@@ -1,0 +1,110 @@
+/*
+#--------------------------------
+# Copyright (c) 2011 "Capensis" [http://www.capensis.com]
+#
+# This file is part of Canopsis.
+#
+# Canopsis is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# Canopsis is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Affero General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public License
+# along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
+# ---------------------------------
+*/
+.kpi {
+	display: block;
+	width: 128px;
+	height: 128px;
+	background-position:center center;
+	background-repeat:no-repeat;
+}
+
+
+/*-----------------------------iconset N°1---------------------------*/
+.kpi_iconSet01_0-10 {
+	background-image: url(./icon_set/meteo1/03.png) !important;
+}
+
+.kpi_iconSet01_10-20 {
+	background-image: url(./icon_set/meteo1/17.png) !important;
+}
+
+.kpi_iconSet01_20-30 {
+	background-image: url(./icon_set/meteo1/14.png) !important;
+}
+
+.kpi_iconSet01_30-40 {
+	background-image: url(./icon_set/meteo1/07.png) !important;
+}
+
+.kpi_iconSet01_40-50 {
+	background-image: url(./icon_set/meteo1/11.png) !important;
+}
+
+.kpi_iconSet01_50-60 {
+	background-image: url(./icon_set/meteo1/26.png) !important;
+}
+
+.kpi_iconSet01_60-70 {
+	background-image: url(./icon_set/meteo1/28.png) !important;
+}
+
+.kpi_iconSet01_70-80 {
+	background-image: url(./icon_set/meteo1/44.png) !important;
+}
+
+.kpi_iconSet01_80-90 {
+	background-image: url(./icon_set/meteo1/34.png) !important;
+}
+
+.kpi_iconSet01_90-100 {
+	background-image: url(./icon_set/meteo1/32.png) !important;
+}
+
+/*-----------------------------iconset N°2---------------------------*/
+.kpi_iconSet02_0-10 {
+	background-image: url(./icon_set/meteo2/2.png) !important;
+}
+
+.kpi_iconSet02_10-20 {
+	background-image: url(./icon_set/meteo2/2.png) !important;
+}
+
+.kpi_iconSet02_20-30 {
+	background-image: url(./icon_set/meteo2/2.png) !important;
+}
+
+.kpi_iconSet02_30-40 {
+	background-image: url(./icon_set/meteo2/1.png) !important;
+}
+
+.kpi_iconSet02_40-50 {
+	background-image: url(./icon_set/meteo2/1.png) !important;
+}
+
+.kpi_iconSet02_50-60 {
+	background-image: url(./icon_set/meteo2/1.png) !important;
+}
+
+.kpi_iconSet02_60-70 {
+	background-image: url(./icon_set/meteo2/1.png) !important;
+}
+
+.kpi_iconSet02_70-80 {
+	background-image: url(./icon_set/meteo2/1.png) !important;
+}
+
+.kpi_iconSet02_80-90 {
+	background-image: url(./icon_set/meteo2/0.png) !important;
+}
+
+.kpi_iconSet02_90-100 {
+	background-image: url(./icon_set/meteo2/0.png) !important;
+}

@@ -1,0 +1,32 @@
+NAME="python-libs"
+
+LOG="$LOG_PATH/$NAME.log"
+rm -f $LOG &> /dev/null
+
+function build(){
+	true
+}
+
+function install(){
+	easy_install_pylib simplejson
+	easy_install_pylib pymongo
+	easy_install_pylib pycurl
+	easy_install_pylib tornado
+	easy_install_pylib python-daemon
+	easy_install_pylib gevent
+	easy_install_pylib bottle
+	easy_install_pylib Beaker
+	easy_install_pylib mongodb_beaker
+	easy_install_pylib pysnmp
+	easy_install_pylib xmlrpclib
+	easy_install_pylib pyparsing
+	easy_install_pylib gunicorn
+	easy_install_pylib apscheduler
+	easy_install_pylib msgpack-python
+	easy_install_pylib supervisor
+	easy_install_pylib isit
+
+	# Todo: Very dirty patch, see https://github.com/Supervisor/supervisor/issues/141
+	sed -i "156i\            if isinstance(value, bool):\n                value = xmlrpclib.boolean(value)" $PREFIX/lib/python2.7/site-packages/supervisor-3.0a12-py2.7.egg/supervisor/xmlrpc.py
+	rm $PREFIX/lib/python2.7/site-packages/supervisor-3.0a12-py2.7.egg/supervisor/*.pyc
+}

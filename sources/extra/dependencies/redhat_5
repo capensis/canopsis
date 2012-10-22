@@ -1,0 +1,5 @@
+yum clean all
+yum update
+yum install -y make gcc gcc-c++ zlib-devel libevent-devel libevent ncurses-devel libcurl-devel wget
+
+rm -f externals/python-libs/pycurl-7.18.2.tar.gz &> /dev/null || true

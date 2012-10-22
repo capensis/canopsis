@@ -1,0 +1,121 @@
+<!--
+#--------------------------------
+# Copyright (c) 2011 "Capensis" [http://www.capensis.com]
+#
+# This file is part of Canopsis.
+#
+# Canopsis is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# Canopsis is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Affero General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public License
+# along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
+# ---------------------------------
+-->
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+
+    <title>Canopsis</title>
+
+	<!-- Theme -->
+	<link rel="stylesheet" type="text/css" href="resources/lib/bootstrap/css/pnotify_bootstrap.css">
+	
+	<link rel="stylesheet" type="text/css" href="themes/extjs/css/ext-all-gray.css">
+	<link rel="stylesheet" type="text/css" href="themes/default/theme.css">
+	<link rel="stylesheet" type="text/css" href="themes/canopsis/theme.css">
+
+	<link rel="stylesheet" type="text/css" href="resources/lib/jquery-ui/theme/jquery-ui.css">
+	
+	<link rel="stylesheet" type="text/css" href="resources/lib/jqGridable/jqGridable.css">
+	
+	<link rel="stylesheet" type="text/css" href="resources/lib/pnotify/jquery.pnotify.default.css">
+	<!-- <link rel="stylesheet" type="text/css" href="resources/lib/pnotify/icons/jquery.pnotify.default.icons.css"> -->
+
+	<link rel="stylesheet" type="text/css" href="/ui/widgets.css">
+
+</head>
+<body>
+	<div id="loading-mask" class="login">
+		<div class='header'></div>
+		<div class='layout'></div>
+
+		<div id="loading">
+			<div class="loading-indicator">
+				Canopsis - <a href="http://www.canopsis.org">www.canopsis.org</a><br/>
+				<span id="loading-msg">Loading styles and images...</span>
+        		</div>
+        	</div>
+
+
+		<!-- Ext-JS -->
+		<script type="text/javascript">document.getElementById('loading-msg').innerHTML = 'Loading ExtJS Core ...';</script>
+	
+		<!-- <script type="text/javascript" src="resources/lib/extjs/ext-debug.js"></script> -->
+		<script type="text/javascript" src="resources/lib/extjs/ext-all.js"></script>
+		<!-- <script type="text/javascript" src="resources/lib/extjs/ext.js"></script> -->
+		<!-- <script type="text/javascript" src="resources/lib/extjs/bootstrap.js"></script> -->
+
+		<!-- Ext localization javascript -->
+		<script type="text/javascript" id="extlocale"></script>
+		<script type="text/javascript" id="canopsislocale"></script>
+
+		<!-- Jquery -->
+		<script type="text/javascript">document.getElementById('loading-msg').innerHTML = 'Loading JQuery ...';</script>
+		<script type="text/javascript" src="resources/lib/jquery/jquery.min.js"></script>
+		<script type="text/javascript" src="resources/lib/jquery-ui/jquery-ui.min.js"></script>
+		
+		<script type="text/javascript">document.getElementById('loading-msg').innerHTML = 'Loading JQuery plugins ...';</script>
+		<script type="text/javascript" src="resources/lib/jQuery.encoding.digests.sha1.js"></script>
+		<script type="text/javascript" src="resources/lib/jquery.md5.js"></script>
+		<script type="text/javascript" src="resources/lib/jquery.peity.min.js"></script>
+		<script type="text/javascript" src="resources/lib/jquery.sparkline.js"></script>
+		<script type="text/javascript" src="resources/lib/jquery.lightbox-0.5.js"></script>
+		
+		<script type="text/javascript">document.getElementById('loading-msg').innerHTML = 'Loading jqGridable ...';</script>
+		<script type="text/javascript" src="resources/lib/jqGridable/jqGridable.js"></script>
+		
+		<script type="text/javascript">document.getElementById('loading-msg').innerHTML = 'Loading pnotify ...';</script>
+		<script type="text/javascript" src="resources/lib/pnotify/jquery.pnotify.min.js"></script>   
+	 
+		<!-- <script type="text/javascript">document.getElementById('loading-msg').innerHTML = 'Loading Highcharts ...';</script> -->
+		<!-- <script type="text/javascript" src="resources/lib/Highcharts/js/highcharts.js"></script> -->
+
+		<script type="text/javascript">document.getElementById('loading-msg').innerHTML = 'Loading Highstock ...';</script>
+		<script type="text/javascript" src="resources/lib/Highstock/js/highstock.js"></script>
+		<script type="text/javascript" src="resources/lib/regression.js"></script>
+		<script type="text/javascript" src="resources/lib/Highstock/js/modules/exporting.js"></script>
+
+		<!-- Application -->
+		<script type="text/javascript">document.getElementById('loading-msg').innerHTML = 'Loading Canopsis ...';</script>
+		<script type="text/javascript" src="app/lib/locale.js"></script>
+		<script type="text/javascript" src="app/lib/global.js"></script>
+		<script type="text/javascript" src="app/lib/log.js"></script>
+		<script type="text/javascript" src="app/lib/tools.js"></script>
+		<script type="text/javascript" src="app/lib/renderers.js"></script>
+		
+		<script type="text/javascript">document.getElementById('loading-msg').innerHTML = 'Loading NowJS client ...';</script>
+		<script type="text/javascript" id="nowjs"></script>
+		<script type="text/javascript"> Ext.fly('nowjs').set({src: global.nowjs.proto+'://'+global.nowjs.hostname+":"+global.nowjs.port+"/nowjs/now.js"});</script>
+		
+		
+		<!-- Extjs Plugins -->
+		<script type="text/javascript">document.getElementById('loading-msg').innerHTML = 'Loading Extjs plugins ...';</script>
+		<script type="text/javascript" src="resources/lib/jqGridable/jqGridable.Ext.js"></script>
+		<script type="text/javascript" src="resources/lib/extjs-plugins/Ext.ux.ColorField.js"></script>
+
+		<script type="text/javascript">document.getElementById('loading-msg').innerHTML = 'Loading Application ...';</script>
+		<script type="text/javascript" src="app.js"></script>
+
+	</div>
+</body>
+</html>

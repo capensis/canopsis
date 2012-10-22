@@ -1,0 +1,45 @@
+#!/bin/bash
+
+NAME="mongodb"
+VERSION=2.2.0
+RELEASE=2
+DESCRIPTION=""
+REQUIRES="canohome python canolibs"
+
+function pre_install(){
+	echo "Pre-install $NAME $VERSION-$RELEASE ..."
+	check_code $? 
+}
+
+function post_install(){
+	echo "Post-install $NAME $VERSION-$RELEASE ..."
+	mkdir -p $PREFIX/var/log/mongodb
+	mkdir -p $PREFIX/var/lib/mongodb
+	chown $HUSER -R $PREFIX/var/log/mongodb
+	chown $HUSER -R $PREFIX/var/lib/mongodb
+}
+
+function pre_remove(){
+	echo "Pre-remove $NAME $VERSION-$RELEASE ..."
+	service mongodb stop
+}
+
+function post_remove(){
+	echo "Post-remove $NAME $VERSION-$RELEASE ..."
+}
+
+function pre_update(){
+	echo "Pre-update $NAME $VERSION-$RELEASE ..."
+	check_code $?
+}
+
+function post_update(){
+	echo "Post-update $NAME $VERSION-$RELEASE ..."
+	check_code $?
+}
+
+function purge(){
+	echo "Purge $NAME $VERSION-$RELEASE ..."
+	rm -Rf $PREFIX/var/lib/mongodb
+	rm -Rf $PREFIX/var/log/mongodb
+}

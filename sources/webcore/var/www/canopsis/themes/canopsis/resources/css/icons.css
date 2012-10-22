@@ -1,0 +1,456 @@
+/*
+#--------------------------------
+# Copyright (c) 2011 "Capensis" [http://www.capensis.com]
+#
+# This file is part of Canopsis.
+#
+# Canopsis is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# Canopsis is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Affero General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public License
+# along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
+# ---------------------------------
+*/
+.icon {
+	display: block;
+	width: 16px;
+	height: 16px;
+	margin-left: auto;
+	margin-right: auto;
+	background-position:center; 
+}
+
+.icon-clickable {
+	display: block;
+	width: 16px;
+	height: 16px;
+	margin-left: auto;
+	margin-right: auto;
+	background-position:center; 
+	cursor: pointer;
+}
+
+.icon-big {
+	display: block;
+	width: 32px;
+	height:32px;
+	margin-left: auto;
+	margin-right: auto;
+	background-position:center; 
+	
+}
+
+.icon-loading { 
+    background-image: url(../images/ajax-loader.gif) !important; 
+} 
+
+.icon-user { 
+    background-image: url(../images/icons/user.png) !important; 
+} 
+ 
+.icon-add { 
+    background-image: url(../images/icons/add.png) !important; 
+} 
+
+.icon-next { 
+    background-image: url(../images/icons/resultset_next.png) !important; 
+} 
+
+.icon-download { 
+    background-image: url(../images/icons/disk.png) !important;
+} 
+
+.icon-previous { 
+    background-image: url(../images/icons/resultset_previous.png) !important; 
+} 
+ 
+.icon-delete { 
+    background-image: url(../images/icons/delete.png) !important; 
+}
+
+.icon-config { 
+    background-image: url(../images/icons/delete.png) !important; 
+}
+
+.icon-reload { 
+    background-image: url(../images/icons/reload.png) !important; 
+}
+
+.icon-search { 
+    background-image: url(../images/icons/magnifier.png) !important; 
+}
+
+.icon-calendar { 
+	background-image: url(../images/icons/calendar.png) !important; 
+}
+
+.icon-clean {
+	background-image: url(../images/Tango-Blue-Materia/16x16/actions/edit-clear.png) !important; 
+}
+
+.icon-import {
+	background-image: url(../images/Tango-Blue-Materia/16x16/actions/gtk-unindent.png) !important;
+}
+
+.icon-export {
+	background-image: url(../images/Tango-Blue-Materia/16x16/actions/gtk-indent.png) !important;
+}
+
+.icon-internal-metrics {
+	background-image: url(../images/icons/database_gear.png) !important;
+}
+
+/*
+.icon-cancel { 
+    background-image: url(../images/icons/move.png) !important; 
+}
+*/
+
+.icon-cancel { 
+    background-image: url(../images/icons/cross.png) !important; 
+}
+
+.icon-exit { 
+    background-image: url(../images/icons/door_in.png) !important; 
+}
+
+.icon-access {
+	background-image: url(../images/icons/lock.png) !important; 
+}
+
+.icon-edit {
+	background-image: url(../images/icons/edit.png) !important; 
+}
+
+.icon-close {
+	background-image: url(../images/icons/cross.png) !important; 
+}
+
+.icon-save { 
+    background-image: url(../images/icons/save.png) !important; 
+}
+
+.icon-copy {
+	background-image: url(../images/icons/copy.png) !important;
+}
+
+.icon-perfdata { 
+    background-image: url(../images/states/perfdata.png) !important; 
+}
+
+.icon-bullet-orange { 
+    background-image: url(../images/icons/bullet_orange.png) !important; 
+}
+
+.icon-bullet-red  { 
+    background-image: url(../images/icons/bullet_red.png) !important;
+}
+
+.icon-bullet-green  { 
+    background-image: url(../images/icons/bullet_green.png) !important;
+}
+
+.icon-logout { 
+    background-image: url(../images/Tango-Blue-Materia/16x16/actions/system-log-out.png) !important; 
+}
+
+.icon-preferences { 
+    background-image: url(../images/icons/cog.png) !important; 
+}
+
+.icon-console { 
+    background-image: url(../images/icons/application_osx_terminal.png) !important; 
+}
+
+.icon-mail { 
+    background-image: url(../images/icons/email.png) !important; 
+}
+
+.icon-clear { 
+    background-image: url(../images/Tango-Blue-Materia/16x16/actions/edit-clear.png) !important; 
+}
+
+.icon-page-html { 
+    background-image: url(../images/icons/page_white_code.png) !important; 
+}
+
+.icon-page-go{
+	 background-image: url(../images/icons/page_white_go.png) !important; 
+}
+
+.icon-folder-add {
+	background-image: url(../images/icons/folder_add.png) !important;
+}
+
+.icon-leaf-add {
+	background-image: url(../images/icons/page_white_add.png) !important;
+}
+
+.icon-run {
+	background-image: url(../images/icons/cog_go.png) !important;
+}
+
+.icon-wizard {
+	background-image: url(../images/icons/application_form.png) !important;
+}
+
+.icon-preview {
+	background-image: url(../images/icons/eye.png) !important;
+}
+
+/* Mainbar */
+
+.icon-mainbar-run { 
+    background-image: url(../images/icons/application_cascade.png) !important; 
+}
+
+.icon-mainbar-add-task { 
+    background-image: url(../images/icons/cog_add.png) !important; 
+}
+
+.icon-mainbar-build { 
+    background-image: url(../images/icons/application_form_edit.png) !important; 
+}
+
+.icon-mainbar-report { 
+    background-image: url(../images/icons/application_view_gallery.png) !important; 
+}
+
+.icon-mainbar-edit-view { 
+    background-image: url(../images/icons/application_edit.png) !important; 
+}
+
+.icon-mainbar-edit-group { 
+    background-image: url(../images/icons/group_edit.png) !important; 
+}
+
+.icon-mainbar-edit-account { 
+    background-image: url(../images/icons/user_edit.png) !important; 
+}
+
+.icon-mainbar-edit-task { 
+    background-image: url(../images/icons/cog.png) !important; 
+}
+
+.icon-mainbar-briefcase { 
+    background-image: url(../images/icons/briefcase.png) !important; 
+}
+
+.icon-mainbar-new-view { 
+    background-image: url(../images/icons/application_add.png) !important; 
+}
+
+.icon-mainbar-view { 
+    background-image: url(../images/icons/application.png) !important; 
+}
+
+.icon-mainbar-dashboard { 
+    background-image: url(../images/icons/application_home.png) !important; 
+}
+
+.icon-mainbar-reporting { 
+    background-image: url(../images/icons/chart_curve_edit.png) !important; 
+}
+
+.icon-mainbar-viewdetails { 
+    background-image: url(../images/icons/application_view_detail.png) !important; 
+}
+
+.icon-mainbar-colors { 
+    background-image: url(../images/icons/color_swatch.png) !important; 
+}
+
+.icon-mainbar-perfdata {
+	background-image: url(../images/icons/chart_line.png) !important;
+}
+
+.icon-mainbar-selector { 
+    background-image: url(../images/icons/arrow_join.png) !important; 
+}
+
+.icon-mainbar-eventLog{
+	background-image: url(../images/icons/time_go.png) !important; 
+}
+
+.icon-true { 
+    background-image: url(../images/icons/bullet_green.png) !important; 
+}
+
+.icon-false { 
+    background-image: url(../images/icons/bullet_red.png) !important;
+}
+
+.icon-comment { 
+    background-image: url(../images/icons/comment.png) !important;
+}
+
+.icon-derogation {
+	background-image: url(../images/Tango-Blue-Materia/22x22/categories/applications-development.png) !important;
+}
+
+.icon-enable-disable { 
+	background-image: url(../images/icons/true.png) !important;
+}
+
+/* state */
+
+/*.icon-state-0 { 
+    background-image: url(../images/Tango-Blue-Materia/16x16/places/server.png) !important; 
+}*/
+
+.icon-state-0 { 
+    background-image: url(../images/states/0.png) !important;
+}
+
+.icon-state-1 { 
+    background-image: url(../images/states/1.png) !important;
+}
+
+.icon-state-2 { 
+    background-image: url(../images/states/2.png) !important;
+}
+
+.icon-state-3 { 
+    background-image: url(../images/Tango-Blue-Materia/16x16/apps/gnome-help.png) !important; 
+}
+
+/*  state_type  */
+
+.icon-state-type-0 { 
+    background-image: url(../images/icons/tag_orange.png) !important;
+}
+
+.icon-state-type-1 { 
+    background-image: url(../images/icons/tag_green.png) !important;
+}
+
+
+/* source_type */
+
+
+.icon-crecord_type- { 
+    background-image: url(../images/Tango-Blue-Materia/16x16/apps/help.png) !important; 
+}
+
+.icon-crecord_type-brule { 
+    background-image: url(../images/Tango-Blue-Materia/16x16/apps/preferences-desktop-theme.png) !important; 
+}
+
+.icon-crecord_type-clock { 
+    background-image: url(../images/Tango-Blue-Materia/16x16/apps/date.png) !important; 
+}
+
+.icon-crecord_type-sla { 
+    background-image: url(../images/Tango-Blue-Materia/16x16/mimetypes/spreadsheet.png) !important; 
+}
+
+.icon-crecord_type-availability { 
+    background-image: url(../images/Tango-Blue-Materia/16x16/status/image-loading.png) !important; 
+}
+
+.icon-crecord_type-component { 
+    background-image: url(../images/Tango-Blue-Materia/16x16/places/server.png) !important; 
+}
+
+/* crecord_type */
+
+.icon-crecord_type-resource { 
+    background-image: url(../images/Tango-Blue-Materia/16x16/categories/applications-system.png) !important; 
+}
+
+.icon-crecord_type-derogation { 
+    background-image: url(../images/icons/table_error.png) !important; 
+}
+
+.icon-crecord_type-account { 
+    background-image: url(../images/icons/account.png) !important; 
+}
+
+.icon-crecord_type-group { 
+    background-image: url(../images/icons/group.png) !important; 
+}
+
+.icon-crecord_type-selector { 
+    background-image: url(../images/icons/arrow_join.png) !important; 
+}
+
+
+/* TAB */
+
+.icon-tab-default { 
+    background-image: url(../images/icons/report.png) !important; 
+} 
+
+.icon-tab-Accounts { 
+    background-image: url(../images/icons/user.png) !important; 
+} 
+
+/* mimetype */
+.icon-mimetype-pdf { 
+    background-image: url(../images/icons/page_white_acrobat.png) !important; 
+}
+.icon-mimetype-png { 
+    background-image: url(../images/icons/picture.png) !important; 
+}
+
+/* Controles */
+
+.icon-control-pause, .x-tool-pause { 
+    background-image: url(../images/icons/control_pause.png) !important; 
+}
+
+.icon-control-play, .x-tool-play { 
+    background-image: url(../images/icons/control_play.png) !important; 
+}
+
+.icon-control-repeat, .x-tool-repeat { 
+    background-image: url(../images/icons/control_repeat.png) !important; 
+}
+
+.icon-country-fr {
+    background-image: url(../images/icons/countries/fr.png) !important ;
+}
+
+
+.icon-country-es {
+    background-image: url(../images/icons/countries/es.png) !important ;
+}
+
+.icon-country-us {
+    background-image: url(../images/icons/countries/us.png) !important ;
+}
+
+.icon-os-linux {
+    background-image: url(../images/icons/os/linux-32.png) !important ;
+}
+
+.icon-os-windows {
+    background-image: url(../images/icons/os/windows-32.png) !important ;
+}
+
+.icon-os-mac {
+    background-image: url(../images/icons/os/mac-32.png) !important ;
+}
+
+.icon-browser-firefox {
+    background-image: url(../images/icons/browser/firefox-32.png) !important ;
+}
+.icon-browser-safari {
+    background-image: url(../images/icons/browser/safari-32.png) !important ;
+}
+.icon-browser-chrome {
+    background-image: url(../images/icons/browser/chrome-32.png) !important ;
+}
+.icon-browser-opera {
+    background-image: url(../images/icons/browser/opera-32.png) !important ;
+}
+.icon-browser-firefox {
+    background-image: url(../images/icons/browser/firefox-32.png) !important ;
+}

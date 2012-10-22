@@ -1,0 +1,3 @@
+/var/log/rabbitmq/*
+/var/lib/rabbitmq/mnesia/*
+/.erlang.cookie

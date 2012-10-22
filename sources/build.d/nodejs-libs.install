@@ -1,0 +1,66 @@
+NAME="nodejs-libs"
+
+LOG="$LOG_PATH/$NAME.log"
+rm -f $LOG &> /dev/null
+
+function npm_install(){
+	echo "   + NPM Install $1 $2"
+	if [ -d $PREFIX/lib/node_modules/$1 ]; then
+		echo "     + Already install."
+	else
+		su - $HUSER -c "export NODE_PATH=$PREFIX/lib/node_modules && cd $PREFIX/lib/ && npm install $PREFIX/tmp/nodejs-libs/$1-$2.tgz" 1>> $LOG 2>> $LOG
+		check_code $?
+	fi
+}
+
+function install(){
+	cd $SRC_PATH/externals
+
+	rm -R $PREFIX/.npm &> /dev/null || true
+
+	mkdir -p $PREFIX/lib/node_modules
+	chown -R $HUSER $PREFIX/lib/node_modules
+
+	cp -R $SRC_PATH/externals/nodejs-libs $PREFIX/tmp/
+        check_code $?
+
+	# Socket IO
+	npm_install options 0.0.3
+	npm_install commander 0.5.2
+	npm_install ws 0.4.13
+
+	npm_install zeparser 0.0.5
+	npm_install active-x-obfuscator 0.0.1
+	
+	npm_install xmlhttprequest 1.2.2
+	npm_install uglify-js 1.2.5
+	npm_install socket.io-client 0.9.5
+
+	
+	npm_install redis 0.6.7
+	npm_install policyfile 0.0.4
+	npm_install socket.io 0.9.5
+
+	# AMQP
+	npm_install amqp 0.1.3
+
+	# MongoDB
+	npm_install bson 0.0.5
+	npm_install mongodb 1.0.1
+
+	# Faye
+	npm_install cookiejar 1.3.0
+	npm_install faye-websocket 0.4.2
+	npm_install faye 0.8.2
+
+	#Node
+	npm_install node-proxy 0.5.2 
+	npm_install now 0.8.1
+
+	# Iniparser
+	npm_install iniparser 1.0.5
+
+	rm -R $PREFIX/tmp/nodejs-libs
+        check_code $?
+
+}

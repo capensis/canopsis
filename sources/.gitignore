@@ -1,0 +1,17 @@
+log/
+externals/pylibs/*/
+packages/*/files.lst
+packages/*/files.tgz
+*/draft
+*/drafts
+externals/*/
+*.pyc
+*neb2socket.o
+!externals/rabbitmq-plugins
+packages/files.lst
+bootstrap/*.tgz
+bootstrap/*.conf
+bootstrap/common.sh
+webcore/var/www/canopsis/resources/lib
+pyperfstore/*.egg*
+pyperfstore2/*.egg*

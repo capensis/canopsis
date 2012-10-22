@@ -1,0 +1,17 @@
+NAME="collectd-libs"
+
+LOG="$LOG_PATH/$NAME.log"
+rm -f $LOG &> /dev/null
+
+function build(){
+	true
+}
+
+function install(){
+	echo " + Post install configurations ..."
+
+	cd $SRC_PATH	
+	install_basic_source $NAME
+
+	install_conf "collectd.conf"
+}

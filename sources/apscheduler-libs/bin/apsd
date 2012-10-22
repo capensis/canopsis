@@ -1,0 +1,56 @@
+#!/usr/bin/env python
+import os, time
+os.environ['TZ'] = 'UTC'
+time.tzset()
+
+from apscheduler.scheduler import Scheduler
+from apschedulerlibs.cmongodbjobstore import CMongoDBJobStore
+import logging
+import string
+
+from cinit import cinit
+
+# Logger
+init 	= cinit()
+logger 	= init.getLogger('apsd')
+handler = init.getHandler(logger)
+
+# Init
+sched = Scheduler()
+c = {
+	"daemonic": "True",
+	"apscheduler.jobstore.cmongodbjobstore.class": "apschedulerlibs.cmongodbjobstore:CMongoDBJobStore",
+	"apscheduler.jobstore.cmongodbjobstore.database": "canopsis",
+	"apscheduler.jobstore.cmongodbjobstore.collection": "object"
+}
+
+# Mongojobstore refresh interval in seconds
+refresh_interval = 60
+
+logger.info('Config: %s' % c)
+sched.configure(c)
+sched.start()
+
+def main_loop():
+	last_refresh = int(time.time())
+
+	while handler.RUN:
+		if int(time.time()) >= (last_refresh + refresh_interval):
+			logger.debug('Refresh Mongodb jobstore')
+			last_refresh = int(time.time())
+			for js in sched._jobstores:
+				if isinstance(sched._jobstores[js], CMongoDBJobStore):
+					sched._jobstores[js].check_and_refresh()
+					sched._wakeup.set()
+
+		time.sleep(1)
+
+# Main
+if __name__ == '__main__':
+	sched.print_jobs()
+	try:
+		main_loop()
+	except KeyboardInterrupt:
+		logger.info('Exiting by user request')
+		
+	sched.shutdown()

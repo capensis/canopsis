@@ -1,0 +1,102 @@
+#!/usr/bin/env python
+
+import sys, os, getopt, json
+
+def usage():
+	print(" Usage: scheduledtasks [OPTIONS] <task_name> <method> [method_args (json)]")
+	print
+	print(" Options:")
+	print("  -t <value>, --timeout=<value>")
+	print("		Timeout (default: %s seconds)" % timeout)
+	print("  -n, --nowait")
+	print("		No wait end of task")
+	print("  -h, --help")
+	print("		show help")
+
+def main(argv):
+	global timeout
+	timeout = 120
+	
+	try:
+		opts, args = getopt.getopt(	sys.argv[1:], 
+									"nht:",
+									["help", "timeout="])
+	except getopt.GetoptError, err:
+		print(err)
+		usage()
+		sys.exit(1)
+		
+	if len(args) < 2:
+		usage()
+		sys.exit(1)
+		
+	user 		= 'root'
+	group 		= 'root'
+	
+	nowait		= False
+	
+	taskname	= args[0]
+	methodname	= args[1]
+	
+	if len(args) >= 3:
+		try:
+			methodargs = json.load(open(args[2], 'r'))
+			pass
+		except Exception, err:
+			methodargs = None
+			print "Invalid method args (%s)" % err
+			sys.exit()
+
+	else:
+		methodargs = None
+	
+	for opt, arg in opts:
+		if opt in ('-h', '--help'):
+			usage()
+			sys.exit(1)
+		if opt in ('--nowait', '-n'):
+			nowait = True
+		if opt in ('--timeout', '-t'):
+			timeout = int(arg)
+			
+	print "Run task:"
+	print " + No wait: %s"		% nowait
+	print " + Timeout: %s"		% timeout
+	print " + Task name: %s"	% taskname
+	print " + Method name: %s"	% methodname
+	print " + Task args: %s"	% methodargs
+	
+	try:
+		module = __import__(taskname)
+		exec "task = module.%s" % methodname
+		print "Task loaded."
+	except Exception, err:
+		print "Impossible to load '%s' task." % taskname
+		print " + %s" % err
+	
+	print "Run task '%s.%s' ..." % (taskname, methodname)
+	try:
+		if methodargs:
+			result = task.delay(**methodargs)
+		else:
+			result = task.delay()
+		
+		if not nowait:
+			result.wait(timeout=timeout)
+			if result.result:
+				print " + Result: %s" % result.result
+			if result.successful():
+				print " + Task finished successfully"
+				sys.exit(0)
+			else:
+				print " + Task finished with errors"
+				sys.exit(1)
+		else:
+			print " + Task launched"
+		
+	except Exception, err:
+		print "Impossible run task."
+		print " + %s" % err	
+
+if __name__ == "__main__":
+    main(sys.argv[1:])

@@ -1,0 +1,81 @@
+#!/usr/bin/env python
+#--------------------------------
+# Copyright (c) 2011 "Capensis" [http://www.capensis.com]
+#
+# This file is part of Canopsis.
+#
+# Canopsis is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# Canopsis is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Affero General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public License
+# along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
+# ---------------------------------
+
+import logging, time
+from cstorage import get_storage
+from caccount import caccount
+from cinit import cinit
+
+import pyperfstore2
+
+from optparse import OptionParser
+import sys
+
+
+usage = "usage: %prog [-d]"
+
+parser = OptionParser(usage=usage)
+
+parser.add_option("-d", default=False, action="store_true", help="Clean dbs")
+
+(options, args) = parser.parse_args()
+
+do = options.d
+
+# 24 hours
+freshness = 60 * 60 * 24
+
+init 	= cinit()
+
+logger 	= init.getLogger("CleanEventDB", level="DEBUG")
+storage = get_storage(namespace='events', logging_level=logging.ERROR, account=caccount(user="root", group="root"))
+
+if not do:
+	logger.debug("/!\\ Simulation Mode, nothing to do /!\\")
+
+manager = pyperfstore2.manager(logging_level=logging.DEBUG)
+	
+################### EVENTS
+logger.debug("Clean events")
+records = storage.find(	{'$and': [
+				{'event_type': { '$in': [ 'check', 'sla', 'selector' ]}},
+				{'crecord_write_time': {'$lt': int(time.time() - freshness)}}
+			]
+})
+
+logger.debug(" + %s found" % len(records))
+
+for record in records:
+	logger.debug(" + %s" % record._id)
+	if do:
+		logger.debug("    -> Too old, remove it")
+		storage.remove(record)
+	
+################### PERFSTORE
+logger.debug("Clean perfstore2 Metrics")
+records = manager.find(mfilter={ 'lts': {'$lt': int(time.time() - freshness)} })
+						
+logger.debug(" + %s found" % records.count())
+
+for record in records:
+	logger.debug(" + %s: %s %s -> %s" % (record['_id'], record['co'], record.get('re',"-"), record['me']))
+	if do:
+		logger.debug("    -> Too old, remove it")
+		manager.remove(_id=record['_id'])

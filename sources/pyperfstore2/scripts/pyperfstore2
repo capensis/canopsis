@@ -1,0 +1,76 @@
+#!/usr/bin/env python
+#--------------------------------
+# Copyright (c) 2011 "Capensis" [http://www.capensis.com]
+#
+# This file is part of Canopsis.
+#
+# Canopsis is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# Canopsis is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Affero General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public License
+# along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
+# ---------------------------------
+
+import logging, sys
+
+logging_level = logging.ERROR
+
+## Options parsing
+from optparse import OptionParser
+
+usage = "usage: %prog [options] showstats"
+
+parser = OptionParser(usage=usage)
+
+parser.add_option("-v", "--verbose", action="store_true", dest="verbose",
+                  help="more verbose")
+
+(options, args) = parser.parse_args()
+
+if options.verbose:
+	logging_level = logging.DEBUG
+
+logging.basicConfig(level=logging_level,
+	#format='%(name)s %(levelname)s %(message)s',
+	format='%(message)s',
+)
+
+logger = logging.getLogger('pyperfstore2')
+
+def get_arg(args, index):
+	try:
+		arg = args[index]
+	except:
+		logger.error('Missing parameters ...')
+		sys.exit(1)
+	return arg
+
+#### MAIN
+logger.debug("Command line options:")
+logger.debug(" + Options: %s" % options)
+logger.debug(" + Args: %s" % args)
+
+action = get_arg(args, 0)
+logger.debug(" + Action: %s" % action)
+
+#node_id = get_arg(args, 1)
+#logger.debug(" + Node: %s" % node_id)
+
+## Go
+import pyperfstore2
+manager = pyperfstore2.manager()
+
+if   action == "showstats":
+	manager.showStats()
+
+else:
+	logger.error('Invalid action ...')
+	sys.exit(1)	
+

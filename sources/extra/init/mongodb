@@ -1,0 +1,157 @@
+#!/bin/sh
+#--------------------------------
+# Copyright (c) 2011 "Capensis" [http://www.capensis.com]
+#
+# This file is part of Canopsis.
+#
+# Canopsis is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# Canopsis is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Affero General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public License
+# along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
+# ----------
+
+PATH=$HOME/bin:$HOME/sbin:$PATH
+DAEMON=$HOME/bin/mongod
+
+NAME=mongodb
+CONF=$HOME/etc/mongodb.conf
+DATA=$HOME/var/lib/mongodb
+LOGDIR=$HOME/var/log/mongodb
+PIDFILE=$HOME/var/run/$NAME.pid
+
+LOGFILE=$LOGDIR/$NAME.log
+LOG_FILE_START=$LOGDIR/$NAME-daemon.log
+
+ERRCODE=0
+
+if test ! -x $DAEMON; then
+    echo "Could not find $DAEMON"
+    exit 0
+fi
+
+if test ! -x $DATA; then
+    mkdir -p $DATA || exit 0
+fi
+
+DAEMON_OPTS="--fork --quiet --config $CONF --pidfilepath $PIDFILE"
+
+set -e
+
+running_pid() {
+    # Check if a given process pid's cmdline matches a given name
+    pid=$1
+    name=$2
+    [ -z "$pid" ] && return 1
+    [ ! -d /proc/$pid ] &&  return 1
+    cmd=`cat /proc/$pid/cmdline | tr "\000" "\n"|head -n 1 |cut -d : -f 1`
+    # Is this the expected server
+    [ "$cmd" != "$name" ] && return 1
+    return 0
+}
+
+running() {
+    # No pidfile, probably no daemon present
+    [ ! -f "$PIDFILE" ] && return 1
+    pid=`cat $PIDFILE`
+    running_pid $pid $DAEMON || return 1
+    return 0
+}
+
+wait_socket(){
+    if [ $(ls /tmp/mongodb-*.sock 2> /dev/null | wc -l) -ne 0 ]; then
+	return 0
+    fi
+    TIMEOUT=300
+    TIMEOUT=$((TIMEOUT * 2))
+ 	
+    echo "   + Wait MongoDB socket (may be long the firstime) ..."
+    i=0
+    while [ $(ls /tmp/mongodb-*.sock 2> /dev/null | wc -l) -eq 0 ]; do
+        if [ $i -gt $TIMEOUT ]; then
+	    echo -n "   + Timeout"
+            exit 1
+        fi
+        i=$((i+1))
+        sleep 0.5
+    done
+}
+
+start_server() {
+	$DAEMON $DAEMON_OPTS &> /dev/null &
+	return $?
+}
+
+stop_server() {
+	kill $(cat $PIDFILE | tail -n 1)
+	return $?
+}
+
+fncase(){
+
+	case "$1" in
+	  start)
+		echo "Starting $NAME ..."
+		if running;  then
+			echo " + Apparently already running"
+			ERRCODE=1
+		else
+			start_server
+			sleep 1
+			wait_socket
+			if running; then
+				echo " + Done"	
+			else
+				echo " + Impossible to start"
+				ERRCODE=1
+			fi
+		fi
+		;;
+	  stop)
+		echo "Stopping $NAME ..."
+		if running; then
+			stop_server
+			sleep 1
+			if running; then
+				echo " + Impossible to stop"
+				ERRCODE=1
+			else
+				echo " + Done"	
+			fi
+		else
+			echo " + Apparently not running"
+			ERRCODE=1
+		fi
+		;;
+
+	  restart|force-reload)
+		fncase "stop"
+		fncase "start"
+		;;
+	  status)
+
+		echo "Checking status of $NAME"
+		if running ;  then
+		    echo " + Running"
+		else
+		    echo " + Apparently not running"
+		    ERRCODE=1
+		fi
+		;;
+	  *)
+		echo "Usage: $NAME {start|stop|force-stop|restart|force-reload|status}" >&2
+		ERRCODE=1
+		;;
+	esac
+}
+
+
+fncase $1
+exit $ERRCODE

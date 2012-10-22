@@ -1,0 +1,64 @@
+#!/bin/bash
+
+set -E -o pipefail
+
+usage () {
+	echo "HELP"
+	exit
+}
+
+if [[ "$1" =~ ^(-h|--help|help)$ ]] || [[ -z $1 ]]; then
+	usage
+fi
+
+echo " :: Start configuration restoration"
+
+ARCHIVE=$1
+FULLPATH=$ARCHIVE
+FILENAME="${FULLPATH##*/}"
+
+if ! [ -e $FULLPATH ]; then
+	echo " ## Archive not found ($FULLPATH)"
+	echo " ## Failed"
+	exit 1
+else
+	echo " :: Archive detected ($FULLPATH)"
+fi
+
+if ! [[ ${FILENAME: -4} == ".zip" || $(exit $?) == 1 ]]; then
+	echo " ## Package format must be *.zip (${FILENAME: -4})"
+	echo " ## Failed"
+	exit 1
+else
+	echo " :: Good archive format (${FILENAME: -4})"
+fi
+
+ARCHIVE="${FILENAME%.[^.]*}"
+
+if ! [ -d $HOME/etc ]; then
+	echo " ## etc folder not already exist"
+	echo " :: Create it"
+	mkdir -p $HOME/etc 
+else
+	echo " :: etc folder already exist"
+fi
+
+echo " :: Create temp dir"
+tmp_dir=$(mktemp -d --tmpdir=$HOME/tmp)
+echo " :: Extract config archive into temp dir"
+unzip $FULLPATH -d $tmp_dir
+echo " :: Apply config files"
+cp -a $tmp_dir/$ARCHIVE/. $HOME/etc
+#cp -R $tmp_dir/$ARCHIVE/.* $HOME/etc
+echo " :: Clean temp dir"
+rm -r $tmp_dir
+if ! [ -f $HOME/etc/.packages ]; then
+	echo " ## File .packages not exist in your archive"
+	echo " ## Packages wont be reinstall"
+	exit 1
+fi
+echo " :: Reinstall packages"
+while read line; do 
+	packages="$packages $line"
+done < $HOME/etc/.packages
+pkgmgr install $packages

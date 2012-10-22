@@ -1,0 +1,11 @@
+NAME="webcore-libs"
+
+function build(){
+	true
+}
+
+function install(){
+	mkdir -p $PREFIX/var/www/canopsis/resources/lib/
+	cp -R $SRC_PATH/externals/webcore-libs/* $PREFIX/var/www/canopsis/resources/lib/
+	check_code $?
+}

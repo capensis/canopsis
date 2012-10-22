@@ -1,0 +1,18 @@
+{
+	"filename"		: "",
+	"viewname"		: "",
+	"starttime" 	: "",
+	"stoptime"		: "",
+	"cookiejar" 	: "/opt/canopsis/tmp/cookies.wkhtmltopdf.txt",
+	"windowstatus"	: "ready",
+	"xlock"			: "/tmp/.X3-lock",
+	"xvfb_cmd"		: "Xvfb :3 -screen 0 1024x768x24 &",
+	"display_int"	: "127.0.0.1:3",
+	"report_dir"	: "/opt/canopsis/tmp/report",
+	"header"		: "--header-html /opt/canopsis/var/wkhtmltopdf/header.html",
+	"footer"		: "--footer-html /opt/canopsis/var/wkhtmltopdf/footer.html",
+	"opts"			: [	"--use-xserver",
+						"--debug-javascript",
+						"--load-error-handling ignore",
+						"--disable-smart-shrinking"]
+}

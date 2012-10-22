@@ -1,0 +1,10 @@
+[{
+	"name":  "Live events",
+	"version": 0.1,
+	"author": "capensis",
+	"website": "http://www.canopsis.org",
+	"xtype": "live_events",
+	"description": "Display live events (websocket)",
+	"refreshInterval": 0,
+	"rowHeight": 400
+}]

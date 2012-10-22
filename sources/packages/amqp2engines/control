@@ -1,0 +1,64 @@
+#!/bin/bash
+
+NAME="amqp2engines"
+VERSION=0.2
+RELEASE=0
+DESCRIPTION=""
+REQUIRES="canohome python canolibs supervisord-conf pyperfstore2"
+
+NO_ARCH=true
+NO_DIST=true
+NO_DISTVERS=true
+
+function pre_install(){
+	echo "Pre-install $NAME $VERSION-$RELEASE ..."
+	check_code $? 
+}
+
+function post_install(){
+	echo "Post-install $NAME $VERSION-$RELEASE ..."
+	if [ -e $PREFIX/opt/amqp2mongodb ]; then
+		echo " + Disable amqp2mongodb"
+		rm -f $PREFIX/etc/init.d/amqp2mongodb
+		sed -i "s#service amqp2mongodb#service amqp2engines#g" $PREFIX/bin/hypcontrol	
+	fi
+	if [ -e $PREFIX/opt/collectd2event ]; then
+		echo " + Disable collectd2event"
+		rm -f $PREFIX/etc/init.d/collectd2event
+		sed -i "s#service collectd2event .*##g" $PREFIX/bin/hypcontrol
+	fi
+
+	mkdir -p $PREFIX/var/log/engines
+	check_code $? 
+}
+
+function pre_remove(){
+	echo "Pre-remove $NAME $VERSION-$RELEASE ..."
+	check_code $?
+}
+
+function post_remove(){
+	echo "Post-remove $NAME $VERSION-$RELEASE ..."
+	check_code $?
+}
+
+function pre_update(){
+	echo "Pre-update $NAME $VERSION-$RELEASE ..."
+	echo " + Delete amqp2mongodb queue"
+	rabbitmqadmin  -V canopsis  delete queue name=amqp2mongodb &> /dev/null
+	echo " + Delete collectd2event queue"
+	rabbitmqadmin  -V canopsis  delete queue name=collectd2event &> /dev/null
+
+	rm $PREFIX/etc/init.d/amqp2engines &> /dev/null || true
+}
+
+function post_update(){
+	echo "Post-update $NAME $VERSION-$RELEASE ..."
+	mkdir -p $PREFIX/var/log/engines
+	check_code $?
+}
+
+function purge(){
+	echo "Purge $NAME $VERSION-$RELEASE ..."
+	check_code $?
+}

@@ -1,0 +1,216 @@
+<!--
+#--------------------------------
+# Copyright (c) 2011 "Capensis" [http://www.capensis.com]
+#
+# This file is part of Canopsis.
+#
+# Canopsis is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# Canopsis is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Affero General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public License
+# along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
+# ---------------------------------
+-->
+
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+
+    <title>Canopsis</title>
+
+	<!-- Theme -->
+	<link rel="stylesheet" type="text/css" href="resources/lib/bootstrap/css/pnotify_bootstrap.css">
+	
+	<link rel="stylesheet" type="text/css" href="themes/extjs/css/ext-all-gray.css">
+	<link rel="stylesheet" type="text/css" href="themes/default/theme.css">
+	<link rel="stylesheet" type="text/css" href="themes/canopsis/theme.css">
+
+	<link rel="stylesheet" type="text/css" href="resources/lib/jquery-ui/theme/jquery-ui.css">
+	
+	<link rel="stylesheet" type="text/css" href="resources/lib/jqGridable/jqGridable.css">
+	
+	<link rel="stylesheet" type="text/css" href="resources/lib/pnotify/jquery.pnotify.default.css">
+	<!-- <link rel="stylesheet" type="text/css" href="resources/lib/pnotify/icons/jquery.pnotify.default.icons.css"> -->
+
+	<!-- <link rel="stylesheet" type="text/css" href="/ui/widgets.css">-->
+
+</head>
+<body class="login">
+	
+	<div id='container'></div>
+		<div class='layout' id="layout"></div>
+		<div id="loading" >
+			<div class="loading-indicator">
+				Canopsis - <a href="http://www.canopsis.org">www.canopsis.org</a><br/>
+				<span id="loading-msg">Loading styles and images...</span>
+        		</div>
+        	</div>
+			<!-- Ext-JS -->
+			<script type="text/javascript">document.getElementById('loading-msg').innerHTML = 'Loading ExtJS Core ...';</script>
+
+			<!-- <script type="text/javascript" src="resources/lib/extjs/ext-debug.js"></script> -->
+			<script type="text/javascript" src="resources/lib/extjs/ext-all.js"></script>
+			<!-- <script type="text/javascript" src="resources/lib/extjs/ext.js"></script> -->
+			<!-- <script type="text/javascript" src="resources/lib/extjs/bootstrap.js"></script> -->
+
+			<!-- Ext localization javascript -->
+			<script type="text/javascript" id="extlocale"></script>
+			<script type="text/javascript" id="canopsislocale"></script>
+
+			<!-- Jquery -->
+			<script type="text/javascript">document.getElementById('loading-msg').innerHTML = 'Loading JQuery ...';</script>
+			<script type="text/javascript" src="resources/lib/jquery/jquery.min.js"></script>
+			<script type="text/javascript" src="resources/lib/jquery-ui/jquery-ui.min.js"></script>
+			<script type="text/javascript" src="resources/lib/jQuery.encoding.digests.sha1.js"></script>
+			<script type="text/javascript" src="resources/lib/jquery.md5.js"></script>
+			<script type="text/javascript" src="resources/lib/jquery.peity.min.js"></script>
+			<script type="text/javascript" src="resources/lib/jquery.sparkline.js"></script>
+
+			<script type="text/javascript">document.getElementById('loading-msg').innerHTML = 'Loading jqGridable ...';</script>
+			<script type="text/javascript" src="resources/lib/jqGridable/jqGridable.js"></script>
+
+			<script type="text/javascript">document.getElementById('loading-msg').innerHTML = 'Loading pnotify ...';</script>
+			<script type="text/javascript" src="resources/lib/pnotify/jquery.pnotify.min.js"></script>   
+
+			<!-- <script type="text/javascript">document.getElementById('loading-msg').innerHTML = 'Loading Highcharts ...';</script> -->
+			<!-- <script type="text/javascript" src="resources/lib/Highcharts/js/highcharts.js"></script> -->
+
+			<script type="text/javascript">document.getElementById('loading-msg').innerHTML = 'Loading Highstock ...';</script>
+			<script type="text/javascript" src="resources/lib/Highstock/js/highstock.js"></script>
+			<script type="text/javascript" src="resources/lib/regression.js"></script>
+			<script type="text/javascript" src="resources/lib/Highstock/js/modules/exporting.js"></script>
+
+			<!-- Application -->
+			<script type="text/javascript">document.getElementById('loading-msg').innerHTML = 'Loading Canopsis ...';</script>
+			<script type="text/javascript" src="app/lib/locale.js"></script>
+			<script type="text/javascript" src="app/lib/global.js"></script>
+			<script type="text/javascript" src="app/lib/log.js"></script>
+			<script type="text/javascript" src="app/lib/tools.js"></script>
+			<script type="text/javascript" src="app/lib/renderers.js"></script>
+
+			<script type="text/javascript">document.getElementById('loading-msg').innerHTML = 'Loading NowJS client ...';</script>
+			<script type="text/javascript" id="nowjs"></script>
+			<script type="text/javascript"> Ext.fly('nowjs').set({src: global.nowjs.proto+'://'+global.nowjs.hostname+":"+global.nowjs.port+"/nowjs/now.js"});</script>
+
+
+			<!-- Extjs Plugins -->
+			<script type="text/javascript">document.getElementById('loading-msg').innerHTML = 'Loading Extjs plugins ...';</script>
+			<script type="text/javascript" src="resources/lib/jqGridable/jqGridable.Ext.js"></script>
+			<script type="text/javascript" src="resources/lib/extjs-plugins/Ext.ux.ColorField.js"></script>
+
+			<script type="text/javascript">document.getElementById('loading-msg').innerHTML = 'Loading Application ...';</script>
+
+		</div>
+		
+		<script type="text/javascript">
+		
+		
+		function on_failure(){
+			log.error('Impossible deal with server')
+		}
+
+		function displayView(){
+			//---------------------load locales------------------
+			log.debug("Loading locale ...", "[app]");
+		
+			var locale = global.account['locale']
+			if (! locale){
+				locale = global.default_locale;
+			}
+			log.debug(" + User locale: "+locale, "[app]");
+
+			Ext.fly('extlocale').set({src:'resources/lib/extjs/locale/ext-lang-' + locale + '.js'});
+			Ext.fly('canopsislocale').set({src:'resources/locales/lang-' + locale + '.js'});
+			
+			//----------------Start app---------------
+
+			log.debug("Start ExtJS application ...", "[app]");
+			
+			var app = Ext.application({
+				name: 'canopsis',
+				appFolder: 'app',
+				controllers: [
+					'Account',
+					'Widgets',
+					'Curves',
+					'Websocket',
+					'View',
+					'Notify'
+				],
+				launch: function() {
+					this.getController('Widgets').on('loaded', this.createView);
+				},
+				createView: function(){
+					
+					//styling
+					$('#loading').remove()
+					$('#layout').remove()
+					$('body').removeClass('login')
+					
+					var content = Ext.create('canopsis.view.Tabs.Content',{
+						renderTo: 'container',
+						//width: 940,
+						view_id : view_id,
+						autoshow : true,
+						fullscreenMode: true
+					});	
+
+				}
+			});
+			log.debug("Application started", "[app]");
+		}
+
+			
+		Ext.onReady(function() {
+			
+			Ext.Loader.setConfig({enabled:true});
+			
+			var decoded_url = Ext.urlDecode(window.location.search)
+			log.debug('Get options from URL ('+decoded_url+')')
+			
+			if(decoded_url.view_id != undefined){
+				view_id = decoded_url.view_id
+			} else {
+				log.debug('no view specified, render dashboard')
+				view_id = 'view._default_.dashboard';
+			}
+			
+			var account_key = decoded_url.auth_key
+			
+			Ext.Ajax.request({
+				type: 'rest',
+				url: '/autoLogin/' + account_key,
+				reader: {
+					type: 'json',
+					root: 'data',
+					totalProperty  : 'total',
+					successProperty: 'success'
+				},		
+				success: function(response){
+					var response = Ext.JSON.decode(response.responseText)
+					if (response.success) {
+						global.account = response.data[0]
+						$("head").append($("<link rel='stylesheet' href='/ui/widgets.css' type='text/css' media='screen' />"));
+						displayView()
+					}else{
+						log.debug('Auth failed')
+						on_failure()
+					}
+				},
+				failure: on_failure
+			});
+			
+		});
+		
+	</script>
+	
+</body>
+</html>

@@ -1,0 +1,19 @@
+[{
+	"name":  "Weather Kpi",
+	"verions": 0.1,
+	"author": "capensis",
+	"website": "http://www.canopsis.org",
+	"xtype":"weather_kpi",
+	"description": "Display service health with icons",
+	"refreshInterval": 300,
+	"formWidth": 600,
+	"nodeId" : true,
+	"options": [{
+			"xtype": "numberfield",
+			"fieldLabel":"Icon set",
+			"name": "iconset",
+			"value": 1,
+			"minValue": 1
+		}]
+	
+}]

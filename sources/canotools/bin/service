@@ -1,0 +1,33 @@
+#!/bin/bash
+
+show_help() {
+	echo "Usage : service [SERVICE] [ACTION]"
+    exit 1
+}
+
+if [ -z $1 ]; then show_help; fi
+if [ -z $2 ]; then show_help; fi
+
+## Start supervisord
+if [ -e $HOME/etc/supervisord.conf ]; then
+	if [ -e $HOME/bin/supervisord ]; then
+		if [ $(ps aux | grep 'supervisord' | grep -v grep | wc -l) -eq 0 ]; then
+			rm $HOME/var/run/supervisord.pid &> /dev/null
+			supervisord
+		else
+			supervisorctl update &> /dev/null
+		fi
+	fi
+fi
+	
+if [ -e $HOME/etc/init.d/$1 ]; then
+	$HOME/etc/init.d/$1 $2
+else
+	# Check supervisord
+	if [ -e $HOME/etc/supervisord.d/$1.conf ]; then
+		supervisorctl $2 $1
+		exit $?
+	fi
+	echo "$1: Startup script not found ... ($HOME/etc/init.d/$1)"
+	exit 1
+fi

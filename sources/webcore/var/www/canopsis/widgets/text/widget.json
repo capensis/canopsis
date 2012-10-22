@@ -1,0 +1,35 @@
+[{
+	"name":  "Text Cell",
+	"version": 0.1,
+	"author": "capensis",
+	"website": "http://www.canopsis.org",
+	"xtype": "text",
+	"description": "Display a message with a html template.",
+	"description-fr":"Affiche un message avec un modèle HTML.",
+	"refreshInterval": 300,
+	"border" : false,
+	"locales": ["fr"],
+	"options": [
+			{
+				"title" : "Inventory",
+				"items" : [{
+					"xtype":"cinventory",
+					"name" : "nodes",
+					"multiSelect": false
+				}]
+			},
+			{	
+				"title": "Template",
+				"layout": "anchor",
+				"items" : [
+					{
+						"xtype": "htmleditor",
+						"anchor": "100%",
+						"name": "text",
+						"height" : 350,
+						"value": ""
+					}
+				]
+			}
+	]
+}]

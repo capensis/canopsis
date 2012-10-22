@@ -1,0 +1,54 @@
+2006-04-26  Marco Sordi <gabriev@infinitiv.it>
+	
+	* version upgrade 0.0.9
+	* varius symlink fixes
+
+2006-04-26  Marco Sordi <gabriev@infinitiv.it>
+	
+	* version upgrade 0.0.8
+	* add new emblems icons
+	* varius fixes
+
+2006-04-23  Marco Sordi (special thanks to mejy)  <gabriev@infinitiv.it>
+	
+	* version upgrade 0.0.7
+	* fix symlink for update-manager
+	* varius fixes
+
+	* add firefox e thunderbird icon
+	* add GAIM icon from Tangerine theme
+	* add Amarok icon from Tangerine theme
+	* add Synaptic icon from Tangerine theme
+	* add xchat-gnome icon from Tangerine theme
+	* add Inkscape from Tangerine theme
+	* add k3b from Tangerine theme
+	* add konqueror from Tangerine theme
+	* add kontact from Tangerine theme
+	* add konversation from Tangerine theme
+	* add kopete from Tangerine theme
+	* add OpenOffice icons from Human theme
+		ooo-calc
+		ooo-draw
+		ooo-gulls
+		ooo-impress
+		ooo-math
+		ooo-printeradmin
+		ooo-template
+		ooo-writer
+
+2006-04-22  Marco Sordi  <gabriev@infinitiv.it>
+
+	* version upgrade 0.0.6
+	* scalable/places/folder.icon: Update with better attach points
+	* gnome-mime-text-x-authors.svg: new icon
+	* gnome-mime-text-x-credits.svg: new icon
+	* gnome-mime-text-x-makefile.svg: new icon
+	* gnome-mime-application-x-ms-dos-executable.svg: new icon
+	* gnome-mime-application.svg: new icon
+	* gnome-mime-text-x-copying.svg: new icon
+	* gnome-library.svg: new icon
+	* gnome-mime-text-x-csrc.svg: new icon
+	* gnome-mime-text-x-c++src.svg: new icon
+	* text-css.svg: new icon
+
+	* Fix symlinks icon size for 48x48

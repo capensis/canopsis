@@ -1,0 +1,139 @@
+[{
+	"name":  "Weather",
+	"version": 0.1,
+	"author": "capensis",
+	"website": "http://www.canopsis.org",
+	"xtype": "weather",
+	"description": "Display selector state SLA as weather icons.",
+	"description-fr": "Affiche l'état des sélecteurs et des SLA avec des icônes météo.",
+	"refreshInterval": 300,
+	"border" : false,
+	"locales": ["fr"],
+	"options": [
+			{
+				"title" : "Options",
+				"items" : [{
+					"xtype": "fieldset",
+					"title": "Display options",
+					"collapsible": false,
+					"items": [{
+								"xtype": "checkbox",
+								"fieldLabel": "Use simplified display (icon and title)",
+								"inputValue": true,
+								"uncheckedValue": false,
+								"checked": false,
+								"name": "simple_display"
+							},{
+								"xtype": "numberfield",
+								"fieldLabel": "Title size (Only for simplified display)",
+								"value": 14,
+								"minValue": 1,
+								"name": "title_font_size",
+								"allowBlank": true
+							},{
+								"xtype": "numberfield",
+								"fieldLabel": "Default padding",
+								"value": 3,
+								"minValue": 0,
+								"name": "defaultPadding",
+								"allowBlank": true
+							},{
+								"xtype": "numberfield",
+								"fieldLabel": "Default margin",
+								"value": 3,
+								"minValue": 0,
+								"name": "defaultMargin",
+								"allowBlank": true
+							},{
+								"xtype": "numberfield",
+								"fieldLabel": "Default height",
+								"value" : 70,
+								"minValue": 0,
+								"name": "defaultHeight",
+								"allowBlank": true
+							},{
+								"xtype": "colorfield",
+								"fieldLabel": "Impair brick background color",
+								"name": "bg_impair_color",
+								"allowBlank": false,
+								"value": "#FAFAFA"
+							},{
+								"xtype": "colorfield",
+								"fieldLabel": "Pair brick background color",
+								"name": "bg_pair_color",
+								"allowBlank": false,
+								"value": "#FFFFFF"
+							},{
+								"xtype": "checkbox",
+								"fieldLabel": "Display icon on the left",
+								"inputValue": true,
+								"uncheckedValue": false,
+								"checked": false,
+								"name": "icon_on_left"
+							},{
+								"xtype": "checkbox",
+								"fieldLabel": "Display 'report issue' button",
+								"inputValue": true,
+								"uncheckedValue": false,
+								"checked": false,
+								"name": "display_report_button"
+							},{
+								"xtype": "checkbox",
+								"fieldLabel": "Display derogation icon",
+								"inputValue": true,
+								"uncheckedValue": false,
+								"checked": true,
+								"name": "display_derogation_icon"
+							},{
+								"xtype": "checkbox",
+								"fieldLabel": "Use SLA state as icon value",
+								"inputValue": true,
+								"uncheckedValue": false,
+								"checked": true,
+								"name": "state_as_icon_value"
+							},{
+								"xtype": "checkbox",
+								"fieldLabel": "Use selector state as icon value for selected SLA",
+								"inputValue": true,
+								"uncheckedValue": false,
+								"checked": false,
+								"name": "selector_state_as_icon_value"
+							},{
+								"xtype": "numberfield",
+								"fieldLabel": "Icon type",
+								"maxValue": 2,
+								"minValue": 1,
+								"value": 1,
+								"name": "iconSet"
+							},{
+								"xtype": "textfield",
+								"fieldLabel":"Helpdesk url",
+								"emptyText":"Type URL or leave blank",
+								"name":"helpdesk"
+							}]
+					}]
+			},
+			{
+				"title" : "Selectors",
+				"items" : [{
+					"xtype":"cinventory",
+					"name" : "nodes",
+					"multiSelect": true,
+					"additional_field": {
+											"xtype":"combobox",
+											"name":"link",
+											"emptyText":"Type URL or view name",
+											"store":"Views",
+											"displayField":"crecord_name",
+											"valueField": "crecord_name",
+											"typeAhead": false,
+											"hideLabel": true,
+											"minChars": 2,
+											"queryMode": "remote"
+										},
+					"event_type": "selector",
+					"base_filter" : {"$or":[{"event_type":"selector"},{"event_type":"sla"}]}
+				}]
+			}
+	]
+}]

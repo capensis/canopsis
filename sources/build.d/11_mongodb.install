@@ -1,0 +1,29 @@
+NAME="mongodb"
+
+FCHECK="$PREFIX/bin/mongod"
+
+BASE="mongodb-linux-$ARCH-$VERSION"
+LOG="$LOG_PATH/$BASE.log"
+rm -f $LOG &> /dev/null
+
+
+function build(){
+	cd $SRC_PATH/externals
+
+	if [ ! -e $BASE ]; then
+		extract_archive "$BASE.tgz"
+	fi
+}
+
+function install(){
+	cd $SRC_PATH/externals/$BASE
+	check_code $?
+
+	cp -R bin/* $PREFIX/bin/
+	check_code $?
+	
+	chown $HUSER:$HGROUP $PREFIX/bin/mongo*
+	check_code $?
+
+	install_init "mongodb"
+}
