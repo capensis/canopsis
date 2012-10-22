@@ -158,7 +158,7 @@ Ext.define('widgets.line_graph.line_graph' , {
 	},
 
 	afterContainerRender: function() {
-		log.debug('Initialize line_graph', this.logAuthor);
+		log.debug('Initialize '+this.chart_type+'_graph', this.logAuthor);
 		log.debug(' + Time window: ' + this.time_window, this.logAuthor);
 
 		this.series = {};
@@ -185,7 +185,7 @@ Ext.define('widgets.line_graph.line_graph' , {
 
 				if (source_type == 'resource') {
 					var resource = this.nodes[0].resource;
-					title = resource + ' ' + _('line_graph.on') + ' ' + component;
+					title = resource + ' ' + _(this.chart_type+'_graph.on') + ' ' + component;
 				}else {
 					title = component;
 				}
@@ -296,7 +296,8 @@ Ext.define('widgets.line_graph.line_graph' , {
 				series: {
 					animation: false,
 					shadow: false
-				}
+				},
+				column: {}
 			},
 			symbols: [],
 			credits: {
@@ -453,14 +454,16 @@ Ext.define('widgets.line_graph.line_graph' , {
 			}*/
 
 			if (data.length > 0) {
-				//
-
 				for (var i in data) {
 					this.addDataOnChart(data[i]);
-					//add/refresh trend lines
+
 					// Exclude state lines
-					if (this.trend_lines && (data[i]['metric'] != 'cps_state' && data[i]['metric'] != 'cps_state_ok' && data[i]['metric'] != 'cps_state_warn' && data[i]['metric'] != 'cps_state_crit'))
-						this.addTrendLines(data[i]);
+					if(data[i]['metric'] != 'cps_state' && data[i]['metric'] != 'cps_state_ok' && data[i]['metric'] != 'cps_state_warn' && data[i]['metric'] != 'cps_state_crit'){
+						var node = this.nodesByID[data[i].node];
+						//add/refresh trend lines
+						if (node.extra_field && node.extra_field.trend_curve)
+							this.addTrendLines(data[i]);
+					}
 				}
 
 				//Disable no data message
@@ -540,8 +543,9 @@ Ext.define('widgets.line_graph.line_graph' , {
 
 		var metric_long_name = '';
 
+		var node = this.nodesByID[node_id];
+
 		if (! this.same_node) {
-			var node = this.nodesByID[node_id];
 			if (node) {
 				metric_long_name = node.component;
 				if (node.source_type == 'resource')
@@ -556,7 +560,9 @@ Ext.define('widgets.line_graph.line_graph' , {
 
 		// Set Label
 		var label = undefined;
-		if (curve)
+		if(node && node.extra_field && node.extra_field.label)
+			label = node.extra_field.label
+		if (!label && curve)
 			label = curve.get('label');
 		if (! label)
 			label = metric_name;
@@ -769,6 +775,7 @@ Ext.define('widgets.line_graph.line_graph' , {
 
 	addTrendLines: function(data) {
 		log.debug(' + Trend line', this.logAuthor);
+
 		var referent_serie = this.series_hc[data.node + '.' + data.metric];
 		var trend_id = data.node + '.' + data.metric + '-TREND';
 
@@ -809,13 +816,13 @@ Ext.define('widgets.line_graph.line_graph' , {
 			log.debug('  +  Create it', this.logAuthor);
 
 			//name
-			var trend_name = data.metric + '-TREND';
+			var trend_name = referent_serie.name + '-TREND';
 			var curve = global.curvesCtrl.getRenderInfo(trend_name);
 			var color = undefined;
 
 			if (curve) {
 				label = curve.get('label');
-				color = info.get('line_color');
+				color = referent_serie.color;
 			}else {
 				//check if referent curve have its own curve
 				var curve = global.curvesCtrl.getRenderInfo(data.metric);

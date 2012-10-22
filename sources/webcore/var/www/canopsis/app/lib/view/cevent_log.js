@@ -202,49 +202,4 @@ Ext.define('canopsis.lib.view.cevent_log' , {
 
 	}
 
-	/*
-	bindSpecificButtons : function(){
-		this.down('button[action=Show_resource]').on('click',function(){
-			this.store.toggleEventFilter('source_type','resource')
-			log.dump(this)
-			this.ctrl._searchRecord()
-		},this)
-
-		this.down('button[action=Show_component]').on('click',function(){
-			this.store.toggleEventFilter('source_type','component')
-			this.ctrl._searchRecord()
-		},this)
-
-		this.down('button[action=Show_state_ok]').on('click',function(){
-			this.store.toggleEventFilter('state',0)
-			this.ctrl._searchRecord()
-		},this)
-
-		this.down('button[action=Show_state_warning]').on('click',function(){
-			this.store.toggleEventFilter('state',1)
-			this.ctrl._searchRecord()
-		},this)
-
-		this.down('button[action=Show_state_critical]').on('click',function(){
-			this.store.toggleEventFilter('state',2)
-			this.ctrl._searchRecord()
-		},this)
-
-		this.down('button[action=Show_state_unknown]').on('click',function(){
-			this.store.toggleEventFilter('state',3)
-			this.ctrl._searchRecord()
-		},this)
-
-		this.down('button[action=Show_soft_state]').on('click',function(){
-			this.store.toggleEventFilter('state_type',0)
-			this.ctrl._searchRecord()
-		},this)
-
-		this.down('button[action=Show_hard_state]').on('click',function(){
-			this.store.toggleEventFilter('state_type',1)
-			this.ctrl._searchRecord()
-		},this)
-
-	}
-*/
 });

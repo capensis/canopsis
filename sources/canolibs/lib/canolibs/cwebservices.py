@@ -18,7 +18,7 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-import urllib2, cookielib, json
+import urllib, urllib2, cookielib, json
 import logging
 
 logging.basicConfig(level=logging.DEBUG,
@@ -77,6 +77,71 @@ class cwebservices(object):
 	def logout(self):
 		self.logger.debug("Logout.")
 		self.get("/logout", False)
+		
+	def put_view(self,view_id=None,view_name=None,parent_id=None,user='root',leaf=True):
+		if view_name and parent_id:
+			if not view_id:
+				view_id = 'view.%s.%s' % (user,view_name)
+			url = '%s/ui/view' % self.base_url
+			data = {
+				'id': view_id,
+				'_id': view_id,
+				'crecord_name':view_name,
+				'parentId':parent_id,
+				'items':[],
+				'leaf':leaf
+				}
+			
+			req = urllib2.Request(url, json.dumps(data))
+			response = self.opener.open(req)
+			return response.read()
+		else:
+			self.logger.debug("Missing parameters (must specified view name/parent)" % login)
+			return None
+			
+	def rename_view(self,view_id,new_name):
+		url = '%s/ui/view' % self.base_url
+		data = json.dumps({
+				'crecord_name':new_name,
+				'_id':view_id
+			})
+		req = urllib2.Request(url, data)
+		req.get_method = lambda: 'PUT'
+		response = self.opener.open(req)
+		return response.read()
+	
+	def change_view_parent(self,view_id,parent_id):
+		url = '%s/ui/view' % self.base_url
+		data = json.dumps({
+				'_id':view_id,
+				'parentId':parent_id
+			})
+		req = urllib2.Request(url, data)
+		req.get_method = lambda: 'PUT'
+		response = self.opener.open(req)
+		return response.read()
+		
+	def delete_view_or_dir(self,ids):
+		url = '%s/ui/view' % self.base_url
+		if not isinstance(ids,list):
+			ids = [ids]
+		
+		data = []
+		
+		for _id in ids:
+			data.append({'_id':_id})
+	
+		req = urllib2.Request(url, json.dumps(data))
+		req.get_method = lambda: 'DELETE'
+		response = self.opener.open(req)
+		return response.read()
+		
+	def valid_server_response(self,response):
+		response = response['data']
+		for record in response:
+			if not response[record].get('success',False):
+				raise Exception(response[record].get('output','error'))
+		return True
 
 	def __del__(self):
 		if self.is_login:

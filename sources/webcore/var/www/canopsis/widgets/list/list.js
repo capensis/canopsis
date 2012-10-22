@@ -45,6 +45,8 @@ Ext.define('widgets.list.list' , {
 	scroll: true,
 	column_sort: true,
 
+	fitler_buttons: false,
+
 	default_sort_column: 'state',
 	default_sort_direction: 'DESC',
 	//..
@@ -86,7 +88,9 @@ Ext.define('widgets.list.list' , {
 			opt_bar_reload: this.reload,
 			opt_bar_delete: false,
 			hideHeaders: this.hideHeaders,
-			scroll: this.scroll
+			scroll: this.scroll,
+
+			fitler_buttons: this.fitler_buttons
 
 			//opt_view_element:'view.ComponentDetails'
 

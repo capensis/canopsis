@@ -114,10 +114,14 @@ Ext.define('canopsis.lib.controller.cgrid', {
 		//search buttons
 		var btns = Ext.ComponentQuery.query('#' + id + ' button[action=search]');
 		for (i in btns) {
-			if (this.grid.opt_simple_search == true) {
-				btns[i].on('click', this._searchRecordSimple, this);
+			if (this.grid.opt_bar_time_search) {
+				btns[i].on('click', this.timeDisplay, this);
 			}else {
-				btns[i].on('click', this._searchRecord, this);
+				if (this.grid.opt_simple_search == true) {
+					btns[i].on('click', this._searchRecordSimple, this);
+				}else {
+					btns[i].on('click', this._searchRecord, this);
+				}
 			}
 		}
 
@@ -189,10 +193,10 @@ Ext.define('canopsis.lib.controller.cgrid', {
 		}
 
 		// TimeDisplaybutton
-		var btns = Ext.ComponentQuery.query('#' + id + ' button[action=timeDisplay]');
+	/*	var btns = Ext.ComponentQuery.query('#' + id + ' button[action=timeDisplay]');
 		for (i in btns) {
 			btns[i].on('click', this.timeDisplay, this);
-		}
+		}*/
 
 		var field = Ext.ComponentQuery.query('#' + id + ' cdate[name=startTimeSearch]');
 		for (var i in field) {
@@ -501,21 +505,31 @@ Ext.define('canopsis.lib.controller.cgrid', {
 			data = item.data;
 			editing = true;
 		}
+		
+		var form;
 
 		if (this.formXtype) {
 			if (this.EditMethod == 'tab') {
-				// Create new TAB
+				
 				var main_tabs = Ext.getCmp('main-tabs');
 				var tab = Ext.getCmp(id);
-
 				if (tab) {
+					// Active TAB
 					log.debug("Tab '" + id + "' allready open, just show it", this.logAuthor);
 					main_tabs.setActiveTab(tab);
+					return undefined;
 				}else {
+					// Create new TAB
 					log.debug("Create tab '" + this.formXtype + "'", this.logAuthor);
-					var form = main_tabs.add({
+
+					if(editing)
+						var title = _('Editing ') + data.crecord_name
+					else
+						var title = '*' + _('New') + ' ' + this.modelId
+
+					form = main_tabs.add({
 						id: id,
-						title: '*' + _('New') + ' ' + this.modelId,
+						title: title,
 						xtype: this.formXtype,
 						EditMethod: this.EditMethod,
 						editing: editing,
@@ -530,11 +544,12 @@ Ext.define('canopsis.lib.controller.cgrid', {
 				}
 
 			}else {
-				var form = Ext.getCmp(id);
+				form = Ext.getCmp(id);
 
 				if (form) {
 					log.debug("Window '" + id + "' allready open, just show it", this.logAuthor);
 					form.win.show();
+					return form;
 				}else {
 					// Create new Window
 					log.debug("Create window '" + this.formXtype + "'", this.logAuthor);
@@ -572,7 +587,6 @@ Ext.define('canopsis.lib.controller.cgrid', {
 
 			this._bindFormEvents(form);
 			return form;
-
 		}
 	},
 

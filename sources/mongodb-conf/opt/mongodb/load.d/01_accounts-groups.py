@@ -41,7 +41,8 @@ groups =  {
 	'CPS_event_admin':'Send event by the webservice or websocket.',
 	'CPS_selector_admin':'Manage all selectors in canopsis, add, remove or edit.',
 	'CPS_perfdata_admin':'Manage all perfdata in canopsis, remove or edit',
-	'CPS_derogation_admin':'Manage and create derogation on canopsis'
+	'CPS_derogation_admin':'Manage and create derogation on canopsis',
+    'CPS_authkey':'Give the ability to renew the account authkey'
 }
 
 def init():

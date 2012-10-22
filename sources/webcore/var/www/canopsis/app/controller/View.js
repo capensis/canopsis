@@ -197,13 +197,20 @@ Ext.define('canopsis.controller.View', {
 	
 			this.treeStore.sync({
 				scope: this,
-				callback: function(){
-						this.treeStore.load({
-							scope: this,
-							callback: function() {
-								//open view for edition AFTER refresh treestore
-								//otherwise it disappear
-								if (this.open_after_put == true) {
+				callback: function(batch){
+					var response = Ext.decode(batch.operations[0].response.responseText)
+
+					this.request_success = true
+					
+					var data = response.data
+					for(var i in data)
+						if(!data[i].success)
+							this.request_success = false
+					
+					this.treeStore.load({
+							scope:this,
+							callback : function(){
+								if (this.open_after_put == true && this.request_success) {
 									var tab = this.getController('Tabs').open_view({ view_id: record.get('_id'), title: record.get('crecord_name') });
 									tab.editMode();
 									tab.doRedraw();
@@ -212,9 +219,9 @@ Ext.define('canopsis.controller.View', {
 									Ext.getCmp('dashboardSelector').store.load();
 								}
 							}
-						})
-					}
-				});
+					})							
+				}
+			});
 
 
 		}else {

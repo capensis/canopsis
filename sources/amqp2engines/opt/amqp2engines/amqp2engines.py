@@ -158,17 +158,20 @@ def start_engines():
 	import sla
 	import alertcounter
 	import derogation
+	import topology
 	
 
 	engine_selector		= selector.engine(logging_level=logging.INFO)
 	engines.append(engine_selector)
+	
+	engine_topology		= topology.engine(next_engines=[engine_selector], logging_level=logging.DEBUG)
+	engines.append(engine_topology)
 
-	engine_alertcounter	= alertcounter.engine(next_engines=[engine_selector], logging_level=logging.INFO)
+	engine_alertcounter	= alertcounter.engine(next_engines=[engine_topology], logging_level=logging.INFO)
 	engines.append(engine_alertcounter)
 	
 	engine_collectdgw	= collectdgw.engine()
 	engines.append(engine_collectdgw)
-	
 	
 	engine_eventstore	= eventstore.engine( logging_level=logging.INFO)
 	engines.append(engine_eventstore)
@@ -179,13 +182,12 @@ def start_engines():
 	engine_tag			= tag.engine(		next_engines=[engine_perfstore])
 	engines.append(engine_tag)
 	
-	
 	engine_derogation 	= derogation.engine( next_engines=[engine_tag], logging_level=logging.INFO)
 	engines.append(engine_derogation)
 
 	engine_sla			= sla.engine(logging_level=logging.INFO)
 	engines.append(engine_sla)
-
+	
 	# Set Next queue
 	## Events
 	next_event_engines.append(engine_derogation)

@@ -40,20 +40,11 @@ Ext.define('canopsis.store.TreeStoreViews', {
 
 	proxy: {
 		batchActions: true,
-		//TODO : use that to make difference between update/create
-		actionMethods: {
-			read: 'GET',
-			create: 'POST',
-			destroy: 'DELETE',
-			update: 'POST'
-		},
+		appendId: false,
 		type: 'rest',
 		url: '/ui/view',
 		reader: {
 			type: 'json'
-			//root: 'data',
-			//totalProperty  : 'total',
-			//successProperty: 'success',
 		},
 		writer: {
 			type: 'json',
@@ -66,8 +57,21 @@ Ext.define('canopsis.store.TreeStoreViews', {
 				this.sync();
 		},
 		write: function(store, operation,option) {
-			if (operation.action == 'destroy')
-				global.notify.notify(_('Success'), _('Record deleted'), 'success');
+			data = Ext.decode(operation.response.responseText).data
+			for(var i in data){
+				if(data[i].success == true){
+					if (operation.action == 'create')
+						global.notify.notify(_('Success'), _('Record saved'), 'success');
+					if (operation.action == 'destroy')
+						global.notify.notify(_('Success'), _('Record deleted'), 'success');
+					if (operation.action == 'update')
+						global.notify.notify(_('Success'), _('Record updated'), 'success');
+				}else{
+					global.notify.notify(_('Error') + ' ' + _('on') + ' ' + i, _(data[i].output), 'warning');
+				}
+			}
 		}
 	}
 });
+
+

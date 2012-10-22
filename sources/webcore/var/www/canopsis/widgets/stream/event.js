@@ -82,6 +82,65 @@ widget_stream_event_template = Ext.create('Ext.XTemplate',
 		{ compiled: true }
 	);
 
+widget_stream_event_template_compact = Ext.create('Ext.XTemplate',
+
+		"<table class='table'>",
+		'<tr>',
+			"<td class='state' style='background-color: ", '<tpl if="state==0">green</tpl>', '<tpl if="state==1">orange</tpl>', '<tpl if="state==2">red</tpl>', '<tpl if="state==3">grey</tpl>', ";'/>",
+			"<td class='picture_compact' ", '<tpl if="referer">comment</tpl>', "' >",
+				'<tpl if="authorId">',
+					//"<img src='/files/avatar-{authorId}'/></img>",
+					"<img src='widgets/stream/logo/ui.png'></img>",
+				'</tpl>',
+				'<tpl if="authorId == undefined">',
+					"<img src='widgets/stream/logo/{connector}.png'></img>",
+				'</tpl>',
+			'</td>',
+			"<td class='", '<tpl if="referer">comment</tpl>', "'>",
+				"<div class='content_compact'>",
+
+					'<header>',
+						"<span id='{event_Component_id}-time' class='timestamp'>{event_date}</span>",
+						'<tpl if="author">',
+							"<h1 class='title'>{author}</h1>",
+						'</tpl>',
+						'<tpl if="author == undefined">',
+							'<tpl if="display_name">',
+								"<h1 class='title'>{display_name}</h1>",
+							'</tpl>',
+							'<tpl if="display_name == undefined">',
+								'<tpl if="source_type == \'resource\'">',
+									"<h1 class='title'>{component} - {resource}</h1>",
+								'</tpl>',
+								'<tpl if="source_type == \'component\'">',
+									"<h1 class='title'>{component}</h1>",
+								'</tpl>',
+								"<span class='output'>{output}</span>",
+							'</tpl>',
+						'</tpl>',
+					'</header>',
+					'<tpl if="referer == undefined">',
+						"<div class='afooter_compact'>",
+								'<tpl if="derogation_id != undefined">',
+									"<span class='icon icon-crecord_type-derogation' id='{event_Component_id}-derogation' style='float: left;'></span>",
+								'</tpl>',
+								"<span class='icon icon-comment'></span><div class='comment-counter' id='{event_Component_id}-nbcomment'></div>",
+								"<span id='{event_Component_id}-expend-comments' class='icon icon-plus'></span>",
+						'</div>',
+					'</tpl>',
+				'</div>',
+			'</td>',
+		'</tr>',
+		"<tr class='tr-comments'>",
+			'<td/><td/>',
+			"<td id='{event_Component_id}-comments-td' class='comments' style='display: none;' colspan=2>",
+				"<div id='{event_Component_id}-comments'></div>",
+			'</td>',
+		'</tr>',
+		'</table>',
+		{ compiled: true }
+	);
+
 widget_stream_derogation_tooltip_template = Ext.create('Ext.XTemplate',
 		'<p>',
 			'<b>{name}</b>', '<br/>',
@@ -132,6 +191,9 @@ Ext.define('widgets.stream.event' , {
 
 		this.html = this.build();
 
+		if(this.stream.compact)
+			this.style = {padding:'0px'}
+
 		this.callParent(arguments);
 	},
 
@@ -169,7 +231,10 @@ Ext.define('widgets.stream.event' , {
 		raw['event_date'] = rdr_elapsed_time(raw['timestamp']);
 		raw['event_Component_id'] = this.id;
 
-		return widget_stream_event_template.applyTemplate(raw);
+		if(this.stream.compact)
+			return widget_stream_event_template_compact.applyTemplate(raw);
+		else
+			return widget_stream_event_template.applyTemplate(raw);
 	},
 
 	afterRender: function() {

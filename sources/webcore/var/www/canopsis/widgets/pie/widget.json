@@ -67,12 +67,17 @@
 								"name" : "backgroundColor",
 								"fieldLabel": "Background color",
 								"value": "FFFFFF"
-                           },{
+							},{
+								"xtype": "checkbox",
+								"fieldLabel": "Enable gradient colors",
+								"checked": false,
+								"name": "gradientColor"
+							},{
 								"xtype" : "colorfield",
 								"name" : "borderColor",
 								"fieldLabel": "Border color",
 								"value": "FFFFFF"
-                           },{
+							},{
 								"xtype" : "numberfield",
 								"name" : "borderWidth",
 								"fieldLabel": "Border Width",
@@ -90,6 +95,11 @@
 								"fieldLabel": "Enable legend",
 								"checked": true,
 								"name": "legend"
+							},{
+								"xtype": "checkbox",
+								"fieldLabel": "Enable labels",
+								"checked": false,
+								"name": "labels"
 							},{
 								"xtype" : "numberfield",
 								"name" : "legend_fontSize",
@@ -171,7 +181,7 @@
 			{
 						"xtype": "cmetric",
 						"name": "nodes",
-						"multiSelect": false,
+						"multiSelect": true,
 						"metrics": true
 					}]
 		}]

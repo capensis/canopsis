@@ -67,10 +67,25 @@ for record in records:
 	if do:
 		logger.debug("    -> Too old, remove it")
 		storage.remove(record)
+		
+	logger.debug("    -> Clean Metrics")
+	if record.data.get('source_type', None) == 'resource':
+		mfilter = { 'co': record.data.get('component', None), 're': record.data.get('resource', None) }
+	else:
+		mfilter = { 'co': record.data.get('component', None) }
+		
+	precords = manager.find(mfilter=mfilter)
+	
+	for precord in precords:
+		logger.debug("      + %s: %s %s -> %s" % (precord['_id'], precord['co'], precord.get('re',"-"), precord['me']))
+		if do:
+			logger.debug("    -> Too old, remove it")
+			manager.remove(_id=precord['_id'])
+		
 	
 ################### PERFSTORE
 logger.debug("Clean perfstore2 Metrics")
-records = manager.find(mfilter={ 'lts': {'$lt': int(time.time() - freshness)} })
+records = manager.find(mfilter={ 'lts': {'$lt': int(time.time() - freshness)}, 'me': {'$nin': [ 'cps_statechange', 'cps_statechange_nok', 'cps_statechange_0', 'cps_statechange_1', 'cps_statechange_2', 'cps_statechange_3' ]} })
 						
 logger.debug(" + %s found" % records.count())
 

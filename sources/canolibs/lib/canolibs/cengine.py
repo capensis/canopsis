@@ -172,7 +172,7 @@ class cengine(multiprocessing.Process):
 					#self.logger.debug("Forward event '%s' to next engines" % wevent['rk'])
 					self.next_queue(wevent)
 				else:
-					self.logger.debug("Forward original event '%s' to next engines" % event['rk'])
+					#self.logger.debug("Forward original event '%s' to next engines" % event['rk'])
 					self.next_queue(event)
 					
 		except Exception, err:

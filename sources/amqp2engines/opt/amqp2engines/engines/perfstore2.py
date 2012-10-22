@@ -52,9 +52,18 @@ class engine(cengine):
 			## Auto rotate
 			self.rotate_time  = now - (now % self.rotate_period) + self.rotate_period
 			try:
+				self.logger.info('Start rotation')
 				self.manager.rotateAll()
+				self.logger.info('  + Ok')
 			except Exception, err:
 				self.logger.error('Impossible to rotate perfdata: %s' % err)
+				
+			#try:
+			#	self.logger.info('Start repairDatabase')
+			#	self.manager.store.db.command("repairDatabase")
+			#	self.logger.info('  + Ok')
+			#except Exception, err:
+			#	self.logger.error('Impossible to repairDatabase: %s' % err)			
 				
 			#try:
 			#	self.manager.cleanAll()
@@ -63,7 +72,7 @@ class engine(cengine):
 				
 			self.logger.info('Next rotate: %s UTC (%s)' % (datetime.utcfromtimestamp(self.rotate_time), self.rotate_time))
 		
-	def to_perfstore(self, rk, perf_data, timestamp, component, resource=None):
+	def to_perfstore(self, rk, perf_data, timestamp, component, resource=None, tags=None):
 		
 		if isinstance(perf_data, list):
 			#[ {'min': 0.0, 'metric': u'rta', 'value': 0.097, 'warn': 100.0, 'crit': 500.0, 'unit': u'ms'}, {'min': 0.0, 'metric': u'pl', 'value': 0.0, 'warn': 20.0, 'crit': 60.0, 'unit': u'%'} ]
@@ -105,8 +114,14 @@ class engine(cengine):
 						name = "%s%s" % (component, metric)
 					else:
 						name = "%s%s%s" % (component, resource, metric)
-						
-					self.manager.push(name=name, value=value, timestamp=timestamp, meta_data={'type': dtype, 'min': vmin, 'max': vmax, 'thd_warn': vwarn, 'thd_crit': vcrit, 'co': component, 're': resource, 'me': metric ,'unit':unit})
+					
+					meta_data={'type': dtype, 'min': vmin, 'max': vmax, 'thd_warn': vwarn, 'thd_crit': vcrit, 'co': component, 're': resource, 'me': metric ,'unit':unit}
+					
+					# Add tags
+					if tags:
+						meta_data['tg'] = tags
+					
+					self.manager.push(name=name, value=value, timestamp=timestamp, meta_data=meta_data) 
 				except Exception, err:
 					self.logger.warning('Impossible to put value in perfstore (%s) (metric=%s, unit=%s, value=%s)', err, metric, unit, value)
 			
@@ -147,12 +162,15 @@ class engine(cengine):
 
 		### Store perfdata
 		if perf_data_array:
+			tags = event.get('tags', None)
+			
 			try:				
 				self.to_perfstore(	rk=event['rk'],
 									component=event['component'],
 									resource=event.get('resource', None),
 									perf_data=perf_data_array,
-									timestamp=timestamp
+									timestamp=timestamp,
+									tags=tags
 				)
 								
 			except Exception, err:

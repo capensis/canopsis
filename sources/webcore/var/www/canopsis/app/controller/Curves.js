@@ -38,6 +38,8 @@ Ext.define('canopsis.controller.Curves', {
 		this.callParent(arguments);
 
 		global.curvesCtrl = this;
+
+		Ext.require('Ext.menu.ColorPicker');
     },
 
 	preSave: function(record,data,form) {

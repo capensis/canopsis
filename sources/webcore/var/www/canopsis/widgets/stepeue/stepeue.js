@@ -121,7 +121,6 @@ Ext.define('widgets.stepeue.stepeue' , {
 				};
 				this.content = Ext.create('Ext.Panel', {
 					xtype: 'panel',
-					title: this.title,
 					items: listItems,
 					layout: 'fit',
 					border: false
@@ -137,7 +136,6 @@ Ext.define('widgets.stepeue.stepeue' , {
 				});
 				this.content = Ext.create('Ext.Panel', {
 					xtype: 'panel',
-					title: this.title,
 					items: tabsPanel,
 					layout: 'fit',
 					border: false

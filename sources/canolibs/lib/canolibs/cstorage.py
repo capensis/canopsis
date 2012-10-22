@@ -292,7 +292,7 @@ class cstorage(object):
 	def count(self, *args, **kargs):
 		return self.find(count=True, *args, **kargs)
 
-	def find(self, mfilter={}, mfields=None, account=None, namespace=None, one=False, count=False, sort=None, limit=0, offset=0, for_write=False, ignore_bin=True):
+	def find(self, mfilter={}, mfields=None, account=None, namespace=None, one=False, count=False, sort=None, limit=0, offset=0, for_write=False, ignore_bin=True, raw=False):
 		if not account:
 			account = self.account
 			
@@ -344,8 +344,12 @@ class cstorage(object):
 					# Remove binary (base64)
 					if ignore_bin and raw_record.get('media_bin', None):
 						del raw_record['media_bin']
+					
+					if not raw:
+						records.append(crecord(raw_record=raw_record))
+					else:
+						records.append(raw_record)
 						
-					records.append(crecord(raw_record=raw_record))
 				except Exception, err:
 					## Not record format ..
 					self.logger.error("Impossible parse record ('%s') !" % err)

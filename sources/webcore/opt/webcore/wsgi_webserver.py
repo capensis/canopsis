@@ -37,7 +37,7 @@ except:
 #from gevent import monkey; monkey.patch_all()
 
 ## Configurations
-webservices = ['account',  'auth', 'event', 'files', 'perfstore', 'reporting', 'rest', 'rights', 'ui_view', 'ui_widgets']
+webservices = ['account',  'auth', 'event', 'files', 'perfstore', 'reporting', 'rest', 'rights', 'ui_view', 'ui_widgets', 'topology']
 webservices_mods = {}
 
 config_filename	= os.path.expanduser('~/etc/webserver.conf')

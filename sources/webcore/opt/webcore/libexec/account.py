@@ -117,7 +117,7 @@ def account_getAuthKey(dest_account):
 		
 	
 
-@get('/account/getNewAuthKey/:dest_account')
+@get('/account/getNewAuthKey/:dest_account',checkAuthPlugin={'authorized_grp':'group.CPS_authkey'})
 def account_newAuthKey(dest_account):
 	if not dest_account:
 		return HTTPError(404, 'No account specified')

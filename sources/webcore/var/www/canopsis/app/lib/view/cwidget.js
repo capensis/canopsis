@@ -34,7 +34,8 @@ Ext.define('canopsis.lib.view.cwidget' , {
 
 	refreshInterval: 0,
 
-	baseUrl: '/rest/events/event/',
+	baseUrl: '/rest/events/event',
+	uri: '/rest/events/event',
 
 	logAuthor: '[widget]',
 
@@ -84,7 +85,7 @@ Ext.define('canopsis.lib.view.cwidget' , {
 
 		this.callParent(arguments);
 
-		this.uri = '/rest/events/event';
+		//this.uri = '/rest/events/event';
 
 		if (this.reportMode) {
 			this.refreshInterval = false;
@@ -231,7 +232,7 @@ Ext.define('canopsis.lib.view.cwidget' , {
 	getNodeInfo: function() {
 		if (this.nodeId) {
 			Ext.Ajax.request({
-				url: this.uri + '/' + this.nodeId,
+				url: this.baseUrl + '/' + this.nodeId,
 				scope: this,
 				success: function(response) {
 					var data = Ext.JSON.decode(response.responseText);

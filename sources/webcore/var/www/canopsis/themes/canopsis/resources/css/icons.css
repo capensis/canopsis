@@ -279,6 +279,10 @@
 	background-image: url(../images/icons/time_go.png) !important; 
 }
 
+.icon-mainbar-topology{
+	background-image: url(../images/icons/chart_organisation.png) !important; 
+}
+
 .icon-true { 
     background-image: url(../images/icons/bullet_green.png) !important; 
 }
@@ -381,6 +385,9 @@
     background-image: url(../images/icons/arrow_join.png) !important; 
 }
 
+.icon-crecord_type-topology{
+	background-image: url(../images/icons/chart_organisation.png) !important; 
+}
 
 /* TAB */
 

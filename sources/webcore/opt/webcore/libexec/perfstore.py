@@ -105,63 +105,6 @@ def perfstore_nodes_get_values(start=None, stop=None, interval=None):
 	output = {'total': len(output), 'success': True, 'data': output}
 	return output
 	
-"""#### GET@
-@get('/perfstore/values/:component/:metrics')
-@get('/perfstore/values/:component/:resource/:metrics')
-@get('/perfstore/values/:component/:resource/:metrics/:start')
-@get('/perfstore/values/:component/:resource/:metrics/:start/:stop')
-def get_values(component=None,resource=None,metrics=None,start=None,stop=None):
-	if not component:
-		logger.warning("Invalid arguments: component is not defined")
-		return HTTPError(404, "Invalid arguments")
-		
-	if not isinstance(metrics,list):
-		metrics = [metrics]
-		
-	#time_interval		= request.params.get('interval', default=None)
-	aggregate_method	= request.params.get('aggregate_method', default=None)
-	aggregate_interval	= request.params.get('aggregate_interval', default=None)
-	aggregate_max_points= request.params.get('aggregate_max_points', default=None)
-	#use_window_ts	= 	request.params.get('use_window_ts', default=None)
-	
-	if not start:
-		start = request.params.get('start', default=None)
-	if not stop:
-		stop = request.params.get('stop', default=None)
-	
-	logger.debug("Get:")
-	logger.debug(" + component: %s" % component)
-	if resource:
-		logger.debug(" + resource: %s" % resource)
-	logger.debug(" + metrics: %s" % metrics)
-	logger.debug(" + start: %s" % start)
-	logger.debug(" + stop: %s" % stop)
-	logger.debug(" + aggregate_method: %s" % aggregate_method)
-	logger.debug(" + aggregate_interval: %s" % aggregate_interval)
-	logger.debug(" + aggregate_max_points: %s" % aggregate_max_points)
-	#logger.debug(" + use_window_ts:    %s" % use_window_ts)
-	#logger.debug(" + time_interval:    %s" % time_interval)
-	
-	output = []
-	
-	for metric in metrics:
-		if resource:
-			_id = manager.get_meta_id('%s%s%s' % (component,resource,metric))
-		else:
-			_id = manager.get_meta_id('%s%s' % (component,metric))
-			
-		output += perfstore_get_values(	_id=_id,
-										start=start,
-										stop=stop,
-										aggregate_method=aggregate_method,
-										aggregate_interval=aggregate_interval,
-										aggregate_max_points=aggregate_max_points)
-
-	output = {'total': len(output), 'success': True, 'data': output}
- 
-	return output
-"""
-
 #### GET@
 @get('/perfstore')
 @get('/perfstore/get_all_metrics')
@@ -326,6 +269,97 @@ def clean(_id=None):
 				manager.clean(_id=item['_id'])
 """
 
+#### POST@
+@route('/perfstore/perftop')
+def perfstore_perftop():
+	data = []
+	
+	limit		= int(request.params.get('limit', default=10))
+	sort		= int(request.params.get('sort', default=1))
+	tag			= request.params.get('tag', default=None)
+	metric		= request.params.get('metric', default=None)
+	resource	= request.params.get('resource', default=None)
+	time_window	= int(request.params.get('time_window', default=86400))
+	percent	    = request.params.get('percent', default=False)
+	threshold	= request.params.get('threshold', default=None)
+	
+	if threshold:
+		threshold = float(threshold)
+	
+	if percent == 'true':
+		percent = True
+	else:
+		percent = False
+
+	logger.debug("PerfTop:")
+	logger.debug(" + resource:    %s" % resource)
+	logger.debug(" + metric:      %s" % metric)
+	logger.debug(" + tag:         %s" %tag)
+	logger.debug(" + limit:       %s" % limit)
+	logger.debug(" + percent:     %s" % percent)
+	logger.debug(" + threshold:   %s" % threshold)
+	logger.debug(" + time_window: %s" % time_window)
+	logger.debug(" + sort:        %s" % sort)
+	
+	mfilter={'me': metric}
+	
+	if tag and tag != '':
+		mfilter['tg'] = tag
+		
+	if resource and resource != '':
+		mfilter['re'] = resource
+	
+	logger.debug(" + mfilter:   %s" % mfilter)
+	
+	mtype = manager.store.find(mfilter=mfilter, limit=1, mfields=['t'])
+	
+	if mtype:
+		mtype = mtype.get('t', 'GAUGE')
+		
+		logger.debug(" + mtype:    %s" % mtype)
+		
+		if mtype != 'COUNTER':
+			metrics = manager.store.find(mfilter=mfilter, mfields=['_id', 'co', 're', 'me', 'lv', 'u', 'ma'], sort=[('lv', sort)], limit=limit)
+			for metric in metrics:
+				if percent and metric.get('ma', None):
+					if metric['lv'] != 0:
+						metric['lv'] = round((float(metric['lv']) * 100) / metric['ma'], 2)
+						metric['u'] = '%'
+				
+				if threshold:
+					if metric['lv'] > threshold:
+						data.append(metric)
+				else:	
+					data.append(metric)
+		else:
+			# Compute values
+			tstop = int(time.time())
+			tstart = tstop - time_window
+			metrics =  manager.store.find(mfilter=mfilter, mfields=['_id', 'co', 're', 'me', 'lv', 'u'], limit=0)
+			for metric in metrics:
+				points = manager.get_points(_id=metric['_id'], tstart=tstart, tstop=tstop)
+				if len(points):
+					metric['lv'] = points[len(points)-1][1]
+				else:
+					metric['lv'] = 0
+
+				if threshold:
+					if metric['lv'] > threshold:
+						data.append(metric)
+				else:	
+					data.append(metric)
+				
+			reverse = True
+			if sort == 1:
+				reverse = False	
+				
+			data = sorted(data, key=lambda k: k['lv'], reverse=reverse)[:limit]
+	else:
+		logger.debug("No records found")
+		
+	
+	return {'success': True, 'data' : data, 'total' : len(data)}
+
 ########################################################################
 # Functions
 ########################################################################
@@ -400,6 +434,10 @@ def perfstore_get_values(_id, start=None, stop=None, aggregate_method=None, aggr
 												tstop=stop,
 												return_meta=True)
 
+			# For UI display
+			if len(points) == 0 and meta['type'] == 'COUNTER':
+				points = [(start, 0), (stop, 0)]
+				
 			points =  pyperfstore2.utils.aggregate(	points=points,
 												max_points=aggregate_max_points,
 												interval=aggregate_interval,

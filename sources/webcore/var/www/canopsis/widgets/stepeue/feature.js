@@ -112,6 +112,85 @@ Ext.define('widgets.stepeue.feature' , {
                         this.scenarios[i].destroy();
 
         },
+	displayLastErrorsVideos: function() {
+                var filter = { '$and' : [{ 'event_id': this.record.internalId }, { 'type_message' : 'feature'}, { 'state': {'$ne':0} } ] };
+                var gmodel = Ext.ModelManager.getModel('canopsis.model.Event');
+                var storeEvent = Ext.create('canopsis.lib.store.cstore', {
+                        model: gmodel,
+                        pageSize: 5,
+                        proxy: {
+                                type: 'rest',
+                                url: '/rest/events_log/event',
+                                reader: {
+                                        type: 'json',
+                                        root: 'data',
+                                        totalProperty: 'total',
+                                        successProperty: 'success'
+                                }
+                        }
+                });
+                storeEvent.setFilter(filter);
+                storeEvent.sort({ property: 'timestamp', direction: 'DESC' });
+                me = this;
+                storeEvent.load({callback: function(records, operation, success) { 
+			var listItems = new Array();
+			for ( i in records ) {
+                                var object = {
+                                        title: rdr_tstodate(records[i].data.timestamp),
+                                        layout: 'fit',
+                                        border: false,
+					listeners: {
+						activate: function(tabs) {
+							var object = {
+								src: "/rest/media/events_log/"+records[i].raw._id,
+								videoWidth:"70%"
+							};	
+							var tpl = new Ext.XTemplate(
+								'<div class="align-center">',
+								'<video autoplay="autoplay" controls="controls" width="{videoWidth}" src="{src}">{alt}</video>',
+								'</div>'
+							);
+							var oHtml = tpl.apply(object);
+							tabs.removeAll();
+							tabs.add({ xtype:"panel", border:true, layout:"fit", html:oHtml});
+						}
+					} 
+				};
+				listItems.push(object);
+			}
+			var gwidth = Ext.getBody().getWidth() * .8;
+			var gheight = Ext.getBody().getHeight() * .9;
+			if ( listItems.length > 0 ) {
+				var tabsPanel = Ext.create('Ext.tab.Panel', {
+					xtype: 'panel',
+					width: '100%',
+					height: '100%',
+                                        items: listItems,
+                                        border: false,
+					width:gwidth,
+					height:gheight
+	                        });
+				Ext.create('Ext.window.Window', {
+					xtype: 'xpanel',
+					layout: 'fit',
+					autoScroll: false,
+					title:"Last Errors Executions videos",
+					items:[tabsPanel],
+				}).show().center();
+			} else {
+				Ext.create('Ext.window.Window', {
+					xtype: 'xpanel',
+					layout: 'fit',
+					autoScroll: false,
+					title:"Last Errors Executions videos",
+					html: "no errors are logged"
+				}).show().center();
+
+			}
+
+		}}) ;
+
+	},
 	getFeatureViewObject: function() {
 		log.debug('Listing the scenario of the feature', this.logAuthor);
 		var me = this;
@@ -142,13 +221,59 @@ Ext.define('widgets.stepeue.feature' , {
 				{ header: 'Scenario Name', dataIndex: 'scenario', flex: 2, sortable: false, align: 'center'},
 				{ header: 'Localization', dataIndex: 'localization', flex: 1, sortable: false},
 				{ header: 'OS', dataIndex: 'os', flex: 1, sortable: false},
-				{ header: 'Browser', dataIndex: 'browser', flex: 1, sortable: false}
+				{ header: 'Browser', dataIndex: 'browser', flex: 1, sortable: false},
+				{ 
+					xtype:'actioncolumn',
+					items:[{
+						icon: "/static/canopsis/themes/canopsis/resources/images/icons/date_error.png",
+						tooltip: "Last Errors Execution",
+						handler: function( grid, rowIndex, colIndex ) {
+							var rec = grid.getStore().getAt(rowIndex);
+							me.scenarios[rec.get('scenario')].displayLastExecution( me.record.internalId ) ;
+						}
+					}, {
+						icon:"/static/canopsis/themes/canopsis/resources/images/icons/table.png",
+						tooltip:"Tests with other configuration for this scenario",
+						handler: function ( grid, rowIndex, ColIndex ) {
+							var rec = grid.getStore().getAt(rowIndex);
+							var scen_name = rec.get('scenario') ;
+							var gwidth = Ext.getBody().getWidth() * .6;
+							var gheight = Ext.getBody().getHeight() * .8;
+							if (me.scenarios[scen_name].scenarios.length > 0) {
+								Ext.create('Ext.window.Window', {
+									xtype: 'panel',
+									layout: 'fit',
+									id: 'window-screenshot',
+									autoScroll: true,
+									width: gwidth,
+									height: gheight,
+									items: me.scenarios[scen_name].buildDetailsView(),
+									renderTo: Ext.getBody(),
+									modal: true
+									}).show().center();
+                                        		} else {
+                                                                Ext.create('Ext.window.Window', {
+                                                                        xtype: 'panel',
+                                                                        layout: 'fit',
+                                                                        id: 'window-screenshot',
+                                                                        autoScroll: true,
+                                                                        width: gwidth,
+                                                                        height: gheight,
+									html: "No other configuration for this test",
+                                                                        renderTo: Ext.getBody(),
+                                                                        modal: true
+                                                                        }).show().center();
+							}
+
+						}
+					} ]	
+				}
+	
 			],
 			store: storeScenar,
 			listeners: {
-				itemclick: function(view, record, htmlEl, index, e ) {
+				/*itemclick: function(view, record, htmlEl, index, e ) {
 					var scen_name = record.data.scenario;
-					var gwidth = Ext.getBody().getWidth() * .6;
 					var gheight = Ext.getBody().getHeight() * .8;
 					if (me.scenarios[scen_name].scenarios.length > 0) {
 						Ext.create('Ext.window.Window', {
@@ -163,27 +288,11 @@ Ext.define('widgets.stepeue.feature' , {
 							modal: true
 						}).show().center();
 					}
-
-				},
+				
+				},*/
 				viewready: function() {
 					for (i in me.scenarios)
 						me.scenarios[i].getPerfData();
-/*					$(".line-graph").each ( function( ) {
-						var value = $(this).attr('id').split(':')[0] ;
-						var mapgraph = me.scenarios[value].mapGraph ;
-						$(this).sparkline({
-							template : "line_basic_5",
-							defaultSeries: {
-								type: "bar",
-							}
-							width:gWidth,
-							tooltipClassname : "tooltip",
-							tooltipFormat: '[{{value:date}}]<br />{{value}}',
-							tooltipValueLookups: {
-								date: $.range_map( mapgraph )
-							} } ) ;
-					} ) ;*/
-					//$(".line-graph").sparkline("html", { type: "bar", width:gWidth,  tooltipClassname : "tooltip" } ) ;
 					var picwidth = Ext.getBody().getWidth() * .6;
 					var picheight = Ext.getBody().getHeight() * .92;
 					$('a.image-zoom').lightBox({
@@ -234,6 +343,7 @@ Ext.define('widgets.stepeue.feature' , {
                                                 xtype: 'xpanel',
                                                 layout: 'fit',
                                                 autoScroll: false,
+						title:"Last Execution Video",
 						height: gheight,
                                                 html: oHtml,
                                                 renderTo: Ext.getBody(),
@@ -241,15 +351,20 @@ Ext.define('widgets.stepeue.feature' , {
 						width: gwidth,
 						height: gheight
                                         }).show().center();
+				},
+			},{
+				type:"gear",
+				tooltip:"display last errors video",
+				handler: function() {
+					me.displayLastErrorsVideos() ;	
 				}
-			}],
+			}],	
                         items: [grid],
                         border: false,
                         height: '100%',
 			autoScroll: true
 		});
 		this.content = card1;
-		console.log(this.elementContainer);
 		this.elementContainer.removeAll();
 		this.elementContainer.add(this.content);
 

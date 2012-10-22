@@ -56,7 +56,7 @@ Ext.define('canopsis.view.Account.Form', {
 			},{
 				fieldLabel: _('Group'),
 				name: 'aaa_group',
-				store: 'Groups',
+				store: Ext.create('canopsis.store.Groups'),
 				value: 'Canopsis',
 				displayField: 'crecord_name',
 				valueField: '_id',

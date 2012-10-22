@@ -60,136 +60,194 @@ def tree_get():
 	return output
 
 
+@delete('/ui/view')
 @delete('/ui/view/:name')
 def tree_delete(name=None):
-	namespace='object'
+	logger.debug('DELETE:')
 	account = get_account()
-	storage = get_storage(namespace=namespace, account=account, logging_level=logging.DEBUG)
+	storage = get_storage(namespace='object', account=account, logging_level=logging.DEBUG)
 	
-	record = storage.get(name, account=account)
-	
-	if isinstance(record, crecord):
-		if len(record.children) == 0:
-			if record.check_write(account=account):
-				#remove record from its parent child list
-				for parent in record.parent:
-					parent_rec = storage.get(parent, account=account)
-					parent_rec.remove_children(record )
-					if parent_rec.check_write(account=account):
-						storage.put(parent_rec,account=account)
-					else:
-						logger.debug('Access Denied')
-						return HTTPError(403, "Access Denied")
+	if not name:
+		name = []
+		data = json.loads(request.body.readline())
+		if not isinstance(data,list):
+			data = [data]
+		for view in data:
+			name.append(view['_id'])
 			
-				try:
-					storage.remove(record, account=account)
-				except Exception, err:
-					logger.error(err)
-					return HTTPError(404, 'Error while removing: %s' % err)
+
+	output = {}
+	
+	for _id in name:
+		try:
+			record = storage.get(_id, account=account)
+		except Exception, err:
+			logger.info(' + Record not found: %s' %_id)
+			output[record._id] = {'success':False,'output':'Record not found'}
+			record = None
+			
+		if record:
+			if len(record.children) == 0:
+				if record.check_write(account=account):
+					#remove record from its parent child list
+					for parent in record.parent:
+						parent_rec = storage.get(parent, account=account)
+						parent_rec.remove_children(record )
+						if parent_rec.check_write(account=account):
+							storage.put(parent_rec,account=account)
+						else:
+							logger.info(' + No sufficient rights on parent %s' % parent_rec.name)
+							output[parent_rec.name] = {'success':False,'output':'No right to remove children'}
+					#remove the record
+					try:
+						storage.remove(record, account=account)
+						output[record.name] = {'success':True,'output':''}
+					except Exception, err:
+						logger.error(err)
+						output[record.name] = {'success':False,'output':err}
+				else:
+					logger.info(' + No sufficient rights on %s' % parent_rec.crecord_name)
+					output[record.name] = {'success':False,'output':'No sufficient rights'}
 			else:
-				logger.debug('Access Denied')
-				return HTTPError(403, "Access Denied")
-				
-		else:
-			logger.warning('This record have children, remove those child before')
+				output[record.name] = {'success':False,'output':'This record have children, remove those child before'}
+				logger.warning('This record have children, remove those child before')
+	
+	return {"total": len(name), "success": True, "data": output}
 
-	
-	
 @post('/ui/view',checkAuthPlugin={'authorized_grp':group_managing_access})
-@post('/ui/view/:name',checkAuthPlugin={'authorized_grp':group_managing_access})
-def tree_update(name='None'):
-	namespace = 'object'
+def tree_add():
+	logger.debug('POST:')
 	account = get_account()
-
-	storage = get_storage(namespace=namespace, account=account)
+	storage = get_storage(namespace='object', account=account)
 	
 	data = json.loads(request.body.readline())
-	if isinstance(data,list):
-		data = data[0]
-	
-	logger.debug('Tree update %s' % data['_id'])
+	if not isinstance(data,list):
+		data = [data]
+		
+	output = {}
 
-	try:
-		logger.debug(' + Get future parent record')
-		record_parent = storage.get(data['parentId'], account=account)
-	except:
-		return HTTPError(403, "You don't have right on the parent record: %s")
-	
-	try:
-		logger.debug(' + Get the children record')
-		record_child = storage.get(data['_id'], account=account)
-	except:
-		logger.debug('   + Children not found')
-		record_child = None
+	for view in data:
+		view_name = view.get('crecord_name',view['_id'])
+		
+		try:
+			logger.debug(' + Get future parent record')
+			record_parent = storage.get(view['parentId'], account=account)
+		except:
+			logger.info("You don't have right on the parent record: %s" % view['parentId'])
+			output[view_name] = {'success':False,'output':"You don't have right on the parent record"}
+			record_parent = None
+		
+		try:
+			record_child = storage.get(view['_id'], account=account)
+			logger.debug(' + Children found %s' % view['_id'])
+			output[view['_id']] = {'success':False,'output':"Record id already exist"}
+		except:
+			logger.debug(' + Children not found')
+			record_child = None
 
-	#test if the record exist
-	if isinstance(record_child, crecord):
-		#check write rights
-		if record_parent.check_write(account=account) and record_child.check_write(account=account):
-			#if parents are really different
-			if not (data['parentId'] in record_child.parent):
+		if record_parent and not record_child:
+			if record_parent.check_write(account=account):
+				try:
+					if view['leaf'] == True:
+						logger.debug('record is a leaf, add the new view')
+						record = crecord({'leaf':True,'_id':view['id'],'items':view['items']},type='view',name=view['crecord_name'],account=account)
+					else:
+						logger.debug('record is a directory, add it')
+						record = crecord({'_id':view['id']},type='view_directory',name=view['crecord_name'],account=account)
+				except Exception, err:
+					logger.info('Error while building view/directory crecord : %s' % err)
+					output[view_name] = {'success':False,'output':"Error while building crecord: %s" % err}
+					record = None
+					
+				if isinstance(record,crecord):
+					record.chown(account._id)
+					record.chgrp(account.group)
+					record.chmod('g+w')
+					record.chmod('g+r')
+					
+					storage.put(record,account=account)
+					record_parent.add_children(record)
+
+					storage.put([record,record_parent],account=account)
+					output[view_name] = {'success':True,'output':''}
+			else:
+				logger.info('Access Denied')
+				output[view_name] = {'success':False,'output':"No rights on this record"}
+		else:
+			logger.error("Parent doesn't exists or view/directory already exists for %s" % view_name)
+			
+	return {"total": len(data), "success": True, "data": output}
+
+@put('/ui/view',checkAuthPlugin={'authorized_grp':group_managing_access})
+def update_view_relatives():
+	logger.debug('PUT:')
+	account = get_account()
+	storage = get_storage(namespace='object', account=account)
+	
+	data = json.loads(request.body.readline())
+	if not isinstance(data,list):
+		data = [data]
+	
+	output={}
+	
+	for view in data:
+		view_name = view.get('crecord_name',view['_id'])
+		_id = view.get('_id',None)
+		parent_id = view.get('parentId',None)
+		
+		logger.debug(' + View to update is %s' % _id)
+		logger.debug(' + Parent is %s' % parent_id)
+		
+		#get records
+		try:
+			record_child = storage.get(_id, account=account)
+		except Exception, err:
+			logger.error(" + Record to update wasn't found")
+			output[view_name] = {'success':False,'output':str(err)}
+		
+		#check action to do
+		if parent_id and not parent_id in record_child.parent:
+			try:
+				record_parent = storage.get(parent_id, account=account)
 				logger.debug(' + Update relations')	
 				record_parent_old = storage.get(record_child.parent[0], account=account)
 				logger.debug('   + Remove children %s from %s' % (record_child._id, record_parent_old._id))
+				
+				if not record_parent.check_write(account=account) or not record_parent_old.check_write(account=account):
+					raise Exception('No rights on parent record')
+				
 				record_parent_old.remove_children(record_child)
 				
 				logger.debug('   + Add children %s to %s' % (record_child._id, record_parent._id))
 				record_parent.add_children(record_child)
 				
 				logger.debug('   + Updating all records')
-				storage.put([record_child, record_parent, record_parent_old],account=account)
-				
-			elif (record_child.name != data['crecord_name']):
-				logger.debug(' + Rename record')	
-				logger.debug('   + old name : %s' % record_child.name)
-				logger.debug('   + new name : %s' % data['crecord_name'])
-				record_child.name = data['crecord_name']
-				storage.put(record_child,account=account)
-			
-			else :
-				logger.debug(' + Records are same, nothing to do')
-		else:
-			logger.debug('Access Denied')
-			return HTTPError(403, "Access Denied")
-			
-	else:
-		#add new view/folder
-		parentNode = storage.get(data['parentId'], account=account)
-		#test rights
-		if isinstance(parentNode, crecord):
-			if parentNode.check_write(account=account):
-				if data['leaf'] == True:
-					logger.debug('record is a leaf, add the new view')
-					record = crecord({'leaf':True,'_id':data['id'],'items':data['items']},type='view',name=data['crecord_name'],account=account)
-				else:
-					logger.debug('record is a directory, add it')
-					record = crecord({'_id':data['id']},type='view_directory',name=data['crecord_name'],account=account)
-				
-				#must save before add children
-				record.chown(account._id)
-				record.chgrp(account.group)
-				record.chmod('g+w')
-				record.chmod('g+r')
-				
-				storage.put(record,account=account)
-				
-				parentNode.add_children(record)
-				
-				
-				
-				storage.put([record,parentNode],account=account)
-			else:
-				logger.debug('Access Denied')
-				return HTTPError(403, "Access Denied")
+	
+				storage.put([record_parent,record_child,record_parent_old],account=account)
+			except Exception, err:
+				output[view_name] = {'success':False,'output':str(err)}
+				logger.error(err)
 
+		elif view['crecord_name'] and record_child.name != view['crecord_name']:
+			logger.debug(' + Rename record')	
+			logger.debug('   + old name : %s' % record_child.name)
+			logger.debug('   + new name : %s' % view['crecord_name'])
+			record_child.name = view['crecord_name']
+			storage.put(record_child,account=account)
+		
 		else :
-			logger.error('ParentNode doesn\'t exist')
+			logger.debug(' + Records are same, nothing to do')
+			
+		if not view_name in output:
+			output[view_name] = {'success':True,'output':""}
+
+	return {"total": len(data), "success": True, "data": output}
+
 
 @get('/ui/view/exist/:name')
 def check_exist(name=None):
-	namespace = 'object'
 	account = get_account()
-	storage = get_storage(namespace=namespace, account=account)
+	storage = get_storage(namespace='object', account=account)
 	
 	mfilter = {'crecord_name':name}
 	
@@ -207,11 +265,8 @@ def check_exist(name=None):
 @get('/ui/view/export/:_id')
 def exportView(_id=None):
 	logger.debug('Prepare to return view json file')
-	namespace = 'object'
 	account = get_account()
-	storage = get_storage(namespace=namespace, account=account)
-	
-	#export_fields = ['']
+	storage = get_storage(namespace='object', account=account)
 	
 	if not _id:
 		_id = request.params.get('_id', default=None)

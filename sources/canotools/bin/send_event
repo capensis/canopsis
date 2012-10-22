@@ -18,7 +18,12 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-import sys, os, getopt, json, urllib2, urllib, cookielib, traceback
+import sys, os, getopt, urllib2, urllib, cookielib, traceback
+
+try:
+	import json
+except:
+	import simplejson as json
 
 def usage():
 	print(" Usage: send_event ")
@@ -87,7 +92,7 @@ def main(argv):
 	
 	try:
 		response = json.loads(r.read())
-	except Exception,err:
+	except Exception, err:
 		print('Error: bad response from server %s' % err)
 		
 	if not response['success']:
@@ -112,7 +117,7 @@ def main(argv):
 		#------------------read file-------------------	
 		try:
 			event = json.loads(open(file_path, "r").read().decode('utf-8-sig'))
-		except Exception as err:
+		except Exception, err:
 			print('Invalid json file: %s' % err)
 			sys.exit()
 			
@@ -152,6 +157,6 @@ def main(argv):
 if __name__ == "__main__":
 	try:
 		main(sys.argv[1:])
-	except Exception as err:
+	except Exception, err:
 		traceback.print_exc(file=sys.stdout)
 		sys.exit(1)

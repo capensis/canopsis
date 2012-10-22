@@ -38,6 +38,13 @@
 							"name": "showToolbar"
 					   },{
 							"xtype": "checkboxfield",
+							"fieldLabel": "Compact display",
+							"inputValue": true,
+							"uncheckedValue": false,
+							"checked": false,
+							"name": "compact"
+					   },{
+							"xtype": "checkboxfield",
 							"fieldLabel": "Enable user inputs",
 							"inputValue": true,
 							"uncheckedValue": false,

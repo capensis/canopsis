@@ -102,7 +102,8 @@ function createApplication(){
 			'Events',
 			'Selector',
 			'Derogation',
-			'Perfdata'
+			'Perfdata',
+			'Topology'
 		],
 	
 		//autoCreateViewport: true,

@@ -21,6 +21,7 @@ import logging
 logger = logging.getLogger('utils')
 
 import zlib
+import time
 
 import msgpack
 packer = None
@@ -289,7 +290,7 @@ def aggregate(points, max_points=None, interval=None, atype=None, agfn=None, mod
 				logger.debug("     + %s points" % (len(points_to_aggregate)))
 				
 				agvalue = round(agfn(points_to_aggregate),2)
-				point = [timestamp+interval, agvalue]
+				point = [timestamp, agvalue]
 				
 				logger.debug("       + Ag Point: %s" % point)
 				
@@ -300,7 +301,7 @@ def aggregate(points, max_points=None, interval=None, atype=None, agfn=None, mod
 								
 			else:
 				logger.debug("       + No points")
-				rpoints.append([timestamp+interval, 0])
+				rpoints.append([timestamp, 0])
 				
 				points_to_aggregate = []
 		
@@ -430,10 +431,14 @@ def fill_interval(points, start, stop, interval):
 		dict_points[point[0]] = point
 	
 	output_list = []
-	for i in range(start, stop+interval, interval):
+	for i in range(start, stop, interval):
 		try:
 			output_list.append(dict_points[i])
 		except:
 			output_list.append([i,0])
+	
+	#check last timestamp
+	#if len(output_list) and output_list[len(output_list)-1][0] > int(time.time()):
+	#	output_list[len(output_list)-1][0] = int(time.time())
 		
 	return output_list

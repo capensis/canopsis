@@ -51,9 +51,14 @@ Ext.define('widgets.pie.pie' , {
 	legend_borderWidth: 1,
 	legend_fontSize: 12,
 	legend_fontColor: '#3E576F',
+    
+    labels: false,
+    gradientColor: false,
+
 	//
 
 	nb_node: 0,
+	hide_other_column: false,
 
 
 	initComponent: function() {
@@ -146,17 +151,19 @@ Ext.define('widgets.pie.pie' , {
 					allowPointSelect: true,
 					cursor: 'pointer',
 					dataLabels: {
-						enabled: false
+						enabled: this.labels,
+                        color: '#000000',
+                        connectorColor: '#000000',
+                        formatter: function() {return '<b>'+ this.point.name +'</b>: '+ Math.round(this.percentage) +' %';}
 					},
 					showInLegend: true,
 					animation: false,
 					size: this.pie_size + '%'
-				}
+				},
+				column:{}
 			},
 			tooltip: {
-				formatter: function() {
-					return this.point.name + ': ' + Math.round(this.percentage * 1000) / 1000 + ' %';
-					}
+				formatter:this.tooltipFunction
 			},
 			title: {
 				text: this.chartTitle,
@@ -231,11 +238,6 @@ Ext.define('widgets.pie.pie' , {
 	},
 
 	doRefresh: function(from, to) {
-	/*	if (Ext.Date.now() < this.lastRefresh + (this.interval*1000)){
-			log.debug('Wait right interval to refresh', this.logAuthor)
-			return false
-		}*/
-
 		// Get last point only
 		if (this.interval) {
 			to = Ext.Date.now();
@@ -280,37 +282,22 @@ Ext.define('widgets.pie.pie' , {
 			// Remove old series
 			this.removeSerie();
 
-			var serie = {
-				id: 'pie',
-				type: 'pie',
-				data: []
-			};
+			serie = this.getSerie()
+
+			if(this.setAxis)
+				this.setAxis(data)
 
 			var other_unit = '';
 
 			for (var index in data) {
-				info = data[index];
+				var info = data[index];
 
 				var node = info['node'];
 				var metric = info['metric'];
 
 				var value = undefined;
 
-				//----------------Process value-----------------
-			/*	if(info.type == 'COUNTER'){
-					if(this.counter_value[metric]){
-						value = this.counter_value[metric]
-					}else{
-						this.counter_value[metric] = 0
-						value = 0
-					}
 
-						value += info['values'][0][1]
-
-					log.debug('The value for ' + metric + ' is ' + value,
-												this.logAuthor)
-				}else{
-					var info_length = info['values'].length*/
 				if (info['values'].length >= 1)
 					value = info['values'][0][1];
 
@@ -344,11 +331,16 @@ Ext.define('widgets.pie.pie' , {
 					other_unit += ' (' + unit + ')';
 				}
 
-				serie.data.push({ id: metric, name: metric_long_name, y: value, color: colors[0] });
+				if(this.gradientColor)
+					var color = this.getGradientColor(colors[0])
+				else
+					var color = colors[0]
+
+				serie.data.push({ id: metric, name: metric_long_name, y: value, color: color });
 
 			}
 
-			if (data.length == 1) {
+			if (data.length == 1 && !this.hide_other_column) {
 				var other_label = '<b>' + this.other_label + '</b>' + other_unit;
 				var colors = global.curvesCtrl.getRenderColors(this.other_label, 1);
 				serie.data.push({ id: 'pie_other', name: other_label, y: max - value, color: colors[0] });
@@ -367,7 +359,7 @@ Ext.define('widgets.pie.pie' , {
 	},
 
 	removeSerie: function() {
-		var serie = this.chart.get('pie');
+		var serie = this.chart.get('serie');
 		if (serie)
 			serie.destroy();
 	},
@@ -382,12 +374,35 @@ Ext.define('widgets.pie.pie' , {
 		this.displaySerie();
 	},
 
+	getSerie: function(){
+		return  {
+					id: 'serie',
+					type: 'pie',
+					data: []
+				};
+	},
+
+	getGradientColor: function(color) {
+		return {
+			radialGradient: { cx: 0.5, cy: 0.3, r: 0.7 },
+			stops: [
+				[0, color],
+				[1, Highcharts.Color(color).brighten(-0.3).get('rgb')]
+			]
+		};
+	},
+
 	onResize: function() {
 		log.debug('onRezize', this.logAuthor);
 		if (this.chart) {
 			this.chart.setSize(this.getWidth(), this.getHeight() , false);
 			this.reloadSerie();
 		}
+	},
+
+
+	tooltipFunction: function() {
+		return this.point.name + ': ' + Math.round(this.percentage * 1000) / 1000 + ' %';
 	}
 
 });

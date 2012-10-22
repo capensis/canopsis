@@ -50,6 +50,8 @@ Ext.define('widgets.stream.stream' , {
 	amqp_queue: 'alerts',
 	hard_state_only: true,
 
+	compact:true,
+
 	initComponent: function() {
 		if (this.fullscreenMode) {
 			this.enable_userinputs = false;

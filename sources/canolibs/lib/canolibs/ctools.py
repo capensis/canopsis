@@ -173,5 +173,9 @@ def Str2Number(string):
 		value = int(value)
 		
 	return value
-	
+
+##	Remove duplicate entry
+def uniq(alist):
+	set = {}
+	return [set.setdefault(e,e) for e in alist if e not in set]
 	

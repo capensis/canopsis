@@ -24,6 +24,7 @@ from caccount import caccount
 from crecord import crecord
 
 from ctools import legend
+from ctools import uniq
 from ctools import parse_perfdata
 
 legend_type = ['soft', 'hard']
@@ -116,9 +117,12 @@ class carchiver(object):
 			
 			new_metrics = [ perf['metric'] for perf in new_event['perf_data_array'] ]
 			old_metrics = [ perf['metric'] for perf in old_event['perf_data_array'] ]
-			
+						
 			if new_metrics == old_metrics:
+				new_event['perf_data_metrics'] = new_metrics
 				return new_event
+			
+			new_event['perf_data_metrics'] = uniq(new_metrics + old_metrics)
 			
 			for new_metric in new_metrics:
 				if new_metric in old_metrics:
@@ -127,6 +131,8 @@ class carchiver(object):
 					perf_data_array.append(new_event['perf_data_array'][new_metrics.index(new_metric)])
 						
 			new_event['perf_data_array'] = perf_data_array
+			
+		
 		
 		return new_event
 

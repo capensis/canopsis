@@ -171,8 +171,20 @@ Ext.define('canopsis.view.Mainbar.Bar' , {
 				{
 					iconCls: 'icon-mainbar-selector',
 					text: _('Selectors'),
-					action: 'editSelector',
+					action: 'openViewMenu',
 					viewId: 'view.selector_manager'
+				}
+			]);
+		}
+		
+		//Topology menu
+		if (global.accountCtrl.checkRoot() || global.accountCtrl.checkGroup('group.CPS_topology_admin')) {
+			menu_build = menu_build.concat([
+				{
+					iconCls: 'icon-mainbar-topology',
+					text: _('Topologies'),
+					action: 'openViewMenu',
+					viewId: 'view.topology_manager'
 				}
 			]);
 		}
@@ -392,6 +404,27 @@ Ext.define('canopsis.view.Mainbar.Bar' , {
 		];
 
 		this.callParent(arguments);
+	},
+
+	afterRender: function(){
+		this.callParent(arguments);
+		var tip = Ext.create('Ext.tip.ToolTip', {
+			target: Ext.getCmp('Mainbar-menu-Websocket').el,
+			renderTo: Ext.getBody(),
+			_htmlRender: function(){
+				return Ext.String.format(
+					'{0}: <b>{1}</b><br/><i>{2}</i>',
+					_('Websocket is now'),
+					global.websocketCtrl.connected ? _('connected') : _('disconnected'),
+					global.websocketCtrl.connected ? '' : _('Check if websocket deamon is started or check your firewall port ') + global.nowjs.port
+				)
+			},
+			listeners: {
+				beforeshow: function updateTipBody(tip) {
+					this.update(this._htmlRender())
+				}
+			}
+		});
 	}
 
 });

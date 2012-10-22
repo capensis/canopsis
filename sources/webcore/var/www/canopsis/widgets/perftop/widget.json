@@ -1,0 +1,66 @@
+[{
+	"name":  "Perf. Top",
+	"version": 0.1,
+	"author": "capensis",
+	"website": "http://www.canopsis.org",
+	"xtype": "perftop",
+	"description": "Display list of metrics sorted by value",
+	"description-fr":"Affiche une liste de metriques triée par valeur.",
+	"refreshInterval": 300,
+	"locales": ["fr"],
+	"options": [{
+			"title": "Options",
+						"items": [
+							{
+								"xtype" : "textfield",
+								"name" : "tag",
+								"fieldLabel": "Tag",
+								"allowBlank": true
+							},{
+								"xtype" : "numberfield",
+								"name" : "limit",
+								"fieldLabel": "Limit",
+								"minValue": 1,
+								"value": 10
+							},{
+								"xtype" : "numberfield",
+								"name" : "threshold (>)",
+								"fieldLabel": "Threshold"
+							},{
+								"xtype": "checkbox",
+								"fieldLabel": "calculate Percent (if possible)",
+								"checked": false,
+								"name": "percent"
+							},{
+								"xtype": "cduration",
+								"name": "time_window",
+								"value": 86400,
+								"fieldLabel": "Time window (for counter)"
+							},{
+								"xtype": "combobox",
+								"name": "sort",
+								"fieldLabel": "Default direction",
+								"queryMode": "local",
+								"displayField": "text",
+								"valueField": "value",
+								"value": -1,
+								"store": {
+									"xtype": "store",
+									"fields": ["value", "text"],
+									"data" : [
+										{"value": -1, "text": "Descending"},
+										{"value": 1, "text": "Ascending"}
+									]
+								}
+							}
+						]
+				},{
+			"title": "Choose Metrics",
+			"items": [{
+						"xtype": "cmetric",
+						"name": "nodes",
+						"multiSelect": false,
+						"metrics": true
+					}]
+		}]
+}]

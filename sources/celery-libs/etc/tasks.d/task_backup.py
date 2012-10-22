@@ -1,7 +1,8 @@
 from celery.task import task
 from celerylibs import decorators
-from subprocess import Popen, PIPE
+from subprocess import Popen
 from tempfile import mkdtemp
+from ubik import core as ubik_api
 import logging, os, shutil
 
 @task
@@ -55,10 +56,13 @@ def config(output='/opt/canopsis/var/backups'):
 	tmp_dir = mkdtemp(prefix='/opt/canopsis/tmp/')
 
 	logger.debug('Create file with installed packages')
-	export_output = Popen('pkgmgr export', shell=True, stdout=PIPE)
-	export_output.wait()
+	lines = []
+	for package in ubik_api.db.get_installed():
+		lines.append(package.name)
+		lines.append('\n')
+	lines = lines[:-1]
 	f = open('/opt/canopsis/etc/.packages', 'w')
-	f.writelines(export_output.stdout.read())
+	f.writelines(lines)
 	f.close()
 
 	logger.debug('Copy config files into tmp folder')

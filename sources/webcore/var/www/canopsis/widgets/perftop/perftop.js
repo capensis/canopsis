@@ -1,0 +1,132 @@
+/*
+#--------------------------------
+# Copyright (c) 2011 "Capensis" [http://www.capensis.com]
+#
+# This file is part of Canopsis.
+#
+# Canopsis is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# Canopsis is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Affero General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public License
+# along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
+# ---------------------------------
+*/
+Ext.define('widgets.perftop.perftop' , {
+	extend: 'canopsis.lib.view.cwidget',
+
+	alias: 'widget.perftop',
+
+	//Default options
+	limit: 10,
+	metric: undefined,
+	resource: undefined,
+	sort: -1,
+	tag: undefined,
+	time_window: 86400,
+	threshold: undefined,
+	percent: false,
+	//..
+
+	afterContainerRender: function() {
+		
+		if (this.nodes && this.nodes.length > 0){
+			node = this.nodes[0]
+			this.metric = node.metrics[0]
+			this.resource = node.resource
+
+			this.store = Ext.create('canopsis.store.Perfdatas', {
+
+				model: 'canopsis.model.Perfdata',
+				
+				autoLoad: false,
+
+				proxy: {
+					type: 'rest',
+					url: '/perfstore/perftop',
+					extraParams: {'limit': this.limit, 'sort': this.sort, 'tag': this.tag, 'metric': this.metric, 'resource': this.resource, 'time_window': this.time_window, 'threshold': this.threshold, 'percent': this.percent},
+					reader: {
+						type: 'json',
+						root: 'data',
+						totalProperty: 'total',
+						successProperty: 'success'
+					}
+				},
+
+			});
+
+			this.grid = Ext.create('canopsis.lib.view.cgrid', {
+				model: 'Perfdata',
+				store: this.store,
+
+				opt_bar: false,
+				opt_paging: false,
+				opt_menu_delete: false,
+				opt_bar_add: false,
+				opt_menu_rights: false,
+				opt_bar_search: false,
+
+				opt_tags_search: false,
+				opt_simple_search: false,
+
+				opt_cell_edit: false,
+				
+				columns: [
+					{
+						header: '',
+						width: 25,
+						sortable: false,
+						renderer: function() {return "<span class='icon icon-mainbar-perfdata' />"}
+					},{
+							header: _('Component'),
+							flex: 1,
+							sortable: true,
+							dataIndex: 'co'
+					},{
+							header: _('Resource'),
+							flex: 1,
+							sortable: true,
+							dataIndex: 're'
+					},{
+							header: _('Metric'),
+							flex: 2,
+							sortable: true,
+							dataIndex: 'me',
+							 editor: {xtype: 'textfield'}
+					},{
+							header: _('Value'),
+							width: 100,
+							sortable: true,
+							dataIndex: 'lv',
+							align: 'right'
+					},{
+							header: _('Unit'),
+							width: 45,
+							sortable: true,
+							dataIndex: 'u',
+							align: 'center',
+							editor: {xtype: 'textfield'}
+					}
+
+				],
+			});
+
+			this.wcontainer.removeAll();
+			this.wcontainer.add(this.grid);
+		}
+
+		this.ready();
+	},
+
+	doRefresh: function(from, to) {
+		if (this.grid)
+			this.grid.store.load();
+	}
+
+});

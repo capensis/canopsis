@@ -64,35 +64,18 @@ Ext.define('canopsis.controller.Selector', {
 		return record;
 	},
 
-	ajaxValidation: function(record,edit) {
+	ajaxValidation: function(record, edit) {
 		if (edit) {
 			this._save(record, true);
 			return;
 		}
-
-		this.backup_record = record;
-		filter = {
-					filter: Ext.encode({'crecord_name': record.get('crecord_name')}),
-					limit: 1
-					};
-
-		Ext.Ajax.request({
-			method: 'GET',
-			scope: this,
-			params: filter,
-			url: '/rest/object/selector',
-			success: function(response, opts) {
-				var data = Ext.decode(response.responseText).data;
-
-				if (data.length == 0) {
-					this._save(this.backup_record, false);
-					this.backup_record = undefined;
-					this.backup_edit = undefined;
-				}else {
-					global.notify.notify(_('Bad name'), _('This selector name already exist'), 'warning');
-				}
-			}
-		});
+		
+		isRecordExist('object', 'selector', 'crecord_name', record, function(ctrl, record, exist){
+			if (exist)
+				ctrl._save(record, false);
+			else
+				global.notify.notify(_('Bad name'), _('This selector name already exist'), 'warning');
+		}, this);		
 	},
 
 	change_selector_output: function(_id,type,message) {

@@ -21,6 +21,7 @@ function detect_os(){
 	UBUNTU=`echo "$VERSION" | grep -i ubuntu | wc -l`
 	REDHAT=`echo "$VERSION" | grep -i redhat | wc -l`
 	CENTOS=`echo "$VERSION" | grep -i centos | wc -l`
+	FC=`echo "$VERSION" | grep -i "\.fc..\." | wc -l`
 	ARCHL=`if [ -e /etc/arch-release ]; then echo 1; fi`
 	DIST_VERS=""
 	
@@ -38,6 +39,10 @@ function detect_os(){
 		echo " + $DIST $DIST_VERS"
 	elif [ $CENTOS -ne 0 ]; then
 		DIST="centos"
+		DIST_VERS=`lsb_release -r | cut -f2 | cut -d '.' -f1`
+		echo " + $DIST $DIST_VERS"
+	elif [ $FC -ne 0 ]; then
+		DIST="fedora"
 		DIST_VERS=`lsb_release -r | cut -f2 | cut -d '.' -f1`
 		echo " + $DIST $DIST_VERS"
 	elif [ $ARCHL -ne 0 ]; then

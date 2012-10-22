@@ -39,7 +39,7 @@ var global = {
 	},
 	log: {
 		/* 0: none, 1: info, 2: error, 3: error + warning, 4: error + warning + debug, 5: error + warning + debug + dump */
-		level: 2,
+		level: 5,
 		buffer: 50
 	},
 

@@ -61,4 +61,4 @@ echo " :: Reinstall packages"
 while read line; do 
 	packages="$packages $line"
 done < $HOME/etc/.packages
-pkgmgr install $packages
+ubik install --force-yes $packages

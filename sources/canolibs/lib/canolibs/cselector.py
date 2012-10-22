@@ -64,8 +64,9 @@ class cselector(crecord):
 		
 		self.output_tpl="{cps_sel_state_0} Ok, {cps_sel_state_1} Warning, {cps_sel_state_2} Critical"
 
-		self.sel_metric_name = "cps_sel_state_%s"
-
+		self.sel_metric_prefix = "cps_sel_"
+		self.sel_metric_name = self.sel_metric_prefix + "state_%s"
+		
 		self._ids = None
 		
 		self.logger = logging.getLogger('cselector')
@@ -194,7 +195,8 @@ class cselector(crecord):
 			if not mfilter:
 				self.logger.debug("  + Invalid mfilter" )
 				return []
-			self.logger.debug(" + namespace: %s" % self.namespace)	
+			self.logger.debug(" + namespace: %s" % self.namespace)
+			
 			records = self.storage.find(mfilter=mfilter, namespace=self.namespace)
 			for record in records:
 				if not record._id in ids:
@@ -321,7 +323,22 @@ class cselector(crecord):
 			metric =  self.sel_metric_name % i
 			output_data[metric] = value
 			perf_data_array.append({"metric": metric, "value": value, "max": total})
+		
+		perf_data_array.append({"metric": self.sel_metric_prefix + "total", "value": total})
+		
+		# Counte components and resources
+		mfilter = self.makeMfilter()
+		if mfilter:
+		
+			sel_nb_component = self.storage.count(mfilter={'$and': [ mfilter, {'source_type': 'component'}]}, namespace=self.namespace)
+			sel_nb_resource = self.storage.count(mfilter={'$and': [ mfilter, {'source_type': 'resource'}]}, namespace=self.namespace)		
 			
+			if sel_nb_component + sel_nb_resource == total:
+				perf_data_array.append({"metric": self.sel_metric_prefix + "component", "value": sel_nb_component, 'max': total})
+				perf_data_array.append({"metric": self.sel_metric_prefix + "resource", "value": sel_nb_resource, 'max': total})
+			else:
+				self.logger.error("Invalid count: component: %s, resource: %s, total: %s" % (sel_nb_component, sel_nb_resource, total))
+		
 		output_data['total'] = total
 	
 		# Fill Output template

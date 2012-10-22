@@ -29,36 +29,6 @@ Ext.define('canopsis.lib.store.ctreeStore', {
         this.proxy.on('exception', this._manage_exception, this);
     },
 
-	//raise an exception if server didn't accept the request
-	//and display a popup if the store is modified
-	listeners: {
-	/*	exception: function(proxy, response, operation){
-			Ext.MessageBox.show({
-				title: _('REMOTE EXCEPTION'),
-				msg: this.storeId + ': ' + _('request failed'),
-				icon: Ext.MessageBox.ERROR,
-				buttons: Ext.Msg.OK
-			});
-			log.debug(response);
-		},*/
-		load: function(store, node, records) {
-			if (this.autoLocalization) {
-				var i;
-				for (i in records) {
-					record = records[i];
-					record.set('text', _(record.get('text')));
-					record.modified = false;
-				}
-			}
-		},
-		write: function(store, operation,option) {
-			if (operation.action == 'create')
-				global.notify.notify(_('Success'), _('Record saved'), 'success');
-			if (operation.action == 'destroy')
-				global.notify.notify(_('Success'), _('Record deleted'), 'success');
-		}
-   },
-
    	_manage_exception: function(store, request, options) {
 		if (request.status == 403) {
 			global.notify.notify(_('Access denied'), _('You don\'t have the rights to modify this object'), 'error');

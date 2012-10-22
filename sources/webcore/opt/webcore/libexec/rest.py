@@ -22,7 +22,7 @@ import sys, os, logging, json
 
 import bottle
 from bottle import route, get, put, delete, request, HTTPError, post, response
-
+from datetime import *
 ## Canopsis
 from caccount import caccount
 from cstorage import cstorage
@@ -43,19 +43,6 @@ ctype_to_group_access = {
 							'selector' : 'group.CPS_selector_admin',
 							'derogation' : 'group.CPS_derogation_admin'
 						}
-
-admin_view_list = [
-					'view.account_manager',
-					'view.group_manager',
-					'view.selector_manager',
-					'view.view_manager',
-					'view.schedule_manager',
-					'view.briefcase',
-					'view.curves',
-					'view.derogation_manager',
-					'view.perfdata',
-					'view.eventLog_navigation'
-					]
 
 #########################################################################
 
@@ -109,6 +96,7 @@ def rest_get(namespace, ctype=None, _id=None):
 	sort		= request.params.get('sort', default=None)
 	query		= request.params.get('query', default=None)
 	onlyWritable	= request.params.get('onlyWritable', default=False)
+	noAdminView	= request.params.get('noAdminView', default=False)
 	ids			= request.params.get('ids', default=[])
 	
 	get_id			= request.params.get('_id', default=None)
@@ -223,14 +211,18 @@ def rest_get(namespace, ctype=None, _id=None):
 	#----------------dump record and post filtering-------
 	for record in records:
 		if record:
-			data = None
-			if onlyWritable:
-				if record._id not in admin_view_list:
-					data = record.dump(json=True)
-			else:
-				data = record.dump(json=True)
+			do_dump = True
 
-			if data:
+			if onlyWritable:
+				if not record.check_write(account=account):
+					do_dump = False
+
+			if noAdminView:
+				if 'adminView' in record.data and record.data['adminView']:
+					do_dump = False
+
+			if do_dump:
+				data = record.dump(json=True)
 				data['id'] = data['_id']
 				if data.has_key('next_run_time'):
 					data['next_run_time'] = str(data['next_run_time'])
@@ -468,3 +460,59 @@ def rest_delete(namespace, ctype, _id=None):
 	except:
 		return HTTPError(404, _id+" Not Found")
 
+
+
+#decorateur, @get for http method, and then routes
+@get('/event_log')
+@get('/event_log/:start')
+@get('/event_log/:start/:stop')
+def get_timeline(start=None,stop=None):
+	#get user and access to mongo
+	account = get_account()
+	storage = get_storage(namespace='events_log')
+
+	#get data in payload
+	start = request.params.get('start', default=None)
+	stop = request.params.get('stop', default=None)
+
+	#set returned variable
+	output = { } 
+	total = None
+
+	#build filter for mongo request (put advanced option in it)
+	mfilter = {'$and':[{'crecord_type':'event'}]}
+
+	if start :
+		mfilter['and'].append({'timestamp': {'$gt': start}})
+	if stop :
+		mfilter['and'].append({'timestamp': {'$lt': stop}})
+				
+	records = storage.find(mfilter, account=account)
+
+	tmp_output = {}
+	for record in records:
+		dump = record.dump()
+		if not tmp_output.has_key(dump['event_id']) :
+			tmp_output[dump['event_id']] = []
+		tmp_output[dump['event_id']].append(dump)
+
+	events = {} 
+	for tag in tmp_output.keys() :
+		prev_id = None
+		for record in tmp_output[tag] :
+			item = {}
+			if ( prev_id != None ) :
+				events[prev_id]['end'] = datetime.fromtimestamp(record['timestamp']).isoformat()#strftime('%Y-%m-%d %H:%M:%S')
+			item['title'] = str(dump['component'])
+			if 'long_output' in record :
+				item['description'] = record['long_output']
+			item['start'] = datetime.fromtimestamp(record['timestamp']).isoformat()#strftime('%Y-%m-%d %H:%M:%S')
+			item['durationEvent'] = True
+			events[record['_id']] = item
+			prev_id = record['_id'] 
+	output['events'] = events.values()
+	output['dateTimeFormat'] = 'iso8601'
+	output['wiki-url'] = "http://simile.mit.edu/shelf/"
+	output['wiki-section'] = "Simile JFK Timeline"
+	#return the total, the success of function and the requested data in output
+	return output

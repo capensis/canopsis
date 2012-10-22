@@ -1,5 +1,5 @@
 [{
-	"name":  "Graph",
+	"name":  "Line Graph",
 	"version": 0.1,
 	"author": "capensis",
 	"website": "http://www.canopsis.org",
@@ -34,22 +34,6 @@
 								"fieldLabel": "Enable SVG Exporting",
 								"checked": false,
 								"name": "exporting_enabled"
-							},{
-								"xtype": "combobox",
-								"name": "chart_type",
-								"fieldLabel": "Chart type",
-								"queryMode": "local",
-								"displayField": "text",
-								"valueField": "value",
-								"value": "line",
-								"store": {
-									"xtype": "store",
-									"fields": ["value", "text"],
-									"data" : [
-										{"value": "line", "text": "Line graph"},
-										{"value": "column", "text": "Bar graph"}
-									]
-								}
 							},{
 								"xtype": "cduration",
 								"name": "time_window",
@@ -204,11 +188,6 @@
 								"checked": false,
 								"name": "SeriePercent"
 							},{
-								"xtype": "checkbox",
-								"fieldLabel": "Enable trend lines",
-								"checked": false,
-								"name": "trend_lines"
-							},{
 								"xtype": "combobox",
 								"name": "trend_lines_type",
 								"fieldLabel": "Trend line type",
@@ -360,7 +339,20 @@
 						"xtype": "cmetric",
 						"name": "nodes",
 						"multiSelect": true,
-						"metrics": true
+						"metrics": true,
+						"additional_field": [{
+											"xtype":"textfield",
+											"header":"Custom label(wip)",
+											"name":"label",
+											"emptyText":"Type the new label here",
+											"flex":1
+										},{
+											"xtype":"checkcolumn",
+											"text":"trend(wip)",
+											"dataIndex": "trend_curve",
+											"width": 55,
+											"checked":true
+										}]
 					}]
 		}]
 }]
