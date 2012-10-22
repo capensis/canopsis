@@ -1,0 +1,3 @@
+[submodule "sources/externals"]
+	path = sources/externals
+	url = http://github.com/capensis/canopsis-externals.git
