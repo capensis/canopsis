@@ -21,6 +21,7 @@ INC_DIRS="/usr/include"
 LOG_PATH="$SRC_PATH/log/"
 INST_CONF="$SRC_PATH/build.d/"
 
+mkdir -p $LOG_PATH
 
 ######################################
 #  functions
