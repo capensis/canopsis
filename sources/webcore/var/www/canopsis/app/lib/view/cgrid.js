@@ -177,7 +177,7 @@ Ext.define('canopsis.lib.view.cgrid' , {
 						xtype: 'button',
 						//text: _('TimeDisplay'),
 						iconCls: 'icon-search',
-						action: 'timeDisplay'
+						action: 'search'
 					});
 				}
 
