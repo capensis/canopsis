@@ -264,7 +264,6 @@ Ext.define('widgets.line_graph.line_graph' , {
 						// Shared
 						var s = '<b>' + rdr_tstodate(this.x / 1000) + '</b>';
 						$.each(this.points, function(i, point) {
-							console.log(point)
 							var y = point.y;
 							if (point.series.options.invert)
 								y = -y;
@@ -272,7 +271,6 @@ Ext.define('widgets.line_graph.line_graph' , {
 						});
 						return s;
 					}else {
-						console.log(this)
 						var y = this.y;
 						if (this.series.options.invert)
 							y = - y;
@@ -590,7 +588,6 @@ Ext.define('widgets.line_graph.line_graph' , {
 		}
 
 		if (this.SeriesType == 'area') {
-			console.log('area')
 			if(node.extra_field && node.extra_field.area_color){
 				serie['fillColor'] = node.extra_field.area_color;
 			}else{
