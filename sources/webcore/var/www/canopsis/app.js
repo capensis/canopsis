@@ -116,6 +116,8 @@ function createApplication(){
 			Ext.require('canopsis.lib.form.field.cfieldset');
 			Ext.require('canopsis.lib.form.field.cdate');
 			Ext.require('canopsis.lib.form.field.cduration');
+			Ext.require('canopsis.lib.form.field.cduration');
+			Ext.require('canopsis.lib.form.field.ccolorfield');
 			
 			// more xtype
 			Ext.require('canopsis.lib.view.cevent_log');
