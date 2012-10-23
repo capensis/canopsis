@@ -342,16 +342,21 @@
 						"metrics": true,
 						"additional_field": [{
 											"xtype":"textfield",
-											"header":"Custom label(wip)",
+											"header":"Custom label",
 											"name":"label",
 											"emptyText":"Type the new label here",
 											"flex":1
 										},{
 											"xtype":"checkcolumn",
-											"text":"trend(wip)",
+											"text":"trend",
 											"dataIndex": "trend_curve",
 											"width": 55,
 											"checked":true
+										},{
+											"xtype" : "colorfield",
+											"name" : "curve_color",
+											"header": "Curve color",
+											"value": "FFFFFF"
 										}]
 					}]
 		}]

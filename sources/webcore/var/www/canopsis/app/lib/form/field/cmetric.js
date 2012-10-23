@@ -235,7 +235,7 @@ Ext.define('canopsis.lib.form.field.cmetric' , {
 					})
 
 					if(_plugins.length == 0 ){
-						_plugins.push(Ext.create('Ext.grid.plugin.CellEditing', {
+						_plugins.push(Ext.create('Ext.grid.plugin.RowEditing', {
 							clicksToEdit: 1,
 							autoCancel: true
 						}))
