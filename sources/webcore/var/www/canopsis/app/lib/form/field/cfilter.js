@@ -32,6 +32,7 @@ Ext.define('canopsis.lib.form.field.cfilter' , {
 	ctype: 'event',
 	model: 'canopsis.model.Event',
 	autoScroll: true,
+	params: {},
 
 	columns: [
 		{
@@ -77,6 +78,7 @@ Ext.define('canopsis.lib.form.field.cfilter' , {
 			proxy: {
 				type: 'rest',
 				url: url,
+				extraParams: this.params,
 				reader: {
 					type: 'json',
 					root: 'data',
@@ -115,9 +117,9 @@ Ext.define('canopsis.lib.form.field.cfilter' , {
 		//--------------edit area (hand writing part)--------
 
 		this.edit_area = Ext.widget('textarea', {
-				hidden: true,
-				validator: this.check_json_validity,
-				flex: 1
+			hidden: true,
+			validator: this.check_json_validity,
+			flex: 1
 		});
 
 		//---------------------TBAR--------------------------

@@ -115,17 +115,18 @@
 			"name": "mfilter",
 			"url": "/perfstore",
 			"model": "canopsis.model.Perfdata",
+			"params": {"show_internals": true},
 			"columns": [
 				{
 					"header": "Component",
 					"sortable": false,
 					"dataIndex": "co",
-					"flex": 2
+					"flex": 1
 		   		},{
 		   			"header": "Resource",
 					"sortable": false,
 					"dataIndex": "re",
-					"flex": 2
+					"flex": 1
 		 		},{
 		   			"header": "Metric",
 					"sortable": false,
