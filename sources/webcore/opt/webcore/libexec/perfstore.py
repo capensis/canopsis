@@ -319,7 +319,7 @@ def perfstore_perftop():
 		logger.debug(" + mtype:    %s" % mtype)
 		
 		if mtype != 'COUNTER':
-			metrics = manager.store.find(mfilter=mfilter, mfields=['_id', 'co', 're', 'me', 'lv', 'u', 'ma'], sort=[('lv', sort)], limit=limit)
+			metrics = manager.store.find(mfilter=mfilter, mfields=['_id', 'co', 're', 'me', 'lv', 'u', 'ma', 'lts'], sort=[('lv', sort)], limit=limit)
 			for metric in metrics:
 				if percent and metric.get('ma', None):
 					if metric['lv'] != 0:
@@ -335,7 +335,7 @@ def perfstore_perftop():
 			# Compute values
 			tstop = int(time.time())
 			tstart = tstop - time_window
-			metrics =  manager.store.find(mfilter=mfilter, mfields=['_id', 'co', 're', 'me', 'lv', 'u'], limit=0)
+			metrics =  manager.store.find(mfilter=mfilter, mfields=['_id', 'co', 're', 'me', 'lv', 'u', 'lts'], limit=0)
 			for metric in metrics:
 				points = manager.get_points(_id=metric['_id'], tstart=tstart, tstop=tstop)
 				if len(points):
