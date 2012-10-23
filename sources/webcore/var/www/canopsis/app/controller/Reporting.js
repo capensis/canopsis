@@ -30,7 +30,7 @@ Ext.define('canopsis.controller.Reporting', {
 		this.callParent(arguments);
 	},
 
-	launchReport: function(view_id, from, to,mail) {
+	launchReport: function(view_id, from, to, mail, orientation, pagesize) {
 		log.debug('Launch Report on view ' + view_id, this.logAuthor);
 
 		//if no date given
@@ -53,6 +53,10 @@ Ext.define('canopsis.controller.Reporting', {
 		Ext.Ajax.request({
 			url: url,
 			scope: this,
+			params: {
+				'orientation': orientation,
+				'pagesize': pagesize
+			},
 			success: function(response) {
 				var data = Ext.JSON.decode(response.responseText);
 				log.dump(data);
