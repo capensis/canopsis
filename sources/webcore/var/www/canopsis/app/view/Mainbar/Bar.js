@@ -321,7 +321,8 @@ Ext.define('canopsis.view.Mainbar.Bar' , {
 				iconCls: 'icon-mainbar-sources',
 				text: '<b>commit</b>: '+global.commit.substr(0,10),
 				onClick: function(){
-					window.open("https://github.com/capensis/canopsis/commit/"+global.commit,'_blank');
+					if (global.commit)
+						window.open("https://github.com/capensis/canopsis/commit/"+global.commit,'_blank');
 				}
 			},'-', {
 				iconCls: 'icon-logout',
