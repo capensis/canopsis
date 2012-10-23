@@ -347,16 +347,21 @@
 											"emptyText":"Type the new label here",
 											"flex":1
 										},{
+											"xtype" : "colorfield",
+											"name" : "curve_color",
+											"header": "Curve color",
+											"value": "FFFFFF"
+										},{
+											"xtype" : "colorfield",
+											"name" : "area_color",
+											"header": "Area color",
+											"value": "FFFFFF"
+										},{
 											"xtype":"checkcolumn",
 											"text":"trend",
 											"dataIndex": "trend_curve",
 											"width": 55,
 											"checked":true
-										},{
-											"xtype" : "colorfield",
-											"name" : "curve_color",
-											"header": "Curve color",
-											"value": "FFFFFF"
 										}]
 					}]
 		}]

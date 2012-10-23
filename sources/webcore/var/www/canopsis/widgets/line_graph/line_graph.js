@@ -575,17 +575,28 @@ Ext.define('widgets.line_graph.line_graph' , {
 		log.debug('    + legend: ' + metric_long_name, this.logAuthor);
 		log.debug('    + color: ' + colors[0], this.logAuthor);
 
-		var serie = {id: serie_id, name: metric_long_name, data: [], color: colors[0], min: min, max: max, yAxis: yAxis};
+		var _color = colors[0]
+		if(node.extra_field && node.extra_field.curve_color)
+			_color = node.extra_field.curve_color;
+
+		var serie = {id: serie_id, name: metric_long_name, data: [], color: _color, min: min, max: max, yAxis: yAxis};
 
 		if (curve) {
 			serie['dashStyle'] = curve.get('dashStyle');
 			serie['invert'] = curve.get('invert');
 		}
 
-		if (this.SeriesType == 'area' && curve) {
-			serie['fillColor'] = colors[1];
-			serie['fillOpacity'] = colors[2] / 100;
-			serie['zIndex'] = curve.get('zIndex');
+		if (this.SeriesType == 'area') {
+			console.log('area')
+			if(node.extra_field && node.extra_field.area_color){
+				serie['fillColor'] = node.extra_field.area_color;
+			}else{
+				if(curve){
+					serie['fillColor'] = colors[1];
+					serie['fillOpacity'] = colors[2] / 100;
+					serie['zIndex'] = curve.get('zIndex');
+				}
+			}
 		}
 
 		this.series[serie_id] = serie;
