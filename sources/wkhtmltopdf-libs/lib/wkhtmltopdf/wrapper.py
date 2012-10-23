@@ -22,7 +22,7 @@ from subprocess import Popen
 
 logger = logging.getLogger('WRAPPER')
 
-def load_conf(filename, viewname, starttime, stoptime, account, wrapper_conf_file):
+def load_conf(filename, viewname, starttime, stoptime, account, wrapper_conf_file, orientation='Portrait', pagesize='A4'):
 	conf = open(wrapper_conf_file, "r").read()
 	settings = json.loads(conf)
 	settings['filename'] = filename
@@ -30,6 +30,8 @@ def load_conf(filename, viewname, starttime, stoptime, account, wrapper_conf_fil
 	settings['starttime'] = starttime
 	settings['stoptime'] = stoptime
 	settings['account'] = account
+	settings['orientation'] = orientation
+	settings['pagesize'] = pagesize
 	return settings
 
 def check_xorg(lock, xvfb_cmd):
@@ -65,8 +67,10 @@ def	get_cookie(cookiejar, account):
 	#logger.debug("wkhtmltopdf --load-error-handling ignore --cookie-jar %s \"http://127.0.0.1:8082/auth/%s/%s?cryptedKey=True\" /dev/null" % (cookiejar, account.user, authkey))
 	#output = Popen("wkhtmltopdf --load-error-handling ignore --cookie-jar %s \"http://127.0.0.1:8082/auth/%s/%s?cryptedKey=True\" /dev/null" % (cookiejar, account.user, authkey), shell=True)
 
-	logger.error("wkhtmltopdf --load-error-handling ignore --cookie-jar %s \"http://127.0.0.1:8082/keyAuth/%s/%s\" /dev/null" % (cookiejar, account.user, authkey))
-	output = Popen("wkhtmltopdf --load-error-handling ignore --cookie-jar %s \"http://127.0.0.1:8082/keyAuth/%s/%s\" /dev/null" % (cookiejar, account.user, authkey), shell=True)
+	cmd = "wkhtmltopdf --load-error-handling ignore --cookie-jar %s \"http://127.0.0.1:8082/keyAuth/%s/%s\" /dev/null" % (cookiejar, account.user, authkey)
+
+	logger.info(cmd)
+	output = Popen(cmd, shell=True)
 
 	output.wait()
 	
@@ -101,6 +105,9 @@ def run(settings):
 	header			= settings['header']
 	footer			= settings['footer']
 	account			= settings['account']
+	
+	orientation		= settings['orientation']
+	pagesize		= settings['pagesize']
 
 	check_xorg(xlock, xvfb_cmd)
 	export_env(display_int)
@@ -110,9 +117,10 @@ def run(settings):
 	runscript = "var export_view_id='%s';var export_from=%s;var export_to=%s" % (viewname, starttime, stoptime)
 	opts = ' '.join(opts)
 
-	logger.debug("wkhtmltopdf %s %s %s --window-status %s -T 21mm --header-line --header-spacing 5 --cookie-jar %s --run-script \"%s\" 'http://127.0.0.1:8082/static/canopsis/reporting.html' '%s/%s'" % (opts, header, footer, windowstatus, cookiejar, runscript, report_dir, filename))
+	cmd = "wkhtmltopdf -O %s -s %s %s %s %s --window-status %s -T 21mm --header-line --header-spacing 5 --cookie-jar %s --run-script \"%s\" 'http://127.0.0.1:8082/static/canopsis/reporting.html' '%s/%s'" % (orientation, pagesize, opts, header, footer, windowstatus, cookiejar, runscript, report_dir, filename)
 
-	result = Popen("wkhtmltopdf %s %s %s --window-status %s -T 21mm --header-line --header-spacing 5 --cookie-jar %s --run-script \"%s\" 'http://127.0.0.1:8082/static/canopsis/reporting.html' '%s/%s'" % (opts, header, footer, windowstatus, cookiejar, runscript, report_dir, filename), shell=True)
+	logger.info(cmd)
+	result = Popen(cmd, shell=True)
 
 	result.wait()
 	clean_x()

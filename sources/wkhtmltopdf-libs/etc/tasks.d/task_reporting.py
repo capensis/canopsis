@@ -39,7 +39,7 @@ logger 	= init.getLogger('Reporting Task')
 
 @task
 @decorators.log_task
-def render_pdf(filename=None, viewname=None, starttime=None, stoptime=None, account=None, wrapper_conf_file=None, mail=None, owner=None):
+def render_pdf(filename=None, viewname=None, starttime=None, stoptime=None, account=None, wrapper_conf_file=None, mail=None, owner=None, orientation='Portrait', pagesize='A4'):
 
 
 	if viewname is None:
@@ -49,7 +49,7 @@ def render_pdf(filename=None, viewname=None, starttime=None, stoptime=None, acco
 
 	#if no wrapper conf file set, take the default
 	if wrapper_conf_file is None:
-		wrapper_conf_file = "/opt/canopsis/etc/wkhtmltopdf_wrapper.json"
+		wrapper_conf_file = os.path.expanduser("~/etc/wkhtmltopdf_wrapper.json")
 	
 	#check if the account is just a name or a real caccount
 	if isinstance(account ,str) or isinstance(account ,unicode):
@@ -98,11 +98,13 @@ def render_pdf(filename=None, viewname=None, starttime=None, stoptime=None, acco
 		import wkhtmltopdf.wrapper
 		# Generate config
 		settings = wkhtmltopdf.wrapper.load_conf(	ascii_filename,
-													viewname,
-													starttime,
-													stoptime,
-													account,
-													wrapper_conf_file)
+								viewname,
+								starttime,
+								stoptime,
+								account,
+								wrapper_conf_file,
+								orientation=orientation,
+								pagesize=pagesize)
 		file_path = open(wrapper_conf_file, "r").read()
 		file_path = '%s/%s' % (json.loads(file_path)['report_dir'],ascii_filename)
 		# Run rendering

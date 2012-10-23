@@ -32,6 +32,14 @@ Ext.define('widgets.perftop.perftop' , {
 	time_window: 86400,
 	threshold: undefined,
 	percent: false,
+
+	show_source_type: true,		
+	show_last_time: false,			
+	show_metric: true,	
+	show_component: true,
+	show_resource: true,
+	show_value: true,
+	show_unit: true,
 	//..
 
 	afterContainerRender: function() {
@@ -60,6 +68,67 @@ Ext.define('widgets.perftop.perftop' , {
 				},
 
 			});
+			
+			this.columns = [];
+			
+			if (this.show_source_type)
+				this.columns.push({
+					header: '',
+					width: 25,
+					sortable: false,
+					renderer: function() {return "<span class='icon icon-mainbar-perfdata' />"}
+				});
+				
+			if (this.show_component)
+				this.columns.push({
+					header: _('Component'),
+					flex: 1,
+					sortable: false,
+					dataIndex: 'co'
+				});
+			
+			if (this.show_resource)
+				this.columns.push({
+					header: _('Resource'),
+					flex: 1,
+					sortable: false,
+					dataIndex: 're'
+				});
+
+			if (this.show_metric)
+				this.columns.push({
+					header: _('Metric'),
+					flex: 2,
+					sortable: false,
+					dataIndex: 'me',
+				});							
+
+			if (this.show_value)
+				this.columns.push({
+					header: _('Value'),
+					width: 100,
+					sortable: false,
+					dataIndex: 'lv',
+					align: 'right'
+				});
+				
+			if (this.show_unit)
+				this.columns.push({
+					header: _('Unit'),
+					width: 45,
+					sortable: false,
+					dataIndex: 'u',
+					align: 'center'
+				});
+
+			if (this.show_last_time)
+				this.columns.push({
+					header: _('Last time'),
+					width: 130,
+					dataIndex: 'lts',
+					align: 'center',
+					renderer: rdr_tstodate
+				});
 
 			this.grid = Ext.create('canopsis.lib.view.cgrid', {
 				model: 'Perfdata',
@@ -77,44 +146,7 @@ Ext.define('widgets.perftop.perftop' , {
 
 				opt_cell_edit: false,
 				
-				columns: [
-					{
-						header: '',
-						width: 25,
-						sortable: false,
-						renderer: function() {return "<span class='icon icon-mainbar-perfdata' />"}
-					},{
-							header: _('Component'),
-							flex: 1,
-							sortable: true,
-							dataIndex: 'co'
-					},{
-							header: _('Resource'),
-							flex: 1,
-							sortable: true,
-							dataIndex: 're'
-					},{
-							header: _('Metric'),
-							flex: 2,
-							sortable: true,
-							dataIndex: 'me',
-							 editor: {xtype: 'textfield'}
-					},{
-							header: _('Value'),
-							width: 100,
-							sortable: true,
-							dataIndex: 'lv',
-							align: 'right'
-					},{
-							header: _('Unit'),
-							width: 45,
-							sortable: true,
-							dataIndex: 'u',
-							align: 'center',
-							editor: {xtype: 'textfield'}
-					}
-
-				],
+				columns: this.columns,
 			});
 
 			this.wcontainer.removeAll();

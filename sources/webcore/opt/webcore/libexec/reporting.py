@@ -53,11 +53,19 @@ group_managing_access = ['group.CPS_reporting_admin']
 
 #########################################################################
 
-@get('/reporting/:startTime/:stopTime/:view_name/:mail',checkAuthPlugin={'authorized_grp':group_managing_access})
-@get('/reporting/:startTime/:stopTime/:view_name',checkAuthPlugin={'authorized_grp':group_managing_access})
+@post('/reporting/:startTime/:stopTime/:view_name/:mail',checkAuthPlugin={'authorized_grp':group_managing_access})
+@post('/reporting/:startTime/:stopTime/:view_name',checkAuthPlugin={'authorized_grp':group_managing_access})
 def generate_report(startTime, stopTime,view_name,mail=None):
 	account = get_account()
 	storage = cstorage(account=account, namespace='object')
+	
+	orientation = request.params.get('orientation', default=None)
+	pagesize = request.params.get('pagesize', default=None)
+	
+	if not orientation or orientation == '':
+		orientation = 'Portrait'
+	if not pagesize or pagesize == '':
+		pagesize = 'A4'
 	
 	if(isinstance(mail,str)):
 		try:
@@ -81,6 +89,13 @@ def generate_report(startTime, stopTime,view_name,mail=None):
 
 	fileName = None
 	
+	logger.debug('file_name:   %s' % file_name)
+	logger.debug('view_name:   %s' % view_name)
+	logger.debug('startTime:   %s' % startTime)
+	logger.debug('stopTime:    %s' % stopTime)
+	logger.debug('orientation: %s' % orientation)
+	logger.debug('pagesize:    %s' % pagesize)
+	
 	try:
 		import task_reporting
 	except Exception, err:
@@ -93,8 +108,10 @@ def generate_report(startTime, stopTime,view_name,mail=None):
 										startTime,
 										stopTime,
 										account,
-										"/opt/canopsis/etc/wkhtmltopdf_wrapper.json",
-										mail)
+										os.path.expanduser("~/etc/wkhtmltopdf_wrapper.json"),
+										mail,
+										orientation=orientation,
+										pagesize=pagesize)
 		result.wait()
 		fileName = result.result
 	except Exception, err:

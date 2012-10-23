@@ -47,7 +47,9 @@ Ext.define('canopsis.controller.Schedule', {
 					task: 'task_reporting',
 					method: 'render_pdf',
 					_scheduled: data.crecord_name,
-					owner: data.owner
+					owner: data.owner,
+					orientation: data.orientation,
+					pagesize: data.pagesize
 				};
 
 		//check if a mail must be send
@@ -270,11 +272,13 @@ Ext.define('canopsis.controller.Schedule', {
 		options = item.get('kwargs');
 		view_name = options.viewname;
 		start_time = options.starttime;
+		orientation = options.orientation;
+		pagesize = options.pagesize;
 		mail = options.mail;
 		if (mail != undefined)
 			mail = Ext.encode(mail);
 
-		this.getController('Reporting').launchReport(view_name, start_time, undefined, mail);
+		this.getController('Reporting').launchReport(view_name, start_time, undefined, mail, orientation, pagesize);
 	},
 
 	//call a window wizard to schedule Schedule with passed argument

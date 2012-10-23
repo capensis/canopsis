@@ -9,58 +9,106 @@
 	"refreshInterval": 300,
 	"locales": ["fr"],
 	"options": [{
-			"title": "Options",
-						"items": [
-							{
-								"xtype" : "textfield",
-								"name" : "tag",
-								"fieldLabel": "Tag",
-								"allowBlank": true
-							},{
-								"xtype" : "numberfield",
-								"name" : "limit",
-								"fieldLabel": "Limit",
-								"minValue": 1,
-								"value": 10
-							},{
-								"xtype" : "numberfield",
-								"name" : "threshold (>)",
-								"fieldLabel": "Threshold"
-							},{
-								"xtype": "checkbox",
-								"fieldLabel": "calculate Percent (if possible)",
-								"checked": false,
-								"name": "percent"
-							},{
-								"xtype": "cduration",
-								"name": "time_window",
-								"value": 86400,
-								"fieldLabel": "Time window (for counter)"
-							},{
-								"xtype": "combobox",
-								"name": "sort",
-								"fieldLabel": "Default direction",
-								"queryMode": "local",
-								"displayField": "text",
-								"valueField": "value",
-								"value": -1,
-								"store": {
-									"xtype": "store",
-									"fields": ["value", "text"],
-									"data" : [
-										{"value": -1, "text": "Descending"},
-										{"value": 1, "text": "Ascending"}
-									]
-								}
-							}
-						]
-				},{
+		"title": "Options",
+		"items": [
+			{
+				"xtype": "fieldset",
+				"title": "General",
+				"collapsible": false,
+				"items": [
+					{
+						"xtype" : "textfield",
+						"name" : "tag",
+						"fieldLabel": "Tag",
+						"allowBlank": true
+					},{
+						"xtype" : "numberfield",
+						"name" : "limit",
+						"fieldLabel": "Limit",
+						"minValue": 1,
+						"value": 10
+					},{
+						"xtype" : "numberfield",
+						"name" : "threshold (>)",
+						"fieldLabel": "Threshold"
+					},{
+						"xtype": "checkbox",
+						"fieldLabel": "calculate Percent (if possible)",
+						"checked": false,
+						"name": "percent"
+					},{
+						"xtype": "cduration",
+						"name": "time_window",
+						"value": 86400,
+						"fieldLabel": "Time window (for counter)"
+					},{
+						"xtype": "combobox",
+						"name": "sort",
+						"fieldLabel": "Default direction",
+						"queryMode": "local",
+						"displayField": "text",
+						"valueField": "value",
+						"value": -1,
+						"store": {
+							"xtype": "store",
+							"fields": ["value", "text"],
+							"data" : [
+								{"value": -1, "text": "Descending"},
+								{"value": 1, "text": "Ascending"}
+							]
+						}
+					}
+				]
+			},{
+				"xtype": "fieldset",
+				"title": "Columns",
+				"collapsible": false,
+				"items": [
+					{
+						"xtype": "checkbox",
+						"boxLabel": "Source type icon",
+						"checked": true,
+						"name": "show_source_type"
+					},{
+						"xtype": "checkbox",
+						"boxLabel": "Component",
+						"checked": true,
+						"name": "show_component"
+					},{
+						"xtype": "checkbox",
+						"boxLabel": "Resource",
+						"checked": true,
+						"name": "show_resource"
+					},{
+						"xtype": "checkbox",
+						"boxLabel": "Metric",
+						"checked": true,
+						"name": "show_metric"
+					},{
+						"xtype": "checkbox",
+						"boxLabel": "Value",
+						"checked": true,
+						"name": "show_value"
+					},{
+						"xtype": "checkbox",
+						"boxLabel": "Unit",
+						"checked": true,
+						"name": "show_unit"
+					},{
+						"xtype": "checkbox",
+						"boxLabel": "Last time",
+						"checked": false,
+						"name": "show_last_time"
+					}]
+				}
+			]
+		},{
 			"title": "Choose Metrics",
 			"items": [{
-						"xtype": "cmetric",
-						"name": "nodes",
-						"multiSelect": false,
-						"metrics": true
-					}]
+				"xtype": "cmetric",
+				"name": "nodes",
+				"multiSelect": false,
+				"metrics": true
 		}]
+	}]
 }]
