@@ -107,14 +107,32 @@
 						"name": "show_last_time"
 					}]
 				}
-			]
-		},{
-			"title": "Choose Metrics",
-			"items": [{
-				"xtype": "cmetric",
-				"name": "nodes",
-				"multiSelect": false,
-				"metrics": true
-		}]
+		]
+	},{
+		"title": "Filter",
+		"items": {
+			"xtype": "cfilter",
+			"name": "mfilter",
+			"url": "/perfstore",
+			"model": "canopsis.model.Perfdata",
+			"columns": [
+				{
+					"header": "Component",
+					"sortable": false,
+					"dataIndex": "co",
+					"flex": 2
+		   		},{
+		   			"header": "Resource",
+					"sortable": false,
+					"dataIndex": "re",
+					"flex": 2
+		 		},{
+		   			"header": "Metric",
+					"sortable": false,
+					"dataIndex": "me",
+					"flex": 1
+		 		}
+		 	]
+		}
 	}]
 }]

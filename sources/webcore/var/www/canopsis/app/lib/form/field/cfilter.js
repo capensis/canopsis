@@ -27,9 +27,25 @@ Ext.define('canopsis.lib.form.field.cfilter' , {
 
 	border: false,
 
+	url: undefined,
 	namespace: 'events',
 	ctype: 'event',
+	model: 'canopsis.model.Event',
 	autoScroll: true,
+
+	columns: [
+		{
+			header: '',
+			width: 25,
+			sortable: false,
+			dataIndex: 'source_type',
+			renderer: rdr_source_type
+   		},{
+			sortable: false,
+			dataIndex: 'id',
+			flex: 2,
+			renderer: this.preview_render
+ 	}],
 
 	filter: undefined,
 
@@ -47,12 +63,20 @@ Ext.define('canopsis.lib.form.field.cfilter' , {
 		this.define_object();
 		this.build_store();
 
+		var url = this.url;
+
+		if (! url){
+			url = '/rest/' + this.namespace;
+			if (this.ctype)
+				url += '/' + this.ctype;
+		}
+
 		//-----------------preview windows----------------
 		this.preview_store = Ext.create('canopsis.lib.store.cstore', {
-			model: 'canopsis.model.Event',
+			model: this.model,
 			proxy: {
 				type: 'rest',
-				url: '/rest/' + this.namespace + '/' + this.ctype,
+				url: url,
 				reader: {
 					type: 'json',
 					root: 'data',
@@ -78,19 +102,7 @@ Ext.define('canopsis.lib.form.field.cfilter' , {
 			border: false,
 			hidden: true,
 			hideHeaders: true,
-			columns: [
-				{
-					header: '',
-					width: 25,
-					sortable: false,
-					dataIndex: 'source_type',
-					renderer: rdr_source_type
-	       		},{
-					sortable: false,
-					dataIndex: 'id',
-					flex: 2,
-					renderer: this.preview_render
-	       		}]
+			columns: this.columns
 		});
 
 		//-------------cfilter (wizard part)---------------

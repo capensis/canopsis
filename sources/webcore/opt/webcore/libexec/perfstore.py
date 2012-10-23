@@ -276,13 +276,18 @@ def perfstore_perftop():
 	
 	limit		= int(request.params.get('limit', default=10))
 	sort		= int(request.params.get('sort', default=1))
-	tag			= request.params.get('tag', default=None)
-	metric		= request.params.get('metric', default=None)
-	resource	= request.params.get('resource', default=None)
+	mfilter		= request.params.get('mfilter', default={})
 	time_window	= int(request.params.get('time_window', default=86400))
 	percent	    = request.params.get('percent', default=False)
 	threshold	= request.params.get('threshold', default=None)
 	
+	if mfilter:
+		try:
+			mfilter = json.loads(mfilter)
+		except Exception, err:
+			logger.error("Impossible to decode mfilter: %s: %s" % (mfilter, err))
+			mfilter = None
+
 	if threshold:
 		threshold = float(threshold)
 	
@@ -292,24 +297,12 @@ def perfstore_perftop():
 		percent = False
 
 	logger.debug("PerfTop:")
-	logger.debug(" + resource:    %s" % resource)
-	logger.debug(" + metric:      %s" % metric)
-	logger.debug(" + tag:         %s" %tag)
+	logger.debug(" + mfilter:     %s" % mfilter)
 	logger.debug(" + limit:       %s" % limit)
 	logger.debug(" + percent:     %s" % percent)
 	logger.debug(" + threshold:   %s" % threshold)
 	logger.debug(" + time_window: %s" % time_window)
 	logger.debug(" + sort:        %s" % sort)
-	
-	mfilter={'me': metric}
-	
-	if tag and tag != '':
-		mfilter['tg'] = tag
-		
-	if resource and resource != '':
-		mfilter['re'] = resource
-	
-	logger.debug(" + mfilter:   %s" % mfilter)
 	
 	mtype = manager.store.find(mfilter=mfilter, limit=1, mfields=['t'])
 	

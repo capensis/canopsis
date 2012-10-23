@@ -25,10 +25,8 @@ Ext.define('widgets.perftop.perftop' , {
 
 	//Default options
 	limit: 10,
-	metric: undefined,
-	resource: undefined,
+	mfilter: undefined,
 	sort: -1,
-	tag: undefined,
 	time_window: 86400,
 	threshold: undefined,
 	percent: false,
@@ -45,10 +43,7 @@ Ext.define('widgets.perftop.perftop' , {
 
 	afterContainerRender: function() {
 		
-		if (this.nodes && this.nodes.length > 0){
-			node = this.nodes[0]
-			this.metric = node.metrics[0]
-			this.resource = node.resource
+		if (this.mfilter && this.mfilter != ''){
 
 			this.store = Ext.create('canopsis.store.Perfdatas', {
 
@@ -59,7 +54,7 @@ Ext.define('widgets.perftop.perftop' , {
 				proxy: {
 					type: 'rest',
 					url: '/perfstore/perftop',
-					extraParams: {'limit': this.limit, 'sort': this.sort, 'tag': this.tag, 'metric': this.metric, 'resource': this.resource, 'time_window': this.time_window, 'threshold': this.threshold, 'percent': this.percent},
+					extraParams: {'limit': this.limit, 'sort': this.sort, 'mfilter': this.mfilter, 'time_window': this.time_window, 'threshold': this.threshold, 'percent': this.percent},
 					reader: {
 						type: 'json',
 						root: 'data',
