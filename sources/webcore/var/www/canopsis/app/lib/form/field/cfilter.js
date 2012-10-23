@@ -43,9 +43,12 @@ Ext.define('canopsis.lib.form.field.cfilter' , {
 			renderer: rdr_source_type
    		},{
 			sortable: false,
-			dataIndex: 'id',
-			flex: 2,
-			renderer: this.preview_render
+			dataIndex: 'component',
+			flex: 2
+ 		},{
+			sortable: false,
+			dataIndex: 'resource',
+			flex: 2
  	}],
 
 	filter: undefined,
@@ -88,16 +91,6 @@ Ext.define('canopsis.lib.form.field.cfilter' , {
 			 },
 			autoLoad: false
 		});
-
-		this.preview_render = function(value, p, record) {
-			var node = '';
-			if (record.data.resource) {
-				node = Ext.String.format('<b>{0}</b><br>&nbsp;&nbsp;{1}', record.data.component, record.data.resource);
-			}else {
-				node = Ext.String.format('<b>{0}</b>', record.data.component);
-			}
-			return node;
-		}
 
 		this.preview_grid = Ext.widget('grid', {
 			store: this.preview_store,
