@@ -7,6 +7,7 @@
 	"description": "Display list of metrics sorted by value",
 	"description-fr":"Affiche une liste de metriques triée par valeur.",
 	"refreshInterval": 300,
+	"border": true,
 	"locales": ["fr"],
 	"options": [{
 		"title": "Options",
@@ -57,6 +58,11 @@
 								{"value": 1, "text": "Ascending"}
 							]
 						}
+					},{
+						"xtype": "checkbox",
+						"fieldLabel": "Hide headers",
+						"checked": false,
+						"name": "hideHeaders"
 					}
 				]
 			},{

@@ -27,6 +27,7 @@ var global = {
 	accountCtrl: undefined,
 	curvesCtrl: undefined,
 	websocketCtrl: undefined,
+	commit: '',
 
 	state_colors: {
 		up: '#50b432',

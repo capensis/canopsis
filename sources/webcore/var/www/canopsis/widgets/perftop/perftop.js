@@ -40,6 +40,7 @@ Ext.define('widgets.perftop.perftop' , {
 	show_resource: true,
 	show_value: true,
 	show_unit: true,
+	hideHeaders: false,
 	//..
 
 	afterContainerRender: function() {
@@ -143,6 +144,8 @@ Ext.define('widgets.perftop.perftop' , {
 
 				opt_tags_search: false,
 				opt_simple_search: false,
+				
+				hideHeaders: this.hideHeaders,
 
 				opt_cell_edit: false,
 				
