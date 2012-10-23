@@ -347,15 +347,15 @@
 											"emptyText":"Type the new label here",
 											"flex":1
 										},{
-											"xtype" : "colorfield",
+											"xtype" : "ccolorfield",
 											"name" : "curve_color",
 											"header": "Curve color",
-											"value": "FFFFFF"
+											"replaceWhiteColor":true
 										},{
-											"xtype" : "colorfield",
+											"xtype" : "ccolorfield",
 											"name" : "area_color",
 											"header": "Area color",
-											"value": "FFFFFF"
+											"replaceWhiteColor":true
 										},{
 											"xtype":"checkcolumn",
 											"text":"trend",

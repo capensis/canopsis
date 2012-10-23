@@ -316,13 +316,17 @@ Ext.define('widgets.pie.pie' , {
 
 				var colors = global.curvesCtrl.getRenderColors(metric_name, index);
 				var curve = global.curvesCtrl.getRenderInfo(metric_name);
+				var node = this.nodesByID[node];
 
 				// Set Label
 				var label = undefined;
-				if (curve)
+				if(node && node.extra_field && node.extra_field.label)
+					label = node.extra_field.label
+				if (!label && curve)
 					label = curve.get('label');
 				if (! label)
 					label = metric_name;
+
 
 				var metric_long_name = '<b>' + label + '</b>';
 
@@ -331,10 +335,14 @@ Ext.define('widgets.pie.pie' , {
 					other_unit += ' (' + unit + ')';
 				}
 
+				var _color = colors[0]
+				if(node.extra_field && node.extra_field.curve_color)
+					_color = node.extra_field.curve_color;
+
 				if(this.gradientColor)
-					var color = this.getGradientColor(colors[0])
+					var color = this.getGradientColor(_color)
 				else
-					var color = colors[0]
+					var color = _color
 
 				serie.data.push({ id: metric, name: metric_long_name, y: value, color: color });
 

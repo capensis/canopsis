@@ -182,7 +182,19 @@
 						"xtype": "cmetric",
 						"name": "nodes",
 						"multiSelect": true,
-						"metrics": true
+						"metrics": true,
+						"additional_field": [{
+											"xtype":"textfield",
+											"header":"Custom label",
+											"name":"label",
+											"emptyText":"Type the new label here",
+											"flex":1
+										},{
+											"xtype" : "ccolorfield",
+											"name" : "curve_color",
+											"header": "Curve color",
+											"replaceWhiteColor":true
+										}]
 					}]
 		}]
 }]
