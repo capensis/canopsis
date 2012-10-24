@@ -39,6 +39,7 @@ Ext.define('widgets.perftop.perftop' , {
 	show_value: true,
 	show_unit: true,
 	hideHeaders: false,
+	show_position: true,
 	//..
 
 	afterContainerRender: function() {
@@ -67,6 +68,17 @@ Ext.define('widgets.perftop.perftop' , {
 			
 			this.columns = [];
 			
+			if (this.show_position)
+				this.columns.push({
+					header: '',
+					width: 25,
+					align: 'center',
+					sortable: false,
+					renderer: function(value, metaData, record, rowIndex) {
+						return "<b>" + (rowIndex + 1) + "</b>";
+					}
+				});
+
 			if (this.show_source_type)
 				this.columns.push({
 					header: '',

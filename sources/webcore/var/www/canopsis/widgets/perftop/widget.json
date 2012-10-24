@@ -72,7 +72,12 @@
 				"items": [
 					{
 						"xtype": "checkbox",
-						"boxLabel": "Source type icon",
+						"boxLabel": "Position",
+						"checked": true,
+						"name": "show_position"
+					},{
+						"xtype": "checkbox",
+						"boxLabel": "Icon",
 						"checked": true,
 						"name": "show_source_type"
 					},{
