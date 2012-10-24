@@ -282,50 +282,52 @@ Ext.define('canopsis.lib.form.field.ctopo' , {
 		var me = this ;
 		var extForm = nodeEl.extForm;
 		
-		if (extForm && ! extForm.isDestroyed){
-			log.debug('Show form', me.logAuthor)
-			extForm.show();
-			
-		}else{
-			log.debug('Create form', me.logAuthor)
-			var form = Ext.create("Ext.form.Panel", nodeEl.form);
-			
-			// Load form
-			if (nodeEl.options)
-				form.getForm().setValues(nodeEl.options);
-			
-			var bbar = [{
-					xtype: 'button',
-					text: _('Cancel'),
-					handler: function() {
-						log.debug(' + Cancel form', this.logAuthor) 
-						nodeEl.extForm.close();
-					},
-					iconCls: 'icon-cancel'
-				},'->',{
-					xtype: 'button',
-					text: _('Save'),	
-					handler: function() { 
-						log.debug(' + Save form', this.logAuthor) 
-						var form = nodeEl.extForm.getComponent(0).getForm();
-						var values = form.getValues();
-						nodeEl.data.options = values;
-						nodeEl.options = values;
-						nodeEl.extForm.close();
-					},
-					iconCls: 'icon-save',
-					iconAlign: 'right' ,
-				}
-			];
-			
-			delete nodeEl.extForm
-			nodeEl.extForm = Ext.create('Ext.window.Window', {
-				title: _("Change operator option"),
-				items: form,
-				bbar: bbar,
-				resizable: false,
-				closeAction: 'destroy'
-			}).show().center();
+		if (nodeEl.form){
+			if (extForm && ! extForm.isDestroyed){
+				log.debug('Show form', me.logAuthor)
+				extForm.show();
+				
+			}else{
+				log.debug('Create form', me.logAuthor)
+				var form = Ext.create("Ext.form.Panel", nodeEl.form);
+				
+				// Load form
+				if (nodeEl.options)
+					form.getForm().setValues(nodeEl.options);
+				
+				var bbar = [{
+						xtype: 'button',
+						text: _('Cancel'),
+						handler: function() {
+							log.debug(' + Cancel form', this.logAuthor) 
+							nodeEl.extForm.close();
+						},
+						iconCls: 'icon-cancel'
+					},'->',{
+						xtype: 'button',
+						text: _('Save'),	
+						handler: function() { 
+							log.debug(' + Save form', this.logAuthor) 
+							var form = nodeEl.extForm.getComponent(0).getForm();
+							var values = form.getValues();
+							nodeEl.data.options = values;
+							nodeEl.options = values;
+							nodeEl.extForm.close();
+						},
+						iconCls: 'icon-save',
+						iconAlign: 'right' ,
+					}
+				];
+				
+				delete nodeEl.extForm
+				nodeEl.extForm = Ext.create('Ext.window.Window', {
+					title: _("Change operator option"),
+					items: form,
+					bbar: bbar,
+					resizable: false,
+					closeAction: 'destroy'
+				}).show().center();
+			}
 		}
 	},	
 	createNode: function(data){
