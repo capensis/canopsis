@@ -547,7 +547,7 @@ Ext.define('widgets.line_graph.line_graph' , {
 		var node = this.nodesByID[node_id];
 
 		if (! this.same_node) {
-			if (node) {
+			if (node && (node.extra_field && !node.extra_field.label)) {
 				metric_long_name = node.component;
 				if (node.source_type == 'resource')
 					metric_long_name += ' - ' + node.resource;
@@ -561,7 +561,7 @@ Ext.define('widgets.line_graph.line_graph' , {
 
 		// Set Label
 		var label = undefined;
-		if(node && node.extra_field && node.extra_field.label)
+		if(node.extra_field && node.extra_field.label)
 			label = node.extra_field.label
 		if (!label && curve)
 			label = curve.get('label');
