@@ -885,7 +885,7 @@ Ext.define('widgets.line_graph.line_graph' , {
 				id: trend_id,
 				type: 'line',
 				name: label,
-				metric: referent_serie.options.metric+'-TREND',
+				metric: referent_serie.options.metric+' (TREND)',
 				bunit: referent_serie.options.bunit,
 				data: [],
 				marker: {enabled: false},
