@@ -364,7 +364,7 @@ Ext.define('widgets.line_graph.line_graph' , {
 				else if (point.series.options.bunit == 'ms')
 					value = rdr_time_interval(y/1000)
 
-				s += '<br/>' + point.series.options.metric + ': ' + value;
+				s += '<br/><b>' + point.series.options.metric + ':</b> ' + value;
 			});
 			return s;
 
@@ -383,7 +383,7 @@ Ext.define('widgets.line_graph.line_graph' , {
 			else if (this.series.options.bunit == 'ms')
 				value = rdr_time_interval(y/1000)
 
-			return '<b>' + rdr_tstodate(this.x / 1000) + '<br/>' + this.series.options.metric + ':</b> ' + value ;
+			return '<b>' + rdr_tstodate(this.x / 1000) + '<br/><b>' + this.series.options.metric + ':</b> ' + value ;
 		}
 	},
 
@@ -885,6 +885,8 @@ Ext.define('widgets.line_graph.line_graph' , {
 				id: trend_id,
 				type: 'line',
 				name: label,
+				metric: referent_serie.options.metric+'-TREND',
+				bunit: referent_serie.options.bunit,
 				data: [],
 				marker: {enabled: false},
 				dashStyle: trend_dashStyle
