@@ -42,6 +42,8 @@ Ext.define('widgets.categorized_graph.categorized_graph' , {
 	aggregate_interval: 0,
 	aggregate_max_points: 1,
 
+	verticalDisplay: false,
+
 	getSerie: function(){
 		return  {
 					id: 'serie',
@@ -66,6 +68,9 @@ Ext.define('widgets.categorized_graph.categorized_graph' , {
 		if(this.graph_type == 'column'){
 			this.options.legend = {enabled:false}
 			this.options.yAxis = [{title: { text: null }}]
+			
+			if(this.verticalDisplay)
+				this.options.chart.inverted = true
 
 			if(this.labels){
 				this.options.plotOptions.column.dataLabels = {

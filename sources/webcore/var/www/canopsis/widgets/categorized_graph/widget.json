@@ -81,6 +81,11 @@
 						"items": [
 							{
 								"xtype": "checkbox",
+								"fieldLabel": "Vertical display (rotate graph)",
+								"checked": false,
+								"name": "verticalDisplay"
+							},{
+								"xtype": "checkbox",
 								"fieldLabel": "Enable SVG Exporting",
 								"checked": false,
 								"name": "exporting_enabled"
@@ -111,7 +116,19 @@
 						"xtype": "cmetric",
 						"name": "nodes",
 						"multiSelect": true,
-						"metrics": true
+						"metrics": true,
+						"additional_field": [{
+											"xtype":"textfield",
+											"header":"Custom label",
+											"name":"label",
+											"emptyText":"Type the new label here",
+											"flex":1
+										},{
+											"xtype" : "ccolorfield",
+											"name" : "curve_color",
+											"header": "Curve color",
+											"replaceWhiteColor":true
+										}]
 					}]
 		}]
 }]
