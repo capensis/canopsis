@@ -312,3 +312,10 @@ function isRecordExist(namespace, crecord_type, field, record, callback, scope) 
 			}
 		});	
 }
+
+function parseBool(arg) {
+	if (arg == 0 || arg == null || arg == undefined || arg == false)
+		return false;
+	else
+		return true;
+}
