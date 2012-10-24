@@ -214,8 +214,8 @@ var rdr_time_interval = function(val) {
 	if (tmp >= 1)
 		return tmp + ' ' + _('Minute') + '(s)';
 
-	if (val > 1)
-		return tmp + ' ' + _('Second') + '(s)';
+	if (val >= 1)
+		return val + ' ' + _('Second') + '(s)';
 
 	tmp = Math.round((val * 1000)*100)/100;
 	if (tmp >= 1)
