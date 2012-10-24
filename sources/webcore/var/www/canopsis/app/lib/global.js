@@ -108,6 +108,18 @@ var global = {
 		12: _('December')
 	},
 
+	timeUnit: {
+		'y':  _('Year'),
+		'm':  _('Month'),
+		'w':  _('Week'),
+		'd':  _('Day'),
+		'h':  _('Hour'),
+		'm':  _('Minute'),
+		's':  _('Second'),
+		'ms': _('Millisecond'),
+		'us': _('Microsecond')
+	},
+
 	untranslated: [],
 
 	nowjs: {

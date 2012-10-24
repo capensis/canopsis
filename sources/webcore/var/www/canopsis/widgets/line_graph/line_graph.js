@@ -258,25 +258,7 @@ Ext.define('widgets.line_graph.line_graph' , {
 				shared: this.tooltip_shared,
 				crosshairs: this.tooltip_crosshairs,
 				enabled: this.tooltip,
-				formatter: function() {
-					if (this['points']) {
-
-						// Shared
-						var s = '<b>' + rdr_tstodate(this.x / 1000) + '</b>';
-						$.each(this.points, function(i, point) {
-							var y = point.y;
-							if (point.series.options.invert)
-								y = -y;
-							s += '<br/>' + point.series.name + ': ' + y;
-						});
-						return s;
-					}else {
-						var y = this.y;
-						if (this.series.options.invert)
-							y = - y;
-						return '<b>' + rdr_tstodate(this.x / 1000) + '<br/>' + this.series.name + ':</b> ' + y;
-					}
-				}
+				formatter: this.tooltip_formatter
 			},
 			xAxis: {
 				id: 'timestamp',
@@ -360,6 +342,48 @@ Ext.define('widgets.line_graph.line_graph' , {
 			if (this.zoom) {
 				this.options.chart.zoomType = 'x';
 			}
+		}
+	},
+
+	tooltip_formatter: function(){
+		if (this['points']) {
+			// Shared
+			var s = '<b>' + rdr_tstodate(this.x / 1000) + '</b>';
+			$.each(this.points, function(i, point) {
+				var y = point.y;
+				if (point.series.options.invert)
+					y = -y;
+
+				var value = y + ' ' + point.series.options.bunit
+
+				if (point.series.options.bunit)
+					value += ' ' + point.series.options.bunit
+
+				if (point.series.options.bunit == 's')
+					value = rdr_time_interval(y)
+				else if (point.series.options.bunit == 'ms')
+					value = rdr_time_interval(y/1000)
+
+				s += '<br/>' + point.series.options.metric + ': ' + value;
+			});
+			return s;
+
+		} else {
+			var y = this.y;
+			if (this.series.options.invert)
+				y = - y;
+
+			var value = y
+
+			if (this.series.options.bunit)
+				value += ' ' + this.series.options.bunit
+
+			if (this.series.options.bunit == 's')
+				value = rdr_time_interval(y)
+			else if (this.series.options.bunit == 'ms')
+				value = rdr_time_interval(y/1000)
+
+			return '<b>' + rdr_tstodate(this.x / 1000) + '<br/>' + this.series.options.metric + ':</b> ' + value ;
 		}
 	},
 
@@ -533,6 +557,9 @@ Ext.define('widgets.line_graph.line_graph' , {
 
 		log.debug('  + Create Serie:', this.logAuthor);
 
+		if (bunit == null)
+			bunit = undefined
+
 		if (this.SeriePercent && max > 0)
 			bunit = '%';
 
@@ -580,7 +607,7 @@ Ext.define('widgets.line_graph.line_graph' , {
 		if(node.extra_field && node.extra_field.curve_color)
 			_color = node.extra_field.curve_color;
 
-		var serie = {id: serie_id, name: metric_long_name, data: [], color: _color, min: min, max: max, yAxis: yAxis};
+		var serie = {id: serie_id, name: metric_long_name, metric: label, data: [], color: _color, min: min, max: max, yAxis: yAxis, bunit: bunit};
 
 		if (curve) {
 			serie['dashStyle'] = curve.get('dashStyle');

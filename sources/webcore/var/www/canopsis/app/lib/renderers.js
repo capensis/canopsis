@@ -190,23 +190,42 @@ var rdr_time_interval = function(val) {
 
 	var tmp;
 
-	tmp = val / global.commonTs.year;
+	tmp = Math.round((val / global.commonTs.year)*100)/100;
 	if (tmp >= 1)
 		return tmp + ' ' + _('Year') + '(s)';
 
-	tmp = val / global.commonTs.month;
+	tmp = Math.round((val / global.commonTs.month)*100)/100;
 	if (tmp >= 1)
 		return tmp + ' ' + _('Month') + '(s)';
 
-	tmp = val / global.commonTs.week;
+	tmp = Math.round((val / global.commonTs.week)*100)/100;
 	if (tmp >= 1)
 		return tmp + ' ' + _('Week') + '(s)';
 
-	tmp = val / global.commonTs.day;
+	tmp = Math.round((val / global.commonTs.day)*100)/100;
 	if (tmp >= 1)
 		return tmp + ' ' + _('Day') + '(s)';
 
-	return val + ' ' + _('Second') + '(s)';
+	tmp = Math.round((val / global.commonTs.hours)*100)/100;
+	if (tmp >= 1)
+		return tmp + ' ' + _('Hour') + '(s)';
+
+	tmp = Math.round((val / global.commonTs.minute)*100)/100;
+	if (tmp >= 1)
+		return tmp + ' ' + _('Minute') + '(s)';
+
+	if (val > 1)
+		return tmp + ' ' + _('Second') + '(s)';
+
+	tmp = Math.round((val * 1000)*100)/100;
+	if (tmp >= 1)
+		return tmp + ' ' + _('Millisecond') + '(s)';
+
+	tmp = Math.round((val * 1000000)*100)/100;
+	if (tmp >= 1)
+		return tmp + ' ' + _('Microsecond') + '(s)';
+
+	return val;
 };
 
 rdr_elapsed_time = function(timestamp, full_length) {
