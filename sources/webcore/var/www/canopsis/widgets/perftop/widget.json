@@ -116,6 +116,12 @@
 			"url": "/perfstore",
 			"model": "canopsis.model.Perfdata",
 			"params": {"show_internals": true},
+			"operator_fields": [
+				{"operator": "co",	"text": "Component",	"type": "all" },
+				{"operator": "re",	"text": "Resource",		"type": "all" },
+				{"operator": "me",	"text": "Metric",		"type": "all" },
+				{"operator": "tg",	"text": "Tags",			"type": "array" }
+			],
 			"columns": [
 				{
 					"header": "Component",

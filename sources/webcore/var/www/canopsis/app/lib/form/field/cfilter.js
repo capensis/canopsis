@@ -53,6 +53,16 @@ Ext.define('canopsis.lib.form.field.cfilter' , {
 
 	filter: undefined,
 
+	operator_fields: [
+		{'operator': 'connector_name',	'text': _('Connector name'),	'type': 'all' },
+		{'operator': 'event_type',		'text': _('Event type'),		'type': 'all'},
+		{'operator': 'state',			'text': _('State'),				'type': 'all'},
+		{'operator': 'state_type',		'text': _('State type'),		'type': 'all'},
+		{'operator': 'resource',		'text': _('Resource'),			'type': 'all'},
+		{'operator': 'component',		'text': _('Component'),			'type': 'all'},
+		{'operator': 'tags', 			'text': _('Tags'),				'type': 'array'}
+	],
+
 	layout: {
         type: 'vbox',
         align: 'stretch'
@@ -665,21 +675,18 @@ Ext.define('canopsis.lib.form.field.cfilter' , {
 	build_store: function() {
 		log.debug('Build stores', this.logAuthor);
 
+		var operator_fields = [
+			{'operator': '$nor', 'text': _('Nor'), 'type': 'object'},
+			{'operator': '$or', 'text': _('Or'), 'type': 'object'},
+			{'operator': '$and', 'text': _('And'), 'type': 'object'}
+		];
+
+		operator_fields = Ext.Array.union(operator_fields, this.operator_fields);
+
 		//---------------------operator store----------------
 		this.operator_store = Ext.create('Ext.data.Store', {
 			fields: ['operator', 'text', 'type'],
-			data: [
-				{'operator': '$nor', 'text': _('Nor'), 'type': 'object'},
-				{'operator': '$or', 'text': _('Or'), 'type': 'object'},
-				{'operator': '$and', 'text': _('And'), 'type': 'object'},
-				{'operator': 'tags', 'text': _('Tags'), 'type': 'array'},
-				{'operator': 'connector_name', 'text': _('Connector name'), 'type': 'all' },
-				{'operator': 'event_type', 'text': _('Event type'), 'type': 'all'},
-				{'operator': 'state', 'text': _('State'), 'type': 'all'},
-				{'operator': 'state_type', 'text': _('State type'), 'type': 'all'},
-				{'operator': 'resource', 'text': _('Resource'), 'type': 'all'},
-				{'operator': 'component', 'text': _('Component'), 'type': 'all'}
-			]
+			data: operator_fields
 		});
 
 		this.sub_operator_store = Ext.create('Ext.data.Store', {
