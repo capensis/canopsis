@@ -110,6 +110,7 @@
 		]
 	},{
 		"title": "Filter",
+		"layout":"fit",
 		"items": {
 			"xtype": "cfilter",
 			"name": "mfilter",
