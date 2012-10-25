@@ -472,7 +472,7 @@ Ext.define('canopsis.lib.form.field.cfilter' , {
 			operator_combo_change: function(combo,value,oldvalue) {
 				log.debug(' + Catch changes on operator combobox, value : ' + value, this.logAuthor);
 				var operator_type = this.get_type_from_operator(value, this.operator_store);
-				//log.debug(' + The type of the operator is: ' + operator_type,this.logAuthor)
+				log.debug(' + The type of the operator is: ' + operator_type,this.logAuthor)
 				if (operator_type == 'object') {
 					//log.debug('   + Field is a known operator',this.logAuthor)
 					this.contain_other_cfilter = true;
@@ -486,7 +486,7 @@ Ext.define('canopsis.lib.form.field.cfilter' , {
 					this.contain_other_cfilter = false;
 					this.add_button.hide();
 					this.sub_operator_combo.show();
-					if (value == 'tags')
+					if (operator_type == 'array')
 						this.sub_operator_combo.setValue('$in');
 					else
 						this.sub_operator_combo_change();
