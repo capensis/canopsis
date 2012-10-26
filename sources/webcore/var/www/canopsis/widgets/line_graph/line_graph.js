@@ -360,9 +360,9 @@ Ext.define('widgets.line_graph.line_graph' , {
 					value += ' ' + point.series.options.bunit
 
 				if (point.series.options.bunit == 's')
-					value = rdr_time_interval(y)
+					value = rdr_duration(y)
 				else if (point.series.options.bunit == 'ms')
-					value = rdr_time_interval(y/1000)
+					value = rdr_duration(y/1000)
 
 				s += '<br/><b>' + point.series.options.metric + ':</b> ' + value;
 			});
@@ -379,9 +379,9 @@ Ext.define('widgets.line_graph.line_graph' , {
 				value += ' ' + this.series.options.bunit
 
 			if (this.series.options.bunit == 's')
-				value = rdr_time_interval(y)
+				value = rdr_duration(y)
 			else if (this.series.options.bunit == 'ms')
-				value = rdr_time_interval(y/1000)
+				value = rdr_duration(y/1000)
 
 			return '<b>' + rdr_tstodate(this.x / 1000) + '<br/><b>' + this.series.options.metric + ':</b> ' + value ;
 		}

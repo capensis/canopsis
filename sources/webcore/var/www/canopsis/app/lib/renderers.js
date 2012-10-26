@@ -300,3 +300,34 @@ rdr_os = function(val ) {
 rdr_browser = function(val ) {
 	return '<span class=\"icon icon-browser-'+ val.toLowerCase() + '\" />';
 };
+
+rdr_duration = function(timestamp){
+	var times = [
+		[ global.commonTs.year,		'y' ],
+		[ global.commonTs.month,	'M' ],
+		[ global.commonTs.week,		'w' ],
+		[ global.commonTs.day,		'd' ],
+		[ global.commonTs.hours,	'h' ],
+		[ global.commonTs.minute,	'm' ],
+		[ 1,						's' ],
+		[ 0.001,					'ms' ],
+		[ 0.000001,					'us' ],
+	]
+
+	var output = '';
+	for (var i in times) {
+		if (timestamp >= times[i][0]){
+			var value = parseInt(timestamp / times[i][0])
+			timestamp -= value * times[i][0]
+			if (output != '')
+				output += ' '
+			
+			output += value + times[i][1]
+		}
+
+		if (timestamp == 0)
+			break
+	}
+
+	return output
+};
