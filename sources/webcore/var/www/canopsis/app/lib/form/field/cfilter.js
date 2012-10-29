@@ -60,7 +60,7 @@ Ext.define('canopsis.lib.form.field.cfilter' , {
 		{'operator': 'state_type',		'text': _('State type'),		'type': 'all'},
 		{'operator': 'resource',		'text': _('Resource'),			'type': 'all'},
 		{'operator': 'component',		'text': _('Component'),			'type': 'all'},
-		{'operator': 'tags', 			'text': _('Tags'),				'type': 'array'}
+		{'operator': 'tags', 			'text': _('Tags'),				'type': 'all'}
 	],
 
 	layout: {
