@@ -28,6 +28,7 @@ Ext.define('canopsis.view.Tabs.View_form' , {
 	items : [{
 				"xtype": "fieldset",
 				"title": _("Page option"),
+				"defaults": {anchor: '100%'},
 				"collapsible": false,
 				"items": [{
 							"xtype": "combobox",

@@ -52,6 +52,8 @@ Ext.define('canopsis.view.Tabs.Content' , {
 
 	record: undefined,
 
+	view_option_window : undefined,
+
 	//Locales
 	locales: {
 		save: _('Save'),
