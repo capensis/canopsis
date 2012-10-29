@@ -32,8 +32,6 @@ Ext.define('canopsis.model.Schedule', {
 		{name: 'next_run_time'},
 		{name: 'cron', defaultValue: undefined},
 		{name: 'log'},
-		{name: 'orientation'},
-		{name: 'pagesize'},
 		{
 			name: 'log_success',
 			convert: function(value, record) {return record.get('log').success}

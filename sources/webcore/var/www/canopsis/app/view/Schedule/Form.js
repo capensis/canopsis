@@ -99,44 +99,8 @@ Ext.define('canopsis.view.Schedule.Form', {
 			value: global.account.user,
 			queryMode: 'remote'
 		});
-		
-		var orientationCombo = {
-			fieldLabel: _('Orientation'),
-			xtype: 'combobox',
-			name: 'orientation',
-			queryMode: 'local',
-			displayField: 'text',
-			valueField: 'value',
-			value: 'Portrait',
-			store: {
-				xtype: 'store',
-				fields: ['value', 'text'],
-				data: [
-					{value: 'Portrait', text: _('Portrait')},
-					{value: 'Landscape', text: _('Landscape')}
-				]
-			}
-		}
-		
-		var pagesizeCombo = {
-			fieldLabel: _('Page-size'),
-			xtype: 'combobox',
-			name: 'pagesize',
-			queryMode: 'local',
-			displayField: 'text',
-			valueField: 'value',
-			value: 'A4',
-			store: {
-				xtype: 'store',
-				fields: ['value', 'text'],
-				data: [
-					{value: 'A4', text: _('A4')},
-					{value: 'A3', text: _('A3')}
-				]
-			}
-		}
 
-		this.generalOptions.add([fonctionCombo, TaskName, viewCombo, ownerCombo, orientationCombo, pagesizeCombo]);
+		this.generalOptions.add([fonctionCombo, TaskName, viewCombo, ownerCombo]);
 
 		//--------------------------time options--------------
 		var durationCombo = Ext.widget('combobox', {
