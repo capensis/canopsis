@@ -69,6 +69,11 @@ Ext.define('canopsis.view.Tabs.Content' , {
 		configure: _('Configure')
 	},
 
+	pageWidth: {
+		'portrait': {'A4': 940, 'A3': 1090 },
+		'landscape': {'A4': 1090, 'A3': 1585},
+	},
+
 	//Logging
 	log: function(message) {
 		log.debug(message, this.logAuthor);
@@ -123,6 +128,22 @@ Ext.define('canopsis.view.Tabs.Content' , {
 
 				if (this.view.view_options != undefined)
 					this.view_options = this.view.view_options;
+
+				// Set width for exporting in PDF
+				if (this.exportMode && this.view_options.pageSize && this.view_options.orientation){
+					var pageSize = this.view_options.pageSize;
+					var orientation = this.view_options.orientation;
+					log.debug("Orientation: "+orientation, this.logAuthor);
+					log.debug("pageSize: "+pageSize, this.logAuthor);
+
+					var width = this.pageWidth[orientation][pageSize];
+					log.debug("width: "+width, this.logAuthor);
+
+					if (width){
+						log.debug(" + Update width", this.logAuthor);
+						this.setWidth(width);
+					}
+				}
 
 				this.fireEvent('ready', this);
 
