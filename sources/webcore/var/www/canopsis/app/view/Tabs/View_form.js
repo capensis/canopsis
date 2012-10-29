@@ -81,13 +81,11 @@ Ext.define('canopsis.view.Tabs.View_form' , {
 	cancel_button: function() {
 		log.debug('cancel button', this.logAuthor);
 		this.fireEvent('close');
-		this.win.close()
 	},
 
 	save_button: function() {
 		log.debug('save button', this.logAuthor);
 		var variables = this.getValues()
 		this.fireEvent('save', variables);
-		this.win.close()
 	}
 });
