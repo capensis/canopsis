@@ -346,45 +346,34 @@ Ext.define('widgets.line_graph.line_graph' , {
 	},
 
 	tooltip_formatter: function(){
-		if (this['points']) {
-			// Shared
-			var s = '<b>' + rdr_tstodate(this.x / 1000) + '</b>';
-			$.each(this.points, function(i, point) {
-				var y = point.y;
-				if (point.series.options.invert)
-					y = -y;
 
-				var value = y + ' ' + point.series.options.bunit
+		var formatter = function(options, value){
+			if (options.invert)
+				value = - value;
 
-				if (point.series.options.bunit)
-					value += ' ' + point.series.options.bunit
+			if (options.bunit)
+				value += ' ' + options.bunit
 
-				if (point.series.options.bunit == 's')
-					value = rdr_duration(y)
-				else if (point.series.options.bunit == 'ms')
-					value = rdr_duration(y/1000)
-
-				s += '<br/><b>' + point.series.options.metric + ':</b> ' + value;
-			});
-			return s;
-
-		} else {
-			var y = this.y;
-			if (this.series.options.invert)
-				y = - y;
-
-			var value = y
-
-			if (this.series.options.bunit)
-				value += ' ' + this.series.options.bunit
-
-			if (this.series.options.bunit == 's')
+			// Parse units
+			if (options.bunit == 's')
 				value = rdr_duration(y)
-			else if (this.series.options.bunit == 'ms')
+			else if (options.bunit == 'ms')
 				value = rdr_duration(y/1000)
 
-			return '<b>' + rdr_tstodate(this.x / 1000) + '<br/><b>' + this.series.options.metric + ':</b> ' + value ;
+			return '<b>' + options.metric + ':</b> ' + value ;
 		}
+
+		var s = '<b>' + rdr_tstodate(this.x / 1000) + '</b>';
+		
+		if (this['points']) {
+			// Shared
+			$.each(this.points, function(i, point) {
+				s += '<br/>' + formatter(point.series.options, point.y)
+			});
+		} else {
+			s += '<br/>' + formatter(this.series.options, this.y)
+		}
+		return s;
 	},
 
 	createChart: function() {
