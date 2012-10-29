@@ -59,14 +59,6 @@ def generate_report(startTime, stopTime,view_name,mail=None):
 	account = get_account()
 	storage = cstorage(account=account, namespace='object')
 	
-	orientation = request.params.get('orientation', default=None)
-	pagesize = request.params.get('pagesize', default=None)
-	
-	if not orientation or orientation == '':
-		orientation = 'Portrait'
-	if not pagesize or pagesize == '':
-		pagesize = 'A4'
-	
 	if(isinstance(mail,str)):
 		try:
 			mail = json.loads(mail)
@@ -93,8 +85,6 @@ def generate_report(startTime, stopTime,view_name,mail=None):
 	logger.debug('view_name:   %s' % view_name)
 	logger.debug('startTime:   %s' % startTime)
 	logger.debug('stopTime:    %s' % stopTime)
-	logger.debug('orientation: %s' % orientation)
-	logger.debug('pagesize:    %s' % pagesize)
 	
 	try:
 		import task_reporting
@@ -109,9 +99,7 @@ def generate_report(startTime, stopTime,view_name,mail=None):
 										stopTime,
 										account,
 										os.path.expanduser("~/etc/wkhtmltopdf_wrapper.json"),
-										mail,
-										orientation=orientation,
-										pagesize=pagesize)
+										mail)
 		result.wait()
 		fileName = result.result
 	except Exception, err:
