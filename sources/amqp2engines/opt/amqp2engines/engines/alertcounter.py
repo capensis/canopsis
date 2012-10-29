@@ -53,7 +53,7 @@ class engine(cengine):
 			del storage
 		
 	
-	def count_alert(self, component, state, value, resource=None):
+	def count_alert(self, component, state, value, resource=None, tags=[]):
 		
 		if resource:
 			meta_data = {'type': 'COUNTER', 'co': component, 're': resource }
@@ -61,6 +61,9 @@ class engine(cengine):
 		else:
 			meta_data = {'type': 'COUNTER', 'co': component }
 			name = meta_data['co']
+
+		if tags:
+			meta_data['tg'] = tags
 		
 		metric = "cps_statechange"
 		meta_data['me'] = metric
@@ -109,15 +112,17 @@ class engine(cengine):
 									component	= 'stat',
 									resource	= tag,
 									state		= event['state'],
-									value		= 1
-							)			
+									value		= 1,
+									tags		= event['tags']
+							)
 				
 				# By name
 				self.count_alert(
 					component	= event['component'],
 					resource	= event.get('resource', None),
 					state		= event['state'],
-					value		= 1
+					value		= 1,
+					tags		= event['tags']
 				)
 	
 		return event
