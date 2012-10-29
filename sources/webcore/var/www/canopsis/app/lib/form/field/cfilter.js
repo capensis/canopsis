@@ -678,7 +678,8 @@ Ext.define('canopsis.lib.form.field.cfilter' , {
 		var operator_fields = [
 			{'operator': '$nor', 'text': _('Nor'), 'type': 'object'},
 			{'operator': '$or', 'text': _('Or'), 'type': 'object'},
-			{'operator': '$and', 'text': _('And'), 'type': 'object'}
+			{'operator': '$and', 'text': _('And'), 'type': 'object'},
+			{'operator': '$not', 'text': _('Not'), 'type': 'object'}
 		];
 
 		operator_fields = Ext.Array.union(operator_fields, this.operator_fields);
