@@ -267,7 +267,10 @@ Ext.define('widgets.line_graph.line_graph' , {
 			},
 			yAxis: [
 				{
-					title: { text: null }
+					title: { text: null },
+					labels: {
+						formatter: this.y_formatter
+					}
 				},{
 					id: 'state',
 					title: { text: null },
@@ -345,11 +348,26 @@ Ext.define('widgets.line_graph.line_graph' , {
 		}
 	},
 
+	y_formatter: function(){
+		if (this.chart.series.length){
+			var bunit = this.chart.series[0].options.bunit
+			if (bunit){
+				if (bunit == 's')
+					return rdr_duration(this.value)
+				else if (bunit == 'ms')
+					return rdr_duration(this.value/1000)
+			}
+		}
+		return this.value
+	},
+
 	tooltip_formatter: function(){
 
 		var formatter = function(options, value){
 			if (options.invert)
 				value = - value;
+
+			var y = value;
 
 			if (options.bunit)
 				value += ' ' + options.bunit
