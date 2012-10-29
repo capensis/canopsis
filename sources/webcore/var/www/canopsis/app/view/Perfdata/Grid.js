@@ -117,7 +117,13 @@ Ext.define('canopsis.view.Perfdata.Grid' , {
 				dataIndex: 'u',
 				align: 'center',
 				editor: {xtype: 'textfield'}
-		}
+		}/*,{
+				header: _('Tags'),
+				flex: 2,
+				sortable: false,
+				dataIndex: 'tg',
+				renderer: rdr_tags
+		}*/
 
 	],
 
