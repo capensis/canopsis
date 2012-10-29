@@ -27,13 +27,13 @@ Ext.define('canopsis.view.Perfdata.Grid' , {
 	store: 'Perfdatas',
 
 	opt_paging: true,
-	opt_menu_delete: true,
 	opt_bar_add: false,
 	opt_menu_rights: false,
 	opt_bar_search: true,
 
 	opt_tags_search: false,
 	opt_simple_search: true,
+	opt_keynav_del:false,
 
 	opt_cell_edit: false,
 
