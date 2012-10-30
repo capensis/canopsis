@@ -284,19 +284,21 @@ Ext.define('widgets.pie.pie' , {
 
 			serie = this.getSerie()
 
-			if(this.setAxis)
-				this.setAxis(data)
-
 			var other_unit = '';
 
 			for (var index in data) {
 				var info = data[index];
 
-				var node = info['node'];
+				var node = this.nodesByID[info['node']];
+
+				//custom metric
+				if(node.extra_field && node.extra_field.label){
+					data[index]['metric'] = node.extra_field.label
+				}
+
 				var metric = info['metric'];
 
 				var value = undefined;
-
 
 				if (info['values'].length >= 1)
 					value = info['values'][0][1];
@@ -316,17 +318,15 @@ Ext.define('widgets.pie.pie' , {
 
 				var colors = global.curvesCtrl.getRenderColors(metric_name, index);
 				var curve = global.curvesCtrl.getRenderInfo(metric_name);
-				var node = this.nodesByID[node];
 
 				// Set Label
 				var label = undefined;
-				if(node && node.extra_field && node.extra_field.label)
-					label = node.extra_field.label
 				if (!label && curve)
 					label = curve.get('label');
 				if (! label)
 					label = metric_name;
 
+				metric = label
 
 				var metric_long_name = '<b>' + label + '</b>';
 
@@ -347,6 +347,9 @@ Ext.define('widgets.pie.pie' , {
 				serie.data.push({ id: metric, name: metric_long_name, y: value, color: color });
 
 			}
+
+			if(this.setAxis)
+				this.setAxis(data)
 
 			if (data.length == 1 && !this.hide_other_column) {
 				var other_label = '<b>' + this.other_label + '</b>' + other_unit;
