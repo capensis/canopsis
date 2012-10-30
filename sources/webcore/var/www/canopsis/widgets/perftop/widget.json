@@ -25,8 +25,24 @@
 						"value": 10
 					},{
 						"xtype" : "numberfield",
-						"name" : "threshold (>)",
-						"fieldLabel": "Threshold"
+						"name" : "threshold",
+						"fieldLabel": "Threshold (>)"
+					},{
+						"xtype": "combobox",
+						"name": "threshold_direction",
+						"fieldLabel": "Threshold direction",
+						"queryMode": "local",
+						"displayField": "text",
+						"valueField": "value",
+						"value": -1,
+						"store": {
+							"xtype": "store",
+							"fields": ["value", "text"],
+							"data" : [
+								{"value": -1, "text": ">="},
+								{"value": 1, "text": "<="}
+							]
+						}
 					},{
 						"xtype": "checkbox",
 						"fieldLabel": "calculate Percent (if possible)",

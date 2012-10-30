@@ -29,6 +29,7 @@ Ext.define('widgets.perftop.perftop' , {
 	sort: -1,
 	time_window: 86400,
 	threshold: undefined,
+	threshold_direction: -1,
 	percent: false,
 
 	show_source_type: true,		
@@ -55,7 +56,14 @@ Ext.define('widgets.perftop.perftop' , {
 				proxy: {
 					type: 'rest',
 					url: '/perfstore/perftop',
-					extraParams: {'limit': this.limit, 'sort': this.sort, 'mfilter': this.mfilter, 'time_window': this.time_window, 'threshold': this.threshold, 'percent': this.percent},
+					extraParams: {	'limit': this.limit,
+									'sort': this.sort,
+									'mfilter': this.mfilter,
+									'time_window': this.time_window,
+									'threshold': this.threshold,
+									'threshold_direction': this.threshold_direction,
+									'percent': this.percent
+								},
 					reader: {
 						type: 'json',
 						root: 'data',
