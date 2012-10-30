@@ -55,11 +55,15 @@ Ext.define('widgets.kpi.kpi' , {
     labels: false,
     gradientColor: false,
 
-	//
+	interval: global.commonTs.hours,
+	aggregate_method: 'LAST',
+	aggregate_interval: 0,
+	aggregate_max_points: 1,
 
 	nb_node: 0,
 	hide_other_column: false,
 
+	kpi_type: 'pie',
 
 	initComponent: function() {
 		this.backgroundColor	= check_color(this.backgroundColor);
@@ -140,7 +144,8 @@ Ext.define('widgets.kpi.kpi' , {
 				animation: false,
 				borderColor: this.borderColor,
 				borderWidth: this.borderWidth,
-				backgroundColor: this.backgroundColor
+				backgroundColor: this.backgroundColor,
+				inverted: (this.kpi_type == 'column')? this.verticalDisplay : false,
 			},
 			exporting: {
 				enabled: false
@@ -195,7 +200,7 @@ Ext.define('widgets.kpi.kpi' , {
 				enabled: false
 			},
 			legend: {
-				enabled: this.legend,
+				enabled: (this.kpi_type == 'column')? false : this.legend,
 				verticalAlign: this.legend_verticalAlign,
 				align: this.legend_align,
 				layout: this.legend_layout,
@@ -209,6 +214,22 @@ Ext.define('widgets.kpi.kpi' , {
 			},
 			series: []
 		};
+
+		if(this.kpi_type == 'column'){
+			this.options.yAxis = [{title: { text: null }}]
+			if(this.labels){
+				this.options.plotOptions.column.dataLabels = {
+					enabled: true,
+					formatter: function() {
+						if(this.y)
+							return '<b>'+this.y +'</b>';
+						else
+							return ''
+					}
+				}
+			}
+		}
+
 
 		//specifique options to add
 		if (this.exportMode) {
@@ -232,9 +253,12 @@ Ext.define('widgets.kpi.kpi' , {
 		}
 		this.post_params = {
 			'nodes': Ext.JSON.encode(post_params),
-			'aggregate_method' : 'LAST',
+			'aggregate_method' : this.aggregate_method,
 			'aggregate_max_points': 1
 		};
+
+		if(this.aggregate_interval)
+			this.post_params['aggregate_interval'] = this.aggregate_interval
 	},
 
 	doRefresh: function(from, to) {
@@ -348,7 +372,7 @@ Ext.define('widgets.kpi.kpi' , {
 
 			}
 
-			if(this.setAxis)
+			if(this.setAxis && this.kpi_type == 'column')
 				this.setAxis(data)
 
 			if (data.length == 1 && !this.hide_other_column) {
@@ -388,7 +412,7 @@ Ext.define('widgets.kpi.kpi' , {
 	getSerie: function(){
 		return  {
 					id: 'serie',
-					type: 'pie',
+					type: this.kpi_type,
 					data: []
 				};
 	},
@@ -413,7 +437,20 @@ Ext.define('widgets.kpi.kpi' , {
 
 
 	tooltipFunction: function() {
-		return this.point.name + ': ' + Math.round(this.percentage * 1000) / 1000 + ' %';
-	}
+		if(this.kpi_type)
+			return this.point.name + ': ' + Math.round(this.percentage * 1000) / 1000 + ' %';
+		else
+			return this.key+': ' + this.y
+	},
+
+	setAxis: function(data){
+		var metrics = []
+		for(var i in data)
+			if(data[i].metric)
+				metrics.push(data[i].metric)
+
+		this.chart.xAxis[0].setCategories(metrics, false)
+
+	},
 
 });
