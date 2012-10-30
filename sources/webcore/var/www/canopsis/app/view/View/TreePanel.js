@@ -44,8 +44,8 @@ Ext.define('canopsis.view.View.TreePanel' , {
 			flex: 1,
 			menuDisabled: true,
 			dataIndex: 'view_options',
-			renderer: function(val){
-				if (val)
+			renderer: function(val,meta,record){
+				if (val && record.raw.crecord_type != 'view_directory')
 					return val.pageSize + ' - ' + val.orientation
 			}
 		},{

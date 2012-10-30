@@ -183,9 +183,12 @@ Ext.define('canopsis.view.Tabs.Content' , {
 			dump = this.dumpJqGridable();
 		}
 
-		//get view options
+		var view_options = undefined
 		if (this.getViewOptions)
 			var view_options = this.getViewOptions();
+
+		if(!view_options && this.view_options)
+			var view_options = this.view_options;
 
 		// Update view
 		if (this.view_id) {
