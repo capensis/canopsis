@@ -252,7 +252,13 @@ Ext.define('canopsis.lib.form.field.cmetric' , {
 			margin: 3,
 			border: true,
 			scroll: true,
-			columns: _columns,
+			columns: {
+				defaults: {
+					menuDisabled: true, 
+					sortable: false,
+				},
+				items:_columns,
+			},
 			plugins: _plugins,
 			viewConfig: {
     			markDirty:false,
