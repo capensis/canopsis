@@ -288,6 +288,19 @@ Ext.define('canopsis.view.Tabs.Content' , {
 
 		this.stopAllTasks();
 	},
+
+	openOptions: function(){
+		this.callParent(arguments);
+		var options = this.getViewOptions()
+		if(!options)
+			options = this.view_options
+
+		if(this.view_option_win && options){
+			var form = this.view_option_win.down('form')
+			if(form)
+				form.getForm().setValues(options)
+		}
+	},
 	/*
 	removeReportingBar : function(){
 		log.debug('removing reporting bar', this.logAuthor)
