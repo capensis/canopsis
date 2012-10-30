@@ -201,6 +201,15 @@ Ext.define('canopsis.lib.form.field.cmetric' , {
 		//------------------------ Selection grid---------------------
 		var _columns = [
 				{
+					xtype: 'actioncolumn',
+					width: 25,
+					align: 'center',
+					tooltip: _('Delete'),
+					icon: './themes/canopsis/resources/images/icons/bin_closed.png',
+					handler: function(view, rowIndex, colindex) {
+						var rec = view.getStore().removeAt(rowIndex);
+					}
+				},{
 					header: _('Component'),
 					sortable: false,
 					dataIndex: 'co',
@@ -231,12 +240,11 @@ Ext.define('canopsis.lib.form.field.cmetric' , {
 						sortable: false,
 						dataIndex: this.additional_field[i].name,
 						editor: this.additional_field[i],
-						//flex: 3
 					})
 
 					if(_plugins.length == 0 ){
 						_plugins.push(Ext.create('Ext.grid.plugin.RowEditing', {
-							clicksToEdit: 1,
+							clicksToEdit: 2,
 							autoCancel: true
 						}))
 					}
@@ -244,6 +252,7 @@ Ext.define('canopsis.lib.form.field.cmetric' , {
 				}
 			}
 		}
+
 
 		//create grid
 		this.selected_grid = Ext.widget('grid', {
@@ -297,11 +306,6 @@ Ext.define('canopsis.lib.form.field.cmetric' , {
 		this.meta_grid.on('itemdblclick', function(view, record) {
 			this.select_meta(record);
 		},this);
-
-		//----------------------event selected metric----------------
-		this.selected_grid.on('itemdblclick', function(view,record) {
-			this.selected_store.remove(record);
-		}, this);
 
 		//----------------------drop function--------------------
 		this.selected_grid.getView().on('beforedrop', function(html_node,data,model,dropPosition,dropFunction,eOpts) {
