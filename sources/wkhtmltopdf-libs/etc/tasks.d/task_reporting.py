@@ -88,8 +88,10 @@ def render_pdf(filename=None, viewname=None, starttime=None, stoptime=None, acco
 	logger.info('Filename: %s' % filename)
 
 	#get orientation and pagesize
-	orientation = view_record.data.get('view_options', {}).get('orientation', 'Portrait')
-	pagesize = view_record.data.get('view_options', {}).get('pageSize', 'A4')
+	view_options = view_record.data.get('view_options', {})
+	if isinstance(view_options, dict):
+		orientation = view_options.get('orientation', 'Portrait')
+		pagesize = view_options.get('pageSize', 'A4')
 
 	logger.info('Orientation: %s' % orientation)
 	logger.info('Pagesize: %s' % pagesize)

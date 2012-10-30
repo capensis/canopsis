@@ -130,7 +130,7 @@ Ext.define('canopsis.view.Tabs.Content' , {
 					this.view_options = this.view.view_options;
 
 				// Set width for exporting in PDF
-				if (this.exportMode && this.view_options.pageSize && this.view_options.orientation){
+				if (this.exportMode && this.view_options && this.view_options.pageSize && this.view_options.orientation){
 					var pageSize = this.view_options.pageSize;
 					var orientation = this.view_options.orientation;
 					log.debug("Orientation: "+orientation, this.logAuthor);
@@ -143,6 +143,9 @@ Ext.define('canopsis.view.Tabs.Content' , {
 						log.debug(" + Update width", this.logAuthor);
 						this.setWidth(width);
 					}
+				}else{
+					log.debug(" + Update default width", this.logAuthor);
+					this.setWidth(this.pageWidth['portrait']['A4']);
 				}
 
 				this.fireEvent('ready', this);
