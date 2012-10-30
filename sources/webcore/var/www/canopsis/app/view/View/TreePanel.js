@@ -42,25 +42,11 @@ Ext.define('canopsis.view.View.TreePanel' , {
 		},{
 			text: _('Export Options'),
 			flex: 1,
-			align: 'right',
 			menuDisabled: true,
 			dataIndex: 'view_options',
 			renderer: function(val){
 				if (val)
 					return val.pageSize + ' - ' + val.orientation
-			}
-		},{
-			xtype: 'actioncolumn',
-			width: 25,
-			menuDisabled: true,
-			align: 'center',
-			tooltip: _('Options'),
-			icon: './themes/canopsis/resources/images/icons/cog.png',
-			handler: function(tree, rowIndex, colindex) {
-				var rec = tree.getStore().getAt(rowIndex).raw;
-                if (rec.crecord_type == 'view')
-					tree.fireEvent('OpenViewOption', rec);
-				
 			}
 		},{
 			flex: 1,
@@ -147,6 +133,19 @@ Ext.define('canopsis.view.View.TreePanel' , {
 					});
 					_window.show();
 				}
+			}
+		},{
+			xtype: 'actioncolumn',
+			width: 25,
+			menuDisabled: true,
+			align: 'center',
+			tooltip: _('Options'),
+			icon: './themes/canopsis/resources/images/icons/cog.png',
+			handler: function(tree, rowIndex, colindex) {
+				var rec = tree.getStore().getAt(rowIndex).raw;
+                if (rec.crecord_type == 'view')
+					tree.fireEvent('OpenViewOption', rec);
+				
 			}
 		}];
 
