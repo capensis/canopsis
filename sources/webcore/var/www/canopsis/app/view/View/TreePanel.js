@@ -40,6 +40,14 @@ Ext.define('canopsis.view.View.TreePanel' , {
 			flex: 5,
 			dataIndex: 'crecord_name'
 		},{
+			text: _('Export Options'),
+			flex: 1,
+			dataIndex: 'view_options',
+			renderer: function(val){
+				if (val)
+					return val.pageSize + ' - ' + val.orientation
+			}
+		},{
 			flex: 1,
 			dataIndex: 'aaa_owner',
 			renderer: rdr_clean_id,
