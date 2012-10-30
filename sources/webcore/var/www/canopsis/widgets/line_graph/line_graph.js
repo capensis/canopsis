@@ -353,9 +353,9 @@ Ext.define('widgets.line_graph.line_graph' , {
 			var bunit = this.chart.series[0].options.bunit
 			if (bunit){
 				if (bunit == 's')
-					return rdr_duration(this.value)
+					return rdr_duration(this.value, 1)
 				else if (bunit == 'ms')
-					return rdr_duration(this.value/1000)
+					return rdr_duration(this.value/1000, 1)
 			}
 		}
 		return this.value
