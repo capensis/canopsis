@@ -183,7 +183,7 @@ Ext.define('canopsis.view.Tabs.Content' , {
 		//apply new view style
 		this.applyViewOptions(view_options);
 		
-		this.up('tabpanel').tabBar.setDisabled(false)
+		//this.up('tabpanel').tabBar.setDisabled(false)
 	},
 
 	//Binding
@@ -210,13 +210,13 @@ Ext.define('canopsis.view.Tabs.Content' , {
 	editMode: function() {
 		if (! this.edit) {
 			this.stopAllTasks();
-			this.up('tabpanel').tabBar.setDisabled(true)
+			//this.up('tabpanel').tabBar.setDisabled(true)
 			this.callParent(arguments);
 		}
 	},
 	
 	cancel: function(){
-		this.up('tabpanel').tabBar.setDisabled(false)
+		//this.up('tabpanel').tabBar.setDisabled(false)
 		this.callParent(arguments);
 	},
 
