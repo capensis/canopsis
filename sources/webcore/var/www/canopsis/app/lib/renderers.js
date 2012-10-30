@@ -301,7 +301,11 @@ rdr_browser = function(val ) {
 	return '<span class=\"icon icon-browser-'+ val.toLowerCase() + '\" />';
 };
 
-rdr_duration = function(timestamp){
+rdr_duration = function(timestamp, nb){
+
+	if (! nb && nb != 0)
+		nb = 99
+
 	var times = [
 		[ global.commonTs.year,		'y' ],
 		[ global.commonTs.month,	'M' ],
@@ -315,6 +319,7 @@ rdr_duration = function(timestamp){
 	]
 
 	var output = '';
+	var j = 0;
 	for (var i in times) {
 		if (timestamp >= times[i][0]){
 			var value = parseInt(timestamp / times[i][0])
@@ -323,9 +328,10 @@ rdr_duration = function(timestamp){
 				output += ' '
 			
 			output += value + times[i][1]
+			j += 1;
 		}
 
-		if (timestamp == 0)
+		if (timestamp == 0 || j >= nb)
 			break
 	}
 
