@@ -18,7 +18,7 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-import logging, time
+import logging, time, argparse
 from cstorage import get_storage
 from caccount import caccount
 from cinit import cinit
@@ -28,26 +28,39 @@ import pyperfstore2
 from optparse import OptionParser
 import sys
 
-
-usage = "usage: %prog [-d]"
-
-parser = OptionParser(usage=usage)
-
-parser.add_option("-d", default=False, action="store_true", help="Clean dbs")
-
-(options, args) = parser.parse_args()
-
-do = options.d
-
-# 24 hours
-freshness = 60 * 60 * 24
-
 init 	= cinit()
-
 logger 	= init.getLogger("CleanEventDB", level="DEBUG")
+
+parser = argparse.ArgumentParser()
+parser.add_argument('-mode', '--work-mode', default='fake',help='choose between fake or real mode') 
+parser.add_argument('-freshness', '--time-amount', help='int + char y/M/w/d/h/m/s')
+parser.add_argument('-event', '--event-types', nargs='+', default=['sla', 'check','selector'], help='list of event type')
+
+args = parser.parse_args()
+if len(sys.argv)==1:
+    parser.print_help()
+    sys.exit(1)
+
+freshness = args.time_amount
+unit = {"s" : 1, "m" : 60, "h" : 60*60, "d" : 60*60*24, "w" : 60*60*24*7, "M" : 60*60*24*30, "y" : 60*60*24*365}
+last_char = freshness[len(freshness) -1 : ]
+
+try:
+	if last_char.isdigit():
+		freshness = int(freshness)
+	else:
+		multiple = unit[last_char]
+		freshness = int(freshness[ : len(freshness)-1])
+		freshness *= multiple
+
+except Exception,err:
+	logger.error("error %s \n" %err) 
+	sys.exit(1)
+	
+
 storage = get_storage(namespace='events', logging_level=logging.ERROR, account=caccount(user="root", group="root"))
 
-if not do:
+if (args.work_mode=='fake'):
 	logger.debug("/!\\ Simulation Mode, nothing to do /!\\")
 
 manager = pyperfstore2.manager(logging_level=logging.DEBUG)
@@ -55,16 +68,17 @@ manager = pyperfstore2.manager(logging_level=logging.DEBUG)
 ################### EVENTS
 logger.debug("Clean events")
 records = storage.find(	{'$and': [
-				{'event_type': { '$in': [ 'check', 'sla', 'selector' ]}},
+				{'event_type': { '$in': args.event_types }},
 				{'crecord_write_time': {'$lt': int(time.time() - freshness)}}
 			]
 })
+
 
 logger.debug(" + %s found" % len(records))
 
 for record in records:
 	logger.debug(" + %s" % record._id)
-	if do:
+	if (args.work_mode=='real'):
 		logger.debug("    -> Too old, remove it")
 		storage.remove(record)
 		
@@ -78,7 +92,7 @@ for record in records:
 	
 	for precord in precords:
 		logger.debug("      + %s: %s %s -> %s" % (precord['_id'], precord['co'], precord.get('re',"-"), precord['me']))
-		if do:
+		if (args.work_mode=='real'):
 			logger.debug("    -> Too old, remove it")
 			manager.remove(_id=precord['_id'])
 		
@@ -91,6 +105,6 @@ logger.debug(" + %s found" % records.count())
 
 for record in records:
 	logger.debug(" + %s: %s %s -> %s" % (record['_id'], record['co'], record.get('re',"-"), record['me']))
-	if do:
+	if (args.work_mode=='real'):
 		logger.debug("    -> Too old, remove it")
 		manager.remove(_id=record['_id'])
