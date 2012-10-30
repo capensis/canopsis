@@ -73,6 +73,8 @@ Ext.define('canopsis.controller.View', {
 			},this);
 
 		this.tree.getView().on('getViewFile', this.getViewFile, this);
+
+		this.tree.getView().on('OpenViewOption', this.OpenViewOption, this);
 	},
 
 	check_right_on_drop: function(node,data,overModel) {
@@ -291,6 +293,33 @@ Ext.define('canopsis.controller.View', {
 	getViewFile: function(view_id) {
 		log.debug('Get view file', this.logAuthor);
 		window.open('/ui/view/export/' + view_id);
+	},
+
+	OpenViewOption: function(view){
+		var form = Ext.create('canopsis.view.Tabs.View_form')
+
+		form.getForm().setValues(view.view_options)
+
+		this.view_option_win = Ext.create('widget.window', {
+			title: view.crecord_name +' '+ _('options'),
+			items: [form],
+			closable: false,
+			resizable: false,
+			constrain: true,
+			renderTo: this.tree.id,
+			closeAction: 'destroy'
+		}).show();
+
+		form.on('save',function(data){
+			this.view_option_win.close()
+			updateRecord('object','view','View',view._id,{view_options:data})
+			this.treeStore.load()
+		},this)
+		
+		form.on('close',function(){
+			this.view_option_win.close()
+		},this)
+
 	}
 
 });

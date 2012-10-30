@@ -42,10 +42,25 @@ Ext.define('canopsis.view.View.TreePanel' , {
 		},{
 			text: _('Export Options'),
 			flex: 1,
+			align: 'right',
+			menuDisabled: true,
 			dataIndex: 'view_options',
 			renderer: function(val){
 				if (val)
 					return val.pageSize + ' - ' + val.orientation
+			}
+		},{
+			xtype: 'actioncolumn',
+			width: 25,
+			menuDisabled: true,
+			align: 'center',
+			tooltip: _('Options'),
+			icon: './themes/canopsis/resources/images/icons/cog.png',
+			handler: function(tree, rowIndex, colindex) {
+				var rec = tree.getStore().getAt(rowIndex).raw;
+                if (rec.crecord_type == 'view')
+					tree.fireEvent('OpenViewOption', rec);
+				
 			}
 		},{
 			flex: 1,
@@ -74,19 +89,22 @@ Ext.define('canopsis.view.View.TreePanel' , {
 			dataIndex: 'aaa_access_other'
 		},{
 			xtype: 'actioncolumn',
-			width: 20,
-			text: _('Dump'),
+			width: 25,
+			menuDisabled: true,
+			align: 'center',
+			tooltip: _('Dump'),
 			icon: './themes/canopsis/resources/images/Tango-Blue-Materia/16x16/actions/gtk-indent.png',
 			handler: function(tree, rowIndex, colindex) {
 				var rec = tree.getStore().getAt(rowIndex).raw;
-                if (rec.crecord_type == 'view') {
+                if (rec.crecord_type == 'view')
 					tree.fireEvent('getViewFile', rec._id);
-				}
 			}
 		},{
 			xtype: 'actioncolumn',
-			width: 20,
-			text: _('URL'),
+			width: 25,
+			align: 'center',
+			menuDisabled: true,
+			tooltip: _('URL'),
 			icon: './themes/canopsis/resources/images/icons/page_white_code.png',
 			handler: function(tree, rowIndex, colindex) {
 				var rec = tree.getStore().getAt(rowIndex).raw;
