@@ -375,7 +375,7 @@ Ext.define('widgets.kpi.kpi' , {
 			if(this.setAxis && this.kpi_type == 'column')
 				this.setAxis(data)
 
-			if (data.length == 1 && !this.hide_other_column) {
+			if (data.length == 1 && !this.hide_other_column && this.kpi_type == 'pie') {
 				var other_label = '<b>' + this.other_label + '</b>' + other_unit;
 				var colors = global.curvesCtrl.getRenderColors(this.other_label, 1);
 				serie.data.push({ id: 'pie_other', name: other_label, y: max - value, color: colors[0] });
