@@ -1,4 +1,4 @@
-#!/opt/canopsis/bin/mongo canopsis
+#!mongo canopsis
 
 round = function(x){ return Math.round(x*1000)/1000; };
 
