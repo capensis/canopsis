@@ -274,13 +274,14 @@ def clean(_id=None):
 def perfstore_perftop():
 	data = []
 	
-	limit		= int(request.params.get('limit', default=10))
-	sort		= int(request.params.get('sort', default=1))
-	mfilter		= request.params.get('mfilter', default={})
-	time_window	= int(request.params.get('time_window', default=86400))
-	percent	    = request.params.get('percent', default=False)
-	threshold	= request.params.get('threshold', default=None)
-	
+	limit					= int(request.params.get('limit', default=10))
+	sort					= int(request.params.get('sort', default=1))
+	mfilter					= request.params.get('mfilter', default={})
+	time_window				= int(request.params.get('time_window', default=86400))
+	percent	    			= request.params.get('percent', default=False)
+	threshold				= request.params.get('threshold', default=None)
+	threshold_direction 	= int(request.params.get('threshold_direction', default=-1))
+
 	if mfilter:
 		try:
 			mfilter = json.loads(mfilter)
@@ -301,6 +302,7 @@ def perfstore_perftop():
 	logger.debug(" + limit:       %s" % limit)
 	logger.debug(" + percent:     %s" % percent)
 	logger.debug(" + threshold:   %s" % threshold)
+	logger.debug(" + threshold_direction:   %s" % threshold_direction)
 	logger.debug(" + time_window: %s" % time_window)
 	logger.debug(" + sort:        %s" % sort)
 	
@@ -320,7 +322,9 @@ def perfstore_perftop():
 						metric['u'] = '%'
 				
 				if threshold:
-					if metric['lv'] > threshold:
+					if threshold_direction == -1 and metric['lv'] >= threshold:
+						data.append(metric)
+					elif threshold_direction == 1 and metric['lv'] <= threshold:
 						data.append(metric)
 				else:	
 					data.append(metric)
@@ -337,7 +341,9 @@ def perfstore_perftop():
 					metric['lv'] = 0
 
 				if threshold:
-					if metric['lv'] > threshold:
+					if threshold_direction == -1 and metric['lv'] >= threshold:
+						data.append(metric)
+					elif threshold_direction == 1 and metric['lv'] <= threshold:
 						data.append(metric)
 				else:	
 					data.append(metric)

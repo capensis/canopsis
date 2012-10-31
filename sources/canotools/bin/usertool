@@ -10,10 +10,11 @@ logging.basicConfig(level=logging.DEBUG,
                     )
 
 parser = argparse.ArgumentParser()
-parser.add_argument('-list', '--list-users')
-parser.add_argument('-add',  '--add-user')
-parser.add_argument('-del',  '--delete-user')
-parser.add_argument('-chpa', '--user-chpass')
+parser.add_argument('-list', '--list-users',action='store_const',const=True)
+parser.add_argument('-add',  '--add-user',action='store_const',const=True)
+parser.add_argument('-del',  '--delete-user',action='store_const',const=True)
+parser.add_argument('-chpa', '--user-chpass',action='store_const',const=True)
+
 parser.add_argument('-user', '--user-name')
 parser.add_argument('-pass', '--user-pass')
 parser.add_argument('-mail', '--user-mail')
