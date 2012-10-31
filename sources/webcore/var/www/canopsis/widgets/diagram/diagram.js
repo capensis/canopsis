@@ -214,24 +214,22 @@ Ext.define('widgets.diagram.diagram' , {
 					color: this.legend_fontColor
 				}
 			},
-			series: []
+			series: [],
+			yAxis : [{
+				title: { text: null },
+				labels: {formatter: this.y_formatter}
+			}]
 		};
-
+		/*
 		if(this.diagram_type == 'column'){
-			this.options.yAxis = [{title: { text: null }}]
-			if(this.labels){
-				this.options.plotOptions.column.dataLabels = {
-					enabled: true,
-					formatter: function() {
-						if(this.y)
-							return '<b>'+this.y +'</b>';
-						else
-							return ''
-					}
+			this.options.yAxis = [{
+				title: { text: null },
+				labels: {
+					formatter: this.y_formatter
 				}
-			}
+			}]
 		}
-
+		*/
 
 		//specifique options to add
 		if (this.exportMode) {
@@ -308,7 +306,7 @@ Ext.define('widgets.diagram.diagram' , {
 			// Remove old series
 			this.removeSerie();
 
-			serie = this.getSerie()
+			serie = this.getSerie(data)
 
 			var other_unit = '';
 
@@ -411,11 +409,19 @@ Ext.define('widgets.diagram.diagram' , {
 		this.displaySerie();
 	},
 
-	getSerie: function(){
+	getSerie: function(data){
+		var bunit = undefined
+		if(data.length != 0)
+			for(var i in data)
+				if(data[i].bunit)
+					bunit = data[i].bunit
+				
 		return  {
 					id: 'serie',
 					type: this.diagram_type,
-					data: []
+					shadow : false,
+					data: [],
+					bunit: bunit
 				};
 	},
 
@@ -487,6 +493,19 @@ Ext.define('widgets.diagram.diagram' , {
 
 		this.chart.xAxis[0].setCategories(metrics, false)
 
+	},
+
+	y_formatter: function(){
+		if (this.chart.series.length){
+			var bunit = this.chart.series[0].options.bunit
+			if (bunit){
+				if (bunit == 's')
+					return rdr_duration(this.value)
+				else if (bunit == 'ms')
+					return rdr_duration(this.value/1000)
+			}
+		}
+		return this.value
 	},
 
 });
