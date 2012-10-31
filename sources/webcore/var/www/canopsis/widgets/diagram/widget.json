@@ -1,11 +1,11 @@
 [{
-	"name":  "Kpi",
+	"name":  "Diagram",
 	"verions": 0.1,
 	"author": "capensis",
 	"website": "http://www.canopsis.org",
-	"xtype":"kpi",
-	"description": "Display perfdata as a kpi.",
-	"description-fr": "Affiche les données sous forme indicateur de performance.",
+	"xtype":"diagram",
+	"description": "Compare values in a pie or a categorized bar graph.",
+	"description-fr": "Comparer des valeurs dans un camembert ou un histogramme catégorisé.",
 	"refreshInterval": 300,
 	"locales": ["fr"],
 	"options": [{
@@ -31,8 +31,8 @@
 						"items": [
 							{
 								"xtype": "combobox",
-								"name": "kpi_type",
-								"fieldLabel": "Kpi type",
+								"name": "diagram_type",
+								"fieldLabel": "Diagram type",
 								"queryMode": "local",
 								"displayField": "text",
 								"valueField": "value",

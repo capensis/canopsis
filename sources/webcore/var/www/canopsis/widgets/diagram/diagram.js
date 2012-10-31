@@ -18,12 +18,12 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 */
-Ext.define('widgets.kpi.kpi' , {
+Ext.define('widgets.diagram.diagram' , {
 	extend: 'canopsis.lib.view.cwidget',
 
-	alias: 'widget.kpi',
+	alias: 'widget.diagram',
 
-	logAuthor: '[kpi]',
+	logAuthor: '[diagram]',
 
 	options: {},
 	chartTitle: null,
@@ -63,7 +63,7 @@ Ext.define('widgets.kpi.kpi' , {
 	nb_node: 0,
 	hide_other_column: false,
 
-	kpi_type: 'pie',
+	diagram_type: 'pie',
 
 	initComponent: function() {
 		this.backgroundColor	= check_color(this.backgroundColor);
@@ -145,7 +145,7 @@ Ext.define('widgets.kpi.kpi' , {
 				borderColor: this.borderColor,
 				borderWidth: this.borderWidth,
 				backgroundColor: this.backgroundColor,
-				inverted: (this.kpi_type == 'column')? this.verticalDisplay : false,
+				inverted: (this.diagram_type == 'column')? this.verticalDisplay : false,
 			},
 			exporting: {
 				enabled: false
@@ -202,7 +202,7 @@ Ext.define('widgets.kpi.kpi' , {
 				enabled: false
 			},
 			legend: {
-				enabled: (this.kpi_type == 'column')? false : this.legend,
+				enabled: (this.diagram_type == 'column')? false : this.legend,
 				verticalAlign: this.legend_verticalAlign,
 				align: this.legend_align,
 				layout: this.legend_layout,
@@ -217,7 +217,7 @@ Ext.define('widgets.kpi.kpi' , {
 			series: []
 		};
 
-		if(this.kpi_type == 'column'){
+		if(this.diagram_type == 'column'){
 			this.options.yAxis = [{title: { text: null }}]
 			if(this.labels){
 				this.options.plotOptions.column.dataLabels = {
@@ -374,10 +374,10 @@ Ext.define('widgets.kpi.kpi' , {
 
 			}
 
-			if(this.setAxis && this.kpi_type == 'column')
+			if(this.setAxis && this.diagram_type == 'column')
 				this.setAxis(data)
 
-			if (data.length == 1 && !this.hide_other_column && this.kpi_type == 'pie') {
+			if (data.length == 1 && !this.hide_other_column && this.diagram_type == 'pie') {
 				var other_label = '<b>' + this.other_label + '</b>' + other_unit;
 				var colors = global.curvesCtrl.getRenderColors(this.other_label, 1);
 				serie.data.push({ id: 'pie_other', name: other_label, y: max - value, color: colors[0] });
@@ -414,7 +414,7 @@ Ext.define('widgets.kpi.kpi' , {
 	getSerie: function(){
 		return  {
 					id: 'serie',
-					type: this.kpi_type,
+					type: this.diagram_type,
 					data: []
 				};
 	},
@@ -439,7 +439,7 @@ Ext.define('widgets.kpi.kpi' , {
 
 
 	tooltipFunction: function() {
-		if(this.kpi_type)
+		if(this.diagram_type)
 			return this.point.name + ': ' + Math.round(this.percentage * 1000) / 1000 + ' %';
 		else
 			return this.key+': ' + this.y
