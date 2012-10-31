@@ -64,7 +64,6 @@ Ext.define('canopsis.controller.Widgets', {
     	this.store.each(function(record) {
     		if(record.raw){
 	    		if(record.raw.disabled == true){
-	    			console.log(record)
 	    			records.push(record)
 	    		}
 	    	}
