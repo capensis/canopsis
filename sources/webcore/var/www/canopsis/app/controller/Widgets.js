@@ -46,6 +46,8 @@ Ext.define('canopsis.controller.Widgets', {
 				}
 			}, this);
 
+			this.clean_disabled_widget()
+
 			//translate the store
 			this.check_translate();
 
@@ -55,6 +57,19 @@ Ext.define('canopsis.controller.Widgets', {
 			 },1000, this);
 
 		}, this);
+    },
+
+    clean_disabled_widget: function(){
+    	var records = []
+    	this.store.each(function(record) {
+    		if(record.raw){
+	    		if(record.raw.disabled == true){
+	    			console.log(record)
+	    			records.push(record)
+	    		}
+	    	}
+    	},this)
+    	this.store.remove(records)
     },
 
 	check_translate: function() {
