@@ -467,8 +467,6 @@ Ext.define('widgets.diagram.diagram' , {
 		}
 
 		var s = '';
-
-		console.log(this)
 		
 		if (this['points']) {
 			// Shared

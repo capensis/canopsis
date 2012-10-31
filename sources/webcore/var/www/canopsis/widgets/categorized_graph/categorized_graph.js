@@ -18,20 +18,16 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 */
-
-// initComponent -> afterContainerRender 	-> setchartTitle -> ready -> doRefresh -> onRefresh -> addDataOnChart
-//                                			-> setOptions                             			-> getSerie
-//											-> createChart
-
-
 Ext.define('widgets.categorized_graph.categorized_graph' , {
-	extend: 'canopsis.lib.view.cwidget',
+	extend: 'Ext.panel.Panel',
 
 	alias: 'widget.categorized_graph',
 
 	logAuthor: '[categorized_graph]',
 
-	defaultHtml: '<center><span class="icon icon-loading" />' + _('This wiget is no longer available, please look at "diagram" widget') +'</center>'
-	
+	initComponent: function() {
+			this.html = '<center><span/>' + _('This wiget is no longer available, please look at "diagram" widget') +'</center>',
+			this.callParent(arguments);
+	}
 
 });
