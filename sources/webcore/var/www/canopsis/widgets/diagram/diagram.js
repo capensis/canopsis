@@ -170,7 +170,7 @@ Ext.define('widgets.diagram.diagram' , {
 				}
 			},
 			tooltip: {
-				formatter:this.tooltipFunction
+				formatter: this.tooltip_formatter
 			},
 			title: {
 				text: this.chartTitle,
@@ -370,7 +370,7 @@ Ext.define('widgets.diagram.diagram' , {
 				else
 					var color = _color
 
-				serie.data.push({ id: metric, name: metric_long_name, y: value, color: color });
+				serie.data.push({ id: metric, name: metric_long_name, y: value, color: color, bunit:unit });
 
 			}
 
@@ -437,12 +437,49 @@ Ext.define('widgets.diagram.diagram' , {
 		}
 	},
 
-
+	/*
 	tooltipFunction: function() {
 		if(this.diagram_type)
 			return this.point.name + ': ' + Math.round(this.percentage * 1000) / 1000 + ' %';
 		else
 			return this.key+': ' + this.y
+	},
+	*/
+
+	tooltip_formatter: function(){
+
+		var formatter = function(options, value){
+			if (options.invert)
+				value = - value;
+
+			var y = value;
+
+			if (options.bunit)
+				value += ' ' + options.bunit
+
+			// Parse units
+			if (options.bunit == 's')
+				value = rdr_duration(y)
+			else if (options.bunit == 'ms')
+				value = rdr_duration(y/1000)
+
+			return '<b>' + options.metric + ':</b> ' + value ;
+		}
+
+		console.log('---------------------------')
+		console.log(this)
+
+		var s = '<b>' + rdr_tstodate(this.x / 1000) + '</b>';
+		
+		if (this['points']) {
+			// Shared
+			$.each(this.points, function(i, point) {
+				s += '<br/>' + formatter(point.series.options, point.y)
+			});
+		} else {
+			s += '<br/>' + formatter(this.series.options, this.y)
+		}
+		return s;
 	},
 
 	setAxis: function(data){
