@@ -19,15 +19,35 @@
 # ---------------------------------
 
 import collectd
-
+import ConfigParser
 import json
+import urllib2
+import os
+
 plugin_name = "canopsis_rabbitmq"
 
-url = "http://127.0.0.1:55672/api"
+url = "None"
 
 canopsis_exchanges = ['canopsis.events','canopsis.alerts']
 
 opener = None
+
+filename = '~/etc/amqp.conf'
+filename = os.path.expanduser(filename)
+
+config = ConfigParser.RawConfigParser()
+
+try:
+	config.read(filename)
+	section = 'master'
+	amqp_host = config.get(section, "host")
+	amqp_userid = config.get(section, "userid")
+	amqp_password = config.get(section, "password")
+
+	url = "http://%s:55672/api" % amqp_host
+except Exception, err:
+	log("Impossible to load configurations (%s) !" % err)
+
 
 ### Functions
 def put_value(metric, value, type='gauge'):
@@ -46,14 +66,18 @@ def log(msg):
 def init_callback():
 	log('Init plugin')
 
-	import urllib2
+	if not url:
+		log(' + url is not defined !')
+		return
+
+	log('url: %s' % url)
 
 	global opener
 
 	proxy_handler = urllib2.ProxyHandler({})
 
 	password_mgr = urllib2.HTTPPasswordMgrWithDefaultRealm()
-	password_mgr.add_password(None, url, "guest", "guest")
+	password_mgr.add_password(None, url, amqp_userid, amqp_password)
 	handler = urllib2.HTTPBasicAuthHandler(password_mgr)
 	
 	opener = urllib2.build_opener(handler, proxy_handler)
@@ -62,6 +86,9 @@ def config_callback(config):
 	log('Config plugin')
 
 def read_callback(data=None):
+	if not url or not opener:
+		return
+
 	f = opener.open(url+"/exchanges")
 	
 	try:
