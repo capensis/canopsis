@@ -165,7 +165,9 @@ Ext.define('widgets.kpi.kpi' , {
 					animation: false,
 					size: this.pie_size + '%'
 				},
-				column:{}
+				column:{
+					animation: false,
+				}
 			},
 			tooltip: {
 				formatter:this.tooltipFunction
@@ -400,6 +402,7 @@ Ext.define('widgets.kpi.kpi' , {
 	},
 
 	displaySerie: function() {
+		console.log(this.options)
 		if (this.serie)
 			this.chart.addSeries(Ext.clone(this.serie));
 	},
