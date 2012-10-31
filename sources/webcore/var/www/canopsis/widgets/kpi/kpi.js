@@ -402,7 +402,6 @@ Ext.define('widgets.kpi.kpi' , {
 	},
 
 	displaySerie: function() {
-		console.log(this.options)
 		if (this.serie)
 			this.chart.addSeries(Ext.clone(this.serie));
 	},
