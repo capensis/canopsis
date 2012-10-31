@@ -370,7 +370,7 @@ Ext.define('widgets.diagram.diagram' , {
 				else
 					var color = _color
 
-				serie.data.push({ id: metric, name: metric_long_name, y: value, color: color, bunit:unit });
+				serie.data.push({ id: metric, name: metric_long_name, metric:metric, y: value, color: color, bunit:unit });
 
 			}
 
@@ -466,18 +466,17 @@ Ext.define('widgets.diagram.diagram' , {
 			return '<b>' + options.metric + ':</b> ' + value ;
 		}
 
-		console.log('---------------------------')
-		console.log(this)
+		var s = '';
 
-		var s = '<b>' + rdr_tstodate(this.x / 1000) + '</b>';
+		console.log(this)
 		
 		if (this['points']) {
 			// Shared
 			$.each(this.points, function(i, point) {
-				s += '<br/>' + formatter(point.series.options, point.y)
+				s += formatter(point.options, point.y)
 			});
 		} else {
-			s += '<br/>' + formatter(this.series.options, this.y)
+			s += formatter(this.point.options, this.y)
 		}
 		return s;
 	},
