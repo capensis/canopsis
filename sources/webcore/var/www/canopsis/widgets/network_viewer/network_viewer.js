@@ -64,12 +64,10 @@ Ext.define('widgets.network_viewer.network_viewer' , {
 	},
 
 	doRefresh: function(){
-		console.log('ffqrgfefsrbhegiber')
 		if(this.sigmaContainer)
 			this.sigmaContainer.empty()
 
 		this.initSigma()
-
 	},
 	
 	//-------------------Sigma related functions------------------
