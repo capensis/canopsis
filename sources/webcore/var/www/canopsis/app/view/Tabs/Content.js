@@ -126,23 +126,26 @@ Ext.define('canopsis.view.Tabs.Content' , {
 				this.view = data.data[0];
 				this.dump = this.view.items;
 
-				if (this.view.view_options != undefined)
-					this.view_options = this.view.view_options;
 
-				// Set width for exporting in PDF
-				if (this.exportMode && this.view_options && this.view_options.pageSize && this.view_options.orientation){
+				if (this.view.view_options != undefined){
+					this.view_options = this.view.view_options;
 					var pageSize = this.view_options.pageSize;
 					var orientation = this.view_options.orientation;
+				}
+
+				if(pageSize && orientation){
+					var width = this.pageWidth[orientation][pageSize];
+					this.pageModeSize = width
+				}
+
+				// Set width for exporting in PDF
+				if (this.exportMode && width){
 					log.debug("Orientation: "+orientation, this.logAuthor);
 					log.debug("pageSize: "+pageSize, this.logAuthor);
-
-					var width = this.pageWidth[orientation][pageSize];
 					log.debug("width: "+width, this.logAuthor);
 
-					if (width){
-						log.debug(" + Update width", this.logAuthor);
+					if (width)
 						this.setWidth(width);
-					}
 				}else{
 					log.debug(" + Update default width", this.logAuthor);
 					this.setWidth(this.pageWidth['portrait']['A4']);
@@ -307,6 +310,13 @@ Ext.define('canopsis.view.Tabs.Content' , {
 				form.getForm().setValues(options)
 		}
 	},
+
+	setViewOptions : function(data){
+		this.callParent(arguments);
+		if(data.orientation && data.pageSize)
+			 this.pageModeSize = this.pageWidth[data.orientation][data.pageSize];
+	},
+
 	/*
 	removeReportingBar : function(){
 		log.debug('removing reporting bar', this.logAuthor)
