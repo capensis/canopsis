@@ -98,6 +98,7 @@ Ext.define('widgets.line_graph.line_graph' , {
 
 	nb_node: 0,
 	same_node: true,
+	displayLastValue: false,
 
 	initComponent: function() {
 		this.backgroundColor	= check_color(this.backgroundColor);
@@ -512,6 +513,7 @@ Ext.define('widgets.line_graph.line_graph' , {
 					}
 				}
 
+				if(this.displayLastValue)
 				this.drawLastValue(last_values)
 
 
