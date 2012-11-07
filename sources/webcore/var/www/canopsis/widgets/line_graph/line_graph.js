@@ -106,6 +106,8 @@ Ext.define('widgets.line_graph.line_graph' , {
 		this.legend_borderColor = check_color(this.legend_borderColor);
 		this.legend_backgroundColor	= check_color(this.legend_backgroundColor);
 
+		this.lastValue = []
+
 		log.debug('nodes:', this.logAuthor);
 		log.dump(this.nodes);
 
@@ -486,6 +488,9 @@ Ext.define('widgets.line_graph.line_graph' , {
 			}*/
 
 			if (data.length > 0) {
+
+				var last_values = []
+
 				for (var i in data) {
 					this.addDataOnChart(data[i]);
 
@@ -496,7 +501,19 @@ Ext.define('widgets.line_graph.line_graph' , {
 						if (node.extra_field && node.extra_field.trend_curve)
 							this.addTrendLines(data[i]);
 					}
+
+					if(data[i]['values']){
+						var array_len = data[i]['values'].length - 1
+						last_values.push([
+							data[i]['metric'],
+							data[i]['values'][array_len][1],
+							data[i]['bunit']
+						])
+					}
 				}
+
+				this.drawLastValue(last_values)
+
 
 				//Disable no data message
 				if (this.chartMessage) {
@@ -919,6 +936,38 @@ Ext.define('widgets.line_graph.line_graph' , {
 				log.debug('  +  not enough data to draw trend line');
 			}
 		}
+	},
+
+	drawLastValue: function(value){
+		var html = '<span style="color:{0};font-size: 1.2em;">{1}: {2}{3}</span>'
+		
+		var list_string = []
+
+		for(var i in value){
+			list_string.push(
+				Ext.String.format(
+					html,
+					'dark grey',
+					value[i][0],
+					value[i][1],
+					(value[i][2]) ? value[i][2] : ''
+				)
+			)
+		}
+
+		for(var i in this.lastValue)
+			this.lastValue[i].destroy()
+
+		for(var i in list_string){
+			this.lastValue[i] = this.chart.renderer.text(
+				list_string[i],
+				this.getWidth() / 3 * 2,
+				this.getHeight() / 4 + (20 * i)
+			);
+			this.lastValue[i].add()
+		}
+
+		
 	},
 
 	truncValueArray: function(value_array) {
