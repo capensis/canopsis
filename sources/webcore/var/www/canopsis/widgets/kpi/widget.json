@@ -1,0 +1,65 @@
+[{
+	"name":  "Kpi",
+	"verions": 0.1,
+	"author": "capensis",
+	"website": "http://www.canopsis.org",
+	"xtype":"kpi",
+	"description": "Display KPI.",
+	"description-fr": "Afficher une KPI",
+	"refreshInterval": 300,
+	"locales": ["fr"],
+	"options": [{
+				"title": "Style",
+				"items": [{
+							"xtype" : "numberfield",
+							"name" : "lines",
+							"fieldLabel": "Lines",
+							"minValue": 1,
+							"value": 12
+						},{
+							"xtype" : "numberfield",
+							"name" : "angle",
+							"fieldLabel": "Angle",
+							"minValue": 0,
+							"maxValue": 48,
+							"value": 0
+						},{
+							"xtype" : "numberfield",
+							"name" : "lineWidth",
+							"fieldLabel": "Line width",
+							"minValue": 0.1,
+							"value": 0.3
+
+						},{
+							"xtype" : "colorfield",
+							"name" : "colorStop",
+							"fieldLabel": "Stop color",
+							"value": "#8FC0DA"
+						},{
+							"xtype" : "colorfield",
+							"name" : "colorStart",
+							"fieldLabel": "Start color",
+							"value": "#6FADCF"
+						},{
+							"xtype" : "colorfield",
+							"name" : "strokeColor",
+							"fieldLabel": "Stroke color",
+							"value": "#EEEEEE"
+						}]
+			},{
+				"title": "Choose Metrics",
+				"items": [{
+							"xtype": "cmetric",
+							"name": "nodes",
+							"multiSelect": false,
+							"metrics": true,
+							"additional_field": [{
+												"xtype":"textfield",
+												"header":"Custom label",
+												"name":"label",
+												"emptyText":"Type the new label here",
+												"flex":1
+											}]
+						}]
+			}]
+}]
