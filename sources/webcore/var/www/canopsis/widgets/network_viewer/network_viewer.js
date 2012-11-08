@@ -145,6 +145,13 @@ Ext.define('widgets.network_viewer.network_viewer' , {
 			label:tree.name,
 			x:coord.x,
 			y:coord.y,
+			shape:'square'
+		}
+
+
+		if(depth == 0){
+			node_params.shape = 'square',
+			node_params.size = this.maxNodeSize * 1.5
 		}
 
 		if(tree.state != undefined)
