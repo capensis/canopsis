@@ -38,6 +38,13 @@
 							"value": 20
 
 						},{
+							"xtype" : "numberfield",
+							"name" : "labelSize",
+							"fieldLabel": "Label size",
+							"minValue": 0,
+							"value": 25
+
+						},{
 							"xtype" : "colorfield",
 							"name" : "colorStop",
 							"fieldLabel": "Stop color",

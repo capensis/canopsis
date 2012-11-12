@@ -96,6 +96,8 @@ Ext.define('widgets.line_graph.line_graph' , {
 	//use_window_ts: false,
 	//..
 
+	last_values: [],
+
 	nb_node: 0,
 	same_node: true,
 	displayLastValue: false,
@@ -490,7 +492,7 @@ Ext.define('widgets.line_graph.line_graph' , {
 
 			if (data.length > 0) {
 
-				var last_values = []
+				this.last_values = []
 
 				for (var i in data) {
 					this.addDataOnChart(data[i]);
@@ -510,7 +512,7 @@ Ext.define('widgets.line_graph.line_graph' , {
 						else
 							var metric_name = data[i]['metric']
 
-						last_values.push([
+						this.last_values.push([
 							metric_name,
 							data[i]['values'][array_len][1],
 							data[i]['bunit']
@@ -518,8 +520,8 @@ Ext.define('widgets.line_graph.line_graph' , {
 					}
 				}
 
-				if(this.displayLastValue)
-					this.drawLastValue(last_values)
+				if(this.displayLastValue && this.last_values)
+					this.drawLastValue(this.last_values)
 
 
 				//Disable no data message
@@ -567,8 +569,11 @@ Ext.define('widgets.line_graph.line_graph' , {
 
 	onResize: function() {
 		log.debug('onRezize', this.logAuthor);
-		if (this.chart)
+		if (this.chart){
 			this.chart.setSize(this.getWidth(), this.getHeight() , false);
+			if(this.displayLastValue && this.last_values)
+				this.drawLastValue(this.last_values)
+		}
 	},
 
 	dblclick: function() {

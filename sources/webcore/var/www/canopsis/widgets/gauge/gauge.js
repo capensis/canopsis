@@ -37,8 +37,9 @@ Ext.define('widgets.gauge.gauge' , {
 	colorStop: '#8FC0DA',    // just experiment with them
 	strokeColor: '#EEEEEE',   // to see which ones work best for you
 	generateGradient: true,
+	
 	textSize : 40,
-
+	labelSize: 25,
 	maxValue:100,
 	animationSpeed:32,
 
@@ -46,14 +47,23 @@ Ext.define('widgets.gauge.gauge' , {
 		this.callParent(arguments);
 
 		var width = this.wcontainer.getWidth()
-		var height = this.getHeight() - (this.textSize + 10)
+		var height = this.getHeight() - (this.textSize + this.labelSize + 10)
+
 		var canvasId = this.wcontainerId + '-canvas'
 		var textId = this.wcontainerId + '-text'
+		var labelId = this.wcontainerId + '-label'
 
 		var textHTML = '<div id="'+textId+'" style="font-size: '+this.textSize+'px;text-align:center;"></div>'
 		var canvasHTML = '<canvas width="'+width+'" height="'+height+'" id="'+canvasId+'"></canvas>'
-		
-		var target = this.wcontainer.update(textHTML+canvasHTML)
+		var labelHTML = '<div id="'+labelId+'" style="font-size: '+this.labelSize+'px;text-align:center;color:#3E576F"></div>'
+
+		console.log('-----------------------')
+		console.log(this.title)
+
+		if(this.title)
+			var target = this.wcontainer.update(canvasHTML+textHTML)
+		else
+			var target = this.wcontainer.update(labelHTML+canvasHTML+textHTML)
 
 		var opts = {
 			lines: this.lines,
@@ -133,11 +143,22 @@ Ext.define('widgets.gauge.gauge' , {
 	onRefresh: function(data) {
 		log.debug('onRefresh', this.logAuthor);
 
+		var label = Ext.get(this.wcontainerId + '-label')
+
 		var fields = undefined
 		if(this.nodes[0].extra_field)
 			fields = this.nodes[0].extra_field
 
-		if(fields.ma){
+		//update metric name
+		if(label){
+			if(fields && fields.label)
+				label.update(fields.label)
+			else
+				label.update(data.metric)
+		}
+			
+		//update metric value
+		if(fields && fields.ma){
 			this.gauge.maxValue = fields.ma
 		}else if(data.max){
 			this.gauge.maxValue = data.max
