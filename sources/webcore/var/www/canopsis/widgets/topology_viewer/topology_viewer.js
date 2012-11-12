@@ -18,10 +18,10 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 */
-Ext.define('widgets.network_viewer.network_viewer' , {
+Ext.define('widgets.topology_viewer.topology_viewer' , {
 	extend: 'canopsis.lib.view.cwidget',
 
-	alias: 'widget.network_viewer',
+	alias: 'widget.topology_viewer',
 	
 	//geometric options
 	

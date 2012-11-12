@@ -1,9 +1,9 @@
 [{
-	"name":  "Network viewer",
+	"name":  "Topology viewer",
 	"version": 0.1,
 	"author": "capensis",
 	"website": "http://www.canopsis.org",
-	"xtype": "network_viewer",
+	"xtype": "topology_viewer",
 	"description": "test",
 	"description-fr":"test",
 	"refreshInterval": 300,
