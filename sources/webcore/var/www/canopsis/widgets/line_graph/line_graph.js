@@ -494,10 +494,10 @@ Ext.define('widgets.line_graph.line_graph' , {
 
 				for (var i in data) {
 					this.addDataOnChart(data[i]);
+					var node = this.nodesByID[data[i].node];
 
 					// Exclude state lines
 					if(data[i]['metric'] != 'cps_state' && data[i]['metric'] != 'cps_state_ok' && data[i]['metric'] != 'cps_state_warn' && data[i]['metric'] != 'cps_state_crit'){
-						var node = this.nodesByID[data[i].node];
 						//add/refresh trend lines
 						if (node.extra_field && node.extra_field.trend_curve)
 							this.addTrendLines(data[i]);
@@ -505,8 +505,13 @@ Ext.define('widgets.line_graph.line_graph' , {
 
 					if(data[i]['values']){
 						var array_len = data[i]['values'].length - 1
+						if(node.extra_field && node.extra_field.label)
+							var metric_name = node.extra_field.label
+						else
+							var metric_name = data[i]['metric']
+
 						last_values.push([
-							data[i]['metric'],
+							metric_name,
 							data[i]['values'][array_len][1],
 							data[i]['bunit']
 						])
@@ -514,7 +519,7 @@ Ext.define('widgets.line_graph.line_graph' , {
 				}
 
 				if(this.displayLastValue)
-				this.drawLastValue(last_values)
+					this.drawLastValue(last_values)
 
 
 				//Disable no data message
