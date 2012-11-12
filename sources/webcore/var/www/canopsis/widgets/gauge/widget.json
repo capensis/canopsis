@@ -46,6 +46,13 @@
 							"value": 0.3
 
 						},{
+							"xtype" : "numberfield",
+							"name" : "textSize",
+							"fieldLabel": "Text size",
+							"minValue": 0,
+							"value": 20
+
+						},{
 							"xtype" : "colorfield",
 							"name" : "colorStop",
 							"fieldLabel": "Stop color",
@@ -73,6 +80,11 @@
 												"header":"Custom label",
 												"name":"label",
 												"emptyText":"Type the new label here",
+												"flex":1
+											},{
+												"xtype":"numberfield",
+												"header":"Max value",
+												"name":"max",
 												"flex":1
 											}]
 						}]

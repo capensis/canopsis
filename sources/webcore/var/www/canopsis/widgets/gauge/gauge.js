@@ -37,7 +37,7 @@ Ext.define('widgets.gauge.gauge' , {
 	colorStop: '#8FC0DA',    // just experiment with them
 	strokeColor: '#EEEEEE',   // to see which ones work best for you
 	generateGradient: true,
-	textSize : 41,
+	textSize : 40,
 
 	maxValue:100,
 	animationSpeed:32,
@@ -46,7 +46,7 @@ Ext.define('widgets.gauge.gauge' , {
 		this.callParent(arguments);
 
 		var width = this.wcontainer.getWidth()
-		var height = this.getHeight() - this.textSize - 10
+		var height = this.getHeight() - (this.textSize + 10)
 		var canvasId = this.wcontainerId + '-canvas'
 		var textId = this.wcontainerId + '-text'
 
@@ -66,9 +66,6 @@ Ext.define('widgets.gauge.gauge' , {
 			generateGradient: this.generateGradient
 		}
 
-		//console.log('------------------------')
-		//console.log(opts)
-
 		this.gauge = new Gauge(document.getElementById(canvasId));
 		this.gauge.setOptions(opts)
 		this.gauge.setTextField(document.getElementById(textId));
@@ -76,6 +73,12 @@ Ext.define('widgets.gauge.gauge' , {
 		this.gauge.maxValue = this.maxValue;
 		this.gauge.animationSpeed = this.animationSpeed
 		
+	},
+
+	onResize: function() {
+		log.debug('onRezize', this.logAuthor);
+		this.wcontainer.removeAll()
+		this.afterContainerRender()
 	},
 
 	getNodeInfo: function(from,to) {
