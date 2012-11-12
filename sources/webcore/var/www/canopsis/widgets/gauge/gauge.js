@@ -70,7 +70,6 @@ Ext.define('widgets.gauge.gauge' , {
 		this.gauge.setOptions(opts)
 		this.gauge.setTextField(document.getElementById(textId));
 
-		this.gauge.maxValue = this.maxValue;
 		this.gauge.animationSpeed = this.animationSpeed
 		
 	},
@@ -133,9 +132,19 @@ Ext.define('widgets.gauge.gauge' , {
 
 	onRefresh: function(data) {
 		log.debug('onRefresh', this.logAuthor);
-		console.log(data)
-		if(data.max)
+
+		var fields = undefined
+		if(this.nodes[0].extra_field)
+			fields = this.nodes[0].extra_field
+
+		if(fields.ma){
+			this.gauge.maxValue = fields.ma
+		}else if(data.max){
 			this.gauge.maxValue = data.max
+		}else{
+			this.gauge.maxValue = this.maxValue;
+		}
+
 		if(data.values)
 			this.gauge.set(data.values[data.values.length - 1][1])
 	},

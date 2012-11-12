@@ -84,7 +84,7 @@
 											},{
 												"xtype":"numberfield",
 												"header":"Max value",
-												"name":"max",
+												"name":"ma",
 												"flex":1
 											}]
 						}]
