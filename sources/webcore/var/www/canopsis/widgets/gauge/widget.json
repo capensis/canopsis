@@ -9,21 +9,6 @@
 	"refreshInterval": 300,
 	"locales": ["fr"],
 	"options": [{
-				"title": "Options",
-				"items": [{
-						"xtype": "fieldset",
-						"title": "Value options",
-						"collapsible": false,
-						"items": [
-							{
-								"xtype" : "numberfield",
-								"name" : "maxValue",
-								"fieldLabel": "Max value",
-								"value": 100
-                           }		
-						]
-				}]
-			},{
 				"title": "Style",
 				"items": [{
 							"xtype" : "numberfield",
