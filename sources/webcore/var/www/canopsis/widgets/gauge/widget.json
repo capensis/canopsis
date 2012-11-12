@@ -1,14 +1,29 @@
 [{
-	"name":  "Kpi",
+	"name":  "Gauge",
 	"verions": 0.1,
 	"author": "capensis",
 	"website": "http://www.canopsis.org",
-	"xtype":"kpi",
-	"description": "Display KPI.",
-	"description-fr": "Afficher une KPI",
+	"xtype":"gauge",
+	"description": "Display Gauge.",
+	"description-fr": "Afficher une jauge",
 	"refreshInterval": 300,
 	"locales": ["fr"],
 	"options": [{
+				"title": "Options",
+				"items": [{
+						"xtype": "fieldset",
+						"title": "Value options",
+						"collapsible": false,
+						"items": [
+							{
+								"xtype" : "numberfield",
+								"name" : "maxValue",
+								"fieldLabel": "Max value",
+								"value": 100
+                           }		
+						]
+				}]
+			},{
 				"title": "Style",
 				"items": [{
 							"xtype" : "numberfield",

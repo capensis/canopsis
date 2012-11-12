@@ -18,15 +18,15 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 */
-Ext.define('widgets.kpi.kpi' , {
+Ext.define('widgets.gauge.gauge' , {
 	extend: 'canopsis.lib.view.cwidget',
 
-	alias: 'widget.kpi',
+	alias: 'widget.gauge',
 
-	logAuthor: '[kpi]',
+	logAuthor: '[gauge]',
 
 	lines: 12, // The number of lines to draw
-	angle: 0, // The length of each line
+	angle: 4, // The length of each line
 	lineWidth: 0.3, // The line thickness
 	pointer: {
 		length: 0.9, // The radius of the inner circle
@@ -39,7 +39,7 @@ Ext.define('widgets.kpi.kpi' , {
 	generateGradient: true,
 	textSize : 41,
 
-	maxValue:100000,
+	maxValue:100,
 	animationSpeed:32,
 
 	afterContainerRender: function() {
@@ -57,7 +57,7 @@ Ext.define('widgets.kpi.kpi' , {
 
 		var opts = {
 			lines: this.lines,
-			angle: this.angle,
+			angle: this.angle/100,
 			lineWidth: this.lineWidth,
 			pointer: this.pointer,
 			colorStart: this.colorStart,
@@ -66,11 +66,16 @@ Ext.define('widgets.kpi.kpi' , {
 			generateGradient: this.generateGradient
 		}
 
-		this.gauge = new Gauge(document.getElementById(canvasId)).setOptions(opts);
+		//console.log('------------------------')
+		//console.log(opts)
+
+		this.gauge = new Gauge(document.getElementById(canvasId));
+		this.gauge.setOptions(opts)
 		this.gauge.setTextField(document.getElementById(textId));
 
 		this.gauge.maxValue = this.maxValue;
 		this.gauge.animationSpeed = this.animationSpeed
+		
 	},
 
 	getNodeInfo: function(from,to) {
