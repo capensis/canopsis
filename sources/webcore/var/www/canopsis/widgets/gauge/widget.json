@@ -20,7 +20,7 @@
 							"xtype" : "numberfield",
 							"name" : "animationSpeed",
 							"fieldLabel": "Animation speed",
-							"minValue": 0,
+							"minValue": 1,
 							"maxValue": 128,
 							"value": 30
 						},{
@@ -69,22 +69,22 @@
 							"xtype" : "colorfield",
 							"name" : "pointerColor",
 							"fieldLabel": "Pointer color",
-							"value": "#EEEEEE"
-						},{
-							"xtype" : "colorfield",
-							"name" : "colorStop",
-							"fieldLabel": "Stop color",
-							"value": "#8FC0DA"
+							"value": "#A3A3A3"
 						},{
 							"xtype" : "colorfield",
 							"name" : "colorStart",
 							"fieldLabel": "Start color",
-							"value": "#6FADCF"
+							"value": "#06CF14"
+						},{
+							"xtype" : "colorfield",
+							"name" : "colorStop",
+							"fieldLabel": "Stop color",
+							"value": "#04750C"
 						},{
 							"xtype" : "colorfield",
 							"name" : "strokeColor",
 							"fieldLabel": "Stroke color",
-							"value": "#EEEEEE"
+							"value": "#C9DBA0"
 						}]
 			},{
 				"title": "Choose Metrics",

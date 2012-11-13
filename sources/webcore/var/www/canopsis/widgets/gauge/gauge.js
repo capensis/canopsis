@@ -53,6 +53,10 @@ Ext.define('widgets.gauge.gauge' , {
 		var textId = this.wcontainerId + '-text'
 		var labelId = this.wcontainerId + '-label'
 
+		log.debug('canvasId: ' + canvasId, this.logAuthor);
+		log.debug('textId: ' + textId, this.logAuthor);
+		log.debug('labelId: ' + labelId, this.logAuthor);
+
 		var textHTML = '<div id="'+textId+'" style="font-size: '+this.textSize+'px;text-align:center;"></div>'
 		var canvasHTML = '<canvas width="'+width+'" height="'+height+'" id="'+canvasId+'"></canvas>'
 		var labelHTML = '<div id="'+labelId+'" style="font-size: '+this.labelSize+'px;text-align:center;color:#3E576F"></div>'
@@ -95,7 +99,7 @@ Ext.define('widgets.gauge.gauge' , {
 		this.processNodes()
 		if (this.nodeId) {
 			Ext.Ajax.request({
-				url: this.makeUrl(from,to),
+				url: '/perfstore/values' + '/' + to + '/' + to,
 				scope: this,
 				params: this.post_params,
 				method: 'POST',
@@ -113,15 +117,6 @@ Ext.define('widgets.gauge.gauge' , {
 			});
 		}
 
-	},
-
-	makeUrl: function(from, to) {
-		var url = '/perfstore/values';
-		if (! to)
-			url += '/' + from;
-		if (from && to) 
-			url += '/' + from + '/' + to;
-		return url;
 	},
 
 	processNodes: function() {
@@ -171,7 +166,7 @@ Ext.define('widgets.gauge.gauge' , {
 			if(data.values)
 				this.gauge.set(data.values[data.values.length - 1][1])
 		}catch(err){
-			console.log('Error while set value:' + err, this.logAuthor)
+			log.error('Error while set value:' + err, this.logAuthor)
 		}
 	},
 
