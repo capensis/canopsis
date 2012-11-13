@@ -146,7 +146,6 @@ Ext.define('canopsis.controller.Derogation', {
 		if (name) {
 			win_conf.title += ': ' + name;
 			form.getForm().setValues({'tags': [name]});
-			console.log(form.getForm());
 		}
 
 		form.win = Ext.create('widget.window', win_conf).show();
