@@ -337,3 +337,37 @@ rdr_duration = function(timestamp, nb){
 
 	return output
 };
+
+rdr_yaxis = function(ori_value, multiple){
+
+	if (! multiple || parseInt(multiple) == NaN)
+		multiple = 1000
+
+	var output = ori_value
+
+	value = ori_value / multiple
+	if (value >= 1){
+		output = value + "K"
+		ori_value = value
+	}
+
+	value = ori_value / multiple
+	if (value >= 1){
+		output = value + "M"
+		ori_value = value
+	}
+
+	value = ori_value / multiple
+	if (value >= 1){
+		output = value + "G"
+		ori_value = value
+	}
+
+	value = ori_value / multiple
+	if (value >= 1){
+		output = value + "T"
+		ori_value = value
+	}
+
+	return output
+};

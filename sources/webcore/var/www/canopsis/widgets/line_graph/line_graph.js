@@ -363,7 +363,7 @@ Ext.define('widgets.line_graph.line_graph' , {
 					return rdr_duration(this.value/1000)
 			}
 		}
-		return this.value
+		return rdr_yaxis(this.value)
 	},
 
 	tooltip_formatter: function(){
