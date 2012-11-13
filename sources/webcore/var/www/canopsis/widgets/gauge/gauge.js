@@ -28,11 +28,11 @@ Ext.define('widgets.gauge.gauge' , {
 	lines: 12, // The number of lines to draw
 	angle: 4, // The length of each line
 	lineWidth: 0.3, // The line thickness
-	pointer: {
-		length: 0.9, // The radius of the inner circle
-		strokeWidth: 0.035, // The rotation offset
-		color: '#000000' // Fill color
-	},
+
+	pointerLength: 0.9,
+	pointerWidth: 0.035,
+	pointerColor: '#000000',
+
 	colorStart: '#6FADCF',   // Colors
 	colorStop: '#8FC0DA',    // just experiment with them
 	strokeColor: '#EEEEEE',   // to see which ones work best for you
@@ -57,9 +57,6 @@ Ext.define('widgets.gauge.gauge' , {
 		var canvasHTML = '<canvas width="'+width+'" height="'+height+'" id="'+canvasId+'"></canvas>'
 		var labelHTML = '<div id="'+labelId+'" style="font-size: '+this.labelSize+'px;text-align:center;color:#3E576F"></div>'
 
-		console.log('-----------------------')
-		console.log(this.title)
-
 		if(this.title)
 			var target = this.wcontainer.update(canvasHTML+textHTML)
 		else
@@ -69,7 +66,11 @@ Ext.define('widgets.gauge.gauge' , {
 			lines: this.lines,
 			angle: this.angle/100,
 			lineWidth: this.lineWidth,
-			pointer: this.pointer,
+			pointer: {
+				length: this.pointerLength, // The radius of the inner circle
+				strokeWidth: this.pointerWidth, // The rotation offset
+				color: this.pointerColor // Fill color
+			},
 			colorStart: this.colorStart,
 			colorStop: this.colorStop,
 			strokeColor: this.strokeColor,
@@ -166,8 +167,12 @@ Ext.define('widgets.gauge.gauge' , {
 			this.gauge.maxValue = this.maxValue;
 		}
 
-		if(data.values)
-			this.gauge.set(data.values[data.values.length - 1][1])
+		try{
+			if(data.values)
+				this.gauge.set(data.values[data.values.length - 1][1])
+		}catch(err){
+			console.log('Error while set value:' + err, this.logAuthor)
+		}
 	},
 
 });

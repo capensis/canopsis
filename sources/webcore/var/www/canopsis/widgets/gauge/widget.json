@@ -45,6 +45,25 @@
 							"value": 25
 
 						},{
+							"xtype" : "numberfield",
+							"name" : "pointerLength",
+							"fieldLabel": "Pointer length",
+							"minValue": 0.1,
+							"value": 0.9,
+							"step": 0.1
+						},{
+							"xtype" : "numberfield",
+							"name" : "pointerWidth",
+							"fieldLabel": "Pointer width",
+							"minValue": 0,
+							"value": 0.035,
+							"step": 0.01
+						},{
+							"xtype" : "colorfield",
+							"name" : "pointerColor",
+							"fieldLabel": "Pointer color",
+							"value": "#EEEEEE"
+						},{
 							"xtype" : "colorfield",
 							"name" : "colorStop",
 							"fieldLabel": "Stop color",
