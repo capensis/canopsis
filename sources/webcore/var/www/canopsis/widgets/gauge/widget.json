@@ -18,6 +18,13 @@
 							"value": 12
 						},{
 							"xtype" : "numberfield",
+							"name" : "animationSpeed",
+							"fieldLabel": "Animation speed",
+							"minValue": 0,
+							"maxValue": 128,
+							"value": 30
+						},{
+							"xtype" : "numberfield",
 							"name" : "angle",
 							"fieldLabel": "Angle",
 							"minValue": 0,

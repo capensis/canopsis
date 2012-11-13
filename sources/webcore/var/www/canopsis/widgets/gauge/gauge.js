@@ -41,7 +41,7 @@ Ext.define('widgets.gauge.gauge' , {
 	textSize : 40,
 	labelSize: 25,
 	maxValue:100,
-	animationSpeed:32,
+	animationSpeed:30,
 
 	afterContainerRender: function() {
 		this.callParent(arguments);
