@@ -66,22 +66,22 @@
 							"value": 0.035,
 							"step": 0.01
 						},{
-							"xtype" : "colorfield",
+							"xtype" : "ccolorfield",
 							"name" : "pointerColor",
 							"fieldLabel": "Pointer color",
 							"value": "#A3A3A3"
 						},{
-							"xtype" : "colorfield",
+							"xtype" : "ccolorfield",
 							"name" : "colorStart",
 							"fieldLabel": "Start color",
 							"value": "#06CF14"
 						},{
-							"xtype" : "colorfield",
+							"xtype" : "ccolorfield",
 							"name" : "colorStop",
 							"fieldLabel": "Stop color",
 							"value": "#04750C"
 						},{
-							"xtype" : "colorfield",
+							"xtype" : "ccolorfield",
 							"name" : "strokeColor",
 							"fieldLabel": "Stroke color",
 							"value": "#C9DBA0"
