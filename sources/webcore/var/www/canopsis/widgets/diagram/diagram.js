@@ -65,6 +65,9 @@ Ext.define('widgets.diagram.diagram' , {
 
 	diagram_type: 'pie',
 
+	labelFormatter :function() {return '<b>'+ this.point.name +'</b>: '+ Math.round(this.percentage) +' %';},
+	labelFormatterBar : function() {return '<b>'+ this.x +'</b>: '+ this.y;},
+
 	initComponent: function() {
 		this.backgroundColor	= check_color(this.backgroundColor);
 		this.borderColor	= check_color(this.borderColor);
@@ -159,7 +162,7 @@ Ext.define('widgets.diagram.diagram' , {
 						enabled: this.labels,
                         color: '#000000',
                         connectorColor: '#000000',
-                        formatter: function() {return '<b>'+ this.point.name +'</b>: '+ Math.round(this.percentage) +' %';}
+                        formatter: this.labelFormatter
 					},
 					showInLegend: true,
 					animation: false,
@@ -167,6 +170,12 @@ Ext.define('widgets.diagram.diagram' , {
 				},
 				column:{
 					animation: false,
+					dataLabels: {
+						enabled: this.labels,
+                        color: '#000000',
+                        connectorColor: '#000000',
+                        formatter: this.labelFormatterBar
+					},
 				}
 			},
 			tooltip: {
