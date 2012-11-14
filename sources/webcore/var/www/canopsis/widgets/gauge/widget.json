@@ -29,7 +29,7 @@
 							"fieldLabel": "Angle",
 							"minValue": 0,
 							"maxValue": 48,
-							"value": 0
+							"value": 10
 						},{
 							"xtype" : "numberfield",
 							"name" : "lineWidth",
