@@ -281,6 +281,7 @@ def perfstore_perftop():
 	percent	    			= request.params.get('percent', default=False)
 	threshold				= request.params.get('threshold', default=None)
 	threshold_direction 	= int(request.params.get('threshold_direction', default=-1))
+	expand 					= request.params.get('expand', default=False)
 
 	if mfilter:
 		try:
@@ -297,6 +298,11 @@ def perfstore_perftop():
 	else:
 		percent = False
 
+	if expand == 'true':
+		expand = True
+	else:
+		expand = False
+
 	logger.debug("PerfTop:")
 	logger.debug(" + mfilter:     %s" % mfilter)
 	logger.debug(" + limit:       %s" % limit)
@@ -305,6 +311,7 @@ def perfstore_perftop():
 	logger.debug(" + threshold_direction:   %s" % threshold_direction)
 	logger.debug(" + time_window: %s" % time_window)
 	logger.debug(" + sort:        %s" % sort)
+	logger.debug(" + expand:       %s" % expand)
 	
 	mtype = manager.store.find(mfilter=mfilter, limit=1, mfields=['t'])
 	
@@ -313,7 +320,7 @@ def perfstore_perftop():
 		
 		logger.debug(" + mtype:    %s" % mtype)
 		
-		if mtype != 'COUNTER':
+		if mtype != 'COUNTER' and not expand:
 			metrics = manager.store.find(mfilter=mfilter, mfields=['_id', 'co', 're', 'me', 'lv', 'u', 'ma', 'lts'], sort=[('lv', sort)], limit=limit)
 			for metric in metrics:
 				if percent and metric.get('ma', None):
@@ -332,21 +339,35 @@ def perfstore_perftop():
 			# Compute values
 			tstop = int(time.time())
 			tstart = tstop - time_window
+			logger.debug(" + tstart:      %s" % tstart)
+			logger.debug(" + tstop:       %s" % tstop)
 			metrics =  manager.store.find(mfilter=mfilter, mfields=['_id', 'co', 're', 'me', 'lv', 'u', 'lts'], limit=0)
 			for metric in metrics:
 				points = manager.get_points(_id=metric['_id'], tstart=tstart, tstop=tstop)
-				if len(points):
-					metric['lv'] = points[len(points)-1][1]
+				if expand:
+					del metric['_id']
+					if not len(points):
+						metric['lv'] = 0
+						data.append(metric)
+					else:
+						for point in points:
+							nmetric = metric.copy()
+							nmetric['lts'] = point[0]
+							nmetric['lv'] = point[1]		
+							data.append(nmetric)
 				else:
-					metric['lv'] = 0
+					if len(points):
+						metric['lv'] = points[len(points)-1][1]
+					else:
+						metric['lv'] = 0
 
-				if threshold:
-					if threshold_direction == -1 and metric['lv'] >= threshold:
+					if threshold:
+						if threshold_direction == -1 and metric['lv'] >= threshold:
+							data.append(metric)
+						elif threshold_direction == 1 and metric['lv'] <= threshold:
+							data.append(metric)
+					else:	
 						data.append(metric)
-					elif threshold_direction == 1 and metric['lv'] <= threshold:
-						data.append(metric)
-				else:	
-					data.append(metric)
 				
 			reverse = True
 			if sort == 1:

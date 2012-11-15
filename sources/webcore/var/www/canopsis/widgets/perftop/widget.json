@@ -45,7 +45,12 @@
 						}
 					},{
 						"xtype": "checkbox",
-						"fieldLabel": "calculate Percent (if possible)",
+						"fieldLabel": "Expand values",
+						"checked": false,
+						"name": "expand"
+					},{
+						"xtype": "checkbox",
+						"fieldLabel": "Calculate Percent (if possible)",
 						"checked": false,
 						"name": "percent"
 					},{
@@ -108,13 +113,18 @@
 						"name": "show_metric"
 					},{
 						"xtype": "checkbox",
-						"boxLabel": "Value",
+						"boxLabel": "Human-readable value",
 						"checked": true,
+						"name": "show_hr_value"
+					},{
+						"xtype": "checkbox",
+						"boxLabel": "Value",
+						"checked": false,
 						"name": "show_value"
 					},{
 						"xtype": "checkbox",
 						"boxLabel": "Unit",
-						"checked": true,
+						"checked": false,
 						"name": "show_unit"
 					},{
 						"xtype": "checkbox",

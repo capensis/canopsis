@@ -37,10 +37,12 @@ Ext.define('widgets.perftop.perftop' , {
 	show_metric: true,	
 	show_component: true,
 	show_resource: true,
-	show_value: true,
-	show_unit: true,
+	show_value: false,
+	show_unit: false,
+	show_hr_value: true,
 	hideHeaders: false,
 	show_position: true,
+	expand: false,
 	//..
 
 	afterContainerRender: function() {
@@ -62,7 +64,8 @@ Ext.define('widgets.perftop.perftop' , {
 									'time_window': this.time_window,
 									'threshold': this.threshold,
 									'threshold_direction': this.threshold_direction,
-									'percent': this.percent
+									'percent': this.percent,
+									'expand': this.expand
 								},
 					reader: {
 						type: 'json',
@@ -116,8 +119,21 @@ Ext.define('widgets.perftop.perftop' , {
 					header: _('Metric'),
 					flex: 2,
 					sortable: false,
-					dataIndex: 'me',
+					dataIndex: 'me'
 				});							
+
+			
+			if (this.show_hr_value)
+				this.columns.push({
+					header: _('Value'),
+					width: 100,
+					sortable: false,
+					dataIndex: 'lv',
+					align: 'right',
+					renderer: function(value, metaData, record) {
+						return rdr_humanreadable_value(value, record.get('u'));
+					}
+				});
 
 			if (this.show_value)
 				this.columns.push({
