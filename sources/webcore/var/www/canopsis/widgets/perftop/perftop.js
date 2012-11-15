@@ -61,7 +61,6 @@ Ext.define('widgets.perftop.perftop' , {
 					extraParams: {	'limit': this.limit,
 									'sort': this.sort,
 									'mfilter': this.mfilter,
-									'time_window': this.time_window,
 									'threshold': this.threshold,
 									'threshold_direction': this.threshold_direction,
 									'percent': this.percent,
@@ -191,6 +190,7 @@ Ext.define('widgets.perftop.perftop' , {
 	},
 
 	doRefresh: function(from, to) {
+		this.store.proxy.extraParams['time_window'] = (to-from)/1000
 		if (this.grid)
 			this.grid.store.load();
 	}
