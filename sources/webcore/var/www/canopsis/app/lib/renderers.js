@@ -338,36 +338,65 @@ rdr_duration = function(timestamp, nb){
 	return output
 };
 
-rdr_yaxis = function(ori_value, multiple){
+rdr_yaxis = function(ori_value, multiple, decimal){
 
 	if (! multiple || parseInt(multiple) == NaN)
 		multiple = 1000
 
+	if (! decimal || parseInt(decimal) == NaN)
+		decimal = 2
+
 	var output = ori_value
 
-	value = ori_value / multiple
+	value = Math.round((ori_value / multiple)*Math.pow(10, decimal))/100
 	if (value >= 1){
 		output = value + "K"
 		ori_value = value
 	}
 
-	value = ori_value / multiple
+	value = Math.round((ori_value / multiple)*Math.pow(10, decimal))/100
 	if (value >= 1){
 		output = value + "M"
 		ori_value = value
 	}
 
-	value = ori_value / multiple
+	value = Math.round((ori_value / multiple)*Math.pow(10, decimal))/100
 	if (value >= 1){
 		output = value + "G"
 		ori_value = value
 	}
 
-	value = ori_value / multiple
+	value = Math.round((ori_value / multiple)*Math.pow(10, decimal))/100
 	if (value >= 1){
 		output = value + "T"
 		ori_value = value
 	}
 
 	return output
+};
+
+rdr_humanreadable_value = function(value, unit){
+	var multiple = 1000
+
+	if (! unit || unit == undefined){
+		unit = ''
+	}else {
+
+		if (unit == "o" || unit == "MB")
+			multiple = 1024
+
+		if (unit == "MB"){
+			unit = "B"
+			value = value * 1024 * 1024
+		}
+
+		if (unit == "ms" || unit == "s"){
+			if (unit == "ms")
+				value = value / 1000
+			return rdr_duration(value)
+		}
+	}
+
+	value = rdr_yaxis(value, multiple)
+	return value + unit;
 };

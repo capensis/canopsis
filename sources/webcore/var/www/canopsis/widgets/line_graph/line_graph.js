@@ -356,12 +356,7 @@ Ext.define('widgets.line_graph.line_graph' , {
 	y_formatter: function(){
 		if (this.chart.series.length){
 			var bunit = this.chart.series[0].options.bunit
-			if (bunit){
-				if (bunit == 's')
-					return rdr_duration(this.value)
-				else if (bunit == 'ms')
-					return rdr_duration(this.value/1000)
-			}
+			return rdr_humanreadable_value(this.value, bunit)
 		}
 		return rdr_yaxis(this.value)
 	},
@@ -372,17 +367,7 @@ Ext.define('widgets.line_graph.line_graph' , {
 			if (options.invert)
 				value = - value;
 
-			var y = value;
-
-			if (options.bunit)
-				value += ' ' + options.bunit
-
-			// Parse units
-			if (options.bunit == 's')
-				value = rdr_duration(y)
-			else if (options.bunit == 'ms')
-				value = rdr_duration(y/1000)
-
+			value = rdr_humanreadable_value(value, options.bunit)
 			return '<b>' + options.metric + ':</b> ' + value ;
 		}
 
