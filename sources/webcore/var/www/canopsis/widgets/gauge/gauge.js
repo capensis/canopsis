@@ -25,74 +25,75 @@ Ext.define('widgets.gauge.gauge' , {
 
 	logAuthor: '[gauge]',
 
-	lines: 12, // The number of lines to draw
-	angle: 4, // The length of each line
-	lineWidth: 0.3, // The line thickness
-
-	pointerLength: 0.9,
-	pointerWidth: 0.035,
-	pointerColor: '#000000',
-
-	colorStart: '#6FADCF',   // Colors
-	colorStop: '#8FC0DA',    // just experiment with them
-	strokeColor: '#EEEEEE',   // to see which ones work best for you
-	generateGradient: true,
+	colorStart: '#6FADCF',
+	colorStop: '#8FC0DA', 
+	gaugeColor: '#E1E6FA', 
+	titleFontColor: '#3E576F',
+	gaugeWidthScale: 1,
+	showMinMax: true,
+	shadowOpacity: 0.7,
 	
-	textSize : 40,
 	labelSize: 25,
 	maxValue:100,
-	animationSpeed:30,
+	minValue: 0,
 
-	afterContainerRender: function() {
+	// Internals
+	gauge: undefined,
+
+	label: '',
+	gaugeTitle: '',
+	gaugeLabel: '',
+	lastValue: 0,
+
+	initComponent: function() {
+		this.gaugeTitle = this.title
+		this.title = ''
 		this.callParent(arguments);
+	},
 
-		var width = this.wcontainer.getWidth()
-		var height = this.getHeight() - (this.textSize + this.labelSize + 10)
+	createGauge: function(){
 
-		var canvasId = this.wcontainerId + '-canvas'
-		var textId = this.wcontainerId + '-text'
-		var labelId = this.wcontainerId + '-label'
+		if (this.autoTitle)
+			if (this.nodes.length){
+				var component = this.nodes[0].component;
+				var source_type = this.nodes[0].source_type;
 
-		log.debug('canvasId: ' + canvasId, this.logAuthor);
-		log.debug('textId: ' + textId, this.logAuthor);
-		log.debug('labelId: ' + labelId, this.logAuthor);
-
-		var textHTML = '<div id="'+textId+'" style="font-size: '+this.textSize+'px;text-align:center;"></div>'
-		var canvasHTML = '<canvas width="'+width+'" height="'+height+'" id="'+canvasId+'"></canvas>'
-		var labelHTML = '<div id="'+labelId+'" style="font-size: '+this.labelSize+'px;text-align:center;color:#3E576F"></div>'
-
-		if(this.title)
-			var target = this.wcontainer.update(canvasHTML+textHTML)
-		else
-			var target = this.wcontainer.update(labelHTML+canvasHTML+textHTML)
+				if (source_type == 'resource') {
+					var resource = this.nodes[0].resource;
+					this.gaugeTitle = resource + ' ' + _('on') + ' ' + component;
+				}else {
+					this.gaugeTitle = component;
+				}
+			}
 
 		var opts = {
-			lines: this.lines,
-			angle: this.angle/100,
-			lineWidth: this.lineWidth,
-			pointer: {
-				length: this.pointerLength, // The radius of the inner circle
-				strokeWidth: this.pointerWidth, // The rotation offset
-				color: this.pointerColor // Fill color
-			},
-			colorStart: this.colorStart,
-			colorStop: this.colorStop,
-			strokeColor: this.strokeColor,
-			generateGradient: this.generateGradient
+			id: this.wcontainerId,
+			value: 0,
+			gaugeWidthScale: this.gaugeWidthScale,
+			titleFontColor: this.titleFontColor,
+			showMinMax: this.showMinMax,
+			levelColorsGradient: true,
+			min: this.minValue,
+			max: this.maxValue,
+			shadowOpacity: this.shadowOpacity,
+			title: this.gaugeTitle,
+			label: this.gaugeLabel,
+			levelColors: [this.colorStart, this.colorStop],
+			gaugeColor: this.gaugeColor
 		}
 
-		this.gauge = new Gauge(document.getElementById(canvasId));
-		this.gauge.setOptions(opts)
-		this.gauge.setTextField(document.getElementById(textId));
+		log.debug("Gauge options:", this.logAuthor)
+		log.dump(opts)
 
-		this.gauge.animationSpeed = this.animationSpeed
-		
+		this.gauge = new JustGage(opts);	
 	},
 
 	onResize: function() {
 		log.debug('onRezize', this.logAuthor);
-		this.wcontainer.removeAll()
-		this.afterContainerRender()
+
+		delete this.gauge
+		this.createGauge()
+		this.gauge.refresh(this.lastValue)
 	},
 
 	getNodeInfo: function(from,to) {
@@ -139,34 +140,54 @@ Ext.define('widgets.gauge.gauge' , {
 	onRefresh: function(data) {
 		log.debug('onRefresh', this.logAuthor);
 
-		var label = Ext.get(this.wcontainerId + '-label')
+		if (data){
 
-		var fields = undefined
-		if(this.nodes[0].extra_field)
-			fields = this.nodes[0].extra_field
+			var fields = undefined
+			if(this.nodes[0].extra_field)
+				fields = this.nodes[0].extra_field
 
-		//update metric name
-		if(label){
-			if(fields && fields.label)
-				label.update(fields.label)
+			if (data.min)
+				this.minValue = data.min
+
+			//update metric name
+			if (fields && fields.label)
+				this.gaugeLabel = fields.label
 			else
-				label.update(data.metric)
-		}
-			
-		//update metric value
-		if(fields && fields.ma){
-			this.gauge.maxValue = fields.ma
-		}else if(data.max){
-			this.gauge.maxValue = data.max
-		}else{
-			this.gauge.maxValue = this.maxValue;
-		}
+				this.gaugeLabel = data.metric
+					
+			//update metric value
+			var maxValue = this.maxValue
+			if(fields && fields.ma){
+				maxValue = fields.ma
+			}else if(data.max){
+				maxValue = data.max
+			}
+			this.maxValue = maxValue
 
-		try{
-			if(data.values)
-				this.gauge.set(data.values[data.values.length - 1][1])
-		}catch(err){
-			log.error('Error while set value:' + err, this.logAuthor)
+
+			var minValue = this.minValue
+			if(fields && fields.mi){
+				minValue = fields.mi
+			}else if(data.max){
+				minValue = data.min
+			}
+			this.minValue = minValue
+			console.log(minValue)
+
+			try{
+				if(data.values){
+					if (! this.gauge)
+						this.createGauge()
+
+					this.lastValue = data.values[data.values.length - 1][1]
+					this.gauge.refresh(this.lastValue)
+				}
+			}catch(err){
+				log.error('Error while set value:' + err, this.logAuthor)
+			}
+
+		}else{
+			log.debug('No data', this.logAuthor)
 		}
 	},
 

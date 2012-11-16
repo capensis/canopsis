@@ -11,80 +11,32 @@
 	"options": [{
 				"title": "Style",
 				"items": [{
-							"xtype" : "numberfield",
-							"name" : "lines",
-							"fieldLabel": "Lines",
-							"minValue": 1,
-							"value": 12
+							"xtype": "checkbox",
+							"fieldLabel": "Show Min & Max",
+							"checked": true,
+							"name": "showMinMax"
 						},{
 							"xtype" : "numberfield",
-							"name" : "animationSpeed",
-							"fieldLabel": "Animation speed",
-							"minValue": 1,
-							"maxValue": 128,
-							"value": 30
-						},{
-							"xtype" : "numberfield",
-							"name" : "angle",
-							"fieldLabel": "Angle",
+							"name" : "gaugeWidthScale",
+							"fieldLabel": "Gauge width scale",
 							"minValue": 0,
-							"maxValue": 48,
-							"value": 10
-						},{
-							"xtype" : "numberfield",
-							"name" : "lineWidth",
-							"fieldLabel": "Line width",
-							"minValue": 0.1,
-							"value": 0.3
-
-						},{
-							"xtype" : "numberfield",
-							"name" : "textSize",
-							"fieldLabel": "Text size",
-							"minValue": 0,
-							"value": 20
-
-						},{
-							"xtype" : "numberfield",
-							"name" : "labelSize",
-							"fieldLabel": "Label size",
-							"minValue": 0,
-							"value": 25
-
-						},{
-							"xtype" : "numberfield",
-							"name" : "pointerLength",
-							"fieldLabel": "Pointer length",
-							"minValue": 0.1,
-							"value": 0.9,
-							"step": 0.1
-						},{
-							"xtype" : "numberfield",
-							"name" : "pointerWidth",
-							"fieldLabel": "Pointer width",
-							"minValue": 0,
-							"value": 0.035,
+							"value": 1,
 							"step": 0.01
-						},{
-							"xtype" : "ccolorfield",
-							"name" : "pointerColor",
-							"fieldLabel": "Pointer color",
-							"value": "#A3A3A3"
 						},{
 							"xtype" : "ccolorfield",
 							"name" : "colorStart",
 							"fieldLabel": "Start color",
-							"value": "#06CF14"
+							"value": "#FF9300"
 						},{
 							"xtype" : "ccolorfield",
 							"name" : "colorStop",
 							"fieldLabel": "Stop color",
-							"value": "#04750C"
+							"value": "#B9121B"
 						},{
 							"xtype" : "ccolorfield",
-							"name" : "strokeColor",
-							"fieldLabel": "Stroke color",
-							"value": "#C9DBA0"
+							"name" : "gaugeColor",
+							"fieldLabel": "Gauge color",
+							"value": "#85C630"
 						}]
 			},{
 				"title": "Choose Metrics",
@@ -98,6 +50,11 @@
 												"header":"Custom label",
 												"name":"label",
 												"emptyText":"Type the new label here",
+												"flex":1
+											},{
+												"xtype":"numberfield",
+												"header":"Min value",
+												"name":"mi",
 												"flex":1
 											},{
 												"xtype":"numberfield",
