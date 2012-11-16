@@ -172,7 +172,6 @@ Ext.define('widgets.gauge.gauge' , {
 				minValue = data.min
 			}
 			this.minValue = minValue
-			console.log(minValue)
 
 			try{
 				if(data.values){
