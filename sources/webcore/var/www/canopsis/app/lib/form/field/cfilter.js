@@ -394,6 +394,23 @@ Ext.define('canopsis.lib.form.field.cfilter' , {
 								store: this.sub_operator_store
 							});
 
+				//-----------------is/isnot combo------------------
+				this.is_isnot_combo = Ext.widget('combobox', {
+								queryMode: 'local',
+								displayField: 'text',
+								valueField: 'operator',
+								value: '$is',
+								editable: false,
+								margin: '0 0 0 5',
+								width: 80,
+								store: {
+									fields: ['operator', 'text', 'type'],
+									data: [
+										{'operator': '$is', 'text': _('Is'), 'type': 'value'},
+										{'operator': '$not', 'text': _('Is Not'), 'type': 'value' },
+									]}
+							});
+
 				//--------------------panel-------------------------
 				this.add_button = Ext.widget('button', {
 					iconCls: 'icon-add',
@@ -425,7 +442,7 @@ Ext.define('canopsis.lib.form.field.cfilter' , {
 				var items_array = [];
 				if (this.opt_remove_button)
 					items_array.push(this.remove_button);
-				items_array.push(this.operator_combo, this.sub_operator_combo, this.string_value, this.array_field, this.add_button);
+				items_array.push(this.operator_combo,this.is_isnot_combo, this.sub_operator_combo, this.string_value, this.array_field, this.add_button);
 
 				//upper panel
 				var config = {
@@ -492,10 +509,6 @@ Ext.define('canopsis.lib.form.field.cfilter' , {
 						this.sub_operator_combo_change();
 					this.bottomPanel.hide();
 				}
-
-
-
-
 			},
 
 			sub_operator_combo_change: function(combo,value,oldvalue) {
@@ -604,7 +617,13 @@ Ext.define('canopsis.lib.form.field.cfilter' , {
 						values[sub_operator] = this.array_field.getValue();
 					}
 				}
+
 				output[field] = values;
+
+				//is/isnot combo process
+				if(this.is_isnot_combo.getValue() == "$not")
+					output = {"$not":output}
+
 				return output;
 			},
 
@@ -613,8 +632,17 @@ Ext.define('canopsis.lib.form.field.cfilter' , {
 				if (typeof(filter) == 'string')
 					filter = Ext.decode(filter);
 
+
+
 				var key = Ext.Object.getKeys(filter)[0];
 				var value = filter[key];
+
+				//$not case processing
+				if(key = '$not'){
+					this.is_isnot_combo.setValue('$not')
+					var key = Ext.Object.getKeys(value)[0];
+					var value = value[key];
+				}
 
 				//Hack: clear filter before research, otherwise -> search always = -1
 				this.operator_store.clearFilter();
@@ -678,8 +706,8 @@ Ext.define('canopsis.lib.form.field.cfilter' , {
 		var operator_fields = [
 			{'operator': '$nor', 'text': _('Nor'), 'type': 'object'},
 			{'operator': '$or', 'text': _('Or'), 'type': 'object'},
-			{'operator': '$and', 'text': _('And'), 'type': 'object'},
-			{'operator': '$not', 'text': _('Not'), 'type': 'object'}
+			{'operator': '$and', 'text': _('And'), 'type': 'object'}
+			//{'operator': '$not', 'text': _('Not'), 'type': 'object'}
 		];
 
 		operator_fields = Ext.Array.union(operator_fields, this.operator_fields);
