@@ -498,6 +498,7 @@ Ext.define('canopsis.lib.form.field.cfilter' , {
 					this.array_field.hide();
 					this.sub_operator_combo.hide();
 					this.bottomPanel.show();
+					this.is_isnot_combo.hide();
 				} else {
 					//log.debug('   + Unknown operator',this.logAuthor)
 					this.contain_other_cfilter = false;
@@ -508,6 +509,7 @@ Ext.define('canopsis.lib.form.field.cfilter' , {
 					else
 						this.sub_operator_combo_change();
 					this.bottomPanel.hide();
+					this.is_isnot_combo.show();
 				}
 			},
 
@@ -632,13 +634,11 @@ Ext.define('canopsis.lib.form.field.cfilter' , {
 				if (typeof(filter) == 'string')
 					filter = Ext.decode(filter);
 
-
-
 				var key = Ext.Object.getKeys(filter)[0];
 				var value = filter[key];
 
 				//$not case processing
-				if(key = '$not'){
+				if(key == '$not'){
 					this.is_isnot_combo.setValue('$not')
 					var key = Ext.Object.getKeys(value)[0];
 					var value = value[key];
