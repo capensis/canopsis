@@ -315,6 +315,17 @@ def perfstore_perftop():
 	
 	mtype = manager.store.find(mfilter=mfilter, limit=1, mfields=['t'])
 	
+	def check_threshold(value):
+		if threshold:
+			if threshold_direction == -1 and value >= threshold:
+				return True
+			elif threshold_direction == 1 and value <= threshold:
+				return True
+			else:
+				return False
+		else:
+			return True
+
 	if mtype:
 		mtype = mtype.get('t', 'GAUGE')
 		
@@ -328,12 +339,7 @@ def perfstore_perftop():
 						metric['lv'] = round((float(metric['lv']) * 100) / metric['ma'], 2)
 						metric['u'] = '%'
 				
-				if threshold:
-					if threshold_direction == -1 and metric['lv'] >= threshold:
-						data.append(metric)
-					elif threshold_direction == 1 and metric['lv'] <= threshold:
-						data.append(metric)
-				else:	
+				if check_threshold(metric['lv']):
 					data.append(metric)
 		else:
 			# Compute values
@@ -360,22 +366,18 @@ def perfstore_perftop():
 						data.append(metric)
 					else:
 						for point in points:
-							nmetric = metric.copy()
-							nmetric['lts'] = point[0]
-							nmetric['lv'] = point[1]		
-							data.append(nmetric)
+							if check_threshold(point[1]):
+								nmetric = metric.copy()
+								nmetric['lts'] = point[0]
+								nmetric['lv'] = point[1]
+								data.append(nmetric)
 				else:
 					if len(points):
 						metric['lv'] = points[len(points)-1][1]
 					else:
 						metric['lv'] = 0
 
-					if threshold:
-						if threshold_direction == -1 and metric['lv'] >= threshold:
-							data.append(metric)
-						elif threshold_direction == 1 and metric['lv'] <= threshold:
-							data.append(metric)
-					else:	
+					if check_threshold(metric['lv']):
 						data.append(metric)
 				
 			reverse = True
