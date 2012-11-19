@@ -625,6 +625,12 @@ Ext.define('canopsis.lib.form.field.cfilter' , {
 				if(this.is_isnot_combo.getValue() == "$not"){
 					if(sub_operator == '$eq'){
 						output[field] = {'$ne': values}
+					/*}else if(sub_operator == '$regex'){
+						console.log('----------------------------------')
+						var regex = new RegExp(values[sub_operator])
+						console.log(regex)
+						output[field] = {"$not": /toto/ }
+					*/	
 					}else{
 						output[field] = {"$not":values};
 					}
