@@ -26,7 +26,7 @@
 					},{
 						"xtype" : "numberfield",
 						"name" : "threshold",
-						"fieldLabel": "Threshold (>)"
+						"fieldLabel": "Threshold"
 					},{
 						"xtype": "combobox",
 						"name": "threshold_direction",
