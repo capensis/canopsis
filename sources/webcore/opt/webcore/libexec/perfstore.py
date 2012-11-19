@@ -341,7 +341,16 @@ def perfstore_perftop():
 			tstart = tstop - time_window
 			logger.debug(" + tstart:      %s" % tstart)
 			logger.debug(" + tstop:       %s" % tstop)
-			metrics =  manager.store.find(mfilter=mfilter, mfields=['_id', 'co', 're', 'me', 'lv', 'u', 'lts'], limit=0)
+			metric_limit = 0
+			
+			if expand:
+				metric_limit = 1
+
+			metrics =  manager.store.find(mfilter=mfilter, mfields=['_id', 'co', 're', 'me', 'lv', 'u', 'lts'], limit=metric_limit)
+
+			if isinstance(metrics, dict):
+				metrics = [metrics]
+
 			for metric in metrics:
 				points = manager.get_points(_id=metric['_id'], tstart=tstart, tstop=tstop)
 				if expand:
@@ -445,7 +454,7 @@ def perfstore_get_values(_id, start=None, stop=None, aggregate_method=None, aggr
 			if point:
 				points = [ point ]
 				
-			print points
+			logger.debug('Point: %s' % points)
 				
 		else:
 			
