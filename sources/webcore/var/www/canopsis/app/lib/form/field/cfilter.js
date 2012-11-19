@@ -592,6 +592,7 @@ Ext.define('canopsis.lib.form.field.cfilter' , {
 					return undefined;
 
 				var value = this.string_value.getValue();
+				var sub_operator = undefined
 
 				var output = {};
 
@@ -614,18 +615,23 @@ Ext.define('canopsis.lib.form.field.cfilter' , {
 						if (sub_operator != '$eq')
 							values[sub_operator] = this.string_value.getValue();
 						else
-							var values = this.string_value.getValue();
+							values = this.string_value.getValue();
 					}else if (sub_operator_type == 'array') {
 						values[sub_operator] = this.array_field.getValue();
 					}
 				}
 
-				output[field] = values;
-
 				//is/isnot combo process
-				if(this.is_isnot_combo.getValue() == "$not")
-					output = {"$not":output}
-
+				if(this.is_isnot_combo.getValue() == "$not"){
+					if(sub_operator == '$eq'){
+						output[field] = {'$ne': values}
+					}else{
+						output[field] = {"$not":values};
+					}
+				}else{
+					output[field] = values;
+				}
+				
 				return output;
 			},
 
@@ -638,10 +644,13 @@ Ext.define('canopsis.lib.form.field.cfilter' , {
 				var value = filter[key];
 
 				//$not case processing
-				if(key == '$not'){
-					this.is_isnot_combo.setValue('$not')
-					var key = Ext.Object.getKeys(value)[0];
-					var value = value[key];
+				if(Ext.isObject(value)){
+					var sub_key = Ext.Object.getKeys(value)[0]
+					if(sub_key == '$not'){
+						this.is_isnot_combo.setValue('$not')
+						if(Ext.isObject(value[sub_key]))
+							value = value[sub_key]
+					}
 				}
 
 				//Hack: clear filter before research, otherwise -> search always = -1
