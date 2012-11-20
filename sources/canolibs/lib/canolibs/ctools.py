@@ -181,19 +181,25 @@ def uniq(alist):
 	
 ## - Convert { '$not': {'$regex': "..." }} to {'$not': re.compile("...")} 
 def clean_mfilter(mfilter, isnot=False):
-		for key in mfilter:
-				if key == '$not':
-						isnot = True
-				
-				values = mfilter[key]
+	for key in mfilter:
+		if key == '$not':
+				isnot = True
+		
+		#logger.error("filter is : %s" % mfilter)
+		#logger.error("key is : %s" % key)
 
-				if isinstance(values, list):
-						for value in values:
-								clean_mfilter(value, isnot)
-				elif isinstance(values, dict):
-						mfilter[key] = clean_mfilter(values, isnot)
-				else:
-						if isnot and (isinstance(values, str) or isinstance(values, unicode) ) and key == '$regex':
-								return re.compile(values)
+		if isinstance(mfilter,str) or isinstance(mfilter,unicode):
+			values = mfilter
+		else:
+			values = mfilter[key]
 
-		return mfilter
+		if isinstance(values, list):
+			for value in values:
+					clean_mfilter(value, isnot)
+		elif isinstance(values, dict):
+			mfilter[key] = clean_mfilter(values, isnot)
+		else:
+			if isnot and (isinstance(values, str) or isinstance(values, unicode) ) and key == '$regex':
+				return re.compile(values)
+
+	return mfilter
