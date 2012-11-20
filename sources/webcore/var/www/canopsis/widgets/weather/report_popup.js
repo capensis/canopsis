@@ -38,7 +38,7 @@ Ext.define('widgets.weather.report_popup' , {
 		'component': undefined,
 		'resource': 'user_problem',
 		'referer': undefined,
-		'author': global.account.firstname + ' ' + global.account.lastname,
+		'author': undefined,
 		'state': 1,
 		'display_name': this.display_name,
 		'state_type': 1,
@@ -46,6 +46,10 @@ Ext.define('widgets.weather.report_popup' , {
 	},
 
 
+	initComponent: function() {
+		this.base_event['author'] = global.account.firstname + ' ' + global.account.lastname;
+		this.callParent(arguments);
+	},
 
 	_buildForm: function() {
 		this._form.add({
