@@ -23,6 +23,18 @@ Ext.define('canopsis.lib.view.cwizard' , {
 
 	alias: 'widget.ViewBuilderWizard',
 
+	requires: [
+				'canopsis.lib.form.field.cinventory',
+				'canopsis.lib.form.field.cmetric',
+				'canopsis.lib.form.field.cfilter',
+				'canopsis.lib.form.field.ctag',
+				'canopsis.lib.form.field.cfieldset',
+				'canopsis.lib.form.field.cdate',
+				'canopsis.lib.form.field.cduration',
+				'canopsis.lib.form.field.cduration',
+				'canopsis.lib.form.field.ccolorfield'
+			],
+
 	title: _('Wizard'),
 	closable: false,
 	closeAction: 'destroy',

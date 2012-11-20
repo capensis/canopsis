@@ -217,9 +217,11 @@
 										{"value": "LongDashDotDot", "text": "LongDashDotDot"}		
 								]
 								}
-							}
-						]
-					},{
+							}]
+					}]
+		}, {
+			"title": "Style",
+			"items": [{
 						"xtype": "fieldset",
 						"title": "Graph Style",
 						"collapsible": false,
@@ -335,9 +337,7 @@
 									]
 								}
 							}]
-					}
-			]
-						
+					}]
 		}, {
 			"title": "Choose Metrics",
 			"items": [{
