@@ -26,7 +26,7 @@
 						]
 					},{
 						"xtype": "fieldset",
-						"title": "Kpi",
+						"title": "Diagram",
 						"collapsible": false,
 						"items": [
 							{
@@ -140,128 +140,130 @@
 								}
 							}
 						]
-					},{
-						"xtype": "fieldset",
-						"title": "Kpi Style",
-						"collapsible": false,
-						"items": [
-							{
-								"xtype" : "colorfield",
-								"name" : "backgroundColor",
-								"fieldLabel": "Background color",
-								"value": "FFFFFF"
-							},{
-								"xtype": "checkbox",
-								"fieldLabel": "Enable gradient colors",
-								"checked": false,
-								"name": "gradientColor"
-							},{
-								"xtype" : "colorfield",
-								"name" : "borderColor",
-								"fieldLabel": "Border color",
-								"value": "FFFFFF"
-							},{
-								"xtype" : "numberfield",
-								"name" : "borderWidth",
-								"fieldLabel": "Border Width",
-								"minValue": 0,
-								"value": 0
-                           }
-						]
-					},{
-						"xtype": "fieldset",
-						"title": "Legend Style",
-						"collapsible": false,
-						"items": [
-							{
-								"xtype": "checkbox",
-								"fieldLabel": "Enable legend",
-								"checked": true,
-								"name": "legend"
-							},{
-								"xtype": "checkbox",
-								"fieldLabel": "Enable labels",
-								"checked": false,
-								"name": "labels"
-							},{
-								"xtype" : "numberfield",
-								"name" : "legend_fontSize",
-								"fieldLabel": "Font Size",
-								"minValue": 1,
-								"value": 12
-                           },{
-								"xtype" : "numberfield",
-								"name" : "legend_borderWidth",
-								"fieldLabel": "Border Width",
-								"minValue": 0,
-								"value": 1
-                           },{
-								"xtype" : "colorfield",
-								"name" : "legend_backgroundColor",
-								"fieldLabel": "Background color",
-								"value": "FFFFFF"
-                           },{
-								"xtype" : "colorfield",
-								"name" : "legend_borderColor",
-								"fieldLabel": "Border color",
-								"value": "909090"
-                           },{
-								"xtype": "combobox",
-								"name": "legend_verticalAlign",
-								"fieldLabel": "Legend vertical alignement",
-								"queryMode": "local",
-								"displayField": "text",
-								"valueField": "value",
-								"value": "bottom",
-								"store": {
-									"xtype": "store",
-									"fields": ["value", "text"],
-									"data" : [
-										{"value": "top", "text": "Top"},
-										{"value": "middle", "text": "Middle"},
-										{"value": "bottom", "text": "Bottom"}
-									]
-								}
-							},{
-								"xtype": "combobox",
-								"name": "legend_align",
-								"fieldLabel": "Legend horizontal alignement",
-								"queryMode": "local",
-								"displayField": "text",
-								"valueField": "value",
-								"value": "center",
-								"store": {
-									"xtype": "store",
-									"fields": ["value", "text"],
-									"data" : [
-										{"value": "left", "text": "Left"},
-										{"value": "center", "text": "Center"},
-										{"value": "right", "text": "Right"}
-									]
-								}
-							},{
-								"xtype": "combobox",
-								"name": "legend_layout",
-								"fieldLabel": "Legend layout",
-								"queryMode": "local",
-								"displayField": "text",
-								"valueField": "value",
-								"value": "horizontal",
-								"store": {
-									"xtype": "store",
-									"fields": ["value", "text"],
-									"data" : [
-										{"value": "horizontal", "text": "Horizontal"},
-										{"value": "vertical", "text": "Vertical"}
-									]
-								}
-							}]
+					}]	
+		},{
+			"title": "Style",
+			"items": [{
+					"xtype": "fieldset",
+					"title": "Diagram Style",
+					"collapsible": false,
+					"items": [
+						{
+							"xtype" : "colorfield",
+							"name" : "backgroundColor",
+							"fieldLabel": "Background color",
+							"value": "FFFFFF"
+						},{
+							"xtype": "checkbox",
+							"fieldLabel": "Enable gradient colors",
+							"checked": false,
+							"name": "gradientColor"
+						},{
+							"xtype" : "colorfield",
+							"name" : "borderColor",
+							"fieldLabel": "Border color",
+							"value": "FFFFFF"
+						},{
+							"xtype" : "numberfield",
+							"name" : "borderWidth",
+							"fieldLabel": "Border Width",
+							"minValue": 0,
+							"value": 0
+                       }
+					]
+				},{
+					"xtype": "fieldset",
+					"title": "Legend Style",
+					"collapsible": false,
+					"items": [
+						{
+							"xtype": "checkbox",
+							"fieldLabel": "Enable legend",
+							"checked": true,
+							"name": "legend"
+						},{
+							"xtype": "checkbox",
+							"fieldLabel": "Enable labels",
+							"checked": false,
+							"name": "labels"
+						},{
+							"xtype" : "numberfield",
+							"name" : "legend_fontSize",
+							"fieldLabel": "Font Size",
+							"minValue": 1,
+							"value": 12
+                       },{
+							"xtype" : "numberfield",
+							"name" : "legend_borderWidth",
+							"fieldLabel": "Border Width",
+							"minValue": 0,
+							"value": 1
+                       },{
+							"xtype" : "colorfield",
+							"name" : "legend_backgroundColor",
+							"fieldLabel": "Background color",
+							"value": "FFFFFF"
+                       },{
+							"xtype" : "colorfield",
+							"name" : "legend_borderColor",
+							"fieldLabel": "Border color",
+							"value": "909090"
+                       },{
+							"xtype": "combobox",
+							"name": "legend_verticalAlign",
+							"fieldLabel": "Legend vertical alignement",
+							"queryMode": "local",
+							"displayField": "text",
+							"valueField": "value",
+							"value": "bottom",
+							"store": {
+								"xtype": "store",
+								"fields": ["value", "text"],
+								"data" : [
+									{"value": "top", "text": "Top"},
+									{"value": "middle", "text": "Middle"},
+									{"value": "bottom", "text": "Bottom"}
+								]
+							}
+						},{
+							"xtype": "combobox",
+							"name": "legend_align",
+							"fieldLabel": "Legend horizontal alignement",
+							"queryMode": "local",
+							"displayField": "text",
+							"valueField": "value",
+							"value": "center",
+							"store": {
+								"xtype": "store",
+								"fields": ["value", "text"],
+								"data" : [
+									{"value": "left", "text": "Left"},
+									{"value": "center", "text": "Center"},
+									{"value": "right", "text": "Right"}
+								]
+							}
+						},{
+							"xtype": "combobox",
+							"name": "legend_layout",
+							"fieldLabel": "Legend layout",
+							"queryMode": "local",
+							"displayField": "text",
+							"valueField": "value",
+							"value": "horizontal",
+							"store": {
+								"xtype": "store",
+								"fields": ["value", "text"],
+								"data" : [
+									{"value": "horizontal", "text": "Horizontal"},
+									{"value": "vertical", "text": "Vertical"}
+								]
+							}
+						}]
 					}]
-						
 		},{
 			"title": "Choose Metrics",
 			"items": [
-			{
+					{
 						"xtype": "cmetric",
 						"name": "nodes",
 						"multiSelect": true,
