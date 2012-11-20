@@ -108,21 +108,6 @@ function createApplication(){
 	
 		//autoCreateViewport: true,
 		launch: function() {
-			// load own fields
-			Ext.require('canopsis.lib.form.field.cinventory');
-			Ext.require('canopsis.lib.form.field.cmetric');
-			Ext.require('canopsis.lib.form.field.cfilter');
-			Ext.require('canopsis.lib.form.field.ctag');
-			Ext.require('canopsis.lib.form.field.cfieldset');
-			Ext.require('canopsis.lib.form.field.cdate');
-			Ext.require('canopsis.lib.form.field.cduration');
-			Ext.require('canopsis.lib.form.field.cduration');
-			Ext.require('canopsis.lib.form.field.ccolorfield');
-			
-			// more xtype
-			Ext.require('canopsis.lib.view.cevent_log');
-
-
 			this.getController('Widgets').on('loaded', this.createViewport,this,{single : true});
 		},
 
