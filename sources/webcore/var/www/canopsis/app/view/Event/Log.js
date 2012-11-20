@@ -18,10 +18,12 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 */
-Ext.define('canopsis.view.event.event_log' , {
+Ext.define('canopsis.view.Event.Log' , {
 	extend: 'canopsis.lib.view.cgrid_state',
+	
+	alias: 'widget.EventLog',
 
-	alias: 'widget.event_log',
+	logAuthor: '[View][Event][Log]',
 
 	store: undefined,
 
@@ -196,12 +198,13 @@ Ext.define('canopsis.view.event.event_log' , {
 
 		//---------------------bind controller----------------------
 		this.ctrl = Ext.create('canopsis.lib.controller.cgrid');
+	
 		this.callParent(arguments);
 
 		this.on('afterrender', function() {
 			this.ctrl._bindGridEvents(this);
 		}, this);
-
+	
 	}
 
 });

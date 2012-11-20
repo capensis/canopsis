@@ -78,7 +78,7 @@ def init():
 	create_view('perfdata','Perfdata',data, adminView=True)
 
 	###Event log navigation
-	data = { 'xtype': 'event_log'}
+	data = { 'xtype': 'EventLog'}
 	create_view('eventLog_navigation', 'Events log navigation', data, adminView=True)
 	
 	### Group

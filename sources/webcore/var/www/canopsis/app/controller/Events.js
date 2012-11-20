@@ -23,6 +23,8 @@ Ext.define('canopsis.controller.Events', {
 
 	logAuthor: '[controller][Events]',
 
+	views: ['Event.Log'],
+	stores: ['EventLogs'],
 	models: ['Event'],
 
 	init: function() {

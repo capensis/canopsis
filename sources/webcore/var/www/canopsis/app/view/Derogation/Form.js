@@ -21,6 +21,10 @@
 Ext.define('canopsis.view.Derogation.Form' , {
 	extend: 'canopsis.lib.view.cform',
 
+	requires: [
+		'canopsis.lib.form.field.cdate'
+	],
+
 	alias: 'widget.DerogationForm',
 
 	width: 500,

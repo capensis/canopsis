@@ -21,6 +21,10 @@
 Ext.define('canopsis.view.ReportingBar.ReportingBar' , {
 	extend: 'Ext.toolbar.Toolbar',
 
+	requires: [
+		'canopsis.lib.form.field.cdate'
+	],
+
 	alias: 'widget.ReportingBar',
 
 	dock: 'top',

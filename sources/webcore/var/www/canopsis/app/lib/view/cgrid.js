@@ -24,7 +24,8 @@ Ext.define('canopsis.lib.view.cgrid' , {
 	requires: [
 		'Ext.grid.plugin.CellEditing',
 		'Ext.form.field.Text',
-		'Ext.toolbar.TextItem'
+		'Ext.toolbar.TextItem',
+		'canopsis.lib.form.field.cdate'
 	],
 
 	// Options
