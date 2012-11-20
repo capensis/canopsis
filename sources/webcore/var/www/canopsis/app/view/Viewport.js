@@ -24,7 +24,8 @@ Ext.define('canopsis.view.Viewport', {
 
 	requires: [
 		'Ext.layout.container.Border',
-		'Ext.tab.Panel'
+		'Ext.tab.Panel',
+		'Ext.panel.Header'
 	],
 
 	layout: 'border',
@@ -46,7 +47,8 @@ Ext.define('canopsis.view.Viewport', {
 			collapsed: false,
 			collapsible: true,
 			preventHeader: true,
-			placeholder: Ext.create('Ext.panel.Header', {
+			placeholder: {
+				xtype: 'Ext.panel.Header',
 				height: 5,
 				listeners: {
 					mouseover: {
@@ -54,7 +56,7 @@ Ext.define('canopsis.view.Viewport', {
 						fn: function() { Ext.getCmp('region-north').expand(); }
 					}
 				}
-			 }),
+			 },
 
 			listeners: {
 				dblclick: {

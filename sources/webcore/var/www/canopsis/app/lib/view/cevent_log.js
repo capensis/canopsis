@@ -23,7 +23,7 @@ Ext.define('canopsis.lib.view.cevent_log' , {
 
 	alias: 'widget.cevent_log',
 
-	store: Ext.create('canopsis.store.EventLogs'),
+	store: undefined,
 
 	opt_show_component: true,
 	opt_allow_edit: false,
@@ -38,6 +38,8 @@ Ext.define('canopsis.lib.view.cevent_log' , {
 	opt_bar_search_field: ['component', 'resource', 'metric'],
 
 	initComponent: function() {
+		this.store = Ext.create('canopsis.store.EventLogs')
+
 		this.bar_search = [{
 			xtype: 'button',
 			iconCls: 'icon-crecord_type-resource',

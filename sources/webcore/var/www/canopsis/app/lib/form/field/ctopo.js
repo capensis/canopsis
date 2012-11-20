@@ -45,7 +45,7 @@ Ext.define('canopsis.lib.form.field.ctopo' , {
 	layout: 'absolute',
 	
 	cls: 'ctopo-dropzone',
-	tpl: new Ext.XTemplate(
+	tpl: [
 		'<div id="{id}" class="{cls} {nodeType}" style="border:{nodeBorderWidth}px solid {nodeBorderColor}; background-color:{nodeBackgroundColor}; color:{nodeColor}; padding:1em; border-radius:1em; box-shadow:0.2em 0.2em 0.1em 0.1em #999;">',
 			'<center>',
 				'<tpl if="event_type == \'operator\'">',
@@ -64,15 +64,8 @@ Ext.define('canopsis.lib.form.field.ctopo' , {
 				'<span>{label}</span>',
 			'</center>',
 		'</div>', 
-		{
-			compiled:true,
-			operatorNotRootNode: function(event_type, connector ) {
-				if ( event_type == 'operator' && ! connector ) 
-					return true;
-				return false;
-			}
-		}
-	),
+	].join('\n'),
+
 	windowOperatorOption: 0, 
 	getSubmitData: function(){
 			return this.getValue()
@@ -90,7 +83,7 @@ Ext.define('canopsis.lib.form.field.ctopo' , {
 				node.data['x'] = node.getPosition()[0];
 				node.data['y'] = node.getPosition()[1];
 				
-				nodes[node.id] = node.data ;
+				nodes[node.id] = node.data;
 								
 				log.debug(' + '+node._id, this.logAuthor );
 				for (var j in node.conns){
@@ -105,7 +98,6 @@ Ext.define('canopsis.lib.form.field.ctopo' , {
 				}
 			}	
 			var r = { nodes: nodes, conns:conns, root:this.rootNode } ;
-			
 			return r ;
 		} else log.error('error : no root node', this.logAuthor) 
 		
@@ -152,6 +144,17 @@ Ext.define('canopsis.lib.form.field.ctopo' , {
 	initComponent: function ( ) {
 		if ( ! this.topoName ) 
 			this.topoName = "topology";
+
+		this.tpl = new Ext.XTemplate(this.tpl,
+		{
+			compiled:true,
+			operatorNotRootNode: function(event_type, connector ) {
+				if ( event_type == 'operator' && ! connector ) 
+					return true;
+				return false;
+			}
+		});
+
 		this.callParent(arguments);
 	},
 	verifyNodeConn: function( connexion ) {
