@@ -54,11 +54,17 @@ Ext.define('widgets.topology_viewer.topology_viewer' , {
 
 	state_color: ['green','orange','red','grey'],
 
+	lastUpdate: undefined,
+	canvasContext: undefined,
+	canvas: undefined,
+
 	//-----------------widget functions----------------
 
 	initComponent: function() {
 		if(this.background_color)
 			this.bodyStyle = {'background-color': this.background_color}
+
+
 
 		this.callParent(arguments);
 	},
@@ -102,6 +108,7 @@ Ext.define('widgets.topology_viewer.topology_viewer' , {
 				success: function(response) {
 					var nodes = Ext.JSON.decode(response.responseText).data;
 					var nestedTree = nodes[0]['nestedTree']
+					this.lastUpdate = nodes[0]['crecord_creation_time']
 					this.drawRecursiveTree(nestedTree)
 					this.sigmaDraw()
 				}
@@ -190,12 +197,28 @@ Ext.define('widgets.topology_viewer.topology_viewer' , {
 	linkNode: function(link_name,first_node,second_node,params){
 		this.sigmaContainer.addEdge(link_name,first_node,second_node,params)
 	},
+
+	displayLastUpdate : function(){
+		if(this.canvasContext && this.lastUpdate){
+			//console.log(this.canvas.width)
+			//console.log(this.canvas.height)
+			this.canvasContext.fillText(rdr_elapsed_time(this.lastUpdate),10, 10);
+		}
+	},
 	
 	sigmaDraw: function(){
 		this.sigmaContainer.draw()
+		this.canvas = document.getElementById(this.sigmaContainer._core.domRoot.lastChild.id)
+		this.canvasContext = this.canvas.getContext("2d");
+		this.canvasContext.font = "bold 12px sans-serif";
+		this.displayLastUpdate()
+
+		this.sigmaContainer._core.mousecaptor.bind(
+							'stopinterpolate',
+							this.displayLastUpdate.bind(this))
 	},
 	
-	//----------------trigonomique functions-----------------
+	//----------------trigo functions-----------------
 	degTorad: function(val){
 		return val * (Math.PI/180)
 	},
