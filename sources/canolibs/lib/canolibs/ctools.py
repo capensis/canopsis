@@ -179,3 +179,21 @@ def uniq(alist):
 	set = {}
 	return [set.setdefault(e,e) for e in alist if e not in set]
 	
+## - Convert { '$not': {'$regex': "..." }} to {'$not': re.compile("...")} 
+def clean_mfilter(mfilter, isnot=False):
+		for key in mfilter:
+				if key == '$not':
+						isnot = True
+				
+				values = mfilter[key]
+
+				if isinstance(values, list):
+						for value in values:
+								clean_mfilter(value, isnot)
+				elif isinstance(values, dict):
+						mfilter[key] = clean_mfilter(values, isnot)
+				else:
+						if isnot and (isinstance(values, str) or isinstance(values, unicode) ) and key == '$regex':
+								return re.compile(values)
+
+		return mfilter

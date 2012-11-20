@@ -29,6 +29,7 @@ from cstorage import cstorage
 from cstorage import get_storage
 from crecord import crecord
 import base64
+from ctools import clean_mfilter
 
 #import protection function
 from libexec.auth import check_auth, get_account ,check_group_rights
@@ -203,6 +204,10 @@ def rest_get(namespace, ctype=None, _id=None):
 			mfilter['_id'] = { '$regex' : '.*'+search+'.*', '$options': 'i' }
 		
 		logger.debug(" + mfilter: "+str(mfilter))
+
+		#clean mfilter
+		mfilter = clean_mfilter(mfilter)
+
 		records =  storage.find(mfilter, sort=msort, limit=limit, offset=start, account=account)
 		total =	storage.count(mfilter, account=account)
 
@@ -486,7 +491,10 @@ def get_timeline(start=None,stop=None):
 		mfilter['and'].append({'timestamp': {'$gt': start}})
 	if stop :
 		mfilter['and'].append({'timestamp': {'$lt': stop}})
-				
+	
+	#clean mfilter
+	mfilter = clean_mfilter(mfilter)
+
 	records = storage.find(mfilter, account=account)
 
 	tmp_output = {}

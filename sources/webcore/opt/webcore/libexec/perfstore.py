@@ -28,7 +28,7 @@ from bottle import route, get, post, put, delete, request, HTTPError, response
 from libexec.auth import check_auth, get_account
 
 # Modules
-from ctools import parse_perfdata
+from ctools import parse_perfdata, clean_mfilter
 
 import pyperfstore2
 manager = None
@@ -189,6 +189,8 @@ def perstore_get_all_metrics():
 		
 	logger.debug(" + mfilter:  %s" % mfilter)
 	
+	mfilter = clean_mfilter(mfilter)
+
 	data  = manager.find(limit=0, skip=0, mfilter=mfilter, data=False, sort=msort)
 	total = data.count()
 	data  = [meta for meta in data.skip(start).limit(limit)]
@@ -312,6 +314,8 @@ def perfstore_perftop():
 	logger.debug(" + time_window: %s" % time_window)
 	logger.debug(" + sort:        %s" % sort)
 	logger.debug(" + expand:       %s" % expand)
+
+	mfilter =  clean_mfilter(mfilter)
 	
 	mtype = manager.store.find(mfilter=mfilter, limit=1, mfields=['t'])
 	
@@ -351,6 +355,9 @@ def perfstore_perftop():
 			
 			if expand:
 				metric_limit = 1
+
+			#clean mfilter
+			mfilter =  clean_mfilter(mfilter)
 
 			metrics =  manager.store.find(mfilter=mfilter, mfields=['_id', 'co', 're', 'me', 'lv', 'u', 'lts'], limit=metric_limit)
 
