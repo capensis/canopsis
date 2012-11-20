@@ -18,10 +18,10 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 */
-Ext.define('canopsis.lib.view.cevent_log' , {
+Ext.define('canopsis.view.event.event_log' , {
 	extend: 'canopsis.lib.view.cgrid_state',
 
-	alias: 'widget.cevent_log',
+	alias: 'widget.event_log',
 
 	store: undefined,
 
