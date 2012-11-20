@@ -114,7 +114,8 @@ Ext.define('canopsis.lib.form.field.cfilter' , {
 		this.cfilter = Ext.create('cfilter.object', {
 			operator_store: this.operator_store,
 			sub_operator_store: this.sub_operator_store,
-			opt_remove_button: false
+			opt_remove_button: false,
+			start_with_and: true
 		});
 
 		//--------------edit area (hand writing part)--------
@@ -361,6 +362,7 @@ Ext.define('canopsis.lib.form.field.cfilter' , {
 			operator_store: undefined,
 			sub_operator_store: undefined,
 			filter: undefined,
+			start_with_and: false,
 
 			opt_remove_button: true,
 
@@ -482,6 +484,11 @@ Ext.define('canopsis.lib.form.field.cfilter' , {
 				//--------------load filter if there is filter--------
 				if (this.filter)
 					this.setValue(this.filter);
+				else
+					if(this.start_with_and){
+						this.operator_combo.setValue('$and')
+						this.add_cfilter()
+					}
 			},
 
 
