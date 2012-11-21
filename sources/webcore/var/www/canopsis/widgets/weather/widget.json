@@ -11,10 +11,10 @@
 	"locales": ["fr"],
 	"options": [
 			{
-				"title" : "Options",
+				"title" : "Style",
 				"items" : [{
 					"xtype": "fieldset",
-					"title": "Display options",
+					"title": "Style options",
 					"collapsible": false,
 					"items": [{
 								"xtype": "checkbox",
