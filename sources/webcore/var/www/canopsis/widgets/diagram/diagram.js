@@ -224,10 +224,14 @@ Ext.define('widgets.diagram.diagram' , {
 				}
 			},
 			series: [],
-			yAxis : [{
+			xAxis : {
+				title: { text: null },
+				labels: {enabled:(this.labels)?false:true}
+			},
+			yAxis : {
 				title: { text: null },
 				labels: {formatter: this.y_formatter}
-			}]
+			}
 		};
 		/*
 		if(this.diagram_type == 'column'){
