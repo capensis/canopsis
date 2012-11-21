@@ -10,7 +10,7 @@ SRC=`pwd`
 CPS="/opt/canopsis"
 
 rm $SRC/sources/webcore/var/www/canopsis/resources/lib
-ln -s $SRC/sources/externals/webcore-libs $SRC/webcore/var/www/canopsis/resources/lib
+ln -s $SRC/sources/externals/webcore-libs $SRC/sources/webcore/var/www/canopsis/resources/lib
 
 rm -R $CPS/opt/webcore
 ln -s $SRC/sources/webcore/opt/webcore $CPS/opt/
