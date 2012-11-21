@@ -391,7 +391,8 @@ Ext.define('widgets.line_graph.line_graph' , {
 				useUTC: false
 			}
 		});
-		this.chartMessage = this.chart.renderer.text(_('Waiting data') + ' ...', 50, 50).add();
+		//this.chartMessage = this.chart.renderer.text(_('Waiting data') + ' ...', 50, 50).add();
+		this.getEl().mask(_('No data on interval'));
 	},
 
 	////////////////////// CORE
@@ -515,16 +516,23 @@ Ext.define('widgets.line_graph.line_graph' , {
 					this.chartMessage = undefined;
 				}
 
-				this.chart.redraw();
+				//unmasking
+				var this_El = this.getEl()
+				if (this_El.isMasked && !this.isDisabled())
+					this_El.unmask()
 
+				this.chart.redraw();
 			} else {
 				log.debug(' + No data', this.logAuthor);
 				//---------if report, cleaning the chart--------
 				if (this.reportMode == true) {
 					this.clearGraph();
+					/*
 					if (this.chartMessage == undefined) {
 						this.chartMessage = this.chart.renderer.text('<div style="margin:auto;">' + _('Infortunatly, there is no data for this period') + '</div>', 50, 50).add();
 					}
+					*/
+					this.getEl().mask(_('Infortunatly, there is no data for this period'));
 					this.chart.redraw();
 				}
 			}
