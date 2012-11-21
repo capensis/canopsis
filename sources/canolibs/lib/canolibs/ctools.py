@@ -181,6 +181,9 @@ def uniq(alist):
 	
 ## - Convert { '$not': {'$regex': "..." }} to {'$not': re.compile("...")} 
 def clean_mfilter(mfilter, isnot=False):
+	if not mfilter:
+		return None
+
 	for key in mfilter:
 		if key == '$not':
 				isnot = True
