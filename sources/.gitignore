@@ -13,3 +13,6 @@ bootstrap/*.tgz
 webcore/var/www/canopsis/resources/lib
 pyperfstore/*.egg*
 pyperfstore2/*.egg*
+webcore/var/www/canopsis/canopsis.min.js
+webcore/var/www/canopsis/canopsis.min.js.gz
+webcore/var/www/canopsis/commit.js
