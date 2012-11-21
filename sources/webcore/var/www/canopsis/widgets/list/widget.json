@@ -10,45 +10,8 @@
 	"locales": ["fr"],
 	"options": [{
 			"title": "Options",
-			"items": [{
-						"xtype": "fieldset",
-						"title": "Style",
-						"collapsible": false,
-						"items": [
-							{
-								"xtype": "checkbox",
-								"boxLabel": "Enable search field",
-								"checked": false,
-								"name": "bar_search"
-							},{
-								"xtype": "checkbox",
-								"boxLabel": "Enable reload button",
-								"checked": false,
-								"name": "reload"
-							},{
-								"xtype": "checkbox",
-								"boxLabel": "Enable scroll",
-								"checked": true,
-								"name": "scroll"
-							},{
-								"xtype": "checkbox",
-								"boxLabel": "Hide headers",
-								"checked": false,
-								"name": "hideHeaders"
-							},{
-								"xtype": "checkbox",
-								"boxLabel": "Enable pagging",
-								"checked": false,
-								"name": "paging"
-							},{
-								"xtype" : "numberfield",
-								"name" : "pageSize",
-								"fieldLabel": "Page Size",
-								"minValue": 1,
-								"value": 20
-							}
-						]
-					},{
+			"items": [
+					{
 						"xtype": "fieldset",
 						"title": "Columns",
 						"collapsible": false,
@@ -145,11 +108,52 @@
 						]
 				}]
 		},{
+			"title": "Style",
+			"items": [{
+						"xtype": "fieldset",
+						"title": "Style",
+						"collapsible": false,
+						"items": [
+							{
+								"xtype": "checkbox",
+								"boxLabel": "Enable search field",
+								"checked": false,
+								"name": "bar_search"
+							},{
+								"xtype": "checkbox",
+								"boxLabel": "Enable reload button",
+								"checked": false,
+								"name": "reload"
+							},{
+								"xtype": "checkbox",
+								"boxLabel": "Enable scroll",
+								"checked": true,
+								"name": "scroll"
+							},{
+								"xtype": "checkbox",
+								"boxLabel": "Hide headers",
+								"checked": false,
+								"name": "hideHeaders"
+							},{
+								"xtype": "checkbox",
+								"boxLabel": "Enable pagging",
+								"checked": false,
+								"name": "paging"
+							},{
+								"xtype" : "numberfield",
+								"name" : "pageSize",
+								"fieldLabel": "Page Size",
+								"minValue": 1,
+								"value": 20
+						}]
+					}]
+		},{
 			"title": "Filter",
 			"items": [{
 					"xtype": "cfilter",
 					"name": "filter"
 				}]
 		}]
+
 
 }]
