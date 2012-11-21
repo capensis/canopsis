@@ -677,7 +677,7 @@ Ext.define('widgets.line_graph.line_graph' , {
 				values[index][1] = - values[index][1];
 
 		//type specifique parsing
-		if (type == 'COUNTER' && !this.aggregate_interval) {
+		if (type == 'COUNTER' && !this.aggregate_interval && !this.reportMode) {
 			var last_point = serie.data[serie.data.length - 1];
 			if (last_point) {
 				if (last_point.y != undefined)
