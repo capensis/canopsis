@@ -146,7 +146,7 @@ Ext.define('canopsis.lib.view.cwizard' , {
 		step.defaults = { labelWidth: this.labelWidth };
 
 		if (step.items.length == 1)
-			if (! step.layout) {
+			if (! step.layout && !(step.items[0].xtype == 'fieldset')) {
 				step.layout = 'fit';
 				step.defaults.autoScroll = true;
 			}
