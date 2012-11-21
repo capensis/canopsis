@@ -66,7 +66,7 @@ Ext.define('widgets.diagram.diagram' , {
 	diagram_type: 'pie',
 
 	labelFormatter :function() {return '<b>'+ this.point.name +'</b>: '+ Math.round(this.percentage) +' %';},
-	labelFormatterBar : function() {return '<b>'+ this.x +'</b>: '+ this.y;},
+	labelFormatterBar : function() {return '<b>'+ this.x +'</b>: '+ rdr_humanreadable_value(this.y)},
 
 	initComponent: function() {
 		this.backgroundColor	= check_color(this.backgroundColor);
@@ -471,17 +471,7 @@ Ext.define('widgets.diagram.diagram' , {
 			if (options.invert)
 				value = - value;
 
-			var y = value;
-
-			if (options.bunit)
-				value += ' ' + options.bunit
-
-			// Parse units
-			if (options.bunit == 's')
-				value = rdr_duration(y)
-			else if (options.bunit == 'ms')
-				value = rdr_duration(y/1000)
-
+			value = rdr_humanreadable_value(value, options.bunit)
 			return '<b>' + options.metric + ':</b> ' + value ;
 		}
 
@@ -511,12 +501,7 @@ Ext.define('widgets.diagram.diagram' , {
 	y_formatter: function(){
 		if (this.chart.series.length){
 			var bunit = this.chart.series[0].options.bunit
-			if (bunit){
-				if (bunit == 's')
-					return rdr_duration(this.value)
-				else if (bunit == 'ms')
-					return rdr_duration(this.value/1000)
-			}
+			return rdr_humanreadable_value(this.value, bunit)
 		}
 		return this.value
 	},
