@@ -150,6 +150,16 @@ Ext.define('widgets.stream.stream' , {
 	},
 
 	afterContainerRender: function() {
+		if (global.websocketCtrl.connected){
+			this.startStream();
+		}else{
+			global.websocketCtrl.on('transport_up', function() {
+				this.startStream();
+			}, this, {single: true});
+		}
+	},
+
+	startStream: function(){
 		var me = this;
 		this.getHistory(undefined, undefined, function(records) {
 			if (records.length > 0)
@@ -160,7 +170,6 @@ Ext.define('widgets.stream.stream' , {
 
 			me.ready();
 		});
-
 	},
 
 	getHistory: function(from, to, onSuccess) {
