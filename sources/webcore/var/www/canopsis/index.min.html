@@ -78,7 +78,7 @@
 	
 	<script type="text/javascript" src="resources/lib/pnotify/jquery.pnotify.min.js"></script>   
  
-	<!-- <script type="text/javascript">document.getElementById('loading-msg').innerHTML = 'Loading Highcharts ...';</script> -->
+	<!-- Highcharts -->
 	<!-- <script type="text/javascript" src="resources/lib/Highcharts/js/highcharts.js"></script> -->
 	<script type="text/javascript" src="resources/lib/Highstock/js/highstock.js"></script>
 	<script type="text/javascript" src="resources/lib/regression.js"></script>
@@ -100,7 +100,7 @@
 			global.minimified = true
 
 			//check Auth
-			log.debug('Check auth ...', "[app]");
+			log.debug('Check auth ...', "[index]");
 			Ext.Ajax.request({
 				type: 'rest',
 				url: '/account/me',
@@ -120,22 +120,22 @@
 
 						createApplication()
 					} else {
-						log.debug(' + Please loggin', "[app]");
+						log.debug(' + Please loggin', "[index]");
 					}
 				},
 				failure: function(response) {
 					if (response.status == 403){
-						log.debug(' + Please loggin', "[app]");
+						log.debug(' + Please loggin', "[index]");
 
 						Ext.create('canopsis.auth', {
 							on_authed: function(){
 								Ext.get('auth').remove();
-								createApplication()
+								createApplication();
 							}
 						})
-;					}else{
+					}else{
 						document.getElementById('loading-msg').innerHTML = 'Impossible to load Canopsis ...';
-						log.debug(' + Error in request', "[app]");
+						log.debug(' + Error in request', "[index]");
 					}
 				}
 			});
