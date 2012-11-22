@@ -40,6 +40,7 @@ paths = [
 	os.path.join(webui_path, "app/store"),
 	os.path.join(webui_path, "app/lib/menu"),
 	os.path.join(webui_path, "app/lib/form"),
+	os.path.join(webui_path, "app/lib/view/cpopup.js"),
 	os.path.join(webui_path, "app/lib/view"),
 	os.path.join(webui_path, "app/view/Tabs/Content.js"),
 	os.path.join(webui_path, "app/view"),
@@ -64,8 +65,8 @@ def locate(pattern, root=os.curdir):
             yield os.path.join(path, filename)
 
 def append_file(file_path):
+	min_file.write("\n/* %s */\n" % file_path)
 	if debug:
-		min_file.write("\n/* %s */\n" % file_path)
 		min_file.write("console.log('   -> %s')\n" % file_path)
 	shutil.copyfileobj(open(file_path, 'r'), min_file)
 	appended_files.append(file_path)
