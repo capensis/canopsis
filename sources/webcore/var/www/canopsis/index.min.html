@@ -47,81 +47,114 @@
 	<!-- <script src="resources/lib/timeline/timeline_js/timeline-api.js?bundle=true" type="text/javascript"></script> -->
 </head>
 <body>
-	<div id="loading-mask" class="login">
+	<div id="auth" class='login'>
 		<div class='header'></div>
+		<div class='title'><img src="themes/canopsis/resources/images/logo_canopsis_auth.png"></img></div>
 		<div class='layout'></div>
-
-		<div id="loading">
-			<div class="loading-indicator">
-				Canopsis - <a href="http://www.canopsis.org">www.canopsis.org</a><br/>
-				<span id="loading-msg">Loading styles and images...</span>
-        		</div>
-        	</div>
-
-
-		<!-- Ext-JS -->
-		<script type="text/javascript">document.getElementById('loading-msg').innerHTML = 'Loading ExtJS Core ...';</script>
-	
-		<!-- <script type="text/javascript" src="resources/lib/extjs/ext-debug.js"></script> -->
-		<!-- <script type="text/javascript" src="resources/lib/extjs/ext-all.js"></script> -->
-		<script type="text/javascript" src="resources/lib/extjs/ext-all.js.gz"></script>
-		<!-- <script type="text/javascript" src="resources/lib/extjs/ext.js"></script> -->
-		<!-- <script type="text/javascript" src="resources/lib/extjs/bootstrap.js"></script> -->
-
-		<!-- Ext localization javascript -->
-		<script type="text/javascript" id="extlocale"></script>
-		<script type="text/javascript" id="canopsislocale"></script>
-
-		<!-- Jquery -->
-		<script type="text/javascript">document.getElementById('loading-msg').innerHTML = 'Loading JQuery ...';</script>
-		<script type="text/javascript" src="resources/lib/jquery/jquery.min.js"></script>
-		<script type="text/javascript" src="resources/lib/jquery-ui/jquery-ui.min.js"></script>
-		
-		<script type="text/javascript">document.getElementById('loading-msg').innerHTML = 'Loading JQuery plugins ...';</script>
-		<script type="text/javascript" src="resources/lib/jQuery.encoding.digests.sha1.js"></script>
-		<script type="text/javascript" src="resources/lib/jquery.md5.js"></script>
-		<script type="text/javascript" src="resources/lib/jquery.peity.min.js"></script>
-		<script type="text/javascript" src="resources/lib/jquery.sparkline.js"></script>
-		<script type="text/javascript" src="resources/lib/jquery.lightbox-0.5.js"></script>
-		<script type="text/javascript" src="resources/lib/jquery.jsPlumb-1.3.13-all-min.js"></script>
-		<script type="text/javascript" src="resources/lib/sigma.min.js"></script>
-
-		<script type="text/javascript" src="resources/lib/justGage/raphael.2.1.0.min.js"></script>
-		<script type="text/javascript" src="resources/lib/justGage/justgage.1.0.1.min.js"></script>
-		
-		<script type="text/javascript">document.getElementById('loading-msg').innerHTML = 'Loading jqGridable ...';</script>
-		<script type="text/javascript" src="resources/lib/jqGridable/jqGridable.js"></script>
-		
-		<script type="text/javascript">document.getElementById('loading-msg').innerHTML = 'Loading pnotify ...';</script>
-		<script type="text/javascript" src="resources/lib/pnotify/jquery.pnotify.min.js"></script>   
-	 
-		<!-- <script type="text/javascript">document.getElementById('loading-msg').innerHTML = 'Loading Highcharts ...';</script> -->
-		<!-- <script type="text/javascript" src="resources/lib/Highcharts/js/highcharts.js"></script> -->
-
-		<script type="text/javascript">document.getElementById('loading-msg').innerHTML = 'Loading Highstock ...';</script>
-		<script type="text/javascript" src="resources/lib/Highstock/js/highstock.js"></script>
-		<script type="text/javascript" src="resources/lib/regression.js"></script>
-		<script type="text/javascript" src="resources/lib/Highstock/js/modules/exporting.js"></script>
-
-		<!-- Extjs Plugins -->
-		<script type="text/javascript">document.getElementById('loading-msg').innerHTML = 'Loading Extjs plugins ...';</script>
-		<script type="text/javascript" src="resources/lib/jqGridable/jqGridable.Ext.js"></script>
-		<script type="text/javascript" src="resources/lib/extjs-plugins/Ext.ux.ColorField.js"></script>
-		<script type="text/javascript" src="resources/lib/extjs-plugins/Ext.ux.CheckColumn.js"></script>
-
-		<!-- Application -->
-		<script type="text/javascript">document.getElementById('loading-msg').innerHTML = 'Loading Application ...';</script>
-
-		<script type="text/javascript" src="app.js"></script>
-		<script type="text/javascript" src="canopsis.min.js.gz"></script>
-
-		<!-- NowJS -->
-		<script type="text/javascript">document.getElementById('loading-msg').innerHTML = 'Loading NowJS client ...';</script>
-		<script type="text/javascript" id="nowjs"></script>
-
-		<!-- Start Application -->
-		<script type="text/javascript">document.getElementById('loading-msg').innerHTML = 'Starting Application ...';</script>
-
+		<div id='auth_form' class='form'></div>
+		<!-- <div id="loading-mask" class="login">
+			<div class='header'></div>
+			<div class='title'><img src="themes/canopsis/resources/images/logo_canopsis_auth.png"></img></div>
+			<div class='layout'></div>
+		</div> -->
 	</div>
+
+	<!-- Ext-JS -->
+	<!-- <script type="text/javascript" src="resources/lib/extjs/ext-debug.js"></script> -->
+	<!-- <script type="text/javascript" src="resources/lib/extjs/ext-all.js"></script> -->
+	<script type="text/javascript" src="resources/lib/extjs/ext-all.js.gz"></script>
+	<!-- <script type="text/javascript" src="resources/lib/extjs/ext.js"></script> -->
+	<!-- <script type="text/javascript" src="resources/lib/extjs/bootstrap.js"></script> -->
+
+	<!-- Ext localization javascript -->
+	<script type="text/javascript" id="extlocale"></script>
+	<script type="text/javascript" id="canopsislocale"></script>
+
+	<!-- Jquery -->
+	<script type="text/javascript" src="resources/lib/jquery/jquery.min.js"></script>
+	<script type="text/javascript" src="resources/lib/jquery-ui/jquery-ui.min.js"></script>
+	
+	<script type="text/javascript" src="resources/lib/jQuery.encoding.digests.sha1.js"></script>
+	<script type="text/javascript" src="resources/lib/jquery.md5.js"></script>
+	<script type="text/javascript" src="resources/lib/jquery.peity.min.js"></script>
+	<script type="text/javascript" src="resources/lib/jquery.sparkline.js"></script>
+	<script type="text/javascript" src="resources/lib/jquery.lightbox-0.5.js"></script>
+	<script type="text/javascript" src="resources/lib/jquery.jsPlumb-1.3.13-all-min.js"></script>
+	<script type="text/javascript" src="resources/lib/sigma.min.js"></script>
+
+	<script type="text/javascript" src="resources/lib/justGage/raphael.2.1.0.min.js"></script>
+	<script type="text/javascript" src="resources/lib/justGage/justgage.1.0.1.min.js"></script>
+	
+	<script type="text/javascript" src="resources/lib/jqGridable/jqGridable.js"></script>
+	
+	<script type="text/javascript" src="resources/lib/pnotify/jquery.pnotify.min.js"></script>   
+ 
+	<!-- <script type="text/javascript">document.getElementById('loading-msg').innerHTML = 'Loading Highcharts ...';</script> -->
+	<!-- <script type="text/javascript" src="resources/lib/Highcharts/js/highcharts.js"></script> -->
+	<script type="text/javascript" src="resources/lib/Highstock/js/highstock.js"></script>
+	<script type="text/javascript" src="resources/lib/regression.js"></script>
+	<script type="text/javascript" src="resources/lib/Highstock/js/modules/exporting.js"></script>
+
+	<!-- Extjs Plugins -->
+	<script type="text/javascript" src="resources/lib/jqGridable/jqGridable.Ext.js"></script>
+	<script type="text/javascript" src="resources/lib/extjs-plugins/Ext.ux.ColorField.js"></script>
+	<script type="text/javascript" src="resources/lib/extjs-plugins/Ext.ux.CheckColumn.js"></script>
+
+	<!-- Application -->
+	<script type="text/javascript" src="canopsis.js"></script>
+	<script type="text/javascript" src="app.js"></script>
+	<script type="text/javascript" src="auth.js"></script>
+
+	<!-- NowJS -->
+	<script type="text/javascript" id="nowjs"></script>
+
+
+	<script type="text/javascript">
+		Ext.onReady(function() {
+			global.minimified = true
+
+			//check Auth
+			log.debug('Check auth ...', "[app]");
+			Ext.Ajax.request({
+				type: 'rest',
+				url: '/account/me',
+				reader: {
+					type: 'json',
+					root: 'data',
+					totalProperty  : 'total',
+					successProperty: 'success'
+				},
+				success: function(response){
+					request_state = Ext.JSON.decode(response.responseText).success
+					if (request_state){
+						global.account = Ext.JSON.decode(response.responseText).data[0];
+						log.debug(' + Logged', "[app]");
+
+						Ext.get('auth').remove();
+
+						createApplication()
+					} else {
+						log.debug(' + Please loggin', "[app]");
+					}
+				},
+				failure: function(response) {
+					if (response.status == 403){
+						log.debug(' + Please loggin', "[app]");
+
+						Ext.create('canopsis.auth', {
+							on_authed: function(){
+								Ext.get('auth').remove();
+								createApplication()
+							}
+						})
+;					}else{
+						document.getElementById('loading-msg').innerHTML = 'Impossible to load Canopsis ...';
+						log.debug(' + Error in request', "[app]");
+					}
+				}
+			});
+		});
+	</script>
+
 </body>
 </html>

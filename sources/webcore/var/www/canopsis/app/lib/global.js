@@ -29,6 +29,8 @@ var global = {
 	websocketCtrl: undefined,
 	commit: '',
 
+	minimified: false,
+
 	state_colors: {
 		up: '#50b432',
 		down: '#ed241b',

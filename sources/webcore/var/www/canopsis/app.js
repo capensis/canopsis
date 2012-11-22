@@ -19,35 +19,6 @@
 # ---------------------------------
 */
 
-Ext.onReady(function() {
-	Ext.Loader.setConfig({enabled:true});
-
-	//check Auth
-	log.debug('Check auth ...', "[app]");
-	Ext.Ajax.request({
-		type: 'rest',
-		url: '/account/me',
-		reader: {
-			type: 'json',
-			root: 'data',
-			totalProperty  : 'total',
-			successProperty: 'success'
-		},
-		success: function(response){
-			request_state = Ext.JSON.decode(response.responseText).success
-			if (request_state){
-				global.account = Ext.JSON.decode(response.responseText).data[0];
-				createApplication()
-			} else {
-				window.location.href='/';
-			}
-		},
-		failure: function() {
-			window.location.href='/';
-		}
-	});
-});
-
 
 function createApplication(){
 	log.debug("Loading locale ...", "[app]");
@@ -108,14 +79,22 @@ function createApplication(){
 	
 		//autoCreateViewport: true,
 		launch: function() {
-			this.getController('Widgets').on('loaded', this.createViewport,this,{single : true});
+			if (global.minimified){
+				this.createViewport();
+			}else{
+				this.getController('Widgets').on('loaded', this.createViewport,this,{single : true});
+			}
 		},
 
 		createViewport: function(){
 			Ext.create('canopsis.view.Viewport');
 			log.debug('Remove mask ...',"[app]");
-			Ext.get('loading').remove();
-			Ext.get('loading-mask').remove();
+
+			if (Ext.get('loading'))
+				Ext.get('loading').remove();
+
+			if (Ext.get('loading-mask'))
+				Ext.get('loading-mask').remove();
 		}
 		
 		

@@ -33,34 +33,41 @@ Ext.define('canopsis.controller.Widgets', {
 		Ext.Loader.setPath('widgets', './widgets');
 		this.store = this.getStore('Widgets');
 		log.debug('parsing Widget store', this.logAuthor);
-		this.store.on('load', function() {
-			if (! this.store.loaded){
-				this.store.each(function(record) {
-					log.debug('loading ' + record.data.xtype, this.logAuthor);
-					var name = 'widgets.' + record.data.xtype + '.' + record.data.xtype;
-					Ext.require(name);
-					if (record.data.locales && Ext.Array.contains(record.data.locales, global.locale)) {
-						log.debug(' + loading locale ' + global.locale + ' ...', this.logAuthor);
-						var name = 'widgets.' + record.data.xtype + '.locales.lang-' + global.locale;
-						//Ext.require(name);
-						Ext.Loader.syncRequire(name);
-					}
-				}, this);
 
+		if (! global.minimified){
+			this.store.on('load', function() {
+				if (! this.store.loaded){
+					this.store.each(function(record) {
+						log.debug('loading ' + record.data.xtype, this.logAuthor);
+						var name = 'widgets.' + record.data.xtype + '.' + record.data.xtype;
+						Ext.require(name);
+						if (record.data.locales && Ext.Array.contains(record.data.locales, global.locale)) {
+							log.debug(' + loading locale ' + global.locale + ' ...', this.logAuthor);
+							var name = 'widgets.' + record.data.xtype + '.locales.lang-' + global.locale;
+							//Ext.require(name);
+							Ext.Loader.syncRequire(name);
+						}
+					}, this);
+
+					this.clean_disabled_widget()
+
+					//translate the store
+					this.check_translate();
+
+					// small hack
+					Ext.Function.defer(function() {
+						this.fireEvent('loaded');
+					 },1000, this);
+					
+					this.store.loaded = true
+				}
+
+			}, this);
+		}else{
+			this.store.on('load', function() {
 				this.clean_disabled_widget()
-
-				//translate the store
-				this.check_translate();
-
-				// small hack
-				Ext.Function.defer(function() {
-					this.fireEvent('loaded');
-				 },1000, this);
-				
-				this.store.loaded = true
-			}
-
-		}, this);
+			}, this);
+		}
     },
 
     clean_disabled_widget: function(){
