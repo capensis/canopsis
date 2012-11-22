@@ -650,6 +650,9 @@ Ext.define('canopsis.lib.form.field.cfilter' , {
 
 			setValue: function(filter) {
 				log.debug('Set value', this.logAuthor);
+
+				this.remove_all_cfilter()
+
 				if (typeof(filter) == 'string')
 					filter = Ext.decode(filter);
 
