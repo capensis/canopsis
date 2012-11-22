@@ -19,14 +19,16 @@ cps_gz_filepath = os.path.join(webui_path, cps_gz_filename)
 debug = False
 
 exclude_files = [
-	os.path.join(webui_path, "app.js"),
 ]
 
 first_files = [
+	os.path.join(webui_path, "app/lib/locale.js"),
 	os.path.join(webui_path, "app/lib/global.js"),
 	os.path.join(webui_path, "app/lib/locale.js"),
 	os.path.join(webui_path, "app/lib/log.js"),
 	os.path.join(webui_path, "app/lib/tools.js"),
+	os.path.join(webui_path, "auth.js"),
+	os.path.join(webui_path, "app.js"),
 	os.path.join(webui_path, "app/lib/renderers.js"),
 	os.path.join(webui_path, "app/lib/form/cfield.js"),
 	os.path.join(webui_path, "app/lib/form/field/cdate.js"),
