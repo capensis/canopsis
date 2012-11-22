@@ -21,7 +21,7 @@ debug = False
 exclude_files = [
 ]
 
-first_files = [
+paths = [
 	os.path.join(webui_path, "app/lib/locale.js"),
 	os.path.join(webui_path, "app/lib/global.js"),
 	os.path.join(webui_path, "app/lib/locale.js"),
@@ -32,18 +32,9 @@ first_files = [
 	os.path.join(webui_path, "app/lib/renderers.js"),
 	os.path.join(webui_path, "app/lib/form/cfield.js"),
 	os.path.join(webui_path, "app/lib/form/field/cdate.js"),
-	os.path.join(webui_path, "app/lib/view/cpopup.js"),
 	os.path.join(webui_path, "app/lib/view/cgrid.js"),
 	os.path.join(webui_path, "app/lib/view/cgrid_state.js"),
-	os.path.join(webui_path, "app/view/Tabs/Content.js")
-]
-
-last_files = [
-	os.path.join(webui_path, "app/controller/Widgets.js"),
-	os.path.join(webui_path, "app/view/Viewport.js")
-]
-
-paths = [
+	os.path.join(webui_path, "app/view/Tabs/Content.js"),
 	os.path.join(webui_path, "app/model"),
 	os.path.join(webui_path, "app/lib/store"),
 	os.path.join(webui_path, "app/store"),
@@ -56,7 +47,9 @@ paths = [
 	os.path.join(webui_path, "app/lib/controller"),
 	os.path.join(webui_path, "app/controller"),
 	os.path.join(webui_path, "widgets/line_graph/line_graph.js"),
-	os.path.join(webui_path, "widgets/")
+	os.path.join(webui_path, "widgets/"),
+	os.path.join(webui_path, "app/controller/Widgets.js"),
+	os.path.join(webui_path, "app/view/Viewport.js")
 ]
 
 appended_files = []
@@ -78,9 +71,16 @@ def append_file(file_path):
 	appended_files.append(file_path)
 
 def concact_files(wpath):
-	for file_path in locate("*.js", wpath):
-		if file_path not in first_files and file_path not in last_files and file_path not in exclude_files and file_path not in appended_files:
+	if os.path.isfile(wpath):
+		file_path = wpath
+		if file_path not in exclude_files and file_path not in appended_files:
+			print "  + %s" % file_path
 			append_file(file_path)
+	else:
+		for file_path in locate("*.js", wpath):
+			if file_path not in exclude_files and file_path not in appended_files:
+				print "  + %s" % file_path
+				append_file(file_path)
 
 ## Main
 
@@ -97,23 +97,11 @@ min_file = open(cps_filepath, "w")
 if debug:
 	min_file.write("console.log('Start canopsis.min.js')\n")
 
-print " + Append first files"
-if debug:
-	min_file.write("console.log(' + Load first files')\n")
-for file_path in first_files:
-	append_file(file_path)
-
-print " + Append normal files"
+print " + Append files"
 if debug:
 	min_file.write("console.log(' + Load normal files')\n")
 for path in paths:
 	concact_files(path)
-
-print " + Append last files"
-if debug:
-	min_file.write("console.log(' + Load last files')\n")
-for file_path in last_files:
-	append_file(file_path)
 
 print "Close '%s'" % cps_filepath
 if debug:
