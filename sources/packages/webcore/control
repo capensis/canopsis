@@ -12,6 +12,7 @@ NO_DISTVERS=true
 
 function pre_install(){
 	echo "Pre-install $NAME $VERSION-$RELEASE ..."
+	rm -Rf $PREFIX/var/www/canopsis/* &> /dev/null || true
 	check_code $? 
 }
 
@@ -33,7 +34,7 @@ function post_remove(){
 
 function pre_update(){
 	echo "Pre-update $NAME $VERSION-$RELEASE ..."
-	rm -Rf $PREFIX/var/www/canopsis/widgets/* &> /dev/null || true
+	rm -Rf $PREFIX/var/www/canopsis/* &> /dev/null || true
 
 	# Delete old init script
 	rm $PREFIX/etc/init.d/webserver &> /dev/null || true
