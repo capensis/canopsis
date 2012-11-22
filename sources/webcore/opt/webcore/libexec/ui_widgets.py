@@ -67,7 +67,7 @@ def get_all_widgets():
 	return output
 
 #### Widgets CSS
-@get('/ui/widgets.css')
+@get('/ui/widgets.css', skip=['checkAuthPlugin'])
 def get_widgets_css():
 	widgets = get_widgets()
 	output = ""
