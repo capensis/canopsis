@@ -472,6 +472,10 @@ Ext.define('canopsis.lib.form.field.cfilter' , {
 					this.sub_operator_combo_change(combo, value, oldvalue);
 				},this);
 
+				this.sub_operator_combo.on('beforeselect',
+					this.sub_operator_combo_check_validity
+				,this);
+
 				//button binding
 				this.add_button.on('click', function() {this.add_cfilter()},this);
 
@@ -520,6 +524,17 @@ Ext.define('canopsis.lib.form.field.cfilter' , {
 				}
 			},
 
+			sub_operator_combo_check_validity: function(combo,record){
+				var valid_operator_type = this.get_type_from_operator(this.operator_combo.getValue(), this.operator_store);
+				var operator_type = this.get_type_from_operator(record.get('operator'), this.sub_operator_store);
+
+				if (valid_operator_type && valid_operator_type != 'all' && operator_type != valid_operator_type) {
+					global.notify.notify('Wrong operator', "You can't use this operator", 'info');
+					return false;
+				}
+
+			},
+
 			sub_operator_combo_change: function(combo,value,oldvalue) {
 				//log.debug(' + Catch changes on sub operator combobox, value : ' + value, this.logAuthor)
 				if (!value)
@@ -527,13 +542,13 @@ Ext.define('canopsis.lib.form.field.cfilter' , {
 
 				var valid_operator_type = this.get_type_from_operator(this.operator_combo.getValue(), this.operator_store);
 				var operator_type = this.get_type_from_operator(value, this.sub_operator_store);
-
+				/*
 				if (valid_operator_type && valid_operator_type != 'all' && operator_type != valid_operator_type) {
 					global.notify.notify('Wrong operator', "You can't use this operator", 'info');
 					this.sub_operator_combo.setValue(oldvalue);
 					return;
 				}
-
+				*/
 				switch (operator_type) {
 					case 'value':
 						this.string_value.show();
