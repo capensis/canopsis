@@ -304,7 +304,8 @@ Ext.define('canopsis.lib.form.field.cfilter' , {
 
 			add_textfield: function(value) {
 				var config = {
-					emptyText: _('Type value here')
+					emptyText: _('Type value here'),
+					isFormField: false
 				};
 
 				if (value)
