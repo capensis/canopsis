@@ -121,6 +121,7 @@ Ext.define('canopsis.lib.form.field.cfilter' , {
 		//--------------edit area (hand writing part)--------
 
 		this.edit_area = Ext.widget('textarea', {
+			isFormField: false,
 			hidden: true,
 			validator: this.check_json_validity,
 			flex: 1
@@ -377,6 +378,7 @@ Ext.define('canopsis.lib.form.field.cfilter' , {
 				this.operator_combo = Ext.widget('combobox', {
 								queryMode: 'local',
 								displayField: 'text',
+								isFormField: false,
 								//Hack: don't search in store
 								minChars: 50,
 								valueField: 'operator',
@@ -389,6 +391,7 @@ Ext.define('canopsis.lib.form.field.cfilter' , {
 				this.sub_operator_combo = Ext.widget('combobox', {
 								queryMode: 'local',
 								displayField: 'text',
+								isFormField: false,
 								valueField: 'operator',
 								value: '$eq',
 								editable: false,
@@ -400,6 +403,7 @@ Ext.define('canopsis.lib.form.field.cfilter' , {
 				this.is_isnot_combo = Ext.widget('combobox', {
 								queryMode: 'local',
 								displayField: 'text',
+								isFormField: false,
 								valueField: 'operator',
 								value: '$is',
 								editable: false,
