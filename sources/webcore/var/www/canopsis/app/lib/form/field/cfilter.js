@@ -436,6 +436,7 @@ Ext.define('canopsis.lib.form.field.cfilter' , {
 				this.string_value = Ext.widget('textfield', {
 					margin: '0 0 0 5',
 					emptyText: 'Type value here',
+					isFormField: false,
 					getValue: function() {
 						var string = Ext.form.field.Text.superclass.getValue.call(this);
 						var number = parseInt(string);
