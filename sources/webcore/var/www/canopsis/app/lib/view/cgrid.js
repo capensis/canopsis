@@ -197,6 +197,7 @@ Ext.define('canopsis.lib.view.cgrid' , {
 					});
 					bar_child.push({
 						xtype: 'textfield',
+						isFormField: false,
 						name: 'searchField',
 						hideLabel: true,
 						width: 200,
