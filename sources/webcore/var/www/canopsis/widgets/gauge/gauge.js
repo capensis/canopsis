@@ -27,6 +27,7 @@ Ext.define('widgets.gauge.gauge' , {
 
 	colorStart: '#6FADCF',
 	colorStop: '#8FC0DA', 
+	colorWarn: '#FFA500',
 	gaugeColor: '#E1E6FA', 
 	titleFontColor: '#3E576F',
 	gaugeWidthScale: 1,
@@ -78,9 +79,18 @@ Ext.define('widgets.gauge.gauge' , {
 			shadowOpacity: this.shadowOpacity,
 			title: this.gaugeTitle,
 			label: this.gaugeLabel,
-			levelColors: [this.colorStart, this.colorStop],
+			//levelColors: colorList,
 			gaugeColor: this.gaugeColor,
 			textRenderer: rdr_humanreadable_value
+		}
+
+		if(this.levelThresholds){
+			opts.levelColorsGradient = false
+			opts.levelColors = [this.colorStart, this.colorWarn ,this.colorStop]
+			if(this.warnValue,this.critValue)
+				opts.levelThresholds = [this.warnValue,this.critValue]
+		}else{
+			opts.levelColors = [this.colorStart, this.colorStop]
 		}
 
 		log.debug("Gauge options:", this.logAuthor)
@@ -142,6 +152,8 @@ Ext.define('widgets.gauge.gauge' , {
 		log.debug('onRefresh', this.logAuthor);
 
 		if (data){
+			if(this.getEl().isMasked)
+				this.getEl().unmask()
 
 			var fields = undefined
 			if(this.nodes[0].extra_field)
@@ -165,7 +177,6 @@ Ext.define('widgets.gauge.gauge' , {
 			}
 			this.maxValue = maxValue
 
-
 			var minValue = this.minValue
 			if(fields && fields.mi){
 				minValue = fields.mi
@@ -173,6 +184,22 @@ Ext.define('widgets.gauge.gauge' , {
 				minValue = data.min
 			}
 			this.minValue = minValue
+
+			var warnValue = this.warnValue
+			if(fields && fields.tw){
+				warnValue = fields.tw
+			}else if(data.tw){
+				warnValue = data.tw
+			}
+			this.warnValue = warnValue
+
+			var critValue = this.critValue
+			if(fields && fields.tc){
+				critValue = fields.tc
+			}else if(data.tc){
+				critValue = data.tc
+			}
+			this.critValue = critValue
 
 			try{
 				if(data.values){
@@ -187,6 +214,7 @@ Ext.define('widgets.gauge.gauge' , {
 			}
 
 		}else{
+			this.getEl().mask(_('No data received from webserver'));
 			log.debug('No data', this.logAuthor)
 		}
 	},

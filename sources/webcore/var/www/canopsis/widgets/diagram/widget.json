@@ -90,7 +90,10 @@
 								"fieldLabel": "Total (by default use 'max' field of perfdata)"
                            }
 						]
-					},{
+					}]
+		},{
+			"title": "Aggregation",
+			"items": [{
 						"xtype": "fieldset",
 						"title": "Aggregation",
 						"collapsible": false,
@@ -140,7 +143,8 @@
 								}
 							}
 						]
-					}]	
+					}]
+
 		},{
 			"title": "Style",
 			"items": [{
@@ -186,6 +190,11 @@
 							"fieldLabel": "Enable labels",
 							"checked": false,
 							"name": "labels"
+						},{
+								"xtype": "checkbox",
+								"fieldLabel": "Display metric name in label",
+								"checked": false,
+								"name": "nameInLabelFormatter"
 						},{
 							"xtype" : "numberfield",
 							"name" : "legend_fontSize",
