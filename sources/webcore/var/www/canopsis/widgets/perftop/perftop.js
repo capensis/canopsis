@@ -30,7 +30,6 @@ Ext.define('widgets.perftop.perftop' , {
 	time_window: 86400,
 	threshold: undefined,
 	threshold_direction: -1,
-	percent: false,
 
 	show_source_type: true,		
 	show_last_time: false,			
@@ -40,6 +39,7 @@ Ext.define('widgets.perftop.perftop' , {
 	show_value: false,
 	show_unit: false,
 	show_hr_value: true,
+	show_percent: false,
 	hideHeaders: false,
 	show_position: true,
 	expand: false,
@@ -63,7 +63,6 @@ Ext.define('widgets.perftop.perftop' , {
 									'mfilter': this.mfilter,
 									'threshold': this.threshold,
 									'threshold_direction': this.threshold_direction,
-									'percent': this.percent,
 									'expand': this.expand
 								},
 					reader: {
@@ -141,6 +140,22 @@ Ext.define('widgets.perftop.perftop' , {
 					sortable: false,
 					dataIndex: 'lv',
 					align: 'right'
+				});
+
+			if (this.show_percent)
+				this.columns.push({
+					header: _('Percent'),
+					width: 100,
+					sortable: false,
+					dataIndex: 'lv',
+					align: 'right',
+					renderer: function(value, metaData, record) {
+						var max = record.get('ma')
+						if (max)
+							return (Math.round(((value * 100) / max) * 100) / 100) + '%'
+						else
+							return _("N/A")
+					}
 				});
 				
 			if (this.show_unit)

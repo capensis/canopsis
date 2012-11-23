@@ -280,7 +280,6 @@ def perfstore_perftop():
 	sort					= int(request.params.get('sort', default=1))
 	mfilter					= request.params.get('mfilter', default={})
 	time_window				= int(request.params.get('time_window', default=86400))
-	percent	    			= request.params.get('percent', default=False)
 	threshold				= request.params.get('threshold', default=None)
 	threshold_direction 	= int(request.params.get('threshold_direction', default=-1))
 	expand 					= request.params.get('expand', default=False)
@@ -294,11 +293,6 @@ def perfstore_perftop():
 
 	if threshold:
 		threshold = float(threshold)
-	
-	if percent == 'true':
-		percent = True
-	else:
-		percent = False
 
 	if expand == 'true':
 		expand = True
@@ -308,7 +302,6 @@ def perfstore_perftop():
 	logger.debug("PerfTop:")
 	logger.debug(" + mfilter:     %s" % mfilter)
 	logger.debug(" + limit:       %s" % limit)
-	logger.debug(" + percent:     %s" % percent)
 	logger.debug(" + threshold:   %s" % threshold)
 	logger.debug(" + threshold_direction:   %s" % threshold_direction)
 	logger.debug(" + time_window: %s" % time_window)
@@ -337,12 +330,7 @@ def perfstore_perftop():
 		
 		if mtype != 'COUNTER' and not expand:
 			metrics = manager.store.find(mfilter=mfilter, mfields=['_id', 'co', 're', 'me', 'lv', 'u', 'ma', 'lts'], sort=[('lv', sort)], limit=limit)
-			for metric in metrics:
-				if percent and metric.get('ma', None):
-					if metric['lv'] != 0:
-						metric['lv'] = round((float(metric['lv']) * 100) / metric['ma'], 2)
-						metric['u'] = '%'
-				
+			for metric in metrics:				
 				if check_threshold(metric['lv']):
 					data.append(metric)
 		else:

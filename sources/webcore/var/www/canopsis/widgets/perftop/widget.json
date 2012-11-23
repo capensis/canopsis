@@ -49,11 +49,6 @@
 						"checked": false,
 						"name": "expand"
 					},{
-						"xtype": "checkbox",
-						"fieldLabel": "Calculate Percent (if possible)",
-						"checked": false,
-						"name": "percent"
-					},{
 						"xtype": "cduration",
 						"name": "time_window",
 						"value": 86400,
@@ -121,6 +116,11 @@
 						"boxLabel": "Value",
 						"checked": false,
 						"name": "show_value"
+					},{
+						"xtype": "checkbox",
+						"boxLabel": "Percent (if possible)",
+						"checked": false,
+						"name": "show_percent"
 					},{
 						"xtype": "checkbox",
 						"boxLabel": "Unit",
