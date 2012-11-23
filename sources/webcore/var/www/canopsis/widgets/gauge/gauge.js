@@ -79,7 +79,8 @@ Ext.define('widgets.gauge.gauge' , {
 			title: this.gaugeTitle,
 			label: this.gaugeLabel,
 			levelColors: [this.colorStart, this.colorStop],
-			gaugeColor: this.gaugeColor
+			gaugeColor: this.gaugeColor,
+			textRenderer: rdr_humanreadable_value
 		}
 
 		log.debug("Gauge options:", this.logAuthor)
