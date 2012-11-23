@@ -16,6 +16,11 @@
 							"checked": true,
 							"name": "showMinMax"
 						},{
+							"xtype": "checkbox",
+							"fieldLabel": "Use crit/warn threshold",
+							"checked": true,
+							"name": "levelThresholds"
+						},{
 							"xtype" : "numberfield",
 							"name" : "gaugeWidthScale",
 							"fieldLabel": "Gauge width scale",
@@ -26,11 +31,16 @@
 							"xtype" : "ccolorfield",
 							"name" : "colorStart",
 							"fieldLabel": "Start color",
-							"value": "#FF9300"
+							"value": "#85C630"
+						},{
+							"xtype" : "ccolorfield",
+							"name" : "colorWarn",
+							"fieldLabel": "Warn color",
+							"value": "#FFA500"
 						},{
 							"xtype" : "ccolorfield",
 							"name" : "colorStop",
-							"fieldLabel": "Stop color",
+							"fieldLabel": "Stop/critic color",
 							"value": "#B9121B"
 						},{
 							"xtype" : "ccolorfield",
@@ -55,6 +65,16 @@
 												"xtype":"numberfield",
 												"header":"Min value",
 												"name":"mi",
+												"flex":1
+											},{
+												"xtype":"numberfield",
+												"header":"Warn value",
+												"name":"tw",
+												"flex":1
+											},{
+												"xtype":"numberfield",
+												"header":"Crit value",
+												"name":"tc",
 												"flex":1
 											},{
 												"xtype":"numberfield",
