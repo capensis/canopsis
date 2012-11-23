@@ -13,19 +13,6 @@
 			"items": [
 					{
 						"xtype": "fieldset",
-						"title": "Title",
-						"collapsible": false,
-						"items": [
-							{
-								"xtype" : "numberfield",
-								"name" : "title_fontSize",
-								"fieldLabel": "Font Size",
-								"minValue": 1,
-								"value": 15
-                           }		
-						]
-					},{
-						"xtype": "fieldset",
 						"title": "Graph",
 						"collapsible": false,
 						"items": [
@@ -222,6 +209,19 @@
 		}, {
 			"title": "Style",
 			"items": [{
+						"xtype": "fieldset",
+						"title": "Title",
+						"collapsible": false,
+						"items": [
+							{
+								"xtype" : "numberfield",
+								"name" : "title_fontSize",
+								"fieldLabel": "Title font Size",
+								"minValue": 1,
+								"value": 15
+                           }		
+						]
+					},{
 						"xtype": "fieldset",
 						"title": "Graph Style",
 						"collapsible": false,
