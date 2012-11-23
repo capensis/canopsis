@@ -187,6 +187,11 @@
 							"checked": false,
 							"name": "labels"
 						},{
+								"xtype": "checkbox",
+								"fieldLabel": "Display metric name in label",
+								"checked": false,
+								"name": "nameInLabelFormatter"
+						},{
 							"xtype" : "numberfield",
 							"name" : "legend_fontSize",
 							"fieldLabel": "Font Size",
