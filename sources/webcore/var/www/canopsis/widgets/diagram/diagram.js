@@ -391,7 +391,11 @@ Ext.define('widgets.diagram.diagram' , {
 			if (data.length == 1 && !this.hide_other_column && this.diagram_type == 'pie') {
 				var other_label = '<b>' + this.other_label + '</b>' + other_unit;
 				var colors = global.curvesCtrl.getRenderColors(this.other_label, 1);
-				serie.data.push({ id: 'pie_other', name: other_label, y: max - value, color: colors[0] });
+				if(this.gradientColor)
+					var _color = this.getGradientColor(color[0])
+				else
+					var _color = color[0]
+				serie.data.push({ id: 'pie_other', name: other_label, y: max - value, color: _color });
 			}
 
 			if (serie.data) {
@@ -472,7 +476,7 @@ Ext.define('widgets.diagram.diagram' , {
 				value = - value;
 
 			value = rdr_humanreadable_value(value, options.bunit)
-			return '<b>' + options.metric + ':</b> ' + value ;
+			return options.name + ': ' + value ;
 		}
 
 		var s = '';
