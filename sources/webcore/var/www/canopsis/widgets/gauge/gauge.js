@@ -152,6 +152,8 @@ Ext.define('widgets.gauge.gauge' , {
 		log.debug('onRefresh', this.logAuthor);
 
 		if (data){
+			if(this.getEl().isMasked)
+				this.getEl().unmask()
 
 			var fields = undefined
 			if(this.nodes[0].extra_field)
@@ -212,6 +214,7 @@ Ext.define('widgets.gauge.gauge' , {
 			}
 
 		}else{
+			this.getEl().mask(_('No data received from webserver'));
 			log.debug('No data', this.logAuthor)
 		}
 	},
