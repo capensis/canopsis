@@ -19,12 +19,14 @@
 # ---------------------------------
 
 from kombu import BrokerConnection, Exchange, Queue
-from kombu.pools import producers
+import kombu.pools
 from amqplib.client_0_8.exceptions import AMQPConnectionException
 import socket
 
 import time, logging, threading, os
 
+## Limit pool producers
+producers = kombu.pools.Producers(limit=5)
 
 class camqp(threading.Thread):
 	def __init__(self, host="localhost", port=5672, userid="guest", password="guest", virtual_host="canopsis", exchange_name="canopsis", logging_name="camqp", logging_level=logging.INFO, read_config_file=True, auto_connect=True, on_ready=None):
@@ -107,7 +109,7 @@ class camqp(threading.Thread):
 						self.logger.error("Connection error ! (%s)" % err)
 						break
 					except Exception, err:
-						self.logger.error(err)
+						self.logger.error("Unknown error: %s" % err)
 					
 				self.disconnect()
 		
@@ -124,29 +126,37 @@ class camqp(threading.Thread):
 
 	def connect(self):
 		if not self.connected:
-			self.logger.debug("Connect to AMQP Broker (%s:%s)" % (self.host, self.port))
+			self.logger.info("Connect to AMQP Broker (%s:%s)" % (self.host, self.port))
 			
 			self.conn = BrokerConnection(self.amqp_uri)
-				
-			self.logger.debug(" + Open channel")
+
 			try:
-				self.chan = self.conn.channel()
+				self.logger.debug(" + Connect")
+				self.conn.connect()
 				self.logger.info("Connected to AMQP Broker.")
-				
 				self.connected = True
-				self.logger.debug("Channel openned. Ready to send messages")
-				
-				try:
-					## declare exchange
-					self.logger.debug("Declare exchanges")
-					for exchange_name in self.exchanges:
-						self.logger.debug(" + %s" % exchange_name)
-						self.exchanges[exchange_name](self.chan).declare()
-				except Exception, err:
-					self.logger.error("Impossible to declare exchange (%s)" % err)
-				
 			except Exception, err:
-				self.logger.error(err)
+				self.conn.release()
+				self.logger.error("Impossible to connect (%s)" % err)
+			
+			if self.connected:
+				self.logger.debug(" + Open channel")
+				try:
+					self.chan = self.conn.channel()
+					
+					self.logger.debug("Channel openned. Ready to send messages")
+					
+					try:
+						## declare exchange
+						self.logger.debug("Declare exchanges")
+						for exchange_name in self.exchanges:
+							self.logger.debug(" + %s" % exchange_name)
+							self.exchanges[exchange_name](self.chan).declare()
+					except Exception, err:
+						self.logger.error("Impossible to declare exchange (%s)" % err)
+					
+				except Exception, err:
+					self.logger.error(err)
 		else:
 			self.logger.debug("Allready connected")
 	
@@ -258,7 +268,15 @@ class camqp(threading.Thread):
 			self.cancel_queues()
 			
 			self.conn.release()
-			#self.conn.close()
+
+			for exchange in self.exchanges:
+				del exchange
+			self.exchanges = {}
+
+			kombu.pools.reset()
+
+			del self.conn
+
 			self.connected = False
 
 	def wait_connection(self, timeout=5):
