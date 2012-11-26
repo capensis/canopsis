@@ -18,15 +18,15 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from kombu import BrokerConnection, Exchange, Queue
+from kombu import Connection, Exchange, Queue
 import kombu.pools
 from amqplib.client_0_8.exceptions import AMQPConnectionException
 import socket
 
 import time, logging, threading, os
 
-## Limit pool producers
-producers = kombu.pools.Producers(limit=5)
+#from kombu.pools import producers
+
 
 class camqp(threading.Thread):
 	def __init__(self, host="localhost", port=5672, userid="guest", password="guest", virtual_host="canopsis", exchange_name="canopsis", logging_name="camqp", logging_level=logging.INFO, read_config_file=True, auto_connect=True, on_ready=None):
@@ -109,7 +109,7 @@ class camqp(threading.Thread):
 						self.logger.error("Connection error ! (%s)" % err)
 						break
 					except Exception, err:
-						self.logger.error("Unknown error: %s" % err)
+						self.logger.exception("Unknown error:")
 					
 				self.disconnect()
 		
@@ -128,12 +128,13 @@ class camqp(threading.Thread):
 		if not self.connected:
 			self.logger.info("Connect to AMQP Broker (%s:%s)" % (self.host, self.port))
 			
-			self.conn = BrokerConnection(self.amqp_uri)
+			self.conn = Connection(self.amqp_uri)
 
 			try:
 				self.logger.debug(" + Connect")
 				self.conn.connect()
 				self.logger.info("Connected to AMQP Broker.")
+				self.producers = kombu.pools.Producers(limit=10)
 				self.connected = True
 			except Exception, err:
 				self.conn.release()
@@ -237,7 +238,7 @@ class camqp(threading.Thread):
 				exchange_name = self.exchange_name
 				
 			self.logger.debug("Send message to %s in %s" % (routing_key, exchange_name))
-			with producers[self.conn].acquire(block=True) as producer:
+			with self.producers[self.conn].acquire(block=True) as producer:
 				try:
 					producer.publish(msg, serializer=serializer, compression=compression, routing_key=routing_key, exchange=self.get_exchange(exchange_name))
 					self.logger.debug(" + Sended")
@@ -266,15 +267,14 @@ class camqp(threading.Thread):
 			self.logger.info("Disconnect from AMQP Broker")
 	
 			self.cancel_queues()
-			
-			self.conn.release()
 
 			for exchange in self.exchanges:
 				del exchange
 			self.exchanges = {}
 
 			kombu.pools.reset()
-
+			
+			self.conn.release()
 			del self.conn
 
 			self.connected = False
