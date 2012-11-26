@@ -42,7 +42,6 @@ engines=[]
 amqp = None
 next_event_engines = []
 next_alert_engines = []
-ready = False
 
 def clean_message(body, msg):
 	## Sanity Checks
@@ -78,8 +77,8 @@ def clean_message(body, msg):
 							raise Exception(err)
 		except Exception, err:
 			logger.error("   + Failed (%s)" % err)
-			logger.debug("Impossible to parse event '%s'" % rk)
-			#logger.debug(body)
+			logger.debug("RK: '%s', Body:" % rk)
+			logger.debug(body)
 			raise Exception("Impossible to parse event '%s'" % rk)
 
 	event['rk'] = rk
@@ -94,22 +93,12 @@ def clean_message(body, msg):
 		event['tags'] = []
 		
 	return event
-	
-def wait_engine():
-	if not ready:
-		while ready:
-			time.sleep(0.5)
-	
 
 def on_event(body, msg):
-	# Wait engine
-	wait_engine()
-		
 	## Clean message	
 	event = clean_message(body, msg)
 	
 	event['exchange'] = amqp.exchange_name_events
-		
 	
 	## Forward to engines
 	for engine in next_event_engines:
@@ -120,10 +109,7 @@ def on_event(body, msg):
 			amqp.publish(event, engine.amqp_queue, "amq.direct")
 
 	
-def on_alert(body, msg):
-	# Wait engine
-	wait_engine()
-	
+def on_alert(body, msg):	
 	## Clean message	
 	event = clean_message(body, msg)
 	
@@ -212,30 +198,25 @@ def stop_engines():
 			
 	time.sleep(0.5)
 
-def amqp2engines_ready():
-	global ready
-	if not ready:
-		start_engines()
-	else:
-		logger.info("Engine already started")
-
 def main():
-	global amqp, ready
+	global amqp
 		
 	logger.info("Initialyze process")
 	handler.run()
+
+	logger.info("Start Engines")
+	start_engines()
+
+	# Safety wait
+	time.sleep(3)
 	
 	# Init AMQP
-	amqp = camqp(on_ready=amqp2engines_ready, logging_name="%s-amqp" % DAEMON_NAME)
+	amqp = camqp(logging_name="%s-amqp" % DAEMON_NAME)
 	amqp.add_queue(DAEMON_NAME, ['#'], on_event, amqp.exchange_name_events, auto_delete=False)
 	amqp.add_queue("%s_alerts" % DAEMON_NAME, ['#'], on_alert, amqp.exchange_name_alerts, auto_delete=False)
 	
 	# Start AMQP
 	amqp.start()
-	
-	# Safety wait
-	time.sleep(3)
-	ready = True
 	
 	logger.info("Wait")
 	handler.wait()
