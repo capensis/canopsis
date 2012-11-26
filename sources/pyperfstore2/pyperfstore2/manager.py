@@ -262,6 +262,9 @@ class manager(object):
 			if add_prev_point and prev_index != None and prev_index >= 0:
 				self.logger.debug("   + Add prev")
 				rpoints.insert(0, points[prev_index])
+				if (dca['type'] == 'DERIVE' and tstart == tstop and prev_index-1 >= 0):
+					self.logger.debug("   + Add prev for DERIVE")
+					rpoints.insert(0, points[prev_index-1])
 				
 			if add_next_point and next_index != None and next_index < len(points):
 				self.logger.debug("   + Add next")
