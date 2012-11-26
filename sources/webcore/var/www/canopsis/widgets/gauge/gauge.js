@@ -152,7 +152,7 @@ Ext.define('widgets.gauge.gauge' , {
 		log.debug('onRefresh', this.logAuthor);
 
 		if (data){
-			if(this.getEl().isMasked)
+			if(this.getEl().isMasked && !this.isDisabled())
 				this.getEl().unmask()
 
 			var fields = undefined
