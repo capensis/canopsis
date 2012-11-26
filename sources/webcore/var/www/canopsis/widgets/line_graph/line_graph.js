@@ -419,9 +419,9 @@ Ext.define('widgets.line_graph.line_graph' , {
 					log.debug(' +  Wait for refresh', this.logAuthor);
 					return false;
 				}
-
-			log.debug(' + Do Refresh ' + from + ' -> ' + to, this.logAuthor);
-
+			
+			//i have no idea of what the following block do, if useless,
+			// remove it, maybe reporting ?
 			if (this.chart_type == 'column') {
 				if (!this.last_form) {
 					new_from = getMidnight(from);
@@ -431,12 +431,18 @@ Ext.define('widgets.line_graph.line_graph' , {
 						to = Ext.Date.now();
 				}
 			}
-
+			
 			if (! this.reportMode && this.last_from) {
 				from = this.last_from;
+				if(this.aggregate_interval){
+					log.debug('End of last interval: ' + from, this.logAuthor)
+					log.debug('Request next interval: '+from+' + '+this.aggregate_interval+'*1000', this.logAuthor)
+					from = from + (this.aggregate_interval * 1000 )
+				}
 				to = Ext.Date.now();
 			}
 
+			log.debug(' + Do Refresh ' + from + ' -> ' + to, this.logAuthor);
 			log.debug(' + Do Refresh ' + new Date(from) + ' -> ' + new Date(to), this.logAuthor);
 
 			if (this.nodes) {
@@ -451,6 +457,18 @@ Ext.define('widgets.line_graph.line_graph' , {
 						success: function(response) {
 							var data = Ext.JSON.decode(response.responseText);
 							data = data.data;
+
+							if(this.aggregate_interval){
+								if(data.length)
+									try{
+										var last_index = data[0].values.length
+										this.last_from = data[0].values[last_index-1][0]
+										log.debug('Set last timestamp given as future beggining TS: ' + this.last_from, this.logAuthor)
+									}catch(err){
+										log.debug("can't find last timestamp, use requested interval", this.logAuthor)
+									}
+							}
+
 							this.onRefresh(data);
 						},
 						failure: function(result, request) {
