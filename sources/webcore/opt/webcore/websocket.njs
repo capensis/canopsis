@@ -296,7 +296,12 @@ var init_amqp = function(callback){
 
 	amqp_connection.addListener('ready', function(){
 		log.info(" + Connected", "amqp");
-		callback();
+		if (callback)
+			callback();
+	});
+
+	amqp_connection.addListener('error', function(exception){
+		log.error(" + Disconnected", "amqp");
 	});	
 }
 
@@ -332,6 +337,8 @@ var amqp_subscribe_queue = function(queue_name){
 			this.bind("canopsis."+short_name, "#");
 			this.on('queueBindOk', function() { log.debug(" + Ok", "amqp") });
 			
+			this.short_name = short_name
+
 			amqp_queues[queue_name] = this;	
 		});
 	}else{
@@ -533,8 +540,9 @@ var init_now = function(callback){
 	callback()
 }
 
-// Close amqp queue if group is empty
 var heartbeat = function(){
+
+	// Check nowjs and amqp Queue (Close amqp queue if group is empty)
 	nowjs.getGroups(function(groups){
 		for (var i in groups){
 			var group = groups[i]
@@ -549,7 +557,21 @@ var heartbeat = function(){
 				})
 			}
 		}
-	}) 
+	});
+
+	// Check amqp connection, reconnect if possible
+	if (! amqp_connection.readable){
+		log.info(" + Try to reconnect to AMQP", "heartbeat")
+		init_amqp(function(){
+			log.info(" + Re-create AMQP Queues", "amqp")
+			for (var i in amqp_queues){
+				var queue = amqp_queues[i]
+				var short_name = queue.short_name
+				delete amqp_queues[i]
+				amqp_subscribe_queue(short_name)
+			}
+		})
+	}
 }
 
 //####################################################
@@ -584,8 +606,30 @@ var stream_getHistory= function(limit, tags, tags_op, from, to, callback){
 }
 
 //####################################################
+//#  Stop daemon
+//####################################################
+
+var stop = function(){
+	log.info("Stop daemon", "main")
+
+	log.info(" + Stop AMQP", "main")
+	amqp_connection.end()
+
+	log.info("Bye !", "main")
+	process.exit(0)
+}
+
+//####################################################
 //#  Main Program
 //####################################################
+
+process.on('SIGINT', function () {
+	stop();
+});
+
+process.on('SIGTERM', function () {
+	stop();
+});
 
 read_config(function(){
 	log.debug("Configurations:", "main")
@@ -599,6 +643,7 @@ read_config(function(){
 	init_mongo(function(){
 		init_amqp(function(){
 			init_now(function(){
+				log.info(" + heartbeat interval: " + config.nowjs.heartbeat + " sec", "main")
 				log.info("Initialization completed, Ready for action !", "main")
 				setInterval(heartbeat, config.nowjs.heartbeat * 1000);
 				

@@ -213,7 +213,11 @@ def stop_engines():
 	time.sleep(0.5)
 
 def amqp2engines_ready():
-	start_engines()
+	global ready
+	if not ready:
+		start_engines()
+	else:
+		logger.info("Engine already started")
 
 def main():
 	global amqp, ready
