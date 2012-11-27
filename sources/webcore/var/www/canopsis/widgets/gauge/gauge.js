@@ -45,7 +45,7 @@ Ext.define('widgets.gauge.gauge' , {
 	gaugeTitle: '',
 	gaugeLabel: '',
 	lastValue: 0,
-	displayUnit: false,
+	displayUnit: true,
 
 	initComponent: function() {
 		this.gaugeTitle = this.title
