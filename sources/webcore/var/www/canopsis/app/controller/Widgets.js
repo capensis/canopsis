@@ -31,7 +31,9 @@ Ext.define('canopsis.controller.Widgets', {
 
     init: function() {
 		Ext.Loader.setPath('widgets', './widgets');
+
 		this.store = this.getStore('Widgets');
+
 		log.debug('parsing Widget store', this.logAuthor);
 
 		if (! global.minimified) {
@@ -46,7 +48,10 @@ Ext.define('canopsis.controller.Widgets', {
 						//Ext.require(name);
 						Ext.Loader.syncRequire(name);
 					}
+
 				}, this);
+
+				this.clean_disabled_widget();
 
 				//translate the store
 				this.check_translate();
@@ -57,7 +62,22 @@ Ext.define('canopsis.controller.Widgets', {
 				 },1000, this);
 
 			}, this, {single: true});
+		}else {
+			this.store.on('load', function() {
+				this.clean_disabled_widget();
+			}, this);
 		}
+    },
+
+    clean_disabled_widget: function() {
+    	var records = []
+    	this.store.each(function(record) {
+	    	if (record.get('disabled') == true){
+	    		log.debug('Remove '+record.get('xtype')+' from widget store', this.logAuthor);
+	    		records.push(record)
+	    	}
+    	}, this);
+    	this.store.remove(records);
     },
 
 	check_translate: function() {
