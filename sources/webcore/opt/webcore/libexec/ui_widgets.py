@@ -56,7 +56,10 @@ def get_all_widgets():
 			widget_info = FH.read()
 			widget_info = json.loads(widget_info)
 			
-			output.append(widget_info[0])
+			if widget_info[0].get('disabled', False):
+				logger.debug("       + Widget is disabled")
+			else:
+				output.append(widget_info[0])
 
 			FH.close()
 			logger.debug("     + Success")
