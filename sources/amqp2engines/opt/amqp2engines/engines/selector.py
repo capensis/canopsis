@@ -159,7 +159,7 @@ class engine(cengine):
 					if selector.match(event_id):
 						self.selectors_events[sid] += 1
 				except:
-					logger.debug("%s wasn't found, it will be erase" % str(sid))
+					self.logger.debug("%s wasn't found, it will be erase" % str(sid))
 					selectors_to_delete.append(sid)
 					
 		## delete selectors not found
