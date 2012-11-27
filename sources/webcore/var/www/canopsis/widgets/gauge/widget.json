@@ -17,6 +17,11 @@
 							"name": "showMinMax"
 						},{
 							"xtype": "checkbox",
+							"fieldLabel": "Display value unit",
+							"checked": true,
+							"name": "displayUnit"
+						},{
+							"xtype": "checkbox",
 							"fieldLabel": "Use crit/warn threshold",
 							"checked": true,
 							"name": "levelThresholds"

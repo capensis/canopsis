@@ -45,6 +45,7 @@ Ext.define('widgets.gauge.gauge' , {
 	gaugeTitle: '',
 	gaugeLabel: '',
 	lastValue: 0,
+	displayUnit: false,
 
 	initComponent: function() {
 		this.gaugeTitle = this.title
@@ -206,7 +207,7 @@ Ext.define('widgets.gauge.gauge' , {
 			}
 			this.critValue = critValue
 
-			if(data.bunit)
+			if(data.bunit && this.displayUnit)
 				this.bunit = data.bunit
 
 			try{
