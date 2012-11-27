@@ -306,16 +306,19 @@ rdr_duration = function(timestamp, nb){
 	if (! nb && nb != 0)
 		nb = 99
 
+	if (timestamp == 0)
+		return 0
+
 	var times = [
-		[ global.commonTs.year,		'y' ],
-		[ global.commonTs.month,	'M' ],
-		[ global.commonTs.week,		'w' ],
-		[ global.commonTs.day,		'd' ],
-		[ global.commonTs.hours,	'h' ],
-		[ global.commonTs.minute,	'm' ],
-		[ 1,						's' ],
-		[ 0.001,					'ms' ],
-		[ 0.000001,					'us' ],
+		[ global.commonTs.year,		'y',	0 ],
+		[ global.commonTs.month,	'M',	0  ],
+		[ global.commonTs.week,		'w',	0  ],
+		[ global.commonTs.day,		'd',	0  ],
+		[ global.commonTs.hours,	'h',	0  ],
+		[ global.commonTs.minute,	'm',	0  ],
+		[ 1,						's',	0  ],
+		[ 0.001,					'ms',	1  ],
+		[ 0.000001,					'us',	1  ],
 	]
 
 	var output = '';
@@ -331,7 +334,7 @@ rdr_duration = function(timestamp, nb){
 			j += 1;
 		}
 
-		if (timestamp == 0 || j >= nb)
+		if (timestamp == 0 || j >= nb || times[i][3])
 			break
 	}
 
