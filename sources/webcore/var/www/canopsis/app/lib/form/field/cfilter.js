@@ -115,7 +115,7 @@ Ext.define('canopsis.lib.form.field.cfilter' , {
 			operator_store: this.operator_store,
 			sub_operator_store: this.sub_operator_store,
 			opt_remove_button: false,
-			start_with_and: true
+			start_with_and: false
 		});
 
 		//--------------edit area (hand writing part)--------
