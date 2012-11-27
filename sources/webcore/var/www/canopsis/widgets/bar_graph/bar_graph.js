@@ -108,22 +108,22 @@ Ext.define('widgets.bar_graph.bar_graph' , {
 	setOptions: function() {
 		this.callParent(arguments);
 
-		if(this.columnDatalabels)
+		if (this.columnDatalabels)
 		this.options.plotOptions.column.dataLabels = {
 			enabled: true,
 			//color: this.legend_fontColor,
 			style: {fontWeight: 'bold'},
 			formatter: function() {
-				if(this.y)
-					return '<b>'+this.y +'</b>';
+				if (this.y)
+					return '<b>' + this.y + '</b>';
 				else
-					return ''
+					return '';
 			}
-		}
+		};
 
-		if(this.verticalDisplay)
-			this.options.chart.inverted = true
+		if (this.verticalDisplay)
+			this.options.chart.inverted = true;
 
-	},
+	}
 
 });

@@ -69,12 +69,12 @@ Ext.define('canopsis.lib.form.field.cdate' , {
 			regex: getTimeRegex()
 		};
 
-		if (this.now){
+		if (this.now) {
 			if (is12Clock())
 				config.value = Ext.Date.format(new Date, 'g:i a');
 			else
 				config.value = Ext.Date.format(new Date, 'G:i');
-		}else{
+		}else {
 			if (is12Clock())
 				config.value = '12:00 am';
 			else

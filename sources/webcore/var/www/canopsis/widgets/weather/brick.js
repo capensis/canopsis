@@ -139,10 +139,10 @@ Ext.define('widgets.weather.brick' , {
 				this.widget_base_config.title = 'Unknown';
 		}
 
-		var linkUrl = this.formatLink()
+		var linkUrl = this.formatLink();
 
-		if(this.fullscreenMode && linkUrl)
-			this.widget_base_config.title = '<a href="'+linkUrl+'" target="_newtab">'+this.widget_base_config.title+'</a>'
+		if (this.fullscreenMode && linkUrl)
+			this.widget_base_config.title = '<a href="' + linkUrl + '" target="_newtab">' + this.widget_base_config.title + '</a>';
 
 		//icons
 
@@ -349,14 +349,14 @@ Ext.define('widgets.weather.brick' , {
 	},
 
 	//fast hack for freeze, open link in tab, will be changed in develop
-	formatLink: function(){
+	formatLink: function() {
 		if (this.link) {
 			if (this.link.indexOf('http://') != -1 || this.link.indexOf('www.') != -1 || this.link.indexOf('https://') != -1) {
 				if (this.link.indexOf('http://') == -1 && this.link.indexOf('https://') == -1)
 					this.link = 'http://' + this.link;
-				return this.link
+				return this.link;
 			}else {
-				console.log('SEARCH VIEW')
+				console.log('SEARCH VIEW');
 				store = Ext.getStore('Views');
 				var record = store.findExact('crecord_name', this.link);
 				if (record != -1) {
@@ -366,15 +366,15 @@ Ext.define('widgets.weather.brick' , {
 						record.get('_id'),
 						global.account.authkey
 					);
-					console.log(url)
-					return url
+					console.log(url);
+					return url;
 				}else {
 					log.debug('Link is not valid', 'The specified link does not match any view or URL', 'info');
-					return undefined
+					return undefined;
 				}
 			}
-		}else{
-			return undefined
+		}else {
+			return undefined;
 		}
 	},
 

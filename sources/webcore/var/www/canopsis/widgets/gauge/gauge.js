@@ -26,16 +26,16 @@ Ext.define('widgets.gauge.gauge' , {
 	logAuthor: '[gauge]',
 
 	colorStart: '#6FADCF',
-	colorStop: '#8FC0DA', 
+	colorStop: '#8FC0DA',
 	colorWarn: '#FFA500',
-	gaugeColor: '#E1E6FA', 
+	gaugeColor: '#E1E6FA',
 	titleFontColor: '#3E576F',
 	gaugeWidthScale: 1,
 	showMinMax: true,
 	shadowOpacity: 0.7,
-	
+
 	labelSize: 25,
-	maxValue:100,
+	maxValue: 100,
 	minValue: 0,
 
 	// Internals
@@ -48,19 +48,19 @@ Ext.define('widgets.gauge.gauge' , {
 	displayUnit: true,
 
 	initComponent: function() {
-		this.gaugeTitle = this.title
-		this.title = ''
+		this.gaugeTitle = this.title;
+		this.title = '';
 		this.callParent(arguments);
 	},
 
-	renderer: function(val){
-		return rdr_humanreadable_value(val,this.symbol)
+	renderer: function(val) {
+		return rdr_humanreadable_value(val, this.symbol);
 	},
 
-	createGauge: function(){
+	createGauge: function() {
 
 		if (this.autoTitle)
-			if (this.nodes.length){
+			if (this.nodes.length) {
 				var component = this.nodes[0].component;
 				var source_type = this.nodes[0].source_type;
 
@@ -88,33 +88,33 @@ Ext.define('widgets.gauge.gauge' , {
 			gaugeColor: this.gaugeColor,
 			textRenderer: this.renderer,
 			symbol: this.bunit
+		};
+
+		if (this.levelThresholds) {
+			opts.levelColorsGradient = false;
+			opts.levelColors = [this.colorStart, this.colorWarn, this.colorStop];
+			if (this.warnValue, this.critValue)
+				opts.levelThresholds = [this.warnValue, this.critValue];
+		}else {
+			opts.levelColors = [this.colorStart, this.colorStop];
 		}
 
-		if(this.levelThresholds){
-			opts.levelColorsGradient = false
-			opts.levelColors = [this.colorStart, this.colorWarn ,this.colorStop]
-			if(this.warnValue,this.critValue)
-				opts.levelThresholds = [this.warnValue,this.critValue]
-		}else{
-			opts.levelColors = [this.colorStart, this.colorStop]
-		}
+		log.debug('Gauge options:', this.logAuthor);
+		log.dump(opts);
 
-		log.debug("Gauge options:", this.logAuthor)
-		log.dump(opts)
-
-		this.gauge = new JustGage(opts);	
+		this.gauge = new JustGage(opts);
 	},
 
 	onResize: function() {
 		log.debug('onRezize', this.logAuthor);
 
-		delete this.gauge
-		this.createGauge()
-		this.gauge.refresh(this.lastValue)
+		delete this.gauge;
+		this.createGauge();
+		this.gauge.refresh(this.lastValue);
 	},
 
 	getNodeInfo: function(from,to) {
-		this.processNodes()
+		this.processNodes();
 		if (this.nodeId) {
 			Ext.Ajax.request({
 				url: '/perfstore/values' + '/' + to + '/' + to,
@@ -139,12 +139,12 @@ Ext.define('widgets.gauge.gauge' , {
 
 	processNodes: function() {
 		var post_params = [];
-		for (var i in this.nodes) 
+		for (var i in this.nodes)
 			post_params.push({
 				id: this.nodes[i].id,
 				metrics: this.nodes[i].metrics
 			});
-		
+
 		this.post_params = {
 			'nodes': Ext.JSON.encode(post_params),
 			'aggregate_method' : this.aggregate_method,
@@ -157,75 +157,75 @@ Ext.define('widgets.gauge.gauge' , {
 	onRefresh: function(data) {
 		log.debug('onRefresh', this.logAuthor);
 
-		if (data){
-			if(this.getEl().isMasked && !this.isDisabled())
-				this.getEl().unmask()
+		if (data) {
+			if (this.getEl().isMasked && !this.isDisabled())
+				this.getEl().unmask();
 
-			var fields = undefined
-			if(this.nodes[0].extra_field)
-				fields = this.nodes[0].extra_field
+			var fields = undefined;
+			if (this.nodes[0].extra_field)
+				fields = this.nodes[0].extra_field;
 
 			if (data.min)
-				this.minValue = data.min
+				this.minValue = data.min;
 
 			//update metric name
 			if (fields && fields.label)
-				this.gaugeLabel = fields.label
+				this.gaugeLabel = fields.label;
 			else
-				this.gaugeLabel = data.metric
-					
+				this.gaugeLabel = data.metric;
+
 			//update metric value
-			var maxValue = this.maxValue
-			if(fields && fields.ma){
-				maxValue = fields.ma
-			}else if(data.max){
-				maxValue = data.max
+			var maxValue = this.maxValue;
+			if (fields && fields.ma) {
+				maxValue = fields.ma;
+			}else if (data.max) {
+				maxValue = data.max;
 			}
-			this.maxValue = maxValue
+			this.maxValue = maxValue;
 
-			var minValue = this.minValue
-			if(fields && fields.mi){
-				minValue = fields.mi
-			}else if(data.max){
-				minValue = data.min
+			var minValue = this.minValue;
+			if (fields && fields.mi) {
+				minValue = fields.mi;
+			}else if (data.max) {
+				minValue = data.min;
 			}
-			this.minValue = minValue
+			this.minValue = minValue;
 
-			var warnValue = this.warnValue
-			if(fields && fields.tw){
-				warnValue = fields.tw
-			}else if(data.tw){
-				warnValue = data.tw
+			var warnValue = this.warnValue;
+			if (fields && fields.tw) {
+				warnValue = fields.tw;
+			}else if (data.tw) {
+				warnValue = data.tw;
 			}
-			this.warnValue = warnValue
+			this.warnValue = warnValue;
 
-			var critValue = this.critValue
-			if(fields && fields.tc){
-				critValue = fields.tc
-			}else if(data.tc){
-				critValue = data.tc
+			var critValue = this.critValue;
+			if (fields && fields.tc) {
+				critValue = fields.tc;
+			}else if (data.tc) {
+				critValue = data.tc;
 			}
-			this.critValue = critValue
+			this.critValue = critValue;
 
-			if(data.bunit && this.displayUnit)
-				this.bunit = data.bunit
+			if (data.bunit && this.displayUnit)
+				this.bunit = data.bunit;
 
-			try{
-				if(data.values){
+			try {
+				if (data.values) {
 					if (! this.gauge)
-						this.createGauge()
+						this.createGauge();
 
-					this.lastValue = data.values[data.values.length - 1][1]
-					this.gauge.refresh(Math.round(this.lastValue*100)/100)
+					this.lastValue = data.values[data.values.length - 1][1];
+					this.gauge.refresh(Math.round(this.lastValue * 100) / 100);
 				}
-			}catch(err){
-				log.error('Error while set value:' + err, this.logAuthor)
+			}catch (err) {
+				log.error('Error while set value:' + err, this.logAuthor);
 			}
 
-		}else{
+		}else {
 			this.getEl().mask(_('No data received from webserver'));
-			log.debug('No data', this.logAuthor)
+			log.debug('No data', this.logAuthor);
 		}
-	},
+	}
 
 });

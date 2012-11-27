@@ -155,7 +155,7 @@ Ext.define('canopsis.lib.controller.cgrid', {
 
 		if (grid.opt_keynav_del) {
 			//log.debug('id of grid is : ' + id);
-			var inner_view = this.grid.getView()
+			var inner_view = this.grid.getView();
 			this._keynav = Ext.create('Ext.util.KeyNav', inner_view, {
 						scope: this,
 						del: this._deleteButton,
@@ -506,12 +506,12 @@ Ext.define('canopsis.lib.controller.cgrid', {
 			data = item.data;
 			editing = true;
 		}
-		
+
 		var form;
 
 		if (this.formXtype) {
 			if (this.EditMethod == 'tab') {
-				
+
 				var main_tabs = Ext.getCmp('main-tabs');
 				var tab = Ext.getCmp(id);
 				if (tab) {
@@ -523,10 +523,10 @@ Ext.define('canopsis.lib.controller.cgrid', {
 					// Create new TAB
 					log.debug("Create tab '" + this.formXtype + "'", this.logAuthor);
 
-					if(editing)
-						var title = _('Editing ') + data.crecord_name
+					if (editing)
+						var title = _('Editing ') + data.crecord_name;
 					else
-						var title = '*' + _('New') + ' ' + this.modelId
+						var title = '*' + _('New') + ' ' + this.modelId;
 
 					form = main_tabs.add({
 						id: id,
@@ -561,11 +561,11 @@ Ext.define('canopsis.lib.controller.cgrid', {
 						record: data,
 						_record: item
 					});
-					
-					if(this.getEditTitle)
-						var title = this.getEditTitle(item)
+
+					if (this.getEditTitle)
+						var title = this.getEditTitle(item);
 					else
-						var title = _(this.modelId)
+						var title = _(this.modelId);
 
 					var win = Ext.create('widget.window', {
 						title: title,
@@ -577,9 +577,9 @@ Ext.define('canopsis.lib.controller.cgrid', {
 						closeAction: 'destroy'
 					}).show();
 					form.win = win;
-					
-					
-					this.grid.window_form = win
+
+
+					this.grid.window_form = win;
 
 					this._keynav.disable();
 					this.current_form = form;

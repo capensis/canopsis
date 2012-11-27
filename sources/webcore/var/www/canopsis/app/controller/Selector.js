@@ -69,13 +69,13 @@ Ext.define('canopsis.controller.Selector', {
 			this._save(record, true);
 			return;
 		}
-		
-		isRecordExist('object', 'selector', 'crecord_name', record, function(ctrl, record, exist){
+
+		isRecordExist('object', 'selector', 'crecord_name', record, function(ctrl, record, exist) {
 			if (exist)
 				ctrl._save(record, false);
 			else
 				global.notify.notify(_('Bad name'), _('This selector name already exist'), 'warning');
-		}, this);		
+		}, this);
 	},
 
 	change_selector_output: function(_id,type,message) {

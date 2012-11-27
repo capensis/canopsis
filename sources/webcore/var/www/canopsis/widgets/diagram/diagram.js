@@ -51,7 +51,7 @@ Ext.define('widgets.diagram.diagram' , {
 	legend_borderWidth: 1,
 	legend_fontSize: 12,
 	legend_fontColor: '#3E576F',
-    
+
     labels: false,
     gradientColor: false,
 
@@ -67,10 +67,10 @@ Ext.define('widgets.diagram.diagram' , {
 
 	nameInLabelFormatter: false,
 
-	labelFormatter :function() {return '<b>'+ this.point.name +'</b>: '+ Math.round(this.percentage) +' %';},
-	
-	labelFormatterBar : function() {return '<b>'+ this.x +'</b>: '+ rdr_humanreadable_value(this.y)},
-	labelFormatterWithoutName : function(){return rdr_humanreadable_value(this.y)},
+	labelFormatter: function() {return '<b>' + this.point.name + '</b>: ' + Math.round(this.percentage) + ' %';},
+
+	labelFormatterBar: function() {return '<b>' + this.x + '</b>: ' + rdr_humanreadable_value(this.y)},
+	labelFormatterWithoutName: function() {return rdr_humanreadable_value(this.y)},
 
 	initComponent: function() {
 		this.backgroundColor	= check_color(this.backgroundColor);
@@ -152,7 +152,7 @@ Ext.define('widgets.diagram.diagram' , {
 				borderColor: this.borderColor,
 				borderWidth: this.borderWidth,
 				backgroundColor: this.backgroundColor,
-				inverted: (this.diagram_type == 'column')? this.verticalDisplay : false,
+				inverted: (this.diagram_type == 'column') ? this.verticalDisplay : false
 			},
 			exporting: {
 				enabled: false
@@ -172,14 +172,14 @@ Ext.define('widgets.diagram.diagram' , {
 					animation: false,
 					size: this.pie_size + '%'
 				},
-				column:{
+				column: {
 					animation: false,
 					dataLabels: {
 						enabled: this.labels,
                         color: '#000000',
                         connectorColor: '#000000',
-                        formatter: (this.nameInLabelFormatter)? this.labelFormatterBar : this.labelFormatterWithoutName
-					},
+                        formatter: (this.nameInLabelFormatter) ? this.labelFormatterBar : this.labelFormatterWithoutName
+					}
 				}
 			},
 			tooltip: {
@@ -215,7 +215,7 @@ Ext.define('widgets.diagram.diagram' , {
 				enabled: false
 			},
 			legend: {
-				enabled: (this.diagram_type == 'column')? false : this.legend,
+				enabled: (this.diagram_type == 'column') ? false : this.legend,
 				verticalAlign: this.legend_verticalAlign,
 				align: this.legend_align,
 				layout: this.legend_layout,
@@ -228,11 +228,11 @@ Ext.define('widgets.diagram.diagram' , {
 				}
 			},
 			series: [],
-			xAxis : {
+			xAxis: {
 				title: { text: null },
-				labels: {enabled:(this.labels)?false:true}
+				labels: {enabled: (this.labels) ? false : true}
 			},
-			yAxis : {
+			yAxis: {
 				title: { text: null },
 				labels: {formatter: this.y_formatter}
 			}
@@ -274,8 +274,8 @@ Ext.define('widgets.diagram.diagram' , {
 			'aggregate_max_points': 1
 		};
 
-		if(this.aggregate_interval)
-			this.post_params['aggregate_interval'] = this.aggregate_interval
+		if (this.aggregate_interval)
+			this.post_params['aggregate_interval'] = this.aggregate_interval;
 	},
 
 	doRefresh: function(from, to) {
@@ -323,7 +323,7 @@ Ext.define('widgets.diagram.diagram' , {
 			// Remove old series
 			this.removeSerie();
 
-			serie = this.getSerie(data)
+			serie = this.getSerie(data);
 
 			var other_unit = '';
 
@@ -333,8 +333,8 @@ Ext.define('widgets.diagram.diagram' , {
 				var node = this.nodesByID[info['node']];
 
 				//custom metric
-				if(node.extra_field && node.extra_field.label){
-					data[index]['metric'] = node.extra_field.label
+				if (node.extra_field && node.extra_field.label) {
+					data[index]['metric'] = node.extra_field.label;
 				}
 
 				var metric = info['metric'];
@@ -367,7 +367,7 @@ Ext.define('widgets.diagram.diagram' , {
 				if (! label)
 					label = metric_name;
 
-				metric = label
+				metric = label;
 
 				var metric_long_name = '<b>' + label + '</b>';
 
@@ -376,29 +376,29 @@ Ext.define('widgets.diagram.diagram' , {
 					other_unit += ' (' + unit + ')';
 				}
 
-				var _color = colors[0]
-				if(node.extra_field && node.extra_field.curve_color)
+				var _color = colors[0];
+				if (node.extra_field && node.extra_field.curve_color)
 					_color = node.extra_field.curve_color;
 
-				if(this.gradientColor)
-					var color = this.getGradientColor(_color)
+				if (this.gradientColor)
+					var color = this.getGradientColor(_color);
 				else
-					var color = _color
+					var color = _color;
 
-				serie.data.push({ id: metric, name: metric_long_name, metric:metric, y: value, color: color, bunit:unit });
+				serie.data.push({ id: metric, name: metric_long_name, metric: metric, y: value, color: color, bunit: unit });
 
 			}
 
-			if(this.setAxis && this.diagram_type == 'column')
-				this.setAxis(data)
+			if (this.setAxis && this.diagram_type == 'column')
+				this.setAxis(data);
 
 			if (data.length == 1 && !this.hide_other_column && this.diagram_type == 'pie') {
 				var other_label = '<b>' + this.other_label + '</b>' + other_unit;
 				var colors = global.curvesCtrl.getRenderColors(this.other_label, 1);
-				if(this.gradientColor)
-					var _color = this.getGradientColor(colors[0])
+				if (this.gradientColor)
+					var _color = this.getGradientColor(colors[0]);
 				else
-					var _color = colors[0]
+					var _color = colors[0];
 				serie.data.push({ id: 'pie_other', name: other_label, y: max - value, color: _color });
 			}
 
@@ -430,17 +430,17 @@ Ext.define('widgets.diagram.diagram' , {
 		this.displaySerie();
 	},
 
-	getSerie: function(data){
-		var bunit = undefined
-		if(data.length != 0)
-			for(var i in data)
-				if(data[i].bunit)
-					bunit = data[i].bunit
-				
-		return  {
+	getSerie: function(data) {
+		var bunit = undefined;
+		if (data.length != 0)
+			for (var i in data)
+				if (data[i].bunit)
+					bunit = data[i].bunit;
+
+		return {
 					id: 'serie',
 					type: this.diagram_type,
-					shadow : false,
+					shadow: false,
 					data: [],
 					bunit: bunit
 				};
@@ -473,45 +473,45 @@ Ext.define('widgets.diagram.diagram' , {
 	},
 	*/
 
-	tooltip_formatter: function(){
+	tooltip_formatter: function() {
 
-		var formatter = function(options, value){
+		var formatter = function(options, value) {
 			if (options.invert)
 				value = - value;
 
-			value = rdr_humanreadable_value(value, options.bunit)
-			return options.name + ': ' + value ;
-		}
+			value = rdr_humanreadable_value(value, options.bunit);
+			return options.name + ': ' + value;
+		};
 
 		var s = '';
-		
+
 		if (this['points']) {
 			// Shared
 			$.each(this.points, function(i, point) {
-				s += formatter(point.options, point.y)
+				s += formatter(point.options, point.y);
 			});
 		} else {
-			s += formatter(this.point.options, this.y)
+			s += formatter(this.point.options, this.y);
 		}
 		return s;
 	},
 
-	setAxis: function(data){
-		var metrics = []
-		for(var i in data)
-			if(data[i].metric)
-				metrics.push(data[i].metric)
+	setAxis: function(data) {
+		var metrics = [];
+		for (var i in data)
+			if (data[i].metric)
+				metrics.push(data[i].metric);
 
-		this.chart.xAxis[0].setCategories(metrics, false)
+		this.chart.xAxis[0].setCategories(metrics, false);
 
 	},
 
-	y_formatter: function(){
-		if (this.chart.series.length){
-			var bunit = this.chart.series[0].options.bunit
-			return rdr_humanreadable_value(this.value, bunit)
+	y_formatter: function() {
+		if (this.chart.series.length) {
+			var bunit = this.chart.series[0].options.bunit;
+			return rdr_humanreadable_value(this.value, bunit);
 		}
-		return this.value
-	},
+		return this.value;
+	}
 
 });

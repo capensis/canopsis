@@ -137,14 +137,14 @@ Ext.define('canopsis.lib.view.crights' , {
 			});
 			top_panel.add(this.combo_owner);
 		}
-		
-		var group_store = Ext.create('canopsis.store.Groups',{
+
+		var group_store = Ext.create('canopsis.store.Groups', {
 			pageSize: 200,
 			autoLoad: false
-		})
-		
+		});
+
 		//hack, forcing load (otherwise the load is launched long time after)
-		group_store.load()
+		group_store.load();
 
 		if (this.opt_group == true) {
 			this.combo_group = Ext.widget('combo', {
@@ -152,7 +152,7 @@ Ext.define('canopsis.lib.view.crights' , {
 				fieldLabel: _('Group'),
 				queryMode: 'remote',
 				minChars: 2,
-				autoScroll:true,
+				autoScroll: true,
 				displayField: 'crecord_name',
 				valueField: '_id',
 				store: group_store
@@ -175,12 +175,12 @@ Ext.define('canopsis.lib.view.crights' , {
 
 		this.callParent(arguments);
 		//this.show()
-		
+
 		//----------------------load values----------------------
 		if (this.data != undefined) {
 			this._load(this.data);
 		}
-		
+
 	},
 
 	_save: function(record) {

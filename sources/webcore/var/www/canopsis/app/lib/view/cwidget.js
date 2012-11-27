@@ -213,7 +213,7 @@ Ext.define('canopsis.lib.view.cwidget' , {
 	},
 
 	doRefresh: function(from, to) {
-		this.getNodeInfo(from,to);
+		this.getNodeInfo(from, to);
 	},
 
 	_onRefresh: function(data) {

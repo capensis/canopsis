@@ -65,7 +65,7 @@ Ext.define('widgets.weather.weather' , {
 		//---------------------Process nodes---------------
 		var ids = [];
 		this.metric_options = {};
-		if(this.nodeId && this.nodeId.length != 0){
+		if (this.nodeId && this.nodeId.length != 0) {
 			if (typeof(this.nodeId[0]) != 'string') {
 				for (var i = 0; i < this.nodeId.length; i++) {
 					var node = this.nodeId[i];

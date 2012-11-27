@@ -20,7 +20,7 @@
 */
 Ext.define('canopsis.view.Event.Log' , {
 	extend: 'canopsis.lib.view.cgrid_state',
-	
+
 	alias: 'widget.EventLog',
 
 	logAuthor: '[View][Event][Log]',
@@ -40,7 +40,7 @@ Ext.define('canopsis.view.Event.Log' , {
 	opt_bar_search_field: ['component', 'resource', 'metric'],
 
 	initComponent: function() {
-		this.store = Ext.create('canopsis.store.EventLogs')
+		this.store = Ext.create('canopsis.store.EventLogs');
 
 		this.bar_search = [{
 			xtype: 'button',
@@ -198,13 +198,13 @@ Ext.define('canopsis.view.Event.Log' , {
 
 		//---------------------bind controller----------------------
 		this.ctrl = Ext.create('canopsis.lib.controller.cgrid');
-	
+
 		this.callParent(arguments);
 
 		this.on('afterrender', function() {
 			this.ctrl._bindGridEvents(this);
 		}, this);
-	
+
 	}
 
 });

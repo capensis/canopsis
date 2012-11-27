@@ -89,7 +89,7 @@ Ext.define('widgets.stepeue.stepeue' , {
 				var title = this.nodes[i].split('.')[5];
 				var object = {
 					title: title,
-					id: me.wcontainer.id + ':feature:'+ i,
+					id: me.wcontainer.id + ':feature:' + i,
 					layout: 'fit',
 					border: false,
 					listeners: {

@@ -109,7 +109,7 @@ Ext.define('widgets.line_graph.line_graph' , {
 		this.legend_borderColor = check_color(this.legend_borderColor);
 		this.legend_backgroundColor	= check_color(this.legend_backgroundColor);
 
-		this.lastValue = []
+		this.lastValue = [];
 
 		log.debug('nodes:', this.logAuthor);
 		log.dump(this.nodes);
@@ -163,7 +163,7 @@ Ext.define('widgets.line_graph.line_graph' , {
 	},
 
 	afterContainerRender: function() {
-		log.debug('Initialize '+this.chart_type+'_graph', this.logAuthor);
+		log.debug('Initialize ' + this.chart_type + '_graph', this.logAuthor);
 		log.debug(' + Time window: ' + this.time_window, this.logAuthor);
 
 		this.series = {};
@@ -190,7 +190,7 @@ Ext.define('widgets.line_graph.line_graph' , {
 
 				if (source_type == 'resource') {
 					var resource = this.nodes[0].resource;
-					title = resource + ' ' + _(this.chart_type+'_graph.on') + ' ' + component;
+					title = resource + ' ' + _(this.chart_type + '_graph.on') + ' ' + component;
 				}else {
 					title = component;
 				}
@@ -353,33 +353,33 @@ Ext.define('widgets.line_graph.line_graph' , {
 		}
 	},
 
-	y_formatter: function(){
-		if (this.chart.series.length){
-			var bunit = this.chart.series[0].options.bunit
-			return rdr_humanreadable_value(this.value, bunit)
+	y_formatter: function() {
+		if (this.chart.series.length) {
+			var bunit = this.chart.series[0].options.bunit;
+			return rdr_humanreadable_value(this.value, bunit);
 		}
-		return rdr_yaxis(this.value)
+		return rdr_yaxis(this.value);
 	},
 
-	tooltip_formatter: function(){
+	tooltip_formatter: function() {
 
-		var formatter = function(options, value){
+		var formatter = function(options, value) {
 			if (options.invert)
 				value = - value;
 
-			value = rdr_humanreadable_value(value, options.bunit)
-			return '<b>' + options.metric + ':</b> ' + value ;
-		}
+			value = rdr_humanreadable_value(value, options.bunit);
+			return '<b>' + options.metric + ':</b> ' + value;
+		};
 
 		var s = '<b>' + rdr_tstodate(this.x / 1000) + '</b>';
-		
+
 		if (this['points']) {
 			// Shared
 			$.each(this.points, function(i, point) {
-				s += '<br/>' + formatter(point.series.options, point.y)
+				s += '<br/>' + formatter(point.series.options, point.y);
 			});
 		} else {
-			s += '<br/>' + formatter(this.series.options, this.y)
+			s += '<br/>' + formatter(this.series.options, this.y);
 		}
 		return s;
 	},
@@ -419,7 +419,7 @@ Ext.define('widgets.line_graph.line_graph' , {
 					log.debug(' +  Wait for refresh', this.logAuthor);
 					return false;
 				}
-			
+
 			//i have no idea of what the following block do, if useless,
 			// remove it, maybe reporting ?
 			if (this.chart_type == 'column') {
@@ -431,13 +431,13 @@ Ext.define('widgets.line_graph.line_graph' , {
 						to = Ext.Date.now();
 				}
 			}
-			
+
 			if (! this.reportMode && this.last_from) {
 				from = this.last_from;
-				if(this.aggregate_interval){
-					log.debug('End of last interval: ' + from, this.logAuthor)
-					log.debug('Request next interval: '+from+' + '+this.aggregate_interval+'*1000', this.logAuthor)
-					from = from + (this.aggregate_interval * 1000 )
+				if (this.aggregate_interval) {
+					log.debug('End of last interval: ' + from, this.logAuthor);
+					log.debug('Request next interval: ' + from + ' + ' + this.aggregate_interval + '*1000', this.logAuthor);
+					from = from + (this.aggregate_interval * 1000);
 				}
 				to = Ext.Date.now();
 			}
@@ -458,14 +458,14 @@ Ext.define('widgets.line_graph.line_graph' , {
 							var data = Ext.JSON.decode(response.responseText);
 							data = data.data;
 
-							if(this.aggregate_interval){
-								if(data.length)
-									try{
-										var last_index = data[0].values.length
-										this.last_from = data[0].values[last_index-1][0]
-										log.debug('Set last timestamp given as future beggining TS: ' + this.last_from, this.logAuthor)
-									}catch(err){
-										log.debug("can't find last timestamp, use requested interval", this.logAuthor)
+							if (this.aggregate_interval) {
+								if (data.length)
+									try {
+										var last_index = data[0].values.length;
+										this.last_from = data[0].values[last_index - 1][0];
+										log.debug('Set last timestamp given as future beggining TS: ' + this.last_from, this.logAuthor);
+									}catch (err) {
+										log.debug("can't find last timestamp, use requested interval", this.logAuthor);
 									}
 							}
 
@@ -496,36 +496,36 @@ Ext.define('widgets.line_graph.line_graph' , {
 
 			if (data.length > 0) {
 
-				this.last_values = []
+				this.last_values = [];
 
 				for (var i in data) {
 					this.addDataOnChart(data[i]);
 					var node = this.nodesByID[data[i].node];
 
 					// Exclude state lines
-					if(data[i]['metric'] != 'cps_state' && data[i]['metric'] != 'cps_state_ok' && data[i]['metric'] != 'cps_state_warn' && data[i]['metric'] != 'cps_state_crit'){
+					if (data[i]['metric'] != 'cps_state' && data[i]['metric'] != 'cps_state_ok' && data[i]['metric'] != 'cps_state_warn' && data[i]['metric'] != 'cps_state_crit') {
 						//add/refresh trend lines
 						if (node.extra_field && node.extra_field.trend_curve)
 							this.addTrendLines(data[i]);
 					}
 
-					if(data[i]['values']){
-						var array_len = data[i]['values'].length - 1
-						if(node.extra_field && node.extra_field.label)
-							var metric_name = node.extra_field.label
+					if (data[i]['values']) {
+						var array_len = data[i]['values'].length - 1;
+						if (node.extra_field && node.extra_field.label)
+							var metric_name = node.extra_field.label;
 						else
-							var metric_name = data[i]['metric']
+							var metric_name = data[i]['metric'];
 
 						this.last_values.push([
 							metric_name,
 							data[i]['values'][array_len][1],
 							data[i]['bunit']
-						])
+						]);
 					}
 				}
 
-				if(this.displayLastValue && this.last_values)
-					this.drawLastValue(this.last_values)
+				if (this.displayLastValue && this.last_values)
+					this.drawLastValue(this.last_values);
 
 
 				//Disable no data message
@@ -535,9 +535,9 @@ Ext.define('widgets.line_graph.line_graph' , {
 				}
 
 				//unmasking
-				var this_El = this.getEl()
+				var this_El = this.getEl();
 				if (this_El.isMasked && !this.isDisabled())
-					this_El.unmask()
+					this_El.unmask();
 
 				this.chart.redraw();
 			} else {
@@ -580,10 +580,10 @@ Ext.define('widgets.line_graph.line_graph' , {
 
 	onResize: function() {
 		log.debug('onRezize', this.logAuthor);
-		if (this.chart){
+		if (this.chart) {
 			this.chart.setSize(this.getWidth(), this.getHeight() , false);
-			if(this.displayLastValue && this.last_values)
-				this.drawLastValue(this.last_values)
+			if (this.displayLastValue && this.last_values)
+				this.drawLastValue(this.last_values);
 		}
 	},
 
@@ -605,7 +605,7 @@ Ext.define('widgets.line_graph.line_graph' , {
 		log.debug('  + Create Serie:', this.logAuthor);
 
 		if (bunit == null)
-			bunit = undefined
+			bunit = undefined;
 
 		if (this.SeriePercent && max > 0)
 			bunit = '%';
@@ -635,8 +635,8 @@ Ext.define('widgets.line_graph.line_graph' , {
 
 		// Set Label
 		var label = undefined;
-		if(node.extra_field && node.extra_field.label)
-			label = node.extra_field.label
+		if (node.extra_field && node.extra_field.label)
+			label = node.extra_field.label;
 		if (!label && curve)
 			label = curve.get('label');
 		if (! label)
@@ -650,8 +650,8 @@ Ext.define('widgets.line_graph.line_graph' , {
 		log.debug('    + legend: ' + metric_long_name, this.logAuthor);
 		log.debug('    + color: ' + colors[0], this.logAuthor);
 
-		var _color = colors[0]
-		if(node.extra_field && node.extra_field.curve_color)
+		var _color = colors[0];
+		if (node.extra_field && node.extra_field.curve_color)
 			_color = node.extra_field.curve_color;
 
 		var serie = {id: serie_id, name: metric_long_name, metric: label, data: [], color: _color, min: min, max: max, yAxis: yAxis, bunit: bunit};
@@ -662,10 +662,10 @@ Ext.define('widgets.line_graph.line_graph' , {
 		}
 
 		if (this.SeriesType == 'area') {
-			if(node.extra_field && node.extra_field.area_color){
+			if (node.extra_field && node.extra_field.area_color) {
 				serie['fillColor'] = node.extra_field.area_color;
-			}else{
-				if(curve){
+			}else {
+				if (curve) {
 					serie['fillColor'] = colors[1];
 					serie['fillOpacity'] = colors[2] / 100;
 					serie['zIndex'] = curve.get('zIndex');
@@ -932,7 +932,7 @@ Ext.define('widgets.line_graph.line_graph' , {
 				id: trend_id,
 				type: 'line',
 				name: label,
-				metric: referent_serie.options.metric+' (TREND)',
+				metric: referent_serie.options.metric + ' (TREND)',
 				bunit: referent_serie.options.bunit,
 				data: [],
 				marker: {enabled: false},
@@ -961,12 +961,12 @@ Ext.define('widgets.line_graph.line_graph' , {
 		}
 	},
 
-	drawLastValue: function(value){
-		var html = '<span style="color:{0};font-size: 1.2em;">{1}: {2}{3}</span>'
-		
-		var list_string = []
+	drawLastValue: function(value) {
+		var html = '<span style="color:{0};font-size: 1.2em;">{1}: {2}{3}</span>';
 
-		for(var i in value){
+		var list_string = [];
+
+		for (var i in value) {
 			list_string.push(
 				Ext.String.format(
 					html,
@@ -975,22 +975,22 @@ Ext.define('widgets.line_graph.line_graph' , {
 					value[i][1],
 					(value[i][2]) ? value[i][2] : ''
 				)
-			)
+			);
 		}
 
-		for(var i in this.lastValue)
-			this.lastValue[i].destroy()
+		for (var i in this.lastValue)
+			this.lastValue[i].destroy();
 
-		for(var i in list_string){
+		for (var i in list_string) {
 			this.lastValue[i] = this.chart.renderer.text(
 				list_string[i],
 				this.getWidth() / 3 * 2,
 				this.getHeight() / 4 + (20 * i)
 			);
-			this.lastValue[i].add()
+			this.lastValue[i].add();
 		}
 
-		
+
 	},
 
 	truncValueArray: function(value_array) {

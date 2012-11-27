@@ -29,19 +29,19 @@ Ext.define('canopsis.lib.form.field.cinventory' , {
 	search_grid_border: true,
 
 	metrics: true,
-	
+
 	select: true,
 	multiSelect: true,
-	
+
 	dropGroup: 'search_grid_DNDGroup',
 	dragGroup: 'search_grid_DNDGroup',
-	
+
 	inventory_url: '/rest/events/event',
-	
+
 	vertical_multiselect: false,
 	padding: 5,
 	base_filter: undefined,
-	
+
 	fields: ['id', '_id', 'source_type', 'resource', 'component', 'connector', 'event_type'],
 
 	showResource: true,
@@ -98,7 +98,7 @@ Ext.define('canopsis.lib.form.field.cinventory' , {
 
 		//-------building model on the fly with the additionnal field if needed----
 		var fields = this.fields;
-		
+
 		if (this.additional_field)
 			fields.push(this.additional_field.name);
 
@@ -130,8 +130,8 @@ Ext.define('canopsis.lib.form.field.cinventory' , {
 
 
 		//////////////////////// Selection GRID/////////////////////////
-		
-		if (this.select){
+
+		if (this.select) {
 			log.debug(' + Selection grid', this.logAuthor);
 
 			this.selection_render = function(value, p, record) {
@@ -141,7 +141,7 @@ Ext.define('canopsis.lib.form.field.cinventory' , {
 				else
 					node = Ext.String.format('<b>{0}</b>', record.data.component);
 				return node;
-			}
+			};
 			this.selection_store = Ext.create('Ext.data.Store', {model: model});
 			var selection_height = undefined;
 
@@ -233,7 +233,7 @@ Ext.define('canopsis.lib.form.field.cinventory' , {
 								return Ext.String.format('<span style="color:grey">{0}</span>', this.additional_field.emptyText);
 							else
 								return val;
-						}.bind(this);
+						};.bind(this);
 				}
 
 				selection_grid_config.columns.push(editor_config);
@@ -295,7 +295,7 @@ Ext.define('canopsis.lib.form.field.cinventory' , {
 			}
 		});
 
-		
+
 
 		//////// Bind cgrid controller on search grid
 		this.search_ctrl = Ext.create('canopsis.lib.controller.cgrid');
@@ -307,14 +307,14 @@ Ext.define('canopsis.lib.form.field.cinventory' , {
 		//////// Bind events
 		log.debug(' + Bind events', this.logAuthor);
 
-		if (this.selection_grid){
+		if (this.selection_grid) {
 			this.contextMenu = Ext.create('canopsis.lib.menu.cclear', { grid: this.selection_grid});
-			
+
 			this.selection_grid.on('itemdblclick', function(grid, record, item, index) {
 				this.selection_store.removeAt(index);
 				this.selection_grid.metrics[record.data.id] = undefined;
 			}, this);
-			
+
 			this.selection_grid.getView().on('beforedrop', function(event, data, dropRec, dropPosition) {
 				var records = data.records;
 				if (data.view.id != this.selection_grid.getView().id) {
@@ -335,7 +335,7 @@ Ext.define('canopsis.lib.form.field.cinventory' , {
 		//////// Push items
 		log.debug(' + Set items', this.logAuthor);
 		items.push(this.search_grid);
-		
+
 		if (this.selection_grid)
 			items.push(this.selection_grid);
 
@@ -343,7 +343,7 @@ Ext.define('canopsis.lib.form.field.cinventory' , {
 	},
 
 	addRecord: function(record, index) {
-		if (this.selection_grid){
+		if (this.selection_grid) {
 			if (this.selection_store.findExact('id', record.data.id) == -1) {
 				var record_data = record.data;
 
@@ -370,7 +370,7 @@ Ext.define('canopsis.lib.form.field.cinventory' , {
 	getValue: function() {
 		var dump = [];
 
-		if (this.selection_grid){
+		if (this.selection_grid) {
 			this.selection_store.each(function(record) {
 				var id = record.data.id;
 				if (this.additional_field) {
@@ -415,7 +415,7 @@ Ext.define('canopsis.lib.form.field.cinventory' , {
 				ids = data;
 			}
 
-			if (ids.length > 0){
+			if (ids.length > 0) {
 				if (this.selection_grid.rendered) {
 					this.loading_mask = this.selection_grid.getEl().mask(_('Please wait'));
 				}else {
@@ -462,7 +462,7 @@ Ext.define('canopsis.lib.form.field.cinventory' , {
 
 		if (this.selection_grid)
 			this.selection_grid.destroy();
-			
+
 		this.search_grid.destroy();
 
 		Ext.grid.Panel.superclass.beforeDestroy.call(this);

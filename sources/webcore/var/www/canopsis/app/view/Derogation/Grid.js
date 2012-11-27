@@ -42,9 +42,9 @@ Ext.define('canopsis.view.Derogation.Grid' , {
 			var condition = val[i];
 			var type = condition['type'];
 			if (type == 'time_interval') {
-				output += '<b>Type</b>: '+ type + '<br>';
-				output += '&nbsp; + <b>'+ _('Start') + '</b>: '+ rdr_tstodate(condition['startTs']) + '<br>';
-				output += '&nbsp; + <b>'+ _('Stop') + '</b>: '+ rdr_tstodate(condition['stopTs']) + '<br>';
+				output += '<b>Type</b>: ' + type + '<br>';
+				output += '&nbsp; + <b>' + _('Start') + '</b>: ' + rdr_tstodate(condition['startTs']) + '<br>';
+				output += '&nbsp; + <b>' + _('Stop') + '</b>: ' + rdr_tstodate(condition['stopTs']) + '<br>';
 			}
 		}
 		return output;

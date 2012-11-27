@@ -31,7 +31,7 @@ Ext.define('canopsis.view.Derogation.Form' , {
 	layout: 'anchor',
 	bodyPadding: 10,
 	border: false,
-	now:false,
+	now: false,
 
 	initComponent: function() {
 		this.callParent();

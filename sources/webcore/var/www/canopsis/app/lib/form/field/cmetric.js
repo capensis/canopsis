@@ -39,7 +39,7 @@ Ext.define('canopsis.lib.form.field.cmetric' , {
 		this.logAuthor = '[' + this.id + ']';
 		log.debug('Initialize ...', this.logAuthor);
 
-		this.extra_field = []
+		this.extra_field = [];
 
 		this.build_stores();
 		this.build_grids();
@@ -75,24 +75,24 @@ Ext.define('canopsis.lib.form.field.cmetric' , {
 					{name: 'co'},
 					{name: 're', defaultValue: undefined},
 					{name: 'me'}
-				]
+				];
 
-		if (this.additional_field){
-			for(var i in this.additional_field){
-				if(this.additional_field[i].name){
-					var name = this.additional_field[i].name
-					_model.push({name:name});
-				}else{
-					var name = this.additional_field[i].dataIndex
-					_model.push({name:name});
+		if (this.additional_field) {
+			for (var i in this.additional_field) {
+				if (this.additional_field[i].name) {
+					var name = this.additional_field[i].name;
+					_model.push({name: name});
+				}else {
+					var name = this.additional_field[i].dataIndex;
+					_model.push({name: name});
 				}
-				this.extra_field.push(name)
+				this.extra_field.push(name);
 			}
 		}
 
 		Ext.define('Meta', {
 			extend: 'Ext.data.Model',
-			fields:  _model
+			fields: _model
 		});
 
 		//--------------store----------------------
@@ -225,28 +225,28 @@ Ext.define('canopsis.lib.form.field.cmetric' , {
 					dataIndex: 'me',
 					flex: 1
 	       		}
-			]
+			];
 
 		//additionnal columns
-		var _plugins = []
-		if(this.additional_field){
-			for(var i in this.additional_field){
-				if(this.additional_field[i].xtype == "checkcolumn"){
-					_columns.push(this.additional_field[i])
-				}else{
-			
+		var _plugins = [];
+		if (this.additional_field) {
+			for (var i in this.additional_field) {
+				if (this.additional_field[i].xtype == 'checkcolumn') {
+					_columns.push(this.additional_field[i]);
+				}else {
+
 					_columns.push({
 						header: _(this.additional_field[i].header),
 						sortable: false,
 						dataIndex: this.additional_field[i].name,
-						editor: this.additional_field[i],
-					})
+						editor: this.additional_field[i]
+					});
 
-					if(_plugins.length == 0 ){
+					if (_plugins.length == 0) {
 						_plugins.push(Ext.create('Ext.grid.plugin.RowEditing', {
 							clicksToEdit: 2,
 							autoCancel: true
-						}))
+						}));
 					}
 
 				}
@@ -263,14 +263,14 @@ Ext.define('canopsis.lib.form.field.cmetric' , {
 			scroll: true,
 			columns: {
 				defaults: {
-					menuDisabled: true, 
-					sortable: false,
+					menuDisabled: true,
+					sortable: false
 				},
-				items:_columns,
+				items: _columns
 			},
 			plugins: _plugins,
 			viewConfig: {
-    			markDirty:false,
+    			markDirty: false,
 				plugins: {
 					ptype: 'gridviewdragdrop',
 					//enableDrag: false,
@@ -356,11 +356,11 @@ Ext.define('canopsis.lib.form.field.cmetric' , {
 	select_meta: function(record) {
 		var _id = record.get('_id');
 		log.debug('Select Meta ' + _id, this.logAuthor);
-		if (! this.selected_store.getById(_id)){
-			if(! this.multiSelect)
-				this.selected_store.removeAll()
+		if (! this.selected_store.getById(_id)) {
+			if (! this.multiSelect)
+				this.selected_store.removeAll();
 			this.selected_store.add(record.copy());
-		}else{
+		}else {
 			log.debug(' + Already selected' , this.logAuthor);
 		}
 	},
@@ -399,19 +399,19 @@ Ext.define('canopsis.lib.form.field.cmetric' , {
 			if (resource)
 				source_type = 'resource';
 
-			var extra_field = {}
-			if(this.extra_field.length != 0){
-				for(var i in this.extra_field){
-					var value = record.get(this.extra_field[i])
-					if(value != undefined)
-						extra_field[this.extra_field[i]] = value
+			var extra_field = {};
+			if (this.extra_field.length != 0) {
+				for (var i in this.extra_field) {
+					var value = record.get(this.extra_field[i]);
+					if (value != undefined)
+						extra_field[this.extra_field[i]] = value;
 				}
 			}
 
 			if (source_type == 'resource')
-				output.push({'id': _id, 'metrics': metric, 'resource': resource, 'component': component, 'source_type': source_type,'extra_field':extra_field});
+				output.push({'id': _id, 'metrics': metric, 'resource': resource, 'component': component, 'source_type': source_type, 'extra_field': extra_field});
 			else
-				output.push({'id': _id, 'metrics': metric, 'component': component, 'source_type': source_type,'extra_field':extra_field});
+				output.push({'id': _id, 'metrics': metric, 'component': component, 'source_type': source_type, 'extra_field': extra_field});
 		},this);
 
 		return output;
@@ -420,7 +420,7 @@ Ext.define('canopsis.lib.form.field.cmetric' , {
 	setValue: function(data) {
 		log.debug('Load values', this.logAuthor);
 		for (var i in data) {
-			var item = data[i]
+			var item = data[i];
 			//standart
 			config = {
 				id: item.id,
@@ -429,10 +429,10 @@ Ext.define('canopsis.lib.form.field.cmetric' , {
 				me: item.metrics
 			};
 			//additionnal
-			if(item.extra_field && item.extra_field.length != 0)
-				for(var i in item.extra_field )
-						config[i] = item.extra_field[i]
-				
+			if (item.extra_field && item.extra_field.length != 0)
+				for (var i in item.extra_field)
+						config[i] = item.extra_field[i];
+
 			var record = Ext.create('Meta', config);
 			this.selected_store.add(record);
 		}

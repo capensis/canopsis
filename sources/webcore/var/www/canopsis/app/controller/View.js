@@ -181,7 +181,7 @@ Ext.define('canopsis.controller.View', {
 
 	add_to_home: function(record,open_after_put) {
 		//append child
-		this.open_after_put = open_after_put
+		this.open_after_put = open_after_put;
 		var rootDir = 'directory.root.' + global.account.user;
 
 		log.debug('Add view: ', this.logAuthor);
@@ -196,22 +196,22 @@ Ext.define('canopsis.controller.View', {
 
 			//this is a hack
 			rootNode.dirty = false;
-	
+
 			this.treeStore.sync({
 				scope: this,
-				callback: function(batch){
-					var response = Ext.decode(batch.operations[0].response.responseText)
+				callback: function(batch) {
+					var response = Ext.decode(batch.operations[0].response.responseText);
 
-					this.request_success = true
-					
-					var data = response.data
-					for(var i in data)
-						if(!data[i].success)
-							this.request_success = false
-					
+					this.request_success = true;
+
+					var data = response.data;
+					for (var i in data)
+						if (!data[i].success)
+							this.request_success = false;
+
 					this.treeStore.load({
-							scope:this,
-							callback : function(){
+							scope: this,
+							callback: function() {
 								if (this.open_after_put == true && this.request_success) {
 									var tab = this.getController('Tabs').open_view({ view_id: record.get('_id'), title: record.get('crecord_name') });
 									tab.editMode();
@@ -221,7 +221,7 @@ Ext.define('canopsis.controller.View', {
 									Ext.getCmp('dashboardSelector').store.load();
 								}
 							}
-					})							
+					});
 				}
 			});
 
@@ -264,7 +264,7 @@ Ext.define('canopsis.controller.View', {
 					global.notify.notify(_('Wrong file type'), _('Please choose a correct json file'), 'info');
 				}
 			}
-			
+
 			if (file.items) {
 				this.importView(file);
 				popup.close();
@@ -284,9 +284,9 @@ Ext.define('canopsis.controller.View', {
 	importFile: function(file) {
 		log.debug('Import view file', this.logAuthor);
 		var reader = new FileReader();
-		reader.onload = function(e) {
+		reader.onload = (function(e) {
 			this.importView(Ext.decode(e.target.result));
-			}.bind(this);
+		}).bind(this);
 		reader.readAsText(file[0]);
 	},
 
@@ -295,13 +295,13 @@ Ext.define('canopsis.controller.View', {
 		window.open('/ui/view/export/' + view_id);
 	},
 
-	OpenViewOption: function(view){
-		var form = Ext.create('canopsis.view.Tabs.View_form')
+	OpenViewOption: function(view) {
+		var form = Ext.create('canopsis.view.Tabs.View_form');
 
-		form.getForm().setValues(view.view_options)
+		form.getForm().setValues(view.view_options);
 
 		this.view_option_win = Ext.create('widget.window', {
-			title: view.crecord_name +' '+ _('options'),
+			title: view.crecord_name + ' ' + _('options'),
 			items: [form],
 			closable: false,
 			resizable: false,
@@ -310,15 +310,15 @@ Ext.define('canopsis.controller.View', {
 			closeAction: 'destroy'
 		}).show();
 
-		form.on('save',function(data){
-			this.view_option_win.close()
-			updateRecord('object','view','View',view._id,{view_options:data})
-			this.treeStore.load()
-		},this)
-		
-		form.on('close',function(){
-			this.view_option_win.close()
-		},this)
+		form.on('save', function(data) {
+			this.view_option_win.close();
+			updateRecord('object', 'view', 'View', view._id, {view_options: data});
+			this.treeStore.load();
+		},this);
+
+		form.on('close', function() {
+			this.view_option_win.close();
+		},this);
 
 	}
 

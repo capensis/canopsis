@@ -26,7 +26,7 @@ Ext.define('canopsis.model.Topology', {
 		{name: 'name'},
 		{name: 'description'},
 		{name: 'enable', defaultValue: true},
-		
+
 		{name: 'crecord_type', defaultValue: 'topology'},
 		{name: 'crecord_name'},
 		{name: 'display_name', defaultValue: ''},
@@ -37,7 +37,7 @@ Ext.define('canopsis.model.Topology', {
 		{name: 'aaa_group', defaultValue: 'group.CPS_topology_admin'},
 		{name: 'aaa_owner'},
 
-		
+
 		{name: 'nodes', defaultValue: []},
 		{name: 'conns', defaultValue: []},
 		{name: 'root'},

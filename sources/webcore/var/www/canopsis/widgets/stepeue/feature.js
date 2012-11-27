@@ -25,7 +25,7 @@ Ext.define('widgets.stepeue.feature' , {
 	useScreenShot: true,
 	node: null,
 	init: function(node, widget, element ) {
-		log.debug('Initialization of feature ['+ node + ']', this.logAuthor);
+		log.debug('Initialization of feature [' + node + ']', this.logAuthor);
 		this.node = node;
 		this.widget = widget;
 		this.elementContainer = element;
@@ -113,7 +113,7 @@ Ext.define('widgets.stepeue.feature' , {
 
         },
 	displayLastErrorsVideos: function() {
-                var filter = { '$and' : [{ 'event_id': this.record.internalId }, { 'type_message' : 'feature'}, { 'state': {'$ne':0} } ] };
+                var filter = { '$and' : [{ 'event_id': this.record.internalId }, { 'type_message' : 'feature'}, { 'state': {'$ne': 0} }] };
                 var gmodel = Ext.ModelManager.getModel('canopsis.model.Event');
                 var storeEvent = Ext.create('canopsis.lib.store.cstore', {
                         model: gmodel,
@@ -132,9 +132,9 @@ Ext.define('widgets.stepeue.feature' , {
                 storeEvent.setFilter(filter);
                 storeEvent.sort({ property: 'timestamp', direction: 'DESC' });
                 me = this;
-                storeEvent.load({callback: function(records, operation, success) { 
+                storeEvent.load({callback: function(records, operation, success) {
 			var listItems = new Array();
-			for ( i in records ) {
+			for (i in records) {
                                 var object = {
                                         title: rdr_tstodate(records[i].data.timestamp),
                                         layout: 'fit',
@@ -142,9 +142,9 @@ Ext.define('widgets.stepeue.feature' , {
 					listeners: {
 						activate: function(tabs) {
 							var object = {
-								src: "/rest/media/events_log/"+records[i].raw._id,
-								videoWidth:"70%"
-							};	
+								src: '/rest/media/events_log/'+ records[i].raw._id,
+								videoWidth: '70%'
+							};
 							var tpl = new Ext.XTemplate(
 								'<div class="align-center">',
 								'<video autoplay="autoplay" controls="controls" width="{videoWidth}" src="{src}">{alt}</video>',
@@ -152,43 +152,43 @@ Ext.define('widgets.stepeue.feature' , {
 							);
 							var oHtml = tpl.apply(object);
 							tabs.removeAll();
-							tabs.add({ xtype:"panel", border:true, layout:"fit", html:oHtml});
+							tabs.add({ xtype: 'panel', border: true, layout: 'fit', html: oHtml});
 						}
-					} 
+					}
 				};
 				listItems.push(object);
 			}
 			var gwidth = Ext.getBody().getWidth() * .8;
 			var gheight = Ext.getBody().getHeight() * .9;
-			if ( listItems.length > 0 ) {
+			if (listItems.length > 0) {
 				var tabsPanel = Ext.create('Ext.tab.Panel', {
 					xtype: 'panel',
 					width: '100%',
 					height: '100%',
                                         items: listItems,
                                         border: false,
-					width:gwidth,
-					height:gheight
+					width: gwidth,
+					height: gheight
 	                        });
 				Ext.create('Ext.window.Window', {
 					xtype: 'xpanel',
 					layout: 'fit',
 					autoScroll: false,
-					title:"Last Errors Executions videos",
-					items:[tabsPanel],
+					title: 'Last Errors Executions videos',
+					items: [tabsPanel]
 				}).show().center();
 			} else {
 				Ext.create('Ext.window.Window', {
 					xtype: 'xpanel',
 					layout: 'fit',
 					autoScroll: false,
-					title:"Last Errors Executions videos",
-					html: "no errors are logged"
+					title: 'Last Errors Executions videos',
+					html: 'no errors are logged'
 				}).show().center();
 
 			}
 
-		}}) ;
+		}});
 
 	},
 	getFeatureViewObject: function() {
@@ -213,7 +213,7 @@ Ext.define('widgets.stepeue.feature' , {
 					var component = me.scenarios[value].mainScenario.raw.component;
 					var resource = me.scenarios[value].mainScenario.raw.resource;
 					var metric = 'duration';
-					return '<span class=\"line-graph\" id=\"'+ me.widget.wcontainer.id + 'eue-'+ getMetaId(component, resource, metric) + '\"></span>';
+					return '<span class=\"line-graph\" id=\"' + me.widget.wcontainer.id + 'eue-' + getMetaId(component, resource, metric) + '\"></span>';
 				}, flex: 3, sortable: false },
 				{ header: 'Screenshot', dataIndex: 'scenario', renderer: function(value ) {
 					return me.scenarios[value].getScreenShotLogo();
@@ -222,21 +222,21 @@ Ext.define('widgets.stepeue.feature' , {
 				{ header: 'Localization', dataIndex: 'localization', flex: 1, sortable: false},
 				{ header: 'OS', dataIndex: 'os', flex: 1, sortable: false},
 				{ header: 'Browser', dataIndex: 'browser', flex: 1, sortable: false},
-				{ 
-					xtype:'actioncolumn',
-					items:[{
-						icon: "/static/canopsis/themes/canopsis/resources/images/icons/date_error.png",
-						tooltip: "Last Errors Execution",
-						handler: function( grid, rowIndex, colIndex ) {
+				{
+					xtype: 'actioncolumn',
+					items: [{
+						icon: '/static/canopsis/themes/canopsis/resources/images/icons/date_error.png',
+						tooltip: 'Last Errors Execution',
+						handler: function(grid, rowIndex, colIndex ) {
 							var rec = grid.getStore().getAt(rowIndex);
-							me.scenarios[rec.get('scenario')].displayLastExecution( me.record.internalId ) ;
+							me.scenarios[rec.get('scenario')].displayLastExecution(me.record.internalId);
 						}
 					}, {
-						icon:"/static/canopsis/themes/canopsis/resources/images/icons/table.png",
-						tooltip:"Tests with other configuration for this scenario",
-						handler: function ( grid, rowIndex, ColIndex ) {
+						icon: '/static/canopsis/themes/canopsis/resources/images/icons/table.png',
+						tooltip: 'Tests with other configuration for this scenario',
+						handler: function(grid, rowIndex, ColIndex ) {
 							var rec = grid.getStore().getAt(rowIndex);
-							var scen_name = rec.get('scenario') ;
+							var scen_name = rec.get('scenario');
 							var gwidth = Ext.getBody().getWidth() * .6;
 							var gheight = Ext.getBody().getHeight() * .8;
 							if (me.scenarios[scen_name].scenarios.length > 0) {
@@ -259,16 +259,16 @@ Ext.define('widgets.stepeue.feature' , {
                                                                         autoScroll: true,
                                                                         width: gwidth,
                                                                         height: gheight,
-									html: "No other configuration for this test",
+									html: 'No other configuration for this test',
                                                                         renderTo: Ext.getBody(),
                                                                         modal: true
                                                                         }).show().center();
 							}
 
 						}
-					} ]	
+					}]
 				}
-	
+
 			],
 			store: storeScenar,
 			listeners: {
@@ -288,7 +288,7 @@ Ext.define('widgets.stepeue.feature' , {
 							modal: true
 						}).show().center();
 					}
-				
+
 				},*/
 				viewready: function() {
 					for (i in me.scenarios)
@@ -325,7 +325,7 @@ Ext.define('widgets.stepeue.feature' , {
                                         var gheight = Ext.getBody().getHeight() * .95;
 					var object = {
 						description: me.record.raw.description,
-						src: '/rest/media/events/'+ me.record.raw._id,
+						src: '/rest/media/events/' + me.record.raw._id,
 						alt: 'The feature video can not be played',
 						className: 'title-feature',
 						videoWidth: '60%',
@@ -343,7 +343,7 @@ Ext.define('widgets.stepeue.feature' , {
                                                 xtype: 'xpanel',
                                                 layout: 'fit',
                                                 autoScroll: false,
-						title:"Last Execution Video",
+						title: 'Last Execution Video',
 						height: gheight,
                                                 html: oHtml,
                                                 renderTo: Ext.getBody(),
@@ -351,14 +351,14 @@ Ext.define('widgets.stepeue.feature' , {
 						width: gwidth,
 						height: gheight
                                         }).show().center();
-				},
-			},{
-				type:"gear",
-				tooltip:"display last errors video",
-				handler: function() {
-					me.displayLastErrorsVideos() ;	
 				}
-			}],	
+			},{
+				type: 'gear',
+				tooltip: 'display last errors video',
+				handler: function() {
+					me.displayLastErrorsVideos();
+				}
+			}],
                         items: [grid],
                         border: false,
                         height: '100%',

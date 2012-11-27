@@ -70,7 +70,7 @@ Ext.define('canopsis.lib.view.cauthkey' , {
 
 		//-------------------------Build form--------------------
 
-		if (global.accountCtrl.checkRoot() || this.checkDisplayButton() )
+		if (global.accountCtrl.checkRoot() || this.checkDisplayButton())
 			var form_width = config.width + buttonConfig.width;
 		else
 			var form_width = config.width;
@@ -138,12 +138,12 @@ Ext.define('canopsis.lib.view.cauthkey' , {
 			global.notify.notify(_('Error'), _('An error have occured during the updating process'), 'error');
 		}
 	},
-    
-    checkDisplayButton: function(){
-        if(global.accountCtrl.checkGroup('group.CPS_authkey') && !this.account)
-            return true
+
+    checkDisplayButton: function() {
+        if (global.accountCtrl.checkGroup('group.CPS_authkey') && !this.account)
+            return true;
         else
-            return false
+            return false;
     },
 
 	updateHelper: function() {

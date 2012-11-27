@@ -71,7 +71,7 @@ Ext.define('canopsis.controller.Schedule', {
 		}
 		record.set('kwargs', kwargs);
 		record.set('loaded', false);
-		
+
 		//----------------------formating crontab-----------------------
 		//log.dump(data)
 		var time = stringTo24h(data.hours);
@@ -280,7 +280,7 @@ Ext.define('canopsis.controller.Schedule', {
 	//call a window wizard to schedule Schedule with passed argument
 	scheduleWizard: function(item,renderTo) {
 		//temporary hack, check if called by cgrid or ctree
-		var form = Ext.create('canopsis.view.Schedule.Form', {EditMethod: 'window',editing:false});
+		var form = Ext.create('canopsis.view.Schedule.Form', {EditMethod: 'window', editing: false});
 		var store = Ext.getStore('Schedules');
 
 		if (item != undefined) {
@@ -303,7 +303,7 @@ Ext.define('canopsis.controller.Schedule', {
 
 		//-------------------------binding events-----------------------
 		btns = form.down('button[action=save]');
-		btns.on('click', function() {this._saveForm(form,store)},this)
+		btns.on('click', function() {this._saveForm(form, store)},this);
 
 		btns = form.down('button[action=cancel]');
 		btns.on('click', function() {window_wizard.close();}, this);

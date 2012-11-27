@@ -28,42 +28,42 @@ Ext.define('canopsis.view.Topology.Form', {
     },
 
     initComponent: function() {
-		var me = this ;
-		this.rightPanel = Ext.create('canopsis.lib.form.field.ctopo', { flex:1, margin: '0 0 5 0' } )
-		 
-		this.checksGrid = Ext.create('canopsis.lib.form.field.cinventory',{
+		var me = this;
+		this.rightPanel = Ext.create('canopsis.lib.form.field.ctopo', { flex: 1, margin: '0 0 5 0' });
+
+		this.checksGrid = Ext.create('canopsis.lib.form.field.cinventory', {
 			select: false,
 			isFormField: false,
-			padding:0,
-			search_grid_border:false,
+			padding: 0,
+			search_grid_border: false,
 			height: '100%',
 			width: '100%',
 			base_filter: {event_type: 'check'}
 		});
-		
-		this.selsGrid = Ext.create('canopsis.lib.form.field.cinventory',{
+
+		this.selsGrid = Ext.create('canopsis.lib.form.field.cinventory', {
 			select: false,
 			isFormField: false,
-			padding:0,
-			search_grid_border:false,
+			padding: 0,
+			search_grid_border: false,
 			height: '100%',
 			width: '100%',
 			showResource: false,
 			base_filter: {event_type: 'selector'}
 		});
 
-		this.toposGrid = Ext.create('canopsis.lib.form.field.cinventory',{
+		this.toposGrid = Ext.create('canopsis.lib.form.field.cinventory', {
 			select: false,
 			isFormField: false,
-			padding:0,
-			search_grid_border:false,
+			padding: 0,
+			search_grid_border: false,
 			height: '100%',
 			width: '100%',
 			showResource: false,
 			base_filter: {event_type: 'topology'}
 		});
-		
-		this.optionsForm = Ext.create('Ext.form.Panel',{
+
+		this.optionsForm = Ext.create('Ext.form.Panel', {
 			border: false,
 			defaultType: 'textfield',
 			layout: 'anchor',
@@ -71,85 +71,85 @@ Ext.define('canopsis.view.Topology.Form', {
 				anchor: '80%',
 				margin: '5 5 0 5'
 			},
-			
-			items:[{
+
+			items: [{
 				fieldLabel: _('Name'),
-				name : 'crecord_name',
+				name: 'crecord_name',
 				listeners: {
-					change: function( value ) {
-						me.rightPanel.setRootNodeName(value.value) ;
+					change: function(value ) {
+						me.rightPanel.setRootNodeName(value.value);
 					}
 				},
 				allowBlank: false
 			},{
 				fieldLabel: _('Display name'),
-				name : 'display_name'
+				name: 'display_name'
 			},{
 				xtype: 'textarea',
 				fieldLabel: _('Description'),
 				name: 'description',
 				listeners: {
-					change: function( value ) {
+					change: function(value ) {
 						me.rightPanel.setRootNodeDescription(value.value);
 					}
 				}
 			}]
-			
-		}) ;
-		
-		this.leftPanel = Ext.widget('tabpanel',{
-			title: _("Toolbox"),
+
+		});
+
+		this.leftPanel = Ext.widget('tabpanel', {
+			title: _('Toolbox'),
 			width: 400,
 			margin: '0 5 5 0',
-			border:true,
+			border: true,
 			//plain: true,
 			collapsible: true,
 			collapseDirection: 'left',
 			animCollapse: false,
-			items:[{
+			items: [{
 					title: _('Options'),
-					border:false,
-					layout:'fit',
-					items:[this.optionsForm]
+					border: false,
+					layout: 'fit',
+					items: [this.optionsForm]
 				},{
 					title: _('Checks'),
-					border:false,
-					layout:'fit',
-					items:[this.checksGrid]
+					border: false,
+					layout: 'fit',
+					items: [this.checksGrid]
 				},{
 					title: _('Selectors'),
-					border:false,
-					layout:'fit',
-					items:[this.selsGrid]
+					border: false,
+					layout: 'fit',
+					items: [this.selsGrid]
 				},{
 					title: _('Topologies'),
-					border:false,
-					layout:'fit',
-					items:[this.toposGrid]
+					border: false,
+					layout: 'fit',
+					items: [this.toposGrid]
 				},{
 					title: _('Operators'),
-					border:false,
-					layout:'fit',
-					items:[this.build_object_grid()]
+					border: false,
+					layout: 'fit',
+					items: [this.build_object_grid()]
 				}]
-			})
-		
-		
-		this.items = [this.leftPanel, this.rightPanel]
-		
+			});
+
+
+		this.items = [this.leftPanel, this.rightPanel];
+
         this.callParent();
     },
- 
-	build_object_grid : function(){
-		var store = Ext.create('Ext.data.Store',{
+
+	build_object_grid: function() {
+		var store = Ext.create('Ext.data.Store', {
 			 fields: [
-				{name:'_id'},
-				{name:'component'},
-				{name:'source_type'},
-				{name:'event_type'},
-				{name:'description'},
-				{name:'nodeMaxOutConnexion'},
-				{name:'nodeMaxInConnexion'}
+				{name: '_id'},
+				{name: 'component'},
+				{name: 'source_type'},
+				{name: 'event_type'},
+				{name: 'description'},
+				{name: 'nodeMaxOutConnexion'},
+				{name: 'nodeMaxInConnexion'}
 			 ],
 			 proxy: {
 				 type: 'ajax',
@@ -157,12 +157,12 @@ Ext.define('canopsis.view.Topology.Form', {
 				 reader: {type: 'json', root: 'data'}
 			 },
 			 autoLoad: true
-			
-		})
-		
-		this.object_grid = Ext.create('Ext.grid.Panel',{
-			store:store,
-			border:false,
+
+		});
+
+		this.object_grid = Ext.create('Ext.grid.Panel', {
+			store: store,
+			border: false,
 			viewConfig: {
 				plugins: {
 					ptype: 'gridviewdragdrop',
@@ -171,19 +171,19 @@ Ext.define('canopsis.view.Topology.Form', {
 					dropGroup: 'search_grid_DNDGroup'
 				}
 			},
-			columns:[{
+			columns: [{
 				header: _('Id'),
 				width: 100,
-				dataIndex: 'component',
+				dataIndex: 'component'
 			},{
 				header: _('Description'),
-				flex:1,
-				dataIndex: 'description',
-			}],
-			
-		})
-		
-		return this.object_grid
+				flex: 1,
+				dataIndex: 'description'
+			}]
+
+		});
+
+		return this.object_grid;
 	}
 
 });

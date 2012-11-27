@@ -73,7 +73,7 @@ Ext.define('canopsis.view.Tabs.Wizard' , {
 					name: 'refreshInterval',
 					fieldLabel: _('Refresh interval'),
 					queryMode: 'local',
-					editable:false,
+					editable: false,
 					displayField: 'text',
 					valueField: 'value',
 					value: 300,

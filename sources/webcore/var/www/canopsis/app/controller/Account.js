@@ -63,7 +63,7 @@ Ext.define('canopsis.controller.Account', {
 		if (! cb) {
 			cb = function() {
 				log.debug(' + setConfig Ok', this.logAuthor);
-			}
+			};
 		}
 
 		ajaxAction(url, {value: value}, cb, this, 'POST');
@@ -85,7 +85,7 @@ Ext.define('canopsis.controller.Account', {
 					}
 				}
 			});
-		}
+		};
 
 		this.setConfig('locale', locale, cb);
 	},
@@ -104,7 +104,7 @@ Ext.define('canopsis.controller.Account', {
 					}
 				}
 			});
-		}
+		};
 
 		this.setConfig('clock_type', clock_type, cb);
 	},

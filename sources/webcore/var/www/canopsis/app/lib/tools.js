@@ -290,18 +290,18 @@ function getTimeRegex() {
 
 // Check if record exist
 function isRecordExist(namespace, crecord_type, field, record, callback, scope) {
-		var filter = {}
-		filter[field] = record.get(field)
+		var filter = {};
+		filter[field] = record.get(field);
 		filter = {
 			filter: Ext.encode(filter),
 			limit: 1
 		};
-		
+
 		Ext.Ajax.request({
 			method: 'GET',
 			scope: scope,
 			params: filter,
-			url: '/rest/'+namespace+'/'+crecord_type,
+			url: '/rest/' + namespace + '/' + crecord_type,
 			success: function(response, opts) {
 				var data = Ext.decode(response.responseText).data;
 				callback(this, record, data.length == 0);
@@ -310,7 +310,7 @@ function isRecordExist(namespace, crecord_type, field, record, callback, scope) 
 				log.error(' + Impossible to deal with webservice', '[tools][isExist]');
 				callback(this, record, false);
 			}
-		});	
+		});
 }
 
 function parseBool(arg) {

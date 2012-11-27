@@ -190,40 +190,40 @@ var rdr_time_interval = function(val) {
 
 	var tmp;
 
-	tmp = Math.round((val / global.commonTs.year)*100)/100;
+	tmp = Math.round((val / global.commonTs.year) * 100) / 100;
 	if (tmp >= 1)
 		return tmp + ' ' + _('Year') + '(s)';
 
-	tmp = Math.round((val / global.commonTs.month)*100)/100;
+	tmp = Math.round((val / global.commonTs.month) * 100) / 100;
 	if (tmp >= 1)
 		return tmp + ' ' + _('Month') + '(s)';
 
-	tmp = Math.round((val / global.commonTs.week)*100)/100;
+	tmp = Math.round((val / global.commonTs.week) * 100) / 100;
 	if (tmp >= 1)
 		return tmp + ' ' + _('Week') + '(s)';
 
-	tmp = Math.round((val / global.commonTs.day)*100)/100;
+	tmp = Math.round((val / global.commonTs.day) * 100) / 100;
 	if (tmp >= 1)
 		return tmp + ' ' + _('Day') + '(s)';
 
-	tmp = Math.round((val / global.commonTs.hours)*100)/100;
+	tmp = Math.round((val / global.commonTs.hours) * 100) / 100;
 	if (tmp >= 1)
 		return tmp + ' ' + _('Hour') + '(s)';
 
-	tmp = Math.round((val / global.commonTs.minute)*100)/100;
+	tmp = Math.round((val / global.commonTs.minute) * 100) / 100;
 	if (tmp >= 1)
 		return tmp + ' ' + _('Minute') + '(s)';
 
-	if (val >= 1){
-		val = Math.round(val*100)/100;
+	if (val >= 1) {
+		val = Math.round(val * 100) / 100;
 		return val + ' ' + _('Second') + '(s)';
 	}
-	
-	tmp = Math.round((val * 1000)*100)/100;
+
+	tmp = Math.round((val * 1000) * 100) / 100;
 	if (tmp >= 1)
 		return tmp + ' ' + _('Millisecond') + '(s)';
 
-	tmp = Math.round((val * 1000000)*100)/100;
+	tmp = Math.round((val * 1000000) * 100) / 100;
 	if (tmp >= 1)
 		return tmp + ' ' + _('Microsecond') + '(s)';
 
@@ -289,126 +289,126 @@ rdr_country = function(val ) {
 	};
 
 	if (dicCountry[val.toLowerCase()])
-		return '<span class=\"icon icon-country-'+ dicCountry[val.toLowerCase()] + '\" />';
+		return '<span class=\"icon icon-country-' + dicCountry[val.toLowerCase()] + '\" />';
 	else return val;
 };
 
 rdr_os = function(val ) {
-	return '<span class=\"icon icon-os-'+ val.toLowerCase() + '\" />';
+	return '<span class=\"icon icon-os-' + val.toLowerCase() + '\" />';
 };
 
 rdr_browser = function(val ) {
-	return '<span class=\"icon icon-browser-'+ val.toLowerCase() + '\" />';
+	return '<span class=\"icon icon-browser-' + val.toLowerCase() + '\" />';
 };
 
-rdr_duration = function(timestamp, nb){
+rdr_duration = function(timestamp, nb) {
 
 	if (! nb && nb != 0)
-		nb = 99
+		nb = 99;
 
 	if (timestamp == 0)
-		return 0
+		return 0;
 
 	var times = [
-		[ global.commonTs.year,		'y',	0 ],
-		[ global.commonTs.month,	'M',	0  ],
-		[ global.commonTs.week,		'w',	0  ],
-		[ global.commonTs.day,		'd',	0  ],
-		[ global.commonTs.hours,	'h',	0  ],
-		[ global.commonTs.minute,	'm',	0  ],
-		[ 1,						's',	0  ],
-		[ 0.001,					'ms',	1  ],
-		[ 0.000001,					'us',	1  ],
-	]
+		[global.commonTs.year,	'y',	0],
+		[global.commonTs.month,	'M',	0],
+		[global.commonTs.week,	'w',	0],
+		[global.commonTs.day,	'd',	0],
+		[global.commonTs.hours,	'h',	0],
+		[global.commonTs.minute,	'm',	0],
+		[1,	's',	0],
+		[0.001,	'ms',	1],
+		[0.000001,	'us',	1]
+	];
 
 	var output = '';
 	var j = 0;
 	for (var i in times) {
-		if (timestamp >= times[i][0]){
-			var value = parseInt(timestamp / times[i][0])
-			timestamp -= value * times[i][0]
+		if (timestamp >= times[i][0]) {
+			var value = parseInt(timestamp / times[i][0]);
+			timestamp -= value * times[i][0];
 			if (output != '')
-				output += ' '
-			
-			output += value + times[i][1]
+				output += ' ';
+
+			output += value + times[i][1];
 			j += 1;
 		}
 
 		if (timestamp == 0 || j >= nb || times[i][2])
-			break
+			break;
 	}
 
-	return output
+	return output;
 };
 
-rdr_yaxis = function(ori_value, multiple, decimal){
+rdr_yaxis = function(ori_value, multiple, decimal) {
 
 	if (ori_value == 0)
-		return 0
+		return 0;
 
 	if (! multiple || parseInt(multiple) == NaN)
-		multiple = 1000
+		multiple = 1000;
 
 	if (! decimal || parseInt(decimal) == NaN)
-		decimal = 2
+		decimal = 2;
 
 
-	var rounderer = Math.pow(10, decimal)
-	var output = ori_value
+	var rounderer = Math.pow(10, decimal);
+	var output = ori_value;
 
-	value = Math.round(ori_value*rounderer)/rounderer
+	value = Math.round(ori_value * rounderer) / rounderer;
 	if (value < multiple)
-		return value
+		return value;
 
-	value = Math.round((ori_value / multiple)*rounderer)/rounderer
-	if (value >= 1){
-		output = value + "K"
-		ori_value = value
+	value = Math.round((ori_value / multiple) * rounderer) / rounderer;
+	if (value >= 1) {
+		output = value + 'K';
+		ori_value = value;
 	}
 
-	value = Math.round((ori_value / multiple)*rounderer)/rounderer
-	if (value >= 1){
-		output = value + "M"
-		ori_value = value
+	value = Math.round((ori_value / multiple) * rounderer) / rounderer;
+	if (value >= 1) {
+		output = value + 'M';
+		ori_value = value;
 	}
 
-	value = Math.round((ori_value / multiple)*rounderer)/rounderer
-	if (value >= 1){
-		output = value + "G"
-		ori_value = value
+	value = Math.round((ori_value / multiple) * rounderer) / rounderer;
+	if (value >= 1) {
+		output = value + 'G';
+		ori_value = value;
 	}
 
-	value = Math.round((ori_value / multiple)*rounderer)/rounderer
-	if (value >= 1){
-		output = value + "T"
-		ori_value = value
+	value = Math.round((ori_value / multiple) * rounderer) / rounderer;
+	if (value >= 1) {
+		output = value + 'T';
+		ori_value = value;
 	}
 
-	return output
+	return output;
 };
 
-rdr_humanreadable_value = function(value, unit){
-	var multiple = 1000
+rdr_humanreadable_value = function(value, unit) {
+	var multiple = 1000;
 
-	if (! unit || unit == undefined){
-		unit = ''
+	if (! unit || unit == undefined) {
+		unit = '';
 	}else {
 
-		if (unit == "o" || unit == "MB")
-			multiple = 1024
+		if (unit == 'o' || unit == 'MB')
+			multiple = 1024;
 
-		if (unit == "MB"){
-			unit = "B"
-			value = value * 1024 * 1024
+		if (unit == 'MB') {
+			unit = 'B';
+			value = value * 1024 * 1024;
 		}
 
-		if (unit == "ms" || unit == "s"){
-			if (unit == "ms")
-				value = value / 1000
-			return rdr_duration(value)
+		if (unit == 'ms' || unit == 's') {
+			if (unit == 'ms')
+				value = value / 1000;
+			return rdr_duration(value);
 		}
 	}
 
-	value = rdr_yaxis(value, multiple)
+	value = rdr_yaxis(value, multiple);
 	return value + unit;
 };

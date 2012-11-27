@@ -28,7 +28,7 @@ Ext.define('widgets.stepeue.scenario' , {
 	aggregate_max_points: 100,
 	graphHeight: 50,
 	init: function(feature, scenario_name, widget ) {
-		log.debug('Initialization of scenario ['+ scenario_name + '] for feature ['+ feature + ']' , this.logAuthor);
+		log.debug('Initialization of scenario [' + scenario_name + '] for feature [' + feature + ']' , this.logAuthor);
 		this.scenarios = new Array();
 		this.feature = feature;
 		this.name = scenario_name;
@@ -88,7 +88,7 @@ Ext.define('widgets.stepeue.scenario' , {
 						chartRangeMaxX: node['values'][node['values'].length - 1][0],
 						tooltipClassname: 'tooltip',
 						tooltipFormatter: function(sparkline, options, fields) {
-							return '<b>'+ rdr_tstodate(Math.round(fields['x'] / 1000)) + '</b><br>'+ options.userOptions.metric + ': '+ fields['y'] + ' '+ options.userOptions.unit;
+							return '<b>' + rdr_tstodate(Math.round(fields['x'] / 1000)) + '</b><br>' + options.userOptions.metric + ': ' + fields['y'] + ' ' + options.userOptions.unit;
 						}
 					});
 				}
@@ -117,7 +117,7 @@ Ext.define('widgets.stepeue.scenario' , {
 	},
 	getScreenShotLogo: function() {
                 var imgObject = {
-			src: '/rest/media/events/'+ this.mainScenario.raw._id,
+			src: '/rest/media/events/' + this.mainScenario.raw._id,
                 	width: '64px',
                 	alt: 'the screenshot of the scenario can not be load' };
 		var imageTpl = new Ext.XTemplate(
@@ -137,7 +137,7 @@ Ext.define('widgets.stepeue.scenario' , {
 
                 var grid = Ext.create('Ext.grid.Panel', {
                         layout: 'fit',
-			title: 'Other tests with this scenario ['+ this.name + ']',
+			title: 'Other tests with this scenario [' + this.name + ']',
                         columns: [
                                 { header: 'Status', dataIndex: 'cps_state' },
                                 { header: 'Date', dataIndex: 'date', align: 'center'},

@@ -51,7 +51,7 @@ Ext.define('widgets.pie.pie' , {
 	legend_borderWidth: 1,
 	legend_fontSize: 12,
 	legend_fontColor: '#3E576F',
-    
+
     labels: false,
     gradientColor: false,
 
@@ -154,16 +154,16 @@ Ext.define('widgets.pie.pie' , {
 						enabled: this.labels,
                         color: '#000000',
                         connectorColor: '#000000',
-                        formatter: function() {return '<b>'+ this.point.name +'</b>: '+ Math.round(this.percentage) +' %';}
+                        formatter: function() {return '<b>' + this.point.name + '</b>: ' + Math.round(this.percentage) + ' %';}
 					},
 					showInLegend: true,
 					animation: false,
 					size: this.pie_size + '%'
 				},
-				column:{}
+				column: {}
 			},
 			tooltip: {
-				formatter:this.tooltipFunction
+				formatter: this.tooltipFunction
 			},
 			title: {
 				text: this.chartTitle,
@@ -282,7 +282,7 @@ Ext.define('widgets.pie.pie' , {
 			// Remove old series
 			this.removeSerie();
 
-			serie = this.getSerie()
+			serie = this.getSerie();
 
 			var other_unit = '';
 
@@ -292,8 +292,8 @@ Ext.define('widgets.pie.pie' , {
 				var node = this.nodesByID[info['node']];
 
 				//custom metric
-				if(node.extra_field && node.extra_field.label){
-					data[index]['metric'] = node.extra_field.label
+				if (node.extra_field && node.extra_field.label) {
+					data[index]['metric'] = node.extra_field.label;
 				}
 
 				var metric = info['metric'];
@@ -326,7 +326,7 @@ Ext.define('widgets.pie.pie' , {
 				if (! label)
 					label = metric_name;
 
-				metric = label
+				metric = label;
 
 				var metric_long_name = '<b>' + label + '</b>';
 
@@ -335,21 +335,21 @@ Ext.define('widgets.pie.pie' , {
 					other_unit += ' (' + unit + ')';
 				}
 
-				var _color = colors[0]
-				if(node.extra_field && node.extra_field.curve_color)
+				var _color = colors[0];
+				if (node.extra_field && node.extra_field.curve_color)
 					_color = node.extra_field.curve_color;
 
-				if(this.gradientColor)
-					var color = this.getGradientColor(_color)
+				if (this.gradientColor)
+					var color = this.getGradientColor(_color);
 				else
-					var color = _color
+					var color = _color;
 
 				serie.data.push({ id: metric, name: metric_long_name, y: value, color: color });
 
 			}
 
-			if(this.setAxis)
-				this.setAxis(data)
+			if (this.setAxis)
+				this.setAxis(data);
 
 			if (data.length == 1 && !this.hide_other_column) {
 				var other_label = '<b>' + this.other_label + '</b>' + other_unit;
@@ -385,8 +385,8 @@ Ext.define('widgets.pie.pie' , {
 		this.displaySerie();
 	},
 
-	getSerie: function(){
-		return  {
+	getSerie: function() {
+		return {
 					id: 'serie',
 					type: 'pie',
 					data: []

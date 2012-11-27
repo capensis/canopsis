@@ -55,20 +55,20 @@ Ext.define('canopsis.lib.form.field.cfilter' , {
 
 	operator_fields: [
 		{'operator': 'connector_name',	'text': _('Connector name'),	'type': 'all' },
-		{'operator': 'event_type',		'text': _('Event type'),		'type': 'all'},
-		{'operator': 'state',			'text': _('State'),				'type': 'all'},
-		{'operator': 'state_type',		'text': _('State type'),		'type': 'all'},
-		{'operator': 'resource',		'text': _('Resource'),			'type': 'all'},
-		{'operator': 'component',		'text': _('Component'),			'type': 'all'},
-		{'operator': 'tags', 			'text': _('Tags'),				'type': 'all'}
+		{'operator': 'event_type',	'text': _('Event type'),	'type': 'all'},
+		{'operator': 'state',	'text': _('State'),	'type': 'all'},
+		{'operator': 'state_type',	'text': _('State type'),	'type': 'all'},
+		{'operator': 'resource',	'text': _('Resource'),	'type': 'all'},
+		{'operator': 'component',	'text': _('Component'),	'type': 'all'},
+		{'operator': 'tags', 'text': _('Tags'),	'type': 'all'}
 	],
 
 	layout: {
         type: 'vbox',
         align: 'stretch'
     },
-    
-    checkObjectValidity : true,
+
+    checkObjectValidity: true,
 
 	initComponent: function() {
 		this.logAuthor = '[' + this.id + ']';
@@ -79,7 +79,7 @@ Ext.define('canopsis.lib.form.field.cfilter' , {
 
 		var url = this.url;
 
-		if (! url){
+		if (! url) {
 			url = '/rest/' + this.namespace;
 			if (this.ctype)
 				url += '/' + this.ctype;
@@ -171,7 +171,7 @@ Ext.define('canopsis.lib.form.field.cfilter' , {
 	},
 
 	check_object_validity: function(obj) {
-		if(this.checkObjectValidity){
+		if (this.checkObjectValidity) {
 			var output = true;
 			for (var i in obj) {
 				if (Ext.isArray(obj[i])) {
@@ -184,8 +184,8 @@ Ext.define('canopsis.lib.form.field.cfilter' , {
 				}
 			}
 			return output;
-		}else{
-			return true
+		}else {
+			return true;
 		}
 	},
 
@@ -251,7 +251,7 @@ Ext.define('canopsis.lib.form.field.cfilter' , {
 
 	show_preview: function() {
 		var filter = this.getValue();
-		
+
 		if (filter) {
 			if (this.check_object_validity(Ext.decode(filter))) {
 				this.preview_store.clearFilter();
@@ -414,7 +414,7 @@ Ext.define('canopsis.lib.form.field.cfilter' , {
 									fields: ['operator', 'text', 'type'],
 									data: [
 										{'operator': '$is', 'text': _('Is'), 'type': 'value'},
-										{'operator': '$not', 'text': _('Is Not'), 'type': 'value' },
+										{'operator': '$not', 'text': _('Is Not'), 'type': 'value' }
 									]}
 							});
 
@@ -450,7 +450,7 @@ Ext.define('canopsis.lib.form.field.cfilter' , {
 				var items_array = [];
 				if (this.opt_remove_button)
 					items_array.push(this.remove_button);
-				items_array.push(this.operator_combo,this.is_isnot_combo, this.sub_operator_combo, this.string_value, this.array_field, this.add_button);
+				items_array.push(this.operator_combo, this.is_isnot_combo, this.sub_operator_combo, this.string_value, this.array_field, this.add_button);
 
 				//upper panel
 				var config = {
@@ -480,7 +480,7 @@ Ext.define('canopsis.lib.form.field.cfilter' , {
 
 				this.sub_operator_combo.on('beforeselect',
 					this.sub_operator_combo_check_validity
-				,this);
+, this);
 
 				//button binding
 				this.add_button.on('click', function() {this.add_cfilter()},this);
@@ -494,10 +494,10 @@ Ext.define('canopsis.lib.form.field.cfilter' , {
 				//--------------load filter if there is filter--------
 				if (this.filter)
 					this.setValue(this.filter);
-				else
-					if(this.start_with_and){
-						this.operator_combo.setValue('$and')
-						this.add_cfilter()
+				else;
+					if (this.start_with_and) {
+						this.operator_combo.setValue('$and');
+						this.add_cfilter();
 					}
 			},
 
@@ -506,7 +506,7 @@ Ext.define('canopsis.lib.form.field.cfilter' , {
 			operator_combo_change: function(combo,value,oldvalue) {
 				log.debug(' + Catch changes on operator combobox, value : ' + value, this.logAuthor);
 				var operator_type = this.get_type_from_operator(value, this.operator_store);
-				log.debug(' + The type of the operator is: ' + operator_type,this.logAuthor)
+				log.debug(' + The type of the operator is: ' + operator_type, this.logAuthor);
 				if (operator_type == 'object') {
 					//log.debug('   + Field is a known operator',this.logAuthor)
 					this.contain_other_cfilter = true;
@@ -530,7 +530,7 @@ Ext.define('canopsis.lib.form.field.cfilter' , {
 				}
 			},
 
-			sub_operator_combo_check_validity: function(combo,record){
+			sub_operator_combo_check_validity: function(combo,record) {
 				var valid_operator_type = this.get_type_from_operator(this.operator_combo.getValue(), this.operator_store);
 				var operator_type = this.get_type_from_operator(record.get('operator'), this.sub_operator_store);
 
@@ -572,7 +572,7 @@ Ext.define('canopsis.lib.form.field.cfilter' , {
 
 			//give operator and store, return associated type
 			get_type_from_operator: function(operator,store) {
-				if(operator && operator.length >= 2){
+				if (operator && operator.length >= 2) {
 					var index_search = store.find('operator', operator);
 					if (index_search != -1) {
 						var operator_record = store.getAt(index_search);
@@ -582,7 +582,7 @@ Ext.define('canopsis.lib.form.field.cfilter' , {
 						return null;
 					}
 				} else {
-					return null
+					return null;
 				}
 			},
 
@@ -620,7 +620,7 @@ Ext.define('canopsis.lib.form.field.cfilter' , {
 					return undefined;
 
 				var value = this.string_value.getValue();
-				var sub_operator = undefined
+				var sub_operator = undefined;
 
 				var output = {};
 
@@ -650,29 +650,29 @@ Ext.define('canopsis.lib.form.field.cfilter' , {
 				}
 
 				//is/isnot combo process
-				if(this.is_isnot_combo.getValue() == "$not"){
-					if(sub_operator == '$eq'){
-						output[field] = {'$ne': values}
+				if (this.is_isnot_combo.getValue() == '$not') {
+					if (sub_operator == '$eq') {
+						output[field] = {'$ne': values};
 					/*}else if(sub_operator == '$regex'){
 						console.log('----------------------------------')
 						var regex = new RegExp(values[sub_operator])
 						console.log(regex)
 						output[field] = {"$not": /toto/ }
-					*/	
-					}else{
-						output[field] = {"$not":values};
+					*/
+					}else {
+						output[field] = {'$not': values};
 					}
-				}else{
+				}else {
 					output[field] = values;
 				}
-				
+
 				return output;
 			},
 
 			setValue: function(filter) {
 				log.debug('Set value', this.logAuthor);
 
-				this.remove_all_cfilter()
+				this.remove_all_cfilter();
 
 				if (typeof(filter) == 'string')
 					filter = Ext.decode(filter);
@@ -681,12 +681,12 @@ Ext.define('canopsis.lib.form.field.cfilter' , {
 				var value = filter[key];
 
 				//$not case processing
-				if(Ext.isObject(value)){
-					var sub_key = Ext.Object.getKeys(value)[0]
-					if(sub_key == '$not'){
-						this.is_isnot_combo.setValue('$not')
-						if(Ext.isObject(value[sub_key]))
-							value = value[sub_key]
+				if (Ext.isObject(value)) {
+					var sub_key = Ext.Object.getKeys(value)[0];
+					if (sub_key == '$not') {
+						this.is_isnot_combo.setValue('$not');
+						if (Ext.isObject(value[sub_key]))
+							value = value[sub_key];
 					}
 				}
 
@@ -824,9 +824,9 @@ Ext.define('canopsis.lib.form.field.cfilter' , {
 			this.cfilter.setValue(value);
 		}
 	},
-	
-	beforeDestroy: function(){
-		this.checkObjectValidity = false
+
+	beforeDestroy: function() {
+		this.checkObjectValidity = false;
 		this.callParent(arguments);
 	}
 

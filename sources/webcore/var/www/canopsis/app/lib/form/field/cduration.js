@@ -55,10 +55,10 @@ Ext.define('canopsis.lib.form.field.cduration' , {
 					{'name': _('Week'), 'value': global.commonTs.week},
 					{'name': _('Month'), 'value': global.commonTs.month},
 					{'name': _('Year'), 'value': global.commonTs.year}
-				]
-				
-		if(this.add_none_value)
-			store_data.push({'name': _('None'), 'value': undefined})
+				];
+
+		if (this.add_none_value)
+			store_data.push({'name': _('None'), 'value': undefined});
 
 		this.ts_unit = Ext.widget('combobox', {
 			isFormField: false,

@@ -26,7 +26,7 @@ Ext.define('widgets.categorized_graph.categorized_graph' , {
 	logAuthor: '[categorized_graph]',
 
 	initComponent: function() {
-			this.html = '<center><span/>' + _('This wiget is no longer available, please look at "diagram" widget') +'</center>',
+			this.html = '<center><span/>' + _('This wiget is no longer available, please look at "diagram" widget') + '</center>',
 			this.callParent(arguments);
 	}
 

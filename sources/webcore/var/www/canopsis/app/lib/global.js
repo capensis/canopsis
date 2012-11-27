@@ -111,13 +111,13 @@ var global = {
 	},
 
 	timeUnit: {
-		'y':  _('Year'),
-		'm':  _('Month'),
-		'w':  _('Week'),
-		'd':  _('Day'),
-		'h':  _('Hour'),
-		'm':  _('Minute'),
-		's':  _('Second'),
+		'y': _('Year'),
+		'm': _('Month'),
+		'w': _('Week'),
+		'd': _('Day'),
+		'h': _('Hour'),
+		'm': _('Minute'),
+		's': _('Second'),
 		'ms': _('Millisecond'),
 		'us': _('Microsecond')
 	},

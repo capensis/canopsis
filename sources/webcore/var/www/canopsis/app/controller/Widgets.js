@@ -25,7 +25,7 @@ Ext.define('canopsis.controller.Widgets', {
     stores: ['Widgets'],
     models: ['Event'],
 
-    item_to_translate: ['title', 'fieldLabel', 'boxLabel', 'text','emptyText'],
+    item_to_translate: ['title', 'fieldLabel', 'boxLabel', 'text', 'emptyText'],
 
     logAuthor: '[controller][Widgets]',
 
@@ -34,7 +34,7 @@ Ext.define('canopsis.controller.Widgets', {
 		this.store = this.getStore('Widgets');
 		log.debug('parsing Widget store', this.logAuthor);
 
-		if (! global.minimified){
+		if (! global.minimified) {
 			this.store.on('load', function() {
 				this.store.each(function(record) {
 					log.debug('loading ' + record.data.xtype, this.logAuthor);
@@ -48,7 +48,7 @@ Ext.define('canopsis.controller.Widgets', {
 					}
 				}, this);
 
-				this.clean_disabled_widget()
+				this.clean_disabled_widget();
 
 				//translate the store
 				this.check_translate();
@@ -59,23 +59,23 @@ Ext.define('canopsis.controller.Widgets', {
 				 },1000, this);
 
 			}, this, {single: true});
-		}else{
+		}else {
 			this.store.on('load', function() {
-				this.clean_disabled_widget()
+				this.clean_disabled_widget();
 			}, this);
 		}
     },
 
-    clean_disabled_widget: function(){
-    	var records = []
+    clean_disabled_widget: function() {
+    	var records = [];
     	this.store.each(function(record) {
-    		if(record.raw){
-	    		if(record.raw.disabled == true){
-	    			records.push(record)
+    		if (record.raw) {
+	    		if (record.raw.disabled == true) {
+	    			records.push(record);
 	    		}
 	    	}
-    	},this)
-    	this.store.remove(records)
+    	},this);
+    	this.store.remove(records);
     },
 
 	check_translate: function() {

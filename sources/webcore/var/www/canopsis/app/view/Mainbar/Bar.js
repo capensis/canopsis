@@ -176,7 +176,7 @@ Ext.define('canopsis.view.Mainbar.Bar' , {
 				}
 			]);
 		}
-		
+
 		//Topology menu
 		if (global.accountCtrl.checkRoot() || global.accountCtrl.checkGroup('group.CPS_topology_admin')) {
 			menu_build = menu_build.concat([
@@ -319,10 +319,10 @@ Ext.define('canopsis.view.Mainbar.Bar' , {
 				action: 'authkey'
 			},{
 				iconCls: 'icon-mainbar-sources',
-				text: '<b>commit</b>: '+global.commit.substr(0,10),
-				onClick: function(){
+				text: '<b>commit</b>: ' + global.commit.substr(0, 10),
+				onClick: function() {
 					if (global.commit)
-						window.open("https://github.com/capensis/canopsis/commit/"+global.commit,'_blank');
+						window.open('https://github.com/capensis/canopsis/commit/'+ global.commit, '_blank');
 				}
 			},'-', {
 				iconCls: 'icon-logout',
@@ -413,22 +413,22 @@ Ext.define('canopsis.view.Mainbar.Bar' , {
 		this.callParent(arguments);
 	},
 
-	afterRender: function(){
+	afterRender: function() {
 		this.callParent(arguments);
 		var tip = Ext.create('Ext.tip.ToolTip', {
 			target: Ext.getCmp('Mainbar-menu-Websocket').el,
 			renderTo: Ext.getBody(),
-			_htmlRender: function(){
+			_htmlRender: function() {
 				return Ext.String.format(
 					'{0}: <b>{1}</b><br/><i>{2}</i>',
 					_('Websocket is now'),
 					global.websocketCtrl.connected ? _('connected') : _('disconnected'),
 					global.websocketCtrl.connected ? '' : _('Check if websocket deamon is started or check your firewall port ') + global.nowjs.port
-				)
+				);
 			},
 			listeners: {
 				beforeshow: function updateTipBody(tip) {
-					this.update(this._htmlRender())
+					this.update(this._htmlRender());
 				}
 			}
 		});

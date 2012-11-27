@@ -50,7 +50,7 @@ Ext.define('widgets.stream.stream' , {
 	amqp_queue: 'alerts',
 	hard_state_only: true,
 
-	compact:true,
+	compact: true,
 
 	initComponent: function() {
 		if (this.fullscreenMode) {
@@ -150,16 +150,16 @@ Ext.define('widgets.stream.stream' , {
 	},
 
 	afterContainerRender: function() {
-		if (global.websocketCtrl.connected){
+		if (global.websocketCtrl.connected) {
 			this.startStream();
-		}else{
+		}else {
 			global.websocketCtrl.on('transport_up', function() {
 				this.startStream();
 			}, this, {single: true});
 		}
 	},
 
-	startStream: function(){
+	startStream: function() {
 		var me = this;
 		this.getHistory(undefined, undefined, function(records) {
 			if (records.length > 0)

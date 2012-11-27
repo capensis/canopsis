@@ -107,7 +107,7 @@ Ext.define('widgets.weather.report_popup' , {
 	},
 
 	go_to_helpdesk: function() {
-		if (this.helpdesk.indexOf('http://') == -1 && this.helpdesk.indexOf('https://') == -1 && this.helpdesk.indexOf('mailto:') == -1 )
+		if (this.helpdesk.indexOf('http://') == -1 && this.helpdesk.indexOf('https://') == -1 && this.helpdesk.indexOf('mailto:') == -1)
 			this.helpdesk = 'http://' + this.helpdesk;
 		log.debug('Go to the helpdesk ' + this.helpdesk, this.logAuthor);
 		window.open(this.helpdesk, '_newtab');

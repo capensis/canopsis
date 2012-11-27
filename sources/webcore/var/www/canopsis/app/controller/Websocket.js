@@ -39,8 +39,8 @@ Ext.define('canopsis.controller.Websocket', {
 			this.autoconnect = false*/
 
 		Ext.fly('nowjs').set({
-				src: global.nowjs.proto+'://'+global.nowjs.hostname+":"+global.nowjs.port+"/nowjs/now.js"
-			}).on('load', function(){
+				src: global.nowjs.proto + '://' + global.nowjs.hostname + ':'+ global.nowjs.port + '/nowjs/now.js'
+			}).on('load', function() {
 				if (this.autoconnect) {
 					this.connect();
 		}
@@ -134,7 +134,7 @@ Ext.define('canopsis.controller.Websocket', {
 						var s = me.subscribe_cache[id].subscribers[i];
 						s.on_message.apply(s.scope, [message, rk]);
 					}
-				}
+				};
 
 				//Register callback
 				now[id] = callback;

@@ -191,8 +191,8 @@ Ext.define('widgets.stream.event' , {
 
 		this.html = this.build();
 
-		if(this.stream.compact)
-			this.style = {padding:'0px'}
+		if (this.stream.compact)
+			this.style = {padding: '0px'};
 
 		this.callParent(arguments);
 	},
@@ -231,7 +231,7 @@ Ext.define('widgets.stream.event' , {
 		raw['event_date'] = rdr_elapsed_time(raw['timestamp']);
 		raw['event_Component_id'] = this.id;
 
-		if(this.stream.compact)
+		if (this.stream.compact)
 			return widget_stream_event_template_compact.applyTemplate(raw);
 		else
 			return widget_stream_event_template.applyTemplate(raw);

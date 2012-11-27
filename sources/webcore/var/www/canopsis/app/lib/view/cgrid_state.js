@@ -189,7 +189,7 @@ Ext.define('canopsis.lib.view.cgrid_state' , {
 		}
 
 		//-----------filter button-------------------------
-		if(this.fitler_buttons){
+		if (this.fitler_buttons) {
 				this.bar_search = [{
 				xtype: 'button',
 				iconCls: 'icon-crecord_type-resource',
@@ -342,7 +342,7 @@ Ext.define('canopsis.lib.view.cgrid_state' , {
 					}
 					this.store.load();
 				}
-			},'-']
+			},'-'];
 		}
 
 		this.callParent(arguments);

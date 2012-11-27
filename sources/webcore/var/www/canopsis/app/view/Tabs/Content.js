@@ -52,7 +52,7 @@ Ext.define('canopsis.view.Tabs.Content' , {
 
 	record: undefined,
 
-	view_option_window : undefined,
+	view_option_window: undefined,
 
 	//Locales
 	locales: {
@@ -71,7 +71,7 @@ Ext.define('canopsis.view.Tabs.Content' , {
 
 	pageWidth: {
 		'portrait': {'A4': 940, 'A3': 1090 },
-		'landscape': {'A4': 1090, 'A3': 1585},
+		'landscape': {'A4': 1090, 'A3': 1585}
 	},
 
 	//Logging
@@ -127,27 +127,27 @@ Ext.define('canopsis.view.Tabs.Content' , {
 				this.dump = this.view.items;
 
 
-				if (this.view.view_options != undefined){
+				if (this.view.view_options != undefined) {
 					this.view_options = this.view.view_options;
 					var pageSize = this.view_options.pageSize;
 					var orientation = this.view_options.orientation;
 				}
 
-				if(pageSize && orientation){
+				if (pageSize && orientation) {
 					var width = this.pageWidth[orientation][pageSize];
-					this.pageModeSize = width
+					this.pageModeSize = width;
 				}
 
 				// Set width for exporting in PDF
-				if (this.exportMode && width){
-					log.debug("Orientation: "+orientation, this.logAuthor);
-					log.debug("pageSize: "+pageSize, this.logAuthor);
-					log.debug("width: "+width, this.logAuthor);
+				if (this.exportMode && width) {
+					log.debug('Orientation: '+ orientation, this.logAuthor);
+					log.debug('pageSize: '+ pageSize, this.logAuthor);
+					log.debug('width: '+ width, this.logAuthor);
 
 					if (width)
 						this.setWidth(width);
-				}else{
-					log.debug(" + Update default width", this.logAuthor);
+				}else {
+					log.debug(' + Update default width', this.logAuthor);
 					this.setWidth(this.pageWidth['portrait']['A4']);
 				}
 
@@ -189,11 +189,11 @@ Ext.define('canopsis.view.Tabs.Content' , {
 			dump = this.dumpJqGridable();
 		}
 
-		var view_options = undefined
+		var view_options = undefined;
 		if (this.getViewOptions)
 			var view_options = this.getViewOptions();
 
-		if(!view_options && this.view_options)
+		if (!view_options && this.view_options)
 			var view_options = this.view_options;
 
 		// Update view
@@ -212,7 +212,7 @@ Ext.define('canopsis.view.Tabs.Content' , {
 
 		//apply new view style
 		this.applyViewOptions(view_options);
-		
+
 		//this.up('tabpanel').tabBar.setDisabled(false)
 	},
 
@@ -244,8 +244,8 @@ Ext.define('canopsis.view.Tabs.Content' , {
 			this.callParent(arguments);
 		}
 	},
-	
-	cancel: function(){
+
+	cancel: function() {
 		//this.up('tabpanel').tabBar.setDisabled(false)
 		this.callParent(arguments);
 	},
@@ -298,22 +298,22 @@ Ext.define('canopsis.view.Tabs.Content' , {
 		this.stopAllTasks();
 	},
 
-	openOptions: function(){
+	openOptions: function() {
 		this.callParent(arguments);
-		var options = this.getViewOptions()
-		if(!options)
-			options = this.view_options
+		var options = this.getViewOptions();
+		if (!options)
+			options = this.view_options;
 
-		if(this.view_option_win && options){
-			var form = this.view_option_win.down('form')
-			if(form)
-				form.getForm().setValues(options)
+		if (this.view_option_win && options) {
+			var form = this.view_option_win.down('form');
+			if (form)
+				form.getForm().setValues(options);
 		}
 	},
 
-	setViewOptions : function(data){
+	setViewOptions: function(data) {
 		this.callParent(arguments);
-		if(data.orientation && data.pageSize)
+		if (data.orientation && data.pageSize)
 			 this.pageModeSize = this.pageWidth[data.orientation][data.pageSize];
 	},
 

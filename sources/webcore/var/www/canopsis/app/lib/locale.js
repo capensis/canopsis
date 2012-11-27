@@ -19,7 +19,7 @@
 # ---------------------------------
 */
 
-i18n = []
+i18n = [];
 
 function _(text, context) {
 	var ttext = undefined;

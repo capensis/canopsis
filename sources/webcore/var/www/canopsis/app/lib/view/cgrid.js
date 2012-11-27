@@ -358,11 +358,11 @@ Ext.define('canopsis.lib.view.cgrid' , {
 
 		this.callParent(arguments);
 	},
-	
-	beforeDestroy: function(){
-		log.debug('Cleaning cgrid elements',this.logAuthor)
-		if(this.window_form)
-			this.window_form.destroy()
+
+	beforeDestroy: function() {
+		log.debug('Cleaning cgrid elements', this.logAuthor);
+		if (this.window_form)
+			this.window_form.destroy();
 	}
 
 });

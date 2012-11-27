@@ -44,9 +44,9 @@ Ext.define('canopsis.view.View.TreePanel' , {
 			flex: 1,
 			menuDisabled: true,
 			dataIndex: 'view_options',
-			renderer: function(val,meta,record){
+			renderer: function(val,meta,record) {
 				if (val && record.raw && record.raw.crecord_type != 'view_directory')
-					return val.pageSize + ' - ' + val.orientation
+					return val.pageSize + ' - ' + val.orientation;
 			}
 		},{
 			flex: 1,
@@ -145,7 +145,7 @@ Ext.define('canopsis.view.View.TreePanel' , {
 				var rec = tree.getStore().getAt(rowIndex).raw;
                 if (rec.crecord_type == 'view')
 					tree.fireEvent('OpenViewOption', rec);
-				
+
 			}
 		}];
 

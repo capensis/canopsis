@@ -23,11 +23,11 @@ Ext.define('canopsis.controller.Topology', {
 
 	views: ['Topology.Grid', 'Topology.Form'],
 	stores: ['Topologies'],
-	
+
 	models: ['Topology'],
 
 	logAuthor: '[controller][topology]',
-	
+
 	EditMethod: 'tab',
 
 	init: function() {
@@ -45,28 +45,28 @@ Ext.define('canopsis.controller.Topology', {
 		record.set('loaded', false);
 		return record;
 	},
-	
+
 	ajaxValidation: function(record, edit) {
 		if (edit) {
 			this._save(record, true);
 			return;
 		}
 
-		isRecordExist('object', 'topology', 'crecord_name', record, function(ctrl, record, exist){
+		isRecordExist('object', 'topology', 'crecord_name', record, function(ctrl, record, exist) {
 			if (exist)
 				ctrl._save(record, false);
 			else
 				global.notify.notify(_('Bad name'), _('This topology name already exist'), 'warning');
-		}, this);		
+		}, this);
 	},
-	
-	afterload_EditForm: function(form,item_copy){
+
+	afterload_EditForm: function(form,item_copy) {
 		form.rightPanel.setValue({
-			'nodes':item_copy.get('nodes'),
-			'conns':item_copy.get('conns'),
-			'root':item_copy.get('root')
-		})
+			'nodes': item_copy.get('nodes'),
+			'conns': item_copy.get('conns'),
+			'root': item_copy.get('root')
+		});
 	}
-	
-	
+
+
 });

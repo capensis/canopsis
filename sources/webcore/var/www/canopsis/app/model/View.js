@@ -34,7 +34,7 @@ Ext.define('canopsis.model.View', {
 
 		{name: 'enable'},
 		//{name: 'checked', mapping:'enable'},
-		{name: 'view_options', defaultValue: {orientation:'portrait',pageSize:'A4'}},
+		{name: 'view_options', defaultValue: {orientation: 'portrait', pageSize: 'A4'}},
 
 		{name: 'aaa_access_group'},
 		{name: 'aaa_access_other'},

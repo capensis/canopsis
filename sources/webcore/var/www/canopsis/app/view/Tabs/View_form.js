@@ -25,43 +25,43 @@ Ext.define('canopsis.view.Tabs.View_form' , {
 	logAuthor: '[view option wizard]',
 	EditMethod: 'win',
 
-	items : [{
-				"xtype": "fieldset",
-				"title": _("Report options"),
-				"defaults": {anchor: '100%'},
-				"collapsible": false,
-				"items": [{
-							"xtype": "combobox",
-							"name": "orientation",
-							"disable":false,
-							"fieldLabel": _("Orientation"),
-							"queryMode": "local",
-							"displayField": "text",
-							"valueField": "value",
-							"value": "portrait",
-							"store": {
-								"xtype": "store",
-								"fields": ["value", "text"],
-								"data" : [
-									{"value": "portrait", "text": "Portrait"},
-									{"value": "landscape", "text": "Landscape"}
+	items: [{
+				'xtype': 'fieldset',
+				'title': _('Report options'),
+				'defaults': {anchor: '100%'},
+				'collapsible': false,
+				'items': [{
+							'xtype': 'combobox',
+							'name': 'orientation',
+							'disable': false,
+							'fieldLabel': _('Orientation'),
+							'queryMode': 'local',
+							'displayField': 'text',
+							'valueField': 'value',
+							'value': 'portrait',
+							'store': {
+								'xtype': 'store',
+								'fields': ['value', 'text'],
+								'data' : [
+									{'value': 'portrait', 'text': 'Portrait'},
+									{'value': 'landscape', 'text': 'Landscape'}
 								]
 							}
 						},{
-							"xtype": "combobox",
-							"name": "pageSize",
-							"fieldLabel": _("Page size"),
-							"disable":false,
-							"queryMode": "local",
-							"displayField": "text",
-							"valueField": "value",
-							"value": "A4",
-							"store": {
-								"xtype": "store",
-								"fields": ["value", "text"],
-								"data" : [
-									{"value": "A3", "text": "A3"},
-									{"value": "A4", "text": "A4"}
+							'xtype': 'combobox',
+							'name': 'pageSize',
+							'fieldLabel': _('Page size'),
+							'disable': false,
+							'queryMode': 'local',
+							'displayField': 'text',
+							'valueField': 'value',
+							'value': 'A4',
+							'store': {
+								'xtype': 'store',
+								'fields': ['value', 'text'],
+								'data' : [
+									{'value': 'A3', 'text': 'A3'},
+									{'value': 'A4', 'text': 'A4'}
 								]
 							}
 						}]
@@ -72,9 +72,9 @@ Ext.define('canopsis.view.Tabs.View_form' , {
 
 		//-----binding-----
 		var btn = this.down('button[action=cancel]');
-		btn.on('click',this.cancel_button,this)
+		btn.on('click', this.cancel_button, this);
 		btn = this.down('button[action=save]');
-		btn.on('click',this.save_button,this)
+		btn.on('click', this.save_button, this);
 
 	},
 
@@ -85,7 +85,7 @@ Ext.define('canopsis.view.Tabs.View_form' , {
 
 	save_button: function() {
 		log.debug('save button', this.logAuthor);
-		var variables = this.getValues()
+		var variables = this.getValues();
 		this.fireEvent('save', variables);
 	}
 });
