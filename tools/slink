@@ -6,31 +6,34 @@ then
     exit 1
 fi
 
+LINK=1
+if [ "x$1" == "x-u" ]; then
+	LINK=0
+fi
+
 SRC=`pwd`
 CPS="/opt/canopsis"
 
 rm $SRC/sources/webcore/var/www/canopsis/resources/lib
-ln -s $SRC/sources/externals/webcore-libs $SRC/sources/webcore/var/www/canopsis/resources/lib
-
 rm -R $CPS/opt/webcore
-ln -s $SRC/sources/webcore/opt/webcore $CPS/opt/
-
 rm -Rf $CPS/var/www/canopsis
-ln -s $SRC/sources/webcore/var/www/canopsis $CPS/var/www/
-
 rm -R $CPS/lib/canolibs
-ln -s $SRC/sources/canolibs/lib/canolibs $CPS/lib/
-
 rm -R $CPS/opt/snmp2amqp
-ln -s $SRC/sources/snmp2amqp/opt/snmp2amqp $CPS/opt/
 rm -R $CPS/var/snmp
-ln -s $SRC/sources/snmp2amqp/var/snmp $CPS/var/
-
 rm -R $CPS/opt/collectd-libs
-ln -s $SRC/sources/collectd-libs/opt/collectd-libs $CPS/opt/
-
 rm -R $CPS/opt/amqp2engines
-ln -s $SRC/sources/amqp2engines/opt/amqp2engines $CPS/opt/
-
 rm -R $CPS/opt/mongodb
-ln -s $SRC/sources/mongodb-conf/opt/mongodb $CPS/opt/
+
+if [ $LINK -eq 1 ]; then
+	ln -s $SRC/sources/externals/webcore-libs $SRC/sources/webcore/var/www/canopsis/resources/lib
+	ln -s $SRC/sources/webcore/opt/webcore $CPS/opt/
+	ln -s $SRC/sources/webcore/var/www/canopsis $CPS/var/www/
+	ln -s $SRC/sources/canolibs/lib/canolibs $CPS/lib/
+	ln -s $SRC/sources/snmp2amqp/opt/snmp2amqp $CPS/opt/
+	ln -s $SRC/sources/snmp2amqp/var/snmp $CPS/var/
+	ln -s $SRC/sources/collectd-libs/opt/collectd-libs $CPS/opt/
+	ln -s $SRC/sources/amqp2engines/opt/amqp2engines $CPS/opt/
+	ln -s $SRC/sources/mongodb-conf/opt/mongodb $CPS/opt/
+fi
+
+
