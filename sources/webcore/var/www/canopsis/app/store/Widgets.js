@@ -22,18 +22,12 @@ Ext.define('canopsis.store.Widgets', {
     extend: 'canopsis.lib.store.cstore',
 	model: 'canopsis.model.Widget',
 
-	storeId: 'store.Widget',
+	storeId: 'store.Widgets',
 
 	logAuthor: '[store][widget]',
 
 	autoLoad: true,
 	sortOnLoad: true,
-
-	constructor: function(config)
-    {
-        this.callParent(arguments);
-        //this.on('loaded',this.check_translate,this)
-    },
 
 	sorters: [
         {
