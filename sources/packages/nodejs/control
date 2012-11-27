@@ -1,8 +1,8 @@
 #!/bin/bash
 
 NAME="nodejs"
-VERSION=0.6.15
-RELEASE=2
+VERSION=0.8.15
+RELEASE=1
 DESCRIPTION=""
 REQUIRES="canohome"
 
