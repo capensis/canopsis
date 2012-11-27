@@ -334,7 +334,7 @@ rdr_duration = function(timestamp, nb) {
 			j += 1;
 		}
 
-		if (timestamp == 0 || j >= nb || times[i][2])
+		if (timestamp == 0 || j >= nb || (times[i][2] && output))
 			break;
 	}
 
