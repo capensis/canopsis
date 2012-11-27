@@ -346,27 +346,33 @@ rdr_yaxis = function(ori_value, multiple, decimal){
 	if (! decimal || parseInt(decimal) == NaN)
 		decimal = 2
 
+
+	var rounderer = Math.pow(10, decimal)
 	var output = ori_value
 
-	value = Math.round((ori_value / multiple)*Math.pow(10, decimal))/100
+	value = Math.round(ori_value*rounderer)/rounderer
+	if (value < multiple)
+		return value
+
+	value = Math.round((ori_value / multiple)*rounderer)/rounderer
 	if (value >= 1){
 		output = value + "K"
 		ori_value = value
 	}
 
-	value = Math.round((ori_value / multiple)*Math.pow(10, decimal))/100
+	value = Math.round((ori_value / multiple)*rounderer)/rounderer
 	if (value >= 1){
 		output = value + "M"
 		ori_value = value
 	}
 
-	value = Math.round((ori_value / multiple)*Math.pow(10, decimal))/100
+	value = Math.round((ori_value / multiple)*rounderer)/rounderer
 	if (value >= 1){
 		output = value + "G"
 		ori_value = value
 	}
 
-	value = Math.round((ori_value / multiple)*Math.pow(10, decimal))/100
+	value = Math.round((ori_value / multiple)*rounderer)/rounderer
 	if (value >= 1){
 		output = value + "T"
 		ori_value = value
