@@ -396,9 +396,9 @@ Ext.define('widgets.diagram.diagram' , {
 				var other_label = '<b>' + this.other_label + '</b>' + other_unit;
 				var colors = global.curvesCtrl.getRenderColors(this.other_label, 1);
 				if(this.gradientColor)
-					var _color = this.getGradientColor(color[0])
+					var _color = this.getGradientColor(colors[0])
 				else
-					var _color = color[0]
+					var _color = colors[0]
 				serie.data.push({ id: 'pie_other', name: other_label, y: max - value, color: _color });
 			}
 
