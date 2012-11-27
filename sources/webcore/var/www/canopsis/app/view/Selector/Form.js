@@ -25,6 +25,12 @@ Ext.define('canopsis.view.Selector.Form', {
 
 	defaultType: undefined,
 
+	requires: [
+		'canopsis.lib.form.field.cfieldset',
+		'canopsis.lib.form.field.cinventory',
+		'canopsis.lib.form.field.cfilter'
+	],
+
 	fieldDefaults: {
 		labelWidth: 150
 	},
