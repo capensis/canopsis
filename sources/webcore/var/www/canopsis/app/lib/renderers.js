@@ -388,6 +388,9 @@ rdr_yaxis = function(ori_value, multiple, decimal) {
 };
 
 rdr_humanreadable_value = function(value, unit) {
+	if (value == 0)
+		return 0;
+
 	var multiple = 1000;
 
 	if (! unit || unit == undefined) {
