@@ -334,7 +334,7 @@ rdr_duration = function(timestamp, nb){
 			j += 1;
 		}
 
-		if (timestamp == 0 || j >= nb || times[i][3])
+		if (timestamp == 0 || j >= nb || times[i][2])
 			break
 	}
 
@@ -342,6 +342,9 @@ rdr_duration = function(timestamp, nb){
 };
 
 rdr_yaxis = function(ori_value, multiple, decimal){
+
+	if (ori_value == 0)
+		return 0
 
 	if (! multiple || parseInt(multiple) == NaN)
 		multiple = 1000
