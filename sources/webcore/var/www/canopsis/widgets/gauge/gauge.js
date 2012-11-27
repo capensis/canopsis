@@ -52,6 +52,10 @@ Ext.define('widgets.gauge.gauge' , {
 		this.callParent(arguments);
 	},
 
+	renderer: function(val){
+		return rdr_humanreadable_value(val,this.symbol)
+	},
+
 	createGauge: function(){
 
 		if (this.autoTitle)
@@ -81,7 +85,8 @@ Ext.define('widgets.gauge.gauge' , {
 			label: this.gaugeLabel,
 			//levelColors: colorList,
 			gaugeColor: this.gaugeColor,
-			textRenderer: rdr_humanreadable_value
+			textRenderer: this.renderer,
+			symbol: this.bunit
 		}
 
 		if(this.levelThresholds){
@@ -200,6 +205,9 @@ Ext.define('widgets.gauge.gauge' , {
 				critValue = data.tc
 			}
 			this.critValue = critValue
+
+			if(data.bunit)
+				this.bunit = data.bunit
 
 			try{
 				if(data.values){
