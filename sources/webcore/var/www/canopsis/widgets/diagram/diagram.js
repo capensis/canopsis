@@ -133,7 +133,7 @@ Ext.define('widgets.diagram.diagram' , {
 
 			if (source_type == 'resource') {
 				var resource = this.nodes[0].dn[1];
-				title = resource + ' ' + _('pie.on') + ' ' + component;
+				title = resource + ' ' + _('diagram.on') + ' ' + component;
 			}else {
 				title = component;
 			}

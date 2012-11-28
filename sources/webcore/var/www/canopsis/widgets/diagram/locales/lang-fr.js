@@ -19,17 +19,17 @@
 # ---------------------------------
 */
 
-i18n['kpi.on'] = 'sur';
-i18n['kpi.Auto title (if one node)'] = 'Titre automatique (si un noeud)';
-i18n["kpi.Total (by default use 'max' field of perfdata)"] = "Total (par défaut utilise le champ 'max' des données de performance";
-i18n['kpi.Time window'] = 'Fenêtre de temps';
-i18n['kpi.Series Type'] = 'Type de séries';
-i18n['kpi.Line Width'] = 'Largeur de la ligne';
-i18n['kpi.Enable legend'] = 'Afficher la légende';
-i18n['kpi.Legend vertical alignement'] = 'Alignement vertical de la légende';
-i18n['kpi.Legend horizontal alignement'] = 'Alignement horizontal de la légende';
-i18n['kpi.Legend layout'] = 'Disposition de la légende';
-i18n['kpi.Pie Size %'] = 'Taille en %';
-i18n['kpi.Pie'] = 'Camembert';
-i18n['kpi.Pie Style'] = 'Style du Camembert';
-i18n['kpi.Lgend Style'] = 'Style de la légende';
+i18n['diagram.on'] = 'sur';
+i18n['diagram.Auto title (if one node)'] = 'Titre automatique (si un noeud)';
+i18n["diagram.Total (by default use 'max' field of perfdata)"] = "Total (par défaut utilise le champ 'max' des données de performance";
+i18n['diagram.Time window'] = 'Fenêtre de temps';
+i18n['diagram.Series Type'] = 'Type de séries';
+i18n['diagram.Line Width'] = 'Largeur de la ligne';
+i18n['diagram.Enable legend'] = 'Afficher la légende';
+i18n['diagram.Legend vertical alignement'] = 'Alignement vertical de la légende';
+i18n['diagram.Legend horizontal alignement'] = 'Alignement horizontal de la légende';
+i18n['diagram.Legend layout'] = 'Disposition de la légende';
+i18n['diagram.Pie Size %'] = 'Taille en %';
+i18n['diagram.Pie'] = 'Camembert';
+i18n['diagram.Pie Style'] = 'Style du Camembert';
+i18n['diagram.Lgend Style'] = 'Style de la légende';

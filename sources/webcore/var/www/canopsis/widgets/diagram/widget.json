@@ -7,7 +7,7 @@
 	"description": "Compare values in a pie or a categorized bar graph.",
 	"description-fr": "Comparer des valeurs dans un camembert ou un histogramme catégorisé.",
 	"refreshInterval": 300,
-	"locales": ["fr"],
+	"locales": ["fr", "en"],
 	"options": [{
 			"title": "Options",
 			"items": [
