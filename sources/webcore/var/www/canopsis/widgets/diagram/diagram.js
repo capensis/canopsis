@@ -1,4 +1,4 @@
-/*
+7/*
 #--------------------------------
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
@@ -127,7 +127,7 @@ Ext.define('widgets.diagram.diagram' , {
 
 	setchartTitle: function() {
 		var title = '';
-		if (this.nb_node) {
+		if (this.nb_node == 1) {
 			var component = this.nodes[0].dn[0];
 			var source_type = this.nodes[0].source_type;
 
