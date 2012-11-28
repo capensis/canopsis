@@ -573,7 +573,7 @@ Ext.define('canopsis.lib.form.field.cfilter' , {
 			//give operator and store, return associated type
 			get_type_from_operator: function(operator,store) {
 				if (operator && operator.length >= 2) {
-					var index_search = store.find('operator', operator);
+					var index_search = store.findExact('operator', operator);
 					if (index_search != -1) {
 						var operator_record = store.getAt(index_search);
 						var operator_type = operator_record.get('type');
@@ -693,7 +693,7 @@ Ext.define('canopsis.lib.form.field.cfilter' , {
 				//Hack: clear filter before research, otherwise -> search always = -1
 				this.operator_store.clearFilter();
 				log.debug('Search for the operator "' + key + '" in store', this.logAuthor);
-				var search = this.operator_store.find('operator', key);
+				var search = this.operator_store.findExact('operator', key);
 
 				this.operator_combo.setValue(key);
 
