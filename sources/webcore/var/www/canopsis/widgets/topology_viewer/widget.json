@@ -8,6 +8,7 @@
 	"description-fr":"test",
 	"refreshInterval": 300,
 	"locales": ["fr"],
+	"disabled": true,
 	"options": [{
 				"title" : "Options",
 				"items" : [{

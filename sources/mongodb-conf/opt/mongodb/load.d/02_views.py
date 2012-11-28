@@ -82,8 +82,8 @@ def init():
 	create_view('eventLog_navigation', 'Events log navigation', data, adminView=True)
 	
 	### Group
-	data = { 'xtype': 'TopologyGrid'}
-	create_view('topology_manager', 'Topologies', data, adminView=True)
+	#data = { 'xtype': 'TopologyGrid'}
+	#create_view('topology_manager', 'Topologies', data, adminView=True)
 
 	###metric_navigator
 	#data = {'xtype': 'MetricNavigation'}
