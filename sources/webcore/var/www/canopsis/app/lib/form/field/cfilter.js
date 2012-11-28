@@ -720,7 +720,8 @@ Ext.define('canopsis.lib.form.field.cfilter' , {
 				}else {
 					log.debug('  + "' + key + '" is a registred operator', this.logAuthor);
 					var operator_type = this.get_type_from_operator(key, this.operator_store);
-					if (operator_type == 'array' || operator_type == 'value' || operator_type == 'all') {
+					log.debug('      + Type: ' + operator_type, this.logAuthor);
+					if (operator_type == 'array' || operator_type == 'value' || operator_type == 'all' || operator_type == null) {
 						log.debug('  + "' + key + '" contain value', this.logAuthor);
 						var object_value = value;
 						try {
