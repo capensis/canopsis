@@ -325,7 +325,8 @@ def perfstore_perftop():
 
 	if mtype:
 		mtype = mtype.get('t', 'GAUGE')
-		
+		mtype = 'COUNTER'
+
 		logger.debug(" + mtype:    %s" % mtype)
 		
 		if mtype != 'COUNTER' and not expand:
@@ -351,33 +352,41 @@ def perfstore_perftop():
 			#clean mfilter
 			mfilter =  clean_mfilter(mfilter)
 
-			metrics =  manager.store.find(mfilter=mfilter, mfields=['_id', 'co', 're', 'me', 'lv', 'u', 'lts'], limit=metric_limit)
+			metrics =  manager.store.find(mfilter=mfilter, mfields=['_id', 'co', 're', 'me', 'lv', 'u', 'ma', 'lts'], limit=metric_limit)
 
 			if isinstance(metrics, dict):
 				metrics = [metrics]
 
 			for metric in metrics:
-				points = manager.get_points(_id=metric['_id'], tstart=tstart, tstop=tstop)
-				if expand:
-					del metric['_id']
-					if not len(points):
-						metric['lv'] = 0
-						data.append(metric)
-					else:
-						for point in points:
-							if check_threshold(point[1]):
-								nmetric = metric.copy()
-								nmetric['lts'] = point[0]
-								nmetric['lv'] = point[1]
-								data.append(nmetric)
-				else:
-					if len(points):
-						metric['lv'] = points[len(points)-1][1]
-					else:
-						metric['lv'] = 0
+				# Recheck type
+				mtype = metric.get('t', 'GAUGE')
 
+				if mtype == 'GAUGE':
+					logger.debug(" + Metric '%s' (%s) is not a COUNTER" % (metric['me'], metric['_id']))
 					if check_threshold(metric['lv']):
 						data.append(metric)
+				else:
+					points = manager.get_points(_id=metric['_id'], tstart=tstart, tstop=tstop)
+					if expand:
+						del metric['_id']
+						if not len(points):
+							metric['lv'] = 0
+							data.append(metric)
+						else:
+							for point in points:
+								if check_threshold(point[1]):
+									nmetric = metric.copy()
+									nmetric['lts'] = point[0]
+									nmetric['lv'] = point[1]
+									data.append(nmetric)
+					else:
+						if len(points):
+							metric['lv'] = points[len(points)-1][1]
+						else:
+							metric['lv'] = 0
+
+						if check_threshold(metric['lv']):
+							data.append(metric)
 				
 			reverse = True
 			if sort == 1:
