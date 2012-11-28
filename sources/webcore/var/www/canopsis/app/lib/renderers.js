@@ -388,6 +388,12 @@ rdr_yaxis = function(ori_value, multiple, decimal) {
 };
 
 rdr_humanreadable_value = function(value, unit) {
+	is_neg = false
+	if (value < 0){
+		is_neg = true
+		value = value * -1
+	}
+
 	if (value == 0)
 		return 0;
 
@@ -413,5 +419,9 @@ rdr_humanreadable_value = function(value, unit) {
 	}
 
 	value = rdr_yaxis(value, multiple);
+
+	if (is_neg)
+		value = value * -1
+
 	return value + unit;
 };
