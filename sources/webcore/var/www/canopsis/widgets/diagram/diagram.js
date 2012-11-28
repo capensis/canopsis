@@ -1,4 +1,4 @@
-7/*
+/*
 #--------------------------------
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
