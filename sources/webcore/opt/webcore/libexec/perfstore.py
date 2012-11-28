@@ -325,7 +325,6 @@ def perfstore_perftop():
 
 	if mtype:
 		mtype = mtype.get('t', 'GAUGE')
-		mtype = 'COUNTER'
 
 		logger.debug(" + mtype:    %s" % mtype)
 		
