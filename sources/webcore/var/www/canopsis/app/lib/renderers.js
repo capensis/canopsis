@@ -421,7 +421,7 @@ rdr_humanreadable_value = function(value, unit) {
 	value = rdr_yaxis(value, multiple);
 
 	if (is_neg)
-		value = value * -1
+		value = "-" + value
 
 	return value + unit;
 };
