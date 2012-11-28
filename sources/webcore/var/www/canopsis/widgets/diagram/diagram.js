@@ -390,7 +390,7 @@ Ext.define('widgets.diagram.diagram' , {
 			}
 
 			if (this.setAxis && this.diagram_type == 'column')
-				this.setAxis(data);
+				this.setAxis(serie.data);
 
 			if (data.length == 1 && !this.hide_other_column && this.diagram_type == 'pie') {
 				var other_label = '<b>' + this.other_label + '</b>' + other_unit;
@@ -501,9 +501,8 @@ Ext.define('widgets.diagram.diagram' , {
 		for (var i in data)
 			if (data[i].metric)
 				metrics.push(data[i].metric);
-
+		
 		this.chart.xAxis[0].setCategories(metrics, false);
-
 	},
 
 	y_formatter: function() {
