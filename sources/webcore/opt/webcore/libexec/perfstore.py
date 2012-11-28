@@ -360,7 +360,7 @@ def perfstore_perftop():
 				# Recheck type
 				mtype = metric.get('t', 'GAUGE')
 
-				if mtype == 'GAUGE':
+				if mtype != 'COUNTER' and not expand:
 					logger.debug(" + Metric '%s' (%s) is not a COUNTER" % (metric['me'], metric['_id']))
 					if check_threshold(metric['lv']):
 						data.append(metric)
