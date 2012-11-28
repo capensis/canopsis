@@ -20,6 +20,8 @@
 */
 
 i18n['bar_graph.on'] = 'sur';
+i18n['column_graph.on'] = 'sur';
+
 i18n['bar_graph.Auto title (if one node)'] = 'Titre automatique (si un noeud)';
 i18n["bar_graph.Total (by default use 'max' field of perfdata)"] = "Total (par défaut utilise le champ 'max' des données de performance";
 i18n['bar_graph.Time window'] = 'Fenêtre de temps';
