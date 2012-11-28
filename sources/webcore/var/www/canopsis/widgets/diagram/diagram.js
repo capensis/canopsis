@@ -230,7 +230,7 @@ Ext.define('widgets.diagram.diagram' , {
 			series: [],
 			xAxis: {
 				title: { text: null },
-				labels: {enabled: (this.labels) ? false : true}
+				labels: {enabled: (this.nameInLabelFormatter) ? false : true}
 			},
 			yAxis: {
 				title: { text: null },
