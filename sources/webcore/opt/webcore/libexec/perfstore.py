@@ -330,6 +330,10 @@ def perfstore_perftop():
 		
 		if mtype != 'COUNTER' and not expand:
 			metrics = manager.store.find(mfilter=mfilter, mfields=['_id', 'co', 're', 'me', 'lv', 'u', 'ma', 'lts'], sort=[('lv', sort)], limit=limit)
+			
+			if isinstance(metrics, dict):
+				metrics = [metrics]
+
 			for metric in metrics:				
 				if check_threshold(metric['lv']):
 					data.append(metric)
