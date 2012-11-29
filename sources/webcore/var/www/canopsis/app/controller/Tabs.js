@@ -202,6 +202,9 @@ Ext.define('canopsis.controller.Tabs', {
 		if (! tab.edit) {
 			if (!tab.report_window) {
 				var right = this.getController('Account').check_right(tab.view, 'w');
+
+				right = right && ! tab.view.internal;
+
 				if (right == true) {
 					tab.editMode();
 				}else {
