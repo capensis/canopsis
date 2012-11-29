@@ -58,11 +58,14 @@ def init():
 		try:
 			# Check if exist
 			record = storage.get('group.%s' % name)
+			record.data['internal'] = True
+			storage.put(record)
 		except:
 			logger.info(" + Create group '%s'" % name)
 			record = crecord({'_id': 'group.%s' % name }, type='group', name=name, group='group.CPS_account_admin')
 			record.admin_group = 'group.CPS_account_admin'
 			record.data['description'] = groups[name]
+			record.data['internal'] = True
 			record.chmod('o+r')
 			storage.put(record)
 		

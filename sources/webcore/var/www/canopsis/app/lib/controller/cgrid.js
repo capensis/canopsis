@@ -25,6 +25,8 @@ Ext.define('canopsis.lib.controller.cgrid', {
 
 	EditMethod: 'window',
 
+	checkInternal: false,
+
 	logAuthor: '[controller][cgrid]',
 
 	init: function() {
@@ -299,10 +301,14 @@ Ext.define('canopsis.lib.controller.cgrid', {
 			//check right
 			var ctrlAccount = this.getController('Account');
 			var authorized = true;
-			for (var i in selection)
+
+			for (var i in selection){
 				if (!ctrlAccount.check_record_right(selection[i], 'w'))
 					authorized = false;
 
+				if (this.checkInternal && selection[i].get('internal'))
+					authorized = false;
+			}
 
 			if (authorized == true) {
 				log.debug('Remove record ...', this.logAuthor);
