@@ -30,6 +30,8 @@ from random import randint
 import os, sys, json 
 import time
 
+import hashlib
+
 #TEST
 import task_node
 import task_mail
@@ -83,7 +85,7 @@ def render_pdf(filename=None, viewname=None, starttime=None, stoptime=None, acco
 		
 		filename = '%s_From_%s_To_%s.pdf' % (view_record.name, fromDate, toDate) 
 		
-	ascii_filename = filename.encode('ascii', 'ignore')
+	ascii_filename = hashlib.md5(filename.encode('ascii', 'ignore')).hexdigest()
 	
 	logger.info('Filename: %s' % filename)
 
