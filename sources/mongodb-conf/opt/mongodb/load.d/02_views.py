@@ -35,15 +35,15 @@ def init():
 		
 	### Account
 	data = { 'xtype': 'AccountGrid'}
-	create_view('account_manager', 'Accounts', data, adminView=True)
+	create_view('account_manager', 'Accounts', data, internal=True)
 
 	### Group
 	data = { 'xtype': 'GroupGrid'}
-	create_view('group_manager', 'Groups', data, adminView=True)
+	create_view('group_manager', 'Groups', data, internal=True)
 	
 	### Selector
 	data = { 'xtype': 'SelectorGrid'}
-	create_view('selector_manager', 'Selectors', data, adminView=True)
+	create_view('selector_manager', 'Selectors', data, internal=True)
 
 	### Components
 	data = { 'xtype': 'list', 'show_tags': True,'fitler_buttons': True, 'filter': '{"$and": [{"source_type":"component"}, {"event_type": {"$ne": "comment"}}, {"event_type": {"$ne": "user"}}]}', 'show_resource': False}
@@ -55,35 +55,35 @@ def init():
 
 	### View manager
 	data = { 'xtype': 'ViewTreePanel'}
-	create_view('view_manager', 'Views', data, adminView=True)
+	create_view('view_manager', 'Views', data, internal=True)
 
 	###task
 	data = { 'xtype': 'ScheduleGrid'}
-	create_view('schedule_manager', 'Schedules', data, adminView=True)
+	create_view('schedule_manager', 'Schedules', data, internal=True)
 
 	###briefcase
 	data = { 'xtype': 'BriefcaseGrid'}
-	create_view('briefcase', 'Briefcase', data, adminView=True)
+	create_view('briefcase', 'Briefcase', data, internal=True)
 	
 	###curves
 	data = { 'xtype': 'CurvesGrid'}
-	create_view('curves', 'Curves', data, adminView=True)
+	create_view('curves', 'Curves', data, internal=True)
 	
 	###derogation
 	data = {'xtype':'DerogationGrid'}
-	create_view('derogation_manager','Derogations',data, adminView=True)
+	create_view('derogation_manager','Derogations',data, internal=True)
 	
 	###perfdata
 	data = {'xtype':'PerfdataGrid'}
-	create_view('perfdata','Perfdata',data, adminView=True)
+	create_view('perfdata','Perfdata',data, internal=True)
 
 	###Event log navigation
 	data = { 'xtype': 'EventLog'}
-	create_view('eventLog_navigation', 'Events log navigation', data, adminView=True)
+	create_view('eventLog_navigation', 'Events log navigation', data, internal=True)
 	
 	### Group
 	#data = { 'xtype': 'TopologyGrid'}
-	#create_view('topology_manager', 'Topologies', data, adminView=True)
+	#create_view('topology_manager', 'Topologies', data, internal=True)
 
 	###metric_navigator
 	#data = {'xtype': 'MetricNavigation'}
@@ -92,7 +92,7 @@ def init():
 def update():
 	init()
 
-def create_view(_id, name, data, position=None, mod='o+r', autorm=True, adminView=False):
+def create_view(_id, name, data, position=None, mod='o+r', autorm=True, internal=False):
 	#Delete old view
 	try:
 		record = storage.get('view.%s' % _id)
@@ -108,7 +108,7 @@ def create_view(_id, name, data, position=None, mod='o+r', autorm=True, adminVie
 		position = {'width': 1,'top': 0, 'left': 0, 'height': 1}
 		
 	logger.info(" + Create view '%s'" % name)
-	record = crecord({'_id': 'view.%s' % _id, 'adminView': adminView }, type='view', name=name,group='group.CPS_view_admin')
+	record = crecord({'_id': 'view.%s' % _id, 'internal': internal }, type='view', name=name,group='group.CPS_view_admin')
 	
 	if  isinstance(data, list):
 		record.data['items'] = data

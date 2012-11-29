@@ -43,7 +43,8 @@ Ext.define('canopsis.store.Views', {
 	proxy: {
 		type: 'rest',
 		url: '/rest/object/view',
-		extraParams: { noAdminView: true,
+		extraParams: {
+						noInternal: true,
 						limit: 0
 					},
 		reader: {

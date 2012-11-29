@@ -97,7 +97,7 @@ def rest_get(namespace, ctype=None, _id=None):
 	sort		= request.params.get('sort', default=None)
 	query		= request.params.get('query', default=None)
 	onlyWritable	= request.params.get('onlyWritable', default=False)
-	noAdminView	= request.params.get('noAdminView', default=False)
+	noInternal	= request.params.get('noInternal', default=False)
 	ids			= request.params.get('ids', default=[])
 	
 	get_id			= request.params.get('_id', default=None)
@@ -222,8 +222,8 @@ def rest_get(namespace, ctype=None, _id=None):
 				if not record.check_write(account=account):
 					do_dump = False
 
-			if noAdminView:
-				if 'adminView' in record.data and record.data['adminView']:
+			if noInternal:
+				if 'internal' in record.data and record.data['internal']:
 					do_dump = False
 
 			if do_dump:
