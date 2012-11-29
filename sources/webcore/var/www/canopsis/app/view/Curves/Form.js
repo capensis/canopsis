@@ -87,7 +87,8 @@ Ext.define('canopsis.view.Curves.Form', {
 				xtype: 'checkboxfield',
 				fieldLabel: _('Invert values'),
 				name: 'invert',
-				inputValue: true
+				inputValue: true,
+				uncheckedValue: false
 			}]
 
 });

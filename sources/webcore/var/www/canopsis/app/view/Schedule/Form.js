@@ -252,7 +252,9 @@ Ext.define('canopsis.view.Schedule.Form', {
 		//---------------------------Mail option-------------------------
 		var checkmail = Ext.widget('checkboxfield', {
 			boxLabel: _('Send by mail'),
-			name: 'sendMail'
+			name: 'sendMail',
+			inputValue: true,
+			uncheckedValue: false
 		});
 
 		var mailRecep = Ext.widget('textfield', {
