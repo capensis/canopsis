@@ -45,10 +45,12 @@ Ext.define('canopsis.view.Schedule.Form', {
 			collapsible: false
 		});
 
-		this.mailingOptions = Ext.widget('fieldset', {
+		this.mailingOptions = Ext.widget('cfieldset', {
 			xtype: 'fieldset',
-			title: _('Mailing Options'),
-			collapsible: false
+			checkboxName: 'sendMail',
+			checkboxToggle: true,
+			
+			title: _('Mailing Options')
 		});
 		//-----------------General options----------------------
 
@@ -250,13 +252,6 @@ Ext.define('canopsis.view.Schedule.Form', {
 		this.reportOptions.add(unitCombo, lengthCombo);
 
 		//---------------------------Mail option-------------------------
-		var checkmail = Ext.widget('checkboxfield', {
-			boxLabel: _('Send by mail'),
-			name: 'sendMail',
-			inputValue: true,
-			uncheckedValue: false
-		});
-
 		var mailRecep = Ext.widget('textfield', {
 				fieldLabel: _('To'),
 				name: 'recipients'
@@ -267,7 +262,7 @@ Ext.define('canopsis.view.Schedule.Form', {
 				name: 'subject'
 		});
 
-		this.mailingOptions.add(checkmail, mailRecep, mailSubject);
+		this.mailingOptions.add(mailRecep, mailSubject);
 		//-----------------------Binding Events-------------------
 
 

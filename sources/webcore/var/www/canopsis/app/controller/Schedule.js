@@ -53,7 +53,7 @@ Ext.define('canopsis.controller.Schedule', {
 		//check if a mail must be send
 		if (data.sendMail != undefined) {
 			if (data.recipients != '' && data.recipients != undefined) {
-				log.debug('sendMail is true');
+				log.debug('sendMail is true', this.logAuthor);
 
 				 var stripped_recipients = data.recipients.replace(/ /g, '');
 				 var recipients = stripped_recipients.split(',');
@@ -62,6 +62,7 @@ Ext.define('canopsis.controller.Schedule', {
 				 }
 
 				var mail = {
+					'sendMail': data.sendMail,
 					'recipients': recipients,
 					'subject': data.subject,
 					'body': 'Scheduled task reporting'
@@ -105,6 +106,8 @@ Ext.define('canopsis.controller.Schedule', {
 	},
 
 	beforeload_DuplicateForm: function(form,item) {
+		log.debug('beforeload_DuplicateForm', this.logAuthor);
+
 		//---------------get args--------------
 		var kwargs = item.get('kwargs');
 		var viewName = kwargs['viewname'];
@@ -159,16 +162,19 @@ Ext.define('canopsis.controller.Schedule', {
 		//set mail
 		var mail_info = kwargs.mail;
 		if (mail_info != undefined) {
-			if (mail_info.recipients != undefined) {
+			if (mail_info.sendMail != undefined && mail_info.sendMail == true)
 				item.set('sendMail', true);
+
+			if (mail_info.recipients != undefined)
 				item.set('recipients', mail_info.recipients);
-				if (mail_info.subject != undefined)
-					item.set('subject', mail_info.subject);
-			}
+
+			if (mail_info.subject != undefined)
+				item.set('subject', mail_info.subject);
 		}
 	},
 
 	beforeload_EditForm: function(form,item) {
+		log.debug('beforeload_EditForm', this.logAuthor);
 
 		//---------------get args--------------
 		var kwargs = item.get('kwargs');
@@ -179,6 +185,9 @@ Ext.define('canopsis.controller.Schedule', {
 		var cron = item.get('cron');
 
 		var hours = this.format_time(cron);
+
+		log.debug('kwargs:', this.logAuthor);
+		log.dump(kwargs);
 
 		item.set('hours', hours);
 
@@ -225,12 +234,14 @@ Ext.define('canopsis.controller.Schedule', {
 		//set mail
 		var mail_info = kwargs.mail;
 		if (mail_info != undefined) {
-			if (mail_info.recipients != undefined) {
+			if (mail_info.sendMail != undefined && mail_info.sendMail == true)
 				item.set('sendMail', true);
+
+			if (mail_info.recipients != undefined)
 				item.set('recipients', mail_info.recipients);
-				if (mail_info.subject != undefined)
-					item.set('subject', mail_info.subject);
-			}
+
+			if (mail_info.subject != undefined)
+				item.set('subject', mail_info.subject);
 		}
 
 		//hide task name
@@ -241,27 +252,42 @@ Ext.define('canopsis.controller.Schedule', {
 	},
 
 	validateForm: function(store, data, form) {
-		if (!form.editing) {
-			var already_exist = false;
 
-			store.findBy(
-				function(record, id) {
-					if (record.get('crecord_name') == data['crecord_name']) {
-						log.debug('Schedule already exist exist', this.logAuthor);
-						already_exist = true;  // a record with this data exists
-					}
-				}
-			);
+		//check mail options
+		if (data['sendMail']){
+			if (! data['subject'] || ! data['recipients']){
+				log.debug('Invalid mail options', this.logAuthor+'[validateForm]');
+				global.notify.notify(' Invalid mail options', '', 'error');
 
-			if (already_exist) {
-				global.notify.notify(data['crecord_name'] + ' already exist', 'you can\'t add the same Schedule twice', 'error');
+				var field = form.findField('subject')
+				if (! data['subject'] && field)
+					field.markInvalid(_("Invalid field"))
+
+				var field = form.findField('recipients')
+				if (! data['recipients'] && field)
+					field.markInvalid(_("Invalid field"))
+				
 				return false;
-			}else {
-				return true;
 			}
-		}else {
-			return true;
 		}
+
+		//Check duplicate
+		var already_exist = false;
+		if (!form.editing)
+			if (store.findExact('crecord_name', data['crecord_name']) >= 0)
+				already_exist = true
+
+				var field = form.findField('crecord_name')
+				if (field)
+					field.markInvalid(_("Invalid field"))
+
+		if (already_exist) {
+			log.debug('Schedule already exist exist', this.logAuthor+'[validateForm]');
+			global.notify.notify(data['crecord_name'] + ' already exist', 'you can\'t add the same Schedule twice', 'error');
+			return false;
+		}
+
+		return true;
 	},
 
 	runItem: function(item) {
