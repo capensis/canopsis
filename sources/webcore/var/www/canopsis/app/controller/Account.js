@@ -164,18 +164,16 @@ Ext.define('canopsis.controller.Account', {
 		var already_exist = false;
 
 		// in creation mode
-		if (!form.editing) {
-			store.findBy(
-				function(record, id) {
-					if (record.get('user') == data['user']) {
-						log.debug('User already exist', this.logAuthor + '[validateForm]');
-						already_exist = true;  // a record with this data exists
-					}
-				}
-			);
-		}
+		if (!form.editing)
+			if (store.findExact('user', data['user']) >= 0)
+				already_exist = true
+
+			var field = form.findField('user')
+			if (field)
+				field.markInvalid(_("Invalid field"))
 
 		if (already_exist) {
+			log.debug('User already exist', this.logAuthor + '[validateForm]');
 			global.notify.notify(data['user'] + ' already exist', 'you can\'t add the same user twice', 'error');
 			return false;
 		}else {
