@@ -81,9 +81,9 @@ def init():
 	data = { 'xtype': 'EventLog'}
 	create_view('eventLog_navigation', 'Events log navigation', data, internal=True)
 	
-	### Group
-	#data = { 'xtype': 'TopologyGrid'}
-	#create_view('topology_manager', 'Topologies', data, internal=True)
+	### Topology
+	data = { 'xtype': 'TopologyGrid'}
+	create_view('topology_manager', 'Topologies', data, internal=True)
 
 	###metric_navigator
 	#data = {'xtype': 'MetricNavigation'}
