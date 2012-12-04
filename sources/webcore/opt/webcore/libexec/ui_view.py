@@ -137,44 +137,46 @@ def tree_add():
 			output[view_name] = {'success':False,'output':"You don't have right on the parent record"}
 			record_parent = None
 		
+		record_child = None
 		try:
 			record_child = storage.get(view['_id'], account=account)
 			logger.debug(' + Children found %s' % view['_id'])
 			output[view['_id']] = {'success':False,'output':"Record id already exist"}
 		except:
 			logger.debug(' + Children not found')
-			record_child = None
+			output[view_name] = {'success':False,'output':str(err)}
+			
+		if record_child:
+			if record_parent and not record_child:
+				if record_parent.check_write(account=account):
+					try:
+						if view['leaf'] == True:
+							logger.debug('record is a leaf, add the new view')
+							record = crecord({'leaf':True,'_id':view['id'],'items':view['items']},type='view',name=view['crecord_name'],account=account)
+						else:
+							logger.debug('record is a directory, add it')
+							record = crecord({'_id':view['id']},type='view_directory',name=view['crecord_name'],account=account)
+					except Exception, err:
+						logger.info('Error while building view/directory crecord : %s' % err)
+						output[view_name] = {'success':False,'output':"Error while building crecord: %s" % err}
+						record = None
+						
+					if isinstance(record,crecord):
+						record.chown(account._id)
+						record.chgrp(account.group)
+						record.chmod('g+w')
+						record.chmod('g+r')
+						
+						storage.put(record,account=account)
+						record_parent.add_children(record)
 
-		if record_parent and not record_child:
-			if record_parent.check_write(account=account):
-				try:
-					if view['leaf'] == True:
-						logger.debug('record is a leaf, add the new view')
-						record = crecord({'leaf':True,'_id':view['id'],'items':view['items']},type='view',name=view['crecord_name'],account=account)
-					else:
-						logger.debug('record is a directory, add it')
-						record = crecord({'_id':view['id']},type='view_directory',name=view['crecord_name'],account=account)
-				except Exception, err:
-					logger.info('Error while building view/directory crecord : %s' % err)
-					output[view_name] = {'success':False,'output':"Error while building crecord: %s" % err}
-					record = None
-					
-				if isinstance(record,crecord):
-					record.chown(account._id)
-					record.chgrp(account.group)
-					record.chmod('g+w')
-					record.chmod('g+r')
-					
-					storage.put(record,account=account)
-					record_parent.add_children(record)
-
-					storage.put([record,record_parent],account=account)
-					output[view_name] = {'success':True,'output':''}
+						storage.put([record,record_parent],account=account)
+						output[view_name] = {'success':True,'output':''}
+				else:
+					logger.info('Access Denied')
+					output[view_name] = {'success':False,'output':"No rights on this record"}
 			else:
-				logger.info('Access Denied')
-				output[view_name] = {'success':False,'output':"No rights on this record"}
-		else:
-			logger.error("Parent doesn't exists or view/directory already exists for %s" % view_name)
+				logger.error("Parent doesn't exists or view/directory already exists for %s" % view_name)
 			
 	return {"total": len(data), "success": True, "data": output}
 
