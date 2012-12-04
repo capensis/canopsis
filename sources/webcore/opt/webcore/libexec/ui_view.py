@@ -202,13 +202,13 @@ def add_view(views, storage, account):
 	for view in views:
 		view_name = view.get('crecord_name', view['_id'])
 		
+		record_parent = None
 		try:
 			logger.debug(' + Get future parent record')
 			record_parent = storage.get(view['parentId'], account=account)
 		except:
 			logger.info("You don't have right on the parent record: %s" % view['parentId'])
 			output[view_name] = {'success':False,'output':"You don't have right on the parent record"}
-			record_parent = None
 		
 		record_child = None
 		try:
@@ -271,8 +271,10 @@ def update_view(views, storage, account):
 		try:
 			record_child = storage.get(_id, account=account)
 		except Exception, err:
-			logger.error(" + Record to update wasn't found")
-			output[view_name] = {'success':False,'output':str(err)}
+			logger.error(" + View to update wasn't found, try to add view")
+			#output[view_name] = {'success':False,'output':str(err)}
+			#### TODO: Check why update was called
+			output[view_name] = add_view(view, storage, account)[view_name]
 		
 		#check action to do
 		if record_child:
