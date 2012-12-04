@@ -121,62 +121,8 @@ def tree_add():
 	storage = get_storage(namespace='object', account=account)
 	
 	data = json.loads(request.body.readline())
-	if not isinstance(data,list):
-		data = [data]
 		
-	output = {}
-
-	for view in data:
-		view_name = view.get('crecord_name',view['_id'])
-		
-		try:
-			logger.debug(' + Get future parent record')
-			record_parent = storage.get(view['parentId'], account=account)
-		except:
-			logger.info("You don't have right on the parent record: %s" % view['parentId'])
-			output[view_name] = {'success':False,'output':"You don't have right on the parent record"}
-			record_parent = None
-		
-		record_child = None
-		try:
-			record_child = storage.get(view['_id'], account=account)
-			logger.debug(' + Children found %s' % view['_id'])
-			output[view['_id']] = {'success':False,'output':"Record id already exist"}
-		except:
-			logger.debug(' + Children not found')
-			output[view_name] = {'success':False,'output':str(err)}
-			
-		if record_child:
-			if record_parent and not record_child:
-				if record_parent.check_write(account=account):
-					try:
-						if view['leaf'] == True:
-							logger.debug('record is a leaf, add the new view')
-							record = crecord({'leaf':True,'_id':view['id'],'items':view['items']},type='view',name=view['crecord_name'],account=account)
-						else:
-							logger.debug('record is a directory, add it')
-							record = crecord({'_id':view['id']},type='view_directory',name=view['crecord_name'],account=account)
-					except Exception, err:
-						logger.info('Error while building view/directory crecord : %s' % err)
-						output[view_name] = {'success':False,'output':"Error while building crecord: %s" % err}
-						record = None
-						
-					if isinstance(record,crecord):
-						record.chown(account._id)
-						record.chgrp(account.group)
-						record.chmod('g+w')
-						record.chmod('g+r')
-						
-						storage.put(record,account=account)
-						record_parent.add_children(record)
-
-						storage.put([record,record_parent],account=account)
-						output[view_name] = {'success':True,'output':''}
-				else:
-					logger.info('Access Denied')
-					output[view_name] = {'success':False,'output':"No rights on this record"}
-			else:
-				logger.error("Parent doesn't exists or view/directory already exists for %s" % view_name)
+	output = add_view(data, storage, account)
 			
 	return {"total": len(data), "success": True, "data": output}
 
@@ -187,64 +133,8 @@ def update_view_relatives():
 	storage = get_storage(namespace='object', account=account)
 	
 	data = json.loads(request.body.readline())
-	if not isinstance(data,list):
-		data = [data]
 	
-	output={}
-	
-	for view in data:
-		view_name = view.get('crecord_name',view['_id'])
-		_id = view.get('_id',None)
-		parent_id = view.get('parentId',None)
-		
-		logger.debug(' + View to update is %s' % _id)
-		logger.debug(' + Parent is %s' % parent_id)
-		
-		#get records
-		record_child=None
-		try:
-			record_child = storage.get(_id, account=account)
-		except Exception, err:
-			logger.error(" + Record to update wasn't found")
-			output[view_name] = {'success':False,'output':str(err)}
-
-		
-		#check action to do
-		if record_child:
-			if parent_id and not parent_id in record_child.parent:
-				try:
-					record_parent = storage.get(parent_id, account=account)
-					logger.debug(' + Update relations')	
-					record_parent_old = storage.get(record_child.parent[0], account=account)
-					logger.debug('   + Remove children %s from %s' % (record_child._id, record_parent_old._id))
-					
-					if not record_parent.check_write(account=account) or not record_parent_old.check_write(account=account):
-						raise Exception('No rights on parent record')
-					
-					record_parent_old.remove_children(record_child)
-					
-					logger.debug('   + Add children %s to %s' % (record_child._id, record_parent._id))
-					record_parent.add_children(record_child)
-					
-					logger.debug('   + Updating all records')
-		
-					storage.put([record_parent,record_child,record_parent_old],account=account)
-				except Exception, err:
-					output[view_name] = {'success':False,'output':str(err)}
-					logger.error(err)
-
-			elif view['crecord_name'] and record_child.name != view['crecord_name']:
-				logger.debug(' + Rename record')	
-				logger.debug('   + old name : %s' % record_child.name)
-				logger.debug('   + new name : %s' % view['crecord_name'])
-				record_child.name = view['crecord_name']
-				storage.put(record_child,account=account)
-			
-			else :
-				logger.debug(' + Records are same, nothing to do')
-			
-			if not view_name in output:
-				output[view_name] = {'success':True,'output':""}
+	output = update_view(data, storage, account)
 
 	return {"total": len(data), "success": True, "data": output}
 
@@ -300,3 +190,127 @@ def exportView(_id=None):
 	except Exception,err:
 		logger.error(' + Error while fetching view : %s' % err)
 		return {"total": 0, "success": False, "data": {}}
+
+
+def add_view(views, storage, account):
+	if not isinstance(views, list):
+		views = [ views ]
+
+	logger.debug('Create views:')
+	output={}
+
+	for view in views:
+		view_name = view.get('crecord_name', view['_id'])
+		
+		try:
+			logger.debug(' + Get future parent record')
+			record_parent = storage.get(view['parentId'], account=account)
+		except:
+			logger.info("You don't have right on the parent record: %s" % view['parentId'])
+			output[view_name] = {'success':False,'output':"You don't have right on the parent record"}
+			record_parent = None
+		
+		record_child = None
+		try:
+			record_child = storage.get(view['_id'], account=account)
+			logger.debug(' + View already exist %s' % view['_id'])
+			output[view['_id']] = {'success':False,'output':"View already exist"}
+		except:
+			logger.debug(' + View not found')
+			
+		if record_parent and not record_child:
+			if record_parent.check_write(account=account):
+				try:
+					if view['leaf'] == True:
+						logger.debug('record is a leaf, add the new view')
+						record = crecord({'leaf':True,'_id':view['id'],'items':view['items']},type='view',name=view['crecord_name'],account=account)
+					else:
+						logger.debug('record is a directory, add it')
+						record = crecord({'_id':view['id']},type='view_directory',name=view['crecord_name'],account=account)
+				except Exception, err:
+					logger.info('Error while building view/directory crecord : %s' % err)
+					output[view_name] = {'success':False,'output':"Error while building crecord: %s" % err}
+					record = None
+					
+				if isinstance(record,crecord):
+					record.chown(account._id)
+					record.chgrp(account.group)
+					record.chmod('g+w')
+					record.chmod('g+r')
+					
+					storage.put(record,account=account)
+					record_parent.add_children(record)
+
+					storage.put([record,record_parent],account=account)
+					output[view_name] = {'success':True,'output':''}
+			else:
+				logger.info('Access Denied')
+				output[view_name] = {'success':False,'output':"No rights on this record"}
+		else:
+			logger.error("Parent doesn't exists or view/directory already exists for %s" % view_name)
+
+	return output
+
+def update_view(views, storage, account):
+	if not isinstance(views, list):
+		views = [ views ]
+
+	logger.debug('Update views:')
+	output={}
+
+	for view in views:
+		view_name = view.get('crecord_name',view['_id'])
+		_id = view.get('_id', None)
+		parent_id = view.get('parentId', None)
+		
+		logger.debug(' + View to update is %s' % _id)
+		logger.debug(' + Parent is %s' % parent_id)
+		
+		#get records
+		record_child=None
+		try:
+			record_child = storage.get(_id, account=account)
+		except Exception, err:
+			logger.error(" + Record to update wasn't found")
+			output[view_name] = {'success':False,'output':str(err)}
+		
+		#check action to do
+		if record_child:
+			# Change tree
+			if parent_id and not parent_id in record_child.parent:
+				try:
+					record_parent = storage.get(parent_id, account=account)
+					logger.debug(' + Update relations')	
+					record_parent_old = storage.get(record_child.parent[0], account=account)
+					logger.debug('   + Remove children %s from %s' % (record_child._id, record_parent_old._id))
+					
+					if not record_parent.check_write(account=account) or not record_parent_old.check_write(account=account):
+						raise Exception('No rights on parent record')
+					
+					record_parent_old.remove_children(record_child)
+					
+					logger.debug('   + Add children %s to %s' % (record_child._id, record_parent._id))
+					record_parent.add_children(record_child)
+					
+					logger.debug('   + Updating all records')
+		
+					storage.put([record_parent,record_child,record_parent_old],account=account)
+				except Exception, err:
+					output[view_name] = {'success':False,'output':str(err)}
+					logger.error(err)
+
+			# Rename view
+			elif view['crecord_name'] and record_child.name != view['crecord_name']:
+				logger.debug(' + Rename record')	
+				logger.debug('   + old name : %s' % record_child.name)
+				logger.debug('   + new name : %s' % view['crecord_name'])
+				record_child.name = view['crecord_name']
+				storage.put(record_child,account=account)
+			
+			else :
+				logger.debug(' + Records are same, nothing to do')
+			
+			if not view_name in output:
+				output[view_name] = {'success':True,'output':""}
+
+	return output
