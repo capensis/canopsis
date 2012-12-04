@@ -199,47 +199,50 @@ def update_view_relatives():
 		logger.debug(' + Parent is %s' % parent_id)
 		
 		#get records
+		record_child=None
 		try:
 			record_child = storage.get(_id, account=account)
 		except Exception, err:
 			logger.error(" + Record to update wasn't found")
 			output[view_name] = {'success':False,'output':str(err)}
+
 		
 		#check action to do
-		if parent_id and not parent_id in record_child.parent:
-			try:
-				record_parent = storage.get(parent_id, account=account)
-				logger.debug(' + Update relations')	
-				record_parent_old = storage.get(record_child.parent[0], account=account)
-				logger.debug('   + Remove children %s from %s' % (record_child._id, record_parent_old._id))
-				
-				if not record_parent.check_write(account=account) or not record_parent_old.check_write(account=account):
-					raise Exception('No rights on parent record')
-				
-				record_parent_old.remove_children(record_child)
-				
-				logger.debug('   + Add children %s to %s' % (record_child._id, record_parent._id))
-				record_parent.add_children(record_child)
-				
-				logger.debug('   + Updating all records')
-	
-				storage.put([record_parent,record_child,record_parent_old],account=account)
-			except Exception, err:
-				output[view_name] = {'success':False,'output':str(err)}
-				logger.error(err)
-
-		elif view['crecord_name'] and record_child.name != view['crecord_name']:
-			logger.debug(' + Rename record')	
-			logger.debug('   + old name : %s' % record_child.name)
-			logger.debug('   + new name : %s' % view['crecord_name'])
-			record_child.name = view['crecord_name']
-			storage.put(record_child,account=account)
+		if record_child:
+			if parent_id and not parent_id in record_child.parent:
+				try:
+					record_parent = storage.get(parent_id, account=account)
+					logger.debug(' + Update relations')	
+					record_parent_old = storage.get(record_child.parent[0], account=account)
+					logger.debug('   + Remove children %s from %s' % (record_child._id, record_parent_old._id))
+					
+					if not record_parent.check_write(account=account) or not record_parent_old.check_write(account=account):
+						raise Exception('No rights on parent record')
+					
+					record_parent_old.remove_children(record_child)
+					
+					logger.debug('   + Add children %s to %s' % (record_child._id, record_parent._id))
+					record_parent.add_children(record_child)
+					
+					logger.debug('   + Updating all records')
 		
-		else :
-			logger.debug(' + Records are same, nothing to do')
+					storage.put([record_parent,record_child,record_parent_old],account=account)
+				except Exception, err:
+					output[view_name] = {'success':False,'output':str(err)}
+					logger.error(err)
+
+			elif view['crecord_name'] and record_child.name != view['crecord_name']:
+				logger.debug(' + Rename record')	
+				logger.debug('   + old name : %s' % record_child.name)
+				logger.debug('   + new name : %s' % view['crecord_name'])
+				record_child.name = view['crecord_name']
+				storage.put(record_child,account=account)
 			
-		if not view_name in output:
-			output[view_name] = {'success':True,'output':""}
+			else :
+				logger.debug(' + Records are same, nothing to do')
+			
+			if not view_name in output:
+				output[view_name] = {'success':True,'output':""}
 
 	return {"total": len(data), "success": True, "data": output}
 
