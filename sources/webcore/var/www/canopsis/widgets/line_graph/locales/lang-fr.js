@@ -29,6 +29,8 @@ i18n['line_graph.Enable legend'] = 'Afficher la légende';
 i18n['line_graph.Legend vertical alignement'] = 'Alignement vertical de la légende';
 i18n['line_graph.Legend horizontal alignement'] = 'Alignement horizontal de la légende';
 i18n['line_graph.Legend layout'] = 'Disposition de la légende';
+i18n['line_graph.Title font size'] = 'Taille de la police du titre'
+i18n['line_graph.Display last value in background'] = 'Afficher la dernière valeur en arrière plan'
 
 i18n['line_graph.Enable Tooltip'] = "Activer l'infobulle";
 i18n['line_graph.Shared'] = 'Partagé';

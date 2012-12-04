@@ -33,3 +33,7 @@ i18n['diagram.Pie Size %'] = 'Taille en %';
 i18n['diagram.Pie'] = 'Camembert';
 i18n['diagram.Pie Style'] = 'Style du Camembert';
 i18n['diagram.Lgend Style'] = 'Style de la légende';
+i18n['diagram.Diagram type'] = 'Type de diagramme';
+i18n['diagram.Vertical display (rotate graph)'] = 'Affichage vertical';
+i18n['diagram.Enable labels'] = 'Activer les libellés';
+i18n['diagram.Display metric name in label'] = 'Afficher le nom de la métrique dans le libellé'
