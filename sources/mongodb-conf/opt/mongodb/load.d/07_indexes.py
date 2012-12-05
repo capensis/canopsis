@@ -36,9 +36,11 @@ def init():
 		('connector_name',	1),
 		('resource',		1),
 		('component',		1),
-		('state',		1),
+		('state',			1),
 		('state_type',		1),
 		('event_type',		1),
+	])
+	storage.get_backend('events').ensure_index([
 		('tags', 		1)
 	])
 	
@@ -47,10 +49,17 @@ def init():
 		('connector_name',	1),
 		('resource',		1),
 		('component',		1),
-		('state',		1),
-		('state_type',		1),
-		('tags',		1),
+		('state',			1),
 		('event_type',		1),
+		
+	])
+	storage.get_backend('events_log').ensure_index([
+		('state_type',		1),
+	])
+	storage.get_backend('events_log').ensure_index([
+		('tags',			1)
+	])
+	storage.get_backend('events_log').ensure_index([
 		('timestamp',		1)
 	])
 
