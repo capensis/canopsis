@@ -29,7 +29,7 @@ function post_install(){
 	        break
 	    fi
 	    sleep 1
-	    rabbitmqadmin -H 127.0.0.1 list nodes &> /dev/null
+	    su - $HUSER -c "rabbitmqadmin -H 127.0.0.1 list nodes" &> /dev/null
 	    STATE=$?
 	    TRY=$((TRY + 1))
 	    echo -n "."
