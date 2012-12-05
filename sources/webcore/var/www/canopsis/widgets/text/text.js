@@ -136,7 +136,7 @@ Ext.define('widgets.text.text' , {
 			if(begin != -1){
 				//search end of val
 				var end = begin
-				while(_string[end] != '}' && i <= _string.length)
+				while(_string[end] != '}' && end <= _string.length)
 					end = end + 1
 
 				var_array.push(_string.slice(begin,end+1))
