@@ -21,37 +21,90 @@
 Ext.define('widgets.text.text' , {
 	extend: 'canopsis.lib.view.cwidget',
 	alias: 'widget.text',
+
+	//templateVars : undefined,
+	perfdataMetricList : undefined,
+	logAuthor: '[textWidget]',
+
 	initComponent: function() {
+		//get special values by parsing
+		var raw_var = this.extractVariables(this.text)
+
+		if(raw_var.length != 0){
+			//this.templateVars = []
+			this.perfdataMetricList = []
+
+			var extracted_vars = this.cleanVars(raw_var)
+
+			//replacing var in this.text by new var name
+			for(var i in extracted_vars){
+				var one_var = extracted_vars[i]
+				var metric_exploded_name = one_var[1]
+
+				//get rid of perfdata
+				if(metric_exploded_name[0] == 'perfdata')
+					metric_exploded_name = metric_exploded_name.slice(1,metric_exploded_name.length)
+
+				var new_var_name = '{'+metric_exploded_name.join('')+'}'
+				this.text = this.text.replace(new RegExp(one_var[0]),new_var_name)
+
+				//keep track of metrics : {load: value, load: unit }
+				try{
+					this.perfdataMetricList.push([metric_exploded_name[0],metric_exploded_name[1]]) 
+				}catch(err){
+					log.debug('No attribut specified for var '+metric_exploded_name[0],this.logAuthor)
+				}
+			}
+		}
+
 		//Initialisation of ext JS template
 		this.myTemplate = new Ext.XTemplate('<div>' + this.text + '</div>');
+
 		//Compilation of template ( to accelerate the render )
 		this.myTemplate.compile();
 		this.HTML = ''; // contains the html
 		this.callParent(arguments); // Initialization globale of the template
 	},
+
 	onRefresh: function(data) {
-		if (data)
-		{
-			if (this.nodes.length > 1)
-			{
-				var htmlArray = new Array();
-				for (i in data)
-				{
-					var obj = data[i];
-					obj.timestamp = rdr_tstodate(obj.timestamp);
-					htmlArray.push(this.myTemplate.apply(obj));
+		if (data){
+			if(data.perf_data_metrics.length){
+				if(Ext.Object.getKeys(this.perfdataMetricList).length != 0){
+					//loop on var in required perfdata
+					for(var i in this.perfdataMetricList){
+						var metric = this.perfdataMetricList[i][0]
+						var attribut = this.perfdataMetricList[i][1]
+
+						//if there webservice send the right metric
+						if(data.perf_data_metrics.indexOf(metric) != -1){
+							//search the right metric
+							for(var j in data.perf_data_array){
+								if(data.perf_data_array[j].metric == metric){
+									var attributName = this.perfdataMetricList[i].join('')
+									try{
+										var value = data.perf_data_array[j][attribut]
+										if( value != null && value != undefined)
+											if(Ext.isNumeric(value))
+												data[attributName] = rdr_humanreadable_value(value)
+											else
+												data[attributName] = value
+									}catch(err){
+										log.debug('metric : ' + metric + ' have no attribut ' + attribut )
+									}
+									break;
+								}
+								
+							}
+						}
+					}
 				}
-				this.HTML = htmlArray.join('');
 			}
-			else
-			{
-				if (this.nodes.length > 1)
-					for (i in data)
-						data[i].timestamp = rdr_tstodate(data[i].timestamp);
-				//If data exist we apply the template on the node
+
+			try{
 				data.timestamp = rdr_tstodate(data.timestamp);
 				this.HTML = this.myTemplate.apply(data);
-
+			}catch(err){
+				this.HTML = _('The model widget template is not supported, check if your variables use the correct template.')
 			}
 		}
 		else
@@ -61,6 +114,7 @@ Ext.define('widgets.text.text' , {
 		}
 		this.setHtml(this.HTML);
 	},
+
 	getNodeInfo: function() {
 		//we override the function : if there is'nt any nodeId specified we call the onRefresh function
 		if (! this.nodeId)
@@ -69,5 +123,41 @@ Ext.define('widgets.text.text' , {
 		}
 		//we call the parent which is applied when there is a nodeId specified.
 		this.callParent(arguments);
-	}
+	},
+
+	extractVariables: function(text){
+		//search specific value
+		var loop = true
+		var _string = text
+		var var_array = []
+		while(loop){
+			//search for val
+			var begin = _string.search(/{(.+:)+.+}/)
+			if(begin != -1){
+				//search end of val
+				var end = begin
+				while(_string[end] != '}' && i <= _string.length)
+					end = end + 1
+
+				var_array.push(_string.slice(begin,end+1))
+				_string = _string.slice(end,_string.length)
+			}else{
+				loop = false
+			}
+		}
+		return var_array
+	},
+
+	// return :  ['{var1:var2}',['var1','var2']]
+	cleanVars: function(array){
+		var output = []
+		for(var i in array)
+			output.push([
+					array[i],
+					array[i].slice(1,-1).split(':')
+				])
+		return output
+	},
+
+
 });
