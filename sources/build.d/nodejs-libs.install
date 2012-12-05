@@ -14,6 +14,9 @@ function npm_install(){
 }
 
 function install(){
+	# Install Package Offline
+	su - $HUSER -c "export NODE_PATH=$PREFIX/lib/node_modules && npm config set proxy http://127.0.0.1:9999"
+	
 	cd $SRC_PATH/externals
 
 	rm -R $PREFIX/.npm &> /dev/null || true
@@ -45,8 +48,8 @@ function install(){
 	npm_install amqp 0.1.3
 
 	# MongoDB
-	npm_install bson 0.0.5
-	npm_install mongodb 1.0.1
+	npm_install bson 0.1.5
+	npm_install mongodb 1.2.2
 
 	# Faye
 	npm_install cookiejar 1.3.0
