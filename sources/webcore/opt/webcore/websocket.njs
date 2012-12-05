@@ -238,7 +238,7 @@ var mongodb_find = function(collection_name, filter, options, callback, callback
 					callback_err(err)
 			}else{
 				if (callback)
-					callback(record)
+					callback(records)
 			}
 		});
 	}else{
