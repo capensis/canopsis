@@ -1,5 +1,5 @@
 yum clean all
 yum update
-yum install -y make gcc gcc-c++ zlib-devel libevent-devel libevent ncurses-devel curl-devel wget autoconf
+yum install -y make gcc gcc-c++ zlib-devel libevent-devel libevent ncurses-devel curl-devel wget autoconf automake libtool
 
 rm -f externals/python-libs/pycurl-7.18.2.tar.gz &> /dev/null || true
