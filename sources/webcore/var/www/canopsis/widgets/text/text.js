@@ -25,6 +25,7 @@ Ext.define('widgets.text.text' , {
 	//templateVars : undefined,
 	perfdataMetricList : undefined,
 	logAuthor: '[textWidget]',
+	specialCharRegex: /\//g,
 
 	initComponent: function() {
 		//get special values by parsing
@@ -46,6 +47,7 @@ Ext.define('widgets.text.text' , {
 					metric_exploded_name = metric_exploded_name.slice(1,metric_exploded_name.length)
 
 				var new_var_name = '{'+metric_exploded_name.join('')+'}'
+				new_var_name = new_var_name.replace(this.specialCharRegex, '')
 				this.text = this.text.replace(new RegExp(one_var[0]),new_var_name)
 
 				//keep track of metrics : {load: value, load: unit }
@@ -56,6 +58,7 @@ Ext.define('widgets.text.text' , {
 				}
 			}
 		}
+
 
 		//Initialisation of ext JS template
 		this.myTemplate = new Ext.XTemplate('<div>' + this.text + '</div>');
@@ -68,19 +71,23 @@ Ext.define('widgets.text.text' , {
 
 	onRefresh: function(data) {
 		if (data){
-			if(data.perf_data_metrics && data.perf_data_metrics.length){
-				if(Ext.Object.getKeys(this.perfdataMetricList).length != 0){
+			if(data.perf_data_array && data.perf_data_array.length){
+				if(this.perfdataMetricList.length != 0){
 					//loop on var in required perfdata
 					for(var i in this.perfdataMetricList){
 						var metric = this.perfdataMetricList[i][0]
 						var attribut = this.perfdataMetricList[i][1]
 
-						//if there webservice send the right metric
-						if(data.perf_data_metrics.indexOf(metric) != -1){
-							//search the right metric
+						log.debug('Metric searched is ' + metric,this.logAuthor)
+						log.debug('Attribut is ' + attribut,this.logAuthor)
+
+						//search the right metric
+						if(metric != undefined && metric != null){
 							for(var j in data.perf_data_array){
 								if(data.perf_data_array[j].metric == metric){
+									log.debug('  + '+attribut+'  found',this.logAuthor)
 									var attributName = this.perfdataMetricList[i].join('')
+									attributName = attributName.replace(this.specialCharRegex, '')
 									try{
 										var value = data.perf_data_array[j][attribut]
 										if( value != null && value != undefined)
@@ -93,7 +100,6 @@ Ext.define('widgets.text.text' , {
 									}
 									break;
 								}
-								
 							}
 						}
 					}
