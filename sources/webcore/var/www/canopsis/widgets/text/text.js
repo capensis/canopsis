@@ -72,7 +72,7 @@ Ext.define('widgets.text.text' , {
 	onRefresh: function(data) {
 		if (data){
 			if(data.perf_data_array && data.perf_data_array.length){
-				if(this.perfdataMetricList.length != 0){
+				if(this.perfdataMetricList && this.perfdataMetricList.length != 0){
 					//loop on var in required perfdata
 					for(var i in this.perfdataMetricList){
 						var metric = this.perfdataMetricList[i][0]
