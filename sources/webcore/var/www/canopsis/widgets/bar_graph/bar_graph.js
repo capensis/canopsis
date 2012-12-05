@@ -111,14 +111,7 @@ Ext.define('widgets.bar_graph.bar_graph' , {
 		if (this.columnDatalabels)
 		this.options.plotOptions.column.dataLabels = {
 			enabled: true,
-			//color: this.legend_fontColor,
-			style: {fontWeight: 'bold'},
-			formatter: function() {
-				if (this.y)
-					return '<b>' + this.y + '</b>';
-				else
-					return '';
-			}
+			formatter: function(){return rdr_humanreadable_value(this.y, this.point.bunit)}
 		};
 
 		if (this.verticalDisplay)
