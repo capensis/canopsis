@@ -38,6 +38,7 @@ def init():
 		('component',		1),
 		('state',		1),
 		('state_type',		1),
+		('event_type',		1),
 		('tags', 		1)
 	])
 	
@@ -49,6 +50,7 @@ def init():
 		('state',		1),
 		('state_type',		1),
 		('tags',		1),
+		('event_type',		1),
 		('timestamp',		1)
 	])
 
