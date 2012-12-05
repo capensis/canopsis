@@ -68,7 +68,7 @@ Ext.define('widgets.text.text' , {
 
 	onRefresh: function(data) {
 		if (data){
-			if(data.perf_data_metrics.length){
+			if(data.perf_data_metrics && data.perf_data_metrics.length){
 				if(Ext.Object.getKeys(this.perfdataMetricList).length != 0){
 					//loop on var in required perfdata
 					for(var i in this.perfdataMetricList){
