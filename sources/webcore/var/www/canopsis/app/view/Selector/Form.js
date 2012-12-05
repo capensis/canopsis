@@ -28,7 +28,8 @@ Ext.define('canopsis.view.Selector.Form', {
 	requires: [
 		'canopsis.lib.form.field.cfieldset',
 		'canopsis.lib.form.field.cinventory',
-		'canopsis.lib.form.field.cfilter'
+		'canopsis.lib.form.field.cfilter',
+		'canopsis.lib.form.field.cduration'
 	],
 
 	fieldDefaults: {
