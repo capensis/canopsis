@@ -41,7 +41,7 @@ def init():
 		('event_type',		1),
 	])
 	storage.get_backend('events').ensure_index([
-		('tags', 		1)
+		('tags', 			1)
 	])
 	
 	logger.info(" + Create index of 'events_log'")
@@ -58,6 +58,9 @@ def init():
 	])
 	storage.get_backend('events_log').ensure_index([
 		('tags',			1)
+	])
+	storage.get_backend('events_log').ensure_index([
+		('referer',			1)
 	])
 	storage.get_backend('events_log').ensure_index([
 		('timestamp',		1)
