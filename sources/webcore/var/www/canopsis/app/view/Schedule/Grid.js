@@ -26,6 +26,8 @@ Ext.define('canopsis.view.Schedule.Grid' , {
 	model: 'Schedule',
 	store: 'Schedules',
 
+	opt_paging: false,
+
 	opt_db_namespace: 'object',
 
 	opt_menu_delete: true,

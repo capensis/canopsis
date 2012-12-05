@@ -29,7 +29,7 @@ Ext.define('canopsis.view.Account.Grid' , {
 	store: 'Accounts',
 
 	opt_grouping: true,
-	opt_paging: true,
+	opt_paging: false,
 	opt_menu_delete: true,
 	opt_menu_rights: false,
 	opt_menu_authKey: true,
