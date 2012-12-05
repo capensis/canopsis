@@ -204,7 +204,7 @@ var mongodb_collections = {}
 var init_mongo = function(callback){
 	log.info("Connect to MongoDB ...", "mongodb")
 	mongodb_server = new mongodb.Server(config.mongodb.host, parseInt(config.mongodb.port), {})
-	mongodb_client = new mongodb.Db(config.mongodb.db, mongodb_server);
+	mongodb_client = new mongodb.Db(config.mongodb.db, mongodb_server, {safe:false});
 
 	mongodb_client.open(function(err, p_client) {
 		if (err) {
@@ -238,7 +238,7 @@ var mongodb_find = function(collection_name, filter, options, callback, callback
 					callback_err(err)
 			}else{
 				if (callback)
-					callback(record)
+					callback(records)
 			}
 		});
 	}else{
