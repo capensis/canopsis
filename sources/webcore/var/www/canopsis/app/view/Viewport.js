@@ -48,7 +48,7 @@ Ext.define('canopsis.view.Viewport', {
 			collapsible: true,
 			preventHeader: true,
 			placeholder: {
-				xtype: 'Ext.panel.Header',
+				xtype: 'header',
 				height: 5,
 				listeners: {
 					mouseover: {
