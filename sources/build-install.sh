@@ -407,6 +407,11 @@ if [ $OPT_BUILD -eq 1 ]; then
 	######################################
 	#  Build all packages
 	######################################
+
+	# Pre-build
+	if [ -e "$SRC_PATH/pre-build.sh" ]; then
+		. $SRC_PATH/pre-build.sh
+	fi
 	
 	ITEMS=`ls -1 $INST_CONF | grep ".install$"`
 	
@@ -498,6 +503,11 @@ if [ $OPT_BUILD -eq 1 ]; then
 	chown $HUSER:$HGROUP -R $PREFIX
 	check_code $?
 	echo " + Ok"
+
+	# Post-build
+	if [ -e "$SRC_PATH/post-build.sh" ]; then
+		. $SRC_PATH/post-build.sh
+	fi
 	
 	if [ $OPT_WUT -eq 1 ]; then
 		echo "################################"
