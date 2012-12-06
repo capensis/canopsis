@@ -336,6 +336,8 @@ def perfstore_perftop():
 
 			for metric in metrics:				
 				if check_threshold(metric['lv']):
+					if 'ma' in metric and 'lv' in metric:
+						metric['pct'] = round(((metric['lv'] * 100)/ metric['ma']) * 100) / 100
 					data.append(metric)
 		else:
 			# Compute values
@@ -363,6 +365,8 @@ def perfstore_perftop():
 				if mtype != 'COUNTER' and not expand:
 					logger.debug(" + Metric '%s' (%s) is not a COUNTER" % (metric['me'], metric['_id']))
 					if check_threshold(metric['lv']):
+						if 'ma' in metric and 'lv' in metric:
+							metric['pct'] = round(((metric['lv'] * 100)/ metric['ma']) * 100) / 100
 						data.append(metric)
 				else:
 					points = manager.get_points(_id=metric['_id'], tstart=tstart, tstop=tstop)
@@ -377,6 +381,8 @@ def perfstore_perftop():
 									nmetric = metric.copy()
 									nmetric['lts'] = point[0]
 									nmetric['lv'] = point[1]
+									if 'ma' in nmetric and 'lv' in nmetric:
+										nmetric['pct'] = round(((nmetric['lv'] * 100)/ nmetric['ma']) * 100) / 100
 									data.append(nmetric)
 					else:
 						if len(points):
@@ -385,6 +391,8 @@ def perfstore_perftop():
 							metric['lv'] = 0
 
 						if check_threshold(metric['lv']):
+							if 'ma' in metric and 'lv' in metric:
+								metric['pct'] = round(((metric['lv'] * 100)/ metric['ma']) * 100) / 100
 							data.append(metric)
 				
 			reverse = True

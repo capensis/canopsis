@@ -147,12 +147,11 @@ Ext.define('widgets.perftop.perftop' , {
 					header: _('Percent'),
 					width: 100,
 					sortable: false,
-					dataIndex: 'lv',
+					dataIndex: 'pct',
 					align: 'right',
 					renderer: function(value, metaData, record) {
-						var max = record.get('ma');
-						if (max)
-							return (Math.round(((value * 100) / max) * 100) / 100) + '%';
+						if (value != undefined)
+							return value + '%';
 						else
 							return _('N/A');
 					}
