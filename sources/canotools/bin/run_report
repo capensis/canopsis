@@ -21,6 +21,7 @@
 import sys, os, getopt, urllib2, urllib, cookielib, traceback, argparse
 import logging
 import time
+from datetime import date
 from optparse import OptionParser
 
 try:
@@ -100,7 +101,9 @@ if not args.nofile:
 	if args.filename:
 		path = '%s%s' % (path,args.filename)
 	else:
-		path = '%s%s%s%s' % (path,args.view_id,tsStart,tsStop)
+		dateStart = date.fromtimestamp(tsStart).isoformat()
+		dateStop = date.fromtimestamp(tsStop).isoformat()
+		path = '%s%s__%s_%s' % (path,args.view_id,dateStart,dateStop)
 
 	if path.find('.pdf') == -1:
 		path = '%s.pdf' % path 
