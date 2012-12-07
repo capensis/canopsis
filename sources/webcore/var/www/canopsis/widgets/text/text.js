@@ -126,9 +126,29 @@ Ext.define('widgets.text.text' , {
 		if (! this.nodeId)
 		{
 			this.onRefresh(false);
+		}else{
+			Ext.Ajax.request({
+				url: this.baseUrl,
+				scope: this,
+				method: "GET",
+				params:{_id : this.nodeId},
+				success: function(response) {
+					var data = Ext.JSON.decode(response.responseText);
+					if (this.nodeId.length > 1)
+						data = data.data;
+					else
+						data = data.data[0];
+					this._onRefresh(data);
+				},
+				failure: function(result, request) {
+					log.error('Impossible to get Node informations, Ajax request failed ... (' + request.url + ')', this.logAuthor);
+				}
+			});
+
+
 		}
 		//we call the parent which is applied when there is a nodeId specified.
-		this.callParent(arguments);
+		//this.callParent(arguments);
 	},
 
 	extractVariables: function(text){
