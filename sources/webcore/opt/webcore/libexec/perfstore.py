@@ -283,17 +283,21 @@ def perfstore_perftop():
 	threshold				= request.params.get('threshold', default=None)
 	threshold_direction 	= int(request.params.get('threshold_direction', default=-1))
 	expand 					= request.params.get('expand', default=False)
-	percent					= bool(request.params.get('percent', default=False))
+	percent					= request.params.get('percent', default=False)
 	threshold_on_pct		= request.params.get('threshold_on_pct', default=False)
 
 	if percent == 'true':
 		percent = True
+	elif percent == 'false':
+		percent = False
 
 	if threshold_on_pct == 'true':
 		threshold_on_pct = True
+	elif threshold_on_pct == 'false':
+		threshold_on_pct = False
 	
 	sort_on_percent = False
-	if percent:
+	if percent == True:
 		sort_on_percent = True
 
 	if mfilter:
@@ -349,7 +353,7 @@ def perfstore_perftop():
 				metrics = [metrics]
 
 			for metric in metrics:
-				if percent and 'ma' in metric and 'lv' in metric:
+				if (percent or threshold_on_pct) and 'ma' in metric and 'lv' in metric:
 					metric['pct'] = round(((metric['lv'] * 100)/ metric['ma']) * 100) / 100
 				
 				if threshold_on_pct:
@@ -385,7 +389,7 @@ def perfstore_perftop():
 				if mtype != 'COUNTER' and not expand:
 					logger.debug(" + Metric '%s' (%s) is not a COUNTER" % (metric['me'], metric['_id']))
 
-					if percent and 'ma' in metric and 'lv' in metric:
+					if (percent or threshold_on_pct) and 'ma' in metric and 'lv' in metric:
 							metric['pct'] = round(((metric['lv'] * 100)/ metric['ma']) * 100) / 100
 
 					if threshold_on_pct:
@@ -408,7 +412,7 @@ def perfstore_perftop():
 									nmetric = metric.copy()
 									nmetric['lts'] = point[0]
 									nmetric['lv'] = point[1]
-									if percent and 'ma' in nmetric and 'lv' in nmetric:
+									if (percent or threshold_on_pct) and 'ma' in nmetric and 'lv' in nmetric:
 										nmetric['pct'] = round(((nmetric['lv'] * 100)/ nmetric['ma']) * 100) / 100
 									data.append(nmetric)
 					else:
@@ -417,7 +421,7 @@ def perfstore_perftop():
 						else:
 							metric['lv'] = 0
 
-						if percent and 'ma' in metric and 'lv' in metric:
+						if (percent or threshold_on_pct) and 'ma' in metric and 'lv' in metric:
 								metric['pct'] = round(((metric['lv'] * 100)/ metric['ma']) * 100) / 100
 
 						if threshold_on_pct:
