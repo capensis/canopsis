@@ -29,23 +29,63 @@ try:
 except:
 	import simplejson as json
 
+
+def authentificate(server,authkey):
+	cj = cookielib.CookieJar()
+	opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cj))
+	r = opener.open('http://%s/autoLogin/%s' % (server,authkey))
+	r = opener.open('http://%s/account/me' % server)
+
+	try:
+		response = json.loads(r.read())
+	except Exception, err:
+		print('Error: bad response from server %s' % err)
+		
+	if not response['success']:
+		print('Bad authkey, no matching with any user')
+		sys.exit()
+
+	return opener
+
+
 logging.basicConfig()
 logger = logging.getLogger('launch_report')
 unit = {"s" : 1, "m" : 60, "h" : 60*60, "d" : 60*60*24, "w" : 60*60*24*7, "M" : 60*60*24*30, "y" : 60*60*24*365}
 
-parser = argparse.ArgumentParser(description='Launch canopsis report through cmd')
+parser = argparse.ArgumentParser(description='Launch canopsis report through cmd (type "run_report your_authkey -l" to list views)')
 parser.add_argument('authkey', help='The user auth key') 
-parser.add_argument('time_interval', help='int + char y/M/w/d/h/m/s')
-parser.add_argument('view_id', help='Canopsis view id')
+parser.add_argument('time_interval', help='int + char y/M/w/d/h/m/s', nargs='?')
+parser.add_argument('view_id', help='Canopsis view id', nargs='?')
 parser.add_argument('-o','--output-file', help='The output file full path',dest='output_file')
 parser.add_argument('-f', '--file-name', help='Auto generated if not provided',dest='filename')
 parser.add_argument('-s','--server', help='The canopsis webserver',default="127.0.0.1:8082", dest='server')
 parser.add_argument('--no-file', help="Don't save file after reporting",action="count",dest='nofile')
+parser.add_argument('-l','--list', help='list all views with their ids',action="count", dest='list')
 
 args = parser.parse_args()
 if len(sys.argv)==1:
     parser.print_help()
     sys.exit(1)
+
+server,authkey = args.server,args.authkey
+opener = authentificate(server,authkey)
+
+####check if request listing
+if not args.list == None:
+	request = urllib2.Request('http://%s/rest/object/view' % server)
+	r = opener.open(request)
+	json_output = json.loads(r.read())
+	for view in json_output['data']:
+		print 'id: %s   name: %s' % (view['_id'],view['crecord_name'])
+	sys.exit(0)
+
+if not args.time_interval:
+	print('You must provide time_interval')
+	sys.exit(0)
+
+if not args.view_id:
+	print('You must provide one view_id')
+	sys.exit(0)
 
 #######Time interval process
 time_interval = args.time_interval
@@ -62,22 +102,6 @@ try:
 except Exception,err:
 	logger.error("Unrecognized time interval: %s" %err) 
 	sys.exit(1)
-
-######authentificate
-server,authkey = args.server,args.authkey
-cj = cookielib.CookieJar()
-opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cj))
-r = opener.open('http://%s/autoLogin/%s' % (server,authkey))
-r = opener.open('http://%s/account/me' % server)
-
-try:
-	response = json.loads(r.read())
-except Exception, err:
-	print('Error: bad response from server %s' % err)
-	
-if not response['success']:
-	print('Bad authkey, no matching with any user')
-	sys.exit()
 
 #####launch report
 tsStop = int(time.time())
