@@ -63,7 +63,9 @@ Ext.define('widgets.perftop.perftop' , {
 									'mfilter': this.mfilter,
 									'threshold': this.threshold,
 									'threshold_direction': this.threshold_direction,
-									'expand': this.expand
+									'expand': this.expand,
+									'percent': this.show_percent,
+									'threshold_on_pct': this.threshold_on_pct
 								},
 					reader: {
 						type: 'json',

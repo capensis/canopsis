@@ -283,6 +283,18 @@ def perfstore_perftop():
 	threshold				= request.params.get('threshold', default=None)
 	threshold_direction 	= int(request.params.get('threshold_direction', default=-1))
 	expand 					= request.params.get('expand', default=False)
+	percent					= bool(request.params.get('percent', default=False))
+	threshold_on_pct		= request.params.get('threshold_on_pct', default=False)
+
+	if percent == 'true':
+		percent = True
+
+	if threshold_on_pct == 'true':
+		threshold_on_pct = True
+	
+	sort_on_percent = False
+	if percent:
+		sort_on_percent = True
 
 	if mfilter:
 		try:
@@ -307,6 +319,8 @@ def perfstore_perftop():
 	logger.debug(" + time_window: %s" % time_window)
 	logger.debug(" + sort:        %s" % sort)
 	logger.debug(" + expand:       %s" % expand)
+	logger.debug(" + percent:       %s" % percent)
+	logger.debug(" + threshold_on_pct:       %s" % threshold_on_pct)
 
 	mfilter =  clean_mfilter(mfilter)
 	
@@ -334,10 +348,16 @@ def perfstore_perftop():
 			if isinstance(metrics, dict):
 				metrics = [metrics]
 
-			for metric in metrics:				
-				if check_threshold(metric['lv']):
-					if 'ma' in metric and 'lv' in metric:
-						metric['pct'] = round(((metric['lv'] * 100)/ metric['ma']) * 100) / 100
+			for metric in metrics:
+				if percent and 'ma' in metric and 'lv' in metric:
+					metric['pct'] = round(((metric['lv'] * 100)/ metric['ma']) * 100) / 100
+				
+				if threshold_on_pct:
+					val = metric['pct']
+				else:
+					val = metric['lv']
+
+				if check_threshold(val):
 					data.append(metric)
 		else:
 			# Compute values
@@ -364,9 +384,16 @@ def perfstore_perftop():
 
 				if mtype != 'COUNTER' and not expand:
 					logger.debug(" + Metric '%s' (%s) is not a COUNTER" % (metric['me'], metric['_id']))
-					if check_threshold(metric['lv']):
-						if 'ma' in metric and 'lv' in metric:
+
+					if percent and 'ma' in metric and 'lv' in metric:
 							metric['pct'] = round(((metric['lv'] * 100)/ metric['ma']) * 100) / 100
+
+					if threshold_on_pct:
+						val = metric['pct']
+					else:
+						val = metric['lv']
+
+					if check_threshold(val):
 						data.append(metric)
 				else:
 					points = manager.get_points(_id=metric['_id'], tstart=tstart, tstop=tstop)
@@ -381,7 +408,7 @@ def perfstore_perftop():
 									nmetric = metric.copy()
 									nmetric['lts'] = point[0]
 									nmetric['lv'] = point[1]
-									if 'ma' in nmetric and 'lv' in nmetric:
+									if percent and 'ma' in nmetric and 'lv' in nmetric:
 										nmetric['pct'] = round(((nmetric['lv'] * 100)/ nmetric['ma']) * 100) / 100
 									data.append(nmetric)
 					else:
@@ -390,15 +417,24 @@ def perfstore_perftop():
 						else:
 							metric['lv'] = 0
 
-						if check_threshold(metric['lv']):
-							if 'ma' in metric and 'lv' in metric:
+						if percent and 'ma' in metric and 'lv' in metric:
 								metric['pct'] = round(((metric['lv'] * 100)/ metric['ma']) * 100) / 100
+
+						if threshold_on_pct:
+							val = metric['pct']
+						else:
+							val = metric['lv']
+
+						if check_threshold(val):
 							data.append(metric)
 				
-			reverse = True
-			if sort == 1:
-				reverse = False	
-				
+		reverse = True
+		if sort == 1:
+			reverse = False	
+
+		if sort_on_percent:
+			data = sorted(data, key=lambda k: k['pct'], reverse=reverse)[:limit]
+		else:
 			data = sorted(data, key=lambda k: k['lv'], reverse=reverse)[:limit]
 	else:
 		logger.debug("No records found")
