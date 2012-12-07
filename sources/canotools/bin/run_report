@@ -61,6 +61,7 @@ parser.add_argument('-f', '--file-name', help='Auto generated if not provided',d
 parser.add_argument('-s','--server', help='The canopsis webserver',default="127.0.0.1:8082", dest='server')
 parser.add_argument('--no-file', help="Don't save file after reporting",action="count",dest='nofile')
 parser.add_argument('-l','--list', help='list all views with their ids',action="count", dest='list')
+parser.add_argument('-d','--delete', help='Delete file in breifcase after saving on hdd',action="count")
 
 args = parser.parse_args()
 if len(sys.argv)==1:
@@ -136,5 +137,18 @@ if not args.nofile:
 	file.write(r.read())
 	file.close()
 
-	print('%s saved' % path)
+	print(' + %s saved' % path)
+
+	if args.delete != None:
+		request = urllib2.Request('http://%s/files/%s' % (server,json_output['data']['id']))
+		request.get_method = lambda: 'DELETE'
+		r = opener.open(request)
+		try:
+			json.output = json.loads(r.read())
+			if json_output['success']:
+				print(' + File successfuly removed from canopsis briefcase')
+		except Exception as err:
+			logger.error('Error when trying to remove file: %s' % err)
+
+
 
