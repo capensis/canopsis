@@ -18,32 +18,24 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 */
-Ext.define('canopsis.controller.Consolidation', {
-	extend: 'canopsis.lib.controller.cgrid',
-
-	views: ['Consolidation.Grid', 'Consolidation.Form'],
-	stores: ['Consolidations'],
-	models: ['Consolidation'],
-
-	logAuthor: '[controller][Consolidation]',
-
-	init: function() {
-		log.debug('Initialize ...', this.logAuthor);
-
-		this.formXtype = 'ConsolidationForm';
-		this.listXtype = 'ConsolidationGrid';
-
-		this.modelId = 'Consolidation';
-
-		this.callParent(arguments);
-
-		//needed for weather widget
-		global.selectorCtrl = this;
-	},
-	/*
-	_saveForm: function(form,store) {
-		console.log(form.getValues())
-	}
-	*/
-
+Ext.define('canopsis.model.Consolidation', {
+	extend: 'Ext.data.Model',
+	fields: [
+		{name: '_id'},
+		{name: 'id', mapping: '_id'},
+		{name: 'crecord_type', defaultValue: 'consolidation'},
+		{name: 'mfilter'},
+		{name: 'crecord_name'},
+		{name: 'display_name', defaultValue: ''},
+		{name: 'aaa_access_owner', defaultValue: ['r', 'w']},
+		{name: 'aaa_admin_group'},
+		{name: 'aaa_access_group', defaultValue: ['r']},
+		{name: 'aaa_access_other'},
+		{name: 'aaa_group', defaultValue: 'group.CPS_selector_admin'},
+		{name: 'aaa_owner'},
+		{name: 'loaded', defaultValue: false},
+		{name: 'state'},
+		{name: 'enable', defaultValue: true},
+		{name: 'output', defaultValue: ''}
+	]
 });

@@ -18,32 +18,31 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 */
-Ext.define('canopsis.controller.Consolidation', {
-	extend: 'canopsis.lib.controller.cgrid',
 
-	views: ['Consolidation.Grid', 'Consolidation.Form'],
-	stores: ['Consolidations'],
-	models: ['Consolidation'],
+Ext.define('canopsis.store.Consolidations', {
+    extend: 'canopsis.lib.store.cstore',
+	model: 'canopsis.model.Consolidation',
 
-	logAuthor: '[controller][Consolidation]',
+	storeId: 'store.Consolidations',
 
-	init: function() {
-		log.debug('Initialize ...', this.logAuthor);
+	autoLoad: true,
+	autoSync: true,
 
-		this.formXtype = 'ConsolidationForm';
-		this.listXtype = 'ConsolidationGrid';
-
-		this.modelId = 'Consolidation';
-
-		this.callParent(arguments);
-
-		//needed for weather widget
-		global.selectorCtrl = this;
-	},
-	/*
-	_saveForm: function(form,store) {
-		console.log(form.getValues())
+	proxy: {
+		type: 'rest',
+		url: '/rest/object/consolidation',
+		batchActions: true,
+		appendId: false,
+		reader: {
+			type: 'json',
+			root: 'data',
+			totalProperty: 'total',
+			successProperty: 'success'
+		},
+		writer: {
+			type: 'json',
+			writeAllFields: false
+		}
 	}
-	*/
 
 });

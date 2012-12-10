@@ -23,8 +23,8 @@ Ext.define('canopsis.view.Consolidation.Grid' , {
 
 	alias: 'widget.ConsolidationGrid',
 
-	model: 'Perfdata',
-	store: 'Selectors',
+	model: 'Consolidation',
+	store: 'Consolidations',
 
 	opt_db_namespace: 'object',
 
