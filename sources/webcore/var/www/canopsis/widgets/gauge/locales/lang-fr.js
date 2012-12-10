@@ -19,30 +19,11 @@
 # ---------------------------------
 */
 
-Ext.define('canopsis.store.Selectors', {
-    extend: 'canopsis.lib.store.cstore',
-	model: 'canopsis.model.Selector',
-
-	storeId: 'store.Selectors',
-	pageSize: 5000,
-  	autoLoad: true,
-	autoSync: true,
-
-	proxy: {
-		type: 'rest',
-		url: '/rest/object/selector',
-		batchActions: true,
-		appendId: false,
-		reader: {
-			type: 'json',
-			root: 'data',
-			totalProperty: 'total',
-			successProperty: 'success'
-		},
-		writer: {
-			type: 'json',
-			writeAllFields: false
-		}
-	}
-
-});
+i18n['gauge.Show Min & Max'] = 'Montrer Min & Max';
+i18n['gauge.Display value unit'] = "Afficher l'unité";
+i18n['gauge.Use crit/warn threshold'] = "Afficher les seuils de critique/alerte";
+i18n['gauge.Gauge width scale'] = "Largeur de la jauge";
+i18n['gauge.Start color'] = "Couleur de début";
+i18n['gauge.Stop/critic color'] = "Couleur de fin/critique";
+i18n['gauge.Warn color'] = "Couleur d'alerte";
+i18n['gauge.Gauge color'] = "Couleur de la jauge";

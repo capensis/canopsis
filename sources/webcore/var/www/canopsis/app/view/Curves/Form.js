@@ -41,6 +41,7 @@ Ext.define('canopsis.view.Curves.Form', {
 				fieldLabel: _('Dash style'),
 				queryMode: 'local',
 				displayField: 'text',
+				editable: false,
 				valueField: 'value',
 				store: {
 					xtype: 'store',

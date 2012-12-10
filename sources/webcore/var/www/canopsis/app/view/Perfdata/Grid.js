@@ -97,19 +97,28 @@ Ext.define('canopsis.view.Perfdata.Grid' , {
 				width: 100,
 				sortable: true,
 				dataIndex: 'mi',
-				align: 'right'
+				align: 'right',
+				renderer: function(value, metaData, record) {
+						return rdr_humanreadable_value(value, record.get('u'));
+					}
 		},{
 				header: _('Max'),
 				width: 100,
 				sortable: true,
 				dataIndex: 'ma',
-				align: 'right'
+				align: 'right',
+				renderer: function(value, metaData, record) {
+						return rdr_humanreadable_value(value, record.get('u'));
+					}
 		},{
 				header: _('Last value'),
 				width: 100,
 				sortable: true,
 				dataIndex: 'lv',
-				align: 'right'
+				align: 'right',
+				renderer: function(value, metaData, record) {
+						return rdr_humanreadable_value(value, record.get('u'));
+					}
 		},{
 				header: _('Unit'),
 				width: 45,

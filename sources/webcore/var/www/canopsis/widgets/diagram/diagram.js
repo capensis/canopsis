@@ -67,10 +67,10 @@ Ext.define('widgets.diagram.diagram' , {
 
 	nameInLabelFormatter: false,
 
-	labelFormatter: function() {return '<b>' + this.point.name + '</b>: ' + Math.round(this.percentage) + ' %';},
+	labelFormatterPct: function() {	return '<b>' + this.point.metric + '</b>: ' + Math.round(this.percentage) + '%';},
+	labelFormatterBar: function() {	return '<b>' + this.x + '</b>: ' + rdr_humanreadable_value(this.y, this.point.bunit)},
 
-	labelFormatterBar: function() {return '<b>' + this.x + '</b>: ' + rdr_humanreadable_value(this.y)},
-	labelFormatterWithoutName: function() {return rdr_humanreadable_value(this.y)},
+	labelFormatterWithoutName: function() {return rdr_humanreadable_value(this.y, this.point.bunit)},
 
 	initComponent: function() {
 		this.backgroundColor	= check_color(this.backgroundColor);
@@ -166,7 +166,7 @@ Ext.define('widgets.diagram.diagram' , {
 						enabled: this.labels,
                         color: '#000000',
                         connectorColor: '#000000',
-                        formatter: this.labelFormatter
+                        formatter: (this.nameInLabelFormatter) ? this.labelFormatterPct : this.labelFormatterWithoutName
 					},
 					showInLegend: true,
 					animation: false,
@@ -464,15 +464,6 @@ Ext.define('widgets.diagram.diagram' , {
 		}
 	},
 
-	/*
-	tooltipFunction: function() {
-		if(this.diagram_type)
-			return this.point.name + ': ' + Math.round(this.percentage * 1000) / 1000 + ' %';
-		else
-			return this.key+': ' + this.y
-	},
-	*/
-
 	tooltip_formatter: function() {
 
 		var formatter = function(options, value) {
@@ -480,7 +471,7 @@ Ext.define('widgets.diagram.diagram' , {
 				value = - value;
 
 			value = rdr_humanreadable_value(value, options.bunit);
-			return options.name + ': ' + value;
+			return '<b>' + options.metric + '</b>: ' + value;
 		};
 
 		var s = '';

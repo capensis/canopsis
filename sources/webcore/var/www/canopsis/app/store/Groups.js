@@ -23,6 +23,7 @@ Ext.define('canopsis.store.Groups', {
 	model: 'canopsis.model.Group',
 
 	storeId: 'store.Groups',
+	pageSize: 5000,
 
 	autoLoad: true,
 	autoSync: true,

@@ -53,7 +53,8 @@ function post_install(){
 	check_code $?
 
 	echo " + Fix permissions..."
-	chown $HUSER:$HGROUP -R $PREFIX
+	chown $HUSER:$HGROUP $PREFIX
+	chown $HUSER:$HGROUP -R $PREFIX/*
 	check_code $?
 }
 

@@ -47,11 +47,11 @@ def init():
 
 	### Components
 	data = { 'xtype': 'list', 'show_tags': True,'fitler_buttons': True, 'filter': '{"$and": [{"source_type":"component"}, {"event_type": {"$ne": "comment"}}, {"event_type": {"$ne": "user"}}]}', 'show_resource': False}
-	create_view('components', 'Components', data)
+	create_view('components', 'Components', data, internal=True)
 
 	### Resources
 	data = { 'xtype': 'list', 'show_tags': True,'fitler_buttons': True, 'filter': '{"$and": [{"source_type":"resource"}, {"event_type": {"$ne": "comment"}}, {"event_type": {"$ne": "user"}}]}'}
-	create_view('resources', 'Resources', data)
+	create_view('resources', 'Resources', data, internal=True)
 
 	### View manager
 	data = { 'xtype': 'ViewTreePanel'}

@@ -204,7 +204,7 @@ var mongodb_collections = {}
 var init_mongo = function(callback){
 	log.info("Connect to MongoDB ...", "mongodb")
 	mongodb_server = new mongodb.Server(config.mongodb.host, parseInt(config.mongodb.port), {})
-	mongodb_client = new mongodb.Db(config.mongodb.db, mongodb_server);
+	mongodb_client = new mongodb.Db(config.mongodb.db, mongodb_server, {safe:false});
 
 	mongodb_client.open(function(err, p_client) {
 		if (err) {
@@ -235,12 +235,16 @@ var mongodb_find = function(collection_name, filter, options, callback, callback
 				log.error("Find "+collection_name+" "+filter+":", "mongodb");
 				log.error(err, "mongodb");
 				if (callback_err)
-					return callback_err(err)
-			}else
-				return callback(records)
+					callback_err(err)
+			}else{
+				if (callback)
+					callback(records)
+			}
 		});
 	}else{
-		callback_err()
+		log.error("MongoDB Client is not ready", "mongodb");
+		if (callback_err)
+			callback_err()
 	}		
 }
 
@@ -254,12 +258,16 @@ var mongodb_findOne = function(collection_name, filter, options, callback, callb
 				log.error("FindOne "+collection_name+" "+filter+":", "mongodb");
 				log.error(err, "mongodb");
 				if (callback_err)
-					return callback_err(err)
-			}else
-				return callback(record)
+					callback_err(err)
+			}else{
+				if (callback)
+					callback(record)
+			}
 		});
 	}else{
-		callback_err()
+		log.error("MongoDB Client is not ready", "mongodb");
+		if (callback_err)
+			callback_err()
 	}
 }
 
@@ -452,6 +460,7 @@ var init_now = function(callback){
 	////////////////// RPC	
 	everyone.now.auth = function(callback){
 		var clientId = this.user.clientId
+		log.info("Auth " + this.now.authId + " ..." , "nowjs");
 		check_authToken(clientId, this.now.authId, this.now.authToken, callback)
 	}
 	
@@ -633,7 +642,7 @@ process.on('SIGTERM', function () {
 
 read_config(function(){
 	log.debug("Configurations:", "main")
-	config.nowjs.debug = (config.nowjs.debug === 'true')
+	config.nowjs.debug = (config.nowjs.debug === 'true') || (config.nowjs.debug === 'True')
 	
 	// Force debug
 	//config.nowjs.debug = true

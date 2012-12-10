@@ -15,6 +15,23 @@ hypcontrol stop
 hypcontrol start
 sleep 1
 
+echo -n "Wait RabbitMQ ..."
+STATE=1
+TRY=0
+while [ $STATE -ne 0 ]; do
+    if [ $TRY -eq 30 ]; then
+        break
+    fi
+    sleep 1
+    rabbitmqadmin -H 127.0.0.1 list nodes &> /dev/null
+    STATE=$?
+    TRY=$((TRY + 1))
+    echo -n "."
+done
+echo
+check_code $STATE "Failed to join RabbitMQ ..."
+sleep 1
+
 cd $HOME
 
 UNITTESTS=`find ./ | grep Myunittest.py`
