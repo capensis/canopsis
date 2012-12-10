@@ -86,8 +86,8 @@ def init():
 	create_view('topology_manager', 'Topologies', data, internal=True)
 
 	### Aggragations
-	data = { 'xtype': 'AggregationGrid'}
-	create_view('aggregation_manager', 'Aggregations', data, internal=False)
+	data = { 'xtype': 'ConsolidationGrid'}
+	create_view('Consolidation_manager', 'Consolidation', data, internal=False)
 
 	###metric_navigator
 	#data = {'xtype': 'MetricNavigation'}
