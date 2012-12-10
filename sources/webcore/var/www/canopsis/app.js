@@ -74,7 +74,8 @@ function createApplication(){
 			'Selector',
 			'Derogation',
 			'Perfdata',
-			'Topology'
+			'Topology',
+			'Aggregation'
 		],
 	
 		//autoCreateViewport: true,
