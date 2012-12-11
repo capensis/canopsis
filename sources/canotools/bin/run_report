@@ -76,8 +76,13 @@ if not args.list == None:
 	request = urllib2.Request('http://%s/rest/object/view' % server)
 	r = opener.open(request)
 	json_output = json.loads(r.read())
+
+	print 'View ID\t\t\t\tName'
+	print '--------------------------------------------'
 	for view in json_output['data']:
-		print 'id: %s   name: %s' % (view['_id'],view['crecord_name'])
+		if not view.get('internal', False):
+			print '%s\t%s' % (view['_id'], view['crecord_name'])
+
 	sys.exit(0)
 
 if not args.time_interval:
