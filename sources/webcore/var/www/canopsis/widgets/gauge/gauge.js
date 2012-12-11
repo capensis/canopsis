@@ -216,7 +216,7 @@ Ext.define('widgets.gauge.gauge' , {
 						this.createGauge();
 
 					this.lastValue = data.values[data.values.length - 1][1];
-					this.gauge.refresh(Math.round(this.lastValue * 100) / 100);
+					this.gauge.refresh(this.lastValue);
 				}
 			}catch (err) {
 				log.error('Error while set value:' + err, this.logAuthor);
