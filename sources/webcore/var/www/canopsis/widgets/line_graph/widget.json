@@ -210,6 +210,53 @@
 						]
 					}]
 		},{
+			"title": "Operators",
+			"items" : [{
+						"xtype": "fieldset",
+						"title": "Apply optional operator between metrics",
+						"collapsible": false,
+						"items": [
+							{
+								"xtype"      : "fieldcontainer",
+								"defaultType": "radiofield",
+								"defaults": {"flex": 1},
+								"layout": "hbox",
+								"items": [
+								    {
+								        "boxLabel"  : "Mean",
+								        "name"      : "consolidation",
+								        "inputValue": "mean"
+								    },{
+								        "boxLabel"  : "Sum",
+								        "name"      : "consolidation",
+								        "inputValue": "sum"
+								    },{
+								        "boxLabel"  : "Delta",
+								        "name"      : "consolidation",
+								        "inputValue": "delta"
+
+								    },{
+								        "boxLabel"  : "Min",
+								        "name"      : "consolidation",
+								        "inputValue": "min"
+
+								    },{
+								        "boxLabel"  : "Max",
+								        "name"      : "consolidation",
+								        "inputValue": "max"
+
+								    },{
+								        "boxLabel"  : "Nothing",
+								        "name"      : "consolidation",
+								        "inputValue": null,
+								        "checked":true
+
+								    }
+								]
+							}
+						]
+					}]
+		},{					
 			"title": "Style",
 			"items": [{
 						"xtype": "fieldset",
