@@ -442,3 +442,59 @@ def fill_interval(points, start, stop, interval):
 	#	output_list[len(output_list)-1][0] = int(time.time())
 		
 	return output_list
+
+
+### aggregation serie function
+def aggregate_series(series, fn, interval=None):
+	
+	# Todo calcul interval
+	if not interval:
+		interval = 300 * 1000
+
+	# Find start and stop ts
+	start = None
+	stop = None
+	for serie in series:
+		timestamps = [point[0] for point in serie]
+		smin = min(timestamps)
+		smax = max(timestamps)
+		if start == None or smin < start:
+			start = smin
+		if stop == None or smax > stop:
+			stop = smax
+
+	# Align timestamps
+	nseries = []
+	for serie in series:
+		ts = start
+		index = 0
+		nserie = []
+		last_value = None
+
+		while ts <= stop:
+			while index < len(serie) and serie[index][0] <= ts:
+				last_value = serie[index][1]
+				index += 1
+
+			nserie.append( (ts, last_value) )
+			ts+=interval
+
+		nseries.append(nserie)
+
+	# Do operations
+	result = []
+	ts = start
+	i = 0
+	while ts <= stop:
+		points = []
+		for serie in nseries:
+			if serie[i][1]:
+				points.append(serie[i][1])
+
+		value = fn(points)
+		result.append((ts, value))
+
+		i  += 1
+		ts += interval
+
+	return result
