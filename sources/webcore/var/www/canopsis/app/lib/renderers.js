@@ -358,7 +358,7 @@ rdr_yaxis = function(ori_value, multiple, decimal) {
 
 	value = Math.round(ori_value * rounderer) / rounderer;
 	if (value < multiple)
-		return value;
+		return sciToDec(roundSignifiantDigit(ori_value,2));
 
 	value = Math.round((ori_value / multiple) * rounderer) / rounderer;
 	if (value >= 1) {

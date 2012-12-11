@@ -319,3 +319,26 @@ function parseBool(arg) {
 	else
 		return true;
 }
+
+function roundSignifiantDigit(n, sig) {
+    var mult = Math.pow(10,
+        sig - Math.floor(Math.log(n) / Math.LN10) - 1);
+    return Math.round(n * mult) / mult;
+}
+
+function sciToDec(number){
+	val = number
+	if(Ext.isNumber(number))
+		val = number.toString()
+
+	if (val.match(/^[-+]?[1-9]\.[0-9]+e[-]?[1-9][0-9]*$/)) {
+		var arr = new Array();
+		arr = scinum.split('e');
+		var exponent = Math.abs(arr[1]);
+		var precision = new Number(exponent);
+		arr = arr[0].split('.');
+		precision += arr[1].length;
+		val = (+val).toFixed(precision);
+	}
+	return val
+}
