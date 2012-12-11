@@ -57,7 +57,9 @@ Ext.define('widgets.gauge.gauge' , {
 		return rdr_humanreadable_value(val, this.symbol);
 	},
 
-	createGauge: function() {
+	createGauge: function(value) {
+		if(!value)
+			value = 0
 
 		if (this.autoTitle)
 			if (this.nodes.length) {
@@ -74,7 +76,7 @@ Ext.define('widgets.gauge.gauge' , {
 
 		var opts = {
 			id: this.wcontainerId,
-			value: 0,
+			value: value,
 			gaugeWidthScale: this.gaugeWidthScale,
 			titleFontColor: this.titleFontColor,
 			showMinMax: this.showMinMax,
@@ -212,11 +214,12 @@ Ext.define('widgets.gauge.gauge' , {
 
 			try {
 				if (data.values) {
-					if (! this.gauge)
-						this.createGauge();
-
 					this.lastValue = data.values[data.values.length - 1][1];
-					this.gauge.refresh(this.lastValue);
+					
+					if (! this.gauge)
+						this.createGauge(this.lastValue);
+					else
+						this.gauge.refresh(this.lastValue);
 				}
 			}catch (err) {
 				log.error('Error while set value:' + err, this.logAuthor);
