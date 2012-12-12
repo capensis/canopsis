@@ -220,7 +220,6 @@
 								"xtype"      : "fieldcontainer",
 								"defaultType": "radiofield",
 								"defaults": {"flex": 1},
-								"layout": "columns",
 								"items": [
 								    {
 								        "boxLabel"  : "Mean",

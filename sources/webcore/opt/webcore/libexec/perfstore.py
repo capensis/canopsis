@@ -102,7 +102,7 @@ def perfstore_nodes_get_values(start=None, stop=None, interval=None):
 											aggregate_method=aggregate_method,
 											aggregate_interval=aggregate_interval,
 											aggregate_max_points=aggregate_max_points)
-	if consolidation:
+	if consolidation and len(output) != 0:
 		##select right function
 		if consolidation == 'mean':
 			fn = mean
