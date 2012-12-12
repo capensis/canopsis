@@ -152,7 +152,7 @@ Ext.define('widgets.perftop.perftop' , {
 					dataIndex: 'pct',
 					align: 'right',
 					renderer: function(value, metaData, record) {
-						if (value != undefined)
+						if (Ext.isNumber(value))
 							return value + '%';
 						else
 							return _('N/A');
