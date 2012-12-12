@@ -31,6 +31,7 @@ from libexec.auth import check_auth, get_account
 from ctools import parse_perfdata, clean_mfilter
 
 import pyperfstore2
+from pyperfstore2.utils import aggregate_series , mean
 manager = None
 
 import ConfigParser
@@ -75,6 +76,7 @@ def perfstore_nodes_get_values(start=None, stop=None, interval=None):
 	aggregate_method	= request.params.get('aggregate_method',	default=None)
 	aggregate_interval	= request.params.get('aggregate_interval', default=None)
 	aggregate_max_points= request.params.get('aggregate_max_points', default=None)
+	consolidation = request.params.get('consolidation', default=None)
 	output = []
 	
 	if not metas:
@@ -100,7 +102,29 @@ def perfstore_nodes_get_values(start=None, stop=None, interval=None):
 											aggregate_method=aggregate_method,
 											aggregate_interval=aggregate_interval,
 											aggregate_max_points=aggregate_max_points)
+	if consolidation:
+		##select right function
+		if consolidation == 'mean':
+			fn = mean
+		elif consolidation == 'min':
+			fn = lambda x: min(x)
+		elif consolidation == 'max' :
+			fn = lambda x: max(x)
+		elif consolidation == 'sum':
+			fn = lambda x: sum(x)
+		elif consolidation == 'delta':
+			fn = lambda x: x[0] - x[-1]
 
+		series = []
+		for serie in output:
+			series.append(serie["values"])
+		output = [{
+			'node': output[0]['node'],
+			'metric': 'Mean',
+			'bunit': None,
+			'type': 'GAUGE',
+			'values': aggregate_series(series, fn, 60* 1000)
+		}]
 
 	output = {'total': len(output), 'success': True, 'data': output}
 	return output

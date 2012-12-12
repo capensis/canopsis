@@ -220,7 +220,7 @@
 								"xtype"      : "fieldcontainer",
 								"defaultType": "radiofield",
 								"defaults": {"flex": 1},
-								"layout": "hbox",
+								"layout": "columns",
 								"items": [
 								    {
 								        "boxLabel"  : "Mean",
@@ -230,11 +230,6 @@
 								        "boxLabel"  : "Sum",
 								        "name"      : "consolidation",
 								        "inputValue": "sum"
-								    },{
-								        "boxLabel"  : "Delta",
-								        "name"      : "consolidation",
-								        "inputValue": "delta"
-
 								    },{
 								        "boxLabel"  : "Min",
 								        "name"      : "consolidation",

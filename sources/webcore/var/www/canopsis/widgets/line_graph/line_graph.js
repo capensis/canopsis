@@ -102,6 +102,8 @@ Ext.define('widgets.line_graph.line_graph' , {
 	same_node: true,
 	displayLastValue: false,
 
+	consolidation: undefined,
+
 	initComponent: function() {
 		this.backgroundColor	= check_color(this.backgroundColor);
 		this.borderColor	= check_color(this.borderColor);
@@ -1012,7 +1014,8 @@ Ext.define('widgets.line_graph.line_graph' , {
 			'nodes': Ext.JSON.encode(post_params),
 			'aggregate_method' : this.aggregate_method,
 			'aggregate_interval': this.aggregate_interval,
-			'aggregate_max_points': this.aggregate_max_points
+			'aggregate_max_points': this.aggregate_max_points,
+			'consolidation': this.consolidation
 			};
 
 		//if (this.chart_type == 'column')
