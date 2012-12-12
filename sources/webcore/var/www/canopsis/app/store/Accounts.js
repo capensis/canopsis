@@ -23,8 +23,9 @@ Ext.define('canopsis.store.Accounts', {
 	model: 'canopsis.model.Account',
 
 	storeId: 'store.Accounts',
+	pageSize: 5000,
+  	autoLoad: true,
 
-	autoLoad: true,
 	autoSync: true,
 	sorters: ['user'],
 	groupField: 'aaa_group',

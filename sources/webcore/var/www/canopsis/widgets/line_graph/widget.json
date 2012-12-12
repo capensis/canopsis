@@ -219,7 +219,7 @@
 							{
 								"xtype" : "numberfield",
 								"name" : "title_fontSize",
-								"fieldLabel": "Title font Size",
+								"fieldLabel": "Title font size",
 								"minValue": 1,
 								"value": 15
                            }		

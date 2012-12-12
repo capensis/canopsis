@@ -45,6 +45,11 @@
 						}
 					},{
 						"xtype": "checkbox",
+						"fieldLabel": "Compare threshold on pct and not value",
+						"checked": false,
+						"name": "threshold_on_pct"
+					},{
+						"xtype": "checkbox",
 						"fieldLabel": "Expand values (only first metric will be selected)",
 						"checked": false,
 						"name": "expand"

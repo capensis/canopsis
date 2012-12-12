@@ -356,7 +356,6 @@ Ext.define('widgets.weather.brick' , {
 					this.link = 'http://' + this.link;
 				return this.link;
 			}else {
-				console.log('SEARCH VIEW');
 				store = Ext.getStore('Views');
 				var record = store.findExact('crecord_name', this.link);
 				if (record != -1) {
@@ -366,7 +365,6 @@ Ext.define('widgets.weather.brick' , {
 						record.get('_id'),
 						global.account.authkey
 					);
-					console.log(url);
 					return url;
 				}else {
 					log.debug('Link is not valid', 'The specified link does not match any view or URL', 'info');

@@ -234,7 +234,7 @@ Ext.define('widgets.line_graph.line_graph' , {
 				useUTC: false
 			},*/
 			exporting: {
-				enabled: this.exporting_enabled,
+				enabled: (this.exportMode || this.reportMode)? false:this.exporting_enabled,
 				filename: this.chartTitle,
 				type: 'image/svg+xml',
 				url: '/export_svg',

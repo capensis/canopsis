@@ -120,6 +120,7 @@ Ext.define('canopsis.controller.View', {
 			if (selection[i].isLeaf()) {
 				var view_id = 'view.' + global.account.user + '.' + global.gen_id();
 				var new_record = selection[i].copy(view_id);
+				Ext.data.Model.id(new_record)
 				new_record.set('_id', view_id);
 				new_record.set('id', view_id);
 				this.add_to_home(new_record, false);

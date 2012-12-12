@@ -178,7 +178,7 @@ Ext.define('canopsis.view.Mainbar.Bar' , {
 		}
 
 		//Topology menu
-		if (global.accountCtrl.checkRoot() || global.accountCtrl.checkGroup('group.CPS_topology_admin')) {
+	/*	if (global.accountCtrl.checkRoot() || global.accountCtrl.checkGroup('group.CPS_topology_admin')) {
 			menu_build = menu_build.concat([
 				{
 					iconCls: 'icon-mainbar-topology',
@@ -187,7 +187,7 @@ Ext.define('canopsis.view.Mainbar.Bar' , {
 					viewId: 'view.topology_manager'
 				}
 			]);
-		}
+		}*/
 
 		//Build menu
 		if (global.accountCtrl.checkRoot() || global.accountCtrl.checkGroup('group.CPS_view_admin') || global.accountCtrl.checkGroup('group.CPS_view')) {

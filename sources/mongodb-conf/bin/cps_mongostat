@@ -1,4 +1,4 @@
-#!mongo canopsis
+#!/usr/bin/env mongo-shabang
 
 round = function(x){ return Math.round(x*1000)/1000; };
 

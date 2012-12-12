@@ -7,7 +7,7 @@
 	"description": "Display Gauge.",
 	"description-fr": "Afficher une jauge",
 	"refreshInterval": 300,
-	"locales": [],
+	"locales": ["en","fr"],
 	"options": [{
 				"title": "Style",
 				"items": [{

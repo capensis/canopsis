@@ -149,9 +149,11 @@ def delete_file(metaId=None):
 	try:
 		for rfile in rfiles:
 			rfile.remove()
+		return {'total': len(rfiles),"data": [] ,"success":True}
 	except:
 		logger.error('Failed to remove file')
 		return HTTPError(500, "Failed to remove file")
+
 		
 		
 def list_files():
