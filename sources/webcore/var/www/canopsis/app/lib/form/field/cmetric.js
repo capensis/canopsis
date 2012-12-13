@@ -324,9 +324,6 @@ Ext.define('canopsis.lib.form.field.cmetric' , {
 				for (var i in records)
 					this.select_meta(records[i]);
 
-				event.cancel = true;
-				event.dropStatus = true;
-
 				return false;
 			}
 		},this);
