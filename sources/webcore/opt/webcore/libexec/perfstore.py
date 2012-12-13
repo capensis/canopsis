@@ -120,7 +120,7 @@ def perfstore_nodes_get_values(start=None, stop=None, interval=None):
 			series.append(serie["values"])
 		output = [{
 			'node': output[0]['node'],
-			'metric': 'Mean',
+			'metric': consolidation,
 			'bunit': None,
 			'type': 'GAUGE',
 			'values': aggregate_series(series, fn, 60* 1000)
