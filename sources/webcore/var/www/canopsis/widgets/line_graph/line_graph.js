@@ -325,10 +325,10 @@ Ext.define('widgets.line_graph.line_graph' , {
 		}
 
 		// Ymax
-		if (this.SeriePercent) {
+	/*	if (this.SeriePercent) {
 			this.options.yAxis[0].max = 100;
 			//this.options.yAxis.title.text = 'pct'
-		}
+		}*/
 
 		// Configure line type
 		this.options.plotOptions[this.SeriesType] = {
@@ -494,9 +494,19 @@ Ext.define('widgets.line_graph.line_graph' , {
 				}
 			}*/
 
+			var toggle_max_percent = false
+
 			if (data.length > 0) {
 
 				this.last_values = [];
+
+				//percent check
+				if (this.SeriePercent) {
+					if(data.max)
+						toggle_max_percent = true
+					else
+						toggle_max_percent = false
+				}
 
 				for (var i in data) {
 					this.addDataOnChart(data[i]);
@@ -533,6 +543,10 @@ Ext.define('widgets.line_graph.line_graph' , {
 					this.chartMessage.destroy();
 					this.chartMessage = undefined;
 				}
+
+				//set max
+				if (this.SeriePercent && toggle_max_percent)
+					this.chart.yAxis[0].setExtremes(0,100,false)
 
 				//unmasking
 				var this_El = this.getEl();
