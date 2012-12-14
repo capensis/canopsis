@@ -108,11 +108,16 @@ Ext.define('widgets.bar_graph.bar_graph' , {
 	setOptions: function() {
 		this.callParent(arguments);
 
-		if (this.columnDatalabels)
-		this.options.plotOptions.column.dataLabels = {
-			enabled: true,
-			formatter: function(){return rdr_humanreadable_value(this.y, this.point.bunit)}
-		};
+		if (this.columnDatalabels){
+			this.options.plotOptions.column.dataLabels = {
+				enabled: true,
+				formatter: function(){
+					if (this.y)
+						return rdr_humanreadable_value(this.y, this.point.bunit);
+					return ''; 
+				}
+			};
+		}
 
 		if (this.verticalDisplay)
 			this.options.chart.inverted = true;
