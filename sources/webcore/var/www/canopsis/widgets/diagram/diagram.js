@@ -121,8 +121,6 @@ Ext.define('widgets.diagram.diagram' , {
 
 		this.setOptions();
 		this.createChart();
-
-		this.ready();
 	},
 
 	setchartTitle: function() {
@@ -152,7 +150,10 @@ Ext.define('widgets.diagram.diagram' , {
 				borderColor: this.borderColor,
 				borderWidth: this.borderWidth,
 				backgroundColor: this.backgroundColor,
-				inverted: (this.diagram_type == 'column') ? this.verticalDisplay : false
+				inverted: (this.diagram_type == 'column') ? this.verticalDisplay : false,
+				events: {
+					load: (function(){this.ready()}).bind(this)
+				}
 			},
 			exporting: {
 				enabled: false
@@ -317,7 +318,7 @@ Ext.define('widgets.diagram.diagram' , {
 	onRefresh: function(data) {
 		if (this.chart && data.length != 0) {
 			var myEl = this.getEl();
-			if (myEl.isMasked && !this.isDisabled())
+			if (myEl && myEl.isMasked && !this.isDisabled())
 				myEl.unmask();
 
 			// Remove old series
