@@ -34,6 +34,9 @@ function post_remove(){
 
 function pre_update(){
 	echo "Pre-update $NAME $VERSION-$RELEASE ..."
+	mv $PREFIX/var/www/canopsis/resources/lib $PREFIX/tmp/webcore-libs
+	check_code $?
+	
 	rm -Rf $PREFIX/var/www/canopsis/* &> /dev/null || true
 
 	# Delete old init script
@@ -46,6 +49,7 @@ function pre_update(){
 
 function post_update(){
 	echo "Post-update $NAME $VERSION-$RELEASE ..."
+	mv $PREFIX/tmp/webcore-libs $PREFIX/var/www/canopsis/resources/lib
 	check_code $?
 }
 
