@@ -145,6 +145,7 @@ def start_engines():
 	import alertcounter
 	import derogation
 	import topology
+	import consolidation
 	
 
 	engine_selector		= selector.engine(logging_level=logging.INFO)
@@ -173,6 +174,9 @@ def start_engines():
 
 	engine_sla			= sla.engine(logging_level=logging.INFO)
 	engines.append(engine_sla)
+	
+	engine_consolidation		= consolidation.engine(logging_level=logging.DEBUG)
+	engines.append(engine_consolidation)
 	
 	# Set Next queue
 	## Events

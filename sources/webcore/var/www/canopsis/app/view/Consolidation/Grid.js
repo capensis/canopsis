@@ -60,8 +60,7 @@ Ext.define('canopsis.view.Consolidation.Grid' , {
 		},{
 			header: _('Aggregation type'),
 			flex: 1,
-			//dataIndex: 'description'
-			renderer : function(){return 'Mean'}
+			dataIndex: 'type'
 		},{
 			header: _('Output engine'),
 			//align: 'center',
