@@ -35,7 +35,8 @@ Ext.define('canopsis.model.Perfdata', {
 		{name: 'lv'},
 		{name:	'ma'},
 		{name:	'tg'},
-		{name:	'mi'}
+		{name:	'mi'},
+		{name: 'pct'}
 
 	]
 });

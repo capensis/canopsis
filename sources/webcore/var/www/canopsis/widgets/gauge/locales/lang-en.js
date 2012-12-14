@@ -18,31 +18,3 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 */
-
-Ext.define('canopsis.store.Selectors', {
-    extend: 'canopsis.lib.store.cstore',
-	model: 'canopsis.model.Selector',
-
-	storeId: 'store.Selectors',
-	pageSize: 5000,
-  	autoLoad: true,
-	autoSync: true,
-
-	proxy: {
-		type: 'rest',
-		url: '/rest/object/selector',
-		batchActions: true,
-		appendId: false,
-		reader: {
-			type: 'json',
-			root: 'data',
-			totalProperty: 'total',
-			successProperty: 'success'
-		},
-		writer: {
-			type: 'json',
-			writeAllFields: false
-		}
-	}
-
-});

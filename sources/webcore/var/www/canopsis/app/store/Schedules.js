@@ -23,8 +23,8 @@ Ext.define('canopsis.store.Schedules', {
 	model: 'canopsis.model.Schedule',
 
 	storeId: 'store.Schedules',
-
-	autoLoad: true,
+	pageSize: 5000,
+  	autoLoad: true,
 	autoSync: true,
 
 	proxy: {
