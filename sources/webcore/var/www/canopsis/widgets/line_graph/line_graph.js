@@ -176,6 +176,7 @@ Ext.define('widgets.line_graph.line_graph' , {
 		this.setOptions();
 		this.createChart();
 
+		this.ready();
 	},
 
 	setchartTitle: function() {
@@ -226,8 +227,7 @@ Ext.define('widgets.line_graph.line_graph' , {
 				borderWidth: this.borderWidth,
 				backgroundColor: this.backgroundColor,
 				events: {
-					redraw: this.checkTimewindow,
-					load: (function(){this.ready()}).bind(this)
+					redraw: this.checkTimewindow
 				}
 			},
 		/*	global: {

@@ -121,6 +121,8 @@ Ext.define('widgets.diagram.diagram' , {
 
 		this.setOptions();
 		this.createChart();
+
+		this.ready();
 	},
 
 	setchartTitle: function() {
@@ -150,10 +152,7 @@ Ext.define('widgets.diagram.diagram' , {
 				borderColor: this.borderColor,
 				borderWidth: this.borderWidth,
 				backgroundColor: this.backgroundColor,
-				inverted: (this.diagram_type == 'column') ? this.verticalDisplay : false,
-				events: {
-					load: (function(){this.ready()}).bind(this)
-				}
+				inverted: (this.diagram_type == 'column') ? this.verticalDisplay : false
 			},
 			exporting: {
 				enabled: false
