@@ -80,17 +80,28 @@ class engine(cengine):
 				metric_list = self.manager.store.find(mfilter=tfilter)
 				values = []
 				i=1
-				fn = record.get('type', False)
-				if ( isinstance(fn, str)) :
-					fn = [ fn ] 
+				list_fn = record.get('type', False)
+				if ( isinstance(list_fn, str)) :
+					list_fn = [ list_fn ] 
 				for metric in metric_list :
 					m = metric.get('d')
 					values.append( m[len(m)-1][1] ) 
 					i = i + 1
-				if ( fn ) :
-					for i in fn :
+				if ( list_fn ) :
+					for i in list_fn :
+						if i == 'mean':
+							fn = lambda x: sum(x) / len(x)
+						elif i == 'min':
+							fn = lambda x: min(x)
+						elif i == 'max' :
+							fn = lambda x: max(x)
+						elif i == 'sum':
+							fn = lambda x: sum(x)
+						elif i == 'delta':
+							fn = lambda x: x[0] - x[-1]
 						self.logger.debug(i)
 						self.logger.debug(values)
+						self.logger.debug(fn)
 						resultat = pyperfstore2.utils.aggregate_series(values, fn )
 						self.logger.debug(resultat)	 
 				self.timestamp[record.get('_id')] = int(time.time())
