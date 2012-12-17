@@ -784,6 +784,7 @@ Ext.define('canopsis.lib.controller.cgrid', {
 		}else {
 			//create an array and give it to store.search
 			var search_filters = [];
+			var search_tags = [];
 
 			// Split search string by space
 			var search_value_array = split_search_box(search);
@@ -800,12 +801,12 @@ Ext.define('canopsis.lib.controller.cgrid', {
 					var search = search_value_array[0];
 
 					// Process tags
-					if (search[0] == '#')
-						filter = {'tags': search.slice(1)};
-					else
+					if (search[0] == '#'){
+						search_tags.push(search.slice(1));
+					}else{
 						filter[field] = { '$regex' : search, '$options': 'i'};
-
-					search_filters.push(filter);
+						search_filters.push(filter);
+					}	
 
 				} else {
 					var filter = [];
@@ -816,18 +817,25 @@ Ext.define('canopsis.lib.controller.cgrid', {
 						var word = search_value_array[j];
 
 						// Process tags
-						if (word[0] == '#')
-							sub_filter = {'tags': word.slice(1)};
-						else
+						if (word[0] == '#'){
+							search_tags.push(word.slice(1));
+						}else{
 							sub_filter[field] = { '$regex' : word, '$options': 'i'};
-
-						filter.push(sub_filter);
+							filter.push(sub_filter);
+						}
 					}
 					search_filters.push({ '$and': filter});
 				}
 			}
 
-			if (search_filters.length == 1)
+			search_tags = Ext.Array.unique(search_tags);
+			for (var i=0; i < search_tags.length; i++){
+				search_filters.push({ 'tags': search_tags[i] });
+			}
+
+			if (search_filters.length == 0)
+				return;
+			else if (search_filters.length == 1)
 				//store.search(search_filters[0], false);
 				this.search_filter_id = store.addFilter(search_filters[0]);
 			else
