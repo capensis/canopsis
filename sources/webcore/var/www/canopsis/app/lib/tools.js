@@ -244,7 +244,7 @@ function split_search_box(raw) {
 
 	var tmp = raw.split('"');
 	if (tmp.length > 1) {
-		for (var i in tmp) {
+		for (var i=0; i < tmp.length; i++) {
 			var w = tmp[i];
 			if (w.length > 1) {
 				if (w[0] == ' ')

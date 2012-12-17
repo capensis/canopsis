@@ -137,7 +137,7 @@ Ext.define('canopsis.lib.view.cwidget' , {
 
 		if (docks) {
 			height -= docks.length * 2;
-			for (var i in docks)
+			for (var i=0; i < docks.length; i++)
 				if (docks[i].dock == 'top' || docks[i].dock == 'bottom') { height -= this.barHeight }
 		}
 

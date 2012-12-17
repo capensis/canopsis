@@ -259,7 +259,7 @@ rdr_tags = function(tags) {
 	if (tags) {
 		if (tags.length > 0) {
 			html += "<ul class='tags'>";
-			for (var i = 0 ; i < tags; i++)
+			for (var i = 0 ; i < tags.length; i++)
 				html += "<li><a href='#'>" + tags[i] + '</a></li>';
 			html += '</ul>';
 		}

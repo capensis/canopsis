@@ -220,11 +220,9 @@ Ext.define('canopsis.view.Tabs.Content' , {
 	_onShow: function() {
 		log.debug('Show tab ' + this.id, this.logAuthor);
 		var cmps = this.getCmps();
-		for (var i in cmps) {
-			if (cmps[i].TabOnShow) {
+		for (var i=0; i < cmps.length; i++)
+			if (cmps[i].TabOnShow)
 				cmps[i].TabOnShow();
-			}
-		}
 	},
 
 	_onHide: function() {
