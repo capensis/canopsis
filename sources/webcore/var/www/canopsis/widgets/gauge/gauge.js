@@ -93,9 +93,12 @@ Ext.define('widgets.gauge.gauge' , {
 		};
 
 		if (this.exportMode){
+			opts['showInnerShadow'] = 0;
+			opts['shadowVerticalOffset'] = 0;
 			opts['shadowOpacity'] = 0;
-			opts['shadowSize'] = 1;
-			opts['shadowOpacity'] = 1;
+			opts['shadowSize'] = 0;
+			opts['startAnimationType'] = 1;
+			opts['refreshAnimationTime'] = 1;
 		}
 
 		if (this.levelThresholds) {
