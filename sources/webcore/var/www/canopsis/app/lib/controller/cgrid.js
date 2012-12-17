@@ -184,10 +184,10 @@ Ext.define('canopsis.lib.controller.cgrid', {
 			btns[i].on('click', this._downloadButton, this);
 
 		// TimeDisplaybutton
-	/*	var btns = Ext.ComponentQuery.query('#' + id + ' button[action=timeDisplay]');
-		for (i in btns) {
+		/*var btns = Ext.ComponentQuery.query('#' + id + ' button[action=timeDisplay]');
+		for (var i = 0; i < btns.length; i ++)
 			btns[i].on('click', this.timeDisplay, this);
-		}*/
+		*/
 
 		var field = Ext.ComponentQuery.query('#' + id + ' cdate[name=startTimeSearch]');
 		for (var i = 0; i < field.length; i ++) 
@@ -377,9 +377,10 @@ Ext.define('canopsis.lib.controller.cgrid', {
 				//HACK anti set value crash, model doesn't accept unknown value
 				//and will crash
 				var cleaned_data = {};
-				for (var i in data)
-					if (record.fields.keys.indexOf(i) != -1)
-						cleaned_data[i] = data[i];
+				Ext.Object.each(data, function(key, value, myself){
+					if (record.fields.keys.indexOf(key) != -1)
+						cleaned_data[key] = value;
+				});
 
 				record.set(cleaned_data);
 			}else {
@@ -639,15 +640,13 @@ Ext.define('canopsis.lib.controller.cgrid', {
 			var form = this._showForm(item);
 
 			if (form) {
-				if (this.beforeload_EditForm) {
+				if (this.beforeload_EditForm)
 					this.beforeload_EditForm(form, item_copy);
-				}
 
 				form.loadRecord(item_copy);
 
-				if (this.afterload_EditForm) {
+				if (this.afterload_EditForm)
 					this.afterload_EditForm(form, item_copy);
-				}
 			}
 
 			if (this.editRecord)
@@ -729,15 +728,13 @@ Ext.define('canopsis.lib.controller.cgrid', {
 				copy.set('_id', undefined);
 
 				// load records
-				if (this.beforeload_DuplicateForm) {
+				if (this.beforeload_DuplicateForm)
 					this.beforeload_DuplicateForm(form, copy);
-				}
 
 				form.loadRecord(copy);
 
-				if (this.afterload_DuplicateForm) {
+				if (this.afterload_DuplicateForm)
 					this.afterload_DuplicateForm(form, copy);
-				}
 
 				this._bindFormEvents(form);
 			}
