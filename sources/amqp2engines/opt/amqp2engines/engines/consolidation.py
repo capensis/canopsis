@@ -51,7 +51,6 @@ class engine(cengine):
 		self.default_interval = 10
 		
 	def pre_run(self):
-		print "pre run"
 		self.storage = get_storage(namespace='object', account=caccount(user="root", group="root"))
 		self.manager = pyperfstore2.manager(logging_level=self.logging_level)
 		self.load_consolidation()
@@ -59,10 +58,11 @@ class engine(cengine):
 	def beat(self):
 		self.logger.debug('beat')
 		non_loaded_records = self.storage.find({ '$and' : [{ 'crecord_type': 'consolidation' }, {'loaded': { '$ne' : 'true'} } ] }, namespace="object" )
-
+		
 		if (len(non_loaded_records) > 0 ) :
 			for i in non_loaded_records :
 				self.load(i)
+		self.logger.debug(self.records)
 		for i in self.records:
 			record = i.dump()
 			interval = record.get('interval', self.default_interval)
@@ -78,17 +78,21 @@ class engine(cengine):
 				self.logger.debug('ok');
 				tfilter = json.loads(record.get('mfilter'))
 				metric_list = self.manager.store.find(mfilter=tfilter)
-				self.logger.debug(metric_list)
 				values = []
 				i=1
 				fn = record.get('type', False)
+				if ( isinstance(fn, str)) :
+					fn = [ fn ] 
 				for metric in metric_list :
 					m = metric.get('d')
 					values.append( m[len(m)-1][1] ) 
 					i = i + 1
 				if ( fn ) :
-					resultat = pyperfstore2.utils.aggregate_series(values, fn )
-					self.logger.debug(resultat)	 
+					for i in fn :
+						self.logger.debug(i)
+						self.logger.debug(values)
+						resultat = pyperfstore2.utils.aggregate_series(values, fn )
+						self.logger.debug(resultat)	 
 				self.timestamp[record.get('_id')] = int(time.time())
 		
 		
