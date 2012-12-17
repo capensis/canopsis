@@ -65,14 +65,17 @@ def files(metaId=None):
 		logger.debug(" + Content type: %s" % content_type)
 		logger.debug(" + Bin Id:       %s" % rfile.get_binary_id())
 		
-		data = rfile.get()
+		try:
+			data = rfile.get()
+		except Exception as err:
+			logger.error('Error while file fetching: %s' % err)
 
 		if data:
 			response.headers['Content-Disposition'] = 'attachment; filename="%s"' % file_name
 			response.headers['Content-Type'] = content_type
 			try:
 				return data
-			except Exception, err:
+			except Exception as err:
 				logger.error(err)
 		else:
 			logger.error('No report found in gridfs')
