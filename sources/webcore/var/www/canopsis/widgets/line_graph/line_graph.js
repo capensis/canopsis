@@ -123,7 +123,7 @@ Ext.define('widgets.line_graph.line_graph' , {
 			this.same_node = true;
 		} else {
 			var flag = undefined;
-			for (var i in this.nodes) {
+			for (var i = 0; i < this.nodes.length; i ++){
 				var node = this.nodes[i]['resource'] + this.nodes[i]['component'];
 				if (i == 0) {
 					flag = node;
@@ -135,7 +135,7 @@ Ext.define('widgets.line_graph.line_graph' , {
 		}
 
 		//Store nodes in object
-		for (var i in this.nodes) {
+		for (var i = 0; i < this.nodes.length; i ++){
 			var node = this.nodes[i];
 			if (this.nodesByID[node.id])
 				this.nodesByID[node.id].metrics.push(node.metrics[0]);
@@ -508,7 +508,7 @@ Ext.define('widgets.line_graph.line_graph' , {
 						toggle_max_percent = false
 				}
 
-				for (var i in data) {
+				for (var i = 0; i < data.length; i ++){
 					this.addDataOnChart(data[i]);
 					var node = this.nodesByID[data[i].node];
 
@@ -572,7 +572,7 @@ Ext.define('widgets.line_graph.line_graph' , {
 	},
 
 	clearGraph: function() {
-		for (var i in this.chart.series) {
+		for (var i = 0; i < this.chart.series.length; i ++){
 			//log.debug('cleaning serie : ' + this.chart.series[i].name)
 			this.chart.series[i].setData([], false);
 		}
@@ -701,12 +701,12 @@ Ext.define('widgets.line_graph.line_graph' , {
 	parseValues: function(serie, values, type) {
 		//Do operation on value
 		if (this.SeriePercent && serie.options.max > 0)
-			for (var index in values)
-				values[index][1] = getPct(values[index][1], serie.options.max);
+			for (var i = 0; i < values.length; i ++)
+				values[i][1] = getPct(values[i][1], serie.options.max);
 
 		if (serie.options.invert)
-			for (var index in values)
-				values[index][1] = - values[index][1];
+			for (var i = 0; i < values.length; i ++)
+				values[i][1] = - values[i][1];
 
 		//type specifique parsing
 		if (type == 'COUNTER' && !this.aggregate_interval && !this.reportMode) {
@@ -715,9 +715,9 @@ Ext.define('widgets.line_graph.line_graph' , {
 				if (last_point.y != undefined)
 					last_point = last_point.y;
 
-				for (var index in values) {
-					values[index][1] = last_point + values[index][1];
-					last_point = values[index][1];
+				for (var i = 0; i < values.length; i ++) {
+					values[i][1] = last_point + values[i][1];
+					last_point = values[i][1];
 				}
 			}
 		}
@@ -774,17 +774,17 @@ Ext.define('widgets.line_graph.line_graph' , {
 
 			var states = [0, 1, 2, 3];
 			var states_data = [[], [], [], []];
-			for (var index in data['values']) {
-				state = parseInt(data['values'][index][1] / 100);
-				for (var i in states) {
+			for (var i = 0; i < data['values'].length; i++) {
+				state = parseInt(data['values'][i][1] / 100);
+				for (var j = 0; j < states.length; j++) {
 					var value = 0;
-					if (state == i)
+					if (state == j)
 						value = 100;
-					states_data[i].push([data['values'][index][0], value]);
+					states_data[j].push([data['values'][i][0], value]);
 				}
 			}
 
-			for (var i in states) {
+			for (var i = 0; i < states.length; i++) {
 				data['metric'] = 'cps_state_' + i;
 				data['values'] = states_data[i];
 				data['bunit'] = '%';
@@ -861,8 +861,7 @@ Ext.define('widgets.line_graph.line_graph' , {
 		}else {
 			log.debug('   + Push data', this.logAuthor);
 
-			var i;
-			for (i in values) {
+			for (var i = 0; i < values.length; i++) {
 				value = values[i];
 				//addPoint (Object options, [Boolean redraw], [Boolean shift], [Mixed animation]) :
             	serie.addPoint(value, false, this.shift, false);
@@ -890,7 +889,7 @@ Ext.define('widgets.line_graph.line_graph' , {
 				this.data_trends[trend_id] = [];
 
 			//add data
-			for (var i in data.values)
+			for (var i = 0; i < data.values.length; i++)
 				this.data_trends[trend_id].push(data.values[i]);
 
 			//slice data (follow referent serie length)
@@ -980,7 +979,7 @@ Ext.define('widgets.line_graph.line_graph' , {
 
 		var list_string = [];
 
-		for (var i in value) {
+		for (var i = 0; i < value.length; i++) {
 			list_string.push(
 				Ext.String.format(
 					html,
@@ -992,10 +991,10 @@ Ext.define('widgets.line_graph.line_graph' , {
 			);
 		}
 
-		for (var i in this.lastValue)
+		for (var i = 0; i < this.lastValue.length; i++)
 			this.lastValue[i].destroy();
 
-		for (var i in list_string) {
+		for (var i = 0; i < list_string.length; i++) {
 			this.lastValue[i] = this.chart.renderer.text(
 				list_string[i],
 				this.getWidth() / 3 * 2,
@@ -1008,7 +1007,7 @@ Ext.define('widgets.line_graph.line_graph' , {
 	},
 
 	truncValueArray: function(value_array) {
-		for (var i in value_array) {
+		for (var i = 0; i < value_array.length; i++) {
 			value_array[i][1] = Math.floor(value_array[i][1] * 1000) / 1000;
 		}
 		return value_array;
@@ -1016,7 +1015,7 @@ Ext.define('widgets.line_graph.line_graph' , {
 
 	processNodes: function() {
 		var post_params = [];
-		for (var i in this.nodes) {
+		for (var i = 0; i < this.nodes.length; i++) {
 			post_params.push({
 				id: this.nodes[i].id,
 				metrics: this.nodes[i].metrics
