@@ -92,6 +92,12 @@ Ext.define('widgets.gauge.gauge' , {
 			symbol: this.bunit
 		};
 
+		if (this.exportMode){
+			opts['shadowOpacity'] = 0;
+			opts['shadowSize'] = 1;
+			opts['shadowOpacity'] = 1;
+		}
+
 		if (this.levelThresholds) {
 			opts.levelColorsGradient = false;
 			opts.levelColors = [this.colorStart, this.colorWarn, this.colorStop];
