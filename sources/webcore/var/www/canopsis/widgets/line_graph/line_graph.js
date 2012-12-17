@@ -123,7 +123,7 @@ Ext.define('widgets.line_graph.line_graph' , {
 			this.same_node = true;
 		} else {
 			var flag = undefined;
-			for (var i in this.nodes) {
+			for (var i = 0; i < this.nodes.length; i++) {
 				var node = this.nodes[i]['resource'] + this.nodes[i]['component'];
 				if (i == 0) {
 					flag = node;
@@ -135,7 +135,7 @@ Ext.define('widgets.line_graph.line_graph' , {
 		}
 
 		//Store nodes in object
-		for (var i in this.nodes) {
+		for (var i = 0; i < this.nodes.length; i++) {
 			var node = this.nodes[i];
 			if (this.nodesByID[node.id])
 				this.nodesByID[node.id].metrics.push(node.metrics[0]);
@@ -508,7 +508,7 @@ Ext.define('widgets.line_graph.line_graph' , {
 						toggle_max_percent = false
 				}
 
-				for (var i in data) {
+				for (var i = 0; i < data.length; i++) {
 					this.addDataOnChart(data[i]);
 					var node = this.nodesByID[data[i].node];
 
@@ -572,7 +572,7 @@ Ext.define('widgets.line_graph.line_graph' , {
 	},
 
 	clearGraph: function() {
-		for (var i in this.chart.series) {
+		for (var i = 0 ; i < this.chart.series.length; i++) {
 			//log.debug('cleaning serie : ' + this.chart.series[i].name)
 			this.chart.series[i].setData([], false);
 		}
@@ -701,11 +701,11 @@ Ext.define('widgets.line_graph.line_graph' , {
 	parseValues: function(serie, values, type) {
 		//Do operation on value
 		if (this.SeriePercent && serie.options.max > 0)
-			for (var index in values)
+			for (var index = 0; index < values.length; index++)
 				values[index][1] = getPct(values[index][1], serie.options.max);
 
 		if (serie.options.invert)
-			for (var index in values)
+			for (var index = 0; index < values.length; index++)
 				values[index][1] = - values[index][1];
 
 		//type specifique parsing
@@ -715,7 +715,7 @@ Ext.define('widgets.line_graph.line_graph' , {
 				if (last_point.y != undefined)
 					last_point = last_point.y;
 
-				for (var index in values) {
+				for (var index = 0; index < values.length; index++){
 					values[index][1] = last_point + values[index][1];
 					last_point = values[index][1];
 				}
