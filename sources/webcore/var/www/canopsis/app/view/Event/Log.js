@@ -37,7 +37,7 @@ Ext.define('canopsis.view.Event.Log' , {
 	opt_paging: true,
 	opt_bar: true,
 
-	opt_bar_search_field: ['component', 'resource', 'metric'],
+	opt_bar_search_field: ['component', 'resource' ],
 
 	initComponent: function() {
 		this.store = Ext.create('canopsis.store.EventLogs');

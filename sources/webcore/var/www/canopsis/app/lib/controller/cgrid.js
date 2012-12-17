@@ -771,55 +771,47 @@ Ext.define('canopsis.lib.controller.cgrid', {
 			log.debug(' + Search:', this.logAuthor);
 			log.dump(search_value_array);
 
-			// for each opt_bar_search_field
-			for (var i =0; i < grid.opt_bar_search_field.length ; i++) {
-				var field = grid.opt_bar_search_field[i];
+			for (var j =0; j < search_value_array.length ; j++) {
+				var search = search_value_array[j];
 
-				if (search_value_array.length == 1) {
-					var filter = {};
-					var search = search_value_array[0];
-
-					// Process tags
-					if (search[0] == '#'){
-						search_tags.push(search.slice(1));
-					}else{
-						filter[field] = { '$regex' : search, '$options': 'i'};
-						search_filters.push(filter);
-					}	
-
-				} else {
-					var filter = [];
-
-					// for each word in search string
-					for (var j in search_value_array) {
+				// Check if it's a tag
+				if (search[0] == '#'){
+					search_tags.push(search.slice(1));
+				}else{
+					var filter = []
+					for (var i =0; i < grid.opt_bar_search_field.length ; i++) {
+						var field = grid.opt_bar_search_field[i];
 						var sub_filter = {};
-						var word = search_value_array[j];
+						sub_filter[field] = { '$regex' : search, '$options': 'i'};
 
-						// Process tags
-						if (word[0] == '#'){
-							search_tags.push(word.slice(1));
-						}else{
-							sub_filter[field] = { '$regex' : word, '$options': 'i'};
-							filter.push(sub_filter);
-						}
+						filter.push(sub_filter)
 					}
-					search_filters.push({ '$and': filter});
+					search_filters.push({"$or": filter})
 				}
+
 			}
+
+			log.debug(' + search_filters:', this.logAuthor);
+			log.dump(search_filters);
+
+			log.debug(' + search_tags:', this.logAuthor);
+			log.dump(search_tags);
 
 			search_tags = Ext.Array.unique(search_tags);
-			for (var i=0; i < search_tags.length; i++){
+
+			for (var i=0; i < search_tags.length; i++)
 				search_filters.push({ 'tags': search_tags[i] });
-			}
+
+			log.debug(' + Final search_filters:', this.logAuthor);
+			log.dump(search_filters);
 
 			if (search_filters.length == 0)
 				return;
 			else if (search_filters.length == 1)
-				//store.search(search_filters[0], false);
 				this.search_filter_id = store.addFilter(search_filters[0]);
 			else
-				this.search_filter_id = store.addFilter(store.getOrFilter(search_filters));
-				//store.search(store.getOrFilter(search_filters), false);
+				this.search_filter_id = store.addFilter(store.getAndFilter(search_filters));
+
 		}
 
 		if (grid.pagingbar) {
