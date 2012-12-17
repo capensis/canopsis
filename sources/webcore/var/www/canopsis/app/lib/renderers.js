@@ -259,7 +259,7 @@ rdr_tags = function(tags) {
 	if (tags) {
 		if (tags.length > 0) {
 			html += "<ul class='tags'>";
-			for (var i in tags)
+			for (var i = 0 ; i < tags; i++)
 				html += "<li><a href='#'>" + tags[i] + '</a></li>';
 			html += '</ul>';
 		}
@@ -269,7 +269,7 @@ rdr_tags = function(tags) {
 
 rdr_display_groups = function(groups) {
 	output = '';
-	for (var i in groups) {
+	for (var i =0; i < groups.length; i++) {
 		var group = rdr_clean_id(groups[i]);
 
 		output += group;
@@ -323,7 +323,7 @@ rdr_duration = function(timestamp, nb) {
 
 	var output = '';
 	var j = 0;
-	for (var i in times) {
+	for (var i = 0; i < times.length; i++) {
 		if (timestamp >= times[i][0]) {
 			var value = parseInt(timestamp / times[i][0]);
 			timestamp -= value * times[i][0];

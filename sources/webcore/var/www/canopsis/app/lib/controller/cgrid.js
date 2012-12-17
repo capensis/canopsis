@@ -67,55 +67,48 @@ Ext.define('canopsis.lib.controller.cgrid', {
 
 			//Duplicate button
 			var btns = Ext.ComponentQuery.query('#' + grid.contextMenu.id + ' [action=duplicate]');
-			for (i in btns) {
+			for (var i = 0; i < btns.length; i ++) 
 				btns[i].on('click', this._duplicateRecord, this);
-			}
+
 			//DeleteButton
 			var btns = Ext.ComponentQuery.query('#' + grid.contextMenu.id + ' [action=delete]');
-			for (i in btns) {
+			for (var i = 0; i < btns.length; i ++) 
 				btns[i].on('click', this._deleteButton, this);
-			}
 
 			//edit rights
 			var btns = Ext.ComponentQuery.query('#' + grid.contextMenu.id + ' [action=rights]');
-			for (i in btns) {
+			for (var i = 0; i < btns.length; i ++) 
 				btns[i].on('click', this._editRights, this);
-			}
 
 			//Rename option
 			var btns = Ext.ComponentQuery.query('#' + grid.contextMenu.id + ' [action=rename]');
-			for (i in btns) {
+			for (var i = 0; i < btns.length; i ++) 
 				btns[i].on('click', this._rename, this);
-			}
 
 			//send by mail
 			var btns = Ext.ComponentQuery.query('#' + grid.contextMenu.id + ' [action=sendByMail]');
-			for (i in btns) {
+			for (var i = 0; i < btns.length; i ++) 
 				btns[i].on('click', this._sendByMail, this);
-			}
 
 			//authKey
 			var btns = Ext.ComponentQuery.query('#' + grid.contextMenu.id + ' [action=authkey]');
-			for (i in btns) {
+			for (var i = 0; i < btns.length; i ++) 
 				btns[i].on('click', this._authkey, this);
-			}
 
 			//run
 			var btns = Ext.ComponentQuery.query('#' + grid.contextMenu.id + ' [action=run]');
-			for (i in btns) {
+			for (var i = 0; i < btns.length; i ++) 
 				btns[i].on('click', this._runItem, this);
-			}
 
 			//enable / disable button
 			var btns = Ext.ComponentQuery.query('#' + grid.contextMenu.id + ' [action=enable-disable]');
-			for (i in btns) {
+			for (var i = 0; i < btns.length; i ++) 
 				btns[i].on('click', this._enabledisable, this);
-			}
 
 		}
 		//search buttons
 		var btns = Ext.ComponentQuery.query('#' + id + ' button[action=search]');
-		for (i in btns) {
+		for (var i = 0; i < btns.length; i ++){
 			if (this.grid.opt_bar_time_search) {
 				btns[i].on('click', this.timeDisplay, this);
 			}else {
@@ -128,7 +121,7 @@ Ext.define('canopsis.lib.controller.cgrid', {
 		}
 
 		var btns = Ext.ComponentQuery.query('#' + id + ' button[action=clean_search]');
-		for (i in btns) {
+		for (var i = 0; i < btns.length; i ++)  {
 			btns[i].on('click', function() {
 				this.grid.down('textfield[name=searchField]').setValue('');
 				this._searchRecord();
@@ -142,7 +135,7 @@ Ext.define('canopsis.lib.controller.cgrid', {
 				enter: (this.grid.opt_simple_search == true) ? this._searchRecordSimple : this._searchRecord
 			};
 
-		for (i in textfields) {
+		for (var i = 0; i < textfields.length; i ++) {
 				var textfield = textfields[i];
 
 				//HACK : because sometimes this field is really long to render
@@ -167,33 +160,28 @@ Ext.define('canopsis.lib.controller.cgrid', {
 
 		//Duplicate buttons
 		var btns = Ext.ComponentQuery.query('#' + id + ' button[action=duplicate]');
-		for (i in btns) {
+		for (var i = 0; i < btns.length; i ++) 
 			btns[i].on('click', this._duplicateRecord, this);
-		}
 
 		// Add buttons
 		var btns = Ext.ComponentQuery.query('#' + id + ' button[action=add]');
-		for (i in btns) {
+		for (var i = 0; i < btns.length; i ++) 
 			btns[i].on('click', this._addButton, this);
-		}
 
 		// Delete buttons
 		var btns = Ext.ComponentQuery.query('#' + id + ' button[action=delete]');
-		for (i in btns) {
+		for (var i = 0; i < btns.length; i ++) 
 			btns[i].on('click', this._deleteButton, this);
-		}
 
 		// Reload buttons
 		var btns = Ext.ComponentQuery.query('#' + id + ' button[action=reload]');
-		for (i in btns) {
+		for (var i = 0; i < btns.length; i ++) 
 			btns[i].on('click', this._reloadButton, this);
-		}
 
 		// Download buttons
 		var btns = Ext.ComponentQuery.query('#' + id + ' button[action=download]');
-		for (i in btns) {
+		for (var i = 0; i < btns.length; i ++) 
 			btns[i].on('click', this._downloadButton, this);
-		}
 
 		// TimeDisplaybutton
 	/*	var btns = Ext.ComponentQuery.query('#' + id + ' button[action=timeDisplay]');
@@ -202,14 +190,12 @@ Ext.define('canopsis.lib.controller.cgrid', {
 		}*/
 
 		var field = Ext.ComponentQuery.query('#' + id + ' cdate[name=startTimeSearch]');
-		for (var i in field) {
+		for (var i = 0; i < field.length; i ++) 
 			field[i].on('select', this.setMaxDate, this);
-		}
 
 		var field = Ext.ComponentQuery.query('#' + id + ' cdate[name=endTimeSearch]');
-		for (var i in field) {
+		for (var i = 0; i < field.length; i ++) 
 			field[i].on('select', this.setMinDate, this);
-		}
 
 		//this._reloadButton(grid)
 
@@ -221,15 +207,13 @@ Ext.define('canopsis.lib.controller.cgrid', {
 
 		// Save buttons
 		var btns = Ext.ComponentQuery.query('#' + id + ' button[action=save]');
-		for (i in btns) {
+		for (var i = 0; i < btns.length; i ++) 
 			btns[i].on('click', function() { this._saveForm(form) }, this);
-		}
 
 		// Cancel buttons
 		var btns = Ext.ComponentQuery.query('#' + id + ' button[action=cancel]');
-		for (i in btns) {
+		for (var i = 0; i < btns.length; i ++) 
 			btns[i].on('click', function() { this._cancelForm(form) }, this);
-		}
 	},
 
 	_reloadButton: function() {
@@ -270,19 +254,16 @@ Ext.define('canopsis.lib.controller.cgrid', {
 
 		//Enable delete Button
 		btns = Ext.ComponentQuery.query('#' + grid.id + ' button[action=delete]');
-		for (i in btns) {
+		for (var i = 0; i < btns.length; i ++) 
 			btns[i].setDisabled(records.length === 0);
-		}
 
 		//Enable duplicate Button
 		btns = Ext.ComponentQuery.query('#' + grid.id + ' button[action=duplicate]');
-		for (i in btns) {
+		for (var i = 0; i < btns.length; i ++) 
 			btns[i].setDisabled(records.length === 0);
-		}
 
-		if (this.selectionchange) {
+		if (this.selectionchange)
 			this.selectionchange(view, records);
-		}
 
 	},
 
@@ -302,7 +283,7 @@ Ext.define('canopsis.lib.controller.cgrid', {
 			var ctrlAccount = this.getController('Account');
 			var authorized = true;
 
-			for (var i in selection){
+			for (var i = 0; i < selection.length; i ++){
 				if (!ctrlAccount.check_record_right(selection[i], 'w'))
 					authorized = false;
 
@@ -328,10 +309,8 @@ Ext.define('canopsis.lib.controller.cgrid', {
 			}
 		}
 
-		if (this.deleteButton) {
+		if (this.deleteButton)
 			this.deleteButton(button, grid, selection);
-		}
-
 
 	},
 
@@ -792,7 +771,7 @@ Ext.define('canopsis.lib.controller.cgrid', {
 			log.dump(search_value_array);
 
 			// for each opt_bar_search_field
-			for (var i in grid.opt_bar_search_field) {
+			for (var i =0; i < grid.opt_bar_search_field.length ; i++) {
 				var field = grid.opt_bar_search_field[i];
 
 				if (search_value_array.length == 1) {
