@@ -56,26 +56,15 @@ class engine(cengine):
 		self.load_consolidation()
 		self.beat()
 	def beat(self):
-		self.logger.debug('beat')
 		non_loaded_records = self.storage.find({ '$and' : [{ 'crecord_type': 'consolidation' }, {'loaded': { '$ne' : 'true'} } ] }, namespace="object" )
 		
 		if (len(non_loaded_records) > 0 ) :
 			for i in non_loaded_records :
 				self.load(i)
-		self.logger.debug(self.records)
 		for i in self.records:
 			record = i.dump()
 			interval = record.get('interval', self.default_interval)
-			self.logger.debug("interval")
-			self.logger.debug(interval)
-			self.logger.debug("time")
-			self.logger.debug(int(time.time()))
-			self.logger.debug("timestamp")
-			self.logger.debug(self.timestamp[record.get('_id')])
-			self.logger.debug("diff")
-			self.logger.debug(( int(time.time()) - self.timestamp[record.get('_id')]) )
 			if ( int(interval) < ( int(time.time()) - self.timestamp[record.get('_id')]) ):
-				self.logger.debug('ok');
 				tfilter = json.loads(record.get('mfilter'))
 				metric_list = self.manager.store.find(mfilter=tfilter)
 				values = []
@@ -85,9 +74,10 @@ class engine(cengine):
 					list_fn = [ list_fn ] 
 				for metric in metric_list :
 					m = metric.get('d')
-					values.append( m[len(m)-1][1] ) 
+					values.append( m ) 
 					i = i + 1
 				if ( list_fn ) :
+					list_perf_data = []
 					for i in list_fn :
 						if i == 'mean':
 							fn = lambda x: sum(x) / len(x)
@@ -99,11 +89,28 @@ class engine(cengine):
 							fn = lambda x: sum(x)
 						elif i == 'delta':
 							fn = lambda x: x[0] - x[-1]
-						self.logger.debug(i)
-						self.logger.debug(values)
-						self.logger.debug(fn)
-						resultat = pyperfstore2.utils.aggregate_series(values, fn )
-						self.logger.debug(resultat)	 
+						resultat = list()
+						if ( fn ):
+							resultat = pyperfstore2.utils.aggregate_series(values, fn)
+						if ( len(resultat) > 0 ) :
+							list_perf_data.append({ 'metric' : i, 'value' : resultat[0][1], "unit": None, 'max': None, 'warn': None, 'crit': None, 'type': 'GAUGE' } ) 
+				event = cevent.forger(
+					connector ="consolidation",
+					connector_name = "engine",
+					event_type = "check",
+					source_type = "resource",
+					component = record['crecord_name'][1],
+					resource=record['crecord_name'][2],
+					state=0,
+					state_type=1,
+					output="",
+					long_output="",
+		                        perf_data=None,
+                		        perf_data_array=list_perf_data,
+		                        display_name=record['crecord_name'][0]
+				)
+				rk = cevent.get_routingkey(event)
+				self.amqp.publish(event, rk, self.amqp.exchange_name_events)
 				self.timestamp[record.get('_id')] = int(time.time())
 		
 		
