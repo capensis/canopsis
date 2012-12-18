@@ -150,7 +150,7 @@ Ext.define('widgets.gauge.gauge' , {
 
 	processNodes: function() {
 		var post_params = [];
-		for (var i in this.nodes)
+		for (var i=0; i < this.nodes.length; i++)
 			post_params.push({
 				id: this.nodes[i].id,
 				metrics: this.nodes[i].metrics

@@ -488,8 +488,7 @@ Ext.define('widgets.line_graph.line_graph' , {
 			log.debug('On refresh', this.logAuthor);
 			/*if (this.reportMode){
 				log.debug(' + Clean series', this.logAuthor)
-				var i;
-				for (i in this.metrics){
+				for (var i =0; i < this.metrics.length ; i++) {
 					metric = this.metrics[i]
 					this.addDataOnChart({'metric': metric, 'values': [] })
 				}
