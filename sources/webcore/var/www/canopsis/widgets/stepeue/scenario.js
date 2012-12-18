@@ -47,7 +47,7 @@ Ext.define('widgets.stepeue.scenario' , {
 			date: rdr_tstodate(node.raw.timestamp),
 			cps_state: rdr_status(node.raw.state)
 		};
-                for (i in node.raw.perf_data_array) {
+                for (var i=0; i < node.raw.perf_data_array.length; i++) {
                         if (node.raw.perf_data_array[i].metric == 'duration')
                                 duration = Math.round(node.raw.perf_data_array[i].value * 100) / 100;
                 }
@@ -59,7 +59,7 @@ Ext.define('widgets.stepeue.scenario' , {
 		var me = this;
                 url = this.widget.urlPerfStore;
                 post_params_tmp = new Array();
-		for (i in this.metrics) {
+		for (var i=0; i < this.metrics.length; i++) {
 	                var object = { id: getMetaId(this.mainScenario.raw.component, this.mainScenario.raw.resource, this.metrics[i]), 'metrics' : [this.metrics[i]] };
         	        post_params_tmp.push(object);
 		}
@@ -71,6 +71,8 @@ Ext.define('widgets.stepeue.scenario' , {
                         method: 'POST',
                         success: function(response) {
                                 var data = Ext.JSON.decode(response.responseText);
+
+                //TODO: IE
 				for (key in data.data) {
 					var node = data.data[key];
 					var unit = node['unit'];
@@ -108,7 +110,7 @@ Ext.define('widgets.stepeue.scenario' , {
 		var dte = rdr_tstodate(this.mainScenario.raw.timestamp);
 		var duration;
 		var state = rdr_status(this.mainScenario.raw.state);
-		for (i in this.mainScenario.raw.perf_data_array) {
+		for (var i=0; i < this.mainScenario.raw.perf_data_array.length; i++) {
 			if (this.mainScenario.raw.perf_data_array[i].metric == 'duration')
 				duration = Math.round(this.mainScenario.raw.perf_data_array[i].value * 100) / 100;
 

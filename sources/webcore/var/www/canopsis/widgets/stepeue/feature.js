@@ -86,7 +86,7 @@ Ext.define('widgets.stepeue.feature' , {
 				cntxtLoc = records[0].raw.cntxt_localization;
 				cntxtOS = records[0].raw.cntxt_os;
 				scenariosNameArray = new Array();
-				for (i in records) {
+				for (var i=0; i < records.length; i++) {
 					infoScenario = records[i].raw.resource.split('.');
 					scenario_name = infoScenario[2];
 					if (me.scenarios.hasOwnProperty(scenario_name) && me.scenarios[scenario_name] != undefined)
@@ -108,7 +108,7 @@ Ext.define('widgets.stepeue.feature' , {
 		} });
 	},
 	destroyFeature: function() {
-                for (i in this.scenarios)
+                for (var i=0; i < this.scenarios.length; i++)
                         this.scenarios[i].destroy();
 
         },
@@ -134,7 +134,7 @@ Ext.define('widgets.stepeue.feature' , {
                 me = this;
                 storeEvent.load({callback: function(records, operation, success) {
 			var listItems = new Array();
-			for (i in records) {
+			for (var i=0; i < records.length; i++) {
                                 var object = {
                                         title: rdr_tstodate(records[i].data.timestamp),
                                         layout: 'fit',
@@ -195,7 +195,7 @@ Ext.define('widgets.stepeue.feature' , {
 		log.debug('Listing the scenario of the feature', this.logAuthor);
 		var me = this;
 		var listScenarios = new Array();
-		for (i in this.scenarios) {
+		for (var i=0; i < this.scenarios.length; i++) {
 			listScenarios.push(this.scenarios[i].buildMainView());
 		}
 		listScenarios.reverse();
@@ -291,7 +291,7 @@ Ext.define('widgets.stepeue.feature' , {
 
 				},*/
 				viewready: function() {
-					for (i in me.scenarios)
+					for (var i=0; i < me.scenarios.length; i++)
 						me.scenarios[i].getPerfData();
 					var picwidth = Ext.getBody().getWidth() * .6;
 					var picheight = Ext.getBody().getHeight() * .92;
