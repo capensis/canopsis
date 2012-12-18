@@ -125,7 +125,7 @@ Ext.define('canopsis.controller.Account', {
 		if (groups.length > 0) {
 			var groups_records = [];
 
-			for (i in groups) {
+			for (var i=0; i < groups.length; i++) {
 				record = store.findExact('_id', groups[i]);
 				if (record != -1)
 					groups_records.push(store.getAt(record));
@@ -146,9 +146,9 @@ Ext.define('canopsis.controller.Account', {
 		//add groups
 		var record_list = form.checkGrid.getSelectionModel().getSelection();
 		var groups = [];
-		for (i in record_list) {
+
+		for (var i=0; i < record_list.length; i++)
 			groups.push(record_list[i].get('crecord_name'));
-		}
 
 		record.set('groups', groups);
 

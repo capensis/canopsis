@@ -94,7 +94,7 @@ Ext.define('canopsis.controller.Tabs', {
 		this.store.proxy.clear();
 
 		log.debug('Load saved tabs:', this.logAuthor);
-		for (var i in views) {
+		for (var i=0; i < views.length; i++) {
 			var options = views[i];
 			log.debug(' + ' + options.title + '(' + options.view_id + ')', this.logAuthor);
 			options.autoshow = false;
