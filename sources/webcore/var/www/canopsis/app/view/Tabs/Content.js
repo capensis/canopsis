@@ -320,7 +320,7 @@ Ext.define('canopsis.view.Tabs.Content' , {
 		log.debug('removing reporting bar', this.logAuthor)
 		/*
 		var cmps = this.getCmps()
-		for(var i in cmps){
+		for (var i=0; i < cmps.length; i++) {
 			if(cmps[i].reportMode == true){
 				cmps[i].reportMode = false
 				//clean widget
@@ -331,7 +331,6 @@ Ext.define('canopsis.view.Tabs.Content' , {
 		}
 
 		this.export_window.destroy()
-
 	},*/
 
 	setReportDate: function(from,to) {

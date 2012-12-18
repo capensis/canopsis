@@ -106,7 +106,7 @@ Ext.define('canopsis.view.ReportView', {
 
 		//////////////////////////
 
-		for (var i in widget_list) {
+		for (var i=0; i < widget_list.length; i++) {
 			var item = items[i].data;
 
 			item['reportMode'] = true;
