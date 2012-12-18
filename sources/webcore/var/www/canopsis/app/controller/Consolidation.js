@@ -29,7 +29,6 @@ Ext.define('canopsis.controller.Consolidation', {
 
 	init: function() {
 		log.debug('Initialize ...', this.logAuthor);
-
 		this.formXtype = 'ConsolidationForm';
 		this.listXtype = 'ConsolidationGrid';
 
@@ -40,10 +39,12 @@ Ext.define('canopsis.controller.Consolidation', {
 		//needed for weather widget
 		global.selectorCtrl = this;
 	},
-	/*
+	
 	_saveForm: function(form,store) {
-		console.log(form.getValues())
-	}
-	*/
+		if (form.record != undefined)
+			form.record.loaded = false;
+		this.callParent(arguments) ;
+	} 
+	
 
 });
