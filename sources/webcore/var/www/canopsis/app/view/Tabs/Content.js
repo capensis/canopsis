@@ -114,6 +114,7 @@ Ext.define('canopsis.view.Tabs.Content' , {
 		this.on('loaded', function() {
 				if (this.view_options)
 					this.applyViewOptions(this.view_options);
+					this.displayed = true;
 			},this);
 	},
 
@@ -177,7 +178,6 @@ Ext.define('canopsis.view.Tabs.Content' , {
 	setContent: function() {
 		if (this.dump && ! this.displayed) {
 			this.load(this.dump);
-			this.displayed = true;
 		}
 	},
 
