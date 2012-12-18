@@ -228,7 +228,7 @@ Ext.define('canopsis.view.Tabs.Content' , {
 	_onHide: function() {
 		log.debug('Hide tab ' + this.id, this.logAuthor);
 		var cmps = this.getCmps();
-		for (var i in cmps) {
+		for (var i=0; i < cmps.length; i++) {
 			if (cmps[i].TabOnHide) {
 				cmps[i].TabOnHide();
 			}
@@ -251,7 +251,7 @@ Ext.define('canopsis.view.Tabs.Content' , {
 	startAllTasks: function() {
 		log.debug('Start all tasks', this.logAuthor);
 		var cmps = this.getCmps();
-		for (var i in cmps) {
+		for (var i=0; i < cmps.length; i++) {
 			if (cmps[i].startTask) {
 				cmps[i].startTask();
 			}
@@ -261,7 +261,7 @@ Ext.define('canopsis.view.Tabs.Content' , {
 	stopAllTasks: function() {
 		log.debug('Stop all tasks', this.logAuthor);
 		var cmps = this.getCmps();
-		for (var i in cmps) {
+		for (var i=0; i < cmps.length; i++) {
 			if (cmps[i].stopTask) {
 				cmps[i].stopTask();
 			}
@@ -287,7 +287,7 @@ Ext.define('canopsis.view.Tabs.Content' , {
 
 		//switch widget to reporting mode
 		var cmps = this.getCmps();
-		for (var i in cmps) {
+		for (var i=0; i < cmps.length; i++) {
 			if (cmps[i].reportMode == false) {
 				cmps[i].reportMode = true;
 			}
@@ -337,7 +337,7 @@ Ext.define('canopsis.view.Tabs.Content' , {
 	setReportDate: function(from,to) {
 		log.debug('Send report data for widgets', this.logAuthor);
 		var cmps = this.getCmps();
-		for (var i in cmps) {
+		for (var i=0; i < cmps.length; i++) {
 			cmps[i]._doRefresh(from, to);
 		}
 

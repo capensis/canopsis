@@ -259,12 +259,11 @@ Ext.define('canopsis.lib.view.crights' , {
 				var data = record.get('value');
 				if (values.length == data.length) {
 					var returned_value = false;
-					for (i in values) {
-						if (values[i] == data[i]) {
+					for (var i=0; i < values.length; i++) {
+						if (values[i] == data[i])
 							returned_value = true;
-						}else {
+						else
 							returned_value = false;
-						}
 					}
 					return returned_value;
 				}

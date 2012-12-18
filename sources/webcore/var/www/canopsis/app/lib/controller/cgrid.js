@@ -184,10 +184,10 @@ Ext.define('canopsis.lib.controller.cgrid', {
 			btns[i].on('click', this._downloadButton, this);
 
 		// TimeDisplaybutton
-	/*	var btns = Ext.ComponentQuery.query('#' + id + ' button[action=timeDisplay]');
-		for (i in btns) {
+		/*var btns = Ext.ComponentQuery.query('#' + id + ' button[action=timeDisplay]');
+		for (var i = 0; i < btns.length; i ++)
 			btns[i].on('click', this.timeDisplay, this);
-		}*/
+		*/
 
 		var field = Ext.ComponentQuery.query('#' + id + ' cdate[name=startTimeSearch]');
 		for (var i = 0; i < field.length; i ++) 
@@ -377,9 +377,10 @@ Ext.define('canopsis.lib.controller.cgrid', {
 				//HACK anti set value crash, model doesn't accept unknown value
 				//and will crash
 				var cleaned_data = {};
-				for (var i in data)
-					if (record.fields.keys.indexOf(i) != -1)
-						cleaned_data[i] = data[i];
+				Ext.Object.each(data, function(key, value, myself){
+					if (record.fields.keys.indexOf(key) != -1)
+						cleaned_data[key] = value;
+				});
 
 				record.set(cleaned_data);
 			}else {
@@ -639,15 +640,13 @@ Ext.define('canopsis.lib.controller.cgrid', {
 			var form = this._showForm(item);
 
 			if (form) {
-				if (this.beforeload_EditForm) {
+				if (this.beforeload_EditForm)
 					this.beforeload_EditForm(form, item_copy);
-				}
 
 				form.loadRecord(item_copy);
 
-				if (this.afterload_EditForm) {
+				if (this.afterload_EditForm)
 					this.afterload_EditForm(form, item_copy);
-				}
 			}
 
 			if (this.editRecord)
@@ -729,15 +728,13 @@ Ext.define('canopsis.lib.controller.cgrid', {
 				copy.set('_id', undefined);
 
 				// load records
-				if (this.beforeload_DuplicateForm) {
+				if (this.beforeload_DuplicateForm)
 					this.beforeload_DuplicateForm(form, copy);
-				}
 
 				form.loadRecord(copy);
 
-				if (this.afterload_DuplicateForm) {
+				if (this.afterload_DuplicateForm)
 					this.afterload_DuplicateForm(form, copy);
-				}
 
 				this._bindFormEvents(form);
 			}
@@ -771,55 +768,47 @@ Ext.define('canopsis.lib.controller.cgrid', {
 			log.debug(' + Search:', this.logAuthor);
 			log.dump(search_value_array);
 
-			// for each opt_bar_search_field
-			for (var i =0; i < grid.opt_bar_search_field.length ; i++) {
-				var field = grid.opt_bar_search_field[i];
+			for (var j =0; j < search_value_array.length ; j++) {
+				var search = search_value_array[j];
 
-				if (search_value_array.length == 1) {
-					var filter = {};
-					var search = search_value_array[0];
-
-					// Process tags
-					if (search[0] == '#'){
-						search_tags.push(search.slice(1));
-					}else{
-						filter[field] = { '$regex' : search, '$options': 'i'};
-						search_filters.push(filter);
-					}	
-
-				} else {
-					var filter = [];
-
-					// for each word in search string
-					for (var j in search_value_array) {
+				// Check if it's a tag
+				if (search[0] == '#'){
+					search_tags.push(search.slice(1));
+				}else{
+					var filter = []
+					for (var i =0; i < grid.opt_bar_search_field.length ; i++) {
+						var field = grid.opt_bar_search_field[i];
 						var sub_filter = {};
-						var word = search_value_array[j];
+						sub_filter[field] = { '$regex' : search, '$options': 'i'};
 
-						// Process tags
-						if (word[0] == '#'){
-							search_tags.push(word.slice(1));
-						}else{
-							sub_filter[field] = { '$regex' : word, '$options': 'i'};
-							filter.push(sub_filter);
-						}
+						filter.push(sub_filter)
 					}
-					search_filters.push({ '$and': filter});
+					search_filters.push({"$or": filter})
 				}
+
 			}
+
+			log.debug(' + search_filters:', this.logAuthor);
+			log.dump(search_filters);
+
+			log.debug(' + search_tags:', this.logAuthor);
+			log.dump(search_tags);
 
 			search_tags = Ext.Array.unique(search_tags);
-			for (var i=0; i < search_tags.length; i++){
+
+			for (var i=0; i < search_tags.length; i++)
 				search_filters.push({ 'tags': search_tags[i] });
-			}
+
+			log.debug(' + Final search_filters:', this.logAuthor);
+			log.dump(search_filters);
 
 			if (search_filters.length == 0)
 				return;
 			else if (search_filters.length == 1)
-				//store.search(search_filters[0], false);
 				this.search_filter_id = store.addFilter(search_filters[0]);
 			else
-				this.search_filter_id = store.addFilter(store.getOrFilter(search_filters));
-				//store.search(store.getOrFilter(search_filters), false);
+				this.search_filter_id = store.addFilter(store.getAndFilter(search_filters));
+
 		}
 
 		if (grid.pagingbar) {

@@ -271,7 +271,7 @@ function is12Clock() {
 		if (global.account.clock_type && global.account.clock_type != 'auto')
 			global.is12Clock = global.account.clock_type == '12h';
 		else
-			global.is12Clock = global.am_pm_lang.indexOf(global.locale) == -1;
+			global.is12Clock = Ext.Array.contains(global.am_pm_lang, global.locale);
 
 		return global.is12Clock;
 
