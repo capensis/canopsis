@@ -246,7 +246,7 @@ Ext.define('widgets.weather.weather' , {
 		this.wcontainer.removeAll();
 		var debug_loop_count = 0;
 
-		for (var i=0; i < this.nodesId.length; i++) {
+		for (var i=0; i < this.nodeId.length; i++) {
 			var node_id = this.nodeId[i];
 
 			if (data[node_id]) {
