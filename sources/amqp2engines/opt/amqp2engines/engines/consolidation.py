@@ -42,13 +42,13 @@ states = {0: 0, 1:0, 2:0, 3:0}
 
 class engine(cengine):
 	def __init__(self, *args, **kargs):
-		print "init"
 		self.metrics_list = {}
 		self.timestamp = { } 
 		self.manager = pyperfstore2.manager(logging_level=logging.INFO)
 		self.beat_interval = 5 
 		cengine.__init__(self, name=NAME, *args, **kargs)
-		self.default_interval = 10
+		self.default_interval = 300
+		self.records = { } 
 		
 	def pre_run(self):
 		self.storage = get_storage(namespace='object', account=caccount(user="root", group="root"))
@@ -61,27 +61,35 @@ class engine(cengine):
 		if (len(non_loaded_records) > 0 ) :
 			for i in non_loaded_records :
 				self.load(i)
-		for i in self.records:
-			record = i.dump()
+		for _id in self.records.keys() :
+			exists = self.storage.find({ '_id': _id } )
+			self.logger.debug(exists)
+			self.logger.debug(_id)
+			if (len(exists) == 0 ) :
+				del(self.records[_id])
+
+		for record in self.records.values():
 			interval = record.get('interval', self.default_interval)
 			if ( int(interval) < ( int(time.time()) - self.timestamp[record.get('_id')]) ):
 				tfilter = json.loads(record.get('mfilter'))
 				metric_list = self.manager.store.find(mfilter=tfilter)
 				values = []
-				i=1
 				list_fn = record.get('type', False)
-				if ( isinstance(list_fn, str)) :
+				self.logger.debug( 'type liste fn' )
+				self.logger.debug( type(list_fn) )
+				self.logger.debug( list_fn)
+				if ( isinstance(list_fn, str) or isinstance(list_fn, unicode) ) :
 					list_fn = [ list_fn ] 
 				for metric in metric_list :
 					m = metric.get('d')
-					values.append( m ) 
-					i = i + 1
-				if ( list_fn ) :
+					if ( len(m) >0 ) :
+						values.append( m[-2:-1] ) 
+				if ( list_fn and len(values) > 0 ) :
 					list_perf_data = []
 					for i in list_fn :
 						if i == 'mean':
 							fn = lambda x: sum(x) / len(x)
-						elif i == 'min':
+						elif i == 'min' :
 							fn = lambda x: min(x)
 						elif i == 'max' :
 							fn = lambda x: max(x)
@@ -90,27 +98,30 @@ class engine(cengine):
 						elif i == 'delta':
 							fn = lambda x: x[0] - x[-1]
 						resultat = list()
-						if ( fn ):
+						try :
 							resultat = pyperfstore2.utils.aggregate_series(values, fn)
+						except NameError:
+							self.logger.info('la fonction '+i+' est inexistante')
 						if ( len(resultat) > 0 ) :
 							list_perf_data.append({ 'metric' : i, 'value' : resultat[0][1], "unit": None, 'max': None, 'warn': None, 'crit': None, 'type': 'GAUGE' } ) 
-				event = cevent.forger(
-					connector ="consolidation",
-					connector_name = "engine",
-					event_type = "check",
-					source_type = "resource",
-					component = record['crecord_name'][1],
-					resource=record['crecord_name'][2],
-					state=0,
-					state_type=1,
-					output="",
-					long_output="",
-		                        perf_data=None,
-                		        perf_data_array=list_perf_data,
-		                        display_name=record['crecord_name'][0]
-				)
-				rk = cevent.get_routingkey(event)
-				self.amqp.publish(event, rk, self.amqp.exchange_name_events)
+							event = cevent.forger(
+								connector ="consolidation",
+								connector_name = "engine",
+								event_type = "consolidation",
+								source_type = "resource",
+								component = record['crecord_name'][1],
+								resource=record['crecord_name'][2],
+								state=0,
+								state_type=0,
+								output="",
+								long_output="",
+		        			                perf_data=None,
+			                		        perf_data_array=list_perf_data,
+		        			                display_name=record['crecord_name'][0]
+							)	
+							rk = cevent.get_routingkey(event)
+							self.logger.debug(event)
+							self.amqp.publish(event, rk, self.amqp.exchange_name_events)
 				self.timestamp[record.get('_id')] = int(time.time())
 		
 		
@@ -136,11 +147,12 @@ class engine(cengine):
 		                        display_name=record['crecord_name'][0]
 			)
 			rk = cevent.get_routingkey(event)
+			self.records[record.get('_id')] = record
 			self.amqp.publish(event, rk, self.amqp.exchange_name_events)
 
 	def load_consolidation(self) :
-		self.records = self.storage.find({ 'crecord_type': 'consolidation' }, namespace="object")
-		for i in self.records :
+		records = self.storage.find({ 'crecord_type': 'consolidation' }, namespace="object")
+		for i in records :
 			self.load(i)
 				
 			
