@@ -86,7 +86,7 @@ Ext.define('canopsis.lib.form.field.ctopo' , {
 				nodes[node.id] = node.data;
 
 				log.debug(' + ' + node._id, this.logAuthor);
-				for (var j in node.conns) {
+				for (var j=0; j < node.conns.length; j++) {
 					var conn = node.conns[j];
 					var target = Ext.getCmp(conn.targetId);
 					var source = Ext.getCmp(conn.sourceId);
@@ -112,7 +112,7 @@ Ext.define('canopsis.lib.form.field.ctopo' , {
 		this.removeAll();
 
 		log.debug(' + Create nodes', this.logAuthor);
-		for (i in nodes) {
+		for (var i=0; i < nodes.length; i++) {
 			var el = this.createNode(nodes[i]);
 			this.add(el);
 			corresp[i] = el.id;
@@ -124,7 +124,7 @@ Ext.define('canopsis.lib.form.field.ctopo' , {
 
 		log.debug(' + Connect nodes', this.logAuthor);
 
-		for (i in data.conns) {
+		for (var i=0; i < data.conns.length; i++) {
 			var source = data.conns[i][0];
 			var target = data.conns[i][1];
 			log.debug('     + ' + source + ' -> ' + target, this.logAuthor);
@@ -270,11 +270,12 @@ Ext.define('canopsis.lib.form.field.ctopo' , {
 	removeConnection: function(c ) {
 		var target = Ext.getCmp(c.targetId);
 		var source = Ext.getCmp(c.sourceId);
-		for (var i in target.conns)
+		for (var i=0; i < target.conns.length; i++) {
 			if (target.conns[i].connection.id == c.id)
 				delete (target.conns[i]);
+
 		// Remove endpoints
-		for (var i in c.endpoints)
+		for (var i=0; i < c.endpoints.length; i++) {
 			this.jsPlumbInstance.deleteEndpoint(c.endpoints[i]);
 
 		// Remove connection
@@ -385,9 +386,10 @@ Ext.define('canopsis.lib.form.field.ctopo' , {
 				{
 					var connections_out = me.jsPlumbInstance.getConnections({ source: nodeEl.id});
 					var connections_in = me.jsPlumbInstance.getConnections({ target: nodeEl.id});
-					for (i in connections_out)
+
+					for (var i=0; i < connections_out.length; i++)
 						me.removeConnection(connections_out[i]);
-					for (i in connections_in)
+					for (var i=0; i < connections_in.length; i++)
 						me.removeConnection(connections_in[i]);
 
 					nodeEl.destroy();

@@ -101,11 +101,11 @@ Ext.define('canopsis.controller.Websocket', {
 
 		//Re-open channel
 		if (this.subscribe_cache && this.auto_resubscribe) {
-			for (var i in this.subscribe_cache) {
+			for (var i = 0; i < this.subscribe_cache.length; i ++){
 				var s = this.subscribe_cache[i]
 				delete this.subscribe_cache[i];
 
-				for (var j in s.subscribers) {
+				for (var j = 0; j < s.subscribers.length; j ++){
 					var t = s.subscribers[j];
 					this.subscribe(s.type, s.channel, t.on_message, t.scope);
 				}
@@ -130,7 +130,7 @@ Ext.define('canopsis.controller.Websocket', {
 
 				var me = this;
 				var callback = function(message, rk) {
-					for (var i in me.subscribe_cache[id].subscribers) {
+					for (var i = 0; i < me.subscribe_cache[id].subscribers.length; i ++){
 						var s = me.subscribe_cache[id].subscribers[i];
 						s.on_message.apply(s.scope, [message, rk]);
 					}
