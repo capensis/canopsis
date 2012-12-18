@@ -173,7 +173,7 @@ Ext.define('canopsis.lib.form.field.cfilter' , {
 	check_object_validity: function(obj) {
 		if (this.checkObjectValidity) {
 			var output = true;
-			for (var i in obj) {
+			for (var i = 0; i < obj.length; i++) {
 				if (Ext.isArray(obj[i])) {
 					if (obj[i].length == 0)
 						return false;
@@ -338,7 +338,7 @@ Ext.define('canopsis.lib.form.field.cfilter' , {
 
 			getValue: function() {
 				var output = [];
-				for (var i in this.textfield_panel.items.items) {
+				for (var i = 0; this.textfield_panel.items.items.length; i++) {
 					var panel = this.textfield_panel.items.items[i];
 					var textfield = panel.down('.textfield');
 					output.push(textfield.getValue());
@@ -348,9 +348,8 @@ Ext.define('canopsis.lib.form.field.cfilter' , {
 
 			setValue: function(array) {
 				this.textfield_panel.removeAll();
-				for (var i in array) {
+				for (var i = 0; i < array.length; i++) 
 					this.add_textfield(array[i]);
-				}
 			}
 		});
 
@@ -628,7 +627,7 @@ Ext.define('canopsis.lib.form.field.cfilter' , {
 					//get into cfilter
 					var values = [];
 					//get all cfilter values
-					for (var i in items) {
+					for (var i = 0; i < items.length; i++) {
 						var cfilter = items[i];
 						values.push(cfilter.getValue());
 					}
@@ -737,7 +736,7 @@ Ext.define('canopsis.lib.form.field.cfilter' , {
 						else
 							this.string_value.setValue(object_value);
 					}else {
-						for (i in value) {
+						for (var i = 0; i < value.length; i++) {
 							log.debug('  + "' + key + '" contain another cfilter object', this.logAuthor);
 							this.add_cfilter(value[i]);
 						}
