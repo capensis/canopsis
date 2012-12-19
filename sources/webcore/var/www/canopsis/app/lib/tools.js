@@ -148,10 +148,15 @@ function getMidnight(timestamp) {
 function check_color(color) {
 	if (! color)
 		return color;
-	if (color[0] != '#')
-		return '#' + color;
-	else
+
+	if (color.charAt(0) == '#' && color.charAt(1) != '#')
 		return color;
+
+	//Clean color
+	while(color.charAt(0) == '#')
+		color = color.slice(1)
+
+	return '#' + color;
 }
 
 function strip_blanks(val) {
