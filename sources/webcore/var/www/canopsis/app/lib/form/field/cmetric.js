@@ -268,6 +268,7 @@ Ext.define('canopsis.lib.form.field.cmetric' , {
 			store: this.selected_store,
 			flex: 1,
 			margin: 3,
+			multiSelect: true,
 			border: true,
 			scroll: true,
 			columns: {
