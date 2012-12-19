@@ -56,7 +56,7 @@ Ext.define('widgets.stepeue.stepeue', {
 			this.last_from = to;
 			this.features = new Array();
 			for (var i = 0; i < this.nodes.length; i++) {
-				var feature = Ext.create('widgets.stepeue.feature');
+				var feature = Ext.create('widgets.stepeue.feature');  //creation of empty feature
 				this.features.push(feature);
 			}
 		}
@@ -76,11 +76,13 @@ Ext.define('widgets.stepeue.stepeue', {
 	},
 	buildHtml: function() {
 		if (this.nodes.length != 0) {
+			//If there are nodes it means that there are features to print, otherwise we print "no features selected"
 			log.debug('Build the view of the widget', this.logAuthor);
 			var listItems = new Array();
 			var me = this;
-			for (var i = 0; i < this.nodes.length; i++) {
-				var title = this.nodes[i].split('.')[5];
+			for (var i = 0; i < this.nodes.length; i++) { 
+				//each nodes mean each feature
+				var title = this.nodes[i].split('.')[5]; //title of feature
 				var object = {
 					title: title,
 					id: me.wcontainer.id + ':feature:' + i,
@@ -90,7 +92,7 @@ Ext.define('widgets.stepeue.stepeue', {
 						activate: function(tab) {
 							log.debug('activated');
 							var idString = tab.id.split(':');
-							var id = idString[2];
+							var id = idString[2]; //id of the features
 							/*							pnl = Ext.create('Ext.Panel', {
 								xtype: "panel",
 								width: "100%",
@@ -100,13 +102,14 @@ Ext.define('widgets.stepeue.stepeue', {
 								pnl.setLoading(true, true);
 							} ) ;
 							el.add( pnl ) ; */
-							me.features[id].init(me.nodes[id], me, tab);
+							me.features[id].init(me.nodes[id], me, tab); //we build the feature view after initialization
 
 						}
 					}
 				};
-				listItems.push(object);
+				listItems.push(object); 
 			}
+			//if the array listItems has one item it means that there is no tabs otherwise it means that there are.
 			if (listItems.length == 1) {
 				listItems[0].xtype = 'panel';
 				listItems[0].listeners.afterrender = function() {

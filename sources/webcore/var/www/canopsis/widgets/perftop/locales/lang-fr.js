@@ -19,7 +19,7 @@
 # ---------------------------------
 */
 
-i18n['perftop.Limit'] =
+i18n['perftop.Limit'] = 'Limite';
 i18n['perftop.Threshold'] = 'Seuil';
 i18n['perftop.Threshold direction'] = 'Direction seuil';
 i18n['perftop.Compare threshold on pct and not value'] = 'Comparer le seuil au % et non à la valeur';
