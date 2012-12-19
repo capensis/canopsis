@@ -74,6 +74,7 @@
 			<script type="text/javascript" src="resources/lib/jquery.peity.min.js"></script>
 			<script type="text/javascript" src="resources/lib/jquery.sparkline.js"></script>
 			<script type="text/javascript" src="resources/lib/sigma.min.js"></script>
+			<script type="text/javascript" src="resources/lib/jquery.lightbox-0.5.js"></script>
 			
 			<script type="text/javascript" src="resources/lib/justGage/raphael.2.1.0.min.js"></script>
 			<script type="text/javascript" src="resources/lib/justGage/justgage.js"></script>
@@ -102,8 +103,6 @@
 
 			<script type="text/javascript">document.getElementById('loading-msg').innerHTML = 'Loading NowJS client ...';</script>
 			<script type="text/javascript" id="nowjs"></script>
-			<script type="text/javascript"> Ext.fly('nowjs').set({src: global.nowjs.proto+'://'+global.nowjs.hostname+":"+global.nowjs.port+"/nowjs/now.js"});</script>
-
 
 			<!-- Extjs Plugins -->
 			<script type="text/javascript">document.getElementById('loading-msg').innerHTML = 'Loading Extjs plugins ...';</script>
@@ -158,12 +157,10 @@
 					$('#loading').remove()
 					$('#layout').remove()
 					$('body').removeClass('login')
-
-					console.log($('#container').width())
 					
 					var content = Ext.create('canopsis.view.Tabs.Content',{
 						renderTo: 'container',
-						width: ($('#container').width()- 20),
+						width: ($('#container').width()- 1),
 						view_id : view_id,
 						autoshow : true,
 						fullscreenMode: true

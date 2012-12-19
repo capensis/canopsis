@@ -390,8 +390,9 @@ Ext.define('widgets.stepeue.feature', {
 
                 },*/
 				viewready: function() {
-					for (var i = 0; i < me.scenarios.length; i++)
-					me.scenarios[i].getPerfData();
+					Ext.Object.each(me.scenarios, function (i, value) {
+						me.scenarios[i].getPerfData();
+					}) ;
 					var picwidth = Ext.getBody().getWidth() * .6;
 					var picheight = Ext.getBody().getHeight() * .92;
 					$('a.image-zoom').lightBox({

@@ -77,9 +77,8 @@ Ext.define('widgets.stepeue.scenario', {
 			success: function(response) {
 				var data = Ext.JSON.decode(response.responseText);
 
-				//TODO: IE
-				for (key in data.data) {
-					var node = data.data[key];
+				for (var i=0; i < data.data.length; i++) {
+					var node = data.data[i];
 					var unit = node['unit'];
 					var metric = node['metric'];
 
