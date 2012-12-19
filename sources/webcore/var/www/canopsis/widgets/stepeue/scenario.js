@@ -140,7 +140,86 @@ Ext.define('widgets.stepeue.scenario', {
 			'</a>');
 		return imageTpl.applyTemplate(imgObject);
 	},
-	buildDetailsView: function() {
+	displayLastExecutionsErrors : function( node ) {
+                var model = Ext.define('Scenarios', {
+			extend : "Ext.data.Model",
+			fields : [
+				{ 'name': 'state', 'type': 'string'},
+				{ 'name': 'timestamp', 'type': 'float'},
+				{ 'name': 'cntxt_localization', "type":"string"},
+				{ 'name': 'cntxt_os', "type": "string"},
+				{ 'name': 'cntxt_browser', "type": "string" }, 
+				{ 'name': 'perf_data_array', "type": "object"} 
+			]
+
+		}) ;
+                var scenario_errors  = Ext.create('canopsis.lib.store.cstore', {
+                        model: model,
+                        pageSize: 30,
+                        proxy: {
+                                type: 'rest',
+                                url: '/rest/events_log/event',
+                                reader: {
+                                        type: 'json',
+                                        root: 'data',
+                                        totalProperty: 'total',
+                                        successProperty: 'success'
+                                }
+                        },
+			autoLoad: true
+                });
+                var filter = {
+                        '$and': [{
+                                'child': node
+                        }, {
+                                'type_message': 'scenario'
+                        }, {
+                                'state': {
+                                        '$ne': 0
+                                }
+                        },{
+				'resource': {
+					'$regex': 'GLPI.*'+this.name+''
+				}
+			}]
+                };
+		scenario_errors.setFilter( filter ) ;	
+		var grid = Ext.create('Ext.grid.Panel', {
+			layout: 'fit',
+			title: 'Scenario Execution errors [' + this.name + ']',
+			columns: [{
+				header: 'Status',
+				dataIndex: 'state',
+				renderer: function(value) { return rdr_status(value); } 
+			}, {
+				header: 'Date',
+				dataIndex: 'timestamp',
+				align: 'center',
+				renderer: function(value) { return rdr_tstodate(value); }
+			}, {
+				header: 'Localization',
+				dataIndex: 'cntxt_localization',
+				renderer: function(value) { return rdr_country(value); }
+			}, {
+				header: 'OS',
+				dataIndex: 'cntxt_os',
+				renderer: function(value) { return rdr_os(value); }
+			}, {
+				header: 'Browser',
+				dataIndex: 'cntxt_browser',
+				renderer: function(value) { return rdr_browser(value); }
+			}, {
+				header: 'Duration',
+				dataIndex: 'perf_data_array',
+				renderer: function (value) { return Math.round( value[0].value*100 ) / 100 +" "+value[0].unit; } 
+			}],
+			store: scenario_errors
+		});
+		var grid;
+		return grid; 
+
+	},
+	buildDetailsView: function () {
 		log.debug('Build details view', this.logAuthor);
 		var scenarData = this.scenarios;
 		var storeScenar = Ext.create('Ext.data.Store', {
