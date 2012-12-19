@@ -26,7 +26,7 @@ Ext.define('widgets.stepeue.feature', {
 	node: null,
 	init: function(node, widget, element) {
 		log.debug('Initialization of feature [' + node + ']', this.logAuthor);
-		this.node = node;
+		this.node = node; // the id to find the feature in mongodb
 		this.widget = widget;
 		this.elementContainer = element;
 		var filter = {
@@ -98,11 +98,16 @@ Ext.define('widgets.stepeue.feature', {
 			callback: function(records, operation, success) {
 				if (success) {
 					log.debug("feature's Scenario are  loaded", me.logAuthor);
+					
+					//determine the context
 					cntxtBrowser = records[0].raw.cntxt_browser;
 					cntxtLoc = records[0].raw.cntxt_localization;
 					cntxtOS = records[0].raw.cntxt_os;
-					scenariosNameArray = new Array();
+
+					scenariosNameArray = new Array(); //Contains all the scenarioName
+
 					for (var i = 0; i < records.length; i++) {
+					//foreach scenario we determine if it the main scenario or if the context it's different and we build scenario object
 						infoScenario = records[i].raw.resource.split('.');
 						scenario_name = infoScenario[2];
 						if (me.scenarios.hasOwnProperty(scenario_name) && me.scenarios[scenario_name] != undefined) me.scenarios[scenario_name].addScenario(records[i]);
@@ -123,10 +128,10 @@ Ext.define('widgets.stepeue.feature', {
 			}
 		});
 	},
-	destroyFeature: function() {
-		for (var i = 0; i < this.scenarios.length; i++)
-		this.scenarios[i].destroy();
-
+	destroyFeature: function () {
+		Ext.Object.each(this.scenarios, function (i, value) {
+			Ext.destroyMembers( this.scenarios[i] ) ;
+		} ) ;
 	},
 	displayLastErrorsVideos: function() {
 		var filter = {
@@ -165,14 +170,17 @@ Ext.define('widgets.stepeue.feature', {
 			callback: function(records, operation, success) {
 				var listItems = new Array();
 				for (var i = 0; i < records.length; i++) {
+					var rec = records[i] ;
 					var object = {
 						title: rdr_tstodate(records[i].data.timestamp),
 						layout: 'fit',
 						border: false,
+						id : "feature:video:"+records[i].raw._id,
 						listeners: {
-							activate: function(tabs) {
+							activate: function (tab) {
+								var idArray = tab.id.split(':');
 								var object = {
-									src: '/rest/media/events_log/' + records[i].raw._id,
+									src: '/rest/media/events_log/' + idArray[2],
 									videoWidth: '70%'
 								};
 								var tpl = new Ext.XTemplate(
@@ -180,8 +188,8 @@ Ext.define('widgets.stepeue.feature', {
 									'<video autoplay="autoplay" controls="controls" width="{videoWidth}" src="{src}">{alt}</video>',
 									'</div>');
 								var oHtml = tpl.apply(object);
-								tabs.removeAll();
-								tabs.add({
+								tab.removeAll();
+								tab.add({
 									xtype: 'panel',
 									border: true,
 									layout: 'fit',
@@ -300,12 +308,27 @@ Ext.define('widgets.stepeue.feature', {
 				sortable: false
 			}, {
 				xtype: 'actioncolumn',
-				items: [{
+				items: [
+				{
 					icon: '/static/canopsis/themes/canopsis/resources/images/icons/date_error.png',
 					tooltip: 'Last Errors Execution',
 					handler: function(grid, rowIndex, colIndex) {
 						var rec = grid.getStore().getAt(rowIndex);
-						me.scenarios[rec.get('scenario')].displayLastExecution(me.record.internalId);
+						grid = me.scenarios[rec.get('scenario')].displayLastExecutionsErrors(me.node);
+						var gwidth = Ext.getBody().getWidth() * .6;
+						var gheight = Ext.getBody().getHeight() * .8;
+						Ext.create('Ext.window.Window', {
+							xtype: 'panel',
+							layout: 'fit',
+							id: 'window-screenshot',
+							autoScroll: true,
+							width: gwidth,
+							height: gheight,
+							items: [grid],
+							renderTo: Ext.getBody(),
+							modal: true
+						}).show().center();
+		
 					}
 				}, {
 					icon: '/static/canopsis/themes/canopsis/resources/images/icons/table.png',
