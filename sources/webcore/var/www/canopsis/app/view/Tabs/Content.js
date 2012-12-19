@@ -66,7 +66,9 @@ Ext.define('canopsis.view.Tabs.Content' , {
 		cancel: _('Cancel'),
 		edit: _('Edit'),
 		duplicate: _('Duplicate'),
-		configure: _('Configure')
+		configure: _('Configure'),
+		changePageMode: _('Toggle to real page size'),
+		options: _('Edit options')
 	},
 
 	pageWidth: {

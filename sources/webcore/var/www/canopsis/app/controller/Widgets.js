@@ -25,7 +25,7 @@ Ext.define('canopsis.controller.Widgets', {
     stores: ['Widgets'],
     models: ['Event'],
 
-    item_to_translate: ['title', 'fieldLabel', 'boxLabel', 'text', 'emptyText'],
+    item_to_translate: ['title', 'fieldLabel', 'boxLabel', 'text', 'emptyText','header'],
 
     logAuthor: '[controller][Widgets]',
 

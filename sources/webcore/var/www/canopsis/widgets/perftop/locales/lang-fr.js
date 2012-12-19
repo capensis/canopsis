@@ -19,3 +19,20 @@
 # ---------------------------------
 */
 
+i18n['perftop.Limit']=
+i18n['perftop.Threshold']='Seuil';
+i18n['perftop.Threshold direction']='Direction seuil';
+i18n['perftop.Compare threshold on pct and not value']='Comparer le seuil au % et non à la valeur';
+i18n['perftop.Expand values (only first metric will be selected)']='Etendre valeurs(seul la première metrique est selectionnée)';
+i18n['perftop.Time window (for counter)']='Fenêtre de temps(pour les compteurs)';
+i18n['perftop.Default direction']='Direction par défaut';
+i18n['perftop.Hide headers']='Cacher en-tête';
+i18n['perftop.Icon']='Icone';
+i18n['perftop.Component']='Composant';
+i18n['perftop.Resource']='Ressource';
+i18n['perftop.Metric']='Métrique';
+i18n['perftop.Human-readable value']='Affichage humain';
+i18n['perftop.Value']='Valeur';
+i18n['perftop.Percent (if possible)']='Pourcent (si possible)';
+i18n['perftop.Unit']='Unité';
+i18n['perftop.Last time']='Dernier moment';

@@ -54,3 +54,6 @@ i18n['line_graph.Square'] = 'Carré';
 i18n['line_graph.Diamond'] = 'Diamant';
 i18n['line_graph.Triangle'] = 'Triangle';
 i18n['line_graph.Triangle Down'] = 'Triangle inversé';
+i18n['line_graph.Trend']='Tendance';
+i18n['line_graph.Custom label']='Nom label';
+i18n['line_graph.Curve color']='Couleur courbe';

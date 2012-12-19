@@ -37,3 +37,6 @@ i18n['diagram.Diagram type'] = 'Type de diagramme';
 i18n['diagram.Vertical display (rotate graph)'] = 'Affichage vertical';
 i18n['diagram.Enable labels'] = 'Activer les libellés';
 i18n['diagram.Display metric name in label'] = 'Afficher le nom de la métrique dans le libellé'
+i18n['diagram.Enable gradient colors']='Activer les couleurs en dégradées';
+i18n['diagram.Curve color']='Couleur courbe';
+i18n['diagram.Custom label']='Nom label';
