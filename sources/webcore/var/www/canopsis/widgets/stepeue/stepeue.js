@@ -40,9 +40,9 @@ Ext.define('widgets.stepeue.stepeue' , {
 	},
 	destroyObject: function() {
 		log.debug('object destroyed', this.logAuthor);
-                for (i in this.features) {
-                        this.features[i].destroyFeature();
-			Ext.destroyMembers(this.features[i]);
+                for (var i=0; i < this.features.length; i++) {
+                    this.features[i].destroyFeature();
+					Ext.destroyMembers(this.features[i]);
                 	//this.features[i].destroy() ;
                 }
         },
@@ -57,7 +57,7 @@ Ext.define('widgets.stepeue.stepeue' , {
 	                this.urlPerfStore = this.makeUrl(from, to);
                 	this.last_from = to;
 			this.features = new Array();
-			for (i in this.nodes) {
+			for (var i=0; i < this.nodes.length; i++) {
 				var feature = Ext.create('widgets.stepeue.feature');
 				var last = false;
 				if (i == this.nodes.length - 1)
@@ -85,7 +85,7 @@ Ext.define('widgets.stepeue.stepeue' , {
 			log.debug('Build the view of the widget', this.logAuthor);
 			var listItems = new Array();
 			var me = this;
-			for (i in this.features) {
+			for (var i=0; i < this.features.length; i++) {
 				var title = this.nodes[i].split('.')[5];
 				var object = {
 					title: title,

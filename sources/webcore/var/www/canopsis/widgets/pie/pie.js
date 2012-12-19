@@ -70,7 +70,7 @@ Ext.define('widgets.pie.pie' , {
 
 		this.nodesByID = {};
 		//Store nodes in object
-		for (var i in this.nodes) {
+		for (var i=0; i < this.nodes.length; i++) {
 			var node = this.nodes[i];
 
 			//hack for retro compatibility
@@ -224,7 +224,7 @@ Ext.define('widgets.pie.pie' , {
 
 	processNodes: function() {
 		var post_params = [];
-		for (var i in this.nodes) {
+		for (var i=0; i < this.nodes.length; i++) {
 			post_params.push({
 				id: this.nodes[i].id,
 				metrics: this.nodes[i].metrics
@@ -286,14 +286,14 @@ Ext.define('widgets.pie.pie' , {
 
 			var other_unit = '';
 
-			for (var index in data) {
-				var info = data[index];
+			for (var i=0; i < data.length; i++) {
+				var info = data[i];
 
 				var node = this.nodesByID[info['node']];
 
 				//custom metric
 				if (node.extra_field && node.extra_field.label) {
-					data[index]['metric'] = node.extra_field.label;
+					data[i]['metric'] = node.extra_field.label;
 				}
 
 				var metric = info['metric'];
@@ -316,7 +316,7 @@ Ext.define('widgets.pie.pie' , {
 
 				var metric_name = metric;
 
-				var colors = global.curvesCtrl.getRenderColors(metric_name, index);
+				var colors = global.curvesCtrl.getRenderColors(metric_name, i);
 				var curve = global.curvesCtrl.getRenderInfo(metric_name);
 
 				// Set Label
