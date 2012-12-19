@@ -83,9 +83,8 @@ Ext.define('canopsis.lib.view.cwizard' , {
 		if (this.step_list) {
 			//var tmp = this.build_step_list(this.step_list)
 			log.debug('Wizard steps fully generated', this.logAuthor);
-			for (var i in this.step_list) {
+			for (var i = 0; i < this.step_list.length; i++)
 				this.add_new_step(this.step_list[i]);
-			}
 		}
 
 		this.items = [this.tabPanel];
@@ -117,24 +116,23 @@ Ext.define('canopsis.lib.view.cwizard' , {
 		log.debug('binding buttons', this.logAuthor);
 		//---------------------previous button--------------------
 		var btns = Ext.ComponentQuery.query('#' + this.id + ' [action=previous]');
-		for (i in btns) {
+		for (var i = 0; i < btns.length; i++)
 			btns[i].on('click', this.previous_button, this);
-		}
+
 		//---------------------next button--------------------
 		var btns = Ext.ComponentQuery.query('#' + this.id + ' [action=next]');
-		for (i in btns) {
+		for (var i = 0; i < btns.length; i++)
 			btns[i].on('click', this.next_button, this);
-		}
+
 		//---------------------cancel button--------------------
 		var btns = Ext.ComponentQuery.query('#' + this.id + ' [action=cancel]');
-		for (i in btns) {
+		for (var i = 0; i < btns.length; i++)
 			btns[i].on('click', this.cancel_button, this);
-		}
+
 		//---------------------finish button-------------------
 		var btns = Ext.ComponentQuery.query('#' + this.id + ' [action=finish]');
-		for (i in btns) {
+		for (var i = 0; i < btns.length; i++)
 			btns[i].on('click', this.finish_button, this);
-		}
 
 		this.tabPanel.on('tabchange', this.update_button, this);
 	},
@@ -171,7 +169,7 @@ Ext.define('canopsis.lib.view.cwizard' , {
 			delete this.data.description;
 
 		var child_items = this.tabPanel.items.items;
-		for (var i in child_items) {
+		for (var i = 0; i < child_items.length; i++) {
 			var form = child_items[i].getForm();
 			form.setValues(this.data);
 		}
@@ -187,18 +185,17 @@ Ext.define('canopsis.lib.view.cwizard' , {
 
 		var tab_to_remove = [];
 
-		for (var i = this.step_list.length; i < tab_length; i++) {
+		for (var i = this.step_list.length; i < tab_length; i++)
 			tab_to_remove.push(tab_childs[i]);
-		}
 
-		for (var i in tab_to_remove) {
+		for (var i = 0; i < tab_to_remove.length; i++)
 			this.tabPanel.remove(tab_to_remove[i]);
-		}
+
 	},
 
 	isValid: function() {
 		var child_items = this.tabPanel.items.items;
-		for (var i in child_items) {
+		for (var i = 0; i < child_items.length; i++) {
 			var form = child_items[i].getForm();
 			if (form.hasInvalidField())
 				return false;
@@ -210,13 +207,14 @@ Ext.define('canopsis.lib.view.cwizard' , {
 		var output = {};
 
 		var child_items = this.tabPanel.items.items;
-		for (var i in child_items) {
+		for (var i = 0; i < child_items.length; i++) {
 			var form = child_items[i].getForm();
 			var values = form.getValues(false, false, false, true);
-			for (var j in values)
-				output[j] = values[j];
-		}
 
+			Ext.Object.each(values, function(key, value, myself) {
+				output[key] = value;
+			});
+		}
 		return output;
 	},
 
@@ -235,8 +233,8 @@ Ext.define('canopsis.lib.view.cwizard' , {
 			var options = record.get('options');
 
 			if (options) {
-				for (var i in options) {
-					for (var j in options[i].items)
+				for (var i = 0; i < options.length; i++) {
+					for (var j = 0; j < options[i].items.length; j++)
 						if (options[i].items[j].xtype == 'fieldset')
 							options[i].items[j].defaults = { labelWidth: this.labelWidth };
 
@@ -261,7 +259,7 @@ Ext.define('canopsis.lib.view.cwizard' , {
 	set_default_values: function(record) {
 		log.debug('set defaults value to wizard', this.logAuthor);
 		var elements = Ext.ComponentQuery.query('#' + this.id + ' [name]');
-		for (var i in elements) {
+		for (var i = 0; i < elements.length; i++) {
 			var element = elements[i];
 			//don't reset xtype
 			if (element.name != 'xtype') {

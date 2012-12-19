@@ -391,7 +391,7 @@ Ext.define('derogation.field', {
 
 	change: function(value) {
 		var fields = Ext.ComponentQuery.query('#' + this.id + ' [name]');
-		for (var i in fields) {
+		for (var i = 0; i < fields.length; i++) {
 			var elem = fields[i];
 			if (elem.name != 'key_field') {
 				if (elem.name != value) {

@@ -50,64 +50,54 @@ Ext.define('canopsis.lib.controller.ctree', {
 
 			//Duplicate button
 			var btns = Ext.ComponentQuery.query('#' + tree.contextMenu.id + ' [action=duplicate]');
-			for (i in btns) {
+			for (var i = 0; i < btns.length; i++)
 				btns[i].on('click', this._duplicateButton, this);
-			}
+
 			//DeleteButton
 			var btns = Ext.ComponentQuery.query('#' + tree.contextMenu.id + ' [action=delete]');
-			for (i in btns) {
+			for (var i = 0; i < btns.length; i++)
 				btns[i].on('click', this._deleteButton, this);
-			}
 
 			//edit rights
 			var btns = Ext.ComponentQuery.query('#' + tree.contextMenu.id + ' [action=rights]');
-			for (i in btns) {
+			for (var i = 0; i < btns.length; i++)
 				btns[i].on('click', this._editRights, this);
-			}
 
 			//rename button
 			var btns = Ext.ComponentQuery.query('#' + tree.contextMenu.id + ' [action=rename]');
-			for (i in btns) {
+			for (var i = 0; i < btns.length; i++)
 				btns[i].on('click', this._renameButton, this);
-			}
-
 
 			//rename button
 			var btns = Ext.ComponentQuery.query('#' + tree.contextMenu.id + ' [action=export]');
-			for (i in btns) {
+			for (var i = 0; i < btns.length; i++)
 				btns[i].on('click', this._exportButton, this);
-			}
 		}
 
 		//--------------------toolbar buttons--------------------------
 		//delete
 		var btns = Ext.ComponentQuery.query('#' + id + ' button[action=delete]');
-		for (i in btns) {
+		for (var i = 0; i < btns.length; i++)
 			btns[i].on('click', this._deleteButton, this);
-		}
 
 		// Reload button
 		var btns = Ext.ComponentQuery.query('#' + id + ' button[action=reload]');
-		for (i in btns) {
+		for (var i = 0; i < btns.length; i++)
 			btns[i].on('click', this._reloadButton, this);
-		}
 
 		// Add buttons
 		var btns = Ext.ComponentQuery.query('#' + id + ' button[action=add_leaf]');
-		for (i in btns) {
+		for (var i = 0; i < btns.length; i++)
 			btns[i].on('click', this._addLeafButton, this);
-		}
 
 		var btns = Ext.ComponentQuery.query('#' + id + ' button[action=add_directory]');
-		for (i in btns) {
+		for (var i = 0; i < btns.length; i++)
 			btns[i].on('click', this._addDirectoryButton, this);
-		}
 
 		//duplicate
 		var btns = Ext.ComponentQuery.query('#' + id + ' button[action=duplicate]');
-		for (i in btns) {
+		for (var i = 0; i < btns.length; i++)
 			btns[i].on('click', this._duplicateButton, this);
-		}
 
 		//---------------------general binding ---------------------
 		tree.on('selectionchange',	this._selectionchange,	this);
@@ -152,38 +142,33 @@ Ext.define('canopsis.lib.controller.ctree', {
 
 		//Enable delete Button
 		btns = Ext.ComponentQuery.query('#' + tree.id + ' button[action=delete]');
-		for (i in btns) {
+		for (var i = 0; i < btns.length; i++)
 			btns[i].setDisabled(records.length === 0);
-		}
 
-		if (this.selectionchange) {
+		if (this.selectionchange)
 			this.selectionchange(view, records);
-		}
 	},
 
 	_addDirectoryButton: function() {
 		log.debug('add directory', this.logAuthor);
 
-		if (this.addDirectoryButton) {
+		if (this.addDirectoryButton)
 			this.addDirectoryButton();
-		}
 	},
 
 	_addLeafButton: function() {
 		log.debug('add leaf', this.logAuthor);
 
-		if (this.addLeafButton) {
+		if (this.addLeafButton)
 			this.addLeafButton();
-		}
 	},
 
 	_duplicateButton: function() {
 		log.debug('duplicate', this.logAuthor);
 		var tree = this.tree;
 
-		if (this.duplicateButton) {
+		if (this.duplicateButton)
 			this.duplicateButton();
-		}
 	},
 
 	_deleteButton: function() {
@@ -193,7 +178,7 @@ Ext.define('canopsis.lib.controller.ctree', {
 		var verification = true;
 
 		var selection = tree.getSelectionModel().getSelection();
-		for (var i in selection) {
+		for (var i = 0; i < selection.length; i++) {
 			if (this.getController('Account').check_record_right(selection[i], 'w')) {
 				if (selection[i].childNodes.length > 0) {
 					global.notify.notify(_('Directory not empty'), _('The directory must be empty if you want to remove it'), 'error');
@@ -210,25 +195,21 @@ Ext.define('canopsis.lib.controller.ctree', {
 		if (verification == true) {
 			Ext.MessageBox.confirm(_('Confirm'), _('Are you sure you want to delete') + ' ' + selection.length + ' ' + _(' items') + ' ?',
 				function(btn, text) {
-					if (btn == 'yes') {
-						for (var i in selection) {
+					if (btn == 'yes')
+						for (var i = 0; i < selection.length; i++)
 							selection[i].remove();
-						}
-					}
 					tree.store.sync();
 				});
 		}
 
-		if (this.deleteButton) {
+		if (this.deleteButton)
 			this.deleteButton(button, grid, selection);
-		}
 	},
 
 	_reloadButton: function() {
 		log.debug('[controller][ctree] - Reload store "' + this.tree.store.storeId + '" of ' + this.tree.id);
-		if (!this.tree.store.isLoading()) {
+		if (!this.tree.store.isLoading())
 			this.tree.store.load();
-		}
 	},
 
 	_renameButton: function() {
@@ -281,9 +262,8 @@ Ext.define('canopsis.lib.controller.ctree', {
 	},
 
 	_itemDoubleClick: function(record) {
-		if (this.itemDoubleClick) {
+		if (this.itemDoubleClick)
 			this.itemDoubleClick(record);
-		}
 	},
 
 	_exportButton: function() {
@@ -291,9 +271,8 @@ Ext.define('canopsis.lib.controller.ctree', {
 		var tree = this.tree;
 		var selection = tree.getSelectionModel().getSelection()[0];
 
-		if (this.exportButton) {
+		if (this.exportButton)
 			this.exportButton(selection);
-		}
 	}
 
 });

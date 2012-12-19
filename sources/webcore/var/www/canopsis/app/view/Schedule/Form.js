@@ -49,7 +49,7 @@ Ext.define('canopsis.view.Schedule.Form', {
 			xtype: 'fieldset',
 			checkboxName: 'sendMail',
 			checkboxToggle: true,
-			
+
 			title: _('Mailing Options')
 		});
 		//-----------------General options----------------------

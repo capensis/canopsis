@@ -109,7 +109,7 @@ Ext.define('canopsis.lib.form.field.ctag' , {
 			var value_array = value[operator];
 			var tags_string = '';
 
-			for (var i in value_array)
+			for (var i = 0; i < value_array.length; i++)
 				tags_string = tags_string + ' ' + value_array[i];
 
 			this.operator_combo.setValue(operator);

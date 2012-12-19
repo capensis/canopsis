@@ -461,7 +461,10 @@ def perfstore_perftop():
 			reverse = False	
 
 		if sort_on_percent:
-			data = sorted(data, key=lambda k: k['pct'], reverse=reverse)[:limit]
+			for item in data:
+				if not 'pct' in item:
+					item['pct'] = -1
+			data = sorted(data, key=lambda k: k['pct'] , reverse=reverse)[:limit]
 		else:
 			data = sorted(data, key=lambda k: k['lv'], reverse=reverse)[:limit]
 	else:

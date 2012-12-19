@@ -104,7 +104,7 @@ Ext.define('widgets.weather.weather' , {
 				var nodes = Ext.JSON.decode(response.responseText).data;
 				var nodes_obj = {};
 
-				for (var i in nodes) {
+				for (var i = 0; i < nodes.length; i++) {
 					nodes[i].nodeId = getMetaId(nodes[i].component, nodes[i].resource, nodes[i].metric);
 					nodes_obj[nodes[i]._id] = nodes[i];
 				}
@@ -125,7 +125,7 @@ Ext.define('widgets.weather.weather' , {
 
 	getSelectorNodes: function(nodes) {
 		var selector_list = [];
-		for (var i in nodes)
+		for (var i = 0; i < nodes.length; i++)
 			if (nodes[i].selector_rk)
 				selector_list.push(nodes[i].selector_rk);
 
@@ -139,7 +139,7 @@ Ext.define('widgets.weather.weather' , {
 				var nodes = Ext.JSON.decode(response.responseText).data;
 				node_dict = {};
 
-				for (var i in nodes)
+				for (var i = 0; i < nodes.length; i++)
 					node_dict[nodes[i]._id] = nodes[i];
 
 				this.selector_nodes = node_dict;
@@ -159,7 +159,7 @@ Ext.define('widgets.weather.weather' , {
 		//--------------------Prepare post params-----------------
 
 		var post_params = [];
-		for (var i in this.nodes)
+		for (var i = 0; i < this.nodes.length; i++)
 			post_params.push({id: this.nodes[i].node_meta_id});
 
 		//-------------------------send request--------------------
@@ -179,7 +179,7 @@ Ext.define('widgets.weather.weather' , {
 	},
 
 	generate_node_meta_id: function() {
-		for (var i in this.nodes) {
+		for (var i = 0; i < this.nodes.length; i++) {
 
 			//build selector get id or node id
 			if (this.selector_state_as_icon_value && this.selector_nodes[this.nodes[i].selector_rk]) {
@@ -246,7 +246,7 @@ Ext.define('widgets.weather.weather' , {
 		this.wcontainer.removeAll();
 		var debug_loop_count = 0;
 
-		for (var i in this.nodeId) {
+		for (var i = 0; i < this.nodeId.length; i++) {
 			var node_id = this.nodeId[i];
 
 			if (data[node_id]) {
@@ -309,7 +309,7 @@ Ext.define('widgets.weather.weather' , {
 		Ext.Array.each(bricks, function(brick) {
 			var new_values = undefined;
 
-			for (var i in data) {
+			for (var i = 0; i < data.length; i++) {
 				if (data[i].node == brick.selector_meta_id) {
 					new_values = data[i];
 				} else if (data[i].node == brick.node_meta_id) {

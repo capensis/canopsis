@@ -461,6 +461,13 @@ var i18n={
 	"Show state critical":"Afficher état critique",
 	"Show state unknown":"Afficher état inconnu",
 	"Show soft state":"Afficher état soft",
-	"Show hard state":"Afficher état hard"
+	"Show hard state":"Afficher état hard",
+
+	//view edition trad
+	'Toggle to real page size':'Visionner en page réel',
+	'Edit options':'Editer les options',
+	'Portrait':'Portrait',
+	'Landscape':'Paysage'
 	
+
 }

@@ -64,9 +64,8 @@ Ext.define('canopsis.controller.View', {
 
     bindTreeEvent: function() {
 		var btns = Ext.ComponentQuery.query('#' + this.tree.id + ' [action=import]');
-		for (i in btns) {
+		for (var i = 0; i < btns.length; i++)
 			btns[i].on('click', this.openFilepopup, this);
-		}
 
 		this.tree.on('exportPdf', function(view) {
 				this.getController('Reporting').launchReport(view);
@@ -116,11 +115,11 @@ Ext.define('canopsis.controller.View', {
 		var tree = this.tree;
 		var selection = tree.getSelectionModel().getSelection();
 		//for each selected view
-		for (var i in selection) {
+		for (var i = 0; i < selection.length; i++) {
 			if (selection[i].isLeaf()) {
 				var view_id = 'view.' + global.account.user + '.' + global.gen_id();
 				var new_record = selection[i].copy(view_id);
-				Ext.data.Model.id(new_record)
+				Ext.data.Model.id(new_record);
 				new_record.set('_id', view_id);
 				new_record.set('id', view_id);
 				this.add_to_home(new_record, false);
@@ -206,7 +205,7 @@ Ext.define('canopsis.controller.View', {
 					this.request_success = true;
 
 					var data = response.data;
-					for (var i in data)
+					for (var i = 0; i < data.length; i++)
 						if (!data[i].success)
 							this.request_success = false;
 

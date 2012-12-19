@@ -35,6 +35,9 @@ class engine(cengine):
 		
 		self.nb_beat_publish = 10
 		self.nb_beat = 0
+
+		self.thd_warn_sec_per_evt = 1.5
+		self.thd_crit_sec_per_evt = 2
 	
 	def pre_run(self):
 		#load selectors

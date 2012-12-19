@@ -254,19 +254,19 @@ Ext.define('canopsis.controller.Schedule', {
 	validateForm: function(store, data, form) {
 
 		//check mail options
-		if (data['sendMail']){
-			if (! data['subject'] || ! data['recipients']){
-				log.debug('Invalid mail options', this.logAuthor+'[validateForm]');
+		if (data['sendMail']) {
+			if (! data['subject'] || ! data['recipients']) {
+				log.debug('Invalid mail options', this.logAuthor + '[validateForm]');
 				global.notify.notify(' Invalid mail options', '', 'error');
 
-				var field = form.findField('subject')
+				var field = form.findField('subject');
 				if (! data['subject'] && field)
-					field.markInvalid(_("Invalid field"))
+					field.markInvalid(_('Invalid field'));
 
-				var field = form.findField('recipients')
+				var field = form.findField('recipients');
 				if (! data['recipients'] && field)
-					field.markInvalid(_("Invalid field"))
-				
+					field.markInvalid(_('Invalid field'));
+
 				return false;
 			}
 		}
@@ -275,14 +275,14 @@ Ext.define('canopsis.controller.Schedule', {
 		var already_exist = false;
 		if (!form.editing)
 			if (store.findExact('crecord_name', data['crecord_name']) >= 0)
-				already_exist = true
+				already_exist = true;
 
-				var field = form.findField('crecord_name')
+				var field = form.findField('crecord_name');
 				if (field)
-					field.markInvalid(_("Invalid field"))
+					field.markInvalid(_('Invalid field'));
 
 		if (already_exist) {
-			log.debug('Schedule already exist exist', this.logAuthor+'[validateForm]');
+			log.debug('Schedule already exist exist', this.logAuthor + '[validateForm]');
 			global.notify.notify(data['crecord_name'] + ' already exist', 'you can\'t add the same Schedule twice', 'error');
 			return false;
 		}

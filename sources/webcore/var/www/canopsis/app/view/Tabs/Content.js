@@ -66,7 +66,9 @@ Ext.define('canopsis.view.Tabs.Content' , {
 		cancel: _('Cancel'),
 		edit: _('Edit'),
 		duplicate: _('Duplicate'),
-		configure: _('Configure')
+		configure: _('Configure'),
+		changePageMode: _('Toggle to real page size'),
+		options: _('Edit options')
 	},
 
 	pageWidth: {
@@ -114,6 +116,7 @@ Ext.define('canopsis.view.Tabs.Content' , {
 		this.on('loaded', function() {
 				if (this.view_options)
 					this.applyViewOptions(this.view_options);
+					this.displayed = true;
 			},this);
 	},
 
@@ -140,15 +143,16 @@ Ext.define('canopsis.view.Tabs.Content' , {
 
 				// Set width for exporting in PDF
 				if (this.exportMode && width) {
-					log.debug('Orientation: '+ orientation, this.logAuthor);
-					log.debug('pageSize: '+ pageSize, this.logAuthor);
-					log.debug('width: '+ width, this.logAuthor);
+					log.debug('Orientation: ' + orientation, this.logAuthor);
+					log.debug('pageSize: ' + pageSize, this.logAuthor);
+					log.debug('width: ' + width, this.logAuthor);
 
 					if (width)
 						this.setWidth(width);
 				}else {
 					log.debug(' + Update default width', this.logAuthor);
-					this.setWidth(this.pageWidth['portrait']['A4']);
+					if (!this.fullscreenMode)
+						this.setWidth(this.pageWidth['portrait']['A4']);
 				}
 
 				this.fireEvent('ready', this);
@@ -177,7 +181,6 @@ Ext.define('canopsis.view.Tabs.Content' , {
 	setContent: function() {
 		if (this.dump && ! this.displayed) {
 			this.load(this.dump);
-			this.displayed = true;
 		}
 	},
 
@@ -220,17 +223,15 @@ Ext.define('canopsis.view.Tabs.Content' , {
 	_onShow: function() {
 		log.debug('Show tab ' + this.id, this.logAuthor);
 		var cmps = this.getCmps();
-		for (var i in cmps) {
-			if (cmps[i].TabOnShow) {
+		for (var i = 0; i < cmps.length; i++)
+			if (cmps[i].TabOnShow)
 				cmps[i].TabOnShow();
-			}
-		}
 	},
 
 	_onHide: function() {
 		log.debug('Hide tab ' + this.id, this.logAuthor);
 		var cmps = this.getCmps();
-		for (var i in cmps) {
+		for (var i = 0; i < cmps.length; i++) {
 			if (cmps[i].TabOnHide) {
 				cmps[i].TabOnHide();
 			}
@@ -253,7 +254,7 @@ Ext.define('canopsis.view.Tabs.Content' , {
 	startAllTasks: function() {
 		log.debug('Start all tasks', this.logAuthor);
 		var cmps = this.getCmps();
-		for (var i in cmps) {
+		for (var i = 0; i < cmps.length; i++) {
 			if (cmps[i].startTask) {
 				cmps[i].startTask();
 			}
@@ -263,7 +264,7 @@ Ext.define('canopsis.view.Tabs.Content' , {
 	stopAllTasks: function() {
 		log.debug('Stop all tasks', this.logAuthor);
 		var cmps = this.getCmps();
-		for (var i in cmps) {
+		for (var i = 0; i < cmps.length; i++) {
 			if (cmps[i].stopTask) {
 				cmps[i].stopTask();
 			}
@@ -289,7 +290,7 @@ Ext.define('canopsis.view.Tabs.Content' , {
 
 		//switch widget to reporting mode
 		var cmps = this.getCmps();
-		for (var i in cmps) {
+		for (var i = 0; i < cmps.length; i++) {
 			if (cmps[i].reportMode == false) {
 				cmps[i].reportMode = true;
 			}
@@ -322,7 +323,7 @@ Ext.define('canopsis.view.Tabs.Content' , {
 		log.debug('removing reporting bar', this.logAuthor)
 		/*
 		var cmps = this.getCmps()
-		for(var i in cmps){
+		for (var i=0; i < cmps.length; i++) {
 			if(cmps[i].reportMode == true){
 				cmps[i].reportMode = false
 				//clean widget
@@ -333,13 +334,12 @@ Ext.define('canopsis.view.Tabs.Content' , {
 		}
 
 		this.export_window.destroy()
-
 	},*/
 
 	setReportDate: function(from,to) {
 		log.debug('Send report data for widgets', this.logAuthor);
 		var cmps = this.getCmps();
-		for (var i in cmps) {
+		for (var i = 0; i < cmps.length; i++) {
 			cmps[i]._doRefresh(from, to);
 		}
 

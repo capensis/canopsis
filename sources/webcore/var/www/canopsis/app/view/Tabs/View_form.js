@@ -43,8 +43,8 @@ Ext.define('canopsis.view.Tabs.View_form' , {
 								'xtype': 'store',
 								'fields': ['value', 'text'],
 								'data' : [
-									{'value': 'portrait', 'text': 'Portrait'},
-									{'value': 'landscape', 'text': 'Landscape'}
+									{'value': 'portrait', 'text': _('Portrait')},
+									{'value': 'landscape', 'text': _('Landscape')}
 								]
 							}
 						},{

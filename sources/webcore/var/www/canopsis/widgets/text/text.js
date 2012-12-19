@@ -23,38 +23,38 @@ Ext.define('widgets.text.text' , {
 	alias: 'widget.text',
 
 	//templateVars : undefined,
-	perfdataMetricList : undefined,
+	perfdataMetricList: undefined,
 	logAuthor: '[textWidget]',
 	specialCharRegex: /\//g,
 
 	initComponent: function() {
 		//get special values by parsing
-		var raw_var = this.extractVariables(this.text)
+		var raw_var = this.extractVariables(this.text);
 
-		if(raw_var.length != 0){
+		if (raw_var.length != 0) {
 			//this.templateVars = []
-			this.perfdataMetricList = []
+			this.perfdataMetricList = [];
 
-			var extracted_vars = this.cleanVars(raw_var)
+			var extracted_vars = this.cleanVars(raw_var);
 
 			//replacing var in this.text by new var name
-			for(var i in extracted_vars){
-				var one_var = extracted_vars[i]
-				var metric_exploded_name = one_var[1]
+			for (var i = 0; i < extracted_vars.length; i++) {
+				var one_var = extracted_vars[i];
+				var metric_exploded_name = one_var[1];
 
 				//get rid of perfdata
-				if(metric_exploded_name[0] == 'perfdata')
-					metric_exploded_name = metric_exploded_name.slice(1,metric_exploded_name.length)
+				if (metric_exploded_name[0] == 'perfdata')
+					metric_exploded_name = metric_exploded_name.slice(1, metric_exploded_name.length);
 
-				var new_var_name = '{'+metric_exploded_name.join('')+'}'
-				new_var_name = new_var_name.replace(this.specialCharRegex, '')
-				this.text = this.text.replace(new RegExp(one_var[0]),new_var_name)
+				var new_var_name = '{' + metric_exploded_name.join('') + '}';
+				new_var_name = new_var_name.replace(this.specialCharRegex, '');
+				this.text = this.text.replace(new RegExp(one_var[0]), new_var_name);
 
 				//keep track of metrics : {load: value, load: unit }
-				try{
-					this.perfdataMetricList.push([metric_exploded_name[0],metric_exploded_name[1]]) 
-				}catch(err){
-					log.debug('No attribut specified for var '+metric_exploded_name[0],this.logAuthor)
+				try {
+					this.perfdataMetricList.push([metric_exploded_name[0], metric_exploded_name[1]]);
+				}catch (err) {
+					log.debug('No attribut specified for var ' + metric_exploded_name[0], this.logAuthor);
 				}
 			}
 		}
@@ -70,33 +70,33 @@ Ext.define('widgets.text.text' , {
 	},
 
 	onRefresh: function(data) {
-		if (data){
-			if(data.perf_data_array && data.perf_data_array.length){
-				if(this.perfdataMetricList && this.perfdataMetricList.length != 0){
+		if (data) {
+			if (data.perf_data_array && data.perf_data_array.length) {
+				if (this.perfdataMetricList && this.perfdataMetricList.length != 0) {
 					//loop on var in required perfdata
-					for(var i in this.perfdataMetricList){
-						var metric = this.perfdataMetricList[i][0]
-						var attribut = this.perfdataMetricList[i][1]
+					for (var i = 0; i < this.perfdataMetricList.length; i++) {
+						var metric = this.perfdataMetricList[i][0];
+						var attribut = this.perfdataMetricList[i][1];
 
-						log.debug('Metric searched is ' + metric,this.logAuthor)
-						log.debug('Attribut is ' + attribut,this.logAuthor)
+						log.debug('Metric searched is ' + metric, this.logAuthor);
+						log.debug('Attribut is ' + attribut, this.logAuthor);
 
 						//search the right metric
-						if(metric != undefined && metric != null){
-							for(var j in data.perf_data_array){
-								if(data.perf_data_array[j].metric == metric){
-									log.debug('  + '+attribut+'  found',this.logAuthor)
-									var attributName = this.perfdataMetricList[i].join('')
-									attributName = attributName.replace(this.specialCharRegex, '')
-									try{
-										var value = data.perf_data_array[j][attribut]
-										if( value != null && value != undefined)
-											if(Ext.isNumeric(value))
-												data[attributName] = rdr_humanreadable_value(value)
+						if (metric != undefined && metric != null) {
+							for (var j = 0; j < data.perf_data_array.length; j++) {
+								if (data.perf_data_array[j].metric == metric) {
+									log.debug('  + ' + attribut + '  found', this.logAuthor);
+									var attributName = this.perfdataMetricList[i].join('');
+									attributName = attributName.replace(this.specialCharRegex, '');
+									try {
+										var value = data.perf_data_array[j][attribut];
+										if (value != null && value != undefined)
+											if (Ext.isNumeric(value))
+												data[attributName] = rdr_humanreadable_value(value);
 											else
-												data[attributName] = value
-									}catch(err){
-										log.debug('metric : ' + metric + ' have no attribut ' + attribut )
+												data[attributName] = value;
+									}catch (err) {
+										log.debug('metric : ' + metric + ' have no attribut ' + attribut);
 									}
 									break;
 								}
@@ -106,11 +106,11 @@ Ext.define('widgets.text.text' , {
 				}
 			}
 
-			try{
+			try {
 				data.timestamp = rdr_tstodate(data.timestamp);
 				this.HTML = this.myTemplate.apply(data);
-			}catch(err){
-				this.HTML = _('The model widget template is not supported, check if your variables use the correct template.')
+			}catch (err) {
+				this.HTML = _('The model widget template is not supported, check if your variables use the correct template.');
 			}
 		}
 		else
@@ -126,12 +126,12 @@ Ext.define('widgets.text.text' , {
 		if (! this.nodeId)
 		{
 			this.onRefresh(false);
-		}else{
+		}else {
 			Ext.Ajax.request({
 				url: this.baseUrl,
 				scope: this,
-				method: "GET",
-				params:{_id : this.nodeId},
+				method: 'GET',
+				params: {_id: this.nodeId},
 				success: function(response) {
 					var data = Ext.JSON.decode(response.responseText);
 					if (this.nodeId.length > 1)
@@ -151,39 +151,39 @@ Ext.define('widgets.text.text' , {
 		//this.callParent(arguments);
 	},
 
-	extractVariables: function(text){
+	extractVariables: function(text) {
 		//search specific value
-		var loop = true
-		var _string = text
-		var var_array = []
-		while(loop){
+		var loop = true;
+		var _string = text;
+		var var_array = [];
+		while (loop) {
 			//search for val
-			var begin = _string.search(/{(.+:)+.+}/)
-			if(begin != -1){
+			var begin = _string.search(/{(.+:)+.+}/);
+			if (begin != -1) {
 				//search end of val
-				var end = begin
-				while(_string[end] != '}' && end <= _string.length)
-					end = end + 1
+				var end = begin;
+				while (_string[end] != '}' && end <= _string.length)
+					end = end + 1;
 
-				var_array.push(_string.slice(begin,end+1))
-				_string = _string.slice(end,_string.length)
-			}else{
-				loop = false
+				var_array.push(_string.slice(begin, end + 1));
+				_string = _string.slice(end, _string.length);
+			}else {
+				loop = false;
 			}
 		}
-		return var_array
+		return var_array;
 	},
 
 	// return :  ['{var1:var2}',['var1','var2']]
-	cleanVars: function(array){
-		var output = []
-		for(var i in array)
+	cleanVars: function(array) {
+		var output = [];
+		for (var i = 0; i < array.length; i++)
 			output.push([
 					array[i],
-					array[i].slice(1,-1).split(':')
-				])
-		return output
-	},
+					array[i].slice(1, -1).split(':')
+				]);
+		return output;
+	}
 
 
 });

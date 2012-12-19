@@ -81,14 +81,16 @@ Ext.define('widgets.diagram.diagram' , {
 
 		this.nodesByID = {};
 		//Store nodes in object
-		for (var i in this.nodes) {
+		for (var i = 0; i < this.nodes.length; i++) {
 			var node = this.nodes[i];
 
 			//hack for retro compatibility
 			if (!node.dn)
 				node.dn = [node.component, node.resource];
 
-			if (this.nodesByID[node.id]) {
+			if (this.nodesByID[node.id] === undefined) {
+				this.nodesByID[node.id] = {};
+				this.nodesByID[node.id]['metrics'] = [];
 				this.nodesByID[node.id].metrics.push(node.metrics[0]);
 			}else {
 				this.nodesByID[node.id] = Ext.clone(node);
@@ -262,7 +264,7 @@ Ext.define('widgets.diagram.diagram' , {
 
 	processNodes: function() {
 		var post_params = [];
-		for (var i in this.nodes) {
+		for (var i = 0; i < this.nodes.length; i++) {
 			post_params.push({
 				id: this.nodes[i].id,
 				metrics: this.nodes[i].metrics
@@ -317,7 +319,7 @@ Ext.define('widgets.diagram.diagram' , {
 	onRefresh: function(data) {
 		if (this.chart && data.length != 0) {
 			var myEl = this.getEl();
-			if (myEl.isMasked && !this.isDisabled())
+			if (myEl && myEl.isMasked && !this.isDisabled())
 				myEl.unmask();
 
 			// Remove old series
@@ -327,14 +329,14 @@ Ext.define('widgets.diagram.diagram' , {
 
 			var other_unit = '';
 
-			for (var index in data) {
-				var info = data[index];
+			for (var i = 0; i < data.length; i++) {
+				var info = data[i];
 
 				var node = this.nodesByID[info['node']];
 
 				//custom metric
 				if (node.extra_field && node.extra_field.label) {
-					data[index]['metric'] = node.extra_field.label;
+					data[i]['metric'] = node.extra_field.label;
 				}
 
 				var metric = info['metric'];
@@ -357,7 +359,7 @@ Ext.define('widgets.diagram.diagram' , {
 
 				var metric_name = metric;
 
-				var colors = global.curvesCtrl.getRenderColors(metric_name, index);
+				var colors = global.curvesCtrl.getRenderColors(metric_name, i);
 				var curve = global.curvesCtrl.getRenderInfo(metric_name);
 
 				// Set Label
@@ -433,7 +435,7 @@ Ext.define('widgets.diagram.diagram' , {
 	getSerie: function(data) {
 		var bunit = undefined;
 		if (data.length != 0)
-			for (var i in data)
+			for (var i = 0; i < data.length; i++)
 				if (data[i].bunit)
 					bunit = data[i].bunit;
 
@@ -489,10 +491,10 @@ Ext.define('widgets.diagram.diagram' , {
 
 	setAxis: function(data) {
 		var metrics = [];
-		for (var i in data)
+		for (var i = 0; i < data.length; i++)
 			if (data[i].metric)
 				metrics.push(data[i].metric);
-		
+
 		this.chart.xAxis[0].setCategories(metrics, false);
 	},
 

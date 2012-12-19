@@ -25,7 +25,7 @@ Ext.define('canopsis.controller.Widgets', {
     stores: ['Widgets'],
     models: ['Event'],
 
-    item_to_translate: ['title', 'fieldLabel', 'boxLabel', 'text', 'emptyText'],
+    item_to_translate: ['title', 'fieldLabel', 'boxLabel', 'text', 'emptyText', 'header'],
 
     logAuthor: '[controller][Widgets]',
 
@@ -70,11 +70,11 @@ Ext.define('canopsis.controller.Widgets', {
     },
 
     clean_disabled_widget: function() {
-    	var records = []
+    	var records = [];
     	this.store.each(function(record) {
-	    	if (record.get('disabled') == true){
-	    		log.debug('Remove '+record.get('xtype')+' from widget store', this.logAuthor);
-	    		records.push(record)
+	    	if (record.get('disabled') == true) {
+	    		log.debug('Remove ' + record.get('xtype') + ' from widget store', this.logAuthor);
+	    		records.push(record);
 	    	}
     	}, this);
     	this.store.remove(records);
@@ -86,7 +86,7 @@ Ext.define('canopsis.controller.Widgets', {
 			this.store.each(function(record) {
 				var options = record.get('options');
 				if (options != undefined) {
-					for (i in options) {
+					for (var i = 0; i < options.length; i++) {
 						this.translate(record.get('xtype'), options[i]);
 					}
 				}
@@ -98,13 +98,14 @@ Ext.define('canopsis.controller.Widgets', {
 	translate: function(xtype, data) {
 
 		// for every item
-		for (var key in data) {
-			if ((key == 'items' || key == 'store' || key == 'data' || key == 'additional_field' || key >= 0) && typeof(data[key]) != 'string')
-				this.translate(xtype, data[key]);
+		var me = this;
+		Ext.Object.each(data, function(key, value, myself) {
+			if ((key == 'items' || key == 'store' || key == 'data' || key == 'additional_field' || key >= 0) && typeof(value) != 'string')
+				me.translate(xtype, value);
 
-			if (Ext.Array.contains(this.item_to_translate, key))
-				data[key] = _(data[key], xtype);
-		}
+			if (Ext.Array.contains(me.item_to_translate, key))
+				data[key] = _(value, xtype);
+		});
 	}
 
 });

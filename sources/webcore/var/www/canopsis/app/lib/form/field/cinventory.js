@@ -318,7 +318,7 @@ Ext.define('canopsis.lib.form.field.cinventory' , {
 			this.selection_grid.getView().on('beforedrop', function(event, data, dropRec, dropPosition) {
 				var records = data.records;
 				if (data.view.id != this.selection_grid.getView().id) {
-					for (var i in records)
+					for (var i = 0; i < records.length; i++)
 						this.addRecord(records[i]);
 
 					event.cancel = true;
@@ -403,12 +403,12 @@ Ext.define('canopsis.lib.form.field.cinventory' , {
 			//Get only id
 			if (this.additional_field && Ext.isObject(data[0])) {
 				//push id
-				for (var i in data)
+				for (var i = 0; i < data.length; i++)
 					ids.push(data[i].id);
 
 				//list to dict
 				var dict = {};
-				for (var i in this.loaded_value)
+				for (var i = 0; i < this.loaded_value.length; i++)
 					dict[this.loaded_value[i].id] = this.loaded_value[i][this.additional_field.name];
 				this.loaded_value = dict;
 			}else {
@@ -435,9 +435,9 @@ Ext.define('canopsis.lib.form.field.cinventory' , {
 							data = data.data;
 							output = [];
 							//reorder ids
-							for (var i in ids) {
+							for (var i = 0; i < ids.length; i++) {
 								var id = ids[i];
-								for (var j in data)
+								for (var j = 0; j < data.length; j++)
 									if (id == data[j]._id)
 										output.push(data[j]);
 							}

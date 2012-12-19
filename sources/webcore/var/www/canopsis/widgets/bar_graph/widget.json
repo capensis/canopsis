@@ -329,7 +329,7 @@
 											"value": "FFFFFF"
 										},{
 											"xtype":"checkcolumn",
-											"text":"trend",
+											"text":"Trend",
 											"dataIndex": "trend_curve",
 											"width": 55,
 											"checked":true

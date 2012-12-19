@@ -57,7 +57,9 @@ Ext.define('widgets.gauge.gauge' , {
 		return rdr_humanreadable_value(val, this.symbol);
 	},
 
-	createGauge: function() {
+	createGauge: function(value) {
+		if (!value)
+			value = 0;
 
 		if (this.autoTitle)
 			if (this.nodes.length) {
@@ -74,7 +76,7 @@ Ext.define('widgets.gauge.gauge' , {
 
 		var opts = {
 			id: this.wcontainerId,
-			value: 0,
+			value: value,
 			gaugeWidthScale: this.gaugeWidthScale,
 			titleFontColor: this.titleFontColor,
 			showMinMax: this.showMinMax,
@@ -89,6 +91,15 @@ Ext.define('widgets.gauge.gauge' , {
 			textRenderer: this.renderer,
 			symbol: this.bunit
 		};
+
+		if (this.exportMode) {
+			opts['showInnerShadow'] = 0;
+			opts['shadowVerticalOffset'] = 0;
+			opts['shadowOpacity'] = 0;
+			opts['shadowSize'] = 0;
+			opts['startAnimationType'] = 1;
+			opts['refreshAnimationTime'] = 1;
+		}
 
 		if (this.levelThresholds) {
 			opts.levelColorsGradient = false;
@@ -139,7 +150,7 @@ Ext.define('widgets.gauge.gauge' , {
 
 	processNodes: function() {
 		var post_params = [];
-		for (var i in this.nodes)
+		for (var i = 0; i < this.nodes.length; i++)
 			post_params.push({
 				id: this.nodes[i].id,
 				metrics: this.nodes[i].metrics
@@ -212,11 +223,12 @@ Ext.define('widgets.gauge.gauge' , {
 
 			try {
 				if (data.values) {
-					if (! this.gauge)
-						this.createGauge();
-
 					this.lastValue = data.values[data.values.length - 1][1];
-					this.gauge.refresh(Math.round(this.lastValue * 100) / 100);
+
+					if (! this.gauge)
+						this.createGauge(this.lastValue);
+					else
+						this.gauge.refresh(this.lastValue);
 				}
 			}catch (err) {
 				log.error('Error while set value:' + err, this.logAuthor);

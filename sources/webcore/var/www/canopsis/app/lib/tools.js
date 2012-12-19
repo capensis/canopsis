@@ -148,10 +148,15 @@ function getMidnight(timestamp) {
 function check_color(color) {
 	if (! color)
 		return color;
-	if (color[0] != '#')
-		return '#' + color;
-	else
+
+	if (color.charAt(0) == '#' && color.charAt(1) != '#')
 		return color;
+
+	//Clean color
+	while(color.charAt(0) == '#')
+		color = color.slice(1)
+
+	return '#' + color;
 }
 
 function strip_blanks(val) {
@@ -244,7 +249,7 @@ function split_search_box(raw) {
 
 	var tmp = raw.split('"');
 	if (tmp.length > 1) {
-		for (var i in tmp) {
+		for (var i = 0; i < tmp.length; i++) {
 			var w = tmp[i];
 			if (w.length > 1) {
 				if (w[0] == ' ')
@@ -271,7 +276,7 @@ function is12Clock() {
 		if (global.account.clock_type && global.account.clock_type != 'auto')
 			global.is12Clock = global.account.clock_type == '12h';
 		else
-			global.is12Clock = global.am_pm_lang.indexOf(global.locale) == -1;
+			global.is12Clock = Ext.Array.contains(global.am_pm_lang, global.locale);
 
 		return global.is12Clock;
 
@@ -318,4 +323,27 @@ function parseBool(arg) {
 		return false;
 	else
 		return true;
+}
+
+function roundSignifiantDigit(n, sig) {
+    var mult = Math.pow(10,
+        sig - Math.floor(Math.log(n) / Math.LN10) - 1);
+    return Math.round(n * mult) / mult;
+}
+
+function sciToDec(number) {
+	val = number;
+	if (Ext.isNumber(number))
+		val = number.toString();
+
+	if (val.match(/^[-+]?[1-9]\.[0-9]+e[-]?[1-9][0-9]*$/)) {
+		var arr = new Array();
+		arr = scinum.split('e');
+		var exponent = Math.abs(arr[1]);
+		var precision = new Number(exponent);
+		arr = arr[0].split('.');
+		precision += arr[1].length;
+		val = (+val).toFixed(precision);
+	}
+	return val;
 }

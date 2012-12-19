@@ -18,74 +18,68 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 */
-Ext.define('widgets.stepeue.stepeue' , {
+Ext.define('widgets.stepeue.stepeue', {
 	extend: 'canopsis.lib.view.cwidget',
 	alias: 'widget.stepeue',
 	logAuthor: '[widget][stepeue]',
 	scroll: true,
 	useScreenShot: true,
 	initComponent: function() {
-		log.debug('initialization of the eue\'s widget' , this.logAuthor);
-                pnl = Ext.create('Ext.Panel', {
-                        xtype: 'panel',
-                        width: '100%',
-                        height: '100%'
-                });
-                pnl.on('afterrender', function() {
-                        pnl.setLoading(true, true);
-                });
-                this.callParent(arguments);
-                this.wcontainer.add(pnl);
-                this.wcontainer.setLoading(true, true);
+		log.debug('initialization of the eue\'s widget', this.logAuthor);
+		pnl = Ext.create('Ext.Panel', {
+			xtype: 'panel',
+			width: '100%',
+			height: '100%'
+		});
+		pnl.on('afterrender', function() {
+			pnl.setLoading(true, true);
+		});
+		this.callParent(arguments);
+		this.wcontainer.add(pnl);
+		this.wcontainer.setLoading(true, true);
 	},
 	destroyObject: function() {
 		log.debug('object destroyed', this.logAuthor);
-                for (i in this.features) {
-                        this.features[i].destroyFeature();
+		for (var i = 0; i < this.features.length; i++) {
+			this.features[i].destroyFeature();
 			Ext.destroyMembers(this.features[i]);
-                	//this.features[i].destroy() ;
-                }
-        },
-        doRefresh: function(from, to ) {
+			//this.features[i].destroy() ;
+		}
+	},
+	doRefresh: function(from, to) {
 		log.debug('do Refresh', this.logAuthor);
-		if (this.features != undefined)
-			this.destroyObject();
+		if (this.features != undefined) this.destroyObject();
 		if (this.nodes.length == 0) {
 			this.buildHtml();
-		}
-		else {
-	                this.urlPerfStore = this.makeUrl(from, to);
-                	this.last_from = to;
+		} else {
+			this.urlPerfStore = this.makeUrl(from, to);
+			this.last_from = to;
 			this.features = new Array();
-			for (i in this.nodes) {
+			for (var i = 0; i < this.nodes.length; i++) {
 				var feature = Ext.create('widgets.stepeue.feature');
-				var last = false;
-				if (i == this.nodes.length - 1)
-					last = true;
 				this.features.push(feature);
 			}
 		}
 		this.buildHtml();
-        },
-        makeUrl: function(from, to) {
-                var url = '/perfstore/values';
-                if (! to) {
-                        url += '/' + from;
-                }
+	},
+	makeUrl: function(from, to) {
+		var url = '/perfstore/values';
+		if (!to) {
+			url += '/' + from;
+		}
 
-                if (from && to) {
-                        url += '/' + from + '/' + to;
-                }
+		if (from && to) {
+			url += '/' + from + '/' + to;
+		}
 
-                return url;
-        },
+		return url;
+	},
 	buildHtml: function() {
-		if (this.nodes.length != 0)
-		{
+		if (this.nodes.length != 0) {
 			log.debug('Build the view of the widget', this.logAuthor);
 			var listItems = new Array();
 			var me = this;
-			for (i in this.features) {
+			for (var i = 0; i < this.nodes.length; i++) {
 				var title = this.nodes[i].split('.')[5];
 				var object = {
 					title: title,
@@ -97,7 +91,7 @@ Ext.define('widgets.stepeue.stepeue' , {
 							log.debug('activated');
 							var idString = tab.id.split(':');
 							var id = idString[2];
-/*							pnl = Ext.create('Ext.Panel', {
+							/*							pnl = Ext.create('Ext.Panel', {
 								xtype: "panel",
 								width: "100%",
 								height: "100%",
@@ -127,7 +121,7 @@ Ext.define('widgets.stepeue.stepeue' , {
 				});
 
 			} else {
-	                	var tabsPanel = Ext.create('Ext.tab.Panel', {
+				var tabsPanel = Ext.create('Ext.tab.Panel', {
 					xtype: 'panel',
 					width: '100%',
 					height: '100%',
@@ -141,12 +135,13 @@ Ext.define('widgets.stepeue.stepeue' , {
 					border: false
 				});
 			}
-			console.log(this.wcontainer);
-                	this.wcontainer.removeAll();
-	                this.wcontainer.add(this.content);
+			this.wcontainer.removeAll();
+			this.wcontainer.add(this.content);
 		} else {
-                	this.wcontainer.removeAll();
-			this.wcontainer.add({ html: 'no feature selected' });
+			this.wcontainer.removeAll();
+			this.wcontainer.add({
+				html: 'no feature selected'
+			});
 		}
 	}
 });

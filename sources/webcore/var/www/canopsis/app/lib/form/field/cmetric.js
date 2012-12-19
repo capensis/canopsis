@@ -78,7 +78,7 @@ Ext.define('canopsis.lib.form.field.cmetric' , {
 				];
 
 		if (this.additional_field) {
-			for (var i in this.additional_field) {
+			for (var i = 0; i < this.additional_field.length; i++) {
 				if (this.additional_field[i].name) {
 					var name = this.additional_field[i].name;
 					_model.push({name: name});
@@ -233,7 +233,7 @@ Ext.define('canopsis.lib.form.field.cmetric' , {
 		//additionnal columns
 		var _plugins = [];
 		if (this.additional_field) {
-			for (var i in this.additional_field) {
+			for (var i = 0; i < this.additional_field.length; i++) {
 				if (this.additional_field[i].xtype == 'checkcolumn') {
 					_columns.push(this.additional_field[i]);
 				}else {
@@ -260,14 +260,15 @@ Ext.define('canopsis.lib.form.field.cmetric' , {
 			header: _('Unit'),
 			sortable: false,
 			dataIndex: 'u',
-			flex: 1	
-		})
+			flex: 1
+		});
 
 		//create grid
 		this.selected_grid = Ext.widget('grid', {
 			store: this.selected_store,
 			flex: 1,
 			margin: 3,
+			multiSelect: true,
 			border: true,
 			scroll: true,
 			columns: {
@@ -321,11 +322,8 @@ Ext.define('canopsis.lib.form.field.cmetric' , {
 			//only do action if is not reorder
 			if (data.view.id != this.selected_grid.getView().id) {
 				var records = data.records;
-				for (var i in records)
+				for (var i = 0; i < records.length; i++)
 					this.select_meta(records[i]);
-
-				event.cancel = true;
-				event.dropStatus = true;
 
 				return false;
 			}
@@ -345,7 +343,8 @@ Ext.define('canopsis.lib.form.field.cmetric' , {
 		var node = record.get('node');
 		var dn = record.get('dn');
 
-		for (var i in metrics)
+		console.log(metrics);
+		for (var i = 0; i < metrics.length; i++)
 			metric_array.push({'node': node, 'metric': metrics[i].dn, 'dn': dn});
 
 		return metric_array.sort(this.sort_by_metric);
@@ -388,7 +387,8 @@ Ext.define('canopsis.lib.form.field.cmetric' , {
     deleteSelected: function() {
 		log.debug('delete selected metrics', this.logAuthor);
 		var selection = this.selected_grid.getSelectionModel().getSelection();
-		for (var i in selection)
+
+		for (var i = 0; i < selection.length; i++)
 			this.selected_store.remove(selection[i]);
 	},
 
@@ -396,6 +396,7 @@ Ext.define('canopsis.lib.form.field.cmetric' , {
 		log.debug('Write values', this.logAuthor);
 		var output = [];
 		var nodes = {};
+
 		this.selected_store.each(function(record) {
 			var _id = record.get('id');
 			var component = record.get('co');
@@ -410,7 +411,7 @@ Ext.define('canopsis.lib.form.field.cmetric' , {
 
 			var extra_field = {};
 			if (this.extra_field.length != 0) {
-				for (var i in this.extra_field) {
+				for (var i = 0; i < this.extra_field.length; i++) {
 					var value = record.get(this.extra_field[i]);
 					if (value != undefined)
 						extra_field[this.extra_field[i]] = value;
@@ -428,7 +429,7 @@ Ext.define('canopsis.lib.form.field.cmetric' , {
 
 	setValue: function(data) {
 		log.debug('Load values', this.logAuthor);
-		for (var i in data) {
+		for (var i = 0; i < data.length; i++) {
 			var item = data[i];
 			//standart
 			config = {
@@ -437,10 +438,12 @@ Ext.define('canopsis.lib.form.field.cmetric' , {
 				re: item.resource,
 				me: item.metrics
 			};
+
 			//additionnal
 			if (item.extra_field && item.extra_field.length != 0)
-				for (var i in item.extra_field)
-						config[i] = item.extra_field[i];
+				Ext.Object.each(item.extra_field, function(key, value, myself) {
+					config[key] = value;
+				});
 
 			var record = Ext.create('Meta', config);
 			this.selected_store.add(record);

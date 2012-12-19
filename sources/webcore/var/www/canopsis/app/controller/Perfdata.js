@@ -39,15 +39,15 @@ Ext.define('canopsis.controller.Perfdata', {
 		this.callParent(arguments);
 
 		var btns = Ext.ComponentQuery.query('#' + this.grid.id + ' [action=toggle_internal_metric]');
-		for (var i in btns)
+		for (var i = 0; i < btns.length; i++)
 			btns[i].on('click', this.grid.store.toggle_internal_metric, this.grid.store);
 
 		var btns = Ext.ComponentQuery.query('#' + this.grid.contextMenu.id + ' [action=clean]');
-		for (var i in btns)
+		for (var i = 0; i < btns.length; i++)
 			btns[i].on('click', this._clean, this);
 
 		var btns = Ext.ComponentQuery.query('#' + this.grid.contextMenu.id + ' [action=clean_all]');
-		for (var i in btns)
+		for (var i = 0; i < btns.length; i++)
 			btns[i].on('click', this._clean_all, this);
 	},
 
@@ -58,7 +58,7 @@ Ext.define('canopsis.controller.Perfdata', {
 		var selection = grid.getSelectionModel().getSelection();
 		if (selection) {
 			var cleaned_selection = [];
-			for (i in selection)
+			for (var i = 0; i < selection.length; i++)
 				cleaned_selection.push(selection[i].raw._id);
 
 			Ext.Ajax.request({

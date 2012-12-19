@@ -76,11 +76,11 @@ Ext.define('canopsis.lib.view.cwidget' , {
 		this.wcontainer = Ext.create('Ext.container.Container', { id: this.wcontainerId, border: false, layout: this.wcontainer_layout, autoScroll: this.wcontainer_autoScroll });
 		this.items = this.wcontainer;
 
-		this.wcontainer.on('afterrender', this.afterContainerRender, this);
-
 		this.wcontainer.on('afterrender', function() {
 			log.debug('SetHeight of wcontainer', this.logAuthor);
 			this.wcontainer.setHeight(this.getHeight());
+
+			this.afterContainerRender();
 		}, this);
 
 		this.callParent(arguments);
@@ -137,7 +137,7 @@ Ext.define('canopsis.lib.view.cwidget' , {
 
 		if (docks) {
 			height -= docks.length * 2;
-			for (var i in docks)
+			for (var i = 0; i < docks.length; i++)
 				if (docks[i].dock == 'top' || docks[i].dock == 'bottom') { height -= this.barHeight }
 		}
 

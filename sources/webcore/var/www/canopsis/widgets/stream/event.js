@@ -327,7 +327,7 @@ Ext.define('widgets.stream.event' , {
 					if (records.length > 0) {
 						me.init_comment_counter();
 						records.reverse();
-						for (var i in records)
+						for (var i = 0; i < records.length; i++)
 								records[i] = Ext.create('widgets.stream.event', {raw: records[i], stream: me});
 
 						me.comments_container.insert(0, records);
