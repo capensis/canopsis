@@ -41,9 +41,8 @@ Ext.define('canopsis.controller.Websocket', {
 		Ext.fly('nowjs').set({
 				src: global.nowjs.proto + '://' + global.nowjs.hostname + ':' + global.nowjs.port + '/nowjs/now.js'
 			}).on('load', function() {
-				if (this.autoconnect) {
+				if (this.autoconnect)
 					this.connect();
-		}
 		}, this);
 
 
