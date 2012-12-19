@@ -151,7 +151,8 @@ Ext.define('canopsis.view.Tabs.Content' , {
 						this.setWidth(width);
 				}else {
 					log.debug(' + Update default width', this.logAuthor);
-					this.setWidth(this.pageWidth['portrait']['A4']);
+					if(!this.fullscreenMode)
+						this.setWidth(this.pageWidth['portrait']['A4']);
 				}
 
 				this.fireEvent('ready', this);
