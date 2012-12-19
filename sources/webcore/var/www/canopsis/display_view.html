@@ -74,6 +74,7 @@
 			<script type="text/javascript" src="resources/lib/jquery.peity.min.js"></script>
 			<script type="text/javascript" src="resources/lib/jquery.sparkline.js"></script>
 			<script type="text/javascript" src="resources/lib/sigma.min.js"></script>
+			<script type="text/javascript" src="resources/lib/jquery.lightbox-0.5.js"></script>
 			
 			<script type="text/javascript" src="resources/lib/justGage/raphael.2.1.0.min.js"></script>
 			<script type="text/javascript" src="resources/lib/justGage/justgage.js"></script>
@@ -158,8 +159,6 @@
 					$('#loading').remove()
 					$('#layout').remove()
 					$('body').removeClass('login')
-
-					console.log($('#container').width())
 					
 					var content = Ext.create('canopsis.view.Tabs.Content',{
 						renderTo: 'container',
