@@ -24,7 +24,7 @@ Ext.define('widgets.stepeue.feature', {
 	scroll: true,
 	useScreenShot: true,
 	node: null,
-	init: function (node, widget, element) {
+	init: function(node, widget, element) {
 		log.debug('Initialization of feature [' + node + ']', this.logAuthor);
 		this.node = node;
 		this.widget = widget;
@@ -53,7 +53,7 @@ Ext.define('widgets.stepeue.feature', {
 		this.scenarios = {};
 		var me = this;
 		this.featureEvent.load({
-			callback: function (records, operation, success) {
+			callback: function(records, operation, success) {
 				if (success) {
 					log.debug('feature is loaded', me.logAuthor);
 					me.record = records[0];
@@ -66,7 +66,7 @@ Ext.define('widgets.stepeue.feature', {
 			}
 		});
 	},
-	findScenario: function () {
+	findScenario: function() {
 		var filter = {
 			'$and': [{
 				'child': this.node
@@ -95,7 +95,7 @@ Ext.define('widgets.stepeue.feature', {
 		});
 		me = this;
 		this.storeEvent.load({
-			callback: function (records, operation, success) {
+			callback: function(records, operation, success) {
 				if (success) {
 					log.debug("feature's Scenario are  loaded", me.logAuthor);
 					cntxtBrowser = records[0].raw.cntxt_browser;
@@ -123,12 +123,12 @@ Ext.define('widgets.stepeue.feature', {
 			}
 		});
 	},
-	destroyFeature: function () {
+	destroyFeature: function() {
 		for (var i = 0; i < this.scenarios.length; i++)
 		this.scenarios[i].destroy();
 
 	},
-	displayLastErrorsVideos: function () {
+	displayLastErrorsVideos: function() {
 		var filter = {
 			'$and': [{
 				'event_id': this.record.internalId
@@ -162,7 +162,7 @@ Ext.define('widgets.stepeue.feature', {
 		});
 		me = this;
 		storeEvent.load({
-			callback: function (records, operation, success) {
+			callback: function(records, operation, success) {
 				var listItems = new Array();
 				for (var i = 0; i < records.length; i++) {
 					var object = {
@@ -170,7 +170,7 @@ Ext.define('widgets.stepeue.feature', {
 						layout: 'fit',
 						border: false,
 						listeners: {
-							activate: function (tabs) {
+							activate: function(tabs) {
 								var object = {
 									src: '/rest/media/events_log/' + records[i].raw._id,
 									videoWidth: '70%'
@@ -226,11 +226,11 @@ Ext.define('widgets.stepeue.feature', {
 		});
 
 	},
-	getFeatureViewObject: function () {
+	getFeatureViewObject: function() {
 		log.debug('Listing the scenario of the feature', this.logAuthor);
 		var me = this;
 		var listScenarios = new Array();
-		Ext.Object.each(this.scenarios, function (i, value) {
+		Ext.Object.each(this.scenarios, function(i, value) {
 			listScenarios.push(me.scenarios[i].buildMainView());
 		});
 		listScenarios.reverse();
@@ -260,7 +260,7 @@ Ext.define('widgets.stepeue.feature', {
 			}, {
 				header: 'Graph',
 				dataIndex: 'scenario',
-				renderer: function (value) {
+				renderer: function(value) {
 					var component = me.scenarios[value].mainScenario.raw.component;
 					var resource = me.scenarios[value].mainScenario.raw.resource;
 					var metric = 'duration';
@@ -271,7 +271,7 @@ Ext.define('widgets.stepeue.feature', {
 			}, {
 				header: 'Screenshot',
 				dataIndex: 'scenario',
-				renderer: function (value) {
+				renderer: function(value) {
 					return me.scenarios[value].getScreenShotLogo();
 				},
 				flex: 2,
@@ -303,14 +303,14 @@ Ext.define('widgets.stepeue.feature', {
 				items: [{
 					icon: '/static/canopsis/themes/canopsis/resources/images/icons/date_error.png',
 					tooltip: 'Last Errors Execution',
-					handler: function (grid, rowIndex, colIndex) {
+					handler: function(grid, rowIndex, colIndex) {
 						var rec = grid.getStore().getAt(rowIndex);
 						me.scenarios[rec.get('scenario')].displayLastExecution(me.record.internalId);
 					}
 				}, {
 					icon: '/static/canopsis/themes/canopsis/resources/images/icons/table.png',
 					tooltip: 'Tests with other configuration for this scenario',
-					handler: function (grid, rowIndex, ColIndex) {
+					handler: function(grid, rowIndex, ColIndex) {
 						var rec = grid.getStore().getAt(rowIndex);
 						var scen_name = rec.get('scenario');
 						var gwidth = Ext.getBody().getWidth() * .6;
@@ -366,7 +366,7 @@ Ext.define('widgets.stepeue.feature', {
                 	}
 
                 },*/
-				viewready: function () {
+				viewready: function() {
 					for (var i = 0; i < me.scenarios.length; i++)
 					me.scenarios[i].getPerfData();
 					var picwidth = Ext.getBody().getWidth() * .6;
@@ -396,7 +396,7 @@ Ext.define('widgets.stepeue.feature', {
 			tools: [{
 				type: 'next',
 				tooltip: 'play the video',
-				handler: function () {
+				handler: function() {
 					var gwidth = Ext.getBody().getWidth() * .8;
 					var gheight = Ext.getBody().getHeight() * .95;
 					var object = {
@@ -430,7 +430,7 @@ Ext.define('widgets.stepeue.feature', {
 			}, {
 				type: 'gear',
 				tooltip: 'display last errors video',
-				handler: function () {
+				handler: function() {
 					me.displayLastErrorsVideos();
 				}
 			}],

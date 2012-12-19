@@ -143,15 +143,15 @@ Ext.define('canopsis.view.Tabs.Content' , {
 
 				// Set width for exporting in PDF
 				if (this.exportMode && width) {
-					log.debug('Orientation: '+ orientation, this.logAuthor);
-					log.debug('pageSize: '+ pageSize, this.logAuthor);
-					log.debug('width: '+ width, this.logAuthor);
+					log.debug('Orientation: ' + orientation, this.logAuthor);
+					log.debug('pageSize: ' + pageSize, this.logAuthor);
+					log.debug('width: ' + width, this.logAuthor);
 
 					if (width)
 						this.setWidth(width);
 				}else {
 					log.debug(' + Update default width', this.logAuthor);
-					if(!this.fullscreenMode)
+					if (!this.fullscreenMode)
 						this.setWidth(this.pageWidth['portrait']['A4']);
 				}
 
@@ -223,7 +223,7 @@ Ext.define('canopsis.view.Tabs.Content' , {
 	_onShow: function() {
 		log.debug('Show tab ' + this.id, this.logAuthor);
 		var cmps = this.getCmps();
-		for (var i=0; i < cmps.length; i++)
+		for (var i = 0; i < cmps.length; i++)
 			if (cmps[i].TabOnShow)
 				cmps[i].TabOnShow();
 	},
@@ -231,7 +231,7 @@ Ext.define('canopsis.view.Tabs.Content' , {
 	_onHide: function() {
 		log.debug('Hide tab ' + this.id, this.logAuthor);
 		var cmps = this.getCmps();
-		for (var i=0; i < cmps.length; i++) {
+		for (var i = 0; i < cmps.length; i++) {
 			if (cmps[i].TabOnHide) {
 				cmps[i].TabOnHide();
 			}
@@ -254,7 +254,7 @@ Ext.define('canopsis.view.Tabs.Content' , {
 	startAllTasks: function() {
 		log.debug('Start all tasks', this.logAuthor);
 		var cmps = this.getCmps();
-		for (var i=0; i < cmps.length; i++) {
+		for (var i = 0; i < cmps.length; i++) {
 			if (cmps[i].startTask) {
 				cmps[i].startTask();
 			}
@@ -264,7 +264,7 @@ Ext.define('canopsis.view.Tabs.Content' , {
 	stopAllTasks: function() {
 		log.debug('Stop all tasks', this.logAuthor);
 		var cmps = this.getCmps();
-		for (var i=0; i < cmps.length; i++) {
+		for (var i = 0; i < cmps.length; i++) {
 			if (cmps[i].stopTask) {
 				cmps[i].stopTask();
 			}
@@ -290,7 +290,7 @@ Ext.define('canopsis.view.Tabs.Content' , {
 
 		//switch widget to reporting mode
 		var cmps = this.getCmps();
-		for (var i=0; i < cmps.length; i++) {
+		for (var i = 0; i < cmps.length; i++) {
 			if (cmps[i].reportMode == false) {
 				cmps[i].reportMode = true;
 			}
@@ -339,7 +339,7 @@ Ext.define('canopsis.view.Tabs.Content' , {
 	setReportDate: function(from,to) {
 		log.debug('Send report data for widgets', this.logAuthor);
 		var cmps = this.getCmps();
-		for (var i=0; i < cmps.length; i++) {
+		for (var i = 0; i < cmps.length; i++) {
 			cmps[i]._doRefresh(from, to);
 		}
 

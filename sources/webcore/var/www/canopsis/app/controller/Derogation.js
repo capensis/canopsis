@@ -111,7 +111,7 @@ Ext.define('canopsis.controller.Derogation', {
 			form.startDate.setValue(conditions.startTs);
 
 		if (data.actions) {
-			for (var i = 0; i < data.actions.length; i ++) {
+			for (var i = 0; i < data.actions.length; i++) {
 				var action = data.actions[i];
 				log.dump(action);
 				if (action.type == 'override') {

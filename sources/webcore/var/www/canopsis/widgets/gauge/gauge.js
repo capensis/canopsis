@@ -58,8 +58,8 @@ Ext.define('widgets.gauge.gauge' , {
 	},
 
 	createGauge: function(value) {
-		if(!value)
-			value = 0
+		if (!value)
+			value = 0;
 
 		if (this.autoTitle)
 			if (this.nodes.length) {
@@ -92,7 +92,7 @@ Ext.define('widgets.gauge.gauge' , {
 			symbol: this.bunit
 		};
 
-		if (this.exportMode){
+		if (this.exportMode) {
 			opts['showInnerShadow'] = 0;
 			opts['shadowVerticalOffset'] = 0;
 			opts['shadowOpacity'] = 0;
@@ -150,7 +150,7 @@ Ext.define('widgets.gauge.gauge' , {
 
 	processNodes: function() {
 		var post_params = [];
-		for (var i=0; i < this.nodes.length; i++)
+		for (var i = 0; i < this.nodes.length; i++)
 			post_params.push({
 				id: this.nodes[i].id,
 				metrics: this.nodes[i].metrics
@@ -224,7 +224,7 @@ Ext.define('widgets.gauge.gauge' , {
 			try {
 				if (data.values) {
 					this.lastValue = data.values[data.values.length - 1][1];
-					
+
 					if (! this.gauge)
 						this.createGauge(this.lastValue);
 					else

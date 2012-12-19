@@ -178,7 +178,7 @@ Ext.define('widgets.stream.stream' , {
 			now.stream_getHistory(this.max, this.tags, this.tags_op, from, to, function(records) {
 				log.debug('Load ' + records.length + ' events', me.logAuthor);
 				if (records.length > 0) {
-					for (var i=0; i < records.length; i++)
+					for (var i = 0; i < records.length; i++)
 							records[i] = Ext.create('widgets.stream.event', {id: me.get_event_id(records[i]), raw: records[i], stream: me});
 
 					if (onSuccess)
@@ -343,13 +343,13 @@ Ext.define('widgets.stream.stream' , {
 		if (this.tags && raw.tags) {
 			if (this.tags_op) {
 				// AND
-				for (var i=0; i < this.tags.length; i++)
+				for (var i = 0; i < this.tags.length; i++)
 					if (! Ext.Array.contains(raw.tags, this.tags[i]))
 						return;
 			}else {
 				// OR
 				var show = false;
-				for (var i=0; i < this.tags.length; i++)
+				for (var i = 0; i < this.tags.length; i++)
 					if (Ext.Array.contains(raw.tags, this.tags[i]))
 						show = true;
 

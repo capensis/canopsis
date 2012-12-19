@@ -65,7 +65,7 @@ Ext.define('canopsis.lib.menu.cclear' , {
 
 	action_delete: function() {
 		var selection = this.grid.getSelectionModel().getSelection();
-		for (var i=0; i < selection.length; i++)
+		for (var i = 0; i < selection.length; i++)
 			this.grid_store.remove(selection[i]);
 	},
 

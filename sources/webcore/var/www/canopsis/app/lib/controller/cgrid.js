@@ -67,48 +67,48 @@ Ext.define('canopsis.lib.controller.cgrid', {
 
 			//Duplicate button
 			var btns = Ext.ComponentQuery.query('#' + grid.contextMenu.id + ' [action=duplicate]');
-			for (var i = 0; i < btns.length; i ++) 
+			for (var i = 0; i < btns.length; i++)
 				btns[i].on('click', this._duplicateRecord, this);
 
 			//DeleteButton
 			var btns = Ext.ComponentQuery.query('#' + grid.contextMenu.id + ' [action=delete]');
-			for (var i = 0; i < btns.length; i ++) 
+			for (var i = 0; i < btns.length; i++)
 				btns[i].on('click', this._deleteButton, this);
 
 			//edit rights
 			var btns = Ext.ComponentQuery.query('#' + grid.contextMenu.id + ' [action=rights]');
-			for (var i = 0; i < btns.length; i ++) 
+			for (var i = 0; i < btns.length; i++)
 				btns[i].on('click', this._editRights, this);
 
 			//Rename option
 			var btns = Ext.ComponentQuery.query('#' + grid.contextMenu.id + ' [action=rename]');
-			for (var i = 0; i < btns.length; i ++) 
+			for (var i = 0; i < btns.length; i++)
 				btns[i].on('click', this._rename, this);
 
 			//send by mail
 			var btns = Ext.ComponentQuery.query('#' + grid.contextMenu.id + ' [action=sendByMail]');
-			for (var i = 0; i < btns.length; i ++) 
+			for (var i = 0; i < btns.length; i++)
 				btns[i].on('click', this._sendByMail, this);
 
 			//authKey
 			var btns = Ext.ComponentQuery.query('#' + grid.contextMenu.id + ' [action=authkey]');
-			for (var i = 0; i < btns.length; i ++) 
+			for (var i = 0; i < btns.length; i++)
 				btns[i].on('click', this._authkey, this);
 
 			//run
 			var btns = Ext.ComponentQuery.query('#' + grid.contextMenu.id + ' [action=run]');
-			for (var i = 0; i < btns.length; i ++) 
+			for (var i = 0; i < btns.length; i++)
 				btns[i].on('click', this._runItem, this);
 
 			//enable / disable button
 			var btns = Ext.ComponentQuery.query('#' + grid.contextMenu.id + ' [action=enable-disable]');
-			for (var i = 0; i < btns.length; i ++) 
+			for (var i = 0; i < btns.length; i++)
 				btns[i].on('click', this._enabledisable, this);
 
 		}
 		//search buttons
 		var btns = Ext.ComponentQuery.query('#' + id + ' button[action=search]');
-		for (var i = 0; i < btns.length; i ++){
+		for (var i = 0; i < btns.length; i++) {
 			if (this.grid.opt_bar_time_search) {
 				btns[i].on('click', this.timeDisplay, this);
 			}else {
@@ -121,7 +121,7 @@ Ext.define('canopsis.lib.controller.cgrid', {
 		}
 
 		var btns = Ext.ComponentQuery.query('#' + id + ' button[action=clean_search]');
-		for (var i = 0; i < btns.length; i ++)  {
+		for (var i = 0; i < btns.length; i++) {
 			btns[i].on('click', function() {
 				this.grid.down('textfield[name=searchField]').setValue('');
 				this._searchRecord();
@@ -135,7 +135,7 @@ Ext.define('canopsis.lib.controller.cgrid', {
 				enter: (this.grid.opt_simple_search == true) ? this._searchRecordSimple : this._searchRecord
 			};
 
-		for (var i = 0; i < textfields.length; i ++) {
+		for (var i = 0; i < textfields.length; i++) {
 				var textfield = textfields[i];
 
 				//HACK : because sometimes this field is really long to render
@@ -160,27 +160,27 @@ Ext.define('canopsis.lib.controller.cgrid', {
 
 		//Duplicate buttons
 		var btns = Ext.ComponentQuery.query('#' + id + ' button[action=duplicate]');
-		for (var i = 0; i < btns.length; i ++) 
+		for (var i = 0; i < btns.length; i++)
 			btns[i].on('click', this._duplicateRecord, this);
 
 		// Add buttons
 		var btns = Ext.ComponentQuery.query('#' + id + ' button[action=add]');
-		for (var i = 0; i < btns.length; i ++) 
+		for (var i = 0; i < btns.length; i++)
 			btns[i].on('click', this._addButton, this);
 
 		// Delete buttons
 		var btns = Ext.ComponentQuery.query('#' + id + ' button[action=delete]');
-		for (var i = 0; i < btns.length; i ++) 
+		for (var i = 0; i < btns.length; i++)
 			btns[i].on('click', this._deleteButton, this);
 
 		// Reload buttons
 		var btns = Ext.ComponentQuery.query('#' + id + ' button[action=reload]');
-		for (var i = 0; i < btns.length; i ++) 
+		for (var i = 0; i < btns.length; i++)
 			btns[i].on('click', this._reloadButton, this);
 
 		// Download buttons
 		var btns = Ext.ComponentQuery.query('#' + id + ' button[action=download]');
-		for (var i = 0; i < btns.length; i ++) 
+		for (var i = 0; i < btns.length; i++)
 			btns[i].on('click', this._downloadButton, this);
 
 		// TimeDisplaybutton
@@ -190,11 +190,11 @@ Ext.define('canopsis.lib.controller.cgrid', {
 		*/
 
 		var field = Ext.ComponentQuery.query('#' + id + ' cdate[name=startTimeSearch]');
-		for (var i = 0; i < field.length; i ++) 
+		for (var i = 0; i < field.length; i++)
 			field[i].on('select', this.setMaxDate, this);
 
 		var field = Ext.ComponentQuery.query('#' + id + ' cdate[name=endTimeSearch]');
-		for (var i = 0; i < field.length; i ++) 
+		for (var i = 0; i < field.length; i++)
 			field[i].on('select', this.setMinDate, this);
 
 		//this._reloadButton(grid)
@@ -207,12 +207,12 @@ Ext.define('canopsis.lib.controller.cgrid', {
 
 		// Save buttons
 		var btns = Ext.ComponentQuery.query('#' + id + ' button[action=save]');
-		for (var i = 0; i < btns.length; i ++) 
+		for (var i = 0; i < btns.length; i++)
 			btns[i].on('click', function() { this._saveForm(form) }, this);
 
 		// Cancel buttons
 		var btns = Ext.ComponentQuery.query('#' + id + ' button[action=cancel]');
-		for (var i = 0; i < btns.length; i ++) 
+		for (var i = 0; i < btns.length; i++)
 			btns[i].on('click', function() { this._cancelForm(form) }, this);
 	},
 
@@ -254,12 +254,12 @@ Ext.define('canopsis.lib.controller.cgrid', {
 
 		//Enable delete Button
 		btns = Ext.ComponentQuery.query('#' + grid.id + ' button[action=delete]');
-		for (var i = 0; i < btns.length; i ++) 
+		for (var i = 0; i < btns.length; i++)
 			btns[i].setDisabled(records.length === 0);
 
 		//Enable duplicate Button
 		btns = Ext.ComponentQuery.query('#' + grid.id + ' button[action=duplicate]');
-		for (var i = 0; i < btns.length; i ++) 
+		for (var i = 0; i < btns.length; i++)
 			btns[i].setDisabled(records.length === 0);
 
 		if (this.selectionchange)
@@ -283,7 +283,7 @@ Ext.define('canopsis.lib.controller.cgrid', {
 			var ctrlAccount = this.getController('Account');
 			var authorized = true;
 
-			for (var i = 0; i < selection.length; i ++){
+			for (var i = 0; i < selection.length; i++) {
 				if (!ctrlAccount.check_record_right(selection[i], 'w'))
 					authorized = false;
 
@@ -377,7 +377,7 @@ Ext.define('canopsis.lib.controller.cgrid', {
 				//HACK anti set value crash, model doesn't accept unknown value
 				//and will crash
 				var cleaned_data = {};
-				Ext.Object.each(data, function(key, value, myself){
+				Ext.Object.each(data, function(key, value, myself) {
 					if (record.fields.keys.indexOf(key) != -1)
 						cleaned_data[key] = value;
 				});
@@ -768,22 +768,22 @@ Ext.define('canopsis.lib.controller.cgrid', {
 			log.debug(' + Search:', this.logAuthor);
 			log.dump(search_value_array);
 
-			for (var j =0; j < search_value_array.length ; j++) {
+			for (var j = 0; j < search_value_array.length; j++) {
 				var search = search_value_array[j];
 
 				// Check if it's a tag
-				if (search[0] == '#'){
+				if (search[0] == '#') {
 					search_tags.push(search.slice(1));
-				}else{
-					var filter = []
-					for (var i =0; i < grid.opt_bar_search_field.length ; i++) {
+				}else {
+					var filter = [];
+					for (var i = 0; i < grid.opt_bar_search_field.length; i++) {
 						var field = grid.opt_bar_search_field[i];
 						var sub_filter = {};
 						sub_filter[field] = { '$regex' : search, '$options': 'i'};
 
-						filter.push(sub_filter)
+						filter.push(sub_filter);
 					}
-					search_filters.push({"$or": filter})
+					search_filters.push({'$or': filter});
 				}
 
 			}
@@ -796,7 +796,7 @@ Ext.define('canopsis.lib.controller.cgrid', {
 
 			search_tags = Ext.Array.unique(search_tags);
 
-			for (var i=0; i < search_tags.length; i++)
+			for (var i = 0; i < search_tags.length; i++)
 				search_filters.push({ 'tags': search_tags[i] });
 
 			log.debug(' + Final search_filters:', this.logAuthor);

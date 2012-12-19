@@ -125,7 +125,7 @@ Ext.define('canopsis.controller.Account', {
 		if (groups.length > 0) {
 			var groups_records = [];
 
-			for (var i=0; i < groups.length; i++) {
+			for (var i = 0; i < groups.length; i++) {
 				record = store.findExact('_id', groups[i]);
 				if (record != -1)
 					groups_records.push(store.getAt(record));
@@ -147,7 +147,7 @@ Ext.define('canopsis.controller.Account', {
 		var record_list = form.checkGrid.getSelectionModel().getSelection();
 		var groups = [];
 
-		for (var i=0; i < record_list.length; i++)
+		for (var i = 0; i < record_list.length; i++)
 			groups.push(record_list[i].get('crecord_name'));
 
 		record.set('groups', groups);
@@ -166,11 +166,11 @@ Ext.define('canopsis.controller.Account', {
 		// in creation mode
 		if (!form.editing)
 			if (store.findExact('user', data['user']) >= 0)
-				already_exist = true
+				already_exist = true;
 
-			var field = form.findField('user')
+			var field = form.findField('user');
 			if (field)
-				field.markInvalid(_("Invalid field"))
+				field.markInvalid(_('Invalid field'));
 
 		if (already_exist) {
 			log.debug('User already exist', this.logAuthor + '[validateForm]');

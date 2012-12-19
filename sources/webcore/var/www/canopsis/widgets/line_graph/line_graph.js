@@ -136,7 +136,7 @@ Ext.define('widgets.line_graph.line_graph' , {
 		}
 
 		//Store nodes in object
-		for (var i = 0; i < this.nodes.length; i ++){
+		for (var i = 0; i < this.nodes.length; i++) {
 			var node = this.nodes[i];
 			if (this.nodesByID[node.id])
 				this.nodesByID[node.id].metrics.push(node.metrics[0]);
@@ -235,7 +235,7 @@ Ext.define('widgets.line_graph.line_graph' , {
 				useUTC: false
 			},*/
 			exporting: {
-				enabled: (this.exportMode || this.reportMode)? false:this.exporting_enabled,
+				enabled: (this.exportMode || this.reportMode) ? false : this.exporting_enabled,
 				filename: this.chartTitle,
 				type: 'image/svg+xml',
 				url: '/export_svg',
@@ -494,7 +494,7 @@ Ext.define('widgets.line_graph.line_graph' , {
 				}
 			}*/
 
-			var toggle_max_percent = false
+			var toggle_max_percent = false;
 
 			if (data.length > 0) {
 
@@ -502,13 +502,13 @@ Ext.define('widgets.line_graph.line_graph' , {
 
 				//percent check
 				if (this.SeriePercent) {
-					if(data.max)
-						toggle_max_percent = true
+					if (data.max)
+						toggle_max_percent = true;
 					else
-						toggle_max_percent = false
+						toggle_max_percent = false;
 				}
 
-				for (var i = 0; i < data.length; i ++){
+				for (var i = 0; i < data.length; i++) {
 					this.addDataOnChart(data[i]);
 					var node = this.nodesByID[data[i].node];
 
@@ -546,7 +546,7 @@ Ext.define('widgets.line_graph.line_graph' , {
 
 				//set max
 				if (this.SeriePercent && toggle_max_percent)
-					this.chart.yAxis[0].setExtremes(0,100,false)
+					this.chart.yAxis[0].setExtremes(0, 100, false);
 
 				//unmasking
 				var this_El = this.getEl();
@@ -572,7 +572,7 @@ Ext.define('widgets.line_graph.line_graph' , {
 	},
 
 	clearGraph: function() {
-		for (var i = 0; i < this.chart.series.length; i ++){
+		for (var i = 0; i < this.chart.series.length; i++) {
 			//log.debug('cleaning serie : ' + this.chart.series[i].name)
 			this.chart.series[i].setData([], false);
 		}
@@ -701,11 +701,11 @@ Ext.define('widgets.line_graph.line_graph' , {
 	parseValues: function(serie, values, type) {
 		//Do operation on value
 		if (this.SeriePercent && serie.options.max > 0)
-			for (var i = 0; i < values.length; i ++)
+			for (var i = 0; i < values.length; i++)
 				values[i][1] = getPct(values[i][1], serie.options.max);
 
 		if (serie.options.invert)
-			for (var i = 0; i < values.length; i ++)
+			for (var i = 0; i < values.length; i++)
 				values[i][1] = - values[i][1];
 
 		//type specifique parsing
@@ -715,7 +715,7 @@ Ext.define('widgets.line_graph.line_graph' , {
 				if (last_point.y != undefined)
 					last_point = last_point.y;
 
-				for (var i = 0; i < values.length; i ++) {
+				for (var i = 0; i < values.length; i++) {
 					values[i][1] = last_point + values[i][1];
 					last_point = values[i][1];
 				}

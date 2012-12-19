@@ -24,21 +24,21 @@ Ext.define('widgets.stepeue.stepeue', {
 	logAuthor: '[widget][stepeue]',
 	scroll: true,
 	useScreenShot: true,
-	initComponent: function () {
+	initComponent: function() {
 		log.debug('initialization of the eue\'s widget', this.logAuthor);
 		pnl = Ext.create('Ext.Panel', {
 			xtype: 'panel',
 			width: '100%',
 			height: '100%'
 		});
-		pnl.on('afterrender', function () {
+		pnl.on('afterrender', function() {
 			pnl.setLoading(true, true);
 		});
 		this.callParent(arguments);
 		this.wcontainer.add(pnl);
 		this.wcontainer.setLoading(true, true);
 	},
-	destroyObject: function () {
+	destroyObject: function() {
 		log.debug('object destroyed', this.logAuthor);
 		for (var i = 0; i < this.features.length; i++) {
 			this.features[i].destroyFeature();
@@ -46,7 +46,7 @@ Ext.define('widgets.stepeue.stepeue', {
 			//this.features[i].destroy() ;
 		}
 	},
-	doRefresh: function (from, to) {
+	doRefresh: function(from, to) {
 		log.debug('do Refresh', this.logAuthor);
 		if (this.features != undefined) this.destroyObject();
 		if (this.nodes.length == 0) {
@@ -62,7 +62,7 @@ Ext.define('widgets.stepeue.stepeue', {
 		}
 		this.buildHtml();
 	},
-	makeUrl: function (from, to) {
+	makeUrl: function(from, to) {
 		var url = '/perfstore/values';
 		if (!to) {
 			url += '/' + from;
@@ -74,7 +74,7 @@ Ext.define('widgets.stepeue.stepeue', {
 
 		return url;
 	},
-	buildHtml: function () {
+	buildHtml: function() {
 		if (this.nodes.length != 0) {
 			log.debug('Build the view of the widget', this.logAuthor);
 			var listItems = new Array();
@@ -87,7 +87,7 @@ Ext.define('widgets.stepeue.stepeue', {
 					layout: 'fit',
 					border: false,
 					listeners: {
-						activate: function (tab) {
+						activate: function(tab) {
 							log.debug('activated');
 							var idString = tab.id.split(':');
 							var id = idString[2];
@@ -109,7 +109,7 @@ Ext.define('widgets.stepeue.stepeue', {
 			}
 			if (listItems.length == 1) {
 				listItems[0].xtype = 'panel';
-				listItems[0].listeners.afterrender = function () {
+				listItems[0].listeners.afterrender = function() {
 					log.debug('after render', this.logAuthor);
 					me.features[0].init(me.nodes[0], me, this);
 				};

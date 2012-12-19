@@ -30,7 +30,7 @@ Ext.define('canopsis.controller.Group', {
 	logAuthor: '[controller][Group]',
 
 	checkInternal: true,
-	
+
 	//allowEdit: false,
 
 	init: function() {
@@ -63,9 +63,9 @@ Ext.define('canopsis.controller.Group', {
 			if (store.findExact('crecord_name', data['crecord_name']) >= 0)
 				already_exist = true;
 
-			var field = form.findField('crecord_name')
+			var field = form.findField('crecord_name');
 			if (field)
-				field.markInvalid(_("Invalid field"))
+				field.markInvalid(_('Invalid field'));
 
 		if (already_exist) {
 			log.debug('Group already exist', this.logAuthor + '[validateForm]');

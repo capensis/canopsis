@@ -71,13 +71,13 @@ Ext.define('canopsis.controller.Tabs', {
 	reload_active_view: function() {
 		log.debug('Reload active view', this.logAuthor);
 		var tab = Ext.getCmp('main-tabs').getActiveTab();
-		if(tab.displayed){
+		if (tab.displayed) {
 			tab.removeAll(true);
 			tab.displayed = false;
 			tab.autoshow = true;
 			tab.getView();
-		}else{
-			log.debug('currently in refresh')
+		}else {
+			log.debug('currently in refresh');
 		}
 	},
 
@@ -98,7 +98,7 @@ Ext.define('canopsis.controller.Tabs', {
 		this.store.proxy.clear();
 
 		log.debug('Load saved tabs:', this.logAuthor);
-		for (var i=0; i < views.length; i++) {
+		for (var i = 0; i < views.length; i++) {
 			var options = views[i];
 			log.debug(' + ' + options.title + '(' + options.view_id + ')', this.logAuthor);
 			options.autoshow = false;

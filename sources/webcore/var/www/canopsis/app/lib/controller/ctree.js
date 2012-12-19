@@ -145,7 +145,7 @@ Ext.define('canopsis.lib.controller.ctree', {
 		for (var i = 0; i < btns.length; i++)
 			btns[i].setDisabled(records.length === 0);
 
-		if (this.selectionchange) 
+		if (this.selectionchange)
 			this.selectionchange(view, records);
 	},
 
@@ -178,7 +178,7 @@ Ext.define('canopsis.lib.controller.ctree', {
 		var verification = true;
 
 		var selection = tree.getSelectionModel().getSelection();
-		for (var i = 0; i < selection.length; i++){
+		for (var i = 0; i < selection.length; i++) {
 			if (this.getController('Account').check_record_right(selection[i], 'w')) {
 				if (selection[i].childNodes.length > 0) {
 					global.notify.notify(_('Directory not empty'), _('The directory must be empty if you want to remove it'), 'error');
@@ -195,8 +195,8 @@ Ext.define('canopsis.lib.controller.ctree', {
 		if (verification == true) {
 			Ext.MessageBox.confirm(_('Confirm'), _('Are you sure you want to delete') + ' ' + selection.length + ' ' + _(' items') + ' ?',
 				function(btn, text) {
-					if (btn == 'yes') 
-						for (var i = 0; i < selection.length; i++) 
+					if (btn == 'yes')
+						for (var i = 0; i < selection.length; i++)
 							selection[i].remove();
 					tree.store.sync();
 				});

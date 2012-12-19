@@ -132,13 +132,13 @@ Ext.define('canopsis.lib.store.cstore', {
 
    getFilterList: function() {
 		var filters = [];
-		var filter_list = this.filter_list
-	   
-		Ext.Object.each(filter_list, function(key, value, myself){
-			Ext.Object.each(filter_list[key], function(key, value, myself){
+		var filter_list = this.filter_list;
+
+		Ext.Object.each(filter_list, function(key, value, myself) {
+			Ext.Object.each(filter_list[key], function(key, value, myself) {
 				var filter = {};
 				filter[key] = value;
-				filters.push(filter);				
+				filters.push(filter);
 			});
 		});
 

@@ -67,7 +67,7 @@ Ext.define('canopsis.store.EventLogs', {
 
 	buildEventFilter: function() {
 		var cleaned_filter = {};
-		for (var i = 0; i < this.eventFilter.length; i ++)
+		for (var i = 0; i < this.eventFilter.length; i++)
 			cleaned_filter[i] = this.getNinFilter(this.eventFilter[i]);
 
 		this.setFilter(cleaned_filter);

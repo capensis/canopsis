@@ -58,7 +58,7 @@ Ext.define('canopsis.store.TreeStoreViews', {
 		},
 		write: function(store, operation,option) {
 			data = Ext.decode(operation.response.responseText).data;
-			for (var i=0; i < data.length; i++) {
+			for (var i = 0; i < data.length; i++) {
 				if (data[i].success == true) {
 					if (operation.action == 'create')
 						global.notify.notify(_('Success'), _('Record saved'), 'success');

@@ -81,7 +81,7 @@ Ext.define('widgets.diagram.diagram' , {
 
 		this.nodesByID = {};
 		//Store nodes in object
-		for (var i=0; i < this.nodes.length; i++) {
+		for (var i = 0; i < this.nodes.length; i++) {
 			var node = this.nodes[i];
 
 			//hack for retro compatibility
@@ -264,7 +264,7 @@ Ext.define('widgets.diagram.diagram' , {
 
 	processNodes: function() {
 		var post_params = [];
-		for (var i=0; i < this.nodes.length; i++) {
+		for (var i = 0; i < this.nodes.length; i++) {
 			post_params.push({
 				id: this.nodes[i].id,
 				metrics: this.nodes[i].metrics
@@ -329,7 +329,7 @@ Ext.define('widgets.diagram.diagram' , {
 
 			var other_unit = '';
 
-			for (var i=0; i < data.length; i++) {
+			for (var i = 0; i < data.length; i++) {
 				var info = data[i];
 
 				var node = this.nodesByID[info['node']];
@@ -435,7 +435,7 @@ Ext.define('widgets.diagram.diagram' , {
 	getSerie: function(data) {
 		var bunit = undefined;
 		if (data.length != 0)
-			for (var i=0; i < data.length; i++)
+			for (var i = 0; i < data.length; i++)
 				if (data[i].bunit)
 					bunit = data[i].bunit;
 
@@ -491,10 +491,10 @@ Ext.define('widgets.diagram.diagram' , {
 
 	setAxis: function(data) {
 		var metrics = [];
-		for (var i=0; i < data.length; i++)
+		for (var i = 0; i < data.length; i++)
 			if (data[i].metric)
 				metrics.push(data[i].metric);
-		
+
 		this.chart.xAxis[0].setCategories(metrics, false);
 	},
 

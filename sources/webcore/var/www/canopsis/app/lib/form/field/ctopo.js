@@ -86,7 +86,7 @@ Ext.define('canopsis.lib.form.field.ctopo' , {
 				nodes[node.id] = node.data;
 
 				log.debug(' + ' + node._id, this.logAuthor);
-				for (var j=0; j < node.conns.length; j++) {
+				for (var j = 0; j < node.conns.length; j++) {
 					var conn = node.conns[j];
 					var target = Ext.getCmp(conn.targetId);
 					var source = Ext.getCmp(conn.sourceId);
@@ -112,7 +112,7 @@ Ext.define('canopsis.lib.form.field.ctopo' , {
 		this.removeAll();
 
 		log.debug(' + Create nodes', this.logAuthor);
-		for (var i=0; i < nodes.length; i++) {
+		for (var i = 0; i < nodes.length; i++) {
 			var el = this.createNode(nodes[i]);
 			this.add(el);
 			corresp[i] = el.id;
@@ -124,7 +124,7 @@ Ext.define('canopsis.lib.form.field.ctopo' , {
 
 		log.debug(' + Connect nodes', this.logAuthor);
 
-		for (var i=0; i < data.conns.length; i++) {
+		for (var i = 0; i < data.conns.length; i++) {
 			var source = data.conns[i][0];
 			var target = data.conns[i][1];
 			log.debug('     + ' + source + ' -> ' + target, this.logAuthor);
@@ -214,7 +214,7 @@ Ext.define('canopsis.lib.form.field.ctopo' , {
 		var data = Ext.Object.merge(data, this.node_default);
 		data.connector = 'topology';
 		data.event_type = 'operator';
-		data.label = this.topologyName + '<br />'+ description;
+		data.label = this.topologyName + '<br />' + description;
 		data['html'] = this.tpl.apply(data);
 		root.data.label = data.label;
 		root.update(data.html);
@@ -270,12 +270,12 @@ Ext.define('canopsis.lib.form.field.ctopo' , {
 	removeConnection: function(c ) {
 		var target = Ext.getCmp(c.targetId);
 		var source = Ext.getCmp(c.sourceId);
-		for (var i=0; i < target.conns.length; i++) {
+		for (var i = 0; i < target.conns.length; i++) {
 			if (target.conns[i].connection.id == c.id)
 				delete (target.conns[i]);
 
 		// Remove endpoints
-		for (var i=0; i < c.endpoints.length; i++) {
+		for (var i = 0; i < c.endpoints.length; i++) {
 			this.jsPlumbInstance.deleteEndpoint(c.endpoints[i]);
 
 		// Remove connection
@@ -319,7 +319,7 @@ Ext.define('canopsis.lib.form.field.ctopo' , {
 							nodeEl.extForm.close();
 						},
 						iconCls: 'icon-save',
-						iconAlign: 'right' 
+						iconAlign: 'right'
 					}
 				];
 
@@ -333,7 +333,7 @@ Ext.define('canopsis.lib.form.field.ctopo' , {
 				}).show().center();
 			}
 		}
-	},
+	};,
 	createNode: function(data) {
 		var me = this;
 		//we do a deep copy of data, in order to prevent to have a node which is a tree
@@ -366,8 +366,8 @@ Ext.define('canopsis.lib.form.field.ctopo' , {
 				containment: 'parent'
 			});
 
-			var point = $('#'+ nodeEl.id + ' .ctopo-point');
-			var node = $('#'+ nodeEl.id);
+			var point = $('#' + nodeEl.id + ' .ctopo-point');
+			var node = $('#' + nodeEl.id);
 
 			me.jsPlumbInstance.makeSource(point, {
 				parent: node,
@@ -381,15 +381,15 @@ Ext.define('canopsis.lib.form.field.ctopo' , {
 
 			// Destroy node
 			nodeEl.getEl().on('dblclick', function() {
-				log.debug('Destroy node '+ nodeEl._id, me.logAuthor);
+				log.debug('Destroy node ' + nodeEl._id, me.logAuthor);
 				if (me.rootNode != nodeEl.id)
 				{
 					var connections_out = me.jsPlumbInstance.getConnections({ source: nodeEl.id});
 					var connections_in = me.jsPlumbInstance.getConnections({ target: nodeEl.id});
 
-					for (var i=0; i < connections_out.length; i++)
+					for (var i = 0; i < connections_out.length; i++)
 						me.removeConnection(connections_out[i]);
-					for (var i=0; i < connections_in.length; i++)
+					for (var i = 0; i < connections_in.length; i++)
 						me.removeConnection(connections_in[i]);
 
 					nodeEl.destroy();
@@ -404,7 +404,7 @@ Ext.define('canopsis.lib.form.field.ctopo' , {
 
 		});
 		return nodeEl;
-	},
+	};,
 
 	afterRender: function() {
 		var me = this;
@@ -458,7 +458,7 @@ Ext.define('canopsis.lib.form.field.ctopo' , {
 		});
 		this.add(root);
 		this.rootNode = root.id;
-	},
+	};,
 
 	beforeDestroy: function() {
 		log.debug('Clean jsPlumb', this.logAuthor);
@@ -466,5 +466,5 @@ Ext.define('canopsis.lib.form.field.ctopo' , {
 		delete this.jsPlumbInstance;
 
 		this.callParent(arguments);
- 	}
+ 	};
 });

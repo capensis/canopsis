@@ -27,18 +27,18 @@ Ext.define('widgets.stepeue.scenario', {
 	metrics: ['duration', 'failed'],
 	aggregate_max_points: 100,
 	graphHeight: 50,
-	init: function (feature, scenario_name, widget) {
+	init: function(feature, scenario_name, widget) {
 		log.debug('Initialization of scenario [' + scenario_name + '] for feature [' + feature + ']', this.logAuthor);
 		this.scenarios = new Array();
 		this.feature = feature;
 		this.name = scenario_name;
 		this.widget = widget;
 	},
-	putMainScenario: function (node) {
+	putMainScenario: function(node) {
 		log.debug('Main scenario defined', this.logAuthor);
 		this.mainScenario = node;
 	},
-	addScenario: function (node) {
+	addScenario: function(node) {
 		log.debug('scenario added', this.logAuthor);
 		var object = {
 			browser: rdr_browser(node.raw.cntxt_browser),
@@ -53,7 +53,7 @@ Ext.define('widgets.stepeue.scenario', {
 		object.dur = duration;
 		this.scenarios.push(object);
 	},
-	getPerfData: function () {
+	getPerfData: function() {
 		log.debug('find Perf Store Data of Scenario', this.logAuthor);
 		var me = this;
 		url = this.widget.urlPerfStore;
@@ -74,7 +74,7 @@ Ext.define('widgets.stepeue.scenario', {
 			scope: this,
 			params: post_params,
 			method: 'POST',
-			success: function (response) {
+			success: function(response) {
 				var data = Ext.JSON.decode(response.responseText);
 
 				//TODO: IE
@@ -93,19 +93,19 @@ Ext.define('widgets.stepeue.scenario', {
 						chartRangeMinX: node['values'][0][0],
 						chartRangeMaxX: node['values'][node['values'].length - 1][0],
 						tooltipClassname: 'tooltip',
-						tooltipFormatter: function (sparkline, options, fields) {
+						tooltipFormatter: function(sparkline, options, fields) {
 							return '<b>' + rdr_tstodate(Math.round(fields['x'] / 1000)) + '</b><br>' + options.userOptions.metric + ': ' + fields['y'] + ' ' + options.userOptions.unit;
 						}
 					});
 				}
 				log.debug('end of loading PerfData', this.logAuthor);
 			},
-			failure: function (result, request) {
+			failure: function(result, request) {
 				log.error('Ajax request failed ... (' + request.url + ')', this.logAuthor);
 			}
 		});
 	},
-	buildMainView: function () {
+	buildMainView: function() {
 		var arrayName = this.mainScenario.raw.resource.split('.');
 		var scenarioName = arrayName[2];
 		var loc = rdr_country(this.mainScenario.raw.cntxt_localization);
@@ -128,7 +128,7 @@ Ext.define('widgets.stepeue.scenario', {
 			dur: duration
 		};
 	},
-	getScreenShotLogo: function () {
+	getScreenShotLogo: function() {
 		var imgObject = {
 			src: '/rest/media/events/' + this.mainScenario.raw._id,
 			width: '64px',
@@ -140,7 +140,7 @@ Ext.define('widgets.stepeue.scenario', {
 			'</a>');
 		return imageTpl.applyTemplate(imgObject);
 	},
-	buildDetailsView: function () {
+	buildDetailsView: function() {
 		log.debug('Build details view', this.logAuthor);
 		var scenarData = this.scenarios;
 		var storeScenar = Ext.create('Ext.data.Store', {

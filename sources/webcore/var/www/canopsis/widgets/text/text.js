@@ -38,7 +38,7 @@ Ext.define('widgets.text.text' , {
 			var extracted_vars = this.cleanVars(raw_var);
 
 			//replacing var in this.text by new var name
-			for (var i=0; i < extracted_vars.length; i++) {
+			for (var i = 0; i < extracted_vars.length; i++) {
 				var one_var = extracted_vars[i];
 				var metric_exploded_name = one_var[1];
 
@@ -74,7 +74,7 @@ Ext.define('widgets.text.text' , {
 			if (data.perf_data_array && data.perf_data_array.length) {
 				if (this.perfdataMetricList && this.perfdataMetricList.length != 0) {
 					//loop on var in required perfdata
-					for (var i=0; i < this.perfdataMetricList.length; i++) {
+					for (var i = 0; i < this.perfdataMetricList.length; i++) {
 						var metric = this.perfdataMetricList[i][0];
 						var attribut = this.perfdataMetricList[i][1];
 
@@ -83,7 +83,7 @@ Ext.define('widgets.text.text' , {
 
 						//search the right metric
 						if (metric != undefined && metric != null) {
-							for (var j=0; j < data.perf_data_array.length; j++) {
+							for (var j = 0; j < data.perf_data_array.length; j++) {
 								if (data.perf_data_array[j].metric == metric) {
 									log.debug('  + ' + attribut + '  found', this.logAuthor);
 									var attributName = this.perfdataMetricList[i].join('');
@@ -177,7 +177,7 @@ Ext.define('widgets.text.text' , {
 	// return :  ['{var1:var2}',['var1','var2']]
 	cleanVars: function(array) {
 		var output = [];
-		for (var i=0; i < array.length; i++)
+		for (var i = 0; i < array.length; i++)
 			output.push([
 					array[i],
 					array[i].slice(1, -1).split(':')

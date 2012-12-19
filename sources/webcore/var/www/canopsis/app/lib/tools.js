@@ -244,7 +244,7 @@ function split_search_box(raw) {
 
 	var tmp = raw.split('"');
 	if (tmp.length > 1) {
-		for (var i=0; i < tmp.length; i++) {
+		for (var i = 0; i < tmp.length; i++) {
 			var w = tmp[i];
 			if (w.length > 1) {
 				if (w[0] == ' ')
@@ -326,10 +326,10 @@ function roundSignifiantDigit(n, sig) {
     return Math.round(n * mult) / mult;
 }
 
-function sciToDec(number){
-	val = number
-	if(Ext.isNumber(number))
-		val = number.toString()
+function sciToDec(number) {
+	val = number;
+	if (Ext.isNumber(number))
+		val = number.toString();
 
 	if (val.match(/^[-+]?[1-9]\.[0-9]+e[-]?[1-9][0-9]*$/)) {
 		var arr = new Array();
@@ -340,5 +340,5 @@ function sciToDec(number){
 		precision += arr[1].length;
 		val = (+val).toFixed(precision);
 	}
-	return val
+	return val;
 }

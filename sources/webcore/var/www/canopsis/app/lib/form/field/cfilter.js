@@ -348,7 +348,7 @@ Ext.define('canopsis.lib.form.field.cfilter' , {
 
 			setValue: function(array) {
 				this.textfield_panel.removeAll();
-				for (var i = 0; i < array.length; i++) 
+				for (var i = 0; i < array.length; i++)
 					this.add_textfield(array[i]);
 			}
 		});

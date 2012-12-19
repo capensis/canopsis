@@ -108,13 +108,13 @@ Ext.define('widgets.bar_graph.bar_graph' , {
 	setOptions: function() {
 		this.callParent(arguments);
 
-		if (this.columnDatalabels){
+		if (this.columnDatalabels) {
 			this.options.plotOptions.column.dataLabels = {
 				enabled: true,
-				formatter: function(){
+				formatter: function() {
 					if (this.y)
 						return rdr_humanreadable_value(this.y, this.point.bunit);
-					return ''; 
+					return '';
 				}
 			};
 		}
