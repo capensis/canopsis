@@ -171,7 +171,7 @@ Ext.define('canopsis.lib.form.field.cfilter' , {
 	},
 
 	check_object_validity: function(obj) {
-		if (this.checkObjectValidity) {
+		if (obj && this.checkObjectValidity) {
 			var output = true;
 			for (var i = 0; i < obj.length; i++) {
 				if (Ext.isArray(obj[i])) {

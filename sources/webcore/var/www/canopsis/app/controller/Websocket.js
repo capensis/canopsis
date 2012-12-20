@@ -38,12 +38,22 @@ Ext.define('canopsis.controller.Websocket', {
 		/*if (Ext.isIE)
 			this.autoconnect = false*/
 
-		Ext.fly('nowjs').set({
-				src: global.nowjs.proto + '://' + global.nowjs.hostname + ':' + global.nowjs.port + '/nowjs/now.js'
-			}).on('load', function() {
+		if (! Ext.isIE){
+			Ext.fly('nowjs').set({
+					src: global.nowjs.proto + '://' + global.nowjs.hostname + ':' + global.nowjs.port + '/nowjs/now.js'
+				}).on('load', function() {
+					if (this.autoconnect)
+						this.connect();
+			}, this);
+
+		}else{
+			var elNowjs = document.getElementById('nowjs');
+			elNowjs.setAttribute("src", global.nowjs.proto + '://' + global.nowjs.hostname + ':' + global.nowjs.port + '/nowjs/now.js');
+			Ext.defer(function(){
 				if (this.autoconnect)
 					this.connect();
-		}, this);
+			}, 2000, this);
+		}
 
 
     },
