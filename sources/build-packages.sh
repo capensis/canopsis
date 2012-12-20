@@ -60,7 +60,7 @@ rm stable &> /dev/null
 touch .repo_root
 ln -s . stable
 if [ $? -ne 0 ]; then exit 1; fi
-ubik-repo generate --old-format stable
+ubik-repo generate stable
 if [ $? -ne 0 ]; then exit 1; fi
 
 echo "---> Start HTTP Repo"
