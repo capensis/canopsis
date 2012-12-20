@@ -34,6 +34,9 @@ Ext.define('canopsis.view.Selector.Grid' , {
 	opt_bar_enable: true,
 	opt_paging: false,
 
+	opt_bar_search: true,
+	opt_bar_search_field: ['crecord_name', 'display_name', 'description'],
+
 	columns: [
 		{
 			header: '',

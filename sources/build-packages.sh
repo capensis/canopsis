@@ -47,11 +47,11 @@ pkill -u canopsis &> /dev/null || true
 echo "-------> Install from packages"
 
 echo "---> Install Ubik"
-pip install --upgrade git+http://github.com/Socketubs/Ubik.git
+pip install --upgrade git+http://github.com/Socketubs/ubik.git
 if [ $? -ne 0 ]; then exit 1; fi
 
 echo "---> Install Ubik tools"
-pip install --upgrade git+http://github.com/Socketubs/Ubik-toolbelt.git
+pip install --upgrade git+http://github.com/Socketubs/ubik-toolbelt.git
 if [ $? -ne 0 ]; then exit 1; fi
 
 echo "---> Make repo"
