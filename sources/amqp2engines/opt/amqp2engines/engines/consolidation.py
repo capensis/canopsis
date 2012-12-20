@@ -45,7 +45,10 @@ class engine(cengine):
 		self.metrics_list = {}
 		self.timestamp = { } 
 		self.manager = pyperfstore2.manager(logging_level=logging.INFO)
-		self.beat_interval = 5 
+		self.beat_interval = 300 
+	
+		#for debug
+		#self.beat_interval = 5 
 		cengine.__init__(self, name=NAME, *args, **kargs)
 		self.default_interval = 300
 		self.records = { } 
@@ -75,15 +78,13 @@ class engine(cengine):
 				metric_list = self.manager.store.find(mfilter=tfilter)
 				values = []
 				list_fn = record.get('type', False)
-				self.logger.debug( 'type liste fn' )
-				self.logger.debug( type(list_fn) )
-				self.logger.debug( list_fn)
 				if ( isinstance(list_fn, str) or isinstance(list_fn, unicode) ) :
 					list_fn = [ list_fn ] 
 				for metric in metric_list :
 					m = metric.get('d')
 					if ( len(m) >0 ) :
 						values.append( m[-2:-1] ) 
+				
 				if ( list_fn and len(values) > 0 ) :
 					list_perf_data = []
 					for i in list_fn :
@@ -102,6 +103,7 @@ class engine(cengine):
 							resultat = pyperfstore2.utils.aggregate_series(values, fn)
 						except NameError:
 							self.logger.info('la fonction '+i+' est inexistante')
+							self.storage.update(record.get('_id'), {'output_engine': "function "+i+" does not exists"  } )
 						if ( len(resultat) > 0 ) :
 							list_perf_data.append({ 'metric' : i, 'value' : resultat[0][1], "unit": None, 'max': None, 'warn': None, 'crit': None, 'type': 'GAUGE' } ) 
 							event = cevent.forger(
@@ -120,8 +122,12 @@ class engine(cengine):
 		        			                display_name=record['crecord_name'][0]
 							)	
 							rk = cevent.get_routingkey(event)
-							self.logger.debug(event)
 							self.amqp.publish(event, rk, self.amqp.exchange_name_events)
+							self.storage.update(record.get('_id'), {'output_engine': datetime.now().strftime('%Y-%m-%d %H:%M:%S')+" : Computation done. Next Computation in "+str(interval)+" s"  } )
+						else:
+							self.storage.update(record.get('_id'), {'output_engine': "No result"  } )
+				else:
+					self.storage.update(record.get('_id'), {'output_engine': "No input values"  } )
 				self.timestamp[record.get('_id')] = int(time.time())
 		
 		
@@ -138,6 +144,7 @@ class engine(cengine):
 			for nb in metric_list:
 				nb_items = nb_items + 1
 			self.storage.update(record.get('_id'), {'nb_items': nb_items } )
+			self.storage.update(record.get('_id'), {'output_engine': "Correctly Load"  } )
 			event = cevent.forger(
 					connector = "consolidation",
 					connector_name = "engine",
@@ -156,6 +163,8 @@ class engine(cengine):
 			rk = cevent.get_routingkey(event)
 			self.records[record.get('_id')] = record
 			self.amqp.publish(event, rk, self.amqp.exchange_name_events)
+		else:
+			self.storage.update(record.get('_id'), {'output_engine': "Impossible to load : no filter defined"  } )
 
 	def load_consolidation(self) :
 		records = self.storage.find({ 'crecord_type': 'consolidation' }, namespace="object")
@@ -169,3 +178,4 @@ class engine(cengine):
 		record_list = self.storage.find({ 'crecord_type': 'consolidation' }, namespace="object")
 		for i in record_list :
 			self.storage.update(i._id, {'loaded': 'false' })
+			self.storage.update(i._id, {'output_engine': "Correctly Unload"  } )

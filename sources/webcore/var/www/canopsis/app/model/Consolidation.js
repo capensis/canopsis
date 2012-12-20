@@ -36,6 +36,9 @@ Ext.define('canopsis.model.Consolidation', {
 		{name: 'loaded', defaultValue: false},
 		{name: 'state'},
 		{name: 'enable', defaultValue: true},
-		{name: 'output', defaultValue: ''}
+		{name: 'output', defaultValue: ''},
+		{name: 'nb_items'},
+		{name: 'type'},
+		{name: 'output_engine'}
 	]
 });

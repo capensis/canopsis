@@ -88,6 +88,10 @@ Ext.define('canopsis.view.Consolidation.Form', {
                     			name      : 'type',
                     			inputValue: 'mean'
 							},{
+								boxLabel  : _('Sum'),
+					name 	  : 'type',
+					inputValue: 'sum'
+							},{
 								boxLabel  : _('Delta'),
                     			name      : 'type',
                     			inputValue: 'delta'
@@ -104,7 +108,39 @@ Ext.define('canopsis.view.Consolidation.Form', {
 					},{
 						title: _('Filter'),
 						xtype: 'cfilter',
-						name: 'mfilter'
+						name: 'mfilter',
+						url: "/perfstore",
+						model:"canopsis.model.Perfdata",
+						columns : [
+							{
+								header:"",
+								sortable: false,
+								flex: 2,
+								dataIndex: "co",
+							},{
+								header:"",
+								sortable: false,
+								flex: 2,
+								dataIndex:"re"
+							}, {
+								header:"",
+								sortable:false,
+								flex: 2,
+								dataIndex:"me"
+							}, {
+								header:"",
+								sortable: false,
+								flex: 2,
+								dataIndex:"u"
+							}
+						],
+						operator_fields: [
+							{ 'operator': 'co', 'text': _('Component'), 'type': 'all'},
+							{ 'operator': 're', 'text': _('Resource'), 'type': 'all'},
+							{ 'operator': 'me', 'text': _('Metric'), 'type': 'all'},
+							{ 'operator': 'u', 'text': _('Unit'), 'type': 'all'},
+							{ 'operator': 'tg', 'text':_('Tags'), 'type': 'all'}
+						]
 					}
 				]
 			}

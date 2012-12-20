@@ -65,14 +65,14 @@ Ext.define('canopsis.view.Consolidation.Grid' , {
 			header: _('Output engine'),
 			//align: 'center',
 			flex: 2,
-			//dataIndex: 'sla_state',
-			renderer : function(){return 'Ressource = Regex(cpu*) && Metric = system '}
+			dataIndex: 'output_engine',
+			//renderer : function(){return 'Ressource = Regex(cpu*) && Metric = system '}
 		},{
 			header: _('Nb elements'),
 			align: 'center',
 			width: 70,
-			//dataIndex: 'sla_state',
-			renderer : function(){return 34}
+			dataIndex: 'nb_items',
+			//renderer : function(){return 34}
 		}
 	],
 
