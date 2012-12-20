@@ -30,6 +30,7 @@ Ext.define('canopsis.model.Schedule', {
 		{name: 'args', defaultsValue: []},
 		{name: 'kwargs' , defaultsValue: {}},
 		{name: 'next_run_time'},
+		{name: 'reporting_interval'},
 		{name: 'cron', defaultValue: undefined},
 		{name: 'log'},
 		{

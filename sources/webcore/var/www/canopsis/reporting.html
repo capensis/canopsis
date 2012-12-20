@@ -119,16 +119,34 @@
 			'</div>',
 			{compiled: true}
 		);
+
+		var t2 = new Ext.Template(
+			'<div id="{id}" name="{id}" style="{style}">',
+				'<span>{to}</span>',
+			'</div>',
+			{compiled: true}
+		);
+
 		
 		var document_body = Ext.getBody()
+		console.log('export_from                  '+export_from)
 		
-		t.insertFirst(document_body, {
-			id: 'interval_header',
-			//style: 'text-align:center;',
-			style: 'margin-left:400px;',
-			from: _('From') + ' ' + Ext.Date.format(from_date, 'Y-m-d'),
-			to: _('To') + ' ' + Ext.Date.format(to_date, 'Y-m-d')
-		});
+		if(parseInt(export_from) == 0){
+			t2.insertFirst(document_body, {
+				id: 'interval_header',
+				style: 'margin-left:400px;',
+				to: Ext.Date.format(to_date, 'Y-m-d')
+			});
+			
+		}else{
+			t.insertFirst(document_body, {
+				id: 'interval_header',
+				style: 'margin-left:400px;',
+				from: _('From') + ' ' + Ext.Date.format(from_date, 'Y-m-d'),
+				to: _('To') + ' ' + Ext.Date.format(to_date, 'Y-m-d')
+			});
+		}
+
 
 		//----------------Start app---------------
 
