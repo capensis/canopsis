@@ -131,20 +131,20 @@ Ext.define('canopsis.controller.Account', {
 					groups_records.push(store.getAt(record));
 			}
 
-			var selectMethod = form.checkGrid.getSelectionModel();
+			var selectMethod = form.down('grid').getSelectionModel();
 			selectMethod.select(groups_records);
-
 		}
 	},
 
 	preSave: function(record,data,form) {
 		//don't update password if it's empty
-		if (form.editing && (record.get('passwd') == '')) {
+		if (form.editing && (record.get('passwd') == ''))
 			delete record.data.passwd;
-		}
+		
 
 		//add groups
-		var record_list = form.checkGrid.getSelectionModel().getSelection();
+		var checkGrid = form.down('grid')
+		var record_list = checkGrid.getSelectionModel().getSelection();
 		var groups = [];
 
 		for (var i = 0; i < record_list.length; i++)

@@ -29,83 +29,82 @@ Ext.define('canopsis.view.Account.Form', {
 
 	//layout : 'hbox',
 
-	initComponent: function() {
-		log.debug('Initializing...', this.logAuthor);
+	width:350,
+	height:400,
 
-
-		//---------------------------General options-------------------------
-		var g_options = [{
-				fieldLabel: _('Login'),
-				name: 'user',
-				allowBlank: false,
-				regex: /^[A-Za-z0-9_]+$/,
-				regexText: _('Invalid login') + ', ' + _('use alphanumeric characters only') + '<br/>([A-Za-z0-9_])'
-			},{
-				fieldLabel: _('First Name'),
-				name: 'firstname',
-				allowBlank: false
-			}, {
-				fieldLabel: _('Last Name'),
-				name: 'lastname',
-				allowBlank: false
-			},{
-				fieldLabel: _('E-mail'),
-				name: 'mail',
-				vtype: 'email',
-				allowBlank: true
-			},{
-				fieldLabel: _('Group'),
-				name: 'aaa_group',
-				store: Ext.create('canopsis.store.Groups'),
-				value: 'Canopsis',
-				displayField: 'crecord_name',
-				valueField: '_id',
-				editable: false,
-				xtype: 'combobox',
-				allowBlank: false
-			},{
-				fieldLabel: _('Password'),
-				inputType: 'password',
-				name: 'passwd'
-				//allowBlank : false
-			}];
-
-
-
-		var g_options_panel = Ext.widget('fieldset', {
+	items:[{
+		xtype: 'tabpanel',
+		plain: true,
+		border: false,
+		defaults: {
+			border: false,
+			autoScroll: true
+		},
+		items:[{
 				title: _('General options'),
 				defaultType: 'textfield',
-				items: g_options
-			});
+				bodyStyle: 'padding:5px 5px 0',
+				layout: 'anchor',
+				border:false,
+				items:[{
+					xtype:'fieldset',
+					defaultType: 'textfield',
+					border:false,
+					items:[{
+						fieldLabel: _('Login'),
+						name: 'user',
+						allowBlank: false,
+						regex: /^[A-Za-z0-9_]+$/,
+						regexText: _('Invalid login') + ', ' + _('use alphanumeric characters only') + '<br/>([A-Za-z0-9_])'
+					},{
+						fieldLabel: _('First Name'),
+						name: 'firstname',
+						allowBlank: false
+					}, {
+						fieldLabel: _('Last Name'),
+						name: 'lastname',
+						allowBlank: false
+					},{
+						fieldLabel: _('E-mail'),
+						name: 'mail',
+						vtype: 'email',
+						allowBlank: true
+					},{
+						fieldLabel: _('Group'),
+						name: 'aaa_group',
+						store: Ext.create('canopsis.store.Groups'),
+						value: 'Canopsis',
+						displayField: 'crecord_name',
+						valueField: '_id',
+						editable: false,
+						xtype: 'combobox',
+						allowBlank: false
+					},{
+						fieldLabel: _('Password'),
+						inputType: 'password',
+						name: 'passwd'
+						//allowBlank : false
+					}]
 
-		//----------------------- drag and drop-------------------
-		var checkboxModel = Ext.create('Ext.selection.CheckboxModel');
-		this.checkGrid = Ext.create('Ext.grid.Panel', {
+				}]
+		},{
+			title: _('Groups'),
+			//defaultType: 'textfield',
+			//bodyStyle: 'padding:5px 5px 0',
+			xtype:'grid',
 			store: 'Groups',
 			autoScroll: true,
-			height: 200,
-			selModel: checkboxModel,
+			//height: 200,
+			selType:'checkboxmodel',
+			selModel:{mode:'MULTI'},
 			columns: [
 				{text: _('Name'), dataIndex: 'crecord_name', flex: 1}
 			],
 			columnLines: true,
-			title: _('Groups'),
 			hideHeaders: true,
-			collapsible: true,
-			//collapsed : true,
 			name: 'groups',
 			scroll: 'vertical',
-			margin: '4 0 6 0'
-		});
-
-		var secondary_group = Ext.widget('fieldset', {
-				title: _('Secondary groups'),
-				items: [this.checkGrid]
-			});
-
-		this.callParent(arguments);
-
-		this.add([g_options_panel, secondary_group]);
-	}
+		}]
+	}]
 
 });
