@@ -27,10 +27,10 @@ Ext.define('canopsis.view.Account.Form', {
 
 	logAuthor: '[Controller][Account][Form]',
 
-	//layout : 'hbox',
+	layout: 'fit',
 
 	width:350,
-	height:400,
+	height:350,
 
 	items:[{
 		xtype: 'tabpanel',
@@ -93,7 +93,6 @@ Ext.define('canopsis.view.Account.Form', {
 			xtype:'grid',
 			store: 'Groups',
 			autoScroll: true,
-			//height: 200,
 			selType:'checkboxmodel',
 			selModel:{mode:'MULTI', showHeaderCheckbox: false},
 			columns: [
