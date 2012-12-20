@@ -84,11 +84,5 @@ Ext.define('canopsis.view.Briefcase.Grid' , {
 			text: _('Others'),
 			dataIndex: 'aaa_access_other'
 		}
-	],
-
-	initComponent: function() {
-		this.callParent(arguments);
-	}
-
-
+	]
 });
