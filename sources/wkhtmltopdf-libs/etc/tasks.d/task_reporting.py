@@ -68,8 +68,9 @@ def render_pdf(filename=None, viewname=None, starttime=None, stoptime=None, acco
 		
 	#set stop time
 	if stoptime is None:
-		starttime = (time.time() - starttime) * 1000
 		stoptime = (time.time()) * 1000
+	if starttime != 0:
+		starttime = (time.time() - starttime) * 1000
 	
 	#get view options
 	storage = cstorage(account=account, namespace='object')
@@ -80,10 +81,13 @@ def render_pdf(filename=None, viewname=None, starttime=None, stoptime=None, acco
 
 	#set filename
 	if filename is None:
-		fromDate = date.fromtimestamp(int(starttime) / 1000)
 		toDate = date.fromtimestamp(int(stoptime) / 1000)
 		
-		filename = '%s_From_%s_To_%s.pdf' % (view_record.name, fromDate, toDate) 
+		if starttime !=0:
+			fromDate = date.fromtimestamp(int(starttime) / 1000)
+			filename = '%s_From_%s_To_%s.pdf' % (view_record.name, fromDate, toDate) 
+		else:
+			filename = '%s_%s.pdf' % (view_record.name, toDate) 
 		
 	ascii_filename = hashlib.md5(filename.encode('ascii', 'ignore')).hexdigest()
 	
