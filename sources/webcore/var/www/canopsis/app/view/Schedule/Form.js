@@ -43,8 +43,7 @@ Ext.define('canopsis.view.Schedule.Form', {
 			title: _('Reporting Interval'),
 			layout: 'hbox',
 			checkboxName: 'reporting_interval',
-			checkboxToggle: true,
-			//collapsible: false
+			checkboxToggle: true
 		});
 
 		this.mailingOptions = Ext.widget('cfieldset', {
