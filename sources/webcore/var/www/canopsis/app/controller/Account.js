@@ -193,16 +193,16 @@ Ext.define('canopsis.controller.Account', {
 		}
 
 		if ((option == 'r') || (option == 'w')) {
-			if ((user == record.get('aaa_owner')) && (record.data.aaa_access_owner.indexOf(option) > -1)) {
+			if ( (user == record.get('aaa_owner')) && (Ext.Array.contains(record.data.aaa_access_owner, option)) ) {
 				//log.debug('owner')
 				return true;
-			} else if ((group == record.get('aaa_group')) && (record.data.aaa_access_group.indexOf(option) > -1)) {
+			} else if ( (group == record.get('aaa_group')) && (Ext.Array.contains(record.data.aaa_access_group, option)) ) {
 				//log.debug('group')
 				return true;
-			} else if ((groups.indexOf(record.get('aaa_group')) != -1) && (record.data.aaa_access_group.indexOf(option) > -1)) {
+			} else if ( (Ext.Array.contains(groups, record.get('aaa_group'))) && (Ext.Array.contains(record.data.aaa_access_group, option)) ) {
 				//log.debug('group')
 				return true;
-			} else if ((groups.indexOf(record.get('aaa_admin_group')) != -1) || group == record.get('aaa_admin_group')) {
+			} else if ( (Ext.Array.contains(groups, record.get('aaa_admin_group'))) || (group == record.get('aaa_admin_group')) ) {
 				return true;
 			} else {
 				//log.debug('nothing')
@@ -225,16 +225,16 @@ Ext.define('canopsis.controller.Account', {
 		}
 
 		if ((option == 'r') || (option == 'w')) {
-			if ((user == obj.aaa_owner) && (obj.aaa_access_owner.indexOf(option) > -1)) {
+			if ( (user == obj.aaa_owner) && (Ext.Array.contains(obj.aaa_access_owner, option)) ) {
 				//log.debug('owner')
 				return true;
-			} else if ((group == obj.aaa_group) && (obj.aaa_access_group.indexOf(option) > -1)) {
+			} else if ( (group == obj.aaa_group) && (Ext.Array.contains(obj.aaa_access_group, option)) ) {
 				//log.debug('group')
 				return true;
-			} else if ((groups.indexOf(obj.aaa_group) != -1) && (obj.aaa_access_group.indexOf(option) > -1)) {
+			} else if ( (Ext.Array.contains(groups, obj.aaa_group)) && (Ext.Array.contains(obj.aaa_access_group, option)) ) {
 				//log.debug('group')
 				return true;
-			} else if ((groups.indexOf(obj.aaa_admin_group) != -1) || group == obj.aaa_admin_group) {
+			} else if ( (Ext.Array.contains(groups, obj.aaa_admin_group)) || group == obj.aaa_admin_group) {
 				return true;
 			} else {
 				//log.debug('nothing')
@@ -347,14 +347,14 @@ Ext.define('canopsis.controller.Account', {
 	},
 
 	checkGroup: function(group) {
-		if (global.account.aaa_group == group || (global.account.groups.indexOf(group) != -1))
+		if (global.account.aaa_group == group || (Ext.Array.contains(global.account.groups, group)) )
 			return true;
 		else
 			return false;
 	},
 
 	checkRoot: function() {
-		if (global.account.user == 'root' || global.account.aaa_group == 'group.CPS_root' || (global.account.groups.indexOf('group.CPS_root') != -1))
+		if (global.account.user == 'root' || global.account.aaa_group == 'group.CPS_root' || (Ext.Array.contains(global.account.groups, 'group.CPS_root')) )
 			return true;
 		else
 			return false;
