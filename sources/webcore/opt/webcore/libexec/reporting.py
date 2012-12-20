@@ -93,6 +93,9 @@ def generate_report(startTime, stopTime,view_name,mail=None):
 
 	result = None
 
+	#Task report need starttime to be an interval, so ... hack
+	startTime = int(stopTime) - int(startTime)
+
 	try:
 		logger.debug('Run celery task')
 		result = task_reporting.render_pdf.delay(file_name,

@@ -42,6 +42,16 @@ logger 	= init.getLogger('Reporting Task')
 @task
 @decorators.log_task
 def render_pdf(filename=None, viewname=None, starttime=None, stoptime=None, account=None, wrapper_conf_file=None, mail=None, owner=None, orientation='Portrait', pagesize='A4'):
+	
+	#prepare stoptime and starttime
+	if stoptime:
+		stoptime = int(stoptime)*1000
+	else:
+		stoptime = time.time()*1000
+	if starttime:
+		starttime = int(starttime)*1000
+	else:
+		startime = 0
 
 	if viewname is None:
 		raise ValueError("task_render_pdf : you must at least provide a viewname")
@@ -66,11 +76,9 @@ def render_pdf(filename=None, viewname=None, starttime=None, stoptime=None, acco
 			account = caccount(mail='anonymous@localhost.local')
 			logger.info('Anonymous account created')
 		
-	#set stop time
-	if stoptime is None:
-		stoptime = (time.time()) * 1000
+	#set start time if needed
 	if starttime != 0:
-		starttime = (time.time() - starttime) * 1000
+		starttime = stoptime - starttime 
 	
 	#get view options
 	storage = cstorage(account=account, namespace='object')

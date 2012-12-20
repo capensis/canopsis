@@ -54,8 +54,8 @@ unit = {"s" : 1, "m" : 60, "h" : 60*60, "d" : 60*60*24, "w" : 60*60*24*7, "M" : 
 
 parser = argparse.ArgumentParser(description='Launch canopsis report through cmd (type "run_report your_authkey -l" to list views)')
 parser.add_argument('authkey', help='The user auth key') 
-parser.add_argument('time_interval', help='int + char y/M/w/d/h/m/s', nargs='?')
 parser.add_argument('view_id', help='Canopsis view id', nargs='?')
+parser.add_argument('-t','--time_interval', help='int + char y/M/w/d/h/m/s  (optional)',default=None)
 parser.add_argument('-o','--output-file', help='The output file full path',dest='output_file')
 parser.add_argument('-f', '--file-name', help='Auto generated if not provided',dest='filename')
 parser.add_argument('-s','--server', help='The canopsis webserver',default="127.0.0.1:8082", dest='server')
@@ -85,35 +85,35 @@ if not args.list == None:
 
 	sys.exit(0)
 
-if not args.time_interval:
-	print('You must provide time_interval')
-	sys.exit(0)
-
 if not args.view_id:
 	print('You must provide one view_id')
 	sys.exit(0)
 
 #######Time interval process
 time_interval = args.time_interval
-last_char = time_interval[len(time_interval) -1 : ]
 
-try:
-	if last_char.isdigit():
-		time_interval = int(time_interval)
-	else:
-		multiple = unit[last_char]
-		time_interval = int(time_interval[ : len(time_interval)-1])
-		time_interval *= multiple
+tsStop = int(time.time())
+tsStart = 0
 
-except Exception,err:
-	logger.error("Unrecognized time interval: %s" %err) 
-	sys.exit(1)
+if(time_interval):
+	last_char = time_interval[len(time_interval) -1 : ]
+	try:
+		if last_char.isdigit():
+			time_interval = int(time_interval)
+		else:
+			multiple = unit[last_char]
+			time_interval = int(time_interval[ : len(time_interval)-1])
+			time_interval *= multiple
+
+		tsStart = int(tsStop - time_interval)
+
+	except Exception,err:
+		logger.error("Unrecognized time interval: %s" %err) 
+		sys.exit(1)
 
 #####launch report
-tsStop = int(time.time())
-tsStart = int(tsStop - time_interval)
 
-request = urllib2.Request('http://%s/reporting/%s/%s/%s' % (server,tsStart*1000,tsStop*1000,args.view_id), '')
+request = urllib2.Request('http://%s/reporting/%s/%s/%s' % (server,tsStart,tsStop,args.view_id), '')
 r = opener.open(request)
 json_output = json.loads(r.read())
 
@@ -131,9 +131,12 @@ if not args.nofile:
 	if args.filename:
 		path = '%s%s' % (path,args.filename)
 	else:
-		dateStart = date.fromtimestamp(tsStart).isoformat()
 		dateStop = date.fromtimestamp(tsStop).isoformat()
-		path = '%s%s__%s_%s' % (path,args.view_id,dateStart,dateStop)
+		if(tsStart != 0):
+			dateStart = date.fromtimestamp(tsStart).isoformat()
+			path = '%s%s__%s_%s' % (path,args.view_id,dateStart,dateStop)
+		else:
+			path = '%s%s__%s' % (path,args.view_id,dateStop)
 
 	if path.find('.pdf') == -1:
 		path = '%s.pdf' % path 
