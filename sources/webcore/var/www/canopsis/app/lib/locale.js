@@ -52,7 +52,7 @@ function _(text, context) {
 	// Translate failed
 	if (global)
 		if (global.locale != 'en' && (global.log.level > 4))
-			if (global.untranslated.indexOf(text) == -1)
+			if (! Ext.Array.contains(global.untranslated, text))
 				global.untranslated.push(text);
 
 	return text;
