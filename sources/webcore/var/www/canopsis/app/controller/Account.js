@@ -131,8 +131,8 @@ Ext.define('canopsis.controller.Account', {
 					groups_records.push(store.getAt(record));
 			}
 
-			var selectMethod = form.down('grid').getSelectionModel();
-			selectMethod.select(groups_records);
+			var groups_grid= form.down('grid');
+			groups_grid.getSelectionModel().select(groups_records, false, true);
 		}
 	},
 

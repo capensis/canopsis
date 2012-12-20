@@ -36,6 +36,7 @@ Ext.define('canopsis.view.Account.Form', {
 		xtype: 'tabpanel',
 		plain: true,
 		border: false,
+		deferredRender: false,
 		defaults: {
 			border: false,
 			autoScroll: true
@@ -89,21 +90,18 @@ Ext.define('canopsis.view.Account.Form', {
 				}]
 		},{
 			title: _('Groups'),
-			//defaultType: 'textfield',
-			//bodyStyle: 'padding:5px 5px 0',
 			xtype:'grid',
 			store: 'Groups',
 			autoScroll: true,
 			//height: 200,
 			selType:'checkboxmodel',
-			selModel:{mode:'MULTI'},
+			selModel:{mode:'MULTI', showHeaderCheckbox: false},
 			columns: [
 				{text: _('Name'), dataIndex: 'crecord_name', flex: 1}
 			],
 			columnLines: true,
 			hideHeaders: true,
-			name: 'groups',
-			scroll: 'vertical',
+			name: 'groups'
 		}]
 	}]
 
