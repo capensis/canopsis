@@ -67,6 +67,10 @@ Ext.define('canopsis.controller.View', {
 		for (var i = 0; i < btns.length; i++)
 			btns[i].on('click', this.openFilepopup, this);
 
+		var btns = Ext.ComponentQuery.query('#' + this.tree.contextMenu.id + ' [action=OpenViewOption]');
+		for (var i = 0; i < btns.length; i++)
+			btns[i].on('click', this.OpenViewOptionWrapper, this);
+
 		this.tree.on('exportPdf', function(view) {
 				this.getController('Reporting').launchReport(view);
 			},this);
@@ -293,6 +297,12 @@ Ext.define('canopsis.controller.View', {
 	getViewFile: function(view_id) {
 		log.debug('Get view file', this.logAuthor);
 		window.open('/ui/view/export/' + view_id);
+	},
+
+	OpenViewOptionWrapper: function(){
+		var select = this.tree.getSelectionModel().getSelection();
+		if(select && select.length > 0)
+			this.OpenViewOption(select[select.length-1].data)
 	},
 
 	OpenViewOption: function(view) {
