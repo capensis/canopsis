@@ -28,7 +28,7 @@ Ext.define('canopsis.store.Files', {
 
 	sorters: [
         {
-            property: 'creationTs',
+            property: 'crecord_creation_time',
             direction: 'ASC'
         }
     ],
