@@ -126,11 +126,18 @@ class engine(cengine):
 		
 		
 	def load (self, rec ) :
+		self.logger.debug('load')
 		record = rec.dump()
 		rec.loaded = True
 		self.storage.update(record.get('_id'), {'loaded': 'true' })
 		if ( record.get('mfilter', False) ) :
 			self.timestamp[record.get('_id')] = int(time.time())
+			tfilter = json.loads(record.get('mfilter'))
+			metric_list = self.manager.store.find(mfilter=tfilter )
+			nb_items = 0
+			for nb in metric_list:
+				nb_items = nb_items + 1
+			self.storage.update(record.get('_id'), {'nb_items': nb_items } )
 			event = cevent.forger(
 					connector = "consolidation",
 					connector_name = "engine",
