@@ -139,10 +139,9 @@ Ext.define('canopsis.controller.Websocket', {
 
 				var me = this;
 				var callback = function(message, rk) {
-					for (var i = 0; i < me.subscribe_cache[id].subscribers.length; i++) {
-						var s = me.subscribe_cache[id].subscribers[i];
-						s.on_message.apply(s.scope, [message, rk]);
-					}
+					Ext.Object.each(me.subscribe_cache[id].subscribers, function(key, subscriber, myself){
+						subscriber.on_message.apply(subscriber.scope, [message, rk]);
+					}, me);
 				};
 
 				//Register callback
