@@ -18,6 +18,7 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 */
+
 Ext.define('canopsis.view.Account.Grid' , {
 	extend: 'canopsis.lib.view.cgrid',
 
@@ -36,43 +37,43 @@ Ext.define('canopsis.view.Account.Grid' , {
 
 	columns: [
 		{
-                	header: '',
-	                width: 25,
-	                sortable: false,
+			header: '',
+			width: 25,
+			sortable: false,
 			renderer: rdr_crecord_type,
-	                dataIndex: 'crecord_type'
-        	},{
-        	        header: _('Login'),
-	                flex: 2,
-	                sortable: true,
-                	dataIndex: 'user'
+			dataIndex: 'crecord_type'
 		},{
-	                header: _('First name'),
-	                flex: 2,
-	                sortable: false,
-                	dataIndex: 'firstname'
+			header: _('Login'),
+			flex: 2,
+			sortable: true,
+			dataIndex: 'user'
 		},{
-	                header: _('Last name'),
-	                flex: 2,
-	                sortable: false,
-	                dataIndex: 'lastname'
+			header: _('First name'),
+			flex: 2,
+			sortable: false,
+			dataIndex: 'firstname'
 		},{
-                	header: _('Email'),
-	                flex: 2,
-	                sortable: false,
-                	dataIndex: 'mail'
+			header: _('Last name'),
+			flex: 2,
+			sortable: false,
+			dataIndex: 'lastname'
 		},{
-	                header: _('Group'),
-	                flex: 2,
-	                sortable: false,
-	                dataIndex: 'aaa_group',
-	                renderer: rdr_clean_id
-        },{
-                	header: _('Groups'),
-	                flex: 2,
-	                sortable: false,
-	                dataIndex: 'groups',
-	                renderer: rdr_display_groups
+			header: _('Email'),
+			flex: 2,
+			sortable: false,
+			dataIndex: 'mail'
+		},{
+			header: _('Group'),
+			flex: 2,
+			sortable: false,
+			dataIndex: 'aaa_group',
+			renderer: rdr_clean_id
+		},{
+			header: _('Groups'),
+			flex: 2,
+			sortable: false,
+			dataIndex: 'groups',
+			renderer: rdr_display_groups
 		}
 
 	]
