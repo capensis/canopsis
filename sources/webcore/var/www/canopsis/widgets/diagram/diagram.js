@@ -94,8 +94,8 @@ Ext.define('widgets.diagram.diagram' , {
 				this.nodesByID[node.id].metrics.push(node.metrics[0]);
 			}else {
 				this.nodesByID[node.id] = Ext.clone(node);
-				this.nb_node += 1;
 			}
+			this.nb_node += 1;
 		}
 		log.debug('nodesByID:', this.logAuthor);
 		log.dump(this.nodesByID);
