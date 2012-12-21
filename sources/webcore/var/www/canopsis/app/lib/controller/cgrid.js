@@ -555,7 +555,10 @@ Ext.define('canopsis.lib.controller.cgrid', {
 
 					var win = Ext.create('widget.window', {
 						title: title,
-						items: form,
+						items: {
+							xtype: 'panel',
+							items: form
+						},
 						closable: true,
 						resizable: false,
 						constrain: true,
