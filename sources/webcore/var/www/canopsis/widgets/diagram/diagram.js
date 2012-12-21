@@ -401,7 +401,7 @@ Ext.define('widgets.diagram.diagram' , {
 					var _color = this.getGradientColor(colors[0]);
 				else
 					var _color = colors[0];
-				serie.data.push({ id: 'pie_other', name: other_label, y: max - value, color: _color });
+				serie.data.push({ id: 'pie_other', name: other_label, metric: this.other_label, y: max - value, color: _color });
 			}
 
 			if (serie.data) {
