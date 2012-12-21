@@ -197,6 +197,12 @@ Ext.define('canopsis.controller.Tabs', {
 		}
 	},
 
+	cancel_active_view: function() {
+		var tab = Ext.getCmp('main-tabs').getActiveTab();
+		if (tab.edit)
+			tab.cancel();
+	},
+
 	create_new_view: function() {
 		this.getController('View').create_new_view();
 	},
