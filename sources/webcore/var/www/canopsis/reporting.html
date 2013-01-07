@@ -110,8 +110,8 @@
 		Ext.fly('canopsislocale').set({src:'resources/locales/lang-' + locale + '.js'});
 		
 		//------------------Add time interval on reporting-------------
-		var from_date = new Date(parseInt(export_from,10))
-		var to_date =  new Date(parseInt(export_to,10))
+		var from_date = new Date(cleanTimestamp(export_from)*1000)
+		var to_date =  new Date(cleanTimestamp(export_to)*1000)
 		
 		var t = new Ext.Template(
 			'<div id="{id}" name="{id}" style="{style}">',
@@ -175,8 +175,8 @@
 					*/
 					reportMode : true,
 					exportMode : true,
-					export_from : export_from,
-					export_to : export_to,
+					export_from : cleanTimestamp(export_from)*1000,
+					export_to : cleanTimestamp(export_to)*1000,
 					
 					//border: true,
 					//debug: true,

@@ -347,3 +347,14 @@ function sciToDec(number) {
 	}
 	return val;
 }
+
+function cleanTimestamp(number){
+	if(Ext.isNumber(number))
+		number = parseInt(number,10).toString()
+	if(number.length > 12){
+		var cleaned_timestamp = parseInt(number,10)
+		return parseInt(cleaned_timestamp/1000,10)
+	}else{
+		return parseInt(number,10)
+	}
+}

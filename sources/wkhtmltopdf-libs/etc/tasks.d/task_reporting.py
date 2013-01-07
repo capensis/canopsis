@@ -24,6 +24,7 @@ from caccount import caccount
 from crecord import crecord
 from cstorage import cstorage
 from cfile import cfile
+from ctools import cleanTimestamp
 from datetime import date
 from celerylibs import decorators
 from random import randint
@@ -45,11 +46,11 @@ def render_pdf(filename=None, viewname=None, starttime=None, stoptime=None, acco
 	
 	#prepare stoptime and starttime
 	if stoptime:
-		stoptime = int(stoptime)*1000
+		stoptime = cleanTimestamp(stoptime)
 	else:
-		stoptime = time.time()*1000
+		stoptime = time.time()
 	if starttime:
-		starttime = int(starttime)*1000
+		starttime = starttime/1000
 	else:
 		startime = 0
 
@@ -75,10 +76,6 @@ def render_pdf(filename=None, viewname=None, starttime=None, stoptime=None, acco
 		else:
 			account = caccount(mail='anonymous@localhost.local')
 			logger.info('Anonymous account created')
-		
-	#set start time if needed
-	if starttime != 0:
-		starttime = stoptime - starttime 
 	
 	#get view options
 	storage = cstorage(account=account, namespace='object')
@@ -89,13 +86,17 @@ def render_pdf(filename=None, viewname=None, starttime=None, stoptime=None, acco
 
 	#set filename
 	if filename is None:
-		toDate = date.fromtimestamp(int(stoptime) / 1000)
+		toDate = date.fromtimestamp(int(stoptime) )
 		
-		if starttime !=0:
-			fromDate = date.fromtimestamp(int(starttime) / 1000)
+		if starttime:
+			fromDate = date.fromtimestamp(int(starttime))
 			filename = '%s_From_%s_To_%s.pdf' % (view_record.name, fromDate, toDate) 
 		else:
 			filename = '%s_%s.pdf' % (view_record.name, toDate) 
+
+	#set start time if needed
+	if starttime:
+		starttime = stoptime - starttime 
 		
 	ascii_filename = hashlib.md5(filename.encode('ascii', 'ignore')).hexdigest()
 	
