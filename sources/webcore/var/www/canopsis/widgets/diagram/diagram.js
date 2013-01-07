@@ -88,7 +88,10 @@ Ext.define('widgets.diagram.diagram' , {
 			if (!node.dn)
 				node.dn = [node.component, node.resource];
 
-			if (this.nodesByID[node.id] === undefined) {
+			console.log('""""""""""""""""""""""""""""""""""""""""""')
+			console.log(this.nodes)
+
+			if (this.nodesByID[node.id]) {
 				this.nodesByID[node.id] = {};
 				this.nodesByID[node.id]['metrics'] = [];
 				this.nodesByID[node.id].metrics.push(node.metrics[0]);
