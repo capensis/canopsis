@@ -629,7 +629,9 @@ Ext.define('canopsis.lib.form.field.cfilter' , {
 					//get all cfilter values
 					for (var i = 0; i < items.length; i++) {
 						var cfilter = items[i];
-						values.push(cfilter.getValue());
+						var value = cfilter.getValue()
+						if (value)
+							values.push(value);
 					}
 				}else {
 					//just simple value (no inner cfilter)
