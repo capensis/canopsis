@@ -338,7 +338,7 @@ Ext.define('canopsis.lib.form.field.cfilter' , {
 
 			getValue: function() {
 				var output = [];
-				for (var i = 0; this.textfield_panel.items.items.length; i++) {
+				for (var i = 0; i < this.textfield_panel.items.items.length; i++) {
 					var panel = this.textfield_panel.items.items[i];
 					var textfield = panel.down('.textfield');
 					output.push(textfield.getValue());
