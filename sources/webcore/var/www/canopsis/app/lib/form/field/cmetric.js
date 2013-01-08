@@ -69,33 +69,32 @@ Ext.define('canopsis.lib.form.field.cmetric' , {
 		log.debug('Build stores', this.logAuthor);
 
 		//---------------create model-----------------
-		var _model = [
+		var fields = [
 					{name: '_id'},
 					{name: 'id', mapping: '_id'},
 					{name: 'co'},
 					{name: 're', defaultValue: undefined},
-					{name: 'me'}
+					{name: 'me'},
+					{name: 't'},
+					{name: 'u'}
 				];
 
 		if (this.additional_field) {
 			for (var i = 0; i < this.additional_field.length; i++) {
 				if (this.additional_field[i].name) {
 					var name = this.additional_field[i].name;
-					_model.push({name: name});
+					fields.push({name: name});
 				}else {
 					var name = this.additional_field[i].dataIndex;
-					_model.push({name: name});
+					fields.push({name: name});
 				}
 				this.extra_field.push(name);
 			}
 		}
 
-		// Unit
-		_model.push({name: 'u'});
-
 		Ext.define('Meta', {
 			extend: 'Ext.data.Model',
-			fields: _model
+			fields: fields
 		});
 
 		//--------------store----------------------
@@ -402,6 +401,7 @@ Ext.define('canopsis.lib.form.field.cmetric' , {
 			var component = record.get('co');
 			var resource = record.get('re');
 			var metric = record.get('me');
+			var type = record.get('t');
 			if (!Ext.isArray(metric))
 				metric = [metric];
 
@@ -419,9 +419,9 @@ Ext.define('canopsis.lib.form.field.cmetric' , {
 			}
 
 			if (source_type == 'resource')
-				output.push({'id': _id, 'metrics': metric, 'resource': resource, 'component': component, 'source_type': source_type, 'extra_field': extra_field});
+				output.push({'id': _id, 'metrics': metric, 'resource': resource, 'component': component, 'source_type': source_type, 'extra_field': extra_field, 'type': type});
 			else
-				output.push({'id': _id, 'metrics': metric, 'component': component, 'source_type': source_type, 'extra_field': extra_field});
+				output.push({'id': _id, 'metrics': metric, 'component': component, 'source_type': source_type, 'extra_field': extra_field, 'type': type});
 		},this);
 
 		return output;

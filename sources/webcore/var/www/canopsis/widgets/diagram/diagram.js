@@ -67,6 +67,8 @@ Ext.define('widgets.diagram.diagram' , {
 
 	nameInLabelFormatter: false,
 
+	haveCounter: false,
+
 	labelFormatterPct: function() {	return '<b>' + this.point.metric + '</b>: ' + Math.round(this.percentage) + '%';},
 	labelFormatterBar: function() {	return '<b>' + this.x + '</b>: ' + rdr_humanreadable_value(this.y, this.point.bunit)},
 
@@ -83,6 +85,9 @@ Ext.define('widgets.diagram.diagram' , {
 		//Store nodes in object
 		for (var i = 0; i < this.nodes.length; i++) {
 			var node = this.nodes[i];
+
+			if (node['type'] && node['type'] == 'COUNTER')
+				this.haveCounter = true
 
 			//hack for retro compatibility
 			if (!node.dn)
@@ -283,13 +288,11 @@ Ext.define('widgets.diagram.diagram' , {
 
 	doRefresh: function(from, to) {
 		// Get last point only
-		if (this.interval) {
-			to = Ext.Date.now();
-			from = to - this.interval * 1000;
-		}else {
+		if (this.time_window && from == 0)
+			from = to - this.time_window * 1000;
+		else if (! this.haveCounter)
 			from = to;
-		}
-
+		
 		log.debug('Get values from ' + new Date(from) + ' to ' + new Date(to), this.logAuthor);
 
 		if (this.nodes) {
