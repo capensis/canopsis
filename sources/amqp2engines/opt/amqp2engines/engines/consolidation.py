@@ -59,22 +59,22 @@ class engine(cengine):
 		self.load_consolidation()
 		self.beat()
 	def beat(self):
-		non_loaded_records = self.storage.find({ '$and' : [{ 'crecord_type': 'consolidation' }, {'loaded': { '$ne' : 'true'} }, {'enable': 'true'} ] }, namespace="object" )
+		non_loaded_records = self.storage.find({ '$and' : [{ 'crecord_type': 'consolidation' }, {'loaded': { '$ne' : 'true'} } ] }, namespace="object" )
 		
 		if len(non_loaded_records) > 0  :
 			for i in non_loaded_records :
 				self.load(i)
 		for _id in self.records.keys() :
 			exists = self.storage.find({ '_id': _id } )
-			rec = exists.dump()
 			if len(exists) == 0  :
 				del(self.records[_id])
-			elif rec.get('enable') != 'true' :
-				del( self.records[_id] )
+			elif len(exists) == 1:
+				rec = exists[0].dump()
+				self.records[_id]['enable'] = rec.get('enable')
 
 		for record in self.records.values():
 			interval = record.get('interval', self.default_interval)
-			if  int(interval) < ( int(time.time()) - self.timestamp[record.get('_id')]) :
+			if  int(interval) < ( int(time.time()) - self.timestamp[record.get('_id')]) and ( record.get('enable') == "true" or record.get('enable') == True ) :
 				tfilter = json.loads(record.get('mfilter'))
 				metric_list = self.manager.store.find(mfilter=tfilter)
 				values = []
@@ -141,7 +141,9 @@ class engine(cengine):
 			self.timestamp[record.get('_id')] = int(time.time())
 			tfilter = json.loads(record.get('mfilter'))
 			metric_list = self.manager.store.find(mfilter=tfilter )
-			nb_items = len(metric_list)
+			nb_items = 0
+			for i in metric_list:
+				nb_items = nb_items +1 
 			self.storage.update(record.get('_id'), {'nb_items': nb_items } )
 			self.storage.update(record.get('_id'), {'output_engine': "Correctly Load"  } )
 			event = cevent.forger(
@@ -166,7 +168,7 @@ class engine(cengine):
 			self.storage.update(record.get('_id'), {'output_engine': "Impossible to load : no filter defined"  } )
 
 	def load_consolidation(self) :
-		records = self.storage.find({ '$and' :[ {'crecord_type': 'consolidation'},{'enable': 'true'}] }, namespace="object")
+		records = self.storage.find({ '$and' :[ {'crecord_type': 'consolidation'}] }, namespace="object")
 		for i in records :
 			self.load(i)
 				
