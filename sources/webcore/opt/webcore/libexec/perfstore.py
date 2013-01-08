@@ -1,3 +1,4 @@
+
 #!/usr/bin/env python
 # --------------------------------
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
@@ -384,7 +385,7 @@ def perfstore_perftop():
 			#clean mfilter
 			mfilter =  clean_mfilter(mfilter)
 
-			metrics =  manager.store.find(mfilter=mfilter, mfields=['_id', 'co', 're', 'me', 'lv', 'u', 'ma', 'lts'], limit=metric_limit)
+			metrics =  manager.store.find(mfilter=mfilter, mfields=['_id', 'co', 're', 'me', 'lv', 'u', 'ma', 'lts', 't'], limit=metric_limit)
 
 			if isinstance(metrics, dict):
 				metrics = [metrics]
@@ -392,7 +393,6 @@ def perfstore_perftop():
 			for metric in metrics:
 				# Recheck type
 				mtype = metric.get('t', 'GAUGE')
-
 				if mtype != 'COUNTER' and not expand:
 					logger.debug(" + Metric '%s' (%s) is not a COUNTER" % (metric['me'], metric['_id']))
 
