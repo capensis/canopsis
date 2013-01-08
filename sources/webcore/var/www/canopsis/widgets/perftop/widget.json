@@ -153,7 +153,7 @@
 				{"operator": "re",	"text": "Resource",		"type": "all" },
 				{"operator": "me",	"text": "Metric",		"type": "all" },
 				{"operator": "t",	"text": "Type",			"type": "all" },
-				{"operator": "tg",	"text": "Tags",			"type": "array" }
+				{"operator": "tg",	"text": "Tags",			"type": "all" }
 			],
 			"columns": [
 				{

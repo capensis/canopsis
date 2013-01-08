@@ -273,7 +273,8 @@ Ext.define('widgets.diagram.diagram' , {
 		this.post_params = {
 			'nodes': Ext.JSON.encode(post_params),
 			'aggregate_method' : this.aggregate_method,
-			'aggregate_max_points': 1
+			'aggregate_max_points': 1,
+			'aggregate_timemodulation': false
 		};
 
 		if (this.aggregate_interval)

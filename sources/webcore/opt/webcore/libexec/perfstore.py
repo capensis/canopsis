@@ -68,14 +68,19 @@ group_managing_access = ['group.CPS_perfdata_admin']
 #### POST@
 @post('/perfstore/values')
 @post('/perfstore/values/:start/:stop')
-def perfstore_nodes_get_values(start=None, stop=None, interval=None):
+def perfstore_nodes_get_values(start=None, stop=None):
 
+	interval = None
 	metas = request.params.get('nodes', default=None)
 	
-	aggregate_method	= request.params.get('aggregate_method',	default=None)
-	aggregate_interval	= request.params.get('aggregate_interval', default=None)
-	aggregate_max_points= request.params.get('aggregate_max_points', default=None)
+	aggregate_timemodulation	= request.params.get('aggregate_timemodulation', default=True)
+	aggregate_method			= request.params.get('aggregate_method',	default=None)
+	aggregate_interval			= request.params.get('aggregate_interval', default=None)
+	aggregate_max_points		= request.params.get('aggregate_max_points', default=None)
 	output = []
+
+	if aggregate_timemodulation != "false" or aggregate_timemodulation != "False" or aggregate_timemodulation != 0:
+		aggregate_timemodulation = True
 	
 	if not metas:
 		logger.warning("Invalid arguments")
@@ -85,6 +90,7 @@ def perfstore_nodes_get_values(start=None, stop=None, interval=None):
 	
 	logger.debug("POST:")
 	logger.debug(" + metas: %s" % metas)
+	logger.debug(" + aggregate_timemodulation: %s" % aggregate_timemodulation)
 	logger.debug(" + aggregate_method: %s" % aggregate_method)
 	logger.debug(" + aggregate_interval: %s" % aggregate_interval)
 	logger.debug(" + aggregate_max_points: %s" % aggregate_max_points)
@@ -99,7 +105,8 @@ def perfstore_nodes_get_values(start=None, stop=None, interval=None):
 											stop=stop,
 											aggregate_method=aggregate_method,
 											aggregate_interval=aggregate_interval,
-											aggregate_max_points=aggregate_max_points)
+											aggregate_max_points=aggregate_max_points,
+											aggregate_timemodulation=aggregate_timemodulation)
 
 
 	output = {'total': len(output), 'success': True, 'data': output}
@@ -453,7 +460,7 @@ def perfstore_perftop():
 # Functions
 ########################################################################
 
-def perfstore_get_values(_id, start=None, stop=None, aggregate_method=None, aggregate_interval=None, aggregate_max_points=None):
+def perfstore_get_values(_id, start=None, stop=None, aggregate_method=None, aggregate_interval=None, aggregate_max_points=None, aggregate_timemodulation=True):
 	
 	if start and not stop:
 		stop = start
@@ -476,6 +483,7 @@ def perfstore_get_values(_id, start=None, stop=None, aggregate_method=None, aggr
 		
 	if not aggregate_method:
 		aggregate_method = pyperfstore_aggregate_method
+		aggregate_interval = None
 	
 	logger.debug("Perfstore get points:")
 	logger.debug(" + meta _id:    %s" % _id)
@@ -493,11 +501,12 @@ def perfstore_get_values(_id, start=None, stop=None, aggregate_method=None, aggr
 		logger.error("Invalid _id '%s'" % _id)
 		return output
 	
-	if (aggregate_interval):
+	if aggregate_interval and aggregate_timemodulation:
 		start -= start % aggregate_interval
 		stop -= (stop % aggregate_interval)
 		stop += aggregate_interval
-		
+
+		logger.debug('Fix range date:')
 		aggregate_max_points = int( round((stop - start) / aggregate_interval + 0.5) )
 		logger.debug(" + start:       %s" % start)
 		logger.debug(" + stop:        %s" % stop)
@@ -535,7 +544,7 @@ def perfstore_get_values(_id, start=None, stop=None, aggregate_method=None, aggr
 		logger.error("Error when getting points: %s" % err)
 	
 	
-	if(aggregate_interval):
+	if aggregate_interval and aggregate_timemodulation:
 		points = pyperfstore2.utils.fill_interval(points,start,stop,aggregate_interval)
 	
 	if points and meta:
