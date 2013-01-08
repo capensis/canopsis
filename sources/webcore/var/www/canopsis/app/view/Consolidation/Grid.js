@@ -34,7 +34,7 @@ Ext.define('canopsis.view.Consolidation.Grid' , {
 	opt_bar_enable: true,
 
 	columns: [
-		{
+		/*{
 			header: _('State'),
 			align: 'center',
 			width: 50,
@@ -46,11 +46,17 @@ Ext.define('canopsis.view.Consolidation.Grid' , {
 			width: 55,
 			dataIndex: 'enable',
 			renderer: rdr_boolean
-		}*/,{
+		},*/{
 			header: _('Loaded'),
 			align: 'center',
 			width: 55,
 			dataIndex: 'loaded',
+			renderer: rdr_boolean
+		},{
+			header: _('Enable'),
+			align: 'center',
+			width: 55,
+			dataIndex: 'enable',
 			renderer: rdr_boolean
 		},{
 			header: _('Name'),
