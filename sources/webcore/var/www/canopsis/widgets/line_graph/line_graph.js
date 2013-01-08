@@ -711,13 +711,14 @@ Ext.define('widgets.line_graph.line_graph' , {
 		//type specifique parsing
 		if (type == 'COUNTER' && !this.aggregate_interval && !this.reportMode) {
 			var last_point = serie.data[serie.data.length - 1];
+			console.log(values)
+			console.log(last_point)
 			if (last_point) {
-				if (last_point.y != undefined)
-					last_point = last_point.y;
+				if (last_point.y != undefined) {
+					var last_value = last_point.y;
+					for (var i = 0; i < values.length; i++)
+						values[i][1] = last_value + values[i][1];
 
-				for (var i = 0; i < values.length; i++) {
-					values[i][1] = last_point + values[i][1];
-					last_point = values[i][1];
 				}
 			}
 		}
