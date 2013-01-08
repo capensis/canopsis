@@ -283,7 +283,7 @@ Ext.define('widgets.diagram.diagram' , {
 
 	doRefresh: function(from, to) {
 		// Get last point only
-		if (this.time_window)
+		if (this.time_window && from == 0)
 			from = to - this.time_window * 1000;
 		else
 			from = to;
