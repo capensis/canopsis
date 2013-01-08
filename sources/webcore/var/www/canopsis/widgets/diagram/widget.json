@@ -47,9 +47,8 @@
 								}
 							},{
 								"xtype" : "cduration",
-								"name" : "interval",
-								"fieldLabel": "Time interval",
-								"number_min_val": 0,
+								"name" : "time_window",
+								"fieldLabel": "Time window (for counter)",
 								"value": 0
                            },{
 								"xtype": "checkbox",
