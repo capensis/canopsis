@@ -283,12 +283,10 @@ Ext.define('widgets.diagram.diagram' , {
 
 	doRefresh: function(from, to) {
 		// Get last point only
-		if (this.interval) {
-			to = Ext.Date.now();
-			from = to - this.interval * 1000;
-		}else {
+		if (this.time_window)
+			from = to - this.time_window * 1000;
+		else
 			from = to;
-		}
 
 		log.debug('Get values from ' + new Date(from) + ' to ' + new Date(to), this.logAuthor);
 
