@@ -110,7 +110,6 @@
 									"xtype": "store",
 									"fields": ["value", "text"],
 									"data" : [
-										{"value": "", "text": "None"},
 										{"value": "MAX", "text": "Max"},
 										{"value": "MIN", "text": "Min"},
 										{"value": "LAST", "text": "Last"},
