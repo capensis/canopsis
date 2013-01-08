@@ -58,13 +58,23 @@ Ext.define('canopsis.view.Consolidation.Grid' , {
 			sortable: true,
 			dataIndex: 'crecord_name'
 		},{
-			header: _('Aggregation type'),
+			header: _('Component'),
 			flex: 1,
+			sortable: true,
+			dataIndex: 'component'
+		},{
+			header: _('Resource'),
+			flex: 1,
+			sortable: true,
+			dataIndex: 'resource'
+		}, {
+			header: _('Aggregation type'),
+			flex: 3,
 			dataIndex: 'type'
 		},{
 			header: _('Output engine'),
 			//align: 'center',
-			flex: 2,
+			flex: 6,
 			dataIndex: 'output_engine',
 			//renderer : function(){return 'Ressource = Regex(cpu*) && Metric = system '}
 		},{

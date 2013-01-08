@@ -59,33 +59,34 @@ class engine(cengine):
 		self.load_consolidation()
 		self.beat()
 	def beat(self):
-		non_loaded_records = self.storage.find({ '$and' : [{ 'crecord_type': 'consolidation' }, {'loaded': { '$ne' : 'true'} } ] }, namespace="object" )
+		non_loaded_records = self.storage.find({ '$and' : [{ 'crecord_type': 'consolidation' }, {'loaded': { '$ne' : 'true'} }, {'enable': 'true'} ] }, namespace="object" )
 		
-		if (len(non_loaded_records) > 0 ) :
+		if len(non_loaded_records) > 0  :
 			for i in non_loaded_records :
 				self.load(i)
 		for _id in self.records.keys() :
 			exists = self.storage.find({ '_id': _id } )
-			self.logger.debug(exists)
-			self.logger.debug(_id)
-			if (len(exists) == 0 ) :
+			rec = exists.dump()
+			if len(exists) == 0  :
 				del(self.records[_id])
+			elif rec.get('enable') != 'true' :
+				del( self.records[_id] )
 
 		for record in self.records.values():
 			interval = record.get('interval', self.default_interval)
-			if ( int(interval) < ( int(time.time()) - self.timestamp[record.get('_id')]) ):
+			if  int(interval) < ( int(time.time()) - self.timestamp[record.get('_id')]) :
 				tfilter = json.loads(record.get('mfilter'))
 				metric_list = self.manager.store.find(mfilter=tfilter)
 				values = []
 				list_fn = record.get('type', False)
-				if ( isinstance(list_fn, str) or isinstance(list_fn, unicode) ) :
+				if isinstance(list_fn, str) or isinstance(list_fn, unicode) :
 					list_fn = [ list_fn ] 
 				for metric in metric_list :
 					m = metric.get('d')
 					if ( len(m) >0 ) :
 						values.append( m[-2:-1] ) 
 				
-				if ( list_fn and len(values) > 0 ) :
+				if list_fn and len(values) > 0 :
 					list_perf_data = []
 					for i in list_fn :
 						if i == 'mean':
@@ -104,15 +105,15 @@ class engine(cengine):
 						except NameError:
 							self.logger.info('la fonction '+i+' est inexistante')
 							self.storage.update(record.get('_id'), {'output_engine': "function "+i+" does not exists"  } )
-						if ( len(resultat) > 0 ) :
+						if len(resultat) > 0 :
 							list_perf_data.append({ 'metric' : i, 'value' : resultat[0][1], "unit": None, 'max': None, 'warn': None, 'crit': None, 'type': 'GAUGE' } ) 
 							event = cevent.forger(
 								connector ="consolidation",
 								connector_name = "engine",
 								event_type = "consolidation",
 								source_type = "resource",
-								component = record['crecord_name'][1],
-								resource=record['crecord_name'][2],
+								component = record['component'],
+								resource=record['resource'],
 								state=0,
 								state_type=0,
 								output="",
@@ -136,13 +137,11 @@ class engine(cengine):
 		record = rec.dump()
 		rec.loaded = True
 		self.storage.update(record.get('_id'), {'loaded': 'true' })
-		if ( record.get('mfilter', False) ) :
+		if record.get('mfilter', False) :
 			self.timestamp[record.get('_id')] = int(time.time())
 			tfilter = json.loads(record.get('mfilter'))
 			metric_list = self.manager.store.find(mfilter=tfilter )
-			nb_items = 0
-			for nb in metric_list:
-				nb_items = nb_items + 1
+			nb_items = len(metric_list)
 			self.storage.update(record.get('_id'), {'nb_items': nb_items } )
 			self.storage.update(record.get('_id'), {'output_engine': "Correctly Load"  } )
 			event = cevent.forger(
@@ -167,7 +166,7 @@ class engine(cengine):
 			self.storage.update(record.get('_id'), {'output_engine': "Impossible to load : no filter defined"  } )
 
 	def load_consolidation(self) :
-		records = self.storage.find({ 'crecord_type': 'consolidation' }, namespace="object")
+		records = self.storage.find({ '$and' :[ {'crecord_type': 'consolidation'},{'enable': 'true'}] }, namespace="object")
 		for i in records :
 			self.load(i)
 				
@@ -175,7 +174,7 @@ class engine(cengine):
 			
 			
 	def unload_consolidation(self):
-		record_list = self.storage.find({ 'crecord_type': 'consolidation' }, namespace="object")
+		record_list = self.storage.find({ '$and': [{'crecord_type': 'consolidation' }, {'loaded':'true'}]}, namespace="object")
 		for i in record_list :
 			self.storage.update(i._id, {'loaded': 'false' })
 			self.storage.update(i._id, {'output_engine': "Correctly Unload"  } )

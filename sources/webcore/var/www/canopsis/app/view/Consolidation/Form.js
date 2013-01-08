@@ -64,11 +64,11 @@ Ext.define('canopsis.view.Consolidation.Form', {
 										allowBlank: false
 									},{
 										fieldLabel: _('Component'),
-										name: 'crecord_name',
+										name: 'component',
 										allowBlank: false
 									},{
 										fieldLabel: _('Ressource'),
-										name: 'crecord_name',
+										name: 'resource',
 										allowBlank: false
 									}]
 							}
