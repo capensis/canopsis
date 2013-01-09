@@ -141,9 +141,7 @@ class engine(cengine):
 			self.timestamp[record.get('_id')] = int(time.time())
 			tfilter = json.loads(record.get('mfilter'))
 			metric_list = self.manager.store.find(mfilter=tfilter )
-			nb_items = 0
-			for i in metric_list:
-				nb_items = nb_items +1 
+			nb_items = metric_list.count()
 			self.storage.update(record.get('_id'), {'nb_items': nb_items } )
 			self.storage.update(record.get('_id'), {'output_engine': "Correctly Load"  } )
 			event = cevent.forger(
