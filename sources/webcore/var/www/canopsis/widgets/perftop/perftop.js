@@ -66,7 +66,7 @@ Ext.define('widgets.perftop.perftop' , {
 									'expand': this.expand,
 									'percent': this.show_percent,
 									'threshold_on_pct': this.threshold_on_pct,
-									'report': this.reportMode || this.exportMode,
+									'report': this.reportMode || this.exportMode
 								},
 					reader: {
 						type: 'json',
