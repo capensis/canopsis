@@ -342,7 +342,6 @@ Ext.define('canopsis.lib.form.field.cmetric' , {
 		var node = record.get('node');
 		var dn = record.get('dn');
 
-		console.log(metrics);
 		for (var i = 0; i < metrics.length; i++)
 			metric_array.push({'node': node, 'metric': metrics[i].dn, 'dn': dn});
 
@@ -436,7 +435,8 @@ Ext.define('canopsis.lib.form.field.cmetric' , {
 				id: item.id,
 				co: item.component,
 				re: item.resource,
-				me: item.metrics
+				me: item.metrics,
+				t: item.type
 			};
 
 			//additionnal
