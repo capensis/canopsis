@@ -236,6 +236,8 @@ Ext.define('derogation.field', {
 
 
 		var config_list_state = {
+			stateIconPath: this.state_icon_path,
+			iconClass: this.icon_class,
 			isFormField: false,
 			xtype: 'combobox',
 			editable: false,
@@ -251,10 +253,10 @@ Ext.define('derogation.field', {
 			listConfig: {
 				getInnerTpl: function() {
 					var tpl = '<div>' +
-							  '<img src="' + this.state_icon_path + '{icon}" class="' + this.icon_class + '"/>' +
+							  '<img src="' + this.findParentByType('combobox').stateIconPath + '{icon}" class="' + this.findParentByType('combobox').iconClass + '"/>' +
 							  '{text}</div>';
 					return tpl;
-				}.bind(this)
+				}
 			},
 			store: {
 				xtype: 'store',
@@ -268,6 +270,8 @@ Ext.define('derogation.field', {
 		};
 
 		var config_alertIcon_radio = {
+			alertIconPath: this.alert_icon_path,
+			iconClass: this.icon_class,
 			isFormField: false,
 			border: false,
 			editable: false,
@@ -283,10 +287,10 @@ Ext.define('derogation.field', {
 			listConfig: {
 				getInnerTpl: function() {
 					var tpl = '<div>' +
-							  '<img src="' + this.alert_icon_path + '{icon}" class="' + this.icon_class + '"/>' +
+							  '<img src="' + this.findParentByType('combobox').alertIconPath + '{icon}" class="' + this.findParentByType('combobox').icon_class + '"/>' +
 							  '{text}</div>';
 					return tpl;
-				}.bind(this)
+				}
 			},
 			store: {
 				xtype: 'store',
