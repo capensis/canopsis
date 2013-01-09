@@ -281,7 +281,8 @@ def clean(_id=None):
 
 #### POST@
 @route('/perfstore/perftop')
-def perfstore_perftop():
+@route('/perfstore/perftop/:start/:stop')
+def perfstore_perftop(start=None, stop=None):
 	data = []
 	
 	limit					= int(request.params.get('limit', default=10))
@@ -293,11 +294,17 @@ def perfstore_perftop():
 	expand 					= request.params.get('expand', default=False)
 	percent					= request.params.get('percent', default=False)
 	threshold_on_pct		= request.params.get('threshold_on_pct', default=False)
+	report					= request.params.get('report', default=False)
 
 	if percent == 'true':
 		percent = True
 	elif percent == 'false':
 		percent = False
+
+	if report == 'true':
+		report = True
+	elif report == 'false':
+		report = False
 
 	if threshold_on_pct == 'true':
 		threshold_on_pct = True
@@ -323,16 +330,29 @@ def perfstore_perftop():
 	else:
 		expand = False
 
+	if stop:
+		stop = int(int(stop) / 1000)
+	else:
+		stop = int(time.time())
+		
+	if start:
+		start = int(int(start) / 1000)
+	else:
+		start = stop - time_window
+
 	logger.debug("PerfTop:")
 	logger.debug(" + mfilter:     %s" % mfilter)
 	logger.debug(" + limit:       %s" % limit)
 	logger.debug(" + threshold:   %s" % threshold)
 	logger.debug(" + threshold_direction:   %s" % threshold_direction)
-	logger.debug(" + time_window: %s" % time_window)
 	logger.debug(" + sort:        %s" % sort)
 	logger.debug(" + expand:       %s" % expand)
+	logger.debug(" + report:       %s" % report)
 	logger.debug(" + percent:       %s" % percent)
 	logger.debug(" + threshold_on_pct:       %s" % threshold_on_pct)
+	logger.debug(" + time_window: %s" % time_window)
+	logger.debug(" + start:       %s (%s)" % (start, datetime.utcfromtimestamp(start)))
+	logger.debug(" + stop:        %s (%s)" % (stop, datetime.utcfromtimestamp(stop)))
 
 	mfilter =  clean_mfilter(mfilter)
 	
@@ -354,7 +374,8 @@ def perfstore_perftop():
 
 		logger.debug(" + mtype:    %s" % mtype)
 		
-		if mtype != 'COUNTER' and not expand:
+		if mtype != 'COUNTER' and not expand and not report:
+			# Quick method, use last value
 			metrics = manager.store.find(mfilter=mfilter, mfields=['_id', 'co', 're', 'me', 'lv', 'u', 'ma', 'lts'], sort=[('lv', sort)], limit=limit)
 			
 			if isinstance(metrics, dict):
@@ -373,10 +394,6 @@ def perfstore_perftop():
 					data.append(metric)
 		else:
 			# Compute values
-			tstop = int(time.time())
-			tstart = tstop - time_window
-			logger.debug(" + tstart:      %s" % tstart)
-			logger.debug(" + tstop:       %s" % tstop)
 			metric_limit = 0
 			
 			if expand:
@@ -407,7 +424,7 @@ def perfstore_perftop():
 					if check_threshold(val):
 						data.append(metric)
 				else:
-					points = manager.get_points(_id=metric['_id'], tstart=tstart, tstop=tstop)
+					points = manager.get_points(_id=metric['_id'], tstart=start, tstop=stop)
 					if expand:
 						del metric['_id']
 						if not len(points):
