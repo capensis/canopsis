@@ -104,9 +104,9 @@ Ext.define('canopsis.lib.form.field.cfilter' , {
 
 		this.preview_grid = Ext.widget('grid', {
 			store: this.preview_store,
-			border: false,
+			border: true,
 			hidden: true,
-			hideHeaders: true,
+			hideHeaders: false,
 			columns: this.columns
 		});
 
