@@ -67,6 +67,8 @@ Ext.define('widgets.diagram.diagram' , {
 
 	nameInLabelFormatter: false,
 
+	haveCounter: false,
+
 	labelFormatterPct: function() {	return '<b>' + this.point.metric + '</b>: ' + Math.round(this.percentage) + '%';},
 	labelFormatterBar: function() {	return '<b>' + this.x + '</b>: ' + rdr_humanreadable_value(this.y, this.point.bunit)},
 
@@ -84,18 +86,21 @@ Ext.define('widgets.diagram.diagram' , {
 		for (var i = 0; i < this.nodes.length; i++) {
 			var node = this.nodes[i];
 
+			if (node['type'] && node['type'] == 'COUNTER')
+				this.haveCounter = true
+
 			//hack for retro compatibility
 			if (!node.dn)
 				node.dn = [node.component, node.resource];
 
-			if (this.nodesByID[node.id] === undefined) {
+			if (this.nodesByID[node.id]) {
 				this.nodesByID[node.id] = {};
 				this.nodesByID[node.id]['metrics'] = [];
 				this.nodesByID[node.id].metrics.push(node.metrics[0]);
 			}else {
 				this.nodesByID[node.id] = Ext.clone(node);
-				this.nb_node += 1;
 			}
+			this.nb_node += 1;
 		}
 		log.debug('nodesByID:', this.logAuthor);
 		log.dump(this.nodesByID);
@@ -273,7 +278,8 @@ Ext.define('widgets.diagram.diagram' , {
 		this.post_params = {
 			'nodes': Ext.JSON.encode(post_params),
 			'aggregate_method' : this.aggregate_method,
-			'aggregate_max_points': 1
+			'aggregate_max_points': 1,
+			'aggregate_timemodulation': false
 		};
 
 		if (this.aggregate_interval)
@@ -282,13 +288,11 @@ Ext.define('widgets.diagram.diagram' , {
 
 	doRefresh: function(from, to) {
 		// Get last point only
-		if (this.interval) {
-			to = Ext.Date.now();
-			from = to - this.interval * 1000;
-		}else {
+		if (this.time_window && from == 0)
+			from = to - this.time_window * 1000;
+		else if (! this.haveCounter)
 			from = to;
-		}
-
+		
 		log.debug('Get values from ' + new Date(from) + ' to ' + new Date(to), this.logAuthor);
 
 		if (this.nodes) {
@@ -401,7 +405,7 @@ Ext.define('widgets.diagram.diagram' , {
 					var _color = this.getGradientColor(colors[0]);
 				else
 					var _color = colors[0];
-				serie.data.push({ id: 'pie_other', name: other_label, y: max - value, color: _color });
+				serie.data.push({ id: 'pie_other', name: other_label, metric: this.other_label, y: max - value, color: _color });
 			}
 
 			if (serie.data) {

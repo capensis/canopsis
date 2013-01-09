@@ -378,7 +378,7 @@ Ext.define('canopsis.lib.controller.cgrid', {
 				//and will crash
 				var cleaned_data = {};
 				Ext.Object.each(data, function(key, value, myself) {
-					if (record.fields.keys.indexOf(key) != -1)
+					if (Ext.Array.contains(record.fields.keys, key))
 						cleaned_data[key] = value;
 				});
 
@@ -555,7 +555,10 @@ Ext.define('canopsis.lib.controller.cgrid', {
 
 					var win = Ext.create('widget.window', {
 						title: title,
-						items: form,
+						items: {
+							xtype: 'panel',
+							items: form
+						},
 						closable: true,
 						resizable: false,
 						constrain: true,

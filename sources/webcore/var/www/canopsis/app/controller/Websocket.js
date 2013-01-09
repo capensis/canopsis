@@ -38,12 +38,22 @@ Ext.define('canopsis.controller.Websocket', {
 		/*if (Ext.isIE)
 			this.autoconnect = false*/
 
-		Ext.fly('nowjs').set({
-				src: global.nowjs.proto + '://' + global.nowjs.hostname + ':' + global.nowjs.port + '/nowjs/now.js'
-			}).on('load', function() {
+		if (! Ext.isIE){
+			Ext.fly('nowjs').set({
+					src: global.nowjs.proto + '://' + global.nowjs.hostname + ':' + global.nowjs.port + '/nowjs/now.js'
+				}).on('load', function() {
+					if (this.autoconnect)
+						this.connect();
+			}, this);
+
+		}else{
+			var elNowjs = document.getElementById('nowjs');
+			elNowjs.setAttribute("src", global.nowjs.proto + '://' + global.nowjs.hostname + ':' + global.nowjs.port + '/nowjs/now.js');
+			Ext.defer(function(){
 				if (this.autoconnect)
 					this.connect();
-		}, this);
+			}, 2000, this);
+		}
 
 
     },
@@ -129,10 +139,9 @@ Ext.define('canopsis.controller.Websocket', {
 
 				var me = this;
 				var callback = function(message, rk) {
-					for (var i = 0; i < me.subscribe_cache[id].subscribers.length; i++) {
-						var s = me.subscribe_cache[id].subscribers[i];
-						s.on_message.apply(s.scope, [message, rk]);
-					}
+					Ext.Object.each(me.subscribe_cache[id].subscribers, function(key, subscriber, myself){
+						subscriber.on_message.apply(subscriber.scope, [message, rk]);
+					}, me);
 				};
 
 				//Register callback

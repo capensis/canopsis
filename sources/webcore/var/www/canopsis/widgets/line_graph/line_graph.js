@@ -417,7 +417,7 @@ Ext.define('widgets.line_graph.line_graph' , {
 	doRefresh: function(from, to) {
 		if (this.chart) {
 			//If bar chart, wait full insterval
-			if (this.lastRefresh)
+			if (this.lastRefresh && !this.reportMode)
 				if (Ext.Date.now() < this.lastRefresh + (this.aggregate_interval * 1000) && this.aggregate_interval > 0) {
 					log.debug(' +  Wait for refresh', this.logAuthor);
 					return false;
@@ -512,7 +512,9 @@ Ext.define('widgets.line_graph.line_graph' , {
 
 				for (var i = 0; i < data.length; i++) {
 					this.addDataOnChart(data[i]);
-					var node = this.nodesByID[data[i].node];
+
+					var node_id = data[i].node
+					var node = this.nodesByID[node_id];
 
 					// Exclude state lines
 					if (data[i]['metric'] != 'cps_state' && data[i]['metric'] != 'cps_state_ok' && data[i]['metric'] != 'cps_state_warn' && data[i]['metric'] != 'cps_state_crit') {
@@ -522,15 +524,15 @@ Ext.define('widgets.line_graph.line_graph' , {
 					}
 
 					if (data[i]['values']) {
-						var array_len = data[i]['values'].length - 1;
 						if (node.extra_field && node.extra_field.label)
 							var metric_name = node.extra_field.label;
 						else
 							var metric_name = data[i]['metric'];
 
+						var last_value = data[i]['values'][data[i]['values'].length-1][1]
 						this.last_values.push([
 							metric_name,
-							data[i]['values'][array_len][1],
+							last_value,
 							data[i]['bunit']
 						]);
 					}
@@ -611,12 +613,11 @@ Ext.define('widgets.line_graph.line_graph' , {
 	getSerie: function(node_id, metric_name, bunit, min, max, yAxis) {
 		var serie_id = node_id + '.' + metric_name;
 
-		if (! yAxis)
-			yAxis = 0;
-
-		//var serie = this.chart.get(serie_id)
 		var serie = this.series_hc[serie_id];
 		if (serie) { return serie }
+
+		if (! yAxis)
+			yAxis = 0;
 
 		log.debug('  + Create Serie:', this.logAuthor);
 
@@ -714,12 +715,10 @@ Ext.define('widgets.line_graph.line_graph' , {
 		if (type == 'COUNTER' && !this.aggregate_interval && !this.reportMode) {
 			var last_point = serie.data[serie.data.length - 1];
 			if (last_point) {
-				if (last_point.y != undefined)
-					last_point = last_point.y;
-
-				for (var i = 0; i < values.length; i++) {
-					values[i][1] = last_point + values[i][1];
-					last_point = values[i][1];
+				if (last_point.y != undefined) {
+					var last_value = last_point.y;
+					for (var i = 0; i < values.length; i++)
+						values[i][1] = last_value + values[i][1];
 				}
 			}
 		}
@@ -793,7 +792,7 @@ Ext.define('widgets.line_graph.line_graph' , {
 				this.addDataOnChart(data);
 			}
 
-			return;
+			return true;
 
 		}else {
 			serie = this.getSerie(node_id, metric_name, bunit, min, max);
@@ -801,13 +800,13 @@ Ext.define('widgets.line_graph.line_graph' , {
 
 		if (! serie) {
 			log.error('Impossible to get serie, node: ' + node_id + ' metric: ' + metric_name, this.logAuthor);
-			return;
+			return false;
 		}
 
 		if (! serie.options) {
 			log.error("Impossible to read serie's option", this.logAuthor);
 			log.dump(serie);
-			return;
+			return false;
 		}
 
 		//Add war/crit line if on first serie
@@ -976,19 +975,19 @@ Ext.define('widgets.line_graph.line_graph' , {
 		}
 	},
 
-	drawLastValue: function(value) {
+	drawLastValue: function(values) {
 		var html = '<span style="color:{0};font-size: 1.2em;">{1}: {2}{3}</span>';
 
 		var list_string = [];
 
-		for (var i = 0; i < value.length; i++) {
+		for (var i = 0; i < values.length; i++) {
 			list_string.push(
 				Ext.String.format(
 					html,
 					'dark grey',
-					value[i][0],
-					value[i][1],
-					(value[i][2]) ? value[i][2] : ''
+					values[i][0],
+					values[i][1],
+					(values[i][2]) ? values[i][2] : ''
 				)
 			);
 		}
@@ -1004,8 +1003,6 @@ Ext.define('widgets.line_graph.line_graph' , {
 			);
 			this.lastValue[i].add();
 		}
-
-
 	},
 
 	truncValueArray: function(value_array) {

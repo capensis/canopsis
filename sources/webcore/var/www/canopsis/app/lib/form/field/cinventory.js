@@ -226,14 +226,17 @@ Ext.define('canopsis.lib.form.field.cinventory' , {
 					editor: this.additional_field,
 					flex: 3
 				};
-				//console.log(editor_config)
+
+				selection_grid_config.emptyText = this.additional_field.emptyText
+
 				if (this.additional_field.name == 'link') {
-					editor_config.renderer = (function(val) {
+					editor_config.renderer = function(val) {
+							//this = selection_grid_config
 							if (!val)
-								return Ext.String.format('<span style="color:grey">{0}</span>', this.additional_field.emptyText);
+								return Ext.String.format('<span style="color:grey">{0}</span>', this.emptyText);
 							else
 								return val;
-						}).bind(this);
+						}
 				}
 
 				selection_grid_config.columns.push(editor_config);

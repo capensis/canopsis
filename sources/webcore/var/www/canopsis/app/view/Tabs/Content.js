@@ -194,10 +194,13 @@ Ext.define('canopsis.view.Tabs.Content' , {
 
 		var view_options = undefined;
 		if (this.getViewOptions)
-			var view_options = this.getViewOptions();
+			view_options = this.getViewOptions();
 
 		if (!view_options && this.view_options)
-			var view_options = this.view_options;
+			view_options = this.view_options;
+
+		if(!view_options)
+			view_options = {orientation: 'portrait', pageSize: 'A4'}
 
 		// Update view
 		if (this.view_id) {

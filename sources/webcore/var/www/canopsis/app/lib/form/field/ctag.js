@@ -70,13 +70,11 @@ Ext.define('canopsis.lib.form.field.ctag' , {
 		var rawString = this.textArea.getValue();
 		var separator = undefined;
 
-		if (rawString.indexOf(',') != -1) {
+		if 			(Ext.Array.contains(rawString, ';')) {
 			var separator = ',';
-		}else if (rawString.indexOf(';') != -1) {
+		}else if 	(Ext.Array.contains(rawString, ',')) {
 			var separator = ';';
-		}else if (rawString.indexOf(',') != -1) {
-			var separator = ',';
-		}else if (rawString.indexOf(' ') != -1) {
+		}else if 	(Ext.Array.contains(rawString, ' ')) {
 			var separator = ' ';
 			rawString = rawString.replace(/  +/g, ' ');
 		}

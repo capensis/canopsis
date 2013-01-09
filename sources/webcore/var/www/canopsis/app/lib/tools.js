@@ -325,10 +325,11 @@ function parseBool(arg) {
 		return true;
 }
 
-function roundSignifiantDigit(n, sig) {
-    var mult = Math.pow(10,
-        sig - Math.floor(Math.log(n) / Math.LN10) - 1);
-    return Math.round(n * mult) / mult;
+function roundSignifiantDigit(value, sig) {
+	var mult = Math.pow(10, sig) 
+	value = Math.round(value * mult)
+	value = value / mult
+    return value;
 }
 
 function sciToDec(number) {
@@ -346,4 +347,15 @@ function sciToDec(number) {
 		val = (+val).toFixed(precision);
 	}
 	return val;
+}
+
+function cleanTimestamp(number){
+	if(Ext.isNumber(number))
+		number = parseInt(number,10).toString()
+	if(number.length > 12){
+		var cleaned_timestamp = parseInt(number,10)
+		return parseInt(cleaned_timestamp/1000,10)
+	}else{
+		return parseInt(number,10)
+	}
 }

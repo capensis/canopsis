@@ -28,8 +28,8 @@ Ext.define('canopsis.lib.form.field.cduration' , {
 	layout: 'hbox',
 
 	number_step: 1,
-	number_min_val: 1,
-	value: undefined,
+	number_min_val: 0,
+	value: global.commonTs.day,
 	add_none_value: false,
 
 	fieldLabel: undefined,
@@ -43,7 +43,7 @@ Ext.define('canopsis.lib.form.field.cduration' , {
 			name: 'ts_window',
 			//margin: '0 0 0 5',
 			width: 50,
-			//value:this.value,
+			value:this.value,
 			minValue: this.number_min_val,
 			step: this.number_step
 		});
@@ -81,7 +81,7 @@ Ext.define('canopsis.lib.form.field.cduration' , {
 
 		this.callParent(arguments);
 
-		this.ts_unit.on('select', this.checkDisable, this);
+		//this.ts_unit.on('select', this.checkDisable, this);
 
 		this.setValue(this.value);
 
@@ -144,7 +144,7 @@ Ext.define('canopsis.lib.form.field.cduration' , {
 			}
 		}else {
 			this.ts_unit.select(this.ts_unit.getStore().data.items[0]);
-			this.ts_window.setDisabled(true);
+			//this.ts_window.setDisabled(true);
 		}
 	}
 });

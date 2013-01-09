@@ -37,7 +37,10 @@ Ext.define('canopsis.controller.Schedule', {
 	},
 
 	preSave: function(record,data) {
-		var timeLength = data.timeLength * data.timeLengthUnit;
+		if(data.reporting_interval)
+			var timeLength = data.timeLength * data.timeLengthUnit;
+		else
+			var timeLength = 0
 
 		//--------------------------set kwargs----------------------------
 		var kwargs = {
@@ -214,21 +217,23 @@ Ext.define('canopsis.controller.Schedule', {
 		}
 
 		//compute timeLength
-		scale = Math.floor(timeLength / global.commonTs.day);
+		if(timeLength != 0){
+			scale = Math.floor(timeLength / global.commonTs.day);
 
-		if (scale >= 365) {
-			item.set('timeLengthUnit', global.commonTs.year);
-			item.set('timeLength', Math.floor(scale / 365));
-		}else if (scale >= 30) {
-			item.set('timeLengthUnit', global.commonTs.month);
-			item.set('timeLength', Math.floor(scale / 30));
-		}else if (scale >= 7) {
-			item.set('timeLengthUnit', global.commonTs.week);
-			item.set('timeLength', Math.floor(scale / 7));
-			//log.dump(item);
-		} else {
-			item.set('timeLengthUnit', global.commonTs.day);
-			item.set('timeLength', Math.floor(scale));
+			if (scale >= 365) {
+				item.set('timeLengthUnit', global.commonTs.year);
+				item.set('timeLength', Math.floor(scale / 365));
+			}else if (scale >= 30) {
+				item.set('timeLengthUnit', global.commonTs.month);
+				item.set('timeLength', Math.floor(scale / 30));
+			}else if (scale >= 7) {
+				item.set('timeLengthUnit', global.commonTs.week);
+				item.set('timeLength', Math.floor(scale / 7));
+				//log.dump(item);
+			} else {
+				item.set('timeLengthUnit', global.commonTs.day);
+				item.set('timeLength', Math.floor(scale));
+			}
 		}
 
 		//set mail

@@ -104,6 +104,7 @@ Ext.define('widgets.weather.weather' , {
 				var nodes = Ext.JSON.decode(response.responseText).data;
 				var nodes_obj = {};
 
+
 				for (var i = 0; i < nodes.length; i++) {
 					nodes[i].nodeId = getMetaId(nodes[i].component, nodes[i].resource, nodes[i].metric);
 					nodes_obj[nodes[i]._id] = nodes[i];
@@ -125,6 +126,7 @@ Ext.define('widgets.weather.weather' , {
 
 	getSelectorNodes: function(nodes) {
 		var selector_list = [];
+
 		for (var i = 0; i < nodes.length; i++)
 			if (nodes[i].selector_rk)
 				selector_list.push(nodes[i].selector_rk);
@@ -159,8 +161,11 @@ Ext.define('widgets.weather.weather' , {
 		//--------------------Prepare post params-----------------
 
 		var post_params = [];
-		for (var i = 0; i < this.nodes.length; i++)
-			post_params.push({id: this.nodes[i].node_meta_id});
+
+		var me = this;
+		Ext.Object.each(this.nodes, function(key, value, myself) {
+			post_params.push({id: me.nodes[key].node_meta_id})
+		});
 
 		//-------------------------send request--------------------
 		Ext.Ajax.request({
@@ -179,38 +184,40 @@ Ext.define('widgets.weather.weather' , {
 	},
 
 	generate_node_meta_id: function() {
-		for (var i = 0; i < this.nodes.length; i++) {
-
+		var me = this;
+		Ext.Object.each(this.nodes, function(node_id, node, myself) {
 			//build selector get id or node id
-			if (this.selector_state_as_icon_value && this.selector_nodes[this.nodes[i].selector_rk]) {
-				var selector = this.selector_nodes[this.nodes[i].selector_rk];
-				var component = selector.component;
-				var resource = selector.resource;
-				var metric = 'cps_state';
+			if (me.selector_state_as_icon_value && me.selector_nodes[node.selector_rk]) {
+
+				var selector 	= me.selector_nodes[node.selector_rk];
+				var component 	= selector.component;
+				var resource 	= selector.resource;
+				var metric 		= 'cps_state';
 
 				if (resource)
 					var selector_id = getMetaId(component, resource, metric);
 				else
 					var selector_id = getMetaId(component, undefined, metric);
 
-				this.nodes[i].selector_meta_id = selector_id;
+				node.selector_meta_id = selector_id;
 
 			}else {
-				var component = this.nodes[i].component;
-				var resource = this.nodes[i].resource;
-				if (this.nodes[i].event_type == 'selector')
+				var component 	= node.component;
+				var resource 	= node.resource;
+
+				if (node.event_type == 'selector')
 					var metric = 'cps_state';
 				else
 					var metric = 'cps_pct_by_state_0';
 
 				if (resource)
-					var node = getMetaId(component, resource, metric);
+					var node_meta_id = getMetaId(component, resource, metric);
 				else
-					var node = getMetaId(component, undefined, metric);
+					var node_meta_id = getMetaId(component, undefined, metric);
 
-				this.nodes[i].node_meta_id = node;
+				node.node_meta_id = node_meta_id;
 			}
-		}
+		});
 	},
 
 	configure: function() {

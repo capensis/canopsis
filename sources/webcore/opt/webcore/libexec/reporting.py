@@ -69,10 +69,14 @@ def generate_report(startTime, stopTime,view_name,mail=None):
 	try:
 		record = storage.get(view_name,account=account)
 		
-		fromDate = str(date.fromtimestamp(int(startTime) / 1000))
 		toDate = str(date.fromtimestamp(int(stopTime) / 1000))
-		
-		file_name = '%s_From_%s_To_%s.pdf' % (record.name,fromDate,toDate)
+
+		if int(startTime):
+			fromDate = str(date.fromtimestamp(int(startTime) / 1000))
+			file_name = '%s_From_%s_To_%s.pdf' % (record.name,fromDate,toDate)
+		else:
+			file_name = '%s_%s.pdf' % (record.name,toDate)
+
 	except  Exception, err:
 		logger.error(err)
 		name_array = view_name.split('.')
@@ -92,6 +96,9 @@ def generate_report(startTime, stopTime,view_name,mail=None):
 		logger.debug(err)
 
 	result = None
+
+	#Task report need starttime to be an interval, so ... hack
+	startTime = int(stopTime) - int(startTime)
 
 	try:
 		logger.debug('Run celery task')

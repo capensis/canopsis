@@ -194,7 +194,7 @@ Ext.define('canopsis.lib.view.cwidget' , {
 	},
 
 	_doRefresh: function(from, to) {
-		if (this.exportMode) {
+		if (this.exportMode && this.export_from != 0) {
 			from = this.export_from;
 			to = this.export_to;
 		}else {
