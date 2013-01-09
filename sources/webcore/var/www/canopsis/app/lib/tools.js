@@ -325,10 +325,11 @@ function parseBool(arg) {
 		return true;
 }
 
-function roundSignifiantDigit(n, sig) {
-    var mult = Math.pow(10,
-        sig - Math.floor(Math.log(n) / Math.LN10) - 1);
-    return Math.round(n * mult) / mult;
+function roundSignifiantDigit(value, sig) {
+	var mult = Math.pow(10, sig) 
+	value = Math.round(value * mult)
+	value = value / mult
+    return value;
 }
 
 function sciToDec(number) {
