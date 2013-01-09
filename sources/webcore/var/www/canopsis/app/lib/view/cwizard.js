@@ -36,7 +36,7 @@ Ext.define('canopsis.lib.view.cwizard' , {
 			],
 
 	title: _('Wizard'),
-	closable: false,
+	closable: true,
 	closeAction: 'destroy',
 	width: 800,
 	//minWidth: 350,
@@ -317,7 +317,6 @@ Ext.define('canopsis.lib.view.cwizard' , {
 
 	cancel_button: function() {
 		log.debug('cancel button', this.logAuthor);
-		this.fireEvent('cancel');
 		this.close();
 	},
 
