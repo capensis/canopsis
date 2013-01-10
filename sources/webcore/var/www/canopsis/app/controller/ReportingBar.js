@@ -49,7 +49,7 @@ Ext.define('canopsis.controller.ReportingBar', {
 			},
 			'ReportingBar button[action="previous"]' : {
 				click: this.previousButton
-			},
+			}
 		});
 
 		this.callParent(arguments);
