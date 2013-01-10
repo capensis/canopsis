@@ -47,8 +47,8 @@ Ext.define('canopsis.controller.ReportingBar', {
 		bar.nextButton.on('click', this.nextButton, this);
 		bar.previousButton.on('click', this.previousButton, this);
 
-		bar.fromTs.on('select', this.setMinDate, this);
 		bar.toTs.on('select', this.setMaxDate, this);
+		bar.fromTs.on('select', this.setMinDate, this);
 
 	},
 
@@ -74,7 +74,7 @@ Ext.define('canopsis.controller.ReportingBar', {
 
 	nextButton: function() {
 		log.debug('Next button pressed', this.logAuthor);
-		var dateField = this.bar.fromTs;
+		var dateField = this.bar.toTs;
 
 		if (dateField.isValid()) {
 			var selectedTime = dateField.getValue();
@@ -90,7 +90,7 @@ Ext.define('canopsis.controller.ReportingBar', {
 
 	previousButton: function() {
 		log.debug('Previous button pressed', this.logAuthor);
-		var dateField = this.bar.fromTs;
+		var dateField = this.bar.toTs;
 
 		if (dateField.isValid()) {
 			var selectedTime = dateField.getValue();
@@ -150,7 +150,7 @@ Ext.define('canopsis.controller.ReportingBar', {
 		} else {
 			var timeUnit = this.bar.combo.getValue();
 			var periodLength = this.bar.periodNumber.getValue();
-			var stopTimestamp = this.bar.fromTs.getValue();
+			var stopTimestamp = this.bar.toTs.getValue();
 			var startTimestamp = stopTimestamp - (timeUnit * periodLength);
 		}
 		return {start: startTimestamp, stop: stopTimestamp};
@@ -189,7 +189,7 @@ Ext.define('canopsis.controller.ReportingBar', {
 
 	toggle_mode: function() {
 		if (this.bar.advancedMode) {
-			this.bar.toTs.hide();
+			this.bar.fromTs.hide();
 			this.bar.textFrom.hide();
 			this.bar.textTo.hide();
 			this.bar.textFor.show();
@@ -200,7 +200,7 @@ Ext.define('canopsis.controller.ReportingBar', {
 			this.bar.combo.show();
 			this.bar.advancedMode = false;
 		}else {
-			this.bar.toTs.show();
+			this.bar.fromTs.show();
 			this.bar.textFrom.show();
 			this.bar.textTo.show();
 			this.bar.textFor.hide();

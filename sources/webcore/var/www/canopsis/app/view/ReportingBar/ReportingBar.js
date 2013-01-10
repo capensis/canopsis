@@ -86,15 +86,15 @@ Ext.define('canopsis.view.ReportingBar.ReportingBar' , {
 		this.combo.setValue(86400);
 
 		this.textFrom = this.add({xtype: 'tbtext', text: _('From') + ': ', hidden: true});
-		this.textBefore = this.add({xtype: 'tbtext', text: _('Before') + ': '});
-
 		this.fromTs = this.add({
 			xtype: 'cdate',
 			date_width: 130,
 			hour_width: 70,
-			date_value: tommorow,
-			max_value: tommorow
+			date_value: today,
+			max_value: tommorow,
+			hidden: true
 		});
+
 
 		this.nextButton = this.add({
 			xtype: 'button',
@@ -103,14 +103,13 @@ Ext.define('canopsis.view.ReportingBar.ReportingBar' , {
 		});
 
 		this.textTo = this.add({xtype: 'tbtext', text: _('To') + ': ', hidden: true});
-
+		this.textBefore = this.add({xtype: 'tbtext', text: _('Before') + ': '});
 		this.toTs = this.add({
 			xtype: 'cdate',
 			date_width: 130,
 			hour_width: 70,
-			date_value: today,
-			max_value: tommorow,
-			hidden: true
+			date_value: tommorow,
+			max_value: tommorow
 		});
 
 
