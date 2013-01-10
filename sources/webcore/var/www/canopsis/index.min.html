@@ -43,14 +43,6 @@
 	<!-- <link rel="stylesheet" type="text/css" href="resources/lib/pnotify/icons/jquery.pnotify.default.icons.css"> -->
 
 	<link rel="stylesheet" type="text/css" href="/ui/widgets.css">
-</head>
-<body>
-	<div id="auth" class='login'>
-		<div class='header'></div>
-		<div class='title'><img src="themes/canopsis/resources/images/logo_canopsis_auth.png"></img></div>
-		<div class='layout'></div>
-		<div id='auth_form' class='form'></div>
-	</div>
 
 	<!-- Ext-JS -->
 	<script type="text/javascript" src="resources/lib/extjs/ext-all.js.gz"></script>
@@ -91,13 +83,24 @@
 
 	<!-- Application -->
 	<script type="text/javascript" src="commit.js"></script>
-	<script type="text/javascript" src="canopsis.min.js.gz"></script>
+	<!-- <script type="text/javascript" src="canopsis.min.js.gz"></script> -->
+	<script type="text/javascript" src="canopsis.js"></script>
 
 	<!-- NowJS -->
 	<script type="text/javascript" id="nowjs"></script>
 
+</head>
+
+<body>
+	<div id="auth" class='login'>
+		<div class='header'></div>
+		<div class='title'><img src="themes/canopsis/resources/images/logo_canopsis_auth.png"></img></div>
+		<div class='layout'></div>
+		<div id='auth_form' class='form'></div>
+	</div>
+
 	<script type="text/javascript">
-		Ext.onReady(function() {
+		Ext.onDocumentReady(function() {
 			global.minimified = true
 
 			//check Auth
