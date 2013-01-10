@@ -43,7 +43,7 @@ Ext.define('canopsis.view.ReportingBar.ReportingBar' , {
 		var tommorow = new Date(today.getTime() + (global.commonTs.day * 1000));
 		var yesterday = new Date(today.getTime() - (global.commonTs.day * 1000));
 
-		this.previousButton = this.add({
+		this.add({
 			xtype: 'button',
 			cls: 'x-btn-icon x-tbar-page-prev',
 			action: 'previous'
@@ -96,7 +96,7 @@ Ext.define('canopsis.view.ReportingBar.ReportingBar' , {
 		});
 
 
-		this.nextButton = this.add({
+		this.add({
 			xtype: 'button',
 			cls: 'x-btn-icon x-tbar-page-next',
 			action: 'next'
