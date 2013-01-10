@@ -115,9 +115,9 @@ widget_stream_event_template_compact = Ext.create('Ext.XTemplate',
 								'<tpl if="source_type == \'component\'">',
 									"<h1 class='title'>{component}</h1>",
 								'</tpl>',
-								"<span class='output'>{output}</span>",
 							'</tpl>',
 						'</tpl>',
+						"<span class='output'>{output}</span>",
 					'</header>',
 					'<tpl if="referer == undefined">',
 						"<div class='afooter_compact'>",
@@ -328,7 +328,7 @@ Ext.define('widgets.stream.event' , {
 						me.init_comment_counter();
 						records.reverse();
 						for (var i = 0; i < records.length; i++)
-								records[i] = Ext.create('widgets.stream.event', {raw: records[i], stream: me});
+								records[i] = Ext.create('widgets.stream.event', {raw: records[i], stream: me.stream});
 
 						me.comments_container.insert(0, records);
 					}
