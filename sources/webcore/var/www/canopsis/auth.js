@@ -91,7 +91,7 @@ Ext.define('canopsis.auth' , {
 				params: {
 					cryptedKey: 'True',
 					password: authkey,
-					login: login,
+					login: login
 				},
 				success: function(response){
 					response = Ext.JSON.decode(response.responseText)

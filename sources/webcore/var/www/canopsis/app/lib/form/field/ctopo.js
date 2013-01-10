@@ -270,12 +270,12 @@ Ext.define('canopsis.lib.form.field.ctopo' , {
 	removeConnection: function(c ) {
 		var target = Ext.getCmp(c.targetId);
 		var source = Ext.getCmp(c.sourceId);
-		for (var i = 0; i < target.conns.length; i++) {
+		for (var i = 0; i < target.conns.length; i++)
 			if (target.conns[i].connection.id == c.id)
 				delete (target.conns[i]);
 
 		// Remove endpoints
-		for (var i = 0; i < c.endpoints.length; i++) {
+		for (var i = 0; i < c.endpoints.length; i++)
 			this.jsPlumbInstance.deleteEndpoint(c.endpoints[i]);
 
 		// Remove connection
@@ -333,7 +333,8 @@ Ext.define('canopsis.lib.form.field.ctopo' , {
 				}).show().center();
 			}
 		}
-	};,
+	},
+
 	createNode: function(data) {
 		var me = this;
 		//we do a deep copy of data, in order to prevent to have a node which is a tree
@@ -404,7 +405,7 @@ Ext.define('canopsis.lib.form.field.ctopo' , {
 
 		});
 		return nodeEl;
-	};,
+	},
 
 	afterRender: function() {
 		var me = this;
@@ -458,7 +459,7 @@ Ext.define('canopsis.lib.form.field.ctopo' , {
 		});
 		this.add(root);
 		this.rootNode = root.id;
-	};,
+	},
 
 	beforeDestroy: function() {
 		log.debug('Clean jsPlumb', this.logAuthor);
@@ -466,5 +467,5 @@ Ext.define('canopsis.lib.form.field.ctopo' , {
 		delete this.jsPlumbInstance;
 
 		this.callParent(arguments);
- 	};
+ 	}
 });
