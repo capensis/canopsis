@@ -28,7 +28,28 @@ Ext.define('canopsis.controller.ReportingBar', {
 		log.debug('Initialize ...', this.logAuthor);
 
 		this.control({
-			'ReportingBar' : {afterrender: this._bindBarEvents}
+			'ReportingBar' : {afterrender: this._bindBarEvents},
+			'ReportingBar button[action="toggleMode"]' : {
+				click: this.toggle_mode
+			},
+			'ReportingBar button[action="search"]' : {
+				click: this.launchReport
+			},
+			'ReportingBar button[action="save"]' : {
+				click: this.saveButton
+			},
+			'ReportingBar button[action="link"]' : {
+				click: this.htmlReport
+			},
+			'ReportingBar button[action="exit"]' : {
+				click: this.exitButton
+			},
+			'ReportingBar button[action="next"]' : {
+				click: this.nextButton
+			},
+			'ReportingBar button[action="previous"]' : {
+				click: this.previousButton
+			},
 		});
 
 		this.callParent(arguments);
@@ -38,18 +59,8 @@ Ext.define('canopsis.controller.ReportingBar', {
 		log.debug('Bind events...', this.logAuthor);
 		this.bar = bar;
 
-		bar.saveButton.on('click', this.saveButton, this);
-		bar.htmlButton.on('click', this.htmlReport, this);
-		bar.exitButton.on('click', this.exitButton, this);
-		bar.searchButton.on('click', this.launchReport, this);
-		bar.toggleButton.on('click', this.toggle_mode, this);
-
-		bar.nextButton.on('click', this.nextButton, this);
-		bar.previousButton.on('click', this.previousButton, this);
-
 		bar.toTs.on('select', this.setMaxDate, this);
 		bar.fromTs.on('select', this.setMinDate, this);
-
 	},
 
 	launchReport: function() {

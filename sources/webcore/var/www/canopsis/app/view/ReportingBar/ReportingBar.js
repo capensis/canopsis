@@ -122,31 +122,24 @@ Ext.define('canopsis.view.ReportingBar.ReportingBar' , {
 		this.toggleButton = this.add({
 			xtype: 'button',
 			iconCls: 'icon-calendar',
+			action:'toggleMode',
 			tooltip: _('Toggle to advanced/simple mode')
-		});
-
-		this.searchButton = this.add({
+		},{
 			xtype: 'button',
 			iconCls: 'icon-run',
 			action: 'search',
 			tooltip: _('Display data of the selected time')
-		});
-
-		this.saveButton = this.add({
+		},{
 			xtype: 'button',
 			iconCls: 'icon-save',
 			action: 'save',
 			tooltip: _('Export this view to pdf')
-		});
-
-		this.htmlButton = this.add({
+		},{
 			xtype: 'button',
 			iconCls: 'icon-page-html',
 			action: 'link',
 			tooltip: _('View page in html')
-		});
-
-		this.exitButton = this.add({
+		},{
 			xtype: 'button',
 			iconCls: 'icon-close',
 			action: 'exit',
