@@ -17,6 +17,11 @@
 	font-size: 9px;
 }
 
+.widget-weather .right_panel .logo p{
+	position:relative;
+	top:40%
+}
+
 /* icons */
 
 .widget-weather-icon-info{
