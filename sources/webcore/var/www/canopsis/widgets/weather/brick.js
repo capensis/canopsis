@@ -60,14 +60,16 @@ widget_weather_template = Ext.create('Ext.XTemplate',
 	);
 
 widget_weather_simple_template = Ext.create('Ext.XTemplate',
-		'<div class="table">',
-			'<div style="width:25%" class="table_div"></div>',
-			'<div style="width:15%" class="table_div logo {class_icon}"></div>',
-			'<div style="width:30%;font-size:{title_font_size}px" class="table_div" id="{id}-title">',
-				'<div><span>{title}</span></div>',
-			'</div>',
-			'<div style="width:25%" class="table_div"></div>',
-		'</div',
+		'<table>',
+			'<tr>',
+
+				'<td style="width:25%" class="table_div"></td>',
+				'<td style="width:15%" class="table_div logo {class_icon}"></td>',
+				'<td style="width:30%;font-size:{title_font_size}px" class="table_div" id="{id}-title">',
+					'<div><span>{title}</span></div>',
+				'</td>',
+				'<td style="width:25%" class="table_div"></td>',
+		'</tr>',
 		{compiled: true}
 	);
 

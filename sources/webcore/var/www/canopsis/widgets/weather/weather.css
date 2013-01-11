@@ -15,11 +15,13 @@
 }
 
 .widget-weather .table_div div {
+	display:table;
 	height:100%;
 	width:100%;
 }
 
 .widget-weather .table_div div span {
+	display:table-cell;
 	vertical-align:middle;
 	text-align: center;
 	word-wrap: break-word;
