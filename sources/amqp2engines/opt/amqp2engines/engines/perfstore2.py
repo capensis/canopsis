@@ -150,7 +150,7 @@ class engine(cengine):
 		self.logger.debug(' + perf_data_array: %s', perf_data_array)
 		
 		### Add status informations
-		if   event['event_type'] == 'check' or event['event_type'] == 'selector':
+		if   event['event_type'] == 'check' or event['event_type'] == 'selector' or event['event_type'] == 'sla':
 			state = int(event['state'])
 			state_type = int(event['state_type'])
 			state_extra = 0
