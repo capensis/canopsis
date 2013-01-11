@@ -260,9 +260,10 @@ Ext.define('widgets.weather.brick' , {
 			var timestamp = data.values[0][0];
 			var nb_points = data.values.length;
 			var last_timestamp = data.values[nb_points - 1][0];
+			var last_value = data.values[nb_points - 1][1];
 
 			if (this.event_type == 'selector' || this.selector_state_as_icon_value) {
-				var state = demultiplex_cps_state(data.values[0][1]).state;
+				var state = demultiplex_cps_state(last_value).state;
 				log.debug(' + State of ' + this.component + ' is: ' + state, this.logAuthor);
 				log.debug(' + ' + nb_points + ' points returned by server', this.logAuthor);
 				log.debug('  +  First value ts: ' + timestamp, this.logAuthor);
@@ -270,12 +271,12 @@ Ext.define('widgets.weather.brick' , {
 
 				var icon_value = 100 - (state / 4 * 100);
 				widget_data.class_icon = this.getIcon(icon_value);
-				widget_data.output = _('State on') + ' ' + rdr_tstodate(timestamp / 1000);
+				widget_data.output = _('State on') + ' ' + rdr_tstodate(last_timestamp / 1000);
 			}else {
-				var cps_pct_by_state_0 = data.values[0][1];
+				var cps_pct_by_state_0 = last_value;
 				widget_data.percent = cps_pct_by_state_0;
 				widget_data.class_icon = this.getIcon(cps_pct_by_state_0);
-				widget_data.output = _('SLA on') + ' ' + rdr_tstodate(timestamp / 1000);
+				widget_data.output = _('SLA on') + ' ' + rdr_tstodate(last_timestamp / 1000);
 			}
 		} else {
 			widget_data.class_icon = 'widget-weather-icon-info';
