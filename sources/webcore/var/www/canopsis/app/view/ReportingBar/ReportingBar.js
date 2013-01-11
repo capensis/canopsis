@@ -108,7 +108,7 @@ Ext.define('canopsis.view.ReportingBar.ReportingBar' , {
 			xtype: 'cdate',
 			date_width: 130,
 			hour_width: 70,
-			date_value: tommorow,
+			now: true,
 			max_value: tommorow
 		});
 
