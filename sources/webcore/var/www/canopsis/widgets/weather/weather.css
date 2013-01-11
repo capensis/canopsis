@@ -1,6 +1,6 @@
 .widget-weather table{
 	height: 100%;
-	width: 95%;
+	width: 100%;
 	font-family: "Sans-serif";
 	border-style: none;
 }
@@ -9,18 +9,18 @@
 	height: 100%;
 }
 
-.widget-weather .table_div {
+.widget-weather .weather_table_div {
 	height:100%;
 	float:left;
 }
 
-.widget-weather .table_div div {
+.widget-weather .weather_table_div div {
 	display:table;
 	height:100%;
 	width:100%;
 }
 
-.widget-weather .table_div div span {
+.widget-weather .weather_table_div div span {
 	display:table-cell;
 	vertical-align:middle;
 	text-align: center;
@@ -28,45 +28,45 @@
 	font-weight: bold;
 }
 
-.widget-weather .logo {
+.widget-weather .weather_logo {
 	background-position:center center;
 	background-repeat:no-repeat;
 	background-size:contain;
 }
 
-.widget-weather .clickable {
+.widget-weather .weather_clickable {
 	cursor:pointer;
 }
 
-.widget-weather .clickable:hover{
+.widget-weather .weather_clickable:hover{
 	text-decoration:underline;
 }
 
 /*left panel*/
-.widget-weather .left_panel{
+.widget-weather .weather_left_panel{
 	width:75%;
 	/*vertical-align:top;*/
 }
 
-.widget-weather .first_sub_section{
+.widget-weather .weather_first_sub_section{
 	/*width:100%;*/
 	height:70%;
 }
 
-.widget-weather .second_sub_section{
+.widget-weather .weather_second_sub_section{
 	/*width:100%;*/
 	height:30%;
 	vertical-align:middle;
 }
 
-.widget-weather .left_panel .first_sub_section .title{
+.widget-weather .weather_left_panel .weather_first_sub_section .weather_title{
 	width: 100%;
 	font-size: 14px;
 	/*word-wrap: break-word;*/
 	font-weight: bold;
 }
 
-.widget-weather .left_panel .first_sub_section .title span{
+.widget-weather .weather_left_panel .weather_first_sub_section .weather_title span{
 	font-size:xx-small;
 	font-weight: normal;
 	vertical-align: middle;
@@ -74,13 +74,13 @@
 	word-wrap: break-word;
  }
 
-.widget-weather .left_panel .first_sub_section .comment{
+.widget-weather .weather_left_panel .weather_first_sub_section .weather_comment{
 	display: inline-block;
 	font-size: 12px;
 	width: 80%;
 }
 
-.widget-weather .left_panel .first_sub_section .icon-edit{
+.widget-weather .weather_left_panel .weather_first_sub_section .icon-edit{
 	display: inline-block;
 	float:right;
 	opacity: 0;
@@ -89,14 +89,14 @@
 }
 
 
-.widget-weather .left_panel .alert_button{
+.widget-weather .weather_left_panel .weather_alert_button{
 	float:left;
 	height:100%;
 	font-size:10px;
 	max-height:22px;
 }
 
-.widget-weather .left_panel .alert_information{
+.widget-weather .weather_left_panel .weather_alert_information{
 	position: relative;
 	float:left;
 	margin-left:2%;
@@ -104,12 +104,12 @@
 }
 
 /*right panel*/
-.widget-weather .right_panel{
+.widget-weather .weather_right_panel{
 	/*float:left;*/
 	width:25%;
 }
 
-.widget-weather .right_panel .logo{
+.widget-weather .weather_right_panel .weather_logo{
 	display:table;
 	width: 100%;
 	height: 80%;
@@ -126,7 +126,7 @@
 	background-size:contain;
 }
 
-.widget-weather .right_panel .logo p{
+.widget-weather .weather_right_panel .weather_logo p{
 	display:table-cell;
 	vertical-align:middle;
 	text-align:center;
@@ -135,7 +135,7 @@
 	font-weight: bold;
 }
 
-.widget-weather .right_panel .legend{
+.widget-weather .weather_right_panel .weather_legend{
 	width: 100%;
 	height: 20%;
 	text-align:center;
@@ -144,11 +144,11 @@
 
 /*--------------------- icons --------------------*/
 
-.widget-weather-icon-info{
+.weather_icon-info{
 	background-image: url(./icons/info-icon.png) !important;
 }
 
-.widget-weather-form-icon{
+.weather_form-icon{
 	vertical-align:middle;
 	height:22px;
 	/*width: 29px;*/
@@ -157,7 +157,7 @@
 
 /*alert icon*/
 
-.widget-weather-alert-icon{
+.weather_alert-icon{
 	display:inline-block;
 	float:left;
 	background-position:center center;
@@ -170,15 +170,15 @@
 	max-height: 40px;
 }
 
-.widget-weather-alert-icon-0{
+.weather_alert-icon-0{
 	background-image: url(./icons/public_domain_icon/workman.png) !important;
 }
 
-.widget-weather-alert-icon-1{
+.weather_alert-icon-1{
 	background-image: url(./icons/public_domain_icon/slippery.png) !important;
 }
 
-.widget-weather-alert-icon-2{
+.weather_alert-icon-2{
 	background-image: url(./icons/public_domain_icon/alert.png) !important;
 }
 

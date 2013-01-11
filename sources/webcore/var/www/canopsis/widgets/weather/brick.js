@@ -22,37 +22,37 @@
 widget_weather_template = Ext.create('Ext.XTemplate',
 		'<table>',
 			'<tr>',
-				'<td class="left_panel">',
-					'<div class="first_sub_section" id="{id}-output">',
-						'<p class="title" id="{id}-title">{title}<span>{event_ts}</span></p>',
-						'<p class="comment">',
+				'<td class="weather_left_panel">',
+					'<div class="weather_first_sub_section" id="{id}-output">',
+						'<p class="weather_title" id="{id}-title">{title}<span>{event_ts}</span></p>',
+						'<p class="weather_comment">',
 							'{output}',
 						'</p>',
 						'<tpl if="admin == true && derogation == true">',
 							'<div class="icon icon-edit" id="{id}-edit_button"></div>',
 						'</tpl>',
 					'</div>',
-					'<div class="second_sub_section">',
+					'<div class="weather_second_sub_section">',
 						'<tpl if="button_text != undefined">',
-							'<button class="alert_button" type="button" id="{id}-button">{button_text}</button>',
+							'<button class="weather_alert_button" type="button" id="{id}-button">{button_text}</button>',
 						'</tpl>',
 						'<tpl if="alert_icon" != undefined">',
-							'<div class="widget-weather-alert-icon {alert_icon}"></div>',
+							'<div class="weather_alert-icon {alert_icon}"></div>',
 						'</tpl>',
 						'<tpl if="alert_msg" != undefined">',
-							'<p class="alert_information" id="{id}-alert_message">{alert_msg}</p>',
+							'<p class="weather_alert_information" id="{id}-alert_message">{alert_msg}</p>',
 						'</tpl>',
 					'</div>',
 				'</td>',
-				'<td class="right_panel">',
-					'<div class="logo {class_icon}">',
+				'<td class="weather_right_panel">',
+					'<div class="weather_logo {class_icon}">',
 						'<tpl if="percent != undefined ">',
 							'<p>{percent}%</p>',
 						 '<tpl else>',
 							'<p></p>',
 						'</tpl>',
 					'</div>',
-					'<div class="legend">{legend}</div>',
+					'<div class="weather_legend">{legend}</div>',
 				'</td>',
 			'</tr>',
 		'</table>',
@@ -63,12 +63,12 @@ widget_weather_simple_template = Ext.create('Ext.XTemplate',
 		'<table>',
 			'<tr>',
 
-				'<td style="width:25%" class="table_div"></td>',
-				'<td style="width:15%" class="table_div logo {class_icon}"></td>',
-				'<td style="width:30%;font-size:{title_font_size}px" class="table_div" id="{id}-title">',
+				'<td style="width:25%" class="weather_table_div"></td>',
+				'<td style="width:15%" class="weather_table_div weather_logo {class_icon}"></td>',
+				'<td style="width:30%;font-size:{title_font_size}px" class="weather_table_div" id="{id}-title">',
 					'<div><span>{title}</span></div>',
 				'</td>',
-				'<td style="width:25%" class="table_div"></td>',
+				'<td style="width:25%" class="weather_table_div"></td>',
 		'</tr>',
 		{compiled: true}
 	);
@@ -91,7 +91,7 @@ Ext.define('widgets.weather.brick' , {
 	simple_display: false,
 	title_font_size: 14,
 
-	alert_icon_basename: 'widget-weather-alert-icon-',
+	alert_icon_basename: 'weather_alert-icon-',
 
 	helpdesk: undefined,
 	nodeId: undefined,
@@ -176,7 +176,7 @@ Ext.define('widgets.weather.brick' , {
 
 		var clickable_title = this.getEl().getById(this.id + '-title');
 		if (clickable_title && (this.external_link || this.link) && !this.fullscreenMode) {
-			clickable_title.addCls('clickable');
+			clickable_title.addCls('weather_clickable');
 			clickable_title.on('click', this.externalLink, this);
 		}
 		if (this.widget_base_config.admin && this.display_derogation_icon && this.edit_button) {
@@ -232,7 +232,7 @@ Ext.define('widgets.weather.brick' , {
 				if (data.perf_data_array[0])
 					widget_data.class_icon = this.getIcon(data.perf_data_array[0].value);
 				else
-					widget_data.class_icon = 'widget-weather-icon-info';
+					widget_data.class_icon = 'weather_icon-info';
 			}
 			if (data.perf_data_array)
 				widget_data.percent = data.perf_data_array[0].value;
@@ -281,7 +281,7 @@ Ext.define('widgets.weather.brick' , {
 				widget_data.output = _('SLA on') + ' ' + rdr_tstodate(last_timestamp / 1000);
 			}
 		} else {
-			widget_data.class_icon = 'widget-weather-icon-info';
+			widget_data.class_icon = 'weather_icon-info';
 			widget_data.output = _('No data available');
 		}
 
@@ -294,7 +294,7 @@ Ext.define('widgets.weather.brick' , {
 		log.debug('  +  Build empty brick for ' + this.event_type + ' ' + this.component, this.logAuthor);
 		var widget_data = {
 			output: _('No data for the selected information'),
-			class_icon: 'widget-weather-icon-info'
+			class_icon: 'weather_icon-info'
 		};
 
 		var config = Ext.Object.merge(widget_data, this.widget_base_config);
