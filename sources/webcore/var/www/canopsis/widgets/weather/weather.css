@@ -108,6 +108,7 @@
 }
 
 .widget-weather .right_panel .logo{
+	display:table;
 	width: 100%;
 	height: 80%;
 	background-position:center center;
@@ -124,6 +125,7 @@
 }
 
 .widget-weather .right_panel .logo p{
+	display:table-cell;
 	vertical-align:middle;
 	text-align:center;
 	width:100%;
