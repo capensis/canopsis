@@ -159,7 +159,7 @@ Ext.define('widgets.weather.brick' , {
 			this.widget_base_config.title = '<a href="' + linkUrl + '" target="_newtab">' + this.widget_base_config.title + '</a>';
 
 		//icons
-
+		/*
 		if (this.icon_on_left) {
 			this.widget_base_config.first_panel_float = 'right';
 			this.widget_base_config.second_panel_float = 'left';
@@ -167,7 +167,7 @@ Ext.define('widgets.weather.brick' , {
 			this.widget_base_config.first_panel_float = 'left';
 			this.widget_base_config.second_panel_float = 'right';
 		}
-
+		*/
 		//check ressource admin
 		if (global.accountCtrl.check_right(this.data, 'w'))
 			this.widget_base_config.admin = true;

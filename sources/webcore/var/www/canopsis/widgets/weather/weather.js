@@ -169,7 +169,7 @@ Ext.define('widgets.weather.weather' , {
 
 		//-------------------------send request--------------------
 		Ext.Ajax.request({
-			url: '/perfstore/values/' + from + '/' + to,
+			url: '/perfstore/values/' + from*1000 + '/' + to*1000,
 			params: {'nodes': Ext.JSON.encode(post_params)},
 			scope: this,
 			success: function(response) {
