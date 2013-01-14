@@ -69,7 +69,7 @@ widget_weather_template = Ext.create('Ext.XTemplate',
 	);
 
 widget_weather_simple_template = Ext.create('Ext.XTemplate',
-		'<table class="weather-table" style="height:100%;vertical-align:middle;">',
+		'<table class="weather-table" style="vertical-align:middle;">',
 			'<tr>',
 				'<td style="width:25%" class=""></td>',
 				'<td style="width:25%;">',
