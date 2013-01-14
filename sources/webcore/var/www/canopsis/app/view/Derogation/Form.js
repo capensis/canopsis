@@ -194,7 +194,7 @@ Ext.define('derogation.field', {
 	icon_weather2: '05.png',
 	icon_weather3: '09.png',
 
-	alert_icon_path: 'widgets/weather/icons/public_domain_icon/',
+	alert_icon_path: 'widgets/weather/icons/alert/',
 	icon_alert1: 'workman.png',
 	icon_alert2: 'slippery.png',
 	icon_alert3: 'alert.png',

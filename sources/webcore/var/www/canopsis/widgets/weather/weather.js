@@ -228,21 +228,15 @@ Ext.define('widgets.weather.weather' , {
 				icon_on_left: this.icon_on_left,
 				exportMode: this.exportMode
 			};
-
+		
 		if (this.defaultPadding)
 			this.base_config.padding = this.defaultPadding;
 
 		if (this.defaultMargin)
 			this.base_config.margin = this.defaultMargin;
 
-		if (this.nodes.length == 1) {
+		if (this.nodes.length == 1) 
 			this.base_config.anchor = '100% 100%';
-		} else {
-			if (this.defaultHeight)
-				this.base_config.height = parseInt(this.defaultHeight, 10);
-			this.base_config.anchor = '100%';
-		}
-
 	},
 
 	populate: function(data) {
