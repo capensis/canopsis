@@ -68,6 +68,55 @@ widget_weather_template = Ext.create('Ext.XTemplate',
 		{compiled: true}
 	);
 
+widget_weather_template_left = Ext.create('Ext.XTemplate',
+		'<table class="weather-table">',
+			'<tr>',
+				'<td style="width: 20%;">',
+					'<div class="weather-relative">',
+						'<tpl if="percent != undefined ">',
+							'<div class="weather-percent">{percent}%</div>',
+						'</tpl>',
+						'<img class="weather-image" src="{icon_src}"/>',
+					'</div>',
+				'</td>',
+				'<td style="vertical-align: top;" colspan=3>',
+					'<span class="weather-title">{title}</span>',
+					'<span class="weather-ts">{event_ts}</span></br>',
+					'{output}',
+				'</td>',
+				'<td style="width: 14px;" id="{id}-edit_td">',
+					'<tpl if="admin == true && derogation == true">',
+						'<div class="icon icon-edit weather-clickable" id="{id}-edit_button"></div>',
+					'</tpl>',
+				'</td>',
+			'</tr>',
+			'<tr>',
+				'<td><center>{legend}</center></td>',
+				//'<td></td>',
+				'<td rowspan=2 style="width: 90px;">',
+					'<tpl if="button_text != undefined">',
+						'<button class="weather-button"  type="button" id="{id}-button">{button_text}</button>',
+					'</tpl>',
+				'</td>',
+				'<td rowspan=2 style="width: 30px;">',
+					'<tpl if="alert_icon" != undefined">',
+						'<img src="{alert_icon}">',
+					'</tpl>',
+				'</td>',
+				'<td rowspan=2>',
+					'<tpl if="alert_msg" != undefined">',
+						'<p class="weather-alert-message" id="{id}-alert_message">{alert_msg}</p>',
+					'</tpl>',
+				'</td>',
+			'</tr>',
+			'<tr>',
+				'<td></td>',
+				'<td></td>',
+			'</tr>',
+		'</table>',
+		{compiled: true}
+	);
+
 widget_weather_simple_template = Ext.create('Ext.XTemplate',
 		'<table class="weather-table" style="vertical-align:middle;">',
 			'<tr>',
@@ -138,7 +187,10 @@ Ext.define('widgets.weather.brick' , {
 		if (this.simple_display)
 			this._html_template = widget_weather_simple_template;
 		else
-			this._html_template = widget_weather_template;
+			if(this.icon_on_left)
+				this._html_template = widget_weather_template_left;
+			else
+				this._html_template = widget_weather_template;
 
 		this.widget_base_config = {
 			id: this.id,
