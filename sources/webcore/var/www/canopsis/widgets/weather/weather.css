@@ -20,6 +20,10 @@
 	height: auto;
 }
 
+.weather-relative{
+	position:relative;
+}
+
 .weather-title {
 	font-weight:bold;
 	font-size:14px;
@@ -37,7 +41,7 @@
 .weather-percent{
 	position: absolute;
 	width:100%;
-	top:35%;
+	top:38%;
 	left:0;
 	vertical-align: middle;
 	text-align: center;
