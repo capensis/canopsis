@@ -93,15 +93,15 @@ class engine(cengine):
 						mMin = metric.get('mi')
 						mMax = metric.get('ma')
 						mUnit = metric.get('u')
-					if  metric.get('mi') < mMin :
-						mMin = metric.get('mi')
-					if metric.get('ma') > mMax :
-						mMax = metric.get('ma')
-					if metric.get('u') != mUnit :
-						output_message = "warning : to many units\n"
-					if  mType != metric.get('t') :
-						output_message = "warning : to many metrics type\n"
-						
+					else:
+						if  metric.get('mi') < mMin :
+							mMin = metric.get('mi')
+						if metric.get('ma') > mMax :
+							mMax = metric.get('ma')
+						if metric.get('u') != mUnit :
+							output_message = "warning : too many units\n"
+						if  mType != metric.get('t') :
+							output_message = "warning : too many metrics type\n"
 					m = metric.get('d')
 					if ( len(m) >0 ) :
 						values.append( m[-2:-1] ) 
