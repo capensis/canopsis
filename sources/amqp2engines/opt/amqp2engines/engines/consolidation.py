@@ -59,17 +59,17 @@ class engine(cengine):
 		self.load_consolidation()
 		self.beat()
 	def beat(self):
-		non_loaded_records = self.storage.find({ '$and' : [{ 'crecord_type': 'consolidation' }, {'loaded': { '$ne' : 'true'} } ] }, namespace="object" )
+		non_loaded_records = self.storage.find({ '$and' : [{ 'crecord_type': 'consolidation' }  ] }, namespace="object" )
 		
 		if len(non_loaded_records) > 0  :
 			for i in non_loaded_records :
 				self.load(i)
 		for _id in self.records.keys() :
-			exists = self.storage.find({ '_id': _id } )
-			if len(exists) == 0  :
+			exists = self.storage.find_one({ '_id': _id })
+			if not exists :
 				del(self.records[_id])
-			elif len(exists) == 1:
-				rec = exists[0].dump()
+			else:
+				rec = exists.dump()
 				self.records[_id]['enable'] = rec.get('enable')
 
 		for record in self.records.values():
@@ -159,7 +159,6 @@ class engine(cengine):
 		
 		
 	def load (self, rec ) :
-		self.logger.debug('load')
 		record = rec.dump()
 		rec.loaded = True
 		self.storage.update(record.get('_id'), {'loaded': 'true' })
