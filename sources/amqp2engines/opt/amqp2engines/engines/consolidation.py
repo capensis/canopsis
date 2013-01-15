@@ -45,12 +45,12 @@ class engine(cengine):
 		self.metrics_list = {}
 		self.timestamp = { } 
 		self.manager = pyperfstore2.manager(logging_level=logging.INFO)
-		self.beat_interval = 300 
+		self.beat_interval = 10 
 	
 		#for debug
 		#self.beat_interval = 5 
 		cengine.__init__(self, name=NAME, *args, **kargs)
-		self.default_interval = 300
+		self.default_interval = 10
 		self.records = { } 
 		
 	def pre_run(self):
@@ -75,13 +75,33 @@ class engine(cengine):
 		for record in self.records.values():
 			interval = record.get('interval', self.default_interval)
 			if  int(interval) < ( int(time.time()) - self.timestamp[record.get('_id')]) and ( record.get('enable') == "true" or record.get('enable') == True ) :
+				output_message = None
 				tfilter = json.loads(record.get('mfilter'))
 				metric_list = self.manager.store.find(mfilter=tfilter)
 				values = []
 				list_fn = record.get('type', False)
 				if isinstance(list_fn, str) or isinstance(list_fn, unicode) :
 					list_fn = [ list_fn ] 
+				indice = 0
+				mType = None
+				mUnit = None
+				mMin = None
+				mMax = None
 				for metric in metric_list :
+					if  indice == 0 :
+						mType = metric.get('t')
+						mMin = metric.get('mi')
+						mMax = metric.get('ma')
+						mUnit = metric.get('u')
+					if  metric.get('mi') < mMin :
+						mMin = metric.get('mi')
+					if metric.get('ma') > mMax :
+						mMax = metric.get('ma')
+					if metric.get('u') != mUnit :
+						output_message = "warning : to many units\n"
+					if  mType != metric.get('t') :
+						output_message = "warning : to many metrics type\n"
+						
 					m = metric.get('d')
 					if ( len(m) >0 ) :
 						values.append( m[-2:-1] ) 
@@ -103,10 +123,10 @@ class engine(cengine):
 						try :
 							resultat = pyperfstore2.utils.aggregate_series(values, fn)
 						except NameError:
-							self.logger.info('la fonction '+i+' est inexistante')
-							self.storage.update(record.get('_id'), {'output_engine': "function "+i+" does not exists"  } )
+							self.logger.info('Function ['+i+'] does not exist')
+							output_message = "warning : function ["+i+"] does not exists\n"
 						if len(resultat) > 0 :
-							list_perf_data.append({ 'metric' : i, 'value' : resultat[0][1], "unit": None, 'max': None, 'warn': None, 'crit': None, 'type': 'GAUGE' } ) 
+							list_perf_data.append({ 'metric' : i, 'value' : resultat[0][1], "unit": mUnit, 'max': mMax, 'min': mMin, 'warn': None, 'crit': None, 'type': mType } ) 
 							event = cevent.forger(
 								connector ="consolidation",
 								connector_name = "engine",
@@ -124,9 +144,15 @@ class engine(cengine):
 							)	
 							rk = cevent.get_routingkey(event)
 							self.amqp.publish(event, rk, self.amqp.exchange_name_events)
-							self.storage.update(record.get('_id'), {'output_engine': datetime.now().strftime('%Y-%m-%d %H:%M:%S')+" : Computation done. Next Computation in "+str(interval)+" s"  } )
+							if output_message == None:
+								self.storage.update(record.get('_id'), {'output_engine': datetime.now().strftime('%Y-%m-%d %H:%M:%S')+" : Computation done. Next Computation in "+str(interval)+" s"  } )
+							else:
+								self.storage.update(record.get('_id'), {'output_engine': datetime.now().strftime('%Y-%m-%d %H:%M:%S')+" : Computation done but there are issues : \n"+output_message+". Next Computation in "+str(interval)+" s"  } )
 						else:
-							self.storage.update(record.get('_id'), {'output_engine': "No result"  } )
+							if output_message == None:
+								self.storage.update(record.get('_id'), {'output_engine': "No result"  } )
+							else:
+								self.storage.update(record.get('_id'), {'output_engine': "there are issues : \n"+output_message+"warning : No result"  } )
 				else:
 					self.storage.update(record.get('_id'), {'output_engine': "No input values"  } )
 				self.timestamp[record.get('_id')] = int(time.time())
