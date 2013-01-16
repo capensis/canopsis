@@ -237,6 +237,10 @@ Ext.define('widgets.weather.weather' , {
 
 		if (this.nodes.length == 1) 
 			this.base_config.anchor = '100% 100%';
+		/*else
+			if (this.defaultHeight)
+				this.base_config.height = parseInt(this.defaultHeight, 10);
+		*/
 	},
 
 	populate: function(data) {
