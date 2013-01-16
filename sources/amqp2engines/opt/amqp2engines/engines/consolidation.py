@@ -79,7 +79,6 @@ class engine(cengine):
 			#self.logger.info(self.timestamp[record.get('_id')])
 			#self.logger.info(int(time.time()) - self.timestamp[record.get('_id')])
 			if  int(interval) < ( int(time.time()) - self.timestamp[record.get('_id')]) and ( record.get('enable') == "true" or record.get('enable') == True ) :
-				self.logger.info('in IF')
 				output_message = None
 				tfilter = json.loads(record.get('mfilter'))
 				metric_list = self.manager.store.find(mfilter=tfilter)
