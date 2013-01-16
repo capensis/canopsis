@@ -52,7 +52,10 @@ Ext.define('canopsis.controller.Consolidation', {
 			operators = [operators]
 		for(var i=0; i < operators.length; i++)
 			form.down('checkbox[inputValue='+operators[i]+']').setValue(true)
-	}
+	},
 	
+	afterload_DuplicateForm: function(form, item_copy){
+		this.afterload_EditForm(form, item_copy)
+	}
 
 });
