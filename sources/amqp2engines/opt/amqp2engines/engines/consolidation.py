@@ -34,12 +34,6 @@ from datetime import datetime
 
 NAME="consolidation"
 
-#states_str = ("Ok", "Warning", "Critical", "Unknown", "Undetermined")
-#states = {0: 0, 1:0, 2:0, 3:0, 4:0}
-
-states_str = ("Ok", "Warning", "Critical", "Unknown")
-states = {0: 0, 1:0, 2:0, 3:0}
-
 class engine(cengine):
 	def __init__(self, *args, **kargs):
 		self.metrics_list = {}
@@ -47,8 +41,6 @@ class engine(cengine):
 		self.manager = pyperfstore2.manager(logging_level=logging.INFO)
 		self.beat_interval = 10 
 	
-		#for debug
-		#self.beat_interval = 5 
 		cengine.__init__(self, name=NAME, *args, **kargs)
 		self.default_interval = 10
 		self.records = { } 
@@ -59,25 +51,21 @@ class engine(cengine):
 		self.load_consolidation()
 		self.beat()
 	def beat(self):
-		non_loaded_records = self.storage.find({ '$and' : [{ 'crecord_type': 'consolidation' }, {'loaded': { '$ne' : 'true'} } ] }, namespace="object" )
+		non_loaded_records = self.storage.find({ '$and' : [{ 'crecord_type': 'consolidation' }, {'loaded': { '$ne' : True} } ] }, namespace="object" )
 
 		if len(non_loaded_records) > 0  :
-			for i in non_loaded_records :
-				self.load(i)
+			for item in non_loaded_records :
+				self.load(item)
 		for _id in self.records.keys() :
-			exists = self.storage.find({ '_id': _id } )
-			if len(exists) == 0  :
-				del(self.records[_id])
-			elif len(exists) == 1:
-				rec = exists[0].dump()
+			exists = self.storage.find_one({ '_id': _id } )
+			if exists:
+				rec = exists.dump()
 				self.records[_id]['enable'] = rec.get('enable')
+			else:
+				del(self.records[_id])
 
 		for record in self.records.values():
 			interval = record.get('interval', self.default_interval)
-			#self.logger.info('-----------------------------')
-			#self.logger.info(interval)
-			#self.logger.info(self.timestamp[record.get('_id')])
-			#self.logger.info(int(time.time()) - self.timestamp[record.get('_id')])
 			if  int(interval) < ( int(time.time()) - self.timestamp[record.get('_id')]) and ( record.get('enable') == "true" or record.get('enable') == True ) :
 				output_message = None
 				tfilter = json.loads(record.get('mfilter'))
@@ -86,13 +74,9 @@ class engine(cengine):
 				list_fn = record.get('type', False)
 				if isinstance(list_fn, str) or isinstance(list_fn, unicode) :
 					list_fn = [ list_fn ] 
-				indice = 0
-				mType = None
-				mUnit = None
-				mMin = None
-				mMax = None
-				for metric in metric_list :
-					if  indice == 0 :
+				mType = mUnit = mMin = mMax = None
+				for index,metric in enumerate(metric_list) :
+					if  index == 0 :
 						mType = metric.get('t')
 						mMin = metric.get('mi')
 						mMax = metric.get('ma')
@@ -103,11 +87,11 @@ class engine(cengine):
 						if metric.get('ma') > mMax :
 							mMax = metric.get('ma')
 						if metric.get('u') != mUnit :
-							output_message = "warning : too many units\n"
+							output_message = "warning : too many units"
 						if  mType != metric.get('t') :
-							output_message = "warning : too many metrics type\n"
+							output_message = "warning : too many metrics type"
 					m = metric.get('d')
-					if ( len(m) >0 ) :
+					if len(m) >0:
 						values.append( m[-2:-1] ) 
 				
 				if list_fn and len(values) > 0 :
@@ -123,15 +107,9 @@ class engine(cengine):
 							fn = lambda x: sum(x)
 						elif i == 'delta':
 							fn = lambda x: x[0] - x[-1]
-						resultat = list()
+						resultat = []
 						try :
-							#self.logger.info('valeur intial')
-							#self.logger.info(values)
-							#self.logger.info('fonction:')
-							#self.logger.info(i)
 							resultat = pyperfstore2.utils.aggregate_series(values, fn)
-							#self.logger.info('point de sortit:')
-							#self.logger.info(resultat)
 						except NameError:
 							self.logger.info('Function ['+i+'] does not exist')
 							output_message = "warning : function ["+i+"] does not exists\n"
@@ -154,18 +132,19 @@ class engine(cengine):
 								display_name=record['crecord_name'][0]
 							)	
 							rk = cevent.get_routingkey(event)
-							#self.logger.info('PUBLISH EVENT')
-							#self.logger.info(event)
 							self.amqp.publish(event, rk, self.amqp.exchange_name_events)
-							if output_message == None:
-								self.storage.update(record.get('_id'), {'output_engine': datetime.now().strftime('%Y-%m-%d %H:%M:%S')+" : Computation done. Next Computation in "+str(interval)+" s"  } )
+
+							if not output_message:
+								engine_output = '%s : Computation done. Next Computation in %s s' % (datetime.now().strftime('%Y-%m-%d %H:%M:%S'),str(interval))
+								self.storage.update(record.get('_id'),{'output_engine':engine_output} )
 							else:
-								self.storage.update(record.get('_id'), {'output_engine': datetime.now().strftime('%Y-%m-%d %H:%M:%S')+" : Computation done but there are issues : \n"+output_message+". Next Computation in "+str(interval)+" s"  } )
+								engine_output = '%s : Computation done but there are issues : "%s" . Next Computation in %s s' % (datetime.now().strftime('%Y-%m-%d %H:%M:%S'),output_message,str(interval))
+								self.storage.update(record.get('_id'), {'output_engine': engine_output} )
 						else:
-							if output_message == None:
+							if not output_message:
 								self.storage.update(record.get('_id'), {'output_engine': "No result"  } )
 							else:
-								self.storage.update(record.get('_id'), {'output_engine': "there are issues : \n"+output_message+"warning : No result"  } )
+								self.storage.update(record.get('_id'), {'output_engine': "there are issues : %s warning : No result" % output_message } )
 				else:
 					self.storage.update(record.get('_id'), {'output_engine': "No input values"  } )
 				self.timestamp[record.get('_id')] = int(time.time())
@@ -174,7 +153,7 @@ class engine(cengine):
 	def load (self, rec ) :
 		record = rec.dump()
 		rec.loaded = True
-		self.storage.update(record.get('_id'), {'loaded': 'true' })
+		self.storage.update(record.get('_id'), {'loaded': True })
 		if record.get('mfilter', False) :
 			self.timestamp[record.get('_id')] = int(time.time())
 			tfilter = json.loads(record.get('mfilter'))
@@ -193,9 +172,9 @@ class engine(cengine):
 					state_type=1,
 					output="",
 					long_output="",
-		                        perf_data=None,
-                		        perf_data_array=None,
-		                        display_name=record['crecord_name'][0]
+					perf_data=None,
+					perf_data_array=None,
+					display_name=record['crecord_name'][0]
 			)
 			rk = cevent.get_routingkey(event)
 			self.records[record.get('_id')] = record
@@ -208,11 +187,8 @@ class engine(cengine):
 		for i in records :
 			self.load(i)
 				
-			
-			
-			
 	def unload_consolidation(self):
-		record_list = self.storage.find({ '$and': [{'crecord_type': 'consolidation' }, {'loaded':'true'}]}, namespace="object")
+		record_list = self.storage.find({ '$and': [{'crecord_type': 'consolidation' }, {'loaded':True}]}, namespace="object")
 		for i in record_list :
-			self.storage.update(i._id, {'loaded': 'false' })
+			self.storage.update(i._id, {'loaded': False })
 			self.storage.update(i._id, {'output_engine': "Correctly Unload"  } )

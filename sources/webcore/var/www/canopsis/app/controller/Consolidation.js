@@ -39,8 +39,8 @@ Ext.define('canopsis.controller.Consolidation', {
 	_saveForm: function(form,store) {
 		if (form.record != undefined ) {
 			form.record.loaded = false;
-			form.record.nb_items = "";
-			form.record.output_engine = "";
+			form.record.nb_items = undefined;
+			form.record.output_engine = undefined;
 		}
 		this.callParent(arguments) ;
 	},
