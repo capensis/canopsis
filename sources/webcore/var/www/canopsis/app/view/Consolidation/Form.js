@@ -75,34 +75,38 @@ Ext.define('canopsis.view.Consolidation.Form', {
 						]
 					},{
 						title: _('Operations'),
-						defaultType: 'textfield',
 						bodyStyle: 'padding:5px 5px 0',
 						layout: 'anchor',
 						defaults: {anchor: '100%'},
 						items: [{
 							xtype: 'fieldset',
-							title: _('Operations type'),
-							defaultType: 'checkbox',
+							title: _('Operator'),
 							items:[{
-								boxLabel  : _('Mean'),
-                    			name      : 'type',
-                    			inputValue: 'mean'
-							},{
-								boxLabel  : _('Sum'),
-								name 	  : 'type',
-								inputValue: 'sum'
-							},{
-								boxLabel  : _('Delta'),
-                    			name      : 'type',
-                    			inputValue: 'delta'
-							},{
-								boxLabel  : _('Min'),
-                    			name      : 'type',
-                    			inputValue: 'min'
-							},{
-								boxLabel  : _('Max'),
-                    			name      : 'type',
-                    			inputValue: 'max'
+								xtype: 'checkboxgroup',
+								title: _('Operations type'),
+								columns: 3,
+	        					vertical: true,
+								items:[{
+									boxLabel  : _('Mean'),
+	                    			name      : 'type',
+	                    			inputValue: 'mean'
+								},{
+									boxLabel  : _('Sum'),
+									name 	  : 'type',
+									inputValue: 'sum'
+								},{
+									boxLabel  : _('Delta'),
+	                    			name      : 'type',
+	                    			inputValue: 'delta'
+								},{
+									boxLabel  : _('Min'),
+	                    			name      : 'type',
+	                    			inputValue: 'min'
+								},{
+									boxLabel  : _('Max'),
+	                    			name      : 'type',
+	                    			inputValue: 'max'
+								}]
 							}]
 						}]
 					},{

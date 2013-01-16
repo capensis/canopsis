@@ -78,7 +78,7 @@ Ext.define('canopsis.view.Consolidation.Grid' , {
 			flex: 3,
 			dataIndex: 'type'
 		},{
-			header: _('Output engine'),
+			header: _('Engine ouput'),
 			//align: 'center',
 			flex: 6,
 			dataIndex: 'output_engine',
