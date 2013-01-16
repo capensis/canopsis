@@ -59,22 +59,27 @@ class engine(cengine):
 		self.load_consolidation()
 		self.beat()
 	def beat(self):
-		non_loaded_records = self.storage.find({ '$and' : [{ 'crecord_type': 'consolidation' }  ] }, namespace="object" )
-		
+		non_loaded_records = self.storage.find({ '$and' : [{ 'crecord_type': 'consolidation' }, {'loaded': { '$ne' : 'true'} } ] }, namespace="object" )
+
 		if len(non_loaded_records) > 0  :
 			for i in non_loaded_records :
 				self.load(i)
 		for _id in self.records.keys() :
-			exists = self.storage.find_one({ '_id': _id })
-			if not exists :
+			exists = self.storage.find({ '_id': _id } )
+			if len(exists) == 0  :
 				del(self.records[_id])
-			else:
-				rec = exists.dump()
+			elif len(exists) == 1:
+				rec = exists[0].dump()
 				self.records[_id]['enable'] = rec.get('enable')
 
 		for record in self.records.values():
 			interval = record.get('interval', self.default_interval)
+			#self.logger.info('-----------------------------')
+			#self.logger.info(interval)
+			#self.logger.info(self.timestamp[record.get('_id')])
+			#self.logger.info(int(time.time()) - self.timestamp[record.get('_id')])
 			if  int(interval) < ( int(time.time()) - self.timestamp[record.get('_id')]) and ( record.get('enable') == "true" or record.get('enable') == True ) :
+				self.logger.info('in IF')
 				output_message = None
 				tfilter = json.loads(record.get('mfilter'))
 				metric_list = self.manager.store.find(mfilter=tfilter)
@@ -121,7 +126,13 @@ class engine(cengine):
 							fn = lambda x: x[0] - x[-1]
 						resultat = list()
 						try :
+							#self.logger.info('valeur intial')
+							#self.logger.info(values)
+							#self.logger.info('fonction:')
+							#self.logger.info(i)
 							resultat = pyperfstore2.utils.aggregate_series(values, fn)
+							#self.logger.info('point de sortit:')
+							#self.logger.info(resultat)
 						except NameError:
 							self.logger.info('Function ['+i+'] does not exist')
 							output_message = "warning : function ["+i+"] does not exists\n"
@@ -135,14 +146,17 @@ class engine(cengine):
 								component = record['component'],
 								resource=record['resource'],
 								state=0,
+								timestamp=resultat[0][0],
 								state_type=0,
 								output="",
 								long_output="",
-		        			                perf_data=None,
-			                		        perf_data_array=list_perf_data,
-		        			                display_name=record['crecord_name'][0]
+								perf_data=None,
+								perf_data_array=list_perf_data,
+								display_name=record['crecord_name'][0]
 							)	
 							rk = cevent.get_routingkey(event)
+							#self.logger.info('PUBLISH EVENT')
+							#self.logger.info(event)
 							self.amqp.publish(event, rk, self.amqp.exchange_name_events)
 							if output_message == None:
 								self.storage.update(record.get('_id'), {'output_engine': datetime.now().strftime('%Y-%m-%d %H:%M:%S')+" : Computation done. Next Computation in "+str(interval)+" s"  } )

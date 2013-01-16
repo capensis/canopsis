@@ -89,8 +89,8 @@ Ext.define('canopsis.view.Consolidation.Form', {
                     			inputValue: 'mean'
 							},{
 								boxLabel  : _('Sum'),
-					name 	  : 'type',
-					inputValue: 'sum'
+								name 	  : 'type',
+								inputValue: 'sum'
 							},{
 								boxLabel  : _('Delta'),
                     			name      : 'type',
