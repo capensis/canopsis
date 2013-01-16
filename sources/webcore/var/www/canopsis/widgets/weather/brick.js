@@ -32,7 +32,7 @@ widget_weather_template = Ext.create('Ext.XTemplate',
 						'<div class="icon icon-edit weather-clickable" id="{id}-edit_button"></div>',
 					'</tpl>',
 				'</td>',
-				'<td style="width: 20%;">',
+				'<td class="weather-td-image" style="width: 20%;">',
 					'<div class="weather-relative">',
 						'<tpl if="percent != undefined ">',
 							'<div class="weather-percent">{percent}%</div>',
@@ -59,6 +59,7 @@ widget_weather_template = Ext.create('Ext.XTemplate',
 				'</td>',
 				'<td></td>',
 				'<td><center>{legend}</center></td>',
+				//'<td><center>&nbsp;</center></td>',
 			'</tr>',
 			'<tr>',
 				'<td></td>',
@@ -71,7 +72,7 @@ widget_weather_template = Ext.create('Ext.XTemplate',
 widget_weather_template_left = Ext.create('Ext.XTemplate',
 		'<table class="weather-table">',
 			'<tr>',
-				'<td style="width: 20%;">',
+				'<td class="weather-td-image" style="width: 20%;">',
 					'<div class="weather-relative">',
 						'<tpl if="percent != undefined ">',
 							'<div class="weather-percent">{percent}%</div>',
@@ -121,7 +122,7 @@ widget_weather_simple_template = Ext.create('Ext.XTemplate',
 		'<table class="weather-table" style="vertical-align:middle;">',
 			'<tr>',
 				'<td style="width:25%" class=""></td>',
-				'<td style="width:25%;">',
+				'<td class="weather-td-image" style="width:25%;">',
 					'<div class="weather-relative">',
 						'<img class="weather-image" src="{icon_src}">',
 						'<tpl if="percent != undefined ">',
@@ -180,6 +181,8 @@ Ext.define('widgets.weather.brick' , {
 		this.resource = this.data.resource;
 
 		this.callParent(arguments);
+
+		this.on('resize',this.onResize,this)
 	},
 
 	afterRender: function() {
@@ -274,6 +277,18 @@ Ext.define('widgets.weather.brick' , {
 
 		//Hack for removing scrolling bar on ie
 		this.getEl().parent().setStyle('overflow-x','hidden')
+	/*	this.getEl().down('.weather-image').setStyle('width',this.getWidth() * 0.20)
+		this.getEl().down('.weather-td-image').setStyle('width',this.getWidth() * 0.20)*/
+
+
+	},
+
+	onResize: function(){
+		//very dirty hack, ie resize images after that
+		if(Ext.isIE){
+			this.getEl().down('.weather-image').setStyle('width',this.getWidth() * 0.20)
+			this.getEl().down('.weather-td-image').setStyle('width',this.getWidth() * 0.20)
+		}
 	},
 
 	build: function(data) {
