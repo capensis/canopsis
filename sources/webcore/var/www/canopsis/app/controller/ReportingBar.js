@@ -87,32 +87,35 @@ Ext.define('canopsis.controller.ReportingBar', {
 		log.debug('Next button pressed', this.logAuthor);
 		var dateField = this.bar.toTs;
 
-		if (dateField.isValid()) {
-			var selectedTime = dateField.getValue();
-			var timeUnit = this.bar.combo.getValue();
+		var selectedTime = dateField.getValue();
+		var timeUnit = this.bar.combo.getValue();
 
-			var timestamp = selectedTime + (timeUnit * this.bar.periodNumber.getValue());
-			dateField.setValue(timestamp);
+		console.log('selected time : ' + selectedTime)
+		console.log('time unit : ' + timeUnit)
+
+		var timestamp = selectedTime + (timeUnit * this.bar.periodNumber.getValue());
+		dateField.setValue(timestamp);
+
+		if (dateField.isValid())
 			this.launchReport();
-		}else {
+		else
 			global.notify.notify(_('Invalid date'), _('The selected date is invalid'));
-		}
 	},
 
 	previousButton: function() {
 		log.debug('Previous button pressed', this.logAuthor);
 		var dateField = this.bar.toTs;
 
-		if (dateField.isValid()) {
-			var selectedTime = dateField.getValue();
-			var timeUnit = this.bar.combo.getValue();
+		var selectedTime = dateField.getValue();
+		var timeUnit = this.bar.combo.getValue();
 
-			var timestamp = selectedTime - (timeUnit * this.bar.periodNumber.getValue());
-			dateField.setValue(timestamp);
+		var timestamp = selectedTime - (timeUnit * this.bar.periodNumber.getValue());
+		dateField.setValue(timestamp);
+
+		if (dateField.isValid()) 
 			this.launchReport();
-		}else {
+		else 
 			global.notify.notify(_('Invalid date'), _('The selected date is invalid'));
-		}
 	},
 
 	saveButton: function() {

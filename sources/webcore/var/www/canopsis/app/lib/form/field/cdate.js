@@ -91,16 +91,12 @@ Ext.define('canopsis.lib.form.field.cdate' , {
 	},
 
 	getValue: function() {
-		if (this.isValid()) {
-			var date = parseInt(Ext.Date.format(this.date.getValue(), 'U'));
-			var hour = stringTo24h(this.hour.getValue());
+		var date = parseInt(Ext.Date.format(this.date.getValue(), 'U'));
+		var hour = stringTo24h(this.hour.getValue());
 
-			var timestamp = date + (hour.hour * 60 * 60) + (hour.minute * 60);
-			//log.dump('output date is' + new Date(timestamp*1000))
-			return parseInt(timestamp, 10);
-		}else {
-			return undefined;
-		}
+		var timestamp = date + (hour.hour * 60 * 60) + (hour.minute * 60);
+		//log.dump('output date is' + new Date(timestamp*1000))
+		return parseInt(timestamp, 10);
 	},
 
 	setValue: function(value) {
