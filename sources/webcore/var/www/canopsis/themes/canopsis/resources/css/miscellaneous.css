@@ -1,0 +1,4 @@
+/*fix for mask that overlap everything*/
+.x-mask-msg{
+	z-index: 100;
+}
