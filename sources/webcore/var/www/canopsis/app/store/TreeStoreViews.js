@@ -30,12 +30,6 @@ Ext.define('canopsis.store.TreeStoreViews', {
 
 	clearOnLoad: true,
 
-
-	/*
-	root:{
-		id:'directory.root'
-	},
-	*/
 	defaultRootId: 'directory.root',
 
 	proxy: {
@@ -52,26 +46,6 @@ Ext.define('canopsis.store.TreeStoreViews', {
 		}
 	},
 
-	listeners: {
-		move: function(node, oldParent, newParent, index, options ) {
-				this.sync();
-		},
-		write: function(store, operation,option) {
-			data = Ext.decode(operation.response.responseText).data;
-			for (var i = 0; i < data.length; i++) {
-				if (data[i].success == true) {
-					if (operation.action == 'create')
-						global.notify.notify(_('Success'), _('Record saved'), 'success');
-					if (operation.action == 'destroy')
-						global.notify.notify(_('Success'), _('Record deleted'), 'success');
-					if (operation.action == 'update')
-						global.notify.notify(_('Success'), _('Record updated'), 'success');
-				}else {
-					global.notify.notify(_('Error') + ' ' + _('on') + ' ' + i, _(data[i].output), 'warning');
-				}
-			}
-		}
-	}
 });
 
 
