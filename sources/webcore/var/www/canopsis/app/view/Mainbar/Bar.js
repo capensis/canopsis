@@ -177,6 +177,18 @@ Ext.define('canopsis.view.Mainbar.Bar' , {
 			]);
 		}
 
+		//Root selector menu
+		if (global.accountCtrl.checkRoot()){ //|| global.accountCtrl.checkGroup('group.CPS_selector_admin')) {
+			menu_build = menu_build.concat([
+				{
+					iconCls: 'icon-mainbar-consolidation',
+					text: _('Consolidation'),
+					action: 'openViewMenu',
+					viewId: 'view.consolidation_manager'
+				}
+			]);
+		}
+
 		//Topology menu
 	/*	if (global.accountCtrl.checkRoot() || global.accountCtrl.checkGroup('group.CPS_topology_admin')) {
 			menu_build = menu_build.concat([

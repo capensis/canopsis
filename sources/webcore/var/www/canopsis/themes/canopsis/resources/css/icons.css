@@ -275,6 +275,10 @@
     background-image: url(../images/icons/arrow_join.png) !important; 
 }
 
+.icon-mainbar-consolidation { 
+    background-image: url(../images/icons/chart_line_link.png) !important; 
+}
+
 .icon-mainbar-eventLog{
 	background-image: url(../images/icons/time_go.png) !important; 
 }
