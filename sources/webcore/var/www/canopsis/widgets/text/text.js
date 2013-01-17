@@ -90,9 +90,13 @@ Ext.define('widgets.text.text' , {
 									attributName = attributName.replace(this.specialCharRegex, '');
 									try {
 										var value = data.perf_data_array[j][attribut];
+
+										var unit = undefined;
+										try { unit = data.perf_data_array[j]["unit"]; } catch (err) {}
+
 										if (value != null && value != undefined)
 											if (Ext.isNumeric(value))
-												data[attributName] = rdr_humanreadable_value(value);
+												data[attributName] = rdr_humanreadable_value(value, unit);
 											else
 												data[attributName] = value;
 									}catch (err) {
