@@ -111,8 +111,8 @@ class engine(cengine):
 						try :
 							resultat = pyperfstore2.utils.aggregate_series(values, fn)
 						except NameError:
-							self.logger.info('Function ['+i+'] does not exist')
-							output_message = "warning : function ["+i+"] does not exists\n"
+							self.logger.info('Function [%s] does not exist' % i)
+							output_message = "warning : function [%s] does not exists" % i
 						if len(resultat) > 0 :
 							list_perf_data.append({ 'metric' : i, 'value' : resultat[0][1], "unit": mUnit, 'max': mMax, 'min': mMin, 'warn': None, 'crit': None, 'type': mType } ) 
 							event = cevent.forger(
@@ -159,8 +159,10 @@ class engine(cengine):
 			tfilter = json.loads(record.get('mfilter'))
 			metric_list = self.manager.store.find(mfilter=tfilter )
 			nb_items = metric_list.count()
-			self.storage.update(record.get('_id'), {'nb_items': nb_items } )
-			self.storage.update(record.get('_id'), {'output_engine': "Correctly Load"  } )
+			self.storage.update(record.get('_id'), {
+													'output_engine': "Correctly Loaded",
+													'nb_items': nb_items
+													} )
 			event = cevent.forger(
 					connector = "consolidation",
 					connector_name = "engine",
@@ -189,6 +191,8 @@ class engine(cengine):
 				
 	def unload_consolidation(self):
 		record_list = self.storage.find({ '$and': [{'crecord_type': 'consolidation' }, {'loaded':True}]}, namespace="object")
-		for i in record_list :
-			self.storage.update(i._id, {'loaded': False })
-			self.storage.update(i._id, {'output_engine': "Correctly Unload"  } )
+		for item in record_list :
+			self.storage.update(item._id, {
+										'output_engine': "Correctly Unload",
+										'loaded': False
+										} )
