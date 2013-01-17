@@ -50,6 +50,7 @@ class engine(cengine):
 		self.manager = pyperfstore2.manager(logging_level=self.logging_level)
 		self.load_consolidation()
 		self.beat()
+
 	def beat(self):
 		non_loaded_records = self.storage.find({ '$and' : [{ 'crecord_type': 'consolidation' }, {'loaded': { '$ne' : True} } ] }, namespace="object" )
 
@@ -81,6 +82,8 @@ class engine(cengine):
 						mMin = metric.get('mi')
 						mMax = metric.get('ma')
 						mUnit = metric.get('u')
+						#mCrit = metric.get('tc')
+						#mWarn = metric.get('tw')
 					else:
 						if  metric.get('mi') < mMin :
 							mMin = metric.get('mi')
@@ -96,25 +99,16 @@ class engine(cengine):
 				
 				if list_fn and len(values) > 0 :
 					list_perf_data = []
-					for i in list_fn :
-						if i == 'mean':
-							fn = lambda x: sum(x) / len(x)
-						elif i == 'min' :
-							fn = lambda x: min(x)
-						elif i == 'max' :
-							fn = lambda x: max(x)
-						elif i == 'sum':
-							fn = lambda x: sum(x)
-						elif i == 'delta':
-							fn = lambda x: x[0] - x[-1]
+					for function_name in list_fn :
+						fn = self.get_math_function(function_name)
 						resultat = []
 						try :
 							resultat = pyperfstore2.utils.aggregate_series(values, fn)
 						except NameError:
-							self.logger.info('Function [%s] does not exist' % i)
+							self.logger.info('Function [%s] does not exist' % item)
 							output_message = "warning : function [%s] does not exists" % i
 						if len(resultat) > 0 :
-							list_perf_data.append({ 'metric' : i, 'value' : resultat[0][1], "unit": mUnit, 'max': mMax, 'min': mMin, 'warn': None, 'crit': None, 'type': mType } ) 
+							list_perf_data.append({ 'metric' : function_name, 'value' : resultat[0][1], "unit": mUnit, 'max': mMax, 'min': mMin, 'warn': None, 'crit': None, 'type': mType } ) 
 							event = cevent.forger(
 								connector ="consolidation",
 								connector_name = "engine",
@@ -186,13 +180,31 @@ class engine(cengine):
 
 	def load_consolidation(self) :
 		records = self.storage.find({ '$and' :[ {'crecord_type': 'consolidation'}] }, namespace="object")
-		for i in records :
-			self.load(i)
+		for item in records :
+			self.load(item)
+
+		self.logger.info('Loaded %i consolidations' % len(records))
 				
 	def unload_consolidation(self):
-		record_list = self.storage.find({ '$and': [{'crecord_type': 'consolidation' }, {'loaded':True}]}, namespace="object")
-		for item in record_list :
+		records = self.storage.find({ '$and': [{'crecord_type': 'consolidation' }, {'loaded':True}]}, namespace="object")
+		for item in records :
 			self.storage.update(item._id, {
 										'output_engine': "Correctly Unload",
 										'loaded': False
 										} )
+
+		self.logger.info('Unloaded %i consolidations' % len(records))
+
+	def get_math_function(self, name):
+		if name == 'mean':
+			return lambda x: sum(x) / len(x)
+		elif name == 'min' :
+			return lambda x: min(x)
+		elif name == 'max' :
+			return lambda x: max(x)
+		elif name == 'sum':
+			return lambda x: sum(x)
+		elif name == 'delta':
+			return lambda x: x[0] - x[-1]
+		else:
+			return None
