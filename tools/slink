@@ -14,9 +14,9 @@ fi
 SRC=`pwd`
 CPS="/opt/canopsis"
 
-rm $SRC/sources/webcore/var/www/canopsis/resources/lib
 rm -R $CPS/opt/webcore
 rm -Rf $CPS/var/www/canopsis
+rm -Rf $CPS/var/www/webcore-libs
 rm -R $CPS/lib/canolibs
 rm -R $CPS/opt/snmp2amqp
 rm -R $CPS/var/snmp
@@ -25,7 +25,7 @@ rm -R $CPS/opt/amqp2engines
 rm -R $CPS/opt/mongodb
 
 if [ $LINK -eq 1 ]; then
-	ln -s $SRC/sources/externals/webcore-libs $SRC/sources/webcore/var/www/canopsis/resources/lib
+	ln -s $SRC/sources/externals/webcore-libs $CPS/var/www/
 	ln -s $SRC/sources/webcore/opt/webcore $CPS/opt/
 	ln -s $SRC/sources/webcore/var/www/canopsis $CPS/var/www/
 	ln -s $SRC/sources/canolibs/lib/canolibs $CPS/lib/
