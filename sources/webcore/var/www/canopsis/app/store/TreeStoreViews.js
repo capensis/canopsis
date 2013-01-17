@@ -44,7 +44,7 @@ Ext.define('canopsis.store.TreeStoreViews', {
 			type: 'json',
 			method: 'POST'
 		}
-	},
+	}
 
 });
 
