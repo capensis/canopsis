@@ -111,7 +111,7 @@ Ext.define('widgets.line_graph.line_graph' , {
 		this.legend_borderColor = check_color(this.legend_borderColor);
 		this.legend_backgroundColor	= check_color(this.legend_backgroundColor);
 
-		this.lastValue = [];
+		this.OverlayLegend = [];
 
 		log.debug('nodes:', this.logAuthor);
 		log.dump(this.nodes);
@@ -976,32 +976,59 @@ Ext.define('widgets.line_graph.line_graph' , {
 	},
 
 	drawLastValue: function(values) {
-		var html = '<span style="color:{0};font-size: 1.2em;">{1}: {2}{3}</span>';
+		var html = '<span style="color:{0};font-size: 1.2em;">{1}</span>';
 
 		var list_string = [];
 
+		var bigLenght = undefined
+
+		// Push values
 		for (var i = 0; i < values.length; i++) {
+			var strvalue = values[i][2] ? values[i][2] : ''
+			var string = values[i][0] + ': ' + values[i][1] + strvalue
+
+			// Search most longer string
+			if (bigLenght == undefined || bigLenght < string.length)
+				bigLenght = string.length
+
 			list_string.push(
 				Ext.String.format(
 					html,
 					'dark grey',
-					values[i][0],
-					values[i][1],
-					(values[i][2]) ? values[i][2] : ''
+					string
 				)
 			);
 		}
 
-		for (var i = 0; i < this.lastValue.length; i++)
-			this.lastValue[i].destroy();
+		// Clean
+		for (var i = 0; i < this.OverlayLegend.length; i++)
+			this.OverlayLegend[i].destroy();
+
+		this.OverlayLegend = [];
+
+		// Display text on chart
+		var charH = 20
+		var charW = 5
+
+		var h = this.getHeight()
+		var w = this.getWidth()
+
+		var marginTop = h / 4
+		var marginRight = 20
+
+		var x = w - (bigLenght * charW) - marginRight
+		var y = marginTop
 
 		for (var i = 0; i < list_string.length; i++) {
-			this.lastValue[i] = this.chart.renderer.text(
-				list_string[i],
-				this.getWidth() / 3 * 2,
-				this.getHeight() / 4 + (20 * i)
+			var string = list_string[i]
+			var chartText = this.chart.renderer.text(
+				string,
+				x - string.length,
+				y + (i*charH)
 			);
-			this.lastValue[i].add();
+
+			this.OverlayLegend.push(chartText)
+			chartText.add();
 		}
 	},
 

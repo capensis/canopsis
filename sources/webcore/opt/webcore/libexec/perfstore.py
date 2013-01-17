@@ -30,6 +30,7 @@ from libexec.auth import check_auth, get_account
 
 # Modules
 from ctools import parse_perfdata, clean_mfilter
+from ctools import cleanTimestamp
 
 import pyperfstore2
 from pyperfstore2.utils import aggregate_series , mean
@@ -98,6 +99,11 @@ def perfstore_nodes_get_values(start=None, stop=None):
 	logger.debug(" + aggregate_method: %s" % aggregate_method)
 	logger.debug(" + aggregate_interval: %s" % aggregate_interval)
 	logger.debug(" + aggregate_max_points: %s" % aggregate_max_points)
+
+
+	# Hack, normalize timestamps on next release !
+	start = cleanTimestamp(start) * 1000
+	stop  = cleanTimestamp(stop) * 1000
 
 	output = []
 

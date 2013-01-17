@@ -96,6 +96,11 @@
 								"name": "showWarnCritLine"
 							},{
 								"xtype": "checkbox",
+								"fieldLabel": "Display last value in background",
+								"checked": false,
+								"name": "displayLastValue"
+							},{
+								"xtype": "checkbox",
 								"fieldLabel": "Calcul Percent",
 								"checked": false,
 								"name": "SeriePercent"

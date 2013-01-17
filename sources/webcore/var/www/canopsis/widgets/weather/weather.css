@@ -1,273 +1,65 @@
-.widget-weather .table {
-	height: 100%;
-	width: 100%;
-	font-family: "Sans-serif";
-	border-style: none;
-}
-
-.widget-weather .table_div {
-	height:100%;
-	float:left;
-	/*display: table;*/
-}
-
-.widget-weather .table_div div {
-	display:table;
-	height:100%;
-	width:100%;
-}
-
-.widget-weather .table_div div span {
-	display:table-cell;
-	vertical-align:middle;
-	text-align: center;
-	word-wrap: break-word;
-	font-weight: bold;
-}
-
-.widget-weather .logo {
-	background-position:center center;
-	background-repeat:no-repeat;
-	background-size:contain;
-}
-
-.widget-weather .clickable {
-	cursor:pointer;
-}
-
-.widget-weather .clickable:hover{
-	text-decoration:underline;
-}
-
-/*left panel*/
-.widget-weather .left_panel{
-	display:table;
-	height: 100%;
-	/*float : left;*/
-	width:75%;
-	vertical-align:top;
-	/*padding: 2px;*/
-}
-
-.widget-weather .first_sub_section{
-	width:100%;
-	height:70%;
-}
-
-.widget-weather .second_sub_section{
-	width:100%;
-	height:30%;
-}
-
-.widget-weather .left_panel .first_sub_section .title{
-	width: 100%;
-	font-size: 14px;
-	/*word-wrap: break-word;*/
-	font-weight: bold;
-}
-
-.widget-weather .left_panel .first_sub_section .title span{
-	font-size:xx-small;
-	font-weight: normal;
-	vertical-align: middle;
-	margin-left : 8px;
-	word-wrap: break-word;
- }
-
-.widget-weather .left_panel .first_sub_section .comment{
+.weather-table { 
 	font-size: 12px;
-	width: 100%;
+	border:0px;
+	width:100%;
+	margin: 3px;
 }
 
-.widget-weather .left_panel .first_sub_section .comment span{
-	float:right;
-	opacity: 0;
-	background-size:contain;
+.weather-clickable{
+	opacity:0;
 	cursor:pointer;
 }
 
-.widget-weather .left_panel .alert_information{
-	display: table;
-	float: right;
-	width: 40%;
-	/*margin-top: 2%;*/
-	margin-left: 4%
-}
-/*
-.widget-weather .left_panel .alert_img{
-	background-image: url(./icons/warning-icon.png) !important;
-	background-position:center center;
-	background-repeat:no-repeat;
-	background-size:contain;
-	float:right;
-	width: 10%;
-	height: 100%;
-	max-height: 30px;
-}
-*/
-.widget-weather .left_panel .alert_button{
-	float:left;
-	height:100%;
-	font-size:10px;
-	max-height:22px;
+.weather-table button{ 
+	width: 85px;
+	font-size: 9px;
 }
 
-
-/*right panel*/
-.widget-weather .right_panel{
-	/*float:left;*/
-	width:25%;
-	height:100%;
-}
-
-.widget-weather .right_panel .logo{
-	display:table;
+.weather-table img{
 	width: 100%;
-	height: 80%;
-	background-position:center center;
-	background-repeat:no-repeat;
-	background-size:contain;
+	height: auto;
 }
 
-.widget-weather .logo_full_height{
-	width: 100%;
-	height: 100%;
-	background-position:center center;
-	background-repeat:no-repeat;
-	background-size:contain;
-}
-
-.widget-weather .right_panel .logo p{
-	display:table-cell;
-	vertical-align:middle;
-	text-align:center;
+.weather-relative{
+	position:relative;
 	width:100%;
-	font-size:13px;
-	font-weight: bold;
 }
 
-.widget-weather .right_panel .legend{
-	width: 100%;
-	height: 20%;
-	text-align:center;
-	font-size:11px;
+.weather-title {
+	font-weight:bold;
+	font-size:14px;
 }
 
-/* icons */
-
-.widget-weather-icon-info{
-	background-image: url(./icons/info-icon.png) !important;
+.weather-ts {
+	font-size:10px;
+	margin-left: 10px;
 }
 
-.widget-weather-form-icon{
-	vertical-align:middle;
-	height:22px;
-	/*width: 29px;*/
-	margin-right: 5px;
+.weather-percent{
+	position: absolute;
+	width:100%;
+	top:38%;
+	left:0;
+	vertical-align: middle;
+	text-align: center;
+	font-weight:bold;
+	font-size:14px;
 }
 
-/*alert icon*/
-
-.widget-weather-alert-icon{
-	background-position:center center;
-	background-repeat:no-repeat;
-	background-size:contain;
-	float:right;
-	width: 17%;
-	height: 100%;
-	max-height: 40px;
+.weather-alert-message{
+	margin-left: 10px;
+	width:100px;
 }
 
+/*for combobox icons*/
 .widget-weather-alert-icon-0{
-	background-image: url(./icons/public_domain_icon/workman.png) !important;
+	background-image: url(./icons/alert/workman.png) !important;
 }
 
 .widget-weather-alert-icon-1{
-	background-image: url(./icons/public_domain_icon/slippery.png) !important;
+	background-image: url(./icons/alert/slippery.png) !important;
 }
 
 .widget-weather-alert-icon-2{
-	background-image: url(./icons/public_domain_icon/alert.png) !important;
-}
-
-/*-----------------------------iconset N°1---------------------------*/
-.iconSet1_0-10 {
-	background-image: url(./icons/set1/09.png) !important;
-}
-
-.iconSet1_10-20 {
-	background-image: url(./icons/set1/09.png) !important;
-}
-
-.iconSet1_20-30 {
-	background-image: url(./icons/set1/08.png) !important;
-}
-
-.iconSet1_30-40 {
-	background-image: url(./icons/set1/07.png) !important;
-}
-
-.iconSet1_40-50 {
-	background-image: url(./icons/set1/06.png) !important;
-}
-
-.iconSet1_50-60 {
-	background-image: url(./icons/set1/05.png) !important;
-}
-
-.iconSet1_60-70 {
-	background-image: url(./icons/set1/04.png) !important;
-}
-
-.iconSet1_70-80 {
-	background-image: url(./icons/set1/03.png) !important;
-}
-
-.iconSet1_80-90 {
-	background-image: url(./icons/set1/02.png) !important;
-}
-
-.iconSet1_90-100 {
-	background-image: url(./icons/set1/01.png) !important;
-}
-
-/*-----------------------------iconset N°2---------------------------*/
-.iconSet2_0-10 {
-	background-image: url(./icons/set2/2.png) !important;
-}
-
-.iconSet2_10-20 {
-	background-image: url(./icons/set2/2.png) !important;
-}
-
-.iconSet2_20-30 {
-	background-image: url(./icons/set2/2.png) !important;
-}
-
-.iconSet2_30-40 {
-	background-image: url(./icons/set2/1.png) !important;
-}
-
-.iconSet2_40-50 {
-	background-image: url(./icons/set2/1.png) !important;
-}
-
-.iconSet2_50-60 {
-	background-image: url(./icons/set2/1.png) !important;
-}
-
-.iconSet2_60-70 {
-	background-image: url(./icons/set2/1.png) !important;
-}
-
-.iconSet2_70-80 {
-	background-image: url(./icons/set2/1.png) !important;
-}
-
-.iconSet2_80-90 {
-	background-image: url(./icons/set2/0.png) !important;
-}
-
-.iconSet2_90-100 {
-	background-image: url(./icons/set2/0.png) !important;
+	background-image: url(./icons/alert/alert.png) !important;
 }

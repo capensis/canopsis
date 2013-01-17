@@ -19,6 +19,7 @@
 # ---------------------------------
 
 import sys, os, logging, json
+import re
 
 import bottle
 from bottle import route, get, put, delete, request, HTTPError, response
@@ -74,11 +75,18 @@ def get_widgets_css():
 
 	logger.debug(" + Search all widgets CSS...")
 	for widget in widgets:
-		css = "widgets/%s/%s.css" % (widget, widget )
+		css = "widgets/%s/%s.css" % (widget, widget)
+		iecss = "widgets/%s/%s-ie.css" % (widget, widget)
 		
 		if os.path.exists(base_path + css):
 			logger.debug(" - %s" % css)
 			output += "@import '/static/canopsis/%s';\n" % css
+
+		#MSIE 8.0 MSIE 7.0
+		user_agent = request.environ.get('HTTP_USER_AGENT')
+		if re.search("MSIE [78]", user_agent) and os.path.exists(base_path + iecss):
+			logger.debug(" - %s" % iecss)
+			output += "@import '/static/canopsis/%s';\n" % iecss
 
 	response.content_type = 'text/css'
 	return output

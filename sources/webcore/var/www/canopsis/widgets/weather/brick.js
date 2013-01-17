@@ -20,55 +20,121 @@
 */
 
 widget_weather_template = Ext.create('Ext.XTemplate',
-		'<div class="table">',
-			'<div class="left_panel" style="float:{first_panel_float}">',
-				'<div class="first_sub_section" id="{id}-output">',
-					'<p class="title" id="{id}-title">{title}<span>{event_ts}</span></p>',
-					'<p class="comment">',
-						'{output}',
-						'<tpl if="admin == true && derogation == true">',
-							'<span class="icon icon-edit" id="{id}-edit_button"></span>',
-							//'<span class="icon icon-derogation" id="{id}-derogation_button"></span>',
+		'<table class="weather-table">',
+			'<tr>',
+				'<td style="vertical-align: top;" colspan=3>',
+					'<span class="weather-title">{title}</span>',
+					'<span class="weather-ts">{event_ts}</span></br>',
+					'{output}',
+				'</td>',
+				'<td style="width: 14px;" id="{id}-edit_td">',
+					'<tpl if="admin == true && derogation == true">',
+						'<div class="icon icon-edit weather-clickable" id="{id}-edit_button"></div>',
+					'</tpl>',
+				'</td>',
+				'<td class="weather-td-image" style="width: 20%;">',
+					'<div class="weather-relative">',
+						'<tpl if="percent != undefined ">',
+							'<div class="weather-percent">{percent}%</div>',
 						'</tpl>',
-					'</p>',
-				'</div>',
-				'<div class="second_sub_section">',
+						'<img class="weather-image" src="{icon_src}"/>',
+					'</div>',
+				'</td>',
+			'</tr>',
+			'<tr>',
+				'<td rowspan=2 style="width: 90px;">',
 					'<tpl if="button_text != undefined">',
-						//'<div class="alert_button"><button type="button">{button_text}</button></div>',
-						'<button class="alert_button" type="button" id="{id}-button">{button_text}</button>',
+						'<button class="weather-button"  type="button" id="{id}-button">{button_text}</button>',
 					'</tpl>',
-					'<tpl if="alert_msg" != undefined">',
-						'<div class="alert_information" id="{id}-alert_message"><span>{alert_msg}</span></div>',
-					'</tpl>',
+				'</td>',
+				'<td rowspan=2 style="width: 30px;">',
 					'<tpl if="alert_icon" != undefined">',
-						//'<div class="{alert_icon}"></div>',
-						'<div class="widget-weather-alert-icon {alert_icon}"></div>',
+						'<img src="{alert_icon}">',
 					'</tpl>',
-				'</div>',
-			'</div>',
-			'<div class="right_panel" style="float:{second_panel_float}">',
-				'<div class="logo {class_icon}">',
-					'<tpl if="percent != undefined ">',
-						'<p>{percent}%</p>',
-					 '<tpl else>',
-						'<p></p>',
+				'</td>',
+				'<td rowspan=2>',
+					'<tpl if="alert_msg" != undefined">',
+						'<p class="weather-alert-message" id="{id}-alert_message">{alert_msg}</p>',
 					'</tpl>',
-				'</div>',
-				'<div class="legend">{legend}</div>',
-			'</div>',
-		'</div',
+				'</td>',
+				'<td></td>',
+				'<td><center>{legend}</center></td>',
+				//'<td><center>&nbsp;</center></td>',
+			'</tr>',
+			'<tr>',
+				'<td></td>',
+				'<td></td>',
+			'</tr>',
+		'</table>',
+		{compiled: true}
+	);
+
+widget_weather_template_left = Ext.create('Ext.XTemplate',
+		'<table class="weather-table">',
+			'<tr>',
+				'<td class="weather-td-image" style="width: 20%;">',
+					'<div class="weather-relative">',
+						'<tpl if="percent != undefined ">',
+							'<div class="weather-percent">{percent}%</div>',
+						'</tpl>',
+						'<img class="weather-image" src="{icon_src}"/>',
+					'</div>',
+				'</td>',
+				'<td style="vertical-align: top;" colspan=3>',
+					'<span class="weather-title">{title}</span>',
+					'<span class="weather-ts">{event_ts}</span></br>',
+					'{output}',
+				'</td>',
+				'<td style="width: 14px;" id="{id}-edit_td">',
+					'<tpl if="admin == true && derogation == true">',
+						'<div class="icon icon-edit weather-clickable" id="{id}-edit_button"></div>',
+					'</tpl>',
+				'</td>',
+			'</tr>',
+			'<tr>',
+				'<td><center>{legend}</center></td>',
+				//'<td></td>',
+				'<td rowspan=2 style="width: 90px;">',
+					'<tpl if="button_text != undefined">',
+						'<button class="weather-button"  type="button" id="{id}-button">{button_text}</button>',
+					'</tpl>',
+				'</td>',
+				'<td rowspan=2 style="width: 30px;">',
+					'<tpl if="alert_icon" != undefined">',
+						'<img src="{alert_icon}">',
+					'</tpl>',
+				'</td>',
+				'<td rowspan=2>',
+					'<tpl if="alert_msg" != undefined">',
+						'<p class="weather-alert-message" id="{id}-alert_message">{alert_msg}</p>',
+					'</tpl>',
+				'</td>',
+			'</tr>',
+			'<tr>',
+				'<td></td>',
+				'<td></td>',
+			'</tr>',
+		'</table>',
 		{compiled: true}
 	);
 
 widget_weather_simple_template = Ext.create('Ext.XTemplate',
-		'<div class="table">',
-			'<div style="width:25%" class="table_div"></div>',
-			'<div style="width:15%" class="table_div logo {class_icon}"></div>',
-			'<div style="width:30%;font-size:{title_font_size}px" class="table_div" id="{id}-title">',
-				'<div><span>{title}</span></div>',
-			'</div>',
-			'<div style="width:25%" class="table_div"></div>',
-		'</div',
+		'<table class="weather-table" style="vertical-align:middle;">',
+			'<tr>',
+				'<td style="width:25%" class=""></td>',
+				'<td class="weather-td-image" style="width:25%;">',
+					'<div class="weather-relative">',
+						'<img class="weather-image" src="{icon_src}">',
+						'<tpl if="percent != undefined ">',
+							'<div class="weather-percent">{percent}%</div>',
+						'</tpl>',
+					'</div>',
+				'</td>',
+				'<td style="width:30%;font-size:{title_font_size}px" class="" id="{id}-title">',
+					'<div><span>{title}</span></div>',
+				'</td>',
+				'<td style="width:15%" class=""></td>',
+		'</tr>',
 		{compiled: true}
 	);
 
@@ -90,7 +156,9 @@ Ext.define('widgets.weather.brick' , {
 	simple_display: false,
 	title_font_size: 14,
 
-	alert_icon_basename: 'widget-weather-alert-icon-',
+	alert_icon_basedir: 'widgets/weather/icons/alert/',
+	alert_icon_name: ['workman.png','slippery.png','alert.png'],
+	info_weather_icon: 'widgets/weather/icons/info-icon.png',
 
 	helpdesk: undefined,
 	nodeId: undefined,
@@ -113,6 +181,8 @@ Ext.define('widgets.weather.brick' , {
 		this.resource = this.data.resource;
 
 		this.callParent(arguments);
+
+		this.on('resize',this.onResize,this)
 	},
 
 	afterRender: function() {
@@ -120,7 +190,10 @@ Ext.define('widgets.weather.brick' , {
 		if (this.simple_display)
 			this._html_template = widget_weather_simple_template;
 		else
-			this._html_template = widget_weather_template;
+			if(this.icon_on_left)
+				this._html_template = widget_weather_template_left;
+			else
+				this._html_template = widget_weather_template;
 
 		this.widget_base_config = {
 			id: this.id,
@@ -145,7 +218,7 @@ Ext.define('widgets.weather.brick' , {
 			this.widget_base_config.title = '<a href="' + linkUrl + '" target="_newtab">' + this.widget_base_config.title + '</a>';
 
 		//icons
-
+		/*
 		if (this.icon_on_left) {
 			this.widget_base_config.first_panel_float = 'right';
 			this.widget_base_config.second_panel_float = 'left';
@@ -153,7 +226,7 @@ Ext.define('widgets.weather.brick' , {
 			this.widget_base_config.first_panel_float = 'left';
 			this.widget_base_config.second_panel_float = 'right';
 		}
-
+		*/
 		//check ressource admin
 		if (global.accountCtrl.check_right(this.data, 'w'))
 			this.widget_base_config.admin = true;
@@ -175,11 +248,11 @@ Ext.define('widgets.weather.brick' , {
 
 		var clickable_title = this.getEl().getById(this.id + '-title');
 		if (clickable_title && (this.external_link || this.link) && !this.fullscreenMode) {
-			clickable_title.addCls('clickable');
+			clickable_title.addCls('weather_clickable');
 			clickable_title.on('click', this.externalLink, this);
 		}
 		if (this.widget_base_config.admin && this.display_derogation_icon && this.edit_button) {
-			var output = this.getEl().getById(this.id + '-output');
+			var output = this.getEl().getById(this.id + '-edit_td');
 			if (output) {
 				output.hover(
 					function() {this.edit_button.fadeIn()},
@@ -201,6 +274,21 @@ Ext.define('widgets.weather.brick' , {
 				},this);
 			}
 		}
+
+		//Hack for removing scrolling bar on ie
+		this.getEl().parent().setStyle('overflow-x','hidden')
+	/*	this.getEl().down('.weather-image').setStyle('width',this.getWidth() * 0.20)
+		this.getEl().down('.weather-td-image').setStyle('width',this.getWidth() * 0.20)*/
+
+
+	},
+
+	onResize: function(){
+		//very dirty hack, ie resize images after that
+		if(Ext.isIE){
+			this.getEl().down('.weather-image').setStyle('width',this.getWidth() * 0.20)
+			this.getEl().down('.weather-td-image').setStyle('width',this.getWidth() * 0.20)
+		}
 	},
 
 	build: function(data) {
@@ -216,22 +304,22 @@ Ext.define('widgets.weather.brick' , {
 
 		if (data.event_type == 'selector') {
 			var icon_value = 100 - (data.state / 4 * 100);
-			widget_data.class_icon = this.getIcon(icon_value);
+			widget_data.icon_src = this.getIcon(icon_value);
 		}else {
 			if (this.state_as_icon_value || this.selector) {
 				if (!this.selector) {
 					var icon_value = 100 - (data.state / 4 * 100);
-					widget_data.class_icon = this.getIcon(icon_value);
+					widget_data.icon_src = this.getIcon(icon_value);
 				}else {
 					log.debug('  +  This brick is using its selector state as icon', this.logAuthor);
 					var icon_value = 100 - (this.selector.state / 4 * 100);
-					widget_data.class_icon = this.getIcon(icon_value);
+					widget_data.icon_src = this.getIcon(icon_value);
 				}
 			}else {
 				if (data.perf_data_array[0])
-					widget_data.class_icon = this.getIcon(data.perf_data_array[0].value);
+					widget_data.icon_src = this.getIcon(data.perf_data_array[0].value);
 				else
-					widget_data.class_icon = 'widget-weather-icon-info';
+					widget_data.icon_src = this.info_weather_icon;
 			}
 			if (data.perf_data_array)
 				widget_data.percent = data.perf_data_array[0].value;
@@ -243,9 +331,11 @@ Ext.define('widgets.weather.brick' , {
 
 		if (this.data.alert_msg)
 			widget_data.alert_msg = this.data.alert_msg;
+		else
+			widget_data.alert_msg = "&nbsp;"
 
 		if (this.data.alert_icon != undefined)
-			widget_data.alert_icon = this.alert_icon_basename + this.data.alert_icon;
+			widget_data.alert_icon = this.alert_icon_basedir + this.alert_icon_name[this.data.alert_icon];
 
 		var config = Ext.Object.merge(widget_data, this.widget_base_config);
 		var _html = this._html_template.applyTemplate(config);
@@ -261,25 +351,26 @@ Ext.define('widgets.weather.brick' , {
 			var timestamp = data.values[0][0];
 			var nb_points = data.values.length;
 			var last_timestamp = data.values[nb_points - 1][0];
+			var last_value = data.values[nb_points - 1][1];
 
 			if (this.event_type == 'selector' || this.selector_state_as_icon_value) {
-				var state = demultiplex_cps_state(data.values[0][1]).state;
+				var state = demultiplex_cps_state(last_value).state;
 				log.debug(' + State of ' + this.component + ' is: ' + state, this.logAuthor);
 				log.debug(' + ' + nb_points + ' points returned by server', this.logAuthor);
 				log.debug('  +  First value ts: ' + timestamp, this.logAuthor);
 				log.debug('  +  Last value ts: ' + last_timestamp, this.logAuthor);
 
 				var icon_value = 100 - (state / 4 * 100);
-				widget_data.class_icon = this.getIcon(icon_value);
-				widget_data.output = _('State on') + ' ' + rdr_tstodate(timestamp / 1000);
+				widget_data.icon_src = this.getIcon(icon_value);
+				widget_data.output = _('State on') + ' ' + rdr_tstodate(last_timestamp / 1000);
 			}else {
-				var cps_pct_by_state_0 = data.values[0][1];
+				var cps_pct_by_state_0 = last_value;
 				widget_data.percent = cps_pct_by_state_0;
-				widget_data.class_icon = this.getIcon(cps_pct_by_state_0);
-				widget_data.output = _('SLA on') + ' ' + rdr_tstodate(timestamp / 1000);
+				widget_data.icon_src = this.getIcon(cps_pct_by_state_0);
+				widget_data.output = _('SLA on') + ' ' + rdr_tstodate(last_timestamp / 1000);
 			}
 		} else {
-			widget_data.class_icon = 'widget-weather-icon-info';
+			widget_data.icon_src = this.info_weather_icon;
 			widget_data.output = _('No data available');
 		}
 
@@ -292,7 +383,7 @@ Ext.define('widgets.weather.brick' , {
 		log.debug('  +  Build empty brick for ' + this.event_type + ' ' + this.component, this.logAuthor);
 		var widget_data = {
 			output: _('No data for the selected information'),
-			class_icon: 'widget-weather-icon-info'
+			icon_src: this.info_weather_icon
 		};
 
 		var config = Ext.Object.merge(widget_data, this.widget_base_config);
@@ -378,44 +469,6 @@ Ext.define('widgets.weather.brick' , {
 
 	getIcon: function(value) {
 		value = Math.floor(value / 10) * 10;
-		switch (value) {
-			case 0:
-				return 'iconSet' + this.iconSet + '_' + '0-10';
-				break;
-			case 10:
-				return 'iconSet' + this.iconSet + '_' + '10-20';
-				break;
-			case 20:
-				return 'iconSet' + this.iconSet + '_' + '20-30';
-				break;
-			case 30:
-				return 'iconSet' + this.iconSet + '_' + '30-40';
-				break;
-			case 40:
-				return 'iconSet' + this.iconSet + '_' + '40-50';
-				break;
-			case 50:
-				return 'iconSet' + this.iconSet + '_' + '50-60';
-				break;
-			case 60:
-				return 'iconSet' + this.iconSet + '_' + '60-70';
-				break;
-			case 70:
-				return 'iconSet' + this.iconSet + '_' + '70-80';
-				break;
-			case 80:
-				return 'iconSet' + this.iconSet + '_' + '80-90';
-				break;
-			case 90:
-				return 'iconSet' + this.iconSet + '_' + '90-100';
-				break;
-			case 100:
-				return 'iconSet' + this.iconSet + '_' + '90-100';
-				break;
-			default:
-				return undefined;
-				break;
-		}
+		return 'widgets/weather/icons/set' + this.iconSet + '/' + value + '.png';
 	}
-
 });

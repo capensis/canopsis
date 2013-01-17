@@ -155,7 +155,7 @@ Ext.define('widgets.weather.weather' , {
 
 	},
 
-	getPastNodes: function(from,to) {
+	getPastNodes: function(from, to) {
 		log.debug(' + Request data from: ' + from + ' to: ' + to, this.logAuthor);
 		//log.dump(this.nodes)
 		//--------------------Prepare post params-----------------
@@ -228,21 +228,19 @@ Ext.define('widgets.weather.weather' , {
 				icon_on_left: this.icon_on_left,
 				exportMode: this.exportMode
 			};
-
+		
 		if (this.defaultPadding)
 			this.base_config.padding = this.defaultPadding;
 
 		if (this.defaultMargin)
 			this.base_config.margin = this.defaultMargin;
 
-		if (this.nodes.length == 1) {
+		if (this.nodes.length == 1) 
 			this.base_config.anchor = '100% 100%';
-		} else {
+		/*else
 			if (this.defaultHeight)
 				this.base_config.height = parseInt(this.defaultHeight, 10);
-			this.base_config.anchor = '100%';
-		}
-
+		*/
 	},
 
 	populate: function(data) {
@@ -311,18 +309,17 @@ Ext.define('widgets.weather.weather' , {
 
 	report: function(data) {
 		log.debug(' + Enter report function', this.logAuthor);
-		bricks = this.wcontainer.items.items;
+		var bricks = this.wcontainer.items.items;
+		var dataById = {}
+
+		for (var i = 0; i < data.length; i++)
+			dataById[data[i].node] = data[i]
 
 		Ext.Array.each(bricks, function(brick) {
-			var new_values = undefined;
+			var new_values = dataById[brick.selector_meta_id];
 
-			for (var i = 0; i < data.length; i++) {
-				if (data[i].node == brick.selector_meta_id) {
-					new_values = data[i];
-				} else if (data[i].node == brick.node_meta_id) {
-					new_values = data[i];
-				}
-			}
+			if (! new_values)
+				new_values = dataById[brick.node_meta_id];
 
 			if (new_values && new_values.values.length > 0) {
 				log.debug(' + New values for ' + brick.event_type + ' ' + brick.component, this.logAuthor);
