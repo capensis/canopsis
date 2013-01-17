@@ -55,19 +55,20 @@ Ext.define('canopsis.store.EventLogs', {
 	toggleEventFilter: function(field,value) {
 		if (this.eventFilter[field] == undefined) {
 			this.eventFilter[field] = [value];
-		}else {
-			var index = this.eventFilter[field].indexOf(value);
-			if (index != -1)
+		} else {
+			if (Ext.Array.contains(this.eventFilter[field], value)){
+				var index = this.eventFilter[field].indexOf(value);
 				this.eventFilter[field].splice(index, 1);
-			else
+			} else {
 				this.eventFilter[field].push(value);
+			}
 		}
 		this.buildEventFilter();
 	},
 
 	buildEventFilter: function() {
 		var cleaned_filter = {};
-		for (var i in this.eventFilter)
+		for (var i = 0; i < this.eventFilter.length; i++)
 			cleaned_filter[i] = this.getNinFilter(this.eventFilter[i]);
 
 		this.setFilter(cleaned_filter);

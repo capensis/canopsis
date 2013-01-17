@@ -45,13 +45,6 @@
 								"name": "defaultMargin",
 								"allowBlank": true
 							},{
-								"xtype": "numberfield",
-								"fieldLabel": "Default height",
-								"value" : 70,
-								"minValue": 0,
-								"name": "defaultHeight",
-								"allowBlank": true
-							},{
 								"xtype": "colorfield",
 								"fieldLabel": "Impair brick background color",
 								"name": "bg_impair_color",

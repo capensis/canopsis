@@ -73,6 +73,20 @@ Ext.define('canopsis.controller.Keynav', {
 					var ctrl = this.getController('Tabs');
 					ctrl.save_active_view();
 				}
+
+			},{
+				key: Ext.EventObject.X,
+				ctrl: true,
+				scope: this,
+				fn: function(key, event) {
+					event.stopEvent();
+					// cancel view
+					log.debug('ctrl + x', this.logAuthor);
+
+					var ctrl = this.getController('Tabs');
+					ctrl.cancel_active_view();
+				}
+
 			},{
 				key: Ext.EventObject.F,
 				ctrl: true,

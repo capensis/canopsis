@@ -67,6 +67,8 @@ Ext.define('widgets.diagram.diagram' , {
 
 	nameInLabelFormatter: false,
 
+	haveCounter: false,
+
 	labelFormatterPct: function() {	return '<b>' + this.point.metric + '</b>: ' + Math.round(this.percentage) + '%';},
 	labelFormatterBar: function() {	return '<b>' + this.x + '</b>: ' + rdr_humanreadable_value(this.y, this.point.bunit)},
 
@@ -81,19 +83,24 @@ Ext.define('widgets.diagram.diagram' , {
 
 		this.nodesByID = {};
 		//Store nodes in object
-		for (var i in this.nodes) {
+		for (var i = 0; i < this.nodes.length; i++) {
 			var node = this.nodes[i];
+
+			if (node['type'] && node['type'] == 'COUNTER')
+				this.haveCounter = true
 
 			//hack for retro compatibility
 			if (!node.dn)
 				node.dn = [node.component, node.resource];
 
 			if (this.nodesByID[node.id]) {
+				this.nodesByID[node.id] = {};
+				this.nodesByID[node.id]['metrics'] = [];
 				this.nodesByID[node.id].metrics.push(node.metrics[0]);
 			}else {
 				this.nodesByID[node.id] = Ext.clone(node);
-				this.nb_node += 1;
 			}
+			this.nb_node += 1;
 		}
 		log.debug('nodesByID:', this.logAuthor);
 		log.dump(this.nodesByID);
@@ -262,7 +269,7 @@ Ext.define('widgets.diagram.diagram' , {
 
 	processNodes: function() {
 		var post_params = [];
-		for (var i in this.nodes) {
+		for (var i = 0; i < this.nodes.length; i++) {
 			post_params.push({
 				id: this.nodes[i].id,
 				metrics: this.nodes[i].metrics
@@ -271,7 +278,8 @@ Ext.define('widgets.diagram.diagram' , {
 		this.post_params = {
 			'nodes': Ext.JSON.encode(post_params),
 			'aggregate_method' : this.aggregate_method,
-			'aggregate_max_points': 1
+			'aggregate_max_points': 1,
+			'aggregate_timemodulation': false
 		};
 
 		if (this.aggregate_interval)
@@ -280,13 +288,11 @@ Ext.define('widgets.diagram.diagram' , {
 
 	doRefresh: function(from, to) {
 		// Get last point only
-		if (this.interval) {
-			to = Ext.Date.now();
-			from = to - this.interval * 1000;
-		}else {
+		if (this.time_window && from == 0)
+			from = to - this.time_window * 1000;
+		else if (! this.haveCounter)
 			from = to;
-		}
-
+		
 		log.debug('Get values from ' + new Date(from) + ' to ' + new Date(to), this.logAuthor);
 
 		if (this.nodes) {
@@ -317,7 +323,7 @@ Ext.define('widgets.diagram.diagram' , {
 	onRefresh: function(data) {
 		if (this.chart && data.length != 0) {
 			var myEl = this.getEl();
-			if (myEl.isMasked && !this.isDisabled())
+			if (myEl && myEl.isMasked && !this.isDisabled())
 				myEl.unmask();
 
 			// Remove old series
@@ -327,14 +333,14 @@ Ext.define('widgets.diagram.diagram' , {
 
 			var other_unit = '';
 
-			for (var index in data) {
-				var info = data[index];
+			for (var i = 0; i < data.length; i++) {
+				var info = data[i];
 
 				var node = this.nodesByID[info['node']];
 
 				//custom metric
 				if (node.extra_field && node.extra_field.label) {
-					data[index]['metric'] = node.extra_field.label;
+					data[i]['metric'] = node.extra_field.label;
 				}
 
 				var metric = info['metric'];
@@ -357,7 +363,7 @@ Ext.define('widgets.diagram.diagram' , {
 
 				var metric_name = metric;
 
-				var colors = global.curvesCtrl.getRenderColors(metric_name, index);
+				var colors = global.curvesCtrl.getRenderColors(metric_name, i);
 				var curve = global.curvesCtrl.getRenderInfo(metric_name);
 
 				// Set Label
@@ -399,7 +405,7 @@ Ext.define('widgets.diagram.diagram' , {
 					var _color = this.getGradientColor(colors[0]);
 				else
 					var _color = colors[0];
-				serie.data.push({ id: 'pie_other', name: other_label, y: max - value, color: _color });
+				serie.data.push({ id: 'pie_other', name: other_label, metric: this.other_label, y: max - value, color: _color });
 			}
 
 			if (serie.data) {
@@ -433,7 +439,7 @@ Ext.define('widgets.diagram.diagram' , {
 	getSerie: function(data) {
 		var bunit = undefined;
 		if (data.length != 0)
-			for (var i in data)
+			for (var i = 0; i < data.length; i++)
 				if (data[i].bunit)
 					bunit = data[i].bunit;
 
@@ -489,10 +495,10 @@ Ext.define('widgets.diagram.diagram' , {
 
 	setAxis: function(data) {
 		var metrics = [];
-		for (var i in data)
+		for (var i = 0; i < data.length; i++)
 			if (data[i].metric)
 				metrics.push(data[i].metric);
-		
+
 		this.chart.xAxis[0].setCategories(metrics, false);
 	},
 

@@ -206,3 +206,10 @@ def clean_mfilter(mfilter, isnot=False):
 				return re.compile(values)
 
 	return mfilter
+
+def cleanTimestamp(timestamp):
+	if len(str(timestamp)) > 12:
+		return int(timestamp) / 1000
+	else:
+		return int(timestamp)
+

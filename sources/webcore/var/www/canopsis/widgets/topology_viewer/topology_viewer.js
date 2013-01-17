@@ -173,7 +173,7 @@ Ext.define('widgets.topology_viewer.topology_viewer' , {
 
 		if (tree.childs && tree.childs.length > 0) {
 			angle = this.computeAnglesPosition(tree.childs.length, usuable_angle, angle);
-			for (var i in tree.childs) {
+			for (var i = 0; i < tree.childs.length; i++) {
 				var child = tree.childs[i];
 				var _id = this.drawRecursiveTree(child, depth + 1, angle[i], coord);
 

@@ -46,7 +46,7 @@ Ext.define('canopsis.view.View.TreePanel' , {
 			dataIndex: 'view_options',
 			renderer: function(val,meta,record) {
 				if (val && record.raw && record.raw.crecord_type != 'view_directory')
-					return val.pageSize + ' - ' + val.orientation;
+					return val.pageSize + ' - ' + _(val.orientation);
 			}
 		},{
 			flex: 1,
@@ -175,6 +175,17 @@ Ext.define('canopsis.view.View.TreePanel' , {
 
 	export_pdf: function(view) {
 		this.fireEvent('exportPdf', view);
+	},
+
+	add_to_context_menu: function(item_array){
+		item_array.push(
+			Ext.create('Ext.Action', {
+				iconCls: 'icon-preferences',
+				text: _('Options'),
+				action: 'OpenViewOption'
+			})
+		)
+		return item_array
 	}
 
 });

@@ -96,6 +96,11 @@
 								"name": "showWarnCritLine"
 							},{
 								"xtype": "checkbox",
+								"fieldLabel": "Display last value in background",
+								"checked": false,
+								"name": "displayLastValue"
+							},{
+								"xtype": "checkbox",
 								"fieldLabel": "Calcul Percent",
 								"checked": false,
 								"name": "SeriePercent"
@@ -329,7 +334,7 @@
 											"value": "FFFFFF"
 										},{
 											"xtype":"checkcolumn",
-											"text":"trend",
+											"text":"Trend",
 											"dataIndex": "trend_curve",
 											"width": 55,
 											"checked":true

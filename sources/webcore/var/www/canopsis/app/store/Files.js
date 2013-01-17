@@ -28,8 +28,8 @@ Ext.define('canopsis.store.Files', {
 
 	sorters: [
         {
-            property: 'creationTs',
-            direction: 'ASC'
+            property: 'crecord_creation_time',
+            direction: 'DESC'
         }
     ],
 

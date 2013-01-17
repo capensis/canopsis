@@ -65,7 +65,8 @@ Ext.define('widgets.perftop.perftop' , {
 									'threshold_direction': this.threshold_direction,
 									'expand': this.expand,
 									'percent': this.show_percent,
-									'threshold_on_pct': this.threshold_on_pct
+									'threshold_on_pct': this.threshold_on_pct,
+									'report': this.reportMode || this.exportMode
 								},
 					reader: {
 						type: 'json',
@@ -152,8 +153,11 @@ Ext.define('widgets.perftop.perftop' , {
 					dataIndex: 'pct',
 					align: 'right',
 					renderer: function(value, metaData, record) {
-						if (value != undefined)
-							return value + '%';
+						if (Ext.isNumber(value))
+							if (value == -1)
+								return _('N/A');
+							else
+								return value + '%';
 						else
 							return _('N/A');
 					}
@@ -207,8 +211,16 @@ Ext.define('widgets.perftop.perftop' , {
 
 	doRefresh: function(from, to) {
 		this.store.proxy.extraParams['time_window'] = (to - from) / 1000;
+		this.store.proxy.extraParams['report'] = this.reportMode || this.exportMode;
+		var url  = this.store.proxy['url'];
+
+		if (this.store.proxy.extraParams['report'])
+			this.store.proxy['url'] = url + '/' + from +'/' + to;
+		
 		if (this.grid)
 			this.grid.store.load();
+
+		this.store.proxy['url'] = url;
 	}
 
 });

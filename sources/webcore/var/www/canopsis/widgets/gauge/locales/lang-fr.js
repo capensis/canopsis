@@ -21,9 +21,14 @@
 
 i18n['gauge.Show Min & Max'] = 'Montrer Min & Max';
 i18n['gauge.Display value unit'] = "Afficher l'unité";
-i18n['gauge.Use crit/warn threshold'] = "Afficher les seuils de critique/alerte";
-i18n['gauge.Gauge width scale'] = "Largeur de la jauge";
-i18n['gauge.Start color'] = "Couleur de début";
-i18n['gauge.Stop/critic color'] = "Couleur de fin/critique";
+i18n['gauge.Use crit/warn threshold'] = 'Afficher les seuils de critique/alerte';
+i18n['gauge.Gauge width scale'] = 'Largeur de la jauge';
+i18n['gauge.Start color'] = 'Couleur de début';
+i18n['gauge.Stop/critic color'] = 'Couleur de fin/critique';
 i18n['gauge.Warn color'] = "Couleur d'alerte";
-i18n['gauge.Gauge color'] = "Couleur de la jauge";
+i18n['gauge.Gauge color'] = 'Couleur de la jauge';
+i18n['gauge.Custom label'] = 'Nom label';
+i18n['gauge.Min value'] = 'Valeur min';
+i18n['gauge.Warn value'] = 'Valeur alerte';
+i18n['gauge.Crit value'] = 'Valeur crit';
+i18n['gauge.Max value'] = 'Valeur max';

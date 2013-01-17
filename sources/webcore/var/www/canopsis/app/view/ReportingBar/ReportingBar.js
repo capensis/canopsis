@@ -43,7 +43,7 @@ Ext.define('canopsis.view.ReportingBar.ReportingBar' , {
 		var tommorow = new Date(today.getTime() + (global.commonTs.day * 1000));
 		var yesterday = new Date(today.getTime() - (global.commonTs.day * 1000));
 
-		this.previousButton = this.add({
+		this.add({
 			xtype: 'button',
 			cls: 'x-btn-icon x-tbar-page-prev',
 			action: 'previous'
@@ -86,31 +86,30 @@ Ext.define('canopsis.view.ReportingBar.ReportingBar' , {
 		this.combo.setValue(86400);
 
 		this.textFrom = this.add({xtype: 'tbtext', text: _('From') + ': ', hidden: true});
-		this.textBefore = this.add({xtype: 'tbtext', text: _('Before') + ': '});
-
 		this.fromTs = this.add({
-			xtype: 'cdate',
-			date_width: 130,
-			hour_width: 70,
-			date_value: tommorow,
-			max_value: tommorow
-		});
-
-		this.nextButton = this.add({
-			xtype: 'button',
-			cls: 'x-btn-icon x-tbar-page-next',
-			action: 'next'
-		});
-
-		this.textTo = this.add({xtype: 'tbtext', text: _('To') + ': ', hidden: true});
-
-		this.toTs = this.add({
 			xtype: 'cdate',
 			date_width: 130,
 			hour_width: 70,
 			date_value: today,
 			max_value: tommorow,
 			hidden: true
+		});
+
+
+		this.add({
+			xtype: 'button',
+			cls: 'x-btn-icon x-tbar-page-next',
+			action: 'next'
+		});
+
+		this.textTo = this.add({xtype: 'tbtext', text: _('To') + ': ', hidden: true});
+		this.textBefore = this.add({xtype: 'tbtext', text: _('Before') + ': '});
+		this.toTs = this.add({
+			xtype: 'cdate',
+			date_width: 130,
+			hour_width: 70,
+			now: true,
+			max_value: tommorow
 		});
 
 
@@ -123,31 +122,24 @@ Ext.define('canopsis.view.ReportingBar.ReportingBar' , {
 		this.toggleButton = this.add({
 			xtype: 'button',
 			iconCls: 'icon-calendar',
+			action:'toggleMode',
 			tooltip: _('Toggle to advanced/simple mode')
-		});
-
-		this.searchButton = this.add({
+		},{
 			xtype: 'button',
 			iconCls: 'icon-run',
 			action: 'search',
 			tooltip: _('Display data of the selected time')
-		});
-
-		this.saveButton = this.add({
+		},{
 			xtype: 'button',
 			iconCls: 'icon-save',
 			action: 'save',
 			tooltip: _('Export this view to pdf')
-		});
-
-		this.htmlButton = this.add({
+		},{
 			xtype: 'button',
 			iconCls: 'icon-page-html',
 			action: 'link',
 			tooltip: _('View page in html')
-		});
-
-		this.exitButton = this.add({
+		},{
 			xtype: 'button',
 			iconCls: 'icon-close',
 			action: 'exit',

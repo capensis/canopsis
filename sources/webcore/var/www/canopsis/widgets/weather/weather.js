@@ -104,7 +104,8 @@ Ext.define('widgets.weather.weather' , {
 				var nodes = Ext.JSON.decode(response.responseText).data;
 				var nodes_obj = {};
 
-				for (var i in nodes) {
+
+				for (var i = 0; i < nodes.length; i++) {
 					nodes[i].nodeId = getMetaId(nodes[i].component, nodes[i].resource, nodes[i].metric);
 					nodes_obj[nodes[i]._id] = nodes[i];
 				}
@@ -125,7 +126,8 @@ Ext.define('widgets.weather.weather' , {
 
 	getSelectorNodes: function(nodes) {
 		var selector_list = [];
-		for (var i in nodes)
+
+		for (var i = 0; i < nodes.length; i++)
 			if (nodes[i].selector_rk)
 				selector_list.push(nodes[i].selector_rk);
 
@@ -139,7 +141,7 @@ Ext.define('widgets.weather.weather' , {
 				var nodes = Ext.JSON.decode(response.responseText).data;
 				node_dict = {};
 
-				for (var i in nodes)
+				for (var i = 0; i < nodes.length; i++)
 					node_dict[nodes[i]._id] = nodes[i];
 
 				this.selector_nodes = node_dict;
@@ -153,14 +155,17 @@ Ext.define('widgets.weather.weather' , {
 
 	},
 
-	getPastNodes: function(from,to) {
+	getPastNodes: function(from, to) {
 		log.debug(' + Request data from: ' + from + ' to: ' + to, this.logAuthor);
 		//log.dump(this.nodes)
 		//--------------------Prepare post params-----------------
 
 		var post_params = [];
-		for (var i in this.nodes)
-			post_params.push({id: this.nodes[i].node_meta_id});
+
+		var me = this;
+		Ext.Object.each(this.nodes, function(key, value, myself) {
+			post_params.push({id: me.nodes[key].node_meta_id})
+		});
 
 		//-------------------------send request--------------------
 		Ext.Ajax.request({
@@ -179,38 +184,40 @@ Ext.define('widgets.weather.weather' , {
 	},
 
 	generate_node_meta_id: function() {
-		for (var i in this.nodes) {
-
+		var me = this;
+		Ext.Object.each(this.nodes, function(node_id, node, myself) {
 			//build selector get id or node id
-			if (this.selector_state_as_icon_value && this.selector_nodes[this.nodes[i].selector_rk]) {
-				var selector = this.selector_nodes[this.nodes[i].selector_rk];
-				var component = selector.component;
-				var resource = selector.resource;
-				var metric = 'cps_state';
+			if (me.selector_state_as_icon_value && me.selector_nodes[node.selector_rk]) {
+
+				var selector 	= me.selector_nodes[node.selector_rk];
+				var component 	= selector.component;
+				var resource 	= selector.resource;
+				var metric 		= 'cps_state';
 
 				if (resource)
 					var selector_id = getMetaId(component, resource, metric);
 				else
 					var selector_id = getMetaId(component, undefined, metric);
 
-				this.nodes[i].selector_meta_id = selector_id;
+				node.selector_meta_id = selector_id;
 
 			}else {
-				var component = this.nodes[i].component;
-				var resource = this.nodes[i].resource;
-				if (this.nodes[i].event_type == 'selector')
+				var component 	= node.component;
+				var resource 	= node.resource;
+
+				if (node.event_type == 'selector')
 					var metric = 'cps_state';
 				else
 					var metric = 'cps_pct_by_state_0';
 
 				if (resource)
-					var node = getMetaId(component, resource, metric);
+					var node_meta_id = getMetaId(component, resource, metric);
 				else
-					var node = getMetaId(component, undefined, metric);
+					var node_meta_id = getMetaId(component, undefined, metric);
 
-				this.nodes[i].node_meta_id = node;
+				node.node_meta_id = node_meta_id;
 			}
-		}
+		});
 	},
 
 	configure: function() {
@@ -221,21 +228,19 @@ Ext.define('widgets.weather.weather' , {
 				icon_on_left: this.icon_on_left,
 				exportMode: this.exportMode
 			};
-
+		
 		if (this.defaultPadding)
 			this.base_config.padding = this.defaultPadding;
 
 		if (this.defaultMargin)
 			this.base_config.margin = this.defaultMargin;
 
-		if (this.nodes.length == 1) {
+		if (this.nodes.length == 1) 
 			this.base_config.anchor = '100% 100%';
-		} else {
+		/*else
 			if (this.defaultHeight)
 				this.base_config.height = parseInt(this.defaultHeight, 10);
-			this.base_config.anchor = '100%';
-		}
-
+		*/
 	},
 
 	populate: function(data) {
@@ -246,7 +251,7 @@ Ext.define('widgets.weather.weather' , {
 		this.wcontainer.removeAll();
 		var debug_loop_count = 0;
 
-		for (var i in this.nodeId) {
+		for (var i = 0; i < this.nodeId.length; i++) {
 			var node_id = this.nodeId[i];
 
 			if (data[node_id]) {
@@ -304,18 +309,17 @@ Ext.define('widgets.weather.weather' , {
 
 	report: function(data) {
 		log.debug(' + Enter report function', this.logAuthor);
-		bricks = this.wcontainer.items.items;
+		var bricks = this.wcontainer.items.items;
+		var dataById = {}
+
+		for (var i = 0; i < data.length; i++)
+			dataById[data[i].node] = data[i]
 
 		Ext.Array.each(bricks, function(brick) {
-			var new_values = undefined;
+			var new_values = dataById[brick.selector_meta_id];
 
-			for (var i in data) {
-				if (data[i].node == brick.selector_meta_id) {
-					new_values = data[i];
-				} else if (data[i].node == brick.node_meta_id) {
-					new_values = data[i];
-				}
-			}
+			if (! new_values)
+				new_values = dataById[brick.node_meta_id];
 
 			if (new_values && new_values.values.length > 0) {
 				log.debug(' + New values for ' + brick.event_type + ' ' + brick.component, this.logAuthor);

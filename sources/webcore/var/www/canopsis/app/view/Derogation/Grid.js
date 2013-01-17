@@ -38,7 +38,7 @@ Ext.define('canopsis.view.Derogation.Grid' , {
 
 	rdr_time_conditions: function(val) {
 		output = '';
-		for (var i in val) {
+		for (var i = 0; i < val.length; i++) {
 			var condition = val[i];
 			var type = condition['type'];
 			if (type == 'time_interval') {
@@ -52,7 +52,7 @@ Ext.define('canopsis.view.Derogation.Grid' , {
 
 	rdr_actions: function(val) {
 		output = '';
-		for (var i in val) {
+		for (var i = 0; i < val.length; i++) {
 			var action = val[i];
 			var type = action['type'];
 			if (type == 'override') {

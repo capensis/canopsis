@@ -38,18 +38,19 @@ Ext.define('canopsis.view.Schedule.Form', {
 			collapsible: false
 		});
 
-		this.reportOptions = Ext.widget('fieldset', {
+		this.reportOptions = Ext.widget('cfieldset', {
 			xtype: 'fieldset',
-			title: _('Reporting Options'),
+			title: _('Reporting Interval'),
 			layout: 'hbox',
-			collapsible: false
+			checkboxName: 'reporting_interval',
+			checkboxToggle: true
 		});
 
 		this.mailingOptions = Ext.widget('cfieldset', {
 			xtype: 'fieldset',
 			checkboxName: 'sendMail',
 			checkboxToggle: true,
-			
+
 			title: _('Mailing Options')
 		});
 		//-----------------General options----------------------

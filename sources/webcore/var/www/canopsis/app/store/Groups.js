@@ -28,6 +28,13 @@ Ext.define('canopsis.store.Groups', {
 	autoLoad: true,
 	autoSync: true,
 
+	sorters: [
+        {
+            property: 'crecord_name',
+            direction: 'ASC'
+        }
+    ],
+
 	proxy: {
 		type: 'rest',
 		url: '/rest/object/group',

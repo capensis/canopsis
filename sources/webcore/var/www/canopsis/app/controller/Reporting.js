@@ -39,7 +39,7 @@ Ext.define('canopsis.controller.Reporting', {
 			if (from)
 				from = to - (from * 1000);
 			else
-				from = to - (global.commonTs.day * 1000);
+				from = 0
 		}
 
 		global.notify.notify(_('Please Wait'), _('Your document is rendering, a popup will ask you where to save in few seconds'));

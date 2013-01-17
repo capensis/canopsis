@@ -71,10 +71,14 @@ Ext.define('canopsis.controller.Tabs', {
 	reload_active_view: function() {
 		log.debug('Reload active view', this.logAuthor);
 		var tab = Ext.getCmp('main-tabs').getActiveTab();
-		tab.removeAll(true);
-		tab.displayed = false;
-		tab.autoshow = true;
-		tab.getView();
+		if (tab.displayed) {
+			tab.removeAll(true);
+			tab.displayed = false;
+			tab.autoshow = true;
+			tab.getView();
+		}else {
+			log.debug('currently in refresh');
+		}
 	},
 
 	open_dashboard: function() {
@@ -94,7 +98,7 @@ Ext.define('canopsis.controller.Tabs', {
 		this.store.proxy.clear();
 
 		log.debug('Load saved tabs:', this.logAuthor);
-		for (var i in views) {
+		for (var i = 0; i < views.length; i++) {
 			var options = views[i];
 			log.debug(' + ' + options.title + '(' + options.view_id + ')', this.logAuthor);
 			options.autoshow = false;
@@ -191,6 +195,12 @@ Ext.define('canopsis.controller.Tabs', {
 				global.notify.notify(_('Access denied'), _('You don\'t have the rights to modify this object'), 'error');
 			}
 		}
+	},
+
+	cancel_active_view: function() {
+		var tab = Ext.getCmp('main-tabs').getActiveTab();
+		if (tab.edit)
+			tab.cancel();
 	},
 
 	create_new_view: function() {

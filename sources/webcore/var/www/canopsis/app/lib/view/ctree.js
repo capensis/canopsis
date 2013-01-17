@@ -161,6 +161,9 @@ Ext.define('canopsis.lib.view.ctree' , {
 				);
 			}
 
+			if(this.add_to_context_menu)
+				this.add_to_context_menu(myArray)
+
 			if (myArray.length != 0) {
 				this.contextMenu = Ext.create('Ext.menu.Menu', {
 					items: myArray

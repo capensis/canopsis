@@ -20,4 +20,4 @@
 */
 
 //i18n['text.Inner text'] = 'Texte intérieur'
-
+i18n['stream.Compact display'] = 'Affichage compacte';

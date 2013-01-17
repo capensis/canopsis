@@ -233,8 +233,11 @@ class cengine(multiprocessing.Process):
 			
 			perf_data_array = [
 				{'retention': self.perfdata_retention, 'metric': 'cps_queue_size', 'value': self.input_queue.qsize(), 'unit': 'evt' },
-				{'retention': self.perfdata_retention, 'metric': 'cps_evt_per_sec', 'value': round(evt_per_sec,2), 'unit': 'evt/sec' },
-				{'retention': self.perfdata_retention, 'metric': 'cps_sec_per_evt', 'value': round(sec_per_evt,5), 'unit': 'sec/evt', 'warn': 0.5, 'crit': 0.8 },
+				{'retention': self.perfdata_retention, 'metric': 'cps_evt_per_sec', 'value': round(evt_per_sec,2), 'unit': 'evt' },
+				{'retention': self.perfdata_retention, 'metric': 'cps_sec_per_evt', 'value': round(sec_per_evt,5), 'unit': 's',
+					'warn': self.thd_warn_sec_per_evt,
+					'crit': self.thd_crit_sec_per_evt
+				},
 			]
 			
 			event = cevent.forger(

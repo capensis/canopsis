@@ -28,7 +28,28 @@ Ext.define('canopsis.controller.ReportingBar', {
 		log.debug('Initialize ...', this.logAuthor);
 
 		this.control({
-			'ReportingBar' : {afterrender: this._bindBarEvents}
+			'ReportingBar' : {afterrender: this._bindBarEvents},
+			'ReportingBar button[action="toggleMode"]' : {
+				click: this.toggle_mode
+			},
+			'ReportingBar button[action="search"]' : {
+				click: this.launchReport
+			},
+			'ReportingBar button[action="save"]' : {
+				click: this.saveButton
+			},
+			'ReportingBar button[action="link"]' : {
+				click: this.htmlReport
+			},
+			'ReportingBar button[action="exit"]' : {
+				click: this.exitButton
+			},
+			'ReportingBar button[action="next"]' : {
+				click: this.nextButton
+			},
+			'ReportingBar button[action="previous"]' : {
+				click: this.previousButton
+			}
 		});
 
 		this.callParent(arguments);
@@ -38,18 +59,8 @@ Ext.define('canopsis.controller.ReportingBar', {
 		log.debug('Bind events...', this.logAuthor);
 		this.bar = bar;
 
-		bar.saveButton.on('click', this.saveButton, this);
-		bar.htmlButton.on('click', this.htmlReport, this);
-		bar.exitButton.on('click', this.exitButton, this);
-		bar.searchButton.on('click', this.launchReport, this);
-		bar.toggleButton.on('click', this.toggle_mode, this);
-
-		bar.nextButton.on('click', this.nextButton, this);
-		bar.previousButton.on('click', this.previousButton, this);
-
-		bar.fromTs.on('select', this.setMinDate, this);
 		bar.toTs.on('select', this.setMaxDate, this);
-
+		bar.fromTs.on('select', this.setMinDate, this);
 	},
 
 	launchReport: function() {
@@ -74,34 +85,37 @@ Ext.define('canopsis.controller.ReportingBar', {
 
 	nextButton: function() {
 		log.debug('Next button pressed', this.logAuthor);
-		var dateField = this.bar.fromTs;
+		var dateField = this.bar.toTs;
 
-		if (dateField.isValid()) {
-			var selectedTime = dateField.getValue();
-			var timeUnit = this.bar.combo.getValue();
+		var selectedTime = dateField.getValue();
+		var timeUnit = this.bar.combo.getValue();
 
-			var timestamp = selectedTime + (timeUnit * this.bar.periodNumber.getValue());
-			dateField.setValue(timestamp);
+		console.log('selected time : ' + selectedTime)
+		console.log('time unit : ' + timeUnit)
+
+		var timestamp = selectedTime + (timeUnit * this.bar.periodNumber.getValue());
+		dateField.setValue(timestamp);
+
+		if (dateField.isValid())
 			this.launchReport();
-		}else {
+		else
 			global.notify.notify(_('Invalid date'), _('The selected date is invalid'));
-		}
 	},
 
 	previousButton: function() {
 		log.debug('Previous button pressed', this.logAuthor);
-		var dateField = this.bar.fromTs;
+		var dateField = this.bar.toTs;
 
-		if (dateField.isValid()) {
-			var selectedTime = dateField.getValue();
-			var timeUnit = this.bar.combo.getValue();
+		var selectedTime = dateField.getValue();
+		var timeUnit = this.bar.combo.getValue();
 
-			var timestamp = selectedTime - (timeUnit * this.bar.periodNumber.getValue());
-			dateField.setValue(timestamp);
+		var timestamp = selectedTime - (timeUnit * this.bar.periodNumber.getValue());
+		dateField.setValue(timestamp);
+
+		if (dateField.isValid()) 
 			this.launchReport();
-		}else {
+		else 
 			global.notify.notify(_('Invalid date'), _('The selected date is invalid'));
-		}
 	},
 
 	saveButton: function() {
@@ -150,7 +164,7 @@ Ext.define('canopsis.controller.ReportingBar', {
 		} else {
 			var timeUnit = this.bar.combo.getValue();
 			var periodLength = this.bar.periodNumber.getValue();
-			var stopTimestamp = this.bar.fromTs.getValue();
+			var stopTimestamp = this.bar.toTs.getValue();
 			var startTimestamp = stopTimestamp - (timeUnit * periodLength);
 		}
 		return {start: startTimestamp, stop: stopTimestamp};
@@ -189,7 +203,7 @@ Ext.define('canopsis.controller.ReportingBar', {
 
 	toggle_mode: function() {
 		if (this.bar.advancedMode) {
-			this.bar.toTs.hide();
+			this.bar.fromTs.hide();
 			this.bar.textFrom.hide();
 			this.bar.textTo.hide();
 			this.bar.textFor.show();
@@ -200,7 +214,7 @@ Ext.define('canopsis.controller.ReportingBar', {
 			this.bar.combo.show();
 			this.bar.advancedMode = false;
 		}else {
-			this.bar.toTs.show();
+			this.bar.fromTs.show();
 			this.bar.textFrom.show();
 			this.bar.textTo.show();
 			this.bar.textFor.hide();

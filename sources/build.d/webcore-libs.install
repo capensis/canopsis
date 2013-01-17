@@ -5,7 +5,6 @@ function build(){
 }
 
 function install(){
-	mkdir -p $PREFIX/var/www/canopsis/resources/lib/
-	cp -R $SRC_PATH/externals/webcore-libs/* $PREFIX/var/www/canopsis/resources/lib/
+	cp -R $SRC_PATH/externals/webcore-libs $PREFIX/var/www/
 	check_code $?
 }

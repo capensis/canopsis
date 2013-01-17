@@ -70,13 +70,11 @@ Ext.define('canopsis.lib.form.field.ctag' , {
 		var rawString = this.textArea.getValue();
 		var separator = undefined;
 
-		if (rawString.indexOf(',') != -1) {
+		if 			(Ext.Array.contains(rawString, ';')) {
 			var separator = ',';
-		}else if (rawString.indexOf(';') != -1) {
+		}else if 	(Ext.Array.contains(rawString, ',')) {
 			var separator = ';';
-		}else if (rawString.indexOf(',') != -1) {
-			var separator = ',';
-		}else if (rawString.indexOf(' ') != -1) {
+		}else if 	(Ext.Array.contains(rawString, ' ')) {
 			var separator = ' ';
 			rawString = rawString.replace(/  +/g, ' ');
 		}
@@ -109,7 +107,7 @@ Ext.define('canopsis.lib.form.field.ctag' , {
 			var value_array = value[operator];
 			var tags_string = '';
 
-			for (var i in value_array)
+			for (var i = 0; i < value_array.length; i++)
 				tags_string = tags_string + ' ' + value_array[i];
 
 			this.operator_combo.setValue(operator);

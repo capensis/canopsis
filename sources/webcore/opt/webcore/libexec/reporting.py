@@ -69,17 +69,20 @@ def generate_report(startTime, stopTime,view_name,mail=None):
 	try:
 		record = storage.get(view_name,account=account)
 		
-		fromDate = str(date.fromtimestamp(int(startTime) / 1000))
 		toDate = str(date.fromtimestamp(int(stopTime) / 1000))
-		
-		file_name = '%s_From_%s_To_%s.pdf' % (record.name,fromDate,toDate)
+
+		if int(startTime):
+			fromDate = str(date.fromtimestamp(int(startTime) / 1000))
+			file_name = '%s_From_%s_To_%s.pdf' % (record.name,fromDate,toDate)
+		else:
+			file_name = '%s_%s.pdf' % (record.name,toDate)
+
 	except  Exception, err:
 		logger.error(err)
 		name_array = view_name.split('.')
 		file_name = name_array[len(name_array)-1]
 		file_name += '_' + str(date.fromtimestamp(int(startTime) / 1000)) +'.pdf'
 
-	fileName = None
 	
 	logger.debug('file_name:   %s' % file_name)
 	logger.debug('view_name:   %s' % view_name)
@@ -91,6 +94,12 @@ def generate_report(startTime, stopTime,view_name,mail=None):
 	except Exception, err:
 		logger.debug("Check your celeryconfig.py, if you have reporting task imported")
 		logger.debug(err)
+
+	result = None
+
+	#Task report need starttime to be an interval, so ... hack
+	startTime = int(stopTime) - int(startTime)
+
 	try:
 		logger.debug('Run celery task')
 		result = task_reporting.render_pdf.delay(file_name,
@@ -101,19 +110,27 @@ def generate_report(startTime, stopTime,view_name,mail=None):
 										os.path.expanduser("~/etc/wkhtmltopdf_wrapper.json"),
 										mail)
 		result.wait()
-		fileName = result.result
+		result = result.result
 	except Exception, err:
+		result = None
 		logger.error(err)
 
-	if fileName:
-		if len(fileName['data']) > 0:
-			return {'total': 1, 'success': True, 'data': { 'id': str(fileName['data'][0])}}
-		else:
-			logger.error('Error while generating pdf : %s' % fileName['celery_output'])
-			return {'total': 0, 'success': False, 'data': {}}
-	else:
-		logger.debug('file not found, error while generating pdf')
-		return {'total': 0, 'success': False, 'data': {}}
+	if not result:
+		logger.debug('File not found, error while generating pdf')
+		return {'total': 0, 'success': False, 'data': {} }
+
+	if len(result['data']) <= 0:
+		logger.error('Error while generating pdf : %s' % result['celery_output'])
+		return {'total': 0, 'success': False, 'data': {} }
+
+	_id = str(result['data'][0])
+	logger.debug(' + File Id: %s' % _id)
+
+	if not _id:
+		logger.err('Invalid fileID: %s' % _id)
+		return {'total': 0, 'success': False, 'data': {} }
+
+	return {'total': 1, 'success': True, 'data': {'id': _id} }
 	
 @post('/sendreport')
 def send_report():

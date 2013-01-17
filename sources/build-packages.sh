@@ -47,11 +47,11 @@ pkill -u canopsis &> /dev/null || true
 echo "-------> Install from packages"
 
 echo "---> Install Ubik"
-pip install --upgrade git+http://github.com/Socketubs/Ubik.git
+pip install --upgrade git+http://github.com/socketubs/ubik.git@0.1
 if [ $? -ne 0 ]; then exit 1; fi
 
 echo "---> Install Ubik tools"
-pip install --upgrade git+http://github.com/Socketubs/Ubik-toolbelt.git
+pip install --upgrade git+http://github.com/socketubs/ubik-toolbelt.git
 if [ $? -ne 0 ]; then exit 1; fi
 
 echo "---> Make repo"
@@ -60,7 +60,7 @@ rm stable &> /dev/null
 touch .repo_root
 ln -s . stable
 if [ $? -ne 0 ]; then exit 1; fi
-ubik-repo generate --old-format stable
+ubik-repo generate stable
 if [ $? -ne 0 ]; then exit 1; fi
 
 echo "---> Start HTTP Repo"
