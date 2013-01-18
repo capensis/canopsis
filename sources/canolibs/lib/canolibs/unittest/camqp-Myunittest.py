@@ -71,6 +71,8 @@ class KnownValues(unittest.TestCase):
 		duration = time.time() - start
 		print "Receive message in", duration,"ms"
 		if rcvmsgbody != msgbody:
+			print "msgbody:\t", msgbody
+			print "rcvmsgbody:\t", rcvmsgbody
 			raise NameError, 'Received Event is not conform'
 
 	def test_99_Disconnect(self):
