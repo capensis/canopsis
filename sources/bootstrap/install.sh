@@ -45,7 +45,7 @@ echo "   - Ok"
 
 echo " + Configure Ubik ..."
 export UBIK_CONF=$HOME/etc/ubik.conf
-export PATH=$PATH:$HOME/bin:$HOME/.local/bin
+export PATH=$PATH:$HOME/bin
 cp $BPATH/ubik.conf etc/ &>> $LOG
 
 if [ "x$1" != "x" ]; then
@@ -57,7 +57,7 @@ echo "   - Ok"
 
 echo " + Check Ubik install (package manager) ..."
 ubik -v &> /dev/null
-check_code $? "Impossible to find Ubik, please install Ubik with root user: 'pip install --upgrade git+http://github.com/Socketubs/Ubik.git'"
+check_code $? "Impossible to find Ubik, please install Ubik with root user: 'pip install --upgrade git+http://github.com/socketubs/ubik.git@0.1'"
 echo "   - Ok"
 
 echo " + Install Canohome from canopsis package ..."
@@ -65,19 +65,17 @@ ubik install --force canohome
 check_code $? "Impossible to install packages"
 . .bash_profile
 echo "   - Ok"
+echo
 
-echo " + Install Ubik from canopsis package ..."
-ubik install --force ubik
-check_code $? "Impossible to install packages"
-if [ ! -e bin/ubik ]; then
-    echo "Installation failed"
+echo " + Link Ubik with your Canopsis environment ..."
+ubik_path=$(which ubik)
+check_code $? "Impossible to find Ubik path"
+if [ ! -e $ubik_path ]; then
+    echo "Impossible to find Ubik path"
     exit 1
 fi
-echo "   - Ok"
-
-echo " + Clean old Ubik"
-rm -Rf .local &>> $LOG
-check_code $? "Impossible to clean ubik"
+ln -s $ubik_path $HOME/bin/ubik
+check_code $? "Impossible to make symlink"
 echo "   - Ok"
 
 echo
