@@ -4,7 +4,7 @@ NAME="celery-libs"
 VERSION=0.4
 RELEASE=1
 DESCRIPTION=""
-REQUIRES="canohome python celeryi ubik"
+REQUIRES="canohome python celery ubik"
 
 NO_ARCH=true
 NO_DIST=true
