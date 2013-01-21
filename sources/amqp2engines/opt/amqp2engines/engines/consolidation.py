@@ -37,7 +37,7 @@ NAME="consolidation"
 class engine(cengine):
 	def __init__(self, *args, **kargs):
 		self.metrics_list = {}
-		self.timestamp = { } 
+		self.timestamps = { } 
 		self.manager = pyperfstore2.manager(logging_level=logging.INFO)
 		self.beat_interval = 60
 	
@@ -52,7 +52,7 @@ class engine(cengine):
 		self.beat()
 
 	def beat(self):
-		non_loaded_records = self.storage.find({ '$and' : [{ 'crecord_type': 'consolidation' }, {'loaded': { '$ne' : True} } ] }, namespace="object" )
+		non_loaded_records = self.storage.find({ '$and' : [{ 'crecord_type': 'consolidation' },{'enable': True}, {'loaded': { '$ne' : True} } ] }, namespace="object" )
 
 		if len(non_loaded_records) > 0  :
 			for item in non_loaded_records :
@@ -66,18 +66,24 @@ class engine(cengine):
 				del(self.records[_id])
 
 		for record in self.records.values():
-			consolidation_interval = record.get('interval', self.default_interval)
-			if  int(consolidation_interval) < time.time() - (self.timestamp[record.get('_id')] and record.get('enable') == True ) :
+			consolidation_interval = int(record.get('interval', self.default_interval))
+			current_interval = int(time.time() - self.timestamps[record.get('_id')])
+
+			self.logger.debug('current interval: %s , consolidation interval: %s' % (current_interval,consolidation_interval))
+			if  current_interval >= consolidation_interval:
+				self.logger.debug('Compute new consolidation for: %s' % record.get('crecord_name','Unkown'))
+
 				output_message = None
 				tfilter = json.loads(record.get('mfilter'))
 				metric_list = self.manager.store.find(mfilter=tfilter)
-				values = []
+				
 				list_fn = record.get('type', False)
 
-				if isinstance(list_fn, str) or isinstance(list_fn, unicode) :
+				if not isinstance(list_fn, list):
 					list_fn = [ list_fn ] 
 
 				mType = mUnit = mMin = mMax = None
+				values = []
 
 				for index,metric in enumerate(metric_list) :
 					if  index == 0 :
@@ -96,9 +102,14 @@ class engine(cengine):
 							output_message = "warning : too many units"
 						if  mType != metric.get('t') :
 							output_message = "warning : too many metrics type"
-					m = metric.get('d')
-					if len(m) >0:
-						values.append( m[-2:-1] ) 
+
+					self.logger.debug('Get last point for: %s' % metric.get('_id'))
+					last_point = self.manager.get_last_point(_id=metric.get('_id'))
+					if last_point:
+						values.append([last_point])
+
+				#self.logger.debug("type: %s" % type(values))
+				#self.logger.debug(values)
 				
 				if list_fn and len(values) > 0 :
 					list_perf_data = []
@@ -108,8 +119,8 @@ class engine(cengine):
 						try :
 							resultat = pyperfstore2.utils.aggregate_series(values, fn)
 						except NameError:
-							self.logger.info('Function [%s] does not exist' % item)
-							output_message = "warning : function [%s] does not exists" % i
+							self.logger.info('Function [%s] does not exist' % function_name)
+							output_message = "warning : function [%s] does not exists" % function_name
 						if len(resultat) > 0 :
 							list_perf_data.append({ 'metric' : function_name, 'value' : resultat[0][1], "unit": mUnit, 'max': mMax, 'min': mMin, 'warn': None, 'crit': None, 'type': mType } ) 
 							event = cevent.forger(
@@ -144,7 +155,7 @@ class engine(cengine):
 								self.storage.update(record.get('_id'), {'output_engine': "there are issues : %s warning : No result" % output_message } )
 				else:
 					self.storage.update(record.get('_id'), {'output_engine': "No input values"  } )
-				self.timestamp[record.get('_id')] = int(time.time())
+				self.timestamps[record.get('_id')] = time.time()
 		
 		
 	def load (self, rec ) :
@@ -152,7 +163,7 @@ class engine(cengine):
 		rec.loaded = True
 		self.storage.update(record.get('_id'), {'loaded': True })
 		if record.get('mfilter', False) :
-			self.timestamp[record.get('_id')] = int(time.time())
+			self.timestamps[record.get('_id')] = time.time()
 			tfilter = json.loads(record.get('mfilter'))
 			metric_list = self.manager.store.find(mfilter=tfilter )
 			nb_items = metric_list.count()
@@ -182,7 +193,7 @@ class engine(cengine):
 			self.storage.update(record.get('_id'), {'output_engine': "Impossible to load : no filter defined"  } )
 
 	def load_consolidation(self) :
-		records = self.storage.find({ '$and' :[ {'crecord_type': 'consolidation'}] }, namespace="object")
+		records = self.storage.find({ '$and' :[ {'crecord_type': 'consolidation'},{'enable': True}] }, namespace="object")
 		for item in records :
 			self.load(item)
 
