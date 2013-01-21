@@ -2,7 +2,7 @@
 
 NAME="amqp2engines"
 VERSION=0.4
-RELEASE=0
+RELEASE=1
 DESCRIPTION=""
 REQUIRES="canohome python canolibs supervisord-conf pyperfstore2"
 
