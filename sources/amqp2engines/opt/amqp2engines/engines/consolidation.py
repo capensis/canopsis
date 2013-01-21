@@ -39,10 +39,10 @@ class engine(cengine):
 		self.metrics_list = {}
 		self.timestamp = { } 
 		self.manager = pyperfstore2.manager(logging_level=logging.INFO)
-		self.beat_interval = 10 
+		self.beat_interval = 60
 	
 		cengine.__init__(self, name=NAME, *args, **kargs)
-		self.default_interval = 10
+		self.default_interval = 60
 		self.records = { } 
 		
 	def pre_run(self):
@@ -56,26 +56,29 @@ class engine(cengine):
 
 		if len(non_loaded_records) > 0  :
 			for item in non_loaded_records :
+				self.logger.info("New consolidation found '%s', load" % item.name)
 				self.load(item)
+
 		for _id in self.records.keys() :
 			exists = self.storage.find_one({ '_id': _id } )
-			if exists:
-				rec = exists.dump()
-				self.records[_id]['enable'] = rec.get('enable')
-			else:
+			if not exists:
+				self.logger.info("%s deleted, remove from record list" % self.records[_id]['crecord_name'])
 				del(self.records[_id])
 
 		for record in self.records.values():
-			interval = record.get('interval', self.default_interval)
-			if  int(interval) < ( int(time.time()) - self.timestamp[record.get('_id')]) and ( record.get('enable') == "true" or record.get('enable') == True ) :
+			consolidation_interval = record.get('interval', self.default_interval)
+			if  int(consolidation_interval) < time.time() - (self.timestamp[record.get('_id')] and record.get('enable') == True ) :
 				output_message = None
 				tfilter = json.loads(record.get('mfilter'))
 				metric_list = self.manager.store.find(mfilter=tfilter)
 				values = []
 				list_fn = record.get('type', False)
+
 				if isinstance(list_fn, str) or isinstance(list_fn, unicode) :
 					list_fn = [ list_fn ] 
+
 				mType = mUnit = mMin = mMax = None
+
 				for index,metric in enumerate(metric_list) :
 					if  index == 0 :
 						mType = metric.get('t')
@@ -119,20 +122,20 @@ class engine(cengine):
 								state=0,
 								timestamp=resultat[0][0],
 								state_type=0,
-								output="",
+								output="Consolidation: '%s' successfully loaded" % record['crecord_name'],
 								long_output="",
 								perf_data=None,
 								perf_data_array=list_perf_data,
-								display_name=record['crecord_name'][0]
+								display_name=record['crecord_name']
 							)	
 							rk = cevent.get_routingkey(event)
 							self.amqp.publish(event, rk, self.amqp.exchange_name_events)
 
 							if not output_message:
-								engine_output = '%s : Computation done. Next Computation in %s s' % (datetime.now().strftime('%Y-%m-%d %H:%M:%S'),str(interval))
+								engine_output = '%s : Computation done. Next Computation in %s s' % (datetime.now().strftime('%Y-%m-%d %H:%M:%S'),str(consolidation_interval))
 								self.storage.update(record.get('_id'),{'output_engine':engine_output} )
 							else:
-								engine_output = '%s : Computation done but there are issues : "%s" . Next Computation in %s s' % (datetime.now().strftime('%Y-%m-%d %H:%M:%S'),output_message,str(interval))
+								engine_output = '%s : Computation done but there are issues : "%s" . Next Computation in %s s' % (datetime.now().strftime('%Y-%m-%d %H:%M:%S'),output_message,str(consolidation_interval))
 								self.storage.update(record.get('_id'), {'output_engine': engine_output} )
 						else:
 							if not output_message:
@@ -162,15 +165,15 @@ class engine(cengine):
 					connector_name = "engine",
 					event_type = "check",
 					source_type="resource",
-					component=record['crecord_name'][1],
-					resource=record['crecord_name'][2],
+					component=record['component'],
+					resource=record['resource'],
 					state=0,
 					state_type=1,
 					output="",
 					long_output="",
 					perf_data=None,
 					perf_data_array=None,
-					display_name=record['crecord_name'][0]
+					display_name=record['crecord_name']
 			)
 			rk = cevent.get_routingkey(event)
 			self.records[record.get('_id')] = record
@@ -183,7 +186,7 @@ class engine(cengine):
 		for item in records :
 			self.load(item)
 
-		self.logger.info('Loaded %i consolidations' % len(records))
+		self.logger.info('Load %i consolidations' % len(records))
 				
 	def unload_consolidation(self):
 		records = self.storage.find({ '$and': [{'crecord_type': 'consolidation' }, {'loaded':True}]}, namespace="object")
@@ -193,7 +196,7 @@ class engine(cengine):
 										'loaded': False
 										} )
 
-		self.logger.info('Unloaded %i consolidations' % len(records))
+		self.logger.info('Unload %i consolidations' % len(records))
 
 	def get_math_function(self, name):
 		if name == 'mean':
