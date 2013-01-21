@@ -118,6 +118,9 @@ class engine(cengine):
 						resultat = []
 						try :
 							resultat = pyperfstore2.utils.aggregate_series(values, fn)
+							self.logger.debug('Values for %s operation:' % function_name)
+							self.logger.debug(values)
+							self.logger.debug('Resultat: %s' % str(resultat[0][1]))
 						except NameError:
 							self.logger.info('Function [%s] does not exist' % function_name)
 							output_message = "warning : function [%s] does not exists" % function_name
@@ -141,6 +144,9 @@ class engine(cengine):
 							)	
 							rk = cevent.get_routingkey(event)
 							self.amqp.publish(event, rk, self.amqp.exchange_name_events)
+
+							#self.logger.debug('The following event was sent:')
+							#self.logger.debug(event)
 
 							if not output_message:
 								engine_output = '%s : Computation done. Next Computation in %s s' % (datetime.now().strftime('%Y-%m-%d %H:%M:%S'),str(consolidation_interval))
