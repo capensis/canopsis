@@ -27,15 +27,18 @@ Ext.define('canopsis.lib.store.cstore', {
 	logAuthor: '[cstore]',
 
     listeners: {
-		update: function() {
+		update: function(store, record, index, eOpts) {
 			if (this.storeId !== 'Tabs')
 				if (global.websocketCtrl)
 					global.websocketCtrl.publish_event('store', this.storeId, 'update');
 		},
-		remove: function() {
+		remove: function(store, record, index, eOpts) {
 			if (this.storeId !== 'Tabs')
 				if (global.websocketCtrl)
 					global.websocketCtrl.publish_event('store', this.storeId, 'remove');
+		},
+		write: function( store, operation, eOpts){
+			this.displaySuccess(store,operation,eOpts)
 		}
    },
 
