@@ -231,18 +231,15 @@ Ext.define('canopsis.lib.view.cwidget' , {
 	getNodeInfo: function() {
 		if (this.nodeId) {
 			Ext.Ajax.request({
-				url: this.baseUrl + '/' + this.nodeId,
+				url: this.baseUrl + '/events/' + this.nodeId,
 				scope: this,
 				success: function(response) {
 					var data = Ext.JSON.decode(response.responseText);
 					if (this.nodeId.length > 1)
-					{
 						data = data.data;
-					}
 					else
-					{
 						data = data.data[0];
-					}
+
 					this._onRefresh(data);
 				},
 				failure: function(result, request) {
