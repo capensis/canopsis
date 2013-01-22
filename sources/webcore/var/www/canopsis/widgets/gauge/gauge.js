@@ -128,7 +128,7 @@ Ext.define('widgets.gauge.gauge' , {
 		this.processNodes();
 		if (this.nodeId) {
 			Ext.Ajax.request({
-				url: '/perfstore/values' + '/' + parseInt(to/1000) + '/' +  parseInt(to/1000),
+				url: '/perfstore/values' + '/' + to + '/' +  to,
 				scope: this,
 				params: this.post_params,
 				method: 'POST',

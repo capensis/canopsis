@@ -198,14 +198,17 @@ Ext.define('canopsis.lib.view.cwidget' , {
 			from = this.export_from;
 			to = this.export_to;
 		}else {
-			if (! to || to < 10000000) {
+			if (! to || to < 10000000)
 				to = Ext.Date.now();
-			}
 
 			if (! from || from < 10000000) {
 				from = to - (this.time_window * 1000);
 			}
 		}
+
+		//ms to s
+		from = parseInt(from/1000)
+		to = parseInt(to/1000)
 
 		var done = this.doRefresh(from, to);
 		if (done != false)

@@ -403,14 +403,12 @@ Ext.define('widgets.line_graph.line_graph' , {
 	makeUrl: function(from, to) {
 		var url = '/perfstore/values';
 
-		if (! to) {
-			url += '/' + parseInt(from/1000);
-		}
+		if (! to) 
+			url += '/' + parseInt(from);
 
-		if (from && to) {
-			url += '/' + parseInt(from/1000) + '/' + parseInt(to/1000);
-		}
-
+		if (from && to) 
+			url += '/' + parseInt(from) + '/' + parseInt(to);
+		
 		return url;
 	},
 
@@ -425,7 +423,7 @@ Ext.define('widgets.line_graph.line_graph' , {
 
 			//i have no idea of what the following block do, if useless,
 			// remove it, maybe reporting ?
-			if (this.chart_type == 'column') {
+			/*if (this.chart_type == 'column') {
 				if (!this.last_form) {
 					new_from = getMidnight(from);
 					new_to = getMidnight(to);
@@ -433,16 +431,16 @@ Ext.define('widgets.line_graph.line_graph' , {
 					if ((to - from) <= global.commonTs.day)
 						to = Ext.Date.now();
 				}
-			}
+			}*/
 
 			if (! this.reportMode && this.last_from) {
 				from = this.last_from;
 				if (this.aggregate_interval) {
 					log.debug('End of last interval: ' + from, this.logAuthor);
-					log.debug('Request next interval: ' + from + ' + ' + this.aggregate_interval + '*1000', this.logAuthor);
-					from = from + (this.aggregate_interval * 1000);
+					log.debug('Request next interval: ' + from + ' + ' + this.aggregate_interval, this.logAuthor);
+					from = from + (this.aggregate_interval);
 				}
-				to = Ext.Date.now();
+				to = parseInt(Ext.Date.now() / 1000);
 			}
 
 			log.debug(' + Do Refresh ' + from + ' -> ' + to, this.logAuthor);

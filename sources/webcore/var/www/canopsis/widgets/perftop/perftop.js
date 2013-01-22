@@ -210,7 +210,7 @@ Ext.define('widgets.perftop.perftop' , {
 	},
 
 	doRefresh: function(from, to) {
-		this.store.proxy.extraParams['time_window'] = (to - from) / 1000;
+		this.store.proxy.extraParams['time_window'] = to - from;
 		this.store.proxy.extraParams['report'] = this.reportMode || this.exportMode;
 		var url  = this.store.proxy['url'];
 

@@ -298,7 +298,7 @@ Ext.define('widgets.diagram.diagram' , {
 		if (this.nodes) {
 			if (this.nodes.length != 0) {
 
-				var url = '/perfstore/values/' + parseInt(from/1000) + '/' + parseInt(to/1000);
+				var url = '/perfstore/values/' + from + '/' + to;
 
 				Ext.Ajax.request({
 					url: url,
