@@ -19,14 +19,12 @@
 # ---------------------------------
 
 import sys, os, logging, json, subprocess
-#from gevent import monkey; monkey.patch_all()
 import gevent
 
 import bottle
 from bottle import route, get, delete, request, HTTPError, post, static_file, response
 
 from urllib import quote
-#gridfs
 from pymongo import Connection
 import gridfs
 
@@ -41,6 +39,7 @@ from crecord import crecord
 from cfile import cfile
 
 import task_mail
+import task_reporting
 
 #import protection function
 from libexec.auth import check_auth, get_account
@@ -53,53 +52,38 @@ group_managing_access = ['group.CPS_reporting_admin']
 
 #########################################################################
 
-@post('/reporting/:startTime/:stopTime/:view_name/:mail',checkAuthPlugin={'authorized_grp':group_managing_access})
-@post('/reporting/:startTime/:stopTime/:view_name',checkAuthPlugin={'authorized_grp':group_managing_access})
+@get('/reporting/:startTime/:stopTime/:view_name/:mail',checkAuthPlugin={'authorized_grp':group_managing_access})
+@get('/reporting/:startTime/:stopTime/:view_name',checkAuthPlugin={'authorized_grp':group_managing_access})
 def generate_report(startTime, stopTime,view_name,mail=None):
 	account = get_account()
 	storage = cstorage(account=account, namespace='object')
-	
-	if(isinstance(mail,str)):
+	startTime = int(startTime)
+	stopTime = int(stopTime)
+
+	if mail:
 		try:
 			mail = json.loads(mail)
 		except Exception, err:
 			logger.error('Error while transform string mail to object' % err)
-	
-	#get crecord name of the view (id is really harsh)
+			mail=None
 	try:
 		record = storage.get(view_name,account=account)
-		
-		toDate = str(date.fromtimestamp(int(stopTime)))
-
-		if int(startTime):
-			fromDate = str(date.fromtimestamp(int(startTime)))
-			file_name = '%s_From_%s_To_%s.pdf' % (record.name,fromDate,toDate)
-		else:
-			file_name = '%s_%s.pdf' % (record.name,toDate)
-
-	except  Exception, err:
+	except Exception, err:
 		logger.error(err)
-		name_array = view_name.split('.')
-		file_name = name_array[len(name_array)-1]
-		file_name += '_' + str(date.fromtimestamp(int(startTime))) +'.pdf'
+		return {'total': 1, 'success': False, 'data': [str(err)] }
+		
 
-	
+	toDate = str(date.fromtimestamp(int(stopTime)))
+	fromDate = str(date.fromtimestamp(int(startTime)))
+	file_name = '%s_From_%s_To_%s.pdf' % (record.name,fromDate,toDate)
+
 	logger.debug('file_name:   %s' % file_name)
 	logger.debug('view_name:   %s' % view_name)
 	logger.debug('startTime:   %s' % startTime)
 	logger.debug('stopTime:    %s' % stopTime)
-	
-	try:
-		import task_reporting
-	except Exception, err:
-		logger.debug("Check your celeryconfig.py, if you have reporting task imported")
-		logger.debug(err)
 
 	result = None
-
-	#Task report need starttime to be an interval, so ... hack
-	startTime = int(stopTime) - int(startTime)
-
+	
 	try:
 		logger.debug('Run celery task')
 		result = task_reporting.render_pdf.delay(file_name,
@@ -111,26 +95,19 @@ def generate_report(startTime, stopTime,view_name,mail=None):
 										mail)
 		result.wait()
 		result = result.result
+		#testing purpose
+		#result = {'data':[],'celery_output':'boom'}
 	except Exception, err:
-		result = None
-		logger.error(err)
+		return {'total': 1, 'success': False, 'data': [str(err)] }
 
-	if not result:
-		logger.debug('File not found, error while generating pdf')
-		return {'total': 0, 'success': False, 'data': {} }
-
-	if len(result['data']) <= 0:
+	if not result or len(result['data']) == 0:
 		logger.error('Error while generating pdf : %s' % result['celery_output'])
-		return {'total': 0, 'success': False, 'data': {} }
+		return {'total': 0, 'success': False, 'data': [result['celery_output']] }
 
 	_id = str(result['data'][0])
+	
 	logger.debug(' + File Id: %s' % _id)
-
-	if not _id:
-		logger.err('Invalid fileID: %s' % _id)
-		return {'total': 0, 'success': False, 'data': {} }
-
-	return {'total': 1, 'success': True, 'data': {'id': _id} }
+	return {'total': 1, 'success': True, 'data': [{'id': _id}] }
 	
 @post('/sendreport')
 def send_report():

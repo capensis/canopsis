@@ -33,8 +33,6 @@ import time
 
 import hashlib
 
-#TEST
-import task_node
 import task_mail
 
 init 	= cinit()
