@@ -404,11 +404,11 @@ Ext.define('widgets.line_graph.line_graph' , {
 		var url = '/perfstore/values';
 
 		if (! to) {
-			url += '/' + from;
+			url += '/' + parseInt(from/1000);
 		}
 
 		if (from && to) {
-			url += '/' + from + '/' + to;
+			url += '/' + parseInt(from/1000) + '/' + parseInt(to/1000);
 		}
 
 		return url;
@@ -702,6 +702,10 @@ Ext.define('widgets.line_graph.line_graph' , {
 	},
 
 	parseValues: function(serie, values, type) {
+		//MAKE A BETTER LOOP, JUST FOR TEST
+		for (var i = 0; i < values.length; i++)
+			values[i][0] = values[i][0] * 1000
+
 		//Do operation on value
 		if (this.SeriePercent && serie.options.max > 0)
 			for (var i = 0; i < values.length; i++)

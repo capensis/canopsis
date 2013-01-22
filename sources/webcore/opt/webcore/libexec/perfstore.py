@@ -33,7 +33,7 @@ from ctools import parse_perfdata, clean_mfilter
 from ctools import cleanTimestamp
 
 import pyperfstore2
-from pyperfstore2.utils import aggregate_series , mean
+from pyperfstore2.utils import consolidation , mean
 manager = None
 
 import ConfigParser
@@ -100,11 +100,6 @@ def perfstore_nodes_get_values(start=None, stop=None):
 	logger.debug(" + aggregate_interval: %s" % aggregate_interval)
 	logger.debug(" + aggregate_max_points: %s" % aggregate_max_points)
 
-
-	# Hack, normalize timestamps on next release !
-	start = cleanTimestamp(start) * 1000
-	stop  = cleanTimestamp(stop) * 1000
-
 	output = []
 
 	for meta in metas:
@@ -139,7 +134,7 @@ def perfstore_nodes_get_values(start=None, stop=None):
 			'metric': consolidation,
 			'bunit': None,
 			'type': 'GAUGE',
-			'values': aggregate_series(series, fn, 60* 1000)
+			'values': consolidation(series, fn, 60)
 		}]
 
 	output = {'total': len(output), 'success': True, 'data': output}
@@ -363,12 +358,12 @@ def perfstore_perftop(start=None, stop=None):
 		expand = False
 
 	if stop:
-		stop = int(int(stop) / 1000)
+		stop = int(stop)
 	else:
 		stop = int(time.time())
 		
 	if start:
-		start = int(int(start) / 1000)
+		start = int(start)
 	else:
 		start = stop - time_window
 
@@ -515,12 +510,12 @@ def perfstore_get_values(_id, start=None, stop=None, aggregate_method=None, aggr
 		stop = start
 	
 	if stop:
-		stop = int(int(stop) / 1000)
+		stop = int(stop)
 	else:
 		stop = int(time.time())
 		
 	if start:
-		start = int(int(start) / 1000)
+		start = int(start)
 	else:
 		start = stop - 86400
 
@@ -595,10 +590,8 @@ def perfstore_get_values(_id, start=None, stop=None, aggregate_method=None, aggr
 	
 	if aggregate_interval and aggregate_timemodulation:
 		points = pyperfstore2.utils.fill_interval(points,start,stop,aggregate_interval)
-	
-	if points and meta:
-		points = [[point[0] * 1000, point[1]] for point in points]
 
+	if points and meta:
 		output.append({'node': _id, 'metric': meta['me'], 'values': points, 'bunit': meta['unit'], 'min': meta['min'], 'max': meta['max'], 'thld_warn': meta['thd_warn'], 'thld_crit': meta['thd_crit'], 'type': meta['type']})
 				
 	return output

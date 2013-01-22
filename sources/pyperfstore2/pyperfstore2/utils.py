@@ -445,11 +445,11 @@ def fill_interval(points, start, stop, interval):
 
 
 ### aggregation serie function
-def aggregate_series(series, fn, interval=None):
+def consolidation(series, fn, interval=None):
 	
 	# Todo calcul interval
 	if not interval:
-		interval = 300 * 1000
+		interval = 300
 
 	# Find start and stop ts
 	start = None

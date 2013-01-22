@@ -69,10 +69,10 @@ def generate_report(startTime, stopTime,view_name,mail=None):
 	try:
 		record = storage.get(view_name,account=account)
 		
-		toDate = str(date.fromtimestamp(int(stopTime) / 1000))
+		toDate = str(date.fromtimestamp(int(stopTime)))
 
 		if int(startTime):
-			fromDate = str(date.fromtimestamp(int(startTime) / 1000))
+			fromDate = str(date.fromtimestamp(int(startTime)))
 			file_name = '%s_From_%s_To_%s.pdf' % (record.name,fromDate,toDate)
 		else:
 			file_name = '%s_%s.pdf' % (record.name,toDate)
@@ -81,7 +81,7 @@ def generate_report(startTime, stopTime,view_name,mail=None):
 		logger.error(err)
 		name_array = view_name.split('.')
 		file_name = name_array[len(name_array)-1]
-		file_name += '_' + str(date.fromtimestamp(int(startTime) / 1000)) +'.pdf'
+		file_name += '_' + str(date.fromtimestamp(int(startTime))) +'.pdf'
 
 	
 	logger.debug('file_name:   %s' % file_name)

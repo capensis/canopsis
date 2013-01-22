@@ -289,7 +289,7 @@ Ext.define('widgets.diagram.diagram' , {
 	doRefresh: function(from, to) {
 		// Get last point only
 		if (this.time_window && from == 0)
-			from = to - this.time_window * 1000;
+			from = to - this.time_window;
 		else if (! this.haveCounter)
 			from = to;
 		
@@ -298,7 +298,7 @@ Ext.define('widgets.diagram.diagram' , {
 		if (this.nodes) {
 			if (this.nodes.length != 0) {
 
-				var url = '/perfstore/values/' + from + '/' + to;
+				var url = '/perfstore/values/' + parseInt(from/1000) + '/' + parseInt(to/1000);
 
 				Ext.Ajax.request({
 					url: url,
@@ -321,6 +321,13 @@ Ext.define('widgets.diagram.diagram' , {
 	},
 
 	onRefresh: function(data) {
+		// s to ms
+		/*
+		if(data.values && (data.values.length>0))
+			for(var i =0; i < data.values.length; i++)
+				data.values[i][0] = data.values[i][0]*1000
+		*/
+
 		if (this.chart && data.length != 0) {
 			var myEl = this.getEl();
 			if (myEl && myEl.isMasked && !this.isDisabled())
