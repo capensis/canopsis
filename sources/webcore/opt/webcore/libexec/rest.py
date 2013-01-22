@@ -84,7 +84,6 @@ def rest_get_media(namespace, _id):
 @get('/rest/:namespace/:ctype')
 @get('/rest/:namespace')
 def rest_get(namespace, ctype=None, _id=None):
-	
 	#get the session (security)
 	account = get_account()
 
