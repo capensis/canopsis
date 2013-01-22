@@ -29,6 +29,26 @@ Ext.define('canopsis.lib.store.ctreeStore', {
         this.proxy.on('exception', this._manage_exception, this);
     },
 
+    listeners: {
+    	move: function(node, oldParent, newParent, index, options ) {
+				this.sync();
+		},
+		write: function( store, operation, eOpts){
+			this.displaySuccess(store,operation,eOpts)
+		}
+   },
+
+   displaySuccess: function(store, operation,option) {
+		if (operation.success) {
+			if (operation.action == 'create')
+				global.notify.notify(_('Success'), _('Record saved'), 'success');
+			if (operation.action == 'destroy')
+				global.notify.notify(_('Success'), _('Record deleted'), 'success');
+			if (operation.action == 'update')
+				global.notify.notify(_('Success'), _('Record updated'), 'success');
+		}
+	},
+
    	_manage_exception: function(store, request, options) {
 		if (request.status == 403) {
 			global.notify.notify(_('Access denied'), _('You don\'t have the rights to modify this object'), 'error');

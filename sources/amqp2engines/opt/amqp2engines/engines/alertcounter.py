@@ -109,8 +109,8 @@ class engine(cengine):
 							if tag in self.selectors_name:
 								self.logger.debug("Increment Tag: '%s'" % tag)
 								self.count_alert(
-									component	= 'stat',
-									resource	= tag,
+									component	= tag,
+									resource	= 'selector',
 									state		= event['state'],
 									value		= 1,
 									tags		= event['tags']

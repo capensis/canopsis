@@ -30,4 +30,20 @@ def init():
 	manager.store.drop()
 
 def update():
-	pass
+	# tweak: rename all 'stat' metrics
+	metrics = manager.find(mfilter={"co": "stat", "me": {"$regex": "^cps_.*"}})
+
+	for metric in metrics:
+		logger.info(" + Move '%s.%s.%s' to '%s.%s.%s'" % (metric["co"], metric["re"], metric["me"], metric["re"], "selector", metric["me"]))
+		
+		old_id = metric["_id"]
+		del metric["_id"]
+
+		metric["co"] = metric["re"]
+		metric["re"] = "selector"
+		name = "%s%s%s" % (metric["co"], metric["re"], metric["me"])
+		_id = manager.gen_id(name)
+
+		manager.store.create(_id, metric)
+		manager.store.remove(_id=old_id)
+

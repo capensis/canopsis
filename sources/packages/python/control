@@ -28,7 +28,7 @@ function post_remove(){
 
 function pre_update(){
 	echo "Pre-update $NAME $VERSION-$RELEASE ..."
-	check_code $?
+	chmod u+w $PREFIX/lib/libpython*
 }
 
 function post_update(){

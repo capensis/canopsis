@@ -42,10 +42,12 @@ Ext.define('canopsis.lib.form.field.cfilter' , {
 			dataIndex: 'source_type',
 			renderer: rdr_source_type
    		},{
+   			header: _("Component"),
 			sortable: false,
 			dataIndex: 'component',
 			flex: 2
  		},{
+ 			header: _("Resource"),
 			sortable: false,
 			dataIndex: 'resource',
 			flex: 2
