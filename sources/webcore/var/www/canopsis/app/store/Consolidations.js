@@ -37,7 +37,7 @@ Ext.define('canopsis.store.Consolidations', {
 			type: 'json',
 			root: 'data',
 			totalProperty: 'total',
-			successProperty: 'success',
+			successProperty: 'success'
 		},
 		writer: {
 			type: 'json',

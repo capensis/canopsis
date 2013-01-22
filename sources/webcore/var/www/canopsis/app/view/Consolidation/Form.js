@@ -120,7 +120,7 @@ Ext.define('canopsis.view.Consolidation.Form', {
 								header:"",
 								sortable: false,
 								flex: 2,
-								dataIndex: "co",
+								dataIndex: "co"
 							},{
 								header:"",
 								sortable: false,

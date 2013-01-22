@@ -81,7 +81,7 @@ Ext.define('canopsis.view.Consolidation.Grid' , {
 			header: _('Engine ouput'),
 			//align: 'center',
 			flex: 6,
-			dataIndex: 'output_engine',
+			dataIndex: 'output_engine'
 			//renderer : function(){return 'Ressource = Regex(cpu*) && Metric = system '}
 		},{
 			header: _('Nb elements'),
