@@ -104,7 +104,6 @@ Ext.define('widgets.weather.weather' , {
 				var nodes = Ext.JSON.decode(response.responseText).data;
 				var nodes_obj = {};
 
-
 				for (var i = 0; i < nodes.length; i++) {
 					nodes[i].nodeId = getMetaId(nodes[i].component, nodes[i].resource, nodes[i].metric);
 					nodes_obj[nodes[i]._id] = nodes[i];
@@ -161,7 +160,6 @@ Ext.define('widgets.weather.weather' , {
 		//--------------------Prepare post params-----------------
 
 		var post_params = [];
-
 		var me = this;
 		Ext.Object.each(this.nodes, function(key, value, myself) {
 			post_params.push({id: me.nodes[key].node_meta_id})
@@ -169,7 +167,7 @@ Ext.define('widgets.weather.weather' , {
 
 		//-------------------------send request--------------------
 		Ext.Ajax.request({
-			url: '/perfstore/values/' + from + '/' + to,
+			url: '/perfstore/values/' + parseInt(from) + '/' + parseInt(to),
 			params: {'nodes': Ext.JSON.encode(post_params)},
 			scope: this,
 			success: function(response) {
