@@ -206,10 +206,6 @@ Ext.define('canopsis.lib.view.cwidget' , {
 			}
 		}
 
-		//ms to s
-		from = parseInt(from/1000)
-		to = parseInt(to/1000)
-
 		var done = this.doRefresh(from, to);
 		if (done != false)
 			this.lastRefresh = Ext.Date.now();

@@ -215,7 +215,7 @@ Ext.define('widgets.perftop.perftop' , {
 		var url  = this.store.proxy['url'];
 
 		if (this.store.proxy.extraParams['report'])
-			this.store.proxy['url'] = url + '/' + from +'/' + to;
+			this.store.proxy['url'] = url + '/' + parseInt(from/1000) +'/' + parseInt(to/1000);
 		
 		if (this.grid)
 			this.grid.store.load();

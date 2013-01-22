@@ -268,7 +268,7 @@ Ext.define('widgets.stream.stream' , {
 			this.wcontainer.removeAll(true);
 
 			var me = this;
-			this.getHistory(from, to, function(records) {
+			this.getHistory(parseInt(from/1000), parseInt(to/1000), function(records) {
 				if (records.length > 0)
 					me.add_events(records);
 			});

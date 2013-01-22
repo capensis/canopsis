@@ -404,10 +404,10 @@ Ext.define('widgets.line_graph.line_graph' , {
 		var url = '/perfstore/values';
 
 		if (! to) 
-			url += '/' + parseInt(from);
+			url += '/' + parseInt(from/1000);
 
 		if (from && to) 
-			url += '/' + parseInt(from) + '/' + parseInt(to);
+			url += '/' + parseInt(from/1000) + '/' + parseInt(to/1000);
 		
 		return url;
 	},
