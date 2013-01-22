@@ -609,7 +609,7 @@ var stream_getHistory= function(limit, tags, tags_op, from, to, callback){
 			mfilter["$and"].push({"tags": {"$in": tags}})
 		
 	if (from && to)
-		mfilter["$and"].push({"timestamp": { "$gte": from/1000, "$lte": to/1000 } })
+		mfilter["$and"].push({"timestamp": { "$gte": from, "$lte": to } })
 
 	mongodb_find('events_log', mfilter, { 'limit': limit, 'sort': {"timestamp": -1} }, callback)
 }
