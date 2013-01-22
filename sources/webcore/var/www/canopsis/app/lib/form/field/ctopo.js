@@ -108,15 +108,17 @@ Ext.define('canopsis.lib.form.field.ctopo' , {
 
 		var nodes = data.nodes;
 		var corresp = { };
+		var me = this;
 
 		this.removeAll();
 
 		log.debug(' + Create nodes', this.logAuthor);
-		for (var i = 0; i < nodes.length; i++) {
-			var el = this.createNode(nodes[i]);
-			this.add(el);
-			corresp[i] = el.id;
-		}
+		Ext.Object.each(nodes, function(key, value, myself) {
+			var el = me.createNode(value);
+			me.add(el);
+			corresp[key] = el.id;
+		});
+
 		log.debug('   + Done', this.logAuthor);
 
 		this.rootNode = corresp[data.root];
