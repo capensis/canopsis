@@ -87,7 +87,7 @@ Ext.define('canopsis.view.Consolidation.Grid' , {
 			header: _('Nb elements'),
 			align: 'center',
 			width: 70,
-			dataIndex: 'nb_items',
+			dataIndex: 'nb_items'
 			//renderer : function(){return 34}
 		}
 	],
