@@ -70,21 +70,22 @@ Ext.define('widgets.topology_viewer.topology_viewer' , {
 	},
 
 	doRefresh: function() {
-		if (this.sigmaContainer){
+		if (this.sigmaContainer)
 			this.sigmaContainer.emptyGraph();
-			this.sigmaContainer.draw();
-		} else {
+		else
 			this.initSigma();
-		}
 
 		this.getNodeInfo();
 	},
 
 	onRefresh: function(node) {
-		var nestedTree = node['nestedTree'];
 		this.lastUpdate = node['crecord_creation_time'];
-		this.drawRecursiveTree(nestedTree);
+		this.drawRecursiveTree(node['nestedTree']);
 		this.sigmaDraw();
+	},
+
+	onResize: function() {
+		this.sigmaContainer.resize();
 	},
 
 	//-------------------Sigma related functions------------------
