@@ -14,5 +14,6 @@
 	"opts"			: [	"--use-xserver",
 						"--debug-javascript",
 						"--load-error-handling ignore",
-						"--disable-smart-shrinking"]
+						"--disable-smart-shrinking"],
+	"timeout"		:	300
 }
