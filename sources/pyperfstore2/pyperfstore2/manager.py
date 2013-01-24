@@ -30,6 +30,7 @@ class manager(object):
 		self.logger = logging.getLogger('manager')
 		self.logger.setLevel(logging_level)
 
+		# Store
 		self.store = store(logging_level=logging_level, **kwargs)
 		
 		self.dca_min_length = dca_min_length

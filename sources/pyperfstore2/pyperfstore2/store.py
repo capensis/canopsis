@@ -31,6 +31,19 @@ class store(object):
 		
 		self.logger.debug(" + Init MongoDB Store")
 
+		# Read db option from conf
+		import ConfigParser
+		config = ConfigParser.RawConfigParser()
+		config.read(os.path.expanduser('~/etc/cstorage.conf'))
+
+		try:
+			mongo_host = config.get('master', 'host')		if config.get('master', 'host') != "" and not mongo_host else mongo_host
+			mongo_port = config.getint('master', 'port')	if config.get('master', 'port') != "" and not mongo_port else mongo_port
+			mongo_user = config.get('master', 'userid')		if config.get('master', 'userid') != "" and not mongo_user else mongo_user
+			mongo_pass = config.get('master', 'password')	if config.get('master', 'password') != "" and not mongo_pass else mongo_pass
+		except:
+			pass
+
 		self.mongo_host = mongo_host
 		self.mongo_port = mongo_port
 		self.mongo_db = mongo_db
@@ -38,6 +51,7 @@ class store(object):
 		self.mongo_safe = mongo_safe
 		self.mongo_user = mongo_user if mongo_user != "" else None
 		self.mongo_pass = mongo_pass if mongo_pass != "" else None
+
 		
 		self.connected = False
 		
