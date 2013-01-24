@@ -267,7 +267,7 @@ class engine(cengine):
 		self.amqp.publish(event, rk, self.amqp.exchange_name_events)
 		
 		# Update selector record
-		self.storage.update(_id, {'sla_timewindow_lastcalcul': stop, 'sla_timewindow_perfdata': perf_data_array, 'sla_state': event['state']})
+		self.storage.update(_id, {'sla_timewindow_lastcalcul': stop, 'sla_timewindow_perfdata': perf_data_array, 'sla_state': event['state'], 'sla_rk': rk})
 	
 	def beat(self):
 		start = time.time()
