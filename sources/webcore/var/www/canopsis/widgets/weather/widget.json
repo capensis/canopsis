@@ -78,19 +78,22 @@
 								"checked": true,
 								"name": "display_derogation_icon"
 							},{
-								"xtype": "checkbox",
-								"fieldLabel": "Use SLA state as icon value",
-								"inputValue": true,
-								"uncheckedValue": false,
-								"checked": true,
-								"name": "state_as_icon_value"
-							},{
-								"xtype": "checkbox",
-								"fieldLabel": "Use selector state as icon value for selected SLA",
-								"inputValue": true,
-								"uncheckedValue": false,
-								"checked": false,
-								"name": "selector_state_as_icon_value"
+								"xtype": "combobox",
+								"name": "icon_state_source",
+								"fieldLabel": "State source as icone value",
+								"queryMode": "local",
+								"displayField": "text",
+								"valueField": "value",
+								"value": "default",
+								"store": {
+									"xtype": "store",
+									"fields": ["value", "text"],
+									"data" : [
+										{"value": "default", "text": "Default"},
+										{"value": "selector", "text": "Selector"},
+										{"value": "sla", "text": "SLA"}
+									]
+								}
 							},{
 								"xtype": "numberfield",
 								"fieldLabel": "Icon type",

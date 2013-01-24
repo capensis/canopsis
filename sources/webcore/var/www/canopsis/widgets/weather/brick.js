@@ -217,16 +217,6 @@ Ext.define('widgets.weather.brick' , {
 		if (this.fullscreenMode && linkUrl)
 			this.widget_base_config.title = '<a href="' + linkUrl + '" target="_newtab">' + this.widget_base_config.title + '</a>';
 
-		//icons
-		/*
-		if (this.icon_on_left) {
-			this.widget_base_config.first_panel_float = 'right';
-			this.widget_base_config.second_panel_float = 'left';
-		}else {
-			this.widget_base_config.first_panel_float = 'left';
-			this.widget_base_config.second_panel_float = 'right';
-		}
-		*/
 		//check ressource admin
 		if (global.accountCtrl.check_right(this.data, 'w'))
 			this.widget_base_config.admin = true;
@@ -296,34 +286,15 @@ Ext.define('widgets.weather.brick' , {
 
 		var widget_data = {
 			legend: rdr_elapsed_time(data.last_state_change, true),
-			event_ts: rdr_tstodate(data.timestamp, true)
+			event_ts: rdr_tstodate(data.timestamp, true),
+			widget_data.icon_src = this.getIcon((4 - data.state)*100/4);
 		};
 
 		if (data.output && data.output != '')
 			widget_data.output = data.output;
 
-		if (data.event_type == 'selector') {
-			var icon_value = 100 - (data.state / 4 * 100);
-			widget_data.icon_src = this.getIcon(icon_value);
-		}else {
-			if (this.state_as_icon_value || this.selector) {
-				if (!this.selector) {
-					var icon_value = 100 - (data.state / 4 * 100);
-					widget_data.icon_src = this.getIcon(icon_value);
-				}else {
-					log.debug('  +  This brick is using its selector state as icon', this.logAuthor);
-					var icon_value = 100 - (this.selector.state / 4 * 100);
-					widget_data.icon_src = this.getIcon(icon_value);
-				}
-			}else {
-				if (data.perf_data_array[0])
-					widget_data.icon_src = this.getIcon(data.perf_data_array[0].value);
-				else
-					widget_data.icon_src = this.info_weather_icon;
-			}
-			if (data.perf_data_array)
-				widget_data.percent = data.perf_data_array[0].value;
-		}
+		if(data.event_type == 'sla' && data.perf_data_array)
+			widget_data.percent = data.perf_data_array[0].value;
 
 		//----------------alert && derog-------------
 		if (this.display_report_button)
