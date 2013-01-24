@@ -49,6 +49,7 @@ class KnownValues(unittest.TestCase):
 
 	def test_01_Init(self):
 		global manager
+
 		manager = pyperfstore2.manager(mongo_collection='unittest_perfdata2', dca_min_length=50, logging_level=logging.DEBUG)
 		
 		manager.store.drop()
