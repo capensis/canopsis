@@ -123,10 +123,9 @@ class Wrapper(object):
 
 		self.logger.debug('wkhtmltopdf will be launched with the following command:')
 		self.logger.debug(cmd)
-		
 		result = Popen(cmd, shell=True)
-		#result = subprocess.call(cmd, shell=True)
 		waitTime = 0
+
 		#return 0 if everything's ok
 		while result.poll() == None:
 			sleep(2)
