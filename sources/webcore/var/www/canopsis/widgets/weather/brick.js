@@ -287,7 +287,7 @@ Ext.define('widgets.weather.brick' , {
 		var widget_data = {
 			legend: rdr_elapsed_time(data.last_state_change, true),
 			event_ts: rdr_tstodate(data.timestamp, true),
-			widget_data.icon_src = this.getIcon((4 - data.state)*100/4);
+			icon_src: this.getIcon((4 - data.state)*100/4)
 		};
 
 		if (data.output && data.output != '')
