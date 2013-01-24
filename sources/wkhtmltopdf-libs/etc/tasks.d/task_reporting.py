@@ -34,32 +34,20 @@ import time
 import hashlib
 
 import task_mail
+import wkhtmltopdf.wrapper
 
 init 	= cinit()
 logger 	= init.getLogger('Reporting Task') 
 
 @task
 @decorators.log_task
-def render_pdf(filename=None, viewname=None, starttime=None, stoptime=None, account=None, wrapper_conf_file=None, mail=None, owner=None, orientation='Portrait', pagesize='A4'):
+def render_pdf(fileName=None, viewName=None, startTime=None, stopTime=None, account=None, mail=None, owner=None, orientation='Portrait', pagesize='A4'):
 	
-	#prepare stoptime and starttime
-	if stoptime:
-		stoptime = cleanTimestamp(stoptime)
-	else:
-		stoptime = time.time()
-	if starttime:
-		starttime = starttime/1000
-	else:
-		startime = 0
+	if not startTime or not stopTime:
+		raise ValueError("task_render_pdf: Missing stop/start timestamps")
 
-	if viewname is None:
-		raise ValueError("task_render_pdf : you must at least provide a viewname")
-
-	################setting variable for celery auto launch task##################"
-
-	#if no wrapper conf file set, take the default
-	if wrapper_conf_file is None:
-		wrapper_conf_file = os.path.expanduser("~/etc/wkhtmltopdf_wrapper.json")
+	if viewName is None:
+		raise ValueError("task_render_pdf: you must at least provide a viewName")
 	
 	#check if the account is just a name or a real caccount
 	if isinstance(account ,str) or isinstance(account ,unicode):
@@ -78,28 +66,20 @@ def render_pdf(filename=None, viewname=None, starttime=None, stoptime=None, acco
 	#get view options
 	storage = cstorage(account=account, namespace='object')
 	try:
-		view_record = storage.get(viewname,account=account)
+		view_record = storage.get(viewName,account=account)
 	except:
-		raise Exception("Impossible to find view '%s' with account '%s'" % (viewname, account._id))
+		raise Exception("Impossible to find view '%s' with account '%s'" % (viewName, account._id))
 
-	#set filename
-	if filename is None:
-		toDate = date.fromtimestamp(int(stoptime) )
-		
-		if starttime:
-			fromDate = date.fromtimestamp(int(starttime))
-			filename = '%s_From_%s_To_%s.pdf' % (view_record.name, fromDate, toDate) 
-		else:
-			filename = '%s_%s.pdf' % (view_record.name, toDate) 
+	#set fileName
+	if fileName is None:
+		toDate = date.fromtimestamp(int(stopTime) )
+		fromDate = date.fromtimestamp(int(startTime))
+		fileName = '%s_From_%s_To_%s.pdf' % (view_record.name, fromDate, toDate) 
 
-	#set start time if needed
-	if starttime:
-		starttime = stoptime - starttime 
-		
-	ascii_filename = hashlib.md5(filename.encode('ascii', 'ignore')).hexdigest()
+	logger.info('fileName: %s' % fileName)
+
+	ascii_fileName = hashlib.md5(fileName.encode('ascii', 'ignore')).hexdigest()
 	
-	logger.info('Filename: %s' % filename)
-
 	#get orientation and pagesize
 	view_options = view_record.data.get('view_options', {})
 	if isinstance(view_options, dict):
@@ -109,34 +89,28 @@ def render_pdf(filename=None, viewname=None, starttime=None, stoptime=None, acco
 	logger.info('Orientation: %s' % orientation)
 	logger.info('Pagesize: %s' % pagesize)
 
-	##############################################################################
-	
-	libwkhtml_dir=os.path.expanduser("~/lib")
-	sys.path.append(libwkhtml_dir)
+	wrapper_conf_file = os.path.expanduser("~/etc/wkhtmltopdf_wrapper.json")
+	file_path = open(wrapper_conf_file, "r").read()
+	file_path = '%s/%s' % (json.loads(file_path)['report_dir'],ascii_fileName)
 
-	logger.info('Load wkhtmltopdf.wrapper')
-	import wkhtmltopdf.wrapper
-
-	# Generate config
-	settings = wkhtmltopdf.wrapper.load_conf(	ascii_filename,
-							viewname,
-							starttime,
-							stoptime,
+	Generate config
+	settings = wkhtmltopdf.wrapper.load_conf(	ascii_fileName,
+							viewName,
+							startTime,
+							stopTime,
 							account,
 							wrapper_conf_file,
 							orientation=orientation,
 							pagesize=pagesize)
 
-	file_path = open(wrapper_conf_file, "r").read()
-	file_path = '%s/%s' % (json.loads(file_path)['report_dir'],ascii_filename)
+
 
 	# Run rendering
 	logger.debug('Run pdf rendering')
 	result = wkhtmltopdf.wrapper.run(settings)
-	result.wait()
 
 	logger.debug('Put it in grid fs')
-	id = put_in_grid_fs(file_path, filename, account,owner)
+	doc_id = put_in_grid_fs(file_path, fileName, account,owner)
 	logger.debug('Remove tmp report file')
 	os.remove(file_path)
 	
@@ -145,7 +119,7 @@ def render_pdf(filename=None, viewname=None, starttime=None, stoptime=None, acco
 		#get cfile
 		try:
 			reportStorage = cstorage(account=account, namespace='files')
-			meta = reportStorage.get(id)
+			meta = reportStorage.get(doc_id)
 			meta.__class__ = cfile
 		except Exception, err:
 			logger.error('Error while fetching cfile : %s' % err)
@@ -165,7 +139,7 @@ def render_pdf(filename=None, viewname=None, starttime=None, stoptime=None, acco
 			logger.error(err)
 			raise Exception('Impossible to send mail')
 		
-	return id
+	return doc_id
 
 @task
 def put_in_grid_fs(file_path, file_name, account,owner=None):
