@@ -34,13 +34,14 @@ from ctools import cleanTimestamp
 
 import pyperfstore2
 from pyperfstore2.utils import consolidation , mean
+
 manager = None
 
-import ConfigParser
-config = ConfigParser.RawConfigParser()
-config.read(os.path.expanduser('~/etc/cstorage.conf'))
-
 logger = logging.getLogger("perfstore")
+
+import ConfigParser
+
+config = ConfigParser.RawConfigParser()
 
 config.read(os.path.expanduser('~/etc/webserver.conf'))
 pyperfstore_aggregate			= True
