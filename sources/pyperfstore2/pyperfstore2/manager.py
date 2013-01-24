@@ -29,7 +29,7 @@ class manager(object):
 	def __init__(self, retention=0, dca_min_length = 250, logging_level=logging.INFO, cache=True, **kwargs):
 		self.logger = logging.getLogger('manager')
 		self.logger.setLevel(logging_level)
-		print kwargs
+
 		self.store = store(logging_level=logging_level, **kwargs)
 		
 		self.dca_min_length = dca_min_length

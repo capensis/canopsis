@@ -36,8 +36,8 @@ class store(object):
 		self.mongo_db = mongo_db
 		self.mongo_collection = mongo_collection
 		self.mongo_safe = mongo_safe
-		self.mongo_user = mongo_user
-		self.mongo_pass = mongo_pass
+		self.mongo_user = mongo_user if mongo_user != "" else None
+		self.mongo_pass = mongo_pass if mongo_pass != "" else None
 		
 		self.connected = False
 		
