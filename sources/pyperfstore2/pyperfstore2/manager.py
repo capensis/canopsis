@@ -26,11 +26,11 @@ from pyperfstore2.store import store
 import pyperfstore2.utils as utils
 
 class manager(object):
-	def __init__(self, mongo_collection='perfdata2', retention=0, dca_min_length = 250, logging_level=logging.INFO, cache=True, mongo_safe=False):
+	def __init__(self, retention=0, dca_min_length = 250, logging_level=logging.INFO, cache=True, **kwargs):
 		self.logger = logging.getLogger('manager')
 		self.logger.setLevel(logging_level)
-		
-		self.store = store(mongo_collection=mongo_collection, logging_level=logging_level, mongo_safe=mongo_safe)
+		print kwargs
+		self.store = store(logging_level=logging_level, **kwargs)
 		
 		self.dca_min_length = dca_min_length
 		

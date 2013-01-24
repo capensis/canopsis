@@ -25,7 +25,7 @@ from pymongo import Connection
 from gridfs import GridFS
 
 class store(object):
-	def __init__(self, mongo_host="127.0.0.1", mongo_port=27017, mongo_db='canopsis', mongo_collection='perfdata2', mongo_safe=False, logging_level=logging.INFO):
+	def __init__(self, mongo_host="127.0.0.1", mongo_port=27017, mongo_db='canopsis', mongo_collection='perfdata2', mongo_user=None, mongo_pass=None, mongo_safe=False, logging_level=logging.INFO):
 		self.logger = logging.getLogger('store')
 		self.logger.setLevel(logging_level)
 		
@@ -36,6 +36,8 @@ class store(object):
 		self.mongo_db = mongo_db
 		self.mongo_collection = mongo_collection
 		self.mongo_safe = mongo_safe
+		self.mongo_user = mongo_user
+		self.mongo_pass = mongo_pass
 		
 		self.connected = False
 		
@@ -49,12 +51,26 @@ class store(object):
 			self.logger.debug("Connect to MongoDB (%s/%s@%s:%s)" % (self.mongo_db, self.mongo_collection, self.mongo_host, self.mongo_port))
 			
 			try:
-				self.conn=Connection(self.mongo_host, self.mongo_port)
+				self.conn=Connection(host=self.mongo_host, port=self.mongo_port, safe=self.mongo_safe)
+				self.logger.debug(" + Success")
 			except Exception, err:
 				self.logger.error(" + %s" % err)
 				return False
 				
 			self.db=self.conn[self.mongo_db]
+
+			try:
+				self.logger.debug("Try to auth '%s'" % self.mongo_user)
+				if self.mongo_user and self.mongo_pass != None:
+						if not self.db.authenticate(self.mongo_user, self.mongo_pass):
+							raise Exception('Invalid user or pass.')
+						self.logger.debug(" + Success")
+			except Exception, err:
+				self.logger.error(" + Impossible to authenticate: %s" % err)
+				self.disconnect()
+				return False
+
+			self.logger.debug("Get collections")
 			self.collection = self.db[self.mongo_collection]
 			self.grid = GridFS(self.db, self.mongo_collection+"_bin")
 			self.connected = True
@@ -64,7 +80,7 @@ class store(object):
 	def check_connection(self):
 		if not self.connected:
 			if not self.connect():
-				raise Exception('Impossible to push, not connected ...')
+				raise Exception('Impossible to deal with DB, you are not connected ...')
 						
 	def count(self, _id):
 		return self.collection.find({'_id': _id}).count()
@@ -84,7 +100,7 @@ class store(object):
 			data['$pop'] = mpop
 		
 		if data:
-			return self.collection.update({'_id': _id}, data, upsert=upsert, safe=self.mongo_safe)
+			return self.collection.update({'_id': _id}, data, upsert=upsert)
 	
 	def push(self, _id, point, meta_data={}):
 		self.check_connection()
@@ -99,7 +115,7 @@ class store(object):
 		self.check_connection()
 		data['_id'] = _id
 		self.logger.debug("Create record '%s'" % _id)
-		return self.collection.insert(data, safe=self.mongo_safe)
+		return self.collection.insert(data)
 
 	def create_bin(self, _id, data):
 		self.check_connection()
@@ -107,6 +123,7 @@ class store(object):
 		return self.grid.put(data, _id=_id)
 			
 	def remove(self, _id=None, mfilter=None):
+		self.check_connection()
 		if mfilter:
 			return self.collection.remove(mfilter)
 		elif _id:
@@ -137,18 +154,22 @@ class store(object):
 		return size
 	
 	def get(self, _id):
+		self.check_connection()
 		return self.collection.find_one({'_id': _id})
 	
 	def get_bin(self, _id):
+		self.check_connection()
 		return self.grid.get(_id).read()
 
 	def find(self, limit=0, skip=0, mfilter={}, mfields=None, sort=None):
+		self.check_connection()
 		if limit == 1:
 			return self.collection.find_one(mfilter, limit=limit, fields=mfields, sort=sort)
 		else:		
 			return self.collection.find(mfilter, limit=limit, skip=skip, fields=mfields, sort=sort)
 							
 	def drop(self):
+		self.check_connection()
 		self.db.drop_collection(self.mongo_collection)
 		self.db.drop_collection(self.mongo_collection+"_bin.chunks")
 		self.db.drop_collection(self.mongo_collection+"_bin.files")
