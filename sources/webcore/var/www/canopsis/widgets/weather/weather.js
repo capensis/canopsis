@@ -52,7 +52,7 @@ Ext.define('widgets.weather.weather' , {
 	external_link: undefined,
 	linked_view: undefined,
 	helpdesk: undefined,
-	icon_state_source: "default",
+	icon_state_source: 'default',
 
 	initComponent: function() {
 		this.firstNodeIds = [];
@@ -67,21 +67,21 @@ Ext.define('widgets.weather.weather' , {
 		this.configure();
 
 		//---------------------Process nodes---------------
-		for(var i = 0; i < this.nodes.length; i++){
-			var node = this.nodes[i]
-			if(node._id)
-				this.firstNodeIds.push(node._id)
+		for (var i = 0; i < this.nodes.length; i++) {
+			var node = this.nodes[i];
+			if (node._id)
+				this.firstNodeIds.push(node._id);
 			else
-				this.firstNodeIds.push(node.id)
-			if(node.link)
-				this.external_link_dict[node.id] = node.link
+				this.firstNodeIds.push(node.id);
+			if (node.link)
+				this.external_link_dict[node.id] = node.link;
 		}
 
 		this.callParent(arguments);
 	},
 
 	doRefresh: function(from, to) {
-		this.getNodes(this.firstNodeIds,this.firstNodesCallback)
+		this.getNodes(this.firstNodeIds, this.firstNodesCallback);
 	},
 
 	getNodes: function(node_ids,callback) {
@@ -101,69 +101,69 @@ Ext.define('widgets.weather.weather' , {
 
 	firstNodesCallback: function(response) {
 		var nodes = Ext.JSON.decode(response.responseText).data;
-		this.nodes = nodes
-		if(this.icon_state_source != "default")
-			this.secondNodeCheck()
+		this.nodes = nodes;
+		if (this.icon_state_source != 'default')
+			this.secondNodeCheck();
 		else
-			this.populate()
+			this.populate();
 	},
 
-	secondNodeCheck : function(){
+	secondNodeCheck: function() {
 		//build list of second node ids if not already did
-		if(this.secondNodeIds.length == 0){
-			log.debug('Building List of second ids to fetch', this.logAuthor)
-			for(var i = 0; i< this.nodes.length; i++){
-				log.debug(' + Check if second node need for: '+ this.nodes[i]._id, this.logAuthor)
-				var event_type = this.nodes[i].event_type
+		if (this.secondNodeIds.length == 0) {
+			log.debug('Building List of second ids to fetch', this.logAuthor);
+			for (var i = 0; i < this.nodes.length; i++) {
+				log.debug(' + Check if second node need for: ' + this.nodes[i]._id, this.logAuthor);
+				var event_type = this.nodes[i].event_type;
 
-				if(event_type != this.icon_state_source){
-					log.debug('  +  event type different from icon state source', this.logAuthor)
-					if(event_type == "selector"){
-						if(this.nodes[i].sla_rk)
-							this.secondNodeIds.push(this.nodes[i].sla_rk)
-					}else{
-						if(this.nodes[i].selector_rk)
-							this.secondNodeIds.push(this.nodes[i].selector_rk)
+				if (event_type != this.icon_state_source) {
+					log.debug('  +  event type different from icon state source', this.logAuthor);
+					if (event_type == 'selector') {
+						if (this.nodes[i].sla_rk)
+							this.secondNodeIds.push(this.nodes[i].sla_rk);
+					}else {
+						if (this.nodes[i].selector_rk)
+							this.secondNodeIds.push(this.nodes[i].selector_rk);
 					}
 				}
 			}
 		}
-		
-		if(this.secondNodeIds.length > 0){
-			log.debug(' + Fetch secondary nodes', this.logAuthor)
-			this.getNodes(this.secondNodeIds,this.secondNodesCallback)
-		}else{
-			log.debug(' + No need to fetch more nodes, populating', this.logAuthor)
-			this.populate()
+
+		if (this.secondNodeIds.length > 0) {
+			log.debug(' + Fetch secondary nodes', this.logAuthor);
+			this.getNodes(this.secondNodeIds, this.secondNodesCallback);
+		}else {
+			log.debug(' + No need to fetch more nodes, populating', this.logAuthor);
+			this.populate();
 		}
 	},
 
-	secondNodesCallback : function(response){
+	secondNodesCallback: function(response) {
 		var nodes = Ext.JSON.decode(response.responseText).data;
-		for(var i = 0; i < nodes.length ; i++)
-			this.secondNodes[nodes[i]._id] = nodes[i]
-		this.populate()
+		for (var i = 0; i < nodes.length; i++)
+			this.secondNodes[nodes[i]._id] = nodes[i];
+		this.populate();
 	},
 
-	populate: function(){
+	populate: function() {
 		log.debug('Populate widget with ' + this.nodeId.length + ' elements.', this.logAuthor);
 		this.wcontainer.removeAll();
 
-		for(var i = 0; i < this.nodes.length; i++){
-			var node = Ext.clone(this.nodes[i])
+		for (var i = 0; i < this.nodes.length; i++) {
+			var node = Ext.clone(this.nodes[i]);
 
 			//-----------------overload values----------------
-			if(this.icon_state_source != "default"){
-				log.debug('Attempt to overide values with second node',this.logAuthor)
-				if(node.sla_rk)
-					var _id = node.sla_rk
-				if(node.selector_rk)
-					var _id = node.selector_rk
-				var second_node =this.secondNodes[_id]
+			if (this.icon_state_source != 'default') {
+				log.debug('Attempt to overide values with second node', this.logAuthor);
+				if (node.sla_rk)
+					var _id = node.sla_rk;
+				if (node.selector_rk)
+					var _id = node.selector_rk;
+				var second_node = this.secondNodes[_id];
 
-				if(second_node){
-					node.state = second_node.state
-					node.last_state_change = second_node.last_state_change
+				if (second_node) {
+					node.state = second_node.state;
+					node.last_state_change = second_node.last_state_change;
 				}
 			}
 
@@ -171,8 +171,8 @@ Ext.define('widgets.weather.weather' , {
 			var config = {
 				data: node,
 				link: this.external_link_dict[node._id],
-				bg_color: (i % 2)? this.bg_pair_color: this.bg_impair_color
-			}
+				bg_color: (i % 2) ? this.bg_pair_color : this.bg_impair_color
+			};
 			var weather = Ext.create('widgets.weather.brick', Ext.Object.merge(config, this.base_config));
 			this.wcontainer.add(weather);
 		}
@@ -195,16 +195,16 @@ Ext.define('widgets.weather.weather' , {
 				fullscreenMode: this.fullscreenMode,
 				helpdesk: this.helpdesk
 			};
-		
+
 		if (this.defaultPadding)
 			this.base_config.padding = this.defaultPadding;
 
 		if (this.defaultMargin)
 			this.base_config.margin = this.defaultMargin;
 
-		if (this.nodes.length == 1) 
+		if (this.nodes.length == 1)
 			this.base_config.anchor = '100% 100%';
 
-	},
+	}
 
 });
