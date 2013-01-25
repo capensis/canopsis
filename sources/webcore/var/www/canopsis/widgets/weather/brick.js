@@ -284,17 +284,30 @@ Ext.define('widgets.weather.brick' , {
 	build: function(data) {
 		log.debug('  +  Build html for ' + data._id, this.logAuthor);
 
-		var widget_data = {
-			legend: rdr_elapsed_time(data.last_state_change, true),
-			event_ts: rdr_tstodate(data.timestamp, true),
-			icon_src: this.getIcon((4 - data.state)*100/4)
-		};
+		var widget_data = {}
+
+		if(data.state != undefined)
+			widget_data.icon_src = this.getIcon((4 - data.state)*100/4)
+		else
+			widget_data.icon_src =this.info_weather_icon
+
+		if(data.last_state_change)
+			widget_data.legend = rdr_elapsed_time(data.last_state_change, true)
+
+		if(data.timestamp)
+			widget_data.event_ts = rdr_tstodate(data.timestamp, true)
 
 		if (data.output && data.output != '')
 			widget_data.output = data.output;
 
-		if(data.event_type == 'sla' && data.perf_data_array)
-			widget_data.percent = data.perf_data_array[0].value;
+		if(data.event_type == 'sla' && data.perf_data_array){
+			if(data.percent){
+				widget_data.percent = data.percent
+				widget_data.icon_src = this.getIcon(data.percent)
+			}else{
+				widget_data.percent = data.perf_data_array[0].value;
+			}
+		}
 
 		//----------------alert && derog-------------
 		if (this.display_report_button)
@@ -313,7 +326,7 @@ Ext.define('widgets.weather.brick' , {
 		this.getEl().update(_html);
 	},
 
-
+/*
 	buildReport: function(data) {
 		log.debug(' + Build html report for ' + this.event_type + ' ' + this.component + ':', this.logAuthor);
 		var widget_data = {	};
@@ -367,7 +380,7 @@ Ext.define('widgets.weather.brick' , {
 		var _html = this._html_template.applyTemplate(config);
 		this.getEl().update(_html);
 	},
-
+*/
 	report_issue: function() {
 		var config = {
 			_component: this.component,

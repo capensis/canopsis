@@ -56,9 +56,11 @@ Ext.define('widgets.weather.weather' , {
 
 	initComponent: function() {
 		this.firstNodeIds = [];
-		this.secondNodes = {};
+		this.nodeDict = {};
+		this.matchingDict = {};
 		this.secondNodeIds = [];
 		this.external_link_dict = {};
+		this.list_meta_id = []
 
 		log.debug('Initialize weather widget', this.logAuthor);
 		if (this.exportMode || this.simple_display)
@@ -81,7 +83,13 @@ Ext.define('widgets.weather.weather' , {
 	},
 
 	doRefresh: function(from, to) {
-		this.getNodes(this.firstNodeIds,this.firstNodesCallback)
+		if(this.exportMode || this.reportMode){
+			if(this.list_meta_id.length == 0)
+				this.generate_all_meta_ids()
+			this.getPastNode(this.list_meta_id,from,to)
+		}else{
+			this.getNodes(this.firstNodeIds,this.firstNodesCallback)
+		}
 	},
 
 	getNodes: function(node_ids,callback) {
@@ -101,29 +109,48 @@ Ext.define('widgets.weather.weather' , {
 
 	firstNodesCallback: function(response) {
 		var nodes = Ext.JSON.decode(response.responseText).data;
-		this.nodes = nodes
+		
+		//create node dict
+		for(var i = 0; i < nodes.length ; i++){
+			var node = nodes[i]
+			this.nodeDict[node['_id']] = {
+											rk:node['_id'],
+											_event:node,
+											}
+		}
+
 		if(this.icon_state_source != "default")
 			this.secondNodeCheck()
 		else
-			this.populate()
+			if(!this.reportMode && !this.exportMode)
+				this.populate()
 	},
 
 	secondNodeCheck : function(){
 		//build list of second node ids if not already did
 		if(this.secondNodeIds.length == 0){
 			log.debug('Building List of second ids to fetch', this.logAuthor)
-			for(var i = 0; i< this.nodes.length; i++){
+			for(var i = 0; i< this.firstNodeIds.length; i++){
 				log.debug(' + Check if second node need for: '+ this.nodes[i]._id, this.logAuthor)
-				var event_type = this.nodes[i].event_type
+				
+				var _id = this.firstNodeIds[i]
+				var node_event = this.nodeDict[_id]._event
+				var event_type = node_event.event_type
 
 				if(event_type != this.icon_state_source){
 					log.debug('  +  event type different from icon state source', this.logAuthor)
 					if(event_type == "selector"){
-						if(this.nodes[i].sla_rk)
-							this.secondNodeIds.push(this.nodes[i].sla_rk)
+						if(node_event.sla_rk){
+							this.secondNodeIds.push(node_event.sla_rk)
+							this.nodeDict[_id].srk = node_event.sla_rk
+							this.matchingDict[node_event.sla_rk] = _id 
+						}
 					}else{
-						if(this.nodes[i].selector_rk)
-							this.secondNodeIds.push(this.nodes[i].selector_rk)
+						if(node_event.selector_rk){
+							this.secondNodeIds.push(node_event.selector_rk)
+							this.matchingDict[node_event.selector_rk] = _id
+							this.nodeDict[_id].srk = node_event.selector_rk 
+						}
 					}
 				}
 			}
@@ -134,47 +161,130 @@ Ext.define('widgets.weather.weather' , {
 			this.getNodes(this.secondNodeIds,this.secondNodesCallback)
 		}else{
 			log.debug(' + No need to fetch more nodes, populating', this.logAuthor)
-			this.populate()
+			if(!this.reportMode && !this.exportMode)
+				this.populate()
 		}
 	},
 
 	secondNodesCallback : function(response){
 		var nodes = Ext.JSON.decode(response.responseText).data;
-		for(var i = 0; i < nodes.length ; i++)
-			this.secondNodes[nodes[i]._id] = nodes[i]
-		this.populate()
+
+		for(var i = 0; i < nodes.length ; i++){
+			var node = nodes[i]
+			var _id = node._id
+			this.nodeDict[this.matchingDict[_id]].sevent = node
+		}
+
+		if(!this.reportMode && !this.exportMode)
+			this.populate()
+	},
+
+	getPastNode: function(node_ids,from,to) {
+		log.debug('+ Get perfstore values', this.logAuthor);
+
+		//process meta_id to perfstore format
+		post_params = []
+		for(var i =0; i < this.list_meta_id.length; i++)
+			post_params.push({id:this.list_meta_id[i]})
+
+		Ext.Ajax.request({
+			url: '/perfstore/values/' + from + '/' + to,
+			scope: this,
+			params: {'nodes': Ext.JSON.encode(post_params)},
+			success: function(response) {
+				var data = Ext.JSON.decode(response.responseText).data;
+				var metric_dict = {}
+
+				//array to dict
+				for(var i = 0; i < data.length;i++)
+					metric_dict[data[i].node] = data[i]
+
+				Ext.Object.each(this.nodeDict, function(key, value, myself) {
+					var node = value
+					var _event = value._event
+					var sevent = value.sevent
+
+					//if node need data and webserver sent data
+					if(node.metaId){
+						if(metric_dict[node.metaId]){
+							this.overload_event(_event,
+											metric_dict[node.metaId].values,
+											metric_dict[node.metaId].metric)
+						}else{
+							_event.state = undefined
+							_event.percent = undefined
+							_event.output = _("No data available")
+							_event.perf_data_array = undefined
+						}
+					}
+					
+					//if node need data for his second node
+					if(node.smetaId){
+						if(metric_dict[node.smetaId]){
+							this.overload_event(sevent,
+												metric_dict[node.smetaId].values,
+												metric_dict[node.metaId].metric)
+						}else{
+							sevent.state = undefined
+							sevent.percent = undefined
+							sevent.output = _("No data available")
+							sevent.perf_data_array = undefined
+						}
+
+					}
+
+				},this);
+
+				this.populate()
+			},
+			failure: function(result, request) {
+				log.error('Impossible to get Node', this.logAuthor);
+				global.notify.notify(_('Issue'), _("The selected selector can't be found"), 'info');
+			}
+		})
+	},
+
+	overload_event : function(_event,values,metric_type){
+		var last_value = values[values.length - 1]
+		if(metric_type == 'cps_state'){
+			_event.state = demultiplex_cps_state(last_value[1]).state
+			_event.output =_('State on') + ' ' + rdr_tstodate(last_value[0] / 1000);
+
+		}else{
+			_event.percent = undefined
+			_event.output = _('SLA on') + ' ' + rdr_tstodate(last_value[0] / 1000);
+		}
+		_event.timestamp = undefined
+		_event.last_state_change = undefined
 	},
 
 	populate: function(){
 		log.debug('Populate widget with ' + this.nodeId.length + ' elements.', this.logAuthor);
 		this.wcontainer.removeAll();
 
-		for(var i = 0; i < this.nodes.length; i++){
-			var node = Ext.clone(this.nodes[i])
+		for(var i = 0; i < this.firstNodeIds.length; i++){
+			var _id = this.firstNodeIds[i]
+			
+			var node = Ext.clone(this.nodeDict[_id])
 
 			//-----------------overload values----------------
 			if(this.icon_state_source != "default"){
 				log.debug('Attempt to overide values with second node',this.logAuthor)
-				if(node.sla_rk)
-					var _id = node.sla_rk
-				if(node.selector_rk)
-					var _id = node.selector_rk
-				var second_node =this.secondNodes[_id]
-
-				if(second_node){
-					node.state = second_node.state
-					node.last_state_change = second_node.last_state_change
+				if(node.sevent){
+					node._event.state = node.sevent.state
+					node._event.last_state_change = node.sevent.last_state_change
 				}
 			}
 
 			//------------------create config----------------
 			var config = {
-				data: node,
-				link: this.external_link_dict[node._id],
+				data: node._event,
+				link: this.external_link_dict[_id],
 				bg_color: (i % 2)? this.bg_pair_color: this.bg_impair_color
 			}
 			var weather = Ext.create('widgets.weather.brick', Ext.Object.merge(config, this.base_config));
 			this.wcontainer.add(weather);
+			
 		}
 	},
 
@@ -205,6 +315,29 @@ Ext.define('widgets.weather.weather' , {
 		if (this.nodes.length == 1) 
 			this.base_config.anchor = '100% 100%';
 
+	},
+
+	generate_all_meta_ids: function(){
+		Ext.Object.each(this.nodeDict, function(key, node, myself) {
+			node.metaId = this.generate_meta_id(node._event)
+			this.list_meta_id.push(node.metaId)
+			if(node.sevent){
+				node.smetaId = this.generate_meta_id(node.sevent)
+				this.list_meta_id.push(node.smetaId)
+			}
+		},this);
+	},
+
+	generate_meta_id: function(node) {
+		var component = node.component
+		var resource = node.resource
+
+		if(node.event_type == 'selector')
+			var metric = 'cps_state'
+		else
+			var metric = 'cps_pct_by_state_0';
+
+		return getMetaId(component, resource, metric);
 	},
 
 });
