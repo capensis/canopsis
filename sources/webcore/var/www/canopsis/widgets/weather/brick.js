@@ -157,7 +157,7 @@ Ext.define('widgets.weather.brick' , {
 	title_font_size: 14,
 
 	alert_icon_basedir: 'widgets/weather/icons/alert/',
-	alert_icon_name: ['workman.png','slippery.png','alert.png'],
+	alert_icon_name: ['workman.png', 'slippery.png', 'alert.png'],
 	info_weather_icon: 'widgets/weather/icons/info-icon.png',
 
 	helpdesk: undefined,
@@ -182,15 +182,15 @@ Ext.define('widgets.weather.brick' , {
 
 		this.callParent(arguments);
 
-		this.on('resize',this.onResize,this)
+		this.on('resize', this.onResize, this);
 	},
 
 	afterRender: function() {
 		//------------------build widget base config--------------
 		if (this.simple_display)
 			this._html_template = widget_weather_simple_template;
-		else
-			if(this.icon_on_left)
+		else;
+			if (this.icon_on_left)
 				this._html_template = widget_weather_template_left;
 			else
 				this._html_template = widget_weather_template;
@@ -266,45 +266,45 @@ Ext.define('widgets.weather.brick' , {
 		}
 
 		//Hack for removing scrolling bar on ie
-		this.getEl().parent().setStyle('overflow-x','hidden')
+		this.getEl().parent().setStyle('overflow-x', 'hidden');
 	/*	this.getEl().down('.weather-image').setStyle('width',this.getWidth() * 0.20)
 		this.getEl().down('.weather-td-image').setStyle('width',this.getWidth() * 0.20)*/
 
 
 	},
 
-	onResize: function(){
+	onResize: function() {
 		//very dirty hack, ie resize images after that
-		if(Ext.isIE){
-			this.getEl().down('.weather-image').setStyle('width',this.getWidth() * 0.20)
-			this.getEl().down('.weather-td-image').setStyle('width',this.getWidth() * 0.20)
+		if (Ext.isIE) {
+			this.getEl().down('.weather-image').setStyle('width', this.getWidth() * 0.20);
+			this.getEl().down('.weather-td-image').setStyle('width', this.getWidth() * 0.20);
 		}
 	},
 
 	build: function(data) {
 		log.debug('  +  Build html for ' + data._id, this.logAuthor);
 
-		var widget_data = {}
+		var widget_data = {};
 
-		if(data.state != undefined)
-			widget_data.icon_src = this.getIcon((4 - data.state)*100/4)
+		if (data.state != undefined)
+			widget_data.icon_src = this.getIcon((4 - data.state) * 100 / 4);
 		else
-			widget_data.icon_src =this.info_weather_icon
+			widget_data.icon_src = this.info_weather_icon;
 
-		if(data.last_state_change)
-			widget_data.legend = rdr_elapsed_time(data.last_state_change, true)
+		if (data.last_state_change)
+			widget_data.legend = rdr_elapsed_time(data.last_state_change, true);
 
-		if(data.timestamp)
-			widget_data.event_ts = rdr_tstodate(data.timestamp, true)
+		if (data.timestamp)
+			widget_data.event_ts = rdr_tstodate(data.timestamp, true);
 
 		if (data.output && data.output != '')
 			widget_data.output = data.output;
 
-		if(data.event_type == 'sla' && data.perf_data_array){
-			if(data.percent){
-				widget_data.percent = data.percent
-				widget_data.icon_src = this.getIcon(data.percent)
-			}else{
+		if (data.event_type == 'sla' && data.perf_data_array) {
+			if (data.percent) {
+				widget_data.percent = data.percent;
+				widget_data.icon_src = this.getIcon(data.percent);
+			}else {
 				widget_data.percent = data.perf_data_array[0].value;
 			}
 		}
@@ -316,7 +316,7 @@ Ext.define('widgets.weather.brick' , {
 		if (this.data.alert_msg)
 			widget_data.alert_msg = this.data.alert_msg;
 		else
-			widget_data.alert_msg = "&nbsp;"
+			widget_data.alert_msg = '&nbsp;';
 
 		if (this.data.alert_icon != undefined)
 			widget_data.alert_icon = this.alert_icon_basedir + this.alert_icon_name[this.data.alert_icon];
