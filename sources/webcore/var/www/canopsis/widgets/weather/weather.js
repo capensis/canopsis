@@ -95,7 +95,7 @@ Ext.define('widgets.weather.weather' , {
 		}
 
 		// Mode Reporting/Exporting
-		if (this.nodeDict == {}){
+		if (Ext.Object.getSize(this.nodeDict) == 0){
 			this.getNodes(this.firstNodeIds, this.firstNodesCallback);
 			return
 		}
