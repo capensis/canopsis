@@ -85,13 +85,27 @@ Ext.define('widgets.weather.weather' , {
 	},
 
 	doRefresh: function(from, to) {
-		if (this.exportMode || this.reportMode) {
-			if (this.list_meta_id.length == 0)
-				this.generate_all_meta_ids();
-			this.getPastNode(this.list_meta_id, from, to);
-		}else {
+		this.from = to
+		this.to = to
+
+		// Mode Live
+		if (! this.reportMode && ! this.exportMode){
 			this.getNodes(this.firstNodeIds, this.firstNodesCallback);
+			return
 		}
+
+		// Mode Reporting/Exporting
+		if (this.nodeDict == {}){
+			this.getNodes(this.firstNodeIds, this.firstNodesCallback);
+			return
+		}
+
+		// Mode Reporting
+		if (this.reportMode){
+			this.populateCheck()
+			return
+		}
+
 	},
 
 	getNodes: function(node_ids,callback) {
@@ -124,9 +138,8 @@ Ext.define('widgets.weather.weather' , {
 
 		if (this.icon_state_source != 'default')
 			this.secondNodeCheck();
-		else;
-			if (!this.reportMode && !this.exportMode)
-				this.populate();
+		else
+			this.populateCheck();
 	},
 
 	secondNodeCheck: function() {
@@ -164,8 +177,7 @@ Ext.define('widgets.weather.weather' , {
 			this.getNodes(this.secondNodeIds, this.secondNodesCallback);
 		}else {
 			log.debug(' + No need to fetch more nodes, populating', this.logAuthor);
-			if (!this.reportMode && !this.exportMode)
-				this.populate();
+			this.populateCheck();
 		}
 	},
 
@@ -178,8 +190,7 @@ Ext.define('widgets.weather.weather' , {
 			this.nodeDict[this.matchingDict[_id]].sevent = node;
 		}
 
-		if (!this.reportMode && !this.exportMode)
-			this.populate();
+		this.populateCheck();
 	},
 
 	getPastNode: function(node_ids,from,to) {
@@ -255,15 +266,26 @@ Ext.define('widgets.weather.weather' , {
 		});
 	},
 
+	populateCheck: function() {
+		if (this.reportMode || this.exportMode){
+			if (this.list_meta_id.length == 0)
+				this.generate_all_meta_ids();
+			this.getPastNode(this.list_meta_id, this.from, this.to);
+		} else {
+			this.populate()
+		}
+	},
+
 	populate: function() {
 		log.debug('Populate widget with ' + this.nodeId.length + ' elements.', this.logAuthor);
 		this.wcontainer.removeAll();
+
+		log.debug('There is '+ Ext.Object.getSize(this.nodeDict) +' nodes for ' + this.firstNodeIds.length +' requested node',this.logAuthor)
 
 		for (var i = 0; i < this.firstNodeIds.length; i++) {
 			var _id = this.firstNodeIds[i];
 
 			var node = Ext.clone(this.nodeDict[_id]);
-			log.debug('There is '+ Ext.Object.getSize(this.nodeDict) +' nodes for ' + this.firstNodeIds.length +' requested node',this.logAuthor)
 
 			//-----------------overload values----------------
 			if (this.icon_state_source != 'default') {
