@@ -158,7 +158,7 @@ Ext.define('widgets.weather.brick' , {
 
 	alert_icon_basedir: 'widgets/weather/icons/alert/',
 	alert_icon_name: ['workman.png', 'slippery.png', 'alert.png'],
-	info_weather_icon: 'widgets/weather/icons/info-icon.png',
+	info_weather_icon: 'widgets/weather/icons/question.png',
 
 	helpdesk: undefined,
 	nodeId: undefined,
