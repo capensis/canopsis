@@ -287,7 +287,8 @@ Ext.define('widgets.weather.brick' , {
 		var widget_data = {};
 
 		if (data.state != undefined)
-			widget_data.icon_src = this.getIcon((4 - data.state) * 100 / 4);
+			//widget_data.icon_src = this.getIcon((4 - data.state) * 100 / 4);
+			widget_data.icon_src = this.getIcon(data.state)
 		else
 			widget_data.icon_src = this.info_weather_icon;
 
@@ -452,7 +453,7 @@ Ext.define('widgets.weather.brick' , {
 	},
 
 	getIcon: function(value) {
-		value = Math.floor(value / 10) * 10;
-		return 'widgets/weather/icons/set' + this.iconSet + '/' + value + '.png';
+		//value = Math.floor(value / 10) * 10;
+		return 'widgets/weather/icons/set' + this.iconSet + '/state_' + value + '.png';
 	}
 });

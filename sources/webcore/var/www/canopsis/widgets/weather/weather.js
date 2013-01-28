@@ -190,6 +190,9 @@ Ext.define('widgets.weather.weather' , {
 		for (var i = 0; i < list_meta.length; i++)
 			post_params.push({id: this.list_meta_id[i]});
 
+		console.log(this.nodeDict)
+		console.log(this.matchingDictMeta)
+
 		Ext.Ajax.request({
 			url: '/perfstore/values/' + from + '/' + to,
 			scope: this,
