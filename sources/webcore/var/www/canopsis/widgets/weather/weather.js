@@ -190,9 +190,6 @@ Ext.define('widgets.weather.weather' , {
 		for (var i = 0; i < list_meta.length; i++)
 			post_params.push({id: this.list_meta_id[i]});
 
-		console.log(this.nodeDict)
-		console.log(this.matchingDictMeta)
-
 		Ext.Ajax.request({
 			url: '/perfstore/values/' + from + '/' + to,
 			scope: this,
@@ -265,6 +262,7 @@ Ext.define('widgets.weather.weather' , {
 			var _id = this.firstNodeIds[i];
 
 			var node = Ext.clone(this.nodeDict[_id]);
+			log.debug('There is '+ this.nodeDict.lenght +' nodes for ' + this.firstNodeIds.length +' requested node',this.logAuthor)
 
 			//-----------------overload values----------------
 			if (this.icon_state_source != 'default') {
