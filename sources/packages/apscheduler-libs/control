@@ -2,7 +2,7 @@
 
 NAME="apscheduler-libs"
 VERSION=0.2
-RELEASE=0
+RELEASE=1
 DESCRIPTION=""
 REQUIRES="canohome canolibs python-libs supervisord-conf celery-libs"
 
