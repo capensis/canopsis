@@ -186,7 +186,7 @@ Ext.define('widgets.weather.weather' , {
 
 		//process meta_id to perfstore format
 		var post_params = [];
-		var list_meta = Ext.Object.getValues(this.matchingDictMeta)
+		var list_meta = Ext.Object.getValues(this.matchingDictMeta);
 		for (var i = 0; i < list_meta.length; i++)
 			post_params.push({id: this.list_meta_id[i]});
 
@@ -198,49 +198,49 @@ Ext.define('widgets.weather.weather' , {
 				var data = Ext.JSON.decode(response.responseText).data;
 				var metric_dict = {};
 
-				for(var i =0; i< data.length; i++){
+				for (var i = 0; i < data.length; i++) {
 					//console.log(data)
-					var metric = data[i]
-					var node_id = this.matchingDictMeta[metric.node]
-					var node = this.nodeDict[node_id]
-					var last_value = metric.values[metric.values.length-1]
+					var metric = data[i];
+					var node_id = this.matchingDictMeta[metric.node];
+					var node = this.nodeDict[node_id];
+					var last_value = metric.values[metric.values.length - 1];
 
-					if(metric.metric == 'cps_pct_by_state_0'){
+					if (metric.metric == 'cps_pct_by_state_0') {
 						//for percent in sla
-						if(node.metaIdPct && node.metaIdPct == metric.node){
-							var new_value = last_value[1]
-							if(node._event.event_type == 'sla')
-								node._event.perf_data_array[0].value = new_value
-		
-							if(node.sevent && node.sevent.event_type == 'sla')
-								node.sevent.perf_data_array[0].value = new_value
+						if (node.metaIdPct && node.metaIdPct == metric.node) {
+							var new_value = last_value[1];
+							if (node._event.event_type == 'sla')
+								node._event.perf_data_array[0].value = new_value;
+
+							if (node.sevent && node.sevent.event_type == 'sla')
+								node.sevent.perf_data_array[0].value = new_value;
 						}
-					}else{
-						if(last_value && last_value[1]){
-							if(node.smetaId && node.smetaId == metric.node){
+					}else {
+						if (last_value && last_value[1]) {
+							if (node.smetaId && node.smetaId == metric.node) {
 								node.sevent.state = demultiplex_cps_state(last_value[1]).state;
 								node.sevent.timestamp = undefined;
 								node.sevent.last_state_change = undefined;
-								if(node.sevent.event_type == 'selector')
+								if (node.sevent.event_type == 'selector')
 									node.sevent.output = _('State on') + ' ' + rdr_tstodate(last_value[0] / 1000);
 								else
 									node.sevent.output = _('SLA on') + ' ' + rdr_tstodate(last_value[0] / 1000);
-							}else{
+							}else {
 								node._event.state = demultiplex_cps_state(last_value[1]).state;
 								node._event.timestamp = undefined;
 								node._event.last_state_change = undefined;
-								if(node._event.event_type == 'selector')
+								if (node._event.event_type == 'selector')
 									node._event.output = _('State on') + ' ' + rdr_tstodate(last_value[0] / 1000);
 								else
 									node._event.output = _('SLA on') + ' ' + rdr_tstodate(last_value[0] / 1000);
 							}
-						}else{
-							log.debug('No perfdata returned for: ' + node_id,this.logAuthor)
-							node._event.output('No state available on this period')
-							if(node.sevent)
-								node.sevent.state = undefined
+						}else {
+							log.debug('No perfdata returned for: ' + node_id, this.logAuthor);
+							node._event.output('No state available on this period');
+							if (node.sevent)
+								node.sevent.state = undefined;
 							else
-								node._event.state = undefined
+								node._event.state = undefined;
 						}
 					}
 				}
@@ -317,23 +317,23 @@ Ext.define('widgets.weather.weather' , {
 	generate_all_meta_ids: function() {
 		Ext.Object.each(this.nodeDict, function(key, node, myself) {
 			if (node.sevent) {
-				var active_event = node.sevent
+				var active_event = node.sevent;
 				var metaId = this.generate_meta_id(node.sevent);
-				node.smetaId = metaId
-			}else{
-				var active_event = node._event
+				node.smetaId = metaId;
+			}else {
+				var active_event = node._event;
 				var metaId = this.generate_meta_id(node._event);
-				node.metaId = metaId
+				node.metaId = metaId;
 			}
 
 			this.list_meta_id.push(metaId);
-			this.matchingDictMeta[metaId] = key
+			this.matchingDictMeta[metaId] = key;
 
 			//check if needed to retrieve sla pct
-			if(node._event.event_type == 'sla'){
+			if (node._event.event_type == 'sla') {
 				node.metaIdPct = this.generate_meta_id(node._event, 'cps_pct_by_state_0');
 				this.list_meta_id.push(node.metaIdPct);
-				this.matchingDictMeta[node.metaIdPct] = key
+				this.matchingDictMeta[node.metaIdPct] = key;
 			}
 			/*
 			if(node.sevent && node.sevent.event_type == 'sla'){
@@ -347,7 +347,7 @@ Ext.define('widgets.weather.weather' , {
 	generate_meta_id: function(node, metric) {
 		var component = node.component;
 		var resource = node.resource;
-		var metric = (metric)?metric:'cps_state';
+		var metric = (metric) ? metric : 'cps_state';
 
 		return getMetaId(component, resource, metric);
 	}

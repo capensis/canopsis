@@ -31,6 +31,7 @@ except ImportError:  # pragma: nocover
     import pickle
 
 logger = logging.getLogger('MongoDbStore')
+logger.setLevel(logging.DEBUG)
 
 class CMongoDBJobStore(MongoDBJobStore):
 	
@@ -103,6 +104,12 @@ class CMongoDBJobStore(MongoDBJobStore):
 				
 		logger.info(' + %s jobs loaded' % len(jobs))
 		self.jobs = jobs
+
+	def close(self):
+		for job in self.jobs:
+			logger.info(' + Unload %s' % job.id)
+			self.collection.update({'_id':job.id},{"$set":{'loaded':False}},True)
+		MongoDBJobStore.close(self)
 
 	def check_and_refresh(self):
 		count = None
