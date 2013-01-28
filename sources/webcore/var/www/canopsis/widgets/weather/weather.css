@@ -52,6 +52,11 @@
 }
 
 /*for combobox icons*/
+.widget-weather-form-icon{
+	height:24px;
+	width:28px;
+}
+
 .widget-weather-alert-icon-0{
 	background-image: url(./icons/alert/workman.png) !important;
 }
