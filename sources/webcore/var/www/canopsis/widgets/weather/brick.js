@@ -288,7 +288,7 @@ Ext.define('widgets.weather.brick' , {
 
 		if (data.state != undefined)
 			//widget_data.icon_src = this.getIcon((4 - data.state) * 100 / 4);
-			widget_data.icon_src = this.getIcon(data.state)
+			widget_data.icon_src = this.getIcon(data.state);
 		else
 			widget_data.icon_src = this.info_weather_icon;
 
@@ -303,7 +303,7 @@ Ext.define('widgets.weather.brick' , {
 
 		if (data.event_type == 'sla' && data.perf_data_array)
 			widget_data.percent = data.perf_data_array[0].value;
-	
+
 		//----------------alert && derog-------------
 		if (this.display_report_button)
 			widget_data.button_text = _('Report issue');
