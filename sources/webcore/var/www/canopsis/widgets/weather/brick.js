@@ -223,8 +223,7 @@ Ext.define('widgets.weather.brick' , {
 
 		//----------------------build html------------------------
 		if (this.data) {
-			if (!this.exportMode)
-				this.build(this.data);
+			this.build(this.data);
 		}else {
 			this.buildEmpty();
 		}
@@ -363,7 +362,7 @@ Ext.define('widgets.weather.brick' , {
 		var _html = this._html_template.applyTemplate(config);
 		this.getEl().update(_html);
 	},
-
+	*/
 	buildEmpty: function() {
 		log.debug('  +  Build empty brick for ' + this.event_type + ' ' + this.component, this.logAuthor);
 		var widget_data = {
@@ -375,7 +374,7 @@ Ext.define('widgets.weather.brick' , {
 		var _html = this._html_template.applyTemplate(config);
 		this.getEl().update(_html);
 	},
-*/
+
 	report_issue: function() {
 		var config = {
 			_component: this.component,
