@@ -226,7 +226,6 @@ Ext.define('widgets.weather.weather' , {
 								else
 									node.sevent.output = _('SLA on') + ' ' + rdr_tstodate(last_value[0] / 1000);
 							}else{
-								console.log(demultiplex_cps_state(last_value[1]))
 								node._event.state = demultiplex_cps_state(last_value[1]).state;
 								node._event.timestamp = undefined;
 								node._event.last_state_change = undefined;
