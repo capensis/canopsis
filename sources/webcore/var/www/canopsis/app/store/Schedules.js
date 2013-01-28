@@ -27,6 +27,13 @@ Ext.define('canopsis.store.Schedules', {
   	autoLoad: true,
 	autoSync: true,
 
+	sorters: [
+		{
+			property: 'crecord_creation_time',
+			direction: 'DESC'
+		}
+	],
+
 	proxy: {
 		type: 'rest',
 		url: '/rest/object/schedule',

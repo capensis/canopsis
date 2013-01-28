@@ -22,9 +22,20 @@ rm -R $CPS/opt/snmp2amqp
 rm -R $CPS/var/snmp
 rm -R $CPS/opt/collectd-libs
 rm -R $CPS/opt/amqp2engines
+rm -R $CPS/lib/apschedulerlibs
 rm -R $CPS/opt/mongodb
+rm -Rf $CPS/bin/apsd
+rm -Rf $CPS/etc/tasks.d/task_reporting.py
+rm -Rf $CPS/etc/tasks.d/task_mail.py
+rm -Rf $CPS/etc/tasks.d/task_backup.py
+rm -Rf $CPS/etc/tasks.d/task_node.py
+
 
 if [ $LINK -eq 1 ]; then
+	ln -s $SRC/sources/celery-libs/etc/tasks.d/* $CPS/etc/tasks.d/
+	ln -s $SRC/sources/wkhtmltopdf-libs/etc/tasks.d/task_reporting.py $CPS/etc/tasks.d/
+	ln -s $SRC/sources/apscheduler-libs/bin/apsd $CPS/bin/
+	ln -s $SRC/sources/apscheduler-libs/lib/apschedulerlibs $CPS/lib/
 	ln -s $SRC/sources/externals/webcore-libs $CPS/var/www/
 	ln -s $SRC/sources/webcore/opt/webcore $CPS/opt/
 	ln -s $SRC/sources/webcore/var/www/canopsis $CPS/var/www/

@@ -143,7 +143,9 @@ def render_pdf(filename=None, viewname=None, starttime=None, stoptime=None, acco
 	os.remove(file_path)
 	
 	#Subtask mail (if needed)
-	if isinstance(mail, dict):
+	if isinstance(mail, dict) and mail['sendMail']:
+		del mail['sendMail']
+
 		#get cfile
 		try:
 			reportStorage = cstorage(account=account, namespace='files')

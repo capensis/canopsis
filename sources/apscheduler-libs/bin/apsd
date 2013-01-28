@@ -8,17 +8,19 @@ from apschedulerlibs.cmongodbjobstore import CMongoDBJobStore
 import logging
 import string
 
+import threading
+
 from cinit import cinit
 
 # Logger
 init 	= cinit()
-logger 	= init.getLogger('apsd')
+logger 	= init.getLogger('apsd', level="INFO")
 handler = init.getHandler(logger)
 
 # Init
 sched = Scheduler()
 c = {
-	"daemonic": "True",
+	"daemonic": "False",
 	"apscheduler.jobstore.cmongodbjobstore.class": "apschedulerlibs.cmongodbjobstore:CMongoDBJobStore",
 	"apscheduler.jobstore.cmongodbjobstore.database": "canopsis",
 	"apscheduler.jobstore.cmongodbjobstore.collection": "object"
@@ -29,7 +31,10 @@ refresh_interval = 60
 
 logger.info('Config: %s' % c)
 sched.configure(c)
+
+logger.info('Start Scheduler and Handler')
 sched.start()
+handler.run()
 
 def main_loop():
 	last_refresh = int(time.time())
@@ -49,8 +54,15 @@ def main_loop():
 if __name__ == '__main__':
 	sched.print_jobs()
 	try:
+		logger.info('Start mainloop')
 		main_loop()
 	except KeyboardInterrupt:
 		logger.info('Exiting by user request')
-		
+	
+	logger.info('Stop handler')
+	handler.stop()
+	logger.info(' + Done')
+
+	logger.info('Stop Scheduler')
 	sched.shutdown()
+	logger.info(' + Done')
