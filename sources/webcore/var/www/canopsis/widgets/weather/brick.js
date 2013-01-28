@@ -300,15 +300,9 @@ Ext.define('widgets.weather.brick' , {
 		if (data.output && data.output != '')
 			widget_data.output = data.output;
 
-		if (data.event_type == 'sla' && data.perf_data_array) {
-			if (data.percent) {
-				widget_data.percent = data.percent;
-				widget_data.icon_src = this.getIcon(data.percent);
-			}else {
-				widget_data.percent = data.perf_data_array[0].value;
-			}
-		}
-
+		if (data.event_type == 'sla' && data.perf_data_array)
+			widget_data.percent = data.perf_data_array[0].value;
+	
 		//----------------alert && derog-------------
 		if (this.display_report_button)
 			widget_data.button_text = _('Report issue');
