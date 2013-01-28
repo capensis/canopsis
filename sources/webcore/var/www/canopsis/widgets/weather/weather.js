@@ -205,9 +205,10 @@ Ext.define('widgets.weather.weather' , {
 					var node = this.nodeDict[node_id]
 					var last_value = metric.values[metric.values.length-1]
 
+					
 					//for percent in sla
 					if(node.metaIdPct && node.metaIdPct == metric.node){
-						var new_value = metric.values[metric.values.length-1][1]
+						var new_value = last_value[1]
 						if(node._event.event_type == 'sla')
 							node._event.perf_data_array[0].value = new_value
 	
@@ -215,22 +216,32 @@ Ext.define('widgets.weather.weather' , {
 							node.sevent.perf_data_array[0].value = new_value
 					}
 
-					if(node.smetaId && node.smetaId == metric.node){
-						node.sevent.state = demultiplex_cps_state(last_value[1]).state;
-						node.sevent.timestamp = undefined;
-						node.sevent.last_state_change = undefined;
-						if(node.sevent.event_type == 'selector')
-							node.sevent.output = _('State on') + ' ' + rdr_tstodate(last_value[0] / 1000);
-						else
-							node.sevent.output = _('SLA on') + ' ' + rdr_tstodate(last_value[0] / 1000);
+					if(last_value && last_value[1]){
+						if(node.smetaId && node.smetaId == metric.node){
+							node.sevent.state = demultiplex_cps_state(last_value[1]).state;
+							node.sevent.timestamp = undefined;
+							node.sevent.last_state_change = undefined;
+							if(node.sevent.event_type == 'selector')
+								node.sevent.output = _('State on') + ' ' + rdr_tstodate(last_value[0] / 1000);
+							else
+								node.sevent.output = _('SLA on') + ' ' + rdr_tstodate(last_value[0] / 1000);
+						}else{
+							console.log(demultiplex_cps_state(last_value[1]))
+							node._event.state = demultiplex_cps_state(last_value[1]).state;
+							node._event.timestamp = undefined;
+							node._event.last_state_change = undefined;
+							if(node._event.event_type == 'selector')
+								node._event.output = _('State on') + ' ' + rdr_tstodate(last_value[0] / 1000);
+							else
+								node._event.output = _('SLA on') + ' ' + rdr_tstodate(last_value[0] / 1000);
+						}
 					}else{
-						node._event.state = demultiplex_cps_state(last_value[1]).state;
-						node._event.timestamp = undefined;
-						node._event.last_state_change = undefined;
-						if(node._event.event_type == 'selector')
-							node._event.output = _('State on') + ' ' + rdr_tstodate(last_value[0] / 1000);
+						log.debug('No perfdata returned for: ' + node_id,this.logAuthor)
+						node._event.output('No state available on this period')
+						if(node.sevent)
+							node.sevent.state = undefined
 						else
-							node._event.output = _('SLA on') + ' ' + rdr_tstodate(last_value[0] / 1000);
+							node._event.state = undefined
 					}
 				}
 
