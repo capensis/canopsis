@@ -226,9 +226,9 @@ var updateRecord = function(namespace, crecord_type, model, _id, data, on_succes
 var demultiplex_cps_state = function(cps_state) {
 	var state = cps_state.toString();
 	if (state.length == 2)
-		return {state: 0, state_type: state[0], state_extra: state[1]};
+		return {state: 0, state_type: state.charAt(0), state_extra: state.charAt(1)};
 	else if (state.length == 3)
-		return {state: state[0], state_type: state[1], state_extra: state[2]};
+		return {state: state.charAt(0), state_type: state.charAt(1), state_extra: state.charAt(2)};
 	else
 		return undefined;
 };
