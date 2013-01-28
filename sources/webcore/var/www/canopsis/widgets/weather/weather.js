@@ -111,6 +111,7 @@ Ext.define('widgets.weather.weather' , {
 
 	firstNodesCallback: function(response) {
 		var nodes = Ext.JSON.decode(response.responseText).data;
+		log.debug('Received '+nodes.length+' nodes from webserver',this.logAuthor)
 
 		//create node dict
 		for (var i = 0; i < nodes.length; i++) {
@@ -262,7 +263,7 @@ Ext.define('widgets.weather.weather' , {
 			var _id = this.firstNodeIds[i];
 
 			var node = Ext.clone(this.nodeDict[_id]);
-			log.debug('There is '+ this.nodeDict.lenght +' nodes for ' + this.firstNodeIds.length +' requested node',this.logAuthor)
+			log.debug('There is '+ Ext.Object.getSize(this.nodeDict) +' nodes for ' + this.firstNodeIds.length +' requested node',this.logAuthor)
 
 			//-----------------overload values----------------
 			if (this.icon_state_source != 'default') {
