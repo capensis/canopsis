@@ -37,7 +37,7 @@ except:
 #from gevent import monkey; monkey.patch_all()
 
 ## Configurations
-webservices = ['account',  'auth', 'event', 'files', 'perfstore', 'reporting', 'rest', 'rights', 'ui_view', 'ui_widgets', 'topology']
+webservices = ['account',  'auth', 'event', 'files', 'perfstore', 'reporting', 'rest', 'rights', 'ui_view', 'ui_widgets', 'topology', 'locales']
 webservices_mods = {}
 
 config_filename	= os.path.expanduser('~/etc/webserver.conf')
@@ -153,18 +153,22 @@ session_opts = {
 }
 
 ## Basic Handler
-@route('/static/:path#.+#',skip=[auth_plugin])
-def server_static(path):
+@route('/:lang/static/:path#.+#',	skip=['checkAuthPlugin'])
+@route('/static/:path#.+#',			skip=['checkAuthPlugin'])
+def server_static(path, lang='en'):
 	return static_file(path, root=root_directory)
 
 @route('/favicon.ico',skip=[auth_plugin])
 def favicon():
 	return
 
-@route('/',skip=[auth_plugin])
-@route('/:key',skip=[auth_plugin])
-@route('/index.html',skip=[auth_plugin])
-def index(key=None):
+@route('/',					skip=['checkAuthPlugin'])
+@route('/:key',				skip=['checkAuthPlugin'])
+@route('/index.html',		skip=['checkAuthPlugin'])
+@route('/:lang/',			skip=['checkAuthPlugin'])
+@route('/:lang/:key',		skip=['checkAuthPlugin'])
+@route('/:lang/index.html',	skip=['checkAuthPlugin'])
+def index(key=None, lang='en'):
 	#autologin
 	if key:
 		if len(key) == 56:
@@ -176,7 +180,7 @@ def index(key=None):
 			else:
 				logger.info('autoLogin failed')
 
-	redirect("/static/canopsis/auth.html?url=/static/canopsis/index.html")
+	redirect("/static/canopsis/auth.html?url=/static/canopsis/index.html&lang=%s" % lang)
 
 
 ## Install session Middleware

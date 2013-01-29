@@ -1,0 +1,1146 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: en\n"
+
+msgid "Access denied"
+msgstr "Access denied"
+
+msgid "Accounts"
+msgstr "Accounts"
+
+msgid "Action"
+msgstr "Action"
+
+msgid "Actions"
+msgstr "Actions"
+
+msgid "Active"
+msgstr "Active"
+
+msgid "Add"
+msgstr "Add"
+
+msgid "Add column"
+msgstr "Add column"
+
+msgid "Add directory"
+msgstr "Add directory"
+
+msgid "Add new field/condition"
+msgstr "Add new field/condition"
+
+msgid "Add new value to this list"
+msgstr "Add new value to this list"
+
+msgid "Add row"
+msgstr "Add row"
+
+msgid "Alert icon"
+msgstr "Alert icon"
+
+msgid "Alert message"
+msgstr "Alert message"
+
+msgid "Algorithm"
+msgstr "Algorithm"
+
+msgid "And"
+msgstr "And"
+
+msgid "An error have occured during the process"
+msgstr "An error have occured during the process"
+
+msgid "An error have occured during the updating process"
+msgstr "An error have occured during the updating process"
+
+msgid "Application must be reloaded, do you want to reload now ?"
+msgstr "Application must be reloaded, do you want to reload now ?"
+
+msgid "E-mail"
+msgstr "E-mail"
+
+msgid "Hours (local time)"
+msgstr "Hours (local time)"
+
+msgid "Calcul SLA (if state is calculated)"
+msgstr "Calcul SLA (if state is calculated)"
+
+msgid "April"
+msgstr "April"
+
+msgid "Area color"
+msgstr "Area color"
+
+msgid "Area opacity"
+msgstr "Area opacity"
+
+msgid "Ask for a new key"
+msgstr "Ask for a new key"
+
+msgid "August"
+msgstr "August"
+
+msgid "Authentification key"
+msgstr "Authentification key"
+
+msgid "Be carefull"
+msgstr "Be carefull"
+
+msgid "Before"
+msgstr "Before"
+
+msgid "Begin"
+msgstr "Begin"
+
+msgid "body"
+msgstr "body"
+
+msgid "Briefcase"
+msgstr "Briefcase"
+
+msgid "Calcul SLA"
+msgstr "Calcul SLA"
+
+msgid "Calcul state"
+msgstr "Calcul state"
+
+msgid "Calcul State"
+msgstr "Calcul State"
+
+msgid "Cancel"
+msgstr "Cancel"
+
+msgid "Change operator option"
+msgstr "Change operator option"
+
+msgid "Check if websocket deamon is started or check your firewall port "
+msgstr "Check if websocket deamon is started or check your firewall port "
+
+msgid "Checks"
+msgstr "Checks"
+
+msgid "choose the type of widget you want, its title, and refresh interval"
+msgstr "choose the type of widget you want, its title, and refresh interval"
+
+msgid "Choose widget"
+msgstr "Choose widget"
+
+msgid "Clean"
+msgstr "Clean"
+
+msgid "Clean all"
+msgstr "Clean all"
+
+msgid "Clear all"
+msgstr "Clear all"
+
+msgid "Clear tabs cache"
+msgstr "Clear tabs cache"
+
+msgid "Clock type"
+msgstr "Clock type"
+
+msgid "Comment"
+msgstr "Comment"
+
+msgid "Component"
+msgstr "Component"
+
+msgid "Components"
+msgstr "Components"
+
+msgid "Condition"
+msgstr "Condition"
+
+msgid "Configuration panel"
+msgstr "Configuration panel"
+
+msgid "Configure"
+msgstr "Configure"
+
+msgid "Configure clock display"
+msgstr "Configure clock display"
+
+msgid "Configure language"
+msgstr "Configure language"
+
+msgid "Connected to websocket"
+msgstr "Connected to websocket"
+
+msgid "Connector"
+msgstr "Connector"
+
+msgid "Connector name"
+msgstr "Connector name"
+
+msgid "Connector Name"
+msgstr "Connector Name"
+
+msgid "Consider unknown time"
+msgstr "Consider unknown time"
+
+msgid "Console"
+msgstr "Console"
+
+msgid "Creation date"
+msgstr "Creation date"
+
+msgid "Critical"
+msgstr "Critical"
+
+msgid "Critical threshold"
+msgstr "Critical threshold"
+
+msgid "Curves"
+msgstr "Curves"
+
+msgid "Dash"
+msgstr "Dash"
+
+msgid "Dashboard"
+msgstr "Dashboard"
+
+msgid "DashDot"
+msgstr "DashDot"
+
+msgid "Dash style"
+msgstr "Dash style"
+
+msgid "Date"
+msgstr "Date"
+
+msgid "day"
+msgstr "day"
+
+msgid "Day"
+msgstr "Day"
+
+msgid "Day of week"
+msgstr "Day of week"
+
+msgid "December"
+msgstr "December"
+
+msgid "Delete"
+msgstr "Delete"
+
+msgid "Delete selected"
+msgstr "Delete selected"
+
+msgid "Deleting event forbidden"
+msgstr "Deleting event forbidden"
+
+msgid "Deleting event have failed"
+msgstr "Deleting event have failed"
+
+msgid "Derogation"
+msgstr "Derogation"
+
+msgid "Derogation manager"
+msgstr "Derogation manager"
+
+msgid "Description"
+msgstr "Description"
+
+msgid "disconnected"
+msgstr "disconnected"
+
+msgid "Disconnected from websocket."
+msgstr "Disconnected from websocket."
+
+msgid "Display"
+msgstr "Display"
+
+msgid "Display data of the selected time"
+msgstr "Display data of the selected time"
+
+msgid "Display internal metrics"
+msgstr "Display internal metrics"
+
+msgid "Display name"
+msgstr "Display name"
+
+msgid "Dot"
+msgstr "Dot"
+
+msgid "Download"
+msgstr "Download"
+
+msgid "Dump"
+msgstr "Dump"
+
+msgid "Duplicate"
+msgstr "Duplicate"
+
+msgid "Edit"
+msgstr "Edit"
+
+msgid "Edit active view"
+msgstr "Edit active view"
+
+msgid "Editing "
+msgstr "Editing "
+
+msgid "Editing rights"
+msgstr "Editing rights"
+
+msgid "Edit mode"
+msgstr "Edit mode"
+
+msgid "Edit options"
+msgstr "Edit options"
+
+msgid "Edit schedules"
+msgstr "Edit schedules"
+
+msgid "Email"
+msgstr "Email"
+
+msgid "Enabled"
+msgstr "Enabled"
+
+msgid "Enable/Disable"
+msgstr "Enable/Disable"
+
+msgid "Ending"
+msgstr "Ending"
+
+msgid "Equal"
+msgstr "Equal"
+
+msgid "Error in request:"
+msgstr "Error in request:"
+
+msgid "Error while store synchronisation with server"
+msgstr "Error while store synchronisation with server"
+
+msgid "Event navigation"
+msgstr "Event navigation"
+
+msgid "Event successfuly delete"
+msgstr "Event successfuly delete"
+
+msgid "Event successfuly sent"
+msgstr "Event successfuly sent"
+
+msgid "Event type"
+msgstr "Event type"
+
+msgid "Every"
+msgstr "Every"
+
+msgid "Exclude"
+msgstr "Exclude"
+
+msgid "Exists"
+msgstr "Exists"
+
+msgid "Export active view"
+msgstr "Export active view"
+
+msgid "Export Options"
+msgstr "Export Options"
+
+msgid "Export ready"
+msgstr "Export ready"
+
+msgid "Export this view to pdf"
+msgstr "Export this view to pdf"
+
+msgid "February"
+msgstr "February"
+
+msgid "Field"
+msgstr "Field"
+
+msgid "file"
+msgstr "file"
+
+msgid "File"
+msgstr "File"
+
+msgid "File name"
+msgstr "File name"
+
+msgid "Filter"
+msgstr "Filter"
+
+msgid "Finish"
+msgstr "Finish"
+
+msgid "First name"
+msgstr "First name"
+
+msgid "First Name"
+msgstr "First Name"
+
+msgid "First point"
+msgstr "First point"
+
+msgid "For"
+msgstr "For"
+
+msgid "Frequency"
+msgstr "Frequency"
+
+msgid "Friday"
+msgstr "Friday"
+
+msgid "From"
+msgstr "From"
+
+msgid "General"
+msgstr "General"
+
+msgid "General options"
+msgstr "General options"
+
+msgid "Go to the page"
+msgstr "Go to the page"
+
+msgid "Greater"
+msgstr "Greater"
+
+msgid "Greater or equal"
+msgstr "Greater or equal"
+
+msgid "Group"
+msgstr "Group"
+
+msgid "Group rights"
+msgstr "Group rights"
+
+msgid "Groups"
+msgstr "Groups"
+
+msgid "Group successfuly added to secondary groups"
+msgstr "Group successfuly added to secondary groups"
+
+msgid "Group successfuly removed from secondary groups"
+msgstr "Group successfuly removed from secondary groups"
+
+msgid "here"
+msgstr "here"
+
+msgid "Hour"
+msgstr "Hour"
+
+msgid "Id"
+msgstr "Id"
+
+msgid "ids"
+msgstr "ids"
+
+msgid "if available"
+msgstr "if available"
+
+msgid "If you generate a new authentification key, the old one will NOT work anymore. Do want to update the key now ?"
+msgstr "If you generate a new authentification key, the old one will NOT work anymore. Do want to update the key now ?"
+
+msgid "i'm empty !"
+msgstr "i'm empty !"
+
+msgid "Import view"
+msgstr "Import view"
+
+msgid "Imposible to deal with webservice, record not saved."
+msgstr "Imposible to deal with webservice, record not saved."
+
+msgid "In"
+msgstr "In"
+
+msgid "Include"
+msgstr "Include"
+
+msgid "Incorrect right option given"
+msgstr "Incorrect right option given"
+
+msgid "Indisponible"
+msgstr "Indisponible"
+
+msgid "in seconds"
+msgstr "in seconds"
+
+msgid "Invalid field"
+msgstr "Invalid field"
+
+msgid "Invert"
+msgstr "Invert"
+
+msgid "Invert values"
+msgstr "Invert values"
+
+msgid "Is"
+msgstr "Is"
+
+msgid "Is Not"
+msgstr "Is Not"
+
+msgid "items"
+msgstr "items"
+
+msgid "items"
+msgstr "items"
+
+msgid "ITIL.Build"
+msgstr "Build"
+
+msgid "ITIL.Report"
+msgstr "Report"
+
+msgid "ITIL.Run"
+msgstr "Run"
+
+msgid "January"
+msgstr "January"
+
+msgid "July"
+msgstr "July"
+
+msgid "June"
+msgstr "June"
+
+msgid "Label"
+msgstr "Label"
+
+msgid "Landscape"
+msgstr "Landscape"
+
+msgid "Language"
+msgstr "Language"
+
+msgid "Last check"
+msgstr "Last check"
+
+msgid "Last execution"
+msgstr "Last execution"
+
+msgid "Last name"
+msgstr "Last name"
+
+msgid "Last Name"
+msgstr "Last Name"
+
+msgid "Last point"
+msgstr "Last point"
+
+msgid "Last value"
+msgstr "Last value"
+
+msgid "Leave reporting mode"
+msgstr "Leave reporting mode"
+
+msgid "Less"
+msgstr "Less"
+
+msgid "Less or equal"
+msgstr "Less or equal"
+
+msgid "Level"
+msgstr "Level"
+
+msgid "Line color"
+msgstr "Line color"
+
+msgid "Line Color"
+msgstr "Line Color"
+
+msgid "Line style"
+msgstr "Line style"
+
+msgid "Live reporting toolbar"
+msgstr "Live reporting toolbar"
+
+msgid "Loaded"
+msgstr "Loaded"
+
+msgid "Login"
+msgstr "Login"
+
+msgid "Logout"
+msgstr "Logout"
+
+msgid "LongDash"
+msgstr "LongDash"
+
+msgid "LongDashDot"
+msgstr "LongDashDot"
+
+msgid "LongDashDotDot"
+msgstr "LongDashDotDot"
+
+msgid "Long output"
+msgstr "Long output"
+
+msgid "Mailing"
+msgstr "Mailing"
+
+msgid "Mailing Options"
+msgstr "Mailing Options"
+
+msgid "Mail not sent, error with celery task"
+msgstr "Mail not sent, error with celery task"
+
+msgid "Mail not sent, webserver error"
+msgstr "Mail not sent, webserver error"
+
+msgid "Mail sent"
+msgstr "Mail sent"
+
+msgid "March"
+msgstr "March"
+
+msgid "Match all"
+msgstr "Match all"
+
+msgid "Max"
+msgstr "Max"
+
+msgid "May"
+msgstr "May"
+
+msgid "Menu"
+msgstr "Menu"
+
+msgid "Message"
+msgstr "Message"
+
+msgid "Message updated"
+msgstr "Message updated"
+
+msgid "Metric"
+msgstr "Metric"
+
+msgid "Metric name"
+msgstr "Metric name"
+
+msgid "Microsecond"
+msgstr "Microsecond"
+
+msgid "Millisecond"
+msgstr "Millisecond"
+
+msgid "Min"
+msgstr "Min"
+
+msgid "Minute"
+msgstr "Minute"
+
+msgid "Monday"
+msgstr "Monday"
+
+msgid "month"
+msgstr "month"
+
+msgid "Month"
+msgstr "Month"
+
+msgid "Name"
+msgstr "Name"
+
+msgid "New"
+msgstr "New"
+
+msgid "New view"
+msgstr "New view"
+
+msgid "Next"
+msgstr "Next"
+
+msgid "Next execution"
+msgstr "Next execution"
+
+msgid "None"
+msgstr "None"
+
+msgid "Nor"
+msgstr "Nor"
+
+msgid "No right"
+msgstr "No right"
+
+msgid "Not"
+msgstr "Not"
+
+msgid "Not equal"
+msgstr "Not equal"
+
+msgid "Not in"
+msgstr "Not in"
+
+msgid "no title"
+msgstr "no title"
+
+msgid "November"
+msgstr "November"
+
+msgid "October"
+msgstr "October"
+
+msgid "Ok"
+msgstr "Ok"
+
+msgid "Operators"
+msgstr "Operators"
+
+msgid "optional"
+msgstr "optional"
+
+msgid "options"
+msgstr "options"
+
+msgid "Options"
+msgstr "Options"
+
+msgid "Or"
+msgstr "Or"
+
+msgid "Or copy/paste"
+msgstr "Or copy/paste"
+
+msgid "Orientation"
+msgstr "Orientation"
+
+msgid "Others"
+msgstr "Others"
+
+msgid "Others rights"
+msgstr "Others rights"
+
+msgid "Output"
+msgstr "Output"
+
+msgid "Output Template"
+msgstr "Output Template"
+
+msgid "Owner"
+msgstr "Owner"
+
+msgid "Owner rights"
+msgstr "Owner rights"
+
+msgid "Owners"
+msgstr "Owners"
+
+msgid "Page size"
+msgstr "Page size"
+
+msgid "Password"
+msgstr "Password"
+
+msgid "Perfdata"
+msgstr "Perfdata"
+
+msgid "Period selection"
+msgstr "Period selection"
+
+msgid "Please check your form"
+msgstr "Please check your form"
+
+msgid "Please choose a correct json file"
+msgstr "Please choose a correct json file"
+
+msgid "Please close reporting before editing the view"
+msgstr "Please close reporting before editing the view"
+
+msgid "Please correct the form"
+msgstr "Please correct the form"
+
+msgid "Please enter directory name:"
+msgstr "Please enter directory name:"
+
+msgid "Please enter view name:"
+msgstr "Please enter view name:"
+
+msgid "Please wait"
+msgstr "Please wait"
+
+msgid "Please wait a moment, some informations aren't availables"
+msgstr "Please wait a moment, some informations aren't availables"
+
+msgid "Portrait"
+msgstr "Portrait"
+
+msgid "Preview"
+msgstr "Preview"
+
+msgid "Previous"
+msgstr "Previous"
+
+msgid "Read"
+msgstr "Read"
+
+msgid "Recipients :"
+msgstr "Recipients :"
+
+msgid "Record deleted"
+msgstr "Record deleted"
+
+msgid "Record saved"
+msgstr "Record saved"
+
+msgid "Record updated"
+msgstr "Record updated"
+
+msgid "Refresh interval"
+msgstr "Refresh interval"
+
+msgid "Regex"
+msgstr "Regex"
+
+msgid "Reload"
+msgstr "Reload"
+
+msgid "Remove all"
+msgstr "Remove all"
+
+msgid "Remove this condition"
+msgstr "Remove this condition"
+
+msgid "Remove this from list of value"
+msgstr "Remove this from list of value"
+
+msgid "Rename"
+msgstr "Rename"
+
+msgid "Reporting"
+msgstr "Reporting"
+
+msgid "Reporting Interval"
+msgstr "Reporting Interval"
+
+msgid "Report options"
+msgstr "Report options"
+
+msgid "Resource"
+msgstr "Resource"
+
+msgid "Resources"
+msgstr "Resources"
+
+msgid "Rights"
+msgstr "Rights"
+
+msgid "Rights updated"
+msgstr "Rights updated"
+
+msgid "Run now"
+msgstr "Run now"
+
+msgid "S"
+msgstr "S"
+
+msgid "Satursday"
+msgstr "Satursday"
+
+msgid "Save"
+msgstr "Save"
+
+msgid "Schedule"
+msgstr "Schedule"
+
+msgid "Schedule active view export"
+msgstr "Schedule active view export"
+
+msgid "Schedule export"
+msgstr "Schedule export"
+
+msgid "Schedule name"
+msgstr "Schedule name"
+
+msgid "Scheduling"
+msgstr "Scheduling"
+
+msgid "Search"
+msgstr "Search"
+
+msgid "Second"
+msgstr "Second"
+
+msgid "Select a file"
+msgstr "Select a file"
+
+msgid "Select a view"
+msgstr "Select a view"
+
+msgid "Select file"
+msgstr "Select file"
+
+msgid "Selection"
+msgstr "Selection"
+
+msgid "select metrics"
+msgstr "select metrics"
+
+msgid "Selectors"
+msgstr "Selectors"
+
+msgid "Send by mail"
+msgstr "Send by mail"
+
+msgid "Sending event forbidden"
+msgstr "Sending event forbidden"
+
+msgid "Sending event have failed"
+msgstr "Sending event have failed"
+
+msgid "September"
+msgstr "September"
+
+msgid "ShortDash"
+msgstr "ShortDash"
+
+msgid "ShortDashDot"
+msgstr "ShortDashDot"
+
+msgid "ShortDashDotDot"
+msgstr "ShortDashDotDot"
+
+msgid "ShortDot"
+msgstr "ShortDot"
+
+msgid "Show border"
+msgstr "Show border"
+
+msgid "Show component"
+msgstr "Show component"
+
+msgid "Show hard state"
+msgstr "Show hard state"
+
+msgid "Show log console"
+msgstr "Show log console"
+
+msgid "Show resource"
+msgstr "Show resource"
+
+msgid "Show soft state"
+msgstr "Show soft state"
+
+msgid "Show state critical"
+msgstr "Show state critical"
+
+msgid "Show state ok"
+msgstr "Show state ok"
+
+msgid "Show state unknown"
+msgstr "Show state unknown"
+
+msgid "Show state warning"
+msgstr "Show state warning"
+
+msgid "Simple alert"
+msgstr "Simple alert"
+
+msgid "SLA"
+msgstr "SLA"
+
+msgid "SLA Value"
+msgstr "SLA Value"
+
+msgid "Solid"
+msgstr "Solid"
+
+msgid "Source"
+msgstr "Source"
+
+msgid "Source type"
+msgstr "Source type"
+
+msgid "Start"
+msgstr "Start"
+
+msgid "State"
+msgstr "State"
+
+msgid "State type"
+msgstr "State type"
+
+msgid "Stop"
+msgstr "Stop"
+
+msgid "subject"
+msgstr "subject"
+
+msgid "Subject"
+msgstr "Subject"
+
+msgid "Success"
+msgstr "Success"
+
+msgid "Successfully"
+msgstr "Successfully"
+
+msgid "Sunday"
+msgstr "Sunday"
+
+msgid "Switch to live reporting"
+msgstr "Switch to live reporting"
+
+msgid "Tags"
+msgstr "Tags"
+
+msgid "The directory must be empty if you want to remove it"
+msgstr "The directory must be empty if you want to remove it"
+
+msgid "The last"
+msgstr "The last"
+
+msgid "The mail have been successfuly sent"
+msgstr "The mail have been successfuly sent"
+
+msgid "The report generation have failed"
+msgstr "The report generation have failed"
+
+msgid "The selected date is in futur"
+msgstr "The selected date is in futur"
+
+msgid "The selected date is invalid"
+msgstr "The selected date is invalid"
+
+msgid "This json is malformed"
+msgstr "This json is malformed"
+
+msgid "This selector name already exist"
+msgstr "This selector name already exist"
+
+msgid "This task is not send by mail"
+msgstr "This task is not send by mail"
+
+msgid "This topology name already exist"
+msgstr "This topology name already exist"
+
+msgid "Thursday"
+msgstr "Thursday"
+
+msgid "TimeDisplay"
+msgstr "TimeDisplay"
+
+msgid "time window"
+msgstr "time window"
+
+msgid "Time window"
+msgstr "Time window"
+
+msgid "To"
+msgstr "To"
+
+msgid "Toggle to advanced/simple mode"
+msgstr "Toggle to advanced/simple mode"
+
+msgid "Toggle to real page size"
+msgstr "Toggle to real page size"
+
+msgid "Toolbox"
+msgstr "Toolbox"
+
+msgid "Topologies"
+msgstr "Topologies"
+
+msgid "Tuesday"
+msgstr "Tuesday"
+
+msgid "Type"
+msgstr "Type"
+
+msgid "Type here alert message..."
+msgstr "Type here alert message..."
+
+msgid "Type here new comment..."
+msgstr "Type here new comment..."
+
+msgid "Type value here"
+msgstr "Type value here"
+
+msgid "Type value or choose operator"
+msgstr "Type value or choose operator"
+
+msgid "Type your tags here"
+msgstr "Type your tags here"
+
+msgid "Unit"
+msgstr "Unit"
+
+msgid "Updating rights have failed"
+msgstr "Updating rights have failed"
+
+msgid "URL"
+msgstr "URL"
+
+msgid "URL to"
+msgstr "URL to"
+
+msgid "use alphanumeric characters only"
+msgstr "use alphanumeric characters only"
+
+msgid "View"
+msgstr "View"
+
+msgid "View dump"
+msgstr "View dump"
+
+msgid "View mode"
+msgstr "View mode"
+
+msgid "View options wizard"
+msgstr "View options wizard"
+
+msgid "View page in html"
+msgstr "View page in html"
+
+msgid "Views manager"
+msgstr "Views manager"
+
+msgid "Warning"
+msgstr "Warning"
+
+msgid "Warning threshold"
+msgstr "Warning threshold"
+
+msgid "Websocket is now"
+msgstr "Websocket is now"
+
+msgid "Wednesday"
+msgstr "Wednesday"
+
+msgid "Week"
+msgstr "Week"
+
+msgid "Widget Wizard"
+msgstr "Widget Wizard"
+
+msgid "Wizard"
+msgstr "Wizard"
+
+msgid "Worst state"
+msgstr "Worst state"
+
+msgid "Write"
+msgstr "Write"
+
+msgid "Write and Read"
+msgstr "Write and Read"
+
+msgid "Year"
+msgstr "Year"
+
+msgid "You don't have the rights to modify this object"
+msgstr "You don't have the rights to modify this object"
+
+msgid "you must give an object to fill me"
+msgstr "you must give an object to fill me"
+
+msgid "You must select record"
+msgstr "You must select record"
+
+msgid "Your authentification key is updated"
+msgstr "Your authentification key is updated"
+
+msgid "Your document is rendering, a popup will ask you where to save in few seconds"
+msgstr "Your document is rendering, a popup will ask you where to save in few seconds"
+
+msgid "zIndex"
+msgstr "zIndex"
+
