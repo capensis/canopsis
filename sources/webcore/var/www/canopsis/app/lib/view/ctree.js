@@ -51,7 +51,7 @@ Ext.define('canopsis.lib.view.ctree' , {
 			bar_child.push({
 				xtype: 'button',
 				iconCls: 'icon-leaf-add',
-				text: _('Add ' + this.leafName),
+				text: _('Add') + ' ' + this.leafName,
 				action: 'add_leaf'
 			});
 		}
