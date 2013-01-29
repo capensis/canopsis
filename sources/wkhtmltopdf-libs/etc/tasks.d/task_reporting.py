@@ -34,14 +34,14 @@ import time
 import hashlib
 
 import task_mail
-import wkhtmltopdf.wrapper
+from wkhtmltopdf.wrapper import Wrapper 
 
 init 	= cinit()
 logger 	= init.getLogger('Reporting Task') 
 
 @task
 @decorators.log_task
-def render_pdf(fileName=None, viewName=None, startTime=None, stopTime=None, account=None, mail=None, owner=None, orientation='Portrait', pagesize='A4'):
+def render_pdf(fileName=None, viewName=None, startTime=None, stopTime=None,interval=None account=None, mail=None, owner=None, orientation='Portrait', pagesize='A4'):
 	
 	if not startTime or not stopTime:
 		raise ValueError("task_render_pdf: Missing stop/start timestamps")
@@ -77,7 +77,6 @@ def render_pdf(fileName=None, viewName=None, startTime=None, stopTime=None, acco
 		fileName = '%s_From_%s_To_%s.pdf' % (view_record.name, fromDate, toDate) 
 
 	logger.info('fileName: %s' % fileName)
-
 	ascii_fileName = hashlib.md5(fileName.encode('ascii', 'ignore')).hexdigest()
 	
 	#get orientation and pagesize
@@ -93,8 +92,8 @@ def render_pdf(fileName=None, viewName=None, startTime=None, stopTime=None, acco
 	file_path = open(wrapper_conf_file, "r").read()
 	file_path = '%s/%s' % (json.loads(file_path)['report_dir'],ascii_fileName)
 
-	Generate config
-	settings = wkhtmltopdf.wrapper.load_conf(	ascii_fileName,
+	#create wrapper object
+	wkhtml_wrapper = Wrapper(	ascii_fileName,
 							viewName,
 							startTime,
 							stopTime,
@@ -103,15 +102,13 @@ def render_pdf(fileName=None, viewName=None, startTime=None, stopTime=None, acco
 							orientation=orientation,
 							pagesize=pagesize)
 
-
-
 	# Run rendering
 	logger.debug('Run pdf rendering')
-	result = wkhtmltopdf.wrapper.run(settings)
+	wkhtml_wrapper.run_report()
 
-	logger.debug('Put it in grid fs')
+	logger.info('Put it in grid fs: %S' % file_path)
 	doc_id = put_in_grid_fs(file_path, fileName, account,owner)
-	logger.debug('Remove tmp report file')
+	logger.debug('Remove tmp report file with docId: %s' % doc_id)
 	os.remove(file_path)
 	
 	#Subtask mail (if needed)

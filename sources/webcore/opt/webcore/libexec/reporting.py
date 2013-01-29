@@ -52,8 +52,8 @@ group_managing_access = ['group.CPS_reporting_admin']
 
 #########################################################################
 
-@get('/reporting/:startTime/:stopTime/:view_name/:mail',checkAuthPlugin={'authorized_grp':group_managing_access})
-@get('/reporting/:startTime/:stopTime/:view_name',checkAuthPlugin={'authorized_grp':group_managing_access})
+@post('/reporting/:startTime/:stopTime/:view_name/:mail',checkAuthPlugin={'authorized_grp':group_managing_access})
+@post('/reporting/:startTime/:stopTime/:view_name',checkAuthPlugin={'authorized_grp':group_managing_access})
 def generate_report(startTime, stopTime,view_name,mail=None):
 	account = get_account()
 	storage = cstorage(account=account, namespace='object')
