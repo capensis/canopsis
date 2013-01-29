@@ -68,7 +68,9 @@ Ext.define('canopsis.model.Schedule', {
 		{name: 'aaa_owner'},
 
 		{name: 'intervalLength'},
-		{name: 'intervalUnit'},		
+		{name: 'intervalUnit'},	
+		{name: 'frequency'},
+
 
 		{name: 'exporting_interval'},
 		{name: 'exporting_account'},

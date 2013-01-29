@@ -59,10 +59,10 @@ Ext.define('canopsis.controller.Schedule', {
 					owner: record.get('exporting_owner')
 				};
 
-		record.set('kwargs',kwargs)
+		
 
 		//check if a mail must be send
-		if (data.exporting_mail != undefined) {
+		if (data.exporting_mail) {
 			if (data.exporting_recipients != '' && data.exporting_recipients != undefined) {
 				log.debug('sendMail is true', this.logAuthor);
 
@@ -79,9 +79,10 @@ Ext.define('canopsis.controller.Schedule', {
 				kwargs['mail'] = mail;
 			}
 		}else{
-			kwargs['mail'] = {};
+			kwargs['mail'] = null
 		}
 
+		record.set('kwargs',kwargs)
 		record.set('loaded', false);
 
 		//----------------------formating crontab-----------------------
@@ -99,11 +100,11 @@ Ext.define('canopsis.controller.Schedule', {
 			hour: d.getUTCHours()
 		};
 
-		if (data.month)
+		if (data.crontab_month)
 			crontab['month'] = data.crontab_month;
-		if (data.dayWeek)
+		if (data.crontab_day_of_week)
 			crontab['day_of_week'] = data.crontab_day_of_week;
-		if (data.day)
+		if (data.crontab_day)
 			crontab['day'] = data.crontab_day;
 
 		record.set('cron', crontab);

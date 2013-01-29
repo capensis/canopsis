@@ -107,7 +107,7 @@ Ext.define('canopsis.view.Schedule.Form', {
 
 		//--------------------------time options--------------
 		var durationCombo = Ext.widget('combobox', {
-			name: 'every',
+			name: 'frequency',
 			fieldLabel: _('Every'),
 			queryMode: 'local',
 			displayField: 'text',
