@@ -44,7 +44,7 @@ Ext.define('canopsis.controller.Reporting', {
 
 		global.notify.notify(_('Please Wait'), _('Your document is rendering, a popup will ask you where to save in few seconds'));
 
-		var url = '/reporting/' + from + '/' + to + '/' + view_id;
+		var url = '/reporting/' + parseInt(from/1000) + '/' + parseInt(to/1000) + '/' + view_id;
 
 		if (mail != undefined) {
 			url += '/' + mail;
@@ -61,7 +61,7 @@ Ext.define('canopsis.controller.Reporting', {
 				var data = Ext.JSON.decode(response.responseText);
 				log.dump(data);
 				if (data.success == true) {
-					var id = data.data.id;
+					var id = data.data[0].id;
 					global.notify.notify(
 						_('Export ready'),
 						_('You can get your document') + ' <a href="' + location.protocol + '//' + location.host + '/files/' + id + '"  target="_blank">' + _('here') + '</a>',
