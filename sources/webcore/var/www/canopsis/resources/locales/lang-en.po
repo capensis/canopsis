@@ -481,9 +481,6 @@ msgstr "Is Not"
 msgid "items"
 msgstr "items"
 
-msgid "items"
-msgstr "items"
-
 msgid "ITIL.Build"
 msgstr "Build"
 
