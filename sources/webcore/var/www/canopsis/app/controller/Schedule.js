@@ -59,8 +59,6 @@ Ext.define('canopsis.controller.Schedule', {
 					owner: record.get('exporting_owner')
 				};
 
-		
-
 		//check if a mail must be send
 		if (data.exporting_mail) {
 			if (data.exporting_recipients != '' && data.exporting_recipients != undefined) {
@@ -115,17 +113,17 @@ Ext.define('canopsis.controller.Schedule', {
 	validateForm: function(store, data, form) {
 
 		//check mail options
-		if (data['sendMail']) {
-			if (! data['subject'] || ! data['recipients']) {
+		if (data['exporting_mail']) {
+			if (! data['exporting_subject'] || ! data['exporting_subject']) {
 				log.debug('Invalid mail options', this.logAuthor + '[validateForm]');
 				global.notify.notify(' Invalid mail options', '', 'error');
 
-				var field = form.findField('subject');
-				if (! data['subject'] && field)
+				var field = form.findField('exporting_subject');
+				if (! data['exporting_subject'] && field)
 					field.markInvalid(_('Invalid field'));
 
-				var field = form.findField('recipients');
-				if (! data['recipients'] && field)
+				var field = form.findField('exporting_recipients');
+				if (! data['exporting_recipients'] && field)
 					field.markInvalid(_('Invalid field'));
 
 				return false;
@@ -158,7 +156,7 @@ Ext.define('canopsis.controller.Schedule', {
 		view_name = options.viewname;
 		start_time = options.starttime;
 		mail = options.mail;
-		if (mail != undefined)
+		if (mail)
 			mail = Ext.encode(mail);
 
 		this.getController('Reporting').launchReport(view_name, start_time, undefined, mail);
