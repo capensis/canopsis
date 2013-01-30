@@ -203,17 +203,6 @@ Ext.define('widgets.line_graph.line_graph' , {
 	},
 
 	setOptions: function() {
-		//----------find the right scale and tickinterval for xAxis------------
-		/*if (this.reportStop && this.reportStart){
-			var timestampInterval = (this.reportStop/1000) - (this.reportStart/1000)
-			var tsFormat = this.findScaleAxe(timestampInterval)
-			var tickInterval = this.findTickInterval(timestampInterval)
-		} else {
-			var tsFormat = 'H:i'
-			var tickInterval = global.commonTs.threeHours * 1000
-		}*/
-		//---------------------------------------------------------
-
 		this.options = {
 			reportMode: this.reportMode,
 
@@ -401,15 +390,7 @@ Ext.define('widgets.line_graph.line_graph' , {
 	////////////////////// CORE
 
 	makeUrl: function(from, to) {
-		var url = '/perfstore/values';
-
-		if (! to) 
-			url += '/' + parseInt(from/1000);
-
-		if (from && to) 
-			url += '/' + parseInt(from/1000) + '/' + parseInt(to/1000);
-		
-		return url;
+		return '/perfstore/values' +'/' + parseInt(from/1000) + '/' + parseInt(to/1000);
 	},
 
 	doRefresh: function(from, to) {
@@ -440,7 +421,7 @@ Ext.define('widgets.line_graph.line_graph' , {
 					log.debug('Request next interval: ' + from + ' + ' + this.aggregate_interval, this.logAuthor);
 					from = from + (this.aggregate_interval);
 				}
-				to = parseInt(Ext.Date.now() / 1000);
+				to = parseInt(Ext.Date.now());
 			}
 
 			log.debug(' + Do Refresh ' + from + ' -> ' + to, this.logAuthor);

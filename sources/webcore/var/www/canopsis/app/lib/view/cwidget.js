@@ -58,8 +58,6 @@ Ext.define('canopsis.lib.view.cwidget' , {
 
 	active: false,
 
-	//PollNodeInfo: true,
-
 	initComponent: function() {
 		this.active = true;
 
@@ -67,9 +65,8 @@ Ext.define('canopsis.lib.view.cwidget' , {
 
 		log.debug('InitComponent ' + this.id + ' (reportMode: ' + this.reportMode + ', exportMode: ' + this.exportMode + ')', this.logAuthor);
 
-		if (this.title == '') {
+		if (this.title == '')
 			this.title = false;
-		}
 
 		this.wcontainerId = this.id + '-content';
 
@@ -85,11 +82,8 @@ Ext.define('canopsis.lib.view.cwidget' , {
 
 		this.callParent(arguments);
 
-		//this.uri = '/rest/events/event';
-
-		if (this.reportMode) {
+		if (this.reportMode) 
 			this.refreshInterval = false;
-		}
 
 		//Compatibility
 		if (this.nodes) {
@@ -184,10 +178,8 @@ Ext.define('canopsis.lib.view.cwidget' , {
 		}else {
 			if (! to )
 				to = Ext.Date.now();
-
-			if (! from) {
+			if (! from) 
 				from = to - (this.time_window * 1000);
-			}
 		}
 
 		var done = this.doRefresh(from, to);
@@ -220,13 +212,9 @@ Ext.define('canopsis.lib.view.cwidget' , {
 				success: function(response) {
 					var data = Ext.JSON.decode(response.responseText);
 					if (this.nodeId.length > 1)
-					{
 						data = data.data;
-					}
 					else
-					{
 						data = data.data[0];
-					}
 					this._onRefresh(data);
 				},
 				failure: function(result, request) {
