@@ -101,25 +101,14 @@ Ext.define('canopsis.lib.view.cwidget' , {
 		}
 
 		//if reporting
-		if (this.exportMode) {
-			//this._reporting(this.reportStartTs,this.reportStopTs)
-			//this._reporting(reportStart,reportStop)
-			//this.uri += '/' + this.nodeId;
-
-			/*if (this.nodeId){
-				log.debug(' + NodeId: '+this.nodeId, this.logAuthor)
-				this.on('afterrender', this._doRefresh, this);
-			}*/
-
-			//this._doRefresh()
-
-		}else {
+		if (!this.exportMode) {
 			if (this.refreshInterval) {
 				log.debug(' + Refresh Interval: ' + this.refreshInterval, this.logAuthor);
 				this.task = {
 					run: this._doRefresh,
 					interval: this.refreshInterval * 1000,
-					scope: this
+					scope: this,
+					args: [undefined,undefined]
 				};
 			}
 		}
@@ -148,11 +137,10 @@ Ext.define('canopsis.lib.view.cwidget' , {
 	},
 
 	ready: function() {
-		if (this.task) {
+		if (this.task)
 			this.startTask();
-		}else {
-			this._doRefresh();
-		}
+		else 
+			this._doRefresh(undefined,Ext.Date.now());
 	},
 
 	startTask: function() {
@@ -161,7 +149,7 @@ Ext.define('canopsis.lib.view.cwidget' , {
 				log.debug('Start task, interval:  ' + this.refreshInterval + ' seconds', this.logAuthor);
 				Ext.TaskManager.start(this.task);
 			}else {
-				this._doRefresh();
+				this._doRefresh(undefined,Ext.Date.now());
 			}
 		}
 	},
@@ -173,10 +161,6 @@ Ext.define('canopsis.lib.view.cwidget' , {
 		}
 	},
 
-	/*
-	dblclick: function(){
-	},
-	*/
 
 	TabOnShow: function() {
 		log.debug('Show', this.logAuthor);
@@ -198,10 +182,10 @@ Ext.define('canopsis.lib.view.cwidget' , {
 			from = this.export_from;
 			to = this.export_to;
 		}else {
-			if (! to || to < 10000000)
+			if (! to )
 				to = Ext.Date.now();
 
-			if (! from || from < 10000000) {
+			if (! from) {
 				from = to - (this.time_window * 1000);
 			}
 		}
