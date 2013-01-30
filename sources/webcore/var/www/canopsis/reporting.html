@@ -178,18 +178,11 @@
 				var content = Ext.create('canopsis.view.Tabs.Content',{
 					renderTo: 'container',
 					view_id : export_view_id,
-					/*
-					autoScale: false,
-					autoScroll: false,
-					*/
+					autoshow : true,
 					reportMode : true,
 					exportMode : true,
 					export_from : (from_date)?from_date:null,
-					export_to : to_date,
-					
-					//border: true,
-					//debug: true,
-					autoshow : true,
+					export_to : to_date
 				});	
 
 				//-----------------Hack fix manual height--------------------
