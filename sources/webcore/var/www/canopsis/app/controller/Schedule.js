@@ -50,7 +50,7 @@ Ext.define('canopsis.controller.Schedule', {
 
 		var kwargs = {
 					viewName: record.get('exporting_viewName'),
-					startTime: record.get('exporting_startTime'),
+					//startTime: record.get('exporting_startTime'),
 					account: record.get('exporting_account'),
 					task: record.get('exporting_task'),
 					method: record.get('exporting_method'),

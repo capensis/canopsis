@@ -41,11 +41,14 @@ logger 	= init.getLogger('Reporting Task')
 
 @task
 @decorators.log_task
-def render_pdf(fileName=None, viewName=None, startTime=None, stopTime=None,interval=None account=None, mail=None, owner=None, orientation='Portrait', pagesize='A4'):
-	
-	if not startTime or not stopTime:
-		raise ValueError("task_render_pdf: Missing stop/start timestamps")
+def render_pdf(fileName=None, viewName=None, startTime=None, stopTime=None, interval=None, account=None, mail=None, owner=None, orientation='Portrait', pagesize='A4'):
+	if not stopTime:
+		stopTime = int(time.time())
 
+	if not startTime:
+		if interval:
+			startTime = stopTime - interval
+	
 	if viewName is None:
 		raise ValueError("task_render_pdf: you must at least provide a viewName")
 	
@@ -72,9 +75,12 @@ def render_pdf(fileName=None, viewName=None, startTime=None, stopTime=None,inter
 
 	#set fileName
 	if fileName is None:
-		toDate = date.fromtimestamp(int(stopTime) )
-		fromDate = date.fromtimestamp(int(startTime))
-		fileName = '%s_From_%s_To_%s.pdf' % (view_record.name, fromDate, toDate) 
+		toDate = date.fromtimestamp(int(stopTime))
+		if startTime:
+			fromDate = date.fromtimestamp(int(startTime))
+			fileName = '%s_From_%s_To_%s.pdf' % (view_record.name, fromDate, toDate) 
+		else:
+			fileName = '%s_%s.pdf' % (view_record.name,toDate) 
 
 	logger.info('fileName: %s' % fileName)
 	ascii_fileName = hashlib.md5(fileName.encode('ascii', 'ignore')).hexdigest()
@@ -106,7 +112,7 @@ def render_pdf(fileName=None, viewName=None, startTime=None, stopTime=None,inter
 	logger.debug('Run pdf rendering')
 	wkhtml_wrapper.run_report()
 
-	logger.info('Put it in grid fs: %S' % file_path)
+	logger.info('Put it in grid fs: %s' % file_path)
 	doc_id = put_in_grid_fs(file_path, fileName, account,owner)
 	logger.debug('Remove tmp report file with docId: %s' % doc_id)
 	os.remove(file_path)

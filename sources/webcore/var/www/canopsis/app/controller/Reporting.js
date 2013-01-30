@@ -34,21 +34,22 @@ Ext.define('canopsis.controller.Reporting', {
 		log.debug('Launch Report on view ' + view_id, this.logAuthor);
 
 		//if no date given
-		if (to == undefined) {
-			to = Ext.Date.now();
-			if (from)
-				from = to - (from * 1000);
-			else
-				from = 0
-		}
+		if (!to)
+			to = parseInt(Ext.Date.now()/1000);
+		else
+			to = parseInt(to/1000)
+
+		if(!from)
+			from = -1
+		else
+			from = parseInt(from/1000)
+
+		var url = '/reporting/'+ from + '/' + to + '/' + view_id;
+
+		if (mail != undefined)
+			url += '/' + mail;
 
 		global.notify.notify(_('Please Wait'), _('Your document is rendering, a popup will ask you where to save in few seconds'));
-
-		var url = '/reporting/' + parseInt(from/1000) + '/' + parseInt(to/1000) + '/' + view_id;
-
-		if (mail != undefined) {
-			url += '/' + mail;
-		}
 
 		Ext.Ajax.request({
 			url: url,

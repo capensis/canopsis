@@ -55,10 +55,15 @@ group_managing_access = ['group.CPS_reporting_admin']
 @post('/reporting/:startTime/:stopTime/:view_name/:mail',checkAuthPlugin={'authorized_grp':group_managing_access})
 @post('/reporting/:startTime/:stopTime/:view_name',checkAuthPlugin={'authorized_grp':group_managing_access})
 def generate_report(startTime, stopTime,view_name,mail=None):
+	if int(startTime) == -1:
+		startTime = None
+	else:
+		startTime = int(startTime)
+
+	stopTime = int(stopTime)
+
 	account = get_account()
 	storage = cstorage(account=account, namespace='object')
-	startTime = int(startTime)
-	stopTime = int(stopTime)
 
 	if mail:
 		try:
@@ -74,8 +79,11 @@ def generate_report(startTime, stopTime,view_name,mail=None):
 		
 
 	toDate = str(date.fromtimestamp(int(stopTime)))
-	fromDate = str(date.fromtimestamp(int(startTime)))
-	file_name = '%s_From_%s_To_%s.pdf' % (record.name,fromDate,toDate)
+	if startTime:
+		fromDate = str(date.fromtimestamp(int(startTime)))
+		file_name = '%s_From_%s_To_%s.pdf' % (record.name,fromDate,toDate)
+	else:
+		file_name = '%s_%s.pdf' % (record.name,toDate)
 
 	logger.debug('file_name:   %s' % file_name)
 	logger.debug('view_name:   %s' % view_name)
@@ -86,13 +94,14 @@ def generate_report(startTime, stopTime,view_name,mail=None):
 	
 	try:
 		logger.debug('Run celery task')
-		result = task_reporting.render_pdf.delay(file_name,
-										view_name,
-										startTime,
-										stopTime,
-										account,
-										os.path.expanduser("~/etc/wkhtmltopdf_wrapper.json"),
-										mail)
+		result = task_reporting.render_pdf.delay(
+										fileName=file_name,
+										viewName=view_name,
+										startTime=startTime,
+										stopTime=stopTime,
+										account=account,
+										mail=mail
+										)
 		result.wait()
 		result = result.result
 		#testing purpose

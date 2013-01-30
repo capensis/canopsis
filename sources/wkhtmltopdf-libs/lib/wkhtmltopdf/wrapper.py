@@ -21,6 +21,7 @@ import os, logging, signal, time, json,random
 from tempfile import mkstemp
 from subprocess import Popen
 from time import sleep
+from time import time
 
 logging.basicConfig()
 
@@ -101,7 +102,12 @@ class Wrapper(object):
 			self.currentX.terminate()
 
 	def launch_wkhtml(self):
-		script_js = "var export_view_id='%s';var export_from=%s;var export_to=%s" % (self.settings['viewName'], self.settings['startTime'], self.settings['stopTime'])
+		# python none to js null
+		export_from = self.settings.get('startTime')
+		if not export_from:
+			export_from = 'null'
+
+		script_js = "var export_view_id='%s';var export_from=%s;var export_to=%s" % (self.settings['viewName'],export_from , self.settings.get('stopTime',int(time())))
 		opts = ' '.join(self.settings['opts'])
 
 		cmd = "wkhtmltopdf -O %s -s %s %s %s %s --window-status %s\
@@ -132,3 +138,4 @@ class Wrapper(object):
 			waitTime = waitTime + 2
 			if waitTime >= self.settings.get('timeout',300):
 				result.kill()
+		self.logger.debug('Pdf rendered, leaving wrapper')
