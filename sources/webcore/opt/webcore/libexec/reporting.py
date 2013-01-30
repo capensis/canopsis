@@ -104,8 +104,7 @@ def generate_report(startTime, stopTime,view_name,mail=None):
 										)
 		result.wait()
 		result = result.result
-		#testing purpose
-		#result = {'data':[],'celery_output':'boom'}
+
 	except Exception, err:
 		return {'total': 1, 'success': False, 'data': [str(err)] }
 
