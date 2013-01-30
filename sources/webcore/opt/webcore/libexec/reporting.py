@@ -55,11 +55,7 @@ group_managing_access = ['group.CPS_reporting_admin']
 @post('/reporting/:startTime/:stopTime/:view_name/:mail',checkAuthPlugin={'authorized_grp':group_managing_access})
 @post('/reporting/:startTime/:stopTime/:view_name',checkAuthPlugin={'authorized_grp':group_managing_access})
 def generate_report(startTime, stopTime,view_name,mail=None):
-	if int(startTime) == -1:
-		startTime = None
-	else:
-		startTime = int(startTime)
-
+	startTime = None if int(startTime) == -1 else int(startTime)
 	stopTime = int(stopTime)
 
 	account = get_account()
