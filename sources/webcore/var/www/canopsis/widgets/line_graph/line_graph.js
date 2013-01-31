@@ -681,18 +681,17 @@ Ext.define('widgets.line_graph.line_graph' , {
 	},
 
 	parseValues: function(serie, values, type) {
+
 		//MAKE A BETTER LOOP, JUST FOR TEST
-		for (var i = 0; i < values.length; i++)
+		for (var i = 0; i < values.length; i++){
 			values[i][0] = values[i][0] * 1000
 
-		//Do operation on value
-		if (this.SeriePercent && serie.options.max > 0)
-			for (var i = 0; i < values.length; i++)
+			if (this.SeriePercent && serie.options.max > 0)
 				values[i][1] = getPct(values[i][1], serie.options.max);
 
-		if (serie.options.invert)
-			for (var i = 0; i < values.length; i++)
+			if (serie.options.invert)
 				values[i][1] = - values[i][1];
+		}
 
 		//type specifique parsing
 		if (type == 'COUNTER' && !this.aggregate_interval && !this.reportMode) {
