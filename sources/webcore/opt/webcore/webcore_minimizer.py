@@ -2,10 +2,15 @@
 
 import sys, os, fnmatch
 import shutil
+import getpass
 
 ## Configurations
 
-install_path = "/opt/canopsis/"
+if getpass.getuser() != 'canopsis':
+	install_path = "/opt/canopsis/"
+else:
+	install_path = os.path.expanduser('~')
+	
 webui_path = os.path.join(install_path, "var/www/canopsis")
 
 cps_filename = "canopsis.js"
