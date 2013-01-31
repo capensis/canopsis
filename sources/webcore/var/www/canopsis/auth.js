@@ -101,6 +101,66 @@ Ext.define('canopsis.auth' , {
 		this.callParent(arguments);
 	},
 
+	onSuccess: function(){
+		if (this.on_authed)
+			this.on_authed(global.account)
+	},
+
+	onFailure: function(){
+		log.debug(" + Auth Failed", this.logAuthor)
+		Ext.MessageBox.alert(_('authentification failed'), _('Login or password invalid'))
+	},
+
+	auth_m1: function(login, passwd, passwd_sha1) {
+
+		var timestamp = Math.floor(Ext.Date.format(new Date(), 'U') / 10) * 10
+		var authkey = $.encoding.digests.hexSha1Str(passwd_sha1 + timestamp.toString());
+
+		Ext.Ajax.request({
+			method: 'GET',
+			url: this.url,
+			scope: this,
+			params: {
+				cryptedKey: 'True',
+				password: authkey,
+				login: login
+			},
+			success: function(response){
+				response = Ext.JSON.decode(response.responseText)
+				log.debug(" + M1 Auth Ok", this.logAuthor);
+				global.account = response.data[0];
+				this.onSuccess();
+			},
+			failure: function(form, action) {
+				log.debug(" + M1 Failed", this.logAuthor);
+				this.auth_m2(login, passwd, passwd_sha1);
+			}
+		});
+	},
+
+	auth_m2: function(login, passwd, passwd_sha1) {						
+		//relaunch auth with sha 1 mdp
+		Ext.Ajax.request({
+			method: 'GET',
+			url: this.url,
+			scope: this,
+			params: {
+				password: passwd_sha1,
+				login: login
+			},
+			success: function(form, action) {
+				response = Ext.JSON.decode(response.responseText)
+				log.debug(" + M2 Auth Ok", this.logAuthor);
+				global.account = response.data[0];
+				this.onSuccess();
+			},
+			failure: function(form, action) {
+				log.debug(" + M2 Failed", this.logAuthor);
+				this.onFailure()
+			}
+		})
+	},
+
 	submit: function() {
 		log.debug("Sublit form", this.logAuthor)
 
@@ -112,35 +172,11 @@ Ext.define('canopsis.auth' , {
 			var locale = FieldValues.locale;
 			var passwd_sha1 = $.encoding.digests.hexSha1Str(passwd);
 
-			var timestamp = Math.floor(Ext.Date.format(new Date(), 'U') / 10) * 10
-			var authkey = $.encoding.digests.hexSha1Str(passwd_sha1 + timestamp.toString());
-
 			// User change locale in combobox
 			if (locale != ENV['locale'])
 				Ext.fly('locale').set({src:'/'+locale+'/static/canopsis/locales.js'});
 
-			Ext.Ajax.request({
-				method: 'GET',
-				url: this.url,
-				scope: this,
-				params: {
-					cryptedKey: 'True',
-					password: authkey,
-					login: login
-				},
-				success: function(response){
-					response = Ext.JSON.decode(response.responseText)
-					log.debug(" + Auth Ok", this.logAuthor)
-					global.account = response.data[0]
-					if (this.on_authed)
-						this.on_authed(global.account)
-				},
-				failure: function(form, action) {
-					log.debug(" + Auth Failed", this.logAuthor)
-					Ext.MessageBox.alert(_('authentification failed'), _('Login or password invalid'))
-				}
-			});
-
+			this.auth_m1(login, passwd, passwd_sha1)
 		}else{
 			log.debug("+ Form is invalid", this.logAuthor)
 			Ext.Msg.alert(_('Invalid Data'), _('Please correct form errors.'))
