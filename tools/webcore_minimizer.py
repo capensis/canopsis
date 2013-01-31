@@ -63,24 +63,28 @@ def locate(pattern, root=os.curdir):
         for filename in fnmatch.filter(files, pattern):
             yield os.path.join(path, filename)
 
-def append_file(file_path):
-	min_file.write("\n/* %s */\n" % file_path)
+def append_file(file, file_path):
+	file.write("\n/* %s */\n" % file_path)
 	if debug:
-		min_file.write("console.log('   -> %s')\n" % file_path)
-	shutil.copyfileobj(open(file_path, 'r'), min_file)
+		file.write("console.log('   -> %s')\n" % file_path)
+	shutil.copyfileobj(open(file_path, 'r'), file)
 	appended_files.append(file_path)
 
-def concact_files(wpath):
+def exclude_locales(wpath):
+	for file_path in locate("*lang*.js", wpath):
+		exclude_files.append(file_path)
+
+def concact_files(file, wpath):
 	if os.path.isfile(wpath):
 		file_path = wpath
 		if file_path not in exclude_files and file_path not in appended_files:
 			print "  + %s" % file_path
-			append_file(file_path)
+			append_file(file, file_path)
 	else:
 		for file_path in locate("*.js", wpath):
 			if file_path not in exclude_files and file_path not in appended_files:
 				print "  + %s" % file_path
-				append_file(file_path)
+				append_file(file, file_path)
 
 ## Main
 
@@ -90,50 +94,38 @@ for path in [cps_filepath, cps_min_filepath, cps_gz_filepath]:
 		print " + %s" % path
 		os.remove(path)
 
+print " + Exclude locales file"
+exclude_locales(webui_path)
 
 print "Open '%s' in write mode" % cps_filename
-min_file = open(cps_filepath, "w")
+file = open(cps_filepath, "w")
 
 if debug:
-	min_file.write("console.log('Start canopsis.min.js')\n")
+	file.write("console.log('Start canopsis.min.js')\n")
 
 print " + Append files"
 if debug:
-	min_file.write("console.log(' + Load normal files')\n")
+	file.write("console.log(' + Load normal files')\n")
 for path in paths:
-	concact_files(path)
+	concact_files(file, path)
 
 print "Close '%s'" % cps_filepath
 if debug:
-	min_file.write("console.log('End canopsis.min.js')\n")
+	file.write("console.log('End canopsis.min.js')\n")
 
+file.close()
 print "%s files appended in '%s'" % (len(appended_files), cps_filename)
 
-min_file.close()
-
-
-print "Minimify '%s'" % cps_filename
-if not os.path.exists('sources/externals/rjsmin-1.0.5/rjsmin.py'):
-	if not os.path.exists('sources/externals/rjsmin-1.0.5.tar.gz'):
-		print " + Error: 'rjsmin-1.0.5.tar.gz' not found in external dir"
-		sys.exit(1)
-	else:
-		print "Extract 'rjsmin-1.0.5.tar.gz' ..."
-		os.system('cd sources/externals && tar xfz rjsmin-1.0.5.tar.gz')
-		if not os.path.exists('sources/externals/rjsmin-1.0.5/rjsmin.py'):
-			print " + Error: Impossible to extract"
-			sys.exit(1)
-
-		print " + Done"
-
-os.system("cat %s | sources/externals/rjsmin-1.0.5/rjsmin.py > %s" % (cps_filepath, cps_min_filepath))
-if not os.path.exists(cps_min_filepath):
-	print " + Error: Impossible to minimify"
+print "Minimify '%s' to '%s'" % (cps_filename, cps_min_filename)
+if not os.path.exists('%s/bin/uglifyjs' % install_path):
+	print " + Error: 'uglifyjs'"
 	sys.exit(1)
+
+os.system("cd %s && bin/node bin/uglifyjs %s > %s" % (install_path, cps_filepath, cps_min_filepath))
 
 print " + Done"
 
-print "Compress '%s'" % cps_min_filename
+print "Compress '%s' to '%s'" % (cps_min_filename, cps_gz_filename)
 os.system("gzip -c -9 %s > %s" % (cps_min_filepath, cps_gz_filepath))
 if not os.path.exists(cps_gz_filepath):
 	print " + Error: Impossible to compress"
