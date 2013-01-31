@@ -176,12 +176,10 @@ def index(key=None, lang='en'):
 			output = autoLogin(key)
 			if output['success']:
 				logger.info('autoLogin success')
-				redirect('/static/canopsis/index.html')
 			else:
 				logger.info('autoLogin failed')
 
-	redirect("/static/canopsis/auth.html?url=/static/canopsis/index.html&lang=%s" % lang)
-
+	redirect('/%s/static/canopsis/index.html' % lang)
 
 ## Install session Middleware
 app = SessionMiddleware(app, session_opts)

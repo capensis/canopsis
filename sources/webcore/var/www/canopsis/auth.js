@@ -33,24 +33,53 @@ Ext.define('canopsis.auth' , {
 
 	fieldDefaults: {
 		msgTarget: 'side',
-		labelWidth: 75
+		labelWidth: 100
 	},
 	defaultType: 'textfield',
 	defaults: {
 		anchor: '100%'
 	},
 
-	items: [{
-		fieldLabel: _('Username'),
-		name: 'login',
-		allowBlank:false
-	},{
-		fieldLabel: _('Password'),
-		name: 'password',
-		id: 'password',
-		inputType: 'password',
-		allowBlank:false
-	}],
+	items: [
+		{
+			fieldLabel: _('Username'),
+			name: 'login',
+			allowBlank:false
+		},{
+			fieldLabel: _('Password'),
+			name: 'password',
+			id: 'password',
+			inputType: 'password',
+			allowBlank:false
+		},{
+			xtype: 'combo',
+			name: 'locale',
+			queryMode: 'local',
+			displayField: 'text',
+			valueField: 'value',
+			fieldLabel: _('Language'),
+			value: ENV['locale'],
+			store: {
+				xtype: 'store',
+				fields: ['value', 'text'],
+				data: [
+						{'value': 'fr', 'text': 'Français'},
+						{'value': 'en', 'text': 'English'}
+						//{"value": 'ja', "text": "日本語"},
+				]
+			},
+			iconCls: 'no-icon',
+			/*listeners:{
+				'select': function(combo, records){
+					if (records.length){
+						locale = records[0].get('value')
+						window.location.href = '/'+locale+'/';
+					}
+				}
+			}*/
+
+		}
+	],
 
 	on_authed: undefined,
 
@@ -77,12 +106,18 @@ Ext.define('canopsis.auth' , {
 
 		var form = this.getForm()
 		if (form.isValid()){
-			var login = form.getFieldValues().login
-			var passwd = form.getFieldValues().password;
+			var FieldValues = form.getFieldValues()
+			var login =	FieldValues.login
+			var passwd = FieldValues.password;
+			var locale = FieldValues.locale;
 			var passwd_sha1 = $.encoding.digests.hexSha1Str(passwd);
 
 			var timestamp = Math.floor(Ext.Date.format(new Date(), 'U') / 10) * 10
 			var authkey = $.encoding.digests.hexSha1Str(passwd_sha1 + timestamp.toString());
+
+			// User change locale in combobox
+			if (locale != ENV['locale'])
+				Ext.fly('locale').set({src:'/'+locale+'/static/canopsis/locales.js'});
 
 			Ext.Ajax.request({
 				method: 'GET',

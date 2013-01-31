@@ -95,7 +95,7 @@ for lang in locales:
 def route_locales(lang='en'):
 	response.content_type = 'text/javascript'
 	if lang in locales:
-		return locales_str[lang]
+		return "ENV['locale']='%s';\n\n" % lang + locales_str[lang]
 	else:
 		logger.error("Unknown language '%s'" % lang)
 		return "//Unknown language '%s'" % lang
