@@ -203,7 +203,7 @@ Ext.define('widgets.weather.weather' , {
 			post_params.push({id: this.list_meta_id[i]});
 
 		Ext.Ajax.request({
-			url: '/perfstore/values/' + from + '/' + to,
+			url: '/perfstore/values/' + parseInt(from/1000) + '/' + parseInt(to/1000),
 			scope: this,
 			params: {'nodes': Ext.JSON.encode(post_params)},
 			success: function(response) {
@@ -234,17 +234,17 @@ Ext.define('widgets.weather.weather' , {
 								node.sevent.timestamp = undefined;
 								node.sevent.last_state_change = undefined;
 								if (node.sevent.event_type == 'selector')
-									node.sevent.output = _('State on') + ' ' + rdr_tstodate(last_value[0] / 1000);
+									node.sevent.output = _('State on') + ' ' + rdr_tstodate(last_value[0]);
 								else
-									node.sevent.output = _('SLA on') + ' ' + rdr_tstodate(last_value[0] / 1000);
+									node.sevent.output = _('SLA on') + ' ' + rdr_tstodate(last_value[0]);
 							}else {
 								node._event.state = demultiplex_cps_state(last_value[1]).state;
 								node._event.timestamp = undefined;
 								node._event.last_state_change = undefined;
 								if (node._event.event_type == 'selector')
-									node._event.output = _('State on') + ' ' + rdr_tstodate(last_value[0] / 1000);
+									node._event.output = _('State on') + ' ' + rdr_tstodate(last_value[0]);
 								else
-									node._event.output = _('SLA on') + ' ' + rdr_tstodate(last_value[0] / 1000);
+									node._event.output = _('SLA on') + ' ' + rdr_tstodate(last_value[0]);
 							}
 						}else {
 							log.debug('No perfdata returned for: ' + node_id, this.logAuthor);
