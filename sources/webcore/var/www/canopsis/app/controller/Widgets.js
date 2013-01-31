@@ -42,13 +42,6 @@ Ext.define('canopsis.controller.Widgets', {
 					log.debug('loading ' + record.data.xtype, this.logAuthor);
 					var name = 'widgets.' + record.data.xtype + '.' + record.data.xtype;
 					Ext.require(name);
-					if (record.data.locales && Ext.Array.contains(record.data.locales, global.locale)) {
-						log.debug(' + loading locale ' + global.locale + ' ...', this.logAuthor);
-						var name = 'widgets.' + record.data.xtype + '.locales.lang-' + global.locale;
-						//Ext.require(name);
-						Ext.Loader.syncRequire(name);
-					}
-
 				}, this);
 
 				this.clean_disabled_widget();
@@ -81,22 +74,19 @@ Ext.define('canopsis.controller.Widgets', {
     },
 
 	check_translate: function() {
-		if (global.locale != 'en') {
-			log.debug('Attempting to translate widget in store', this.logAuthor);
-			this.store.each(function(record) {
-				var options = record.get('options');
-				if (options != undefined) {
-					for (var i = 0; i < options.length; i++) {
-						this.translate(record.get('xtype'), options[i]);
-					}
+		log.debug('Attempting to translate widget in store', this.logAuthor);
+		this.store.each(function(record) {
+			var options = record.get('options');
+			if (options != undefined) {
+				for (var i = 0; i < options.length; i++) {
+					this.translate(record.get('xtype'), options[i]);
 				}
-			},this);
-		}
+			}
+		},this);
 	},
 
 	//recursive translate function for widget records
 	translate: function(xtype, data) {
-
 		// for every item
 		var me = this;
 		Ext.Object.each(data, function(key, value, myself) {

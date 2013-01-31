@@ -30,11 +30,6 @@ function createApplication(){
 	global.locale = locale
 	log.debug(" + User locale: "+locale, "[app]");
 	
-	if (! global.minimified) {
-		Ext.fly('extlocale').set({src:'resources/lib/extjs/locale/ext-lang-' + locale + '.js'});
-		Ext.fly('canopsislocale').set({src:'resources/locales/lang-' + locale + '.js'});
-	}
-	
 	//Answer to every error
 	Ext.Ajax.on('requestexception', function (conn, response, options) {
 		if (response.status === 403) {

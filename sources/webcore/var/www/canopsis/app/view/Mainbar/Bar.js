@@ -42,7 +42,7 @@ Ext.define('canopsis.view.Mainbar.Bar' , {
 			displayField: 'text',
 			valueField: 'value',
 			fieldLabel: _('Language'),
-			value: global.locale,
+			value: ENV["locale"],
 			store: {
 				xtype: 'store',
 				fields: ['value', 'text'],

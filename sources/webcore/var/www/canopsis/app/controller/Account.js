@@ -71,6 +71,20 @@ Ext.define('canopsis.controller.Account', {
 		return global.account[id];
 	},
 
+	logout: function(){
+		Ext.Ajax.request({
+			url: '/logout',
+			scope: this,
+			success: function(response) {
+				log.debug(' + Success.', this.logAuthor);
+				window.location.href = '/' + ENV['locale'] + '/';
+			},
+			failure: function(result, request) {
+				log.error("Logout impossible, maybe you're already logout");
+			}
+		});
+	},
+
 	setLocale: function(locale) {
 		var cb = function() {
 			log.debug(' + setLocale Ok', this.logAuthor);
@@ -81,7 +95,7 @@ Ext.define('canopsis.controller.Account', {
   				buttons: Ext.Msg.OKCANCEL,
   				fn: function(btn) {
 					if (btn == 'ok') {
-						window.location.reload();
+						window.location.href = '/'+locale+'/';
 					}
 				}
 			});
