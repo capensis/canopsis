@@ -376,9 +376,12 @@ Ext.define('canopsis.lib.form.field.cinventory' , {
 		if (this.selection_grid) {
 			this.selection_store.each(function(record) {
 				var id = record.data.id;
+				var obj = Ext.clone(record.data)
 				if (this.additional_field) {
 					var additional_value = record.data[this.additional_field.name];
-					var obj = {id: id};
+					//double id is for compatibility
+					obj['id'] = id
+					obj['_id'] = id
 					obj[this.additional_field.name] = additional_value;
 					dump.push(obj);
 				}else {
