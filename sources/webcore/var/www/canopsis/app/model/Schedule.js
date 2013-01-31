@@ -30,7 +30,6 @@ Ext.define('canopsis.model.Schedule', {
 		{name: 'args', defaultsValue: []},
 		{name: 'kwargs' , defaultsValue: {}},
 		{name: 'next_run_time'},
-		{name: 'reporting_interval'},
 		{name: 'cron', defaultValue: undefined},
 		{name: 'log'},
 		{
@@ -66,6 +65,29 @@ Ext.define('canopsis.model.Schedule', {
 		{name: 'aaa_access_owner'},
 		{name: 'aaa_admin_group'},
 		{name: 'aaa_group'},
-		{name: 'aaa_owner'}
+		{name: 'aaa_owner'},
+
+		{name: 'intervalLength'},
+		{name: 'intervalUnit'},	
+		{name: 'frequency'},
+
+
+		{name: 'exporting_interval'},
+		{name: 'exporting_account'},
+		{name: 'exporting_task'},
+		{name: 'exporting_method'},
+		{name: 'exporting_owner'},
+		{name: 'exporting_viewName'},
+
+		{name: 'exporting_mail'},
+		{name: 'exporting_recipients'},
+		{name: 'exporting_subject'},
+		
+		{name: 'crontab_hours'},
+		{name: 'crontab_month'},
+		{name: 'crontab_day_of_week'},
+		{name: 'crontab_day'},
+
+
 	]
 });

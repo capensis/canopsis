@@ -17,112 +17,125 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
-import os, logging, signal, time, json
+import os, logging, signal, time, json,random
+from tempfile import mkstemp
 from subprocess import Popen
+from time import sleep
+from time import time
 
-logger = logging.getLogger('WRAPPER')
+logging.basicConfig()
 
-def load_conf(filename, viewname, starttime, stoptime, account, wrapper_conf_file, orientation='Portrait', pagesize='A4'):
-	conf = open(wrapper_conf_file, "r").read()
-	settings = json.loads(conf)
-	settings['filename'] = filename
-	settings['viewname'] = viewname
-	settings['starttime'] = starttime
-	settings['stoptime'] = stoptime
-	settings['account'] = account
-	settings['orientation'] = orientation
-	settings['pagesize'] = pagesize
-	return settings
+class Wrapper(object):
+	def __init__(self,filename, viewName, startTime, stopTime, account, wrapper_conf_file, orientation='Portrait', pagesize='A4'):
+		self.logger = logging.getLogger('[Wkhtml wrapper]')
+		self.logger.setLevel(logging.DEBUG)
 
-def check_xorg(lock, xvfb_cmd):
-	import random
-	from tempfile import mkstemp
-	global DISP, XAUTH
+		conf = open(wrapper_conf_file, "r").read()
+		self.settings = json.loads(conf)
 
-	XAUTH = mkstemp()[1]
-	DISP = random.randint(1, 500)
+		self.settings['filename'] = filename
+		self.settings['viewName'] = viewName
+		self.settings['startTime'] = startTime
+		self.settings['stopTime'] = stopTime
+		self.settings['account'] = account
+		self.settings['orientation'] = orientation
+		self.settings['pagesize'] = pagesize
 
-	while os.path.isfile("/tmp/.X%s-lock" % DISP):
-		DISP = random.randint(1, 500)
+		self.xauth = mkstemp()[1]
+		self.xDisplay = random.randint(1, 500)
+		self.currentX = None
 
-	cmd = 'Xvfb -screen 0 1024x768x24 -terminate -auth %s -nolisten tcp :%s >/dev/null 2>&1 &' % (XAUTH, DISP)
-	logger.debug(cmd)
-	output = Popen(cmd, shell=True)
+	def run_report(self):
+		self.create_xvfb()
+		self.export_env(self.xDisplay)
+		self.create_report_dir(self.settings['report_dir'])
+		self.get_cookie(self.settings['account'],self.settings['cookiejar'])
+		self.launch_wkhtml()
+		self.clean_x(self.xauth)
 
-def export_env(interface):
-	logger.debug(" [WK_WRAPPER] :: Set env DISPLAY to %s" % DISP)
-	os.environ['DISPLAY'] = ':%s' % DISP
+	def create_xvfb(self):
+		self.logger.debug('Get free Xlock')
+		while os.path.isfile("/tmp/.X%s-lock" % self.xDisplay):
+			self.xDisplay = random.randint(1, 500)
 
-def check_report_dir(report_dir):
-	logger.debug(" [WK_WRAPPER] :: Check if report directorie exist")
-	if not os.path.isdir(report_dir):
-		logger.debug(" [WK_WRAPPER] :: Create it at %s" % report_dir)
-		os.makedirs(report_dir)
+		cmd = 'Xvfb -screen 0 1024x768x24 -terminate -auth %s -nolisten tcp :%s >/dev/null 2>&1 &' % (self.xauth, self.xDisplay)
+		self.logger.debug('Launched cmd for creating Xvfb display')
+		self.logger.debug(cmd)
+		self.currentX = Popen(cmd, shell=True)
 
-def	get_cookie(cookiejar, account):
-	output = Popen("wkhtmltopdf -h >> /dev/null",shell=True)
-	output.wait()
-	authkey = account.get_authkey()
-	logger.debug(" [WK_WRAPPER] :: Recreate cookie (%s)" % cookiejar)
-	#logger.debug("wkhtmltopdf --load-error-handling ignore --cookie-jar %s \"http://127.0.0.1:8082/auth/%s/%s?cryptedKey=True\" /dev/null" % (cookiejar, account.user, authkey))
-	#output = Popen("wkhtmltopdf --load-error-handling ignore --cookie-jar %s \"http://127.0.0.1:8082/auth/%s/%s?cryptedKey=True\" /dev/null" % (cookiejar, account.user, authkey), shell=True)
+	def export_env(self,environnement):
+		self.logger.debug('Set DISPLAY env variable to %s' % environnement)
+		os.environ['DISPLAY'] = ':%s' % environnement
 
-	cmd = "wkhtmltopdf --load-error-handling ignore --cookie-jar %s \"http://127.0.0.1:8082/keyAuth/%s/%s\" /dev/null" % (cookiejar, account.user, authkey)
+	def create_report_dir(self,directory):
+		self.logger.debug("Check if report directory exist")
 
-	logger.info(cmd)
-	output = Popen(cmd, shell=True)
+		if not os.path.isdir(directory):
+			self.logger.debug("Create directory as %s" % directory)
+			os.makedirs(directory)
 
-	output.wait()
-	
-	if os.path.isfile(cookiejar):
-		if os.stat(cookiejar).st_size==0:
-			logger.error(" [WK_WRAPPER] :: Error while cookie forging")
-			exit()
-		else:
-			logger.debug(" [WK_WRAPPER] :: Cookie created")
-	else:
-		logger.error(" [WK_WRAPPER] :: Error while cookie forging")
-		exit()
+	def get_cookie(self, account, cookiejar):
+		output = Popen("wkhtmltopdf -h >> /dev/null",shell=True)
+		output.wait()
+		
+		authkey = account.get_authkey()
+		self.logger.debug("Recreate cookie: %s" % cookiejar)
 
-def clean_x():
-	os.remove(XAUTH)
-	if os.path.exists('/tmp/.X%s-lock' % DISP):
-		pid = int(open('/tmp/.X%s-lock' % DISP).read().strip())
-		os.kill(pid, signal.SIGINT)
+		cmd = "wkhtmltopdf --load-error-handling ignore --cookie-jar %s \"http://127.0.0.1:8082/keyAuth/%s/%s\" /dev/null" % (cookiejar, account.user, authkey)
+		self.logger.debug('Logging command:')
+		self.logger.debug(cmd)
+		output = Popen(cmd, shell=True)
+		output.wait()
 
-def run(settings):
-	filename 		= settings['filename']
-	viewname 		= settings['viewname']
-	starttime 		= settings['starttime']
-	stoptime		= settings['stoptime']
-	cookiejar		= settings['cookiejar']
-	windowstatus	= settings['windowstatus']
-	opts			= settings['opts']
-	xlock			= settings['xlock']
-	xvfb_cmd		= settings['xvfb_cmd']
-	display_int		= settings['display_int']
-	report_dir		= settings['report_dir']
-	header			= settings['header']
-	footer			= settings['footer']
-	account			= settings['account']
-	
-	orientation		= settings['orientation']
-	pagesize		= settings['pagesize']
+		self.logger.debug('Check if cookie is created:')
+		if not os.path.isfile(cookiejar):
+			raise Exception("Error while cookie forging")
 
-	check_xorg(xlock, xvfb_cmd)
-	export_env(display_int)
-	check_report_dir(report_dir)
-	get_cookie(cookiejar, account)
+		if os.stat(cookiejar).st_size == 0:
+			raise Exception("Error while cookie forging")
+		
+		self.logger.debug("Cookie created")
 
-	runscript = "var export_view_id='%s';var export_from=%s;var export_to=%s" % (viewname, starttime, stoptime)
-	opts = ' '.join(opts)
+	def clean_x(self,xauth):
+		os.remove(xauth)
+		if self.currentX:
+			self.currentX.terminate()
 
-	cmd = "wkhtmltopdf -O %s -s %s %s %s %s --window-status %s -T 21mm --header-line --header-spacing 5 --cookie-jar %s --run-script \"%s\" 'http://127.0.0.1:8082/static/canopsis/reporting.html' '%s/%s' 2>&1 | grep -v 'settings.windowStatus:ready'" % (orientation, pagesize, opts, header, footer, windowstatus, cookiejar, runscript, report_dir, filename)
+	def launch_wkhtml(self):
+		# python none to js null
+		export_from = self.settings.get('startTime')
+		if not export_from:
+			export_from = 'null'
 
-	logger.info(cmd)
-	result = Popen(cmd, shell=True)
+		script_js = "var export_view_id='%s';var export_from=%s;var export_to=%s" % (self.settings['viewName'],export_from , self.settings.get('stopTime',int(time())))
+		opts = ' '.join(self.settings['opts'])
 
-	result.wait()
-	clean_x()
+		cmd = "wkhtmltopdf -O %s -s %s %s %s %s --window-status %s\
+				-T 21mm --header-line --header-spacing 5 --cookie-jar %s\
+				--run-script \"%s\" 'http://127.0.0.1:8082/static/canopsis/reporting.html'\
+				'%s/%s' 2>&1 | grep -v\
+				'settings.windowStatus:ready'" % (
+													self.settings['orientation'], 
+													self.settings['pagesize'], 
+													opts, 
+													self.settings['header'], 
+													self.settings['footer'], 
+													self.settings['windowstatus'], 
+													self.settings['cookiejar'], 
+													script_js, 
+													self.settings['report_dir'], 
+													self.settings['filename']
+													)
 
-	return result
+		self.logger.debug('wkhtmltopdf will be launched with the following command:')
+		self.logger.debug(cmd)
+		result = Popen(cmd, shell=True)
+		waitTime = 0
+
+		#return 0 if everything's ok
+		while result.poll() == None:
+			sleep(2)
+			waitTime = waitTime + 2
+			if waitTime >= self.settings.get('timeout',300):
+				result.kill()
+		self.logger.debug('Pdf rendered, leaving wrapper')

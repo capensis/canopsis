@@ -346,19 +346,17 @@ Ext.define('canopsis.view.Tabs.Content' , {
 	setReportDate: function(from,to) {
 		log.debug('Send report data for widgets', this.logAuthor);
 		var cmps = this.getCmps();
-		for (var i = 0; i < cmps.length; i++) {
+		for (var i = 0; i < cmps.length; i++)
 			cmps[i]._doRefresh(from, to);
-		}
-
 	},
 
 	//misc
 	beforeclose: function(tab, object) {
 		log.debug('Active previous tab', this.logAuthor);
 		old_tab = Ext.getCmp('main-tabs').old_tab;
-		if (old_tab) {
+		if (old_tab)
 			Ext.getCmp('main-tabs').setActiveTab(old_tab);
-		}
+		
 
 		if (this.localstore_record) {
 			//remove from store

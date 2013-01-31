@@ -73,7 +73,7 @@ opener = authentificate(server,authkey)
 
 ####check if request listing
 if not args.list == None:
-	request = urllib2.Request('http://%s/rest/object/view' % server)
+	request = urllib2.Request('http://%s/rest/object/view?&noInternal=true&limit=0' % server)
 	r = opener.open(request)
 	json_output = json.loads(r.read())
 
@@ -93,7 +93,7 @@ if not args.view_id:
 time_interval = args.time_interval
 
 tsStop = int(time.time())
-tsStart = 0
+tsStart = -1 #-1 is the flag for no start (use widget time window)
 
 if(time_interval):
 	last_char = time_interval[len(time_interval) -1 : ]
@@ -113,7 +113,7 @@ if(time_interval):
 
 #####launch report
 
-request = urllib2.Request('http://%s/reporting/%s/%s/%s' % (server,tsStart*1000,tsStop*1000,args.view_id), '')
+request = urllib2.Request('http://%s/reporting/%s/%s/%s' % (server,tsStart,tsStop,args.view_id), '')
 r = opener.open(request)
 json_output = json.loads(r.read())
 
@@ -122,7 +122,7 @@ if not json_output['success']:
 
 #####save report
 if not args.nofile:
-	request = urllib2.Request('http://%s/file/%s' % (server,json_output['data']['id']))
+	request = urllib2.Request('http://%s/file/%s' % (server,json_output['data'][0]['id']))
 	r = opener.open(request)
 
 	path = ''
@@ -132,7 +132,7 @@ if not args.nofile:
 		path = '%s%s' % (path,args.filename)
 	else:
 		dateStop = date.fromtimestamp(tsStop).isoformat()
-		if(tsStart != 0):
+		if(tsStart != -1):
 			dateStart = date.fromtimestamp(tsStart).isoformat()
 			path = '%s%s__%s_%s' % (path,args.view_id,dateStart,dateStop)
 		else:

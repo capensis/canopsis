@@ -203,17 +203,6 @@ Ext.define('widgets.line_graph.line_graph' , {
 	},
 
 	setOptions: function() {
-		//----------find the right scale and tickinterval for xAxis------------
-		/*if (this.reportStop && this.reportStart){
-			var timestampInterval = (this.reportStop/1000) - (this.reportStart/1000)
-			var tsFormat = this.findScaleAxe(timestampInterval)
-			var tickInterval = this.findTickInterval(timestampInterval)
-		} else {
-			var tsFormat = 'H:i'
-			var tickInterval = global.commonTs.threeHours * 1000
-		}*/
-		//---------------------------------------------------------
-
 		this.options = {
 			reportMode: this.reportMode,
 
@@ -401,15 +390,7 @@ Ext.define('widgets.line_graph.line_graph' , {
 	////////////////////// CORE
 
 	makeUrl: function(from, to) {
-		var url = '/perfstore/values';
-
-		if (! to) 
-			url += '/' + parseInt(from/1000);
-
-		if (from && to) 
-			url += '/' + parseInt(from/1000) + '/' + parseInt(to/1000);
-		
-		return url;
+		return '/perfstore/values' +'/' + parseInt(from/1000) + '/' + parseInt(to/1000);
 	},
 
 	doRefresh: function(from, to) {
@@ -440,7 +421,7 @@ Ext.define('widgets.line_graph.line_graph' , {
 					log.debug('Request next interval: ' + from + ' + ' + this.aggregate_interval, this.logAuthor);
 					from = from + (this.aggregate_interval);
 				}
-				to = parseInt(Ext.Date.now() / 1000);
+				to = parseInt(Ext.Date.now());
 			}
 
 			log.debug(' + Do Refresh ' + from + ' -> ' + to, this.logAuthor);
@@ -700,18 +681,17 @@ Ext.define('widgets.line_graph.line_graph' , {
 	},
 
 	parseValues: function(serie, values, type) {
+
 		//MAKE A BETTER LOOP, JUST FOR TEST
-		for (var i = 0; i < values.length; i++)
+		for (var i = 0; i < values.length; i++){
 			values[i][0] = values[i][0] * 1000
 
-		//Do operation on value
-		if (this.SeriePercent && serie.options.max > 0)
-			for (var i = 0; i < values.length; i++)
+			if (this.SeriePercent && serie.options.max > 0)
 				values[i][1] = getPct(values[i][1], serie.options.max);
 
-		if (serie.options.invert)
-			for (var i = 0; i < values.length; i++)
+			if (serie.options.invert)
 				values[i][1] = - values[i][1];
+		}
 
 		//type specifique parsing
 		if (type == 'COUNTER' && !this.aggregate_interval && !this.reportMode) {
