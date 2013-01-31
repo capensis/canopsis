@@ -65,11 +65,11 @@ Ext.define('widgets.stepeue.stepeue', {
 	makeUrl: function(from, to) {
 		var url = '/perfstore/values';
 		if (!to) {
-			url += '/' + from;
+			url += '/' + parseInt(from/1000);
 		}
 
 		if (from && to) {
-			url += '/' + from + '/' + to;
+			url += '/' + parseInt(from/1000) + '/' + parseInt(to/1000);
 		}
 
 		return url;

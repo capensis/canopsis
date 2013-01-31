@@ -35,27 +35,27 @@ Ext.define('canopsis.controller.Consolidation', {
 		this.modelId = 'Consolidation';
 		this.callParent(arguments);
 	},
-	
+
 	_saveForm: function(form,store) {
-		if (form.record != undefined ) {
+		if (form.record != undefined) {
 			form.record.loaded = false;
 			form.record.nb_items = undefined;
 			form.record.output_engine = undefined;
 		}
-		this.callParent(arguments) ;
+		this.callParent(arguments);
 	},
 
-	afterload_EditForm: function(form, item_copy){
+	afterload_EditForm: function(form, item_copy) {
 		//checkboxgroup don't tick boxes, this code do.
-		var operators = item_copy.get('type')
-		if(!Ext.isArray(operators))
-			operators = [operators]
-		for(var i=0; i < operators.length; i++)
-			form.down('checkbox[inputValue='+operators[i]+']').setValue(true)
+		var operators = item_copy.get('type');
+		if (!Ext.isArray(operators))
+			operators = [operators];
+		for (var i = 0; i < operators.length; i++)
+			form.down('checkbox[inputValue=' + operators[i] + ']').setValue(true);
 	},
-	
-	afterload_DuplicateForm: function(form, item_copy){
-		this.afterload_EditForm(form, item_copy)
+
+	afterload_DuplicateForm: function(form, item_copy) {
+		this.afterload_EditForm(form, item_copy);
 	}
 
 });

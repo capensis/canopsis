@@ -276,30 +276,34 @@ Ext.define('canopsis.view.Tabs.Content' , {
 
 	//Reporting
 	addReportingBar: function() {
-		var config = {
-					width: 620,
-					border: false,
-					title: _('Live reporting toolbar'),
-					constrain: true,
-					renderTo: this.id,
-					resizable: false,
-					closable: false
-					};
-		this.reportingBar = Ext.widget('ReportingBar', {reloadAfterAction: true});
+		if (! this.report_window){
+			var config = {
+						width: 620,
+						border: false,
+						title: _('Live reporting toolbar'),
+						constrain: true,
+						renderTo: this.id,
+						resizable: false,
+						closable: false
+						};
+			this.reportingBar = Ext.widget('ReportingBar', {reloadAfterAction: true});
 
-		this.report_window = Ext.widget('window', config);
-		this.report_window.addDocked(this.reportingBar);
-		this.report_window.show();
+			this.report_window = Ext.widget('window', config);
+			this.report_window.addDocked(this.reportingBar);
+			this.report_window.show();
 
-		//switch widget to reporting mode
-		var cmps = this.getCmps();
-		for (var i = 0; i < cmps.length; i++) {
-			if (cmps[i].reportMode == false) {
-				cmps[i].reportMode = true;
+			//switch widget to reporting mode
+			var cmps = this.getCmps();
+			for (var i = 0; i < cmps.length; i++) {
+				if (cmps[i].reportMode == false) {
+					cmps[i].reportMode = true;
+				}
 			}
-		}
 
-		this.stopAllTasks();
+			this.stopAllTasks();
+		}else{
+			log.debug('Reporting bar already opened', this.logAuthor);
+		}
 	},
 
 	openOptions: function() {

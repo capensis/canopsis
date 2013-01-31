@@ -2,7 +2,7 @@
 
 NAME="webcore-libs"
 VERSION=0.3
-RELEASE=0
+RELEASE=3
 DESCRIPTION=""
 REQUIRES="canohome python canolibs webcore"
 
@@ -12,8 +12,6 @@ NO_DISTVERS=true
 
 function pre_install(){
 	echo "Pre-install $NAME $VERSION-$RELEASE ..."
-	# rm old libs
-	rm -R $HOME/var/www/canopsis/resources/lib &> /dev/null || true
 	check_code $? 
 }
 
@@ -34,7 +32,6 @@ function post_remove(){
 
 function pre_update(){
 	echo "Pre-update $NAME $VERSION-$RELEASE ..."
-	rm -R $HOME/var/www/canopsis/resources/lib &> /dev/null || true
 	check_code $?
 }
 

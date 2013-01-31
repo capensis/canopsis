@@ -34,13 +34,14 @@ from ctools import cleanTimestamp
 
 import pyperfstore2
 from pyperfstore2.utils import consolidation , mean
+
 manager = None
 
-import ConfigParser
-config = ConfigParser.RawConfigParser()
-config.read(os.path.expanduser('~/etc/cstorage.conf'))
-
 logger = logging.getLogger("perfstore")
+
+import ConfigParser
+
+config = ConfigParser.RawConfigParser()
 
 config.read(os.path.expanduser('~/etc/webserver.conf'))
 pyperfstore_aggregate			= True
@@ -437,7 +438,7 @@ def perfstore_perftop(start=None, stop=None):
 			for metric in metrics:
 				# Recheck type
 				mtype = metric.get('t', 'GAUGE')
-				if mtype != 'COUNTER' and not expand:
+				if mtype != 'COUNTER' and not expand and not report:
 					logger.debug(" + Metric '%s' (%s) is not a COUNTER" % (metric['me'], metric['_id']))
 
 					if (percent or threshold_on_pct) and 'ma' in metric and 'lv' in metric:
@@ -451,13 +452,19 @@ def perfstore_perftop(start=None, stop=None):
 					if check_threshold(val):
 						data.append(metric)
 				else:
-					points = manager.get_points(_id=metric['_id'], tstart=start, tstop=stop)
-					if expand:
-						del metric['_id']
-						if not len(points):
-							metric['lv'] = 0
-							data.append(metric)
-						else:
+					points = []
+					if mtype != 'COUNTER' and not expand:
+						# Get only one point
+						point = manager.get_point(_id=metric['_id'], ts=stop)
+						if point:
+							points = [point]
+					else:
+						# grt points from 'start' to 'stop'
+						points = manager.get_points(_id=metric['_id'], tstart=start, tstop=stop)
+
+					if len(points):
+						if expand:
+							del metric['_id']	
 							for point in points:
 								if check_threshold(point[1]):
 									nmetric = metric.copy()
@@ -466,22 +473,21 @@ def perfstore_perftop(start=None, stop=None):
 									if (percent or threshold_on_pct) and 'ma' in nmetric and 'lv' in nmetric:
 										nmetric['pct'] = round(((nmetric['lv'] * 100)/ nmetric['ma']) * 100) / 100
 									data.append(nmetric)
-					else:
-						if len(points):
+						else:		
+							# keep last point
+							metric['lts'] = points[len(points)-1][0]
 							metric['lv'] = points[len(points)-1][1]
-						else:
-							metric['lv'] = 0
 
-						if (percent or threshold_on_pct) and 'ma' in metric and 'lv' in metric:
-								metric['pct'] = round(((metric['lv'] * 100)/ metric['ma']) * 100) / 100
+							if (percent or threshold_on_pct) and 'ma' in metric and 'lv' in metric:
+									metric['pct'] = round(((metric['lv'] * 100)/ metric['ma']) * 100) / 100
 
-						if threshold_on_pct:
-							val = metric['pct']
-						else:
-							val = metric['lv']
+							if threshold_on_pct:
+								val = metric['pct']
+							else:
+								val = metric['lv']
 
-						if check_threshold(val):
-							data.append(metric)
+							if check_threshold(val):
+								data.append(metric)
 				
 		reverse = True
 		if sort == 1:

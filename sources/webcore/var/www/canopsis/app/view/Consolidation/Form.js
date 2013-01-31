@@ -81,30 +81,30 @@ Ext.define('canopsis.view.Consolidation.Form', {
 						items: [{
 							xtype: 'fieldset',
 							title: _('Operator'),
-							items:[{
+							items: [{
 								xtype: 'checkboxgroup',
 								title: _('Operations type'),
 								columns: 3,
 	        					vertical: true,
-								items:[{
-									boxLabel  : _('Mean'),
-	                    			name      : 'type',
+								items: [{
+									boxLabel: _('Mean'),
+	                    			name: 'type',
 	                    			inputValue: 'mean'
 								},{
-									boxLabel  : _('Sum'),
-									name 	  : 'type',
+									boxLabel: _('Sum'),
+									name: 'type',
 									inputValue: 'sum'
 								},{
-									boxLabel  : _('Delta'),
-	                    			name      : 'type',
+									boxLabel: _('Delta'),
+	                    			name: 'type',
 	                    			inputValue: 'delta'
 								},{
-									boxLabel  : _('Min'),
-	                    			name      : 'type',
+									boxLabel: _('Min'),
+	                    			name: 'type',
 	                    			inputValue: 'min'
 								},{
-									boxLabel  : _('Max'),
-	                    			name      : 'type',
+									boxLabel: _('Max'),
+	                    			name: 'type',
 	                    			inputValue: 'max'
 								}]
 							}]
@@ -113,29 +113,29 @@ Ext.define('canopsis.view.Consolidation.Form', {
 						title: _('Filter'),
 						xtype: 'cfilter',
 						name: 'mfilter',
-						url: "/perfstore",
-						model:"canopsis.model.Perfdata",
-						columns : [
+						url: '/perfstore',
+						model: 'canopsis.model.Perfdata',
+						columns: [
 							{
-								header:"",
+								header: '',
 								sortable: false,
 								flex: 2,
-								dataIndex: "co",
+								dataIndex: 'co'
 							},{
-								header:"",
+								header: '',
 								sortable: false,
 								flex: 2,
-								dataIndex:"re"
+								dataIndex: 're'
 							}, {
-								header:"",
-								sortable:false,
-								flex: 2,
-								dataIndex:"me"
-							}, {
-								header:"",
+								header: '',
 								sortable: false,
 								flex: 2,
-								dataIndex:"u"
+								dataIndex: 'me'
+							}, {
+								header: '',
+								sortable: false,
+								flex: 2,
+								dataIndex: 'u'
 							}
 						],
 						operator_fields: [
@@ -143,7 +143,7 @@ Ext.define('canopsis.view.Consolidation.Form', {
 							{ 'operator': 're', 'text': _('Resource'), 'type': 'all'},
 							{ 'operator': 'me', 'text': _('Metric'), 'type': 'all'},
 							{ 'operator': 'u', 'text': _('Unit'), 'type': 'all'},
-							{ 'operator': 'tg', 'text':_('Tags'), 'type': 'all'}
+							{ 'operator': 'tg', 'text': _('Tags'), 'type': 'all'}
 						]
 					}
 				]

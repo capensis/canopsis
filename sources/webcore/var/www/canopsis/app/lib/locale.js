@@ -19,7 +19,8 @@
 # ---------------------------------
 */
 
-i18n = [];
+if (typeof(i18n) == 'undefined')
+	i18n = {};
 
 function _(text, context) {
 	var ttext = undefined;

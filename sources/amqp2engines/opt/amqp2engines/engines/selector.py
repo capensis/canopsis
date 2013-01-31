@@ -137,10 +137,13 @@ class engine(cengine):
 			else:
 				if self.selectors_events[_id]:
 					publish = True
-				
+
 				if publish:
 					(rk, event) = selector.event()
 					if event:
+						if selector.data.get('sla_rk', None):
+							event['sla_rk'] = selector.data.get('sla_rk')
+
 						self.logger.debug("Publish event for '%s' (%s events)" % (selector.name, self.selectors_events[_id]))
 						self.storage.update(_id, {'state': event['state']})
 						self.amqp.publish(event, rk, self.amqp.exchange_name_events)

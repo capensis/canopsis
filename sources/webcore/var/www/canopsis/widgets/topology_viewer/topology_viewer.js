@@ -71,15 +71,27 @@ Ext.define('widgets.topology_viewer.topology_viewer' , {
 
 	doRefresh: function() {
 		if (this.sigmaContainer)
-			this.sigmaContainer.empty();
+			this.sigmaContainer.emptyGraph();
+		else
+			this.initSigma();
 
-		this.initSigma();
+		this.getNodeInfo();
+	},
+
+	onRefresh: function(node) {
+		this.lastUpdate = node['crecord_creation_time'];
+		this.drawRecursiveTree(node['nestedTree']);
+		this.sigmaDraw();
+	},
+
+	onResize: function() {
+		this.sigmaContainer.resize();
 	},
 
 	//-------------------Sigma related functions------------------
 
 	initSigma: function() {
-		log.debug('Init Sigma.js');
+		log.debug('Init Sigma.js', this.logAuthor);
 		var sigma_root = this.wcontainer.getEl().id;
 		this.sigmaContainer = sigma.init(document.getElementById(sigma_root));
 		this.sigmaContainer.drawingProperties({
@@ -97,23 +109,6 @@ Ext.define('widgets.topology_viewer.topology_viewer' , {
 		}).mouseProperties({
 			maxRatio: 4
 		});
-
-		if (this.nodes) {
-			var id = this.nodes[0];
-			Ext.Ajax.request({
-				url: this.baseUrl + '/' + id,
-				scope: this,
-				method: 'GET',
-				params: {ids: Ext.encode(this.nodeId)},
-				success: function(response) {
-					var nodes = Ext.JSON.decode(response.responseText).data;
-					var nestedTree = nodes[0]['nestedTree'];
-					this.lastUpdate = nodes[0]['crecord_creation_time'];
-					this.drawRecursiveTree(nestedTree);
-					this.sigmaDraw();
-				}
-			});
-		}
 	},
 
 	computeAnglesPosition: function(number_of_point,usable_angle,start_angle) {
@@ -207,6 +202,7 @@ Ext.define('widgets.topology_viewer.topology_viewer' , {
 	},
 
 	sigmaDraw: function() {
+		log.debug('Redraw topolgy', this.logAuthor);
 		this.sigmaContainer.draw();
 		this.canvas = document.getElementById(this.sigmaContainer._core.domRoot.lastChild.id);
 		this.canvasContext = this.canvas.getContext('2d');

@@ -190,9 +190,9 @@ Ext.define('derogation.field', {
 	//bodyStyle:{'background': '#ededed'},
 
 	state_icon_path: 'widgets/weather/icons/set1/',
-	icon_weather1: '01.png',
-	icon_weather2: '05.png',
-	icon_weather3: '09.png',
+	icon_weather1: 'state_0.png',
+	icon_weather2: 'state_1.png',
+	icon_weather3: 'state_2.png',
 
 	alert_icon_path: 'widgets/weather/icons/alert/',
 	icon_alert1: 'workman.png',
@@ -287,7 +287,7 @@ Ext.define('derogation.field', {
 			listConfig: {
 				getInnerTpl: function() {
 					var tpl = '<div>' +
-							  '<img src="' + this.findParentByType('combobox').alertIconPath + '{icon}" class="' + this.findParentByType('combobox').icon_class + '"/>' +
+							  '<img src="' + this.findParentByType('combobox').alertIconPath + '{icon}" class="' + this.findParentByType('combobox').iconClass + '"/>' +
 							  '{text}</div>';
 					return tpl;
 				}
