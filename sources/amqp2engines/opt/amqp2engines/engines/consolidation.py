@@ -39,10 +39,10 @@ class engine(cengine):
 		self.metrics_list = {}
 		self.timestamps = { } 
 		self.manager = pyperfstore2.manager(logging_level=logging.INFO)
-		self.beat_interval = 60
+		self.beat_interval = 10
 	
 		cengine.__init__(self, name=NAME, *args, **kargs)
-		self.default_interval = 60
+		self.default_interval = 10
 		self.records = { } 
 		
 	def pre_run(self):
@@ -77,7 +77,10 @@ class engine(cengine):
 				tfilter = json.loads(record.get('mfilter'))
 				metric_list = self.manager.store.find(mfilter=tfilter)
 				
-				list_fn = record.get('type', False)
+				fn_first = record.get('type_first', False)
+				duration_ag = record.get('duration_aggregation', False)
+
+				list_fn = record.get('type_second', False)
 
 				if not isinstance(list_fn, list):
 					list_fn = [ list_fn ] 
@@ -104,12 +107,20 @@ class engine(cengine):
 							output_message = "warning : too many metrics type"
 
 					self.logger.debug('Get last point for: %s' % metric.get('_id'))
-					last_point = self.manager.get_last_point(_id=metric.get('_id'))
-					if last_point:
-						values.append([last_point])
-
-				#self.logger.debug("type: %s" % type(values))
-				#self.logger.debug(values)
+					tstart = int(time.time()) - duration_ag 
+					list_points = self.manager.get_points(tstart=tstart, _id=metric.get('_id'))
+					last_points = self.manager.get_last_point( _id=metric.get('_id'))
+					if list_points:
+						self.logger.debug('list points')
+						self.logger.debug(list_points)
+						fn = self.get_math_function( record.get('type_first') )
+						self.logger.debug('fn')
+						self.logger.debug(fn)
+						self.logger.debug(last_points)
+						#resultat = pyperfstore2.utils.aggregate_series(values, fn)
+						values.append([last_points])
+				self.logger.debug("type: %s" % type(values))
+				self.logger.debug(values)
 				
 				if list_fn and len(values) > 0 :
 					list_perf_data = []

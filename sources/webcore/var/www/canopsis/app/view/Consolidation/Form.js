@@ -74,38 +74,83 @@ Ext.define('canopsis.view.Consolidation.Form', {
 							}
 						]
 					},{
-						title: _('Operations'),
+						title: _('First Aggregation'),
+						bodyStyle: 'padding:5px 5px 0',
+						layout: 'anchor',
+						defaults: {anchor: '100%'},
+						items:[{
+							xtype: 'fieldset',
+							title: _('Operator'),
+							items:[{
+								xtype: 'checkboxgroup',
+								title: _('Operations type'),
+								columns: 3,
+	        						vertical: true,
+								items:[{
+									boxLabel  : _('Mean'),
+				                    			name      : 'type_first',
+	                			    			inputValue: 'mean'
+								},{
+									boxLabel  : _('Sum'),
+									name 	  : 'type_first',
+									inputValue: 'sum'
+								},{
+									boxLabel  : _('Delta'),
+	                    						name      : 'type_first',
+				                    			inputValue: 'delta'
+								},{
+									boxLabel  : _('Min'),
+	                			    			name      : 'type_first',
+	                    						inputValue: 'min'
+								},{
+									boxLabel  : _('Max'),
+				                    			name      : 'type_first',
+	                			    			inputValue: 'max'
+								}]
+							}]
+				
+						},{
+							xtype: 'fieldset',
+							title: _('Duration for first aggregation'),
+							items: [{
+								xtype: 'cduration',
+								name: 'duration_aggregation'
+							}]
+						}]
+						
+					},{
+						title: _('Second Aggregation'),
 						bodyStyle: 'padding:5px 5px 0',
 						layout: 'anchor',
 						defaults: {anchor: '100%'},
 						items: [{
 							xtype: 'fieldset',
 							title: _('Operator'),
-							items: [{
+							items:[{
 								xtype: 'checkboxgroup',
 								title: _('Operations type'),
 								columns: 3,
-	        					vertical: true,
-								items: [{
-									boxLabel: _('Mean'),
-	                    			name: 'type',
-	                    			inputValue: 'mean'
+	        						vertical: true,
+								items:[{
+									boxLabel  : _('Mean'),
+				                    			name      : 'type_second',
+	                			    			inputValue: 'mean'
 								},{
-									boxLabel: _('Sum'),
-									name: 'type',
+									boxLabel  : _('Sum'),
+									name 	  : 'type_second',
 									inputValue: 'sum'
 								},{
-									boxLabel: _('Delta'),
-	                    			name: 'type',
-	                    			inputValue: 'delta'
+									boxLabel  : _('Delta'),
+	                    						name      : 'type_second',
+				                    			inputValue: 'delta'
 								},{
-									boxLabel: _('Min'),
-	                    			name: 'type',
-	                    			inputValue: 'min'
+									boxLabel  : _('Min'),
+	                			    			name      : 'type_second',
+	                    						inputValue: 'min'
 								},{
-									boxLabel: _('Max'),
-	                    			name: 'type',
-	                    			inputValue: 'max'
+									boxLabel  : _('Max'),
+				                    			name      : 'type_second',
+	                			    			inputValue: 'max'
 								}]
 							}]
 						}]
@@ -113,29 +158,29 @@ Ext.define('canopsis.view.Consolidation.Form', {
 						title: _('Filter'),
 						xtype: 'cfilter',
 						name: 'mfilter',
-						url: '/perfstore',
-						model: 'canopsis.model.Perfdata',
-						columns: [
+						url: "/perfstore",
+						model:"canopsis.model.Perfdata",
+						columns : [
 							{
-								header: '',
+								header:"",
 								sortable: false,
 								flex: 2,
-								dataIndex: 'co'
+								dataIndex: "co",
 							},{
-								header: '',
+								header:"",
 								sortable: false,
 								flex: 2,
-								dataIndex: 're'
+								dataIndex:"re"
 							}, {
-								header: '',
-								sortable: false,
+								header:"",
+								sortable:false,
 								flex: 2,
-								dataIndex: 'me'
+								dataIndex:"me"
 							}, {
-								header: '',
+								header:"",
 								sortable: false,
 								flex: 2,
-								dataIndex: 'u'
+								dataIndex:"u"
 							}
 						],
 						operator_fields: [
@@ -143,7 +188,7 @@ Ext.define('canopsis.view.Consolidation.Form', {
 							{ 'operator': 're', 'text': _('Resource'), 'type': 'all'},
 							{ 'operator': 'me', 'text': _('Metric'), 'type': 'all'},
 							{ 'operator': 'u', 'text': _('Unit'), 'type': 'all'},
-							{ 'operator': 'tg', 'text': _('Tags'), 'type': 'all'}
+							{ 'operator': 'tg', 'text':_('Tags'), 'type': 'all'}
 						]
 					}
 				]
