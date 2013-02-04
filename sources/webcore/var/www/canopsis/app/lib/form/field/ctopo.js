@@ -50,14 +50,14 @@ Ext.define('canopsis.lib.form.field.ctopo' , {
 			'<center>',
 				'<tpl if="event_type == \'operator\'">',
 					'<tpl if="connector == \'topology\'">',
-						'<img class="ctopo-point" src="/static/canopsis/themes/canopsis/resources/images/topology.png" />',
+						'<img class="ctopo-point" style="width: 32px; height: 32px;" src="/static/canopsis/themes/canopsis/resources/images/topology.png" />',
 					'</tpl>',
 					'<tpl if="connector != \'topology\'">',
-						'<img class="ctopo-point" src="/static/canopsis/themes/canopsis/resources/images/Tango-Blue-Materia/24x24/categories/applications-accessories.png" />',
+						'<img class="ctopo-point" style="width: 32px; height: 32px;" src="/static/canopsis/themes/canopsis/resources/images/Tango-Blue-Materia/24x24/categories/applications-accessories.png" />',
 					'</tpl>',
 				'</tpl>',
 				'<tpl if="event_type != \'operator\'">',
-					'<img class="ctopo-point" src="widgets/stream/logo/{connector}.png" />',
+					'<img class="ctopo-point" style="width: 32px; height: 32px;" src="widgets/stream/logo/{connector}.png" />',
 				'</tpl>',
 			'</center>',
 			'<center>',
@@ -139,7 +139,7 @@ Ext.define('canopsis.lib.form.field.ctopo' , {
 		log.debug('   + Done', this.logAuthor);
 
 		// Defer second refresh for slow browser/connection
-		Ext.defer(this.jsPlumbInstance.repaintEverything, 50, this);
+		//Ext.defer(this.jsPlumbInstance.repaintEverything, 50, this);
 		this.jsPlumbInstance.repaintEverything();
 	},
 
