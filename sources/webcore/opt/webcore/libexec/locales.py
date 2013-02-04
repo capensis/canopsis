@@ -89,6 +89,23 @@ for lang in locales:
 		elif os.path.exists(js_path):
 			locales_str[lang] += parse_js(js_path)
 
+	#Clean comments/Licence
+	pattern = re.compile("^#.*", re.MULTILINE)
+	locales_str[lang] = pattern.sub("", locales_str[lang])
+
+	#locales_str[lang] = re.sub("//.*", "", locales_str[lang])
+	#locales_str[lang] = re.sub("/\*.*", "", locales_str[lang])
+	#locales_str[lang] = re.sub("\*/.*", "", locales_str[lang])
+	#locales_str[lang] = re.sub(" \* .*$", "", locales_str[lang])
+
+	data = ""
+	for line in locales_str[lang].split('\n'):
+		if line != "":
+			data += line + '\n'
+
+	locales_str[lang] = data
+
+
 
 @route('/:lang/static/canopsis/locales.js', skip=['checkAuthPlugin'])
 @route('/static/canopsis/locales.js', skip=['checkAuthPlugin'])
