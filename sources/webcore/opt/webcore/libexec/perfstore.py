@@ -31,6 +31,7 @@ from libexec.auth import check_auth, get_account
 # Modules
 from ctools import parse_perfdata, clean_mfilter
 from ctools import cleanTimestamp
+from ctools import internal_metrics
 
 import pyperfstore2
 from pyperfstore2.utils import consolidation , mean
@@ -214,8 +215,6 @@ def perstore_get_all_metrics():
 				for field in fields:
 					mor.append({field: {'$regex': '.*%s.*' % word, '$options': 'i'}})	
 				mfilter['$and'].append({'$or': mor})
-	
-	internal_metrics = [ 'cps_state', 'cps_statechange', 'cps_statechange_nok', 'cps_statechange_0', 'cps_statechange_1', 'cps_statechange_2', 'cps_statechange_3', 'cps_evt_per_sec', 'cps_sec_per_evt', 'cps_queue_size', 'cps_sel_state_0', 'cps_sel_state_1', 'cps_sel_state_2', 'cps_sel_state_3'  ]
 	
 	if not show_internals:
 		if mfilter:
