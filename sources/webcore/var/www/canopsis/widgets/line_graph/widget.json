@@ -372,6 +372,13 @@
 											"checked":true
 										}]
 					}]
+		},{
+			"title": "Display events on axis",
+			"items": [{
+				"title":"Choose what to display",
+				"xtype": "cfilter",
+				"name": "flagFilter"
+			}]
 		}]
 }]
 

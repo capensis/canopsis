@@ -23,6 +23,25 @@
 //                                			-> setOptions                             			-> getSerie
 //											-> createChart
 
+flag_tootlipt_template = Ext.create('Ext.XTemplate',
+	"<table>",
+		"<tr>",
+			'<td style="margin:3px;">',
+				'<img src="widgets/stream/logo/{icon}.png" style="width: 32px;"></img>',
+			"</td>",
+			'<td>',
+				'<div style="margin:3px;">',
+					"<b>{component}</b>",
+					'<tpl if="resource">',
+						'<b> - {resource}</b>',
+					'</tpl>',
+					'<br/>{text}',
+				"</div>",
+			"</td>",
+		"</tr>",
+	"</table>",
+	{compiled: true}
+);
 
 Ext.define('widgets.line_graph.line_graph' , {
 	extend: 'canopsis.lib.view.cwidget',
@@ -264,7 +283,8 @@ Ext.define('widgets.line_graph.line_graph' , {
 				shared: this.tooltip_shared,
 				crosshairs: this.tooltip_crosshairs,
 				enabled: this.tooltip,
-				formatter: this.tooltip_formatter
+				formatter: this.tooltip_formatter,
+				useHTML: true
 			},
 			xAxis: {
 				id: 'timestamp',
@@ -363,26 +383,29 @@ Ext.define('widgets.line_graph.line_graph' , {
 	},
 
 	tooltip_formatter: function() {
+		if(!this.y && this.point && this.point.text){
+			return flag_tootlipt_template.applyTemplate(this.point)
+		}else{
+			var formatter = function(options, value) {
+				if (options.invert)
+					value = - value;
 
-		var formatter = function(options, value) {
-			if (options.invert)
-				value = - value;
+				value = rdr_humanreadable_value(value, options.bunit);
+				return '<b>' + options.metric + ':</b> ' + value;
+			};
 
-			value = rdr_humanreadable_value(value, options.bunit);
-			return '<b>' + options.metric + ':</b> ' + value;
-		};
+			var s = '<b>' + rdr_tstodate(this.x / 1000) + '</b>';
 
-		var s = '<b>' + rdr_tstodate(this.x / 1000) + '</b>';
-
-		if (this['points']) {
-			// Shared
-			$.each(this.points, function(i, point) {
-				s += '<br/>' + formatter(point.series.options, point.y);
-			});
-		} else {
-			s += '<br/>' + formatter(this.series.options, this.y);
+			if (this['points']) {
+				// Shared
+				$.each(this.points, function(i, point) {
+					s += '<br/>' + formatter(point.series.options, point.y);
+				});
+			} else {
+				s += '<br/>' + formatter(this.series.options, this.y);
+			}
+			return s;
 		}
-		return s;
 	},
 
 	createChart: function() {
@@ -480,7 +503,38 @@ Ext.define('widgets.line_graph.line_graph' , {
 					log.debug('No nodes specified', this.logAuthor);
 				}
 			}
+
+
+			//if(this.nodeForFlags && this.nodeForFlags.length != 0){
+			if(this.flagFilter){
+				var filter = [{
+								"timestamp": { "$gte": parseInt(from/1000), "$lte": parseInt(to/1000) }
+							},{
+								"state_type":1
+							}]
+
+				filter.push(Ext.decode(this.flagFilter))
+
+				Ext.Ajax.request({
+					url: '/rest/events_log',
+					scope: this,
+					params: {filter:Ext.encode({'$and':filter})},
+					method: 'Get',
+					success: function(response) {
+						var data = Ext.JSON.decode(response.responseText).data;
+						this.addFlagSerie(data)
+					},
+					failure: function(result, request) {
+						log.error('Ajax request failed ... (' + request.url + ')', this.logAuthor);
+					}
+				});
+			}
 		}
+	},
+
+	getFlagFilter: function(from,to){
+
+
 	},
 
 	onRefresh: function(data) {
@@ -794,8 +848,8 @@ Ext.define('widgets.line_graph.line_graph' , {
 
 		}else {
 			serie = this.getSerie(node_id, metric_name, bunit, min, max);
-		}
-
+		
+}
 		if (! serie) {
 			log.error('Impossible to get serie, node: ' + node_id + ' metric: ' + metric_name, this.logAuthor);
 			return false;
@@ -1057,6 +1111,57 @@ Ext.define('widgets.line_graph.line_graph' , {
 
 		//if (this.use_window_ts)
 		//	this.post_params.use_window_ts = this.use_window_ts;
+	},
+
+	addFlagSerie: function(data){
+		var serie = this.chart.get('x_flags')
+		var sData = []
+
+		for(var i = 0; i < data.length; i++){
+			var state_color = this.getStateColor(data[i].state)
+			sData.push({
+				x : data[i].timestamp*1000,
+				text : data[i].output,
+				component: data[i].component,
+				resource: data[i].resource,
+				icon: data[i].connector.toLowerCase(),
+				fillColor: state_color,
+				style:{color:state_color},
+				states : {
+					hover : {
+						fillColor : state_color 
+					}
+				},
+				title: 'A'
+			})
+		}
+
+		if(serie){
+			for(var i =0; i < sData.length; i++)
+				serie.addPoint(sData[i],true,this.shift)
+		}else{
+			var serie = {
+				id: 'x_flags',
+				type : 'flags',
+				data : sData,
+				shape : 'circlepin',
+				width : 17,
+				color : 'black',
+				showInLegend: false,
+			}
+			this.chart.addSeries(serie, true, false);
+		}
+	},
+
+	getStateColor: function(state){
+		if(state == 0)
+			return global.state_colors.ok
+		if(state == 1)
+			return global.state_colors.warning
+		if(state == 2)
+			return global.state_colors.critical
+		if(state == 3)
+			return global.state_colors.unknown
 	},
 
  	beforeDestroy: function() {
