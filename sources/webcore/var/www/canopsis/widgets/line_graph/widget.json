@@ -309,7 +309,7 @@
 						"title": "Legend",
 						"checkboxName": "legend",
 						"value": true,
-						"checkboxToggle": true,
+
 						"items": [
 							{
 								"xtype" : "numberfield",

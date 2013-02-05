@@ -60,6 +60,9 @@ Ext.define('canopsis.lib.form.field.cfieldset' , {
 	},
 
 	setValue: function(value) {
+		if (value == undefined && this.value)
+			value = this.value
+
 		if (value == undefined)
 			value = false;
 
