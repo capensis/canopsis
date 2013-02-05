@@ -1122,8 +1122,11 @@ Ext.define('widgets.line_graph.line_graph' , {
 		}
 
 		if(serie){
-			for(var i =0; i < sData.length; i++)
-				serie.addPoint(sData[i],true,this.shift)
+			if(this.reportMode)
+				serie.setData(sData)
+			else
+				for(var i =0; i < sData.length; i++)
+					serie.addPoint(sData[i],true,this.shift)
 		}else{
 			var serie = {
 				id: 'x_flags',
