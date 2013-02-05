@@ -29,9 +29,10 @@ rm -Rf $CPS/etc/tasks.d/task_reporting.py
 rm -Rf $CPS/etc/tasks.d/task_mail.py
 rm -Rf $CPS/etc/tasks.d/task_backup.py
 rm -Rf $CPS/etc/tasks.d/task_node.py
-
+rm -Rf $CPS/lib/wkhtmltopdf/*
 
 if [ $LINK -eq 1 ]; then
+	ln -s $SRC/sources/wkhtmltopdf-libs/lib/wkhtmltopdf/* $CPS/lib/wkhtmltopdf/
 	ln -s $SRC/sources/celery-libs/etc/tasks.d/* $CPS/etc/tasks.d/
 	ln -s $SRC/sources/wkhtmltopdf-libs/etc/tasks.d/task_reporting.py $CPS/etc/tasks.d/
 	ln -s $SRC/sources/apscheduler-libs/bin/apsd $CPS/bin/

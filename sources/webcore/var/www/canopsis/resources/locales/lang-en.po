@@ -1141,3 +1141,29 @@ msgstr "Your document is rendering, a popup will ask you where to save in few se
 msgid "zIndex"
 msgstr "zIndex"
 
+msgid "1h"
+msgstr "1h"
+
+msgid "1d"
+msgstr "1d"
+
+msgid "1m"
+msgstr "1m"
+
+msgid "1w"
+msgstr "1w"
+
+msgid "1y"
+msgstr "1y"
+
+msgid "Consolidation"
+msgstr "Consolidation"
+
+msgid "Please choose a valid metric in wizard"
+msgstr "Please choose a valid metric in wizard"
+
+msgid "Unfortunately, there is no data for this period"
+msgstr "Unfortunately, there is no data for this period"
+
+msgid "Loading data from server"
+msgstr "Loading data from server"

@@ -149,6 +149,17 @@
 								]
 								}
 							}]
+					},{
+						"xtype": "cfieldset",
+						"title": "Time navigation",
+						"checkboxName": "timeNav",
+						"items": [
+							{
+								"xtype": "cduration",
+								"name": "timeNav_window",
+								"value": 604800,
+								"fieldLabel": "Time window"
+							}]
 					}]
 		},{
 			"title": "Aggregation",
@@ -294,16 +305,13 @@
                            }					
 						]
 					},{
-						"xtype": "fieldset",
-						"title": "Legend Style",
-						"collapsible": false,
+						"xtype": "cfieldset",
+						"title": "Legend",
+						"checkboxName": "legend",
+						"value": true,
+						"checkboxToggle": true,
 						"items": [
 							{
-								"xtype": "checkbox",
-								"fieldLabel": "Enable legend",
-								"checked": true,
-								"name": "legend"
-							},{
 								"xtype" : "numberfield",
 								"name" : "legend_fontSize",
 								"fieldLabel": "Font Size",
