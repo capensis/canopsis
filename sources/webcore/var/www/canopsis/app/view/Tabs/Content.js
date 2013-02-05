@@ -125,7 +125,7 @@ Ext.define('canopsis.view.Tabs.Content' , {
 			url: '/rest/object/view/' + this.view_id,
 			scope: this,
 			success: function(response) {
-				data = Ext.JSON.decode(response.responseText);
+				var data = Ext.JSON.decode(response.responseText);
 				this.view = data.data[0];
 				this.dump = this.view.items;
 
