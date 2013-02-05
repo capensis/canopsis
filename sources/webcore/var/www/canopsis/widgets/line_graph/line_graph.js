@@ -1147,6 +1147,7 @@ Ext.define('widgets.line_graph.line_graph' , {
 				shape : 'circlepin',
 				width : 17,
 				color : 'black',
+				 zIndex: 2,
 				showInLegend: false,
 			}
 			this.chart.addSeries(serie, true, false);

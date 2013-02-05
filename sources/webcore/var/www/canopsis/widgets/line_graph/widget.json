@@ -373,9 +373,8 @@
 										}]
 					}]
 		},{
-			"title": "Display events on axis",
+			"title": "Choose events",
 			"items": [{
-				"title":"Choose what to display",
 				"xtype": "cfilter",
 				"name": "flagFilter"
 			}]
