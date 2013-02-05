@@ -123,6 +123,9 @@ Ext.define('widgets.line_graph.line_graph' , {
 
 	consolidation: undefined,
 
+	timeNav: false,
+	timeNav_window: 604800,
+
 	initComponent: function() {
 		this.backgroundColor	= check_color(this.backgroundColor);
 		this.borderColor	= check_color(this.borderColor);
@@ -169,6 +172,9 @@ Ext.define('widgets.line_graph.line_graph' , {
 		log.dump(this.nodesByID);
 
 		log.debug('same_node: ' + this.same_node, this.logAuthor);
+
+		if (this.timeNav)
+			this.reportMode = true
 
 		//Set title
 		if (this.autoTitle) {
@@ -241,9 +247,6 @@ Ext.define('widgets.line_graph.line_graph' , {
 					redraw: this.checkTimewindow
 				}
 			},
-		/*	global: {
-				useUTC: false
-			},*/
 			exporting: {
 				enabled: (this.exportMode || this.reportMode) ? false : this.exporting_enabled,
 				filename: this.chartTitle,
@@ -261,6 +264,39 @@ Ext.define('widgets.line_graph.line_graph' , {
 						enabled: false
 					}
 				}
+			},
+			navigator: {
+				enabled: this.timeNav,
+				baseSeries: 0,
+				height: 20
+			},
+			rangeSelector : {
+				enabled: this.timeNav,
+				buttons: [{
+					type: 'hour',
+					count: 1,
+					text: _('1h')
+				}, {
+					type: 'day',
+					count: 1,
+					text: _('1d')
+				}, {
+					type: 'week',
+					count: 1,
+					text: _('1w')
+				}/*, {
+					type: 'year',
+					count: 1,
+					text: '1y'
+				}, {
+					type: 'all',
+					text: 'All'
+				}*/],
+				inputEnabled: false,
+				selected : 1
+			},
+			scrollbar: {
+				enabled: this.timeNav
 			},
 			colors: [],
 			title: {
@@ -280,7 +316,10 @@ Ext.define('widgets.line_graph.line_graph' , {
 			xAxis: {
 				id: 'timestamp',
 				type: 'datetime',
-				tickmarkPlacement: 'on'
+				tickmarkPlacement: 'on',
+				events : {
+					afterSetExtremes : this.afterSetExtremes
+				}
 			},
 			yAxis: [
 				{
@@ -363,6 +402,20 @@ Ext.define('widgets.line_graph.line_graph' , {
 				this.options.chart.zoomType = 'x';
 			}
 		}
+
+		//Time Navigation
+		if (this.timeNav){
+			var data = [[Date.now()-(this.timeNav_window*1000), null], [Date.now(), null]];
+			this.options.series.push({
+				id: 'timeNav',
+				name: 'timeNav',
+				data: data,
+				showInLegend: false
+			});
+
+			this.options.xAxis['min'] = Date.now()-(this.time_window*1000);
+			this.options.xAxis['max'] = Date.now();
+		}
 	},
 
 	y_formatter: function() {
@@ -406,8 +459,6 @@ Ext.define('widgets.line_graph.line_graph' , {
 				useUTC: false
 			}
 		});
-		//this.chartMessage = this.chart.renderer.text(_('Waiting data') + ' ...', 50, 50).add();
-		this.getEl().mask(_('No data on interval'));
 	},
 
 	////////////////////// CORE
@@ -482,6 +533,7 @@ Ext.define('widgets.line_graph.line_graph' , {
 					});
 				} else {
 					log.debug('No nodes specified', this.logAuthor);
+					this.chart.showLoading(_('Please choose a valid metric in wizard'));
 				}
 			}
 
@@ -511,11 +563,6 @@ Ext.define('widgets.line_graph.line_graph' , {
 				});
 			}
 		}
-	},
-
-	getFlagFilter: function(from,to){
-
-
 	},
 
 	onRefresh: function(data) {
@@ -585,23 +632,15 @@ Ext.define('widgets.line_graph.line_graph' , {
 				if (this.SeriePercent && toggle_max_percent)
 					this.chart.yAxis[0].setExtremes(0, 100, false);
 
-				//unmasking
-				var this_El = this.getEl();
-				if (this_El.isMasked && !this.isDisabled())
-					this_El.unmask();
-
 				this.chart.redraw();
+				this.chart.hideLoading();
 			} else {
 				log.debug(' + No data', this.logAuthor);
 				//---------if report, cleaning the chart--------
 				if (this.reportMode == true) {
 					this.clearGraph();
-					/*
-					if (this.chartMessage == undefined) {
-						this.chartMessage = this.chart.renderer.text('<div style="margin:auto;">' + _('Infortunatly, there is no data for this period') + '</div>', 50, 50).add();
-					}
-					*/
-					this.getEl().mask(_('Infortunatly, there is no data for this period'));
+
+					this.chart.showLoading(_('Unfortunately, there is no data for this period'));
 					this.chart.redraw();
 				}
 			}
@@ -1148,6 +1187,20 @@ Ext.define('widgets.line_graph.line_graph' , {
 			return global.state_colors.critical
 		if(state == 3)
 			return global.state_colors.unknown
+	},
+
+	afterSetExtremes: function(e){
+		var me = this.chart.options.cwidget;
+		if (me.timeNav){
+			var from =  Math.round(e.min, 0);
+			var to   =  Math.round(e.max, 0);
+			log.debug("Highcharts: afterSetExtremes: " + from + " -> " + to, me.logAuthor);
+			if (! isNaN(from) && ! isNaN(to)){
+				me.reportMode = true;
+				me.chart.showLoading(_('Loading data from server')+'...');
+				me.doRefresh(from, to);
+			}
+		}
 	},
 
  	beforeDestroy: function() {

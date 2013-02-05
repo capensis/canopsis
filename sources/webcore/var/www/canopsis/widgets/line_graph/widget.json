@@ -149,6 +149,17 @@
 								]
 								}
 							}]
+					},{
+						"xtype": "cfieldset",
+						"title": "Time navigation",
+						"checkboxName": "timeNav",
+						"items": [
+							{
+								"xtype": "cduration",
+								"name": "timeNav_window",
+								"value": 604800,
+								"fieldLabel": "Time window"
+							}]
 					}]
 		},{
 			"title": "Aggregation",
