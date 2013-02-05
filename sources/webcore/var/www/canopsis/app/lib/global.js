@@ -51,7 +51,7 @@ var global = {
 	pageSize: 20,
 
 	default_locale: 'en',
-	locale: 'en',
+	locale: ENV['locale'],
 	am_pm_lang: ['en'],
 
 	is12Clock: undefined,

@@ -51,10 +51,12 @@ function _(text, context) {
 	if (ttext) return Ext.String.capitalize(ttext);
 
 	// Translate failed
-	if (global)
-		if (global.locale != 'en' && (global.log.level > 4))
-			if (! Ext.Array.contains(global.untranslated, text))
-				global.untranslated.push(text);
+	if (global && global.log.level > 4)
+		if (! Ext.Array.contains(global.untranslated, text))
+			global.untranslated.push(text);
 
-	return text;
+	if (global && global.locale == 'en')
+		return "->> " + text + " <<-";
+	else
+		return text;
 }
