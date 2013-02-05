@@ -413,6 +413,12 @@
 											"checked":true
 										}]
 					}]
+		},{
+			"title": "Choose events",
+			"items": [{
+				"xtype": "cfilter",
+				"name": "flagFilter"
+			}]
 		}]
 }]
 
