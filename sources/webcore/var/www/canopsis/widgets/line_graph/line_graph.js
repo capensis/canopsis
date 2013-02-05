@@ -413,6 +413,9 @@ Ext.define('widgets.line_graph.line_graph' , {
 				showInLegend: false
 			});
 
+			// Disable legend, see: https://github.com/highslide-software/highcharts.com/issues/567
+			this.options.legend.enabled = false;
+			
 			this.options.xAxis['min'] = Date.now()-(this.time_window*1000);
 			this.options.xAxis['max'] = Date.now();
 		}
