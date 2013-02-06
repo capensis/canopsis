@@ -114,6 +114,7 @@ Ext.define('canopsis.view.Consolidation.Form', {
 							title: _('Interval for first aggregation'),
 							items: [{
 								xtype: 'cduration',
+								value: global.commonTs.hours,
 								name: 'aggregation_interval'
 							}]
 						}]

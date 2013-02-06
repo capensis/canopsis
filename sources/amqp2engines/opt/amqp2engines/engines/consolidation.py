@@ -38,14 +38,13 @@ NAME="consolidation"
 class engine(cengine):
 	def __init__(self, *args, **kargs):
 		self.metrics_list = {}
-		self.timestamps = { } 
-		self.manager = pyperfstore2.manager(logging_level=logging.INFO)
-		self.beat_interval = 10
-	
-		cengine.__init__(self, name=NAME, *args, **kargs)
+		self.timestamps = {} 
+		self.records = {} 
 		self.default_interval = 60
-		self.records = { } 
-		
+
+		self.manager = pyperfstore2.manager(logging_level=logging.INFO)	
+		cengine.__init__(self, name=NAME, *args, **kargs)
+
 	def pre_run(self):
 		self.storage = get_storage(namespace='object', account=caccount(user="root", group="root"))
 		self.manager = pyperfstore2.manager(logging_level=self.logging_level)
@@ -68,6 +67,7 @@ class engine(cengine):
 
 		for record in self.records.values():
 			consolidation_last_timestamp = self.timestamps[record.get('_id')]
+
 			aggregation_interval = record.get('aggregation_interval', self.default_interval)
 			current_interval = int(time.time()) - consolidation_last_timestamp
 
@@ -80,6 +80,8 @@ class engine(cengine):
 				mfilter = {'$and': [mfilter, {'me': {'$nin':internal_metrics}}]}
 				self.logger.debug('the mongo filter is: %s' % mfilter)
 				metric_list = self.manager.store.find(mfilter=mfilter)
+				self.logger.debug('length of matching metric list is: %i' % metric_list.count())
+
 				
 				first_aggr_function = record.get('first_aggregation_type', False)
 				second_aggr_function = record.get('second_aggregation_type', False)
@@ -120,68 +122,80 @@ class engine(cengine):
 					list_points = self.manager.get_points(tstart=tstart, _id=metric.get('_id'))
 
 					if list_points:
-						#self.logger.debug('list points')
-						#self.logger.debug(list_points)
 						fn = self.get_math_function(first_aggr_function)
+						point_timestamp = int(time.time()) - current_interval/2
 						if fn:
-							resultat = fn([value[1] for value in list_points])
-							point_timestamp = int(time.time()) - current_interval/2
-							values.append([[point_timestamp,resultat]])
+							point_value = fn([value[1] for value in list_points])
 						else:
-							value.append([list_points[len(list_points)-1]])
+							point_value = list_points[len(list_points)-1][1]
+						values.append([[point_timestamp,point_value]])
 				
 				self.logger.debug(values)
 
-				if second_aggr_function and len(values) > 0 :
-					list_perf_data = []
-					for function_name in second_aggr_function :
-						fn = self.get_math_function(function_name)
-						resultat = []
-						try :
-							resultat = pyperfstore2.utils.consolidation(values, fn)
-							self.logger.debug('Values for %s operation:' % function_name)
-							self.logger.debug(values)
-							self.logger.debug('Resultcpat: %s' % str(resultat[0][1]))
-						except NameError:
-							self.logger.info('Function [%s] does not exist' % function_name)
-							output_message = "warning : function [%s] does not exists" % function_name
-						if len(resultat) > 0 :
-							list_perf_data.append({ 'metric' : function_name, 'value' : resultat[0][1], "unit": mUnit, 'max': mMax, 'min': mMin, 'warn': None, 'crit': None, 'type': mType } ) 
-							event = cevent.forger(
-								connector ="consolidation",
-								connector_name = "engine",
-								event_type = "consolidation",
-								source_type = "resource",
-								component = record['component'],
-								resource=record['resource'],
-								state=0,
-								timestamp=resultat[0][0],
-								state_type=0,
-								output="Consolidation: '%s' successfully computed" % record.get('crecord_name','No name'),
-								long_output="",
-								perf_data=None,
-								perf_data_array=list_perf_data,
-								display_name=record['crecord_name']
-							)	
-							rk = cevent.get_routingkey(event)
-							self.amqp.publish(event, rk, self.amqp.exchange_name_events)
+				if not second_aggr_function:
+					self.storage.update(record.get('_id'), {'output_engine': "No second aggregation function given"  } )
+					return
 
-							self.logger.debug('The following event was sent:')
-							self.logger.debug(event)
+				if len(values) == 0 :
+					self.logger.debug('No values')
+					self.storage.update(record.get('_id'), {
+															'output_engine': "No input values",
+															'consolidation_ts':int(time.time())
+															})
+					self.timestamps[record.get('_id')] = int(time.time())
+					return
 
-							if not output_message:
-								engine_output = '%s : Computation done. Next Computation in %s s' % (datetime.now().strftime('%Y-%m-%d %H:%M:%S'),str(aggregation_interval))
-								self.storage.update(record.get('_id'),{'output_engine':engine_output} )
-							else:
-								engine_output = '%s : Computation done but there are issues : "%s" . Next Computation in %s s' % (datetime.now().strftime('%Y-%m-%d %H:%M:%S'),output_message,str(aggregation_interval))
-								self.storage.update(record.get('_id'), {'output_engine': engine_output} )
+				list_perf_data = []
+				for function_name in second_aggr_function :
+					fn = self.get_math_function(function_name)
+
+					if not fn:
+						self.logger.debug('No function given for second aggregation')
+						self.storage.update(record.get('_id'), {'output_engine': "No function given for second aggregation"})
+						return
+
+					resultat = pyperfstore2.utils.consolidation(values, fn)
+
+					self.logger.debug('Values for %s operation:' % function_name)
+					self.logger.debug(values)
+					self.logger.debug('Result: %s' % str(resultat[0][1]))
+	
+					if len(resultat) == 0 :
+						if not output_message:
+							self.storage.update(record.get('_id'), {'output_engine': "No result"  } )
 						else:
-							if not output_message:
-								self.storage.update(record.get('_id'), {'output_engine': "No result"  } )
-							else:
-								self.storage.update(record.get('_id'), {'output_engine': "there are issues : %s warning : No result" % output_message } )
-				else:
-					self.storage.update(record.get('_id'), {'output_engine': "No input values"  } )
+							self.storage.update(record.get('_id'), {'output_engine': "there are issues : %s warning : No result" % output_message } )
+
+					list_perf_data.append({ 'metric' : function_name, 'value' : resultat[0][1], "unit": mUnit, 'max': mMax, 'min': mMin, 'warn': None, 'crit': None, 'type': mType } ) 
+					event = cevent.forger(
+						connector ="consolidation",
+						connector_name = "engine",
+						event_type = "consolidation",
+						source_type = "resource",
+						component = record['component'],
+						resource=record['resource'],
+						state=0,
+						timestamp=resultat[0][0],
+						state_type=0,
+						output="Consolidation: '%s' successfully computed" % record.get('crecord_name','No name'),
+						long_output="",
+						perf_data=None,
+						perf_data_array=list_perf_data,
+						display_name=record['crecord_name']
+					)	
+					rk = cevent.get_routingkey(event)
+					self.amqp.publish(event, rk, self.amqp.exchange_name_events)
+
+					self.logger.debug('The following event was sent:')
+					self.logger.debug(event)
+
+					if not output_message:
+						engine_output = '%s : Computation done. Next Computation in %s s' % (datetime.now().strftime('%Y-%m-%d %H:%M:%S'),str(aggregation_interval))
+						self.storage.update(record.get('_id'),{'output_engine':engine_output} )
+					else:
+						engine_output = '%s : Computation done but there are issues : "%s" . Next Computation in %s s' % (datetime.now().strftime('%Y-%m-%d %H:%M:%S'),output_message,str(aggregation_interval))
+						self.storage.update(record.get('_id'), {'output_engine': engine_output} )
+
 				self.storage.update(record.get('_id'), {'consolidation_ts':int(time.time())})
 				self.timestamps[record.get('_id')] = int(time.time())
 		
