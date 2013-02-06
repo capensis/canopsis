@@ -151,14 +151,32 @@ Ext.define('canopsis.lib.form.field.cfilter' , {
 			margin: 5,
 			scope: this
 		});
+		this.clean_button = Ext.widget('button', {
+			handler: this.reset_cfilter,
+			tooltip: _('Clean'),
+			iconCls: 'icon-clean',
+			margin: 5,
+			scope: this
+		});
 
 		var button_panel = Ext.widget('panel', {
 			border: false,
-			items: [this.wizard_button, this.edit_button, this.preview_button]
+			items: [this.wizard_button, this.edit_button, this.preview_button, this.clean_button ]
 		});
 
 		this.items = [button_panel, this.cfilter, this.edit_area, this.preview_grid];
 		this.callParent(arguments);
+	},
+
+	reset_cfilter: function(){
+		this.cfilter.destroy()
+		this.cfilter = Ext.create('cfilter.object', {
+			operator_store: this.operator_store,
+			sub_operator_store: this.sub_operator_store,
+			opt_remove_button: false,
+			start_with_and: false
+		});
+		this.add(this.cfilter)
 	},
 
 	check_json_validity: function(value) {
@@ -217,6 +235,8 @@ Ext.define('canopsis.lib.form.field.cfilter' , {
 		(wizard) ? this.wizard_button.setDisabled(false) : this.wizard_button.setDisabled(true);
 		(edit) ? this.edit_button.setDisabled(false) : this.edit_button.setDisabled(true);
 		(preview) ? this.preview_button.setDisabled(false) : this.preview_button.setDisabled(true);
+
+		(wizard) ? this.clean_button.setDisabled(true) : this.clean_button.setDisabled(false);
 	},
 
 
@@ -224,7 +244,7 @@ Ext.define('canopsis.lib.form.field.cfilter' , {
 		if (!this.edit_area.isHidden()) {
 			if (this.edit_area.validate()) {
 				var filter = this.edit_area.getValue();
-				filter = strip_blanks(filter);
+				filter = strip_return(filter);
 				if (filter && filter != '') {
 					this.cfilter.remove_all_cfilter();
 					this.setValue(filter);
@@ -792,7 +812,7 @@ Ext.define('canopsis.lib.form.field.cfilter' , {
 
 		if (!this.edit_area.isHidden()) {
 			if (this.edit_area.validate())
-				value = strip_blanks(this.edit_area.getValue());
+				value = strip_return(this.edit_area.getValue());
 		} else {
 			value = this.cfilter.getValue();
 		}
