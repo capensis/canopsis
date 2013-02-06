@@ -58,6 +58,7 @@ Ext.define('canopsis.controller.Widgets', {
 		}else {
 			this.store.on('load', function() {
 				this.clean_disabled_widget();
+				this.fireEvent('loaded');
 			}, this);
 		}
     },

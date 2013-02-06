@@ -184,3 +184,44 @@ Ext.define('canopsis.auth' , {
 	}
 
 });
+
+var checkAuth = function(callback){
+	//check Auth
+	log.debug('Check auth ...', "[index]");
+	Ext.Ajax.request({
+		type: 'rest',
+		url: '/account/me',
+		reader: {
+			type: 'json',
+			root: 'data',
+			totalProperty  : 'total',
+			successProperty: 'success'
+		},
+		success: function(response){
+			request_state = Ext.JSON.decode(response.responseText).success
+			if (request_state){
+				global.account = Ext.JSON.decode(response.responseText).data[0];
+
+				log.debug(' + Logged', "[app]");
+				callback(global.account);
+
+			} else {
+				log.debug(' + Please loggin', "[index]");
+				createAuthForm(callback);
+			}
+		},
+		failure: function(response) {
+			if (response.status == 403){
+				log.debug(' + Please loggin', "[index]");
+			}else{
+				log.debug(' + Error in request', "[index]");
+			}
+			createAuthForm(callback);
+		}
+	});
+}
+
+var createAuthForm = function(callback){
+	Ext.get('auth').setVisible(true, true);
+	Ext.create('canopsis.auth', { on_authed: callback });
+}

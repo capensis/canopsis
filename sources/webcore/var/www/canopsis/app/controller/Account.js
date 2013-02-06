@@ -77,7 +77,7 @@ Ext.define('canopsis.controller.Account', {
 			scope: this,
 			success: function(response) {
 				log.debug(' + Success.', this.logAuthor);
-				window.location.href = '/' + ENV['locale'] + '/';
+				window.location.reload();
 			},
 			failure: function(result, request) {
 				log.error("Logout impossible, maybe you're already logout");

@@ -23,9 +23,9 @@ import os, sys, time, logging
 import ConfigParser
 
 import bottle
-from bottle import route, run, static_file, redirect
-from libexec.auth import autoLogin
-from libexec.auth import checkAuthPlugin
+from bottle import route, run, static_file, redirect, request
+
+import libexec.auth
 
 ## Hack: Prevent "ExtractionError: Can't extract file(s) to egg cache" when 2 process extract egg at the same time ...
 try:
@@ -116,6 +116,17 @@ def unload_webservices():
 		#except Exception, err:
 		#	logger.error("Impossible to unload '%s'. (%s)" % (webservice, err))
 
+def autoLogin(key=None):
+	if key and len(key) == 56:
+		logger.debug('Autologin:')
+		output = libexec.auth.autoLogin(key)
+		if output['success']:
+			logger.info(' + Success')
+			return True
+		else:
+			logger.info(' + Failed')
+			return False
+
 ## Bind signals
 import gevent, signal, sys
 stop_in_progress=False
@@ -137,7 +148,7 @@ app = bottle.default_app()
 load_webservices()
 
 ## Install plugins
-auth_plugin = checkAuthPlugin()
+auth_plugin = libexec.auth.checkAuthPlugin()
 
 bottle.install(auth_plugin)
 
@@ -156,6 +167,10 @@ session_opts = {
 @route('/:lang/static/:path#.+#',	skip=['checkAuthPlugin'])
 @route('/static/:path#.+#',			skip=['checkAuthPlugin'])
 def server_static(path, lang='en'):
+	key = request.params.get('auth_key', default=None)
+	if key:
+		autoLogin(key)
+
 	return static_file(path, root=root_directory)
 
 @route('/favicon.ico',skip=[auth_plugin])
@@ -169,15 +184,12 @@ def favicon():
 @route('/:lang/:key',		skip=['checkAuthPlugin'])
 @route('/:lang/index.html',	skip=['checkAuthPlugin'])
 def index(key=None, lang='en'):
-	#autologin
+	uri_key = request.params.get('auth_key', default=None)
+	if not key and uri_key:
+		key = uri_key
+
 	if key:
-		if len(key) == 56:
-			logger.debug('key for autologin privided, seach if account match')
-			output = autoLogin(key)
-			if output['success']:
-				logger.info('autoLogin success')
-			else:
-				logger.info('autoLogin failed')
+		autoLogin(key)
 
 	redirect('/%s/static/canopsis/index.html' % lang)
 

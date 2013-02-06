@@ -97,10 +97,13 @@ Ext.define('canopsis.view.View.TreePanel' , {
                 if (rec.crecord_type == 'view') {
 					var view = rec._id;
 					var auth_key = global.account.authkey;
-					var url = Ext.String.format('http://{0}/static/canopsis/display_view.html?view_id={1}&auth_key={2}',
-					$(location).attr('host'),
-					view,
-					auth_key);
+					var url = Ext.String.format(
+						'{0}/{1}?fullscreenMode=true&view_id={2}&auth_key={3}',
+						window.location.origin,
+						window.location.pathname,
+						view,
+						auth_key
+					);
 
 					var _window = Ext.widget('window', {
 						resizable: false,

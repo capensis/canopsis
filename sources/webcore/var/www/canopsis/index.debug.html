@@ -42,14 +42,9 @@
 	<link rel="stylesheet" type="text/css" href="resources/lib/pnotify/jquery.pnotify.default.css">
 
 	<link rel="stylesheet" type="text/css" href="/ui/widgets.css">
-	<!-- <script src="resources/lib/timeline/timeline_ajax/simile-ajax-api.js?bundle=true" type="text/javascript"></script> -->
-	<!-- <script src="resources/lib/timeline/timeline_js/timeline-api.js?bundle=true" type="text/javascript"></script> -->
 
 	<!-- Ext-JS -->
-	<!-- <script type="text/javascript" src="resources/lib/extjs/ext-debug.js"></script> -->
-	<script type="text/javascript" src="resources/lib/extjs/ext-all.js"></script>
-	<!-- <script type="text/javascript" src="resources/lib/extjs/ext.js"></script> -->
-	<!-- <script type="text/javascript" src="resources/lib/extjs/bootstrap.js"></script> -->
+	<script type="text/javascript" src="resources/lib/extjs/ext-all.js.gz"></script>
 
 	<!-- Jquery -->
 	<script type="text/javascript" src="resources/lib/jquery/jquery.min.js"></script>
@@ -70,9 +65,15 @@
 	
 	<script type="text/javascript" src="resources/lib/pnotify/jquery.pnotify.min.js"></script>   
  
-	<script type="text/javascript" src="resources/lib/Highstock/js/highstock.src.js"></script>
+	<!-- Highcharts -->
+	<script type="text/javascript" src="resources/lib/Highstock/js/highstock.js"></script>
 	<script type="text/javascript" src="resources/lib/regression.js"></script>
 	<script type="text/javascript" src="resources/lib/Highstock/js/modules/exporting.js"></script>
+
+	<!-- Extjs Plugins -->
+	<script type="text/javascript" src="resources/lib/jqGridable/jqGridable.Ext.js"></script>
+	<script type="text/javascript" src="resources/lib/extjs-plugins/Ext.ux.ColorField.js"></script>
+	<script type="text/javascript" src="resources/lib/extjs-plugins/Ext.ux.CheckColumn.js"></script>
 
 	<!-- ENV -->
 	<script type="text/javascript">
@@ -91,9 +92,6 @@
 	<script type="text/javascript" src="app/lib/log.js"></script>
 	<script type="text/javascript" src="app/lib/tools.js"></script>
 	<script type="text/javascript" src="app/lib/renderers.js"></script>
-	
-	<!-- Nowjs -->
-	<script type="text/javascript" id="nowjs"></script>
 		
 	<!-- Extjs Plugins -->
 	<script type="text/javascript" src="resources/lib/jqGridable/jqGridable.Ext.js"></script>
@@ -102,9 +100,12 @@
 
 	<!-- App -->
 	<script type="text/javascript" src="app.js"></script>
+
+	<!-- Nowjs -->
+	<script type="text/javascript" id="nowjs"></script>
 </head>
 <body>
-	<div id="auth" class='login'>
+	<div id="auth" class='login' style='display: none;'>
 		<div class='header'>DEBUG</div>
 		<div class='title'><img src="themes/canopsis/resources/images/logo_canopsis_auth.png"></img></div>
 		<div class='layout'></div>
@@ -117,47 +118,9 @@
 
 			// Debug Mode
 			global.log.level = 5;
-			log.level = 5;
+			log.level = global.log.level;
 
-			//check Auth
-			log.debug('Check auth ...', "[index]");
-			Ext.Ajax.request({
-				type: 'rest',
-				url: '/account/me',
-				reader: {
-					type: 'json',
-					root: 'data',
-					totalProperty  : 'total',
-					successProperty: 'success'
-				},
-				success: function(response){
-					request_state = Ext.JSON.decode(response.responseText).success
-					if (request_state){
-						global.account = Ext.JSON.decode(response.responseText).data[0];
-						log.debug(' + Logged', "[app]");
-
-						Ext.get('auth').remove();
-
-						createApplication()
-					} else {
-						log.debug(' + Please loggin', "[index]");
-					}
-				},
-				failure: function(response) {
-					if (response.status == 403){
-						log.debug(' + Please loggin', "[index]");
-
-						Ext.create('canopsis.auth', {
-							on_authed: function(){
-								Ext.get('auth').remove();
-								createApplication();
-							}
-						})
-					}else{
-						log.debug(' + Error in request', "[index]");
-					}
-				}
-			});
+			checkAuth(createApplication);
 		});
 	</script>
 </body>

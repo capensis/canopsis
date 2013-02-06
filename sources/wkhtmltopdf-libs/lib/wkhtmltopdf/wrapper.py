@@ -49,7 +49,6 @@ class Wrapper(object):
 		self.create_xvfb()
 		self.export_env(self.xDisplay)
 		self.create_report_dir(self.settings['report_dir'])
-		self.get_cookie(self.settings['account'],self.settings['cookiejar'])
 		self.launch_wkhtml()
 		self.clean_x(self.xauth)
 
@@ -74,45 +73,25 @@ class Wrapper(object):
 			self.logger.debug("Create directory as %s" % directory)
 			os.makedirs(directory)
 
-	def get_cookie(self, account, cookiejar):
-		output = Popen("wkhtmltopdf -h >> /dev/null",shell=True)
-		output.wait()
-		
-		authkey = account.get_authkey()
-		self.logger.debug("Recreate cookie: %s" % cookiejar)
-
-		cmd = "wkhtmltopdf --load-error-handling ignore --cookie-jar %s \"http://127.0.0.1:8082/keyAuth/%s/%s\" /dev/null" % (cookiejar, account.user, authkey)
-		self.logger.debug('Logging command:')
-		self.logger.debug(cmd)
-		output = Popen(cmd, shell=True)
-		output.wait()
-
-		self.logger.debug('Check if cookie is created:')
-		if not os.path.isfile(cookiejar):
-			raise Exception("Error while cookie forging")
-
-		if os.stat(cookiejar).st_size == 0:
-			raise Exception("Error while cookie forging")
-		
-		self.logger.debug("Cookie created")
-
 	def clean_x(self,xauth):
 		os.remove(xauth)
 		if self.currentX:
 			self.currentX.terminate()
 
 	def launch_wkhtml(self):
+		output = Popen("wkhtmltopdf -h >> /dev/null",shell=True)
+		output.wait()
+
 		# python none to js null
 		export_from = self.settings.get('startTime')
 		if not export_from:
 			export_from = 'null'
 
-		script_js = "var export_view_id='%s';var export_from=%s;var export_to=%s" % (self.settings['viewName'],export_from , self.settings.get('stopTime',int(time())))
 		opts = ' '.join(self.settings['opts'])
 
 		cmd = "wkhtmltopdf -O %s -s %s %s %s %s --window-status %s\
-				-T 21mm --header-line --header-spacing 5 --cookie-jar %s\
-				--run-script \"%s\" 'http://127.0.0.1:8082/static/canopsis/reporting.html'\
+				-T 21mm --header-line --header-spacing 5\
+				'http://127.0.0.1:8082/%s/static/canopsis/index.html?exportMode=true&view_id=%s&from=%s&to=%s&auth_key=%s'\
 				'%s/%s' 2>&1 | grep -v\
 				'settings.windowStatus:ready'" % (
 													self.settings['orientation'], 
@@ -121,8 +100,11 @@ class Wrapper(object):
 													self.settings['header'], 
 													self.settings['footer'], 
 													self.settings['windowstatus'], 
-													self.settings['cookiejar'], 
-													script_js, 
+													self.settings['account'].data['locale'],
+													self.settings['viewName'],
+													export_from,
+													self.settings.get('stopTime', int(time())),
+													self.settings['account'].get_authkey(),
 													self.settings['report_dir'], 
 													self.settings['filename']
 													)

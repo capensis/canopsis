@@ -40,15 +40,11 @@
 	<link rel="stylesheet" type="text/css" href="resources/lib/extjs-plugins/CheckHeader.css">
 	
 	<link rel="stylesheet" type="text/css" href="resources/lib/pnotify/jquery.pnotify.default.css">
-	<!-- <link rel="stylesheet" type="text/css" href="resources/lib/pnotify/icons/jquery.pnotify.default.icons.css"> -->
 
 	<link rel="stylesheet" type="text/css" href="/ui/widgets.css">
 
 	<!-- Ext-JS -->
 	<script type="text/javascript" src="resources/lib/extjs/ext-all.js.gz"></script>
-
-	<!-- Ext localization javascript -->
-	<script type="text/javascript" id="extlocale"></script>
 
 	<!-- Jquery -->
 	<script type="text/javascript" src="resources/lib/jquery/jquery.min.js"></script>
@@ -70,7 +66,6 @@
 	<script type="text/javascript" src="resources/lib/pnotify/jquery.pnotify.min.js"></script>   
  
 	<!-- Highcharts -->
-	<!-- <script type="text/javascript" src="resources/lib/Highcharts/js/highcharts.js"></script> -->
 	<script type="text/javascript" src="resources/lib/Highstock/js/highstock.js"></script>
 	<script type="text/javascript" src="resources/lib/regression.js"></script>
 	<script type="text/javascript" src="resources/lib/Highstock/js/modules/exporting.js"></script>
@@ -104,7 +99,7 @@
 </head>
 
 <body>
-	<div id="auth" class='login'>
+	<div id="auth" class='login' style='display: none;'>
 		<div class='header'></div>
 		<div class='title'><img src="themes/canopsis/resources/images/logo_canopsis_auth.png"></img></div>
 		<div class='layout'></div>
@@ -113,47 +108,9 @@
 
 	<script type="text/javascript">
 		Ext.onDocumentReady(function() {
-			global.minimified = true
+			global.minimified = true;
 
-			//check Auth
-			log.debug('Check auth ...', "[index]");
-			Ext.Ajax.request({
-				type: 'rest',
-				url: '/account/me',
-				reader: {
-					type: 'json',
-					root: 'data',
-					totalProperty  : 'total',
-					successProperty: 'success'
-				},
-				success: function(response){
-					request_state = Ext.JSON.decode(response.responseText).success
-					if (request_state){
-						global.account = Ext.JSON.decode(response.responseText).data[0];
-						log.debug(' + Logged', "[app]");
-
-						Ext.get('auth').remove();
-
-						createApplication()
-					} else {
-						log.debug(' + Please loggin', "[index]");
-					}
-				},
-				failure: function(response) {
-					if (response.status == 403){
-						log.debug(' + Please loggin', "[index]");
-
-						Ext.create('canopsis.auth', {
-							on_authed: function(){
-								Ext.get('auth').remove();
-								createApplication();
-							}
-						})
-					}else{
-						log.debug(' + Error in request', "[index]");
-					}
-				}
-			});
+			checkAuth(createApplication);
 		});
 	</script>
 
