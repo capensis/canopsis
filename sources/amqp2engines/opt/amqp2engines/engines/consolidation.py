@@ -156,9 +156,9 @@ class engine(cengine):
 
 					resultat = pyperfstore2.utils.consolidation(values, fn)
 
-					self.logger.debug('Values for %s operation:' % function_name)
-					self.logger.debug(values)
-					self.logger.debug('Result: %s' % str(resultat[0][1]))
+					#self.logger.debug('Values for %s operation:' % function_name)
+					#self.logger.debug(values)
+					#self.logger.debug('Result: %s' % str(resultat[0][1]))
 	
 					if len(resultat) == 0 :
 						if not output_message:
