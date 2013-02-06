@@ -153,6 +153,7 @@
 						"xtype": "cfieldset",
 						"title": "Time navigation",
 						"checkboxName": "timeNav",
+						"value": false,
 						"items": [
 							{
 								"xtype": "cduration",
@@ -309,7 +310,6 @@
 						"title": "Legend",
 						"checkboxName": "legend",
 						"value": true,
-						"checkboxToggle": true,
 						"items": [
 							{
 								"xtype" : "numberfield",

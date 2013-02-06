@@ -55,7 +55,7 @@ function _(text, context) {
 		if (! Ext.Array.contains(global.untranslated, text))
 			global.untranslated.push(text);
 
-	if (global && global.locale == 'en')
+	if (global && global.log.level > 4)
 		return "->> " + text + " <<-";
 	else
 		return text;
