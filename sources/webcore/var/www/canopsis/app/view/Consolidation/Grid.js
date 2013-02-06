@@ -73,18 +73,18 @@ Ext.define('canopsis.view.Consolidation.Grid' , {
 			flex: 1,
 			sortable: true,
 			dataIndex: 'resource'
-		}, {
-			header: _('First aggregation type'),
-			flex: 3,
-			dataIndex: 'type_first'
 		},{
 			header: _('Duration for first Aggregation'),
 			flex: 1,
-			dataIndex: 'duration_aggregation'
+			dataIndex: 'aggregation_interval'
+		},{
+			header: _('First aggregation type'),
+			flex: 3,
+			dataIndex: 'first_aggregation_type'
 		},{
 			header: _('Second aggregation type'),
 			flex: 3,
-			dataIndex: 'type_second'
+			dataIndex: 'second_aggregation_type'
 
 		},{
 			header: _('Engine ouput'),

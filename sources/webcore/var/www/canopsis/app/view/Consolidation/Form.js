@@ -82,39 +82,40 @@ Ext.define('canopsis.view.Consolidation.Form', {
 							xtype: 'fieldset',
 							title: _('Operator'),
 							items:[{
-								xtype: 'checkboxgroup',
+								xtype: 'radiogroup',
 								title: _('Operations type'),
 								columns: 3,
 	        						vertical: true,
 								items:[{
 									boxLabel  : _('Mean'),
-				                    			name      : 'type_first',
+				                    			name      : 'first_aggregation_type',
 	                			    			inputValue: 'mean'
 								},{
 									boxLabel  : _('Sum'),
-									name 	  : 'type_first',
+									name 	  : 'first_aggregation_type',
 									inputValue: 'sum'
 								},{
 									boxLabel  : _('Delta'),
-	                    						name      : 'type_first',
+	                    						name      : 'first_aggregation_type',
 				                    			inputValue: 'delta'
 								},{
 									boxLabel  : _('Min'),
-	                			    			name      : 'type_first',
+	                			    			name      : 'first_aggregation_type',
 	                    						inputValue: 'min'
 								},{
 									boxLabel  : _('Max'),
-				                    			name      : 'type_first',
+				                    			name      : 'first_aggregation_type',
 	                			    			inputValue: 'max'
 								}]
 							}]
 				
 						},{
 							xtype: 'fieldset',
-							title: _('Duration for first aggregation'),
+							title: _('Interval for first aggregation'),
 							items: [{
 								xtype: 'cduration',
-								name: 'duration_aggregation'
+								value: global.commonTs.minute,
+								name: 'aggregation_interval'
 							}]
 						}]
 						
@@ -133,23 +134,23 @@ Ext.define('canopsis.view.Consolidation.Form', {
 	        						vertical: true,
 								items:[{
 									boxLabel  : _('Mean'),
-				                    			name      : 'type_second',
+				                    			name      : 'second_aggregation_type',
 	                			    			inputValue: 'mean'
 								},{
 									boxLabel  : _('Sum'),
-									name 	  : 'type_second',
+									name 	  : 'second_aggregation_type',
 									inputValue: 'sum'
 								},{
 									boxLabel  : _('Delta'),
-	                    						name      : 'type_second',
+	                    						name      : 'second_aggregation_type',
 				                    			inputValue: 'delta'
 								},{
 									boxLabel  : _('Min'),
-	                			    			name      : 'type_second',
+	                			    			name      : 'second_aggregation_type',
 	                    						inputValue: 'min'
 								},{
 									boxLabel  : _('Max'),
-				                    			name      : 'type_second',
+				                    			name      : 'second_aggregation_type',
 	                			    			inputValue: 'max'
 								}]
 							}]
