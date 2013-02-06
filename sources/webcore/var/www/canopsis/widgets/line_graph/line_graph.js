@@ -655,8 +655,11 @@ Ext.define('widgets.line_graph.line_graph' , {
 
 	clearGraph: function() {
 		for (var i = 0; i < this.chart.series.length; i++) {
-			//log.debug('cleaning serie : ' + this.chart.series[i].name)
-			this.chart.series[i].setData([], false);
+			var name = this.chart.series[i].name 
+			if (name != 'timeNav' && name != 'Navigator'){
+				log.debug('Cleaning serie: ' + name, this.logAuthor)
+				this.chart.series[i].setData([], false);
+			}
 		}
 	},
 
