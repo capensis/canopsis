@@ -163,6 +163,10 @@ function strip_blanks(val) {
 	return val.replace(/\n/g, '').replace(/ /g, '');
 }
 
+function strip_return(val){
+	return val.replace(/\n/g, '')
+}
+
 function stringTo24h(src_time) {
 	var time = src_time.split(' ');
 
