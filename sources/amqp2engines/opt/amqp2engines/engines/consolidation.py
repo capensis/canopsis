@@ -110,16 +110,18 @@ class engine(cengine):
 						if  mType != metric.get('t') :
 							output_message = "warning : too many metrics type"
 
-					self.logger.debug('Get points for: %s , %s , %s, %s' % (metric.get('_id'),metric.get('co'),metric.get('re',''),metric.get('me')))
+					self.logger.debug(' + Get points for: %s , %s , %s, %s' % (metric.get('_id'),metric.get('co'),metric.get('re',''),metric.get('me')))
 
 					if int(time.time()) - aggregation_interval <= consolidation_last_timestamp + 60:
-						self.logger.debug('Use original tstart')
 						tstart = consolidation_last_timestamp
+						self.logger.debug('  +  Use original tstart: %i' % consolidation_last_timestamp)
 					else:
-						self.logger.debug('new tstart')
 						tstart = int(time.time()) - aggregation_interval
+						self.logger.debug('  +  new tstart: %i' % tstart)
 
 					list_points = self.manager.get_points(tstart=tstart, _id=metric.get('_id'))
+					self.logger.debug('  +  Values on interval:')
+					self.logger.debug(list_points)
 
 					if list_points:
 						fn = self.get_math_function(first_aggr_function)
@@ -130,6 +132,7 @@ class engine(cengine):
 							point_value = list_points[len(list_points)-1][1]
 						values.append([[point_timestamp,point_value]])
 				
+				self.logger.debug('  +  Summary of horizontal aggregation:')
 				self.logger.debug(values)
 
 				if not second_aggr_function:
@@ -137,7 +140,7 @@ class engine(cengine):
 					return
 
 				if len(values) == 0 :
-					self.logger.debug('No values')
+					self.logger.debug('  +  No values')
 					self.storage.update(record.get('_id'), {
 															'output_engine': "No input values",
 															'consolidation_ts':int(time.time())
@@ -155,10 +158,6 @@ class engine(cengine):
 						return
 
 					resultat = pyperfstore2.utils.consolidation(values, fn)
-
-					#self.logger.debug('Values for %s operation:' % function_name)
-					#self.logger.debug(values)
-					#self.logger.debug('Result: %s' % str(resultat[0][1]))
 	
 					if len(resultat) == 0 :
 						if not output_message:
