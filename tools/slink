@@ -14,16 +14,16 @@ fi
 SRC=`pwd`
 CPS="/opt/canopsis"
 
-rm -R $CPS/opt/webcore
+rm -Rf $CPS/opt/webcore
 rm -Rf $CPS/var/www/canopsis
 rm -Rf $CPS/var/www/webcore-libs
-rm -R $CPS/lib/canolibs
-rm -R $CPS/opt/snmp2amqp
-rm -R $CPS/var/snmp
-rm -R $CPS/opt/collectd-libs
-rm -R $CPS/opt/amqp2engines
-rm -R $CPS/lib/apschedulerlibs
-rm -R $CPS/opt/mongodb
+rm -Rf $CPS/lib/canolibs
+rm -Rf $CPS/opt/snmp2amqp
+rm -Rf $CPS/var/snmp
+rm -Rf $CPS/opt/collectd-libs
+rm -Rf $CPS/opt/amqp2engines
+rm -Rf $CPS/lib/apschedulerlibs
+rm -Rf $CPS/opt/mongodb
 rm -Rf $CPS/bin/apsd
 rm -Rf $CPS/etc/tasks.d/task_reporting.py
 rm -Rf $CPS/etc/tasks.d/task_mail.py
