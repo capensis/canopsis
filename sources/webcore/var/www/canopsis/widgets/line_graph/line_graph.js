@@ -221,7 +221,7 @@ Ext.define('widgets.line_graph.line_graph' , {
 
 				if (source_type == 'resource') {
 					var resource = this.nodes[0].resource;
-					title = resource + ' ' + _(this.chart_type + '_graph.on') + ' ' + component;
+					title = resource + ' ' + _('on') + ' ' + component;
 				}else {
 					title = component;
 				}
