@@ -123,6 +123,14 @@ var global = {
 	},
 
 	untranslated: [],
+	dump_untranslated: function(){
+		var dump = ''
+		for (var i = 0; i < global.untranslated.length; i++){
+			dump += 'msgid "'+global.untranslated[i]+'"\n'
+			dump += 'msgstr "'+global.untranslated[i]+'"\n\n'
+		}
+		console.log(dump)
+	},
 
 	nowjs: {
 		proto: 'http',
