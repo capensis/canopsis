@@ -114,13 +114,13 @@ class engine(cengine):
 
 					if int(time.time()) - aggregation_interval <= consolidation_last_timestamp + 60:
 						tstart = consolidation_last_timestamp
-						self.logger.debug('  +  Use original tstart: %i' % consolidation_last_timestamp)
+						self.logger.debug('   +   Use original tstart: %i' % consolidation_last_timestamp)
 					else:
 						tstart = int(time.time()) - aggregation_interval
-						self.logger.debug('  +  new tstart: %i' % tstart)
+						self.logger.debug('   +   new tstart: %i' % tstart)
 
 					list_points = self.manager.get_points(tstart=tstart, _id=metric.get('_id'))
-					self.logger.debug('  +  Values on interval:')
+					self.logger.debug('   +   Values on interval:')
 					self.logger.debug(list_points)
 
 					if list_points:
@@ -132,7 +132,7 @@ class engine(cengine):
 							point_value = list_points[len(list_points)-1][1]
 						values.append([[point_timestamp,point_value]])
 				
-				self.logger.debug('  +  Summary of horizontal aggregation:')
+				self.logger.debug('   +   Summary of horizontal aggregation:')
 				self.logger.debug(values)
 
 				if not second_aggr_function:
@@ -164,6 +164,8 @@ class engine(cengine):
 							self.storage.update(record.get('_id'), {'output_engine': "No result"  } )
 						else:
 							self.storage.update(record.get('_id'), {'output_engine': "there are issues : %s warning : No result" % output_message } )
+
+					self.logger.debug(' + Result of aggregation for "%s": %f' % (function_name,resultat[0][1]))
 
 					list_perf_data.append({ 'metric' : function_name, 'value' : resultat[0][1], "unit": mUnit, 'max': mMax, 'min': mMin, 'warn': None, 'crit': None, 'type': mType } ) 
 					event = cevent.forger(
