@@ -74,87 +74,73 @@ Ext.define('canopsis.view.Consolidation.Form', {
 							}
 						]
 					},{
-						title: _('First Aggregation'),
+						title: _('Consolidation'),
 						bodyStyle: 'padding:5px 5px 0',
 						layout: 'anchor',
 						defaults: {anchor: '100%'},
 						items:[{
 							xtype: 'fieldset',
-							title: _('Operator'),
-							items:[{
-								xtype: 'radiogroup',
-								title: _('Operations type'),
-								columns: 3,
-	        						vertical: true,
-								items:[{
-									boxLabel  : _('Mean'),
-				                    			name      : 'first_aggregation_type',
-	                			    			inputValue: 'mean'
-								},{
-									boxLabel  : _('Sum'),
-									name 	  : 'first_aggregation_type',
-									inputValue: 'sum'
-								},{
-									boxLabel  : _('Delta'),
-	                    						name      : 'first_aggregation_type',
-				                    			inputValue: 'delta'
-								},{
-									boxLabel  : _('Min'),
-	                			    			name      : 'first_aggregation_type',
-	                    						inputValue: 'min'
-								},{
-									boxLabel  : _('Max'),
-				                    			name      : 'first_aggregation_type',
-	                			    			inputValue: 'max'
-								}]
-							}]
-				
-						},{
-							xtype: 'fieldset',
-							title: _('Interval for first aggregation'),
+							title: _('Aggregation interval'),
+							layout:'column',
 							items: [{
 								xtype: 'cduration',
 								value: global.commonTs.minute,
-								name: 'aggregation_interval'
+								name: 'aggregation_interval',
+								columnWidth: .50
+							},{
+								labelWidth: 70,
+								xtype: "combobox",
+								name: "first_aggregation_type",
+								queryMode: "local",
+								fieldLabel:'Operator',
+								displayField: "text",
+								valueField: "value",
+								value: 'last',
+								store: {
+									xtype: "store",
+									fields: ["value", "text"],
+									data : [
+										{"value": "last", "text": _("Last point")},
+										{"value": "mean", "text": _("Mean")},
+										{"value": "sum", "text": _("Sum")},
+										{"value": "delta", "text": _("Delta")},
+										{"value": "min", "text": _("Min")},
+										{"value": "max", "text": _("Max")}
+									]
+								}
 							}]
-						}]
-						
-					},{
-						title: _('Second Aggregation'),
-						bodyStyle: 'padding:5px 5px 0',
-						layout: 'anchor',
-						defaults: {anchor: '100%'},
-						items: [{
+						},{
 							xtype: 'fieldset',
-							title: _('Operator'),
+							title: _('Consolidation operator'),
 							items:[{
 								xtype: 'checkboxgroup',
-								title: _('Operations type'),
+								name:'checkboxgroup',
 								columns: 3,
-	        						vertical: true,
+	        					vertical: true,
 								items:[{
 									boxLabel  : _('Mean'),
-				                    			name      : 'second_aggregation_type',
-	                			    			inputValue: 'mean'
+									name      : 'second_aggregation_type',
+									inputValue: 'mean'
 								},{
 									boxLabel  : _('Sum'),
 									name 	  : 'second_aggregation_type',
 									inputValue: 'sum'
 								},{
 									boxLabel  : _('Delta'),
-	                    						name      : 'second_aggregation_type',
-				                    			inputValue: 'delta'
+									name      : 'second_aggregation_type',
+									inputValue: 'delta'
 								},{
 									boxLabel  : _('Min'),
-	                			    			name      : 'second_aggregation_type',
-	                    						inputValue: 'min'
+									name      : 'second_aggregation_type',
+									inputValue: 'min'
 								},{
 									boxLabel  : _('Max'),
-				                    			name      : 'second_aggregation_type',
-	                			    			inputValue: 'max'
+									name      : 'second_aggregation_type',
+									inputValue: 'max'
 								}]
 							}]
 						}]
+						
 					},{
 						title: _('Filter'),
 						xtype: 'cfilter',

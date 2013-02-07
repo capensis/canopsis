@@ -47,11 +47,14 @@ Ext.define('canopsis.controller.Consolidation', {
 
 	afterload_EditForm: function(form, item_copy) {
 		//checkboxgroup don't tick boxes, this code do.
-		var operators = item_copy.get('type');
+		var operators = item_copy.get('second_aggregation_type');
 		if (!Ext.isArray(operators))
 			operators = [operators];
+		
+		var panel = form.down('checkboxgroup[name=checkboxgroup]')
+
 		for (var i = 0; i < operators.length; i++)
-			form.down('checkbox[inputValue=' + operators[i] + ']').setValue(true);
+			panel.down('checkbox[inputValue=' + operators[i] + ']').setValue(true);
 	},
 
 	afterload_DuplicateForm: function(form, item_copy) {
