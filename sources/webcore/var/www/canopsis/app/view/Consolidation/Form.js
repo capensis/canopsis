@@ -59,7 +59,7 @@ Ext.define('canopsis.view.Consolidation.Form', {
 								defaultType: 'textfield',
 								defaults: { labelWidth: labelWidth },
 								items: [{
-										fieldLabel: _('Name'),
+										fieldLabel: _('Display name'),
 										name: 'crecord_name',
 										allowBlank: false
 									},{

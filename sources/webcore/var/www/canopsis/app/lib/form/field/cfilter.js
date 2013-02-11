@@ -210,7 +210,7 @@ Ext.define('canopsis.lib.form.field.cfilter' , {
 	},
 
 	isValid: function() {
-		log.debug('Execute isValid function', this.logAuthor);
+		//log.debug('Execute isValid function', this.logAuthor);
 		var value = this.getRawValue();
 		if (this.check_json_validity(value) == true) {
 			if (this.check_object_validity(Ext.decode(value))) {
