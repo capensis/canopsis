@@ -93,7 +93,7 @@ class engine(cengine):
 
 				for index,metric in enumerate(metric_list) :
 					if  index == 0 :
-						mType = metric.get('t')
+						#mType = metric.get('t')
 						mMin = metric.get('mi')
 						mMax = metric.get('ma')
 						mUnit = metric.get('u')
@@ -119,8 +119,7 @@ class engine(cengine):
 					self.logger.debug('   +   from: %s  to now' % datetime.fromtimestamp(tstart).strftime('%Y-%m-%d %H:%M:%S'))
 
 					list_points = self.manager.get_points(tstart=tstart, _id=metric.get('_id'))
-					self.logger.debug('   +   Values on interval:')
-					self.logger.debug(list_points)
+					self.logger.debug('   +   Values on interval: %s' % ' '.join([str(value[1]) for value in list_points]))
 
 					if list_points:
 						fn = self.get_math_function(first_aggr_function)
@@ -172,7 +171,7 @@ class engine(cengine):
 											"unit": mUnit, 
 											'max': mMax, 
 											'min': mMin, 
-											'type': mType } ) 
+											'type': 'GAUGE' } ) 
 
 				event = cevent.forger(
 					connector ="consolidation",
