@@ -104,8 +104,6 @@ class engine(cengine):
 							mMax = metric.get('ma')
 						if metric.get('u') != mUnit :
 							output_message = "warning : too many units"
-						if  mType != metric.get('t') :
-							output_message = "warning : too many metrics type"
 
 					self.logger.debug(' + Get points for: %s , %s , %s, %s' % (metric.get('_id'),metric.get('co'),metric.get('re',''),metric.get('me')))
 
