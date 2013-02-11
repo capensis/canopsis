@@ -82,7 +82,7 @@ def perfstore_nodes_get_values(start=None, stop=None):
 	aggregate_method			= request.params.get('aggregate_method',	default=None)
 	aggregate_interval			= request.params.get('aggregate_interval', default=None)
 	aggregate_max_points		= request.params.get('aggregate_max_points', default=None)
-	consolidation 				= request.params.get('consolidation', default=None)
+	consolidation_method 		= request.params.get('consolidation_method', default=None)
 
 	output = []
 
@@ -115,17 +115,17 @@ def perfstore_nodes_get_values(start=None, stop=None):
 											aggregate_max_points=aggregate_max_points,
 											aggregate_timemodulation=aggregate_timemodulation)											
 
-	if consolidation and len(output) != 0:
+	if consolidation_method and len(output) != 0:
 		##select right function
-		if consolidation == 'mean':
+		if consolidation_method == 'mean':
 			fn = pyperfstore2.utils.mean
-		elif consolidation == 'min':
+		elif consolidation_method == 'min':
 			fn = min
-		elif consolidation == 'max' :
+		elif consolidation_method == 'max' :
 			fn = max
-		elif consolidation == 'sum':
+		elif consolidation_method == 'sum':
 			fn = sum
-		elif consolidation == 'delta':
+		elif consolidation_method == 'delta':
 			fn = lambda x: x[0] - x[-1]
 
 		series = []
@@ -133,7 +133,7 @@ def perfstore_nodes_get_values(start=None, stop=None):
 			series.append(serie["values"])
 		output = [{
 			'node': output[0]['node'],
-			'metric': consolidation,
+			'metric': consolidation_method,
 			'bunit': None,
 			'type': 'GAUGE',
 			'values': pyperfstore2.utils.consolidation(series, fn, 60)

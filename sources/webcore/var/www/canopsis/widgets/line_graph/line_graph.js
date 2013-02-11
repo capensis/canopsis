@@ -121,7 +121,7 @@ Ext.define('widgets.line_graph.line_graph' , {
 	same_node: true,
 	displayLastValue: false,
 
-	consolidation: undefined,
+	consolidation_method: undefined,
 
 	timeNav: false,
 	timeNav_window: 604800,
@@ -1142,7 +1142,7 @@ Ext.define('widgets.line_graph.line_graph' , {
 			'aggregate_method' : this.aggregate_method,
 			'aggregate_interval': this.aggregate_interval,
 			'aggregate_max_points': this.aggregate_max_points,
-			'consolidation': this.consolidation
+			'consolidation_method': this.consolidation_method
 			};
 
 		//if (this.chart_type == 'column')

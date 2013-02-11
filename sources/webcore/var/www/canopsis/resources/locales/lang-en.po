@@ -7,6 +7,15 @@ msgstr ""
 msgid "Connect"
 msgstr "Connect"
 
+msgid "Aggregation / Consolidation"
+msgstr "Aggregation / Consolidation"
+
+msgid "Consolidation between metrics"
+msgstr "Consolidation between metrics"
+
+msgid "Consolidation Method"
+msgstr "Consolidation Method"
+
 msgid "Username"
 msgstr "Username"
 
