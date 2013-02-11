@@ -10,6 +10,9 @@ msgstr "Connect"
 msgid "Username"
 msgstr "Username"
 
+msgid "Auto title"
+msgstr "Auto title"
+
 msgid "Access denied"
 msgstr "Access denied"
 
