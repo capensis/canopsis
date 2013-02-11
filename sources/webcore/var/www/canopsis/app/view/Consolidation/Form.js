@@ -90,7 +90,7 @@ Ext.define('canopsis.view.Consolidation.Form', {
 							},{
 								labelWidth: 70,
 								xtype: "combobox",
-								name: "first_aggregation_type",
+								name: "aggregation_method",
 								queryMode: "local",
 								fieldLabel:'Operator',
 								displayField: "text",
@@ -119,23 +119,23 @@ Ext.define('canopsis.view.Consolidation.Form', {
 	        					vertical: true,
 								items:[{
 									boxLabel  : _('Mean'),
-									name      : 'second_aggregation_type',
+									name      : 'consolidation_method',
 									inputValue: 'mean'
 								},{
 									boxLabel  : _('Sum'),
-									name 	  : 'second_aggregation_type',
+									name 	  : 'consolidation_method',
 									inputValue: 'sum'
 								},{
 									boxLabel  : _('Delta'),
-									name      : 'second_aggregation_type',
+									name      : 'consolidation_method',
 									inputValue: 'delta'
 								},{
 									boxLabel  : _('Min'),
-									name      : 'second_aggregation_type',
+									name      : 'consolidation_method',
 									inputValue: 'min'
 								},{
 									boxLabel  : _('Max'),
-									name      : 'second_aggregation_type',
+									name      : 'consolidation_method',
 									inputValue: 'max'
 								}]
 							}]
