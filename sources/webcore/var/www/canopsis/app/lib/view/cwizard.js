@@ -144,7 +144,7 @@ Ext.define('canopsis.lib.view.cwizard' , {
 		step.defaults = { labelWidth: this.labelWidth };
 
 		if (step.items.length == 1)
-			if (! step.layout && !(step.items[0].xtype == 'fieldset')) {
+			if (! step.layout && !(step.items[0].xtype == 'fieldset' || step.items[0].xtype == 'cfieldset')) {
 				step.layout = 'fit';
 				step.defaults.autoScroll = true;
 			}
@@ -235,7 +235,7 @@ Ext.define('canopsis.lib.view.cwizard' , {
 			if (options) {
 				for (var i = 0; i < options.length; i++) {
 					for (var j = 0; j < options[i].items.length; j++)
-						if (options[i].items[j].xtype == 'fieldset')
+						if (options[i].items[j].xtype == 'fieldset' || options[i].items[j].xtype == 'cfieldset')
 							options[i].items[j].defaults = { labelWidth: this.labelWidth };
 
 					output.push(this.add_new_step(options[i]));
