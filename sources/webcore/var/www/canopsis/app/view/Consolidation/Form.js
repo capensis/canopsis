@@ -67,7 +67,7 @@ Ext.define('canopsis.view.Consolidation.Form', {
 										name: 'component',
 										allowBlank: false
 									},{
-										fieldLabel: _('Ressource'),
+										fieldLabel: _('Resource'),
 										name: 'resource',
 										allowBlank: false
 									}]

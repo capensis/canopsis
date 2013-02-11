@@ -1692,3 +1692,6 @@ msgstr "Columns Options"
 
 msgid "Enable trend lines"
 msgstr "Enable trend lines"
+
+msgid "on"
+msgstr "on"
