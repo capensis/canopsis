@@ -10,6 +10,9 @@ msgstr "Connect"
 msgid "Username"
 msgstr "Username"
 
+msgid "Saved"
+msgstr "Saved"
+
 msgid "Auto title"
 msgstr "Auto title"
 
