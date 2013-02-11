@@ -40,50 +40,52 @@ Ext.define('canopsis.auth' , {
 		anchor: '100%'
 	},
 
-	items: [
-		{
-			fieldLabel: _('Username'),
-			name: 'login',
-			allowBlank:false
-		},{
-			fieldLabel: _('Password'),
-			name: 'password',
-			id: 'password',
-			inputType: 'password',
-			allowBlank:false
-		},{
-			xtype: 'combo',
-			name: 'locale',
-			queryMode: 'local',
-			displayField: 'text',
-			valueField: 'value',
-			fieldLabel: _('Language'),
-			value: ENV['locale'],
-			store: {
-				xtype: 'store',
-				fields: ['value', 'text'],
-				data: [
-						{'value': 'fr', 'text': 'Français'},
-						{'value': 'en', 'text': 'English'}
-						//{"value": 'ja', "text": "日本語"},
-				]
-			},
-			iconCls: 'no-icon',
-			/*listeners:{
-				'select': function(combo, records){
-					if (records.length){
-						locale = records[0].get('value')
-						window.location.href = '/'+locale+'/';
-					}
-				}
-			}*/
-
-		}
-	],
+	items: [],
 
 	on_authed: undefined,
 
 	initComponent: function() {
+		this.items = [
+			{
+				fieldLabel: _('Username'),
+				name: 'login',
+				allowBlank:false
+			},{
+				fieldLabel: _('Password'),
+				name: 'password',
+				id: 'password',
+				inputType: 'password',
+				allowBlank:false
+			},{
+				xtype: 'combo',
+				name: 'locale',
+				queryMode: 'local',
+				displayField: 'text',
+				valueField: 'value',
+				fieldLabel: _('Language'),
+				value: ENV['locale'],
+				store: {
+					xtype: 'store',
+					fields: ['value', 'text'],
+					data: [
+							{'value': 'fr', 'text': 'Français'},
+							{'value': 'en', 'text': 'English'}
+							//{"value": 'ja', "text": "日本語"},
+					]
+				},
+				iconCls: 'no-icon',
+				/*listeners:{
+					'select': function(combo, records){
+						if (records.length){
+							locale = records[0].get('value')
+							window.location.href = '/'+locale+'/';
+						}
+					}
+				}*/
+
+			}
+		]
+
 		log.debug("Bind enter key", this.logAuthor)
 		this.navkeys = Ext.create('Ext.util.KeyNav', Ext.getDoc(), {
 			scope: this,

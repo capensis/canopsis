@@ -643,15 +643,17 @@ Ext.define('widgets.line_graph.line_graph' , {
 				if (this.SeriePercent && toggle_max_percent)
 					this.chart.yAxis[0].setExtremes(0, 100, false);
 
-				this.chart.redraw();
 				this.chart.hideLoading();
+				this.chart.redraw();
 			} else {
 				log.debug(' + No data', this.logAuthor);
 				//---------if report, cleaning the chart--------
 				if (this.reportMode == true)
 					this.clearGraph();
-
-				this.chart.showLoading(_('Unfortunately, there is no data for this period'));
+				
+				if (this.reportMode == true || this.series.length == 0)
+					this.chart.showLoading(_('Unfortunately, there is no data for this period'));
+				
 				this.chart.redraw();
 			}
 		}

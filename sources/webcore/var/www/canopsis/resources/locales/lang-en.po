@@ -4,6 +4,12 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Language: en\n"
 
+msgid "Connect"
+msgstr "Connect"
+
+msgid "Username"
+msgstr "Username"
+
 msgid "Access denied"
 msgstr "Access denied"
 
