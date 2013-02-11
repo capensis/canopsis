@@ -31,7 +31,7 @@ import json
 
 import time
 from datetime import datetime
-from ctools import internal_metrics
+from ctools import internal_metrics, roundSignifiantDigit
 
 NAME="consolidation"
 
@@ -97,8 +97,6 @@ class engine(cengine):
 						mMin = metric.get('mi')
 						mMax = metric.get('ma')
 						mUnit = metric.get('u')
-						#mCrit = metric.get('tc')
-						#mWarn = metric.get('tw')
 					else:
 						if  metric.get('mi') < mMin :
 							mMin = metric.get('mi')
@@ -113,10 +111,10 @@ class engine(cengine):
 
 					if int(time.time()) - aggregation_interval <= consolidation_last_timestamp + 60:
 						tstart = consolidation_last_timestamp
-						self.logger.debug('   +   Use original tstart: %i' % consolidation_last_timestamp)
+						#self.logger.debug('   +   Use original tstart: %i' % consolidation_last_timestamp)
 					else:
 						tstart = int(time.time()) - aggregation_interval
-						self.logger.debug('   +   new tstart: %i' % tstart)
+						#self.logger.debug('   +   new tstart: %i' % tstart)
 
 					self.logger.debug('   +   from: %s  to now' % datetime.fromtimestamp(tstart).strftime('%Y-%m-%d %H:%M:%S'))
 
@@ -133,7 +131,7 @@ class engine(cengine):
 							point_value = list_points[len(list_points)-1][1]
 						values.append([[point_timestamp,point_value]])
 				
-				self.logger.debug('   +   Summary of horizontal aggregation:')
+				self.logger.debug('   +   Summary of horizontal aggregation "%s":' % first_aggr_function)
 				self.logger.debug(values)
 
 				if not second_aggr_function:
@@ -168,8 +166,13 @@ class engine(cengine):
 
 					self.logger.debug(' + Result of aggregation for "%s": %f' % (function_name,resultat[0][1]))
 
-					list_perf_data.append({ 'metric' : function_name, 'value' : resultat[0][1], "unit": mUnit, 'max': mMax, 'min': mMin, 'warn': None, 'crit': None, 'type': mType } ) 
-
+					list_perf_data.append({ 
+											'metric' : function_name, 
+											'value' : roundSignifiantDigit(resultat[0][1],3), 
+											"unit": mUnit, 
+											'max': mMax, 
+											'min': mMin, 
+											'type': mType } ) 
 
 				event = cevent.forger(
 					connector ="consolidation",
@@ -268,3 +271,6 @@ class engine(cengine):
 			return lambda x: x[0] - x[-1]
 		else:
 			return None
+
+	def post_run(self):
+		self.unload_consolidation()
