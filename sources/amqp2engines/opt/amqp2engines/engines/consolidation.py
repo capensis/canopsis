@@ -82,11 +82,11 @@ class engine(cengine):
 				metric_list = self.manager.store.find(mfilter=mfilter)
 				self.logger.debug('length of matching metric list is: %i' % metric_list.count())
 				
-				first_aggr_function = record.get('first_aggregation_type', False)
-				second_aggr_function = record.get('second_aggregation_type', False)
+				aggregation_method = record.get('aggregation_method', False)
+				consolidation_methods = record.get('consolidation_method', False)
 
-				if not isinstance(second_aggr_function, list):
-					second_aggr_function = [ second_aggr_function ] 
+				if not isinstance(consolidation_methods, list):
+					consolidation_methods = [ consolidation_methods ] 
 
 				mType = mUnit = mMin = mMax = None
 				values = []
@@ -104,8 +104,6 @@ class engine(cengine):
 							mMax = metric.get('ma')
 						if metric.get('u') != mUnit :
 							output_message = "warning : too many units"
-						if  mType != metric.get('t') :
-							output_message = "warning : too many metrics type"
 
 					self.logger.debug(' + Get points for: %s , %s , %s, %s' % (metric.get('_id'),metric.get('co'),metric.get('re',''),metric.get('me')))
 
@@ -126,7 +124,7 @@ class engine(cengine):
 					self.logger.debug('   +   Values on interval: %s' % ' '.join([str(value[1]) for value in list_points]))
 
 					if list_points:
-						fn = self.get_math_function(first_aggr_function)
+						fn = self.get_math_function(aggregation_method)
 						point_timestamp = int(time.time()) - current_interval/2
 						if fn:
 							point_value = fn([value[1] for value in list_points])
@@ -134,10 +132,10 @@ class engine(cengine):
 							point_value = list_points[len(list_points)-1][1]
 						values.append([[point_timestamp,point_value]])
 				
-				self.logger.debug('   +   Summary of horizontal aggregation "%s":' % first_aggr_function)
+				self.logger.debug('   +   Summary of horizontal aggregation "%s":' % aggregation_method)
 				self.logger.debug(values)
 
-				if not second_aggr_function:
+				if not consolidation_methods:
 					self.storage.update(record.get('_id'), {'output_engine': "No second aggregation function given"  } )
 					return
 
@@ -151,7 +149,7 @@ class engine(cengine):
 					return
 
 				list_perf_data = []
-				for function_name in second_aggr_function :
+				for function_name in consolidation_methods :
 					fn = self.get_math_function(function_name)
 
 					if not fn:
