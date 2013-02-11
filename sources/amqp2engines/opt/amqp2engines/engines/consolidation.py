@@ -116,7 +116,11 @@ class engine(cengine):
 						tstart = int(time.time()) - aggregation_interval
 						#self.logger.debug('   +   new tstart: %i' % tstart)
 
-					self.logger.debug('   +   from: %s  to now' % datetime.fromtimestamp(tstart).strftime('%Y-%m-%d %H:%M:%S'))
+					self.logger.debug(
+										'   +   from: %s to %s' % 
+										(datetime.fromtimestamp(tstart).strftime('%Y-%m-%d %H:%M:%S'),
+										datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S'))
+									)
 
 					list_points = self.manager.get_points(tstart=tstart, _id=metric.get('_id'))
 					self.logger.debug('   +   Values on interval: %s' % ' '.join([str(value[1]) for value in list_points]))
