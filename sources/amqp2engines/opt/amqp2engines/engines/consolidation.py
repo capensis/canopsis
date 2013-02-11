@@ -78,10 +78,9 @@ class engine(cengine):
 				output_message = None
 				mfilter = json.loads(record.get('mfilter'))
 				mfilter = {'$and': [mfilter, {'me': {'$nin':internal_metrics}}]}
-				self.logger.debug('the mongo filter is: %s' % mfilter)
+				#self.logger.debug('the mongo filter is: %s' % mfilter)
 				metric_list = self.manager.store.find(mfilter=mfilter)
 				self.logger.debug('length of matching metric list is: %i' % metric_list.count())
-
 				
 				first_aggr_function = record.get('first_aggregation_type', False)
 				second_aggr_function = record.get('second_aggregation_type', False)
@@ -118,6 +117,8 @@ class engine(cengine):
 					else:
 						tstart = int(time.time()) - aggregation_interval
 						self.logger.debug('   +   new tstart: %i' % tstart)
+
+					self.logger.debug('   +   from: %s  to now' % datetime.fromtimestamp(tstart).strftime('%Y-%m-%d %H:%M:%S'))
 
 					list_points = self.manager.get_points(tstart=tstart, _id=metric.get('_id'))
 					self.logger.debug('   +   Values on interval:')
@@ -168,34 +169,36 @@ class engine(cengine):
 					self.logger.debug(' + Result of aggregation for "%s": %f' % (function_name,resultat[0][1]))
 
 					list_perf_data.append({ 'metric' : function_name, 'value' : resultat[0][1], "unit": mUnit, 'max': mMax, 'min': mMin, 'warn': None, 'crit': None, 'type': mType } ) 
-					event = cevent.forger(
-						connector ="consolidation",
-						connector_name = "engine",
-						event_type = "consolidation",
-						source_type = "resource",
-						component = record['component'],
-						resource=record['resource'],
-						state=0,
-						timestamp=resultat[0][0],
-						state_type=0,
-						output="Consolidation: '%s' successfully computed" % record.get('crecord_name','No name'),
-						long_output="",
-						perf_data=None,
-						perf_data_array=list_perf_data,
-						display_name=record['crecord_name']
-					)	
-					rk = cevent.get_routingkey(event)
-					self.amqp.publish(event, rk, self.amqp.exchange_name_events)
 
-					self.logger.debug('The following event was sent:')
-					self.logger.debug(event)
 
-					if not output_message:
-						engine_output = '%s : Computation done. Next Computation in %s s' % (datetime.now().strftime('%Y-%m-%d %H:%M:%S'),str(aggregation_interval))
-						self.storage.update(record.get('_id'),{'output_engine':engine_output} )
-					else:
-						engine_output = '%s : Computation done but there are issues : "%s" . Next Computation in %s s' % (datetime.now().strftime('%Y-%m-%d %H:%M:%S'),output_message,str(aggregation_interval))
-						self.storage.update(record.get('_id'), {'output_engine': engine_output} )
+				event = cevent.forger(
+					connector ="consolidation",
+					connector_name = "engine",
+					event_type = "consolidation",
+					source_type = "resource",
+					component = record['component'],
+					resource=record['resource'],
+					state=0,
+					timestamp=time.time(),
+					state_type=0,
+					output="Consolidation: '%s' successfully computed" % record.get('crecord_name','No name'),
+					long_output="",
+					perf_data=None,
+					perf_data_array=list_perf_data,
+					display_name=record['crecord_name']
+				)	
+				rk = cevent.get_routingkey(event)
+				self.amqp.publish(event, rk, self.amqp.exchange_name_events)
+
+				self.logger.debug('The following event was sent:')
+				self.logger.debug(event)
+
+				if not output_message:
+					engine_output = '%s : Computation done. Next Computation in %s s' % (datetime.now().strftime('%Y-%m-%d %H:%M:%S'),str(aggregation_interval))
+					self.storage.update(record.get('_id'),{'output_engine':engine_output} )
+				else:
+					engine_output = '%s : Computation done but there are issues : "%s" . Next Computation in %s s' % (datetime.now().strftime('%Y-%m-%d %H:%M:%S'),output_message,str(aggregation_interval))
+					self.storage.update(record.get('_id'), {'output_engine': engine_output} )
 
 				self.storage.update(record.get('_id'), {'consolidation_ts':int(time.time())})
 				self.timestamps[record.get('_id')] = int(time.time())
