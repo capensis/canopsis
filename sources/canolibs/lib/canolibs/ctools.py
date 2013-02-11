@@ -18,7 +18,7 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-import re, logging, socket, time
+import re, logging, socket, time, math
 
 legend = ['ok','warning','critical','unknown']
 
@@ -215,3 +215,8 @@ def cleanTimestamp(timestamp):
 	else:
 		return int(timestamp)
 
+def roundSignifiantDigit(value, sig):
+	mult = math.pow(10,sig)
+	value = round(value*mult)
+	value = value/mult
+	return value

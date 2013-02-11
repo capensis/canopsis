@@ -31,7 +31,7 @@ import json
 
 import time
 from datetime import datetime
-from ctools import internal_metrics
+from ctools import internal_metrics, roundSignifiantDigit
 
 NAME="consolidation"
 
@@ -93,12 +93,10 @@ class engine(cengine):
 
 				for index,metric in enumerate(metric_list) :
 					if  index == 0 :
-						mType = metric.get('t')
+						#mType = metric.get('t')
 						mMin = metric.get('mi')
 						mMax = metric.get('ma')
 						mUnit = metric.get('u')
-						#mCrit = metric.get('tc')
-						#mWarn = metric.get('tw')
 					else:
 						if  metric.get('mi') < mMin :
 							mMin = metric.get('mi')
@@ -113,16 +111,15 @@ class engine(cengine):
 
 					if int(time.time()) - aggregation_interval <= consolidation_last_timestamp + 60:
 						tstart = consolidation_last_timestamp
-						self.logger.debug('   +   Use original tstart: %i' % consolidation_last_timestamp)
+						#self.logger.debug('   +   Use original tstart: %i' % consolidation_last_timestamp)
 					else:
 						tstart = int(time.time()) - aggregation_interval
-						self.logger.debug('   +   new tstart: %i' % tstart)
+						#self.logger.debug('   +   new tstart: %i' % tstart)
 
 					self.logger.debug('   +   from: %s  to now' % datetime.fromtimestamp(tstart).strftime('%Y-%m-%d %H:%M:%S'))
 
 					list_points = self.manager.get_points(tstart=tstart, _id=metric.get('_id'))
-					self.logger.debug('   +   Values on interval:')
-					self.logger.debug(list_points)
+					self.logger.debug('   +   Values on interval: %s' % ' '.join([str(value[1]) for value in list_points]))
 
 					if list_points:
 						fn = self.get_math_function(first_aggr_function)
@@ -133,7 +130,7 @@ class engine(cengine):
 							point_value = list_points[len(list_points)-1][1]
 						values.append([[point_timestamp,point_value]])
 				
-				self.logger.debug('   +   Summary of horizontal aggregation:')
+				self.logger.debug('   +   Summary of horizontal aggregation "%s":' % first_aggr_function)
 				self.logger.debug(values)
 
 				if not second_aggr_function:
@@ -168,8 +165,13 @@ class engine(cengine):
 
 					self.logger.debug(' + Result of aggregation for "%s": %f' % (function_name,resultat[0][1]))
 
-					list_perf_data.append({ 'metric' : function_name, 'value' : resultat[0][1], "unit": mUnit, 'max': mMax, 'min': mMin, 'warn': None, 'crit': None, 'type': mType } ) 
-
+					list_perf_data.append({ 
+											'metric' : function_name, 
+											'value' : roundSignifiantDigit(resultat[0][1],3), 
+											"unit": mUnit, 
+											'max': mMax, 
+											'min': mMin, 
+											'type': 'GAUGE' } ) 
 
 				event = cevent.forger(
 					connector ="consolidation",
@@ -268,3 +270,6 @@ class engine(cengine):
 			return lambda x: x[0] - x[-1]
 		else:
 			return None
+
+	def post_run(self):
+		self.unload_consolidation()
