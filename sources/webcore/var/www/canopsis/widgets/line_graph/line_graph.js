@@ -324,6 +324,11 @@ Ext.define('widgets.line_graph.line_graph' , {
 					afterSetExtremes : this.afterSetExtremes
 				}
 			},
+			loading: {
+				labelStyle: {
+					top: '2em'
+				}
+			},
 			yAxis: [
 				{
 					title: { text: null },
@@ -643,12 +648,11 @@ Ext.define('widgets.line_graph.line_graph' , {
 			} else {
 				log.debug(' + No data', this.logAuthor);
 				//---------if report, cleaning the chart--------
-				if (this.reportMode == true) {
+				if (this.reportMode == true)
 					this.clearGraph();
 
-					this.chart.showLoading(_('Unfortunately, there is no data for this period'));
-					this.chart.redraw();
-				}
+				this.chart.showLoading(_('Unfortunately, there is no data for this period'));
+				this.chart.redraw();
 			}
 		}
 	},
