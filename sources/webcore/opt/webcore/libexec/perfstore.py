@@ -34,7 +34,7 @@ from ctools import cleanTimestamp
 from ctools import internal_metrics
 
 import pyperfstore2
-from pyperfstore2.utils import consolidation , mean
+import pyperfstore2.utils
 
 manager = None
 
@@ -118,13 +118,13 @@ def perfstore_nodes_get_values(start=None, stop=None):
 	if consolidation and len(output) != 0:
 		##select right function
 		if consolidation == 'mean':
-			fn = mean
+			fn = pyperfstore2.utils.mean
 		elif consolidation == 'min':
-			fn = lambda x: min(x)
+			fn = min
 		elif consolidation == 'max' :
-			fn = lambda x: max(x)
+			fn = max
 		elif consolidation == 'sum':
-			fn = lambda x: sum(x)
+			fn = sum
 		elif consolidation == 'delta':
 			fn = lambda x: x[0] - x[-1]
 
@@ -136,7 +136,7 @@ def perfstore_nodes_get_values(start=None, stop=None):
 			'metric': consolidation,
 			'bunit': None,
 			'type': 'GAUGE',
-			'values': consolidation(series, fn, 60)
+			'values': pyperfstore2.utils.consolidation(series, fn, 60)
 		}]
 
 	output = {'total': len(output), 'success': True, 'data': output}
