@@ -74,22 +74,23 @@ Ext.define('canopsis.view.Consolidation.Grid' , {
 			sortable: true,
 			dataIndex: 'resource'
 		},{
-			header: _('Duration for first Aggregation'),
+			header: _('Aggregation interval'),
 			flex: 1,
-			dataIndex: 'aggregation_interval'
+			dataIndex: 'aggregation_interval',
+			renderer:rdr_time_interval
 		},{
-			header: _('First aggregation type'),
-			flex: 3,
-			dataIndex: 'first_aggregation_type'
+			header: _('Aggregation method'),
+			flex: 1.2,
+			dataIndex: 'aggregation_method'
 		},{
-			header: _('Second aggregation type'),
-			flex: 3,
-			dataIndex: 'second_aggregation_type'
+			header: _('Consolidation method'),
+			flex: 1.2,
+			dataIndex: 'consolidation_method'
 
 		},{
 			header: _('Engine ouput'),
 			//align: 'center',
-			flex: 6,
+			flex: 5,
 			dataIndex: 'output_engine',
 			//renderer : function(){return 'Ressource = Regex(cpu*) && Metric = system '}
 		},{
