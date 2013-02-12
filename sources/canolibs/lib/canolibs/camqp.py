@@ -43,7 +43,8 @@ class camqp(threading.Thread):
 		self.exchange_name=exchange_name
 		self.logging_level = logging_level
 		
-		self.read_config("amqp")
+		if (read_config_file):
+			self.read_config("amqp")
 		
 		self.amqp_uri = "amqp://%s:%s@%s:%s/%s" % (self.userid, self.password, self.host, self.port, self.virtual_host)
 		
