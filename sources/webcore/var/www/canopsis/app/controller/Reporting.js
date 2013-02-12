@@ -65,7 +65,7 @@ Ext.define('canopsis.controller.Reporting', {
 					var id = data.data[0].id;
 					global.notify.notify(
 						_('Export ready'),
-						_('You can get your document') + ' <a href="' + location.protocol + '//' + location.host + '/files/' + id + '"  target="_blank">' + _('here') + '</a>',
+						_('You can download your document') + ' <a href="' + location.protocol + '//' + location.host + '/files/' + id + '"  target="_blank">' + _('here') + '</a>',
 						'success'
 					);
 				}else {
