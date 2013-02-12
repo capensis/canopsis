@@ -23,7 +23,7 @@
 //                                			-> setOptions                             			-> getSerie
 //											-> createChart
 
-flag_tootlipt_template = Ext.create('Ext.XTemplate',
+flag_tootlip_template = Ext.create('Ext.XTemplate',
 	"<table>",
 		"<tr>",
 			'<td style="margin:3px;">',
@@ -35,6 +35,7 @@ flag_tootlipt_template = Ext.create('Ext.XTemplate',
 					'<tpl if="resource">',
 						'<b> - {resource}</b>',
 					'</tpl>',
+					' <span style="color:grey;font-size:10px">{date}</span>',
 					'<br/>{text}',
 				"</div>",
 			"</td>",
@@ -441,7 +442,7 @@ Ext.define('widgets.line_graph.line_graph' , {
 
 	tooltip_formatter: function() {
 		if(!this.y && this.point && this.point.text){
-			return flag_tootlipt_template.applyTemplate(this.point)
+			return flag_tootlip_template.applyTemplate(this.point)
 		}else{
 			var formatter = function(options, value) {
 				if (options.invert)
@@ -1169,6 +1170,7 @@ Ext.define('widgets.line_graph.line_graph' , {
 					text : data[i].output,
 					component: data[i].component,
 					resource: data[i].resource,
+					date: rdr_tstodate(data[i].timestamp),
 					icon: data[i].connector.toLowerCase(),
 					fillColor: state_color,
 					style:{color:state_color},
