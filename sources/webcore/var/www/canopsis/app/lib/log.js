@@ -23,75 +23,7 @@ var log = {
 	level: global.log.level,
 	buffer: global.log.buffer,
 
-	window: false,
 	console: true,
-
-	store: Ext.create('Ext.data.ArrayStore', {
-			fields: [
-				{name: 'level'},
-				{name: 'level_msg'},
-				{name: 'date'},
-				{name: 'source'},
-				{name: 'message'},
-				{name: 'author'}
-       	 		]
-   		 }),
-
-	create_window: function() {
-
-		this.grid = Ext.create('Ext.grid.Panel', {
-				width: '100%',
-				height: '100%',
-				border: 0,
-				autoScroll: true,
-				store: this.store,
-				columns: [{
-						text: _('Level'),
-						dataIndex: 'level_msg',
-						align: 'center',
-						sortable: false
-					},{
-						text: _('Date'),
-						xtype: 'datecolumn',
-						format: 'H:i:s',
-						dataIndex: 'date',
-						align: 'center',
-						sortable: false
-					},{
-						text: _('Source'),
-						dataIndex: 'source',
-						sortable: false
-					},{
-						text: _('Message'),
-						flex: 1,
-						dataIndex: 'message',
-						sortable: false
-					}]
-    		});
-
-		this.window = Ext.create('widget.window', {
-			title: _('Console'),
-			closable: true,
-			closeAction: 'hide',
-			width: 800,
-			minWidth: 350,
-			height: 350,
-			items: this.grid
-		});
-
-	},
-
-	show_console: function() {
-		if (! this.window) {
-			this.create_window();
-		}
-
-		if (! this.window.isVisible()) {
-			this.window.show();
-			//todo: not scrolled when first show ... maybe use event for this ...
-			this.grid.getView().focusRow(this.grid.getStore().getCount() - 1);
-		}
-	},
 
 	info: function(msg, author) {
 		if (this.level >= 1) {
@@ -136,13 +68,6 @@ var log = {
 			level_msg = 'DEBUG';
 		}else if (level == 5) {
 			level_msg = 'DUMP';
-		}
-
-		var date = new Date;
-		this.store.add([[level, level_msg,	date,	'ui',	'<pre>' + msg + '</pre>',	author]]);
-
-		if (this.store.count() > this.buffer) {
-			this.store.removeAt(0);
 		}
 
 		if (author) {

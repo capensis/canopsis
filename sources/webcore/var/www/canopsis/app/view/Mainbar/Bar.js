@@ -318,10 +318,6 @@ Ext.define('canopsis.view.Mainbar.Bar' , {
 		//Configuration menu
 		menu_configuration = menu_configuration.concat([
 			{
-				iconCls: 'icon-console',
-				text: _('Show log console'),
-				action: 'showconsole'
-			},{
 				iconCls: 'icon-clear',
 				text: _('Clear tabs cache'),
 				action: 'cleartabscache'

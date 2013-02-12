@@ -64,9 +64,6 @@ Ext.define('canopsis.controller.Mainbar', {
 			'Mainbar menuitem[action="editSelector"]' : {
 				click: this.openViewMenu
 			},
-			'Mainbar menuitem[action="showconsole"]' : {
-				click: this.showconsole
-			},
 			'Mainbar menuitem[action="openViewsManager"]' : {
 				click: this.openViewMenu
 			},
@@ -141,11 +138,6 @@ Ext.define('canopsis.controller.Mainbar', {
 		log.debug('Show authkey', this.logAuthor);
 		var authkey = Ext.create('canopsis.lib.view.cauthkey');
 		authkey.show();
-	},
-
-	showconsole: function() {
-		log.debug('Show log console', this.logAuthor);
-		log.show_console();
 	},
 
 	openViewMenu: function(item) {
