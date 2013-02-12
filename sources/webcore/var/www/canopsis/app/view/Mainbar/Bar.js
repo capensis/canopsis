@@ -415,7 +415,10 @@ Ext.define('canopsis.view.Mainbar.Bar' , {
 					showSeparator: true,
 					items: menu_configuration
 				}*/
-			}
+			},
+			Ext.create('canopsis.lib.menu.cspinner', {
+				flex: 0.2
+			})
 		];
 
 		this.callParent(arguments);
@@ -423,6 +426,7 @@ Ext.define('canopsis.view.Mainbar.Bar' , {
 
 	afterRender: function() {
 		this.callParent(arguments);
+
 		var tip = Ext.create('Ext.tip.ToolTip', {
 			target: Ext.getCmp('Mainbar-menu-Websocket').el,
 			renderTo: Ext.getBody(),
