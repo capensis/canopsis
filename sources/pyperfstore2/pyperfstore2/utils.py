@@ -123,6 +123,8 @@ def derivs(vlist):
 
 def parse_dst(points, dtype, first_point=[]):
 	logger.debug("Parse Data Source Type %s on %s points" % (dtype, len(points)))
+
+	dtype = dtype.upper()
 		
 	if dtype == "DERIVE" or dtype == "COUNTER" or dtype == "ABSOLUTE":
 		if points:
@@ -214,6 +216,8 @@ def aggregate(points, max_points=None, interval=None, atype=None, agfn=None, mod
 	
 	if not atype:
 		atype = 'MEAN'
+
+	atype = atype.upper()
 	
 	logger.debug("Aggregate %s points (max: %s, interval: %s, method: %s, mode: %s)" % (len(points), max_points, interval, atype, mode))
 
