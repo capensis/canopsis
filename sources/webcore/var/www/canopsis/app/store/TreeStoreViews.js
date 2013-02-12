@@ -44,6 +44,10 @@ Ext.define('canopsis.store.TreeStoreViews', {
 			type: 'json',
 			method: 'POST'
 		}
+	},
+
+	afterCorrectWrite : function(){
+		Ext.getStore('Views').load()
 	}
 
 });

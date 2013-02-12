@@ -409,9 +409,18 @@
 					}]
 		},{
 			"title": "Choose events",
+			"layout":"anchor",
 			"items": [{
 				"xtype": "cfilter",
-				"name": "flagFilter"
+				"name": "flagFilter",
+				"anchor": "100% 90%"
+			},{
+				"xtype":"numberfield",
+				"name": "nbMavEventsDisplayed",
+				"fieldLabel":"Maximum number of displayed event (0 for no limit)",
+				"value": 100,
+				"minValue": 0,
+				"anchor": "50% 10%"
 			}]
 		}]
 }]

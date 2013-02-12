@@ -35,6 +35,8 @@ Ext.define('canopsis.lib.store.ctreeStore', {
 		},
 		write: function( store, operation, eOpts){
 			this.displaySuccess(store,operation,eOpts)
+			if (operation.success && this.afterCorrectWrite)
+				this.afterCorrectWrite()
 		}
    },
 
