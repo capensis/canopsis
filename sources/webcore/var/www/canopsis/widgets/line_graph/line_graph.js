@@ -126,6 +126,8 @@ Ext.define('widgets.line_graph.line_graph' , {
 	timeNav: false,
 	timeNav_window: 604800,
 
+	nbMavEventsDisplayed : 100,
+
 	initComponent: function() {
 		this.backgroundColor	= check_color(this.backgroundColor);
 		this.borderColor	= check_color(this.borderColor);
@@ -562,7 +564,10 @@ Ext.define('widgets.line_graph.line_graph' , {
 				Ext.Ajax.request({
 					url: '/rest/events_log',
 					scope: this,
-					params: {filter:Ext.encode({'$and':filter})},
+					params: {
+						filter:Ext.encode({'$and':filter}),
+						limit:this.nbMavEventsDisplayed
+					},
 					method: 'Get',
 					success: function(response) {
 						var data = Ext.JSON.decode(response.responseText).data;
