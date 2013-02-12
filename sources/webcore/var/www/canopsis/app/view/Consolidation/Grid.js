@@ -30,7 +30,7 @@ Ext.define('canopsis.view.Consolidation.Grid' , {
 
 	opt_menu_delete: true,
 	opt_bar_duplicate: true,
-	opt_menu_rights: false,
+	opt_menu_rights: true,
 	opt_bar_enable: true,
 
 	columns: [

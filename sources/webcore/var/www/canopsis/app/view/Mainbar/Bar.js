@@ -178,7 +178,7 @@ Ext.define('canopsis.view.Mainbar.Bar' , {
 		}
 
 		//Root selector menu
-		if (global.accountCtrl.checkRoot()){ //|| global.accountCtrl.checkGroup('group.CPS_selector_admin')) {
+		if (global.accountCtrl.checkRoot() || global.accountCtrl.checkGroup('group.CPS_consolidation_admin')) {
 			menu_build = menu_build.concat([
 				{
 					iconCls: 'icon-mainbar-consolidation',
