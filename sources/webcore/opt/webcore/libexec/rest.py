@@ -42,7 +42,8 @@ ctype_to_group_access = {
 							'account' : 'group.CPS_account_admin',
 							'group' : 'group.CPS_account_admin',
 							'selector' : 'group.CPS_selector_admin',
-							'derogation' : 'group.CPS_derogation_admin'
+							'derogation' : 'group.CPS_derogation_admin',
+							'consolidation' : 'group.CPS_consolidation_admin'
 						}
 
 #########################################################################
