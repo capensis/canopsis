@@ -80,7 +80,7 @@ Ext.define('canopsis.view.Mainbar.Bar' , {
 		this.viewSelector = Ext.create('Ext.form.field.ComboBox', {
 			id: 'viewSelector',
 			action: 'viewSelector',
-			store: Ext.create('canopsis.store.Views', {autoLoad: false}),
+			store: Ext.getStore('Views'),
 			displayField: 'crecord_name',
 			valueField: 'id',
 			typeAhead: false,
