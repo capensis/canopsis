@@ -170,15 +170,13 @@ Ext.define('canopsis.controller.Tabs', {
 					localstore_record: localstore_record
 				};
 
-				if (index != undefined) {
+				if (index != undefined)
 					tab = maintabs.insert(index, tab);
-				}else {
+				else
 					tab = maintabs.add(tab);
-				}
 
-				if (options.autoshow) {
+				if (options.autoshow)
 					tab.show();
-				}
 
 				return tab;
 			}
