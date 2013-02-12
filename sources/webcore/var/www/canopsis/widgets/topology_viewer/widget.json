@@ -6,6 +6,7 @@
 	"xtype": "topology_viewer",
 	"description": "test",
 	"description-fr":"test",
+	"disabled": true,
 	"refreshInterval": 300,
 	"locales": ["fr"],
 	"options": [{

@@ -144,17 +144,18 @@ def start_engines():
 	import sla
 	import alertcounter
 	import derogation
-	import topology
+	#import topology
 	import consolidation
 	
 
 	engine_selector		= selector.engine(logging_level=logging.INFO)
 	engines.append(engine_selector)
 	
-	engine_topology		= topology.engine(next_engines=[engine_selector], logging_level=logging.INFO)
-	engines.append(engine_topology)
+	#engine_topology		= topology.engine(next_engines=[engine_selector], logging_level=logging.INFO)
+	#engines.append(engine_topology)
 
-	engine_alertcounter	= alertcounter.engine(next_engines=[engine_topology], logging_level=logging.INFO)
+	#engine_alertcounter	= alertcounter.engine(next_engines=[engine_topology], logging_level=logging.INFO)
+	engine_alertcounter	= alertcounter.engine(next_engines=[engine_selector], logging_level=logging.INFO)
 	engines.append(engine_alertcounter)
 	
 	engine_collectdgw	= collectdgw.engine()
