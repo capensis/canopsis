@@ -39,6 +39,8 @@ Ext.define('canopsis.lib.menu.cspinner' , {
 
 	ajax_queue: 0,
 
+	handleMouseEvents: false,
+
 
 	initComponent: function() {
 		log.debug('Initializing...', this.logAuthor);
