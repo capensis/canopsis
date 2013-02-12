@@ -32,7 +32,9 @@ Ext.define('canopsis.lib.menu.cspinner' , {
 		width: 2,
 		length: 3,
 		shadow: true,
-		radius: 3
+		radius: 3,
+		top: 1,
+		left: 1
 	},
 
 	tEl: undefined,
