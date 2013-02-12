@@ -87,7 +87,7 @@ def init():
 
 	### Aggragations
 	data = { 'xtype': 'ConsolidationGrid'}
-	create_view('consolidation_manager', 'Consolidation', data, internal=False)
+	create_view('consolidation_manager', 'Consolidation', data, internal=True)
 
 	###metric_navigator
 	#data = {'xtype': 'MetricNavigation'}
