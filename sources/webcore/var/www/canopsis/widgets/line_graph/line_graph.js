@@ -1161,43 +1161,45 @@ Ext.define('widgets.line_graph.line_graph' , {
 		var serie = this.chart.get('x_flags')
 		var sData = []
 
-		for(var i = 0; i < data.length; i++){
-			var state_color = this.getStateColor(data[i].state)
-			sData.push({
-				x : data[i].timestamp*1000,
-				text : data[i].output,
-				component: data[i].component,
-				resource: data[i].resource,
-				icon: data[i].connector.toLowerCase(),
-				fillColor: state_color,
-				style:{color:state_color},
-				states : {
-					hover : {
-						fillColor : state_color 
-					}
-				},
-				title: 'A'
-			})
-		}
-
-		if(serie){
-			if(this.reportMode)
-				serie.setData(sData)
-			else
-				for(var i =0; i < sData.length; i++)
-					serie.addPoint(sData[i],true,this.shift)
-		}else{
-			var serie = {
-				id: 'x_flags',
-				type : 'flags',
-				data : sData,
-				shape : 'circlepin',
-				width : 17,
-				color : 'black',
-				 zIndex: 2,
-				showInLegend: false,
+		if(data){
+			for(var i = 0; i < data.length; i++){
+				var state_color = this.getStateColor(data[i].state)
+				sData.push({
+					x : data[i].timestamp*1000,
+					text : data[i].output,
+					component: data[i].component,
+					resource: data[i].resource,
+					icon: data[i].connector.toLowerCase(),
+					fillColor: state_color,
+					style:{color:state_color},
+					states : {
+						hover : {
+							fillColor : state_color 
+						}
+					},
+					title: 'A'
+				})
 			}
-			this.chart.addSeries(serie, true, false);
+
+			if(serie){
+				if(this.reportMode)
+					serie.setData(sData)
+				else
+					for(var i =0; i < sData.length; i++)
+						serie.addPoint(sData[i],true,this.shift)
+			}else{
+				var serie = {
+					id: 'x_flags',
+					type : 'flags',
+					data : sData,
+					shape : 'circlepin',
+					width : 17,
+					color : 'black',
+					 zIndex: 2,
+					showInLegend: false,
+				}
+				this.chart.addSeries(serie, true, false);
+			}
 		}
 	},
 
