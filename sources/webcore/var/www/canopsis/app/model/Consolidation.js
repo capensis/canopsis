@@ -31,7 +31,7 @@ Ext.define('canopsis.model.Consolidation', {
 		{name: 'aaa_admin_group'},
 		{name: 'aaa_access_group', defaultValue: ['r']},
 		{name: 'aaa_access_other'},
-		{name: 'aaa_group', defaultValue: 'group.CPS_selector_admin'},
+		{name: 'aaa_group', defaultValue: 'group.CPS_consolidation_admin'},
 		{name: 'aaa_owner'},
 		{name: 'loaded', defaultValue: false},
 		{name: 'state'},
