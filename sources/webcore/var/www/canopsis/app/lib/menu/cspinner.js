@@ -59,11 +59,12 @@ Ext.define('canopsis.lib.menu.cspinner' , {
 	},
 
 	stop: function(){
-		if (this.spinner && this.ajax_queue == 0){
+		if (this.spinner && this.ajax_queue <= 0){
 			log.debug('Stop spinner', this.logAuthor);
 			this.spinner.stop();
 			delete this.spinner;
 			this.spinner = undefined;
+			this.ajax_queue = 0;
 		}
 	},
 
