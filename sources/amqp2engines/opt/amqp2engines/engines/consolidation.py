@@ -102,8 +102,11 @@ class engine(cengine):
 					else:
 						if  metric.get('mi') < mMin :
 							mMin = metric.get('mi')
-						if metric.get('ma') > mMax :
-							mMax = metric.get('ma')
+						if metric.get('ma'):
+							if mMax:
+								mMax += metric.get('ma')
+							else:
+								mMax = metric.get('ma')
 						if metric.get('u') != mUnit :
 							output_message = "warning : too many units"
 
