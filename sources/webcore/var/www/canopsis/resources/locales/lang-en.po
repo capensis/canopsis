@@ -4,6 +4,24 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Language: en\n"
 
+msgid "Aggregation interval"
+msgstr "Aggregation interval"
+
+msgid "Aggregation method"
+msgstr "Aggregation method"
+
+msgid "Consolidation method"
+msgstr "Consolidation method"
+
+msgid "Maximum number of displayed events (0 for no limit)"
+msgstr "Maximum number of displayed events (0 for no limit)"
+
+msgid "Consolidation operator"
+msgstr "Consolidation operator"
+
+msgid "Exporting Interval"
+msgstr "Exporting Interval"
+
 msgid "Connect"
 msgstr "Connect"
 
