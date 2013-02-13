@@ -186,10 +186,12 @@ Ext.define('canopsis.controller.Mainbar', {
 		if (tab)
 			maintabs.remove(tab.id);
 
-		//close current dashboard
-		maintabs.remove(maintabs.getComponent(0).id);
+		var current_dashboard_id = maintabs.getComponent(0).id
+		
+		this.getController('Tabs').open_dashboard();
 
-		var tab = this.getController('Tabs').open_dashboard();
+		//close current dashboard
+		maintabs.remove(current_dashboard_id);
 	},
 
 	openDashboard: function() {

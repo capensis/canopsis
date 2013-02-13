@@ -36,8 +36,8 @@ Ext.define('canopsis.controller.Tabs', {
 				//remove: this.on_remove,
 				afterrender: function() {
 					if (! this.tabpanel_rendered) {
+						this.open_saved_views();
 						this.open_dashboard();
-						this.open_saved_view();
 						this.tabpanel_rendered = true;
 					}
 				}
@@ -87,7 +87,7 @@ Ext.define('canopsis.controller.Tabs', {
 		return this.open_view({ view_id: dashboard_id, title: _('Dashboard'), closable: false, save: false }, 0);
 	},
 
-	open_saved_view: function() {
+	open_saved_views: function() {
 		var views = [];
 
 		this.store.each(function(record) {
@@ -100,13 +100,13 @@ Ext.define('canopsis.controller.Tabs', {
 		log.debug('Load saved tabs:', this.logAuthor);
 		for (var i = 0; i < views.length; i++) {
 			var options = views[i];
-			log.debug(' + ' + options.title + '(' + options.view_id + ')', this.logAuthor);
+			log.debug(' + ' + options.title + ' (' + options.view_id + ')', this.logAuthor);
 			options.autoshow = false;
 
 			var tab = this.open_view(options);
 			if (! tab) {
 				log.debug('Invalid view options:', this.logAuthor);
-				//log.dump(options)
+				log.dump(options)
 			}
 		}
 
@@ -207,21 +207,29 @@ Ext.define('canopsis.controller.Tabs', {
 
 	edit_active_view: function() {
 		var tab = Ext.getCmp('main-tabs').getActiveTab();
-		if (! tab.edit) {
-			if (!tab.report_window) {
-				var right = this.getController('Account').check_right(tab.view, 'w');
 
-				right = right && ! tab.view.internal;
+		// Already in edit mode
+		if (tab.edit)
+			return
 
-				if (right == true) {
-					tab.editMode();
-				}else {
-					global.notify.notify(_('Access denied'), _('You don\'t have the rights to modify this object'), 'error');
-				}
-			}else {
-				global.notify.notify(_('Information'), _('Please close reporting before editing the view'), 'info');
-			}
+		if (! tab.view){
+			global.notify.notify(_('Information'), _("View isn't fully loaded."), 'info');
+			return
 		}
+
+		if (tab.report_window) {
+			global.notify.notify(_('Information'), _('Please close reporting before editing the view'), 'info');
+			return
+		}
+
+		var right = this.getController('Account').check_right(tab.view, 'w');
+		right = right && ! tab.view.internal;
+
+		if (right == true)
+			tab.editMode();
+		else
+			global.notify.notify(_('Access denied'), _("You don't have the rights to modify this object"), 'error');
+
 	}
 
   	/*on_add: function(component, index, object){
