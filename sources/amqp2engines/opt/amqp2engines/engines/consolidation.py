@@ -52,6 +52,8 @@ class engine(cengine):
 		self.beat()
 
 	def beat(self):
+		beat_start = time.time()
+
 		non_loaded_records = self.storage.find({ '$and' : [{ 'crecord_type': 'consolidation' },{'enable': True}, {'loaded': { '$ne' : True} } ] }, namespace="object" )
 
 		if len(non_loaded_records) > 0  :
@@ -120,18 +122,17 @@ class engine(cengine):
 										datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S'))
 									)
 
-					list_points = self.manager.get_points(tstart=tstart, _id=metric.get('_id'))
+					list_points = self.manager.get_points(tstart=tstart,tstop=time.time(), _id=metric.get('_id'))
 					self.logger.debug('   +   Values on interval: %s' % ' '.join([str(value[1]) for value in list_points]))
 
 					if list_points:
 						fn = self.get_math_function(aggregation_method)
-						point_timestamp = int(time.time()) - current_interval/2
 						if fn:
 							point_value = fn([value[1] for value in list_points])
 						else:
 							point_value = list_points[len(list_points)-1][1]
-						values.append([[point_timestamp,point_value]])
-				
+						values.append(point_value)
+
 				self.logger.debug('   +   Summary of horizontal aggregation "%s":' % aggregation_method)
 				self.logger.debug(values)
 
@@ -157,23 +158,25 @@ class engine(cengine):
 						self.storage.update(record.get('_id'), {'output_engine': "No function given for second aggregation"})
 						return
 
-					resultat = pyperfstore2.utils.consolidation(values, fn)
-	
-					if len(resultat) == 0 :
+					if len(values) == 0 :
 						if not output_message:
 							self.storage.update(record.get('_id'), {'output_engine': "No result"  } )
 						else:
 							self.storage.update(record.get('_id'), {'output_engine': "there are issues : %s warning : No result" % output_message } )
 
-					self.logger.debug(' + Result of aggregation for "%s": %f' % (function_name,resultat[0][1]))
+					value = fn(values)
+
+					self.logger.debug(' + Result of aggregation for "%s": %f' % (function_name,value))
 
 					list_perf_data.append({ 
 											'metric' : function_name, 
-											'value' : roundSignifiantDigit(resultat[0][1],3), 
+											'value' : roundSignifiantDigit(value,3), 
 											"unit": mUnit, 
 											'max': mMax, 
 											'min': mMin, 
 											'type': 'GAUGE' } ) 
+
+				point_timestamp = int(time.time()) - current_interval/2
 
 				event = cevent.forger(
 					connector ="consolidation",
@@ -183,7 +186,7 @@ class engine(cengine):
 					component = record['component'],
 					resource=record['resource'],
 					state=0,
-					timestamp=time.time(),
+					timestamp=point_timestamp,
 					state_type=0,
 					output="Consolidation: '%s' successfully computed" % record.get('crecord_name','No name'),
 					long_output="",
@@ -192,6 +195,7 @@ class engine(cengine):
 					display_name=record['crecord_name']
 				)	
 				rk = cevent.get_routingkey(event)
+				self.counter_event += 1
 				self.amqp.publish(event, rk, self.amqp.exchange_name_events)
 
 				self.logger.debug('The following event was sent:')
@@ -207,6 +211,7 @@ class engine(cengine):
 				self.storage.update(record.get('_id'), {'consolidation_ts':int(time.time())})
 				self.timestamps[record.get('_id')] = int(time.time())
 		
+		self.counter_worktime += time.time() - beat_start
 		
 	def load (self, rec ) :
 		record = rec.dump()
