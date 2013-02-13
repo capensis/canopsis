@@ -99,14 +99,15 @@ class engine(cengine):
 						mMin = metric.get('mi')
 						mMax = metric.get('ma')
 						mUnit = metric.get('u')
+						if 'sum' in consolidation_methods:
+							maxSum = mMax
 					else:
 						if  metric.get('mi') < mMin :
 							mMin = metric.get('mi')
-						if metric.get('ma'):
-							if mMax:
-								mMax += metric.get('ma')
-							else:
-								mMax = metric.get('ma')
+						if metric.get('ma') > mMax :
+							mMax = metric.get('ma')
+						if 'sum' in consolidation_methods:
+							maxSum += metric.get('ma')
 						if metric.get('u') != mUnit :
 							output_message = "warning : too many units"
 
@@ -175,7 +176,7 @@ class engine(cengine):
 											'metric' : function_name, 
 											'value' : roundSignifiantDigit(value,3), 
 											"unit": mUnit, 
-											'max': mMax, 
+											'max': maxSum if function_name == 'sum' else mMax, 
 											'min': mMin, 
 											'type': 'GAUGE' } ) 
 
