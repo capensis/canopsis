@@ -76,8 +76,9 @@ Ext.define('canopsis.controller.Tabs', {
 			tab.displayed = false;
 			tab.autoshow = true;
 			tab.getView();
-		}else {
-			log.debug('currently in refresh');
+		}else{
+			tab.autoshow = true;
+			tab.getView();
 		}
 	},
 
@@ -88,6 +89,8 @@ Ext.define('canopsis.controller.Tabs', {
 	},
 
 	open_saved_views: function() {
+		var dashboard_id = this.getController('Account').getConfig('dashboard', 'view._default_.dashboard');
+
 		var views = [];
 
 		this.store.each(function(record) {
@@ -100,13 +103,17 @@ Ext.define('canopsis.controller.Tabs', {
 		log.debug('Load saved tabs:', this.logAuthor);
 		for (var i = 0; i < views.length; i++) {
 			var options = views[i];
-			log.debug(' + ' + options.title + ' (' + options.view_id + ')', this.logAuthor);
-			options.autoshow = false;
+			if (options.view_id == dashboard_id){
+				log.debug(' + Dashboard, do nothing', this.logAuthor);
+			}else{
+				log.debug(' + ' + options.title + ' (' + options.view_id + ')', this.logAuthor);
+				options.autoshow = false;
 
-			var tab = this.open_view(options);
-			if (! tab) {
-				log.debug('Invalid view options:', this.logAuthor);
-				log.dump(options)
+				var tab = this.open_view(options);
+				if (! tab) {
+					log.debug('Invalid view options:', this.logAuthor);
+					log.dump(options)
+				}
 			}
 		}
 
@@ -135,20 +142,18 @@ Ext.define('canopsis.controller.Tabs', {
 		if (options.view_id) {
 			var maintabs = Ext.getCmp('main-tabs');
 
-			if (options.tab_id) {
+			if (options.tab_id)
 				var tab_id = options.view_id + options.tab_id + '.tab';
-			} else {
+			else
 				var tab_id = options.view_id + '.tab';
-			}
 
 			var tab = Ext.getCmp(tab_id);
 
 			if (tab) {
-				log.debug(' - Tab allerady open, just show it', this.logAuthor);
+				log.debug(' + Tab allerady open, just show it', this.logAuthor);
 				maintabs.setActiveTab(tab);
 			}else {
-				log.debug(' - Create tab ...', this.logAuthor);
-				log.debug('    - Get view config (' + options.view_id + ') ...', this.logAuthor);
+				log.debug(' + Create tab ...', this.logAuthor);
 
 				var localstore_record = false;
 				if (options.save) {
@@ -170,6 +175,9 @@ Ext.define('canopsis.controller.Tabs', {
 					localstore_record: localstore_record
 				};
 
+				log.debug(' + Tab options:', this.logAuthor);
+				log.dump(tab)
+
 				if (index != undefined)
 					tab = maintabs.insert(index, tab);
 				else
@@ -177,6 +185,10 @@ Ext.define('canopsis.controller.Tabs', {
 
 				if (options.autoshow)
 					tab.show();
+
+				// Dashboard If only one tabs
+				if (options.autoshow && ! tab.displayed && index == 0 && maintabs.items.length == 1)
+					tab.getView();
 
 				return tab;
 			}
