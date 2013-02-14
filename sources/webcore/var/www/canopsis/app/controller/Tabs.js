@@ -97,9 +97,14 @@ Ext.define('canopsis.controller.Tabs', {
 				if (view)
 					title = view.get('crecord_name');
 
-				return this.open_view({ view_id: dashboard_id, title: title, closable: false, save: false, iconCls: 'icon-bullet-green' }, 0);
+				var tab = this.open_view({ view_id: dashboard_id, title: title, closable: false, save: false, iconCls: 'icon-bullet-green' }, 0);
+				
+				// Set history
+				Ext.getCmp('main-tabs').old_tab = tab;
+
+				return tab;
 			}else{
-				// Load dashboard after views are loaded
+				// Load dashboard after view store is loaded
 				view_store.on("load", this.open_dashboard, this, {single: true});
 				view_store.load();
 			}
@@ -202,8 +207,10 @@ Ext.define('canopsis.controller.Tabs', {
 				else
 					tab = maintabs.add(tab);
 
-				if (options.autoshow)
+				if (options.autoshow){
+					maintabs.setActiveTab(tab);
 					tab.show();
+				}
 
 				// Dashboard If only one tabs
 				if (options.autoshow && ! tab.displayed && index == 0 && maintabs.items.length == 1)

@@ -32,7 +32,6 @@ var normalApp = function(){
 			'Notify',
 			'Group',
 			'Account',
-			'Tabs',
 			'Reporting',
 			'ReportingBar',
 			'Keynav',
@@ -44,8 +43,9 @@ var normalApp = function(){
 			'Selector',
 			'Derogation',
 			'Perfdata',
-			'Topology',
-			'Consolidation'
+			//'Topology',
+			'Consolidation',
+			'Tabs'
 		],
 	
 		//autoCreateViewport: true,
