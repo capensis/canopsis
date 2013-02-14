@@ -85,7 +85,19 @@ Ext.define('canopsis.controller.Tabs', {
 	open_dashboard: function() {
 		var dashboard_id = this.getController('Account').getConfig('dashboard', 'view._default_.dashboard');
 		log.debug('Open dashboard: ' + dashboard_id, this.logAuthor);
-		return this.open_view({ view_id: dashboard_id, title: _('Dashboard'), closable: false, save: false }, 0);
+
+		var title = _('Dashboard');
+
+		// Get original Title
+		var view_store = Ext.data.StoreManager.lookup('Views');
+		if (view_store){
+			var view = view_store.getById(dashboard_id);
+			if (view)
+				title = view.get('crecord_name');
+		}
+
+		// Open view
+		return this.open_view({ view_id: dashboard_id, title: title, closable: false, save: false, iconCls: 'icon-bullet-green' }, 0);
 	},
 
 	open_saved_views: function() {
