@@ -25,7 +25,7 @@ Ext.define('canopsis.store.Topologies', {
 
 	storeId: 'store.Topologies',
 
-	autoLoad: true,
+	autoLoad: false,
 	autoSync: true,
 
 	proxy: {

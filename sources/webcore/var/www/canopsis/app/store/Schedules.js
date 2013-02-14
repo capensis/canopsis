@@ -24,7 +24,7 @@ Ext.define('canopsis.store.Schedules', {
 
 	storeId: 'store.Schedules',
 	pageSize: 5000,
-  	autoLoad: true,
+  	autoLoad: false,
 	autoSync: true,
 
 	sorters: [

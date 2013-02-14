@@ -23,7 +23,7 @@ Ext.define('canopsis.store.Files', {
 	model: 'canopsis.model.File',
 
 	//storeId: 'store.Group',
-	autoLoad: true,
+	autoLoad: false,
 	autoSync: true,
 
 	sorters: [

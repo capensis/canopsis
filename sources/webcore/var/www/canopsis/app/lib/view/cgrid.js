@@ -81,6 +81,8 @@ Ext.define('canopsis.lib.view.cgrid' , {
 	bar_search: [],
 	menu_items: [],
 
+	logAuthor: '[view][cgrid]',
+
 	TabOnShow: function() {
 		this.suspendLayout = false;
 		this.doLayout();
@@ -357,6 +359,13 @@ Ext.define('canopsis.lib.view.cgrid' , {
 		}
 
 		this.callParent(arguments);
+
+		// Load Store if not loaded
+		if (this.store){
+			log.debug("Store Loaded: " + this.store.loaded, this.logAuthor)
+			if (! this.store.loaded && ! this.store.autoLoad)
+				this.store.load();
+		}
 	},
 
 	beforeDestroy: function() {

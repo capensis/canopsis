@@ -359,16 +359,6 @@ Ext.define('canopsis.lib.view.cgrid_state' , {
 		} else {
 			return 'row-background-unknown';
 		}
-	},
-
-	load_services_of_host: function(hostname) {
-		this.store.proxy.extraParams = {'filter': '{"component":"' + hostname + '", "source_type": "resource"}'};
-		this.store.load();
-	},
-
-	load_host: function(hostname) {
-		this.store.proxy.extraParams = {'filter': '{"component":"' + hostname + '"}'};
-		this.store.load();
 	}
 
 });

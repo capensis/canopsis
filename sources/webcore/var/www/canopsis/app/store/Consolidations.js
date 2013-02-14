@@ -25,7 +25,7 @@ Ext.define('canopsis.store.Consolidations', {
 
 	storeId: 'store.Consolidations',
 
-	autoLoad: true,
+	autoLoad: false,
 	autoSync: true,
 
 	proxy: {
