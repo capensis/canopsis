@@ -60,6 +60,8 @@ Ext.define('canopsis.view.Tabs.Content' , {
 	view: undefined,
 	view_options: undefined,
 
+	onClose: false,
+
 	//Locales
 	locales: {
 		save: _('Save'),
@@ -241,6 +243,9 @@ Ext.define('canopsis.view.Tabs.Content' , {
 
 	//Binding
 	_onShow: function() {
+		if (this.onClose)
+			return
+		
 		log.debug('Show tab ' + this.id, this.logAuthor);
 		
 		if (! this.displayed){
@@ -375,6 +380,8 @@ Ext.define('canopsis.view.Tabs.Content' , {
 	//misc
 	beforeclose: function(tab, object) {
 		log.debug('Active previous tab', this.logAuthor);
+		this.onClose = true;
+
 		old_tab = Ext.getCmp('main-tabs').old_tab;
 		if (old_tab)
 			Ext.getCmp('main-tabs').setActiveTab(old_tab);
