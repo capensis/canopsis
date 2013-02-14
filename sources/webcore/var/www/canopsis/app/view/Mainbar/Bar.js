@@ -100,7 +100,7 @@ Ext.define('canopsis.view.Mainbar.Bar' , {
 			valueField: 'id',
 			typeAhead: true,
 			//hideLabel: true,
-			fieldLabel: _('Dashboard'),
+			fieldLabel: _('Home view'),
 			minChars: 2,
 			queryMode: 'local',
 			emptyText: _('Select a view') + ' ...',
