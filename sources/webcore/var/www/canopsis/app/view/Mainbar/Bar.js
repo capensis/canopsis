@@ -409,12 +409,9 @@ Ext.define('canopsis.view.Mainbar.Bar' , {
 			},{
 				iconCls: (global.websocketCtrl.connected) ? 'icon-bullet-green' : 'icon-bullet-red',
 				id: 'Mainbar-menu-Websocket',
-				flex: 0.2,
 				handleMouseEvents: false
 			},
-			Ext.create('canopsis.lib.menu.cspinner', {
-				flex: 0.2
-			})
+			Ext.create('canopsis.lib.menu.cspinner')
 		];
 
 		this.callParent(arguments);
