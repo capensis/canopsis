@@ -23,6 +23,8 @@ Ext.define('canopsis.view.Consolidation.Form', {
 
 	alias: 'widget.ConsolidationForm',
 
+	requires:['canopsis.lib.form.field.cthreshold_metro'],
+
 	fieldDefaults: {
 		labelWidth: 150
 	},
@@ -141,7 +143,14 @@ Ext.define('canopsis.view.Consolidation.Form', {
 							}]
 						}]
 						
-					},{
+					}/*,{
+						title: _('Thresholds'),
+						bodyStyle: 'padding:5px 5px 0',
+						layout:'fit',
+						items:[{
+							xtype:'cthreshold_metro'
+						}]
+					}*/,{
 						title: _('Filter'),
 						xtype: 'cfilter',
 						name: 'mfilter',
