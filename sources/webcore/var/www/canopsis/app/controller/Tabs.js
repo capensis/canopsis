@@ -90,14 +90,21 @@ Ext.define('canopsis.controller.Tabs', {
 
 		// Get original Title
 		var view_store = Ext.data.StoreManager.lookup('Views');
-		if (view_store){
-			var view = view_store.getById(dashboard_id);
-			if (view)
-				title = view.get('crecord_name');
-		}
 
-		// Open view
-		return this.open_view({ view_id: dashboard_id, title: title, closable: false, save: false, iconCls: 'icon-bullet-green' }, 0);
+		if (view_store){
+			if (view_store.loaded){
+				var view = view_store.getById(dashboard_id);
+				if (view)
+					title = view.get('crecord_name');
+
+				return this.open_view({ view_id: dashboard_id, title: title, closable: false, save: false, iconCls: 'icon-bullet-green' }, 0);
+			}else{
+				// Load dashboard after views are loaded
+				view_store.on("load", this.open_dashboard, this, {single: true});
+				view_store.load();
+			}
+		}
+		return false;
 	},
 
 	open_saved_views: function() {
