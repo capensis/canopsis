@@ -26,7 +26,7 @@ Ext.define('canopsis.store.EventLogs', {
 
 	logAuthor: '[store][curve]',
 
-	autoLoad: true,
+	autoLoad: false,
 	autoSync: true,
 
 	sortOnLoad: true,

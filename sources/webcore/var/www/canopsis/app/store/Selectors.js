@@ -25,7 +25,7 @@ Ext.define('canopsis.store.Selectors', {
 
 	storeId: 'store.Selectors',
 	pageSize: 5000,
-  	autoLoad: true,
+  	autoLoad: false,
 	autoSync: true,
 
 	sorters: [

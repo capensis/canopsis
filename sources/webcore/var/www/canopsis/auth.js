@@ -147,10 +147,11 @@ Ext.define('canopsis.auth' , {
 			url: this.url,
 			scope: this,
 			params: {
+				shadow: 'True',
 				password: passwd_sha1,
 				login: login
 			},
-			success: function(form, action) {
+			success: function(response) {
 				response = Ext.JSON.decode(response.responseText)
 				log.debug(" + M2 Auth Ok", this.logAuthor);
 				global.account = response.data[0];

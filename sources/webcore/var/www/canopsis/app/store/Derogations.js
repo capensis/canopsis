@@ -26,7 +26,7 @@ Ext.define('canopsis.store.Derogations', {
 
 	logAuthor: '[store][Derogations]',
 
-	autoLoad: true,
+	autoLoad: false,
 	autoSync: true,
 
 	sortOnLoad: true,
