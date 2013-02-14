@@ -69,7 +69,7 @@ Ext.define('canopsis.lib.view.cwizard' , {
 		this.previousButton = this.bbar.add({xtype: 'button', text: _('Previous'), action: 'previous', disabled: true, iconCls: 'icon-previous'});
 		this.nextButton = this.bbar.add({xtype: 'button', text: _('Next'), action: 'next', disabled: true, iconCls: 'icon-next', iconAlign: 'right'});
 
-		this.finishButton = this.bbar.add({xtype: 'button', text: _('Finish'), action: 'finish', iconCls: 'icon-save', iconAlign: 'right'});
+		this.finishButton = this.bbar.add({xtype: 'button', text: _('Finish'), action: 'finish', iconCls: 'icon-save', iconAlign: 'right',disabled:true});
 
 		//--
 		this.tabPanel = Ext.create('Ext.tab.Panel', {
@@ -296,23 +296,20 @@ Ext.define('canopsis.lib.view.cwizard' , {
 		var activeTabIndex = this.tabPanel.items.findIndex('id', this.tabPanel.getActiveTab().id);
 		var tabCount = this.tabPanel.items.length;
 
-		if (activeTabIndex == 0) {
+		if (activeTabIndex == 0){
 			this.previousButton.setDisabled(true);
-		} else {
+			this.finishButton.setDisabled(true);
+		}else{
 			this.previousButton.setDisabled(false);
+			this.finishButton.setDisabled(false);
 		}
+		
 
-		if (activeTabIndex == (tabCount - 1)) {
+		if (activeTabIndex == (tabCount - 1)) 
 			this.nextButton.setDisabled(true);
-			if (!this.edit) {
-				this.finishButton.setDisabled(false);
-			}
-		} else {
+		 else 
 			this.nextButton.setDisabled(false);
-			if (!this.edit) {
-				this.finishButton.setDisabled(true);
-			}
-		}
+		
 	},
 
 	cancel_button: function() {
