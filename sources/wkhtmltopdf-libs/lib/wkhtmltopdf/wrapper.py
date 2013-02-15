@@ -85,7 +85,7 @@ class Wrapper(object):
 		# python none to js null
 		export_from = self.settings.get('startTime')
 		if not export_from:
-			export_from = 'null'
+			export_from = -1
 
 		opts = ' '.join(self.settings['opts'])
 

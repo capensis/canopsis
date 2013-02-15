@@ -55,8 +55,8 @@ group_managing_access = ['group.CPS_reporting_admin']
 @post('/reporting/:startTime/:stopTime/:view_name/:mail',checkAuthPlugin={'authorized_grp':group_managing_access})
 @post('/reporting/:startTime/:stopTime/:view_name',checkAuthPlugin={'authorized_grp':group_managing_access})
 def generate_report(startTime, stopTime,view_name,mail=None):
-	startTime = None if int(startTime) == -1 else int(startTime)
 	stopTime = int(stopTime)
+	startTime = int(startTime)
 
 	account = get_account()
 	storage = cstorage(account=account, namespace='object')
@@ -75,7 +75,7 @@ def generate_report(startTime, stopTime,view_name,mail=None):
 		
 
 	toDate = str(date.fromtimestamp(int(stopTime)))
-	if startTime:
+	if startTime and startTime != -1:
 		fromDate = str(date.fromtimestamp(int(startTime)))
 		file_name = '%s_From_%s_To_%s.pdf' % (record.name,fromDate,toDate)
 	else:

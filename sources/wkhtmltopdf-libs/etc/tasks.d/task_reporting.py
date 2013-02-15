@@ -48,6 +48,8 @@ def render_pdf(fileName=None, viewName=None, startTime=None, stopTime=None, inte
 	if not startTime:
 		if interval:
 			startTime = stopTime - interval
+		else:
+			startTime = -1
 	
 	if viewName is None:
 		raise ValueError("task_render_pdf: you must at least provide a viewName")
@@ -76,7 +78,7 @@ def render_pdf(fileName=None, viewName=None, startTime=None, stopTime=None, inte
 	#set fileName
 	if fileName is None:
 		toDate = date.fromtimestamp(int(stopTime))
-		if startTime:
+		if startTime and startTime != -1:
 			fromDate = date.fromtimestamp(int(startTime))
 			fileName = '%s_From_%s_To_%s.pdf' % (view_record.name, fromDate, toDate) 
 		else:
