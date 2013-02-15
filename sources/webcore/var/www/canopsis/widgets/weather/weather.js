@@ -290,14 +290,14 @@ Ext.define('widgets.weather.weather' , {
 			//-----------------overload values----------------
 			if (this.icon_state_source != 'default') {
 				log.debug('Attempt to overide values with second node', this.logAuthor);
-				if (node.sevent) {
+				if (node && node.sevent) {
 					node._event.state = node.sevent.state;
 					node._event.last_state_change = node.sevent.last_state_change;
 				}
 			}
 
 			//------------------create config----------------
-			if(node._event){
+			if(node && node._event){
 				var config = {
 					data: node._event,
 					link: this.external_link_dict[_id],
