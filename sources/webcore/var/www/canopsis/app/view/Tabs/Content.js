@@ -203,6 +203,7 @@ Ext.define('canopsis.view.Tabs.Content' , {
 			failure: function(result, request) {
 					log.error('Ajax request failed ... (' + request.url + ')', this.logAuthor);
 					log.error('Close tab, maybe not exist ...', this.logAuthor);
+					global.notify.notify(_('Warning'), _("Impossible to get view options."), 'warning');
 					this.destroy();
 			}
 		});
