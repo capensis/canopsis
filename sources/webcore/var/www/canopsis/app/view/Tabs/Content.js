@@ -62,6 +62,19 @@ Ext.define('canopsis.view.Tabs.Content' , {
 
 	onClose: false,
 
+	spinner: undefined,
+	spinner_delay: 5,
+	spinner_options: {
+		color:'#808080',
+		lines: 11,
+		width: 18,
+		length: 30,
+		shadow: false,
+		radius: 40,
+		top: 'auto',
+		left: 'auto'
+	},
+
 	//Locales
 	locales: {
 		save: _('Save'),
@@ -92,6 +105,17 @@ Ext.define('canopsis.view.Tabs.Content' , {
     //Init
 	initComponent: function() {
 		this.callParent(arguments);
+
+		// Display timer if view is too long to load
+		this.on('afterlayout', function(){
+			Ext.defer(function(){
+				if (! this.displayed) {
+					log.debug("Display view spinner", this.logAuthor);
+					tEl = document.getElementById(this.JqgContainerId);
+					this.spinner = new Spinner(this.spinner_options).spin(tEl);
+				}	
+			}, this.spinner_delay, this)
+		}, this, { single: true });
 
 		log.debug("Display view '" + this.view_id + "' ...", this.logAuthor);
 
@@ -166,6 +190,12 @@ Ext.define('canopsis.view.Tabs.Content' , {
 					if (!this.fullscreenMode)
 						this.setWidth(this.pageWidth['portrait']['A4']);
 				}*/
+
+				if (this.spinner){
+					log.debug("Remove view spinner", this.logAuthor);
+					this.spinner.stop();
+					delete this.spinner;
+				}
 
 				this.setContent(dump);
 
@@ -245,7 +275,7 @@ Ext.define('canopsis.view.Tabs.Content' , {
 	_onShow: function() {
 		if (this.onClose)
 			return
-		
+
 		log.debug('Show tab ' + this.id, this.logAuthor);
 		
 		if (! this.displayed){
