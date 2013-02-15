@@ -849,8 +849,6 @@ Ext.define('canopsis.lib.controller.cgrid', {
 
 	timeDisplay: function() {
 		var store = this.grid.getStore();
-		console.log('---------------------')
-		console.log(this.filter_id)
 		if (this.filter_id)
 			store.deleteFilter(this.filter_id);
 
