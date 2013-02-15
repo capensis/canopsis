@@ -76,9 +76,9 @@ Ext.define('canopsis.lib.form.field.cdate' , {
 				config.value = Ext.Date.format(new Date, 'G:i');
 		}else {
 			if (is12Clock())
-				config.value = '12:00 am';
+				config.value = Ext.Date.format(this.date_value, 'g:i a');
 			else
-				config.value = '00:00';
+				config.value = Ext.Date.format(this.date_value, 'G:i');
 		}
 
 		this.hour = Ext.widget('textfield', config);

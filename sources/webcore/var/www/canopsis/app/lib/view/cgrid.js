@@ -166,14 +166,19 @@ Ext.define('canopsis.lib.view.cgrid' , {
 					//bar_child.push({ xtype: 'tbspacer', width: 150 })
 					bar_child.push('-');
 
+					var yesterday =  new Date();
+ 					yesterday.setDate(yesterday.getDate()-1);
+
 					bar_child.push({
 						xtype: 'cdate',
-						name: 'startTimeSearch'
+						name: 'startTimeSearch',
+						date_value: yesterday
 					});
 
 					bar_child.push({
 						xtype: 'cdate',
-						name: 'endTimeSearch'
+						name: 'endTimeSearch',
+						now: true
 					});
 
 					bar_child.push({
