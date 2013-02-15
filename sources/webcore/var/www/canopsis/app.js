@@ -80,19 +80,25 @@ var exportApp = function(){
 	if (ENV["to"])
 		to = ENV["to"] * 1000
 
-	if (ENV["from"])
-		from = ENV["from"] * 1000
-
-	var from_date = new Date(from);
-	var to_date = new Date(to);
+	if (ENV["from"] == -1)
+		from = undefined
+	else
+		if (ENV["from"])
+			from = ENV["from"] * 1000
 
 	log.debug('Exporting options:')
-	log.debug(' + From: '+ from_date	+ '(' + from + ')')
+	
+	if(from){
+		var from_date = new Date(from);
+		log.debug(' + From: '+ from_date	+ '(' + from + ')')
+	}
+
+	var to_date = new Date(to);
 	log.debug(' + To:   '+ to_date		+ '(' + to + ')')
 
 	var title = '';
 
-	if (from != to)
+	if (from && from != to)
 		title =  Ext.String.format(
 				'<span>'+_('From')+' {0} '+_('To')+' {1}</span>',
 				Ext.Date.format(from_date, 'Y-m-d'),
