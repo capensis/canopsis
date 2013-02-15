@@ -25,6 +25,8 @@ Ext.define('canopsis.lib.menu.cspinner' , {
 
 	logAuthor: '[cspinner]',
 
+	width: 28,
+
 	spinner: undefined,
 	spinner_options: {
 		color:'#fff',
