@@ -25,14 +25,13 @@ var normalApp = function(){
 		appFolder: 'app',
 
 		controllers: [
+			'Notify',
+			'View',
 			'Websocket',
 			'Mainbar',
 			'Widgets',
-			'View',
-			'Notify',
 			'Group',
 			'Account',
-			'Tabs',
 			'Reporting',
 			'ReportingBar',
 			'Keynav',
@@ -44,8 +43,9 @@ var normalApp = function(){
 			'Selector',
 			'Derogation',
 			'Perfdata',
-			'Topology',
-			'Consolidation'
+			//'Topology',
+			'Consolidation',
+			'Tabs'
 		],
 	
 		//autoCreateViewport: true,
@@ -173,7 +173,6 @@ var fullscreenApp = function(){
 			'Widgets',
 			'Curves',
 			'Websocket',
-			'View',
 			'Notify'
 		],
 		launch: function() {

@@ -36,8 +36,8 @@ Ext.define('canopsis.controller.Tabs', {
 				//remove: this.on_remove,
 				afterrender: function() {
 					if (! this.tabpanel_rendered) {
-						this.open_saved_views();
 						this.open_dashboard();
+						this.open_saved_views();
 						this.tabpanel_rendered = true;
 					}
 				}
@@ -85,7 +85,31 @@ Ext.define('canopsis.controller.Tabs', {
 	open_dashboard: function() {
 		var dashboard_id = this.getController('Account').getConfig('dashboard', 'view._default_.dashboard');
 		log.debug('Open dashboard: ' + dashboard_id, this.logAuthor);
-		return this.open_view({ view_id: dashboard_id, title: _('Dashboard'), closable: false, save: false }, 0);
+
+		var title = _('Dashboard');
+
+		// Get original Title
+		var view_store = Ext.data.StoreManager.lookup('Views');
+
+		if (view_store){
+			if (view_store.loaded){
+				var view = view_store.getById(dashboard_id);
+				if (view)
+					title = view.get('crecord_name');
+
+				var tab = this.open_view({ view_id: dashboard_id, title: title, closable: false, save: false, iconCls: 'icon-bullet-green' }, 0);
+				
+				// Set history
+				Ext.getCmp('main-tabs').old_tab = tab;
+
+				return tab;
+			}else{
+				// Load dashboard after view store is loaded
+				view_store.on("load", this.open_dashboard, this, {single: true});
+				view_store.load();
+			}
+		}
+		return false;
 	},
 
 	open_saved_views: function() {
@@ -103,17 +127,13 @@ Ext.define('canopsis.controller.Tabs', {
 		log.debug('Load saved tabs:', this.logAuthor);
 		for (var i = 0; i < views.length; i++) {
 			var options = views[i];
-			if (options.view_id == dashboard_id){
-				log.debug(' + Dashboard, do nothing', this.logAuthor);
-			}else{
-				log.debug(' + ' + options.title + ' (' + options.view_id + ')', this.logAuthor);
-				options.autoshow = false;
+			log.debug(' + ' + options.title + ' (' + options.view_id + ')', this.logAuthor);
+			options.autoshow = false;
 
-				var tab = this.open_view(options);
-				if (! tab) {
-					log.debug('Invalid view options:', this.logAuthor);
-					log.dump(options)
-				}
+			var tab = this.open_view(options);
+			if (! tab) {
+				log.debug('Invalid view options:', this.logAuthor);
+				log.dump(options)
 			}
 		}
 
@@ -183,8 +203,10 @@ Ext.define('canopsis.controller.Tabs', {
 				else
 					tab = maintabs.add(tab);
 
-				if (options.autoshow)
+				if (options.autoshow){
+					maintabs.setActiveTab(tab);
 					tab.show();
+				}
 
 				// Dashboard If only one tabs
 				if (options.autoshow && ! tab.displayed && index == 0 && maintabs.items.length == 1)
