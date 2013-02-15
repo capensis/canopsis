@@ -63,7 +63,7 @@ Ext.define('canopsis.view.Tabs.Content' , {
 	onClose: false,
 
 	spinner: undefined,
-	spinner_delay: 5,
+	spinner_delay: 300,
 	spinner_options: {
 		color:'#808080',
 		lines: 11,
