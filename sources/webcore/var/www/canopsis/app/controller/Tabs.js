@@ -36,8 +36,8 @@ Ext.define('canopsis.controller.Tabs', {
 				//remove: this.on_remove,
 				afterrender: function() {
 					if (! this.tabpanel_rendered) {
-						this.open_saved_views();
 						this.open_dashboard();
+						this.open_saved_views();
 						this.tabpanel_rendered = true;
 					}
 				}
@@ -127,17 +127,13 @@ Ext.define('canopsis.controller.Tabs', {
 		log.debug('Load saved tabs:', this.logAuthor);
 		for (var i = 0; i < views.length; i++) {
 			var options = views[i];
-			if (options.view_id == dashboard_id){
-				log.debug(' + Dashboard, do nothing', this.logAuthor);
-			}else{
-				log.debug(' + ' + options.title + ' (' + options.view_id + ')', this.logAuthor);
-				options.autoshow = false;
+			log.debug(' + ' + options.title + ' (' + options.view_id + ')', this.logAuthor);
+			options.autoshow = false;
 
-				var tab = this.open_view(options);
-				if (! tab) {
-					log.debug('Invalid view options:', this.logAuthor);
-					log.dump(options)
-				}
+			var tab = this.open_view(options);
+			if (! tab) {
+				log.debug('Invalid view options:', this.logAuthor);
+				log.dump(options)
 			}
 		}
 
