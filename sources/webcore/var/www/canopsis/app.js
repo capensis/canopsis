@@ -25,11 +25,11 @@ var normalApp = function(){
 		appFolder: 'app',
 
 		controllers: [
+			'Notify',
+			'View',
 			'Websocket',
 			'Mainbar',
 			'Widgets',
-			'View',
-			'Notify',
 			'Group',
 			'Account',
 			'Reporting',
@@ -173,7 +173,6 @@ var fullscreenApp = function(){
 			'Widgets',
 			'Curves',
 			'Websocket',
-			'View',
 			'Notify'
 		],
 		launch: function() {
