@@ -37,7 +37,6 @@ Ext.define('canopsis.controller.Schedule', {
 	},
 
 	preSave: function(record,data) {
-		console.log(data.exporting_interval)
 		if(data.exporting_interval)
 			var interval = data.exporting_intervalLength * data.exporting_intervalUnit;
 		else
@@ -111,12 +110,10 @@ Ext.define('canopsis.controller.Schedule', {
 	},
 
 	beforeload_EditForm: function(form,item) {
-		console.log(item)
 		crontab = item.data.cron
 		if(crontab && crontab.hour != undefined && crontab.minute != undefined){
 			var d = new Date();
 			d.setUTCHours(crontab.hour,crontab.minute)
-			console.log(form.down('textfield[name=crontab_hours]'))
 			var minutes = d.getMinutes()
 			if(minutes < 10)
 				minutes = '0'+minutes
