@@ -113,10 +113,14 @@ Ext.define('canopsis.controller.Schedule', {
 	beforeload_EditForm: function(form,item) {
 		console.log(item)
 		crontab = item.data.cron
-		if(crontab && crontab.hour && crontab.minute){
+		if(crontab && crontab.hour != undefined && crontab.minute != undefined){
 			var d = new Date();
 			d.setUTCHours(crontab.hour,crontab.minute)
-			form.down('textfield[name=crontab_hours]').setValue(d.getHours()+':'+d.getMinutes())
+			console.log(form.down('textfield[name=crontab_hours]'))
+			var minutes = d.getMinutes()
+			if(minutes < 10)
+				minutes = '0'+minutes
+			form.down('textfield[name=crontab_hours]').setValue(d.getHours()+':'+minutes)
 		}
 	},
 
