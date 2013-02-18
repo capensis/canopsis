@@ -7,6 +7,24 @@ msgstr ""
 msgid "Home view"
 msgstr "Home view"
 
+msgid "Leave a"
+msgstr "Leave a"
+
+msgid "event"
+msgstr "event"
+
+msgid "Clear tray"
+msgstr "Clear tray"
+
+msgid "Pause stream"
+msgstr "Pause stream"
+
+msgid "comment(s)"
+msgstr "comment(s)"
+
+msgid "connected"
+msgstr "connected
+
 msgid "Aggregation interval"
 msgstr "Aggregation interval"
 
