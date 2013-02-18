@@ -29,7 +29,7 @@ msgid "comment(s)"
 msgstr "comment(s)"
 
 msgid "connected"
-msgstr "connected
+msgstr "connected"
 
 msgid "Aggregation interval"
 msgstr "Aggregation interval"
