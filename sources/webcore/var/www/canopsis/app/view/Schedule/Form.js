@@ -235,7 +235,7 @@ Ext.define('canopsis.view.Schedule.Form', {
 			fieldLabel: _('The last'),
 			minValue: 1,
 			value: 1,
-			allowBlank: false,
+			//allowBlank: false,
 			width: 160
 		});
 
