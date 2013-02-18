@@ -31,7 +31,7 @@ Ext.define('canopsis.controller.Mainbar', {
 				collapse: this.onCollapseMainbar,
 				expand: this.onExpandMainbar
 			},
-			'Mainbar menuitem[action="logout"]' : {
+			'Mainbar [action="logout"]' : {
 				click: this.logout
 			},
 			'Mainbar menuitem[action="cleartabscache"]' : {
