@@ -410,7 +410,8 @@ Ext.define('canopsis.view.Mainbar.Bar' , {
 			Ext.create('canopsis.lib.menu.cspinner'),
 			{
 				iconCls: 'icon-bootstrap-off',
-				action: 'logout'
+				action: 'logout',
+				tooltip: _('Logout')
 			}
 		];
 

@@ -54,7 +54,7 @@
 	background: #b1b0b0;
 }
 
-.Mainbar .x-btn-over{
+.Mainbar .x-btn-over, .x-btn-menu-active{
 	background-image: none;
 	background-color: #b1b0b0;
 	border: none;
