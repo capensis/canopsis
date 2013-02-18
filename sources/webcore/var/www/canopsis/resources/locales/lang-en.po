@@ -340,6 +340,9 @@ msgstr "Edit options"
 msgid "Edit schedules"
 msgstr "Edit schedules"
 
+msgid "Schedules"
+msgstr "Schedules"
+
 msgid "Email"
 msgstr "Email"
 

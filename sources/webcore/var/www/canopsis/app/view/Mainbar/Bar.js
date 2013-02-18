@@ -236,7 +236,7 @@ Ext.define('canopsis.view.Mainbar.Bar' , {
 					action: 'ScheduleExportView'
 				},{
 					iconCls: 'icon-mainbar-edit-task',
-					text: _('Edit schedules'),
+					text: _('Schedules'),
 					action: 'editSchedule',
 					viewId: 'view.schedule_manager'
 				}
