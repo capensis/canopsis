@@ -191,7 +191,7 @@ class engine(cengine):
 					resource=record['resource'],
 					state=0,
 					timestamp=point_timestamp,
-					state_type=0,
+					state_type=1,
 					output="Consolidation: '%s' successfully computed" % record.get('crecord_name','No name'),
 					long_output="",
 					perf_data=None,
