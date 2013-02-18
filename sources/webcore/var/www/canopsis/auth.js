@@ -104,8 +104,9 @@ Ext.define('canopsis.auth' , {
 	},
 
 	onSuccess: function(){
+		this.navkeys.destroy();
 		if (this.on_authed)
-			this.on_authed(global.account)
+			this.on_authed(global.account);
 	},
 
 	onFailure: function(){
