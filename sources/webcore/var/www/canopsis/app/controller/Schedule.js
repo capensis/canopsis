@@ -39,7 +39,7 @@ Ext.define('canopsis.controller.Schedule', {
 	preSave: function(record,data) {
 		console.log(data.exporting_interval)
 		if(data.exporting_interval)
-			var interval = data.intervalLength * data.intervalUnit;
+			var interval = data.exporting_intervalLength * data.exporting_intervalUnit;
 		else
 			var interval = null
 

@@ -211,7 +211,7 @@ Ext.define('canopsis.view.Schedule.Form', {
 
 
 		var lengthCombo = Ext.widget('combobox', {
-			name: 'intervalLength',
+			name: 'exporting_intervalLength',
 			queryMode: 'local',
 			displayField: 'text',
 			width: 90,
@@ -231,7 +231,7 @@ Ext.define('canopsis.view.Schedule.Form', {
 		});
 
 		var unitCombo = Ext.widget('numberfield', {
-			name: 'intervalUnit',
+			name: 'exporting_intervalUnit',
 			fieldLabel: _('The last'),
 			minValue: 1,
 			value: 1,

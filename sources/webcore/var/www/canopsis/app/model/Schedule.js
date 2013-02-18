@@ -60,16 +60,16 @@ Ext.define('canopsis.model.Schedule', {
 				}
 		},
 
-		{name: 'aaa_access_group'},
-		{name: 'aaa_access_other'},
-		{name: 'aaa_access_owner'},
+		{name: 'aaa_access_owner', defaultValue: ['r', 'w']},
+		{name: 'aaa_access_group', defaultValue: ['r']},
+		{name: 'aaa_access_other', defaultValue: []},
 		{name: 'aaa_admin_group'},
 		{name: 'aaa_group'},
 		{name: 'aaa_owner'},
 
-		{name: 'intervalLength'},
-		{name: 'intervalUnit'},	
-		{name: 'frequency'},
+		{name: 'exporting_intervalLength'},
+		{name: 'exporting_intervalUnit'},	
+		{name: 'frequency',defaultValue:'day'},
 
 
 		{name: 'exporting_interval'},
