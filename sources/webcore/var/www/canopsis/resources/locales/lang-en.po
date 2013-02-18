@@ -7,6 +7,12 @@ msgstr ""
 msgid "Home view"
 msgstr "Home view"
 
+msgid "Confirm"
+msgstr "Confirm"
+
+msgid "Are you sure you want to delete"
+msgstr "Are you sure you want to delete"
+
 msgid "Leave a"
 msgstr "Leave a"
 
