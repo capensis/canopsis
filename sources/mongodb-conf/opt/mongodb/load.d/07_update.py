@@ -73,8 +73,8 @@ def update_schedule():
 		if 'starttime' in kwargs:
 			del kwargs['starttime']
 
-		if 'hour' in cron and 'minute':
-			record.data['crontab_hours'] = '%i:%02d' % (int(cron['hour']),int(cron['minute']))
+		#if 'hour' in cron and 'minute':
+		#	record.data['crontab_hours'] = '%i:%02d' % (int(cron['hour']),int(cron['minute']))
 
 		if 'day_of_week' in cron:
 			record.data['crontab_day_of_week'] = cron['day_of_week']

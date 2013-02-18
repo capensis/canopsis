@@ -83,7 +83,7 @@ Ext.define('canopsis.model.Schedule', {
 		{name: 'exporting_recipients'},
 		{name: 'exporting_subject'},
 		
-		{name: 'crontab_hours'},
+		//{name: 'crontab_hours'},
 		{name: 'crontab_month'},
 		{name: 'crontab_day_of_week'},
 		{name: 'crontab_day'},

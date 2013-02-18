@@ -110,6 +110,16 @@ Ext.define('canopsis.controller.Schedule', {
 		return record;
 	},
 
+	beforeload_EditForm: function(form,item) {
+		console.log(item)
+		crontab = item.data.cron
+		if(crontab && crontab.hour && crontab.minute){
+			var d = new Date();
+			d.setUTCHours(crontab.hour,crontab.minute)
+			form.down('textfield[name=crontab_hours]').setValue(d.getHours()+':'+d.getMinutes())
+		}
+	},
+
 	validateForm: function(store, data, form) {
 
 		//check mail options
