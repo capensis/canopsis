@@ -332,10 +332,6 @@ Ext.define('canopsis.view.Mainbar.Bar' , {
 					if (global.commit)
 						window.open('https://github.com/capensis/canopsis/commit/' + global.commit, '_blank');
 				}
-			},'-', {
-				iconCls: 'icon-logout',
-				text: _('Logout'),
-				action: 'logout'
 			}
 		]);
 
@@ -411,7 +407,11 @@ Ext.define('canopsis.view.Mainbar.Bar' , {
 				id: 'Mainbar-menu-Websocket',
 				handleMouseEvents: false
 			},
-			Ext.create('canopsis.lib.menu.cspinner')
+			Ext.create('canopsis.lib.menu.cspinner'),
+			{
+				iconCls: 'icon-bootstrap-off',
+				action: 'logout'
+			}
 		];
 
 		this.callParent(arguments);
