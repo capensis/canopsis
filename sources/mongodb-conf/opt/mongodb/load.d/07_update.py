@@ -89,7 +89,7 @@ def update_schedule():
 			record.data['frequency'] = record.data['every']
 			del record.data['every']
 
-		if 'interval' in kwargs:
+		if 'interval' in kwargs and kwargs['interval']:
 			nbDays = timedelta(seconds=kwargs['interval']).days
 
 			if nbDays >= 365:
