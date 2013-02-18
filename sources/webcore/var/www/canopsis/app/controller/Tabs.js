@@ -184,7 +184,7 @@ Ext.define('canopsis.controller.Tabs', {
 				}
 
 				var tab = {
-					title: _(options.title),
+					title: options.title,
 					id: tab_id,
 					iconCls: [options.iconCls],
 					view_id: options.view_id,
