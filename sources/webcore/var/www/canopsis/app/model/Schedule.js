@@ -32,7 +32,7 @@ Ext.define('canopsis.model.Schedule', {
 		{name: 'next_run_time'},
 		{name: 'cron', defaultValue: undefined},
 		{name: 'log'},
-		 name: 'mail',
+		{name: 'mail',
 		 convert: function(value, record) {
 					var kwargs = record.get('kwargs');
 					if (kwargs['mail'] != undefined && kwargs['mail'].sendMail)

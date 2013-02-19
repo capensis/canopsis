@@ -46,15 +46,14 @@ Ext.define('canopsis.view.Schedule.Grid' , {
 			width: 55,
 			sortable: true,
 			dataIndex: 'log',
-			renderer: ,
-			renderer: function(value){return rdr_boolean(value.log.success)}
+			renderer: function(value){return rdr_boolean(value.success)}
 		},{
 			header: _('Last execution'),
 			flex: 1,
 			sortable: true,
 			dataIndex: 'log',
 			renderer: function(value){
-				return rdr_tstodate(value.log.timestamp)
+				return rdr_tstodate(value.timestamp)
 			}
 		},{
 			header: _('Next execution'),
@@ -77,10 +76,10 @@ Ext.define('canopsis.view.Schedule.Grid' , {
 			header: _('Output'),
 			flex: 5,
 			sortable: true,
-			dataIndex: 'log'
+			dataIndex: 'log',
 			renderer: function(value){
-				var celery = value.log.celery_output;
-				var duration = value.log.duration;
+				var celery = value.celery_output;
+				var duration = value.duration;
 				if (celery != undefined && duration != undefined) {
 					return celery + ' (in ' + duration + 's)';
 				}
