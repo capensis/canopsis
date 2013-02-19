@@ -32,25 +32,6 @@ Ext.define('canopsis.model.Schedule', {
 		{name: 'next_run_time'},
 		{name: 'cron', defaultValue: undefined},
 		{name: 'log'},
-		{
-			name: 'log_success',
-			convert: function(value, record) {return record.get('log').success}
-		},
-		{
-			name: 'log_output',
-			convert: function(value, record) {
-				var celery = record.get('log').celery_output;
-				var duration = record.get('log').duration;
-				if (celery != undefined && duration != undefined) {
-					return celery + ' (in ' + duration + 's)';
-				}
-			}
-		},
-		{
-			name: 'log_last_execution',
-			convert: function(value, record) {return record.get('log').timestamp}
-		},
-		{
 		 name: 'mail',
 		 convert: function(value, record) {
 					var kwargs = record.get('kwargs');
