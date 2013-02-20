@@ -25,7 +25,8 @@ debug = False
 
 exclude_files = [
 	os.path.join(webui_path, "app/lib/locale.js"),
-	os.path.join(webui_path, "app/lib/global.js")
+	os.path.join(webui_path, "app/lib/global.js"),
+	os.path.join(webui_path, "app/lib/global_options.js")
 ]
 
 paths = [

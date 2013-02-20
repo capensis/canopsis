@@ -154,3 +154,6 @@ var global = {
 		port: 8085
 	}
 };
+
+if (typeof(global_options) == 'object')
+	global = Ext.Object.merge(global, global_options);

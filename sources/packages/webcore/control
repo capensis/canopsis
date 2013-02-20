@@ -18,6 +18,12 @@ function pre_install(){
 
 function post_install(){
 	echo "Post-install $NAME $VERSION-$RELEASE ..."
+
+	if [ ! -e $PREFIX/var/www/global_options.js ]; then
+		cp $PREFIX/var/www/canopsis/app/lib/global_options.js $PREFIX/var/www/global_options.js
+		check_code $?
+	fi
+
 	$PREFIX/bin/webcore_minimizer
 	check_code $? 
 }
@@ -50,6 +56,12 @@ function pre_update(){
 
 function post_update(){
 	echo "Post-update $NAME $VERSION-$RELEASE ..."
+
+	if [ ! -e $PREFIX/var/www/global_options.js ]; then
+		cp $PREFIX/var/www/canopsis/app/lib/global_options.js $PREFIX/var/www/global_options.js
+		check_code $?
+	fi
+
 	check_code $?
 }
 
