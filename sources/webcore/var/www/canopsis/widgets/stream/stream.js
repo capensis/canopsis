@@ -251,6 +251,7 @@ Ext.define('widgets.stream.stream' , {
 				'event_type': 'user',
 				'component': global.account.id,
 				'output': message,
+				'display_name': global.account.firstname + ' ' + global.account.lastname,
 				'author': global.account.firstname + ' ' + global.account.lastname,
 				'state': state,
 				'state_type': 1,
