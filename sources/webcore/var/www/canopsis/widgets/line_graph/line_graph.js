@@ -27,13 +27,23 @@ flag_tootlip_template = Ext.create('Ext.XTemplate',
 	"<table>",
 		"<tr>",
 			'<td style="margin:3px;">',
-				'<img src="widgets/stream/logo/{icon}.png" style="width: 32px;"></img>',
+				'<tpl if="event_type == \'user\'">',
+					'<img src="widgets/stream/logo/ui.png" style="width: 32px;"></img>',
+				'</tpl>',
+				'<tpl if="event_type != \'user\'">',
+					'<img src="widgets/stream/logo/{icon}.png" style="width: 32px;"></img>',
+				'</tpl>',
 			"</td>",
 			'<td>',
 				'<div style="margin:3px;">',
-					"<b>{component}</b>",
-					'<tpl if="resource">',
-						'<b> - {resource}</b>',
+					'<tpl if="display_name">',
+							"<b>{display_name}</b>",
+					'</tpl>',
+					'<tpl if="display_name == undefined">',
+						"<b>{component}</b>",
+						'<tpl if="resource">',
+							'<b> - {resource}</b>',
+						'</tpl>',
 					'</tpl>',
 					' <span style="color:grey;font-size:10px">{date}</span>',
 					'<br/>{text}',
@@ -442,7 +452,7 @@ Ext.define('widgets.line_graph.line_graph' , {
 
 	tooltip_formatter: function() {
 		if(!this.y && this.point && this.point.text){
-			return flag_tootlip_template.applyTemplate(this.point)
+			return flag_tootlip_template.applyTemplate(this.point);
 		}else{
 			var formatter = function(options, value) {
 				if (options.invert)
@@ -1170,6 +1180,8 @@ Ext.define('widgets.line_graph.line_graph' , {
 					text : data[i].output,
 					component: data[i].component,
 					resource: data[i].resource,
+					display_name: data[i].display_name,
+					event_type: data[i].event_type,
 					date: rdr_tstodate(data[i].timestamp),
 					icon: data[i].connector.toLowerCase(),
 					fillColor: state_color,
