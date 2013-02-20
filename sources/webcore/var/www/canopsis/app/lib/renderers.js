@@ -402,20 +402,20 @@ rdr_humanreadable_value = function(value, unit) {
 	if (! unit || unit == undefined) {
 		unit = '';
 	}else {
-
-		if (unit == 'o' || unit == 'MB')
-			multiple = 1024;
-
-		if (unit == 'MB') {
-			unit = 'B';
-			value = value * 1024 * 1024;
+		try{
+			var information = global.sizeTable[unit.toUpperCase()]
+			if(information){
+				multiple = information['multiple']
+				unit = information['unit']
+				value = value * information['pow']
+				//console.log(value)
+			}
+		}catch(err){
+			log.debug(err.message)
 		}
 
-		if (unit == 'ms' || unit == 's') {
-			if (unit == 'ms')
-				value = value / 1000;
+		if (unit == 'S')
 			return rdr_duration(value);
-		}
 	}
 
 	value = rdr_yaxis(value, multiple);

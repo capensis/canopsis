@@ -122,6 +122,22 @@ var global = {
 		'us': _('Microsecond')
 	},
 
+	sizeTable: {
+		'KB':{multiple: 1024, unit:'B', pow: Math.pow(2,10)},
+		'MB':{multiple: 1024, unit:'B', pow: Math.pow(2,20)},
+		'GB':{multiple: 1024, unit:'B', pow: Math.pow(2,30)},
+		'TB':{multiple: 1024, unit:'B', pow: Math.pow(2,40)},
+		'PB':{multiple: 1024, unit:'B', pow: Math.pow(2,50)},
+		'KO':{multiple: 1024, unit:'O', pow: Math.pow(2,10)},
+		'MO':{multiple: 1024, unit:'O', pow: Math.pow(2,20)},
+		'GO':{multiple: 1024, unit:'O', pow: Math.pow(2,30)},
+		'TO':{multiple: 1024, unit:'O', pow: Math.pow(2,40)},
+		'PO':{multiple: 1024, unit:'O', pow: Math.pow(2,50)},
+		'MS':{multiple: 1000, unit:'S', pow: Math.pow(10,-3)},
+		'US':{multiple: 1000, unit:'S', pow: Math.pow(10,-6)},
+		'NS':{multiple: 1000, unit:'S', pow: Math.pow(10,-9)}
+	},
+
 	untranslated: [],
 	dump_untranslated: function(){
 		var dump = ''
