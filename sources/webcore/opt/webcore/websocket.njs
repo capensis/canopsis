@@ -537,7 +537,10 @@ var init_now = function(callback){
 	////////////////// Binding events
 	nowjs.on("connect", function(){
 		var clientId = this.user.clientId
-		log.info(this.now.authId + " connected ("+clientId+")", "nowjs");
+		var authId = this.now.authId 
+		if (authId == undefined)
+			authId = 'Unknown'
+		log.info(authId + " connected ("+clientId+")", "nowjs");
 	});
 
 	nowjs.on("disconnect", function(){

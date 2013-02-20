@@ -19,50 +19,69 @@
 # ---------------------------------
 */
 Ext.define('canopsis.controller.Websocket', {
-    extend: 'Ext.app.Controller',
-
-    views: [],
-    stores: [],
+	extend: 'Ext.app.Controller',
+	
+	views: [],
+	stores: [],
 
 	logAuthor: '[controller][Websocket]',
 
-    autoconnect: true,
-    connected: false,
+	autoconnect: true,
+	connected: false,
 
     subscribe_cache: {},
     auto_resubscribe: true,
 
+	jsLoader: undefined,
+	jsLoaded: false,
+
     init: function() {
 		global.websocketCtrl = this;
+		this.loadLibs();
+    },
 
-		/*if (Ext.isIE)
-			this.autoconnect = false*/
+    loadLibs: function(){
+		if (this.jsLoader)
+			this.jsLoader.destroy();
 
-		if (! Ext.isIE){
-			Ext.fly('nowjs').set({
-					src: global.nowjs.proto + '://' + global.nowjs.hostname + ':' + global.nowjs.port + '/nowjs/now.js'
-				}).on('load', function() {
+		this.jsLoader = new Ext.Element(document.createElement('script'))
+
+		if (Ext.isIE){
+
+			Ext.defer(function(){
+				if (typeof(now) != 'undefined') {
+					this.jsLoaded = true;
 					if (this.autoconnect)
 						this.connect();
-			}, this);
+				}
+			}, 2000, this);
 
 		}else{
-			var elNowjs = document.getElementById('nowjs');
-			elNowjs.setAttribute("src", global.nowjs.proto + '://' + global.nowjs.hostname + ':' + global.nowjs.port + '/nowjs/now.js');
-			Ext.defer(function(){
-				if (this.autoconnect)
-					this.connect();
-			}, 2000, this);
+
+			this.jsLoader.on('load', function() {
+				if (typeof(now) != 'undefined') {
+					this.jsLoaded = true;
+					if (this.autoconnect)
+						this.connect();
+				}
+			}, this, {single: true});
 		}
 
+		this.jsLoader.set({
+			type: "text/javascript",
+			src: global.nowjs.proto + '://' + global.nowjs.hostname + ':' + global.nowjs.port + '/nowjs/now.js'
+		});
 
+
+		document.getElementById('nowjs').insertBefore(this.jsLoader.dom);
     },
 
     connect: function() {
 		log.debug('Connect Websocket ...', this.logAuthor);
 
-		if (typeof(now) == 'undefined') {
-			log.error('Impossible to load NowJS Client.', this.logAuthor);
+		if (! this.jsLoaded) {
+			log.error('NowJS Client not loaded. Try to load it.', this.logAuthor);
+			this.loadLibs();
 			return;
 		}
 
