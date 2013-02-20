@@ -202,6 +202,9 @@ function createApplication(account){
 	if (Ext.get('auth'))
 		Ext.get('auth').remove();
 
+	if (global.account.id == undefined)
+		global.account.id = global.account._id;
+
 	log.debug("Loading locale ...", "[app]");
 	
 	var locale = global.account['locale']
