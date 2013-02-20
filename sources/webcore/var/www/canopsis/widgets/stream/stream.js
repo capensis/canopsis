@@ -19,6 +19,13 @@
 # ---------------------------------
 */
 
+unavailableMessageHTML = Ext.create('Ext.XTemplate',
+	'<div>',
+    	'<span style="vertical-align: middle;text-align:center;">{text}</span>',
+	'</div>',
+	{ compiled: true }
+);
+
 Ext.define('widgets.stream.stream' , {
 	extend: 'canopsis.lib.view.cwidget',
 
@@ -50,7 +57,7 @@ Ext.define('widgets.stream.stream' , {
 	amqp_queue: 'alerts',
 	hard_state_only: true,
 
-	compact: true,
+	compact: true, 
 
 	initComponent: function() {
 		if (this.fullscreenMode) {
@@ -153,10 +160,29 @@ Ext.define('widgets.stream.stream' , {
 		if (global.websocketCtrl.connected) {
 			this.startStream();
 		}else {
+			this.displayUnavailableMessage()
 			global.websocketCtrl.on('transport_up', function() {
 				this.startStream();
 			}, this, {single: true});
 		}
+	},
+
+	displayUnavailableMessage: function(){
+		this.wcontainer.add({
+			xtype:'panel',
+			anchor:'100% 100%',
+			border: 0,
+			layout: {
+				align: 'middle',
+				pack: 'center',
+				type: 'hbox'
+			},
+			items:[{
+				xtype:'panel',
+				unstyled: true,
+				html:unavailableMessageHTML.apply({text:_('Websocket Unavailable')})
+			}]
+		})
 	},
 
 	startStream: function() {
