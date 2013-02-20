@@ -188,15 +188,27 @@ class camqp(threading.Thread):
 					routing_key = None
 					if qsettings['routing_keys']:
 						routing_key = qsettings['routing_keys'][0]
+
+					exchange = self.get_exchange(qsettings['exchange_name'])
 					
 					self.logger.debug("   + exchange: '%s', routing_key: '%s', exclusive: %s, auto_delete: %s, no_ack: %s" % (qsettings['exchange_name'], routing_key, qsettings['exclusive'], qsettings['auto_delete'], qsettings['no_ack']))
 					qsettings['queue'] = Queue(queue_name,
-											exchange = self.get_exchange(qsettings['exchange_name']),
+											exchange = exchange,
 											routing_key = routing_key,
 											exclusive = qsettings['exclusive'],
 											auto_delete = qsettings['auto_delete'],
-											no_ack = qsettings['no_ack'])
-					
+											no_ack = qsettings['no_ack'],
+											channel=self.chan)
+
+					qsettings['queue'].declare()
+
+					if len(qsettings['routing_keys']) > 1:
+						self.logger.debug("   + Bind on all routing keys")
+						for index, routing_key in enumerate(qsettings['routing_keys']):
+							if index != 0:
+								self.logger.debug("     + routing_key: '%s'" % routing_key)
+								qsettings['queue'].bind_to(exchange=exchange, routing_key=routing_key)
+
 				if not qsettings['consumer']:
 					self.logger.debug("   + Create Consumer")
 					qsettings['consumer'] = self.conn.Consumer(qsettings['queue'], callbacks=[ qsettings['callback'] ])
