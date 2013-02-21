@@ -27,10 +27,23 @@ import msgpack
 packer = None
 unpacker = None
 
+import calendar
 from datetime import datetime
+from dateutil.relativedelta import *
+
+intervalToRelativeDelta = {
+	60:relativedelta(minutes=+1),
+	3600:relativedelta(hours=+1),
+	86400:relativedelta(days=+1),
+	604800:relativedelta(weeks=+1),
+	2629800:relativedelta(months=+1),
+	31557600:relativedelta(years=+1)
+}
 
 
 #### Utils fn
+def datetimeToTimestamp(_date):
+	return calendar.timegm(_date.timetuple())
 
 def get_overlap(a, b):
 	return max(0, min(a[1], b[1]) - max(a[0], b[0]))
@@ -208,9 +221,6 @@ def aggregate(points, max_points=None, interval=None, atype=None, agfn=None, mod
 				
 	if max_points != None:
 		 max_points = int(max_points)
-
-	if interval != None:
-		 interval = int(interval)
 	
 	if not atype:
 		atype = 'MEAN'
@@ -261,24 +271,47 @@ def aggregate(points, max_points=None, interval=None, atype=None, agfn=None, mod
 		stop = points[len(points)-1][0]
 		
 		# modulo interval
-		start -= start % interval
-		stop  -= (stop  % interval) + interval
-		stop  += interval
+		start_datetime = datetime.utcfromtimestamp(start)-relativedelta(hour=0,minute=0,second=0)
+		stop_datetime = datetime.utcfromtimestamp(stop)+relativedelta(days=+1,hour=0,minute=0,second=0)
+	
+		start = datetimeToTimestamp(start_datetime)
+		stop = datetimeToTimestamp(stop_datetime)
+
+		logger.debug('start is: %s' %  datetime.utcfromtimestamp(start))
+		logger.debug('stop is: %s' %  datetime.utcfromtimestamp(stop))
+
+		timestamp_list = []
+
+		#try de get real interval
+		if interval in intervalToRelativeDelta:
+			logger.debug('   + Use Smart time length (real number of day in month/years)')
+			while start_datetime < stop_datetime:
+				timestamp_list.append(datetimeToTimestamp(start_datetime))
+				start_datetime = start_datetime + intervalToRelativeDelta[interval]
+		else:
+			timestamp_list = range(start, stop+interval, interval)
 		
+		#logger.debug(timestamp_list)
+
+		#initialize variable for loop
 		prev_point = None
 		i=0
-		
 		points_to_aggregate = []
 		last_point = None
 		
-		for timestamp in range(start, stop+interval, interval):
-			logger.debug("   + Interval: %s -> %s" % (datetime.utcfromtimestamp(timestamp), datetime.utcfromtimestamp(timestamp+interval)))
+		for index,timestamp in enumerate(timestamp_list):
+			try:
+				next_timestamp = timestamp_list[index+1]
+			except:
+				next_timestamp = stop
+
+			logger.debug("   + Interval: %s -> %s" % (datetime.utcfromtimestamp(timestamp), datetime.utcfromtimestamp(next_timestamp)))
 			
 			while i < len(points):
-				if points[i][0] >= timestamp and points[i][0] < (timestamp+interval):
+				if points[i][0] >= timestamp and points[i][0] < (next_timestamp):
 					points_to_aggregate.append(points[i])
 							
-				if points[i][0] >= (timestamp+interval):
+				if points[i][0] >= (next_timestamp):
 					break
 					
 				i+=1
@@ -442,3 +475,59 @@ def fill_interval(points, start, stop, interval):
 	#	output_list[len(output_list)-1][0] = int(time.time())
 		
 	return output_list
+
+
+### aggregation serie function
+def aggregate_series(series, fn, interval=None):
+	
+	# Todo calcul interval
+	if not interval:
+		interval = 300 * 1000
+
+	# Find start and stop ts
+	start = None
+	stop = None
+	for serie in series:
+		timestamps = [point[0] for point in serie]
+		smin = min(timestamps)
+		smax = max(timestamps)
+		if start == None or smin < start:
+			start = smin
+		if stop == None or smax > stop:
+			stop = smax
+
+	# Align timestamps
+	nseries = []
+	for serie in series:
+		ts = start
+		index = 0
+		nserie = []
+		last_value = None
+
+		while ts <= stop:
+			while index < len(serie) and serie[index][0] <= ts:
+				last_value = serie[index][1]
+				index += 1
+
+			nserie.append( (ts, last_value) )
+			ts+=interval
+
+		nseries.append(nserie)
+
+	# Do operations
+	result = []
+	ts = start
+	i = 0
+	while ts <= stop:
+		points = []
+		for serie in nseries:
+			if serie[i][1]:
+				points.append(serie[i][1])
+
+		value = fn(points)
+		result.append((ts, value))
+
+		i  += 1
+		ts += interval
+
+	return result
