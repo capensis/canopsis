@@ -71,8 +71,6 @@ Ext.define('canopsis.controller.Websocket', {
 			type: "text/javascript",
 			src: global.nowjs.proto + '://' + global.nowjs.hostname + ':' + global.nowjs.port + '/nowjs/now.js'
 		});
-		console.log(document.getElementById('nowjs'))
-		console.log(this.jsLoader.dom)
 
 		document.getElementById('nowjs').appendChild(this.jsLoader.dom);
     },
