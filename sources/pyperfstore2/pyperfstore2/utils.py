@@ -200,6 +200,45 @@ def parse_dst(points, dtype, first_point=[]):
 	
 	return points
 
+def roundTime(date, interval):
+		date = date.replace(second=0, microsecond=0)
+
+		if (interval >= 60*60): # hour
+			date = date.replace(minute=0)
+		if (interval >= 60*60*24): # day
+			date = date.replace(hour=0)
+		if (interval >= 60*60*24*28): # month
+			date = date.replace(day=1)
+		if (interval >= 60*60*24*28*364): # year
+			date = date.replace(month=1)
+
+		return date
+
+def getTimeSteps(start, stop, interval):
+	logger.debug('getTimeSteps:')
+	timeSteps = []
+
+	start_datetime 	= datetime.utcfromtimestamp(start)
+	stop_datetime 	= datetime.utcfromtimestamp(stop)
+
+	#try de get real interval
+	if interval in intervalToRelativeDelta.keys():
+		logger.debug('   + Use Smart time length (real number of day in month/years)')
+		
+		interval = intervalToRelativeDelta[interval]
+
+		date = start_datetime
+		while date < stop_datetime:
+			timeSteps.append(datetimeToTimestamp(date))
+			date += interval
+			
+	else:
+		logger.debug('   + Use interval')
+		timeSteps = range(start, stop+interval, interval)
+
+	logger.debug(timeSteps)
+
+	return timeSteps
 
 def aggregate(points, max_points=None, interval=None, atype=None, agfn=None, mode=None):
 	
@@ -270,38 +309,29 @@ def aggregate(points, max_points=None, interval=None, atype=None, agfn=None, mod
 		start = points[0][0]
 		stop = points[len(points)-1][0]
 		
-		# modulo interval
-		start_datetime = datetime.utcfromtimestamp(start)-relativedelta(hour=0,minute=0,second=0)
-		stop_datetime = datetime.utcfromtimestamp(stop)+relativedelta(days=+1,hour=0,minute=0,second=0)
+		# Find start time
+		start_datetime = datetime.utcfromtimestamp(start)
+		start_datetime = roundTime(start_datetime, interval)
+
+		stop_datetime = datetime.utcfromtimestamp(stop)
 	
 		start = datetimeToTimestamp(start_datetime)
 		stop = datetimeToTimestamp(stop_datetime)
 
-		logger.debug('start is: %s' %  datetime.utcfromtimestamp(start))
-		logger.debug('stop is: %s' %  datetime.utcfromtimestamp(stop))
+		logger.debug(' + Start: %s' %  datetime.utcfromtimestamp(start))
+		logger.debug(' + Stop:  %s' %  datetime.utcfromtimestamp(stop))
 
-		timestamp_list = []
+		timeSteps = getTimeSteps(start, stop, interval)
 
-		#try de get real interval
-		if interval in intervalToRelativeDelta:
-			logger.debug('   + Use Smart time length (real number of day in month/years)')
-			while start_datetime < stop_datetime:
-				timestamp_list.append(datetimeToTimestamp(start_datetime))
-				start_datetime = start_datetime + intervalToRelativeDelta[interval]
-		else:
-			timestamp_list = range(start, stop+interval, interval)
-		
-		#logger.debug(timestamp_list)
-
-		#initialize variable for loop
+		#initialize variables for loop
 		prev_point = None
 		i=0
 		points_to_aggregate = []
 		last_point = None
 		
-		for index,timestamp in enumerate(timestamp_list):
+		for index, timestamp in enumerate(timeSteps):
 			try:
-				next_timestamp = timestamp_list[index+1]
+				next_timestamp = timeSteps[index+1]
 			except:
 				next_timestamp = stop
 
@@ -457,18 +487,35 @@ def fill_interval(points, start, stop, interval):
 	if((stop - start) < interval):
 		logger.debug('Aggregation interval is higher than interval itself,nothing done')
 		return points
-	
-	#list points to dict points
-	dict_points = {}	
-	for point in points:
-		dict_points[point[0]] = point
+
+	start_datetime = datetime.utcfromtimestamp(start)
+	start_datetime = roundTime(start_datetime, interval)
+	start = datetimeToTimestamp(start_datetime)
+
+	logger.debug(' + Start: %s' %  datetime.utcfromtimestamp(start))
+	logger.debug(' + Stop:  %s' %  datetime.utcfromtimestamp(stop))
+
+	timeSteps = getTimeSteps(start, stop, interval)
+
+	for index, timestamp in enumerate(timeSteps):
+		try:
+			next_timestamp = timeSteps[index+1]
+		except:
+			next_timestamp = stop
 	
 	output_list = []
-	for i in range(start, stop, interval):
-		try:
-			output_list.append(dict_points[i])
-		except:
-			output_list.append([i,0])
+	points_index = 0
+	for index, timestamp in enumerate(timeSteps):
+		if points_index >= len(points):
+			break
+
+		point = points[points_index]
+
+		if timestamp == point[0]:
+			output_list.append(point)
+			points_index += 1
+		else:
+			output_list.append([timestamp, 0])
 	
 	#check last timestamp
 	#if len(output_list) and output_list[len(output_list)-1][0] > int(time.time()):

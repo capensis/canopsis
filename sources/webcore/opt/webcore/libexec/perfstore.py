@@ -530,14 +530,14 @@ def perfstore_get_values(_id, start=None, stop=None, aggregate_method=None, aggr
 		return output
 	
 	if aggregate_interval and aggregate_timemodulation:
-		start -= start % aggregate_interval
-		stop -= (stop % aggregate_interval)
-		stop += aggregate_interval
+		#start -= start % aggregate_interval
+		#stop -= (stop % aggregate_interval)
+		#stop += aggregate_interval
 
-		logger.debug('Fix range date:')
+		#logger.debug('Fix range date:')
 		aggregate_max_points = int( round((stop - start) / aggregate_interval + 0.5) )
-		logger.debug(" + start:       %s" % start)
-		logger.debug(" + stop:        %s" % stop)
+		#logger.debug(" + start:       %s" % start)
+		#logger.debug(" + stop:        %s" % stop)
 	
 	try:
 		points = []
@@ -556,24 +556,24 @@ def perfstore_get_values(_id, start=None, stop=None, aggregate_method=None, aggr
 		else:
 			
 			(meta, points) = manager.get_points(	_id=_id,
-												tstart=start,
-												tstop=stop,
-												return_meta=True)
+													tstart=start,
+													tstop=stop,
+													return_meta=True)
 
 			# For UI display
 			if len(points) == 0 and meta['type'] == 'COUNTER':
 				points = [(start, 0), (stop, 0)]
 				
 			points =  pyperfstore2.utils.aggregate(	points=points,
-												max_points=aggregate_max_points,
-												interval=aggregate_interval,
-												atype=aggregate_method)
+													max_points=aggregate_max_points,
+													interval=aggregate_interval,
+													atype=aggregate_method)
 	except Exception, err:
 		logger.error("Error when getting points: %s" % err)
 	
 	
 	if aggregate_interval and aggregate_timemodulation:
-		points = pyperfstore2.utils.fill_interval(points,start,stop,aggregate_interval)
+		points = pyperfstore2.utils.fill_interval(points, start, stop, aggregate_interval)
 	
 	if points and meta:
 		points = [[point[0] * 1000, point[1]] for point in points]
