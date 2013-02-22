@@ -297,14 +297,16 @@ Ext.define('widgets.weather.weather' , {
 			}
 
 			//------------------create config----------------
-			var config = {
-				data: node._event,
-				link: this.external_link_dict[_id],
-				bg_color: (i % 2) ? this.bg_impair_color : this.bg_pair_color
-			};
-			var weather = Ext.create('widgets.weather.brick', Ext.Object.merge(config, this.base_config));
-			this.wcontainer.add(weather);
-			log.debug('Widget populated',this.logAuthor)
+			if(node && node._event){
+				var config = {
+					data: node._event,
+					link: this.external_link_dict[_id],
+					bg_color: (i % 2) ? this.bg_impair_color : this.bg_pair_color
+				};
+				var weather = Ext.create('widgets.weather.brick', Ext.Object.merge(config, this.base_config));
+				this.wcontainer.add(weather);
+				log.debug('Widget populated',this.logAuthor)
+			}
 		}
 	},
 
