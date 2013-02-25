@@ -50,7 +50,7 @@ def render_pdf(filename=None, viewname=None, starttime=None, stoptime=None, acco
 	else:
 		stoptime = time.time()
 	if starttime:
-		starttime = starttime/1000
+		starttime = cleanTimestamp(starttime)
 	else:
 		startime = 0
 
@@ -84,6 +84,10 @@ def render_pdf(filename=None, viewname=None, starttime=None, stoptime=None, acco
 	except:
 		raise Exception("Impossible to find view '%s' with account '%s'" % (viewname, account._id))
 
+	#set start time if needed
+	if starttime:
+		starttime = stoptime - starttime 
+
 	#set filename
 	if filename is None:
 		toDate = date.fromtimestamp(int(stoptime) )
@@ -93,10 +97,6 @@ def render_pdf(filename=None, viewname=None, starttime=None, stoptime=None, acco
 			filename = '%s_From_%s_To_%s.pdf' % (view_record.name, fromDate, toDate) 
 		else:
 			filename = '%s_%s.pdf' % (view_record.name, toDate) 
-
-	#set start time if needed
-	if starttime:
-		starttime = stoptime - starttime 
 		
 	ascii_filename = hashlib.md5(filename.encode('ascii', 'ignore')).hexdigest()
 	

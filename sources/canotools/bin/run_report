@@ -113,7 +113,7 @@ if(time_interval):
 
 #####launch report
 
-request = urllib2.Request('http://%s/reporting/%s/%s/%s' % (server,tsStart*1000,tsStop*1000,args.view_id), '')
+request = urllib2.Request('http://%s/reporting/%s/%s/%s' % (server,tsStart,tsStop,args.view_id), '')
 r = opener.open(request)
 json_output = json.loads(r.read())
 
