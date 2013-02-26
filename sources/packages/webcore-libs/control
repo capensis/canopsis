@@ -2,7 +2,7 @@
 
 NAME="webcore-libs"
 VERSION=0.3
-RELEASE=3
+RELEASE=4
 DESCRIPTION=""
 REQUIRES="canohome python canolibs webcore"
 

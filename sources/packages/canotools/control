@@ -2,7 +2,7 @@
 
 NAME="canotools"
 VERSION=0.4
-RELEASE=1
+RELEASE=2
 DESCRIPTION=""
 REQUIRES="canohome python canolibs"
 
