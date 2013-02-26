@@ -407,24 +407,28 @@ Ext.define('canopsis.view.Mainbar.Bar' , {
 							text: _('Documentation'),
 							onClick: function() { window.open('https://github.com/capensis/canopsis-doc/wiki', '_blank'); }
 						},{
-							iconCls: 'icon-community',
-							text: _("Community"),
-							onClick: function() { window.open('http://www.canopsis.org', '_blank'); }
+							iconCls: 'icon-forum',
+							text: _('Forum'),
+							onClick: function() { window.open('http://forums.monitoring-fr.org/index.php/board,127.0.html', '_blank'); }
 						},{
 							iconCls: 'icon-issue',
 							text: _("Report a issue"),
 							onClick: function() { window.open('https://github.com/capensis/canopsis/issues', '_blank'); }
 						},{
-							iconCls: 'icon-github',
-							text: _('Fork Me') + " !",
-							onClick: function() { window.open('https://github.com/capensis/canopsis', '_blank'); }
-						},{
+							iconCls: 'icon-community',
+							text: _("Community"),
+							onClick: function() { window.open('http://www.canopsis.org', '_blank'); }
+						},'-',{
 							iconCls: 'icon-mainbar-sources',
 							text: '<b>Commit</b>: ' + global.commit.substr(0, 10),
 							onClick: function() {
 								if (global.commit)
 									window.open('https://github.com/capensis/canopsis/commit/' + global.commit, '_blank');
 							}
+						},{
+							iconCls: 'icon-github',
+							text: _('Fork Me') + " !",
+							onClick: function() { window.open('https://github.com/capensis/canopsis', '_blank'); }
 						}
 					]
 				}

@@ -66,6 +66,10 @@
     background-image: url(../images/icons/world.png) !important; 
 }
 
+.icon-forum { 
+    background-image: url(../images/icons/comments.png) !important; 
+}
+
 .icon-github { 
     background-image: url(../images/github-icon.png) !important; 
 }
@@ -83,7 +87,7 @@
 }
 
 .icon-documentation { 
-    background-image: url(../images/icons/book.png) !important; 
+    background-image: url(../images/icons/book_open.png) !important; 
 } 
 
 .icon-user { 
