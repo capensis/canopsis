@@ -4,6 +4,18 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Language: en\n"
 
+msgid "Documentation"
+msgstr "Documentation"
+
+msgid "Community"
+msgstr "Community"
+
+msgid "Report a issue"
+msgstr "Report a issue"
+
+msgid "Fork Me"
+msgstr "Fork Me"
+
 msgid "Home view"
 msgstr "Home view"
 

@@ -325,13 +325,6 @@ Ext.define('canopsis.view.Mainbar.Bar' , {
 				iconCls: 'icon-access',
 				text: _('Authentification key'),
 				action: 'authkey'
-			},{
-				iconCls: 'icon-mainbar-sources',
-				text: '<b>commit</b>: ' + global.commit.substr(0, 10),
-				onClick: function() {
-					if (global.commit)
-						window.open('https://github.com/capensis/canopsis/commit/' + global.commit, '_blank');
-				}
 			}
 		]);
 
@@ -394,13 +387,46 @@ Ext.define('canopsis.view.Mainbar.Bar' , {
 					items: menu_preferences
 				}
 
-			},'-', {
+			},'-',{
 				iconCls: 'icon-preferences',
 				width: 36,
 				menu: {
 					name: 'Preferences',
 					showSeparator: true,
 					items: menu_configuration
+				}
+			},{
+				iconCls: 'icon-about',
+				width: 36,
+				menu: {
+					name: 'About',
+					showSeparator: true,
+					items: [
+						{
+							iconCls: 'icon-documentation',
+							text: _('Documentation'),
+							onClick: function() { window.open('https://github.com/capensis/canopsis-doc/wiki', '_blank'); }
+						},{
+							iconCls: 'icon-community',
+							text: _("Community"),
+							onClick: function() { window.open('http://www.canopsis.org', '_blank'); }
+						},{
+							iconCls: 'icon-issue',
+							text: _("Report a issue"),
+							onClick: function() { window.open('https://github.com/capensis/canopsis/issues', '_blank'); }
+						},{
+							iconCls: 'icon-github',
+							text: _('Fork Me') + " !",
+							onClick: function() { window.open('https://github.com/capensis/canopsis', '_blank'); }
+						},{
+							iconCls: 'icon-mainbar-sources',
+							text: '<b>Commit</b>: ' + global.commit.substr(0, 10),
+							onClick: function() {
+								if (global.commit)
+									window.open('https://github.com/capensis/canopsis/commit/' + global.commit, '_blank');
+							}
+						}
+					]
 				}
 			},{
 				iconCls: (global.websocketCtrl.connected) ? 'icon-bullet-green' : 'icon-bullet-red',

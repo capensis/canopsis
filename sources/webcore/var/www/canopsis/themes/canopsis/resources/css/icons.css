@@ -62,8 +62,28 @@
   cursor: pointer;
 }
 
+.icon-about { 
+    background-image: url(../images/icons/world.png) !important; 
+}
+
+.icon-github { 
+    background-image: url(../images/github-icon.png) !important; 
+}
+
+.icon-issue { 
+    background-image: url(../images/icons/bug.png) !important; 
+}
+
+.icon-community { 
+    background-image: url(../images/icons/group.png) !important; 
+}
+
 .icon-loading { 
     background-image: url(../images/ajax-loader.gif) !important; 
+}
+
+.icon-documentation { 
+    background-image: url(../images/icons/book.png) !important; 
 } 
 
 .icon-user { 
