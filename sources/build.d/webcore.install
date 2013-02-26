@@ -7,6 +7,4 @@ function build(){
 function install(){
 	install_basic_source $NAME
 	echo "global.commit='$(git log | head -1 | cut -d ' ' -f2)'" > $PREFIX/var/www/canopsis/commit.js
-	cd $SRC_PATH/../
-	tools/webcore_minifier.py
 }
