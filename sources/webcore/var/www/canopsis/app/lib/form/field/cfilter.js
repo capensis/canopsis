@@ -278,11 +278,11 @@ Ext.define('cfilter.object' , {
 							else
 								return true
 					},this)
-					this.operatorChange(undefined,this.getOperatorRecord())
+					this.showOnValueType(this.getValueType())
 				}
 			}else{
 				this.operatorStore.clearFilter(false)
-				this.operatorChange(undefined,this.getOperatorRecord())
+				this.showOnValueType(this.getValueType())
 			}	
 		}
 	},
@@ -299,7 +299,14 @@ Ext.define('cfilter.object' , {
 			this.innerCfilter = true
 	},
 
-	getOperatorRecord: function(){
+	getFieldRecord: function(){
+		var recordId = this.fieldStore.find('operator',this.cfilterField.getValue())
+		if(recordId == -1)
+			return undefined
+		return this.fieldStore.getAt(recordId)
+	},
+
+	getOperatorRecord:function(){
 		var recordId = this.operatorStore.find('operator',this.cfilterOperator.getValue())
 		return this.operatorStore.getAt(recordId)
 	},
@@ -337,6 +344,23 @@ Ext.define('cfilter.object' , {
 
 	},
 
+	//this function aimed to determine final type of value (string/bool...)
+	//first we check field type (timestamp need date, then operator type ($exist need bool)
+	getValueType: function(){
+		var operatorRecord = this.getOperatorRecord()
+		var fieldRecord = this.getFieldRecord()
+
+		var fieldType = undefined
+		if(fieldRecord)
+			var fieldType = fieldRecord.get('type')
+
+		if(!fieldType || fieldType == 'all')
+			return operatorRecord.get('type')[0]
+
+		return fieldType
+		
+	},
+
 	showOnValueType: function(type){
 		var elements = this.cfilterFieldElements
 		for(var i=0; i < elements.length; i++)
@@ -356,7 +380,60 @@ Ext.define('cfilter.object' , {
 		}
 	},
 
+	//return the value of the elements corresponding of given type (ex:"string/bool/date ...")
+	getValueByElementType: function(type){
+		var elements = this.cfilterFieldElements
+		for(var i=0; i < elements.length; i++)
+			if(elements[i].cfilterType == type)
+				if(elements[i].getValue)
+					return elements[i].getValue()
+	},
+
 	getValue: function(){
+		var fieldRecord = this.getFieldRecord()
+		var operatorRecord = this.getOperatorRecord()
+		var isIsNotValue = this.down('combobox[name=cfilterIsCombo]').getValue()
+
+		var inputValue = this.getValueByElementType(this.getValueType())
+
+		var output = {}
+
+		//if custom field input (ex: not timestamp/event_type ..)
+		// if(!fieldRecord)
+		// 	log.debug('undefined')
+
+		//if contained another cfilter
+		if(fieldRecord && fieldRecord.get('type') == 'object'){
+			var listCfilterResult = []
+			var panel = this.down('panel[name=lowerPanel]')
+			for(var i=0; i < panel.items.items.length; i++)
+				listCfilterResult.push(panel.items.items[i].getValue())
+			output[this.cfilterField.getValue()] = listCfilterResult
+			return output
+		}
+
+		//get values
+		var values = {}
+		var operator = operatorRecord.get('operator')
+
+		if(operatorRecord.get('operator') == '$eq')
+			values = inputValue
+		else
+			values[operator] = inputValue
+
+		//manage negation
+		if(isIsNotValue == '$not')
+			if(operator == '$eq')
+				values = {'$ne': values};
+			else
+				values = {'$not': values};
+
+		output[this.cfilterField.getValue()] = values
+
+		// console.log('---------------------')
+		// console.log(Ext.encode(output))
+
+		return output
 	},
 
 	setValue: function(){
