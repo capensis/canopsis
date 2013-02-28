@@ -105,6 +105,9 @@ Ext.define('cfilter.object' , {
 	extend: 'Ext.panel.Panel',
 	border: false,
 	margin: 5,
+	autoScroll:true,
+
+	initialCfilter: false,
 
 	items: [{
 		name:'upperPanel',
@@ -112,12 +115,12 @@ Ext.define('cfilter.object' , {
 		layout: 'hbox',
 		border: false,
 		items:[{
-			name: 'cfilterAddButton',
 			xtype:'button',
-			iconCls: 'icon-add',
-			margin: '0 0 0 5',
-			hidden: true,
-			tooltip: _('Add new field/condition')
+			name:'cfilterRemoveButton',
+			iconCls: 'icon-cancel',
+			margin: '0 5 0 0',
+			width: 24,
+			tooltip: _('Remove this from list of value')
 		},{
 			name:'cfilterField',
 			xtype:'combobox',
@@ -156,7 +159,6 @@ Ext.define('cfilter.object' , {
 			displayField: 'text',
 			isFormField: false,
 			valueField: 'operator',
-			//value: '$eq',
 			editable: false,
 			margin: '0 0 0 5',
 			store: {
@@ -227,19 +229,33 @@ Ext.define('cfilter.object' , {
 	initComponent: function() {
 		this.logAuthor = '[' + this.id + ']';
 		this.callParent(arguments);
-			
+
+		//stock cfilterField elements
+		this.cfilterFieldElements = [this.down('panel[name=lowerPanel]')]
+		var upperPanelId = this.down('panel[name=upperPanel]').id
+		this.cfilterFieldElements = Ext.Array.union(
+			this.cfilterFieldElements,
+			Ext.ComponentQuery.query('#' + upperPanelId + ' > *[cfilterField]')
+		)
+		
+		//stock frequently used element
 		this.cfilterField = this.down('combobox[name=cfilterField]')
 		this.cfilterOperator = this.down('combobox[name=cfilterOperator]')
 		this.fieldStore = this.cfilterField.getStore()
 		this.operatorStore = this.cfilterOperator.getStore()
 
+		//prepare cfilter
 		this.fieldStore.loadData(this.fields_array)
 		this.operatorStore.loadData(this.operators_array)
 		this.cfilterOperator.setValue('$eq')
+		if(this.initialCfilter)
+			this.down('button[name=cfilterRemoveButton]').hide()
 
+		//bind events
 		this.cfilterField.on('select',this.fieldChange,this)
 		this.cfilterOperator.on('select',this.operatorChange,this)
-
+		this.down('button[name=cfilterAddButton]').on('click',this.createInnerCfilter,this)
+		this.down('button[name=cfilterRemoveButton]').on('click',function() {this.destroy()},this)
 	},
 
 	fieldChange: function(combo,records){
@@ -247,12 +263,10 @@ Ext.define('cfilter.object' , {
 		var record = records[0]
 		var allowed_type = record.get('type')
 
-		console.log(allowed_type)
-
 		if(allowed_type){
 			if(allowed_type != 'all'){
 				if(allowed_type == 'object'){
-					if(!this.innerCfilter)
+					if(!this.haveInnerCfilter)
 						this.createInnerCfilter()
 					this.showOnValueType('object')
 				}else{
@@ -264,57 +278,81 @@ Ext.define('cfilter.object' , {
 							else
 								return true
 					},this)
-					this.showOnValueType(allowed_type)
+					this.operatorChange(undefined,this.getOperatorRecord())
 				}
 			}else{
 				this.operatorStore.clearFilter(false)
-				this.showOnValueType('string')
+				this.operatorChange(undefined,this.getOperatorRecord())
 			}	
 		}
 	},
 
 	createInnerCfilter: function(){
-		this.innerCfilter = Ext.create('cfilter.object',{fields_array:this.fields_array,operators_array:this.operators_array})
-		this.down('panel[name=lowerPanel]').add(this.innerCfilter)
+		var cfilter = Ext.create('cfilter.object',{
+			fields_array:this.fields_array,
+			operators_array:this.operators_array
+		})
+
+		this.down('panel[name=lowerPanel]').add(cfilter)
+
+		if(!this.innerCfilter)
+			this.innerCfilter = true
 	},
 
-	operatorChange: function(combo,records){
+	getOperatorRecord: function(){
+		var recordId = this.operatorStore.find('operator',this.cfilterOperator.getValue())
+		return this.operatorStore.getAt(recordId)
+	},
+
+	operatorChange: function(combo,record_or_records){
 		log.debug('Operator changed',this.logAuthor)
 
-		//get needed variable
-		var operatorRecord = records[0]
+		if(Ext.isArray(record_or_records))
+			var operatorRecord = record_or_records[0]
+		else
+			var operatorRecord = record_or_records
+
 		var operatorRecordType = operatorRecord.get('type')
 
 		var fieldRecord_index = this.fieldStore.find('operator',this.cfilterField.getValue())
 		if(fieldRecord_index != -1){
 			var fieldRecord = this.fieldStore.getAt(fieldRecord_index)
 			var fieldRecordType = fieldRecord.get('type')
-
-			
-			if(fieldRecordType && fieldRecordType == 'all')
-				//IF field doesn't require specific value (ex: "custom field")
-				if(operatorRecord.get('array'))
-					log.debug('array')
-				else
-					//WARNING CLEAN THAT ----
-					this.showOnValueType(operatorRecordType[0])
-			else
-				//field require specif value, like "timestamp" who need date
-				this.showOnValueType(fieldRecordType)
+		}else{
+			//WARNING CLEAN THAT ----
+			this.showOnValueType(operatorRecordType[0])
+			return
 		}
+
+		if(fieldRecordType == 'all')
+			//IF field doesn't require specific value (ex: "custom field")
+			if(operatorRecord.get('array'))
+				log.debug('array')
+			else
+				//WARNING CLEAN THAT ----
+				this.showOnValueType(operatorRecordType[0])
+		else
+			//field require specif value, like "timestamp" who need date
+			this.showOnValueType(fieldRecordType)
+
 	},
 
 	showOnValueType: function(type){
-		var elements = Ext.ComponentQuery.query('#' + this.id + ' > *[cfilterField]')
-		for(var i=0; i < elements.length; i++){
-			console.log(elements[i].cfilterType + '  '+ type)
-			if(elements[i].cfilterType == type){
-				console.log('show')
+		var elements = this.cfilterFieldElements
+		for(var i=0; i < elements.length; i++)
+			if(elements[i].cfilterType == type)
 				elements[i].show()
-			}else{
-				console.log('hide')
+			else
 				elements[i].hide()
-			}
+
+		if(type =='object'){
+			this.down('button[name=cfilterAddButton]').show()
+			this.down('combobox[name=cfilterIsCombo]').hide()
+			this.cfilterOperator.hide()
+		}else{
+			this.down('button[name=cfilterAddButton]').hide()
+			this.down('combobox[name=cfilterIsCombo]').show()
+			this.cfilterOperator.show()
 		}
 	},
 
@@ -425,7 +463,7 @@ Ext.define('canopsis.lib.form.field.cfilter' , {
 			fields_array: this.operator_store,
 			operators_array: this.sub_operator_store,
 			opt_remove_button: false,
-			start_with_and: false,
+			initialCfilter: true,
 			flex:1
 		});
 
