@@ -366,7 +366,7 @@ Ext.define('canopsis.lib.view.cgrid' , {
 		this.callParent(arguments);
 
 		// Load Store if not loaded
-		if (this.store){
+		if (this.store && this.store.proxy.url){
 			log.debug("Store Loaded: " + this.store.loaded, this.logAuthor)
 			if (! this.store.loaded && ! this.store.autoLoad)
 				this.store.load();
