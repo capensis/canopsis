@@ -94,7 +94,10 @@ def clean_message(body, msg):
 
 	if not event.get("timestamp", None):
 		event["timestamp"] = int(time.time())
-		
+
+	if not event.get("state_type", None):
+		event["state_type"] = 1
+
 	return event
 
 def on_event(body, msg):
