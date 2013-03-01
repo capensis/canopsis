@@ -108,6 +108,7 @@ Ext.define('cfilter.object' , {
 	autoScroll:true,
 
 	initialCfilter: false,
+	filter: false,
 
 	items: [{
 		name:'upperPanel',
@@ -256,6 +257,10 @@ Ext.define('cfilter.object' , {
 		this.cfilterOperator.on('select',this.operatorChange,this)
 		this.down('button[name=cfilterAddButton]').on('click',this.createInnerCfilter,this)
 		this.down('button[name=cfilterRemoveButton]').on('click',function() {this.destroy()},this)
+
+		//set data if existing
+		if(this.filter)
+			this.setValue(this.filter)
 	},
 
 	fieldChange: function(combo,records){
@@ -287,10 +292,11 @@ Ext.define('cfilter.object' , {
 		}
 	},
 
-	createInnerCfilter: function(){
+	createInnerCfilter: function(data){
 		var cfilter = Ext.create('cfilter.object',{
 			fields_array:this.fields_array,
-			operators_array:this.operators_array
+			operators_array:this.operators_array,
+			filter:data
 		})
 
 		this.down('panel[name=lowerPanel]').add(cfilter)
@@ -392,15 +398,11 @@ Ext.define('cfilter.object' , {
 	getValue: function(){
 		var fieldRecord = this.getFieldRecord()
 		var operatorRecord = this.getOperatorRecord()
+		var operator = operatorRecord.get('operator')
 		var isIsNotValue = this.down('combobox[name=cfilterIsCombo]').getValue()
-
 		var inputValue = this.getValueByElementType(this.getValueType())
-
 		var output = {}
-
-		//if custom field input (ex: not timestamp/event_type ..)
-		// if(!fieldRecord)
-		// 	log.debug('undefined')
+		var values = {}
 
 		//if contained another cfilter
 		if(fieldRecord && fieldRecord.get('type') == 'object'){
@@ -412,10 +414,7 @@ Ext.define('cfilter.object' , {
 			return output
 		}
 
-		//get values
-		var values = {}
-		var operator = operatorRecord.get('operator')
-
+		//Get operator
 		if(operatorRecord.get('operator') == '$eq')
 			values = inputValue
 		else
@@ -430,13 +429,46 @@ Ext.define('cfilter.object' , {
 
 		output[this.cfilterField.getValue()] = values
 
-		// console.log('---------------------')
-		// console.log(Ext.encode(output))
-
 		return output
 	},
 
-	setValue: function(){
+	setValue: function(filter){
+		var key = Ext.Object.getKeys(filter)[0];
+		var value = filter[key];
+
+		this.cfilterField.setValue(key)
+
+		//if $and/$or
+		if(Ext.isArray(value)){
+			for(var i=0; i< value.length;i++)
+				this.createInnerCfilter(value[i])
+			this.showOnValueType('object')
+			return
+		}
+
+		if(!Ext.isObject(value)){
+			var type = this.getValueType()
+			this.down('*[cfilterField=true][cfilterType='+type+']').setValue(value)
+			return
+		}
+
+		//operator or not
+		key = Ext.Object.getKeys(value)[0];
+		value = value[key]
+
+		if(key == '$not')
+			this.down('combobox[name=cfilterIsCombo]').setValue('$not')
+
+		if(Ext.isObject(value)){
+			key = Ext.Object.getKeys(value)[0];
+			this.cfilterOperator.setValue(key)
+			value = value[key]
+		}
+
+		var type = this.getValueType()
+		this.down('*[cfilterField=true][cfilterType='+type+']').setValue(value)
+
+
 	}
 
 })
@@ -797,7 +829,6 @@ Ext.define('canopsis.lib.form.field.cfilter' , {
 	},
 
 	setValue: function(value) {
-		/*
 		log.debug('Set value', this.logAuthor);
 		if (value != null && value != undefined && value != '') {
 			if (typeof(value) == 'string')
@@ -805,7 +836,7 @@ Ext.define('canopsis.lib.form.field.cfilter' , {
 
 			log.debug('The filter to set is : ' + Ext.encode(value), this.logAuthor);
 			this.cfilter.setValue(value);
-		}*/
+		}
 	},
 
 	beforeDestroy: function() {
