@@ -456,7 +456,7 @@ Ext.define('cfilter.object' , {
 		key = Ext.Object.getKeys(value)[0];
 		value = value[key]
 
-		if(key == '$not')
+		if(key == '$not' || key == '$ne')
 			this.down('combobox[name=cfilterIsCombo]').setValue('$not')
 
 		if(Ext.isObject(value)){
