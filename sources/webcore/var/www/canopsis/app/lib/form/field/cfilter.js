@@ -463,11 +463,13 @@ Ext.define('cfilter.object' , {
 			key = Ext.Object.getKeys(value)[0];
 			this.cfilterOperator.setValue(key)
 			value = value[key]
+		}else{
+			this.cfilterOperator.setValue(key)
 		}
 
 		var type = this.getValueType()
 		this.down('*[cfilterField=true][cfilterType='+type+']').setValue(value)
-
+		this.showOnValueType(type)
 
 	}
 
