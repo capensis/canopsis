@@ -21,83 +21,106 @@
 
 Ext.define('cfilter.array_field', {
 	extend: 'Ext.panel.Panel',
+	alias: 'widget.cfilterArrayField',
 
 	border: false,
 	value: undefined,
 
-	margin: '0 0 0 5',
+	
 	layout: 'hbox',
 
-	initComponent: function() {
-		this.textfield_panel = Ext.widget('panel', {
-			border: false,
-			margin: '0 0 0 5'
-		});
+	itemXtype: 'textfield',
 
-		if (!this.value) {
-			this.add_textfield();
+	items: [{
+		xtype:'button',
+		iconCls: 'icon-add',
+		margin: '0 0 0 5',
+		tooltip: _('Add new value to this list'),
+		hidden:true
+	},{
+		xtype:'panel',
+		border: false,
+		margin: '0 0 0 5',
+		name:'cfilterArrayPanel',
+		defaults: {
+			margin: '0 0 5 5',
 		}
-		//--------buttons--------
-		this.add_button = Ext.widget('button', {
-			iconCls: 'icon-add',
-			//margin: '0 0 0 5',
-			tooltip: _('Add new value to this list')
-		});
-		//--------build object----
-		this.items = [this.add_button, this.textfield_panel];
+	}],
+
+	initComponent: function() {
 		this.callParent(arguments);
-		//--------bindings-------
-		this.add_button.on('click', function() {this.add_textfield()},this);
+		this.arrayPanel = this.down('panel[name=cfilterArrayPanel]')
+		this.addButton = this.down('button')
+		this.add_child()
+		this.addButton.on('click', function() {this.add_child(undefined,true)},this);
 	},
 
-	add_textfield: function(value) {
-		var config = {
-			emptyText: _('Type value here'),
-			isFormField: false
-		};
+	add_child: function(value,removeButton) {
+		var config = [{
+				xtype: this.itemXtype,
+				//emptyText: 'Type value here',
+				name:'valueField',
+				isFormField: false,
+				value: value
+			}]
 
-		if (value)
-			config.value = value;
+		if(removeButton)
+			config.push({
+				xtype:'button',
+				iconCls: 'icon-cancel',
+				margin: '0 0 0 5',
+				width: 24,
+				tooltip: _('Remove this from list of value'),
+				handler: function(button){button.up().destroy()}
+			})
+		
+		this.arrayPanel.add({
+			xtype:'container',
+			layout:'hbox',
+			items:config
+		})
+	},
 
-		var textfield = Ext.widget('textfield', config);
-		var remove_button = Ext.widget('button', {
-			iconCls: 'icon-cancel',
-			margin: '0 0 0 5',
-			width: 24,
-			tooltip: _('Remove this from list of value')
-		});
-
-		var item_array = [textfield];
-
-		//if it's not first elem, add remove button
-		if (this.textfield_panel.items.length >= 1)
-			item_array.push(remove_button);
-
-		var panel = Ext.widget('panel', {
-			border: false,
-			margin: '0 0 5 0',
-			layout: 'hbox',
-			items: item_array
-		});
-		remove_button.on('click', function(button) {button.up().destroy()});
-
-		return this.textfield_panel.add(panel);
+	switchArrayMode : function(_switch){
+		if(_switch){
+			this.addButton.show()
+			for(var i=1; i< this.arrayPanel.items.items.length;i++)
+				this.arrayPanel.items.items[i].show()
+		}else{
+			this.addButton.hide()
+			for(var i=1; i< this.arrayPanel.items.items.length;i++)
+				this.arrayPanel.items.items[i].hide()
+		}
 	},
 
 	getValue: function() {
 		var output = [];
-		for (var i = 0; i < this.textfield_panel.items.items.length; i++) {
-			var panel = this.textfield_panel.items.items[i];
-			var textfield = panel.down('.textfield');
-			output.push(textfield.getValue());
+		for (var i = 0; i < this.arrayPanel.items.items.length; i++) {
+			var item = this.arrayPanel.items.items[i]
+			if(!item.hidden)
+				output.push(item.down('[name=valueField]').getValue())
 		}
-		return output;
+
+		if(output.length == 1)
+			return output[0];
+		else
+			return output;
 	},
 
 	setValue: function(array) {
-		this.textfield_panel.removeAll();
-		for (var i = 0; i < array.length; i++)
-			this.add_textfield(array[i]);
+		this.arrayPanel.removeAll()
+
+		if(!Ext.isArray(array))
+			array = [array]
+
+		for(var i=0; i < array.length;i++)
+			if(i == 0)
+				this.add_child(array[i])
+			else
+				this.add_child(array[i],true)
+		
+		if(array.length > 1)
+			this.switchArrayMode(true)
 	}
 });
 
@@ -163,23 +186,14 @@ Ext.define('cfilter.object' , {
 			editable: false,
 			margin: '0 0 0 5',
 			store: {
-				fields: ['operator', 'text', 'type'],
+				fields: ['operator', 'text', 'type','array'],
 				data: []
 			}
 		},{
+			xtype:'cfilterArrayField',
 			cfilterField:true,
 			cfilterType: 'string',
-			xtype: 'textfield',
-			margin: '0 0 0 5',
-			emptyText: 'Type value here',
-			isFormField: false,
-			getValue: function() {
-				var string = Ext.form.field.Text.superclass.getValue.call(this);
-				var number = parseInt(string);
-				if (! isNaN(number))
-					return number;
-				return string;
-			}
+			itemXtype: 'textfield',
 		},{
 			xtype:'combobox',
 			cfilterField:true,
@@ -199,12 +213,11 @@ Ext.define('cfilter.object' , {
 				]
 			}
 		},{
+			xtype:'cfilterArrayField',
 			cfilterField:true,
 			cfilterType: 'date',
-			xtype: 'datepicker',
+			itemXtype: 'datefield',
 			hidden:true,
-			margin: '0 0 0 5',
-			isFormField: false,
 		},{
 			cfilterField:true,
 			cfilterType: 'array',
@@ -331,22 +344,24 @@ Ext.define('cfilter.object' , {
 		if(fieldRecord_index != -1){
 			var fieldRecord = this.fieldStore.getAt(fieldRecord_index)
 			var fieldRecordType = fieldRecord.get('type')
+
+			if(fieldRecordType == 'all')
+			//IF field doesn't require specific value (ex: "custom field")
+				this.showOnValueType(operatorRecordType[0])
+			else
+				//field require specif value, like "timestamp" who need date
+			this.showOnValueType(fieldRecordType)
+
 		}else{
 			//WARNING CLEAN THAT ----
 			this.showOnValueType(operatorRecordType[0])
-			return
 		}
 
-		if(fieldRecordType == 'all')
-			//IF field doesn't require specific value (ex: "custom field")
-			if(operatorRecord.get('array'))
-				log.debug('array')
-			else
-				//WARNING CLEAN THAT ----
-				this.showOnValueType(operatorRecordType[0])
-		else
-			//field require specif value, like "timestamp" who need date
-			this.showOnValueType(fieldRecordType)
+		//switch array mode if needed
+		var element = this.down('*[cfilterField=true][hidden=false]')
+		if(element && element.switchArrayMode)
+			element.switchArrayMode(operatorRecord.get('array'))
+		
 	},
 
 	//this function aimed to determine final type of value (string/bool...)
@@ -387,11 +402,17 @@ Ext.define('cfilter.object' , {
 
 	//return the value of the elements corresponding of given type (ex:"string/bool/date ...")
 	getValueByElementType: function(type){
+		var element = this.getElementByType(type)
+		if(element)
+			return element.getValue()
+	},
+
+	getElementByType: function(type){
 		var elements = this.cfilterFieldElements
 		for(var i=0; i < elements.length; i++)
 			if(elements[i].cfilterType == type)
 				if(elements[i].getValue)
-					return elements[i].getValue()
+					return elements[i]
 	},
 
 	getValue: function(){
@@ -432,6 +453,7 @@ Ext.define('cfilter.object' , {
 	},
 
 	setValue: function(filter){
+		console.log(filter)
 		var key = Ext.Object.getKeys(filter)[0];
 		var value = filter[key];
 
@@ -771,11 +793,11 @@ Ext.define('canopsis.lib.form.field.cfilter' , {
 				{'operator': '$lte', 'text': _('Less or equal'), 'type': ['string','date'], 'array':false },
 				{'operator': '$gt', 'text': _('Greater'), 'type': ['string','date'], 'array':false },
 				{'operator': '$gte', 'text': _('Greater or equal'), 'type': ['string','date'], 'array':false },
-				{'operator': '$all', 'text': _('Match all'), 'type': ['array'], 'array':true },
+				{'operator': '$all', 'text': _('Match all'), 'type': ['string','date'], 'array':true },
 				{'operator': '$exists', 'text': _('Exists'), 'type': ['bool'], 'array':false },
 				{'operator': '$ne', 'text': _('Not equal'), 'type': ['string','date'], 'array':false },
-				{'operator': '$in', 'text': _('In'), 'type': ['string'], 'array':true},
-				{'operator': '$nin', 'text': _('Not in'), 'type': ['string'],'array':true },
+				{'operator': '$in', 'text': _('In'), 'type': ['string','date'], 'array':true},
+				{'operator': '$nin', 'text': _('Not in'), 'type': ['string','date'],'array':true },
 				{'operator': '$regex', 'text': _('Regex'), 'type': ['string'], 'array':false}
 			]
 		/*
