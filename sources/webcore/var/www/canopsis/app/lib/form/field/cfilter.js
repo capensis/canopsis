@@ -255,7 +255,7 @@ Ext.define('cfilter.object' , {
 		//bind events
 		this.cfilterField.on('select',this.fieldChange,this)
 		this.cfilterOperator.on('select',this.operatorChange,this)
-		this.down('button[name=cfilterAddButton]').on('click',this.createInnerCfilter,this)
+		this.down('button[name=cfilterAddButton]').on('click',function(){this.createInnerCfilter()},this)
 		this.down('button[name=cfilterRemoveButton]').on('click',function() {this.destroy()},this)
 
 		//set data if existing
@@ -301,8 +301,8 @@ Ext.define('cfilter.object' , {
 
 		this.down('panel[name=lowerPanel]').add(cfilter)
 
-		if(!this.innerCfilter)
-			this.innerCfilter = true
+		if(!this.haveInnerCfilter)
+			this.haveInnerCfilter = true
 	},
 
 	getFieldRecord: function(){
@@ -347,7 +347,6 @@ Ext.define('cfilter.object' , {
 		else
 			//field require specif value, like "timestamp" who need date
 			this.showOnValueType(fieldRecordType)
-
 	},
 
 	//this function aimed to determine final type of value (string/bool...)
@@ -456,7 +455,7 @@ Ext.define('cfilter.object' , {
 		key = Ext.Object.getKeys(value)[0];
 		value = value[key]
 
-		if(key == '$not' || key == '$ne')
+		if(key == '$not')
 			this.down('combobox[name=cfilterIsCombo]').setValue('$not')
 
 		if(Ext.isObject(value)){
