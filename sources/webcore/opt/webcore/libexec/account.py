@@ -364,7 +364,10 @@ def account_delete(_id=None):
 	account = get_account()
 	storage = get_storage(namespace='object')
 	
+	logger.debug("DELETE:")
+
 	data = request.body.readline()
+	logger.debug(" + Data: %s" % data)
 	if data:
 		try:
 			data=json.loads(data)
@@ -380,6 +383,7 @@ def account_delete(_id=None):
 					_id.append(item['id'])
 				if '_id' in item:
 					_id.append(item['_id'])
+					
 		if isinstance(data, dict):
 			if 'id' in data:
 				_id.append(data['id'])
@@ -389,8 +393,8 @@ def account_delete(_id=None):
 	if not _id:
 		return HTTPError(400, "Bad request, no _id sent")
 
-	logger.debug("DELETE:")
-	logger.debug(" + _id: "+str(_id))
+	
+	logger.debug(" + _id: %s " % _id)
 	try:
 		storage.remove(_id, account=account)
 		#storage.remove('directory.root.%s' % _id.split('.')[1], account=account)
