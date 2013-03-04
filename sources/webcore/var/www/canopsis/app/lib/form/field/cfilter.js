@@ -21,6 +21,7 @@
 
 Ext.define('cfilter.array_field', {
 	extend: 'Ext.panel.Panel',
+	requires : ['canopsis.lib.form.field.cdatePicker'],
 	alias: 'widget.cfilterArrayField',
 
 	border: false,
@@ -216,7 +217,7 @@ Ext.define('cfilter.object' , {
 			xtype:'cfilterArrayField',
 			cfilterField:true,
 			cfilterType: 'date',
-			itemXtype: 'datefield',
+			itemXtype: 'cdatePicker',
 			hidden:true,
 		},{
 			cfilterField:true,
@@ -470,6 +471,7 @@ Ext.define('cfilter.object' , {
 		if(!Ext.isObject(value)){
 			var type = this.getValueType()
 			this.down('*[cfilterField=true][cfilterType='+type+']').setValue(value)
+			this.showOnValueType(type)
 			return
 		}
 
@@ -490,8 +492,8 @@ Ext.define('cfilter.object' , {
 
 		var type = this.getValueType()
 		this.down('*[cfilterField=true][cfilterType='+type+']').setValue(value)
+		console.log(type)
 		this.showOnValueType(type)
-
 	}
 
 })
