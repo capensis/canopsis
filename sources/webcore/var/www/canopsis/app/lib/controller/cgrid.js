@@ -275,6 +275,7 @@ Ext.define('canopsis.lib.controller.cgrid', {
 	_deleteButton: function(button) {
 		log.debug('Clicked deleteButton', this.logAuthor);
 		var grid = this.grid;
+		var me = this;
 
 		var selection = grid.getSelectionModel().getSelection();
 		if (selection) {
@@ -289,16 +290,19 @@ Ext.define('canopsis.lib.controller.cgrid', {
 
 				if (this.checkInternal && selection[i].get('internal'))
 					authorized = false;
+
+				if (! authorized)
+					break;
 			}
 
 			if (authorized == true) {
-				log.debug('Remove record ...', this.logAuthor);
 				Ext.MessageBox.confirm(_('Confirm'), _('Are you sure you want to delete') + ' ' + selection.length + ' ' + _('items') + ' ?',
 					function(btn, text) {
 						if (btn == 'yes') {
+							log.debug('Remove records', me.logAuthor);
 							//grid.store.suspendEvents()
 							grid.store.remove(selection);
-							log.debug('Reload store', this.logAuthor);
+							//log.debug('Reload store', me.logAuthor);
 							//grid.store.sync()
 							//grid.store.resumeEvents()
 							//grid.store.load()
