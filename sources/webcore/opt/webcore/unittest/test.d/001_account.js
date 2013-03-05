@@ -48,10 +48,6 @@ casper.then(function() {
 });
 
 casper.then(function() {
-	casper.waitWhileVisible("div.ui-pnotify-container");
-});
-
-casper.then(function() {
 	casper.echo('> Select created Account', 'COMMENT');
 	clickRowLabel('Casper');
 });
@@ -61,10 +57,6 @@ casper.then(function() {
 	click("span.icon-delete");
 	clickLabel('Yes');
 	casper.waitUntilVisible("div.ui-pnotify-container");
-});
-
-casper.then(function() {
-	casper.waitWhileVisible("div.ui-pnotify-container");
 });
 
 casper.then(function() {
