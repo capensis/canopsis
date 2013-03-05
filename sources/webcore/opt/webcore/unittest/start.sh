@@ -24,14 +24,20 @@ TFILE="tests.js"
 cat main.js > $TFILE
 
 echo "Build tests file '$TFILE'"
-for file in test.d/*
-do
-    if [[ -f $file ]]; then
-    	echo "  - $file"
-    	echo >> $TFILE
-    	echo "casper.then(function() { casper.echo('\n###########################\n# $file\n###########################', 'COMMENT'); });" >> $TFILE
-        cat "$file" >> $TFILE
-    fi
+
+if [ "x$1" != "x" ]; then
+	files="test.d/000_auth.js $1 test.d/999_logout.js"
+else
+	files=test.d/*
+fi
+
+for file in $files; do
+	if [[ -f $file ]]; then
+		echo "  - $file"
+		echo >> $TFILE
+		echo "casper.then(function() { casper.echo('\n###########################\n# $file\n###########################', 'COMMENT'); });" >> $TFILE
+		cat "$file" >> $TFILE
+	fi
 done
 echo " + Done"
 

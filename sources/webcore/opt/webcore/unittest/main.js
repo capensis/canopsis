@@ -103,6 +103,7 @@ var clickMenu = function(name){
 		run:    "span.icon-mainbar-run", 
 		report: "span.icon-mainbar-report",
 		buildAccount: "img.icon-mainbar-edit-account",
+		buildGroup: "img.icon-mainbar-edit-group",
 	}
 	click(menu[name]);
 }
