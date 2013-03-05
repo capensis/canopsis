@@ -33,7 +33,7 @@ Ext.define('canopsis.store.Accounts', {
 		type: 'rest',
 		url: '/account/',
 		batchActions: true,
-		appendId: false,
+		//appendId: false,
 		reader: {
 			type: 'json',
 			root: 'data',
