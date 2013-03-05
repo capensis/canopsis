@@ -106,7 +106,10 @@ class checkAuthPlugin(object):
 				logger.debug(" + Valid auth")
 				return callback(*args, **kawrgs)
 			else:
-				logger.error(" + Invalid auth")
+				logger.error(" + Invalid auth for %s" % account_id)
+				logger.error("   +   authorized_grp: %s" % ' '.join(authorized_grp))
+				logger.error("   +   account_group: %s" % account_group)
+				logger.error("   +   account_groups: %s" % ' '.join(account_groups))
 				return HTTPError(403, 'Insufficient rights')
 				#return {'total': 0, 'success': False, 'data': []}
 				#return redirect('/static/canopsis/auth.html' + '?url=' + url)
@@ -343,6 +346,9 @@ def reload_account(_id=None,record=None):
 			
 		session_accounts[account_to_update._id] = account_to_update
 		s = bottle.request.environ.get('beaker.session')
+		logger.debug(s)
+		logger.debug(s['account_group'])
+		logger.debug(s['account_groups'])
 		s['account_group'] = account_to_update.group
 		s['account_groups'] = account_to_update.groups
 		logger.debug('Account %s is in following groups : %s' % (_id,str(account_to_update.groups)))
