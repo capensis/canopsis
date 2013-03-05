@@ -435,7 +435,7 @@ Ext.define('canopsis.view.Mainbar.Bar' , {
 			},{
 				iconCls: (global.websocketCtrl.connected) ? 'icon-bullet-green' : 'icon-bullet-red',
 				id: 'Mainbar-menu-Websocket',
-				handleMouseEvents: false
+				onClick: function() { global.websocketCtrl.connect(); }
 			},
 			Ext.create('canopsis.lib.menu.cspinner'),
 			{

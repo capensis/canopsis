@@ -51,6 +51,7 @@ Ext.define('canopsis.controller.Websocket', {
 			Ext.defer(function(){
 				if (typeof(now) != 'undefined') {
 					this.jsLoaded = true;
+					this.bindNow();
 					if (this.autoconnect)
 						this.connect();
 				}
@@ -61,6 +62,7 @@ Ext.define('canopsis.controller.Websocket', {
 			this.jsLoader.on('load', function() {
 				if (typeof(now) != 'undefined') {
 					this.jsLoaded = true;
+					this.bindNow();
 					if (this.autoconnect)
 						this.connect();
 				}
@@ -75,20 +77,14 @@ Ext.define('canopsis.controller.Websocket', {
 		document.getElementById('nowjs').appendChild(this.jsLoader.dom);
     },
 
-    connect: function() {
-		log.debug('Connect Websocket ...', this.logAuthor);
-
-		if (! this.jsLoaded) {
-			log.error('NowJS Client not loaded. Try to load it.', this.logAuthor);
-			this.loadLibs();
-			return;
-		}
+    bindNow: function() {
+		var me = this;
 
 		now.authToken = global.account.authkey;
 		now.authId = global.account._id;
 
 		now.ready(function() {
-			var me = global.websocketCtrl;
+			log.debug(' + Now ready', me.logAuthor);
 
 			now.core.socketio.on('disconnect', function() {
 				if (me.connected) {
@@ -97,9 +93,6 @@ Ext.define('canopsis.controller.Websocket', {
 					me.fireEvent('transport_down', this);
 				}
 			});
-
-
-			log.debug(' + Connected', me.logAuthor);
 
 			now.auth(function() {
 				log.debug(' + Authed', me.logAuthor);
@@ -113,6 +106,23 @@ Ext.define('canopsis.controller.Websocket', {
 			});
 
 		});
+    },
+
+    connect: function() {
+		log.debug('Connect Websocket ...', this.logAuthor);
+
+		if (this.connected){
+			log.debug(' + Already connected', this.logAuthor);
+			return;
+		}
+
+		if (! this.jsLoaded) {
+			log.error('NowJS Client not loaded. Try to load it.', this.logAuthor);
+			this.loadLibs();
+			return;
+		}else{
+			log.debug(' + All is Ok, NowJS do reconnect automatically', this.logAuthor);
+		}
     },
 
     transport_down: function() {
