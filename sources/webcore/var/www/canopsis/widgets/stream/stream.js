@@ -162,6 +162,7 @@ Ext.define('widgets.stream.stream' , {
 		}else {
 			this.displayUnavailableMessage()
 			global.websocketCtrl.on('transport_up', function() {
+				this.wcontainer.removeAll();
 				this.startStream();
 			}, this, {single: true});
 		}
