@@ -662,10 +662,11 @@ Ext.define('canopsis.lib.form.field.cfilter' , {
 	reset_cfilter: function(){
 		this.cfilter.destroy()
 		this.cfilter = Ext.create('cfilter.object', {
-			operator_array: this.operator_array,
-			sub_operator_array: this.sub_operator_array,
+			fields_array: this.operator_array,
+			operators_array: this.sub_operator_array,
 			opt_remove_button: false,
-			start_with_and: false
+			initialCfilter: true,
+			flex:1
 		});
 		this.add(this.cfilter)
 	},
