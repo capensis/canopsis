@@ -146,6 +146,7 @@ var global = {
 			dump += 'msgstr "'+global.untranslated[i]+'"\n\n'
 		}
 		console.log(dump)
+		return dump;
 	},
 
 	nowjs: {
