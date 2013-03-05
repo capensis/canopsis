@@ -183,7 +183,7 @@ def uniq(alist):
 	
 ## - Convert { '$not': {'$regex': "..." }} to {'$not': re.compile("...")} 
 def clean_mfilter(mfilter, isnot=False):
-	if not mfilter:
+	if not mfilter or isinstance(mfilter,int):
 		return mfilter
 
 	for key in mfilter:
@@ -200,7 +200,7 @@ def clean_mfilter(mfilter, isnot=False):
 
 		if isinstance(values, list):
 			for value in values:
-					clean_mfilter(value, isnot)
+				clean_mfilter(value, isnot)
 		elif isinstance(values, dict):
 			mfilter[key] = clean_mfilter(values, isnot)
 		else:
