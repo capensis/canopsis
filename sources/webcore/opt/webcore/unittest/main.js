@@ -25,7 +25,8 @@ var casper = require('casper').create({
 });
 
 casper.on('remote.message', function(msg){
-	//console.log(msg);
+	if (casper_verbose)
+		console.log(msg);
 });
 
 
