@@ -19,6 +19,10 @@ casper.then(function() {
 casper.then(function() {
 	casper.echo('> Submit Form', 'COMMENT');
 	click(selector_submitBtn);
+});
+
+casper.then(function() {
+	casper.echo('> Wait viewport', 'COMMENT');
 	wait(selector_viewport, timeout, "Auth is Ok and Application is loaded");
 });
 

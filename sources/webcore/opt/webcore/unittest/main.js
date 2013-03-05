@@ -3,7 +3,7 @@
 //#################
 var url = 					'http://127.0.0.1:8082/en/static/canopsis/index.debug.html';
 ///var url = 					'http://demo-devel.canopsis.org/';
-var timeout =				2000;
+var timeout =				5000;
 
 var casper_verbose =		false;
 var casper_logLevel =		'debug';
@@ -25,7 +25,7 @@ var casper = require('casper').create({
 });
 
 casper.on('remote.message', function(msg){
-	console.log(msg);
+	//console.log(msg);
 });
 
 
