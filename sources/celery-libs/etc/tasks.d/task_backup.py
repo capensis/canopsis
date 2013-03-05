@@ -5,76 +5,72 @@ from tempfile import mkdtemp
 from ubik import core as ubik_api
 import logging, os, shutil
 
+home_path = os.path.expanduser('~/')
+backup_path = '%s/var/backups' % home_path
+
 @task
 @decorators.log_task
-def mongo(host='localhost', output='/opt/canopsis/var/backups'):
+def mongo(host='localhost'):
 	logger = logging.getLogger()
-	logger.debug('Mongo Backup start')
-	logger.debug('Host  : %s' % host)
-	logger.debug('Output: %s' % output)
+	logger.debug('Mongo Backup start:')
+	logger.debug(' + Host  : %s' % host)
+	logger.debug(' + Backup path: %s' % backup_path)
 
-	logger.debug('Create temp dir')
 	archive_name = 'backup_mongodb'
-	tmp_dir = mkdtemp(prefix='/opt/canopsis/tmp/')
-	os.makedirs('%s/%s' % (tmp_dir, archive_name))
+	tmp_dir = '%s/%s' % (backup_path, archive_name)
 
-	logger.debug('Create output dir if not exists')
-	if not os.path.exists(output):
-		os.makedirs(output)	
+	if os.path.exists(tmp_dir):
+		logger.debug(' + Remove old temp dir')
+		shutil.rmtree(tmp_dir)
 
+	os.makedirs(tmp_dir)
 
-	logger.debug('Launch mongodump')
-	mongodump_cmd = '/opt/canopsis/bin/mongodump --host %s --out %s/%s' % (host, tmp_dir, archive_name)
-	logger.debug('Command: %s' % mongodump_cmd)
+	logger.debug(' + Launch mongodump')
+	#mongodump_cmd = 'mongodump --host %s --out - | gzip -c -9 > %s/%s.gz' % (host, backup_path, archive_name)
+	mongodump_cmd = 'mongodump --host %s --out %s/' % (host, tmp_dir)
+	logger.debug(' + Command: %s' % mongodump_cmd)
+
 	dump_output = Popen(mongodump_cmd, shell=True)
 	dump_output.wait()
 
-	logger.debug('Create archive into %s' % output)
+	logger.debug(' + Make archive')
+	shutil.make_archive('%s/%s' % (backup_path, archive_name), 'zip', tmp_dir)	
 
-	shutil.make_archive('%s/%s' % (output, archive_name),
-						'zip',
-						tmp_dir)
-
-	logger.debug('Remove temp dir')
+	logger.debug(' + Remove temp dir')
 	shutil.rmtree(tmp_dir)
-	
+
 	logger.debug('Mongo Backup finished')
 
 @task
 @decorators.log_task
-def config(output='/opt/canopsis/var/backups'):
+def config():
 	logger = logging.getLogger()
-	logger.debug('Config Backup start')
-	logger.debug('Output: %s' % output)
-	
-	logger.debug('Create output dir if not exists')
-	if not os.path.exists(output):
-		os.makedirs(output)	
+	logger.debug('Config Backup start:')
 
-	logger.debug('Create temp dir')
 	archive_name = 'backup_config'
-	tmp_dir = mkdtemp(prefix='/opt/canopsis/tmp/')
+	tmp_dir = '%s/%s' % (backup_path, archive_name)
 
-	logger.debug('Create file with installed packages')
+	if os.path.exists(tmp_dir):
+		logger.debug(' + Remove old temp dir')
+		shutil.rmtree(tmp_dir)
+
+	logger.debug(' + List all packages')
 	lines = []
 	for package in ubik_api.db.get_installed():
 		lines.append(package.name)
 		lines.append('\n')
 	lines = lines[:-1]
-	f = open('/opt/canopsis/etc/.packages', 'w')
+	f = open('%s/etc/.packages' % home_path, 'w')
 	f.writelines(lines)
 	f.close()
 
-	logger.debug('Copy config files into tmp folder')
-	shutil.copytree('/opt/canopsis/etc', '%s/%s' % (tmp_dir, archive_name))
+	logger.debug(' + Copy config files')
+	shutil.copytree('%s/etc' % home_path, '%s/' % tmp_dir)
 	
-	logger.debug('Create archive into %s' % output)
-	logger.debug('Archive name: %s' % archive_name)
-	shutil.make_archive('%s/%s' % (output, archive_name),
-						'zip',
-						tmp_dir)
+	logger.debug(' + Make archive')
+	shutil.make_archive('%s/%s' % (backup_path, archive_name), 'zip', tmp_dir)	
 
-	logger.debug('Remove temp dir')
+	logger.debug(' + Remove temp dir')
 	shutil.rmtree(tmp_dir)
 
 	logger.debug('Config Backup finished')
