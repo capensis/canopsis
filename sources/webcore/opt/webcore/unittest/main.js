@@ -72,7 +72,10 @@ var click = function(selector){
 	}, timeout);
 }
 
-var clickRowLabel = function(label){
+var clickRowLabel = function(label, dbl){
+	if (dbl == undefined || dbl != true)
+		dbl = false;
+
 	var selector = {
 		type: 'xpath',
 		path: '//*[text()="'+label+'"]'
@@ -80,7 +83,10 @@ var clickRowLabel = function(label){
 
 	casper.waitForText(label, function() {
 		casper.mouseEvent('mouseover', selector);
-		casper.mouseEvent('mousedown', selector);
+		if (dbl)
+			casper.mouseEvent('dblclick', selector);
+		else
+			casper.mouseEvent('mousedown', selector);
 		wait("tr.x-grid-row-selected");
 	}, timeout)
 }
@@ -129,6 +135,10 @@ var waitText = function(text){
 	}, function(){
 		casper.test.fail("'"+text+"' not found.");
 	}, timeout)
+}
+
+var closeTab = function(){
+	click("a.x-tab-close-btn");
 }
 
 //#################
