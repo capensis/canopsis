@@ -268,6 +268,7 @@ Ext.define('cfilter.object' , {
 		//bind events
 		this.cfilterField.on('select',this.fieldChange,this)
 		this.cfilterOperator.on('select',this.operatorChange,this)
+
 		this.down('button[name=cfilterAddButton]').on('click',function(){this.createInnerCfilter()},this)
 		this.down('button[name=cfilterRemoveButton]').on('click',function() {this.destroy()},this)
 
@@ -278,8 +279,14 @@ Ext.define('cfilter.object' , {
 
 	fieldChange: function(combo,records){
 		log.debug('Field changed',this.logAuthor)
-		var record = records[0]
-		var allowed_type = record.get('type')
+		if(!records)
+			var record = this.getFieldRecord()
+		else
+			var record = records[0]
+
+		var allowed_type = undefined
+		if(record)
+			var allowed_type = record.get('type')
 
 		if(allowed_type){
 			if(allowed_type != 'all'){
@@ -467,6 +474,8 @@ Ext.define('cfilter.object' , {
 			this.showOnValueType('object')
 			return
 		}
+
+		this.fieldChange()
 
 		if(!Ext.isObject(value)){
 			var type = this.getValueType()
