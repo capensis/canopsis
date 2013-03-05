@@ -34,7 +34,7 @@ except:
 	pass
 
 #import protection function
-from libexec.auth import check_auth, get_account, reload_account,check_group_rights,reload_account
+from libexec.auth import check_auth, get_account, reload_account,check_group_rights
 
 
 logger = logging.getLogger('Account')
@@ -353,7 +353,11 @@ def account_update(_id=None):
 		setattr(record,item,data[item])
 
 	storage.put(record,account=account)
-	reload_account(record._id)
+
+	#if user is itself, reload account
+	if account._id == record._id:
+		#user itself, reload
+		reload_account(record._id)
 	
 
 
