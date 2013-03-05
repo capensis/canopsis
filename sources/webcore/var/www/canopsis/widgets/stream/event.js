@@ -213,6 +213,9 @@ Ext.define('widgets.stream.event' , {
 		if (! raw['display_name'])
 			raw['display_name'] = undefined;
 
+		if (! raw['derogation_id'])
+			raw['derogation_id'] = undefined;
+
 		if (! raw['output'])
 			raw['output'] = '';
 
