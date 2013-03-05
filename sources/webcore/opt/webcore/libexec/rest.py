@@ -337,7 +337,8 @@ def rest_post(namespace, ctype, _id=None):
 		record = crecord(raw_record=raw_record)
 		record.chown(account.user)
 		record.chgrp(group)
-		#record.admin_group = ctype_to_group_access[ctype]
+		#if ctype in ctype_to_group_access:
+			#record.admin_group = ctype_to_group_access[ctype]
 	
 	logger.debug(' + Record: %s' % record.dump())
 	try:

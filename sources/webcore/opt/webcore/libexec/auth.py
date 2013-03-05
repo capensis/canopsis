@@ -106,7 +106,7 @@ class checkAuthPlugin(object):
 				logger.debug(" + Valid auth")
 				return callback(*args, **kawrgs)
 			else:
-				logger.error(" + Invalid auth for %s" % account_id)
+				logger.error(" + Invalid auth")
 				logger.error("   +   authorized_grp: %s" % ' '.join(authorized_grp))
 				logger.error("   +   account_group: %s" % account_group)
 				logger.error("   +   account_groups: %s" % ' '.join(account_groups))
