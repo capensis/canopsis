@@ -290,7 +290,7 @@ def account_post():
 		logger.warning('WARNING : no user specified ...')
 		
 @put('/account/',checkAuthPlugin={'authorized_grp':group_managing_access})
-@put('/account/_id',checkAuthPlugin={'authorized_grp':group_managing_access})
+@put('/account/:_id',checkAuthPlugin={'authorized_grp':group_managing_access})
 def account_update(_id=None):
 	account = get_account()
 	root_account = caccount(user="root", group="root")
@@ -378,9 +378,10 @@ def account_delete(_id=None):
 		except:
 			return HTTPError(400, "Bad request, data are not json")
 			
-		if not _id:
-			_id = []
-			
+		#if not _id:
+		_id = []
+		
+		logger.debug(" + Loaded Data: %s" % data)
 		if isinstance(data, list):
 			for item in data:
 				if 'id' in item:
