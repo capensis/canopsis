@@ -36,6 +36,7 @@ Ext.define('canopsis.lib.form.field.cdate' , {
 	date_value: undefined,
 	max_value: undefined,
 	label_text: undefined,
+	value: undefined,
 
 	now: false,
 
@@ -88,6 +89,9 @@ Ext.define('canopsis.lib.form.field.cdate' , {
 		this.callParent(arguments);
 
 		this.relayEvents(this.date, ['select']);
+
+		if(this.value)
+			this.setValue(this.value)
 	},
 
 	getValue: function() {

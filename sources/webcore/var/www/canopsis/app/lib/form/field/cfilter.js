@@ -41,11 +41,9 @@ Ext.define('cfilter.array_field', {
 	},{
 		xtype:'panel',
 		border: false,
-		margin: '0 0 0 5',
+		//margin: '0 0 0 5',
 		name:'cfilterArrayPanel',
-		defaults: {
-			margin: '0 0 5 5',
-		}
+		defaults: {margin: '0 0 5 5'}
 	}],
 
 	initComponent: function() {
@@ -180,6 +178,7 @@ Ext.define('cfilter.object' , {
 		},{
 			name:'cfilterOperator',
 			xtype:'combobox',
+			width:120,
 			queryMode: 'local',
 			displayField: 'text',
 			isFormField: false,
@@ -217,7 +216,7 @@ Ext.define('cfilter.object' , {
 			xtype:'cfilterArrayField',
 			cfilterField:true,
 			cfilterType: 'date',
-			itemXtype: 'cdatePicker',
+			itemXtype: 'cdate',
 			hidden:true,
 		},{
 			cfilterField:true,
@@ -454,7 +453,8 @@ Ext.define('cfilter.object' , {
 	},
 
 	setValue: function(filter){
-		console.log(filter)
+		this.down('panel[name=lowerPanel]').removeAll()
+
 		var key = Ext.Object.getKeys(filter)[0];
 		var value = filter[key];
 
@@ -470,6 +470,8 @@ Ext.define('cfilter.object' , {
 
 		if(!Ext.isObject(value)){
 			var type = this.getValueType()
+			console.log('type')
+			console.log(type)
 			this.down('*[cfilterField=true][cfilterType='+type+']').setValue(value)
 			this.showOnValueType(type)
 			return
@@ -492,7 +494,6 @@ Ext.define('cfilter.object' , {
 
 		var type = this.getValueType()
 		this.down('*[cfilterField=true][cfilterType='+type+']').setValue(value)
-		console.log(type)
 		this.showOnValueType(type)
 	}
 
@@ -594,8 +595,8 @@ Ext.define('canopsis.lib.form.field.cfilter' , {
 
 		//-------------cfilter (wizard part)---------------
 		this.cfilter = Ext.create('cfilter.object', {
-			fields_array: this.operator_store,
-			operators_array: this.sub_operator_store,
+			fields_array: this.operator_array,
+			operators_array: this.sub_operator_array,
 			opt_remove_button: false,
 			initialCfilter: true,
 			flex:1
@@ -652,8 +653,8 @@ Ext.define('canopsis.lib.form.field.cfilter' , {
 	reset_cfilter: function(){
 		this.cfilter.destroy()
 		this.cfilter = Ext.create('cfilter.object', {
-			operator_store: this.operator_store,
-			sub_operator_store: this.sub_operator_store,
+			operator_array: this.operator_array,
+			sub_operator_array: this.sub_operator_array,
 			opt_remove_button: false,
 			start_with_and: false
 		});
@@ -726,10 +727,8 @@ Ext.define('canopsis.lib.form.field.cfilter' , {
 			if (this.edit_area.validate()) {
 				var filter = this.edit_area.getValue();
 				filter = strip_return(filter);
-				if (filter && filter != '') {
-					this.cfilter.remove_all_cfilter();
+				if (filter && filter != '') 
 					this.setValue(filter);
-				}
 
 				this.switch_elements_visibility(true, false, false);
 				this.switch_button_state(false, true, true);
@@ -778,48 +777,26 @@ Ext.define('canopsis.lib.form.field.cfilter' , {
 			{'operator': '$nor', 'text': _('Nor'), 'type': 'object'},
 			{'operator': '$or', 'text': _('Or'), 'type': 'object'},
 			{'operator': '$and', 'text': _('And'), 'type': 'object'}
-			//{'operator': '$not', 'text': _('Not'), 'type': 'object'}
+
 		];
 
 		operator_fields = Ext.Array.union(operator_fields, this.operator_fields);
 
-		//---------------------operator store----------------
-		/*this.operator_store = Ext.create('Ext.data.Store', {
-			fields: ['operator', 'text', 'type'],
-			data: operator_fields
-		});*/
-		this.operator_store = operator_fields 
-		this.sub_operator_store = [
+		this.operator_array = operator_fields 
+
+		this.sub_operator_array = [
 				{'operator': '$eq', 'text': _('Equal'), 'type': ['string','date'], 'array':false},
 				{'operator': '$lt', 'text': _('Less'), 'type': ['string','date'], 'array':false },
 				{'operator': '$lte', 'text': _('Less or equal'), 'type': ['string','date'], 'array':false },
 				{'operator': '$gt', 'text': _('Greater'), 'type': ['string','date'], 'array':false },
 				{'operator': '$gte', 'text': _('Greater or equal'), 'type': ['string','date'], 'array':false },
-				{'operator': '$all', 'text': _('Match all'), 'type': ['string','date'], 'array':true },
+				{'operator': '$all', 'text': _('Match all'), 'type': ['string'], 'array':true },
 				{'operator': '$exists', 'text': _('Exists'), 'type': ['bool'], 'array':false },
 				{'operator': '$ne', 'text': _('Not equal'), 'type': ['string','date'], 'array':false },
-				{'operator': '$in', 'text': _('In'), 'type': ['string','date'], 'array':true},
-				{'operator': '$nin', 'text': _('Not in'), 'type': ['string','date'],'array':true },
+				{'operator': '$in', 'text': _('In'), 'type': ['string'], 'array':true},
+				{'operator': '$nin', 'text': _('Not in'), 'type': ['string'],'array':true },
 				{'operator': '$regex', 'text': _('Regex'), 'type': ['string'], 'array':false}
 			]
-		/*
-		this.sub_operator_store = Ext.create('Ext.data.Store', {
-			fields: ['operator', 'text', 'type'],
-			data: [
-				{'operator': '$eq', 'text': _('Equal'), 'type': ['value','date']},
-				{'operator': '$lt', 'text': _('Less'), 'type': ['value','date'] },
-				{'operator': '$lte', 'text': _('Less or equal'), 'type': ['value','date'] },
-				{'operator': '$gt', 'text': _('Greater'), 'type': ['value','date'] },
-				{'operator': '$gte', 'text': _('Greater or equal'), 'type': ['value','date'] },
-				{'operator': '$all', 'text': _('Match all'), 'type': 'array' },
-				{'operator': '$exists', 'text': _('Exists'), 'type': 'bool' },
-				{'operator': '$ne', 'text': _('Not equal'), 'type': ['value','date'] },
-				{'operator': '$in', 'text': _('In'), 'type': 'array'},
-				{'operator': '$nin', 'text': _('Not in'), 'type': 'array'},
-				{'operator': '$regex', 'text': _('Regex'), 'type': 'value'}
-			]
-		});*/
-
 	},
 
 	getRawValue: function() {
