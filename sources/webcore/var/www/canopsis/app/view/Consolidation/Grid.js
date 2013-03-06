@@ -88,7 +88,7 @@ Ext.define('canopsis.view.Consolidation.Grid' , {
 			dataIndex: 'consolidation_method'
 
 		},{
-			header: _('Engine ouput'),
+			header: _('Engine message'),
 			//align: 'center',
 			flex: 5,
 			dataIndex: 'output_engine',

@@ -129,7 +129,7 @@ Ext.define('canopsis.lib.view.cgrid_state' , {
 
 		if (this.opt_show_output) {
 			this.columns.push({
-				header: _('Output'),
+				header: _('Message'),
 				flex: 4,
 				sortable: this.opt_column_sortable,
 				dataIndex: 'output'
