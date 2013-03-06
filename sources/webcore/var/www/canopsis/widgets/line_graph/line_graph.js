@@ -665,7 +665,7 @@ Ext.define('widgets.line_graph.line_graph' , {
 
 				//set max
 				if (this.SeriePercent && toggle_max_percent)
-					this.chart.yAxis[0].setExtremes(0, 100, false);
+					this.chart.yAxis[1].setExtremes(0, 100, false);
 
 				this.chart.hideLoading();
 				this.chart.redraw();
@@ -857,7 +857,7 @@ Ext.define('widgets.line_graph.line_graph' , {
 		if (! label)
 			label = metric_name;
 
-		this.chart.yAxis[0].addPlotLine({
+		this.chart.yAxis[1].addPlotLine({
 			value: value,
 			width: width,
 			zIndex: zindex,
