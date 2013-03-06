@@ -107,9 +107,12 @@ class checkAuthPlugin(object):
 				return callback(*args, **kawrgs)
 			else:
 				logger.error(" + Invalid auth")
-				logger.error("   +   authorized_grp: %s" % ' '.join(authorized_grp))
-				logger.error("   +   account_group: %s" % account_group)
-				logger.error("   +   account_groups: %s" % ' '.join(account_groups))
+				if authorized_grp:
+					logger.error("   +   authorized_grp: %s" % ' '.join(authorized_grp))
+				if account_group:
+					logger.error("   +   account_group: %s" % account_group)
+				if account_groups:
+					logger.error("   +   account_groups: %s" % ' '.join(account_groups))
 				return HTTPError(403, 'Insufficient rights')
 				#return {'total': 0, 'success': False, 'data': []}
 				#return redirect('/static/canopsis/auth.html' + '?url=' + url)
