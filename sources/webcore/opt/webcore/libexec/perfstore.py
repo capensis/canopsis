@@ -79,12 +79,15 @@ def perfstore_nodes_get_values(start=None, stop=None):
 	metas = request.params.get('nodes', default=None)
 	
 	aggregate_timemodulation	= request.params.get('aggregate_timemodulation', default=True)
-	aggregate_method			= request.params.get('aggregate_method',	default=None)
+	aggregate_method			= request.params.get('aggregate_method',	default=pyperfstore_aggregate_method)
 	aggregate_interval			= request.params.get('aggregate_interval', default=None)
-	aggregate_max_points		= request.params.get('aggregate_max_points', default=None)
+	aggregate_max_points		= request.params.get('aggregate_max_points', default=pyperfstore_aggregate_maxpoints)
 	consolidation_method 		= request.params.get('consolidation_method', default=None)
 
 	output = []
+
+	if aggregate_method == "":
+		aggregate_method = None
 
 	if aggregate_timemodulation != "false" or aggregate_timemodulation != "False" or aggregate_timemodulation != 0:
 		aggregate_timemodulation = True
@@ -509,7 +512,7 @@ def perfstore_perftop(start=None, stop=None):
 # Functions
 ########################################################################
 
-def perfstore_get_values(_id, start=None, stop=None, aggregate_method=None, aggregate_interval=None, aggregate_max_points=None, aggregate_timemodulation=True):
+def perfstore_get_values(_id, start=None, stop=None, aggregate_method=pyperfstore_aggregate_method, aggregate_interval=None, aggregate_max_points=pyperfstore_aggregate_maxpoints, aggregate_timemodulation=True):
 	
 	if start and not stop:
 		stop = start
@@ -526,13 +529,6 @@ def perfstore_get_values(_id, start=None, stop=None, aggregate_method=None, aggr
 
 	if aggregate_interval:
 		aggregate_interval = int(aggregate_interval)
-	
-	if not aggregate_max_points:
-		aggregate_max_points = pyperfstore_aggregate_maxpoints
-		
-	if not aggregate_method:
-		aggregate_method = pyperfstore_aggregate_method
-		aggregate_interval = None
 	
 	logger.debug("Perfstore get points:")
 	logger.debug(" + meta _id:    %s" % _id)
