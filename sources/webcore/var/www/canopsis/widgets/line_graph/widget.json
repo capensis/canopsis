@@ -4,8 +4,8 @@
 	"author": "capensis",
 	"website": "http://www.canopsis.org",
 	"xtype":"line_graph",
-	"description": "Display perfdata on customizable graphs.",
-	"description-fr":"Affiche les données de performances sur des graphiques personalisables.",
+	"description": "Displays metrics on interactive customizable graph.",
+	"description-fr":"Affiche des métriques sur un graphique interactif et personalisable.",
 	"refreshInterval": 300,
 	"locales": ["en", "fr"],
 	"options": [{
