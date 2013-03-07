@@ -1788,3 +1788,9 @@ msgstr "Enable trend lines"
 
 msgid "on"
 msgstr "on"
+
+msgid "Engine message"
+msgstr "Engine message"
+
+msgid "Plugin message"
+msgstr "Plugin message"
