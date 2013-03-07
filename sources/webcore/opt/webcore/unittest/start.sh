@@ -50,7 +50,7 @@ if [ "x$BIN_AVCONV" != "x" ]; then
 	echo
 	echo "Build video ..."
 	LOG="captures/avconv.log"
-	$BIN_AVCONV -y -r 3 -i captures/step-%d.png tests.webm 1> $LOG 2> $LOG
+	$BIN_AVCONV -y -r 6 -i captures/step-%d.png tests.webm 1> $LOG 2> $LOG
 	echo " + Done"
 fi
 
