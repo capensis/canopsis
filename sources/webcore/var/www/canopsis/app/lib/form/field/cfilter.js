@@ -479,8 +479,6 @@ Ext.define('cfilter.object' , {
 
 		if(!Ext.isObject(value)){
 			var type = this.getValueType()
-			console.log('type')
-			console.log(type)
 			this.down('*[cfilterField=true][cfilterType='+type+']').setValue(value)
 			this.showOnValueType(type)
 			return
