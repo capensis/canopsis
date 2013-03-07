@@ -82,16 +82,18 @@ casper.then(function() {
 casper.then(function() {
 	casper.echo('> Reload Account', 'COMMENT');
 	click("span.icon-reload");
+	casper.waitUntilVisible("div.ui-pnotify-container");
 });
 
 casper.then(function() {
-	casper.echo('> Check if account is realy deleted', 'COMMENT');
+	casper.echo('> Check if account is really deleted', 'COMMENT');
 
 	casper.waitForText("Casper", function() {
 		casper.test.fail("Account not deleted");
 	}, function(){
 		casper.test.pass("Ok");
 	}, 500);
+
 });
 
 casper.then(function() {

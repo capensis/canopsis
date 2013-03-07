@@ -2,7 +2,7 @@
 //# Groups
 //#################
 
-var selector_account_form = ".x-fieldset";
+var selector_group_form = ".x-window-item";
 
 casper.then(function() {
 	casper.echo('> Click on Build', 'COMMENT');
@@ -20,11 +20,10 @@ casper.then(function() {
 	click("span.icon-reload");
 });
 
-/*
 casper.then(function() {
-	casper.echo('> Check if account exist', 'COMMENT');
+	casper.echo('> Check if group exist', 'COMMENT');
 	casper.waitForText("Casper", function() {
-		casper.test.fail("Account already in store !");
+		casper.test.fail("Group already in store !");
 	}, function(){
 		casper.test.pass("Ok");
 	}, 500);
@@ -38,11 +37,8 @@ casper.then(function() {
 
 casper.then(function() {
 	casper.echo('> Fill fields and Save', 'COMMENT');
-	fill_field(selector_account_form, 'user', 'casper');
-	fill_field(selector_account_form, 'passwd', 'casper');
-	fill_field(selector_account_form, 'firstname', 'Casper');
-	fill_field(selector_account_form, 'lastname', 'JS');
-	fill_field(selector_account_form, 'mail', 'capser@js.com');
+	fill_field(selector_group_form, 'crecord_name', 'Casper');
+	fill_field(selector_group_form, 'description', 'CasperDescription');
 	click("span.icon-save");
 	waitWhile("span.icon-save");
 	waitText("Casper");
@@ -50,52 +46,48 @@ casper.then(function() {
 });
 
 casper.then(function() {
-	casper.echo('> Select created Account', 'COMMENT');
-	clickRowLabel('Casper');
+	casper.echo('> Select created group', 'COMMENT');
+	clickLabel('CasperDescription')
+	wait(".x-editor");
 });
 
 casper.then(function() {
-	casper.echo('> Edit Account', 'COMMENT');
-	clickRowLabel('Casper', true);
-	wait("span.icon-save");
-});
-
-casper.then(function() {
-	fill_field(selector_account_form, 'lastname', 'Edited');
-	click("span.icon-save");
-	waitWhile("span.icon-save");
-	waitText("Edited");
-	casper.waitUntilVisible("div.ui-pnotify-container");
-});
-
-casper.then(function() {
-	casper.echo('> Select created Account', 'COMMENT');
-	clickRowLabel('Casper');
-});
-
-casper.then(function() {
-	casper.echo('> Remove created Account', 'COMMENT');
-	click("span.icon-delete");
-	clickLabel('Yes');
-	casper.waitUntilVisible("div.ui-pnotify-container");
-});
-
-casper.then(function() {
-	casper.echo('> Reload Account', 'COMMENT');
+	casper.echo('> Edit group', 'COMMENT');
+	fillGridEditableField('.x-editor input', 'Modified');
 	click("span.icon-reload");
+	waitText("CasperDescriptionModified")
+});
+
+
+casper.then(function() {
+	casper.echo('> Select created Group', 'COMMENT');
+	clickRowLabel('Casper');
 });
 
 casper.then(function() {
-	casper.echo('> Check if account is realy deleted', 'COMMENT');
+	casper.echo('> Remove created Group', 'COMMENT');
+	click("span.icon-delete");
+});
 
+casper.then(function() {
+	clickLabel('Yes');
+	waitWhile("div.ui-pnotify-container");
+})
+
+casper.then(function() {
+	casper.echo('> Reload Group', 'COMMENT');
+	click("span.icon-reload");
+	waitWhile("div.ui-pnotify-container");
+});
+
+casper.then(function() {
+	casper.echo('> Check if group is really deleted', 'COMMENT');
 	casper.waitForText("Casper", function() {
-		casper.test.fail("Account not deleted");
+		casper.test.fail("Group not deleted");
 	}, function(){
 		casper.test.pass("Ok");
 	}, 500);
 });
-
-*/
 
 casper.then(function() {
 	casper.echo('> Close Tab', 'COMMENT');
