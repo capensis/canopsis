@@ -62,7 +62,6 @@ Ext.define('widgets.line_graph.line_graph' , {
 	layout: 'fit',
 
 	first: false,
-	shift: false,
 	last_from: false,
 	pushPoints: false,
 
@@ -698,12 +697,15 @@ Ext.define('widgets.line_graph.line_graph' , {
 		var now = Ext.Date.now();
 
 		if (this.series.length > 0 && now < (me.last_from + 500)) {
-			var extremes = this.series[0].xAxis.getExtremes();
-			var data_window = extremes.dataMax - extremes.dataMin;
-			me.shift = data_window > (me.time_window * 1000);
+			for (var i = 0; i < this.series.length; i++) {
+				var serie = this.series[i];
+				var data_window = Date.now() - serie.xData[0];
+				var shift = data_window > (me.time_window * 1000);
 
-			log.debug(' + Data window: ' + data_window, me.logAuthor);
-			log.debug('   + Shift: ' + me.shift, me.logAuthor);
+				log.debug(serie.name, me.logAuthor);
+				log.debug(' + Data window: ' + data_window + ', Shift: ' + shift, me.logAuthor);
+				serie.shift = shift;
+			}
 		}
 	},
 
@@ -782,7 +784,7 @@ Ext.define('widgets.line_graph.line_graph' , {
 		if (node.extra_field && node.extra_field.curve_color)
 			_color = node.extra_field.curve_color;
 
-		var serie = {id: serie_id, name: metric_long_name, metric: label, data: [], color: _color, min: min, max: max, yAxis: yAxis, bunit: bunit};
+		var serie = {id: serie_id, name: metric_long_name, metric: label, data: [], color: _color, min: min, max: max, yAxis: yAxis, bunit: bunit, shift: false};
 
 		if (curve) {
 			serie['dashStyle'] = curve.get('dashStyle');
@@ -985,7 +987,7 @@ Ext.define('widgets.line_graph.line_graph' , {
 			for (var i = 0; i < values.length; i++) {
 				value = values[i];
 				//addPoint (Object options, [Boolean redraw], [Boolean shift], [Mixed animation]) :
-            	serie.addPoint(value, false, this.shift, false);
+            	serie.addPoint(value, false, serie.shift, false);
 			}
 		}
 
@@ -1014,7 +1016,7 @@ Ext.define('widgets.line_graph.line_graph' , {
 				this.data_trends[trend_id].push(data.values[i]);
 
 			//slice data (follow referent serie length)
-			if (this.shift)
+			if (trend_line.shift)
 				this.data_trends[trend_id].splice(0, data.values.length);
 
 			if (this.data_trends[trend_id].length > 2) {
@@ -1070,7 +1072,8 @@ Ext.define('widgets.line_graph.line_graph' , {
 				bunit: referent_serie.options.bunit,
 				data: [],
 				marker: {enabled: false},
-				dashStyle: trend_dashStyle
+				dashStyle: trend_dashStyle,
+				shift: false,
 			};
 			if (color)
 				serie['color'] = color;
@@ -1214,18 +1217,21 @@ Ext.define('widgets.line_graph.line_graph' , {
 					serie.setData(sData)
 				else
 					for(var i =0; i < sData.length; i++)
-						serie.addPoint(sData[i],true,this.shift)
+						serie.addPoint(sData[i], true, serie.shift)
 			}else{
 				var serie = {
 					id: 'x_flags',
+					name: 'Flags',
 					type : 'flags',
 					data : sData,
 					shape : 'circlepin',
 					width : 17,
 					color : 'black',
-					 zIndex: 2,
+					zIndex: 2,
 					showInLegend: false,
+					shift: false
 				}
+				this.series[serie.id] = serie;
 				this.chart.addSeries(serie, true, false);
 			}
 		}
