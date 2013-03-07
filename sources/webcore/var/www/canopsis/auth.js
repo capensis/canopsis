@@ -74,14 +74,20 @@ Ext.define('canopsis.auth' , {
 					]
 				},
 				iconCls: 'no-icon',
-				/*listeners:{
+				listeners:{
 					'select': function(combo, records){
 						if (records.length){
 							locale = records[0].get('value')
-							window.location.href = '/'+locale+'/';
+							if (locale != ENV['locale']){
+								Ext.util.Cookies.set('locale', locale);
+								if (global.minimified)
+									window.location.href = '/'+locale+'/';
+								else
+									window.location.href = '/'+locale+'/static/canopsis/index.debug.html';
+							}
 						}
 					}
-				}*/
+				}
 
 			}
 		]
@@ -177,8 +183,8 @@ Ext.define('canopsis.auth' , {
 			var passwd_sha1 = $.encoding.digests.hexSha1Str(passwd);
 
 			// User change locale in combobox
-			if (locale != ENV['locale'])
-				Ext.fly('locale').set({src:'/'+locale+'/static/canopsis/locales.js'});
+			//if (locale != ENV['locale'])
+			//	Ext.fly('locale').set({src:'/'+locale+'/static/canopsis/locales.js'});
 
 			this.auth_m1(login, passwd, passwd_sha1)
 		}else{

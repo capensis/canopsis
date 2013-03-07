@@ -94,12 +94,16 @@ Ext.define('canopsis.controller.Account', {
 				icon: Ext.MessageBox.WARNING,
   				buttons: Ext.Msg.OKCANCEL,
   				fn: function(btn) {
-					if (btn == 'ok') {
-						window.location.href = '/'+locale+'/';
-					}
+					if (btn == 'ok')
+						if (global.minimified)
+							window.location.href = '/'+locale+'/';
+						else
+							window.location.href = '/'+locale+'/static/canopsis/index.debug.html';
 				}
 			});
 		};
+
+		Ext.util.Cookies.set('locale', locale);
 
 		this.setConfig('locale', locale, cb);
 	},

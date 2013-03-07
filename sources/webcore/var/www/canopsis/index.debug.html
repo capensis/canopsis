@@ -84,6 +84,16 @@
 	<!-- Locales -->
 	<script type="text/javascript" id="locale"></script>
 	<script type="text/javascript" src="locales.js"></script>
+
+	<!-- Load page with good locale -->
+	<script type="text/javascript">
+		var cookie_locale = Ext.util.Cookies.get('locale');
+		if (! cookie_locale)
+			Ext.util.Cookies.set('locale', ENV['locale']);
+		else
+			if (cookie_locale != ENV['locale'])
+				window.location.href = '/'+cookie_locale+'/static/canopsis/index.debug.html';
+	</script>
 	<script type="text/javascript" src="app/lib/locale.js"></script>
 
 	<!-- Configuration -->

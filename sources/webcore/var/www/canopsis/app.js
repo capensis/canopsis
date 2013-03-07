@@ -196,6 +196,23 @@ var fullscreenApp = function(){
 	});
 }
 
+function checkLocale(){
+	log.debug("Loading locale:", "[app]");
+
+	log.debug(" + ENV:     "+ ENV['locale'], "[app]");
+	global.locale = ENV['locale']
+	
+	var cookie_locale = Ext.util.Cookies.get('locale');
+	log.debug(" + Cookie:  "+ cookie_locale, "[app]");
+
+	if (global.account && global.account['locale']){
+		var account_locale = global.account['locale'];
+		log.debug(" + Account: "+ account_locale, "[app]");
+	}
+
+	log.debug("Locale:     "+ global.locale, "[app]");
+}
+
 function createApplication(account){
 	log.debug("Remove auth form ...", "[app]");
 
@@ -205,14 +222,7 @@ function createApplication(account){
 	if (global.account.id == undefined)
 		global.account.id = global.account._id;
 
-	log.debug("Loading locale ...", "[app]");
-	
-	var locale = global.account['locale']
-	if (! locale){
-		locale = global.default_locale;
-	}
-	global.locale = locale
-	log.debug(" + User locale: "+locale, "[app]");
+	checkLocale();
 
 	// URL Decode
 	var url_options = Ext.Object.fromQueryString(window.location.search)
