@@ -430,14 +430,11 @@ def rest_delete(namespace, ctype, _id=None):
 	
 	if isinstance(data,list):
 		logger.debug(" + Attempt to remove %i item from db" % len(data))
-		if _id:
-			_id = [_id]
-		else:
-			_id = []
+		_id = []
 			
 		for item in data:
 			if isinstance(item,str):
-				_id = item
+				_id.append(item)
 			if isinstance(item,dict):
 				if '_id' in item:
 					_id.append(item['_id'])
