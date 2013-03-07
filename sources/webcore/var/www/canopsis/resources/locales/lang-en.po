@@ -1794,3 +1794,15 @@ msgstr "Engine message"
 
 msgid "Plugin message"
 msgstr "Plugin message"
+
+msgid "seconds ago"
+msgstr "seconds ago"
+
+msgid "mins ago"
+msgstr "mins ago"
+
+msgid "hours ago"
+msgstr "hours ago"
+
+msgid "days ago"
+msgstr "days ago"

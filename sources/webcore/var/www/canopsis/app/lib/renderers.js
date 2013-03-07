@@ -235,20 +235,20 @@ rdr_elapsed_time = function(timestamp, full_length) {
 
 	var elapsed = parseInt(new Date().getTime() / 1000) - timestamp;
 
-	var elapsed_text = elapsed + ' seconds ago';
+	var elapsed_text = elapsed + ' ' + _('seconds ago');
 
 	if (elapsed < 3)
 		elapsed_text = 'just now';
 	if (elapsed > 60)
-		elapsed_text = parseInt(elapsed / 60) + ' mins ago';
+		elapsed_text = parseInt(elapsed / 60) + ' ' + _('mins ago');
 	if (!full_length) {
 		if (elapsed > 3600)
 			elapsed_text = rdr_tstodate(timestamp);
 	}else {
 		if (elapsed > 3600)
-			elapsed_text = parseInt(elapsed / 3600) + ' hours ago';
+			elapsed_text = parseInt(elapsed / 3600) + ' ' + _('hours ago');
 		if (elapsed > 86400)
-			elapsed_text = parseInt(elapsed / 86400) + ' days ago';
+			elapsed_text = parseInt(elapsed / 86400) + ' ' + _('days ago');
 	}
 
 	return elapsed_text;
