@@ -5,14 +5,8 @@
 var selector_group_form = ".x-window-item";
 
 casper.then(function() {
-	casper.echo('> Click on Build', 'COMMENT');
-	clickMenu("build");
-});
-
-casper.then(function() {
-	casper.echo('> Click Edit Groups', 'COMMENT');
-	clickMenu("buildGroup");
-	waitText("CPS_root");
+	casper.echo('> Open menu Group', 'COMMENT');
+	openMenu('build','buildGroup','CPS_root')
 });
 
 casper.then(function() {

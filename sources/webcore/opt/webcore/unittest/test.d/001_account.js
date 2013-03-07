@@ -5,14 +5,8 @@
 var selector_account_form = ".x-fieldset";
 
 casper.then(function() {
-	casper.echo('> Click on Build', 'COMMENT');
-	clickMenu("build");
-});
-
-casper.then(function() {
-	casper.echo('> Click Edit Accounts', 'COMMENT');
-	clickMenu("buildAccount");
-	waitText("CPS_root");
+	casper.echo('> Open menu Group', 'COMMENT');
+	openMenu('build','buildAccount','CPS_root')
 });
 
 casper.then(function() {
