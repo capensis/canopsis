@@ -182,10 +182,6 @@ Ext.define('canopsis.auth' , {
 			var locale = FieldValues.locale;
 			var passwd_sha1 = $.encoding.digests.hexSha1Str(passwd);
 
-			// User change locale in combobox
-			//if (locale != ENV['locale'])
-			//	Ext.fly('locale').set({src:'/'+locale+'/static/canopsis/locales.js'});
-
 			this.auth_m1(login, passwd, passwd_sha1)
 		}else{
 			log.debug("+ Form is invalid", this.logAuthor)

@@ -210,6 +210,10 @@ function checkLocale(){
 		log.debug(" + Account: "+ account_locale, "[app]");
 	}
 
+	// For export mode
+	if (ENV["exportMode"] && global.locale != account_locale)
+		Ext.fly('locale').set({src:'/'+account_locale+'/static/canopsis/locales.js'});
+
 	log.debug("Locale:     "+ global.locale, "[app]");
 }
 
@@ -222,8 +226,6 @@ function createApplication(account){
 	if (global.account.id == undefined)
 		global.account.id = global.account._id;
 
-	checkLocale();
-
 	// URL Decode
 	var url_options = Ext.Object.fromQueryString(window.location.search)
 	log.debug(" + Url options: ", "[app]");
@@ -233,6 +235,8 @@ function createApplication(account){
 	ENV["fullscreenMode"] = url_options['fullscreenMode'] == 'true' ? true : false;
 	ENV["exportMode"] = url_options['exportMode'] == 'true' ? true : false;
 	ENV["reportMode"] = url_options['reportMode'] == 'true' ? true : false;
+
+	checkLocale();
 
 	if (url_options['from']){
 		try{

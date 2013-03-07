@@ -848,7 +848,7 @@ Ext.define('widgets.line_graph.line_graph' , {
 		var dashStyle = 'Solid';
 
 		if (curve) {
-			label = curve.get('label');
+			label = _(curve.get('label'));
 			color = global.curvesCtrl.getRenderColors(metric_name, 1)[0];
 			zindex = curve.get('zIndex');
 			dashStyle = curve.get('dashStyle');
