@@ -48,7 +48,7 @@
 								"name": "show_resource"
 							},{
 								"xtype": "checkbox",
-								"boxLabel": "Plugin's output",
+								"boxLabel": "Plugin message",
 								"checked": true,
 								"name": "show_output"
 							},{

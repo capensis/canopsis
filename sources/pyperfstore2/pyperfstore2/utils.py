@@ -242,12 +242,15 @@ def getTimeSteps(start, stop, interval):
 
 	return timeSteps
 
-def aggregate(points, max_points=None, interval=None, atype=None, agfn=None, mode=None):
+def aggregate(points, max_points=None, interval=None, atype='MEAN', agfn=None, mode=None):
 	
 	if len(points) < 2:
 		logger.debug('Aggregation useless, %i points' % len(points))
 		return points
 	
+	if not atype:
+		return points
+
 	if not mode:
 		mode = 'by_point'
 	elif mode != 'by_point':
@@ -262,9 +265,6 @@ def aggregate(points, max_points=None, interval=None, atype=None, agfn=None, mod
 				
 	if max_points != None:
 		 max_points = int(max_points)
-	
-	if not atype:
-		atype = 'MEAN'
 
 	atype = atype.upper()
 	

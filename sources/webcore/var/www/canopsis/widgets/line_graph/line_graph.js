@@ -139,6 +139,8 @@ Ext.define('widgets.line_graph.line_graph' , {
 
 	nbMavEventsDisplayed : 100,
 
+	lastBunit: undefined,
+
 	initComponent: function() {
 		this.backgroundColor	= check_color(this.backgroundColor);
 		this.borderColor	= check_color(this.borderColor);
@@ -344,15 +346,21 @@ Ext.define('widgets.line_graph.line_graph' , {
 			},
 			yAxis: [
 				{
+					id: 'state',
+					title: { text: null },
+					labels: { enabled: false },
+					max: 100
+				},{
 					title: { text: null },
 					labels: {
 						formatter: this.y_formatter
 					}
 				},{
-					id: 'state',
 					title: { text: null },
-					labels: { enabled: false },
-					max: 100
+					labels: {
+						formatter: this.y_formatter
+					},
+					opposite: true
 				}
 			],
 			plotOptions: {
@@ -443,8 +451,8 @@ Ext.define('widgets.line_graph.line_graph' , {
 	},
 
 	y_formatter: function() {
-		if (this.chart.series.length) {
-			var bunit = this.chart.series[0].options.bunit;
+		if (this.axis.series.length) {
+			var bunit = this.axis.series[0].options.bunit;
 			return rdr_humanreadable_value(this.value, bunit);
 		}
 		return rdr_yaxis(this.value);
@@ -657,7 +665,7 @@ Ext.define('widgets.line_graph.line_graph' , {
 
 				//set max
 				if (this.SeriePercent && toggle_max_percent)
-					this.chart.yAxis[0].setExtremes(0, 100, false);
+					this.chart.yAxis[1].setExtremes(0, 100, false);
 
 				this.chart.hideLoading();
 				this.chart.redraw();
@@ -719,8 +727,8 @@ Ext.define('widgets.line_graph.line_graph' , {
 		var serie = this.series_hc[serie_id];
 		if (serie) { return serie }
 
-		if (! yAxis)
-			yAxis = 0;
+		if (yAxis == undefined)
+			yAxis = 1;
 
 		log.debug('  + Create Serie:', this.logAuthor);
 
@@ -849,7 +857,7 @@ Ext.define('widgets.line_graph.line_graph' , {
 		if (! label)
 			label = metric_name;
 
-		this.chart.yAxis[0].addPlotLine({
+		this.chart.yAxis[1].addPlotLine({
 			value: value,
 			width: width,
 			zIndex: zindex,
@@ -874,7 +882,7 @@ Ext.define('widgets.line_graph.line_graph' , {
 		var serie = undefined;
 
 		if (metric_name == 'cps_state_ok' || metric_name == 'cps_state_warn' || metric_name == 'cps_state_crit') {
-			serie = this.getSerie(node_id, metric_name, undefined, undefined, undefined, 1);
+			serie = this.getSerie(node_id, metric_name, undefined, undefined, undefined, 0);
 		}
 
 		if (metric_name == 'cps_state') {
@@ -901,9 +909,15 @@ Ext.define('widgets.line_graph.line_graph' , {
 			return true;
 
 		}else {
-			serie = this.getSerie(node_id, metric_name, bunit, min, max);
-		
-}
+			if (this.lastBunit == undefined || this.lastBunit == bunit){
+				serie = this.getSerie(node_id, metric_name, bunit, min, max, 1);
+				this.lastBunit = bunit
+			}else{
+				serie = this.getSerie(node_id, metric_name, bunit, min, max, 2);
+			}
+
+		}
+
 		if (! serie) {
 			log.error('Impossible to get serie, node: ' + node_id + ' metric: ' + metric_name, this.logAuthor);
 			return false;

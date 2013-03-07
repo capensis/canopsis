@@ -216,13 +216,9 @@ class cengine(multiprocessing.Process):
 		if self.counter_worktime and self.counter_event:
 			sec_per_evt = self.counter_worktime / self.counter_event
 			self.logger.debug(" + %0.5f seconds/event" % sec_per_evt)
-			
-		self.counter_error = 0
-		self.counter_event = 0
-		self.counter_worktime = 0
 		
 		## Submit event
-		if self.send_stats_event:
+		if self.send_stats_event and self.counter_event != 0:
 			state = 0
 			
 			if sec_per_evt > self.thd_warn_sec_per_evt:
@@ -239,6 +235,8 @@ class cengine(multiprocessing.Process):
 					'crit': self.thd_crit_sec_per_evt
 				},
 			]
+
+			self.logger.debug(" + State: %s" % state)
 			
 			event = cevent.forger(
 				connector = "cengine",
@@ -255,6 +253,11 @@ class cengine(multiprocessing.Process):
 			rk = cevent.get_routingkey(event)
 			self.amqp.publish(event, rk, self.amqp.exchange_name_events)
 		
+
+		self.counter_error = 0
+		self.counter_event = 0
+		self.counter_worktime = 0
+
 		try:
 			self.beat()
 		except Exception, err:

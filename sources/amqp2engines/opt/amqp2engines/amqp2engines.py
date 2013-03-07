@@ -92,11 +92,11 @@ def clean_message(body, msg):
 	elif not isinstance(event['tags'], list):
 		event['tags'] = []
 
-	if not event.get("timestamp", None):
-		event["timestamp"] = int(time.time())
+	event["timestamp"] 	= event.get("timestamp", time.time() )
+	event["timestamp"] 	= int(event["timestamp"])
 
-	if not event.get("state_type", None):
-		event["state_type"] = 1
+	event["state"]		= event.get("state", 0)
+	event["state_type"] = event.get("state_type", 1)
 
 	return event
 

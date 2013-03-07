@@ -73,7 +73,7 @@ Ext.define('canopsis.view.Schedule.Grid' , {
 			sortable: true,
 			dataIndex: 'crecord_name'
 		},{
-			header: _('Output'),
+			header: _('Message'),
 			flex: 5,
 			sortable: true,
 			dataIndex: 'log',
