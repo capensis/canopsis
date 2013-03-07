@@ -8,7 +8,7 @@ var timeout =				5000;
 var casper_verbose =		false;
 var casper_logLevel =		'debug';
 var viewportSize = 			{width: 1366, height: 768};
-var capture_interval = 		1000;
+var capture_interval = 		500;
 
 //#################
 //# Casper
@@ -36,13 +36,12 @@ casper.on('remote.message', function(msg){
 
 var step = 0;
 var capture = function(){
-	casper.capture('captures/step-'+step+'.png');
+	var capturePath = 'captures/step-'+step+'.png'
+	casper.capture(capturePath);
 	step += 1;
 }
 
-var capturer = setInterval(function(){
-	capture();
-}, capture_interval);
+var capturer = undefined
 
 var fill_field = function(selector, name, value){
 	var options = {};
@@ -96,6 +95,12 @@ var fillGridEditableField = function(selector,text){
 	casper.sendKeys('.x-editor input', '\n');
 }
 
+var selectComboValue = function(comboName,comboValue){
+	casper.test.assertExists('input[name="'+comboName+'"]', 'Check if field "'+comboName+'" exist')
+	click('input[name="'+comboName+'"]')
+	clickLabel(comboValue)
+}
+
 var clickLabel = function(label){
 	casper.waitForText(label, function() {
 		casper.clickLabel(label);
@@ -107,10 +112,23 @@ var clickMenu = function(name){
 		build:  "span.icon-mainbar-build",
 		run:    "span.icon-mainbar-run", 
 		report: "span.icon-mainbar-report",
-		buildAccount: "img.icon-mainbar-edit-account",
-		buildGroup: "img.icon-mainbar-edit-group",
 	}
 	click(menu[name]);
+}
+
+var openMenu = function(menu_name,sub_menu_name,textToWait){
+	var sub_menu = {
+		buildAccount: "img.icon-mainbar-edit-account",
+		buildGroup: "img.icon-mainbar-edit-group",
+		buildCurve:  "img.icon-mainbar-colors",
+	}
+
+	casper.echo('> Click on '+ menu_name + ' then ' + sub_menu_name, 'COMMENT');
+	clickMenu(menu_name);
+	click(sub_menu[sub_menu_name]);
+
+	if(textToWait)
+		waitText(textToWait)
 }
 
 var wait = function(selector, timeout, str_onSuccess, str_onFailed){
@@ -177,13 +195,19 @@ casper.start(url, function() {
 		});
 
 	});
+
+	capturer = setInterval(function(){
+		capture();
+	}, capture_interval);
+
 });
 
 //#################
 //# Exit casper at end
 //#################
 casper.run(function() {
-	clearInterval(capturer);
+	if(capturer)
+		clearInterval(capturer);
 	capture();
 
 	casper.echo('\n########### END ###########', 'COMMENT');
