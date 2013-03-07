@@ -39,7 +39,7 @@ Ext.define('canopsis.store.Selectors', {
 		type: 'rest',
 		url: '/rest/object/selector',
 		batchActions: true,
-		appendId: false,
+		appendId: true,
 		reader: {
 			type: 'json',
 			root: 'data',
