@@ -39,7 +39,7 @@ Ext.define('canopsis.store.Groups', {
 		type: 'rest',
 		url: '/rest/object/group',
 		batchActions: true,
-		appendId: false,
+		appendId: true,
 		reader: {
 			type: 'json',
 			root: 'data',
