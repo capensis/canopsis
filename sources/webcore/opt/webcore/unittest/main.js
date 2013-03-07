@@ -91,6 +91,11 @@ var clickRowLabel = function(label, dbl){
 	}, timeout)
 }
 
+var fillGridEditableField = function(selector,text){
+	casper.sendKeys('.x-editor input', text);
+	casper.sendKeys('.x-editor input', '\n');
+}
+
 var clickLabel = function(label){
 	casper.waitForText(label, function() {
 		casper.clickLabel(label);
@@ -123,11 +128,16 @@ var waitWhile = function(selector, timeout, str_onSuccess, str_onFailed){
 	if (str_onSuccess == undefined)  str_onSuccess	= selector + " is not found";
 	if (str_onFailed == undefined)	str_onFailed	= selector + " found";
 
-	casper.waitWhileSelector(selector, function() {
-		casper.test.pass(str_onSuccess);
-	}, function() {
-		casper.test.fail(str_onFailed);
-	}, timeout);
+	if (casper.exists(selector)) {
+		casper.test.pass("Wait for '"+selector+"' to disappear");
+		casper.waitWhileSelector(selector, function() {
+			casper.test.pass(str_onSuccess);
+		}, function() {
+			casper.test.fail(str_onFailed);
+		}, timeout);
+	}else{
+		casper.test.pass("'"+selector+"' already disappeared.");
+	}
 }
 
 var waitText = function(text){
@@ -165,6 +175,7 @@ casper.start(url, function() {
 				$('#div-click').hide();
 			}, 300);
 		});
+
 	});
 });
 
