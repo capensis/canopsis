@@ -240,7 +240,7 @@ rdr_elapsed_time = function(timestamp, full_length) {
 	if (elapsed < 3)
 		elapsed_text = 'just now';
 	if (elapsed > 60)
-		elapsed_text = parseInt(elapsed / 60) + ' ' + _('mins ago');
+		elapsed_text = parseInt(elapsed / 60) + ' ' + _('minutes ago');
 	if (!full_length) {
 		if (elapsed > 3600)
 			elapsed_text = rdr_tstodate(timestamp);
