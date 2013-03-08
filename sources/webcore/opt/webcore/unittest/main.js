@@ -172,6 +172,90 @@ var closeTab = function(){
 }
 
 //#################
+//# cgrid utils
+//#################
+
+var cgridOpen = function(menu_name,sub_menu_name,textToWait){
+	casper.then(function() {
+		casper.echo('> Open menu record', 'COMMENT');
+		openMenu(menu_name,sub_menu_name,textToWait)
+	});
+
+	casper.then(function() {
+		casper.echo('> Reload record', 'COMMENT');
+		click("span.icon-reload");
+	});
+
+	casper.then(function() {
+		casper.echo('> Check if record exist', 'COMMENT');
+		casper.waitForText("Casper", function() {
+			casper.test.fail("record already in store !");
+		}, function(){
+			casper.test.pass("Ok");
+		}, 500);
+	});
+
+	casper.then(function() {
+		casper.echo('> Open Add form', 'COMMENT');
+		click("span.icon-add");
+		wait("span.icon-save");
+	});
+}
+
+var cgridEditRecord = function(selector_form,fieldToEdit,ModifiedValue){
+	casper.then(function() {
+		casper.echo('> Select created record', 'COMMENT');
+		clickRowLabel('Casper');
+	});
+
+	casper.then(function() {
+		casper.echo('> Edit record', 'COMMENT');
+		clickRowLabel('Casper', true);
+		wait("span.icon-save");
+	});
+
+	casper.then(function() {
+		fill_field(selector_selector_form, fieldToEdit, ModifiedValue);
+		click("span.icon-save");
+		waitWhile("span.icon-save");
+		waitText(ModifiedValue);
+		casper.waitUntilVisible("div.ui-pnotify-container");
+	});
+
+}
+
+var cgridRemoveRecord = function(){
+	casper.then(function() {
+		casper.echo('> Select created selector', 'COMMENT');
+		clickRowLabel('Casper');
+	});
+
+	casper.then(function() {
+		casper.echo('> Remove created selector', 'COMMENT');
+		click("span.icon-delete");
+		clickLabel('Yes');
+		casper.waitUntilVisible("div.ui-pnotify-container");
+	});
+
+	casper.then(function() {
+		casper.echo('> Reload selector', 'COMMENT');
+		click("span.icon-reload");
+		casper.waitUntilVisible("div.ui-pnotify-container");
+	});
+
+	casper.then(function() {
+		casper.echo('> Check if selector is really deleted', 'COMMENT');
+
+		casper.waitForText("Casper", function() {
+			casper.test.fail("selector not deleted");
+		}, function(){
+			casper.test.pass("Ok");
+		}, 500);
+
+	});
+}
+
+//#################
 //# Load page
 //#################
 casper.echo('> Load page "'+url+'"', 'COMMENT');
