@@ -42,7 +42,7 @@ done
 echo " + Done"
 
 ## Run
-$BIN_CASPERJS test $TFILE
+$BIN_CASPERJS test $TFILE --save=log.xml
 CODE=$?
 
 if [ "x$BIN_AVCONV" != "x" ]; then
