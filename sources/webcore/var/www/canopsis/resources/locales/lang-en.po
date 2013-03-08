@@ -1798,8 +1798,8 @@ msgstr "Plugin message"
 msgid "seconds ago"
 msgstr "seconds ago"
 
-msgid "mins ago"
-msgstr "mins ago"
+msgid "minutes ago"
+msgstr "minutes ago"
 
 msgid "hours ago"
 msgstr "hours ago"
