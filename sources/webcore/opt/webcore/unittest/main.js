@@ -29,6 +29,10 @@ casper.on('remote.message', function(msg){
 		console.log(msg);
 });
 
+casper.test.on('fail', function(result){
+	casper.test.done();
+	casper.test.renderResults(true, 0, 'log.xml');
+});
 
 //#################
 //# Utils
@@ -65,10 +69,10 @@ var click = function(selector){
 			casper.test.pass(" + Clicked");
 		});
 
-	},function() {
+	});/*,function() {
 		casper.test.fail("'"+selector+"' not found.");
 
-	}, timeout);
+	}, timeout);*/
 }
 
 var clickRowLabel = function(label, dbl){
@@ -140,9 +144,9 @@ var wait = function(selector, timeout, str_onSuccess, str_onFailed){
 
 	casper.waitForSelector(selector, function() {
 		casper.test.pass(str_onSuccess);
-	}, function() {
+	});/*, function() {
 		casper.test.fail(str_onFailed);
-	}, timeout);
+	}, timeout);*/
 }
 
 var waitWhile = function(selector, timeout, str_onSuccess, str_onFailed){
@@ -153,9 +157,9 @@ var waitWhile = function(selector, timeout, str_onSuccess, str_onFailed){
 		casper.test.pass("Wait for '"+selector+"' to disappear");
 		casper.waitWhileSelector(selector, function() {
 			casper.test.pass(str_onSuccess);
-		}, function() {
+		});/*, function() {
 			casper.test.fail(str_onFailed);
-		}, timeout);
+		}, timeout);*/
 	}else{
 		casper.test.pass("'"+selector+"' already disappeared.");
 	}
@@ -164,9 +168,9 @@ var waitWhile = function(selector, timeout, str_onSuccess, str_onFailed){
 var waitText = function(text){
 	casper.waitForText(text, function() {
 		casper.test.pass("'"+text+"' found.");
-	}, function(){
+	});/*, function(){
 		casper.test.fail("'"+text+"' not found.");
-	}, timeout)
+	}, timeout)*/
 }
 
 var closeTab = function(){
@@ -299,8 +303,8 @@ casper.run(function() {
 
 	casper.echo('\n########### END ###########', 'COMMENT');
 	casper.echo('> Quit Casper', 'COMMENT');
-	//casper.test.done()
-	casper.exit();
+	casper.test.done();
+	casper.test.renderResults(true, 0, 'log.xml');
 });
 
 
