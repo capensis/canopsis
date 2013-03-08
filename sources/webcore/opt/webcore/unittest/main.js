@@ -121,7 +121,9 @@ var openMenu = function(menu_name,sub_menu_name,textToWait){
 		buildAccount: "img.icon-mainbar-edit-account",
 		buildGroup: "img.icon-mainbar-edit-group",
 		buildCurve:  "img.icon-mainbar-colors",
-		buildSelector: "img.icon-mainbar-selector"
+		buildSelector: "img.icon-mainbar-selector",
+		buildSchedule: "img.icon-mainbar-edit-task",
+		buildConsolidation: "img.icon-mainbar-consolidation"
 	}
 
 	casper.echo('> Click on '+ menu_name + ' then ' + sub_menu_name, 'COMMENT');
@@ -215,7 +217,7 @@ var cgridEditRecord = function(selector_form,fieldToEdit,ModifiedValue){
 	});
 
 	casper.then(function() {
-		fill_field(selector_selector_form, fieldToEdit, ModifiedValue);
+		fill_field(selector_form, fieldToEdit, ModifiedValue);
 		click("span.icon-save");
 		waitWhile("span.icon-save");
 		waitText(ModifiedValue);

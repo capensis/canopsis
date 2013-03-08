@@ -5,12 +5,7 @@
 var selector_consolidation_form = ".x-window-item";
 
 //open and check
-cgridOpen('build','buildSelector')
-
-casper.then(function(){
-	wait('input[name="component"]')
-
-})
+cgridOpen('build','buildConsolidation')
 
 casper.then(function() {
 	casper.echo('> Fill fields and Save', 'COMMENT');
