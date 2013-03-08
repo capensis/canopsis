@@ -119,7 +119,6 @@ Ext.define('widgets.line_graph.line_graph' , {
 	lineWidth: 1,
 
 	//trends
-	data_trends: [],
 	trend_lines: false,
 	trend_lines_type: 'ShortDot',
 	//use_window_ts: false,
@@ -260,9 +259,9 @@ Ext.define('widgets.line_graph.line_graph' , {
 				borderColor: this.borderColor,
 				borderWidth: this.borderWidth,
 				backgroundColor: this.backgroundColor,
-				events: {
-					redraw: this.checkTimewindow
-				}
+					events: {
+						redraw: this.shift
+					}
 			},
 			exporting: {
 				enabled: (this.exportMode || this.reportMode) ? false : this.exporting_enabled,
@@ -568,7 +567,6 @@ Ext.define('widgets.line_graph.line_graph' , {
 				}
 			}
 
-
 			//if(this.nodeForFlags && this.nodeForFlags.length != 0){
 			if(this.flagFilter){
 				var filter = [{
@@ -692,19 +690,43 @@ Ext.define('widgets.line_graph.line_graph' , {
 		}
 	},
 
-	checkTimewindow: function() {
+	shift: function() {
+		var me = this;
 		var me = this.options.cwidget;
 		var now = Ext.Date.now();
 
-		if (this.series.length > 0 && now < (me.last_from + 500)) {
-			for (var i = 0; i < this.series.length; i++) {
-				var serie = this.series[i];
-				var data_window = Date.now() - serie.xData[0];
-				var shift = data_window > (me.time_window * 1000);
+		var timestamp = now - (me.time_window * 1000)
 
+		if (me.chart.series.length > 0 && now < (me.last_from + 500)) {
+			for (var i = 0; i < me.chart.series.length; i++) {
+				var serie = me.chart.series[i];
+				
 				log.debug(serie.name, me.logAuthor);
-				log.debug(' + Data window: ' + data_window + ', Shift: ' + shift, me.logAuthor);
-				serie.shift = shift;
+				if (serie.data.length){
+					var fpoint = serie.data[0];
+					while (serie.data.length && fpoint.x < timestamp){
+						log.debug(' + Remove point', me.logAuthor);
+						fpoint.remove(false);
+						fpoint = serie.data[0];
+					}
+				}
+
+				
+				//var shift = true;
+				//console.log(serie.data[0])
+				/*while(shift){
+					var data_window = now - serie.xData[0];
+					shift = data_window > (me.time_window * 1000);
+
+					
+					log.debug(' + Data window: ' + data_window + ', Shift: ' + shift, me.logAuthor);
+					serie.shift = shift;
+
+					if (shift && serie.data[0]){
+						log.debug('   + Remove point')
+						serie.data[0].remove(false);
+					}
+				}*/
 			}
 		}
 	},
@@ -1007,32 +1029,16 @@ Ext.define('widgets.line_graph.line_graph' , {
 		if (trend_line) {
 			log.debug('  +  Trend line found : ' + trend_id, this.logAuthor);
 
-			//if reporting, clear old data
-			if (this.reportMode)
-				this.data_trends[trend_id] = [];
-
-			//add data
-			for (var i = 0; i < data.values.length; i++)
-				this.data_trends[trend_id].push(data.values[i]);
-
-			//slice data (follow referent serie length)
-			if (trend_line.shift)
-				this.data_trends[trend_id].splice(0, data.values.length);
-
-			if (this.data_trends[trend_id].length > 2) {
-				//compute data
-				var line = fitData(this.data_trends[trend_id]).data;
-
-				//trunc value
-				line = this.truncValueArray(line);
-
-				//set data
-				trend_line.setData(line, false);
-			} else {
-				log.debug('  +  not enough data to draw trend line');
-				trend_line.setData([], false);
+			var line = [];
+			for (var i=0; i < referent_serie.data.length; i++){
+				var point = referent_serie.data[i];
+				line.push([point.x, point.y]);
 			}
-		}else {
+
+			line = fitData(line).data;
+			trend_line.setData(line, false);
+
+		}else{
 			log.debug('  +  Trend line not found : ' + trend_id, this.logAuthor);
 			log.debug('  +  Create it', this.logAuthor);
 
@@ -1082,10 +1088,8 @@ Ext.define('widgets.line_graph.line_graph' , {
 			this.chart.addSeries(Ext.clone(serie), false, false);
 			var hcserie = this.chart.get(trend_id);
 
-			this.data_trends[trend_id] = Ext.clone(data.values);
-
-			if (this.data_trends[trend_id].length > 2) {
-				var line = fitData(this.data_trends[trend_id]).data;
+			if (data.values.length > 2) {
+				var line = fitData(data.values).data;
 
 				//trunc value
 				line = this.truncValueArray(line);
@@ -1213,6 +1217,7 @@ Ext.define('widgets.line_graph.line_graph' , {
 			}
 
 			if(serie){
+				console.log(serie.shift)
 				if(this.reportMode)
 					serie.setData(sData)
 				else
