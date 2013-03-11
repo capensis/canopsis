@@ -1,8 +1,8 @@
 //#################
 //# Configs
 //#################
-//var url = 					'http://127.0.0.1:8082/en/static/canopsis/index.debug.html';
-var url = 					'http://demo-devel.canopsis.org/';
+var url = 					'http://127.0.0.1:8082/en/static/canopsis/index.debug.html';
+//var url = 					'http://demo-devel.canopsis.org/';
 var timeout =				5000;
 
 var casper_verbose =		false;
@@ -268,6 +268,7 @@ casper.start(url, function() {
 	casper.test.assertTitle('Canopsis', 'Check page title');
 
 	casper.evaluate(function() {
+		localStorage.clear();
 		$('body').append('<div id="div-click" style="z-index: 99999999999; position:absolute; overflow:hidden; border-radius:10px; width:10px; height:10px; background-color: #FF0000;"></div>');
 		$('#div-click').hide();
 
