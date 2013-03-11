@@ -10,7 +10,7 @@ cgridOpen('build','buildSelector')
 casper.then(function() {
 	casper.echo('> Fill fields and Save', 'COMMENT');
 	fill_field(selector_selector_form, 'crecord_name', 'Casper');
-	fill_field(selector_selector_form, 'display_name', 'CasperDisplayName');
+	fill_field(selector_selector_form, 'display_name', 'DisplayName');
 
 	click("span.icon-save");
 	waitWhile("span.icon-save");
