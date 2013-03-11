@@ -32,7 +32,7 @@ Ext.define('canopsis.store.Consolidations', {
 		type: 'rest',
 		url: '/rest/object/consolidation',
 		batchActions: true,
-		appendId: false,
+		appendId: true,
 		reader: {
 			type: 'json',
 			root: 'data',
