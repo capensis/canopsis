@@ -426,35 +426,33 @@ def rest_delete(namespace, ctype, _id=None):
 			data = json.loads(data)
 		except:
 			logger.warning('Invalid data in request payload')
+			data = None	
 
-	
-	if isinstance(data,list):
-		logger.debug(" + Attempt to remove %i item from db" % len(data))
-		_id = []
-			
-		for item in data:
-			if isinstance(item,str):
-				_id.append(item)
-			if isinstance(item,dict):
-				if '_id' in item:
-					_id.append(item['_id'])
-				if 'id' in item:
-					_id.append(item['id'])
-		
-	
-	if not _id:
-		if isinstance(data,str):
+	if data:
+		logger.debug(" + Data: %s" % data)
+
+		if isinstance(data, list):
+			logger.debug(" + Attempt to remove %i item from db" % len(data))
+			_id = []
+				
+			for item in data:
+				if isinstance(item,str):
+					_id.append(item)
+					
+				if isinstance(item,dict):
+					item_id = item.get('_id', item.get('id', None))
+					if item_id:
+						_id.append(item_id)
+
+		if isinstance(data, str):
 			_id = data
-		if isinstance(data,dict):
-			if '_id' in data:
-				_id = str(data['_id'])
-			if 'id' in data:
-				_id = str(data['id'])
+
+		if isinstance(data, dict):
+			_id = data.get('_id', data.get('id', None))
 
 	if not _id:
 		logger.error("DELETE: No '_id' field in header ...")
 		return HTTPError(404, "No '_id' field in header ...")
-
 
 	logger.debug(" + _id: %s" % _id)
 	

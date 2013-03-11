@@ -1,8 +1,8 @@
 //#################
 //# Configs
 //#################
-var url = 					'http://127.0.0.1:8082/en/static/canopsis/index.debug.html';
-//var url = 					'http://demo-devel.canopsis.org/';
+//var url = 					'http://127.0.0.1:8082/en/static/canopsis/index.debug.html';
+var url = 					'http://demo-devel.canopsis.org/';
 var timeout =				5000;
 
 var casper_verbose =		false;

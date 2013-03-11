@@ -437,7 +437,8 @@ Ext.define('widgets.line_graph.line_graph' , {
 				id: 'timeNav',
 				name: 'timeNav',
 				data: data,
-				showInLegend: false
+				showInLegend: false,
+				shift: false
 			});
 
 			// Disable legend, see: https://github.com/highslide-software/highcharts.com/issues/567
@@ -628,8 +629,8 @@ Ext.define('widgets.line_graph.line_graph' , {
 					var node_id = data[i].node
 					var node = this.nodesByID[node_id];
 
-					// Exclude state lines
-					if (data[i]['metric'] != 'cps_state' && data[i]['metric'] != 'cps_state_ok' && data[i]['metric'] != 'cps_state_warn' && data[i]['metric'] != 'cps_state_crit') {
+					// Exclude state lines and timeNav
+					if (! this.timeNav && data[i]['metric'] != 'cps_state' && data[i]['metric'] != 'cps_state_ok' && data[i]['metric'] != 'cps_state_warn' && data[i]['metric'] != 'cps_state_crit') {
 						//add/refresh trend lines
 						if (node.extra_field && node.extra_field.trend_curve)
 							this.addTrendLines(data[i]);
@@ -691,8 +692,12 @@ Ext.define('widgets.line_graph.line_graph' , {
 	},
 
 	shift: function() {
-		var me = this;
 		var me = this.options.cwidget;
+
+		// Don't shift on timeNav mode
+		if (! this.timeNav)
+			return
+
 		var now = Ext.Date.now();
 
 		var timestamp = now - (me.time_window * 1000)
@@ -701,32 +706,21 @@ Ext.define('widgets.line_graph.line_graph' , {
 			for (var i = 0; i < me.chart.series.length; i++) {
 				var serie = me.chart.series[i];
 				
+				// Don't shift timeNav
+				if (serie.name != 'timeNav' && serie.name != 'Navigator')
+					continue
+
 				log.debug(serie.name, me.logAuthor);
-				if (serie.data.length){
-					var fpoint = serie.data[0];
-					while (serie.data.length && fpoint.x < timestamp){
-						log.debug(' + Remove point', me.logAuthor);
-						fpoint.remove(false);
-						fpoint = serie.data[0];
-					}
+				if (serie.data.length)
+					continue
+
+				var fpoint = serie.data[0];
+				while (serie.data.length && fpoint.x < timestamp){
+					log.debug(' + Remove point', me.logAuthor);
+					fpoint.remove(false);
+					fpoint = serie.data[0];
 				}
 
-				
-				//var shift = true;
-				//console.log(serie.data[0])
-				/*while(shift){
-					var data_window = now - serie.xData[0];
-					shift = data_window > (me.time_window * 1000);
-
-					
-					log.debug(' + Data window: ' + data_window + ', Shift: ' + shift, me.logAuthor);
-					serie.shift = shift;
-
-					if (shift && serie.data[0]){
-						log.debug('   + Remove point')
-						serie.data[0].remove(false);
-					}
-				}*/
 			}
 		}
 	},
@@ -1217,7 +1211,6 @@ Ext.define('widgets.line_graph.line_graph' , {
 			}
 
 			if(serie){
-				console.log(serie.shift)
 				if(this.reportMode)
 					serie.setData(sData)
 				else
