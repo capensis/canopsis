@@ -232,31 +232,30 @@ var cgridEditRecord = function(selector_form,fieldToEdit,ModifiedValue){
 
 var cgridRemoveRecord = function(){
 	casper.then(function() {
-		casper.echo('> Select created selector', 'COMMENT');
+		casper.echo('> Select created record', 'COMMENT');
 		clickRowLabel('Casper');
 	});
 
 	casper.then(function() {
-		casper.echo('> Remove created selector', 'COMMENT');
+		casper.echo('> Remove created record', 'COMMENT');
 		click("span.icon-delete");
 		clickLabel('Yes');
 		casper.waitUntilVisible("div.ui-pnotify-container");
 	});
 
 	casper.then(function() {
-		casper.echo('> Reload selector', 'COMMENT');
+		casper.echo('> Reload record', 'COMMENT');
 		click("span.icon-reload");
-		casper.waitUntilVisible("div.ui-pnotify-container");
 	});
 
 	casper.then(function() {
-		casper.echo('> Check if selector is really deleted', 'COMMENT');
+		casper.echo('> Check if record is really deleted', 'COMMENT');
 
 		casper.waitForText("Casper", function() {
-			casper.test.fail("selector not deleted");
+			casper.test.fail("record not deleted");
 		}, function(){
 			casper.test.pass("Ok");
-		}, 1000);
+		}, 2000);
 
 	});
 }
