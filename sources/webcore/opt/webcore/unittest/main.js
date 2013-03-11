@@ -256,7 +256,7 @@ var cgridRemoveRecord = function(){
 			casper.test.fail("selector not deleted");
 		}, function(){
 			casper.test.pass("Ok");
-		}, 500);
+		}, 1000);
 
 	});
 }
