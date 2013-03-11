@@ -101,7 +101,11 @@ var fillGridEditableField = function(selector,text){
 
 var selectComboValue = function(comboName,comboValue){
 	casper.test.assertExists('input[name="'+comboName+'"]', 'Check if field "'+comboName+'" exist')
-	click('input[name="'+comboName+'"]')
+	//because trigger is in the parent sibling
+	var trigger_id = casper.evaluate(function(comboName) {
+		return $('input[name="'+comboName+'"]').parent().next()[0].id},comboName
+		)
+	click('#'+trigger_id+' > div')
 	clickLabel(comboValue)
 }
 
@@ -225,15 +229,17 @@ var cgridEditRecord = function(selector_form,fieldToEdit,ModifiedValue){
 		click("span.icon-save");
 		waitWhile("span.icon-save");
 		waitText(ModifiedValue);
-		casper.waitUntilVisible("div.ui-pnotify-container");
+		//casper.waitUntilVisible("div.ui-pnotify-container");
 	});
 
 }
 
-var cgridRemoveRecord = function(){
+var cgridRemoveRecord = function(rowLabelText){
+	if(!rowLabelText)rowLabelText = 'Casper';
+
 	casper.then(function() {
 		casper.echo('> Select created record', 'COMMENT');
-		clickRowLabel('Casper');
+		clickRowLabel(rowLabelText);
 	});
 
 	casper.then(function() {
