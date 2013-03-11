@@ -371,33 +371,38 @@ def account_delete(_id=None):
 	logger.debug("DELETE:")
 
 	data = request.body.readline()
-	logger.debug(" + Data: %s" % data)
 	if data:
 		try:
-			data=json.loads(data)
+			data = json.loads(data)
 		except:
-			return HTTPError(400, "Bad request, data are not json")
-			
-		#if not _id:
-		_id = []
-		
-		logger.debug(" + Loaded Data: %s" % data)
+			logger.warning('Invalid data in request payload')
+			data = None
+
+	if data:
+		logger.debug(" + Data: %s" % data)
+
 		if isinstance(data, list):
+			logger.debug(" + Attempt to remove %i item from db" % len(data))
+			_id = []
+				
 			for item in data:
-				if 'id' in item:
-					_id.append(item['id'])
-				if '_id' in item:
-					_id.append(item['_id'])
+				if isinstance(item,str):
+					_id.append(item)
 					
+				if isinstance(item,dict):
+					item_id = item.get('_id', item.get('id', None))
+					if item_id:
+						_id.append(item_id)
+
+		if isinstance(data, str):
+			_id = data
+
 		if isinstance(data, dict):
-			if 'id' in data:
-				_id.append(data['id'])
-			if '_id' in data:
-				_id.append(data['_id'])
+			_id = data.get('_id', data.get('id', None))
 
 	if not _id:
-		return HTTPError(400, "Bad request, no _id sent")
-
+		logger.error("DELETE: No '_id' field in header ...")
+		return HTTPError(404, "No '_id' field in header ...")
 	
 	logger.debug(" + _id: %s " % _id)
 	try:
