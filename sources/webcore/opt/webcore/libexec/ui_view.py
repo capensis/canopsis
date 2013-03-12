@@ -115,7 +115,8 @@ def tree_delete(name=None):
 	return {"total": len(name), "success": True, "data": output}
 
 @post('/ui/view',checkAuthPlugin={'authorized_grp':group_managing_access})
-def tree_add():
+@post('/ui/view/:_id',checkAuthPlugin={'authorized_grp':group_managing_access})
+def tree_add(_id=None):
 	logger.debug('POST:')
 	account = get_account()
 	storage = get_storage(namespace='object', account=account)
@@ -127,7 +128,8 @@ def tree_add():
 	return {"total": len(data), "success": True, "data": output}
 
 @put('/ui/view',checkAuthPlugin={'authorized_grp':group_managing_access})
-def update_view_relatives():
+@put('/ui/view/:_id',checkAuthPlugin={'authorized_grp':group_managing_access})
+def update_view_relatives(_id=None):
 	logger.debug('PUT:')
 	account = get_account()
 	storage = get_storage(namespace='object', account=account)
