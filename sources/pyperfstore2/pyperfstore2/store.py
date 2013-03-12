@@ -167,9 +167,9 @@ class store(object):
 		
 		return size
 	
-	def get(self, _id):
+	def get(self, _id, mfields=None):
 		self.check_connection()
-		return self.collection.find_one({'_id': _id})
+		return self.collection.find_one({'_id': _id}, fields=mfields)
 	
 	def get_bin(self, _id):
 		self.check_connection()
