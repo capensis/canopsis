@@ -23,6 +23,8 @@ function post_install(){
 		cp $PREFIX/var/www/canopsis/app/lib/global_options.js $PREFIX/var/www/global_options.js
 		check_code $?
 	fi
+	
+	mkdir -p $PREFIX/var/www/widgets
 
 	$PREFIX/bin/webcore_minimizer
 	check_code $? 
@@ -62,6 +64,8 @@ function post_update(){
 		check_code $?
 	fi
 
+	mkdir -p $PREFIX/var/www/widgets
+	
 	check_code $?
 }
 

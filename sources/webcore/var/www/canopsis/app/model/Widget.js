@@ -38,6 +38,7 @@ Ext.define('canopsis.model.Widget', {
 		{name: 'rowHeight',	defaultValue: undefined},
 		{name: 'formWidth',	defaultValue: 350},
 		{name: 'locales',	defaultValue: undefined},
-		{name: 'disabled',	defaultValue: false}
+		{name: 'disabled',	defaultValue: false},
+		{name: 'thirdparty',defaultValue: false}
 		]
 });

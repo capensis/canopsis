@@ -24,24 +24,57 @@ from caccount import caccount
 from cinit import cinit
 
 import pyperfstore2
+import logging
 
-from optparse import OptionParser
+from docopt import docopt
+from datetime import datetime
 import sys
 
-init 	= cinit()
-logger 	= init.getLogger("CleanEventDB", level="DEBUG")
+doc = """clean_dbs, clean your Canopsis Database.
 
-parser = argparse.ArgumentParser()
-parser.add_argument('-mode', '--work-mode', default='fake',help='choose between fake or real mode') 
-parser.add_argument('-freshness', '--time-amount', help='int + char y/M/w/d/h/m/s')
-parser.add_argument('-event', '--event-types', nargs='+', default=['sla', 'check','selector'], help='list of event type')
+Usage:
+  clean_dbs [--freshness <duration>] [--event_type <type>] [--verbose] [--do]
+  clean_dbs -h | --help
 
-args = parser.parse_args()
-if len(sys.argv)==1:
-    parser.print_help()
-    sys.exit(1)
+Options:
+  -h --help               Show help
+  --do                    Remove items
+  --freshness <duration>  Items on 'crecord_write_time' <  (Now - <duration>), you can use <int>[y/M/w/d/h/m/s]. Ex: '1d' for one day
+  --event-types <types>   Items on 'event_type' in <types>
+"""
+args = docopt(doc)
 
-freshness = args.time_amount
+options = {
+	'freshness': 	args.get('--freshness', None),
+	'event_type': 	args.get('--event_type', None),
+	'do': 			args.get('--do', False),
+	'verbose':		args.get('--verbose', False)
+}
+
+if not options['freshness']:
+	options['freshness'] = '1d'
+
+if not options['event_type']:
+	options['event_type'] = ['sla', 'check','selector']
+
+
+# Init logging
+if options["verbose"]:
+	logger_level = logging.DEBUG
+else:
+	logger_level = logging.INFO
+
+logging.basicConfig(format='%(asctime)s %(levelname)s %(name)s %(message)s',level=logger_level)
+logger 	= logging.getLogger('clean_dbs')
+
+
+logger.debug("Option:")
+logger.debug(" + freshness: %s" %	options["freshness"])
+logger.debug(" + event_type: %s" %	options["event_type"])
+logger.debug(" + do: %s" %			options["do"])
+logger.debug(" + verbose: %s" %		options["verbose"])
+
+freshness = options["freshness"]
 unit = {"s" : 1, "m" : 60, "h" : 60*60, "d" : 60*60*24, "w" : 60*60*24*7, "M" : 60*60*24*30, "y" : 60*60*24*365}
 last_char = freshness[len(freshness) -1 : ]
 
@@ -57,54 +90,96 @@ except Exception,err:
 	logger.error("error %s \n" %err) 
 	sys.exit(1)
 	
+threshold = int(time.time() - freshness)
 
-storage = get_storage(namespace='events', logging_level=logging.ERROR, account=caccount(user="root", group="root"))
 
-if (args.work_mode=='fake'):
-	logger.debug("/!\\ Simulation Mode, nothing to do /!\\")
+logger.info("Freshness:  %s seconds" % freshness)
+logger.info("Threshold:  %s: %s" % (threshold, datetime.fromtimestamp(threshold).strftime('%Y-%m-%d %H:%M:%S')) )
+logger.info("Event type: %s" %	options["event_type"])
 
-manager = pyperfstore2.manager(logging_level=logging.DEBUG)
-	
+logger.debug("Init all Storages")
+storage = get_storage(namespace='events', logging_level=logger_level, account=caccount(user="root", group="root"))
+manager = pyperfstore2.manager(logging_level=logger_level)
+
+if not options["do"]:
+	logger.info("/!\\ Simulation Mode, nothing to do /!\\")
+
 ################### EVENTS
-logger.debug("Clean events")
-records = storage.find(	{'$and': [
-				{'event_type': { '$in': args.event_types }},
-				{'crecord_write_time': {'$lt': int(time.time() - freshness)}}
-			]
-})
+logger.info("Find old events:")
+mfilter = 	{
+	'$and': [
+		{'event_type': 			{ '$in': options['event_type'] }},
+		{'crecord_write_time':	{ '$lt': threshold}}
+	]
+}
 
+records = storage.find(mfilter, { '_id': 1, 'component': 1, 'resource': 1 })
+logger.info(" + %s found" % len(records))
 
-logger.debug(" + %s found" % len(records))
+pfilter = {"$or": []}
+event_ids = []
+perfdata_ids = []
 
 for record in records:
-	logger.debug(" + %s" % record._id)
-	if (args.work_mode=='real'):
-		logger.debug("    -> Too old, remove it")
-		storage.remove(record)
-		
-	logger.debug("    -> Clean Metrics")
-	if record.data.get('source_type', None) == 'resource':
-		mfilter = { 'co': record.data.get('component', None), 're': record.data.get('resource', None) }
+	#logger.debug(" + %s" % record._id)
+	event_ids.append(record['_id'])
+
+	if record.get('resource', None):
+		pfilter["$or"].append({ 'co': record['component'], 're': record['resource'] })
 	else:
-		mfilter = { 'co': record.data.get('component', None) }
-		
-	precords = manager.find(mfilter=mfilter)
-	
-	for precord in precords:
-		logger.debug("      + %s: %s %s -> %s" % (precord['_id'], precord['co'], precord.get('re',"-"), precord['me']))
-		if (args.work_mode=='real'):
-			logger.debug("    -> Too old, remove it")
-			manager.remove(_id=precord['_id'])
-		
-	
-################### PERFSTORE
-logger.debug("Clean perfstore2 Metrics")
-records = manager.find(mfilter={ 'lts': {'$lt': int(time.time() - freshness)}, 'me': {'$nin': [ 'cps_statechange', 'cps_statechange_nok', 'cps_statechange_0', 'cps_statechange_1', 'cps_statechange_2', 'cps_statechange_3' ]} })
-						
-logger.debug(" + %s found" % records.count())
+		pfilter["$or"].append({ 'co': record['component'] })
 
-for record in records:
-	logger.debug(" + %s: %s %s -> %s" % (record['_id'], record['co'], record.get('re',"-"), record['me']))
-	if (args.work_mode=='real'):
-		logger.debug("    -> Too old, remove it")
-		manager.remove(_id=record['_id'])
+#logger.debug("IDS to remove: %s" % ids)
+#logger.debug("pfilter: %s" % pfilter)
+
+if (len(pfilter["$or"])):
+	logger.info("Find perfdata linked from events:")
+	precords = manager.find(mfilter=pfilter, data=False)
+	logger.info(" + %s found" % precords.count())
+	logger.debug("Build array of ids:")
+	perfdata_ids = [precord['_id'] for precord in precords]
+	logger.debug(" + Done")
+
+logger.info("Find old Metrics (linked from event):")
+pfilter = { 'lts': {'$lt': threshold}, 'me': {'$nin': [ 'cps_statechange', 'cps_statechange_nok', 'cps_statechange_0', 'cps_statechange_1', 'cps_statechange_2', 'cps_statechange_3' ]} }
+
+precords = manager.find(mfilter=pfilter, data=False)
+logger.info(" + %s found" % precords.count())
+
+logger.info("Check twin id:")
+for precord in precords:
+	if precord['_id'] not in perfdata_ids:
+		perfdata_ids.append(precord['_id'])
+logger.info(" + Done")
+
+logger.info("Summary:")
+logger.info(" + Events to delete:	%s" % len(event_ids))
+logger.info(" + Perfdata to delete:	%s" % len(perfdata_ids))
+
+if options["do"]:
+	logger.info("Remove events ...")
+	storage.get_backend().remove({'_id': {'$in': event_ids}})
+	logger.info("Remove Perfdata ...")
+	manager.remove(_id=perfdata_ids)
+	perfdata_ids = []
+
+################### PERFSTORE
+logger.info("Find old Metrics:")
+precords = manager.find(
+		mfilter={
+			'lts': {'$lt': threshold },
+			'me': {'$nin': [ 'cps_statechange', 'cps_statechange_nok', 'cps_statechange_0', 'cps_statechange_1', 'cps_statechange_2', 'cps_statechange_3' ]
+			}
+		},
+		data=False)
+
+ids = [precord['_id'] for precord in precords if precord['_id'] not in perfdata_ids]
+
+if options["do"]:
+	manager.remove(_id=ids)
+
+logger.info(" + %s found" % len(ids))
+
+
+if not options["do"]:
+	logger.info("/!\\ Simulation Mode, nothing to do /!\\")

@@ -18,10 +18,15 @@ def mongo(host='localhost'):
 
 	archive_name = 'backup_mongodb'
 	tmp_dir = '%s/%s' % (backup_path, archive_name)
+	archive_path = '%s.zip' % tmp_dir
 
 	if os.path.exists(tmp_dir):
 		logger.debug(' + Remove old temp dir')
 		shutil.rmtree(tmp_dir)
+
+	if os.path.exists(archive_path):
+		logger.debug(' + Remove old backup')
+		os.remove(archive_path)
 
 	os.makedirs(tmp_dir)
 
@@ -34,10 +39,20 @@ def mongo(host='localhost'):
 	dump_output.wait()
 
 	logger.debug(' + Make archive')
-	shutil.make_archive('%s/%s' % (backup_path, archive_name), 'zip', tmp_dir)	
+	#shutil.make_archive('%s/%s' % (backup_path, archive_name), 'zip', tmp_dir)
+	# shutil.make_archive(base_name, format[, root_dir[, base_dir[, verbose[, dry_run[, owner[, group[, logger]]]]]]])
+	shutil.make_archive(
+		base_name='%s/%s' % (backup_path, archive_name),
+		root_dir=backup_path,
+		format='zip',
+		base_dir=archive_name,
+		logger=logger)
 
 	logger.debug(' + Remove temp dir')
-	shutil.rmtree(tmp_dir)
+	shutil.rmtree('%s/%s' % (backup_path, archive_name))
+
+	if not os.path.exists(archive_path):
+		raise IOError("Archive file '%s' not found ..." % archive_path)
 
 	logger.debug('Mongo Backup finished')
 

@@ -30,7 +30,8 @@ Ext.define('canopsis.controller.Widgets', {
     logAuthor: '[controller][Widgets]',
 
     init: function() {
-		Ext.Loader.setPath('widgets', './widgets');
+		Ext.Loader.setPath('widgets', '/static/canopsis/widgets');
+		Ext.Loader.setPath('widgets.thirdparty', '/static/widgets');
 
 		this.store = this.getStore('Widgets');
 
@@ -39,8 +40,13 @@ Ext.define('canopsis.controller.Widgets', {
 		if (! global.minimified) {
 			this.store.on('load', function() {
 				this.store.each(function(record) {
-					log.debug('loading ' + record.data.xtype, this.logAuthor);
-					var name = 'widgets.' + record.data.xtype + '.' + record.data.xtype;
+					var name;
+					if (record.get('thirdparty'))
+						name = 'widgets.thirdparty.' + record.get('xtype') + '.' + record.get('xtype');
+					else
+						name = 'widgets.' + record.get('xtype') + '.' + record.get('xtype');
+
+					log.debug('loading ' + record.get('xtype') + ' (' + name + ')', this.logAuthor);
 					Ext.require(name);
 				}, this);
 

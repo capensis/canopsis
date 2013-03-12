@@ -83,13 +83,17 @@ def main(argv):
 		
 		if not nowait:
 			result.wait(timeout=timeout)
+			output = None
 			if result.result:
+				output = result.result.get('celery_output', None)
 				print " + Result: %s" % result.result
-			if result.successful():
+			if result.successful() and result.result.get('success', False):
 				print " + Task finished successfully"
 				sys.exit(0)
 			else:
-				print " + Task finished with errors"
+				print " + Task finished with errors:"
+				if output:
+					print output
 				sys.exit(1)
 		else:
 			print " + Task launched"
