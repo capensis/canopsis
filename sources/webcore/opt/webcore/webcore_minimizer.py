@@ -55,6 +55,7 @@ paths = [
 	os.path.join(webui_path, "app/controller"),
 	os.path.join(webui_path, "widgets/line_graph/line_graph.js"),
 	os.path.join(webui_path, "widgets/"),
+	os.path.join(webui_path, "../widgets/"),
 	os.path.join(webui_path, "app/controller/Widgets.js"),
 	os.path.join(webui_path, "app/view/Viewport.js")
 ]
