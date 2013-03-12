@@ -61,29 +61,32 @@ def tree_get():
 
 
 @delete('/ui/view')
-@delete('/ui/view/:name')
-def tree_delete(name=None):
+@delete('/ui/view/:_id')
+def tree_delete(_id=None):
 	logger.debug('DELETE:')
 	account = get_account()
 	storage = get_storage(namespace='object', account=account, logging_level=logging.DEBUG)
 	
-	if not name:
-		name = []
+	ids = []
+
+	try:
 		data = json.loads(request.body.readline())
 		if not isinstance(data,list):
 			data = [data]
 		for view in data:
-			name.append(view['_id'])
-			
+			ids.append(view['_id'])
+	except:
+		logger.debug('No payload for delete action')
+		ids.append(_id)
 
 	output = {}
 	
-	for _id in name:
+	for _id in ids:
 		try:
 			record = storage.get(_id, account=account)
 		except Exception, err:
 			logger.info(' + Record not found: %s' %_id)
-			output[record._id] = {'success':False,'output':'Record not found'}
+			output[_id] = {'success':False,'output':'Record not found'}
 			record = None
 			
 		if record:
@@ -112,7 +115,7 @@ def tree_delete(name=None):
 				output[record.name] = {'success':False,'output':'This record have children, remove those child before'}
 				logger.warning('This record have children, remove those child before')
 	
-	return {"total": len(name), "success": True, "data": output}
+	return {"total": len(ids), "success": True, "data": output}
 
 @post('/ui/view',checkAuthPlugin={'authorized_grp':group_managing_access})
 @post('/ui/view/:_id',checkAuthPlugin={'authorized_grp':group_managing_access})
