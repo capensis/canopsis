@@ -34,7 +34,7 @@ Ext.define('canopsis.store.TreeStoreViews', {
 
 	proxy: {
 		batchActions: true,
-		appendId: false,
+		//appendId: false,
 		type: 'rest',
 		url: '/ui/view',
 		reader: {
