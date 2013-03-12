@@ -10,9 +10,14 @@ cgridOpen('report','buildSchedule')
 casper.then(function() {
 	casper.echo('> Fill fields and Save', 'COMMENT');
 	fill_field(selector_consolidation_form, 'crecord_name', 'Casper');
-	selectComboValue('exporting_viewName','Dashboard')
 	fill_field(selector_consolidation_form, 'crontab_hours','00:00')
+})
 
+casper.then(function() {
+	selectComboValue('exporting_viewName','Dashboard')
+})
+
+casper.then(function() {
 	click("span.icon-save");
 	waitWhile("span.icon-save");
 	waitText("Casper");

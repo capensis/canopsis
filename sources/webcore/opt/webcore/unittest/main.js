@@ -100,13 +100,19 @@ var fillGridEditableField = function(selector,text){
 }
 
 var selectComboValue = function(comboName,comboValue){
-	casper.test.assertExists('input[name="'+comboName+'"]', 'Check if field "'+comboName+'" exist')
-	//because trigger is in the parent sibling
-	var trigger_id = casper.evaluate(function(comboName) {
-		return $('input[name="'+comboName+'"]').parent().next()[0].id},comboName
-		)
-	click('#'+trigger_id+' > div')
-	clickLabel(comboValue)
+	casper.then(function(){
+		casper.test.assertExists('input[name="'+comboName+'"]', 'Check if field "'+comboName+'" exist')
+		//because trigger is in the parent sibling
+		var trigger_id = casper.evaluate(function(comboName) {
+			return $('input[name="'+comboName+'"]').parent().next()[0].id},comboName
+			)
+		click('#'+trigger_id+' > div')
+	})
+	casper.then(function(){
+		casper.waitForText(comboValue, function() {
+			casper.clickLabel(comboValue,'li');
+		}, timeout)
+	})
 }
 
 var clickLabel = function(label){
