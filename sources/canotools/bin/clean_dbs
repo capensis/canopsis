@@ -74,8 +74,6 @@ logger.debug(" + event_type: %s" %	options["event_type"])
 logger.debug(" + do: %s" %			options["do"])
 logger.debug(" + verbose: %s" %		options["verbose"])
 
-logger.debug("Parse Freshness:")
-
 freshness = options["freshness"]
 unit = {"s" : 1, "m" : 60, "h" : 60*60, "d" : 60*60*24, "w" : 60*60*24*7, "M" : 60*60*24*30, "y" : 60*60*24*365}
 last_char = freshness[len(freshness) -1 : ]
@@ -95,9 +93,9 @@ except Exception,err:
 threshold = int(time.time() - freshness)
 
 
-logger.debug(" + freshness: %s seconds" % freshness)
-logger.debug(" + Threshold: %s: %s" % (threshold, datetime.fromtimestamp(threshold).strftime('%Y-%m-%d %H:%M:%S')) )
-
+logger.info("Freshness:  %s seconds" % freshness)
+logger.info("Threshold:  %s: %s" % (threshold, datetime.fromtimestamp(threshold).strftime('%Y-%m-%d %H:%M:%S')) )
+logger.info("Event type: %s" %	options["event_type"])
 
 logger.debug("Init all Storages")
 storage = get_storage(namespace='events', logging_level=logger_level, account=caccount(user="root", group="root"))
