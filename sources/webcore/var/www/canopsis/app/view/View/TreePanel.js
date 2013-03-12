@@ -74,6 +74,19 @@ Ext.define('canopsis.view.View.TreePanel' , {
 			text: _('Others'),
 			dataIndex: 'aaa_access_other'
 		},{
+			width: 130,
+			align: 'center',
+			text: _('Last modified'),
+			dataIndex: 'crecord_write_time',
+			renderer: rdr_tstodate
+		},{
+			width: 130,
+			align: 'center',
+			text: _('Creation date'),
+			dataIndex: 'crecord_creation_time',
+			hidden: true,
+			renderer: rdr_tstodate
+		},{
 			xtype: 'actioncolumn',
 			width: 25,
 			menuDisabled: true,
