@@ -138,7 +138,8 @@ var openMenu = function(menu_name,sub_menu_name,textToWait){
 		buildSelector: "img.icon-mainbar-selector",
 		buildSchedule: "img.icon-mainbar-edit-task",
 		buildConsolidation: "img.icon-mainbar-consolidation",
-		buildNewView: "img.icon-mainbar-new-view"
+		buildNewView: "img.icon-mainbar-new-view",
+		runViewManager: "img.icon-mainbar-run"
 	}
 
 	casper.echo('> Click on '+ menu_name + ' then ' + sub_menu_name, 'COMMENT');
