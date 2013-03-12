@@ -100,9 +100,19 @@ var fillGridEditableField = function(selector,text){
 }
 
 var selectComboValue = function(comboName,comboValue){
-	casper.test.assertExists('input[name="'+comboName+'"]', 'Check if field "'+comboName+'" exist')
-	click('input[name="'+comboName+'"]')
-	clickLabel(comboValue)
+	casper.then(function(){
+		casper.test.assertExists('input[name="'+comboName+'"]', 'Check if field "'+comboName+'" exist')
+		//because trigger is in the parent sibling
+		var trigger_id = casper.evaluate(function(comboName) {
+			return $('input[name="'+comboName+'"]').parent().next()[0].id},comboName
+			)
+		click('#'+trigger_id+' > div')
+	})
+	casper.then(function(){
+		casper.waitForText(comboValue, function() {
+			casper.clickLabel(comboValue,'li');
+		}, timeout)
+	})
 }
 
 var clickLabel = function(label){
@@ -127,7 +137,8 @@ var openMenu = function(menu_name,sub_menu_name,textToWait){
 		buildCurve:  "img.icon-mainbar-colors",
 		buildSelector: "img.icon-mainbar-selector",
 		buildSchedule: "img.icon-mainbar-edit-task",
-		buildConsolidation: "img.icon-mainbar-consolidation"
+		buildConsolidation: "img.icon-mainbar-consolidation",
+		buildNewView: "img.icon-mainbar-new-view"
 	}
 
 	casper.echo('> Click on '+ menu_name + ' then ' + sub_menu_name, 'COMMENT');
@@ -225,15 +236,17 @@ var cgridEditRecord = function(selector_form,fieldToEdit,ModifiedValue){
 		click("span.icon-save");
 		waitWhile("span.icon-save");
 		waitText(ModifiedValue);
-		casper.waitUntilVisible("div.ui-pnotify-container");
+		//casper.waitUntilVisible("div.ui-pnotify-container");
 	});
 
 }
 
-var cgridRemoveRecord = function(){
+var cgridRemoveRecord = function(rowLabelText){
+	if(!rowLabelText)rowLabelText = 'Casper';
+
 	casper.then(function() {
 		casper.echo('> Select created record', 'COMMENT');
-		clickRowLabel('Casper');
+		clickRowLabel(rowLabelText);
 	});
 
 	casper.then(function() {
