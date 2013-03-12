@@ -42,6 +42,18 @@
 	<link rel="stylesheet" type="text/css" href="/static/webcore-libs/pnotify/jquery.pnotify.default.css">
 
 	<link rel="stylesheet" type="text/css" href="/ui/widgets.css">
+	
+</head>
+<body>
+	<!-- Nowjs -->
+	<div id="nowjs"></div>
+
+	<div id="auth" class='login' style='display: none;'>
+		<div class='header'>DEBUG</div>
+		<div class='title'><img src="themes/canopsis/resources/images/logo_canopsis_auth.png"></img></div>
+		<div class='layout'></div>
+		<div id='auth_form' class='form'></div>
+	</div>
 
 	<!-- Ext-JS -->
 	<script type="text/javascript" src="/static/webcore-libs/extjs/ext-all-dev.js"></script>
@@ -114,18 +126,7 @@
 
 	<!-- App -->
 	<script type="text/javascript" src="app.js"></script>
-	
-</head>
-<body>
-	<!-- Nowjs -->
-	<div id="nowjs"></div>
 
-	<div id="auth" class='login' style='display: none;'>
-		<div class='header'>DEBUG</div>
-		<div class='title'><img src="themes/canopsis/resources/images/logo_canopsis_auth.png"></img></div>
-		<div class='layout'></div>
-		<div id='auth_form' class='form'></div>
-	</div>
 
 	<script type="text/javascript">
 		Ext.onDocumentReady(function() {
