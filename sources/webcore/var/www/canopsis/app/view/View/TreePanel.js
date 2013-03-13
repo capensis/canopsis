@@ -38,7 +38,8 @@ Ext.define('canopsis.view.View.TreePanel' , {
 			xtype: 'treecolumn',
 			text: _('Name'),
 			flex: 5,
-			dataIndex: 'crecord_name'
+			dataIndex: 'crecord_name',
+			renderer: function(value, metaData, record) { return "<span name='view."+record.get('crecord_name')+"'></span>" + value ; }
 		},{
 			text: _('Export Options'),
 			flex: 1,
