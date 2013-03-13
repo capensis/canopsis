@@ -1806,3 +1806,15 @@ msgstr "hours ago"
 
 msgid "days ago"
 msgstr "days ago"
+
+msgid "HTML"
+msgstr "HTML"
+
+msgid "Impossible to get view options."
+msgstr "Impossible to get view options."
+
+msgid "Last modified"
+msgstr "Last modified"
+
+msgid "View name"
+msgstr "View name"

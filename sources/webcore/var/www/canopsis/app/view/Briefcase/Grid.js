@@ -72,17 +72,20 @@ Ext.define('canopsis.view.Briefcase.Grid' , {
 			width: 80,
 			align: 'center',
 			text: _('Owner'),
-			dataIndex: 'aaa_access_owner'
+			dataIndex: 'aaa_access_owner',
+			renderer: rdr_access
 		},{
 			width: 60,
 			align: 'center',
 			text: _('Group'),
-			dataIndex: 'aaa_access_group'
+			dataIndex: 'aaa_access_group',
+			renderer: rdr_access
 		},{
 			width: 60,
 			align: 'center',
 			text: _('Others'),
-			dataIndex: 'aaa_access_other'
+			dataIndex: 'aaa_access_other',
+			renderer: rdr_access
 		}
 	]
 });

@@ -86,34 +86,33 @@ def tree_delete(_id=None):
 			record = storage.get(_id, account=account)
 		except Exception, err:
 			logger.info(' + Record not found: %s' %_id)
-			output[_id] = {'success':False,'output':'Record not found'}
-			record = None
+			output[_id] = {'success':False, 'output':'Record not found'}
+			continue
 			
-		if record:
-			if len(record.children) == 0:
-				if record.check_write(account=account):
-					#remove record from its parent child list
-					for parent in record.parent:
-						parent_rec = storage.get(parent, account=account)
-						parent_rec.remove_children(record )
-						if parent_rec.check_write(account=account):
-							storage.put(parent_rec,account=account)
-						else:
-							logger.info(' + No sufficient rights on parent %s' % parent_rec.name)
-							output[parent_rec.name] = {'success':False,'output':'No right to remove children'}
-					#remove the record
-					try:
-						storage.remove(record, account=account)
-						output[record.name] = {'success':True,'output':''}
-					except Exception, err:
-						logger.error(err)
-						output[record.name] = {'success':False,'output':err}
-				else:
-					logger.info(' + No sufficient rights on %s' % parent_rec.crecord_name)
-					output[record.name] = {'success':False,'output':'No sufficient rights'}
+		if len(record.children) == 0:
+			if record.check_write(account=account):
+				#remove record from its parent child list
+				for parent in record.parent:
+					parent_rec = storage.get(parent, account=account)
+					parent_rec.remove_children(record )
+					if parent_rec.check_write(account=account):
+						storage.put(parent_rec,account=account)
+					else:
+						logger.info(' + No sufficient rights on parent %s' % parent_rec.name)
+						output[parent_rec.name] = {'success':False,'output':'No right to remove children'}
+				#remove the record
+				try:
+					storage.remove(record, account=account)
+					output[record.name] = {'success':True,'output':''}
+				except Exception, err:
+					logger.error(err)
+					output[record.name] = {'success':False,'output':err}
 			else:
-				output[record.name] = {'success':False,'output':'This record have children, remove those child before'}
-				logger.warning('This record have children, remove those child before')
+				logger.info(' + No sufficient rights on %s' % parent_rec.crecord_name)
+				output[record.name] = {'success':False,'output':'No sufficient rights'}
+		else:
+			output[record.name] = {'success':False,'output':'This record have children, remove those child before'}
+			logger.warning('This record have children, remove those child before')
 	
 	return {"total": len(ids), "success": True, "data": output}
 

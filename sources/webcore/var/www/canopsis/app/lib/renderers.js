@@ -425,3 +425,9 @@ rdr_humanreadable_value = function(value, unit) {
 
 	return value + unit;
 };
+
+
+rdr_access = function(val) {
+	val.sort();
+	return val;
+}

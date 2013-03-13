@@ -143,6 +143,8 @@ class cstorage(object):
 	def update(self, _id, data, namespace=None, account=None):
 		if not isinstance(data, dict):
 			raise Exception('Invalid data, must be a dict ...')
+
+		data['crecord_write_time'] = int(time.time())
 		
 		# Check if record exist
 		count = self.count({'_id': _id}, namespace=namespace, account=account, for_write=True)

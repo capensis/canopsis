@@ -63,17 +63,33 @@ Ext.define('canopsis.view.View.TreePanel' , {
 			width: 80,
 			align: 'center',
 			text: _('Owner'),
-			dataIndex: 'aaa_access_owner'
+			dataIndex: 'aaa_access_owner',
+			renderer: rdr_access
 		},{
 			width: 60,
 			align: 'center',
 			text: _('Group'),
-			dataIndex: 'aaa_access_group'
+			dataIndex: 'aaa_access_group',
+			renderer: rdr_access
 		},{
 			width: 60,
 			align: 'center',
 			text: _('Others'),
-			dataIndex: 'aaa_access_other'
+			dataIndex: 'aaa_access_other',
+			renderer: rdr_access
+		},{
+			width: 130,
+			align: 'center',
+			text: _('Last modified'),
+			dataIndex: 'crecord_write_time',
+			renderer: rdr_tstodate
+		},{
+			width: 130,
+			align: 'center',
+			text: _('Creation date'),
+			dataIndex: 'crecord_creation_time',
+			hidden: true,
+			renderer: rdr_tstodate
 		},{
 			xtype: 'actioncolumn',
 			width: 25,
