@@ -21,7 +21,7 @@
 
 Ext.define('cfilter.array_field', {
 	extend: 'Ext.panel.Panel',
-	requires: ['canopsis.lib.form.field.cdatePicker'],
+
 	alias: 'widget.cfilterArrayField',
 
 	border: false,
