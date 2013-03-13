@@ -57,12 +57,7 @@ Ext.define('canopsis.store.Views', {
 			type: 'json',
 			writeAllFields: false
 		}
-	},
-
-	constructor: function(config) {
-		this.callParent(arguments);
 	}
-
 	/*load: function (){
 		log.debug('View store loaded.')
 		log.dump(this.getById('view.root.dashboard'))
