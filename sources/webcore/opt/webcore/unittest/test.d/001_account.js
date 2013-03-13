@@ -21,7 +21,7 @@ casper.then(function() {
 
 cgridEditRecord(selector_account_form, 'lastname', 'Modified');
 
-cgridRemoveRecord()
+cgridRemoveRecord(undefined,'DELETE')
 
 casper.then(function() {
 	casper.echo('> Close Tab', 'COMMENT');
