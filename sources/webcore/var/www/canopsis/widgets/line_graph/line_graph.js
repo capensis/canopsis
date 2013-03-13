@@ -432,7 +432,7 @@ Ext.define('widgets.line_graph.line_graph' , {
 
 		//Time Navigation
 		if (this.timeNav) {
-			var now = Ext.Date.now()
+			var now = Ext.Date.now();
 			var data = [[now - (this.timeNav_window * 1000), null], [now, null]];
 			this.options.series.push({
 				id: 'timeNav',
