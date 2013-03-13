@@ -23,7 +23,7 @@ Ext.define('canopsis.view.Consolidation.Form', {
 
 	alias: 'widget.ConsolidationForm',
 
-	requires: ['canopsis.lib.form.field.cthreshold_metro'],
+	//requires: ['canopsis.lib.form.field.cthreshold_metro'],
 
 	fieldDefaults: {
 		labelWidth: 150
