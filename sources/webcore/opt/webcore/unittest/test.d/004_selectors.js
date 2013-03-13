@@ -18,7 +18,7 @@ casper.then(function() {
 	casper.waitUntilVisible("div.ui-pnotify-container");
 });
 
-cgridEditRecord(selector_selector_form, 'display_name', 'CasperMod')
+cgridEditRecord(selector_selector_form, 'display_name', 'CasperModified')
 
 cgridRemoveRecord()
 

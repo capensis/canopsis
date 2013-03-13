@@ -24,9 +24,9 @@ casper.then(function() {
 	casper.waitUntilVisible("div.ui-pnotify-container");
 });
 
-cgridEditRecord(selector_consolidation_form, 'crecord_name', 'CasperMod')
+cgridEditRecord(selector_consolidation_form, 'crecord_name', 'CasperModified')
 
-cgridRemoveRecord('CasperMod')
+cgridRemoveRecord('CasperModified')
 
 casper.then(function() {
 	casper.echo('> Close Tab', 'COMMENT');
