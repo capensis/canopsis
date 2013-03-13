@@ -81,7 +81,7 @@ var global = {
 	],
 
 	gen_id: function() {
-			var timestamp = new Date().getTime();
+			var timestamp = Ext.Date.now();
 			return timestamp + '-' + Math.floor(Math.random() * 10);
 	},
 
