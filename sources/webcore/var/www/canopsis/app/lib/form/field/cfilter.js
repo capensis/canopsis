@@ -21,105 +21,105 @@
 
 Ext.define('cfilter.array_field', {
 	extend: 'Ext.panel.Panel',
-	requires : ['canopsis.lib.form.field.cdatePicker'],
+	requires: ['canopsis.lib.form.field.cdatePicker'],
 	alias: 'widget.cfilterArrayField',
 
 	border: false,
 	value: undefined,
 
-	
+
 	layout: 'hbox',
 
 	itemXtype: 'textfield',
 
 	items: [{
-		xtype:'button',
+		xtype: 'button',
 		iconCls: 'icon-add',
 		margin: '0 0 0 5',
 		tooltip: _('Add new value to this list'),
-		hidden:true
+		hidden: true
 	},{
-		xtype:'panel',
+		xtype: 'panel',
 		border: false,
 		//margin: '0 0 0 5',
-		name:'cfilterArrayPanel',
+		name: 'cfilterArrayPanel',
 		defaults: {margin: '0 0 5 5'}
 	}],
 
 	initComponent: function() {
 		this.callParent(arguments);
-		this.arrayPanel = this.down('panel[name=cfilterArrayPanel]')
-		this.addButton = this.down('button')
-		this.add_child()
-		this.addButton.on('click', function() {this.add_child(undefined,true)},this);
+		this.arrayPanel = this.down('panel[name=cfilterArrayPanel]');
+		this.addButton = this.down('button');
+		this.add_child();
+		this.addButton.on('click', function() {this.add_child(undefined, true)},this);
 	},
 
 	add_child: function(value,removeButton) {
 		var config = [{
 				xtype: this.itemXtype,
 				//emptyText: 'Type value here',
-				name:'valueField',
+				name: 'valueField',
 				isFormField: false,
 				value: value
-			}]
+			}];
 
-		if(removeButton)
+		if (removeButton)
 			config.push({
-				xtype:'button',
+				xtype: 'button',
 				iconCls: 'icon-cancel',
 				margin: '0 0 0 5',
 				width: 24,
 				tooltip: _('Remove this from list of value'),
-				handler: function(button){button.up().destroy()}
-			})
-		
+				handler: function(button) {button.up().destroy()}
+			});
+
 		this.arrayPanel.add({
-			xtype:'container',
-			layout:'hbox',
-			items:config
-		})
+			xtype: 'container',
+			layout: 'hbox',
+			items: config
+		});
 	},
 
-	switchArrayMode : function(_switch){
-		if(_switch){
-			this.addButton.show()
-			for(var i=1; i< this.arrayPanel.items.items.length;i++)
-				this.arrayPanel.items.items[i].show()
-		}else{
-			this.addButton.hide()
-			for(var i=1; i< this.arrayPanel.items.items.length;i++)
-				this.arrayPanel.items.items[i].hide()
+	switchArrayMode: function(_switch) {
+		if (_switch) {
+			this.addButton.show();
+			for (var i = 1; i < this.arrayPanel.items.items.length; i++)
+				this.arrayPanel.items.items[i].show();
+		}else {
+			this.addButton.hide();
+			for (var i = 1; i < this.arrayPanel.items.items.length; i++)
+				this.arrayPanel.items.items[i].hide();
 		}
 	},
 
 	getValue: function() {
 		var output = [];
 		for (var i = 0; i < this.arrayPanel.items.items.length; i++) {
-			var item = this.arrayPanel.items.items[i]
-			if(!item.hidden)
-				output.push(item.down('[name=valueField]').getValue())
+			var item = this.arrayPanel.items.items[i];
+			if (!item.hidden)
+				output.push(item.down('[name=valueField]').getValue());
 		}
 
-		if(output.length == 1)
+		if (output.length == 1)
 			return output[0];
 		else
 			return output;
 	},
 
 	setValue: function(array) {
-		this.arrayPanel.removeAll()
+		this.arrayPanel.removeAll();
 
-		if(!Ext.isArray(array))
-			array = [array]
+		if (!Ext.isArray(array))
+			array = [array];
 
-		for(var i=0; i < array.length;i++)
-			if(i == 0)
-				this.add_child(array[i])
+		for (var i = 0; i < array.length; i++)
+			if (i == 0)
+				this.add_child(array[i]);
 			else
-				this.add_child(array[i],true)
-		
-		if(array.length > 1)
-			this.switchArrayMode(true)
+				this.add_child(array[i], true);
+
+		if (array.length > 1)
+			this.switchArrayMode(true);
 	}
 });
 
@@ -127,26 +127,26 @@ Ext.define('cfilter.object' , {
 	extend: 'Ext.panel.Panel',
 	border: false,
 	margin: 5,
-	autoScroll:true,
+	autoScroll: true,
 
 	initialCfilter: false,
 	filter: false,
 
 	items: [{
-		name:'upperPanel',
+		name: 'upperPanel',
 		xtype: 'panel',
 		layout: 'hbox',
 		border: false,
-		items:[{
-			xtype:'button',
-			name:'cfilterRemoveButton',
+		items: [{
+			xtype: 'button',
+			name: 'cfilterRemoveButton',
 			iconCls: 'icon-cancel',
 			margin: '0 5 0 0',
 			width: 24,
 			tooltip: _('Remove this from list of value')
 		},{
-			name:'cfilterField',
-			xtype:'combobox',
+			name: 'cfilterField',
+			xtype: 'combobox',
 			queryMode: 'local',
 			displayField: 'text',
 			isFormField: false,
@@ -154,13 +154,13 @@ Ext.define('cfilter.object' , {
 			valueField: 'operator',
 			emptyText: _('Type value or choose operator'),
 			store: {
-					"xtype": "store",
-					"fields": ["operator", "text","type"],
-					"data" : []
+					'xtype': 'store',
+					'fields': ['operator', 'text', 'type'],
+					'data' : []
 				}
 		},{
-			name:'cfilterIsCombo',
-			xtype:'combobox',
+			name: 'cfilterIsCombo',
+			xtype: 'combobox',
 			queryMode: 'local',
 			displayField: 'text',
 			isFormField: false,
@@ -176,9 +176,9 @@ Ext.define('cfilter.object' , {
 					{'operator': '$not', 'text': _('Is Not'), 'type': 'value' }
 				]}
 		},{
-			name:'cfilterOperator',
-			xtype:'combobox',
-			width:120,
+			name: 'cfilterOperator',
+			xtype: 'combobox',
+			width: 120,
 			queryMode: 'local',
 			displayField: 'text',
 			isFormField: false,
@@ -186,45 +186,45 @@ Ext.define('cfilter.object' , {
 			editable: false,
 			margin: '0 0 0 5',
 			store: {
-				fields: ['operator', 'text', 'type','array'],
+				fields: ['operator', 'text', 'type', 'array'],
 				data: []
 			}
 		},{
-			xtype:'cfilterArrayField',
-			cfilterField:true,
+			xtype: 'cfilterArrayField',
+			cfilterField: true,
 			cfilterType: 'string',
-			itemXtype: 'textfield',
+			itemXtype: 'textfield'
 		},{
-			xtype:'combobox',
-			cfilterField:true,
+			xtype: 'combobox',
+			cfilterField: true,
 			cfilterType: 'bool',
 			margin: '0 0 0 5',
 			value: true,
-			hidden:true,
+			hidden: true,
 			isFormField: false,
-			displayField: "text",
-			valueField: "value",
+			displayField: 'text',
+			valueField: 'value',
 			store: {
 				xtype: 'store',
-				fields: ["value", "text"],
-				data : [
-					{"value": true, "text": "True"},
-					{"value": false, "text": "False"}
+				fields: ['value', 'text'],
+				data: [
+					{'value': true, 'text': 'True'},
+					{'value': false, 'text': 'False'}
 				]
 			}
 		},{
-			xtype:'cfilterArrayField',
-			cfilterField:true,
+			xtype: 'cfilterArrayField',
+			cfilterField: true,
 			cfilterType: 'date',
 			itemXtype: 'cdate',
-			hidden:true,
+			hidden: true
 		},{
-			cfilterField:true,
+			cfilterField: true,
 			cfilterType: 'array',
-			extend:'cfilter.array_field',
-			hidden:true,
+			extend: 'cfilter.array_field',
+			hidden: true
 		},{
-			xtype:'button',
+			xtype: 'button',
 			name: 'cfilterAddButton',
 			iconCls: 'icon-add',
 			margin: '0 0 0 5',
@@ -232,279 +232,279 @@ Ext.define('cfilter.object' , {
 			tooltip: _('Add new field/condition')
 		}]
 	},{
-		cfilterField:true,
+		cfilterField: true,
 		cfilterType: 'object',
-		xtype:'panel',
-		name:'lowerPanel',
+		xtype: 'panel',
+		name: 'lowerPanel',
 		margin: '0 0 0 20',
 		bodyStyle: 'border-top:none;border-bottom:none;border-right:none;'
 	}],
-	
+
 	initComponent: function() {
 		this.logAuthor = '[' + this.id + ']';
 		this.callParent(arguments);
 
 		//stock cfilterField elements
-		this.cfilterFieldElements = [this.down('panel[name=lowerPanel]')]
-		var upperPanelId = this.down('panel[name=upperPanel]').id
+		this.cfilterFieldElements = [this.down('panel[name=lowerPanel]')];
+		var upperPanelId = this.down('panel[name=upperPanel]').id;
 		this.cfilterFieldElements = Ext.Array.union(
 			this.cfilterFieldElements,
 			Ext.ComponentQuery.query('#' + upperPanelId + ' > *[cfilterField]')
-		)
-		
+		);
+
 		//stock frequently used element
-		this.cfilterField = this.down('combobox[name=cfilterField]')
-		this.cfilterOperator = this.down('combobox[name=cfilterOperator]')
-		this.fieldStore = this.cfilterField.getStore()
-		this.operatorStore = this.cfilterOperator.getStore()
+		this.cfilterField = this.down('combobox[name=cfilterField]');
+		this.cfilterOperator = this.down('combobox[name=cfilterOperator]');
+		this.fieldStore = this.cfilterField.getStore();
+		this.operatorStore = this.cfilterOperator.getStore();
 
 		//prepare cfilter
-		this.fieldStore.loadData(this.fields_array)
-		this.operatorStore.loadData(this.operators_array)
-		this.cfilterOperator.setValue('$eq')
-		if(this.initialCfilter)
-			this.down('button[name=cfilterRemoveButton]').hide()
+		this.fieldStore.loadData(this.fields_array);
+		this.operatorStore.loadData(this.operators_array);
+		this.cfilterOperator.setValue('$eq');
+		if (this.initialCfilter)
+			this.down('button[name=cfilterRemoveButton]').hide();
 
 		//bind events
-		this.cfilterField.on('select',this.fieldChange,this)
-		this.cfilterOperator.on('select',this.operatorChange,this)
+		this.cfilterField.on('select', this.fieldChange, this);
+		this.cfilterOperator.on('select', this.operatorChange, this);
 
-		this.down('button[name=cfilterAddButton]').on('click',function(){this.createInnerCfilter()},this)
-		this.down('button[name=cfilterRemoveButton]').on('click',function() {this.destroy()},this)
+		this.down('button[name=cfilterAddButton]').on('click', function() {this.createInnerCfilter()},this);
+		this.down('button[name=cfilterRemoveButton]').on('click', function() {this.destroy()},this);
 
 		//set data if existing
-		if(this.filter)
-			this.setValue(this.filter)
+		if (this.filter)
+			this.setValue(this.filter);
 	},
 
-	fieldChange: function(combo,records){
-		log.debug('Field changed',this.logAuthor)
-		if(!records)
-			var record = this.getFieldRecord()
+	fieldChange: function(combo,records) {
+		log.debug('Field changed', this.logAuthor);
+		if (!records)
+			var record = this.getFieldRecord();
 		else
-			var record = records[0]
+			var record = records[0];
 
-		var allowed_type = undefined
-		if(record)
-			var allowed_type = record.get('type')
+		var allowed_type = undefined;
+		if (record)
+			var allowed_type = record.get('type');
 
-		if(allowed_type){
-			if(allowed_type != 'all'){
-				if(allowed_type == 'object'){
-					if(!this.haveInnerCfilter)
-						this.createInnerCfilter()
-					this.showOnValueType('object')
-				}else{
-					this.operatorStore.clearFilter(true)
-					this.operatorStore.filterBy(function(record){
-							var record_types = record.get('type')
-							if(Ext.Array.indexOf(record_types,allowed_type) == -1)
-								return false
+		if (allowed_type) {
+			if (allowed_type != 'all') {
+				if (allowed_type == 'object') {
+					if (!this.haveInnerCfilter)
+						this.createInnerCfilter();
+					this.showOnValueType('object');
+				}else {
+					this.operatorStore.clearFilter(true);
+					this.operatorStore.filterBy(function(record) {
+							var record_types = record.get('type');
+							if (Ext.Array.indexOf(record_types, allowed_type) == -1)
+								return false;
 							else
-								return true
-					},this)
-					this.showOnValueType(this.getValueType())
+								return true;
+					},this);
+					this.showOnValueType(this.getValueType());
 				}
-			}else{
-				this.operatorStore.clearFilter(false)
-				this.showOnValueType(this.getValueType())
-			}	
+			}else {
+				this.operatorStore.clearFilter(false);
+				this.showOnValueType(this.getValueType());
+			}
 		}
 	},
 
-	createInnerCfilter: function(data){
-		var cfilter = Ext.create('cfilter.object',{
-			fields_array:this.fields_array,
-			operators_array:this.operators_array,
-			filter:data
-		})
+	createInnerCfilter: function(data) {
+		var cfilter = Ext.create('cfilter.object', {
+			fields_array: this.fields_array,
+			operators_array: this.operators_array,
+			filter: data
+		});
 
-		this.down('panel[name=lowerPanel]').add(cfilter)
+		this.down('panel[name=lowerPanel]').add(cfilter);
 
-		if(!this.haveInnerCfilter)
-			this.haveInnerCfilter = true
+		if (!this.haveInnerCfilter)
+			this.haveInnerCfilter = true;
 	},
 
-	getFieldRecord: function(){
-		var recordId = this.fieldStore.find('operator',this.cfilterField.getValue())
-		if(recordId == -1)
-			return undefined
-		return this.fieldStore.getAt(recordId)
+	getFieldRecord: function() {
+		var recordId = this.fieldStore.find('operator', this.cfilterField.getValue());
+		if (recordId == -1)
+			return undefined;
+		return this.fieldStore.getAt(recordId);
 	},
 
-	getOperatorRecord:function(){
-		var recordId = this.operatorStore.find('operator',this.cfilterOperator.getValue())
-		return this.operatorStore.getAt(recordId)
+	getOperatorRecord: function() {
+		var recordId = this.operatorStore.find('operator', this.cfilterOperator.getValue());
+		return this.operatorStore.getAt(recordId);
 	},
 
-	operatorChange: function(combo,record_or_records){
-		log.debug('Operator changed',this.logAuthor)
+	operatorChange: function(combo,record_or_records) {
+		log.debug('Operator changed', this.logAuthor);
 
-		if(Ext.isArray(record_or_records))
-			var operatorRecord = record_or_records[0]
+		if (Ext.isArray(record_or_records))
+			var operatorRecord = record_or_records[0];
 		else
-			var operatorRecord = record_or_records
+			var operatorRecord = record_or_records;
 
-		var operatorRecordType = operatorRecord.get('type')
+		var operatorRecordType = operatorRecord.get('type');
 
-		var fieldRecord_index = this.fieldStore.find('operator',this.cfilterField.getValue())
-		if(fieldRecord_index != -1){
-			var fieldRecord = this.fieldStore.getAt(fieldRecord_index)
-			var fieldRecordType = fieldRecord.get('type')
+		var fieldRecord_index = this.fieldStore.find('operator', this.cfilterField.getValue());
+		if (fieldRecord_index != -1) {
+			var fieldRecord = this.fieldStore.getAt(fieldRecord_index);
+			var fieldRecordType = fieldRecord.get('type');
 
-			if(fieldRecordType == 'all')
+			if (fieldRecordType == 'all')
 			//IF field doesn't require specific value (ex: "custom field")
-				this.showOnValueType(operatorRecordType[0])
+				this.showOnValueType(operatorRecordType[0]);
 			else
 				//field require specif value, like "timestamp" who need date
-			this.showOnValueType(fieldRecordType)
+			this.showOnValueType(fieldRecordType);
 
-		}else{
+		}else {
 			//WARNING CLEAN THAT ----
-			this.showOnValueType(operatorRecordType[0])
+			this.showOnValueType(operatorRecordType[0]);
 		}
 
 		//switch array mode if needed
-		var element = this.down('*[cfilterField=true][hidden=false]')
-		if(element && element.switchArrayMode)
-			element.switchArrayMode(operatorRecord.get('array'))
-		
+		var element = this.down('*[cfilterField=true][hidden=false]');
+		if (element && element.switchArrayMode)
+			element.switchArrayMode(operatorRecord.get('array'));
+
 	},
 
 	//this function aimed to determine final type of value (string/bool...)
 	//first we check field type (timestamp need date, then operator type ($exist need bool)
-	getValueType: function(){
-		var operatorRecord = this.getOperatorRecord()
-		var fieldRecord = this.getFieldRecord()
+	getValueType: function() {
+		var operatorRecord = this.getOperatorRecord();
+		var fieldRecord = this.getFieldRecord();
 
-		var fieldType = undefined
-		if(fieldRecord)
-			var fieldType = fieldRecord.get('type')
+		var fieldType = undefined;
+		if (fieldRecord)
+			var fieldType = fieldRecord.get('type');
 
-		if(!fieldType || fieldType == 'all')
-			return operatorRecord.get('type')[0]
+		if (!fieldType || fieldType == 'all')
+			return operatorRecord.get('type')[0];
 
-		return fieldType
-		
+		return fieldType;
+
 	},
 
-	showOnValueType: function(type){
-		var elements = this.cfilterFieldElements
-		for(var i=0; i < elements.length; i++)
-			if(elements[i].cfilterType == type)
-				elements[i].show()
+	showOnValueType: function(type) {
+		var elements = this.cfilterFieldElements;
+		for (var i = 0; i < elements.length; i++)
+			if (elements[i].cfilterType == type)
+				elements[i].show();
 			else
-				elements[i].hide()
+				elements[i].hide();
 
-		if(type =='object'){
-			this.down('button[name=cfilterAddButton]').show()
-			this.down('combobox[name=cfilterIsCombo]').hide()
-			this.cfilterOperator.hide()
-		}else{
-			this.down('button[name=cfilterAddButton]').hide()
-			this.down('combobox[name=cfilterIsCombo]').show()
-			this.cfilterOperator.show()
+		if (type == 'object') {
+			this.down('button[name=cfilterAddButton]').show();
+			this.down('combobox[name=cfilterIsCombo]').hide();
+			this.cfilterOperator.hide();
+		}else {
+			this.down('button[name=cfilterAddButton]').hide();
+			this.down('combobox[name=cfilterIsCombo]').show();
+			this.cfilterOperator.show();
 		}
 	},
 
 	//return the value of the elements corresponding of given type (ex:"string/bool/date ...")
-	getValueByElementType: function(type){
-		var element = this.getElementByType(type)
-		if(element)
-			return element.getValue()
+	getValueByElementType: function(type) {
+		var element = this.getElementByType(type);
+		if (element)
+			return element.getValue();
 	},
 
-	getElementByType: function(type){
-		var elements = this.cfilterFieldElements
-		for(var i=0; i < elements.length; i++)
-			if(elements[i].cfilterType == type)
-				if(elements[i].getValue)
-					return elements[i]
+	getElementByType: function(type) {
+		var elements = this.cfilterFieldElements;
+		for (var i = 0; i < elements.length; i++)
+			if (elements[i].cfilterType == type)
+				if (elements[i].getValue)
+					return elements[i];
 	},
 
-	getValue: function(){
-		var fieldRecord = this.getFieldRecord()
-		var operatorRecord = this.getOperatorRecord()
-		var operator = operatorRecord.get('operator')
-		var isIsNotValue = this.down('combobox[name=cfilterIsCombo]').getValue()
-		var inputValue = this.getValueByElementType(this.getValueType())
-		var output = {}
-		var values = {}
+	getValue: function() {
+		var fieldRecord = this.getFieldRecord();
+		var operatorRecord = this.getOperatorRecord();
+		var operator = operatorRecord.get('operator');
+		var isIsNotValue = this.down('combobox[name=cfilterIsCombo]').getValue();
+		var inputValue = this.getValueByElementType(this.getValueType());
+		var output = {};
+		var values = {};
 
 		//if contained another cfilter
-		if(fieldRecord && fieldRecord.get('type') == 'object'){
-			var listCfilterResult = []
-			var panel = this.down('panel[name=lowerPanel]')
-			for(var i=0; i < panel.items.items.length; i++)
-				listCfilterResult.push(panel.items.items[i].getValue())
-			output[this.cfilterField.getValue()] = listCfilterResult
-			return output
+		if (fieldRecord && fieldRecord.get('type') == 'object') {
+			var listCfilterResult = [];
+			var panel = this.down('panel[name=lowerPanel]');
+			for (var i = 0; i < panel.items.items.length; i++)
+				listCfilterResult.push(panel.items.items[i].getValue());
+			output[this.cfilterField.getValue()] = listCfilterResult;
+			return output;
 		}
 
 		//Get operator
-		if(operatorRecord.get('operator') == '$eq')
-			values = inputValue
+		if (operatorRecord.get('operator') == '$eq')
+			values = inputValue;
 		else
-			values[operator] = inputValue
+			values[operator] = inputValue;
 
 		//manage negation
-		if(isIsNotValue == '$not')
-			if(operator == '$eq')
+		if (isIsNotValue == '$not')
+			if (operator == '$eq')
 				values = {'$ne': values};
 			else
 				values = {'$not': values};
 
-		output[this.cfilterField.getValue()] = values
+		output[this.cfilterField.getValue()] = values;
 
-		return output
+		return output;
 	},
 
-	setValue: function(filter){
-		this.down('panel[name=lowerPanel]').removeAll()
+	setValue: function(filter) {
+		this.down('panel[name=lowerPanel]').removeAll();
 
 		var key = Ext.Object.getKeys(filter)[0];
 		var value = filter[key];
 
-		this.cfilterField.setValue(key)
+		this.cfilterField.setValue(key);
 
 		//if $and/$or
-		if(Ext.isArray(value)){
-			for(var i=0; i< value.length;i++)
-				this.createInnerCfilter(value[i])
-			this.showOnValueType('object')
-			return
+		if (Ext.isArray(value)) {
+			for (var i = 0; i < value.length; i++)
+				this.createInnerCfilter(value[i]);
+			this.showOnValueType('object');
+			return;
 		}
 
-		this.fieldChange()
+		this.fieldChange();
 
-		if(!Ext.isObject(value)){
-			var type = this.getValueType()
-			this.down('*[cfilterField=true][cfilterType='+type+']').setValue(value)
-			this.showOnValueType(type)
-			return
+		if (!Ext.isObject(value)) {
+			var type = this.getValueType();
+			this.down('*[cfilterField=true][cfilterType=' + type + ']').setValue(value);
+			this.showOnValueType(type);
+			return;
 		}
 
 		//operator or not
 		key = Ext.Object.getKeys(value)[0];
-		value = value[key]
+		value = value[key];
 
-		if(key == '$not')
-			this.down('combobox[name=cfilterIsCombo]').setValue('$not')
+		if (key == '$not')
+			this.down('combobox[name=cfilterIsCombo]').setValue('$not');
 
-		if(Ext.isObject(value)){
+		if (Ext.isObject(value)) {
 			key = Ext.Object.getKeys(value)[0];
-			this.cfilterOperator.setValue(key)
-			value = value[key]
-		}else{
-			this.cfilterOperator.setValue(key)
+			this.cfilterOperator.setValue(key);
+			value = value[key];
+		}else {
+			this.cfilterOperator.setValue(key);
 		}
 
-		var type = this.getValueType()
-		this.down('*[cfilterField=true][cfilterType='+type+']').setValue(value)
-		this.showOnValueType(type)
+		var type = this.getValueType();
+		this.down('*[cfilterField=true][cfilterType=' + type + ']').setValue(value);
+		this.showOnValueType(type);
 	}
 
-})
+});
 
 
 Ext.define('canopsis.lib.form.field.cfilter' , {
@@ -530,12 +530,12 @@ Ext.define('canopsis.lib.form.field.cfilter' , {
 			dataIndex: 'source_type',
 			renderer: rdr_source_type
    		},{
-   			header: _("Component"),
+   			header: _('Component'),
 			sortable: false,
 			dataIndex: 'component',
 			flex: 2
  		},{
- 			header: _("Resource"),
+ 			header: _('Resource'),
 			sortable: false,
 			dataIndex: 'resource',
 			flex: 2
@@ -606,7 +606,7 @@ Ext.define('canopsis.lib.form.field.cfilter' , {
 			operators_array: this.sub_operator_array,
 			opt_remove_button: false,
 			initialCfilter: true,
-			flex:1
+			flex: 1
 		});
 
 		//--------------edit area (hand writing part)--------
@@ -650,23 +650,23 @@ Ext.define('canopsis.lib.form.field.cfilter' , {
 
 		var button_panel = Ext.widget('panel', {
 			border: false,
-			items: [this.wizard_button, this.edit_button, this.preview_button, this.clean_button ]
+			items: [this.wizard_button, this.edit_button, this.preview_button, this.clean_button]
 		});
 
 		this.items = [button_panel, this.cfilter, this.edit_area, this.preview_grid];
 		this.callParent(arguments);
 	},
 
-	reset_cfilter: function(){
-		this.cfilter.destroy()
+	reset_cfilter: function() {
+		this.cfilter.destroy();
 		this.cfilter = Ext.create('cfilter.object', {
 			fields_array: this.operator_array,
 			operators_array: this.sub_operator_array,
 			opt_remove_button: false,
 			initialCfilter: true,
-			flex:1
+			flex: 1
 		});
-		this.add(this.cfilter)
+		this.add(this.cfilter);
 	},
 
 	check_json_validity: function(value) {
@@ -735,7 +735,7 @@ Ext.define('canopsis.lib.form.field.cfilter' , {
 			if (this.edit_area.validate()) {
 				var filter = this.edit_area.getValue();
 				filter = strip_return(filter);
-				if (filter && filter != '') 
+				if (filter && filter != '')
 					this.setValue(filter);
 
 				this.switch_elements_visibility(true, false, false);
@@ -790,21 +790,21 @@ Ext.define('canopsis.lib.form.field.cfilter' , {
 
 		operator_fields = Ext.Array.union(operator_fields, this.operator_fields);
 
-		this.operator_array = operator_fields 
+		this.operator_array = operator_fields;
 
 		this.sub_operator_array = [
-				{'operator': '$eq', 'text': _('Equal'), 'type': ['string','date'], 'array':false},
-				{'operator': '$lt', 'text': _('Less'), 'type': ['string','date'], 'array':false },
-				{'operator': '$lte', 'text': _('Less or equal'), 'type': ['string','date'], 'array':false },
-				{'operator': '$gt', 'text': _('Greater'), 'type': ['string','date'], 'array':false },
-				{'operator': '$gte', 'text': _('Greater or equal'), 'type': ['string','date'], 'array':false },
-				{'operator': '$all', 'text': _('Match all'), 'type': ['string'], 'array':true },
-				{'operator': '$exists', 'text': _('Exists'), 'type': ['bool'], 'array':false },
-				{'operator': '$ne', 'text': _('Not equal'), 'type': ['string','date'], 'array':false },
-				{'operator': '$in', 'text': _('In'), 'type': ['string'], 'array':true},
-				{'operator': '$nin', 'text': _('Not in'), 'type': ['string'],'array':true },
-				{'operator': '$regex', 'text': _('Regex'), 'type': ['string'], 'array':false}
-			]
+				{'operator': '$eq', 'text': _('Equal'), 'type': ['string', 'date'], 'array': false},
+				{'operator': '$lt', 'text': _('Less'), 'type': ['string', 'date'], 'array': false },
+				{'operator': '$lte', 'text': _('Less or equal'), 'type': ['string', 'date'], 'array': false },
+				{'operator': '$gt', 'text': _('Greater'), 'type': ['string', 'date'], 'array': false },
+				{'operator': '$gte', 'text': _('Greater or equal'), 'type': ['string', 'date'], 'array': false },
+				{'operator': '$all', 'text': _('Match all'), 'type': ['string'], 'array': true },
+				{'operator': '$exists', 'text': _('Exists'), 'type': ['bool'], 'array': false },
+				{'operator': '$ne', 'text': _('Not equal'), 'type': ['string', 'date'], 'array': false },
+				{'operator': '$in', 'text': _('In'), 'type': ['string'], 'array': true},
+				{'operator': '$nin', 'text': _('Not in'), 'type': ['string'], 'array': true },
+				{'operator': '$regex', 'text': _('Regex'), 'type': ['string'], 'array': false}
+			];
 	},
 
 	getRawValue: function() {

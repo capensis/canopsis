@@ -24,8 +24,8 @@
 //											-> createChart
 
 flag_tootlip_template = Ext.create('Ext.XTemplate',
-	"<table>",
-		"<tr>",
+	'<table>',
+		'<tr>',
 			'<td style="margin:3px;">',
 				'<tpl if="event_type == \'user\'">',
 					'<img src="widgets/stream/logo/ui.png" style="width: 32px;"></img>',
@@ -33,24 +33,24 @@ flag_tootlip_template = Ext.create('Ext.XTemplate',
 				'<tpl if="event_type != \'user\'">',
 					'<img src="widgets/stream/logo/{icon}.png" style="width: 32px;"></img>',
 				'</tpl>',
-			"</td>",
+			'</td>',
 			'<td>',
 				'<div style="margin:3px;">',
 					'<tpl if="display_name">',
-							"<b>{display_name}</b>",
+							'<b>{display_name}</b>',
 					'</tpl>',
 					'<tpl if="display_name == undefined">',
-						"<b>{component}</b>",
+						'<b>{component}</b>',
 						'<tpl if="resource">',
 							'<b> - {resource}</b>',
 						'</tpl>',
 					'</tpl>',
 					' <span style="color:grey;font-size:10px">{date}</span>',
 					'<br/>{text}',
-				"</div>",
-			"</td>",
-		"</tr>",
-	"</table>",
+				'</div>',
+			'</td>',
+		'</tr>',
+	'</table>',
 	{compiled: true}
 );
 
@@ -135,7 +135,7 @@ Ext.define('widgets.line_graph.line_graph' , {
 	timeNav: false,
 	timeNav_window: 604800,
 
-	nbMavEventsDisplayed : 100,
+	nbMavEventsDisplayed: 100,
 
 	lastBunit: undefined,
 
@@ -187,10 +187,10 @@ Ext.define('widgets.line_graph.line_graph' , {
 		log.debug('same_node: ' + this.same_node, this.logAuthor);
 
 		if (this.timeNav && this.exportMode)
-			this.timeNav = false
+			this.timeNav = false;
 
 		if (this.timeNav)
-			this.reportMode = true
+			this.reportMode = true;
 
 		//Set title
 		if (this.autoTitle) {
@@ -286,7 +286,7 @@ Ext.define('widgets.line_graph.line_graph' , {
 				baseSeries: 0,
 				height: 20
 			},
-			rangeSelector : {
+			rangeSelector: {
 				enabled: this.timeNav,
 				buttons: [{
 					type: 'hour',
@@ -309,7 +309,7 @@ Ext.define('widgets.line_graph.line_graph' , {
 					text: 'All'
 				}*/],
 				inputEnabled: false,
-				selected : 1
+				selected: 1
 			},
 			scrollbar: {
 				enabled: this.timeNav
@@ -333,8 +333,8 @@ Ext.define('widgets.line_graph.line_graph' , {
 				id: 'timestamp',
 				type: 'datetime',
 				tickmarkPlacement: 'on',
-				events : {
-					afterSetExtremes : this.afterSetExtremes
+				events: {
+					afterSetExtremes: this.afterSetExtremes
 				}
 			},
 			loading: {
@@ -431,8 +431,8 @@ Ext.define('widgets.line_graph.line_graph' , {
 		}
 
 		//Time Navigation
-		if (this.timeNav){
-			var data = [[Date.now()-(this.timeNav_window*1000), null], [Date.now(), null]];
+		if (this.timeNav) {
+			var data = [[Date.now() - (this.timeNav_window * 1000), null], [Date.now(), null]];
 			this.options.series.push({
 				id: 'timeNav',
 				name: 'timeNav',
@@ -444,7 +444,7 @@ Ext.define('widgets.line_graph.line_graph' , {
 			// Disable legend, see: https://github.com/highslide-software/highcharts.com/issues/567
 			this.options.legend.enabled = false;
 
-			this.options.xAxis['min'] = Date.now()-(this.time_window*1000);
+			this.options.xAxis['min'] = Date.now() - (this.time_window * 1000);
 			this.options.xAxis['max'] = Date.now();
 		}
 	},
@@ -458,9 +458,9 @@ Ext.define('widgets.line_graph.line_graph' , {
 	},
 
 	tooltip_formatter: function() {
-		if(!this.y && this.point && this.point.text){
+		if (!this.y && this.point && this.point.text) {
 			return flag_tootlip_template.applyTemplate(this.point);
-		}else{
+		}else {
 			var formatter = function(options, value) {
 				if (options.invert)
 					value = - value;
@@ -495,7 +495,7 @@ Ext.define('widgets.line_graph.line_graph' , {
 	////////////////////// CORE
 
 	makeUrl: function(from, to) {
-		return '/perfstore/values' +'/' + parseInt(from/1000) + '/' + parseInt(to/1000);
+		return '/perfstore/values' + '/' + parseInt(from / 1000) + '/' + parseInt(to / 1000);
 	},
 
 	doRefresh: function(from, to) {
@@ -569,26 +569,26 @@ Ext.define('widgets.line_graph.line_graph' , {
 			}
 
 			//if(this.nodeForFlags && this.nodeForFlags.length != 0){
-			if(this.flagFilter){
+			if (this.flagFilter) {
 				var filter = [{
-								"timestamp": { "$gte": parseInt(from/1000), "$lte": parseInt(to/1000) }
+								'timestamp': { '$gte': parseInt(from / 1000), '$lte': parseInt(to / 1000) }
 							},{
-								"state_type":1
-							}]
+								'state_type': 1
+							}];
 
-				filter.push(Ext.decode(this.flagFilter))
+				filter.push(Ext.decode(this.flagFilter));
 
 				Ext.Ajax.request({
 					url: '/rest/events_log',
 					scope: this,
 					params: {
-						filter:Ext.encode({'$and':filter}),
-						limit:this.nbMavEventsDisplayed
+						filter: Ext.encode({'$and': filter}),
+						limit: this.nbMavEventsDisplayed
 					},
 					method: 'Get',
 					success: function(response) {
 						var data = Ext.JSON.decode(response.responseText).data;
-						this.addFlagSerie(data)
+						this.addFlagSerie(data);
 					},
 					failure: function(result, request) {
 						log.error('Ajax request failed ... (' + request.url + ')', this.logAuthor);
@@ -626,7 +626,7 @@ Ext.define('widgets.line_graph.line_graph' , {
 				for (var i = 0; i < data.length; i++) {
 					this.addDataOnChart(data[i]);
 
-					var node_id = data[i].node
+					var node_id = data[i].node;
 					var node = this.nodesByID[node_id];
 
 					// Exclude state lines and timeNav
@@ -642,7 +642,7 @@ Ext.define('widgets.line_graph.line_graph' , {
 						else
 							var metric_name = data[i]['metric'];
 
-						var last_value = data[i]['values'][data[i]['values'].length-1][1]
+						var last_value = data[i]['values'][data[i]['values'].length - 1][1];
 						this.last_values.push([
 							metric_name,
 							last_value,
@@ -672,10 +672,10 @@ Ext.define('widgets.line_graph.line_graph' , {
 				//---------if report, cleaning the chart--------
 				if (this.reportMode == true)
 					this.clearGraph();
-				
+
 				if (this.reportMode == true || this.series.length == 0)
 					this.chart.showLoading(_('Unfortunately, there is no data for this period'));
-				
+
 				this.chart.redraw();
 			}
 		}
@@ -683,9 +683,9 @@ Ext.define('widgets.line_graph.line_graph' , {
 
 	clearGraph: function() {
 		for (var i = 0; i < this.chart.series.length; i++) {
-			var name = this.chart.series[i].name 
-			if (name != 'timeNav' && name != 'Navigator'){
-				log.debug('Cleaning serie: ' + name, this.logAuthor)
+			var name = this.chart.series[i].name;
+			if (name != 'timeNav' && name != 'Navigator') {
+				log.debug('Cleaning serie: ' + name, this.logAuthor);
 				this.chart.series[i].setData([], false);
 			}
 		}
@@ -696,26 +696,26 @@ Ext.define('widgets.line_graph.line_graph' , {
 
 		// Don't shift on timeNav mode
 		if (! this.timeNav)
-			return
+			return;
 
 		var now = Ext.Date.now();
 
-		var timestamp = now - (me.time_window * 1000)
+		var timestamp = now - (me.time_window * 1000);
 
 		if (me.chart.series.length > 0 && now < (me.last_from + 500)) {
 			for (var i = 0; i < me.chart.series.length; i++) {
 				var serie = me.chart.series[i];
-				
+
 				// Don't shift timeNav
 				if (serie.name != 'timeNav' && serie.name != 'Navigator')
-					continue
+					continue;
 
 				log.debug(serie.name, me.logAuthor);
 				if (serie.data.length)
-					continue
+					continue;
 
 				var fpoint = serie.data[0];
-				while (serie.data.length && fpoint.x < timestamp){
+				while (serie.data.length && fpoint.x < timestamp) {
 					log.debug(' + Remove point', me.logAuthor);
 					fpoint.remove(false);
 					fpoint = serie.data[0];
@@ -833,8 +833,8 @@ Ext.define('widgets.line_graph.line_graph' , {
 	parseValues: function(serie, values, type) {
 
 		//MAKE A BETTER LOOP, JUST FOR TEST
-		for (var i = 0; i < values.length; i++){
-			values[i][0] = values[i][0] * 1000
+		for (var i = 0; i < values.length; i++) {
+			values[i][0] = values[i][0] * 1000;
 
 			if (this.SeriePercent && serie.options.max > 0)
 				values[i][1] = getPct(values[i][1], serie.options.max);
@@ -927,10 +927,10 @@ Ext.define('widgets.line_graph.line_graph' , {
 			return true;
 
 		}else {
-			if (this.lastBunit == undefined || this.lastBunit == bunit){
+			if (this.lastBunit == undefined || this.lastBunit == bunit) {
 				serie = this.getSerie(node_id, metric_name, bunit, min, max, 1);
-				this.lastBunit = bunit
-			}else{
+				this.lastBunit = bunit;
+			}else {
 				serie = this.getSerie(node_id, metric_name, bunit, min, max, 2);
 			}
 
@@ -1024,7 +1024,7 @@ Ext.define('widgets.line_graph.line_graph' , {
 			log.debug('  +  Trend line found : ' + trend_id, this.logAuthor);
 
 			var line = [];
-			for (var i=0; i < referent_serie.data.length; i++){
+			for (var i = 0; i < referent_serie.data.length; i++) {
 				var point = referent_serie.data[i];
 				line.push([point.x, point.y]);
 			}
@@ -1032,7 +1032,7 @@ Ext.define('widgets.line_graph.line_graph' , {
 			line = fitData(line).data;
 			trend_line.setData(line, false);
 
-		}else{
+		}else {
 			log.debug('  +  Trend line not found : ' + trend_id, this.logAuthor);
 			log.debug('  +  Create it', this.logAuthor);
 
@@ -1073,7 +1073,7 @@ Ext.define('widgets.line_graph.line_graph' , {
 				data: [],
 				marker: {enabled: false},
 				dashStyle: trend_dashStyle,
-				shift: false,
+				shift: false
 			};
 			if (color)
 				serie['color'] = color;
@@ -1101,16 +1101,16 @@ Ext.define('widgets.line_graph.line_graph' , {
 
 		var list_string = [];
 
-		var bigLenght = undefined
+		var bigLenght = undefined;
 
 		// Push values
 		for (var i = 0; i < values.length; i++) {
-			var strvalue = values[i][2] ? values[i][2] : ''
-			var string = values[i][0] + ': ' + values[i][1] + strvalue
+			var strvalue = values[i][2] ? values[i][2] : '';
+			var string = values[i][0] + ': ' + values[i][1] + strvalue;
 
 			// Search most longer string
 			if (bigLenght == undefined || bigLenght < string.length)
-				bigLenght = string.length
+				bigLenght = string.length;
 
 			list_string.push(
 				Ext.String.format(
@@ -1128,27 +1128,27 @@ Ext.define('widgets.line_graph.line_graph' , {
 		this.OverlayLegend = [];
 
 		// Display text on chart
-		var charH = 20
-		var charW = 5
+		var charH = 20;
+		var charW = 5;
 
-		var h = this.getHeight()
-		var w = this.getWidth()
+		var h = this.getHeight();
+		var w = this.getWidth();
 
-		var marginTop = h / 4
-		var marginRight = 20
+		var marginTop = h / 4;
+		var marginRight = 20;
 
-		var x = w - (bigLenght * charW) - marginRight
-		var y = marginTop
+		var x = w - (bigLenght * charW) - marginRight;
+		var y = marginTop;
 
 		for (var i = 0; i < list_string.length; i++) {
-			var string = list_string[i]
+			var string = list_string[i];
 			var chartText = this.chart.renderer.text(
 				string,
 				x - string.length,
-				y + (i*charH)
+				y + (i * charH)
 			);
 
-			this.OverlayLegend.push(chartText)
+			this.OverlayLegend.push(chartText);
 			chartText.add();
 		}
 	},
@@ -1183,16 +1183,16 @@ Ext.define('widgets.line_graph.line_graph' , {
 		//	this.post_params.use_window_ts = this.use_window_ts;
 	},
 
-	addFlagSerie: function(data){
-		var serie = this.chart.get('x_flags')
-		var sData = []
+	addFlagSerie: function(data) {
+		var serie = this.chart.get('x_flags');
+		var sData = [];
 
-		if(data){
-			for(var i = 0; i < data.length; i++){
-				var state_color = this.getStateColor(data[i].state)
+		if (data) {
+			for (var i = 0; i < data.length; i++) {
+				var state_color = this.getStateColor(data[i].state);
 				sData.push({
-					x : data[i].timestamp*1000,
-					text : data[i].output,
+					x: data[i].timestamp * 1000,
+					text: data[i].output,
 					component: data[i].component,
 					resource: data[i].resource,
 					display_name: data[i].display_name,
@@ -1200,61 +1200,61 @@ Ext.define('widgets.line_graph.line_graph' , {
 					date: rdr_tstodate(data[i].timestamp),
 					icon: data[i].connector.toLowerCase(),
 					fillColor: state_color,
-					style:{color:state_color},
-					states : {
-						hover : {
-							fillColor : state_color 
+					style: {color: state_color},
+					states: {
+						hover: {
+							fillColor: state_color
 						}
 					},
 					title: 'A'
-				})
+				});
 			}
 
-			if(serie){
-				if(this.reportMode)
-					serie.setData(sData)
+			if (serie) {
+				if (this.reportMode)
+					serie.setData(sData);
 				else
-					for(var i =0; i < sData.length; i++)
-						serie.addPoint(sData[i], true, serie.shift)
-			}else{
+					for (var i = 0; i < sData.length; i++)
+						serie.addPoint(sData[i], true, serie.shift);
+			}else {
 				var serie = {
 					id: 'x_flags',
 					name: 'Flags',
-					type : 'flags',
-					data : sData,
-					shape : 'circlepin',
-					width : 17,
-					color : 'black',
+					type: 'flags',
+					data: sData,
+					shape: 'circlepin',
+					width: 17,
+					color: 'black',
 					zIndex: 2,
 					showInLegend: false,
 					shift: false
-				}
+				};
 				this.series[serie.id] = serie;
 				this.chart.addSeries(serie, true, false);
 			}
 		}
 	},
 
-	getStateColor: function(state){
-		if(state == 0)
-			return global.state_colors.ok
-		if(state == 1)
-			return global.state_colors.warning
-		if(state == 2)
-			return global.state_colors.critical
-		if(state == 3)
-			return global.state_colors.unknown
+	getStateColor: function(state) {
+		if (state == 0)
+			return global.state_colors.ok;
+		if (state == 1)
+			return global.state_colors.warning;
+		if (state == 2)
+			return global.state_colors.critical;
+		if (state == 3)
+			return global.state_colors.unknown;
 	},
 
-	afterSetExtremes: function(e){
+	afterSetExtremes: function(e) {
 		var me = this.chart.options.cwidget;
-		if (me.timeNav){
-			var from =  Math.round(e.min, 0);
-			var to   =  Math.round(e.max, 0);
-			log.debug("Highcharts: afterSetExtremes: " + from + " -> " + to, me.logAuthor);
-			if (! isNaN(from) && ! isNaN(to)){
+		if (me.timeNav) {
+			var from = Math.round(e.min, 0);
+			var to = Math.round(e.max, 0);
+			log.debug('Highcharts: afterSetExtremes: ' + from + ' -> ' + to, me.logAuthor);
+			if (! isNaN(from) && ! isNaN(to)) {
 				me.reportMode = true;
-				me.chart.showLoading(_('Loading data from server')+'...');
+				me.chart.showLoading(_('Loading data from server') + '...');
 				me.doRefresh(from, to);
 			}
 		}

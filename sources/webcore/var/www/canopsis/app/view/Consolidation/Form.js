@@ -23,7 +23,7 @@ Ext.define('canopsis.view.Consolidation.Form', {
 
 	alias: 'widget.ConsolidationForm',
 
-	requires:['canopsis.lib.form.field.cthreshold_metro'],
+	requires: ['canopsis.lib.form.field.cthreshold_metro'],
 
 	fieldDefaults: {
 		labelWidth: 150
@@ -80,10 +80,10 @@ Ext.define('canopsis.view.Consolidation.Form', {
 						bodyStyle: 'padding:5px 5px 0',
 						layout: 'anchor',
 						defaults: {anchor: '100%'},
-						items:[{
+						items: [{
 							xtype: 'fieldset',
 							title: _('Aggregation interval'),
-							layout:'column',
+							layout: 'column',
 							items: [{
 								xtype: 'cduration',
 								value: global.commonTs.minute,
@@ -91,58 +91,58 @@ Ext.define('canopsis.view.Consolidation.Form', {
 								columnWidth: .50
 							},{
 								labelWidth: 70,
-								xtype: "combobox",
-								name: "aggregation_method",
-								queryMode: "local",
-								fieldLabel:'Operator',
-								displayField: "text",
-								valueField: "value",
+								xtype: 'combobox',
+								name: 'aggregation_method',
+								queryMode: 'local',
+								fieldLabel: 'Operator',
+								displayField: 'text',
+								valueField: 'value',
 								value: 'last',
 								store: {
-									xtype: "store",
-									fields: ["value", "text"],
-									data : [
-										{"value": "last", "text": _("Last point")},
-										{"value": "mean", "text": _("Mean")},
-										{"value": "sum", "text": _("Sum")},
-										{"value": "delta", "text": _("Delta")},
-										{"value": "min", "text": _("Min")},
-										{"value": "max", "text": _("Max")}
+									xtype: 'store',
+									fields: ['value', 'text'],
+									data: [
+										{'value': 'last', 'text': _('Last point')},
+										{'value': 'mean', 'text': _('Mean')},
+										{'value': 'sum', 'text': _('Sum')},
+										{'value': 'delta', 'text': _('Delta')},
+										{'value': 'min', 'text': _('Min')},
+										{'value': 'max', 'text': _('Max')}
 									]
 								}
 							}]
 						},{
 							xtype: 'fieldset',
 							title: _('Consolidation operator'),
-							items:[{
+							items: [{
 								xtype: 'checkboxgroup',
-								name:'checkboxgroup',
+								name: 'checkboxgroup',
 								columns: 3,
 	        					vertical: true,
-								items:[{
-									boxLabel  : _('Mean'),
-									name      : 'consolidation_method',
+								items: [{
+									boxLabel: _('Mean'),
+									name: 'consolidation_method',
 									inputValue: 'mean'
 								},{
-									boxLabel  : _('Sum'),
-									name 	  : 'consolidation_method',
+									boxLabel: _('Sum'),
+									name: 'consolidation_method',
 									inputValue: 'sum'
 								},{
-									boxLabel  : _('Delta'),
-									name      : 'consolidation_method',
+									boxLabel: _('Delta'),
+									name: 'consolidation_method',
 									inputValue: 'delta'
 								},{
-									boxLabel  : _('Min'),
-									name      : 'consolidation_method',
+									boxLabel: _('Min'),
+									name: 'consolidation_method',
 									inputValue: 'min'
 								},{
-									boxLabel  : _('Max'),
-									name      : 'consolidation_method',
+									boxLabel: _('Max'),
+									name: 'consolidation_method',
 									inputValue: 'max'
 								}]
 							}]
 						}]
-						
+
 					}/*,{
 						title: _('Thresholds'),
 						bodyStyle: 'padding:5px 5px 0',
@@ -154,29 +154,29 @@ Ext.define('canopsis.view.Consolidation.Form', {
 						title: _('Filter'),
 						xtype: 'cfilter',
 						name: 'mfilter',
-						url: "/perfstore",
-						model:"canopsis.model.Perfdata",
-						columns : [
+						url: '/perfstore',
+						model: 'canopsis.model.Perfdata',
+						columns: [
 							{
-								header:"",
+								header: '',
 								sortable: false,
 								flex: 2,
-								dataIndex: "co",
+								dataIndex: 'co'
 							},{
-								header:"",
+								header: '',
 								sortable: false,
 								flex: 2,
-								dataIndex:"re"
+								dataIndex: 're'
 							}, {
-								header:"",
-								sortable:false,
-								flex: 2,
-								dataIndex:"me"
-							}, {
-								header:"",
+								header: '',
 								sortable: false,
 								flex: 2,
-								dataIndex:"u"
+								dataIndex: 'me'
+							}, {
+								header: '',
+								sortable: false,
+								flex: 2,
+								dataIndex: 'u'
 							}
 						],
 						operator_fields: [
@@ -184,7 +184,7 @@ Ext.define('canopsis.view.Consolidation.Form', {
 							{ 'operator': 're', 'text': _('Resource'), 'type': 'all'},
 							{ 'operator': 'me', 'text': _('Metric'), 'type': 'all'},
 							{ 'operator': 'u', 'text': _('Unit'), 'type': 'all'},
-							{ 'operator': 'tg', 'text':_('Tags'), 'type': 'all'}
+							{ 'operator': 'tg', 'text': _('Tags'), 'type': 'all'}
 						]
 					}
 				]

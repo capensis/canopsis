@@ -77,7 +77,7 @@ Ext.define('canopsis.view.Consolidation.Grid' , {
 			header: _('Aggregation interval'),
 			flex: 1,
 			dataIndex: 'aggregation_interval',
-			renderer:rdr_time_interval
+			renderer: rdr_time_interval
 		},{
 			header: _('Aggregation method'),
 			flex: 1.2,
@@ -91,13 +91,13 @@ Ext.define('canopsis.view.Consolidation.Grid' , {
 			header: _('Engine message'),
 			//align: 'center',
 			flex: 5,
-			dataIndex: 'output_engine',
+			dataIndex: 'output_engine'
 			//renderer : function(){return 'Ressource = Regex(cpu*) && Metric = system '}
 		},{
 			header: _('Nb elements'),
 			align: 'center',
 			width: 70,
-			dataIndex: 'nb_items',
+			dataIndex: 'nb_items'
 			//renderer : function(){return 34}
 		}
 	],

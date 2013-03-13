@@ -29,40 +29,40 @@ Ext.define('canopsis.lib.form.field.cthreshold_metro' , {
 
 	layout: 'anchor',
 
-	items:[{
-			xtype:'panel',
+	items: [{
+			xtype: 'panel',
 			anchor: '100% 10%',
 			border: 0,
 			autoScroll: true,
-			items:[{
-				xtype:'label',
+			items: [{
+				xtype: 'label',
 				text: 'If:'
 			},{
-				xtype:'button',
-				text:'add',
+				xtype: 'button',
+				text: 'add',
 				name: 'add_condition'
 			}]
 		},{
-			xtype:'panel',
+			xtype: 'panel',
 			name: 'if_section',
 			anchor: '100% 70%',
 			margin: '0 0 0 40',
 			border: 0,
-			autoScroll: true,
+			autoScroll: true
 		},{
-			xtype:'panel',
+			xtype: 'panel',
 			anchor: '100% 10%',
 			border: 0,
-			items:[{
-				xtype:'label',
-				text: 'Else:',
+			items: [{
+				xtype: 'label',
+				text: 'Else:'
 			}]
 		},{
-			xtype:'panel',
+			xtype: 'panel',
 			name: 'else_section',
 			anchor: '100% 10%',
 			border: 0,
-			items:[{
+			items: [{
 				xtype: 'combobox',
 				displayField: 'text',
 				isFormField: false,
@@ -73,53 +73,53 @@ Ext.define('canopsis.lib.form.field.cthreshold_metro' , {
 				store: {
 						fields: ['text', 'value'],
 						data: [
-							{text:'Ok' ,value:'0'},
-							{text:'Warn' ,value:'1'},
-							{text:'Crit' ,value:'2'},
-							{text:'Unknown' ,value:'3'},
+							{text: 'Ok' , value: '0'},
+							{text: 'Warn' , value: '1'},
+							{text: 'Crit' , value: '2'},
+							{text: 'Unknown' , value: '3'}
 						]
 					}
 			}]
 		}],
 
-	initComponent:function(){
+	initComponent: function() {
 		this.callParent(arguments);
-		this.condition_panel = this.down('panel[name=if_section]')
-		this.down('button[name=add_condition]').on('click',this.add_condition,this)
-		this.add_condition()
+		this.condition_panel = this.down('panel[name=if_section]');
+		this.down('button[name=add_condition]').on('click', this.add_condition, this);
+		this.add_condition();
 	},
 
-	add_condition: function(){
-		var panel = this.condition_panel.add(Ext.create('ctreshold_metro.field'))
-		panel.on('moveUp',this.movePanelUp,this)
-		panel.on('moveDown',this.movePanelDown,this)
+	add_condition: function() {
+		var panel = this.condition_panel.add(Ext.create('ctreshold_metro.field'));
+		panel.on('moveUp', this.movePanelUp, this);
+		panel.on('moveDown', this.movePanelDown, this);
 	},
 
-	movePanelUp: function(obj){
-		var element_index = this.condition_panel.items.keys.indexOf(obj.id)
-		if(element_index - 1 >= 0){
-			var element = this.condition_panel.remove(Ext.getCmp(obj.id),false)
-			this.condition_panel.insert(element_index-1,element)
+	movePanelUp: function(obj) {
+		var element_index = this.condition_panel.items.keys.indexOf(obj.id);
+		if (element_index - 1 >= 0) {
+			var element = this.condition_panel.remove(Ext.getCmp(obj.id), false);
+			this.condition_panel.insert(element_index - 1, element);
 		}
 	},
 
-	movePanelDown: function(obj){
-		var element_index = this.condition_panel.items.keys.indexOf(obj.id)
-		if(element_index + 1 <= this.condition_panel.items.length){
-			var element = this.condition_panel.remove(Ext.getCmp(obj.id),false)
-			this.condition_panel.insert(element_index + 1,element)
+	movePanelDown: function(obj) {
+		var element_index = this.condition_panel.items.keys.indexOf(obj.id);
+		if (element_index + 1 <= this.condition_panel.items.length) {
+			var element = this.condition_panel.remove(Ext.getCmp(obj.id), false);
+			this.condition_panel.insert(element_index + 1, element);
 		}
 	},
 
 	getValue: function() {
-		var items = this.condition_panel.items.items
-		var output = []
-		for(var i=0; i < items.length; i++)
-			output.push(items[i].getValue())
+		var items = this.condition_panel.items.items;
+		var output = [];
+		for (var i = 0; i < items.length; i++)
+			output.push(items[i].getValue());
 
 		return undefined;
 	}
-})
+});
 
 Ext.define('ctreshold_metro.field', {
 	extend: 'Ext.panel.Panel',
@@ -127,54 +127,54 @@ Ext.define('ctreshold_metro.field', {
 	border: false,
 	value: undefined,
 
-	defaults:{
-		margin: '0 0 0 5',
+	defaults: {
+		margin: '0 0 0 5'
 	},
 
-	margin : '5 0 0 0',
+	margin: '5 0 0 0',
 
 	layout: 'hbox',
 
-	items : [{
+	items: [{
 		xtype: 'button',
-		text:'delete',
-		name:'delete'
+		text: 'delete',
+		name: 'delete'
 	},{
 		xtype: 'combobox',
 		displayField: 'text',
 		isFormField: false,
 		name: 'metric',
 		//minChars: 1,
-		editable:false,
+		editable: false,
 		valueField: 'value',
 		emptyText: _('Type value or choose operator'),
-		store:  {
+		store: {
 				fields: ['text', 'value'],
 				data: [
-					{text:'Mean' ,value:'mean'},
-					{text:'Min' ,value:'min'},
-					{text:'Max' ,value:'max'},
-					{text:'Delta' ,value:'delta'},
-					{text:'Sum' ,value:'sum'},
+					{text: 'Mean' , value: 'mean'},
+					{text: 'Min' , value: 'min'},
+					{text: 'Max' , value: 'max'},
+					{text: 'Delta' , value: 'delta'},
+					{text: 'Sum' , value: 'sum'}
 				]
 			}
 	},{
 		xtype: 'combobox',
 		displayField: 'text',
 		isFormField: false,
-		name:'operator',
+		name: 'operator',
 		editable: false,
 		valueField: 'value',
 		width: 40,
 		store: {
 				fields: ['text', 'value'],
 				data: [
-					{'text': '>',	'value':'>' },
-					{'text': '>=',	'value':'>=' },
-					{'text': '<',	'value':'<' },
-					{'text': '<=',	'value':'<=' },
-					{'text': '=',	'value':'=' },
-					{'text': '!=',	'value':'!=' },
+					{'text': '>',	'value': '>' },
+					{'text': '>=',	'value': '>=' },
+					{'text': '<',	'value': '<' },
+					{'text': '<=',	'value': '<=' },
+					{'text': '=',	'value': '=' },
+					{'text': '!=',	'value': '!=' }
 				]
 			}
 	},{
@@ -184,8 +184,8 @@ Ext.define('ctreshold_metro.field', {
         emptyText: 'Value',
         allowBlank: false
 	},{
-		xtype:'label',
-		text:'=>',
+		xtype: 'label',
+		text: '=>',
 		margin: '0 5 0 5'
 	},{
 		xtype: 'combobox',
@@ -198,41 +198,41 @@ Ext.define('ctreshold_metro.field', {
 		store: {
 				fields: ['text', 'value'],
 				data: [
-					{text:'Ok' ,value:'0'},
-					{text:'Warn' ,value:'1'},
-					{text:'Crit' ,value:'2'},
-					{text:'Unknown' ,value:'3'},
+					{text: 'Ok' , value: '0'},
+					{text: 'Warn' , value: '1'},
+					{text: 'Crit' , value: '2'},
+					{text: 'Unknown' , value: '3'}
 				]
 			}
 	},{
 		xtype: 'button',
-		text:'up',
+		text: 'up',
 		name: 'up'
 	},{
 		xtype: 'button',
-		text:'down',
-		name:'down'
+		text: 'down',
+		name: 'down'
 	}],
 
-	initComponent:function(){
+	initComponent: function() {
 		this.callParent(arguments);
 
-		this.down('button[name=delete]').on('click',this.destroy,this)
-		this.down('button[name=up]').on('click',function(){
-			this.fireEvent('moveUp',{id:this.id})
-		},this)
-		this.down('button[name=down]').on('click',function(){
-			this.fireEvent('moveDown',{id:this.id})
-		},this)
+		this.down('button[name=delete]').on('click', this.destroy, this);
+		this.down('button[name=up]').on('click', function() {
+			this.fireEvent('moveUp', {id: this.id});
+		},this);
+		this.down('button[name=down]').on('click', function() {
+			this.fireEvent('moveDown', {id: this.id});
+		},this);
 	},
 
-	getValue: function(){
-		var metric = this.down('combobox[name=metric]').getValue()
-		var operator = this.down('combobox[name=operator]').getValue()
-		var value = this.down('textfield[name=value]').getValue()
-		var state = this.down('combobox[name=state]').getValue()
+	getValue: function() {
+		var metric = this.down('combobox[name=metric]').getValue();
+		var operator = this.down('combobox[name=operator]').getValue();
+		var value = this.down('textfield[name=value]').getValue();
+		var state = this.down('combobox[name=state]').getValue();
 
-		console.log(metric +' '+ operator +' '+ value +' '+state)
+		console.log(metric + ' ' + operator + ' ' + value + ' ' + state);
 	}
 
-})
+});
