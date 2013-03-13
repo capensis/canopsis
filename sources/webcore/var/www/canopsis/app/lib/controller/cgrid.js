@@ -300,12 +300,7 @@ Ext.define('canopsis.lib.controller.cgrid', {
 					function(btn, text) {
 						if (btn == 'yes') {
 							log.debug('Remove records', me.logAuthor);
-							//grid.store.suspendEvents()
 							grid.store.remove(selection);
-							//log.debug('Reload store', me.logAuthor);
-							//grid.store.sync()
-							//grid.store.resumeEvents()
-							//grid.store.load()
 						}
 					});
 			} else {

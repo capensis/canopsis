@@ -130,7 +130,7 @@ def auth(login=None, password=None):
 		password = request.params.get('password', default=None)
 
 	if not login or not password:
-		return HTTPError(404, "Invalid arguments")
+		return HTTPError(400, "Invalid arguments")
 
 	_id = "account." + login
 
@@ -145,6 +145,9 @@ def auth(login=None, password=None):
 	try:
 		account = caccount(storage.get(_id, account=caccount(user=login)))
 		logger.debug(" + Check password ...")
+
+		if not account.is_enable():
+			return HTTPError(403, "This account is not enabled")
 
 		if shadow:
 			access = account.check_shadowpasswd(password)
@@ -178,7 +181,7 @@ def auth(login=None, password=None):
 @get('/autoLogin/:key',skip=['checkAuthPlugin'])
 def autoLogin(key=None):
 	if not key:
-		return HTTPError(404, "No key provided")
+		return HTTPError(400, "No key provided")
 	#---------------------Get storage/account-------------------
 	storage = get_storage(namespace='object')
 	
@@ -191,6 +194,10 @@ def autoLogin(key=None):
 	#-------------------------if found, create session and redirect------------------------
 	if len(foundByKey) == 1:
 		account = caccount(foundByKey[0])
+
+		if not account.is_enable():
+			return HTTPError(403, "This account is not enabled")
+
 		s = bottle.request.environ.get('beaker.session')
 		s['account_id'] = account._id
 		s['account_user'] = account.user
@@ -234,6 +241,9 @@ def keyAuth(login=None, key=None):
 		logger.error('Error while fetching %s : %s' % (_id,err))
 		return HTTPError(403, "There is no account for this login")
 	
+	if not account.is_enable():
+		return HTTPError(403, "This account is not enabled")
+
 	#---------------------Check key-------------------------
 	if account.check_authkey(key):
 		s = bottle.request.environ.get('beaker.session')

@@ -34,6 +34,7 @@ Ext.define('canopsis.view.Account.Grid' , {
 	opt_menu_delete: true,
 	opt_menu_rights: false,
 	opt_menu_authKey: true,
+	opt_bar_enable: true,
 
 	columns: [
 		{
@@ -42,6 +43,12 @@ Ext.define('canopsis.view.Account.Grid' , {
 			sortable: false,
 			renderer: rdr_crecord_type,
 			dataIndex: 'crecord_type'
+		},{
+			header: _('Enabled'),
+			align: 'center',
+			width: 55,
+			dataIndex: 'enable',
+			renderer: rdr_boolean
 		},{
 			header: _('Login'),
 			flex: 2,

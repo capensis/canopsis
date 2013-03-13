@@ -401,16 +401,28 @@ def account_delete(_id=None):
 			_id = data.get('_id', data.get('id', None))
 
 	if not _id:
-		logger.error("DELETE: No '_id' field in header ...")
 		return HTTPError(404, "No '_id' field in header ...")
 	
 	logger.debug(" + _id: %s " % _id)
 	try:
 		storage.remove(_id, account=account)
-		#storage.remove('directory.root.%s' % _id.split('.')[1], account=account)
-		logger.debug('account removed')
 	except:
 		return HTTPError(404, _id+" Not Found")
+
+	#delete all object
+	if not isinstance(_id, list):
+		_id = [_id]
+
+	mfilter = {'aaa_owner':{'$in':_id}}
+	record_list = storage.find(mfilter=mfilter,account=account)
+	record_id_list = [record._id for record in record_list]
+
+	try:
+		storage.remove(record_id_list,account=account)
+	except Exception as err:
+		log.error('Error While suppressing account items: %s' % err)
+
+	logger.debug('account removed')
 
 ### GROUP
 @post('/account/addToGroup/:group_id/:account_id',checkAuthPlugin={'authorized_grp':group_managing_access})

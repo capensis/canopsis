@@ -117,7 +117,7 @@ Ext.define('canopsis.auth' , {
 
 	onFailure: function(){
 		log.debug(" + Auth Failed", this.logAuthor)
-		Ext.MessageBox.alert(_('authentification failed'), _('Login or password invalid'))
+		Ext.MessageBox.alert(_('Authentification failed'), _('Password invalid or account disabled'))
 	},
 
 	auth_m1: function(login, passwd, passwd_sha1) {
