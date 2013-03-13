@@ -1818,3 +1818,12 @@ msgstr "Last modified"
 
 msgid "View name"
 msgstr "View name"
+
+msgid "When you delete an account ALL its object (view, curve...) is deleted with it. You can choose to just disable the account in order to keep its objects."
+msgstr "When you delete an account ALL its object (view, curve...) is deleted with it. You can choose to just disable the account in order to keep its objects."
+
+msgid "DELETE"
+msgstr "DELETE"
+
+msgid "Disable"
+msgstr "Disable"
