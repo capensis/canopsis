@@ -19,7 +19,7 @@ casper.then(function() {
 	casper.waitUntilVisible("div.ui-pnotify-container");
 });
 
-cgridEditRecord(selector_account_form, 'lastname', 'Edited');
+cgridEditRecord(selector_account_form, 'lastname', 'Modified');
 
 cgridRemoveRecord()
 

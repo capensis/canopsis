@@ -46,7 +46,7 @@ casper.then(function(){
 })
 
 casper.then(function(){
-	casper.mouseEvent('span', 'mousedown[name="view.CasperView"]' );
+	casper.mouseEvent('mousedown', 'span[name="view.CasperView"]' );
 })
 
 casper.then(function(){
