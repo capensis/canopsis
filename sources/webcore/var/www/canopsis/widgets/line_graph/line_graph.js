@@ -432,7 +432,8 @@ Ext.define('widgets.line_graph.line_graph' , {
 
 		//Time Navigation
 		if (this.timeNav) {
-			var data = [[Date.now() - (this.timeNav_window * 1000), null], [Date.now(), null]];
+			var now = Ext.Date.now()
+			var data = [[now - (this.timeNav_window * 1000), null], [now, null]];
 			this.options.series.push({
 				id: 'timeNav',
 				name: 'timeNav',
@@ -444,8 +445,8 @@ Ext.define('widgets.line_graph.line_graph' , {
 			// Disable legend, see: https://github.com/highslide-software/highcharts.com/issues/567
 			this.options.legend.enabled = false;
 
-			this.options.xAxis['min'] = Date.now() - (this.time_window * 1000);
-			this.options.xAxis['max'] = Date.now();
+			this.options.xAxis['min'] = now - (this.time_window * 1000);
+			this.options.xAxis['max'] = now;
 		}
 	},
 
