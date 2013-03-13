@@ -67,8 +67,6 @@ Ext.define('canopsis.model.Schedule', {
 		//{name: 'crontab_hours'},
 		{name: 'crontab_month'},
 		{name: 'crontab_day_of_week'},
-		{name: 'crontab_day'},
-
-
+		{name: 'crontab_day'}
 	]
 });
