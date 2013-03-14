@@ -104,6 +104,7 @@ Ext.define('canopsis.lib.view.cwizard' , {
 		//bind combobox
 		if (this.data) {
 			this.loadData();
+			this.finishButton.setDisabled(false);
 		} else {
 			var combo = Ext.ComponentQuery.query('#' + this.id + ' [name=xtype]');
 			if (combo.length != 0)
@@ -298,10 +299,10 @@ Ext.define('canopsis.lib.view.cwizard' , {
 
 		if (activeTabIndex == 0){
 			this.previousButton.setDisabled(true);
-			this.finishButton.setDisabled(true);
+			//this.finishButton.setDisabled(true);
 		}else{
 			this.previousButton.setDisabled(false);
-			this.finishButton.setDisabled(false);
+			//this.finishButton.setDisabled(false);
 		}
 		
 
