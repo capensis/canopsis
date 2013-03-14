@@ -45,17 +45,28 @@ Ext.define('canopsis.auth' , {
 	on_authed: undefined,
 
 	initComponent: function() {
+
+		var default_login = '';
+		var default_password = '';
+
+		if (window.location.host == "demo-devel.canopsis.org" || window.location.host == "demo.canopsis.org"){
+			default_login = 'root';
+			default_password = 'root';
+		}
+
 		this.items = [
 			{
 				fieldLabel: _('Username'),
 				name: 'login',
-				allowBlank:false
+				allowBlank: false,
+				value: default_login
 			},{
 				fieldLabel: _('Password'),
 				name: 'password',
 				id: 'password',
 				inputType: 'password',
-				allowBlank:false
+				allowBlank: false,
+				value: default_password
 			},{
 				xtype: 'combo',
 				name: 'locale',
