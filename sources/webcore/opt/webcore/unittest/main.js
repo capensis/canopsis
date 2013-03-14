@@ -242,8 +242,9 @@ var cgridEditRecord = function(selector_form,fieldToEdit,ModifiedValue){
 
 }
 
-var cgridRemoveRecord = function(rowLabelText){
+var cgridRemoveRecord = function(rowLabelText,deleteLabel){
 	if(!rowLabelText)rowLabelText = 'Casper';
+	if(!deleteLabel)deleteLabel = 'Yes';
 
 	casper.then(function() {
 		casper.echo('> Select created record', 'COMMENT');
@@ -253,7 +254,7 @@ var cgridRemoveRecord = function(rowLabelText){
 	casper.then(function() {
 		casper.echo('> Remove created record', 'COMMENT');
 		click("span.icon-delete");
-		clickLabel('Yes');
+		clickLabel(deleteLabel);
 		casper.waitUntilVisible("div.ui-pnotify-container");
 	});
 

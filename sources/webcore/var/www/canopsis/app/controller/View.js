@@ -164,8 +164,14 @@ Ext.define('canopsis.controller.View', {
 	},
 
 	create_new_view: function() {
-		Ext.Msg.prompt(_('View name'), _('Please enter view name:'), function(btn, viewName) {
+		Ext.Msg.prompt(_('View name'), _('Please enter view name:'), function(btn, viewName,opts) {
+			console.log(opts)
 			if (btn == 'ok') {
+				if(!viewName || viewName == ''){
+					global.notify.notify(_('Warning'), "You must provide a correct view name", 'warning');
+					return
+				}
+
 				// Create view
 				var view_id = 'view.' + global.account.user + '.' + global.gen_id();
 
@@ -177,6 +183,7 @@ Ext.define('canopsis.controller.View', {
 				record.set('leaf', true);
 
 				this.add_to_home(record, true);
+
 			} else {
 				log.debug('cancel new view', this.logAuthor);
 			}
