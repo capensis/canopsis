@@ -43,7 +43,7 @@ var normalApp = function(){
 			'Selector',
 			'Derogation',
 			'Perfdata',
-			//'Topology',
+			'Topology',
 			'Consolidation',
 			'Tabs'
 		],
