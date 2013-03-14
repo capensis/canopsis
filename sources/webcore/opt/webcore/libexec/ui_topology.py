@@ -28,7 +28,7 @@ from libexec.auth import check_auth, get_account
 #group_managing_access = ['']
 #########################################################################
 
-logger = logging.getLogger("topology")
+logger = logging.getLogger("ui_topology")
 
 import sys, os
 operators_path=os.path.expanduser('~/opt/amqp2engines/engines/topology')
