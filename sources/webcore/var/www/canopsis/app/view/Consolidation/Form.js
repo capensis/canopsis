@@ -158,24 +158,24 @@ Ext.define('canopsis.view.Consolidation.Form', {
 						model: 'canopsis.model.Perfdata',
 						columns: [
 							{
-								header: '',
+								header: 'Component',
 								sortable: false,
 								flex: 2,
 								dataIndex: 'co'
 							},{
-								header: '',
+								header: 'Resource',
 								sortable: false,
 								flex: 2,
 								dataIndex: 're'
 							}, {
-								header: '',
+								header: 'Metric',
 								sortable: false,
 								flex: 2,
 								dataIndex: 'me'
 							}, {
-								header: '',
+								header: 'Unit',
 								sortable: false,
-								flex: 2,
+								flex: 0.5,
 								dataIndex: 'u'
 							}
 						],
