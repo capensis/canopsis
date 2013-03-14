@@ -298,18 +298,22 @@ Ext.define('canopsis.lib.form.field.ctopo' , {
 
 				// Translate form
 				var form = nodeEl.form;
-				for (var i=0; i < form.items.length; i++){
-					var item = form.items[i];
 
-					if (item.fieldLabel)
-						item.fieldLabel = _(item.fieldLabel);
+				if (! form.translated){
+					for (var i=0; i < form.items.length; i++){
+						var item = form.items[i];
 
-					if (item.xtype == 'combobox')
-						for (var j=0; j < item.store.data.length; j++)
-							if (item.store.data[j].text)
-								item.store.data[j].text = _(item.store.data[j].text)
+						if (item.fieldLabel)
+							item.fieldLabel = _(item.fieldLabel);
 
-					form.items[i] = item;
+						if (item.xtype == 'combobox')
+							for (var j=0; j < item.store.data.length; j++)
+								if (item.store.data[j].text)
+									item.store.data[j].text = _(item.store.data[j].text)
+
+						form.items[i] = item;
+					}
+					nodeEl.form.translated = true;
 				}
 
 				form.bodyStyle = 'padding: 5px;';
