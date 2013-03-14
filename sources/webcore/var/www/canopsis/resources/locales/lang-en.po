@@ -1827,3 +1827,48 @@ msgstr "DELETE"
 
 msgid "Disable"
 msgstr "Disable"
+
+msgid "Apply OR between states"
+msgstr "Apply OR between states"
+
+msgid "Calcul the cluster state"
+msgstr "Calcul the cluster state"
+
+msgid "Apply AND between states"
+msgstr "Apply AND between states"
+
+msgid "Calcul the worst state"
+msgstr "Calcul the worst state"
+
+msgid "Check state"
+msgstr "Check state"
+
+msgid "No Ok"
+msgstr "No Ok"
+
+msgid "Unknown"
+msgstr "Unknown"
+
+msgid "then"
+msgstr "then"
+
+msgid "Worst State"
+msgstr "Worst State"
+
+msgid "else"
+msgstr "else"
+
+msgid "Need at least"
+msgstr "Need at least"
+
+msgid "in state"
+msgstr "in state"
+
+msgid "Not Ok"
+msgstr "Not Ok"
+
+msgid "Then"
+msgstr "Then"
+
+msgid "Else"
+msgstr "Else"
