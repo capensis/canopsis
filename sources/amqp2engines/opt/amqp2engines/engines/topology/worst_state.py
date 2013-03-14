@@ -31,17 +31,7 @@ options={
 	'event_type': 'operator',
 	'source_type': 'component',
 	'nodeMaxOutConnexion':10,
-	'nodeMaxInConnexion':10,
-	'form': {
-		'xtype': 'form',
-		'items': [
-			{
-				'fieldLabel': 'Display Name',
-				'name': 'display_name',
-				'xtype': 'textfield'
-			}
-		]
-	}
+	'nodeMaxInConnexion':10
 }
 
 def operator(states, options={}):
