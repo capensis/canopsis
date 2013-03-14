@@ -295,7 +295,25 @@ Ext.define('canopsis.lib.form.field.ctopo' , {
 
 			}else {
 				log.debug('Create form', me.logAuthor);
-				var form = Ext.create('Ext.form.Panel', nodeEl.form);
+
+				// Translate form
+				var form = nodeEl.form;
+				for (var i=0; i < form.items.length; i++){
+					var item = form.items[i];
+
+					if (item.fieldLabel)
+						item.fieldLabel = _(item.fieldLabel);
+
+					if (item.xtype == 'combobox')
+						for (var j=0; j < item.store.data.length; j++)
+							if (item.store.data[j].text)
+								item.store.data[j].text = _(item.store.data[j].text)
+
+					form.items[i] = item;
+				}
+
+				form.bodyStyle = 'padding: 5px;';
+				var form = Ext.create('Ext.form.Panel', form);
 
 				// Load form
 				if (nodeEl.options)

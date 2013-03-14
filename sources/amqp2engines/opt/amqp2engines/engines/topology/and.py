@@ -47,7 +47,7 @@ options={
 					"xtype": "store",
 					"fields": ["value", "text"],
 					"data" : [
-						{"value": "-1", "text": "No Ok"},
+						{"value": "-1", "text": "Not Ok"},
 						{"value": "0", "text": "Ok"},
 						{"value": "1", "text": "Warning"},
 						{"value": "2", "text": "Critical"},
@@ -56,7 +56,7 @@ options={
 				}
 			},{
 				"xtype": "combobox",
-				"name": "then",
+				"name": "Then",
 				"fieldLabel": "then",
 				"queryMode": "local",
 				"displayField": "text",
@@ -76,7 +76,7 @@ options={
 			},{
 				"xtype": "combobox",
 				"name": "else",
-				"fieldLabel": "else",
+				"fieldLabel": "Else",
 				"queryMode": "local",
 				"displayField": "text",
 				"valueField": "value",
