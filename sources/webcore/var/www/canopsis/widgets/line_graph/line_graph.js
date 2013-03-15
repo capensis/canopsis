@@ -577,7 +577,12 @@ Ext.define('widgets.line_graph.line_graph' , {
 								'state_type': 1
 							}];
 
-				filter.push(Ext.decode(this.flagFilter));
+				var decodedFilter = Ext.decode(this.flagFilter)
+				var decodedFilterKeys = Ext.Object.getKeys(decodedFilter)
+				if(!decodedFilterKeys[0] || decodedFilterKeys[0] == "null")
+					return
+
+				filter.push(decodedFilter);
 
 				Ext.Ajax.request({
 					url: '/rest/events_log',

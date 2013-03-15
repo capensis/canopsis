@@ -135,14 +135,11 @@ Ext.define('widgets.topology_viewer.topology_viewer' , {
 		var depth_coef = (depth / 100);
 
 		var radius = this.radiusOffset - depth_coef;
-		console.log(radius)
 
 		var coord = {
 			x: this.getX(referent_coord.x, radius, angle),
 			y: this.getY(referent_coord.y, radius, angle)
 		};
-
-		console.log(coord)
 
 		var node_params = {
 			label: tree.name.replace(/<.*>/gi,' '),
@@ -196,8 +193,6 @@ Ext.define('widgets.topology_viewer.topology_viewer' , {
 
 	displayLastUpdate: function() {
 		if (this.canvasContext && this.lastUpdate) {
-			//console.log(this.canvas.width)
-			//console.log(this.canvas.height)
 			this.canvasContext.fillText(rdr_elapsed_time(this.lastUpdate), 10, 20);
 		}
 	},
