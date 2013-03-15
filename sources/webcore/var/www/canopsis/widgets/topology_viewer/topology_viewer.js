@@ -32,7 +32,7 @@ Ext.define('widgets.topology_viewer.topology_viewer' , {
 	usable_angle: Math.PI / 2,
 
 	//sigma options
-	defaultLabelColor: '#ccc',
+	defaultLabelColor: '#8f9baf',
 	sigmaFont: 'Arial',
 	edgeColor: 'source',
 	defaultEdgeType: 'line',
@@ -63,8 +63,6 @@ Ext.define('widgets.topology_viewer.topology_viewer' , {
 	initComponent: function() {
 		if (this.background_color)
 			this.bodyStyle = {'background-color': this.background_color};
-
-
 
 		this.callParent(arguments);
 	},
@@ -144,7 +142,7 @@ Ext.define('widgets.topology_viewer.topology_viewer' , {
 		};
 
 		var node_params = {
-			label: tree.name,
+			label: tree.name.replace(/<.*>/gi,' '),
 			x: coord.x,
 			y: coord.y,
 			shape: 'square'

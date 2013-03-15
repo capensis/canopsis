@@ -14,10 +14,14 @@ casper.then(function() {
 	fill_field(selector_account_form, 'lastname', 'JS');
 	fill_field(selector_account_form, 'mail', 'capser@js.com');
 	click("span.icon-save");
+	
+});
+
+casper.then(function(){
 	waitWhile("span.icon-save");
 	waitText("Casper");
 	casper.waitUntilVisible("div.ui-pnotify-container");
-});
+})
 
 cgridEditRecord(selector_account_form, 'lastname', 'Modified');
 

@@ -57,6 +57,8 @@ class engine(cengine):
 	def beat(self):
 		beat_start = time.time()
 
+		self.clean_consolidations()
+
 		non_loaded_records = self.storage.find({ '$and' : [{ 'crecord_type': 'consolidation' },{'enable': True}, {'loaded': { '$ne' : True} } ] }, namespace="object" )
 
 		if len(non_loaded_records) > 0  :
@@ -253,6 +255,25 @@ class engine(cengine):
 			self.amqp.publish(event, rk, self.amqp.exchange_name_events)
 		else:
 			self.storage.update(record.get('_id'), {'output_engine': "Impossible to load : no filter defined"  } )
+
+	def clean_consolidations(self):
+		id_to_clean = []
+		ids = [_id for _id in self.records]
+
+		count = self.storage.count({'_id': {"$in": ids}}, namespace="object")
+		if count != len(ids):
+			for _id in self.records:
+				if not self.storage.count({'_id': _id, 'enable': True}, namespace="object"):
+					id_to_clean.append(_id)
+				
+			for _id in id_to_clean:
+				self.logger.debug("Clean consolidation %s: %s" % (_id, self.records[_id].name))
+				try:
+					self.storage.update(_id, {'loaded': False})
+				except:
+					self.logger.debug(" + Record are deleted.")
+					
+				del self.records[_id]
 
 	def load_consolidation(self) :
 		records = self.storage.find({ '$and' :[ {'crecord_type': 'consolidation'},{'enable': True}] }, namespace="object")
