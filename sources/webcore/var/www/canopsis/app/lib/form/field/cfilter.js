@@ -454,8 +454,11 @@ Ext.define('cfilter.object' , {
 			else
 				values = {'$not': values};
 
-		output[this.cfilterField.getValue()] = values;
+		var keyValue = this.cfilterField.getValue()
+		if(!keyValue)
+			return undefined
 
+		output[keyValue] = values;
 		return output;
 	},
 
