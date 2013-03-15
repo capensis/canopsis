@@ -151,11 +151,10 @@ def send_events(n, rate=0, burst=100):
 def clean_db():
 	# Clean DB
 	logger.info("Remove old data")
-	records = storage.find({'connector': 'bench'}, mfields={'_id': 1}, namespace='events')
-	storage.remove([record['_id'] for record in records], namespace='events')
-	records = storage.find({'connector': 'bench'}, mfields={'_id': 1}, namespace='events_log')
-	storage.remove([record['_id'] for record in records], namespace='events_log')
-	logger.info(" + Done")	
+	storage.get_backend('events').remove({'connector': 'bench'}, safe=True)
+	storage.get_backend('events_log').remove({'connector': 'bench'}, safe=True)
+	time.sleep(1)
+	logger.info(" + Done")
 
 
 ########################################################
@@ -167,10 +166,12 @@ def clean_db():
 
 amqp.start()
 
+clean_db()
+
 try:
 	stats = []
 	# Send n events and check lattency
-	n = 1000
+	n = 5000
 	for rate in [100, 150, 200, 250, 300, 350, 400, 450, 500]:
 		result = send_events(n, rate)
 		stats.append((rate, result))
