@@ -580,7 +580,7 @@ Ext.define('widgets.line_graph.line_graph' , {
 				var decodedFilter = Ext.decode(this.flagFilter)
 				var decodedFilterKeys = Ext.Object.getKeys(decodedFilter)
 				if(!decodedFilterKeys[0] || decodedFilterKeys[0] == "null")
-					console.log('SECCCCUUUUUUU')
+					return
 
 				filter.push(decodedFilter);
 
