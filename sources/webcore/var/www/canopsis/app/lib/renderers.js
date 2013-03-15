@@ -428,6 +428,8 @@ rdr_humanreadable_value = function(value, unit) {
 
 
 rdr_access = function(val) {
-	val.sort();
-	return val;
+	if (Ext.isArray(val))
+		return val.sort();
+	else
+		return val;
 }
