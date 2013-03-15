@@ -198,7 +198,7 @@ Ext.define('widgets.topology_viewer.topology_viewer' , {
 		if (this.canvasContext && this.lastUpdate) {
 			//console.log(this.canvas.width)
 			//console.log(this.canvas.height)
-			this.canvasContext.fillText(rdr_elapsed_time(this.lastUpdate), 10, 10);
+			this.canvasContext.fillText(rdr_elapsed_time(this.lastUpdate), 10, 20);
 		}
 	},
 
