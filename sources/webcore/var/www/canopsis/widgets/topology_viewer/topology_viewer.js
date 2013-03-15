@@ -105,7 +105,7 @@ Ext.define('widgets.topology_viewer.topology_viewer' , {
 			minEdgeSize: this.minEdgeSize,
 			maxEdgeSize: this.maxEdgeSize
 		}).mouseProperties({
-			maxRatio: 4
+			maxRatio: 24
 		});
 	},
 
@@ -135,11 +135,14 @@ Ext.define('widgets.topology_viewer.topology_viewer' , {
 		var depth_coef = (depth / 100);
 
 		var radius = this.radiusOffset - depth_coef;
+		console.log(radius)
 
 		var coord = {
 			x: this.getX(referent_coord.x, radius, angle),
 			y: this.getY(referent_coord.y, radius, angle)
 		};
+
+		console.log(coord)
 
 		var node_params = {
 			label: tree.name.replace(/<.*>/gi,' '),
@@ -204,7 +207,8 @@ Ext.define('widgets.topology_viewer.topology_viewer' , {
 		this.sigmaContainer.draw();
 		this.canvas = document.getElementById(this.sigmaContainer._core.domRoot.lastChild.id);
 		this.canvasContext = this.canvas.getContext('2d');
-		this.canvasContext.font = 'bold 12px sans-serif';
+		this.canvasContext.font = '13px sans-serif ';
+		this.canvasContext.fillStyle = '#8f9baf'
 		this.displayLastUpdate();
 
 		this.sigmaContainer._core.mousecaptor.bind(
