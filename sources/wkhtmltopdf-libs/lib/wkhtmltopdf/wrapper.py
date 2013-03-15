@@ -100,7 +100,7 @@ class Wrapper(object):
 													self.settings['header'], 
 													self.settings['footer'], 
 													self.settings['windowstatus'], 
-													self.settings['account'].data['locale'],
+													self.settings['account'].data.get('locale', 'en'),
 													self.settings['viewName'],
 													export_from,
 													self.settings.get('stopTime', int(time())),
