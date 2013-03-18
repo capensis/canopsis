@@ -243,10 +243,6 @@ Ext.define('widgets.diagram.diagram' , {
 				title: { text: null },
 				labels: {formatter: this.y_formatter}
 			},
-			lang: {
-				months:[_('January'), _('February'), _('March'), _('April'), _('May'), _('June'), _('July'), _('August'), _('September'), _('October'), _('November'), _('December')],
-				weekdays:[_("Sunday"), _("Monday"), _("Tuesday"), _("Wednesday"), _("Thursday"),_("Friday"), _("Saturday")]
-			},
 		};
 		/*
 		if(this.diagram_type == 'column'){
@@ -269,6 +265,13 @@ Ext.define('widgets.diagram.diagram' , {
 
 	createChart: function() {
 		this.chart = new Highcharts.Chart(this.options);
+		Highcharts.setOptions({
+			lang: {
+				months:[_('January'), _('February'), _('March'), _('April'), _('May'), _('June'), _('July'), _('August'), _('September'), _('October'), _('November'), _('December')],
+				weekdays:[_("Sunday"), _("Monday"), _("Tuesday"), _("Wednesday"), _("Thursday"),_("Friday"), _("Saturday")],
+				shortMonths: [_('Jan'), _('Feb'), _('Mar'), _('Apr'), _('May'), _('Jun'), _('Jul'),_('Aug'), _('Sept'), _('Oct'), _('Nov'), _('Dec')],
+			},
+		});
 	},
 
 	processNodes: function() {
