@@ -26,6 +26,7 @@ from camqp import camqp
 import cevent
 from cstorage import get_storage
 from caccount import caccount
+import traceback
 
 ########################################################
 #
@@ -55,7 +56,11 @@ base_component_event = cevent.forger(
 					output =			"Output",
 					long_output =		"",
 					#perf_data =			None,
-					#perf_data_array =	[],
+					perf_data_array =	[
+						{'metric': 'shortterm', 'value': 0.25, 'unit': None, 'min': None, 'max': None, 'warn': None, 'crit': None, 'type': 'GAUGE' },
+						{'metric': 'midterm',   'value': 0.16, 'unit': None, 'min': None, 'max': None, 'warn': None, 'crit': None, 'type': 'GAUGE' },
+						{'metric': 'longterm',  'value': 0.12, 'unit': None, 'min': None, 'max': None, 'warn': None, 'crit': None, 'type': 'GAUGE' }
+                    ]
 					#display_name =		""
 				)
 
@@ -93,7 +98,7 @@ def signal_handler(signum, frame):
 signal.signal(signal.SIGINT, signal_handler)
 signal.signal(signal.SIGTERM, signal_handler)
 
-def send_events(n, rate=0, burst=100):
+def send_events(n, rate=0, burst=10):
 	i = 0
 	
 	logger.info("Send %s events" % n)
@@ -118,7 +123,8 @@ def send_events(n, rate=0, burst=100):
 
 		if (rate and (i % burst == 0)):
 			elapsed = time.time() - time_start_burst
-			time.sleep(time_break - elapsed)
+			if (time_break > elapsed):
+				time.sleep(time_break - elapsed)
 			time_start_burst = time.time()
 
 		i+=1
@@ -135,6 +141,7 @@ def send_events(n, rate=0, burst=100):
 		raw = storage.find_one({'_id': rk}, mfields={'bench_timestamp': 1})
 		if raw:
 			elapsed = time.time() - float(raw['bench_timestamp'])
+			storage.get_backend('events').remove({'_id': rk}, safe=True)
 			logger.info(" + Done, Delta: %.3f s" % elapsed )
 			break
 		
@@ -144,18 +151,29 @@ def send_events(n, rate=0, burst=100):
 
 		time.sleep(0.001)
 
-	clean_db()
-
 	return elapsed
 
 def clean_db():
 	# Clean DB
 	logger.info("Remove old data")
+	storage.get_backend('perfdata2').remove({'co': {'$regex': 'component-.*'}}, safe=True)
 	storage.get_backend('events').remove({'connector': 'bench'}, safe=True)
 	storage.get_backend('events_log').remove({'connector': 'bench'}, safe=True)
 	time.sleep(1)
-	logger.info(" + Done")
+	if (storage.get_backend('events').find({'connector': 'bench'}).count()):
+		logger.error(" + All data are not removed ...")
+	else:	
+		logger.info(" + Done")
 
+def mean(values) :
+	return sum(values) / float(len(values))
+
+def stat_variance( echantillon ) :
+	n = len( echantillon ) # taille
+	mq = mean( echantillon )**2
+	s = sum( [ x**2 for x in echantillon ] )
+	variance = s / n - mq
+	return variance
 
 ########################################################
 #
@@ -167,20 +185,33 @@ def clean_db():
 amqp.start()
 
 clean_db()
+stats = []
 
 try:
-	stats = []
 	# Send n events and check lattency
-	n = 5000
-	for rate in [100, 150, 200, 250, 300, 350, 400, 450, 500]:
-		result = send_events(n, rate)
-		stats.append((rate, result))
+	#nbs = [ 500, 1000, 1250, 1500, 1750, 2000, 2250, 2500, 2750, 3000, 3250, 3500, 3750, 4000 ]
+	#rates =  [100, 150, 200, 250, 300, 350, 400, 450, 500]
+	nbs = [ 4000 ]
+	rates = [ 500 ]
+	
+	for rate in rates:
+		for nb in nbs:
+			result = send_events(nb, rate)
+			stats.append((nb, rate, result))
+			time.sleep(5)
+			#clean_db()
 
-	print stats
+	clean_db()
 
 except Exception as err:
 	logger.error('Bench Failed !')
 	logger.error(err)
+	traceback.print_exc(file=sys.stdout)
+
+times = [stat[2] for stat in stats]
+print "Stats:"
+print " + Mean: 	%.2f" % mean(times)
+print " + Variance:	%.2f" % stat_variance(times)
 
 amqp.stop()
 amqp.join()
