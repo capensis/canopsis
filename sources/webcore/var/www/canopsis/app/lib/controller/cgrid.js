@@ -34,7 +34,7 @@ Ext.define('canopsis.lib.controller.cgrid', {
 
 		var control = {};
 		control[this.listXtype] = {
-		                afterrender: this._bindGridEvents
+			afterrender: this._bindGridEvents
 		};
 		this.control(control);
 
@@ -59,7 +59,6 @@ Ext.define('canopsis.lib.controller.cgrid', {
 			if (grid.opt_allow_edit == true)
 				grid.on('itemdblclick', this._editRecord, this);
 		}
-
 
 		//Binding action for contextMenu
 		if (grid.contextMenu) {
@@ -317,14 +316,21 @@ Ext.define('canopsis.lib.controller.cgrid', {
 		log.debug('Clicked enabledisable Button', this.logAuthor);
 		var grid = this.grid;
 
+		this.grid.store.suspendAutoSync()
+
 		var selection = grid.getSelectionModel().getSelection();
-		if (selection) {
-			var record = selection[0];
+		for(var i = 0; i < selection.length; i++){
+			var record = selection[i]
+			record.suspendEvents()
 			if (record.get('enable'))
 				record.set('enable', false);
 			else
 				record.set('enable', true);
+			record.resumeEvents()
 		}
+
+		this.grid.store.resumeAutoSync()
+		this.grid.store.sync()
 	},
 
 	_editRights: function() {

@@ -303,61 +303,68 @@ def account_update(_id=None):
 		return HTTPError(400, "No data received")
 	data = json.loads(data)
 	
-	if '_id' in data:
-		_id = data['_id']
-		del data['_id']
-	if 'id' in data:
-		_id = data['id']
-		del data['id']
+	if not isinstance(data,list):
+		data = [data]
 
-	if not _id:
-		return HTTPError(400, "No id recieved")
-	
-	try:
-		record = caccount(storage.get(_id ,account=account))
-		logger.debug('Update account %s' % _id)
-	except:
-		logger.debug('Account %s not found' % _id)
-		return HTTPError(404, "Account to update not found")
-	
-	#Get password
-	if 'passwd' in data:
-		logger.debug(' + Update password ...')
-		record.passwd(str(data['passwd']))
-		del data['passwd']
-		
-	#Get group
-	if 'aaa_group' in data:
-		logger.debug(' + Update group ...')
-		record.chgrp(str(data['aaa_group']))
-		del data['aaa_group']
-			
-	#get secondary groups
-	if 'groups' in data:
-		groups = []
-		for group in data['groups']:
-			if group.find('group.') == -1:
-				groups.append('group.%s' % group)
-			else:
-				groups.append(group)
 
-		logger.debug(' + Update groups ...')	
-		logger.debug(' + Old groups : %s' % str(record.groups))
-		logger.debug(' + New groups : %s' % str(groups))
-		record.groups = groups
-		del data['groups']
-	
 
 	for item in data:
-		logger.debug('Update %s with %s' % (str(item),data[item]))
-		setattr(record,item,data[item])
+		logger.debug(item)
+		if '_id' in item:
+			_id = item['_id']
+			del item['_id']
+		if 'id' in item:
+			_id = item['id']
+			del item['id']
 
-	storage.put(record,account=account)
+		if not _id:
+			return HTTPError(400, "No id recieved")
+		
+		try:
+			record = caccount(storage.get(_id ,account=account))
+			logger.debug('Update account %s' % _id)
+		except:
+			logger.debug('Account %s not found' % _id)
+			return HTTPError(404, "Account to update not found")
+		
+		#Get password
+		if 'passwd' in item:
+			logger.debug(' + Update password ...')
+			record.passwd(str(item['passwd']))
+			del item['passwd']
+			
+		#Get group
+		if 'aaa_group' in item:
+			logger.debug(' + Update group ...')
+			record.chgrp(str(item['aaa_group']))
+			del item['aaa_group']
+				
+		#get secondary groups
+		if 'groups' in item:
+			groups = []
+			for group in item['groups']:
+				if group.find('group.') == -1:
+					groups.append('group.%s' % group)
+				else:
+					groups.append(group)
 
-	#if user is itself, reload account
-	if account._id == record._id:
-		#user itself, reload
-		reload_account(record._id)
+			logger.debug(' + Update groups ...')	
+			logger.debug(' + Old groups : %s' % str(record.groups))
+			logger.debug(' + New groups : %s' % str(groups))
+			record.groups = groups
+			del item['groups']
+		
+
+		for _key in item:
+			logger.debug('Update %s with %s' % (str(_key),item[_key]))
+			setattr(record,_key,item[_key])
+
+		storage.put(record,account=account)
+
+		#if user is itself, reload account
+		if account._id == record._id:
+			#user itself, reload
+			reload_account(record._id)
 	
 
 
