@@ -489,7 +489,12 @@ Ext.define('widgets.line_graph.line_graph' , {
 		Highcharts.setOptions({
 			global: {
 				useUTC: false
-			}
+			},
+			lang: {
+				months:[_('January'), _('February'), _('March'), _('April'), _('May'), _('June'), _('July'), _('August'), _('September'), _('October'), _('November'), _('December')],
+				weekdays:[_("Sunday"), _("Monday"), _("Tuesday"), _("Wednesday"), _("Thursday"),_("Friday"), _("Saturday")],
+				shortMonths: [_('Jan'), _('Feb'), _('Mar'), _('Apr'), _('May'), _('Jun'), _('Jul'),_('Aug'), _('Sept'), _('Oct'), _('Nov'), _('Dec')],
+			},
 		});
 	},
 

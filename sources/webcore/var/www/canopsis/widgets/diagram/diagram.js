@@ -242,7 +242,11 @@ Ext.define('widgets.diagram.diagram' , {
 			yAxis: {
 				title: { text: null },
 				labels: {formatter: this.y_formatter}
-			}
+			},
+			lang: {
+				months:[_('January'), _('February'), _('March'), _('April'), _('May'), _('June'), _('July'), _('August'), _('September'), _('October'), _('November'), _('December')],
+				weekdays:[_("Sunday"), _("Monday"), _("Tuesday"), _("Wednesday"), _("Thursday"),_("Friday"), _("Saturday")]
+			},
 		};
 		/*
 		if(this.diagram_type == 'column'){
