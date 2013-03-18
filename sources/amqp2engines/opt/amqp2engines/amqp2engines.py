@@ -169,7 +169,12 @@ def start_engines():
 	
 	engine_eventstore	= eventstore.engine( logging_level=logging.INFO)
 	engines.append(engine_eventstore)
+	#engine_eventstore2	= eventstore.engine( logging_level=logging.INFO)
+	#engines.append(engine_eventstore2)
+	#engine_eventstore3	= eventstore.engine( logging_level=logging.INFO)
+	#engines.append(engine_eventstore3)
 
+	#engine_perfstore	= perfstore2.engine(next_engines=[engine_eventstore, engine_eventstore2, engine_eventstore3])
 	engine_perfstore	= perfstore2.engine(next_engines=[engine_eventstore])
 	engines.append(engine_perfstore)
 	
@@ -182,7 +187,7 @@ def start_engines():
 	engine_sla			= sla.engine(logging_level=logging.INFO)
 	engines.append(engine_sla)
 	
-	engine_consolidation		= consolidation.engine(logging_level=logging.DEBUG)
+	engine_consolidation		= consolidation.engine(logging_level=logging.INFO)
 	engines.append(engine_consolidation)
 	
 	# Set Next queue
