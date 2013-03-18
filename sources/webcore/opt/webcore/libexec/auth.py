@@ -102,6 +102,14 @@ class checkAuthPlugin(object):
 				else:
 					access = False
 
+			#check if authkey params
+			givenAuthkey = request.params.get('authkey',False)
+			if givenAuthkey:
+				logger.debug(" + found authkey (%s) in parameters" % givenAuthkey)
+				autoLogin(key=givenAuthkey)
+				if get_account().user != "anonymous":
+					access=True
+
 			if access:
 				logger.debug(" + Valid auth")
 				return callback(*args, **kawrgs)
@@ -189,7 +197,9 @@ def autoLogin(key=None):
 				'crecord_type':'account',
 				'authkey':key,
 			}
-				
+	
+	logger.debug('Try to find %s key' % key)
+
 	foundByKey = storage.find(mfilter=mfilter, account=caccount(user='root'))
 	#-------------------------if found, create session and redirect------------------------
 	if len(foundByKey) == 1:
