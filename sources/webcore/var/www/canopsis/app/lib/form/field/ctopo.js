@@ -353,7 +353,9 @@ Ext.define('canopsis.lib.form.field.ctopo' , {
 					items: form,
 					bbar: bbar,
 					resizable: false,
-					closeAction: 'destroy'
+					closeAction: 'destroy',
+					constrain: true,
+					renderTo: Ext.getCmp('main-tabs').getActiveTab().id
 				}).show().center();
 			}
 		}
