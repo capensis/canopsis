@@ -235,24 +235,24 @@ class engine(cengine):
 													'output_engine': "Correctly Loaded",
 													'nb_items': nb_items
 													} )
-			event = cevent.forger(
-					connector = "consolidation",
-					connector_name = "engine",
-					event_type = "check",
-					source_type="resource",
-					component=record['component'],
-					resource=record['resource'],
-					state=0,
-					state_type=1,
-					output="Consolidation %s successfully loaded" % record.get('crecord_name','No name'),
-					long_output="",
-					perf_data=None,
-					perf_data_array=None,
-					display_name=record['crecord_name']
-			)
-			rk = cevent.get_routingkey(event)
+			# event = cevent.forger(
+			# 		connector = "consolidation",
+			# 		connector_name = "engine",
+			# 		event_type = "check",
+			# 		source_type="resource",
+			# 		component=record['component'],
+			# 		resource=record['resource'],
+			# 		state=0,
+			# 		state_type=1,
+			# 		output="Consolidation %s successfully loaded" % record.get('crecord_name','No name'),
+			# 		long_output="",
+			# 		perf_data=None,
+			# 		perf_data_array=None,
+			# 		display_name=record['crecord_name']
+			# )
+			#rk = cevent.get_routingkey(event)
 			self.records[record.get('_id')] = record
-			self.amqp.publish(event, rk, self.amqp.exchange_name_events)
+			#self.amqp.publish(event, rk, self.amqp.exchange_name_events)
 		else:
 			self.storage.update(record.get('_id'), {'output_engine': "Impossible to load : no filter defined"  } )
 
