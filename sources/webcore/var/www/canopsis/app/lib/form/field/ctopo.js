@@ -83,8 +83,6 @@ Ext.define('canopsis.lib.form.field.ctopo' , {
 				node.data['x'] = node.getPosition()[0];
 				node.data['y'] = node.getPosition()[1];
 
-				nodes[node.id] = node.data;
-
 				log.debug(' + ' + node._id, this.logAuthor);
 				for (var j = 0; j < node.conns.length; j++) {
 					var conn = node.conns[j];
@@ -96,8 +94,21 @@ Ext.define('canopsis.lib.form.field.ctopo' , {
 						conns.push([source.id, target.id]);
 					}
 				}
+
+				//spring cleaning
+				if(node.data.conns)
+					delete node.data.conns
+				if(node.data.data)
+					delete node.data.data
+
+				nodes[node.id] = node.data;
 			}
+
+
 			var r = { nodes: nodes, conns: conns, root: this.rootNode };
+
+			console.log('""""""""""""""""""""""""""')
+			console.log(r)
 			return r;
 		} else log.error('error : no root node', this.logAuthor);
 
@@ -365,6 +376,7 @@ Ext.define('canopsis.lib.form.field.ctopo' , {
 		var me = this;
 		//we do a deep copy of data, in order to prevent to have a node which is a tree
 		var orig_data = { };
+
 		$.extend(true, orig_data, data);
 		var data = Ext.Object.merge(data, this.node_default);
 
