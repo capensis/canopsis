@@ -56,11 +56,11 @@ base_component_event = cevent.forger(
 					output =			"Output",
 					long_output =		"",
 					#perf_data =			None,
-					perf_data_array =	[
-						{'metric': 'shortterm', 'value': 0.25, 'unit': None, 'min': None, 'max': None, 'warn': None, 'crit': None, 'type': 'GAUGE' },
-						{'metric': 'midterm',   'value': 0.16, 'unit': None, 'min': None, 'max': None, 'warn': None, 'crit': None, 'type': 'GAUGE' },
-						{'metric': 'longterm',  'value': 0.12, 'unit': None, 'min': None, 'max': None, 'warn': None, 'crit': None, 'type': 'GAUGE' }
-                    ]
+					#perf_data_array =	[
+					#	{'metric': 'shortterm', 'value': 0.25, 'unit': None, 'min': None, 'max': None, 'warn': None, 'crit': None, 'type': 'GAUGE' },
+					#	{'metric': 'midterm',   'value': 0.16, 'unit': None, 'min': None, 'max': None, 'warn': None, 'crit': None, 'type': 'GAUGE' },
+					#	{'metric': 'longterm',  'value': 0.12, 'unit': None, 'min': None, 'max': None, 'warn': None, 'crit': None, 'type': 'GAUGE' }
+                    #]
 					#display_name =		""
 				)
 
@@ -192,7 +192,7 @@ try:
 	#nbs = [ 500, 1000, 1250, 1500, 1750, 2000, 2250, 2500, 2750, 3000, 3250, 3500, 3750, 4000 ]
 	#rates =  [100, 150, 200, 250, 300, 350, 400, 450, 500]
 	nbs = [ 4000 ]
-	rates = [ 500 ]
+	rates = [ 200 ]
 	
 	for rate in rates:
 		for nb in nbs:
