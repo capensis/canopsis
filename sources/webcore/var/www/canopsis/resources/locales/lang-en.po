@@ -1905,3 +1905,6 @@ msgstr "Nov"
 
 msgid "Dec"
 msgstr "Dec"
+
+msgid "Time is out of range"
+msgstr "Time is out of range"
