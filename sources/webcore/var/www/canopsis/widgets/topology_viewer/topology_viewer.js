@@ -65,31 +65,39 @@ Ext.define('widgets.topology_viewer.topology_viewer' , {
 			this.bodyStyle = {'background-color': this.background_color};
 
 		this.callParent(arguments);
+
+		if (Ext.ieVersion <= 9 && Ext.ieVersion != 0) {
+			this.setHtml('<center>' + _('Widget not supported by ie') + '</center>');
+			return;
+		}
 	},
 
 	doRefresh: function() {
-		if (this.sigmaContainer)
-			this.sigmaContainer.emptyGraph();
-		else
-			this.initSigma();
+		if (Ext.ieVersion >= 9 || Ext.ieVersion == 0){
+			if (this.sigmaContainer)
+				this.sigmaContainer.emptyGraph();
+			else
+				this.initSigma();
 
-		this.getNodeInfo();
+			this.getNodeInfo();
+		}
 	},
 
-	onRefresh: function(node) {
+	onRefresh : function(node) {
 		this.lastUpdate = node['crecord_creation_time'];
 		this.drawRecursiveTree(node['nestedTree']);
 		this.sigmaDraw();
 	},
 
-	onResize: function() {
+	onResize : function() {
 		this.sigmaContainer.resize();
 	},
 
 	//-------------------Sigma related functions------------------
 
-	initSigma: function() {
+	initSigma : function() {
 		log.debug('Init Sigma.js', this.logAuthor);
+
 		var sigma_root = this.wcontainer.getEl().id;
 		this.sigmaContainer = sigma.init(document.getElementById(sigma_root));
 		this.sigmaContainer.drawingProperties({
@@ -109,7 +117,7 @@ Ext.define('widgets.topology_viewer.topology_viewer' , {
 		});
 	},
 
-	computeAnglesPosition: function(number_of_point,usable_angle,start_angle) {
+	computeAnglesPosition : function(number_of_point,usable_angle,start_angle) {
 		//center to the middle of the angle
 		start_angle = start_angle - (usable_angle / 2);
 
@@ -126,7 +134,7 @@ Ext.define('widgets.topology_viewer.topology_viewer' , {
 		return tab;
 	},
 
-	drawRecursiveTree: function(tree,depth,angle,referent_coord) {
+	drawRecursiveTree : function(tree,depth,angle,referent_coord) {
 		//console.log('Recursive tree '+tree.name+' ' + depth +' '+ angle)
 		if (!depth) depth = 0;
 		if (!angle) angle = Math.PI * 2;
@@ -142,7 +150,7 @@ Ext.define('widgets.topology_viewer.topology_viewer' , {
 		};
 
 		var node_params = {
-			label: tree.name.replace(/<.*>/gi,' '),
+			label: tree.name.replace(/<.*>/gi, ' '),
 			x: coord.x,
 			y: coord.y,
 			shape: 'square'
@@ -183,27 +191,27 @@ Ext.define('widgets.topology_viewer.topology_viewer' , {
 		return tree._id;
 	},
 
-	addNode: function(name,config) {
+	addNode : function(name,config) {
 		this.sigmaContainer.addNode(name, config);
 	},
 
-	linkNode: function(link_name,first_node,second_node,params) {
+	linkNode : function(link_name,first_node,second_node,params) {
 		this.sigmaContainer.addEdge(link_name, first_node, second_node, params);
 	},
 
-	displayLastUpdate: function() {
+	displayLastUpdate : function() {
 		if (this.canvasContext && this.lastUpdate) {
 			this.canvasContext.fillText(rdr_elapsed_time(this.lastUpdate), 10, 20);
 		}
 	},
 
-	sigmaDraw: function() {
+	sigmaDraw : function() {
 		log.debug('Redraw topolgy', this.logAuthor);
 		this.sigmaContainer.draw();
 		this.canvas = document.getElementById(this.sigmaContainer._core.domRoot.lastChild.id);
 		this.canvasContext = this.canvas.getContext('2d');
 		this.canvasContext.font = '13px sans-serif ';
-		this.canvasContext.fillStyle = '#8f9baf'
+		this.canvasContext.fillStyle = '#8f9baf';
 		this.displayLastUpdate();
 
 		this.sigmaContainer._core.mousecaptor.bind(
@@ -212,25 +220,25 @@ Ext.define('widgets.topology_viewer.topology_viewer' , {
 	},
 
 	//----------------trigo functions-----------------
-	degTorad: function(val) {
+	degTorad : function(val) {
 		return val * (Math.PI / 180);
 	},
 
-	radTodeg: function(val) {
+	radTodeg : function(val) {
 		return val * (180 / Math.PI);
 	},
 
-	getXY: function(x,y,radius,angle) {
+	getXY : function(x,y,radius,angle) {
 		var x = this.getX(x, radius, angle);
 		var y = this.getY(y, radius, angle);
 		return {x: x, y: y};
 	},
 
-	getX: function(x,radius,angle) {
+	getX : function(x,radius,angle) {
 		return x + radius * Math.cos(angle);
 	},
 
-	getY: function(y,radius,angle) {
+	getY : function(y,radius,angle) {
 		return y + radius * Math.sin(angle);
 	}
 
