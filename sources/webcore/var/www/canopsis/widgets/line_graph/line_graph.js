@@ -559,6 +559,8 @@ Ext.define('widgets.line_graph.line_graph' , {
 				}else {
 					serie.xAxis.setExtremes(now - time_window, now, false);
 				}
+
+				this.shift();
 			}
 
 			log.debug(' + Do Refresh ' + from + ' -> ' + to, this.logAuthor);
@@ -731,6 +733,8 @@ Ext.define('widgets.line_graph.line_graph' , {
 		var now = Ext.Date.now();
 
 		var timestamp = now - (me.time_window * 1000);
+
+		log.debug('Check shifting ...', me.logAuthor);
 
 		if (me.chart.series.length > 0 && now < (me.last_from + 500)) {
 			for (var i = 0; i < me.chart.series.length; i++) {
