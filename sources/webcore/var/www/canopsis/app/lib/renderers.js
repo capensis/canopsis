@@ -235,20 +235,20 @@ rdr_elapsed_time = function(timestamp, full_length) {
 
 	var elapsed = parseInt(new Date().getTime() / 1000) - timestamp;
 
-	var elapsed_text = elapsed + ' seconds ago';
+	var elapsed_text = elapsed + ' ' + _('seconds ago');
 
 	if (elapsed < 3)
 		elapsed_text = 'just now';
 	if (elapsed > 60)
-		elapsed_text = parseInt(elapsed / 60) + ' mins ago';
+		elapsed_text = parseInt(elapsed / 60) + ' ' + _('minutes ago');
 	if (!full_length) {
 		if (elapsed > 3600)
 			elapsed_text = rdr_tstodate(timestamp);
 	}else {
 		if (elapsed > 3600)
-			elapsed_text = parseInt(elapsed / 3600) + ' hours ago';
+			elapsed_text = parseInt(elapsed / 3600) + ' ' + _('hours ago');
 		if (elapsed > 86400)
-			elapsed_text = parseInt(elapsed / 86400) + ' days ago';
+			elapsed_text = parseInt(elapsed / 86400) + ' ' + _('days ago');
 	}
 
 	return elapsed_text;
@@ -402,20 +402,20 @@ rdr_humanreadable_value = function(value, unit) {
 	if (! unit || unit == undefined) {
 		unit = '';
 	}else {
-
-		if (unit == 'o' || unit == 'MB')
-			multiple = 1024;
-
-		if (unit == 'MB') {
-			unit = 'B';
-			value = value * 1024 * 1024;
+		try{
+			var information = global.sizeTable[unit.toUpperCase()]
+			if(information){
+				multiple = information['multiple']
+				unit = information['unit']
+				value = value * information['pow']
+				//console.log(value)
+			}
+		}catch(err){
+			log.debug(err.message)
 		}
 
-		if (unit == 'ms' || unit == 's') {
-			if (unit == 'ms')
-				value = value / 1000;
+		if (unit == 'S')
 			return rdr_duration(value);
-		}
 	}
 
 	value = rdr_yaxis(value, multiple);
@@ -425,3 +425,11 @@ rdr_humanreadable_value = function(value, unit) {
 
 	return value + unit;
 };
+
+
+rdr_access = function(val) {
+	if (Ext.isArray(val))
+		return val.sort();
+	else
+		return val;
+}

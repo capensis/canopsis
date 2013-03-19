@@ -34,7 +34,7 @@ Ext.define('canopsis.store.TreeStoreViews', {
 
 	proxy: {
 		batchActions: true,
-		appendId: false,
+		//appendId: false,
 		type: 'rest',
 		url: '/ui/view',
 		reader: {
@@ -44,6 +44,10 @@ Ext.define('canopsis.store.TreeStoreViews', {
 			type: 'json',
 			method: 'POST'
 		}
+	},
+
+	afterCorrectWrite : function(){
+		Ext.getStore('Views').load()
 	}
 
 });

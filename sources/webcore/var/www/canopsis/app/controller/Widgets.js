@@ -30,7 +30,8 @@ Ext.define('canopsis.controller.Widgets', {
     logAuthor: '[controller][Widgets]',
 
     init: function() {
-		Ext.Loader.setPath('widgets', './widgets');
+		Ext.Loader.setPath('widgets', '/static/canopsis/widgets');
+		Ext.Loader.setPath('widgets.thirdparty', '/static/widgets');
 
 		this.store = this.getStore('Widgets');
 
@@ -39,16 +40,14 @@ Ext.define('canopsis.controller.Widgets', {
 		if (! global.minimified) {
 			this.store.on('load', function() {
 				this.store.each(function(record) {
-					log.debug('loading ' + record.data.xtype, this.logAuthor);
-					var name = 'widgets.' + record.data.xtype + '.' + record.data.xtype;
-					Ext.require(name);
-					if (record.data.locales && Ext.Array.contains(record.data.locales, global.locale)) {
-						log.debug(' + loading locale ' + global.locale + ' ...', this.logAuthor);
-						var name = 'widgets.' + record.data.xtype + '.locales.lang-' + global.locale;
-						//Ext.require(name);
-						Ext.Loader.syncRequire(name);
-					}
+					var name;
+					if (record.get('thirdparty'))
+						name = 'widgets.thirdparty.' + record.get('xtype') + '.' + record.get('xtype');
+					else
+						name = 'widgets.' + record.get('xtype') + '.' + record.get('xtype');
 
+					log.debug('loading ' + record.get('xtype') + ' (' + name + ')', this.logAuthor);
+					Ext.require(name);
 				}, this);
 
 				this.clean_disabled_widget();
@@ -65,6 +64,7 @@ Ext.define('canopsis.controller.Widgets', {
 		}else {
 			this.store.on('load', function() {
 				this.clean_disabled_widget();
+				this.fireEvent('loaded');
 			}, this);
 		}
     },
@@ -81,22 +81,19 @@ Ext.define('canopsis.controller.Widgets', {
     },
 
 	check_translate: function() {
-		if (global.locale != 'en') {
-			log.debug('Attempting to translate widget in store', this.logAuthor);
-			this.store.each(function(record) {
-				var options = record.get('options');
-				if (options != undefined) {
-					for (var i = 0; i < options.length; i++) {
-						this.translate(record.get('xtype'), options[i]);
-					}
+		log.debug('Attempting to translate widget in store', this.logAuthor);
+		this.store.each(function(record) {
+			var options = record.get('options');
+			if (options != undefined) {
+				for (var i = 0; i < options.length; i++) {
+					this.translate(record.get('xtype'), options[i]);
 				}
-			},this);
-		}
+			}
+		},this);
 	},
 
 	//recursive translate function for widget records
 	translate: function(xtype, data) {
-
 		// for every item
 		var me = this;
 		Ext.Object.each(data, function(key, value, myself) {

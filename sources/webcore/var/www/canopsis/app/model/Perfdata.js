@@ -36,7 +36,12 @@ Ext.define('canopsis.model.Perfdata', {
 		{name:	'ma'},
 		{name:	'tg'},
 		{name:	'mi'},
-		{name: 'pct'}
+		{name: 'pct'},
+
+		{name: 'aaa_access_owner', defaultValue: ['r', 'w']},
+		{name: 'aaa_access_group', defaultValue: ['r']},
+		{name: 'aaa_access_other', defaultValue: []},
+		{name: 'aaa_admin_group', defaultValue: 'group.CPS_perfdata_admin'}
 
 	]
 });

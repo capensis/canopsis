@@ -26,11 +26,12 @@ from pyperfstore2.store import store
 import pyperfstore2.utils as utils
 
 class manager(object):
-	def __init__(self, mongo_collection='perfdata2', retention=0, dca_min_length = 250, logging_level=logging.INFO, cache=True, mongo_safe=False):
+	def __init__(self, retention=0, dca_min_length = 250, logging_level=logging.INFO, cache=True, **kwargs):
 		self.logger = logging.getLogger('manager')
 		self.logger.setLevel(logging_level)
-		
-		self.store = store(mongo_collection=mongo_collection, logging_level=logging_level, mongo_safe=mongo_safe)
+
+		# Store
+		self.store = store(logging_level=logging_level, **kwargs)
 		
 		self.dca_min_length = dca_min_length
 		
@@ -74,10 +75,10 @@ class manager(object):
 			
 		return _id
 		
-	def get_meta(self, _id=None, name=None, raw=False):
+	def get_meta(self, _id=None, name=None, raw=False, mfields=None):
 		_id = self.get_id(_id, name)
 		
-		meta_data = self.store.get(_id)
+		meta_data = self.store.get(_id, mfields=mfields)
 		
 		if not meta_data:
 			return None
@@ -454,23 +455,44 @@ class manager(object):
 		self.store.update(_id, mset=data)
 	
 	def remove(self, _id=None, name=None, purge=True):
-		_id = self.get_id(_id, name)
-		
-		self.logger.info("Remove: %s" % _id)
-		
-		dca = self.get_meta(_id=_id, raw=True)
-		if dca:
-			# Remove compressed DCA (if there is compressed dca)
-			for bin_dca in dca.get('c', []):
-				self.logger.debug(" + Remove Bin DCA: %s" % bin_dca[2])
-				self.store.grid.delete(bin_dca[2])
-		
-			# Remove plain DCA and Meta
-			#if purge:
-			self.logger.debug(" + Remove Meta and Plains DCA")
-			self.store.remove(_id=_id)
+		ids = []
+		if isinstance(_id, list):
+			ids = [self.get_id(iid, name) for iid in _id]
 		else:
-			self.logger.warning(" DCA not found")
+			ids = [self.get_id(_id, name)]
+
+		if (len(ids) > 1):
+			self.logger.debug("Remove: %s DCA" % len(ids))
+		else:
+			self.logger.debug("Remove: %s" % ids)
+		
+		dcas = []
+		bin_dcas = []
+
+		for _id in ids:
+			dca = self.get_meta(_id=_id, raw=True, mfields={'c': 1})
+			if dca:
+				dcas.append(dca)
+				binaries = dca.get('c', [])
+				if len(binaries):
+					for bin_dca in binaries:
+						bin_dcas.append(bin_dca[2])
+
+		self.logger.debug(" + %s Meta DCA Found" % len(dcas))
+		self.logger.debug(" + %s Binaries Found" % len(bin_dcas))
+
+
+		if len(bin_dcas):
+			self.logger.debug("Remove Compressed Binaries ...")
+			self.store.db[self.store.mongo_collection+"_bin.chunks"].remove({'files_id': {'$in': bin_dcas}})
+			self.store.db[self.store.mongo_collection+"_bin.files"].remove({'_id': {'$in': bin_dcas}})
+
+		if len(dcas):
+			self.logger.debug("Remove Meta and Plains DCA ...")
+			if len(dcas) == 1:
+				self.store.remove(_id=dcas[0]['_id'])
+			else:
+				self.store.remove(mfilter={'_id': {'$in': [ dca['_id'] for dca in dcas]}})
 	
 	def showStats(self):
 		metas = self.find(limit=0)

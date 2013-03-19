@@ -26,7 +26,7 @@ Ext.define('canopsis.store.Perfdatas', {
 
 	logAuthor: '[store][Perfdatas]',
 
-	autoLoad: true,
+	autoLoad: false,
 	autoSync: true,
 
 	proxy: {

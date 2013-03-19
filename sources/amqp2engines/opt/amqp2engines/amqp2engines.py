@@ -91,7 +91,13 @@ def clean_message(body, msg):
 		
 	elif not isinstance(event['tags'], list):
 		event['tags'] = []
-		
+
+	event["timestamp"] 	= event.get("timestamp", time.time() )
+	event["timestamp"] 	= int(event["timestamp"])
+
+	event["state"]		= event.get("state", 0)
+	event["state_type"] = event.get("state_type", 1)
+
 	return event
 
 def on_event(body, msg):
@@ -144,17 +150,18 @@ def start_engines():
 	import sla
 	import alertcounter
 	import derogation
-	#import topology
+	import topology
+	import consolidation
 	
 
 	engine_selector		= selector.engine(logging_level=logging.INFO)
 	engines.append(engine_selector)
 	
-	#engine_topology		= topology.engine(next_engines=[engine_selector], logging_level=logging.DEBUG)
-	#engines.append(engine_topology)
+	engine_topology		= topology.engine(next_engines=[engine_selector], logging_level=logging.INFO)
+	engines.append(engine_topology)
 
-	#engine_alertcounter	= alertcounter.engine(next_engines=[engine_topology], logging_level=logging.INFO)
-	engine_alertcounter	= alertcounter.engine(next_engines=[engine_selector], logging_level=logging.INFO)
+	engine_alertcounter	= alertcounter.engine(next_engines=[engine_topology], logging_level=logging.INFO)
+	#engine_alertcounter	= alertcounter.engine(next_engines=[engine_selector], logging_level=logging.INFO)
 	engines.append(engine_alertcounter)
 	
 	engine_collectdgw	= collectdgw.engine()
@@ -162,7 +169,12 @@ def start_engines():
 	
 	engine_eventstore	= eventstore.engine( logging_level=logging.INFO)
 	engines.append(engine_eventstore)
+	#engine_eventstore2	= eventstore.engine( logging_level=logging.INFO)
+	#engines.append(engine_eventstore2)
+	#engine_eventstore3	= eventstore.engine( logging_level=logging.INFO)
+	#engines.append(engine_eventstore3)
 
+	#engine_perfstore	= perfstore2.engine(next_engines=[engine_eventstore, engine_eventstore2, engine_eventstore3])
 	engine_perfstore	= perfstore2.engine(next_engines=[engine_eventstore])
 	engines.append(engine_perfstore)
 	
@@ -174,6 +186,9 @@ def start_engines():
 
 	engine_sla			= sla.engine(logging_level=logging.INFO)
 	engines.append(engine_sla)
+	
+	engine_consolidation		= consolidation.engine(logging_level=logging.INFO)
+	engines.append(engine_consolidation)
 	
 	# Set Next queue
 	## Events

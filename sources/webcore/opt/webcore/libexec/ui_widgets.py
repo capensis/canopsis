@@ -32,10 +32,33 @@ logger = logging.getLogger("ui-widgets")
 
 #########################################################################
 
-base_path = os.path.expanduser("~/var/www/canopsis/")
+www_path = os.path.expanduser("~/var/www/")
+base_path = "%s/canopsis/" % www_path
 
-def get_widgets():
-	return os.listdir(base_path + "widgets/")
+def get_internal_widgets():
+	wlist = []
+	if os.path.exists(base_path + "widgets/"):
+		wlist += os.listdir(base_path + "widgets/")
+	return wlist
+
+def get_external_widgets():
+	wlist = []
+	if os.path.exists(www_path + "widgets/"):
+		wlist += os.listdir(www_path + "widgets/")
+	return wlist
+
+def get_widget_json(json_path):
+	try:
+		FH = open (json_path, 'r' )
+		widget_info = FH.read()
+		widget_info = json.loads(widget_info)[0]
+		FH.close()
+		logger.debug("     + Success")
+		return widget_info
+	except Exception, err:
+		logger.debug("     + Failed (%s)" % err)
+
+	return None	
 
 #### GET
 @get('/ui/widgets')
@@ -45,24 +68,24 @@ def get_all_widgets():
 
 	output = []
 
-	widgets = get_widgets()
-
 	logger.debug(" + Search all widgets ...")
+	widgets =  get_internal_widgets()
+	widgets += get_external_widgets()
+
 	for widget in widgets:
-		widget_path = "%s/widgets/%s/" % (base_path, widget)
+		# Externals
+		widget_path = "%s/widgets/%s/" % (www_path, widget)
+		if not os.path.exists("%s/widget.json" % widget_path):
+			# Internals
+			widget_path = "%s/widgets/%s/" % (base_path, widget)
+			if not os.path.exists("%s/widget.json" % widget_path):
+				return
 
 		logger.debug("   + Load '%s' (%s)" % (widget, widget_path))
-		try:
-			FH = open (widget_path + "/widget.json", 'r' )
-			widget_info = FH.read()
-			widget_info = json.loads(widget_info)
-			
-			output.append(widget_info[0])
 
-			FH.close()
-			logger.debug("     + Success")
-		except Exception, err:
-			logger.debug("     + Failed (%s)" % err)
+		widget_info = get_widget_json("%s/widget.json" % widget_path)
+		if widget_info:
+			output.append(widget_info)
 		
 	output={'total': len(output), 'success': True, 'data': output}
 	return output
@@ -70,23 +93,37 @@ def get_all_widgets():
 #### Widgets CSS
 @get('/ui/widgets.css', skip=['checkAuthPlugin'])
 def get_widgets_css():
-	widgets = get_widgets()
+	widgets =  get_internal_widgets()
+	widgets += get_external_widgets()
+
 	output = ""
 
 	logger.debug(" + Search all widgets CSS...")
 	for widget in widgets:
-		css = "widgets/%s/%s.css" % (widget, widget)
-		iecss = "widgets/%s/%s-ie.css" % (widget, widget)
+		css_uri = "/static/canopsis/widgets"
+
+		# Externals
+		widget_path = "%s/widgets/%s/" % (www_path, widget)
+		if not os.path.exists("%s/widget.json" % widget_path):
+			# Internals
+			widget_path = "%s/widgets/%s/" % (base_path, widget)
+			if not os.path.exists("%s/widget.json" % widget_path):
+				return
+		else:
+			css_uri = "/static/widgets"
+
+		css =		"%s.css" 	% widget
+		css_ie =	"%s-ie.css"	% widget
 		
-		if os.path.exists(base_path + css):
+		if os.path.exists("%s/%s" % (widget_path, css)):
 			logger.debug(" - %s" % css)
-			output += "@import '/static/canopsis/%s';\n" % css
+			output += "@import '%s/%s/%s';\n" % (css_uri, widget, css)
 
 		#MSIE 8.0 MSIE 7.0
 		user_agent = request.environ.get('HTTP_USER_AGENT')
-		if re.search("MSIE [78]", user_agent) and os.path.exists(base_path + iecss):
-			logger.debug(" - %s" % iecss)
-			output += "@import '/static/canopsis/%s';\n" % iecss
+		if re.search("MSIE [78]", user_agent) and os.path.exists("%s/%s" % (widget_path, css_ie)):
+			logger.debug(" - %s" % css_ie)
+			output += "@import '%s/%s/%s';\n" % (css_uri, widget, css_ie)
 
 	response.content_type = 'text/css'
 	return output

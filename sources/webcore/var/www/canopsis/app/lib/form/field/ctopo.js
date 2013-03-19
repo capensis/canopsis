@@ -50,14 +50,14 @@ Ext.define('canopsis.lib.form.field.ctopo' , {
 			'<center>',
 				'<tpl if="event_type == \'operator\'">',
 					'<tpl if="connector == \'topology\'">',
-						'<img class="ctopo-point" src="/static/canopsis/themes/canopsis/resources/images/topology.png" />',
+						'<img class="ctopo-point" style="width: 32px; height: 32px;" src="/static/canopsis/themes/canopsis/resources/images/topology.png" />',
 					'</tpl>',
 					'<tpl if="connector != \'topology\'">',
-						'<img class="ctopo-point" src="/static/canopsis/themes/canopsis/resources/images/Tango-Blue-Materia/24x24/categories/applications-accessories.png" />',
+						'<img class="ctopo-point" style="width: 32px; height: 32px;" src="/static/canopsis/themes/canopsis/resources/images/Tango-Blue-Materia/24x24/categories/applications-accessories.png" />',
 					'</tpl>',
 				'</tpl>',
 				'<tpl if="event_type != \'operator\'">',
-					'<img class="ctopo-point" src="widgets/stream/logo/{connector}.png" />',
+					'<img class="ctopo-point" style="width: 32px; height: 32px;" src="widgets/stream/logo/{connector}.png" />',
 				'</tpl>',
 			'</center>',
 			'<center>',
@@ -83,8 +83,6 @@ Ext.define('canopsis.lib.form.field.ctopo' , {
 				node.data['x'] = node.getPosition()[0];
 				node.data['y'] = node.getPosition()[1];
 
-				nodes[node.id] = node.data;
-
 				log.debug(' + ' + node._id, this.logAuthor);
 				for (var j = 0; j < node.conns.length; j++) {
 					var conn = node.conns[j];
@@ -96,8 +94,21 @@ Ext.define('canopsis.lib.form.field.ctopo' , {
 						conns.push([source.id, target.id]);
 					}
 				}
+
+				//spring cleaning
+				if(node.data.conns)
+					delete node.data.conns
+				if(node.data.data)
+					delete node.data.data
+
+				nodes[node.id] = node.data;
 			}
+
+
 			var r = { nodes: nodes, conns: conns, root: this.rootNode };
+
+			console.log('""""""""""""""""""""""""""')
+			console.log(r)
 			return r;
 		} else log.error('error : no root node', this.logAuthor);
 
@@ -108,15 +119,17 @@ Ext.define('canopsis.lib.form.field.ctopo' , {
 
 		var nodes = data.nodes;
 		var corresp = { };
+		var me = this;
 
 		this.removeAll();
 
 		log.debug(' + Create nodes', this.logAuthor);
-		for (var i = 0; i < nodes.length; i++) {
-			var el = this.createNode(nodes[i]);
-			this.add(el);
-			corresp[i] = el.id;
-		}
+		Ext.Object.each(nodes, function(key, value, myself) {
+			var el = me.createNode(value);
+			me.add(el);
+			corresp[key] = el.id;
+		});
+
 		log.debug('   + Done', this.logAuthor);
 
 		this.rootNode = corresp[data.root];
@@ -137,7 +150,7 @@ Ext.define('canopsis.lib.form.field.ctopo' , {
 		log.debug('   + Done', this.logAuthor);
 
 		// Defer second refresh for slow browser/connection
-		Ext.defer(this.jsPlumbInstance.repaintEverything, 50, this);
+		//Ext.defer(this.jsPlumbInstance.repaintEverything, 50, this);
 		this.jsPlumbInstance.repaintEverything();
 	},
 
@@ -293,7 +306,29 @@ Ext.define('canopsis.lib.form.field.ctopo' , {
 
 			}else {
 				log.debug('Create form', me.logAuthor);
-				var form = Ext.create('Ext.form.Panel', nodeEl.form);
+
+				// Translate form
+				var form = nodeEl.form;
+
+				if (! form.translated){
+					for (var i=0; i < form.items.length; i++){
+						var item = form.items[i];
+
+						if (item.fieldLabel)
+							item.fieldLabel = _(item.fieldLabel);
+
+						if (item.xtype == 'combobox')
+							for (var j=0; j < item.store.data.length; j++)
+								if (item.store.data[j].text)
+									item.store.data[j].text = _(item.store.data[j].text)
+
+						form.items[i] = item;
+					}
+					nodeEl.form.translated = true;
+				}
+
+				form.bodyStyle = 'padding: 5px;';
+				var form = Ext.create('Ext.form.Panel', form);
 
 				// Load form
 				if (nodeEl.options)
@@ -329,7 +364,9 @@ Ext.define('canopsis.lib.form.field.ctopo' , {
 					items: form,
 					bbar: bbar,
 					resizable: false,
-					closeAction: 'destroy'
+					closeAction: 'destroy',
+					constrain: true,
+					renderTo: Ext.getCmp('main-tabs').getActiveTab().id
 				}).show().center();
 			}
 		}
@@ -339,6 +376,7 @@ Ext.define('canopsis.lib.form.field.ctopo' , {
 		var me = this;
 		//we do a deep copy of data, in order to prevent to have a node which is a tree
 		var orig_data = { };
+
 		$.extend(true, orig_data, data);
 		var data = Ext.Object.merge(data, this.node_default);
 

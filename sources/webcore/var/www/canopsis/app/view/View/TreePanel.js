@@ -38,7 +38,8 @@ Ext.define('canopsis.view.View.TreePanel' , {
 			xtype: 'treecolumn',
 			text: _('Name'),
 			flex: 5,
-			dataIndex: 'crecord_name'
+			dataIndex: 'crecord_name',
+			renderer: function(value, metaData, record) { return "<span name='view."+record.get('crecord_name')+"'></span>" + value ; }
 		},{
 			text: _('Export Options'),
 			flex: 1,
@@ -62,17 +63,33 @@ Ext.define('canopsis.view.View.TreePanel' , {
 			width: 80,
 			align: 'center',
 			text: _('Owner'),
-			dataIndex: 'aaa_access_owner'
+			dataIndex: 'aaa_access_owner',
+			renderer: rdr_access
 		},{
 			width: 60,
 			align: 'center',
 			text: _('Group'),
-			dataIndex: 'aaa_access_group'
+			dataIndex: 'aaa_access_group',
+			renderer: rdr_access
 		},{
 			width: 60,
 			align: 'center',
 			text: _('Others'),
-			dataIndex: 'aaa_access_other'
+			dataIndex: 'aaa_access_other',
+			renderer: rdr_access
+		},{
+			width: 130,
+			align: 'center',
+			text: _('Last modified'),
+			dataIndex: 'crecord_write_time',
+			renderer: rdr_tstodate
+		},{
+			width: 130,
+			align: 'center',
+			text: _('Creation date'),
+			dataIndex: 'crecord_creation_time',
+			hidden: true,
+			renderer: rdr_tstodate
 		},{
 			xtype: 'actioncolumn',
 			width: 25,
@@ -97,10 +114,13 @@ Ext.define('canopsis.view.View.TreePanel' , {
                 if (rec.crecord_type == 'view') {
 					var view = rec._id;
 					var auth_key = global.account.authkey;
-					var url = Ext.String.format('http://{0}/static/canopsis/display_view.html?view_id={1}&auth_key={2}',
-					$(location).attr('host'),
-					view,
-					auth_key);
+					var url = Ext.String.format(
+						'http://{0}{1}?fullscreenMode=true&view_id={2}&auth_key={3}',
+						window.location.host,
+						window.location.pathname,
+						view,
+						auth_key
+					);
 
 					var _window = Ext.widget('window', {
 						resizable: false,

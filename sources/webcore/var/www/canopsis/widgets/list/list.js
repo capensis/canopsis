@@ -109,7 +109,7 @@ Ext.define('widgets.list.list' , {
 	},
 
 	doRefresh: function(from, to) {
-		if (this.grid)
+		if (this.grid && this.grid.store.loaded)
 			this.grid.store.load();
 	}
 

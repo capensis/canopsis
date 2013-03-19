@@ -87,7 +87,7 @@ Ext.define('widgets.diagram.diagram' , {
 			var node = this.nodes[i];
 
 			if (node['type'] && node['type'] == 'COUNTER')
-				this.haveCounter = true
+				this.haveCounter = true;
 
 			//hack for retro compatibility
 			if (!node.dn)
@@ -140,7 +140,7 @@ Ext.define('widgets.diagram.diagram' , {
 
 			if (source_type == 'resource') {
 				var resource = this.nodes[0].dn[1];
-				title = resource + ' ' + _('diagram.on') + ' ' + component;
+				title = resource + ' ' + _('on') + ' ' + component;
 			}else {
 				title = component;
 			}
@@ -265,6 +265,13 @@ Ext.define('widgets.diagram.diagram' , {
 
 	createChart: function() {
 		this.chart = new Highcharts.Chart(this.options);
+		Highcharts.setOptions({
+			lang: {
+				months: [_('January'), _('February'), _('March'), _('April'), _('May'), _('June'), _('July'), _('August'), _('September'), _('October'), _('November'), _('December')],
+				weekdays: [_('Sunday'), _('Monday'), _('Tuesday'), _('Wednesday'), _('Thursday'), _('Friday'), _('Saturday')],
+				shortMonths: [_('Jan'), _('Feb'), _('Mar'), _('Apr'), _('May'), _('Jun'), _('Jul'), _('Aug'), _('Sept'), _('Oct'), _('Nov'), _('Dec')]
+			}
+		});
 	},
 
 	processNodes: function() {
@@ -289,16 +296,16 @@ Ext.define('widgets.diagram.diagram' , {
 	doRefresh: function(from, to) {
 		// Get last point only
 		if (this.time_window && from == 0)
-			from = to - this.time_window * 1000;
+			from = to - this.time_window;
 		else if (! this.haveCounter)
 			from = to;
-		
+
 		log.debug('Get values from ' + new Date(from) + ' to ' + new Date(to), this.logAuthor);
 
 		if (this.nodes) {
 			if (this.nodes.length != 0) {
 
-				var url = '/perfstore/values/' + from + '/' + to;
+				var url = '/perfstore/values/' + parseInt(from / 1000) + '/' + parseInt(to / 1000);
 
 				Ext.Ajax.request({
 					url: url,
@@ -321,6 +328,13 @@ Ext.define('widgets.diagram.diagram' , {
 	},
 
 	onRefresh: function(data) {
+		// s to ms
+		/*
+		if(data.values && (data.values.length>0))
+			for(var i =0; i < data.values.length; i++)
+				data.values[i][0] = data.values[i][0]*1000
+		*/
+
 		if (this.chart && data.length != 0) {
 			var myEl = this.getEl();
 			if (myEl && myEl.isMasked && !this.isDisabled())

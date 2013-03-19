@@ -4,8 +4,8 @@
 	"author": "capensis",
 	"website": "http://www.canopsis.org",
 	"xtype":"line_graph",
-	"description": "Display perfdata on customizable graphs.",
-	"description-fr":"Affiche les données de performances sur des graphiques personalisables.",
+	"description": "Displays metrics on interactive customizable graph.",
+	"description-fr":"Affiche des métriques sur un graphique interactif et personalisable.",
 	"refreshInterval": 300,
 	"locales": ["en", "fr"],
 	"options": [{
@@ -149,9 +149,21 @@
 								]
 								}
 							}]
+					},{
+						"xtype": "cfieldset",
+						"title": "Time navigation",
+						"checkboxName": "timeNav",
+						"value": false,
+						"items": [
+							{
+								"xtype": "cduration",
+								"name": "timeNav_window",
+								"value": 604800,
+								"fieldLabel": "Time window"
+							}]
 					}]
 		},{
-			"title": "Aggregation",
+			"title": "Aggregation / Consolidation",
 			"items" : [{
 						"xtype": "fieldset",
 						"title": "Aggregation",
@@ -170,12 +182,12 @@
 									"fields": ["value", "text"],
 									"data" : [
 										{"value": "", "text": "None"},
-										{"value": "MAX", "text": "Max"},
-										{"value": "MIN", "text": "Min"},
-										{"value": "LAST", "text": "Last"},
-										{"value": "FIRST", "text": "First"},
-										{"value": "DELTA", "text": "Delta"},
-										{"value": "MEAN", "text": "Mean"}
+										{"value": "max", "text": "Max"},
+										{"value": "min", "text": "Min"},
+										{"value": "last", "text": "Last"},
+										{"value": "first", "text": "First"},
+										{"value": "delta", "text": "Delta"},
+										{"value": "mean", "text": "Mean"}
 									]
 								}
 							},{
@@ -184,7 +196,7 @@
 								"fieldLabel": "Max points (if no interval)",
 								"minValue": 2,
 								"value": 500
-                           },{
+							},{
 								"xtype": "combobox",
 								"name": "aggregate_interval",
 								"fieldLabel": "Aggregation Interval",
@@ -208,8 +220,35 @@
 								}
 							}
 						]
-					}]
-		},{
+					},{
+						"xtype": "fieldset",
+						"title": "Consolidation between metrics",
+						"collapsible": false,
+						"items": [
+							{
+								"xtype": "combobox",
+								"name": "consolidation_method",
+								"fieldLabel": "Consolidation Method",
+								"queryMode": "local",
+								"displayField": "text",
+								"valueField": "value",
+								"value":"",
+								"store": {
+									"xtype": "store",
+									"fields": ["value", "text"],
+									"data" : [
+										{"value": "", "text": "None"},
+										{"value": "max", "text": "Max"},
+										{"value": "min", "text": "Min"},
+										{"value": "sum", "text": "Sum"},
+										{"value": "mean", "text": "Mean"}
+									]
+								}
+							}
+						]
+					}
+				]
+		},{					
 			"title": "Style",
 			"items": [{
 						"xtype": "fieldset",
@@ -253,16 +292,12 @@
                            }					
 						]
 					},{
-						"xtype": "fieldset",
-						"title": "Legend Style",
-						"collapsible": false,
+						"xtype": "cfieldset",
+						"title": "Legend",
+						"checkboxName": "legend",
+						"value": true,
 						"items": [
 							{
-								"xtype": "checkbox",
-								"fieldLabel": "Enable legend",
-								"checked": true,
-								"name": "legend"
-							},{
 								"xtype" : "numberfield",
 								"name" : "legend_fontSize",
 								"fieldLabel": "Font Size",
@@ -372,6 +407,21 @@
 											"checked":true
 										}]
 					}]
+		},{
+			"title": "Choose events",
+			"layout":"anchor",
+			"items": [{
+				"xtype": "cfilter",
+				"name": "flagFilter",
+				"anchor": "100% 90%"
+			},{
+				"xtype":"numberfield",
+				"name": "nbMavEventsDisplayed",
+				"fieldLabel":"Maximum number of displayed events (0 for no limit)",
+				"value": 100,
+				"minValue": 0,
+				"anchor": "50% 10%"
+			}]
 		}]
 }]
 

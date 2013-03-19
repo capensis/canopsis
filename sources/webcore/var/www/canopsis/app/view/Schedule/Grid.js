@@ -45,14 +45,16 @@ Ext.define('canopsis.view.Schedule.Grid' , {
 			header: _('Success'),
 			width: 55,
 			sortable: true,
-			dataIndex: 'log_success',
-			renderer: rdr_boolean
+			dataIndex: 'log',
+			renderer: function(value){return rdr_boolean(value.success)}
 		},{
 			header: _('Last execution'),
 			flex: 1,
 			sortable: true,
-			dataIndex: 'log_last_execution',
-			renderer: rdr_tstodate
+			dataIndex: 'log',
+			renderer: function(value){
+				return rdr_tstodate(value.timestamp)
+			}
 		},{
 			header: _('Next execution'),
 			flex: 1,
@@ -71,11 +73,17 @@ Ext.define('canopsis.view.Schedule.Grid' , {
 			sortable: true,
 			dataIndex: 'crecord_name'
 		},{
-			header: _('Output'),
+			header: _('Message'),
 			flex: 5,
 			sortable: true,
-			dataIndex: 'log_output'
-
+			dataIndex: 'log',
+			renderer: function(value){
+				var celery = value.celery_output;
+				var duration = value.duration;
+				if (celery != undefined && duration != undefined) {
+					return celery + ' (in ' + duration + 's)';
+				}
+			}
 		},{
 			header: _('Mailing'),
 			width: 55,

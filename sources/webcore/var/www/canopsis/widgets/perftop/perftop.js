@@ -210,12 +210,12 @@ Ext.define('widgets.perftop.perftop' , {
 	},
 
 	doRefresh: function(from, to) {
-		this.store.proxy.extraParams['time_window'] = (to - from) / 1000;
+		this.store.proxy.extraParams['time_window'] = to - from;
 		this.store.proxy.extraParams['report'] = this.reportMode || this.exportMode;
 		var url  = this.store.proxy['url'];
 
 		if (this.store.proxy.extraParams['report'])
-			this.store.proxy['url'] = url + '/' + from +'/' + to;
+			this.store.proxy['url'] = url + '/' + parseInt(from/1000) +'/' + parseInt(to/1000);
 		
 		if (this.grid)
 			this.grid.store.load();

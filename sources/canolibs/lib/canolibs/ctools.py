@@ -18,11 +18,13 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-import re, logging, socket, time
+import re, logging, socket, time, math
 
 legend = ['ok','warning','critical','unknown']
 
 logger = logging.getLogger('ctools')
+
+internal_metrics = [ 'cps_state', 'cps_statechange', 'cps_statechange_nok', 'cps_statechange_0', 'cps_statechange_1', 'cps_statechange_2', 'cps_statechange_3', 'cps_evt_per_sec', 'cps_sec_per_evt', 'cps_queue_size', 'cps_sel_state_0', 'cps_sel_state_1', 'cps_sel_state_2', 'cps_sel_state_3'  ]
 
 #############################################
 
@@ -181,7 +183,7 @@ def uniq(alist):
 	
 ## - Convert { '$not': {'$regex': "..." }} to {'$not': re.compile("...")} 
 def clean_mfilter(mfilter, isnot=False):
-	if not mfilter:
+	if not mfilter or isinstance(mfilter,int):
 		return mfilter
 
 	for key in mfilter:
@@ -198,7 +200,7 @@ def clean_mfilter(mfilter, isnot=False):
 
 		if isinstance(values, list):
 			for value in values:
-					clean_mfilter(value, isnot)
+				clean_mfilter(value, isnot)
 		elif isinstance(values, dict):
 			mfilter[key] = clean_mfilter(values, isnot)
 		else:
@@ -213,3 +215,8 @@ def cleanTimestamp(timestamp):
 	else:
 		return int(timestamp)
 
+def roundSignifiantDigit(value, sig):
+	mult = math.pow(10,sig)
+	value = round(value*mult)
+	value = value/mult
+	return value

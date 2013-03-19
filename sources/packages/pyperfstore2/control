@@ -1,8 +1,8 @@
 #!/bin/bash
 
 NAME="pyperfstore2"
-VERSION=2.1
-RELEASE=1
+VERSION=2.2
+RELEASE=0
 DESCRIPTION=""
 REQUIRES="canohome python"
 

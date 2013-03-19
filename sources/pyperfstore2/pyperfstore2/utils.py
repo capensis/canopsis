@@ -136,6 +136,8 @@ def derivs(vlist):
 
 def parse_dst(points, dtype, first_point=[]):
 	logger.debug("Parse Data Source Type %s on %s points" % (dtype, len(points)))
+
+	dtype = dtype.upper()
 		
 	if dtype == "DERIVE" or dtype == "COUNTER" or dtype == "ABSOLUTE":
 		if points:
@@ -240,12 +242,15 @@ def getTimeSteps(start, stop, interval):
 
 	return timeSteps
 
-def aggregate(points, max_points=None, interval=None, atype=None, agfn=None, mode=None):
+def aggregate(points, max_points=None, interval=None, atype='MEAN', agfn=None, mode=None):
 	
 	if len(points) < 2:
 		logger.debug('Aggregation useless, %i points' % len(points))
 		return points
 	
+	if not atype:
+		return points
+
 	if not mode:
 		mode = 'by_point'
 	elif mode != 'by_point':
@@ -260,9 +265,8 @@ def aggregate(points, max_points=None, interval=None, atype=None, agfn=None, mod
 				
 	if max_points != None:
 		 max_points = int(max_points)
-	
-	if not atype:
-		atype = 'MEAN'
+
+	atype = atype.upper()
 	
 	logger.debug("Aggregate %s points (max: %s, interval: %s, method: %s, mode: %s)" % (len(points), max_points, interval, atype, mode))
 
@@ -525,11 +529,11 @@ def fill_interval(points, start, stop, interval):
 
 
 ### aggregation serie function
-def aggregate_series(series, fn, interval=None):
+def consolidation(series, fn, interval=None):
 	
 	# Todo calcul interval
 	if not interval:
-		interval = 300 * 1000
+		interval = 300
 
 	# Find start and stop ts
 	start = None

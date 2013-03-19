@@ -130,7 +130,7 @@ class engine(cengine):
 		 
 	def work(self, event, *args, **kargs):
 		## Metrology
-		timestamp = int(event['timestamp'])
+		timestamp = event.get('timestamp', None)
 
 		## Get perfdata
 		perf_data = event.get('perf_data', None)

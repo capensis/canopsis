@@ -56,12 +56,19 @@ Ext.define('canopsis.lib.form.field.cfieldset' , {
 				return true;
 			else
 				return false;
+		}else{
+			return this.value;
 		}
 	},
 
 	setValue: function(value) {
+		if (value == undefined && this.value)
+			value = this.value
+
 		if (value == undefined)
 			value = false;
+
+		this.value = value;
 
 		if (this.checkboxCmp) {
 			this.checkboxCmp.setValue(value);

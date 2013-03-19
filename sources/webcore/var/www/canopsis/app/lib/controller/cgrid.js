@@ -34,7 +34,7 @@ Ext.define('canopsis.lib.controller.cgrid', {
 
 		var control = {};
 		control[this.listXtype] = {
-		                afterrender: this._bindGridEvents
+			afterrender: this._bindGridEvents
 		};
 		this.control(control);
 
@@ -59,7 +59,6 @@ Ext.define('canopsis.lib.controller.cgrid', {
 			if (grid.opt_allow_edit == true)
 				grid.on('itemdblclick', this._editRecord, this);
 		}
-
 
 		//Binding action for contextMenu
 		if (grid.contextMenu) {
@@ -275,6 +274,7 @@ Ext.define('canopsis.lib.controller.cgrid', {
 	_deleteButton: function(button) {
 		log.debug('Clicked deleteButton', this.logAuthor);
 		var grid = this.grid;
+		var me = this;
 
 		var selection = grid.getSelectionModel().getSelection();
 		if (selection) {
@@ -289,19 +289,17 @@ Ext.define('canopsis.lib.controller.cgrid', {
 
 				if (this.checkInternal && selection[i].get('internal'))
 					authorized = false;
+
+				if (! authorized)
+					break;
 			}
 
 			if (authorized == true) {
-				log.debug('Remove record ...', this.logAuthor);
 				Ext.MessageBox.confirm(_('Confirm'), _('Are you sure you want to delete') + ' ' + selection.length + ' ' + _('items') + ' ?',
 					function(btn, text) {
 						if (btn == 'yes') {
-							//grid.store.suspendEvents()
+							log.debug('Remove records', me.logAuthor);
 							grid.store.remove(selection);
-							log.debug('Reload store', this.logAuthor);
-							//grid.store.sync()
-							//grid.store.resumeEvents()
-							//grid.store.load()
 						}
 					});
 			} else {
@@ -318,14 +316,21 @@ Ext.define('canopsis.lib.controller.cgrid', {
 		log.debug('Clicked enabledisable Button', this.logAuthor);
 		var grid = this.grid;
 
+		this.grid.store.suspendAutoSync()
+
 		var selection = grid.getSelectionModel().getSelection();
-		if (selection) {
-			var record = selection[0];
+		for(var i = 0; i < selection.length; i++){
+			var record = selection[i]
+			record.suspendEvents()
 			if (record.get('enable'))
 				record.set('enable', false);
 			else
 				record.set('enable', true);
+			record.resumeEvents()
 		}
+
+		this.grid.store.resumeAutoSync()
+		this.grid.store.sync()
 	},
 
 	_editRights: function() {

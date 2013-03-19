@@ -1,0 +1,143 @@
+<!--
+#--------------------------------
+# Copyright (c) 2011 "Capensis" [http://www.capensis.com]
+#
+# This file is part of Canopsis.
+#
+# Canopsis is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# Canopsis is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Affero General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public License
+# along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
+# ---------------------------------
+-->
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+
+    <title>Canopsis</title>
+
+	<!-- Theme -->
+	<link rel="stylesheet" type="text/css" href="/static/webcore-libs/bootstrap/css/pnotify_bootstrap.css">
+	
+	<link rel="stylesheet" type="text/css" href="themes/extjs/css/ext-all-gray.css">
+	<link rel="stylesheet" type="text/css" href="themes/default/theme.css">
+	<link rel="stylesheet" type="text/css" href="themes/canopsis/theme.css">
+
+	<link rel="stylesheet" type="text/css" href="/static/webcore-libs/jquery-ui/theme/jquery-ui.css">
+	
+	<link rel="stylesheet" type="text/css" href="/static/webcore-libs/jqGridable/jqGridable.css">
+	<link rel="stylesheet" type="text/css" href="/static/webcore-libs/extjs-plugins/CheckHeader.css">
+	
+	<link rel="stylesheet" type="text/css" href="/static/webcore-libs/pnotify/jquery.pnotify.default.css">
+
+	<link rel="stylesheet" type="text/css" href="/ui/widgets.css">
+	
+</head>
+<body>
+	<!-- Nowjs -->
+	<div id="nowjs"></div>
+
+	<div id="auth" class='login' style='display: none;'>
+		<div class='header'>DEBUG</div>
+		<div class='title'><img src="themes/canopsis/resources/images/logo_canopsis_auth.png"></img></div>
+		<div class='layout'></div>
+		<div id='auth_form' class='form'></div>
+	</div>
+
+	<!-- Ext-JS -->
+	<script type="text/javascript" src="/static/webcore-libs/extjs/ext-all-dev.js"></script>
+
+	<!-- Jquery -->
+	<script type="text/javascript" src="/static/webcore-libs/jquery/jquery.min.js"></script>
+	<script type="text/javascript" src="/static/webcore-libs/jquery-ui/jquery-ui.min.js"></script>
+	
+	<script type="text/javascript" src="/static/webcore-libs/jQuery.encoding.digests.sha1.js"></script>
+	<script type="text/javascript" src="/static/webcore-libs/jquery.md5.js"></script>
+	<script type="text/javascript" src="/static/webcore-libs/jquery.peity.min.js"></script>
+	<script type="text/javascript" src="/static/webcore-libs/jquery.sparkline.js"></script>
+	<script type="text/javascript" src="/static/webcore-libs/jquery.lightbox-0.5.js"></script>
+	<script type="text/javascript" src="/static/webcore-libs/jquery.jsPlumb-1.3.13-all-min.js"></script>
+	<script type="text/javascript" src="/static/webcore-libs/sigma.min.js"></script>
+	<script type="text/javascript" src="/static/webcore-libs/spin/spin.min.js"></script>
+
+	<script type="text/javascript" src="/static/webcore-libs/justGage/raphael.2.1.0.min.js"></script>
+	<script type="text/javascript" src="/static/webcore-libs/justGage/justgage.js"></script>
+	
+	<script type="text/javascript" src="/static/webcore-libs/jqGridable/jqGridable.js"></script>
+	
+	<script type="text/javascript" src="/static/webcore-libs/pnotify/jquery.pnotify.min.js"></script>   
+ 
+	<!-- Highcharts -->
+	<script type="text/javascript" src="/static/webcore-libs/Highstock/js/highstock.js"></script>
+	<script type="text/javascript" src="/static/webcore-libs/regression.js"></script>
+	<script type="text/javascript" src="/static/webcore-libs/Highstock/js/modules/exporting.js"></script>
+
+	<!-- Extjs Plugins -->
+	<script type="text/javascript" src="/static/webcore-libs/jqGridable/jqGridable.Ext.js"></script>
+	<script type="text/javascript" src="/static/webcore-libs/extjs-plugins/Ext.ux.ColorField.js"></script>
+	<script type="text/javascript" src="/static/webcore-libs/extjs-plugins/Ext.ux.CheckColumn.js"></script>
+
+	<!-- ENV -->
+	<script type="text/javascript">
+		ENV = {};
+	</script>
+
+	<!-- Locales -->
+	<script type="text/javascript" id="locale"></script>
+	<script type="text/javascript" src="locales.js"></script>
+
+	<!-- Load page with good locale -->
+	<script type="text/javascript">
+		var cookie_locale = Ext.util.Cookies.get('locale');
+		if (! cookie_locale)
+			Ext.util.Cookies.set('locale', ENV['locale']);
+		else
+			if (cookie_locale != ENV['locale'])
+				window.location.href = '/'+cookie_locale+'/static/canopsis/index.debug.html';
+	</script>
+	<script type="text/javascript" src="app/lib/locale.js"></script>
+
+	<!-- Configuration -->
+	<script type="text/javascript" src="/static/global_options.js"></script>
+	<script type="text/javascript" src="app/lib/global.js"></script>
+
+	<!-- Application -->
+	<script type="text/javascript" src="auth.js"></script>
+	<script type="text/javascript" src="commit.js"></script>
+	<script type="text/javascript" src="app/lib/log.js"></script>
+	<script type="text/javascript" src="app/lib/tools.js"></script>
+	<script type="text/javascript" src="app/lib/renderers.js"></script>
+		
+	<!-- Extjs Plugins -->
+	<script type="text/javascript" src="/static/webcore-libs/jqGridable/jqGridable.Ext.js"></script>
+	<script type="text/javascript" src="/static/webcore-libs/extjs-plugins/Ext.ux.ColorField.js"></script>
+	<script type="text/javascript" src="/static/webcore-libs/extjs-plugins/Ext.ux.CheckColumn.js"></script>
+
+	<!-- App -->
+	<script type="text/javascript" src="app.js"></script>
+
+
+	<script type="text/javascript">
+		Ext.onDocumentReady(function() {
+			Ext.Loader.setConfig({enabled:true});
+
+			// Debug Mode
+			global.log.level = 5;
+			log.level = global.log.level;
+
+			checkAuth(createApplication);
+		});
+	</script>
+</body>
+</html>

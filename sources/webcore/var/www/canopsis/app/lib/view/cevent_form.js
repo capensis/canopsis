@@ -100,12 +100,12 @@ Ext.define('canopsis.lib.view.cevent_form' , {
 			//allowBlank: false
 		},{
 			xtype: 'textfield',
-			fieldLabel: _('Output'),
+			fieldLabel: _('Message'),
 			name: 'output'
 			//allowBlank: false
 		},{
 			xtype: 'textfield',
-			fieldLabel: _('Long output'),
+			fieldLabel: _('Long message'),
 			name: 'long_output'
 			//allowBlank: false
 		}];

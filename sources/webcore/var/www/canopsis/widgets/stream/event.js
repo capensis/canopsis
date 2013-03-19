@@ -57,7 +57,7 @@ widget_stream_event_template = Ext.create('Ext.XTemplate',
 								'</tpl>',
 							'</tpl>',
 						'</tpl>',
-						"<span id='{event_Component_id}-time' class='timestamp'>{event_date}</span>",
+						"<span id='{event_Component_id}-time' class='timestamp'>{event_date}</span></br>",
 					'</header>',
 					"<span class='output'>{output}</span></br> <span class='long_output'>{long_output}</span>",
 					'<tpl if="referer == undefined">',
@@ -212,6 +212,9 @@ Ext.define('widgets.stream.event' , {
 
 		if (! raw['display_name'])
 			raw['display_name'] = undefined;
+
+		if (! raw['derogation_id'])
+			raw['derogation_id'] = undefined;
 
 		if (! raw['output'])
 			raw['output'] = '';

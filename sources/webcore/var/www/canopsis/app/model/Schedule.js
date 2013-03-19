@@ -30,29 +30,9 @@ Ext.define('canopsis.model.Schedule', {
 		{name: 'args', defaultsValue: []},
 		{name: 'kwargs' , defaultsValue: {}},
 		{name: 'next_run_time'},
-		{name: 'reporting_interval'},
 		{name: 'cron', defaultValue: undefined},
 		{name: 'log'},
-		{
-			name: 'log_success',
-			convert: function(value, record) {return record.get('log').success}
-		},
-		{
-			name: 'log_output',
-			convert: function(value, record) {
-				var celery = record.get('log').celery_output;
-				var duration = record.get('log').duration;
-				if (celery != undefined && duration != undefined) {
-					return celery + ' (in ' + duration + 's)';
-				}
-			}
-		},
-		{
-			name: 'log_last_execution',
-			convert: function(value, record) {return record.get('log').timestamp}
-		},
-		{
-		 name: 'mail',
+		{name: 'mail',
 		 convert: function(value, record) {
 					var kwargs = record.get('kwargs');
 					if (kwargs['mail'] != undefined && kwargs['mail'].sendMail)
@@ -61,11 +41,32 @@ Ext.define('canopsis.model.Schedule', {
 				}
 		},
 
-		{name: 'aaa_access_group'},
-		{name: 'aaa_access_other'},
-		{name: 'aaa_access_owner'},
+		{name: 'aaa_access_owner', defaultValue: ['r', 'w']},
+		{name: 'aaa_access_group', defaultValue: ['r']},
+		{name: 'aaa_access_other', defaultValue: []},
 		{name: 'aaa_admin_group'},
 		{name: 'aaa_group'},
-		{name: 'aaa_owner'}
+		{name: 'aaa_owner'},
+
+		{name: 'exporting_intervalLength'},
+		{name: 'exporting_intervalUnit'},	
+		{name: 'frequency',defaultValue:'day'},
+
+
+		{name: 'exporting_interval'},
+		{name: 'exporting_account'},
+		{name: 'exporting_task'},
+		{name: 'exporting_method'},
+		{name: 'exporting_owner'},
+		{name: 'exporting_viewName'},
+
+		{name: 'exporting_mail'},
+		{name: 'exporting_recipients'},
+		{name: 'exporting_subject'},
+		
+		//{name: 'crontab_hours'},
+		{name: 'crontab_month'},
+		{name: 'crontab_day_of_week'},
+		{name: 'crontab_day'}
 	]
 });

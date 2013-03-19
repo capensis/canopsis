@@ -26,6 +26,8 @@ Ext.define('canopsis.lib.store.cstore', {
 
 	logAuthor: '[cstore]',
 
+	loaded: false,
+
     listeners: {
 		update: function(store, record, index, eOpts) {
 			if (this.storeId !== 'Tabs')
@@ -57,7 +59,12 @@ Ext.define('canopsis.lib.store.cstore', {
 		//now this.filter_list is local
 		this.filter_list = {};
 		this.baseFilter = false;
+
 		this.callParent([config]);
+
+		this.on('load', function(){
+			this.loaded = true;
+		}, this, {single: true});
 	},
 
 

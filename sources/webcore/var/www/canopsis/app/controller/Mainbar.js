@@ -31,7 +31,7 @@ Ext.define('canopsis.controller.Mainbar', {
 				collapse: this.onCollapseMainbar,
 				expand: this.onExpandMainbar
 			},
-			'Mainbar menuitem[action="logout"]' : {
+			'Mainbar [action="logout"]' : {
 				click: this.logout
 			},
 			'Mainbar menuitem[action="cleartabscache"]' : {
@@ -63,9 +63,6 @@ Ext.define('canopsis.controller.Mainbar', {
 			},
 			'Mainbar menuitem[action="editSelector"]' : {
 				click: this.openViewMenu
-			},
-			'Mainbar menuitem[action="showconsole"]' : {
-				click: this.showconsole
 			},
 			'Mainbar menuitem[action="openViewsManager"]' : {
 				click: this.openViewMenu
@@ -129,17 +126,7 @@ Ext.define('canopsis.controller.Mainbar', {
 
 	logout: function() {
 		log.debug('Logout', this.logAuthor);
-		Ext.Ajax.request({
-			url: '/logout',
-			scope: this,
-			success: function(response) {
-				log.debug(' + Success.', this.logAuthor);
-				window.location.href = '/';
-			},
-			failure: function(result, request) {
-				log.error("Logout impossible, maybe you're already logout");
-			}
-		});
+		this.getController('Account').logout();
 	},
 
 	cleartabscache: function() {
@@ -151,11 +138,6 @@ Ext.define('canopsis.controller.Mainbar', {
 		log.debug('Show authkey', this.logAuthor);
 		var authkey = Ext.create('canopsis.lib.view.cauthkey');
 		authkey.show();
-	},
-
-	showconsole: function() {
-		log.debug('Show log console', this.logAuthor);
-		log.show_console();
 	},
 
 	openViewMenu: function(item) {
@@ -179,9 +161,9 @@ Ext.define('canopsis.controller.Mainbar', {
 	},
 
 	setLocale: function(combo, records) {
-		var language = records[0].get('value');
-		log.debug('Set language to ' + language, this.logAuthor);
-		this.getController('Account').setLocale(language);
+		var locale = records[0].get('value');
+		log.debug('Set language to ' + locale, this.logAuthor);
+		this.getController('Account').setLocale(locale);
 	},
 
 	setClockType: function(combo, records) {
@@ -204,10 +186,12 @@ Ext.define('canopsis.controller.Mainbar', {
 		if (tab)
 			maintabs.remove(tab.id);
 
-		//close current dashboard
-		maintabs.remove(maintabs.getComponent(0).id);
+		var current_dashboard_id = maintabs.getComponent(0).id
+		
+		this.getController('Tabs').open_dashboard();
 
-		var tab = this.getController('Tabs').open_dashboard();
+		//close current dashboard
+		maintabs.remove(current_dashboard_id);
 	},
 
 	openDashboard: function() {

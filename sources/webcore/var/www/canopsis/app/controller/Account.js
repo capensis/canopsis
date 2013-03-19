@@ -71,6 +71,71 @@ Ext.define('canopsis.controller.Account', {
 		return global.account[id];
 	},
 
+	_deleteButton: function(button) {
+		log.debug('Clicked deleteButton', this.logAuthor);
+		var grid = this.grid;
+		var me = this;
+
+		var selection = grid.getSelectionModel().getSelection();
+		if (selection) {
+
+			//check right
+			var ctrlAccount = this.getController('Account');
+			var authorized = true;
+
+			for (var i = 0; i < selection.length; i++) {
+				if (!ctrlAccount.check_record_right(selection[i], 'w'))
+					authorized = false;
+
+				if (this.checkInternal && selection[i].get('internal'))
+					authorized = false;
+
+				if (! authorized)
+					break;
+			}
+
+			if (authorized == true) {
+				Ext.Msg.show({
+					title:_('Are you sure ?'),
+					inputSelection: selection,
+					msg: _('When you delete an account ALL its object (view, curve...) is deleted with it. You can choose to just disable the account in order to keep its objects.'),
+					buttons: Ext.Msg.YESNOCANCEL,
+					buttonText: {
+						yes: _('DELETE'),
+						no: _('Disable')
+					},
+					scope: me,
+					fn:function(buttonId, text, opt){
+						if(buttonId == 'yes')
+							this.grid.store.remove(opt.inputSelection);
+						if(buttonId == 'no')
+							this._enabledisable()
+					}
+				});
+			} else {
+				global.notify.notify(_('Access denied'), _('You don\'t have the rights to modify this object'), 'error');
+			}
+		}
+
+		if (this.deleteButton)
+			this.deleteButton(button, grid, selection);
+
+	},
+
+	logout: function(){
+		Ext.Ajax.request({
+			url: '/logout',
+			scope: this,
+			success: function(response) {
+				log.debug(' + Success.', this.logAuthor);
+				window.location.reload();
+			},
+			failure: function(result, request) {
+				log.error("Logout impossible, maybe you're already logout");
+			}
+		});
+	},
+
 	setLocale: function(locale) {
 		var cb = function() {
 			log.debug(' + setLocale Ok', this.logAuthor);
@@ -80,12 +145,16 @@ Ext.define('canopsis.controller.Account', {
 				icon: Ext.MessageBox.WARNING,
   				buttons: Ext.Msg.OKCANCEL,
   				fn: function(btn) {
-					if (btn == 'ok') {
-						window.location.reload();
-					}
+					if (btn == 'ok')
+						if (global.minimified)
+							window.location.href = '/'+locale+'/';
+						else
+							window.location.href = '/'+locale+'/static/canopsis/index.debug.html';
 				}
 			});
 		};
+
+		Ext.util.Cookies.set('locale', locale);
 
 		this.setConfig('locale', locale, cb);
 	},

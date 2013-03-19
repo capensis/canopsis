@@ -25,9 +25,7 @@ Ext.define('canopsis.model.Curve', {
 		{name: '_id'},
 		{name: 'metric'},
 		{name: 'crecord_name'},
-		{name: 'aaa_group', defaultValue: 'curves_admin' },
-		{name: 'aaa_access_group', defaultValue: ['r', 'w'] },
-		{name: 'aaa_access_other', defaultValue: ['r'] },
+		
 		{name: 'line_color',	defaultValue: undefined },
 		{name: 'area_color',	defaultValue: undefined },
 		{name: 'area_opacity',	defaultValue: undefined, type: 'int'},
@@ -37,10 +35,10 @@ Ext.define('canopsis.model.Curve', {
 		{name: 'label',	defaultValue: undefined },
 
 		{name: 'aaa_access_owner', defaultValue: ['r', 'w']},
-		{name: 'aaa_access_group', defaultValue: ['r']},
-		{name: 'aaa_access_other'},
-		{name: 'aaa_admin_group'},
-		{name: 'aaa_group'},
+		{name: 'aaa_access_group', defaultValue: ['r', 'w'] },
+		{name: 'aaa_access_other', defaultValue: ['r'] },
+		{name: 'aaa_admin_group', defaultValue: 'group.CPS_curve_admin'},
+		{name: 'aaa_group', defaultValue: 'group.CPS_curve_admin' },
 		{name: 'aaa_owner'}
 	]
 });

@@ -31,15 +31,18 @@ from libexec.auth import check_auth, get_account
 # Modules
 from ctools import parse_perfdata, clean_mfilter
 from ctools import cleanTimestamp
+from ctools import internal_metrics
 
 import pyperfstore2
+import pyperfstore2.utils
+
 manager = None
 
-import ConfigParser
-config = ConfigParser.RawConfigParser()
-config.read(os.path.expanduser('~/etc/cstorage.conf'))
-
 logger = logging.getLogger("perfstore")
+
+import ConfigParser
+
+config = ConfigParser.RawConfigParser()
 
 config.read(os.path.expanduser('~/etc/webserver.conf'))
 pyperfstore_aggregate			= True
@@ -76,10 +79,15 @@ def perfstore_nodes_get_values(start=None, stop=None):
 	metas = request.params.get('nodes', default=None)
 	
 	aggregate_timemodulation	= request.params.get('aggregate_timemodulation', default=True)
-	aggregate_method			= request.params.get('aggregate_method',	default=None)
+	aggregate_method			= request.params.get('aggregate_method',	default=pyperfstore_aggregate_method)
 	aggregate_interval			= request.params.get('aggregate_interval', default=None)
-	aggregate_max_points		= request.params.get('aggregate_max_points', default=None)
+	aggregate_max_points		= request.params.get('aggregate_max_points', default=pyperfstore_aggregate_maxpoints)
+	consolidation_method 		= request.params.get('consolidation_method', default=None)
+
 	output = []
+
+	if aggregate_method == "":
+		aggregate_method = None
 
 	if aggregate_timemodulation != "false" or aggregate_timemodulation != "False" or aggregate_timemodulation != 0:
 		aggregate_timemodulation = True
@@ -97,11 +105,6 @@ def perfstore_nodes_get_values(start=None, stop=None):
 	logger.debug(" + aggregate_interval: %s" % aggregate_interval)
 	logger.debug(" + aggregate_max_points: %s" % aggregate_max_points)
 
-
-	# Hack, normalize timestamps on next release !
-	start = cleanTimestamp(start) * 1000
-	stop  = cleanTimestamp(stop) * 1000
-
 	output = []
 
 	for meta in metas:
@@ -113,8 +116,31 @@ def perfstore_nodes_get_values(start=None, stop=None):
 											aggregate_method=aggregate_method,
 											aggregate_interval=aggregate_interval,
 											aggregate_max_points=aggregate_max_points,
-											aggregate_timemodulation=aggregate_timemodulation)
+											aggregate_timemodulation=aggregate_timemodulation)											
 
+	if consolidation_method and len(output) != 0:
+		##select right function
+		if consolidation_method == 'mean':
+			fn = pyperfstore2.utils.mean
+		elif consolidation_method == 'min':
+			fn = min
+		elif consolidation_method == 'max' :
+			fn = max
+		elif consolidation_method == 'sum':
+			fn = sum
+		elif consolidation_method == 'delta':
+			fn = lambda x: x[0] - x[-1]
+
+		series = []
+		for serie in output:
+			series.append(serie["values"])
+		output = [{
+			'node': output[0]['node'],
+			'metric': consolidation_method,
+			'bunit': None,
+			'type': 'GAUGE',
+			'values': pyperfstore2.utils.consolidation(series, fn, 60)
+		}]
 
 	output = {'total': len(output), 'success': True, 'data': output}
 	return output
@@ -192,8 +218,6 @@ def perstore_get_all_metrics():
 				for field in fields:
 					mor.append({field: {'$regex': '.*%s.*' % word, '$options': 'i'}})	
 				mfilter['$and'].append({'$or': mor})
-	
-	internal_metrics = [ 'cps_state', 'cps_statechange', 'cps_statechange_nok', 'cps_statechange_0', 'cps_statechange_1', 'cps_statechange_2', 'cps_statechange_3', 'cps_evt_per_sec', 'cps_sec_per_evt', 'cps_queue_size', 'cps_sel_state_0', 'cps_sel_state_1', 'cps_sel_state_2', 'cps_sel_state_3'  ]
 	
 	if not show_internals:
 		if mfilter:
@@ -337,12 +361,12 @@ def perfstore_perftop(start=None, stop=None):
 		expand = False
 
 	if stop:
-		stop = int(int(stop) / 1000)
+		stop = int(stop)
 	else:
 		stop = int(time.time())
 		
 	if start:
-		start = int(int(start) / 1000)
+		start = int(start)
 	else:
 		start = stop - time_window
 
@@ -488,30 +512,23 @@ def perfstore_perftop(start=None, stop=None):
 # Functions
 ########################################################################
 
-def perfstore_get_values(_id, start=None, stop=None, aggregate_method=None, aggregate_interval=None, aggregate_max_points=None, aggregate_timemodulation=True):
+def perfstore_get_values(_id, start=None, stop=None, aggregate_method=pyperfstore_aggregate_method, aggregate_interval=None, aggregate_max_points=pyperfstore_aggregate_maxpoints, aggregate_timemodulation=True):
 	
 	if start and not stop:
 		stop = start
 	
 	if stop:
-		stop = int(int(stop) / 1000)
+		stop = int(stop)
 	else:
 		stop = int(time.time())
 		
 	if start:
-		start = int(int(start) / 1000)
+		start = int(start)
 	else:
 		start = stop - 86400
 
 	if aggregate_interval:
 		aggregate_interval = int(aggregate_interval)
-	
-	if not aggregate_max_points:
-		aggregate_max_points = pyperfstore_aggregate_maxpoints
-		
-	if not aggregate_method:
-		aggregate_method = pyperfstore_aggregate_method
-		aggregate_interval = None
 	
 	logger.debug("Perfstore get points:")
 	logger.debug(" + meta _id:    %s" % _id)
@@ -574,10 +591,8 @@ def perfstore_get_values(_id, start=None, stop=None, aggregate_method=None, aggr
 	
 	if aggregate_interval and aggregate_timemodulation:
 		points = pyperfstore2.utils.fill_interval(points, start, stop, aggregate_interval)
-	
-	if points and meta:
-		points = [[point[0] * 1000, point[1]] for point in points]
 
+	if points and meta:
 		output.append({'node': _id, 'metric': meta['me'], 'values': points, 'bunit': meta['unit'], 'min': meta['min'], 'max': meta['max'], 'thld_warn': meta['thd_warn'], 'thld_crit': meta['thd_crit'], 'type': meta['type']})
 				
 	return output

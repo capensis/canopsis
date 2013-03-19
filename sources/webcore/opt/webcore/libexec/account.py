@@ -34,7 +34,7 @@ except:
 	pass
 
 #import protection function
-from libexec.auth import check_auth, get_account, reload_account,check_group_rights,reload_account
+from libexec.auth import check_auth, get_account, reload_account,check_group_rights
 
 
 logger = logging.getLogger('Account')
@@ -290,7 +290,7 @@ def account_post():
 		logger.warning('WARNING : no user specified ...')
 		
 @put('/account/',checkAuthPlugin={'authorized_grp':group_managing_access})
-@put('/account/_id',checkAuthPlugin={'authorized_grp':group_managing_access})
+@put('/account/:_id',checkAuthPlugin={'authorized_grp':group_managing_access})
 def account_update(_id=None):
 	account = get_account()
 	root_account = caccount(user="root", group="root")
@@ -303,57 +303,68 @@ def account_update(_id=None):
 		return HTTPError(400, "No data received")
 	data = json.loads(data)
 	
-	if '_id' in data:
-		_id = data['_id']
-		del data['_id']
-	if 'id' in data:
-		_id = data['id']
-		del data['id']
+	if not isinstance(data,list):
+		data = [data]
 
-	if not _id:
-		return HTTPError(400, "No id recieved")
-	
-	try:
-		record = caccount(storage.get(_id ,account=account))
-		logger.debug('Update account %s' % _id)
-	except:
-		logger.debug('Account %s not found' % _id)
-		return HTTPError(404, "Account to update not found")
-	
-	#Get password
-	if 'passwd' in data:
-		logger.debug(' + Update password ...')
-		record.passwd(str(data['passwd']))
-		del data['passwd']
-		
-	#Get group
-	if 'aaa_group' in data:
-		logger.debug(' + Update group ...')
-		record.chgrp(str(data['aaa_group']))
-		del data['aaa_group']
-			
-	#get secondary groups
-	if 'groups' in data:
-		groups = []
-		for group in data['groups']:
-			if group.find('group.') == -1:
-				groups.append('group.%s' % group)
-			else:
-				groups.append(group)
 
-		logger.debug(' + Update groups ...')	
-		logger.debug(' + Old groups : %s' % str(record.groups))
-		logger.debug(' + New groups : %s' % str(groups))
-		record.groups = groups
-		del data['groups']
-	
 
 	for item in data:
-		logger.debug('Update %s with %s' % (str(item),data[item]))
-		setattr(record,item,data[item])
+		logger.debug(item)
+		if '_id' in item:
+			_id = item['_id']
+			del item['_id']
+		if 'id' in item:
+			_id = item['id']
+			del item['id']
 
-	storage.put(record,account=account)
-	reload_account(record._id)
+		if not _id:
+			return HTTPError(400, "No id recieved")
+		
+		try:
+			record = caccount(storage.get(_id ,account=account))
+			logger.debug('Update account %s' % _id)
+		except:
+			logger.debug('Account %s not found' % _id)
+			return HTTPError(404, "Account to update not found")
+		
+		#Get password
+		if 'passwd' in item:
+			logger.debug(' + Update password ...')
+			record.passwd(str(item['passwd']))
+			del item['passwd']
+			
+		#Get group
+		if 'aaa_group' in item:
+			logger.debug(' + Update group ...')
+			record.chgrp(str(item['aaa_group']))
+			del item['aaa_group']
+				
+		#get secondary groups
+		if 'groups' in item:
+			groups = []
+			for group in item['groups']:
+				if group.find('group.') == -1:
+					groups.append('group.%s' % group)
+				else:
+					groups.append(group)
+
+			logger.debug(' + Update groups ...')	
+			logger.debug(' + Old groups : %s' % str(record.groups))
+			logger.debug(' + New groups : %s' % str(groups))
+			record.groups = groups
+			del item['groups']
+		
+
+		for _key in item:
+			logger.debug('Update %s with %s' % (str(_key),item[_key]))
+			setattr(record,_key,item[_key])
+
+		storage.put(record,account=account)
+
+		#if user is itself, reload account
+		if account._id == record._id:
+			#user itself, reload
+			reload_account(record._id)
 	
 
 
@@ -364,39 +375,61 @@ def account_delete(_id=None):
 	account = get_account()
 	storage = get_storage(namespace='object')
 	
+	logger.debug("DELETE:")
+
 	data = request.body.readline()
 	if data:
 		try:
-			data=json.loads(data)
+			data = json.loads(data)
 		except:
-			return HTTPError(400, "Bad request, data are not json")
-			
-		if not _id:
-			_id = []
-			
+			logger.warning('Invalid data in request payload')
+			data = None
+
+	if data:
+		logger.debug(" + Data: %s" % data)
+
 		if isinstance(data, list):
+			logger.debug(" + Attempt to remove %i item from db" % len(data))
+			_id = []
+				
 			for item in data:
-				if 'id' in item:
-					_id.append(item['id'])
-				if '_id' in item:
-					_id.append(item['_id'])
+				if isinstance(item,str):
+					_id.append(item)
+					
+				if isinstance(item,dict):
+					item_id = item.get('_id', item.get('id', None))
+					if item_id:
+						_id.append(item_id)
+
+		if isinstance(data, str):
+			_id = data
+
 		if isinstance(data, dict):
-			if 'id' in data:
-				_id.append(data['id'])
-			if '_id' in data:
-				_id.append(data['_id'])
+			_id = data.get('_id', data.get('id', None))
 
 	if not _id:
-		return HTTPError(400, "Bad request, no _id sent")
-
-	logger.debug("DELETE:")
-	logger.debug(" + _id: "+str(_id))
+		return HTTPError(404, "No '_id' field in header ...")
+	
+	logger.debug(" + _id: %s " % _id)
 	try:
 		storage.remove(_id, account=account)
-		#storage.remove('directory.root.%s' % _id.split('.')[1], account=account)
-		logger.debug('account removed')
 	except:
 		return HTTPError(404, _id+" Not Found")
+
+	#delete all object
+	if not isinstance(_id, list):
+		_id = [_id]
+
+	mfilter = {'aaa_owner':{'$in':_id}}
+	record_list = storage.find(mfilter=mfilter,account=account)
+	record_id_list = [record._id for record in record_list]
+
+	try:
+		storage.remove(record_id_list,account=account)
+	except Exception as err:
+		log.error('Error While suppressing account items: %s' % err)
+
+	logger.debug('account removed')
 
 ### GROUP
 @post('/account/addToGroup/:group_id/:account_id',checkAuthPlugin={'authorized_grp':group_managing_access})

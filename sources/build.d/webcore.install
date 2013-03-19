@@ -6,5 +6,10 @@ function build(){
 
 function install(){
 	install_basic_source $NAME
+
+	chown $HUSER $PREFIX/var/www/canopsis/resources/locales
+	su - $HUSER -c "webcore_update_locales"
+	check_code $? "Impossible to download locales"
+
 	echo "global.commit='$(git log | head -1 | cut -d ' ' -f2)'" > $PREFIX/var/www/canopsis/commit.js
 }

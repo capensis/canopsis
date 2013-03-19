@@ -63,6 +63,17 @@ function install(){
 	# Iniparser
 	npm_install iniparser 1.0.5
 
+
+	# Symlink
+	cd $PREFIX
+	DST="bin/uglifyjs"
+	SRC="lib/node_modules/uglify-js/bin/uglifyjs"
+	rm $DST 2> /dev/null || true
+	if [ -e $SRC ]; then
+		ln -s ../$SRC $DST
+	fi
+	cd
+
 	rm -R $PREFIX/tmp/nodejs-libs
         check_code $?
 

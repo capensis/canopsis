@@ -351,7 +351,7 @@ Ext.define('widgets.weather.brick' , {
 				var cps_pct_by_state_0 = last_value;
 				widget_data.percent = cps_pct_by_state_0;
 				widget_data.icon_src = this.getIcon(cps_pct_by_state_0);
-				widget_data.output = _('SLA on') + ' ' + rdr_tstodate(last_timestamp / 1000);
+				widget_data.output = _('SLA on') + ' ' + rdr_tstodate(last_timestamp);
 			}
 		} else {
 			widget_data.icon_src = this.info_weather_icon;

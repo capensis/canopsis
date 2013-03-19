@@ -47,8 +47,47 @@
 	
 }
 
+.icon-bootstrap-off {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  margin-top: 2px;
+  margin-left: auto;
+  margin-right: auto;
+  line-height: 14px;
+  vertical-align: text-top;
+  background-image: url("../../../../../webcore-libs/bootstrap/img/glyphicons-halflings-white.png");
+  background-position: -384px 0;
+  background-repeat: no-repeat;
+  cursor: pointer;
+}
+
+.icon-about { 
+    background-image: url(../images/icons/world.png) !important; 
+}
+
+.icon-forum { 
+    background-image: url(../images/icons/comments.png) !important; 
+}
+
+.icon-github { 
+    background-image: url(../images/github-icon.png) !important; 
+}
+
+.icon-issue { 
+    background-image: url(../images/icons/bug.png) !important; 
+}
+
+.icon-community { 
+    background-image: url(../images/icons/group.png) !important; 
+}
+
 .icon-loading { 
     background-image: url(../images/ajax-loader.gif) !important; 
+}
+
+.icon-documentation { 
+    background-image: url(../images/icons/book_open.png) !important; 
 } 
 
 .icon-user { 
@@ -273,6 +312,10 @@
 
 .icon-mainbar-selector { 
     background-image: url(../images/icons/arrow_join.png) !important; 
+}
+
+.icon-mainbar-consolidation { 
+    background-image: url(../images/icons/chart_line_link.png) !important; 
 }
 
 .icon-mainbar-eventLog{

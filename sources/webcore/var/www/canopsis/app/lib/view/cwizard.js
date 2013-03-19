@@ -69,7 +69,7 @@ Ext.define('canopsis.lib.view.cwizard' , {
 		this.previousButton = this.bbar.add({xtype: 'button', text: _('Previous'), action: 'previous', disabled: true, iconCls: 'icon-previous'});
 		this.nextButton = this.bbar.add({xtype: 'button', text: _('Next'), action: 'next', disabled: true, iconCls: 'icon-next', iconAlign: 'right'});
 
-		this.finishButton = this.bbar.add({xtype: 'button', text: _('Finish'), action: 'finish', iconCls: 'icon-save', iconAlign: 'right'});
+		this.finishButton = this.bbar.add({xtype: 'button', text: _('Finish'), action: 'finish', iconCls: 'icon-save', iconAlign: 'right',disabled:true});
 
 		//--
 		this.tabPanel = Ext.create('Ext.tab.Panel', {
@@ -104,6 +104,7 @@ Ext.define('canopsis.lib.view.cwizard' , {
 		//bind combobox
 		if (this.data) {
 			this.loadData();
+			this.finishButton.setDisabled(false);
 		} else {
 			var combo = Ext.ComponentQuery.query('#' + this.id + ' [name=xtype]');
 			if (combo.length != 0)
@@ -144,7 +145,7 @@ Ext.define('canopsis.lib.view.cwizard' , {
 		step.defaults = { labelWidth: this.labelWidth };
 
 		if (step.items.length == 1)
-			if (! step.layout && !(step.items[0].xtype == 'fieldset')) {
+			if (! step.layout && !(step.items[0].xtype == 'fieldset' || step.items[0].xtype == 'cfieldset')) {
 				step.layout = 'fit';
 				step.defaults.autoScroll = true;
 			}
@@ -235,7 +236,7 @@ Ext.define('canopsis.lib.view.cwizard' , {
 			if (options) {
 				for (var i = 0; i < options.length; i++) {
 					for (var j = 0; j < options[i].items.length; j++)
-						if (options[i].items[j].xtype == 'fieldset')
+						if (options[i].items[j].xtype == 'fieldset' || options[i].items[j].xtype == 'cfieldset')
 							options[i].items[j].defaults = { labelWidth: this.labelWidth };
 
 					output.push(this.add_new_step(options[i]));
@@ -296,23 +297,20 @@ Ext.define('canopsis.lib.view.cwizard' , {
 		var activeTabIndex = this.tabPanel.items.findIndex('id', this.tabPanel.getActiveTab().id);
 		var tabCount = this.tabPanel.items.length;
 
-		if (activeTabIndex == 0) {
+		if (activeTabIndex == 0){
 			this.previousButton.setDisabled(true);
-		} else {
+			//this.finishButton.setDisabled(true);
+		}else{
 			this.previousButton.setDisabled(false);
+			//this.finishButton.setDisabled(false);
 		}
+		
 
-		if (activeTabIndex == (tabCount - 1)) {
+		if (activeTabIndex == (tabCount - 1)) 
 			this.nextButton.setDisabled(true);
-			if (!this.edit) {
-				this.finishButton.setDisabled(false);
-			}
-		} else {
+		 else 
 			this.nextButton.setDisabled(false);
-			if (!this.edit) {
-				this.finishButton.setDisabled(true);
-			}
-		}
+		
 	},
 
 	cancel_button: function() {

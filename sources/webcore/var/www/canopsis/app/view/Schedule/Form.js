@@ -40,15 +40,15 @@ Ext.define('canopsis.view.Schedule.Form', {
 
 		this.reportOptions = Ext.widget('cfieldset', {
 			xtype: 'fieldset',
-			title: _('Reporting Interval'),
+			title: _('Exporting Interval'),
 			layout: 'hbox',
-			checkboxName: 'reporting_interval',
+			checkboxName: 'exporting_interval',
 			checkboxToggle: true
 		});
 
 		this.mailingOptions = Ext.widget('cfieldset', {
 			xtype: 'fieldset',
-			checkboxName: 'sendMail',
+			checkboxName: 'exporting_mail',
 			checkboxToggle: true,
 
 			title: _('Mailing Options')
@@ -80,7 +80,7 @@ Ext.define('canopsis.view.Schedule.Form', {
 
 		var viewCombo = Ext.widget('combobox', {
 			fieldLabel: _('View'),
-			name: 'view',
+			name: 'exporting_viewName',
 			store: Ext.create('canopsis.store.Views', {autoLoad: true}),
 			displayField: 'crecord_name',
 			valueField: 'id',
@@ -93,7 +93,7 @@ Ext.define('canopsis.view.Schedule.Form', {
 
 		var ownerCombo = Ext.widget('combobox', {
 			fieldLabel: _('Owner'),
-			name: 'owner',
+			name: 'exporting_owner',
 			store: Ext.create('canopsis.store.Accounts', {autoLoad: true}),
 			displayField: 'user',
 			valueField: 'user',
@@ -107,7 +107,7 @@ Ext.define('canopsis.view.Schedule.Form', {
 
 		//--------------------------time options--------------
 		var durationCombo = Ext.widget('combobox', {
-			name: 'every',
+			name: 'frequency',
 			fieldLabel: _('Every'),
 			queryMode: 'local',
 			displayField: 'text',
@@ -126,7 +126,7 @@ Ext.define('canopsis.view.Schedule.Form', {
 		});
 
 		var monthCombo = Ext.widget('combobox', {
-			name: 'month',
+			name: 'crontab_month',
 			fieldLabel: _('Month'),
 			queryMode: 'local',
 			displayField: 'text',
@@ -154,12 +154,11 @@ Ext.define('canopsis.view.Schedule.Form', {
 		});
 
 		var dayData = [];
-		for (var i = 1; i < 32; i++) {
+		for (var i = 1; i < 32; i++)
 			dayData.push({value: i, text: i});
-		}
 
 		var dayCombo = Ext.widget('combobox', {
-			name: 'day',
+			name: 'crontab_day',
 			fieldLabel: _('Day'),
 			queryMode: 'local',
 			displayField: 'text',
@@ -175,7 +174,7 @@ Ext.define('canopsis.view.Schedule.Form', {
 		});
 
 		var dayWeekCombo = Ext.widget('combobox', {
-			name: 'dayWeek',
+			name: 'crontab_day_of_week',
 			fieldLabel: _('Day of week'),
 			queryMode: 'local',
 			displayField: 'text',
@@ -199,22 +198,12 @@ Ext.define('canopsis.view.Schedule.Form', {
 		});
 
 		var hoursField = Ext.widget('textfield', {
-			name: 'hours',
+			name: 'crontab_hours',
 			fieldLabel: _('Hours (local time)'),
 			//increment: 15,
 			allowBlank: false,
 			regex: getTimeRegex()
 		});
-
-		//carry the _id for rest service update
-/*		if (this.editing == true) {
-			var recordId = Ext.widget('textfield', {
-				name: '_id',
-				allowBlank: false,
-				hidden: true
-			});
-			this.timeOptions.add(recordId);
-		}*/
 
 		this.timeOptions.add([durationCombo, monthCombo, dayWeekCombo, dayCombo, hoursField]);
 
@@ -222,7 +211,7 @@ Ext.define('canopsis.view.Schedule.Form', {
 
 
 		var lengthCombo = Ext.widget('combobox', {
-			name: 'timeLengthUnit',
+			name: 'exporting_intervalLength',
 			queryMode: 'local',
 			displayField: 'text',
 			width: 90,
@@ -242,11 +231,11 @@ Ext.define('canopsis.view.Schedule.Form', {
 		});
 
 		var unitCombo = Ext.widget('numberfield', {
-			name: 'timeLength',
+			name: 'exporting_intervalUnit',
 			fieldLabel: _('The last'),
 			minValue: 1,
 			value: 1,
-			allowBlank: false,
+			//allowBlank: false,
 			width: 160
 		});
 
@@ -255,12 +244,12 @@ Ext.define('canopsis.view.Schedule.Form', {
 		//---------------------------Mail option-------------------------
 		var mailRecep = Ext.widget('textfield', {
 				fieldLabel: _('To'),
-				name: 'recipients'
+				name: 'exporting_recipients'
 		});
 
 		var mailSubject = Ext.widget('textfield', {
 				fieldLabel: _('Subject'),
-				name: 'subject'
+				name: 'exporting_subject'
 		});
 
 		this.mailingOptions.add(mailRecep, mailSubject);

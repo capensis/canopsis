@@ -51,7 +51,7 @@ var global = {
 	pageSize: 20,
 
 	default_locale: 'en',
-	locale: 'en',
+	locale: ENV['locale'],
 	am_pm_lang: ['en'],
 
 	is12Clock: undefined,
@@ -81,7 +81,7 @@ var global = {
 	],
 
 	gen_id: function() {
-			var timestamp = new Date().getTime();
+			var timestamp = Ext.Date.now();
 			return timestamp + '-' + Math.floor(Math.random() * 10);
 	},
 
@@ -122,7 +122,32 @@ var global = {
 		'us': _('Microsecond')
 	},
 
+	sizeTable: {
+		'KB':{multiple: 1024, unit:'B', pow: Math.pow(2,10)},
+		'MB':{multiple: 1024, unit:'B', pow: Math.pow(2,20)},
+		'GB':{multiple: 1024, unit:'B', pow: Math.pow(2,30)},
+		'TB':{multiple: 1024, unit:'B', pow: Math.pow(2,40)},
+		'PB':{multiple: 1024, unit:'B', pow: Math.pow(2,50)},
+		'KO':{multiple: 1024, unit:'O', pow: Math.pow(2,10)},
+		'MO':{multiple: 1024, unit:'O', pow: Math.pow(2,20)},
+		'GO':{multiple: 1024, unit:'O', pow: Math.pow(2,30)},
+		'TO':{multiple: 1024, unit:'O', pow: Math.pow(2,40)},
+		'PO':{multiple: 1024, unit:'O', pow: Math.pow(2,50)},
+		'MS':{multiple: 1000, unit:'S', pow: Math.pow(10,-3)},
+		'US':{multiple: 1000, unit:'S', pow: Math.pow(10,-6)},
+		'NS':{multiple: 1000, unit:'S', pow: Math.pow(10,-9)}
+	},
+
 	untranslated: [],
+	dump_untranslated: function(){
+		var dump = ''
+		for (var i = 0; i < global.untranslated.length; i++){
+			dump += 'msgid "'+global.untranslated[i]+'"\n'
+			dump += 'msgstr "'+global.untranslated[i]+'"\n\n'
+		}
+		console.log(dump)
+		return dump;
+	},
 
 	nowjs: {
 		proto: 'http',
@@ -130,3 +155,6 @@ var global = {
 		port: 8085
 	}
 };
+
+if (typeof(global_options) == 'object')
+	global = Ext.Object.merge(global, global_options);

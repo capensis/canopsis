@@ -40,8 +40,6 @@ Ext.define('canopsis.view.Event.Log' , {
 	opt_bar_search_field: ['component', 'resource'],
 
 	initComponent: function() {
-		this.store = Ext.create('canopsis.store.EventLogs');
-
 		this.bar_search = [{
 			xtype: 'button',
 			iconCls: 'icon-crecord_type-resource',
@@ -199,6 +197,17 @@ Ext.define('canopsis.view.Event.Log' , {
 		//---------------------bind controller----------------------
 		this.ctrl = Ext.create('canopsis.lib.controller.cgrid');
 
+		var stop = (new Date().getTime())/1000
+		var start =  stop - 86400
+		
+		// add filter for timestamp
+		var initialFilter ={'$and':[{
+								timestamp: {'$gt': parseInt(start)}},
+								{timestamp: {'$lt': parseInt(stop)}}]
+							}
+		this.store = Ext.create('canopsis.store.EventLogs');
+		this.ctrl.filter_id = this.store.addFilter(initialFilter)
+		//----------------
 		this.callParent(arguments);
 
 		this.on('afterrender', function() {

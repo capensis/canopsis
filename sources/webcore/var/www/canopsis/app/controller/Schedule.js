@@ -37,48 +37,54 @@ Ext.define('canopsis.controller.Schedule', {
 	},
 
 	preSave: function(record,data) {
-		if(data.reporting_interval)
-			var timeLength = data.timeLength * data.timeLengthUnit;
+		if(data.exporting_interval)
+			var interval = data.exporting_intervalLength * data.exporting_intervalUnit;
 		else
-			var timeLength = 0
+			var interval = null
 
-		//--------------------------set kwargs----------------------------
+		record.set('exporting_interval', data.exporting_interval);
+		record.set('exporting_account', global.account.user);
+		record.set('exporting_task', 'task_reporting');
+		record.set('exporting_method', 'render_pdf');
+
 		var kwargs = {
-					viewname: data.view,
-					starttime: timeLength,
-					account: global.account.user,
-					task: 'task_reporting',
-					method: 'render_pdf',
-					_scheduled: data.crecord_name,
-					owner: data.owner
+					viewName: record.get('exporting_viewName'),
+					//startTime: record.get('exporting_startTime'),
+					account: record.get('exporting_account'),
+					task: record.get('exporting_task'),
+					method: record.get('exporting_method'),
+					interval: interval,
+					_scheduled: record.get('crecord_name'),
+					owner: record.get('exporting_owner')
 				};
 
 		//check if a mail must be send
-		if (data.sendMail != undefined) {
-			if (data.recipients != '' && data.recipients != undefined) {
+		if (data.exporting_mail) {
+			if (data.exporting_recipients != '' && data.exporting_recipients != undefined) {
 				log.debug('sendMail is true', this.logAuthor);
 
-				 var stripped_recipients = data.recipients.replace(/ /g, '');
+				 var stripped_recipients = data.exporting_recipients.replace(/ /g, '');
 				 var recipients = stripped_recipients.split(',');
-				 if (recipients.length == 1) {
+				 if (recipients.length == 1)
 					 recipients = stripped_recipients.split(';');
-				 }
 
 				var mail = {
-					'sendMail': data.sendMail,
 					'recipients': recipients,
-					'subject': data.subject,
+					'subject': record.get('exporting_subject'),
 					'body': 'Scheduled task reporting'
 				};
 				kwargs['mail'] = mail;
 			}
+		}else{
+			kwargs['mail'] = null
 		}
-		record.set('kwargs', kwargs);
+
+		record.set('kwargs',kwargs)
 		record.set('loaded', false);
 
 		//----------------------formating crontab-----------------------
 		//log.dump(data)
-		var time = stringTo24h(data.hours);
+		var time = stringTo24h(data.crontab_hours);
 
 		//apply offset to get utc
 		var d = new Date();
@@ -91,185 +97,44 @@ Ext.define('canopsis.controller.Schedule', {
 			hour: d.getUTCHours()
 		};
 
-		if (data.month)
-			crontab['month'] = data.month;
-
-
-		if (data.dayWeek)
-			crontab['day_of_week'] = data.dayWeek;
-
-
-		if (data.day)
-			crontab['day'] = data.day;
+		if (data.crontab_month)
+			crontab['month'] = data.crontab_month;
+		if (data.crontab_day_of_week)
+			crontab['day_of_week'] = data.crontab_day_of_week;
+		if (data.crontab_day)
+			crontab['day'] = data.crontab_day;
 
 		record.set('cron', crontab);
-		//------------------------------------------------------
 
 		return record;
 	},
 
-	beforeload_DuplicateForm: function(form,item) {
-		log.debug('beforeload_DuplicateForm', this.logAuthor);
-
-		//---------------get args--------------
-		var kwargs = item.get('kwargs');
-		var viewName = kwargs['viewname'];
-		var timeLength = kwargs['starttime'];
-		var owner = kwargs['owner'];
-		//--------------get cron---------------
-		var cron = item.get('cron');
-
-		var hours = this.format_time(cron);
-
-		item.set('hours', hours);
-
-		//set record id for editing (pass to webserver later for update)
-		item.set('_id', item.get('_id'));
-
-		//set view
-		item.set('view', viewName);
-		item.set('owner', owner);
-
-		//set right day if exist
-		if (cron.day_of_week != undefined) {
-			item.set('every', 'week');
-			item.set('dayWeek', cron.day_of_week);
-		}
-
-		if (cron.day != undefined)
-			item.set('day', cron.day);
-
-		if (cron.month != undefined) {
-			item.set('every', 'year');
-			item.set('month', cron.month);
-		}
-
-		//compute timeLength
-		scale = Math.floor(timeLength / global.commonTs.day);
-
-		if (scale >= 365) {
-			item.set('timeLengthUnit', global.commonTs.year);
-			item.set('timeLength', Math.floor(scale / 365));
-		}else if (scale >= 30) {
-			item.set('timeLengthUnit', global.commonTs.month);
-			item.set('timeLength', Math.floor(scale / 30));
-		}else if (scale >= 7) {
-			item.set('timeLengthUnit', global.commonTs.week);
-			item.set('timeLength', Math.floor(scale / 7));
-			//log.dump(item);
-		} else {
-			item.set('timeLengthUnit', global.commonTs.day);
-			item.set('timeLength', Math.floor(scale));
-		}
-
-		//set mail
-		var mail_info = kwargs.mail;
-		if (mail_info != undefined) {
-			if (mail_info.sendMail != undefined && mail_info.sendMail == true)
-				item.set('sendMail', true);
-
-			if (mail_info.recipients != undefined)
-				item.set('recipients', mail_info.recipients);
-
-			if (mail_info.subject != undefined)
-				item.set('subject', mail_info.subject);
-		}
-	},
-
 	beforeload_EditForm: function(form,item) {
-		log.debug('beforeload_EditForm', this.logAuthor);
-
-		//---------------get args--------------
-		var kwargs = item.get('kwargs');
-		var viewName = kwargs['viewname'];
-		var timeLength = kwargs['starttime'];
-		var owner = kwargs['owner'];
-		//--------------get cron---------------
-		var cron = item.get('cron');
-
-		var hours = this.format_time(cron);
-
-		log.debug('kwargs:', this.logAuthor);
-		log.dump(kwargs);
-
-		item.set('hours', hours);
-
-		//set record id for editing (pass to webserver later for update)
-		item.set('_id', item.get('_id'));
-
-		//set view
-		item.set('view', viewName);
-		item.set('owner', owner);
-
-		//set right day if exist
-		if (cron.day_of_week != undefined) {
-			item.set('every', 'week');
-			item.set('dayWeek', cron.day_of_week);
-		}
-
-		if (cron.day != undefined) {
-			item.set('day', cron.day);
-		}
-
-		if (cron.month != undefined) {
-			item.set('every', 'year');
-			item.set('month', cron.month);
-		}
-
-		//compute timeLength
-		if(timeLength != 0){
-			scale = Math.floor(timeLength / global.commonTs.day);
-
-			if (scale >= 365) {
-				item.set('timeLengthUnit', global.commonTs.year);
-				item.set('timeLength', Math.floor(scale / 365));
-			}else if (scale >= 30) {
-				item.set('timeLengthUnit', global.commonTs.month);
-				item.set('timeLength', Math.floor(scale / 30));
-			}else if (scale >= 7) {
-				item.set('timeLengthUnit', global.commonTs.week);
-				item.set('timeLength', Math.floor(scale / 7));
-				//log.dump(item);
-			} else {
-				item.set('timeLengthUnit', global.commonTs.day);
-				item.set('timeLength', Math.floor(scale));
-			}
-		}
-
-		//set mail
-		var mail_info = kwargs.mail;
-		if (mail_info != undefined) {
-			if (mail_info.sendMail != undefined && mail_info.sendMail == true)
-				item.set('sendMail', true);
-
-			if (mail_info.recipients != undefined)
-				item.set('recipients', mail_info.recipients);
-
-			if (mail_info.subject != undefined)
-				item.set('subject', mail_info.subject);
-		}
-
-		//hide task name
-		var task_name_field = Ext.ComponentQuery.query('#' + form.id + ' textfield[name=crecord_name]')[0];
-		if (task_name_field != undefined) {
-			task_name_field.hide();
+		crontab = item.data.cron
+		if(crontab && crontab.hour != undefined && crontab.minute != undefined){
+			var d = new Date();
+			d.setUTCHours(crontab.hour,crontab.minute)
+			var minutes = d.getMinutes()
+			if(minutes < 10)
+				minutes = '0'+minutes
+			form.down('textfield[name=crontab_hours]').setValue(d.getHours()+':'+minutes)
 		}
 	},
 
 	validateForm: function(store, data, form) {
 
 		//check mail options
-		if (data['sendMail']) {
-			if (! data['subject'] || ! data['recipients']) {
+		if (data['exporting_mail']) {
+			if (! data['exporting_subject'] || ! data['exporting_subject']) {
 				log.debug('Invalid mail options', this.logAuthor + '[validateForm]');
 				global.notify.notify(' Invalid mail options', '', 'error');
 
-				var field = form.findField('subject');
-				if (! data['subject'] && field)
+				var field = form.findField('exporting_subject');
+				if (! data['exporting_subject'] && field)
 					field.markInvalid(_('Invalid field'));
 
-				var field = form.findField('recipients');
-				if (! data['recipients'] && field)
+				var field = form.findField('exporting_recipients');
+				if (! data['exporting_recipients'] && field)
 					field.markInvalid(_('Invalid field'));
 
 				return false;
@@ -302,7 +167,7 @@ Ext.define('canopsis.controller.Schedule', {
 		view_name = options.viewname;
 		start_time = options.starttime;
 		mail = options.mail;
-		if (mail != undefined)
+		if (mail)
 			mail = Ext.encode(mail);
 
 		this.getController('Reporting').launchReport(view_name, start_time, undefined, mail);

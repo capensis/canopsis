@@ -23,9 +23,9 @@ import os, sys, time, logging
 import ConfigParser
 
 import bottle
-from bottle import route, run, static_file, redirect
-from libexec.auth import autoLogin
-from libexec.auth import checkAuthPlugin
+from bottle import route, run, static_file, redirect, request
+
+import libexec.auth
 
 ## Hack: Prevent "ExtractionError: Can't extract file(s) to egg cache" when 2 process extract egg at the same time ...
 try:
@@ -37,7 +37,7 @@ except:
 #from gevent import monkey; monkey.patch_all()
 
 ## Configurations
-webservices = ['account',  'auth', 'event', 'files', 'perfstore', 'reporting', 'rest', 'rights', 'ui_view', 'ui_widgets', 'topology']
+webservices = ['account',  'auth', 'event', 'files', 'perfstore', 'reporting', 'rest', 'rights', 'ui_view', 'ui_widgets', 'ui_topology', 'ui_locales']
 webservices_mods = {}
 
 config_filename	= os.path.expanduser('~/etc/webserver.conf')
@@ -116,6 +116,17 @@ def unload_webservices():
 		#except Exception, err:
 		#	logger.error("Impossible to unload '%s'. (%s)" % (webservice, err))
 
+def autoLogin(key=None):
+	if key and len(key) == 56:
+		logger.debug('Autologin:')
+		output = libexec.auth.autoLogin(key)
+		if output['success']:
+			logger.info(' + Success')
+			return True
+		else:
+			logger.info(' + Failed')
+			return False
+
 ## Bind signals
 import gevent, signal, sys
 stop_in_progress=False
@@ -137,7 +148,7 @@ app = bottle.default_app()
 load_webservices()
 
 ## Install plugins
-auth_plugin = checkAuthPlugin()
+auth_plugin = libexec.auth.checkAuthPlugin()
 
 bottle.install(auth_plugin)
 
@@ -153,31 +164,34 @@ session_opts = {
 }
 
 ## Basic Handler
-@route('/static/:path#.+#',skip=[auth_plugin])
-def server_static(path):
+@route('/:lang/static/:path#.+#',	skip=['checkAuthPlugin'])
+@route('/static/:path#.+#',			skip=['checkAuthPlugin'])
+def server_static(path, lang='en'):
+	key = request.params.get('auth_key', default=None)
+	if key:
+		autoLogin(key)
+
 	return static_file(path, root=root_directory)
 
 @route('/favicon.ico',skip=[auth_plugin])
 def favicon():
 	return
 
-@route('/',skip=[auth_plugin])
-@route('/:key',skip=[auth_plugin])
-@route('/index.html',skip=[auth_plugin])
-def index(key=None):
-	#autologin
+@route('/',					skip=['checkAuthPlugin'])
+@route('/:key',				skip=['checkAuthPlugin'])
+@route('/index.html',		skip=['checkAuthPlugin'])
+@route('/:lang/',			skip=['checkAuthPlugin'])
+@route('/:lang/:key',		skip=['checkAuthPlugin'])
+@route('/:lang/index.html',	skip=['checkAuthPlugin'])
+def index(key=None, lang='en'):
+	uri_key = request.params.get('auth_key', default=None)
+	if not key and uri_key:
+		key = uri_key
+
 	if key:
-		if len(key) == 56:
-			logger.debug('key for autologin privided, seach if account match')
-			output = autoLogin(key)
-			if output['success']:
-				logger.info('autoLogin success')
-				redirect('/static/canopsis/index.html')
-			else:
-				logger.info('autoLogin failed')
+		autoLogin(key)
 
-	redirect("/static/canopsis/auth.html?url=/static/canopsis/index.html")
-
+	redirect('/%s/static/canopsis/index.html' % lang)
 
 ## Install session Middleware
 app = SessionMiddleware(app, session_opts)

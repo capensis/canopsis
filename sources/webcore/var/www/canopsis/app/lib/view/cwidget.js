@@ -58,8 +58,6 @@ Ext.define('canopsis.lib.view.cwidget' , {
 
 	active: false,
 
-	//PollNodeInfo: true,
-
 	initComponent: function() {
 		this.active = true;
 
@@ -67,9 +65,8 @@ Ext.define('canopsis.lib.view.cwidget' , {
 
 		log.debug('InitComponent ' + this.id + ' (reportMode: ' + this.reportMode + ', exportMode: ' + this.exportMode + ')', this.logAuthor);
 
-		if (this.title == '') {
+		if (this.title == '')
 			this.title = false;
-		}
 
 		this.wcontainerId = this.id + '-content';
 
@@ -85,11 +82,8 @@ Ext.define('canopsis.lib.view.cwidget' , {
 
 		this.callParent(arguments);
 
-		//this.uri = '/rest/events/event';
-
-		if (this.reportMode) {
+		if (this.reportMode) 
 			this.refreshInterval = false;
-		}
 
 		//Compatibility
 		if (this.nodes) {
@@ -101,25 +95,15 @@ Ext.define('canopsis.lib.view.cwidget' , {
 		}
 
 		//if reporting
-		if (this.exportMode) {
-			//this._reporting(this.reportStartTs,this.reportStopTs)
-			//this._reporting(reportStart,reportStop)
-			//this.uri += '/' + this.nodeId;
-
-			/*if (this.nodeId){
-				log.debug(' + NodeId: '+this.nodeId, this.logAuthor)
-				this.on('afterrender', this._doRefresh, this);
-			}*/
-
-			//this._doRefresh()
-
-		}else {
+		if (!this.exportMode) {
 			if (this.refreshInterval) {
 				log.debug(' + Refresh Interval: ' + this.refreshInterval, this.logAuthor);
 				this.task = {
 					run: this._doRefresh,
 					interval: this.refreshInterval * 1000,
-					scope: this
+					scope: this,
+					args: [undefined,undefined],
+					active: false
 				};
 			}
 		}
@@ -148,35 +132,35 @@ Ext.define('canopsis.lib.view.cwidget' , {
 	},
 
 	ready: function() {
-		if (this.task) {
+		if (this.task)
 			this.startTask();
-		}else {
-			this._doRefresh();
-		}
+		else 
+			if(this.exportMode)
+				this._doRefresh(this.export_from,this.export_to);
+			else
+				this._doRefresh(undefined,Ext.Date.now());
 	},
 
 	startTask: function() {
 		if (! this.reportMode) {
-			if (this.task) {
+			if (this.task && ! this.task.active) {
 				log.debug('Start task, interval:  ' + this.refreshInterval + ' seconds', this.logAuthor);
 				Ext.TaskManager.start(this.task);
+				this.task.active = true;
 			}else {
-				this._doRefresh();
+				this._doRefresh(undefined, undefined);
 			}
 		}
 	},
 
 	stopTask: function() {
-		if (this.task) {
+		if (this.task && this.task.active) {
 			log.debug('Stop task', this.logAuthor);
 			Ext.TaskManager.stop(this.task);
+			this.task.active = false;
 		}
 	},
 
-	/*
-	dblclick: function(){
-	},
-	*/
 
 	TabOnShow: function() {
 		log.debug('Show', this.logAuthor);
@@ -194,17 +178,14 @@ Ext.define('canopsis.lib.view.cwidget' , {
 	},
 
 	_doRefresh: function(from, to) {
-		if (this.exportMode && this.export_from != 0) {
-			from = this.export_from;
+		if (this.exportMode && from) {
+			from = from;
 			to = this.export_to;
 		}else {
-			if (! to || to < 10000000) {
+			if (! to )
 				to = Ext.Date.now();
-			}
-
-			if (! from || from < 10000000) {
+			if (! from) 
 				from = to - (this.time_window * 1000);
-			}
 		}
 
 		var done = this.doRefresh(from, to);
@@ -232,18 +213,15 @@ Ext.define('canopsis.lib.view.cwidget' , {
 	getNodeInfo: function() {
 		if (this.nodeId) {
 			Ext.Ajax.request({
-				url: this.baseUrl + '/' + this.nodeId,
+				url: this.baseUrl + '/events/' + this.nodeId,
 				scope: this,
 				success: function(response) {
 					var data = Ext.JSON.decode(response.responseText);
 					if (this.nodeId.length > 1)
-					{
 						data = data.data;
-					}
 					else
-					{
 						data = data.data[0];
-					}
+
 					this._onRefresh(data);
 				},
 				failure: function(result, request) {

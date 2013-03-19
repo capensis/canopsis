@@ -1,8 +1,8 @@
 #!/bin/bash
 
 NAME="webcore"
-VERSION=0.4
-RELEASE=5
+VERSION=0.5
+RELEASE=1
 DESCRIPTION=""
 REQUIRES="canohome python canolibs supervisord-conf wkhtmltopdf-libs nodejs-libs"
 
@@ -18,6 +18,15 @@ function pre_install(){
 
 function post_install(){
 	echo "Post-install $NAME $VERSION-$RELEASE ..."
+
+	if [ ! -e $PREFIX/var/www/global_options.js ]; then
+		cp $PREFIX/var/www/canopsis/app/lib/global_options.js $PREFIX/var/www/global_options.js
+		check_code $?
+	fi
+	
+	mkdir -p $PREFIX/var/www/widgets
+
+	$PREFIX/bin/webcore_minimizer
 	check_code $? 
 }
 
@@ -42,10 +51,21 @@ function pre_update(){
 
 	rm $PREFIX/etc/init.d/webserver &> /dev/null || true
 	rm $PREFIX/etc/init.d/websocket &> /dev/null || true
+	
+	$PREFIX/bin/webcore_minimizer
+	check_code $?
 }
 
 function post_update(){
 	echo "Post-update $NAME $VERSION-$RELEASE ..."
+
+	if [ ! -e $PREFIX/var/www/global_options.js ]; then
+		cp $PREFIX/var/www/canopsis/app/lib/global_options.js $PREFIX/var/www/global_options.js
+		check_code $?
+	fi
+
+	mkdir -p $PREFIX/var/www/widgets
+	
 	check_code $?
 }
 

@@ -19,6 +19,13 @@
 # ---------------------------------
 */
 
+unavailableMessageHTML = Ext.create('Ext.XTemplate',
+	'<div>',
+    	'<span style="vertical-align: middle;text-align:center;">{text}</span>',
+	'</div>',
+	{ compiled: true }
+);
+
 Ext.define('widgets.stream.stream' , {
 	extend: 'canopsis.lib.view.cwidget',
 
@@ -50,7 +57,7 @@ Ext.define('widgets.stream.stream' , {
 	amqp_queue: 'alerts',
 	hard_state_only: true,
 
-	compact: true,
+	compact: true, 
 
 	initComponent: function() {
 		if (this.fullscreenMode) {
@@ -153,10 +160,30 @@ Ext.define('widgets.stream.stream' , {
 		if (global.websocketCtrl.connected) {
 			this.startStream();
 		}else {
+			this.displayUnavailableMessage()
 			global.websocketCtrl.on('transport_up', function() {
+				this.wcontainer.removeAll();
 				this.startStream();
 			}, this, {single: true});
 		}
+	},
+
+	displayUnavailableMessage: function(){
+		this.wcontainer.add({
+			xtype:'panel',
+			anchor:'100% 100%',
+			border: 0,
+			layout: {
+				align: 'middle',
+				pack: 'center',
+				type: 'hbox'
+			},
+			items:[{
+				xtype:'panel',
+				unstyled: true,
+				html:unavailableMessageHTML.apply({text:_('Websocket Unavailable')})
+			}]
+		})
 	},
 
 	startStream: function() {
@@ -225,6 +252,7 @@ Ext.define('widgets.stream.stream' , {
 				'event_type': 'user',
 				'component': global.account.id,
 				'output': message,
+				'display_name': global.account.firstname + ' ' + global.account.lastname,
 				'author': global.account.firstname + ' ' + global.account.lastname,
 				'state': state,
 				'state_type': 1,
@@ -268,7 +296,7 @@ Ext.define('widgets.stream.stream' , {
 			this.wcontainer.removeAll(true);
 
 			var me = this;
-			this.getHistory(from, to, function(records) {
+			this.getHistory(parseInt(from/1000), parseInt(to/1000), function(records) {
 				if (records.length > 0)
 					me.add_events(records);
 			});

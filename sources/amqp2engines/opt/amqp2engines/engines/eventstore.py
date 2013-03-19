@@ -40,7 +40,7 @@ class engine(cengine):
 		except:
 			pass
 			
-		event_types = ['check', 'trap', 'comment', 'log', 'user', 'selector', 'sla', 'perf', 'eue', 'topology']
+		event_types = ['check', 'trap', 'comment', 'log', 'user', 'selector', 'sla', 'perf', 'eue', 'topology', 'consolidation']
 		event_type = event['event_type']
 		
 		if event_type not in event_types:
@@ -50,7 +50,7 @@ class engine(cengine):
 		## Archive event
 		if event_type == 'perf' :
 			pass
-		elif event_type == 'check' or event_type == 'selector' or event_type == 'sla' or event_type == 'eue' or event_type == 'topology':
+		elif event_type == 'check' or event_type == 'selector' or event_type == 'sla' or event_type == 'eue' or event_type == 'topology' or event_type == 'consolidation':
 			
 			_id = self.archiver.check_event(event_id, event)
 			if _id:

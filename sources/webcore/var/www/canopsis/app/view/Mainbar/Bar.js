@@ -80,7 +80,7 @@ Ext.define('canopsis.view.Mainbar.Bar' , {
 		this.viewSelector = Ext.create('Ext.form.field.ComboBox', {
 			id: 'viewSelector',
 			action: 'viewSelector',
-			store: Ext.create('canopsis.store.Views', {autoLoad: false}),
+			store: Ext.getStore('Views'),
 			displayField: 'crecord_name',
 			valueField: 'id',
 			typeAhead: false,
@@ -100,7 +100,7 @@ Ext.define('canopsis.view.Mainbar.Bar' , {
 			valueField: 'id',
 			typeAhead: true,
 			//hideLabel: true,
-			fieldLabel: _('Dashboard'),
+			fieldLabel: _('Home view'),
 			minChars: 2,
 			queryMode: 'local',
 			emptyText: _('Select a view') + ' ...',
@@ -177,17 +177,29 @@ Ext.define('canopsis.view.Mainbar.Bar' , {
 			]);
 		}
 
+		//Root selector menu
+		if (global.accountCtrl.checkRoot() || global.accountCtrl.checkGroup('group.CPS_consolidation_admin')) {
+			menu_build = menu_build.concat([
+				{
+					iconCls: 'icon-mainbar-consolidation',
+					text: _('Consolidation'),
+					action: 'openViewMenu',
+					viewId: 'view.consolidation_manager'
+				}
+			]);
+		}
+
 		//Topology menu
-	/*	if (global.accountCtrl.checkRoot() || global.accountCtrl.checkGroup('group.CPS_topology_admin')) {
+		if (global.accountCtrl.checkRoot() || global.accountCtrl.checkGroup('group.CPS_topology_admin')) {
 			menu_build = menu_build.concat([
 				{
 					iconCls: 'icon-mainbar-topology',
-					text: _('Topologies'),
+					text: _('Topologies') + " (BETA)",
 					action: 'openViewMenu',
 					viewId: 'view.topology_manager'
 				}
 			]);
-		}*/
+		}
 
 		//Build menu
 		if (global.accountCtrl.checkRoot() || global.accountCtrl.checkGroup('group.CPS_view_admin') || global.accountCtrl.checkGroup('group.CPS_view')) {
@@ -224,7 +236,7 @@ Ext.define('canopsis.view.Mainbar.Bar' , {
 					action: 'ScheduleExportView'
 				},{
 					iconCls: 'icon-mainbar-edit-task',
-					text: _('Edit schedules'),
+					text: _('Schedules'),
 					action: 'editSchedule',
 					viewId: 'view.schedule_manager'
 				}
@@ -306,10 +318,6 @@ Ext.define('canopsis.view.Mainbar.Bar' , {
 		//Configuration menu
 		menu_configuration = menu_configuration.concat([
 			{
-				iconCls: 'icon-console',
-				text: _('Show log console'),
-				action: 'showconsole'
-			},{
 				iconCls: 'icon-clear',
 				text: _('Clear tabs cache'),
 				action: 'cleartabscache'
@@ -317,17 +325,6 @@ Ext.define('canopsis.view.Mainbar.Bar' , {
 				iconCls: 'icon-access',
 				text: _('Authentification key'),
 				action: 'authkey'
-			},{
-				iconCls: 'icon-mainbar-sources',
-				text: '<b>commit</b>: ' + global.commit.substr(0, 10),
-				onClick: function() {
-					if (global.commit)
-						window.open('https://github.com/capensis/canopsis/commit/' + global.commit, '_blank');
-				}
-			},'-', {
-				iconCls: 'icon-logout',
-				text: _('Logout'),
-				action: 'logout'
 			}
 		]);
 
@@ -390,7 +387,7 @@ Ext.define('canopsis.view.Mainbar.Bar' , {
 					items: menu_preferences
 				}
 
-			},'-', {
+			},'-',{
 				iconCls: 'icon-preferences',
 				width: 36,
 				menu: {
@@ -399,14 +396,52 @@ Ext.define('canopsis.view.Mainbar.Bar' , {
 					items: menu_configuration
 				}
 			},{
+				iconCls: 'icon-about',
+				width: 36,
+				menu: {
+					name: 'About',
+					showSeparator: true,
+					items: [
+						{
+							iconCls: 'icon-documentation',
+							text: _('Documentation'),
+							onClick: function() { window.open('https://github.com/capensis/canopsis-doc/wiki', '_blank'); }
+						},{
+							iconCls: 'icon-community',
+							text: _("Community"),
+							onClick: function() { window.open('http://www.canopsis.org', '_blank'); }
+						},{
+							iconCls: 'icon-forum',
+							text: _('Forum'),
+							onClick: function() { window.open('http://forums.monitoring-fr.org/index.php/board,127.0.html', '_blank'); }
+						},'-',{
+							iconCls: 'icon-mainbar-sources',
+							text: '<b>Commit</b>: ' + global.commit.substr(0, 10),
+							onClick: function() {
+								if (global.commit)
+									window.open('https://github.com/capensis/canopsis/commit/' + global.commit, '_blank');
+							}
+						},{
+							iconCls: 'icon-issue',
+							text: _("Report a issue"),
+							onClick: function() { window.open('https://github.com/capensis/canopsis/issues', '_blank'); }
+						},{
+							iconCls: 'icon-github',
+							text: _('Fork Me') + " !",
+							onClick: function() { window.open('https://github.com/capensis/canopsis', '_blank'); }
+						}
+					]
+				}
+			},{
 				iconCls: (global.websocketCtrl.connected) ? 'icon-bullet-green' : 'icon-bullet-red',
 				id: 'Mainbar-menu-Websocket',
-				flex: 0.2
-				/*menu: {
-					name: 'Websocket',
-					showSeparator: true,
-					items: menu_configuration
-				}*/
+				onClick: function() { global.websocketCtrl.connect(); }
+			},
+			Ext.create('canopsis.lib.menu.cspinner'),
+			{
+				iconCls: 'icon-bootstrap-off',
+				action: 'logout',
+				tooltip: _('Logout')
 			}
 		];
 
@@ -415,6 +450,7 @@ Ext.define('canopsis.view.Mainbar.Bar' , {
 
 	afterRender: function() {
 		this.callParent(arguments);
+
 		var tip = Ext.create('Ext.tip.ToolTip', {
 			target: Ext.getCmp('Mainbar-menu-Websocket').el,
 			renderTo: Ext.getBody(),

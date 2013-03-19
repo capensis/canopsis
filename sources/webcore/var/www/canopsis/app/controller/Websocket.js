@@ -19,58 +19,72 @@
 # ---------------------------------
 */
 Ext.define('canopsis.controller.Websocket', {
-    extend: 'Ext.app.Controller',
-
-    views: [],
-    stores: [],
+	extend: 'Ext.app.Controller',
+	
+	views: [],
+	stores: [],
 
 	logAuthor: '[controller][Websocket]',
 
-    autoconnect: true,
-    connected: false,
+	autoconnect: true,
+	connected: false,
 
     subscribe_cache: {},
     auto_resubscribe: true,
 
+	jsLoader: undefined,
+	jsLoaded: false,
+
     init: function() {
 		global.websocketCtrl = this;
-
-		/*if (Ext.isIE)
-			this.autoconnect = false*/
-
-		if (! Ext.isIE){
-			Ext.fly('nowjs').set({
-					src: global.nowjs.proto + '://' + global.nowjs.hostname + ':' + global.nowjs.port + '/nowjs/now.js'
-				}).on('load', function() {
-					if (this.autoconnect)
-						this.connect();
-			}, this);
-
-		}else{
-			var elNowjs = document.getElementById('nowjs');
-			elNowjs.setAttribute("src", global.nowjs.proto + '://' + global.nowjs.hostname + ':' + global.nowjs.port + '/nowjs/now.js');
-			Ext.defer(function(){
-				if (this.autoconnect)
-					this.connect();
-			}, 2000, this);
-		}
-
-
+		this.loadLibs();
     },
 
-    connect: function() {
-		log.debug('Connect Websocket ...', this.logAuthor);
+    loadLibs: function(){
+		if (this.jsLoader)
+			this.jsLoader.destroy();
 
-		if (typeof(now) == 'undefined') {
-			log.error('Impossible to load NowJS Client.', this.logAuthor);
-			return;
+		this.jsLoader = new Ext.Element(document.createElement('script'))
+
+		if (Ext.isIE){
+
+			Ext.defer(function(){
+				if (typeof(now) != 'undefined') {
+					this.jsLoaded = true;
+					this.bindNow();
+					if (this.autoconnect)
+						this.connect();
+				}
+			}, 2000, this);
+
+		}else{
+
+			this.jsLoader.on('load', function() {
+				if (typeof(now) != 'undefined') {
+					this.jsLoaded = true;
+					this.bindNow();
+					if (this.autoconnect)
+						this.connect();
+				}
+			}, this, {single: true});
 		}
+
+		this.jsLoader.set({
+			type: "text/javascript",
+			src: global.nowjs.proto + '://' + global.nowjs.hostname + ':' + global.nowjs.port + '/nowjs/now.js'
+		});
+
+		document.getElementById('nowjs').appendChild(this.jsLoader.dom);
+    },
+
+    bindNow: function() {
+		var me = this;
 
 		now.authToken = global.account.authkey;
 		now.authId = global.account._id;
 
 		now.ready(function() {
-			var me = global.websocketCtrl;
+			log.debug(' + Now ready', me.logAuthor);
 
 			now.core.socketio.on('disconnect', function() {
 				if (me.connected) {
@@ -79,9 +93,6 @@ Ext.define('canopsis.controller.Websocket', {
 					me.fireEvent('transport_down', this);
 				}
 			});
-
-
-			log.debug(' + Connected', me.logAuthor);
 
 			now.auth(function() {
 				log.debug(' + Authed', me.logAuthor);
@@ -95,6 +106,23 @@ Ext.define('canopsis.controller.Websocket', {
 			});
 
 		});
+    },
+
+    connect: function() {
+		log.debug('Connect Websocket ...', this.logAuthor);
+
+		if (this.connected){
+			log.debug(' + Already connected', this.logAuthor);
+			return;
+		}
+
+		if (! this.jsLoaded) {
+			log.error('NowJS Client not loaded. Try to load it.', this.logAuthor);
+			this.loadLibs();
+			return;
+		}else{
+			log.debug(' + All is Ok, NowJS do reconnect automatically', this.logAuthor);
+		}
     },
 
     transport_down: function() {

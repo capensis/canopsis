@@ -81,6 +81,8 @@ Ext.define('canopsis.lib.view.cgrid' , {
 	bar_search: [],
 	menu_items: [],
 
+	logAuthor: '[view][cgrid]',
+
 	TabOnShow: function() {
 		this.suspendLayout = false;
 		this.doLayout();
@@ -164,14 +166,19 @@ Ext.define('canopsis.lib.view.cgrid' , {
 					//bar_child.push({ xtype: 'tbspacer', width: 150 })
 					bar_child.push('-');
 
+					var yesterday =  new Date();
+ 					yesterday.setDate(yesterday.getDate()-1);
+
 					bar_child.push({
 						xtype: 'cdate',
-						name: 'startTimeSearch'
+						name: 'startTimeSearch',
+						date_value: yesterday
 					});
 
 					bar_child.push({
 						xtype: 'cdate',
-						name: 'endTimeSearch'
+						name: 'endTimeSearch',
+						now: true
 					});
 
 					bar_child.push({
@@ -357,6 +364,13 @@ Ext.define('canopsis.lib.view.cgrid' , {
 		}
 
 		this.callParent(arguments);
+
+		// Load Store if not loaded
+		if (this.store && this.store.proxy.url){
+			log.debug("Store Loaded: " + this.store.loaded, this.logAuthor)
+			if (! this.store.loaded && ! this.store.autoLoad)
+				this.store.load();
+		}
 	},
 
 	beforeDestroy: function() {

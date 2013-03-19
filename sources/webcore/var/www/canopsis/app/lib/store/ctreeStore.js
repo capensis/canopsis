@@ -24,7 +24,7 @@ Ext.define('canopsis.lib.store.ctreeStore', {
 	autoLocalization: false,
 
 	constructor: function(config) {
-        this.callParent(arguments);
+        this.callParent([config]);
 
         this.proxy.on('exception', this._manage_exception, this);
     },
@@ -35,6 +35,8 @@ Ext.define('canopsis.lib.store.ctreeStore', {
 		},
 		write: function( store, operation, eOpts){
 			this.displaySuccess(store,operation,eOpts)
+			if (operation.success && this.afterCorrectWrite)
+				this.afterCorrectWrite()
 		}
    },
 

@@ -95,7 +95,7 @@ Ext.define('canopsis.controller.Derogation', {
 	},
 
 	afterload_EditForm: function(form, item) {
-		data = item.data;
+		var data = item.data;
 		//log.dump(data)
 
 		if (!data.forTs)

@@ -44,7 +44,7 @@ Ext.define('canopsis.store.Curves', {
 		type: 'rest',
 		url: '/rest/object/curve',
 		batchActions: true,
-		appendId: false,
+		appendId: true,
 		reader: {
 			type: 'json',
 			root: 'data',

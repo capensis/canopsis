@@ -41,7 +41,9 @@ Ext.define('canopsis.model.View', {
 		{name: 'aaa_access_owner'},
 		{name: 'aaa_admin_group'},
 		{name: 'aaa_group'},
-		{name: 'aaa_owner'}
+		{name: 'aaa_owner'},
+		{name: 'crecord_write_time'},
+		{name: 'crecord_creation_time'}
     ]
 
 });

@@ -36,6 +36,7 @@ Ext.define('canopsis.lib.form.field.cdate' , {
 	date_value: undefined,
 	max_value: undefined,
 	label_text: undefined,
+	value: undefined,
 
 	now: false,
 
@@ -76,9 +77,9 @@ Ext.define('canopsis.lib.form.field.cdate' , {
 				config.value = Ext.Date.format(new Date, 'G:i');
 		}else {
 			if (is12Clock())
-				config.value = '12:00 am';
+				config.value = Ext.Date.format(this.date_value, 'g:i a');
 			else
-				config.value = '00:00';
+				config.value = Ext.Date.format(this.date_value, 'G:i');
 		}
 
 		this.hour = Ext.widget('textfield', config);
@@ -88,6 +89,9 @@ Ext.define('canopsis.lib.form.field.cdate' , {
 		this.callParent(arguments);
 
 		this.relayEvents(this.date, ['select']);
+
+		if(this.value)
+			this.setValue(this.value)
 	},
 
 	getValue: function() {

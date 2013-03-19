@@ -129,7 +129,7 @@ Ext.define('canopsis.lib.view.cgrid_state' , {
 
 		if (this.opt_show_output) {
 			this.columns.push({
-				header: _('Output'),
+				header: _('Message'),
 				flex: 4,
 				sortable: this.opt_column_sortable,
 				dataIndex: 'output'
@@ -359,16 +359,6 @@ Ext.define('canopsis.lib.view.cgrid_state' , {
 		} else {
 			return 'row-background-unknown';
 		}
-	},
-
-	load_services_of_host: function(hostname) {
-		this.store.proxy.extraParams = {'filter': '{"component":"' + hostname + '", "source_type": "resource"}'};
-		this.store.load();
-	},
-
-	load_host: function(hostname) {
-		this.store.proxy.extraParams = {'filter': '{"component":"' + hostname + '"}'};
-		this.store.load();
 	}
 
 });

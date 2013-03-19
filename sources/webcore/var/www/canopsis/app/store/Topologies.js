@@ -25,8 +25,15 @@ Ext.define('canopsis.store.Topologies', {
 
 	storeId: 'store.Topologies',
 
-	autoLoad: true,
+	autoLoad: false,
 	autoSync: true,
+
+	sorters: [
+		{
+			property: 'crecord_name',
+			direction: 'ASC'
+		}
+	],
 
 	proxy: {
 		type: 'rest',

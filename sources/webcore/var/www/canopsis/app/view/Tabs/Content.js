@@ -32,6 +32,8 @@ Ext.define('canopsis.view.Tabs.Content' , {
 
 	items: [],
 
+	border: false,
+
 	//Ext.jq.Gridable
 	spotlight: true,
 	contextMenu: true,
@@ -53,6 +55,25 @@ Ext.define('canopsis.view.Tabs.Content' , {
 	record: undefined,
 
 	view_option_window: undefined,
+
+	dump: undefined,
+	view: undefined,
+	view_options: undefined,
+
+	onClose: false,
+
+	spinner: undefined,
+	spinner_delay: 300,
+	spinner_options: {
+		color:'#808080',
+		lines: 11,
+		width: 18,
+		length: 30,
+		shadow: false,
+		radius: 40,
+		top: 'auto',
+		left: 'auto'
+	},
 
 	//Locales
 	locales: {
@@ -85,6 +106,17 @@ Ext.define('canopsis.view.Tabs.Content' , {
 	initComponent: function() {
 		this.callParent(arguments);
 
+		// Display timer if view is too long to load
+		this.on('afterlayout', function(){
+			Ext.defer(function(){
+				if (! this.displayed) {
+					log.debug("Display view spinner", this.logAuthor);
+					tEl = document.getElementById(this.JqgContainerId);
+					this.spinner = new Spinner(this.spinner_options).spin(tEl);
+				}	
+			}, this.spinner_delay, this)
+		}, this, { single: true });
+
 		log.debug("Display view '" + this.view_id + "' ...", this.logAuthor);
 
 		this.options = {
@@ -94,14 +126,6 @@ Ext.define('canopsis.view.Tabs.Content' , {
 			export_to: this.export_to,
 			fullscreenMode: this.fullscreenMode
 		};
-
-		this.getView();
-
-		this.on('ready', function() {
-			if (this.autoshow) {
-				this.setContent();
-			}
-		}, this);
 
 		this.on('save', this.saveView, this);
 
@@ -113,11 +137,10 @@ Ext.define('canopsis.view.Tabs.Content' , {
 		this.on('resizeWidget', this.onResizeWidget, this);
 
 		//Apply view options when loaded
-		this.on('loaded', function() {
-				if (this.view_options)
-					this.applyViewOptions(this.view_options);
-					this.displayed = true;
-			},this);
+		//this.on('loaded', this.applyViewOptions, this);
+
+		if (this.fullscreenMode || this.exportMode)
+			this.getView();
 	},
 
 	getView: function() {
@@ -125,42 +148,62 @@ Ext.define('canopsis.view.Tabs.Content' , {
 			url: '/rest/object/view/' + this.view_id,
 			scope: this,
 			success: function(response) {
-				data = Ext.JSON.decode(response.responseText);
-				this.view = data.data[0];
-				this.dump = this.view.items;
+				var data = Ext.JSON.decode(response.responseText);
+				var view = data.data[0];
+				var dump = view.items;
 
+				if (dump == undefined || dump == '')
+					dump = []
 
-				if (this.view.view_options != undefined) {
-					this.view_options = this.view.view_options;
-					var pageSize = this.view_options.pageSize;
-					var orientation = this.view_options.orientation;
-				}
+				this.view = view;
+				this.dump = dump;
 
-				if (pageSize && orientation) {
-					var width = this.pageWidth[orientation][pageSize];
-					this.pageModeSize = width;
-				}
+				var view_options = { orientation: 'portrait', pageSize: 'A4' };
+				
+				if (view.view_options)
+					view_options = Ext.Object.merge(view_options, view.view_options);
+
+				this.view_options = view_options;
+
+				var width = this.pageWidth[view_options.orientation][view_options.pageSize]
+
+				this.pageModeSize = width;
+
+				log.debug('getView:', this.logAuthor);
+				log.debug(' + view_options:', this.logAuthor);
+				log.dump(view_options)
+				log.debug(' + width: ' + width, this.logAuthor);
+				log.debug(' + nb widget: ' + dump.length, this.logAuthor);
+				log.debug(' + dump:', this.logAuthor);
+				log.dump(dump)
 
 				// Set width for exporting in PDF
-				if (this.exportMode && width) {
-					log.debug('Orientation: ' + orientation, this.logAuthor);
-					log.debug('pageSize: ' + pageSize, this.logAuthor);
+				if (this.exportMode) {
+					log.debug('Orientation: ' + view_options.orientation, this.logAuthor);
+					log.debug('pageSize: ' + view_options.pageSize, this.logAuthor);
 					log.debug('width: ' + width, this.logAuthor);
 
-					if (width)
-						this.setWidth(width);
-				}else {
+					this.setWidth(width);
+
+				}/* else {
 					log.debug(' + Update default width', this.logAuthor);
 					if (!this.fullscreenMode)
 						this.setWidth(this.pageWidth['portrait']['A4']);
+				}*/
+
+				if (this.spinner){
+					log.debug("Remove view spinner", this.logAuthor);
+					this.spinner.stop();
+					delete this.spinner;
 				}
 
-				this.fireEvent('ready', this);
+				this.setContent(dump);
 
 			},
 			failure: function(result, request) {
 					log.error('Ajax request failed ... (' + request.url + ')', this.logAuthor);
 					log.error('Close tab, maybe not exist ...', this.logAuthor);
+					global.notify.notify(_('Warning'), _("Impossible to get view options."), 'warning');
 					this.destroy();
 			}
 		});
@@ -168,20 +211,27 @@ Ext.define('canopsis.view.Tabs.Content' , {
 
 	applyViewOptions: function(options) {
 		log.debug('Apply view options', this.logAuthor);
-		if (options) {
+		if (! options)
+			options = this.view_options
+
+		if (options)
 			if (options['background'])
 				this.body.setStyle('background', '#' + options['background']);
-		}
 	},
 
 	onResizeWidget: function(cmp) {
 		cmp.onResize();
 	},
 
-	setContent: function() {
-		if (this.dump && ! this.displayed) {
-			this.load(this.dump);
+	setContent: function(dump) {
+		if (! dump)
+			dump = this.dump;
+
+		if (dump && ! this.displayed) {
+			log.debug('setContent of '+this.view_id, this.logAuthor);
+			this.load(dump);
 		}
+		this.displayed = true;
 	},
 
 	saveView: function(dump) {
@@ -217,18 +267,26 @@ Ext.define('canopsis.view.Tabs.Content' , {
 		this.startAllTasks();
 
 		//apply new view style
-		this.applyViewOptions(view_options);
+		//this.applyViewOptions(view_options);
 
 		//this.up('tabpanel').tabBar.setDisabled(false)
 	},
 
 	//Binding
 	_onShow: function() {
+		if (this.onClose)
+			return
+
 		log.debug('Show tab ' + this.id, this.logAuthor);
-		var cmps = this.getCmps();
-		for (var i = 0; i < cmps.length; i++)
-			if (cmps[i].TabOnShow)
-				cmps[i].TabOnShow();
+		
+		if (! this.displayed){
+			this.getView();
+		}else{
+			var cmps = this.getCmps();
+			for (var i = 0; i < cmps.length; i++)
+				if (cmps[i].TabOnShow)
+					cmps[i].TabOnShow();
+		}
 	},
 
 	_onHide: function() {
@@ -346,19 +404,19 @@ Ext.define('canopsis.view.Tabs.Content' , {
 	setReportDate: function(from,to) {
 		log.debug('Send report data for widgets', this.logAuthor);
 		var cmps = this.getCmps();
-		for (var i = 0; i < cmps.length; i++) {
+		for (var i = 0; i < cmps.length; i++)
 			cmps[i]._doRefresh(from, to);
-		}
-
 	},
 
 	//misc
 	beforeclose: function(tab, object) {
 		log.debug('Active previous tab', this.logAuthor);
+		this.onClose = true;
+
 		old_tab = Ext.getCmp('main-tabs').old_tab;
-		if (old_tab) {
+		if (old_tab)
 			Ext.getCmp('main-tabs').setActiveTab(old_tab);
-		}
+		
 
 		if (this.localstore_record) {
 			//remove from store

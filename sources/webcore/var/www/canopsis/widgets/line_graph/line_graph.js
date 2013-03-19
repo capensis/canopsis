@@ -23,6 +23,36 @@
 //                                			-> setOptions                             			-> getSerie
 //											-> createChart
 
+flag_tootlip_template = Ext.create('Ext.XTemplate',
+	'<table>',
+		'<tr>',
+			'<td style="margin:3px;">',
+				'<tpl if="event_type == \'user\'">',
+					'<img src="widgets/stream/logo/ui.png" style="width: 32px;"></img>',
+				'</tpl>',
+				'<tpl if="event_type != \'user\'">',
+					'<img src="widgets/stream/logo/{icon}.png" style="width: 32px;"></img>',
+				'</tpl>',
+			'</td>',
+			'<td>',
+				'<div style="margin:3px;">',
+					'<tpl if="display_name">',
+							'<b>{display_name}</b>',
+					'</tpl>',
+					'<tpl if="display_name == undefined">',
+						'<b>{component}</b>',
+						'<tpl if="resource">',
+							'<b> - {resource}</b>',
+						'</tpl>',
+					'</tpl>',
+					' <span style="color:grey;font-size:10px">{date}</span>',
+					'<br/>{text}',
+				'</div>',
+			'</td>',
+		'</tr>',
+	'</table>',
+	{compiled: true}
+);
 
 Ext.define('widgets.line_graph.line_graph' , {
 	extend: 'canopsis.lib.view.cwidget',
@@ -32,7 +62,6 @@ Ext.define('widgets.line_graph.line_graph' , {
 	layout: 'fit',
 
 	first: false,
-	shift: false,
 	last_from: false,
 	pushPoints: false,
 
@@ -90,7 +119,6 @@ Ext.define('widgets.line_graph.line_graph' , {
 	lineWidth: 1,
 
 	//trends
-	data_trends: [],
 	trend_lines: false,
 	trend_lines_type: 'ShortDot',
 	//use_window_ts: false,
@@ -101,6 +129,18 @@ Ext.define('widgets.line_graph.line_graph' , {
 	nb_node: 0,
 	same_node: true,
 	displayLastValue: false,
+
+	consolidation_method: undefined,
+
+	timeNav: false,
+	timeNav_window: 604800,
+	onDoRefresh: false,
+
+	nbMavEventsDisplayed: 100,
+
+	lastBunit: undefined,
+
+	lastShift: undefined,
 
 	initComponent: function() {
 		this.backgroundColor	= check_color(this.backgroundColor);
@@ -149,6 +189,9 @@ Ext.define('widgets.line_graph.line_graph' , {
 
 		log.debug('same_node: ' + this.same_node, this.logAuthor);
 
+		if (this.timeNav && this.exportMode)
+			this.timeNav = false;
+
 		//Set title
 		if (this.autoTitle) {
 			this.setchartTitle();
@@ -191,7 +234,7 @@ Ext.define('widgets.line_graph.line_graph' , {
 
 				if (source_type == 'resource') {
 					var resource = this.nodes[0].resource;
-					title = resource + ' ' + _(this.chart_type + '_graph.on') + ' ' + component;
+					title = resource + ' ' + _('on') + ' ' + component;
 				}else {
 					title = component;
 				}
@@ -201,17 +244,6 @@ Ext.define('widgets.line_graph.line_graph' , {
 	},
 
 	setOptions: function() {
-		//----------find the right scale and tickinterval for xAxis------------
-		/*if (this.reportStop && this.reportStart){
-			var timestampInterval = (this.reportStop/1000) - (this.reportStart/1000)
-			var tsFormat = this.findScaleAxe(timestampInterval)
-			var tickInterval = this.findTickInterval(timestampInterval)
-		} else {
-			var tsFormat = 'H:i'
-			var tickInterval = global.commonTs.threeHours * 1000
-		}*/
-		//---------------------------------------------------------
-
 		this.options = {
 			reportMode: this.reportMode,
 
@@ -227,13 +259,10 @@ Ext.define('widgets.line_graph.line_graph' , {
 				borderColor: this.borderColor,
 				borderWidth: this.borderWidth,
 				backgroundColor: this.backgroundColor,
-				events: {
-					redraw: this.checkTimewindow
-				}
+					events: {
+						redraw: this.shift
+					}
 			},
-		/*	global: {
-				useUTC: false
-			},*/
 			exporting: {
 				enabled: (this.exportMode || this.reportMode) ? false : this.exporting_enabled,
 				filename: this.chartTitle,
@@ -252,6 +281,39 @@ Ext.define('widgets.line_graph.line_graph' , {
 					}
 				}
 			},
+			navigator: {
+				enabled: this.timeNav,
+				baseSeries: 0,
+				height: 20
+			},
+			rangeSelector: {
+				enabled: this.timeNav,
+				buttons: [{
+					type: 'hour',
+					count: 1,
+					text: _('1h')
+				}, {
+					type: 'day',
+					count: 1,
+					text: _('1d')
+				}, {
+					type: 'week',
+					count: 1,
+					text: _('1w')
+				}/*, {
+					type: 'year',
+					count: 1,
+					text: '1y'
+				}, {
+					type: 'all',
+					text: 'All'
+				}*/],
+				inputEnabled: false,
+				selected: 1
+			},
+			scrollbar: {
+				enabled: this.timeNav
+			},
 			colors: [],
 			title: {
 				text: this.chartTitle,
@@ -264,24 +326,39 @@ Ext.define('widgets.line_graph.line_graph' , {
 				shared: this.tooltip_shared,
 				crosshairs: this.tooltip_crosshairs,
 				enabled: this.tooltip,
-				formatter: this.tooltip_formatter
+				formatter: this.tooltip_formatter,
+				useHTML: true
 			},
 			xAxis: {
 				id: 'timestamp',
 				type: 'datetime',
-				tickmarkPlacement: 'on'
+				tickmarkPlacement: 'on',
+				events: {
+					afterSetExtremes: this.afterSetExtremes
+				}
+			},
+			loading: {
+				labelStyle: {
+					top: '2em'
+				}
 			},
 			yAxis: [
 				{
+					id: 'state',
+					title: { text: null },
+					labels: { enabled: false },
+					max: 100
+				},{
 					title: { text: null },
 					labels: {
 						formatter: this.y_formatter
 					}
 				},{
-					id: 'state',
 					title: { text: null },
-					labels: { enabled: false },
-					max: 100
+					labels: {
+						formatter: this.y_formatter
+					},
+					opposite: true
 				}
 			],
 			plotOptions: {
@@ -352,37 +429,59 @@ Ext.define('widgets.line_graph.line_graph' , {
 				this.options.chart.zoomType = 'x';
 			}
 		}
+
+		//Time Navigation
+		if (this.timeNav) {
+			var now = Ext.Date.now();
+			var data = [[now - (this.timeNav_window * 1000), null], [now, null]];
+			this.options.series.push({
+				id: 'timeNav',
+				name: 'timeNav',
+				data: data,
+				showInLegend: false,
+				shift: false
+			});
+
+			// Disable legend, see: https://github.com/highslide-software/highcharts.com/issues/567
+			this.options.legend.enabled = false;
+
+			this.options.xAxis['min'] = now - (this.time_window * 1000);
+			this.options.xAxis['max'] = now;
+		}
 	},
 
 	y_formatter: function() {
-		if (this.chart.series.length) {
-			var bunit = this.chart.series[0].options.bunit;
+		if (this.axis.series.length) {
+			var bunit = this.axis.series[0].options.bunit;
 			return rdr_humanreadable_value(this.value, bunit);
 		}
 		return rdr_yaxis(this.value);
 	},
 
 	tooltip_formatter: function() {
+		if (!this.y && this.point && this.point.text) {
+			return flag_tootlip_template.applyTemplate(this.point);
+		}else {
+			var formatter = function(options, value) {
+				if (options.invert)
+					value = - value;
 
-		var formatter = function(options, value) {
-			if (options.invert)
-				value = - value;
+				value = rdr_humanreadable_value(value, options.bunit);
+				return '<b>' + options.metric + ':</b> ' + value;
+			};
 
-			value = rdr_humanreadable_value(value, options.bunit);
-			return '<b>' + options.metric + ':</b> ' + value;
-		};
+			var s = '<b>' + rdr_tstodate(this.x / 1000) + '</b>';
 
-		var s = '<b>' + rdr_tstodate(this.x / 1000) + '</b>';
-
-		if (this['points']) {
-			// Shared
-			$.each(this.points, function(i, point) {
-				s += '<br/>' + formatter(point.series.options, point.y);
-			});
-		} else {
-			s += '<br/>' + formatter(this.series.options, this.y);
+			if (this['points']) {
+				// Shared
+				$.each(this.points, function(i, point) {
+					s += '<br/>' + formatter(point.series.options, point.y);
+				});
+			} else {
+				s += '<br/>' + formatter(this.series.options, this.y);
+			}
+			return s;
 		}
-		return s;
 	},
 
 	createChart: function() {
@@ -390,46 +489,30 @@ Ext.define('widgets.line_graph.line_graph' , {
 		Highcharts.setOptions({
 			global: {
 				useUTC: false
+			},
+			lang: {
+				months: [_('January'), _('February'), _('March'), _('April'), _('May'), _('June'), _('July'), _('August'), _('September'), _('October'), _('November'), _('December')],
+				weekdays: [_('Sunday'), _('Monday'), _('Tuesday'), _('Wednesday'), _('Thursday'), _('Friday'), _('Saturday')],
+				shortMonths: [_('Jan'), _('Feb'), _('Mar'), _('Apr'), _('May'), _('Jun'), _('Jul'), _('Aug'), _('Sept'), _('Oct'), _('Nov'), _('Dec')]
 			}
 		});
-		//this.chartMessage = this.chart.renderer.text(_('Waiting data') + ' ...', 50, 50).add();
-		this.getEl().mask(_('No data on interval'));
 	},
 
 	////////////////////// CORE
 
 	makeUrl: function(from, to) {
-		var url = '/perfstore/values';
-
-		if (! to) {
-			url += '/' + from;
-		}
-
-		if (from && to) {
-			url += '/' + from + '/' + to;
-		}
-
-		return url;
+		return '/perfstore/values' + '/' + parseInt(from / 1000) + '/' + parseInt(to / 1000);
 	},
 
 	doRefresh: function(from, to) {
+		var now = Ext.Date.now();
+
 		if (this.chart) {
 			//If bar chart, wait full insterval
-			if (this.lastRefresh && !this.reportMode)
-				if (Ext.Date.now() < this.lastRefresh + (this.aggregate_interval * 1000) && this.aggregate_interval > 0) {
+			if (! this.reportMode && this.lastRefresh) {
+				if (now < this.lastRefresh + (this.aggregate_interval * 1000) && this.aggregate_interval > 0) {
 					log.debug(' +  Wait for refresh', this.logAuthor);
 					return false;
-				}
-
-			//i have no idea of what the following block do, if useless,
-			// remove it, maybe reporting ?
-			if (this.chart_type == 'column') {
-				if (!this.last_form) {
-					new_from = getMidnight(from);
-					new_to = getMidnight(to);
-
-					if ((to - from) <= global.commonTs.day)
-						to = Ext.Date.now();
 				}
 			}
 
@@ -437,10 +520,48 @@ Ext.define('widgets.line_graph.line_graph' , {
 				from = this.last_from;
 				if (this.aggregate_interval) {
 					log.debug('End of last interval: ' + from, this.logAuthor);
-					log.debug('Request next interval: ' + from + ' + ' + this.aggregate_interval + '*1000', this.logAuthor);
-					from = from + (this.aggregate_interval * 1000);
+					log.debug('Request next interval: ' + from + ' + ' + this.aggregate_interval, this.logAuthor);
+					from = from + (this.aggregate_interval);
 				}
-				to = Ext.Date.now();
+				to = parseInt(now);
+			}
+
+			if (this.timeNav) {
+				var time_limit = now - (this.timeNav_window * 1000);
+
+				if (to > now)
+					to = now;
+
+				if (from < time_limit)
+					from = time_limit;
+
+				if (to <= time_limit) {
+					this.chart.showLoading(_('Time is out of range') + '...');
+					return;
+				}
+
+				var time_window = to - from;
+
+				this.onDoRefresh = true;
+
+				// re-enable auto loading
+				/*if (this.reportMode && to > (now - 300000)){
+					this.reportMode = false;
+					this.startTask();
+					return;
+				}*/
+
+				var serie = this.chart.get('timeNav');
+				var e = serie.xAxis.getExtremes();
+				var time_window = e.max - e.min;
+
+				if (this.reportMode) {
+					this.stopTask();
+					serie.xAxis.setExtremes(from, to, false);
+				}else {
+					serie.xAxis.setExtremes(now - time_window, now, false);
+				}
+
 			}
 
 			log.debug(' + Do Refresh ' + from + ' -> ' + to, this.logAuthor);
@@ -478,7 +599,41 @@ Ext.define('widgets.line_graph.line_graph' , {
 					});
 				} else {
 					log.debug('No nodes specified', this.logAuthor);
+					this.chart.showLoading(_('Please choose a valid metric in wizard'));
 				}
+			}
+
+			//if(this.nodeForFlags && this.nodeForFlags.length != 0){
+			if (this.flagFilter) {
+				var filter = [{
+								'timestamp': { '$gte': parseInt(from / 1000), '$lte': parseInt(to / 1000) }
+							},{
+								'state_type': 1
+							}];
+
+				var decodedFilter = Ext.decode(this.flagFilter);
+				var decodedFilterKeys = Ext.Object.getKeys(decodedFilter);
+				if (!decodedFilterKeys[0] || decodedFilterKeys[0] == 'null')
+					return;
+
+				filter.push(decodedFilter);
+
+				Ext.Ajax.request({
+					url: '/rest/events_log',
+					scope: this,
+					params: {
+						filter: Ext.encode({'$and': filter}),
+						limit: this.nbMavEventsDisplayed
+					},
+					method: 'Get',
+					success: function(response) {
+						var data = Ext.JSON.decode(response.responseText).data;
+						this.addFlagSerie(data);
+					},
+					failure: function(result, request) {
+						log.error('Ajax request failed ... (' + request.url + ')', this.logAuthor);
+					}
+				});
 			}
 		}
 	},
@@ -486,13 +641,6 @@ Ext.define('widgets.line_graph.line_graph' , {
 	onRefresh: function(data) {
 		if (this.chart) {
 			log.debug('On refresh', this.logAuthor);
-			/*if (this.reportMode){
-				log.debug(' + Clean series', this.logAuthor)
-				for (var i =0; i < this.metrics.length ; i++) {
-					metric = this.metrics[i]
-					this.addDataOnChart({'metric': metric, 'values': [] })
-				}
-			}*/
 
 			var toggle_max_percent = false;
 
@@ -511,11 +659,11 @@ Ext.define('widgets.line_graph.line_graph' , {
 				for (var i = 0; i < data.length; i++) {
 					this.addDataOnChart(data[i]);
 
-					var node_id = data[i].node
+					var node_id = data[i].node;
 					var node = this.nodesByID[node_id];
 
-					// Exclude state lines
-					if (data[i]['metric'] != 'cps_state' && data[i]['metric'] != 'cps_state_ok' && data[i]['metric'] != 'cps_state_warn' && data[i]['metric'] != 'cps_state_crit') {
+					// Exclude state lines and timeNav
+					if (! this.timeNav && data[i]['metric'] != 'cps_state' && data[i]['metric'] != 'cps_state_ok' && data[i]['metric'] != 'cps_state_warn' && data[i]['metric'] != 'cps_state_crit') {
 						//add/refresh trend lines
 						if (node.extra_field && node.extra_field.trend_curve)
 							this.addTrendLines(data[i]);
@@ -527,7 +675,7 @@ Ext.define('widgets.line_graph.line_graph' , {
 						else
 							var metric_name = data[i]['metric'];
 
-						var last_value = data[i]['values'][data[i]['values'].length-1][1]
+						var last_value = data[i]['values'][data[i]['values'].length - 1][1];
 						this.last_values.push([
 							metric_name,
 							last_value,
@@ -548,49 +696,67 @@ Ext.define('widgets.line_graph.line_graph' , {
 
 				//set max
 				if (this.SeriePercent && toggle_max_percent)
-					this.chart.yAxis[0].setExtremes(0, 100, false);
+					this.chart.yAxis[1].setExtremes(0, 100, false);
 
-				//unmasking
-				var this_El = this.getEl();
-				if (this_El.isMasked && !this.isDisabled())
-					this_El.unmask();
-
+				this.chart.hideLoading();
 				this.chart.redraw();
 			} else {
 				log.debug(' + No data', this.logAuthor);
 				//---------if report, cleaning the chart--------
-				if (this.reportMode == true) {
+				if (this.reportMode == true)
 					this.clearGraph();
-					/*
-					if (this.chartMessage == undefined) {
-						this.chartMessage = this.chart.renderer.text('<div style="margin:auto;">' + _('Infortunatly, there is no data for this period') + '</div>', 50, 50).add();
-					}
-					*/
-					this.getEl().mask(_('Infortunatly, there is no data for this period'));
-					this.chart.redraw();
-				}
+
+				if (this.reportMode == true || this.series.length == 0)
+					this.chart.showLoading(_('Unfortunately, there is no data for this period'));
+
+				this.chart.redraw();
 			}
 		}
 	},
 
 	clearGraph: function() {
 		for (var i = 0; i < this.chart.series.length; i++) {
-			//log.debug('cleaning serie : ' + this.chart.series[i].name)
-			this.chart.series[i].setData([], false);
+			var name = this.chart.series[i].name;
+			if (name != 'timeNav' && name != 'Navigator') {
+				log.debug('Cleaning serie: ' + name, this.logAuthor);
+				this.chart.series[i].setData([], false);
+			}
 		}
 	},
 
-	checkTimewindow: function() {
+	shift: function() {
 		var me = this.options.cwidget;
+
 		var now = Ext.Date.now();
 
-		if (this.series.length > 0 && now < (me.last_from + 500)) {
-			var extremes = this.series[0].xAxis.getExtremes();
-			var data_window = extremes.dataMax - extremes.dataMin;
-			me.shift = data_window > (me.time_window * 1000);
+		var timestamp = now - (me.time_window * 1000);
 
-			log.debug(' + Data window: ' + data_window, me.logAuthor);
-			log.debug('   + Shift: ' + me.shift, me.logAuthor);
+		if (! me.lastShift)
+			me.lastShift = now;
+
+		if (me.chart.series.length > 0 && now < (me.last_from + 5000) && now > (me.lastShift + 59000)) {
+			log.debug('Check shifting (' + me.chart.series.length + ' series):', me.logAuthor);
+			me.lastShift = now;
+
+			for (var i = 0; i < me.chart.series.length; i++) {
+				var serie = me.chart.series[i];
+
+				// Don't shift timeNav
+				if (serie.name == 'timeNav' || serie.name == 'Navigator')
+					continue;
+
+				if (serie.data.length <= 2)
+					continue;
+
+				var fpoint = serie.data[0];
+				var removed = 0;
+				while (serie.data.length && fpoint.x < timestamp) {
+					fpoint.remove(false);
+					fpoint = serie.data[0];
+					removed += 1;
+				}
+				log.debug(' + ' + serie.name + ', ' + removed + ' point(s) removed', me.logAuthor);
+			}
 		}
 	},
 
@@ -604,6 +770,9 @@ Ext.define('widgets.line_graph.line_graph' , {
 	},
 
 	dblclick: function() {
+		//if (this.timeNav)
+		//	this.reportMode = false;
+
 		if (this.chart && ! this.isDisabled())
 			this.chart.zoomOut();
 	},
@@ -614,8 +783,8 @@ Ext.define('widgets.line_graph.line_graph' , {
 		var serie = this.series_hc[serie_id];
 		if (serie) { return serie }
 
-		if (! yAxis)
-			yAxis = 0;
+		if (yAxis == undefined)
+			yAxis = 1;
 
 		log.debug('  + Create Serie:', this.logAuthor);
 
@@ -635,7 +804,7 @@ Ext.define('widgets.line_graph.line_graph' , {
 
 		var node = this.nodesByID[node_id];
 
-		if (! this.same_node) {
+		if (! this.same_node && ! this.consolidation_method) {
 			if (node && (node.extra_field && !node.extra_field.label)) {
 				metric_long_name = node.component;
 				if (node.source_type == 'resource')
@@ -669,7 +838,7 @@ Ext.define('widgets.line_graph.line_graph' , {
 		if (node.extra_field && node.extra_field.curve_color)
 			_color = node.extra_field.curve_color;
 
-		var serie = {id: serie_id, name: metric_long_name, metric: label, data: [], color: _color, min: min, max: max, yAxis: yAxis, bunit: bunit};
+		var serie = {id: serie_id, name: metric_long_name, metric: label, data: [], color: _color, min: min, max: max, yAxis: yAxis, bunit: bunit, shift: false};
 
 		if (curve) {
 			serie['dashStyle'] = curve.get('dashStyle');
@@ -700,14 +869,17 @@ Ext.define('widgets.line_graph.line_graph' , {
 	},
 
 	parseValues: function(serie, values, type) {
-		//Do operation on value
-		if (this.SeriePercent && serie.options.max > 0)
-			for (var i = 0; i < values.length; i++)
+
+		//MAKE A BETTER LOOP, JUST FOR TEST
+		for (var i = 0; i < values.length; i++) {
+			values[i][0] = values[i][0] * 1000;
+
+			if (this.SeriePercent && serie.options.max > 0)
 				values[i][1] = getPct(values[i][1], serie.options.max);
 
-		if (serie.options.invert)
-			for (var i = 0; i < values.length; i++)
+			if (serie.options.invert)
 				values[i][1] = - values[i][1];
+		}
 
 		//type specifique parsing
 		if (type == 'COUNTER' && !this.aggregate_interval && !this.reportMode) {
@@ -732,7 +904,7 @@ Ext.define('widgets.line_graph.line_graph' , {
 		var dashStyle = 'Solid';
 
 		if (curve) {
-			label = curve.get('label');
+			label = _(curve.get('label'));
 			color = global.curvesCtrl.getRenderColors(metric_name, 1)[0];
 			zindex = curve.get('zIndex');
 			dashStyle = curve.get('dashStyle');
@@ -741,7 +913,7 @@ Ext.define('widgets.line_graph.line_graph' , {
 		if (! label)
 			label = metric_name;
 
-		this.chart.yAxis[0].addPlotLine({
+		this.chart.yAxis[1].addPlotLine({
 			value: value,
 			width: width,
 			zIndex: zindex,
@@ -766,7 +938,7 @@ Ext.define('widgets.line_graph.line_graph' , {
 		var serie = undefined;
 
 		if (metric_name == 'cps_state_ok' || metric_name == 'cps_state_warn' || metric_name == 'cps_state_crit') {
-			serie = this.getSerie(node_id, metric_name, undefined, undefined, undefined, 1);
+			serie = this.getSerie(node_id, metric_name, undefined, undefined, undefined, 0);
 		}
 
 		if (metric_name == 'cps_state') {
@@ -793,7 +965,13 @@ Ext.define('widgets.line_graph.line_graph' , {
 			return true;
 
 		}else {
-			serie = this.getSerie(node_id, metric_name, bunit, min, max);
+			if (this.lastBunit == undefined || this.lastBunit == bunit) {
+				serie = this.getSerie(node_id, metric_name, bunit, min, max, 1);
+				this.lastBunit = bunit;
+			}else {
+				serie = this.getSerie(node_id, metric_name, bunit, min, max, 2);
+			}
+
 		}
 
 		if (! serie) {
@@ -863,7 +1041,7 @@ Ext.define('widgets.line_graph.line_graph' , {
 			for (var i = 0; i < values.length; i++) {
 				value = values[i];
 				//addPoint (Object options, [Boolean redraw], [Boolean shift], [Mixed animation]) :
-            	serie.addPoint(value, false, this.shift, false);
+            	serie.addPoint(value, false, serie.shift, false);
 			}
 		}
 
@@ -883,31 +1061,15 @@ Ext.define('widgets.line_graph.line_graph' , {
 		if (trend_line) {
 			log.debug('  +  Trend line found : ' + trend_id, this.logAuthor);
 
-			//if reporting, clear old data
-			if (this.reportMode)
-				this.data_trends[trend_id] = [];
-
-			//add data
-			for (var i = 0; i < data.values.length; i++)
-				this.data_trends[trend_id].push(data.values[i]);
-
-			//slice data (follow referent serie length)
-			if (this.shift)
-				this.data_trends[trend_id].splice(0, data.values.length);
-
-			if (this.data_trends[trend_id].length > 2) {
-				//compute data
-				var line = fitData(this.data_trends[trend_id]).data;
-
-				//trunc value
-				line = this.truncValueArray(line);
-
-				//set data
-				trend_line.setData(line, false);
-			} else {
-				log.debug('  +  not enough data to draw trend line');
-				trend_line.setData([], false);
+			var line = [];
+			for (var i = 0; i < referent_serie.data.length; i++) {
+				var point = referent_serie.data[i];
+				line.push([point.x, point.y]);
 			}
+
+			line = fitData(line).data;
+			trend_line.setData(line, false);
+
 		}else {
 			log.debug('  +  Trend line not found : ' + trend_id, this.logAuthor);
 			log.debug('  +  Create it', this.logAuthor);
@@ -948,7 +1110,8 @@ Ext.define('widgets.line_graph.line_graph' , {
 				bunit: referent_serie.options.bunit,
 				data: [],
 				marker: {enabled: false},
-				dashStyle: trend_dashStyle
+				dashStyle: trend_dashStyle,
+				shift: false
 			};
 			if (color)
 				serie['color'] = color;
@@ -957,10 +1120,8 @@ Ext.define('widgets.line_graph.line_graph' , {
 			this.chart.addSeries(Ext.clone(serie), false, false);
 			var hcserie = this.chart.get(trend_id);
 
-			this.data_trends[trend_id] = Ext.clone(data.values);
-
-			if (this.data_trends[trend_id].length > 2) {
-				var line = fitData(this.data_trends[trend_id]).data;
+			if (data.values.length > 2) {
+				var line = fitData(data.values).data;
 
 				//trunc value
 				line = this.truncValueArray(line);
@@ -978,16 +1139,16 @@ Ext.define('widgets.line_graph.line_graph' , {
 
 		var list_string = [];
 
-		var bigLenght = undefined
+		var bigLenght = undefined;
 
 		// Push values
 		for (var i = 0; i < values.length; i++) {
-			var strvalue = values[i][2] ? values[i][2] : ''
-			var string = values[i][0] + ': ' + values[i][1] + strvalue
+			var strvalue = values[i][2] ? values[i][2] : '';
+			var string = values[i][0] + ': ' + values[i][1] + strvalue;
 
 			// Search most longer string
 			if (bigLenght == undefined || bigLenght < string.length)
-				bigLenght = string.length
+				bigLenght = string.length;
 
 			list_string.push(
 				Ext.String.format(
@@ -1005,27 +1166,27 @@ Ext.define('widgets.line_graph.line_graph' , {
 		this.OverlayLegend = [];
 
 		// Display text on chart
-		var charH = 20
-		var charW = 5
+		var charH = 20;
+		var charW = 5;
 
-		var h = this.getHeight()
-		var w = this.getWidth()
+		var h = this.getHeight();
+		var w = this.getWidth();
 
-		var marginTop = h / 4
-		var marginRight = 20
+		var marginTop = h / 4;
+		var marginRight = 20;
 
-		var x = w - (bigLenght * charW) - marginRight
-		var y = marginTop
+		var x = w - (bigLenght * charW) - marginRight;
+		var y = marginTop;
 
 		for (var i = 0; i < list_string.length; i++) {
-			var string = list_string[i]
+			var string = list_string[i];
 			var chartText = this.chart.renderer.text(
 				string,
 				x - string.length,
-				y + (i*charH)
+				y + (i * charH)
 			);
 
-			this.OverlayLegend.push(chartText)
+			this.OverlayLegend.push(chartText);
 			chartText.add();
 		}
 	},
@@ -1049,7 +1210,8 @@ Ext.define('widgets.line_graph.line_graph' , {
 			'nodes': Ext.JSON.encode(post_params),
 			'aggregate_method' : this.aggregate_method,
 			'aggregate_interval': this.aggregate_interval,
-			'aggregate_max_points': this.aggregate_max_points
+			'aggregate_max_points': this.aggregate_max_points,
+			'consolidation_method': this.consolidation_method
 			};
 
 		//if (this.chart_type == 'column')
@@ -1057,6 +1219,89 @@ Ext.define('widgets.line_graph.line_graph' , {
 
 		//if (this.use_window_ts)
 		//	this.post_params.use_window_ts = this.use_window_ts;
+	},
+
+	addFlagSerie: function(data) {
+		var serie = this.chart.get('x_flags');
+		var sData = [];
+
+		if (data) {
+			for (var i = 0; i < data.length; i++) {
+				var state_color = this.getStateColor(data[i].state);
+				sData.push({
+					x: data[i].timestamp * 1000,
+					text: data[i].output,
+					component: data[i].component,
+					resource: data[i].resource,
+					display_name: data[i].display_name,
+					event_type: data[i].event_type,
+					date: rdr_tstodate(data[i].timestamp),
+					icon: data[i].connector.toLowerCase(),
+					fillColor: state_color,
+					style: {color: state_color},
+					states: {
+						hover: {
+							fillColor: state_color
+						}
+					},
+					title: 'A'
+				});
+			}
+
+			if (serie) {
+				if (this.reportMode)
+					serie.setData(sData);
+				else
+					for (var i = 0; i < sData.length; i++)
+						serie.addPoint(sData[i], true, serie.shift);
+			}else {
+				var serie = {
+					id: 'x_flags',
+					name: 'Flags',
+					type: 'flags',
+					data: sData,
+					shape: 'circlepin',
+					width: 17,
+					color: 'black',
+					zIndex: 2,
+					showInLegend: false,
+					shift: false
+				};
+				this.series[serie.id] = serie;
+				this.chart.addSeries(serie, true, false);
+			}
+		}
+	},
+
+	getStateColor: function(state) {
+		if (state == 0)
+			return global.state_colors.ok;
+		if (state == 1)
+			return global.state_colors.warning;
+		if (state == 2)
+			return global.state_colors.critical;
+		if (state == 3)
+			return global.state_colors.unknown;
+	},
+
+	afterSetExtremes: function(e) {
+		var me = this.chart.options.cwidget;
+
+		if (me.onDoRefresh) {
+			me.onDoRefresh = false;
+			return;
+		}
+
+		if (me.timeNav) {
+			var from = Math.round(e.min, 0);
+			var to = Math.round(e.max, 0);
+			log.debug('Highcharts: afterSetExtremes: ' + from + ' -> ' + to, me.logAuthor);
+			if (! isNaN(from) && ! isNaN(to)) {
+				me.chart.showLoading(_('Loading data from server') + '...');
+				me.reportMode = true;
+				me.doRefresh(from, to);
+			}
+		}
 	},
 
  	beforeDestroy: function() {

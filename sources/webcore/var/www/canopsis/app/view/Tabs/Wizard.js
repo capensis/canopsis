@@ -98,6 +98,9 @@ Ext.define('canopsis.view.Tabs.Wizard' , {
 
 		this.callParent(arguments);
 
+		var combo = this.down('combobox[name=xtype]')
+		combo.on('select',function(){this.finishButton.setDisabled(false);},this)
+
 	},
 
 	cancel_button: function() {
