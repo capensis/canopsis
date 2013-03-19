@@ -296,7 +296,7 @@ class engine(cengine):
 					component =			topo['crecord_name'],
 					state =				states_info['state'],
 					state_type =		states_info['state_type'],
-					output =			"Output",
+					output =			"",
 					long_output =		"",
 					#perf_data =			None,
 					#perf_data_array =	[],
