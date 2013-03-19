@@ -489,10 +489,10 @@ Ext.define('widgets.line_graph.line_graph' , {
 				useUTC: false
 			},
 			lang: {
-				months:[_('January'), _('February'), _('March'), _('April'), _('May'), _('June'), _('July'), _('August'), _('September'), _('October'), _('November'), _('December')],
-				weekdays:[_("Sunday"), _("Monday"), _("Tuesday"), _("Wednesday"), _("Thursday"),_("Friday"), _("Saturday")],
-				shortMonths: [_('Jan'), _('Feb'), _('Mar'), _('Apr'), _('May'), _('Jun'), _('Jul'),_('Aug'), _('Sept'), _('Oct'), _('Nov'), _('Dec')],
-			},
+				months: [_('January'), _('February'), _('March'), _('April'), _('May'), _('June'), _('July'), _('August'), _('September'), _('October'), _('November'), _('December')],
+				weekdays: [_('Sunday'), _('Monday'), _('Tuesday'), _('Wednesday'), _('Thursday'), _('Friday'), _('Saturday')],
+				shortMonths: [_('Jan'), _('Feb'), _('Mar'), _('Apr'), _('May'), _('Jun'), _('Jul'), _('Aug'), _('Sept'), _('Oct'), _('Nov'), _('Dec')]
+			}
 		});
 	},
 
@@ -507,7 +507,7 @@ Ext.define('widgets.line_graph.line_graph' , {
 
 		if (this.chart) {
 			//If bar chart, wait full insterval
-			if (! this.reportMode && this.lastRefresh){
+			if (! this.reportMode && this.lastRefresh) {
 				if (now < this.lastRefresh + (this.aggregate_interval * 1000) && this.aggregate_interval > 0) {
 					log.debug(' +  Wait for refresh', this.logAuthor);
 					return false;
@@ -524,29 +524,29 @@ Ext.define('widgets.line_graph.line_graph' , {
 				to = parseInt(now);
 			}
 
-			if (this.timeNav){
-				var time_limit = now - (this.timeNav_window*1000);
+			if (this.timeNav) {
+				var time_limit = now - (this.timeNav_window * 1000);
 				if (from < time_limit)
 					from = time_limit;
 
 				if (to > now)
 					to = now;
 
-				if (to <= time_limit){
+				if (to <= time_limit) {
 					this.chart.showLoading(_('Time is out of range') + '...');
 					return;
 				}
 
 				this.onDoRefresh = true;
-				var serie = this.chart.get("timeNav");
+				var serie = this.chart.get('timeNav');
 				var e = serie.xAxis.getExtremes();
 				var time_window = e.max - e.min;
 
 				//console.log(this.reportMode);
-				if (this.reportMode){
+				if (this.reportMode) {
 					serie.xAxis.setExtremes(from, to, false);
-				}else{
-					serie.xAxis.setExtremes(now-time_window, now, false);
+				}else {
+					serie.xAxis.setExtremes(now - time_window, now, false);
 				}
 			}
 
@@ -597,10 +597,10 @@ Ext.define('widgets.line_graph.line_graph' , {
 								'state_type': 1
 							}];
 
-				var decodedFilter = Ext.decode(this.flagFilter)
-				var decodedFilterKeys = Ext.Object.getKeys(decodedFilter)
-				if(!decodedFilterKeys[0] || decodedFilterKeys[0] == "null")
-					return
+				var decodedFilter = Ext.decode(this.flagFilter);
+				var decodedFilterKeys = Ext.Object.getKeys(decodedFilter);
+				if (!decodedFilterKeys[0] || decodedFilterKeys[0] == 'null')
+					return;
 
 				filter.push(decodedFilter);
 
@@ -1271,9 +1271,9 @@ Ext.define('widgets.line_graph.line_graph' , {
 	afterSetExtremes: function(e) {
 		var me = this.chart.options.cwidget;
 
-		if (me.onDoRefresh){
+		if (me.onDoRefresh) {
 			me.onDoRefresh = false;
-			return
+			return;
 		}
 
 		if (me.timeNav) {
