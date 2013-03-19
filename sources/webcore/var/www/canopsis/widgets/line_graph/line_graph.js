@@ -190,9 +190,6 @@ Ext.define('widgets.line_graph.line_graph' , {
 		if (this.timeNav && this.exportMode)
 			this.timeNav = false;
 
-		if (this.timeNav)
-			this.reportMode = true;
-
 		//Set title
 		if (this.autoTitle) {
 			this.setchartTitle();
@@ -506,10 +503,12 @@ Ext.define('widgets.line_graph.line_graph' , {
 	},
 
 	doRefresh: function(from, to) {
+		var now = Ext.Date.now();
+
 		if (this.chart) {
 			//If bar chart, wait full insterval
-			if (this.lastRefresh && !this.reportMode){
-				if (Ext.Date.now() < this.lastRefresh + (this.aggregate_interval * 1000) && this.aggregate_interval > 0) {
+			if (! this.reportMode && this.lastRefresh){
+				if (now < this.lastRefresh + (this.aggregate_interval * 1000) && this.aggregate_interval > 0) {
 					log.debug(' +  Wait for refresh', this.logAuthor);
 					return false;
 				}
@@ -522,22 +521,33 @@ Ext.define('widgets.line_graph.line_graph' , {
 					log.debug('Request next interval: ' + from + ' + ' + this.aggregate_interval, this.logAuthor);
 					from = from + (this.aggregate_interval);
 				}
-				to = parseInt(Ext.Date.now());
+				to = parseInt(now);
 			}
 
 			if (this.timeNav){
-				var time_limit = Ext.Date.now() - (this.timeNav_window*1000);
+				var time_limit = now - (this.timeNav_window*1000);
 				if (from < time_limit)
-					from = time_limit
-				
+					from = time_limit;
+
+				if (to > now)
+					to = now;
+
 				if (to <= time_limit){
 					this.chart.showLoading(_('Time is out of range') + '...');
-					return
+					return;
 				}
 
 				this.onDoRefresh = true;
 				var serie = this.chart.get("timeNav");
-				serie.xAxis.setExtremes(from, to, false);
+				var e = serie.xAxis.getExtremes();
+				var time_window = e.max - e.min;
+
+				//console.log(this.reportMode);
+				if (this.reportMode){
+					serie.xAxis.setExtremes(from, to, false);
+				}else{
+					serie.xAxis.setExtremes(now-time_window, now, false);
+				}
 			}
 
 			log.debug(' + Do Refresh ' + from + ' -> ' + to, this.logAuthor);
@@ -617,13 +627,6 @@ Ext.define('widgets.line_graph.line_graph' , {
 	onRefresh: function(data) {
 		if (this.chart) {
 			log.debug('On refresh', this.logAuthor);
-			/*if (this.reportMode){
-				log.debug(' + Clean series', this.logAuthor)
-				for (var i =0; i < this.metrics.length ; i++) {
-					metric = this.metrics[i]
-					this.addDataOnChart({'metric': metric, 'values': [] })
-				}
-			}*/
 
 			var toggle_max_percent = false;
 
@@ -751,6 +754,9 @@ Ext.define('widgets.line_graph.line_graph' , {
 	},
 
 	dblclick: function() {
+		if (this.timeNav)
+			this.reportMode = false;
+
 		if (this.chart && ! this.isDisabled())
 			this.chart.zoomOut();
 	},
@@ -1275,8 +1281,8 @@ Ext.define('widgets.line_graph.line_graph' , {
 			var to = Math.round(e.max, 0);
 			log.debug('Highcharts: afterSetExtremes: ' + from + ' -> ' + to, me.logAuthor);
 			if (! isNaN(from) && ! isNaN(to)) {
-				me.reportMode = true;
 				me.chart.showLoading(_('Loading data from server') + '...');
+				me.reportMode = true;
 				me.doRefresh(from, to);
 			}
 		}
