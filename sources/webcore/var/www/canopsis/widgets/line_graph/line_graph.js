@@ -140,6 +140,8 @@ Ext.define('widgets.line_graph.line_graph' , {
 
 	lastBunit: undefined,
 
+	lastShift: undefined,
+
 	initComponent: function() {
 		this.backgroundColor	= check_color(this.backgroundColor);
 		this.borderColor	= check_color(this.borderColor);
@@ -559,6 +561,7 @@ Ext.define('widgets.line_graph.line_graph' , {
 				}else {
 					serie.xAxis.setExtremes(now - time_window, now, false);
 				}
+
 			}
 
 			log.debug(' + Do Refresh ' + from + ' -> ' + to, this.logAuthor);
@@ -724,33 +727,35 @@ Ext.define('widgets.line_graph.line_graph' , {
 	shift: function() {
 		var me = this.options.cwidget;
 
-		// Don't shift on timeNav mode
-		if (! this.timeNav)
-			return;
-
 		var now = Ext.Date.now();
 
 		var timestamp = now - (me.time_window * 1000);
 
-		if (me.chart.series.length > 0 && now < (me.last_from + 500)) {
+		if (! me.lastShift)
+			me.lastShift = now;
+
+		if (me.chart.series.length > 0 && now < (me.last_from + 5000) && now > (me.lastShift + 59000)) {
+			log.debug('Check shifting (' + me.chart.series.length + ' series):', me.logAuthor);
+			me.lastShift = now;
+
 			for (var i = 0; i < me.chart.series.length; i++) {
 				var serie = me.chart.series[i];
 
 				// Don't shift timeNav
-				if (serie.name != 'timeNav' && serie.name != 'Navigator')
+				if (serie.name == 'timeNav' || serie.name == 'Navigator')
 					continue;
 
-				log.debug(serie.name, me.logAuthor);
-				if (serie.data.length)
+				if (serie.data.length <= 2)
 					continue;
 
 				var fpoint = serie.data[0];
+				var removed = 0;
 				while (serie.data.length && fpoint.x < timestamp) {
-					log.debug(' + Remove point', me.logAuthor);
 					fpoint.remove(false);
 					fpoint = serie.data[0];
+					removed += 1;
 				}
-
+				log.debug(' + ' + serie.name + ', ' + removed + ' point(s) removed', me.logAuthor);
 			}
 		}
 	},

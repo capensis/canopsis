@@ -1843,9 +1843,6 @@ msgstr "Calcul the worst state"
 msgid "Check state"
 msgstr "Check state"
 
-msgid "No Ok"
-msgstr "No Ok"
-
 msgid "Unknown"
 msgstr "Unknown"
 
@@ -1905,3 +1902,6 @@ msgstr "Nov"
 
 msgid "Dec"
 msgstr "Dec"
+
+msgid "Time is out of range"
+msgstr "Time is out of range"

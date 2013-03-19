@@ -42,8 +42,8 @@ class engine(cengine):
 		self.records = {} 
 		self.default_interval = 60
 
-		self.thd_warn_sec_per_evt = 1.5
-		self.thd_crit_sec_per_evt = 2
+		self.thd_warn_sec_per_evt = 8
+		self.thd_crit_sec_per_evt = 10
 
 		self.manager = pyperfstore2.manager(logging_level=logging.INFO)	
 		cengine.__init__(self, name=NAME, *args, **kargs)
