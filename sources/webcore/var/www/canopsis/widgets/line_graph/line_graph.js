@@ -735,9 +735,9 @@ Ext.define('widgets.line_graph.line_graph' , {
 			me.lastShift = now;
 
 		if (me.chart.series.length > 0 && now < (me.last_from + 5000) && now > (me.lastShift + 59000)) {
-			log.debug('Check shifting ('+me.chart.series.length+' series):', me.logAuthor);
+			log.debug('Check shifting (' + me.chart.series.length + ' series):', me.logAuthor);
 			me.lastShift = now;
-			
+
 			for (var i = 0; i < me.chart.series.length; i++) {
 				var serie = me.chart.series[i];
 
@@ -755,7 +755,7 @@ Ext.define('widgets.line_graph.line_graph' , {
 					fpoint = serie.data[0];
 					removed += 1;
 				}
-				log.debug(' + '+serie.name+', '+removed+' point(s) removed', me.logAuthor);
+				log.debug(' + ' + serie.name + ', ' + removed + ' point(s) removed', me.logAuthor);
 			}
 		}
 	},
