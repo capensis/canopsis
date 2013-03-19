@@ -102,7 +102,8 @@ Ext.define('canopsis.lib.view.cwidget' , {
 					run: this._doRefresh,
 					interval: this.refreshInterval * 1000,
 					scope: this,
-					args: [undefined,undefined]
+					args: [undefined,undefined],
+					active: false
 				};
 			}
 		}
@@ -142,19 +143,21 @@ Ext.define('canopsis.lib.view.cwidget' , {
 
 	startTask: function() {
 		if (! this.reportMode) {
-			if (this.task) {
+			if (this.task && ! this.task.active) {
 				log.debug('Start task, interval:  ' + this.refreshInterval + ' seconds', this.logAuthor);
 				Ext.TaskManager.start(this.task);
+				this.task.active = true;
 			}else {
-				this._doRefresh(undefined,Ext.Date.now());
+				this._doRefresh(undefined, undefined);
 			}
 		}
 	},
 
 	stopTask: function() {
-		if (this.task) {
+		if (this.task && this.task.active) {
 			log.debug('Stop task', this.logAuthor);
 			Ext.TaskManager.stop(this.task);
+			this.task.active = false;
 		}
 	},
 
