@@ -1843,9 +1843,6 @@ msgstr "Calcul the worst state"
 msgid "Check state"
 msgstr "Check state"
 
-msgid "No Ok"
-msgstr "No Ok"
-
 msgid "Unknown"
 msgstr "Unknown"
 
