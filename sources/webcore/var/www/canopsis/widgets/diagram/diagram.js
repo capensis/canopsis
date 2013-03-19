@@ -87,7 +87,7 @@ Ext.define('widgets.diagram.diagram' , {
 			var node = this.nodes[i];
 
 			if (node['type'] && node['type'] == 'COUNTER')
-				this.haveCounter = true
+				this.haveCounter = true;
 
 			//hack for retro compatibility
 			if (!node.dn)
@@ -242,7 +242,7 @@ Ext.define('widgets.diagram.diagram' , {
 			yAxis: {
 				title: { text: null },
 				labels: {formatter: this.y_formatter}
-			},
+			}
 		};
 		/*
 		if(this.diagram_type == 'column'){
@@ -267,10 +267,10 @@ Ext.define('widgets.diagram.diagram' , {
 		this.chart = new Highcharts.Chart(this.options);
 		Highcharts.setOptions({
 			lang: {
-				months:[_('January'), _('February'), _('March'), _('April'), _('May'), _('June'), _('July'), _('August'), _('September'), _('October'), _('November'), _('December')],
-				weekdays:[_("Sunday"), _("Monday"), _("Tuesday"), _("Wednesday"), _("Thursday"),_("Friday"), _("Saturday")],
-				shortMonths: [_('Jan'), _('Feb'), _('Mar'), _('Apr'), _('May'), _('Jun'), _('Jul'),_('Aug'), _('Sept'), _('Oct'), _('Nov'), _('Dec')],
-			},
+				months: [_('January'), _('February'), _('March'), _('April'), _('May'), _('June'), _('July'), _('August'), _('September'), _('October'), _('November'), _('December')],
+				weekdays: [_('Sunday'), _('Monday'), _('Tuesday'), _('Wednesday'), _('Thursday'), _('Friday'), _('Saturday')],
+				shortMonths: [_('Jan'), _('Feb'), _('Mar'), _('Apr'), _('May'), _('Jun'), _('Jul'), _('Aug'), _('Sept'), _('Oct'), _('Nov'), _('Dec')]
+			}
 		});
 	},
 
@@ -299,13 +299,13 @@ Ext.define('widgets.diagram.diagram' , {
 			from = to - this.time_window;
 		else if (! this.haveCounter)
 			from = to;
-		
+
 		log.debug('Get values from ' + new Date(from) + ' to ' + new Date(to), this.logAuthor);
 
 		if (this.nodes) {
 			if (this.nodes.length != 0) {
 
-				var url = '/perfstore/values/' + parseInt(from/1000) + '/' + parseInt(to/1000);
+				var url = '/perfstore/values/' + parseInt(from / 1000) + '/' + parseInt(to / 1000);
 
 				Ext.Ajax.request({
 					url: url,
