@@ -526,24 +526,35 @@ Ext.define('widgets.line_graph.line_graph' , {
 
 			if (this.timeNav) {
 				var time_limit = now - (this.timeNav_window * 1000);
-				if (from < time_limit)
-					from = time_limit;
 
 				if (to > now)
 					to = now;
+
+				if (from < time_limit)
+					from = time_limit;
 
 				if (to <= time_limit) {
 					this.chart.showLoading(_('Time is out of range') + '...');
 					return;
 				}
 
+				var time_window = to - from;
+
 				this.onDoRefresh = true;
+
+				// re-enable auto loading
+				/*if (this.reportMode && to > (now - 300000)){
+					this.reportMode = false;
+					this.startTask();
+					return;
+				}*/
+
 				var serie = this.chart.get('timeNav');
 				var e = serie.xAxis.getExtremes();
 				var time_window = e.max - e.min;
 
-				//console.log(this.reportMode);
 				if (this.reportMode) {
+					this.stopTask();
 					serie.xAxis.setExtremes(from, to, false);
 				}else {
 					serie.xAxis.setExtremes(now - time_window, now, false);
@@ -754,8 +765,8 @@ Ext.define('widgets.line_graph.line_graph' , {
 	},
 
 	dblclick: function() {
-		if (this.timeNav)
-			this.reportMode = false;
+		//if (this.timeNav)
+		//	this.reportMode = false;
 
 		if (this.chart && ! this.isDisabled())
 			this.chart.zoomOut();
