@@ -134,6 +134,7 @@ Ext.define('widgets.line_graph.line_graph' , {
 
 	timeNav: false,
 	timeNav_window: 604800,
+	onDoRefresh: false,
 
 	nbMavEventsDisplayed: 100,
 
@@ -507,23 +508,12 @@ Ext.define('widgets.line_graph.line_graph' , {
 	doRefresh: function(from, to) {
 		if (this.chart) {
 			//If bar chart, wait full insterval
-			if (this.lastRefresh && !this.reportMode)
+			if (this.lastRefresh && !this.reportMode){
 				if (Ext.Date.now() < this.lastRefresh + (this.aggregate_interval * 1000) && this.aggregate_interval > 0) {
 					log.debug(' +  Wait for refresh', this.logAuthor);
 					return false;
 				}
-
-			//i have no idea of what the following block do, if useless,
-			// remove it, maybe reporting ?
-			/*if (this.chart_type == 'column') {
-				if (!this.last_form) {
-					new_from = getMidnight(from);
-					new_to = getMidnight(to);
-
-					if ((to - from) <= global.commonTs.day)
-						to = Ext.Date.now();
-				}
-			}*/
+			}
 
 			if (! this.reportMode && this.last_from) {
 				from = this.last_from;
@@ -533,6 +523,21 @@ Ext.define('widgets.line_graph.line_graph' , {
 					from = from + (this.aggregate_interval);
 				}
 				to = parseInt(Ext.Date.now());
+			}
+
+			if (this.timeNav){
+				var time_limit = Ext.Date.now() - (this.timeNav_window*1000);
+				if (from < time_limit)
+					from = time_limit
+				
+				if (to <= time_limit){
+					this.chart.showLoading(_('Time is out of range') + '...');
+					return
+				}
+
+				this.onDoRefresh = true;
+				var serie = this.chart.get("timeNav");
+				serie.xAxis.setExtremes(from, to, false);
 			}
 
 			log.debug(' + Do Refresh ' + from + ' -> ' + to, this.logAuthor);
@@ -1259,6 +1264,12 @@ Ext.define('widgets.line_graph.line_graph' , {
 
 	afterSetExtremes: function(e) {
 		var me = this.chart.options.cwidget;
+
+		if (me.onDoRefresh){
+			me.onDoRefresh = false;
+			return
+		}
+
 		if (me.timeNav) {
 			var from = Math.round(e.min, 0);
 			var to = Math.round(e.max, 0);
