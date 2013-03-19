@@ -90,7 +90,8 @@ Ext.define('widgets.topology_viewer.topology_viewer' , {
 	},
 
 	onResize : function() {
-		this.sigmaContainer.resize();
+		if(this.sigmaContainer)
+			this.sigmaContainer.resize();
 	},
 
 	//-------------------Sigma related functions------------------
