@@ -157,7 +157,7 @@ class cengine(multiprocessing.Process):
 				msg.ack()
 		except:
 			msg.ack()
-			if (event['rk'] not in self.rk_on_error):
+			if event['rk'] not in self.rk_on_error:
 				self.logger.error("Impossible to deal with: %s" % event)
 				self.rk_on_error.append(event['rk'])
 
