@@ -52,7 +52,6 @@ function pre_update(){
 	rm $PREFIX/etc/init.d/webserver &> /dev/null || true
 	rm $PREFIX/etc/init.d/websocket &> /dev/null || true
 	
-	$PREFIX/bin/webcore_minimizer
 	check_code $?
 }
 
@@ -66,6 +65,7 @@ function post_update(){
 
 	mkdir -p $PREFIX/var/www/widgets
 	
+	$PREFIX/bin/webcore_minimizer
 	check_code $?
 }
 
