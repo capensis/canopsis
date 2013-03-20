@@ -39,4 +39,5 @@ You can see the documentation wiki at https://github.com/capensis/canopsis-doc/w
 ## Links:
 * Wiki: https://github.com/capensis/canopsis/wiki/_pages
 * Community: http://www.canopsis.org
+* Forum (french): http://forums.monitoring-fr.org/index.php/board,127.0.html
 
