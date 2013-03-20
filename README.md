@@ -1,3 +1,4 @@
+# Canopsis
 ![Screenshot](https://raw.github.com/capensis/canopsis/develop/screenshots/01.png)
 
 ## What this ? Where are we going ?
