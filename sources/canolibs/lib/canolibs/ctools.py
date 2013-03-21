@@ -51,7 +51,7 @@ def calcul_pct(data, total=None):
 	return data_pct
 
 #############################################
-RE_PERF_DATA = re.compile("('?([0-9A-Za-z/\\\:\.%%\-{}\?_ ]*)'?=([0-9.,]*)(([A-Za-z%%/]*))(;@?([0-9.,]*):?)?(;@?([0-9.,]*):?)?(;@?([0-9.,]*):?)?(;@?([0-9.,]*):?)?(;? ?))")
+RE_PERF_DATA = re.compile("('?([0-9A-Za-z/\\\:\.%%\-{}\?\[\]_ ]*)'?=(\-?[0-9.,]*)(([A-Za-z%%/]*))(;@?(\-?[0-9.,]*):?)?(;@?(\-?[0-9.,]*):?)?(;@?(\-?[0-9.,]*):?)?(;@?(\-?[0-9.,]*):?)?(;? ?))")
 
 def parse_perfdata(perf_data_raw):
 		# 'label'=value[UOM];[warn];[crit];[min];[max]
@@ -88,7 +88,6 @@ def parse_perfdata(perf_data_raw):
 				i+=1
 				if i==15:
 					try:
-						logger.debug(" + %s" % perf_data)
 						perf_data_clean = {}
 						for key in perf_data.keys():
 							if perf_data[key]:
@@ -100,7 +99,7 @@ def parse_perfdata(perf_data_raw):
 									else:
 										logger.debug("Invalid value, '%s' = '%s'" % (key, perf_data[key]))
 								
-								#logger.debug("   + %s: %s" % (key, perf_data_clean[key]))
+								#logger.debug("   + %s: %s" % (key, perf_data_clean[key]))	
 					
 						try:
 							value = perf_data_clean['value']
@@ -108,7 +107,19 @@ def parse_perfdata(perf_data_raw):
 							perf_data_array.append(perf_data_clean)
 						except Exception, err:
 							logger.warning("perf_data: Missing fields %s (%s)" % (err, perf_data_clean))
-							logger.debug("perf_data: Raw: %s" % perf_data_raw)
+							logger.warning("perf_data: Raw: %s" % perf_data_raw)
+
+						if not perf_data_clean.get('unit', None):
+							# split: g[in_bps]= ...
+							metric_ori = perf_data_clean['metric']
+							if metric_ori[len(metric_ori)-1] == ']':
+								metric_ori = metric_ori[:len(metric_ori)-1]
+								metric = metric_ori.split('[', 1)
+								if len(metric) == 2:
+									 perf_data_clean['metric'] = metric[0]
+									 perf_data_clean['unit'] = metric[1]
+
+						logger.debug(" + %s" % perf_data_clean)
 						
 					except Exception, err:
 						
