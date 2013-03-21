@@ -128,3 +128,28 @@ def get_widgets_css():
 	response.content_type = 'text/css'
 	return output
 
+#### external widgets libs
+@get('/ui/thirdpartylibs.js', skip=['checkAuthPlugin'])
+def get_external_widgets_libs():
+	widgets =  get_internal_widgets()
+	widgets += get_external_widgets()
+
+	output = ""
+
+	logger.debug(" + Search all widgets thirdparty libs...")
+	for widget in widgets:
+		widget_path = "%s/widgets/%s/libs" % (www_path, widget)
+		if not os.path.exists(widget_path):
+			continue
+
+		list_of_files = os.listdir(widget_path)
+		for filename in [_file for _file in list_of_files if '.js' in _file]:
+			with open('%s/%s' % (widget_path,filename), 'r') as f:
+				output += f.read()
+
+	response.content_type = 'application/javascript'
+	return output
+
+
+
+
