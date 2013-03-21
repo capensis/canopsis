@@ -76,6 +76,8 @@ class cengine(multiprocessing.Process):
 		self.use_internal_queue = use_internal_queue
 		
 		self.send_stats_event = True
+
+		self.rk_on_error = []
 				
 		self.logger.info("Engine initialised")
 		
@@ -141,17 +143,25 @@ class cengine(multiprocessing.Process):
 		self.logger.info("End of Engine")
 		
 	def on_amqp_event(self, event, msg):
-		if self.use_internal_queue:
-			if self.input_queue.full():
-				self.logger.warning("Stop AMQP Flow")
-				self.amqp.paused = True
-				msg.requeue()
+		try:
+			if self.use_internal_queue:
+				if self.input_queue.full():
+					self.logger.warning("Stop AMQP Flow")
+					self.amqp.paused = True
+					msg.requeue()
+				else:
+					self.input_queue.put(event)
+					msg.ack()
 			else:
-				self.input_queue.put(event)
+				self._work(event)
 				msg.ack()
-		else:
-			self._work(event)
+		except:
 			msg.ack()
+			if event['rk'] not in self.rk_on_error:
+				self.logger.error("Impossible to deal with: %s" % event)
+				self.rk_on_error.append(event['rk'])
+
+			self.next_queue(event)
 	
 	def _work(self, event, *args, **kargs):
 		start = time.time()
