@@ -407,7 +407,7 @@ Ext.define('widgets.weather.brick' , {
 							if (!this.fullscreenMode) {
 								global.tabsCtrl.open_view({ view_id: record.get('_id'), title: _(record.get('crecord_name')) });
 							}else {
-								var url = Ext.String.format('http://{0}/static/canopsis/display_view.html?view_id={1}&auth_key={2}',
+								var url = Ext.String.format('http://{0}/static/canopsis/display_view.html?view_id={1}&authkey={2}',
 									$(location).attr('host'),
 									record.get('_id'),
 									global.account.authkey
@@ -435,7 +435,7 @@ Ext.define('widgets.weather.brick' , {
 				var record = store.findExact('crecord_name', this.link);
 				if (record != -1) {
 					record = store.getAt(record);
-					var url = Ext.String.format('http://{0}/static/canopsis/display_view.html?view_id={1}&auth_key={2}',
+					var url = Ext.String.format('http://{0}/static/canopsis/display_view.html?view_id={1}&authkey={2}',
 						$(location).attr('host'),
 						record.get('_id'),
 						global.account.authkey

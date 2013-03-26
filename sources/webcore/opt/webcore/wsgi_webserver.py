@@ -167,7 +167,7 @@ session_opts = {
 @route('/:lang/static/:path#.+#',	skip=['checkAuthPlugin'])
 @route('/static/:path#.+#',			skip=['checkAuthPlugin'])
 def server_static(path, lang='en'):
-	key = request.params.get('auth_key', default=None)
+	key = request.params.get('authkey', default=None)
 	if key:
 		autoLogin(key)
 
@@ -184,7 +184,7 @@ def favicon():
 @route('/:lang/:key',		skip=['checkAuthPlugin'])
 @route('/:lang/index.html',	skip=['checkAuthPlugin'])
 def index(key=None, lang='en'):
-	uri_key = request.params.get('auth_key', default=None)
+	uri_key = request.params.get('authkey', default=None)
 	if not key and uri_key:
 		key = uri_key
 

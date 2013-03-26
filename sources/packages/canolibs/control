@@ -2,7 +2,7 @@
 
 NAME="canolibs"
 VERSION=0.5
-RELEASE=1
+RELEASE=2
 DESCRIPTION=""
 REQUIRES="canohome python python-libs"
 

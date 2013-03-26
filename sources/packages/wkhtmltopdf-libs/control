@@ -2,7 +2,7 @@
 
 NAME="wkhtmltopdf-libs"
 VERSION="0.4"
-RELEASE=3
+RELEASE=4
 DESCRIPTION=""
 REQUIRES="wkhtmltopdf"
 
