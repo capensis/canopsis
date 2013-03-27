@@ -75,7 +75,6 @@ Ext.define('canopsis.controller.Tabs', {
 	},
 
 	openNextTab: function(){
-		console.log('OPEN NEXT TAB')
 		var maintabs = Ext.getCmp('main-tabs');
 		var maintabLength =  maintabs.items.length;
 
