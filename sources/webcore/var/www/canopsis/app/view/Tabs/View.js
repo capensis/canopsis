@@ -21,6 +21,7 @@
 Ext.define('canopsis.view.Tabs.View' , {
 	extend: 'Ext.tab.Panel',
 	alias: 'widget.TabsView',
+	requires: ['canopsis.lib.view.cnumberPrompt'],
 
 	activeTab: 0, // index or id
 	bodyBorder: false,
@@ -40,18 +41,22 @@ Ext.define('canopsis.view.Tabs.View' , {
 			scope:this,
 			toggleHandler: function(button, state) {
 				if (state) {
-					Ext.Msg.prompt(
+					var prompt = Ext.create('canopsis.lib.view.cnumberPrompt')
+					prompt.prompt(
 						_('Question'),
 						_('Enter the delay to stay on each view, in minutes'),
 						function(button,text,obj){
 							var number = parseInt(text)
-							if(isNaN(number)){
+						/*	if(isNaN(number)){
 								global.notify.notify(_('Warning'),_('You must enter only number'))
-								return
-							}
+								this.toggle(false,true)
+								return false
+							}*/
 							if(button == 'ok'){
 								this.up('tabpanel').fireEvent('AutoRotateView',true, number)
 								this.setIconCls('icon-control-pause');
+							}else{
+								this.toggle(false,true)
 							}
 						},
 						button

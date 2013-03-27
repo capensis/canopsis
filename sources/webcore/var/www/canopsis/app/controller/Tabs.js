@@ -61,7 +61,7 @@ Ext.define('canopsis.controller.Tabs', {
 			interval: 5*60*1000,
 			scope: this
 		}
-		this.taskRotateIndex = -1
+		this.taskRotateIndex = 0
 	},
 
 	auto_rotate_view:function(_switch,delay){
@@ -79,12 +79,11 @@ Ext.define('canopsis.controller.Tabs', {
 		var maintabs = Ext.getCmp('main-tabs');
 		var maintabLength =  maintabs.items.length;
 
-		this.taskRotateIndex = this.taskRotateIndex + 1
-
-		if(this.taskRotateIndex == maintabLength){
+		if((this.taskRotateIndex+1) == maintabLength){
 			maintabs.setActiveTab(0);
-			this.taskRotateIndex = -1
+			this.taskRotateIndex = 0
 		}else{
+			this.taskRotateIndex = this.taskRotateIndex + 1
 			maintabs.setActiveTab(this.taskRotateIndex);
 		}
 		
