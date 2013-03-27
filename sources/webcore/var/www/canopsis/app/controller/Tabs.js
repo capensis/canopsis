@@ -40,7 +40,9 @@ Ext.define('canopsis.controller.Tabs', {
 						this.open_saved_views();
 						this.tabpanel_rendered = true;
 					}
-				}
+				},
+				reload_active_view:this.reload_active_view,
+				AutoRotateView:this.auto_rotate_view
 			}
 		});
 
@@ -52,6 +54,40 @@ Ext.define('canopsis.controller.Tabs', {
 		}
 
 		global.tabsCtrl = this;
+
+		//taskRotate
+		this.taskRotate = {
+			run: this.openNextTab,
+			interval: 5*60*1000,
+			scope: this
+		}
+		this.taskRotateIndex = -1
+	},
+
+	auto_rotate_view:function(_switch,delay){
+		if(delay)
+			this.taskRotate.interval = delay*60*1000
+
+		if(_switch)
+			Ext.TaskManager.start(this.taskRotate)
+		else
+			Ext.TaskManager.stop(this.taskRotate)
+	},
+
+	openNextTab: function(){
+		console.log('OPEN NEXT TAB')
+		var maintabs = Ext.getCmp('main-tabs');
+		var maintabLength =  maintabs.items.length;
+
+		this.taskRotateIndex = this.taskRotateIndex + 1
+
+		if(this.taskRotateIndex == maintabLength){
+			maintabs.setActiveTab(0);
+			this.taskRotateIndex = -1
+		}else{
+			maintabs.setActiveTab(this.taskRotateIndex);
+		}
+		
 	},
 
 	clearTabsCache: function() {

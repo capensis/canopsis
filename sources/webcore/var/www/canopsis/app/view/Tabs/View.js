@@ -25,7 +25,52 @@ Ext.define('canopsis.view.Tabs.View' , {
 	activeTab: 0, // index or id
 	bodyBorder: false,
 	componentCls: 'cps-headertabs',
-	plain: true
+	plain: true,
+	tabBar:{
+		//plain:true,
+		items:[{
+		    xtype: 'tbfill'
+		},{
+		    iconCls: 'icon-control-play',
+			tooltip: _('Rotate view'),
+			xtype:'button',
+			border: 0,
+			style:'background-color:#e0e0e0;background-image:none;',
+			enableToggle: true,
+			scope:this,
+			toggleHandler: function(button, state) {
+				if (state) {
+					Ext.Msg.prompt(
+						_('Question'),
+						_('Enter the delay to stay on each view, in minutes'),
+						function(button,text,obj){
+							var number = parseInt(text)
+							if(isNaN(number)){
+								global.notify.notify(_('Warning'),_('You must enter only number'))
+								return
+							}
+							if(button == 'ok'){
+								this.up('tabpanel').fireEvent('AutoRotateView',true, number)
+								this.setIconCls('icon-control-pause');
+							}
+						},
+						button
+					)
+				}else {
+					button.setIconCls('icon-control-play');
+					button.up('tabpanel').fireEvent('AutoRotateView',false)
+				}
+			}
+		},{
+		    iconCls: 'icon-control-repeat',
+			tooltip: _('Refresh view'),
+		    xtype:'button',
+		    style:'background-color:#e0e0e0;background-image:none;',
+		    border: 0,
+		    handler:function(btn,state){
+				this.up('tabpanel').fireEvent('reload_active_view')
+			}
+		}]
+	},
 
 });
-
