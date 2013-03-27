@@ -91,7 +91,7 @@ class Wrapper(object):
 
 		cmd = "wkhtmltopdf -O %s -s %s %s %s %s --window-status %s\
 				-T 21mm --header-line --header-spacing 5\
-				'http://127.0.0.1:8082/%s/static/canopsis/index.html?exportMode=true&view_id=%s&from=%s&to=%s&auth_key=%s'\
+				'http://127.0.0.1:8082/%s/static/canopsis/index.html?exportMode=true&view_id=%s&from=%s&to=%s&authkey=%s'\
 				'%s/%s' 2>&1 | grep -v\
 				'settings.windowStatus:ready'" % (
 													self.settings['orientation'], 

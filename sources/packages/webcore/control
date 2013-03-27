@@ -2,7 +2,7 @@
 
 NAME="webcore"
 VERSION=0.5
-RELEASE=1
+RELEASE=2
 DESCRIPTION=""
 REQUIRES="canohome python canolibs supervisord-conf wkhtmltopdf-libs nodejs-libs"
 
@@ -63,6 +63,10 @@ function post_update(){
 		check_code $?
 	fi
 
+        if [ ! -e $PREFIX/bin/uglifyjs ]; then
+                ln -s $PREFIX/lib/node_modules/uglify-js/bin/uglifyjs $PREFIX/bin/uglifyjs
+        fi
+	
 	mkdir -p $PREFIX/var/www/widgets
 	
 	$PREFIX/bin/webcore_minimizer
