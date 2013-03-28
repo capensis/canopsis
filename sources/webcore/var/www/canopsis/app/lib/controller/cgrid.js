@@ -712,7 +712,7 @@ Ext.define('canopsis.lib.controller.cgrid', {
 							id: id,
 							EditMethod: this.EditMethod,
 							editing: editing,
-							record: item.copy
+							record: item.copy()
 						});
 
 						var win = Ext.create('widget.window', {
