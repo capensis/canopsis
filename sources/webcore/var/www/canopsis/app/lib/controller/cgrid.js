@@ -674,7 +674,7 @@ Ext.define('canopsis.lib.controller.cgrid', {
 		return false;
     },
 
-	_duplicateRecord: function(view, item, index) {
+	_duplicateRecord: function() {
 		log.debug('clicked duplicateRecord', this.logAuthor);
 		var grid = this.grid;
 		var item = grid.getSelectionModel().getSelection()[0];
@@ -712,7 +712,7 @@ Ext.define('canopsis.lib.controller.cgrid', {
 							id: id,
 							EditMethod: this.EditMethod,
 							editing: editing,
-							record: item.copy
+							record: data
 						});
 
 						var win = Ext.create('widget.window', {
