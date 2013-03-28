@@ -68,22 +68,24 @@ Ext.define('canopsis.controller.Tabs', {
 		if(delay)
 			this.taskRotate.interval = delay*60*1000
 
-		if(_switch)
+		if(_switch){
+			this.taskRotateIndex = 0
 			Ext.TaskManager.start(this.taskRotate)
-		else
+		}else{
 			Ext.TaskManager.stop(this.taskRotate)
+		}
 	},
 
 	openNextTab: function(){
 		var maintabs = Ext.getCmp('main-tabs');
 		var maintabLength =  maintabs.items.length;
 
-		if((this.taskRotateIndex+1) == maintabLength){
+		if((this.taskRotateIndex) == maintabLength){
 			maintabs.setActiveTab(0);
 			this.taskRotateIndex = 0
 		}else{
-			this.taskRotateIndex = this.taskRotateIndex + 1
 			maintabs.setActiveTab(this.taskRotateIndex);
+			this.taskRotateIndex = this.taskRotateIndex + 1
 		}
 		
 	},

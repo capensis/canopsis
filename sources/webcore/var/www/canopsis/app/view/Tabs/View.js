@@ -46,7 +46,7 @@ Ext.define('canopsis.view.Tabs.View' , {
 						_('Question'),
 						_('Enter the delay to stay on each view, in minutes'),
 						function(button,text,obj){
-							var number = parseInt(text)
+							var number = parseFloat(text)
 						/*	if(isNaN(number)){
 								global.notify.notify(_('Warning'),_('You must enter only number'))
 								this.toggle(false,true)
@@ -59,7 +59,9 @@ Ext.define('canopsis.view.Tabs.View' , {
 								this.toggle(false,true)
 							}
 						},
-						button
+						button,
+						undefined,
+						1
 					)
 				}else {
 					button.setIconCls('icon-control-play');

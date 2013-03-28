@@ -24,7 +24,8 @@
 Ext.define('canopsis.lib.view.cnumberPrompt', {
     extend: 'Ext.window.MessageBox',
 
-    MessageBoxMinVal: 1,
+    MessageBoxMinVal: 0.1,
+    defaultValue: 1,
 
     initComponent: function() {
         this.callParent();
@@ -36,7 +37,8 @@ Ext.define('canopsis.lib.view.cnumberPrompt', {
 
     _createNumberField: function() {
         //copy paste what is being done in the initComonent to create the textfield
-        return new Ext.form.field.Number({
+        return Ext.widget('numberfield',{
+                       //xtype: 'numberfield',
                         id: this.id + '-textfield',
                         anchor: '100%',
                         value:1,
