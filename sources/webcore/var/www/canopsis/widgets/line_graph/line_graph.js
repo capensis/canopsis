@@ -1108,6 +1108,7 @@ Ext.define('widgets.line_graph.line_graph' , {
 				name: label,
 				metric: referent_serie.options.metric + ' (TREND)',
 				bunit: referent_serie.options.bunit,
+				yAxis:referent_serie.options.yAxis,
 				data: [],
 				marker: {enabled: false},
 				dashStyle: trend_dashStyle,
