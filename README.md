@@ -4,9 +4,9 @@
 ## What's this ? Where are we going ?
 `Canopsis` is an open-source hypervisor whose goal is to aggregate informations and events coming from multiple sources to create a global solution for monitoring and resources administration.
 
-Built to last on top of proven Open Source technologies by and for all IT professionals. It is an event based architecture and it is modular by design. Plug your infrastructure tools like `Syslog`, `Nagios`, [`Shinken`](https://github.com/naparuba/shinken), `...` to `Canopsis` and you're ready to go.
+Built to be on top of proven Open Source technologies by and for all IT professionals. It's an event based architecture and modular by design. Plug your infrastructure tools like `Syslog`, `Nagios`, [`Shinken`](https://github.com/naparuba/shinken), `...` to `Canopsis` and you're ready to go.
 
-We want to integrate to `Canopsis` datas coming from various sources and from differents types (performance, availability, events datas). We should be able to construct dashboards that mix such datas.
+We want to integrate to `Canopsis` data coming from various sources and from differents types (performance, availability, events datas). We should be able to construct dashboards that mix such data.
 
 ## How to try ?
 
