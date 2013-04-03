@@ -1,7 +1,7 @@
 # Canopsis
 ![Screenshot](https://raw.github.com/capensis/canopsis/develop/screenshots/01.png)
 
-## What this ? Where are we going ?
+## What's this ? Where are we going ?
 `Canopsis` is an open-source hypervisor whose goal is to aggregate informations and events coming from multiple sources to create a global solution for monitoring and resources administration.
 
 Built to last on top of proven Open Source technologies by and for all IT professionals. It is an event based architecture and it is modular by design. Plug your infrastructure tools like `Syslog`, `Nagios`, [`Shinken`](https://github.com/naparuba/shinken), `...` to `Canopsis` and you're ready to go.
