@@ -29,10 +29,10 @@ Ext.define('canopsis.view.Account.Form', {
 
 	layout: 'fit',
 
-	width:350,
-	height:350,
+	width: 350,
+	height: 350,
 
-	items:[{
+	items: [{
 		xtype: 'tabpanel',
 		plain: true,
 		border: false,
@@ -41,17 +41,17 @@ Ext.define('canopsis.view.Account.Form', {
 			border: false,
 			autoScroll: true
 		},
-		items:[{
+		items: [{
 				title: _('General options'),
 				defaultType: 'textfield',
 				bodyStyle: 'padding:5px 5px 0',
 				layout: 'anchor',
-				border:false,
-				items:[{
-					xtype:'fieldset',
+				border: false,
+				items: [{
+					xtype: 'fieldset',
 					defaultType: 'textfield',
-					border:false,
-					items:[{
+					border: false,
+					items: [{
 						fieldLabel: _('Login'),
 						name: 'user',
 						allowBlank: false,
@@ -90,11 +90,11 @@ Ext.define('canopsis.view.Account.Form', {
 				}]
 		},{
 			title: _('Groups'),
-			xtype:'grid',
+			xtype: 'grid',
 			store: 'Groups',
 			autoScroll: true,
-			selType:'checkboxmodel',
-			selModel:{mode:'MULTI', showHeaderCheckbox: false},
+			selType: 'checkboxmodel',
+			selModel: {mode: 'MULTI', showHeaderCheckbox: false},
 			columns: [
 				{text: _('Name'), dataIndex: 'crecord_name', flex: 1}
 			],

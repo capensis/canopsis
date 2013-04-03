@@ -39,7 +39,7 @@ Ext.define('canopsis.view.View.TreePanel' , {
 			text: _('Name'),
 			flex: 5,
 			dataIndex: 'crecord_name',
-			renderer: function(value, metaData, record) { return "<span name='view."+record.get('crecord_name')+"'></span>" + value ; }
+			renderer: function(value, metaData, record) { return "<span name='view." + record.get('crecord_name') + "'></span>" + value; }
 		},{
 			text: _('Export Options'),
 			flex: 1,
@@ -197,15 +197,15 @@ Ext.define('canopsis.view.View.TreePanel' , {
 		this.fireEvent('exportPdf', view);
 	},
 
-	add_to_context_menu: function(item_array){
+	add_to_context_menu: function(item_array) {
 		item_array.push(
 			Ext.create('Ext.Action', {
 				iconCls: 'icon-preferences',
 				text: _('Options'),
 				action: 'OpenViewOption'
 			})
-		)
-		return item_array
+		);
+		return item_array;
 	}
 
 });

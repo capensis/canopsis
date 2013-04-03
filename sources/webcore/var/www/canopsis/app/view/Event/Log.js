@@ -197,16 +197,16 @@ Ext.define('canopsis.view.Event.Log' , {
 		//---------------------bind controller----------------------
 		this.ctrl = Ext.create('canopsis.lib.controller.cgrid');
 
-		var stop = (new Date().getTime())/1000
-		var start =  stop - 86400
-		
+		var stop = (new Date().getTime()) / 1000;
+		var start = stop - 86400;
+
 		// add filter for timestamp
-		var initialFilter ={'$and':[{
+		var initialFilter = {'$and': [{
 								timestamp: {'$gt': parseInt(start)}},
 								{timestamp: {'$lt': parseInt(stop)}}]
-							}
+							};
 		this.store = Ext.create('canopsis.store.EventLogs');
-		this.ctrl.filter_id = this.store.addFilter(initialFilter)
+		this.ctrl.filter_id = this.store.addFilter(initialFilter);
 		//----------------
 		this.callParent(arguments);
 

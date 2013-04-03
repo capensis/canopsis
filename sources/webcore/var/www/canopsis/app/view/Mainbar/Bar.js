@@ -194,7 +194,7 @@ Ext.define('canopsis.view.Mainbar.Bar' , {
 			menu_build = menu_build.concat([
 				{
 					iconCls: 'icon-mainbar-topology',
-					text: _('Topologies') + " (BETA)",
+					text: _('Topologies') + ' (BETA)',
 					action: 'openViewMenu',
 					viewId: 'view.topology_manager'
 				}
@@ -387,7 +387,7 @@ Ext.define('canopsis.view.Mainbar.Bar' , {
 					items: menu_preferences
 				}
 
-			},'-',{
+			},'-', {
 				iconCls: 'icon-preferences',
 				width: 36,
 				menu: {
@@ -408,13 +408,13 @@ Ext.define('canopsis.view.Mainbar.Bar' , {
 							onClick: function() { window.open('https://github.com/capensis/canopsis-doc/wiki', '_blank'); }
 						},{
 							iconCls: 'icon-community',
-							text: _("Community"),
+							text: _('Community'),
 							onClick: function() { window.open('http://www.canopsis.org', '_blank'); }
 						},{
 							iconCls: 'icon-forum',
 							text: _('Forum'),
 							onClick: function() { window.open('http://forums.monitoring-fr.org/index.php/board,127.0.html', '_blank'); }
-						},'-',{
+						},'-', {
 							iconCls: 'icon-mainbar-sources',
 							text: '<b>Commit</b>: ' + global.commit.substr(0, 10),
 							onClick: function() {
@@ -423,11 +423,11 @@ Ext.define('canopsis.view.Mainbar.Bar' , {
 							}
 						},{
 							iconCls: 'icon-issue',
-							text: _("Report a issue"),
+							text: _('Report a issue'),
 							onClick: function() { window.open('https://github.com/capensis/canopsis/issues', '_blank'); }
 						},{
 							iconCls: 'icon-github',
-							text: _('Fork Me') + " !",
+							text: _('Fork Me') + ' !',
 							onClick: function() { window.open('https://github.com/capensis/canopsis', '_blank'); }
 						}
 					]
