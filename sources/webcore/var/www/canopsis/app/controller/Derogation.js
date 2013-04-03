@@ -135,7 +135,7 @@ Ext.define('canopsis.controller.Derogation', {
 			title: 'Derogation',
 			items: form,
 			closable: false,
-			resizable: false,
+			resizable: true,
 			constrain: true,
 			renderTo: Ext.getCmp('main-tabs').getActiveTab().id,
 			closeAction: 'destroy'
