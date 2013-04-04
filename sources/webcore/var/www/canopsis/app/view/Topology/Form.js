@@ -148,10 +148,10 @@ Ext.define('canopsis.view.Topology.Form', {
 				{name: 'source_type'},
 				{name: 'event_type'},
 				{name: 'description', defaultValue: ''},
-				{name: 'nodeMaxOutConnexion',defaultValue: 1},
+				{name: 'nodeMaxOutConnexion', defaultValue: 1},
 				{name: 'nodeMaxInConnexion', defaultValue: 2},
 				{name: 'form', defaultValue: undefined}
-				
+
 			 ],
 			 proxy: {
 				 type: 'ajax',
@@ -163,12 +163,12 @@ Ext.define('canopsis.view.Topology.Form', {
 		});
 
 		// Translate Operators
-		store.on('load', function(store, records){
-			for (var i=0; i < records.length; i++){
+		store.on('load', function(store, records) {
+			for (var i = 0; i < records.length; i++) {
 				var record = records[i];
-				record.set('description', _(record.get('description')))
+				record.set('description', _(record.get('description')));
 			}
-		}, this, {single: true})
+		}, this, {single: true});
 
 		this.object_grid = Ext.create('Ext.grid.Panel', {
 			store: store,

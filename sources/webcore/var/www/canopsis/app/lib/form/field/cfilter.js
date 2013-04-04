@@ -63,6 +63,9 @@ Ext.define('cfilter.array_field', {
 				value: value
 			}];
 
+		if(Ext.isIE && this.itemXtype == 'textfield')
+			config[0].width = 120
+
 		if (removeButton)
 			config.push({
 				xtype: 'button',

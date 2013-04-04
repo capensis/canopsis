@@ -122,7 +122,7 @@ Ext.define('canopsis.view.ReportingBar.ReportingBar' , {
 		this.toggleButton = this.add({
 			xtype: 'button',
 			iconCls: 'icon-calendar',
-			action:'toggleMode',
+			action: 'toggleMode',
 			tooltip: _('Toggle to advanced/simple mode')
 		},{
 			xtype: 'button',

@@ -24,10 +24,10 @@ Ext.define('canopsis.view.Curves.Form', {
 	alias: 'widget.CurvesForm',
 
 	logAuthor: '[view][Curves][form]',
-	layout:'vbox',
+	layout: 'vbox',
 
 	border: false,
-	items:[
+	items: [
 		{
 			name: 'id',
 			hidden: true
@@ -94,5 +94,5 @@ Ext.define('canopsis.view.Curves.Form', {
 			inputValue: true,
 			uncheckedValue: false
 		}]
-			
+
 });

@@ -164,8 +164,11 @@ Ext.define('canopsis.controller.Schedule', {
 		log.debug('Clicked on run item', this.logAuthor);
 
 		options = item.get('kwargs');
-		view_name = options.viewname;
-		start_time = options.starttime;
+		view_name = options.viewName;
+		start_time = undefined
+		if(options.interval)
+			start_time = Ext.Date.now() -  (options.interval *1000);
+
 		mail = options.mail;
 		if (mail)
 			mail = Ext.encode(mail);
