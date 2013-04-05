@@ -162,7 +162,7 @@ Ext.define('canopsis.controller.Schedule', {
 
 	runItem: function(item) {
 		log.debug('Clicked on run item', this.logAuthor);
-
+		
 		options = item.get('kwargs');
 		view_name = options.viewName;
 		start_time = undefined
@@ -171,7 +171,7 @@ Ext.define('canopsis.controller.Schedule', {
 
 		mail = options.mail;
 		if (mail)
-			mail = Ext.encode(mail);
+			mail = Ext.encode(mail.recipients);
 
 		this.getController('Reporting').launchReport(view_name, start_time, undefined, mail);
 	},
