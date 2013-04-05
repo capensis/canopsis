@@ -120,8 +120,7 @@ def render_pdf(fileName=None, viewName=None, startTime=None, stopTime=None, inte
 	os.remove(file_path)
 	
 	#Subtask mail (if needed)
-	if isinstance(mail, dict) and mail['sendMail']:
-		del mail['sendMail']
+	if isinstance(mail, dict):
 
 		#get cfile
 		try:

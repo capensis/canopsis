@@ -171,7 +171,7 @@ Ext.define('canopsis.controller.Schedule', {
 
 		mail = options.mail;
 		if (mail)
-			mail = Ext.encode(mail.recipients);
+			mail = Ext.encode(mail);
 
 		this.getController('Reporting').launchReport(view_name, start_time, undefined, mail);
 	},

@@ -85,6 +85,7 @@ def generate_report(startTime, stopTime,view_name,mail=None):
 	logger.debug('view_name:   %s' % view_name)
 	logger.debug('startTime:   %s' % startTime)
 	logger.debug('stopTime:    %s' % stopTime)
+	logger.debug('mail:    %s' % mail)
 
 	result = None
 	
