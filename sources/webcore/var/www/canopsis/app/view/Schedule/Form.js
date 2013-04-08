@@ -238,7 +238,7 @@ Ext.define('canopsis.view.Schedule.Form', {
     initComponent: function() {
     	//IE hack
     	if(Ext.isIE){
-    		this.height = 600
+    		this.height = 500
     		this.width = 300
     	}
 
