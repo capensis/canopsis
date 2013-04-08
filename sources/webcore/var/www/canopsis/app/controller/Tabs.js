@@ -69,8 +69,13 @@ Ext.define('canopsis.controller.Tabs', {
 	},
 
 	reload_active_view: function() {
-		log.debug('Reload active view', this.logAuthor);
 		var tab = Ext.getCmp('main-tabs').getActiveTab();
+		
+		// In edit mode
+		if (tab.edit)
+			return
+
+		log.debug('Reload active view', this.logAuthor);
 		if (tab.displayed) {
 			tab.removeAll(true);
 			tab.displayed = false;
