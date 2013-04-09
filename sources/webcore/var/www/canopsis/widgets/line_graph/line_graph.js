@@ -775,10 +775,13 @@ Ext.define('widgets.line_graph.line_graph' , {
 			for (var i = 0; i < me.chart.series.length; i++) {
 				var serie = me.chart.series[i];
 
+				log.debug(' + ' + serie.name + ', ' + serie.data.length + ' point(s)', me.logAuthor);
+
 				// Don't shift timeNav
 				if (serie.name == 'timeNav' || serie.name == 'Navigator')
 					continue;
 
+				// Don't shift short serie
 				if (serie.data.length <= 2)
 					continue;
 
@@ -789,7 +792,7 @@ Ext.define('widgets.line_graph.line_graph' , {
 					fpoint = serie.data[0];
 					removed += 1;
 				}
-				log.debug(' + ' + serie.name + ', ' + removed + ' point(s) removed', me.logAuthor);
+				log.debug(' - ' + removed + ' point(s) removed', me.logAuthor);
 			}
 
 			me.lastShift = now;
