@@ -73,7 +73,7 @@ Ext.define('canopsis.view.Schedule.Form', {
 							valueField: 'user',
 							typeAhead: false,
 							allowBlank: false,
-							value: global.account.user,
+							//value: global.account.user,
 							queryMode: 'remote'
 						}
 					]
@@ -249,6 +249,7 @@ Ext.define('canopsis.view.Schedule.Form', {
     		dayWeekCombo = this.down('*[name="crontab_day_of_week"]'),
     		monthCombo = this.down('*[name="crontab_month"]');
 
+
 		durationCombo.on('change', function(combo,newValue,oldValue) {
 			switch (newValue) {
 				case 'day':
@@ -276,6 +277,8 @@ Ext.define('canopsis.view.Schedule.Form', {
 					break;
 			}
 		},this);
+
+		 this.down('*[name="exporting_owner"]').setValue(global.account.user)
 
     }
 
