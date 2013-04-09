@@ -243,7 +243,7 @@ def getTimeSteps(start, stop, interval):
 		logger.debug('   + Use interval')
 		timeSteps = range(start, stop+interval, interval)
 
-	logger.debug(timeSteps)
+	#logger.debug(timeSteps)
 
 	return timeSteps
 
@@ -294,7 +294,7 @@ def aggregate(points, max_points=None, interval=None, atype='MEAN', agfn=None, m
 			agfn = vmean
 
 	logger.debug(" + Interval: %s" % interval)
-	logger.debug(" + Points: %s" % points)
+	#logger.debug(" + Points: %s" % points)
 
 	rpoints=[]
 	
