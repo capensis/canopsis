@@ -240,7 +240,7 @@ Ext.define('cfilter.object' , {
 		xtype: 'panel',
 		name: 'lowerPanel',
 		margin: '0 0 0 20',
-		bodyStyle: 'border-top:none;border-bottom:none;border-right:none;'
+		bodyStyle: (Ext.isIE)?'border-color:white;':'border-top:none;border-bottom:none;border-right:none;' 
 	}],
 
 	initComponent: function() {
@@ -322,7 +322,7 @@ Ext.define('cfilter.object' , {
 			filter: data
 		});
 
-		this.down('panel[name=lowerPanel]').add(cfilter);
+		var test = this.down('panel[name=lowerPanel]').add(cfilter);
 
 		if (!this.haveInnerCfilter)
 			this.haveInnerCfilter = true;
