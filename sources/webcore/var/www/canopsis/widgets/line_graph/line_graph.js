@@ -140,6 +140,7 @@ Ext.define('widgets.line_graph.line_graph' , {
 
 	lastBunit: undefined,
 
+	autoShift: true,
 	lastShift: undefined,
 
 	initComponent: function() {
@@ -259,9 +260,9 @@ Ext.define('widgets.line_graph.line_graph' , {
 				borderColor: this.borderColor,
 				borderWidth: this.borderWidth,
 				backgroundColor: this.backgroundColor,
-					events: {
-						redraw: this.shift
-					}
+				/*events: {
+					redraw: this.shift
+				}*/
 			},
 			exporting: {
 				enabled: (this.exportMode || this.reportMode) ? false : this.exporting_enabled,
@@ -403,7 +404,7 @@ Ext.define('widgets.line_graph.line_graph' , {
 		}
 
 		// Ymax
-	/*	if (this.SeriePercent) {
+		/*if (this.SeriePercent) {
 			this.options.yAxis[0].max = 100;
 			//this.options.yAxis.title.text = 'pct'
 		}*/
@@ -438,8 +439,7 @@ Ext.define('widgets.line_graph.line_graph' , {
 				id: 'timeNav',
 				name: 'timeNav',
 				data: data,
-				showInLegend: false,
-				shift: false
+				showInLegend: false
 			});
 
 			// Disable legend, see: https://github.com/highslide-software/highcharts.com/issues/567
@@ -500,6 +500,24 @@ Ext.define('widgets.line_graph.line_graph' , {
 
 	////////////////////// CORE
 
+	removeLastPointOfAllSeries: function(){
+		me = this;
+		for (var i = 0; i < me.chart.series.length; i++) {
+			var serie = me.chart.series[i];
+
+			// Don't touch timeNav
+			if (serie.name == 'timeNav' || serie.name == 'Navigator')
+				continue;
+			
+			if (serie.data.length){
+				var point = serie.data[serie.data.length-1];
+				log.debug(' + Remove last point of "'+serie.name+'"', this.logAuthor);
+				point.remove(false, false);
+			}
+
+		}
+	},
+
 	makeUrl: function(from, to) {
 		return '/perfstore/values' + '/' + parseInt(from / 1000) + '/' + parseInt(to / 1000);
 	},
@@ -508,22 +526,25 @@ Ext.define('widgets.line_graph.line_graph' , {
 		var now = Ext.Date.now();
 
 		if (this.chart) {
-			//If bar chart, wait full insterval
-			if (! this.reportMode && this.lastRefresh) {
-				if (now < this.lastRefresh + (this.aggregate_interval * 1000) && this.aggregate_interval > 0) {
-					log.debug(' +  Wait for refresh', this.logAuthor);
-					return false;
-				}
-			}
 
-			if (! this.reportMode && this.last_from) {
-				from = this.last_from;
-				if (this.aggregate_interval) {
-					log.debug('End of last interval: ' + from, this.logAuthor);
-					log.debug('Request next interval: ' + from + ' + ' + this.aggregate_interval, this.logAuthor);
-					from = from + (this.aggregate_interval);
+			if (this.last_from)
+				log.debug('Last from: ' + new Date(this.last_from) + " (" + this.last_from + ")", this.logAuthor);
+
+			if (! this.reportMode){
+
+				if (this.last_from)
+					from = this.last_from;
+
+				if (this.aggregate_interval){
+					var aggregate_interval = this.aggregate_interval * 1000;
+
+					//round start and stop time from interval:
+					from = from  + (aggregate_interval - from % aggregate_interval) - aggregate_interval;
+					to =   to    + (aggregate_interval - to   % aggregate_interval);
+
+					// Disable auto shift by default
+					//this.autoShift = false;
 				}
-				to = parseInt(now);
 			}
 
 			if (this.timeNav) {
@@ -564,13 +585,14 @@ Ext.define('widgets.line_graph.line_graph' , {
 
 			}
 
-			log.debug(' + Do Refresh ' + from + ' -> ' + to, this.logAuthor);
-			log.debug(' + Do Refresh ' + new Date(from) + ' -> ' + new Date(to), this.logAuthor);
+			log.debug('Timestamps:', this.logAuthor);
+			log.debug(' + Do Refresh: ' + from + ' -> ' + to, this.logAuthor);
+			log.debug(' + Do Refresh: ' + new Date(from) + ' -> ' + new Date(to), this.logAuthor);
 
 			if (this.nodes) {
 				if (this.nodes.length != 0) {
 					url = this.makeUrl(from, to);
-					this.last_from = to;
+
 					Ext.Ajax.request({
 						url: url,
 						scope: this,
@@ -580,15 +602,20 @@ Ext.define('widgets.line_graph.line_graph' , {
 							var data = Ext.JSON.decode(response.responseText);
 							data = data.data;
 
-							if (this.aggregate_interval) {
-								if (data.length)
-									try {
-										var last_index = data[0].values.length;
-										this.last_from = data[0].values[last_index - 1][0];
-										log.debug('Set last timestamp given as future beggining TS: ' + this.last_from, this.logAuthor);
-									}catch (err) {
-										log.debug("can't find last timestamp, use requested interval", this.logAuthor);
-									}
+							// Get last timestamp on first serie
+							if (data.length && data[0].values.length){
+								var last_index = data[0].values.length - 1;
+								var last_from = data[0].values[last_index][0];
+
+								last_from = (last_from + 1) * 1000;
+
+								// Timestamp of new and old point are equal, remove last point for update
+								if (this.aggregate_interval && this.last_from && this.last_from == last_from)
+									this.removeLastPointOfAllSeries();
+
+								this.last_from = last_from;
+
+								log.debug('Last from: ' + new Date(this.last_from) + " (" + this.last_from + ")", this.logAuthor);
 							}
 
 							this.onRefresh(data);
@@ -699,6 +726,10 @@ Ext.define('widgets.line_graph.line_graph' , {
 					this.chart.yAxis[1].setExtremes(0, 100, false);
 
 				this.chart.hideLoading();
+				
+				if (this.autoShift)
+					this.shift();
+
 				this.chart.redraw();
 			} else {
 				log.debug(' + No data', this.logAuthor);
@@ -725,18 +756,21 @@ Ext.define('widgets.line_graph.line_graph' , {
 	},
 
 	shift: function() {
-		var me = this.options.cwidget;
+		if (this.options && this.options.cwidget)
+			me = this.options.cwidget;
+		else
+			me = this;
 
 		var now = Ext.Date.now();
-
-		var timestamp = now - (me.time_window * 1000);
 
 		if (! me.lastShift)
 			me.lastShift = now;
 
-		if (me.chart.series.length > 0 && now < (me.last_from + 5000) && now > (me.lastShift + 59000)) {
+		//if (me.chart.series.length > 0 && now < (me.last_from + 5000) && now > (me.lastShift + 50000)) {
+		if (me.chart.series.length > 0 && now > (me.lastShift + 50000)) {
 			log.debug('Check shifting (' + me.chart.series.length + ' series):', me.logAuthor);
-			me.lastShift = now;
+			
+			var timestamp = now - (me.time_window * 1000);
 
 			for (var i = 0; i < me.chart.series.length; i++) {
 				var serie = me.chart.series[i];
@@ -751,12 +785,15 @@ Ext.define('widgets.line_graph.line_graph' , {
 				var fpoint = serie.data[0];
 				var removed = 0;
 				while (serie.data.length && fpoint.x < timestamp) {
-					fpoint.remove(false);
+					fpoint.remove(false, false);
 					fpoint = serie.data[0];
 					removed += 1;
 				}
 				log.debug(' + ' + serie.name + ', ' + removed + ' point(s) removed', me.logAuthor);
 			}
+
+			me.lastShift = now;
+			//me.chart.redraw();
 		}
 	},
 
@@ -838,7 +875,17 @@ Ext.define('widgets.line_graph.line_graph' , {
 		if (node.extra_field && node.extra_field.curve_color)
 			_color = node.extra_field.curve_color;
 
-		var serie = {id: serie_id, name: metric_long_name, metric: label, data: [], color: _color, min: min, max: max, yAxis: yAxis, bunit: bunit, shift: false};
+		var serie = {
+			id: serie_id,
+			name: metric_long_name,
+			metric: label,
+			data: [],
+			color: _color,
+			min: min,
+			max: max,
+			yAxis: yAxis,
+			bunit: bunit
+		};
 
 		if (curve) {
 			serie['dashStyle'] = curve.get('dashStyle');
@@ -883,13 +930,15 @@ Ext.define('widgets.line_graph.line_graph' , {
 
 		//type specifique parsing
 		if (type == 'COUNTER' && !this.aggregate_interval && !this.reportMode) {
-			var last_point = serie.data[serie.data.length - 1];
-			if (last_point) {
-				if (last_point.y != undefined) {
-					var last_value = last_point.y;
-					for (var i = 0; i < values.length; i++)
-						values[i][1] = last_value + values[i][1];
+			if (serie.data.length){
+				var last_point = serie.data[serie.data.length - 1];
+				var last_value = last_point.y;
+				var new_values = []
+				for (var i = 0; i < values.length; i++){
+					if (values[i][1] != 0)
+						new_values.push([ values[i][0], last_value + values[i][1] ])
 				}
+				values = new_values
 			}
 		}
 
@@ -1041,7 +1090,7 @@ Ext.define('widgets.line_graph.line_graph' , {
 			for (var i = 0; i < values.length; i++) {
 				value = values[i];
 				//addPoint (Object options, [Boolean redraw], [Boolean shift], [Mixed animation]) :
-            	serie.addPoint(value, false, serie.shift, false);
+            	serie.addPoint(value, false, false, false);
 			}
 		}
 
@@ -1111,9 +1160,9 @@ Ext.define('widgets.line_graph.line_graph' , {
 				yAxis:referent_serie.options.yAxis,
 				data: [],
 				marker: {enabled: false},
-				dashStyle: trend_dashStyle,
-				shift: false
+				dashStyle: trend_dashStyle
 			};
+
 			if (color)
 				serie['color'] = color;
 
@@ -1254,7 +1303,7 @@ Ext.define('widgets.line_graph.line_graph' , {
 					serie.setData(sData);
 				else
 					for (var i = 0; i < sData.length; i++)
-						serie.addPoint(sData[i], true, serie.shift);
+						serie.addPoint(sData[i], true, false);
 			}else {
 				var serie = {
 					id: 'x_flags',
@@ -1265,8 +1314,7 @@ Ext.define('widgets.line_graph.line_graph' , {
 					width: 17,
 					color: 'black',
 					zIndex: 2,
-					showInLegend: false,
-					shift: false
+					showInLegend: false
 				};
 				this.series[serie.id] = serie;
 				this.chart.addSeries(serie, true, false);

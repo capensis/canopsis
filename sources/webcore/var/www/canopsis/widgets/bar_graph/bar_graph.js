@@ -32,7 +32,7 @@ Ext.define('widgets.bar_graph.bar_graph' , {
 	layout: 'fit',
 
 	first: false,
-	shift: false,
+
 	last_from: false,
 	pushPoints: false,
 
