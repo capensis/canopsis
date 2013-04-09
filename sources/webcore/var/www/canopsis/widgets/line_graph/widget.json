@@ -182,12 +182,12 @@
 									"fields": ["value", "text"],
 									"data" : [
 										{"value": "", "text": "None"},
-										{"value": "max", "text": "Max"},
-										{"value": "min", "text": "Min"},
-										{"value": "last", "text": "Last"},
-										{"value": "first", "text": "First"},
-										{"value": "delta", "text": "Delta"},
-										{"value": "mean", "text": "Mean"}
+										{"value": "MAX", "text": "Max"},
+										{"value": "MIN", "text": "Min"},
+										{"value": "LAST", "text": "Last"},
+										{"value": "FIRST", "text": "First"},
+										{"value": "DELTA", "text": "Delta"},
+										{"value": "MEAN", "text": "Mean"}
 									]
 								}
 							},{

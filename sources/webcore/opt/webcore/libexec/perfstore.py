@@ -580,11 +580,17 @@ def perfstore_get_values(_id, start=None, stop=None, aggregate_method=pyperfstor
 			# For UI display
 			if len(points) == 0 and meta['type'] == 'COUNTER':
 				points = [(start, 0), (stop, 0)]
-				
-			points =  pyperfstore2.utils.aggregate(	points=points,
-													max_points=aggregate_max_points,
-													interval=aggregate_interval,
-													atype=aggregate_method)
+
+			if len(points) and meta['type'] == 'COUNTER':
+				# Insert null point for aggreagation
+				points.insert(0, [points[0][0], 0])
+
+			if len(points):
+				points =  pyperfstore2.utils.aggregate(	points=points,
+														max_points=aggregate_max_points,
+														interval=aggregate_interval,
+														atype=aggregate_method)
+
 	except Exception, err:
 		logger.error("Error when getting points: %s" % err)
 	

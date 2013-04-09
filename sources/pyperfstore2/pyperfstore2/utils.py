@@ -33,6 +33,9 @@ from dateutil.relativedelta import *
 
 intervalToRelativeDelta = {
 	60:relativedelta(minutes=+1),
+	300:relativedelta(minutes=+5),
+	900:relativedelta(minutes=+15),
+	1800:relativedelta(minutes=+30),
 	3600:relativedelta(hours=+1),
 	86400:relativedelta(days=+1),
 	604800:relativedelta(weeks=+1),
@@ -223,6 +226,8 @@ def getTimeSteps(start, stop, interval):
 	start_datetime 	= datetime.utcfromtimestamp(start)
 	stop_datetime 	= datetime.utcfromtimestamp(stop)
 
+	logger.debug('   + Interval: %s' % interval)
+
 	#try de get real interval
 	if interval in intervalToRelativeDelta.keys():
 		logger.debug('   + Use Smart time length (real number of day in month/years)')
@@ -230,7 +235,7 @@ def getTimeSteps(start, stop, interval):
 		interval = intervalToRelativeDelta[interval]
 
 		date = start_datetime
-		while date < stop_datetime:
+		while date < (stop_datetime + interval):
 			timeSteps.append(datetimeToTimestamp(date))
 			date += interval
 			
@@ -238,7 +243,7 @@ def getTimeSteps(start, stop, interval):
 		logger.debug('   + Use interval')
 		timeSteps = range(start, stop+interval, interval)
 
-	logger.debug(timeSteps)
+	#logger.debug(timeSteps)
 
 	return timeSteps
 
@@ -289,6 +294,7 @@ def aggregate(points, max_points=None, interval=None, atype='MEAN', agfn=None, m
 			agfn = vmean
 
 	logger.debug(" + Interval: %s" % interval)
+	#logger.debug(" + Points: %s" % points)
 
 	rpoints=[]
 	
@@ -337,15 +343,16 @@ def aggregate(points, max_points=None, interval=None, atype='MEAN', agfn=None, m
 			try:
 				next_timestamp = timeSteps[index+1]
 			except:
-				next_timestamp = stop
+				#next_timestamp = stop
+				break
 
 			logger.debug("   + Interval: %s -> %s" % (datetime.utcfromtimestamp(timestamp), datetime.utcfromtimestamp(next_timestamp)))
 			
 			while i < len(points):
-				if points[i][0] >= timestamp and points[i][0] < (next_timestamp):
+				if points[i][0] >= timestamp and points[i][0] < next_timestamp:
 					points_to_aggregate.append(points[i])
 							
-				if points[i][0] >= (next_timestamp):
+				if points[i][0] >= next_timestamp:
 					break
 					
 				i+=1
@@ -368,7 +375,7 @@ def aggregate(points, max_points=None, interval=None, atype='MEAN', agfn=None, m
 								
 			else:
 				logger.debug("       + No points")
-				rpoints.append([timestamp, 0])
+				#rpoints.append([timestamp, 0])
 				
 				points_to_aggregate = []
 		
@@ -498,6 +505,17 @@ def fill_interval(points, start, stop, interval):
 
 	logger.debug(' + Start: %s' %  datetime.utcfromtimestamp(start))
 	logger.debug(' + Stop:  %s' %  datetime.utcfromtimestamp(stop))
+
+	# Set start time on a multiple of interval from first point
+	if len(points):
+		first_timestamp = points[0][0]
+		logger.debug(' + First_timestamp: %s' %  datetime.utcfromtimestamp(first_timestamp))
+
+		if first_timestamp > start:
+			delta = (first_timestamp - start) // interval
+			start = first_timestamp - (delta * interval)
+			logger.debug(' + New Start: %s (%s)' %  (datetime.utcfromtimestamp(start), start))
+
 
 	timeSteps = getTimeSteps(start, stop, interval)
 

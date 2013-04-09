@@ -136,9 +136,9 @@ Ext.define('canopsis.lib.view.cwidget' , {
 			this.startTask();
 		else 
 			if(this.exportMode)
-				this._doRefresh(this.export_from,this.export_to);
+				this._doRefresh(this.export_from, this.export_to);
 			else
-				this._doRefresh(undefined,Ext.Date.now());
+				this._doRefresh(undefined, parseInt(Ext.Date.now()));
 	},
 
 	startTask: function() {
@@ -178,19 +178,15 @@ Ext.define('canopsis.lib.view.cwidget' , {
 	},
 
 	_doRefresh: function(from, to) {
-		if (this.exportMode && from) {
-			from = from;
-			to = this.export_to;
-		}else {
-			if (! to )
-				to = Ext.Date.now();
-			if (! from) 
-				from = to - (this.time_window * 1000);
-		}
+		var now = parseInt(Ext.Date.now())
 
-		var done = this.doRefresh(from, to);
-		if (done != false)
-			this.lastRefresh = Ext.Date.now();
+		if (! to)
+			to = now;
+		if (! from) 
+			from = to - (this.time_window * 1000);
+
+		this.doRefresh(from, to);
+		this.lastRefresh = now;
 	},
 
 	doRefresh: function(from, to) {

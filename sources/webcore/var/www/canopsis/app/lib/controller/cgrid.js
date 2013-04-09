@@ -560,10 +560,7 @@ Ext.define('canopsis.lib.controller.cgrid', {
 
 					var win = Ext.create('widget.window', {
 						title: title,
-						items: {
-							xtype: 'panel',
-							items: form
-						},
+						items:[form],
 						closable: true,
 						resizable: false,
 						constrain: true,
@@ -571,7 +568,6 @@ Ext.define('canopsis.lib.controller.cgrid', {
 						closeAction: 'destroy'
 					}).show();
 					form.win = win;
-
 
 					this.grid.window_form = win;
 
