@@ -219,14 +219,18 @@ def roundTime(date, interval):
 
 		return date
 
-def getTimeSteps(start, stop, interval):
+def getTimeSteps(start, stop, interval, natural=True):
 	logger.debug('getTimeSteps:')
 	timeSteps = []
+	
+	logger.debug('   + Interval: %s' % interval)
+
+	if natural:
+		# Round start
+		start = start  + (interval - start % interval) - interval
 
 	start_datetime 	= datetime.utcfromtimestamp(start)
 	stop_datetime 	= datetime.utcfromtimestamp(stop)
-
-	logger.debug('   + Interval: %s' % interval)
 
 	#try de get real interval
 	if interval in intervalToRelativeDelta.keys():
@@ -243,7 +247,7 @@ def getTimeSteps(start, stop, interval):
 		logger.debug('   + Use interval')
 		timeSteps = range(start, stop+interval, interval)
 
-	#logger.debug(timeSteps)
+	logger.debug(timeSteps)
 
 	return timeSteps
 

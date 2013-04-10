@@ -259,7 +259,7 @@ Ext.define('widgets.line_graph.line_graph' , {
 				animation: false,
 				borderColor: this.borderColor,
 				borderWidth: this.borderWidth,
-				backgroundColor: this.backgroundColor,
+				backgroundColor: this.backgroundColor
 				/*events: {
 					redraw: this.shift
 				}*/
@@ -500,7 +500,7 @@ Ext.define('widgets.line_graph.line_graph' , {
 
 	////////////////////// CORE
 
-	removeLastPointOfAllSeries: function(){
+	removeLastPointOfAllSeries: function() {
 		me = this;
 		for (var i = 0; i < me.chart.series.length; i++) {
 			var serie = me.chart.series[i];
@@ -508,10 +508,10 @@ Ext.define('widgets.line_graph.line_graph' , {
 			// Don't touch timeNav
 			if (serie.name == 'timeNav' || serie.name == 'Navigator')
 				continue;
-			
-			if (serie.data.length){
-				var point = serie.data[serie.data.length-1];
-				log.debug(' + Remove last point of "'+serie.name+'"', this.logAuthor);
+
+			if (serie.data.length) {
+				var point = serie.data[serie.data.length - 1];
+				log.debug(' + Remove last point of "' + serie.name + '"', this.logAuthor);
 				point.remove(false, false);
 			}
 
@@ -528,19 +528,19 @@ Ext.define('widgets.line_graph.line_graph' , {
 		if (this.chart) {
 
 			if (this.last_from)
-				log.debug('Last from: ' + new Date(this.last_from) + " (" + this.last_from + ")", this.logAuthor);
+				log.debug('Last from: ' + new Date(this.last_from) + ' (' + this.last_from + ')', this.logAuthor);
 
-			if (! this.reportMode){
+			if (! this.reportMode) {
 
 				if (this.last_from)
 					from = this.last_from;
 
-				if (this.aggregate_interval){
+				if (this.aggregate_interval) {
 					var aggregate_interval = this.aggregate_interval * 1000;
 
 					//round start and stop time from interval:
-					from = from  + (aggregate_interval - from % aggregate_interval) - aggregate_interval;
-					to =   to    + (aggregate_interval - to   % aggregate_interval);
+					from = from + (aggregate_interval - from % aggregate_interval) - aggregate_interval;
+					to = to + (aggregate_interval - to % aggregate_interval);
 
 					// Disable auto shift by default
 					//this.autoShift = false;
@@ -603,7 +603,7 @@ Ext.define('widgets.line_graph.line_graph' , {
 							data = data.data;
 
 							// Get last timestamp on first serie
-							if (data.length && data[0].values.length){
+							if (data.length && data[0].values.length) {
 								var last_index = data[0].values.length - 1;
 								var last_from = data[0].values[last_index][0];
 
@@ -615,7 +615,7 @@ Ext.define('widgets.line_graph.line_graph' , {
 
 								this.last_from = last_from;
 
-								log.debug('Last from: ' + new Date(this.last_from) + " (" + this.last_from + ")", this.logAuthor);
+								log.debug('Last from: ' + new Date(this.last_from) + ' (' + this.last_from + ')', this.logAuthor);
 							}
 
 							this.onRefresh(data);
@@ -726,7 +726,7 @@ Ext.define('widgets.line_graph.line_graph' , {
 					this.chart.yAxis[1].setExtremes(0, 100, false);
 
 				this.chart.hideLoading();
-				
+
 				if (this.autoShift)
 					this.shift();
 
@@ -755,7 +755,14 @@ Ext.define('widgets.line_graph.line_graph' , {
 		}
 	},
 
-	shift: function() {
+	shift: function(tolerance) {
+
+		if (tolerance == undefined)
+			if (this.aggregate_interval)
+				tolerance = this.aggregate_interval * 1000;
+			else
+				tolerance = 0;
+
 		if (this.options && this.options.cwidget)
 			me = this.options.cwidget;
 		else
@@ -769,16 +776,19 @@ Ext.define('widgets.line_graph.line_graph' , {
 		//if (me.chart.series.length > 0 && now < (me.last_from + 5000) && now > (me.lastShift + 50000)) {
 		if (me.chart.series.length > 0 && now > (me.lastShift + 50000)) {
 			log.debug('Check shifting (' + me.chart.series.length + ' series):', me.logAuthor);
-			
-			var timestamp = now - (me.time_window * 1000);
+
+			var timestamp = now - (me.time_window * 1000) - tolerance;
 
 			for (var i = 0; i < me.chart.series.length; i++) {
 				var serie = me.chart.series[i];
+
+				log.debug(' + ' + serie.name + ', ' + serie.data.length + ' point(s)', me.logAuthor);
 
 				// Don't shift timeNav
 				if (serie.name == 'timeNav' || serie.name == 'Navigator')
 					continue;
 
+				// Don't shift short serie
 				if (serie.data.length <= 2)
 					continue;
 
@@ -789,7 +799,7 @@ Ext.define('widgets.line_graph.line_graph' , {
 					fpoint = serie.data[0];
 					removed += 1;
 				}
-				log.debug(' + ' + serie.name + ', ' + removed + ' point(s) removed', me.logAuthor);
+				log.debug('   - ' + removed + ' point(s) removed', me.logAuthor);
 			}
 
 			me.lastShift = now;
@@ -930,15 +940,15 @@ Ext.define('widgets.line_graph.line_graph' , {
 
 		//type specifique parsing
 		if (type == 'COUNTER' && !this.aggregate_interval && !this.reportMode) {
-			if (serie.data.length){
+			if (serie.data.length) {
 				var last_point = serie.data[serie.data.length - 1];
 				var last_value = last_point.y;
-				var new_values = []
-				for (var i = 0; i < values.length; i++){
+				var new_values = [];
+				for (var i = 0; i < values.length; i++) {
 					if (values[i][1] != 0)
-						new_values.push([ values[i][0], last_value + values[i][1] ])
+						new_values.push([values[i][0], last_value + values[i][1]]);
 				}
-				values = new_values
+				values = new_values;
 			}
 		}
 
@@ -1157,7 +1167,7 @@ Ext.define('widgets.line_graph.line_graph' , {
 				name: label,
 				metric: referent_serie.options.metric + ' (TREND)',
 				bunit: referent_serie.options.bunit,
-				yAxis:referent_serie.options.yAxis,
+				yAxis: referent_serie.options.yAxis,
 				data: [],
 				marker: {enabled: false},
 				dashStyle: trend_dashStyle
