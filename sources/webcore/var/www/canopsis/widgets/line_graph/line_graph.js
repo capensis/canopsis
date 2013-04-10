@@ -755,7 +755,14 @@ Ext.define('widgets.line_graph.line_graph' , {
 		}
 	},
 
-	shift: function() {
+	shift: function(tolerance) {
+
+		if (tolerance == undefined)
+			if (this.aggregate_interval)
+				tolerance = this.aggregate_interval * 1000
+			else
+				tolerance = 0
+
 		if (this.options && this.options.cwidget)
 			me = this.options.cwidget;
 		else
@@ -770,7 +777,7 @@ Ext.define('widgets.line_graph.line_graph' , {
 		if (me.chart.series.length > 0 && now > (me.lastShift + 50000)) {
 			log.debug('Check shifting (' + me.chart.series.length + ' series):', me.logAuthor);
 			
-			var timestamp = now - (me.time_window * 1000);
+			var timestamp = now - (me.time_window * 1000) - tolerance;
 
 			for (var i = 0; i < me.chart.series.length; i++) {
 				var serie = me.chart.series[i];
@@ -792,7 +799,7 @@ Ext.define('widgets.line_graph.line_graph' , {
 					fpoint = serie.data[0];
 					removed += 1;
 				}
-				log.debug(' - ' + removed + ' point(s) removed', me.logAuthor);
+				log.debug('   - ' + removed + ' point(s) removed', me.logAuthor);
 			}
 
 			me.lastShift = now;
