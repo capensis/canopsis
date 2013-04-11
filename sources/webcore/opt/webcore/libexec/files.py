@@ -71,15 +71,20 @@ def files(metaId=None):
 			logger.error('Error while file fetching: %s' % err)
 
 		if data:
-			response.headers['Content-Disposition'] = 'attachment; filename="%s"' % file_name
+			try:
+				response.headers['Content-Disposition'] = 'attachment; filename="%s"' % file_name.encode("utf8")
+			except Exception as err:
+				logger.error(err)
+				return HTTPError(500, "Impossible to encode file_name.")
+
 			response.headers['Content-Type'] = content_type
 			try:
 				return data
 			except Exception as err:
 				logger.error(err)
 		else:
-			logger.error('No report found in gridfs')
-			return HTTPError(404, " Not Found")
+			logger.error('File not found in gridfs')
+			return HTTPError(404, "File not found")
 	else:
 		return list_files()
 
