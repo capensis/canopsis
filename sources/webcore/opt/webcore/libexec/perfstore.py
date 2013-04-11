@@ -546,15 +546,11 @@ def perfstore_get_values(_id, start=None, stop=None, aggregate_method=pyperfstor
 		logger.error("Invalid _id '%s'" % _id)
 		return output
 	
-	if aggregate_interval and aggregate_timemodulation:
-		#start -= start % aggregate_interval
-		#stop -= (stop % aggregate_interval)
-		#stop += aggregate_interval
+	fill = False
 
-		#logger.debug('Fix range date:')
+	if aggregate_interval and aggregate_timemodulation:
 		aggregate_max_points = int( round((stop - start) / aggregate_interval + 0.5) )
-		#logger.debug(" + start:       %s" % start)
-		#logger.debug(" + stop:        %s" % stop)
+		fill = True
 	
 	try:
 		points = []
@@ -589,14 +585,14 @@ def perfstore_get_values(_id, start=None, stop=None, aggregate_method=pyperfstor
 				points =  pyperfstore2.utils.aggregate(	points=points,
 														max_points=aggregate_max_points,
 														interval=aggregate_interval,
-														atype=aggregate_method)
+														atype=aggregate_method,
+														start=start,
+														stop=stop,
+														fill=fill)
 
 	except Exception, err:
 		logger.error("Error when getting points: %s" % err)
-	
-	
-	if aggregate_interval and aggregate_timemodulation:
-		points = pyperfstore2.utils.fill_interval(points, start, stop, aggregate_interval)
+
 
 	if points and meta:
 		output.append({'node': _id, 'metric': meta['me'], 'values': points, 'bunit': meta['unit'], 'min': meta['min'], 'max': meta['max'], 'thld_warn': meta['thd_warn'], 'thld_crit': meta['thd_crit'], 'type': meta['type']})

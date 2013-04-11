@@ -219,15 +219,11 @@ def roundTime(date, interval):
 
 		return date
 
-def getTimeSteps(start, stop, interval, natural=True):
+def getTimeSteps(start, stop, interval):
 	logger.debug('getTimeSteps:')
 	timeSteps = []
 	
 	logger.debug('   + Interval: %s' % interval)
-
-	if natural:
-		# Round start
-		start = start  + (interval - start % interval) - interval
 
 	start_datetime 	= datetime.utcfromtimestamp(start)
 	stop_datetime 	= datetime.utcfromtimestamp(stop)
@@ -251,7 +247,7 @@ def getTimeSteps(start, stop, interval, natural=True):
 
 	return timeSteps
 
-def aggregate(points, max_points=None, interval=None, atype='MEAN', agfn=None, mode=None):
+def aggregate(points, start=None, stop=None, max_points=None, interval=None, atype='MEAN', agfn=None, mode=None, fill=False):
 	
 	if len(points) < 2:
 		logger.debug('Aggregation useless, %i points' % len(points))
@@ -320,8 +316,11 @@ def aggregate(points, max_points=None, interval=None, atype='MEAN', agfn=None, m
 		
 		points_to_aggregate = []
 		
-		start = points[0][0]
-		stop = points[len(points)-1][0]
+		if not start:
+			start = points[0][0]
+
+		if not stop:
+			stop = points[len(points)-1][0]
 		
 		# Find start time
 		start_datetime = datetime.utcfromtimestamp(start)
@@ -379,7 +378,8 @@ def aggregate(points, max_points=None, interval=None, atype='MEAN', agfn=None, m
 								
 			else:
 				logger.debug("       + No points")
-				#rpoints.append([timestamp, 0])
+				if fill:
+					rpoints.append([timestamp, 0])
 				
 				points_to_aggregate = []
 		
