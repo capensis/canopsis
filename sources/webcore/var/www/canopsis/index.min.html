@@ -100,8 +100,11 @@
 
 	<!-- Load page with good locale -->
 	<script type="text/javascript">
+		if (! ENV['locale'])
+			ENV['locale'] = "en";
+
 		var cookie_locale = Ext.util.Cookies.get('locale');
-		if (! cookie_locale)
+		if (! cookie_locale || cookie_locale == undefined || cookie_locale == "undefined")
 			Ext.util.Cookies.set('locale', ENV['locale']);
 		else
 			if (cookie_locale != ENV['locale'])
