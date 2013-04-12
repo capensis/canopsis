@@ -56,7 +56,11 @@ def files(metaId=None):
 	
 		logger.debug("Get file '%s'" % metaId)
 		
-		rfile = get_cfile(metaId, storage)
+		try:
+			rfile = get_cfile(metaId, storage)
+		except Exception as err:
+			logger.error('File not found: %s' % err)
+			return HTTPError(404, "File not found")
 		
 		file_name = rfile.data['file_name']
 		content_type = rfile.data['content_type']
