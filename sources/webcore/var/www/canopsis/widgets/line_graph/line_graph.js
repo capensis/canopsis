@@ -535,12 +535,21 @@ Ext.define('widgets.line_graph.line_graph' , {
 				if (this.last_from)
 					from = this.last_from;
 
+				if (from < (now - (this.time_window*1000)))
+					from = now - (this.time_window*1000)
+
 				if (this.aggregate_interval) {
+
 					var aggregate_interval = this.aggregate_interval * 1000;
 
-					//round start and stop time from interval:
-					from = from + (aggregate_interval - from % aggregate_interval) - aggregate_interval;
-					to = to + (aggregate_interval - to % aggregate_interval);
+					if (this.aggregate_interval < global.commonTs['month']) {
+						from = Math.floor(from / aggregate_interval) * aggregate_interval;
+					}else {
+						if (this.aggregate_interval >= global.commonTs['month'])
+							from = moment.unix(from / 1000).startOf('month').unix() * 1000;
+						if (this.aggregate_interval >= global.commonTs['year'])
+							from = moment.unix(from / 1000).startOf('year').unix() * 1000;
+					}
 
 					// Disable auto shift by default
 					//this.autoShift = false;
