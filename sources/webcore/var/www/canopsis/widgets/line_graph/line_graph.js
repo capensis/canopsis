@@ -535,6 +535,9 @@ Ext.define('widgets.line_graph.line_graph' , {
 				if (this.last_from)
 					from = this.last_from;
 
+				if (from < (now - (this.time_window*1000)))
+					from = now - (this.time_window*1000)
+
 				if (this.aggregate_interval) {
 
 					var aggregate_interval = this.aggregate_interval * 1000;
