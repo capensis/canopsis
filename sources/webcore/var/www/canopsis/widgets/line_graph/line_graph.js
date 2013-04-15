@@ -138,7 +138,8 @@ Ext.define('widgets.line_graph.line_graph' , {
 
 	nbMavEventsDisplayed: 100,
 
-	lastBunit: undefined,
+	lastYaxis: 0,
+	bunitYaxis: {},
 
 	autoShift: true,
 	lastShift: undefined,
@@ -855,6 +856,7 @@ Ext.define('widgets.line_graph.line_graph' , {
 		log.debug('    + serie id: ' + serie_id, this.logAuthor);
 		log.debug('    + serie index: ' + serie_index, this.logAuthor);
 		log.debug('    + bunit: ' + bunit, this.logAuthor);
+		log.debug('    + yAxis: ' + yAxis, this.logAuthor);
 
 		var metric_long_name = '';
 
@@ -993,6 +995,26 @@ Ext.define('widgets.line_graph.line_graph' , {
 		});
 	},
 
+	getYaxis: function(bunit){
+		var yaxis;
+
+		if (bunit == undefined)
+			bunit = 'default';
+
+		yaxis = this.bunitYaxis[bunit];
+
+		if (yaxis == undefined){
+			yaxis = this.lastYaxis + 1;
+			this.lastYaxis = yaxis;
+		}
+
+		//Todo: in futur version yaxis is created dynamically
+		if (yaxis > 2)
+			yaxis = 2;
+
+		return yaxis;
+	},
+
 	addDataOnChart: function(data) {
 		var metric_name = data['metric'];
 		var values = data['values'];
@@ -1033,13 +1055,8 @@ Ext.define('widgets.line_graph.line_graph' , {
 			return true;
 
 		}else {
-			if (this.lastBunit == undefined || this.lastBunit == bunit) {
-				serie = this.getSerie(node_id, metric_name, bunit, min, max, 1);
-				this.lastBunit = bunit;
-			}else {
-				serie = this.getSerie(node_id, metric_name, bunit, min, max, 2);
-			}
-
+			var yaxis = this.getYaxis(bunit);
+			serie = this.getSerie(node_id, metric_name, bunit, min, max, yaxis);
 		}
 
 		if (! serie) {
