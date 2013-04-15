@@ -109,10 +109,14 @@ def perfstore_nodes_get_values(start=None, stop=None):
 
 	for meta in metas:
 		_id = meta.get('id', None)
+
+		# TODO: for futur version, use only this !
+		mstart = meta.get('from', start)
+		mstop = meta.get('to', stop)
 		if _id:
 			output += perfstore_get_values(	_id=meta['id'],
-											start=start,
-											stop=stop,
+											start=mstart,
+											stop=mstop,
 											aggregate_method=aggregate_method,
 											aggregate_interval=aggregate_interval,
 											aggregate_max_points=aggregate_max_points,
