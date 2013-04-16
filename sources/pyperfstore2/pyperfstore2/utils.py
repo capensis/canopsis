@@ -248,10 +248,7 @@ def getTimeSteps(start, stop, interval):
 	return timeSteps
 
 def aggregate(points, start=None, stop=None, max_points=None, interval=None, atype='MEAN', agfn=None, mode=None, fill=False):
-	
-	if len(points) < 2:
-		logger.debug('Aggregation useless, %i points' % len(points))
-		return points
+
 	
 	if not atype:
 		return points
@@ -313,7 +310,7 @@ def aggregate(points, start=None, stop=None, max_points=None, interval=None, aty
 			rpoints.append([timestamp, value])
 		
 	elif mode == 'by_interval':
-		
+	
 		points_to_aggregate = []
 		
 		if not start:
@@ -321,6 +318,9 @@ def aggregate(points, start=None, stop=None, max_points=None, interval=None, aty
 
 		if not stop:
 			stop = points[len(points)-1][0]
+
+		if len(points) == 1:
+			return [ [start, points[0][1]] ]
 		
 		# Find start time
 		start_datetime = datetime.utcfromtimestamp(start)
