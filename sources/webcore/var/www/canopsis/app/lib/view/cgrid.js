@@ -79,6 +79,7 @@ Ext.define('canopsis.lib.view.cgrid' , {
 	exportMode: false,
 
 	bar_search: [],
+	opt_bar_customs: [],
 	menu_items: [],
 
 	logAuthor: '[view][cgrid]',
@@ -161,6 +162,10 @@ Ext.define('canopsis.lib.view.cgrid' , {
 					});
 				}
 
+				if (this.opt_bar_customs) {
+					bar_child = bar_child.concat(this.opt_bar_customs);
+				}
+
 				if (this.opt_bar_time_search) {
 
 					//bar_child.push({ xtype: 'tbspacer', width: 150 })
@@ -188,7 +193,6 @@ Ext.define('canopsis.lib.view.cgrid' , {
 						action: 'search'
 					});
 				}
-
 
 				if (this.opt_bar_search) {
 					bar_child.push({xtype: 'tbfill'});
@@ -229,10 +233,7 @@ Ext.define('canopsis.lib.view.cgrid' , {
 					});
 				}
 
-
-
-
-				//creating toolbar
+				// Creating toolbar
 				if (this.opt_bar_bottom) {
 					this.bbar = Ext.create('Ext.toolbar.Toolbar', {
 						items: bar_child
