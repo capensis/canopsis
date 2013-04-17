@@ -41,6 +41,63 @@ Ext.define('canopsis.view.Briefcase.Grid' , {
 	opt_bar_search: true,
 	opt_bar_search_field: ['file_name'],
 
+	opt_bar_customs: [{
+		text: 'Add', xtype: 'button', iconCls: 'icon-add', handler: function() {
+			var addFileWindow = Ext.create('Ext.window.Window', {
+				title: 'Add new file to briefcase',
+				height: 110,
+		    	width: 300,
+		    	layout: 'fit',
+		    	items: [
+		    		Ext.create('Ext.form.Panel', {
+						bodyPadding: '5 5 0',
+
+						defaults: {
+							allowBlank: false
+						},
+
+				        items: [{
+				            xtype: 'filefield',
+				            id: 'form-file',
+				            emptyText: 'Select a file',
+				            fieldLabel: 'File',
+				            name: 'file-path',
+				            buttonText: 'Browse',
+				            width: 275
+				        }],
+
+				        buttons: [
+				        	{
+					            text: 'Upload',
+					            handler: function(){
+					                var form = this.up('form').getForm();
+					                if (form.isValid()) {
+					                    form.submit({
+					                        url: '/files',
+					                        success: function(fp, o) {
+					                            console.log(':: File uploaded');
+					                            var store = Ext.getStore('Files')
+					                            store.load();
+					                            addFileWindow.close();
+					                        },
+					                        failure: function(fp, o) {
+					                        	console.log('!! Failed to upload file');
+					                        	addFileWindow.close();
+
+					                        }
+					                    });
+					                }
+					            }
+					        }
+					    ]
+			    	})
+		    	]
+			});
+			addFileWindow.show();
+		}
+	}],
+
+
 	columns: [{
 			header: '',
 			width: 25,
