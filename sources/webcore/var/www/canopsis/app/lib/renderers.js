@@ -87,6 +87,9 @@ var rdr_crecord_type = function(val, metadata, record, rowIndex, colIndex, store
 };
 
 var rdr_file_type = function(val, metadata, record, rowIndex, colIndex, store) {
+	if (!val) {
+		return "<span class='icon icon-unknown' />";
+	}
 	var split = val.split('/');
 	if (split.length > 0) {
 		return "<span class='icon icon-mimetype-" + split[split.length - 1] + "' />";
