@@ -244,6 +244,10 @@
 	background-image: url(../images/icons/eye.png) !important;
 }
 
+.icon-unknown { 
+    background-image: url(../images/Tango-Blue-Materia/16x16/apps/gnome-help.png) !important; 
+}
+
 /* Mainbar */
 
 .icon-mainbar-run { 
