@@ -31,7 +31,7 @@ import itertools
 
 class cengine(multiprocessing.Process):
 
-	def __init__(self, next_engines=[], next_balanced=True, name="worker1", beat_interval=60, use_internal_queue=True, queue_maxsize=1000, logging_level=logging.INFO):
+	def __init__(self, next_engines=[], next_balanced=True, name="worker1", beat_interval=60, use_internal_queue=False, queue_maxsize=1000, logging_level=logging.INFO):
 		
 		multiprocessing.Process.__init__(self)
 		
@@ -82,7 +82,7 @@ class cengine(multiprocessing.Process):
 		self.logger.info("Engine initialised")
 		
 	def create_amqp_queue(self):
-		self.amqp.add_queue(self.amqp_queue, None, self.on_amqp_event, "amq.direct", no_ack=False, exclusive=False, auto_delete=False)
+		self.amqp.add_queue(self.amqp_queue, None, self.on_amqp_event, "amq.direct", no_ack=True, exclusive=False, auto_delete=False)
 	
 	def pre_run(self):
 		pass
@@ -123,7 +123,6 @@ class cengine(multiprocessing.Process):
 				if now > (self.beat_last + self.beat_interval):
 					self._beat()						
 					self.beat_last = now
-			
 
 			while self.RUN:
 				try:
@@ -135,7 +134,7 @@ class cengine(multiprocessing.Process):
 						self.amqp.paused = False
 					time.sleep(0.5)
 					break
-		
+
 		self.post_run()
 		
 		self.logger.info("Stop Engine")
@@ -144,20 +143,10 @@ class cengine(multiprocessing.Process):
 		
 	def on_amqp_event(self, event, msg):
 		try:
-			if self.use_internal_queue:
-				if self.input_queue.full():
-					self.logger.warning("Stop AMQP Flow")
-					self.amqp.paused = True
-					msg.requeue()
-				else:
-					self.input_queue.put(event)
-					msg.ack()
-			else:
-				self._work(event)
-				msg.ack()
-		except:
-			msg.ack()
+			self._work(event)
+		except Exception as err:
 			if event['rk'] not in self.rk_on_error:
+				self.logger.error(err)
 				self.logger.error("Impossible to deal with: %s" % event)
 				self.rk_on_error.append(event['rk'])
 
@@ -186,8 +175,13 @@ class cengine(multiprocessing.Process):
 		if error:
 			self.counter_error +=1
 			
+		elapsed = time.time() - start
+
+		if elapsed > 3:
+			self.logger.warning("Elapsed time %.2f seconds" % elapsed)
+
 		self.counter_event += 1
-		self.counter_worktime += time.time() - start
+		self.counter_worktime += elapsed
 		
 	def work(self, event, amqp_msg):
 		return event
