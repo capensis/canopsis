@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 # --------------------------------
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
@@ -18,17 +19,21 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-import sys, os, logging, json
+import sys
+import os
+import logging
+import json
 import gevent
 
 import bottle
-from bottle import route, get, delete, put,request, HTTPError, post, static_file, response
+from bottle import route, get, delete, put, request
+from bottle import HTTPError, post, static_file, response
 
-#gridfs
+# GridFS
 from pymongo import Connection
 import gridfs
 
-## Canopsis
+# Canopsis
 from caccount import caccount
 from cstorage import cstorage
 from cstorage import get_storage
@@ -38,7 +43,7 @@ from cfile import cfile
 from cfile import get_cfile
 from cfile import namespace
 
-#import protection function
+# Import protection function
 from libexec.auth import check_auth, get_account
 
 logger = logging.getLogger('Files')
@@ -63,7 +68,7 @@ def files(metaId=None):
 			return HTTPError(404, "File not found")
 		
 		file_name = rfile.data['file_name']
-		content_type = rfile.data['content_type']
+		content_type = rfile.data['content_type'] or 'application/octet-stream'
 		
 		logger.debug(" + File name:    %s" % file_name)
 		logger.debug(" + Content type: %s" % content_type)
@@ -91,6 +96,32 @@ def files(metaId=None):
 			return HTTPError(404, "File not found")
 	else:
 		return list_files()
+
+
+@post('/file')
+@post('/files')
+def add_file():
+	# Must be set as text/html cause of extjs upload file method
+	# http://docs.sencha.com/extjs/4.0.7/#!/api/Ext.form.Basic-method-hasUpload
+	# A json in a string will be return to avoid Bottle to automatically set header to json
+	response.headers['Content-Type'] = 'text/html'
+
+	data = request.files['file-path']
+
+	if data.filename and data.file:
+		account = get_account()
+		storage = get_storage(account=account, namespace=namespace)
+		cfile_record = cfile(storage=storage)
+		cfile_record.put_data(data.file.read(), file_name=data.filename)
+		try:
+			storage.put(cfile_record)
+			data = {'success': True, 'data': 'File uploaded'} 
+		except Exception as err:
+			data = {'success': False, 'data': err}
+	else:
+		data = {'success': False, 'data': 'Invalid form received'}
+	return json.dumps(data)
+
 
 @put('/files')
 @put('/files/:metaId')
