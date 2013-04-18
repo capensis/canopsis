@@ -97,7 +97,6 @@ Ext.define('canopsis.view.Briefcase.Grid' , {
 		}
 	}],
 
-
 	columns: [{
 			header: '',
 			width: 25,
@@ -144,5 +143,83 @@ Ext.define('canopsis.view.Briefcase.Grid' , {
 			dataIndex: 'aaa_access_other',
 			renderer: rdr_access
 		}
-	]
+	],
+
+	toggleSearchBarButtons: function(button, state) {
+		var state = state || false;
+		var tbar = this.getTbar();
+		var items = tbar.items.items;
+		
+		for (var y=0;y <items.length;y++) {
+			var item = items[y];
+			if (item.xtype == "button") {
+				if (item != button) {
+					item.toggle(state);
+				}
+			}
+		}
+	},
+
+	initComponent: function() {
+		this.bar_search = [{
+			xtype: 'button',
+			iconCls: 'icon-mimetype-pdf',
+			pack: 'end',
+			tooltip: _('Show pdf'),
+			enableToggle: true,
+			scope: this,
+			toggleHandler: function(button, state) {
+				if (state) {
+					button.filter_id = this.store.addFilter(
+						{'content_type': 'application/pdf'}
+					);
+					this.toggleSearchBarButtons(button, false);
+				} else {
+					if (button.filter_id)
+						this.store.deleteFilter(button.filter_id);
+				}
+				this.store.load();
+			}
+		},{
+			xtype: 'button',
+			iconCls: 'icon-mimetype-png',
+			pack: 'end',
+			tooltip: _('Show png'),
+			enableToggle: true,
+			scope: this,
+			toggleHandler: function(button, state) {
+				if (state) {
+					button.filter_id = this.store.addFilter(
+						{'content_type': 'application/png'}
+					);
+					this.toggleSearchBarButtons(button, false);
+				} else {
+					if (button.filter_id)
+						this.store.deleteFilter(button.filter_id);
+				}
+				this.store.load();
+			}
+		},{
+			xtype: 'button',
+			iconCls: 'icon-unknown',
+			pack: 'end',
+			tooltip: _('Show unknown'),
+			enableToggle: true,
+			scope: this,
+			toggleHandler: function(button, state) {
+				if (state) {
+					button.filter_id = this.store.addFilter(
+						{'content_type': null}
+					);
+					this.toggleSearchBarButtons(button, false);
+				} else {
+					if (button.filter_id)
+						this.store.deleteFilter(button.filter_id);
+				}
+				this.store.load();
+			}
+		},'-'],
+		this.ctrl = Ext.create('canopsis.lib.controller.cgrid');
+		this.callParent(arguments);
+	}
 });

@@ -52,8 +52,8 @@ Ext.define('canopsis.lib.view.cgrid' , {
 	opt_tags_search: true,
 	opt_cell_edit: false,
 
-	//Hack , will be unified soon with the common research, just need time to
-	//rewrite the old search used by cinventory or cgrid_state
+	// Hack , will be unified soon with the common research, just need time to
+	// rewrite the old search used by cinventory or cgrid_state
 	opt_simple_search: false,
 
 	opt_db_namespace: 'object',
@@ -84,6 +84,16 @@ Ext.define('canopsis.lib.view.cgrid' , {
 
 	logAuthor: '[view][cgrid]',
 
+	getTbar: function() {
+		var dockedItems = this.getDockedItems();
+		for (var i=0;i < dockedItems.length;i++) {
+			var dockedItem = dockedItems[i];
+			if (dockedItem.dock == "top" && dockedItem.componentCls == "x-toolbar") {
+				return dockedItem;
+			}
+		}
+	},
+
 	TabOnShow: function() {
 		this.suspendLayout = false;
 		this.doLayout();
@@ -101,11 +111,11 @@ Ext.define('canopsis.lib.view.cgrid' , {
 			this.features.push(groupingFeature);
 		}*/
 
-		//multi select
+		// Multi select
 		if (this.opt_multiSelect == true)
 			this.multiSelect = true;
 
-		// keynav_del
+		// Keynav_del
 		if (this.opt_bar_delete && this.opt_keynav_del == undefined)
 			this.opt_keynav_del = true;
 
@@ -243,7 +253,6 @@ Ext.define('canopsis.lib.view.cgrid' , {
 						items: bar_child
 					});
 				}
-
 			}
 
 			//--------------------Paging toolbar -----------------
@@ -351,8 +360,6 @@ Ext.define('canopsis.lib.view.cgrid' , {
 						items: myArray
 					});
 				}
-
-
 			}
 		}
 
@@ -379,5 +386,4 @@ Ext.define('canopsis.lib.view.cgrid' , {
 		if (this.window_form)
 			this.window_form.destroy();
 	}
-
 });
