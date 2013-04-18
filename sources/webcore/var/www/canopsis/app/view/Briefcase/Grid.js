@@ -72,18 +72,28 @@ Ext.define('canopsis.view.Briefcase.Grid' , {
 					            handler: function(){
 					                var form = this.up('form').getForm();
 					                if (form.isValid()) {
+					                	global.notify.notify('Uploading your file...');
 					                    form.submit({
 					                        url: '/files',
 					                        success: function(fp, o) {
-					                            console.log(':: File uploaded');
+					                        	console.log(o);
+					                        	global.notify.notify(_('Success'), _('File uploaded'), 'success');
 					                            var store = Ext.getStore('Files')
 					                            store.load();
 					                            addFileWindow.close();
 					                        },
 					                        failure: function(fp, o) {
-					                        	console.log('!! Failed to upload file');
+					                        	var code = o.result.data.code;
+					                        	var msg = _('Unknown error');
+					                        	if (code === 415) {
+					                        		var msg = _('Unsupported Media Type');
+					                        	} else if (code === 500) {
+					                        		var msg = _('Internal server error');
+					                        	} else if (code === 400) {
+					                        		var msg = _('Bad request');
+					                        	}
+					                        	global.notify.notify(_('Failed'), msg, 'error');
 					                        	addFileWindow.close();
-
 					                        }
 					                    });
 					                }
