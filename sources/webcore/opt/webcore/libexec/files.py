@@ -48,6 +48,23 @@ from libexec.auth import check_auth, get_account
 
 logger = logging.getLogger('Files')
 
+# Defines allowed mime types
+_allowed_mimetypes = {
+	'application/pdf': ['pdf'],
+	'image/gif': ['gif'],
+	'image/jpeg': ['jpeg', 'jpg'],
+	'image/png': ['png'],
+	'video/ogg': ['ogg']
+}
+
+def get_reversed_http_mimetypes():
+	result = {}
+	for key, values in _allowed_mimetypes.items():
+		for value in values:
+			result[value] = key
+	return result
+allowed_mimetypes = get_reversed_http_mimetypes()
+
 #########################################################################
 
 @get('/files/:metaId')
@@ -55,6 +72,8 @@ logger = logging.getLogger('Files')
 @get('/files')
 def files(metaId=None):
 	
+	# Arg option for attachement http option
+
 	if metaId:
 		account = get_account()
 		storage = get_storage(account=account, namespace=namespace)
@@ -109,17 +128,22 @@ def add_file():
 	data = request.files['file-path']
 
 	if data.filename and data.file:
-		account = get_account()
-		storage = get_storage(account=account, namespace=namespace)
-		cfile_record = cfile(storage=storage)
-		cfile_record.put_data(data.file.read(), file_name=data.filename)
-		try:
-			storage.put(cfile_record)
-			data = {'success': True, 'data': 'File uploaded'} 
-		except Exception as err:
-			data = {'success': False, 'data': err}
+		if allowed_mimetypes.get(data.filename.split('.')[-1], False):
+			content_type = allowed_mimetypes[data.filename.split('.')[-1]]
+			account = get_account()
+			storage = get_storage(account=account, namespace=namespace)
+			cfile_record = cfile(storage=storage)
+			cfile_record.put_data(data.file.read(), file_name=data.filename, content_type=content_type)
+			try:
+				storage.put(cfile_record)
+				data = {'success': True, 'data': {'code': 200, 'message': 'File uploaded'}}
+			except Exception as err:
+				data = {'success': False, 'data': {'code': 500, 'message': err}}
+		else:
+			data = {'success': False, 'data': {'code': 415, 'message': 'Unsupported Media Type'}}
 	else:
-		data = {'success': False, 'data': 'Invalid form received'}
+		data = {'success': False, 'data': {'code': 400, 'message': 'Bad request'}}
+
 	return json.dumps(data)
 
 
