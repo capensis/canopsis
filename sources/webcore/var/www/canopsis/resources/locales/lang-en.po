@@ -1905,3 +1905,18 @@ msgstr "Dec"
 
 msgid "Time is out of range"
 msgstr "Time is out of range"
+
+msgid "Rotate view"
+msgstr "Rotate view"
+
+msgid "Refresh view"
+msgstr "Refresh view"
+
+msgid "Show pdf"
+msgstr "Show pdf"
+
+msgid "Show png"
+msgstr "Show png"
+
+msgid "Show unknown"
+msgstr "Show unknown"
