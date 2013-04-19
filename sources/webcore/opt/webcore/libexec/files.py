@@ -72,7 +72,10 @@ allowed_mimetypes = get_reversed_http_mimetypes()
 @get('/files')
 def files(metaId=None):
 	
-	# Arg option for attachement http option
+	# Arg option for attachement http option (default: True)
+	as_attachment = True
+	if request.params.get('as_attachment') in ['false', 'False', '0']:
+		as_attachment = False
 
 	if metaId:
 		account = get_account()
@@ -99,11 +102,12 @@ def files(metaId=None):
 			logger.error('Error while file fetching: %s' % err)
 
 		if data:
-			try:
-				response.headers['Content-Disposition'] = 'attachment; filename="%s"' % file_name.encode("utf8")
-			except Exception as err:
-				logger.error(err)
-				return HTTPError(500, "Impossible to encode file_name.")
+			if as_attachment:
+				try:
+					response.headers['Content-Disposition'] = 'attachment; filename="%s"' % file_name.encode("utf8")
+				except Exception as err:
+					logger.error(err)
+					return HTTPError(500, "Impossible to encode file_name.")
 
 			response.headers['Content-Type'] = content_type
 			try:
