@@ -176,4 +176,12 @@ class engine(cengine):
 			except Exception, err:
 				self.logger.warning("Impossible to store: %s ('%s')" % (perf_data_array, err))
 		
+		# Clean perfdata keys
+		for index, perf_data in enumerate(event['perf_data_array']):
+			new_perf_data = {}
+			for key in perf_data:
+				if perf_data[key] != None:
+					new_perf_data[key] = perf_data[key]
+			event['perf_data_array'][index] = new_perf_data
+
 		return event
