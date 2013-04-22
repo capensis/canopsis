@@ -454,7 +454,7 @@ Ext.define('widgets.line_graph.line_graph' , {
 	},
 
 	tooltip_formatter: function() {
-		if (!this.y && this.point && this.point.text) {
+		if (!this.y && this.point && this._flag == true) {
 			return flag_tootlip_template.applyTemplate(this.point);
 		}else {
 			var formatter = function(options, value) {
@@ -1314,6 +1314,7 @@ Ext.define('widgets.line_graph.line_graph' , {
 				sData.push({
 					x: data[i].timestamp * 1000,
 					text: data[i].output,
+					_flag: true,
 					component: data[i].component,
 					resource: data[i].resource,
 					display_name: data[i].display_name,
