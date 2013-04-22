@@ -72,6 +72,19 @@ Ext.define('canopsis.controller.Briefcase', {
 		this._editRecord(this.grid, item);
 	},
 
+	setAvatar: function(avatar_id) {
+		Ext.Ajax.request({
+			method: 'POST',
+			url: '/account/setConfig/avatar_id',
+			params: {
+				value: avatar_id
+			},
+			success: function(response) {
+				console.log(response);
+			}
+		})
+	},
+
 	_ajaxRequest: function(mail) {
 		Ext.Ajax.request({
 			type: 'rest',

@@ -18,18 +18,20 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-#import logging
+import time
+import hashlib
+# import logging
+
 from crecord import crecord
 from random import getrandbits
+
 try:
 	from cgroup import cgroup
 except:
 	pass
-import hashlib, time
 
 class caccount(crecord):
 	def __init__(self, record=None, user=None, group=None, lastname=None, firstname=None, mail=None, groups=[], authkey=None, *args, **kargs):
-
 		self.user = user
 		self.groups = groups
 		self.shadowpasswd = None
@@ -46,25 +48,23 @@ class caccount(crecord):
 			self.user = "anonymous"
 
 		if not group:
-			group ="group.anonymous"
+			group = "group.anonymous"
 			
 		if not self.authkey:
 			self.generate_new_authkey()
 
 		if self.user:
-			self._id = self.type+"."+self.user
+			self._id = self.type + "." + self.user
 		
-		self.access_owner=['r','w']
-		self.access_group=[]
-		self.access_other=[]
-		self.access_unauth=[]
+		self.access_owner = ['r', 'w']
+		self.access_group = []
+		self.access_other = []
+		self.access_unauth = []
 
 		if isinstance(record, crecord):
 			crecord.__init__(self, _id=self._id, record=record, type=self.type, *args, **kargs)
 		else:
 			crecord.__init__(self, _id=self._id, owner="account.%s" % self.user, group=group, type=self.type, *args, **kargs)
-
-
 
 	def get_full_mail(self):
 		return "\"%s %s\" <%s>" % (self.firstname, self.lastname, self.mail)
@@ -97,19 +97,24 @@ class caccount(crecord):
 		if not shadow:
 			shadow = self.shadowpasswd
 			
-		return hashlib.sha1( str(shadow).upper() + str( int( time.time() / 10)*10 )  ).hexdigest()
+		return hashlib.sha1(str(shadow).upper() + str( int( time.time() / 10)*10 )).hexdigest()
 
 	def get_authkey(self):
 		if not self.authkey:
 			return self.generate_new_authkey()
 		return self.authkey
 		
-	def check_authkey(self,authkey):
+	def check_authkey(self, authkey):
 		if str(authkey).upper() == str(self.get_authkey()).upper():
 			return True
 		else:
 			return False
 		
+	def get_mail_md5(self):
+		m = hashlib.md5()
+		m.update(self.mail)
+		return m.hexdigest()
+
 	def generate_new_authkey(self):
 		self.authkey = hashlib.sha224(str(getrandbits(512))).hexdigest()
 		return self.authkey
@@ -141,7 +146,6 @@ class caccount(crecord):
 			if self.groups[0] == self.group:
 				self.groups.pop(0)
 		'''
-
 		self.shadowpasswd = self.data['shadowpasswd']
 		if 'authkey' in self.data:
 			self.authkey = self.data['authkey']
@@ -155,14 +159,14 @@ class caccount(crecord):
 		print " + Group:\t", self.group
 		print " + Groups:\t", self.groups, "\n"
 		
-	def add_in_groups(self,groups,storage=None):
+	def add_in_groups(self, groups, storage=None):
 		if not storage:
 			storage = self.storage
 		
 		if not isinstance(groups,list):
 			groups = [groups]
 			
-		#string _id to cgroup
+		# String _id to cgroup
 		group_list = []
 		for group in groups:
 			if isinstance(group,cgroup):
@@ -175,7 +179,7 @@ class caccount(crecord):
 					except Exception,err:
 						raise Exception('Group not found: %s', err)
 												
-		#add to groups
+		# Add to groups
 		for group in group_list:
 				if unicode(group._id) not in self.groups:
 					self.groups.append(unicode(group._id))
@@ -187,14 +191,14 @@ class caccount(crecord):
 					if group.storage:
 						group.save()
 	
-	def remove_from_groups(self,groups,storage=None):
+	def remove_from_groups(self, groups, storage=None):
 		if not storage:
 			storage = self.storage
 		
 		if not isinstance(groups,list):
 				groups = [groups]
 				
-		#string _id to cgroup
+		# String _id to cgroup
 		group_list = []
 		for group in groups:
 			if isinstance(group,crecord):
@@ -203,10 +207,10 @@ class caccount(crecord):
 				if storage:
 					try:
 						record = storage.get(group)
-						group_list.append(cgroup(record,storage=storage))
+						group_list.append(cgroup(record, storage=storage))
 					except Exception,err:
 						raise Exception('Group not found: %s', err)
-		#remove groups
+		# Remove groups
 		for group in group_list:
 				if unicode(group._id) in self.groups:
 					self.groups.remove(group._id)
@@ -232,4 +236,3 @@ def caccount_get(storage, user):
 	record = storage.get('account.'+user)
 	account = caccount(record)
 	return account
-	

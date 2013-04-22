@@ -63,6 +63,7 @@ Ext.define('canopsis.lib.view.cgrid' , {
 	opt_menu_rename: false,
 	opt_menu_run_item: false,
 	opt_menu_authKey: false,
+	opt_menu_set_avatar: false,
 
 	opt_confirmation_delete: true,
 
@@ -318,6 +319,16 @@ Ext.define('canopsis.lib.view.cgrid' , {
 							iconCls: 'icon-access',
 							text: _('Rights'),
 							action: 'rights'
+						})
+					);
+				}
+
+				if (this.opt_menu_set_avatar == true) {
+					myArray.push(
+						Ext.create('Ext.Action', {
+							iconCls: 'icon-add',
+							text: _('Set as avatar'),
+							action: 'setAvatar'
 						})
 					);
 				}

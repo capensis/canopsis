@@ -35,6 +35,7 @@ Ext.define('canopsis.view.Briefcase.Grid' , {
 	//opt_menu_send_mail:true,
 
 	opt_menu_rename: true,
+	opt_menu_set_avatar: true,
 
 	opt_db_namespace: 'files',
 

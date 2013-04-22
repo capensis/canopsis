@@ -85,5 +85,3 @@ def get_cfile(_id, storage):
 	record = storage.get(_id, namespace=namespace)
 	rfile = cfile(storage=storage, record=record)
 	return rfile
-	
-	

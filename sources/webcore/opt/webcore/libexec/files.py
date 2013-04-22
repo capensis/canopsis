@@ -64,6 +64,8 @@ def get_reversed_http_mimetypes():
 			result[value] = key
 	return result
 allowed_mimetypes = get_reversed_http_mimetypes()
+# Max allowed upload file in megabytes
+max_size = 5
 
 #########################################################################
 

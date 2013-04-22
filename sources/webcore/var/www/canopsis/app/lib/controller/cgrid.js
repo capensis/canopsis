@@ -94,6 +94,11 @@ Ext.define('canopsis.lib.controller.cgrid', {
 			for (var i = 0; i < btns.length; i++)
 				btns[i].on('click', this._authkey, this);
 
+			// Set Avatar
+			var btns = Ext.ComponentQuery.query('#' + grid.contextMenu.id + ' [action=setAvatar]');
+			for (var i = 0; i < btns.length; i++)
+				btns[i].on('click', this._setAvatar, this);
+
 			//run
 			var btns = Ext.ComponentQuery.query('#' + grid.contextMenu.id + ' [action=run]');
 			for (var i = 0; i < btns.length; i++)
@@ -603,6 +608,22 @@ Ext.define('canopsis.lib.controller.cgrid', {
 
 		var authkey = Ext.create('canopsis.lib.view.cauthkey', config);
 		authkey.show();
+	},
+
+	_setAvatar: function(view, item, index) {
+		console.log('Clicked set avatar', this.logAuthor);
+		var grid = this.grid;
+		var item = grid.getSelectionModel().getSelection()[0];
+		var filename = item.data.file_name;
+		var extension = filename.split('.').pop();
+
+		if ($.inArray(extension, ['png', 'jpeg', 'jpg', 'gif']) == -1) {
+			global.notify.notify(_('Failed'), "File extension not valid", 'error');
+			return
+		}
+
+		var _id = item.data._id;
+		this.setAvatar(_id);
 	},
 
 	_runItem: function() {

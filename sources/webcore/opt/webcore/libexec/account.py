@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 # --------------------------------
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
@@ -18,16 +19,20 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-import sys, os, logging, json
-
+import sys
+import os
+import logging
+import json
 import bottle
+
 from bottle import route, get, put, delete, request, HTTPError, post, response
 
-## Canopsis
+# Canopsis
 from caccount import caccount
 from cstorage import cstorage
 from cstorage import get_storage
 from crecord import crecord
+
 try:
 	from cgroup import cgroup
 except:
@@ -71,11 +76,20 @@ def account_get_me():
 
 	output={'total': 1, 'success': True, 'data': output}
 
-	logger.debug(" + Output: "+str(output))
+	logger.debug(" + Output: " + str(output))
 	
 	logger.debug('Response status: %s' % response.status)
 	
 	return output
+
+#### Get Avatar
+@get('/account/getAvatar')
+def account_get_avatar():
+	account = get_account()
+	if account.data.get('avatar_id'):
+		return {'success': True, 'data': {'url': "/files/%s" % account.data['avatar_id']}}
+	else:
+		return {'success': True, 'data': {'url': "widgets/stream/logo/ui.png"}}
 
 #### POST setConfig
 @post('/account/setConfig/:_id')
@@ -84,9 +98,9 @@ def account_setConfig(_id):
 	storage = get_storage(namespace='object')
 	
 	value = request.params.get('value', default=None)
-	
+
 	logger.debug(" + setConfig '%s' => '%s'" % (_id, value))
-	
+
 	if value:
 		account.data[_id] = value
 		storage.put(account, account=account)
