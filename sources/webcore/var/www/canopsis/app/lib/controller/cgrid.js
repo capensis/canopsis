@@ -583,17 +583,16 @@ Ext.define('canopsis.lib.controller.cgrid', {
 
 	_sendByMail: function() {
 		log.debug('Clicked sendByMail', this.logAuthor);
-		grid = this.grid;
-		item = grid.getSelectionModel().getSelection()[0];
-		if (this.sendByMail) {
+		var grid = this.grid;
+		var item = grid.getSelectionModel().getSelection()[0];
+		if (this.sendByMail) 
 				this.sendByMail(item);
-		}
 	},
 
 	_authkey: function() {
 		log.debug('Clicked authentification key', this.logAuthor);
-		grid = this.grid;
-		item = grid.getSelectionModel().getSelection()[0];
+		var grid = this.grid;
+		var item = grid.getSelectionModel().getSelection()[0];
 
 		var config = {
 			account: item.get('user'),
@@ -607,8 +606,8 @@ Ext.define('canopsis.lib.controller.cgrid', {
 
 	_runItem: function() {
 		log.debug('Clicked runItem', this.logAuthor);
-		grid = this.grid;
-		item = grid.getSelectionModel().getSelection()[0];
+		var grid = this.grid;
+		var item = grid.getSelectionModel().getSelection()[0];
 		if (this.runItem) {
 			this.runItem(item);
 		}
@@ -617,8 +616,8 @@ Ext.define('canopsis.lib.controller.cgrid', {
 
 	_rename: function(view, item, index) {
 		log.debug('Clicked rename', this.logAuthor);
-		grid = this.grid;
-		item = grid.getSelectionModel().getSelection()[0];
+		var grid = this.grid;
+		var item = grid.getSelectionModel().getSelection()[0];
 
 		//check rights
 		var ctrl = this.getController('Account');
@@ -635,7 +634,7 @@ Ext.define('canopsis.lib.controller.cgrid', {
 		log.debug('Clicked editRecord', this.logAuthor);
 
 		//hack create a copy to not mess with old record
-		item_copy = item.copy();
+		var item_copy = item.copy();
 		Ext.data.Model.id(item_copy);
 
 		//check rights
