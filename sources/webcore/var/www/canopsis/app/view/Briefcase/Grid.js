@@ -202,13 +202,13 @@ Ext.define('canopsis.view.Briefcase.Grid' , {
 			xtype: 'button',
 			iconCls: 'icon-mimetype-png',
 			pack: 'end',
-			tooltip: _('Show png'),
+			tooltip: _('Show images'),
 			enableToggle: true,
 			scope: this,
 			toggleHandler: function(button, state) {
 				if (state) {
 					button.filter_id = this.store.addFilter(
-						{'content_type': 'application/png'}
+						{'content_type': { $in: ['image/png', 'image/jpeg', 'image/gif', 'image/jpg']}}
 					);
 					this.toggleSearchBarButtons(button, false);
 				} else {
@@ -219,7 +219,26 @@ Ext.define('canopsis.view.Briefcase.Grid' , {
 			}
 		},{
 			xtype: 'button',
-			iconCls: 'icon-unknown',
+			iconCls: 'icon-mimetype-video',
+			pack: 'end',
+			tooltip: _('Show videos'),
+			enableToggle: true,
+			scope: this,
+			toggleHandler: function(button, state) {
+				if (state) {
+					button.filter_id = this.store.addFilter(
+						{'content_type': 'video/ogg'}
+					);
+					this.toggleSearchBarButtons(button, false);
+				} else {
+					if (button.filter_id)
+						this.store.deleteFilter(button.filter_id);
+				}
+				this.store.load();
+			}
+		},{
+			xtype: 'button',
+			iconCls: 'icon-mimetype-unknown',
 			pack: 'end',
 			tooltip: _('Show unknown'),
 			enableToggle: true,
