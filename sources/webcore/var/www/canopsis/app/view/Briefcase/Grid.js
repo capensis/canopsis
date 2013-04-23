@@ -49,6 +49,7 @@ Ext.define('canopsis.view.Briefcase.Grid' , {
 				height: 110,
 		    	width: 300,
 		    	layout: 'fit',
+
 		    	items: [
 		    		Ext.create('Ext.form.Panel', {
 						bodyPadding: '5 5 0',
@@ -57,6 +58,7 @@ Ext.define('canopsis.view.Briefcase.Grid' , {
 							allowBlank: false
 						},
 
+
 				        items: [{
 				            xtype: 'filefield',
 				            id: 'form-file',
@@ -64,7 +66,13 @@ Ext.define('canopsis.view.Briefcase.Grid' , {
 				            fieldLabel: 'File',
 				            name: 'file-path',
 				            buttonText: 'Browse',
-				            width: 275
+				            width: 275,
+				            listeners: {
+				            	change: function(me, value){
+				            		me.setRawValue(value.replace("C:\\fakepath\\", ""));
+				            	},
+				            },
+
 				        }],
 
 				        buttons: [
@@ -77,7 +85,6 @@ Ext.define('canopsis.view.Briefcase.Grid' , {
 					                    form.submit({
 					                        url: '/files',
 					                        success: function(fp, o) {
-					                        	console.log(o);
 					                        	global.notify.notify(_('Success'), _('File uploaded'), 'success');
 					                            var store = Ext.getStore('Files')
 					                            store.load();
@@ -195,13 +202,13 @@ Ext.define('canopsis.view.Briefcase.Grid' , {
 			xtype: 'button',
 			iconCls: 'icon-mimetype-png',
 			pack: 'end',
-			tooltip: _('Show png'),
+			tooltip: _('Show images'),
 			enableToggle: true,
 			scope: this,
 			toggleHandler: function(button, state) {
 				if (state) {
 					button.filter_id = this.store.addFilter(
-						{'content_type': 'application/png'}
+						{'content_type': { $in: ['image/png', 'image/jpeg', 'image/gif', 'image/jpg']}}
 					);
 					this.toggleSearchBarButtons(button, false);
 				} else {
@@ -212,7 +219,26 @@ Ext.define('canopsis.view.Briefcase.Grid' , {
 			}
 		},{
 			xtype: 'button',
-			iconCls: 'icon-unknown',
+			iconCls: 'icon-mimetype-video',
+			pack: 'end',
+			tooltip: _('Show videos'),
+			enableToggle: true,
+			scope: this,
+			toggleHandler: function(button, state) {
+				if (state) {
+					button.filter_id = this.store.addFilter(
+						{'content_type': 'video/ogg'}
+					);
+					this.toggleSearchBarButtons(button, false);
+				} else {
+					if (button.filter_id)
+						this.store.deleteFilter(button.filter_id);
+				}
+				this.store.load();
+			}
+		},{
+			xtype: 'button',
+			iconCls: 'icon-mimetype-unknown',
 			pack: 'end',
 			tooltip: _('Show unknown'),
 			enableToggle: true,

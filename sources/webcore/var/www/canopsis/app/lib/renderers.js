@@ -91,8 +91,17 @@ var rdr_file_type = function(val, metadata, record, rowIndex, colIndex, store) {
 		return "<span class='icon icon-unknown' />";
 	}
 	var split = val.split('/');
+	if (split.length > 0)
+		var extension = split[split.length - 1];
+	else
+		var extension = "unknown";
+
+	if ($.inArray(extension, ['jpg', 'jpeg', 'gif', 'png']) != -1)
+		return "<span class='icon icon-mimetype-png' />";
+	if ($.inArray(extension, ['ogg']) != -1)
+		return "<span class='icon icon-mimetype-video' />";
 	if (split.length > 0) {
-		return "<span class='icon icon-mimetype-" + split[split.length - 1] + "' />";
+		return "<span class='icon icon-mimetype-" + extension + "' />";
 	}
 };
 

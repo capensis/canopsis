@@ -451,11 +451,17 @@
 } 
 
 /* mimetype */
+.icon-mimetype-unknown { 
+    background-image: url(../images/Tango-Blue-Materia/16x16/apps/gnome-help.png) !important; 
+}
 .icon-mimetype-pdf { 
     background-image: url(../images/icons/page_white_acrobat.png) !important; 
 }
 .icon-mimetype-png { 
     background-image: url(../images/icons/picture.png) !important; 
+}
+.icon-mimetype-video { 
+    background-image: url(../images/icons/film.png) !important; 
 }
 
 /* Controles */
