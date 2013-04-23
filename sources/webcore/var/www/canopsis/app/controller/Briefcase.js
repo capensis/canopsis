@@ -80,7 +80,10 @@ Ext.define('canopsis.controller.Briefcase', {
 				value: avatar_id
 			},
 			success: function(response) {
-				console.log(response);
+				global.notify.notify(_('Success'), _('Avatar setted'), 'success');
+			},
+			failure: function(response) {
+				global.notify.notify(_('Failed'), _('Impossible to set this file as avatar'), 'error');
 			}
 		})
 	},

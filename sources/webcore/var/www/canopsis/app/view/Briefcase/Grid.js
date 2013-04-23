@@ -85,7 +85,6 @@ Ext.define('canopsis.view.Briefcase.Grid' , {
 					                    form.submit({
 					                        url: '/files',
 					                        success: function(fp, o) {
-					                        	console.log(o);
 					                        	global.notify.notify(_('Success'), _('File uploaded'), 'success');
 					                            var store = Ext.getStore('Files')
 					                            store.load();
