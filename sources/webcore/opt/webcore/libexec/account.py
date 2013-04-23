@@ -25,7 +25,8 @@ import logging
 import json
 import bottle
 
-from bottle import route, get, put, delete, request, HTTPError, post, response
+from bottle import route, get, put, delete, post
+from bottle import request, HTTPError, response, redirect
 
 # Canopsis
 from caccount import caccount
@@ -83,13 +84,19 @@ def account_get_me():
 	return output
 
 #### Get Avatar
-@get('/account/getAvatar')
-def account_get_avatar():
-	account = get_account()
-	if account.data.get('avatar_id'):
-		return {'success': True, 'data': {'url': "/files/%s" % account.data['avatar_id']}}
+@get('/account/getAvatar/:_id')
+def account_get_avatar(_id):
+	account = caccount(user="root", group="root")
+	storage = get_storage(namespace='object',account=account)
+
+	account = caccount(storage.get(_id,account=account))
+	avatar_id = account.data.get('avatar_id')
+	if avatar_id:
+		avatar_url = "/files/%s" % avatar_id
 	else:
-		return {'success': True, 'data': {'url': "widgets/stream/logo/ui.png"}}
+		avatar_url = "widgets/stream/logo/ui.png"
+
+	redirect(avatar_url)
 
 #### POST setConfig
 @post('/account/setConfig/:_id')

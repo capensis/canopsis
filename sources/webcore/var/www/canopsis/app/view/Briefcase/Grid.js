@@ -49,6 +49,7 @@ Ext.define('canopsis.view.Briefcase.Grid' , {
 				height: 110,
 		    	width: 300,
 		    	layout: 'fit',
+
 		    	items: [
 		    		Ext.create('Ext.form.Panel', {
 						bodyPadding: '5 5 0',
@@ -57,6 +58,7 @@ Ext.define('canopsis.view.Briefcase.Grid' , {
 							allowBlank: false
 						},
 
+
 				        items: [{
 				            xtype: 'filefield',
 				            id: 'form-file',
@@ -64,7 +66,13 @@ Ext.define('canopsis.view.Briefcase.Grid' , {
 				            fieldLabel: 'File',
 				            name: 'file-path',
 				            buttonText: 'Browse',
-				            width: 275
+				            width: 275,
+				            listeners: {
+				            	change: function(me, value){
+				            		me.setRawValue(value.replace("C:\\fakepath\\", ""));
+				            	},
+				            },
+
 				        }],
 
 				        buttons: [
