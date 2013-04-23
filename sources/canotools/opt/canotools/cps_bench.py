@@ -28,6 +28,9 @@ from cstorage import get_storage
 from caccount import caccount
 import traceback
 
+import pyperfstore2
+
+
 ########################################################
 #
 #   Configuration
@@ -44,6 +47,7 @@ logger = logging.getLogger("bench")
 amqp = camqp()
 
 storage = get_storage(namespace='events', account=caccount(user="root", group="root"))
+manager = pyperfstore2.manager(logging_level=logging.INFO)
 
 base_component_event = cevent.forger(
 					connector =			'bench',
@@ -56,13 +60,27 @@ base_component_event = cevent.forger(
 					output =			"Output",
 					long_output =		"",
 					#perf_data =			None,
-					#perf_data_array =	[
-					#	{'metric': 'shortterm', 'value': 0.25, 'unit': None, 'min': None, 'max': None, 'warn': None, 'crit': None, 'type': 'GAUGE' },
-					#	{'metric': 'midterm',   'value': 0.16, 'unit': None, 'min': None, 'max': None, 'warn': None, 'crit': None, 'type': 'GAUGE' },
-					#	{'metric': 'longterm',  'value': 0.12, 'unit': None, 'min': None, 'max': None, 'warn': None, 'crit': None, 'type': 'GAUGE' }
-                    #]
+					perf_data_array =	[
+						{'metric': 'metric1', 'value': 0.25, 'unit': None, 'min': None, 'max': None, 'warn': None, 'crit': None, 'type': 'GAUGE' },
+						{'metric': 'metric2',   'value': 0.16, 'unit': None, 'min': None, 'max': None, 'warn': None, 'crit': None, 'type': 'GAUGE' },
+						{'metric': 'metric3',  'value': 0.12, 'unit': None, 'min': None, 'max': None, 'warn': None, 'crit': None, 'type': 'GAUGE' },
+						{'metric': 'metric4',  'value': 0.12, 'unit': None, 'min': None, 'max': None, 'warn': None, 'crit': None, 'type': 'GAUGE' },
+						{'metric': 'metric5',  'value': 0.12, 'unit': None, 'min': None, 'max': None, 'warn': None, 'crit': None, 'type': 'GAUGE' },
+						{'metric': 'metric6',  'value': 0.12, 'unit': None, 'min': None, 'max': None, 'warn': None, 'crit': None, 'type': 'GAUGE' },
+						{'metric': 'metric7',  'value': 0.12, 'unit': None, 'min': None, 'max': None, 'warn': None, 'crit': None, 'type': 'GAUGE' },
+						{'metric': 'metric8',  'value': 0.12, 'unit': None, 'min': None, 'max': None, 'warn': None, 'crit': None, 'type': 'GAUGE' },
+						{'metric': 'metric9',  'value': 0.12, 'unit': None, 'min': None, 'max': None, 'warn': None, 'crit': None, 'type': 'GAUGE' },
+						{'metric': 'metric10',  'value': 0.12, 'unit': None, 'min': None, 'max': None, 'warn': None, 'crit': None, 'type': 'GAUGE' }
+                    ]
 					#display_name =		""
 				)
+
+base_component_event['latency'] = 0.141
+base_component_event['current_attempt'] = 1
+base_component_event['max_attempts'] = 1
+base_component_event['execution_time'] = 0.007503
+base_component_event['output'] = "WARNING - Charge moyenne: 0.92, 3.11, 3.45"
+base_component_event['perfdata'] = "load1=0.920;5.000;10.000;0; load5=3.110;4.000;6.000;0; load15=3.450;3.000;4.000;0;"
 
 base_resource_event = cevent.forger(
 					connector =			'bench',
@@ -115,8 +133,15 @@ def send_events(n, rate=0, burst=10):
 	while RUN and i < n:
 		event = base_component_event.copy()
 
-		event['component'] += str(i)
+		#event['component'] += str(i)
+		event['component'] += "bench"
+
+		if i % 300 == 0:
+			event['state'] = 2
+
 		event['bench_timestamp'] = time.time()
+		benchId = i
+		event['benchId'] = benchId
 
 		rk = cevent.get_routingkey(event)
 		amqp.publish(event, rk, amqp.exchange_name_events)
@@ -135,14 +160,16 @@ def send_events(n, rate=0, burst=10):
 	# Get last event
 	record = None
 	elapsed = None
-	logger.info("Wait last record ...")
+	logger.info("Wait last record ('%s' %s) ..." % (rk, benchId))
 	timeout = time.time() + 300
 	while RUN:
-		raw = storage.find_one({'_id': rk}, mfields={'bench_timestamp': 1})
+		raw = storage.find_one({'_id': rk, 'benchId': benchId}, mfields={'bench_timestamp': 1})
 		if raw:
 			elapsed = time.time() - float(raw['bench_timestamp'])
 			storage.get_backend('events').remove({'_id': rk}, safe=True)
 			logger.info(" + Done, Delta: %.3f s" % elapsed )
+			total = elapsed + duration - 1
+			logger.info(" + Est: %.0f Events/sec" % (n/total))
 			break
 		
 		if time.time() > timeout:
@@ -156,9 +183,15 @@ def send_events(n, rate=0, burst=10):
 def clean_db():
 	# Clean DB
 	logger.info("Remove old data")
-	storage.get_backend('perfdata2').remove({'co': {'$regex': 'component-.*'}}, safe=True)
+
+	for perf_data in base_component_event['perf_data_array']:
+		manager.remove(name="%sbench%s" % (base_component_event['component'], perf_data['metric']))
+
+	#storage.get_backend('perfdata2').remove({'co': {'$regex': 'component-.*'}}, safe=True)
+
 	storage.get_backend('events').remove({'connector': 'bench'}, safe=True)
 	storage.get_backend('events_log').remove({'connector': 'bench'}, safe=True)
+
 	time.sleep(1)
 	if (storage.get_backend('events').find({'connector': 'bench'}).count()):
 		logger.error(" + All data are not removed ...")
@@ -191,8 +224,10 @@ try:
 	# Send n events and check lattency
 	#nbs = [ 500, 1000, 1250, 1500, 1750, 2000, 2250, 2500, 2750, 3000, 3250, 3500, 3750, 4000 ]
 	#rates =  [100, 150, 200, 250, 300, 350, 400, 450, 500]
-	nbs = [ 4000 ]
-	rates = [ 200 ]
+	nbs = [ 5000, 10000 ]
+	#nbs = [ 10000 ]
+	#rates = [ 100, 200, 300, 400 ]
+	rates = [ 350 ]
 	
 	for rate in rates:
 		for nb in nbs:
