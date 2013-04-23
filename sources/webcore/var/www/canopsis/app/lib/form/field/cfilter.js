@@ -99,14 +99,35 @@ Ext.define('cfilter.array_field', {
 		var output = [];
 		for (var i = 0; i < this.arrayPanel.items.items.length; i++) {
 			var item = this.arrayPanel.items.items[i];
-			if (!item.hidden)
-				output.push(item.down('[name=valueField]').getValue());
+			if (!item.hidden){
+				var value = item.down('[name=valueField]').getValue();
+				output.push(this.cleanValue(value))	
+			}
 		}
 
 		if (output.length == 1)
 			return output[0];
 		else
 			return output;
+	},
+
+	cleanValue: function(value){
+		if (Ext.isNumber(value))
+			return value;
+
+		var intValue = parseInt(value);
+
+		if ( ! Ext.isNumber(intValue))
+			return value;
+
+		var floatValue = parseFloat(value);
+
+		if (intValue == floatValue)
+			value = intValue;
+		else
+			value = floatValue;
+
+		return value;
 	},
 
 	setValue: function(array) {
