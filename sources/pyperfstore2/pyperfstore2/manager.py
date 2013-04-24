@@ -75,13 +75,31 @@ class manager(object):
 			
 		return _id
 		
+	def get_data(self, _id):
+		data = self.store.redis.lrange(_id, 0, -1)
+
+		def cleanPoint(p):
+			p[0] = int(p[0])
+			try:
+				p[1] = int(p[1])
+			except:
+				p[1] = float(p[1])
+			return p
+
+		data = [ cleanPoint(p.split('|')) for p in data ]
+
+		return data
+
 	def get_meta(self, _id=None, name=None, raw=False, mfields=None):
 		_id = self.get_id(_id, name)
 		
 		meta_data = self.store.get(_id, mfields=mfields)
-		
+
 		if not meta_data:
 			return None
+
+		if not mfields or mfields.get('d', False):
+			meta_data['d'] = self.get_data(_id)
 		
 		# Uncompress fields name
 		if not raw:
@@ -181,8 +199,7 @@ class manager(object):
 		if len(dca['d']):
 			plain_fts = dca['d'][0][0]
 			plain_lts = dca['d'][len(dca['d'])-1][0]
-		
-		
+			
 		self.logger.debug(" + plain_fts: %s" % plain_fts)
 		self.logger.debug(" + plain_lts: %s" % plain_lts)
 		
@@ -331,10 +348,10 @@ class manager(object):
 		# Find yesterday DCA
 		if _id:
 			self.logger.debug("Rotate DCA '%s'" % _id)
-			dcas = self.find(_id=_id, mfilter={ 'd' : {'$ne': []} })
+			dcas = self.find(_id=_id)
 		else:
 			self.logger.info("Rotate All DCA")
-			dcas = self.store.find(mfilter={'d' : {'$ne': []}})
+			dcas = self.store.find()
 		
 		if not dcas.count():
 			self.logger.debug(" + Nothing to do")
@@ -343,6 +360,8 @@ class manager(object):
 		for dca in dcas:
 			_id = dca['_id']
 			self.logger.debug(" + DCA: %s" % _id)
+
+			dca['d'] = self.get_data(_id)
 			
 			fts = dca['d'][0][0]
 			lts = dca['d'][len(dca['d'])-1][0]
@@ -360,7 +379,8 @@ class manager(object):
 					
 					self.logger.debug("   + Add bin_id in meta and clean meta")
 					ofts = dca.get('fts', fts)
-					self.store.update(_id=_id, mset={'fts': ofts, 'lts': lts, 'd': []}, mpush={'c': (fts, lts, bin_id)})
+					self.store.update(_id=_id, mset={'fts': ofts, 'd': []}, mpush={'c': (fts, lts, bin_id)})
+					self.store.redis.delete(_id)
 					
 				except Exception,err:
 					self.logger.info('Impossible to rotate %s: %s' % (_id, err))
@@ -404,7 +424,8 @@ class manager(object):
 			self.logger.debug("   + Start cleanning of %s metas" % nb_metas)
 					
 		for meta in metas:
-			self.logger.debug("   + Clean meta '%s'" % meta['_id'])
+			meta_id = meta['_id']
+			self.logger.debug("   + Clean meta '%s'" % meta_id)
 										
 			## Clean binaries
 			bin_fts = None
@@ -419,17 +440,17 @@ class manager(object):
 					self.store.grid.delete(bin_id)
 					
 					# Remove dca meta
-					self.store.update(_id=meta['_id'], mpop={ 'c' : -1  })
+					self.store.update(_id=meta_id, mpop={ 'c' : -1  })
 				else:
 					if not bin_fts:
 						bin_fts = fts
 			
 			## Clean plain
 			plain_fts = None
-			points = []
-			if len(meta['d']):
-				if meta['d'][0][0] <= timestamp:
-					for point in meta['d']:
+			points = self.get_data(meta_id)
+			if len(points):
+				if points[0][0] <= timestamp:
+					for point in points:
 						fts = point[0]
 						if fts <= timestamp:
 							self.logger.debug("     + Remove plain point")
@@ -438,14 +459,15 @@ class manager(object):
 							if not plain_fts:
 								plain_fts = fts
 					if points:
-						self.store.update(_id=meta['_id'], mset={ 'd': points})
+						points = ["%s|%s" % (p[0], p[1]) for p in points]
+						self.store.redis.lset(meta_id, points)
 			
 			## Set new fts
 			fts = plain_fts
 			if bin_fts < plain_fts:
 				fts = bin_fts
 			
-			self.store.update(_id=meta['_id'], mset={'fts': fts})
+			self.store.update(_id=meta_id, mset={'fts': fts})
 			cleaned += 1
 						
 		return cleaned
@@ -470,6 +492,7 @@ class manager(object):
 		bin_dcas = []
 
 		for _id in ids:
+			self.store.redis_pipe.delete(_id)
 			dca = self.get_meta(_id=_id, raw=True, mfields={'c': 1})
 			if dca:
 				dcas.append(dca)
@@ -477,6 +500,8 @@ class manager(object):
 				if len(binaries):
 					for bin_dca in binaries:
 						bin_dcas.append(bin_dca[2])
+
+		self.store.sync()
 
 		self.logger.debug(" + %s Meta DCA Found" % len(dcas))
 		self.logger.debug(" + %s Binaries Found" % len(bin_dcas))
@@ -493,6 +518,7 @@ class manager(object):
 				self.store.remove(_id=dcas[0]['_id'])
 			else:
 				self.store.remove(mfilter={'_id': {'$in': [ dca['_id'] for dca in dcas]}})
+
 	
 	def showStats(self):
 		metas = self.find(limit=0)

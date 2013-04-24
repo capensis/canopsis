@@ -23,9 +23,23 @@ import os, sys, json, logging, time
 from bson.errors import InvalidStringData
 from pymongo import Connection
 from gridfs import GridFS
+import redis
+
+import threading
 
 class store(object):
-	def __init__(self, mongo_host="127.0.0.1", mongo_port=27017, mongo_db='canopsis', mongo_collection='perfdata2', mongo_user=None, mongo_pass=None, mongo_safe=False, logging_level=logging.INFO):
+	def __init__(self,
+			mongo_host="127.0.0.1",
+			mongo_port=27017,
+			mongo_db='canopsis',
+			mongo_collection='perfdata2',
+			mongo_user=None,
+			mongo_pass=None,
+			mongo_safe=False,
+			redis_db=0,
+			redis_sync_interval=10,
+			logging_level=logging.INFO):
+
 		self.logger = logging.getLogger('store')
 		self.logger.setLevel(logging_level)
 		
@@ -52,10 +66,21 @@ class store(object):
 		self.mongo_user = mongo_user if mongo_user != "" else None
 		self.mongo_pass = mongo_pass if mongo_pass != "" else None
 
-		
+		self.redis_sync_interval = redis_sync_interval
+		self.redis_db = redis_db
+
 		self.connected = False
 		
 		self.connect()
+
+		self.last_sync = time.time()
+
+		self.last_rate_time = time.time()
+		self.rate_interval = 10
+		self.rate_threshold = 20
+		self.last_rate = 0
+		self.pipe_size = 0
+		self.pushed_values = 0
 
 	def connect(self):
 		if self.connected:
@@ -72,6 +97,9 @@ class store(object):
 				return False
 				
 			self.db=self.conn[self.mongo_db]
+
+			self.redis = redis.StrictRedis(host='localhost', port=6379, db=self.redis_db)
+			self.redis_pipe = self.redis.pipeline()
 
 			try:
 				self.logger.debug("Try to auth '%s'" % self.mongo_user)
@@ -90,7 +118,7 @@ class store(object):
 			self.connected = True
 			self.logger.debug(" + Success")
 			return True
-			
+
 	def check_connection(self):
 		if not self.connected:
 			if not self.connect():
@@ -116,20 +144,51 @@ class store(object):
 		if data:
 			return self.collection.update({'_id': _id}, data, upsert=upsert)
 	
-	def push(self, _id, point, meta_data={}):
+	def sync(self):
+		self.logger.debug("Sync pipeline to Redis")
+		self.redis_pipe.execute()
+		self.last_sync = time.time()
+		self.pipe_size = 0
+
+	def push(self, _id, point, meta_data={}, bulk=True):
 		self.check_connection()
 		self.logger.debug("Push point '%s' in '%s'" % (point, _id))
 		
 		meta_data['lts'] = point[0]
 		meta_data['lv'] = point[1]
-		
-		return self.update(_id=_id, mset=meta_data, mpush={'d': point})
 
-	def create(self, _id, data):
-		self.check_connection()
-		data['_id'] = _id
-		self.logger.debug("Create record '%s'" % _id)
-		return self.collection.insert(data)
+		# Update meta data on mongo
+		if not self.redis.exists(_id):
+			self.update(_id=_id, mset=meta_data)
+
+		now = time.time()
+
+		# Calcul push rate
+		if self.pushed_values and (self.last_rate_time + self.rate_interval) < now:
+			elapsed = now - self.last_rate_time
+			self.last_rate =  self.pushed_values // elapsed
+			self.pushed_values = 0
+			self.last_rate_time = now
+
+		# Disable bulk mode in lower rate
+		if bulk and self.last_rate < self.rate_threshold:
+			bulk = False
+		
+		if bulk and self.pipe_size == 0:
+			self.logger.debug("Bulk mode is enabled (rate: %s push/sec)" % self.last_rate)
+
+		# Push perfdata to db
+		if not bulk and self.pipe_size == 0:
+			self.redis.rpush(_id, '%s|%s' % (point[0], point[1]))
+		else:
+			self.redis_pipe.rpush(_id, '%s|%s' % (point[0], point[1]))
+			self.pipe_size += 1
+
+		# Sync DB if need
+		if self.pipe_size and self.redis_sync_interval and (self.last_sync + self.redis_sync_interval) < now:
+			self.sync()
+
+		self.pushed_values += 1
 
 	def create_bin(self, _id, data):
 		self.check_connection()
@@ -187,8 +246,12 @@ class store(object):
 		self.db.drop_collection(self.mongo_collection)
 		self.db.drop_collection(self.mongo_collection+"_bin.chunks")
 		self.db.drop_collection(self.mongo_collection+"_bin.files")
+		self.redis.flushdb()
 		
 	def disconnect(self):
+		# Sync redis
+		self.sync()
+
 		if self.connected:
 			self.logger.debug("Disconnect from MongoDB")
 			self.conn.disconnect()
