@@ -40,8 +40,8 @@ handler = init.getHandler(logger)
 
 engines=[]
 amqp = None
-next_event_engines = []
-next_alert_engines = []
+next_event_amqp_queue = []
+next_alert_amqp_queue = []
 
 def clean_message(body, msg):
 	## Sanity Checks
@@ -105,15 +105,10 @@ def on_event(body, msg):
 	event = clean_message(body, msg)
 	
 	event['exchange'] = amqp.exchange_name_events
-	
-	## Forward to engines
-	for engine in next_event_engines:
-		try:
-			engine.input_queue.put(event)
-		except Queue.Full:
-			logger.warngin("Internal queue of '%s' is full, forward event to AMQP queue." % engine.name)
-			amqp.publish(event, engine.amqp_queue, "amq.direct")
 
+	## Forward to engines
+	for amqp_queue in next_event_amqp_queue:
+		amqp.publish(event, amqp_queue, "amq.direct")
 	
 def on_alert(body, msg):	
 	## Clean message	
@@ -122,81 +117,79 @@ def on_alert(body, msg):
 	event['exchange'] = amqp.exchange_name_alerts
 	
 	## Forward to engines
-	for engine in next_alert_engines:
-		try:
-			engine.input_queue.put(event)
-		except Queue.Full:
-			logger.warngin("Internal queue of '%s' is full, forward event to AMQP queue." % engine.name)
-			amqp.publish(event, engine.amqp_queue, "amq.direct")
+	for amqp_queue in next_alert_amqp_queue:
+		amqp.publish(event, amqp_queue, "amq.direct")
 
 def start_engines():
 	global engines
-	# Init Engines
-	## TODO: Use routing table for dynamic routing
-	### Route:
-	
-	# Events:
-	### Nagios/Icinga/Shinken... ----------------------------> canopsis.events -> tag -> perfstore -> eventstore
-	### collectd ------------------> amq.topic -> collectdgw |
-	
-	# Alerts:
-	### canopsis.alerts -> selector -> eventstore
-	
-	import perfstore2
-	import eventstore
-	import collectdgw
-	import tag
-	import selector
-	import sla
-	import alertcounter
-	import derogation
-	import topology
-	import consolidation
-	
+	global next_event_amqp_queue
+	global next_alert_amqp_queue
 
-	engine_selector		= selector.engine(logging_level=logging.INFO)
-	engines.append(engine_selector)
-	
-	engine_topology		= topology.engine(next_engines=[engine_selector], logging_level=logging.INFO)
-	engines.append(engine_topology)
+	##################
+	# Events
+	##################
 
-	engine_alertcounter	= alertcounter.engine(next_engines=[engine_topology], logging_level=logging.INFO)
-	#engine_alertcounter	= alertcounter.engine(next_engines=[engine_selector], logging_level=logging.INFO)
-	engines.append(engine_alertcounter)
-	
-	engine_collectdgw	= collectdgw.engine()
-	engines.append(engine_collectdgw)
-	
-	engine_eventstore	= eventstore.engine( logging_level=logging.INFO)
-	engines.append(engine_eventstore)
-	#engine_eventstore2	= eventstore.engine( logging_level=logging.INFO)
-	#engines.append(engine_eventstore2)
-	#engine_eventstore3	= eventstore.engine( logging_level=logging.INFO)
-	#engines.append(engine_eventstore3)
-
-	#engine_perfstore	= perfstore2.engine(next_engines=[engine_eventstore, engine_eventstore2, engine_eventstore3])
-	engine_perfstore	= perfstore2.engine(next_engines=[engine_eventstore])
-	engines.append(engine_perfstore)
-	
-	engine_tag			= tag.engine(		next_engines=[engine_perfstore])
-	engines.append(engine_tag)
-	
-	engine_derogation 	= derogation.engine( next_engines=[engine_tag], logging_level=logging.INFO)
-	engines.append(engine_derogation)
-
-	engine_sla			= sla.engine(logging_level=logging.INFO)
-	engines.append(engine_sla)
-	
-	engine_consolidation		= consolidation.engine(logging_level=logging.INFO)
-	engines.append(engine_consolidation)
-	
-	# Set Next queue
 	## Events
-	next_event_engines.append(engine_derogation)
-	#next_event_engines.append(engine_tag)
+	next_event_amqp_queue = ["Engine_derogation"]
+
+	# Engine_derogation
+	import derogation
+	engines.append( derogation.engine(		next_amqp_queues=['Engine_tag'], logging_level=logging.DEBUG) )
+
+	# Engine_tag
+	import tag
+	engines.append( tag.engine(				next_amqp_queues=['Engine_perfstore2']) )
+
+	# Engine_perfstore2
+	import perfstore2
+	engines.append( perfstore2.engine(		next_amqp_queues=['Engine_eventstore']) )
+
+	# Engine_eventstore
+	import eventstore
+	engines.append( eventstore.engine() )
+
+
+	##################
+	# Alerts
+	##################
+
 	## Alerts
-	next_alert_engines.append(engine_alertcounter)
-	
+	next_alert_amqp_queue = ["Engine_alertcounter"]
+
+	# Engine_alertcounter
+	import alertcounter
+	engines.append( alertcounter.engine(	next_amqp_queues=['Engine_topology']) )
+
+	# Engine_topology
+	import topology
+	engines.append( topology.engine(		next_amqp_queues=['Engine_selector']) )
+
+	# Engine_selector
+	import selector
+	engines.append( selector.engine() )
+
+
+	##################
+	# Autres
+	##################
+
+	# Engine_collectdgw
+	import collectdgw
+	engines.append( collectdgw.engine() )
+
+	# Engine_sla (no queue)
+	import sla
+	engines.append( sla.engine() )
+
+	# Engine_consolidation
+	import consolidation
+	engines.append( consolidation.engine() )	
+
+
+	##################
+	# Start engines
+	##################
+
 	logger.info("Start engines")
 	for engine in engines:
 		engine.start()
