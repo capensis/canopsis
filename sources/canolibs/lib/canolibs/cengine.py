@@ -36,7 +36,9 @@ class cengine(multiprocessing.Process):
 			next_balanced=False,
 			name="worker1",
 			beat_interval=60,
-			logging_level=logging.INFO):
+			logging_level=logging.INFO,
+			exchange_name='amq.topic',
+			routing_keys=[]):
 		
 		multiprocessing.Process.__init__(self)
 		
@@ -49,6 +51,8 @@ class cengine(multiprocessing.Process):
 		self.name = name
 		
 		self.amqp_queue = "Engine_%s" % name
+		self.routing_keys = routing_keys
+		self.exchange_name = exchange_name
 		
 		self.perfdata_retention = 3600
 
@@ -84,7 +88,15 @@ class cengine(multiprocessing.Process):
 		self.logger.info("Engine initialised")
 		
 	def create_amqp_queue(self):
-		self.amqp.add_queue(self.amqp_queue, None, self.on_amqp_event, "amq.direct", no_ack=True, exclusive=False, auto_delete=False)
+		self.amqp.add_queue(
+			queue_name=self.amqp_queue,
+			routing_keys=self.routing_keys,
+			callback=self.on_amqp_event,
+			exchange_name=self.exchange_name,
+			no_ack=True,
+			exclusive=False,
+			auto_delete=False
+		)
 	
 	def pre_run(self):
 		pass
@@ -140,7 +152,7 @@ class cengine(multiprocessing.Process):
 		
 	def on_amqp_event(self, event, msg):
 		try:
-			self._work(event)
+			self._work(event, msg)
 		except Exception as err:
 			if event['rk'] not in self.rk_on_error:
 				self.logger.error(err)
@@ -149,11 +161,11 @@ class cengine(multiprocessing.Process):
 
 			self.next_queue(event)
 	
-	def _work(self, event, *args, **kargs):
+	def _work(self, event, msg=None, *args, **kargs):
 		start = time.time()
 		error = False
 		try:
-			wevent = self.work(event, *args, **kargs)
+			wevent = self.work(event, msg, *args, **kargs)
 			
 			#self.logger.debug("Forward event '%s' to next engines" % event['rk'])
 
