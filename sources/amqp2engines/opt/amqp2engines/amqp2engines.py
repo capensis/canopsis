@@ -59,7 +59,7 @@ def start_engines():
 
 	# Engine_perfstore2
 	import perfstore2
-	#engines.append( perfstore2.engine(		next_amqp_queues=['Engine_eventstore']) )
+	engines.append( perfstore2.engine(		next_amqp_queues=['Engine_eventstore']) )
 
 	# Engine_eventstore
 	import eventstore
