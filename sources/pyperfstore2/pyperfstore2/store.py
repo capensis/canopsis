@@ -36,6 +36,8 @@ class store(object):
 			mongo_user=None,
 			mongo_pass=None,
 			mongo_safe=False,
+			redis_host="127.0.0.1",
+			redis_port=6379,
 			redis_db=0,
 			redis_sync_interval=10,
 			logging_level=logging.INFO):
@@ -68,6 +70,8 @@ class store(object):
 
 		self.redis_sync_interval = redis_sync_interval
 		self.redis_db = redis_db
+		self.redis_host = redis_host
+		self.redis_port = redis_port
 
 		self.connected = False
 		
@@ -98,7 +102,7 @@ class store(object):
 				
 			self.db=self.conn[self.mongo_db]
 
-			self.redis = redis.StrictRedis(host='localhost', port=6379, db=self.redis_db)
+			self.redis = redis.StrictRedis(host=self.redis_host, port=self.redis_port, db=self.redis_db)
 			self.redis_pipe = self.redis.pipeline()
 
 			try:
