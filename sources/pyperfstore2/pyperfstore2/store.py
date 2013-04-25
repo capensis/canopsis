@@ -36,7 +36,7 @@ class store(object):
 			mongo_user=None,
 			mongo_pass=None,
 			mongo_safe=False,
-			redis_host="127.0.0.1",
+			redis_host=None,
 			redis_port=6379,
 			redis_db=0,
 			redis_sync_interval=10,
@@ -70,8 +70,11 @@ class store(object):
 
 		self.redis_sync_interval = redis_sync_interval
 		self.redis_db = redis_db
-		self.redis_host = redis_host
 		self.redis_port = redis_port
+		self.redis_host = redis_host
+
+		if not redis_host:
+			self.redis_host = self.mongo_host
 
 		self.connected = False
 		
