@@ -364,7 +364,7 @@ class manager(object):
 			dca['d'] = self.get_data(_id)
 
 			if not len(dca['d']):
-				self.logger.debug("  - No points in plain DCA")
+				self.logger.debug("  + No points in plain DCA")
 				continue
 			
 			fts = dca['d'][0][0]

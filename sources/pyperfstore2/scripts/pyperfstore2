@@ -20,12 +20,12 @@
 
 import logging, sys
 
-logging_level = logging.ERROR
+logging_level = logging.INFO
 
 ## Options parsing
 from optparse import OptionParser
 
-usage = "usage: %prog [options] showstats"
+usage = "usage: %prog [options] [showstats|update]"
 
 parser = OptionParser(usage=usage)
 
@@ -69,6 +69,21 @@ manager = pyperfstore2.manager()
 
 if   action == "showstats":
 	manager.showStats()
+
+elif   action == "update":
+	logger.info("Update Pyperfstore data")
+	# Rotate plain data
+	metrics = manager.find(mfilter={'d': {'$exists': True, '$not': {'$size': 0} } })
+	logger.info(" + %s metrics" % metrics.count())
+	for metric in metrics:
+		_id = metric.get('_id')
+		dca = metric.get('d', False)
+		if dca:
+			logger.info(" + Move plain data of %s in Redis" % _id)
+			points = ['%s|%s' % (point[0], point[1]) for point in dca ]
+			[ manager.store.redis_pipe.lpush(_id, point) for point in points ]
+			manager.store.sync()
+			manager.store.collection.update({'_id': _id}, {"$unset": {"d": True}})
 
 else:
 	logger.error('Invalid action ...')

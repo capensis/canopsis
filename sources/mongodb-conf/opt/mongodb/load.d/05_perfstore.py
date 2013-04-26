@@ -47,18 +47,4 @@ def update():
 		manager.store.create(_id, metric)
 		manager.store.remove(_id=old_id)
 
-	# Rotate plain data
-	metrics = manager.find(mfilter={'d': {'$not': {'$size': 0}}})
-
-	for metric in metrics:
-		_id = metric.get('_id')
-		dca = metric.get('d', False)
-		if dca:
-			logger.info(" + Move plain data of %s in Redis" % _id)
-			data = ['%s|%s' % (p[0], p[1]) for p in dca ]
-			manager.store.redis.lpush(_id, data)
-			manager.store.collection.update({'_id': _id}, {"$unset": {"d": True}})
-
-	manager.store.sync()
-
 
