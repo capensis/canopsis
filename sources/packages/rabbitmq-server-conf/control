@@ -54,6 +54,10 @@ function post_install(){
 	RCODE=$?
 	if [ $RCODE -ne 0 ]; then CODE=$RCODE; fi
 
+	#echo " + Remove old queues ..."
+	#$PREFIX/bin/rabbitmqadmin -H 127.0.0.1 --vhost=canopsis --username=guest --password=guest delete queue name="amqp2engines" &> /dev/null
+	#$PREFIX/bin/rabbitmqadmin -H 127.0.0.1 --vhost=canopsis --username=guest --password=guest delete queue name="amqp2engines_alerts" &> /dev/null
+
 	launch_cmd 1 service rabbitmq-server stop
 
 	check_code $CODE "Error in rabbitMQ configurations ..."

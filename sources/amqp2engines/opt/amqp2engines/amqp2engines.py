@@ -29,7 +29,6 @@ import sys, os
 sys.path.append(os.path.expanduser('~/opt/amqp2engines/engines/'))
 
 ## Configurations
-
 DAEMON_NAME="amqp2engines"
 
 init 	= cinit()
@@ -37,6 +36,27 @@ logger 	= init.getLogger(DAEMON_NAME, level="INFO")
 handler = init.getHandler(logger)
 
 engines=[]
+
+## Very Dirty HACK !
+## Remove old queues (temporary workaround)
+import ConfigParser
+amqp_config = ConfigParser.RawConfigParser()
+section = 'master'
+amqp_config.read(os.path.expanduser("~/etc/amqp.conf"))
+amqp_host = amqp_config.get(section, "host")
+amqp_port = amqp_config.getint(section, "port")
+amqp_userid = amqp_config.get(section, "userid")
+amqp_password = amqp_config.get(section, "password")
+amqp_virtual_host = amqp_config.get(section, "virtual_host")
+
+import subprocess
+subprocess.call('rabbitmqadmin -H %s --vhost=%s --username=%s --password=%s delete queue name="amqp2engines"'
+	% (amqp_host, amqp_virtual_host, amqp_userid, amqp_password), shell=True)
+subprocess.call('rabbitmqadmin -H %s --vhost=%s --username=%s --password=%s delete queue name="amqp2engines_alerts"'
+	% (amqp_host, amqp_virtual_host, amqp_userid, amqp_password), shell=True)
+
+###### END of HACK ####
+
 
 def start_engines():
 	global engines
