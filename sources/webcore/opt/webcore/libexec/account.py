@@ -85,16 +85,22 @@ def account_get_me():
 
 #### Get Avatar
 @get('/account/getAvatar/:_id')
-def account_get_avatar(_id):
-	account = caccount(user="root", group="root")
+@get('/account/getAvatar')
+def account_get_avatar(_id=None):
+	#account = caccount(user="root", group="root")
+	account = get_account()
 	storage = get_storage(namespace='object',account=account)
 
-	account = caccount(storage.get(_id,account=account))
+	if _id is not None:
+		account = caccount(storage.get(_id,account=account))
+	
+	print(account.data)
 	avatar_id = account.data.get('avatar_id')
+	
 	if avatar_id:
 		avatar_url = "/files/%s" % avatar_id
 	else:
-		avatar_url = "widgets/stream/logo/ui.png"
+		avatar_url = "/static/canopsis/widgets/stream/logo/ui.png"
 
 	redirect(avatar_url)
 
