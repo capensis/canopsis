@@ -91,7 +91,35 @@ Ext.define('canopsis.view.Mainbar.Bar' , {
 			width: 200
 		});
 
-		this.dashboardSelector = Ext.create('Ext.form.field.ComboBox', {
+		// Retrieve Files store add apply images filter
+		var avatarSelectorStore = Ext.create('canopsis.store.Files');
+		avatarSelectorStore.addFilter(
+				{'content_type': { $in: ['image/png', 'image/jpeg', 'image/gif', 'image/jpg']}}
+		);
+		var avatarSelectorComboBox = Ext.create('Ext.form.field.ComboBox', {
+			id: 'avatarSelector',
+			action: 'avatarSelector',
+			store: avatarSelectorStore,
+			displayField: 'file_name',
+			fieldLabel: _('Choose avatar'),
+			iconCls: 'no-icon',
+			width: 257-22-2
+		});
+		var avatarSelectorAdd = Ext.create('Ext.Button', {
+			iconCls: 'icon-add',
+			margin: '0 0 0 2'
+		});
+
+		this.avatarSelector = Ext.create('Ext.container.Container', {
+			iconCls: 'no-icon',
+			layout: {
+			    type: 'hbox',
+			    align: 'right'
+			},
+			items: [avatarSelectorComboBox, avatarSelectorAdd]
+		});
+
+		avatarSelectorComboBox.dashboardSelectorComboBox = Ext.create('Ext.form.field.ComboBox', {
 			iconCls: 'icon-mainbar-dashboard',
 			id: 'dashboardSelector',
 			action: 'dashboardSelector',
@@ -115,7 +143,7 @@ Ext.define('canopsis.view.Mainbar.Bar' , {
 		this.viewSelector.on('select', function() {
 				var menu = this.down('menu[name="Run"]');
 				menu.hide();
-			},this);
+		},this);
 
 		var menu_build = [];
 		var menu_run = [];
@@ -333,7 +361,8 @@ Ext.define('canopsis.view.Mainbar.Bar' , {
 			this.localeSelector,
 			this.clockTypeSelector,
 			'-',
-			this.dashboardSelector
+			this.dashboardSelector,
+			this.avatarSelector
 		]);
 
 
@@ -376,19 +405,22 @@ Ext.define('canopsis.view.Mainbar.Bar' , {
 				name: 'clock',
 				align: 'strech',
 				flex: 4
-			},'->', {
+			},'->',{
 				xtype: 'container',
 				html: "<div class='cps-account' >" + global.account.firstname + ' ' + global.account.lastname + '</div>',
 				flex: 2.3
-			},{
-				iconCls: 'icon-user',
+			},
+				this.userPreferences
+			,'-',{
+				icon: '/account/getAvatar',
+				iconCls: 'icon-mainbar icon-avatar-bar',
 				width: 36,
 				menu: {
 					items: menu_preferences
 				}
 
 			},'-', {
-				iconCls: 'icon-preferences',
+				iconCls: 'icon-mainbar icon-preferences',
 				width: 36,
 				menu: {
 					name: 'Preferences',
@@ -396,7 +428,7 @@ Ext.define('canopsis.view.Mainbar.Bar' , {
 					items: menu_configuration
 				}
 			},{
-				iconCls: 'icon-about',
+				iconCls: 'icon-mainbar icon-about',
 				width: 36,
 				menu: {
 					name: 'About',
@@ -433,13 +465,13 @@ Ext.define('canopsis.view.Mainbar.Bar' , {
 					]
 				}
 			},{
-				iconCls: (global.websocketCtrl.connected) ? 'icon-bullet-green' : 'icon-bullet-red',
+				iconCls: (global.websocketCtrl.connected) ? 'icon-mainbar icon-bullet-green' : 'icon-mainbar icon-bullet-red',
 				id: 'Mainbar-menu-Websocket',
 				onClick: function() { global.websocketCtrl.connect(); }
 			},
 			Ext.create('canopsis.lib.menu.cspinner'),
 			{
-				iconCls: 'icon-bootstrap-off',
+				iconCls: 'icon-mainbar icon-bootstrap-off',
 				action: 'logout',
 				tooltip: _('Logout')
 			}

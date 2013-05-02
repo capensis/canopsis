@@ -224,10 +224,10 @@ try:
 	# Send n events and check lattency
 	#nbs = [ 500, 1000, 1250, 1500, 1750, 2000, 2250, 2500, 2750, 3000, 3250, 3500, 3750, 4000 ]
 	#rates =  [100, 150, 200, 250, 300, 350, 400, 450, 500]
-	nbs = [ 5000, 10000 ]
+	nbs = [ 10000 ]
 	#nbs = [ 10000 ]
 	#rates = [ 100, 200, 300, 400 ]
-	rates = [ 350 ]
+	rates = [ 370 ]
 	
 	for rate in rates:
 		for nb in nbs:
