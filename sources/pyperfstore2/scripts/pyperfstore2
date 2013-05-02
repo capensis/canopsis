@@ -25,7 +25,7 @@ logging_level = logging.INFO
 ## Options parsing
 from optparse import OptionParser
 
-usage = "usage: %prog [options] [showstats|update]"
+usage = "usage: %prog [options] [showstats|rotate|update]"
 
 parser = OptionParser(usage=usage)
 
@@ -84,6 +84,9 @@ elif   action == "update":
 			[ manager.store.redis_pipe.lpush(_id, point) for point in points ]
 			manager.store.sync()
 			manager.store.collection.update({'_id': _id}, {"$unset": {"d": True}})
+
+elif   action == "rotate":
+	manager.rotateAll()
 
 else:
 	logger.error('Invalid action ...')
