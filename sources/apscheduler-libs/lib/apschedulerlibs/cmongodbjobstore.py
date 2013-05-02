@@ -45,7 +45,7 @@ class CMongoDBJobStore(MongoDBJobStore):
 			try:
 				job = Job.__new__(Job)
 				
-				if job_dict['aaa_owner'] != 'root':
+				if job_dict['aaa_owner'] != 'account.root':
 					if job_dict['kwargs']['task'] != 'task_reporting':
 						raise ValueError("User %s isn\'t allow to run task %s" % (job_dict['aaa_owner'],job_dict['kwargs']['task']))
 				
