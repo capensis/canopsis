@@ -109,8 +109,8 @@ class store(object):
 			self.redis_pipe = self.redis.pipeline()
 
 			try:
-				self.logger.debug("Try to auth '%s'" % self.mongo_user)
 				if self.mongo_user and self.mongo_pass != None:
+						self.logger.debug("Try to auth '%s'" % self.mongo_user)
 						if not self.db.authenticate(self.mongo_user, self.mongo_pass):
 							raise Exception('Invalid user or pass.')
 						self.logger.debug(" + Success")
@@ -265,5 +265,5 @@ class store(object):
 		else:
 			self.logger.warning("Impossible to disconnect, you are not connected")
 
-	def __del__(self):
-		self.disconnect()
+	#def __del__(self):
+	#	self.disconnect()
