@@ -25,8 +25,8 @@ else
 	echo " :: Archive detected ($FULLPATH)"
 fi
 
-if ! [[ ${FILENAME: -4} == ".zip" || $(exit $?) == 1 ]]; then
-	echo " ## Package format must be *.zip (${FILENAME: -4})"
+if ! [[ ${FILENAME: -4} == ".tar.gz" || $(exit $?) == 1 ]]; then
+	echo " ## Package format must be *.tar.gz (${FILENAME: -4})"
 	echo " ## Failed"
 	exit 1
 else
@@ -46,7 +46,7 @@ fi
 echo " :: Create temp dir"
 tmp_dir=$(mktemp -d --tmpdir=$HOME/tmp)
 echo " :: Extract config archive into temp dir"
-unzip $FULLPATH -d $tmp_dir
+tar xfz $FULLPATH -C $tmp_dir
 echo " :: Apply config files"
 cp -a $tmp_dir/$ARCHIVE/. $HOME/etc
 #cp -R $tmp_dir/$ARCHIVE/.* $HOME/etc
