@@ -340,6 +340,7 @@ class manager(object):
 		self.rotate()
 		
 	def rotate(self, _id=None, name=None):
+		t = time.time()
 		try:
 			_id = self.get_id(_id, name)
 		except:
@@ -348,51 +349,60 @@ class manager(object):
 		# Find yesterday DCA
 		if _id:
 			self.logger.debug("Rotate DCA '%s'" % _id)
-			dcas = self.find(_id=_id)
+			_ids = [ _id ]
 		else:
 			self.logger.info("Rotate All DCA")
-			dcas = self.store.find()
+			_ids = []
+			self.logger.info(" + Get all keys")
+			keys = self.store.redis.keys('*')
+			self.logger.info(" + Check length (%s keys)" % len(keys))
+			for key in keys:
+				self.store.redis_pipe.llen(key)
 		
-		if not dcas.count():
-			self.logger.debug(" + Nothing to do")
+			result = self.store.redis_pipe.execute()
+
+			for index, key in enumerate(keys):
+				if result[index] >= self.dca_min_length:
+					_ids.append(key)
+	
+		if not _ids:
+			self.logger.info("Nothing to do")
 			return
 
-		for dca in dcas:
-			_id = dca['_id']
+		self.logger.info("Start rotation of %s keys" % len(_ids))
+		for _id in _ids:
 			self.logger.debug(" + DCA: %s" % _id)
 
-			dca['d'] = self.get_data(_id)
-
-			if not len(dca['d']):
-				self.logger.debug("  + No points in plain DCA")
-				continue
+			points = self.get_data(_id)
 			
-			fts = dca['d'][0][0]
-			lts = dca['d'][len(dca['d'])-1][0]
-				
-			#check if must compress or not
-			if len(dca['d']) >= self.dca_min_length:				
-				self.logger.debug("  + Compress %s -> %s" % (fts, lts))
-				
-				data = utils.compress(dca['d'])
+			fts = points[0][0]
+			lts = points[len(points)-1][0]
 							
-				try:
-					bin_id = "%s%s" % (_id, lts)
-					self.logger.debug("   + Store in binary record")
-					self.store.create_bin(_id=bin_id, data=data)
+			self.logger.debug("  + Compress %s -> %s" % (fts, lts))
+			
+			data = utils.compress(points)
+						
+			try:
+				bin_id = "%s%s" % (_id, lts)
+				self.logger.debug("   + Store in binary record")
+				self.store.create_bin(_id=bin_id, data=data)
+				
+				self.logger.debug("   + Add bin_id in meta and clean meta")
+				#ofts = dca.get('fts', fts)
+				#self.store.update(_id=_id, mset={'fts': ofts, 'd': []}, mpush={'c': (fts, lts, bin_id)})
+				self.store.update(_id=_id, mpush={'c': (fts, lts, bin_id)})
+				self.store.redis.delete(_id)
+				
+			except Exception,err:
+				self.logger.info('Impossible to rotate %s: %s' % (_id, err))
 					
-					self.logger.debug("   + Add bin_id in meta and clean meta")
-					ofts = dca.get('fts', fts)
-					self.store.update(_id=_id, mset={'fts': ofts, 'd': []}, mpush={'c': (fts, lts, bin_id)})
-					self.store.redis.delete(_id)
-					
-				except Exception,err:
-					self.logger.info('Impossible to rotate %s: %s' % (_id, err))
-					
-			else:
-				self.logger.debug("  + Not enough point in DCA")
-				ofts = dca.get('fts', fts)
-				self.store.update(_id=_id, mset={'fts': ofts})
+			#else:
+			#	self.logger.debug("  + Not enough point in DCA")
+			#	ofts = dca.get('fts', fts)
+			#	self.store.update(_id=_id, mset={'fts': ofts})
+
+		t = time.time() - t
+		self.logger.info("End of rotation, elapsed: %.3f seconds" % t)
 			
 	def cleanAll(self, timestamp=None):
 		return self.clean(timestamp=timestamp)
@@ -523,7 +533,6 @@ class manager(object):
 			else:
 				self.store.remove(mfilter={'_id': {'$in': [ dca['_id'] for dca in dcas]}})
 
-	
 	def showStats(self):
 		metas = self.find(limit=0)
 		mcount = metas.count()
