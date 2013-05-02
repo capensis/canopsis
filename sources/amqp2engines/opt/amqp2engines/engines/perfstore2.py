@@ -39,39 +39,6 @@ class engine(cengine):
 		import logging
 		self.manager = pyperfstore2.manager(logging_level=logging.INFO)
 		
-		now = int(time.time())
-		self.rotate_period = 86400
-		self.rotate_time = now - (now % self.rotate_period) + self.rotate_period
-		
-		self.logger.info('Next rotate: %s UTC (%s)' % (datetime.utcfromtimestamp(self.rotate_time), self.rotate_time))
-		
-	def beat(self):
-		now = int(time.time())
-		
-		if now >= self.rotate_time:
-			## Auto rotate
-			self.rotate_time  = now - (now % self.rotate_period) + self.rotate_period
-			try:
-				self.logger.info('Start rotation')
-				self.manager.rotateAll()
-				self.logger.info('  + Ok')
-			except Exception, err:
-				self.logger.error('Impossible to rotate perfdata: %s' % err)
-				
-			#try:
-			#	self.logger.info('Start repairDatabase')
-			#	self.manager.store.db.command("repairDatabase")
-			#	self.logger.info('  + Ok')
-			#except Exception, err:
-			#	self.logger.error('Impossible to repairDatabase: %s' % err)			
-				
-			#try:
-			#	self.manager.cleanAll()
-			#except Exception, err:
-			#	self.logger.error('Impossible to clean perfdata: %s' % err)
-				
-			self.logger.info('Next rotate: %s UTC (%s)' % (datetime.utcfromtimestamp(self.rotate_time), self.rotate_time))
-		
 	def to_perfstore(self, rk, perf_data, timestamp, component, resource=None, tags=None):
 		
 		if isinstance(perf_data, list):
