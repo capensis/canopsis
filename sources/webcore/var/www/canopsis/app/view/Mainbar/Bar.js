@@ -107,7 +107,21 @@ Ext.define('canopsis.view.Mainbar.Bar' , {
 		});
 		var avatarSelectorAdd = Ext.create('Ext.Button', {
 			iconCls: 'icon-add',
-			margin: '0 0 0 2'
+			margin: '0 0 0 2',
+			listeners: {
+				click: function(me, event) {
+					var uploader = Ext.create('canopsis.view.Briefcase.Uploader', {
+						callback: function(fileId, filename) {
+							console.log(fileId);
+							console.log('Set avatar (' + fileId + ')' + ' ' + filename);
+							var ctrl = global.accountCtrl.getController('Briefcase');
+							ctrl.setAvatar(fileId, filename);
+						}
+					})
+					me.up('menu').hide();
+					uploader.show();
+				}
+			}	
 		});
 
 		this.avatarSelector = Ext.create('Ext.container.Container', {

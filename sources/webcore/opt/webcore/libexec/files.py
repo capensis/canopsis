@@ -141,8 +141,8 @@ def add_file():
 			cfile_record = cfile(storage=storage)
 			cfile_record.put_data(data.file.read(), file_name=data.filename, content_type=content_type)
 			try:
-				storage.put(cfile_record)
-				data = {'success': True, 'data': {'code': 200, 'message': 'File uploaded'}}
+				file_id = storage.put(cfile_record)
+				data = {'success': True, 'data': {'code': 200, 'message': 'File uploaded', 'filename': data.filename, 'file_id': str(file_id)}}
 			except Exception as err:
 				data = {'success': False, 'data': {'code': 500, 'message': err}}
 		else:

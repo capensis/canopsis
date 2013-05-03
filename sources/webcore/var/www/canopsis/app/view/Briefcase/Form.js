@@ -39,5 +39,4 @@ Ext.define('canopsis.view.Briefcase.Form', {
 
 		this.callParent();
 	}
-
 });
