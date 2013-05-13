@@ -1,0 +1,20 @@
+ .progress-label {
+float: left;
+margin-left: 50%;
+text-shadow: 1px 1px 0 #fff;
+/*
+font-size:150%;
+font-weight: bold;
+*/
+}
+.ui-progressbar .ui-progressbar-value {
+margin:0px;
+}
+.ui-widget-header {
+border-style:solid;
+border-color:#B9BDBD;
+border-top:0px;
+border-left:0px;
+border-bottom:0px;
+
+}

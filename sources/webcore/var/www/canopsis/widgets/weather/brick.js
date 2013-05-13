@@ -189,7 +189,7 @@ Ext.define('widgets.weather.brick' , {
 		//------------------build widget base config--------------
 		if (this.simple_display)
 			this._html_template = widget_weather_simple_template;
-		else;
+		else
 			if (this.icon_on_left)
 				this._html_template = widget_weather_template_left;
 			else

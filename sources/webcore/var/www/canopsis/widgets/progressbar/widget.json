@@ -1,0 +1,102 @@
+[{
+	"name":  "progressbar",
+	"version": 1,
+	"author": "Capensis",
+	"website": "http://www.canopsis.org",
+	"xtype": "progressbar",
+	"description": "progressbar Widget",
+	"refreshInterval": 300,
+	"border" : false,
+	"options":
+	[{
+		"title": "Style",
+		"layout": "anchor",
+		"items":
+		[{
+			"xtype" : "numberfield",
+			"name" : "gHeight",
+			"fieldLabel": "Bar height in pixels",
+			"minValue": 0,
+			"value": 20,
+			"step": 1
+		},{
+			"xtype" : "ccolorfield",
+			"name" : "colorBg",
+			"fieldLabel": "Background color",
+			"value": "#EEEEEE"
+		},{
+			"xtype" : "ccolorfield",
+			"name" : "colorStart",
+			"fieldLabel": "Start color",
+			"value": "#1BE01B"
+		},{
+			"xtype" : "ccolorfield",
+			"name" : "colorMid",
+			"fieldLabel": "Middle color",
+			"value": "#FFCD43"
+		},{
+			"xtype" : "ccolorfield",
+			"name" : "colorEnd",
+			"fieldLabel": "End color",
+			"value": "#E0251B"
+		},{
+			"xtype": "checkbox",
+			"fieldLabel": "Display gradient",
+			"checked": true,
+			"name": "dispGrad"
+		},{
+			"xtype": "checkbox",
+			"fieldLabel": "Bold text",
+			"checked": true,
+			"name": "boldText"
+		},{
+			"xtype" : "numberfield",
+			"name" : "fontSize",
+			"fieldLabel": "font size in percent",
+			"minValue": 0,
+			"value": 100,
+			"step": 1
+			}]
+	},{
+		"title": "Choose Metrics",
+		"items": 
+		[{
+			"xtype": "cmetric",
+			"name": "nodes",
+			"multiSelect": true,
+			"metrics": true,
+			"additional_field": 
+			[{
+				"xtype":"textfield",
+				"header":"Custom label",
+				"name":"label",
+				"emptyText":"Type the new label here",
+				"flex":1
+			},{
+				"xtype":"numberfield",
+				"header":"Min value",
+				"name":"mi",
+				"decimalPrecision": 5,
+				"flex":1
+			},{
+				"xtype":"numberfield",
+				"header":"Warn value",
+				"name":"tw",
+				"decimalPrecision": 5,
+				"flex":1
+			},{
+				"xtype":"numberfield",
+				"header":"Crit value",
+				"name":"tc",
+				"decimalPrecision": 5,
+				"flex":1
+			},{
+				"xtype":"numberfield",
+				"header":"Max value",
+				"name":"ma",
+				"decimalPrecision": 5,
+				"flex":1
+			}]
+		}]
+	}]
+}]
