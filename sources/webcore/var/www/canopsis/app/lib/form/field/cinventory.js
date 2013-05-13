@@ -450,7 +450,7 @@ Ext.define('canopsis.lib.form.field.cinventory' , {
 
 							this.setValue_record(output);
 
-							if (this.selection_grid.rendered && this.selection_grid.isMasked())
+							if (this.selection_grid.rendered && this.selection_grid.getEl().isMasked())
 								this.loading_mask = this.selection_grid.getEl().unmask();
 
 							this.value_already_fetched = true;
