@@ -50,8 +50,8 @@ class crecord(object):
 		self.binary = None
 
 		if account:
-			self.owner=self.chown(account.user)
-			self.group=self.chown(account.group)
+			self.chown(account.user)
+			self.chgrp(account.group)
 		
 		#set admin account
 		if not self.admin_group:

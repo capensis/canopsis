@@ -52,6 +52,9 @@ Ext.define('canopsis.controller.Mainbar', {
 			'Mainbar combobox[action="clockTypeSelector"]' : {
 				select: this.setClockType
 			},
+			'Mainbar combobox[action="avatarSelector"]' : {
+				select: this.setAvatar
+			},
 			'Mainbar menuitem[action="openDashboard"]' : {
 				click: this.openDashboard
 			},
@@ -170,6 +173,14 @@ Ext.define('canopsis.controller.Mainbar', {
 		var clock_type = records[0].get('value');
 		log.debug('Set clock to ' + clock_type, this.logAuthor);
 		this.getController('Account').setClock(clock_type);
+	},
+
+	setAvatar: function(combo, records) {
+		var avatarId = records[0].data.id;
+		var avatarFilename = records[0].data.file_name;
+		console.log('Set avatar to ' + avatarId + '(' + avatarFilename + ')');
+		combo.up('button').hideMenu();
+		this.getController('Briefcase').setAvatar(avatarId, avatarFilename);
 	},
 
 	setDashboard: function(combo, records) {

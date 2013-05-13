@@ -23,7 +23,7 @@ widget_weather_template = Ext.create('Ext.XTemplate',
 		'<table class="weather-table">',
 			'<tr>',
 				'<td style="vertical-align: top;" colspan=3>',
-					'<span class="weather-title">{title}</span>',
+					'<span class="weather-title" id="{id}-title">{title}</span>',
 					'<span class="weather-ts">{event_ts}</span></br>',
 					'{output}',
 				'</td>',
@@ -189,7 +189,7 @@ Ext.define('widgets.weather.brick' , {
 		//------------------build widget base config--------------
 		if (this.simple_display)
 			this._html_template = widget_weather_simple_template;
-		else;
+		else
 			if (this.icon_on_left)
 				this._html_template = widget_weather_template_left;
 			else
@@ -237,7 +237,7 @@ Ext.define('widgets.weather.brick' , {
 
 		var clickable_title = this.getEl().getById(this.id + '-title');
 		if (clickable_title && (this.external_link || this.link) && !this.fullscreenMode) {
-			clickable_title.addCls('weather_clickable');
+			clickable_title.addCls('weather-clickable');
 			clickable_title.on('click', this.externalLink, this);
 		}
 		if (this.widget_base_config.admin && this.display_derogation_icon && this.edit_button) {
