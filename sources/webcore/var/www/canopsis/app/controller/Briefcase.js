@@ -72,12 +72,21 @@ Ext.define('canopsis.controller.Briefcase', {
 		this._editRecord(this.grid, item);
 	},
 
-	setAvatar: function(avatar_id) {
+	setAvatar: function(file_id, filename) {
+		var extension = filename.split('.').pop();
+
+		if ($.inArray(extension, ['png', 'jpeg', 'jpg', 'gif']) == -1) {
+			global.notify.notify(_('Failed'), "File extension not valid", 'error');
+			return
+		}
+
+		var avatar_id = file_id;
+
 		Ext.Ajax.request({
 			method: 'POST',
 			url: '/account/setConfig/avatar_id',
 			params: {
-				value: avatar_id
+				value: file_id
 			},
 			success: function(response) {
 				global.notify.notify(_('Success'), _('Avatar setted'), 'success');

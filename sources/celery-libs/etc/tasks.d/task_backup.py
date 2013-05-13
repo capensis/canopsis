@@ -18,7 +18,7 @@ def mongo(host='localhost'):
 
 	archive_name = 'backup_mongodb'
 	tmp_dir = '%s/%s' % (backup_path, archive_name)
-	archive_path = '%s.zip' % tmp_dir
+	archive_path = '%s.tar.gz' % tmp_dir
 
 	if os.path.exists(tmp_dir):
 		logger.debug(' + Remove old temp dir')
@@ -44,7 +44,7 @@ def mongo(host='localhost'):
 	shutil.make_archive(
 		base_name='%s/%s' % (backup_path, archive_name),
 		root_dir=backup_path,
-		format='zip',
+		format='gztar',
 		base_dir=archive_name,
 		logger=logger)
 
@@ -83,7 +83,7 @@ def config():
 	shutil.copytree('%s/etc' % home_path, '%s/' % tmp_dir)
 	
 	logger.debug(' + Make archive')
-	shutil.make_archive('%s/%s' % (backup_path, archive_name), 'zip', tmp_dir)	
+	shutil.make_archive('%s/%s' % (backup_path, archive_name), 'gztar', tmp_dir)	
 
 	logger.debug(' + Remove temp dir')
 	shutil.rmtree(tmp_dir)

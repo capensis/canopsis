@@ -614,15 +614,8 @@ Ext.define('canopsis.lib.controller.cgrid', {
 		var grid = this.grid;
 		var item = grid.getSelectionModel().getSelection()[0];
 		var filename = item.data.file_name;
-		var extension = filename.split('.').pop();
-
-		if ($.inArray(extension, ['png', 'jpeg', 'jpg', 'gif']) == -1) {
-			global.notify.notify(_('Failed'), "File extension not valid", 'error');
-			return
-		}
-
-		var _id = item.data._id;
-		this.setAvatar(_id);
+		var file_id = item.data._id;
+		this.setAvatar(file_id, filename);
 	},
 
 	_runItem: function() {
