@@ -610,12 +610,12 @@ Ext.define('canopsis.lib.controller.cgrid', {
 	},
 
 	_setAvatar: function(view, item, index) {
-		console.log('Clicked set avatar', this.logAuthor);
 		var grid = this.grid;
 		var item = grid.getSelectionModel().getSelection()[0];
 		var filename = item.data.file_name;
 		var file_id = item.data._id;
-		this.setAvatar(file_id, filename);
+		
+		global.accountCtrl.setAvatar(file_id, filename);
 	},
 
 	_runItem: function() {
