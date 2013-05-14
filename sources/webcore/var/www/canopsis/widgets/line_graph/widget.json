@@ -413,7 +413,7 @@
 			"items": [{
 				"xtype": "cfilter",
 				"name": "flagFilter",
-				"anchor": "100% 90%"
+				"anchor": "100% 80%"
 			},{
 				"xtype":"numberfield",
 				"name": "nbMavEventsDisplayed",

@@ -40,8 +40,9 @@ Ext.define('canopsis.lib.view.ccard' , {
 
     contentPanelDefault: {
                         xtype:'form',
+                        width: '100%',
                         border:false,
-                        padding:10,
+                        padding: 5,
                         autoScroll: true
                     },
 

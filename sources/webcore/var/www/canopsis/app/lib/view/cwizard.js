@@ -38,65 +38,68 @@ Ext.define('canopsis.lib.view.cwizard' , {
 	wizardSteps: {
 				title: _('Choose widget'),
 				//description : _('choose the type of widget you want, its title, and refresh interval'),
-				items: [
-				{
-					xtype: 'combo',
-					store: 'Widgets',
-					queryMode: 'local',
-					forceSelection: true,
-					fieldLabel: _('Type'),
-					name: 'xtype',
-					editable: false,
-					displayField: 'name',
-					valueField: 'xtype',
-					//autoLoad: true,
-					//value: 'empty',
-					allowBlank: false
-				},{
-					xtype: 'displayfield',
-					name: 'description',
-					isFormField: false,
-					fieldLabel: _('Description')
-				},{
-					xtype: 'checkbox',
-					fieldLabel: _('Show border'),
-					checked: false,
-					name: 'border',
-					uncheckedValue: false
-				},{
-					xtype: 'checkbox',
-					fieldLabel: _('Auto title') + ' ' + _('if available'),
-					checked: true,
-					inputValue: true,
-					uncheckedValue: false,
-					name: 'autoTitle'
-				},{
-					xtype: 'textfield',
-					fieldLabel: _('Title') + ' (' + _('optional') + ')',
-					name: 'title'
-				},{
-					xtype: 'combobox',
-					name: 'refreshInterval',
-					fieldLabel: _('Refresh interval'),
-					queryMode: 'local',
-					editable: false,
-					displayField: 'text',
-					valueField: 'value',
-					value: 300,
-					store: {
-						xtype: 'store',
-						fields: ['value', 'text'],
-						data: [
-							{value: 0,	text: 'None'},
-							{value: 60,	text: '1 minutes'},
-							{value: 300,	text: '5 minutes'},
-							{value: 600,	text: '10 minutes'},
-							{value: 900,	text: '15 minutes'},
-							{value: 1800,	text: '30 minutes'},
-							{value: 3600,	text: '1 hour'}
-						]
-					}
-				}]
+				items: [{
+							xtype:'fieldset',
+							title:_('General options'),
+							items:[{
+								xtype: 'combo',
+								store: 'Widgets',
+								queryMode: 'local',
+								forceSelection: true,
+								fieldLabel: _('Type'),
+								name: 'xtype',
+								editable: false,
+								displayField: 'name',
+								valueField: 'xtype',
+								//autoLoad: true,
+								//value: 'empty',
+								allowBlank: false
+							},{
+								xtype: 'displayfield',
+								name: 'description',
+								isFormField: false,
+								fieldLabel: _('Description')
+							},{
+								xtype: 'checkbox',
+								fieldLabel: _('Show border'),
+								checked: false,
+								name: 'border',
+								uncheckedValue: false
+							},{
+								xtype: 'checkbox',
+								fieldLabel: _('Auto title') + ' ' + _('if available'),
+								checked: true,
+								inputValue: true,
+								uncheckedValue: false,
+								name: 'autoTitle'
+							},{
+								xtype: 'textfield',
+								fieldLabel: _('Title') + ' (' + _('optional') + ')',
+								name: 'title'
+							},{
+								xtype: 'combobox',
+								name: 'refreshInterval',
+								fieldLabel: _('Refresh interval'),
+								queryMode: 'local',
+								editable: false,
+								displayField: 'text',
+								valueField: 'value',
+								value: 300,
+								store: {
+									xtype: 'store',
+									fields: ['value', 'text'],
+									data: [
+										{value: 0,	text: 'None'},
+										{value: 60,	text: '1 minutes'},
+										{value: 300,	text: '5 minutes'},
+										{value: 600,	text: '10 minutes'},
+										{value: 900,	text: '15 minutes'},
+										{value: 1800,	text: '30 minutes'},
+										{value: 3600,	text: '1 hour'}
+									]
+								}
+							}]
+						}]
 			},
 	
 	afterRender: function(){
