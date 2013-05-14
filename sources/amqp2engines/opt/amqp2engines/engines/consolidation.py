@@ -267,7 +267,7 @@ class engine(cengine):
 					id_to_clean.append(_id)
 				
 			for _id in id_to_clean:
-				self.logger.debug("Clean consolidation %s: %s" % (_id, self.records[_id].name))
+				self.logger.debug("Clean consolidation %s" % _id)
 				try:
 					self.storage.update(_id, {'loaded': False})
 				except:

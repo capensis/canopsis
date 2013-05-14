@@ -87,22 +87,24 @@ def account_get_me():
 @get('/account/getAvatar/:_id')
 @get('/account/getAvatar')
 def account_get_avatar(_id=None):
-	#account = caccount(user="root", group="root")
 	account = get_account()
 	storage = get_storage(namespace='object',account=account)
 
-	if _id is not None:
-		account = caccount(storage.get(_id,account=account))
-	
-	print(account.data)
-	avatar_id = account.data.get('avatar_id')
-	
-	if avatar_id:
-		avatar_url = "/files/%s" % avatar_id
-	else:
-		avatar_url = "/static/canopsis/widgets/stream/logo/ui.png"
+	if not _id:
+		_id = account._id
 
-	redirect(avatar_url)
+	logger.debug('getAvatar of: %s' % _id)
+
+	record = storage.get(_id, account=caccount(user="root", group="root"))
+	
+	if not record or not record.data.get('avatar_id', None):
+		redirect("/static/canopsis/widgets/stream/logo/ui.png")
+
+	avatar_id =  record.data.get('avatar_id')
+
+	logger.debug(' + avatar_id: %s' % avatar_id)
+
+	redirect("/files/%s" % avatar_id)
 
 #### POST setConfig
 @post('/account/setConfig/:_id')

@@ -67,6 +67,9 @@ Ext.define('canopsis.view.Briefcase.Uploader', {
 	                        	log.debug("File '"+filename+"' uploded with id: '"+file_id+"'", win.logAuthor);
 	                        	global.notify.notify(_('Success'), _('File uploaded with sucess'), 'success');
 
+	                            if (win.callback)
+	                            	win.callback(file_id, filename);
+
 	                        	// Reload stores
 	                            Ext.getStore('Files').load();
 	           					Ext.getStore('Avatar').load();
@@ -74,8 +77,6 @@ Ext.define('canopsis.view.Briefcase.Uploader', {
 	           					// Close windows
 	                            win.close();
 
-	                            if (win.callback)
-	                            	win.callback(file_id, filename);
 	                        },
 	                        failure: function(form, action) {
 	                        	log.error("Failed to upload file", win.logAuthor);
