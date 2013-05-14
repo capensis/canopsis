@@ -113,10 +113,10 @@ Ext.define('canopsis.view.Mainbar.Bar' , {
 			width: 257-22-2
 		});
 
-		// If no auto load
-		//avatarSelectorStore.on('load', function(){
-		//	avatarSelectorComboBox.setValue(global.account.avatar_id)
-		//}, {single: true});
+		// Set if avatar change
+		avatarSelectorStore.on('load', function(){
+			avatarSelectorComboBox.select(global.account.avatar_id)
+		}, {single: true});
 
 		var avatarSelectorAdd = Ext.create('Ext.Button', {
 			iconCls: 'icon-add',
