@@ -430,6 +430,8 @@ Ext.define('canopsis.controller.Account', {
 	},
 
 	setAvatar: function(file_id, filename) {
+		var me = this;
+
 		var extension = filename.split('.').pop();
 
 		if ($.inArray(extension, ['png', 'jpeg', 'jpg', 'gif']) == -1) {
@@ -439,6 +441,7 @@ Ext.define('canopsis.controller.Account', {
 
 		var avatar_id = file_id;
 
+		log.debug('Set avatar_id in backend', this.logAuthor);
 		Ext.Ajax.request({
 			method: 'POST',
 			url: '/account/setConfig/avatar_id',
@@ -447,14 +450,17 @@ Ext.define('canopsis.controller.Account', {
 			},
 			success: function(response) {
 				global.notify.notify(_('Success'), _('Avatar setted'), 'success');
+				log.debug(' + Done', me.logAuthor);
 
 				global.account.avatar_id = avatar_id;
 
 				// Update icon in main bar
+				log.debug('Refresh Mainbar', me.logAuthor);
 				Ext.ComponentQuery.query('button[iconCls="icon-mainbar icon-avatar-bar"]')[0].setIcon('/account/getAvatar')
 			},
 			failure: function(response) {
 				global.notify.notify(_('Failed'), _('Impossible to set this file as avatar'), 'error');
+				log.error('Impossible to set this file as avatar', me.logAuthor);
 			}
 		})
 	}
