@@ -104,6 +104,7 @@ Ext.define('canopsis.lib.view.cwizard' , {
 	
 	afterRender: function(){
 		this.callParent(arguments);
+
 		var combo = this.down('combobox[name=xtype]')
 		if(combo.rendered)
 			this.comboAfterRender()
@@ -119,6 +120,7 @@ Ext.define('canopsis.lib.view.cwizard' , {
 			var record = combo.store.findRecord('xtype',this.data.xtype,undefined,false,false,true)
 			this.addNewSteps(Ext.clone(record.raw.options))
 			this.setValue(this.data)
+			combo.setDisabled(true)
 		}
 	},
 
