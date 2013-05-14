@@ -443,10 +443,12 @@ Ext.define('canopsis.controller.Account', {
 			method: 'POST',
 			url: '/account/setConfig/avatar_id',
 			params: {
-				value: file_id
+				value: avatar_id
 			},
 			success: function(response) {
 				global.notify.notify(_('Success'), _('Avatar setted'), 'success');
+
+				global.account.avatar_id = avatar_id;
 
 				// Update icon in main bar
 				Ext.ComponentQuery.query('button[iconCls="icon-mainbar icon-avatar-bar"]')[0].setIcon('/account/getAvatar')
