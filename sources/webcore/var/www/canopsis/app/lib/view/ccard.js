@@ -42,7 +42,7 @@ Ext.define('canopsis.lib.view.ccard' , {
                         xtype:'form',
                         width: '100%',
                         border:false,
-                        padding: 5,
+                        padding: '0 5 0 5',
                         autoScroll: true
                     },
 
@@ -162,9 +162,10 @@ Ext.define('canopsis.lib.view.ccard' , {
         _obj.title = undefined
 
         //one item
-        if(_obj.items && _obj.items.length == 1)
+        if(_obj.layout != 'anchor' && _obj.items && _obj.items.length == 1)
             _obj.layout = 'fit'
 
+        console.log(_obj)
         this.contentPanel.add(_obj)
         return this.contentPanel.items.length - 1
     },

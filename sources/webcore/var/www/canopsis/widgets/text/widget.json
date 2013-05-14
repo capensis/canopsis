@@ -24,9 +24,8 @@
 				"items" : [
 					{
 						"xtype": "htmleditor",
-						"anchor": "100%",
+						"anchor": "100% 99%",
 						"name": "text",
-						"height" : 350,
 						"value": ""
 					}
 				]

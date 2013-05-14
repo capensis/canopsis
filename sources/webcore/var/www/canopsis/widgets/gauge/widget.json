@@ -10,49 +10,57 @@
 	"locales": ["en","fr"],
 	"options": [{
 				"title": "Style",
-				"items": [{
-							"xtype": "checkbox",
-							"fieldLabel": "Show Min & Max",
-							"checked": true,
-							"name": "showMinMax"
-						},{
-							"xtype": "checkbox",
-							"fieldLabel": "Display value unit",
-							"checked": true,
-							"name": "displayUnit"
-						},{
-							"xtype": "checkbox",
-							"fieldLabel": "Use crit/warn threshold",
-							"checked": true,
-							"name": "levelThresholds"
-						},{
-							"xtype" : "numberfield",
-							"name" : "gaugeWidthScale",
-							"fieldLabel": "Gauge width scale",
-							"minValue": 0,
-							"value": 1,
-							"step": 0.01
-						},{
-							"xtype" : "ccolorfield",
-							"name" : "colorStart",
-							"fieldLabel": "Start color",
-							"value": "#85C630"
-						},{
-							"xtype" : "ccolorfield",
-							"name" : "colorWarn",
-							"fieldLabel": "Warn color",
-							"value": "#FFA500"
-						},{
-							"xtype" : "ccolorfield",
-							"name" : "colorStop",
-							"fieldLabel": "Stop/critic color",
-							"value": "#B9121B"
-						},{
-							"xtype" : "ccolorfield",
-							"name" : "gaugeColor",
-							"fieldLabel": "Gauge color",
-							"value": "#E0E0E0"
-						}]
+				"items": [
+							{
+								"xtype": "fieldset",
+								"title": "Style",
+								"items": [
+											{
+												"xtype": "checkbox",
+												"fieldLabel": "Show Min & Max",
+												"checked": true,
+												"name": "showMinMax"
+											},{
+												"xtype": "checkbox",
+												"fieldLabel": "Display value unit",
+												"checked": true,
+												"name": "displayUnit"
+											},{
+												"xtype": "checkbox",
+												"fieldLabel": "Use crit/warn threshold",
+												"checked": true,
+												"name": "levelThresholds"
+											},{
+												"xtype" : "numberfield",
+												"name" : "gaugeWidthScale",
+												"fieldLabel": "Gauge width scale",
+												"minValue": 0,
+												"value": 1,
+												"step": 0.01
+											},{
+												"xtype" : "ccolorfield",
+												"name" : "colorStart",
+												"fieldLabel": "Start color",
+												"value": "#85C630"
+											},{
+												"xtype" : "ccolorfield",
+												"name" : "colorWarn",
+												"fieldLabel": "Warn color",
+												"value": "#FFA500"
+											},{
+												"xtype" : "ccolorfield",
+												"name" : "colorStop",
+												"fieldLabel": "Stop/critic color",
+												"value": "#B9121B"
+											},{
+												"xtype" : "ccolorfield",
+												"name" : "gaugeColor",
+												"fieldLabel": "Gauge color",
+												"value": "#E0E0E0"
+											}
+								]
+							}
+						]
 			},{
 				"title": "Choose Metrics",
 				"items": [{
