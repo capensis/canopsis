@@ -178,9 +178,12 @@ Ext.define('canopsis.controller.Mainbar', {
 	setAvatar: function(combo, records) {
 		var avatarId = records[0].data.id;
 		var avatarFilename = records[0].data.file_name;
-		console.log('Set avatar to ' + avatarId + '(' + avatarFilename + ')');
+
+		log.debug('Set avatar to ' + avatarId + '(' + avatarFilename + ')', this.logAuthor);
+		
 		combo.up('button').hideMenu();
-		this.getController('Briefcase').setAvatar(avatarId, avatarFilename);
+		
+		global.accountCtrl.setAvatar(avatarId, avatarFilename);
 	},
 
 	setDashboard: function(combo, records) {

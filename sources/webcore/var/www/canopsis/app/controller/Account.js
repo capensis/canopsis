@@ -427,6 +427,34 @@ Ext.define('canopsis.controller.Account', {
 			return true;
 		else
 			return false;
+	},
+
+	setAvatar: function(file_id, filename) {
+		var extension = filename.split('.').pop();
+
+		if ($.inArray(extension, ['png', 'jpeg', 'jpg', 'gif']) == -1) {
+			global.notify.notify(_('Failed'), "File extension not valid", 'error');
+			return
+		}
+
+		var avatar_id = file_id;
+
+		Ext.Ajax.request({
+			method: 'POST',
+			url: '/account/setConfig/avatar_id',
+			params: {
+				value: file_id
+			},
+			success: function(response) {
+				global.notify.notify(_('Success'), _('Avatar setted'), 'success');
+
+				// Update icon in main bar
+				Ext.ComponentQuery.query('button[iconCls="icon-mainbar icon-avatar-bar"]')[0].setIcon('/account/getAvatar')
+			},
+			failure: function(response) {
+				global.notify.notify(_('Failed'), _('Impossible to set this file as avatar'), 'error');
+			}
+		})
 	}
 
 });

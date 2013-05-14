@@ -92,30 +92,40 @@ Ext.define('canopsis.view.Mainbar.Bar' , {
 		});
 
 		// Retrieve Files store add apply images filter
-		var avatarSelectorStore = Ext.create('canopsis.store.Files');
+		var avatarSelectorStore = Ext.create('canopsis.store.Files',{
+			storeId: 'Avatar',
+			autoLoad: true,
+		});
+
 		avatarSelectorStore.addFilter(
 				{'content_type': { $in: ['image/png', 'image/jpeg', 'image/gif', 'image/jpg']}}
 		);
+
 		var avatarSelectorComboBox = Ext.create('Ext.form.field.ComboBox', {
 			id: 'avatarSelector',
 			action: 'avatarSelector',
 			store: avatarSelectorStore,
 			displayField: 'file_name',
 			fieldLabel: _('Choose avatar'),
+			valueField: '_id',
+			value: global.account.avatar_id,
 			iconCls: 'no-icon',
 			width: 257-22-2
 		});
+
+		// If no auto load
+		//avatarSelectorStore.on('load', function(){
+		//	avatarSelectorComboBox.setValue(global.account.avatar_id)
+		//}, {single: true});
+
 		var avatarSelectorAdd = Ext.create('Ext.Button', {
 			iconCls: 'icon-add',
 			margin: '0 0 0 2',
 			listeners: {
 				click: function(me, event) {
 					var uploader = Ext.create('canopsis.view.Briefcase.Uploader', {
-						callback: function(fileId, filename) {
-							console.log(fileId);
-							console.log('Set avatar (' + fileId + ')' + ' ' + filename);
-							var ctrl = global.accountCtrl.getController('Briefcase');
-							ctrl.setAvatar(fileId, filename);
+						callback: function(file_id, filename) {
+							global.accountCtrl.setAvatar(file_id, filename);
 						}
 					})
 					me.up('menu').hide();
@@ -133,7 +143,7 @@ Ext.define('canopsis.view.Mainbar.Bar' , {
 			items: [avatarSelectorComboBox, avatarSelectorAdd]
 		});
 
-		avatarSelectorComboBox.dashboardSelectorComboBox = Ext.create('Ext.form.field.ComboBox', {
+		this.dashboardSelector = Ext.create('Ext.form.field.ComboBox', {
 			iconCls: 'icon-mainbar-dashboard',
 			id: 'dashboardSelector',
 			action: 'dashboardSelector',
