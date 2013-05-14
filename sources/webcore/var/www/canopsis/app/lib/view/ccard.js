@@ -165,7 +165,6 @@ Ext.define('canopsis.lib.view.ccard' , {
         if(_obj.layout != 'anchor' && _obj.items && _obj.items.length == 1)
             _obj.layout = 'fit'
 
-        console.log(_obj)
         this.contentPanel.add(_obj)
         return this.contentPanel.items.length - 1
     },
