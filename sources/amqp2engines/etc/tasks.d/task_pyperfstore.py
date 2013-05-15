@@ -33,6 +33,6 @@ logger 	= init.getLogger('Pyperfstore Task')
 
 @task
 @decorators.log_task
-def rotate(owner=None):
+def rotate(account=None, owner=None):
 	manager = pyperfstore2.manager()
 	manager.rotateAll()
