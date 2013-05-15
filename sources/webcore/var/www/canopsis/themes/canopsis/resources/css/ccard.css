@@ -1,5 +1,5 @@
 .cwizardButton{
-	height:22px;
+	min-height:22px;
 	width: 120px;
 	margin-top: 7px;
 	padding: 0px  0px 0px 30px;
