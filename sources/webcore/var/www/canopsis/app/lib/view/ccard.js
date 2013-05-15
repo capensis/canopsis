@@ -91,13 +91,14 @@ Ext.define('canopsis.lib.view.ccard' , {
 
         this.bbarNextButton = this.down('button[_name=bbarNext]')
         this.bbarFinishButton = this.down('button[_name=bbarFinish]')
+        this.bbarPreviousButton = this.down('button[_name="bbarPrevious"]')
 
         //binding events
         this.bbarFinishButton.on('click',function(){
             this.fireEvent('save',this.widgetId,this.getValue())
             this.destroy()
         },this)
-        this.down('button[_name="bbarPrevious"]').on('click',function(){this.previousButton()},this)
+        this.bbarPreviousButton.on('click',function(){this.previousButton()},this)
         this.bbarNextButton.on('click',function(){this.nextButton()},this)
         this.down('button[_name="bbarAdvance"]').on('toggle',
             function(button,toggle){
@@ -184,9 +185,17 @@ Ext.define('canopsis.lib.view.ccard' , {
         this.activeButton = buttonNumber
         this.addSelectedCss(buttonNumber)
 
+        if(!this.edit)
+            this.checkDisplayFinishButton()
+    },
+
+    checkDisplayFinishButton: function(){
         if(this.activeButton == this.buttonPanel.items.length - 1){
             this.bbarNextButton.hide()
             this.bbarFinishButton.show()
+        }else{
+            this.bbarNextButton.show()
+            this.bbarFinishButton.hide()
         }
     },
 
@@ -215,11 +224,8 @@ Ext.define('canopsis.lib.view.ccard' , {
             this.showStep(newIndex);
         }
 
-        if(this.bbarNextButton.isHidden()){
-            this.bbarNextButton.show()
-            this.bbarFinishButton.hide()
-        }
-
+        if(!this.edit)
+            this.checkDisplayFinishButton()
     },
 
     switchToAdvancedMode: function(){
@@ -269,6 +275,9 @@ Ext.define('canopsis.lib.view.ccard' , {
     },
 
     getValue: function(){
+        if(this.beforeGetValue)
+            this.beforeGetValue()
+        
         var wizardChilds = this.contentPanel.items.items
         var _obj = {}
         for(var i = 0; i < wizardChilds.length; i++)

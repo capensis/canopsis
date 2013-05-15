@@ -105,6 +105,14 @@ Ext.define('canopsis.lib.view.cwizard' , {
 	afterRender: function(){
 		this.callParent(arguments);
 
+		if(this.data){
+			this.edit = true
+			this.bbarNextButton.hide()
+			this.bbarNextButton.hide()
+			this.bbarPreviousButton.hide()
+            this.bbarFinishButton.show()
+        }
+
 		var combo = this.down('combobox[name=xtype]')
 		if(combo.rendered)
 			this.comboAfterRender()
@@ -143,6 +151,10 @@ Ext.define('canopsis.lib.view.cwizard' , {
 	addOptionPanel: function(combo,records,opts){
 		this.cleanPanels()
 		this.addNewSteps(Ext.clone(records[0].raw.options))
+	},
+
+	beforeGetValue: function(){
+		this.down('combobox[name=xtype]').setDisabled(false)
 	}
 
 });
