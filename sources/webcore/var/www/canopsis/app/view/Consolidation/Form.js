@@ -56,7 +56,7 @@ Ext.define('canopsis.view.Consolidation.Form', {
 								hidden: true
 							},
 							{
-								xtype: 'fieldset',
+								xtype: 'cfieldset',
 								title: _('General'),
 								defaultType: 'textfield',
 								defaults: { labelWidth: labelWidth },
@@ -81,7 +81,7 @@ Ext.define('canopsis.view.Consolidation.Form', {
 						layout: 'anchor',
 						defaults: {anchor: '100%'},
 						items: [{
-							xtype: 'fieldset',
+							xtype: 'cfieldset',
 							title: _('Aggregation interval'),
 							layout: 'column',
 							items: [{
@@ -112,7 +112,7 @@ Ext.define('canopsis.view.Consolidation.Form', {
 								}
 							}]
 						},{
-							xtype: 'fieldset',
+							xtype: 'cfieldset',
 							title: _('Consolidation operator'),
 							items: [{
 								xtype: 'checkboxgroup',

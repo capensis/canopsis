@@ -13,9 +13,8 @@
 			"title": "Options",
 			"items": [
 				{
-					"xtype": "fieldset",
+					"xtype": "cfieldset",
 					"title": "Options",
-					"collapsible": false,
 					"items": [
 						{
 							"xtype" : "numberfield",
@@ -60,9 +59,8 @@
 					   }	
 					]
 				},{
-					"xtype": "fieldset",
+					"xtype": "cfieldset",
 					"title": "Filter",
-					"collapsible": false,
 					"items": [
 						{
 							"xtype" : "textfield",

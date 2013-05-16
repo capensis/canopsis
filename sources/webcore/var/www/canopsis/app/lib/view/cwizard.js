@@ -39,7 +39,7 @@ Ext.define('canopsis.lib.view.cwizard' , {
 				title: _('Choose widget'),
 				//description : _('choose the type of widget you want, its title, and refresh interval'),
 				items: [{
-							xtype:'fieldset',
+							xtype:'cfieldset',
 							title:_('General options'),
 							items:[{
 								xtype: 'combo',

@@ -65,7 +65,7 @@ Ext.define('canopsis.view.Selector.Form', {
 								hidden: true
 							},
 							{
-								xtype: 'fieldset',
+								xtype: 'cfieldset',
 								title: _('General'),
 								defaultType: 'textfield',
 								defaults: { labelWidth: labelWidth },
@@ -85,7 +85,6 @@ Ext.define('canopsis.view.Selector.Form', {
 								]
 							},{
 								xtype: 'cfieldset',
-								checkboxToggle: true,
 								title: _('Calcul State'),
 								checkboxName: 'dostate',
 								defaultType: 'textfield',
@@ -117,7 +116,6 @@ Ext.define('canopsis.view.Selector.Form', {
 								]
 							},{
 								xtype: 'cfieldset',
-								checkboxToggle: true,
 								title: _('Calcul SLA (if state is calculated)'),
 								checkboxName: 'dosla',
 								defaultType: 'textfield',

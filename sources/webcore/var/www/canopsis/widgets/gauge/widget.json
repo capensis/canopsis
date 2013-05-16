@@ -12,7 +12,7 @@
 				"title": "Style",
 				"items": [
 							{
-								"xtype": "fieldset",
+								"xtype": "cfieldset",
 								"title": "Style",
 								"items": [
 											{
