@@ -60,7 +60,6 @@ Ext.define('canopsis.lib.view.ccard' , {
 
     items:[
             {
-                //flex: 1,
                 _name: 'buttonPanel',
                 width: 160,
                 border:false,
