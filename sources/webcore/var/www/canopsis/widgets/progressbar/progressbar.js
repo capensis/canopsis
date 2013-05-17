@@ -192,6 +192,9 @@ Ext.define('widgets.progressbar.progressbar' ,
 	{
 		for (var i = 0; i < this.nodes.length; i++)
 		{
+			if (! this.data[i])
+				continue;
+
 			var _met = this.data[i].metric;
 			var _comp = this.nodes[i].component;
 			var _res = this.nodes[i].resource;
