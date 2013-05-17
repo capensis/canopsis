@@ -38,6 +38,7 @@ paths = [
 	os.path.join(webui_path, "app/lib/form/cfield.js"),
 	os.path.join(webui_path, "app/lib/form/field/cdate.js"),
 	os.path.join(webui_path, "app/lib/form/field/cdatePicker.js"),
+	os.path.join(webui_path, "app/lib/view/ccard.js"),
 	os.path.join(webui_path, "app/lib/view/cgrid.js"),
 	os.path.join(webui_path, "app/lib/view/cgrid_state.js"),
 	os.path.join(webui_path, "app/view/Tabs/Content.js"),
