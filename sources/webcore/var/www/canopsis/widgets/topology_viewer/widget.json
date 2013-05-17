@@ -12,9 +12,8 @@
 	"options": [{
 				"title" : "Options",
 				"items" : [{
-					"xtype": "fieldset",
+					"xtype": "cfieldset",
 					"title": "Display options",
-					"collapsible": false,
 					"items": [{
 								"xtype": "numberfield",
 								"fieldLabel": "Min node size",

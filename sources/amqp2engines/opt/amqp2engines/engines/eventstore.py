@@ -62,7 +62,7 @@ class engine(cengine):
 		elif event_type == 'trap' or event_type == 'log':
 			
 			## passthrough
-			self.archiver.store_event(event_id, event)
+			self.archiver.store_new_event(event_id, event)
 			_id = self.archiver.log_event(event_id, event)
 			event['_id'] = _id
 			event['event_id'] = event_id

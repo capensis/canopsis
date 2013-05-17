@@ -426,8 +426,13 @@ rdr_humanreadable_value = function(value, unit) {
 			log.debug(err.message)
 		}
 
-		if (unit == 'S')
-			return rdr_duration(value);
+		if (unit == 'S'){
+			value = rdr_duration(value);
+			if (is_neg)
+				value = '-' + value;
+
+			return value;
+		}
 	}
 
 	value = rdr_yaxis(value, multiple);

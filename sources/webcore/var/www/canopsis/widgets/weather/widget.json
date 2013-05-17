@@ -13,9 +13,8 @@
 			{
 				"title" : "Style",
 				"items" : [{
-					"xtype": "fieldset",
+					"xtype": "cfieldset",
 					"title": "Style options",
-					"collapsible": false,
 					"items": [{
 								"xtype": "checkbox",
 								"fieldLabel": "Use simplified display (icon and title)",

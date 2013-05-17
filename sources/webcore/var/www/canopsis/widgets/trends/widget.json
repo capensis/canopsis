@@ -1,0 +1,75 @@
+[{
+	"name":  "Trends",
+	"verions": 0.1,
+	"author": "capensis",
+	"website": "http://www.canopsis.org",
+	"xtype": "trends",
+	"description": "Display trend values",
+	"refreshInterval": 300,
+	"locales": ["en"],
+	"options": [
+		{
+			"title": "Options",
+			"items": [
+					{
+						"xtype": "cfieldset",
+						"title": "Trends",
+						"items": [
+							{
+								"xtype" : "cduration",
+								"name" : "time_window",
+								"fieldLabel": "Time window",
+								"value": 86400
+                           }]
+					},{
+						"xtype": "cfieldset",
+						"title": "Style",
+						"items": [
+							{
+								"xtype": "checkbox",
+								"fieldLabel": "Display in pct",
+								"checked": true,
+								"name": "display_pct"
+							},{
+								"xtype" : "ccolorfield",
+								"name" : "colorLow",
+								"fieldLabel": "Low color",
+								"value": "#1BE01B"
+							},{
+								"xtype" : "ccolorfield",
+								"name" : "colorMid",
+								"fieldLabel": "Middle color",
+								"value": "#E0E0E0"
+							},{
+								"xtype" : "ccolorfield",
+								"name" : "colorHight",
+								"fieldLabel": "Hight color",
+								"value": "#E0251B"
+							}
+						]
+					}
+				]
+		},{
+			"title": "Choose Metrics",
+			"items": [
+					{
+						"xtype": "cmetric",
+						"name": "nodes",
+						"multiSelect": true,
+						"metrics": true,
+						"additional_field": [{
+											"xtype":"textfield",
+											"header":"Custom label",
+											"name":"label",
+											"emptyText":"Type the new label here",
+											"flex":1
+										},{
+											"xtype":"numberfield",
+											"header":"Max value",
+											"name":"ma",
+											"decimalPrecision": 5,
+											"flex":1
+										}]
+					}]
+		}]
+}]

@@ -13,9 +13,8 @@
 		"title": "Options",
 		"items": [
 			{
-				"xtype": "fieldset",
+				"xtype": "cfieldset",
 				"title": "General",
-				"collapsible": false,
 				"items": [
 					{
 						"xtype" : "numberfield",
@@ -82,9 +81,8 @@
 					}
 				]
 			},{
-				"xtype": "fieldset",
+				"xtype": "cfieldset",
 				"title": "Columns",
-				"collapsible": false,
 				"items": [
 					{
 						"xtype": "checkbox",
