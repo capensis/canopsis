@@ -117,14 +117,14 @@ Ext.define('canopsis.view.Derogation.Form' , {
 		//----------------build general options field------------
 
 		this.add({
-			xtype: 'fieldset',
+			xtype: 'cfieldset',
 			title: _('General options'),
 			items: [crecord_name, description, beginning, ending]
 		});
 
 		//--------------------Variable field-----------------------
 		this.variableField = this.add({
-			xtype: 'fieldset',
+			xtype: 'cfieldset',
 			title: _('Actions')
 		});
 
