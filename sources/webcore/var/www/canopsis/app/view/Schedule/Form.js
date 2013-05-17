@@ -25,9 +25,8 @@ Ext.define('canopsis.view.Schedule.Form', {
 
 	items: [
 			{
-				xtype: 'fieldset',
+				xtype: 'cfieldset',
 				title: _('General options'),
-				collapsible: false,
 				layout: 'anchor',
 				defaults:{flex:1},
 				items: [
@@ -78,9 +77,8 @@ Ext.define('canopsis.view.Schedule.Form', {
 						}
 					]
 			},{
-				xtype: 'fieldset',
+				xtype: 'cfieldset',
 				title: _('Frequency'),
-				collapsible: false,
 				items: [
 						{
 							xtype: 'combobox',
@@ -184,7 +182,6 @@ Ext.define('canopsis.view.Schedule.Form', {
 				title: _('Exporting Interval'),
 				layout: 'hbox',
 				checkboxName: 'exporting_interval',
-				checkboxToggle: true,
 				items: [
 						{
 							xtype: 'combobox',
@@ -218,7 +215,6 @@ Ext.define('canopsis.view.Schedule.Form', {
 			},{
 				xtype: 'cfieldset',
 				checkboxName: 'exporting_mail',
-				checkboxToggle: true,
 				title: _('Mailing Options'),
 				items: [
 						{

@@ -12,9 +12,8 @@
 			"title": "Options",
 			"items": [
 					{
-						"xtype": "fieldset",
+						"xtype": "cfieldset",
 						"title": "Title",
-						"collapsible": false,
 						"items": [
 							{
 								"xtype" : "numberfield",
@@ -25,9 +24,8 @@
                            }		
 						]
 					},{
-						"xtype": "fieldset",
+						"xtype": "cfieldset",
 						"title": "Diagram",
-						"collapsible": false,
 						"items": [
 							{
 								"xtype": "combobox",
@@ -57,9 +55,8 @@
 								"name": "exporting_enabled"
 							}]
 					},{
-						"xtype": "fieldset",
+						"xtype": "cfieldset",
 						"title": "Bar graph specific options",
-						"collapsible": false,
 						"items": [{
 								"xtype": "checkbox",
 								"fieldLabel": "Vertical display (rotate graph)",
@@ -67,7 +64,7 @@
 								"name": "verticalDisplay"
 						}]
 					},{
-						"xtype": "fieldset",
+						"xtype": "cfieldset",
 						"title": "Pie specific options",
 						"collapsible": false,
 						"items": [
@@ -93,9 +90,8 @@
 		},{
 			"title": "Aggregation",
 			"items": [{
-						"xtype": "fieldset",
+						"xtype": "cfieldset",
 						"title": "Aggregation",
-						"collapsible": false,
 						"items": [
 							{
 								"xtype": "combobox",
@@ -146,9 +142,8 @@
 		},{
 			"title": "Style",
 			"items": [{
-					"xtype": "fieldset",
+					"xtype": "cfieldset",
 					"title": "Diagram Style",
-					"collapsible": false,
 					"items": [
 						{
 							"xtype" : "colorfield",
@@ -174,9 +169,8 @@
                        }
 					]
 				},{
-					"xtype": "fieldset",
+					"xtype": "cfieldset",
 					"title": "Legend Style",
-					"collapsible": false,
 					"items": [
 						{
 							"xtype": "checkbox",

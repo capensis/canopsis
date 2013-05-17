@@ -25,10 +25,13 @@ Ext.define('canopsis.lib.form.field.cfieldset' , {
 
 	alias: 'widget.cfieldset',
 
-	checkboxToggle: true,
+	checkboxToggle: false,
 	inputValue: true,
-	collapsible: true,
-	collapsed: true,
+	collapsible: false,
+	collapsed: false,
+	border:false,
+
+	//style : {'border-width': "1px 0px 0px 0px"},
 
 	getName: function() {
 		return this.checkboxName;
@@ -40,11 +43,20 @@ Ext.define('canopsis.lib.form.field.cfieldset' , {
 	},
 
 	initComponent: function() {
-		if (this.value == true)
-			this.collapsed = false;
 
 		if (!this.name)
 			this.name = this.checkboxName;
+
+		if(this.name != undefined){
+			this.collapsed = true
+			this.checkboxToggle = true
+		}
+
+		if (this.value == true)
+			this.collapsed = false;
+
+		//don't move this, otherwise it won't work
+		this.style = {'border-width': "1px 0px 0px 0px"}
 
         this.callParent(arguments);
     },

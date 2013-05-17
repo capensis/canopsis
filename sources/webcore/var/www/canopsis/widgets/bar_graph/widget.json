@@ -12,9 +12,8 @@
 			"title": "Options",
 			"items": [
 					{
-						"xtype": "fieldset",
+						"xtype": "cfieldset",
 						"title": "Title",
-						"collapsible": false,
 						"items": [
 							{
 								"xtype" : "numberfield",
@@ -25,9 +24,8 @@
                            }		
 						]
 					},{
-						"xtype": "fieldset",
+						"xtype": "cfieldset",
 						"title": "Graph",
-						"collapsible": false,
 						"items": [
 							{
 								"xtype": "checkbox",
@@ -52,9 +50,8 @@
 								"value": 600
                            }]
 					},{
-						"xtype": "fieldset",
+						"xtype": "cfieldset",
 						"title": "Columns Options",
-						"collapsible": false,
 						"items": [
 							{
 								"xtype": "checkbox",
@@ -63,9 +60,8 @@
 								"name": "columnDatalabels"
 							}]
 					},{
-						"xtype": "fieldset",
+						"xtype": "cfieldset",
 						"title": "Tooltype",
-						"collapsible": false,
 						"items": [
 							{
 								"xtype": "checkbox",
@@ -85,9 +81,8 @@
 							}
 						]
 					},{
-						"xtype": "fieldset",
+						"xtype": "cfieldset",
 						"title": "Extra",
-						"collapsible": false,
 						"items": [
 							{
 								"xtype": "checkbox",
@@ -139,9 +134,8 @@
 		},{
 			"title": "Aggregation",
 			"items": [{					
-						"xtype": "fieldset",
+						"xtype": "cfieldset",
 						"title": "Aggregation",
-						"collapsible": false,
 						"items": [
 							{
 								"xtype": "combobox",
@@ -198,9 +192,8 @@
 		},{
 			"title": "Style",
 			"items": [{
-						"xtype": "fieldset",
+						"xtype": "cfieldset",
 						"title": "Graph Style",
-						"collapsible": false,
 						"items": [
 							{
 								"xtype": "checkbox",
@@ -226,9 +219,8 @@
                            }					
 						]
 					},{
-						"xtype": "fieldset",
+						"xtype": "cfieldset",
 						"title": "Legend Style",
-						"collapsible": false,
 						"items": [
 							{
 								"xtype": "checkbox",
