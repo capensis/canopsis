@@ -300,7 +300,8 @@ Ext.define('widgets.weather.brick' , {
 		if (data.output && data.output != '')
 			widget_data.output = data.output;
 
-		if (data.event_type == 'sla' && data.perf_data_array)
+		//if (data.event_type == 'sla' && data.perf_data_array)
+		if (data.perf_data_array && data.perf_data_array[0].unit == '%')
 			widget_data.percent = data.perf_data_array[0].value;
 
 		//----------------alert && derog-------------
