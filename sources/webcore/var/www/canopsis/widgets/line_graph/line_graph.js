@@ -454,7 +454,7 @@ Ext.define('widgets.line_graph.line_graph' , {
 	},
 
 	tooltip_formatter: function() {
-		if (this.point._flag == true) {
+		if (this.point && this.point._flag == true) {
 			return flag_tootlip_template.applyTemplate(this.point);
 		}else {
 			var formatter = function(options, value) {
