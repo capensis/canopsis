@@ -293,6 +293,7 @@ Ext.define('widgets.weather.weather' , {
 				if (node && node.sevent) {
 					node._event.state = node.sevent.state;
 					node._event.last_state_change = node.sevent.last_state_change;
+					node._event.perf_data_array = node.sevent.perf_data_array;
 				}
 			}
 
