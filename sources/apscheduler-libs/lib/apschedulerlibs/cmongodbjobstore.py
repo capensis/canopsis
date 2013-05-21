@@ -94,9 +94,9 @@ class CMongoDBJobStore(MongoDBJobStore):
 				
 				job.__setstate__(job_dict)
 				jobs.append(job)
-				
+
 				#change flag to true
-				self.collection.update({'_id':job_dict_id},{"$set":{'loaded':True}},True)
+				self.collection.update({'_id':job_dict_id},{"$set":{'loaded':True, 'next_run_time': job_dict['next_run_time']}},True)
 				
 			except Exception:
 				job_name = job_dict.get('name', '(unknown)')
