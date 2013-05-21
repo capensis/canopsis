@@ -1,131 +1,23 @@
-
-Ext.define('widgets.progressbar.bar', 
-{
-	extend: 'Ext.container.Container',
-	border: 0,
-	_res: undefined,
-	_comp: undefined,
-	_met: undefined,
-	_label: undefined,
-	_value : undefined,
-	_gHeight: undefined,
-	_colorStart:undefined,
-	_colorMid: undefined,
-	_colorEnd:undefined,
-	_colorBg: undefined,
-	_grad1: undefined,
-	_grad2: undefined,
-	_dispGrad: undefined,
-	_fontSize: undefined,
-	_boldText: undefined,
-	
-	initComponent: function()
-	{
-		this.callParent(arguments);
-
-		this.idpb = this.id+'pb';
-
-		if (!this._label)
-			if (this._res)
-				this.names = this._comp+', '+this._res+', '+this._met+': ';
-			else
-				this.names = this._comp+', '+this._met+': ';
-		else
-			this.names = this._label;
-
-		var tpl = new Ext.Template
-		(
-			'<table border=0 align=center style="width:100%;margin-bottom:5px;">',
-			'<tr><td style="min-width:150px;width:40%;">',
-			'<div class="label">{names}</div></td>',
-			'<td style="min-width:50px;">',
-			'<div style="width:100%;line-height:'+this._gHeight+'px;" id={idpb}>',
-			'<div class="progress-label"></div></div>',
-			'</td></tr></table>'
-		);
-
-		var html = tpl.apply({
-			names: this.names, 
-			idpb: this.idpb,
-			gHeight: this._gHeight
-		});
-
-		this.update(html);
-	},
-
-	afterRender: function()
-	{
-		this.jqpb = $("#"+this.idpb);
-		this.displayBars();
-	},
-
-	displayBars: function()
-	{
-		if (this._value<40)
-			var pcolor = this.shadeColor(this._colorStart,-20);
-		else if (this._value<55)
-			var pcolor = this.shadeColor(this._colorStart,-40); 
-		else if (this._value<65)
-			var pcolor = this.shadeColor(this._colorMid,-20); 
-		else if (this._value<75)
-			var pcolor = this.shadeColor(this._colorMid,-40); 
-		else
-			var pcolor = this.shadeColor(this._colorEnd,-20); 
-
-		$("#"+this.idpb).progressbar({"value":this._value})
-			.height(this._gHeight)
-			.css({ 'background': this._colorBg })
-			.css('border');
-
-		var idpb_div = $('#'+this.idpb+' > div');
-
-		if (this._dispGrad)
-		{
-			var grad_color = this.shadeColor(pcolor,100);
-			idpb_div.css('background', '-webkit-gradient(linear, left top, left bottom, from('	+ grad_color +'), to('+pcolor+'))');
-			idpb_div.css('background', '-webkit-linear-gradient(' 	+ grad_color +', '+pcolor+')');
-			idpb_div.css('background', '-moz-linear-gradient('			+ grad_color +', '+pcolor+')');
-			idpb_div.css('background', '-ms-linear-gradient('			+ grad_color +', '+pcolor+')');
-			idpb_div.css('background', '-o-linear-gradient('			+ grad_color +', '+pcolor+')');
-			idpb_div.css('background', 'linear-gradient(to bottom, '	+ grad_color +', '+pcolor+')');
-		}
-		else
-			idpb_div.css('background',pcolor);
-
-		var idpb_progresslabel = $('#'+this.idpb+" > .progress-label");
-
-		idpb_progresslabel.css('background','transparent');
-
-		if (this._boldText){
-			idpb_progresslabel.css('font-weight','bold');
-			$('#'+this.id+' .label').css('font-weight','bold');
-		}
-
-		if (this._fontSize)
-			idpb_progresslabel.css('font-size',this._fontSize+'%');
-
-		idpb_progresslabel.text(Math.floor(this._value)+"%");
-	},
-	shadeColor: function (color, percent) 
-	{
-		if (! color)
-			return '#000000'
-
-		var R = parseInt(color.substring(1,3),16);
-		var G = parseInt(color.substring(3,5),16);
-		var B = parseInt(color.substring(5,7),16);
-		R = parseInt(R * (100 + percent) / 100);
-		G = parseInt(G * (100 + percent) / 100);
-		B = parseInt(B * (100 + percent) / 100);
-		R = (R<255)?R:255;
-		G = (G<255)?G:255;
-		B = (B<255)?B:255;
-		var RR = ((R.toString(16).length==1)?"0"+R.toString(16):R.toString(16));
-		var GG = ((G.toString(16).length==1)?"0"+G.toString(16):G.toString(16));
-		var BB = ((B.toString(16).length==1)?"0"+B.toString(16):B.toString(16));
-		return "#"+RR+GG+BB;
-	}
-});
+/*
+#--------------------------------
+# Copyright (c) 2011 "Capensis" [http://www.capensis.com]
+#
+# This file is part of Canopsis.
+#
+# Canopsis is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# Canopsis is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Affero General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public License
+# along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
+# ---------------------------------
+*/
 
 Ext.define('widgets.progressbar.progressbar' , 
 {
@@ -138,21 +30,33 @@ Ext.define('widgets.progressbar.progressbar' ,
 	wcontainer_layout: {type:'anchor'},
 	bodyPadding: '5 5 5 5',
 
-	grad1: '#FFFFFF',
 	colorBg: '#EEEEEE',
 	colorStart: '#1BE01B',
 	colorMid: '#FFCD43',
 	colorEnd: '#E0251B',
-	dispGrad: true,
-	boldText: true,
-	fontSize: 100,
 
+	dispGrad: true,
+	
+	//boldText: true,
+	//fontSize: 100,
+	
+	gHeight: 20,
 
 	initComponent: function()
 	{
 		log.debug("initComponent", this.logAuthor)
+
+		this.nodesByID = parseNodes(this.nodes);
+		log.debug('nodesByID:', this.logAuthor);
+		log.dump(this.nodesByID);
+
+		// Color Scaling
+		var colors = [this.colorStart, this.colorMid, this.colorEnd];
+		this.colorScale = chroma.scale(colors);
+
+		this.progressBars = {};
+
 		this.callParent(arguments);
-		this.progressBarArray=[];
 	},
 
 	getNodeInfo: function(from,to) 
@@ -170,11 +74,8 @@ Ext.define('widgets.progressbar.progressbar' ,
 				success: function(response) 
 				{
 					var data = Ext.JSON.decode(response.responseText);
-					this.data = data.data;
-					if (this.progressBarArray==0)
-						this.createBars();
-					else
-						this.refreshBars();
+					data = data.data;
+					this.displayBars(data);
 				}, 
 				failure: function(result, request) 
 				{
@@ -188,65 +89,106 @@ Ext.define('widgets.progressbar.progressbar' ,
 		}
 	},
 
-	createBars: function()
-	{
-		for (var i = 0; i < this.nodes.length; i++)
-		{
-			if (! this.data[i])
-				continue;
+	setGradient: function(_id, value){
+		log.debug('setGradient: '+_id+", value: "+value, this.logAuthor);
 
-			var _met = this.data[i].metric;
-			var _comp = this.nodes[i].component;
-			var _res = this.nodes[i].resource;
-			var _val = this.data[i].values[0][1];
-			var _max = this.nodes[i].extra_field.ma;
-			if (this.nodes[i].extra_field.label != "")
-				var _label = this.nodes[i].extra_field.label
-			else
-				var _label = null;
-			var percent = (100*_val) / _max;
-			if (_max)
-			{
-				this.createBarsObj
-				(
-					_res, _comp, _met, percent,
-					this.gHeight, this.colorStart, this.colorMid, this.colorEnd, 
-					this.colorBg, this.grad1, this.grad2, _label, this.dispGrad,
-					this.fontSize, this.boldText
-				);
-			}
+		var lowColor = this.colorScale(value).hex()
+		var hightColor = chroma.hex(lowColor).brighten(20).hex()
+
+		pbEl = $('#'+_id + " .x-progress-bar");
+		pbEl.css('background-image', "none");
+
+		if (this.dispGrad){
+			pbEl.css('background', '-webkit-gradient(linear, left top, left bottom, from('	+ hightColor +'), to('+lowColor+'))');
+			pbEl.css('background', '-webkit-linear-gradient(' + hightColor +', '+lowColor+')');
+			pbEl.css('background', '-moz-linear-gradient('	+ hightColor +', '+lowColor+')');
+			pbEl.css('background', '-ms-linear-gradient('	+ hightColor +', '+lowColor+')');
+			pbEl.css('background', '-o-linear-gradient('	+ hightColor +', '+lowColor+')');
+			pbEl.css('background', 'linear-gradient(to bottom, '	+ hightColor +', '+lowColor+')');
+		}else{
+			pbEl.css('background-color', lowColor);
 		}
-	},
-	refreshBars: function()
-	{
-		for (var i = 0; i < this.progressBarArray.length; i++)
-		{
-			_val = this.data[i].values[0][1];
-			_max = this.nodes[i].extra_field.ma;
-			percent = (100*_val)/_max;
-			oldPercent = this.progressBarArray[i]._value;
-			if (percent != oldPercent)
-			{
-				this.progressBarArray[i]._value = percent;
-				this.progressBarArray[i].displayBars();
-			}
-		}
+
+		//pbEl.height(this.gHeight);
+
 	},
 
-	createBarsObj: function
-		( res, comp, met, val, gHeight, colorStart, colorMid, colorEnd,
-			colorBg, grad1, grad2, label, dispGrad, fontSize, boldText ) 
+	displayBars: function(data)
 	{
-		this.obj = Ext.create("widgets.progressbar.bar",
-			{
-				_res:res, _comp:comp, _met:met, _value:val,
-				_gHeight:gHeight, _colorStart:colorStart, _colorMid:colorMid, 
-				_colorEnd:colorEnd, _colorBg:colorBg, _grad1:grad1, _grad2:grad2,
-				_label:label, _dispGrad:dispGrad, _fontSize:fontSize, _boldText:boldText
+		for (var i = 0; i < data.length; i++){
+
+			var item = data[i];
+			var _id = item.node;
+
+
+			// Create it
+			log.debug('Item: ' + _id, this.logAuthor);
+			log.dump(item);
+
+			var node = this.nodesByID[_id];
+			log.debug('Node:', this.logAuthor);
+			log.dump(node);
+			
+			var label = node.label;
+
+			log.debug(' + Label: '+label, this.logAuthor);
+
+			var value = item.values[0][1];
+			var max = item.max;
+
+			//Extra field
+			if (node.max)
+				max = node.max
+
+			log.debug(' + Value: '+value, this.logAuthor);
+			log.debug(' + Max:   '+max, this.logAuthor);
+
+			var pct = 0;
+			if (value && max){
+				pct = (value * 100)/max;
+				pct = roundSignifiantDigit(pct, 2);
 			}
-		);
-		this.down('#'+this.wcontainerId).add(this.obj);
-		this.progressBarArray.push(this.obj);
+
+			log.debug(' + Pct:   '+pct, this.logAuthor);
+
+			var text = pct + "%";
+
+			// Check if pb already exist
+			if (this.progressBars[_id]){
+				var pb = this.progressBars[_id];
+				log.debug('Update: ' + _id, this.logAuthor)
+				pb.updateText(text);
+				pb.updateProgress(pct/100);
+				return
+			}
+
+			var pb = Ext.create('Ext.ProgressBar', {
+				text: text,
+				value: pct/100,
+				flex:1,
+				height: this.gHeight,
+				cls:'widgets-progressbar',
+				border: 1,
+			});
+
+			pb.on("update", function(pb, value){ this.setGradient(pb.id, value); }, this);
+			pb.on("afterrender", function(pb){ this.setGradient(pb.id, pb.value); }, this, {single: 1});
+
+			this.wcontainer.add({
+				layout: {
+					type: 'hbox'
+				},
+				border: 0,
+				margin: 4,
+				height: this.gHeight,
+				items: [
+					{ border: 0, html: String(label), flex:1 },
+					pb
+				]
+			});
+
+			this.progressBars[_id] = pb;
+		}
 	},
 
 	processNodes: function() 
@@ -258,6 +200,7 @@ Ext.define('widgets.progressbar.progressbar' ,
 				id: this.nodes[i].id,
 				metrics: this.nodes[i].metrics
 			});
+
 		this.post_params = 
 		{
 			'nodes': Ext.JSON.encode(post_params),
