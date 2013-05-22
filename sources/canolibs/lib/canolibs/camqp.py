@@ -20,7 +20,12 @@
 
 from kombu import Connection, Exchange, Queue
 import kombu.pools
-from amqplib.client_0_8.exceptions import AMQPConnectionException
+
+try:
+	from amqplib.client_0_8.exceptions import AMQPConnectionException as ConnectionError
+except:
+	from amqp.exceptions import ConnectionError
+
 import socket
 
 import time, logging, threading, os
@@ -67,7 +72,7 @@ class camqp(threading.Thread):
 		
 		self.paused = False
 		
-		self.connection_errors = (	 AMQPConnectionException,
+		self.connection_errors = (	 ConnectionError,
 									 socket.error,
 									 IOError,
 									 OSError,)
