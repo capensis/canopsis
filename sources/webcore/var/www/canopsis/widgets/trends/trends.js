@@ -42,52 +42,10 @@ Ext.define('widgets.trends.trends' , {
 	display_pct: true,
 
 	initComponent: function() {
-		this.nodesByID = {};
-		//Store nodes in object
-		for (var i = 0; i < this.nodes.length; i++) {
-			var node = this.nodes[i];
+		this.nodesByID = parseNodes(this.nodes);
 
-			if (node['type'] && node['type'] == 'COUNTER')
-				this.haveCounter = true;
-
-			//hack for retro compatibility
-			if (!node.dn)
-				node.dn = [node.component, node.resource];
-
-			if (node.metrics && node.metrics.length)
-				node.metric = node.metrics[0];
-
-			// Make label
-			if (node.resource)
-				var label = node.component + " " + node.resource;
-			else
-				var label = node.component;
-
-			if (node.metric)
-				label += " " + node.metric;
-
-			if (node.extra_field && node.extra_field.label)
-				label = node.extra_field.label;
-
-			var max = undefined;
-			if (node.extra_field && node.extra_field.ma)
-				max = node.extra_field.ma;
-
-			node.label = label;
-			node.max = max;
-
-			if (this.nodesByID[node.id]) {
-				this.nodesByID[node.id] = {};
-				this.nodesByID[node.id]['metrics'] = [];
-				this.nodesByID[node.id].metrics.push(node.metrics[0]);
-			}else {
-				this.nodesByID[node.id] = Ext.clone(node);
-			}
-			this.nb_node += 1;
-		}
 		log.debug('nodesByID:', this.logAuthor);
 		log.dump(this.nodesByID);
-
 
 		// Color Scaling
 		var colors = [this.colorLow, this.colorLow, this.colorMid, this.colorHight, this.colorHight];
@@ -203,13 +161,20 @@ Ext.define('widgets.trends.trends' , {
 			}
 
 
-			//delta_pct = 100
+			//delta_pct = 105
 
 			var fill = this.colorScale(0.5).hex();
 			var degrees = 0;
 
 			if (delta_pct != undefined){
 				degrees = Math.round((-delta_pct * 90) / 100);
+
+				if (degrees > 90)
+					degrees = 90;
+
+				if (degrees < -90)
+					degrees = -90;
+
 				fill = this.colorScale(0.5+(delta_pct*0.5)/100).hex();
 			}
 
@@ -259,7 +224,7 @@ Ext.define('widgets.trends.trends' , {
 					{ border: 0, height: this.item_height, html: String(text), bodyStyle: { "line-height": this.item_height+ "px", "text-align": "right", "padding-right": "3px"}},
 					row
 				]
-			})
+			});
 		}
 	},
 

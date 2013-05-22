@@ -51,8 +51,9 @@ done
 
 echo "Check celery and tasks"
 runtask task_backup mongo
-if [ ! -e $HOME/var/backups/backup_mongodb.zip ]; then
-	echo " + Error"
+bfile="$HOME/var/backups/backup_mongodb.tar.gz"
+if [ ! -e $bfile ]; then
+	echo " + Error, backup file not found ($bfile)"
 	hypcontrol stop
 	exit 1
 else

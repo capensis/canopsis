@@ -9,6 +9,7 @@
 	"border" : false,
 	"options":
 	[{
+		"xtype":"fieldset",
 		"title": "Style",
 		"layout": "anchor",
 		"items":
