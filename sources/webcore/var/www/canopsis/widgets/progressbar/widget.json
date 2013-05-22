@@ -9,17 +9,11 @@
 	"border" : false,
 	"options":
 	[{
+		"xtype":"fieldset",
 		"title": "Style",
 		"layout": "anchor",
 		"items":
 		[{
-			"xtype" : "numberfield",
-			"name" : "gHeight",
-			"fieldLabel": "Bar height in pixels",
-			"minValue": 0,
-			"value": 20,
-			"step": 1
-		},{
 			"xtype" : "ccolorfield",
 			"name" : "colorBg",
 			"fieldLabel": "Background color",
@@ -44,19 +38,7 @@
 			"fieldLabel": "Display gradient",
 			"checked": true,
 			"name": "dispGrad"
-		},{
-			"xtype": "checkbox",
-			"fieldLabel": "Bold text",
-			"checked": true,
-			"name": "boldText"
-		},{
-			"xtype" : "numberfield",
-			"name" : "fontSize",
-			"fieldLabel": "font size in percent",
-			"minValue": 0,
-			"value": 100,
-			"step": 1
-			}]
+		}]
 	},{
 		"title": "Choose Metrics",
 		"items": 

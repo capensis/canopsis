@@ -157,8 +157,6 @@ Ext.define('widgets.line_graph.line_graph' , {
 
 		this.nb_node = this.nodes.length;
 
-		this.nodesByID = {};
-
 		// Check if same node
 		if (this.nb_node == 1) {
 			this.same_node = true;
@@ -176,14 +174,7 @@ Ext.define('widgets.line_graph.line_graph' , {
 			}
 		}
 
-		//Store nodes in object
-		for (var i = 0; i < this.nodes.length; i++) {
-			var node = this.nodes[i];
-			if (this.nodesByID[node.id])
-				this.nodesByID[node.id].metrics.push(node.metrics[0]);
-			else
-				this.nodesByID[node.id] = Ext.clone(node);
-		}
+		this.nodesByID = parseNodes(this.nodes);
 
 		log.debug('nodesByID:', this.logAuthor);
 		log.dump(this.nodesByID);
@@ -454,7 +445,7 @@ Ext.define('widgets.line_graph.line_graph' , {
 	},
 
 	tooltip_formatter: function() {
-		if (this.point._flag == true) {
+		if (this.point && this.point._flag == true) {
 			return flag_tootlip_template.applyTemplate(this.point);
 		}else {
 			var formatter = function(options, value) {

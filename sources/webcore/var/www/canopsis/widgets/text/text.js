@@ -29,34 +29,36 @@ Ext.define('widgets.text.text' , {
 
 	initComponent: function() {
 		//get special values by parsing
-		var raw_var = this.extractVariables(this.text);
+		var raw_vars = this.extractVariables(this.text);
 
-		if (raw_var.length != 0) {
-			//this.templateVars = []
-			this.perfdataMetricList = [];
+		if (raw_vars.length != 0) {
+			this.perfdataMetricList = {};
 
-			var extracted_vars = this.cleanVars(raw_var);
+			var vars = this.cleanVars(raw_vars);
 
-			//replacing var in this.text by new var name
-			for (var i = 0; i < extracted_vars.length; i++) {
-				var one_var = extracted_vars[i];
-				var metric_exploded_name = one_var[1];
+			log.debug('Rebuild vars form user template', this.logAuthor);
+			Ext.Object.each(vars, function(key, value){
+				log.debug(' + ' + key, this.logAuthor);
+				var var_name = value[0];
+				if ((var_name == "perfdata" || var_name == "perf_data") && value.length == 3){
 
-				//get rid of perfdata
-				if (metric_exploded_name[0] == 'perfdata')
-					metric_exploded_name = metric_exploded_name.slice(1, metric_exploded_name.length);
+					var_name = "perf_data";
+					var metric = value[1];
+					var attribut = value[2];
 
-				var new_var_name = '{' + metric_exploded_name.join('') + '}';
-				new_var_name = new_var_name.replace(this.specialCharRegex, '');
-				this.text = this.text.replace(new RegExp(one_var[0]), new_var_name);
+					var tpl_name = var_name  + Math.ceil(Math.random() * 1000)
+	
+					this.text = this.text.replace(new RegExp(key), '{' + tpl_name + '}');
 
-				//keep track of metrics : {load: value, load: unit }
-				try {
-					this.perfdataMetricList.push([metric_exploded_name[0], metric_exploded_name[1]]);
-				}catch (err) {
-					log.debug('No attribut specified for var ' + metric_exploded_name[0], this.logAuthor);
+					this.perfdataMetricList[metric] = {
+						metric: metric,
+						attribut: attribut,
+						tpl_name: tpl_name
+					};
 				}
-			}
+			}, this);
+
+			log.dump(this.perfdataMetricList);
 		}
 
 
@@ -70,48 +72,46 @@ Ext.define('widgets.text.text' , {
 	},
 
 	onRefresh: function(data) {
-		if (data) {
-			if (data.perf_data_array && data.perf_data_array.length) {
-				if (this.perfdataMetricList && this.perfdataMetricList.length != 0) {
-					//loop on var in required perfdata
-					for (var i = 0; i < this.perfdataMetricList.length; i++) {
-						var metric = this.perfdataMetricList[i][0];
-						var attribut = this.perfdataMetricList[i][1];
+		perf_data = {};
 
-						log.debug('Metric searched is ' + metric, this.logAuthor);
-						log.debug('Attribut is ' + attribut, this.logAuthor);
+		if (data){
+			if (data.perf_data_array){
+				log.debug('Parse perf_data_array', this.logAuthor);
+				for (var i = 0; i < data.perf_data_array.length; i++)
+					perf_data[data.perf_data_array[i]["metric"]] = data.perf_data_array[i];
 
-						//search the right metric
-						if (metric != undefined && metric != null) {
-							for (var j = 0; j < data.perf_data_array.length; j++) {
-								if (data.perf_data_array[j].metric == metric) {
-									log.debug('  + ' + attribut + '  found', this.logAuthor);
-									var attributName = this.perfdataMetricList[i].join('');
-									attributName = attributName.replace(this.specialCharRegex, '');
-									try {
-										var value = data.perf_data_array[j][attribut];
+				log.dump(perf_data);
+			}
 
-										var unit = undefined;
-										try { unit = data.perf_data_array[j]["unit"]; } catch (err) {}
+			if (this.perfdataMetricList){
+				log.debug('Parse template perf_data', this.logAuthor);
 
-										if (value != null && value != undefined)
-											if (Ext.isNumeric(value))
-												data[attributName] = rdr_humanreadable_value(value, unit);
-											else
-												data[attributName] = value;
-									}catch (err) {
-										log.debug('metric : ' + metric + ' have no attribut ' + attribut);
-									}
-									break;
-								}
-							}
-						}
+				Ext.Object.each(this.perfdataMetricList, function(key, value){
+					var metric = key;
+					var attribut = value.attribut;
+					var tpl_name = value.tpl_name;
+
+					log.debug(' + ' + metric + '(' + tpl_name + ')' + ': ' + attribut, this.logAuthor)
+
+					var perf = perf_data[metric];
+
+					if (perf && perf[attribut] != undefined){
+						var unit = perf["unit"];
+						var value = perf[attribut];
+					
+						if (Ext.isNumeric(value) && unit)
+							value = rdr_humanreadable_value(value, unit)
+
+						log.debug('   + ' + value, this.logAuthor);
+
+						data[tpl_name] = value;
 					}
-				}
+				});
 			}
 
 			try {
 				data.timestamp = rdr_tstodate(data.timestamp);
+
 				this.HTML = this.myTemplate.apply(data);
 			}catch (err) {
 				this.HTML = _('The model widget template is not supported, check if your variables use the correct template.');
@@ -156,6 +156,7 @@ Ext.define('widgets.text.text' , {
 	},
 
 	extractVariables: function(text) {
+		log.debug("extractVariables:", this.logAuthor);
 		//search specific value
 		var loop = true;
 		var _string = text;
@@ -175,17 +176,17 @@ Ext.define('widgets.text.text' , {
 				loop = false;
 			}
 		}
+
+		log.dump(var_array);
 		return var_array;
 	},
 
 	// return :  ['{var1:var2}',['var1','var2']]
 	cleanVars: function(array) {
-		var output = [];
+		var output = {};
 		for (var i = 0; i < array.length; i++)
-			output.push([
-					array[i],
-					array[i].slice(1, -1).split(':')
-				]);
+			output[array[i]] = array[i].slice(1, -1).split(':')
+
 		return output;
 	}
 

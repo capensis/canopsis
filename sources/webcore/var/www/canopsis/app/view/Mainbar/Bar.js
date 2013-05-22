@@ -515,7 +515,7 @@ Ext.define('canopsis.view.Mainbar.Bar' , {
 					'{0}: <b>{1}</b><br/><i>{2}</i>',
 					_('Websocket is now'),
 					global.websocketCtrl.connected ? _('connected') : _('disconnected'),
-					global.websocketCtrl.connected ? '' : _('Check if websocket deamon is started or check your firewall port ') + global.nowjs.port
+					global.websocketCtrl.connected ? '' : _('Check if websocket daemon is started or check your firewall port ') + global.nowjs.port
 				);
 			},
 			listeners: {

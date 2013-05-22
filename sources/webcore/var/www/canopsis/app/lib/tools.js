@@ -363,3 +363,53 @@ function cleanTimestamp(number){
 		return parseInt(number,10)
 	}
 }
+
+
+function parseNodes(nodes){
+	var nodesByID = {};
+	var nb_node = 0;
+
+	for (var i = 0; i < nodes.length; i++) {
+		var node = nodes[i];
+
+		//if (node['type'] && node['type'] == 'COUNTER')
+		//	this.haveCounter = true;
+
+		//hack for retro compatibility
+		if (!node.dn)
+			node.dn = [node.component, node.resource];
+
+		if (node.metrics && node.metrics.length)
+			node.metric = node.metrics[0];
+
+		// Make label
+		if (node.resource)
+			var label = node.component + " " + node.resource;
+		else
+			var label = node.component;
+
+		if (node.metric)
+			label += " " + node.metric;
+
+		if (node.extra_field && node.extra_field.label)
+			label = node.extra_field.label;
+
+		var max = undefined;
+		if (node.extra_field && node.extra_field.ma)
+			max = node.extra_field.ma;
+
+		node.label = label;
+		node.max = max;
+
+		if (nodesByID[node.id]) {
+			nodesByID[node.id] = {};
+			nodesByID[node.id]['metrics'] = [];
+			nodesByID[node.id].metrics.push(node.metrics[0]);
+		}else {
+			nodesByID[node.id] = Ext.clone(node);
+		}
+		nb_node += 1;
+	}
+
+	return nodesByID;
+}

@@ -81,27 +81,16 @@ Ext.define('widgets.diagram.diagram' , {
 		this.legend_borderColor = check_color(this.legend_borderColor);
 		this.legend_backgroundColor	= check_color(this.legend_backgroundColor);
 
-		this.nodesByID = {};
-		//Store nodes in object
+		//search counter
 		for (var i = 0; i < this.nodes.length; i++) {
 			var node = this.nodes[i];
-
 			if (node['type'] && node['type'] == 'COUNTER')
 				this.haveCounter = true;
-
-			//hack for retro compatibility
-			if (!node.dn)
-				node.dn = [node.component, node.resource];
-
-			if (this.nodesByID[node.id]) {
-				this.nodesByID[node.id] = {};
-				this.nodesByID[node.id]['metrics'] = [];
-				this.nodesByID[node.id].metrics.push(node.metrics[0]);
-			}else {
-				this.nodesByID[node.id] = Ext.clone(node);
-			}
-			this.nb_node += 1;
 		}
+
+		this.nodesByID = parseNodes(this.nodes);
+		this.nb_node = Ext.Object.getSize(this.nodesByID);
+
 		log.debug('nodesByID:', this.logAuthor);
 		log.dump(this.nodesByID);
 
