@@ -137,9 +137,6 @@ Ext.define('widgets.line_graph.line_graph' , {
 
 	nbMavEventsDisplayed: 100,
 
-	lastYaxis: 0,
-	bunitYaxis: {},
-
 	autoShift: true,
 	lastShift: undefined,
 
@@ -149,6 +146,9 @@ Ext.define('widgets.line_graph.line_graph' , {
 		this.legend_fontColor	= check_color(this.legend_fontColor);
 		this.legend_borderColor = check_color(this.legend_borderColor);
 		this.legend_backgroundColor	= check_color(this.legend_backgroundColor);
+
+		this.lastYaxis = 0;
+		this.bunitYaxis = {};
 
 		this.OverlayLegend = [];
 
