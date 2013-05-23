@@ -1106,7 +1106,7 @@ Ext.define('widgets.line_graph.line_graph' , {
 			}
 
 			line = fitData(line).data;
-			trend_line.setData(line, false);
+			trend_line.setData(line, true);
 
 		}else {
 			log.debug('  +  Trend line not found : ' + trend_id, this.logAuthor);
