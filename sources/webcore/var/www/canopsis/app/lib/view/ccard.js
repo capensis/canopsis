@@ -60,7 +60,6 @@ Ext.define('canopsis.lib.view.ccard' , {
 
     items:[
             {
-                //flex: 1,
                 _name: 'buttonPanel',
                 width: 160,
                 border:false,
@@ -75,9 +74,9 @@ Ext.define('canopsis.lib.view.ccard' , {
 
     bbar: [
             {text:'advance mode',_name:'bbarAdvance',enableToggle:true,hidden:true},
-            {text:'previous',_name:'bbarPrevious'},'->',
-            {text: 'Next',_name:'bbarNext'},
-            {text: 'Finish',_name:'bbarFinish', hidden:true}
+            {iconCls : 'icon-previous', text:'previous',_name:'bbarPrevious'},'->',
+            {iconAlign: 'right',iconCls : 'icon-next', text: 'Next',_name:'bbarNext'},
+            {iconAlign: 'right',iconCls : 'icon-save', text: 'Finish',_name:'bbarFinish', hidden:true}
         ],
 
     initComponent: function() {
