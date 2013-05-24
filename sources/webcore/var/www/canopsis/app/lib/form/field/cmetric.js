@@ -255,12 +255,12 @@ Ext.define('canopsis.lib.form.field.cmetric' , {
 			}
 		}
 
-		_columns.push({
+		/*_columns.push({
 			header: _('Unit'),
 			sortable: false,
 			dataIndex: 'u',
 			flex: 1
-		});
+		});*/
 
 		//create grid
 		this.selected_grid = Ext.widget('grid', {
