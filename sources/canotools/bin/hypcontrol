@@ -3,6 +3,7 @@
 function start(){
 	service rabbitmq-server start
 	service mongodb start
+	service redis-server start
 	service amqp2engines start
 	service celeryd start
 	service apsd start
@@ -23,6 +24,7 @@ function stop(){
 	service apsd stop
 	service celeryd stop
 	service amqp2engines stop
+	service redis-server stop
 	service mongodb stop
 	service rabbitmq-server stop
 	

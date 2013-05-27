@@ -18,6 +18,7 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
+import kombu
 from kombu import Connection, Exchange, Queue
 import kombu.pools
 
@@ -189,30 +190,37 @@ class camqp(threading.Thread):
 				
 				if not qsettings['queue']:
 					self.logger.debug("   + Create queue")
-					
+
+					# copy list
+					routing_keys = list(qsettings['routing_keys'])
 					routing_key = None
-					if qsettings['routing_keys']:
-						routing_key = qsettings['routing_keys'][0]
+					if len(routing_keys):
+						routing_key = routing_keys[0]
+						routing_keys = routing_keys[1:]
 
 					exchange = self.get_exchange(qsettings['exchange_name'])
-					
-					self.logger.debug("   + exchange: '%s', routing_key: '%s', exclusive: %s, auto_delete: %s, no_ack: %s" % (qsettings['exchange_name'], routing_key, qsettings['exclusive'], qsettings['auto_delete'], qsettings['no_ack']))
+
+
+					#self.logger.debug("   + exchange: '%s', routing_key: '%s', exclusive: %s, auto_delete: %s, no_ack: %s" % (qsettings['exchange_name'], routing_key, qsettings['exclusive'], qsettings['auto_delete'], qsettings['no_ack']))
+					self.logger.debug("   + exchange: '%s', exclusive: %s, auto_delete: %s, no_ack: %s" % (qsettings['exchange_name'], qsettings['exclusive'], qsettings['auto_delete'], qsettings['no_ack']))
 					qsettings['queue'] = Queue(queue_name,
 											exchange = exchange,
 											routing_key = routing_key,
 											exclusive = qsettings['exclusive'],
 											auto_delete = qsettings['auto_delete'],
 											no_ack = qsettings['no_ack'],
-											channel=self.chan)
+											channel=self.conn.channel())
 
 					qsettings['queue'].declare()
 
-					if len(qsettings['routing_keys']) > 1:
+					if len(routing_keys):
 						self.logger.debug("   + Bind on all routing keys")
-						for index, routing_key in enumerate(qsettings['routing_keys']):
-							if index != 0:
-								self.logger.debug("     + routing_key: '%s'" % routing_key)
+						for routing_key in routing_keys:
+							self.logger.debug("     + routing_key: '%s'" % routing_key)
+							try:
 								qsettings['queue'].bind_to(exchange=exchange, routing_key=routing_key)
+							except:
+								self.logger.error("You need upgrade your Kombu version (%s)" % kombu.__version__)
 
 				if not qsettings['consumer']:
 					self.logger.debug("   + Create Consumer")
@@ -226,14 +234,16 @@ class camqp(threading.Thread):
 
 	
 	def add_queue(self, queue_name, routing_keys, callback, exchange_name=None, no_ack=True, exclusive=False, auto_delete=True):
-		if exchange_name == "amq.direct":
-			routing_keys = queue_name
-		
-		if routing_keys:
-			if not isinstance(routing_keys, list):
-				routing_keys = [ routing_keys ]
+		#if exchange_name == "amq.direct":
+		#	routing_keys = queue_name
+
+		c_routing_keys = []
+
+		if not isinstance(routing_keys, list):
+			if isinstance(routing_keys, str):
+				c_routing_keys = [ routing_keys ]
 		else:
-			routing_keys = None
+			c_routing_keys = routing_keys
 		
 		if not exchange_name:
 			exchange_name = self.exchange_name		
@@ -241,13 +251,14 @@ class camqp(threading.Thread):
 		self.queues[queue_name]={	'queue': False,
 									'consumer': False,
 									'queue_name': queue_name,
-									'routing_keys': routing_keys,
+									'routing_keys': c_routing_keys,
 									'callback': callback,
 									'exchange_name': exchange_name,
 									'no_ack': no_ack,
 									'exclusive': exclusive,
 									'auto_delete': auto_delete
 							}
+
 
 	def publish(self, msg, routing_key, exchange_name=None, serializer="json", compression=None, content_type=None, content_encoding=None):
 		self.wait_connection()
