@@ -66,13 +66,26 @@ Ext.define('widgets.diagram.diagram' , {
 	diagram_type: 'pie',
 
 	nameInLabelFormatter: false,
+	pctInLabel: true,
 
 	haveCounter: false,
 
-	labelFormatterPct: function() {	return '<b>' + this.point.metric + '</b>: ' + Math.round(this.percentage) + '%';},
-	labelFormatterBar: function() {	return '<b>' + this.x + '</b>: ' + rdr_humanreadable_value(this.y, this.point.bunit)},
+	labelFormatter: function() {
+		var me = this.series.chart.options.cwidget;
 
-	labelFormatterWithoutName: function() {return rdr_humanreadable_value(this.y, this.point.bunit)},
+		var prefix = "";
+
+		if (me.nameInLabelFormatter)
+			if (this.x)
+				prefix = '<b>' + this.x + ':</b> '
+			else
+				prefix = '<b>' + this.point.metric + ':</b> '
+
+		if (me.pctInLabel && this.percentage != undefined)
+			return prefix + rdr_humanreadable_value(this.percentage, "%");
+		else
+			return prefix + rdr_humanreadable_value(this.y, this.point.bunit);
+	},
 
 	initComponent: function() {
 		this.backgroundColor	= check_color(this.backgroundColor);
@@ -139,6 +152,7 @@ Ext.define('widgets.diagram.diagram' , {
 
 	setOptions: function() {
 		this.options = {
+			cwidget: this,
 			chart: {
 				renderTo: this.wcontainerId,
 				defaultSeriesType: 'pie',
@@ -162,7 +176,7 @@ Ext.define('widgets.diagram.diagram' , {
 						enabled: this.labels,
                         color: '#000000',
                         connectorColor: '#000000',
-                        formatter: (this.nameInLabelFormatter) ? this.labelFormatterPct : this.labelFormatterWithoutName
+                        formatter: this.labelFormatter
 					},
 					showInLegend: true,
 					animation: false,
@@ -174,7 +188,7 @@ Ext.define('widgets.diagram.diagram' , {
 						enabled: this.labels,
                         color: '#000000',
                         connectorColor: '#000000',
-                        formatter: (this.nameInLabelFormatter) ? this.labelFormatterBar : this.labelFormatterWithoutName
+                        formatter: this.labelFormatter
 					}
 				}
 			},

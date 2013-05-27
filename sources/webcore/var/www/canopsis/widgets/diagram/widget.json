@@ -183,10 +183,15 @@
 							"checked": false,
 							"name": "labels"
 						},{
-								"xtype": "checkbox",
-								"fieldLabel": "Display metric name in label",
-								"checked": false,
-								"name": "nameInLabelFormatter"
+							"xtype": "checkbox",
+							"fieldLabel": "Display metric name in label",
+							"checked": false,
+							"name": "nameInLabelFormatter"
+						},{
+							"xtype": "checkbox",
+							"fieldLabel": "Display percentage in label",
+							"checked": true,
+							"name": "pctInLabel"
 						},{
 							"xtype" : "numberfield",
 							"name" : "legend_fontSize",
