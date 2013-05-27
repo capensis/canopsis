@@ -37,7 +37,7 @@ class cengine(multiprocessing.Process):
 			name="worker1",
 			beat_interval=60,
 			logging_level=logging.INFO,
-			exchange_name='amq.topic',
+			exchange_name='amq.direct',
 			routing_keys=[]):
 		
 		multiprocessing.Process.__init__(self)

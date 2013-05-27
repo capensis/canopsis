@@ -194,12 +194,15 @@ class camqp(threading.Thread):
 					# copy list
 					routing_keys = list(qsettings['routing_keys'])
 					routing_key = None
+
 					if len(routing_keys):
 						routing_key = routing_keys[0]
 						routing_keys = routing_keys[1:]
 
 					exchange = self.get_exchange(qsettings['exchange_name'])
 
+					if (qsettings['exchange_name'] == "amq.direct" and not routing_key):
+						routing_key = queue_name
 
 					#self.logger.debug("   + exchange: '%s', routing_key: '%s', exclusive: %s, auto_delete: %s, no_ack: %s" % (qsettings['exchange_name'], routing_key, qsettings['exclusive'], qsettings['auto_delete'], qsettings['no_ack']))
 					self.logger.debug("   + exchange: '%s', exclusive: %s, auto_delete: %s, no_ack: %s" % (qsettings['exchange_name'], qsettings['exclusive'], qsettings['auto_delete'], qsettings['no_ack']))
