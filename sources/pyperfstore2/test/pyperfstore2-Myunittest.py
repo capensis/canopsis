@@ -155,11 +155,11 @@ class KnownValues(unittest.TestCase):
 		## Push n points
 		self.test_02_Push()
 		
-		
+		## TODO: re-code this function !
 		## Clean old dca
-		cleaned = manager.clean(name=name, timestamp=ut_start+n)
-		if not cleaned:
-			raise Exception('Data must be cleaning: %s' % cleaned)
+		#cleaned = manager.clean(name=name, timestamp=ut_start+n)
+		#if not cleaned:
+		#	raise Exception('Data must be cleaning: %s' % cleaned)
 			
 		cleaned = manager.cleanAll(timestamp=ut_start+n)
 		if cleaned:
