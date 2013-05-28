@@ -21,11 +21,12 @@
 Ext.define('canopsis.lib.view.cwizard' , {
 	extend: 'canopsis.lib.view.ccard',
 
-	alias: 'widget.ViewBuilderWizard',
+	alias: 'widget.cwizard',
 
 	requires: [
 				'canopsis.lib.form.field.cinventory',
 				'canopsis.lib.form.field.cmetric',
+				'canopsis.lib.form.field.ccustom',
 				'canopsis.lib.form.field.cfilter',
 				'canopsis.lib.form.field.ctag',
 				'canopsis.lib.form.field.cfieldset',
@@ -104,6 +105,8 @@ Ext.define('canopsis.lib.view.cwizard' , {
 	
 	afterRender: function(){
 		this.callParent(arguments);
+
+		this.childStores = {}
 
 		if(this.data){
 			this.edit = true

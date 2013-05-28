@@ -376,6 +376,7 @@
 						"name": "nodes",
 						"multiSelect": true,
 						"metrics": true,
+						"sharedStore":"line_graph",
 						"additional_field": [{
 											"xtype":"textfield",
 											"header":"Custom label",
@@ -399,6 +400,12 @@
 											"width": 55,
 											"checked":true
 										}]
+					}]
+		},{
+			"title": "customize metrics",
+			"items": [{
+						"xtype": "ccustom",
+						"sharedStore":"line_graph"
 					}]
 		},{
 			"title": "Choose events",

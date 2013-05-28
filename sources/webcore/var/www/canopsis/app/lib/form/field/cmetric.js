@@ -35,6 +35,8 @@ Ext.define('canopsis.lib.form.field.cmetric' , {
 
     multiSelect: true,
 
+    sharedStore : undefined,
+
 	initComponent: function() {
 		this.logAuthor = '[' + this.id + ']';
 		log.debug('Initialize ...', this.logAuthor);
@@ -63,6 +65,14 @@ Ext.define('canopsis.lib.form.field.cmetric' , {
 		this.items = [container, this.selected_grid];
 
 		this.callParent(arguments);
+	},
+
+	afterRender: function(){
+		this.callParent(arguments);
+		if(this.sharedStore){
+			this.parentWizard = this.findParentByType('cwizard')
+			this.parentWizard.childStores[this.sharedStore] = this.selected_store
+		}
 	},
 
 	build_stores: function() {
@@ -448,6 +458,12 @@ Ext.define('canopsis.lib.form.field.cmetric' , {
 			var record = Ext.create('Meta', config);
 			this.selected_store.add(record);
 		}
+	},
+
+	beforeDestroy: function() {
+		//deference store
+		if(this.sharedStore && this.parentWizard)
+			delete this.parentWizard.childStores[this.sharedStore]
 	}
 
 });
