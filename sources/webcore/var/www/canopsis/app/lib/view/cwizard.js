@@ -154,6 +154,14 @@ Ext.define('canopsis.lib.view.cwizard' , {
 	addOptionPanel: function(combo,records,opts){
 		this.cleanPanels()
 		this.addNewSteps(Ext.clone(records[0].raw.options))
+
+		//additionnal options
+		var options = {
+			"description": records[0].raw.description,
+			"refreshInterval": records[0].raw.refreshInterval,
+			"border" : records[0].raw.border
+		}
+		this.setValue(options)
 	},
 
 	beforeGetValue: function(){

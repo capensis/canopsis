@@ -372,6 +372,8 @@ function parseNodes(nodes){
 	for (var i = 0; i < nodes.length; i++) {
 		var node = nodes[i];
 
+		node.bunit = undefined;
+
 		//if (node['type'] && node['type'] == 'COUNTER')
 		//	this.haveCounter = true;
 
@@ -393,6 +395,9 @@ function parseNodes(nodes){
 
 		if (node.extra_field && node.extra_field.label)
 			label = node.extra_field.label;
+
+		if (node.extra_field && node.extra_field.u)
+			node.bunit = node.extra_field.u;
 
 		var max = undefined;
 		if (node.extra_field && node.extra_field.ma)

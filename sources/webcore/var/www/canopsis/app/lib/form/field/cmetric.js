@@ -130,9 +130,14 @@ Ext.define('canopsis.lib.form.field.cmetric' , {
 				 autoLoad: true
 		});
 
-		this.selected_store = Ext.create('canopsis.lib.store.cstore', {
-				model: 'Meta'
-		});
+		if(this.sharedStore)
+			this.selected_store = Ext.create('canopsis.lib.store.cstore',
+				Ext.Object.merge({model: 'Meta'},this.sharedStore)
+			)
+		else
+			this.selected_store = Ext.create('canopsis.lib.store.cstore', {
+					model: 'Meta'
+			});
 
 	},
 
@@ -265,12 +270,12 @@ Ext.define('canopsis.lib.form.field.cmetric' , {
 			}
 		}
 
-		_columns.push({
+		/*_columns.push({
 			header: _('Unit'),
 			sortable: false,
 			dataIndex: 'u',
 			flex: 1
-		});
+		});*/
 
 		//create grid
 		this.selected_grid = Ext.widget('grid', {
@@ -464,6 +469,4 @@ Ext.define('canopsis.lib.form.field.cmetric' , {
 		//deference store
 		if(this.sharedStore && this.parentWizard)
 			delete this.parentWizard.childStores[this.sharedStore]
-	}
-
 });

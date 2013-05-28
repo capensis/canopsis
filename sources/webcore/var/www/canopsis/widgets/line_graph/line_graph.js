@@ -137,9 +137,6 @@ Ext.define('widgets.line_graph.line_graph' , {
 
 	nbMavEventsDisplayed: 100,
 
-	lastYaxis: 0,
-	bunitYaxis: {},
-
 	autoShift: true,
 	lastShift: undefined,
 
@@ -149,6 +146,9 @@ Ext.define('widgets.line_graph.line_graph' , {
 		this.legend_fontColor	= check_color(this.legend_fontColor);
 		this.legend_borderColor = check_color(this.legend_borderColor);
 		this.legend_backgroundColor	= check_color(this.legend_backgroundColor);
+
+		this.lastYaxis = 0;
+		this.bunitYaxis = {};
 
 		this.OverlayLegend = [];
 
@@ -643,17 +643,12 @@ Ext.define('widgets.line_graph.line_graph' , {
 					}
 
 					if (data[i]['values']) {
-						if (node.extra_field && node.extra_field.label)
-							var metric_name = node.extra_field.label;
-						else
-							var metric_name = data[i]['metric'];
-
 						var last_value = data[i]['values'][data[i]['values'].length - 1][1];
 
 						this.last_values.push([
-							metric_name,
+							node.value,
 							last_value,
-							data[i]['bunit']
+							node.bunit
 						]);
 					}
 				}
@@ -776,16 +771,21 @@ Ext.define('widgets.line_graph.line_graph' , {
 		var serie = this.chart.get(serie_id);
 		if (serie) { return serie; }
 
-		log.debug('  + Create Serie:', this.logAuthor);
+		var node = this.nodesByID[node_id];
 
-		if (yAxis == undefined)
-			yAxis = 1;
+		log.debug('  + Create Serie:', this.logAuthor);
 
 		if (bunit == null)
 			bunit = undefined;
 
 		if (this.SeriePercent && max > 0)
 			bunit = '%';
+
+		if (node.bunit)
+			bunit = node.bunit;
+
+		if (yAxis == undefined)
+			yAxis = this.getYaxis(bunit);
 
 		var serie_index = this.chart.series.length;
 
@@ -795,8 +795,6 @@ Ext.define('widgets.line_graph.line_graph' , {
 		log.debug('    + yAxis: ' + yAxis, this.logAuthor);
 
 		var metric_long_name = '';
-
-		var node = this.nodesByID[node_id];
 
 		if (! this.same_node && ! this.consolidation_method) {
 			if (node && (node.extra_field && !node.extra_field.label)) {
@@ -990,8 +988,7 @@ Ext.define('widgets.line_graph.line_graph' , {
 			return true;
 
 		}else {
-			var yaxis = this.getYaxis(bunit);
-			serie = this.getSerie(node_id, metric_name, bunit, min, max, yaxis);
+			serie = this.getSerie(node_id, metric_name, bunit, min, max, undefined);
 		}
 
 		if (! serie) {
@@ -1106,7 +1103,7 @@ Ext.define('widgets.line_graph.line_graph' , {
 			}
 
 			line = fitData(line).data;
-			trend_line.setData(line, false);
+			trend_line.setData(line, true);
 
 		}else {
 			log.debug('  +  Trend line not found : ' + trend_id, this.logAuthor);

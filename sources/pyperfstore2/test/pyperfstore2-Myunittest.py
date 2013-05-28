@@ -50,7 +50,11 @@ class KnownValues(unittest.TestCase):
 	def test_01_Init(self):
 		global manager
 
-		manager = pyperfstore2.manager(mongo_collection='unittest_perfdata2', dca_min_length=50, logging_level=logging.DEBUG)
+		manager = pyperfstore2.manager(
+			mongo_collection='unittest_perfdata2',
+			dca_min_length=50,
+			logging_level=logging.DEBUG,
+			redis_db=1)
 		
 		manager.store.drop()
 
@@ -64,6 +68,8 @@ class KnownValues(unittest.TestCase):
 			manager.push(name=name, value=i, timestamp=i, meta_data=meta_data)
 			nb+=1
 		
+		manager.store.sync()
+
 		start = i
 		stop = start + n
 		manager.timestamp = start
@@ -149,11 +155,11 @@ class KnownValues(unittest.TestCase):
 		## Push n points
 		self.test_02_Push()
 		
-		
+		## TODO: re-code this function !
 		## Clean old dca
-		cleaned = manager.clean(name=name, timestamp=ut_start+n)
-		if not cleaned:
-			raise Exception('Data must be cleaning: %s' % cleaned)
+		#cleaned = manager.clean(name=name, timestamp=ut_start+n)
+		#if not cleaned:
+		#	raise Exception('Data must be cleaning: %s' % cleaned)
 			
 		cleaned = manager.cleanAll(timestamp=ut_start+n)
 		if cleaned:
@@ -193,6 +199,7 @@ class KnownValues(unittest.TestCase):
 				raise Exception('Invalid count: %s ' % len(points))
 	
 	def test_99_Drop(self):
+		manager.showAll()
 		manager.store.drop()
 	
 if __name__ == "__main__":

@@ -45,7 +45,7 @@ class CMongoDBJobStore(MongoDBJobStore):
 			try:
 				job = Job.__new__(Job)
 				
-				if job_dict['aaa_owner'] != 'root':
+				if job_dict['aaa_owner'] != 'account.root':
 					if job_dict['kwargs']['task'] != 'task_reporting':
 						raise ValueError("User %s isn\'t allow to run task %s" % (job_dict['aaa_owner'],job_dict['kwargs']['task']))
 				
@@ -94,9 +94,9 @@ class CMongoDBJobStore(MongoDBJobStore):
 				
 				job.__setstate__(job_dict)
 				jobs.append(job)
-				
+
 				#change flag to true
-				self.collection.update({'_id':job_dict_id},{"$set":{'loaded':True}},True)
+				self.collection.update({'_id':job_dict_id},{"$set":{'loaded':True, 'next_run_time': job_dict['next_run_time']}},True)
 				
 			except Exception:
 				job_name = job_dict.get('name', '(unknown)')

@@ -386,7 +386,15 @@ Ext.define('canopsis.view.Mainbar.Bar' , {
 			this.clockTypeSelector,
 			'-',
 			this.dashboardSelector,
-			this.avatarSelector
+			this.avatarSelector,
+			{
+				iconCls: 'no-icon',
+				text: _('Change your password'),
+				onClick: function() {
+					var win = Ext.create("canopsis.view.Account.Password");
+					win.show();
+				}
+			}
 		]);
 
 

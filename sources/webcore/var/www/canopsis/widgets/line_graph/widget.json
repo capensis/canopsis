@@ -399,6 +399,11 @@
 											"dataIndex": "trend_curve",
 											"width": 55,
 											"checked":true
+										},{
+											"xtype":"textfield",
+											"header":"Unit",
+											"name":"u",
+											"width": 30
 										}]
 					}]
 		},{

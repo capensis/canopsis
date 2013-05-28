@@ -31,27 +31,36 @@ import itertools
 
 class cengine(multiprocessing.Process):
 
-	def __init__(self, next_engines=[], next_balanced=True, name="worker1", beat_interval=60, use_internal_queue=False, queue_maxsize=1000, logging_level=logging.INFO):
+	def __init__(self,
+			next_amqp_queues=[],
+			next_balanced=False,
+			name="worker1",
+			beat_interval=60,
+			logging_level=logging.INFO,
+			exchange_name='amq.direct',
+			routing_keys=[]):
 		
 		multiprocessing.Process.__init__(self)
 		
 		self.logging_level = logging_level
 	
 		self.signal_queue = multiprocessing.Queue(maxsize=5)
-		self.input_queue = multiprocessing.Queue(maxsize=queue_maxsize)
-		self.queue_maxsize = queue_maxsize
+
 		self.RUN = True
 		
 		self.name = name
 		
 		self.amqp_queue = "Engine_%s" % name
+		self.routing_keys = routing_keys
+		self.exchange_name = exchange_name
 		
 		self.perfdata_retention = 3600
+
+		self.next_amqp_queues = next_amqp_queues
+		self.get_amqp_queue = itertools.cycle(self.next_amqp_queues)
 		
 		## Get from internal or external queue
 		self.next_balanced = next_balanced
-		self.next_engines = next_engines
-		self.get_next_engine = itertools.cycle(self.next_engines)
 		
 		init 	= cinit()
 		
@@ -71,10 +80,7 @@ class cengine(multiprocessing.Process):
 		self.beat_last = time.time()
 		
 		self.create_queue =  True
-		
-		# If use_internal_queue is false, use only AMQP Queue
-		self.use_internal_queue = use_internal_queue
-		
+
 		self.send_stats_event = True
 
 		self.rk_on_error = []
@@ -82,7 +88,15 @@ class cengine(multiprocessing.Process):
 		self.logger.info("Engine initialised")
 		
 	def create_amqp_queue(self):
-		self.amqp.add_queue(self.amqp_queue, None, self.on_amqp_event, "amq.direct", no_ack=True, exclusive=False, auto_delete=False)
+		self.amqp.add_queue(
+			queue_name=self.amqp_queue,
+			routing_keys=self.routing_keys,
+			callback=self.on_amqp_event,
+			exchange_name=self.exchange_name,
+			no_ack=True,
+			exclusive=False,
+			auto_delete=False
+		)
 	
 	def pre_run(self):
 		pass
@@ -124,16 +138,11 @@ class cengine(multiprocessing.Process):
 					self._beat()						
 					self.beat_last = now
 
-			while self.RUN:
-				try:
-					event = self.input_queue.get_nowait()
-					self._work(event)
-				except Queue.Empty:
-					if self.amqp.paused and self.RUN:
-						self.logger.info("Re-start AMQP Flow")
-						self.amqp.paused = False
-					time.sleep(0.5)
-					break
+			try:
+				time.sleep(1)
+			except Exception as err:
+				self.logger.error("Error in break time: %s" % err)
+				self.RUN = False
 
 		self.post_run()
 		
@@ -143,7 +152,7 @@ class cengine(multiprocessing.Process):
 		
 	def on_amqp_event(self, event, msg):
 		try:
-			self._work(event)
+			self._work(event, msg)
 		except Exception as err:
 			if event['rk'] not in self.rk_on_error:
 				self.logger.error(err)
@@ -152,19 +161,18 @@ class cengine(multiprocessing.Process):
 
 			self.next_queue(event)
 	
-	def _work(self, event, *args, **kargs):
+	def _work(self, event, msg=None, *args, **kargs):
 		start = time.time()
 		error = False
 		try:
-			wevent = self.work(event, *args, **kargs)
-			# Forward event to next queue
-			if self.next_engines:
-				if wevent:
-					#self.logger.debug("Forward event '%s' to next engines" % wevent['rk'])
-					self.next_queue(wevent)
-				else:
-					#self.logger.debug("Forward original event '%s' to next engines" % event['rk'])
-					self.next_queue(event)
+			wevent = self.work(event, msg, *args, **kargs)
+			
+			#self.logger.debug("Forward event '%s' to next engines" % event['rk'])
+
+			if isinstance(wevent, dict):
+				self.next_queue(wevent)
+			else:
+				self.next_queue(event)
 					
 		except Exception, err:
 			error = True
@@ -188,29 +196,17 @@ class cengine(multiprocessing.Process):
 		
 	def next_queue(self, event):
 		if self.next_balanced:
-			engine = self.get_next_engine.next()
-			if engine:
-				if engine.use_internal_queue and not engine.input_queue.full():
-					engine.input_queue.put(event)
-				else:
-					self.amqp.publish(event, engine.amqp_queue, "amq.direct")
+			queue_name = self.get_amqp_queue.next()
+			if queue_name:
+				self.amqp.publish(event, queue_name, "amq.direct")
 
 		else:	
-			for engine in self.next_engines:
-				if engine.use_internal_queue and not engine.input_queue.full():
-					#self.logger.debug(" + Forward via internal Q to '%s'" % engine.name)
-					engine.input_queue.put(event)
-				else:
-					#self.logger.debug(" + Forward via amqp to '%s'" % engine.amqp_queue)
-					self.amqp.publish(event, engine.amqp_queue, "amq.direct")
+			for queue_name in self.next_amqp_queues:
+				#self.logger.debug(" + Forward via amqp to '%s'" % engine.amqp_queue)
+				self.amqp.publish(event, queue_name, "amq.direct")
 
 	def _beat(self):
 		self.logger.debug("Beat: %s event(s), %s error" % (self.counter_event, self.counter_error))
-		
-		if not self.input_queue.empty():
-			size = self.input_queue.qsize()
-			if size > 110:
-				self.logger.info("%s event(s) in internal queue" % size)
 			
 		evt_per_sec = 0
 		sec_per_evt = 0
@@ -234,7 +230,6 @@ class cengine(multiprocessing.Process):
 				state = 2
 			
 			perf_data_array = [
-				{'retention': self.perfdata_retention, 'metric': 'cps_queue_size', 'value': self.input_queue.qsize(), 'unit': 'evt' },
 				{'retention': self.perfdata_retention, 'metric': 'cps_evt_per_sec', 'value': round(evt_per_sec,2), 'unit': 'evt' },
 				{'retention': self.perfdata_retention, 'metric': 'cps_sec_per_evt', 'value': round(sec_per_evt,5), 'unit': 's',
 					'warn': self.thd_warn_sec_per_evt,
@@ -278,20 +273,6 @@ class cengine(multiprocessing.Process):
 		
 		# cancel self consumer
 		self.amqp.cancel_queues()
-		
-		# transfer internal queue to AMQP queue
-		if not self.input_queue.empty():
-			self.logger.info("Transfer internal queue to AMQP queue")
-			try:
-				i =0
-				while True:
-					event = self.input_queue.get_nowait()
-					if event:
-						i+=1
-						self.amqp.publish(event, self.amqp_queue, "amq.direct")
-						
-			except Queue.Empty:
-				self.logger.info(" + %s event(s) transfered to AMQP" % i)
 					
 		self.amqp.stop()
 		self.amqp.join()
