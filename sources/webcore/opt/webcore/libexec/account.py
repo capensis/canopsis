@@ -117,7 +117,11 @@ def account_setConfig(_id):
 	logger.debug(" + setConfig '%s' => '%s'" % (_id, value))
 
 	if value:
-		account.data[_id] = value
+		if _id == "shadowpasswd":
+			account.shadowpasswd = value
+		else:
+			account.data[_id] = value
+
 		storage.put(account, account=account)
 		output={'total': 0, 'success': True, 'data': []}
 	else:

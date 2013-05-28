@@ -429,6 +429,14 @@ Ext.define('canopsis.controller.Account', {
 			return false;
 	},
 
+	setPassword: function(password){
+		var password = $.encoding.digests.hexSha1Str(password);
+		
+		this.setConfig("shadowpasswd", password, function(){
+			global.notify.notify(_('Success'), _('Your password is updated'), 'success');
+		});
+	},
+
 	setAvatar: function(file_id, filename) {
 		var me = this;
 
