@@ -236,14 +236,14 @@ Ext.define('canopsis.lib.view.ccard' , {
     switchToAdvancedMode: function(){
         this.advanceMode = true;
 
-        for(var i = 0; i < this.buttonPanel.items.items.length;i++)
+        for(var i = 1; i < this.buttonPanel.items.items.length;i++)
             this.getButton(i).show();
     },
 
     switchToSimpleMode: function(){
         this.advanceMode = false;
 
-        for(var i = 0; i < this.buttonPanel.items.items.length;i++){
+        for(var i = 1; i < this.buttonPanel.items.items.length;i++){
             var button = this.getButton(i);
             if(button.advanced == true)
                 button.hide();
