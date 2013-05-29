@@ -6,14 +6,14 @@
 .cwlist .thumb{
 	background: #dddddd;
 	padding: 2px;
-	padding-bottom: 0;
 }
 
 .cwlist .thumb-wrap{
 	float: left;
-	margin: 2px;
+	margin: 5px;
 	margin-right: 0;
 	padding: 5px;
+	height: 110px;
 }
 
 .cwlist .thumb-wrap span {
@@ -25,12 +25,10 @@
 
 .cwlist .x-item-over{
 	border:1px solid #dddddd;
-	padding: 4px;
 }
 
 .cwlist .x-item-selected{
 	border:1px solid #99bbe8;
-	padding: 4px;
 }
 
 .cwlist .x-item-selected .thumb{

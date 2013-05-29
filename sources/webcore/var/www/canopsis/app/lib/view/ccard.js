@@ -302,10 +302,12 @@ Ext.define('canopsis.lib.view.ccard' , {
             form.setValues(data);
         }
 
-        // Hide "choose widgets"
-        this.getButton(0).hide();
-        this.showStep(1);
-        this.bbarFinishButton.enable();
+        // Hide "choose widgets" in edit mode
+        if (this.data){
+            this.getButton(0).hide();
+            this.showStep(1);
+            this.bbarFinishButton.enable();
+        }
     }
 
 })

@@ -37,8 +37,9 @@ Ext.define('canopsis.lib.form.field.cwlist' , {
 		tpl: [
 			'<tpl for=".">',
 				'<div class="thumb-wrap" id="{xtype}">',
-				'<div class="thumb"><img height=60px width=60px src="{thumb}" title="{name}"></div>',
-				'<span class="x-editable">{name}</span></div>',
+					'<div class="thumb"><img height=60px width=60px src="{thumb}" title="{name}"></div>',
+					'<span class="x-editable">{name}</span>',
+				'</div>',
 			'</tpl>',
 			'<div class="x-clear"></div>'
 		],
