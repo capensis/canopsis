@@ -236,6 +236,10 @@
 	background-image: url(../images/icons/cog_go.png) !important;
 }
 
+.icon-advanced {
+    background-image: url(../images/icons/star.png) !important;
+}
+
 .icon-wizard {
 	background-image: url(../images/icons/application_form.png) !important;
 }

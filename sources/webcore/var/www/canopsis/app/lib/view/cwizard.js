@@ -143,7 +143,6 @@ Ext.define('canopsis.lib.view.cwizard' , {
 
 		//additionnal options
 		var options = {
-			"description": records[0].raw.description,
 			"refreshInterval": records[0].raw.refreshInterval,
 			"border" : records[0].raw.border
 		}

@@ -38,6 +38,8 @@ Ext.define('canopsis.lib.view.ccard' , {
     activeButton: 0,
     wizardSteps : undefined,
 
+    advanceMode: false,
+
     contentPanelDefault: {
                         xtype:'form',
                         width: '100%',
@@ -48,8 +50,7 @@ Ext.define('canopsis.lib.view.ccard' , {
 
     buttonDefault: {
                     xtype:'container',
-                    padding: 0,
-                    hidden: false
+                    padding: 0
                 },
 
     buttonTpl: new Ext.Template([
@@ -73,10 +74,10 @@ Ext.define('canopsis.lib.view.ccard' , {
     ],
 
     bbar: [
-            {text:'advance mode',_name:'bbarAdvance',enableToggle:true,hidden:true},
-            {iconCls : 'icon-previous', text:'previous',_name:'bbarPrevious'},'->',
-            {iconAlign: 'right',iconCls : 'icon-next', text: 'Next',_name:'bbarNext'},
-            {iconAlign: 'right',iconCls : 'icon-save', text: 'Finish',_name:'bbarFinish', hidden:true}
+            {iconCls : 'icon-previous', text:'previous', _name:'bbarPrevious'},
+            {iconCls : 'icon-advanced', text: _('Advance mode'), _name:'bbarAdvance', enableToggle:true },'->',
+            {iconCls : 'icon-next', iconAlign: 'right', text: 'Next', _name:'bbarNext'},
+            {iconCls : 'icon-save', iconAlign: 'right',  text: 'Finish', _name:'bbarFinish', hidden:true}
         ],
 
     initComponent: function() {
@@ -122,8 +123,12 @@ Ext.define('canopsis.lib.view.ccard' , {
 
         for(var i =0; i < configObject.length; i++){
             var button = configObject[i]
+            var content = Ext.clone(button)
 
-            button.panelIndex = this.addContent(Ext.clone(button))
+            if (! this.advanceMode && button.advanced == true)
+                button.hidden = true;
+
+            button.panelIndex = this.addContent(content)
 
             /*clean items*/
             delete button.items
@@ -132,7 +137,7 @@ Ext.define('canopsis.lib.view.ccard' , {
     },
 
     addButton: function(buttonConfig){
-        buttonConfig = Ext.Object.merge(buttonConfig,this.buttonDefault)
+        buttonConfig = Ext.Object.merge(buttonConfig, this.buttonDefault)
 
         if(!buttonConfig.buttonIndex)
             buttonConfig.buttonIndex = this.buttonPanel.items.length
@@ -144,12 +149,12 @@ Ext.define('canopsis.lib.view.ccard' , {
         //create click event for item
         if(item.getEl())
             item.getEl().on('click',
-                        function(){this.fireEvent('click',this.buttonIndex,this.panelIndex,this)}
+                        function(){this.fireEvent('click', this.buttonIndex, this.panelIndex, this)}
                     ,item)
         else
             item.on('afterrender',function(button){
                     button.getEl().on('click',
-                        function(){this.fireEvent('click',this.buttonIndex,this.panelIndex,this)}
+                        function(){this.fireEvent('click', this.buttonIndex, this.panelIndex, this)}
                         ,this)
                     })
 
@@ -157,7 +162,7 @@ Ext.define('canopsis.lib.view.ccard' , {
     },
 
     addContent: function(extjs_obj_array){
-        var _obj = Ext.Object.merge(extjs_obj_array,this.contentPanelDefault)
+        var _obj = Ext.Object.merge(extjs_obj_array, this.contentPanelDefault)
 
         //no title header
         _obj.title = undefined
@@ -229,15 +234,20 @@ Ext.define('canopsis.lib.view.ccard' , {
     },
 
     switchToAdvancedMode: function(){
+        this.advanceMode = true;
+
         for(var i = 0; i < this.buttonPanel.items.items.length;i++)
-            if(this.buttonPanel.items.items[i].advanced == true)
-                this.buttonPanel.items.items[i].getEl().removeCls('cwizardDisabledButton')
+            this.getButton(i).show();
     },
 
     switchToSimpleMode: function(){
-        for(var i = 0; i < this.buttonPanel.items.items.length;i++)
-            if(this.buttonPanel.items.items[i].advanced == true)
-                this.buttonPanel.items.items[i].getEl().addCls('cwizardDisabledButton')
+        this.advanceMode = false;
+
+        for(var i = 0; i < this.buttonPanel.items.items.length;i++){
+            var button = this.getButton(i);
+            if(button.advanced == true)
+                button.hide();
+        }
 
         if(this._isDisabled(this.activeButton))
             this.showStep(0)
@@ -259,7 +269,7 @@ Ext.define('canopsis.lib.view.ccard' , {
     _isDisabled: function(buttonNumber){
         var button = this.getButton(buttonNumber)
         if(button)
-            return button.getEl().hasCls('cwizardDisabledButton')
+            return button.hidden
     },
 
     //getters
