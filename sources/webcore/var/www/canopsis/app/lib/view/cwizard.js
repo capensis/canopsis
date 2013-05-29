@@ -23,10 +23,13 @@ Ext.define('canopsis.lib.view.cwizard' , {
 
 	alias: 'widget.ViewBuilderWizard',
 
+	cwlist: undefined,
+
 	requires: [
 				'canopsis.lib.form.field.cinventory',
 				'canopsis.lib.form.field.cmetric',
 				'canopsis.lib.form.field.cfilter',
+				'canopsis.lib.form.field.cwlist',
 				'canopsis.lib.form.field.ctag',
 				'canopsis.lib.form.field.cfieldset',
 				'canopsis.lib.form.field.cdate',
@@ -42,18 +45,8 @@ Ext.define('canopsis.lib.view.cwizard' , {
 							xtype:'cfieldset',
 							title:_('General options'),
 							items:[{
-								xtype: 'combo',
-								store: 'Widgets',
-								queryMode: 'local',
-								forceSelection: true,
-								fieldLabel: _('Type'),
-								name: 'xtype',
-								editable: false,
-								displayField: 'name',
-								valueField: 'xtype',
-								//autoLoad: true,
-								//value: 'empty',
-								allowBlank: false
+								xtype: 'cwlist',
+								name: 'xtype'
 							},{
 								xtype: 'displayfield',
 								name: 'description',
@@ -110,25 +103,20 @@ Ext.define('canopsis.lib.view.cwizard' , {
 			this.bbarNextButton.hide()
 			this.bbarNextButton.hide()
 			this.bbarPreviousButton.hide()
-            this.bbarFinishButton.show()
-        }
+			this.bbarFinishButton.show()
+		}
 
-		var combo = this.down('combobox[name=xtype]')
-		if(combo.rendered)
-			this.comboAfterRender()
-		else
-			combo.on('afterRender',this.comboAfterRender,this)
-	},
+		this.cwlist = this.down('cwlist');
 
-	comboAfterRender: function(){
-		var combo = this.down('combobox[name=xtype]')
-		combo.on('select', this.addOptionPanel, this);
+		this.cwlist.on('select', this.addOptionPanel, this);
+
 		if(this.data){
-			combo.setValue(this.data.xtype)
-			var record = combo.store.findRecord('xtype',this.data.xtype,undefined,false,false,true)
-			this.addNewSteps(Ext.clone(record.raw.options))
-			this.setValue(this.data)
-			combo.setDisabled(true)
+			this.cwlist.setValue(this.data.xtype);
+			this.cwlist.setDisabled(true);
+
+			var options = Ext.clone(this.cwlist.nodes[0].raw.options);
+			this.addNewSteps(options);
+			this.setValue(this.data);
 		}
 	},
 
@@ -148,7 +136,7 @@ Ext.define('canopsis.lib.view.cwizard' , {
 			this.buttonPanel.remove(buttonToDel[i],true)
 	},
 
-	addOptionPanel: function(combo,records,opts){
+	addOptionPanel: function(cwlist, records){
 		this.cleanPanels()
 		this.addNewSteps(Ext.clone(records[0].raw.options))
 
@@ -162,7 +150,7 @@ Ext.define('canopsis.lib.view.cwizard' , {
 	},
 
 	beforeGetValue: function(){
-		this.down('combobox[name=xtype]').setDisabled(false)
+		this.cwlist.setDisabled(false)
 	}
 
 });
