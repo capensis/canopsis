@@ -45,8 +45,16 @@ Ext.define('canopsis.lib.form.field.ccustom' , {
 		this.matchingDict = {}
 
 		//bindings
-		this.down('button[iconCls=icon-previous]').on('click',function(){console.log('previous')})
-		this.down('button[iconCls=icon-next]').on('click',function(){console.log('next')})
+		this.down('button[iconCls=icon-previous]').on('click',function(){
+			var panel = this.getLayout().getPrev()
+			if(panel)
+				this.getLayout().prev()
+		},this)
+		this.down('button[iconCls=icon-next]').on('click',function(){
+			var panel = this.getLayout().getNext()
+			if(panel)
+				this.getLayout().next()
+		},this)
 
 		this.sourceStore.on('add',function(store,records){
 			this.addPanels(records)
@@ -81,7 +89,7 @@ Ext.define('canopsis.lib.form.field.ccustom' , {
 
 	},
 
-	getValue: function() {
+	getValue: function(){
 
 	}
 

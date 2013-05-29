@@ -465,8 +465,9 @@ Ext.define('canopsis.lib.form.field.cmetric' , {
 		}
 	},
 
-	beforeDestroy: function() {
+	beforeDestroy: function(){
 		//deference store
 		if(this.sharedStore && this.parentWizard)
 			delete this.parentWizard.childStores[this.sharedStore]
+	}
 });
