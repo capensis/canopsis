@@ -38,62 +38,61 @@ Ext.define('canopsis.lib.view.cwizard' , {
 				'canopsis.lib.form.field.ccolorfield'
 			],
 
-	wizardSteps: {
+	wizardSteps: [{
 				title: _('Choose widget'),
 				//description : _('choose the type of widget you want, its title, and refresh interval'),
 				items: [{
-							xtype:'cfieldset',
-							title:_('General options'),
-							items:[{
-								xtype: 'cwlist',
-								name: 'xtype'
-							},{
-								xtype: 'displayfield',
-								name: 'description',
-								isFormField: false,
-								fieldLabel: _('Description')
-							},{
-								xtype: 'checkbox',
-								fieldLabel: _('Show border'),
-								checked: false,
-								name: 'border',
-								uncheckedValue: false
-							},{
-								xtype: 'checkbox',
-								fieldLabel: _('Auto title') + ' ' + _('if available'),
-								checked: true,
-								inputValue: true,
-								uncheckedValue: false,
-								name: 'autoTitle'
-							},{
-								xtype: 'textfield',
-								fieldLabel: _('Title') + ' (' + _('optional') + ')',
-								name: 'title'
-							},{
-								xtype: 'combobox',
-								name: 'refreshInterval',
-								fieldLabel: _('Refresh interval'),
-								queryMode: 'local',
-								editable: false,
-								displayField: 'text',
-								valueField: 'value',
-								value: 300,
-								store: {
-									xtype: 'store',
-									fields: ['value', 'text'],
-									data: [
-										{value: 0,	text: 'None'},
-										{value: 60,	text: '1 minutes'},
-										{value: 300,	text: '5 minutes'},
-										{value: 600,	text: '10 minutes'},
-										{value: 900,	text: '15 minutes'},
-										{value: 1800,	text: '30 minutes'},
-										{value: 3600,	text: '1 hour'}
-									]
-								}
-							}]
+						xtype: 'cwlist',
+						name: 'xtype'
+					}]
+				},{
+				title: _('General'),
+				//description : _('choose the type of widget you want, its title, and refresh interval'),
+				items: [{
+						xtype:'cfieldset',
+						title:_('General options'),
+						items:[{
+							xtype: 'textfield',
+							fieldLabel: _('Title') + ' (' + _('optional') + ')',
+							name: 'title'
+						},{
+							xtype: 'checkbox',
+							fieldLabel: _('Auto title') + ' ' + _('if available'),
+							checked: true,
+							inputValue: true,
+							uncheckedValue: false,
+							name: 'autoTitle'
+						},{
+							xtype: 'checkbox',
+							fieldLabel: _('Show border'),
+							checked: false,
+							name: 'border',
+							uncheckedValue: false
+						},{
+							xtype: 'combobox',
+							name: 'refreshInterval',
+							fieldLabel: _('Refresh interval'),
+							queryMode: 'local',
+							editable: false,
+							displayField: 'text',
+							valueField: 'value',
+							value: 300,
+							store: {
+								xtype: 'store',
+								fields: ['value', 'text'],
+								data: [
+									{value: 0,	text: 'None'},
+									{value: 60,	text: '1 minutes'},
+									{value: 300,	text: '5 minutes'},
+									{value: 600,	text: '10 minutes'},
+									{value: 900,	text: '15 minutes'},
+									{value: 1800,	text: '30 minutes'},
+									{value: 3600,	text: '1 hour'}
+								]
+							}
 						}]
-			},
+					}]
+			}],
 	
 	afterRender: function(){
 		this.callParent(arguments);
@@ -125,9 +124,11 @@ Ext.define('canopsis.lib.view.cwizard' , {
 		
 		//stock ref in array, otherwise the array is modified
 		//during the removing loop
-		for(var i = 1; i < this.contentPanel.items.items.length; i++)
+		var nb_fixed_tab = 2;
+
+		for(var i = nb_fixed_tab; i < this.contentPanel.items.items.length; i++)
 			contentToDel.push(this.contentPanel.items.items[i])
-		for(var i = 1; i < this.buttonPanel.items.items.length; i++)
+		for(var i = nb_fixed_tab; i < this.buttonPanel.items.items.length; i++)
 			buttonToDel.push(this.buttonPanel.items.items[i])
 
 		for(var i = 0; i < contentToDel.length; i++)
@@ -147,6 +148,8 @@ Ext.define('canopsis.lib.view.cwizard' , {
 			"border" : records[0].raw.border
 		}
 		this.setValue(options)
+
+		//this.nextButton();
 	},
 
 	beforeGetValue: function(){
