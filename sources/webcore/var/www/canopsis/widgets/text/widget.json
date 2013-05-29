@@ -12,6 +12,7 @@
 	"options": [
 			{
 				"title" : "Inventory",
+				"advanced": true,
 				"items" : [{
 					"xtype":"cinventory",
 					"name" : "nodes",

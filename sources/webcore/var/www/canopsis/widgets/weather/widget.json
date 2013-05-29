@@ -12,6 +12,7 @@
 	"options": [
 			{
 				"title" : "Style",
+				"advanced": true,
 				"items" : [{
 					"xtype": "cfieldset",
 					"title": "Style options",

@@ -10,6 +10,7 @@
 	"locales": ["en", "fr"],
 	"options": [{
 			"title": "Options",
+			"advanced": true,
 			"items": [
 					{
 						"xtype": "cfieldset",
@@ -161,6 +162,7 @@
 					}]
 		},{
 			"title": "Aggregation / Consolidation",
+			"advanced": true,
 			"items" : [{
 						"xtype": "cfieldset",
 						"title": "Aggregation",
@@ -245,6 +247,7 @@
 				]
 		},{					
 			"title": "Style",
+			"advanced": true,
 			"items": [{
 						"xtype": "cfieldset",
 						"title": "Title",
@@ -369,7 +372,23 @@
 								}
 							}]
 					}]
-		}, {
+		},{
+			"title": "Choose events",
+			"advanced": true,
+			"layout":"anchor",
+			"items": [{
+				"xtype": "cfilter",
+				"name": "flagFilter",
+				"anchor": "100% 80%"
+			},{
+				"xtype":"numberfield",
+				"name": "nbMavEventsDisplayed",
+				"fieldLabel":"Maximum number of displayed events (0 for no limit)",
+				"value": 100,
+				"minValue": 0,
+				"anchor": "50% 10%"
+			}]
+		},{
 			"title": "Choose Metrics",
 			"items": [{
 						"xtype": "cmetric",
@@ -405,21 +424,6 @@
 											"width": 30
 										}]
 					}]
-		},{
-			"title": "Choose events",
-			"layout":"anchor",
-			"items": [{
-				"xtype": "cfilter",
-				"name": "flagFilter",
-				"anchor": "100% 80%"
-			},{
-				"xtype":"numberfield",
-				"name": "nbMavEventsDisplayed",
-				"fieldLabel":"Maximum number of displayed events (0 for no limit)",
-				"value": 100,
-				"minValue": 0,
-				"anchor": "50% 10%"
-			}]
 		}]
 }]
 

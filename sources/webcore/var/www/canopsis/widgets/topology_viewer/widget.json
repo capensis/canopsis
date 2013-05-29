@@ -11,6 +11,7 @@
 	"locales": ["fr"],
 	"options": [{
 				"title" : "Options",
+				"advanced": true,
 				"items" : [{
 					"xtype": "cfieldset",
 					"title": "Display options",
