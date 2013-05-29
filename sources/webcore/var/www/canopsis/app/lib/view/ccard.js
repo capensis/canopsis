@@ -77,7 +77,7 @@ Ext.define('canopsis.lib.view.ccard' , {
             {iconCls : 'icon-previous', text:'previous', _name:'bbarPrevious'},
             {iconCls : 'icon-advanced', text: _('Advance mode'), _name:'bbarAdvance', enableToggle:true },'->',
             {iconCls : 'icon-next', iconAlign: 'right', text: 'Next', _name:'bbarNext'},
-            {iconCls : 'icon-save', iconAlign: 'right',  text: 'Finish', _name:'bbarFinish', hidden:true}
+            {iconCls : 'icon-save', iconAlign: 'right',  text: 'Finish', _name:'bbarFinish', hidden:true, disabled: true}
         ],
 
     initComponent: function() {
@@ -301,6 +301,11 @@ Ext.define('canopsis.lib.view.ccard' , {
             var form = wizardChilds[i].getForm();
             form.setValues(data);
         }
+
+        // Hide "choose widgets"
+        this.getButton(0).hide();
+        this.showStep(1);
+        this.bbarFinishButton.enable();
     }
 
 })

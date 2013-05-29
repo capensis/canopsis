@@ -139,6 +139,9 @@ Ext.define('canopsis.lib.view.cwizard' , {
 
 	addOptionPanel: function(cwlist, records){
 		this.cleanPanels()
+		
+		this.bbarFinishButton.enable();
+
 		this.addNewSteps(Ext.clone(records[0].raw.options))
 
 		//additionnal options
