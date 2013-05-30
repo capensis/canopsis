@@ -27,22 +27,29 @@ Ext.define('canopsis.lib.form.field.ccustom' , {
 
 	border: false,
 
-    sharedStore : undefined,
+	sharedStore : undefined,
 
-    layout:'card',
+	layout:'card',
 
-    tbar: [
-    		{xtype:'button',iconCls : 'icon-previous'},
-    		'->',
-    		{xtype:'button',iconCls : 'icon-next'},
-    	],
+	tbar: [
+			{xtype:'button',iconCls : 'icon-previous'},
+			'->',
+			{xtype:'button',iconCls : 'icon-next'},
+		],
+
+	customForm: undefined,
+
+	initComponent: function() {
+        this.callParent(arguments);
+       	this.matchingDict = {}
+    },
 
 	afterRender: function() {
 		this.callParent(arguments);
 
 		//vars
 		this.sourceStore = this.findParentByType('cwizard').childStores[this.sharedStore]
-		this.matchingDict = {}
+
 
 		//bindings
 		this.down('button[iconCls=icon-previous]').on('click',function(){
@@ -68,11 +75,34 @@ Ext.define('canopsis.lib.form.field.ccustom' , {
 	addPanels: function(records){
 		if(!Ext.isArray(records))
 			records = [records]
-		for(var i = 0; i < records.length; i++){
-			var nodeId = records[i].data.id
-			var elem = this.add({xtype:'panel',html:nodeId})
-			this.matchingDict[nodeId] = elem
-		}
+		for(var i = 0; i < records.length; i++)
+			this.addPanel(records[i].data.id, records[i].data)
+	},
+
+	addPanel: function(nodeId, data){
+		var elem = this.add({
+			xtype:'form',
+			nodeId: nodeId,
+			margin: '10 5 5 5',
+			items: Ext.clone(this.customForm),
+			layout: {
+				type: 'vbox',
+				align : 'left',
+				//pack  : 'start',
+			},
+			border: false,
+		/*	fieldDefaults: {
+				//anchor:'50%'
+			},*/
+			dataToLoad: Ext.clone(data),
+			listeners:{
+				afterrender: function(){
+								this.getForm().setValues(this.dataToLoad)
+							}
+			}
+		})
+
+		this.matchingDict[nodeId] = elem
 	},
 
 	removePanels: function(records){
@@ -85,12 +115,22 @@ Ext.define('canopsis.lib.form.field.ccustom' , {
 		}
 	},
 
-	setValue: function(){
-
+	setValue: function(data){
+		Ext.Object.each(data, function(key, value, myself) {
+			this.addPanel(key,value)
+		},this)
 	},
 
 	getValue: function(){
+		var output = {}
+		Ext.Object.each(this.matchingDict, function(key, value, myself) {
+			output[key] = value.getForm().getValues()
+		},this)
 
+		//prevent sub item form to be submit individualy
+		this.disable()
+
+		return output
 	}
 
 });

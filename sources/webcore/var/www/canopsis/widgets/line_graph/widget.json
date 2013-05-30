@@ -376,41 +376,39 @@
 						"name": "nodes",
 						"multiSelect": true,
 						"metrics": true,
-						"sharedStore":"line_graph",
-						"additional_field": [{
-											"xtype":"textfield",
-											"header":"Custom label",
-											"name":"label",
-											"emptyText":"Type the new label here",
-											"flex":1
-										},{
-											"xtype" : "ccolorfield",
-											"name" : "curve_color",
-											"header": "Curve color",
-											"replaceWhiteColor":true
-										},{
-											"xtype" : "ccolorfield",
-											"name" : "area_color",
-											"header": "Area color",
-											"replaceWhiteColor":true
-										},{
-											"xtype":"checkcolumn",
-											"text":"Trend",
-											"dataIndex": "trend_curve",
-											"width": 55,
-											"checked":true
-										},{
-											"xtype":"textfield",
-											"header":"Unit",
-											"name":"u",
-											"width": 30
-										}]
-					}]
+						"sharedStore":"line_graph"
+						}]
 		},{
 			"title": "customize metrics",
 			"items": [{
 						"xtype": "ccustom",
-						"sharedStore":"line_graph"
+						"name": "metricsOptions",
+						"sharedStore":"line_graph",
+						"customForm": [{
+											"xtype":"textfield",
+											"fieldLabel":"Custom label",
+											"name":"me",
+											"emptyText":"Type the new label here"
+										},{
+											"xtype" : "ccolorfield",
+											"name" : "curve_color",
+											"fieldLabel": "Curve color",
+											"replaceWhiteColor":true
+										},{
+											"xtype" : "ccolorfield",
+											"name" : "area_color",
+											"fieldLabel": "Area color",
+											"replaceWhiteColor":true
+										},{
+											"xtype":"checkbox",
+											"fieldLabel":"Trend",
+											"name": "trend_curve",
+											"checked":true
+										},{
+											"xtype":"textfield",
+											"fieldLabel":"Unit",
+											"name":"u"
+										}]
 					}]
 		},{
 			"title": "Choose events",

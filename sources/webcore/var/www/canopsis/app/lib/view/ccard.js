@@ -282,6 +282,7 @@ Ext.define('canopsis.lib.view.ccard' , {
         var _obj = {}
         for(var i = 0; i < wizardChilds.length; i++)
             _obj = Ext.Object.merge(_obj,wizardChilds[i].getValues(false, false, false, true))
+        console.log(_obj)
         return _obj
     },
 
