@@ -66,7 +66,7 @@ class KnownValues(unittest.TestCase):
 	def test_02_PutData(self):
 		record1 = crecord({'_id': 'check1', 'check': 'test1', 'state': 0, 'source_type': 'service'})
 		record2 = crecord({'_id': 'check2', 'check': 'test2', 'state': 1, 'source_type': 'service'})
-		record3 = crecord({'_id': 'check3', 'check': 'test3', 'state': 2, 'source_type': 'service'})
+		record3 = crecord({'_id': 'check3', 'check': 'test3', 'state': 2, 'source_type': 'service', 'state_type': 0, 'previous_state': 1})
 
 		storage.put([record1, record2, record3])
 		
@@ -154,10 +154,15 @@ class KnownValues(unittest.TestCase):
 	def test_06_GetState(self):
 		selector.setMfilter({'$or': [ {'check': 'test1'},  {'check': 'test2'}, {'check': 'test3'}] })
 		(states, state, state_type) = selector.getState()
-		if state != 2:
+		if state != 1:
 			raise Exception('Invalid state ("%s")' % state)
 		
 		selector.setMfilter({'$or': [ {'check': 'test1'},  {'check': 'test2'}] })
+		(states, state, state_type) = selector.getState()
+		if state != 1:
+			raise Exception('Invalid state ("%s")' % state)
+
+		selector.setMfilter({'$or': [ {'check': 'test1'},  {'check': 'test2'}, {'check': 'test3'}] })
 		(states, state, state_type) = selector.getState()
 		if state != 1:
 			raise Exception('Invalid state ("%s")' % state)

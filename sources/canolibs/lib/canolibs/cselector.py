@@ -249,33 +249,37 @@ class cselector(crecord):
 				self.logger.debug("  + Invalid filter" )
 				return ({}, 3, 1)
 			
-			# Build Map / Reduce	
-			mmap = Code("function () {"
-			"	var state = this.state;"
-			"	if (this.state_type == 0) {"
-			"		state = this.previous_state"
-			"	}"
-			"	if (this.source_type == 'host'){"
-			"		if (state == 0){ emit(0, 1) }"
-			"		else if (state == 1){ emit(2, 1) }"
-			"		else if (state == 2){ emit(3, 1) }"
-			"		else if (state == 3){ emit(3, 1) }"
-			"	}"
-			"	else {"
-			"		emit(state, 1)"
-			"	}"
-			"}")
+			result = self.storage.get_backend(namespace=self.namespace).aggregate([
+					{ '$match': mfilter },
+					{ '$project': {
+							'_id': True,
+							'state': True,
+							'state_type': True,
+							'previous_state': True
+						}
+					},
+					{ '$group': {
+							'_id': {
+								'state': '$state',
+								'state_type': "$state_type",
+								'previous_state': "$previous_state"
+							},
+							'count': { '$sum' : 1 }
+						}
+					}
+			])
 
-			mreduce = Code("function (key, values) {"
-			"  var total = 0;"
-			"  for (var i = 0; i < values.length; i++) {"
-			"    total += values[i];"
-			"  }"
-			"  return total;"
-			"}")
-			
-			# Map / Reduce
-			states = self.storage.map_reduce(mfilter, mmap, mreduce, namespace=self.namespace)
+			self.logger.debug(" + result: %s" % result)
+
+			states = {}
+			for state in result['result']:
+				key = state['_id']['state']
+
+				if state['_id'].get('state_type', 1) == 0:
+					key = state['_id'].get('previous_state', key)
+
+				states[key] = states.get(key, 0) + state['count']
+
 		
 		self.logger.debug(" + namespace: %s" % self.namespace)
 		self.logger.debug(" + states: %s" % states)
