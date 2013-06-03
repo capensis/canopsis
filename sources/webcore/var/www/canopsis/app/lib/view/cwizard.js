@@ -166,6 +166,51 @@ Ext.define('canopsis.lib.view.cwizard' , {
 
 	beforeGetValue: function(){
 		this.down('combobox[name=xtype]').setDisabled(false)
-	}
+	},
+
+	getValue: function(){
+        if(this.beforeGetValue)
+            this.beforeGetValue()
+        
+        var wizardChilds = this.contentPanel.items.items
+
+        var mergedNode = {}
+        var cmetricName = undefined
+        var outputObj = {}
+
+        //for each panel
+        for(var i = 0; i < wizardChilds.length; i++){
+            var form = wizardChilds[i]
+            var values = form.getValues(false, false, false, true)
+
+            var formType = form.items.items[0].xtype
+            if(formType == 'cmetric'){
+            	//the key is the cmetric given name (in widget.json)
+            	cmetricName =  Ext.Object.getKeys(values)[0]
+                for(var j = 0; j < values[cmetricName].length; j++){
+                    var node = values[cmetricName][j]
+                    console.log(node)
+                    mergedNode[node.id] = node
+                }
+            }else if(formType == 'ccustom'){
+                var valueObject = values.ccustom
+                Ext.Object.each(valueObject, function(key, value, myself) {
+                	console.log(key)
+                	console.log(mergedNode[key])
+                	if(mergedNode[key] != undefined)
+                		mergedNode[key] = Ext.Object.merge(mergedNode[key],value)
+                },this)
+            }else{
+                outputObj = Ext.Object.merge(outputObj,values)
+            }
+        }
+
+        if(mergedNode.length != 0)
+        	outputObj[cmetricName] = mergedNode
+
+        console.log(outputObj)
+        return outputObj
+    },
+
 
 });

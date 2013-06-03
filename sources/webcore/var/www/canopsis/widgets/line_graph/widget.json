@@ -382,7 +382,6 @@
 			"title": "customize metrics",
 			"items": [{
 						"xtype": "ccustom",
-						"name": "metricsOptions",
 						"sharedStore":"line_graph",
 						"customForm": [{
 											"xtype":"textfield",
@@ -403,7 +402,7 @@
 											"xtype":"checkbox",
 											"fieldLabel":"Trend",
 											"name": "trend_curve",
-											"checked":true
+											"checked":false
 										},{
 											"xtype":"textfield",
 											"fieldLabel":"Unit",

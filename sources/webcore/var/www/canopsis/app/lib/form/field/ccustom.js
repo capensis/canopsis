@@ -30,6 +30,7 @@ Ext.define('canopsis.lib.form.field.ccustom' , {
 	sharedStore : undefined,
 
 	layout:'card',
+	name : 'ccustom',
 
 	tbar: [
 			{xtype:'button',iconCls : 'icon-previous'},
@@ -88,17 +89,13 @@ Ext.define('canopsis.lib.form.field.ccustom' , {
 			layout: {
 				type: 'vbox',
 				align : 'left',
-				//pack  : 'start',
 			},
 			border: false,
-		/*	fieldDefaults: {
-				//anchor:'50%'
-			},*/
 			dataToLoad: Ext.clone(data),
 			listeners:{
 				afterrender: function(){
-								this.getForm().setValues(this.dataToLoad)
-							}
+					this.getForm().setValues(this.dataToLoad)
+				}
 			}
 		})
 
