@@ -189,14 +189,11 @@ Ext.define('canopsis.lib.view.cwizard' , {
             	cmetricName =  Ext.Object.getKeys(values)[0]
                 for(var j = 0; j < values[cmetricName].length; j++){
                     var node = values[cmetricName][j]
-                    console.log(node)
                     mergedNode[node.id] = node
                 }
             }else if(formType == 'ccustom'){
                 var valueObject = values.ccustom
                 Ext.Object.each(valueObject, function(key, value, myself) {
-                	console.log(key)
-                	console.log(mergedNode[key])
                 	if(mergedNode[key] != undefined)
                 		mergedNode[key] = Ext.Object.merge(mergedNode[key],value)
                 },this)
