@@ -208,6 +208,4 @@ Ext.define('canopsis.lib.view.cwizard' , {
         console.log(outputObj)
         return outputObj
     },
-
-
 });

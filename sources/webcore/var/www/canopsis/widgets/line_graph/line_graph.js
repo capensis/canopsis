@@ -157,7 +157,8 @@ Ext.define('widgets.line_graph.line_graph' , {
 
 		this.nb_node = this.nodes.length;
 
-		// Check if same node
+		//pour savoir si meme composent ressource
+/*		// Check if same node
 		if (this.nb_node == 1) {
 			this.same_node = true;
 		} else {
@@ -173,8 +174,11 @@ Ext.define('widgets.line_graph.line_graph' , {
 				}
 			}
 		}
-
-		this.nodesByID = parseNodes(this.nodes);
+*/
+		if(Ext.isArray(this.nodes))
+			this.nodesByID = parseNodes(this.nodes);
+		else
+			this.nodesByID = expandAttributs(this.nodes)
 
 		log.debug('nodesByID:', this.logAuthor);
 		log.dump(this.nodesByID);

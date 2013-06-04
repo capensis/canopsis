@@ -418,3 +418,52 @@ function parseNodes(nodes){
 
 	return nodesByID;
 }
+
+function expandAttributs(nodeList){
+	Ext.Object.each(nodeList, function(id, node, obj) {
+
+		if(node.co != undefined){
+			node.component = node.co
+			delete node.co
+		}
+
+		if(node.re != undefined){
+			node.resource = node.re
+			delete node.re
+		}
+
+		if(node.t != undefined){
+			node.type = node.t
+			delete node.t
+		}
+
+		if(node.me != undefined){
+			console.log('METRIC')
+			node.metric = node.me
+			delete node.me
+		}
+
+		if(node.u != undefined){
+			node.bunit = node.u
+			delete node.u
+		}
+
+		if (!node.dn)
+			node.dn = [node.component, node.resource];
+
+		// Make label
+		if (node.resource)
+			var label = node.component + " " + node.resource;
+		else
+			var label = node.component;
+
+		if (node.metric)
+			label += " " + node.metric;
+
+		node.label = label
+
+
+	})
+
+	return nodeList
+}
