@@ -2,3 +2,35 @@
 .x-mask-msg{
 	z-index: 100;
 }
+
+.cwlist .thumb{
+	background: #dddddd;
+	padding: 2px;
+}
+
+.cwlist .thumb-wrap{
+	float: left;
+	margin: 5px;
+	margin-right: 0;
+	padding: 5px;
+	height: 110px;
+}
+
+.cwlist .thumb-wrap span {
+	display: block;
+	overflow: hidden;
+	text-align: center;
+	width: 60px;
+}
+
+.cwlist .x-item-over{
+	border:1px solid #dddddd;
+}
+
+.cwlist .x-item-selected{
+	border:1px solid #99bbe8;
+}
+
+.cwlist .x-item-selected .thumb{
+	background:transparent;
+}

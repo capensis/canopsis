@@ -89,6 +89,7 @@
 					}]
 		},{
 			"title": "Aggregation",
+			"advanced": true,
 			"items": [{
 						"xtype": "cfieldset",
 						"title": "Aggregation",
@@ -141,6 +142,7 @@
 
 		},{
 			"title": "Style",
+			"advanced": true,
 			"items": [{
 					"xtype": "cfieldset",
 					"title": "Diagram Style",

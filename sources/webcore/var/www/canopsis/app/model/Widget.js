@@ -29,6 +29,7 @@ Ext.define('canopsis.model.Widget', {
 		{name: 'website',	defaultValue: undefined},
 		{name: 'options',	defaultValue: undefined},
 		{name: 'xtype'},
+		{name: 'thumb'},
 		{name: 'colspan',	defaultValue: 1},
 		{name: 'rowspan',	defaultValue: 1},
 		{name: 'refreshInterval', defaultValue: undefined},

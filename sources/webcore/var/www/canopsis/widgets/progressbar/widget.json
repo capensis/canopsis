@@ -1,5 +1,5 @@
 [{
-	"name":  "Progressbar",
+	"name":  "Progress bar",
 	"version": 1,
 	"author": "Capensis",
 	"website": "http://www.canopsis.org",
@@ -11,6 +11,7 @@
 	[{
 		"xtype":"fieldset",
 		"title": "Style",
+		"advanced": true,
 		"layout": "anchor",
 		"items":
 		[{

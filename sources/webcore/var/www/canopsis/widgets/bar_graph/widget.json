@@ -10,6 +10,7 @@
 	"locales": ["en", "fr"],
 	"options": [{
 			"title": "Options",
+			"advanced": true,
 			"items": [
 					{
 						"xtype": "cfieldset",
@@ -133,6 +134,7 @@
 					}]
 		},{
 			"title": "Aggregation",
+			"advanced": true,
 			"items": [{					
 						"xtype": "cfieldset",
 						"title": "Aggregation",
@@ -191,6 +193,7 @@
 					}]
 		},{
 			"title": "Style",
+			"advanced": true,
 			"items": [{
 						"xtype": "cfieldset",
 						"title": "Graph Style",

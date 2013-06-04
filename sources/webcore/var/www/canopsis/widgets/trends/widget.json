@@ -24,6 +24,7 @@
 					},{
 						"xtype": "cfieldset",
 						"title": "Style",
+						"advanced": true,
 						"items": [
 							{
 								"xtype": "checkbox",

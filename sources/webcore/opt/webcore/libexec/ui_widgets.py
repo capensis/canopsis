@@ -58,7 +58,16 @@ def get_widget_json(json_path):
 	except Exception, err:
 		logger.debug("     + Failed (%s)" % err)
 
-	return None	
+	return None
+
+def get_thumb_url(widget_path, url_path):
+	default_thumb = "themes/canopsis/resources/images/thumb_widget.png"
+
+	thumb_path = "%s/thumb.png" % widget_path
+	if os.path.exists(thumb_path):
+		return "%s/thumb.png" % url_path
+
+	return default_thumb
 
 #### GET
 @get('/ui/widgets')
@@ -75,15 +84,20 @@ def get_all_widgets():
 	for widget in widgets:
 		# Externals
 		widget_path = "%s/widgets/%s/" % (www_path, widget)
+		url_path = "canopsis/widgets/%s/" % widget
 		if not os.path.exists("%s/widget.json" % widget_path):
 			# Internals
 			widget_path = "%s/widgets/%s/" % (base_path, widget)
+			url_path = "widgets/%s/" % widget
 			if not os.path.exists("%s/widget.json" % widget_path):
-				return
+				continue
 
 		logger.debug("   + Load '%s' (%s)" % (widget, widget_path))
 
 		widget_info = get_widget_json("%s/widget.json" % widget_path)
+
+		widget_info["thumb"] = get_thumb_url(widget_path, url_path)
+
 		if widget_info:
 			output.append(widget_info)
 		
@@ -149,7 +163,3 @@ def get_external_widgets_libs():
 
 	response.content_type = 'application/javascript'
 	return output
-
-
-
-
