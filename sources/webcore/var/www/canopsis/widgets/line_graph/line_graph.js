@@ -175,10 +175,12 @@ Ext.define('widgets.line_graph.line_graph' , {
 			}
 		}
 */
-		if(Ext.isArray(this.nodes))
+		if(Ext.isArray(this.nodes)){
+			//retro compatibility
 			this.nodesByID = parseNodes(this.nodes);
-		else
+		}else{
 			this.nodesByID = expandAttributs(this.nodes)
+		}
 
 		log.debug('nodesByID:', this.logAuthor);
 		log.dump(this.nodesByID);
@@ -555,11 +557,9 @@ Ext.define('widgets.line_graph.line_graph' , {
 
 			}
 
-			if (this.nodes) {
-				if (this.nodes.length != 0) {
-
+			if (this.nodesByID) {
+				if (Ext.Object.getSize(this.nodesByID) != 0) {
 					url = this.makeUrl(from, to);
-
 					Ext.Ajax.request({
 						url: url,
 						scope: this,
@@ -642,7 +642,7 @@ Ext.define('widgets.line_graph.line_graph' , {
 					// Exclude state lines and timeNav
 					if (! this.timeNav && data[i]['metric'] != 'cps_state' && data[i]['metric'] != 'cps_state_ok' && data[i]['metric'] != 'cps_state_warn' && data[i]['metric'] != 'cps_state_crit') {
 						//add/refresh trend lines
-						if (node.extra_field && node.extra_field.trend_curve)
+						if (node.trend_curve)
 							this.addTrendLines(data[i]);
 					}
 
@@ -801,7 +801,7 @@ Ext.define('widgets.line_graph.line_graph' , {
 		var metric_long_name = '';
 
 		if (! this.same_node && ! this.consolidation_method) {
-			if (node && (node.extra_field && !node.extra_field.label)) {
+			if (node && ( !node.label)) {
 				metric_long_name = node.component;
 				if (node.source_type == 'resource')
 					metric_long_name += ' - ' + node.resource;
@@ -815,8 +815,8 @@ Ext.define('widgets.line_graph.line_graph' , {
 
 		// Set Label
 		var label = undefined;
-		if (node.extra_field && node.extra_field.label)
-			label = node.extra_field.label;
+		if (node.label)
+			label = node.label;
 		if (!label && curve)
 			label = curve.get('label');
 		if (! label)
@@ -831,8 +831,8 @@ Ext.define('widgets.line_graph.line_graph' , {
 		log.debug('    + color: ' + colors[0], this.logAuthor);
 
 		var _color = colors[0];
-		if (node.extra_field && node.extra_field.curve_color)
-			_color = node.extra_field.curve_color;
+		if (node.curve_color)
+			_color = node.curve_color;
 
 		var serie = {
 			id: serie_id,
@@ -853,8 +853,8 @@ Ext.define('widgets.line_graph.line_graph' , {
 		}
 
 		if (this.SeriesType == 'area') {
-			if (node.extra_field && node.extra_field.area_color) {
-				serie['fillColor'] = node.extra_field.area_color;
+			if (node.area_color) {
+				serie['fillColor'] = node.area_color;
 			}else {
 				if (curve) {
 					serie['fillColor'] = colors[1];
@@ -1242,14 +1242,12 @@ Ext.define('widgets.line_graph.line_graph' , {
 		//TODO: Rebuild this with new format !
 
 		var now = Ext.Date.now();
-
 		var post_params = [];
-		for (var i = 0; i < this.nodes.length; i++) {
 
-			var nodeId = this.nodes[i].id;
-			var serieId = nodeId + '.' + this.nodes[i].metrics[0];
+		Ext.Object.each(this.nodesByID, function(id, node, obj) {
+			var nodeId = id;
+			var serieId = nodeId + '.' + node.metrics[0];
 			var serie = this.series[serieId];
-
 			var from = oFrom;
 			var to = oTo;
 
@@ -1274,18 +1272,19 @@ Ext.define('widgets.line_graph.line_graph' , {
 				}
 			}
 
-			log.debug('Serie ' + nodeId + ' ' + this.nodes[i].metrics + ':', this.logAuthor);
+			log.debug('Serie ' + nodeId + ' ' + node.metrics + ':', this.logAuthor);
 			//log.debug(' + Do Refresh: ' + new Date(from) + ' -> ' + new Date(to) + ' (' + from + ' -> ' + to + ')', this.logAuthor);
 			log.debug(' + From: ' + new Date(from) + ' (' + from + ')', this.logAuthor);
 			log.debug(' + To:   ' + new Date(to) + ' (' + to + ')', this.logAuthor);
 
 			post_params.push({
 				id: nodeId,
-				metrics: this.nodes[i].metrics,
+				metrics: node.metrics,
 				from: parseInt(from / 1000),
 				to: parseInt(to / 1000)
 			});
-		}
+
+		},this)
 
 		return {
 			'nodes': Ext.JSON.encode(post_params),
