@@ -438,7 +438,6 @@ function expandAttributs(nodeList){
 		}
 
 		if(node.me != undefined){
-			console.log('METRIC')
 			node.metric = node.me
 			delete node.me
 		}
@@ -461,8 +460,6 @@ function expandAttributs(nodeList){
 			label += " " + node.metric;
 
 		node.label = label
-
-
 	})
 
 	return nodeList

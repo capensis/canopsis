@@ -832,7 +832,7 @@ Ext.define('widgets.line_graph.line_graph' , {
 
 		var _color = colors[0];
 		if (node.curve_color)
-			_color = node.curve_color;
+			_color = check_color(node.curve_color);
 
 		var serie = {
 			id: serie_id,
@@ -854,7 +854,7 @@ Ext.define('widgets.line_graph.line_graph' , {
 
 		if (this.SeriesType == 'area') {
 			if (node.area_color) {
-				serie['fillColor'] = node.area_color;
+				serie['fillColor'] = check_color(node.area_color);
 			}else {
 				if (curve) {
 					serie['fillColor'] = colors[1];
@@ -863,6 +863,8 @@ Ext.define('widgets.line_graph.line_graph' , {
 				}
 			}
 		}
+		console.log('EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE')
+		console.log(serie)
 
 		this.series[serie_id] = serie;
 
