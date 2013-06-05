@@ -117,6 +117,7 @@ class camqp(threading.Thread):
 						break
 					except Exception, err:
 						self.logger.exception("Unknown error:")
+						break
 					
 				self.disconnect()
 		
