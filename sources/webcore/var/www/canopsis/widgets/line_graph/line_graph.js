@@ -730,7 +730,7 @@ Ext.define('widgets.line_graph.line_graph' , {
 					continue;
 
 				// Don't shift short serie
-				if (serie.data.length <= 2)
+				if (serie.data.length <= 2 && serie.name != 'Flags')
 					continue;
 
 				var fpoint = serie.data[0];
