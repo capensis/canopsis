@@ -219,11 +219,13 @@ Ext.define('widgets.line_graph.line_graph' , {
 		if (this.nb_node) {
 			if (this.same_node) {
 
-				var component = this.nodes[0].component;
-				var source_type = this.nodes[0].source_type;
+				var firstKey =Ext.Object.getKeys(this.nodesByID)[0]
+				var firstNode = this.nodesByID[firstKey]
+				var component = firstNode.component;
+				var source_type = firstNode.source_type;
 
 				if (source_type == 'resource') {
-					var resource = this.nodes[0].resource;
+					var resource = firstNode.resource;
 					title = resource + ' ' + _('on') + ' ' + component;
 				}else {
 					title = component;
