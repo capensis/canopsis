@@ -46,10 +46,22 @@ Ext.define('widgets.gauge.gauge' , {
 	gaugeLabel: '',
 	lastValue: 0,
 	displayUnit: true,
+	time_window: 0,
 
 	initComponent: function() {
 		this.gaugeTitle = this.title;
 		this.title = '';
+		
+		this.nodesByID = parseNodes(this.nodes);
+
+		this.haveCounter = false;
+		//search counter
+		for (var i = 0; i < this.nodes.length; i++) {
+			var node = this.nodes[i];
+			if (node['type'] && node['type'] == 'COUNTER')
+				this.haveCounter = true;
+		}
+
 		this.callParent(arguments);
 	},
 
@@ -126,9 +138,13 @@ Ext.define('widgets.gauge.gauge' , {
 
 	getNodeInfo: function(from,to) {
 		this.processNodes();
+
+		if (! this.haveCounter || ! this.time_window)
+			from = to;
+
 		if (this.nodeId) {
 			Ext.Ajax.request({
-				url: '/perfstore/values' + '/' + parseInt(to/1000) + '/' + parseInt(to/1000),
+				url: '/perfstore/values' + '/' + parseInt(from/1000) + '/' + parseInt(to/1000),
 				scope: this,
 				params: this.post_params,
 				method: 'POST',
