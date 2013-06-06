@@ -443,26 +443,45 @@ Ext.define('canopsis.lib.form.field.cmetric' , {
 
 	setValue: function(data) {
 		log.debug('Load values', this.logAuthor);
-		for (var i = 0; i < data.length; i++) {
-			var item = data[i];
-			//standart
-			config = {
-				id: item.id,
-				co: item.component,
-				re: item.resource,
-				me: item.metrics,
-				t: item.type
-			};
 
-			//additionnal
-			if (item.extra_field && item.extra_field.length != 0)
-				Ext.Object.each(item.extra_field, function(key, value, myself) {
-					config[key] = value;
-				});
+		var metricList = []
+		if(Ext.isArray(data)){
+			//retrocompatibility
+			for (var i = 0; i < data.length; i++) {
+				var item = data[i];
+				//standart
+				var config = {
+					id: item.id,
+					co: item.component,
+					re: item.resource,
+					me: item.metrics,
+					t: item.type
+				};
 
-			var record = Ext.create('Meta', config);
-			this.selected_store.add(record);
+				//additionnal
+				if (item.extra_field && item.extra_field.length != 0)
+					Ext.Object.each(item.extra_field, function(key, value, myself) {
+						config[key] = value;
+					});
+
+				metricList.push(Ext.create('Meta', config))
+			}
 		}
+
+		if(Ext.isObject(data)){
+			Ext.Object.each(data, function(key, value, myself) {
+				var config = {
+					id: value.id,
+					co: value.component,
+					re: value.resource,
+					me: value.metrics,
+					t: value.type
+				};
+				metricList.push(Ext.create('Meta',config))
+			},this)
+		}
+
+		this.selected_store.add(metricList);
 	},
 
 	beforeDestroy: function(){

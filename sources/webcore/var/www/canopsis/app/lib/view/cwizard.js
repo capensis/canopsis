@@ -184,14 +184,16 @@ Ext.define('canopsis.lib.view.cwizard' , {
                     var node = values[cmetricName][j]
                     mergedNode[node.id] = node
                 }
-            }else if(formType == 'ccustom'){
-                var valueObject = values.ccustom
-                Ext.Object.each(valueObject, function(key, value, myself) {
-                	if(mergedNode[key] != undefined)
-                		mergedNode[key] = Ext.Object.merge(mergedNode[key],value)
-                },this)
-            }else{
-                outputObj = Ext.Object.merge(outputObj,values)
+            }else{ 
+            	if(formType == 'ccustom'){
+	                var valueObject = values.ccustom
+	                Ext.Object.each(valueObject, function(key, value, myself) {
+	                	if(mergedNode[key] != undefined)
+	                		mergedNode[key] = Ext.Object.merge(mergedNode[key],value)
+	                },this)
+	                
+	            }
+            	outputObj = Ext.Object.merge(outputObj,values)
             }
         }
 

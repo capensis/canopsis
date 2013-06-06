@@ -155,36 +155,33 @@ Ext.define('widgets.line_graph.line_graph' , {
 		log.debug('nodes:', this.logAuthor);
 		log.dump(this.nodes);
 
-		this.nb_node = this.nodes.length;
+		//retro compatibility
+		if(Ext.isArray(this.nodes))
+			this.nodesByID = parseNodes(this.nodes);
+		else
+			this.nodesByID = expandAttributs(this.nodes)
 
-		//pour savoir si meme composent ressource
-/*		// Check if same node
+		this.nb_node = Ext.Object.getSize(this.nodesByID);
+
+		// Check if same node
 		if (this.nb_node == 1) {
 			this.same_node = true;
 		} else {
 			var flag = undefined;
 
-			for (var i = 0; i < this.nodes.length; i++) {
-				var node = this.nodes[i]['resource'] + this.nodes[i]['component'];
-				if (i == 0) {
+			Ext.Object.each(this.nodesByID, function(key, value, myself) {
+				var node = value['resource'] + value['component'];
+				if (flag == undefined) {
 					flag = node;
 				}else if (flag != node) {
 					this.same_node = false;
-					break;
 				}
-			}
+			},this)
 		}
-*/
-		if(Ext.isArray(this.nodes)){
-			//retro compatibility
-			this.nodesByID = parseNodes(this.nodes);
-		}else{
-			this.nodesByID = expandAttributs(this.nodes)
-		}
+
 
 		log.debug('nodesByID:', this.logAuthor);
 		log.dump(this.nodesByID);
-
 		log.debug('same_node: ' + this.same_node, this.logAuthor);
 
 		if (this.timeNav && this.exportMode)
@@ -863,8 +860,6 @@ Ext.define('widgets.line_graph.line_graph' , {
 				}
 			}
 		}
-		console.log('EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE')
-		console.log(serie)
 
 		this.series[serie_id] = serie;
 
