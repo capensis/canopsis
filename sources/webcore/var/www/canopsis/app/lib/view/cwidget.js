@@ -182,6 +182,10 @@ Ext.define('canopsis.lib.view.cwidget' , {
 
 		if (! to)
 			to = now;
+		
+		if (! from && this.lastRefresh)
+			from = this.lastRefresh;
+
 		if (! from) 
 			from = to - (this.time_window * 1000);
 
