@@ -1089,10 +1089,13 @@ Ext.define('widgets.line_graph.line_graph' , {
 		return true;
 	},
 
+	getEta: function(y, a, b){
+		var now = parseInt(Ext.Date.now())
+		return parseInt((y-b)/a) - now; 
+	},
+
 	addTrendLines: function(data) {
 		log.debug(' + Trend line', this.logAuthor);
-
-		var now = parseInt(Ext.Date.now())
 
 		var serie_id = data.node + '.' + data.metric;
 		var referent_serie = this.chart.get(serie_id);
@@ -1115,8 +1118,15 @@ Ext.define('widgets.line_graph.line_graph' , {
 
 			var reg = fitData(line);
 
-			if (node.max){
-				var eta = parseInt((node.max-reg.intercept)/reg.slope) - now;
+			var y = undefined;
+			if (reg.slope > 0 && node.max != undefined)
+				y = node.max;
+
+			if (reg.slope < 0 && node.min != undefined)
+				y = node.min;
+
+			if (y != undefined){
+				var eta = this.getEta(y, reg.slope, reg.intercept)
 				trend_line.eta = rdr_duration(eta/1000, 2);
 			}
 
@@ -1178,8 +1188,15 @@ Ext.define('widgets.line_graph.line_graph' , {
 
 				var reg = fitData(data.values);
 
-				if (node.max){
-					var eta = parseInt((node.max-reg.intercept)/reg.slope) - now;
+				var y = undefined;
+				if (reg.slope > 0 && node.max != undefined)
+					y = node.max;
+
+				if (reg.slope < 0 && node.min != undefined)
+					y = node.min;
+
+				if (y != undefined){
+					var eta = this.getEta(y, reg.slope, reg.intercept)
 					hcserie.eta = rdr_duration(eta/1000, 2);
 				}
 	
