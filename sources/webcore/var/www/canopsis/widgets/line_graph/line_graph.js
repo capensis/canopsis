@@ -447,6 +447,7 @@ Ext.define('widgets.line_graph.line_graph' , {
 	tooltip_formatter: function() {
 		if (this.point && this.point._flag == true) {
 			return flag_tootlip_template.applyTemplate(this.point);
+
 		}else {
 			var formatter = function(options, value) {
 				if (options.invert)
@@ -465,6 +466,8 @@ Ext.define('widgets.line_graph.line_graph' , {
 				});
 			} else {
 				s += '<br/>' + formatter(this.series.options, this.y);
+				if (this.series.eta)
+					s += '<br/><b>ETA:</b> ' + this.series.eta
 			}
 			return s;
 		}
@@ -634,6 +637,10 @@ Ext.define('widgets.line_graph.line_graph' , {
 
 					var node_id = data[i].node;
 					var node = this.nodesByID[node_id];
+
+					// TODO: Fix with new format
+					if (! node.max && data[i].max)
+						node.max = data[i].max
 
 					// Exclude state lines and timeNav
 					if (! this.timeNav && data[i]['metric'] != 'cps_state' && data[i]['metric'] != 'cps_state_ok' && data[i]['metric'] != 'cps_state_warn' && data[i]['metric'] != 'cps_state_crit') {
@@ -1085,9 +1092,13 @@ Ext.define('widgets.line_graph.line_graph' , {
 	addTrendLines: function(data) {
 		log.debug(' + Trend line', this.logAuthor);
 
+		var now = parseInt(Ext.Date.now())
+
 		var serie_id = data.node + '.' + data.metric;
 		var referent_serie = this.chart.get(serie_id);
 		var trend_id = data.node + '.' + data.metric + '-TREND';
+
+		var node = this.nodesByID[data.node];
 
 		//get the trend line
 		var trend_line = this.chart.get(trend_id);
@@ -1102,7 +1113,14 @@ Ext.define('widgets.line_graph.line_graph' , {
 				line.push([point.x, point.y]);
 			}
 
-			line = fitData(line).data;
+			var reg = fitData(line);
+
+			if (node.max){
+				var eta = parseInt((node.max-reg.intercept)/reg.slope) - now;
+				trend_line.eta = rdr_duration(eta/1000, 2);
+			}
+
+			line = reg.data;
 			trend_line.setData(line, true);
 
 		}else {
@@ -1157,7 +1175,15 @@ Ext.define('widgets.line_graph.line_graph' , {
 			var hcserie = this.chart.get(trend_id);
 
 			if (data.values.length > 2) {
-				var line = fitData(data.values).data;
+
+				var reg = fitData(data.values);
+
+				if (node.max){
+					var eta = parseInt((node.max-reg.intercept)/reg.slope) - now;
+					hcserie.eta = rdr_duration(eta/1000, 2);
+				}
+	
+				var line = reg.data;
 
 				//trunc value
 				line = this.truncValueArray(line);
