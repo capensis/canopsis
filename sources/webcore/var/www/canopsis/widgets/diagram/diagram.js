@@ -304,7 +304,6 @@ Ext.define('widgets.diagram.diagram' , {
 		if (! this.haveCounter)
 			from = to;
 
-		console.log(this.haveCounter)
 		if (this.haveCounter && this.time_window)
 			from = to - (this.time_window*1000);
 
