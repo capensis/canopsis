@@ -321,6 +321,13 @@ rdr_duration = function(timestamp, nb) {
 	if (timestamp == 0)
 		return 0;
 
+	var is_neg = false;
+
+	if (timestamp < 0){
+		is_neg = true;
+		timestamp = Math.abs(timestamp);
+	}
+
 	var times = [
 		[global.commonTs.year,	'y',	0],
 		[global.commonTs.month,	'M',	0],
