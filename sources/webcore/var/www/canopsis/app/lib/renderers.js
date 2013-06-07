@@ -322,11 +322,10 @@ rdr_duration = function(timestamp, nb) {
 		return 0;
 
 	var is_neg = false;
-
-	if (timestamp < 0){
+	if (timestamp < 0)
 		is_neg = true;
-		timestamp = Math.abs(timestamp);
-	}
+
+	timestamp = Math.abs(timestamp);
 
 	var times = [
 		[global.commonTs.year,	'y',	0],
