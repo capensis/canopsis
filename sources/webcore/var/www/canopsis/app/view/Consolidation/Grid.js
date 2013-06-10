@@ -33,6 +33,9 @@ Ext.define('canopsis.view.Consolidation.Grid' , {
 	opt_menu_rights: true,
 	opt_bar_enable: true,
 
+	opt_bar_search: true,
+	opt_bar_search_field: ['crecord_name', 'display_name', 'description'],
+
 	columns: [
 		/*{
 			header: _('State'),
