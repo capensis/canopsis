@@ -95,6 +95,7 @@ def init():
 
 def update():
 	init()
+	update_view_for_new_metric_format()
 
 def create_view(_id, name, data, position=None, mod='o+r', autorm=True, internal=False):
 	#Delete old view
@@ -124,3 +125,32 @@ def create_view(_id, name, data, position=None, mod='o+r', autorm=True, internal
 	record.chmod(mod)
 	storage.put(record)
 	return record
+
+def update_view_for_new_metric_format():
+	records = storage.find({'crecord_type': 'view'}, namespace='object', account=root)
+	for view in records:
+		for item in view.data['items']:
+			nodesObject = {}
+
+			#check if old format
+			if 'nodes' in item['data']:
+				if isinstance(item['data']['nodes'], list) and item['data']['xtype'] == "line_graph":
+					if not 'ccustom' in item['data']:
+						item['data']['ccustom'] = {}
+
+					for node in item['data']['nodes']:
+						# write extra_fields in node root
+						nodesObject[node['id']] = node
+						if 'extra_field' in node:
+							#for key, value in enumerate(node['extra_field']):
+							nodesObject[node['id']].update(node['extra_field'])
+
+							#build ccustom in view
+							item['data']['ccustom'][node['id']] = node['extra_field']
+							del node['extra_field']
+
+					item['data']['nodes'] = nodesObject
+			#print(item['data'])
+	storage.put(records)
+				
+
