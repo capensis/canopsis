@@ -121,7 +121,7 @@ Ext.define('canopsis.lib.form.field.ccustom' , {
 	getValue: function(){
 		var output = {}
 		Ext.Object.each(this.matchingDict, function(key, value, myself) {
-			output[key] = value.getForm().getValues()
+			output[key] = value.getForm().getFieldValues()
 		},this)
 
 		//prevent sub item form to be submit individualy
