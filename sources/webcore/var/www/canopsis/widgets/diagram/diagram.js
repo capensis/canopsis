@@ -94,18 +94,29 @@ Ext.define('widgets.diagram.diagram' , {
 		this.legend_borderColor = check_color(this.legend_borderColor);
 		this.legend_backgroundColor	= check_color(this.legend_backgroundColor);
 
-		//search counter
-		for (var i = 0; i < this.nodes.length; i++) {
-			var node = this.nodes[i];
-			if (node['type'] && node['type'] == 'COUNTER')
-				this.haveCounter = true;
-		}
+		//retrocompatibilité
+		if(Ext.isArray(this.nodes))
+			this.nodesByID = parseNodes(this.nodes);
+		else
+			this.nodesByID = expandAttributs(this.nodes);
 
-		this.nodesByID = parseNodes(this.nodes);
 		this.nb_node = Ext.Object.getSize(this.nodesByID);
 
 		log.debug('nodesByID:', this.logAuthor);
 		log.dump(this.nodesByID);
+
+		//search counter
+		/*
+		for (var i = 0; i < this.nodes.length; i++) {
+			var node = this.nodes[i];
+			if (node['type'] && node['type'] == 'COUNTER')
+				this.haveCounter = true;
+		}*/
+
+		Ext.Object.each(this.nodesByID, function(id, node, obj) {
+			if (node['type'] && node['type'] == 'COUNTER')
+				this.haveCounter = true;
+		},this)
 
 		//Set title
 		if (this.autoTitle) {
@@ -125,7 +136,7 @@ Ext.define('widgets.diagram.diagram' , {
 		log.debug('Initialize Pie', this.logAuthor);
 
 		// Clean this.nodes
-		if (this.nodes)
+		if (this.nodesByID)
 			this.processNodes();
 
 		this.setOptions();
@@ -137,15 +148,17 @@ Ext.define('widgets.diagram.diagram' , {
 	setchartTitle: function() {
 		var title = '';
 		if (this.nb_node == 1) {
-			var component = this.nodes[0].dn[0];
-			var source_type = this.nodes[0].source_type;
+				var firstKey =Ext.Object.getKeys(this.nodesByID)[0]
+				var firstNode = this.nodesByID[firstKey]
+				var component = firstNode.component;
+				var source_type = firstNode.source_type;
 
-			if (source_type == 'resource') {
-				var resource = this.nodes[0].dn[1];
-				title = resource + ' ' + _('on') + ' ' + component;
-			}else {
-				title = component;
-			}
+				if (source_type == 'resource') {
+					var resource = firstNode.resource;
+					title = resource + ' ' + _('on') + ' ' + component;
+				}else {
+					title = component;
+				}
 		}
 		this.chartTitle = title;
 	},
@@ -279,12 +292,20 @@ Ext.define('widgets.diagram.diagram' , {
 
 	processNodes: function() {
 		var post_params = [];
-		for (var i = 0; i < this.nodes.length; i++) {
+	/*	for (var i = 0; i < this.nodes.length; i++) {
 			post_params.push({
 				id: this.nodes[i].id,
 				metrics: this.nodes[i].metrics
 			});
 		}
+	*/
+		Ext.Object.each(this.nodesByID, function(id, node, obj) {
+			post_params.push({
+				id: id,
+				metrics: node.metrics
+			});
+		},this)
+
 		this.post_params = {
 			'nodes': Ext.JSON.encode(post_params),
 			'aggregate_method' : this.aggregate_method,
@@ -305,8 +326,8 @@ Ext.define('widgets.diagram.diagram' , {
 
 		log.debug('Get values from ' + new Date(from) + ' to ' + new Date(to), this.logAuthor);
 
-		if (this.nodes) {
-			if (this.nodes.length != 0) {
+		if (this.nodesByID) {
+			if (this.nb_node != 0) {
 
 				var url = '/perfstore/values/' + parseInt(from / 1000) + '/' + parseInt(to / 1000);
 
@@ -356,9 +377,8 @@ Ext.define('widgets.diagram.diagram' , {
 				var node = this.nodesByID[info['node']];
 
 				//custom metric
-				if (node.extra_field && node.extra_field.label) {
-					data[i]['metric'] = node.extra_field.label;
-				}
+				if ( node.label) 
+					data[i]['metric'] = node.label;
 
 				var metric = info['metric'];
 
@@ -400,8 +420,8 @@ Ext.define('widgets.diagram.diagram' , {
 				}
 
 				var _color = colors[0];
-				if (node.extra_field && node.extra_field.curve_color)
-					_color = node.extra_field.curve_color;
+				if (node.curve_color)
+					_color = node.curve_color;
 
 				if (this.gradientColor)
 					var color = this.getGradientColor(_color);

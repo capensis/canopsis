@@ -276,12 +276,18 @@
 						"name": "nodes",
 						"multiSelect": true,
 						"metrics": true,
-						"additional_field": [{
+						"sharedStore":"line_graph"
+					}]
+		},{
+			"title": "Customize metrics",
+			"items": [{
+						"xtype": "ccustom",
+						"sharedStore":"line_graph",
+						"customForm": [{
 											"xtype":"textfield",
 											"header":"Custom label",
 											"name":"label",
-											"emptyText":"Type the new label here",
-											"flex":1
+											"emptyText":"Type the new label here"
 										},{
 											"xtype" : "ccolorfield",
 											"name" : "curve_color",
