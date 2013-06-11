@@ -231,7 +231,7 @@ class engine(cengine):
 
 	
 	def load_consolidation(self):
-		self.logger.info('Load configurations:')
+		self.logger.debug('Load configurations:')
 
 		self.records = {}
 
@@ -241,7 +241,7 @@ class engine(cengine):
 			self.storage.update(item._id, {'loaded': True})
 			self.records[item._id] = item.dump()
 
-		self.logger.info(' + %i loaded' % len(records))
+		self.logger.debug(' + %i loaded' % len(records))
 				
 	def unload_consolidation(self):
 		records = self.storage.find({ '$and': [{'crecord_type': 'consolidation' }, {'loaded':True}]}, namespace="object")
@@ -250,7 +250,7 @@ class engine(cengine):
 				'loaded': False
 			} )
 
-		self.logger.info('%i configuration unloaded' % len(records))
+		self.logger.debug('%i configuration unloaded' % len(records))
 
 	def get_math_function(self, name):
 		if name == 'mean':
