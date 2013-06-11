@@ -92,6 +92,10 @@ class engine(cengine):
 
 				self.logger.debug(" + %s metrics found" % metric_list.count())
 
+				if not metric_list.count():
+					self.storage.update(_id, { 'output_engine': "No metrics, check your filter" })
+					continue
+
 				aggregation_method = record.get('aggregation_method')
 				self.logger.debug(" + aggregation_method: %s" % aggregation_method)
 
@@ -157,9 +161,17 @@ class engine(cengine):
 					fn = self.get_math_function(aggregation_method)
 
 					pValues = [point[1] for point in points]
+
+					if not len(pValues):
+						continue
+
 					values.append(fn(pValues))
 
 				self.logger.debug(" + %s values" % len(values))
+
+				if not len(values):
+					self.storage.update(_id, { 'output_engine': "No values, check your interval" })
+					continue
 
 				self.logger.debug("Step 3: Consolidate (%s)" % consolidation_methods)
 
