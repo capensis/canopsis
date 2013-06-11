@@ -292,13 +292,7 @@ Ext.define('widgets.diagram.diagram' , {
 
 	processNodes: function() {
 		var post_params = [];
-	/*	for (var i = 0; i < this.nodes.length; i++) {
-			post_params.push({
-				id: this.nodes[i].id,
-				metrics: this.nodes[i].metrics
-			});
-		}
-	*/
+
 		Ext.Object.each(this.nodesByID, function(id, node, obj) {
 			post_params.push({
 				id: id,

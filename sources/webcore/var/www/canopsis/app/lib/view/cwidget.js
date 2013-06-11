@@ -94,6 +94,11 @@ Ext.define('canopsis.lib.view.cwidget' , {
 			}
 		}
 
+		if(Ext.isArray(this.nodes))
+			this.nodesByID = parseNodes(this.nodes);
+		else
+			this.nodesByID = expandAttributs(this.nodes);
+
 		//if reporting
 		if (!this.exportMode) {
 			if (this.refreshInterval) {

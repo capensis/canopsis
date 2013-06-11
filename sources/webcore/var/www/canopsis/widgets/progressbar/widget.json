@@ -48,38 +48,40 @@
 			"name": "nodes",
 			"multiSelect": true,
 			"metrics": true,
-			"additional_field": 
-			[{
-				"xtype":"textfield",
-				"header":"Custom label",
-				"name":"label",
-				"emptyText":"Type the new label here",
-				"flex":1
-			},{
-				"xtype":"numberfield",
-				"header":"Min value",
-				"name":"mi",
-				"decimalPrecision": 5,
-				"flex":1
-			},{
-				"xtype":"numberfield",
-				"header":"Warn value",
-				"name":"tw",
-				"decimalPrecision": 5,
-				"flex":1
-			},{
-				"xtype":"numberfield",
-				"header":"Crit value",
-				"name":"tc",
-				"decimalPrecision": 5,
-				"flex":1
-			},{
-				"xtype":"numberfield",
-				"header":"Max value",
-				"name":"ma",
-				"decimalPrecision": 5,
-				"flex":1
-			}]
+			"sharedStore": "progressbar"
+			
 		}]
+	},{
+		"title": "Customize metrics",
+		"items": [{
+					"xtype": "ccustom",
+					"sharedStore":"progressbar",
+					"customForm": [{
+									"xtype":"textfield",
+									"fieldLabel":"Custom label",
+									"name":"label",
+									"emptyText":"Type the new label here"
+								},{
+									"xtype":"numberfield",
+									"fieldLabel":"Min value",
+									"name":"mi",
+									"decimalPrecision": 5
+								},{
+									"xtype":"numberfield",
+									"fieldLabel":"Warn value",
+									"name":"tw",
+									"decimalPrecision": 5
+								},{
+									"xtype":"numberfield",
+									"fieldLabel":"Crit value",
+									"name":"tc",
+									"decimalPrecision": 5
+								},{
+									"xtype":"numberfield",
+									"fieldLabel":"Max value",
+									"name":"ma",
+									"decimalPrecision": 5
+								}]
+				}]
 	}]
 }]
