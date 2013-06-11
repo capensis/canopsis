@@ -204,7 +204,7 @@ class engine(cengine):
 					state=0,
 					timestamp=now,
 					state_type=1,
-					output="Consolidation: '%s' successfully computed" % record.get('crecord_name', 'No name'),
+					output="Consolidation: '%s' successfully computed" % name,
 					long_output="",
 					perf_data=None,
 					perf_data_array=perf_data_array,
@@ -220,17 +220,10 @@ class engine(cengine):
 
 				beat_elapsed = time.time() - now
 
-				#if not output_message:
-				#	engine_output = '%s: Computation done in %.2f s. Next Computation in %s s' % (datetime.now().strftime('%Y-%m-%d %H:%M:%S'), elapsed, str(aggregation_interval))
-				#	self.storage.update(record.get('_id'),{'output_engine':engine_output} )
-				#else:
-				#	engine_output = '%s: Computation done in %.2f s but there are issues : "%s" . Next Computation in %s s' % (datetime.now().strftime('%Y-%m-%d %H:%M:%S'), elapsed, output_message,str(aggregation_interval))
-				#	self.storage.update(record.get('_id'), {'output_engine': engine_output} )
-
 				self.storage.update(_id, {
 					'consolidation_ts': int(now),
 					'nb_items': len(metrics),
-					'output_engine': "Computation done in %.2fs" % (beat_elapsed)
+					'output_engine': "Computation done in %.2fs (%s/%s)" % (beat_elapsed, len(values), len(metrics))
 				})
 
 			else:
