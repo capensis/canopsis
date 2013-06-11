@@ -653,7 +653,7 @@ Ext.define('widgets.line_graph.line_graph' , {
 						var last_value = data[i]['values'][data[i]['values'].length - 1][1];
 
 						this.last_values.push([
-							node.value,
+							node.label,
 							last_value,
 							node.bunit
 						]);
