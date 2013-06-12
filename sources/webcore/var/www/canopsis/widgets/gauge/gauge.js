@@ -62,12 +62,14 @@ Ext.define('widgets.gauge.gauge' , {
 			value = 0;
 
 		if (this.autoTitle)
-			if (this.nodes.length) {
-				var component = this.nodes[0].component;
-				var source_type = this.nodes[0].source_type;
+			if (this.nodesByID) {
+				var node = this.nodesByID[Ext.Object.getKeys(this.nodesByID)[0]]
+
+				var component = node.component;
+				var source_type = node.source_type;
 
 				if (source_type == 'resource') {
-					var resource = this.nodes[0].resource;
+					var resource = node.resource;
 					this.gaugeTitle = resource + ' ' + _('on') + ' ' + component;
 				}else {
 					this.gaugeTitle = component;
@@ -126,7 +128,7 @@ Ext.define('widgets.gauge.gauge' , {
 
 	getNodeInfo: function(from,to) {
 		this.processNodes();
-		if (this.nodeId) {
+		if (this.nodesByID) {
 			Ext.Ajax.request({
 				url: '/perfstore/values' + '/' + parseInt(to/1000) + '/' + parseInt(to/1000),
 				scope: this,
@@ -134,7 +136,7 @@ Ext.define('widgets.gauge.gauge' , {
 				method: 'POST',
 				success: function(response) {
 					var data = Ext.JSON.decode(response.responseText);
-					if (this.nodeId.length > 1)
+					if (Ext.Object.getSize(this.nodesByID) > 1)
 						data = data.data;
 					else
 						data = data.data[0];
@@ -150,11 +152,13 @@ Ext.define('widgets.gauge.gauge' , {
 
 	processNodes: function() {
 		var post_params = [];
-		for (var i = 0; i < this.nodes.length; i++)
+
+		Ext.Object.each(this.nodesByID, function(id, node, obj) {
 			post_params.push({
-				id: this.nodes[i].id,
-				metrics: this.nodes[i].metrics
+				id: id,
+				metrics: node.metrics
 			});
+		},this)
 
 		this.post_params = {
 			'nodes': Ext.JSON.encode(post_params),
@@ -173,8 +177,9 @@ Ext.define('widgets.gauge.gauge' , {
 				this.getEl().unmask();
 
 			var fields = undefined;
-			if (this.nodes[0].extra_field)
-				fields = this.nodes[0].extra_field;
+
+			//get first node
+			fields = this.nodesByID[Ext.Object.getKeys(this.nodesByID)[0]]
 
 			if (data.min)
 				this.minValue = data.min;
