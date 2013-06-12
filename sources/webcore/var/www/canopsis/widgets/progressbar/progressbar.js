@@ -46,10 +46,6 @@ Ext.define('widgets.progressbar.progressbar' ,
 	{
 		log.debug("initComponent", this.logAuthor)
 
-		this.nodesByID = parseNodes(this.nodes);
-		log.debug('nodesByID:', this.logAuthor);
-		log.dump(this.nodesByID);
-
 		// Color Scaling
 		var colors = [this.colorStart, this.colorMid, this.colorEnd];
 		this.colorScale = chroma.scale(colors);
@@ -57,6 +53,9 @@ Ext.define('widgets.progressbar.progressbar' ,
 		this.progressBars = {};
 
 		this.callParent(arguments);
+
+		log.debug('nodesByID:', this.logAuthor);
+		log.dump(this.nodesByID);
 	},
 
 	getNodeInfo: function(from,to) 

@@ -447,6 +447,11 @@ function expandAttributs(nodeList){
 			delete node.u
 		}
 
+		if(node.ma != undefined){
+			node.max = node.ma
+			delete node.ma
+		}
+
 		if (!node.dn)
 			node.dn = [node.component, node.resource];
 
