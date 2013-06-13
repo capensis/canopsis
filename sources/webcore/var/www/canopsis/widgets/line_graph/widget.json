@@ -185,7 +185,8 @@
 										{"value": "LAST", "text": "Last"},
 										{"value": "FIRST", "text": "First"},
 										{"value": "DELTA", "text": "Delta"},
-										{"value": "MEAN", "text": "Mean"}
+										{"value": "MEAN", "text": "Mean"},
+										{"value": "SUM", "text": "Sum"}
 									]
 								}
 							},{
