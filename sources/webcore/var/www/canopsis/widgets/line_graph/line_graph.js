@@ -1296,8 +1296,8 @@ Ext.define('widgets.line_graph.line_graph' , {
 				if (serie && serie['last_timestamp'])
 					from = serie['last_timestamp'];
 
-				if (from < (now - (this.time_window * 1000)))
-						from = now - (this.time_window * 1000);
+				if (from < (to - (this.time_window * 1000)))
+						from = to - (this.time_window * 1000);
 			}
 
 			if (this.aggregate_interval) {

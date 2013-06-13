@@ -27,6 +27,11 @@
 								"value": 86400,
 								"fieldLabel": "Time window"
 							},{
+								"xtype": "cduration",
+								"name": "time_window_offset",
+								"value": 0,
+								"fieldLabel": "Time window offset"
+							},{
 								"xtype": "combobox",
 								"name": "SeriesType",
 								"fieldLabel": "Series Type",

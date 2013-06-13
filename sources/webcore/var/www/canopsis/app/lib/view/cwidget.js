@@ -54,6 +54,8 @@ Ext.define('canopsis.lib.view.cwidget' , {
 
 	time_window: global.commonTs.day, //24 hours
 
+	time_window_offset: 0,
+
 	lastRefresh: undefined,
 
 	active: false,
@@ -181,7 +183,7 @@ Ext.define('canopsis.lib.view.cwidget' , {
 		var now = parseInt(Ext.Date.now())
 
 		if (! to)
-			to = now;
+			to = now - (this.time_window_offset * 1000);
 		
 		if (! from && this.lastRefresh)
 			from = this.lastRefresh;
@@ -190,7 +192,7 @@ Ext.define('canopsis.lib.view.cwidget' , {
 			from = to - (this.time_window * 1000);
 
 		this.doRefresh(from, to);
-		this.lastRefresh = now;
+		this.lastRefresh = to;
 	},
 
 	doRefresh: function(from, to) {
