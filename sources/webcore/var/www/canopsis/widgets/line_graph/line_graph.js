@@ -725,7 +725,7 @@ Ext.define('widgets.line_graph.line_graph' , {
 		if (me.chart.series.length > 0 && now > (me.lastShift + 50000)) {
 			log.debug('Check shifting (' + me.chart.series.length + ' series):', me.logAuthor);
 
-			var timestamp = now - (me.time_window * 1000) - tolerance;
+			var timestamp = now - (me.time_window * 1000) - (me.time_window_offset * 1000) - tolerance;
 
 			for (var i = 0; i < me.chart.series.length; i++) {
 				var serie = me.chart.series[i];
