@@ -42,8 +42,6 @@ Ext.define('widgets.trends.trends' , {
 	display_pct: true,
 
 	initComponent: function() {
-		this.nodesByID = parseNodes(this.nodes);
-
 		log.debug('nodesByID:', this.logAuthor);
 		log.dump(this.nodesByID);
 
@@ -56,12 +54,14 @@ Ext.define('widgets.trends.trends' , {
 
 	getPostParams: function() {
 		var post_params = [];
-		for (var i = 0; i < this.nodes.length; i++) {
+
+		Ext.Object.each(this.nodesByID, function(id, node, obj) {
 			post_params.push({
-				id: this.nodes[i].id,
-				metrics: this.nodes[i].metrics
+				id: id,
+				metrics: node.metrics
 			});
-		}
+		},this)
+
 		var post_params = {
 			'nodes': Ext.JSON.encode(post_params),
 			'aggregate_method' : this.aggregate_method,
@@ -79,7 +79,7 @@ Ext.define('widgets.trends.trends' , {
 	doRefresh: function(from, to) {
 		log.debug('Get values from ' + new Date(from) + ' to ' + new Date(to), this.logAuthor);
 
-		if (this.nodes && this.nodes.length) {
+		if (this.nodesByID && Ext.Object.getSize(this.nodesByID) != 0 ) {
 			var url = '/perfstore/values/' + parseInt(from / 1000) + '/' + parseInt(to / 1000);
 
 			Ext.Ajax.request({

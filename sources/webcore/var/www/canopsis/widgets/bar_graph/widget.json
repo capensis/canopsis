@@ -316,25 +316,29 @@
 						"name": "nodes",
 						"multiSelect": true,
 						"metrics": true,
-						"additional_field": [{
-											"xtype":"textfield",
-											"header":"Custom label",
-											"name":"label",
-											"emptyText":"Type the new label here",
-											"flex":1
-										},{
-											"xtype" : "ccolorfield",
-											"name" : "curve_color",
-											"header": "Curve color",
-											"value": "FFFFFF"
-										},{
-											"xtype":"checkcolumn",
-											"text":"Trend",
-											"dataIndex": "trend_curve",
-											"width": 55,
-											"checked":true
-										}]
+						"sharedStore":"barGraph"
 					}]
-		}]
+		},{
+		"title": "Customize metrics",
+		"items": [{
+					"xtype": "ccustom",
+					"sharedStore":"barGraph",
+					"customForm": [{
+									"xtype":"textfield",
+									"fieldLabel":"Custom label",
+									"name":"label",
+									"emptyText":"Type the new label here"
+								},{
+									"xtype" : "ccolorfield",
+									"name" : "curve_color",
+									"fieldLabel": "Curve color",
+									"value": "FFFFFF"
+								},{
+									"xtype":"checkbox",
+									"text":"Trend",
+									"checked":true
+								}]
+				}]
+	}]
 }]
 
