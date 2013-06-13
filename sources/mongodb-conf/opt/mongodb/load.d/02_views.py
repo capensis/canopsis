@@ -134,7 +134,7 @@ def update_view_for_new_metric_format():
 
 			#check if old format
 			if 'nodes' in item['data']:
-				if isinstance(item['data']['nodes'], list) and item['data']['xtype'] == "line_graph":
+				if isinstance(item['data']['nodes'], list):
 					if not 'ccustom' in item['data']:
 						item['data']['ccustom'] = {}
 
