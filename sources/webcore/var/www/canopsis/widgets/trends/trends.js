@@ -100,8 +100,10 @@ Ext.define('widgets.trends.trends' , {
 	},
 
 	onRefresh: function(data) {
-		this.wcontainer.removeAll();
+		if (! data.length)
+			return;
 
+		this.wcontainer.removeAll();
 
 		for (var i=0; i < data.length; i++){
 			var _id = data[i].node;
