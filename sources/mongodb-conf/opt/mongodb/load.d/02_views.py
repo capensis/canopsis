@@ -134,22 +134,27 @@ def update_view_for_new_metric_format():
 
 			#check if old format
 			if 'nodes' in item['data']:
-				if isinstance(item['data']['nodes'], list):
+				itemNodes = item['data']['nodes']
+
+				if isinstance(itemNodes, list):
 					if not 'ccustom' in item['data']:
 						item['data']['ccustom'] = {}
 
-					for node in item['data']['nodes']:
+					itemCcustom = item['data']['ccustom']
+
+					for node in itemNodes:
 						# write extra_fields in node root
 						nodesObject[node['id']] = node
+						itemCcustom[node['id']] = {}
 						if 'extra_field' in node:
 							#for key, value in enumerate(node['extra_field']):
 							nodesObject[node['id']].update(node['extra_field'])
 
 							#build ccustom in view
-							item['data']['ccustom'][node['id']] = node['extra_field']
+							itemCcustom[node['id']] = node['extra_field']
 							del node['extra_field']
 
-					item['data']['nodes'] = nodesObject
+					itemNodes = nodesObject
 			#print(item['data'])
 	storage.put(records)
 				

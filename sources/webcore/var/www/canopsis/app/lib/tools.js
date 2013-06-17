@@ -422,35 +422,22 @@ function parseNodes(nodes){
 function expandAttributs(nodeList){
 	Ext.Object.each(nodeList, function(id, node, obj) {
 
-		if(node.co != undefined){
-			node.component = node.co
-			delete node.co
-		}
+		var attributNames = {
+							'co':'component',
+							're':'resource',
+							't':'type',
+							'me':'metric',
+							'u':'bunit',
+							'ma':'max'
+						}
 
-		if(node.re != undefined){
-			node.resource = node.re
-			delete node.re
-		}
+		Ext.Object.each(attributNames, function(key, value, myself) {
+			if(node[key] != undefined){
+				node[value] = node[key]
+				delete node[key]
+			}
+		},this)
 
-		if(node.t != undefined){
-			node.type = node.t
-			delete node.t
-		}
-
-		if(node.me != undefined){
-			node.metric = node.me
-			delete node.me
-		}
-
-		if(node.u != undefined){
-			node.bunit = node.u
-			delete node.u
-		}
-
-		if(node.ma != undefined){
-			node.max = node.ma
-			delete node.ma
-		}
 
 		if (!node.dn)
 			node.dn = [node.component, node.resource];
@@ -465,6 +452,7 @@ function expandAttributs(nodeList){
 			label += " " + node.metric;
 
 		node.label = label
+
 	})
 
 	return nodeList
