@@ -111,6 +111,9 @@ Ext.define('widgets.text.text' , {
 
 			try {
 				data.timestamp = rdr_tstodate(data.timestamp);
+				
+				if (this.lastRefresh)
+					data.lastRefresh = rdr_tstodate(parseInt(this.lastRefresh / 1000));
 
 				this.HTML = this.myTemplate.apply(data);
 			}catch (err) {
