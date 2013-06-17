@@ -71,6 +71,9 @@ Ext.define('widgets.diagram.diagram' , {
 	haveCounter: false,
 
 	labelFormatter: function() {
+		if(this.y == 0)
+			return
+
 		var me = this.series.chart.options.cwidget;
 
 		var prefix = "";
