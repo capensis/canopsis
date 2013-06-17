@@ -45,7 +45,11 @@ Ext.define('canopsis.lib.view.ccard' , {
                         width: '100%',
                         border:false,
                         padding: '0 5 0 5',
-                        autoScroll: true
+                        autoScroll: true,
+                        layout: {
+                                    type: 'vbox',
+                                    align: 'stretch'
+                                },
                     },
 
     buttonDefault: {
@@ -69,7 +73,7 @@ Ext.define('canopsis.lib.view.ccard' , {
                 flex: 1,
                 _name: 'contentPanel',
                 border:false,
-                layout:'card',
+                layout:'card'
             }
     ],
 

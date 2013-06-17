@@ -143,11 +143,11 @@ def update_view_for_new_metric_format():
 					itemCcustom = item['data']['ccustom']
 
 					for node in itemNodes:
-						# write extra_fields in node root
 						nodesObject[node['id']] = node
 						itemCcustom[node['id']] = {}
+
+						# write extra_fields in node root
 						if 'extra_field' in node:
-							#for key, value in enumerate(node['extra_field']):
 							nodesObject[node['id']].update(node['extra_field'])
 
 							#build ccustom in view
