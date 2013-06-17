@@ -71,7 +71,7 @@ Ext.define('widgets.text.text' , {
 		this.callParent(arguments); // Initialization globale of the template
 	},
 
-	onRefresh: function(data) {
+	onRefresh: function(data, from, to) {
 		perf_data = {};
 
 		if (data){
@@ -109,30 +109,33 @@ Ext.define('widgets.text.text' , {
 				});
 			}
 
-			try {
-				data.timestamp = rdr_tstodate(data.timestamp);
-				
-				if (this.lastRefresh)
-					data.lastRefresh = rdr_tstodate(parseInt(this.lastRefresh / 1000));
-
-				this.HTML = this.myTemplate.apply(data);
-			}catch (err) {
-				this.HTML = _('The model widget template is not supported, check if your variables use the correct template.');
-			}
+			data.timestamp = rdr_tstodate(data.timestamp);
 		}
 		else
 		{
-			//otherwise we put the text contained in the field
-			this.HTML = this.text;
+			data = {}
 		}
+
+		try {
+			if (from)			
+				data.from = rdr_tstodate(parseInt(from / 1000));
+
+			if (to)			
+				data.to = rdr_tstodate(parseInt(to / 1000));
+
+			this.HTML = this.myTemplate.apply(data);
+		}catch (err) {
+			this.HTML = _('The model widget template is not supported, check if your variables use the correct template.');
+		}
+
 		this.setHtml(this.HTML);
 	},
 
-	getNodeInfo: function() {
+	getNodeInfo: function(from, to) {
 		//we override the function : if there is'nt any nodeId specified we call the onRefresh function
 		if (! this.nodeId)
 		{
-			this.onRefresh(false);
+			this.onRefresh(undefined, from, to);
 		}else {
 			Ext.Ajax.request({
 				url: this.baseUrl,
@@ -145,7 +148,7 @@ Ext.define('widgets.text.text' , {
 						data = data.data;
 					else
 						data = data.data[0];
-					this._onRefresh(data);
+					this._onRefresh(data, from, to);
 				},
 				failure: function(result, request) {
 					log.error('Impossible to get Node informations, Ajax request failed ... (' + request.url + ')', this.logAuthor);

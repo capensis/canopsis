@@ -199,12 +199,12 @@ Ext.define('canopsis.lib.view.cwidget' , {
 		this.getNodeInfo(from, to);
 	},
 
-	_onRefresh: function(data) {
+	_onRefresh: function(data, from, to) {
 		this.data = data;
-		this.onRefresh(data);
+		this.onRefresh(data, from, to);
 	},
 
-	onRefresh: function(data) {
+	onRefresh: function(data, from, to) {
 		log.debug('onRefresh', this.logAuthor);
 	},
 
@@ -212,7 +212,7 @@ Ext.define('canopsis.lib.view.cwidget' , {
 		log.debug('onRezize', this.logAuthor);
 	},
 
-	getNodeInfo: function() {
+	getNodeInfo: function(from, to) {
 		if (this.nodeId) {
 			Ext.Ajax.request({
 				url: this.baseUrl + '/events/' + this.nodeId,
@@ -224,7 +224,7 @@ Ext.define('canopsis.lib.view.cwidget' , {
 					else
 						data = data.data[0];
 
-					this._onRefresh(data);
+					this._onRefresh(data, from, to);
 				},
 				failure: function(result, request) {
 					log.error('Impossible to get Node informations, Ajax request failed ... (' + request.url + ')', this.logAuthor);
