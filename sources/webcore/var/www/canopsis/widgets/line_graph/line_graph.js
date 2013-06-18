@@ -452,6 +452,7 @@ Ext.define('widgets.line_graph.line_graph' , {
 	tooltip_formatter: function() {
 		if (this.point && this.point._flag == true) {
 			return flag_tootlip_template.applyTemplate(this.point);
+
 		}else {
 			var formatter = function(options, value) {
 				if (options.invert)
@@ -470,6 +471,8 @@ Ext.define('widgets.line_graph.line_graph' , {
 				});
 			} else {
 				s += '<br/>' + formatter(this.series.options, this.y);
+				if (this.series.eta)
+					s += '<br/><b>ETA:</b> ' + this.series.eta
 			}
 			return s;
 		}
@@ -638,6 +641,10 @@ Ext.define('widgets.line_graph.line_graph' , {
 					var node_id = data[i].node;
 					var node = this.nodesByID[node_id];
 
+					// TODO: Fix with new format
+					if (! node.max && data[i].max)
+						node.max = data[i].max
+
 					// Exclude state lines and timeNav
 					if (! this.timeNav && data[i]['metric'] != 'cps_state' && data[i]['metric'] != 'cps_state_ok' && data[i]['metric'] != 'cps_state_warn' && data[i]['metric'] != 'cps_state_crit') {
 						//add/refresh trend lines
@@ -649,7 +656,7 @@ Ext.define('widgets.line_graph.line_graph' , {
 						var last_value = data[i]['values'][data[i]['values'].length - 1][1];
 
 						this.last_values.push([
-							node.value,
+							node.label,
 							last_value,
 							node.bunit
 						]);
@@ -721,7 +728,7 @@ Ext.define('widgets.line_graph.line_graph' , {
 		if (me.chart.series.length > 0 && now > (me.lastShift + 50000)) {
 			log.debug('Check shifting (' + me.chart.series.length + ' series):', me.logAuthor);
 
-			var timestamp = now - (me.time_window * 1000) - tolerance;
+			var timestamp = now - (me.time_window * 1000) - (me.time_window_offset * 1000) - tolerance;
 
 			for (var i = 0; i < me.chart.series.length; i++) {
 				var serie = me.chart.series[i];
@@ -733,7 +740,7 @@ Ext.define('widgets.line_graph.line_graph' , {
 					continue;
 
 				// Don't shift short serie
-				if (serie.data.length <= 2)
+				if (serie.data.length <= 2 && serie.name != 'Flags')
 					continue;
 
 				var fpoint = serie.data[0];
@@ -1085,12 +1092,19 @@ Ext.define('widgets.line_graph.line_graph' , {
 		return true;
 	},
 
+	getEta: function(y, a, b){
+		var now = parseInt(Ext.Date.now())
+		return parseInt((y-b)/a) - now; 
+	},
+
 	addTrendLines: function(data) {
 		log.debug(' + Trend line', this.logAuthor);
 
 		var serie_id = data.node + '.' + data.metric;
 		var referent_serie = this.chart.get(serie_id);
 		var trend_id = data.node + '.' + data.metric + '-TREND';
+
+		var node = this.nodesByID[data.node];
 
 		//get the trend line
 		var trend_line = this.chart.get(trend_id);
@@ -1105,7 +1119,21 @@ Ext.define('widgets.line_graph.line_graph' , {
 				line.push([point.x, point.y]);
 			}
 
-			line = fitData(line).data;
+			var reg = fitData(line);
+
+			var y = undefined;
+			if (reg.slope > 0 && node.max != undefined)
+				y = node.max;
+
+			if (reg.slope < 0 && node.min != undefined)
+				y = node.min;
+
+			if (y != undefined){
+				var eta = this.getEta(y, reg.slope, reg.intercept)
+				trend_line.eta = rdr_duration(eta/1000, 2);
+			}
+
+			line = reg.data;
 			trend_line.setData(line, true);
 
 		}else {
@@ -1160,7 +1188,22 @@ Ext.define('widgets.line_graph.line_graph' , {
 			var hcserie = this.chart.get(trend_id);
 
 			if (data.values.length > 2) {
-				var line = fitData(data.values).data;
+
+				var reg = fitData(data.values);
+
+				var y = undefined;
+				if (reg.slope > 0 && node.max != undefined)
+					y = node.max;
+
+				if (reg.slope < 0 && node.min != undefined)
+					y = node.min;
+
+				if (y != undefined){
+					var eta = this.getEta(y, reg.slope, reg.intercept)
+					hcserie.eta = rdr_duration(eta/1000, 2);
+				}
+	
+				var line = reg.data;
 
 				//trunc value
 				line = this.truncValueArray(line);
@@ -1254,8 +1297,8 @@ Ext.define('widgets.line_graph.line_graph' , {
 				if (serie && serie['last_timestamp'])
 					from = serie['last_timestamp'];
 
-				if (from < (now - (this.time_window * 1000)))
-						from = now - (this.time_window * 1000);
+				if (from < (to - (this.time_window * 1000)))
+						from = to - (this.time_window * 1000);
 			}
 
 			if (this.aggregate_interval) {

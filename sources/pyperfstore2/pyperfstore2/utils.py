@@ -20,6 +20,8 @@
 import logging
 logger = logging.getLogger('utils')
 
+#logger.setLevel(logging.DEBUG)
+
 import zlib
 import time
 
@@ -133,6 +135,9 @@ def vmax(vlist):
 	vlist = get_values(vlist)
 	return max(vlist)
 
+def vsum(vlist):
+	vlist = get_values(vlist)
+	return sum(vlist)
 
 def derivs(vlist):
 	return [vlist[i] - vlist[i - 1] for i in range(1, len(vlist) - 2)]
@@ -286,7 +291,7 @@ def aggregate(points, start=None, stop=None, max_points=None, interval=None, aty
 		elif atype == 'DELTA':
 			agfn = delta
 		elif atype == 'SUM':
-			agfn = sum
+			agfn = vsum
 		else:
 			agfn = vmean
 

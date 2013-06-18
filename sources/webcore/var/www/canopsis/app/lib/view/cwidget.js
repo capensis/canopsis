@@ -54,6 +54,8 @@ Ext.define('canopsis.lib.view.cwidget' , {
 
 	time_window: global.commonTs.day, //24 hours
 
+	time_window_offset: 0,
+
 	lastRefresh: undefined,
 
 	active: false,
@@ -186,24 +188,28 @@ Ext.define('canopsis.lib.view.cwidget' , {
 		var now = parseInt(Ext.Date.now())
 
 		if (! to)
-			to = now;
+			to = now - (this.time_window_offset * 1000);
+		
+		if (! from && this.lastRefresh)
+			from = this.lastRefresh;
+
 		if (! from) 
 			from = to - (this.time_window * 1000);
 
 		this.doRefresh(from, to);
-		this.lastRefresh = now;
+		this.lastRefresh = to;
 	},
 
 	doRefresh: function(from, to) {
 		this.getNodeInfo(from, to);
 	},
 
-	_onRefresh: function(data) {
+	_onRefresh: function(data, from, to) {
 		this.data = data;
-		this.onRefresh(data);
+		this.onRefresh(data, from, to);
 	},
 
-	onRefresh: function(data) {
+	onRefresh: function(data, from, to) {
 		log.debug('onRefresh', this.logAuthor);
 	},
 
@@ -211,7 +217,7 @@ Ext.define('canopsis.lib.view.cwidget' , {
 		log.debug('onRezize', this.logAuthor);
 	},
 
-	getNodeInfo: function() {
+	getNodeInfo: function(from, to) {
 		if (this.nodeId) {
 			Ext.Ajax.request({
 				url: this.baseUrl + '/events/' + this.nodeId,
@@ -223,7 +229,7 @@ Ext.define('canopsis.lib.view.cwidget' , {
 					else
 						data = data.data[0];
 
-					this._onRefresh(data);
+					this._onRefresh(data, from, to);
 				},
 				failure: function(result, request) {
 					log.error('Impossible to get Node informations, Ajax request failed ... (' + request.url + ')', this.logAuthor);

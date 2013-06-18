@@ -71,6 +71,9 @@ Ext.define('widgets.diagram.diagram' , {
 	haveCounter: false,
 
 	labelFormatter: function() {
+		if(this.y == 0)
+			return
+
 		var me = this.series.chart.options.cwidget;
 
 		var prefix = "";
@@ -314,9 +317,13 @@ Ext.define('widgets.diagram.diagram' , {
 	doRefresh: function(from, to) {
 		// Get last point only
 		if (this.time_window && from == 0)
-			from = to - this.time_window;
-		else if (! this.haveCounter)
+			from = to - (this.time_window*1000);
+		
+		if (! this.haveCounter)
 			from = to;
+
+		if (this.haveCounter && this.time_window)
+			from = to - (this.time_window*1000);
 
 		log.debug('Get values from ' + new Date(from) + ' to ' + new Date(to), this.logAuthor);
 

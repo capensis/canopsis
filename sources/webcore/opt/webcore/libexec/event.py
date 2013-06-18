@@ -76,6 +76,7 @@ def send_event(	routing_key=None):
 	long_output = None
 	timestamp = None
 	display_name = None
+	tags = None
 				
 	#--------------------explode routing key----------
 	if routing_key :
@@ -161,6 +162,17 @@ def send_event(	routing_key=None):
 		
 	if not long_output:
 		long_output = data.get('long_output', None)
+
+	if not tags:
+		tags = data.get('tags', [])
+		if isinstance(tags, str):
+			try:
+				tags = json.loads(tags)
+			except Exception, err:
+				logger.error("Impossible to parse 'tags': %s (%s)" % (tags, err))
+
+		if not isinstance(tags, list):
+			tags = []
 		
 	if not perf_data:
 		perf_data = data.get('perf_data', None)
@@ -172,6 +184,9 @@ def send_event(	routing_key=None):
 				perf_data_array = json.loads(perf_data_array)
 			except Exception, err:
 				logger.error("Impossible to parse 'perf_data_array': %s (%s)" % (perf_data_array, err))
+
+		if not isinstance(perf_data_array, list):
+			perf_data_array = []
 		
 	#------------------------------forging event----------------------------------
 
@@ -189,7 +204,8 @@ def send_event(	routing_key=None):
 				perf_data = perf_data,
 				perf_data_array = perf_data_array,
 				timestamp = timestamp,
-				display_name = display_name
+				display_name = display_name,
+				tags = tags
 			)
 	
 	logger.debug(type(perf_data_array))

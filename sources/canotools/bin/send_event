@@ -141,6 +141,9 @@ def main(argv):
 	if event.get('perf_data_array', None):
 		event['perf_data_array'] = json.dumps(event['perf_data_array'])
 
+	if event.get('tags', None):
+		event['tags'] = json.dumps(event['tags'])
+
 	event['connector'] = 'Cli'
 	
 	if not event.get('connector_name', None):

@@ -46,6 +46,13 @@ Ext.define('widgets.progressbar.progressbar' ,
 	{
 		log.debug("initComponent", this.logAuthor)
 
+		if (Ext.isIE)
+			this.dispGrad = false;
+
+		this.nodesByID = parseNodes(this.nodes);
+		log.debug('nodesByID:', this.logAuthor);
+		log.dump(this.nodesByID);
+
 		// Color Scaling
 		var colors = [this.colorStart, this.colorMid, this.colorEnd];
 		this.colorScale = chroma.scale(colors);

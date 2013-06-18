@@ -9,10 +9,21 @@
 	"refreshInterval": 300,
 	"locales": ["en","fr"],
 	"options": [{
-				"title": "Style",
+				"title": "Options",
 				"advanced": true,
 				"items": [
 							{
+								"xtype": "cfieldset",
+								"title": "Options",
+								"items": [
+											{
+												"xtype" : "cduration",
+												"name" : "time_window",
+												"fieldLabel": "Time window (for counter)",
+												"value": 0
+											}
+										]
+							},{
 								"xtype": "cfieldset",
 								"title": "Style",
 								"items": [
