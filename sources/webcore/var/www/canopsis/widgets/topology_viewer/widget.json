@@ -76,7 +76,7 @@
 					"title" : "Topologies",
 					"items" : [{
 						"xtype":"cinventory",
-						"name" : "nodes",
+						"name" : "inventory",
 						"multiSelect": false,
 						"base_filter": {"event_type": "topology"}
 					}]

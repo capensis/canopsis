@@ -137,10 +137,10 @@ def update_view_for_new_metric_format():
 				itemNodes = item['data']['nodes']
 
 				if isinstance(itemNodes, list):
-
+					itemXtype = item['data']['xtype']
 					#update for text widget
-					if item['data']['xtype'] == 'text':
-						print('Update widget text format')
+					if itemXtype == 'text' or itemXtype == 'topology_viewer':
+						print('Update widget text/topology_viewer format')
 						item['data']['inventory'] = item['data']['nodes']
 						del item['data']['nodes']
 						break
