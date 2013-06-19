@@ -1920,3 +1920,6 @@ msgstr "Show png"
 
 msgid "Show unknown"
 msgstr "Show unknown"
+
+msgid "mailTo"
+msgstr "To"
