@@ -133,7 +133,7 @@ Ext.define('widgets.text.text' , {
 
 	getNodeInfo: function(from, to) {
 		//we override the function : if there is'nt any nodeId specified we call the onRefresh function
-		if (! this.nodeId)
+		if (! this.inventory)
 		{
 			this.onRefresh(undefined, from, to);
 		}else {
@@ -141,10 +141,10 @@ Ext.define('widgets.text.text' , {
 				url: this.baseUrl,
 				scope: this,
 				method: 'GET',
-				params: {_id: this.nodeId},
+				params: {_id: this.inventory},
 				success: function(response) {
 					var data = Ext.JSON.decode(response.responseText);
-					if (this.nodeId.length > 1)
+					if (this.inventory.length > 1)
 						data = data.data;
 					else
 						data = data.data[0];
@@ -154,8 +154,6 @@ Ext.define('widgets.text.text' , {
 					log.error('Impossible to get Node informations, Ajax request failed ... (' + request.url + ')', this.logAuthor);
 				}
 			});
-
-
 		}
 		//we call the parent which is applied when there is a nodeId specified.
 		//this.callParent(arguments);

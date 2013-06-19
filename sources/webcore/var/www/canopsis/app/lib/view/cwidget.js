@@ -96,6 +96,9 @@ Ext.define('canopsis.lib.view.cwidget' , {
 			}
 		}
 
+		if(this.inventory)
+			this.nodeId = this.inventory
+
 		if(Ext.isArray(this.nodes))
 			this.nodesByID = parseNodes(this.nodes);
 		else

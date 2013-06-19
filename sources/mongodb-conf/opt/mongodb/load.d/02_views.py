@@ -137,22 +137,35 @@ def update_view_for_new_metric_format():
 				itemNodes = item['data']['nodes']
 
 				if isinstance(itemNodes, list):
+					itemXtype = item['data']['xtype']
+					#update for text widget
+					if itemXtype == 'text' or itemXtype == 'topology_viewer':
+						print('Update widget text/topology_viewer format')
+						item['data']['inventory'] = item['data']['nodes']
+						del item['data']['nodes']
+						break
+
+
 					if not 'ccustom' in item['data']:
 						item['data']['ccustom'] = {}
 
 					itemCcustom = item['data']['ccustom']
 
 					for node in itemNodes:
-						nodesObject[node['id']] = node
-						itemCcustom[node['id']] = {}
+						try:
+							nodesObject[node['id']] = node
+							itemCcustom[node['id']] = {}
 
-						# write extra_fields in node root
-						if 'extra_field' in node:
-							nodesObject[node['id']].update(node['extra_field'])
+							# write extra_fields in node root
+							if 'extra_field' in node:
+								nodesObject[node['id']].update(node['extra_field'])
 
-							#build ccustom in view
-							itemCcustom[node['id']] = node['extra_field']
-							del node['extra_field']
+								#build ccustom in view
+								itemCcustom[node['id']] = node['extra_field']
+								del node['extra_field']
+						except Exception as error:
+							print('An error occured for the following widget: %s' % error)
+							print(item)
 
 					itemNodes = nodesObject
 			#print(item['data'])
