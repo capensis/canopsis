@@ -219,7 +219,7 @@ Ext.define('canopsis.view.Schedule.Form', {
 				items: [
 						{
 							xtype: 'textfield',
-							fieldLabel: _('To'),
+							fieldLabel: _('mailTo'),
 							name: 'exporting_recipients'
 						},{
 							xtype: 'textfield',
