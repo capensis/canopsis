@@ -163,8 +163,8 @@ def update_view_for_new_metric_format():
 								#build ccustom in view
 								itemCcustom[node['id']] = node['extra_field']
 								del node['extra_field']
-						except ValueError as error:
-							print('an error occured for the following widget: %s' % error)
+						except Exception as error:
+							print('An error occured for the following widget: %s' % error)
 							print(item)
 
 					itemNodes = nodesObject
