@@ -15,7 +15,7 @@
 				"advanced": true,
 				"items" : [{
 					"xtype":"cinventory",
-					"name" : "nodes",
+					"name" : "inventory",
 					"multiSelect": false
 				}]
 			},
