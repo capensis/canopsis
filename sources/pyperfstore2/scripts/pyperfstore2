@@ -86,7 +86,7 @@ elif   action == "update":
 			manager.store.collection.update({'_id': _id}, {"$unset": {"d": True}})
 
 elif   action == "rotate":
-	manager.rotateAll()
+	manager.rotateAll(concurrency=4)
 
 else:
 	logger.error('Invalid action ...')
