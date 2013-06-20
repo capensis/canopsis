@@ -411,7 +411,7 @@
 						"customForm": [{
 											"xtype":"textfield",
 											"fieldLabel":"Custom label",
-											"name":"me",
+											"name":"label",
 											"emptyText":"Type the new label here"
 										},{
 											"xtype" : "ccolorfield",
