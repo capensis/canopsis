@@ -420,8 +420,21 @@ function parseNodes(nodes){
 }
 
 function expandAttributs(nodeList){
-	Ext.Object.each(nodeList, function(id, node, obj) {
+	var componentResource = undefined
+	var sameResource = true
 
+	//search for same node
+	Ext.Object.each(nodeList, function(id, node, obj) {
+		var concatCoRes = node['component'] + node['resource']
+
+		if(!componentResource)
+			componentResource = concatCoRes
+		else
+			if(componentResource != concatCoRes)
+				sameResource = false
+	},this)
+
+	Ext.Object.each(nodeList, function(id, node, obj) {
 		var attributNames = {
 							'co':'component',
 							're':'resource',
@@ -438,20 +451,25 @@ function expandAttributs(nodeList){
 			}
 		},this)
 
-
 		if (!node.dn)
 			node.dn = [node.component, node.resource];
 
 		// Make label
-		if (node.resource)
-			var label = node.component + " " + node.resource;
-		else
-			var label = node.component;
+		if(!node.label){
+			if(!sameResource){
+				if (node.resource)
+					var label = node.component + " " + node.resource;
+				else
+					var label = node.component;
 
-		if (node.metric)
-			label += " " + node.metric;
+				label += " "
+			}
 
-		node.label = label
+			if (node.metric)
+				label += node.metric;
+
+			node.label = label
+		}
 
 	})
 
