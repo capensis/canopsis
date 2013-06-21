@@ -121,7 +121,7 @@ def start_engines():
 
 	# Engine_consolidation
 	import consolidation
-	engines.append( consolidation.engine() )	
+	engines.append( consolidation.engine(logging_level=logging.DEBUG) )	
 
 
 	##################
