@@ -63,9 +63,17 @@ class engine(cengine):
 		self.logger.info(" + Planned keys: %s", len(planned_keys))
 		self.logger.info(" + Keys: %s", (len(keys) - 1)) # - self.kplan
 
-		#keys -> planned_keys
-		to_add = [ k for k in keys if k not in planned_keys and k != self.kplan ]
-		to_rem = [ k for k in planned_keys if k not in keys and k != self.kplan ]
+		tmp_dict = {}
+		for k in planned_keys:
+			tmp_dict[k] = False
+
+		to_add = [ k for k in keys if tmp_dict.get(k, True) and k != self.kplan ]
+
+		tmp_dict = {}
+		for k in keys:
+			tmp_dict[k] = False
+
+		to_rem = [ k for k in planned_keys if tmp_dict.get(k, True) and k != self.kplan ]
 
 		rp = self.redis.pipeline()
 
@@ -90,6 +98,7 @@ class engine(cengine):
 
 		if (self.last_build + self.build_interval < start):
 			self.build_rotate_plan()
+			return
 
 		rp = self.redis.pipeline()
 
