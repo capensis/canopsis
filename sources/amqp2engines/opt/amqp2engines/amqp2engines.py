@@ -123,7 +123,7 @@ def start_engines():
 	import consolidation
 	engines.append( consolidation.engine() )	
 
-	# Engine_consolidation
+	# Engine_perfstore2_rotate
 	import perfstore2_rotate
 	engines.append( perfstore2_rotate.engine() )	
 
