@@ -23,6 +23,8 @@ import unittest
 import time, json, logging
 from bson import BSON
 
+import logging
+
 from camqp import camqp
 from cinit import cinit
 ## Engines path
@@ -44,9 +46,20 @@ def main():
 	logger.info("Initialyze process")
 	handler.run()
 
-	# Engine_cleaner
-	import perfstore2
-	engine = perfstore2.engine(		next_amqp_queues=['Engine_eventstore'])
+	if len(sys.argv) != 2:
+		logger.error("Invalid args")
+		sys.exit(1)
+
+	engine_name = sys.argv[1]
+
+	logger.info(" + engine_name: %s" % engine_name)
+
+	try:
+		module = __import__(engine_name)
+		engine = module.engine(logging_level=logging.DEBUG)
+	except Exception as err:
+		logger.error("Impossible to load '%s': %s" (engine_name, err))
+		sys.exit(1)
 
 	engine.start()
 	logger.info("Wait")
