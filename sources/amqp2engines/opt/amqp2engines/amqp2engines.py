@@ -121,8 +121,11 @@ def start_engines():
 
 	# Engine_consolidation
 	import consolidation
-	engines.append( consolidation.engine(logging_level=logging.DEBUG) )	
+	engines.append( consolidation.engine() )	
 
+	# Engine_consolidation
+	import perfstore2_rotate
+	engines.append( perfstore2_rotate.engine() )	
 
 	##################
 	# Start engines
