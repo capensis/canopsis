@@ -1923,3 +1923,54 @@ msgstr "Show unknown"
 
 msgid "mailTo"
 msgstr "To"
+
+msgid "Trends"
+msgstr "Trends"
+
+msgid "Display in pct"
+msgstr "Display in pct"
+
+msgid "Low color"
+msgstr "Low color"
+
+msgid "Middle color"
+msgstr "Middle color"
+
+msgid "Hight color"
+msgstr "Hight color"
+
+msgid "Customize metrics"
+msgstr "Customize metrics"
+
+msgid "End color"
+msgstr "End color"
+
+msgid "Display gradient"
+msgstr "Display gradient"
+
+msgid "Display percentage in label"
+msgstr "Display percentage in label"
+
+msgid "Time window offset"
+msgstr "Time window offset"
+
+msgid "customize metrics"
+msgstr "customize metrics"
+
+msgid "Choose avatar"
+msgstr "Choose avatar"
+
+msgid "Change your password"
+msgstr "Change your password"
+
+msgid "Advance mode"
+msgstr "Advance mode"
+
+msgid "Show images"
+msgstr "Show images"
+
+msgid "Show videos"
+msgstr "Show videos"
+
+msgid "Set as avatar"
+msgstr "Set as avatar"
