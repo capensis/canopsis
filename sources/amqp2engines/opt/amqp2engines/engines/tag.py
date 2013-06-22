@@ -72,10 +72,11 @@ class engine(cengine):
 		for data in datas:
 			_id = data.get('_id')
 			sel = data.get('crecord_name')
-			ids = data.get('ids')
-
-			for rk in ids:
-				try:
-					self.selByRk[rk].append(sel)
-				except:
-					self.selByRk[rk] = [ sel ]
+			ids = data.get('ids', [])
+				
+			if isinstance(ids, list):
+				for rk in ids:
+					try:
+						self.selByRk[rk].append(sel)
+					except:
+						self.selByRk[rk] = [ sel ]
