@@ -86,7 +86,14 @@ elif   action == "update":
 			manager.store.collection.update({'_id': _id}, {"$unset": {"d": True}})
 
 elif   action == "rotate":
-	manager.rotateAll()
+	import multiprocessing
+	concurrency = multiprocessing.cpu_count() - 1
+
+	if concurrency <= 0:
+		concurrency=1
+
+	logger.info("Concurrency: %s" % concurrency)
+	manager.rotateAll(concurrency=concurrency)
 
 else:
 	logger.error('Invalid action ...')

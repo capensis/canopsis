@@ -286,14 +286,14 @@
 						"sharedStore":"line_graph",
 						"customForm": [			{
 											"xtype":"textfield",
-											"header":"Custom label",
+											"fieldLabel":"Custom label",
 											"name":"label",
 											"emptyText":"Type the new label here"
 										},
 										{
 											"xtype" : "ccolorfield",
 											"name" : "curve_color",
-											"header": "Curve color",
+											"fieldLabel": "Curve color",
 											"replaceWhiteColor":true
 										},{
 											"xtype": "textfield",
