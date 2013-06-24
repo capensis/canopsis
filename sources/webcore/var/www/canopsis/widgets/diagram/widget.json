@@ -297,7 +297,7 @@
 											"replaceWhiteColor":true
 										},{
 											"xtype": "textfield",
-											"fieldlabel": "Categorie",
+											"fieldLabel": "Categorie",
 											"name": "category",
 											"emptyText": "type the category here"
 										}]

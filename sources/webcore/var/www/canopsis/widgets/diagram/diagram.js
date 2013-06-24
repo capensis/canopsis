@@ -97,7 +97,7 @@ Ext.define('widgets.diagram.diagram' , {
 		this.legend_borderColor = check_color(this.legend_borderColor);
 		this.legend_backgroundColor	= check_color(this.legend_backgroundColor);
 	
-		//retrocompatibilité
+			//retrocompatibilité
 		if(Ext.isArray(this.nodes))
 			this.nodesByID = parseNodes(this.nodes);
 		else
@@ -107,11 +107,12 @@ Ext.define('widgets.diagram.diagram' , {
 		
 		this.series_array = new Array();
 		this.categories = new Array();
-		for ( key in this.nodesByID ) {
-			if ( this.nodesByID[key].category && this.categories.indexOf(this.nodesByID[key].category) ==  -1 ) 
-				this.categories.push( this.nodesByID[key]['category'] ) ;
+		var me = this;
+		Ext.Object.each (this.nodesByID, function (id, node, obj ) { 
+			if ( node.category && me.categories.indexOf(node.category) ==  -1 ) 
+				me.categories.push( node['category'] ) ;
 			
-		 }
+		 } )
 		log.debug('nodesByID:', this.logAuthor);
 		log.dump(this.nodesByID);
 
@@ -357,15 +358,22 @@ Ext.define('widgets.diagram.diagram' , {
 	getSerieConf: function( info, node, i ) {
 
 		//custom metric
-
-		var metric = info['metric'];
+		var metric;
+		if ( info != undefined )
+			metric = info['metric'];
 		var value = undefined;
 
-		if (info['values'].length >= 1)
+		if (info != undefined && info['values'] != undefined &&  info['values'].length >= 1)
 			value = info['values'][0][1];
+		else if ( this.categories.length > 0 ) 
+			value = 0;
 
-		var unit = info['bunit'];
-		var max = info['max'];
+		var unit;
+		var max;
+		if ( info != undefined ) {
+			unit = info['bunit'];
+			max = info['max'];
+		}
 
 		if (max == null)
 			max = this.max;
@@ -395,7 +403,7 @@ Ext.define('widgets.diagram.diagram' , {
 		}
 
 		var _color = colors[0];
-		if (node.curve_color)
+		if (node != undefined &&  node.curve_color)
 			_color = node.curve_color;
 
 		if (this.gradientColor)
@@ -449,35 +457,46 @@ Ext.define('widgets.diagram.diagram' , {
 			this.removeSerie();
 
 			var other_unit = '';
+			var serie;
 			if ( this.diagram_type == 'column' && this.categories.length > 0 ) {
 				dataByCategories = this.groupByCategories( data ) ;
 				var multiple_serie = true ;
 				var serie_liste = [] ;
 				var j = 0;
-				for ( met in dataByCategories ) {
-					var serie = this.getSerie(data, met);
-					var tmpdata2 = dataByCategories[met] ;
-					for ( var i=0; i < this.categories.length; i++) {
-						var cat = this.categories[i] ;
-
+				var me = this;
+				Ext.Object.each( dataByCategories, function( met, tmpdata2, obj) { 
+					serie = me.getSerie(data, met);
+					console.log( met);
+					console.log( tmpdata2);
+					for ( var i=0; i < me.categories.length; i++) {
+						var cat = me.categories[i] ;
+						console.log (cat);
+					
 						var tmpdata = tmpdata2[cat] ;
-						var info = tmpdata[0];
-						var node = this.nodesByID[info['node']];
+
+						if ( tmpdata != undefined ) {
+							var info = tmpdata[0];
+							var node = me.nodesByID[info['node']];
 						
-						if ( node.label) 
-							tmpdata[0]['metric'] = node.label;
+							if (  node.label ) 
+								tmpdata[0]['metric'] = node.label;
+							var serie_conf = me.getSerieConf(info, node, j);
 						
-						var serie_conf = this.getSerieConf(info, node, j);
-						
-						serie_conf.category = cat;
-						
-						serie.data.push(serie_conf);
+							serie_conf.category = cat;
+							console.log(serie_conf);	
+							serie.data.push(serie_conf);
+						} else {
+							var serie_conf = me.getSerieConf( { metric: met}, undefined, j) ;
+							console.log(serie_conf ) ;
+							serie.data.push(serie_conf);
+						}
 					}
 					serie.name = serie.data[0].metric ;
-					serie.color = serie.data[0].color;	
+					serie.color = serie.data[0].color;
+					console.log(serie);	
 					serie_liste.push(serie);
 					j++;
-				}
+				} );
 			} else {
 				serie = this.getSerie(data);
 				for (var i = 0; i < data.length; i++) {
@@ -542,8 +561,8 @@ Ext.define('widgets.diagram.diagram' , {
 					serie.data.push(serie_conf);
 				}
 			}
-
-			if (this.setAxis && this.diagram_type == 'column')
+			
+			if (this.setAxis && this.diagram_type == 'column' && this.serie_liste == undefined )
 				this.setAxis(serie.data);
 
 			if (data.length == 1 && !this.hide_other_column && this.diagram_type == 'pie') {
