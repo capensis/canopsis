@@ -109,7 +109,7 @@ Ext.define('widgets.diagram.diagram' , {
 		this.categories = new Array();
 		var me = this;
 		Ext.Object.each (this.nodesByID, function (id, node, obj ) { 
-			if ( node.category && me.categories.indexOf(node.category) ==  -1 ) 
+			if ( node.category && Ext.Array.indexOf ( me.categories, node.category) ==  -1 ) 
 				me.categories.push( node['category'] ) ;
 			
 		 } )
@@ -466,11 +466,8 @@ Ext.define('widgets.diagram.diagram' , {
 				var me = this;
 				Ext.Object.each( dataByCategories, function( met, tmpdata2, obj) { 
 					serie = me.getSerie(data, met);
-					console.log( met);
-					console.log( tmpdata2);
 					for ( var i=0; i < me.categories.length; i++) {
 						var cat = me.categories[i] ;
-						console.log (cat);
 					
 						var tmpdata = tmpdata2[cat] ;
 
@@ -483,17 +480,15 @@ Ext.define('widgets.diagram.diagram' , {
 							var serie_conf = me.getSerieConf(info, node, j);
 						
 							serie_conf.category = cat;
-							console.log(serie_conf);	
 							serie.data.push(serie_conf);
 						} else {
-							var serie_conf = me.getSerieConf( { metric: met}, undefined, j) ;
-							console.log(serie_conf ) ;
+							var info = { metric: met } ;
+							var serie_conf = me.getSerieConf( info, null, j) ;
 							serie.data.push(serie_conf);
 						}
 					}
 					serie.name = serie.data[0].metric ;
 					serie.color = serie.data[0].color;
-					console.log(serie);	
 					serie_liste.push(serie);
 					j++;
 				} );
@@ -508,54 +503,6 @@ Ext.define('widgets.diagram.diagram' , {
 					if ( node.label) 
 						data[i]['metric'] = node.label;
 
-/*					var metric = info['metric'];
-
-					var value = undefined;
-
-					if (info['values'].length >= 1)
-						value = info['values'][0][1];
-
-					//------------------
-
-					var unit = info['bunit'];
-					var max = info['max'];
-
-					if (max == null)
-						max = this.max;
-
-					if (unit == '%' && ! max)
-						max = 100;
-
-					var metric_name = metric;
-
-					var colors = global.curvesCtrl.getRenderColors(metric_name, i);
-					var curve = global.curvesCtrl.getRenderInfo(metric_name);
-
-					// Set Label
-					var label = undefined;
-					if (!label && curve)
-						label = curve.get('label');
-					if (! label)
-						label = metric_name;
-
-					metric = label;
-
-					var metric_long_name = '<b>' + label + '</b>';
-
-					if (unit) {
-						metric_long_name += ' (' + unit + ')';
-						other_unit += ' (' + unit + ')';
-					}
-
-					var _color = colors[0];
-					if (node.curve_color)
-						_color = node.curve_color;
-
-					if (this.gradientColor)
-						var color = this.getGradientColor(_color);
-					else
-						var color = _color;
-					*/
 					var serie_conf = this.getSerieConf(info, node, i);
 					//var serie_conf = { id: metric, name: metric_long_name, metric: metric,   y: value, color: color, bunit: unit } ;
 					serie.data.push(serie_conf);
