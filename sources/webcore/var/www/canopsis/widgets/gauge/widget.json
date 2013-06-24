@@ -14,17 +14,6 @@
 				"items": [
 							{
 								"xtype": "cfieldset",
-								"title": "Options",
-								"items": [
-											{
-												"xtype" : "cduration",
-												"name" : "time_window",
-												"fieldLabel": "Time window (for counter)",
-												"value": 0
-											}
-										]
-							},{
-								"xtype": "cfieldset",
 								"title": "Style",
 								"items": [
 											{
