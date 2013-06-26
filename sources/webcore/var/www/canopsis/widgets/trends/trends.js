@@ -54,8 +54,10 @@ Ext.define('widgets.trends.trends' , {
 
 	getPostParams: function() {
 		var post_params = [];
-
+		console.log(this.nodesByID);
 		Ext.Object.each(this.nodesByID, function(id, node, obj) {
+			console.log(id);
+			console.log(node);
 			post_params.push({
 				id: id,
 				metrics: node.metrics
@@ -77,6 +79,12 @@ Ext.define('widgets.trends.trends' , {
 	},
 
 	doRefresh: function(from, to) {
+		console.log(this);
+		if ( this.from )  
+			from = this.from;
+
+		if ( this.to ) 
+			to  = this.to;
 		log.debug('Get values from ' + new Date(from) + ' to ' + new Date(to), this.logAuthor);
 
 		if (this.nodesByID && Ext.Object.getSize(this.nodesByID) != 0 ) {
@@ -89,7 +97,10 @@ Ext.define('widgets.trends.trends' , {
 				method: 'POST',
 				success: function(response) {
 					var data = Ext.JSON.decode(response.responseText);
+					console.log(data);
 					data = data.data;
+					console.log('data ajax');
+					console.log(data);
 					this.onRefresh(data);
 				},
 				failure: function(result, request) {
@@ -213,20 +224,36 @@ Ext.define('widgets.trends.trends' , {
 			}
 
 			log.debug(" + Text: " + text, this.logAuthor);
+			if ( this.caller != undefined && this.caller == 'mini_chart') {
+				this.wcontainer.add({
+					layout: {
+						type: 'hbox',
+						//align: 'stretch'
+					},
+					border: 0,
+					margin: 1,
+					anchor: "100% 100%",
+					items: [
+						{ border: 0, height: this.item_height, html: String(text),  bodyStyle: { "line-height": this.item_height+ "px", "text-align": "right", "padding-right": "3px"}},
+						row
+					]
+				});
 
-			this.wcontainer.add({
-				layout: {
-					type: 'hbox',
-					//align: 'stretch'
-				},
-				border: 0,
-				margin: 1,
-				items: [
-					{ border: 0, height: this.item_height, html: node.label, flex:1, bodyStyle: { "line-height": this.item_height + "px" } },
-					{ border: 0, height: this.item_height, html: String(text), bodyStyle: { "line-height": this.item_height+ "px", "text-align": "right", "padding-right": "3px"}},
-					row
-				]
-			});
+			} else {
+				this.wcontainer.add({
+					layout: {
+						type: 'hbox',
+						//align: 'stretch'
+					},
+					border: 0,
+					margin: 1,
+					items: [
+						{ border: 0, height: this.item_height, html: node.label, flex:1, bodyStyle: { "line-height": this.item_height + "px" } },
+						{ border: 0, height: this.item_height, html: String(text), bodyStyle: { "line-height": this.item_height+ "px", "text-align": "right", "padding-right": "3px"}},
+						row
+					]
+				});
+			}
 		}
 	},
 
