@@ -547,7 +547,9 @@ Ext.define('canopsis.lib.form.field.cfilter' , {
 	ctype: 'event',
 	model: 'canopsis.model.Event',
 	autoScroll: true,
-	params: {},
+	params: {
+		show_internals: true
+	},
 
 	columns: [
 		{
