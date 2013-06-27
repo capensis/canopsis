@@ -20,7 +20,7 @@
 */
 
 Ext.define('canopsis.lib.form.field.ccustom' , {
-	extend: 'Ext.panel.Panel',
+	extend: 'canopsis.lib.view.ccard',
 	mixins: ['canopsis.lib.form.cfield'],
 
 	alias: 'widget.ccustom',
@@ -29,20 +29,42 @@ Ext.define('canopsis.lib.form.field.ccustom' , {
 
 	sharedStore : undefined,
 
-	layout:'card',
 	name : 'ccustom',
-
-	tbar: [
-			{xtype:'button',iconCls : 'icon-previous'},
-			'->',
-			{xtype:'button',iconCls : 'icon-next'},
-		],
 
 	customForm: undefined,
 
+    contentPanelDefault: {
+                    xtype:'form',
+                    width: '100%',
+                    border:false,
+                    //padding: '0 5 0 5',
+                    margin: '30px',
+                    autoScroll: true,
+                    layout: {
+                                type: 'vbox',
+                                align: 'stretch'
+                            },
+                },
+
+    buttonTpl: new Ext.Template([
+                '<div class="ccustomButton">',
+                    '{title}',
+                '</div>'
+            ]).compile(),
+
 	initComponent: function() {
         this.callParent(arguments);
-       	this.matchingDict = {}
+
+        this.panelIdByNode = {}
+
+        this.customForm.push({
+								"xtype":"hiddenfield",
+								"name":"_id"
+							},{
+								"xtype":"hiddenfield",
+								"name":"titleInWizard"
+							})
+
     },
 
 	afterRender: function() {
@@ -50,19 +72,6 @@ Ext.define('canopsis.lib.form.field.ccustom' , {
 
 		//vars
 		this.sourceStore = this.findParentByType('cwizard').childStores[this.sharedStore]
-
-
-		//bindings
-		this.down('button[iconCls=icon-previous]').on('click',function(){
-			var panel = this.getLayout().getPrev()
-			if(panel)
-				this.getLayout().prev()
-		},this)
-		this.down('button[iconCls=icon-next]').on('click',function(){
-			var panel = this.getLayout().getNext()
-			if(panel)
-				this.getLayout().next()
-		},this)
 
 		this.sourceStore.on('add',function(store,records){
 			this.addPanels(records)
@@ -81,53 +90,84 @@ Ext.define('canopsis.lib.form.field.ccustom' , {
 	},
 
 	addPanel: function(nodeId, data){
-		var elem = this.add({
-			xtype:'form',
-			nodeId: nodeId,
-			margin: '10 5 5 5',
-			items: Ext.clone(this.customForm),
-			layout: {
-				type: 'vbox',
-				align : 'left',
-			},
-			border: false,
-			dataToLoad: Ext.clone(data),
-			listeners:{
-				afterrender: function(){
-					this.getForm().setValues(this.dataToLoad)
-				}
-			}
-		})
+		var panelConfig = {items:Ext.clone(this.customForm)}
 
-		this.matchingDict[nodeId] = elem
+		data.titleInWizard = this.buildTitle(data)
+
+		var panelNumber = this.addContent(panelConfig,data)
+		if(data._id)
+			this.panelIdByNode[data._id] = panelNumber
+		var button = {title:data.titleInWizard,panelIndex: panelNumber}
+
+		this.addButton(button)
 	},
 
 	removePanels: function(records){
+		//if someone find something to do this in extjs, build this again
 		if(!Ext.isArray(records))
 			records = [records]
 		for(var i = 0; i < records.length; i++){
 			var nodeId = records[i].data.id
-			if(this.matchingDict[nodeId])
-				this.remove(this.matchingDict[nodeId])
+			if(this.panelIdByNode[nodeId] != undefined){
+				var panelNumber = this.panelIdByNode[nodeId]
+				var panel = this.panelByindex[panelNumber]
+				var button = this.buttonByPanelIndex[panelNumber]
+				console.log('panel and button')
+				console.log(this.panelByindex)
+				if(panel && button){
+					panel.setDisabled(true)
+					panel.hide()
+					button.setDisabled(true)
+					button.hide()
+					delete this.panelByindex[panelNumber]
+					delete this.panelIdByNode[nodeId]
+					delete this.buttonByPanelIndex[panelNumber]
+				}
+			}
 		}
+			
+
 	},
 
 	setValue: function(data){
+		console.log(data)
 		Ext.Object.each(data, function(key, value, myself) {
-			this.addPanel(key,value)
+			value._id = key
+			this.addPanel(this.buildTitle(value),value)
 		},this)
 	},
 
 	getValue: function(){
-		var output = {}
-		Ext.Object.each(this.matchingDict, function(key, value, myself) {
-			output[key] = value.getForm().getFieldValues()
-		},this)
-
+		var wizardChilds = this.contentPanel.items.items
+        var output = {}
+        for(var i = 0; i < wizardChilds.length; i++){
+        	if(!wizardChilds.disabled){
+	        	var values = wizardChilds[i].getValues(false, false, false, true)
+	        	if(values._id){
+		        	output[values._id] = values
+		        	output[values._id]['titleInWizard'] = this.buildTitle(values)
+		        }
+	        }
+        }
 		//prevent sub item form to be submit individualy
 		this.disable()
 
 		return output
+	},
+
+	buildTitle: function(data){
+		if(data.titleInWizard)
+			return data.titleInWizard
+
+		if(!data.co || !data.me)
+			return data._id
+
+		var title = data.co
+		if(data.re)
+			title += ' ' + data.re
+		title += ' ' + data.me
+
+		return title
 	}
 
 });
