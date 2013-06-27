@@ -459,7 +459,7 @@ Ext.define('widgets.diagram.diagram' , {
 			if ( this.diagram_type == 'column' && this.categories.length > 0 ) {
 				dataByCategories = this.groupByCategories( data ) ;
 				var multiple_serie = true ;
-				var serie_liste = [] ;
+				var serie_list = [] ;
 				var j = 0;
 				var me = this;
 				Ext.Object.each( dataByCategories, function( met, tmpdata2, obj) { 
@@ -487,7 +487,7 @@ Ext.define('widgets.diagram.diagram' , {
 					}
 					serie.name = serie.data[0].metric ;
 					serie.color = serie.data[0].color;
-					serie_liste.push(serie);
+					serie_list.push(serie);
 					j++;
 				} );
 			} else {
@@ -507,7 +507,7 @@ Ext.define('widgets.diagram.diagram' , {
 				}
 			}
 			
-			if (this.setAxis && this.diagram_type == 'column' && this.serie_liste == undefined )
+			if (this.setAxis && this.diagram_type == 'column' && this.serie_list == undefined )
 				this.setAxis(serie.data);
 
 			if (data.length == 1 && !this.hide_other_column && this.diagram_type == 'pie') {
@@ -521,8 +521,8 @@ Ext.define('widgets.diagram.diagram' , {
 			}
 
 			if (serie.data) {
-				if ( serie_liste != undefined && serie_liste.length > 0 )
-					this.serie_liste = serie_liste ;
+				if ( serie_list != undefined && serie_list.length > 0 )
+					this.serie_list = serie_list ;
 				else
 					this.serie = serie;
 				this.displaySerie();
@@ -550,9 +550,9 @@ Ext.define('widgets.diagram.diagram' , {
 	},
 
 	displaySerie: function() {
-		if (this.serie_liste && this.serie_liste.length > 0 ) {
-			for ( var i = 0; i < this.serie_liste.length; i++ ) {
-				var serie = this.serie_liste[i];
+		if (this.serie_list && this.serie_list.length > 0 ) {
+			for ( var i = 0; i < this.serie_list.length; i++ ) {
+				var serie = this.serie_list[i];
 				this.chart.addSeries(Ext.clone(serie ) ) ;
 			}
 		} else if (this.serie)
