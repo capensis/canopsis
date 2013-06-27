@@ -178,22 +178,6 @@ Ext.define('widgets.mini_chart.mini_chart' , {
 		return options;
 
 	},
-	lightenDarkenColor: function (col,amt,usePound,num,f,h,r,b,g) {
-		if (col[0]=="#") {
-			col = col.slice(1);
-			usePound = (usePound==undefined?true:usePound)
-		}
- 
-		num = parseInt(col,16);
-		f=function(n) { return n>255?255:(n<0?0:n) }
-		h=function(n) { return n.length<2?"0"+n:n }
-   
-		r = h(f((num >> 16) + amt).toString(16));
-		b = h(f(((num >> 8) & 0x00FF) + amt).toString(16));
-		g = h(f((num & 0x0000FF) + amt).toString(16));
- 
-		return (usePound?"#":"") + r + b + g;
-	},
 	onResize: function() {
 		Ext.Object.each ( this.series, function(id, serie, obj) {
 			serie.setWidth( this.getWidth() );
@@ -212,6 +196,8 @@ Ext.define('widgets.mini_chart.mini_chart' , {
 
 			if (serie.invert)
 				values[i][1] = - values[i][1];
+
+			values[i][0] = values[i][0] /1000;
 		}
 		return values;
 	},
