@@ -459,7 +459,7 @@ Ext.define('widgets.diagram.diagram' , {
 			if ( this.diagram_type == 'column' && this.categories.length > 0 ) {
 				dataByCategories = this.groupByCategories( data ) ;
 				var multiple_serie = true ;
-				var serie_list = [] ;
+				var serie_list = { } ;
 				var j = 0;
 				var me = this;
 				Ext.Object.each( dataByCategories, function( met, tmpdata2, obj) { 
@@ -487,7 +487,7 @@ Ext.define('widgets.diagram.diagram' , {
 					}
 					serie.name = serie.data[0].metric ;
 					serie.color = serie.data[0].color;
-					serie_list.push(serie);
+					serie_list[met] = serie ;
 					j++;
 				} );
 			} else {
@@ -550,11 +550,10 @@ Ext.define('widgets.diagram.diagram' , {
 	},
 
 	displaySerie: function() {
-		if (this.serie_list && this.serie_list.length > 0 ) {
-			for ( var i = 0; i < this.serie_list.length; i++ ) {
-				var serie = this.serie_list[i];
+		if (this.serie_list && Ext.Object.getSize( this.serie_list )  > 0 ) {
+			Ext.Object.each( this.serie_list, function( i, serie, obj) {
 				this.chart.addSeries(Ext.clone(serie ) ) ;
-			}
+			}, this ) ;
 		} else if (this.serie)
 			this.chart.addSeries(Ext.clone(this.serie));
 	},
