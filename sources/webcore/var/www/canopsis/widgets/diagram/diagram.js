@@ -97,7 +97,7 @@ Ext.define('widgets.diagram.diagram' , {
 		this.legend_borderColor = check_color(this.legend_borderColor);
 		this.legend_backgroundColor	= check_color(this.legend_backgroundColor);
 	
-			//retrocompatibilité
+		//retrocompatibilité
 		if(Ext.isArray(this.nodes))
 			this.nodesByID = parseNodes(this.nodes);
 		else
@@ -420,7 +420,7 @@ Ext.define('widgets.diagram.diagram' , {
 			var info = data[j];
 			var node = this.nodesByID[info['node'] ];
 			if ( node.label) 
-				data[j]['metric'] = node.label;
+				info['metric'] = node.label;
 
 			var metric = info['metric'];
 			if ( dataByCategories[metric] ) {

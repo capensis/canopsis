@@ -27,22 +27,23 @@ Ext.define('widgets.mini_chart.mini_chart' , {
 	extend: 'canopsis.lib.view.cwidget',
 
 	alias: 'widget.mini_chart',
-
+	requires: [ 'canopsis.lib.view.csparkline' ] ,
 	wcontainer_layout: {
-        type: 'vbox',
-        align: 'center'
-    },
+        	type: 'vbox',
+	        align: 'center'
+    	},
 
 
 	logAuthor: '[mini_chart]',
 	initComponent: function() {
 		log.debug('initComponent', this.logAuthor) ;	
 		log.debug('nodesByID:', this.logAuthor);
-		log.dump(this.nodesByID);
 		if(Ext.isArray(this.nodes))
 			this.nodesByID = parseNodes(this.nodes);
 		else
 			this.nodesByID = expandAttributs(this.nodes)
+
+		log.dump(this.nodesByID);
 
 		this.series = {} ;
 		this.charts = { } ;
@@ -197,34 +198,6 @@ Ext.define('widgets.mini_chart.mini_chart' , {
 		Ext.Object.each ( this.series, function(id, serie, obj) {
 			serie.setWidth( this.getWidth() );
 			serie.setHeight( this.getHeight() / Ext.Object.getSize(this.nodesByID) );
-			var last;
-			if ( serie.items.items.length == 2 ) 
-			{
-				serie.items.items[1].destroy();
-				var serie_panel = serie.add ( {
-					xtype: "panel",
-					flex: 5,
-					border: false
-				} ) ;
-				this.charts[id]['options']['width'] = serie_panel.getWidth() ;
-				this.charts[id]['options']['height'] = serie_panel.getHeight() ;
-				
-				$('#'+serie_panel.getId() ).sparkline(this.charts[id]['values'], this.charts[id]['options'] );
-			} else if ( serie.items.items.length == 3 ) {
-				var last_cpn = serie.items.items[2].cloneConfig() ;
-				serie.items.items[2].destroy();
-				serie.items.items[1].destroy();
-				var serie_panel = serie.add ( {
-					xtype: "panel",
-					flex: 5,
-					border: false
-				} ) ;
-				this.charts[id]['options']['width'] = serie_panel.getWidth() ;
-				this.charts[id]['options']['height'] = serie_panel.getHeight() ;
-				$('#'+serie_panel.getId() ).sparkline(this.charts[id]['values'], this.charts[id]['options'] );
-				serie.add(last_cpn);
-			}
-			//serie.items.items[1].el.id +" canvas").height(this.getHeight)  ;
 		}, this ) ;	
 	},
 	parseValues: function(serie, values) {
@@ -272,31 +245,19 @@ Ext.define('widgets.mini_chart.mini_chart' , {
 			
 						//We add the serie panel
 						var serie_panel = this.series[node].add ( {
-							xtype: "panel",
+							xtype: "csparkline",
+							values: Ext.clone( values ),
+							node: Ext.clone( this.nodesByID[node] ) ,
+							info: Ext.clone( info) ,
 							flex: 4,
-							border: false,
-							style: {
-								width: '95%',
+							chart_type: this.chart_type,
+							border: false
+							/*style: {
 								marginLeft: 'auto',
 								marginRight:'auto'
-							}
+							}*/
 						} ) ;
-			
-						//we get options and build the serie panel
-						var options = this.buildOptions(info, values, serie_panel, i) ;
-						if ( this.chart_type == 'column' ) {
-								var new_values = new Array();
-								for ( var i=0; i < values.length; i++ ){
-										new_values[i] = values[i][1]  ;
-									}
-								options.type = 'bar' ;
-								this.charts[node] = { 'values': new_values, 'options': options } ;
-								$('#'+serie_panel.getId() ).sparkline(new_values, options );
-						} else {
-								this.charts[node] = { 'values': values, 'options': options } ;
-								$('#'+serie_panel.getId() ).sparkline(values, options );
-						}
-			
+						this.charts[node] = true;	
 						if (this.nodesByID[node]['printed_value'] == 'last_value' ) {
 								this.series[node].add( {
 									xtype: "panel",
@@ -307,7 +268,7 @@ Ext.define('widgets.mini_chart.mini_chart' , {
 								}) ;
 						} else if ( this.nodesByID[node]['printed_value'] == 'trend' ) {
 								var nByID = { } ;
-								nByID[node] = this.nodesByID[node] ;
+								nByID[node] = Ext.clone( this.nodesByID[node] ) ;
 								this.series[node].add( {
 									xtype: "trends",
 									flex: 3,

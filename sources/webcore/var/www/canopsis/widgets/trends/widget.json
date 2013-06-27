@@ -75,6 +75,43 @@
 										"fieldLabel":"Max value",
 										"name":"ma",
 										"decimalPrecision": 5
+									},{
+										"xtype": "cfieldset",
+										"title": "Sparklines",
+										"items": [{
+											"xtype": "checkbox",
+											"fieldLabel": "Show a sparkline Graph",
+											"checked": false,
+											"name": "show_sparkline"
+										},{
+											"xtype" : "ccolorfield",
+											"name" : "curve_color",
+											"fieldLabel": "Curve color",
+											"replaceWhiteColor":true
+										},{
+											"xtype" : "ccolorfield",
+											"name" : "area_color",
+											"fieldLabel": "Area color",
+											"replaceWhiteColor":true
+	
+										},{
+											"xtype": "combobox",
+											"name": "chart_type",
+											"fieldLabel": "Chart Type",
+											"queryMode": "local",
+											"displayField": "text",
+											"valueField": "value",
+											"value": "line_graph",
+											"store": {
+												"xtype": "store",
+												"fields": ["value", "text"],
+												"data" : [
+													{"value": "line_graph", "text": "Line Graph"},
+													{"value": "column", "text": "Bar Graph"}
+												]
+											}
+
+										}]
 									}]
 					}]
 	}]
