@@ -19,11 +19,27 @@
 # ---------------------------------
 */
 Ext.define('canopsis.lib.view.cwizard' , {
-	extend: 'canopsis.lib.view.ccard',
-
+	extend: 'Ext.window.Window',
 	alias: 'widget.cwizard',
 
+	layout: 'fit',
+
+	title: 'Wizard',
+    closable: true,
+    closeAction: 'destroy',
+    constrain: true,
+    width: 800,
+    height: 500,
+
 	cwlist: undefined,
+
+    bbar: [
+        {iconCls : 'icon-previous', text:'previous', _name:'bbarPrevious'},
+        {iconCls : 'icon-advanced', text: _('Advance mode'), _name:'bbarAdvance', enableToggle:true },'->',
+        {iconCls : 'icon-next', iconAlign: 'right', text: 'Next', _name:'bbarNext'},
+        {iconCls : 'icon-save', iconAlign: 'right',  text: 'Finish', _name:'bbarFinish', hidden:true, disabled: true}
+    ],
+
 
 	requires: [
 				'canopsis.lib.form.field.cinventory',
@@ -36,10 +52,13 @@ Ext.define('canopsis.lib.view.cwizard' , {
 				'canopsis.lib.form.field.cdate',
 				'canopsis.lib.form.field.cduration',
 				'canopsis.lib.form.field.cduration',
-				'canopsis.lib.form.field.ccolorfield'
+				'canopsis.lib.form.field.ccolorfield',
+				'canopsis.lib.view.ccard'
 			],
 
-	wizardSteps: [{
+	items: [{
+		xtype: 'ccard',
+		wizardSteps: [{
 				title: _('Choose widget'),
 				//description : _('choose the type of widget you want, its title, and refresh interval'),
 				items: [{
@@ -99,7 +118,41 @@ Ext.define('canopsis.lib.view.cwizard' , {
 						}]
 					}]
 			}],
+
+	}],
 	
+	initComponent: function() {
+        this.callParent(arguments);
+
+        this.ccard = this.down('ccard')
+        this.bbarNextButton = this.down('button[_name=bbarNext]')
+        this.bbarFinishButton = this.down('button[_name=bbarFinish]')
+        this.bbarPreviousButton = this.down('button[_name="bbarPrevious"]')
+        this.bbarAdvanceButton = this.down('button[_name="bbarAdvance"]')
+
+        //binding events
+        if(this.bbarFinishButton)
+            this.bbarFinishButton.on('click',function(){
+                this.fireEvent('save',this.widgetId,this.getValue())
+                this.destroy()
+            },this)
+        if(this.bbarPreviousButton)
+            this.bbarPreviousButton.on('click',function(){this.previousButton()},this.ccard)
+        if(this.bbarNextButton)
+            this.bbarNextButton.on('click',function(){this.nextButton()},this.ccard)
+        if(this.bbarAdvanceButton)
+            this.bbarAdvanceButton.on('toggle',
+                function(button,toggle){
+                    if(toggle)
+                        this.switchToAdvancedMode()
+                    else
+                        this.switchToSimpleMode()
+                },this.ccard)
+
+       this.ccard.on('buttonChanged',this.checkDisplayFinishButton,this)
+    },	
+
+
 	afterRender: function(){
 		this.callParent(arguments);
 
@@ -122,42 +175,30 @@ Ext.define('canopsis.lib.view.cwizard' , {
 			this.cwlist.setDisabled(true);
 
 			var options = Ext.clone(this.cwlist.nodes[0].raw.options);
-			this.addNewSteps(options);
-			this.setValue(this.data);
+			this.ccard.addNewSteps(options);
+			this.ccard.setValue(this.data);
+
+			// Hide "choose widgets" in edit mode
+			this.ccard.getButton(0).hide();
+        	this.ccard.showStep(1);
+			this.bbarFinishButton.enable();
 		}
 	},
 
-	cleanPanels: function(){
-		var contentToDel = [], buttonToDel = []
-		
-		//stock ref in array, otherwise the array is modified
-		//during the removing loop
-		var nb_fixed_tab = 2;
-
-		for(var i = nb_fixed_tab; i < this.contentPanel.items.items.length; i++)
-			contentToDel.push(this.contentPanel.items.items[i])
-		for(var i = nb_fixed_tab; i < this.buttonPanel.items.items.length; i++)
-			buttonToDel.push(this.buttonPanel.items.items[i])
-
-		for(var i = 0; i < contentToDel.length; i++)
-			this.contentPanel.remove(contentToDel[i],true)
-		for(var i = 0; i < buttonToDel.length; i++)
-			this.buttonPanel.remove(buttonToDel[i],true)
-	},
 
 	addOptionPanel: function(cwlist, records){
-		this.cleanPanels()
+		this.ccard.cleanPanels()
 		
 		this.bbarFinishButton.enable();
 
-		this.addNewSteps(Ext.clone(records[0].raw.options))
+		this.ccard.addNewSteps(Ext.clone(records[0].raw.options))
 
 		//additionnal options
 		var options = {
 			"refreshInterval": records[0].raw.refreshInterval,
 			"border" : records[0].raw.border
 		}
-		this.setValue(options)
+		this.ccard.setValue(options)
 
 		//this.nextButton();
 	},
@@ -166,11 +207,21 @@ Ext.define('canopsis.lib.view.cwizard' , {
 		this.cwlist.setDisabled(false)
 	},
 
+	checkDisplayFinishButton: function(){
+        if(this.ccard.activeButton == this.ccard.buttonPanel.items.length - 1){
+            this.bbarNextButton.hide()
+            this.bbarFinishButton.show()
+        }else{
+            this.bbarNextButton.show()
+            this.bbarFinishButton.hide()
+        }
+    },
+
 	getValue: function(){
         if(this.beforeGetValue)
             this.beforeGetValue()
         
-        var wizardChilds = this.contentPanel.items.items
+        var wizardChilds = this.ccard.contentPanel.items.items
 
         var mergedNode = {}
         var cmetricName = undefined
