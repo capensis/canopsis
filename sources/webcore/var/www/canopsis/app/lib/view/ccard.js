@@ -20,20 +20,14 @@
 */
 
 Ext.define('canopsis.lib.view.ccard' , {
-    extend: 'Ext.window.Window',
+    extend: 'Ext.panel.Panel',
     alias: 'widget.ccard',
 
-    title: 'Wizard',
-    closable: true,
-    closeAction: 'destroy',
-    width: 800,
-    height: 500,
     layout: {
         type:'hbox',
         align:'stretch'
     },
 
-    constrain: true,
     edit: false,
     activeButton: 0,
     wizardSteps : undefined,
@@ -68,6 +62,7 @@ Ext.define('canopsis.lib.view.ccard' , {
                 _name: 'buttonPanel',
                 width: 160,
                 border:false,
+                autoScroll: true,
                 html: '<div class="cwizardBorderColor"></div>',
             },{
                 flex: 1,
@@ -77,15 +72,11 @@ Ext.define('canopsis.lib.view.ccard' , {
             }
     ],
 
-    bbar: [
-            {iconCls : 'icon-previous', text:'previous', _name:'bbarPrevious'},
-            {iconCls : 'icon-advanced', text: _('Advance mode'), _name:'bbarAdvance', enableToggle:true },'->',
-            {iconCls : 'icon-next', iconAlign: 'right', text: 'Next', _name:'bbarNext'},
-            {iconCls : 'icon-save', iconAlign: 'right',  text: 'Finish', _name:'bbarFinish', hidden:true, disabled: true}
-        ],
-
     initComponent: function() {
         this.callParent(arguments);
+
+        this.panelByindex = {}
+        this.buttonByPanelIndex = {}
 
         //stock ref to panels
         this.buttonPanel = this.down('panel[_name="buttonPanel"]')
@@ -93,25 +84,6 @@ Ext.define('canopsis.lib.view.ccard' , {
 
         if(this.wizardSteps != undefined)
             this.addNewSteps(Ext.clone(this.wizardSteps))
-
-        this.bbarNextButton = this.down('button[_name=bbarNext]')
-        this.bbarFinishButton = this.down('button[_name=bbarFinish]')
-        this.bbarPreviousButton = this.down('button[_name="bbarPrevious"]')
-
-        //binding events
-        this.bbarFinishButton.on('click',function(){
-            this.fireEvent('save',this.widgetId,this.getValue())
-            this.destroy()
-        },this)
-        this.bbarPreviousButton.on('click',function(){this.previousButton()},this)
-        this.bbarNextButton.on('click',function(){this.nextButton()},this)
-        this.down('button[_name="bbarAdvance"]').on('toggle',
-            function(button,toggle){
-                if(toggle)
-                    this.switchToAdvancedMode()
-                else
-                    this.switchToSimpleMode()
-            },this)
     },
 
     afterRender : function(){
@@ -150,6 +122,8 @@ Ext.define('canopsis.lib.view.ccard' , {
 
         var item = this.buttonPanel.insert(buttonConfig.buttonIndex,buttonConfig)
 
+        this.buttonByPanelIndex[buttonConfig.panelIndex] = item
+
         //create click event for item
         if(item.getEl())
             item.getEl().on('click',
@@ -165,7 +139,7 @@ Ext.define('canopsis.lib.view.ccard' , {
         item.on('click',this.showStep,this)
     },
 
-    addContent: function(extjs_obj_array){
+    addContent: function(extjs_obj_array,data){
         var _obj = Ext.Object.merge(extjs_obj_array, this.contentPanelDefault)
 
         //no title header
@@ -175,7 +149,12 @@ Ext.define('canopsis.lib.view.ccard' , {
         if(_obj.layout != 'anchor' && _obj.items && _obj.items.length == 1)
             _obj.layout = 'fit'
 
-        this.contentPanel.add(_obj)
+        var panel = this.contentPanel.add(_obj)
+        if(data)
+            panel.getForm().setValues(data)
+
+        this.panelByindex[this.contentPanel.items.length - 1] = panel
+
         return this.contentPanel.items.length - 1
     },
 
@@ -195,17 +174,28 @@ Ext.define('canopsis.lib.view.ccard' , {
         this.addSelectedCss(buttonNumber)
 
         if(!this.edit)
-            this.checkDisplayFinishButton()
+            this.fireEvent('buttonChanged')
+            //this.checkDisplayFinishButton()
     },
 
-    checkDisplayFinishButton: function(){
-        if(this.activeButton == this.buttonPanel.items.length - 1){
-            this.bbarNextButton.hide()
-            this.bbarFinishButton.show()
-        }else{
-            this.bbarNextButton.show()
-            this.bbarFinishButton.hide()
-        }
+
+
+    cleanPanels: function(){
+        var contentToDel = [], buttonToDel = []
+        
+        //stock ref in array, otherwise the array is modified
+        //during the removing loop
+        var nb_fixed_tab = 2;
+
+        for(var i = nb_fixed_tab; i < this.contentPanel.items.items.length; i++)
+            contentToDel.push(this.contentPanel.items.items[i])
+        for(var i = nb_fixed_tab; i < this.buttonPanel.items.items.length; i++)
+            buttonToDel.push(this.buttonPanel.items.items[i])
+
+        for(var i = 0; i < contentToDel.length; i++)
+            this.contentPanel.remove(contentToDel[i],true)
+        for(var i = 0; i < buttonToDel.length; i++)
+            this.buttonPanel.remove(buttonToDel[i],true)
     },
 
     nextButton: function(newIndex){
@@ -234,7 +224,8 @@ Ext.define('canopsis.lib.view.ccard' , {
         }
 
         if(!this.edit)
-            this.checkDisplayFinishButton()
+            this.fireEvent('buttonChanged')
+            //this.checkDisplayFinishButton()
     },
 
     switchToAdvancedMode: function(){
@@ -304,13 +295,6 @@ Ext.define('canopsis.lib.view.ccard' , {
         for (var i = 0; i < wizardChilds.length; i++) {
             var form = wizardChilds[i].getForm();
             form.setValues(data);
-        }
-
-        // Hide "choose widgets" in edit mode
-        if (this.data){
-            this.getButton(0).hide();
-            this.showStep(1);
-            this.bbarFinishButton.enable();
         }
     }
 
