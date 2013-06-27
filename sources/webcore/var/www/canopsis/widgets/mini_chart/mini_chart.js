@@ -23,37 +23,6 @@
 //                                			-> setOptions                             			-> getSerie
 //											-> createChart
 
-flag_tootlip_template = Ext.create('Ext.XTemplate',
-	'<table>',
-		'<tr>',
-			'<td style="margin:3px;">',
-				'<tpl if="event_type == \'user\'">',
-					'<img src="widgets/stream/logo/ui.png" style="width: 32px;"></img>',
-				'</tpl>',
-				'<tpl if="event_type != \'user\'">',
-					'<img src="widgets/stream/logo/{icon}.png" style="width: 32px;"></img>',
-				'</tpl>',
-			'</td>',
-			'<td>',
-				'<div style="margin:3px;">',
-					'<tpl if="display_name">',
-							'<b>{display_name}</b>',
-					'</tpl>',
-					'<tpl if="display_name == undefined">',
-						'<b>{component}</b>',
-						'<tpl if="resource">',
-							'<b> - {resource}</b>',
-						'</tpl>',
-					'</tpl>',
-					' <span style="color:grey;font-size:10px">{date}</span>',
-					'<br/>{text}',
-				'</div>',
-			'</td>',
-		'</tr>',
-	'</table>',
-	{compiled: true}
-);
-
 Ext.define('widgets.mini_chart.mini_chart' , {
 	extend: 'canopsis.lib.view.cwidget',
 

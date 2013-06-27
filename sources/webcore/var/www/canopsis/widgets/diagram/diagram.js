@@ -359,20 +359,18 @@ Ext.define('widgets.diagram.diagram' , {
 
 		//custom metric
 		var metric;
-		if ( info != undefined )
-			metric = info['metric'];
-		var value = undefined;
-
-		if (info != undefined && info['values'] != undefined &&  info['values'].length >= 1)
-			value = info['values'][0][1];
-		else if ( this.categories.length > 0 ) 
-			value = 0;
-
+		var value;
 		var unit;
 		var max;
 		if ( info != undefined ) {
+			metric = info['metric'];
 			unit = info['bunit'];
 			max = info['max'];
+		
+			if (info['values'] != undefined &&  info['values'].length >= 1)
+				value = info['values'][0][1];
+			else if ( this.categories.length > 0 ) 
+				value = 0;
 		}
 
 		if (max == null)
