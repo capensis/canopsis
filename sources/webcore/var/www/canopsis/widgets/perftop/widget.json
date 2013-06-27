@@ -54,11 +54,6 @@
 						"checked": false,
 						"name": "expand"
 					},{
-						"xtype": "cduration",
-						"name": "time_window",
-						"value": 86400,
-						"fieldLabel": "Time window (for counter)"
-					},{
 						"xtype": "combobox",
 						"name": "sort",
 						"fieldLabel": "Default direction",

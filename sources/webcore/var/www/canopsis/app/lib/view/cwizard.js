@@ -91,6 +91,11 @@ Ext.define('canopsis.lib.view.cwizard' , {
 									{value: 3600,	text: '1 hour'}
 								]
 							}
+						},{
+							xtype: "cduration",
+							name: "time_window",
+							value: 86400,
+							fieldLabel: "Time window"
 						}]
 					}]
 			}],

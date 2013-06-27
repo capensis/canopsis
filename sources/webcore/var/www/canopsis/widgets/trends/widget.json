@@ -13,16 +13,6 @@
 			"items": [
 					{
 						"xtype": "cfieldset",
-						"title": "Trends",
-						"items": [
-							{
-								"xtype" : "cduration",
-								"name" : "time_window",
-								"fieldLabel": "Time window",
-								"value": 86400
-                           }]
-					},{
-						"xtype": "cfieldset",
 						"title": "Style",
 						"advanced": true,
 						"items": [

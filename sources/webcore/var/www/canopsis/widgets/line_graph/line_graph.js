@@ -471,8 +471,11 @@ Ext.define('widgets.line_graph.line_graph' , {
 				});
 			} else {
 				s += '<br/>' + formatter(this.series.options, this.y);
-				if (this.series.eta)
-					s += '<br/><b>ETA:</b> ' + this.series.eta
+				if (this.series.eta){
+					var eta = this.series.eta;
+					var dEta = parseInt(Ext.Date.now()) + eta
+					s += '<br/><b>ETA:</b> ' + rdr_tstodate(dEta/1000) + ' (' + rdr_duration(eta/1000, 2) + ')';
+				}
 			}
 			return s;
 		}
@@ -1128,10 +1131,8 @@ Ext.define('widgets.line_graph.line_graph' , {
 			if (reg.slope < 0 && node.min != undefined)
 				y = node.min;
 
-			if (y != undefined){
-				var eta = this.getEta(y, reg.slope, reg.intercept)
-				trend_line.eta = rdr_duration(eta/1000, 2);
-			}
+			if (y != undefined) 
+				trend_line.eta = this.getEta(y, reg.slope, reg.intercept);
 
 			line = reg.data;
 			trend_line.setData(line, true);
@@ -1198,11 +1199,9 @@ Ext.define('widgets.line_graph.line_graph' , {
 				if (reg.slope < 0 && node.min != undefined)
 					y = node.min;
 
-				if (y != undefined){
-					var eta = this.getEta(y, reg.slope, reg.intercept)
-					hcserie.eta = rdr_duration(eta/1000, 2);
-				}
-	
+				if (y != undefined)
+					hcserie.eta = this.getEta(y, reg.slope, reg.intercept);
+			
 				var line = reg.data;
 
 				//trunc value
