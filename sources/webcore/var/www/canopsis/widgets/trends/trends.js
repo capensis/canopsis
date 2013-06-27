@@ -54,10 +54,7 @@ Ext.define('widgets.trends.trends' , {
 
 	getPostParams: function() {
 		var post_params = [];
-		console.log(this.nodesByID);
 		Ext.Object.each(this.nodesByID, function(id, node, obj) {
-			console.log(id);
-			console.log(node);
 			post_params.push({
 				id: id,
 				metrics: node.metrics
@@ -79,7 +76,6 @@ Ext.define('widgets.trends.trends' , {
 	},
 
 	doRefresh: function(from, to) {
-		console.log(this);
 		if ( this.from )  
 			from = this.from;
 
@@ -97,10 +93,7 @@ Ext.define('widgets.trends.trends' , {
 				method: 'POST',
 				success: function(response) {
 					var data = Ext.JSON.decode(response.responseText);
-					console.log(data);
 					data = data.data;
-					console.log('data ajax');
-					console.log(data);
 					this.onRefresh(data);
 				},
 				failure: function(result, request) {
