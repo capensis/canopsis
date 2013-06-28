@@ -110,7 +110,7 @@
 					}]
 			},
 			{
-				"title" : "Selectors Topology",
+				"title" : "Selectors Topologies",
 				"items" : [{
 					"xtype":"cinventory",
 					"name" : "nodes",
