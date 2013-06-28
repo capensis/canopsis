@@ -153,7 +153,7 @@ Ext.define('widgets.weather.weather' , {
 				var node_event = this.nodeDict[_id]._event;
 				var event_type = node_event.event_type;
 
-				if (event_type != this.icon_state_source) {
+				if (event_type != this.icon_state_source && event_type != "topology") {
 					log.debug('  +  event type different from icon state source', this.logAuthor);
 					if (event_type == 'selector') {
 						if (node_event.sla_rk) {

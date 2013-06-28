@@ -28,7 +28,7 @@ widget_weather_template = Ext.create('Ext.XTemplate',
 					'{output}',
 				'</td>',
 				'<td style="width: 14px;" id="{id}-edit_td">',
-					'<tpl if="admin == true && derogation == true">',
+					'<tpl if="admin == true && derogation == true && exportMode == false">',
 						'<div class="icon icon-edit weather-clickable" id="{id}-edit_button"></div>',
 					'</tpl>',
 				'</td>',
@@ -86,7 +86,7 @@ widget_weather_template_left = Ext.create('Ext.XTemplate',
 					'{output}',
 				'</td>',
 				'<td style="width: 14px;" id="{id}-edit_td">',
-					'<tpl if="admin == true && derogation == true">',
+					'<tpl if="admin == true && derogation == true && exportMode == false">',
 						'<div class="icon icon-edit weather-clickable" id="{id}-edit_button"></div>',
 					'</tpl>',
 				'</td>',
@@ -198,7 +198,8 @@ Ext.define('widgets.weather.brick' , {
 		this.widget_base_config = {
 			id: this.id,
 			title_font_size: this.title_font_size,
-			derogation: !this.fullscreenMode
+			derogation: !this.fullscreenMode,
+			exportMode: this.exportMode
 		};
 
 		//title
@@ -301,7 +302,7 @@ Ext.define('widgets.weather.brick' , {
 			widget_data.output = data.output;
 
 		//if (data.event_type == 'sla' && data.perf_data_array)
-		if (data.perf_data_array && data.perf_data_array[0].unit == '%')
+		if (data.event_type == 'sla' && data.perf_data_array && data.perf_data_array[0].unit == '%')
 			widget_data.percent = data.perf_data_array[0].value;
 
 		//----------------alert && derog-------------

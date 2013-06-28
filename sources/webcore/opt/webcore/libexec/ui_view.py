@@ -239,8 +239,8 @@ def add_view(views, storage, account):
 				if isinstance(record,crecord):
 					record.chown(account._id)
 					record.chgrp(account.group)
-					record.chmod('g+w')
-					record.chmod('g+r')
+
+					record.access_group = []
 					
 					storage.put(record,account=account)
 					record_parent.add_children(record)

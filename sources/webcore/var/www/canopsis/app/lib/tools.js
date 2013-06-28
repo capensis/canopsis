@@ -435,21 +435,7 @@ function expandAttributs(nodeList){
 	},this)
 
 	Ext.Object.each(nodeList, function(id, node, obj) {
-		var attributNames = {
-							'co':'component',
-							're':'resource',
-							't':'type',
-							'me':'metric',
-							'u':'bunit',
-							'ma':'max'
-						}
-
-		Ext.Object.each(attributNames, function(key, value, myself) {
-			if(node[key] != undefined){
-				node[value] = node[key]
-				delete node[key]
-			}
-		},this)
+		expandMetric(node)
 
 		if (!node.dn)
 			node.dn = [node.component, node.resource];
@@ -474,4 +460,24 @@ function expandAttributs(nodeList){
 	})
 
 	return nodeList
+}
+
+function expandMetric(node){
+	var attributNames = {
+						'co':'component',
+						're':'resource',
+						't':'type',
+						'me':'metric',
+						'u':'bunit',
+						'ma':'max'
+					}
+
+	Ext.Object.each(attributNames, function(key, value, myself) {
+		if(node[key] != undefined){
+			node[value] = node[key]
+			delete node[key]
+		}
+	},this)
+
+	return node
 }

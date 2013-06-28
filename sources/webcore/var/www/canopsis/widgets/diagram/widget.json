@@ -44,11 +44,6 @@
 									]
 								}
 							},{
-								"xtype" : "cduration",
-								"name" : "time_window",
-								"fieldLabel": "Time window (for counter)",
-								"value": 0
-                           },{
 								"xtype": "checkbox",
 								"fieldLabel": "Enable SVG Exporting",
 								"checked": false,
