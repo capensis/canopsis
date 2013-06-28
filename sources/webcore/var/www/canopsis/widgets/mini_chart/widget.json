@@ -38,17 +38,6 @@
 							"name": "SeriePercent"
 						}]
 				},{
-
-						"xtype": "cfieldset",
-						"title": "Time Window",
-						"items": [
-							{
-								"xtype" : "cduration",
-								"name" : "time_window",
-								"fieldLabel": "Time window",
-								"value": 86400
-                           }]
-				},{
 				"xtype": "cfieldset",
 				"title": "Aggregation",
 				"items": [
@@ -135,20 +124,11 @@
 											"fieldLabel": "Area color",
 											"replaceWhiteColor":true
 										},{
-											"xtype":"combobox",
-											"fieldLabel":"Printed Value",
-											"name": "printed_value",
-											"queryMode": "local",
-											"displayField": "text",
-											"valueField": "value",
-											"store": {
-												"xtype": "store",
-												"fields": ["value", "text"],
-												"data" : [
-													{"value": "last_value", "text": "Last Value"},
-													{"value": "trend", "text": "Evolution"}
-												]
-											}
+											"xtype": "checkbox",
+											"fieldLabel": "Display in pct",
+											"checked": true,
+											"name": "last_value"
+										
 										},{
 											"xtype":"textfield",
 											"fieldLabel":"Unit",

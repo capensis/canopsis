@@ -70,7 +70,7 @@
 										"title": "Sparklines",
 										"items": [{
 											"xtype": "checkbox",
-											"fieldLabel": "Show a sparkline Graph",
+											"fieldLabel": "Show a thumb Graph",
 											"checked": false,
 											"name": "show_sparkline"
 										},{
