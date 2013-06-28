@@ -250,7 +250,7 @@ Ext.define('widgets.mini_chart.mini_chart' , {
 									flex: 2,
 									bodyCls: "valigncenter padding-left",
 									border: false,
-									html : "<div><b>"+values[ values.length - 1][1]+" "+options['unit']+"</b></div>"
+									html : "<div><b>"+values[ values.length - 1][1]+"</b></div>"
 								}) ;
 						} else if ( this.nodesByID[node]['printed_value'] == 'trend' ) {
 								var nByID = { } ;

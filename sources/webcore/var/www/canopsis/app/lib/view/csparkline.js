@@ -23,7 +23,6 @@ Ext.define('canopsis.lib.view.csparkline' , {
 	layout: "fit",
 	alias: 'widget.csparkline',
 	initComponent: function() {
-		console.log("oook sparkline");
 		this.callParent(arguments);
 	},
 	buildOptions : function( ) {
@@ -101,7 +100,6 @@ Ext.define('canopsis.lib.view.csparkline' , {
 	},
 	listeners: {
 		afterlayout: function(el, eventName, handler, t) {
-			console.log("oookk sparklin");
 			this.buildSparkline();
 		},
 		resize: function() {

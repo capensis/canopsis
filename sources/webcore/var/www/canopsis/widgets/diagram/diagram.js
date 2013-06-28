@@ -108,11 +108,14 @@ Ext.define('widgets.diagram.diagram' , {
 		this.series_array = new Array();
 		this.categories = new Array();
 		var me = this;
+		this.nodesByMetricAndCategory = { } ;
 		Ext.Object.each (this.nodesByID, function (id, node, obj ) { 
 			if ( node.category && Ext.Array.indexOf ( me.categories, node.category) ==  -1 ) 
 				me.categories.push( node['category'] ) ;
 			
-		 } )
+			me.nodesByMetricAndCategory[id] = { 'category' : node.category, 'metric' : node.label } ;
+			
+		 } ) ;
 		log.debug('nodesByID:', this.logAuthor);
 		log.dump(this.nodesByID);
 
@@ -414,30 +417,6 @@ Ext.define('widgets.diagram.diagram' , {
 		return serie_conf;
 
 	},
-	groupByCategories: function(data) {
-		dataByCategories = { } ;
-		for ( var j=0; j < data.length; j++ ) {
-			var info = data[j];
-			var node = this.nodesByID[info['node'] ];
-			if ( node.label) 
-				info['metric'] = node.label;
-
-			var metric = info['metric'];
-			if ( dataByCategories[metric] ) {
-				if ( dataByCategories[metric][node.category] )
-					dataByCategories[metric][node.category].push(info );
-				else {
-					dataByCategories[metric][node.category] = new Array() ;
-					dataByCategories[metric][node.category].push(info ) ;
-				}
-			} else {
-				dataByCategories[metric] = { } ;
-				dataByCategories[metric][node.category] = new Array();
-				dataByCategories[metric][node.category].push(info );
-			}
-		}
-		return dataByCategories;
-	},
 	onRefresh: function(data) {
 		// s to ms
 		/*
@@ -457,39 +436,39 @@ Ext.define('widgets.diagram.diagram' , {
 			var other_unit = '';
 			var serie;
 			if ( this.diagram_type == 'column' && this.categories.length > 0 ) {
-				dataByCategories = this.groupByCategories( data ) ;
 				var multiple_serie = true ;
 				var serie_list = { } ;
 				var j = 0;
 				var me = this;
-				Ext.Object.each( dataByCategories, function( met, tmpdata2, obj) { 
-					serie = me.getSerie(data, met);
-					for ( var i=0; i < me.categories.length; i++) {
-						var cat = me.categories[i] ;
-					
-						var tmpdata = tmpdata2[cat] ;
+				
+				for ( var i = 0; i < data.length; i++ ) {
+					var info = data[i];
+					var node = this.nodesByID[info['node']];
 
-						if ( tmpdata != undefined ) {
-							var info = tmpdata[0];
-							var node = me.nodesByID[info['node']];
-						
-							if (  node.label ) 
-								tmpdata[0]['metric'] = node.label;
-							var serie_conf = me.getSerieConf(info, node, j);
-						
-							serie_conf.category = cat;
-							serie.data.push(serie_conf);
-						} else {
-							var info = { metric: met } ;
-							var serie_conf = me.getSerieConf( info, null, j) ;
-							serie.data.push(serie_conf);
-						}
+					var metric = this.nodesByMetricAndCategory[info['node']].metric ;
+					var category = this.nodesByMetricAndCategory[info['node']].category;
+
+					if ( ! serie_list[metric] ) { 
+						serie_list[metric] = this.getSerie(data, metric) ;
+						j++;
 					}
-					serie.name = serie.data[0].metric ;
-					serie.color = serie.data[0].color;
-					serie_list[met] = serie ;
-					j++;
-				} );
+					if ( ! serie_list[metric].data ) 
+						serie_list[metric].data = new Array() ;
+		
+					if (node.label)
+						info['metric'] = node.label;	
+					var serie_conf = me.getSerieConf(info, node, j);
+					serie_conf['category'] = category;		
+					if ( serie_list[metric].data.length > 0 ) 
+						serie_conf['color'] = undefined;	
+					var id_category =  Ext.Array.indexOf(this.categories, category ) ;
+					serie_list[metric].data[id_category] = serie_conf;
+					if ( ! serie_list[metric].name ) 
+						serie_list[metric].name = serie_conf.name ;
+					if ( ! serie_list[metric].color ) 
+						serie_list[metric].color = serie_conf.color;
+					
+				}
 			} else {
 				serie = this.getSerie(data);
 				for (var i = 0; i < data.length; i++) {
@@ -508,7 +487,10 @@ Ext.define('widgets.diagram.diagram' , {
 			}
 			
 			if (this.setAxis && this.diagram_type == 'column' && this.serie_list == undefined )
-				this.setAxis(serie.data);
+				if ( serie_list != undefined && Ext.Object.getSize( serie_list )  >  0 )
+					this.setAxis( serie_list[Object.keys(serie_list)[0]].data ) ;
+				else
+					this.setAxis(serie.data);
 
 			if (data.length == 1 && !this.hide_other_column && this.diagram_type == 'pie') {
 				var other_label = '<b>' + this.other_label + '</b>' + other_unit;
@@ -520,8 +502,8 @@ Ext.define('widgets.diagram.diagram' , {
 				serie.data.push({ id: 'pie_other', name: other_label, metric: this.other_label, y: max - value, color: _color });
 			}
 
-			if (serie.data) {
-				if ( serie_list != undefined && serie_list.length > 0 )
+			if (( serie && serie.data) || Ext.Object.getSize( serie_list )  > 0 ) {
+				if ( serie_list != undefined && Ext.Object.getSize( serie_list )  > 0 )
 					this.serie_list = serie_list ;
 				else
 					this.serie = serie;

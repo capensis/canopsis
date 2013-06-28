@@ -148,7 +148,6 @@ Ext.define('widgets.trends.trends' , {
 				v1 = ret[0]*t1 + ret[1]
 				v2 = ret[0]*t2 + ret[1]
 
-				//console.log("v1", v1, "v2", v2)
 
 				delta = roundSignifiantDigit(v2 - v1, 2);
 				hdelta = rdr_humanreadable_value(delta, bunit)
@@ -245,10 +244,7 @@ Ext.define('widgets.trends.trends' , {
 						{ border: 0, height: this.item_height, html: node.label, flex:1, bodyStyle: { "line-height": this.item_height + "px" } },
 					]
 				} ;
-				console.log("ok");
-				console.log(node);
 				if ( node.show_sparkline ) {
-					console.log('ooook');
 					item_to_add.items.push({
 						xtype: "csparkline",
 						values: Ext.clone( values ),
