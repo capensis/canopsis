@@ -110,7 +110,7 @@
 					}]
 			},
 			{
-				"title" : "Selectors",
+				"title" : "Selectors Topologies",
 				"items" : [{
 					"xtype":"cinventory",
 					"name" : "nodes",
@@ -128,7 +128,7 @@
 											"queryMode": "remote"
 										},
 					"event_type": "selector",
-					"base_filter" : {"$or":[{"event_type":"selector"},{"event_type":"sla"}]}
+					"base_filter" : {"$or":[{"event_type":"selector"}, {"event_type":"sla"}, {"event_type":"topology"}]}
 				}]
 			}
 	]

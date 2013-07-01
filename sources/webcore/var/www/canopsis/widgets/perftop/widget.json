@@ -135,8 +135,7 @@
 		]
 	},{
 		"title": "Filter",
-		"layout":"fit",
-		"items": {
+		"items": [{
 			"xtype": "cfilter",
 			"name": "mfilter",
 			"url": "/perfstore",
@@ -167,6 +166,6 @@
 					"flex": 1
 		 		}
 		 	]
-		}
+		}]
 	}]
 }]

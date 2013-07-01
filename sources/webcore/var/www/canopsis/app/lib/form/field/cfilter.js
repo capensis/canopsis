@@ -547,7 +547,9 @@ Ext.define('canopsis.lib.form.field.cfilter' , {
 	ctype: 'event',
 	model: 'canopsis.model.Event',
 	autoScroll: true,
-	params: {},
+	params: {
+		show_internals: true
+	},
 
 	columns: [
 		{
@@ -572,13 +574,14 @@ Ext.define('canopsis.lib.form.field.cfilter' , {
 
 	operator_fields: [
 		{'operator': 'connector_name',	'text': _('Connector name'),	'type': 'all' },
-		{'operator': 'event_type',	'text': _('Event type'),	'type': 'all'},
-		{'operator': 'state',	'text': _('State'),	'type': 'all'},
-		{'operator': 'state_type',	'text': _('State type'),	'type': 'all'},
-		{'operator': 'resource',	'text': _('Resource'),	'type': 'all'},
-		{'operator': 'component',	'text': _('Component'),	'type': 'all'},
-		{'operator': 'tags', 'text': _('Tags'),	'type': 'all'},
-		{'operator': 'timestamp', 'text': _('Timestamp'),	'type': 'date'}
+		{'operator': 'event_type',		'text': _('Event type'),		'type': 'all'},
+		{'operator': 'source_type',		'text': _('Source type'),		'type': 'all'},
+		{'operator': 'state',			'text': _('State'),				'type': 'all'},
+		{'operator': 'state_type',		'text': _('State type'),		'type': 'all'},
+		{'operator': 'resource',		'text': _('Resource'),			'type': 'all'},
+		{'operator': 'component',		'text': _('Component'),			'type': 'all'},
+		{'operator': 'tags', 			'text': _('Tags'),				'type': 'all'},
+		{'operator': 'timestamp', 		'text': _('Timestamp'),			'type': 'date'}
 	],
 
 	layout: {

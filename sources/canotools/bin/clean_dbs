@@ -40,7 +40,7 @@ Options:
   -h --help               Show help
   --do                    Remove items
   --freshness <duration>  Items on 'crecord_write_time' <  (Now - <duration>), you can use <int>[y/M/w/d/h/m/s]. Ex: '1d' for one day
-  --event-types <types>   Items on 'event_type' in <types>
+  --event_type <type>     Items on 'event_type' in <type>
 """
 args = docopt(doc)
 
@@ -56,6 +56,8 @@ if not options['freshness']:
 
 if not options['event_type']:
 	options['event_type'] = ['sla', 'check','selector']
+else:
+	options['event_type'] = [ options['event_type'] ]
 
 
 # Init logging
