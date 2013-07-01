@@ -436,6 +436,7 @@ function expandAttributs(nodeList){
 
 	Ext.Object.each(nodeList, function(id, node, obj) {
 		expandMetric(node)
+		var label = ""
 
 		if (!node.dn)
 			node.dn = [node.component, node.resource];
@@ -444,9 +445,9 @@ function expandAttributs(nodeList){
 		if(!node.label){
 			if(!sameResource){
 				if (node.resource)
-					var label = node.component + " " + node.resource;
+					label = node.component + " " + node.resource;
 				else
-					var label = node.component;
+					label = node.component;
 
 				label += " "
 			}
