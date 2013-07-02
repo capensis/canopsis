@@ -27,147 +27,151 @@ Ext.define('canopsis.lib.form.field.ccustom' , {
 
 	border: false,
 
-	sharedStore : undefined,
+	sharedStore: undefined,
 
-	name : 'ccustom',
+	name: 'ccustom',
 
-	customForm: undefined,
+	contentPanelDefault: {
+					xtype: 'form',
+					width: '100%',
+					border: false,
+					//padding: '0 5 0 5',
+					margin: '30px',
+					autoScroll: true,
+					layout: {
+								type: 'vbox',
+								align: 'stretch'
+							},
+					defaults: {
+						listeners: {
+									change: function(field, newVal, oldVal) {
+										this.up('form').fireEvent('ccustomChange');
+									}
+								}
+					}
+	},
 
-    contentPanelDefault: {
-                    xtype:'form',
-                    width: '100%',
-                    border:false,
-                    //padding: '0 5 0 5',
-                    margin: '30px',
-                    autoScroll: true,
-                    layout: {
-                                type: 'vbox',
-                                align: 'stretch'
-                            },
-                },
-
-    buttonTpl: new Ext.Template([
-                '<div class="ccustomButton">',
-                    '{title}',
-                '</div>'
-            ]).compile(),
+	buttonTpl: new Ext.Template([
+				'<div class="ccustomButton">',
+					'{title}',
+				'</div>'
+			]).compile(),
 
 	initComponent: function() {
-        this.callParent(arguments);
-
-        this.panelIdByNode = {}
-
-        this.customForm.push({
-								"xtype":"hiddenfield",
-								"name":"_id"
-							},{
-								"xtype":"hiddenfield",
-								"name":"titleInWizard"
-							})
-
-    },
+		this.callParent(arguments);
+		this.panelIdByNode = {};
+	},
 
 	afterRender: function() {
 		this.callParent(arguments);
 
-		//vars
-		this.sourceStore = this.findParentByType('cwizard').childStores[this.sharedStore]
+		this.sourceStore = this.findParentByType('cwizard').childStores[this.sharedStore];
 
-		this.sourceStore.on('add',function(store,records){
-			this.addPanels(records)
-		},this)
-		this.sourceStore.on('remove',function(store,records){
-			this.removePanels(records)
-		},this)
+		this.sourceStore.on('add', function(store,records) {
+			this.addPanels(records);
+		},this);
+		this.sourceStore.on('remove', function(store,records) {
+			this.removePanels(records);
+		},this);
 
+		this.sourceStore.each(function(record) {
+			this.addPanels(record);
+		},this);
 	},
 
-	addPanels: function(records){
-		if(!Ext.isArray(records))
-			records = [records]
-		for(var i = 0; i < records.length; i++)
-			this.addPanel(records[i].data.id, records[i].data)
+	addPanels: function(records) {
+		if (!Ext.isArray(records))
+			records = [records];
+		for (var i = 0; i < records.length; i++)
+			this.addPanel(records[i].data.id, records[i]);
 	},
 
-	addPanel: function(nodeId, data){
-		var panelConfig = {items:Ext.clone(this.customForm)}
+	addPanel: function(nodeId, record) {
+		var panelConfig = {items: Ext.clone(this.customForm)};
 
-		data.titleInWizard = this.buildTitle(data)
+		var title = this.buildTitle(record.data);
 
-		var panelNumber = this.addContent(panelConfig,data)
-		if(data._id)
-			this.panelIdByNode[data._id] = panelNumber
-		var button = {title:data.titleInWizard,panelIndex: panelNumber}
+		var panelNumber = this.addContent(panelConfig, record);
 
-		this.addButton(button)
+		if (record.get('_id'))
+			this.panelIdByNode[record.get('id')] = panelNumber;
+
+		var button = {title: title, panelIndex: panelNumber};
+
+		this.addButton(button);
 	},
 
-	removePanels: function(records){
+	addContent: function(extjs_obj_array,record) {
+		var _obj = Ext.Object.merge(extjs_obj_array, this.contentPanelDefault);
+
+		var panel = this.contentPanel.add(_obj);
+
+		if (record){
+			panel.getForm().setValues(record.data);
+			panel.sourceRecord = record
+		}
+
+		//save record when change made on form
+		panel.on('ccustomChange',
+			function() {
+				var values = this.getForm().getValues()
+				if(this.sourceRecord)
+					this.sourceRecord.beginEdit()
+					this.sourceRecord.set(values)
+					this.sourceRecord.endEdit(true)
+			},panel
+		);
+
+		this.panelByindex[this.contentPanel.items.length - 1] = panel;
+		return this.contentPanel.items.length - 1;
+	},
+
+	removePanels: function(records) {
 		//if someone find something to do this in extjs, build this again
-		if(!Ext.isArray(records))
-			records = [records]
-		for(var i = 0; i < records.length; i++){
-			var nodeId = records[i].data.id
-			if(this.panelIdByNode[nodeId] != undefined){
-				var panelNumber = this.panelIdByNode[nodeId]
-				var panel = this.panelByindex[panelNumber]
-				var button = this.buttonByPanelIndex[panelNumber]
-				console.log('panel and button')
-				console.log(this.panelByindex)
-				if(panel && button){
-					panel.setDisabled(true)
-					panel.hide()
-					button.setDisabled(true)
+		if (!Ext.isArray(records))
+			records = [records];
+		for (var i = 0; i < records.length; i++) {
+			var nodeId = records[i].data.id;
+			if (this.panelIdByNode[nodeId] != undefined) {
+				var panelNumber = this.panelIdByNode[nodeId];
+				var panel = this.panelByindex[panelNumber];
+				var button = this.buttonByPanelIndex[panelNumber];
+				if (panel && button) {
+					panel.setDisabled(true);
+					panel.hide();
+					button.setDisabled(true);
 					button.hide()
 					delete this.panelByindex[panelNumber]
 					delete this.panelIdByNode[nodeId]
-					delete this.buttonByPanelIndex[panelNumber]
+					delete this.buttonByPanelIndex[panelNumber];
 				}
 			}
 		}
-			
+
 
 	},
 
-	setValue: function(data){
-		console.log(data)
-		Ext.Object.each(data, function(key, value, myself) {
-			value._id = key
-			this.addPanel(this.buildTitle(value),value)
-		},this)
+	setValue: function(data) {
+		return;
 	},
 
-	getValue: function(){
-		var wizardChilds = this.contentPanel.items.items
-        var output = {}
-        for(var i = 0; i < wizardChilds.length; i++){
-        	if(!wizardChilds.disabled){
-	        	var values = wizardChilds[i].getValues(false, false, false, true)
-	        	if(values._id){
-		        	output[values._id] = values
-		        	output[values._id]['titleInWizard'] = this.buildTitle(values)
-		        }
-	        }
-        }
-		//prevent sub item form to be submit individualy
-		this.disable()
-
-		return output
+	getValue: function() {
+		return;
 	},
 
-	buildTitle: function(data){
-		if(data.titleInWizard)
-			return data.titleInWizard
+	buildTitle: function(data) {
+		if (data.titleInWizard)
+			return data.titleInWizard;
 
-		if(!data.co || !data.me)
-			return data._id
+		if (!data.co || !data.me)
+			return data._id;
 
-		var title = data.co
-		if(data.re)
-			title += ' ' + data.re
-		title += ' ' + data.me
+		var title = data.co;
+		if (data.re)
+			title += ' ' + data.re;
+		title += ' ' + data.me;
 
-		return title
+		return title;
 	}
 
 });
