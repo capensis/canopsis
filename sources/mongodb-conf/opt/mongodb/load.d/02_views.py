@@ -138,6 +138,7 @@ def update_view_for_new_metric_format():
 
 				if isinstance(itemNodes, list):
 					itemXtype = item['data']['xtype']
+
 					#update for text widget
 					if itemXtype == 'text' or itemXtype == 'topology_viewer':
 						print('Update widget text/topology_viewer format')
@@ -145,30 +146,30 @@ def update_view_for_new_metric_format():
 						del item['data']['nodes']
 						break
 
-
-					if not 'ccustom' in item['data']:
-						item['data']['ccustom'] = {}
-
-					itemCcustom = item['data']['ccustom']
-
 					for node in itemNodes:
 						try:
 							nodesObject[node['id']] = node
-							itemCcustom[node['id']] = {}
 
 							# write extra_fields in node root
 							if 'extra_field' in node:
 								nodesObject[node['id']].update(node['extra_field'])
 
 								#build ccustom in view
-								itemCcustom[node['id']] = node['extra_field']
 								del node['extra_field']
 						except Exception as error:
 							print('An error occured for the following widget: %s' % error)
 							print(item)
 
-					itemNodes = nodesObject
-			#print(item['data'])
+					item['data']['nodes'] = nodesObject
+					print(item['data']['nodes'])
+
+				#check between commits
+				if 'ccustom' in item['data']:
+					for nodeId, customValue in item['data']['ccustom'].iteritems():
+						if nodeId in itemNodes:
+							itemNodes[nodeId].update(customValue)
+					del item['data']['ccustom']
+				
 	storage.put(records)
 				
 
