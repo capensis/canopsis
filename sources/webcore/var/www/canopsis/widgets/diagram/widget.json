@@ -272,7 +272,10 @@
 						"name": "nodes",
 						"multiSelect": true,
 						"metrics": true,
-						"sharedStore":"line_graph"
+						"sharedStore":"line_graph",
+						"additional_field": [
+							"label","curve_color"
+						]
 					}]
 		},{
 			"title": "Customize metrics",
