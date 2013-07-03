@@ -92,8 +92,7 @@ Ext.define('canopsis.lib.form.field.cmetric' , {
 
 		if (this.additional_field) {
 			for (var i = 0; i < this.additional_field.length; i++) 
-				if (this.additional_field[i].name) 
-					fields.push({name: this.additional_field[i].name});
+				fields.push({name: this.additional_field[i]});
 		}
 
 		Ext.define('Meta', {
@@ -413,9 +412,6 @@ Ext.define('canopsis.lib.form.field.cmetric' , {
 			output.push(data)
 		},this);
 
-		console.log('eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee')
-		console.log(output)
-
 		return output;
 	},
 
@@ -447,6 +443,11 @@ Ext.define('canopsis.lib.form.field.cmetric' , {
 					item.re = item.resource,
 					item.t = item.type
 				}
+
+				if(!item.me)
+					item.me = item.metrics[0]
+
+				if(Ext.isArray)
 
 				metricList.push(Ext.create('Meta',item))
 			},this)
