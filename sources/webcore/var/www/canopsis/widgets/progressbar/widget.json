@@ -48,8 +48,10 @@
 			"name": "nodes",
 			"multiSelect": true,
 			"metrics": true,
-			"sharedStore": "progressbar"
-			
+			"sharedStore": "progressbar",
+			"additional_field": [
+				"label","mi","tw","tc","ma"
+			]	
 		}]
 	},{
 		"title": "Customize metrics",

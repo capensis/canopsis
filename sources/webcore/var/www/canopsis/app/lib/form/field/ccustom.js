@@ -114,7 +114,7 @@ Ext.define('canopsis.lib.form.field.ccustom' , {
 		//save record when change made on form
 		panel.on('ccustomChange',
 			function() {
-				var values = this.getForm().getValues()
+				var values = this.getForm().getValues(false, false, false, true)
 				if(this.sourceRecord)
 					this.sourceRecord.beginEdit()
 					this.sourceRecord.set(values)
