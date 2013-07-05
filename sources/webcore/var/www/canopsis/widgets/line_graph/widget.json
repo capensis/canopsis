@@ -396,7 +396,15 @@
 						"name": "nodes",
 						"multiSelect": true,
 						"metrics": true,
-						"sharedStore":"line_graph"
+						"sharedStore":"line_graph",
+						"additional_field": [
+											"label",
+											"curve_color",
+											"Curve color",
+											"area_color",
+											"trend_curve",
+											"u"
+										]
 						}]
 		},{
 			"title": "customize metrics",

@@ -317,7 +317,10 @@
 						"name": "nodes",
 						"multiSelect": true,
 						"metrics": true,
-						"sharedStore":"barGraph"
+						"sharedStore":"barGraph",
+						"additional_field": [
+							"label","curve_color","Trend"
+						]
 					}]
 		},{
 		"title": "Customize metrics",
@@ -337,6 +340,7 @@
 								},{
 									"xtype":"checkbox",
 									"text":"Trend",
+									"fieldLabel":"Trend",
 									"checked":true
 								}]
 				}]

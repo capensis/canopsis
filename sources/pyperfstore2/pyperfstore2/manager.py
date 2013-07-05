@@ -346,6 +346,12 @@ class manager(object):
 		_ids = []
 		self.logger.info(" + Get all keys")
 		keys = self.store.redis.keys('*')
+
+		try:
+			keys.remove("perfstore2:rotate:plan")
+		except:
+			pass
+			
 		self.logger.info(" + Check length (%s keys)" % len(keys))
 		for key in keys:
 			self.store.redis_pipe.llen(key)
@@ -355,8 +361,6 @@ class manager(object):
 		for index, key in enumerate(keys):
 			if result[index] >= self.dca_min_length:
 				_ids.append(key)
-			
-			_ids.append(key)
 
 		if not _ids:
 			self.logger.info("Nothing to do")

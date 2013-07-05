@@ -69,7 +69,10 @@
 							"name": "nodes",
 							"multiSelect": false,
 							"metrics": true,
-							"sharedStore":"gauge"
+							"sharedStore":"gauge",
+							"additional_field": [
+								"label","mi","tw","tc","ma"
+							]
 						}]
 			},{
 				"title": "Customize metrics",

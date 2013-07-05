@@ -48,7 +48,10 @@
 						"name": "nodes",
 						"multiSelect": true,
 						"metrics": true,
-						"sharedStore": "trends"
+						"sharedStore": "trends",
+						"additional_field": [
+							"label","ma"
+						]
 					}]
 		},{
 			"title": "Customize metrics",
