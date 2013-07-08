@@ -1,6 +1,6 @@
 .cwizardButton{
 	min-height:22px;
-	width: 120px;
+	width: 130px;
 	margin-top: 7px;
 	padding: 2px  2px 2px 25px;
 
@@ -52,7 +52,7 @@
 	color: black;
 	z-index: 13;
 	/*height:25px;*/
-	width: 130px;
+	width: 140px;
 }
 
 .cwizardDisabledButton .cwizardButton{
