@@ -32,7 +32,7 @@ def init():
 	### Default Dasboard
 	data = [{'position': {'width': 8, 'top': 2, 'left': 8, 'height': 7}, 'data': {'bar_search': False, 'show_last_check': True, 'xtype': 'list', 'pageSize': 100, 'title': 'Resource problems', 'show_source_type': True, 'border': True, 'default_sort_direction': 'DESC', 'scroll': True, 'filter': '{ "$and": [ {"source_type":"resource"}, {"state": { "$ne": 0 }} ]}', 'default_sort_column': 'state', 'paging': False, 'show_resource': True, 'reload': False, 'show_state': True, 'refreshInterval': 300, 'show_output': True, 'show_state_type': True, 'column_sort': True, 'hideHeaders': False, 'show_component': True}, 'id': '1336723949800-5'}, {'position': {'width': 8, 'top': 2, 'left': 0, 'height': 7}, 'data': {'bar_search': False, 'show_last_check': True, 'xtype': 'list', 'pageSize': 100, 'title': 'Component problems', 'show_source_type': True, 'border': True, 'default_sort_direction': 'DESC', 'scroll': True, 'filter': '{ "$and": [ {"source_type":"component"}, {"state": { "$ne" : 0 }} ]}', 'default_sort_column': 'state', 'paging': False, 'show_resource': False, 'reload': False, 'show_state': True, 'refreshInterval': 300, 'show_output': True, 'show_state_type': True, 'column_sort': True, 'hideHeaders': False, 'show_component': True}, 'id': '1336724023524-4'}, {'position': {'width': 4, 'top': 0, 'left': 0, 'height': 2}, 'data': {'refreshInterval': 0, 'title': '', 'border': False, 'xtype': 'text', 'text': '<img src="themes/canopsis/resources/images/logo_canopsis.png" height="100%">'}, 'id': '1336724801997-7'}]
 	create_view('_default_.dashboard', 'Dashboard', data, autorm=False)
-		
+
 	### Account
 	data = { 'xtype': 'AccountGrid'}
 	create_view('account_manager', 'Accounts', data, internal=True)
@@ -40,7 +40,7 @@ def init():
 	### Group
 	data = { 'xtype': 'GroupGrid'}
 	create_view('group_manager', 'Groups', data, internal=True)
-	
+
 	### Selector
 	data = { 'xtype': 'SelectorGrid'}
 	create_view('selector_manager', 'Selectors', data, internal=True)
@@ -64,15 +64,15 @@ def init():
 	###briefcase
 	data = { 'xtype': 'BriefcaseGrid'}
 	create_view('briefcase', 'Briefcase', data, internal=True)
-	
+
 	###curves
 	data = { 'xtype': 'CurvesGrid'}
 	create_view('curves', 'Curves', data, internal=True)
-	
+
 	###derogation
 	data = {'xtype':'DerogationGrid'}
 	create_view('derogation_manager','Derogations',data, internal=True)
-	
+
 	###perfdata
 	data = {'xtype':'PerfdataGrid'}
 	create_view('perfdata','Perfdata',data, internal=True)
@@ -80,7 +80,7 @@ def init():
 	###Event log navigation
 	data = { 'xtype': 'EventLog'}
 	create_view('eventLog_navigation', 'Events log navigation', data, internal=True)
-	
+
 	### Topology
 	data = { 'xtype': 'TopologyGrid'}
 	create_view('topology_manager', 'Topologies', data, internal=True)
@@ -107,21 +107,21 @@ def create_view(_id, name, data, position=None, mod='o+r', autorm=True, internal
 			return record
 	except:
 		pass
-		
+
 	if not position:
 		# fullscreen
 		position = {'width': 1,'top': 0, 'left': 0, 'height': 1}
-		
+
 	logger.info(" + Create view '%s'" % name)
 	record = crecord({'_id': 'view.%s' % _id, 'internal': internal }, type='view', name=name,group='group.CPS_view_admin')
-	
+
 	if  isinstance(data, list):
 		record.data['items'] = data
 	elif  isinstance(data, dict):
 		record.data['items'] = [ {'position': position, 'data': data } ]
 	else:
 		raise("Invalide data ...")
-		
+
 	record.chmod(mod)
 	storage.put(record)
 	return record
@@ -164,12 +164,12 @@ def update_view_for_new_metric_format():
 					print(item['data']['nodes'])
 
 				#check between commits
-				if 'ccustom' in item['data']:
+				if 'ccustom' in item['data'] and item['data']['ccustom']:
 					for nodeId, customValue in item['data']['ccustom'].iteritems():
 						if nodeId in itemNodes:
 							itemNodes[nodeId].update(customValue)
 					del item['data']['ccustom']
-				
+
 	storage.put(records)
-				
+
 
