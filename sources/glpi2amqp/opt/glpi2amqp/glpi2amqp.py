@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import MySQLdb as mysql
-from time import time
+import time
 
 from camqp import camqp
 from cinit import cinit
@@ -11,16 +11,37 @@ import cevent
 DAEMON_NAME = 'glpi2amqp'
 
 class Connector(object):
-     """ Connector between GLPI and Canopsis (via AMQP) """
+    """ Connector between GLPI and Canopsis (via AMQP) """
 
     def __init__(self):
         """ Initialize connector and start AMQP socket """
 
         self.init = cinit()
         self.logger = self.init.getLogger(DAEMON_NAME)
-        self.handler = init.getHandler(self.logger)
+        self.handler = self.init.getHandler(self.logger)
 
+    def load_config(self):
+        """ Load configuration """
 
+        import sys
+        import os
+
+        sys.path.append(os.path.expanduser('~/etc'))
+        import glpi2amqp_conf
+
+        try:
+            self.config = {
+                'mysql_host': glpi2amqp_conf.mysql_host,
+                'mysql_user': glpi2amqp_conf.mysql_user,
+                'mysql_pass': glpi2amqp_conf.mysql_pass,
+                'mysql_db': glpi2amqp_conf.mysql_db
+            }
+
+        except AttributeError, err:
+            self.logger.error('Can\'t load configuration: {0}'.format(err))
+            return False
+
+        return True
 
     def __call__(self):
         self.handler.run()
@@ -32,8 +53,16 @@ class Connector(object):
 
         try:
             # connect to MySQL
-            self.logger.debug('Connect to MySQL database...')
-            self.sql = mysql.connect('localhost', 'glpi', 'gpli', 'glpi')
+            self.logger.debug('Connect to MySQL database {0}@{1} {2}...',
+                self.config['mysql_user'],
+                self.config['mysql_host'],
+                self.config['mysql_db'])
+
+            self.sql = mysql.connect(
+                self.config['mysql_host'],
+                self.config['mysql_user'],
+                self.config['mysql_pass'],
+                self.config['mysql_db'])
 
             # get data
             self.get_data()
@@ -43,7 +72,7 @@ class Connector(object):
             self.sql.close()
 
         except mysql.Error, err:
-            self.logger.error('MySQL error #{0}: {1}'.format(e.args[0], e.args[1]))
+            self.logger.error('MySQL error #{0}: {1}'.format(err.args[0], err.args[1]))
 
         # stop AMQP
         self.logger.debug('Stop AMQP...')
@@ -117,4 +146,6 @@ class Connector(object):
 
 if __name__ == '__main__':
     connector = Connector()
-    connector()
+
+    if connector.load_config():
+        connector()
