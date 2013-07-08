@@ -82,8 +82,11 @@ Ext.define('canopsis.lib.form.field.ccustom' , {
 	addPanels: function(records) {
 		if (!Ext.isArray(records))
 			records = [records];
-		for (var i = 0; i < records.length; i++)
-			this.addPanel(records[i].data.id, records[i]);
+		for (var i = 0; i < records.length; i++){
+			var nodeId = records[i].data.id
+			if(!this.panelIdByNode[nodeId])
+				this.addPanel(nodeId, records[i]);
+		}
 	},
 
 	addPanel: function(nodeId, record) {
@@ -93,8 +96,7 @@ Ext.define('canopsis.lib.form.field.ccustom' , {
 
 		var panelNumber = this.addContent(panelConfig, record);
 
-		if (record.get('_id'))
-			this.panelIdByNode[record.get('id')] = panelNumber;
+		this.panelIdByNode[record.get('id')] = panelNumber;
 
 		var button = {title: title, panelIndex: panelNumber};
 
