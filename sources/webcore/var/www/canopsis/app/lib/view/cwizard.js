@@ -209,6 +209,9 @@ Ext.define('canopsis.lib.view.cwizard' , {
 	},
 
 	checkDisplayFinishButton: function(){
+		if(this.edit)
+			return
+		
         if(this.ccard.activeButton == this.ccard.buttonPanel.items.length - 1){
             this.bbarNextButton.hide()
             this.bbarFinishButton.show()
