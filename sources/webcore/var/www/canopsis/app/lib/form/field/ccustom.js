@@ -82,8 +82,11 @@ Ext.define('canopsis.lib.form.field.ccustom' , {
 	addPanels: function(records) {
 		if (!Ext.isArray(records))
 			records = [records];
-		for (var i = 0; i < records.length; i++)
-			this.addPanel(records[i].data.id, records[i]);
+		for (var i = 0; i < records.length; i++){
+			var nodeId = records[i].data.id
+			if(!this.panelIdByNode[nodeId])
+				this.addPanel(nodeId, records[i]);
+		}
 	},
 
 	addPanel: function(nodeId, record) {
@@ -93,8 +96,7 @@ Ext.define('canopsis.lib.form.field.ccustom' , {
 
 		var panelNumber = this.addContent(panelConfig, record);
 
-		if (record.get('_id'))
-			this.panelIdByNode[record.get('id')] = panelNumber;
+		this.panelIdByNode[record.get('id')] = panelNumber;
 
 		var button = {title: title, panelIndex: panelNumber};
 
@@ -103,6 +105,15 @@ Ext.define('canopsis.lib.form.field.ccustom' , {
 
 	addContent: function(extjs_obj_array,record) {
 		var _obj = Ext.Object.merge(extjs_obj_array, this.contentPanelDefault);
+
+		//add title in front of panel
+		var panelTitle = {
+			xtype: 'panel',
+			border: false,
+			padding: '0 0 20 0',
+			html: '<center>'+this.buildTitle(record.data)+'</center>'
+		}
+		_obj.items = Ext.Array.merge(panelTitle,_obj.items)
 
 		var panel = this.contentPanel.add(_obj);
 
