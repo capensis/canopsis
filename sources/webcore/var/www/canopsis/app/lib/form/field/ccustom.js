@@ -104,6 +104,15 @@ Ext.define('canopsis.lib.form.field.ccustom' , {
 	addContent: function(extjs_obj_array,record) {
 		var _obj = Ext.Object.merge(extjs_obj_array, this.contentPanelDefault);
 
+		//add title in front of panel
+		var panelTitle = {
+			xtype: 'panel',
+			border: false,
+			padding: '0 0 20 0',
+			html: '<center>'+this.buildTitle(record.data)+'</center>'
+		}
+		_obj.items = Ext.Array.merge(panelTitle,_obj.items)
+
 		var panel = this.contentPanel.add(_obj);
 
 		if (record){
