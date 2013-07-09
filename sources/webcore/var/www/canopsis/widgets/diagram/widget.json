@@ -282,16 +282,22 @@
 			"items": [{
 						"xtype": "ccustom",
 						"sharedStore":"line_graph",
-						"customForm": [{
+						"customForm": [			{
 											"xtype":"textfield",
 											"fieldLabel":"Custom label",
 											"name":"label",
 											"emptyText":"Type the new label here"
-										},{
+										},
+										{
 											"xtype" : "ccolorfield",
 											"name" : "curve_color",
 											"fieldLabel": "Curve color",
 											"replaceWhiteColor":true
+										},{
+											"xtype": "textfield",
+											"fieldLabel": "Categorie",
+											"name": "category",
+											"emptyText": "type the category here"
 										}]
 					}]
 		}]
