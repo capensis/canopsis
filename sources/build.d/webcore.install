@@ -8,7 +8,7 @@ function install(){
 	install_basic_source $NAME
 
 	chown $HUSER $PREFIX/var/www/canopsis/resources/locales
-	#su - $HUSER -c "export http_proxy=$http_proxy && export https_proxy=$https_proxy && webcore_update_locales"
+	su - $HUSER -c "export http_proxy=$http_proxy && export https_proxy=$https_proxy && webcore_update_locales"
 	check_code $? "Impossible to download locales"
 
 	echo "global.commit='$(git log | head -1 | cut -d ' ' -f2)'" > $PREFIX/var/www/canopsis/commit.js
