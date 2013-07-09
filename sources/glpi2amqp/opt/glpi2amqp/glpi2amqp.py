@@ -34,7 +34,8 @@ class Connector(object):
                 'mysql_host': glpi2amqp_conf.mysql_host,
                 'mysql_user': glpi2amqp_conf.mysql_user,
                 'mysql_pass': glpi2amqp_conf.mysql_pass,
-                'mysql_db': glpi2amqp_conf.mysql_db
+                'mysql_db': glpi2amqp_conf.mysql_db,
+                'interval': glpi2amqp_conf.interval,
             }
 
         except AttributeError, err:
@@ -90,7 +91,6 @@ class Connector(object):
 
                 perf_data = []
 
-                # Get number of tickets closed
                 try:
                     with self.sql:
                         cursor = self.sql.cursor()
@@ -135,7 +135,7 @@ class Connector(object):
                     self.logger.error('Impossible to send log to Canopsis: \'{0}\''.format(err))
                     continue
 
-                time.sleep(1)
+                time.sleep(self.config['interval'])
 
         except Exception, err:
             self.logger.error('Exception: \'{0}\''.format(err))
