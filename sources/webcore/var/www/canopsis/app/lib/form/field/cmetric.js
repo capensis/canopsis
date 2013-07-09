@@ -89,17 +89,10 @@ Ext.define('canopsis.lib.form.field.cmetric' , {
 					{name: 'u'}
 				];
 
+
 		if (this.additional_field) {
-			for (var i = 0; i < this.additional_field.length; i++) {
-				if (this.additional_field[i].name) {
-					var name = this.additional_field[i].name;
-					fields.push({name: name});
-				}else {
-					var name = this.additional_field[i].dataIndex;
-					fields.push({name: name});
-				}
-				this.extra_field.push(name);
-			}
+			for (var i = 0; i < this.additional_field.length; i++) 
+				fields.push({name: this.additional_field[i]});
 		}
 
 		Ext.define('Meta', {
@@ -246,6 +239,7 @@ Ext.define('canopsis.lib.form.field.cmetric' , {
 
 		//additionnal columns
 		var _plugins = [];
+		/*
 		if (this.additional_field) {
 			for (var i = 0; i < this.additional_field.length; i++) {
 				if (this.additional_field[i].xtype == 'checkcolumn') {
@@ -268,7 +262,7 @@ Ext.define('canopsis.lib.form.field.cmetric' , {
 
 				}
 			}
-		}
+		}*/
 
 		/*_columns.push({
 			header: _('Unit'),
@@ -411,31 +405,11 @@ Ext.define('canopsis.lib.form.field.cmetric' , {
 		var nodes = {};
 
 		this.selected_store.each(function(record) {
-			var _id = record.get('id');
-			var component = record.get('co');
-			var resource = record.get('re');
-			var metric = record.get('me');
-			var type = record.get('t');
-			if (!Ext.isArray(metric))
-				metric = [metric];
-
-			var source_type = 'component';
-			if (resource)
-				source_type = 'resource';
-
-			var extra_field = {};
-			if (this.extra_field.length != 0) {
-				for (var i = 0; i < this.extra_field.length; i++) {
-					var value = record.get(this.extra_field[i]);
-					if (value != undefined)
-						extra_field[this.extra_field[i]] = value;
-				}
-			}
-
-			if (source_type == 'resource')
-				output.push({'id': _id, 'metrics': metric, 'resource': resource, 'component': component, 'source_type': source_type, 'extra_field': extra_field, 'type': type});
-			else
-				output.push({'id': _id, 'metrics': metric, 'component': component, 'source_type': source_type, 'extra_field': extra_field, 'type': type});
+			var data = Ext.clone(record.data)
+			//clean that
+			if(data.me)
+				data.metrics = [data.me]
+			output.push(data)
 		},this);
 
 		return output;
@@ -443,13 +417,12 @@ Ext.define('canopsis.lib.form.field.cmetric' , {
 
 	setValue: function(data) {
 		log.debug('Load values', this.logAuthor);
-
 		var metricList = []
+		
+		//retrocompatibility
 		if(Ext.isArray(data)){
-			//retrocompatibility
 			for (var i = 0; i < data.length; i++) {
 				var item = data[i];
-				//standart
 				var config = {
 					id: item.id,
 					co: item.component,
@@ -457,27 +430,26 @@ Ext.define('canopsis.lib.form.field.cmetric' , {
 					me: item.metrics,
 					t: item.type
 				};
-
-				//additionnal
-				if (item.extra_field && item.extra_field.length != 0)
-					Ext.Object.each(item.extra_field, function(key, value, myself) {
-						config[key] = value;
-					});
-
 				metricList.push(Ext.create('Meta', config))
 			}
 		}
 
 		if(Ext.isObject(data)){
 			Ext.Object.each(data, function(key, value, myself) {
-				var config = {
-					id: value.id,
-					co: value.component,
-					re: value.resource,
-					me: value.metrics,
-					t: value.type
-				};
-				metricList.push(Ext.create('Meta',config))
+				var item = Ext.clone(value)
+
+				if(!item.re || !item.co){
+					item.co = item.component,
+					item.re = item.resource,
+					item.t = item.type
+				}
+
+				if(!item.me)
+					item.me = item.metrics[0]
+
+				if(Ext.isArray)
+
+				metricList.push(Ext.create('Meta',item))
 			},this)
 		}
 

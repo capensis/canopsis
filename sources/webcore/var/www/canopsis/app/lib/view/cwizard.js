@@ -53,7 +53,8 @@ Ext.define('canopsis.lib.view.cwizard' , {
 				'canopsis.lib.form.field.cduration',
 				'canopsis.lib.form.field.cduration',
 				'canopsis.lib.form.field.ccolorfield',
-				'canopsis.lib.view.ccard'
+				'canopsis.lib.view.ccard',
+				'canopsis.lib.form.field.ccustom'
 			],
 
 	items: [{
@@ -208,6 +209,9 @@ Ext.define('canopsis.lib.view.cwizard' , {
 	},
 
 	checkDisplayFinishButton: function(){
+		if(this.edit)
+			return
+		
         if(this.ccard.activeButton == this.ccard.buttonPanel.items.length - 1){
             this.bbarNextButton.hide()
             this.bbarFinishButton.show()
@@ -241,14 +245,6 @@ Ext.define('canopsis.lib.view.cwizard' , {
                     mergedNode[node.id] = node
                 }
             }else{ 
-            	if(formType == 'ccustom'){
-	                var valueObject = values.ccustom
-	                Ext.Object.each(valueObject, function(key, value, myself) {
-	                	if(mergedNode[key] != undefined)
-	                		mergedNode[key] = Ext.Object.merge(mergedNode[key],value)
-	                },this)
-	                
-	            }
             	outputObj = Ext.Object.merge(outputObj,values)
             }
         }
@@ -256,7 +252,6 @@ Ext.define('canopsis.lib.view.cwizard' , {
         if(mergedNode.length != 0)
         	outputObj[cmetricName] = mergedNode
 
-        console.log(outputObj)
         return outputObj
     },
 });
