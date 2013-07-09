@@ -123,6 +123,20 @@ class Connector(object):
                             'type': 'GAUGE'
                         })
 
+                        # Get average time passed on tickets
+                        cursor.execute('SELECT AVG(TIME_TO_SEC(TIMEDIFF(`closedate`, `date`))) FROM glpi_tickets WHERE status = %s', ('closed',))
+
+                        perf_data.append({
+                            'metric': 'tickets_time_avg',
+                            'value': float(cursor.fetchone()),
+                            'unit': 's',
+                            'min': 0,
+                            'max': None,
+                            'warn': None,
+                            'crit': None,
+                            'type': 'GAUGE'
+                        })
+
                 except mysql.Error, err:
                     self.logger.error('MySQL error #{0}: {1}'.format(err.args[0], err.args[1]))
                     continue
