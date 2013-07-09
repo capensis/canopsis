@@ -88,22 +88,40 @@ class Connector(object):
             while self.handler.status():
                 # Generate data
 
-                data = {
-                    'component': 'glpi',
-                    'resource': 'n_tickets_closed',
-                    'timestamp': time.time(),
-                    'state': 0,
-                    'source_type': 'resource',
-                }
+                perf_data = []
 
                 # Get number of tickets closed
                 try:
                     with self.sql:
                         cursor = self.sql.cursor()
+
+                        # Get number of closed tickets
                         cursor.execute('SELECT * FROM glpi_tickets WHERE status = %s', ('closed',))
 
-                        data['output'] = '{0}'.format(cursor.rowcount)
-                        data['long_output'] = data['output']
+                        perf_data.append({
+                            'metric': 'n_tickets_closed',
+                            'value': cursor.rowcount,
+                            'unit': None,
+                            'min': 0,
+                            'max': None,
+                            'warn': None,
+                            'crit': None,
+                            'type': 'GAUGE'
+                        })
+
+                        # Get number of assigned tickets
+                        cursor.execute('SELECT * FROM glpi_tickets WHERE status = %s', ('assign',))
+
+                        perf_data.append({
+                            'metric': 'n_tickets_open',
+                            'value': cursor.rowcount,
+                            'unit': None,
+                            'min': 0,
+                            'max': None,
+                            'warn': None,
+                            'crit': None,
+                            'type': 'GAUGE'
+                        })
 
                 except mysql.Error, err:
                     self.logger.error('MySQL error #{0}: {1}'.format(err.args[0], err.args[1]))
@@ -111,11 +129,13 @@ class Connector(object):
 
                 # Send data
                 try:
-                    self.on_log(data)
+                    self.on_log(perf_data)
 
                 except Exception, err:
                     self.logger.error('Impossible to send log to Canopsis: \'{0}\''.format(err))
                     continue
+
+                time.sleep(1)
 
         except Exception, err:
             self.logger.error('Exception: \'{0}\''.format(err))
@@ -127,14 +147,13 @@ class Connector(object):
         event = cevent.forger(
             connector='glpi',
             connector_name=DAEMON_NAME,
-            component=data['component'],
-            resource=data['resource'],
-            timestamp=data['timestamp'],
-            source_type=data['source_type'],
+            component='glpi',
+            resource='mysql',
+            timestamp=int(time.time()),
+            source_type='resource',
             event_type='log',
-            state=data['state'],
-            output=data['output'],
-            long_output=data['long_output']
+            state=0,
+            perf_data_array=data
         )
 
         # Publish event
