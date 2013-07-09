@@ -24,6 +24,7 @@ Ext.define('widgets.trends.trends' , {
 	alias: 'widget.trends',
 
 	logAuthor: '[trends]',
+	requires: [ 'canopsis.lib.view.csparkline' ] ,
 
 	wcontainer_layout: 'anchor',
 
@@ -54,7 +55,6 @@ Ext.define('widgets.trends.trends' , {
 
 	getPostParams: function() {
 		var post_params = [];
-
 		Ext.Object.each(this.nodesByID, function(id, node, obj) {
 			post_params.push({
 				id: id,
@@ -77,6 +77,11 @@ Ext.define('widgets.trends.trends' , {
 	},
 
 	doRefresh: function(from, to) {
+		if ( this.from )  
+			from = this.from;
+
+		if ( this.to ) 
+			to  = this.to;
 		log.debug('Get values from ' + new Date(from) + ' to ' + new Date(to), this.logAuthor);
 
 		if (this.nodesByID && Ext.Object.getSize(this.nodesByID) != 0 ) {
@@ -143,7 +148,6 @@ Ext.define('widgets.trends.trends' , {
 				v1 = ret[0]*t1 + ret[1]
 				v2 = ret[0]*t2 + ret[1]
 
-				//console.log("v1", v1, "v2", v2)
 
 				delta = roundSignifiantDigit(v2 - v1, 2);
 				hdelta = rdr_humanreadable_value(delta, bunit)
@@ -213,20 +217,50 @@ Ext.define('widgets.trends.trends' , {
 			}
 
 			log.debug(" + Text: " + text, this.logAuthor);
+			if ( this.caller != undefined && this.caller == 'mini_chart') {
+				this.wcontainer.add({
+					layout: {
+						type: 'hbox',
+						//align: 'stretch'
+					},
+					border: 0,
+					margin: 1,
+					anchor: "100% 100%",
+					items: [
+						{ border: 0, height: this.item_height, html: String(text),  bodyStyle: { "line-height": this.item_height+ "px", "text-align": "right", "padding-right": "3px"}},
+						row
+					]
+				});
 
-			this.wcontainer.add({
-				layout: {
-					type: 'hbox',
-					//align: 'stretch'
-				},
-				border: 0,
-				margin: 1,
-				items: [
-					{ border: 0, height: this.item_height, html: node.label, flex:1, bodyStyle: { "line-height": this.item_height + "px" } },
-					{ border: 0, height: this.item_height, html: String(text), bodyStyle: { "line-height": this.item_height+ "px", "text-align": "right", "padding-right": "3px"}},
-					row
-				]
-			});
+			} else {
+				var item_to_add = {
+					layout: {
+						type: 'hbox',
+						//align: 'stretch'
+					},
+					border: 0,
+					margin: 1,
+					items: [
+						{ border: 0, height: this.item_height, html: node.label, flex:1, bodyStyle: { "line-height": this.item_height + "px" } },
+					]
+				} ;
+				if ( node.show_sparkline ) {
+					item_to_add.items.push({
+						xtype: "csparkline",
+						values: Ext.clone( values ),
+						node: Ext.clone( node ) ,
+						info: Ext.clone( data[i] ) ,
+						flex: 3,
+						chart_type: node.chart_type,
+						height: this.item_height,
+						border: false
+		
+					});
+				}
+				item_to_add.items.push( { border: 0, height: this.item_height, html: String(text), bodyStyle: { "line-height": this.item_height+ "px", "text-align": "right", "padding-right": "3px"}} );
+				item_to_add.items.push(row);
+				this.wcontainer.add( item_to_add ) ;
+			}
 		}
 	},
 
