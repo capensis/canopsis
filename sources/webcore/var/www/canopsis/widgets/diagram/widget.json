@@ -281,6 +281,7 @@
 			"title": "Customize metrics",
 			"items": [{
 						"xtype": "ccustom",
+						"advanced": true,
 						"sharedStore":"line_graph",
 						"customForm": [{
 											"xtype":"textfield",

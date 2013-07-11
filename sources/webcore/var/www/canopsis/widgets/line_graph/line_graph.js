@@ -351,6 +351,17 @@ Ext.define('widgets.line_graph.line_graph' , {
 						formatter: this.y_formatter
 					},
 					opposite: true
+				},{
+					title: { text: null },
+					labels: {
+						formatter: this.y_formatter
+					}
+				},{
+					title: { text: null },
+					labels: {
+						formatter: this.y_formatter
+					},
+					opposite: true
 				}
 			],
 			plotOptions: {
@@ -797,7 +808,12 @@ Ext.define('widgets.line_graph.line_graph' , {
 		if (node.bunit)
 			bunit = node.bunit;
 
-		if (yAxis == undefined)
+		var yAxis = node.yAxis
+
+		if(Ext.isNumber(yAxis))
+			yAxis = yAxis
+
+		if (yAxis == undefined || yAxis == "default" || yAxis == "")
 			yAxis = this.getYaxis(bunit);
 
 		var serie_index = this.chart.series.length;
@@ -955,8 +971,8 @@ Ext.define('widgets.line_graph.line_graph' , {
 		}
 
 		//Todo: in futur version yaxis is created dynamically
-		if (yaxis > 2)
-			yaxis = 2;
+		//if (yaxis > 2)
+		//	yaxis = 2;
 
 		return yaxis;
 	},
