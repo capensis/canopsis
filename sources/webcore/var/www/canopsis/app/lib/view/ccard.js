@@ -269,6 +269,14 @@ Ext.define('canopsis.lib.view.ccard' , {
             return button.hidden;
     },
 
+    isLastPanel : function(){
+        var panel = this.contentPanel.getLayout().getNext()
+        if(!panel)
+            return true
+        else
+            return false
+    },
+
     //getters
 
     getButton: function(buttonNumber) {
