@@ -165,7 +165,7 @@ def update_view_for_new_metric_format():
 
 				#check between commits
 				if 'ccustom' in item['data']:
-					if isinstance(item['data']['ccustom'], dict)
+					if isinstance(item['data']['ccustom'], dict):
 						for nodeId, customValue in item['data']['ccustom'].iteritems():
 							if nodeId in itemNodes:
 								itemNodes[nodeId].update(customValue)
