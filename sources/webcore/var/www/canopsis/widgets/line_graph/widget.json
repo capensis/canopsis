@@ -404,7 +404,7 @@
 											"area_color",
 											"trend_curve",
 											"u",
-											"yaxis"
+											"yAxis"
 										]
 						}]
 		},{
@@ -444,7 +444,7 @@
 											"queryMode": "local",
 											"displayField": "text",
 											"valueField": "value",
-											"value": "default",
+											"value":"default",
 											"store": {
 												"xtype": "store",
 												"fields": ["value", "text"],

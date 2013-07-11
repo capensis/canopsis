@@ -810,13 +810,10 @@ Ext.define('widgets.line_graph.line_graph' , {
 
 		var yAxis = node.yAxis
 
-		console.log('###############################################')
-		console.log(yAxis)
-
 		if(Ext.isNumber(yAxis))
 			yAxis = yAxis
 
-		if (yAxis == undefined)
+		if (yAxis == undefined || yAxis == "default")
 			yAxis = this.getYaxis(bunit);
 
 		var serie_index = this.chart.series.length;
