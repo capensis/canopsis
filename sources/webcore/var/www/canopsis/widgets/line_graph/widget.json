@@ -403,7 +403,8 @@
 											"Curve color",
 											"area_color",
 											"trend_curve",
-											"u"
+											"u",
+											"yaxis"
 										]
 						}]
 		},{
@@ -436,6 +437,25 @@
 											"xtype":"textfield",
 											"fieldLabel":"Unit",
 											"name":"u"
+										},{
+											"xtype": "combobox",
+											"name": "yAxis",
+											"fieldLabel": "Y axis",
+											"queryMode": "local",
+											"displayField": "text",
+											"valueField": "value",
+											"value": "default",
+											"store": {
+												"xtype": "store",
+												"fields": ["value", "text"],
+												"data" : [
+													{"value": "default", "text": "Dynamic"},
+													{"value": 1, "text": "1st axis"},
+													{"value": 2, "text": "2nd axis"},
+													{"value": 3, "text": "3rd axis"},
+													{"value": 4, "text": "4th axis"}
+												]
+											}
 										}]
 					}]
 		}]
