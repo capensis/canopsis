@@ -411,6 +411,7 @@
 			"items": [{
 						"xtype": "ccustom",
 						"sharedStore":"line_graph",
+						"advanced": true,
 						"customForm": [{
 											"xtype":"textfield",
 											"fieldLabel":"Custom label",
