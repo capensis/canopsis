@@ -93,49 +93,59 @@ class Connector(object):
 
                 try:
                     with self.sql:
-                        cursor = self.sql.cursor()
+                        cursor = self.sql.cursor(mysql.cursors.DictCursor)
 
-                        # Get number of closed tickets
-                        cursor.execute('SELECT * FROM glpi_tickets WHERE status = %s', ('closed',))
+                        # Get informations about tickets
+                        cursor.execute('''
+                            SELECT
+                                status,
+                                COUNT(*) AS total,
+                                AVG(TIME_TO_SEC(TIMEDIFF(`closedate`, `date`))) AS avgtime
+                            FROM
+                                glpi_tickets
+                            GROUP BY `status`
+                        ''')
 
-                        perf_data.append({
-                            'metric': 'n_tickets_closed',
-                            'value': cursor.rowcount,
-                            'unit': None,
-                            'min': 0,
-                            'max': None,
-                            'warn': None,
-                            'crit': None,
-                            'type': 'GAUGE'
-                        })
+                        rows = cursor.fetchall()
 
-                        # Get number of assigned tickets
-                        cursor.execute('SELECT * FROM glpi_tickets WHERE status = %s', ('assign',))
+                        for row in rows:
+                            # Generate data for assigned tickets
+                            if row['status'] == 'assign':
+                                perf_data.append({
+                                    'metric': 'n_tickets_open',
+                                    'value': row['total'],
+                                    'unit': None,
+                                    'min': 0,
+                                    'max': None,
+                                    'warn': None,
+                                    'crit': None,
+                                    'type': 'GAUGE'
+                                })
 
-                        perf_data.append({
-                            'metric': 'n_tickets_open',
-                            'value': cursor.rowcount,
-                            'unit': None,
-                            'min': 0,
-                            'max': None,
-                            'warn': None,
-                            'crit': None,
-                            'type': 'GAUGE'
-                        })
+                            # Generate data for closed tickets
+                            elif row['status'] == 'closed':
+                                perf_data.append({
+                                    'metric': 'n_tickets_closed',
+                                    'value': row['total'],
+                                    'unit': None,
+                                    'min': 0,
+                                    'max': None,
+                                    'warn': None,
+                                    'crit': None,
+                                    'type': 'GAUGE'
+                                })
 
-                        # Get average time passed on tickets
-                        cursor.execute('SELECT AVG(TIME_TO_SEC(TIMEDIFF(`closedate`, `date`))) FROM glpi_tickets WHERE status = %s', ('closed',))
-
-                        perf_data.append({
-                            'metric': 'tickets_time_avg',
-                            'value': float(cursor.fetchone()),
-                            'unit': 's',
-                            'min': 0,
-                            'max': None,
-                            'warn': None,
-                            'crit': None,
-                            'type': 'GAUGE'
-                        })
+                                # Average time passed on tickets
+                                perf_data.append({
+                                    'metric': 'tickets_time_avg',
+                                    'value': int(row['avgtime']),
+                                    'unit': 's',
+                                    'min': 0,
+                                    'max': None,
+                                    'warn': None,
+                                    'crit': None,
+                                    'type': 'GAUGE'
+                                })
 
                 except mysql.Error, err:
                     self.logger.error('MySQL error #{0}: {1}'.format(err.args[0], err.args[1]))
