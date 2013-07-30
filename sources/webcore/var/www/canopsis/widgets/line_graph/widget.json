@@ -385,6 +385,7 @@
 				"xtype":"numberfield",
 				"name": "nbMavEventsDisplayed",
 				"fieldLabel":"Maximum number of displayed events (0 for no limit)",
+				"labelWidth": 200,
 				"value": 100,
 				"minValue": 0,
 				"anchor": "50% 10%"
