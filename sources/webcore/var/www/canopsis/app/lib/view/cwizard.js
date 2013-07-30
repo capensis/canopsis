@@ -40,7 +40,6 @@ Ext.define('canopsis.lib.view.cwizard' , {
         {iconCls : 'icon-save', iconAlign: 'right',  text: 'Finish', _name:'bbarFinish', hidden:true, disabled: true}
     ],
 
-
 	requires: [
 				'canopsis.lib.form.field.cinventory',
 				'canopsis.lib.form.field.cmetric',
@@ -53,8 +52,7 @@ Ext.define('canopsis.lib.view.cwizard' , {
 				'canopsis.lib.form.field.cduration',
 				'canopsis.lib.form.field.cduration',
 				'canopsis.lib.form.field.ccolorfield',
-				'canopsis.lib.view.ccard',
-				'canopsis.lib.form.field.ccustom'
+				'canopsis.lib.view.ccard'
 			],
 
 	items: [{
