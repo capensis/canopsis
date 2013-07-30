@@ -97,7 +97,7 @@ Ext.define('canopsis.controller.Widgets', {
 		// for every item
 		var me = this;
 		Ext.Object.each(data, function(key, value, myself) {
-			if ((key == 'items' || key == 'store' || key == 'data' || key == 'additional_field' || key >= 0) && typeof(value) != 'string')
+			if ((key == 'items' || key == 'store' || key == 'data' || key == 'additional_field' || key == 'customForm' || key >= 0) && typeof(value) != 'string')
 				me.translate(xtype, value);
 
 			if (Ext.Array.contains(me.item_to_translate, key))
