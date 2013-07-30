@@ -102,20 +102,20 @@ Ext.define('canopsis.lib.view.cwizard' , {
 								xtype: 'store',
 								fields: ['value', 'text'],
 								data: [
-									{value: 0,	text: 'None'},
-									{value: 60,	text: '1 minutes'},
-									{value: 300,	text: '5 minutes'},
-									{value: 600,	text: '10 minutes'},
-									{value: 900,	text: '15 minutes'},
-									{value: 1800,	text: '30 minutes'},
-									{value: 3600,	text: '1 hour'}
+									{value: 0,	text: _('None')},
+									{value: 60,	text: '1 ' + _('minute')},
+									{value: 300,	text: '5 ' + _('minutes')},
+									{value: 600,	text: '10 ' + _('minutes')},
+									{value: 900,	text: '15 ' + _('minutes')},
+									{value: 1800,	text: '30 ' + _('minutes')},
+									{value: 3600,	text: '1 ' + _('hour')}
 								]
 							}
 						},{
 							xtype: "cduration",
 							name: "time_window",
 							value: 86400,
-							fieldLabel: "Time window"
+							fieldLabel: _('Time window')
 						}]
 					}]
 			}],
