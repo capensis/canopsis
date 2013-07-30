@@ -30,7 +30,7 @@ function post_remove(){
 
 function pre_update(){
 	echo "Pre-update $NAME $VERSION-$RELEASE ..."
-	check_code $?
+	service mongodb stop
 }
 
 function post_update(){
