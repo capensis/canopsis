@@ -247,7 +247,7 @@ Ext.define('canopsis.lib.view.ccard' , {
         }
 
         if (this._isDisabled(this.activeButton))
-            this.showStep(0);
+            this.showStep(1);
     },
 
     //css manipulation
