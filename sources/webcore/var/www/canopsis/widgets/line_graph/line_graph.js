@@ -222,14 +222,14 @@ Ext.define('widgets.line_graph.line_graph' , {
 				var firstKey =Ext.Object.getKeys(this.nodesByID)[0]
 				var firstNode = this.nodesByID[firstKey]
 				var component = firstNode.component;
-				var source_type = firstNode.source_type;
-
-				if (source_type == 'resource') {
-					var resource = firstNode.resource;
+				var resource = undefined;
+				
+				try{ resource = firstNode.resource }catch(err){}
+				
+				if (resource)
 					title = resource + ' ' + _('on') + ' ' + component;
-				}else {
+				else
 					title = component;
-				}
 			}
 		}
 		this.chartTitle = title;
