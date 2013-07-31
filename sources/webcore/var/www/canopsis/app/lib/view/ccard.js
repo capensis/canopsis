@@ -101,6 +101,9 @@ Ext.define('canopsis.lib.view.ccard' , {
             var button = configObject[i];
             var content = Ext.clone(button);
 
+            if (button.advanced == undefined)
+                button.advanced = false;
+
             if (! this.advanceMode && button.advanced == true)
                 button.hidden = true;
 
@@ -270,11 +273,20 @@ Ext.define('canopsis.lib.view.ccard' , {
     },
 
     isLastPanel : function(){
-        var panel = this.contentPanel.getLayout().getNext()
-        if(!panel)
-            return true
+        var button = undefined;
+        var i = this.activeButton + 1
+
+        do {
+            button = this.getButton(i);
+            i+=1;
+
+        } while (button && (this.advanceMode != button.advanced));
+
+        if (button)
+            return false;
         else
-            return false
+            return true;
+
     },
 
     //getters
@@ -282,6 +294,10 @@ Ext.define('canopsis.lib.view.ccard' , {
     getButton: function(buttonNumber) {
         if (buttonNumber == undefined)
             buttonNumber = this.activeButton;
+
+        if (buttonNumber >=  this.buttonPanel.items.items.length)
+            return undefined
+
         return this.buttonPanel.items.items[buttonNumber];
     },
 
