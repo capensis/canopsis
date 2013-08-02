@@ -26,7 +26,7 @@ from bottle import route, get, put, delete, request, HTTPError, response
 
 ## Canopsis
 from cstorage import get_storage
-from libexec.auth import check_auth, get_account
+from libexec.auth import get_account
 
 logger = logging.getLogger("ui-widgets")
 

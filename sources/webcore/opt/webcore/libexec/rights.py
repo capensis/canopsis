@@ -30,7 +30,7 @@ from cstorage import get_storage
 from crecord import crecord
 
 #import protection function
-from libexec.auth import check_auth, get_account
+from libexec.auth import get_account
 
 logger = logging.getLogger("rights")
 
