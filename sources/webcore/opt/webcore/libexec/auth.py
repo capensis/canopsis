@@ -42,7 +42,7 @@ session_accounts = {
 class checkAuthPlugin(object):
 	name='checkAuthPlugin'
 
-	def __init__(self,authorized_grp=[],unauthorized_grp=[]):
+	def __init__(self,authorized_grp=[], unauthorized_grp=[]):
 		self.authorized_grp = authorized_grp
 		self.unauthorized_grp = unauthorized_grp
 		self.keyword = None
@@ -89,19 +89,22 @@ class checkAuthPlugin(object):
 			if check_root(account):
 				access = True
 			else:
-				logger.debug("Check authorized_grp: %s" % authorized_grp)
-				if authorized_grp:
-					for group in authorized_grp:
-						if check_group_rights(account, group):
-							access = True
-							break
+				if not authorized_grp and not unauthorized_grp:
+					access = True
+				else:
+					logger.debug("Check authorized_grp: %s" % authorized_grp)
+					if authorized_grp:
+						for group in authorized_grp:
+							if check_group_rights(account, group):
+								access = True
+								break
 
-				logger.debug("Check unauthorized_grp and overwrite access: %s" % unauthorized_grp)
-				if unauthorized_grp:
-					for group in unauthorized_grp:
-						if check_group_rights(account, group):
-							access = False
-							break
+					logger.debug("Check unauthorized_grp and overwrite access: %s" % unauthorized_grp)
+					if unauthorized_grp:
+						for group in unauthorized_grp:
+							if check_group_rights(account, group):
+								access = False
+								break
 
 
 			#logger.debug("Check path: '%s'" % path)
