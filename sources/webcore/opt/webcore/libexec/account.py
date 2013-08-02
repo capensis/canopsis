@@ -40,7 +40,7 @@ except:
 	pass
 
 #import protection function
-from libexec.auth import check_auth, get_account, reload_account,check_group_rights
+from libexec.auth import get_account, delete_session, reload_account, check_group_rights
 
 
 logger = logging.getLogger('Account')
@@ -73,7 +73,7 @@ def account_get_me():
 		data = record.dump(json=True)
 		data['id'] = data['_id']
 		output = [data]
-		reload_account(account._id,record)
+		reload_account(account._id)
 
 	output={'total': 1, 'success': True, 'data': output}
 
@@ -150,7 +150,7 @@ def account_getAuthKey(dest_account):
 		
 	
 
-@get('/account/getNewAuthKey/:dest_account',checkAuthPlugin={'authorized_grp':'group.CPS_authkey'})
+@get('/account/getNewAuthKey/:dest_account', checkAuthPlugin={'authorized_grp':'group.CPS_authkey'})
 def account_newAuthKey(dest_account):
 	if not dest_account:
 		return HTTPError(404, 'No account specified')
@@ -242,7 +242,7 @@ def account_get(_id=None):
 
 	
 #### POST
-@post('/account/',checkAuthPlugin={'authorized_grp':group_managing_access})
+@post('/account/', checkAuthPlugin={'authorized_grp':group_managing_access})
 def account_post():
 	#get the session (security)
 	account = get_account()
@@ -269,7 +269,7 @@ def account_post():
 	if data['user']:
 		#check if already exist
 		already_exist = False
-		_id = "account." + str(data['user'])
+		_id = "account.%s" % data['user']
 		try:
 			record = storage.get(_id ,account=account)
 			logger.debug('Update account %s' % _id)
@@ -339,8 +339,6 @@ def account_update(_id=None):
 	if not isinstance(data,list):
 		data = [data]
 
-
-
 	for item in data:
 		logger.debug(item)
 		if '_id' in item:
@@ -392,15 +390,9 @@ def account_update(_id=None):
 			logger.debug('Update %s with %s' % (str(_key),item[_key]))
 			setattr(record,_key,item[_key])
 
-		storage.put(record,account=account)
-
-		#if user is itself, reload account
-		if account._id == record._id:
-			#user itself, reload
-			reload_account(record._id)
+		storage.put(record, account=account)
+		reload_account(record._id)
 	
-
-
 #### DELETE
 @delete('/account/',checkAuthPlugin={'authorized_grp':group_managing_access})
 @delete('/account/:_id',checkAuthPlugin={'authorized_grp':group_managing_access})
@@ -446,6 +438,7 @@ def account_delete(_id=None):
 	logger.debug(" + _id: %s " % _id)
 	try:
 		storage.remove(_id, account=account)
+		delete_session(_id)
 	except:
 		return HTTPError(404, _id+" Not Found")
 
