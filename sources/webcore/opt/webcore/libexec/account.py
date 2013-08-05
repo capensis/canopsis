@@ -44,6 +44,7 @@ from libexec.auth import get_account, delete_session, reload_account, check_grou
 
 
 logger = logging.getLogger('Account')
+#logger.setLevel(logging.DEBUG)
 
 #group who have right to access 
 group_managing_access = ['group.CPS_account_admin']
@@ -62,7 +63,11 @@ def account_get_me():
 
 	#try:
 	logger.debug(" + Try to get '%s' ... " % account._id)
-	record = storage.get(account._id, account=account)
+
+	try:
+		record = storage.get(account._id, account=account)
+	except:
+		return HTTPError(404, 'Impossible to find account')
 
 	#logger.debug("   + Result: '%s'" % record)
 	#except Exception, err:
