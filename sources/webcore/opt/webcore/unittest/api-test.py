@@ -79,8 +79,12 @@ def login_crypted():
 @test
 def login_authkey():
 	resp = get('/autoLogin/dummy', status=[403])
-
 	resp = get('/autoLogin/%s' % authkey, status=[200])
+	logout()
+
+	params={ 'authkey': authkey }
+	resp = get('/autoLogin/dummy', status=[403])
+	resp = get('/account/me', params=params, status=[200])
 	logout()
 
 @test
@@ -95,6 +99,7 @@ def login_checkAuthPlugin():
 	logout()
 
 	resp = get('/auth/canopsis/canopsis', status=[200])
+	resp = get('/ui/view', status=[200])
 	resp = get('/account/checkAuthPlugin1', status=[200])
 	resp = get('/account/checkAuthPlugin2', status=[403])
 

@@ -72,6 +72,7 @@ class checkAuthPlugin(object):
 			unauthorized_grp = [unauthorized_grp]
 
 		def do_auth(*args, **kawrgs):
+			logger.debug("Auth query")
 			access = False
 
 			try:
@@ -85,6 +86,8 @@ class checkAuthPlugin(object):
 			
 			if not account:
 				return HTTPError(403, "Forbidden")
+
+			logger.debug(" + _id: %s" % account._id)
 
 			if check_root(account):
 				access = True
@@ -112,11 +115,17 @@ class checkAuthPlugin(object):
 			#	access = True
 
 			authkey = request.params.get('authkey', None)
-			if not access and authkey:
+			if authkey:
 				logger.debug("Check authkey: '%s'" % authkey)
 
-				if check_authkey(authkey):
+				account = check_authkey(authkey)
+
+				if account:
+					logger.debug(" + _id: %s" % account._id)
+					create_session(account)
 					access = True
+				else:
+					logger.debug(" + Failed")
 
 			logger.debug(" + Access: %s" % access)
 
