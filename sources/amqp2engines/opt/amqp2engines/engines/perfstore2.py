@@ -76,6 +76,7 @@ class engine(cengine):
 				
 				if value == None:
 					self.logger.warning("Invalid value: '%s' (%s: %s)" % (value, rk, metric))
+					continue
 
 				try:
 					# Build Name with "component + resource + metric"
