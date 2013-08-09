@@ -718,6 +718,9 @@ msgstr "Min"
 msgid "Minute"
 msgstr "Minute"
 
+msgid "Minutes"
+msgstr "Minutes"
+
 msgid "Monday"
 msgstr "Monday"
 
@@ -1953,9 +1956,6 @@ msgstr "Display percentage in label"
 
 msgid "Time window offset"
 msgstr "Time window offset"
-
-msgid "customize metrics"
-msgstr "customize metrics"
 
 msgid "Choose avatar"
 msgstr "Choose avatar"

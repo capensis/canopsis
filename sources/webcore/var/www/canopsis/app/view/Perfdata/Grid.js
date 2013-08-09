@@ -71,7 +71,7 @@ Ext.define('canopsis.view.Perfdata.Grid' , {
 					minValue: 0,
 					step:60
 					}
-		}*/,{
+		},{
 				header: _('First point'),
 				width: 150,
 				sortable: true,
@@ -126,7 +126,7 @@ Ext.define('canopsis.view.Perfdata.Grid' , {
 				dataIndex: 'u',
 				align: 'center',
 				editor: {xtype: 'textfield'}
-		}/*,{
+		},{
 				header: _('Tags'),
 				flex: 2,
 				sortable: false,

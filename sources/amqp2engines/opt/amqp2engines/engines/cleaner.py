@@ -84,5 +84,6 @@ class engine(cengine):
 
 		event["state"]		= event.get("state", 0)
 		event["state_type"] = event.get("state_type", 1)
+		event["event_type"] = event.get("event_type", "check")
 
 		return event

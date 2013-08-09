@@ -77,8 +77,9 @@ class engine(cengine):
 				record = self.storage.get(selector._id)
 				self.logger.debug("Unload selector %s: %s" % (record._id, record.name))
 				self.storage.update(record._id, {'loaded': False})
-				del selector
-				
+
+			del self.selectors
+	
 		self.selectors = []
 		
 	def unload_all_selectors(self):

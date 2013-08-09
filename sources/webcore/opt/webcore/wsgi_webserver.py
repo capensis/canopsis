@@ -33,7 +33,11 @@ try:
 except:
 	time.sleep(2)
 	from beaker.middleware import SessionMiddleware
-	
+
+# Reduce beaker verbose
+import mongodb_beaker
+mongodb_beaker.log.setLevel(logging.INFO)
+
 #from gevent import monkey; monkey.patch_all()
 
 ## Configurations
