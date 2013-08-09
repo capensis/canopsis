@@ -29,7 +29,7 @@ except:
 
 import socket
 
-import time, logging, threading, os
+import time, logging, threading, os, traceback
 
 #from kombu.pools import producers
 
@@ -112,11 +112,12 @@ class camqp(threading.Thread):
 							time.sleep(0.5)
 					except socket.timeout:
 						pass
-					except self.connection_errors, err:
+					except self.connection_errors as err:
 						self.logger.error("Connection error ! (%s)" % err)
 						break
-					except Exception, err:
-						self.logger.exception("Unknown error:")
+					except Exception as err:
+						self.logger.error("Unknown error: %s (%s)" % (err, type(err)))
+						traceback.print_exc(file=sys.stdout)
 						break
 					
 				self.disconnect()
