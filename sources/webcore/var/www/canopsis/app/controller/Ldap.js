@@ -27,7 +27,7 @@ Ext.define('canopsis.controller.Ldap', {
 
 	logAuthor: '[controller][ldap]',
 
-	//ditMethod: 'tab',
+	//editMethod: 'tab',
 
 	init: function() {
 		log.debug('Initialize ...', this.logAuthor);
@@ -48,11 +48,10 @@ Ext.define('canopsis.controller.Ldap', {
 		store.on('load', function() {
 			var record = store.getAt(0);
 
-			log.debug('Edit:', this.logAuthor);
-			log.dump(record);
-
-			//if (record)
+			if (record)
 				this._editRecord(undefined, record, 0, store)
+			else
+				this._showForm(undefined, store)
 
 		}, this, {single: true});
 
