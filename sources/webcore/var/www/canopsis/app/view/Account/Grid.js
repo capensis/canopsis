@@ -36,6 +36,13 @@ Ext.define('canopsis.view.Account.Grid' , {
 	opt_menu_authKey: true,
 	opt_bar_enable: true,
 
+	opt_bar_customs: [{
+		text: 'Ldap',
+		xtype: 'button',
+		iconCls: 'icon-book',
+		action: 'ldap'
+	}],
+
 	columns: [
 		{
 			header: '',
@@ -43,6 +50,12 @@ Ext.define('canopsis.view.Account.Grid' , {
 			sortable: false,
 			renderer: rdr_crecord_type,
 			dataIndex: 'crecord_type'
+		},{
+			header: '',
+			width: 25,
+			sortable: false,
+			renderer: function(val) { if (val == true) return "<span class='icon icon-book_link' />"; },
+			dataIndex: 'external'
 		},{
 			header: _('Enabled'),
 			align: 'center',

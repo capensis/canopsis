@@ -18,27 +18,60 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 */
-Ext.define('canopsis.model.Account', {
-    extend: 'Ext.data.Model',
-    fields: [
-		{name: '_id'},
-		{name: 'id', mapping: '_id'},
-		{name: 'crecord_type'},
-		{name: 'firstname'},
-		{name: 'lastname'},
-		{name: 'user'},
-		{name: 'mail'},
-		{name: 'groups' , type: 'array'},
-		{name: 'passwd'},
-		{name: 'clock_type', defaultValue: 'auto'},
-		{name: 'enable', defaultValue:'true'},
-		{name: 'external', defaultValue:'false'},
+Ext.define('canopsis.controller.Ldap', {
+	extend: 'canopsis.lib.controller.cgrid',
 
+	views: ['Ldap.Form'],
+	stores: ['Ldaps'],
+	models: ['Ldap'],
+
+	logAuthor: '[controller][ldap]',
+
+	//ditMethod: 'tab',
+
+	init: function() {
+		log.debug('Initialize ...', this.logAuthor);
+
+		this.formXtype = 'LdapForm';
+		this.listXtype = undefined;
+
+		this.modelId = 'Ldap';
+
+		this.callParent(arguments);
+	},
+
+	accountButton: function(){
+		var store = this.getStore('Ldaps');
+
+		this.grid = this.getController('Account').grid;
+		
+		store.on('load', function() {
+			var record = store.getAt(0);
+
+			log.debug('Edit:', this.logAuthor);
+			log.dump(record);
+
+			//if (record)
+				this._editRecord(undefined, record, 0, store)
+
+		}, this, {single: true});
+
+		store.load();
+	},
+
+
+	preSave: function(record, data, form) {
+		record.set('id', "ldap.config");
+		//record.set('groups', groups);
+		/*
 		{name: 'aaa_access_group', defaultValue: undefined},
 		{name: 'aaa_access_other', defaultValue: undefined},
 		{name: 'aaa_access_owner', defaultValue: undefined},
 		{name: 'aaa_admin_group', defaultValue: undefined},
 		{name: 'aaa_group', defaultValue: undefined},
-		{name: 'aaa_owner', defaultValue: undefined}
-	]
+		{name: 'aaa_owner', defaultValue: undefined},
+		*/
+		return record;
+	}
+
 });

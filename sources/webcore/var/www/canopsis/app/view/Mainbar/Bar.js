@@ -380,14 +380,11 @@ Ext.define('canopsis.view.Mainbar.Bar' , {
 			}
 		]);
 
-		//Preferences menu
-		menu_preferences = menu_preferences.concat([
-			this.localeSelector,
-			this.clockTypeSelector,
-			'-',
-			this.dashboardSelector,
-			this.avatarSelector,
-			{
+		
+		this.changePass = undefined;
+
+		if (! global.account.external)
+			this.changePass = {
 				iconCls: 'no-icon',
 				text: _('Change your password'),
 				onClick: function() {
@@ -395,6 +392,15 @@ Ext.define('canopsis.view.Mainbar.Bar' , {
 					win.show();
 				}
 			}
+
+		//Preferences menu
+		menu_preferences = menu_preferences.concat([
+			this.localeSelector,
+			this.clockTypeSelector,
+			'-',
+			this.dashboardSelector,
+			this.avatarSelector,
+			this.changePass
 		]);
 
 
