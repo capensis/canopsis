@@ -27,7 +27,7 @@ Ext.define('canopsis.auth' , {
 
 	logAuthor: '[auth]',
 
-	title: _('Authentification'),
+	title: _('Authentication'),
 
 	renderTo: 'auth_form',
 
