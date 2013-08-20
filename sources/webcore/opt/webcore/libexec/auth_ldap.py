@@ -140,7 +140,8 @@ def prov(user, password):
 			if isinstance(value, list) and len(value):
 				value = value[0]
 
-			info[field] =  str(value).title()
+		info["lastname"] =  str(info["lastname"]).title()
+		info["firstname"] =  str(info["firstname"]).title()
 
 		info["user"] = user
 		info["passwd"] = password
