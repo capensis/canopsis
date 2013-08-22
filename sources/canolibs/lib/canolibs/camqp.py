@@ -110,11 +110,14 @@ class camqp(threading.Thread):
 							self.conn.drain_events(timeout=0.5)
 						else:
 							time.sleep(0.5)
+
 					except socket.timeout:
 						pass
+
 					except self.connection_errors as err:
 						self.logger.error("Connection error ! (%s)" % err)
 						break
+
 					except Exception as err:
 						self.logger.error("Unknown error: %s (%s)" % (err, type(err)))
 						traceback.print_exc(file=sys.stdout)
@@ -145,7 +148,7 @@ class camqp(threading.Thread):
 				self.logger.info("Connected to AMQP Broker.")
 				self.producers = kombu.pools.Producers(limit=10)
 				self.connected = True
-			except Exception, err:
+			except Exception as err:
 				self.conn.release()
 				self.logger.error("Impossible to connect (%s)" % err)
 			
@@ -162,10 +165,10 @@ class camqp(threading.Thread):
 						for exchange_name in self.exchanges:
 							self.logger.debug(" + %s" % exchange_name)
 							self.exchanges[exchange_name](self.chan).declare()
-					except Exception, err:
+					except Exception as err:
 						self.logger.error("Impossible to declare exchange (%s)" % err)
 					
-				except Exception, err:
+				except Exception as err:
 					self.logger.error(err)
 		else:
 			self.logger.debug("Allready connected")
@@ -306,10 +309,16 @@ class camqp(threading.Thread):
 				del exchange
 			self.exchanges = {}
 
-			kombu.pools.reset()
-			
-			self.conn.release()
-			del self.conn
+			try:
+				kombu.pools.reset()
+			except Exception as err:
+				self.logger.error("Impossible to reset kombu pools: %s (%s)" % (err, type(err)))
+
+			try:
+				self.conn.release()
+				del self.conn
+			except Exception as err:
+				self.logger.error("Impossible to release connection: %s (%s)" % (err, type(err)))
 
 			self.connected = False
 
