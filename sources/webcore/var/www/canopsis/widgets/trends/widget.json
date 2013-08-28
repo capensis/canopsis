@@ -50,7 +50,7 @@
 						"metrics": true,
 						"sharedStore": "trends",
 						"additional_field": [
-							"label","ma"
+							"label","ma", "show_sparkline", "curve_color", "area_color", "chart_type"
 						]
 					}]
 		},{
@@ -70,8 +70,8 @@
 										"decimalPrecision": 5
 									},{
 										"xtype": "cfieldset",
-										"title": "Sparklines",
-										"items": [{
+										"title": "Sparklines"
+									},{
 											"xtype": "checkbox",
 											"fieldLabel": "Show a thumb Graph",
 											"checked": false,
@@ -107,5 +107,4 @@
 										}]
 									}]
 					}]
-	}]
 }]
