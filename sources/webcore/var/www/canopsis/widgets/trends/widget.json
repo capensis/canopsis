@@ -55,7 +55,6 @@
 					}]
 		},{
 			"title": "Customize metrics",
-			"advanced": true,
 			"items": [{
 						"xtype": "ccustom",
 						"sharedStore":"trends",
