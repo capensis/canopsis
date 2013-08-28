@@ -35,7 +35,7 @@ Ext.define('canopsis.lib.view.csparkline' , {
 
 		//Find the unit
 		var unit = '';
-		if ( this.SeriePercent && this.info['max'] )
+		if ( this.node['display_pct'] )
 			unit = '%';
 		else if (this.node['u'] ) 
 			unit = this.node['u'] ;
