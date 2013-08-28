@@ -120,7 +120,6 @@ Ext.define('widgets.mini_chart.mini_chart' , {
 		return '/perfstore/values' + '/' + parseInt(from / 1000) + '/' + parseInt(to / 1000);
 	},
 	buildOptions : function(info, values, serie_panel, i ) {
-		
 		var node = info['node'] ;
 		
 		//Find the print label
@@ -132,7 +131,7 @@ Ext.define('widgets.mini_chart.mini_chart' , {
 
 		//Find the unit
 		var unit = '';
-		if ( this.SeriePercent && info['max'] )
+		if ( this.nodesByID[node]['display_pct'] )
 			unit = '%';
 		else if (this.nodesByID[node]['u'] ) 
 			unit = this.nodesByID[node]['u'] ;
@@ -189,8 +188,8 @@ Ext.define('widgets.mini_chart.mini_chart' , {
 		//MAKE A BETTER LOOP, JUST FOR TEST
 		for (var i = 0; i < values.length; i++) {
 			values[i][0] = values[i][0] * 1000;
-
-			if (this.SeriePercent && serie.max > 0) { 
+			
+			if (this.nodesByID[serie.node]['display_pct'] && serie.max > 0) { 
 				values[i][1] = getPct(values[i][1], serie.max);
 			}
 
@@ -220,6 +219,7 @@ Ext.define('widgets.mini_chart.mini_chart' , {
 						else 
 								label = info['metric'] ;
 
+						info['metric'] = label;
 						//Add a component with the print label
 						this.series[node].add( {
 							xtype:"panel",
@@ -228,7 +228,7 @@ Ext.define('widgets.mini_chart.mini_chart' , {
 							html: "<div><b>"+label+"</b></div>",
 							border: false 
 						});
-			
+						
 						//We add the serie panel
 						var serie_panel = this.series[node].add ( {
 							xtype: "csparkline",
@@ -243,8 +243,8 @@ Ext.define('widgets.mini_chart.mini_chart' , {
 								marginRight:'auto'
 							}*/
 						} ) ;
-						this.charts[node] = true;	
-						if (this.nodesByID[node]['printed_value'] == 'last_value' ) {
+						this.charts[node] = true;
+						if (this.nodesByID[node]['printed_value']  ) {
 								this.series[node].add( {
 									xtype: "panel",
 									flex: 2,
@@ -252,35 +252,7 @@ Ext.define('widgets.mini_chart.mini_chart' , {
 									border: false,
 									html : "<div><b>"+values[ values.length - 1][1]+"</b></div>"
 								}) ;
-						} else if ( this.nodesByID[node]['printed_value'] == 'trend' ) {
-								var nByID = { } ;
-								nByID[node] = Ext.clone( this.nodesByID[node] ) ;
-								this.series[node].add( {
-									xtype: "trends",
-									flex: 3,
-									bodyCls: "valigncenter-child padding-left",
-									bodyStyle: {
-										padding:"0px",
-										margin:"0px",
-										width: "100%",
-									},
-									height: this.series[node].getHeight(),
-									border: false,
-									nodes: nByID,
-									nodesByID: nByID,
-									margin:0,
-									aggregate_method : this.aggregate_method,
-									aggregate_interval: this.aggregate_interval,
-									aggregate_max_points: this.aggregate_max_points,
-									display_pct: this.nodesByID[node]['display_pct'],
-									colorLow: this.nodesByID[node]['colorLow'],
-									colorMid: this.nodesByID[node]['colorMid'],
-									colorHight: this.nodesByID[node]['colorHight'],	
-									from: this.from, 
-									to: this.to,
-									caller: "mini_chart"
-								}) ; 
-						}
+						} 
 						//We display the last value or the evolution
 				}
 		} else {

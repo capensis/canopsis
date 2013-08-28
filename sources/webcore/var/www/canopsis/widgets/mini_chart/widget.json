@@ -97,14 +97,18 @@
 	},{
 	"title": "Choose Metrics",
 	"items": [{					
-		"xtype": "cmetric",
-		"name": "nodes",
-		"multiSelect": true,
-		"metrics": true,
-		"sharedStore":"line_graph"
+						"xtype": "cmetric",
+						"name": "nodes",
+						"multiSelect": true,
+						"metrics": true,
+						"sharedStore":"line_graph",
+						"additional_field": [
+							"label","curve_color", "area_color", "last_value", "u", "display_pct", "colorLow", "colorMid", "colorHight"
+						]
 	}]
 	},{
 			"title": "customize metrics",
+			"advanced": true,
 			"items": [{
 						"xtype": "ccustom",
 						"sharedStore":"line_graph",
@@ -125,44 +129,24 @@
 											"replaceWhiteColor":true
 										},{
 											"xtype": "checkbox",
-											"fieldLabel": "Display in pct",
+											"fieldLabel": "Show last value",
 											"checked": true,
-											"name": "last_value"
+											"name": "printed_value"
 										
 										},{
 											"xtype":"textfield",
 											"fieldLabel":"Unit",
 											"name":"u"
-										},{
-											"xtype": "cfieldset",
-											"title": "Customize Trends' Style",
-											"items": [
-											{
+										},{									
 												"xtype": "checkbox",
 												"fieldLabel": "Display in pct",
 												"checked": true,
 												"name": "display_pct"
-											},{
-												"xtype" : "ccolorfield",
-												"name" : "colorLow",
-												"fieldLabel": "Low color",
-												"value": "#1BE01B"
-											},{
-												"xtype" : "ccolorfield",
-												"name" : "colorMid",
-												"fieldLabel": "Middle color",
-												"value": "#E0E0E0"
-											},{
-												"xtype" : "ccolorfield",
-												"name" : "colorHight",
-												"fieldLabel": "Hight color",
-												"value": "#E0251B"
-											}
-										]
+										}
 
-										}]
-			}]
-	}]
+					]
+				}]
+		}]
 
 }]
 
