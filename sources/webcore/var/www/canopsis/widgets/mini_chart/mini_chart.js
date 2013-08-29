@@ -212,48 +212,55 @@ Ext.define('widgets.mini_chart.mini_chart' , {
 						if ( this.series[node] ) 
 								this.series[node].removeAll();
 
+						if ( Ext.ComponentQuery.query('#'+this.series[node].getId() +" > csparkline").length  == 0 ) { 
 						//Find the print label
-						var label ;
-						if ( this.nodesByID[node]['label'] ) 
-								label = this.nodesByID[node]['label'] ;
-						else 
-								label = info['metric'] ;
-
-						info['metric'] = label;
-						//Add a component with the print label
-						this.series[node].add( {
-							xtype:"panel",
-							flex: 2,	
-							bodyCls: "valigncenter",
-							html: "<div><b>"+label+"</b></div>",
-							border: false 
-						});
+							var label ;
+							if ( this.nodesByID[node]['label'] ) 
+									label = this.nodesByID[node]['label'] ;
+							else 
+									label = info['metric'] ;
+	
+							info['metric'] = label;
+							//Add a component with the print label
+							this.series[node].add( {
+								xtype:"panel",
+								flex: 2,	
+								bodyCls: "valigncenter",
+								html: "<div><b>"+label+"</b></div>",
+								border: false 
+							});
 						
-						//We add the serie panel
-						var serie_panel = this.series[node].add ( {
-							xtype: "csparkline",
-							values: Ext.clone( values ),
-							node: Ext.clone( this.nodesByID[node] ) ,
-							info: Ext.clone( info) ,
-							flex: 4,
-							chart_type: this.chart_type,
-							border: false
-							/*style: {
-								marginLeft: 'auto',
-								marginRight:'auto'
-							}*/
-						} ) ;
-						this.charts[node] = true;
-						if (this.nodesByID[node]['printed_value']  ) {
-								this.series[node].add( {
-									xtype: "panel",
-									flex: 2,
-									bodyCls: "valigncenter padding-left",
-									border: false,
-									html : "<div><b>"+values[ values.length - 1][1]+"</b></div>"
-								}) ;
-						} 
+							//We add the serie panel
+							var serie_panel = this.series[node].add ( {
+								xtype: "csparkline",
+								values: Ext.clone( values ),
+								node: Ext.clone( this.nodesByID[node] ) ,
+								info: Ext.clone( info) ,
+								flex: 4,
+								chart_type: this.chart_type,
+								border: false
+								/*style: {
+									marginLeft: 'auto',
+									marginRight:'auto'
+								}*/
+							} ) ;
+							this.charts[node] = true;
+							if (this.nodesByID[node]['printed_value']  ) {
+									this.series[node].add( {
+										xtype: "panel",
+										flex: 2,
+										bodyCls: "valigncenter padding-left",
+										border: false,
+										html : "<div><b>"+values[ values.length - 1][1]+"</b></div>"
+									}) ;
+							} 
 						//We display the last value or the evolution
+						} else {
+							//we redraw only the graph and update the last value
+							Ext.ComponentQuery.query('#'+this.series[node].getId() +" > csparkline")[0].addValues(values);
+							if ( Ext.ComponentQuery.query('#'+this.series[node].getId() +" > panel").length == 2 ) 
+								Ext.ComponentQuery.query('#'+this.series[node].getId() +" > panel")[1].setHtml("<div><b>"+values[ values.length - 1][1]+"</b></div>") ;
+						}
 				}
 		} else {
 			this.getEl().mask(_('No data on interval'));
@@ -263,6 +270,11 @@ Ext.define('widgets.mini_chart.mini_chart' , {
 	afterContainerRender: function() {
 		var me = this ;
 		Ext.Object.each(this.nodesByID, function(id, node, obj) {
+			var pTop = 1;
+			var pBottom = 5;
+			var gHeight = me.getSize().height - pTop - pBottom-5;
+			if ( me.header != undefined ) 
+				gHeight = gHeight - me.header.getSize().height ;
 			var serie  = {
 				layout: {
 					type: "hbox",
@@ -271,11 +283,11 @@ Ext.define('widgets.mini_chart.mini_chart' , {
 				style: {
 					paddingLeft: '10px',
 					paddingRight: '0px',
-					paddingTop: '1px',
-					paddingBottom: '5px'
+					paddingTop: pTop+'px',
+					paddingBottom: pBottom+'px'
 				},
 				width: me.getSize().width,
-				height: me.getSize().height / Ext.Object.getSize(me.nodesByID),
+				height: gHeight / Ext.Object.getSize(me.nodesByID),
 				border: false
 			};
 			me.series[id] = me.wcontainer.add( serie ) ;

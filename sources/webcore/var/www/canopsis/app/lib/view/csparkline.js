@@ -88,7 +88,13 @@ Ext.define('canopsis.lib.view.csparkline' , {
 		//return options;
 
 	},
-
+	addValues: function(values) {
+		this.values = this.values.slice(values.length);
+		for ( var i=0; i < values.length; i++ ) {
+			this.values.push( values[i] ) ;
+		}
+		this.buildSparkline();
+	},
 	tooltipFormatter: function(sparkline, options, fields) {
 		$('.tooltip-sparkline').css('border-color', options.userOptions.lineColor);
 
