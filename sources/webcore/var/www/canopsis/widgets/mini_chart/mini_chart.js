@@ -270,6 +270,11 @@ Ext.define('widgets.mini_chart.mini_chart' , {
 	afterContainerRender: function() {
 		var me = this ;
 		Ext.Object.each(this.nodesByID, function(id, node, obj) {
+			var pTop = 1;
+			var pBottom = 5;
+			var gHeight = me.getSize().height - pTop - pBottom-5;
+			if ( me.header != undefined ) 
+				gHeight = gHeight - me.header.getSize().height ;
 			var serie  = {
 				layout: {
 					type: "hbox",
@@ -278,11 +283,11 @@ Ext.define('widgets.mini_chart.mini_chart' , {
 				style: {
 					paddingLeft: '10px',
 					paddingRight: '0px',
-					paddingTop: '1px',
-					paddingBottom: '5px'
+					paddingTop: pTop+'px',
+					paddingBottom: pBottom+'px'
 				},
 				width: me.getSize().width,
-				height: me.getSize().height / Ext.Object.getSize(me.nodesByID),
+				height: gHeight / Ext.Object.getSize(me.nodesByID),
 				border: false
 			};
 			me.series[id] = me.wcontainer.add( serie ) ;
