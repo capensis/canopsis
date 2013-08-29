@@ -22,9 +22,20 @@ Ext.define('canopsis.lib.view.csparkline' , {
 	extend: 'Ext.panel.Panel',
 	layout: "fit",
 	alias: 'widget.csparkline',
+
+	listeners: {
+		afterlayout: function(el, eventName, handler, t) {
+			this.buildSparkline();
+		},
+		resize: function() {
+			this.buildSparkline();
+		}
+	},
+
 	initComponent: function() {
 		this.callParent(arguments);
 	},
+
 	buildOptions : function( ) {
 		//Find the print label
 		var label ;
@@ -57,32 +68,39 @@ Ext.define('canopsis.lib.view.csparkline' , {
 			area_color = curve_color;
 		else
 			area_color = chroma.hex( curve_color ).brighten(20).hex();
+
 		var options = {
-					width: this.getWidth(), 
-					height: this.getHeight(),
-					chartRangeMinX: this.values[0][0],
-					chartRangeMaxX: this.values[this.values.length - 1][0],
-					lineColor: curve_color,
-					fillColor: area_color,
-					barColor: area_color,
-					tooltipClassname: 'tooltip-minichart',
-					metric: label,
-					unit: unit,
-					chart_type: this.chart_type,
-					original_values: Ext.clone( this.values ),	
-					tooltipFormatter: function(sparkline, options, fields) {
-						$(document ).find('.tooltip-minichart').css('border', '2px solid '+curve_color);
-						if ( options.userOptions.chart_type == 'line_graph' ) 
-							return '<b>' + rdr_tstodate(Math.round(fields['x'])) + '</b><br>' + options.userOptions.metric + ': ' + fields['y'] + ' ' + options.userOptions.unit;
-						return '<b>'+rdr_tstodate(Math.round( options.userOptions.original_values[fields[0].offset][0] / 1000 ) )+'</b><br />'+options.userOptions.metric+' : '+fields[0].value+' '+options.userOptions.unit ; 
-					} 
+			width: this.getWidth(), 
+			height: this.getHeight(),
+			chartRangeMinX: this.values[0][0],
+			chartRangeMaxX: this.values[this.values.length - 1][0],
+			lineColor: curve_color,
+			fillColor: area_color,
+			barColor: area_color,
+			tooltipClassname: 'tooltip-minichart',
+			metric: label,
+			unit: unit,
+			chart_type: this.chart_type,
+			original_values: Ext.clone( this.values ),	
+			tooltipFormatter: this.tooltipFormatter
 		} ;
 		this.options = options ;
 		//return options;
 
 	},
+
+	tooltipFormatter: function(sparkline, options, fields) {
+		$(document).find('.tooltip-minichart').css('border', '2px solid '+curve_color);
+		
+		if ( options.userOptions.chart_type == 'line_graph' ) 
+			return '<b>' + rdr_tstodate(Math.round(fields['x'])) + '</b><br>' + options.userOptions.metric + ': ' + fields['y'] + ' ' + options.userOptions.unit;
+
+		return '<b>'+rdr_tstodate(Math.round( options.userOptions.original_values[fields[0].offset][0] / 1000 ) )+'</b><br />'+options.userOptions.metric+' : '+fields[0].value+' '+options.userOptions.unit ; 
+	},
+
 	buildSparkline : function() {
 		this.buildOptions();
+
 		if ( this.chart_type == 'column' ) {
 			var new_values = new Array();
 			for ( var i=0; i < this.values.length; i++ ){
@@ -97,13 +115,5 @@ Ext.define('canopsis.lib.view.csparkline' , {
 			$('#'+this.getId() ).sparkline(Ext.clone( this.values ) , this.options );
 		}
 
-	},
-	listeners: {
-		afterlayout: function(el, eventName, handler, t) {
-			this.buildSparkline();
-		},
-		resize: function() {
-			this.buildSparkline();
-		}
 	}
 });
