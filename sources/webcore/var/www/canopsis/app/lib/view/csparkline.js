@@ -90,7 +90,6 @@ Ext.define('canopsis.lib.view.csparkline' , {
 	},
 
 	tooltipFormatter: function(sparkline, options, fields) {
-		console.log(options.lineColor)
 		$('.tooltip-sparkline').css('border-color', options.userOptions.lineColor);
 
 		var html;
