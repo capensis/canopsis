@@ -77,7 +77,7 @@ Ext.define('canopsis.lib.view.csparkline' , {
 			lineColor: curve_color,
 			fillColor: area_color,
 			barColor: area_color,
-			tooltipClassname: 'tooltip-minichart',
+			tooltipClassname: 'tooltip-sparkline',
 			metric: label,
 			unit: unit,
 			chart_type: this.chart_type,
@@ -90,12 +90,17 @@ Ext.define('canopsis.lib.view.csparkline' , {
 	},
 
 	tooltipFormatter: function(sparkline, options, fields) {
-		$(document).find('.tooltip-minichart').css('border', '2px solid '+curve_color);
-		
-		if ( options.userOptions.chart_type == 'line_graph' ) 
-			return '<b>' + rdr_tstodate(Math.round(fields['x'])) + '</b><br>' + options.userOptions.metric + ': ' + fields['y'] + ' ' + options.userOptions.unit;
+		console.log(options.lineColor)
+		$('.tooltip-sparkline').css('border-color', options.userOptions.lineColor);
 
-		return '<b>'+rdr_tstodate(Math.round( options.userOptions.original_values[fields[0].offset][0] / 1000 ) )+'</b><br />'+options.userOptions.metric+' : '+fields[0].value+' '+options.userOptions.unit ; 
+		var html;
+
+		if ( options.userOptions.chart_type == 'line_graph' ) 
+			html = '<b>' + rdr_tstodate(Math.round(fields['x'])) + '</b><br>' + options.userOptions.metric + ': ' + fields['y'] + ' ' + options.userOptions.unit;
+		else
+			html = '<b>' + rdr_tstodate(Math.round( options.userOptions.original_values[fields[0].offset][0] / 1000 ) ) + '</b><br />' + options.userOptions.metric + ' : ' + fields[0].value + ' ' + options.userOptions.unit; 
+
+		return html;
 	},
 
 	buildSparkline : function() {
