@@ -208,9 +208,6 @@ Ext.define('widgets.mini_chart.mini_chart' , {
 						var node = info['node'] ;
 						var values = this.parseValues( info, info['values'] ) ;
 
-						//clean the series
-						if ( this.series[node] ) 
-								this.series[node].removeAll();
 
 						if ( Ext.ComponentQuery.query('#'+this.series[node].getId() +" > csparkline").length  == 0 ) { 
 						//Find the print label
@@ -258,8 +255,8 @@ Ext.define('widgets.mini_chart.mini_chart' , {
 						} else {
 							//we redraw only the graph and update the last value
 							Ext.ComponentQuery.query('#'+this.series[node].getId() +" > csparkline")[0].addValues(values);
-							if ( Ext.ComponentQuery.query('#'+this.series[node].getId() +" > panel").length == 2 ) 
-								Ext.ComponentQuery.query('#'+this.series[node].getId() +" > panel")[1].setHtml("<div><b>"+values[ values.length - 1][1]+"</b></div>") ;
+							if ( Ext.ComponentQuery.query('#'+this.series[node].getId() +" > panel").length == 3 ) 
+								Ext.ComponentQuery.query('#'+this.series[node].getId() +" > panel")[2].update("<div><b>"+values[ values.length - 1][1]+"</b></div>") ;
 						}
 				}
 		} else {
@@ -282,7 +279,7 @@ Ext.define('widgets.mini_chart.mini_chart' , {
 				},
 				style: {
 					paddingLeft: '10px',
-					paddingRight: '0px',
+					paddingRight: '5px',
 					paddingTop: pTop+'px',
 					paddingBottom: pBottom+'px'
 				},

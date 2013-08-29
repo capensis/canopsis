@@ -130,7 +130,7 @@
 										},{
 											"xtype": "checkbox",
 											"fieldLabel": "Show last value",
-											"checked": true,
+											"checked": false,
 											"name": "printed_value"
 										
 										},{
