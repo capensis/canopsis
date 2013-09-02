@@ -23,7 +23,7 @@ import bottle
 from bottle import route, get, put, delete, request, HTTPError, post, response
 
 #import protection function
-from libexec.auth import check_auth, get_account
+from libexec.auth import get_account
 
 #group_managing_access = ['']
 #########################################################################

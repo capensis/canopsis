@@ -26,7 +26,7 @@ import bottle
 from bottle import route, get, post, put, delete, request, HTTPError, response
 
 #import protection function
-from libexec.auth import check_auth, get_account
+from libexec.auth import get_account
 
 # Modules
 from ctools import parse_perfdata, clean_mfilter

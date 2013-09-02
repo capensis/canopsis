@@ -385,6 +385,7 @@
 				"xtype":"numberfield",
 				"name": "nbMavEventsDisplayed",
 				"fieldLabel":"Maximum number of displayed events (0 for no limit)",
+				"labelWidth": 200,
 				"value": 100,
 				"minValue": 0,
 				"anchor": "50% 10%"
@@ -403,11 +404,13 @@
 											"Curve color",
 											"area_color",
 											"trend_curve",
-											"u"
+											"u",
+											"yAxis"
 										]
 						}]
 		},{
 			"title": "customize metrics",
+			"advanced": true,
 			"items": [{
 						"xtype": "ccustom",
 						"sharedStore":"line_graph",
@@ -435,6 +438,25 @@
 											"xtype":"textfield",
 											"fieldLabel":"Unit",
 											"name":"u"
+										},{
+											"xtype": "combobox",
+											"name": "yAxis",
+											"fieldLabel": "Y axis",
+											"queryMode": "local",
+											"displayField": "text",
+											"valueField": "value",
+											"value":"default",
+											"store": {
+												"xtype": "store",
+												"fields": ["value", "text"],
+												"data" : [
+													{"value": "default", "text": "Dynamic"},
+													{"value": 1, "text": "1st axis"},
+													{"value": 2, "text": "2nd axis"},
+													{"value": 3, "text": "3rd axis"},
+													{"value": 4, "text": "4th axis"}
+												]
+											}
 										}]
 					}]
 		}]

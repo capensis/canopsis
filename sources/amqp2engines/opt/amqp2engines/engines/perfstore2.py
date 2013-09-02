@@ -74,6 +74,10 @@ class engine(cengine):
 					
 				self.logger.debug(" + Put metric '%s' (%s %s (%s)) for ts %s ..." % (metric, value, unit, dtype, timestamp))
 				
+				if value == None:
+					self.logger.warning("Invalid value: '%s' (%s: %s)" % (value, rk, metric))
+					continue
+
 				try:
 					# Build Name with "component + resource + metric"
 					name=None

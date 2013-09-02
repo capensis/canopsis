@@ -222,14 +222,14 @@ Ext.define('widgets.line_graph.line_graph' , {
 				var firstKey =Ext.Object.getKeys(this.nodesByID)[0]
 				var firstNode = this.nodesByID[firstKey]
 				var component = firstNode.component;
-				var source_type = firstNode.source_type;
-
-				if (source_type == 'resource') {
-					var resource = firstNode.resource;
+				var resource = undefined;
+				
+				try{ resource = firstNode.resource }catch(err){}
+				
+				if (resource)
 					title = resource + ' ' + _('on') + ' ' + component;
-				}else {
+				else
 					title = component;
-				}
 			}
 		}
 		this.chartTitle = title;
@@ -340,6 +340,17 @@ Ext.define('widgets.line_graph.line_graph' , {
 					title: { text: null },
 					labels: { enabled: false },
 					max: 100
+				},{
+					title: { text: null },
+					labels: {
+						formatter: this.y_formatter
+					}
+				},{
+					title: { text: null },
+					labels: {
+						formatter: this.y_formatter
+					},
+					opposite: true
 				},{
 					title: { text: null },
 					labels: {
@@ -797,7 +808,12 @@ Ext.define('widgets.line_graph.line_graph' , {
 		if (node.bunit)
 			bunit = node.bunit;
 
-		if (yAxis == undefined)
+		var yAxis = node.yAxis
+
+		if(Ext.isNumber(yAxis))
+			yAxis = yAxis
+
+		if (yAxis == undefined || yAxis == "default" || yAxis == "")
 			yAxis = this.getYaxis(bunit);
 
 		var serie_index = this.chart.series.length;
@@ -955,8 +971,8 @@ Ext.define('widgets.line_graph.line_graph' , {
 		}
 
 		//Todo: in futur version yaxis is created dynamically
-		if (yaxis > 2)
-			yaxis = 2;
+		//if (yaxis > 2)
+		//	yaxis = 2;
 
 		return yaxis;
 	},

@@ -30,6 +30,7 @@ Ext.define('canopsis.lib.form.field.cfieldset' , {
 	collapsible: false,
 	collapsed: false,
 	border:false,
+	defaults: { labelWidth: 200 }, 
 
 	//style : {'border-width': "1px 0px 0px 0px"},
 
