@@ -193,8 +193,9 @@ def account_get(_id=None):
 	
 	#get the session (security)
 	account = get_account()
-	#if not check_group_rights(account,'group.account_managing'):
-	#	return HTTPError(403, 'Insufficient rights')
+
+	if not check_group_rights(account, 'group.account_managing'):
+		return HTTPError(403, 'Insufficient rights')
 
 	limit = int(request.params.get('limit', default=20))
 	#page =  int(request.params.get('page', default=0))
