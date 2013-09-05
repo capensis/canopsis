@@ -575,9 +575,8 @@ Ext.define('widgets.line_graph.line_graph' , {
 
 			if (this.nodesByID) {
 				if (Ext.Object.getSize(this.nodesByID) != 0) {
-					url = this.makeUrl(from, to);
 					Ext.Ajax.request({
-						url: url,
+						url: '/perfstore/values',
 						scope: this,
 						params: this.buildParams(from, to),
 						method: 'POST',
@@ -1327,6 +1326,10 @@ Ext.define('widgets.line_graph.line_graph' , {
 					if (this.aggregate_interval >= global.commonTs['year'])
 						from = moment.unix(from / 1000).startOf('year').unix() * 1000;
 				}
+
+				var tzOffset = new Date().getTimezoneOffset();
+				log.debug('TZ Offset: ' + tzOffset, this.logAuthor)
+				from += tzOffset * 60 * 1000;
 			}
 
 			log.debug('Serie ' + nodeId + ' ' + node.metrics + ':', this.logAuthor);

@@ -20,7 +20,7 @@
 import logging
 logger = logging.getLogger('utils')
 
-#logger.setLevel(logging.DEBUG)
+logger.setLevel(logging.DEBUG)
 
 import zlib
 import time
@@ -328,13 +328,13 @@ def aggregate(points, start=None, stop=None, max_points=None, interval=None, aty
 			return [ [start, points[0][1]] ]
 		
 		# Find start time
-		start_datetime = datetime.utcfromtimestamp(start)
-		start_datetime = roundTime(start_datetime, interval)
+		#start_datetime = datetime.utcfromtimestamp(start)
+		#start_datetime = roundTime(start_datetime, interval)
 
-		stop_datetime = datetime.utcfromtimestamp(stop)
+		#stop_datetime = datetime.utcfromtimestamp(stop)
 	
-		start = datetimeToTimestamp(start_datetime)
-		stop = datetimeToTimestamp(stop_datetime)
+		#start = datetimeToTimestamp(start_datetime)
+		#stop = datetimeToTimestamp(stop_datetime)
 
 		logger.debug(' + Start: %s' %  datetime.utcfromtimestamp(start))
 		logger.debug(' + Stop:  %s' %  datetime.utcfromtimestamp(stop))

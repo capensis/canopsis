@@ -84,7 +84,7 @@ class checkAuthPlugin(object):
 
 			account = get_account()
 			
-			if not account:
+			if not account or account.user == 'anonymous':
 				return HTTPError(403, "Forbidden")
 
 			logger.debug(" + _id: %s" % account._id)
@@ -258,14 +258,13 @@ def autoLogin(key=None):
 def disconnect():
 	s = bottle.request.environ.get('beaker.session')
 	user = s.get('account_user', None)
-	success = False
 
-	if user:
-		logger.debug("Disconnect '%s'" % user)
-		delete_session()
-		success = True
+	if not user:
+		return HTTPError(403, "Forbidden")
 
-	return {'total': 0, 'success': success, 'data': []}
+	logger.debug("Disconnect '%s'" % user)
+	delete_session()
+	return {'total': 0, 'success': True, 'data': []}
 
 #find the account in memory, or try to find it from database, if not in db log anon
 def get_account(_id=None):
