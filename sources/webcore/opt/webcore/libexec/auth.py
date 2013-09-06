@@ -31,7 +31,7 @@ from cstorage import get_storage
 from crecord import crecord
 
 logger = logging.getLogger("auth")
-#logger.setLevel(logging.DEBUG)
+logger.setLevel(logging.DEBUG)
 
 #session variable
 session_accounts = {
@@ -83,6 +83,18 @@ class checkAuthPlugin(object):
 			url = bottle.request.url
 
 			account = get_account()
+
+			authkey = request.params.get('authkey', None)
+			if authkey:
+				logger.debug("Check authkey: '%s'" % authkey)
+
+				account = check_authkey(authkey)
+
+				if account:
+					create_session(account)
+					access = True
+				else:
+					logger.debug(" + Failed")
 			
 			if not account or account.user == 'anonymous':
 				return HTTPError(403, "Forbidden")
@@ -113,19 +125,6 @@ class checkAuthPlugin(object):
 			#logger.debug("Check path: '%s'" % path)
 			#if path == "/canopsis/auth.html":
 			#	access = True
-
-			authkey = request.params.get('authkey', None)
-			if authkey:
-				logger.debug("Check authkey: '%s'" % authkey)
-
-				account = check_authkey(authkey)
-
-				if account:
-					logger.debug(" + _id: %s" % account._id)
-					create_session(account)
-					access = True
-				else:
-					logger.debug(" + Failed")
 
 			logger.debug(" + Access: %s" % access)
 
