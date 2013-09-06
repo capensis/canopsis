@@ -41,9 +41,15 @@ class KnownValues(unittest.TestCase):
 			raise Exception('Data corruption ...')
 
 	def test_02_InitFromRaw(self):
-		raw = {'parent': [], 'children': [], 'crecord_name': 'titi', 'aaa_access_group': ['r'], 'aaa_access_owner': ['r', 'w'], 'aaa_group': None, 'aaa_access_unauth': [], 'aaa_owner': None, 'aaa_access_other': [], 'mydata1': 'data1', 'mydata3': 'data3', 'mydata2': 'data2', 'crecord_type': 'raw', 'crecord_write_time': None, 'enable': True}
+		raw = {'_id': None, 'parent': [], 'children': [], 'crecord_name': 'titi', 'aaa_access_group': ['r'], 'aaa_access_owner': ['r', 'w'], 'aaa_group': None, 'aaa_access_unauth': [], 'aaa_owner': None, 'aaa_access_other': [], 'mydata1': 'data1', 'mydata3': 'data3', 'mydata2': 'data2', 'crecord_type': 'raw', 'crecord_write_time': None, 'enable': True}
 
 		record = crecord(raw_record=raw)
+
+		dump = record.dump()
+		print(' + _id: %s (%s)' % (dump['_id'], type(dump['_id'])))
+
+		if not isinstance(dump['_id'], type(None)):
+			raise Exception('Invalid _id type')
 
 		del record.data['crecord_creation_time']
 
@@ -153,7 +159,7 @@ class KnownValues(unittest.TestCase):
 		
 
 if __name__ == "__main__":
-	unittest.main(verbosity=1)
+	unittest.main(verbosity=2)
 	
 
 

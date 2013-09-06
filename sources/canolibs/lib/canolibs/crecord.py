@@ -104,14 +104,12 @@ class crecord(object):
 			self.access_other = []
 		if not self.access_unauth:
 			self.access_unauth = []
-			
 		
-		try:
-			self._id = str(dump['_id'])
-			del dump['_id']
-		except:
-			self._id = None
+		dump['_id'] = dump.get('_id', None)
 
+		self._id = dump['_id']
+
+		del dump['_id']
 		del dump['enable']
 		del dump['aaa_owner']
 		del dump['aaa_group']
