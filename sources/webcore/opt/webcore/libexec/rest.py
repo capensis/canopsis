@@ -301,9 +301,9 @@ def rest_post(namespace, ctype, _id=None):
 	except:
 		pass
 	
-	logger.debug(" + _id: "+str(_id))
-	logger.debug(" + ctype: "+str(ctype))
-	logger.debug(" + Data: "+str(data))
+	logger.debug(" + _id:   %s" % _id)
+	logger.debug(" + ctype: %s" % ctype)
+	logger.debug(" + Data:  %s" % data)
 	
 	## Set group
 	if data.has_key('aaa_group'):
@@ -331,10 +331,16 @@ def rest_post(namespace, ctype, _id=None):
 		
 	else:
 		raw_record = crecord(_id=_id, type=str(ctype)).dump()
+		logger.debug(' + raw_record: %s' % raw_record)
+
+		#logger.debug(' + _id: %s (%s)' % (raw_record['_id'], type(raw_record['_id'])))
+
 		for key in dict(data).keys():
 			raw_record[key] = data[key]
 
 		record = crecord(raw_record=raw_record)
+		logger.debug(' + dump record: %s' % record.dump())
+
 		record.chown(account.user)
 		record.chgrp(group)
 		#if ctype in ctype_to_group_access:
