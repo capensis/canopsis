@@ -18,53 +18,65 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-def parseRules(data, rules):
-	for element in data :
-		checkRuleForElement(rule, element)
 
-def checkRuleForElement(rule, element):
-	#if isinstance(element, dict):
-	# element = [element]
+def check(mfilter, event):
+	# For each key of filter
+	for key in mfilter:
+		if key == '$and':
+			# Check match for each elements in the list
 
-	print "parsing rule : " + str(rule)
+			for element in mfilter['$and']:
+				# If one does not match, then return False
+				if not check(element, event):
+					return False
 
-	#FIXME handling more than two values 
-	if("$and" in rule):
-		rule1 = checkRuleForElement(rule["$and"][0], element) 
-		rule2 = checkRuleForElement(rule["$and"][1], element) 
-		return rule1 and rule2
+		elif key == '$or':
+			# Check match for each elements in the list
 
-	if("$or" in rule):
-		rule1 = checkRuleForElement(rule["$and"][0], element) 
-		rule2 = checkRuleForElement(rule["$and"][1], element) 
-		return rule1 or rule2
+			for element in mfilter['$or']:
+				# If one match, then return True
+				if check(element, event):
+					return True
+			# Here nothing matched, then return False
+			return False
 
-	ruleKey = rule.keys()[0]
-	ruleValue = rule[ruleKey]["$eq"]
+		elif key == '$gt':
 
-	if("$eq" in rule[ruleKey]):
-		return operatorEq(ruleKey, ruleValue, element)
+			for element in mfilter['$gt']:
+				# Return False if the element is not greater than specified value
+				if event[element] <= mfilter['$gt'][element]:
+					return False
 
-	if("$lt" in rule[ruleKey]):
-		return operatorLt(ruleKey, ruleValue, element)
+		elif key == '$gte':
 
-	if("$gt" in rule[ruleKey]):
-		return operatorLt(ruleKey, ruleValue, element)
+			for element in mfilter['$gte']:
+				# Return False if the element is not greater or equal than specified value
+				if event[element] < mfilter['$gte'][element]:
+					return False
 
-	#else
-	return False
+		elif key == '$lt':
 
-def operatorEq(ruleKey, ruleValue, element):
-	if(ruleKey in element and element[ruleKey] == ruleValue):
-		print "found " + str(element)
-		return True
+			for element in mfilter['$lt']:
+				# Return False if the element is not lesser than specified value
+				if event[element] >= mfilter['$lt'][element]:
+					return False
 
-def operatorLt(ruleKey, ruleValue, element):
-	if(ruleKey in element and element[ruleKey] < ruleValue):
-		print "found " + str(element)
-		return True
+		elif key == '$lte':
 
-def operatorGt(ruleKey, ruleValue, element):
-	if(ruleKey in element and element[ruleKey] > ruleValue):
-		print "found " + str(element)
-		return True
+			for element in mfilter['$lte']:
+				# Return False if the element is not lesser or equal than specified value
+				if event[element] > mfilter['$lte'][element]:
+					return False
+
+		# For each other case, just test the equality
+		else:
+			if isinstance(mfilter[key], dict) and '$eq' in mfilter[key]:
+				if event[key] != mfilter[key]['$eq']:
+					return False
+
+			else:w
+				if event[key] != mfilter[key]:
+					return False
+
+	# If we arrive here, everything matched
+	return True
