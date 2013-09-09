@@ -63,7 +63,12 @@ def check(mfilter, event):
 					if event[key] > mfilter[key]['$lte']:
 						return False
 
-			else:w
+				elif '$in' in mfilter[key]:
+					if event[key] not in mfilter[key]['$in']:
+						return False
+						
+			else:
+			
 				if event[key] != mfilter[key]:
 					return False
 
