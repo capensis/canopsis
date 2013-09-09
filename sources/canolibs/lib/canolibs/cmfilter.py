@@ -18,37 +18,65 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-def parseRules(data, rules):
-	for element in data :
-		check(rule, element)
+def check(mfilter, event):
+	# For each key of filter
+	for key in mfilter:
+		if key == '$and':
+			# Check match for each elements in the list
 
-def check(rule, element):
+			for element in mfilter['$and']:
+				# If one does not match, then return False
+				if not check(element, event):
+					return False
 
-	#if isinstance(element, dict):
-	#	element = [element]
+		elif key == '$or':
+			# Check match for each elements in the list
 
-	print "parsing rule : " + str(rule)
+			for element in mfilter['$or']:
+				# If one match, then return True
+				if check(element, event):
+					return True
 
-	#FIXME handling more than two values 
-	if("$and" in rule):
-		rule1 = check(rule["$and"][0], element) 
-		rule2 = check(rule["$and"][1], element) 
-		return rule1 and rule2
+			# Here nothing matched, then return False
+			return False
 
-	if("$or" in rule):
-		rule1 = check(rule["$and"][0], element) 
-		rule2 = check(rule["$and"][1], element) 
-		return rule1 or rule2
+		elif key == '$gt':
 
-	ruleKey = ""
-	ruleValue = ""
+			for element in mfilter['$gt']:
+				# Return False if the element is not greater than specified value
+				if event[element] <= mfilter['$gt'][element]:
+					return False
 
-	for key in rule:
-		ruleKey=key
-		ruleValue=rule[key]["$eq"]
+		elif key == '$gte':
 
-	if(ruleKey in element and element[ruleKey]==ruleValue):
-		print "found " + str(element)
-		return True
+			for element in mfilter['$gte']:
+				# Return False if the element is not greater or equal than specified value
+				if event[element] < mfilter['$gte'][element]:
+					return False
 
-	return False
+		elif key == '$lt':
+
+			for element in mfilter['$lt']:
+				# Return False if the element is not lesser than specified value
+				if event[element] >= mfilter['$lt'][element]:
+					return False
+
+		elif key == '$lte':
+
+			for element in mfilter['$lte']:
+				# Return False if the element is not lesser or equal than specified value
+				if event[element] > mfilter['$lte'][element]:
+					return False
+
+		# For each other case, just test the equality
+		else:
+			if isinstance(mfilter[key], dict) and '$eq' in mfilter[key]:
+				if event[key] != mfilter[key]['$eq']:
+					return False
+
+			else:
+				if event[key] != mfilter[key]:
+					return False
+
+	# If we arrive here, everything matched
+	return True
