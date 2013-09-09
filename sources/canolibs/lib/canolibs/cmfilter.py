@@ -45,11 +45,21 @@ def check(mfilter, event):
 		# For each other case, just test the equality
 		else:
 			if isinstance(mfilter[key], dict):
-				if '$eq' in mfilter[key]:
+				if '$exists' in mfilter[key]:
+					#check if key is in event
+					if mfilter[key]['$exists']:
+						if key not in event:
+							return False
+					#check if key is not in event
+					else:
+						if key in event:
+							return False
+
+				elif '$eq' in mfilter[key]:
 					if event[key] != mfilter[key]['$eq']:
 						return False
 
-				if '$ne' in mfilter[key]:
+				elif '$ne' in mfilter[key]:
 					if event[key] == mfilter[key]['$ne']:
 						return False
 
@@ -74,7 +84,7 @@ def check(mfilter, event):
 						return False
 
 				elif '$nin' in mfilter[key]:
-					if event[key] in mfilter[key]['$in']:
+					if event[key] in mfilter[key]['$nin']:
 						return False
 
 				else:
