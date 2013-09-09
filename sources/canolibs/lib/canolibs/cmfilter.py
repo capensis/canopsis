@@ -72,6 +72,18 @@ def field_check(mfilter, event, key):
 			if field_check(reverse_mfilter, event, key):
 				return False
 
+		elif op == '$all':
+			items = event[key]
+
+			# If event[key] isn't a list, treat it as if it was
+			if not isinstance(items, list):
+				items = [items]
+
+			# Check if all items from mfilter[key]['$all'] are in event[key]
+			for item in mfilter[key][op]:
+				if item not in items:
+					return False
+
 		else:
 			if event[key] != mfilter[key]:
 				return False
