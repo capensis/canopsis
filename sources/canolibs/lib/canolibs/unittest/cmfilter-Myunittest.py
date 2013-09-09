@@ -50,6 +50,10 @@ class KnownValues(unittest.TestCase):
 		match = cmfilter.check(filter1, event)	
 		self.assertTrue(match, msg='Filter: %s' % filter1)
 
+		filter1 = {'timestamp': { '$gt': 1378713357 } }
+		match = cmfilter.check(filter1, event)	
+		self.assertFalse(match, msg='Filter: %s' % filter1)
+
 		filter1 = {'timestamp': { '$gte': 1378713357 } }
 		match = cmfilter.check(filter1, event)	
 		self.assertTrue(match, msg='Filter: %s' % filter1)
