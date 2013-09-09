@@ -44,31 +44,21 @@ class KnownValues(unittest.TestCase):
 
 		# Test normal behaviors
 		event = {'connector': 'nagios'}
-		if event == engine.work(event):
-			print '[OK] PASS event ',event
-		else:
-			raise Exception('Rule not work')
+		self.assertTrue(event == engine.work(event))
 
 	
 		event = {'connector': 'collectd'}
-		if DROP == engine.work(event):
-			print '[OK] DROP event ',event
-		else:
-			raise Exception('Rule not work')
+		self.assertTrue(DROP == engine.work(event))
 
 		# Test default actions
 		event = {'connector': 'default_drop'}
-		if DROP == engine.work(event):
-			print '[OK] DROP event ',event
-		else:
-			raise Exception('Rule not work')
+		self.assertTrue(DROP == engine.work(event))
 
+		# Change default action
 		engine.configuration['default_action'] = 'pass'
 		event = {'connector': 'default_pass'}
-		if event == engine.work(event):
-			print '[OK] DROP event ',event
-		else:
-			raise Exception('Rule not work')
+		self.assertTrue(event == engine.work(event))
+
 
 if __name__ == "__main__":
 
