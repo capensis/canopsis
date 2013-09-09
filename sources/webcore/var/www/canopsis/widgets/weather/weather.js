@@ -277,6 +277,9 @@ Ext.define('widgets.weather.weather' , {
 	},
 
 	populate: function() {
+		if (! this.nodeId)
+			return
+		
 		log.debug('Populate widget with ' + this.nodeId.length + ' elements.', this.logAuthor);
 		this.wcontainer.removeAll();
 
