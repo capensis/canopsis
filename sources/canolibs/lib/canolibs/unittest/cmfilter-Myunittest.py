@@ -76,7 +76,7 @@ class KnownValues(unittest.TestCase):
 
 		filter1 = {'timestamp': { '$nin': [ 0, 5, 6 ] } }
 		match = cmfilter.check(filter1, event)	
-		self.assertFalse(match, msg='Filter: %s' % filter1)
+		self.assertTrue(match, msg='Filter: %s' % filter1)
 
 		filter1 = {'timestamp': { '$gt': 0, '$lt': 237871335 } }
 		match = cmfilter.check(filter1, event)	
