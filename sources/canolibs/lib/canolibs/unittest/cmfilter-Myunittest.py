@@ -29,7 +29,7 @@ class KnownValues(unittest.TestCase):
 	def setUp(self):
 		pass
 
-	def test_01_check(self):
+	def test_01_simple(self):
 		filter1 = {'connector': 'cengine'}
 		match = cmfilter.check(filter1, event)	
 		self.assertTrue(match, msg='Filter: %s' % filter1)
@@ -38,6 +38,7 @@ class KnownValues(unittest.TestCase):
 		match = cmfilter.check(filter1, event)	
 		self.assertFalse(match, msg='Filter: %s' % filter1)
 
+	def test_02_exists(self):
 		filter1 = {'timestamp': { '$exists': True } }
 		match = cmfilter.check(filter1, event)	
 		self.assertTrue(match, msg='Filter: %s' % filter1)
@@ -45,7 +46,8 @@ class KnownValues(unittest.TestCase):
 		filter1 = {'timestamp': { '$exists': False } }
 		match = cmfilter.check(filter1, event)	
 		self.assertFalse(match, msg='Filter: %s' % filter1)
-		
+
+	def test_03_eq(self):
 		filter1 = {'connector': { '$eq': 'cengine' } }
 		match = cmfilter.check(filter1, event)	
 		self.assertTrue(match, msg='Filter: %s' % filter1)
@@ -58,6 +60,7 @@ class KnownValues(unittest.TestCase):
 		match = cmfilter.check(filter1, event)	
 		self.assertTrue(match, msg='Filter: %s' % filter1)
 
+	def test_04_gt_gte(self):
 		filter1 = {'timestamp': { '$gt': 1378713357 } }
 		match = cmfilter.check(filter1, event)	
 		self.assertFalse(match, msg='Filter: %s' % filter1)
@@ -70,6 +73,7 @@ class KnownValues(unittest.TestCase):
 		match = cmfilter.check(filter1, event)	
 		self.assertTrue(match, msg='Filter: %s' % filter1)
 
+	def test_05_in_nin(self):
 		filter1 = {'timestamp': { '$in': [ 0, 5, 6, 1378713357 ] } }
 		match = cmfilter.check(filter1, event)	
 		self.assertTrue(match, msg='Filter: %s' % filter1)
@@ -78,6 +82,7 @@ class KnownValues(unittest.TestCase):
 		match = cmfilter.check(filter1, event)	
 		self.assertTrue(match, msg='Filter: %s' % filter1)
 
+	def test_06_complex(self):
 		filter1 = {'timestamp': { '$gt': 0, '$lt': 2378713357 } }
 		match = cmfilter.check(filter1, event)	
 		self.assertTrue(match, msg='Filter: %s' % filter1)
@@ -105,27 +110,7 @@ class KnownValues(unittest.TestCase):
 		filter1 = { '$nor': [ { 'connector': { '$eq': 'cengine' } }, {'connector': { '$eq': 'cccengine' } } ] }
 		match = cmfilter.check(filter1, event)
 		self.assertFalse(match, msg='Filter: %s' % filter1)
-
-		filter1 = { 'connector': { '$all': [ 'cengine' ] } }
-		match = cmfilter.check(filter1, event)
-		self.assertTrue(match, msg='Filter: %s' % filter1)
-
-		filter1 = { 'connector': { '$all': [ 'cengine', 'ccengine' ] } }
-		match = cmfilter.check(filter1, event)
-		self.assertFalse(match, msg='Filter: %s' % filter1)
-
-		filter1 = { 'connector': { '$regex': 'c.ngInE' } }
-		match = cmfilter.check(filter1, event)	
-		self.assertFalse(match, msg='Filter: %s' % filter1)
-
-		filter1 = { 'connector': { '$regex': 'c.ngInE', '$options': 'i' } }
-		match = cmfilter.check(filter1, event)	
-		self.assertTrue(match, msg='Filter: %s' % filter1)
-
-		filter1 = { 'connector': { '$regex': 'c..ngine', '$options': 'i' } }
-		match = cmfilter.check(filter1, event)	
-		self.assertFalse(match, msg='Filter: %s' % filter1)
-
+		
 		filter1 = {'connector': 'cengine', 'event_type': 'check'}
 		match = cmfilter.check(filter1, event)	
 		self.assertTrue(match, msg='Filter: %s' % filter1)
@@ -139,6 +124,28 @@ class KnownValues(unittest.TestCase):
 		self.assertTrue(match, msg='Filter: %s' % filter1)
 
 		filter1 = {'$or': [ { '$and': [ {'connector': 'cenginddddde'}, {'event_type': 'check'} ] },  {'event_type': 'checkkkkk'} ] }
+		match = cmfilter.check(filter1, event)	
+		self.assertFalse(match, msg='Filter: %s' % filter1)
+
+	def test_07_all(self):
+		filter1 = { 'connector': { '$all': [ 'cengine' ] } }
+		match = cmfilter.check(filter1, event)
+		self.assertTrue(match, msg='Filter: %s' % filter1)
+
+		filter1 = { 'connector': { '$all': [ 'cengine', 'ccengine' ] } }
+		match = cmfilter.check(filter1, event)
+		self.assertFalse(match, msg='Filter: %s' % filter1)
+
+	def test_08_regex(self):
+		filter1 = { 'connector': { '$regex': 'c.ngInE' } }
+		match = cmfilter.check(filter1, event)	
+		self.assertFalse(match, msg='Filter: %s' % filter1)
+
+		filter1 = { 'connector': { '$regex': 'c.ngInE', '$options': 'i' } }
+		match = cmfilter.check(filter1, event)	
+		self.assertTrue(match, msg='Filter: %s' % filter1)
+
+		filter1 = { 'connector': { '$regex': 'c..ngine', '$options': 'i' } }
 		match = cmfilter.check(filter1, event)	
 		self.assertFalse(match, msg='Filter: %s' % filter1)
 
