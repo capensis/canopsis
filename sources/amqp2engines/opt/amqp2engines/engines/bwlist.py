@@ -19,6 +19,8 @@
 # ---------------------------------
 
 from cengine import cengine
+from cengine import DROP
+
 from caccount import caccount
 from cstorage import get_storage
 import cevent
@@ -29,9 +31,6 @@ from datetime import datetime
 
 NAME="bw-list"
 
-DROP = -1
-
-
 class engine(cengine):
 
 	def pre_run(self):
@@ -41,22 +40,32 @@ class engine(cengine):
 		self.configuration = {'rules': [
 			{'filter':'connector', 'pattern': 'nagios', 'action': 'pass'},
 			{'filter':'connector', 'pattern': 'collectd', 'action': 'drop'},
-		]}
+		], 'default_action': 'pass'}
 
 	def work(self, event, *xargs, **kwargs):		
 		
 		if not self.configuration:
 			return event
 
+		default_action = self.configuration['default_action'] 
+
 		#When list configuration then check black and white lists
 		for filterItem in self.configuration['rules']:
+			action = filterItem['action']
+
 			if self.filterMatch(event, filterItem):
-				if filterItem['action'] == 'pass':
+				if action == 'pass':
 					return event
-				elif filterItem['action'] == 'drop':
+
+				elif action == 'drop':
 					return DROP
+
 				else:
-					self.logger('Unknown action')
+					self.logger.error("Unknown action '%s'" % action)
+
+		if default_action == 'drop':
+			return DROP
+
 		return event
 
 	def filterMatch(self, event, filterItem):
