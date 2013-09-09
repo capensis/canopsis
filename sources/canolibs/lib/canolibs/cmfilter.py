@@ -20,35 +20,51 @@
 
 def parseRules(data, rules):
 	for element in data :
-		check(rule, element)
+		checkRuleForElement(rule, element)
 
-def check(rule, element):
-
+def checkRuleForElement(rule, element):
 	#if isinstance(element, dict):
-	#	element = [element]
+	# element = [element]
 
 	print "parsing rule : " + str(rule)
 
 	#FIXME handling more than two values 
 	if("$and" in rule):
-		rule1 = check(rule["$and"][0], element) 
-		rule2 = check(rule["$and"][1], element) 
+		rule1 = checkRuleForElement(rule["$and"][0], element) 
+		rule2 = checkRuleForElement(rule["$and"][1], element) 
 		return rule1 and rule2
 
 	if("$or" in rule):
-		rule1 = check(rule["$and"][0], element) 
-		rule2 = check(rule["$and"][1], element) 
+		rule1 = checkRuleForElement(rule["$and"][0], element) 
+		rule2 = checkRuleForElement(rule["$and"][1], element) 
 		return rule1 or rule2
 
-	ruleKey = ""
-	ruleValue = ""
+	ruleKey = rule.keys()[0]
+	ruleValue = rule[ruleKey]["$eq"]
 
-	for key in rule:
-		ruleKey=key
-		ruleValue=rule[key]["$eq"]
+	if("$eq" in rule[ruleKey]):
+		return operatorEq(ruleKey, ruleValue, element)
 
-	if(ruleKey in element and element[ruleKey]==ruleValue):
+	if("$lt" in rule[ruleKey]):
+		return operatorLt(ruleKey, ruleValue, element)
+
+	if("$gt" in rule[ruleKey]):
+		return operatorLt(ruleKey, ruleValue, element)
+
+	#else
+	return False
+
+def operatorEq(ruleKey, ruleValue, element):
+	if(ruleKey in element and element[ruleKey] == ruleValue):
 		print "found " + str(element)
 		return True
 
-	return False
+def operatorLt(ruleKey, ruleValue, element):
+	if(ruleKey in element and element[ruleKey] < ruleValue):
+		print "found " + str(element)
+		return True
+
+def operatorGt(ruleKey, ruleValue, element):
+	if(ruleKey in element and element[ruleKey] > ruleValue):
+		print "found " + str(element)
+		return True
