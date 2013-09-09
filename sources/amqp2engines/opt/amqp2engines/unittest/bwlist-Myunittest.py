@@ -34,25 +34,41 @@ class KnownValues(unittest.TestCase):
 	def test_01_Init(self):	
 		engine = bwlist.engine(logging_level=logging.DEBUG)
 		
-		events = [
-			{'result': True, 'connector': 'nagios'},
-			{'result': False, 'connector': 'collectd'},
-			{'result': True, 'connector': 'lapin'}
-		]
+
 		engine.configuration = {'rules': [
 			{'filter':'connector', 'pattern': 'nagios', 'action': 'pass'},
 			{'filter':'connector', 'pattern': 'collectd', 'action': 'drop'},
-		]}
+			],
+			'default_action': 'drop'
+		}
 
-		for event in events:
-			if not event['result'] or engine.work(event) == event:
-				result = '[OK]'
-			else:
-				result = '[KO]'
-				raise Exception('Rule not work')
-				
-			print result + ' TEST EVENT ', event  
+		# Test normal behaviors
+		event = {'connector': 'nagios'}
+		if event == engine.work(event):
+			print '[OK] PASS event ',event
+		else:
+			raise Exception('Rule not work')
+
 	
+		event = {'connector': 'collectd'}
+		if DROP == engine.work(event):
+			print '[OK] DROP event ',event
+		else:
+			raise Exception('Rule not work')
+
+		# Test default actions
+		event = {'connector': 'default_drop'}
+		if DROP == engine.work(event):
+			print '[OK] DROP event ',event
+		else:
+			raise Exception('Rule not work')
+
+		engine.configuration['default_action'] = 'pass'
+		event = {'connector': 'default_pass'}
+		if event == engine.work(event):
+			print '[OK] DROP event ',event
+		else:
+			raise Exception('Rule not work')
 
 if __name__ == "__main__":
 
