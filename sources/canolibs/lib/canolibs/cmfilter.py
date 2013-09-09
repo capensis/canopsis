@@ -47,6 +47,10 @@ def check(mfilter, event):
 					if event[key] != mfilter[key]['$eq']:
 						return False
 
+				if '$ne' in mfilter[key]:
+					if event[key] == mfilter[key]['$ne']:
+						return False
+
 				elif '$gt' in mfilter[key]:
 					if event[key] <= mfilter[key]['$gt']:
 						return False
