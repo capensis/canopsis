@@ -21,6 +21,8 @@
 # MongoDB Operators:
 # http://docs.mongodb.org/manual/reference/operator/
 
+import re
+
 def field_check(mfilter, event, key):
 	for op in mfilter[key]:
 		if op == '$exists':
@@ -35,6 +37,10 @@ def field_check(mfilter, event, key):
 
 		elif op == '$eq':
 			if event[key] != mfilter[key][op]:
+				return False
+
+		elif op == '$regex' or (op == '$options' and "$regex" in mfilter[key]):
+			if not regex_match(event[key], mfilter[key]["$regex"], mfilter[key].get("$options", None)):
 				return False
 
 		elif op == '$ne':
@@ -71,6 +77,18 @@ def field_check(mfilter, event, key):
 
 			if field_check(reverse_mfilter, event, key):
 				return False
+
+		elif op == '$all':
+			items = event[key]
+
+			# If event[key] isn't a list, treat it as if it was
+			if not isinstance(items, list):
+				items = [items]
+
+			# Check if all items from mfilter[key]['$all'] are in event[key]
+			for item in mfilter[key][op]:
+				if item not in items:
+					return False
 
 		else:
 			if event[key] != mfilter[key]:
@@ -123,3 +141,23 @@ def check(mfilter, event):
 
 	# If we arrive here, everything matched
 	return True
+
+def regex_computeoptions(options):
+	if isinstance(options, basestring):
+		if "i" in options:
+			 return re.I
+	return -1
+
+
+def regex_match(phrase, pattern, options=None):
+	options = regex_computeoptions(options)
+
+	if options == -1:
+		match = re.search(pattern, phrase)
+	else:
+		match = re.search(pattern, phrase, options)
+
+	if match:
+		return True
+	else:
+		return False
