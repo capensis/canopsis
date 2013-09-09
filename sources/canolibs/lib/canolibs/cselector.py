@@ -378,7 +378,7 @@ class cselector(crecord):
 		)
 				
 		# Extra field
-		event["selector_id"] = self._id
+		event["selector_id"] = str(self._id)
 		
 		# Build RK
 		rk = cevent.get_routingkey(event)
