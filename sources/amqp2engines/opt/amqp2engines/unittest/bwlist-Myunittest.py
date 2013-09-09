@@ -24,13 +24,15 @@ import logging
 
 sys.path.append(os.path.expanduser('~/opt/amqp2engines/engines/'))
 
+import bwlist
+from cengine import DROP
+
 class KnownValues(unittest.TestCase): 
 	def setUp(self):
 		pass
 
-	def test_01_Init(self):
-		module = __import__('bwlist')		
-		engine = module.engine(logging_level=logging.DEBUG)
+	def test_01_Init(self):	
+		engine = bwlist.engine(logging_level=logging.DEBUG)
 		
 		events = [
 			{'result': True, 'connector': 'nagios'},
@@ -43,7 +45,6 @@ class KnownValues(unittest.TestCase):
 		]}
 
 		for event in events:
-			
 			if not event['result'] or engine.work(event) == event:
 				result = '[OK]'
 			else:

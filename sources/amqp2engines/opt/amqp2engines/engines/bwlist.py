@@ -47,7 +47,7 @@ class engine(cengine):
 		if not self.configuration:
 			return event
 
-		default_action = self.configuration['default_action'] 
+		default_action = self.configuration.get('default_action', 'pass')
 
 		#When list configuration then check black and white lists
 		for filterItem in self.configuration['rules']:
