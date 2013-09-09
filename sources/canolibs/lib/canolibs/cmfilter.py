@@ -21,6 +21,60 @@
 # MongoDB Operators:
 # http://docs.mongodb.org/manual/reference/operator/
 
+def field_check(mfilter, event, key):
+	for op in mfilter[key]:
+		if op == '$exists':
+			#check if key is in event
+			if mfilter[key][op]:
+				if key not in event:
+					return False
+			#check if key is not in event
+			else:
+				if key in event:
+					return False
+
+		elif op == '$eq':
+			if event[key] != mfilter[key][op]:
+				return False
+
+		elif op == '$ne':
+			if event[key] == mfilter[key][op]:
+				return False
+
+		elif op == '$gt':
+			if event[key] <= mfilter[key][op]:
+				return False
+
+		elif op == '$gte':
+			if event[key] < mfilter[key][op]:
+				return False
+
+		elif op == '$lt':
+			if event[key] >= mfilter[key][op]:
+				return False
+
+		elif op == '$lte':
+			if event[key] > mfilter[key][op]:
+				return False
+
+		elif op == '$in':
+			if event[key] not in mfilter[key][op]:
+				return False
+
+		elif op == '$nin':
+			if event[key] in mfilter[key][op]:
+				return False
+
+		elif op == '$not':
+			if field_check(mfilter[key][op], event, key):
+				return False
+
+		else:
+			if event[key] != mfilter[key]:
+				return False
+
+	return True
+
 def check(mfilter, event):
 	# For each key of filter
 	for key in mfilter:
@@ -46,52 +100,8 @@ def check(mfilter, event):
 		# For each other case, just test the equality
 		else:
 			if isinstance(mfilter[key], dict):
-				for op in mfilter[key]:
-					if op == '$exists':
-						#check if key is in event
-						if mfilter[key][op]:
-							if key not in event:
-								return False
-						#check if key is not in event
-						else:
-							if key in event:
-								return False
-
-					elif op == '$eq':
-						if event[key] != mfilter[key][op]:
-							return False
-
-					elif op == '$ne':
-						if event[key] == mfilter[key][op]:
-							return False
-
-					elif op == '$gt':
-						if event[key] <= mfilter[key][op]:
-							return False
-
-					elif op == '$gte':
-						if event[key] < mfilter[key][op]:
-							return False
-
-					elif op == '$lt':
-						if event[key] >= mfilter[key][op]:
-							return False
-
-					elif op == '$lte':
-						if event[key] > mfilter[key][op]:
-							return False
-
-					elif op == '$in':
-						if event[key] not in mfilter[key][op]:
-							return False
-
-					elif op == '$nin':
-						if event[key] in mfilter[key][op]:
-							return False
-
-					else:
-						if event[key] != mfilter[key]:
-							return False
+				if not field_check(mfilter, event, key):
+					return False
 
 			else:
 				if event[key] != mfilter[key]:
