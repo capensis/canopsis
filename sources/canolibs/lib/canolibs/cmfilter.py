@@ -131,6 +131,10 @@ def check(mfilter, event):
 				if not field_check(mfilter, event, key):
 					return False
 
+				elif '$in' in mfilter[key]:
+					if event[key] not in mfilter[key]['$in']:
+						return False
+
 			else:
 			
 				if event[key] != mfilter[key]:
