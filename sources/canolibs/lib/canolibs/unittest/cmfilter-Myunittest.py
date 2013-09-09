@@ -66,6 +66,10 @@ class KnownValues(unittest.TestCase):
 		match = cmfilter.check(filter1, event)	
 		self.assertTrue(match, msg='Filter: %s' % filter1)
 
+		filter1 = {'timestamp': { '$and': [ {'$gt': 0} , {'$lt': 237871335}] } }
+		match = cmfilter.check(filter1, event)	
+		self.assertTrue(match, msg='Filter: %s' % filter1)
+
 		filter1 = { 'connector': { '$eq': 'cengine' },  'timestamp': { '$gt': 137871335 }}
 		match = cmfilter.check(filter1, event)	
 		self.assertTrue(match, msg='Filter: %s' % filter1)
