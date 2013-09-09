@@ -18,6 +18,9 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
+# MongoDB Operators:
+# http://docs.mongodb.org/manual/reference/operator/
+
 def check(mfilter, event):
 	# For each key of filter
 	for key in mfilter:
