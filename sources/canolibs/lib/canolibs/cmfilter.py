@@ -67,6 +67,10 @@ def check(mfilter, event):
 					if event[key] not in mfilter[key]['$in']:
 						return False
 
+				elif '$nin' in mfilter[key]:
+					if event[key] in mfilter[key]['$in']:
+						return False
+
 			else:
 				if event[key] != mfilter[key]:
 					return False
