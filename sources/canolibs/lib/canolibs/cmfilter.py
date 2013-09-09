@@ -75,6 +75,10 @@ def check(mfilter, event):
 					if event[key] in mfilter[key]['$in']:
 						return False
 
+				else:
+					if event[key] != mfilter[key]:
+						return False
+
 			else:
 			
 				if event[key] != mfilter[key]:
