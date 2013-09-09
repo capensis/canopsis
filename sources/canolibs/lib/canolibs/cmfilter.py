@@ -39,7 +39,7 @@ def field_check(mfilter, event, key):
 			if event[key] != mfilter[key][op]:
 				return False
 
-		elif op == '$regex' or op == '$options':
+		elif op == '$regex' or (op == '$options' and "$regex" in mfilter[key]):
 			if not regex_match(event[key], mfilter[key]["$regex"], mfilter[key].get("$options", None)):
 				return False
 
