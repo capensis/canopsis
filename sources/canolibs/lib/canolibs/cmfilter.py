@@ -101,7 +101,7 @@ def check(mfilter, event):
 			return False
 
 		# For each other case, just test the equality
-		else:
+		elif key in event:
 			if isinstance(mfilter[key], dict):
 				if not field_check(mfilter, event, key):
 					return False
@@ -109,6 +109,9 @@ def check(mfilter, event):
 			else:
 				if event[key] != mfilter[key]:
 					return False
+
+		else:
+			return False
 
 	# If we arrive here, everything matched
 	return True
