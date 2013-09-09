@@ -84,7 +84,7 @@ def check(mfilter, event):
 		if key == '$and':
 			# Check match for each elements in the list
 
-			for element in mfilter['$and']:
+			for element in mfilter[key]:
 				# If one does not match, then return False
 				if not check(element, event):
 					return False
@@ -92,12 +92,20 @@ def check(mfilter, event):
 		elif key == '$or':
 			# Check match for each elements in the list
 
-			for element in mfilter['$or']:
+			for element in mfilter[key]:
 				# If one match, then return True
 				if check(element, event):
 					return True
 			# Here nothing matched, then return False
 			return False
+
+		elif key == '$nor':
+			# Check match for each elements in the list
+
+			for element in mfilter[key]:
+				# If one match, then return False
+				if check(element, event):
+					return False
 
 		# For each other case, just test the equality
 		elif key in event:

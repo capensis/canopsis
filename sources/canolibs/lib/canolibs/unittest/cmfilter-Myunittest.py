@@ -98,6 +98,14 @@ class KnownValues(unittest.TestCase):
 		match = cmfilter.check(filter1, event)
 		self.assertFalse(match, msg='Filter: %s' % filter1)
 
+		filter1 = { '$nor': [ { 'connector': { '$eq': 'ccengine' } }, {'connector': { '$eq': 'cccengine' } } ] }
+		match = cmfilter.check(filter1, event)
+		self.assertTrue(match, msg='Filter: %s' % filter1)
+
+		filter1 = { '$nor': [ { 'connector': { '$eq': 'cengine' } }, {'connector': { '$eq': 'cccengine' } } ] }
+		match = cmfilter.check(filter1, event)
+		self.assertFalse(match, msg='Filter: %s' % filter1)
+
 		filter1 = { 'connector': { '$regex': 'c.ngInE' } }
 		match = cmfilter.check(filter1, event)	
 		self.assertFalse(match, msg='Filter: %s' % filter1)
