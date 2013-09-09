@@ -29,6 +29,8 @@ import cevent
 
 import itertools
 
+DROP = -1
+
 class cengine(multiprocessing.Process):
 
 	def __init__(self,
@@ -171,7 +173,9 @@ class cengine(multiprocessing.Process):
 			
 			#self.logger.debug("Forward event '%s' to next engines" % event['rk'])
 
-			if isinstance(wevent, dict):
+			if wevent == DROP:
+				pass
+			elif isinstance(wevent, dict):
 				self.next_queue(wevent)
 			else:
 				self.next_queue(event)
