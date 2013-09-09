@@ -106,6 +106,10 @@ class KnownValues(unittest.TestCase):
 		match = cmfilter.check(filter1, event)	
 		self.assertFalse(match, msg='Filter: %s' % filter1)
 
+		filter1 = { 'connector': { '$regex': '/c.NGINE/i' } }
+		match = cmfilter.check(filter1, event)	
+		self.assertTrue(match, msg='Filter: %s' % filter1)
+
 		filter1 = {'connector': 'cengine', 'event_type': 'check'}
 		match = cmfilter.check(filter1, event)	
 		self.assertTrue(match, msg='Filter: %s' % filter1)
