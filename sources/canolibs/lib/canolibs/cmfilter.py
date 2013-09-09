@@ -66,7 +66,10 @@ def field_check(mfilter, event, key):
 				return False
 
 		elif op == '$not':
-			if field_check(mfilter[key][op], event, key):
+			reverse_mfilter = {}
+			reverse_mfilter[key] = mfilter[key][op]
+
+			if field_check(reverse_mfilter, event, key):
 				return False
 
 		else:
