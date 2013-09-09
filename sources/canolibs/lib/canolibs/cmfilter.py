@@ -45,51 +45,52 @@ def check(mfilter, event):
 		# For each other case, just test the equality
 		else:
 			if isinstance(mfilter[key], dict):
-				if '$exists' in mfilter[key]:
-					#check if key is in event
-					if mfilter[key]['$exists']:
-						if key not in event:
+				for op in mfilter[key]:
+					if op == '$exists':
+						#check if key is in event
+						if mfilter[key][op]:
+							if key not in event:
+								return False
+						#check if key is not in event
+						else:
+							if key in event:
+								return False
+
+					elif op == '$eq':
+						if event[key] != mfilter[key][op]:
 							return False
-					#check if key is not in event
+
+					elif op == '$ne':
+						if event[key] == mfilter[key][op]:
+							return False
+
+					elif op == '$gt':
+						if event[key] <= mfilter[key][op]:
+							return False
+
+					elif op == '$gte':
+						if event[key] < mfilter[key][op]:
+							return False
+
+					elif op == '$lt':
+						if event[key] >= mfilter[key][op]:
+							return False
+
+					elif op == '$lte':
+						if event[key] > mfilter[key][op]:
+							return False
+
+					elif op == '$in':
+						if event[key] not in mfilter[key][op]:
+							return False
+
+					elif op == '$nin':
+						if event[key] in mfilter[key][op]:
+							return False
+
 					else:
-						if key in event:
+						if event[key] != mfilter[key]:
 							return False
-
-				elif '$eq' in mfilter[key]:
-					if event[key] != mfilter[key]['$eq']:
-						return False
-
-				elif '$ne' in mfilter[key]:
-					if event[key] == mfilter[key]['$ne']:
-						return False
-
-				elif '$gt' in mfilter[key]:
-					if event[key] <= mfilter[key]['$gt']:
-						return False
-
-				elif '$gte' in mfilter[key]:
-					if event[key] < mfilter[key]['$gte']:
-						return False
-
-				elif '$lt' in mfilter[key]:
-					if event[key] >= mfilter[key]['$lt']:
-						return False
-
-				elif '$lte' in mfilter[key]:
-					if event[key] > mfilter[key]['$lte']:
-						return False
-
-				elif '$in' in mfilter[key]:
-					if event[key] not in mfilter[key]['$in']:
-						return False
-
-				elif '$nin' in mfilter[key]:
-					if event[key] in mfilter[key]['$nin']:
-						return False
-
-				else:
-					if event[key] != mfilter[key]:
-						return False
 
 			else:
 			
