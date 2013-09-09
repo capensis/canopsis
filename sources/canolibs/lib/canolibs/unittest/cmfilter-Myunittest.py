@@ -32,34 +32,56 @@ class KnownValues(unittest.TestCase):
 	def test_01_check(self):
 		filter1 = {'connector': 'cengine'}
 		match = cmfilter.check(filter1, event)	
-		self.assertTrue(match)
-
-		filter1 = {'connector': { '$eq': 'cengine' } }
-		match = cmfilter.check(filter1, event)	
-		self.assertTrue(match)
+		self.assertTrue(match, msg='Filter: %s' % filter1)
 
 		filter1 = {'connector': 'cengidddddne'}
 		match = cmfilter.check(filter1, event)	
-		self.assertFalse(match)
+		self.assertFalse(match, msg='Filter: %s' % filter1)
+		
+		filter1 = {'connector': { '$eq': 'cengine' } }
+		match = cmfilter.check(filter1, event)	
+		self.assertTrue(match, msg='Filter: %s' % filter1)
+
+		filter1 = {'connector': { '$eq': 'cenginessssss' } }
+		match = cmfilter.check(filter1, event)	
+		self.assertFalse(match, msg='Filter: %s' % filter1)
+
+		filter1 = {'timestamp': { '$eq': 1378713357 } }
+		match = cmfilter.check(filter1, event)	
+		self.assertTrue(match, msg='Filter: %s' % filter1)
+
+		filter1 = {'timestamp': { '$gte': 1378713357 } }
+		match = cmfilter.check(filter1, event)	
+		self.assertTrue(match, msg='Filter: %s' % filter1)
+
+		filter1 = {'timestamp': { '$gt': 137871335 } }
+		match = cmfilter.check(filter1, event)	
+		self.assertTrue(match, msg='Filter: %s' % filter1)
+
+		filter1 = {'timestamp': { '$gt': 0, '$lt': 237871335 } }
+		match = cmfilter.check(filter1, event)	
+		self.assertTrue(match, msg='Filter: %s' % filter1)
+
+		filter1 = { 'connector': { '$eq': 'cengine' },  'timestamp': { '$gt': 137871335 }}
+		match = cmfilter.check(filter1, event)	
+		self.assertTrue(match, msg='Filter: %s' % filter1)
 
 		filter1 = {'connector': 'cengine', 'event_type': 'check'}
 		match = cmfilter.check(filter1, event)	
-		self.assertTrue(match)
+		self.assertTrue(match, msg='Filter: %s' % filter1)
 
 		filter1 = {'$and': [ {'connector': 'cengine'}, {'event_type': 'check'}, {'event_type': 'check'} ] }
 		match = cmfilter.check(filter1, event)	
-		self.assertTrue(match)
+		self.assertTrue(match, msg='Filter: %s' % filter1)
 
 		filter1 = {'$or': [ {'connector': 'cenginddddde'}, {'event_type': 'check'},  {'event_type': 'checkkkkk'} ] }
 		match = cmfilter.check(filter1, event)	
-		self.assertTrue(match)
+		self.assertTrue(match, msg='Filter: %s' % filter1)
 
 		filter1 = {'$or': [ { '$and': [ {'connector': 'cenginddddde'}, {'event_type': 'check'} ] },  {'event_type': 'checkkkkk'} ] }
 		match = cmfilter.check(filter1, event)	
-		self.assertFalse(match)
+		self.assertFalse(match, msg='Filter: %s' % filter1)
 
 if __name__ == "__main__":
 	unittest.main(verbosity=2)
-	
-
 
