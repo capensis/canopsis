@@ -40,39 +40,28 @@ def check(mfilter, event):
 			# Here nothing matched, then return False
 			return False
 
-		elif key == '$gt':
-
-			for element in mfilter['$gt']:
-				# Return False if the element is not greater than specified value
-				if event[element] <= mfilter['$gt'][element]:
-					return False
-
-		elif key == '$gte':
-
-			for element in mfilter['$gte']:
-				# Return False if the element is not greater or equal than specified value
-				if event[element] < mfilter['$gte'][element]:
-					return False
-
-		elif key == '$lt':
-
-			for element in mfilter['$lt']:
-				# Return False if the element is not lesser than specified value
-				if event[element] >= mfilter['$lt'][element]:
-					return False
-
-		elif key == '$lte':
-
-			for element in mfilter['$lte']:
-				# Return False if the element is not lesser or equal than specified value
-				if event[element] > mfilter['$lte'][element]:
-					return False
-
 		# For each other case, just test the equality
 		else:
-			if isinstance(mfilter[key], dict) and '$eq' in mfilter[key]:
-				if event[key] != mfilter[key]['$eq']:
-					return False
+			if isinstance(mfilter[key], dict):
+				if '$eq' in mfilter[key]:
+					if event[key] != mfilter[key]['$eq']:
+						return False
+
+				elif '$gt' in mfilter[key]:
+					if event[key] <= mfilter[key]['$gt']:
+						return False
+
+				elif '$gte' in mfilter[key]:
+					if event[key] < mfilter[key]['$gte']:
+						return False
+
+				elif '$lt' in mfilter[key]:
+					if event[key] >= mfilter[key]['$lt']:
+						return False
+
+				elif '$lte' in mfilter[key]:
+					if event[key] > mfilter[key]['$lte']:
+						return False
 
 			else:w
 				if event[key] != mfilter[key]:
