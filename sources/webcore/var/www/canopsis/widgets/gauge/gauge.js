@@ -208,16 +208,16 @@ Ext.define('widgets.gauge.gauge' , {
 
 			//update metric value
 			var maxValue = this.maxValue;
-			if (fields && fields.ma) {
-				maxValue = fields.ma;
+			if (fields && fields.max) {
+				maxValue = fields.max;
 			}else if (data.max) {
 				maxValue = data.max;
 			}
 			this.maxValue = maxValue;
 
 			var minValue = this.minValue;
-			if (fields && fields.mi) {
-				minValue = fields.mi;
+			if (fields && fields.min) {
+				minValue = fields.min;
 			}else if (data.max) {
 				minValue = data.min;
 			}
