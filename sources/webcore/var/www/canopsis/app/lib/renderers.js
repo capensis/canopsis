@@ -456,3 +456,7 @@ rdr_access = function(val) {
 	else
 		return val;
 }
+
+var rdr_rule_action = function(val, metadata, record, rowIndex, colIndex, store) {
+	return "<span class='icon icon-rule-" + val + "' />";
+};
