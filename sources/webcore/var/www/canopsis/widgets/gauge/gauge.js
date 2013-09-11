@@ -197,9 +197,6 @@ Ext.define('widgets.gauge.gauge' , {
 			//get first node
 			fields = this.nodesByID[Ext.Object.getKeys(this.nodesByID)[0]]
 
-			console.log("Fields:", fields)
-			console.log("DATA:", data)
-
 			if (data.min)
 				this.minValue = data.min;
 
