@@ -45,6 +45,7 @@ var normalApp = function(){
 			'Perfdata',
 			'Topology',
 			'Consolidation',
+			'Rule',
 			'Tabs'
 		],
 	

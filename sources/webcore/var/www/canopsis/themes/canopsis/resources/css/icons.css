@@ -314,6 +314,14 @@
     background-image: url(../images/icons/color_swatch.png) !important; 
 }
 
+.icon-mainbar-filter { 
+    background-image: url(../images/icons/application_view_detail.png) !important; 
+}
+
+.icon-crecord_type-rule { 
+    background-image: url(../images/icons/application_view_detail.png) !important; 
+}
+
 .icon-mainbar-perfdata {
 	background-image: url(../images/icons/chart_line.png) !important;
 }
@@ -356,6 +364,14 @@
 
 .icon-enable-disable { 
 	background-image: url(../images/icons/true.png) !important;
+}
+
+.icon-rule-pass { 
+    background-image: url(../images/icons/tick.png) !important;
+}
+
+.icon-rule-drop { 
+    background-image: url(../images/icons/cross.png) !important;
 }
 
 /* state */

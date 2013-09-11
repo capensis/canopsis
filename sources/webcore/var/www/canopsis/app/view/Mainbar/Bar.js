@@ -241,6 +241,18 @@ Ext.define('canopsis.view.Mainbar.Bar' , {
 			]);
 		}
 
+		//Filter Rules menu
+		if (global.accountCtrl.checkRoot() || global.accountCtrl.checkGroup('group.CPS_filter_admin')) {
+			menu_build = menu_build.concat([
+				{
+					iconCls: 'icon-mainbar-filter',
+					text: _('Filter Rules'),
+					action: 'openViewMenu',
+					viewId: 'view.rules_manager'
+				}
+			]);
+		}
+
 		//Topology menu
 		if (global.accountCtrl.checkRoot() || global.accountCtrl.checkGroup('group.CPS_topology_admin')) {
 			menu_build = menu_build.concat([
