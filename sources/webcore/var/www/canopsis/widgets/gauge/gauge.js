@@ -197,8 +197,20 @@ Ext.define('widgets.gauge.gauge' , {
 			//get first node
 			fields = this.nodesByID[Ext.Object.getKeys(this.nodesByID)[0]]
 
+			console.log("Fields:", fields)
+			console.log("DATA:", data)
+
 			if (data.min)
 				this.minValue = data.min;
+
+			if (data.max)
+				this.maxValue = data.max;
+
+			if (data.thld_warn)
+				this.warnValue = data.thld_warn;
+
+			if (data.thld_crit)
+				this.critValue = data.thld_crit;			
 
 			//update metric name
 			if (fields && fields.label)
@@ -207,37 +219,11 @@ Ext.define('widgets.gauge.gauge' , {
 				this.gaugeLabel = data.metric;
 
 			//update metric value
-			var maxValue = this.maxValue;
-			if (fields && fields.max) {
-				maxValue = fields.max;
-			}else if (data.max) {
-				maxValue = data.max;
-			}
-			this.maxValue = maxValue;
+			if (fields && fields.max)
+				this.maxValue = fields.max;
 
-			var minValue = this.minValue;
-			if (fields && fields.min) {
-				minValue = fields.min;
-			}else if (data.max) {
-				minValue = data.min;
-			}
-			this.minValue = minValue;
-
-			var warnValue = this.warnValue;
-			if (fields && fields.tw) {
-				warnValue = fields.tw;
-			}else if (data.tw) {
-				warnValue = data.tw;
-			}
-			this.warnValue = warnValue;
-
-			var critValue = this.critValue;
-			if (fields && fields.tc) {
-				critValue = fields.tc;
-			}else if (data.tc) {
-				critValue = data.tc;
-			}
-			this.critValue = critValue;
+			if (fields && fields.min)
+				this.minValue = fields.min;
 
 			if (data.bunit && this.displayUnit)
 				this.bunit = data.bunit;
