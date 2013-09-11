@@ -386,25 +386,21 @@ function parseNodes(nodes){
 
 		// Make label
 		if (node.resource)
-			var label = node.component + " " + node.resource;
+			node.label = node.component + " " + node.resource;
 		else
-			var label = node.component;
+			node.label = node.component;
 
 		if (node.metric)
-			label += " " + node.metric;
+			node.label += " " + node.metric;
 
 		if (node.extra_field && node.extra_field.label)
-			label = node.extra_field.label;
+			node.label = node.extra_field.label;
 
 		if (node.extra_field && node.extra_field.u)
 			node.bunit = node.extra_field.u;
 
-		var max = undefined;
 		if (node.extra_field && node.extra_field.ma)
-			max = node.extra_field.ma;
-
-		node.label = label;
-		node.max = max;
+			node.max = node.extra_field.ma;
 
 		if (nodesByID[node.id]) {
 			nodesByID[node.id] = {};
@@ -465,19 +461,20 @@ function expandAttributs(nodeList){
 
 function expandMetric(node){
 	var attributNames = {
-						'co':'component',
-						're':'resource',
-						't':'type',
-						'me':'metric',
-						'u':'bunit',
-						'ma':'max'
-					}
+		'co':'component',
+		're':'resource',
+		't':'type',
+		'me':'metric',
+		'u':'bunit',
+		'tw':'thld_warn',
+		'tc':'thld_crit',
+		'ma':'max',
+		'mi':'min'
+	}
 
 	Ext.Object.each(attributNames, function(key, value, myself) {
-		if(node[key] != undefined){
-			node[value] = node[key]
-			delete node[key]
-		}
+		node[value] = node[key]
+		delete node[key]
 	},this)
 
 	return node
