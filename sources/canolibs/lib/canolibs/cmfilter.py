@@ -146,18 +146,11 @@ def regex_computeoptions(options):
 	if isinstance(options, basestring):
 		if "i" in options:
 			 return re.I
-	return -1
+	return 0
 
 
 def regex_match(phrase, pattern, options=None):
 	options = regex_computeoptions(options)
+	return bool(re.search(pattern, phrase, options))
 
-	if options == -1:
-		match = re.search(pattern, phrase)
-	else:
-		match = re.search(pattern, phrase, options)
-
-	if match:
-		return True
-	else:
-		return False
+	
