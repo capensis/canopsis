@@ -383,10 +383,21 @@ Ext.define('widgets.diagram.diagram' , {
 
 				var metric = info['metric'];
 
-				var value = undefined;
+				log.debug(metric, this.logAuthor);
 
-				if (info['values'].length >= 1)
+				var value = undefined;
+				var timestamp = undefined;
+
+				if (info['values'].length >= 1){
+					timestamp = info['values'][0][0];
 					value = info['values'][0][1];
+				}else{
+					log.debug(' + No value', this.logAuthor);
+					continue;
+				}
+
+				log.debug(' + Timestamp: ' + timestamp, this.logAuthor);
+				log.debug(' + Value: ' + value, this.logAuthor);
 
 				//------------------
 
