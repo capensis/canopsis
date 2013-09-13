@@ -46,35 +46,42 @@ class engine(cengine):
 
 
 	def work(self, event, *xargs, **kwargs):		
-		
-		default_action = self.configuration.get('default_action', 'pass')
 
-		#When list configuration then check black and white lists depending on json configuration
-		for filterItem in self.configuration['rules']:
-			action = filterItem['action']
-			name = filterItem.get('name', 'no_name')
+		default_action = 'pass'
+
+		event_str = event.get('rk',str(event))
+
+		for configuration in self.configurations:
+
+			default_action = configuration.get('default_action', 'pass')
+
+			#When list configuration then check black and white lists depending on json configuration
+			for filterItem in configuration['rules']:
+				action = filterItem['action']
+				name = filterItem.get('name', 'no_name')
 			
-			# Try filter rules on current event
-			if cmfilter.check(filterItem['filter'], event):
+				# Try filter rules on current event
+				if cmfilter.check(filterItem['filter'], event):
 				
-				if action == 'pass':
-					self.logger.debug("Event '%s' passed by rule '%s'" % (event['rk'], name))
-					return event
+					if action == 'pass':
+						self.logger.debug("Event '%s' passed by rule '%s'" % (event_str, name))
+						return event
 
-				elif action == 'drop':
-					self.logger.debug("Event '%s' dropped by rule '%s'" % (event['rk'], name))
-					self.drop_event_count += 1
-					return DROP
+					elif action == 'drop':
+						self.logger.debug("Event '%s' dropped by rule '%s'" % (event_str, name))
+						self.drop_event_count += 1
+						return DROP
 
-				else:
-					self.logger.error("Unknown action '%s'" % action)
+					else:
+						self.logger.error("Unknown action '%s'" % action)
 
 		# No rules matched
 		if default_action == 'drop':
-			self.logger.debug("Event '%s' dropped by default action" % (event['rk']))
+			self.logger.debug("Event '%s' dropped by default action" % (event_str))
 			self.drop_event_count += 1
 			return DROP
 		
+		self.logger.debug("Event '%s' passed by default action" % (event_str))
 		return event
 		
 
@@ -83,12 +90,15 @@ class engine(cengine):
 		# Configuration reload for realtime ui changes handling
 		self.storage = get_storage(logging_level=logging.DEBUG, account=self.account)		
 		configuration = self.storage.find({'_id':'event_filter.rule'}, namespace='object')
+
 		if len(configuration):
-			self.configuration = configuration[0].dump()
+			rules = configuration.dump()
+			self.configurations = sorted(rules, key=lambda x: x['priority'])	
+
 		else:
 			# Failover configuration
-			self.configuration = {'rules': [], 'default_action': 'pass'}
-			self.logger.error('Missing configuration for list filters')
+			self.configurations = {'rules': [], 'default_action': 'pass'}
+			self.logger.debug('Missing configuration for list filters')
 
 		# Send AMQP Event for drop metrics
 		event = cevent.forger(
