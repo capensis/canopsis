@@ -838,13 +838,12 @@ Ext.define('widgets.line_graph.line_graph' , {
 		var label = undefined;
 		if (node.label)
 			label = node.label;
-		if (!label && curve)
+
+		if (curve)
 			label = curve.get('label');
+
 		if (! label)
 			label = metric_name;
-
-		if (label == 'cps_state')
-			label = curve.get('label');
 
 		log.debug('    + label: ' + label, this.logAuthor);
 
