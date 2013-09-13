@@ -526,10 +526,6 @@ Ext.define('widgets.line_graph.line_graph' , {
 		}
 	},*/
 
-	makeUrl: function(from, to) {
-		return '/perfstore/values' + '/' + parseInt(from / 1000) + '/' + parseInt(to / 1000);
-	},
-
 	doRefresh: function(from, to) {
 		var now = Ext.Date.now();
 
@@ -819,6 +815,7 @@ Ext.define('widgets.line_graph.line_graph' , {
 
 		log.debug('    + serie id: ' + serie_id, this.logAuthor);
 		log.debug('    + serie index: ' + serie_index, this.logAuthor);
+		log.debug('    + metric_name: ' + metric_name, this.logAuthor);
 		log.debug('    + bunit: ' + bunit, this.logAuthor);
 		log.debug('    + yAxis: ' + yAxis, this.logAuthor);
 
@@ -841,10 +838,14 @@ Ext.define('widgets.line_graph.line_graph' , {
 		var label = undefined;
 		if (node.label)
 			label = node.label;
-		if (!label && curve)
+
+		if (curve)
 			label = curve.get('label');
+
 		if (! label)
 			label = metric_name;
+
+		log.debug('    + label: ' + label, this.logAuthor);
 
 		metric_long_name += '<b>' + label + '</b>';
 
