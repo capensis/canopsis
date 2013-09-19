@@ -21,7 +21,8 @@
 
 Ext.define('widgets.progressbar.progressbar' , 
 {
-	extend: 'canopsis.lib.view.cwidget',
+    extend: 'canopsis.lib.view.cperfstoreValueConsumerWidget',
+    
 	alias: 'widget.progressbar',
 	logAuthor: '[progressBarWidget]',
 	innerText: undefined,
@@ -68,31 +69,9 @@ Ext.define('widgets.progressbar.progressbar' ,
 	getNodeInfo: function(from,to) 
 	{
 		this.processNodes();
-		if (this.nodesByID) 
-		{
-			Ext.Ajax.request(
-			{
-				url: '/perfstore/values' 
-					+ '/' + parseInt(to/1000)+ '/' + parseInt(to/1000),
-				scope: this,
-				params: this.post_params,
-				method: 'POST',
-				success: function(response) 
-				{
-					var data = Ext.JSON.decode(response.responseText);
-					data = data.data;
-					this.displayBars(data);
-				}, 
-				failure: function(result, request) 
-				{
-					log.error
-					(
-						'get Node info, Ajax req failed ... (' 
-						+ request.url + ')', this.logAuthor
-					);
-				}
-			});
-		}
+
+	    this.refreshNodes(from, to);
+
 	},
 
 	setGradient: function(_id, value){
@@ -119,7 +98,8 @@ Ext.define('widgets.progressbar.progressbar' ,
 
 	},
 
-	displayBars: function(data)
+    onRefresh: function(data)
+//	displayBars: function(data)
 	{
 		for (var i = 0; i < data.length; i++){
 

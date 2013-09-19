@@ -19,7 +19,8 @@
 # ---------------------------------
 */
 Ext.define('widgets.pie.pie' , {
-	extend: 'canopsis.lib.view.cwidget',
+
+    extend: 'canopsis.lib.view.cperfstoreValueConsumerWidget',
 
 	alias: 'widget.pie',
 
@@ -248,29 +249,8 @@ Ext.define('widgets.pie.pie' , {
 
 		log.debug('Get values from ' + new Date(from) + ' to ' + new Date(to), this.logAuthor);
 
-		if (this.nodes) {
-			if (this.nodes.length != 0) {
+	    this.refreshNodes(from, to);
 
-				var url = '/perfstore/values/' + from + '/' + to;
-
-				Ext.Ajax.request({
-					url: url,
-					scope: this,
-					params: this.post_params,
-					method: 'POST',
-					success: function(response) {
-						var data = Ext.JSON.decode(response.responseText);
-						data = data.data;
-						this.onRefresh(data);
-					},
-					failure: function(result, request) {
-						log.error('Ajax request failed ... (' + request.url + ')', this.logAuthor);
-					}
-				});
-			} else {
-				log.debug('No nodes specified', this.logAuthor);
-			}
-		}
 	},
 
 	onRefresh: function(data) {

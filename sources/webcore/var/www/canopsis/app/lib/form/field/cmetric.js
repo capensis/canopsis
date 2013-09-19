@@ -403,8 +403,9 @@ Ext.define('canopsis.lib.form.field.cmetric' , {
 		log.debug('Write values', this.logAuthor);
 		var output = [];
 		var nodes = {};
-
+	    var order = 0;
 		this.selected_store.each(function(record) {
+		    record.data.order = order++;
 			var data = Ext.clone(record.data)
 			//clean that
 			if(data.me)
@@ -419,6 +420,7 @@ Ext.define('canopsis.lib.form.field.cmetric' , {
 		log.debug('Load values', this.logAuthor);
 		var metricList = []
 		
+
 		//retrocompatibility
 		if(Ext.isArray(data)){
 			for (var i = 0; i < data.length; i++) {
@@ -430,7 +432,7 @@ Ext.define('canopsis.lib.form.field.cmetric' , {
 					me: item.metrics,
 					t: item.type
 				};
-				metricList.push(Ext.create('Meta', config))
+			    metricList.push(Ext.create('Meta', config));
 			}
 		}
 
@@ -447,11 +449,14 @@ Ext.define('canopsis.lib.form.field.cmetric' , {
 				if(!item.me)
 					item.me = item.metrics[0]
 
+			    // TODO: check if next line is important
 				if(Ext.isArray)
-
-				metricList.push(Ext.create('Meta',item))
+				    
+				    metricList.push(Ext.create('Meta',item));
 			},this)
 		}
+
+	    metricList.sort(function(a, b){return data[a.get('id')]['order'] - data[b.get('id')]['order'];});
 
 		this.selected_store.add(metricList);
 	},

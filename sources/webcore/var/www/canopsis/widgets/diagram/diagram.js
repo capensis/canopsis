@@ -19,8 +19,7 @@
 # ---------------------------------
 */
 Ext.define('widgets.diagram.diagram' , {
-	extend: 'canopsis.lib.view.cwidget',
-
+    extend: 'canopsis.lib.view.cperfstoreValueConsumerWidget',
 	alias: 'widget.diagram',
 
 	logAuthor: '[diagram]',
@@ -326,30 +325,9 @@ Ext.define('widgets.diagram.diagram' , {
 			from = to - (this.time_window*1000);
 
 		log.debug('Get values from ' + new Date(from) + ' to ' + new Date(to), this.logAuthor);
+	    
+	    this.refreshNodes(from, to);
 
-		if (this.nodesByID) {
-			if (this.nb_node != 0) {
-
-				var url = '/perfstore/values/' + parseInt(from / 1000) + '/' + parseInt(to / 1000);
-
-				Ext.Ajax.request({
-					url: url,
-					scope: this,
-					params: this.post_params,
-					method: 'POST',
-					success: function(response) {
-						var data = Ext.JSON.decode(response.responseText);
-						data = data.data;
-						this.onRefresh(data);
-					},
-					failure: function(result, request) {
-						log.error('Ajax request failed ... (' + request.url + ')', this.logAuthor);
-					}
-				});
-			} else {
-				log.debug('No nodes specified', this.logAuthor);
-			}
-		}
 	},
 
 	onRefresh: function(data) {

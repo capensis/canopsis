@@ -19,11 +19,9 @@
 # ---------------------------------
 */
 Ext.define('canopsis.lib.view.cperfstoreValueConsumerWidget', {
-    
     extend: 'canopsis.lib.view.cwidget',
     
     refreshNodes : function(from, to) {
-	
 	if (this.nodesByID && Ext.Object.getSize(this.nodesByID) != 0) {
 	    var url = '/perfstore/values' + (from!==undefined? ('/' + parseInt(from / 1000) + '/' + parseInt(to / 1000)) : '');
 	    Ext.Ajax.request({

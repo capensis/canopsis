@@ -208,6 +208,8 @@ Ext.define('widgets.weather.weather' , {
 			params: {'nodes': Ext.JSON.encode(post_params)},
 			success: function(response) {
 				var data = Ext.JSON.decode(response.responseText).data;
+			    var that = this;
+			    data.sort(function(a,b){return that.nodesByID[a['node']]['order']-that.nodesByID[b['node']]['order'];});
 				var metric_dict = {};
 
 				for (var i = 0; i < data.length; i++) {
