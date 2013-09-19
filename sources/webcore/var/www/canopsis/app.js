@@ -281,7 +281,7 @@ function createApplication(account){
 	log.debug("Start ExtJS application ...", "[app]");
 
 	// Route
-	if (ENV["exportMode"])
+	if (ENV["exportMode"] || ENV["reportMode"])
 		exportApp();
 	else if (ENV["fullscreenMode"])
 		fullscreenApp();

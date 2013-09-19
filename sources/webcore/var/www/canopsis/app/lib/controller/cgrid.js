@@ -653,30 +653,33 @@ Ext.define('canopsis.lib.controller.cgrid', {
 		}
 	},
 
-	_editRecord: function(view, item, index, store) {
+
+	_editRecord: function(view, record, item, index, e, eOpts, store) {
+
 		log.debug('Clicked editRecord', this.logAuthor);
 
 		//hack create a copy to not mess with old record
-		var item_copy = item.copy();
-		Ext.data.Model.id(item_copy);
+		var record_copy = record.copy();
+		Ext.data.Model.id(record_copy);
 
 		//check rights
 		var ctrl = this.getController('Account');
-		if (ctrl.check_record_right(item, 'w')) {
-			var form = this._showForm(item, store);
+
+		if (ctrl.check_record_right(record, 'w')) {
+			var form = this._showForm(record, store);
 
 			if (form) {
 				if (this.beforeload_EditForm)
-					this.beforeload_EditForm(form, item_copy);
+					this.beforeload_EditForm(form, record_copy);
 
-				form.loadRecord(item_copy);
+				form.loadRecord(record_copy);
 
 				if (this.afterload_EditForm)
-					this.afterload_EditForm(form, item_copy);
+					this.afterload_EditForm(form, record_copy);
 			}
 
 			if (this.editRecord)
-				this.editRecord(view, item_copy, index);
+				this.editRecord(view, record_copy, index);
 		} else {
 			global.notify.notify(_('Access denied'), _('You don\'t have the rights to modify this object'), 'error');
 		}

@@ -55,7 +55,7 @@ flag_tootlip_template = Ext.create('Ext.XTemplate',
 );
 
 Ext.define('widgets.line_graph.line_graph' , {
-	extend: 'canopsis.lib.view.cwidget',
+    extend: 'canopsis.lib.view.cperfstoreValueConsumerWidget',
 
 	alias: 'widget.line_graph',
 
@@ -526,10 +526,6 @@ Ext.define('widgets.line_graph.line_graph' , {
 		}
 	},*/
 
-	makeUrl: function(from, to) {
-		return '/perfstore/values' + '/' + parseInt(from / 1000) + '/' + parseInt(to / 1000);
-	},
-
 	doRefresh: function(from, to) {
 		var now = Ext.Date.now();
 
@@ -573,27 +569,7 @@ Ext.define('widgets.line_graph.line_graph' , {
 
 			}
 
-			if (this.nodesByID) {
-				if (Ext.Object.getSize(this.nodesByID) != 0) {
-					Ext.Ajax.request({
-						url: '/perfstore/values',
-						scope: this,
-						params: this.buildParams(from, to),
-						method: 'POST',
-						success: function(response) {
-							var data = Ext.JSON.decode(response.responseText);
-							data = data.data;
-							this.onRefresh(data);
-						},
-						failure: function(result, request) {
-							log.error('Ajax request failed ... (' + request.url + ')', this.logAuthor);
-						}
-					});
-				} else {
-					log.debug('No nodes specified', this.logAuthor);
-					this.chart.showLoading(_('Please choose a valid metric in wizard'));
-				}
-			}
+		    this.refreshNodes(from, to);
 
 			//if(this.nodeForFlags && this.nodeForFlags.length != 0){
 			if (this.flagFilter) {
@@ -819,6 +795,7 @@ Ext.define('widgets.line_graph.line_graph' , {
 
 		log.debug('    + serie id: ' + serie_id, this.logAuthor);
 		log.debug('    + serie index: ' + serie_index, this.logAuthor);
+		log.debug('    + metric_name: ' + metric_name, this.logAuthor);
 		log.debug('    + bunit: ' + bunit, this.logAuthor);
 		log.debug('    + yAxis: ' + yAxis, this.logAuthor);
 
@@ -841,10 +818,14 @@ Ext.define('widgets.line_graph.line_graph' , {
 		var label = undefined;
 		if (node.label)
 			label = node.label;
-		if (!label && curve)
+
+		if (curve)
 			label = curve.get('label');
+
 		if (! label)
 			label = metric_name;
+
+		log.debug('    + label: ' + label, this.logAuthor);
 
 		metric_long_name += '<b>' + label + '</b>';
 
@@ -1292,67 +1273,6 @@ Ext.define('widgets.line_graph.line_graph' , {
 			value_array[i][1] = Math.floor(value_array[i][1] * 1000) / 1000;
 		}
 		return value_array;
-	},
-
-	buildParams: function(oFrom, oTo) {
-		//TODO: Rebuild this with new format !
-
-		var now = Ext.Date.now();
-		var post_params = [];
-
-		Ext.Object.each(this.nodesByID, function(id, node, obj) {
-			var nodeId = id;
-			var serieId = nodeId + '.' + node.metrics[0];
-			var serie = this.series[serieId];
-			var from = oFrom;
-			var to = oTo;
-
-			if (! this.reportMode) {
-				if (serie && serie['last_timestamp'])
-					from = serie['last_timestamp'];
-
-				if (from < (to - (this.time_window * 1000)))
-						from = to - (this.time_window * 1000);
-			}
-
-			if (this.aggregate_interval) {
-				var aggregate_interval = this.aggregate_interval * 1000;
-
-				if (this.aggregate_interval < global.commonTs['month']) {
-					from = Math.floor(from / aggregate_interval) * aggregate_interval;
-				}else {
-					if (this.aggregate_interval >= global.commonTs['month'])
-						from = moment.unix(from / 1000).startOf('month').unix() * 1000;
-					if (this.aggregate_interval >= global.commonTs['year'])
-						from = moment.unix(from / 1000).startOf('year').unix() * 1000;
-				}
-
-				var tzOffset = new Date().getTimezoneOffset();
-				log.debug('TZ Offset: ' + tzOffset, this.logAuthor)
-				from += tzOffset * 60 * 1000;
-			}
-
-			log.debug('Serie ' + nodeId + ' ' + node.metrics + ':', this.logAuthor);
-			//log.debug(' + Do Refresh: ' + new Date(from) + ' -> ' + new Date(to) + ' (' + from + ' -> ' + to + ')', this.logAuthor);
-			log.debug(' + From: ' + new Date(from) + ' (' + from + ')', this.logAuthor);
-			log.debug(' + To:   ' + new Date(to) + ' (' + to + ')', this.logAuthor);
-
-			post_params.push({
-				id: nodeId,
-				metrics: node.metrics,
-				from: parseInt(from / 1000),
-				to: parseInt(to / 1000)
-			});
-
-		},this)
-
-		return {
-			'nodes': Ext.JSON.encode(post_params),
-			'aggregate_method' : this.aggregate_method,
-			'aggregate_interval': this.aggregate_interval,
-			'aggregate_max_points': this.aggregate_max_points,
-			'consolidation_method': this.consolidation_method
-		};
 	},
 
 	addFlagSerie: function(data) {
