@@ -32,8 +32,10 @@ Ext.define('canopsis.lib.view.cperfstoreValueConsumerWidget', {
 		success: function(response) {
 		    var data = Ext.JSON.decode(response.responseText);
 		    data = data.data;
-		    var that = this;
-		    data.sort(function(a,b){return that.nodesByID[a['node']]['order']-that.nodesByID[b['node']]['order'];});
+		    if(this.nodesByID[data[0]['node']]['order']!==undefined) {
+			var that = this;
+			data.sort(function(a,b){return that.nodesByID[a['node']]['order']-that.nodesByID[b['node']]['order'];});
+		    }
 		    this.onRefresh(data);
 		},
 		failure: function(result, request) {

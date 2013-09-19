@@ -456,7 +456,9 @@ Ext.define('canopsis.lib.form.field.cmetric' , {
 			},this)
 		}
 
-	    metricList.sort(function(a, b){return data[a.get('id')]['order'] - data[b.get('id')]['order'];});
+	    if(metricList.length>0 && data[metricList[0].get('id')]['order']!==undefined) {
+		metricList.sort(function(a, b){return data[a.get('id')]['order'] - data[b.get('id')]['order'];});
+	    }
 
 		this.selected_store.add(metricList);
 	},
