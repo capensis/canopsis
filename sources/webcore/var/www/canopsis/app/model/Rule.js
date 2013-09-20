@@ -32,8 +32,8 @@ Ext.define('canopsis.model.Rule', {
 
 		{name: 'aaa_access_group', defaultValue: undefined},
 		{name: 'aaa_access_other', defaultValue: undefined},
-		{name: 'aaa_access_owner', defaultValue: undefined},
-		{name: 'aaa_admin_group', defaultValue: undefined},
+		{name: 'aaa_access_owner', defaultValue: ['r', 'w']},
+		{name: 'aaa_admin_group', defaultValue: ['r']},
 		{name: 'aaa_group', defaultValue: 'group.CPS_rule_admin'},
 		{name: 'aaa_owner', defaultValue: undefined}
 	]
