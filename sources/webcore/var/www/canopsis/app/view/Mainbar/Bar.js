@@ -242,7 +242,7 @@ Ext.define('canopsis.view.Mainbar.Bar' , {
 		}
 
 		//Filter Rules menu
-		if (global.accountCtrl.checkRoot() || global.accountCtrl.checkGroup('group.CPS_filter_admin')) {
+		if (global.accountCtrl.checkRoot() || global.accountCtrl.checkGroup('group.CPS_rule_admin')) {
 			menu_build = menu_build.concat([
 				{
 					iconCls: 'icon-mainbar-filter',

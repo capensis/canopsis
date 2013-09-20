@@ -44,7 +44,7 @@ groups =  {
 	'CPS_derogation_admin':'Manage and create derogation on canopsis',
 	'CPS_authkey':'Give the ability to renew the account authkey',
 	'CPS_consolidation_admin':'Manage and create consolidations',
-	'CPS_rules_admin':'Manage and create rules (black and white lists for incoming events)'
+	'CPS_rule_admin':'Manage and create rules (black and white lists for incoming events)'
 }
 
 def init():
