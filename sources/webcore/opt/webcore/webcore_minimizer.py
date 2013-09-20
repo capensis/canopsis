@@ -48,6 +48,7 @@ paths = [
 	os.path.join(webui_path, "app/lib/menu"),
 	os.path.join(webui_path, "app/lib/form"),
 	os.path.join(webui_path, "app/lib/view/cpopup.js"),
+	os.path.join(webui_path, "app/lib/view/cwidget.js"),
 	os.path.join(webui_path, "app/lib/view"),
 	os.path.join(webui_path, "app/view/Tabs/Content.js"),
 	os.path.join(webui_path, "app/view"),

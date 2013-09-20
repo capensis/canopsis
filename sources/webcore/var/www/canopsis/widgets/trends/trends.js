@@ -19,9 +19,9 @@
 # ---------------------------------
 */
 Ext.define('widgets.trends.trends' , {
-	extend: 'canopsis.lib.view.cwidget',
+    extend: 'canopsis.lib.view.cperfstoreValueConsumerWidget',
 
-	alias: 'widget.trends',
+    alias: 'widget.trends',
 
 	logAuthor: '[trends]',
 
@@ -52,51 +52,11 @@ Ext.define('widgets.trends.trends' , {
 		this.callParent(arguments);
 	},
 
-	getPostParams: function() {
-		var post_params = [];
-
-		Ext.Object.each(this.nodesByID, function(id, node, obj) {
-			post_params.push({
-				id: id,
-				metrics: node.metrics
-			});
-		},this)
-
-		var post_params = {
-			'nodes': Ext.JSON.encode(post_params),
-			'aggregate_method' : this.aggregate_method,
-			'aggregate_interval': this.aggregate_interval,
-			'aggregate_max_points': this.aggregate_max_points,
-			//'consolidation_method': this.consolidation_method
-		};
-
-		//if (this.aggregate_interval)
-		//	this.post_params['aggregate_interval'] = this.aggregate_interval;
-
-		return post_params;
-	},
-
 	doRefresh: function(from, to) {
 		log.debug('Get values from ' + new Date(from) + ' to ' + new Date(to), this.logAuthor);
 
-		if (this.nodesByID && Ext.Object.getSize(this.nodesByID) != 0 ) {
-			var url = '/perfstore/values/' + parseInt(from / 1000) + '/' + parseInt(to / 1000);
+	    this.refreshNodes(from, to);
 
-			Ext.Ajax.request({
-				url: url,
-				scope: this,
-				params: this.getPostParams(),
-				method: 'POST',
-				success: function(response) {
-					var data = Ext.JSON.decode(response.responseText);
-					data = data.data;
-					this.onRefresh(data);
-				},
-				failure: function(result, request) {
-					log.error('Ajax request failed ... (' + request.url + ')', this.logAuthor);
-				}
-			});
-		}
 	},
 
 	onRefresh: function(data) {

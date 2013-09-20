@@ -24,7 +24,7 @@
 //											-> createChart
 
 Ext.define('widgets.mini_chart.mini_chart' , {
-	extend: 'canopsis.lib.view.cwidget',
+    extend: 'canopsis.lib.view.cperfstoreValueConsumerWidget',
 
 	alias: 'widget.mini_chart',
 	requires: [ 'canopsis.lib.view.csparkline' ] ,
@@ -53,29 +53,10 @@ Ext.define('widgets.mini_chart.mini_chart' , {
 		this.from = from;	
 		this.to = to;
 		log.debug('Get values from ' + new Date(from) + ' to ' + new Date(to), this.logAuthor);
-		if (this.nodesByID) {
-			if (Ext.Object.getSize(this.nodesByID) != 0) {
-				url = this.makeUrl(from, to);
-				Ext.Ajax.request({
-					url: url,
-					scope: this,
-					params: this.buildParams(from, to),
-					method: 'POST',
-					success: function(response) {
-						var data = Ext.JSON.decode(response.responseText);
-						data = data.data;
-						this.onRefresh(data);
-					},
-					failure: function(result, request) {
-						log.error('Ajax request failed ... (' + request.url + ')', this.logAuthor);
-					}
-				});
-			} else {
-				log.debug('No nodes specified', this.logAuthor);
-				this.chart.showLoading(_('Please choose a valid metric in wizard'));
-			}
-		}
-		this.callParent(arguments);
+
+	    this.refreshNodes(from, to);
+
+	    this.callParent(arguments);
 	},
 	buildParams: function(oFrom, oTo) {
 		//TODO: Rebuild this with new format !
