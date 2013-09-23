@@ -89,10 +89,10 @@ class engine(cengine):
 			atype = action.get('type', None)
 
 			if atype == "override":
-				self.logger.debug("    + %s: Override: '%s' -> '%s'" % (event['rk'], afield, avalue))
-
 				afield = action.get('field', None)
 				avalue = action.get('value', None)
+
+				self.logger.debug("    + %s: Override: '%s' -> '%s'" % (event['rk'], afield, avalue))
 
 				if afield and avalue:
 					event[afield] = avalue
