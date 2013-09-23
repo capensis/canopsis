@@ -49,7 +49,13 @@ class engine(cengine):
 		now = time.time()
 		for condition in conditions:
 			if condition['type'] == 'time_interval':
-				if now >= condition['startTs'] and now < condition['stopTs']:
+				always = condition.get('always', False)
+
+				if always:
+					self.logger.debug(" + 'time_interval' is 'always'")
+					result = True
+
+				elif now >= condition['startTs'] and now < condition['stopTs']:
 					self.logger.debug(" + 'time_interval' Match")
 					result = True
 					
