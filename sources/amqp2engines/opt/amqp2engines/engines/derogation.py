@@ -66,29 +66,53 @@ class engine(cengine):
 		return True
 	
 	def actions(self, event, derogation):
-		actions = derogation.get('actions', None)
 		name = derogation.get('crecord_name', None)
+		description = derogation.get('description', None)
+		actions = derogation.get('actions', None)
 		_id = derogation.get('_id', None)
 
+		if not _id or not name or not description or not actions:
+			self.logger.error("Malformed derogation: %s" % derogation)
+			return event
+
+		# If _id is ObjectId(), transform it to str()
 		if not isinstance(_id, basestring):
 			_id = str(_id)
 
 		if not isinstance(actions, list):
-			self.logger.error("Invalid actions field in '%s': %s" % (derogation['_id'], actions))
+			self.logger.error("Invalid actions field in '%s': %s" % (_id, actions))
 			return event
+
+		derogated = False
 		
-		for action in derogation['actions']:
-			if action['type'] == "override":
-				self.logger.debug("    + %s: Override: '%s' -> '%s'" % (event['rk'], action['field'], action['value']))
-				event[action['field']] = action['value']
-				event["derogation_id"] = _id
-				event["derogation_description"] = derogation['description']
-				event["derogation_name"] = derogation['crecord_name']
-				event["tags"].append(name)
-				event["tags"].append("derogated")
+		for action in actions:
+			atype = action.get('type', None)
+
+			if atype == "override":
+				self.logger.debug("    + %s: Override: '%s' -> '%s'" % (event['rk'], afield, avalue))
+
+				afield = action.get('field', None)
+				avalue = action.get('value', None)
+
+				if afield and avalue:
+					event[afield] = avalue
+
+					derogated = True
+
+				else:
+					self.logger.error("Action malformed (need 'field' and 'value'): %s" % action)
+
 			else:
-				self.logger.warning("Unknown action '%s'" % action['type'])
+				self.logger.warning("Unknown action '%s'" % atype)
 				
+		# If the event was derogated, fill some informations
+		if derogated:
+			event["derogation_id"] = _id
+			event["derogation_description"] = description
+			event["derogation_name"] = name
+			event["tags"].append(name)
+			event["tags"].append("derogated")
+
 		return event
 	
 	def work(self, event, *args, **kargs):
