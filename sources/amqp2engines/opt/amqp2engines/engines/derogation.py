@@ -102,6 +102,27 @@ class engine(cengine):
 				else:
 					self.logger.error("Action malformed (need 'field' and 'value'): %s" % action)
 
+			elif atype == "requalificate":
+				statemap_id = action.get('statemap', None)
+
+				self.logger.debug("    + %s: Requalificate using statemap '%s'" % (event['rk'], statemap_id))
+
+				if statemap_id:
+					record = self.storage.find_one(mfilter={'crecord_type': 'statemap', '_id': statemap_id})
+
+					if not record:
+						self.logger.error("Statemap '%s' not found" % statemap_id)
+
+					statemap = cstatemap(record=record)
+
+					event['real_state'] = event['state']
+					event['state'] = statemap.get_mapped_state(event['real_state'])
+
+					derogated = True
+
+				else:
+					self.logger.error("Action malformed (need 'statemap'): %s" % action)
+
 			else:
 				self.logger.warning("Unknown action '%s'" % atype)
 				
