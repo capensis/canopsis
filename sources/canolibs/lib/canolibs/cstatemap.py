@@ -40,4 +40,4 @@ class cstatemap(crecord):
 		self.statemap = self.data['statemap']
 
 	def get_mapped_state(self, state):
-		return self.statemap.get(state, None)
+		return self.statemap[state]
