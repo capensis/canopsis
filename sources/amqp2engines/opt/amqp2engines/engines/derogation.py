@@ -62,7 +62,11 @@ class engine(cengine):
 	def actions(self, event, derogation):
 		actions = derogation.get('actions', None)
 		name = derogation.get('crecord_name', None)
-		
+		_id = derogation.get('_id', None)
+
+		if not isinstance(_id, basestring):
+			_id = str(_id)
+
 		if not isinstance(actions, list):
 			self.logger.error("Invalid actions field in '%s': %s" % (derogation['_id'], actions))
 			return event
@@ -71,7 +75,7 @@ class engine(cengine):
 			if action['type'] == "override":
 				self.logger.debug("    + %s: Override: '%s' -> '%s'" % (event['rk'], action['field'], action['value']))
 				event[action['field']] = action['value']
-				event["derogation_id"] = derogation['_id']
+				event["derogation_id"] = _id
 				event["derogation_description"] = derogation['description']
 				event["derogation_name"] = derogation['crecord_name']
 				event["tags"].append(name)
