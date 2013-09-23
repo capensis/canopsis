@@ -37,3 +37,6 @@ class KnownValues(unittest.TestCase):
 		self.assertEqual(2, statemap.get_mapped_state(5))
 		self.assertEqual(2, statemap.get_mapped_state(6))
 		self.assertEqual(2, statemap.get_mapped_state(7))
+
+if __name__ == "__main__":
+	unittest.main(verbosity=2)
