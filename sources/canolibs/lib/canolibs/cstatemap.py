@@ -27,7 +27,7 @@ class cstatemap(crecord):
 		if isinstance(statemap, list):
 			self.statemap = statemap
 
-		crecord.__init__(self, *args, **kwargs)
+		crecord.__init__(self, type=self.type, *args, **kwargs)
 
 	def dump(self):
 		self.data['statemap'] = self.statemap
@@ -40,4 +40,5 @@ class cstatemap(crecord):
 		self.statemap = self.data['statemap']
 
 	def get_mapped_state(self, state):
-		return self.statemap[state]
+		if state < len(self.statemap):
+			return self.statemap[state]
