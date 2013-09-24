@@ -71,6 +71,25 @@ Ext.define('canopsis.controller.Ldap', {
 		{name: 'aaa_owner', defaultValue: undefined},
 		*/
 		return record;
-	}
+	},
+	
+	_save: function(record, edit, store, form) {
+		//override the parent _save method, to manually choose the store to save data in
+		var store = this.getStore('Ldaps');
+		console.log(store);
 
+		if (edit)
+			var batch = store.proxy.batch({update: [record]});
+		else
+			var batch = store.proxy.batch({create: [record]});
+
+		batch.on('complete', function(batch,operation,opts) {
+			this.displaySuccess(batch, operation, opts);
+			log.debug('Reload store', this.logAuthor);
+			this.load();
+		},store);
+
+		this._postSave(record);
+		this._cancelForm(form);
+	},
 });
