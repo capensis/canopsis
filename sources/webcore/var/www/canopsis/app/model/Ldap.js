@@ -30,7 +30,7 @@ Ext.define('canopsis.model.Ldap', {
 		{name: 'aaa_access_other', defaultValue: undefined},
 		{name: 'aaa_access_owner', defaultValue: undefined},
 		{name: 'aaa_admin_group', defaultValue: undefined},
-		{name: 'aaa_group', defaultValue: undefined},
+		{name: 'aaa_group', defaultValue: "group.Canopsis"},
 		{name: 'aaa_owner', defaultValue: undefined},
 
 		{name: 'uri'},

@@ -78,6 +78,13 @@ Ext.define('canopsis.view.Ldap.Form', {
 			fieldLabel: _('field_mail'),
 			name: 'mail',
 			allowBlank: false
+		},{
+			fieldLabel: _('field_group'),
+			name: 'aaa_group',
+			allowBlank: false
+		},{
+			xtype: 'label',
+			text: _('Warning, you should restart the webserver to apply changes!')
 		}]
 	}]
 

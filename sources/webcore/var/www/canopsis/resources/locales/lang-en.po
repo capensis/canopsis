@@ -1852,6 +1852,9 @@ msgstr "Unknown"
 msgid "then"
 msgstr "then"
 
+msgid "Warning, you should restart the webserver to apply changes!"
+msgstr "Warning, you should restart the webserver to apply changes!"
+
 msgid "Worst State"
 msgstr "Worst State"
 
@@ -2001,6 +2004,9 @@ msgstr "Firstname field"
 
 msgid "field_mail"
 msgstr "Mail field"
+
+msgid "field_group"
+msgstr "Canopsis group field"
 
 msgid "Selectors Topologies"
 msgstr "Selectors Topologies"
