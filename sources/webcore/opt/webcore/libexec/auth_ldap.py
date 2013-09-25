@@ -79,7 +79,7 @@ def prov(user, password):
 	if not password or not user:
 		return None
 
-	if not config.get('user_dn', None):
+	if not config.get('user_dn', None) and config['domain']:
 		dn = "%s@%s" % (user, config['domain'])
 	else:
 		try:
