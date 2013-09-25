@@ -147,12 +147,11 @@ def prov(user, password):
 		info["user"] = user
 		info["passwd"] = password
 		info["external"] = True
-		info["aaa_group"] = config.get("group", "group.Canopsis")
+		info["aaa_group"] = config.get("aaa_group", "group.Canopsis")
 
-		mail_key = config.get("mail","mail")
-		if data[mail_key]:
-			info["mail"] = data[mail_key]
-		else:
+		try:
+			info["mail"] = data[config.get("mail","")]
+		except Exception, err:
 			info["mail"] = "Please set your mail in active directory (field mail)"
 
 		logger.debug(" + Info: %s" % info)
