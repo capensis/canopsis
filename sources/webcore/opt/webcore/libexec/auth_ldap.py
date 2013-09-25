@@ -37,7 +37,7 @@ def auth(user, password):
 	if not password or not user:
 		return None
 
-	if not config.get('user_dn', None):
+	if not config.get('user_dn', None) and config['domain']:
 		dn = "%s@%s" % (user, config['domain'])
 	else:
 		try:
@@ -140,13 +140,20 @@ def prov(user, password):
 			if isinstance(value, list) and len(value):
 				value = value[0]
 
+			info[field] = value 
+
 		info["lastname"] =  str(info["lastname"]).title()
 		info["firstname"] =  str(info["firstname"]).title()
-
 		info["user"] = user
 		info["passwd"] = password
 		info["external"] = True
 		info["aaa_group"] = config.get("group", "group.Canopsis")
+
+		mail_key = config.get("mail","mail")
+		if data[mail_key]:
+			info["mail"] = data[mail_key]
+		else:
+			info["mail"] = "Please set your mail in active directory (field mail)"
 
 		logger.debug(" + Info: %s" % info)
 

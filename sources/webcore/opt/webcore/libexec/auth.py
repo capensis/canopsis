@@ -174,7 +174,6 @@ def auth(login=None, password=None):
 
 	logger.debug(" + _id:      %s" % _id)
 	logger.debug(" + Login:    %s" % login)
-	logger.debug(" + Password: %s" % password)
 	logger.debug(" + Mode:     %s" % mode)
 
 	storage = get_storage(namespace='object')

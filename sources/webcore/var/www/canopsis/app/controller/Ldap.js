@@ -91,5 +91,5 @@ Ext.define('canopsis.controller.Ldap', {
 
 		this._postSave(record);
 		this._cancelForm(form);
-	},
+	}
 });
