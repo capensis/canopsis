@@ -219,7 +219,7 @@ Ext.define('canopsis.controller.Account', {
 		if (form.editing && (record.get('passwd') == ''))
 			delete record.data.passwd;
 		
-		if (record.get('external')){
+		if (record.get('external') == true){
 			log.debug('Impossible to change password on external account', this.logAuthor);
 			delete record.data.passwd;
 		}
