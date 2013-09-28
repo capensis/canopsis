@@ -131,16 +131,6 @@ Ext.define('widgets.gauge.gauge' , {
 	    opts.levelColors = [this.colorStart];		    
 	}
 
-
-	/*		if (this.levelThresholds) {
-			opts.levelColorsGradient = false;
-			opts.levelColors = [this.colorStart, this.colorWarn, this.colorStop];
-			if (this.warnValue, this.critValue)
-			opts.levelThresholds = [this.warnValue, this.critValue];
-			}else {
-			opts.levelColors = [this.colorStart, this.colorStop];
-			}
-	*/
 	log.debug('Gauge options:', this.logAuthor);
 	log.dump(opts);
 
