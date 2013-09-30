@@ -117,11 +117,19 @@ Ext.define('widgets.gauge.gauge' , {
 
 		if (this.levelThresholds) {
 			opts.levelColorsGradient = false;
-			opts.levelColors = [this.colorStart, this.colorWarn, this.colorStop];
-			if (this.warnValue, this.critValue)
-				opts.levelThresholds = [this.warnValue, this.critValue];
-		}else {
-			opts.levelColors = [this.colorStart, this.colorStop];
+		    opts.levelColors = [this.colorStart];
+		    opts.levelThresholds = [];
+		    if (this.warnValue) {
+			opts.levelColors.push(this.colorWarn);
+			opts.levelThresholds.push(this.warnValue);
+		    }
+		    if (this.critValue) {
+			opts.levelColors.push(this.colorStop);
+			opts.levelThresholds.push(this.critValue);
+		    }
+		}else {		    
+			opts.levelColors = [this.colorStart];
+		    opts.levelThresholds = []
 		}
 
 		log.debug('Gauge options:', this.logAuthor);
@@ -192,11 +200,6 @@ Ext.define('widgets.gauge.gauge' , {
 			if (this.getEl().isMasked && !this.isDisabled())
 				this.getEl().unmask();
 
-			var fields = undefined;
-
-			//get first node
-			fields = this.nodesByID[Ext.Object.getKeys(this.nodesByID)[0]]
-
 			if (data.min)
 				this.minValue = data.min;
 
@@ -209,21 +212,24 @@ Ext.define('widgets.gauge.gauge' , {
 			if (data.thld_crit)
 				this.critValue = data.thld_crit;			
 
-			//update metric name
-			if (fields && fields.label)
-				this.gaugeLabel = fields.label;
-			else
-				this.gaugeLabel = data.metric;
-
-			//update metric value
-			if (fields && fields.max)
-				this.maxValue = fields.max;
-
-			if (fields && fields.min)
-				this.minValue = fields.min;
-
 			if (data.bunit && this.displayUnit)
 				this.bunit = data.bunit;
+
+			var fields = undefined;
+
+			//get first node
+			fields = this.nodesByID[Ext.Object.getKeys(this.nodesByID)[0]]
+
+
+		    if (fields) {
+			//update metric name
+			if (fields.label) this.gaugeLabel = fields.label; else this.gaugeLabel = data.metric;
+			//update metric value
+			if (fields.max) this.maxValue = fields.max;
+			if (fields.min) this.minValue = fields.min;
+			if (fields.thld_warn) this.warnValue = fields.thld_warn;
+			if (fields.thld_crit) this.critValue = fields.thld_crit;
+		    }
 
 			try {
 				if (data.values) {
