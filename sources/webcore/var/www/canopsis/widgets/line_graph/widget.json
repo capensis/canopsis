@@ -376,19 +376,27 @@
 		},{
 			"title": "Choose events",
 			"advanced": true,
-			"layout":"anchor",
 			"items": [{
-				"xtype": "cfilter",
-				"name": "flagFilter",
-				"anchor": "100% 80%"
-			},{
-				"xtype":"numberfield",
-				"name": "nbMavEventsDisplayed",
-				"fieldLabel":"Maximum number of displayed events (0 for no limit)",
-				"labelWidth": 200,
-				"value": 100,
-				"minValue": 0,
-				"anchor": "50% 10%"
+				"xtype": "panel",
+    			"border":0,
+				"layout": {                        
+					"type": "vbox",
+					"pack": "start",
+					"align" : "stretch"
+    			},
+				"items":[{
+					"xtype": "cfilter",
+					"name": "flagFilter",
+					"flex": 1
+				},{
+					"xtype":"numberfield",
+					"name": "nbMavEventsDisplayed",
+					"fieldLabel":"Maximum number of displayed events (0 for no limit)",
+					"labelWidth": 200,
+					"value": 100,
+					"minValue": 0,
+					"flex": 0
+				}]
 			}]
 		},{
 			"title": "Choose Metrics",

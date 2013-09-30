@@ -236,8 +236,11 @@ class cselector(crecord):
 		
 		if len(self.include_ids) == 1 and not self.exclude_ids and not self.exclude_ids:
 			states = {}
-			record = self.storage.get(self.include_ids[0], namespace=self.namespace)
-			states[int(record.data["state"])] = 1
+			try:
+				record = self.storage.get(self.include_ids[0], namespace=self.namespace)
+				states[int(record.data["state"])] = 1
+			except:
+				pass #no record found
 			
 		else:	
 			# Build MongoDB filter		
