@@ -36,7 +36,7 @@ class cengine(multiprocessing.Process):
 			next_balanced=False,
 			name="worker1",
 			beat_interval=60,
-			logging_level=logging.DEBUG,
+			logging_level=logging.INFO,
 			exchange_name='amq.direct',
 			routing_keys=[]):
 		
