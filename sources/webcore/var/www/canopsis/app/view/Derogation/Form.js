@@ -18,170 +18,181 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 */
-Ext.define('canopsis.view.Derogation.Form' , {
+Ext.define('canopsis.view.Derogation.Form', {
 	extend: 'canopsis.lib.view.cform',
-
-	requires: [
-		'canopsis.lib.form.field.cdate'
-	],
-
 	alias: 'widget.DerogationForm',
 
 	width: 500,
-	layout: 'anchor',
+	minHeight: 460,
 	bodyPadding: 10,
 	border: false,
 	now: false,
 
+	items: [{
+		xtype: 'tabpanel',
+		deferredRender: false,
+		border: false,
+		plain: true,
+
+		defaults: {
+			border: false,
+			autoScroll: true,
+			layout: 'anchor',
+		},
+
+		items: [{
+			title: _('General'),
+			items: [{
+				xtype: 'hiddenfield',
+				name: '_id',
+				value: undefined,
+			},{
+				xtype: 'hiddenfield',
+				name: 'tags',
+				value: undefined,
+			},{
+				xtype: 'textfield',
+				name: 'crecord_name',
+				fieldLabel: _('Name'),
+				allowBlank: false,
+				width: 295,
+			},{
+				xtype: 'textarea',
+				name: 'description',
+				fieldLabel: 'Description',
+				width: 295,
+			},{
+				xtype: 'fieldcontainer',
+				fieldLabel: _('Begin'),
+				layout: 'hbox',
+				items: [{
+					xtype: 'cdate',
+					name: 'startTs',
+					date_width: 110,
+					now: this.now,
+				}],
+			},{
+				xtype: 'fieldcontainer',
+				fieldLabel: _('Ending'),
+				layout: 'hbox',
+				items: [{
+					xtype: 'combobox',
+					name: 'periodType',
+
+					isFormField: false,
+					editable: false,
+
+					width: 60,
+					margin: '0 5 0 0',
+
+					queryMode: 'local',
+					displayField: 'text',
+					valueField: 'value',
+					value: 'for',
+
+					store: {
+						xtype: 'store',
+						fields: ['value', 'text'],
+						data: [
+							{value: 'for', text: _('For')},
+							{value: 'to', text: _('To')},
+						]
+					},
+
+					listeners: {
+						change: function(combo, value) {
+							var me = combo.up('DerogationForm');
+							var durationDate = me.down('cduration[name=forTs]');
+							var stopDate     = me.down('cdate[name=stopTs]');
+
+							if (value == 'for') {
+								durationDate.show();
+								stopDate.hide();
+								stopDate.setDisabled(true);
+							}
+							else if (value == 'to') {
+								durationDate.hide();
+								stopDate.show();
+								stopDate.setDisabled(false);
+							}
+						},
+					},
+				},{
+					xtype: 'cduration',
+					name: 'forTs',
+					value: global.commonTs.day,
+				},{
+					xtype: 'cdate',
+					name: 'stopTs',
+					hidden: true,
+					disabled: true,
+				}]
+			}],
+		},{
+			title: _('Override'),
+			items: [{
+				xtype: 'button',
+				text: _('Add'),
+				iconCls: 'icon-add',
+				margin: '5 5 5 5',
+
+				listeners: {
+					click: function() {
+						var me = this.up('DerogationForm');
+
+						me.addNewField();
+					}
+				}
+			},{
+				xtype: 'cfieldset',
+				title: _('Actions'),
+				border: 'false',
+				items: [],
+			}],
+		},{
+			title: _('Requalificate'),
+		},{
+			title: _('Filter'),
+			xtype: 'cfilter',
+			name: 'evfilter',
+		}]
+	}],
+
 	initComponent: function() {
 		this.callParent();
 
-		this.add({
-			xtype: 'hiddenfield',
-			name: '_id',
-			value: undefined
-		});
+		this.periodTypeCombo = this.down('combobox[name=periodType]');
+		this.durationDate    = this.down('cduration[name=forTs]');
+		this.startDate       = this.down('cdate[name=startTs]');
+		this.stopDate        = this.down('cdate[name=stopTs]');
 
-		this.add({
-			xtype: 'hiddenfield',
-			name: 'tags',
-			value: undefined
-		});
-
-		var crecord_name = Ext.widget('textfield', {
-			name: 'crecord_name',
-			fieldLabel: _('Name'),
-			allowBlank: false,
-			width: 295
-		});
-
-		var description = Ext.widget('textarea', {
-			name: 'description',
-			fieldLabel: _('Description'),
-			//allowBlank:false,
-			width: 295
-		});
-
-		//----------------Beginning-----------------
-		this.startDate = Ext.widget('cdate', {
-			name: 'startTs',
-			date_width: 110,
-			now: this.now
-		});
-
-		var beginning = Ext.widget('fieldcontainer', {
-			fieldLabel: _('Begin'),
-			layout: 'hbox',
-			items: [this.startDate]
-		});
-
-		//------------------Ending----------------
-
-		this.periodTypeCombo = Ext.widget('combobox', {
-			isFormField: false,
-			editable: false,
-			width: 60,
-			queryMode: 'local',
-			displayField: 'text',
-			valueField: 'value',
-			value: 'for',
-			store: {
-				xtype: 'store',
-				fields: ['value', 'text'],
-				data: [
-					{value: 'for', text: _('For')},
-					{value: 'to', text: _('To')}
-				]
-			}
-		});
-
-		this.durationDate = Ext.widget('cduration', {
-			name: 'forTs',
-			value: global.commonTs.day
-		});
-
-		this.stopDate = Ext.widget('cdate', {
-			name: 'stopTs',
-			margin: '0 0 0 5',
-			hidden: true,
-			disabled: true
-		});
-
-		var ending = Ext.widget('fieldcontainer', {
-			fieldLabel: _('Ending'),
-			layout: 'hbox',
-			items: [this.periodTypeCombo, this.durationDate, this.stopDate]
-		});
-
-
-		//----------------build general options field------------
-
-		this.add({
-			xtype: 'cfieldset',
-			title: _('General options'),
-			items: [crecord_name, description, beginning, ending]
-		});
-
-		//--------------------Variable field-----------------------
-		this.variableField = this.add({
-			xtype: 'cfieldset',
-			title: _('Actions')
-		});
-
-		if (!this.editing)
-			this.variableField.add(Ext.create('derogation.field'));
-
-		//align button with other button
-		var container = this.variableField.add({
-			xtype: 'container',
-			margin: '5 0 0 0',
-			height: 25,
-			layout: 'absolute'
-		});
-
-		this.addButton = container.add({
-			xtype: 'button',
-			x: 436,
-			iconCls: 'icon-add'
-		});
-
-		this.addButton.on('click', this.addButtonFunc, this);
-
-		//--------------bindings--------------
-		this.periodTypeCombo.on('change', this.toggleTimePeriod, this);
-    },
-
-	toggleTimePeriod: function(combo,value) {
-		if (value == 'for') {
-			this.durationDate.show();
-			this.stopDate.hide();
-			this.stopDate.setDisabled(true);
+		if(!this.editing) {
+			this.addNewField();
 		}
-
-		if (value == 'to') {
-			this.durationDate.hide();
-			this.stopDate.show();
-			this.stopDate.setDisabled(false);
-		}
-
 	},
 
-	addButtonFunc: function() {
-		this.addNewField();
+	afterRender: function() {
+		this.callParent();
+
+		var tabpanel = this.down('tabpanel');
+
+		for(var i = 0; i < tabpanel.items.getCount(); ++i) {
+			tabpanel.setActiveTab(i);
+		}
+
+		tabpanel.setActiveTab(0);
 	},
 
-	addNewField: function(variable,value) {
+	addNewField: function(variable, value) {
 		log.debug(' + Adding a new field', this.logAuthor);
-		var last_child_index = this.variableField.items.length;
-		var config = {
-			_variable: variable,
-			_value: value
-		};
-		this.variableField.insert(last_child_index - 1, Ext.create('derogation.field', config));
+
+		var actions = this.down('cfieldset[title="' + _('Actions') + '"]');
+
+		actions.add(Ext.create('derogation.override', {_variable: variable, _value: value}));
 	}
 });
 
-Ext.define('derogation.field', {
+Ext.define('derogation.override', {
 	extend: 'Ext.form.Panel',
 	mixins: ['canopsis.lib.form.cfield'],
 
