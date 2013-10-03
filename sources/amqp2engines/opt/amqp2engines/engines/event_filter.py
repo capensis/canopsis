@@ -26,6 +26,7 @@ from cstorage import get_storage
 import cevent
 import logging
 import cmfilter
+import ast
 
 import time
 from datetime import datetime
@@ -38,10 +39,12 @@ class engine(cengine):
 
 	def __init__(self, *args, **kargs):
 		cengine.__init__(self, name=NAME, *args, **kargs)
+		self.account = caccount(user="root", group="root")
+
 
 	def pre_run(self):
-		self.account = caccount(user="root", group="root")
 		self.drop_event_count = 0
+		self.pass_event_count = 0
 		self.beat()
 
 
@@ -49,32 +52,32 @@ class engine(cengine):
 
 		default_action = 'pass'
 
-		event_str = event.get('rk',str(event))
+		event_str = str(event)
 
-		for configuration in self.configurations:
+		default_action = self.configuration.get('default_action', 'pass')
 
-			default_action = configuration.get('default_action', 'pass')
+		#When list configuration then check black and white lists depending on json configuration
+		for filterItem in self.configuration.get('rules', []):
 
-			#When list configuration then check black and white lists depending on json configuration
-			for filterItem in configuration['rules']:
-				action = filterItem['action']
-				name = filterItem.get('name', 'no_name')
-			
-				# Try filter rules on current event
-				if cmfilter.check(filterItem['filter'], event):
-				
-					if action == 'pass':
-						self.logger.debug("Event '%s' passed by rule '%s'" % (event_str, name))
-						return event
+			action = filterItem.get('action')
 
-					elif action == 'drop':
-						self.logger.debug("Event '%s' dropped by rule '%s'" % (event_str, name))
-						self.drop_event_count += 1
-						return DROP
+			name = filterItem.get('name', 'no_name')
+		
+			# Try filter rules on current event
+			if cmfilter.check(filterItem['mfilter'], event):
+				if action == 'pass':
+					self.logger.debug("Event '%s' passed by rule '%s'" % (event_str, name))
+					self.pass_event_count += 1
+					return event
 
-					else:
-						self.logger.error("Unknown action '%s'" % action)
+				elif action == 'drop':
+					self.logger.debug("Event '%s' dropped by rule '%s'" % (event_str, name))
+					self.drop_event_count += 1
+					return DROP
 
+				else:
+					self.logger.warning("Unknown action '%s'" % action)
+	
 		# No rules matched
 		if default_action == 'drop':
 			self.logger.debug("Event '%s' dropped by default action" % (event_str))
@@ -82,25 +85,32 @@ class engine(cengine):
 			return DROP
 		
 		self.logger.debug("Event '%s' passed by default action" % (event_str))
+		self.pass_event_count += 1
+
 		return event
 		
 
 	def beat(self, *args, **kargs):
-		
 		# Configuration reload for realtime ui changes handling
-		self.storage = get_storage(logging_level=logging.DEBUG, account=self.account)		
-		configuration = self.storage.find({'_id':'event_filter.rule'}, namespace='object')
 
-		if len(configuration):
-			rules = configuration.dump()
-			self.configurations = sorted(rules, key=lambda x: x['priority'])	
+		self.configuration = { 'rules' : [], 'default_action': 'pass'}
 
-		else:
-			# Failover configuration
-			self.configurations = {'rules': [], 'default_action': 'pass'}
-			self.logger.debug('Missing configuration for list filters')
+		self.storage = get_storage(logging_level=logging.DEBUG, account=self.account)	
+		try:
+			records = self.storage.find({'crecord_type':'rule'}, sort="priority")
 
-		# Send AMQP Event for drop metrics
+			for record in records:
+				record_dump = record.dump()
+				record_dump["mfilter"] = ast.literal_eval(record_dump["mfilter"])
+				self.configuration['rules'].append(record_dump)
+
+			self.send_stat_event()
+
+		except Exception, e:
+			self.logger.warning(str(e))
+
+	def send_stat_event(self):
+	# Send AMQP Event for drop metrics
 		event = cevent.forger(
 			connector = "cengine",
 			connector_name = "engine",
@@ -110,12 +120,14 @@ class engine(cengine):
 			state=0,
 			state_type=1,
 			output="%s event dropped since %s" % (self.drop_event_count, self.beat_interval),
-			perf_data_array=[{'metric': 'drop_event' , 'value': self.drop_event_count, 'type': 'COUNTER' }]
+			perf_data_array=[
+								{'metric': 'drop_event' , 'value': self.drop_event_count, 'type': 'COUNTER' },
+								{'metric': 'pass_event' , 'value': self.pass_event_count, 'type': 'COUNTER' }
+							]
 		)
 
 		rk = cevent.get_routingkey(event)
-		self.amqp.publish(event, rk, self.amqp.exchange_name_events)		
+		self.amqp.publish(event, rk, self.amqp.exchange_name_events)
 
 		self.drop_event_count = 0				
-
-
+		self.pass_event_count = 0

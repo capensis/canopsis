@@ -29,71 +29,63 @@ from cengine import DROP
 
 class KnownValues(unittest.TestCase): 
 	def setUp(self):
-		pass
+		self.engine = event_filter.engine(logging_level=logging.DEBUG)
+		self.engine.beat()
 
 	def test_01_Init(self):	
-		engine = event_filter.engine(logging_level=logging.DEBUG)
-		engine.drop_event_count = 0
-		engine.configurations = [{
+		self.engine.drop_event_count = 0
+		self.engine.configuration = {
 			'rules': [
-				{'filter': {'connector': 'nagios'}	, 'action': 'pass'},
-				{'filter': {'connector': 'collectd'}, 'action': 'drop'},
-				{'filter': {'connector': 'priority'}, 'action': 'pass'},
-				{'filter': {'test_field': { '$eq': 'cengine' } }, 'action': 'pass'},
-				{'filter': {'test_field': { '$gt': 1378713357 } },'action': 'drop'},						
+				{'mfilter': {'connector': 'nagios'}	, 'action': 'pass'},
+				{'mfilter': {'connector': 'collectd'}, 'action': 'drop'},
+				{'mfilter': {'connector': 'priority'}, 'action': 'pass'},
+				{'mfilter': {'test_field': { '$eq': 'cengine' } }, 'action': 'pass'},
+				{'mfilter': {'test_field': { '$gt': 1378713357 } },'action': 'drop'},
+				{'mfilter': {"tags": {"$in": "collectd2event"}}},
+				{'mfilter': {'connector': 'nagios'}	, 'action': 'pass'},
+				{'mfilter': {'connector': 'second_rule'}, 'action': 'pass'},
+				{'mfilter': {'connector': 'priority'}, 'action': 'drop'},
+				{'mfilter': {'test_field': { '$eq': 'cengine' } }, 'action': 'pass'},
+				{'mfilter': {'test_field': { '$gt': 1378713357 } },'action': 'drop'},	
 			], 
 			'priority' : 2,
 			'default_action': 'drop',
 			'configuration': 'white_black_lists',
-		},{
-			'rules': [
-				{'filter': {'connector': 'nagios'}	, 'action': 'pass'},
-				{'filter': {'connector': 'second_rule'}, 'action': 'pass'},
-				{'filter': {'connector': 'priority'}, 'action': 'drop'},
-				{'filter': {'test_field': { '$eq': 'cengine' } }, 'action': 'pass'},
-				{'filter': {'test_field': { '$gt': 1378713357 } },'action': 'drop'},						
-			], 
-			'priority' : 1,
-			'default_action': 'drop',
-			'configuration': 'white_black_lists',
 		}
-		]
 
 		# Test normal behaviors
 		event = {'connector': 'nagios'}
 
 
-		self.assertTrue(engine.work(event) == event)
+		self.assertTrue(self.engine.work(event) == event)
 
 	
 		event['connector'] = 'collectd'
-		self.assertTrue(engine.work(event) == DROP)
+		self.assertTrue(self.engine.work(event) == DROP)
 
 		# second rule matched
 		event['connector'] = 'second_rule'
-		self.assertTrue(engine.work(event) == event)
-
+		self.assertTrue(self.engine.work(event) == event)
 
 		# Test default actions
 		event['connector'] = 'default_drop'
-		self.assertTrue(engine.work(event) == DROP)
+		self.assertTrue(self.engine.work(event) == DROP)
 
 		# Change default action
-		for configuration in engine.configurations:
-			configuration['default_action'] = 'pass'
+		self.engine.configuration['default_action'] = 'pass'
 		event['connector'] = 'default_pass'
-		self.assertTrue(engine.work(event) == event)
+		self.assertTrue(self.engine.work(event) == event)
 
 		# rule priority validation sorted is the same used in beat method in the engine
 		event['connector'] = 'priority'
-		self.assertTrue(engine.work(event) == event)
-		engine.configurations = sorted(engine.configurations, key=lambda x: x['priority'])
-		self.assertTrue(engine.work(event) == DROP)
+		self.assertTrue(self.engine.work(event) == event)
+		# self.engine.configuration = sorted(self.engine.configurations, key=lambda x: x['priority'])
+		# self.assertTrue(self.engine.work(event) == DROP)
 
 
 		# No configuration, default configuration is loaded
-		engine.configurations = []
-		self.assertTrue(engine.work(event) == event)
+		self.engine.configuration = {}
+		self.assertTrue(self.engine.work(event) == event)
 
 
 
