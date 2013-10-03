@@ -30,6 +30,8 @@ var global = {
 	commit: '',
 
 	minimified: false,
+	
+	auth_plain: false,
 
 	state_colors: {
 		up: '#50b432',

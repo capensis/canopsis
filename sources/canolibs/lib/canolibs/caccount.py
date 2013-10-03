@@ -52,6 +52,8 @@ class caccount(crecord):
 		self.access_other = []
 		self.access_unauth = []
 
+		self.external = False
+
 		if isinstance(record, crecord):
 			crecord.__init__(self, _id=self._id, record=record, type=self.type, *args, **kargs)
 		else:
@@ -114,6 +116,7 @@ class caccount(crecord):
 		self.data['firstname'] = self.firstname
 		self.data['mail'] = self.mail
 		self.data['groups'] = list(self.groups)
+		self.data['external'] = self.external
 		'''
 		if self.group:
 			self.data['groups'].insert(0, self.group)
@@ -129,6 +132,7 @@ class caccount(crecord):
 		self.firstname = self.data['firstname']
 		self.mail = self.data['mail']
 		self.groups = self.data['groups']
+		self.external = self.data.get('external', self.external)
 		'''
 		if len(self.groups) > 0:
 			if self.groups[0] == self.group:

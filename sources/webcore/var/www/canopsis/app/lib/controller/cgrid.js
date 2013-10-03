@@ -203,6 +203,9 @@ Ext.define('canopsis.lib.controller.cgrid', {
 
 		//this._reloadButton(grid)
 
+		if (this.bindGridEvents)
+			this.bindGridEvents(grid);
+
 	},
 
 	_bindFormEvents: function(form) {
@@ -368,7 +371,7 @@ Ext.define('canopsis.lib.controller.cgrid', {
 			this.addButton(button);
 	},
 
-	_saveForm: function(form,store) {
+	_saveForm: function(form, store) {
 		log.debug('Clicked saveForm', this.logAuthor);
 
 		if (store == undefined) {
@@ -411,7 +414,7 @@ Ext.define('canopsis.lib.controller.cgrid', {
 
 	},
 
-	_save: function(record,edit,store,form) {
+	_save: function(record, edit, store, form) {
 		if (!store)
 			store = this.grid.store;
 		if (!form)
@@ -486,11 +489,11 @@ Ext.define('canopsis.lib.controller.cgrid', {
 		}
 	},
 
-	_showForm: function(item) {
+	_showForm: function(item, store) {
 		log.debug('Show form', this.logAuthor);
 
 		if (this.showForm)
-			return this.showForm(item);
+			return this.showForm(item, store);
 
 		var id = undefined;
 		var data = undefined;
@@ -532,11 +535,14 @@ Ext.define('canopsis.lib.controller.cgrid', {
 						editing: editing,
 						record: data,
 						_record: item,
+						store: store,
 						closable: true
 					}).show();
 					form.win = undefined;
 
-					this._keynav.disable();
+					if (this._keynav)
+						this._keynav.disable();
+
 					this.current_form = form;
 				}
 
@@ -555,7 +561,8 @@ Ext.define('canopsis.lib.controller.cgrid', {
 						EditMethod: this.EditMethod,
 						editing: editing,
 						record: data,
-						_record: item
+						_record: item,
+						store: store
 					});
 
 					if (this.getEditTitle)
@@ -576,7 +583,9 @@ Ext.define('canopsis.lib.controller.cgrid', {
 
 					this.grid.window_form = win;
 
-					this._keynav.disable();
+					if (this._keynav)
+						this._keynav.disable();
+
 					this.current_form = form;
 				}
 			}
@@ -644,7 +653,9 @@ Ext.define('canopsis.lib.controller.cgrid', {
 		}
 	},
 
+
 	_editRecord: function(view, record, item, index, e, eOpts, store) {
+
 		log.debug('Clicked editRecord', this.logAuthor);
 
 		//hack create a copy to not mess with old record
@@ -653,6 +664,7 @@ Ext.define('canopsis.lib.controller.cgrid', {
 
 		//check rights
 		var ctrl = this.getController('Account');
+
 		if (ctrl.check_record_right(record, 'w')) {
 			var form = this._showForm(record, store);
 

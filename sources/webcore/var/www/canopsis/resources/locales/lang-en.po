@@ -1852,6 +1852,9 @@ msgstr "Unknown"
 msgid "then"
 msgstr "then"
 
+msgid "Warning, you should restart the webserver to apply changes!"
+msgstr "Warning, you should restart the webserver to apply changes!"
+
 msgid "Worst State"
 msgstr "Worst State"
 
@@ -1974,3 +1977,60 @@ msgstr "Show videos"
 
 msgid "Set as avatar"
 msgstr "Set as avatar"
+
+msgid "Authentication"
+msgstr "Authentication"
+
+msgid "URI"
+msgstr "URI"
+
+msgid "base_dn"
+msgstr "Base DN"
+
+msgid "user_dn"
+msgstr "User DN"
+
+msgid "domain"
+msgstr "Domain"
+
+msgid "user_filter"
+msgstr "User filter"
+
+msgid "field_lastname"
+msgstr "Lastname field"
+
+msgid "field_firstname"
+msgstr "Firstname field"
+
+msgid "field_mail"
+msgstr "Mail field"
+
+msgid "field_group"
+msgstr "Canopsis group field"
+
+msgid "Selectors Topologies"
+msgstr "Selectors Topologies"
+
+msgid "Y axis"
+msgstr "Y axis"
+
+msgid "Dynamic"
+msgstr "Dynamic"
+
+msgid "1st axis"
+msgstr "1st axis"
+
+msgid "2nd axis"
+msgstr "2nd axis"
+
+msgid "3rd axis"
+msgstr "3rd axis"
+
+msgid "4th axis"
+msgstr "4th axis"
+
+msgid "Saturday"
+msgstr "Saturday"
+
+msgid "Ldap"
+msgstr "Ldap"

@@ -130,6 +130,14 @@
 	background-image: url(../images/icons/calendar.png) !important; 
 }
 
+.icon-book_link { 
+    background-image: url(../images/icons/book_link.png) !important; 
+}
+
+.icon-book { 
+    background-image: url(../images/icons/book.png) !important; 
+}
+
 .icon-clean {
 	background-image: url(../images/Tango-Blue-Materia/16x16/actions/edit-clear.png) !important; 
 }

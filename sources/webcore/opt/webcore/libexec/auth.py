@@ -170,19 +170,31 @@ def auth(login=None, password=None):
 	if request.params.get('cryptedKey', default=False) or request.params.get('crypted', default=False):
 		mode = 'crypted'
 
-	_id = "account." + login
+	_id = "account.%s" % login
 
 	logger.debug(" + _id:      %s" % _id)
 	logger.debug(" + Login:    %s" % login)
-	logger.debug(" + Password: %s" % password)
 	logger.debug(" + Mode:     %s" % mode)
 
 	storage = get_storage(namespace='object')
+	account = None
 
+	## Local
 	try:
 		account = caccount(storage.get(_id, account=caccount(user=login)))
 	except Exception, err:
 		logger.error(err)
+
+	## External
+	# Try to provisionning account
+	if not account and mode == 'plain':
+		try:
+			account = external_prov(login, password)
+		except Exception, err:
+			logger.error(err)
+
+	## Check
+	if not account:
 		return HTTPError(403, "Forbidden")
 
 	logger.debug(" + Check password ...")
@@ -190,14 +202,25 @@ def auth(login=None, password=None):
 	if not account.is_enable():
 		return HTTPError(403, "This account is not enabled")
 
-	if mode == 'plain':
-		access = account.check_passwd(password)
+	if account.external and  mode != 'plain':
+		return HTTPError(403, "Send your password in plain text")
 
-	elif mode == 'shadow':
-		access = account.check_shadowpasswd(password)
+	access = None
 
-	elif mode == 'crypted':
-		access = account.check_tmp_cryptedKey(password)
+	if account.external and mode == 'plain':
+		access = external_auth(login, password)
+
+	if access == None:
+		logger.debug(" + Check with local db")
+
+		if mode == 'plain':
+			access = account.check_passwd(password)
+
+		elif mode == 'shadow':
+			access = account.check_shadowpasswd(password)
+
+		elif mode == 'crypted':
+			access = account.check_tmp_cryptedKey(password)
 
 	if not access:
 		logger.debug(" + Invalid password ...")
@@ -359,17 +382,36 @@ def create_session(account):
 	return s
 
 def delete_session(_id=None):
-	if not _id:
-		account = get_account()
+	account = get_account()
+
+	if not _id:	
 		_id = account._id
 
-	logger.debug("Delete session '%s'" % _id)
+	if isinstance(_id, list):
+		ids = _id
+	else:
+		ids = [ _id ]
 
-	try:
-		del session_accounts[_id]
-	except:
-		pass
+	logger.debug("Delete session '%s'" % ids)
 
-	s = bottle.request.environ.get('beaker.session')
-	if s['account_id'] == account._id:
+	for _id in ids:
+		try:
+			del session_accounts[_id]
+		except:
+			pass
+
+	if account._id in ids:
+		s = bottle.request.environ.get('beaker.session')
 		s.delete()
+
+def external_prov(login, password):
+	import auth_ldap
+	
+	logger.debug(" + Check External provisionning")
+	return auth_ldap.prov(login, password)
+
+def external_auth(login=None, password=None):
+	import auth_ldap
+
+	logger.debug(" + Check External Auth")
+	return auth_ldap.auth(login, password)	

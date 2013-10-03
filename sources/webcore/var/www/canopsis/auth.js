@@ -27,7 +27,7 @@ Ext.define('canopsis.auth' , {
 
 	logAuthor: '[auth]',
 
-	title: _('Authentification'),
+	title: _('Authentication'),
 
 	renderTo: 'auth_form',
 
@@ -158,7 +158,7 @@ Ext.define('canopsis.auth' , {
 		});
 	},
 
-	auth_m2: function(login, passwd, passwd_sha1) {						
+	auth_m2: function(login, passwd, passwd_sha1) {
 		//relaunch auth with sha 1 mdp
 		Ext.Ajax.request({
 			method: 'GET',
@@ -177,6 +177,33 @@ Ext.define('canopsis.auth' , {
 			},
 			failure: function(form, action) {
 				log.debug(" + M2 Failed", this.logAuthor);
+
+				if (global['auth_plain'])
+					this.auth_m3(login, passwd, passwd_sha1);
+				else
+					this.onFailure()
+			}
+		})
+	},
+
+	// WARNING: Plain method /!\
+	auth_m3: function(login, passwd, passwd_sha1) {
+		Ext.Ajax.request({
+			method: 'GET',
+			url: this.url,
+			scope: this,
+			params: {
+				password: passwd,
+				login: login
+			},
+			success: function(response) {
+				response = Ext.JSON.decode(response.responseText)
+				log.debug(" + M3 Auth Ok", this.logAuthor);
+				global.account = response.data[0];
+				this.onSuccess();
+			},
+			failure: function(form, action) {
+				log.debug(" + M3 Failed", this.logAuthor);
 				this.onFailure()
 			}
 		})

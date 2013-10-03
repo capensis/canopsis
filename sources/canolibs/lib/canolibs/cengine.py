@@ -65,11 +65,14 @@ class cengine(multiprocessing.Process):
 		self.next_balanced = next_balanced
 		
 		init 	= cinit()
-		
+			
 		self.logger = init.getLogger(name, logging_level=self.logging_level)
 		
+		logHandler = logging.FileHandler(filename=os.path.expanduser("~/var/log/engines/%s.log" % name))
+		logHandler.setFormatter(logging.Formatter("%(asctime)s %(levelname)s %(name)s %(message)s"))
+
 		# Log in file
-		self.logger.addHandler(logging.FileHandler(filename=os.path.expanduser("~/var/log/engines/%s.log" % name)))	
+		self.logger.addHandler(logHandler)	
 		
 		self.counter_error = 0
 		self.counter_event = 0

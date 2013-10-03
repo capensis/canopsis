@@ -42,6 +42,15 @@ Ext.define('canopsis.controller.Account', {
 		global.accountCtrl = this;
 	},
 
+	bindGridEvents: function(grid){
+		var ldapCtrl = this.getController('Ldap');
+
+		// Bind ldap button
+		var btns = Ext.ComponentQuery.query('#' + grid.id + ' button[action=ldap]');
+		for (var i = 0; i < btns.length; i++)
+			btns[i].on('click', ldapCtrl.accountButton, ldapCtrl);
+	},
+
 	getConfig: function(id, default_value) {
 		log.debug(' + getConfig ' + id, this.logAuthor);
 		if (! global.account[id]) {
@@ -205,11 +214,15 @@ Ext.define('canopsis.controller.Account', {
 		}
 	},
 
-	preSave: function(record,data,form) {
+	preSave: function(record, data, form) {
 		//don't update password if it's empty
 		if (form.editing && (record.get('passwd') == ''))
 			delete record.data.passwd;
 		
+		if (record.get('external') == true){
+			log.debug('Impossible to change password on external account', this.logAuthor);
+			delete record.data.passwd;
+		}
 
 		//add groups
 		var checkGrid = form.down('grid')

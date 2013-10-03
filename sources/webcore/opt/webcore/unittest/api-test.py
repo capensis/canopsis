@@ -65,6 +65,16 @@ def login_plain():
 	logout()
 
 @test
+def login_plain_ldap():
+	storage.remove('account.toto', account=caccount(user='root'))
+	resp = get('/auth/toto/aqzsedrftg123;', status=[200])
+	logout()
+
+	resp = get('/auth/toto/tata', status=[403])
+	resp = get('/auth/toto/aqzsedrftg123;', status=[200])
+	logout()
+
+@test
 def login_shadow():
 	params={ 'shadow': 1 }
 	resp = get('/auth/%s/%s' % (user, shadow), params=params, status=[200])
@@ -106,12 +116,13 @@ def login_checkAuthPlugin():
 	logout()
 
 ## Execute test
-login_failed()
-login_plain()
-login_shadow()
-login_crypted()
-login_authkey()
-login_checkAuthPlugin()
+#login_failed()
+#login_plain()
+login_plain_ldap()
+#login_shadow()
+#login_crypted()
+#login_authkey()
+#login_checkAuthPlugin()
 
 
 quit()

@@ -32,6 +32,7 @@ var normalApp = function(){
 			'Widgets',
 			'Group',
 			'Account',
+			'Ldap',
 			'Reporting',
 			'ReportingBar',
 			'Keynav',
