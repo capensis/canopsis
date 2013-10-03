@@ -78,10 +78,18 @@ Ext.define('canopsis.controller.Derogation', {
 				record.set('selector_name', form.selector_name);
 
 			//------------Actions-----------
+			var actions = [];
+
 			if (!Ext.isArray(data.actions))
-				record.set('actions', [data.actions]);
+				actions.push(data.actions);
 			else
-				record.set('actions', data.actions);
+				actions = actions.concat(data.actions);
+
+			if(data.statemap) {
+				actions.push(data.statemap);
+			}
+
+			record.set('actions', actions);
 
 			return record;
 	},
@@ -118,6 +126,9 @@ Ext.define('canopsis.controller.Derogation', {
 					var field = action.field;
 					var value = action.value;
 					form.addNewField(field, value);
+				}
+				else if (action.type == 'requalificate') {
+					form.setRequalification(action.statemap);
 				}
 			}
 		}

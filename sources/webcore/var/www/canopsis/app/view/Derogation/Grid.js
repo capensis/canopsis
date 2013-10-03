@@ -50,7 +50,7 @@ Ext.define('canopsis.view.Derogation.Grid' , {
 		return output;
 	},
 
-	rdr_actions: function(val) {
+	rdr_override: function(val) {
 		output = '';
 		for (var i = 0; i < val.length; i++) {
 			var action = val[i];
@@ -60,6 +60,15 @@ Ext.define('canopsis.view.Derogation.Grid' , {
 			}
 		}
 		return output;
+	},
+
+	rdr_statemap: function(val) {
+		if(val) {
+			return rdr_boolean(true);
+		}
+		else {
+			return rdr_boolean(false);
+		}
 	},
 
 	initComponent: function() {
@@ -100,10 +109,15 @@ Ext.define('canopsis.view.Derogation.Grid' , {
 				dataIndex: 'time_conditions',
 				renderer: this.rdr_time_conditions
 			},{
-				header: _('Actions'),
+				header: _('Override'),
 				flex: 1,
 				dataIndex: 'actions',
-				renderer: this.rdr_actions
+				renderer: this.rdr_override
+			},{
+				header: _('Statemap'),
+				flex: 1,
+				dataIndex: 'actions',
+				renderer: this.rdr_statemap,
 			},{
 				header: _('Tags'),
 				flex: 1,

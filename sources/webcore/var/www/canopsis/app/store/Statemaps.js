@@ -26,7 +26,7 @@ Ext.define('canopsis.store.Statemaps', {
 
 	logAuthor: '[store][Statemaps]',
 
-	autoLoad: false,
+	autoLoad: true,
 	autoSync: true,
 
 	sortOnLoad: true,

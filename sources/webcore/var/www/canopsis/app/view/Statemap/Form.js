@@ -142,7 +142,7 @@ Ext.define('statemap.field', {
 				},
 			},{
 				xtype: 'button',
-				iconCls: 'icon-delete',
+				iconCls: 'icon-cancel',
 				margin: '0 0 0 5',
 
 				listeners: {

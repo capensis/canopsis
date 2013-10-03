@@ -22,8 +22,8 @@ Ext.define('canopsis.view.Derogation.Form', {
 	extend: 'canopsis.lib.view.cform',
 	alias: 'widget.DerogationForm',
 
-	width: 500,
-	minHeight: 460,
+	width: 700,
+	minHeight: 560,
 	bodyPadding: 10,
 	border: false,
 	now: false,
@@ -146,11 +146,12 @@ Ext.define('canopsis.view.Derogation.Form', {
 			},{
 				xtype: 'cfieldset',
 				title: _('Actions'),
-				border: 'false',
+				border: false,
 				items: [],
 			}],
 		},{
 			title: _('Requalificate'),
+			xtype: 'DerogationStatemapField',
 		},{
 			title: _('Filter'),
 			xtype: 'cfilter',
@@ -171,34 +172,32 @@ Ext.define('canopsis.view.Derogation.Form', {
 		}
 	},
 
-	afterRender: function() {
-		this.callParent();
-
-		var tabpanel = this.down('tabpanel');
-
-		for(var i = 0; i < tabpanel.items.getCount(); ++i) {
-			tabpanel.setActiveTab(i);
-		}
-
-		tabpanel.setActiveTab(0);
-	},
-
 	addNewField: function(variable, value) {
 		log.debug(' + Adding a new field', this.logAuthor);
 
 		var actions = this.down('cfieldset[title="' + _('Actions') + '"]');
 
-		actions.add(Ext.create('derogation.override', {_variable: variable, _value: value}));
+		actions.add(Ext.create('derogation.override', {variable: variable, value: value}));
+	},
+
+	setRequalification: function(statemap_id) {
+		var statemapfield = this.down('[name=statemap]');
+
+		statemapfield.setValue(statemap_id);
+		statemapfield.statemap_id = statemap_id;
 	}
 });
 
 Ext.define('derogation.override', {
 	extend: 'Ext.form.Panel',
 	mixins: ['canopsis.lib.form.cfield'],
+	alias: 'widget.derogationfield',
 
 	border: false,
+	plain: true,
+	bodyPadding: 10,
 	layout: 'hbox',
-	//bodyStyle:{'background': '#ededed'},
+	name: 'actions',
 
 	state_icon_path: 'widgets/weather/icons/set1/',
 	icon_weather1: 'state_0.png',
@@ -212,24 +211,26 @@ Ext.define('derogation.override', {
 
 	icon_class: 'widget-weather-form-icon',
 
-	name: 'actions',
-
 	initComponent: function() {
+		var me = this;
 
-		//------------------config objects-----------------
+		this.callParent();
 
-		var config_key_field = {
+		this.add({
+			xtype: 'combobox',
+
+			name: 'key_field',
 			isFormField: false,
 			editable: false,
+
+			disabled: (!!this.variable),
 			flex: 1,
-			labelWidth: 40,
-			margin: '5 0 0 0',
-			fieldLabel: _('Field'),
+
 			queryMode: 'local',
 			displayField: 'text',
 			valueField: 'value',
-			value: 'output',
-			name: 'key_field',
+			value: this.variable || 'output',
+
 			store: {
 				xtype: 'store',
 				fields: ['value', 'text'],
@@ -237,192 +238,246 @@ Ext.define('derogation.override', {
 					{value: 'state', text: _('State')},
 					{value: 'output', text: _('Comment')},
 					{value: 'alert_msg', text: _('Alert message')},
-					{value: 'alert_icon', text: _('Alert icon')}
-				]
+					{value: 'alert_icon', text: _('Alert icon')},
+				],
+			},
+
+			listeners: {
+				select: function(combo, records, options) {
+					var value = records[0].get('value');
+
+					var fields = {
+						state:      me.down('[name=state]'),
+						alert_icon: me.down('[name=alert_icon]'),
+						output:     me.down('[name=output]'),
+						alert_msg:  me.down('[name=alert_msg]')
+					};
+
+					for(key in fields) {
+						fields[key].hide();
+						fields[key].setDisabled(true);
+					}
+
+					fields[value].show();
+					fields[value].setDisabled(false);
+
+					me.variable = value;
+					me.value    = fields[value].getValue();
+				}
 			}
-		};
-
-		if (this._variable)
-			config_key_field.disabled = true;
-
-
-		var config_list_state = {
-			stateIconPath: this.state_icon_path,
-			iconClass: this.icon_class,
-			isFormField: false,
+		},{
 			xtype: 'combobox',
-			editable: false,
-			margin: '5 5 0 5',
-			disabled: true,
-			hidden: true,
-			flex: 1,
+
 			name: 'state',
-			displayField: 'text',
-			valueField: 'value',
-			queryMode: 'local',
-			value: 0,
-			listConfig: {
-				getInnerTpl: function() {
-					var tpl = '<div>' +
-							  '<img src="' + this.findParentByType('combobox').stateIconPath + '{icon}" class="' + this.findParentByType('combobox').iconClass + '"/>' +
-							  '{text}</div>';
-					return tpl;
-				}
-			},
-			store: {
-				xtype: 'store',
-				fields: ['value', 'text', 'icon'],
-				data: [
-					{value: 0, text: _('Ok'), icon: this.icon_weather1 },
-					{value: 1, text: _('Warning'), icon: this.icon_weather2 },
-					{value: 2, text: _('Critical'), icon: this.icon_weather3 }
-				]
-			}
-		};
-
-		var config_alertIcon_radio = {
-			alertIconPath: this.alert_icon_path,
-			iconClass: this.icon_class,
 			isFormField: false,
-			border: false,
 			editable: false,
-			margin: '5 5 0 5',
-			disabled: true,
-			hidden: true,
-			flex: 1,
-			name: 'alert_icon',
+
+			disabled: (this.variable != 'state'),
+			hidden: (this.variable != 'state'),
+			autoRender: true,
+			flex: 2,
+
+			queryMode: 'local',
 			displayField: 'text',
 			valueField: 'value',
-			queryMode: 'local',
-			value: 0,
-			listConfig: {
-				getInnerTpl: function() {
-					var tpl = '<div>' +
-							  '<img src="' + this.findParentByType('combobox').alertIconPath + '{icon}" class="' + this.findParentByType('combobox').iconClass + '"/>' +
-							  '{text}</div>';
-					return tpl;
-				}
-			},
+			value: this.value || 0,
+
 			store: {
 				xtype: 'store',
 				fields: ['value', 'text', 'icon'],
 				data: [
-					{value: 0, text: _('Indisponible'), icon: this.icon_alert1 },
-					{value: 1, text: _('Be carefull'), icon: this.icon_alert2 },
-					{value: 2, text: _('Simple alert'), icon: this.icon_alert3 }
-				]
-			}
-		};
+					{value: 0, text: _('Ok'), icon: this.icon_weather1},
+					{value: 1, text: _('Warning'), icon: this.icon_weather2},
+					{value: 2, text: _('Critical'), icon: this.icon_weather3},
+				],
+			},
 
-		var config_output_textfield = {
+			listConfig: {
+				getInnerTpl: function() {
+					return '<div><img src="' + me.state_icon_path + '{icon}" class="' + me.icon_class + '" /> {text}</div>';
+				},
+			},
+
+			listeners: {
+				change: function(value) {
+					if(me.variable == 'state') {
+						me.value = value;
+					}
+				},
+			},
+		},{
+			xtype: 'combobox',
+
+			name: 'alert_icon',
 			isFormField: false,
-			flex: 1,
+			editable: false,
+
+			disabled: (this.variable != 'alert_icon'),
+			hidden: (this.variable != 'alert_icon'),
+			autoRender: true,
+			flex: 2,
+
+			queryMode: 'local',
+			displayField: 'text',
+			valueField: 'value',
+			value: this.value || 0,
+
+			store: {
+				xtype: 'store',
+				fields: ['value', 'text', 'icon'],
+				data: [
+					{value: 0, text: _('Unavailable'), icon: this.icon_alert1},
+					{value: 1, text: _('Be carefull'), icon: this.icon_alert2},
+					{value: 2, text: _('Simple alert'), icon: this.icon_alert3},
+				],
+			},
+
+			listConfig: {
+				getInnerTpl: function() {
+					return '<div><img src="' + me.alert_icon_path + '{icon}" class="' + me.icon_class + '" /> {text}</div>';
+				},
+			},
+
+			listeners: {
+				change: function(value) {
+					if(me.variable == 'alert_icon') {
+						me.value = value;
+					}
+				},
+			},
+		},{
+			xtype: 'textfield',
+
 			name: 'output',
-			emptyText: _('Type here new comment...'),
-			margin: '5 5 0 5'
-		};
-
-		//if value, not display comment by default
-		if (this._variable) {
-			config_output_textfield.disabled = true;
-			config_output_textfield.hidden = true;
-		}
-
-		var config_alert_textfield = {
 			isFormField: false,
-			flex: 1,
-			disabled: true,
-			hidden: true,
+
+			disabled: (this.variable != 'output'),
+			hidden: (this.variable != 'output'),
+			autoRender: true,
+			flex: 2,
+
+			emptyText: _('Type here new comment...'),
+			value: this.value || '',
+
+			listeners: {
+				change: function(value) {
+					if(me.variable == 'output') {
+						me.value = value;
+					}
+				},
+			},
+		},{
+			xtype: 'textfield',
+
 			name: 'alert_msg',
+			isFormField: false,
+
+			disabled: (this.variable != 'alert_msg'),
+			hidden: (this.variable != 'alert_msg'),
+			autoRender: true,
+			flex: 2,
+
 			emptyText: _('Type here alert message...'),
-			margin: '5 5 0 5'
-		};
+			value: this.value || '',
 
-
-
-		//---------------------build objects-------------
-		this.key_field = Ext.widget('combobox',	config_key_field);
-
-		this.items = [this.key_field];
-
-		if (!this._variable || this._variable == 'state') {
-			this.list_state = Ext.widget('combobox', config_list_state);
-			this.items.push(this.list_state);
-		}
-
-		if (!this._variable || this._variable == 'alert_icon') {
-			this.alertIcon_radio = Ext.widget('combobox', config_alertIcon_radio);
-			this.items.push(this.alertIcon_radio);
-		}
-
-		if (!this._variable || this._variable == 'output') {
-			this.output_textfield = Ext.widget('textfield', config_output_textfield);
-			this.items.push(this.output_textfield);
-		}
-
-		if (!this._variable || this._variable == 'alert_msg') {
-			this.alert_textfield = Ext.widget('textfield', config_alert_textfield);
-			this.items.push(this.alert_textfield);
-		}
-
-		//----------------------other---------------------
-
-		this.destroyButton = Ext.widget('button', {
+			listeners: {
+				change: function(value) {
+					if(me.variable == 'alert_msg') {
+						me.value = value;
+					}
+				},
+			},
+		},{
+			xtype: 'button',
 			iconCls: 'icon-cancel',
-			margin: '5 0 0 0'
+
+			listeners: {
+				click: function() {
+					Ext.destroy(me);
+				},
+			},
 		});
-		this.items.push(this.destroyButton);
 
-		this.callParent(arguments);
+		if(!this.variable) {
+			var outputfield = this.down('[name=output]');
 
-		//----------------------bind events--------------------
-		this.key_field.on('select', this._onChange, this);
-		this.destroyButton.on('click', this.selfDestruction, this);
-	},
-
-	afterRender: function() {
-		this.callParent(arguments);
-		if (this._variable) {
-			this.key_field.setValue(this._variable);
-			this.change(this._variable);
-			var field = this.down('[name=' + this._variable + ']');
-			if (field)
-				field.setValue(this._value);
-		}
-
-	},
-
-	selfDestruction: function() {
-		//tweak, otherwise the textfield is not deleted
-		Ext.destroy(this.output_textfield);
-		Ext.destroy(this.alert_textfield);
-		Ext.destroy(this);
-	},
-
-	_onChange: function(combo,records,options) {
-		var value = records[0].get('value');
-		this.change(value);
-	},
-
-	change: function(value) {
-		var fields = Ext.ComponentQuery.query('#' + this.id + ' [name]');
-		for (var i = 0; i < fields.length; i++) {
-			var elem = fields[i];
-			if (elem.name != 'key_field') {
-				if (elem.name != value) {
-					elem.hide();
-					elem.setDisabled(true);
-				}else {
-					elem.show();
-					elem.setDisabled(false);
-				}
-			}
+			outputfield.setDisabled(false);
+			outputfield.hidden = false;
 		}
 	},
 
 	getValue: function() {
-		var field = this.key_field.getValue();
-		var value = this.down('[name=' + field + ']').getValue();
-		return {type: 'override', field: field, value: value};
+		var key = this.down('[name=key_field]').getValue();
+
+		var fields = {
+			state:      this.down('[name=state]').getValue(),
+			alert_icon: this.down('[name=alert_icon]').getValue(),
+			output:     this.down('[name=output]').getValue(),
+			alert_msg:  this.down('[name=alert_msg]').getValue()
+		};
+
+		return {type: 'override', field: key, value: fields[key]};
 	}
 });
+
+Ext.define('derogation.statemap', {
+	extend: 'canopsis.view.Statemap.Grid',
+	mixins: ['canopsis.lib.form.cfield'],
+	alias: 'widget.DerogationStatemapField',
+
+	requires: [
+		'canopsis.store.Statemaps',
+	],
+
+	opt_paging: true,
+	opt_menu_delete: false,
+	opt_bar_add: false,
+	opt_menu_rights: false,
+	opt_bar_search: true,
+	opt_bar_enable: false,
+	opt_tags_search: false,
+
+	selType: 'rowmodel',
+	store: 'Statemaps',
+
+	minHeight: 480,
+
+	name: 'statemap',
+
+	listeners: {
+		itemdblclick: function() {
+			/* ignore double-clicks usually handled to edit items */
+			return false;
+		},
+
+		select: function(grid, record) {
+			this.statemap_id = record.data._id;
+		},
+
+		selectionchange: function(grid, selected) {
+			if(selected.length == 0) {
+				this.statemap_id = undefined;
+			}
+		}
+	},
+
+	initComponent: function() {
+		this.callParent();
+	},
+
+	getValue: function() {
+		if(this.statemap_id) {
+			return {type: 'requalificate', statemap: this.statemap_id};
+		}
+	},
+
+	setValue: function(val) {
+		if(val) {
+			this.statemap_id = val;
+
+			var selectmodel = this.getSelectionModel();
+			var record = this.store.find('_id', val);
+			selectmodel.select(record);
+		}
+	}
+})
