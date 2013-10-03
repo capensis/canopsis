@@ -42,6 +42,7 @@ var normalApp = function(){
 			'Events',
 			'Selector',
 			'Derogation',
+			'Statemap',
 			'Perfdata',
 			'Topology',
 			'Consolidation',
