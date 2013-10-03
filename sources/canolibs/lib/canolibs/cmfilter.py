@@ -114,6 +114,7 @@ def check(mfilter, event):
 				# If one match, then return True
 				if check(element, event):
 					return True
+
 			# Here nothing matched, then return False
 			return False
 
