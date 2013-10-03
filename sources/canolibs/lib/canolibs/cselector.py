@@ -106,7 +106,7 @@ class cselector(crecord):
 			self.mfilter = json.loads(self.data['mfilter'])
 		except:
 			pass
-		
+
 		self.namespace		= self.data.get('namespace', self.namespace)
 		self.rk 			= self.data.get('rk', self.rk)
 		self.include_ids	= self.data.get('include_ids', self.include_ids)
@@ -117,6 +117,7 @@ class cselector(crecord):
 		
 		if output_tpl and output_tpl != "":
 			self.output_tpl = output_tpl
+	
 		
 	def setMfilter(self, filter):
 		try:
@@ -132,9 +133,10 @@ class cselector(crecord):
 
 	def setInclude_ids(self, ids):
 		self.include_ids = ids
-		self.changed = True
+		self.changed = True	
+		
 	
-	## Build MongoDB for find ids
+	## Build MongoDB query to find every id matching event
 	def makeMfilter(self):
 		self.logger.debug("Make filter:")
 		(ifilter, efilter, mfilter) = ({}, {}, {})
@@ -162,31 +164,52 @@ class cselector(crecord):
 		if not mfilter and not ifilter and not efilter:
 			self.logger.warning("%s: Invalid filter" % self.name)
 			return None
-		
+
 		if mfilter and not ifilter and not efilter:
 			return mfilter
-			
+			   
 		if not mfilter and ifilter and not efilter:
 			return ifilter
-			
+			   
 		if not mfilter and not ifilter and efilter:
 			return None
-			
+			   
 		if mfilter and ifilter and not efilter:
 			return {"$or": [mfilter, ifilter]}
-			
-		if mfilter and not ifilter and efilter:
-			return {"$and": [mfilter, efilter]}
-			
-		if not mfilter and ifilter and efilter:
-			return {"$and": [ifilter, efilter]}
-		
-		## Universal case
+
+
+
 		return {"$and": [{"$or": [mfilter, ifilter]}, efilter]}
+
 	
-	## Get all ids
+	
+	def match(self, event):
+		"""Does event match this selector ?"""	
+		# is event in always include list ?
+		if self.include_ids and len(self.include_ids) and event.get('_id',False) in self.include_ids:
+			return True
+			
+		# is event always black listed ?
+		if self.exclude_ids and len(self.exclude_ids) and event.get('_id','') in self.exclude_ids:
+			return False
+			
+		# is event matching selector filter ?
+		if not self.mfilter:
+			#mfilter is not set properly, then event shall match this invalid rule
+			return True
+		
+		import cmfilter
+		return cmfilter.check(self.mfilter, event)
+	
+
 	def resolv(self):
-				
+	
+		"""	resolv computes every database event that matches with current selector filter and set current selector _ids to events id list
+		
+		Returns:
+			list. The selector events id list
+		"""				
+		
 		def do_resolv(self):
 			self.logger.debug("do_resolv:")
 			ids = []
@@ -223,9 +246,6 @@ class cselector(crecord):
 		self._ids = do_resolv(self)
 		return self._ids
 	
-	def match(self, _id):
-		ids = self.resolv()
-		return _id in ids
 		
 	def getRecords(self):
 		ids = self.resolv()
@@ -234,74 +254,68 @@ class cselector(crecord):
 	def getState(self):
 		self.logger.debug("getStates:")
 		
-		if len(self.include_ids) == 1 and not self.exclude_ids and not self.exclude_ids:
-			states = {}
-			try:
-				record = self.storage.get(self.include_ids[0], namespace=self.namespace)
-				states[int(record.data["state"])] = 1
-			except:
-				pass #no record found
-			
-		else:	
-			# Build MongoDB filter		
-			mfilter = self.makeMfilter()
-			
-			# Check filter
-			self.logger.debug(" + filter: %s" % mfilter)
-			if not mfilter:
-				self.logger.debug("  + Invalid filter" )
-				return ({}, 3, 1)
-			
-			result = self.storage.get_backend(namespace=self.namespace).aggregate([
-					{ '$match': mfilter },
-					{ '$project': {
-							'_id': True,
-							'state': True,
-							'state_type': True,
-							'previous_state': True
-						}
-					},
-					{ '$group': {
-							'_id': {
-								'state': '$state',
-								'state_type': "$state_type",
-								'previous_state': "$previous_state"
-							},
-							'count': { '$sum' : 1 }
-						}
-					}
-			])
-
-			self.logger.debug(" + result: %s" % result)
-
-			states = {}
-			for state in result['result']:
-				key = state['_id']['state']
-
-				if state['_id'].get('state_type', 1) == 0:
-					key = state['_id'].get('previous_state', key)
-
-				states[key] = states.get(key, 0) + state['count']
-
+		# Build MongoDB filter		
+		mfilter = self.makeMfilter()
+		if not mfilter:
+			self.logger.debug("  + Invalid filter" )
+			return ({}, 3, 1)
 		
+		# Check filter
+		self.logger.debug(" + filter: %s" % mfilter)
+
+		self.logger.debug(" + selector statment agregation")
+		result = self.storage.get_backend(namespace=self.namespace).aggregate([
+				{ '$match': mfilter },
+				{ '$project': {
+						'_id': True,
+						'state': True,
+						'state_type': True,
+						'previous_state': True
+					}
+				},
+				{ '$group': {
+						'_id': {
+							'state': '$state',
+							'state_type': "$state_type",
+							'previous_state': "$previous_state"
+						},
+						'count': { '$sum' : 1 }
+					}
+				}
+		])
+
+		self.logger.debug(" + result: %s" % result)
+
+		states = {}
+		for state in result['result']:
+			key = state['_id']['state']
+
+			if state['_id'].get('state_type', 1) == 0:
+				key = state['_id'].get('previous_state', key)
+
+			states[key] = states.get(key, 0) + state['count']
+
 		self.logger.debug(" + namespace: %s" % self.namespace)
 		self.logger.debug(" + states: %s" % states)
-		
-		# Define state
-		self.logger.debug(" + state algorithm: %s" % self.state_algorithm)
-		if self.state_algorithm == 0:
-			(state, state_type) = self.stateRule_morebadstate(states)
-		else:
-			raise Exception('Invalid state algorithm')
-		
+
+		state, state_type = 0, 1
+		# Compute worst state
+		for s in [0, 1, 2]:
+			if s in states:
+				state = s
+					
 		return (states, state, state_type)
+
+
 		
 	def event(self):
+
 		### Transform Selector to Canopsis Event
 		self.logger.debug("To Event:")
 		
 		# Get state
 		(states, state, state_type) = self.getState()
+		
 		
 		# Build output
 		total = 0		
@@ -332,20 +346,7 @@ class cselector(crecord):
 			perf_data_array.append({"metric": metric, "value": value, "max": total})
 		
 		perf_data_array.append({"metric": self.sel_metric_prefix + "total", "value": total})
-		
-		# Counte components and resources
-		mfilter = self.makeMfilter()
-		if mfilter:
-		
-			sel_nb_component = self.storage.count(mfilter={'$and': [ mfilter, {'source_type': 'component'}]}, namespace=self.namespace)
-			sel_nb_resource = self.storage.count(mfilter={'$and': [ mfilter, {'source_type': 'resource'}]}, namespace=self.namespace)		
-			
-			if sel_nb_component + sel_nb_resource == total:
-				perf_data_array.append({"metric": self.sel_metric_prefix + "component", "value": sel_nb_component, 'max': total})
-				perf_data_array.append({"metric": self.sel_metric_prefix + "resource", "value": sel_nb_resource, 'max': total})
-			else:
-				self.logger.error("Invalid count: component: %s, resource: %s, total: %s" % (sel_nb_component, sel_nb_resource, total))
-		
+
 		output_data['total'] = total
 	
 		# Fill Output template
@@ -379,7 +380,7 @@ class cselector(crecord):
 			perf_data_array=perf_data_array,
 			display_name=display_name
 		)
-				
+		
 		# Extra field
 		event["selector_id"] = str(self._id)
 		
@@ -397,13 +398,4 @@ class cselector(crecord):
 				
 		return (rk, event)
 
-	def stateRule_morebadstate(self, states):
-		state = 0
-		## Set state
-		for s in [0, 1, 2]:
-			try:
-				if states[s]:
-					state = s
-			except:
-				pass
-		return (state, 1)
+

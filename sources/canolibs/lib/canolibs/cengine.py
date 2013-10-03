@@ -212,7 +212,7 @@ class cengine(multiprocessing.Process):
 				self.amqp.publish(event, queue_name, "amq.direct")
 
 	def _beat(self):
-		self.logger.debug("Beat: %s event(s), %s error" % (self.counter_event, self.counter_error))
+
 		now = int(time.time())
 
 		if self.last_stat + 60 <= now:
@@ -275,6 +275,8 @@ class cengine(multiprocessing.Process):
 		except Exception, err:
 			self.logger.error("Beat raise exception: %s" % err)
 			traceback.print_exc(file=sys.stdout)
+		finally:
+			self.beat_lock = False
 				
 	def beat(self):
 		pass

@@ -67,11 +67,11 @@ def start_engines():
 
 	# Engine_cleaner
 	import cleaner
-	engines.append( cleaner.engine(			next_amqp_queues=['Engine_event_filter'], routing_keys=["#"], exchange_name="canopsis.events", name='cleaner_events'))
+	engines.append( cleaner.engine(			next_amqp_queues=['Engine_derogation'], routing_keys=["#"], exchange_name="canopsis.events", name='cleaner_events'))
 
 	# Engine_event_filter
-	import event_filter
-	engines.append( event_filter.engine(	next_amqp_queues=['Engine_derogation']) )
+#	import event_filter
+#	engines.append( event_filter.engine(	next_amqp_queues=['Engine_derogation']) )
 
 
 	# Engine_derogation
