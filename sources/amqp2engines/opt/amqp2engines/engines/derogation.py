@@ -72,7 +72,7 @@ class engine(cengine):
 			return False
 		
 		if conditions != {}:
-			return check(conditions, event)
+			return cmfilter.check(conditions, event)
 
 		else:
 			return True
