@@ -59,7 +59,7 @@ Ext.define('canopsis.view.Perfdata.Grid' , {
 				sortable: true,
 				dataIndex: 'me',
 				 editor: {xtype: 'textfield'}
-		}/*,{
+		},{
 				header: _('Retention') +' ' +  _('in seconds'),
 				width: 150,
 				sortable: true,
@@ -132,7 +132,7 @@ Ext.define('canopsis.view.Perfdata.Grid' , {
 				sortable: false,
 				dataIndex: 'tg',
 				renderer: rdr_tags
-		}*/
+		}
 
 	],
 
