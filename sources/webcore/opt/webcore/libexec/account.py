@@ -48,18 +48,19 @@ logger = logging.getLogger('Account')
 
 #group who have right to access 
 group_managing_access = ['group.CPS_account_admin']
+
+root_account = caccount(user="root", group="root")
 #########################################################################
 
 #### GET Me
 @get('/account/me')
 def account_get_me():
-	namespace = 'object'
 	ctype= 'account'
 	
 	#get the session (security)
 	account = get_account()
 
-	storage = get_storage(namespace=namespace)
+	storage = get_storage(namespace='object')
 
 	#try:
 	logger.debug(" + Try to get '%s' ... " % account._id)
@@ -93,7 +94,7 @@ def account_get_me():
 @get('/account/getAvatar')
 def account_get_avatar(_id=None):
 	account = get_account()
-	storage = get_storage(namespace='object',account=account)
+	storage = get_storage(namespace='object', account=account)
 
 	if not _id:
 		_id = account._id
@@ -252,8 +253,6 @@ def account_get(_id=None):
 def account_post():
 	#get the session (security)
 	account = get_account()
-	root_account = caccount(user="root", group="root")
-	
 	storage = get_storage(namespace='object',account=account)
 
 	logger.debug("POST:")
@@ -277,7 +276,7 @@ def account_post():
 		already_exist = False
 		_id = "account.%s" % data['user']
 		try:
-			record = storage.get(_id ,account=account)
+			record = storage.get(_id, account=account)
 			logger.debug('Update account %s' % _id)
 			already_exist = True
 		except:
@@ -287,44 +286,8 @@ def account_post():
 			return HTTPError(405, "Account already exist, use put method for update !")
 
 		#----------------------------CREATION--------------------------
-		logger.debug(' + New account')
-		new_account = caccount(user=data['user'], group=data['aaa_group'], lastname=data['lastname'], firstname=data['firstname'], mail=data['mail'])
+		create_account(data)
 
-		#passwd
-		passwd = data['passwd']
-		new_account.passwd(passwd)
-		logger.debug("   + Passwd: '%s'" % passwd)
-
-		#secondary groups
-		if 'groups' in data:
-			groups = []
-			for group in data['groups']:
-				if group.find('group.') == -1:
-					groups.append('group.%s' % group)
-				else:
-					groups.append(group)
-			new_account.groups = groups
-		
-		#put record
-		logger.debug(' + Save new account')
-		new_account.chown(new_account._id)
-		storage.put(new_account, account=account)
-		
-		#get rootdir
-		logger.debug(' + Create view directory')
-		rootdir = storage.get('directory.root', account=root_account)
-		
-		if rootdir:
-			userdir = crecord({'_id': 'directory.root.%s' % new_account.user,'id': 'directory.root.%s' % new_account.user ,'expanded':'true'}, type='view_directory', name=new_account.user)
-			userdir.chown(new_account._id)
-			userdir.chgrp(new_account.group)
-			userdir.chmod('g-w')
-			userdir.chmod('g-r')
-
-			rootdir.add_children(userdir)
-			storage.put([rootdir,userdir], account=root_account)
-		else:
-			logger.error('Impossible to get rootdir')
 	else:
 		logger.warning('WARNING : no user specified ...')
 		
@@ -332,8 +295,7 @@ def account_post():
 @put('/account/:_id',checkAuthPlugin={'authorized_grp':group_managing_access})
 def account_update(_id=None):
 	account = get_account()
-	root_account = caccount(user="root", group="root")
-	storage = get_storage(namespace='object',account=account)
+	storage = get_storage(namespace='object', account=account)
 	
 	logger.debug("PUT:")
 
@@ -467,7 +429,7 @@ def account_delete(_id=None):
 @post('/account/addToGroup/:group_id/:account_id',checkAuthPlugin={'authorized_grp':group_managing_access})
 def add_account_to_group(group_id=None,account_id=None):
 	session_account = get_account()
-	storage = get_storage(namespace='object',account=session_account)
+	storage = get_storage(namespace='object', account=session_account)
 	
 	if not group_id or not account_id:
 		return HTTPError(400, 'Bad request, must specified group and account')
@@ -482,9 +444,9 @@ def add_account_to_group(group_id=None,account_id=None):
 	logger.debug('Try to get %s and %s' % (account_id,group_id))
 		
 	try:
-		account_record = storage.get(account_id,account=session_account)
+		account_record = storage.get(account_id, account=session_account)
 		account = caccount(account_record)
-		group_record = storage.get(group_id,account=session_account)
+		group_record = storage.get(group_id, account=session_account)
 		group = cgroup(group_record)
 		
 	except Exception,err:
@@ -540,4 +502,55 @@ def remove_account_from_group(group_id=None,account_id=None):
 		return HTTPError(500, 'Put group/account in db goes wrong')
 	
 	return {'total' :1, 'success' : True, 'data':[]}
-		
+
+
+def create_account(data):
+	logger.debug(' + New account')
+	new_account = caccount(
+		user=data['user'],
+		group=data.get('aaa_group', None),
+		lastname=data['lastname'],
+		firstname=data['firstname'],
+		mail=data['mail']
+	)
+
+	new_account.external = data.get('external', False)
+
+	#passwd
+	passwd = data['passwd']
+	new_account.passwd(passwd)
+	logger.debug("   + Passwd: '%s'" % passwd)
+
+	#secondary groups
+	groups = []
+	for group in data.get('groups', []):
+		if group.find('group.') == -1:
+			groups.append('group.%s' % group)
+		else:
+			groups.append(group)
+	new_account.groups = groups
+	
+	storage = get_storage(namespace='object')
+
+	#put record
+	logger.debug(' + Save new account')
+	new_account.chown(new_account._id)
+	storage.put(new_account, account=root_account)
+	
+	#get rootdir
+	logger.debug(' + Create view directory')
+	rootdir = storage.get('directory.root', account=root_account)
+	
+	if rootdir:
+		userdir = crecord({'_id': 'directory.root.%s' % new_account.user,'id': 'directory.root.%s' % new_account.user ,'expanded':'true'}, type='view_directory', name=new_account.user)
+		userdir.chown(new_account._id)
+		userdir.chgrp(new_account.group)
+		userdir.chmod('g-w')
+		userdir.chmod('g-r')
+
+		rootdir.add_children(userdir)
+		storage.put([rootdir,userdir], account=root_account)
+	else:
+		logger.error('Impossible to get rootdir')
+
+	return new_account

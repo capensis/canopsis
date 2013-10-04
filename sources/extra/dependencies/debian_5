@@ -1,4 +1,0 @@
-#!/bin/sh
-apt-get update
-
-apt-get install -y libevent-dev bzip2 build-essential zlib1g-dev libreadline5-dev libdb4.2-dev libncurses5-dev libexpat1-dev xmlto libcurl4-gnutls-dev git-core libssl-dev libpcre++-dev libsqlite3-dev automake libtool libcairo2-dev uuid-runtime zlib1g-dev curl libbz2-dev xvfb

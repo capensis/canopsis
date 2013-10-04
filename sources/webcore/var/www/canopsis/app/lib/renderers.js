@@ -420,6 +420,14 @@ rdr_humanreadable_value = function(value, unit) {
 	if (! unit || unit == undefined) {
 		unit = '';
 	}else {
+		if (unit == 'S' || unit == 's'){
+			value = rdr_duration(value);
+			if (is_neg)
+				value = '-' + value;
+
+			return value;
+		}
+		
 		try{
 			var information = global.sizeTable[unit.toUpperCase()]
 			if(information){
@@ -430,14 +438,6 @@ rdr_humanreadable_value = function(value, unit) {
 			}
 		}catch(err){
 			log.debug(err.message)
-		}
-
-		if (unit == 'S'){
-			value = rdr_duration(value);
-			if (is_neg)
-				value = '-' + value;
-
-			return value;
 		}
 	}
 
@@ -456,3 +456,7 @@ rdr_access = function(val) {
 	else
 		return val;
 }
+
+var rdr_rule_action = function(val, metadata, record, rowIndex, colIndex, store) {
+	return "<span class='icon icon-rule-" + val + "' />";
+};

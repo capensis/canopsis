@@ -29,6 +29,8 @@ import cevent
 
 import itertools
 
+DROP = -1
+
 class cengine(multiprocessing.Process):
 
 	def __init__(self,
@@ -63,11 +65,14 @@ class cengine(multiprocessing.Process):
 		self.next_balanced = next_balanced
 		
 		init 	= cinit()
-		
+			
 		self.logger = init.getLogger(name, logging_level=self.logging_level)
 		
+		logHandler = logging.FileHandler(filename=os.path.expanduser("~/var/log/engines/%s.log" % name))
+		logHandler.setFormatter(logging.Formatter("%(asctime)s %(levelname)s %(name)s %(message)s"))
+
 		# Log in file
-		self.logger.addHandler(logging.FileHandler(filename=os.path.expanduser("~/var/log/engines/%s.log" % name)))	
+		self.logger.addHandler(logHandler)	
 		
 		self.counter_error = 0
 		self.counter_event = 0
@@ -171,7 +176,9 @@ class cengine(multiprocessing.Process):
 			
 			#self.logger.debug("Forward event '%s' to next engines" % event['rk'])
 
-			if isinstance(wevent, dict):
+			if wevent == DROP:
+				pass
+			elif isinstance(wevent, dict):
 				self.next_queue(wevent)
 			else:
 				self.next_queue(event)
@@ -208,7 +215,7 @@ class cengine(multiprocessing.Process):
 				self.amqp.publish(event, queue_name, "amq.direct")
 
 	def _beat(self):
-		self.logger.debug("Beat: %s event(s), %s error" % (self.counter_event, self.counter_error))
+
 		now = int(time.time())
 
 		if self.last_stat + 60 <= now:
@@ -271,6 +278,8 @@ class cengine(multiprocessing.Process):
 		except Exception, err:
 			self.logger.error("Beat raise exception: %s" % err)
 			traceback.print_exc(file=sys.stdout)
+		finally:
+			self.beat_lock = False
 				
 	def beat(self):
 		pass

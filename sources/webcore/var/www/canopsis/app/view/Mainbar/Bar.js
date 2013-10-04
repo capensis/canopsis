@@ -241,6 +241,18 @@ Ext.define('canopsis.view.Mainbar.Bar' , {
 			]);
 		}
 
+		//Filter Rules menu
+		if (global.accountCtrl.checkRoot() || global.accountCtrl.checkGroup('group.CPS_rule_admin')) {
+			menu_build = menu_build.concat([
+				{
+					iconCls: 'icon-mainbar-filter',
+					text: _('Filter Rules'),
+					action: 'openViewMenu',
+					viewId: 'view.rules_manager'
+				}
+			]);
+		}
+
 		//Topology menu
 		if (global.accountCtrl.checkRoot() || global.accountCtrl.checkGroup('group.CPS_topology_admin')) {
 			menu_build = menu_build.concat([
@@ -393,14 +405,11 @@ Ext.define('canopsis.view.Mainbar.Bar' , {
 			}
 		]);
 
-		//Preferences menu
-		menu_preferences = menu_preferences.concat([
-			this.localeSelector,
-			this.clockTypeSelector,
-			'-',
-			this.dashboardSelector,
-			this.avatarSelector,
-			{
+		
+		this.changePass = undefined;
+
+		if (! global.account.external)
+			this.changePass = {
 				iconCls: 'no-icon',
 				text: _('Change your password'),
 				onClick: function() {
@@ -408,6 +417,15 @@ Ext.define('canopsis.view.Mainbar.Bar' , {
 					win.show();
 				}
 			}
+
+		//Preferences menu
+		menu_preferences = menu_preferences.concat([
+			this.localeSelector,
+			this.clockTypeSelector,
+			'-',
+			this.dashboardSelector,
+			this.avatarSelector,
+			this.changePass
 		]);
 
 

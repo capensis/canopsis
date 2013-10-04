@@ -18,27 +18,32 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 */
-Ext.define('canopsis.model.Account', {
-    extend: 'Ext.data.Model',
-    fields: [
+Ext.define('canopsis.model.Ldap', {
+	extend: 'Ext.data.Model',
+	fields: [
 		{name: '_id'},
 		{name: 'id', mapping: '_id'},
-		{name: 'crecord_type'},
-		{name: 'firstname'},
-		{name: 'lastname'},
-		{name: 'user'},
-		{name: 'mail'},
-		{name: 'groups' , type: 'array'},
-		{name: 'passwd'},
-		{name: 'clock_type', defaultValue: 'auto'},
-		{name: 'enable', defaultValue:'true'},
-		{name: 'external', defaultValue:'false'},
+		{name: 'crecord_type', defaultValue: 'ldap'},
+		{name: 'crecord_name', defaultValue: 'ldap'},
 
 		{name: 'aaa_access_group', defaultValue: undefined},
 		{name: 'aaa_access_other', defaultValue: undefined},
 		{name: 'aaa_access_owner', defaultValue: undefined},
 		{name: 'aaa_admin_group', defaultValue: undefined},
-		{name: 'aaa_group', defaultValue: undefined},
-		{name: 'aaa_owner', defaultValue: undefined}
+		{name: 'aaa_group', defaultValue: "group.Canopsis"},
+		{name: 'aaa_owner', defaultValue: undefined},
+
+		{name: 'uri'},
+		{name: 'base_dn'},
+		{name: 'user_dn'},
+		{name: 'domain'},
+		{name: 'user_filter'},
+
+		{name: 'lastname'},
+		{name: 'firstname'},
+		{name: 'mail'},
+
+		{name: 'enable', defaultValue: true}
+
 	]
 });

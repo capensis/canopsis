@@ -51,6 +51,9 @@ def send(account=None, recipients=None, subject=None, body=None, attachments=Non
 			logger.info('No mail adress for this user (Fill the mail account field)')
 			account_mail = '%s@%s' % (account.user,socket.gethostname())
 
+		if isinstance(account_mail, (list, tuple)):
+			account_mail = account_mail[0]
+
 		if not account_lastname and not account_firstname:
 			account_full_mail = "\"%s\" <%s>" % (account_mail.split('@')[0].title(), account_mail)	
 		else:

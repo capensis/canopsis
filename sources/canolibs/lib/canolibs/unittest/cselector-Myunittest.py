@@ -138,10 +138,10 @@ class KnownValues(unittest.TestCase):
 	def test_05_Match(self):
 		selector.setMfilter({'$or': [ {'check': 'test1'},  {'check': 'test2'}] })
 		
-		if not selector.match('check1'):
+		if not selector.match({'check':'test1'}):
 			raise Exception('Error in match, plain id ...')
 
-		if selector.match('toto'):
+		if selector.match({'check':'toto'}):
 			raise Exception('Error in match, wrong id ...')
 			
 	def test_06_GetRecords(self):

@@ -32,6 +32,7 @@ var normalApp = function(){
 			'Widgets',
 			'Group',
 			'Account',
+			'Ldap',
 			'Reporting',
 			'ReportingBar',
 			'Keynav',
@@ -46,6 +47,7 @@ var normalApp = function(){
 			'Perfdata',
 			'Topology',
 			'Consolidation',
+			'Rule',
 			'Tabs'
 		],
 	

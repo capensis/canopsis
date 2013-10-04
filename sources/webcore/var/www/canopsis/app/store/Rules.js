@@ -18,27 +18,37 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 */
-Ext.define('canopsis.model.Account', {
-    extend: 'Ext.data.Model',
-    fields: [
-		{name: '_id'},
-		{name: 'id', mapping: '_id'},
-		{name: 'crecord_type'},
-		{name: 'firstname'},
-		{name: 'lastname'},
-		{name: 'user'},
-		{name: 'mail'},
-		{name: 'groups' , type: 'array'},
-		{name: 'passwd'},
-		{name: 'clock_type', defaultValue: 'auto'},
-		{name: 'enable', defaultValue:'true'},
-		{name: 'external', defaultValue:'false'},
 
-		{name: 'aaa_access_group', defaultValue: undefined},
-		{name: 'aaa_access_other', defaultValue: undefined},
-		{name: 'aaa_access_owner', defaultValue: undefined},
-		{name: 'aaa_admin_group', defaultValue: undefined},
-		{name: 'aaa_group', defaultValue: undefined},
-		{name: 'aaa_owner', defaultValue: undefined}
-	]
+Ext.define('canopsis.store.Rules', {
+    extend: 'canopsis.lib.store.cstore',
+	model: 'canopsis.model.Rule',
+
+	storeId: 'store.Rules',
+	pageSize: 5000,
+  	autoLoad: false,
+	autoSync: true,
+
+	sorters: [
+        {
+            property: 'priority',
+            direction: 'ASC'
+        }
+    ],
+
+	proxy: {
+		type: 'rest',
+		url: '/rest/object/rule',
+		appendId: true,
+		reader: {
+			type: 'json',
+			root: 'data',
+			totalProperty: 'total',
+			successProperty: 'success'
+		},
+		writer: {
+			type: 'json',
+			writeAllFields: false
+		}
+	}
+
 });

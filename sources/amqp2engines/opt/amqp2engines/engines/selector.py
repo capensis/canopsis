@@ -30,150 +30,89 @@ NAME="selector"
 class engine(cengine):
 	def __init__(self, *args, **kargs):
 		cengine.__init__(self, name=NAME, *args, **kargs)
-		self.selectors = {}
-		self.selectors_events = {}
-		
+		self.selectors = []
+		self.selector_refresh = {}
+		self.beat_interval = 5
 		self.nb_beat_publish = 10
 		self.nb_beat = 0
-
+		#self.beat_interval = 5
 		self.thd_warn_sec_per_evt = 1.5
 		self.thd_crit_sec_per_evt = 2
+		
 	
 	def pre_run(self):
+		self.beat_lock = False
 		#load selectors
 		self.storage = get_storage(namespace='object', account=caccount(user="root", group="root"))
-		
-		self.unload_all_selectors()
-		self.load_selectors()
+		self.reload_selectors()
 
-	def clean_selectors(self):
-		## check if selector is already in store
-		id_to_clean = []
-		ids = [_id for _id in self.selectors]
-		
-		count = self.storage.count({'_id': {"$in": ids}}, namespace="object")
-		if count != len(ids):
-			for _id in self.selectors:
-				if not self.storage.count({'_id': _id, 'enable': True}, namespace="object"):
-					id_to_clean.append(_id)
-				
-			for _id in id_to_clean:
-				self.logger.debug("Clean selector %s: %s" % (_id, self.selectors[_id].name))
-				try:
-					self.storage.update(_id, {'loaded': False})
-				except:
-					self.logger.debug(" + Record are deleted.")
-					
-				del self.selectors[_id]
-				del self.selectors_events[_id]
-	
-	def unload_selectors(self):
-		self.clean_selectors()
-		
-		## Unload selectors
-		if self.selectors:
-			for _id in self.selectors:
-				selector = self.selectors[_id]
-				record = self.storage.get(selector._id)
-				self.logger.debug("Unload selector %s: %s" % (record._id, record.name))
-				self.storage.update(record._id, {'loaded': False})
 
-			del self.selectors
-	
+
+	def reload_selectors(self):
 		self.selectors = []
+		selectorsjson = self.storage.find({'crecord_type': 'selector', 'enable': True}, namespace="object")
 		
-	def unload_all_selectors(self):
-		records = self.storage.find({'crecord_type': 'selector'}, namespace="object")
-		
-		for record in records:
-			self.storage.update(record._id, {'loaded': False})
-	
-	def load_selectors(self):
-		## Load selectors
-		self.clean_selectors()
-		
-		## New selector or modified selector
-		records = self.storage.find({'crecord_type': 'selector', 'loaded': False, 'enable': True}, namespace="object")
-		
-		for record in records:
-			self.logger.debug("Load selector %s: %s" % (record._id, record.name))
-			_id = record._id
-			
-			# Set loaded
-			self.storage.update(_id, {'loaded': True})
-			
-			# Del old
-			if self.selectors.get(_id, None):
-				del self.selectors[_id]
-				del self.selectors_events[_id]
-				
-			## store
-			self.selectors[_id] = cselector(storage=self.storage, record=record, logging_level=self.logging_level)
-			self.selectors_events[_id] = 0
-			
-			## Publish state
-			if self.selectors[_id].dostate:
-				(rk, event) = self.selectors[_id].event()
-				if event:
-					# Set State
-					self.storage.update(_id, {'state': event['state']})
-					# Publish
-					self.amqp.publish(event, rk, self.amqp.exchange_name_events)
-		
+		for	selectorjson in selectorsjson:
+			# let say selector is loaded
+			self.storage.update(selectorjson._id, {'loaded': True})
+			selector = cselector(storage=self.storage, record=selectorjson, logging_level=self.logging_level)
+			self.selectors.append(selector)
 
+			
+			
 	def beat(self):
-		self.load_selectors()
-		
+
+		if self.beat_lock:
+			return 
+			
+		self.beat_lock = True
+		""" Reinitialize selectors and may publish event if they have to"""
+		self.reload_selectors()
+
 		publish = False
 		if self.nb_beat >= self.nb_beat_publish:
 			self.nb_beat = 0
 			publish = True
 		
-		for _id in self.selectors:
-			selector = self.selectors[_id]
+		for selector in self.selectors:
 			
-			if not selector.dostate:
-				# Dont send state but resolve ids for cache result (tags)
-				selector.resolv()
-			else:
-				if self.selectors_events[_id]:
-					publish = True
-
-				if publish:
-					(rk, event) = selector.event()
-					if event:
-						if selector.data.get('sla_rk', None):
-							event['sla_rk'] = selector.data.get('sla_rk')
-
-						self.logger.debug("Publish event for '%s' (%s events)" % (selector.name, self.selectors_events[_id]))
-						self.storage.update(_id, {'state': event['state']})
-						self.amqp.publish(event, rk, self.amqp.exchange_name_events)
-						
-					self.selectors_events[_id] = 0
-						
-		self.nb_beat +=1
-				
-	def work(self, event, *args, **kargs):
-		event_id = event["event_id"]
-		
-		selectors_to_delete = []
-		
-		## Process selector and prevent Burst
-		for sid in self.selectors:
-			selector = self.selectors[sid]
-			if selector.dostate:
+			# do I publish a selector event ? Yes if selector have to and it is time or we got to update status 
+			if selector.dostate and (publish or (selector._id in self.selector_refresh and self.selector_refresh[selector._id])):
 				try:
-					if selector.match(event_id):
-						self.selectors_events[sid] += 1
-				except:
-					self.logger.debug("%s wasn't found, it will be erase" % str(sid))
-					selectors_to_delete.append(sid)
+					#TODO improve this full mongo db request
+					rk, event = selector.event()
+				except Exception as e:
+					self.logger.error({'msg': 'unable to select all event matching this selector in order to publish worst state one form them','exception':e})
+					event = None
+				
+
 					
-		## delete selectors not found
-		for sid in selectors_to_delete:
-			del self.selectors[sid]
+				if event:
+					# Publish Sla information when available
+					publishSla = selector.data.get('sla_rk', None)
+					if publishSla:
+						event['sla_rk'] = publishSla
+											
+					# Ok then i have to update selector statement
+					self.storage.update(selector._id, {'state': event['state']})
+					self.amqp.publish(event, rk, self.amqp.exchange_name_events)
+					self.logger.debug("Published event for selector '%s'" % (selector.name))
+					
+				self.selector_refresh[selector._id] = False
+
+		self.nb_beat +=1
+		self.beat_lock = False
 		
+	def work(self, event, *args, **kargs):
+						
+		## Process selector and prevent Burst
+		for selector in self.selectors:
+			if selector.dostate and selector.match(event):
+				self.selector_refresh[selector._id] = True
+							
 		return event
 		
 	def post_run(self):
-		self.unload_selectors()
+		for selector in self.selectors:
+			self.storage.update(selector._id, {'loaded': False})
+		self.selector = []

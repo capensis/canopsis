@@ -18,27 +18,24 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 */
-Ext.define('canopsis.model.Account', {
-    extend: 'Ext.data.Model',
-    fields: [
-		{name: '_id'},
-		{name: 'id', mapping: '_id'},
-		{name: 'crecord_type'},
-		{name: 'firstname'},
-		{name: 'lastname'},
-		{name: 'user'},
-		{name: 'mail'},
-		{name: 'groups' , type: 'array'},
-		{name: 'passwd'},
-		{name: 'clock_type', defaultValue: 'auto'},
-		{name: 'enable', defaultValue:'true'},
-		{name: 'external', defaultValue:'false'},
+Ext.define('canopsis.controller.Rule', {
+	extend: 'canopsis.lib.controller.cgrid',
 
-		{name: 'aaa_access_group', defaultValue: undefined},
-		{name: 'aaa_access_other', defaultValue: undefined},
-		{name: 'aaa_access_owner', defaultValue: undefined},
-		{name: 'aaa_admin_group', defaultValue: undefined},
-		{name: 'aaa_group', defaultValue: undefined},
-		{name: 'aaa_owner', defaultValue: undefined}
-	]
+	views: ['Rule.Grid', 'Rule.Form'],
+	stores: ['Rules'],
+	models: ['Rule'],
+
+	logAuthor: '[controller][rules]',
+
+	init: function() {
+		log.debug('Initialize ...', this.logAuthor);
+
+		this.formXtype = 'RuleForm';
+		this.listXtype = 'RuleGrid';
+
+		this.modelId = 'Rule';
+
+		this.callParent(arguments);
+	}
+
 });

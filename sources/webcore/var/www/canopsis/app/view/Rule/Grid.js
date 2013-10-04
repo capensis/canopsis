@@ -18,30 +18,24 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 */
-
-Ext.define('canopsis.view.Account.Grid' , {
+Ext.define('canopsis.view.Rule.Grid' , {
 	extend: 'canopsis.lib.view.cgrid',
 
-	controllerId: 'Account',
+	alias: 'widget.RuleGrid',
 
-	alias: 'widget.AccountGrid',
+	model: 'Rule',
+	store: 'Rules',
 
-	model: 'Account',
-	store: 'Accounts',
+	opt_db_namespace: 'object',
 
-	opt_grouping: true,
-	opt_paging: false,
 	opt_menu_delete: true,
-	opt_menu_rights: false,
-	opt_menu_authKey: true,
+	opt_bar_duplicate: true,
+	opt_menu_rights: true,
 	opt_bar_enable: true,
+	opt_paging: false,
 
-	opt_bar_customs: [{
-		text: 'Ldap',
-		xtype: 'button',
-		iconCls: 'icon-book',
-		action: 'ldap'
-	}],
+	opt_bar_search: true,
+	opt_bar_search_field: ['crecord_name', 'priority', 'rule', 'action'],
 
 	columns: [
 		{
@@ -50,52 +44,40 @@ Ext.define('canopsis.view.Account.Grid' , {
 			sortable: false,
 			renderer: rdr_crecord_type,
 			dataIndex: 'crecord_type'
-		},{
-			header: '',
-			width: 25,
-			sortable: false,
-			renderer: function(val) { if (val == true) return "<span class='icon icon-book_link' />"; },
-			dataIndex: 'external'
-		},{
+        },{
 			header: _('Enabled'),
 			align: 'center',
 			width: 55,
 			dataIndex: 'enable',
+			sortable: false,
 			renderer: rdr_boolean
 		},{
-			header: _('Login'),
-			flex: 2,
+			header: 'Priority',
+			width: 55,
 			sortable: true,
-			dataIndex: 'user'
-		},{
-			header: _('First name'),
-			flex: 2,
+			dataIndex: 'priority'
+        },{
+			header: _('Name'),
+			width: 200,
 			sortable: false,
-			dataIndex: 'firstname'
+			dataIndex: 'crecord_name'
 		},{
-			header: _('Last name'),
-			flex: 2,
+			header: _('Rule'),
+			flex: 1,
 			sortable: false,
-			dataIndex: 'lastname'
+			dataIndex: 'mfilter'
 		},{
-			header: _('Email'),
-			flex: 2,
+			header: _('Action'),
+			align: 'center',
+			width: 55,
 			sortable: false,
-			dataIndex: 'mail'
-		},{
-			header: _('Group'),
-			flex: 2,
-			sortable: false,
-			dataIndex: 'aaa_group',
-			renderer: rdr_clean_id
-		},{
-			header: _('Groups'),
-			flex: 2,
-			sortable: false,
-			dataIndex: 'groups',
-			renderer: rdr_display_groups
+			dataIndex: 'action',
+			renderer: rdr_rule_action
 		}
+	],
 
-	]
+	initComponent: function() {
+		this.callParent(arguments);
+	}
 
 });

@@ -468,6 +468,8 @@ Ext.define('cfilter.object' , {
 		//Get operator
 		if (operatorRecord.get('operator') == '$eq')
 			values = inputValue;
+		else if (operatorRecord.get('operator') == '$in' && typeof inputValue == 'string')
+			values[operator] = [inputValue];
 		else
 			values[operator] = inputValue;
 
@@ -477,6 +479,7 @@ Ext.define('cfilter.object' , {
 				values = {'$ne': values};
 			else
 				values = {'$not': values};
+
 
 		var keyValue = this.cfilterField.getValue()
 		if(!keyValue)
