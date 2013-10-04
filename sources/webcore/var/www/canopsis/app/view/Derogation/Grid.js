@@ -63,12 +63,16 @@ Ext.define('canopsis.view.Derogation.Grid' , {
 	},
 
 	rdr_statemap: function(val) {
-		if(val) {
-			return rdr_boolean(true);
+		var found = false;
+
+		for(var i = 0; i < val.length; ++i) {
+			if (val[i].type == 'requalificate') {
+				found = true;
+				break;
+			}
 		}
-		else {
-			return rdr_boolean(false);
-		}
+
+		return rdr_boolean(found);
 	},
 
 	initComponent: function() {
