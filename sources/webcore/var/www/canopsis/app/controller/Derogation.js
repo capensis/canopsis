@@ -91,6 +91,11 @@ Ext.define('canopsis.controller.Derogation', {
 
 			record.set('actions', actions);
 
+			// conditions
+			if(data.evfilter) {
+				record.set('conditions', data.evfilter);
+			}
+
 			return record;
 	},
 

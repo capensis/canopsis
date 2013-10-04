@@ -22,6 +22,7 @@ from cengine import cengine
 from cstorage import get_storage
 from caccount import caccount
 import cevent
+import cmfilter
 import time
 
 NAME="derogation"
@@ -63,7 +64,18 @@ class engine(cengine):
 		
 	
 	def conditions(self, event, derogation):
-		return True
+		conditions = derogation.get('conditions', None)
+
+		if not isinstance(conditions, dict):
+			self.logger.error("Invalid conditions field in '%s': %s" % (derogation['_id'], conditions))
+			self.logger.debug(derogation)
+			return False
+		
+		if conditions != {}:
+			return check(conditions, event)
+
+		else:
+			return True
 	
 	def actions(self, event, derogation):
 		name = derogation.get('crecord_name', None)
