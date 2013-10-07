@@ -38,7 +38,29 @@ class engine(cengine):
 	def pre_run(self):
 		self.storage = get_storage(namespace='object', account=caccount(user="root", group="root"))		
 		self.beat()
-		
+	
+	def wanted(self, event, derogation):
+		"""
+			Check if the derogation want to act on the event.
+
+			:param event: Event to check.
+			:type event: dict
+
+			:param derogation: Derogation to apply.
+			:type derogation: dict
+
+			:rtype: boolean
+		"""
+
+		if event['rk'] in derogation['ids']:
+			return True
+
+		for tag in event['tags']:
+			if tag in derogation['tags']:
+				return True
+
+		return False
+
 	def time_conditions(self, derogation):
 		conditions = derogation.get('time_conditions', None)
 		
@@ -161,7 +183,7 @@ class engine(cengine):
 	def work(self, event, *args, **kargs):
 		for derogation in self.derogations:
 			# Check scope
-			if event['rk'] in derogation['ids']:
+			if self.wanted(event, derogation):
 				self.logger.debug("%s is in %s (%s)" % (event['rk'], derogation['crecord_name'], derogation['_id']))
 				# Check Time
 				if self.time_conditions(derogation):
