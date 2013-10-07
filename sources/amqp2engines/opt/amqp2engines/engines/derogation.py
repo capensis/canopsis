@@ -25,6 +25,7 @@ import cevent
 import cstatemap
 import cmfilter
 import time
+import json
 
 NAME="derogation"
 
@@ -65,15 +66,23 @@ class engine(cengine):
 		
 	
 	def conditions(self, event, derogation):
-		conditions = derogation.get('conditions', None)
+		conditions_json = derogation.get('conditions', None)
 
-		if not isinstance(conditions, dict):
-			self.logger.error("Invalid conditions field in '%s': %s" % (derogation['_id'], conditions))
+		try:
+			conditions = json.loads(conditions_json)
+
+		except ValueError:
+			self.logger.error("Invalid conditions field in '%s': %s" % (derogation['_id'], conditions_json))
 			self.logger.debug(derogation)
+
 			return False
 		
 		if conditions != {}:
-			return cmfilter.check(conditions, event)
+			check = cmfilter.check(conditions, event)
+
+			self.logger.debug(" + 'conditions' check is %s" % check)
+
+			return check
 
 		else:
 			return True
