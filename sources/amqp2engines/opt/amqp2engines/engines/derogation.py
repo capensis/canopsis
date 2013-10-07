@@ -22,7 +22,7 @@ from cengine import cengine
 from cstorage import get_storage
 from caccount import caccount
 import cevent
-import cstatemap
+from cstatemap import cstatemap
 import cmfilter
 import time
 import json

@@ -71,16 +71,15 @@ def start_engines():
 
 	# Engine_event_filter
 	import event_filter
-	engines.append( event_filter.engine(	next_amqp_queues=['Engine_derogation']) )
-
-
-	# Engine_derogation
-	import derogation
-	engines.append( derogation.engine(		next_amqp_queues=['Engine_tag']) )
+	engines.append( event_filter.engine(	next_amqp_queues=['Engine_tag']) )
 
 	# Engine_tag
 	import tag
-	engines.append( tag.engine(				next_amqp_queues=['Engine_perfstore2']) )
+	engines.append( tag.engine(				next_amqp_queues=['Engine_derogation']) )
+
+	# Engine_derogation
+	import derogation
+	engines.append( derogation.engine(		next_amqp_queues=['Engine_perfstore2']) )
 
 	# Engine_perfstore2
 	import perfstore2
