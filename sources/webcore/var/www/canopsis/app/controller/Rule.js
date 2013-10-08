@@ -52,56 +52,28 @@ Ext.define('canopsis.controller.Rule', {
 	},
 
 	defaultRuleChanged: function(combo, newVal, oldVal){
-		comboDefaultAction = Ext.ComponentQuery.query('#' + this.grid.id + ' combobox[alias=widget.defaultAction]');
-		console.log("test");
-		console.log(comboDefaultAction);
-
 		var record = this.storeDefaultAction.getAt(0);
-		console.log(record);
 
 		if(record === undefined)
-		{
-			console.log("adding new record for defaultRule");
 			this.storeDefaultAction.add({action: 'pass'});
-		}
 		else
-		{
-			console.log("editing record for defaultRule");
-			console.log(newVal[0].data.value);
 			this.storeDefaultAction.getAt(0).set("action", newVal[0].data.value);
-			console.log();
-		}
 	},
 
 	updateDefaultActionCombo: function( combo, eOpts ){
-		console.log("=== updateDefaultActionCombo");
-
-		var record = this.storeDefaultAction.getAt(0);
 		var comboValue;
 		try
 		{
-			comboValue = record.data.value;
+			comboValue = this.storeDefaultAction.first().get("action")
 		}
 		catch(err)
 		{
 			comboValue = "pass";
 		}
 
-		if(comboValue === undefined)
-		{
-			console.log("comboValue === undefined");
-			comboValue = "pass";
-		}
-
-		if(comboValue == "pass")
-		{
-			record = combo.findRecordByValue("pass");
-			console.log(record);
+		if(comboValue == "pass" || comboValue === undefined)
 			combo.select(combo.getStore().getAt(0));
-		}
 		else
-			combo.select(combo.getStore().getAt(0));
-		console.log("=== updateDefaultActionCombo 1");
-		console.log(comboValue);
+			combo.select(combo.getStore().getAt(1));
 	}
 });
