@@ -19,6 +19,9 @@
 # ---------------------------------
 
 
+import ConfigParser
+import importlib
+
 import unittest
 import time, json, logging
 
@@ -39,7 +42,6 @@ engines=[]
 
 ## Very Dirty HACK !
 ## Remove old queues (temporary workaround)
-import ConfigParser
 amqp_config = ConfigParser.RawConfigParser()
 section = 'master'
 amqp_config.read(os.path.expanduser("~/etc/amqp.conf"))
@@ -57,80 +59,96 @@ subprocess.call('rabbitmqadmin -H %s --vhost=%s --username=%s --password=%s dele
 
 ###### END of HACK ####
 
+CONFIG_PARAMS = {
+	'next': list,
+	'next_balanced': bool,
+	'name': basestring,
+	'beat_interval': int,
+	'exchange_name': basestring,
+	'routing_keys': list
+}
 
 def start_engines():
 	global engines
 
-	##################
-	# Events
-	##################
+	# Check if configuration exists
+	confpath = os.path.expanduser('~/etc/amqp2engines.conf')
+	if not os.path.exists(confpath):
+		logger.error("Can't find configuration file at '%s'" % confpath)
+		return False
 
-	# Engine_cleaner
-	import cleaner
-	engines.append( cleaner.engine(			next_amqp_queues=['Engine_event_filter'], routing_keys=["#"], exchange_name="canopsis.events", name='cleaner_events'))
+	try:
+		config = ConfigParser.ConfigParser()
+		config.read(confpath)
 
-	# Engine_event_filter
-	import event_filter
-	engines.append( event_filter.engine(	next_amqp_queues=['Engine_derogation']) )
+	except ParsingError, err:
+		logger.error(str(err))
+		return False
 
+	# Parse configuration
 
-	# Engine_derogation
-	import derogation
-	engines.append( derogation.engine(		next_amqp_queues=['Engine_tag']) )
+	for section in config.sections():
+		# We only want engines
+		if not section.startswith('engine:'):
+			continue
 
-	# Engine_tag
-	import tag
-	engines.append( tag.engine(				next_amqp_queues=['Engine_perfstore2']) )
+		# Ignore 'engine:' for engine's name
+		engine_name = section[7:]
 
-	# Engine_perfstore2
-	import perfstore2
-	engines.append( perfstore2.engine(		next_amqp_queues=['Engine_eventstore']) )
+		# Try to load the engine
+		try:
+			engine = importlib.import_module(engine_name)
 
-	# Engine_eventstore
-	import eventstore
-	engines.append( eventstore.engine() )
+		except ImportError:
+			logger.error("No engine named '%s' found" % engine_name)
+			return False
 
+		# Engine loaded, get configuration
+		logger.info('Reading configuration for engine %s' % engine_name)
 
-	##################
-	# Alerts
-	##################
+		engine_conf = {}
 
-	# Engine_cleaner
-	import cleaner
-	engines.append( cleaner.engine(			next_amqp_queues=['Engine_alertcounter'], routing_keys=["#"], exchange_name="canopsis.alerts", name='cleaner_alerts'))
+		for item in config.items(section):
+			param = item[0]
+			value = item[1]
 
-	# Engine_alertcounter
-	import alertcounter
-	engines.append( alertcounter.engine(	next_amqp_queues=['Engine_topology']),)
+			if param not in CONFIG_PARAMS:
+				logger.warning("Unknown parameter '%s', ignoring" % param)
+				continue
 
-	# Engine_topology
-	import topology
-	engines.append( topology.engine(		next_amqp_queues=['Engine_selector']) )
+			# If the parameter is a list, then parse the list in CSV format
+			if CONFIG_PARAMS[param] is list:
+				import csv
 
-	# Engine_selector
-	import selector
-	engines.append( selector.engine() )
+				parser = csv.reader([value])
 
+				value = []
 
-	##################
-	# Autres
-	##################
+				for row in parser:
+					value += row
 
-	# Engine_collectdgw
-	import collectdgw
-	engines.append( collectdgw.engine() )
+			elif CONFIG_PARAMS[param] is int:
+				value = config.getint(section, param)
 
-	# Engine_sla (no queue)
-	import sla
-	engines.append( sla.engine() )
+			elif CONFIG_PARAMS[param] is bool:
+				value = config.getboolean(section, param)
 
-	# Engine_consolidation
-	import consolidation
-	engines.append( consolidation.engine() )	
+			elif CONFIG_PARAMS[param] is float:
+				value = config.getfloat(section, param)
 
-	# Engine_perfstore2_rotate
-	import perfstore2_rotate
-	engines.append( perfstore2_rotate.engine() )	
+			# In all other case, we keep the original string value fetched via item[1]
+
+			engine_conf[param] = value
+
+		# Configuration loaded
+		logger.info("Loading engine '%s' with the following configuration: %s" % (engine_name, engine_conf))
+
+		# Now, we translate the 'next' parameter to the 'next_amqp_queues'
+		if 'next' in engine_conf:
+			engine_conf['next_amqp_queues'] = ['Engine_%s' % next for next in engine_conf['next']]
+			del engine_conf['next']
+
+		engines.append(engine.engine(**engine_conf))
 
 	##################
 	# Start engines
@@ -139,6 +157,8 @@ def start_engines():
 	logger.info("Start engines")
 	for engine in engines:
 		engine.start()
+
+	return True
 	
 def stop_engines():
 	logger.info("Stop engines")
@@ -156,13 +176,16 @@ def stop_engines():
 def main():
 	global amqp
 		
-	logger.info("Initialyze process")
+	logger.info("Initialize process")
 	handler.run()
 
 	logger.info("Start Engines")
-	start_engines()
+
+	if not start_engines():
+		logger.error("A problem occurred, exiting...")
+		sys.exit(1)
 	
-	logger.info("Waitting ...")
+	logger.info("Waiting ...")
 	handler.wait()
 	
 	stop_engines()
