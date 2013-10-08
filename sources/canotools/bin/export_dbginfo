@@ -43,5 +43,5 @@ doit "Compressing report"                    "xz $REPORT_NAME.tar"
 doit "Removing temporary folder"             "rm -rf $REPORT_PATH"
 
 echo
-echo "Your report is located at $REPORT_PATH.tar.xz, send it to canopsis@capensis.fr"
+echo "Your report is located at $REPORT_PATH.tar.xz"
 du -h $REPORT_PATH.tar.xz
