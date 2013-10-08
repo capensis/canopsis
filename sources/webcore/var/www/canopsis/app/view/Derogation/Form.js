@@ -421,7 +421,7 @@ Ext.define('derogation.override', {
 });
 
 Ext.define('derogation.statemap', {
-	extend: 'canopsis.view.Statemap.Grid',
+	extend: 'canopsis.lib.view.cgrid',
 	mixins: ['canopsis.lib.form.cfield'],
 	alias: 'widget.DerogationStatemapField',
 
@@ -438,6 +438,7 @@ Ext.define('derogation.statemap', {
 	opt_tags_search: false,
 
 	selType: 'rowmodel',
+	model: 'Statemap',
 	store: 'Statemaps',
 
 	minHeight: 480,
@@ -461,7 +462,62 @@ Ext.define('derogation.statemap', {
 		}
 	},
 
+	rdr_statemap: function(val) {
+		var output = '<p>';
+
+		for(var i = 0; i < val.length; ++i) {
+			output += '<b>' + i + '</b> -> ';
+
+			switch(val[i]) {
+				case 0:
+					output += 'OK';
+					break;
+
+				case 1:
+					output += 'WARNING';
+					break;
+
+				case 2:
+					output += 'CRITICAL';
+					break;
+
+				default:
+					output += 'UNKNOWN';
+					break;
+			}
+
+			if (i != val.length - 1) {
+				output += ', ';
+			}
+		}
+
+		return output;
+	},
+
 	initComponent: function() {
+		this.columns = [{
+			header: '',
+			width: 25,
+			sortable: false,
+			renderer: rdr_crecord_type,
+			dataIndex: 'crecord_type',
+		},{
+			header: _('Enabled'),
+			align: 'center',
+			width: 55,
+			dataIndex: 'enable',
+			renderer: rdr_boolean,
+		},{
+			header: _('Name'),
+			flex: 1,
+			dataIndex: 'crecord_name',
+		},{
+			header: _('Statemap'),
+			flex: 1,
+			dataIndex: 'statemap',
+			renderer: this.rdr_statemap,
+		}];
+
 		this.callParent();
 	},
 
@@ -480,4 +536,4 @@ Ext.define('derogation.statemap', {
 			selectmodel.select(record);
 		}
 	}
-})
+});
