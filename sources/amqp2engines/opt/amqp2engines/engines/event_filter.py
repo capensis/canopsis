@@ -28,11 +28,6 @@ import logging
 import cmfilter
 import ast
 
-import time
-from datetime import datetime
-
-
-
 NAME='event_filter'
 
 class engine(cengine):
@@ -41,7 +36,6 @@ class engine(cengine):
 		cengine.__init__(self, name=NAME, *args, **kargs)
 		self.account = caccount(user="root", group="root")
 
-
 	def pre_run(self):
 		self.drop_event_count = 0
 		self.pass_event_count = 0
@@ -49,8 +43,6 @@ class engine(cengine):
 
 
 	def work(self, event, *xargs, **kwargs):		
-
-		default_action = 'pass'
 
 		event_str = str(event)
 
@@ -92,10 +84,10 @@ class engine(cengine):
 
 	def beat(self, *args, **kargs):
 		# Configuration reload for realtime ui changes handling
+		self.storage = get_storage(logging_level=logging.DEBUG, account=self.account)
 
-		self.configuration = { 'rules' : [], 'default_action': 'pass'}
+		self.configuration = { 'rules' : [], 'default_action': self.find_default_action()}
 
-		self.storage = get_storage(logging_level=logging.DEBUG, account=self.account)	
 		try:
 			records = self.storage.find({'crecord_type':'rule'}, sort="priority")
 
@@ -131,3 +123,13 @@ class engine(cengine):
 
 		self.drop_event_count = 0				
 		self.pass_event_count = 0
+
+	def find_default_action(self):
+		records = self.storage.find({'crecord_type':'defaultrule'})
+
+		for record in records:
+			record_dump = record.dump()
+			return record_dump["action"]
+
+		self.logger.debug("No default action found. Assuming default action is pass")
+		return 'pass'
