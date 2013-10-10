@@ -139,7 +139,7 @@ Ext.define('canopsis.lib.view.cgrid_state' , {
 
 		if (this.opt_show_ack) {
 			this.columns.push({
-				header: _('Acquittal'),
+				header: _('Acknowledgement'),
 				flex: 2,
 				sortable: this.opt_column_sortable,
 				dataIndex: 'ack',
