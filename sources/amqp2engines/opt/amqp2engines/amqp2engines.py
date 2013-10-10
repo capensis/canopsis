@@ -19,7 +19,7 @@
 # ---------------------------------
 
 
-from ConfigParser import ConfigParser, ParsingError
+from ConfigParser import RawConfigParser, ConfigParser, ParsingError
 import importlib
 
 import unittest
@@ -42,7 +42,7 @@ engines=[]
 
 ## Very Dirty HACK !
 ## Remove old queues (temporary workaround)
-amqp_config = ConfigParser.RawConfigParser()
+amqp_config = RawConfigParser()
 section = 'master'
 amqp_config.read(os.path.expanduser("~/etc/amqp.conf"))
 amqp_host = amqp_config.get(section, "host")
