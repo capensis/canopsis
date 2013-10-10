@@ -95,6 +95,9 @@ def start_engines():
 		# Ignore 'engine:' for engine's name
 		engine_name = section[7:]
 
+		# If there is more :, ignore the rest, it's just to make the section name unique
+		engine_name = engine_name.split(':')[0]
+
 		# Try to load the engine
 		try:
 			engine = importlib.import_module(engine_name)
