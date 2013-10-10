@@ -19,7 +19,7 @@
 # ---------------------------------
 
 
-import ConfigParser
+from ConfigParser import ConfigParser, ParsingError
 import importlib
 
 import unittest
@@ -68,6 +68,16 @@ CONFIG_PARAMS = {
 	'routing_keys': list
 }
 
+class ConfigDict(dict):
+	"""
+		Throw a ParsingError if attempting to create a new section with
+		already existing name.
+	"""
+	def __setitem__(self, key, val):
+		if key in self:
+			raise ParsingError('Multiple sections with the same name, use a suffix like ":events" or ":alerts"')
+		super(ConfigDict, self).__setitem__(key, val)
+
 def start_engines():
 	global engines
 
@@ -78,7 +88,7 @@ def start_engines():
 		return False
 
 	try:
-		config = ConfigParser.ConfigParser()
+		config = ConfigParser(None, ConfigDict)
 		config.read(confpath)
 
 	except ParsingError, err:
