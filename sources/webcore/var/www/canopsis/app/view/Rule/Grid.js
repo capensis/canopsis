@@ -37,43 +37,59 @@ Ext.define('canopsis.view.Rule.Grid' , {
 	opt_bar_search: true,
 	opt_bar_search_field: ['crecord_name', 'priority', 'rule', 'action'],
 
+	opt_bar_customs: [{
+		alias: 'widget.defaultAction',
+		fieldLabel: _('Default action'),
+		xtype: 'combobox',
+		iconCls: 'icon-book',
+		editable: false,
+		store: {
+			xtype: 'store',
+			fields: ['value', 'text'],
+			data: [
+			{value: 'pass', text: _('Pass')},
+			{value: 'drop', text: _('Drop')}
+			]
+		},
+	}],
+
 	columns: [
-		{
-			header: '',
-			width: 25,
-			sortable: false,
-			renderer: rdr_crecord_type,
-			dataIndex: 'crecord_type'
-        },{
-			header: _('Enabled'),
-			align: 'center',
-			width: 55,
-			dataIndex: 'enable',
-			sortable: false,
-			renderer: rdr_boolean
-		},{
-			header: 'Priority',
-			width: 55,
-			sortable: true,
-			dataIndex: 'priority'
-        },{
-			header: _('Name'),
-			width: 200,
-			sortable: false,
-			dataIndex: 'crecord_name'
-		},{
-			header: _('Rule'),
-			flex: 1,
-			sortable: false,
-			dataIndex: 'mfilter'
-		},{
-			header: _('Action'),
-			align: 'center',
-			width: 55,
-			sortable: false,
-			dataIndex: 'action',
-			renderer: rdr_rule_action
-		}
+	{
+		header: '',
+		width: 25,
+		sortable: false,
+		renderer: rdr_crecord_type,
+		dataIndex: 'crecord_type'
+	},{
+		header: _('Enabled'),
+		align: 'center',
+		width: 55,
+		dataIndex: 'enable',
+		sortable: false,
+		renderer: rdr_boolean
+	},{
+		header: 'Priority',
+		width: 55,
+		sortable: true,
+		dataIndex: 'priority'
+	},{
+		header: _('Name'),
+		width: 200,
+		sortable: false,
+		dataIndex: 'crecord_name'
+	},{
+		header: _('Rule'),
+		flex: 1,
+		sortable: false,
+		dataIndex: 'mfilter'
+	},{
+		header: _('Action'),
+		align: 'center',
+		width: 55,
+		sortable: false,
+		dataIndex: 'action',
+		renderer: rdr_rule_action
+	}
 	],
 
 	initComponent: function() {

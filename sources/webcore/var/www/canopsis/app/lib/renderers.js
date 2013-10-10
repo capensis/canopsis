@@ -279,6 +279,22 @@ rdr_tags = function(tags) {
 	return html;
 };
 
+
+rdr_ack = function(ackStatus) {
+
+	//default value
+	var status = 'confirm';
+	//set existing status value, status change is delegated to button click control
+	if (ackStatus) {
+		status = ackStatus;		
+	}
+	if (status === 'cancelled') {
+		return '<span>'+ status +'</span>';
+	} else {
+		return '<button class="ackChangeStatus">' + status + '</button>';
+	}
+};
+
 rdr_display_groups = function(groups) {
 	output = '';
 	for (var i = 0; i < groups.length; i++) {

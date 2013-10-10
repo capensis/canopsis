@@ -41,7 +41,8 @@ Ext.define('canopsis.model.Event', {
 
 		{name: 'event_id'},
 		{name: 'derogation_name'},
-		{name: 'derogation_description'}
+		{name: 'derogation_description'},
+		{name: 'ack'}
 
 	]
 
