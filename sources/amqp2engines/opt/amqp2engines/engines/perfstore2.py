@@ -26,7 +26,7 @@ from ctools import Str2Number
 from datetime import datetime
 
 from cengine import cengine
-from camqp import camqp:
+from camqp import camqp
 
 NAME="perfstore2"
 INTERNAL_QUEUE="beat_perfstore2"
