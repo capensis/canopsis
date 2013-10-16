@@ -166,6 +166,7 @@ Ext.define('canopsis.view.Derogation.Form', {
 		this.durationDate    = this.down('cduration[name=forTs]');
 		this.startDate       = this.down('cdate[name=startTs]');
 		this.stopDate        = this.down('cdate[name=stopTs]');
+		this.eventFilter     = this.down('cfilter[name=evfilter]');
 
 		if(!this.editing) {
 			this.addNewField();

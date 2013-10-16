@@ -121,38 +121,6 @@ Ext.define('canopsis.view.Selector.Grid' , {
 			dataIndex: 'aaa_group',
 			renderer: rdr_clean_id,
 			text: _('Group')
-		}/*,{
-			width: 80,
-			align: 'center',
-			text: _('Owner'),
-			dataIndex: 'aaa_access_owner',
-			renderer: rdr_access
-		},{
-			width: 60,
-			align: 'center',
-			text: _('Group'),
-			dataIndex: 'aaa_access_group',
-			renderer: rdr_access
-		},{
-			width: 60,
-			align: 'center',
-			text: _('Others'),
-			dataIndex: 'aaa_access_other',
-			renderer: rdr_access
-		}*/,{
-			xtype: 'actioncolumn',
-			width: 70,
-			text: _('Derogation'),
-			icon: './themes/canopsis/resources/images/icons/edit.png',
-			iconCls: 'icon-clickable',
-			handler: function(grid, rowIndex, colindex) {
-				var rec = grid.getStore().getAt(rowIndex).raw;
-				log.dump(rec);
-				if (rec.rk)
-					global.derogationCtrl.derogate(rec.rk, rec.crecord_name);
-				else
-					global.notify.notify(_('Information not found'), _("Please wait a moment, some informations aren't availables"), 'info');
-			}
 		}
 	],
 

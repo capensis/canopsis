@@ -30,7 +30,7 @@ Ext.define('canopsis.view.Derogation.Grid' , {
 
 	opt_paging: true,
 	opt_menu_delete: true,
-	opt_bar_add: false,
+	opt_bar_add: true,
 	opt_menu_rights: false,
 	opt_bar_search: true,
 	opt_bar_enable: true,
@@ -104,10 +104,6 @@ Ext.define('canopsis.view.Derogation.Grid' , {
 				flex: 2,
 				dataIndex: 'description'
 			},{
-				header: _('ids'),
-				flex: 2,
-				dataIndex: 'ids'
-			},{
 				header: _('Condition'),
 				flex: 1,
 				dataIndex: 'time_conditions',
@@ -122,11 +118,6 @@ Ext.define('canopsis.view.Derogation.Grid' , {
 				flex: 1,
 				dataIndex: 'actions',
 				renderer: this.rdr_statemap,
-			},{
-				header: _('Tags'),
-				flex: 1,
-				dataIndex: 'tags',
-				renderer: rdr_tags
 			}
 		];
 		this.callParent();

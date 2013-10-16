@@ -27,11 +27,6 @@ widget_weather_template = Ext.create('Ext.XTemplate',
 					'<span class="weather-ts">{event_ts}</span></br>',
 					'{output}',
 				'</td>',
-				'<td style="width: 14px;" id="{id}-edit_td">',
-					'<tpl if="admin == true && derogation == true && exportMode == false">',
-						'<div class="icon icon-edit weather-clickable" id="{id}-edit_button"></div>',
-					'</tpl>',
-				'</td>',
 				'<td class="weather-td-image" style="width: 20%;">',
 					'<div class="weather-relative">',
 						'<tpl if="percent != undefined ">',
@@ -84,11 +79,6 @@ widget_weather_template_left = Ext.create('Ext.XTemplate',
 					'<span class="weather-title">{title}</span>',
 					'<span class="weather-ts">{event_ts}</span></br>',
 					'{output}',
-				'</td>',
-				'<td style="width: 14px;" id="{id}-edit_td">',
-					'<tpl if="admin == true && derogation == true && exportMode == false">',
-						'<div class="icon icon-edit weather-clickable" id="{id}-edit_button"></div>',
-					'</tpl>',
 				'</td>',
 			'</tr>',
 			'<tr>',
@@ -229,8 +219,6 @@ Ext.define('widgets.weather.brick' , {
 			this.buildEmpty();
 		}
 
-		//-----------------------get element----------------------
-		this.edit_button = this.getEl().getById(this.id + '-edit_button');
 		//-----------------------bindings-------------------------
 		var report_button = this.getEl().getById(this.id + '-button');
 		if (report_button)
@@ -240,29 +228,6 @@ Ext.define('widgets.weather.brick' , {
 		if (clickable_title && (this.external_link || this.link) && !this.fullscreenMode) {
 			clickable_title.addCls('weather-clickable');
 			clickable_title.on('click', this.externalLink, this);
-		}
-		if (this.widget_base_config.admin && this.display_derogation_icon && this.edit_button) {
-			var output = this.getEl().getById(this.id + '-edit_td');
-			if (output) {
-				output.hover(
-					function() {this.edit_button.fadeIn()},
-					function() {this.edit_button.fadeOut()},
-					this
-				);
-			}
-
-			if (this.edit_button) {
-				this.edit_button.on('click', function() {
-					if (!this.data.rk) {
-						global.notify.notify(_('Information not found'), _("Please wait a moment, some informations aren't availables"), 'info');
-					}else {
-						var name = this.component;
-						if (this.resource)
-							name += ' - ' + this.resource;
-						global.derogationCtrl.derogate(this.data.rk, name, true);
-					}
-				},this);
-			}
 		}
 
 		//Hack for removing scrolling bar on ie

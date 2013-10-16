@@ -101,9 +101,6 @@ Ext.define('canopsis.controller.Derogation', {
 
 	getEditTitle: function(item) {
 		var name = _(this.modelId);
-		if (item.raw.selector_name)
-			name += ': ' + item.raw.selector_name;
-
 		return name;
 	},
 
@@ -137,35 +134,9 @@ Ext.define('canopsis.controller.Derogation', {
 				}
 			}
 		}
-	},
 
-	derogate: function(id,name,now) {
-		var form = Ext.create('widget.' + this.formXtype, {
-													EditMethod: 'window',
-													store: Ext.getStore('Derogations'),
-													ids: [id],
-													selector_name: name,
-													now: now
-													});
-		var win_conf = {
-			title: 'Derogation',
-			items: form,
-			closable: false,
-			resizable: true,
-			constrain: true,
-			renderTo: Ext.getCmp('main-tabs').getActiveTab().id,
-			closeAction: 'destroy'
-		};
-
-
-
-		if (name) {
-			win_conf.title += ': ' + name;
-			form.getForm().setValues({'tags': [name]});
+		if (data.conditions) {
+			form.eventFilter.setValue(data.conditions);
 		}
-
-		form.win = Ext.create('widget.window', win_conf).show();
-		this._bindFormEvents(form);
 	}
-
 });

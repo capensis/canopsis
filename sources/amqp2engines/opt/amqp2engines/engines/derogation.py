@@ -38,28 +38,6 @@ class engine(cengine):
 	def pre_run(self):
 		self.storage = get_storage(namespace='object', account=caccount(user="root", group="root"))		
 		self.beat()
-	
-	def wanted(self, event, derogation):
-		"""
-			Check if the derogation want to act on the event.
-
-			:param event: Event to check.
-			:type event: dict
-
-			:param derogation: Derogation to apply.
-			:type derogation: dict
-
-			:rtype: boolean
-		"""
-
-		if event['rk'] in derogation['ids']:
-			return True
-
-		for tag in event['tags']:
-			if tag in derogation['tags']:
-				return True
-
-		return False
 
 	def time_conditions(self, derogation):
 		conditions = derogation.get('time_conditions', None)
@@ -99,7 +77,7 @@ class engine(cengine):
 
 			return False
 		
-		if conditions != {}:
+		if conditions:
 			check = cmfilter.check(conditions, event)
 
 			self.logger.debug(" + 'conditions' check is %s" % check)
@@ -144,7 +122,7 @@ class engine(cengine):
 					derogated = True
 
 				else:
-					self.logger.error("Action malformed (need 'field' and 'value'): %s" % action)
+					self.logger.error("Action malformed (needs 'field' and 'value'): %s" % action)
 
 			elif atype == "requalificate":
 				statemap_id = action.get('statemap', None)
@@ -165,7 +143,7 @@ class engine(cengine):
 					derogated = True
 
 				else:
-					self.logger.error("Action malformed (need 'statemap'): %s" % action)
+					self.logger.error("Action malformed (needs 'statemap'): %s" % action)
 
 			else:
 				self.logger.warning("Unknown action '%s'" % atype)
@@ -182,15 +160,14 @@ class engine(cengine):
 	
 	def work(self, event, *args, **kargs):
 		for derogation in self.derogations:
-			# Check scope
-			if self.wanted(event, derogation):
-				self.logger.debug("%s is in %s (%s)" % (event['rk'], derogation['crecord_name'], derogation['_id']))
-				# Check Time
-				if self.time_conditions(derogation):
-					# Check conditions
-					if self.conditions(event, derogation):
-						# Actions
-						return self.actions(event, derogation)
+			# Check Time
+			if self.time_conditions(derogation):
+				# Check conditions
+				if self.conditions(event, derogation):
+					self.logger.debug("%s is in %s (%s)" % (event['rk'], derogation['crecord_name'], derogation['_id']))
+
+					# Actions
+					return self.actions(event, derogation)
 		
 		return event
 		
@@ -217,16 +194,6 @@ class engine(cengine):
 				state = 1
 			else:
 				output = "Derogation '%s' is now inactive" % name
-			
-			
-			tags = derogation.get('tags', None)
-			self.logger.debug(" + Tags: '%s' (%s)" % (tags, type(tags)))
-			
-			if isinstance(tags, str) or isinstance(tags, unicode):
-				tags = [ tags ]
-			
-			if not isinstance(tags, list) or tags == "":
-				tags = None
 				
 			event = cevent.forger(
 				connector = "cengine",
@@ -236,8 +203,7 @@ class engine(cengine):
 				component=NAME,
 				state=state,
 				output=output,
-				long_output=derogation.get('description', None),
-				tags=tags
+				long_output=derogation.get('description', None)
 			)
 			rk = cevent.get_routingkey(event)
 			
@@ -249,19 +215,17 @@ class engine(cengine):
 		## Extract ids
 		records = self.storage.find( {	'crecord_type': 'derogation',
 										'enable': True,
-										'ids': { '$exists' : True },
 										'actions': { '$exists' : True },
 										'conditions': { '$exists' : True } },
 										namespace="object")
 		
 		for record in records:
-			if record.data.get('ids'):
-				derogation = record.dump()
-				if self.time_conditions(derogation):
-					self.set_derogation_state(derogation, True)	
-				else:
-					self.set_derogation_state(derogation, False)
-					
-				self.derogations.append(derogation)
+			derogation = record.dump()
+			if self.time_conditions(derogation):
+				self.set_derogation_state(derogation, True)	
+			else:
+				self.set_derogation_state(derogation, False)
+				
+			self.derogations.append(derogation)
 				
 		self.logger.debug("Load %s derogations." % len(self.derogations))
