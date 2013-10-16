@@ -42,6 +42,7 @@ Ext.define('canopsis.lib.view.cgrid_state' , {
 	opt_show_last_check: true,
 	opt_show_output: true,
 	opt_show_tags: true,
+	opt_show_ack: true,
 
 	opt_show_row_background: true,
 
@@ -136,6 +137,16 @@ Ext.define('canopsis.lib.view.cgrid_state' , {
 			});
 		}
 
+		if (this.opt_show_ack) {
+			this.columns.push({
+				header: _('Acknowledgement'),
+				flex: 2,
+				sortable: this.opt_column_sortable,
+				dataIndex: 'ack',
+				renderer: rdr_ack
+			});
+		}
+
 		if (this.opt_show_tags) {
 			this.columns.push({
 				header: _('Tags'),
@@ -187,164 +198,6 @@ Ext.define('canopsis.lib.view.cgrid_state' , {
 		if (this.opt_show_row_background) {
 			this.viewConfig.getRowClass = this.coloringRow;
 		}
-
-		// Look at the eventlog initComponent duplicate
-		//-----------filter button-------------------------
-		// if (this.fitler_buttons) {
-		// 		this.bar_search = [{
-		// 		xtype: 'button',
-		// 		iconCls: 'icon-crecord_type-resource',
-		// 		pack: 'end',
-		// 		tooltip: _('Show resource'),
-		// 		enableToggle: true,
-		// 		pressed: true,
-		// 		scope: this,
-		// 		toggleHandler: function(button, state) {
-		// 			if (!state) {
-		// 				button.filter_id = this.store.addFilter(
-		// 					{'source_type': {'$ne': 'resource'}}
-		// 				);
-		// 			}else {
-		// 				if (button.filter_id)
-		// 					this.store.deleteFilter(button.filter_id);
-		// 			}
-		// 			this.store.load();
-		// 		}
-		// 	},{
-		// 		xtype: 'button',
-		// 		iconCls: 'icon-crecord_type-component',
-		// 		pack: 'end',
-		// 		tooltip: _('Show component'),
-		// 		enableToggle: true,
-		// 		pressed: true,
-		// 		scope: this,
-		// 		toggleHandler: function(button, state) {
-		// 			if (!state) {
-		// 				button.filter_id = this.store.addFilter(
-		// 					{'source_type': {'$ne': 'component'}}
-		// 				);
-		// 			}else {
-		// 				if (button.filter_id)
-		// 					this.store.deleteFilter(button.filter_id);
-		// 			}
-		// 			this.store.load();
-		// 		}
-		// 	},{
-		// 		xtype: 'button',
-		// 		iconCls: 'icon-state-0',
-		// 		pack: 'end',
-		// 		tooltip: _('Show state ok'),
-		// 		enableToggle: true,
-		// 		pressed: true,
-		// 		scope: this,
-		// 		toggleHandler: function(button, state) {
-		// 			if (!state) {
-		// 				button.filter_id = this.store.addFilter(
-		// 					{'state': {'$ne': 0}}
-		// 				);
-		// 			}else {
-		// 				if (button.filter_id)
-		// 					this.store.deleteFilter(button.filter_id);
-		// 			}
-		// 			this.store.load();
-		// 		}
-		// 	},{
-		// 		xtype: 'button',
-		// 		iconCls: 'icon-state-1',
-		// 		pack: 'end',
-		// 		tooltip: _('Show state warning'),
-		// 		enableToggle: true,
-		// 		pressed: true,
-		// 		scope: this,
-		// 		toggleHandler: function(button, state) {
-		// 			if (!state) {
-		// 				button.filter_id = this.store.addFilter(
-		// 					{'state': {'$ne': 1}}
-		// 				);
-		// 			}else {
-		// 				if (button.filter_id)
-		// 					this.store.deleteFilter(button.filter_id);
-		// 			}
-		// 			this.store.load();
-		// 		}
-		// 	},{
-		// 		xtype: 'button',
-		// 		iconCls: 'icon-state-2',
-		// 		pack: 'end',
-		// 		tooltip: _('Show state critical'),
-		// 		enableToggle: true,
-		// 		pressed: true,
-		// 		scope: this,
-		// 		toggleHandler: function(button, state) {
-		// 			if (!state) {
-		// 				button.filter_id = this.store.addFilter(
-		// 					{'state': {'$ne': 2}}
-		// 				);
-		// 			}else {
-		// 				if (button.filter_id)
-		// 					this.store.deleteFilter(button.filter_id);
-		// 			}
-		// 			this.store.load();
-		// 		}
-		// 	},{
-		// 		xtype: 'button',
-		// 		iconCls: 'icon-state-3',
-		// 		pack: 'end',
-		// 		tooltip: _('Show state unknown'),
-		// 		enableToggle: true,
-		// 		pressed: true,
-		// 		scope: this,
-		// 		toggleHandler: function(button, state) {
-		// 			if (!state) {
-		// 				button.filter_id = this.store.addFilter(
-		// 					{'state': {'$ne': 3}}
-		// 				);
-		// 			}else {
-		// 				if (button.filter_id)
-		// 					this.store.deleteFilter(button.filter_id);
-		// 			}
-		// 			this.store.load();
-		// 		}
-		// 	},{
-		// 		xtype: 'button',
-		// 		iconCls: 'icon-state-type-0',
-		// 		pack: 'end',
-		// 		tooltip: _('Show soft state'),
-		// 		enableToggle: true,
-		// 		pressed: true,
-		// 		scope: this,
-		// 		toggleHandler: function(button, state) {
-		// 			if (!state) {
-		// 				button.filter_id = this.store.addFilter(
-		// 					{'state_type': {'$ne': 0}}
-		// 				);
-		// 			}else {
-		// 				if (button.filter_id)
-		// 					this.store.deleteFilter(button.filter_id);
-		// 			}
-		// 			this.store.load();
-		// 		}
-		// 	},{
-		// 		xtype: 'button',
-		// 		iconCls: 'icon-state-type-1',
-		// 		pack: 'end',
-		// 		tooltip: _('Show hard state'),
-		// 		enableToggle: true,
-		// 		pressed: true,
-		// 		scope: this,
-		// 		toggleHandler: function(button, state) {
-		// 			if (!state) {
-		// 				button.filter_id = this.store.addFilter(
-		// 					{'state_type': {'$ne': 1}}
-		// 				);
-		// 			}else {
-		// 				if (button.filter_id)
-		// 					this.store.deleteFilter(button.filter_id);
-		// 			}
-		// 			this.store.load();
-		// 		}
-		// 	},'-'];
-		// }
 
 		this.callParent(arguments);
 	},

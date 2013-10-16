@@ -19,26 +19,19 @@
 # ---------------------------------
 */
 
-Ext.define('canopsis.store.Rules', {
+Ext.define('canopsis.store.DefaultRules', {
     extend: 'canopsis.lib.store.cstore',
-	model: 'canopsis.model.Rule',
+	model: 'canopsis.model.DefaultRule',
 
-	storeId: 'store.Rules',
-	pageSize: 5000,
-  	autoLoad: true,
+	storeId: 'store.DefaultRules',
+	pageSize: 1,
+  	autoLoad: false,
 	autoSync: true,
-
-	sorters: [
-        {
-            property: 'priority',
-            direction: 'ASC'
-        }
-    ],
 
 	proxy: {
 		type: 'rest',
-		url: '/rest/object/rule',
-		appendId: true,
+		url: '/rest/object/defaultrule',
+		appendId: false,
 		reader: {
 			type: 'json',
 			root: 'data',

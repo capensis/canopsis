@@ -187,12 +187,6 @@ Ext.define('canopsis.lib.controller.cgrid', {
 		for (var i = 0; i < btns.length; i++)
 			btns[i].on('click', this._downloadButton, this);
 
-		// TimeDisplaybutton
-		/*var btns = Ext.ComponentQuery.query('#' + id + ' button[action=timeDisplay]');
-		for (var i = 0; i < btns.length; i ++)
-			btns[i].on('click', this.timeDisplay, this);
-		*/
-
 		var field = Ext.ComponentQuery.query('#' + id + ' cdate[name=startTimeSearch]');
 		for (var i = 0; i < field.length; i++)
 			field[i].on('select', this.setMaxDate, this);
@@ -200,8 +194,6 @@ Ext.define('canopsis.lib.controller.cgrid', {
 		var field = Ext.ComponentQuery.query('#' + id + ' cdate[name=endTimeSearch]');
 		for (var i = 0; i < field.length; i++)
 			field[i].on('select', this.setMinDate, this);
-
-		//this._reloadButton(grid)
 
 		if (this.bindGridEvents)
 			this.bindGridEvents(grid);
@@ -232,6 +224,19 @@ Ext.define('canopsis.lib.controller.cgrid', {
 
 	_select: function(record, index, eOpts) {
 		log.debug('select', this.logAuthor);
+		
+		if (this.grid.opt_show_ack) {
+			var selected_ack;
+			try {
+				selected_ack = Ext.get(this.grid.getView().getNode(index)).query('button[class=ackChangeStatus]:hover');
+			} catch (err) {
+				selected_ack = [];
+			}
+
+			if (selected_ack.length === 1) {
+				this._changeAckStatus();
+			}
+		}
 
 		if (this.grid.opt_tags_search) {
 			// Filter on tags
@@ -318,6 +323,37 @@ Ext.define('canopsis.lib.controller.cgrid', {
 		if (this.deleteButton)
 			this.deleteButton(button, grid, selection);
 
+	},
+
+
+	_changeAckStatus: function() {
+		log.debug('Clicked ack change status Button', this.logAuthor);
+		var grid = this.grid;
+		var store = grid.getStore();
+		var change = true;		
+		grid.store.suspendAutoSync();
+
+		var selection = grid.getSelectionModel().getSelection();
+		
+		var record = selection[0];
+		record.suspendEvents();
+		
+		
+		var ack = record.get('ack');
+		var edit = true;
+		
+		if (!ack) {
+			record.set('ack', 'cancel');
+
+		} else if (ack === 'cancel') {
+			record.set('ack', 'cancelled');
+		} else {
+			change = false;
+		}
+
+		grid.store.resumeAutoSync();
+		grid.store.sync();
+		
 	},
 
 	_enabledisable: function() {
