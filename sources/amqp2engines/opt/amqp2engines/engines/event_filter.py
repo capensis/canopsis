@@ -28,11 +28,6 @@ import logging
 import cmfilter
 import ast
 
-import time
-from datetime import datetime
-
-
-
 NAME='event_filter'
 
 class engine(cengine):
@@ -41,7 +36,6 @@ class engine(cengine):
 		cengine.__init__(self, name=NAME, *args, **kargs)
 		self.account = caccount(user="root", group="root")
 
-
 	def pre_run(self):
 		self.drop_event_count = 0
 		self.pass_event_count = 0
@@ -49,8 +43,6 @@ class engine(cengine):
 
 
 	def work(self, event, *xargs, **kwargs):		
-
-		default_action = 'pass'
 
 		event_str = str(event)
 
@@ -66,12 +58,12 @@ class engine(cengine):
 			# Try filter rules on current event
 			if cmfilter.check(filterItem['mfilter'], event):
 				if action == 'pass':
-					self.logger.debug("Event '%s' passed by rule '%s'" % (event_str, name))
+					self.logger.debug("Event passed by rule '%s'" % name)
 					self.pass_event_count += 1
 					return event
 
 				elif action == 'drop':
-					self.logger.debug("Event '%s' dropped by rule '%s'" % (event_str, name))
+					self.logger.debug("Event dropped by rule '%s'" % name)
 					self.drop_event_count += 1
 					return DROP
 
@@ -91,11 +83,12 @@ class engine(cengine):
 		
 
 	def beat(self, *args, **kargs):
-		# Configuration reload for realtime ui changes handling
+		""" Configuration reload for realtime ui changes handling """
 
-		self.configuration = { 'rules' : [], 'default_action': 'pass'}
+		self.storage = get_storage(logging_level=logging.DEBUG, account=self.account)
 
-		self.storage = get_storage(logging_level=logging.DEBUG, account=self.account)	
+		self.configuration = { 'rules' : [], 'default_action': self.find_default_action()}
+
 		try:
 			records = self.storage.find({'crecord_type':'rule'}, sort="priority")
 
@@ -109,8 +102,10 @@ class engine(cengine):
 		except Exception, e:
 			self.logger.warning(str(e))
 
+
 	def send_stat_event(self):
-	# Send AMQP Event for drop metrics
+		""" Send AMQP Event for drop and pass metrics """
+
 		event = cevent.forger(
 			connector = "cengine",
 			connector_name = "engine",
@@ -121,13 +116,30 @@ class engine(cengine):
 			state_type=1,
 			output="%s event dropped since %s" % (self.drop_event_count, self.beat_interval),
 			perf_data_array=[
-								{'metric': 'drop_event' , 'value': self.drop_event_count, 'type': 'COUNTER' },
-								{'metric': 'pass_event' , 'value': self.pass_event_count, 'type': 'COUNTER' }
+								{'metric': 'pass_event' , 'value': self.pass_event_count, 'type': 'GAUGE' },
+								{'metric': 'drop_event' , 'value': self.drop_event_count, 'type': 'GAUGE' }
 							]
 		)
+
+		self.logger.debug("%s event dropped since %s" % (self.drop_event_count, self.beat_interval))
+		self.logger.debug("%s event passed since %s" % (self.pass_event_count, self.beat_interval))
+
 
 		rk = cevent.get_routingkey(event)
 		self.amqp.publish(event, rk, self.amqp.exchange_name_events)
 
 		self.drop_event_count = 0				
 		self.pass_event_count = 0
+
+
+	def find_default_action(self):
+		""" Find (via the rest API) the default action stored and returns it, else assume it default action is pass """
+
+		records = self.storage.find({'crecord_type':'defaultrule'})
+
+		for record in records:
+			record_dump = record.dump()
+			return record_dump["action"]
+
+		self.logger.debug("No default action found. Assuming default action is pass")
+		return 'pass'

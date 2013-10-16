@@ -26,18 +26,40 @@ from ctools import Str2Number
 from datetime import datetime
 
 from cengine import cengine
+from camqp import camqp
 
 NAME="perfstore2"
+INTERNAL_QUEUE="beat_perfstore2"
 
 class engine(cengine):
 	def __init__(self, *args, **kargs):
 		cengine.__init__(self, name=NAME, *args, **kargs)
 		
 		self.beat_interval =  300
+
+	def create_amqp_queue(self):
+		super(engine, self).create_amqp_queue()
 		
 	def pre_run(self):
 		import logging
 		self.manager = pyperfstore2.manager(logging_level=logging.INFO)
+
+		self.internal_amqp = camqp(logging_level=logging.INFO, logging_name="%s-internal-amqp" % self.name)
+		self.internal_amqp.add_queue(
+			queue_name=INTERNAL_QUEUE,
+			routing_keys=["#"],
+			callback=self.on_internal_event,
+			no_ack=True,
+			exclusive=False,
+			auto_delete=False
+		)
+
+		self.internal_amqp.start()
+
+	def post_run(self):
+		self.internal_amqp.cancel_queues()
+		self.internal_amqp.stop()
+		self.internal_amqp.join()
 		
 	def to_perfstore(self, rk, perf_data, timestamp, component, resource=None, tags=None):
 		
@@ -98,8 +120,13 @@ class engine(cengine):
 			
 		else:
 			raise Exception("Imposible to parse: %s (is not a list)" % perf_data)
-		 
+
 	def work(self, event, *args, **kargs):
+		self.internal_amqp.publish(event, INTERNAL_QUEUE)
+
+		return event
+
+	def on_internal_event(self, event, msg):
 		## Metrology
 		timestamp = event.get('timestamp', None)
 
@@ -154,5 +181,3 @@ class engine(cengine):
 				if perf_data[key] != None:
 					new_perf_data[key] = perf_data[key]
 			event['perf_data_array'][index] = new_perf_data
-
-		return event

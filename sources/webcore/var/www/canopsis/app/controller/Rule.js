@@ -22,10 +22,12 @@ Ext.define('canopsis.controller.Rule', {
 	extend: 'canopsis.lib.controller.cgrid',
 
 	views: ['Rule.Grid', 'Rule.Form'],
-	stores: ['Rules'],
-	models: ['Rule'],
+	stores: ['Rules', 'DefaultRules'],
+	models: ['Rule', 'DefaultRule'],
 
 	logAuthor: '[controller][rules]',
+
+	storeDefaultAction:undefined,
 
 	init: function() {
 		log.debug('Initialize ...', this.logAuthor);
@@ -35,7 +37,43 @@ Ext.define('canopsis.controller.Rule', {
 
 		this.modelId = 'Rule';
 
-		this.callParent(arguments);
-	}
+		this.control( {
+			'combobox[alias=widget.defaultAction]' : {
+				select: this.defaultRuleChanged,
+				afterrender: this.updateDefaultActionCombo
+			}
+		});
 
+		this.callParent(arguments);
+
+		this.storeDefaultAction = this.getStore('DefaultRules');
+
+		this.storeDefaultAction.load();
+	},
+
+	defaultRuleChanged: function(combo, newVal, oldVal){
+		var record = this.storeDefaultAction.getAt(0);
+
+		if(record === undefined)
+			this.storeDefaultAction.add({action: 'pass'});
+		else
+			this.storeDefaultAction.getAt(0).set("action", newVal[0].data.value);
+	},
+
+	updateDefaultActionCombo: function( combo, eOpts ){
+		var comboValue;
+		try
+		{
+			comboValue = this.storeDefaultAction.first().get("action")
+		}
+		catch(err)
+		{
+			comboValue = "pass";
+		}
+
+		if(comboValue == "pass" || comboValue === undefined)
+			combo.select(combo.getStore().getAt(0));
+		else
+			combo.select(combo.getStore().getAt(1));
+	}
 });
