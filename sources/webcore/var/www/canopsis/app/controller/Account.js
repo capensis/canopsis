@@ -133,7 +133,6 @@ Ext.define('canopsis.controller.Account', {
 
 	beforeload_DuplicateForm: function(form, copy) {
 		/* remove unique data */
-		console.log(copy.data);
 		copy.set('user', undefined);
 		copy.set('firstname', undefined);
 		copy.set('lastname', undefined);
