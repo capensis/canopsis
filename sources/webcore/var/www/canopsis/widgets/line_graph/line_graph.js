@@ -856,7 +856,14 @@ Ext.define('widgets.line_graph.line_graph' , {
 		}
 		
 		//gets text instead value
-		var type = node.curve_type.toLowerCase();
+		var type = undefined;
+
+		if(node.curve_type != undefined) {
+			type = node.curve_type.toLowerCase();
+		}
+		else {
+			type = 'default';
+		}
 
 		if (type !== 'default') {
 			serie.type = type;
