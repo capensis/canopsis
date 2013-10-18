@@ -113,6 +113,8 @@ Ext.define('widgets.line_graph.line_graph' , {
 	aggregate_interval: 0,
 	aggregate_max_points: 500,
 
+	SeriesType: 'area',
+
 	SeriePercent: false,
 	lineWidth: 1,
 
@@ -242,6 +244,7 @@ Ext.define('widgets.line_graph.line_graph' , {
 
 			chart: {
 				renderTo: this.wcontainerId,
+				defaultSeriesType: this.SeriesType,
 				//type: this.chart_type,
 				height: this.getHeight(),
 				reflow: false,
@@ -861,16 +864,11 @@ Ext.define('widgets.line_graph.line_graph' , {
 		if(node.curve_type != undefined) {
 			type = node.curve_type.toLowerCase();
 		}
-		else {
-			type = 'default';
-		}
 
-		if (type !== 'default') {
+		if (type && type !== 'default') {
 			serie.type = type;
-		} else {
-			serie.type = this.SeriesType;
 		}
-
+		
 		if (type == 'area' || ( type == 'default' && this.SeriesType == 'area')) {
 			if (node.area_color) {
 				serie['fillColor'] = check_color(node.area_color);
