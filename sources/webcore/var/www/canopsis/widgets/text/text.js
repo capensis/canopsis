@@ -31,22 +31,23 @@ Ext.define('widgets.text.text' , {
 		//get special values by parsing
 		var raw_vars = this.extractVariables(this.text);
 
-		if (raw_vars.length != 0) {
+		if(raw_vars.length != 0) {
 			this.perfdataMetricList = {};
 
 			var vars = this.cleanVars(raw_vars);
 
 			log.debug('Rebuild vars form user template', this.logAuthor);
+
 			Ext.Object.each(vars, function(key, value){
 				log.debug(' + ' + key, this.logAuthor);
 				var var_name = value[0];
-				if ((var_name == "perfdata" || var_name == "perf_data") && value.length == 3){
 
+				if((var_name == "perfdata" || var_name == "perf_data") && value.length == 3) {
 					var_name = "perf_data";
 					var metric = value[1];
 					var attribut = value[2];
 
-					var tpl_name = var_name  + Math.ceil(Math.random() * 1000)
+					var tpl_name = var_name + Math.ceil(Math.random() * 1000)
 	
 					this.text = this.text.replace(new RegExp(key), '{' + tpl_name + '}');
 
@@ -61,7 +62,6 @@ Ext.define('widgets.text.text' , {
 			log.dump(this.perfdataMetricList);
 		}
 
-
 		//Initialisation of ext JS template
 		this.myTemplate = new Ext.XTemplate('<div>' + this.text + '</div>');
 
@@ -74,16 +74,18 @@ Ext.define('widgets.text.text' , {
 	onRefresh: function(data, from, to) {
 		perf_data = {};
 
-		if (data){
-			if (data.perf_data_array){
+		if(data) {
+			if(data.perf_data_array) {
 				log.debug('Parse perf_data_array', this.logAuthor);
-				for (var i = 0; i < data.perf_data_array.length; i++)
+
+				for(var i = 0; i < data.perf_data_array.length; i++) {
 					perf_data[data.perf_data_array[i]["metric"]] = data.perf_data_array[i];
+				}
 
 				log.dump(perf_data);
 			}
 
-			if (this.perfdataMetricList){
+			if(this.perfdataMetricList) {
 				log.debug('Parse template perf_data', this.logAuthor);
 
 				Ext.Object.each(this.perfdataMetricList, function(key, value){
@@ -95,12 +97,14 @@ Ext.define('widgets.text.text' , {
 
 					var perf = perf_data[metric];
 
-					if (perf && perf[attribut] != undefined){
+					if(perf && perf[attribut] != undefined) {
 						var unit = perf["unit"];
 						var value = perf[attribut];
 					
-						if (Ext.isNumeric(value) && unit)
+						if(Ext.isNumeric(value) && unit) {
+							log.dump(this);
 							value = rdr_humanreadable_value(value, unit)
+						}
 
 						log.debug('   + ' + value, this.logAuthor);
 
@@ -111,20 +115,22 @@ Ext.define('widgets.text.text' , {
 
 			data.timestamp = rdr_tstodate(data.timestamp);
 		}
-		else
-		{
+		else {
 			data = {}
 		}
 
 		try {
-			if (from)			
+			if(from) {
 				data.from = rdr_tstodate(parseInt(from / 1000));
+			}
 
-			if (to)			
+			if(to) {
 				data.to = rdr_tstodate(parseInt(to / 1000));
+			}
 
 			this.HTML = this.myTemplate.apply(data);
-		}catch (err) {
+		}
+		catch (err) {
 			this.HTML = _('The model widget template is not supported, check if your variables use the correct template.');
 		}
 
@@ -133,10 +139,10 @@ Ext.define('widgets.text.text' , {
 
 	getNodeInfo: function(from, to) {
 		//we override the function : if there is'nt any nodeId specified we call the onRefresh function
-		if (! this.inventory)
-		{
+		if(!this.inventory) {
 			this.onRefresh(undefined, from, to);
-		}else {
+		}
+		else {
 			Ext.Ajax.request({
 				url: this.baseUrl,
 				scope: this,
@@ -144,12 +150,17 @@ Ext.define('widgets.text.text' , {
 				params: {_id: this.inventory},
 				success: function(response) {
 					var data = Ext.JSON.decode(response.responseText);
-					if (this.inventory.length > 1)
+
+					if(this.inventory.length > 1) {
 						data = data.data;
-					else
+					}
+					else {
 						data = data.data[0];
+					}
+
 					this._onRefresh(data, from, to);
 				},
+
 				failure: function(result, request) {
 					log.error('Impossible to get Node informations, Ajax request failed ... (' + request.url + ')', this.logAuthor);
 				}
@@ -165,18 +176,23 @@ Ext.define('widgets.text.text' , {
 		var loop = true;
 		var _string = text;
 		var var_array = [];
-		while (loop) {
+
+		while(loop) {
 			//search for val
 			var begin = _string.search(/{(.+:)+.+}/);
-			if (begin != -1) {
+
+			if(begin != -1) {
 				//search end of val
 				var end = begin;
-				while (_string.charAt(end) != '}' && end <= _string.length)
+
+				while(_string.charAt(end) != '}' && end <= _string.length) {
 					end = end + 1;
+				}
 
 				var_array.push(_string.slice(begin, end + 1));
 				_string = _string.slice(end, _string.length);
-			}else {
+			}
+			else {
 				loop = false;
 			}
 		}
@@ -188,11 +204,11 @@ Ext.define('widgets.text.text' , {
 	// return :  ['{var1:var2}',['var1','var2']]
 	cleanVars: function(array) {
 		var output = {};
-		for (var i = 0; i < array.length; i++)
+
+		for(var i = 0; i < array.length; i++) {
 			output[array[i]] = array[i].slice(1, -1).split(':')
+		}
 
 		return output;
 	}
-
-
 });

@@ -88,6 +88,13 @@ Ext.define('canopsis.lib.view.cwizard' , {
 							name: 'border',
 							uncheckedValue: false
 						},{
+							xtype: 'checkbox',
+							fieldLabel: _('Human readable values'),
+							checked: true,
+							inputValue: true,
+							uncheckedValue: false,
+							name: 'humanReadable'
+						},{
 							xtype: 'combobox',
 							name: 'refreshInterval',
 							fieldLabel: _('Refresh interval'),

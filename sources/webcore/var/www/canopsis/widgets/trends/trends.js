@@ -19,9 +19,9 @@
 # ---------------------------------
 */
 Ext.define('widgets.trends.trends' , {
-    extend: 'canopsis.lib.view.cperfstoreValueConsumerWidget',
+	extend: 'canopsis.lib.view.cperfstoreValueConsumerWidget',
 
-    alias: 'widget.trends',
+	alias: 'widget.trends',
 
 	logAuthor: '[trends]',
 
@@ -60,20 +60,23 @@ Ext.define('widgets.trends.trends' , {
 	},
 
 	onRefresh: function(data) {
-		if (! data.length)
+		if(!data.length) {
 			return;
+		}
 
 		this.wcontainer.removeAll();
 
-		for (var i=0; i < data.length; i++){
+		for(var i=0; i < data.length; i++) {
 			var _id = data[i].node;
 			var values = data[i].values;
 			var bunit = data[i].bunit;
 			var node = this.nodesByID[_id];
 
 			var max = data[i].max;
-			if (node.max)
+
+			if(node.max) {
 				max = node.max;
+			}
 
 			log.debug("Node: " + _id, this.logAuthor);
 			log.debug(" + Max: " + max, this.logAuthor);
@@ -81,11 +84,11 @@ Ext.define('widgets.trends.trends' , {
 			var x = [];
 			var y = [];
 
-			for (var j = 0; j < values.length; j++) {
-			  if (values[j] != null && values[j][0] != null && values[j][1] != null) {
-			    x.push(values[j][0]);
-			    y.push(values[j][1]);
-			  }
+			for(var j = 0; j < values.length; j++) {
+				if(values[j] != null && values[j][0] != null && values[j][1] != null) {
+					x.push(values[j][0]);
+					y.push(values[j][1]);
+				}
 			}
 
 			var ret = linearRegression(x, y);
@@ -94,7 +97,7 @@ Ext.define('widgets.trends.trends' , {
 			var delta_pct = undefined;
 			var hdelta = 'NaN';
 			
-			if (values.length >= 2){
+			if(values.length >= 2) {
 				var v1 = values[0][1]
 				var t1 = values[0][0]
 				var v2 = values[values.length-1][1]
@@ -106,18 +109,33 @@ Ext.define('widgets.trends.trends' , {
 				//console.log("v1", v1, "v2", v2)
 
 				delta = roundSignifiantDigit(v2 - v1, 2);
-				hdelta = rdr_humanreadable_value(delta, bunit)
 
-				if (delta > 0)
+				if(this.humanReadable) {
+					hdelta = rdr_humanreadable_value(delta, bunit)
+				}
+				else {
+					if(bunit != undefined) {
+						hdelta = delta + ' ' + bunit;
+					}
+					else {
+						hdelta = delta;
+					}
+				}
+
+				if(delta > 0) {
 					hdelta = "+" + hdelta;
+				}
 
 				log.debug(" + Delta: " + delta, this.logAuthor);
 
-				if (max)
-					if (delta > 0)
+				if(max) {
+					if(delta > 0) {
 						delta_pct = Math.round((delta * 100) / max);
-					else
+					}
+					else {
 						delta_pct = -1 * Math.round((-delta * 100) / max);
+					}
+				}
 
 				log.debug(" + Delta Pct: " + delta_pct, this.logAuthor);
 			}
@@ -128,14 +146,16 @@ Ext.define('widgets.trends.trends' , {
 			var fill = this.colorScale(0.5).hex();
 			var degrees = 0;
 
-			if (delta_pct != undefined){
+			if(delta_pct != undefined) {
 				degrees = Math.round((-delta_pct * 90) / 100);
 
-				if (degrees > 90)
+				if(degrees > 90) {
 					degrees = 90;
+				}
 
-				if (degrees < -90)
+				if(degrees < -90) {
 					degrees = -90;
+				}
 
 				fill = this.colorScale(0.5+(delta_pct*0.5)/100).hex();
 			}
@@ -165,9 +185,10 @@ Ext.define('widgets.trends.trends' , {
 			var text = hdelta;
 			
 			// Display as pct
-			if (this.display_pct && delta_pct != undefined){
-				if (delta_pct > 0)
+			if(this.display_pct && delta_pct != undefined) {
+				if(delta_pct > 0) {
 					delta_pct = "+" + delta_pct;
+				}
 
 				text = delta_pct + '%'
 			}
@@ -189,5 +210,4 @@ Ext.define('widgets.trends.trends' , {
 			});
 		}
 	},
-
 });

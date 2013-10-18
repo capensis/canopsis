@@ -49,6 +49,7 @@ Ext.define('canopsis.lib.view.cwidget' , {
 	fullscreenMode: false,
 
 	autoTitle: false,
+	humanReadable: true,
 
 	barHeight: 27,
 
