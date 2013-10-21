@@ -491,7 +491,14 @@ Ext.define('widgets.line_graph.line_graph' , {
 			return flag_tootlip_template.applyTemplate(this.point);
 		}
 		else {
-			var me = this.series.chart.options.cwidget;
+			var me;
+
+			if(this['points']) {
+				me = this.points[0].series.chart.options.cwidget;
+			}
+			else {
+				me = this.series.chart.options.cwidget;
+			}
 
 			var formatter = function(options, value) {
 				if(options.invert) {
