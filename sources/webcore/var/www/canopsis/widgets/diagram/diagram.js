@@ -579,7 +579,7 @@ Ext.define('widgets.diagram.diagram' , {
 	},
 
 	y_formatter: function() {
-		var me = this.series.chart.options.cwidget;
+		var me = this.chart.options.cwidget;
 
 		if(this.chart.series.length) {
 			var bunit = this.chart.series[0].options.bunit;
