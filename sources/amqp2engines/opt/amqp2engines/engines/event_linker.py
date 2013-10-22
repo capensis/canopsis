@@ -52,7 +52,15 @@ class engine(cengine):
 		"""
 
 		for tree in self.trees:
-			record = crecord(storage=self.storage, data=tree)
+			record = self.storage.find_one(mfilter={'rk': tree['rk']})
+
+			if not record:
+				record = crecord(storage=self.storage, data=tree)
+
+			else:
+				record.data['rk'] = tree['rk']
+				record.data['child_nodes'] = tree['child_nodes']
+
 			record.save()
 
 	def work(self, event, *args, **kwargs):

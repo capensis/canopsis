@@ -80,11 +80,13 @@ def rest_get_media(namespace, _id):
 	
 	return base64.b64decode(media_bin)
 
-@get('/rest/events_trees/:rk'):
+@get('/rest/events_trees/:rk')
 def rest_trees_get(rk):
 	"""
 		REST API Handler to get events trees.
 	"""
+
+	logger.info("Getting tree matching rk '{0}'".format(rk))
 
 	account = get_account()
 	storage = get_storage(namespace='events_trees')
@@ -96,10 +98,19 @@ def rest_trees_get(rk):
 	record = storage.find_one({'rk': rkcomps[0]})
 
 	if not record:
+		logger.error('No matching root node for rk {0}'.format(rk))
 		return HTTPError(404, "There is no events tree matching the routing key")
 
 	# Now go to the matching node
 	tree = record.dump()
+
+	if rk == tree['rk']:
+		return {
+			'total': 1,
+			'success': True,
+			'data': tree
+		}
+
 	current_node = tree
 	current_rk = rkcomps[0]
 
@@ -114,16 +125,14 @@ def rest_trees_get(rk):
 
 		# If not found, raise an error
 		else:
+			logger.error('No matching node for rk {0}'.format(rk))
 			return HTTPError(404, "There is no events tree matching the routing key")
 
 	# Return the sub-tree
 	return {
 		'total': 1,
 		'success': True,
-		'data': {
-			'full': tree,
-			'tree': current_node
-		}
+		'data': current_node
 	}
 
 #### GET
