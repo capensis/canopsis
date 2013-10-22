@@ -86,23 +86,23 @@ def rest_trees_get(rk):
 		REST API Handler to get events trees.
 	"""
 
-	logger.info("Getting tree matching rk '{0}'".format(rk))
+	logger.debug("Getting tree matching rk '{0}'".format(rk))
 
 	account = get_account()
-	storage = get_storage(namespace='events_trees')
+	storage = get_storage(logging_level=logging.DEBUG, namespace='events_trees', account=account)
 
 	# Get Routing Key components
 	rkcomps = rk.split('.')
 
 	# Fetch root tree
-	record = storage.find_one({'rk': rkcomps[0]})
+	record = storage.find_one(mfilter={'rk': rkcomps[0]})
 
 	if not record:
 		logger.error('No matching root node for rk {0}'.format(rk))
 		return HTTPError(404, "There is no events tree matching the routing key")
 
 	# Now go to the matching node
-	tree = record.dump()
+	tree = record.dump(json=True)
 
 	if rk == tree['rk']:
 		return {
