@@ -53,7 +53,9 @@ Ext.define('canopsis.lib.view.cperfstoreValueConsumerWidget', {
 		}
 		else {
 			log.debug('No nodes specified', this.logAuthor);
-			this.chart.showLoading(_('Please choose a valid metric in wizard'));
+			//TODO move this in chart class, because cperfstoreValueConsumerWidget might not have a chart
+			if(this.chart)
+				this.chart.showLoading(_('Please choose a valid metric in wizard'));
 		}
 	},
 
