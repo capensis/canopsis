@@ -20,20 +20,25 @@
 */
 Ext.define('widgets.stepeue.feature', {
 	alias: 'widget.stepeue.feature',
+
 	logAuthor: '[widget][stepeue][feature]',
 	scroll: true,
 	useScreenShot: true,
 	node: null,
+
 	init: function(node, widget, element) {
 		log.debug('Initialization of feature [' + node + ']', this.logAuthor);
+
 		this.node = node; // the id to find the feature in mongodb
 		this.widget = widget;
 		this.elementContainer = element;
+
 		var filter = {
 			'$and': [{
 				'_id': this.node
 			}]
 		};
+
 		this.model = Ext.ModelManager.getModel('canopsis.model.Event');
 		this.featureEvent = Ext.create('canopsis.lib.store.cstore', {
 			model: this.model,
@@ -49,16 +54,20 @@ Ext.define('widgets.stepeue.feature', {
 				}
 			}
 		});
+
 		this.featureEvent.setFilter(filter);
 		this.scenarios = {};
+
 		var me = this;
+
 		this.featureEvent.load({
 			callback: function(records, operation, success) {
-				if (success) {
+				if(success) {
 					log.debug('feature is loaded', me.logAuthor);
 					me.record = records[0];
 					me.findScenario();
-				} else {
+				}
+				else {
 					log.error("Problem during the load of scenarios' records of the feature", me.logAuthor);
 					return false;
 				}
@@ -66,6 +75,7 @@ Ext.define('widgets.stepeue.feature', {
 			}
 		});
 	},
+
 	findScenario: function() {
 		var filter = {
 			'$and': [{
@@ -74,6 +84,7 @@ Ext.define('widgets.stepeue.feature', {
 				'type_message': 'scenario'
 			}]
 		};
+
 		this.storeEvent = Ext.create('canopsis.lib.store.cstore', {
 			model: this.model,
 			pageSize: 30,
@@ -88,12 +99,15 @@ Ext.define('widgets.stepeue.feature', {
 				}
 			}
 		});
+
 		this.storeEvent.setFilter(filter);
 		this.storeEvent.sort({
 			property: 'timestamp',
 			direction: 'DESC'
 		});
+
 		me = this;
+
 		this.storeEvent.load({
 			callback: function(records, operation, success) {
 				if (success) {
@@ -106,21 +120,27 @@ Ext.define('widgets.stepeue.feature', {
 
 					scenariosNameArray = new Array(); //Contains all the scenarioName
 
-					for (var i = 0; i < records.length; i++) {
-					//foreach scenario we determine if it the main scenario or if the context it's different and we build scenario object
+					for(var i = 0; i < records.length; i++) {
+						//foreach scenario we determine if it the main scenario or if the context it's different and we build scenario object
 						infoScenario = records[i].raw.resource.split('.');
 						scenario_name = infoScenario[2];
-						if (me.scenarios.hasOwnProperty(scenario_name) && me.scenarios[scenario_name] != undefined) me.scenarios[scenario_name].addScenario(records[i]);
+
+						if (me.scenarios.hasOwnProperty(scenario_name) && me.scenarios[scenario_name] != undefined) {
+							me.scenarios[scenario_name].addScenario(records[i]);
+						}
 						else {
 							var scenario = Ext.create('widgets.stepeue.scenario');
+
 							scenario.init(me.node, scenario_name, me.widget);
 							scenario.putMainScenario(records[i]);
 							me.scenarios[scenario_name] = scenario;
 							scenariosNameArray.push(scenario_name);
 						}
 					}
+
 					me.getFeatureViewObject();
-				} else {
+				}
+				else {
 					log.error("Problem during the load of scenarios' records of the feature", me.logAuthor);
 					return false;
 				}
@@ -128,11 +148,13 @@ Ext.define('widgets.stepeue.feature', {
 			}
 		});
 	},
+
 	destroyFeature: function () {
-		Ext.Object.each(this.scenarios, function (i, value) {
-			Ext.destroyMembers( this.scenarios[i] ) ;
-		} ) ;
+		Ext.Object.each(this.scenarios, function(i, value) {
+			Ext.destroyMembers(this.scenarios[i]);
+		});
 	},
+
 	displayLastErrorsVideos: function() {
 		var filter = {
 			'$and': [{
@@ -145,6 +167,7 @@ Ext.define('widgets.stepeue.feature', {
 				}
 			}]
 		};
+
 		var gmodel = Ext.ModelManager.getModel('canopsis.model.Event');
 		var storeEvent = Ext.create('canopsis.lib.store.cstore', {
 			model: gmodel,
@@ -160,34 +183,41 @@ Ext.define('widgets.stepeue.feature', {
 				}
 			}
 		});
+
 		storeEvent.setFilter(filter);
 		storeEvent.sort({
 			property: 'timestamp',
 			direction: 'DESC'
 		});
+
 		me = this;
+
 		storeEvent.load({
 			callback: function(records, operation, success) {
 				var listItems = new Array();
-				for (var i = 0; i < records.length; i++) {
-					var rec = records[i] ;
+
+				for(var i = 0; i < records.length; i++) {
+					var rec = records[i];
 					var object = {
 						title: rdr_tstodate(records[i].data.timestamp),
 						layout: 'fit',
 						border: false,
 						id : "feature:video:"+records[i].raw._id,
 						listeners: {
-							activate: function (tab) {
+							activate: function(tab) {
 								var idArray = tab.id.split(':');
 								var object = {
 									src: '/rest/media/events_log/' + idArray[2],
 									videoWidth: '70%'
 								};
+
 								var tpl = new Ext.XTemplate(
 									'<div class="align-center">',
 									'<video autoplay="autoplay" controls="controls" width="{videoWidth}" src="{src}">{alt}</video>',
 									'</div>');
+
 								var oHtml = tpl.apply(object);
+
 								tab.removeAll();
 								tab.add({
 									xtype: 'panel',
@@ -198,10 +228,13 @@ Ext.define('widgets.stepeue.feature', {
 							}
 						}
 					};
+
 					listItems.push(object);
 				}
-				var gwidth = Ext.getBody().getWidth() * .8;
-				var gheight = Ext.getBody().getHeight() * .9;
+
+				var gwidth = Ext.getBody().getWidth() * 0.8;
+				var gheight = Ext.getBody().getHeight() * 0.9;
+
 				if (listItems.length > 0) {
 					var tabsPanel = Ext.create('Ext.tab.Panel', {
 						xtype: 'panel',
@@ -212,6 +245,7 @@ Ext.define('widgets.stepeue.feature', {
 						width: gwidth,
 						height: gheight
 					});
+
 					Ext.create('Ext.window.Window', {
 						xtype: 'xpanel',
 						layout: 'fit',
@@ -219,7 +253,8 @@ Ext.define('widgets.stepeue.feature', {
 						title: 'Last Errors Executions videos',
 						items: [tabsPanel]
 					}).show().center();
-				} else {
+				}
+				else {
 					Ext.create('Ext.window.Window', {
 						xtype: 'xpanel',
 						layout: 'fit',
@@ -227,25 +262,28 @@ Ext.define('widgets.stepeue.feature', {
 						title: 'Last Errors Executions videos',
 						html: 'no errors are logged'
 					}).show().center();
-
 				}
-
 			}
 		});
-
 	},
+
 	getFeatureViewObject: function() {
 		log.debug('Listing the scenario of the feature', this.logAuthor);
+
 		var me = this;
 		var listScenarios = new Array();
+
 		Ext.Object.each(this.scenarios, function(i, value) {
 			listScenarios.push(me.scenarios[i].buildMainView());
 		});
+
 		listScenarios.reverse();
+
 		var storeScenar = Ext.create('Ext.data.Store', {
 			fields: ['cps_state', 'date', 'scenario', 'localization', 'os', 'browser', 'dur'],
 			data: listScenarios
 		});
+
 		var grid = Ext.create('Ext.grid.Panel', {
 			height: '100%',
 			columns: [{
@@ -253,70 +291,76 @@ Ext.define('widgets.stepeue.feature', {
 				dataIndex: 'cps_state',
 				flex: 1,
 				sortable: false
-			}, {
+			},{
 				header: 'Date',
 				dataIndex: 'date',
 				flex: 2,
 				sortable: false,
 				align: 'center'
-			}, {
+			},{
 				header: 'Duration',
 				dataIndex: 'dur',
 				flex: 1,
 				sortable: false,
 				align: 'center'
-			}, {
+			},{
 				header: 'Graph',
 				dataIndex: 'scenario',
+
 				renderer: function(value) {
 					var component = me.scenarios[value].mainScenario.raw.component;
 					var resource = me.scenarios[value].mainScenario.raw.resource;
 					var metric = 'duration';
+
 					return '<span class=\"line-graph\" id=\"' + me.widget.wcontainer.id + 'eue-' + getMetaId(component, resource, metric) + '\"></span>';
 				},
 				flex: 3,
 				sortable: false
-			}, {
+			},{
 				header: 'Screenshot',
 				dataIndex: 'scenario',
-				renderer: function(value) {
-					return me.scenarios[value].getScreenShotLogo();
-				},
 				flex: 2,
 				sortable: false,
-				align: 'center'
-			}, {
+				align: 'center',
+
+				renderer: function(value) {
+					return me.scenarios[value].getScreenShotLogo();
+				}
+			},{
 				header: 'Scenario Name',
 				dataIndex: 'scenario',
 				flex: 2,
 				sortable: false,
 				align: 'center'
-			}, {
+			},{
 				header: 'Localization',
 				dataIndex: 'localization',
 				flex: 1,
 				sortable: false
-			}, {
+			},{
 				header: 'OS',
 				dataIndex: 'os',
 				flex: 1,
 				sortable: false
-			}, {
+			},{
 				header: 'Browser',
 				dataIndex: 'browser',
 				flex: 1,
 				sortable: false
-			}, {
+			},{
 				xtype: 'actioncolumn',
-				items: [
-				{
+				items: [{
 					icon: '/static/canopsis/themes/canopsis/resources/images/icons/date_error.png',
 					tooltip: 'Last Errors Execution',
+
 					handler: function(grid, rowIndex, colIndex) {
 						var rec = grid.getStore().getAt(rowIndex);
+
 						grid = me.scenarios[rec.get('scenario')].displayLastExecutionsErrors(me.node);
-						var gwidth = Ext.getBody().getWidth() * .6;
-						var gheight = Ext.getBody().getHeight() * .8;
+
+						var gwidth = Ext.getBody().getWidth() * 0.6;
+						var gheight = Ext.getBody().getHeight() * 0.8;
+
 						Ext.create('Ext.window.Window', {
 							xtype: 'panel',
 							layout: 'fit',
@@ -328,16 +372,17 @@ Ext.define('widgets.stepeue.feature', {
 							renderTo: Ext.getBody(),
 							modal: true
 						}).show().center();
-		
 					}
-				}, {
+				},{
 					icon: '/static/canopsis/themes/canopsis/resources/images/icons/table.png',
 					tooltip: 'Tests with other configuration for this scenario',
+
 					handler: function(grid, rowIndex, ColIndex) {
 						var rec = grid.getStore().getAt(rowIndex);
 						var scen_name = rec.get('scenario');
-						var gwidth = Ext.getBody().getWidth() * .6;
-						var gheight = Ext.getBody().getHeight() * .8;
+						var gwidth = Ext.getBody().getWidth() * 0.6;
+						var gheight = Ext.getBody().getHeight() * 0.8;
+
 						if (me.scenarios[scen_name].scenarios.length > 0) {
 							Ext.create('Ext.window.Window', {
 								xtype: 'panel',
@@ -350,7 +395,8 @@ Ext.define('widgets.stepeue.feature', {
 								renderTo: Ext.getBody(),
 								modal: true
 							}).show().center();
-						} else {
+						}
+						else {
 							Ext.create('Ext.window.Window', {
 								xtype: 'panel',
 								layout: 'fit',
@@ -363,7 +409,6 @@ Ext.define('widgets.stepeue.feature', {
 								modal: true
 							}).show().center();
 						}
-
 					}
 				}]
 			}
@@ -371,30 +416,14 @@ Ext.define('widgets.stepeue.feature', {
 			],
 			store: storeScenar,
 			listeners: {
-				/*itemclick: function(view, record, htmlEl, index, e ) {
-                	var scen_name = record.data.scenario;
-                	var gheight = Ext.getBody().getHeight() * .8;
-                	if (me.scenarios[scen_name].scenarios.length > 0) {
-                		Ext.create('Ext.window.Window', {
-                			xtype: 'panel',
-                			layout: 'fit',
-                			id: 'window-screenshot',
-                			autoScroll: true,
-                			width: gwidth,
-                			height: gheight,
-                			items: me.scenarios[scen_name].buildDetailsView(),
-                			renderTo: Ext.getBody(),
-                			modal: true
-                		}).show().center();
-                	}
-
-                },*/
 				viewready: function() {
-					Ext.Object.each(me.scenarios, function (i, value) {
+					Ext.Object.each(me.scenarios, function(i, value) {
 						me.scenarios[i].getPerfData();
-					}) ;
-					var picwidth = Ext.getBody().getWidth() * .6;
-					var picheight = Ext.getBody().getHeight() * .92;
+					});
+
+					var picwidth = Ext.getBody().getWidth() * 0.6;
+					var picheight = Ext.getBody().getHeight() * 0.92;
+
 					$('a.image-zoom').lightBox({
 						imageBtnNext: '/static/canopsis/themes/canopsis/resources/images/icons/lightbox/lightbox-btn-next.gif',
 						imageBtnPrev: '/static/canopsis/themes/canopsis/resources/images/icons/lightbox/lightbox-btn-prev.gif',
@@ -404,15 +433,13 @@ Ext.define('widgets.stepeue.feature', {
 						maxHeight: picheight,
 						top: 0,
 						fixedNavigation: true
-
-
 					});
-
 				}
 			},
 			autoScroll: true,
 			border: false
 		});
+
 		var card1 = Ext.create('Ext.Panel', {
 			layout: 'fit',
 			xtype: 'panel',
@@ -420,9 +447,11 @@ Ext.define('widgets.stepeue.feature', {
 			tools: [{
 				type: 'next',
 				tooltip: 'play the video',
+
 				handler: function() {
-					var gwidth = Ext.getBody().getWidth() * .8;
-					var gheight = Ext.getBody().getHeight() * .95;
+					var gwidth = Ext.getBody().getWidth() * 0.8;
+					var gheight = Ext.getBody().getHeight() * 0.95;
+
 					var object = {
 						description: me.record.raw.description,
 						src: '/rest/media/events/' + me.record.raw._id,
@@ -431,13 +460,16 @@ Ext.define('widgets.stepeue.feature', {
 						videoWidth: '60%',
 						timestamp: rdr_tstodate(me.record.raw.timestamp)
 					};
+
 					var tpl = new Ext.XTemplate(
 						'<div class="{className}">{description}</div>',
 						'<div class="align-center">',
 						'<video autoplay="autoplay" controls="controls" width="{videoWidth}" src="{src}">{alt}</video>',
 						'<div class="align-center video-date">{timestamp}</div>',
 						'</div>');
+
 					var oHtml = tpl.apply(object);
+
 					Ext.create('Ext.window.Window', {
 						xtype: 'xpanel',
 						layout: 'fit',
@@ -463,9 +495,9 @@ Ext.define('widgets.stepeue.feature', {
 			height: '100%',
 			autoScroll: true
 		});
+
 		this.content = card1;
 		this.elementContainer.removeAll();
 		this.elementContainer.add(this.content);
-
 	}
 });

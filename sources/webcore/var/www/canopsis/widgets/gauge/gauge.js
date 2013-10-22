@@ -56,25 +56,39 @@ Ext.define('widgets.gauge.gauge' , {
 
 		this.haveCounter = false;
 		//search counter
-		for (var i = 0; i < this.nodes.length; i++) {
+		for(var i = 0; i < this.nodes.length; i++) {
 			var node = this.nodes[i];
-			if (node['type'] && node['type'] == 'COUNTER')
+			if(node['type'] && node['type'] == 'COUNTER') {
 				this.haveCounter = true;
+			}
 		}
 
 		this.callParent(arguments);
 	},
 
-	renderer: function(val) {
-		return rdr_humanreadable_value(val, this.symbol);
-	},
-
 	createGauge: function(value) {
-		if (!value)
-			value = 0;
+		var me = this;
 
-		if (this.autoTitle)
-			if (this.nodesByID) {
+		var renderer = function(val) {
+			if(me.humanReadable) {
+				return rdr_humanreadable_value(val, this.symbol);
+			}
+			else {
+				if(this.symbol != undefined) {
+					return val + ' ' + this.symbol;
+				}
+				else {
+					return val;
+				}
+			}
+		};
+
+		if(!value) {
+			value = 0;
+		}
+
+		if(this.autoTitle) {
+			if(this.nodesByID) {
 				var node = this.nodesByID[Ext.Object.getKeys(this.nodesByID)[0]]
 
 				var component = node.component;
@@ -83,10 +97,12 @@ Ext.define('widgets.gauge.gauge' , {
 				if (source_type == 'resource') {
 					var resource = node.resource;
 					this.gaugeTitle = resource + ' ' + _('on') + ' ' + component;
-				}else {
+				}
+				else {
 					this.gaugeTitle = component;
 				}
 			}
+		}
 
 		var opts = {
 			id: this.wcontainerId,
@@ -102,11 +118,11 @@ Ext.define('widgets.gauge.gauge' , {
 			label: this.gaugeLabel,
 			//levelColors: colorList,
 			gaugeColor: this.gaugeColor,
-			textRenderer: this.renderer,
+			textRenderer: renderer,
 			symbol: this.bunit
 		};
 
-		if (this.exportMode) {
+		if(this.exportMode) {
 			opts['showInnerShadow'] = 0;
 			opts['shadowVerticalOffset'] = 0;
 			opts['shadowOpacity'] = 0;
@@ -115,26 +131,30 @@ Ext.define('widgets.gauge.gauge' , {
 			opts['refreshAnimationTime'] = 1;
 		}
 
-		if (this.levelThresholds) {
+		if(this.levelThresholds) {
 			opts.levelColorsGradient = false;
-		    opts.levelColors = [this.colorStart];
-		    opts.levelThresholds = [];
-		    if (this.warnValue) {
-			opts.levelColors.push(this.colorWarn);
-			opts.levelThresholds.push(this.warnValue);
-		    }
-		    if (this.critValue) {
-			opts.levelColors.push(this.colorStop);
-			opts.levelThresholds.push(this.critValue);
-		    }
-		}else {		    
 			opts.levelColors = [this.colorStart];
-		    opts.levelThresholds = []
+			opts.levelThresholds = [];
+
+			if(this.warnValue) {
+				opts.levelColors.push(this.colorWarn);
+				opts.levelThresholds.push(this.warnValue);
+			}
+
+			if(this.critValue) {
+				opts.levelColors.push(this.colorStop);
+				opts.levelThresholds.push(this.critValue);
+			}
+		}
+		else {		    
+			opts.levelColors = [this.colorStart];
+			opts.levelThresholds = []
 		}
 
 		log.debug('Gauge options:', this.logAuthor);
 		log.dump(opts);
 
+		opts['cwidget'] = this;
 		this.gauge = new JustGage(opts);
 	},
 
@@ -149,10 +169,11 @@ Ext.define('widgets.gauge.gauge' , {
 	getNodeInfo: function(from,to) {
 		this.processNodes();
 		
-		if (! this.haveCounter || ! this.time_window)
+		if(!this.haveCounter || !this.time_window) {
 			from = to;
-	
-		if (this.nodesByID) {
+		}
+
+		if(this.nodesByID) {
 			Ext.Ajax.request({
 				url: '/perfstore/values' + '/' + parseInt(from/1000) + '/' + parseInt(to/1000),
 				scope: this,
@@ -160,12 +181,17 @@ Ext.define('widgets.gauge.gauge' , {
 				method: 'POST',
 				success: function(response) {
 					var data = Ext.JSON.decode(response.responseText);
-					if (Ext.Object.getSize(this.nodesByID) > 1)
+
+					if(Ext.Object.getSize(this.nodesByID) > 1) {
 						data = data.data;
-					else
+					}
+					else {
 						data = data.data[0];
+					}
+
 					this._onRefresh(data);
 				},
+
 				failure: function(result, request) {
 					log.error('Impossible to get Node informations, Ajax request failed ... (' + request.url + ')', this.logAuthor);
 				}
@@ -182,38 +208,43 @@ Ext.define('widgets.gauge.gauge' , {
 				id: id,
 				metrics: node.metrics
 			});
-		},this)
+		}, this);
 
 		this.post_params = {
 			'nodes': Ext.JSON.encode(post_params),
 			'aggregate_method' : this.aggregate_method,
 			'aggregate_interval': this.aggregate_interval,
 			'aggregate_max_points': this.aggregate_max_points
-			};
+		};
 	},
-
 
 	onRefresh: function(data) {
 		log.debug('onRefresh', this.logAuthor);
 
-		if (data) {
-			if (this.getEl().isMasked && !this.isDisabled())
+		if(data) {
+			if(this.getEl().isMasked && !this.isDisabled()) {
 				this.getEl().unmask();
+			}
 
-			if (data.min)
+			if(data.min) {
 				this.minValue = data.min;
+			}
 
-			if (data.max)
+			if(data.max) {
 				this.maxValue = data.max;
+			}
 
-			if (data.thld_warn)
+			if(data.thld_warn) {
 				this.warnValue = data.thld_warn;
+			}
 
-			if (data.thld_crit)
+			if(data.thld_crit) {
 				this.critValue = data.thld_crit;			
+			}
 
-			if (data.bunit && this.displayUnit)
+			if(data.bunit && this.displayUnit) {
 				this.bunit = data.bunit;
+			}
 
 			var fields = undefined;
 
@@ -221,33 +252,52 @@ Ext.define('widgets.gauge.gauge' , {
 			fields = this.nodesByID[Ext.Object.getKeys(this.nodesByID)[0]]
 
 
-		    if (fields) {
-			//update metric name
-			if (fields.label) this.gaugeLabel = fields.label; else this.gaugeLabel = data.metric;
-			//update metric value
-			if (fields.max) this.maxValue = fields.max;
-			if (fields.min) this.minValue = fields.min;
-			if (fields.thld_warn) this.warnValue = fields.thld_warn;
-			if (fields.thld_crit) this.critValue = fields.thld_crit;
-		    }
-
-			try {
-				if (data.values) {
-					this.lastValue = data.values[data.values.length - 1][1];
-
-					if (! this.gauge)
-						this.createGauge(this.lastValue);
-					else
-						this.gauge.refresh(this.lastValue);
+			if(fields) {
+				//update metric name
+				if(fields.label) {
+					this.gaugeLabel = fields.label;
 				}
-			}catch (err) {
-				log.error('Error while set value:' + err, this.logAuthor);
+				else {
+					this.gaugeLabel = data.metric;
+				}
+
+				//update metric value
+				if(fields.max) {
+					this.maxValue = fields.max;
+				}
+
+				if(fields.min) {
+					this.minValue = fields.min;
+				}
+
+				if(fields.thld_warn) {
+					this.warnValue = fields.thld_warn;
+				}
+
+				if(fields.thld_crit) {
+					this.critValue = fields.thld_crit;
+				}
 			}
 
-		}else {
+			try {
+				if(data.values) {
+					this.lastValue = data.values[data.values.length - 1][1];
+
+					if(!this.gauge) {
+						this.createGauge(this.lastValue);
+					}
+					else {
+						this.gauge.refresh(this.lastValue);
+					}
+				}
+			}
+			catch (err) {
+				log.error('Error while set value:' + err, this.logAuthor);
+			}
+		}
+		else {
 			this.getEl().mask(_('No data received from webserver'));
 			log.debug('No data', this.logAuthor);
 		}
 	}
-
 });

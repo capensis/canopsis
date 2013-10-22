@@ -131,6 +131,18 @@ Ext.define('canopsis.controller.Account', {
 
 	},
 
+	beforeload_DuplicateForm: function(form, copy) {
+		/* remove unique data */
+		copy.set('user', undefined);
+		copy.set('firstname', undefined);
+		copy.set('lastname', undefined);
+		copy.set('mail', undefined);
+	},
+
+	afterload_DuplicateForm: function(form, copy) {
+		this.form_loadGroups(form, copy);
+	},
+
 	logout: function(){
 		Ext.Ajax.request({
 			url: '/logout',
@@ -198,6 +210,10 @@ Ext.define('canopsis.controller.Account', {
 			user_textfield.hide();
 
 		//------------groups-------------------
+		this.form_loadGroups(form, item);
+	},
+
+	form_loadGroups: function(form, item) {
 		var store = Ext.getStore('Groups');
 		var groups = item.get('groups');
 		if (groups.length > 0) {

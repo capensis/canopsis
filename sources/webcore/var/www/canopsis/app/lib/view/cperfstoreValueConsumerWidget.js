@@ -20,93 +20,102 @@
 */
 Ext.define('canopsis.lib.view.cperfstoreValueConsumerWidget', {
 	extend: 'canopsis.lib.view.cwidget',
-	
-	refreshNodes : function(from, to) {
+
+	refreshNodes: function(from, to) {
 		if (this.nodesByID && Ext.Object.getSize(this.nodesByID) != 0) {
-			var url = '/perfstore/values' + (from!==undefined? ('/' + parseInt(from / 1000) + '/' + parseInt(to / 1000)) : '');
+			var url = '/perfstore/values' + (from !== undefined ? ('/' + parseInt(from / 1000) + '/' + parseInt(to / 1000)) : '');
 
 			Ext.Ajax.request({
 				url: url,
 				scope: this,
 				params: this.getParams(from, to),
 				method: 'POST',
+
 				success: function(response) {
 					var data = Ext.JSON.decode(response.responseText);
 					data = data.data;
 
-					if(data.length > 0 && this.nodesByID[data[0]['node']]['order']!==undefined) {
+					if(data.length > 0 && this.nodesByID[data[0]['node']]['order'] !== undefined) {
 						var that = this;
-						data.sort(function(a,b){return that.nodesByID[a['node']]['order']-that.nodesByID[b['node']]['order'];});
+
+						data.sort(function(a,b) {
+							return that.nodesByID[a['node']]['order']-that.nodesByID[b['node']]['order'];
+						});
 					}
 
 					this.onRefresh(data);
 				},
+
 				failure: function(result, request) {
 					log.error('Ajax request failed ... (' + request.url + ')', this.logAuthor);
 				}
 			});
-		} else {
+		}
+		else {
 			log.debug('No nodes specified', this.logAuthor);
 			this.chart.showLoading(_('Please choose a valid metric in wizard'));
 		}
 	},
-	
-	getParams : function(oFrom, oTo) {
+
+	getParams: function(oFrom, oTo) {
 		var now = Ext.Date.now();
 		var post_params = [];
-		
+
 		Ext.Object.each(this.nodesByID, function(id, node, obj) {
 			var nodeId = id;
 			var serieId = nodeId + '.' + node.metrics[0];
 			var serie = this.series !== undefined ? this.series[serieId] : undefined;
 			var from = oFrom === undefined ? -1 : oFrom;
-			var to = oTo === undefined ? -1 : oTo;
-			
-			if(from!==-1) {
+			var to = oTo ===undefined ? -1 : oTo;
+
+			if(from !== -1) {
 				if(!this.reportMode) {
 					if(serie && serie['last_timestamp']) {
 						from = serie['last_timestamp'];
 					}
-					
+
 					if(from < (to - (this.time_window * 1000))) {
 						from = to - (this.time_window * 1000);
 					}
 				}
-				
+
 				if(this.aggregate_interval) {
 					var aggregate_interval = this.aggregate_interval * 1000;
-					
+
 					if(this.aggregate_interval < global.commonTs['month']) {
 						from = Math.floor(from / aggregate_interval) * aggregate_interval;
-					} else {
+					}
+					else {
 						if(this.aggregate_interval >= global.commonTs['month']) {
 							from = moment.unix(from / 1000).startOf('month').unix() * 1000;
 						}
-						if (this.aggregate_interval >= global.commonTs['year']) {
-							from = moment.unix(from / 1000).startOf('year').unix() * 1000;    
+
+						if(this.aggregate_interval >= global.commonTs['year']) {
+							from = moment.unix(from / 1000).startOf('year').unix() * 1000;	
 						}
 					}
-					
+
 					var tzOffset = new Date().getTimezoneOffset();
 					log.debug('TZ Offset: ' + tzOffset, this.logAuthor)
 					from += tzOffset * 60 * 1000;
 				}
-				
+
 				log.debug('Serie ' + nodeId + ' ' + node.metrics + ':', this.logAuthor);
 				//log.debug(' + Do Refresh: ' + new Date(from) + ' -> ' + new Date(to) + ' (' + from + ' -> ' + to + ')', this.logAuthor);
 				log.debug(' + From: ' + new Date(from) + ' (' + from + ')', this.logAuthor);
 				log.debug(' + To:   ' + new Date(to) + ' (' + to + ')', this.logAuthor);
+
 			}
-			
+
 			post_params.push({
 				id: nodeId,
 				metrics: node.metrics,
 				from: (from !== -1 ? parseInt(from / 1000) : -1),
 				to: (to !== -1 ? parseInt(to / 1000) : -1)
 			});
-			
-		},this);
-		
+
+		}, this);
+
 		return {
 			'nodes': Ext.JSON.encode(post_params),
 			'aggregate_method' : this.aggregate_method,

@@ -141,6 +141,7 @@ Ext.define('canopsis.lib.view.cgrid_state' , {
 			this.columns.push({
 				header: _('Acknowledgement'),
 				flex: 2,
+				hidden: true,
 				sortable: this.opt_column_sortable,
 				dataIndex: 'ack',
 				renderer: rdr_ack

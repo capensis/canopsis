@@ -21,66 +21,85 @@
 Ext.define('widgets.stepeue.stepeue', {
 	extend: 'canopsis.lib.view.cwidget',
 	alias: 'widget.stepeue',
+
 	logAuthor: '[widget][stepeue]',
 	scroll: true,
 	useScreenShot: true,
+
 	initComponent: function() {
 		log.debug('initialization of the eue\'s widget', this.logAuthor);
+
 		pnl = Ext.create('Ext.Panel', {
 			xtype: 'panel',
 			width: '100%',
 			height: '100%'
 		});
+
 		pnl.on('afterrender', function() {
 			pnl.setLoading(true, true);
 		});
+
 		this.callParent(arguments);
 		this.wcontainer.add(pnl);
 		this.wcontainer.setLoading(true, true);
 	},
+
 	destroyObject: function() {
 		log.debug('object destroyed', this.logAuthor);
-		for (var i = 0; i < this.features.length; i++) {
+
+		for(var i = 0; i < this.features.length; i++) {
 			this.features[i].destroyFeature();
 			Ext.destroyMembers(this.features[i]);
-			//this.features[i].destroy() ;
 		}
 	},
+
 	doRefresh: function(from, to) {
 		log.debug('do Refresh', this.logAuthor);
-		if (this.features != undefined) this.destroyObject();
-		if (this.nodes.length == 0) {
+
+		if(this.features != undefined) {
+			this.destroyObject();
+		}
+
+		if(this.nodes.length == 0) {
 			this.buildHtml();
-		} else {
+		}
+		else {
 			this.urlPerfStore = this.makeUrl(from, to);
 			this.last_from = to;
 			this.features = new Array();
-			for (var i = 0; i < this.nodes.length; i++) {
+
+			for(var i = 0; i < this.nodes.length; i++) {
 				var feature = Ext.create('widgets.stepeue.feature');  //creation of empty feature
 				this.features.push(feature);
 			}
 		}
+
 		this.buildHtml();
 	},
+
 	makeUrl: function(from, to) {
 		var url = '/perfstore/values';
-		if (!to) {
+
+		if(!to) {
 			url += '/' + parseInt(from/1000);
 		}
 
-		if (from && to) {
+		if(from && to) {
 			url += '/' + parseInt(from/1000) + '/' + parseInt(to/1000);
 		}
 
 		return url;
 	},
+
 	buildHtml: function() {
 		if (this.nodes.length != 0) {
 			//If there are nodes it means that there are features to print, otherwise we print "no features selected"
 			log.debug('Build the view of the widget', this.logAuthor);
+
 			var listItems = new Array();
 			var me = this;
-			for (var i = 0; i < this.nodes.length; i++) { 
+
+			for(var i = 0; i < this.nodes.length; i++) { 
 				//each nodes mean each feature
 				var title = this.nodes[i].split('.')[5]; //title of feature
 				var object = {
@@ -91,39 +110,36 @@ Ext.define('widgets.stepeue.stepeue', {
 					listeners: {
 						activate: function(tab) {
 							log.debug('activated');
+
 							var idString = tab.id.split(':');
 							var id = idString[2]; //id of the features
-							/*							pnl = Ext.create('Ext.Panel', {
-								xtype: "panel",
-								width: "100%",
-								height: "100%",
-							} ) ;
-							pnl.on( 'afterrender', function ( ) {
-								pnl.setLoading(true, true);
-							} ) ;
-							el.add( pnl ) ; */
+
 							me.features[id].init(me.nodes[id], me, tab); //we build the feature view after initialization
 
 						}
 					}
 				};
+
 				listItems.push(object); 
 			}
+
 			//if the array listItems has one item it means that there is no tabs otherwise it means that there are.
-			if (listItems.length == 1) {
+			if(listItems.length == 1) {
 				listItems[0].xtype = 'panel';
+
 				listItems[0].listeners.afterrender = function() {
 					log.debug('after render', this.logAuthor);
 					me.features[0].init(me.nodes[0], me, this);
 				};
+
 				this.content = Ext.create('Ext.Panel', {
 					xtype: 'panel',
 					items: listItems,
 					layout: 'fit',
 					border: false
 				});
-
-			} else {
+			}
+			else {
 				var tabsPanel = Ext.create('Ext.tab.Panel', {
 					xtype: 'panel',
 					width: '100%',
@@ -131,6 +147,7 @@ Ext.define('widgets.stepeue.stepeue', {
 					items: listItems,
 					border: false
 				});
+
 				this.content = Ext.create('Ext.Panel', {
 					xtype: 'panel',
 					items: tabsPanel,
@@ -138,10 +155,13 @@ Ext.define('widgets.stepeue.stepeue', {
 					border: false
 				});
 			}
+
 			this.wcontainer.removeAll();
 			this.wcontainer.add(this.content);
-		} else {
+		}
+		else {
 			this.wcontainer.removeAll();
+
 			this.wcontainer.add({
 				html: 'no feature selected'
 			});

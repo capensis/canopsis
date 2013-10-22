@@ -408,6 +408,7 @@
 						"sharedStore":"line_graph",
 						"additional_field": [
 											"label",
+											"curve_type",
 											"curve_color",
 											"Curve color",
 											"area_color",
@@ -423,6 +424,20 @@
 						"xtype": "ccustom",
 						"sharedStore":"line_graph",
 						"customForm": [{
+											"xtype" : "combobox",
+											"name" : "curve_type",
+											"fieldLabel": "Curve type",
+											"value":"default",
+											"store": {
+												"xtype": "store",
+												"fields": ["value", "text"],
+												"data" : [
+													{"value": "default", "text": "Default"},
+													{"value": "line", "text": "Line"},
+													{"value": "area", "text": "Area"}
+												]
+											}
+										},{
 											"xtype":"textfield",
 											"fieldLabel":"Custom label",
 											"name":"label",

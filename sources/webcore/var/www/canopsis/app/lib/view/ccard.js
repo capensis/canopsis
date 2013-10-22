@@ -43,7 +43,10 @@ Ext.define('canopsis.lib.view.ccard' , {
                         layout: {
                                     type: 'vbox',
                                     align: 'stretch'
-                                }
+                                },
+                        defaults: {
+                            autoScroll: true,
+                        }
                     },
 
     buttonDefault: {

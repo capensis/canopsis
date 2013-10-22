@@ -11,13 +11,11 @@
 	"options": [
 		{
 			"title": "Choose Feature",
-			"items": [
-				{
+			"items": [{
 					"xtype": "cinventory",
 					"name": "nodes",
 					"base_filter" : {   "$and": [ { "event_type" : "eue" }, {"type_message": "feature"}  ]  }
-				}
-				]
+			}]
 		}
 
 	]

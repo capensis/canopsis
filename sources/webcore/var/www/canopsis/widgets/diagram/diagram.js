@@ -19,7 +19,7 @@
 # ---------------------------------
 */
 Ext.define('widgets.diagram.diagram' , {
-    extend: 'canopsis.lib.view.cperfstoreValueConsumerWidget',
+	extend: 'canopsis.lib.view.cperfstoreValueConsumerWidget',
 	alias: 'widget.diagram',
 
 	logAuthor: '[diagram]',
@@ -51,8 +51,8 @@ Ext.define('widgets.diagram.diagram' , {
 	legend_fontSize: 12,
 	legend_fontColor: '#3E576F',
 
-    labels: false,
-    gradientColor: false,
+	labels: false,
+	gradientColor: false,
 
 	interval: global.commonTs.hours,
 	aggregate_method: 'LAST',
@@ -70,23 +70,43 @@ Ext.define('widgets.diagram.diagram' , {
 	haveCounter: false,
 
 	labelFormatter: function() {
-		if(this.y == 0)
+		if(this.y == 0) {
 			return
+		}
 
 		var me = this.series.chart.options.cwidget;
 
 		var prefix = "";
 
-		if (me.nameInLabelFormatter)
-			if (this.x)
-				prefix = '<b>' + this.x + ':</b> '
-			else
-				prefix = '<b>' + this.point.metric + ':</b> '
+		var formatter = function(value, unit) {
+			if(me.humanReadable) {
+				return rdr_humanreadable_value(value, unit);
+			}
+			else {
+				if (unit != undefined) {
+					return value + ' ' + unit;
+				}
+				else {
+					return value;
+				}
+			}
+		}
 
-		if (me.pctInLabel && this.percentage != undefined)
-			return prefix + rdr_humanreadable_value(this.percentage, "%");
-		else
-			return prefix + rdr_humanreadable_value(this.y, this.point.bunit);
+		if (me.nameInLabelFormatter) {
+			if (this.x) {
+				prefix = '<b>' + this.x + ':</b> '
+			}
+			else {
+				prefix = '<b>' + this.point.metric + ':</b> '
+			}
+		}
+
+		if (me.pctInLabel && this.percentage != undefined) {
+			return prefix + formatter(this.percentage, "%");
+		}
+		else {
+			return prefix + formatter(this.y, this.point.bunit);
+		}
 	},
 
 	initComponent: function() {
@@ -107,25 +127,19 @@ Ext.define('widgets.diagram.diagram' , {
 		log.debug('nodesByID:', this.logAuthor);
 		log.dump(this.nodesByID);
 
-		//search counter
-		/*
-		for (var i = 0; i < this.nodes.length; i++) {
-			var node = this.nodes[i];
-			if (node['type'] && node['type'] == 'COUNTER')
-				this.haveCounter = true;
-		}*/
-
 		Ext.Object.each(this.nodesByID, function(id, node, obj) {
-			if (node['type'] && node['type'] == 'COUNTER')
+			if(node['type'] && node['type'] == 'COUNTER') {
 				this.haveCounter = true;
-		},this)
+			}
+		},this);
 
 		//Set title
-		if (this.autoTitle) {
+		if(this.autoTitle) {
 			this.setchartTitle();
 			this.title = '';
-		}else {
-			if (! this.border) {
+		}
+		else {
+			if(!this.border) {
 				this.chartTitle = this.title;
 				this.title = '';
 			}
@@ -138,8 +152,9 @@ Ext.define('widgets.diagram.diagram' , {
 		log.debug('Initialize Pie', this.logAuthor);
 
 		// Clean this.nodes
-		if (this.nodesByID)
+		if(this.nodesByID) {
 			this.processNodes();
+		}
 
 		this.setOptions();
 		this.createChart();
@@ -149,19 +164,22 @@ Ext.define('widgets.diagram.diagram' , {
 
 	setchartTitle: function() {
 		var title = '';
-		if (this.nb_node == 1) {
-				var firstKey =Ext.Object.getKeys(this.nodesByID)[0]
-				var firstNode = this.nodesByID[firstKey]
-				var component = firstNode.component;
-				var source_type = firstNode.source_type;
 
-				if (source_type == 'resource') {
-					var resource = firstNode.resource;
-					title = resource + ' ' + _('on') + ' ' + component;
-				}else {
-					title = component;
-				}
+		if(this.nb_node == 1) {
+			var firstKey = Ext.Object.getKeys(this.nodesByID)[0]
+			var firstNode = this.nodesByID[firstKey]
+			var component = firstNode.component;
+			var source_type = firstNode.source_type;
+
+			if(source_type == 'resource') {
+				var resource = firstNode.resource;
+				title = resource + ' ' + _('on') + ' ' + component;
+			}
+			else {
+				title = component;
+			}
 		}
+
 		this.chartTitle = title;
 	},
 
@@ -189,9 +207,9 @@ Ext.define('widgets.diagram.diagram' , {
 					cursor: 'pointer',
 					dataLabels: {
 						enabled: this.labels,
-                        color: '#000000',
-                        connectorColor: '#000000',
-                        formatter: this.labelFormatter
+						color: '#000000',
+						connectorColor: '#000000',
+						formatter: this.labelFormatter
 					},
 					showInLegend: true,
 					animation: false,
@@ -201,9 +219,9 @@ Ext.define('widgets.diagram.diagram' , {
 					animation: false,
 					dataLabels: {
 						enabled: this.labels,
-                        color: '#000000',
-                        connectorColor: '#000000',
-                        formatter: this.labelFormatter
+						color: '#000000',
+						connectorColor: '#000000',
+						formatter: this.labelFormatter
 					}
 				}
 			},
@@ -262,19 +280,9 @@ Ext.define('widgets.diagram.diagram' , {
 				labels: {formatter: this.y_formatter}
 			}
 		};
-		/*
-		if(this.diagram_type == 'column'){
-			this.options.yAxis = [{
-				title: { text: null },
-				labels: {
-					formatter: this.y_formatter
-				}
-			}]
-		}
-		*/
 
 		//specifique options to add
-		if (this.exportMode) {
+		if(this.exportMode) {
 			this.options.plotOptions.pie.enableMouseTracking = false;
 			this.options.plotOptions.tooltip = {};
 			this.options.plotOptions.pie.shadow = false;
@@ -300,7 +308,7 @@ Ext.define('widgets.diagram.diagram' , {
 				id: id,
 				metrics: node.metrics
 			});
-		},this)
+		},this);
 
 		this.post_params = {
 			'nodes': Ext.JSON.encode(post_params),
@@ -309,39 +317,38 @@ Ext.define('widgets.diagram.diagram' , {
 			'aggregate_timemodulation': false
 		};
 
-		if (this.aggregate_interval)
+		if(this.aggregate_interval) {
 			this.post_params['aggregate_interval'] = this.aggregate_interval;
+		}
 	},
 
 	doRefresh: function(from, to) {
 		// Get last point only
-		if (this.time_window && from == 0)
-			from = to - (this.time_window*1000);
+		if(this.time_window && from == 0) {
+			from = to - (this.time_window * 1000);
+		}
 		
-		if (! this.haveCounter)
+		if(!this.haveCounter) {
 			from = to;
+		}
 
-		if (this.haveCounter && this.time_window)
-			from = to - (this.time_window*1000);
+		if(this.haveCounter && this.time_window) {
+			from = to - (this.time_window * 1000);
+		}
 
 		log.debug('Get values from ' + new Date(from) + ' to ' + new Date(to), this.logAuthor);
-	    
-	    this.refreshNodes(from, to);
 
+		this.refreshNodes(from, to);
 	},
 
 	onRefresh: function(data) {
 		// s to ms
-		/*
-		if(data.values && (data.values.length>0))
-			for(var i =0; i < data.values.length; i++)
-				data.values[i][0] = data.values[i][0]*1000
-		*/
-
-		if (this.chart && data.length != 0) {
+		if(this.chart && data.length != 0) {
 			var myEl = this.getEl();
-			if (myEl && myEl.isMasked && !this.isDisabled())
+
+			if(myEl && myEl.isMasked && !this.isDisabled()) {
 				myEl.unmask();
+			}
 
 			// Remove old series
 			this.removeSerie();
@@ -350,14 +357,15 @@ Ext.define('widgets.diagram.diagram' , {
 
 			var other_unit = '';
 
-			for (var i = 0; i < data.length; i++) {
+			for(var i = 0; i < data.length; i++) {
 				var info = data[i];
 
 				var node = this.nodesByID[info['node']];
 
 				//custom metric
-				if ( node.label) 
+				if(node.label) {
 					data[i]['metric'] = node.label;
+				}
 
 				var metric = info['metric'];
 
@@ -366,10 +374,11 @@ Ext.define('widgets.diagram.diagram' , {
 				var value = undefined;
 				var timestamp = undefined;
 
-				if (info['values'].length >= 1){
+				if(info['values'].length >= 1) {
 					timestamp = info['values'][0][0];
 					value = info['values'][0][1];
-				}else{
+				}
+				else {
 					log.debug(' + No value', this.logAuthor);
 					continue;
 				}
@@ -382,11 +391,13 @@ Ext.define('widgets.diagram.diagram' , {
 				var unit = info['bunit'];
 				var max = info['max'];
 
-				if (max == null)
+				if(max == null) {
 					max = this.max;
+				}
 
-				if (unit == '%' && ! max)
+				if(unit == '%' && ! max) {
 					max = 100;
+				}
 
 				var metric_name = metric;
 
@@ -395,53 +406,68 @@ Ext.define('widgets.diagram.diagram' , {
 
 				// Set Label
 				var label = undefined;
-				if (!label && curve)
+
+				if(!label && curve) {
 					label = curve.get('label');
-				if (! label)
+				}
+
+				if(!label) {
 					label = metric_name;
+				}
 
 				metric = label;
 
 				var metric_long_name = '<b>' + label + '</b>';
 
-				if (unit) {
+				if(unit) {
 					metric_long_name += ' (' + unit + ')';
 					other_unit += ' (' + unit + ')';
 				}
 
 				var _color = colors[0];
-				if (node.curve_color)
-					_color = node.curve_color;
 
-				if (this.gradientColor)
+				if(node.curve_color) {
+					_color = node.curve_color;
+				}
+
+				if(this.gradientColor) {
 					var color = this.getGradientColor(_color);
-				else
+				}
+				else {
 					var color = _color;
+				}
 
 				serie.data.push({ id: metric, name: metric_long_name, metric: metric, y: value, color: color, bunit: unit });
 
 			}
 
-			if (this.setAxis && this.diagram_type == 'column')
+			if(this.setAxis && this.diagram_type == 'column') {
 				this.setAxis(serie.data);
+			}
 
-			if (data.length == 1 && !this.hide_other_column && this.diagram_type == 'pie') {
+			if(data.length == 1 && !this.hide_other_column && this.diagram_type == 'pie') {
 				var other_label = '<b>' + this.other_label + '</b>' + other_unit;
 				var colors = global.curvesCtrl.getRenderColors(this.other_label, 1);
-				if (this.gradientColor)
+
+				if(this.gradientColor) {
 					var _color = this.getGradientColor(colors[0]);
-				else
+				}
+				else {
 					var _color = colors[0];
+				}
+
 				serie.data.push({ id: 'pie_other', name: other_label, metric: this.other_label, y: max - value, color: _color });
 			}
 
-			if (serie.data) {
+			if(serie.data) {
 				this.serie = serie;
 				this.displaySerie();
-			}else {
+			}
+			else {
 				log.debug('No data to display', this.logAuthor);
 			}
-		}else {
+		}
+		else {
 			this.getEl().mask(_('No data on interval'));
 		}
 
@@ -449,13 +475,16 @@ Ext.define('widgets.diagram.diagram' , {
 
 	removeSerie: function() {
 		var serie = this.chart.get('serie');
-		if (serie)
+
+		if(serie) {
 			serie.destroy();
+		}
 	},
 
 	displaySerie: function() {
-		if (this.serie)
+		if(this.serie) {
 			this.chart.addSeries(Ext.clone(this.serie));
+		}
 	},
 
 	reloadSerie: function() {
@@ -465,18 +494,22 @@ Ext.define('widgets.diagram.diagram' , {
 
 	getSerie: function(data) {
 		var bunit = undefined;
-		if (data.length != 0)
-			for (var i = 0; i < data.length; i++)
-				if (data[i].bunit)
+
+		if(data.length != 0) {
+			for(var i = 0; i < data.length; i++) {
+				if(data[i].bunit) {
 					bunit = data[i].bunit;
+				}
+			}
+		}
 
 		return {
-					id: 'serie',
-					type: this.diagram_type,
-					shadow: false,
-					data: [],
-					bunit: bunit
-				};
+			id: 'serie',
+			type: this.diagram_type,
+			shadow: false,
+			data: [],
+			bunit: bunit
+		};
 	},
 
 	getGradientColor: function(color) {
@@ -491,50 +524,76 @@ Ext.define('widgets.diagram.diagram' , {
 
 	onResize: function() {
 		log.debug('onRezize', this.logAuthor);
-		if (this.chart) {
+
+		if(this.chart) {
 			this.chart.setSize(this.getWidth(), this.getHeight() , false);
 			this.reloadSerie();
 		}
 	},
 
 	tooltip_formatter: function() {
+		var me = this.series.chart.options.cwidget;
 
 		var formatter = function(options, value) {
-			if (options.invert)
+			if(options.invert) {
 				value = - value;
+			}
 
-			value = rdr_humanreadable_value(value, options.bunit);
+			if(me.humanReadable) {
+				value = rdr_humanreadable_value(value, options.bunit);
+			}
+			else {
+				if (options.bunit != undefined) {
+					value = value + ' ' + options.bunit;
+				}
+			}
+
 			return '<b>' + options.metric + '</b>: ' + value;
 		};
 
 		var s = '';
 
-		if (this['points']) {
+		if(this['points']) {
 			// Shared
 			$.each(this.points, function(i, point) {
 				s += formatter(point.options, point.y);
 			});
-		} else {
+		}
+		else {
 			s += formatter(this.point.options, this.y);
 		}
+
 		return s;
 	},
 
 	setAxis: function(data) {
 		var metrics = [];
-		for (var i = 0; i < data.length; i++)
-			if (data[i].metric)
+
+		for(var i = 0; i < data.length; i++) {
+			if(data[i].metric) {
 				metrics.push(data[i].metric);
+			}
+		}
 
 		this.chart.xAxis[0].setCategories(metrics, false);
 	},
 
 	y_formatter: function() {
-		if (this.chart.series.length) {
+		var me = this.chart.options.cwidget;
+
+		if(this.chart.series.length) {
 			var bunit = this.chart.series[0].options.bunit;
-			return rdr_humanreadable_value(this.value, bunit);
+
+			if(me.humanReadable) {
+				return rdr_humanreadable_value(this.value, bunit);
+			}
+			else {
+				if(bunit != undefined) {
+					return this.value + ' ' + bunit;
+				}
+			}
 		}
+
 		return this.value;
 	}
-
 });

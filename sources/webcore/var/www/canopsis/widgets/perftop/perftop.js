@@ -46,11 +46,8 @@ Ext.define('widgets.perftop.perftop' , {
 	//..
 
 	afterContainerRender: function() {
-
-		if (this.mfilter && this.mfilter != '') {
-
+		if(this.mfilter && this.mfilter != '') {
 			this.store = Ext.create('canopsis.store.Perfdatas', {
-
 				model: 'canopsis.model.Perfdata',
 
 				autoLoad: false,
@@ -58,16 +55,17 @@ Ext.define('widgets.perftop.perftop' , {
 				proxy: {
 					type: 'rest',
 					url: '/perfstore/perftop',
-					extraParams: {	'limit': this.limit,
-									'sort': this.sort,
-									'mfilter': this.mfilter,
-									'threshold': this.threshold,
-									'threshold_direction': this.threshold_direction,
-									'expand': this.expand,
-									'percent': this.show_percent,
-									'threshold_on_pct': this.threshold_on_pct,
-									'report': this.reportMode || this.exportMode
-								},
+					extraParams: {
+						'limit': this.limit,
+						'sort': this.sort,
+						'mfilter': this.mfilter,
+						'threshold': this.threshold,
+						'threshold_direction': this.threshold_direction,
+						'expand': this.expand,
+						'percent': this.show_percent,
+						'threshold_on_pct': this.threshold_on_pct,
+						'report': this.reportMode || this.exportMode
+					},
 					reader: {
 						type: 'json',
 						root: 'data',
@@ -75,12 +73,11 @@ Ext.define('widgets.perftop.perftop' , {
 						successProperty: 'success'
 					}
 				}
-
 			});
 
 			this.columns = [];
 
-			if (this.show_position)
+			if(this.show_position) {
 				this.columns.push({
 					header: '',
 					width: 25,
@@ -90,41 +87,48 @@ Ext.define('widgets.perftop.perftop' , {
 						return '<b>' + (rowIndex + 1) + '</b>';
 					}
 				});
+			}
 
-			if (this.show_source_type)
+			if(this.show_source_type) {
 				this.columns.push({
 					header: '',
 					width: 25,
 					sortable: false,
-					renderer: function() {return "<span class='icon icon-mainbar-perfdata' />"}
+					renderer: function() {
+						return "<span class='icon icon-mainbar-perfdata' />";
+					}
 				});
+			}
 
-			if (this.show_component)
+			if(this.show_component) {
 				this.columns.push({
 					header: _('Component'),
 					flex: 1,
 					sortable: false,
 					dataIndex: 'co'
 				});
+			}
 
-			if (this.show_resource)
+			if(this.show_resource) {
 				this.columns.push({
 					header: _('Resource'),
 					flex: 1,
 					sortable: false,
 					dataIndex: 're'
 				});
+			}
 
-			if (this.show_metric)
+			if(this.show_metric) {
 				this.columns.push({
 					header: _('Metric'),
 					flex: 2,
 					sortable: false,
 					dataIndex: 'me'
 				});
+			}
 
 
-			if (this.show_hr_value)
+			if(this.show_hr_value) {
 				this.columns.push({
 					header: _('Value'),
 					width: 100,
@@ -132,11 +136,25 @@ Ext.define('widgets.perftop.perftop' , {
 					dataIndex: 'lv',
 					align: 'right',
 					renderer: function(value, metaData, record) {
-						return rdr_humanreadable_value(value, record.get('u'));
+						var me = this.cwidget;
+						var unit = record.get('u');
+
+						if(me.humanReadable) {
+							return rdr_humanreadable_value(value, unit);
+						}
+						else {
+							if(unit != undefined) {
+								return value + ' ' + unit;
+							}
+							else {
+								return value;
+							}
+						}
 					}
 				});
+			}
 
-			if (this.show_value)
+			if(this.show_value) {
 				this.columns.push({
 					header: _('Value'),
 					width: 100,
@@ -144,8 +162,9 @@ Ext.define('widgets.perftop.perftop' , {
 					dataIndex: 'lv',
 					align: 'right'
 				});
+			}
 
-			if (this.show_percent)
+			if(this.show_percent) {
 				this.columns.push({
 					header: _('Percent'),
 					width: 100,
@@ -153,17 +172,22 @@ Ext.define('widgets.perftop.perftop' , {
 					dataIndex: 'pct',
 					align: 'right',
 					renderer: function(value, metaData, record) {
-						if (Ext.isNumber(value))
-							if (value == -1)
+						if(Ext.isNumber(value)) {
+							if(value == -1) {
 								return _('N/A');
-							else
+							}
+							else {
 								return value + '%';
-						else
+							}
+						}
+						else {
 							return _('N/A');
+						}
 					}
 				});
+			}
 
-			if (this.show_unit)
+			if(this.show_unit) {
 				this.columns.push({
 					header: _('Unit'),
 					width: 45,
@@ -171,8 +195,9 @@ Ext.define('widgets.perftop.perftop' , {
 					dataIndex: 'u',
 					align: 'center'
 				});
+			}
 
-			if (this.show_last_time)
+			if(this.show_last_time) {
 				this.columns.push({
 					header: _('Last time'),
 					width: 130,
@@ -180,6 +205,7 @@ Ext.define('widgets.perftop.perftop' , {
 					align: 'center',
 					renderer: rdr_tstodate
 				});
+			}
 
 			this.grid = Ext.create('canopsis.lib.view.cgrid', {
 				model: 'Perfdata',
@@ -199,7 +225,8 @@ Ext.define('widgets.perftop.perftop' , {
 
 				opt_cell_edit: false,
 
-				columns: this.columns
+				columns: this.columns,
+				cwidget: this,
 			});
 
 			this.wcontainer.removeAll();
@@ -214,13 +241,14 @@ Ext.define('widgets.perftop.perftop' , {
 		this.store.proxy.extraParams['report'] = this.reportMode || this.exportMode;
 		var url  = this.store.proxy['url'];
 
-		if (this.store.proxy.extraParams['report'])
+		if(this.store.proxy.extraParams['report']) {
 			this.store.proxy['url'] = url + '/' + parseInt(from/1000) +'/' + parseInt(to/1000);
+		}
 		
-		if (this.grid)
+		if(this.grid) {
 			this.grid.store.load();
+		}
 
 		this.store.proxy['url'] = url;
 	}
-
 });
