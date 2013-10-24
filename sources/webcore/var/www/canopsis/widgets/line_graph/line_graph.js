@@ -636,6 +636,8 @@ Ext.define('widgets.line_graph.line_graph' , {
 		if(this.chart) {
 			log.debug('On refresh', this.logAuthor);
 
+			this.clearGraph();
+
 			var toggle_max_percent = false;
 
 			if(data.length > 0) {
