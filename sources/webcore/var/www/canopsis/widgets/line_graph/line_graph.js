@@ -559,6 +559,7 @@ Ext.define('widgets.line_graph.line_graph' , {
 		var now = Ext.Date.now();
 
 		if(this.chart) {
+
 			if(this.timeNav) {
 				var time_limit = now - (this.timeNav_window * 1000);
 
@@ -1491,5 +1492,9 @@ Ext.define('widgets.line_graph.line_graph' , {
 			this.chart.destroy();
 			log.debug(' + Chart Destroyed', this.logAuthor);
 		}
+ 	},
+
+ 	getUrl: function(from, to) {
+ 		return '/perfstore/values';
  	}
 });

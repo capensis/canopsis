@@ -151,11 +151,6 @@ Ext.define('widgets.diagram.diagram' , {
 	afterContainerRender: function() {
 		log.debug('Initialize Pie', this.logAuthor);
 
-		// Clean this.nodes
-		if(this.nodesByID) {
-			this.processNodes();
-		}
-
 		this.setOptions();
 		this.createChart();
 
@@ -300,26 +295,9 @@ Ext.define('widgets.diagram.diagram' , {
 		});
 	},
 
-	processNodes: function() {
-		var post_params = [];
-
-		Ext.Object.each(this.nodesByID, function(id, node, obj) {
-			post_params.push({
-				id: id,
-				metrics: node.metrics
-			});
-		},this);
-
-		this.post_params = {
-			'nodes': Ext.JSON.encode(post_params),
-			'aggregate_method' : this.aggregate_method,
-			'aggregate_max_points': 1,
-			'aggregate_timemodulation': false
-		};
-
-		if(this.aggregate_interval) {
-			this.post_params['aggregate_interval'] = this.aggregate_interval;
-		}
+	fillPostParams: function(post_params) {
+		post_params['aggregate_timemodulation'] = false;
+		post_params['aggregate_max_points'] = 1;
 	},
 
 	doRefresh: function(from, to) {
@@ -398,6 +376,9 @@ Ext.define('widgets.diagram.diagram' , {
 				if(unit == '%' && ! max) {
 					max = 100;
 				}
+
+				if (value > max)
+					max = value;
 
 				var metric_name = metric;
 

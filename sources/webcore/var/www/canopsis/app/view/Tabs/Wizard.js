@@ -83,7 +83,11 @@ Ext.define('canopsis.view.Tabs.Wizard' , {
 						fields: ['value', 'text'],
 						data: [
 							{value: 0,	text: 'None'},
+							{value: 1, text: '1 seconde'},
+							{value: 10, text: '10 secondes'},
+							{value: 61, text: '30 secondes'},
 							{value: 60,	text: '1 minutes'},
+							{value: 70,	text: '2 minute'},
 							{value: 300,	text: '5 minutes'},
 							{value: 600,	text: '10 minutes'},
 							{value: 900,	text: '15 minutes'},
