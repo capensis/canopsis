@@ -637,7 +637,9 @@ Ext.define('widgets.line_graph.line_graph' , {
 		if(this.chart) {
 			log.debug('On refresh', this.logAuthor);
 
-			this.clearGraph();
+			if(this.aggregate_interval > 0) {
+				this.clearGraph();
+			}
 
 			var toggle_max_percent = false;
 
@@ -1492,9 +1494,5 @@ Ext.define('widgets.line_graph.line_graph' , {
 			this.chart.destroy();
 			log.debug(' + Chart Destroyed', this.logAuthor);
 		}
- 	},
-
- 	getUrl: function(from, to) {
- 		return '/perfstore/values';
  	}
 });
