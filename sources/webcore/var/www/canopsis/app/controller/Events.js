@@ -1,5 +1,4 @@
 /*
-#--------------------------------
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
@@ -16,7 +15,6 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
-# ---------------------------------
 */
 Ext.define('canopsis.controller.Events', {
 	extend: 'Ext.app.Controller',
@@ -43,22 +41,19 @@ Ext.define('canopsis.controller.Events', {
 			method: 'POST',
 			params: event,
 			scope: this,
-			success: function(response) {
-				var text = response.responseText;
+			success: function() {
 				global.notify.notify(_('Success'), _('Event successfuly sent'), 'success');
-
 			},
 			failure: function(response) {
-
-				if (response.status == 403) {
+				if(response.status === 403) {
 					global.notify.notify(_('Access denied'), _('Sending event forbidden'), 'error');
 					log.error(_('Access denied'));
-				} else {
+				}
+				else {
 					log.error(_('Sending event have failed'), this.logAuthor);
 				}
 			}
 		});
-
 	},
 
 	deleteEvent: function(event_ids) {
@@ -69,23 +64,18 @@ Ext.define('canopsis.controller.Events', {
 			method: 'DELETE',
 			params: event_ids,
 			scope: this,
-			success: function(response) {
-				var text = response.responseText;
+			success: function() {
 				global.notify.notify(_('Success'), _('Event successfuly delete'), 'success');
 			},
 			failure: function(response) {
-
-				if (response.status == 403) {
+				if(response.status === 403) {
 					global.notify.notify(_('Access denied'), _('Deleting event forbidden'), 'error');
 					log.error(_('Access denied'));
-				} else {
+				}
+				else {
 					log.error(_('Deleting event have failed'), this.logAuthor);
 				}
 			}
 		});
-
-
-
 	}
-
 });
