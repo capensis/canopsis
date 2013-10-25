@@ -1,5 +1,4 @@
 /*
-#--------------------------------
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
@@ -16,7 +15,6 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
-# ---------------------------------
 */
 Ext.define('canopsis.controller.MetricNavigation', {
 	extend: 'Ext.app.Controller',
@@ -32,7 +30,7 @@ Ext.define('canopsis.controller.MetricNavigation', {
 		log.debug('Initialize ...', this.logAuthor);
 
 		this.control({
-			'MetricNavigation' : {
+			'MetricNavigation': {
 				afterrender: this._bindMetricNavigation
 			}
 		});
@@ -42,21 +40,23 @@ Ext.define('canopsis.controller.MetricNavigation', {
 
 	_bindMetricNavigation: function(panel) {
 		log.debug('Binding events', this.logAuthor);
-		this.panel = panel;
-		this.tabPanel = panel.tabPanel;
-		this.renderPanel = panel.renderPanel;
-		this.metricTab = panel.metricTab;
+
+		this.panel         = panel;
+		this.tabPanel      = panel.tabPanel;
+		this.renderPanel   = panel.renderPanel;
+		this.metricTab     = panel.metricTab;
 		this.renderContent = panel.renderContent;
 
-		//-------------------------Button bindings------------------
+		// Button bindings
 		panel.buttonCancel.on('click', this._buttonCancel, this);
 		panel.buttonDisplay.on('click', this._buttonDisplay, this);
 		this.tabPanel.on('collapse', this._refreshLayout, this);
 		this.tabPanel.on('expand', this._refreshLayout, this);
 
-		//------------if nodes specified with creation set it automaticaly-----
-		if (panel.nodes.length != 0)
+		// if nodes specified with creation set it automaticaly
+		if(panel.nodes.length !== 0) {
 			this._addGraph(panel.nodes);
+		}
 	},
 
 	_buttonCancel: function() {
@@ -78,8 +78,9 @@ Ext.define('canopsis.controller.MetricNavigation', {
 		timePeriod = this._getTime();
 
 		//add one graph per node
-		for (var i = 0; i < metrics.length; i++) {
+		for(var i = 0; i < metrics.length; i++) {
 			var item = this._createGraph([metrics[i]]);
+
 			//set time after first render (avoid useless ajax request)
 			item.nodes = [metrics[i]];
 			item.processNodes();
@@ -88,8 +89,9 @@ Ext.define('canopsis.controller.MetricNavigation', {
 
 	},
 
-	_createGraph: function(nodes) {
+	_createGraph: function() {
 		log.debug('Adding graph', this.logAuthor);
+
 		var config = {
 			SeriesType: 'line',
 			reportMode: true,
@@ -98,14 +100,16 @@ Ext.define('canopsis.controller.MetricNavigation', {
 			height: 200,
 			layout: 'fit'
 		};
+
 		var graph = Ext.widget('line_graph', config);
 		this.renderContent.add(graph);
+
 		return graph;
 	},
 
 	_refreshLayout: function() {
-		for (var i = 0; i < this.renderContent.items.length; i++) {
-				this.renderContent.items.items[i].onResize();
+		for(var i = 0; i < this.renderContent.items.length; i++) {
+			this.renderContent.items.items[i].onResize();
 		}
 	},
 
@@ -114,26 +118,31 @@ Ext.define('canopsis.controller.MetricNavigation', {
 
 		//get time values
 		var fromDate = this.panel.fromDate.getValue();
-		var toDate = this.panel.toDate.getValue();
+		var toDate   = this.panel.toDate.getValue();
 		var fromHour = this.panel.fromHour.getSubmitData().fromHour;
-		var toHour = this.panel.toHour.getSubmitData().toHour;
+		var toHour   = this.panel.toHour.getSubmitData().toHour;
 
 		//compute from Hour
 		arrayFromHour = fromHour.split(':');
-		fromHour = (arrayFromHour[0] * global.commonTs.hours) + (arrayFromHour[1] * 60);
+		fromHour      = (arrayFromHour[0] * global.commonTs.hours) + (arrayFromHour[1] * 60);
+
 		log.debug('from Hour ts : ' + fromHour);
 
 		//compute to Hour
 		arrayToHour = toHour.split(':');
-		toHour = (arrayToHour[0] * global.commonTs.hours) + (arrayToHour[1] * 60);
+		toHour      = (arrayToHour[0] * global.commonTs.hours) + (arrayToHour[1] * 60);
+
 		log.debug('from Hour ts : ' + toHour);
 
 		fromDate = Ext.Date.format(fromDate, 'U');
-		toDate = Ext.Date.format(toDate, 'U');
+		toDate   = Ext.Date.format(toDate, 'U');
 
 		var from = parseInt(fromDate) + parseInt(fromHour);
-		var to = parseInt(toDate) + parseInt(toHour);
+		var to   = parseInt(toDate) + parseInt(toHour);
 
-		return {from: from, to: to};
+		return {
+			from: from,
+			to: to
+		};
 	}
 });
