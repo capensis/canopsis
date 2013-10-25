@@ -1,5 +1,4 @@
 /*
-#--------------------------------
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
@@ -16,7 +15,6 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
-# ---------------------------------
 */
 Ext.define('canopsis.controller.Ldap', {
 	extend: 'canopsis.lib.controller.cgrid',
@@ -26,8 +24,6 @@ Ext.define('canopsis.controller.Ldap', {
 	models: ['Ldap'],
 
 	logAuthor: '[controller][ldap]',
-
-	//editMethod: 'tab',
 
 	init: function() {
 		log.debug('Initialize ...', this.logAuthor);
@@ -44,14 +40,16 @@ Ext.define('canopsis.controller.Ldap', {
 		var store = this.getStore('Ldaps');
 
 		this.grid = this.getController('Account').grid;
-		
+
 		store.on('load', function() {
 			var record = store.getAt(0);
 
-			if (record)
+			if(record) {
 				this._editRecord(undefined, record, 0, store)
-			else
+			}
+			else {
 				this._showForm(undefined, store)
+			}
 
 		}, this, {single: true});
 
@@ -59,35 +57,33 @@ Ext.define('canopsis.controller.Ldap', {
 	},
 
 
-	preSave: function(record, data, form) {
+	preSave: function(record) {
 		record.set('id', "ldap.config");
-		//record.set('groups', groups);
-		/*
-		{name: 'aaa_access_group', defaultValue: undefined},
-		{name: 'aaa_access_other', defaultValue: undefined},
-		{name: 'aaa_access_owner', defaultValue: undefined},
-		{name: 'aaa_admin_group', defaultValue: undefined},
-		{name: 'aaa_group', defaultValue: undefined},
-		{name: 'aaa_owner', defaultValue: undefined},
-		*/
+
 		return record;
 	},
-	
-	_save: function(record, edit, store, form) {
+
+	_save: function(record, edit, unused_store, form) {
+		void(unused_store);
+
 		//override the parent _save method, to manually choose the store to save data in
 		var store = this.getStore('Ldaps');
 		console.log(store);
 
-		if (edit)
-			var batch = store.proxy.batch({update: [record]});
-		else
-			var batch = store.proxy.batch({create: [record]});
+		var batch = undefined;
 
-		batch.on('complete', function(batch,operation,opts) {
+		if(edit) {
+			batch = store.proxy.batch({update: [record]});
+		}
+		else {
+			batch = store.proxy.batch({create: [record]});
+		}
+
+		batch.on('complete', function(batch, operation, opts) {
 			this.displaySuccess(batch, operation, opts);
 			log.debug('Reload store', this.logAuthor);
 			this.load();
-		},store);
+		}, store);
 
 		this._postSave(record);
 		this._cancelForm(form);

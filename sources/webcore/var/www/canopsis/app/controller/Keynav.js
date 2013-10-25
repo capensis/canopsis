@@ -94,7 +94,6 @@ Ext.define('canopsis.controller.Keynav', {
 					var ctrl = this.getController('Tabs');
 					ctrl.cancel_active_view();
 				}
-
 			},{
 				key: Ext.EventObject.F,
 				ctrl: true,
