@@ -19,7 +19,7 @@
 # ---------------------------------
 */
 
-var normalApp = function(){
+function normalApp() {
 	var app = Ext.application({
 		name: 'canopsis',
 		appFolder: 'app',
@@ -49,68 +49,77 @@ var normalApp = function(){
 			'Rule',
 			'Tabs'
 		],
-	
+
 		//autoCreateViewport: true,
 		launch: function() {
-			if (global.minimified){
+			if(global.minimified) {
 				this.createViewport();
-			}else{
-				this.getController('Widgets').on('loaded', this.createViewport,this,{single : true});
+			}
+			else {
+				this.getController('Widgets').on('loaded', this.createViewport, this, {single : true});
 			}
 		},
 
-		createViewport: function(){
+		createViewport: function() {
 			Ext.create('canopsis.view.Viewport');
 			log.debug('Remove mask ...',"[app]");
 
-			if (Ext.get('loading'))
+			if(Ext.get('loading')) {
 				Ext.get('loading').remove();
+			}
 
-			if (Ext.get('loading-mask'))
+			if(Ext.get('loading-mask')) {
 				Ext.get('loading-mask').remove();
+			}
 		}
-		
-		
 	});
+
+	return app;
 }
 
-var exportApp = function(){
+function exportApp() {
 	// parse dates
-	var to = 	new Date().getTime();
-	var from =  to - (86400 * 1000); // 1 day by default
+	var to   = new Date().getTime();
+	var from = to - (86400 * 1000); // 1 day by default
 
-	if (ENV["to"])
-		to = ENV["to"] * 1000
+	if(ENV["to"]) {
+		to = ENV["to"] * 1000;
+	}
 
-	if (ENV["from"] == -1)
-		from = undefined
-	else
-		if (ENV["from"])
-			from = ENV["from"] * 1000
+	if(ENV["from"] === -1) {
+		from = undefined;
+	}
+	else {
+		if(ENV["from"]) {
+			from = ENV["from"] * 1000;
+		}
+	}
 
-	log.debug('Exporting options:')
-	
-	if(from){
+	log.debug('Exporting options:');
+
+	if(from) {
 		var from_date = new Date(from);
-		log.debug(' + From: '+ from_date	+ '(' + from + ')')
+		log.debug(' + From: ' + from_date + '(' + from + ')');
 	}
 
 	var to_date = new Date(to);
-	log.debug(' + To:   '+ to_date		+ '(' + to + ')')
+	log.debug(' + To:   ' + to_date + '(' + to + ')')
 
 	var title = '';
 
-	if (from && from != to)
+	if(from && from !== to) {
 		title =  Ext.String.format(
-				'<span>'+_('From')+' {0} '+_('To')+' {1}</span>',
-				Ext.Date.format(from_date, 'Y-m-d'),
-				Ext.Date.format(to_date, 'Y-m-d')
-			);
-	else
+			'<span>' + _('From') + ' {0} ' + _('To') + ' {1}</span>',
+			Ext.Date.format(from_date, 'Y-m-d'),
+			Ext.Date.format(to_date, 'Y-m-d')
+		);
+	}
+	else {
 		title = Ext.String.format(
-				'<span>{0}</span>',
-				Ext.Date.format(to_date, 'Y-m-d')
-			);
+			'<span>{0}</span>',
+			Ext.Date.format(to_date, 'Y-m-d')
+		);
+	}
 
 	title = '<div id="interval_header" name="interval_header" style="margin-left:400px;">' + title + '</div>';
 
@@ -129,8 +138,7 @@ var exportApp = function(){
 		launch: function() {
 			this.getController('Widgets').on('loaded', this.createView);
 		},
-		createView: function(){
-
+		createView: function() {
 			var content = Ext.create('canopsis.view.Tabs.Content',{
 				renderTo: 'container',
 				view_id: ENV['view_id'],
@@ -139,38 +147,41 @@ var exportApp = function(){
 				exportMode: true,
 				export_from: from,
 				export_to: to
-			});	
+			});
 
-			//-----------------Hack fix manual height--------------------
-			content.on('loaded', function(){
-				var options = $('#' + content.container.id).jqGridable('get_options')
-				log.dump(options)
-				
-				var jqg_height = options.rows * options.widget_height
-				var header_height = $('#interval_header').height()
-				
-				log.debug('[Reporting] jqg_height: ' + jqg_height)
-				log.debug('[Reporting] header_height: ' + header_height)
-				
-				var total_height = jqg_height + header_height
-				
-				$('#' + content.container.id).height(total_height)
-				$('#' + content.id).height(total_height)
-				$('body').height(total_height)
-			
-				log.debug('[Reporting] Body height : ' + $('body').height())
+			// Hack fix manual height
+			content.on('loaded', function() {
+				var options = $('#' + content.container.id).jqGridable('get_options');
+				log.dump(options);
+
+				var jqg_height = options.rows * options.widget_height;
+				var header_height = $('#interval_header').height();
+
+				log.debug('[Reporting] jqg_height: ' + jqg_height);
+				log.debug('[Reporting] header_height: ' + header_height);
+
+				var total_height = jqg_height + header_height;
+
+				$('#' + content.container.id).height(total_height);
+				$('#' + content.id).height(total_height);
+				$('body').height(total_height);
+
+				log.debug('[Reporting] Body height : ' + $('body').height());
 			});
-			
-			//--------------------aware wkhtml that loading is finished----
-			var task = new Ext.util.DelayedTask(function(){
-				window.status = 'ready'
+
+			// aware wkhtml that loading is finished
+			var task = new Ext.util.DelayedTask(function() {
+				window.status = 'ready';
 			});
-			task.delay(10000)
+
+			task.delay(10000);
 		}
 	});
+
+	return app;
 }
 
-var fullscreenApp = function(){
+function fullscreenApp() {
 	$("body").append("<div id='container'></div>");
 
 	var app = Ext.application({
@@ -186,8 +197,8 @@ var fullscreenApp = function(){
 		launch: function() {
 			this.getController('Widgets').on('loaded', this.createView);
 		},
-		createView: function(){			
-			var content = Ext.create('canopsis.view.Tabs.Content',{
+		createView: function() {
+			var content = Ext.create('canopsis.view.Tabs.Content', {
 				renderTo: 'container',
 				width: ($('#container').width()- 1),
 				view_id : ENV['view_id'],
@@ -196,100 +207,114 @@ var fullscreenApp = function(){
 			});
 		}
 	});
+
+	return app;
 }
 
-function checkLocale(){
+function checkLocale() {
 	log.debug("Loading locale:", "[app]");
 
-	log.debug(" + ENV:     "+ ENV['locale'], "[app]");
+	log.debug(" + ENV:     " + ENV['locale'], "[app]");
 	global.locale = ENV['locale']
-	
+
 	var cookie_locale = Ext.util.Cookies.get('locale');
 	log.debug(" + Cookie:  "+ cookie_locale, "[app]");
 
-	if (global.account && global.account['locale']){
+	if(global.account && global.account['locale']) {
 		var account_locale = global.account['locale'];
 		log.debug(" + Account: "+ account_locale, "[app]");
 	}
 
 	// For export mode
-	if (ENV["exportMode"] && global.locale != account_locale)
-		Ext.fly('locale').set({src:'/'+account_locale+'/static/canopsis/locales.js'});
+	if(ENV["exportMode"] && global.locale !== account_locale) {
+		Ext.fly('locale').set({src:'/' + account_locale + '/static/canopsis/locales.js'});
+	}
 
-	log.debug("Locale:     "+ global.locale, "[app]");
+	log.debug("Locale:     " + global.locale, "[app]");
 }
 
-function createApplication(account){
+function createApplication(account) {
 	log.debug("Remove auth form ...", "[app]");
 
-	if (Ext.get('auth'))
+	if(Ext.get('auth')) {
 		Ext.get('auth').remove();
+	}
 
-	if (global.account.id == undefined)
+	if(global.account.id === undefined) {
 		global.account.id = global.account._id;
+	}
 
 	// URL Decode
-	var url_options = Ext.Object.fromQueryString(window.location.search)
+	var url_options = Ext.Object.fromQueryString(window.location.search);
 	log.debug(" + Url options: ", "[app]");
 	log.dump(url_options);
 
 	// Set env
-	ENV["fullscreenMode"] = url_options['fullscreenMode'] == 'true' ? true : false;
-	ENV["exportMode"] = url_options['exportMode'] == 'true' ? true : false;
-	ENV["reportMode"] = url_options['reportMode'] == 'true' ? true : false;
+	ENV["fullscreenMode"] = url_options['fullscreenMode'] === 'true' ? true : false;
+	ENV["exportMode"] = url_options['exportMode'] === 'true' ? true : false;
+	ENV["reportMode"] = url_options['reportMode'] === 'true' ? true : false;
 
 	checkLocale();
 
-	if (url_options['from']){
-		try{
+	if(url_options['from']) {
+		try {
 			ENV["from"] = parseInt(url_options['from']);
-		}catch(err){
+		}
+		catch(err) {
 			log.error("Impossible to parse: " + url_options['from'], "[app]");
 		}
 	}
 
-	if (url_options['to']){
-		try{
+	if(url_options['to']) {
+		try {
 			ENV["to"] = parseInt(url_options['to']);
-		}catch(err){
+		}
+		catch(err) {
 			log.error("Impossible to parse: " + url_options['to'], "[app]");
 		}
 	}
 
-	if (url_options['view_id'])
+	if(url_options['view_id']) {
 		ENV["view_id"] = url_options['view_id'];
-	
+	}
+
 	log.debug(" + ENV: ", "[app]");
 	log.dump(ENV);
 
-	//Answer to every error
+	// Answer to every error
 	Ext.Ajax.on('requestexception', function (conn, response, options) {
 		log.error('requestexception: ' + response.status + ': ' + response.statusText, "[app]");
-		if (response.status === 403) {
-			global.notify.notify(_('Server notification'),_('You have no sufficient rights'),'info')
+
+		if(response.status === 403) {
+			global.notify.notify(_('Server notification'), _('You have no sufficient rights'), 'info');
 		}
-		if (response.status === 500) {
-			global.notify.notify(_('Server error'),_('Unexpected server error'),'error')
+
+		if(response.status === 500) {
+			global.notify.notify(_('Server error'),_('Unexpected server error'),'error');
 		}
-		if (response.status === 400) {
-			global.notify.notify(_('Server error'), _(response.statusText), 'error')
+
+		if(response.status === 400) {
+			global.notify.notify(_('Server error'), _(response.statusText), 'error');
 		}
-		/*if (response.status === 404) {
-			global.notify.notify(_('Server notification'),_('The ressource you was looking for cannot be found'),'info')
-		}*/
 	});
 
 	log.debug("Start ExtJS application ...", "[app]");
 
+	var app = undefined;
+
 	// Route
-	if (ENV["exportMode"] || ENV["reportMode"])
-		exportApp();
-	else if (ENV["fullscreenMode"])
-		fullscreenApp();
-	else
-		normalApp();
+	if(ENV["exportMode"] || ENV["reportMode"]) {
+		app = exportApp();
+	}
+	else if(ENV["fullscreenMode"]) {
+		app = fullscreenApp();
+	}
+	else {
+		app = normalApp();
+	}
 
 	log.debug("Application started", "[app]");
 
+	return app;
 }
 
