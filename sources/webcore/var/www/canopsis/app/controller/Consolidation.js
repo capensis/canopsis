@@ -1,5 +1,4 @@
 /*
-#--------------------------------
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
@@ -16,7 +15,6 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
-# ---------------------------------
 */
 Ext.define('canopsis.controller.Consolidation', {
 	extend: 'canopsis.lib.controller.cgrid',
@@ -36,23 +34,27 @@ Ext.define('canopsis.controller.Consolidation', {
 		this.callParent(arguments);
 	},
 
-	_saveForm: function(form,store) {
-		if (form.record != undefined) {
+	_saveForm: function(form) {
+		if(form.record !== undefined) {
 			form.record.loaded = false;
 			form.record.nb_items = undefined;
 			form.record.output_engine = undefined;
 		}
+
 		this.callParent(arguments);
 	},
 
 	afterload_EditForm: function(form, item_copy) {
-		//checkboxgroup don't tick boxes, this code do.
+		// checkboxgroup don't tick boxes, this code do.
 		var operators = item_copy.get('consolidation_method');
-		if (!Ext.isArray(operators))
+
+		if(!Ext.isArray(operators)) {
 			operators = [operators];
-		
-		for (var i = 0; i < operators.length; i++)
+		}
+
+		for(var i = 0; i < operators.length; i++) {
 			form.down('checkbox[inputValue=' + operators[i] + ']').setValue(true);
+		}
 	},
 
 	afterload_DuplicateForm: function(form, item_copy) {
