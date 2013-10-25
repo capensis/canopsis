@@ -210,4 +210,10 @@ Ext.define('widgets.trends.trends' , {
 			});
 		}
 	},
+
+	processPostParam: function(post_param) {
+		delete post_param['from'];
+		delete post_param['to'];
+	}
+
 });

@@ -32,6 +32,7 @@ from bson.code import Code
 import time
 import json
 import logging
+import cmfilter
 
 class cselector(crecord):
 	def __init__(self, storage, _id=None, name=None, namespace='events', use_cache=True, record=None, cache_time=60, logging_level=None):
@@ -197,8 +198,7 @@ class cselector(crecord):
 		if not self.mfilter:
 			#mfilter is not set properly, then event shall match this invalid rule
 			return True
-		
-		import cmfilter
+				
 		return cmfilter.check(self.mfilter, event)
 	
 
