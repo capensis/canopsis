@@ -1,5 +1,4 @@
 /*
-#--------------------------------
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
@@ -16,7 +15,6 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
-# ---------------------------------
 */
 Ext.define('canopsis.controller.Account', {
 	extend: 'canopsis.lib.controller.cgrid',
@@ -122,6 +120,8 @@ Ext.define('canopsis.controller.Account', {
 					},
 					scope: me,
 					fn: function(buttonId, text, opt) {
+						void(text);
+
 						if(buttonId === 'yes') {
 							this.grid.store.remove(opt.inputSelection);
 						}
@@ -143,6 +143,8 @@ Ext.define('canopsis.controller.Account', {
 	},
 
 	beforeload_DuplicateForm: function(form, copy) {
+		void(form);
+
 		/* remove unique data */
 		copy.set('user', undefined);
 		copy.set('firstname', undefined);
@@ -285,10 +287,8 @@ Ext.define('canopsis.controller.Account', {
 		var already_exist = false;
 
 		// in creation mode
-		if(!form.editing) {
-			if(store.findExact('user', data['user']) >= 0) {
-				already_exist = true;
-			}
+		if(!form.editing && store.findExact('user', data['user']) >= 0) {
+			already_exist = true;
 		}
 
 		var field = form.findField('user');
@@ -375,8 +375,8 @@ Ext.define('canopsis.controller.Account', {
 
 	},
 
-	// if callback_func != null and ajax success -> callback is call in passed scope with
-	// new key as argument
+	// if the callback function is not null and ajax request is successful,
+	// then the callback is called in passed scope with new key as argument.
 	new_authkey: function(account, callback_func, scope) {
 		if(account) {
 			// ajax request
@@ -403,7 +403,7 @@ Ext.define('canopsis.controller.Account', {
 						log.error('Ajax output incorrect', this.logAuthor);
 					}
 				},
-				failure: function(response) {
+				failure: function() {
 					global.notify.notify(_('Error'), _('An error have occured during the updating process'), 'error');
 					log.error('Error while fetching new Authkey', this.logAuthor);
 				}
@@ -435,7 +435,7 @@ Ext.define('canopsis.controller.Account', {
 					log.error('Ajax output incorrect', this.logAuthor);
 				}
 			},
-			failure: function(response) {
+			failure: function() {
 				global.notify.notify(_('Error'), _('An error have occured during the process'), 'error');
 				log.error('Error while fetching new Authkey', this.logAuthor);
 			}
@@ -466,7 +466,7 @@ Ext.define('canopsis.controller.Account', {
 					log.error('Ajax output incorrect', this.logAuthor);
 				}
 			},
-			failure: function(response) {
+			failure: function() {
 				global.notify.notify(_('Error'), _('An error have occured during the process'), 'error');
 				log.error('Error while fetching new Authkey', this.logAuthor);
 			}
@@ -489,7 +489,7 @@ Ext.define('canopsis.controller.Account', {
 					log.error('Ajax output incorrect', this.logAuthor);
 				}
 			},
-			failure: function(response) {
+			failure: function() {
 				global.notify.notify(_('Error'), _('An error have occured during the process'), 'error');
 				log.error('Error while fetching new Authkey', this.logAuthor);
 			}
@@ -515,9 +515,9 @@ Ext.define('canopsis.controller.Account', {
 	},
 
 	setPassword: function(password){
-		var password = $.encoding.digests.hexSha1Str(password);
+		var passwd = $.encoding.digests.hexSha1Str(password);
 
-		this.setConfig("shadowpasswd", password, function() {
+		this.setConfig("shadowpasswd", passwd, function() {
 			global.notify.notify(_('Success'), _('Your password is updated'), 'success');
 		});
 	},
@@ -542,7 +542,7 @@ Ext.define('canopsis.controller.Account', {
 			params: {
 				value: avatar_id
 			},
-			success: function(response) {
+			success: function() {
 				global.notify.notify(_('Success'), _('Avatar setted'), 'success');
 				log.debug(' + Done', me.logAuthor);
 
@@ -552,7 +552,7 @@ Ext.define('canopsis.controller.Account', {
 				log.debug('Refresh Mainbar', me.logAuthor);
 				Ext.ComponentQuery.query('button[iconCls="icon-mainbar icon-avatar-bar"]')[0].setIcon('/account/getAvatar');
 			},
-			failure: function(response) {
+			failure: function() {
 				global.notify.notify(_('Failed'), _('Impossible to set this file as avatar'), 'error');
 				log.error('Impossible to set this file as avatar', me.logAuthor);
 			}
