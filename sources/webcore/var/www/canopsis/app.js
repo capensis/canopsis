@@ -1,5 +1,4 @@
 /*
-#--------------------------------
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
@@ -16,7 +15,6 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
-# ---------------------------------
 */
 
 function normalApp() {
@@ -80,7 +78,9 @@ function normalApp() {
 function exportApp() {
 	// parse dates
 	var to   = new Date().getTime();
-	var from = to - (86400 * 1000); // 1 day by default
+
+	// 1 day by default
+	var from = to - (86400 * 1000);
 
 	if(ENV["to"]) {
 		to = ENV["to"] * 1000;
@@ -103,7 +103,7 @@ function exportApp() {
 	}
 
 	var to_date = new Date(to);
-	log.debug(' + To:   ' + to_date + '(' + to + ')')
+	log.debug(' + To:   ' + to_date + '(' + to + ')');
 
 	var title = '';
 
@@ -139,7 +139,7 @@ function exportApp() {
 			this.getController('Widgets').on('loaded', this.createView);
 		},
 		createView: function() {
-			var content = Ext.create('canopsis.view.Tabs.Content',{
+			var content = Ext.create('canopsis.view.Tabs.Content', {
 				renderTo: 'container',
 				view_id: ENV['view_id'],
 				autoshow: true,
@@ -215,7 +215,7 @@ function checkLocale() {
 	log.debug("Loading locale:", "[app]");
 
 	log.debug(" + ENV:     " + ENV['locale'], "[app]");
-	global.locale = ENV['locale']
+	global.locale = ENV['locale'];
 
 	var cookie_locale = Ext.util.Cookies.get('locale');
 	log.debug(" + Cookie:  "+ cookie_locale, "[app]");
@@ -234,6 +234,8 @@ function checkLocale() {
 }
 
 function createApplication(account) {
+	void(account);
+
 	log.debug("Remove auth form ...", "[app]");
 
 	if(Ext.get('auth')) {
@@ -282,7 +284,9 @@ function createApplication(account) {
 	log.dump(ENV);
 
 	// Answer to every error
-	Ext.Ajax.on('requestexception', function (conn, response, options) {
+	Ext.Ajax.on('requestexception', function(conn, response, options) {
+		void(conn, options);
+
 		log.error('requestexception: ' + response.status + ': ' + response.statusText, "[app]");
 
 		if(response.status === 403) {

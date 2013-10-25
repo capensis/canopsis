@@ -20,7 +20,7 @@ casper.then(function(){
 	waitWhile("span.icon-save");
 	waitText("Casper");
 	casper.waitUntilVisible("div.ui-pnotify-container");
-})
+});
 
 cgridEditRecord(selector_account_form, 'lastname', 'Modified');
 

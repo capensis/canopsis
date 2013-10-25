@@ -30,7 +30,7 @@ casper.on('remote.message', function(msg) {
 	}
 });
 
-casper.test.on('fail', function(result) {
+casper.test.on('fail', function() {
 	casper.test.done();
 	casper.test.renderResults(true, 0, 'log.xml');
 });
@@ -50,6 +50,8 @@ function capture() {
 var capturer = undefined;
 
 function fill_field(selector, name, value) {
+	void(selector);
+
 	var options = {};
 	options[name] = value;
 
@@ -94,6 +96,8 @@ function clickRowLabel(label, dbl) {
 }
 
 function fillGridEditableField(selector, text) {
+	void(selector);
+
 	casper.sendKeys('.x-editor input', text);
 	casper.sendKeys('.x-editor input', '\n');
 }
@@ -104,7 +108,7 @@ function selectComboValue(comboName, comboValue) {
 
 		//because trigger is in the parent sibling
 		var trigger_id = casper.evaluate(function(comboName) {
-			return $('input[name="' + comboName + '"]').parent().next()[0].id
+			return $('input[name="' + comboName + '"]').parent().next()[0].id;
 		}, comboName);
 
 		click('#' + trigger_id + ' > div');
@@ -114,7 +118,7 @@ function selectComboValue(comboName, comboValue) {
 		casper.waitForText(comboValue, function() {
 			casper.clickLabel(comboValue, 'li');
 		}, timeout);
-	})
+	});
 }
 
 function clickLabel(label) {
@@ -155,12 +159,14 @@ function openMenu(menu_name, sub_menu_name, textToWait) {
 }
 
 function wait(selector, timeout, str_onSuccess, str_onFailed) {
+	void(timeout);
+
 	if(str_onSuccess === undefined) {
 		str_onSuccess = selector + " found";
 	}
 
 	if(str_onFailed === undefined) {
-		str_onFailed = "Impossible to find "+ selector;
+		str_onFailed = "Impossible to find " + selector;
 	}
 
 	casper.waitForSelector(selector, function() {
@@ -169,6 +175,8 @@ function wait(selector, timeout, str_onSuccess, str_onFailed) {
 }
 
 function waitWhile(selector, timeout, str_onSuccess, str_onFailed) {
+	void(timeout);
+
 	if(str_onSuccess === undefined) {
 		str_onSuccess = selector + " is not found";
 	}
@@ -184,7 +192,7 @@ function waitWhile(selector, timeout, str_onSuccess, str_onFailed) {
 			casper.test.pass(str_onSuccess);
 		});
 	}
-	else{
+	else {
 		casper.test.pass("'" + selector + "' already disappeared.");
 	}
 }
