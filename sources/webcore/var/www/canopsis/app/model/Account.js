@@ -31,7 +31,7 @@ Ext.define('canopsis.model.Account', {
 		{name: 'groups' , type: 'array'},
 		{name: 'passwd'},
 		{name: 'clock_type', defaultValue: 'auto'},
-		{name: 'enable', defaultValue:'true'},
+		{name: 'enable', defaultValue:true},
 		{name: 'external', defaultValue:false},
 
 		{name: 'aaa_access_group', defaultValue: undefined},
