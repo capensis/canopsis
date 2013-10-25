@@ -30,7 +30,7 @@ Ext.define('widgets.trends.trends' , {
 	interval: global.commonTs.hours,
 	aggregate_method: undefined,
 	aggregate_interval: 0,
-	aggregate_max_points: 1,
+	aggregate_max_points: 0,
 
 	item_height: 30,
 

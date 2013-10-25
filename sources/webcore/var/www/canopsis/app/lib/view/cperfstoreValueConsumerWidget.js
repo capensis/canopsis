@@ -75,7 +75,7 @@ Ext.define('canopsis.lib.view.cperfstoreValueConsumerWidget', {
 		return this.chart;
 	},
 
-	getParams: function(oFrom, oTo) {
+	getParams: function(from, to) {
 		var now = Ext.Date.now();
 		var post_params = [];
 
@@ -83,9 +83,7 @@ Ext.define('canopsis.lib.view.cperfstoreValueConsumerWidget', {
 			var nodeId = id;
 			var serieId = nodeId + '.' + node.metrics[0];
 			var serie = this.series !== undefined ? this.series[serieId] : undefined;
-			var from = oFrom;
-			var to = oTo;
-
+			
 			if(from) {
 				if(!this.reportMode) {
 					if(serie && serie['last_timestamp']) {
