@@ -85,8 +85,8 @@ function find_gcd(nums)
 	}
 
 	for(var r, a, i = nums.length - 1, GCDNum = nums[i]; i;) {
-		for(a = nums[--i]; r = a % GCDNum; a = GCDNum, GCDNum = r) {
-			;
+		for(a = nums[--i]; a % GCDNum; a = GCDNum, GCDNum = r) {
+			r = a % GCDNum;
 		}
 	}
 
@@ -100,10 +100,12 @@ function split_amqp_rk(rk) {
 	if(srk[2] === 'check') {
 		var component;
 		var resource;
+		var expr;
+		var result;
 
 		if(srk[3] === 'resource') {
-			var expr = /^(\w*)\.(\w*)\.(\w*)\.(\w*)\.(.*)\.([\w\-]*)$/g;
-			var result = expr.exec(rk);
+			expr = /^(\w*)\.(\w*)\.(\w*)\.(\w*)\.(.*)\.([\w\-]*)$/g;
+			result = expr.exec(rk);
 
 			if(result) {
 				component = result[5];
@@ -111,8 +113,8 @@ function split_amqp_rk(rk) {
 			}
 		}
 		else {
-			var expr = /^(\w*)\.(\w*)\.(\w*)\.(\w*)\.(.*)$/g;
-			var result = expr.exec(rk);
+			expr = /^(\w*)\.(\w*)\.(\w*)\.(\w*)\.(.*)$/g;
+			result = expr.exec(rk);
 
 			if(result) {
 				component = result[5];
@@ -184,8 +186,8 @@ function check_color(color) {
 	}
 
 	//Clean color
-	while(color.charAt(0) == '#') {
-		color = color.slice(1)
+	while(color.charAt(0) === '#') {
+		color = color.slice(1);
 	}
 
 	return '#' + color;
@@ -196,11 +198,13 @@ function strip_blanks(val) {
 }
 
 function strip_return(val){
-	return val.replace(/\n/g, '')
+	return val.replace(/\n/g, '');
 }
 
 function stringTo24h(src_time) {
 	var time = src_time.split(' ');
+	var minute = undefined;
+	var hour = undefined;
 
 	if(time.length > 1) {
 		// Format 12h
@@ -208,8 +212,8 @@ function stringTo24h(src_time) {
 		var clock = time[0];
 
 		clock = clock.split(':');
-		var minute = parseInt(clock[1], 10);
-		var hour = parseInt(clock[0], 10);
+		minute = parseInt(clock[1], 10);
+		hour = parseInt(clock[0], 10);
 
 		if(hour_type === 'am' && hour === 12) {
 			hour = 0;
@@ -221,10 +225,10 @@ function stringTo24h(src_time) {
 	}
 	else {
 		// Format 24h
-		var time = src_time.split(':');
+		time = src_time.split(':');
 
-		var minute = time[1];
-		var hour = time[0];
+		minute = time[1];
+		hour = time[0];
 	}
 
 	return {
@@ -234,6 +238,8 @@ function stringTo24h(src_time) {
 }
 
 function updateRecord(namespace, crecord_type, model, _id, data, on_success, on_error) {
+	void(model);
+
 	var logAuthor = '[tools][updateRecord]';
 
 	if(!data) {
@@ -341,7 +347,7 @@ function is12Clock() {
 
 	if(global.account !== undefined) {
 		if(global.account.clock_type && global.account.clock_type !== 'auto') {
-			global.is12Clock = global.account.clock_type == '12h';
+			global.is12Clock = global.account.clock_type === '12h';
 		}
 		else {
 			global.is12Clock = Ext.Array.contains(global.am_pm_lang, global.locale);
@@ -410,11 +416,9 @@ function sciToDec(number) {
 	}
 
 	if(val.match(/^[-+]?[1-9]\.[0-9]+e[-]?[1-9][0-9]*$/)) {
-		var arr = new Array();
-		arr = scinum.split('e');
+		var arr = scinum.split('e');
 
-		var exponent = Math.abs(arr[1]);
-		var precision = new Number(exponent);
+		var precision = Math.abs(arr[1]);
 
 		arr = arr[0].split('.');
 		precision += arr[1].length;

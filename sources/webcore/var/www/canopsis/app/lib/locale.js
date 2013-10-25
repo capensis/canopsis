@@ -68,10 +68,8 @@ function _(text, context) {
 	}
 
 	// Translate failed
-	if(global && global.log.level > 4) {
-		if(!Ext.Array.contains(global.untranslated, text)) {
-			global.untranslated.push(text);
-		}
+	if(global && global.log.level > 4 && !Ext.Array.contains(global.untranslated, text)) {
+		global.untranslated.push(text);
 	}
 
 	if(global && global.log.level > 4) {
