@@ -45,10 +45,10 @@ Ext.define('canopsis.controller.Ldap', {
 			var record = store.getAt(0);
 
 			if(record) {
-				this._editRecord(undefined, record, 0, store)
+				this._editRecord(undefined, record, 0, store);
 			}
 			else {
-				this._showForm(undefined, store)
+				this._showForm(undefined, store);
 			}
 
 		}, this, {single: true});
