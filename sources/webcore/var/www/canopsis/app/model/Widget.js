@@ -19,27 +19,27 @@
 # ---------------------------------
 */
 Ext.define('canopsis.model.Widget', {
-    extend: 'Ext.data.Model',
-    fields: [
+	extend: 'Ext.data.Model',
+	fields: [
 		{name: 'name'},
-		{name: 'description',	defaultValue: undefined},
-		{name: 'description-fr',	defaultValue: undefined},
-		{name: 'version',	defaultValue: undefined},
-		{name: 'author',	defaultValue: undefined},
-		{name: 'website',	defaultValue: undefined},
-		{name: 'options',	defaultValue: undefined},
+		{name: 'description', defaultValue: undefined},
+		{name: 'description-fr', defaultValue: undefined},
+		{name: 'version', defaultValue: undefined},
+		{name: 'author', defaultValue: undefined},
+		{name: 'website', defaultValue: undefined},
+		{name: 'options', defaultValue: undefined},
 		{name: 'xtype'},
 		{name: 'thumb'},
-		{name: 'colspan',	defaultValue: 1},
-		{name: 'rowspan',	defaultValue: 1},
+		{name: 'colspan', defaultValue: 1},
+		{name: 'rowspan', defaultValue: 1},
 		{name: 'refreshInterval', defaultValue: undefined},
-		{name: 'nodeId',	defaultValue: undefined},
+		{name: 'nodeId', defaultValue: undefined},
 		{name: 'title', defaultValue: undefined},
 		{name: 'border', defaultValue: false},
-		{name: 'rowHeight',	defaultValue: undefined},
-		{name: 'formWidth',	defaultValue: 350},
-		{name: 'locales',	defaultValue: undefined},
-		{name: 'disabled',	defaultValue: false},
-		{name: 'thirdparty',defaultValue: false}
-		]
+		{name: 'rowHeight', defaultValue: undefined},
+		{name: 'formWidth', defaultValue: 350},
+		{name: 'locales', defaultValue: undefined},
+		{name: 'disabled', defaultValue: false},
+		{name: 'thirdparty', defaultValue: false}
+	]
 });

@@ -1,5 +1,4 @@
 /*
-#--------------------------------
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
@@ -16,11 +15,10 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
-# ---------------------------------
 */
 Ext.define('canopsis.model.Rule', {
-    extend: 'Ext.data.Model',
-    fields: [
+	extend: 'Ext.data.Model',
+	fields: [
 		{name: '_id'},
 		{name: 'id', mapping: '_id'},
 		{name: 'crecord_type'},
