@@ -27,17 +27,13 @@ Ext.define('canopsis.store.Views', {
 
 	listeners: {
 		remove: function() {
-			if(this.storeId !== 'Tabs') {
-				if(global.websocketCtrl) {
-					global.websocketCtrl.publish_event('store', this.storeId, 'remove');
-				}
+			if(this.storeId !== 'Tabs' && global.websocketCtrl) {
+				global.websocketCtrl.publish_event('store', this.storeId, 'remove');
 			}
 		},
 		update: function() {
-			if(this.storeId !== 'Tabs') {
-				if(global.websocketCtrl) {
-					global.websocketCtrl.publish_event('store', this.storeId, 'update');
-				}
+			if(this.storeId !== 'Tabs' && global.websocketCtrl) {
+				global.websocketCtrl.publish_event('store', this.storeId, 'update');
 			}
 		}
 	},
