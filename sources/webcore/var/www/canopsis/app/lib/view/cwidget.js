@@ -95,12 +95,10 @@ Ext.define('canopsis.lib.view.cwidget' , {
 		}
 
 		//Compatibility
-		if(this.nodes) {
-			if(this.nodes.length > 0) {
-				log.debug('Nodes:', this.logAuthor);
-				log.dump(this.nodes);
-				this.nodeId = this.nodes;
-			}
+		if(this.nodes && this.nodes.length > 0) {
+			log.debug('Nodes:', this.logAuthor);
+			log.dump(this.nodes);
+			this.nodeId = this.nodes;
 		}
 
 		if(this.inventory) {

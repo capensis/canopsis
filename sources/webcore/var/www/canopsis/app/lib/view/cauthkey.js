@@ -77,10 +77,6 @@ Ext.define('canopsis.lib.view.cauthkey', {
 		}
 
 		// build link helper
-		var configHelper = {
-			margin: '20 0 0 0'
-		};
-
 		this.panelHelper = Ext.create('Ext.panel.Panel', formConfig);
 
 		this.items = Ext.create('Ext.panel.Panel', {

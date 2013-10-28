@@ -220,15 +220,14 @@ Ext.define('canopsis.lib.view.crights' , {
 			method: 'PUT',
 			params: params,
 			scope: this,
-			success: function(response) {
-				var text = response.responseText;
+			success: function() {
 				global.notify.notify(_('Success'), _('Rights updated'), 'success');
 				//close the window
 				this.fireEvent('save');
 				this.close();
 			},
 			failure: function(response) {
-				if(response.status == 403) {
+				if(response.status === 403) {
 					global.notify.notify(_('Access denied'), _('You don\'t have the rights to modify this object'), 'error');
 					log.error(_('Access denied'));
 				}

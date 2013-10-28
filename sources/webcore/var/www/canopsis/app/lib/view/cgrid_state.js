@@ -31,7 +31,6 @@ Ext.define('canopsis.lib.view.cgrid_state' , {
 
 	opt_column_sortable: false,
 
-	opt_show_state_type: true,
 	opt_show_component: false,
 	opt_show_resource: true,
 	opt_show_state: true,
@@ -199,7 +198,7 @@ Ext.define('canopsis.lib.view.cgrid_state' , {
 		this.callParent(arguments);
 	},
 
-	coloringRow: function(record,index,rowParams,store) {
+	coloringRow: function(record) {
 		state = record.get('state');
 
 		if(state === 0) {

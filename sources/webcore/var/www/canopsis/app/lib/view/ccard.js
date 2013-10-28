@@ -42,7 +42,7 @@ Ext.define('canopsis.lib.view.ccard' , {
 			align: 'stretch'
 		},
 		defaults: {
-			autoScroll: true,
+			autoScroll: true
 		}
 	},
 
@@ -214,7 +214,7 @@ Ext.define('canopsis.lib.view.ccard' , {
 			this.contentPanel.remove(contentToDel[i], true);
 		}
 
-		for(var i = 0; i < buttonToDel.length; i++) {
+		for(i = 0; i < buttonToDel.length; i++) {
 			this.buttonPanel.remove(buttonToDel[i], true);
 		}
 	},
@@ -304,7 +304,7 @@ Ext.define('canopsis.lib.view.ccard' , {
 
 	isLastPanel : function(){
 		var button = undefined;
-		var i = this.activeButton + 1
+		var i = this.activeButton + 1;
 
 		do {
 			button = this.getButton(i);
