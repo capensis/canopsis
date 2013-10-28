@@ -161,6 +161,7 @@ Ext.define('canopsis.lib.controller.cgrid', {
 
 		//bind keynav
 		var textfields = Ext.ComponentQuery.query('#' + id + ' textfield[name=searchField]');
+		var textfield = undefined;
 
 		var textfield_afterrender = function() {
 			var keynav_config = {
@@ -172,7 +173,7 @@ Ext.define('canopsis.lib.controller.cgrid', {
 		};
 
 		for(i = 0; i < textfields.length; i++) {
-			var textfield = textfields[i];
+			textfield = textfields[i];
 
 			//HACK : because sometimes this field is really long to render
 			if(!textfield.el) {
