@@ -81,7 +81,9 @@ Ext.define('canopsis.lib.form.field.cduration' , {
 
 	},
 
-	checkDisable: function(comb,value) {
+	checkDisable: function(combo, value) {
+		void(combo);
+
 		if(value[0].raw.value) {
 			this.ts_window.setDisabled(false);
 		}

@@ -335,7 +335,9 @@ Ext.define('cfilter.object', {
 		}
 	},
 
-	fieldChange: function(combo,records) {
+	fieldChange: function(combo, records) {
+		void(combo);
+
 		log.debug('Field changed', this.logAuthor);
 
 		var record = undefined;
@@ -353,7 +355,7 @@ Ext.define('cfilter.object', {
 			allowed_type = record.get('type');
 		}
 
-		if(allowed_type) {
+		if(!allowed_type) {
 			if(allowed_type !== 'all') {
 				if (allowed_type === 'object') {
 					if(!this.haveInnerCfilter) {
@@ -416,6 +418,8 @@ Ext.define('cfilter.object', {
 	},
 
 	operatorChange: function(combo, record_or_records) {
+		void(combo);
+
 		log.debug('Operator changed', this.logAuthor);
 		var operatorRecord = undefined;
 
@@ -575,6 +579,7 @@ Ext.define('cfilter.object', {
 
 		var key = Ext.Object.getKeys(filter)[0];
 		var value = filter[key];
+		var type = undefined;
 
 		this.cfilterField.setValue(key);
 
@@ -591,7 +596,7 @@ Ext.define('cfilter.object', {
 		this.fieldChange();
 
 		if(!Ext.isObject(value)) {
-			var type = this.getValueType();
+			type = this.getValueType();
 			this.down('*[cfilterField=true][cfilterType=' + type + ']').setValue(value);
 			this.showOnValueType(type);
 			return;
@@ -614,7 +619,7 @@ Ext.define('cfilter.object', {
 			this.cfilterOperator.setValue(key);
 		}
 
-		var type = this.getValueType();
+		type = this.getValueType();
 		this.down('*[cfilterField=true][cfilterType=' + type + ']').setValue(value);
 		this.showOnValueType(type);
 	}
@@ -799,7 +804,7 @@ Ext.define('canopsis.lib.form.field.cfilter', {
 		}
 
 		try {
-			var obj = Ext.decode(value);
+			Ext.decode(value);
 		}
 		catch (err) {
 			return 'Error: invalid JSON';
@@ -881,7 +886,7 @@ Ext.define('canopsis.lib.form.field.cfilter', {
 		}
 		else {
 			this.wizard_button.setDisabled(true);
-			this.clean_button.setDisabled(false)
+			this.clean_button.setDisabled(false);
 		}
 
 		if(edit) {

@@ -150,7 +150,7 @@ Ext.define('canopsis.lib.form.field.cinventory' , {
 			log.debug(' + Selection grid', this.logAuthor);
 
 			this.selection_render = function(value, p, record) {
-				void(p, record);
+				void(value, p);
 
 				var node = '';
 
@@ -179,7 +179,6 @@ Ext.define('canopsis.lib.form.field.cinventory' , {
 				border: true,
 				multiSelect: this.multiSelect,
 				opt_bar: false,
-				border: true,
 				opt_allow_edit: false,
 				opt_paging: false,
 				flex: 1,
@@ -260,14 +259,13 @@ Ext.define('canopsis.lib.form.field.cinventory' , {
 
 				if(this.additional_field.name === 'link') {
 					editor_config.renderer = function(val) {
-						//this = selection_grid_config
 						if(!val) {
 							return Ext.String.format('<span style="color:grey">{0}</span>', this.emptyText);
 						}
 						else {
 							return val;
 						}
-					}
+					}:
 				}
 
 				selection_grid_config.columns.push(editor_config);
@@ -316,7 +314,6 @@ Ext.define('canopsis.lib.form.field.cinventory' , {
 			opt_bar_search_field: ['_id'],
 			border: this.search_grid_border,
 			opt_paging: true,
-			multiSelect: this.multiSelect,
 			flex: 2,
 			store: this.search_store,
 			columns: this.columns,
@@ -355,7 +352,7 @@ Ext.define('canopsis.lib.form.field.cinventory' , {
 			this.selection_grid.getView().on('beforedrop', function(event, data) {
 				var records = data.records;
 
-				if(data.view.id != this.selection_grid.getView().id) {
+				if(data.view.id !== this.selection_grid.getView().id) {
 					for(var i = 0; i < records.length; i++) {
 						this.addRecord(records[i]);
 					}
@@ -423,8 +420,8 @@ Ext.define('canopsis.lib.form.field.cinventory' , {
 				if(this.additional_field) {
 					var additional_value = record.data[this.additional_field.name];
 					//double id is for compatibility
-					obj['id'] = id
-					obj['_id'] = id
+					obj['id'] = id;
+					obj['_id'] = id;
 					obj[this.additional_field.name] = additional_value;
 					dump.push(obj);
 				}

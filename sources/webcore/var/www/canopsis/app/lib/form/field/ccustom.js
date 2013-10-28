@@ -140,8 +140,8 @@ Ext.define('canopsis.lib.form.field.ccustom', {
 			var values = this.getForm().getValues(false, false, false, true);
 
 			if(this.sourceRecord) {
-				this.sourceRecord.beginEdit()
-				this.sourceRecord.set(values)
+				this.sourceRecord.beginEdit();
+				this.sourceRecord.set(values);
 				this.sourceRecord.endEdit(true);
 			}
 		}, panel);

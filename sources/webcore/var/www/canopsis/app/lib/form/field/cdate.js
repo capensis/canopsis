@@ -47,7 +47,9 @@ Ext.define('canopsis.lib.form.field.cdate', {
 		}
 
 		var config = {
-			isFormField: false, //upper form does not retrieve this element
+			//upper form does not retrieve this element
+			isFormField: false,
+
 			labelWidth: this.date_label_width,
 			value: this.date_value,
 			editable: false,
@@ -62,7 +64,7 @@ Ext.define('canopsis.lib.form.field.cdate', {
 
 		this.date = Ext.widget('datefield', config);
 
-		var config = {
+		config = {
 			isFormField: false,
 			margin: '0 0 0 2',
 			width: this.hour_width,
@@ -96,7 +98,7 @@ Ext.define('canopsis.lib.form.field.cdate', {
 		this.relayEvents(this.date, ['select']);
 
 		if(this.value) {
-			this.setValue(this.value)
+			this.setValue(this.value);
 		}
 	},
 
