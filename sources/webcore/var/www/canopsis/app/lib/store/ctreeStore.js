@@ -1,5 +1,4 @@
 /*
-#--------------------------------
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
@@ -16,7 +15,6 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
-# ---------------------------------
 */
 Ext.define('canopsis.lib.store.ctreeStore', {
 	extend: 'Ext.data.TreeStore',
@@ -24,39 +22,48 @@ Ext.define('canopsis.lib.store.ctreeStore', {
 	autoLocalization: false,
 
 	constructor: function(config) {
-        this.callParent([config]);
+		this.callParent([config]);
+		this.proxy.on('exception', this._manage_exception, this);
+	},
 
-        this.proxy.on('exception', this._manage_exception, this);
-    },
-
-    listeners: {
-    	move: function(node, oldParent, newParent, index, options ) {
-				this.sync();
+	listeners: {
+		move: function() {
+			this.sync();
 		},
-		write: function( store, operation, eOpts){
-			this.displaySuccess(store,operation,eOpts)
-			if (operation.success && this.afterCorrectWrite)
-				this.afterCorrectWrite()
-		}
-   },
+		write: function(store, operation) {
+			void(store);
 
-   displaySuccess: function(store, operation,option) {
-		if (operation.success) {
-			if (operation.action == 'create')
-				global.notify.notify(_('Success'), _('Record saved'), 'success');
-			if (operation.action == 'destroy')
-				global.notify.notify(_('Success'), _('Record deleted'), 'success');
-			if (operation.action == 'update')
-				global.notify.notify(_('Success'), _('Record updated'), 'success');
+			this.displaySuccess(operation);
+
+			if(operation.success && this.afterCorrectWrite) {
+				this.afterCorrectWrite();
+			}
 		}
 	},
 
-   	_manage_exception: function(store, request, options) {
-		if (request.status == 403) {
+	displaySuccess: function(operation) {
+		if (operation.success) {
+			if(operation.action === 'create') {
+				global.notify.notify(_('Success'), _('Record saved'), 'success');
+			}
+			else if (operation.action === 'destroy') {
+				global.notify.notify(_('Success'), _('Record deleted'), 'success');
+			}
+			else if (operation.action === 'update') {
+				global.notify.notify(_('Success'), _('Record updated'), 'success');
+			}
+		}
+	},
+
+	_manage_exception: function(store, request) {
+		void(store);
+
+		if(request.status === 403) {
 			global.notify.notify(_('Access denied'), _('You don\'t have the rights to modify this object'), 'error');
 			log.error(_('Access denied'));
 			this.load();
-		}else {
+		}
+		else {
 			log.error(_('Error while store synchronisation with server'));
 		}
 	}
