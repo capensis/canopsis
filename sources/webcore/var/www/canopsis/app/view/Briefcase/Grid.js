@@ -1,5 +1,4 @@
 /*
-#--------------------------------
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
@@ -16,7 +15,6 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
-# ---------------------------------
 */
 Ext.define('canopsis.view.Briefcase.Grid' , {
 	extend: 'canopsis.lib.view.cgrid',
@@ -31,8 +29,6 @@ Ext.define('canopsis.view.Briefcase.Grid' , {
 	opt_bar_add: false,
 	opt_view_element: true,
 	opt_menu_rights: true,
-	//opt_bar_download: true,
-	//opt_menu_send_mail:true,
 
 	opt_menu_rename: true,
 	opt_menu_set_avatar: true,
@@ -43,7 +39,10 @@ Ext.define('canopsis.view.Briefcase.Grid' , {
 	opt_bar_search_field: ['file_name'],
 
 	opt_bar_customs: [{
-		text: 'Add', xtype: 'button', iconCls: 'icon-add', handler: function() {
+		text: 'Add',
+		xtype: 'button',
+		iconCls: 'icon-add',
+		handler: function() {
 			var addFileWindow = Ext.create('canopsis.view.Briefcase.Uploader');
 			addFileWindow.show();
 		}
@@ -55,7 +54,7 @@ Ext.define('canopsis.view.Briefcase.Grid' , {
 			sortable: false,
 			renderer: rdr_file_type,
 			dataIndex: 'content_type'
-        },{
+		},{
 			header: _('Creation date'),
 			flex: 1,
 			sortable: true,
@@ -98,16 +97,18 @@ Ext.define('canopsis.view.Briefcase.Grid' , {
 	],
 
 	toggleSearchBarButtons: function(button, state) {
-		var state = state || false;
+		if(!state) {
+			state = false;
+		}
+
 		var tbar = this.getTbar();
 		var items = tbar.items.items;
-		
-		for (var y=0;y <items.length;y++) {
+
+		for(var y = 0; y < items.length; y++) {
 			var item = items[y];
-			if (item.xtype == "button") {
-				if (item != button) {
-					item.toggle(state);
-				}
+
+			if(item.xtype === "button" && item !== button) {
+				item.toggle(state);
 			}
 		}
 	},
@@ -121,15 +122,17 @@ Ext.define('canopsis.view.Briefcase.Grid' , {
 			enableToggle: true,
 			scope: this,
 			toggleHandler: function(button, state) {
-				if (state) {
+				if(state) {
 					button.filter_id = this.store.addFilter(
 						{'content_type': 'application/pdf'}
 					);
+
 					this.toggleSearchBarButtons(button, false);
-				} else {
-					if (button.filter_id)
-						this.store.deleteFilter(button.filter_id);
 				}
+				else if(button.filter_id) {
+					this.store.deleteFilter(button.filter_id);
+				}
+
 				this.store.load();
 			}
 		},{
@@ -140,15 +143,17 @@ Ext.define('canopsis.view.Briefcase.Grid' , {
 			enableToggle: true,
 			scope: this,
 			toggleHandler: function(button, state) {
-				if (state) {
+				if(state) {
 					button.filter_id = this.store.addFilter(
 						{'content_type': { $in: ['image/png', 'image/jpeg', 'image/gif', 'image/jpg']}}
 					);
+
 					this.toggleSearchBarButtons(button, false);
-				} else {
-					if (button.filter_id)
-						this.store.deleteFilter(button.filter_id);
 				}
+				else if(button.filter_id) {
+					this.store.deleteFilter(button.filter_id);
+				}
+
 				this.store.load();
 			}
 		},{
@@ -159,15 +164,17 @@ Ext.define('canopsis.view.Briefcase.Grid' , {
 			enableToggle: true,
 			scope: this,
 			toggleHandler: function(button, state) {
-				if (state) {
+				if(state) {
 					button.filter_id = this.store.addFilter(
 						{'content_type': 'video/ogg'}
 					);
+
 					this.toggleSearchBarButtons(button, false);
-				} else {
-					if (button.filter_id)
-						this.store.deleteFilter(button.filter_id);
 				}
+				else if(button.filter_id) {
+					this.store.deleteFilter(button.filter_id);
+				}
+
 				this.store.load();
 			}
 		},{
@@ -178,18 +185,21 @@ Ext.define('canopsis.view.Briefcase.Grid' , {
 			enableToggle: true,
 			scope: this,
 			toggleHandler: function(button, state) {
-				if (state) {
+				if(state) {
 					button.filter_id = this.store.addFilter(
 						{'content_type': null}
 					);
+
 					this.toggleSearchBarButtons(button, false);
-				} else {
-					if (button.filter_id)
-						this.store.deleteFilter(button.filter_id);
 				}
+				else if(button.filter_id) {
+					this.store.deleteFilter(button.filter_id);
+				}
+
 				this.store.load();
 			}
 		},'-'],
+
 		this.ctrl = Ext.create('canopsis.lib.controller.cgrid');
 		this.callParent(arguments);
 	}
