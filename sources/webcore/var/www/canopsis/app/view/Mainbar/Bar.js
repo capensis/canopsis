@@ -151,7 +151,6 @@ Ext.define('canopsis.view.Mainbar.Bar' , {
 			emptyText: _('Select a view') + ' ...',
 			value: global.account['dashboard'],
 			width: 200,
-			iconCls: 'no-icon'
 		});
 
 		// Hide  menu when item are selected
@@ -392,7 +391,7 @@ Ext.define('canopsis.view.Mainbar.Bar' , {
 					var win = Ext.create("canopsis.view.Account.Password");
 					win.show();
 				}
-			}
+			};
 		}
 
 		//Preferences menu
@@ -529,7 +528,7 @@ Ext.define('canopsis.view.Mainbar.Bar' , {
 	afterRender: function() {
 		this.callParent(arguments);
 
-		var tip = Ext.create('Ext.tip.ToolTip', {
+		Ext.create('Ext.tip.ToolTip', {
 			target: Ext.getCmp('Mainbar-menu-Websocket').el,
 			renderTo: Ext.getBody(),
 			_htmlRender: function() {
