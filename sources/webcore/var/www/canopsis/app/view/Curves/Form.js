@@ -1,5 +1,4 @@
 /*
-#--------------------------------
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
@@ -16,7 +15,6 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
-# ---------------------------------
 */
 Ext.define('canopsis.view.Curves.Form', {
 	extend: 'canopsis.lib.view.cform',
@@ -50,19 +48,19 @@ Ext.define('canopsis.view.Curves.Form', {
 				xtype: 'store',
 				fields: ['value', 'text'],
 				data: [
-					{value: 'Solid',	text: _('Solid')},
-					{value: 'ShortDash',	text: _('ShortDash')},
-					{value: 'ShortDot',	text: _('ShortDot')},
-					{value: 'ShortDashDot',	text: _('ShortDashDot')},
-					{value: 'ShortDashDotDot',	text: _('ShortDashDotDot')},
-					{value: 'Dot',	text: _('Dot')},
-					{value: 'Dash',	text: _('Dash')},
-					{value: 'LongDash',	text: _('LongDash')},
-					{value: 'DashDot',	text: _('DashDot')},
-					{value: 'LongDashDot',	text: _('LongDashDot')},
-					{value: 'LongDashDotDot',	text: _('LongDashDotDot')}
-					]
-				}
+					{value: 'Solid', text: _('Solid')},
+					{value: 'ShortDash', text: _('ShortDash')},
+					{value: 'ShortDot', text: _('ShortDot')},
+					{value: 'ShortDashDot', text: _('ShortDashDot')},
+					{value: 'ShortDashDotDot', text: _('ShortDashDotDot')},
+					{value: 'Dot', text: _('Dot')},
+					{value: 'Dash', text: _('Dash')},
+					{value: 'LongDash', text: _('LongDash')},
+					{value: 'DashDot', text: _('DashDot')},
+					{value: 'LongDashDot', text: _('LongDashDot')},
+					{value: 'LongDashDotDot', text: _('LongDashDotDot')}
+				]
+			}
 		},{
 			xtype: 'colorfield',
 			colors: global.default_colors,
@@ -93,6 +91,6 @@ Ext.define('canopsis.view.Curves.Form', {
 			name: 'invert',
 			inputValue: true,
 			uncheckedValue: false
-		}]
-
+		}
+	]
 });
