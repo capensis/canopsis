@@ -194,7 +194,6 @@ Ext.define('canopsis.lib.controller.ctree', {
 
 	_duplicateButton: function() {
 		log.debug('duplicate', this.logAuthor);
-		var tree = this.tree;
 
 		if(this.duplicateButton) {
 			this.duplicateButton();
@@ -223,7 +222,7 @@ Ext.define('canopsis.lib.controller.ctree', {
 
 		if(verification === true) {
 			Ext.MessageBox.confirm(_('Confirm'), _('Are you sure you want to delete') + ' ' + selection.length + ' ' + _('items') + ' ?',
-				function(btn, text) {
+				function(btn) {
 					if(btn === 'yes') {
 						for(i = 0; i < selection.length; i++) {
 							selection[i].remove();
@@ -297,6 +296,8 @@ Ext.define('canopsis.lib.controller.ctree', {
 	},
 
 	_showMenu: function(view, rec, node, index, e) {
+		void(node, index);
+
 		var selection = this.tree.getSelectionModel().getSelection();
 
 		if(selection.length < 2) {
