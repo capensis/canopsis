@@ -140,7 +140,7 @@ Ext.define('canopsis.lib.controller.cgrid', {
 				btns[i].on('click', this.timeDisplay, this);
 			}
 			else {
-				if(this.grid.opt_simple_search == true) {
+				if(this.grid.opt_simple_search === true) {
 					btns[i].on('click', this._searchRecordSimple, this);
 				}
 				else {
@@ -150,33 +150,37 @@ Ext.define('canopsis.lib.controller.cgrid', {
 		}
 
 		btns = Ext.ComponentQuery.query('#' + id + ' button[action=clean_search]');
+		var click_handler = function() {
+			this.grid.down('textfield[name=searchField]').setValue('');
+			this._searchRecord();
+		};
 
 		for(i = 0; i < btns.length; i++) {
-			btns[i].on('click', function() {
-				this.grid.down('textfield[name=searchField]').setValue('');
-				this._searchRecord();
-			}, this);
+			btns[i].on('click', click_handler, this);
 		}
 
 		//bind keynav
 		var textfields = Ext.ComponentQuery.query('#' + id + ' textfield[name=searchField]');
-		var keynav_config = {
-			scope: this,
-			enter: (this.grid.opt_simple_search === true) ? this._searchRecordSimple : this._searchRecord
+
+		var textfield_afterrender = function() {
+			var keynav_config = {
+				scope: this,
+				enter: (this.grid.opt_simple_search === true) ? this._searchRecordSimple : this._searchRecord
+			};
+
+			var keynav = new Ext.util.KeyNav(textfield.id, keynav_config);
 		};
 
 		for(i = 0; i < textfields.length; i++) {
-				var textfield = textfields[i];
+			var textfield = textfields[i];
 
-				//HACK : because sometimes this field is really long to render
-				if(!textfield.el) {
-					textfield.on('afterrender', function() {
-						new Ext.util.KeyNav(textfield.id, keynav_config);
-					}, this);
-				}
-				else {
-					new Ext.util.KeyNav(textfield.id, keynav_config);
-				}
+			//HACK : because sometimes this field is really long to render
+			if(!textfield.el) {
+				textfield.on('afterrender', textfield_afterrender, this);
+			}
+			else {
+				textfield_afterrender();
+			}
 		}
 
 		if(grid.opt_keynav_del) {
@@ -247,20 +251,22 @@ Ext.define('canopsis.lib.controller.cgrid', {
 
 		// Save buttons
 		var btns = Ext.ComponentQuery.query('#' + id + ' button[action=save]');
+		var btns_click = function() {
+			this._saveForm(form);
+		};
 
 		for(var i = 0; i < btns.length; i++) {
-			btns[i].on('click', function() {
-				this._saveForm(form);
-			}, this);
+			btns[i].on('click', btns_click, this);
 		}
 
 		// Cancel buttons
 		btns = Ext.ComponentQuery.query('#' + id + ' button[action=cancel]');
+		btns_click = function() {
+			this._cancelForm(form);
+		};
 
 		for(i = 0; i < btns.length; i++) {
-			btns[i].on('click', function() {
-				this._cancelForm(form);
-			}, this);
+			btns[i].on('click', btns_click, this);
 		}
 	},
 
@@ -271,7 +277,9 @@ Ext.define('canopsis.lib.controller.cgrid', {
 		this.grid.store.load();
 	},
 
-	_select: function(record, index, eOpts) {
+	_select: function(record, index) {
+		void(record);
+
 		log.debug('select', this.logAuthor);
 
 		if(this.grid.opt_show_ack) {
@@ -337,7 +345,7 @@ Ext.define('canopsis.lib.controller.cgrid', {
 
 	},
 
-	_viewElement: function(view, item, index) {
+	_viewElement: function() {
 		log.debug('Clicked on element, function viewElement', this.logAuthor);
 	},
 
@@ -369,7 +377,7 @@ Ext.define('canopsis.lib.controller.cgrid', {
 
 			if(authorized === true) {
 				Ext.MessageBox.confirm(_('Confirm'), _('Are you sure you want to delete') + ' ' + selection.length + ' ' + _('items') + ' ?',
-					function(btn, text) {
+					function(btn) {
 						if(btn === 'yes') {
 							log.debug('Remove records', me.logAuthor);
 							grid.store.remove(selection);
@@ -389,7 +397,6 @@ Ext.define('canopsis.lib.controller.cgrid', {
 	_changeAckStatus: function() {
 		log.debug('Clicked ack change status Button', this.logAuthor);
 		var grid = this.grid;
-		var store = grid.getStore();
 		var change = true;
 		grid.store.suspendAutoSync();
 
@@ -399,7 +406,6 @@ Ext.define('canopsis.lib.controller.cgrid', {
 		record.suspendEvents();
 
 		var ack = record.get('ack');
-		var edit = true;
 
 		if(!ack) {
 			record.set('ack', 'cancel');
@@ -456,7 +462,10 @@ Ext.define('canopsis.lib.controller.cgrid', {
 
 			crights = Ext.create('canopsis.lib.view.crights', config);
 			//listen to save event to refresh store
-			crights.on('save', function() {grid.store.load()},this);
+			crights.on('save', function() {
+				grid.store.load();
+			}, this);
+
 			crights.show();
 		}
 		else {
@@ -499,7 +508,7 @@ Ext.define('canopsis.lib.controller.cgrid', {
 				//HACK anti set value crash, model doesn't accept unknown value
 				//and will crash
 				var cleaned_data = {};
-				Ext.Object.each(data, function(key, value, myself) {
+				Ext.Object.each(data, function(key, value) {
 					if(Ext.Array.contains(record.fields.keys, key)) {
 						cleaned_data[key] = value;
 					}
@@ -655,7 +664,6 @@ Ext.define('canopsis.lib.controller.cgrid', {
 					return undefined;
 				}
 				else {
-
 					// Create new TAB
 					log.debug("Create tab '" + this.formXtype + "'", this.logAuthor);
 
@@ -770,7 +778,7 @@ Ext.define('canopsis.lib.controller.cgrid', {
 		authkey.show();
 	},
 
-	_setAvatar: function(view, item, index) {
+	_setAvatar: function() {
 		var grid = this.grid;
 		var item = grid.getSelectionModel().getSelection()[0];
 		var filename = item.data.file_name;
@@ -790,7 +798,7 @@ Ext.define('canopsis.lib.controller.cgrid', {
 	},
 
 
-	_rename: function(view, item, index) {
+	_rename: function() {
 		log.debug('Clicked rename', this.logAuthor);
 		var grid = this.grid;
 		var item = grid.getSelectionModel().getSelection()[0];
@@ -810,6 +818,8 @@ Ext.define('canopsis.lib.controller.cgrid', {
 
 
 	_editRecord: function(view, record, item, index, e, eOpts, store) {
+		void(item, e, eOpts);
+
 		log.debug('Clicked editRecord', this.logAuthor);
 
 		//hack create a copy to not mess with old record
@@ -844,6 +854,8 @@ Ext.define('canopsis.lib.controller.cgrid', {
 	},
 
 	_contextMenu: function(view, rec, node, index, e) {
+		void(node, index);
+
 		//don't auto select if multi selecting
 		var selection = this.grid.getSelectionModel().getSelection();
 
@@ -975,7 +987,7 @@ Ext.define('canopsis.lib.controller.cgrid', {
 			log.dump(search_value_array);
 
 			for(j = 0; j < search_value_array.length; j++) {
-				var search = search_value_array[j];
+				search = search_value_array[j];
 
 				// Check if it's a tag
 				if(search[0] === '#') {
@@ -1048,14 +1060,18 @@ Ext.define('canopsis.lib.controller.cgrid', {
 		}
 	},
 
-	setMaxDate: function(cdate,date) {
+	setMaxDate: function(cdate, date) {
+		void(cdate);
+
 		log.debug('Set max date', this.logAuthor);
-		var stop = this.grid.down('cdate[name=endTimeSearch]').setMinDate(date);
+		this.grid.down('cdate[name=endTimeSearch]').setMinDate(date);
 	},
 
-	setMinDate: function(cdate,date) {
+	setMinDate: function(cdate, date) {
+		void(cdate);
+
 		log.debug('Set min date', this.logAuthor);
-		var stop = this.grid.down('cdate[name=startTimeSearch]').setMaxDate(date);
+		this.grid.down('cdate[name=startTimeSearch]').setMaxDate(date);
 	},
 
 	timeDisplay: function() {
