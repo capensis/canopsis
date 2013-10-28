@@ -1,5 +1,4 @@
 /*
-#--------------------------------
 # Copyright (c) 2013 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
@@ -16,13 +15,12 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
-# ---------------------------------
 */
 Ext.define('canopsis.lib.view.cperfstoreValueConsumerWidget', {
 	extend: 'canopsis.lib.view.cwidget',
 
 	refreshNodes: function(from, to) {
-		if (this.nodesByID && Ext.Object.getSize(this.nodesByID) != 0) {
+		if(this.nodesByID && Ext.Object.getSize(this.nodesByID) !== 0) {
 			var url = '/perfstore/values' + (from !== undefined ? ('/' + parseInt(from / 1000) + '/' + parseInt(to / 1000)) : '');
 
 			Ext.Ajax.request({
@@ -47,6 +45,8 @@ Ext.define('canopsis.lib.view.cperfstoreValueConsumerWidget', {
 				},
 
 				failure: function(result, request) {
+					void(result);
+
 					log.error('Ajax request failed ... (' + request.url + ')', this.logAuthor);
 				}
 			});
@@ -54,16 +54,16 @@ Ext.define('canopsis.lib.view.cperfstoreValueConsumerWidget', {
 		else {
 			log.debug('No nodes specified', this.logAuthor);
 			//TODO move this in chart class, because cperfstoreValueConsumerWidget might not have a chart
-			if(this.chart)
+			if(this.chart) {
 				this.chart.showLoading(_('Please choose a valid metric in wizard'));
+			}
 		}
 	},
 
 	getParams: function(oFrom, oTo) {
-		var now = Ext.Date.now();
 		var post_params = [];
 
-		Ext.Object.each(this.nodesByID, function(id, node, obj) {
+		Ext.Object.each(this.nodesByID, function(id, node) {
 			var nodeId = id;
 			var serieId = nodeId + '.' + node.metrics[0];
 			var serie = this.series !== undefined ? this.series[serieId] : undefined;
@@ -93,17 +93,16 @@ Ext.define('canopsis.lib.view.cperfstoreValueConsumerWidget', {
 						}
 
 						if(this.aggregate_interval >= global.commonTs['year']) {
-							from = moment.unix(from / 1000).startOf('year').unix() * 1000;	
+							from = moment.unix(from / 1000).startOf('year').unix() * 1000;
 						}
 					}
 
 					var tzOffset = new Date().getTimezoneOffset();
-					log.debug('TZ Offset: ' + tzOffset, this.logAuthor)
+					log.debug('TZ Offset: ' + tzOffset, this.logAuthor);
 					from += tzOffset * 60 * 1000;
 				}
 
 				log.debug('Serie ' + nodeId + ' ' + node.metrics + ':', this.logAuthor);
-				//log.debug(' + Do Refresh: ' + new Date(from) + ' -> ' + new Date(to) + ' (' + from + ' -> ' + to + ')', this.logAuthor);
 				log.debug(' + From: ' + new Date(from) + ' (' + from + ')', this.logAuthor);
 				log.debug(' + To:   ' + new Date(to) + ' (' + to + ')', this.logAuthor);
 

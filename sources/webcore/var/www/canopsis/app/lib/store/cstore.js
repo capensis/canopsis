@@ -28,17 +28,13 @@ Ext.define('canopsis.lib.store.cstore', {
 
 	listeners: {
 		update: function() {
-			if(this.storeId !== 'Tabs') {
-				if(global.websocketCtrl) {
-					global.websocketCtrl.publish_event('store', this.storeId, 'update');
-				}
+			if(this.storeId !== 'Tabs' && global.websocketCtrl) {
+				global.websocketCtrl.publish_event('store', this.storeId, 'update');
 			}
 		},
 		remove: function() {
-			if(this.storeId !== 'Tabs') {
-				if(global.websocketCtrl) {
-					global.websocketCtrl.publish_event('store', this.storeId, 'remove');
-				}
+			if(this.storeId !== 'Tabs' && global.websocketCtrl) {
+				global.websocketCtrl.publish_event('store', this.storeId, 'remove');
 			}
 		},
 		write: function(store, operation) {
@@ -89,7 +85,7 @@ Ext.define('canopsis.lib.store.cstore', {
 
 	addFilter: function(filter) {
 		var md5 = $.md5(Ext.encode(filter));
-	   		this.filter_list[md5] = filter;
+		this.filter_list[md5] = filter;
 		return md5;
 	},
 
