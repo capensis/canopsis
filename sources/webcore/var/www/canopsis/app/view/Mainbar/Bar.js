@@ -150,7 +150,7 @@ Ext.define('canopsis.view.Mainbar.Bar' , {
 			queryMode: 'local',
 			emptyText: _('Select a view') + ' ...',
 			value: global.account['dashboard'],
-			width: 200,
+			width: 200
 		});
 
 		// Hide  menu when item are selected
