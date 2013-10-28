@@ -1,5 +1,4 @@
 /*
-#--------------------------------
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
@@ -16,7 +15,6 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
-# ---------------------------------
 */
 Ext.define('canopsis.store.LiveEvents', {
 	extend: 'canopsis.lib.store.cstore',
@@ -24,11 +22,6 @@ Ext.define('canopsis.store.LiveEvents', {
 	model: 'canopsis.model.Event',
 
 	storeId: 'store.LiveEvents',
-
-	/*sorters: [{
-		property : 'timestamp',
-		direction: 'DESC'
-	}],*/
 
 	data: []
 });

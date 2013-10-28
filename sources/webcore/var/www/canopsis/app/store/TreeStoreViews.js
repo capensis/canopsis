@@ -1,5 +1,4 @@
 /*
-#--------------------------------
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
@@ -16,12 +15,11 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
-# ---------------------------------
 */
 
 Ext.define('canopsis.store.TreeStoreViews', {
-    extend: 'canopsis.lib.store.ctreeStore',
-    model: 'canopsis.model.View',
+	extend: 'canopsis.lib.store.ctreeStore',
+	model: 'canopsis.model.View',
 
 	storeId: 'store.TreeStoreViews',
 
@@ -34,7 +32,6 @@ Ext.define('canopsis.store.TreeStoreViews', {
 
 	proxy: {
 		batchActions: true,
-		//appendId: false,
 		type: 'rest',
 		url: '/ui/view',
 		reader: {
@@ -46,10 +43,7 @@ Ext.define('canopsis.store.TreeStoreViews', {
 		}
 	},
 
-	afterCorrectWrite : function(){
-		Ext.getStore('Views').load()
+	afterCorrectWrite : function() {
+		Ext.getStore('Views').load();
 	}
-
 });
-
-
