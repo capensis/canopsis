@@ -1,5 +1,4 @@
 /*
-#--------------------------------
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
@@ -16,7 +15,6 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
-# ---------------------------------
 */
 Ext.define('canopsis.view.Selector.Form', {
 	extend: 'canopsis.lib.view.cform',
@@ -36,7 +34,7 @@ Ext.define('canopsis.view.Selector.Form', {
 		labelWidth: 150
 	},
 
-    initComponent: function() {
+	initComponent: function() {
 		var labelWidth = 200;
 
 		this.items = [
@@ -56,9 +54,6 @@ Ext.define('canopsis.view.Selector.Form', {
 						defaultType: 'textfield',
 						bodyStyle: 'padding:5px 5px 0',
 						layout: 'anchor',
-						/*defaults: {
-							anchor: '100%'
-						},*/
 						items: [
 							{
 								name: '_id',
@@ -68,7 +63,9 @@ Ext.define('canopsis.view.Selector.Form', {
 								xtype: 'cfieldset',
 								title: _('General'),
 								defaultType: 'textfield',
-								defaults: { labelWidth: labelWidth },
+								defaults: {
+									labelWidth: labelWidth
+								},
 								items: [
 									{
 										fieldLabel: _('Name'),
@@ -89,7 +86,9 @@ Ext.define('canopsis.view.Selector.Form', {
 								checkboxName: 'dostate',
 								defaultType: 'textfield',
 								value: true,
-								defaults: { labelWidth: labelWidth },
+								defaults: {
+									labelWidth: labelWidth
+								},
 								items: [{
 										xtype: 'combobox',
 										name: 'state_algorithm',
@@ -120,7 +119,9 @@ Ext.define('canopsis.view.Selector.Form', {
 								checkboxName: 'dosla',
 								defaultType: 'textfield',
 								value: false,
-								defaults: { labelWidth: labelWidth },
+								defaults: {
+									labelWidth: labelWidth
+								},
 								items: [
 									{
 										xtype: 'fieldcontainer',
@@ -205,7 +206,6 @@ Ext.define('canopsis.view.Selector.Form', {
 			}
 		];
 
-        this.callParent();
-    }
-
+		this.callParent();
+	}
 });
