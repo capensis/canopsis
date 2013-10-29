@@ -555,6 +555,7 @@ Ext.define('widgets.line_graph.line_graph', {
 		var now = Ext.Date.now();
 
 		if(this.chart) {
+
 			if(this.timeNav) {
 				var time_limit = now - (this.timeNav_window * 1000);
 
@@ -632,7 +633,9 @@ Ext.define('widgets.line_graph.line_graph', {
 		if(this.chart) {
 			log.debug('On refresh', this.logAuthor);
 
-			this.clearGraph();
+			if(this.aggregate_interval > 0) {
+				this.clearGraph();
+			}
 
 			var toggle_max_percent = false;
 

@@ -24,7 +24,7 @@ import kombu.pools
 
 try:
 	from amqplib.client_0_8.exceptions import AMQPConnectionException as ConnectionError
-except:
+except ImportError as IE:
 	from amqp.exceptions import ConnectionError
 
 import socket
@@ -277,13 +277,22 @@ class camqp(threading.Thread):
 			self.logger.debug("Send message to %s in %s" % (routing_key, exchange_name))
 			with self.producers[self.conn].acquire(block=True) as producer:
 				try:
-					producer.publish(msg, serializer=serializer, compression=compression, routing_key=routing_key, exchange=self.get_exchange(exchange_name))
+					_msg = msg.copy()
+					camqp._clean_msg_for_serialization(_msg)
+					producer.publish(_msg, serializer=serializer, compression=compression, routing_key=routing_key, exchange=self.get_exchange(exchange_name))
 					self.logger.debug(" + Sended")
 				except Exception, err:
 					self.logger.error(" + Impossible to send (%s)" % err)
 		else:
 			self.logger.error("You are not connected ...")
-			
+
+	@staticmethod
+	def _clean_msg_for_serialization(msg):
+		from bson import objectid
+		for key in msg:
+			if isinstance(msg[key], objectid.ObjectId):
+				msg[key] = str(msg[key])
+
 	def cancel_queues(self):
 		if self.connected:
 			for queue_name in self.queues.keys():

@@ -19,9 +19,15 @@
 Ext.define('canopsis.lib.view.cperfstoreValueConsumerWidget', {
 	extend: 'canopsis.lib.view.cwidget',
 
+	getUrl: function(from, to) {
+		var url = '/perfstore/values' + (from !== undefined ? ('/' + parseInt(from / 1000) + '/' + parseInt(to / 1000)) : '');
+
+		return url;
+	},
+
 	refreshNodes: function(from, to) {
-		if(this.nodesByID && Ext.Object.getSize(this.nodesByID) !== 0) {
-			var url = '/perfstore/values' + (from !== undefined ? ('/' + parseInt(from / 1000) + '/' + parseInt(to / 1000)) : '');
+		if(this.nodesByID && Ext.Object.getSize(this.nodesByID) != 0) {
+			var url = this.getUrl(from, to);
 
 			Ext.Ajax.request({
 				url: url,
@@ -33,15 +39,17 @@ Ext.define('canopsis.lib.view.cperfstoreValueConsumerWidget', {
 					var data = Ext.JSON.decode(response.responseText);
 					data = data.data;
 
-					if(data.length > 0 && this.nodesByID[data[0]['node']]['order'] !== undefined) {
-						var that = this;
+					if(data.length > 0) {
+						if(this.nodesByID[data[0]['node']]['order'] !== undefined) {
+							var that = this;
 
-						data.sort(function(a,b) {
-							return that.nodesByID[a['node']]['order']-that.nodesByID[b['node']]['order'];
-						});
+							data.sort(function(a,b) {
+								return that.nodesByID[a['node']]['order']-that.nodesByID[b['node']]['order'];
+							});
+						}
+
+						this.onRefresh(data);
 					}
-
-					this.onRefresh(data);
 				},
 
 				failure: function(result, request) {
@@ -53,24 +61,28 @@ Ext.define('canopsis.lib.view.cperfstoreValueConsumerWidget', {
 		}
 		else {
 			log.debug('No nodes specified', this.logAuthor);
-			//TODO move this in chart class, because cperfstoreValueConsumerWidget might not have a chart
-			if(this.chart) {
-				this.chart.showLoading(_('Please choose a valid metric in wizard'));
-			}
+
+			this.getChart().showLoading(_('Please choose a valid metric in wizard'));
 		}
 	},
 
-	getParams: function(oFrom, oTo) {
+	getChart: function() {
+		if(this.chart === undefined) {
+			throw new Exception("chart field is not defined in " + this);
+		}
+
+		return this.chart;
+	},
+
+	getParams: function(from, to) {
 		var post_params = [];
 
 		Ext.Object.each(this.nodesByID, function(id, node) {
 			var nodeId = id;
 			var serieId = nodeId + '.' + node.metrics[0];
 			var serie = this.series !== undefined ? this.series[serieId] : undefined;
-			var from = oFrom === undefined ? -1 : oFrom;
-			var to = oTo ===undefined ? -1 : oTo;
 
-			if(from !== -1) {
+			if(from) {
 				if(!this.reportMode) {
 					if(serie && serie['last_timestamp']) {
 						from = serie['last_timestamp'];
@@ -108,21 +120,57 @@ Ext.define('canopsis.lib.view.cperfstoreValueConsumerWidget', {
 
 			}
 
-			post_params.push({
+			post_param = {
 				id: nodeId,
-				metrics: node.metrics,
-				from: (from !== -1 ? parseInt(from / 1000) : -1),
-				to: (to !== -1 ? parseInt(to / 1000) : -1)
-			});
+				metrics: node.metrics
+			}
 
+			if (from) {
+				post_param['from'] = parseInt(from / 1000);
+			}
+			if (to) {
+				post_param['to'] = parseInt(to / 1000);
+			}
+
+			this.processPostParam(post_param);
+
+			post_params.push(post_param);
 		}, this);
 
-		return {
+		post_params = {
 			'nodes': Ext.JSON.encode(post_params),
-			'aggregate_method' : this.aggregate_method,
-			'aggregate_interval': this.aggregate_interval,
-			'aggregate_max_points': this.aggregate_max_points,
-			'consolidation_method': this.consolidation_method
 		};
+
+		if(this.aggregate_method) {
+			post_params['aggregate_method'] = this.aggregate_method;
+		}
+
+		if(this.aggregate_interval) {
+			post_params['aggregate_interval'] = this.aggregate_interval;
+		}
+
+		if(this.aggregate_max_points) {
+			post_params['aggregate_max_points'] = this.aggregate_max_points;
+		}
+
+		if(this.consolidation_method) {
+			post_params['consolidation_method'] = this.consolidation_method;
+		}
+
+		this.processPostParams(post_params);
+
+		return post_params;
+	},
+
+	processPostParam: function(post_param) {
+		void(post_param);
+
+		return;
+	},
+
+	processPostParams: function(post_params) {
+		void(post_params);
+
+		return;
 	}
 });

@@ -104,6 +104,9 @@ Ext.define('canopsis.lib.view.cwizard', {
 						fields: ['value', 'text'],
 						data: [
 							{value: 0,      text: _('None')},
+							{value: 1,      text: '1 '  + _('second')},
+							{value: 10,     text: '10'  + _('seconds')},
+							{value: 30,     text: '30'  + _('seconds')},
 							{value: 60,     text: '1 '  + _('minute')},
 							{value: 300,    text: '5 '  + _('minutes')},
 							{value: 600,    text: '10 ' + _('minutes')},

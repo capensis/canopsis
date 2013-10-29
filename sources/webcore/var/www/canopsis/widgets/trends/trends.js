@@ -28,7 +28,7 @@ Ext.define('widgets.trends.trends' , {
 	interval: global.commonTs.hours,
 	aggregate_method: undefined,
 	aggregate_interval: 0,
-	aggregate_max_points: 1,
+	aggregate_max_points: 0,
 
 	item_height: 30,
 
@@ -198,5 +198,10 @@ Ext.define('widgets.trends.trends' , {
 				]
 			});
 		}
+	},
+
+	processPostParam: function(post_param) {
+		delete post_param['from'];
+		delete post_param['to'];
 	}
 });
