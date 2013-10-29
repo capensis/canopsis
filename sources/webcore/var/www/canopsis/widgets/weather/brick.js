@@ -394,7 +394,7 @@ Ext.define('widgets.weather.brick' , {
 			else {
 				Ext.getStore('Views').load({
 					scope: this,
-					callback: function(records, operation, success) {
+					callback: function() {
 						store = Ext.getStore('Views');
 						var record = store.findExact('crecord_name', this.link);
 

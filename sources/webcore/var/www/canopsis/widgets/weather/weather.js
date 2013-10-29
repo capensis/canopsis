@@ -90,8 +90,10 @@ Ext.define('widgets.weather.weather' , {
 	},
 
 	doRefresh: function(from, to) {
-		this.from = to
-		this.to = to
+		void(from);
+
+		this.from = to;
+		this.to = to;
 
 		// Mode Live
 		if(!this.reportMode && !this.exportMode) {
@@ -100,7 +102,7 @@ Ext.define('widgets.weather.weather' , {
 		}
 
 		// Mode Reporting/Exporting
-		if(Ext.Object.getSize(this.nodeDict) === 0){
+		if(Ext.Object.getSize(this.nodeDict) === 0) {
 			this.getNodes(this.firstNodeIds, this.firstNodesCallback);
 			return;
 		}
@@ -130,7 +132,7 @@ Ext.define('widgets.weather.weather' , {
 
 	firstNodesCallback: function(response) {
 		var nodes = Ext.JSON.decode(response.responseText).data;
-		log.debug('Received ' + nodes.length + ' nodes from webserver',this.logAuthor)
+		log.debug('Received ' + nodes.length + ' nodes from webserver', this.logAuthor);
 
 		//create node dict
 		for(var i = 0; i < nodes.length; i++) {
@@ -201,7 +203,9 @@ Ext.define('widgets.weather.weather' , {
 		this.populateCheck();
 	},
 
-	getPastNode: function(node_ids,from,to) {
+	getPastNode: function(node_ids, from, to) {
+		void(node_ids);
+
 		log.debug('+ Get perfstore values', this.logAuthor);
 
 		//process meta_id to perfstore format
@@ -223,8 +227,6 @@ Ext.define('widgets.weather.weather' , {
 				data.sort(function(a, b) {
 					return that.nodesByID[a['node']]['order'] - that.nodesByID[b['node']]['order'];
 				});
-
-				var metric_dict = {};
 
 				for(i = 0; i < data.length; i++) {
 					var metric = data[i];
@@ -318,7 +320,7 @@ Ext.define('widgets.weather.weather' , {
 		log.debug('Populate widget with ' + this.nodeId.length + ' elements.', this.logAuthor);
 		this.wcontainer.removeAll();
 
-		log.debug('There is '+ Ext.Object.getSize(this.nodeDict) +' nodes for ' + this.firstNodeIds.length +' requested node',this.logAuthor)
+		log.debug('There is '+ Ext.Object.getSize(this.nodeDict) +' nodes for ' + this.firstNodeIds.length +' requested node', this.logAuthor);
 
 		for(var i = 0; i < this.firstNodeIds.length; i++) {
 			var _id = this.firstNodeIds[i];
@@ -346,7 +348,7 @@ Ext.define('widgets.weather.weather' , {
 				var weather = Ext.create('widgets.weather.brick', Ext.Object.merge(config, this.base_config));
 
 				this.wcontainer.add(weather);
-				log.debug('Widget populated',this.logAuthor)
+				log.debug('Widget populated', this.logAuthor);
 			}
 		}
 	},
@@ -384,14 +386,14 @@ Ext.define('widgets.weather.weather' , {
 
 	generate_all_meta_ids: function() {
 		Ext.Object.each(this.nodeDict, function(key, node) {
+			var metaId;
+
 			if(node.sevent) {
-				var active_event = node.sevent;
-				var metaId = this.generate_meta_id(node.sevent);
+				metaId = this.generate_meta_id(node.sevent);
 				node.smetaId = metaId;
 			}
 			else {
-				var active_event = node._event;
-				var metaId = this.generate_meta_id(node._event);
+				metaId = this.generate_meta_id(node._event);
 				node.metaId = metaId;
 			}
 
@@ -410,7 +412,10 @@ Ext.define('widgets.weather.weather' , {
 	generate_meta_id: function(node, metric) {
 		var component = node.component;
 		var resource = node.resource;
-		var metric = (metric) ? metric : 'cps_state';
+
+		if(!metric) {
+			metric = 'cps_state';
+		}
 
 		return getMetaId(component, resource, metric);
 	}
