@@ -19,7 +19,7 @@
 # ---------------------------------
 */
 Ext.define('widgets.eventcalendar.eventcalendar' , {
-	extend: 'canopsis.lib.view.cwidget',
+	extend: 'canopsis.lib.view.cwebsocketWidget',
 
 	alias: 'widget.eventcalendar',
 
@@ -49,7 +49,7 @@ Ext.define('widgets.eventcalendar.eventcalendar' , {
 			events: this.getEvents()
 		});
 
-		initializeStore();
+		this.initializeStore();
 	},
 
 	initializeStore: function(){
@@ -80,7 +80,7 @@ Ext.define('widgets.eventcalendar.eventcalendar' , {
 				}
 			}
 		});
-	}
+	},
 
 	onResize: function() {
 		$('#'+ this.id).fullCalendar('option', 'height', this.height);
