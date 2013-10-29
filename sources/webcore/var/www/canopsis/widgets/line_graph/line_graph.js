@@ -526,7 +526,7 @@ Ext.define('widgets.line_graph.line_graph', {
 
 				if(this.series.eta){
 					var eta = this.series.eta;
-					var dEta = parseInt(Ext.Date.now()) + eta
+					var dEta = parseInt(Ext.Date.now()) + eta;
 					s += '<br/><b>ETA:</b> ' + rdr_tstodate(dEta/1000) + ' (' + rdr_duration(eta/1000, 2) + ')';
 				}
 			}
@@ -1060,7 +1060,7 @@ Ext.define('widgets.line_graph.line_graph', {
 				}
 			}
 
-			for(var i = 0; i < states.length; i++) {
+			for(i = 0; i < states.length; i++) {
 				data['metric'] = 'cps_state_' + i;
 				data['values'] = states_data[i];
 				data['bunit'] = '%';
@@ -1319,7 +1319,7 @@ Ext.define('widgets.line_graph.line_graph', {
 
 			// Search most longer string
 			if(bigLenght === undefined || bigLenght < str.length) {
-				bigLenght = string.length;
+				bigLenght = str.length;
 			}
 
 			list_string.push(
