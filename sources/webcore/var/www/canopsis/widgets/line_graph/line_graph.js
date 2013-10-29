@@ -1,5 +1,4 @@
 /*
-#--------------------------------
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
@@ -16,7 +15,6 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
-# ---------------------------------
 */
 
 /*
@@ -185,12 +183,14 @@ Ext.define('widgets.line_graph.line_graph', {
 			var flag = undefined;
 
 			Ext.Object.each(this.nodesByID, function(key, value) {
+				void(key);
+
 				var node = value['resource'] + value['component'];
 
 				if(flag === undefined) {
 					flag = node;
 				}
-				else if(flag != node) {
+				else if(flag !== node) {
 					this.same_node = false;
 				}
 			}, this);
@@ -233,25 +233,24 @@ Ext.define('widgets.line_graph.line_graph', {
 	setchartTitle: function() {
 		var title = '';
 
-		if(this.nb_node) {
-			if(this.same_node) {
-				var firstKey = Ext.Object.getKeys(this.nodesByID)[0];
-				var firstNode = this.nodesByID[firstKey];
-				var component = firstNode.component;
-				var resource = undefined;
+		if(this.nb_node && this.same_node) {
+			var firstKey = Ext.Object.getKeys(this.nodesByID)[0];
+			var firstNode = this.nodesByID[firstKey];
+			var component = firstNode.component;
+			var resource = undefined;
 
-				try {
-					resource = firstNode.resource;
-				}
-				catch(err) {
-				}
+			try {
+				resource = firstNode.resource;
+			}
+			catch(err) {
+				;
+			}
 
-				if(resource) {
-					title = resource + ' ' + _('on') + ' ' + component;
-				}
-				else {
-					title = component;
-				}
+			if(resource) {
+				title = resource + ' ' + _('on') + ' ' + component;
+			}
+			else {
+				title = component;
 			}
 		}
 
@@ -578,7 +577,7 @@ Ext.define('widgets.line_graph.line_graph', {
 
 				var serie = this.chart.get('timeNav');
 				var e = serie.xAxis.getExtremes();
-				var time_window = e.max - e.min;
+				time_window = e.max - e.min;
 
 				if(this.reportMode) {
 					this.stopTask();
@@ -658,7 +657,7 @@ Ext.define('widgets.line_graph.line_graph', {
 
 					// TODO: Fix with new format
 					if(!node.max && data[i].max) {
-						node.max = data[i].max
+						node.max = data[i].max;
 					}
 
 					// Exclude state lines and timeNav
@@ -769,13 +768,9 @@ Ext.define('widgets.line_graph.line_graph', {
 
 				log.debug(' + ' + serie.name + ', ' + serie.data.length + ' point(s)', me.logAuthor);
 
-				// Don't shift timeNav
-				if(serie.name === 'timeNav' || serie.name === 'Navigator') {
-					continue;
-				}
-
-				// Don't shift short serie
-				if(serie.data.length <= 2 && serie.name !== 'Flags') {
+				// Don't shift timeNav or short serie
+				if(serie.name === 'timeNav' || serie.name === 'Navigator'
+				   || (serie.data.length <= 2 && serie.name !== 'Flags')) {
 					continue;
 				}
 
@@ -838,14 +833,14 @@ Ext.define('widgets.line_graph.line_graph', {
 			bunit = node.bunit;
 		}
 
-		var yAxis = node.yAxis
+		var _yAxis = node.yAxis;
 
 		if(Ext.isNumber(yAxis)) {
-			yAxis = yAxis
+			_yAxis = yAxis;
 		}
 
-		if(yAxis === undefined || yAxis === "default" || yAxis === "") {
-			yAxis = this.getYaxis(bunit);
+		if(_yAxis === undefined || _yAxis === "default" || _yAxis === "") {
+			_yAxis = this.getYaxis(bunit);
 		}
 
 		var serie_index = this.chart.series.length;
@@ -854,20 +849,18 @@ Ext.define('widgets.line_graph.line_graph', {
 		log.debug('    + serie index: ' + serie_index, this.logAuthor);
 		log.debug('    + metric_name: ' + metric_name, this.logAuthor);
 		log.debug('    + bunit: ' + bunit, this.logAuthor);
-		log.debug('    + yAxis: ' + yAxis, this.logAuthor);
+		log.debug('    + yAxis: ' + _yAxis, this.logAuthor);
 
 		var metric_long_name = '';
 
-		if(!this.same_node && !this.consolidation_method) {
-			if(node && (!node.label)) {
-				metric_long_name = node.component;
+		if(!this.same_node && !this.consolidation_method && node && (!node.label)) {
+			metric_long_name = node.component;
 
-				if(node.source_type === 'resource') {
-					metric_long_name += ' - ' + node.resource;
-				}
-
-				metric_long_name = '(' + metric_long_name + ') ';
+			if(node.source_type === 'resource') {
+				metric_long_name += ' - ' + node.resource;
 			}
+
+			metric_long_name = '(' + metric_long_name + ') ';
 		}
 
 		var colors = global.curvesCtrl.getRenderColors(metric_name, serie_index);
@@ -905,7 +898,7 @@ Ext.define('widgets.line_graph.line_graph', {
 			_color = check_color(node.curve_color);
 		}
 
-		var serie = {
+		serie = {
 			id: serie_id,
 			name: metric_long_name,
 			metric: label,
@@ -913,7 +906,7 @@ Ext.define('widgets.line_graph.line_graph', {
 			color: _color,
 			min: min,
 			max: max,
-			yAxis: yAxis,
+			yAxis: _yAxis,
 			bunit: bunit,
 			last_timestamp: undefined
 		};
@@ -968,20 +961,18 @@ Ext.define('widgets.line_graph.line_graph', {
 		}
 
 		//type specifique parsing
-		if(type === 'COUNTER' && !this.aggregate_interval && !this.reportMode) {
-			if(serie.data.length) {
-				var last_point = serie.data[serie.data.length - 1];
-				var last_value = last_point.y;
-				var new_values = [];
+		if(type === 'COUNTER' && !this.aggregate_interval && !this.reportMode && serie.data.length) {
+			var last_point = serie.data[serie.data.length - 1];
+			var last_value = last_point.y;
+			var new_values = [];
 
-				for(var i = 0; i < values.length; i++) {
-					if(values[i][1] != 0) {
-						new_values.push([values[i][0], last_value + values[i][1]]);
-					}
+			for(i = 0; i < values.length; i++) {
+				if(values[i][1] !== 0) {
+					new_values.push([values[i][0], last_value + values[i][1]]);
 				}
-
-				values = new_values;
 			}
+
+			values = new_values;
 		}
 
 		return values;
@@ -1045,6 +1036,7 @@ Ext.define('widgets.line_graph.line_graph', {
 		var type = data['type'];
 
 		var serie = undefined;
+		var value = undefined;
 
 		if(metric_name === 'cps_state_ok' || metric_name === 'cps_state_warn' || metric_name === 'cps_state_crit') {
 			serie = this.getSerie(node_id, metric_name, undefined, undefined, undefined, 0);
@@ -1058,7 +1050,7 @@ Ext.define('widgets.line_graph.line_graph', {
 				state = parseInt(data['values'][i][1] / 100);
 
 				for(var j = 0; j < states.length; j++) {
-					var value = 0;
+					value = 0;
 
 					if(state === j) {
 						value = 100;
@@ -1096,7 +1088,7 @@ Ext.define('widgets.line_graph.line_graph', {
 		//Add war/crit line if on first serie
 		if(this.chart.series.length === 1 && this.showWarnCritLine) {
 			if(data['thld_warn']) {
-				var value = data['thld_warn'];
+				value = data['thld_warn'];
 
 				if(this.SeriePercent && serie.options.max > 0) {
 					value = getPct(value, serie.options.max);
@@ -1106,7 +1098,7 @@ Ext.define('widgets.line_graph.line_graph', {
 			}
 
 			if(data['thld_crit']) {
-				var value = data['thld_crit'];
+				value = data['thld_crit'];
 
 				if(this.SeriePercent && serie.options.max > 0) {
 					value = getPct(value, serie.options.max);
@@ -1167,8 +1159,8 @@ Ext.define('widgets.line_graph.line_graph', {
 		else {
 			log.debug('   + Push data', this.logAuthor);
 
-			for(var i = 0; i < values.length; i++) {
-				value = values[i];
+			for(var idx = 0; idx < values.length; idx++) {
+				value = values[idx];
 				//addPoint (Object options, [Boolean redraw], [Boolean shift], [Mixed animation]) :
 				serie.addPoint(value, false, false, false);
 			}
@@ -1239,7 +1231,7 @@ Ext.define('widgets.line_graph.line_graph', {
 			}
 			else {
 				//check if referent curve have its own curve
-				var curve = global.curvesCtrl.getRenderInfo(data.metric);
+				curve = global.curvesCtrl.getRenderInfo(data.metric);
 
 				if(curve) {
 					label = curve.get('label') + '-TREND';
@@ -1284,10 +1276,8 @@ Ext.define('widgets.line_graph.line_graph', {
 			var hcserie = this.chart.get(trend_id);
 
 			if(data.values.length > 2) {
-
-				var reg = fitData(data.values);
-
-				var y = undefined;
+				reg = fitData(data.values);
+				y = undefined;
 
 				if(reg.slope > 0 && node.max !== undefined) {
 					y = node.max;
@@ -1301,7 +1291,7 @@ Ext.define('widgets.line_graph.line_graph', {
 					hcserie.eta = this.getEta(y, reg.slope, reg.intercept);
 				}
 
-				var line = reg.data;
+				line = reg.data;
 
 				//trunc value
 				line = this.truncValueArray(line);
@@ -1325,10 +1315,10 @@ Ext.define('widgets.line_graph.line_graph', {
 		// Push values
 		for(var i = 0; i < values.length; i++) {
 			var strvalue = values[i][2] ? values[i][2] : '';
-			var string = values[i][0] + ': ' + values[i][1] + strvalue;
+			var str = values[i][0] + ': ' + values[i][1] + strvalue;
 
 			// Search most longer string
-			if(bigLenght === undefined || bigLenght < string.length) {
+			if(bigLenght === undefined || bigLenght < str.length) {
 				bigLenght = string.length;
 			}
 
@@ -1336,13 +1326,13 @@ Ext.define('widgets.line_graph.line_graph', {
 				Ext.String.format(
 					html,
 					'dark grey',
-					string
+					str
 				)
 			);
 		}
 
 		// Clean
-		for(var i = 0; i < this.OverlayLegend.length; i++) {
+		for(i = 0; i < this.OverlayLegend.length; i++) {
 			this.OverlayLegend[i].destroy();
 		}
 
@@ -1361,7 +1351,7 @@ Ext.define('widgets.line_graph.line_graph', {
 		var x = w - (bigLenght * charW) - marginRight;
 		var y = marginTop;
 
-		for(var i = 0; i < list_string.length; i++) {
+		for(i = 0; i < list_string.length; i++) {
 			var string = list_string[i];
 			var chartText = this.chart.renderer.text(
 				string,
@@ -1415,13 +1405,13 @@ Ext.define('widgets.line_graph.line_graph', {
 					serie.setData(sData);
 				}
 				else {
-					for(var i = 0; i < sData.length; i++) {
+					for(i = 0; i < sData.length; i++) {
 						serie.addPoint(sData[i], true, false);
 					}
 				}
 			}
 			else {
-				var serie = {
+				serie = {
 					id: 'x_flags',
 					name: 'Flags',
 					type: 'flags',
@@ -1432,6 +1422,7 @@ Ext.define('widgets.line_graph.line_graph', {
 					zIndex: 2,
 					showInLegend: false
 				};
+
 				this.series[serie.id] = serie;
 				this.chart.addSeries(serie, true, false);
 			}
