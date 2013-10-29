@@ -301,7 +301,7 @@ Ext.define('canopsis.lib.form.field.ctopo' , {
 		});
 
 		this.jsPlumbInstance.bind('beforeDrop', function(conn) {
-			return (me.verifyNodeConn(conn);
+			return (me.verifyNodeConn(conn));
 		});
 
 		this.jsPlumbInstance.bind('click', function(c) {
