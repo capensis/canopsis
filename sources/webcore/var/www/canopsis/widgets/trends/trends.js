@@ -95,18 +95,18 @@ Ext.define('widgets.trends.trends' , {
 			var hdelta = 'NaN';
 
 			if(values.length >= 2) {
-				var v1 = values[0][1]
-				var t1 = values[0][0]
-				var v2 = values[values.length-1][1]
-				var t2 = values[values.length-1][0]
+				var v1 = values[0][1];
+				var t1 = values[0][0];
+				var v2 = values[values.length-1][1];
+				var t2 = values[values.length-1][0];
 
-				v1 = ret[0]*t1 + ret[1]
-				v2 = ret[0]*t2 + ret[1]
+				v1 = ret[0]*t1 + ret[1];
+				v2 = ret[0]*t2 + ret[1];
 
 				delta = roundSignifiantDigit(v2 - v1, 2);
 
 				if(this.humanReadable) {
-					hdelta = rdr_humanreadable_value(delta, bunit)
+					hdelta = rdr_humanreadable_value(delta, bunit);
 				}
 				else {
 					if(bunit !== undefined) {
@@ -180,7 +180,7 @@ Ext.define('widgets.trends.trends' , {
 					delta_pct = "+" + delta_pct;
 				}
 
-				text = delta_pct + '%'
+				text = delta_pct + '%';
 			}
 
 			log.debug(" + Text: " + text, this.logAuthor);
