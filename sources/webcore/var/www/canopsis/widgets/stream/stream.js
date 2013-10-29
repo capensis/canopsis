@@ -279,7 +279,7 @@ Ext.define('widgets.stream.stream', {
 		global.websocketCtrl.publish('amqp', 'events', event_raw);
 	},
 
-	publish_comment: function(event_id, raw, message, orievent) {
+	publish_comment: function(event_id, raw, message) {
 		if(!global.websocketCtrl.connected) {
 			log.error('Impossible to publish, not connected.', this.logAuthor);
 			global.notify.notify(_('Error'), _('Impossible to publish, your are not connected to websocket. Check service or firewall') + ' (port: ' + global.nowjs.port + ')', 'error');
@@ -381,7 +381,7 @@ Ext.define('widgets.stream.stream', {
 		return id;
 	},
 
-	on_event: function(raw, rk) {
+	on_event: function(raw) {
 		//Only hard state
 		if(raw.state_type === 0 && this.hard_state_only) {
 			return;
@@ -441,7 +441,7 @@ Ext.define('widgets.stream.stream', {
 
 				//Clean queue
 				if(this.queue.length > this.max) {
-					var event = this.queue.shift();
+					event = this.queue.shift();
 					event.destroy();
 					delete event;
 				}

@@ -1,5 +1,4 @@
 /*
-#--------------------------------
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
@@ -16,13 +15,11 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
-# ---------------------------------
 */
 Ext.define('widgets.text.text' , {
 	extend: 'canopsis.lib.view.cwidget',
 	alias: 'widget.text',
 
-	//templateVars : undefined,
 	perfdataMetricList: undefined,
 	logAuthor: '[textWidget]',
 	specialCharRegex: /\//g,
@@ -31,7 +28,7 @@ Ext.define('widgets.text.text' , {
 		//get special values by parsing
 		var raw_vars = this.extractVariables(this.text);
 
-		if(raw_vars.length != 0) {
+		if(raw_vars.length !== 0) {
 			this.perfdataMetricList = {};
 
 			var vars = this.cleanVars(raw_vars);
@@ -42,13 +39,13 @@ Ext.define('widgets.text.text' , {
 				log.debug(' + ' + key, this.logAuthor);
 				var var_name = value[0];
 
-				if((var_name == "perfdata" || var_name == "perf_data") && value.length == 3) {
+				if((var_name === "perfdata" || var_name === "perf_data") && value.length === 3) {
 					var_name = "perf_data";
 					var metric = value[1];
 					var attribut = value[2];
 
-					var tpl_name = var_name + Math.ceil(Math.random() * 1000)
-	
+					var tpl_name = var_name + Math.ceil(Math.random() * 1000);
+
 					this.text = this.text.replace(new RegExp(key), '{' + tpl_name + '}');
 
 					this.perfdataMetricList[metric] = {
@@ -67,8 +64,12 @@ Ext.define('widgets.text.text' , {
 
 		//Compilation of template ( to accelerate the render )
 		this.myTemplate.compile();
-		this.HTML = ''; // contains the html
-		this.callParent(arguments); // Initialization globale of the template
+
+		// contains the html
+		this.HTML = '';
+
+		// Initialization globale of the template
+		this.callParent(arguments);
 	},
 
 	onRefresh: function(data, from, to) {
@@ -88,22 +89,22 @@ Ext.define('widgets.text.text' , {
 			if(this.perfdataMetricList) {
 				log.debug('Parse template perf_data', this.logAuthor);
 
-				Ext.Object.each(this.perfdataMetricList, function(key, value){
+				Ext.Object.each(this.perfdataMetricList, function(key, value) {
 					var metric = key;
 					var attribut = value.attribut;
 					var tpl_name = value.tpl_name;
 
-					log.debug(' + ' + metric + '(' + tpl_name + ')' + ': ' + attribut, this.logAuthor)
+					log.debug(' + ' + metric + '(' + tpl_name + ')' + ': ' + attribut, this.logAuthor);
 
 					var perf = perf_data[metric];
 
-					if(perf && perf[attribut] != undefined) {
+					if(perf && perf[attribut] !== undefined) {
 						var unit = perf["unit"];
-						var value = perf[attribut];
-					
+						value = perf[attribut];
+
 						if(Ext.isNumeric(value) && unit) {
 							log.dump(this);
-							value = rdr_humanreadable_value(value, unit)
+							value = rdr_humanreadable_value(value, unit);
 						}
 
 						log.debug('   + ' + value, this.logAuthor);
@@ -116,7 +117,7 @@ Ext.define('widgets.text.text' , {
 			data.timestamp = rdr_tstodate(data.timestamp);
 		}
 		else {
-			data = {}
+			data = {};
 		}
 
 		try {
@@ -162,16 +163,17 @@ Ext.define('widgets.text.text' , {
 				},
 
 				failure: function(result, request) {
+					void(result);
+
 					log.error('Impossible to get Node informations, Ajax request failed ... (' + request.url + ')', this.logAuthor);
 				}
 			});
 		}
-		//we call the parent which is applied when there is a nodeId specified.
-		//this.callParent(arguments);
 	},
 
 	extractVariables: function(text) {
 		log.debug("extractVariables:", this.logAuthor);
+
 		//search specific value
 		var loop = true;
 		var _string = text;
@@ -181,11 +183,11 @@ Ext.define('widgets.text.text' , {
 			//search for val
 			var begin = _string.search(/{(.+:)+.+}/);
 
-			if(begin != -1) {
+			if(begin !== -1) {
 				//search end of val
 				var end = begin;
 
-				while(_string.charAt(end) != '}' && end <= _string.length) {
+				while(_string.charAt(end) !== '}' && end <= _string.length) {
 					end = end + 1;
 				}
 
@@ -206,7 +208,7 @@ Ext.define('widgets.text.text' , {
 		var output = {};
 
 		for(var i = 0; i < array.length; i++) {
-			output[array[i]] = array[i].slice(1, -1).split(':')
+			output[array[i]] = array[i].slice(1, -1).split(':');
 		}
 
 		return output;
