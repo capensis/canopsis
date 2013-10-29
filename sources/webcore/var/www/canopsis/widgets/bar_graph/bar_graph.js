@@ -1,5 +1,4 @@
 /*
-#--------------------------------
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
@@ -16,15 +15,25 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
-# ---------------------------------
 */
 
-// initComponent -> afterContainerRender 	-> setchartTitle -> ready -> doRefresh -> onRefresh -> addDataOnChart
-//                                			-> setOptions                             			-> getSerie
-//											-> createChart
+/*
 
++ initComponent
+|--- setChartTitle
++ afterContainerRender
+|--- setOptions
+|--- createChart
+\--+ ready
+   \--+ doRefresh
+      \--+ refreshNodes
+         \--+ onRefresh
+            \--+ addDataOnChart
+               \--- getSerie
 
-Ext.define('widgets.bar_graph.bar_graph' , {
+*/
+
+Ext.define('widgets.bar_graph.bar_graph', {
 	extend: 'widgets.line_graph.line_graph',
 
 	alias: 'widget.bar_graph',
@@ -48,7 +57,7 @@ Ext.define('widgets.bar_graph.bar_graph' , {
 	chartTitle: null,
 
 	//Default Options
-	time_window: global.commonTs.day, //24 hours
+	time_window: global.commonTs.day,
 	zoom: true,
 	legend: true,
 	tooltip: true,
@@ -78,7 +87,8 @@ Ext.define('widgets.bar_graph.bar_graph' , {
 	legend_borderWidth: 1,
 	legend_fontSize: 12,
 	legend_fontColor: '#3E576F',
-	maxZoom: 60 * 10, // 10 minutes
+	// 10 minutes
+	maxZoom: 60 * 10,
 
 	interval: global.commonTs.hours,
 	aggregate_method: 'MAX',
@@ -93,8 +103,6 @@ Ext.define('widgets.bar_graph.bar_graph' , {
 	data_trends: [],
 	trend_lines: false,
 	trend_lines_type: 'ShortDot',
-	//use_window_ts: false,
-	//..
 
 	nb_node: 0,
 	same_node: true,
@@ -104,24 +112,24 @@ Ext.define('widgets.bar_graph.bar_graph' , {
 	verticalDisplay: false,
 
 
-
 	setOptions: function() {
 		this.callParent(arguments);
 
-		if (this.columnDatalabels) {
+		if(this.columnDatalabels) {
 			this.options.plotOptions.column.dataLabels = {
 				enabled: true,
 				formatter: function() {
-					if (this.y)
+					if(this.y) {
 						return rdr_humanreadable_value(this.y, this.point.bunit);
+					}
+
 					return '';
 				}
 			};
 		}
 
-		if (this.verticalDisplay)
+		if(this.verticalDisplay) {
 			this.options.chart.inverted = true;
-
+		}
 	}
-
 });
