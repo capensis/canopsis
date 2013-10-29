@@ -13,12 +13,11 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
-# ---------------------------------
 */
 Ext.define('canopsis.model.Derogation', {
-    extend: 'Ext.data.Model',
-    idProperty: '_id',
-    fields: [
+	extend: 'Ext.data.Model',
+	idProperty: '_id',
+	fields: [
 		{name: '_id'},
 
 		{name: 'crecord_name'},

@@ -1,5 +1,4 @@
 /*
-#--------------------------------
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
@@ -16,7 +15,6 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
-# ---------------------------------
 */
 Ext.define('widgets.perftop.perftop' , {
 	extend: 'canopsis.lib.view.cwidget',
@@ -43,10 +41,9 @@ Ext.define('widgets.perftop.perftop' , {
 	hideHeaders: false,
 	show_position: true,
 	expand: false,
-	//..
 
 	afterContainerRender: function() {
-		if(this.mfilter && this.mfilter != '') {
+		if(this.mfilter && this.mfilter !== '') {
 			this.store = Ext.create('canopsis.store.Perfdatas', {
 				model: 'canopsis.model.Perfdata',
 
@@ -84,6 +81,8 @@ Ext.define('widgets.perftop.perftop' , {
 					align: 'center',
 					sortable: false,
 					renderer: function(value, metaData, record, rowIndex) {
+						void(value, metaData, record);
+
 						return '<b>' + (rowIndex + 1) + '</b>';
 					}
 				});
@@ -136,6 +135,8 @@ Ext.define('widgets.perftop.perftop' , {
 					dataIndex: 'lv',
 					align: 'right',
 					renderer: function(value, metaData, record) {
+						void(metaData);
+
 						var me = this.cwidget;
 						var unit = record.get('u');
 
@@ -143,7 +144,7 @@ Ext.define('widgets.perftop.perftop' , {
 							return rdr_humanreadable_value(value, unit);
 						}
 						else {
-							if(unit != undefined) {
+							if(unit !== undefined) {
 								return value + ' ' + unit;
 							}
 							else {
@@ -171,9 +172,9 @@ Ext.define('widgets.perftop.perftop' , {
 					sortable: false,
 					dataIndex: 'pct',
 					align: 'right',
-					renderer: function(value, metaData, record) {
+					renderer: function(value) {
 						if(Ext.isNumber(value)) {
-							if(value == -1) {
+							if(value === -1) {
 								return _('N/A');
 							}
 							else {
@@ -226,7 +227,7 @@ Ext.define('widgets.perftop.perftop' , {
 				opt_cell_edit: false,
 
 				columns: this.columns,
-				cwidget: this,
+				cwidget: this
 			});
 
 			this.wcontainer.removeAll();
@@ -244,7 +245,7 @@ Ext.define('widgets.perftop.perftop' , {
 		if(this.store.proxy.extraParams['report']) {
 			this.store.proxy['url'] = url + '/' + parseInt(from/1000) +'/' + parseInt(to/1000);
 		}
-		
+
 		if(this.grid) {
 			this.grid.store.load();
 		}

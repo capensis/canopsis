@@ -1,5 +1,4 @@
 /*
-#--------------------------------
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
@@ -16,9 +15,8 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
-# ---------------------------------
 */
-Ext.define('canopsis.lib.view.cauthkey' , {
+Ext.define('canopsis.lib.view.cauthkey', {
 	extend: 'Ext.window.Window',
 
 	alias: 'widget.crights',
@@ -29,36 +27,22 @@ Ext.define('canopsis.lib.view.cauthkey' , {
 
 	account: undefined,
 
-	//layout : 'vbox',
-
 	logAuthor: '[cauthkey]',
 
 	initComponent: function() {
 		log.debug('Initializing...', this.logAuthor);
 
 		//set title
-		if (this.account)
+		if(this.account) {
 			this.title += ' : ' + this.account;
+		}
 
-		/*
-		this.helperTemplate = new Ext.Template(
-			'<div name="helper" style="{style}">',
-				'<h2>You can auto Logging in canopsis with this link</h2>',
-				'<div >',
-				'<br />',
-				_('Bookmark me ! :'),
-				'<a href={link}>',
-				'{tinyLink}',
-				'</a></div>',
-			'</div>',
-			{compiled: true}
-		);
-		*/
-		//-----------------------Build inner form----------------
+		// Build inner form
 		var config = {
 			readOnly: true,
 			width: 450
 		};
+
 		this.authkey_field = Ext.widget('textfield', config);
 
 		var buttonConfig = {
@@ -66,51 +50,52 @@ Ext.define('canopsis.lib.view.cauthkey' , {
 			iconCls: 'icon-reload',
 			width: 26
 		};
+
 		this.refreshButton = Ext.widget('button', buttonConfig);
 
-		//-------------------------Build form--------------------
+		// Build form
+		var form_width = undefined;
 
-		if (global.accountCtrl.checkRoot() || this.checkDisplayButton())
-			var form_width = config.width + buttonConfig.width;
-		else
-			var form_width = config.width;
+		if(global.accountCtrl.checkRoot() || this.checkDisplayButton()) {
+			form_width = config.width + buttonConfig.width;
+		}
+		else {
+			form_width = config.width;
+		}
 
 		var formConfig = {
 			border: false,
 			layout: 'hbox',
 			width: form_width,
 			margin: 3
-			//height : 22,
 		};
 		this._form = Ext.create('Ext.panel.Panel', formConfig);
 		this._form.add([this.authkey_field]);
-		if (global.account.user == 'root' || this.checkDisplayButton())
-			this._form.add(this.refreshButton);
 
-		//------------------------build link helper--------------
-		var configHelper = {
-			//height : 200,
-			margin: '20 0 0 0'
-		};
+		if(global.account.user === 'root' || this.checkDisplayButton()) {
+			this._form.add(this.refreshButton);
+		}
+
+		// build link helper
 		this.panelHelper = Ext.create('Ext.panel.Panel', formConfig);
 
 		this.items = Ext.create('Ext.panel.Panel', {
-				//items:[this._form,this.panelHelper],
-				items: [this._form],
-				height: 28,
-				border: false
-			});
+			items: [this._form],
+			height: 28,
+			border: false
+		});
 
 		this.callParent(arguments);
 
-		//------------------------set authkey value-------------
-		if (this.account)
+		// set authkey value
+		if(this.account) {
 			this.getAccountKey();
-		else
+		}
+		else {
 			this.updateTextBox(global.account.authkey);
+		}
 
-		//this.updateHelper()
-		//-----------------------binding events-------------------
+		// binding events
 		this.refreshButton.on('click', this._new_authkey, this);
 	},
 
@@ -119,46 +104,48 @@ Ext.define('canopsis.lib.view.cauthkey' , {
 		log.debug('Asking for a new authentification key', this.logAuthor);
 
 		Ext.MessageBox.confirm(_('Confirm'), _('If you generate a new authentification key, the old one will NOT work anymore. Do want to update the key now ?'),
-			function(btn, text) {
-				if (btn == 'yes')
-					if (this.account)
+			function(btn) {
+				if (btn === 'yes') {
+					if(this.account) {
 						global.accountCtrl.new_authkey(this.account, this.updateTextBox, this);
-					else
+					}
+					else {
 						global.accountCtrl.new_authkey(global.account.user, this.updateTextBox, this);
-				else
+					}
+				}
+				else {
 					log.debug('cancel new key generation', this.logAuthor);
-			},this);
+				}
+			},
+		this);
 	},
 
 	updateTextBox: function(text) {
-		if (text != undefined) {
+		if(text !== undefined) {
 			this.authkey_field.setValue(text);
-			//this.updateHelper()
-		}else {
+		}
+		else {
 			global.notify.notify(_('Error'), _('An error have occured during the updating process'), 'error');
 		}
 	},
 
-    checkDisplayButton: function() {
-        if (global.accountCtrl.checkGroup('group.CPS_authkey') && !this.account)
-            return true;
-        else
-            return false;
-    },
+	checkDisplayButton: function() {
+		return (global.accountCtrl.checkGroup('group.CPS_authkey') && !this.account);
+	},
 
 	updateHelper: function() {
 		var url = location.origin + '/' + global.account.authkey;
+
 		this.panelHelper.update(this.helperTemplate.apply({
 				style: 'text-align:center;',
 				link: location.origin + '/' + global.account.authkey,
 				tinyLink: url.slice(0, 40) + '...'
-			}));
+			})
+		);
 	},
 
 	getAccountKey: function() {
 		log.debug('Get account Authkey', this.logAuthor);
 		global.accountCtrl.get_authkey(this.account, this.updateTextBox, this);
 	}
-
 });
-

@@ -2,12 +2,12 @@
 //# Auth
 //#################
 
-var login = 				"root";
-var password = 				"root";
-var selector_form = 		'div[id="auth_form"]';
-var selector_submitBtn =	'button[id="submitbutton-btnEl"]';
-var selector_viewport =		'div.widget-wrapper';
-var selector_websocket = 	'#Mainbar-menu-Websocket-btnIconEl[class~="icon-bullet-green"]';
+var login              = "root";
+var password           = "root";
+var selector_form      = 'div[id="auth_form"]';
+var selector_submitBtn = 'button[id="submitbutton-btnEl"]';
+var selector_viewport  = 'div.widget-wrapper';
+var selector_websocket = '#Mainbar-menu-Websocket-btnIconEl[class~="icon-bullet-green"]';
 
 casper.then(function() {
 	casper.echo('> Fill Auth Form', 'COMMENT');

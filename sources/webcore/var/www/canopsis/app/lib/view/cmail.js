@@ -1,5 +1,4 @@
 /*
-#--------------------------------
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
@@ -16,7 +15,6 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
-# ---------------------------------
 */
 Ext.define('canopsis.lib.view.cmail' , {
 	extend: 'Ext.window.Window',
@@ -36,14 +34,27 @@ Ext.define('canopsis.lib.view.cmail' , {
 	initComponent: function() {
 		log.debug('Initializing...', this.logAuthor);
 
-		//----------------------building bbar----------------
+		// building bbar
 		this.bbar = Ext.create('Ext.toolbar.Toolbar');
 
-		this.cancelButton = this.bbar.add({xtype: 'button', text: _('Cancel'), action: 'cancel', iconCls: 'icon-cancel'});
-		this.bbar.add('->');
-		this.finishButton = this.bbar.add({xtype: 'button', text: _('Finish'), action: 'finish', iconCls: 'icon-save', iconAlign: 'right'});
+		this.cancelButton = this.bbar.add({
+			xtype: 'button',
+			text: _('Cancel'),
+			action: 'cancel',
+			iconCls: 'icon-cancel'
+		});
 
-		//----------------------building reciepients options-----------
+		this.bbar.add('->');
+
+		this.finishButton = this.bbar.add({
+			xtype: 'button',
+			text: _('Finish'),
+			action: 'finish',
+			iconCls: 'icon-save',
+			iconAlign: 'right'
+		});
+
+		// building reciepients options
 
 		this.recipientsOptions = Ext.widget('container', {
 			xtype: 'fieldset',
@@ -52,24 +63,23 @@ Ext.define('canopsis.lib.view.cmail' , {
 			border: 0,
 			padding: 0,
 			width: 500,
-			//title: _('General options'),
 			collapsible: false
 		});
 
 		this.to = Ext.widget('textfield', {
-				fieldLabel: _('To'),
-				width: 275,
-				name: 'recipients'
+			fieldLabel: _('To'),
+			width: 275,
+			name: 'recipients'
 		});
 
 		this.comboUser = Ext.widget('combo', {
-				margin: '0 0 0 2',
-				queryMode: 'local',
-				displayField: 'user',
-				valueField: 'mail',
-				width: 120,
-				store: 'Accounts'
-			});
+			margin: '0 0 0 2',
+			queryMode: 'local',
+			displayField: 'user',
+			valueField: 'mail',
+			width: 120,
+			store: 'Accounts'
+		});
 
 		this.addUserButton = Ext.widget('button', {
 			xtype: 'button',
@@ -79,58 +89,64 @@ Ext.define('canopsis.lib.view.cmail' , {
 
 		this.recipientsOptions.add([this.to, this.comboUser, this.addUserButton]);
 
-		//---------------------------mail information--------------
+		// mail information
 		this.subject = Ext.widget('textfield', {
-				fieldLabel: _('subject'),
-				width: 400,
-				name: 'subject'
+			fieldLabel: _('subject'),
+			width: 400,
+			name: 'subject'
 		});
 
 
-		if (this.bodyHtml == true) {
+		if(this.bodyHtml === true) {
 			this.mailbody = Ext.widget('htmleditor', {
-					fieldLabel: _('body'),
-					name: 'body'
-			});
-		}else {
-			this.mailbody = Ext.widget('textareafield', {
-					fieldLabel: _('body'),
-					width: 400,
-					height: 200,
-					name: 'body'
+				fieldLabel: _('body'),
+				name: 'body'
 			});
 		}
-		//-------------------------- Building window-----------------------------
+		else {
+			this.mailbody = Ext.widget('textareafield', {
+				fieldLabel: _('body'),
+				width: 400,
+				height: 200,
+				name: 'body'
+			});
+		}
+
+		// Building window
 		this._form = Ext.create('Ext.form.Panel', {border: false});
 		this._form.add([this.recipientsOptions, this.subject, this.mailbody]);
 		this.items = this._form;
 
 		this.callParent(arguments);
-		//this.show()
 
-		//-------------------------- Binding events----------------------
+		//  Binding events
 		this.addUserButton.on('click', this._addUser, this);
 
-		this.cancelButton.on('click', function() {this.close()},this);
+		this.cancelButton.on('click', function() {
+			this.close();
+		}, this);
 
 		this.finishButton.on('click', function() {
-				var values = this._form.getValues();
-				if (this.attachement)
-					values.attachement = this.attachement;
-				this.fireEvent('finish', values);
-				this.close();
-			},this);
+			var values = this._form.getValues();
 
+			if(this.attachement) {
+				values.attachement = this.attachement;
+			}
+
+			this.fireEvent('finish', values);
+			this.close();
+		}, this);
 	},
 
 	_addUser: function() {
 		log.debug('clicked on adduser', this.logAuthor);
 		var recipientsValue = this.to.getValue();
-		if (recipientsValue == '') {
+
+		if(recipientsValue === '') {
 			this.to.setValue(this.comboUser.getValue());
-		} else {
+		}
+		else {
 			this.to.setValue(recipientsValue + ',' + this.comboUser.getValue());
 		}
 	}
-
 });

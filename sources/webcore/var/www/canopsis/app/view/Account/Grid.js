@@ -1,5 +1,4 @@
 /*
-#--------------------------------
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
@@ -16,7 +15,6 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
-# ---------------------------------
 */
 
 Ext.define('canopsis.view.Account.Grid' , {
@@ -55,7 +53,11 @@ Ext.define('canopsis.view.Account.Grid' , {
 			header: '',
 			width: 25,
 			sortable: false,
-			renderer: function(val) { if (val == true) return "<span class='icon icon-book_link' />"; },
+			renderer: function(val) {
+				if(val === true) {
+					return "<span class='icon icon-book_link' />";
+				}
+			},
 			dataIndex: 'external'
 		},{
 			header: _('Enabled'),
@@ -96,7 +98,5 @@ Ext.define('canopsis.view.Account.Grid' , {
 			dataIndex: 'groups',
 			renderer: rdr_display_groups
 		}
-
 	]
-
 });

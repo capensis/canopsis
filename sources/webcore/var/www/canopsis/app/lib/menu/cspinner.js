@@ -1,5 +1,4 @@
 /*
-#--------------------------------
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
@@ -16,7 +15,6 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
-# ---------------------------------
 */
 Ext.define('canopsis.lib.menu.cspinner' , {
 	extend: 'Ext.button.Button',
@@ -45,24 +43,25 @@ Ext.define('canopsis.lib.menu.cspinner' , {
 
 	handleMouseEvents: false,
 
-
 	initComponent: function() {
 		log.debug('Initializing...', this.logAuthor);
 	},
 
 	start: function(){
-		if (! this.tEl)
+		if(!this.tEl) {
 			this.tEl = document.getElementById(this.id);
+		}
 
-		if (! this.spinner){
+		if(!this.spinner) {
 			log.debug('Start spinner', this.logAuthor);
 			this.spinner = new Spinner(this.spinner_options).spin(this.tEl);
-		}		
+		}
 	},
 
-	stop: function(){
-		if (this.spinner && this.ajax_queue <= 0){
+	stop: function() {
+		if(this.spinner && this.ajax_queue <= 0) {
 			log.debug('Stop spinner', this.logAuthor);
+
 			this.spinner.stop();
 			delete this.spinner;
 			this.spinner = undefined;
@@ -70,16 +69,27 @@ Ext.define('canopsis.lib.menu.cspinner' , {
 		}
 	},
 
-	bind_Ext_Ajax: function(){
+	bind_Ext_Ajax: function() {
 		log.debug('Bind spinner on Ajax requests', this.logAuthor);
-		Ext.Ajax.on('beforerequest',	function(){ this.ajax_queue += 1; this.start(); }, this);
-		Ext.Ajax.on('requestexception',	function(){ this.ajax_queue -= 1; this.stop(); }, this);
-		Ext.Ajax.on('requestcomplete',	function(){ this.ajax_queue -= 1; this.stop(); }, this);
+
+		Ext.Ajax.on('beforerequest', function() {
+			this.ajax_queue += 1;
+			this.start();
+		}, this);
+
+		Ext.Ajax.on('requestexception', function() {
+			this.ajax_queue -= 1;
+			this.stop();
+		}, this);
+
+		Ext.Ajax.on('requestcomplete', function() {
+			this.ajax_queue -= 1;
+			this.stop();
+		}, this);
 	},
 
 	afterRender: function() {
 		this.callParent(arguments);
 		this.bind_Ext_Ajax();
 	}
-
 });

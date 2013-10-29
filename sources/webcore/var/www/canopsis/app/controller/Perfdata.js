@@ -1,5 +1,4 @@
 /*
-#--------------------------------
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
@@ -16,7 +15,6 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
-# ---------------------------------
 */
 Ext.define('canopsis.controller.Perfdata', {
 	extend: 'canopsis.lib.controller.cgrid',
@@ -35,20 +33,26 @@ Ext.define('canopsis.controller.Perfdata', {
 		this.callParent(arguments);
 	},
 
-	_bindGridEvents: function(grid) {
+	_bindGridEvents: function() {
 		this.callParent(arguments);
 
 		var btns = Ext.ComponentQuery.query('#' + this.grid.id + ' [action=toggle_internal_metric]');
-		for (var i = 0; i < btns.length; i++)
+
+		for(var i = 0; i < btns.length; i++) {
 			btns[i].on('click', this.grid.store.toggle_internal_metric, this.grid.store);
+		}
 
-		var btns = Ext.ComponentQuery.query('#' + this.grid.contextMenu.id + ' [action=clean]');
-		for (var i = 0; i < btns.length; i++)
+		btns = Ext.ComponentQuery.query('#' + this.grid.contextMenu.id + ' [action=clean]');
+
+		for(i = 0; i < btns.length; i++) {
 			btns[i].on('click', this._clean, this);
+		}
 
-		var btns = Ext.ComponentQuery.query('#' + this.grid.contextMenu.id + ' [action=clean_all]');
-		for (var i = 0; i < btns.length; i++)
+		btns = Ext.ComponentQuery.query('#' + this.grid.contextMenu.id + ' [action=clean_all]');
+
+		for(i = 0; i < btns.length; i++) {
 			btns[i].on('click', this._clean_all, this);
+		}
 	},
 
 	_clean: function() {
@@ -56,16 +60,18 @@ Ext.define('canopsis.controller.Perfdata', {
 		var grid = this.grid;
 
 		var selection = grid.getSelectionModel().getSelection();
-		if (selection) {
+
+		if(selection) {
 			var cleaned_selection = [];
-			for (var i = 0; i < selection.length; i++)
+
+			for(var i = 0; i < selection.length; i++) {
 				cleaned_selection.push(selection[i].raw._id);
+			}
 
 			Ext.Ajax.request({
 				url: '/perfstore/clean',
 				params: Ext.encode(cleaned_selection),
-				success: function(response) {
-					var text = response.responseText;
+				success: function() {
 					global.notify.notify('Perfdata Cleaned', 'Perfdatas have been cleaned', 'success');
 				}
 			});
@@ -74,17 +80,13 @@ Ext.define('canopsis.controller.Perfdata', {
 
 	_clean_all: function() {
 		log.debug('Clicked clean all Button', this.logAuthor);
-		var grid = this.grid;
 
 		Ext.Ajax.request({
 			method: 'POST',
 			url: '/perfstore/clean_all',
-			success: function(response) {
-				var text = response.responseText;
+			success: function() {
 				global.notify.notify('Perfdata Cleaned', 'Perfdatas have been cleaned', 'success');
 			}
 		});
 	}
-
-
 });

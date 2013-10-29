@@ -1,5 +1,4 @@
 /*
-#--------------------------------
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
@@ -16,7 +15,6 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
-# ---------------------------------
 */
 Ext.define('canopsis.view.Briefcase.Form', {
 	extend: 'canopsis.lib.view.cform',
@@ -25,14 +23,14 @@ Ext.define('canopsis.view.Briefcase.Form', {
 
 	initComponent: function() {
 		var _id = Ext.widget('textfield', {
-				fieldLabel: _('File name'),
-				name: '_id',
-				hidden: true
+			fieldLabel: _('File name'),
+			name: '_id',
+			hidden: true
 		});
 
 		var filename = Ext.widget('textfield', {
-				fieldLabel: _('File name'),
-				name: 'file_name'
+			fieldLabel: _('File name'),
+			name: 'file_name'
 		});
 
 		this.items = [_id, filename];

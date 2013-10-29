@@ -1,5 +1,4 @@
 /*
-#--------------------------------
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
@@ -16,7 +15,6 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
-# ---------------------------------
 */
 Ext.define('canopsis.view.Account.Form', {
 	extend: 'canopsis.lib.view.cform',
@@ -42,59 +40,61 @@ Ext.define('canopsis.view.Account.Form', {
 			autoScroll: true
 		},
 		items: [{
-				title: _('General options'),
+			title: _('General options'),
+			defaultType: 'textfield',
+			bodyStyle: 'padding:5px 5px 0',
+			layout: 'anchor',
+			border: false,
+			items: [{
+				xtype: 'fieldset',
 				defaultType: 'textfield',
-				bodyStyle: 'padding:5px 5px 0',
-				layout: 'anchor',
 				border: false,
 				items: [{
-					xtype: 'fieldset',
-					defaultType: 'textfield',
-					border: false,
-					items: [{
-						fieldLabel: _('Login'),
-						name: 'user',
-						allowBlank: false,
-						regex: /^[A-Za-z0-9_]+$/,
-						regexText: _('Invalid login') + ', ' + _('use alphanumeric characters only') + '<br/>([A-Za-z0-9_])'
-					},{
-						fieldLabel: _('First Name'),
-						name: 'firstname',
-						allowBlank: false
-					}, {
-						fieldLabel: _('Last Name'),
-						name: 'lastname',
-						allowBlank: false
-					},{
-						fieldLabel: _('E-mail'),
-						name: 'mail',
-						vtype: 'email',
-						allowBlank: true
-					},{
-						fieldLabel: _('Group'),
-						name: 'aaa_group',
-						store: 'Groups',
-						value: 'Canopsis',
-						displayField: 'crecord_name',
-						valueField: '_id',
-						editable: false,
-						xtype: 'combobox',
-						allowBlank: false
-					},{
-						fieldLabel: _('Password'),
-						inputType: 'password',
-						name: 'passwd'
-						//allowBlank : false
-					}]
-
+					fieldLabel: _('Login'),
+					name: 'user',
+					allowBlank: false,
+					regex: /^[A-Za-z0-9_]+$/,
+					regexText: _('Invalid login') + ', ' + _('use alphanumeric characters only') + '<br/>([A-Za-z0-9_])'
+				},{
+					fieldLabel: _('First Name'),
+					name: 'firstname',
+					allowBlank: false
+				}, {
+					fieldLabel: _('Last Name'),
+					name: 'lastname',
+					allowBlank: false
+				},{
+					fieldLabel: _('E-mail'),
+					name: 'mail',
+					vtype: 'email',
+					allowBlank: true
+				},{
+					fieldLabel: _('Group'),
+					name: 'aaa_group',
+					store: 'Groups',
+					value: 'Canopsis',
+					displayField: 'crecord_name',
+					valueField: '_id',
+					editable: false,
+					xtype: 'combobox',
+					allowBlank: false
+				},{
+					fieldLabel: _('Password'),
+					inputType: 'password',
+					name: 'passwd'
 				}]
+
+			}]
 		},{
 			title: _('Groups'),
 			xtype: 'grid',
 			store: 'Groups',
 			autoScroll: true,
 			selType: 'checkboxmodel',
-			selModel: {mode: 'MULTI', showHeaderCheckbox: false},
+			selModel: {
+				mode: 'MULTI',
+				showHeaderCheckbox: false
+			},
 			columns: [
 				{text: _('Name'), dataIndex: 'crecord_name', flex: 1}
 			],
@@ -103,5 +103,4 @@ Ext.define('canopsis.view.Account.Form', {
 			name: 'groups'
 		}]
 	}]
-
 });

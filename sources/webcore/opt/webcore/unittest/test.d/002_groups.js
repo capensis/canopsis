@@ -4,7 +4,7 @@
 
 var selector_group_form = ".x-window-item";
 
-cgridOpen('build','buildGroup','CPS_root')
+cgridOpen('build','buildGroup','CPS_root');
 
 casper.then(function() {
 	casper.echo('> Fill fields and Save', 'COMMENT');
@@ -18,7 +18,7 @@ casper.then(function() {
 
 casper.then(function() {
 	casper.echo('> Select created group', 'COMMENT');
-	clickLabel('CasperDescription')
+	clickLabel('CasperDescription');
 	wait(".x-editor");
 });
 
@@ -26,10 +26,10 @@ casper.then(function() {
 	casper.echo('> Edit group', 'COMMENT');
 	fillGridEditableField('.x-editor input', 'Modified');
 	click("span.icon-reload");
-	waitText("CasperDescriptionModified")
+	waitText("CasperDescriptionModified");
 });
 
-cgridRemoveRecord()
+cgridRemoveRecord();
 
 casper.then(function() {
 	casper.echo('> Close Tab', 'COMMENT');

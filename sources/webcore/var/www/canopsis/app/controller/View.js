@@ -1,5 +1,4 @@
 /*
-#--------------------------------
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
@@ -16,21 +15,19 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
-# ---------------------------------
 */
 Ext.define('canopsis.controller.View', {
-    extend: 'canopsis.lib.controller.ctree',
+	extend: 'canopsis.lib.controller.ctree',
 
-    views: ['View.TreePanel'],
-    stores: ['Views', 'TreeStoreViews'],
-    model: ['View'],
+	views: ['View.TreePanel'],
+	stores: ['Views', 'TreeStoreViews'],
+	model: ['View'],
 
-    logAuthor: '[controller][View]',
+	logAuthor: '[controller][View]',
 
-    init: function() {
+	init: function() {
 		log.debug('Initialize ...', this.logAuthor);
 
-		//this.formXtype = 'GroupForm'
 		this.listXtype = 'ViewTreePanel';
 
 		this.modelId = 'View';
@@ -38,14 +35,17 @@ Ext.define('canopsis.controller.View', {
 		log.debug(' + Load treeStore ...', this.logAuthor);
 		this.treeStore = Ext.data.StoreManager.lookup('TreeStoreViews');
 
-		if (!this.treeStore.isLoading()) {
+		if(!this.treeStore.isLoading()) {
 			this.treeStore.load();
 		}
 
 		this.store = Ext.data.StoreManager.lookup('Views');
 
 		this.store.proxy.on('exception', function(proxy, response) {
+			void(proxy);
+
 			log.error('Error in request', this.logAuthor);
+
 			var message = Ext.String.format(
 				'{0}<br>{1}: {2}',
 				 _('Error in request:'),
@@ -59,46 +59,51 @@ Ext.define('canopsis.controller.View', {
 		this.callParent(arguments);
 
 		//binding view export pdf
+	},
 
-    },
-
-    bindTreeEvent: function() {
+	bindTreeEvent: function() {
 		var btns = Ext.ComponentQuery.query('#' + this.tree.id + ' [action=import]');
-		for (var i = 0; i < btns.length; i++)
-			btns[i].on('click', this.openFilepopup, this);
 
-		var btns = Ext.ComponentQuery.query('#' + this.tree.contextMenu.id + ' [action=OpenViewOption]');
-		for (var i = 0; i < btns.length; i++)
+		for(var i = 0; i < btns.length; i++) {
+			btns[i].on('click', this.openFilepopup, this);
+		}
+
+		btns = Ext.ComponentQuery.query('#' + this.tree.contextMenu.id + ' [action=OpenViewOption]');
+
+		for(i = 0; i < btns.length; i++) {
 			btns[i].on('click', this.OpenViewOptionWrapper, this);
+		}
 
 		this.tree.on('exportPdf', function(view) {
-				this.getController('Reporting').launchReport(view);
-			},this);
+			this.getController('Reporting').launchReport(view);
+		}, this);
 
 		this.tree.getView().on('getViewFile', this.getViewFile, this);
 
 		this.tree.getView().on('OpenViewOption', this.OpenViewOption, this);
 	},
 
-	check_right_on_drop: function(node,data,overModel) {
+	check_right_on_drop: function(node, data, overModel) {
+		void(node);
+
 		log.debug('checking right on record before drop', this.logAuthor);
+
 		var ctrl = this.getController('Account');
 		var src_record = data.records[0];
 		var dest_record = overModel;
 
 		//check if right to right, if not, stop event + display notif
-		if (!(ctrl.check_record_right(src_record, 'w') && ctrl.check_record_right(dest_record, 'w'))) {
+		if(!(ctrl.check_record_right(src_record, 'w') && ctrl.check_record_right(dest_record, 'w'))) {
 			global.notify.notify(_('Access denied'), _('You don\'t have the rights to modify this object'), 'error');
 			return true;
 		}
-
 	},
 
-    addLeafButton: function() {
+	addLeafButton: function() {
 		this.create_new_view();
 	},
 
-    addDirectoryButton: function() {
+	addDirectoryButton: function() {
 		this.create_new_directory();
 	},
 
@@ -106,26 +111,36 @@ Ext.define('canopsis.controller.View', {
 		var tree = this.tree;
 
 		var selection = tree.getSelectionModel().getSelection()[0];
-		if (selection.get('leaf')) {
-			view_id = selection.get('id');
-			view_name = selection.get('crecord_name');
-			this.getController('Tabs').open_view({ view_id: view_id, title: view_name });
+
+		if(selection.get('leaf')) {
+			var view_id   = selection.get('id');
+			var view_name = selection.get('crecord_name');
+
+			this.getController('Tabs').open_view({
+				view_id: view_id,
+				title: view_name
+			});
 		}
 	},
 
 	_duplicateButton: function() {
 		log.debug('duplicate', this.logAuthor);
+
 		//get selected views
 		var tree = this.tree;
 		var selection = tree.getSelectionModel().getSelection();
+
 		//for each selected view
-		for (var i = 0; i < selection.length; i++) {
-			if (selection[i].isLeaf()) {
+		for(var i = 0; i < selection.length; i++) {
+			if(selection[i].isLeaf()) {
 				var view_id = 'view.' + global.account.user + '.' + global.gen_id();
 				var new_record = selection[i].copy(view_id);
+
 				Ext.data.Model.id(new_record);
+
 				new_record.set('_id', view_id);
 				new_record.set('id', view_id);
+
 				this.add_to_home(new_record, false);
 			}
 		}
@@ -136,12 +151,9 @@ Ext.define('canopsis.controller.View', {
 		this.getController('Schedule').scheduleWizard(item, this.tree.id);
 	},
 
-	/////////////////
-
 	create_new_directory: function() {
 		Ext.Msg.prompt(_('Directory name'), _('Please enter directory name:'), function(btn, directoryName) {
-			if (btn == 'ok') {
-
+			if(btn === 'ok') {
 				var record = Ext.create('canopsis.model.View');
 
 				var directory_id = 'directory.' + global.account.user + '.' + global.gen_id();
@@ -150,14 +162,16 @@ Ext.define('canopsis.controller.View', {
 
 				record.set('_id', directory_id);
 				record.set('id', directory_id);
-				//need to set the empty array , otherwise treepanel send request
+
+				//need to set the empty array, otherwise treepanel send request
 				//to fetch inside
 				record.set('children', []);
 				record.set('leaf', false);
 
 				this.add_to_home(record, false);
 
-			} else {
+			}
+			else {
 				log.debug('cancel new view', this.logAuthor);
 			}
 		}, this);
@@ -165,11 +179,12 @@ Ext.define('canopsis.controller.View', {
 
 	create_new_view: function() {
 		Ext.Msg.prompt(_('View name'), _('Please enter view name:'), function(btn, viewName,opts) {
-			console.log(opts)
-			if (btn == 'ok') {
-				if(!viewName || viewName == ''){
+			console.log(opts);
+
+			if(btn === 'ok') {
+				if(!viewName || viewName === ''){
 					global.notify.notify(_('Warning'), "You must provide a correct view name", 'warning');
-					return
+					return;
 				}
 
 				// Create view
@@ -183,8 +198,8 @@ Ext.define('canopsis.controller.View', {
 				record.set('leaf', true);
 
 				this.add_to_home(record, true);
-
-			} else {
+			}
+			else {
 				log.debug('cancel new view', this.logAuthor);
 			}
 		}, this);
@@ -201,8 +216,9 @@ Ext.define('canopsis.controller.View', {
 		log.debug(' + id: ' + record.get('_id'), this.logAuthor);
 
 		var parentNode = this.treeStore.getNodeById(rootDir);
-		var rootNode = this.treeStore.getRootNode();
-		if (parentNode) {
+		var rootNode   = this.treeStore.getRootNode();
+
+		if(parentNode) {
 			parentNode.appendChild(record);
 
 			//this is a hack
@@ -216,72 +232,81 @@ Ext.define('canopsis.controller.View', {
 					this.request_success = true;
 
 					var data = response.data;
-					for (var i = 0; i < data.length; i++)
-						if (!data[i].success)
+
+					for(var i = 0; i < data.length; i++) {
+						if(!data[i].success) {
 							this.request_success = false;
+						}
+					}
 
 					this.treeStore.load({
-							scope: this,
-							callback: function() {
-								if (this.open_after_put == true && this.request_success) {
-									var tab = this.getController('Tabs').open_view({ view_id: record.get('_id'), title: record.get('crecord_name') });
-									tab.editMode();
-									tab.doRedraw();
+						scope: this,
+						callback: function() {
+							if(this.open_after_put === true && this.request_success) {
+								var tab = this.getController('Tabs').open_view({
+									view_id: record.get('_id'),
+									title: record.get('crecord_name')
+								});
 
-									//Hack
-									Ext.getCmp('dashboardSelector').store.load();
-								}
+								tab.editMode();
+								tab.doRedraw();
+
+								// Hack
+								Ext.getCmp('dashboardSelector').store.load();
 							}
+						}
 					});
 				}
 			});
-
-
-		}else {
+		}
+		else {
 			log.debug('Impossible to add view, root directory not found ....', this.logAuthor);
 		}
 	},
 
-    checkOpen: function(view_id) {
-		var maintabs = Ext.getCmp('main-tabs');
+	checkOpen: function(view_id) {
 		var tab = Ext.getCmp(view_id + '.tab');
 
-		if (tab) {
+		if(tab) {
 			global.notify.notify(_('Warning'), 'You must close view before renaming', 'error');
 			return true;
-		}else {
+		}
+		else {
 			return false;
 		}
 	},
 
-	openFilepopup: function(file) {
+	openFilepopup: function() {
 		log.debug('Open file popup', this.logAuthor);
+
 		var config = {
 			_fieldLabel: _('View dump'),
 			copyPasteZone: true,
 			constrainTo: this.tree.id
-			};
+		};
+
 		var popup = Ext.create('canopsis.lib.view.cfile_window', config);
 		popup.show();
 
 		popup.on('save', function(file) {
-			if (file.length > 0) {
+			if(file.length > 0) {
 				var file_type = file[0].type;
-				if (file_type == '' || file_type == 'application/json') {
+
+				if(file_type === '' || file_type === 'application/json') {
 					this.importFile(file);
 					popup.close();
-				}else {
+				}
+				else {
 					log.debug('Wrong file type: ' + file_type, this.logAuthor);
 					global.notify.notify(_('Wrong file type'), _('Please choose a correct json file'), 'info');
 				}
 			}
 
-			if (file.items) {
+			if(file.items) {
 				this.importView(file);
 				popup.close();
 			}
-
-		},this);
+		}, this);
 	},
 
 	importView: function(obj) {
@@ -289,15 +314,17 @@ Ext.define('canopsis.controller.View', {
 		record.set('_id', 'view.' + global.account.user + '.' + global.gen_id());
 		record.set('leaf', true);
 		this.add_to_home(record, false);
-		//this.tree.store.load()
 	},
 
 	importFile: function(file) {
 		log.debug('Import view file', this.logAuthor);
+
 		var reader = new FileReader();
+
 		reader.onload = (function(e) {
 			this.importView(Ext.decode(e.target.result));
 		}).bind(this);
+
 		reader.readAsText(file[0]);
 	},
 
@@ -308,8 +335,10 @@ Ext.define('canopsis.controller.View', {
 
 	OpenViewOptionWrapper: function(){
 		var select = this.tree.getSelectionModel().getSelection();
-		if(select && select.length > 0)
-			this.OpenViewOption(select[select.length-1].data)
+
+		if(select && select.length > 0) {
+			this.OpenViewOption(select[select.length - 1].data);
+		}
 	},
 
 	OpenViewOption: function(view) {
@@ -331,12 +360,10 @@ Ext.define('canopsis.controller.View', {
 			this.view_option_win.close();
 			updateRecord('object', 'view', 'View', view._id, {view_options: data});
 			this.treeStore.load();
-		},this);
+		}, this);
 
 		form.on('close', function() {
 			this.view_option_win.close();
-		},this);
-
+		}, this);
 	}
-
 });

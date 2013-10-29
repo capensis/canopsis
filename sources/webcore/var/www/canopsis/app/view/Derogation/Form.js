@@ -1,5 +1,4 @@
 /*
-#--------------------------------
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
@@ -16,7 +15,6 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
-# ---------------------------------
 */
 Ext.define('canopsis.view.Derogation.Form', {
 	extend: 'canopsis.lib.view.cform',
@@ -105,12 +103,12 @@ Ext.define('canopsis.view.Derogation.Form', {
 							var durationDate = me.down('cduration[name=forTs]');
 							var stopDate     = me.down('cdate[name=stopTs]');
 
-							if (value == 'for') {
+							if(value === 'for') {
 								durationDate.show();
 								stopDate.hide();
 								stopDate.setDisabled(true);
 							}
-							else if (value == 'to') {
+							else if(value === 'to') {
 								durationDate.hide();
 								stopDate.show();
 								stopDate.setDisabled(false);
@@ -178,7 +176,10 @@ Ext.define('canopsis.view.Derogation.Form', {
 
 		var actions = this.down('cfieldset[title="' + _('Actions') + '"]');
 
-		actions.add(Ext.create('derogation.override', {variable: variable, value: value}));
+		actions.add(Ext.create('derogation.override', {
+			variable: variable,
+			value: value
+		}));
 	},
 
 	setRequalification: function(statemap_id) {
@@ -244,7 +245,9 @@ Ext.define('derogation.override', {
 			},
 
 			listeners: {
-				select: function(combo, records, options) {
+				select: function(combo, records) {
+					void(combo);
+
 					var value = records[0].get('value');
 
 					var fields = {
@@ -273,8 +276,8 @@ Ext.define('derogation.override', {
 			isFormField: false,
 			editable: false,
 
-			disabled: (this.variable != 'state'),
-			hidden: (this.variable != 'state'),
+			disabled: (this.variable !== 'state'),
+			hidden: (this.variable !== 'state'),
 			autoRender: true,
 			flex: 2,
 
@@ -301,7 +304,7 @@ Ext.define('derogation.override', {
 
 			listeners: {
 				change: function(value) {
-					if(me.variable == 'state') {
+					if(me.variable === 'state') {
 						me.value = value;
 					}
 				},
@@ -313,8 +316,8 @@ Ext.define('derogation.override', {
 			isFormField: false,
 			editable: false,
 
-			disabled: (this.variable != 'alert_icon'),
-			hidden: (this.variable != 'alert_icon'),
+			disabled: (this.variable !== 'alert_icon'),
+			hidden: (this.variable !== 'alert_icon'),
 			autoRender: true,
 			flex: 2,
 
@@ -341,7 +344,7 @@ Ext.define('derogation.override', {
 
 			listeners: {
 				change: function(value) {
-					if(me.variable == 'alert_icon') {
+					if(me.variable === 'alert_icon') {
 						me.value = value;
 					}
 				},
@@ -352,8 +355,8 @@ Ext.define('derogation.override', {
 			name: 'output',
 			isFormField: false,
 
-			disabled: (this.variable != 'output'),
-			hidden: (this.variable != 'output'),
+			disabled: (this.variable !== 'output'),
+			hidden: (this.variable !== 'output'),
 			autoRender: true,
 			flex: 2,
 
@@ -362,7 +365,7 @@ Ext.define('derogation.override', {
 
 			listeners: {
 				change: function(value) {
-					if(me.variable == 'output') {
+					if(me.variable === 'output') {
 						me.value = value;
 					}
 				},
@@ -373,8 +376,8 @@ Ext.define('derogation.override', {
 			name: 'alert_msg',
 			isFormField: false,
 
-			disabled: (this.variable != 'alert_msg'),
-			hidden: (this.variable != 'alert_msg'),
+			disabled: (this.variable !== 'alert_msg'),
+			hidden: (this.variable !== 'alert_msg'),
 			autoRender: true,
 			flex: 2,
 
@@ -383,7 +386,7 @@ Ext.define('derogation.override', {
 
 			listeners: {
 				change: function(value) {
-					if(me.variable == 'alert_msg') {
+					if(me.variable === 'alert_msg') {
 						me.value = value;
 					}
 				},
@@ -457,7 +460,7 @@ Ext.define('derogation.statemap', {
 		},
 
 		selectionchange: function(grid, selected) {
-			if(selected.length == 0) {
+			if(selected.length === 0) {
 				this.statemap_id = undefined;
 			}
 		}
@@ -487,7 +490,7 @@ Ext.define('derogation.statemap', {
 					break;
 			}
 
-			if (i != val.length - 1) {
+			if (i !== val.length - 1) {
 				output += ', ';
 			}
 		}

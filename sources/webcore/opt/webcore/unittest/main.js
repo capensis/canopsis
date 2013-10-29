@@ -1,14 +1,14 @@
 //#################
 //# Configs
 //#################
-//var url = 					'http://127.0.0.1:8082/en/static/canopsis/index.debug.html';
-var url = 					'http://demo-devel.canopsis.org/';
-var timeout =				5000;
 
-var casper_verbose =		false;
-var casper_logLevel =		'debug';
-var viewportSize = 			{width: 1366, height: 768};
-var capture_interval = 		500;
+var url              = 'http://demo-devel.canopsis.org/';
+var timeout          = 5000;
+
+var casper_verbose   = false;
+var casper_logLevel  = 'debug';
+var viewportSize     = {width: 1366, height: 768};
+var capture_interval = 500;
 
 //#################
 //# Casper
@@ -16,20 +16,21 @@ var capture_interval = 		500;
 var fs = require('fs');
 
 var casper = require('casper').create({
-    verbose: casper_verbose,
-    logLevel: casper_logLevel,
-    viewportSize: viewportSize,
-    onStepComplete: function(){
-    	capture();
-    }
+	verbose: casper_verbose,
+	logLevel: casper_logLevel,
+	viewportSize: viewportSize,
+	onStepComplete: function(){
+		capture();
+	}
 });
 
-casper.on('remote.message', function(msg){
-	if (casper_verbose)
+casper.on('remote.message', function(msg) {
+	if(casper_verbose) {
 		console.log(msg);
+	}
 });
 
-casper.test.on('fail', function(result){
+casper.test.on('fail', function() {
 	casper.test.done();
 	casper.test.renderResults(true, 0, 'log.xml');
 });
@@ -39,98 +40,104 @@ casper.test.on('fail', function(result){
 //#################
 
 var step = 0;
-var capture = function(){
-	var capturePath = 'captures/step-'+step+'.png'
+
+function capture() {
+	var capturePath = 'captures/step-' + step + '.png';
 	casper.capture(capturePath);
 	step += 1;
 }
 
-var capturer = undefined
+var capturer = undefined;
 
-var fill_field = function(selector, name, value){
+function fill_field(selector, name, value) {
+	void(selector);
+
 	var options = {};
 	options[name] = value;
 
-	casper.test.assertExists('input[name="'+name+'"]', 'Check if field "'+name+'" exist');
+	casper.test.assertExists('input[name="' + name + '"]', 'Check if field "' + name + '" exist');
 	casper.fill(selector, options, false);
 	casper.test.assertField(name, value);
 }
 
-var click = function(selector){
+function click(selector) {
 	casper.waitForSelector(selector, function() {
-		
 		casper.test.assertExists(selector, 'Check if '+selector+' exist');
-
-		//casper.mouseEvent('mousemove', selector);
-		//casper.mouseEvent('mouseover', selector);
-		//casper.mouseEvent('mousedown', selector);
 
 		casper.thenClick(selector, function(){
 			casper.test.pass(" + Clicked");
 		});
 
-	});/*,function() {
-		casper.test.fail("'"+selector+"' not found.");
-
-	}, timeout);*/
+	});
 }
 
-var clickRowLabel = function(label, dbl){
-	if (dbl == undefined || dbl != true)
+function clickRowLabel(label, dbl) {
+	if(dbl === undefined || dbl !== true) {
 		dbl = false;
+	}
 
 	var selector = {
 		type: 'xpath',
-		path: '//*[text()="'+label+'"]'
-	}
+		path: '//*[text()="' + label + '"]'
+	};
 
 	casper.waitForText(label, function() {
 		casper.mouseEvent('mouseover', selector);
-		if (dbl)
+
+		if(dbl) {
 			casper.mouseEvent('dblclick', selector);
-		else
+		}
+		else {
 			casper.mouseEvent('mousedown', selector);
+		}
+
 		wait("tr.x-grid-row-selected");
-	}, timeout)
+	}, timeout);
 }
 
-var fillGridEditableField = function(selector,text){
+function fillGridEditableField(selector, text) {
+	void(selector);
+
 	casper.sendKeys('.x-editor input', text);
 	casper.sendKeys('.x-editor input', '\n');
 }
 
-var selectComboValue = function(comboName,comboValue){
-	casper.then(function(){
-		casper.test.assertExists('input[name="'+comboName+'"]', 'Check if field "'+comboName+'" exist')
+function selectComboValue(comboName, comboValue) {
+	casper.then(function() {
+		casper.test.assertExists('input[name="' + comboName + '"]', 'Check if field "' + comboName + '" exist');
+
 		//because trigger is in the parent sibling
 		var trigger_id = casper.evaluate(function(comboName) {
-			return $('input[name="'+comboName+'"]').parent().next()[0].id},comboName
-			)
-		click('#'+trigger_id+' > div')
-	})
-	casper.then(function(){
+			return $('input[name="' + comboName + '"]').parent().next()[0].id;
+		}, comboName);
+
+		click('#' + trigger_id + ' > div');
+	});
+
+	casper.then(function() {
 		casper.waitForText(comboValue, function() {
-			casper.clickLabel(comboValue,'li');
-		}, timeout)
-	})
+			casper.clickLabel(comboValue, 'li');
+		}, timeout);
+	});
 }
 
-var clickLabel = function(label){
+function clickLabel(label) {
 	casper.waitForText(label, function() {
 		casper.clickLabel(label);
-	}, timeout)
+	}, timeout);
 }
 
-var clickMenu = function(name){
+function clickMenu(name) {
 	var menu = {
 		build:  "span.icon-mainbar-build",
-		run:    "span.icon-mainbar-run", 
-		report: "span.icon-mainbar-report",
-	}
+		run:    "span.icon-mainbar-run",
+		report: "span.icon-mainbar-report"
+	};
+
 	click(menu[name]);
 }
 
-var openMenu = function(menu_name,sub_menu_name,textToWait){
+function openMenu(menu_name, sub_menu_name, textToWait) {
 	var sub_menu = {
 		buildAccount: "img.icon-mainbar-edit-account",
 		buildGroup: "img.icon-mainbar-edit-group",
@@ -140,52 +147,63 @@ var openMenu = function(menu_name,sub_menu_name,textToWait){
 		buildConsolidation: "img.icon-mainbar-consolidation",
 		buildNewView: "img.icon-mainbar-new-view",
 		runViewManager: "img.icon-mainbar-run"
-	}
+	};
 
 	casper.echo('> Click on '+ menu_name + ' then ' + sub_menu_name, 'COMMENT');
 	clickMenu(menu_name);
 	click(sub_menu[sub_menu_name]);
 
-	if(textToWait)
-		waitText(textToWait)
-}
-
-var wait = function(selector, timeout, str_onSuccess, str_onFailed){
-	if (str_onSuccess == undefined)  str_onSuccess	= selector + " found";
-	if (str_onFailed == undefined)	str_onFailed	= "Impossible to find "+selector;
-
-	casper.waitForSelector(selector, function() {
-		casper.test.pass(str_onSuccess);
-	});/*, function() {
-		casper.test.fail(str_onFailed);
-	}, timeout);*/
-}
-
-var waitWhile = function(selector, timeout, str_onSuccess, str_onFailed){
-	if (str_onSuccess == undefined)  str_onSuccess	= selector + " is not found";
-	if (str_onFailed == undefined)	str_onFailed	= selector + " found";
-
-	if (casper.exists(selector)) {
-		casper.test.pass("Wait for '"+selector+"' to disappear");
-		casper.waitWhileSelector(selector, function() {
-			casper.test.pass(str_onSuccess);
-		});/*, function() {
-			casper.test.fail(str_onFailed);
-		}, timeout);*/
-	}else{
-		casper.test.pass("'"+selector+"' already disappeared.");
+	if(textToWait) {
+		waitText(textToWait);
 	}
 }
 
-var waitText = function(text){
-	casper.waitForText(text, function() {
-		casper.test.pass("'"+text+"' found.");
-	});/*, function(){
-		casper.test.fail("'"+text+"' not found.");
-	}, timeout)*/
+function wait(selector, timeout, str_onSuccess, str_onFailed) {
+	void(timeout);
+
+	if(str_onSuccess === undefined) {
+		str_onSuccess = selector + " found";
+	}
+
+	if(str_onFailed === undefined) {
+		str_onFailed = "Impossible to find " + selector;
+	}
+
+	casper.waitForSelector(selector, function() {
+		casper.test.pass(str_onSuccess);
+	});
 }
 
-var closeTab = function(){
+function waitWhile(selector, timeout, str_onSuccess, str_onFailed) {
+	void(timeout);
+
+	if(str_onSuccess === undefined) {
+		str_onSuccess = selector + " is not found";
+	}
+
+	if(str_onFailed === undefined) {
+		str_onFailed = selector + " found";
+	}
+
+	if(casper.exists(selector)) {
+		casper.test.pass("Wait for '" + selector + "' to disappear");
+
+		casper.waitWhileSelector(selector, function() {
+			casper.test.pass(str_onSuccess);
+		});
+	}
+	else {
+		casper.test.pass("'" + selector + "' already disappeared.");
+	}
+}
+
+function waitText(text) {
+	casper.waitForText(text, function() {
+		casper.test.pass("'" + text + "' found.");
+	});
+}
+
+function closeTab() {
 	click("a.x-tab-close-btn");
 }
 
@@ -193,10 +211,10 @@ var closeTab = function(){
 //# cgrid utils
 //#################
 
-var cgridOpen = function(menu_name,sub_menu_name,textToWait){
+function cgridOpen(menu_name, sub_menu_name, textToWait) {
 	casper.then(function() {
 		casper.echo('> Open menu record', 'COMMENT');
-		openMenu(menu_name,sub_menu_name,textToWait)
+		openMenu(menu_name, sub_menu_name, textToWait);
 	});
 
 	casper.then(function() {
@@ -206,9 +224,10 @@ var cgridOpen = function(menu_name,sub_menu_name,textToWait){
 
 	casper.then(function() {
 		casper.echo('> Check if record exist', 'COMMENT');
+
 		casper.waitForText("Casper", function() {
 			casper.test.fail("record already in store !");
-		}, function(){
+		}, function() {
 			casper.test.pass("Ok");
 		}, 500);
 	});
@@ -220,7 +239,7 @@ var cgridOpen = function(menu_name,sub_menu_name,textToWait){
 	});
 }
 
-var cgridEditRecord = function(selector_form,fieldToEdit,ModifiedValue){
+function cgridEditRecord(selector_form, fieldToEdit, ModifiedValue) {
 	casper.then(function() {
 		casper.echo('> Select created record', 'COMMENT');
 		clickRowLabel('Casper');
@@ -237,14 +256,17 @@ var cgridEditRecord = function(selector_form,fieldToEdit,ModifiedValue){
 		click("span.icon-save");
 		waitWhile("span.icon-save");
 		waitText(ModifiedValue);
-		//casper.waitUntilVisible("div.ui-pnotify-container");
 	});
-
 }
 
-var cgridRemoveRecord = function(rowLabelText,deleteLabel){
-	if(!rowLabelText)rowLabelText = 'Casper';
-	if(!deleteLabel)deleteLabel = 'Yes';
+function cgridRemoveRecord(rowLabelText, deleteLabel) {
+	if(!rowLabelText) {
+		rowLabelText = 'Casper';
+	}
+
+	if(!deleteLabel) {
+		deleteLabel = 'Yes';
+	}
 
 	casper.then(function() {
 		casper.echo('> Select created record', 'COMMENT');
@@ -271,25 +293,28 @@ var cgridRemoveRecord = function(rowLabelText,deleteLabel){
 		}, function(){
 			casper.test.pass("Ok");
 		}, 2000);
-
 	});
 }
 
 //#################
 //# Load page
 //#################
-casper.echo('> Load page "'+url+'"', 'COMMENT');
+
+casper.echo('> Load page "' + url + '"', 'COMMENT');
+
 casper.start(url, function() {
 	casper.test.assertTitle('Canopsis', 'Check page title');
 
 	casper.evaluate(function() {
 		localStorage.clear();
+
 		$('body').append('<div id="div-click" style="z-index: 99999999999; position:absolute; overflow:hidden; border-radius:10px; width:10px; height:10px; background-color: #FF0000;"></div>');
 		$('#div-click').hide();
 
 		$('body').click(function(event) {
-			if (global.divClickTimeout)
+			if(global.divClickTimeout) {
 				clearTimeout(global.divClickTimeout);
+			}
 
 			$('#div-click').css("top", event.pageY);
 			$('#div-click').css("left", event.pageX);
@@ -299,21 +324,22 @@ casper.start(url, function() {
 				$('#div-click').hide();
 			}, 300);
 		});
-
 	});
 
-	capturer = setInterval(function(){
+	capturer = setInterval(function() {
 		capture();
 	}, capture_interval);
-
 });
 
 //#################
 //# Exit casper at end
 //#################
+
 casper.run(function() {
-	if(capturer)
+	if(capturer) {
 		clearInterval(capturer);
+	}
+
 	capture();
 
 	casper.echo('\n########### END ###########', 'COMMENT');

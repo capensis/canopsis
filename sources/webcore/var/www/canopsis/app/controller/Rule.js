@@ -1,5 +1,4 @@
 /*
-#--------------------------------
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
@@ -16,7 +15,6 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
-# ---------------------------------
 */
 Ext.define('canopsis.controller.Rule', {
 	extend: 'canopsis.lib.controller.cgrid',
@@ -27,7 +25,7 @@ Ext.define('canopsis.controller.Rule', {
 
 	logAuthor: '[controller][rules]',
 
-	storeDefaultAction:undefined,
+	storeDefaultAction: undefined,
 
 	init: function() {
 		log.debug('Initialize ...', this.logAuthor);
@@ -38,7 +36,7 @@ Ext.define('canopsis.controller.Rule', {
 		this.modelId = 'Rule';
 
 		this.control( {
-			'combobox[alias=widget.defaultAction]' : {
+			'combobox[alias=widget.defaultAction]': {
 				select: this.defaultRuleChanged,
 				afterrender: this.updateDefaultActionCombo
 			}
@@ -51,29 +49,34 @@ Ext.define('canopsis.controller.Rule', {
 		this.storeDefaultAction.load();
 	},
 
-	defaultRuleChanged: function(combo, newVal, oldVal){
+	defaultRuleChanged: function(combo, newVal) {
+		void(combo);
+
 		var record = this.storeDefaultAction.getAt(0);
 
-		if(record === undefined)
+		if(record === undefined) {
 			this.storeDefaultAction.add({action: 'pass'});
-		else
+		}
+		else {
 			this.storeDefaultAction.getAt(0).set("action", newVal[0].data.value);
+		}
 	},
 
-	updateDefaultActionCombo: function( combo, eOpts ){
+	updateDefaultActionCombo: function(combo) {
 		var comboValue;
-		try
-		{
-			comboValue = this.storeDefaultAction.first().get("action")
+
+		try {
+			comboValue = this.storeDefaultAction.first().get("action");
 		}
-		catch(err)
-		{
+		catch(err) {
 			comboValue = "pass";
 		}
 
-		if(comboValue == "pass" || comboValue === undefined)
+		if(comboValue === "pass" || comboValue === undefined) {
 			combo.select(combo.getStore().getAt(0));
-		else
+		}
+		else {
 			combo.select(combo.getStore().getAt(1));
+		}
 	}
 });

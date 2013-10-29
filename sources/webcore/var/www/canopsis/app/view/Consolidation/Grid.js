@@ -1,5 +1,4 @@
 /*
-#--------------------------------
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
@@ -16,7 +15,6 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
-# ---------------------------------
 */
 Ext.define('canopsis.view.Consolidation.Grid' , {
 	extend: 'canopsis.lib.view.cgrid',
@@ -37,19 +35,7 @@ Ext.define('canopsis.view.Consolidation.Grid' , {
 	opt_bar_search_field: ['crecord_name', 'display_name', 'description'],
 
 	columns: [
-		/*{
-			header: _('State'),
-			align: 'center',
-			width: 50,
-			dataIndex: 'state',
-			renderer: rdr_status
-		}/*,{
-			header: _('Enabled'),
-			align: 'center',
-			width: 55,
-			dataIndex: 'enable',
-			renderer: rdr_boolean
-		},*/{
+		{
 			header: _('Loaded'),
 			align: 'center',
 			width: 55,
@@ -92,21 +78,17 @@ Ext.define('canopsis.view.Consolidation.Grid' , {
 
 		},{
 			header: _('Engine message'),
-			//align: 'center',
 			flex: 5,
 			dataIndex: 'output_engine'
-			//renderer : function(){return 'Ressource = Regex(cpu*) && Metric = system '}
 		},{
 			header: _('Nb elements'),
 			align: 'center',
 			width: 70,
 			dataIndex: 'nb_items'
-			//renderer : function(){return 34}
 		}
 	],
 
 	initComponent: function() {
 		this.callParent(arguments);
 	}
-
 });

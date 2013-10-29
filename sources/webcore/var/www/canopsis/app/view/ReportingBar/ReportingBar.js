@@ -1,5 +1,4 @@
 /*
-#--------------------------------
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
@@ -16,7 +15,6 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
-# ---------------------------------
 */
 Ext.define('canopsis.view.ReportingBar.ReportingBar' , {
 	extend: 'Ext.toolbar.Toolbar',
@@ -37,11 +35,10 @@ Ext.define('canopsis.view.ReportingBar.ReportingBar' , {
 
 		this.advancedMode = false;
 
-		//---------------------- Create items --------------------------------
+		// Create items
 
 		var today = new Date();
 		var tommorow = new Date(today.getTime() + (global.commonTs.day * 1000));
-		var yesterday = new Date(today.getTime() - (global.commonTs.day * 1000));
 
 		this.previousButton = this.add({
 			xtype: 'button',
@@ -49,7 +46,10 @@ Ext.define('canopsis.view.ReportingBar.ReportingBar' , {
 			action: 'previous'
 		});
 
-		this.textFor = this.add({xtype: 'tbtext', text: _('For') + ':'});
+		this.textFor = this.add({
+			xtype: 'tbtext',
+			text: _('For') + ':'
+		});
 
 		var comboStore = Ext.create('Ext.data.Store', {
 			fields: ['name', 'value'],
@@ -68,7 +68,6 @@ Ext.define('canopsis.view.ReportingBar.ReportingBar' , {
 			width: 55,
 			value: 1,
 			minValue: 1
-			//allowBlank: false,
 		});
 
 		this.combo = this.add({
@@ -102,7 +101,12 @@ Ext.define('canopsis.view.ReportingBar.ReportingBar' , {
 			action: 'next'
 		});
 
-		this.textTo = this.add({xtype: 'tbtext', text: _('To') + ': ', hidden: true});
+		this.textTo = this.add({
+			xtype: 'tbtext',
+			text: _('To') + ': ',
+			hidden: true
+		});
+
 		this.textBefore = this.add({xtype: 'tbtext', text: _('Before') + ': '});
 		this.toTs = this.add({
 			xtype: 'cdate',
@@ -115,7 +119,7 @@ Ext.define('canopsis.view.ReportingBar.ReportingBar' , {
 
 		this.add('->');
 
-		//--------------------Buttons--------------------
+		// Buttons
 
 		this.add('-');
 
@@ -145,8 +149,5 @@ Ext.define('canopsis.view.ReportingBar.ReportingBar' , {
 			action: 'exit',
 			tooltip: _('Leave reporting mode')
 		});
-
-
 	}
-
 });

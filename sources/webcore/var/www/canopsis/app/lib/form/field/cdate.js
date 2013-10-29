@@ -1,5 +1,4 @@
 /*
-#--------------------------------
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
@@ -16,10 +15,9 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
-# ---------------------------------
 */
 
-Ext.define('canopsis.lib.form.field.cdate' , {
+Ext.define('canopsis.lib.form.field.cdate', {
 	extend: 'Ext.container.Container',
 	mixins: ['canopsis.lib.form.cfield'],
 
@@ -44,11 +42,14 @@ Ext.define('canopsis.lib.form.field.cdate' , {
 		this.logAuthor = '[' + this.id + ']';
 		log.debug('Initialize ...', this.logAuthor);
 
-		if (!this.date_value)
+		if(!this.date_value) {
 			this.date_value = new Date();
+		}
 
 		var config = {
-			isFormField: false, //upper form does not retrieve this element
+			//upper form does not retrieve this element
+			isFormField: false,
+
 			labelWidth: this.date_label_width,
 			value: this.date_value,
 			editable: false,
@@ -57,12 +58,13 @@ Ext.define('canopsis.lib.form.field.cdate' , {
 			allowBlank: false
 		};
 
-		if (this.label_text)
+		if(this.label_text) {
 			config.fieldLabel = this.label_text;
+		}
 
 		this.date = Ext.widget('datefield', config);
 
-		var config = {
+		config = {
 			isFormField: false,
 			margin: '0 0 0 2',
 			width: this.hour_width,
@@ -70,16 +72,21 @@ Ext.define('canopsis.lib.form.field.cdate' , {
 			regex: getTimeRegex()
 		};
 
-		if (this.now) {
-			if (is12Clock())
+		if(this.now) {
+			if(is12Clock()) {
 				config.value = Ext.Date.format(new Date, 'g:i a');
-			else
+			}
+			else {
 				config.value = Ext.Date.format(new Date, 'G:i');
-		}else {
-			if (is12Clock())
+			}
+		}
+		else {
+			if(is12Clock()) {
 				config.value = Ext.Date.format(this.date_value, 'g:i a');
-			else
+			}
+			else {
 				config.value = Ext.Date.format(this.date_value, 'G:i');
+			}
 		}
 
 		this.hour = Ext.widget('textfield', config);
@@ -90,8 +97,9 @@ Ext.define('canopsis.lib.form.field.cdate' , {
 
 		this.relayEvents(this.date, ['select']);
 
-		if(this.value)
-			this.setValue(this.value)
+		if(this.value) {
+			this.setValue(this.value);
+		}
 	},
 
 	getValue: function() {
@@ -99,17 +107,20 @@ Ext.define('canopsis.lib.form.field.cdate' , {
 		var hour = stringTo24h(this.hour.getValue());
 
 		var timestamp = date + (hour.hour * 60 * 60) + (hour.minute * 60);
-		//log.dump('output date is' + new Date(timestamp*1000))
+
 		return parseInt(timestamp, 10);
 	},
 
 	setValue: function(value) {
 		log.debug('cdate ' + this.name + ' is setValue with ' + value, this.logAuthor);
 		this.date.setValue(new Date(value * 1000));
-		if (is12Clock())
+
+		if(is12Clock()) {
 			this.hour.setValue(Ext.Date.format(new Date(value * 1000), 'g:i a'));
-		else
+		}
+		else {
 			this.hour.setValue(Ext.Date.format(new Date(value * 1000), 'G:i'));
+		}
 	},
 
 	setDisabled: function(bool) {
@@ -119,10 +130,7 @@ Ext.define('canopsis.lib.form.field.cdate' , {
 	},
 
 	isValid: function() {
-		if (this.date.isValid() && this.hour.isValid())
-			return true;
-		else
-			return false;
+		return (this.date.isValid() && this.hour.isValid());
 	},
 
 	setMaxDate: function(value) {
@@ -132,5 +140,4 @@ Ext.define('canopsis.lib.form.field.cdate' , {
 	setMinDate: function(value) {
 		this.date.setMinValue(value);
 	}
-
 });

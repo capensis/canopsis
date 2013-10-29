@@ -1,5 +1,4 @@
 /*
-#--------------------------------
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
@@ -16,7 +15,6 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
-# ---------------------------------
 */
 
 Ext.define('canopsis.lib.form.field.cwlist' , {
@@ -50,6 +48,8 @@ Ext.define('canopsis.lib.form.field.cwlist' , {
 
 		listeners: {
 			selectionchange: function(dv, nodes){
+				void(dv);
+
 				var field = this.up('panel');
 				field.nodes = nodes;
 				field.fireEvent("select", field, nodes);
@@ -58,14 +58,15 @@ Ext.define('canopsis.lib.form.field.cwlist' , {
 	},
 
 	getValue: function() {
-		if (this.nodes)
+		if(this.nodes) {
 			return this.nodes[0].raw.xtype;
-		else
+		}
+		else {
 			return undefined;
+		}
 	},
 
 	setValue: function(xtype) {
-		this.nodes = [ Ext.getStore("Widgets").findRecord('xtype', xtype, undefined, false, false, true) ];
+		this.nodes = [Ext.getStore("Widgets").findRecord('xtype', xtype, undefined, false, false, true)];
 	}
-
 });

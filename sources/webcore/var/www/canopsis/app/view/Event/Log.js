@@ -1,5 +1,4 @@
 /*
-#--------------------------------
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
@@ -16,7 +15,6 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
-# ---------------------------------
 */
 Ext.define('canopsis.view.Event.Log' , {
 	extend: 'canopsis.lib.view.cgrid_state',
@@ -49,14 +47,15 @@ Ext.define('canopsis.view.Event.Log' , {
 			pressed: true,
 			scope: this,
 			toggleHandler: function(button, state) {
-				if (!state) {
+				if(!state) {
 					button.filter_id = this.store.addFilter(
 						{'source_type': {'$ne': 'resource'}}
 					);
-				}else {
-					if (button.filter_id)
-						this.store.deleteFilter(button.filter_id);
 				}
+				else if(button.filter_id) {
+					this.store.deleteFilter(button.filter_id);
+				}
+
 				this.store.load();
 			}
 		},{
@@ -68,14 +67,15 @@ Ext.define('canopsis.view.Event.Log' , {
 			pressed: true,
 			scope: this,
 			toggleHandler: function(button, state) {
-				if (!state) {
+				if(!state) {
 					button.filter_id = this.store.addFilter(
 						{'source_type': {'$ne': 'component'}}
 					);
-				}else {
-					if (button.filter_id)
-						this.store.deleteFilter(button.filter_id);
 				}
+				else if(button.filter_id) {
+					this.store.deleteFilter(button.filter_id);
+				}
+
 				this.store.load();
 			}
 		},{
@@ -87,14 +87,15 @@ Ext.define('canopsis.view.Event.Log' , {
 			pressed: true,
 			scope: this,
 			toggleHandler: function(button, state) {
-				if (!state) {
+				if(!state) {
 					button.filter_id = this.store.addFilter(
 						{'state': {'$ne': 0}}
 					);
-				}else {
-					if (button.filter_id)
-						this.store.deleteFilter(button.filter_id);
 				}
+				else if(button.filter_id) {
+					this.store.deleteFilter(button.filter_id);
+				}
+
 				this.store.load();
 			}
 		},{
@@ -106,14 +107,15 @@ Ext.define('canopsis.view.Event.Log' , {
 			pressed: true,
 			scope: this,
 			toggleHandler: function(button, state) {
-				if (!state) {
+				if(!state) {
 					button.filter_id = this.store.addFilter(
 						{'state': {'$ne': 1}}
 					);
-				}else {
-					if (button.filter_id)
-						this.store.deleteFilter(button.filter_id);
 				}
+				else if(button.filter_id) {
+					this.store.deleteFilter(button.filter_id);
+				}
+
 				this.store.load();
 			}
 		},{
@@ -125,14 +127,15 @@ Ext.define('canopsis.view.Event.Log' , {
 			pressed: true,
 			scope: this,
 			toggleHandler: function(button, state) {
-				if (!state) {
+				if(!state) {
 					button.filter_id = this.store.addFilter(
 						{'state': {'$ne': 2}}
 					);
-				}else {
-					if (button.filter_id)
-						this.store.deleteFilter(button.filter_id);
 				}
+				else if(button.filter_id) {
+					this.store.deleteFilter(button.filter_id);
+				}
+
 				this.store.load();
 			}
 		},{
@@ -144,14 +147,15 @@ Ext.define('canopsis.view.Event.Log' , {
 			pressed: true,
 			scope: this,
 			toggleHandler: function(button, state) {
-				if (!state) {
+				if(!state) {
 					button.filter_id = this.store.addFilter(
 						{'state': {'$ne': 3}}
 					);
-				}else {
-					if (button.filter_id)
-						this.store.deleteFilter(button.filter_id);
 				}
+				else if(button.filter_id) {
+					this.store.deleteFilter(button.filter_id);
+				}
+
 				this.store.load();
 			}
 		},{
@@ -163,14 +167,15 @@ Ext.define('canopsis.view.Event.Log' , {
 			pressed: true,
 			scope: this,
 			toggleHandler: function(button, state) {
-				if (!state) {
+				if(!state) {
 					button.filter_id = this.store.addFilter(
 						{'state_type': {'$ne': 0}}
 					);
-				}else {
-					if (button.filter_id)
-						this.store.deleteFilter(button.filter_id);
 				}
+				else if(button.filter_id) {
+					this.store.deleteFilter(button.filter_id);
+				}
+
 				this.store.load();
 			}
 		},{
@@ -182,38 +187,45 @@ Ext.define('canopsis.view.Event.Log' , {
 			pressed: true,
 			scope: this,
 			toggleHandler: function(button, state) {
-				if (!state) {
+				if(!state) {
 					button.filter_id = this.store.addFilter(
 						{'state_type': {'$ne': 1}}
 					);
-				}else {
-					if (button.filter_id)
-						this.store.deleteFilter(button.filter_id);
 				}
+				else if(button.filter_id) {
+					this.store.deleteFilter(button.filter_id);
+				}
+
 				this.store.load();
 			}
 		},'-'],
 
-		//---------------------bind controller----------------------
+		// bind controller
 		this.ctrl = Ext.create('canopsis.lib.controller.cgrid');
 
 		var stop = (new Date().getTime()) / 1000;
 		var start = stop - 86400;
 
 		// add filter for timestamp
-		var initialFilter = {'$and': [{
-								timestamp: {'$gt': parseInt(start)}},
-								{timestamp: {'$lt': parseInt(stop)}}]
-							};
+		var initialFilter = {'$and': [
+			{
+				timestamp: {
+					'$gt': parseInt(start)
+				}
+			},{
+				timestamp: {
+					'$lt': parseInt(stop)
+				}
+			}
+		]};
+
 		this.store = Ext.create('canopsis.store.EventLogs');
 		this.ctrl.filter_id = this.store.addFilter(initialFilter);
-		//----------------
+
 		this.callParent(arguments);
 
 		this.on('afterrender', function() {
 			this.ctrl._bindGridEvents(this);
 		}, this);
-
 	}
-
 });

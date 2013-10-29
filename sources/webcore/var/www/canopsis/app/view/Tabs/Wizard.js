@@ -1,5 +1,4 @@
 /*
-#--------------------------------
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
@@ -16,7 +15,6 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
-# ---------------------------------
 */
 
 Ext.define('canopsis.view.Tabs.Wizard' , {
@@ -29,80 +27,80 @@ Ext.define('canopsis.view.Tabs.Wizard' , {
 	logAuthor: '[widget wizard]',
 
 	initComponent: function() {
-
-		//----------------------Build wizard options
+		// Build wizard options
 		var step1 = {
-				title: _('Choose widget'),
-				//description : _('choose the type of widget you want, its title, and refresh interval'),
-				items: [
-				{
-					xtype: 'combo',
-					store: 'Widgets',
-					queryMode: 'local',
-					forceSelection: true,
-					fieldLabel: _('Type'),
-					name: 'xtype',
-					editable: false,
-					displayField: 'name',
-					valueField: 'xtype',
-					//value: 'empty',
-					allowBlank: false
-				},{
-					xtype: 'displayfield',
-					name: 'description',
-					isFormField: false,
-					fieldLabel: _('Description')
-				},{
-					xtype: 'checkbox',
-					fieldLabel: _('Show border'),
-					checked: false,
-					name: 'border',
-					uncheckedValue: false
-				},{
-					xtype: 'checkbox',
-					fieldLabel: _('Auto title') + ' ' + _('if available'),
-					checked: true,
-					inputValue: true,
-					uncheckedValue: false,
-					name: 'autoTitle'
-				},{
-					xtype: 'textfield',
-					fieldLabel: _('Title') + ' (' + _('optional') + ')',
-					name: 'title'
-				},{
-					xtype: 'combobox',
-					name: 'refreshInterval',
-					fieldLabel: _('Refresh interval'),
-					queryMode: 'local',
-					editable: false,
-					displayField: 'text',
-					valueField: 'value',
-					value: 300,
-					store: {
-						xtype: 'store',
-						fields: ['value', 'text'],
-						data: [
-							{value: 0,	text: 'None'},
-							{value: 60,	text: '1 minutes'},
-							{value: 300,	text: '5 minutes'},
-							{value: 600,	text: '10 minutes'},
-							{value: 900,	text: '15 minutes'},
-							{value: 1800,	text: '30 minutes'},
-							{value: 3600,	text: '1 hour'}
-						]
-					}
-				}]
+			title: _('Choose widget'),
+			items: [
+			{
+				xtype: 'combo',
+				store: 'Widgets',
+				queryMode: 'local',
+				forceSelection: true,
+				fieldLabel: _('Type'),
+				name: 'xtype',
+				editable: false,
+				displayField: 'name',
+				valueField: 'xtype',
+				allowBlank: false
+			},{
+				xtype: 'displayfield',
+				name: 'description',
+				isFormField: false,
+				fieldLabel: _('Description')
+			},{
+				xtype: 'checkbox',
+				fieldLabel: _('Show border'),
+				checked: false,
+				name: 'border',
+				uncheckedValue: false
+			},{
+				xtype: 'checkbox',
+				fieldLabel: _('Auto title') + ' ' + _('if available'),
+				checked: true,
+				inputValue: true,
+				uncheckedValue: false,
+				name: 'autoTitle'
+			},{
+				xtype: 'textfield',
+				fieldLabel: _('Title') + ' (' + _('optional') + ')',
+				name: 'title'
+			},{
+				xtype: 'combobox',
+				name: 'refreshInterval',
+				fieldLabel: _('Refresh interval'),
+				queryMode: 'local',
+				editable: false,
+				displayField: 'text',
+				valueField: 'value',
+				value: 300,
+				store: {
+					xtype: 'store',
+					fields: ['value', 'text'],
+					data: [
+						{value: 0,     text: 'None'},
+						{value: 1,     text: '1 second'},
+						{value: 10,    text: '10 seconds'},
+						{value: 61,    text: '30 seconds'},
+						{value: 60,    text: '1 minute'},
+						{value: 300,   text: '5 minutes'},
+						{value: 600,   text: '10 minutes'},
+						{value: 900,   text: '15 minutes'},
+						{value: 1800,  text: '30 minutes'},
+						{value: 3600,  text: '1 hour'}
+					]
+				}
+			}]
 		};
 
 		this.step_list = [step1];
 
 		this.callParent(arguments);
 
-		console.log('-------------------------------------------')
-		console.log(this)
-
 		var combo = this.down('combobox[name=xtype]');
-		combo.on('select', function() {this.finishButton.setDisabled(false);},this);
+
+		combo.on('select', function() {
+			this.finishButton.setDisabled(false);
+		}, this);
 
 	},
 
@@ -115,25 +113,22 @@ Ext.define('canopsis.view.Tabs.Wizard' , {
 	finish_button: function() {
 		log.debug('save button', this.logAuthor);
 		var combo = Ext.ComponentQuery.query('#' + this.id + ' [name=xtype]');
-		if (combo[0].isValid()) {
-			if (this.isValid()) {
+
+		if(combo[0].isValid()) {
+			if(this.isValid()) {
 				var variables = this.get_variables();
 
 				//hack: if no xtype set it (the field is disable in editmode)
-				if (variables.xtype == undefined)
+				if(!variables.xtype) {
 					variables.xtype = combo[0].getValue();
-
-				//log.dump('---------------------')
-				//log.dump(variables)
+				}
 
 				this.fireEvent('save', this.widgetId, variables);
 				this.close();
-			}else {
+			}
+			else {
 				global.notify.notify('Form error', 'There is incorrect field in form', 'info');
 			}
 		}
 	}
-
-
-
 });

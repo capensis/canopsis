@@ -1,5 +1,4 @@
 /*
-#--------------------------------
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
@@ -16,7 +15,6 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
-# ---------------------------------
 */
 Ext.define('canopsis.controller.Topology', {
 	extend: 'canopsis.lib.controller.cgrid',
@@ -41,32 +39,32 @@ Ext.define('canopsis.controller.Topology', {
 		this.callParent(arguments);
 	},
 
-	preSave: function(record, data, form) {
+	preSave: function(record) {
 		record.set('loaded', false);
 		return record;
 	},
 
 	ajaxValidation: function(record, edit) {
-		if (edit) {
+		if(edit) {
 			this._save(record, true);
 			return;
 		}
 
 		isRecordExist('object', 'topology', 'crecord_name', record, function(ctrl, record, exist) {
-			if (exist)
+			if(exist) {
 				ctrl._save(record, false);
-			else
+			}
+			else {
 				global.notify.notify(_('Bad name'), _('This topology name already exist'), 'warning');
+			}
 		}, this);
 	},
 
-	afterload_EditForm: function(form,item_copy) {
+	afterload_EditForm: function(form, item_copy) {
 		form.rightPanel.setValue({
 			'nodes': item_copy.get('nodes'),
 			'conns': item_copy.get('conns'),
 			'root': item_copy.get('root')
 		});
 	}
-
-
 });

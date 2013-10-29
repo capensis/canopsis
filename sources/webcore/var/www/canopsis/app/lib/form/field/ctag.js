@@ -1,5 +1,4 @@
 /*
-#--------------------------------
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
@@ -16,7 +15,6 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
-# ---------------------------------
 */
 
 Ext.define('canopsis.lib.form.field.ctag' , {
@@ -33,7 +31,7 @@ Ext.define('canopsis.lib.form.field.ctag' , {
 		this.logAuthor = '[' + this.id + ']';
 		log.debug('Initialize ...', this.logAuthor);
 
-		//--------------------------store------------------------
+		// store
 		this.operator_store = Ext.create('Ext.data.Store', {
 			fields: ['operator', 'text', 'type'],
 			data: [
@@ -42,18 +40,18 @@ Ext.define('canopsis.lib.form.field.ctag' , {
 			]
 		});
 
-		//------------------create operator combo----------------
+		// create operator combo
 		this.operator_combo = Ext.widget('combobox', {
-								flex: 1,
-								queryMode: 'local',
-								displayField: 'text',
-								editable: false,
-								value: '$in',
-								valueField: 'operator',
-								store: this.operator_store
-							});
+			flex: 1,
+			queryMode: 'local',
+			displayField: 'text',
+			editable: false,
+			value: '$in',
+			valueField: 'operator',
+			store: this.operator_store
+		});
 
-		//----------------------textArea-------------------------
+		// textArea
 		this.textArea = Ext.widget('textfield', {
 			margin: '0 0 0 5',
 			flex: 3,
@@ -70,28 +68,31 @@ Ext.define('canopsis.lib.form.field.ctag' , {
 		var rawString = this.textArea.getValue();
 		var separator = undefined;
 
-		if 			(Ext.Array.contains(rawString, ';')) {
-			var separator = ',';
-		}else if 	(Ext.Array.contains(rawString, ',')) {
-			var separator = ';';
-		}else if 	(Ext.Array.contains(rawString, ' ')) {
-			var separator = ' ';
+		if(Ext.Array.contains(rawString, ';')) {
+			separator = ',';
+		}
+		else if(Ext.Array.contains(rawString, ',')) {
+			separator = ';';
+		}
+		else if(Ext.Array.contains(rawString, ' ')) {
+			separator = ' ';
 			rawString = rawString.replace(/  +/g, ' ');
 		}
 
-		if (!separator)
+		if(!separator) {
 			return undefined;
+		}
 
 		log.debug('String separator is: "' + separator + '"', this.logAuthor);
 
-		if (separator != ' ')
+		if(separator !== ' ') {
 			rawString = strip_blanks(rawString);
+		}
 
 		var tag_array = rawString.split(separator);
 
 		var filter = {'tags': {}};
 		filter['tags'][this.operator_combo.getValue()] = tag_array;
-
 
 		var output = Ext.encode(filter);
 		log.debug('Generated filter is: ' + output, this.logAuthor);
@@ -101,18 +102,19 @@ Ext.define('canopsis.lib.form.field.ctag' , {
 
 	setValue: function(value) {
 		value = Ext.decode(value);
-		if (value['tags']) {
+
+		if(value['tags']) {
 			value = value['tags'];
 			var operator = Ext.Object.getKeys(value)[0];
 			var value_array = value[operator];
 			var tags_string = '';
 
-			for (var i = 0; i < value_array.length; i++)
+			for(var i = 0; i < value_array.length; i++) {
 				tags_string = tags_string + ' ' + value_array[i];
+			}
 
 			this.operator_combo.setValue(operator);
 			this.textArea.setValue(tags_string);
 		}
 	}
-
 });

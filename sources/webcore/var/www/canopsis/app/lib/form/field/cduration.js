@@ -1,5 +1,4 @@
 /*
-#--------------------------------
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
@@ -16,7 +15,6 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
-# ---------------------------------
 */
 
 Ext.define('canopsis.lib.form.field.cduration' , {
@@ -41,7 +39,6 @@ Ext.define('canopsis.lib.form.field.cduration' , {
 		this.ts_window = Ext.widget('numberfield', {
 			isFormField: false,
 			name: 'ts_window',
-			//margin: '0 0 0 5',
 			width: 50,
 			value:this.value,
 			minValue: this.number_min_val,
@@ -49,27 +46,26 @@ Ext.define('canopsis.lib.form.field.cduration' , {
 		});
 
 		var store_data = [
-					{'name': _('Minute'), 'value': global.commonTs.minute},
-					{'name': _('Hour'), 'value': global.commonTs.hours},
-					{'name': _('Day'), 'value': global.commonTs.day},
-					{'name': _('Week'), 'value': global.commonTs.week},
-					{'name': _('Month'), 'value': global.commonTs.month},
-					{'name': _('Year'), 'value': global.commonTs.year}
-				];
+			{'name': _('Minute'), 'value': global.commonTs.minute},
+			{'name': _('Hour'), 'value': global.commonTs.hours},
+			{'name': _('Day'), 'value': global.commonTs.day},
+			{'name': _('Week'), 'value': global.commonTs.week},
+			{'name': _('Month'), 'value': global.commonTs.month},
+			{'name': _('Year'), 'value': global.commonTs.year}
+		];
 
-		if (this.add_none_value)
+		if(this.add_none_value) {
 			store_data.push({'name': _('None'), 'value': undefined});
+		}
 
 		this.ts_unit = Ext.widget('combobox', {
 			isFormField: false,
 			editable: false,
 			width: 97,
-			//margin: '0 0 0 5',
 			name: 'ts_unit',
 			queryMode: 'local',
 			displayField: 'name',
 			valueField: 'value',
-			//value: global.commonTs.day,
 			store: {
 				xtype: 'store',
 				fields: ['value', 'name'],
@@ -81,18 +77,19 @@ Ext.define('canopsis.lib.form.field.cduration' , {
 
 		this.callParent(arguments);
 
-		//this.ts_unit.on('select', this.checkDisable, this);
-
 		this.setValue(this.value);
 
 	},
 
-	checkDisable: function(comb,value) {
-		if (value[0].raw.value)
-			this.ts_window.setDisabled(false);
-		else
-			this.ts_window.setDisabled(true);
+	checkDisable: function(combo, value) {
+		void(combo);
 
+		if(value[0].raw.value) {
+			this.ts_window.setDisabled(false);
+		}
+		else {
+			this.ts_window.setDisabled(true);
+		}
 	},
 
 	show: function() {
@@ -109,42 +106,45 @@ Ext.define('canopsis.lib.form.field.cduration' , {
 		this.ts_window.setDisabled(true);
 		this.ts_unit.hide();
 		this.ts_unit.setDisabled(true);
-
 	},
 
 	getValue: function() {
-		if (!this.ts_unit.getValue())
+		if(!this.ts_unit.getValue()) {
 			return undefined;
+		}
 
-		//log.dump(this.ts_window.getValue()*this.ts_unit.getValue())
 		return this.ts_window.getValue() * this.ts_unit.getValue();
 	},
 
 	setValue: function(value) {
-		if (value) {
-
-			if (value >= global.commonTs.year) {
+		if(value) {
+			if(value >= global.commonTs.year) {
 				this.ts_unit.setValue(global.commonTs.year);
 				this.ts_window.setValue(Math.floor(value / global.commonTs.year));
-			}else if (value >= global.commonTs.month) {
+			}
+			else if(value >= global.commonTs.month) {
 				this.ts_unit.setValue(global.commonTs.month);
 				this.ts_window.setValue(Math.floor(value / global.commonTs.month));
-			}else if (value >= global.commonTs.week) {
+			}
+			else if(value >= global.commonTs.week) {
 				this.ts_unit.setValue(global.commonTs.week);
 				this.ts_window.setValue(Math.floor(value / global.commonTs.week));
-			} else if (value >= global.commonTs.day) {
+			}
+			else if(value >= global.commonTs.day) {
 				this.ts_unit.setValue(global.commonTs.day);
 				this.ts_window.setValue(Math.floor(value / global.commonTs.day));
-			} else if (value >= global.commonTs.hours) {
+			}
+			else if(value >= global.commonTs.hours) {
 				this.ts_unit.setValue(global.commonTs.hours);
 				this.ts_window.setValue(value / global.commonTs.hours);
-			} else {
+			}
+			else {
 				this.ts_unit.setValue(global.commonTs.minute);
 				this.ts_window.setValue(value / global.commonTs.minute);
 			}
-		}else {
+		}
+		else {
 			this.ts_unit.select(this.ts_unit.getStore().data.items[0]);
-			//this.ts_window.setDisabled(true);
 		}
 	}
 });
