@@ -99,7 +99,6 @@ Ext.define('canopsis.auth', {
 						}
 					}
 				}
-
 			}
 		];
 
@@ -186,7 +185,7 @@ Ext.define('canopsis.auth', {
 					this.auth_m3(login, passwd, passwd_sha1);
 				}
 				else {
-					this.onFailure():
+					this.onFailure();
 				}
 			}
 		});

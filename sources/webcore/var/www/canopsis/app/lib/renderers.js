@@ -129,7 +129,7 @@ function rdr_havePerfdata(val) {
 }
 
 function rdr_widget_preview(val, metadata, record, rowIndex) {
-	void(val, metadata; record);
+	void(val, metadata, record);
 
 	return "<span style='background-color:" + global.default_colors[rowIndex] + ';color:' + global.default_colors[rowIndex] + ";'>__</span>";
 }
