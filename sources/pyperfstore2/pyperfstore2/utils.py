@@ -117,15 +117,15 @@ def get_timestamps(points):
 def get_values(points):
 	return [x[1] for x in points]
 
-def mean(vlist):
+def average(vlist):
 	if len(vlist):
 		return round(float( sum(vlist) / float(len(vlist))), 3)
 	else:
 		return 0.0
 
-def vmean(vlist):
+def vaverage(vlist):
 	vlist = get_values(vlist)
-	return mean(vlist)
+	return average(vlist)
 
 def vmin(vlist):
 	vlist = get_values(vlist)
@@ -252,7 +252,7 @@ def getTimeSteps(start, stop, interval):
 
 	return timeSteps
 
-def aggregate(points, start=None, stop=None, max_points=None, interval=None, atype='MEAN', agfn=None, mode=None, fill=False):
+def aggregate(points, start=None, stop=None, max_points=None, interval=None, atype='AVERAGE', agfn=None, mode=None, fill=False):
 
 	
 	if not atype:
@@ -278,8 +278,8 @@ def aggregate(points, start=None, stop=None, max_points=None, interval=None, aty
 	logger.debug("Aggregate %s points (max: %s, interval: %s, method: %s, mode: %s)" % (len(points), max_points, interval, atype, mode))
 
 	if not agfn:
-		if   atype == 'MEAN':
-			agfn = vmean
+		if   atype == 'AVERAGE':
+			agfn = vaverage
 		elif atype == 'FIRST':
 			agfn = get_first_value
 		elif atype == 'LAST':
@@ -293,7 +293,7 @@ def aggregate(points, start=None, stop=None, max_points=None, interval=None, aty
 		elif atype == 'SUM':
 			agfn = vsum
 		else:
-			agfn = vmean
+			agfn = vaverage
 
 	logger.debug(" + Interval: %s" % interval)
 	#logger.debug(" + Points: %s" % points)
