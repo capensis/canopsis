@@ -89,6 +89,14 @@ Ext.define('widgets.progressbar.progressbar', {
 	},
 
 	onRefresh: function(data) {
+		var pb_update = function(pb, value) {
+			this.setGradient(pb.id, value);
+		};
+
+		var pb_afterrender = function(pb) {
+			this.setGradient(pb.id, pb.value);
+		};
+
 		for(var i = 0; i < data.length; i++) {
 			var item = data[i];
 			var _id = item.node;
@@ -110,7 +118,7 @@ Ext.define('widgets.progressbar.progressbar', {
 
 			//Extra field
 			if(node.max) {
-				max = node.max
+				max = node.max;
 			}
 
 			log.debug(' + Value: ' + value, this.logAuthor);
@@ -125,32 +133,28 @@ Ext.define('widgets.progressbar.progressbar', {
 			log.debug(' + Pct:   ' + pct, this.logAuthor);
 
 			var text = pct + "%";
+			var pb = undefined;
 
 			// Check if pb already exist
 			if(this.progressBars[_id]) {
-				var pb = this.progressBars[_id];
+				pb = this.progressBars[_id];
 				log.debug('Update: ' + _id, this.logAuthor);
 				pb.updateText(text);
 				pb.updateProgress(pct/100);
 				return;
 			}
 
-			var pb = Ext.create('Ext.ProgressBar', {
+			pb = Ext.create('Ext.ProgressBar', {
 				text: text,
 				value: pct/100,
 				flex:1,
 				height: this.gHeight,
 				cls:'widgets-progressbar',
-				border: 1,
+				border: 1
 			});
 
-			pb.on("update", function(pb, value) {
-				this.setGradient(pb.id, value);
-			}, this);
-
-			pb.on("afterrender", function(pb) {
-				this.setGradient(pb.id, pb.value);
-			}, this, {single: 1});
+			pb.on("update", pb_update);
+			pb.on("afterrender", pb_afterrender, this, {single: 1});
 
 			this.wcontainer.add({
 				layout: {
