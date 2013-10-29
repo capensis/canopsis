@@ -89,7 +89,7 @@ function rdr_source_type(val) {
 }
 
 function rdr_crecord_type(val) {
-	if(val != '') {
+	if(val !== '') {
 		return "<span class='icon icon-crecord_type-" + val + "' />";
 	}
 }
@@ -145,7 +145,6 @@ function rdr_task_crontab(val) {
 			d.setUTCMinutes(parseInt(val.minute, 10));
 
 			var utc_minutes = d.getUTCMinutes();
-			var utc_hours = d.getUTCHours();
 			var local_minutes = d.getMinutes();
 			var local_hours = d.getHours();
 
@@ -189,8 +188,6 @@ function rdr_task_crontab(val) {
 //Function for rendering export to pdf button, we haven't find another solution
 function rdr_export_button(val, metadata, record, rowIndex, colIndex, store, view) {
 	void(val, metadata, rowIndex, colIndex, store);
-
-	var id = Ext.id();
 
 	if(record.get('leaf')) {
 		var output = '';
@@ -367,7 +364,7 @@ function rdr_display_groups(groups) {
 
 		output += group;
 
-		if(i != (groups.length - 1)) {
+		if(i !== (groups.length - 1)) {
 			output += ',';
 		}
 	}
