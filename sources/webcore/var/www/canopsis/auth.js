@@ -1,5 +1,4 @@
 /*
-#--------------------------------
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
@@ -16,7 +15,6 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
-# ---------------------------------
 */
 
 Ext.define('canopsis.auth', {
@@ -83,6 +81,8 @@ Ext.define('canopsis.auth', {
 				iconCls: 'no-icon',
 				listeners: {
 					select: function(combo, records) {
+						void(combo);
+
 						if(records.length) {
 							locale = records[0].get('value');
 
@@ -154,7 +154,7 @@ Ext.define('canopsis.auth', {
 				global.account = response.data[0];
 				this.onSuccess();
 			},
-			failure: function(form, action) {
+			failure: function() {
 				log.debug(" + M1 Failed", this.logAuthor);
 				this.auth_m2(login, passwd, passwd_sha1);
 			}
@@ -178,7 +178,7 @@ Ext.define('canopsis.auth', {
 				global.account = response.data[0];
 				this.onSuccess();
 			},
-			failure: function(form, action) {
+			failure: function() {
 				log.debug(" + M2 Failed", this.logAuthor);
 
 				if(global['auth_plain']) {
@@ -192,7 +192,7 @@ Ext.define('canopsis.auth', {
 	},
 
 	// WARNING: Plain method /!\
-	auth_m3: function(login, passwd, passwd_sha1) {
+	auth_m3: function(login, passwd) {
 		Ext.Ajax.request({
 			method: 'GET',
 			url: this.url,
@@ -207,7 +207,7 @@ Ext.define('canopsis.auth', {
 				global.account = response.data[0];
 				this.onSuccess();
 			},
-			failure: function(form, action) {
+			failure: function() {
 				log.debug(" + M3 Failed", this.logAuthor);
 				this.onFailure();
 			}
@@ -223,7 +223,6 @@ Ext.define('canopsis.auth', {
 			var FieldValues = form.getFieldValues();
 			var login       = FieldValues.login;
 			var passwd      = FieldValues.password;
-			var locale      = FieldValues.locale;
 			var passwd_sha1 = $.encoding.digests.hexSha1Str(passwd);
 
 			this.auth_m1(login, passwd, passwd_sha1);
@@ -263,7 +262,7 @@ function checkAuth(callback) {
 			}
 		},
 		failure: function(response) {
-			if(response.status == 403) {
+			if(response.status === 403) {
 				log.debug(' + Please loggin', "[index]");
 			}
 			else {
