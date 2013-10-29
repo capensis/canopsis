@@ -198,12 +198,12 @@ def clean_db():
 	else:	
 		logger.info(" + Done")
 
-def mean(values) :
+def average(values) :
 	return sum(values) / float(len(values))
 
 def stat_variance( echantillon ) :
 	n = len( echantillon ) # taille
-	mq = mean( echantillon )**2
+	mq = average( echantillon )**2
 	s = sum( [ x**2 for x in echantillon ] )
 	variance = s / n - mq
 	return variance
@@ -245,7 +245,7 @@ except Exception as err:
 
 times = [stat[2] for stat in stats]
 print "Stats:"
-print " + Mean: 	%.2f" % mean(times)
+print " + Average: 	%.2f" % average(times)
 print " + Variance:	%.2f" % stat_variance(times)
 
 amqp.stop()

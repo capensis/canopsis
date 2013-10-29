@@ -151,7 +151,7 @@ Ext.define('ctreshold_metro.field', {
 		store: {
 				fields: ['text', 'value'],
 				data: [
-					{text: 'Mean' , value: 'mean'},
+					{text: 'Average' , value: 'average'},
 					{text: 'Min' , value: 'min'},
 					{text: 'Max' , value: 'max'},
 					{text: 'Delta' , value: 'delta'},

@@ -103,7 +103,7 @@ Ext.define('canopsis.view.Consolidation.Form', {
 									fields: ['value', 'text'],
 									data: [
 										{'value': 'last', 'text': _('Last point')},
-										{'value': 'mean', 'text': _('Mean')},
+										{'value': 'average', 'text': _('Average')},
 										{'value': 'sum', 'text': _('Sum')},
 										{'value': 'delta', 'text': _('Delta')},
 										{'value': 'min', 'text': _('Min')},
@@ -120,9 +120,9 @@ Ext.define('canopsis.view.Consolidation.Form', {
 								columns: 3,
 	        					vertical: true,
 								items: [{
-									boxLabel: _('Mean'),
+									boxLabel: _('Average'),
 									name: 'consolidation_method',
-									inputValue: 'mean'
+									inputValue: 'average'
 								},{
 									boxLabel: _('Sum'),
 									name: 'consolidation_method',
