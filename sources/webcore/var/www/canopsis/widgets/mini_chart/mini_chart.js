@@ -75,7 +75,6 @@ Ext.define('widgets.mini_chart.mini_chart' , {
 	},
 
 	buildParams: function(oFrom, oTo) {
-		var now = Ext.Date.now();
 		var post_params = [];
 
 		Ext.Object.each(this.nodesByID, function(id, node) {
@@ -198,7 +197,7 @@ Ext.define('widgets.mini_chart.mini_chart' , {
 	},
 
 	onResize: function() {
-		Ext.Object.each (this.series, function(id, serie) {
+		Ext.Object.each(this.series, function(id, serie) {
 			void(id);
 
 			serie.setWidth(this.getWidth());
@@ -233,7 +232,6 @@ Ext.define('widgets.mini_chart.mini_chart' , {
 				var node = info['node'] ;
 				var values = this.parseValues( info, info['values'] ) ;
 
-
 				if(Ext.ComponentQuery.query('#'+this.series[node].getId() +" > csparkline").length  === 0 ) {
 					//Find the print label
 					var label;
@@ -252,16 +250,16 @@ Ext.define('widgets.mini_chart.mini_chart' , {
 						xtype:"panel",
 						flex: 2,
 						bodyCls: "valigncenter",
-						html: "<div><b>"+label+"</b></div>",
+						html: "<div><b>" + label + "</b></div>",
 						border: false
 					});
 
 					//We add the serie panel
-					var serie_panel = this.series[node].add ( {
+					this.series[node].add({
 						xtype: "csparkline",
-						values: Ext.clone( values ),
-						node: Ext.clone( this.nodesByID[node] ) ,
-						info: Ext.clone( info) ,
+						values: Ext.clone(values),
+						node: Ext.clone(this.nodesByID[node]),
+						info: Ext.clone(info),
 						flex: 4,
 						chart_type: this.chart_type,
 						border: false
@@ -298,7 +296,7 @@ Ext.define('widgets.mini_chart.mini_chart' , {
 	afterContainerRender: function() {
 		var me = this;
 
-		Ext.Object.each(this.nodesByID, function(id, node) {
+		Ext.Object.each(this.nodesByID, function(id) {
 			var pTop = 1;
 			var pBottom = 5;
 			var gHeight = me.getSize().height - pTop - pBottom - 5;
