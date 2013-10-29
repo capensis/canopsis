@@ -1,5 +1,4 @@
 /*
-#--------------------------------
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
@@ -16,10 +15,9 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
-# ---------------------------------
 */
 
-Ext.define('canopsis.lib.form.field.ccustom' , {
+Ext.define('canopsis.lib.form.field.ccustom', {
 	extend: 'canopsis.lib.view.ccard',
 	mixins: ['canopsis.lib.form.cfield'],
 
@@ -32,30 +30,29 @@ Ext.define('canopsis.lib.form.field.ccustom' , {
 	name: 'ccustom',
 
 	contentPanelDefault: {
-					xtype: 'form',
-					width: '100%',
-					border: false,
-					//padding: '0 5 0 5',
-					margin: '30px',
-					autoScroll: true,
-					layout: {
-								type: 'vbox',
-								align: 'stretch'
-							},
-					defaults: {
-						listeners: {
-									change: function(field, newVal, oldVal) {
-										this.up('form').fireEvent('ccustomChange');
-									}
-								}
-					}
+		xtype: 'form',
+		width: '100%',
+		border: false,
+		margin: '30px',
+		autoScroll: true,
+		layout: {
+			type: 'vbox',
+			align: 'stretch'
+		},
+		defaults: {
+			listeners: {
+				change: function() {
+					this.up('form').fireEvent('ccustomChange');
+				}
+			}
+		}
 	},
 
 	buttonTpl: new Ext.Template([
-				'<div class="ccustomButton">',
-					'{title}',
-				'</div>'
-			]).compile(),
+		'<div class="ccustomButton">',
+			'{title}',
+		'</div>'
+	]).compile(),
 
 	initComponent: function() {
 		this.callParent(arguments);
@@ -67,43 +64,58 @@ Ext.define('canopsis.lib.form.field.ccustom' , {
 
 		this.sourceStore = this.findParentByType('cwizard').childStores[this.sharedStore];
 
-		this.sourceStore.on('add', function(store,records) {
+		this.sourceStore.on('add', function(store, records) {
+			void(store);
+
 			this.addPanels(records);
-		},this);
-		this.sourceStore.on('remove', function(store,records) {
+		}, this);
+
+		this.sourceStore.on('remove', function(store, records) {
+			void(store);
+
 			this.removePanels(records);
-		},this);
+		}, this);
 
 		this.sourceStore.each(function(record) {
 			this.addPanels(record);
-		},this);
+		}, this);
 	},
 
 	addPanels: function(records) {
-		if (!Ext.isArray(records))
+		if(!Ext.isArray(records)) {
 			records = [records];
-		for (var i = 0; i < records.length; i++){
-			var nodeId = records[i].data.id
-			if(!this.panelIdByNode[nodeId])
+		}
+
+		for(var i = 0; i < records.length; i++) {
+			var nodeId = records[i].data.id;
+
+			if(!this.panelIdByNode[nodeId]) {
 				this.addPanel(nodeId, records[i]);
+			}
 		}
 	},
 
 	addPanel: function(nodeId, record) {
-		var panelConfig = {items: Ext.clone(this.customForm)};
+		void(nodeId);
+
+		var panelConfig = {
+			items: Ext.clone(this.customForm)
+		};
 
 		var title = this.buildTitle(record.data);
-
 		var panelNumber = this.addContent(panelConfig, record);
 
 		this.panelIdByNode[record.get('id')] = panelNumber;
 
-		var button = {title: title, panelIndex: panelNumber};
+		var button = {
+			title: title,
+			panelIndex: panelNumber
+		};
 
 		this.addButton(button);
 	},
 
-	addContent: function(extjs_obj_array,record) {
+	addContent: function(extjs_obj_array, record) {
 		var _obj = Ext.Object.merge(extjs_obj_array, this.contentPanelDefault);
 
 		//add title in front of panel
@@ -111,27 +123,28 @@ Ext.define('canopsis.lib.form.field.ccustom' , {
 			xtype: 'panel',
 			border: false,
 			padding: '0 0 20 0',
-			html: '<center>'+this.buildTitle(record.data)+'</center>'
-		}
-		_obj.items = Ext.Array.merge(panelTitle,_obj.items)
+			html: '<center>' + this.buildTitle(record.data) + '</center>'
+		};
+
+		_obj.items = Ext.Array.merge(panelTitle,_obj.items);
 
 		var panel = this.contentPanel.add(_obj);
 
-		if (record){
+		if(record) {
 			panel.getForm().setValues(record.data);
-			panel.sourceRecord = record
+			panel.sourceRecord = record;
 		}
 
 		//save record when change made on form
-		panel.on('ccustomChange',
-			function() {
-				var values = this.getForm().getValues(false, false, false, true)
-				if(this.sourceRecord)
-					this.sourceRecord.beginEdit()
-					this.sourceRecord.set(values)
-					this.sourceRecord.endEdit(true)
-			},panel
-		);
+		panel.on('ccustomChange', function() {
+			var values = this.getForm().getValues(false, false, false, true);
+
+			if(this.sourceRecord) {
+				this.sourceRecord.beginEdit();
+				this.sourceRecord.set(values);
+				this.sourceRecord.endEdit(true);
+			}
+		}, panel);
 
 		this.panelByindex[this.contentPanel.items.length - 1] = panel;
 		return this.contentPanel.items.length - 1;
@@ -139,30 +152,34 @@ Ext.define('canopsis.lib.form.field.ccustom' , {
 
 	removePanels: function(records) {
 		//if someone find something to do this in extjs, build this again
-		if (!Ext.isArray(records))
+		if(!Ext.isArray(records)) {
 			records = [records];
-		for (var i = 0; i < records.length; i++) {
+		}
+
+		for(var i = 0; i < records.length; i++) {
 			var nodeId = records[i].data.id;
-			if (this.panelIdByNode[nodeId] != undefined) {
+
+			if(this.panelIdByNode[nodeId] !== undefined) {
 				var panelNumber = this.panelIdByNode[nodeId];
 				var panel = this.panelByindex[panelNumber];
 				var button = this.buttonByPanelIndex[panelNumber];
-				if (panel && button) {
+
+				if(panel && button) {
 					panel.setDisabled(true);
 					panel.hide();
+
 					button.setDisabled(true);
-					button.hide()
-					delete this.panelByindex[panelNumber]
-					delete this.panelIdByNode[nodeId]
+					button.hide();
+
+					delete this.panelByindex[panelNumber];
+					delete this.panelIdByNode[nodeId];
 					delete this.buttonByPanelIndex[panelNumber];
 				}
 			}
 		}
-
-
 	},
 
-	setValue: function(data) {
+	setValue: function() {
 		return;
 	},
 
@@ -171,18 +188,22 @@ Ext.define('canopsis.lib.form.field.ccustom' , {
 	},
 
 	buildTitle: function(data) {
-		if (data.titleInWizard)
+		if(data.titleInWizard) {
 			return data.titleInWizard;
+		}
 
-		if (!data.co || !data.me)
+		if(!data.co || !data.me) {
 			return data._id;
+		}
 
 		var title = data.co;
-		if (data.re)
+
+		if(data.re) {
 			title += ' ' + data.re;
+		}
+
 		title += ' ' + data.me;
 
 		return title;
 	}
-
 });

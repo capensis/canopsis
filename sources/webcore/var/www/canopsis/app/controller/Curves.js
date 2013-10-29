@@ -1,5 +1,4 @@
 /*
-#--------------------------------
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
@@ -16,16 +15,15 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
-# ---------------------------------
 */
 Ext.define('canopsis.controller.Curves', {
-    extend: 'canopsis.lib.controller.cgrid',
+	extend: 'canopsis.lib.controller.cgrid',
 
-    views: ['Curves.Grid', 'Curves.Form'],
-    stores: ['Curves'],
-    models: ['Curve'],
+	views: ['Curves.Grid', 'Curves.Form'],
+	stores: ['Curves'],
+	models: ['Curve'],
 
-    logAuthor: '[controller][Curves]',
+	logAuthor: '[controller][Curves]',
 
 	init: function() {
 		log.debug('Initialize ...', this.logAuthor);
@@ -42,55 +40,63 @@ Ext.define('canopsis.controller.Curves', {
 		Ext.require('Ext.menu.ColorPicker');
     },
 
-	preSave: function(record,data,form) {
+	preSave: function(record) {
 		record.data['_id'] = $.encoding.digests.hexSha1Str(record.data['metric']);
 		record.data['crecord_name'] = record.data['metric'];
 		return record;
 	},
 
-	beforeload_EditForm: function(form,item) {
+	beforeload_EditForm: function(form) {
 		var field = Ext.ComponentQuery.query('#' + form.id + ' textfield[name=metric]')[0];
-		if (field)
+
+		if(field) {
 			field.hide();
+		}
 	},
 
 	getRenderInfo: function(metric) {
-		if (metric) {
-			var _id = $.encoding.digests.hexSha1Str(metric);
+		if(metric) {
+			var _id   = $.encoding.digests.hexSha1Str(metric);
 			var store = Ext.data.StoreManager.lookup('Curves');
-			var info = store.getById(_id);
-			if (info) {
+			var info  = store.getById(_id);
+
+			if(info) {
 				return info;
 			}
 		}
 	},
 
 	getRenderColors: function(metric, index) {
-		if (! index)
+		if(!index) {
 			index = 0;
+		}
 
 		var line_color = global.default_colors[index];
 		var area_color = line_color;
 		var area_opacity = 75;
 
 		var info = this.getRenderInfo(metric);
-		if (info) {
+
+		if(info) {
 			line_color = info.get('line_color');
 			area_color = info.get('area_color');
 			area_opacity = info.get('area_opacity');
 		}
 
-		if (line_color)
+		if(line_color) {
 			line_color = '#' + line_color;
-		else
+		}
+		else {
 			line_color = undefined;
+		}
 
-		if (area_color)
+		if(area_color) {
 			area_color = '#' + area_color;
-		else
+		}
+		else {
 			area_color = undefined;
+		}
 
 		return [line_color, area_color, area_opacity];
 	}
-
 });

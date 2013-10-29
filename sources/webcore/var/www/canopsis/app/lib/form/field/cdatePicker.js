@@ -1,5 +1,4 @@
 /*
-#--------------------------------
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
@@ -16,24 +15,25 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
-# ---------------------------------
 */
 
-Ext.define('canopsis.lib.form.field.cdatePicker' , {
+Ext.define('canopsis.lib.form.field.cdatePicker', {
 	extend: 'Ext.form.field.Date',
 	mixins: ['canopsis.lib.form.cfield'],
 	alias: 'widget.cdatePicker',
 
-	getValue: function(){
-		var inputDate = canopsis.lib.form.field.cdatePicker.superclass.getValue.call(this)
-		inputDate = new Date(inputDate)
-		return inputDate.getTime()/1000
+	getValue: function() {
+		var inputDate = canopsis.lib.form.field.cdatePicker.superclass.getValue.call(this);
+		inputDate = new Date(inputDate);
+
+		return inputDate.getTime() / 1000;
 	},
 
-	setValue: function(_date){
-		if(Ext.isNumber(_date))
-			_date = new Date(cleanTimestamp(_date)*1000)
+	setValue: function(_date) {
+		if(Ext.isNumber(_date)) {
+			_date = new Date(cleanTimestamp(_date) * 1000);
+		}
+
 		canopsis.lib.form.field.cdatePicker.superclass.setValue.call(this, _date);
 	}
-
-})
+});

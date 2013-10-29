@@ -1,5 +1,4 @@
 /*
-#--------------------------------
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
@@ -16,18 +15,16 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
-# ---------------------------------
 */
 
 Ext.define('canopsis.lib.view.ctoolbar' , {
 	extend: 'Ext.window.Window',
 	alias: 'widget.ctoolbar',
+
 	title: 'toolbar',
-	//height: 10,
 	closeAction: 'destroy',
-    width: 200,
-    //layout: 'fit',
-    resizable: false,
+	width: 200,
+	resizable: false,
 
 	initComponent: function() {
 		this.callParent(arguments);
@@ -40,5 +37,4 @@ Ext.define('canopsis.lib.view.ctoolbar' , {
 	add: function(element) {
 		this.toolbar.add(element);
 	}
-
 });

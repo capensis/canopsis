@@ -1,5 +1,4 @@
 /*
-#--------------------------------
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
@@ -16,7 +15,6 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
-# ---------------------------------
 */
 Ext.define('canopsis.model.Topology', {
 	extend: 'Ext.data.Model',
@@ -36,7 +34,6 @@ Ext.define('canopsis.model.Topology', {
 		{name: 'aaa_access_other'},
 		{name: 'aaa_group', defaultValue: 'group.CPS_topology_admin'},
 		{name: 'aaa_owner'},
-
 
 		{name: 'nodes', defaultValue: []},
 		{name: 'conns', defaultValue: []},

@@ -1,5 +1,4 @@
 /*
-#--------------------------------
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
@@ -16,10 +15,9 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
-# ---------------------------------
 */
 Ext.define('canopsis.model.View', {
-    extend: 'Ext.data.Model',
+	extend: 'Ext.data.Model',
 
 	fields: [
 		{name: '_id'},
@@ -33,7 +31,6 @@ Ext.define('canopsis.model.View', {
 		{name: 'reporting', defaultValue: false},
 
 		{name: 'enable'},
-		//{name: 'checked', mapping:'enable'},
 		{name: 'view_options', defaultValue: {orientation: 'portrait', pageSize: 'A4'}},
 
 		{name: 'aaa_access_group'},
@@ -44,6 +41,5 @@ Ext.define('canopsis.model.View', {
 		{name: 'aaa_owner'},
 		{name: 'crecord_write_time'},
 		{name: 'crecord_creation_time'}
-    ]
-
+	]
 });

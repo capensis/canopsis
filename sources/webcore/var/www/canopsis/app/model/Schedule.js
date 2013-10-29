@@ -1,5 +1,4 @@
 /*
-#--------------------------------
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
@@ -16,7 +15,6 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
-# ---------------------------------
 */
 Ext.define('canopsis.model.Schedule', {
 	extend: 'Ext.data.Model',
@@ -32,13 +30,19 @@ Ext.define('canopsis.model.Schedule', {
 		{name: 'next_run_time'},
 		{name: 'cron', defaultValue: undefined},
 		{name: 'log'},
-		{name: 'mail',
-		 convert: function(value, record) {
-					var kwargs = record.get('kwargs');
-					if (kwargs['mail'] != undefined && kwargs['mail'].sendMail)
-						return true;
-					return false;
+		{
+			name: 'mail',
+			convert: function(value, record) {
+				void(value);
+
+				var kwargs = record.get('kwargs');
+
+				if(kwargs['mail'] !== undefined && kwargs['mail'].sendMail) {
+					return true;
 				}
+
+				return false;
+			}
 		},
 
 		{name: 'aaa_access_owner', defaultValue: ['r', 'w']},
@@ -49,7 +53,7 @@ Ext.define('canopsis.model.Schedule', {
 		{name: 'aaa_owner'},
 
 		{name: 'exporting_intervalLength'},
-		{name: 'exporting_intervalUnit'},	
+		{name: 'exporting_intervalUnit'},
 		{name: 'frequency',defaultValue:'day'},
 
 
@@ -63,8 +67,7 @@ Ext.define('canopsis.model.Schedule', {
 		{name: 'exporting_mail'},
 		{name: 'exporting_recipients'},
 		{name: 'exporting_subject'},
-		
-		//{name: 'crontab_hours'},
+
 		{name: 'crontab_month'},
 		{name: 'crontab_day_of_week'},
 		{name: 'crontab_day'}

@@ -1,5 +1,4 @@
 /*
-#--------------------------------
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
@@ -16,20 +15,22 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
-# ---------------------------------
 */
 Ext.define('canopsis.view.Topology.Form', {
 	extend: 'canopsis.lib.view.cform',
 
 	alias: 'widget.TopologyForm',
 	layout: {
-        type: 'hbox',
-        align: 'stretch'
-    },
+		type: 'hbox',
+		align: 'stretch'
+	},
 
-    initComponent: function() {
+	initComponent: function() {
 		var me = this;
-		this.rightPanel = Ext.create('canopsis.lib.form.field.ctopo', { flex: 1, margin: '0 0 5 0' });
+		this.rightPanel = Ext.create('canopsis.lib.form.field.ctopo', {
+			flex: 1,
+			margin: '0 0 5 0'
+		});
 
 		this.checksGrid = Ext.create('canopsis.lib.form.field.cinventory', {
 			select: false,
@@ -76,7 +77,7 @@ Ext.define('canopsis.view.Topology.Form', {
 				fieldLabel: _('Name'),
 				name: 'crecord_name',
 				listeners: {
-					change: function(value ) {
+					change: function(value) {
 						me.rightPanel.setRootNodeName(value.value);
 					}
 				},
@@ -89,12 +90,11 @@ Ext.define('canopsis.view.Topology.Form', {
 				fieldLabel: _('Description'),
 				name: 'description',
 				listeners: {
-					change: function(value ) {
+					change: function(value) {
 						me.rightPanel.setRootNodeDescription(value.value);
 					}
 				}
 			}]
-
 		});
 
 		this.leftPanel = Ext.widget('tabpanel', {
@@ -102,47 +102,45 @@ Ext.define('canopsis.view.Topology.Form', {
 			width: 400,
 			margin: '0 5 5 0',
 			border: true,
-			//plain: true,
 			collapsible: true,
 			collapseDirection: 'left',
 			animCollapse: false,
 			items: [{
-					title: _('Options'),
-					border: false,
-					layout: 'fit',
-					items: [this.optionsForm]
-				},{
-					title: _('Checks'),
-					border: false,
-					layout: 'fit',
-					items: [this.checksGrid]
-				},{
-					title: _('Selectors'),
-					border: false,
-					layout: 'fit',
-					items: [this.selsGrid]
-				},{
-					title: _('Topologies'),
-					border: false,
-					layout: 'fit',
-					items: [this.toposGrid]
-				},{
-					title: _('Operators'),
-					border: false,
-					layout: 'fit',
-					items: [this.build_object_grid()]
-				}]
-			});
-
+				title: _('Options'),
+				border: false,
+				layout: 'fit',
+				items: [this.optionsForm]
+			},{
+				title: _('Checks'),
+				border: false,
+				layout: 'fit',
+				items: [this.checksGrid]
+			},{
+				title: _('Selectors'),
+				border: false,
+				layout: 'fit',
+				items: [this.selsGrid]
+			},{
+				title: _('Topologies'),
+				border: false,
+				layout: 'fit',
+				items: [this.toposGrid]
+			},{
+				title: _('Operators'),
+				border: false,
+				layout: 'fit',
+				items: [this.build_object_grid()]
+			}]
+		});
 
 		this.items = [this.leftPanel, this.rightPanel];
 
-        this.callParent();
-    },
+		this.callParent();
+	},
 
 	build_object_grid: function() {
 		var store = Ext.create('Ext.data.Store', {
-			 fields: [
+			fields: [
 				{name: '_id'},
 				{name: 'component'},
 				{name: 'source_type'},
@@ -152,19 +150,23 @@ Ext.define('canopsis.view.Topology.Form', {
 				{name: 'nodeMaxInConnexion', defaultValue: 2},
 				{name: 'form', defaultValue: undefined}
 
-			 ],
-			 proxy: {
-				 type: 'ajax',
-				 url: '/topology/getOperators',
-				 reader: {type: 'json', root: 'data'}
-			 },
-			 autoLoad: true
-
+			],
+			proxy: {
+				type: 'ajax',
+				url: '/topology/getOperators',
+				reader: {
+					type: 'json',
+					root: 'data'
+				}
+			},
+			autoLoad: true
 		});
 
 		// Translate Operators
 		store.on('load', function(store, records) {
-			for (var i = 0; i < records.length; i++) {
+			void(store);
+
+			for(var i = 0; i < records.length; i++) {
 				var record = records[i];
 				record.set('description', _(record.get('description')));
 			}
@@ -191,10 +193,8 @@ Ext.define('canopsis.view.Topology.Form', {
 				flex: 1,
 				dataIndex: 'description'
 			}]
-
 		});
 
 		return this.object_grid;
 	}
-
 });

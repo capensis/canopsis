@@ -1,5 +1,4 @@
 /*
-#--------------------------------
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
@@ -16,7 +15,6 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
-# ---------------------------------
 */
 Ext.define('canopsis.view.Rule.Form', {
 	extend: 'canopsis.lib.view.cform',
@@ -34,7 +32,7 @@ Ext.define('canopsis.view.Rule.Form', {
 
 	defaultType: 'textfield',
 
-    initComponent: function() {
+	initComponent: function() {
 		this.items = [
 			{
 				xtype: 'tabpanel',
@@ -91,7 +89,6 @@ Ext.define('canopsis.view.Rule.Form', {
 			}
 		];
 
-        this.callParent();
-    }
-
+		this.callParent();
+	}
 });

@@ -1,5 +1,4 @@
 /*
-#--------------------------------
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
@@ -16,7 +15,6 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
-# ---------------------------------
 */
 
 Ext.define('canopsis.view.Viewport', {
@@ -39,11 +37,10 @@ Ext.define('canopsis.view.Viewport', {
 			border: false,
 			height: 27,
 			items: [{
-						xtype: 'Mainbar',
-						height: 26
-					}],
+				xtype: 'Mainbar',
+				height: 26
+			}],
 			xtype: 'panel',
-			border: false,
 			collapsed: false,
 			collapsible: true,
 			preventHeader: true,
@@ -53,27 +50,27 @@ Ext.define('canopsis.view.Viewport', {
 				listeners: {
 					mouseover: {
 						element: 'el',
-						fn: function() { Ext.getCmp('region-north').expand(); }
+						fn: function() {
+							Ext.getCmp('region-north').expand();
+						}
 					}
 				}
-			 },
-
+			},
 			listeners: {
 				dblclick: {
 					element: 'body',
-					fn: function() { Ext.getCmp('region-north').collapse(); }
+					fn: function() {
+						Ext.getCmp('region-north').collapse();
+					}
 				}
 			}
-
 		},{
 			region: 'center',
 			border: false,
 			xtype: 'TabsView',
 			id: 'main-tabs'
-
 		}
 	],
-
 
 	initComponent: function() {
 		log.debug('Render viewport ...', this.logAuthor);

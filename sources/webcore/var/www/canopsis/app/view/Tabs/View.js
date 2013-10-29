@@ -1,5 +1,4 @@
 /*
-#--------------------------------
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
@@ -16,23 +15,22 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
-# ---------------------------------
 */
 Ext.define('canopsis.view.Tabs.View' , {
 	extend: 'Ext.tab.Panel',
 	alias: 'widget.TabsView',
 	requires: ['canopsis.lib.view.cnumberPrompt'],
 
-	activeTab: 0, // index or id
+	// index or id
+	activeTab: 0,
 	bodyBorder: false,
 	componentCls: 'cps-headertabs',
 	plain: true,
-	tabBar:{
-		//plain:true,
-		items:[{
-		    xtype: 'tbfill'
+	tabBar: {
+		items: [{
+			xtype: 'tbfill'
 		},{
-		    iconCls: 'icon-control-play',
+			iconCls: 'icon-control-play',
 			tooltip: _('Rotate view'),
 			xtype:'button',
 			border: 0,
@@ -40,44 +38,42 @@ Ext.define('canopsis.view.Tabs.View' , {
 			enableToggle: true,
 			scope:this,
 			toggleHandler: function(button, state) {
-				if (state) {
-					var prompt = Ext.create('canopsis.lib.view.cnumberPrompt')
+				if(state) {
+					var prompt = Ext.create('canopsis.lib.view.cnumberPrompt');
+
 					prompt.prompt(
 						_('Question'),
 						_('Enter the delay to stay on each view, in minutes'),
-						function(button,text,obj){
-							var number = parseFloat(text)
-						/*	if(isNaN(number)){
-								global.notify.notify(_('Warning'),_('You must enter only number'))
-								this.toggle(false,true)
-								return false
-							}*/
-							if(button == 'ok'){
-								this.up('tabpanel').fireEvent('AutoRotateView',true, number)
+						function(button, text) {
+							var number = parseFloat(text);
+
+							if(button === 'ok') {
+								this.up('tabpanel').fireEvent('AutoRotateView', true, number);
 								this.setIconCls('icon-control-pause');
-							}else{
-								this.toggle(false,true)
+							}
+							else{
+								this.toggle(false, true);
 							}
 						},
 						button,
 						undefined,
 						1
-					)
-				}else {
+					);
+				}
+				else {
 					button.setIconCls('icon-control-play');
-					button.up('tabpanel').fireEvent('AutoRotateView',false)
+					button.up('tabpanel').fireEvent('AutoRotateView', false);
 				}
 			}
 		},{
-		    iconCls: 'icon-control-repeat',
+			iconCls: 'icon-control-repeat',
 			tooltip: _('Refresh view'),
-		    xtype:'button',
-		    style:'background-color:#e0e0e0;background-image:none;',
-		    border: 0,
-		    handler:function(btn,state){
-				this.up('tabpanel').fireEvent('reload_active_view')
+			xtype: 'button',
+			style: 'background-color:#e0e0e0;background-image:none;',
+			border: 0,
+			handler: function() {
+				this.up('tabpanel').fireEvent('reload_active_view');
 			}
 		}]
-	},
-
+	}
 });

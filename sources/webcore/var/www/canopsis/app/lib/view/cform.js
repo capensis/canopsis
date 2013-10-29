@@ -1,5 +1,4 @@
 /*
-#--------------------------------
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
@@ -16,7 +15,6 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
-# ---------------------------------
 */
 Ext.define('canopsis.lib.view.cform', {
 	extend: 'Ext.form.Panel',
@@ -36,7 +34,8 @@ Ext.define('canopsis.lib.view.cform', {
 	logAuthor: '[view][cform]',
 
 	initComponent: function() {
-		var tbar = [{
+		var tbar = [
+			{
 				iconCls: 'icon-save',
 				text: _('Save'),
 				action: 'save'
@@ -47,13 +46,14 @@ Ext.define('canopsis.lib.view.cform', {
 			}
 		];
 
-		var bbar = [{
+		var bbar = [
+			{
 				iconCls: 'icon-cancel',
 				text: _('Cancel'),
 				action: 'cancel'
-			},
-			{xtype: 'tbfill'},
-			{
+			},{
+				xtype: 'tbfill'
+			},{
 				iconCls: 'icon-save',
 				text: _('Save'),
 				action: 'save',
@@ -61,19 +61,22 @@ Ext.define('canopsis.lib.view.cform', {
 			}
 		];
 
-		if (this.EditMethod == 'tab') {
+		if(this.EditMethod === 'tab') {
 			this.on('beforeclose', this.beforeclose);
 			this.tbar = tbar;
-		}else {
+		}
+		else {
 			this.bbar = bbar;
 		}
+
 		this.callParent();
 	},
 
-	beforeclose: function(tab, object) {
+	beforeclose: function() {
 		log.debug('Active previous tab', this.logAuthor);
 		old_tab = Ext.getCmp('main-tabs').old_tab;
-		if (old_tab) {
+
+		if(old_tab) {
 			Ext.getCmp('main-tabs').setActiveTab(old_tab);
 		}
 	},
@@ -83,5 +86,4 @@ Ext.define('canopsis.lib.view.cform', {
 		Ext.form.Panel.superclass.beforeDestroy.call(this);
 		log.debug(this.id + ' Destroyed.', this.logAuthor);
 	}
-
 });

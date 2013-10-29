@@ -1,5 +1,4 @@
 /*
-#--------------------------------
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
@@ -16,7 +15,6 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
-# ---------------------------------
 */
 Ext.define('canopsis.controller.Selector', {
 	extend: 'canopsis.lib.controller.cgrid',
@@ -41,21 +39,26 @@ Ext.define('canopsis.controller.Selector', {
 		global.selectorCtrl = this;
 	},
 
-	beforeload_EditForm: function(form, item) {
+	beforeload_EditForm: function(form) {
 		var name = Ext.ComponentQuery.query('#' + form.id + ' textfield[name=crecord_name]')[0];
-		if (name)
+
+		if(name) {
 			name.setReadOnly(true);
+		}
 	},
 
-	preSave: function(record, data, form) {
+	preSave: function(record) {
 		var _id = record.get('_id');
+
 		record.set('id', _id);
 		record.set('loaded', false);
 
-		if (record.get('dosla'))
+		if(record.get('dosla')) {
 			record.set('sla_timewindow', record.get('sla_timewindow_value') * record.get('sla_timewindow_unit'));
-		else
+		}
+		else {
 			record.set('sla_timewindow', undefined);
+		}
 
 		record.set('state', undefined);
 		record.set('sla_state', undefined);
@@ -65,16 +68,18 @@ Ext.define('canopsis.controller.Selector', {
 	},
 
 	ajaxValidation: function(record, edit) {
-		if (edit) {
+		if(edit) {
 			this._save(record, true);
 			return;
 		}
 
 		isRecordExist('object', 'selector', 'crecord_name', record, function(ctrl, record, exist) {
-			if (exist)
+			if(exist) {
 				ctrl._save(record, false);
-			else
+			}
+			else {
 				global.notify.notify(_('Bad name'), _('This selector name already exist'), 'warning');
+			}
 		}, this);
 	},
 
@@ -87,15 +92,15 @@ Ext.define('canopsis.controller.Selector', {
 			loaded: false
 		};
 
-		if (type == 'selector')
+		if(type === 'selector') {
 			data.output_tpl = message;
-		else
+		}
+		else {
 			data.sla_output_tpl = message;
+		}
 
-		updateRecord('object', 'selector', 'canopsis.model.selector', _id, data,
-			function() {
-				global.notify.notify(_('Message updated'), 'The message will be display in few minutes', 'success');
-			});
+		updateRecord('object', 'selector', 'canopsis.model.selector', _id, data, function() {
+			global.notify.notify(_('Message updated'), 'The message will be display in few minutes', 'success');
+		});
 	}
-
 });

@@ -1,5 +1,4 @@
 /*
-#--------------------------------
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
@@ -16,7 +15,6 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
-# ---------------------------------
 */
 Ext.define('canopsis.controller.Keynav', {
 	extend: 'Ext.app.Controller',
@@ -32,6 +30,8 @@ Ext.define('canopsis.controller.Keynav', {
 				ctrl: true,
 				scope: this,
 				fn: function(key, event) {
+					void(key);
+
 					event.stopEvent();
 					// New view
 					log.debug('ctrl + n', this.logAuthor);
@@ -41,6 +41,8 @@ Ext.define('canopsis.controller.Keynav', {
 				ctrl: true,
 				scope: this,
 				fn: function(key, event) {
+					void(key);
+
 					event.stopEvent();
 					// Reload view
 					log.debug('ctrl + r', this.logAuthor);
@@ -54,6 +56,8 @@ Ext.define('canopsis.controller.Keynav', {
 				ctrl: true,
 				scope: this,
 				fn: function(key, event) {
+					void(key);
+
 					event.stopEvent();
 					// Edit view
 					log.debug('ctrl + e', this.logAuthor);
@@ -66,6 +70,8 @@ Ext.define('canopsis.controller.Keynav', {
 				ctrl: true,
 				scope: this,
 				fn: function(key, event) {
+					void(key);
+
 					event.stopEvent();
 					// Save view
 					log.debug('ctrl + s', this.logAuthor);
@@ -79,6 +85,8 @@ Ext.define('canopsis.controller.Keynav', {
 				ctrl: true,
 				scope: this,
 				fn: function(key, event) {
+					void(key);
+
 					event.stopEvent();
 					// cancel view
 					log.debug('ctrl + x', this.logAuthor);
@@ -86,38 +94,20 @@ Ext.define('canopsis.controller.Keynav', {
 					var ctrl = this.getController('Tabs');
 					ctrl.cancel_active_view();
 				}
-
 			},{
 				key: Ext.EventObject.F,
 				ctrl: true,
 				scope: this,
 				fn: function(key, event) {
+					void(key);
+
 					event.stopEvent();
 					// Search view
 					log.debug('ctrl + f', this.logAuthor);
-
-					/*if (this.win) {
-						this.win.show();
-					} else {
-						this.win = Ext.create('widget.window', {
-							title: 'Select a view ...',
-							closable: true,
-							closeAction: 'hide',
-							width: 300,
-							resizable: true,
-							layout: 'fit',
-							bodyStyle: 'padding: 5px;',
-							items: [ Ext.getCmp("viewSelector") ],
-						}).show(false, function(){
-							Ext.getCmp("viewSelector").focus();
-						});
-					}*/
-
 				}
 			}
 		]);
 
 		this.callParent(arguments);
 	}
-
 });

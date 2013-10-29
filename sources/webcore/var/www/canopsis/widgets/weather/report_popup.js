@@ -1,6 +1,4 @@
-
 /*
-#--------------------------------
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
@@ -17,7 +15,6 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
-# ---------------------------------
 */
 
 Ext.define('widgets.weather.report_popup' , {
@@ -66,63 +63,66 @@ Ext.define('widgets.weather.report_popup' , {
 	buildBar: function() {
 		var item_bar = [];
 
-		if (this.helpdesk) {
+		if(this.helpdesk) {
 			item_bar.push(Ext.create('Ext.button.Button', {
 				xtype: 'button',
 				handler: this.go_to_helpdesk,
 				scope: this,
 				text: _('Go to Helpdesk'),
-				//pack:'start',
 				minWidth: 75
 			}));
 		}
-        item_bar.push('->');
+
+		item_bar.push('->');
 
 		item_bar.push(Ext.create('Ext.button.Button', {
 			xtype: 'button',
-            handler: this.ok_button_function,
-            scope: this,
-            text: _('Ok'),
-            minWidth: 75
-        }));
+			handler: this.ok_button_function,
+			scope: this,
+			text: _('Ok'),
+			minWidth: 75
+		}));
 
 		item_bar.push(Ext.create('Ext.button.Button', {
 			xtype: 'button',
-            handler: function() {this.close()},
-            scope: this,
-            text: _('Cancel'),
-            minWidth: 75
-        }));
+			handler: function() {
+				this.close();
+			},
+			scope: this,
+			text: _('Cancel'),
+			minWidth: 75
+		}));
 
-       var bar = new Ext.toolbar.Toolbar({
-            ui: 'footer',
-            dock: 'bottom',
-           /* layout: {
-                pack: 'end'
-            },*/
-            items: item_bar
-        });
+		var bar = new Ext.toolbar.Toolbar({
+			ui: 'footer',
+			dock: 'bottom',
+			items: item_bar
+		});
 
 		return bar;
 	},
 
 	go_to_helpdesk: function() {
-		if (this.helpdesk.indexOf('http://') == -1 && this.helpdesk.indexOf('https://') == -1 && this.helpdesk.indexOf('mailto:') == -1)
+		if(this.helpdesk.indexOf('http://') === -1 && this.helpdesk.indexOf('https://') === -1 && this.helpdesk.indexOf('mailto:') === -1) {
 			this.helpdesk = 'http://' + this.helpdesk;
+		}
+
 		log.debug('Go to the helpdesk ' + this.helpdesk, this.logAuthor);
 		window.open(this.helpdesk, '_newtab');
 	},
-
 
 	ok_button_function: function() {
 		log.debug('Send Event', this.logAuthor);
 		var event = Ext.clone(this.base_event);
 		event.output = this.input_textArea.getValue();
 
-		if (this._component)
+		if(this._component) {
 			event.component = this._component;
-		if (this.referer)
+		}
+
+		if(this.referer) {
 			event.referer = this.referer;
+		}
 
 		log.dump(event);
 

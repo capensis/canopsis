@@ -1,5 +1,4 @@
 /*
-#--------------------------------
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
@@ -16,7 +15,6 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
-# ---------------------------------
 */
 Ext.define('canopsis.controller.Mainbar', {
 	extend: 'Ext.app.Controller',
@@ -31,76 +29,76 @@ Ext.define('canopsis.controller.Mainbar', {
 				collapse: this.onCollapseMainbar,
 				expand: this.onExpandMainbar
 			},
-			'Mainbar [action="logout"]' : {
+			'Mainbar [action="logout"]': {
 				click: this.logout
 			},
-			'Mainbar menuitem[action="cleartabscache"]' : {
+			'Mainbar menuitem[action="cleartabscache"]': {
 				click: this.cleartabscache
 			},
-			'Mainbar menuitem[action="authkey"]' : {
+			'Mainbar menuitem[action="authkey"]': {
 				click: this.authkey
 			},
-			'Mainbar combobox[action="viewSelector"]' : {
+			'Mainbar combobox[action="viewSelector"]': {
 				select: this.openViewSelector
 			},
-			'Mainbar combobox[action="dashboardSelector"]' : {
+			'Mainbar combobox[action="dashboardSelector"]': {
 				select: this.setDashboard
 			},
-			'Mainbar combobox[action="localeSelector"]' : {
+			'Mainbar combobox[action="localeSelector"]': {
 				select: this.setLocale
 			},
-			'Mainbar combobox[action="clockTypeSelector"]' : {
+			'Mainbar combobox[action="clockTypeSelector"]': {
 				select: this.setClockType
 			},
-			'Mainbar combobox[action="avatarSelector"]' : {
+			'Mainbar combobox[action="avatarSelector"]': {
 				select: this.setAvatar
 			},
-			'Mainbar menuitem[action="openDashboard"]' : {
+			'Mainbar menuitem[action="openDashboard"]': {
 				click: this.openDashboard
 			},
-			'Mainbar menuitem[action="editView"]' : {
+			'Mainbar menuitem[action="editView"]': {
 				click: this.editView
 			},
-			'Mainbar menuitem[action="editAccount"]' : {
+			'Mainbar menuitem[action="editAccount"]': {
 				click: this.openViewMenu
 			},
-			'Mainbar menuitem[action="editSelector"]' : {
+			'Mainbar menuitem[action="editSelector"]': {
 				click: this.openViewMenu
 			},
-			'Mainbar menuitem[action="openViewsManager"]' : {
+			'Mainbar menuitem[action="openViewsManager"]': {
 				click: this.openViewMenu
 			},
-			'Mainbar menuitem[action="editGroup"]' : {
+			'Mainbar menuitem[action="editGroup"]': {
 				click: this.openViewMenu
 			},
-			'Mainbar menuitem[action="editSchedule"]' : {
+			'Mainbar menuitem[action="editSchedule"]': {
 				click: this.openViewMenu
 			},
-			'Mainbar menuitem[action="openBriefcase"]' : {
+			'Mainbar menuitem[action="openBriefcase"]': {
 				click: this.openViewMenu
 			},
-			'Mainbar menuitem[action="newView"]' : {
+			'Mainbar menuitem[action="newView"]': {
 				click: this.newView
 			},
-			'Mainbar menuitem[action="exportView"]' : {
+			'Mainbar menuitem[action="exportView"]': {
 				click: this.exportView
 			},
-			'Mainbar menuitem[action="reportingMode"]' : {
+			'Mainbar menuitem[action="reportingMode"]': {
 				click: this.reportingMode
 			},
-			'Mainbar menuitem[action="eventLog_navigation"]' : {
+			'Mainbar menuitem[action="eventLog_navigation"]': {
 				click: this.openViewMenu
 			},
-			'Mainbar menuitem[action="ScheduleExportView"]' : {
+			'Mainbar menuitem[action="ScheduleExportView"]': {
 				click: this.ScheduleExportView
 			},
-			'Mainbar [name="clock"]' : {
+			'Mainbar [name="clock"]': {
 				afterrender: this.setClock
 			},
-			'Mainbar menuitem[action="openViewMenu"]' : {
+			'Mainbar menuitem[action="openViewMenu"]': {
 				click: this.openViewMenu
 			},
-			'Mainbar menuitem[action="openDerogationManager"]' : {
+			'Mainbar menuitem[action="openDerogationManager"]': {
 				click: this.openViewMenu
 			}
 		});
@@ -110,15 +108,19 @@ Ext.define('canopsis.controller.Mainbar', {
 		// Bind Websocket Events
 		global.websocketCtrl.on('transport_up', function() {
 			var button = Ext.getCmp('Mainbar-menu-Websocket');
-			if (button)
+
+			if(button) {
 				button.setIconCls('icon-bullet-green');
-		},this);
+			}
+		}, this);
+
 		global.websocketCtrl.on('transport_down', function() {
 			var button = Ext.getCmp('Mainbar-menu-Websocket');
-			if (button)
-				button.setIconCls('icon-bullet-red');
-		},this);
 
+			if(button) {
+				button.setIconCls('icon-bullet-red');
+			}
+		}, this);
 	},
 
 	onCollapseMainbar: function() {
@@ -144,19 +146,26 @@ Ext.define('canopsis.controller.Mainbar', {
 	},
 
 	openViewMenu: function(item) {
-		var view_id = item.viewId;
-		this.getController('Tabs').open_view({ view_id: view_id, title: _(item.text) });
+		this.getController('Tabs').open_view({
+			view_id: item.viewId,
+			title: _(item.text)
+		});
 	},
 
 	setClock: function(item) {
 		log.debug('Set Clock', this.logAuthor);
+
 		var refreshClock = function() {
 			var thisTime = new Date();
-			if (is12Clock())
+
+			if(is12Clock()) {
 				item.update("<div class='cps-account' >" + Ext.Date.format(thisTime, 'g:i a - l d F Y') + '</div>');
-			else
+			}
+			else {
 				item.update("<div class='cps-account' >" + Ext.Date.format(thisTime, 'G:i - l d F Y') + '</div>');
+			}
 		};
+
 		Ext.TaskManager.start({
 			run: refreshClock,
 			interval: 60000
@@ -164,12 +173,16 @@ Ext.define('canopsis.controller.Mainbar', {
 	},
 
 	setLocale: function(combo, records) {
+		void(combo);
+
 		var locale = records[0].get('value');
 		log.debug('Set language to ' + locale, this.logAuthor);
 		this.getController('Account').setLocale(locale);
 	},
 
 	setClockType: function(combo, records) {
+		void(combo);
+
 		var clock_type = records[0].get('value');
 		log.debug('Set clock to ' + clock_type, this.logAuthor);
 		this.getController('Account').setClock(clock_type);
@@ -180,13 +193,15 @@ Ext.define('canopsis.controller.Mainbar', {
 		var avatarFilename = records[0].data.file_name;
 
 		log.debug('Set avatar to ' + avatarId + '(' + avatarFilename + ')', this.logAuthor);
-		
+
 		combo.up('button').hideMenu();
-		
+
 		global.accountCtrl.setAvatar(avatarId, avatarFilename);
 	},
 
 	setDashboard: function(combo, records) {
+		void(combo);
+
 		var view_id = records[0].get('id');
 		log.debug('Set dashboard to ' + view_id, this.logAuthor);
 
@@ -197,11 +212,12 @@ Ext.define('canopsis.controller.Mainbar', {
 
 		//close view selected if open
 		var tab = Ext.getCmp(view_id + '.tab');
-		if (tab)
+		if(tab) {
 			maintabs.remove(tab.id);
+		}
 
-		var current_dashboard_id = maintabs.getComponent(0).id
-		
+		var current_dashboard_id = maintabs.getComponent(0).id;
+
 		this.getController('Tabs').open_dashboard();
 
 		//close current dashboard
@@ -217,9 +233,14 @@ Ext.define('canopsis.controller.Mainbar', {
 	openViewSelector: function(combo, records) {
 		var view_id = records[0].get('id');
 		var view_name = records[0].get('crecord_name');
+
 		log.debug('Open view "' + view_name + '" (' + view_id + ')', this.logAuthor);
 		combo.clearValue();
-		this.getController('Tabs').open_view({ view_id: view_id, title: view_name });
+
+		this.getController('Tabs').open_view({
+			view_id: view_id,
+			title: view_name
+		});
 	},
 
 	editView: function() {
@@ -240,7 +261,7 @@ Ext.define('canopsis.controller.Mainbar', {
 		ctrl.create_new_view();
 	},
 
-	exportView: function(id) {
+	exportView: function() {
 		var view_id = Ext.getCmp('main-tabs').getActiveTab().view_id;
 		this.getController('Reporting').launchReport(view_id);
 	},
@@ -251,5 +272,4 @@ Ext.define('canopsis.controller.Mainbar', {
 		var record = Ext.create('canopsis.model.Schedule', activetabs.view);
 		this.getController('Schedule').scheduleWizard(record, activetabs.id);
 	}
-
 });

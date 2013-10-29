@@ -1,5 +1,4 @@
 /*
-#--------------------------------
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
@@ -16,10 +15,9 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
-# ---------------------------------
 */
 Ext.define('canopsis.store.Groups', {
-    extend: 'canopsis.lib.store.cstore',
+	extend: 'canopsis.lib.store.cstore',
 	model: 'canopsis.model.Group',
 
 	storeId: 'store.Groups',
@@ -29,11 +27,11 @@ Ext.define('canopsis.store.Groups', {
 	autoSync: true,
 
 	sorters: [
-        {
-            property: 'crecord_name',
-            direction: 'ASC'
-        }
-    ],
+		{
+			property: 'crecord_name',
+			direction: 'ASC'
+		}
+	],
 
 	proxy: {
 		type: 'rest',
@@ -51,5 +49,4 @@ Ext.define('canopsis.store.Groups', {
 			writeAllFields: false
 		}
 	}
-
 });

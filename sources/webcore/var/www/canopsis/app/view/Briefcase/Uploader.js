@@ -1,5 +1,4 @@
 /*
-#--------------------------------
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
@@ -16,7 +15,6 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
-# ---------------------------------
 */
 Ext.define('canopsis.view.Briefcase.Uploader', {
 	extend: 'Ext.window.Window',
@@ -40,53 +38,57 @@ Ext.define('canopsis.view.Briefcase.Uploader', {
 			allowBlank: false
 		},
 
-	    items: [{
-	        xtype: 'filefield',
-	        id: 'form-file',
-	        emptyText: 'Select a file',
-	        fieldLabel: 'File',
-	        name: 'file-path',
-	        buttonText: 'Browse',
-	        width: 275
-	    }],
+		items: [{
+			xtype: 'filefield',
+			id: 'form-file',
+			emptyText: 'Select a file',
+			fieldLabel: 'File',
+			name: 'file-path',
+			buttonText: 'Browse',
+			width: 275
+		}],
 
-	    buttons: [
-	    	{
-	            text: 'Upload',
-	            handler: function(){
-	            	var win = this.up('window');
-	                var form = this.up('form').getForm();
-	                if (form.isValid()) {
-	                    form.submit({
-	                        url: '/files',
-	                        success: function(form, action) {
+		buttons: [
+			{
+				text: 'Upload',
+				handler: function() {
+					var win = this.up('window');
+					var form = this.up('form').getForm();
 
-	                        	var file_id = action.result.data.file_id;
-	                        	var filename = action.result.data.filename;
+					if(form.isValid()) {
+						form.submit({
+							url: '/files',
+							success: function(form, action) {
+								void(form);
 
-	                        	log.debug("File '"+filename+"' uploded with id: '"+file_id+"'", win.logAuthor);
-	                        	global.notify.notify(_('Success'), _('File uploaded with sucess'), 'success');
+								var file_id = action.result.data.file_id;
+								var filename = action.result.data.filename;
 
-	                            if (win.callback)
-	                            	win.callback(file_id, filename);
+								log.debug("File '" + filename + "' uploded with id: '" + file_id + "'", win.logAuthor);
 
-	                        	// Reload stores
-	                            Ext.getStore('Files').load();
-	           					Ext.getStore('Avatar').load();
+								global.notify.notify(_('Success'), _('File uploaded with sucess'), 'success');
 
-	           					// Close windows
-	                            win.close();
+								if(win.callback) {
+									win.callback(file_id, filename);
+								}
 
-	                        },
-	                        failure: function(form, action) {
-	                        	log.error("Failed to upload file", win.logAuthor);
-	                        	global.notify.notify(_('Failed'), _('Failed to upload file'), 'error');
-	                        	win.close();
-	                        }
-	                    });
-	                }
-	            }
-	        }
-	    ]
+								// Reload stores
+								Ext.getStore('Files').load();
+								Ext.getStore('Avatar').load();
+
+								// Close windows
+								win.close();
+
+							},
+							failure: function() {
+								log.error("Failed to upload file", win.logAuthor);
+								global.notify.notify(_('Failed'), _('Failed to upload file'), 'error');
+								win.close();
+							}
+						});
+					}
+				}
+			}
+		]
 	}]
 });

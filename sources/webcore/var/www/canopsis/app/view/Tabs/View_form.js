@@ -1,5 +1,4 @@
 /*
-#--------------------------------
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
@@ -16,7 +15,6 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
-# ---------------------------------
 */
 
 Ext.define('canopsis.view.Tabs.View_form' , {
@@ -26,56 +24,55 @@ Ext.define('canopsis.view.Tabs.View_form' , {
 	EditMethod: 'win',
 
 	items: [{
-				'xtype': 'fieldset',
-				'title': _('Report options'),
-				'defaults': {anchor: '100%'},
-				'collapsible': false,
-				'items': [{
-							'xtype': 'combobox',
-							'name': 'orientation',
-							'disable': false,
-							'fieldLabel': _('Orientation'),
-							'queryMode': 'local',
-							'displayField': 'text',
-							'valueField': 'value',
-							'value': 'portrait',
-							'store': {
-								'xtype': 'store',
-								'fields': ['value', 'text'],
-								'data' : [
-									{'value': 'portrait', 'text': _('Portrait')},
-									{'value': 'landscape', 'text': _('Landscape')}
-								]
-							}
-						},{
-							'xtype': 'combobox',
-							'name': 'pageSize',
-							'fieldLabel': _('Page size'),
-							'disable': false,
-							'queryMode': 'local',
-							'displayField': 'text',
-							'valueField': 'value',
-							'value': 'A4',
-							'store': {
-								'xtype': 'store',
-								'fields': ['value', 'text'],
-								'data' : [
-									{'value': 'A3', 'text': 'A3'},
-									{'value': 'A4', 'text': 'A4'}
-								]
-							}
-						}]
-				}],
+		'xtype': 'fieldset',
+		'title': _('Report options'),
+		'defaults': {anchor: '100%'},
+		'collapsible': false,
+		'items': [{
+			'xtype': 'combobox',
+			'name': 'orientation',
+			'disable': false,
+			'fieldLabel': _('Orientation'),
+			'queryMode': 'local',
+			'displayField': 'text',
+			'valueField': 'value',
+			'value': 'portrait',
+			'store': {
+				'xtype': 'store',
+				'fields': ['value', 'text'],
+				'data' : [
+					{'value': 'portrait', 'text': _('Portrait')},
+					{'value': 'landscape', 'text': _('Landscape')}
+				]
+			}
+		},{
+			'xtype': 'combobox',
+			'name': 'pageSize',
+			'fieldLabel': _('Page size'),
+			'disable': false,
+			'queryMode': 'local',
+			'displayField': 'text',
+			'valueField': 'value',
+			'value': 'A4',
+			'store': {
+				'xtype': 'store',
+				'fields': ['value', 'text'],
+				'data' : [
+					{'value': 'A3', 'text': 'A3'},
+					{'value': 'A4', 'text': 'A4'}
+				]
+			}
+		}]
+	}],
 
 	initComponent: function() {
 		this.callParent(arguments);
 
-		//-----binding-----
+		// binding
 		var btn = this.down('button[action=cancel]');
 		btn.on('click', this.cancel_button, this);
 		btn = this.down('button[action=save]');
 		btn.on('click', this.save_button, this);
-
 	},
 
 	cancel_button: function() {

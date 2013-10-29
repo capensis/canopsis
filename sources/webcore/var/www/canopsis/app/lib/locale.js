@@ -1,5 +1,4 @@
 /*
-#--------------------------------
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
@@ -16,47 +15,67 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
-# ---------------------------------
 */
 
-if (typeof(i18n) == 'undefined')
+if(typeof(i18n) === 'undefined') {
 	i18n = {};
+}
 
 function _(text, context) {
 	var ttext = undefined;
 
 	// Check if locales is loaded
-	if (typeof(i18n) == 'undefined')
+	if(typeof(i18n) === 'undefined') {
 		return text;
+	}
 
-	if (context) {
+	if(context) {
 		ttext = i18n[context + '.' + text];
-		if (ttext) return ttext;
+
+		if(ttext) {
+			return ttext;
+		}
 
 		ttext = i18n[context + '.' + Ext.String.capitalize(text)];
-		if (ttext) return Ext.String.uncapitalize(ttext);
+
+		if(ttext) {
+			return Ext.String.uncapitalize(ttext);
+		}
 
 		ttext = i18n[context + '.' + Ext.String.uncapitalize(text)];
-		if (ttext) return Ext.String.capitalize(ttext);
 
+		if(ttext) {
+			return Ext.String.capitalize(ttext);
+		}
 	}
 
 	ttext = i18n[text];
-	if (ttext) return ttext;
+
+	if(ttext) {
+		return ttext;
+	}
 
 	ttext = i18n[Ext.String.capitalize(text)];
-	if (ttext) return Ext.String.uncapitalize(ttext);
+
+	if(ttext) {
+		return Ext.String.uncapitalize(ttext);
+	}
 
 	ttext = i18n[Ext.String.uncapitalize(text)];
-	if (ttext) return Ext.String.capitalize(ttext);
+
+	if (ttext) {
+		return Ext.String.capitalize(ttext);
+	}
 
 	// Translate failed
-	if (global && global.log.level > 4)
-		if (! Ext.Array.contains(global.untranslated, text))
-			global.untranslated.push(text);
+	if(global && global.log.level > 4 && !Ext.Array.contains(global.untranslated, text)) {
+		global.untranslated.push(text);
+	}
 
-	if (global && global.log.level > 4)
+	if(global && global.log.level > 4) {
 		return "->> " + text + " <<-";
-	else
+	}
+	else {
 		return text;
+	}
 }

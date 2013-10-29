@@ -1,5 +1,4 @@
 /*
-#--------------------------------
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
@@ -16,7 +15,6 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
-# ---------------------------------
 */
 
 Ext.define('canopsis.view.MetricNavigation.MetricNavigation', {
@@ -29,12 +27,12 @@ Ext.define('canopsis.view.MetricNavigation.MetricNavigation', {
 	nodes: [],
 
 	initComponent: function() {
-
 		//create cinventory
 		this.metricTab = Ext.create('canopsis.lib.form.field.cinventory', {
-																	title: _('select metrics'),
-																	vertical_multiselect: true,
-																	default_padding: '3 0 3 0'});
+			title: _('select metrics'),
+			vertical_multiselect: true,
+			default_padding: '3 0 3 0'
+		});
 
 		//create toolbar button
 		var toolbar = Ext.create('Ext.toolbar.Toolbar');
@@ -67,11 +65,15 @@ Ext.define('canopsis.view.MetricNavigation.MetricNavigation', {
 			bbar: toolbar,
 			items: [this.metricTab, this.timePanel]
 		};
+
 		this.tabPanel = Ext.create('Ext.tab.Panel', config_tabPanel);
 
 		//create render panel
-
-		this.renderContent = Ext.create('Ext.panel.Panel', {layout: 'column', border: false, autoScroll: true });
+		this.renderContent = Ext.create('Ext.panel.Panel', {
+			layout: 'column',
+			border: false,
+			autoScroll: true
+		});
 
 		var config_renderPanel = {
 			region: 'center',
@@ -81,12 +83,15 @@ Ext.define('canopsis.view.MetricNavigation.MetricNavigation', {
 			border: false,
 			items: [this.renderContent]
 		};
+
 		this.renderPanel = Ext.create('Ext.panel.Panel', config_renderPanel);
 
-		//---------------------building layout----------------------------------
+		// building layout
 
-		var masterpanel = Ext.create('Ext.panel.Panel', {layout: 'border', items: [this.tabPanel, this.renderPanel]});
-
+		var masterpanel = Ext.create('Ext.panel.Panel', {
+			layout: 'border',
+			items: [this.tabPanel, this.renderPanel]
+		});
 
 		this.items = [masterpanel];
 		this.callParent(arguments);
@@ -95,8 +100,8 @@ Ext.define('canopsis.view.MetricNavigation.MetricNavigation', {
 	createTimePanel: function() {
 		log.debug('Creating time panel', this.logAuthor);
 
+		// fieldSet creation
 
-		//----------------fieldSet creation-------------------
 		var fromField = Ext.widget('fieldset', {
 			xtype: 'fieldset',
 			title: _('From'),
@@ -110,18 +115,18 @@ Ext.define('canopsis.view.MetricNavigation.MetricNavigation', {
 			collapsible: false,
 			layout: 'hbox'
 		});
-		//-------------------some default var------------------
+
+		// some default var
 		var today = new Date();
 		var tommorow = new Date(today.getTime() + (global.commonTs.day * 1000));
 		var yesterday = new Date(today.getTime() - (global.commonTs.day * 1000));
-		//-------------------from field-----------------------
 
+		// from field
 		this.fromHour = fromField.add({
 			xtype: 'timefield',
 			name: 'fromHour',
 			fieldLabel: _('Hour'),
 			increment: 15,
-			//allowBlank: false,
 			labelWidth: 50,
 			flex: 1,
 			submitFormat: 'G:i',
@@ -141,22 +146,17 @@ Ext.define('canopsis.view.MetricNavigation.MetricNavigation', {
 			flex: 1
 		});
 
-
-		//--------------------to field------------------------
-
+		// to field
 		this.toHour = toField.add({
 			xtype: 'timefield',
 			name: 'toHour',
 			fieldLabel: _('Hour'),
 			labelWidth: 50,
 			increment: 15,
-			//allowBlank: false,
 			flex: 1,
 			submitFormat: 'G:i',
 			value: '0:00 AM'
 		});
-
-
 
 		this.toDate = toField.add({
 			xtype: 'datefield',
@@ -171,21 +171,18 @@ Ext.define('canopsis.view.MetricNavigation.MetricNavigation', {
 			flex: 1
 		});
 
-		//-------------------Button--------------------------
+		// Button
 
-
-		//-------------------Building------------------------
+		// Building
 		var config = {
-				title: _('Period selection'),
-				items: [fromField, toField],
-				border: false,
-				//margin:10,
-				padding: 10
+			title: _('Period selection'),
+			items: [fromField, toField],
+			border: false,
+			padding: 10
 		};
+
 		this.timePanel = Ext.create('Ext.form.Panel', config);
 
 		return this.timePanel;
 	}
-
-
 });

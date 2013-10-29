@@ -1,5 +1,4 @@
 /*
-#--------------------------------
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
@@ -16,7 +15,6 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
-# ---------------------------------
 */
 Ext.define('canopsis.view.Derogation.Form' , {
 	extend: 'canopsis.lib.view.cform',
@@ -58,11 +56,10 @@ Ext.define('canopsis.view.Derogation.Form' , {
 		var description = Ext.widget('textarea', {
 			name: 'description',
 			fieldLabel: _('Description'),
-			//allowBlank:false,
 			width: 295
 		});
 
-		//----------------Beginning-----------------
+		// Beginning
 		this.startDate = Ext.widget('cdate', {
 			name: 'startTs',
 			date_width: 110,
@@ -75,7 +72,7 @@ Ext.define('canopsis.view.Derogation.Form' , {
 			items: [this.startDate]
 		});
 
-		//------------------Ending----------------
+		// Ending
 
 		this.periodTypeCombo = Ext.widget('combobox', {
 			isFormField: false,
@@ -114,7 +111,7 @@ Ext.define('canopsis.view.Derogation.Form' , {
 		});
 
 
-		//----------------build general options field------------
+		// build general options field
 
 		this.add({
 			xtype: 'cfieldset',
@@ -122,14 +119,15 @@ Ext.define('canopsis.view.Derogation.Form' , {
 			items: [crecord_name, description, beginning, ending]
 		});
 
-		//--------------------Variable field-----------------------
+		// Variable field
 		this.variableField = this.add({
 			xtype: 'cfieldset',
 			title: _('Actions')
 		});
 
-		if (!this.editing)
+		if(!this.editing) {
 			this.variableField.add(Ext.create('derogation.field'));
+		}
 
 		//align button with other button
 		var container = this.variableField.add({
@@ -147,23 +145,24 @@ Ext.define('canopsis.view.Derogation.Form' , {
 
 		this.addButton.on('click', this.addButtonFunc, this);
 
-		//--------------bindings--------------
+		// bindings
 		this.periodTypeCombo.on('change', this.toggleTimePeriod, this);
-    },
+	},
 
-	toggleTimePeriod: function(combo,value) {
-		if (value == 'for') {
+	toggleTimePeriod: function(combo, value) {
+		void(combo);
+
+		if(value === 'for') {
 			this.durationDate.show();
 			this.stopDate.hide();
 			this.stopDate.setDisabled(true);
 		}
 
-		if (value == 'to') {
+		if(value === 'to') {
 			this.durationDate.hide();
 			this.stopDate.show();
 			this.stopDate.setDisabled(false);
 		}
-
 	},
 
 	addButtonFunc: function() {
@@ -187,7 +186,6 @@ Ext.define('derogation.field', {
 
 	border: false,
 	layout: 'hbox',
-	//bodyStyle:{'background': '#ededed'},
 
 	state_icon_path: 'widgets/weather/icons/set1/',
 	icon_weather1: 'state_0.png',
@@ -205,7 +203,7 @@ Ext.define('derogation.field', {
 
 	initComponent: function() {
 
-		//------------------config objects-----------------
+		// config objects
 
 		var config_key_field = {
 			isFormField: false,
@@ -231,9 +229,9 @@ Ext.define('derogation.field', {
 			}
 		};
 
-		if (this._variable)
+		if(this._variable) {
 			config_key_field.disabled = true;
-
+		}
 
 		var config_list_state = {
 			stateIconPath: this.state_icon_path,
@@ -252,10 +250,7 @@ Ext.define('derogation.field', {
 			value: 0,
 			listConfig: {
 				getInnerTpl: function() {
-					var tpl = '<div>' +
-							  '<img src="' + this.findParentByType('combobox').stateIconPath + '{icon}" class="' + this.findParentByType('combobox').iconClass + '"/>' +
-							  '{text}</div>';
-					return tpl;
+					return '<div><img src="' + this.findParentByType('combobox').stateIconPath + '{icon}" class="' + this.findParentByType('combobox').iconClass + '"/>{text}</div>';
 				}
 			},
 			store: {
@@ -286,10 +281,7 @@ Ext.define('derogation.field', {
 			value: 0,
 			listConfig: {
 				getInnerTpl: function() {
-					var tpl = '<div>' +
-							  '<img src="' + this.findParentByType('combobox').alertIconPath + '{icon}" class="' + this.findParentByType('combobox').iconClass + '"/>' +
-							  '{text}</div>';
-					return tpl;
+					return '<div><img src="' + this.findParentByType('combobox').alertIconPath + '{icon}" class="' + this.findParentByType('combobox').iconClass + '"/>{text}</div>';
 				}
 			},
 			store: {
@@ -312,7 +304,7 @@ Ext.define('derogation.field', {
 		};
 
 		//if value, not display comment by default
-		if (this._variable) {
+		if(this._variable) {
 			config_output_textfield.disabled = true;
 			config_output_textfield.hidden = true;
 		}
@@ -327,58 +319,60 @@ Ext.define('derogation.field', {
 			margin: '5 5 0 5'
 		};
 
-
-
-		//---------------------build objects-------------
+		// build objects
 		this.key_field = Ext.widget('combobox',	config_key_field);
 
 		this.items = [this.key_field];
 
-		if (!this._variable || this._variable == 'state') {
+		if(!this._variable || this._variable === 'state') {
 			this.list_state = Ext.widget('combobox', config_list_state);
 			this.items.push(this.list_state);
 		}
 
-		if (!this._variable || this._variable == 'alert_icon') {
+		if(!this._variable || this._variable === 'alert_icon') {
 			this.alertIcon_radio = Ext.widget('combobox', config_alertIcon_radio);
 			this.items.push(this.alertIcon_radio);
 		}
 
-		if (!this._variable || this._variable == 'output') {
+		if(!this._variable || this._variable === 'output') {
 			this.output_textfield = Ext.widget('textfield', config_output_textfield);
 			this.items.push(this.output_textfield);
 		}
 
-		if (!this._variable || this._variable == 'alert_msg') {
+		if(!this._variable || this._variable === 'alert_msg') {
 			this.alert_textfield = Ext.widget('textfield', config_alert_textfield);
 			this.items.push(this.alert_textfield);
 		}
 
-		//----------------------other---------------------
+		// other
 
 		this.destroyButton = Ext.widget('button', {
 			iconCls: 'icon-cancel',
 			margin: '5 0 0 0'
 		});
+
 		this.items.push(this.destroyButton);
 
 		this.callParent(arguments);
 
-		//----------------------bind events--------------------
+		// bind events
 		this.key_field.on('select', this._onChange, this);
 		this.destroyButton.on('click', this.selfDestruction, this);
 	},
 
 	afterRender: function() {
 		this.callParent(arguments);
-		if (this._variable) {
+
+		if(this._variable) {
 			this.key_field.setValue(this._variable);
 			this.change(this._variable);
-			var field = this.down('[name=' + this._variable + ']');
-			if (field)
-				field.setValue(this._value);
-		}
 
+			var field = this.down('[name=' + this._variable + ']');
+
+			if(field) {
+				field.setValue(this._value);
+			}
+		}
 	},
 
 	selfDestruction: function() {
@@ -388,20 +382,25 @@ Ext.define('derogation.field', {
 		Ext.destroy(this);
 	},
 
-	_onChange: function(combo,records,options) {
+	_onChange: function(combo, records) {
+		void(combo);
+
 		var value = records[0].get('value');
 		this.change(value);
 	},
 
 	change: function(value) {
 		var fields = Ext.ComponentQuery.query('#' + this.id + ' [name]');
-		for (var i = 0; i < fields.length; i++) {
+
+		for(var i = 0; i < fields.length; i++) {
 			var elem = fields[i];
-			if (elem.name != 'key_field') {
-				if (elem.name != value) {
+
+			if(elem.name !== 'key_field') {
+				if(elem.name !== value) {
 					elem.hide();
 					elem.setDisabled(true);
-				}else {
+				}
+				else {
 					elem.show();
 					elem.setDisabled(false);
 				}
@@ -412,6 +411,11 @@ Ext.define('derogation.field', {
 	getValue: function() {
 		var field = this.key_field.getValue();
 		var value = this.down('[name=' + field + ']').getValue();
-		return {type: 'override', field: field, value: value};
+
+		return {
+			type: 'override',
+			field: field,
+			value: value
+		};
 	}
 });
