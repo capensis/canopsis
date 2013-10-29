@@ -265,7 +265,7 @@ Ext.define('canopsis.lib.form.field.cinventory' , {
 						else {
 							return val;
 						}
-					}:
+					};
 				}
 
 				selection_grid_config.columns.push(editor_config);

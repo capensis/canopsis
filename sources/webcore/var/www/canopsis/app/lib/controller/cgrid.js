@@ -31,13 +31,14 @@ Ext.define('canopsis.lib.controller.cgrid', {
 		log.debug('Initialize ' + this.id + ' ...', this.logAuthor);
 
 		var control = {};
+
 		control[this.listXtype] = {
 			afterrender: this._bindGridEvents
 		};
+
 		this.control(control);
 
 		this.callParent(arguments);
-
 	},
 
 	_bindGridEvents: function(grid) {
@@ -50,18 +51,16 @@ Ext.define('canopsis.lib.controller.cgrid', {
 
 		log.debug('Bind events "' + id + '" ...', this.logAuthor);
 
-		grid.on('select', this._select,	this);
+		grid.on('select', this._select, this);
 
 		//Bind Dblclick
-		grid.on('selectionchange',	this._selectionchange,	this);
+		grid.on('selectionchange', this._selectionchange, this);
 
 		if(grid.opt_view_element) {
 			grid.on('itemdblclick', this._viewElement, this);
 		}
-		else {
-			if(grid.opt_allow_edit === true) {
-				grid.on('itemdblclick', this._editRecord, this);
-			}
+		else if(grid.opt_allow_edit === true) {
+			grid.on('itemdblclick', this._editRecord, this);
 		}
 
 		//Binding action for contextMenu
@@ -130,8 +129,8 @@ Ext.define('canopsis.lib.controller.cgrid', {
 			for(i = 0; i < btns.length; i++) {
 				btns[i].on('click', this._enabledisable, this);
 			}
-
 		}
+
 		//search buttons
 		btns = Ext.ComponentQuery.query('#' + id + ' button[action=search]');
 
@@ -163,10 +162,12 @@ Ext.define('canopsis.lib.controller.cgrid', {
 		var textfields = Ext.ComponentQuery.query('#' + id + ' textfield[name=searchField]');
 		var textfield = undefined;
 
+		var me = this;
+
 		var textfield_afterrender = function() {
 			var keynav_config = {
-				scope: this,
-				enter: (this.grid.opt_simple_search === true) ? this._searchRecordSimple : this._searchRecord
+				scope: me,
+				enter: (me.grid.opt_simple_search === true) ? me._searchRecordSimple : me._searchRecord
 			};
 
 			var keynav = new Ext.util.KeyNav(textfield.id, keynav_config);

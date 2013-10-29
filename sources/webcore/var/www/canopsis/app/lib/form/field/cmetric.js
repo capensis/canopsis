@@ -17,7 +17,7 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-Ext.define('canopsis.lib.form.field.cmetric' , {
+Ext.define('canopsis.lib.form.field.cmetric', {
 	extend: 'Ext.panel.Panel',
 	mixins: ['canopsis.lib.form.cfield'],
 
@@ -127,7 +127,7 @@ Ext.define('canopsis.lib.form.field.cmetric' , {
 
 		if(this.sharedStore) {
 			this.selected_store = Ext.create('canopsis.lib.store.cstore',
-				Ext.Object.merge({model: 'Meta'}, this.sharedStore);
+				Ext.Object.merge({model: 'Meta'}, this.sharedStore)
 			);
 		}
 		else {

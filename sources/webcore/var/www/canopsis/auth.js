@@ -202,14 +202,14 @@ Ext.define('canopsis.auth', {
 				login: login
 			},
 			success: function(response) {
-				response = Ext.JSON.decode(response.responseText):
+				response = Ext.JSON.decode(response.responseText);
 				log.debug(" + M3 Auth Ok", this.logAuthor);
 				global.account = response.data[0];
 				this.onSuccess();
 			},
 			failure: function(form, action) {
 				log.debug(" + M3 Failed", this.logAuthor);
-				this.onFailure():
+				this.onFailure();
 			}
 		});
 	},

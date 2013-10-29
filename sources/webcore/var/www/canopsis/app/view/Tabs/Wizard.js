@@ -119,7 +119,7 @@ Ext.define('canopsis.view.Tabs.Wizard' , {
 				var variables = this.get_variables();
 
 				//hack: if no xtype set it (the field is disable in editmode)
-				if(variables.xtype === undefined) {
+				if(!variables.xtype) {
 					variables.xtype = combo[0].getValue();
 				}
 

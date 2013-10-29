@@ -64,7 +64,7 @@ Ext.define('canopsis.lib.form.field.cfieldset' , {
 		if(this.checkboxCmp) {
 			var value = this.checkboxCmp.getValue();
 
-			if(value === 'on' || value === 1) {
+			if(value) {
 				return true;
 			}
 			else {
