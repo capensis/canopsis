@@ -1,5 +1,4 @@
 /*
-#--------------------------------
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
@@ -16,127 +15,126 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
-# ---------------------------------
 */
 
 widget_weather_template = Ext.create('Ext.XTemplate',
-		'<table class="weather-table">',
-			'<tr>',
-				'<td style="vertical-align: top;" colspan=3>',
-					'<span class="weather-title" id="{id}-title">{title}</span>',
-					'<span class="weather-ts">{event_ts}</span></br>',
-					'{output}',
-				'</td>',
-				'<td style="width: 14px;" id="{id}-edit_td">',
-					'<tpl if="admin == true && derogation == true && exportMode == false">',
-						'<div class="icon icon-edit weather-clickable" id="{id}-edit_button"></div>',
+	'<table class="weather-table">',
+		'<tr>',
+			'<td style="vertical-align: top;" colspan=3>',
+				'<span class="weather-title" id="{id}-title">{title}</span>',
+				'<span class="weather-ts">{event_ts}</span></br>',
+				'{output}',
+			'</td>',
+			'<td style="width: 14px;" id="{id}-edit_td">',
+				'<tpl if="admin == true && derogation == true && exportMode == false">',
+					'<div class="icon icon-edit weather-clickable" id="{id}-edit_button"></div>',
+				'</tpl>',
+			'</td>',
+			'<td class="weather-td-image" style="width: 20%;">',
+				'<div class="weather-relative">',
+					'<tpl if="percent != undefined ">',
+						'<div class="weather-percent">{percent}%</div>',
 					'</tpl>',
-				'</td>',
-				'<td class="weather-td-image" style="width: 20%;">',
-					'<div class="weather-relative">',
-						'<tpl if="percent != undefined ">',
-							'<div class="weather-percent">{percent}%</div>',
-						'</tpl>',
-						'<img class="weather-image" src="{icon_src}"/>',
-					'</div>',
-				'</td>',
-			'</tr>',
-			'<tr>',
-				'<td rowspan=2 style="width: 90px;">',
-					'<tpl if="button_text != undefined">',
-						'<button class="weather-button"  type="button" id="{id}-button">{button_text}</button>',
-					'</tpl>',
-				'</td>',
-				'<td rowspan=2 style="width: 30px;">',
-					'<tpl if="alert_icon" != undefined">',
-						'<img src="{alert_icon}">',
-					'</tpl>',
-				'</td>',
-				'<td rowspan=2>',
-					'<tpl if="alert_msg" != undefined">',
-						'<p class="weather-alert-message" id="{id}-alert_message">{alert_msg}</p>',
-					'</tpl>',
-				'</td>',
-				'<td></td>',
-				'<td><center>{legend}</center></td>',
-				//'<td><center>&nbsp;</center></td>',
-			'</tr>',
-			'<tr>',
-				'<td></td>',
-				'<td></td>',
-			'</tr>',
-		'</table>',
-		{compiled: true}
-	);
+					'<img class="weather-image" src="{icon_src}"/>',
+				'</div>',
+			'</td>',
+		'</tr>',
+		'<tr>',
+			'<td rowspan=2 style="width: 90px;">',
+				'<tpl if="button_text != undefined">',
+					'<button class="weather-button"  type="button" id="{id}-button">{button_text}</button>',
+				'</tpl>',
+			'</td>',
+			'<td rowspan=2 style="width: 30px;">',
+				'<tpl if="alert_icon" != undefined">',
+					'<img src="{alert_icon}">',
+				'</tpl>',
+			'</td>',
+			'<td rowspan=2>',
+				'<tpl if="alert_msg" != undefined">',
+					'<p class="weather-alert-message" id="{id}-alert_message">{alert_msg}</p>',
+				'</tpl>',
+			'</td>',
+			'<td></td>',
+			'<td><center>{legend}</center></td>',
+			//'<td><center>&nbsp;</center></td>',
+		'</tr>',
+		'<tr>',
+			'<td></td>',
+			'<td></td>',
+		'</tr>',
+	'</table>',
+	{compiled: true}
+);
 
 widget_weather_template_left = Ext.create('Ext.XTemplate',
-		'<table class="weather-table">',
-			'<tr>',
-				'<td class="weather-td-image" style="width: 20%;">',
-					'<div class="weather-relative">',
-						'<tpl if="percent != undefined ">',
-							'<div class="weather-percent">{percent}%</div>',
-						'</tpl>',
-						'<img class="weather-image" src="{icon_src}"/>',
-					'</div>',
-				'</td>',
-				'<td style="vertical-align: top;" colspan=3>',
-					'<span class="weather-title">{title}</span>',
-					'<span class="weather-ts">{event_ts}</span></br>',
-					'{output}',
-				'</td>',
-				'<td style="width: 14px;" id="{id}-edit_td">',
-					'<tpl if="admin == true && derogation == true && exportMode == false">',
-						'<div class="icon icon-edit weather-clickable" id="{id}-edit_button"></div>',
+	'<table class="weather-table">',
+		'<tr>',
+			'<td class="weather-td-image" style="width: 20%;">',
+				'<div class="weather-relative">',
+					'<tpl if="percent != undefined ">',
+						'<div class="weather-percent">{percent}%</div>',
 					'</tpl>',
-				'</td>',
-			'</tr>',
-			'<tr>',
-				'<td><center>{legend}</center></td>',
-				//'<td></td>',
-				'<td rowspan=2 style="width: 90px;">',
-					'<tpl if="button_text != undefined">',
-						'<button class="weather-button"  type="button" id="{id}-button">{button_text}</button>',
-					'</tpl>',
-				'</td>',
-				'<td rowspan=2 style="width: 30px;">',
-					'<tpl if="alert_icon" != undefined">',
-						'<img src="{alert_icon}">',
-					'</tpl>',
-				'</td>',
-				'<td rowspan=2>',
-					'<tpl if="alert_msg" != undefined">',
-						'<p class="weather-alert-message" id="{id}-alert_message">{alert_msg}</p>',
-					'</tpl>',
-				'</td>',
-			'</tr>',
-			'<tr>',
-				'<td></td>',
-				'<td></td>',
-			'</tr>',
-		'</table>',
-		{compiled: true}
-	);
+					'<img class="weather-image" src="{icon_src}"/>',
+				'</div>',
+			'</td>',
+			'<td style="vertical-align: top;" colspan=3>',
+				'<span class="weather-title">{title}</span>',
+				'<span class="weather-ts">{event_ts}</span></br>',
+				'{output}',
+			'</td>',
+			'<td style="width: 14px;" id="{id}-edit_td">',
+				'<tpl if="admin == true && derogation == true && exportMode == false">',
+					'<div class="icon icon-edit weather-clickable" id="{id}-edit_button"></div>',
+				'</tpl>',
+			'</td>',
+		'</tr>',
+		'<tr>',
+			'<td><center>{legend}</center></td>',
+			//'<td></td>',
+			'<td rowspan=2 style="width: 90px;">',
+				'<tpl if="button_text != undefined">',
+					'<button class="weather-button"  type="button" id="{id}-button">{button_text}</button>',
+				'</tpl>',
+			'</td>',
+			'<td rowspan=2 style="width: 30px;">',
+				'<tpl if="alert_icon" != undefined">',
+					'<img src="{alert_icon}">',
+				'</tpl>',
+			'</td>',
+			'<td rowspan=2>',
+				'<tpl if="alert_msg" != undefined">',
+					'<p class="weather-alert-message" id="{id}-alert_message">{alert_msg}</p>',
+				'</tpl>',
+			'</td>',
+		'</tr>',
+		'<tr>',
+			'<td></td>',
+			'<td></td>',
+		'</tr>',
+	'</table>',
+	{compiled: true}
+);
 
 widget_weather_simple_template = Ext.create('Ext.XTemplate',
-		'<table class="weather-table" style="vertical-align:middle;">',
-			'<tr>',
-				'<td style="width:25%" class=""></td>',
-				'<td class="weather-td-image" style="width:25%;">',
-					'<div class="weather-relative">',
-						'<img class="weather-image" src="{icon_src}">',
-						'<tpl if="percent != undefined ">',
-							'<div class="weather-percent">{percent}%</div>',
-						'</tpl>',
-					'</div>',
-				'</td>',
-				'<td style="width:30%;font-size:{title_font_size}px" class="" id="{id}-title">',
-					'<div><span>{title}</span></div>',
-				'</td>',
-				'<td style="width:15%" class=""></td>',
-		'</tr>',
-		{compiled: true}
-	);
+	'<table class="weather-table" style="vertical-align:middle;">',
+		'<tr>',
+			'<td style="width:25%" class=""></td>',
+			'<td class="weather-td-image" style="width:25%;">',
+				'<div class="weather-relative">',
+					'<img class="weather-image" src="{icon_src}">',
+					'<tpl if="percent != undefined ">',
+						'<div class="weather-percent">{percent}%</div>',
+					'</tpl>',
+				'</div>',
+			'</td>',
+			'<td style="width:30%;font-size:{title_font_size}px" class="" id="{id}-title">',
+				'<div><span>{title}</span></div>',
+			'</td>',
+			'<td style="width:15%" class=""></td>',
+	'</tr>',
+	{compiled: true}
+);
 
 Ext.define('widgets.weather.brick' , {
 	extend: 'Ext.Component',
@@ -168,14 +166,15 @@ Ext.define('widgets.weather.brick' , {
 
 	initComponent: function() {
 		log.debug(' + Initialize brick ' + this.data._id, this.logAuthor);
-		if (this.bg_color) {
-			if (this.bg_color.indexOf('#') == -1)
+
+		if(this.bg_color) {
+			if(this.bg_color.indexOf('#') === -1) {
 				this.bg_color = '#' + this.bg_color;
+			}
 
 			this.style = {'background-color': this.bg_color};
 		}
 
-		//log.dump(this.data)
 		this.event_type = this.data.event_type;
 		this.component = this.data.component;
 		this.resource = this.data.resource;
@@ -186,14 +185,19 @@ Ext.define('widgets.weather.brick' , {
 	},
 
 	afterRender: function() {
-		//------------------build widget base config--------------
-		if (this.simple_display)
+		// build widget base config
+
+		if(this.simple_display) {
 			this._html_template = widget_weather_simple_template;
-		else
-			if (this.icon_on_left)
+		}
+		else {
+			if(this.icon_on_left) {
 				this._html_template = widget_weather_template_left;
-			else
+			}
+			else {
 				this._html_template = widget_weather_template;
+			}
+		}
 
 		this.widget_base_config = {
 			id: this.id,
@@ -204,78 +208,96 @@ Ext.define('widgets.weather.brick' , {
 
 		//title
 
-		if (this.data.display_name) {
+		if(this.data.display_name) {
 			this.widget_base_config.title = this.data.display_name;
-		}else {
-			if (this.component)
+		}
+		else {
+			if(this.component) {
 				this.widget_base_config.title = this.component;
-			else
+			}
+			else {
 				this.widget_base_config.title = 'Unknown';
+			}
 		}
 
 		var linkUrl = this.formatLink();
 
-		if (this.fullscreenMode && linkUrl)
+		if(this.fullscreenMode && linkUrl) {
 			this.widget_base_config.title = '<a href="' + linkUrl + '" target="_newtab">' + this.widget_base_config.title + '</a>';
+		}
 
 		//check ressource admin
-		if (global.accountCtrl.check_right(this.data, 'w'))
+		if(global.accountCtrl.check_right(this.data, 'w')) {
 			this.widget_base_config.admin = true;
+		}
 
-		//----------------------build html------------------------
+		// build html
 		if (this.data) {
 			this.build(this.data);
-		}else {
+		}
+		else {
 			this.buildEmpty();
 		}
 
-		//-----------------------get element----------------------
+		// get element
 		this.edit_button = this.getEl().getById(this.id + '-edit_button');
-		//-----------------------bindings-------------------------
+
+		// bindings
 		var report_button = this.getEl().getById(this.id + '-button');
-		if (report_button)
+
+		if(report_button) {
 			report_button.on('click', this.report_issue, this);
+		}
 
 		var clickable_title = this.getEl().getById(this.id + '-title');
-		if (clickable_title && (this.external_link || this.link) && !this.fullscreenMode) {
+
+		if(clickable_title && (this.external_link || this.link) && !this.fullscreenMode) {
 			clickable_title.addCls('weather-clickable');
 			clickable_title.on('click', this.externalLink, this);
 		}
-		if (this.widget_base_config.admin && this.display_derogation_icon && this.edit_button) {
+
+		if(this.widget_base_config.admin && this.display_derogation_icon && this.edit_button) {
 			var output = this.getEl().getById(this.id + '-edit_td');
-			if (output) {
+
+			if(output) {
 				output.hover(
-					function() {this.edit_button.fadeIn()},
-					function() {this.edit_button.fadeOut()},
+					function() {
+						this.edit_button.fadeIn();
+					},
+					function() {
+						this.edit_button.fadeOut();
+					},
 					this
 				);
 			}
 
-			if (this.edit_button) {
+			if(this.edit_button) {
 				this.edit_button.on('click', function() {
-					if (!this.data.rk) {
+					if(!this.data.rk) {
 						global.notify.notify(_('Information not found'), _("Please wait a moment, some informations aren't availables"), 'info');
-					}else {
+					}
+					else {
 						var name = this.component;
-						if (this.resource)
+
+						if(this.resource) {
 							name += ' - ' + this.resource;
+						}
+
 						global.derogationCtrl.derogate(this.data.rk, name, true);
 					}
-				},this);
+				}, this);
 			}
 		}
 
 		//Hack for removing scrolling bar on ie
 		this.getEl().parent().setStyle('overflow-x', 'hidden');
-	/*	this.getEl().down('.weather-image').setStyle('width',this.getWidth() * 0.20)
-		this.getEl().down('.weather-td-image').setStyle('width',this.getWidth() * 0.20)*/
 
 
 	},
 
 	onResize: function() {
 		//very dirty hack, ie resize images after that
-		if (Ext.isIE) {
+		if(Ext.isIE) {
 			this.getEl().down('.weather-image').setStyle('width', this.getWidth() * 0.20);
 			this.getEl().down('.weather-td-image').setStyle('width', this.getWidth() * 0.20);
 		}
@@ -286,87 +308,53 @@ Ext.define('widgets.weather.brick' , {
 
 		var widget_data = {};
 
-		if (data.state != undefined)
-			//widget_data.icon_src = this.getIcon((4 - data.state) * 100 / 4);
+		if(data.state !== undefined) {
 			widget_data.icon_src = this.getIcon(data.state);
-		else
+		}
+		else {
 			widget_data.icon_src = this.info_weather_icon;
+		}
 
-		if (data.last_state_change)
+		if(data.last_state_change) {
 			widget_data.legend = rdr_elapsed_time(data.last_state_change, true);
+		}
 
-		if (data.timestamp)
+		if(data.timestamp) {
 			widget_data.event_ts = rdr_tstodate(data.timestamp, true);
+		}
 
-		if (data.output && data.output != '')
+		if(data.output && data.output !== '') {
 			widget_data.output = data.output;
+		}
 
-		//if (data.event_type == 'sla' && data.perf_data_array)
-		if (data.event_type == 'sla' && data.perf_data_array && data.perf_data_array[0].unit == '%')
+		if(data.event_type === 'sla' && data.perf_data_array && data.perf_data_array[0].unit === '%') {
 			widget_data.percent = data.perf_data_array[0].value;
+		}
 
-		//----------------alert && derog-------------
-		if (this.display_report_button)
+		// alert && derog
+		if(this.display_report_button) {
 			widget_data.button_text = _('Report issue');
+		}
 
-		if (this.data.alert_msg)
+		if(this.data.alert_msg) {
 			widget_data.alert_msg = this.data.alert_msg;
-		else
+		}
+		else {
 			widget_data.alert_msg = '&nbsp;';
+		}
 
-		if (this.data.alert_icon != undefined)
+		if(this.data.alert_icon !== undefined) {
 			widget_data.alert_icon = this.alert_icon_basedir + this.alert_icon_name[this.data.alert_icon];
-
-		var config = Ext.Object.merge(widget_data, this.widget_base_config);
-		var _html = this._html_template.applyTemplate(config);
-		this.getEl().update(_html);
-	},
-
-/*
-	buildReport: function(data) {
-		log.debug(' + Build html report for ' + this.event_type + ' ' + this.component + ':', this.logAuthor);
-		var widget_data = {	};
-
-		if (data && data.values.length > 0) {
-			var timestamp = data.values[0][0];
-			var nb_points = data.values.length;
-			var last_timestamp = data.values[nb_points - 1][0];
-			var last_value = data.values[nb_points - 1][1];
-
-			if (this.event_type == 'selector' || this.selector_state_as_icon_value) {
-				var state = demultiplex_cps_state(last_value)
-				if (! state){
-						widget_data.icon_src = this.info_weather_icon;
-						widget_data.output = _('Invalid state') + ": '" + last_value + "'";
-				} else {
-					state = state.state;
-					log.debug(' + State of ' + this.component + ' is: ' + state, this.logAuthor);
-					log.debug(' + ' + nb_points + ' points returned by server', this.logAuthor);
-					log.debug('  +  First value ts: ' + timestamp, this.logAuthor);
-					log.debug('  +  Last value ts: ' + last_timestamp, this.logAuthor);
-
-					var icon_value = 100 - (state / 4 * 100);
-					widget_data.icon_src = this.getIcon(icon_value);
-					widget_data.output = _('State on') + ' ' + rdr_tstodate(last_timestamp / 1000);
-				}
-			}else {
-				var cps_pct_by_state_0 = last_value;
-				widget_data.percent = cps_pct_by_state_0;
-				widget_data.icon_src = this.getIcon(cps_pct_by_state_0);
-				widget_data.output = _('SLA on') + ' ' + rdr_tstodate(last_timestamp);
-			}
-		} else {
-			widget_data.icon_src = this.info_weather_icon;
-			widget_data.output = _('No data available');
 		}
 
 		var config = Ext.Object.merge(widget_data, this.widget_base_config);
 		var _html = this._html_template.applyTemplate(config);
 		this.getEl().update(_html);
 	},
-	*/
+
 	buildEmpty: function() {
 		log.debug('  +  Build empty brick for ' + this.event_type + ' ' + this.component, this.logAuthor);
+
 		var widget_data = {
 			output: _('No data for the selected information'),
 			icon_src: this.info_weather_icon
@@ -374,6 +362,7 @@ Ext.define('widgets.weather.brick' , {
 
 		var config = Ext.Object.merge(widget_data, this.widget_base_config);
 		var _html = this._html_template.applyTemplate(config);
+
 		this.getEl().update(_html);
 	},
 
@@ -393,30 +382,42 @@ Ext.define('widgets.weather.brick' , {
 
 	externalLink: function() {
 		log.debug(' + Clicked on title, follow specified link', this.logAuthor);
-		if (this.link) {
-			if (this.link.indexOf('http://') != -1 || this.link.indexOf('www.') != -1 || this.link.indexOf('https://') != -1) {
-				if (this.link.indexOf('http://') == -1 && this.link.indexOf('https://') == -1)
+
+		if(this.link) {
+			if(this.link.indexOf('http://') !== -1 || this.link.indexOf('www.') !== -1 || this.link.indexOf('https://') !== -1) {
+				if(this.link.indexOf('http://') === -1 && this.link.indexOf('https://') === -1) {
 					this.link = 'http://' + this.link;
+				}
+
 				window.open(this.link, '_newtab');
-			}else {
+			}
+			else {
 				Ext.getStore('Views').load({
 					scope: this,
-					callback: function(records, operation, success) {
+					callback: function() {
 						store = Ext.getStore('Views');
 						var record = store.findExact('crecord_name', this.link);
-						if (record != -1) {
+
+						if (record !== -1) {
 							record = store.getAt(record);
-							if (!this.fullscreenMode) {
-								global.tabsCtrl.open_view({ view_id: record.get('_id'), title: _(record.get('crecord_name')) });
-							}else {
+
+							if(!this.fullscreenMode) {
+								global.tabsCtrl.open_view({
+									view_id: record.get('_id'),
+									title: _(record.get('crecord_name'))
+								});
+							}
+							else {
 								var url = Ext.String.format('http://{0}/static/canopsis/display_view.html?view_id={1}&authkey={2}',
 									$(location).attr('host'),
 									record.get('_id'),
 									global.account.authkey
 								);
+
 								window.open(url, '_newtab');
 							}
-						}else {
+						}
+						else {
 							global.notify.notify('Link is not valid', 'The specified link does not match any view or URL', 'info');
 						}
 					}
@@ -427,34 +428,40 @@ Ext.define('widgets.weather.brick' , {
 
 	//fast hack for freeze, open link in tab, will be changed in develop
 	formatLink: function() {
-		if (typeof(this.link) == 'string') {
-			if (this.link.indexOf('http://') != -1 || this.link.indexOf('www.') != -1 || this.link.indexOf('https://') != -1) {
-				if (this.link.indexOf('http://') == -1 && this.link.indexOf('https://') == -1)
+		if(typeof(this.link) === 'string') {
+			if(this.link.indexOf('http://') !== -1 || this.link.indexOf('www.') !== -1 || this.link.indexOf('https://') !== -1) {
+				if(this.link.indexOf('http://') === -1 && this.link.indexOf('https://') === -1) {
 					this.link = 'http://' + this.link;
+				}
+
 				return this.link;
-			}else {
+			}
+			else {
 				store = Ext.getStore('Views');
 				var record = store.findExact('crecord_name', this.link);
-				if (record != -1) {
+
+				if(record !== -1) {
 					record = store.getAt(record);
+
 					var url = Ext.String.format('http://{0}/static/canopsis/display_view.html?view_id={1}&authkey={2}',
 						$(location).attr('host'),
 						record.get('_id'),
 						global.account.authkey
 					);
 					return url;
-				}else {
+				}
+				else {
 					log.debug('Link is not valid', 'The specified link does not match any view or URL', 'info');
 					return undefined;
 				}
 			}
-		}else {
+		}
+		else {
 			return undefined;
 		}
 	},
 
 	getIcon: function(value) {
-		//value = Math.floor(value / 10) * 10;
 		return 'widgets/weather/icons/set' + this.iconSet + '/state_' + value + '.png';
 	}
 });

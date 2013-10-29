@@ -1,5 +1,4 @@
 /*
-#--------------------------------
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
@@ -16,24 +15,25 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
-# ---------------------------------
 */
 Ext.define('canopsis.controller.Notify', {
-    extend: 'Ext.app.Controller',
+	extend: 'Ext.app.Controller',
 
-    opacity: 0.9,
-    history: false,
-    logAuthor: '[controller][cnotify]',
+	opacity: 0.9,
+	history: false,
+	logAuthor: '[controller][cnotify]',
 
-    init: function() {
+	init: function() {
 		global.notify = this;
-		log.debug('[controller][cnotify] - Initialize ...');
-		this.callParent(arguments);
-		$.pnotify.defaults.history = false;
-		//$.pnotify.defaults.styling = 'jqueryui';
-    },
 
-    test: function() {
+		log.debug('[controller][cnotify] - Initialize ...');
+
+		this.callParent(arguments);
+
+		$.pnotify.defaults.history = false;
+	},
+
+	test: function() {
 		this.notify(_('Title'), _('Description'));
 		this.notify(_('Title'), _('Description'), 'info');
 		this.notify(_('Title'), _('Description'), 'success');
@@ -41,12 +41,23 @@ Ext.define('canopsis.controller.Notify', {
 		this.notify(_('Title'), _('Description'), 'error');
 	},
 
-    notify: function(title, text, type, icon, hide, closer, sticker) {
-		if (type == undefined) {var type = 'info'}
-		if (icon == undefined) {var icon = undefined}
-		if (hide == undefined) {var hide = true}
-		if (closer == undefined) {var closer = true}
-		if (sticker == undefined) {var sticker = false}
+	notify: function(title, text, type, icon, hide, closer, sticker) {
+		if(type === undefined) {
+			type = 'info';
+		}
+
+		if(hide === undefined) {
+			hide = true;
+		}
+
+		if(closer === undefined) {
+			closer = true;
+		}
+
+		if(sticker === undefined) {
+			sticker = false;
+		}
+
 		$.pnotify({
 			title: title,
 			text: text,
@@ -59,6 +70,7 @@ Ext.define('canopsis.controller.Notify', {
 			closer: closer,
 			sticker: sticker
 		});
+
 		log.debug('Display notification', this.logAuthor);
 	}
 });

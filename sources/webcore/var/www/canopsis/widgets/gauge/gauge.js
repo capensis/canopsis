@@ -1,5 +1,4 @@
 /*
-#--------------------------------
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
@@ -16,7 +15,6 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
-# ---------------------------------
 */
 Ext.define('widgets.gauge.gauge' , {
 	extend: 'canopsis.lib.view.cwidget',
@@ -51,14 +49,14 @@ Ext.define('widgets.gauge.gauge' , {
 	initComponent: function() {
 		this.gaugeTitle = this.title;
 		this.title = '';
-		
+
 		this.nodesByID = parseNodes(this.nodes);
 
 		this.haveCounter = false;
 		//search counter
 		for(var i = 0; i < this.nodes.length; i++) {
 			var node = this.nodes[i];
-			if(node['type'] && node['type'] == 'COUNTER') {
+			if(node['type'] && node['type'] === 'COUNTER') {
 				this.haveCounter = true;
 			}
 		}
@@ -74,7 +72,7 @@ Ext.define('widgets.gauge.gauge' , {
 				return rdr_humanreadable_value(val, this.symbol);
 			}
 			else {
-				if(this.symbol != undefined) {
+				if(this.symbol !== undefined) {
 					return val + ' ' + this.symbol;
 				}
 				else {
@@ -87,20 +85,18 @@ Ext.define('widgets.gauge.gauge' , {
 			value = 0;
 		}
 
-		if(this.autoTitle) {
-			if(this.nodesByID) {
-				var node = this.nodesByID[Ext.Object.getKeys(this.nodesByID)[0]]
+		if(this.autoTitle && this.nodesByID) {
+			var node = this.nodesByID[Ext.Object.getKeys(this.nodesByID)[0]];
 
-				var component = node.component;
-				var source_type = node.source_type;
+			var component = node.component;
+			var source_type = node.source_type;
 
-				if (source_type == 'resource') {
-					var resource = node.resource;
-					this.gaugeTitle = resource + ' ' + _('on') + ' ' + component;
-				}
-				else {
-					this.gaugeTitle = component;
-				}
+			if (source_type === 'resource') {
+				var resource = node.resource;
+				this.gaugeTitle = resource + ' ' + _('on') + ' ' + component;
+			}
+			else {
+				this.gaugeTitle = component;
 			}
 		}
 
@@ -116,7 +112,6 @@ Ext.define('widgets.gauge.gauge' , {
 			shadowOpacity: this.shadowOpacity,
 			title: this.gaugeTitle,
 			label: this.gaugeLabel,
-			//levelColors: colorList,
 			gaugeColor: this.gaugeColor,
 			textRenderer: renderer,
 			symbol: this.bunit
@@ -146,9 +141,9 @@ Ext.define('widgets.gauge.gauge' , {
 				opts.levelThresholds.push(this.critValue);
 			}
 		}
-		else {		    
+		else {
 			opts.levelColors = [this.colorStart];
-			opts.levelThresholds = []
+			opts.levelThresholds = [];
 		}
 
 		log.debug('Gauge options:', this.logAuthor);
@@ -168,7 +163,7 @@ Ext.define('widgets.gauge.gauge' , {
 
 	getNodeInfo: function(from,to) {
 		this.processNodes();
-		
+
 		if(!this.haveCounter || !this.time_window) {
 			from = to;
 		}
@@ -193,17 +188,18 @@ Ext.define('widgets.gauge.gauge' , {
 				},
 
 				failure: function(result, request) {
+					void(result);
+
 					log.error('Impossible to get Node informations, Ajax request failed ... (' + request.url + ')', this.logAuthor);
 				}
 			});
 		}
-
 	},
 
 	processNodes: function() {
 		var post_params = [];
 
-		Ext.Object.each(this.nodesByID, function(id, node, obj) {
+		Ext.Object.each(this.nodesByID, function(id, node) {
 			post_params.push({
 				id: id,
 				metrics: node.metrics
@@ -239,7 +235,7 @@ Ext.define('widgets.gauge.gauge' , {
 			}
 
 			if(data.thld_crit) {
-				this.critValue = data.thld_crit;			
+				this.critValue = data.thld_crit;
 			}
 
 			if(data.bunit && this.displayUnit) {
@@ -249,7 +245,7 @@ Ext.define('widgets.gauge.gauge' , {
 			var fields = undefined;
 
 			//get first node
-			fields = this.nodesByID[Ext.Object.getKeys(this.nodesByID)[0]]
+			fields = this.nodesByID[Ext.Object.getKeys(this.nodesByID)[0]];
 
 
 			if(fields) {

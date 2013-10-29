@@ -1,5 +1,4 @@
 /*
-#--------------------------------
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
@@ -16,7 +15,6 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
-# ---------------------------------
 */
 Ext.define('canopsis.lib.menu.cclear' , {
 	extend: 'Ext.menu.Menu',
@@ -25,22 +23,21 @@ Ext.define('canopsis.lib.menu.cclear' , {
 
 	initComponent: function() {
 		if (this.grid) {
-
 			this.grid_store = this.grid.getStore();
 
 			this.clearAllButton = Ext.create('Ext.Action', {
-								iconCls: 'icon-delete',
-								text: _('Clear all'),
-								scope: this,
-								handler: this.action_clearall
-							});
+				iconCls: 'icon-delete',
+				text: _('Clear all'),
+				scope: this,
+				handler: this.action_clearall
+			});
 
 			this.deleteButton = Ext.create('Ext.Action', {
-								iconCls: 'icon-delete',
-								text: _('Delete selected'),
-								scope: this,
-								handler: this.action_delete
-							});
+				iconCls: 'icon-delete',
+				text: _('Delete selected'),
+				scope: this,
+				handler: this.action_delete
+			});
 
 			this.items = [this.deleteButton, this.clearAllButton];
 
@@ -52,12 +49,16 @@ Ext.define('canopsis.lib.menu.cclear' , {
 	},
 
 	action_open: function(view, rec, node, index, e) {
+		void(node, index);
+
 		e.preventDefault();
 
 		//don't auto select if multi selecting
 		var selection = this.grid.getSelectionModel().getSelection();
-		if (selection.length < 2)
+
+		if(selection.length < 2) {
 			view.select(rec);
+		}
 
 		this.showAt(e.getXY());
 		return false;
@@ -65,12 +66,13 @@ Ext.define('canopsis.lib.menu.cclear' , {
 
 	action_delete: function() {
 		var selection = this.grid.getSelectionModel().getSelection();
-		for (var i = 0; i < selection.length; i++)
+
+		for(var i = 0; i < selection.length; i++) {
 			this.grid_store.remove(selection[i]);
+		}
 	},
 
 	action_clearall: function() {
 		this.grid_store.removeAll();
 	}
-
 });

@@ -1,5 +1,4 @@
 /*
-#--------------------------------
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
@@ -16,7 +15,6 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
-# ---------------------------------
 */
 
 Ext.define('cfilter.array_field', {
@@ -41,40 +39,46 @@ Ext.define('cfilter.array_field', {
 	},{
 		xtype: 'panel',
 		border: false,
-		//margin: '0 0 0 5',
 		name: 'cfilterArrayPanel',
 		defaults: {margin: '0 0 5 5'}
 	}],
 
 	initComponent: function() {
 		this.callParent(arguments);
+
 		this.arrayPanel = this.down('panel[name=cfilterArrayPanel]');
 		this.addButton = this.down('button');
 		this.add_child();
-		this.addButton.on('click', function() {this.add_child(undefined, true)},this);
+
+		this.addButton.on('click', function() {
+			this.add_child(undefined, true);
+		}, this);
 	},
 
 	add_child: function(value,removeButton) {
 		var config = [{
-				xtype: this.itemXtype,
-				//emptyText: 'Type value here',
-				name: 'valueField',
-				isFormField: false,
-				value: value
-			}];
+			xtype: this.itemXtype,
+			name: 'valueField',
+			isFormField: false,
+			value: value
+		}];
 
-		if(Ext.isIE && this.itemXtype == 'textfield')
-			config[0].width = 120
+		if(Ext.isIE && this.itemXtype === 'textfield') {
+			config[0].width = 120;
+		}
 
-		if (removeButton)
+		if(removeButton) {
 			config.push({
 				xtype: 'button',
 				iconCls: 'icon-cancel',
 				margin: '0 0 0 5',
 				width: 24,
 				tooltip: _('Remove this from list of value'),
-				handler: function(button) {button.up().destroy()}
+				handler: function(button) {
+					button.up().destroy();
+				}
 			});
+		}
 
 		this.arrayPanel.add({
 			xtype: 'container',
@@ -84,48 +88,63 @@ Ext.define('cfilter.array_field', {
 	},
 
 	switchArrayMode: function(_switch) {
-		if (_switch) {
+		var i = undefined;
+
+		if(_switch) {
 			this.addButton.show();
-			for (var i = 1; i < this.arrayPanel.items.items.length; i++)
+
+			for(i = 1; i < this.arrayPanel.items.items.length; i++) {
 				this.arrayPanel.items.items[i].show();
-		}else {
+			}
+		}
+		else {
 			this.addButton.hide();
-			for (var i = 1; i < this.arrayPanel.items.items.length; i++)
+
+			for(i = 1; i < this.arrayPanel.items.items.length; i++) {
 				this.arrayPanel.items.items[i].hide();
+			}
 		}
 	},
 
 	getValue: function() {
 		var output = [];
-		for (var i = 0; i < this.arrayPanel.items.items.length; i++) {
+
+		for(var i = 0; i < this.arrayPanel.items.items.length; i++) {
 			var item = this.arrayPanel.items.items[i];
-			if (!item.hidden){
+
+			if(!item.hidden) {
 				var value = item.down('[name=valueField]').getValue();
-				output.push(this.cleanValue(value))	
+				output.push(this.cleanValue(value));
 			}
 		}
 
-		if (output.length == 1)
+		if(output.length === 1) {
 			return output[0];
-		else
+		}
+		else {
 			return output;
+		}
 	},
 
-	cleanValue: function(value){
-		if (Ext.isNumber(value))
+	cleanValue: function(value) {
+		if(Ext.isNumber(value)) {
 			return value;
+		}
 
 		var intValue = parseInt(value);
 
-		if ( ! Ext.isNumber(intValue))
+		if(!Ext.isNumber(intValue)) {
 			return value;
+		}
 
 		var floatValue = parseFloat(value);
 
-		if (intValue == floatValue)
+		if(intValue === floatValue) {
 			value = intValue;
-		else
+		}
+		else {
 			value = floatValue;
+		}
 
 		return value;
 	},
@@ -133,21 +152,26 @@ Ext.define('cfilter.array_field', {
 	setValue: function(array) {
 		this.arrayPanel.removeAll();
 
-		if (!Ext.isArray(array))
+		if(!Ext.isArray(array)) {
 			array = [array];
+		}
 
-		for (var i = 0; i < array.length; i++)
-			if (i == 0)
+		for(var i = 0; i < array.length; i++) {
+			if(i === 0) {
 				this.add_child(array[i]);
-			else
+			}
+			else {
 				this.add_child(array[i], true);
+			}
+		}
 
-		if (array.length > 1)
+		if(array.length > 1) {
 			this.switchArrayMode(true);
+		}
 	}
 });
 
-Ext.define('cfilter.object' , {
+Ext.define('cfilter.object', {
 	extend: 'Ext.panel.Panel',
 	border: false,
 	margin: 5,
@@ -178,10 +202,10 @@ Ext.define('cfilter.object' , {
 			valueField: 'operator',
 			emptyText: _('Type value or choose operator'),
 			store: {
-					'xtype': 'store',
-					'fields': ['operator', 'text', 'type'],
-					'data' : []
-				}
+				'xtype': 'store',
+				'fields': ['operator', 'text', 'type'],
+				'data' : []
+			}
 		},{
 			name: 'cfilterIsCombo',
 			xtype: 'combobox',
@@ -197,8 +221,9 @@ Ext.define('cfilter.object' , {
 				fields: ['operator', 'text', 'type'],
 				data: [
 					{'operator': '$is', 'text': _('Is'), 'type': 'value'},
-					{'operator': '$not', 'text': _('Is Not'), 'type': 'value' }
-				]}
+					{'operator': '$not', 'text': _('Is Not'), 'type': 'value'}
+				]
+			}
 		},{
 			name: 'cfilterOperator',
 			xtype: 'combobox',
@@ -261,7 +286,7 @@ Ext.define('cfilter.object' , {
 		xtype: 'panel',
 		name: 'lowerPanel',
 		margin: '0 0 0 20',
-		bodyStyle: (Ext.isIE)?'border-color:white;':'border-top:none;border-bottom:none;border-right:none;' 
+		bodyStyle: (Ext.isIE) ? 'border-color:white;' : 'border-top:none;border-bottom:none;border-right:none;'
 	}],
 
 	initComponent: function() {
@@ -271,6 +296,7 @@ Ext.define('cfilter.object' , {
 		//stock cfilterField elements
 		this.cfilterFieldElements = [this.down('panel[name=lowerPanel]')];
 		var upperPanelId = this.down('panel[name=upperPanel]').id;
+
 		this.cfilterFieldElements = Ext.Array.union(
 			this.cfilterFieldElements,
 			Ext.ComponentQuery.query('#' + upperPanelId + ' > *[cfilterField]')
@@ -286,50 +312,76 @@ Ext.define('cfilter.object' , {
 		this.fieldStore.loadData(this.fields_array);
 		this.operatorStore.loadData(this.operators_array);
 		this.cfilterOperator.setValue('$eq');
-		if (this.initialCfilter)
+
+		if(this.initialCfilter) {
 			this.down('button[name=cfilterRemoveButton]').hide();
+		}
 
 		//bind events
 		this.cfilterField.on('select', this.fieldChange, this);
 		this.cfilterOperator.on('select', this.operatorChange, this);
 
-		this.down('button[name=cfilterAddButton]').on('click', function() {this.createInnerCfilter()},this);
-		this.down('button[name=cfilterRemoveButton]').on('click', function() {this.destroy()},this);
+		this.down('button[name=cfilterAddButton]').on('click', function() {
+			this.createInnerCfilter();
+		}, this);
+
+		this.down('button[name=cfilterRemoveButton]').on('click', function() {
+			this.destroy();
+		}, this);
 
 		//set data if existing
-		if (this.filter)
+		if(this.filter) {
 			this.setValue(this.filter);
+		}
 	},
 
-	fieldChange: function(combo,records) {
+	fieldChange: function(combo, records) {
+		void(combo);
+
 		log.debug('Field changed', this.logAuthor);
-		if (!records)
-			var record = this.getFieldRecord();
-		else
-			var record = records[0];
+
+		var record = undefined;
+
+		if(!records) {
+			record = this.getFieldRecord();
+		}
+		else {
+			record = records[0];
+		}
 
 		var allowed_type = undefined;
-		if (record)
-			var allowed_type = record.get('type');
 
-		if (allowed_type) {
-			if (allowed_type != 'all') {
-				if (allowed_type == 'object') {
-					if (!this.haveInnerCfilter)
+		if(record) {
+			allowed_type = record.get('type');
+		}
+
+		if(!allowed_type) {
+			if(allowed_type !== 'all') {
+				if (allowed_type === 'object') {
+					if(!this.haveInnerCfilter) {
 						this.createInnerCfilter();
+					}
+
 					this.showOnValueType('object');
-				}else {
+				}
+				else {
 					this.operatorStore.clearFilter(true);
+
 					this.operatorStore.filterBy(function(record) {
-							var record_types = record.get('type');
-							if (Ext.Array.indexOf(record_types, allowed_type) == -1)
-								return false;
-							else
-								return true;
-					},this);
+						var record_types = record.get('type');
+
+						if(Ext.Array.indexOf(record_types, allowed_type) === -1) {
+							return false;
+						}
+						else {
+							return true;
+						}
+					}, this);
+
 					this.showOnValueType(this.getValueType());
 				}
-			}else {
+			}
+			else {
 				this.operatorStore.clearFilter(false);
 				this.showOnValueType(this.getValueType());
 			}
@@ -343,16 +395,20 @@ Ext.define('cfilter.object' , {
 			filter: data
 		});
 
-		var test = this.down('panel[name=lowerPanel]').add(cfilter);
+		this.down('panel[name=lowerPanel]').add(cfilter);
 
-		if (!this.haveInnerCfilter)
+		if(!this.haveInnerCfilter) {
 			this.haveInnerCfilter = true;
+		}
 	},
 
 	getFieldRecord: function() {
 		var recordId = this.fieldStore.find('operator', this.cfilterField.getValue());
-		if (recordId == -1)
+
+		if(recordId === -1) {
 			return undefined;
+		}
+
 		return this.fieldStore.getAt(recordId);
 	},
 
@@ -361,38 +417,47 @@ Ext.define('cfilter.object' , {
 		return this.operatorStore.getAt(recordId);
 	},
 
-	operatorChange: function(combo,record_or_records) {
-		log.debug('Operator changed', this.logAuthor);
+	operatorChange: function(combo, record_or_records) {
+		void(combo);
 
-		if (Ext.isArray(record_or_records))
-			var operatorRecord = record_or_records[0];
-		else
-			var operatorRecord = record_or_records;
+		log.debug('Operator changed', this.logAuthor);
+		var operatorRecord = undefined;
+
+		if(Ext.isArray(record_or_records)) {
+			operatorRecord = record_or_records[0];
+		}
+		else {
+			operatorRecord = record_or_records;
+		}
 
 		var operatorRecordType = operatorRecord.get('type');
 
 		var fieldRecord_index = this.fieldStore.find('operator', this.cfilterField.getValue());
-		if (fieldRecord_index != -1) {
+
+		if(fieldRecord_index !== -1) {
 			var fieldRecord = this.fieldStore.getAt(fieldRecord_index);
 			var fieldRecordType = fieldRecord.get('type');
 
-			if (fieldRecordType == 'all')
-			//IF field doesn't require specific value (ex: "custom field")
+			if(fieldRecordType === 'all') {
+				//IF field doesn't require specific value (ex: "custom field")
 				this.showOnValueType(operatorRecordType[0]);
-			else
+			}
+			else {
 				//field require specif value, like "timestamp" who need date
-			this.showOnValueType(fieldRecordType);
-
-		}else {
-			//WARNING CLEAN THAT ----
+				this.showOnValueType(fieldRecordType);
+			}
+		}
+		else {
+			//WARNING CLEAN THAT
 			this.showOnValueType(operatorRecordType[0]);
 		}
 
 		//switch array mode if needed
 		var element = this.down('*[cfilterField=true][hidden=false]');
-		if (element && element.switchArrayMode)
-			element.switchArrayMode(operatorRecord.get('array'));
 
+		if(element && element.switchArrayMode) {
+			element.switchArrayMode(operatorRecord.get('array'));
+		}
 	},
 
 	//this function aimed to determine final type of value (string/bool...)
@@ -402,29 +467,35 @@ Ext.define('cfilter.object' , {
 		var fieldRecord = this.getFieldRecord();
 
 		var fieldType = undefined;
-		if (fieldRecord)
-			var fieldType = fieldRecord.get('type');
+		if(fieldRecord) {
+			fieldType = fieldRecord.get('type');
+		}
 
-		if (!fieldType || fieldType == 'all')
+		if(!fieldType || fieldType === 'all') {
 			return operatorRecord.get('type')[0];
+		}
 
 		return fieldType;
-
 	},
 
 	showOnValueType: function(type) {
 		var elements = this.cfilterFieldElements;
-		for (var i = 0; i < elements.length; i++)
-			if (elements[i].cfilterType == type)
-				elements[i].show();
-			else
-				elements[i].hide();
 
-		if (type == 'object') {
+		for(var i = 0; i < elements.length; i++) {
+			if(elements[i].cfilterType === type) {
+				elements[i].show();
+			}
+			else {
+				elements[i].hide();
+			}
+		}
+
+		if (type === 'object') {
 			this.down('button[name=cfilterAddButton]').show();
 			this.down('combobox[name=cfilterIsCombo]').hide();
 			this.cfilterOperator.hide();
-		}else {
+		}
+		else {
 			this.down('button[name=cfilterAddButton]').hide();
 			this.down('combobox[name=cfilterIsCombo]').show();
 			this.cfilterOperator.show();
@@ -434,16 +505,20 @@ Ext.define('cfilter.object' , {
 	//return the value of the elements corresponding of given type (ex:"string/bool/date ...")
 	getValueByElementType: function(type) {
 		var element = this.getElementByType(type);
-		if (element)
+
+		if(element) {
 			return element.getValue();
+		}
 	},
 
 	getElementByType: function(type) {
 		var elements = this.cfilterFieldElements;
-		for (var i = 0; i < elements.length; i++)
-			if (elements[i].cfilterType == type)
-				if (elements[i].getValue)
-					return elements[i];
+
+		for(var i = 0; i < elements.length; i++) {
+			if(elements[i].cfilterType === type && elements[i].getValue) {
+				return elements[i];
+			}
+		}
 	},
 
 	getValue: function() {
@@ -456,34 +531,44 @@ Ext.define('cfilter.object' , {
 		var values = {};
 
 		//if contained another cfilter
-		if (fieldRecord && fieldRecord.get('type') == 'object') {
+		if(fieldRecord && fieldRecord.get('type') === 'object') {
 			var listCfilterResult = [];
 			var panel = this.down('panel[name=lowerPanel]');
-			for (var i = 0; i < panel.items.items.length; i++)
+
+			for(var i = 0; i < panel.items.items.length; i++) {
 				listCfilterResult.push(panel.items.items[i].getValue());
+			}
+
 			output[this.cfilterField.getValue()] = listCfilterResult;
 			return output;
 		}
 
 		//Get operator
-		if (operatorRecord.get('operator') == '$eq')
+		if(operatorRecord.get('operator') === '$eq') {
 			values = inputValue;
-		else if (operatorRecord.get('operator') == '$in' && typeof inputValue == 'string')
+		}
+		else if (operatorRecord.get('operator') === '$in' && typeof inputValue === 'string') {
 			values[operator] = [inputValue];
-		else
+		}
+		else {
 			values[operator] = inputValue;
+		}
 
 		//manage negation
-		if (isIsNotValue == '$not')
-			if (operator == '$eq')
+		if(isIsNotValue === '$not') {
+			if(operator === '$eq') {
 				values = {'$ne': values};
-			else
+			}
+			else {
 				values = {'$not': values};
+			}
+		}
 
+		var keyValue = this.cfilterField.getValue();
 
-		var keyValue = this.cfilterField.getValue()
-		if(!keyValue)
-			return undefined
+		if(!keyValue) {
+			return undefined;
+		}
 
 		output[keyValue] = values;
 		return output;
@@ -494,21 +579,24 @@ Ext.define('cfilter.object' , {
 
 		var key = Ext.Object.getKeys(filter)[0];
 		var value = filter[key];
+		var type = undefined;
 
 		this.cfilterField.setValue(key);
 
 		//if $and/$or
 		if (Ext.isArray(value)) {
-			for (var i = 0; i < value.length; i++)
+			for(var i = 0; i < value.length; i++) {
 				this.createInnerCfilter(value[i]);
+			}
+
 			this.showOnValueType('object');
 			return;
 		}
 
 		this.fieldChange();
 
-		if (!Ext.isObject(value)) {
-			var type = this.getValueType();
+		if(!Ext.isObject(value)) {
+			type = this.getValueType();
 			this.down('*[cfilterField=true][cfilterType=' + type + ']').setValue(value);
 			this.showOnValueType(type);
 			return;
@@ -518,26 +606,27 @@ Ext.define('cfilter.object' , {
 		key = Ext.Object.getKeys(value)[0];
 		value = value[key];
 
-		if (key == '$not')
+		if(key === '$not') {
 			this.down('combobox[name=cfilterIsCombo]').setValue('$not');
+		}
 
-		if (Ext.isObject(value)) {
+		if(Ext.isObject(value)) {
 			key = Ext.Object.getKeys(value)[0];
 			this.cfilterOperator.setValue(key);
 			value = value[key];
-		}else {
+		}
+		else {
 			this.cfilterOperator.setValue(key);
 		}
 
-		var type = this.getValueType();
+		type = this.getValueType();
 		this.down('*[cfilterField=true][cfilterType=' + type + ']').setValue(value);
 		this.showOnValueType(type);
 	}
 
 });
 
-
-Ext.define('canopsis.lib.form.field.cfilter' , {
+Ext.define('canopsis.lib.form.field.cfilter', {
 	extend: 'Ext.panel.Panel',
 	mixins: ['canopsis.lib.form.cfield'],
 
@@ -561,38 +650,39 @@ Ext.define('canopsis.lib.form.field.cfilter' , {
 			sortable: false,
 			dataIndex: 'source_type',
 			renderer: rdr_source_type
-   		},{
-   			header: _('Component'),
+		},{
+			header: _('Component'),
 			sortable: false,
 			dataIndex: 'component',
 			flex: 2
- 		},{
- 			header: _('Resource'),
+		},{
+			header: _('Resource'),
 			sortable: false,
 			dataIndex: 'resource',
 			flex: 2
- 	}],
+ 		}
+ 	],
 
 	filter: undefined,
 
 	operator_fields: [
-		{'operator': 'connector_name',	'text': _('Connector name'),	'type': 'all' },
-		{'operator': 'event_type',		'text': _('Event type'),		'type': 'all'},
-		{'operator': 'source_type',		'text': _('Source type'),		'type': 'all'},
-		{'operator': 'state',			'text': _('State'),				'type': 'all'},
-		{'operator': 'state_type',		'text': _('State type'),		'type': 'all'},
-		{'operator': 'resource',		'text': _('Resource'),			'type': 'all'},
-		{'operator': 'component',		'text': _('Component'),			'type': 'all'},
-		{'operator': 'tags', 			'text': _('Tags'),				'type': 'all'},
-		{'operator': 'timestamp', 		'text': _('Timestamp'),			'type': 'date'}
+		{'operator': 'connector_name', 'text': _('Connector name'), 'type': 'all'},
+		{'operator': 'event_type',     'text': _('Event type'),     'type': 'all'},
+		{'operator': 'source_type',    'text': _('Source type'),    'type': 'all'},
+		{'operator': 'state',          'text': _('State'),          'type': 'all'},
+		{'operator': 'state_type',     'text': _('State type'),     'type': 'all'},
+		{'operator': 'resource',       'text': _('Resource'),       'type': 'all'},
+		{'operator': 'component',      'text': _('Component'),      'type': 'all'},
+		{'operator': 'tags',           'text': _('Tags'),           'type': 'all'},
+		{'operator': 'timestamp',      'text': _('Timestamp'),      'type': 'date'}
 	],
 
 	layout: {
-        type: 'vbox',
-        align: 'stretch'
-    },
+		type: 'vbox',
+		align: 'stretch'
+	},
 
-    checkObjectValidity: true,
+	checkObjectValidity: true,
 
 	initComponent: function() {
 		this.logAuthor = '[' + this.id + ']';
@@ -602,13 +692,15 @@ Ext.define('canopsis.lib.form.field.cfilter' , {
 
 		var url = this.url;
 
-		if (! url) {
+		if(!url) {
 			url = '/rest/' + this.namespace;
-			if (this.ctype)
+
+			if(this.ctype) {
 				url += '/' + this.ctype;
+			}
 		}
 
-		//-----------------preview windows----------------
+		// preview windows
 		this.preview_store = Ext.create('canopsis.lib.store.cstore', {
 			model: this.model,
 			proxy: {
@@ -621,7 +713,7 @@ Ext.define('canopsis.lib.form.field.cfilter' , {
 					totalProperty: 'total',
 					successProperty: 'success'
 				}
-			 },
+			},
 			autoLoad: false
 		});
 
@@ -633,7 +725,7 @@ Ext.define('canopsis.lib.form.field.cfilter' , {
 			columns: this.columns
 		});
 
-		//-------------cfilter (wizard part)---------------
+		// cfilter (wizard part)
 		this.cfilter = Ext.create('cfilter.object', {
 			fields_array: this.operator_array,
 			operators_array: this.sub_operator_array,
@@ -642,7 +734,7 @@ Ext.define('canopsis.lib.form.field.cfilter' , {
 			flex: 1
 		});
 
-		//--------------edit area (hand writing part)--------
+		// edit area (hand writing part)
 
 		this.edit_area = Ext.widget('textarea', {
 			isFormField: false,
@@ -651,14 +743,16 @@ Ext.define('canopsis.lib.form.field.cfilter' , {
 			flex: 1
 		});
 
-		//---------------------TBAR--------------------------
-		this.wizard_button = Ext.widget('button', {handler: this.show_wizard,
+		// TBAR
+		this.wizard_button = Ext.widget('button', {
+			handler: this.show_wizard,
 			iconCls: 'icon-wizard',
 			tooltip: _('Wizard'),
 			scope: this,
 			disabled: true,
 			margin: 5
 		});
+
 		this.edit_button = Ext.widget('button', {
 			handler: this.show_edit_area,
 			tooltip: _('Edit'),
@@ -666,6 +760,7 @@ Ext.define('canopsis.lib.form.field.cfilter' , {
 			margin: 5,
 			scope: this
 		});
+
 		this.preview_button = Ext.widget('button', {
 			handler: this.show_preview,
 			tooltip: _('Preview'),
@@ -673,6 +768,7 @@ Ext.define('canopsis.lib.form.field.cfilter' , {
 			margin: 5,
 			scope: this
 		});
+
 		this.clean_button = Ext.widget('button', {
 			handler: this.reset_cfilter,
 			tooltip: _('Clean'),
@@ -703,80 +799,130 @@ Ext.define('canopsis.lib.form.field.cfilter' , {
 	},
 
 	check_json_validity: function(value) {
-		if (value == '')
+		if(value === '') {
 			return true;
+		}
+
 		try {
-			var obj = Ext.decode(value);
-		}catch (err) {
+			Ext.decode(value);
+		}
+		catch (err) {
 			return 'Error: invalid JSON';
 		}
+
 		return true;
 	},
 
 	check_object_validity: function(obj) {
-		if (obj && this.checkObjectValidity) {
+		if(obj && this.checkObjectValidity) {
 			var output = true;
-			for (var i = 0; i < obj.length; i++) {
-				if (Ext.isArray(obj[i])) {
-					if (obj[i].length == 0)
+
+			for(var i = 0; i < obj.length; i++) {
+				if(Ext.isArray(obj[i])) {
+					if(obj[i].length === 0) {
 						return false;
-					else
+					}
+					else {
 						output = this.check_object_validity(obj[i]);
-				}else if (Ext.isObject(obj[i])) {
+					}
+				}
+				else if(Ext.isObject(obj[i])) {
 					output = this.check_object_validity(obj[i]);
 				}
 			}
+
 			return output;
-		}else {
+		}
+		else {
 			return true;
 		}
 	},
 
 	isValid: function() {
-		//log.debug('Execute isValid function', this.logAuthor);
 		var value = this.getRawValue();
-		if (this.check_json_validity(value) == true) {
-			if (this.check_object_validity(Ext.decode(value))) {
+
+		if(this.check_json_validity(value) === true) {
+			if(this.check_object_validity(Ext.decode(value))) {
 				return true;
-			}else {
+			}
+			else {
 				global.notify.notify('Invalid filter', "You can't let an array empty (and / or / in ...)", 'warning');
 				return false;
 			}
-		}else {
+		}
+		else {
 			return false;
 		}
 	},
 
 
-	switch_elements_visibility: function(cfilter,edit_area,preview_grid) {
-		(edit_area) ? this.edit_area.show() : this.edit_area.hide();
-		(preview_grid) ? this.preview_grid.show() : this.preview_grid.hide();
-		(cfilter) ? this.cfilter.show() : this.cfilter.hide();
+	switch_elements_visibility: function(cfilter, edit_area, preview_grid) {
+		if(edit_area) {
+			this.edit_area.show();
+		}
+		else {
+			this.edit_area.hide();
+		}
+
+		if(preview_grid) {
+			this.preview_grid.show();
+		}
+		else {
+			this.preview_grid.hide();
+		}
+
+		if(cfilter) {
+			this.cfilter.show();
+		}
+		else {
+			this.cfilter.hide();
+		}
 	},
 
 	switch_button_state: function(wizard,edit,preview) {
-		(wizard) ? this.wizard_button.setDisabled(false) : this.wizard_button.setDisabled(true);
-		(edit) ? this.edit_button.setDisabled(false) : this.edit_button.setDisabled(true);
-		(preview) ? this.preview_button.setDisabled(false) : this.preview_button.setDisabled(true);
+		if(wizard) {
+			this.wizard_button.setDisabled(false);
+			this.clean_button.setDisabled(true);
+		}
+		else {
+			this.wizard_button.setDisabled(true);
+			this.clean_button.setDisabled(false);
+		}
 
-		(wizard) ? this.clean_button.setDisabled(true) : this.clean_button.setDisabled(false);
+		if(edit) {
+			this.edit_button.setDisabled(false);
+		}
+		else {
+			this.edit_button.setDisabled(true);
+		}
+
+		if(preview) {
+			this.preview_button.setDisabled(false);
+		}
+		else {
+			this.preview_button.setDisabled(true);
+		}
 	},
 
 
 	show_wizard: function() {
-		if (!this.edit_area.isHidden()) {
-			if (this.edit_area.validate()) {
+		if(!this.edit_area.isHidden()) {
+			if(this.edit_area.validate()) {
 				var filter = this.edit_area.getValue();
 				filter = strip_return(filter);
-				if (filter && filter != '')
+
+				if(filter && filter !== '') {
 					this.setValue(filter);
+				}
 
 				this.switch_elements_visibility(true, false, false);
 				this.switch_button_state(false, true, true);
-			}else {
+			}
+			else {
 				log.debug('Incorrect JSON given', this.logAuthor);
 			}
-		}else {
+		}
+		else {
 			this.switch_elements_visibility(true, false, false);
 			this.switch_button_state(false, true, true);
 		}
@@ -784,10 +930,12 @@ Ext.define('canopsis.lib.form.field.cfilter' , {
 
 	show_edit_area: function() {
 		var filter = Ext.decode(this.getValue());
-		if (filter) {
+
+		if(filter) {
 			filter = JSON.stringify(filter, undefined, 8);
 			this.edit_area.setValue(filter);
 		}
+
 		this.switch_elements_visibility(false, true, false);
 		this.switch_button_state(true, false, true);
 	},
@@ -795,8 +943,8 @@ Ext.define('canopsis.lib.form.field.cfilter' , {
 	show_preview: function() {
 		var filter = this.getValue();
 
-		if (filter) {
-			if (this.check_object_validity(Ext.decode(filter))) {
+		if(filter) {
+			if(this.check_object_validity(Ext.decode(filter))) {
 				this.preview_store.clearFilter();
 				log.debug('Showing preview with filter: ' + filter, this.logAuthor);
 				this.preview_store.setFilter(filter);
@@ -804,9 +952,9 @@ Ext.define('canopsis.lib.form.field.cfilter' , {
 
 				this.switch_elements_visibility(false, false, true);
 				this.switch_button_state(true, true, false);
-			}else {
+			}
+			else {
 				global.notify.notify('Invalid filter', "You can't let an array empty (and / or / in ...)", 'warning');
-
 			}
 		}
 	},
@@ -818,7 +966,6 @@ Ext.define('canopsis.lib.form.field.cfilter' , {
 			{'operator': '$nor', 'text': _('Nor'), 'type': 'object'},
 			{'operator': '$or', 'text': _('Or'), 'type': 'object'},
 			{'operator': '$and', 'text': _('And'), 'type': 'object'}
-
 		];
 
 		operator_fields = Ext.Array.union(operator_fields, this.operator_fields);
@@ -826,32 +973,33 @@ Ext.define('canopsis.lib.form.field.cfilter' , {
 		this.operator_array = operator_fields;
 
 		this.sub_operator_array = [
-				{'operator': '$eq', 'text': _('Equal'), 'type': ['string', 'date'], 'array': false},
-				{'operator': '$lt', 'text': _('Less'), 'type': ['string', 'date'], 'array': false },
-				{'operator': '$lte', 'text': _('Less or equal'), 'type': ['string', 'date'], 'array': false },
-				{'operator': '$gt', 'text': _('Greater'), 'type': ['string', 'date'], 'array': false },
-				{'operator': '$gte', 'text': _('Greater or equal'), 'type': ['string', 'date'], 'array': false },
-				{'operator': '$all', 'text': _('Match all'), 'type': ['string'], 'array': true },
-				{'operator': '$exists', 'text': _('Exists'), 'type': ['bool'], 'array': false },
-				{'operator': '$ne', 'text': _('Not equal'), 'type': ['string', 'date'], 'array': false },
-				{'operator': '$in', 'text': _('In'), 'type': ['string'], 'array': true},
-				{'operator': '$nin', 'text': _('Not in'), 'type': ['string'], 'array': true },
-				{'operator': '$regex', 'text': _('Regex'), 'type': ['string'], 'array': false}
-			];
+			{'operator': '$eq', 'text': _('Equal'), 'type': ['string', 'date'], 'array': false},
+			{'operator': '$lt', 'text': _('Less'), 'type': ['string', 'date'], 'array': false },
+			{'operator': '$lte', 'text': _('Less or equal'), 'type': ['string', 'date'], 'array': false },
+			{'operator': '$gt', 'text': _('Greater'), 'type': ['string', 'date'], 'array': false },
+			{'operator': '$gte', 'text': _('Greater or equal'), 'type': ['string', 'date'], 'array': false },
+			{'operator': '$all', 'text': _('Match all'), 'type': ['string'], 'array': true },
+			{'operator': '$exists', 'text': _('Exists'), 'type': ['bool'], 'array': false },
+			{'operator': '$ne', 'text': _('Not equal'), 'type': ['string', 'date'], 'array': false },
+			{'operator': '$in', 'text': _('In'), 'type': ['string'], 'array': true},
+			{'operator': '$nin', 'text': _('Not in'), 'type': ['string'], 'array': true },
+			{'operator': '$regex', 'text': _('Regex'), 'type': ['string'], 'array': false}
+		];
 	},
 
 	getRawValue: function() {
 		var value = undefined;
 
-		if (!this.edit_area.isHidden()) {
-			if (this.edit_area.validate())
-				value = strip_return(this.edit_area.getValue());
-		} else {
+		if(!this.edit_area.isHidden() && this.edit_area.validate()) {
+			value = strip_return(this.edit_area.getValue());
+		}
+		else {
 			value = this.cfilter.getValue();
 		}
 
-		if (Ext.isObject(value))
+		if(Ext.isObject(value)) {
 			value = Ext.encode(value);
+		}
 
 		return value;
 	},
@@ -859,13 +1007,15 @@ Ext.define('canopsis.lib.form.field.cfilter' , {
 	getValue: function() {
 		value = this.getRawValue();
 
-		if (value) {
-			if (typeof(value) != 'string')
+		if(value) {
+			if(typeof(value) !== 'string') {
 				value = Ext.encode(value);
+			}
 
 			log.debug('The filter is : ' + value, this.logAuthor);
 			return value;
-		}else {
+		}
+		else {
 			log.debug('Invalid JSON value', this.logAuthor);
 			return undefined;
 		}
@@ -873,9 +1023,11 @@ Ext.define('canopsis.lib.form.field.cfilter' , {
 
 	setValue: function(value) {
 		log.debug('Set value', this.logAuthor);
-		if (value != null && value != undefined && value != '') {
-			if (typeof(value) == 'string')
+
+		if(value !== null && value !== undefined && value !== '') {
+			if(typeof(value) === 'string') {
 				value = Ext.decode(value);
+			}
 
 			log.debug('The filter to set is : ' + Ext.encode(value), this.logAuthor);
 			this.cfilter.setValue(value);
@@ -886,5 +1038,4 @@ Ext.define('canopsis.lib.form.field.cfilter' , {
 		this.checkObjectValidity = false;
 		this.callParent(arguments);
 	}
-
 });

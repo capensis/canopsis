@@ -1,5 +1,4 @@
 /*
-#--------------------------------
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
@@ -16,7 +15,6 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
-# ---------------------------------
 */
 Ext.define('canopsis.view.Curves.Grid' , {
 	extend: 'canopsis.lib.view.cgrid',
@@ -40,14 +38,12 @@ Ext.define('canopsis.view.Curves.Grid' , {
 			header: _('Line Color'),
 			sortable: false,
 			align: 'center',
-			//width: 25,
 			dataIndex: 'line_color',
 			renderer: rdr_color
 		},{
 			header: _('Area color'),
 			sortable: false,
 			align: 'center',
-			//width: 25,
 			dataIndex: 'area_color',
 			renderer: rdr_color
 		},{
@@ -82,7 +78,5 @@ Ext.define('canopsis.view.Curves.Grid' , {
 			sortable: true,
 			dataIndex: 'label'
 		}
-
 	]
-
 });

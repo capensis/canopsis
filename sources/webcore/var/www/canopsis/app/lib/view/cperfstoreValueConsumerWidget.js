@@ -1,5 +1,4 @@
 /*
-#--------------------------------
 # Copyright (c) 2013 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
@@ -16,7 +15,6 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
-# ---------------------------------
 */
 Ext.define('canopsis.lib.view.cperfstoreValueConsumerWidget', {
 	extend: 'canopsis.lib.view.cwidget',
@@ -28,7 +26,7 @@ Ext.define('canopsis.lib.view.cperfstoreValueConsumerWidget', {
 	},
 
 	refreshNodes: function(from, to) {
-		if (this.nodesByID && Ext.Object.getSize(this.nodesByID) != 0) {
+		if(this.nodesByID && Ext.Object.getSize(this.nodesByID) != 0) {
 			var url = this.getUrl(from, to);
 
 			Ext.Ajax.request({
@@ -42,7 +40,6 @@ Ext.define('canopsis.lib.view.cperfstoreValueConsumerWidget', {
 					data = data.data;
 
 					if(data.length > 0) {
-
 						if(this.nodesByID[data[0]['node']]['order'] !== undefined) {
 							var that = this;
 
@@ -53,10 +50,11 @@ Ext.define('canopsis.lib.view.cperfstoreValueConsumerWidget', {
 
 						this.onRefresh(data);
 					}
-					
 				},
 
 				failure: function(result, request) {
+					void(result);
+
 					log.error('Ajax request failed ... (' + request.url + ')', this.logAuthor);
 				}
 			});
@@ -69,21 +67,21 @@ Ext.define('canopsis.lib.view.cperfstoreValueConsumerWidget', {
 	},
 
 	getChart: function() {
-		if (this.chart === undefined) {
+		if(this.chart === undefined) {
 			throw new Exception("chart field is not defined in " + this);
 		}
+
 		return this.chart;
 	},
 
 	getParams: function(from, to) {
-		var now = Ext.Date.now();
 		var post_params = [];
 
-		Ext.Object.each(this.nodesByID, function(id, node, obj) {
+		Ext.Object.each(this.nodesByID, function(id, node) {
 			var nodeId = id;
 			var serieId = nodeId + '.' + node.metrics[0];
 			var serie = this.series !== undefined ? this.series[serieId] : undefined;
-			
+
 			if(from) {
 				if(!this.reportMode) {
 					if(serie && serie['last_timestamp']) {
@@ -107,17 +105,16 @@ Ext.define('canopsis.lib.view.cperfstoreValueConsumerWidget', {
 						}
 
 						if(this.aggregate_interval >= global.commonTs['year']) {
-							from = moment.unix(from / 1000).startOf('year').unix() * 1000;	
+							from = moment.unix(from / 1000).startOf('year').unix() * 1000;
 						}
 					}
 
 					var tzOffset = new Date().getTimezoneOffset();
-					log.debug('TZ Offset: ' + tzOffset, this.logAuthor)
+					log.debug('TZ Offset: ' + tzOffset, this.logAuthor);
 					from += tzOffset * 60 * 1000;
 				}
 
 				log.debug('Serie ' + nodeId + ' ' + node.metrics + ':', this.logAuthor);
-				//log.debug(' + Do Refresh: ' + new Date(from) + ' -> ' + new Date(to) + ' (' + from + ' -> ' + to + ')', this.logAuthor);
 				log.debug(' + From: ' + new Date(from) + ' (' + from + ')', this.logAuthor);
 				log.debug(' + To:   ' + new Date(to) + ' (' + to + ')', this.logAuthor);
 
@@ -127,7 +124,7 @@ Ext.define('canopsis.lib.view.cperfstoreValueConsumerWidget', {
 				id: nodeId,
 				metrics: node.metrics
 			}
-			
+
 			if (from) {
 				post_param['from'] = parseInt(from / 1000);
 			}
@@ -138,23 +135,25 @@ Ext.define('canopsis.lib.view.cperfstoreValueConsumerWidget', {
 			this.processPostParam(post_param);
 
 			post_params.push(post_param);
-
 		}, this);
-		
+
 		post_params = {
-			'nodes': Ext.JSON.encode(post_params),		
+			'nodes': Ext.JSON.encode(post_params),
 		};
 
-		if (this.aggregate_method) {
+		if(this.aggregate_method) {
 			post_params['aggregate_method'] = this.aggregate_method;
 		}
-		if (this.aggregate_interval) {
+
+		if(this.aggregate_interval) {
 			post_params['aggregate_interval'] = this.aggregate_interval;
 		}
-		if (this.aggregate_max_points) {
+
+		if(this.aggregate_max_points) {
 			post_params['aggregate_max_points'] = this.aggregate_max_points;
 		}
-		if (this.consolidation_method) {
+
+		if(this.consolidation_method) {
 			post_params['consolidation_method'] = this.consolidation_method;
 		}
 
@@ -163,8 +162,15 @@ Ext.define('canopsis.lib.view.cperfstoreValueConsumerWidget', {
 		return post_params;
 	},
 
-	processPostParam: function(post_param) { },
+	processPostParam: function(post_param) {
+		void(post_param);
 
-	processPostParams: function(post_params) { },
+		return;
+	},
 
+	processPostParams: function(post_params) {
+		void(post_params);
+
+		return;
+	}
 });

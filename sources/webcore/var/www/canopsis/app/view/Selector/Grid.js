@@ -1,5 +1,4 @@
 /*
-#--------------------------------
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
@@ -16,7 +15,6 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
-# ---------------------------------
 */
 Ext.define('canopsis.view.Selector.Grid' , {
 	extend: 'canopsis.lib.view.cgrid',
@@ -44,7 +42,7 @@ Ext.define('canopsis.view.Selector.Grid' , {
 			sortable: false,
 			renderer: rdr_crecord_type,
 			dataIndex: 'crecord_type'
-        },{
+		},{
 			header: _('State'),
 			align: 'center',
 			width: 50,
@@ -92,7 +90,7 @@ Ext.define('canopsis.view.Selector.Grid' , {
 			width: 60,
 			dataIndex: 'sla_timewindow_perfdata',
 			renderer: function(val) {
-				if (val) {
+				if(val) {
 					perf = val[0];
 					return perf.value + perf.unit;
 				}
@@ -121,37 +119,22 @@ Ext.define('canopsis.view.Selector.Grid' , {
 			dataIndex: 'aaa_group',
 			renderer: rdr_clean_id,
 			text: _('Group')
-		}/*,{
-			width: 80,
-			align: 'center',
-			text: _('Owner'),
-			dataIndex: 'aaa_access_owner',
-			renderer: rdr_access
 		},{
-			width: 60,
-			align: 'center',
-			text: _('Group'),
-			dataIndex: 'aaa_access_group',
-			renderer: rdr_access
-		},{
-			width: 60,
-			align: 'center',
-			text: _('Others'),
-			dataIndex: 'aaa_access_other',
-			renderer: rdr_access
-		}*/,{
 			xtype: 'actioncolumn',
 			width: 70,
 			text: _('Derogation'),
 			icon: './themes/canopsis/resources/images/icons/edit.png',
 			iconCls: 'icon-clickable',
-			handler: function(grid, rowIndex, colindex) {
+			handler: function(grid, rowIndex) {
 				var rec = grid.getStore().getAt(rowIndex).raw;
 				log.dump(rec);
-				if (rec.rk)
+
+				if(rec.rk) {
 					global.derogationCtrl.derogate(rec.rk, rec.crecord_name);
-				else
+				}
+				else {
 					global.notify.notify(_('Information not found'), _("Please wait a moment, some informations aren't availables"), 'info');
+				}
 			}
 		}
 	],

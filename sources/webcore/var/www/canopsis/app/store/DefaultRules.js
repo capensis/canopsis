@@ -1,5 +1,4 @@
 /*
-#--------------------------------
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
@@ -16,16 +15,15 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
-# ---------------------------------
 */
 
 Ext.define('canopsis.store.DefaultRules', {
-    extend: 'canopsis.lib.store.cstore',
+	extend: 'canopsis.lib.store.cstore',
 	model: 'canopsis.model.DefaultRule',
 
 	storeId: 'store.DefaultRules',
 	pageSize: 1,
-  	autoLoad: false,
+	autoLoad: false,
 	autoSync: true,
 
 	proxy: {
@@ -43,5 +41,4 @@ Ext.define('canopsis.store.DefaultRules', {
 			writeAllFields: false
 		}
 	}
-
 });

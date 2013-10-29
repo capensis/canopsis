@@ -1,5 +1,4 @@
 /*
-#--------------------------------
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
@@ -16,7 +15,6 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
-# ---------------------------------
 */
 Ext.define('canopsis.lib.view.crights' , {
 	extend: 'Ext.window.Window',
@@ -29,9 +27,6 @@ Ext.define('canopsis.lib.view.crights' , {
 
 	constrain: true,
 	constrainHeader: true,
-
-	//width: 305,
-	//height: 350,
 
 	resizable: false,
 
@@ -53,36 +48,41 @@ Ext.define('canopsis.lib.view.crights' , {
 	initComponent: function() {
 		log.debug('Initializing...', this.logAuthor);
 
-		//--------------------creating bbar-------------------
+		// creating bbar
 		this.saveButton = Ext.widget('button', {
 			text: _('Save'),
 			iconCls: 'icon-save',
 			iconAlign: 'right'
-			});
+		});
+
 		this.cancelButton = Ext.widget('button', {
 			text: _('Cancel'),
 			iconCls: 'icon-cancel'
-			});
+		});
+
 		this.bbar = [this.cancelButton, '->', this.saveButton];
 
-		//-------------------binding events--------------------
-		this.saveButton.on('click', function() {this._save(this.data)},this);
-		this.cancelButton.on('click', function() {this.close()},this);
+		// binding events
+		this.saveButton.on('click', function() {
+			this._save(this.data);
+		}, this);
 
+		this.cancelButton.on('click', function() {
+			this.close();
+		}, this);
 
-		//--------------Rights Store (for combo)----------------
+		// Rights Store (for combo)
 		this._build_store();
 
-
-		//--------------------bottom fieldSet--------------------
+		// bottom fieldSet
 
 		var bottom_panel = Ext.widget('fieldset', {
-				title: _('Rights'),
-				margin: 4
-				//layout : 'hbox',
-			});
+			title: _('Rights'),
+			margin: 4
+			//layout : 'hbox',
+		});
 
-		if (this.opt_owner_rights == true) {
+		if(this.opt_owner_rights === true) {
 			this.combo_owner_rights = Ext.widget('combo', {
 				forceSelection: true,
 				fieldLabel: _('Owner rights'),
@@ -91,10 +91,11 @@ Ext.define('canopsis.lib.view.crights' , {
 				valueField: 'value',
 				store: this.store
 			});
+
 			bottom_panel.add(this.combo_owner_rights);
 		}
 
-		if (this.opt_group_rights == true) {
+		if(this.opt_group_rights === true) {
 			this.combo_group_rights = Ext.widget('combo', {
 				forceSelection: true,
 				fieldLabel: _('Group rights'),
@@ -103,10 +104,11 @@ Ext.define('canopsis.lib.view.crights' , {
 				valueField: 'value',
 				store: this.store
 			});
+
 			bottom_panel.add(this.combo_group_rights);
 		}
 
-		if (this.opt_others_rights == true) {
+		if(this.opt_others_rights === true) {
 			this.combo_others_rights = Ext.widget('combo', {
 				forceSelection: true,
 				fieldLabel: _('Others rights'),
@@ -115,18 +117,18 @@ Ext.define('canopsis.lib.view.crights' , {
 				valueField: 'value',
 				store: this.store
 			});
+
 			bottom_panel.add(this.combo_others_rights);
 		}
 
+		// top fieldSet
 
-		//--------------------top fieldSet------------------
 		var top_panel = Ext.widget('fieldset', {
-				title: _('Owners'),
-				margin: 4
-				//layout: 'hbox'
-			});
+			title: _('Owners'),
+			margin: 4
+		});
 
-		if (this.opt_owner == true) {
+		if(this.opt_owner === true) {
 			this.combo_owner = Ext.widget('combo', {
 				forceSelection: true,
 				fieldLabel: _('Owner'),
@@ -135,6 +137,7 @@ Ext.define('canopsis.lib.view.crights' , {
 				valueField: '_id',
 				store: 'Accounts'
 			});
+
 			top_panel.add(this.combo_owner);
 		}
 
@@ -146,7 +149,7 @@ Ext.define('canopsis.lib.view.crights' , {
 		//hack, forcing load (otherwise the load is launched long time after)
 		group_store.load();
 
-		if (this.opt_group == true) {
+		if(this.opt_group === true) {
 			this.combo_group = Ext.widget('combo', {
 				forceSelection: true,
 				fieldLabel: _('Group'),
@@ -157,35 +160,28 @@ Ext.define('canopsis.lib.view.crights' , {
 				valueField: '_id',
 				store: group_store
 			});
+
 			top_panel.add(this.combo_group);
 		}
 
-		//---------------------building panel-----------------
+		// building panel
 		var inner_panel = Ext.widget('panel', {
-				items: [top_panel, bottom_panel],
-				//layout : 'vbox',
-				//bodyPadding: 4,
-				border: false
-			});
+			items: [top_panel, bottom_panel],
+			border: false
+		});
 
 		this.items = [inner_panel];
 
-
-
-
 		this.callParent(arguments);
-		//this.show()
 
-		//----------------------load values----------------------
-		if (this.data != undefined) {
+		// load values
+		if (this.data !== undefined) {
 			this._load(this.data);
 		}
-
 	},
 
 	_save: function(record) {
 		log.debug('Saving rights', this.logAuthor);
-		//log.dump(this.combo_owner_rights.getValue())
 
 		//creating params to send
 		var params = {};
@@ -198,19 +194,23 @@ Ext.define('canopsis.lib.view.crights' , {
 		var aaa_access_other = this.combo_others_rights.getValue();
 
 		//check if null and add them to params
-		if (aaa_owner != null) {
+		if(aaa_owner !== null) {
 			params.aaa_owner = aaa_owner;
 		}
-		if (aaa_group != null) {
+
+		if (aaa_group !== null) {
 			params.aaa_group = aaa_group;
 		}
-		if (aaa_access_owner != null) {
+
+		if (aaa_access_owner !== null) {
 			params.aaa_access_owner = Ext.encode(aaa_access_owner);
 		}
-		if (aaa_access_group != null) {
+
+		if (aaa_access_group !== null) {
 			params.aaa_access_group = Ext.encode(aaa_access_group);
 		}
-		if (aaa_access_other != null) {
+
+		if (aaa_access_other !== null) {
 			params.aaa_access_other = Ext.encode(aaa_access_other);
 		}
 
@@ -220,25 +220,22 @@ Ext.define('canopsis.lib.view.crights' , {
 			method: 'PUT',
 			params: params,
 			scope: this,
-			success: function(response) {
-				var text = response.responseText;
+			success: function() {
 				global.notify.notify(_('Success'), _('Rights updated'), 'success');
 				//close the window
 				this.fireEvent('save');
 				this.close();
 			},
 			failure: function(response) {
-
-				if (response.status == 403) {
+				if(response.status === 403) {
 					global.notify.notify(_('Access denied'), _('You don\'t have the rights to modify this object'), 'error');
 					log.error(_('Access denied'));
-				} else {
+				}
+				else {
 					log.error(_('Updating rights have failed'), this.logAuthor);
 				}
 			}
 		});
-
-
 	},
 
 	//local store for combox
@@ -256,18 +253,24 @@ Ext.define('canopsis.lib.view.crights' , {
 
 	_get_model: function(values) {
 		var index = this.store.findBy(function(record) {
-				var data = record.get('value');
-				if (values.length == data.length) {
-					var returned_value = false;
-					for (var i = 0; i < values.length; i++) {
-						if (values[i] == data[i])
-							returned_value = true;
-						else
-							returned_value = false;
+			var data = record.get('value');
+
+			if(values.length === data.length) {
+				var returned_value = false;
+
+				for(var i = 0; i < values.length; i++) {
+					if(values[i] === data[i]) {
+						returned_value = true;
 					}
-					return returned_value;
+					else {
+						returned_value = false;
+					}
 				}
-			});
+
+				return returned_value;
+			}
+		});
+
 		return this.store.getAt(index);
 	},
 
@@ -276,17 +279,10 @@ Ext.define('canopsis.lib.view.crights' , {
 
 		var crecord_name = record.get('crecord_name');
 
-		if (crecord_name != undefined)
+		if(crecord_name !== undefined) {
 			this.title = this.title + ' "' + crecord_name + '"';
+		}
 
-		/*
-		log.debug('a_owner : ',this.logAuthor)
-		log.dump(record.get('aaa_access_owner'))
-		log.debug('a_group : ',this.logAuthor)
-		log.dump(record.get('aaa_access_group'))
-		log.debug('a_other : ',this.logAuthor)
-		log.dump(record.get('aaa_access_other'))
-		*/
 		//setting data
 		this.combo_owner_rights.setValue(this._get_model(record.get('aaa_access_owner')));
 		this.combo_group_rights.setValue(this._get_model(record.get('aaa_access_group')));
@@ -294,5 +290,4 @@ Ext.define('canopsis.lib.view.crights' , {
 		this.combo_owner.setValue(record.get('aaa_owner'));
 		this.combo_group.setValue(record.get('aaa_group'));
 	}
-
 });

@@ -1,5 +1,4 @@
 /*
-#--------------------------------
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
@@ -16,7 +15,6 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
-# ---------------------------------
 */
 Ext.define('canopsis.view.Schedule.Grid' , {
 	extend: 'canopsis.lib.view.cgrid',
@@ -46,7 +44,9 @@ Ext.define('canopsis.view.Schedule.Grid' , {
 			width: 55,
 			sortable: true,
 			dataIndex: 'log',
-			renderer: function(value) {return rdr_boolean(value.success)}
+			renderer: function(value) {
+				return rdr_boolean(value.success);
+			}
 		},{
 			header: _('Last execution'),
 			flex: 1,
@@ -80,7 +80,8 @@ Ext.define('canopsis.view.Schedule.Grid' , {
 			renderer: function(value) {
 				var celery = value.celery_output;
 				var duration = value.duration;
-				if (celery != undefined && duration != undefined) {
+
+				if (celery !== undefined && duration !== undefined) {
 					return celery + ' (in ' + duration + 's)';
 				}
 			}
@@ -95,5 +96,4 @@ Ext.define('canopsis.view.Schedule.Grid' , {
 	initComponent: function() {
 		this.callParent(arguments);
 	}
-
 });

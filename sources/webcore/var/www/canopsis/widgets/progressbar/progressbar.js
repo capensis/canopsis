@@ -1,5 +1,4 @@
 /*
-#--------------------------------
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
@@ -16,13 +15,11 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
-# ---------------------------------
 */
 
-Ext.define('widgets.progressbar.progressbar' , 
-{
-    extend: 'canopsis.lib.view.cperfstoreValueConsumerWidget',
-    
+Ext.define('widgets.progressbar.progressbar', {
+	extend: 'canopsis.lib.view.cperfstoreValueConsumerWidget',
+
 	alias: 'widget.progressbar',
 	logAuthor: '[progressBarWidget]',
 	innerText: undefined,
@@ -37,18 +34,15 @@ Ext.define('widgets.progressbar.progressbar' ,
 	colorEnd: '#E0251B',
 
 	dispGrad: true,
-	
-	//boldText: true,
-	//fontSize: 100,
-	
+
 	gHeight: 20,
 
-	initComponent: function()
-	{
-		log.debug("initComponent", this.logAuthor)
+	initComponent: function() {
+		log.debug("initComponent", this.logAuthor);
 
-		if (Ext.isIE)
+		if(Ext.isIE) {
 			this.dispGrad = false;
+		}
 
 		this.nodesByID = parseNodes(this.nodes);
 		log.debug('nodesByID:', this.logAuthor);
@@ -66,46 +60,46 @@ Ext.define('widgets.progressbar.progressbar' ,
 		log.dump(this.nodesByID);
 	},
 
-	getNodeInfo: function(from,to) 
-	{
+	getNodeInfo: function(from, to) {
 		this.processNodes();
 
-	    this.refreshNodes(from, to);
-
+		this.refreshNodes(from, to);
 	},
 
-	setGradient: function(_id, value){
-		log.debug('setGradient: '+_id+", value: "+value, this.logAuthor);
+	setGradient: function(_id, value) {
+		log.debug('setGradient: ' + _id + ", value: " + value, this.logAuthor);
 
-		var lowColor = this.colorScale(value).hex()
-		var hightColor = chroma.hex(lowColor).brighten(20).hex()
+		var lowColor = this.colorScale(value).hex();
+		var hightColor = chroma.hex(lowColor).brighten(20).hex();
 
 		pbEl = $('#'+_id + " .x-progress-bar");
 		pbEl.css('background-image', "none");
 
-		if (this.dispGrad){
-			pbEl.css('background', '-webkit-gradient(linear, left top, left bottom, from('	+ hightColor +'), to('+lowColor+'))');
-			pbEl.css('background', '-webkit-linear-gradient(' + hightColor +', '+lowColor+')');
-			pbEl.css('background', '-moz-linear-gradient('	+ hightColor +', '+lowColor+')');
-			pbEl.css('background', '-ms-linear-gradient('	+ hightColor +', '+lowColor+')');
-			pbEl.css('background', '-o-linear-gradient('	+ hightColor +', '+lowColor+')');
-			pbEl.css('background', 'linear-gradient(to bottom, '	+ hightColor +', '+lowColor+')');
-		}else{
+		if(this.dispGrad) {
+			pbEl.css('background', '-webkit-gradient(linear, left top, left bottom, from(' + hightColor + '), to(' + lowColor + '))');
+			pbEl.css('background', '-webkit-linear-gradient(' + hightColor + ', ' + lowColor + ')');
+			pbEl.css('background', '-moz-linear-gradient(' + hightColor + ', ' + lowColor + ')');
+			pbEl.css('background', '-ms-linear-gradient(' + hightColor + ', ' + lowColor + ')');
+			pbEl.css('background', '-o-linear-gradient(' + hightColor + ', ' + lowColor + ')');
+			pbEl.css('background', 'linear-gradient(to bottom, '    + hightColor +', ' + lowColor + ')');
+		}
+		else{
 			pbEl.css('background-color', lowColor);
 		}
-
-		//pbEl.height(this.gHeight);
-
 	},
 
-    onRefresh: function(data)
-//	displayBars: function(data)
-	{
-		for (var i = 0; i < data.length; i++){
+	onRefresh: function(data) {
+		var pb_update = function(pb, value) {
+			this.setGradient(pb.id, value);
+		};
 
+		var pb_afterrender = function(pb) {
+			this.setGradient(pb.id, pb.value);
+		};
+
+		for(var i = 0; i < data.length; i++) {
 			var item = data[i];
 			var _id = item.node;
-
 
 			// Create it
 			log.debug('Item: ' + _id, this.logAuthor);
@@ -114,7 +108,7 @@ Ext.define('widgets.progressbar.progressbar' ,
 			var node = this.nodesByID[_id];
 			log.debug('Node:', this.logAuthor);
 			log.dump(node);
-			
+
 			var label = node.label;
 
 			log.debug(' + Label: '+label, this.logAuthor);
@@ -123,42 +117,44 @@ Ext.define('widgets.progressbar.progressbar' ,
 			var max = item.max;
 
 			//Extra field
-			if (node.max)
-				max = node.max
+			if(node.max) {
+				max = node.max;
+			}
 
-			log.debug(' + Value: '+value, this.logAuthor);
-			log.debug(' + Max:   '+max, this.logAuthor);
+			log.debug(' + Value: ' + value, this.logAuthor);
+			log.debug(' + Max:   ' + max, this.logAuthor);
 
 			var pct = 0;
-			if (value && max){
-				pct = (value * 100)/max;
+			if(value && max) {
+				pct = (value * 100) / max;
 				pct = roundSignifiantDigit(pct, 2);
 			}
 
-			log.debug(' + Pct:   '+pct, this.logAuthor);
+			log.debug(' + Pct:   ' + pct, this.logAuthor);
 
 			var text = pct + "%";
+			var pb = undefined;
 
 			// Check if pb already exist
-			if (this.progressBars[_id]){
-				var pb = this.progressBars[_id];
-				log.debug('Update: ' + _id, this.logAuthor)
+			if(this.progressBars[_id]) {
+				pb = this.progressBars[_id];
+				log.debug('Update: ' + _id, this.logAuthor);
 				pb.updateText(text);
 				pb.updateProgress(pct/100);
-				return
+				return;
 			}
 
-			var pb = Ext.create('Ext.ProgressBar', {
+			pb = Ext.create('Ext.ProgressBar', {
 				text: text,
 				value: pct/100,
 				flex:1,
 				height: this.gHeight,
 				cls:'widgets-progressbar',
-				border: 1,
+				border: 1
 			});
 
-			pb.on("update", function(pb, value){ this.setGradient(pb.id, value); }, this);
-			pb.on("afterrender", function(pb){ this.setGradient(pb.id, pb.value); }, this, {single: 1});
+			pb.on("update", pb_update);
+			pb.on("afterrender", pb_afterrender, this, {single: 1});
 
 			this.wcontainer.add({
 				layout: {
@@ -177,18 +173,17 @@ Ext.define('widgets.progressbar.progressbar' ,
 		}
 	},
 
-	processNodes: function() 
-	{
+	processNodes: function() {
 		var post_params = [];
-		Ext.Object.each(this.nodesByID, function(id, node, obj) {
+
+		Ext.Object.each(this.nodesByID, function(id, node) {
 			post_params.push({
 				id: id,
 				metrics: node.metrics
 			});
-		},this)
+		}, this);
 
-		this.post_params = 
-		{
+		this.post_params = {
 			'nodes': Ext.JSON.encode(post_params),
 			'aggregate_method' : this.aggregate_method,
 			'aggregate_interval': this.aggregate_interval,

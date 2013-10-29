@@ -1,5 +1,4 @@
 /*
-#--------------------------------
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
@@ -16,7 +15,6 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
-# ---------------------------------
 */
 Ext.define('widgets.diagram.diagram' , {
 	extend: 'canopsis.lib.view.cperfstoreValueConsumerWidget',
@@ -70,8 +68,8 @@ Ext.define('widgets.diagram.diagram' , {
 	haveCounter: false,
 
 	labelFormatter: function() {
-		if(this.y == 0) {
-			return
+		if(this.y === 0) {
+			return;
 		}
 
 		var me = this.series.chart.options.cwidget;
@@ -83,25 +81,25 @@ Ext.define('widgets.diagram.diagram' , {
 				return rdr_humanreadable_value(value, unit);
 			}
 			else {
-				if (unit != undefined) {
+				if (unit !== undefined) {
 					return value + ' ' + unit;
 				}
 				else {
 					return value;
 				}
 			}
-		}
+		};
 
-		if (me.nameInLabelFormatter) {
-			if (this.x) {
-				prefix = '<b>' + this.x + ':</b> '
+		if(me.nameInLabelFormatter) {
+			if(this.x) {
+				prefix = '<b>' + this.x + ':</b> ';
 			}
 			else {
-				prefix = '<b>' + this.point.metric + ':</b> '
+				prefix = '<b>' + this.point.metric + ':</b> ';
 			}
 		}
 
-		if (me.pctInLabel && this.percentage != undefined) {
+		if(me.pctInLabel && this.percentage !== undefined) {
 			return prefix + formatter(this.percentage, "%");
 		}
 		else {
@@ -110,39 +108,41 @@ Ext.define('widgets.diagram.diagram' , {
 	},
 
 	initComponent: function() {
-		this.backgroundColor	= check_color(this.backgroundColor);
-		this.borderColor	= check_color(this.borderColor);
-		this.legend_fontColor	= check_color(this.legend_fontColor);
-		this.legend_borderColor = check_color(this.legend_borderColor);
-		this.legend_backgroundColor	= check_color(this.legend_backgroundColor);
+		this.backgroundColor        = check_color(this.backgroundColor);
+		this.borderColor            = check_color(this.borderColor);
+		this.legend_fontColor       = check_color(this.legend_fontColor);
+		this.legend_borderColor     = check_color(this.legend_borderColor);
+		this.legend_backgroundColor = check_color(this.legend_backgroundColor);
 
-		//retrocompatibilité
-		if(Ext.isArray(this.nodes))
+		//retrocompatibility
+		if(Ext.isArray(this.nodes)) {
 			this.nodesByID = parseNodes(this.nodes);
-		else
+		}
+		else {
 			this.nodesByID = expandAttributs(this.nodes);
+		}
 
 		this.nb_node = Ext.Object.getSize(this.nodesByID);
 
 		log.debug('nodesByID:', this.logAuthor);
 		log.dump(this.nodesByID);
 
-		Ext.Object.each(this.nodesByID, function(id, node, obj) {
-			if(node['type'] && node['type'] == 'COUNTER') {
+		Ext.Object.each(this.nodesByID, function(id, node) {
+			void(id);
+
+			if(node['type'] && node['type'] === 'COUNTER') {
 				this.haveCounter = true;
 			}
-		},this);
+		}, this);
 
 		//Set title
 		if(this.autoTitle) {
 			this.setchartTitle();
 			this.title = '';
 		}
-		else {
-			if(!this.border) {
-				this.chartTitle = this.title;
-				this.title = '';
-			}
+		else if(!this.border) {
+			this.chartTitle = this.title;
+			this.title = '';
 		}
 
 		this.callParent(arguments);
@@ -160,13 +160,13 @@ Ext.define('widgets.diagram.diagram' , {
 	setchartTitle: function() {
 		var title = '';
 
-		if(this.nb_node == 1) {
-			var firstKey = Ext.Object.getKeys(this.nodesByID)[0]
-			var firstNode = this.nodesByID[firstKey]
+		if(this.nb_node === 1) {
+			var firstKey = Ext.Object.getKeys(this.nodesByID)[0];
+			var firstNode = this.nodesByID[firstKey];
 			var component = firstNode.component;
 			var source_type = firstNode.source_type;
 
-			if(source_type == 'resource') {
+			if(source_type === 'resource') {
 				var resource = firstNode.resource;
 				title = resource + ' ' + _('on') + ' ' + component;
 			}
@@ -190,10 +190,7 @@ Ext.define('widgets.diagram.diagram' , {
 				borderColor: this.borderColor,
 				borderWidth: this.borderWidth,
 				backgroundColor: this.backgroundColor,
-				inverted: (this.diagram_type == 'column') ? this.verticalDisplay : false
-			},
-			exporting: {
-				enabled: false
+				inverted: (this.diagram_type === 'column') ? this.verticalDisplay : false
 			},
 			colors: [],
 			plotOptions: {
@@ -253,7 +250,7 @@ Ext.define('widgets.diagram.diagram' , {
 				enabled: false
 			},
 			legend: {
-				enabled: (this.diagram_type == 'column') ? false : this.legend,
+				enabled: (this.diagram_type === 'column') ? false : this.legend,
 				verticalAlign: this.legend_verticalAlign,
 				align: this.legend_align,
 				layout: this.legend_layout,
@@ -302,10 +299,10 @@ Ext.define('widgets.diagram.diagram' , {
 
 	doRefresh: function(from, to) {
 		// Get last point only
-		if(this.time_window && from == 0) {
+		if(this.time_window && from === 0) {
 			from = to - (this.time_window * 1000);
 		}
-		
+
 		if(!this.haveCounter) {
 			from = to;
 		}
@@ -321,7 +318,7 @@ Ext.define('widgets.diagram.diagram' , {
 
 	onRefresh: function(data) {
 		// s to ms
-		if(this.chart && data.length != 0) {
+		if(this.chart && data.length !== 0) {
 			var myEl = this.getEl();
 
 			if(myEl && myEl.isMasked && !this.isDisabled()) {
@@ -364,16 +361,14 @@ Ext.define('widgets.diagram.diagram' , {
 				log.debug(' + Timestamp: ' + timestamp, this.logAuthor);
 				log.debug(' + Value: ' + value, this.logAuthor);
 
-				//------------------
-
 				var unit = info['bunit'];
 				var max = info['max'];
 
-				if(max == null) {
+				if(max === null) {
 					max = this.max;
 				}
 
-				if(unit == '%' && ! max) {
+				if(unit === '%' && !max) {
 					max = 100;
 				}
 
@@ -406,38 +401,53 @@ Ext.define('widgets.diagram.diagram' , {
 				}
 
 				var _color = colors[0];
+				var color = undefined;
 
 				if(node.curve_color) {
 					_color = node.curve_color;
 				}
 
 				if(this.gradientColor) {
-					var color = this.getGradientColor(_color);
+					color = this.getGradientColor(_color);
 				}
 				else {
-					var color = _color;
+					color = _color;
 				}
 
-				serie.data.push({ id: metric, name: metric_long_name, metric: metric, y: value, color: color, bunit: unit });
+				serie.data.push({
+					id: metric,
+					name: metric_long_name,
+					metric: metric,
+					y: value,
+					color: color,
+					bunit: unit
+				});
 
 			}
 
-			if(this.setAxis && this.diagram_type == 'column') {
+			if(this.setAxis && this.diagram_type === 'column') {
 				this.setAxis(serie.data);
 			}
 
-			if(data.length == 1 && !this.hide_other_column && this.diagram_type == 'pie') {
+			if(data.length === 1 && !this.hide_other_column && this.diagram_type === 'pie') {
 				var other_label = '<b>' + this.other_label + '</b>' + other_unit;
-				var colors = global.curvesCtrl.getRenderColors(this.other_label, 1);
+				var rdr_colors = global.curvesCtrl.getRenderColors(this.other_label, 1);
+				var rdr_color = undefined;
 
 				if(this.gradientColor) {
-					var _color = this.getGradientColor(colors[0]);
+					rdr_color = this.getGradientColor(rdr_colors[0]);
 				}
 				else {
-					var _color = colors[0];
+					rdr_color = rdr_colors[0];
 				}
 
-				serie.data.push({ id: 'pie_other', name: other_label, metric: this.other_label, y: max - value, color: _color });
+				serie.data.push({
+					id: 'pie_other',
+					name: other_label,
+					metric: this.other_label,
+					y: max - value,
+					color: rdr_color
+				});
 			}
 
 			if(serie.data) {
@@ -476,7 +486,7 @@ Ext.define('widgets.diagram.diagram' , {
 	getSerie: function(data) {
 		var bunit = undefined;
 
-		if(data.length != 0) {
+		if(data.length !== 0) {
 			for(var i = 0; i < data.length; i++) {
 				if(data[i].bunit) {
 					bunit = data[i].bunit;
@@ -495,7 +505,11 @@ Ext.define('widgets.diagram.diagram' , {
 
 	getGradientColor: function(color) {
 		return {
-			radialGradient: { cx: 0.5, cy: 0.3, r: 0.7 },
+			radialGradient: {
+				cx: 0.5,
+				cy: 0.3,
+				r: 0.7
+			},
 			stops: [
 				[0, color],
 				[1, Highcharts.Color(color).brighten(-0.3).get('rgb')]
@@ -517,14 +531,14 @@ Ext.define('widgets.diagram.diagram' , {
 
 		var formatter = function(options, value) {
 			if(options.invert) {
-				value = - value;
+				value = -value;
 			}
 
 			if(me.humanReadable) {
 				value = rdr_humanreadable_value(value, options.bunit);
 			}
 			else {
-				if (options.bunit != undefined) {
+				if (options.bunit !== undefined) {
 					value = value + ' ' + options.bunit;
 				}
 			}
@@ -537,6 +551,8 @@ Ext.define('widgets.diagram.diagram' , {
 		if(this['points']) {
 			// Shared
 			$.each(this.points, function(i, point) {
+				void(i);
+
 				s += formatter(point.options, point.y);
 			});
 		}
@@ -569,7 +585,7 @@ Ext.define('widgets.diagram.diagram' , {
 				return rdr_humanreadable_value(this.value, bunit);
 			}
 			else {
-				if(bunit != undefined) {
+				if(bunit !== undefined) {
 					return this.value + ' ' + bunit;
 				}
 			}

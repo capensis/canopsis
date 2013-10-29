@@ -1,5 +1,4 @@
 /*
-#--------------------------------
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
@@ -16,7 +15,6 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
-# ---------------------------------
 */
 Ext.define('canopsis.view.Rule.Grid' , {
 	extend: 'canopsis.lib.view.cgrid',
@@ -47,10 +45,10 @@ Ext.define('canopsis.view.Rule.Grid' , {
 			xtype: 'store',
 			fields: ['value', 'text'],
 			data: [
-			{value: 'pass', text: _('Pass')},
-			{value: 'drop', text: _('Drop')}
+				{value: 'pass', text: _('Pass')},
+				{value: 'drop', text: _('Drop')}
 			]
-		},
+		}
 	}],
 
 	columns: [

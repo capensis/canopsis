@@ -1,5 +1,4 @@
 /*
-#--------------------------------
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
@@ -16,10 +15,9 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
-# ---------------------------------
 */
 Ext.define('canopsis.store.Views', {
-    extend: 'canopsis.lib.store.cstore',
+	extend: 'canopsis.lib.store.cstore',
 	model: 'canopsis.model.View',
 
 	storeId: 'store.View',
@@ -29,14 +27,14 @@ Ext.define('canopsis.store.Views', {
 
 	listeners: {
 		remove: function() {
-			if (this.storeId !== 'Tabs')
-				if (global.websocketCtrl)
-					global.websocketCtrl.publish_event('store', this.storeId, 'remove');
+			if(this.storeId !== 'Tabs' && global.websocketCtrl) {
+				global.websocketCtrl.publish_event('store', this.storeId, 'remove');
+			}
 		},
 		update: function() {
-			if (this.storeId !== 'Tabs')
-				if (global.websocketCtrl)
-					global.websocketCtrl.publish_event('store', this.storeId, 'update');
+			if(this.storeId !== 'Tabs' && global.websocketCtrl) {
+				global.websocketCtrl.publish_event('store', this.storeId, 'update');
+			}
 		}
 	},
 
@@ -44,9 +42,9 @@ Ext.define('canopsis.store.Views', {
 		type: 'rest',
 		url: '/rest/object/view',
 		extraParams: {
-						noInternal: true,
-						limit: 0
-					},
+			noInternal: true,
+			limit: 0
+		},
 		reader: {
 			type: 'json',
 			root: 'data',
@@ -58,9 +56,5 @@ Ext.define('canopsis.store.Views', {
 			writeAllFields: false
 		}
 	}
-	/*load: function (){
-		log.debug('View store loaded.')
-		log.dump(this.getById('view.root.dashboard'))
-	},*/
 });
 

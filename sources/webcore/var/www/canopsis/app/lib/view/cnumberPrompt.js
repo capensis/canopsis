@@ -1,5 +1,4 @@
 /*
-#--------------------------------
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
@@ -16,38 +15,37 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
-# ---------------------------------
 */
 
 //inspirated by http://stackoverflow.com/questions/13896474/numberfield-prompt-in-extjs
 
 Ext.define('canopsis.lib.view.cnumberPrompt', {
-    extend: 'Ext.window.MessageBox',
+	extend: 'Ext.window.MessageBox',
 
-    MessageBoxMinVal: 0.1,
-    defaultValue: 1,
+	MessageBoxMinVal: 0.1,
+	defaultValue: 1,
 
-    initComponent: function() {
-        this.callParent();
-        var index = this.promptContainer.items.indexOf(this.textField);
-        this.promptContainer.remove(this.textField);
-        this.textField = this._createNumberField();
-        this.promptContainer.insert(index, this.textField);
-    },
+	initComponent: function() {
+		this.callParent();
 
-    _createNumberField: function() {
-        //copy paste what is being done in the initComonent to create the textfield
-        return Ext.widget('numberfield',{
-                       //xtype: 'numberfield',
-                        id: this.id + '-textfield',
-                        anchor: '100%',
-                        value:1,
-                        minValue: this.MessageBoxMinVal,
-                        enableKeyEvents: true,
-                        listeners: {
-                            keydown: this.onPromptKey,
-                            scope: this
-                        }
-        });
-    }
+		var index = this.promptContainer.items.indexOf(this.textField);
+		this.promptContainer.remove(this.textField);
+		this.textField = this._createNumberField();
+		this.promptContainer.insert(index, this.textField);
+	},
+
+	_createNumberField: function() {
+		//copy paste what is being done in the initComonent to create the textfield
+		return Ext.widget('numberfield', {
+			id: this.id + '-textfield',
+			anchor: '100%',
+			value:1,
+			minValue: this.MessageBoxMinVal,
+			enableKeyEvents: true,
+			listeners: {
+				keydown: this.onPromptKey,
+				scope: this
+			}
+		});
+	}
 });

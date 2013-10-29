@@ -1,5 +1,4 @@
 /*
-#--------------------------------
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
@@ -16,7 +15,6 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
-# ---------------------------------
 */
 
 Ext.define('canopsis.lib.form.field.cthreshold_metro' , {
@@ -29,7 +27,8 @@ Ext.define('canopsis.lib.form.field.cthreshold_metro' , {
 
 	layout: 'anchor',
 
-	items: [{
+	items: [
+		{
 			xtype: 'panel',
 			anchor: '100% 10%',
 			border: 0,
@@ -71,16 +70,17 @@ Ext.define('canopsis.lib.form.field.cthreshold_metro' , {
 				valueField: 'value',
 				width: 100,
 				store: {
-						fields: ['text', 'value'],
-						data: [
-							{text: 'Ok' , value: '0'},
-							{text: 'Warn' , value: '1'},
-							{text: 'Crit' , value: '2'},
-							{text: 'Unknown' , value: '3'}
-						]
-					}
+					fields: ['text', 'value'],
+					data: [
+						{text: 'Ok' , value: '0'},
+						{text: 'Warn' , value: '1'},
+						{text: 'Crit' , value: '2'},
+						{text: 'Unknown' , value: '3'}
+					]
+				}
 			}]
-		}],
+		}
+	],
 
 	initComponent: function() {
 		this.callParent(arguments);
@@ -97,7 +97,8 @@ Ext.define('canopsis.lib.form.field.cthreshold_metro' , {
 
 	movePanelUp: function(obj) {
 		var element_index = this.condition_panel.items.keys.indexOf(obj.id);
-		if (element_index - 1 >= 0) {
+
+		if(element_index - 1 >= 0) {
 			var element = this.condition_panel.remove(Ext.getCmp(obj.id), false);
 			this.condition_panel.insert(element_index - 1, element);
 		}
@@ -105,7 +106,8 @@ Ext.define('canopsis.lib.form.field.cthreshold_metro' , {
 
 	movePanelDown: function(obj) {
 		var element_index = this.condition_panel.items.keys.indexOf(obj.id);
-		if (element_index + 1 <= this.condition_panel.items.length) {
+
+		if(element_index + 1 <= this.condition_panel.items.length) {
 			var element = this.condition_panel.remove(Ext.getCmp(obj.id), false);
 			this.condition_panel.insert(element_index + 1, element);
 		}
@@ -114,8 +116,10 @@ Ext.define('canopsis.lib.form.field.cthreshold_metro' , {
 	getValue: function() {
 		var items = this.condition_panel.items.items;
 		var output = [];
-		for (var i = 0; i < items.length; i++)
+
+		for(var i = 0; i < items.length; i++) {
 			output.push(items[i].getValue());
+		}
 
 		return undefined;
 	}
@@ -144,20 +148,19 @@ Ext.define('ctreshold_metro.field', {
 		displayField: 'text',
 		isFormField: false,
 		name: 'metric',
-		//minChars: 1,
 		editable: false,
 		valueField: 'value',
 		emptyText: _('Type value or choose operator'),
 		store: {
-				fields: ['text', 'value'],
-				data: [
-					{text: 'Mean' , value: 'mean'},
-					{text: 'Min' , value: 'min'},
-					{text: 'Max' , value: 'max'},
-					{text: 'Delta' , value: 'delta'},
-					{text: 'Sum' , value: 'sum'}
-				]
-			}
+			fields: ['text', 'value'],
+			data: [
+				{text: 'Average' , value: 'average'},
+				{text: 'Min' , value: 'min'},
+				{text: 'Max' , value: 'max'},
+				{text: 'Delta' , value: 'delta'},
+				{text: 'Sum' , value: 'sum'}
+			]
+		}
 	},{
 		xtype: 'combobox',
 		displayField: 'text',
@@ -167,22 +170,21 @@ Ext.define('ctreshold_metro.field', {
 		valueField: 'value',
 		width: 40,
 		store: {
-				fields: ['text', 'value'],
-				data: [
-					{'text': '>',	'value': '>' },
-					{'text': '>=',	'value': '>=' },
-					{'text': '<',	'value': '<' },
-					{'text': '<=',	'value': '<=' },
-					{'text': '=',	'value': '=' },
-					{'text': '!=',	'value': '!=' }
-				]
-			}
+			fields: ['text', 'value'],
+			data: [
+				{'text': '>',	'value': '>' },
+				{'text': '>=',	'value': '>=' },
+				{'text': '<',	'value': '<' },
+				{'text': '<=',	'value': '<=' },
+				{'text': '=',	'value': '=' },
+				{'text': '!=',	'value': '!=' }
+			]
+		}
 	},{
 		xtype: 'textfield',
-        name: 'value',
-        //fieldLabel: 'Name',
-        emptyText: 'Value',
-        allowBlank: false
+		name: 'value',
+		emptyText: 'Value',
+		allowBlank: false
 	},{
 		xtype: 'label',
 		text: '=>',
@@ -196,14 +198,14 @@ Ext.define('ctreshold_metro.field', {
 		name: 'state',
 		width: 100,
 		store: {
-				fields: ['text', 'value'],
-				data: [
-					{text: 'Ok' , value: '0'},
-					{text: 'Warn' , value: '1'},
-					{text: 'Crit' , value: '2'},
-					{text: 'Unknown' , value: '3'}
-				]
-			}
+			fields: ['text', 'value'],
+			data: [
+				{text: 'Ok' , value: '0'},
+				{text: 'Warn' , value: '1'},
+				{text: 'Crit' , value: '2'},
+				{text: 'Unknown' , value: '3'}
+			]
+		}
 	},{
 		xtype: 'button',
 		text: 'up',
@@ -218,12 +220,16 @@ Ext.define('ctreshold_metro.field', {
 		this.callParent(arguments);
 
 		this.down('button[name=delete]').on('click', this.destroy, this);
+
 		this.down('button[name=up]').on('click', function() {
 			this.fireEvent('moveUp', {id: this.id});
-		},this);
+		}, this);
+
 		this.down('button[name=down]').on('click', function() {
-			this.fireEvent('moveDown', {id: this.id});
-		},this);
+			this.fireEvent('moveDown', {
+				id: this.id
+			});
+		}, this);
 	},
 
 	getValue: function() {
@@ -234,5 +240,4 @@ Ext.define('ctreshold_metro.field', {
 
 		console.log(metric + ' ' + operator + ' ' + value + ' ' + state);
 	}
-
 });

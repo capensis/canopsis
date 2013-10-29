@@ -1,5 +1,4 @@
 /*
-#--------------------------------
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
@@ -16,20 +15,17 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
-# ---------------------------------
 */
 Ext.define('canopsis.view.Consolidation.Form', {
 	extend: 'canopsis.lib.view.cform',
 
 	alias: 'widget.ConsolidationForm',
 
-	//requires: ['canopsis.lib.form.field.cthreshold_metro'],
-
 	fieldDefaults: {
 		labelWidth: 150
 	},
 
-    initComponent: function() {
+	initComponent: function() {
 		var labelWidth = 200;
 
 		this.items = [
@@ -103,7 +99,7 @@ Ext.define('canopsis.view.Consolidation.Form', {
 									fields: ['value', 'text'],
 									data: [
 										{'value': 'last', 'text': _('Last point')},
-										{'value': 'mean', 'text': _('Mean')},
+										{'value': 'average', 'text': _('Average')},
 										{'value': 'sum', 'text': _('Sum')},
 										{'value': 'delta', 'text': _('Delta')},
 										{'value': 'min', 'text': _('Min')},
@@ -118,11 +114,11 @@ Ext.define('canopsis.view.Consolidation.Form', {
 								xtype: 'checkboxgroup',
 								name: 'checkboxgroup',
 								columns: 3,
-	        					vertical: true,
+								vertical: true,
 								items: [{
-									boxLabel: _('Mean'),
+									boxLabel: _('Average'),
 									name: 'consolidation_method',
-									inputValue: 'mean'
+									inputValue: 'average'
 								},{
 									boxLabel: _('Sum'),
 									name: 'consolidation_method',
@@ -143,14 +139,7 @@ Ext.define('canopsis.view.Consolidation.Form', {
 							}]
 						}]
 
-					}/*,{
-						title: _('Thresholds'),
-						bodyStyle: 'padding:5px 5px 0',
-						layout:'fit',
-						items:[{
-							xtype:'cthreshold_metro'
-						}]
-					}*/,{
+					},{
 						title: _('Filter'),
 						xtype: 'cfilter',
 						name: 'mfilter',
@@ -167,12 +156,12 @@ Ext.define('canopsis.view.Consolidation.Form', {
 								sortable: false,
 								flex: 2,
 								dataIndex: 're'
-							}, {
+							},{
 								header: 'Metric',
 								sortable: false,
 								flex: 2,
 								dataIndex: 'me'
-							}, {
+							},{
 								header: 'Unit',
 								sortable: false,
 								flex: 0.5,
@@ -191,7 +180,6 @@ Ext.define('canopsis.view.Consolidation.Form', {
 			}
 		];
 
-        this.callParent();
-    }
-
+		this.callParent();
+	}
 });

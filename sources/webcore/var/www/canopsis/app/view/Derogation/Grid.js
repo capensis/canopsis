@@ -1,5 +1,4 @@
 /*
-#--------------------------------
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
@@ -16,7 +15,6 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
-# ---------------------------------
 */
 Ext.define('canopsis.view.Derogation.Grid' , {
 	extend: 'canopsis.lib.view.cgrid',
@@ -37,28 +35,34 @@ Ext.define('canopsis.view.Derogation.Grid' , {
 	opt_tags_search: false,
 
 	rdr_time_conditions: function(val) {
-		output = '';
-		for (var i = 0; i < val.length; i++) {
+		var output = '';
+
+		for(var i = 0; i < val.length; i++) {
 			var condition = val[i];
 			var type = condition['type'];
-			if (type == 'time_interval') {
+
+			if(type === 'time_interval') {
 				output += '<b>Type</b>: ' + type + '<br>';
 				output += '&nbsp; + <b>' + _('Start') + '</b>: ' + rdr_tstodate(condition['startTs']) + '<br>';
 				output += '&nbsp; + <b>' + _('Stop') + '</b>: ' + rdr_tstodate(condition['stopTs']) + '<br>';
 			}
 		}
+
 		return output;
 	},
 
 	rdr_actions: function(val) {
-		output = '';
-		for (var i = 0; i < val.length; i++) {
+		var output = '';
+
+		for(var i = 0; i < val.length; i++) {
 			var action = val[i];
 			var type = action['type'];
-			if (type == 'override') {
+
+			if(type === 'override') {
 				output += '<b>' + action['field'] + "</b> -&gt; '" + action['value'] + "'<br>";
 			}
 		}
+
 		return output;
 	},
 
@@ -111,9 +115,7 @@ Ext.define('canopsis.view.Derogation.Grid' , {
 				renderer: rdr_tags
 			}
 		];
+
 		this.callParent();
 	}
-
-
-
 });

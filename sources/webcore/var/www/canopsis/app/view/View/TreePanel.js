@@ -1,5 +1,4 @@
 /*
-#--------------------------------
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
@@ -16,7 +15,6 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
-# ---------------------------------
 */
 Ext.define('canopsis.view.View.TreePanel' , {
 	extend: 'canopsis.lib.view.ctree',
@@ -32,22 +30,27 @@ Ext.define('canopsis.view.View.TreePanel' , {
 	opt_bar_export: true,
 
 	initComponent: function() {
-
-
 		this.columns = [{
 			xtype: 'treecolumn',
 			text: _('Name'),
 			flex: 5,
 			dataIndex: 'crecord_name',
-			renderer: function(value, metaData, record) { return "<span name='view." + record.get('crecord_name') + "'></span>" + value; }
+			renderer: function(value, metaData, record) {
+				void(metaData);
+
+				return "<span name='view." + record.get('crecord_name') + "'></span>" + value;
+			}
 		},{
 			text: _('Export Options'),
 			flex: 1,
 			menuDisabled: true,
 			dataIndex: 'view_options',
-			renderer: function(val,meta,record) {
-				if (val && record.raw && record.raw.crecord_type != 'view_directory')
+			renderer: function(val, metaData, record) {
+				void(metaData);
+
+				if(val && record.raw && record.raw.crecord_type !== 'view_directory') {
 					return val.pageSize + ' - ' + _(val.orientation);
+				}
 			}
 		},{
 			flex: 1,
@@ -97,10 +100,12 @@ Ext.define('canopsis.view.View.TreePanel' , {
 			align: 'center',
 			tooltip: _('Dump'),
 			icon: './themes/canopsis/resources/images/Tango-Blue-Materia/16x16/actions/gtk-indent.png',
-			handler: function(tree, rowIndex, colindex) {
+			handler: function(tree, rowIndex) {
 				var rec = tree.getStore().getAt(rowIndex).raw;
-                if (rec.crecord_type == 'view')
+
+				if(rec.crecord_type === 'view') {
 					tree.fireEvent('getViewFile', rec._id);
+				}
 			}
 		},{
 			xtype: 'actioncolumn',
@@ -109,9 +114,10 @@ Ext.define('canopsis.view.View.TreePanel' , {
 			menuDisabled: true,
 			tooltip: _('URL'),
 			icon: './themes/canopsis/resources/images/icons/page_white_code.png',
-			handler: function(tree, rowIndex, colindex) {
+			handler: function(tree, rowIndex) {
 				var rec = tree.getStore().getAt(rowIndex).raw;
-                if (rec.crecord_type == 'view') {
+
+				if(rec.crecord_type === 'view') {
 					var view = rec._id;
 					var authkey = global.account.authkey;
 					var url = Ext.String.format(
@@ -147,10 +153,13 @@ Ext.define('canopsis.view.View.TreePanel' , {
 								iconCls: 'icon-page-go',
 								height: '100%',
 								margin: 3,
-								handler: function() {window.open(url, '_blank');}
+								handler: function() {
+									window.open(url, '_blank');
+								}
 							}]
 						}]
 					});
+
 					_window.show();
 				}
 			}
@@ -161,15 +170,17 @@ Ext.define('canopsis.view.View.TreePanel' , {
 			align: 'center',
 			tooltip: _('Options'),
 			icon: './themes/canopsis/resources/images/icons/cog.png',
-			handler: function(tree, rowIndex, colindex) {
+			handler: function(tree, rowIndex) {
 				var rec = tree.getStore().getAt(rowIndex).raw;
-                if (rec.crecord_type == 'view')
+
+				if(rec.crecord_type === 'view') {
 					tree.fireEvent('OpenViewOption', rec);
+				}
 
 			}
 		}];
 
-		if (global.reporting == true) {
+		if(global.reporting === true) {
 			this.columns.push({
 				width: 20,
 				renderer: rdr_export_button
@@ -177,18 +188,19 @@ Ext.define('canopsis.view.View.TreePanel' , {
 		}
 
 		this.columns.push({
-				width: 16
-			});
+			width: 16
+		});
 
 		this.callParent(arguments);
 
 		var config = {
-				xtype: 'button',
-				iconCls: 'icon-import',
-				text: _('Import view'),
-				disabled: false,
-				action: 'import'
-			};
+			xtype: 'button',
+			iconCls: 'icon-import',
+			text: _('Import view'),
+			disabled: false,
+			action: 'import'
+		};
+
 		this.dockedToolbar.add(config);
 
 	},
@@ -205,7 +217,7 @@ Ext.define('canopsis.view.View.TreePanel' , {
 				action: 'OpenViewOption'
 			})
 		);
+
 		return item_array;
 	}
-
 });
