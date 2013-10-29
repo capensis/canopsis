@@ -88,7 +88,7 @@ Ext.define('widgets.diagram.diagram' , {
 					return value;
 				}
 			}
-		}
+		};
 
 		if(me.nameInLabelFormatter) {
 			if(this.x) {
@@ -127,7 +127,9 @@ Ext.define('widgets.diagram.diagram' , {
 		log.debug('nodesByID:', this.logAuthor);
 		log.dump(this.nodesByID);
 
-		Ext.Object.each(this.nodesByID, function(id, node, obj) {
+		Ext.Object.each(this.nodesByID, function(id, node) {
+			void(id);
+
 			if(node['type'] && node['type'] === 'COUNTER') {
 				this.haveCounter = true;
 			}
@@ -194,9 +196,6 @@ Ext.define('widgets.diagram.diagram' , {
 				borderWidth: this.borderWidth,
 				backgroundColor: this.backgroundColor,
 				inverted: (this.diagram_type === 'column') ? this.verticalDisplay : false
-			},
-			exporting: {
-				enabled: false
 			},
 			colors: [],
 			plotOptions: {
@@ -451,13 +450,14 @@ Ext.define('widgets.diagram.diagram' , {
 
 			if(data.length === 1 && !this.hide_other_column && this.diagram_type === 'pie') {
 				var other_label = '<b>' + this.other_label + '</b>' + other_unit;
-				var colors = global.curvesCtrl.getRenderColors(this.other_label, 1);
+				var rdr_colors = global.curvesCtrl.getRenderColors(this.other_label, 1);
+				var rdr_color = undefined;
 
 				if(this.gradientColor) {
-					var _color = this.getGradientColor(colors[0]);
+					rdr_color = this.getGradientColor(rdr_colors[0]);
 				}
 				else {
-					var _color = colors[0];
+					rdr_color = rdr_colors[0];
 				}
 
 				serie.data.push({
@@ -465,7 +465,7 @@ Ext.define('widgets.diagram.diagram' , {
 					name: other_label,
 					metric: this.other_label,
 					y: max - value,
-					color: _color
+					color: rdr_color
 				});
 			}
 
@@ -570,6 +570,8 @@ Ext.define('widgets.diagram.diagram' , {
 		if(this['points']) {
 			// Shared
 			$.each(this.points, function(i, point) {
+				void(i);
+
 				s += formatter(point.options, point.y);
 			});
 		}
