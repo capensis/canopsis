@@ -1,0 +1,26 @@
+[{
+	"name":  "EventCalendar",
+	"verions": 0.1,
+	"author": "capensis",
+	"website": "http://www.canopsis.org",
+	"xtype":"eventcalendar",
+	"description": "Event calendar.",
+	"description-fr": "affiche le calendrier des évenements",
+	"refreshInterval": 300,
+	"locales": ["en","fr"],
+
+	"options":[{
+		"title": "Choose Metrics",
+			"items": [
+					{
+						"xtype": "cmetric",
+						"name": "nodes",
+						"multiSelect": true,
+						"metrics": true,
+						"sharedStore":"eventcalendar",
+						"additional_field": [
+							"label","curve_color"
+						]
+					}]
+	}]
+}]

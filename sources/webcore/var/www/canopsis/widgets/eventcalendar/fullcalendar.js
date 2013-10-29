@@ -1,0 +1,1 @@
+fullcalendar/fullcalendar.min.js
