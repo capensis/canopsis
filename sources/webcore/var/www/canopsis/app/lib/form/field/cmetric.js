@@ -69,8 +69,8 @@ Ext.define('canopsis.lib.form.field.cmetric', {
 		this.callParent(arguments);
 
 		if(this.sharedStore) {
-			this.parentWizard = this.findParentByType('cwizard')
-			this.parentWizard.childStores[this.sharedStore] = this.selected_store
+			this.parentWizard = this.findParentByType('cwizard');
+			this.parentWizard.childStores[this.sharedStore] = this.selected_store;
 		}
 	},
 
@@ -147,6 +147,8 @@ Ext.define('canopsis.lib.form.field.cmetric', {
 			tooltip: _('Display internal metrics'),
 			enableToggle: true,
 			toggleHandler: function(button, state) {
+				void(button);
+
 				this.show_internals = state;
 				this.meta_store.getProxy().extraParams.show_internals = this.show_internals;
 				this.meta_store.load();
@@ -220,7 +222,7 @@ Ext.define('canopsis.lib.form.field.cmetric', {
 				tooltip: _('Delete'),
 				icon: './themes/canopsis/resources/images/icons/bin_closed.png',
 				handler: function(view, rowIndex) {
-					var rec = view.getStore().removeAt(rowIndex);
+					view.getStore().removeAt(rowIndex);
 				}
 			},{
 				header: _('Component'),
@@ -293,6 +295,8 @@ Ext.define('canopsis.lib.form.field.cmetric', {
 
 		// Meta inventory
 		this.meta_grid.on('itemdblclick', function(view, record) {
+			void(view);
+
 			this.select_meta(record);
 		}, this);
 
@@ -401,7 +405,6 @@ Ext.define('canopsis.lib.form.field.cmetric', {
 		log.debug('Write values', this.logAuthor);
 
 		var output = [];
-		var nodes = {};
 		var order = 0;
 
 		this.selected_store.each(function(record) {
@@ -413,7 +416,7 @@ Ext.define('canopsis.lib.form.field.cmetric', {
 				data.metrics = [data.me];
 			}
 
-			output.push(data)
+			output.push(data);
 		}, this);
 
 		return output;
