@@ -58,7 +58,6 @@ Ext.define('canopsis.lib.view.cwebsocketWidget', {
 		});
 	},
 
-
     /**
      * Retreives the history
      * @param timestamp from
@@ -67,6 +66,14 @@ Ext.define('canopsis.lib.view.cwebsocketWidget', {
      * @protected
      */
 	getHistory: function(from, to, onSuccess) {
+	},
+
+	/**
+     * Add events to the widget
+     * @param events the list of events to add
+     * @protected
+     */
+	add_events: function(events) {
 	},
 
     /**
@@ -153,5 +160,60 @@ Ext.define('canopsis.lib.view.cwebsocketWidget', {
 		}
 		else
 			return true;
+	},
+
+	/**
+     * event triggered when an event comes from the amqp queue
+     * @param raw event raw JSON
+     * @param rk the routing key of the event
+     */
+
+	on_event: function(raw, rk) {
+
+		var id = this.get_event_id(raw);
+
+		var event = Ext.create('widgets.stream.event', {id: id, raw: raw, stream: this});
+
+		if (event.raw.event_type == 'comment') {
+			var to_event = this.wcontainer.getComponent(this.id + '.' + event.raw.referer);
+			if (to_event) {
+				log.debug('Add comment for ' + event.raw.referer, this.logAuthor);
+				to_event.comment(event);
+			}else {
+				log.debug("Impossible to find event '" + event.raw.referer + "' from container, maybe not displayed ?", this.logAuthor);
+			}
+
+		}else {
+			// Detect Burst or hidden
+			if (this.in_burst() || this.isHidden()) {
+				this.queue.push(event);
+
+				//Clean queue
+				if (this.queue.length > this.max) {
+					var event = this.queue.shift();
+					event.destroy();
+					delete event;
+				}
+			}else {
+				//Display event
+				this.process_queue();
+				this.add_events([event]);
+			}
+
+			this.last_push = new Date().getTime();
+		}
+	},
+
+	/**
+	 * Get the id from a raw event
+	 * @param raw the raw event (json)
+	 * @returns int the id of the event
+	 */
+	get_event_id: function(raw) {
+		var id = undefined;
+		if (raw['_id'])
+			id = raw['_id'];
+
+		return id;
 	}
 });

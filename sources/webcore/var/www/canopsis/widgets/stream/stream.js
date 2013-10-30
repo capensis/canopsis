@@ -30,7 +30,6 @@ Ext.define('widgets.stream.stream' , {
 	extend: 'canopsis.lib.view.cwebsocketWidget',
 
 	alias: 'widget.stream',
-	logAuthor: '[widget][stream]',
 
 	cls: 'widget-stream',
 
@@ -118,7 +117,6 @@ Ext.define('widgets.stream.stream' , {
 				]);
 			}
 
-
 			items = items.concat([
 				'->', {
 						iconCls: 'icon-control-repeat',
@@ -150,6 +148,7 @@ Ext.define('widgets.stream.stream' , {
 		}
 
 		this.callParent(arguments);
+		logAuthor = '[widget][stream]';
 	},
 
 	getHistory: function(from, to, onSuccess) {
@@ -240,73 +239,6 @@ Ext.define('widgets.stream.stream' , {
 		}else {
 			this.burst_counter = 0;
 			return false;
-		}
-	},
-
-	get_event_id: function(raw) {
-		var id = undefined;
-		if (raw['_id'])
-			id = raw['_id'];
-
-		return id;
-	},
-
-	on_event: function(raw, rk) {
-
-		//Only hard state
-		if (raw.state_type == 0 && this.hard_state_only)
-			return;
-
-		// Check tags
-		if (this.tags && raw.tags) {
-			if (this.tags_op) {
-				// AND
-				for (var i = 0; i < this.tags.length; i++)
-					if (! Ext.Array.contains(raw.tags, this.tags[i]))
-						return;
-			}else {
-				// OR
-				var show = false;
-				for (var i = 0; i < this.tags.length; i++)
-					if (Ext.Array.contains(raw.tags, this.tags[i]))
-						show = true;
-
-				if (! show)
-					return;
-			}
-		}
-
-		var id = this.get_event_id(raw);
-
-		var event = Ext.create('widgets.stream.event', {id: id, raw: raw, stream: this});
-
-		if (event.raw.event_type == 'comment') {
-			var to_event = this.wcontainer.getComponent(this.id + '.' + event.raw.referer);
-			if (to_event) {
-				log.debug('Add comment for ' + event.raw.referer, this.logAuthor);
-				to_event.comment(event);
-			}else {
-				log.debug("Impossible to find event '" + event.raw.referer + "' from container, maybe not displayed ?", this.logAuthor);
-			}
-
-		}else {
-			// Detect Burst or hidden
-			if (this.in_burst() || this.isHidden()) {
-				this.queue.push(event);
-
-				//Clean queue
-				if (this.queue.length > this.max) {
-					var event = this.queue.shift();
-					event.destroy();
-					delete event;
-				}
-			}else {
-				//Display event
-				this.process_queue();
-				this.add_events([event]);
-			}
-
-			this.last_push = new Date().getTime();
 		}
 	},
 
