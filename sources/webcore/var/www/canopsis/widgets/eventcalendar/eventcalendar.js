@@ -44,42 +44,36 @@ Ext.define('widgets.eventcalendar.eventcalendar' , {
 	},
 
 	afterRender: function() {
-		$('#' + this.id).fullCalendar({
-			height: this.height,
-			events: this.getEvents()
-		});
-
-		this.initializeStore();
-	},
-
-	initializeStore: function(){
-		this.store = Ext.create('canopsis.store.EventLogs', {
-			model: 'canopsis.model.EventLogs',
-
-			autoLoad: false,
-
-			proxy: {
-				type: 'rest',
-				url: '/event/perftop',
-				extraParams: {
-					'limit': this.limit,
-					'sort': this.sort,
-					'mfilter': this.mfilter,
-					'threshold': this.threshold,
-					'threshold_direction': this.threshold_direction,
-					'expand': this.expand,
-					'percent': this.show_percent,
-					'threshold_on_pct': this.threshold_on_pct,
-					'report': this.reportMode || this.exportMode
-				},
-				reader: {
-					type: 'json',
-					root: 'data',
-					totalProperty: 'total',
-					successProperty: 'success'
+		var calendarRoot = this;
+		$('#' + calendarRoot.id).fullCalendar({
+			height: calendarRoot.height,
+			events: calendarRoot.getEvents(),
+			header: {
+				left: 'prev,next today',
+				center: 'title',
+				right: 'month,agendaWeek,agendaDay'
+			},
+			selectable: true,
+			selectHelper: true,
+			select: function(start, end, allDay) {
+				var title = prompt('Event Title:');
+				if (title) {
+					$('#'+ calendarRoot.id).fullCalendar('renderEvent',
+						{
+							title: title,
+							start: start,
+							end: end,
+							allDay: allDay
+						},
+						true // make the event "stick"
+					);
 				}
+				$('#'+ calendarRoot.id).fullCalendar('unselect');
 			}
 		});
+
+		calendarRoot.add_events([]);
+
 	},
 
 	onResize: function() {
@@ -92,50 +86,21 @@ Ext.define('widgets.eventcalendar.eventcalendar' , {
 		var m = date.getMonth();
 		var y = date.getFullYear();
 
-		return [{
-					title: 'All Day Event',
-					start: new Date(y, m, 1)
-				},
-				{
-					title: 'Long Event',
-					start: new Date(y, m, d-5),
-					end: new Date(y, m, d-2)
-				},
-				{
-					id: 999,
-					title: 'Repeating Event',
-					start: new Date(y, m, d-3, 16, 0),
-					allDay: false
-				},
-				{
-					id: 999,
-					title: 'Repeating Event',
-					start: new Date(y, m, d+4, 16, 0),
-					allDay: false
-				},
-				{
-					title: 'Meeting',
-					start: new Date(y, m, d, 10, 30),
-					allDay: false
-				},
-				{
-					title: 'Lunch',
-					start: new Date(y, m, d, 12, 0),
-					end: new Date(y, m, d, 14, 0),
-					allDay: false
-				},
-				{
-					title: 'Birthday Party',
-					start: new Date(y, m, d+1, 19, 0),
-					end: new Date(y, m, d+1, 22, 30),
-					allDay: false
-				},
-				{
-					title: 'Click for Google',
-					start: new Date(y, m, 28),
-					end: new Date(y, m, 29),
-					url: 'http://google.com/'
-				}];
+		return [];
+	},
+
+	add_events: function(events) {
+		if (events.length >= this.max)
+			this.wcontainer.removeAll(true);
+
+		this.wcontainer.insert(0, events);
+
+		//Remove last components
+		while (this.wcontainer.items.length > this.max) {
+			var item = this.wcontainer.getComponent(this.wcontainer.items.length - 1);
+			this.wcontainer.remove(item.id, true);
+		}
 	}
+
 });
 
