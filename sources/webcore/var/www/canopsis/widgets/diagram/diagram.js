@@ -372,8 +372,8 @@ Ext.define('widgets.diagram.diagram' , {
 					max = 100;
 				}
 
-				if (value > max)
-					max = value;
+				/*if (value > max)
+					max = value;*/
 
 				var metric_name = metric;
 
@@ -429,7 +429,8 @@ Ext.define('widgets.diagram.diagram' , {
 				this.setAxis(serie.data);
 			}
 
-			if(data.length === 1 && !this.hide_other_column && this.diagram_type === 'pie') {
+			if(data.length === 1 && !this.hide_other_column && this.diagram_type === 'pie' && max) {
+
 				var other_label = '<b>' + this.other_label + '</b>' + other_unit;
 				var rdr_colors = global.curvesCtrl.getRenderColors(this.other_label, 1);
 				var rdr_color = undefined;
@@ -448,6 +449,7 @@ Ext.define('widgets.diagram.diagram' , {
 					y: max - value,
 					color: rdr_color
 				});
+				
 			}
 
 			if(serie.data) {
