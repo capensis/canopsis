@@ -147,7 +147,7 @@ Ext.define('widgets.line_graph.line_graph', {
 
 	nbMavEventsDisplayed: 100,
 
-	autoShift: true,
+	autoShift: false,
 	lastShift: undefined,
 
 	initComponent: function() {
@@ -552,6 +552,8 @@ Ext.define('widgets.line_graph.line_graph', {
 	doRefresh: function(from, to) {
 		var now = Ext.Date.now();
 
+
+
 		if(this.chart) {
 
 			if(this.timeNav) {
@@ -631,9 +633,9 @@ Ext.define('widgets.line_graph.line_graph', {
 		if(this.chart) {
 			log.debug('On refresh', this.logAuthor);
 
-			if(this.aggregate_interval > 0) {
+			//if(this.aggregate_interval > 0) {
 				this.clearGraph();
-			}
+			//}
 
 			var toggle_max_percent = false;
 
@@ -1473,5 +1475,20 @@ Ext.define('widgets.line_graph.line_graph', {
 			this.chart.destroy();
 			log.debug(' + Chart Destroyed', this.logAuthor);
 		}
+ 	},
+
+ 	processPostParam: function(post_param) { // patch in waiting that shift method is reused
+ 		if (post_param['from'] && post_param['to']) {
+ 			if(this.timeNav) {
+				var time_limit = (post_param['to'] - this.timeNav_window);
+				post_param['from'] = (post_param['to'] - this.timeNav_window);
+
+				if(post_param['from'] < time_limit) {
+					post_param['from'] = time_limit;
+				}
+			} else {
+ 				post_param['from'] = (post_param['to'] - this.time_window);
+ 			}
+ 		}
  	}
 });

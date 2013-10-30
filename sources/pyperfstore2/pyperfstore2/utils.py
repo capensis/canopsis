@@ -278,7 +278,7 @@ def aggregate(points, start=None, stop=None, max_points=None, interval=None, aty
 	logger.debug("Aggregate %s points (max: %s, interval: %s, method: %s, mode: %s)" % (len(points), max_points, interval, atype, mode))
 
 	if not agfn:
-		if   atype == 'AVERAGE':
+		if   atype == 'AVERAGE' or atype == 'MEAN':
 			agfn = vaverage
 		elif atype == 'FIRST':
 			agfn = get_first_value
