@@ -459,6 +459,11 @@ Ext.define('widgets.line_graph.line_graph', {
 		// Update axis color with curve color
 		for(var id in this.nodesByID) {
 			var node = this.nodesByID[id];
+
+			if(!node.yAxis) {
+				continue;
+			}
+
 			var axis_color = node.curve_color || node.area_color || undefined;
 
 			Ext.merge(this.options.yAxis[node.yAxis], {
