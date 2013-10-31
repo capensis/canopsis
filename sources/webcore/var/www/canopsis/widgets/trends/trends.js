@@ -20,6 +20,8 @@ Ext.define('widgets.trends.trends' , {
 	extend: 'canopsis.lib.view.cperfstoreValueConsumerWidget',
 	alias: 'widget.trends',
 
+	requires: ['canopsis.lib.view.csparkline'],
+
 	wcontainer_layout: 'anchor',
 
 	interval: global.commonTs.hours,
@@ -37,16 +39,16 @@ Ext.define('widgets.trends.trends' , {
 	display_pct: true,
 
 	initComponent: function() {
+		this.callParent(arguments);
+
+		this.logAuthor = '[widgets][trends]';
+
 		log.debug('nodesByID:', this.logAuthor);
 		log.dump(this.nodesByID);
 
 		// Color Scaling
 		var colors = [this.colorLow, this.colorLow, this.colorMid, this.colorHight, this.colorHight];
 		this.colorScale = chroma.scale(colors);
-
-		this.callParent(arguments);
-
-		this.logAuthor = '[widgets][trends]';
 	},
 
 	doRefresh: function(from, to) {
@@ -188,18 +190,49 @@ Ext.define('widgets.trends.trends' , {
 
 			log.debug(" + Text: " + text, this.logAuthor);
 
-			this.wcontainer.add({
+			var item_to_add = {
 				layout: {
 					type: 'hbox'
 				},
 				border: 0,
 				margin: 1,
-				items: [
-					{ border: 0, height: this.item_height, html: node.label, flex:1, bodyStyle: { "line-height": this.item_height + "px" } },
-					{ border: 0, height: this.item_height, html: String(text), bodyStyle: { "line-height": this.item_height + "px", "text-align": "right", "padding-right": "3px"}},
-					row
-				]
+				items: [{
+					border: 0,
+					height: this.item_height,
+					html: node.label,
+					flex: 1,
+					bodyStyle: {
+						"line-height": this.item_height + "px"
+					}
+				}]
+			};
+
+			if(node.show_sparkline) {
+				item_to_add.items.push({
+					xtype: 'csparkline',
+					values: Ext.clone(values),
+					node: Ext.clone(node),
+					info: Ext.clone(data[i]),
+					flex: 3,
+					chart_type: node.chart_type,
+					height: this.item_height,
+					border: false
+				});
+			}
+
+			item_to_add.items.push({
+				border: 0,
+				height: this.item_height,
+				html: String(text),
+				bodyStyle: {
+					"line-height": this.item_height + "px",
+					"text-align": "right",
+					"padding-right": "3px"
+				}
 			});
+
+			item_to_add.items.push(row);
+			this.wcontainer.add(item_to_add);
 		}
 	},
 

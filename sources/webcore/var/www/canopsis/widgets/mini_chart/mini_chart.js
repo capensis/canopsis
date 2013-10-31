@@ -33,19 +33,21 @@
 
 */
 
-Ext.define('widgets.mini_chart.mini_chart' , {
+Ext.define('widgets.mini_chart.mini_chart', {
 	extend: 'canopsis.lib.view.cperfstoreValueConsumerWidget',
 
 	alias: 'widget.mini_chart',
-	requires: [ 'canopsis.lib.view.csparkline' ] ,
+	requires: [ 'canopsis.lib.view.csparkline' ],
 	wcontainer_layout: {
 		type: 'vbox',
 		align: 'center'
 	},
 
-	logAuthor: '[mini_chart]',
-
 	initComponent: function() {
+		this.callParent(arguments);
+
+		this.logAuthor = '[widgets][mini_chart]';
+
 		log.debug('initComponent', this.logAuthor);
 		log.debug('nodesByID:', this.logAuthor);
 
@@ -60,7 +62,6 @@ Ext.define('widgets.mini_chart.mini_chart' , {
 
 		this.series = {};
 		this.charts = {};
-		this.callParent(arguments);
 	},
 
 	doRefresh: function (from, to) {
