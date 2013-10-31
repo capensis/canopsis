@@ -19,8 +19,7 @@
 # ---------------------------------
 import logging
 logger = logging.getLogger('utils')
-
-#logger.setLevel(logging.DEBUG)
+logger.setLevel(logging.DEBUG)
 
 import zlib
 import time
@@ -254,7 +253,6 @@ def getTimeSteps(start, stop, interval):
 
 def aggregate(points, start=None, stop=None, max_points=None, interval=None, atype='AVERAGE', agfn=None, mode=None, fill=False):
 
-	
 	if not atype:
 		return points
 
@@ -372,7 +370,8 @@ def aggregate(points, start=None, stop=None, max_points=None, interval=None, aty
 				logger.debug("     + %s points" % (len(points_to_aggregate)))
 				
 				agvalue = round(agfn(points_to_aggregate),2)
-				point = [timestamp, agvalue]
+
+				point = [next_timestamp, agvalue]
 				
 				logger.debug("       + Ag Point: %s" % point)
 				
@@ -384,7 +383,10 @@ def aggregate(points, start=None, stop=None, max_points=None, interval=None, aty
 			else:
 				logger.debug("       + No points")
 				if fill:
-					rpoints.append([timestamp, 0])
+
+					point = [next_timestamp, 0]
+
+					rpoints.append(point)
 				
 				points_to_aggregate = []
 		
