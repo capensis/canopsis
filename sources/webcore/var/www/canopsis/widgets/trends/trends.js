@@ -18,10 +18,7 @@
 */
 Ext.define('widgets.trends.trends' , {
 	extend: 'canopsis.lib.view.cperfstoreValueConsumerWidget',
-
 	alias: 'widget.trends',
-
-	logAuthor: '[trends]',
 
 	wcontainer_layout: 'anchor',
 
@@ -48,6 +45,8 @@ Ext.define('widgets.trends.trends' , {
 		this.colorScale = chroma.scale(colors);
 
 		this.callParent(arguments);
+
+		this.logAuthor = '[widgets][trends]';
 	},
 
 	doRefresh: function(from, to) {
@@ -82,7 +81,7 @@ Ext.define('widgets.trends.trends' , {
 			var y = [];
 
 			for(var j = 0; j < values.length; j++) {
-				if(values[j] !== null && values[j][0] !== null && values[j][1] !== null) {
+				if(values[j] && values[j][0] && values[j][1]) {
 					x.push(values[j][0]);
 					y.push(values[j][1]);
 				}

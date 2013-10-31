@@ -20,8 +20,6 @@ Ext.define('widgets.diagram.diagram' , {
 	extend: 'canopsis.lib.view.cperfstoreValueConsumerWidget',
 	alias: 'widget.diagram',
 
-	logAuthor: '[diagram]',
-
 	options: {},
 	chartTitle: null,
 	chart: undefined,
@@ -146,6 +144,8 @@ Ext.define('widgets.diagram.diagram' , {
 		}
 
 		this.callParent(arguments);
+
+		this.logAuthor = '[widgets][diagram]';
 	},
 
 	afterContainerRender: function() {
@@ -539,10 +539,8 @@ Ext.define('widgets.diagram.diagram' , {
 			if(me.humanReadable) {
 				value = rdr_humanreadable_value(value, options.bunit);
 			}
-			else {
-				if (options.bunit !== undefined) {
-					value = value + ' ' + options.bunit;
-				}
+			else if (options.bunit) {
+				value = value + ' ' + options.bunit;
 			}
 
 			return '<b>' + options.metric + '</b>: ' + value;
