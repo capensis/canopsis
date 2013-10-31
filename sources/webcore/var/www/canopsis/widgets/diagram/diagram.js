@@ -81,7 +81,7 @@ Ext.define('widgets.diagram.diagram' , {
 				return rdr_humanreadable_value(value, unit);
 			}
 			else {
-				if (unit !== undefined) {
+				if(unit) {
 					return value + ' ' + unit;
 				}
 				else {
@@ -586,10 +586,8 @@ Ext.define('widgets.diagram.diagram' , {
 			if(me.humanReadable) {
 				return rdr_humanreadable_value(this.value, bunit);
 			}
-			else {
-				if(bunit !== undefined) {
-					return this.value + ' ' + bunit;
-				}
+			else if(bunit) {
+				return this.value + ' ' + bunit;
 			}
 		}
 

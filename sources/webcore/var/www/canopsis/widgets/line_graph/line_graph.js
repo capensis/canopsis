@@ -468,7 +468,7 @@ Ext.define('widgets.line_graph.line_graph', {
 				return rdr_humanreadable_value(this.value, bunit);
 			}
 			else {
-				if(bunit !== undefined) {
+				if(bunit) {
 					return this.value + ' ' + bunit;
 				}
 				else {
@@ -502,7 +502,7 @@ Ext.define('widgets.line_graph.line_graph', {
 				if(me.humanReadable) {
 					value = rdr_humanreadable_value(value, options.bunit);
 				}
-				else if(options.bunit !== undefined) {
+				else if(options.bunit) {
 					value = value + ' ' + options.bunit;
 				}
 

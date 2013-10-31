@@ -109,7 +109,7 @@ Ext.define('widgets.trends.trends' , {
 					hdelta = rdr_humanreadable_value(delta, bunit);
 				}
 				else {
-					if(bunit !== undefined) {
+					if(bunit) {
 						hdelta = delta + ' ' + bunit;
 					}
 					else {
