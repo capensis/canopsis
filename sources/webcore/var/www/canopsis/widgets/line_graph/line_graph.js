@@ -74,8 +74,6 @@ Ext.define('widgets.line_graph.line_graph', {
 	first: false,
 	pushPoints: false,
 
-	logAuthor: '[line_graph]',
-
 	options: {},
 	chart: false,
 
@@ -151,6 +149,10 @@ Ext.define('widgets.line_graph.line_graph', {
 	lastShift: undefined,
 
 	initComponent: function() {
+		this.callParent(arguments);
+
+		this.logAuthor = '[widgets][line_graph]';
+
 		this.backgroundColor        = check_color(this.backgroundColor);
 		this.borderColor            = check_color(this.borderColor);
 		this.legend_fontColor       = check_color(this.legend_fontColor);
@@ -196,7 +198,6 @@ Ext.define('widgets.line_graph.line_graph', {
 			}, this);
 		}
 
-
 		log.debug('nodesByID:', this.logAuthor);
 		log.dump(this.nodesByID);
 		log.debug('same_node: ' + this.same_node, this.logAuthor);
@@ -214,8 +215,6 @@ Ext.define('widgets.line_graph.line_graph', {
 			this.chartTitle = this.title;
 			this.title = '';
 		}
-
-		this.callParent(arguments);
 	},
 
 	afterContainerRender: function() {
@@ -456,6 +455,25 @@ Ext.define('widgets.line_graph.line_graph', {
 			this.options.xAxis['min'] = now - (this.time_window * 1000);
 			this.options.xAxis['max'] = now;
 		}
+
+		// Update axis color with curve color
+		for(var id in this.nodesByID) {
+			var node = this.nodesByID[id];
+			var axis_color = node.curve_color || node.area_color || undefined;
+
+			Ext.merge(this.options.yAxis[node.yAxis], {
+				labels: {
+					style: {
+						color: axis_color
+					}
+				},
+				title: {
+					style: {
+						color: axis_color
+					}
+				}
+			});
+		}
 	},
 
 	y_formatter: function() {
@@ -552,8 +570,6 @@ Ext.define('widgets.line_graph.line_graph', {
 	doRefresh: function(from, to) {
 		var now = Ext.Date.now();
 
-
-
 		if(this.chart) {
 
 			if(this.timeNav) {
@@ -633,9 +649,7 @@ Ext.define('widgets.line_graph.line_graph', {
 		if(this.chart) {
 			log.debug('On refresh', this.logAuthor);
 
-			//if(this.aggregate_interval > 0) {
-				this.clearGraph();
-			//}
+			this.clearGraph();
 
 			var toggle_max_percent = false;
 
@@ -1486,7 +1500,8 @@ Ext.define('widgets.line_graph.line_graph', {
 				if(post_param['from'] < time_limit) {
 					post_param['from'] = time_limit;
 				}
-			} else {
+			}
+			else {
  				post_param['from'] = (post_param['to'] - this.time_window);
  			}
  		}
