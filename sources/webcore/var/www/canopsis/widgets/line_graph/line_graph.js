@@ -468,6 +468,7 @@ Ext.define('widgets.line_graph.line_graph', {
 					}
 				},
 				title: {
+					text: (!this.options.legend.enabled ? node.label : null),
 					style: {
 						color: axis_color
 					}
