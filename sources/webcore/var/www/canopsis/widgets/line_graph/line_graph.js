@@ -121,6 +121,7 @@ Ext.define('widgets.line_graph.line_graph', {
 	aggregate_method: 'MAX',
 	aggregate_interval: 0,
 	aggregate_max_points: 500,
+	aggregate_round_time: true,
 
 	SeriesType: 'area',
 
