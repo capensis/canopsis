@@ -48,6 +48,16 @@ groups =  {
 }
 
 def init():
+	base_init()
+	update_for_new_rights()
+
+def update():
+	base_init()
+	check_user_canopsis_groups()
+	check_and_create_authkey()
+	add_description_to_group()
+
+def base_init():
 	storage = get_storage(account=root, namespace='object')
 	
 	# (0'login', 1'pass', 2'group', 3'lastname', 4'firstname', 5'groups' ,6'email')
@@ -124,13 +134,6 @@ def init():
 			storage.put(rootdir)
 			storage.put(userdir)
 
-
-def update():
-	init()
-	check_user_canopsis_groups()
-	check_and_create_authkey()
-	update_for_new_rights()
-	add_description_to_group()
 
 #add CPS_view to canopsis if needed
 def check_user_canopsis_groups() :

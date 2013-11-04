@@ -69,11 +69,11 @@ Ext.define('widgets.gauge.gauge' , {
 
 		var renderer = function(val) {
 			if(me.humanReadable) {
-				return rdr_humanreadable_value(val, this.symbol);
+				return rdr_humanreadable_value(val, me.symbol);
 			}
 			else {
-				if(this.symbol !== undefined) {
-					return val + ' ' + this.symbol;
+				if(me.symbol) {
+					return val + ' ' + me.symbol;
 				}
 				else {
 					return val;
