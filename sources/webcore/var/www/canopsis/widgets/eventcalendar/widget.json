@@ -13,14 +13,31 @@
 		"title": "Choose Metrics",
 			"items": [
 					{
-						"xtype": "cmetric",
-						"name": "nodes",
+						"xtype": "cfilter",
+						"name": "filter",
 						"multiSelect": true,
 						"metrics": true,
 						"sharedStore":"eventcalendar",
 						"additional_field": [
 							"label","curve_color"
 						]
+					}]
+	},{
+		"title": "Options",
+			"items": [
+					{"xtype": "cfieldset",
+					"title": "Options",
+					"items": [
+						{
+							"xtype" : "checkboxfield",
+							"name" : "editable",
+							"fieldLabel": "Editable"
+					   },{
+							"xtype" : "textfield",
+							"name" : "tags",
+							"fieldLabel": "Tags (separated by space)",
+							"allowBlank": true
+					   }]
 					}]
 	}]
 }]

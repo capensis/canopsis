@@ -18,12 +18,17 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 */
+
+Ext.require('widgets.eventcalendar.editwindow');
+
 Ext.define('widgets.eventcalendar.eventcalendar' , {
 	extend: 'canopsis.lib.view.cwebsocketWidget',
 
 	alias: 'widget.eventcalendar',
-
 	logAuthor: '[eventcalendar]',
+
+	tags: '',
+	editable: true,
 
 	initComponent: function() {
 		// var url = "widgets/eventcalendar/fullcalendar.js";
@@ -41,39 +46,49 @@ Ext.define('widgets.eventcalendar.eventcalendar' , {
 
 		this.callParent(arguments);
 
+		this.editwindow = Ext.create("widgets.eventcalendar.editwindow",
+			{
+				calendar: this
+			});
 	},
 
 	afterRender: function() {
 		var calendarRoot = this;
+
+
+
 		$('#' + calendarRoot.id).fullCalendar({
 			height: calendarRoot.height,
 			events: calendarRoot.getEvents(),
+			eventSources: [
+        		this.computeUrl()
+        	],
 			header: {
 				left: 'prev,next today',
 				center: 'title',
 				right: 'month,agendaWeek,agendaDay'
 			},
-			selectable: true,
-			selectHelper: true,
+			selectable: calendarRoot.editable,
+			selectHelper: calendarRoot.editable,
+			editable: calendarRoot.editable,
 			select: function(start, end, allDay) {
-				var title = prompt('Event Title:');
-				if (title) {
-					$('#'+ calendarRoot.id).fullCalendar('renderEvent',
-						{
-							title: title,
-							start: start,
-							end: end,
-							allDay: allDay
-						},
-						true // make the event "stick"
-					);
-				}
-				$('#'+ calendarRoot.id).fullCalendar('unselect');
-			}
-		});
+				console.log("select");
+				console.log(start);
+				console.log(end);
+				calendarRoot.editwindow.showNewEvent(start, end, allDay);
+			},
+			// eventDrop: function() {
+			// }
+			eventClick: function(calEvent, jsEvent, view) {
+				console.log("Click");
+				console.log(calEvent);
+		        $(this).css('border-color', 'red');
+				calendarRoot.editwindow.showEditEvent(calEvent);
+
+    		}
+		}).limitEvents(3);
 
 		calendarRoot.add_events([]);
-
 	},
 
 	onResize: function() {
@@ -90,17 +105,43 @@ Ext.define('widgets.eventcalendar.eventcalendar' , {
 	},
 
 	add_events: function(events) {
-		if (events.length >= this.max)
-			this.wcontainer.removeAll(true);
+		var calendarRoot = this;
 
-		this.wcontainer.insert(0, events);
+		for (var i = events.length - 1; i >= 0; i--) {
+			$('#'+ calendarRoot.id).fullCalendar('renderEvent',
+				{
+					title: events[i].title,
+					start: events[i].start,
+					end: events[i].end,
+					allDay: events[i].allDay
+				},
+				true // make the event "stick"
+			);
+		};
+	},
 
-		//Remove last components
-		while (this.wcontainer.items.length > this.max) {
-			var item = this.wcontainer.getComponent(this.wcontainer.items.length - 1);
-			this.wcontainer.remove(item.id, true);
+	computeUrl: function(from, to){
+		var url = "/rest/events/event?_dc=1383151536066&filter=";
+
+		var query = {
+						"$and": [
+        					{ "timestamp": { "$gt": "!start!" } },
+        					{ "timestamp": { "$lt": "!end!" } }
+    					]
+		};
+
+		if(this.tags && this.tags != "")
+		{
+			console.log("tags found");
+			tagQueryPart = {"tags" : this.tags}
+			query["$and"].push(tagQueryPart);
 		}
+		else
+			console.log("no tags found");
+
+
+		url += JSON.stringify(query);
+
+		return encodeURI(url);
 	}
-
 });
-
