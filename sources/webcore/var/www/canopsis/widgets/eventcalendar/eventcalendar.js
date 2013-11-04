@@ -50,19 +50,22 @@ Ext.define('widgets.eventcalendar.eventcalendar' , {
 			{
 				calendar: this
 			});
+
+		this.eventswindow = Ext.create("widgets.eventcalendar.eventswindow",
+			{
+				calendar: this
+			});
 	},
 
 	afterRender: function() {
 		var calendarRoot = this;
 
-
-
 		$('#' + calendarRoot.id).fullCalendar({
 			height: calendarRoot.height,
 			events: calendarRoot.getEvents(),
 			eventSources: [
-        		this.computeUrl()
-        	],
+				this.computeUrl()
+			],
 			header: {
 				left: 'prev,next today',
 				center: 'title',
@@ -82,10 +85,17 @@ Ext.define('widgets.eventcalendar.eventcalendar' , {
 			eventClick: function(calEvent, jsEvent, view) {
 				console.log("Click");
 				console.log(calEvent);
-		        $(this).css('border-color', 'red');
-				calendarRoot.editwindow.showEditEvent(calEvent);
+				if(calEvent.type && calEvent.type === "non-calendar")
+				{
+					calendarRoot.eventswindow.showEvents(calEvent);
+				}
+				else
+				{
+					$(this).css('border-color', 'red');
+					calendarRoot.editwindow.showEditEvent(calEvent);
+				}
 
-    		}
+			}
 		}).limitEvents(3);
 
 		calendarRoot.add_events([]);
@@ -125,9 +135,9 @@ Ext.define('widgets.eventcalendar.eventcalendar' , {
 
 		var query = {
 						"$and": [
-        					{ "timestamp": { "$gt": "!start!" } },
-        					{ "timestamp": { "$lt": "!end!" } }
-    					]
+							{ "timestamp": { "$gt": "!start!" } },
+							{ "timestamp": { "$lt": "!end!" } }
+						]
 		};
 
 		if(this.tags && this.tags != "")
