@@ -85,7 +85,38 @@ Ext.define('canopsis.lib.form.field.cmetric', {
 			{name: 're', defaultValue: undefined},
 			{name: 'me'},
 			{name: 't'},
-			{name: 'u'}
+			{name: 'u'},
+
+			// optional configuration for customize metrics tab in widget's wizard
+
+			{name: 'label', defaultValue: undefined},
+			{name: 'curve_color', defaultValue: undefined},
+
+			// widget: bar_graph
+			{name: 'trend', defaultValue: undefined},
+
+			// widget: diagram
+			{name: 'category', defaultValue: undefined},
+
+			// widget: gauge
+			{name: 'mi', defaultValue: undefined},
+			{name: 'tw', defaultValue: undefined},
+			{name: 'tc', defaultValue: undefined},
+			{name: 'ma', defaultValue: undefined},
+
+			// widget: line_graph
+			{name: 'curve_type', defaultValue: undefined},
+			{name: 'area_color', defaultValue: undefined},
+			{name: 'trend_curve', defaultValue: undefined},
+			{name: 'yAxis', defaultValue: undefined},
+
+			// widget: mini_chart
+			{name: 'printed_value', defaultValue: undefined},
+			{name: 'display_pct', defaultValue: undefined},
+
+			// widget: trends
+			{name: 'show_sparkline', defaultValue: undefined},
+			{name: 'chart_type', defaultValue: undefined}
 		];
 
 

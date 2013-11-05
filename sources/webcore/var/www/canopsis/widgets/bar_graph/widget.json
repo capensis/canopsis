@@ -347,7 +347,8 @@
 									"xtype":"checkbox",
 									"text":"Trend",
 									"fieldLabel":"Trend",
-									"checked":true
+									"checked":true,
+									"name":"trend"
 								}]
 				}]
 	}]
