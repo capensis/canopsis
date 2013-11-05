@@ -139,15 +139,37 @@ Ext.define('widgets.diagram.diagram', {
 				this.haveCounter = true;
 			}
 
-			if(node.category && Ext.Array.indexOf(this.categories, node.category) === -1) {
-				this.categories.push(node.category);
-			}
+			// initialize categories
+			if(node.category) {
+				if(Ext.Array.indexOf(this.categories, node.category) === -1) {
+					this.categories.push(node.category);
+				}
 
-			this.nodesByMetricAndCategory[id] = {
-				category: node.category,
-				metric: node.label
-			};
+				this.nodesByMetricAndCategory[id] = {
+					category: node.category,
+					metric: node.label
+				};
+			}
 		}, this);
+
+		// at least one metric is categorized
+		if(this.categories.length > 0) {
+			// put all other metrics in default category
+			Ext.Object.each(this.nodesByID, function(id, node) {
+				if(!node.category) {
+					node.category = 'unaffected';
+
+					if(Ext.Array.indexOf(this.categories, node.category) === -1) {
+						this.categories.push(node.category);
+					}
+
+					this.nodesByMetricAndCategory[id] = {
+						category: node.category,
+						metric: node.label
+					};
+				}
+			}, this);
+		}
 
 		//Set title
 		if(this.autoTitle) {
