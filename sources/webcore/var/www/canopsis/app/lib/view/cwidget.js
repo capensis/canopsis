@@ -60,11 +60,21 @@ Ext.define('canopsis.lib.view.cwidget' , {
 	active: false,
 
 	initComponent: function() {
+		this.callParent(arguments);
+
 		this.active = true;
 
-		this.logAuthor = '[' + this.id + ']';
+		if(!this.logAuthor) {
+			this.logAuthor = '[widgets][' + this.xtype + ']';
+		}
 
-		log.debug('InitComponent ' + this.id + ' (reportMode: ' + this.reportMode + ', exportMode: ' + this.exportMode + ')', this.logAuthor);
+		log.debug('Initialize component:', this.logAuthor);
+		log.dump({
+			id: this.id,
+			type: this.xtype,
+			reportMode: this.reportMode,
+			exportMode: this.exportMode
+		});
 
 		if(this.title === '') {
 			this.title = false;
@@ -79,7 +89,7 @@ Ext.define('canopsis.lib.view.cwidget' , {
 			autoScroll: this.wcontainer_autoScroll
 		});
 
-		this.items = this.wcontainer;
+		this.items.add(this.wcontainer);
 
 		this.wcontainer.on('afterrender', function() {
 			log.debug('SetHeight of wcontainer', this.logAuthor);
@@ -87,8 +97,6 @@ Ext.define('canopsis.lib.view.cwidget' , {
 
 			this.afterContainerRender();
 		}, this);
-
-		this.callParent(arguments);
 
 		if(this.reportMode) {
 			this.refreshInterval = false;
