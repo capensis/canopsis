@@ -64,7 +64,8 @@ Ext.define('widgets.eventcalendar.eventcalendar' , {
 			height: calendarRoot.height,
 			events: calendarRoot.getEvents(),
 			eventSources: [
-				this.computeUrl()
+				this.computeTagsUrl(),
+				this.computeIcsUrl()
 			],
 			header: {
 				left: 'prev,next today',
@@ -87,7 +88,7 @@ Ext.define('widgets.eventcalendar.eventcalendar' , {
 				console.log(calEvent);
 				if(calEvent.type && calEvent.type === "non-calendar")
 				{
-					calendarRoot.eventswindow.showEvents(calEvent);
+					calendarRoot.eventswindow.showEvents(calEvent, calendarRoot.tags);
 				}
 				else
 				{
@@ -130,28 +131,60 @@ Ext.define('widgets.eventcalendar.eventcalendar' , {
 		};
 	},
 
-	computeUrl: function(from, to){
-		var url = "/rest/events/event?_dc=1383151536066&filter=";
+	computeTagsUrl: function(from, to){
+		//TODO limit should be dynamic
+		//TODO manage several tags
+		if(this.tags && this.tags != "")
+		{
+			var url = "/rest/events/event?_dc=1383151536066&limit=2000&filter=";
 
-		var query = {
+			var query = {
 						"$and": [
 							{ "timestamp": { "$gt": "!start!" } },
 							{ "timestamp": { "$lt": "!end!" } }
 						]
-		};
+			};
 
-		if(this.tags && this.tags != "")
-		{
 			console.log("tags found");
 			tagQueryPart = {"tags" : this.tags}
 			query["$and"].push(tagQueryPart);
+
+			url += JSON.stringify(query);
+
+			return encodeURI(url);
 		}
 		else
 			console.log("no tags found");
+	},
 
+	computeIcsUrl: function(from, to){
+		//TODO limit should be dynamic
+		//TODO manage several sources
+		if(this.ics_sources && this.ics_sources != "")
+		{
+			var url = "/rest/events/event?_dc=1383151536066&limit=2000&filter=";
 
-		url += JSON.stringify(query);
+			var query = {
+						"$and": [
+							{ "timestamp": { "$gt": "!start!" } },
+							{ "timestamp": { "$lt": "!end!" } }
+						]
+			};
 
-		return encodeURI(url);
+			console.log("ics sources found");
+			eventTypeQueryPart = {"event_type" : "calendar"}
+			// icsSourcesQueryPart = {"event_type" : "calendar"}
+			query["$and"].push(eventTypeQueryPart);
+			// query["$and"].push(icsSourcesQueryPart);
+
+			url += JSON.stringify(query);
+
+			console.log("sources url");
+			console.log(url);
+			return encodeURI(url);
+		}
+		else
+			console.log("no ics sources found");
+
 	}
 });
