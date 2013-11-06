@@ -37,6 +37,11 @@
 							"name" : "tags",
 							"fieldLabel": "Tags (separated by space)",
 							"allowBlank": true
+					   },{
+							"xtype" : "textfield",
+							"name" : "ics_sources",
+							"fieldLabel": "ics_sources",
+							"allowBlank": true
 					   }]
 					}]
 	}]
