@@ -258,7 +258,7 @@ class engine(cengine):
 		self.logger.debug('%i configuration unloaded' % len(records))
 
 	def get_math_function(self, name):
-		if name == 'average':
+		if name == 'average' or name == 'mean':
 			return lambda x: sum(x) / len(x)
 		elif name == 'min' :
 			return lambda x: min(x)

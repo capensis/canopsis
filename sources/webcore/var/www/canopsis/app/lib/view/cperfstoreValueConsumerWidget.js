@@ -153,6 +153,10 @@ Ext.define('canopsis.lib.view.cperfstoreValueConsumerWidget', {
 			post_params['aggregate_max_points'] = this.aggregate_max_points;
 		}
 
+		if(this.aggregate_round_time!==undefined) {
+			post_params['aggregate_round_time'] = this.aggregate_round_time;
+		}
+
 		if(this.consolidation_method) {
 			post_params['consolidation_method'] = this.consolidation_method;
 		}

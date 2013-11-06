@@ -74,8 +74,6 @@ Ext.define('widgets.line_graph.line_graph', {
 	first: false,
 	pushPoints: false,
 
-	logAuthor: '[line_graph]',
-
 	options: {},
 	chart: false,
 
@@ -123,6 +121,7 @@ Ext.define('widgets.line_graph.line_graph', {
 	aggregate_method: 'MAX',
 	aggregate_interval: 0,
 	aggregate_max_points: 500,
+	aggregate_round_time: true,
 
 	SeriesType: 'area',
 
@@ -147,10 +146,14 @@ Ext.define('widgets.line_graph.line_graph', {
 
 	nbMavEventsDisplayed: 100,
 
-	autoShift: true,
+	autoShift: false,
 	lastShift: undefined,
 
 	initComponent: function() {
+		this.callParent(arguments);
+
+		this.logAuthor = '[widgets][line_graph]';
+
 		this.backgroundColor        = check_color(this.backgroundColor);
 		this.borderColor            = check_color(this.borderColor);
 		this.legend_fontColor       = check_color(this.legend_fontColor);
@@ -196,7 +199,6 @@ Ext.define('widgets.line_graph.line_graph', {
 			}, this);
 		}
 
-
 		log.debug('nodesByID:', this.logAuthor);
 		log.dump(this.nodesByID);
 		log.debug('same_node: ' + this.same_node, this.logAuthor);
@@ -214,8 +216,6 @@ Ext.define('widgets.line_graph.line_graph', {
 			this.chartTitle = this.title;
 			this.title = '';
 		}
-
-		this.callParent(arguments);
 	},
 
 	afterContainerRender: function() {
@@ -456,6 +456,31 @@ Ext.define('widgets.line_graph.line_graph', {
 			this.options.xAxis['min'] = now - (this.time_window * 1000);
 			this.options.xAxis['max'] = now;
 		}
+
+		// Update axis color with curve color
+		for(var id in this.nodesByID) {
+			var node = this.nodesByID[id];
+
+			if(!node.yAxis) {
+				continue;
+			}
+
+			var axis_color = node.curve_color || node.area_color || undefined;
+
+			Ext.merge(this.options.yAxis[node.yAxis], {
+				labels: {
+					style: {
+						color: axis_color
+					}
+				},
+				title: {
+					text: (!this.options.legend.enabled ? node.label : null),
+					style: {
+						color: axis_color
+					}
+				}
+			});
+		}
 	},
 
 	y_formatter: function() {
@@ -468,7 +493,7 @@ Ext.define('widgets.line_graph.line_graph', {
 				return rdr_humanreadable_value(this.value, bunit);
 			}
 			else {
-				if(bunit !== undefined) {
+				if(bunit) {
 					return this.value + ' ' + bunit;
 				}
 				else {
@@ -502,7 +527,7 @@ Ext.define('widgets.line_graph.line_graph', {
 				if(me.humanReadable) {
 					value = rdr_humanreadable_value(value, options.bunit);
 				}
-				else if(options.bunit !== undefined) {
+				else if(options.bunit) {
 					value = value + ' ' + options.bunit;
 				}
 
@@ -631,9 +656,7 @@ Ext.define('widgets.line_graph.line_graph', {
 		if(this.chart) {
 			log.debug('On refresh', this.logAuthor);
 
-			if(this.aggregate_interval > 0) {
-				this.clearGraph();
-			}
+			this.clearGraph();
 
 			var toggle_max_percent = false;
 
@@ -1473,5 +1496,21 @@ Ext.define('widgets.line_graph.line_graph', {
 			this.chart.destroy();
 			log.debug(' + Chart Destroyed', this.logAuthor);
 		}
+ 	},
+
+ 	processPostParam: function(post_param) { // patch in waiting that shift method is reused
+ 		if (post_param['from'] && post_param['to']) {
+ 			if(this.timeNav) {
+				var time_limit = (post_param['to'] - this.timeNav_window);
+				post_param['from'] = (post_param['to'] - this.timeNav_window);
+
+				if(post_param['from'] < time_limit) {
+					post_param['from'] = time_limit;
+				}
+			}
+			else {
+ 				post_param['from'] = (post_param['to'] - this.time_window);
+ 			}
+ 		}
  	}
 });

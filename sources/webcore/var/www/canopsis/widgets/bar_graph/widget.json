@@ -146,7 +146,7 @@
 								"queryMode": "local",
 								"displayField": "text",
 								"valueField": "value",
-								"value": "MEAN",
+								"value": "AVERAGE",
 								"store": {
 									"xtype": "store",
 									"fields": ["value", "text"],
@@ -157,7 +157,7 @@
 										{"value": "LAST", "text": "Last"},
 										{"value": "FIRST", "text": "First"},
 										{"value": "DELTA", "text": "Delta"},
-										{"value": "MEAN", "text": "Mean"},
+										{"value": "AVERAGE", "text": "Average"},
 										{"value": "SUM", "text": "Sum"}
 									]
 								}
@@ -189,7 +189,12 @@
 										{"value": 31557600, "text": "1 year"}
 									]
 								}
-							}
+							}, {
+								"xtype": "checkbox",
+								"name": "aggregate_round_time",
+								"fieldLabel": "Round time (if interval)",
+								"checked": true
+							}							
 						]
 					}]
 		},{
@@ -342,7 +347,8 @@
 									"xtype":"checkbox",
 									"text":"Trend",
 									"fieldLabel":"Trend",
-									"checked":true
+									"checked":true,
+									"name":"trend"
 								}]
 				}]
 	}]

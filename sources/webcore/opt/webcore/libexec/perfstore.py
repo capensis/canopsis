@@ -82,6 +82,7 @@ def perfstore_nodes_get_values(start=None, stop=None):
 	aggregate_method			= request.params.get('aggregate_method',	default=pyperfstore_aggregate_method)
 	aggregate_interval			= request.params.get('aggregate_interval', default=None)
 	aggregate_max_points		= request.params.get('aggregate_max_points', default=pyperfstore_aggregate_maxpoints)
+	aggregate_round_time         = request.params.get('aggregate_round_time', default=True)
 	consolidation_method 		= request.params.get('consolidation_method', default=None)
 
 	output = []
@@ -104,6 +105,7 @@ def perfstore_nodes_get_values(start=None, stop=None):
 	logger.debug(" + aggregate_method: %s" % aggregate_method)
 	logger.debug(" + aggregate_interval: %s" % aggregate_interval)
 	logger.debug(" + aggregate_max_points: %s" % aggregate_max_points)
+	logger.debug(" + aggregate_round_time: %s" % aggregate_round_time)
 
 	output = []
 
@@ -120,7 +122,8 @@ def perfstore_nodes_get_values(start=None, stop=None):
 											aggregate_method=aggregate_method,
 											aggregate_interval=aggregate_interval,
 											aggregate_max_points=aggregate_max_points,
-											aggregate_timemodulation=aggregate_timemodulation)											
+											aggregate_timemodulation=aggregate_timemodulation,
+											aggregate_round_time=aggregate_round_time)
 
 	if consolidation_method and len(output) != 0:
 		##select right function
@@ -516,7 +519,7 @@ def perfstore_perftop(start=None, stop=None):
 # Functions
 ########################################################################
 
-def perfstore_get_values(_id, start=None, stop=None, aggregate_method=pyperfstore_aggregate_method, aggregate_interval=None, aggregate_max_points=pyperfstore_aggregate_maxpoints, aggregate_timemodulation=True):
+def perfstore_get_values(_id, start=None, stop=None, aggregate_method=pyperfstore_aggregate_method, aggregate_interval=None, aggregate_max_points=pyperfstore_aggregate_maxpoints, aggregate_timemodulation=True, aggregate_round_time=True):
 	
 	if start and not stop:
 		stop = start
@@ -541,6 +544,7 @@ def perfstore_get_values(_id, start=None, stop=None, aggregate_method=pyperfstor
 	logger.debug('Aggregate:')
 	logger.debug(' + method :     %s' % aggregate_method)
 	logger.debug(' + interval :   %s' % aggregate_interval)
+	logger.debug(' + round time : %s' % aggregate_round_time)
 	logger.debug(' + max_points : %s' % aggregate_max_points)
 	
 	output=[]
@@ -592,7 +596,8 @@ def perfstore_get_values(_id, start=None, stop=None, aggregate_method=pyperfstor
 														atype=aggregate_method,
 														start=start,
 														stop=stop,
-														fill=fill)
+														fill=fill,
+														roundtime = aggregate_round_time)
 
 	except Exception, err:
 		logger.error("Error when getting points: %s" % err)
@@ -602,5 +607,3 @@ def perfstore_get_values(_id, start=None, stop=None, aggregate_method=pyperfstor
 		output.append({'node': _id, 'metric': meta['me'], 'values': points, 'bunit': meta['unit'], 'min': meta['min'], 'max': meta['max'], 'thld_warn': meta['thd_warn'], 'thld_crit': meta['thd_crit'], 'type': meta['type']})
 				
 	return output
-	
-	

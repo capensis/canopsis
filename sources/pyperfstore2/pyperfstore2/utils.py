@@ -19,8 +19,7 @@
 # ---------------------------------
 import logging
 logger = logging.getLogger('utils')
-
-#logger.setLevel(logging.DEBUG)
+logger.setLevel(logging.DEBUG)
 
 import zlib
 import time
@@ -30,25 +29,53 @@ packer = None
 unpacker = None
 
 import calendar
-from datetime import datetime
+from datetime import datetime, timedelta
 from dateutil.relativedelta import *
 
-intervalToRelativeDelta = {
-	60:relativedelta(minutes=+1),
-	300:relativedelta(minutes=+5),
-	900:relativedelta(minutes=+15),
-	1800:relativedelta(minutes=+30),
-	3600:relativedelta(hours=+1),
-	86400:relativedelta(days=+1),
-	604800:relativedelta(weeks=+1),
-	2629800:relativedelta(months=+1),
-	31557600:relativedelta(years=+1)
-}
+MN = 60
+HR = 3600
+D = 86400
+W = 604800
+M = 2629800
+Y = 31557600
 
+intervalToRelativeDelta = {
+	MN:relativedelta(minutes=+1),
+	MN * 5:relativedelta(minutes=+5),
+	MN * 15:relativedelta(minutes=+15),
+	MN * 30:relativedelta(minutes=+30),
+	HR:relativedelta(hours=+1),
+	D:relativedelta(days=+1),
+	W:relativedelta(weeks=+1),
+	M:relativedelta(months=+1),
+	Y:relativedelta(years=+1)
+}
 
 #### Utils fn
 def datetimeToTimestamp(_date):
 	return calendar.timegm(_date.timetuple())
+
+def get_aggregation_time(_time, aggregation_interval):
+	"""
+	Get around aggregation time from input time and aggregation interval.
+	For example, a time of 12:43 with an aggregation interval of 15mn will return 12:30.
+	"""
+
+	if aggregation_interval == 0:
+		logger.debug("Wrong aggregation interval: %s. Must be greater than 0" % aggregation_interval)
+
+	dt = datetime.utcfromtimestamp(_time)
+	logger.debug('get_aggregation_time with time: %s and interval: %s' % (dt, aggregation_interval))
+
+	seconds_to_remove = aggregation_interval - (_time % aggregation_interval)
+	td = timedelta(seconds=seconds_to_remove)
+
+	aggregation_dt = dt + td
+	aggregation_time = datetimeToTimestamp(aggregation_dt)
+
+	logger.debug('result: %s' % aggregation_dt)
+
+	return aggregation_time
 
 def get_overlap(a, b):
 	return max(0, min(a[1], b[1]) - max(a[0], b[0]))
@@ -252,9 +279,8 @@ def getTimeSteps(start, stop, interval):
 
 	return timeSteps
 
-def aggregate(points, start=None, stop=None, max_points=None, interval=None, atype='AVERAGE', agfn=None, mode=None, fill=False):
+def aggregate(points, start=None, stop=None, max_points=None, interval=None, atype='AVERAGE', agfn=None, mode=None, fill=False, roundtime = True):
 
-	
 	if not atype:
 		return points
 
@@ -278,7 +304,7 @@ def aggregate(points, start=None, stop=None, max_points=None, interval=None, aty
 	logger.debug("Aggregate %s points (max: %s, interval: %s, method: %s, mode: %s)" % (len(points), max_points, interval, atype, mode))
 
 	if not agfn:
-		if   atype == 'AVERAGE':
+		if   atype == 'AVERAGE' or atype == 'MEAN':
 			agfn = vaverage
 		elif atype == 'FIRST':
 			agfn = get_first_value
@@ -320,9 +346,15 @@ def aggregate(points, start=None, stop=None, max_points=None, interval=None, aty
 		
 		if not start:
 			start = points[0][0]
+		# get start aggregation interval
+		if roundtime:
+			start = get_aggregation_time(start, interval)
 
 		if not stop:
 			stop = points[len(points)-1][0]
+		# get stop aggregation interval
+		if roundtime:
+			stop = get_aggregation_time(stop, interval)
 
 		if len(points) == 1:
 			return [ [start, points[0][1]] ]
@@ -359,36 +391,40 @@ def aggregate(points, start=None, stop=None, max_points=None, interval=None, aty
 			while i < len(points):
 				if points[i][0] >= timestamp and points[i][0] < next_timestamp:
 					points_to_aggregate.append(points[i])
-							
+
 				if points[i][0] >= next_timestamp:
 					break
-					
+
 				i+=1
 			
 			if points_to_aggregate:
 				if atype == 'DELTA' and last_point:
 					points_to_aggregate.insert(0, last_point)
-					
+
 				logger.debug("     + %s points" % (len(points_to_aggregate)))
-				
+
 				agvalue = round(agfn(points_to_aggregate),2)
-				point = [timestamp, agvalue]
-				
+
+				point = [next_timestamp, agvalue]
+
 				logger.debug("       + Ag Point: %s" % point)
-				
+
 				rpoints.append(point)
-				
+
 				last_point = points_to_aggregate[len(points_to_aggregate)-1]
 				points_to_aggregate = []
-								
 			else:
 				logger.debug("       + No points")
 				if fill:
-					rpoints.append([timestamp, 0])
-				
+
+					point = [next_timestamp, 0]
+
+					rpoints.append(point)
+
 				points_to_aggregate = []
-		
+
 	logger.debug(" + Nb points: %s" % len(rpoints))
+
 	return rpoints
 
 

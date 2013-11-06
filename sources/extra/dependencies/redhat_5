@@ -2,4 +2,6 @@ yum clean all
 yum update -y
 yum install -y make gcc gcc-c++ zlib-devel libevent-devel libevent ncurses-devel curl-devel wget autoconf automake libtool bzip2-libs cyrus-sasl-devel openldap-devel
 
+yum localinstall --nogpgcheck -y sources/externals/libevent-devel-1.4.13-4.el6.x86_64.rpm sources/externals/libevent-doc-1.4.13-4.el6.noarch.rpm sources/externals/libevent-headers-1.4.13-4.el6.noarch.rpm
+
 rm -f sources/externals/python-libs/pycurl-7.18.2.tar.gz &> /dev/null

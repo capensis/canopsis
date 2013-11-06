@@ -104,7 +104,13 @@ Ext.define('widgets.text.text' , {
 
 						if(Ext.isNumeric(value) && unit) {
 							log.dump(this);
-							value = rdr_humanreadable_value(value, unit);
+
+							if(this.humanReadable) {
+								value = rdr_humanreadable_value(value, unit);
+							}
+							else if(unit) {
+								value = value + ' ' + unit;
+							}
 						}
 
 						log.debug('   + ' + value, this.logAuthor);

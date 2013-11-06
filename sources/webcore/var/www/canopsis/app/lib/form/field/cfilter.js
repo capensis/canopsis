@@ -131,6 +131,10 @@ Ext.define('cfilter.array_field', {
 			return value;
 		}
 
+		if(isNaN(value)) {
+			return value;
+		}
+
 		var intValue = parseInt(value);
 
 		if(!Ext.isNumber(intValue)) {
@@ -355,7 +359,7 @@ Ext.define('cfilter.object', {
 			allowed_type = record.get('type');
 		}
 
-		if(!allowed_type) {
+		if(allowed_type) {
 			if(allowed_type !== 'all') {
 				if (allowed_type === 'object') {
 					if(!this.haveInnerCfilter) {

@@ -81,6 +81,10 @@ Ext.define('canopsis.lib.view.csparkline' , {
 			area_color = chroma.hex(curve_color).brighten(20).hex();
 		}
 
+		if(!this.chart_type) {
+			this.chart_type = 'line_graph';
+		}
+
 		var options = {
 			width: this.getWidth(),
 			height: this.getHeight(),
