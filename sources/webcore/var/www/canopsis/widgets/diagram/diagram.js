@@ -315,7 +315,9 @@ Ext.define('widgets.diagram.diagram', {
 		}
 
 		if(this.diagram_type === 'column' && this.categories.length > 0) {
-			this.options.xAxis.categories = this.categories;
+			this.options.xAxis.categories     = this.categories;
+			this.options.xAxis.labels.enabled = true;
+			this.options.legend.enabled       = this.legend;
 		}
 	},
 
