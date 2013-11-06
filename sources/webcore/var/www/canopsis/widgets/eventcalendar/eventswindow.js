@@ -24,8 +24,8 @@ Ext.define('widgets.eventcalendar.eventswindow' , {
 
 	alias: 'widget.eventcalendar.eventswindow',
 
-	height: 400,
-	width: 400,
+	height: 550,
+	width: 800,
 	layout: 'fit',
 	items: {
 		border: false,
@@ -36,29 +36,70 @@ Ext.define('widgets.eventcalendar.eventswindow' , {
 
 	initComponent: function() {
 		this.calendar = this.initialConfig.calendar;
-
 		this.callParent(arguments);
 	},
 
 	_buildForm: function() {
-		//Title
-		this._form.add({
-			xtype: 'grid',
-    		title: 'Events',
-    		columns: [
-        		{ text: 'Component',  dataIndex: 'component' },
-        		{ text: 'Ressource', dataIndex: 'ressource', flex: 1 },
-        		{ text: 'Output', dataIndex: 'output' }
-    		],
+		this._form.bodyPadding = 0;
+		this.grid = Ext.create('canopsis.lib.view.cgrid_state', {
+			exportMode: this.exportMode,
+			opt_paging: this.paging,
+			filter: this.filter,
+			pageSize: this.pageSize,
+			remoteSort: true,
+			height:490,
+			opt_bar_bottom:true,
+			opt_paging:true
 		});
-
+		this._form.add(this.grid);
 	},
 
 	afterRender: function() {
 		this.callParent(arguments);
 	},
 
-	showEvents : function(calEvent){
+	showEvents : function(calEvent, tags){
+		console.log("showEvents");
+		console.log(calEvent.start / 1000);
+		console.log(tags);
+		var d = calEvent.start;
+
+		d.setHours(0);
+		d.setMinutes(0);
+		d.setSeconds(0);
+
+		var startOfDayTimestamp = d / 1000;
+
+		//increment by one day
+		d = new Date(d.getTime() + (24 * 60 * 60 * 1000));
+
+		var endOfDayTimestamp = d / 1000;
+
+		var queryFilter = {
+						"$and": [
+							{ "timestamp": { "$gt": startOfDayTimestamp } },
+							{ "timestamp": { "$lt": endOfDayTimestamp } }
+						]
+		};
+
+		if(tags && tags != "")
+		{
+			console.log("tags found");
+			tagQueryPart = {"tags" : tags}
+			queryFilter["$and"].push(tagQueryPart);
+		}
+		else
+			console.log("no tags found");
+
+
+		console.log("showEvents::loadstore");
+		this.grid.store.setFilter(queryFilter);
+		console.log(queryFilter);
+
+		this.grid.store.load();
+
+		console.log("showEvents::end");
+
 		this.show();
 	}
 });
