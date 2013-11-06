@@ -210,7 +210,7 @@ Ext.define('canopsis.controller.Schedule', {
 			var viewName = item.get('_id');
 			var combo = form.down('combobox[name=view]');
 
-			if(combo !== undefined) {
+			if(combo !== null) {
 				combo.setValue(viewName);
 			}
 		}

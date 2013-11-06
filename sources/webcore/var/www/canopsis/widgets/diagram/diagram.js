@@ -315,7 +315,9 @@ Ext.define('widgets.diagram.diagram', {
 		}
 
 		if(this.diagram_type === 'column' && this.categories.length > 0) {
-			this.options.xAxis.categories = this.categories;
+			this.options.xAxis.categories     = this.categories;
+			this.options.xAxis.labels.enabled = true;
+			this.options.legend.enabled       = this.legend;
 		}
 	},
 
@@ -330,7 +332,7 @@ Ext.define('widgets.diagram.diagram', {
 		});
 	},
 
-	fillPostParams: function(post_params) {
+	processPostParams: function(post_params) {
 		post_params['aggregate_timemodulation'] = false;
 		post_params['aggregate_max_points'] = 1;
 	},
@@ -452,7 +454,7 @@ Ext.define('widgets.diagram.diagram', {
 				}
 			}
 
-			if(data.length === 1 && !this.hide_other_column && this.diagram_type === 'pie' && max) {
+			if(data.length === 1 && !this.hide_other_column && this.diagram_type === 'pie' && serie_conf._max) {
 				var other_label = '<b>' + this.other_label + '</b>' + other_unit;
 				var colors = global.curvesCtrl.getRenderColors(this.other_label, 1);
 
@@ -462,7 +464,7 @@ Ext.define('widgets.diagram.diagram', {
 					id: 'pie_other',
 					name: other_label,
 					metric: this.other_label,
-					y: max - value,
+					y: serie_conf._max - value,
 					color: color
 				});
 			}
@@ -617,7 +619,8 @@ Ext.define('widgets.diagram.diagram', {
 			metric: metric,
 			y: value,
 			color: color,
-			bunit: unit
+			bunit: unit,
+			_max: max
 		};
 	},
 
