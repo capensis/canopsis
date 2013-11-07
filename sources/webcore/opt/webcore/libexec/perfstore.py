@@ -280,41 +280,6 @@ def update_meta(_id=None):
 		except Exception, err:
 			logger.warning('Error while updating meta_id: %s' % err)
 			return HTTPError(500, "Error while updating meta_id: %s" % err)
-			
-"""@post('/perfstore/clean_all')
-def clean_all():
-	try:
-		manager.cleanAll()
-	except Exception,err:
-		return HTTPError(500, "Error while cleaning all metrics: %s" % err)
-"""
-"""
-@post('/perfstore/clean')
-@post('/perfstore/clean/:_id')
-def clean(_id=None):
-	data = request.body.readline()
-	if data:
-		try:
-			data = json.loads(data)
-			logger.debug(data)
-		except:
-			logger.debug('No json decodable')
-	
-	if not isinstance(data,list):
-		data = [data]
-		
-	if _id:
-		logger.debug('Launch clean for: %s' % _id)
-		manager.clean(_id=_id)
-	else:
-		for item in data:
-			if isinstance(item, str) or isinstance(item, unicode):
-				logger.debug('Launch clean for: %s' % item)
-				manager.clean(_id=item)
-			if isinstance(item, dict):
-				logger.debug('Launch clean for: %s' % item['_id'])
-				manager.clean(_id=item['_id'])
-"""
 
 #### POST@
 @route('/perfstore/perftop')

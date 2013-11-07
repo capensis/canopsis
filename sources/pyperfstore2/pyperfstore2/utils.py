@@ -55,28 +55,6 @@ intervalToRelativeDelta = {
 def datetimeToTimestamp(_date):
 	return calendar.timegm(_date.timetuple())
 
-def get_aggregation_time(_time, aggregation_interval):
-	"""
-	Get around aggregation time from input time and aggregation interval.
-	For example, a time of 12:43 with an aggregation interval of 15mn will return 12:30.
-	"""
-
-	if aggregation_interval == 0:
-		logger.debug("Wrong aggregation interval: %s. Must be greater than 0" % aggregation_interval)
-
-	dt = datetime.utcfromtimestamp(_time)
-	logger.debug('get_aggregation_time with time: %s and interval: %s' % (dt, aggregation_interval))
-
-	seconds_to_remove = aggregation_interval - (_time % aggregation_interval)
-	td = timedelta(seconds=seconds_to_remove)
-
-	aggregation_dt = dt + td
-	aggregation_time = datetimeToTimestamp(aggregation_dt)
-
-	logger.debug('result: %s' % aggregation_dt)
-
-	return aggregation_time
-
 def get_overlap(a, b):
 	return max(0, min(a[1], b[1]) - max(a[0], b[0]))
 
@@ -238,20 +216,38 @@ def parse_dst(points, dtype, first_point=[]):
 	return points
 
 def roundTime(date, interval):
-		date = date.replace(second=0, microsecond=0)
+	"""
+	Calculate roudtime relative to a date, an interval.
+	"""
+	result = date
 
-		if (interval >= 60*60): # hour
-			date = date.replace(minute=0)
-		if (interval >= 60*60*24): # day
-			date = date.replace(hour=0)
-		if (interval >= 60*60*24*28): # month
-			date = date.replace(day=1)
-		if (interval >= 60*60*24*28*364): # year
-			date = date.replace(month=1)
+	relativeinterval = intervalToRelativeDelta.get(interval, interval)
 
-		return date
+	if relativeinterval != interval:
+		# assume result does not contain seconds and microseconds in this case
+		result = result.replace(second=0, microsecond=0)
 
-def getTimeSteps(start, stop, interval):
+		if interval < HR: # in minutes
+			result = result.replace(minute=((date.minute / interval) * interval))
+		else:
+			result = result.replace(minute=0)				
+			if interval >= D: # >= 1 day
+				result = result.replace(hour=0)
+			if interval >= W: # >= 1 week
+				weeks = calendar.monthcalendar(result.year, result.month)
+				for index in xrange(len(weeks)):
+					week = weeks[index]
+					if result.day in week:
+						result = result.replace(day=week[0] if week[0]!=0 else 1)
+						break
+			if interval >= M: # >= 1 month
+				result = result.replace(day=1)
+			if interval == Y: # >= 1 year
+				result = result.replace(month=1)					
+		
+	return result
+
+def getTimeSteps(start, stop, interval, roundtime):
 	logger.debug('getTimeSteps:')
 	timeSteps = []
 	
@@ -260,21 +256,23 @@ def getTimeSteps(start, stop, interval):
 	start_datetime 	= datetime.utcfromtimestamp(start)
 	stop_datetime 	= datetime.utcfromtimestamp(stop)
 
-	#try de get real interval
-	if interval in intervalToRelativeDelta.keys():
-		logger.debug('   + Use Smart time length (real number of day in month/years)')
-		
-		interval = intervalToRelativeDelta[interval]
+	if roundtime:
+		stop_datetime = roundTime(stop_datetime, interval)
 
-		date = start_datetime
-		while date < (stop_datetime + interval):
+	relativeinterval = intervalToRelativeDelta.get(interval, None)
+
+	if relativeinterval != None:
+		date = stop_datetime
+		start_datetime_minus_relativeinterval = start_datetime - relativeinterval
+		while date > start_datetime_minus_relativeinterval:
 			timeSteps.append(datetimeToTimestamp(date))
-			date += interval
-			
+			date -= relativeinterval
 	else:
 		logger.debug('   + Use interval')
-		timeSteps = range(start, stop+interval, interval)
-
+		timeSteps = range(stop, start-interval, -interval)
+	
+	timeSteps.reverse()
+	
 	logger.debug(timeSteps)
 
 	return timeSteps
@@ -341,92 +339,85 @@ def aggregate(points, start=None, stop=None, max_points=None, interval=None, aty
 			rpoints.append([timestamp, value])
 		
 	elif mode == 'by_interval':
-	
-		points_to_aggregate = []
 		
 		if not start:
 			start = points[0][0]
-		# get start aggregation interval
-		if roundtime:
-			start = get_aggregation_time(start, interval)
 
 		if not stop:
 			stop = points[len(points)-1][0]
-		# get stop aggregation interval
-		if roundtime:
-			stop = get_aggregation_time(stop, interval)
 
 		if len(points) == 1:
 			return [ [start, points[0][1]] ]
 		
-		# Find start time
-		#start_datetime = datetime.utcfromtimestamp(start)
-		#start_datetime = roundTime(start_datetime, interval)
-
-		#stop_datetime = datetime.utcfromtimestamp(stop)
-	
-		#start = datetimeToTimestamp(start_datetime)
-		#stop = datetimeToTimestamp(stop_datetime)
-
 		logger.debug(' + Start: %s' %  datetime.utcfromtimestamp(start))
 		logger.debug(' + Stop:  %s' %  datetime.utcfromtimestamp(stop))
 
-		timeSteps = getTimeSteps(start, stop, interval)
+		timeSteps = getTimeSteps(start, stop, interval, roundtime)
 
 		#initialize variables for loop
 		prev_point = None
 		i=0
 		points_to_aggregate = []
 		last_point = None
-		
-		for index, timestamp in enumerate(timeSteps):
-			try:
-				next_timestamp = timeSteps[index+1]
-			except:
-				#next_timestamp = stop
-				break
 
-			logger.debug("   + Interval: %s -> %s" % (datetime.utcfromtimestamp(timestamp), datetime.utcfromtimestamp(next_timestamp)))
+		for index in xrange(1, len(timeSteps)):
+
+			timestamp = timeSteps[index]
 			
-			while i < len(points):
-				if points[i][0] >= timestamp and points[i][0] < next_timestamp:
-					points_to_aggregate.append(points[i])
+			previous_timestamp = timeSteps[index-1]
+			
+			logger.debug("   + Interval %s -> %s" % (previous_timestamp, timestamp))
 
-				if points[i][0] >= next_timestamp:
-					break
+			while i < len(points) and points[i][0] < timestamp:
+
+				points_to_aggregate.append(points[i])
 
 				i+=1
-			
+
+			if atype == 'DELTA' and last_point:
+				points_to_aggregate.insert(0, last_point)
+
+			aggregation_point = get_aggregation_point(points_to_aggregate, agfn, previous_timestamp, fill)
+
+			rpoints.append(aggregation_point)
+
 			if points_to_aggregate:
-				if atype == 'DELTA' and last_point:
-					points_to_aggregate.insert(0, last_point)
+				last_point = points_to_aggregate[-1]
 
-				logger.debug("     + %s points" % (len(points_to_aggregate)))
+			points_to_aggregate = []
 
-				agvalue = round(agfn(points_to_aggregate),2)
+		if i < len(points):
 
-				point = [next_timestamp, agvalue]
+			points_to_aggregate = points[i:]
 
-				logger.debug("       + Ag Point: %s" % point)
+			if atype == 'DELTA' and last_point:
+				points_to_aggregate.insert(0, last_point)
 
-				rpoints.append(point)
+			aggregation_point = get_aggregation_point(points_to_aggregate, agfn, timeSteps[-1], fill)
 
-				last_point = points_to_aggregate[len(points_to_aggregate)-1]
-				points_to_aggregate = []
-			else:
-				logger.debug("       + No points")
-				if fill:
-
-					point = [next_timestamp, 0]
-
-					rpoints.append(point)
-
-				points_to_aggregate = []
+			rpoints.append(aggregation_point)
 
 	logger.debug(" + Nb points: %s" % len(rpoints))
 
 	return rpoints
 
+def get_aggregation_point(points_to_aggregate, fn, timestamp, fill):
+	if points_to_aggregate:
+		
+		logger.debug("     + %s points to aggregate" % (len(points_to_aggregate)))
+
+		agvalue = round(fn(points_to_aggregate), 2)
+
+		result = [timestamp, agvalue]
+
+	else:
+		logger.debug("       + No points")
+
+		result = [timestamp, 0 if fill else None]
+
+	logger.debug("   + Point : %s " % result)
+
+	return result
 
 def compress(points):
 	logger.debug("Compress timeserie")
@@ -493,9 +484,6 @@ def uncompress(data):
 	
 	unpacker.feed(str(zlib.decompress(data)))
 	data = unpacker.unpack()
-		
-	#import sys
-	#sys.exit()
 	
 	fts = data[0]
 	points = data[1]
@@ -536,60 +524,6 @@ def uncompress(data):
 		#logger.debug("  %i -> %s" % (i, rpoints[i]))
 	
 	return rpoints
-
-def fill_interval(points, start, stop, interval):
-	logger.debug('Fill interval from %i to %i with interval %i' % (start, stop, interval))
-	
-	if((stop - start) < interval):
-		logger.debug('Aggregation interval is higher than interval itself,nothing done')
-		return points
-
-	start_datetime = datetime.utcfromtimestamp(start)
-	start_datetime = roundTime(start_datetime, interval)
-	start = datetimeToTimestamp(start_datetime)
-
-	logger.debug(' + Start: %s' %  datetime.utcfromtimestamp(start))
-	logger.debug(' + Stop:  %s' %  datetime.utcfromtimestamp(stop))
-
-	# Set start time on a multiple of interval from first point
-	if len(points):
-		first_timestamp = points[0][0]
-		logger.debug(' + First_timestamp: %s' %  datetime.utcfromtimestamp(first_timestamp))
-
-		if first_timestamp > start:
-			delta = (first_timestamp - start) // interval
-			start = first_timestamp - (delta * interval)
-			logger.debug(' + New Start: %s (%s)' %  (datetime.utcfromtimestamp(start), start))
-
-
-	timeSteps = getTimeSteps(start, stop, interval)
-
-	for index, timestamp in enumerate(timeSteps):
-		try:
-			next_timestamp = timeSteps[index+1]
-		except:
-			next_timestamp = stop
-	
-	output_list = []
-	points_index = 0
-	for index, timestamp in enumerate(timeSteps):
-		if points_index >= len(points):
-			break
-
-		point = points[points_index]
-
-		if timestamp == point[0]:
-			output_list.append(point)
-			points_index += 1
-		else:
-			output_list.append([timestamp, 0])
-	
-	#check last timestamp
-	#if len(output_list) and output_list[len(output_list)-1][0] > int(time.time()):
-	#	output_list[len(output_list)-1][0] = int(time.time())
-		
-	return output_list
-
 
 ### aggregation serie function
 def consolidation(series, fn, interval=None):
