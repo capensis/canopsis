@@ -215,7 +215,7 @@ def parse_dst(points, dtype, first_point=[]):
 	
 	return points
 
-def roundTime(date, interval):
+def roundTime(date, interval, timezone=time.timezone):
 	"""
 	Calculate roudtime relative to a date, an interval.
 	"""
@@ -225,14 +225,16 @@ def roundTime(date, interval):
 
 	if relativeinterval != interval:
 		# assume result does not contain seconds and microseconds in this case
-		result = result.replace(second=0, microsecond=0)
+		result = result.replace(second=time.timezone % 60, microsecond=0)
 
 		if interval < HR: # in minutes
 			result = result.replace(minute=((date.minute / interval) * interval))
 		else:
-			result = result.replace(minute=0)				
+			result = result.replace(minute= (time.timezone / MN) % MN)
 			if interval >= D: # >= 1 day
 				result = result.replace(hour=0)
+				td = timedelta(hours=time.timezone / HR)
+				result += td
 			if interval >= W: # >= 1 week
 				weeks = calendar.monthcalendar(result.year, result.month)
 				for index in xrange(len(weeks)):
@@ -247,7 +249,7 @@ def roundTime(date, interval):
 		
 	return result
 
-def getTimeSteps(start, stop, interval, roundtime):
+def getTimeSteps(start, stop, interval, roundtime, timezone=time.timezone):
 	logger.debug('getTimeSteps:')
 	timeSteps = []
 	
@@ -257,7 +259,7 @@ def getTimeSteps(start, stop, interval, roundtime):
 	stop_datetime 	= datetime.utcfromtimestamp(stop)
 
 	if roundtime:
-		stop_datetime = roundTime(stop_datetime, interval)
+		stop_datetime = roundTime(stop_datetime, interval, timezone)
 
 	relativeinterval = intervalToRelativeDelta.get(interval, None)
 
@@ -277,7 +279,7 @@ def getTimeSteps(start, stop, interval, roundtime):
 
 	return timeSteps
 
-def aggregate(points, start=None, stop=None, max_points=None, interval=None, atype='AVERAGE', agfn=None, mode=None, fill=False, roundtime = True):
+def aggregate(points, start=None, stop=None, max_points=None, interval=None, atype='AVERAGE', agfn=None, mode=None, fill=False, roundtime = True, timezone=time.timezone):
 
 	if not atype:
 		return points
@@ -352,7 +354,7 @@ def aggregate(points, start=None, stop=None, max_points=None, interval=None, aty
 		logger.debug(' + Start: %s' %  datetime.utcfromtimestamp(start))
 		logger.debug(' + Stop:  %s' %  datetime.utcfromtimestamp(stop))
 
-		timeSteps = getTimeSteps(start, stop, interval, roundtime)
+		timeSteps = getTimeSteps(start, stop, interval, roundtime, timezone)
 
 		#initialize variables for loop
 		prev_point = None

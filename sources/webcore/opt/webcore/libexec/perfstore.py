@@ -84,6 +84,7 @@ def perfstore_nodes_get_values(start=None, stop=None):
 	aggregate_max_points		= request.params.get('aggregate_max_points', default=pyperfstore_aggregate_maxpoints)
 	aggregate_round_time         = request.params.get('aggregate_round_time', default=True)
 	consolidation_method 		= request.params.get('consolidation_method', default=None)
+	timezoneOffset = request.params.get('timezoneOffset', default=time.timezone)
 
 	output = []
 
@@ -123,7 +124,8 @@ def perfstore_nodes_get_values(start=None, stop=None):
 											aggregate_interval=aggregate_interval,
 											aggregate_max_points=aggregate_max_points,
 											aggregate_timemodulation=aggregate_timemodulation,
-											aggregate_round_time=aggregate_round_time)
+											aggregate_round_time=aggregate_round_time,
+											timezone=time.timezone)
 
 	if consolidation_method and len(output) != 0:
 		##select right function
@@ -484,7 +486,7 @@ def perfstore_perftop(start=None, stop=None):
 # Functions
 ########################################################################
 
-def perfstore_get_values(_id, start=None, stop=None, aggregate_method=pyperfstore_aggregate_method, aggregate_interval=None, aggregate_max_points=pyperfstore_aggregate_maxpoints, aggregate_timemodulation=True, aggregate_round_time=True):
+def perfstore_get_values(_id, start=None, stop=None, aggregate_method=pyperfstore_aggregate_method, aggregate_interval=None, aggregate_max_points=pyperfstore_aggregate_maxpoints, aggregate_timemodulation=True, aggregate_round_time=True, timezone=time.timezone):
 	
 	if start and not stop:
 		stop = start
@@ -562,7 +564,8 @@ def perfstore_get_values(_id, start=None, stop=None, aggregate_method=pyperfstor
 														start=start,
 														stop=stop,
 														fill=fill,
-														roundtime = aggregate_round_time)
+														roundtime = aggregate_round_time,
+														timezone=timezone)
 
 	except Exception, err:
 		logger.error("Error when getting points: %s" % err)
