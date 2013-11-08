@@ -571,7 +571,7 @@ Ext.define('widgets.line_graph.line_graph', {
 		if(val) {
 			var dval = new Date(parseInt(val) * 1000);
 
-			if (this.aggregate_method) {
+			if (this.aggregate_method || this.consolidation_method) {
 				switch(this.aggregate_interval) {
 					case 900: 
 					case 1800: 
