@@ -608,7 +608,6 @@ Ext.define('widgets.line_graph.line_graph', {
 		var now = Ext.Date.now();
 
 		if(this.chart) {
-
 			if(this.timeNav) {
 				var time_limit = now - (this.timeNav_window * 1000);
 
@@ -625,13 +624,11 @@ Ext.define('widgets.line_graph.line_graph', {
 					return;
 				}
 
-				var time_window = to - from;
-
 				this.onDoRefresh = true;
 
 				var serie = this.chart.get('timeNav');
 				var e = serie.xAxis.getExtremes();
-				time_window = e.max - e.min;
+				var time_window = e.max - e.min;
 
 				if(this.reportMode) {
 					this.stopTask();
@@ -1542,7 +1539,7 @@ Ext.define('widgets.line_graph.line_graph', {
 					post_param['from'] = time_limit;
 				}
 			}
-			else {
+			else if(!this.reportMode) {
  				post_param['from'] = (post_param['to'] - this.time_window);
  			}
  		}
