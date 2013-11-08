@@ -28,7 +28,7 @@
    \--+ doRefresh
       \--+ refreshNodes
          \--+ onRefresh
-            \--+ a								ddDataOnChart
+            \--+ addDataOnChart
                \--- getSerie
 
 */
@@ -1530,7 +1530,7 @@ Ext.define('widgets.line_graph.line_graph', {
  	},
 
  	processPostParam: function(post_param) { // patch in waiting that shift method is reused
- 		if (post_param['from'] && post_param['to']) {
+ 		if(post_param['from'] && post_param['to']) {
  			if(this.timeNav) {
 				var time_limit = (post_param['to'] - this.timeNav_window);
 				post_param['from'] = (post_param['to'] - this.timeNav_window);

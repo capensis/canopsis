@@ -47,9 +47,9 @@ Ext.define('canopsis.lib.view.cperfstoreValueConsumerWidget', {
 								return that.nodesByID[a['node']]['order']-that.nodesByID[b['node']]['order'];
 							});
 						}
-
-						this.onRefresh(data);
 					}
+
+					this.onRefresh(data);
 				},
 
 				failure: function(result, request) {
