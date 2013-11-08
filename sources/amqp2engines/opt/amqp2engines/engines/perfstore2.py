@@ -185,9 +185,10 @@ class engine(cengine):
 	def on_internal_event(self, event, msg):
 		## Metrology
 		timestamp = event.get('timestamp', None)
+		perf_data_array = event.get('perf_data_array', [])
 
 		### Store perfdata
-		if event.get('perf_data_array', []):
+		if perf_data_array:
 			tags = event.get('tags', None)
 
 			try:
