@@ -136,6 +136,7 @@ Ext.define('canopsis.lib.view.cperfstoreValueConsumerWidget', {
 
 		post_params = {
 			'nodes': Ext.JSON.encode(post_params),
+			'timezone': new Date().getTimezoneOffset() * 60
 		};
 
 		if(this.aggregate_method) {
