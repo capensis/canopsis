@@ -52,7 +52,6 @@ Ext.define('widgets.scheduler.scheduler', {
 	setOptions: function() {
 		this.options = {
 			reportMode: this.reportMode,
-			cwdiget: this,
 
 			chart: {
 				renderTo: this.wcontainerId,
@@ -94,7 +93,7 @@ Ext.define('widgets.scheduler.scheduler', {
 			},
 			series: [{
 				name: 'jobs',
-				type:'column',
+				type:'columnrange',
 				data: [{
 					color: '#FF0000',
 					low: 1364374000000,
@@ -117,6 +116,7 @@ Ext.define('widgets.scheduler.scheduler', {
 
 	createChart: function() {
 		this.chart = new Highcharts.Chart(this.options);
+		this.chart.options.cwidget = this;
 		Highcharts.setOptions({
 			lang: {
 				months: [_('January'), _('February'), _('March'), _('April'), _('May'), _('June'), _('July'), _('August'), _('September'), _('October'), _('November'), _('December')],
@@ -173,5 +173,13 @@ Ext.define('widgets.scheduler.scheduler', {
 		this.event = this.getEvent(tree.rk);
 
 		console.log(this.event);
+	},
+
+	onResize: function() {
+		log.debug('onRezize', this.logAuthor);
+
+		if(this.chart) {
+			this.chart.setSize(this.getWidth(), this.getHeight() , false);
+		}
 	}
 });
