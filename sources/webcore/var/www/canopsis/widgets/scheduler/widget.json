@@ -17,7 +17,7 @@
 			"name": "inventory",
 			"multiSelect": false,
 			"base_filter": {
-				"event_type": "scheduledcheck"
+				"event_type": "check"
 			}
 		}]
 	}]
