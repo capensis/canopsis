@@ -214,7 +214,6 @@ Ext.define('widgets.diagram.diagram', {
 
 	setOptions: function() {
 		this.options = {
-			cwidget: this,
 			chart: {
 				renderTo: this.wcontainerId,
 				defaultSeriesType: 'pie',
@@ -323,6 +322,7 @@ Ext.define('widgets.diagram.diagram', {
 
 	createChart: function() {
 		this.chart = new Highcharts.Chart(this.options);
+		this.chart.options.cwidget = this;
 		Highcharts.setOptions({
 			lang: {
 				months: [_('January'), _('February'), _('March'), _('April'), _('May'), _('June'), _('July'), _('August'), _('September'), _('October'), _('November'), _('December')],
