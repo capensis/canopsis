@@ -424,7 +424,13 @@ Ext.define('widgets.line_graph.line_graph', {
 			marker: {
 				enabled: marker_enable,
 				symbol: this.marker_symbol,
-				radius: this.marker_radius
+				radius: this.marker_radius,
+
+				states: {
+					hover: {
+						enabled: marker_enable
+					}
+				}
 			}
 		};
 
