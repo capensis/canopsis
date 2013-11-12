@@ -261,8 +261,6 @@ Ext.define('widgets.line_graph.line_graph', {
 		this.options = {
 			reportMode: this.reportMode,
 
-			cwidget: this,
-
 			chart: {
 				renderTo: this.wcontainerId,
 				defaultSeriesType: this.SeriesType,
@@ -538,13 +536,7 @@ Ext.define('widgets.line_graph.line_graph', {
 			_x = this.x / 1000;
 			s += me.format_date(_x);
 			s += '</b>';
-			/*if (this.aggregate_method) {
 
-			} else {
-
-			}
-			s + rdr_tstodate(this.x / 1000) + '</b>';
-			*/
 			if(this['points']) {
 				// Shared
 				$.each(this.points, function(i, point) {
@@ -590,6 +582,7 @@ Ext.define('widgets.line_graph.line_graph', {
 
 	createChart: function() {
 		this.chart = new Highcharts.Chart(this.options);
+		this.chart.options.cwidget = this;
 		Highcharts.setOptions({
 			global: {
 				useUTC: false
