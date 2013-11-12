@@ -70,7 +70,7 @@ Ext.define('widgets.diagram.diagram', {
 			return;
 		}
 
-		var me = this.series.chart.options.cwidget;
+		var me = this.series.chart.options.cwidget();
 
 		var prefix = "";
 
@@ -213,7 +213,13 @@ Ext.define('widgets.diagram.diagram', {
 	},
 
 	setOptions: function() {
+		var me = this;
+
 		this.options = {
+			cwidget: function() {
+				return me;
+			},
+
 			chart: {
 				renderTo: this.wcontainerId,
 				defaultSeriesType: 'pie',
@@ -322,7 +328,6 @@ Ext.define('widgets.diagram.diagram', {
 
 	createChart: function() {
 		this.chart = new Highcharts.Chart(this.options);
-		this.chart.options.cwidget = this;
 		Highcharts.setOptions({
 			lang: {
 				months: [_('January'), _('February'), _('March'), _('April'), _('May'), _('June'), _('July'), _('August'), _('September'), _('October'), _('November'), _('December')],
@@ -648,7 +653,7 @@ Ext.define('widgets.diagram.diagram', {
 	},
 
 	tooltip_formatter: function() {
-		var me = this.series.chart.options.cwidget;
+		var me = this.series.chart.options.cwidget();
 
 		var formatter = function(options, value) {
 			if(options.invert) {
@@ -700,7 +705,7 @@ Ext.define('widgets.diagram.diagram', {
 	},
 
 	y_formatter: function() {
-		var me = this.chart.options.cwidget;
+		var me = this.chart.options.cwidget();
 
 		if(this.chart.series.length) {
 			var bunit = this.chart.series[0].options.bunit;
