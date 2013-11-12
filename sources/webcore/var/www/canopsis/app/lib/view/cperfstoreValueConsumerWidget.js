@@ -47,9 +47,9 @@ Ext.define('canopsis.lib.view.cperfstoreValueConsumerWidget', {
 								return that.nodesByID[a['node']]['order']-that.nodesByID[b['node']]['order'];
 							});
 						}
-
-						this.onRefresh(data);
 					}
+
+					this.onRefresh(data);
 				},
 
 				failure: function(result, request) {
@@ -136,6 +136,7 @@ Ext.define('canopsis.lib.view.cperfstoreValueConsumerWidget', {
 
 		post_params = {
 			'nodes': Ext.JSON.encode(post_params),
+			'timezone': new Date().getTimezoneOffset() * 60
 		};
 
 		if(this.aggregate_method) {

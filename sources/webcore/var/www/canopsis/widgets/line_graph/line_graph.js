@@ -534,8 +534,17 @@ Ext.define('widgets.line_graph.line_graph', {
 				return '<b>' + options.metric + ':</b> ' + value;
 			};
 
-			var s = '<b>' + rdr_tstodate(this.x / 1000) + '</b>';
+			var s = '<b>';
+			_x = this.x / 1000;
+			s += me.format_date(_x);
+			s += '</b>';
+			/*if (this.aggregate_method) {
 
+			} else {
+
+			}
+			s + rdr_tstodate(this.x / 1000) + '</b>';
+			*/
 			if(this['points']) {
 				// Shared
 				$.each(this.points, function(i, point) {
@@ -555,6 +564,27 @@ Ext.define('widgets.line_graph.line_graph', {
 			}
 
 			return s;
+		}
+	},
+
+	format_date: function(val) {
+		if(val) {
+			var dval = new Date(parseInt(val) * 1000);
+
+			if (this.aggregate_method || this.consolidation_method) {
+				switch(this.aggregate_interval) {
+					case 900: 
+					case 1800: 
+					case 3600: return Ext.Date.format(dval, 'Y-m-d h:i:s');
+					case 86400: 
+					case 604800: return Ext.Date.format(dval, 'Y-m-d');
+					case 2629800: return Ext.Date.format(dval, 'Y-m');
+					case 31557600: return Ext.Date.format(dval, 'Y');
+					default: return rdr_tstodate(val);
+				}
+			} else {
+				return rdr_tstodate(val);
+			}
 		}
 	},
 
@@ -578,7 +608,6 @@ Ext.define('widgets.line_graph.line_graph', {
 		var now = Ext.Date.now();
 
 		if(this.chart) {
-
 			if(this.timeNav) {
 				var time_limit = now - (this.timeNav_window * 1000);
 
@@ -595,13 +624,11 @@ Ext.define('widgets.line_graph.line_graph', {
 					return;
 				}
 
-				var time_window = to - from;
-
 				this.onDoRefresh = true;
 
 				var serie = this.chart.get('timeNav');
 				var e = serie.xAxis.getExtremes();
-				time_window = e.max - e.min;
+				var time_window = e.max - e.min;
 
 				if(this.reportMode) {
 					this.stopTask();
@@ -674,6 +701,7 @@ Ext.define('widgets.line_graph.line_graph', {
 				}
 
 				for(var i = 0; i < data.length; i++) {
+
 					this.addDataOnChart(data[i]);
 
 					var node_id = data[i].node;
@@ -1071,6 +1099,9 @@ Ext.define('widgets.line_graph.line_graph', {
 			var states_data = [[], [], [], []];
 
 			for(var i = 0; i < data['values'].length; i++) {
+
+				value = data['values'][i];
+
 				state = parseInt(data['values'][i][1] / 100);
 
 				for(var j = 0; j < states.length; j++) {
@@ -1499,7 +1530,7 @@ Ext.define('widgets.line_graph.line_graph', {
  	},
 
  	processPostParam: function(post_param) { // patch in waiting that shift method is reused
- 		if (post_param['from'] && post_param['to']) {
+ 		if(post_param['from'] && post_param['to']) {
  			if(this.timeNav) {
 				var time_limit = (post_param['to'] - this.timeNav_window);
 				post_param['from'] = (post_param['to'] - this.timeNav_window);
@@ -1508,7 +1539,7 @@ Ext.define('widgets.line_graph.line_graph', {
 					post_param['from'] = time_limit;
 				}
 			}
-			else {
+			else if(!this.reportMode) {
  				post_param['from'] = (post_param['to'] - this.time_window);
  			}
  		}
