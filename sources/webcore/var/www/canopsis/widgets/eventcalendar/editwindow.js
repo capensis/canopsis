@@ -30,9 +30,14 @@ Ext.define('widgets.eventcalendar.editwindow' , {
 	items: {
 		border: false,
 	},
+
+	modal: true,
 	closeAction: 'hide',
 
 	addMode: true,
+
+	currentEditedEvent: {},
+	currentEditedEvent: null,
 
 	initComponent: function() {
 		this.calendar = this.initialConfig.calendar;
@@ -41,13 +46,21 @@ Ext.define('widgets.eventcalendar.editwindow' , {
 	},
 
 	_buildForm: function() {
-		//Title
-		this._form.add({
-			xtype: 'displayfield',
-			value: _('Event title') + ':'
+		// The data store containing the list of states
+
+		this.sources = Ext.create('Ext.data.Store', {
+			fields: ['name'],
 		});
 
+		this.calendar.computeIcsSources();
+
+		for (var i = this.calendar.ics_sources_array.length - 1; i >= 0; i--) {
+			this.sources.add({'name' : this.calendar.ics_sources_array[i]});
+		};
+
+		//Title
 		this._form.add({
+			fieldLabel: _('Event title'),
 			xtype: 'textfield',
 			name: 'event_title',
 			itemId: 'event_title',
@@ -55,52 +68,54 @@ Ext.define('widgets.eventcalendar.editwindow' , {
 			emptyText: _('Type here the event title')
 		});
 
-		//StartDate
 		this._form.add({
-			xtype: 'displayfield',
-			value: _('Start date') + ':'
+			xtype: 'combobox',
+			fieldLabel: _('Event source'),
+			store: this.sources,
+			itemId: 'event_source',
+			name: 'event_source',
+			editable: false,
+			queryMode: 'local',
+			displayField: 'name',
+			valueField: 'name',
+			emptyText: _('Type here the event source'),
+			allowBlank: false
 		});
 
 		this._form.add({
-			xtype: 'datefield',
-			name: 'start_date',
-			itemId: 'start_date'
+			"xtype": "cfieldset",
+			"title": _('Start'),
+			"margin": 0,
+			"padding": 0,
+			"items": [{
+					fieldLabel: _('Date'),
+					xtype: 'datefield',
+					name: 'start_date',
+					itemId: 'start_date'
+				},{
+					fieldLabel: _('Time'),
+					xtype: 'timefield',
+					name: 'start_time',
+					itemId: 'start_time'
+				}]
 		});
 
 		this._form.add({
-			xtype: 'timefield',
-			name: 'start_time',
-			itemId: 'start_time'
-		});
-
-
-		//EndDate
-		this._form.add({
-			xtype: 'displayfield',
-			value: _('End date') + ':'
-		});
-
-		this._form.add({
-			xtype: 'datefield',
-			name: 'end_date',
-			itemId: 'end_date'
-		});
-
-		this._form.add({
-			xtype: 'timefield',
-			name: 'end_time',
-			itemId: 'end_time'
-		});
-
-		//AllDay
-		this._form.add({
-			xtype: 'displayfield',
-			value: _('All day event') + ':'
-		});
-
-		this._form.add({
-			xtype: 'checkbox',
-			name: 'all_day'
+			"xtype": "cfieldset",
+			"title": _('End'),
+			"margin": 0,
+			"padding": 0,
+			"items": [{
+					fieldLabel: _('Date'),
+					xtype: 'datefield',
+					name: 'end_date',
+					itemId: 'end_date'
+				},{
+					fieldLabel: _('Time'),
+					xtype: 'timefield',
+					name: 'end_time',
+					itemId: 'end_time'
+				}]
 		});
 	},
 
@@ -109,40 +124,121 @@ Ext.define('widgets.eventcalendar.editwindow' , {
 	},
 
 	showNewEvent : function(start, end, allDay){
+		this.currentEditedEvent = {};
+		this.currentEditedEventHtml = null;
 		this.addMode = true;
 
 		this._form.down("#event_title").setValue("");
+
+		this._form.down("#event_source").setValue("");
+		this._form.down("#event_source").setDisabled(false);
+
 		this._form.down("#start_date").setValue(start);
 		this._form.down("#end_date").setValue(end);
 
-		this.show();
+		if(!allDay)
+		{
+			this._form.down("#start_time").setValue(start);
+			this._form.down("#end_time").setValue(end);
+		}
+		else
+		{
+			this._form.down("#start_time").setValue(null);
+			this._form.down("#end_time").setValue(null);
+		}
 
-		return { title: "aaaaaa"};
+		this.show();
 	},
 
-	showEditEvent: function(event){
+	showEditEvent: function(event, eventHtml){
+		this.currentEditedEvent = event;
+		this.currentEditedEventHtml = eventHtml;
 		this.addMode = false;
 
 		this._form.down("#event_title").setValue(event.title);
+
+		this._form.down("#event_source").setValue(event.component);
+		this._form.down("#event_source").setDisabled(true);
+
 		this._form.down("#start_date").setValue(new Date(event.start));
 		this._form.down("#end_date").setValue(new Date(event.end));
+		if(!event.all_day)
+		{
+			this._form.down("#start_time").setValue(event.start);
+			this._form.down("#end_time").setValue(event.end);
+		}
+		else
+		{
+			this._form.down("#start_time").setValue(null);
+			this._form.down("#end_time").setValue(null);
+		}
 
 		this.show();
 	},
 
 	ok_button_function: function(){
-		var newEvent = {};
-		newEvent.title = this._form.down("#event_title").getValue();
-		newEvent.start = this._form.down("#start_date").getValue();
-		newEvent.end = this._form.down("#end_date").getValue();
-		newEvent.allDay = this._form.all_day;
+		var newEvent = {}; //TODO set this as a property to save hidden props
 
-		if(this.addMode == true)
+		newEvent.title = this._form.down("#event_title").getValue();
+
+		if(this.currentEditedEvent.id)
+			newEvent.id = this.currentEditedEvent.id;
+		else
 		{
-			//add the new event to the calendar
-			this.calendar.add_events([newEvent]);
+			var now = new Date().toString('yyyy-MM-dd-hh-mm-ss');
+			newEvent.id = newEvent.title + "-" + now + "@" + "widget-calendar";
 		}
 
-		this.hide();
+		combine = function(me, date, time, all_day) {
+				if(Ext.isString(date)) date = me.parseDate(date);
+				if(!date) date = new Date();
+				if(Ext.isString(time)) time = me.parseDate(time);
+				if(!time) time = new Date();
+				var rv = new Date(date);
+				if(!all_day)
+				{
+					rv.setHours(time.getHours());
+					rv.setMinutes(time.getMinutes());
+					rv.setSeconds(time.getSeconds());
+				}
+				return rv;
+			}
+
+		var startDateWidget = this._form.down("#start_date");
+		var startTimeWidget = this._form.down("#start_time");
+		var endDateWidget = this._form.down("#end_date");
+		var endTimeWidget = this._form.down("#end_time");
+
+		var start_datetime = combine(this, startDateWidget.getValue(), startTimeWidget.getValue());
+		var end_datetime = combine(this, endDateWidget.getValue(), endTimeWidget.getValue());
+		var all_day = startTimeWidget.getValue() === null || endTimeWidget.getValue() === null;
+
+		newEvent.component = this._form.down("#event_source").getValue();
+
+		newEvent.start = start_datetime;
+		newEvent.end = end_datetime;
+
+		var isHourfilledOnlyOnStartOrEnd = (startTimeWidget.getValue() === null && endTimeWidget.getValue() !== null)
+											|| (startTimeWidget.getValue() !== null && endTimeWidget.getValue() === null)
+
+		if(isHourfilledOnlyOnStartOrEnd)
+			global.notify.notify(_('Form problem'), _('"You must fill start and end times, or nothing for an all day event"'), 'info');
+		else if(newEvent.component === undefined || newEvent.component === null || newEvent.component === "")
+			global.notify.notify(_('Form problem'), _('"You must specify a source for the event"'), 'info');
+		else
+		{
+			newEvent.allDay = all_day;
+			//add the new event to the calendar
+
+			this.calendar.send_events([newEvent]);
+
+			this.hide();
+		}
+	},
+
+	hide: function() {
+		this.calendar.resetEventStyle(this.currentEditedEventHtml);
+		this.callParent();
 	}
+
 });

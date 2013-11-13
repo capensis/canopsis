@@ -25,9 +25,10 @@
 	},{
 		"title": "Options",
 			"items": [
-					{"xtype": "cfieldset",
-					"title": "Options",
-					"items": [
+					{
+						"xtype": "cfieldset",
+						"title": "Options",
+						"items": [
 						{
 							"xtype" : "checkboxfield",
 							"name" : "editable",
@@ -43,6 +44,43 @@
 							"fieldLabel": "ics_sources",
 							"allowBlank": true
 					   }]
+					}]
+	},{
+		"title": "Display",
+			"items": [
+				{
+						"xtype": "cfieldset",
+						"title": "Default view",
+						"items": [
+							{
+								"xtype" : "textfield",
+								"name" : "defaultView",
+								"fieldLabel": "Default view",
+								"value": "month"
+							}]
+					},{
+						"xtype": "cfieldset",
+						"title": "Header",
+						"items": [
+							{
+								"xtype" : "textfield",
+								"name" : "header_left",
+								"fieldLabel": "left part of the header",
+								"allowBlank": true,
+								"value": "prev,next today"
+							},{
+								"xtype" : "textfield",
+								"name" : "header_center",
+								"fieldLabel": "center part of the header",
+								"allowBlank": true,
+								"value": "title"
+							},{
+								"xtype" : "textfield",
+								"name" : "header_right",
+								"fieldLabel": "right part of the header",
+								"allowBlank": true,
+								"value": "month,agendaWeek,agendaDay"
+							}]
 					}]
 	}]
 }]

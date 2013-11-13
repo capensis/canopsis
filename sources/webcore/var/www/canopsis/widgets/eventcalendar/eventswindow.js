@@ -59,9 +59,6 @@ Ext.define('widgets.eventcalendar.eventswindow' , {
 	},
 
 	showEvents : function(calEvent, tags){
-		console.log("showEvents");
-		console.log(calEvent.start / 1000);
-		console.log(tags);
 		var d = calEvent.start;
 
 		d.setHours(0);
@@ -75,30 +72,10 @@ Ext.define('widgets.eventcalendar.eventswindow' , {
 
 		var endOfDayTimestamp = d / 1000;
 
-		var queryFilter = {
-						"$and": [
-							{ "timestamp": { "$gt": startOfDayTimestamp } },
-							{ "timestamp": { "$lt": endOfDayTimestamp } }
-						]
-		};
+		var filter = this.calendar.computeTagsFilter(startOfDayTimestamp, endOfDayTimestamp);
 
-		if(tags && tags != "")
-		{
-			console.log("tags found");
-			tagQueryPart = {"tags" : tags}
-			queryFilter["$and"].push(tagQueryPart);
-		}
-		else
-			console.log("no tags found");
-
-
-		console.log("showEvents::loadstore");
-		this.grid.store.setFilter(queryFilter);
-		console.log(queryFilter);
-
+		this.grid.store.setFilter(filter);
 		this.grid.store.load();
-
-		console.log("showEvents::end");
 
 		this.show();
 	}
