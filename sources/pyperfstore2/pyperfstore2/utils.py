@@ -32,12 +32,40 @@ import calendar
 from datetime import datetime, timedelta
 from dateutil.relativedelta import *
 
+T_SECOND = 'second'
+T_MINUTE = 'minute'
+T_HOUR = 'hour'
+T_DAY = 'day'
+T_WEEK = 'week'
+T_MONTH = 'month'
+T_YEAR = 'year'
+
+relativeDeltas = {
+	T_MINUTE: relativedelta(minutes=1),
+	T_HOUR: relativedelta(hours=1),
+	T_DAY: relativedelta(days=1),
+	T_WEEK: relativedelta(weeks=1),
+	T_MONTH: relativedelta(months=1),
+	T_YEAR: relativedelta(years=1)
+}
+
+S = 1
 MN = 60
 HR = 3600
 D = 86400
 W = 604800
 M = 2629800
 Y = 31557600
+
+periodtypeByInterval = {
+	S: T_SECOND,
+	MN: T_MINUTE,
+	HR: T_HOUR,
+	D: T_DAY,
+	W: T_WEEK,
+	M: T_MONTH,
+	Y: T_YEAR
+}
 
 intervalToRelativeDelta = {
 	MN:relativedelta(minutes=+1),
@@ -53,6 +81,7 @@ intervalToRelativeDelta = {
 
 #### Utils fn
 def datetimeToTimestamp(_date):
+	return time.mktime(_date.timetuple())
 	return calendar.timegm(_date.timetuple())
 
 def get_overlap(a, b):
@@ -215,41 +244,125 @@ def parse_dst(points, dtype, first_point=[]):
 	
 	return points
 
+def _roundtime(utcdate, periodtime=1, periodtype=T_HOUR, timezone=time.timezone):
+	"""
+	Calculate roudtime relative to an UTC date, a period time/type and a timezone.
+	"""
+	result = utcdate
+
+	relativeinterval = intervalToRelativeDelta.get(periodtype, None)
+
+	if relativeinterval != None:
+		# assume result does not contain seconds and microseconds in this case
+		result = result.replace(microsecond=0)
+
+		if periodtype == T_SECOND:
+			result = result.replace(second= 0 if periodtime > S else int(int(result.second / periodtime) * periodtime))
+		elif periodtype == T_MINUTE:
+			result = result.replace(second=0)
+			result = result.replace(minute = 0 if periodtime > MN else int(int(result.minute / periodtime) * periodtime))
+		elif periodtype == T_HOUR:
+			result = result.replace(second=0, minute=0)
+			result = result.replace(hour= 0 if periodtime > HR else int(int(result.hour / periodtime) * periodtime))
+		elif periodtype == T_DAY:
+			result = result.replace(second=0, minute=0, hour=0)
+			#monthday = calendar.monthday(result.year, result.month)[1]
+			#result = result.replace(day=1 if periodtime > monthday else (result.day / periodtime) * periodtime)
+		elif periodtype == T_WEEK:
+			result = result.replace(second=0, minute=0, hour=0)
+			weeks = calendar.monthcalendar(result.year, result.month)
+			for index in xrange(len(weeks)):
+				week = weeks[index]
+				if result.day in week:
+					result = result.replace(day=week[0] if week[0] != 0 else 1)
+					break			
+		elif periodtype == T_MONTH:
+			result = result.replace(second=0, minute=0, hour=0, day=1)			
+		elif periodtype == T_YEAR:
+			result = result.replace(second=0, minute=0, hour=0, day=1, month=1)
+
+	td = timedelta(seconds=timezone)
+	result += td
+
+	return result
+
 def roundTime(date, interval, timezone=time.timezone):
 	"""
-	Calculate roudtime relative to a date, an interval.
+	Calculate roudtime relative to an UTC date, an interval.
 	"""
 	result = date
 
-	relativeinterval = intervalToRelativeDelta.get(interval, interval)
+	relativeinterval = intervalToRelativeDelta.get(interval, None)
 
-	if relativeinterval != interval:
+	if relativeinterval:
+
+		dt = timedelta(seconds=timezone)
+		result -= dt
+
 		# assume result does not contain seconds and microseconds in this case
-		result = result.replace(second=time.timezone % 60, microsecond=0)
+		result = result.replace(second=0, microsecond=0)
 
 		if interval < HR: # in minutes
-			result = result.replace(minute=((date.minute / interval) * interval))
+			minutes = (result.minute * 60 / interval) * interval / 60
+			result = result.replace(minute=minutes)
+
 		else:
-			result = result.replace(minute= (time.timezone / MN) % MN)
+			result = result.replace(minute=0)
+
 			if interval >= D: # >= 1 day
 				result = result.replace(hour=0)
-				td = timedelta(hours=time.timezone / HR)
-				result += td
+
 			if interval >= W: # >= 1 week
 				weeks = calendar.monthcalendar(result.year, result.month)
-				for index in xrange(len(weeks)):
-					week = weeks[index]
+				for week in weeks:
 					if result.day in week:
 						result = result.replace(day=week[0] if week[0]!=0 else 1)
 						break
+
 			if interval >= M: # >= 1 month
 				result = result.replace(day=1)
-			if interval == Y: # >= 1 year
-				result = result.replace(month=1)					
-		
+
+			if interval >= Y: # >= 1 year
+				result = result.replace(month=1)
+
+		result += dt
+
 	return result
 
-def getTimeSteps(start, stop, interval, roundtime, timezone=time.timezone):
+def _getTimeSteps(start, stop, periodtime, periodtype, roundtime, timezone=time.timezone):
+	logger.debug('getTimeSteps:')
+	timeSteps = []
+	
+	logger.debug('   + Interval: %s' % interval)
+
+	start_datetime 	= datetime.utcfromtimestamp(start)
+	stop_datetime 	= datetime.utcfromtimestamp(stop)
+
+	if roundtime:
+		stop_datetime = roundTime(stop_datetime, interval, timezone)
+
+	if periodtype != None:
+
+		relativeinterval = relativeDeltas[periodtype] * periodtime	
+
+		if relativeinterval != None:
+			date = stop_datetime
+			start_datetime_minus_relativeinterval = start_datetime - relativeinterval
+			while date > start_datetime_minus_relativeinterval:
+				timeSteps.append(datetimeToTimestamp(date))
+				date -= relativeinterval
+
+	else:
+		logger.debug('   + Use interval')
+		timeSteps = range(stop, start-periodtime, -periodtime)
+	
+	timeSteps.reverse()
+	
+	logger.debug('   + timeSteps: ', timeSteps)
+
+	return timeSteps
+
+def getTimeSteps(start, stop, interval, roundtime=True, timezone=time.timezone):
 	logger.debug('getTimeSteps:')
 	timeSteps = []
 	
@@ -263,11 +376,13 @@ def getTimeSteps(start, stop, interval, roundtime, timezone=time.timezone):
 
 	relativeinterval = intervalToRelativeDelta.get(interval, None)
 
-	if relativeinterval != None:
+	if relativeinterval:
 		date = stop_datetime
 		start_datetime_minus_relativeinterval = start_datetime - relativeinterval
-		while date > start_datetime_minus_relativeinterval:
-			timeSteps.append(datetimeToTimestamp(date))
+
+		while date > start_datetime_minus_relativeinterval:			
+			ts = calendar.timegm(date.timetuple())			
+			timeSteps.append(ts)
 			date -= relativeinterval
 	else:
 		logger.debug('   + Use interval')
@@ -275,7 +390,7 @@ def getTimeSteps(start, stop, interval, roundtime, timezone=time.timezone):
 	
 	timeSteps.reverse()
 	
-	logger.debug(timeSteps)
+	logger.debug('   + timeSteps: ', timeSteps)
 
 	return timeSteps
 
