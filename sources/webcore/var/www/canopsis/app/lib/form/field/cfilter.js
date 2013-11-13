@@ -355,7 +355,7 @@ Ext.define('cfilter.object', {
 			allowed_type = record.get('type');
 		}
 
-		if(!allowed_type) {
+		if(allowed_type) {
 			if(allowed_type !== 'all') {
 				if (allowed_type === 'object') {
 					if(!this.haveInnerCfilter) {

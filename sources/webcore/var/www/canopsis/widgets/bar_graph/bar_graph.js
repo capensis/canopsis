@@ -120,7 +120,17 @@ Ext.define('widgets.bar_graph.bar_graph', {
 				enabled: true,
 				formatter: function() {
 					if(this.y) {
-						return rdr_humanreadable_value(this.y, this.point.bunit);
+						if(this.humanReadable) {
+							return rdr_humanreadable_value(this.y, this.point.bunit);
+						}
+						else {
+							if(this.point.bunit) {
+								return this.y + ' ' + this.point.bunit;
+							}
+							else {
+								return this.y;
+							}
+						}
 					}
 
 					return '';

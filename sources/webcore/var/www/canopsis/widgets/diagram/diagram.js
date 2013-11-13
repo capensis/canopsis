@@ -20,8 +20,6 @@ Ext.define('widgets.diagram.diagram' , {
 	extend: 'canopsis.lib.view.cperfstoreValueConsumerWidget',
 	alias: 'widget.diagram',
 
-	logAuthor: '[diagram]',
-
 	options: {},
 	chartTitle: null,
 	chart: undefined,
@@ -81,7 +79,7 @@ Ext.define('widgets.diagram.diagram' , {
 				return rdr_humanreadable_value(value, unit);
 			}
 			else {
-				if (unit !== undefined) {
+				if(unit) {
 					return value + ' ' + unit;
 				}
 				else {
@@ -146,6 +144,8 @@ Ext.define('widgets.diagram.diagram' , {
 		}
 
 		this.callParent(arguments);
+
+		this.logAuthor = '[widgets][diagram]';
 	},
 
 	afterContainerRender: function() {
@@ -372,8 +372,8 @@ Ext.define('widgets.diagram.diagram' , {
 					max = 100;
 				}
 
-				if (value > max)
-					max = value;
+				/*if (value > max)
+					max = value;*/
 
 				var metric_name = metric;
 
@@ -429,7 +429,8 @@ Ext.define('widgets.diagram.diagram' , {
 				this.setAxis(serie.data);
 			}
 
-			if(data.length === 1 && !this.hide_other_column && this.diagram_type === 'pie') {
+			if(data.length === 1 && !this.hide_other_column && this.diagram_type === 'pie' && max) {
+
 				var other_label = '<b>' + this.other_label + '</b>' + other_unit;
 				var rdr_colors = global.curvesCtrl.getRenderColors(this.other_label, 1);
 				var rdr_color = undefined;
@@ -448,6 +449,7 @@ Ext.define('widgets.diagram.diagram' , {
 					y: max - value,
 					color: rdr_color
 				});
+				
 			}
 
 			if(serie.data) {
@@ -537,10 +539,8 @@ Ext.define('widgets.diagram.diagram' , {
 			if(me.humanReadable) {
 				value = rdr_humanreadable_value(value, options.bunit);
 			}
-			else {
-				if (options.bunit !== undefined) {
-					value = value + ' ' + options.bunit;
-				}
+			else if (options.bunit) {
+				value = value + ' ' + options.bunit;
 			}
 
 			return '<b>' + options.metric + '</b>: ' + value;
@@ -584,10 +584,8 @@ Ext.define('widgets.diagram.diagram' , {
 			if(me.humanReadable) {
 				return rdr_humanreadable_value(this.value, bunit);
 			}
-			else {
-				if(bunit !== undefined) {
-					return this.value + ' ' + bunit;
-				}
+			else if(bunit) {
+				return this.value + ' ' + bunit;
 			}
 		}
 

@@ -106,7 +106,7 @@
 										{"value": "LAST", "text": "Last"},
 										{"value": "FIRST", "text": "First"},
 										{"value": "DELTA", "text": "Delta"},
-										{"value": "MEAN", "text": "Mean"},
+										{"value": "AVERAGE", "text": "Average"},
 										{"value": "SUM", "text": "Sum"}
 									]
 								}

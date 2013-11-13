@@ -526,7 +526,7 @@ Ext.define('canopsis.lib.controller.cgrid', {
 			record = this._preSave(record, data, form);
 			record.endEdit(true);
 
-			this._validateForm(store, data, form, record);
+			this._validateForm(fstore, data, form, record);
 
 		}
 		else {

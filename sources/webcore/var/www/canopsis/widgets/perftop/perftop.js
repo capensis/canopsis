@@ -144,7 +144,7 @@ Ext.define('widgets.perftop.perftop' , {
 							return rdr_humanreadable_value(value, unit);
 						}
 						else {
-							if(unit !== undefined) {
+							if(unit) {
 								return value + ' ' + unit;
 							}
 							else {
