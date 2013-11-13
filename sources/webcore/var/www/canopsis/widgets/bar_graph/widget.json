@@ -189,7 +189,12 @@
 										{"value": 31557600, "text": "1 year"}
 									]
 								}
-							}
+							}, {
+								"xtype": "checkbox",
+								"name": "aggregate_round_time",
+								"fieldLabel": "Round time (if interval)",
+								"checked": true
+							}							
 						]
 					}]
 		},{
@@ -342,7 +347,8 @@
 									"xtype":"checkbox",
 									"text":"Trend",
 									"fieldLabel":"Trend",
-									"checked":true
+									"checked":true,
+									"name":"trend"
 								}]
 				}]
 	}]

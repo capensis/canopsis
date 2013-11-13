@@ -131,6 +131,10 @@ Ext.define('cfilter.array_field', {
 			return value;
 		}
 
+		if(isNaN(value)) {
+			return value;
+		}
+
 		var intValue = parseInt(value);
 
 		if(!Ext.isNumber(intValue)) {

@@ -2,4 +2,4 @@ yum clean all
 yum update -y
 yum install -y make gcc gcc-c++ zlib-devel libevent-devel libevent ncurses-devel libcurl-devel wget libtool openssl-devel bzip2-devel cyrus-sasl-devel openldap-devel
 
-yum localinstall --nogpgcheck -y externals/libevent-devel-1.4.13-1.el6.x86_64.rpm
+yum localinstall --nogpgcheck -y sources/externals/libevent-devel-1.4.13-4.el6.x86_64.rpm sources/externals/libevent-doc-1.4.13-4.el6.noarch.rpm sources/externals/libevent-headers-1.4.13-4.el6.noarch.rpm
