@@ -28,6 +28,7 @@ import urllib
 from icalendar import Calendar
 import pytz
 import ConfigParser
+import pickle
 
 import time
 from datetime import datetime
@@ -36,10 +37,15 @@ import calendar
 import cevent
 
 DAEMON_NAME='ics2amqp'
+config_file=os.path.expanduser('~/etc/ics2amqp.conf')
+timestamps_file=os.path.expanduser('~/var/lib/ics2amqp/ics2amqp.timestamps')
+
 
 init 	= cinit()
 logger 	= init.getLogger(DAEMON_NAME)
 handler = init.getHandler(logger)
+
+sleep_time = 1
 
 ics_streams = []
 myamqp = None
@@ -58,21 +64,22 @@ syslog_parser = serverDateTime + hostname + daemon + output
 #
 ########################################################
 
-import inspect
-from pprint import pprint
-
 sources = []
 
 
 utc=pytz.UTC
 
-lastUpdate = utc.localize(datetime(2000, 1, 1))
+lastUpdate = {}
+
 count = 0
 
 def read_config():
+	global config_file
 	try:
+		logger.info(" + reading config")
 		config = ConfigParser.RawConfigParser()
-		config.read(os.path.expanduser('~/etc/ics2amqp.conf'))
+		#TODO add this file in canopsis install
+		config.read(config_file)
 
 		for source_name, source_url in config.items('sources'):
 			sources.append({"name" : source_name, "url" : source_url})
@@ -80,6 +87,30 @@ def read_config():
 	except Exception, e:
 		logger.error(e)
 
+
+def init_timestamps():
+	global lastUpdate
+	global timestamps_file
+	try:
+		timestamps_input = open(timestamps_file, 'r')
+		lastUpdate = pickle.load(timestamps_input)
+		timestamps_input.close()
+	except:
+		logger.warn("No timestamps file found.")
+		lastUpdate = {}
+
+
+def update_timestamps():
+	global timestamps_file
+	global lastUpdate
+
+	if not os.path.exists(os.path.dirname(timestamps_file)):
+		os.makedirs(os.path.dirname(timestamps_file))
+
+	output = open(timestamps_file, 'w')
+	p = pickle.Pickler(output)
+	p.dump(lastUpdate)
+	output.close()
 
 def send_event(source, event):
 	#state should be info
@@ -96,16 +127,16 @@ def send_event(source, event):
 	output = event.get('summary')
 	long_output = event.get('description')
 
-	start = event.get('dtstart').dt
-	end = event.get('dtend').dt
+	start = str(event.get("dtstart").dt)
+	end = str(event.get("dtend").dt)
 
 	if type(start) is datetime:
 		all_day = False
 	else:
 		all_day = True
 
-	start = time.mktime(start.timetuple())
-	end = time.mktime(end.timetuple())
+	# start = time.mktime(start.timetuple())
+	# end = time.mktime(end.timetuple())
 
 	source_type='resource'
 
@@ -134,37 +165,44 @@ def send_event(source, event):
 def parse_ics(source):
 	global count
 	global lastUpdate
+	global timestamps_file
 
 	ics = urllib.urlopen(source["url"]).read()
 			# events = []
 
 	cal = Calendar.from_ical(ics)
 
-	for event in cal.walk('vevent'):
-		if event.get('LAST-MODIFIED').dt > lastUpdate:
+	if not(source["name"] in lastUpdate):
+		lastUpdate[source["name"]] = utc.localize(datetime(2000, 1, 1))
 
+	for event in cal.walk('vevent'):
+		if event.get('LAST-MODIFIED').dt > lastUpdate[source["name"]]:
 			send_event(source, event)
 
 			count = count + 1
 
-	print count
+	lastUpdate[source["name"]] = event.get('dtstamp').dt
 
+	update_timestamps()
 
-	# pprint(inspect.getmembers(event))
+	if count > 0 : print "send %i events from source %s" % (count, source["name"])
 
-	lastUpdate = event.get('dtstamp').dt
 	count = 0
 
 def wait_ics():
 	global sources
-	try:
-		while handler.status():
-			for source in sources:
-				parse_ics(source)
+	# try:
+	logger.info("starting to poll ics files ")
+	while handler.status():
+		for source in sources:
+			# logger.info("parsing source : " + str(source))
+			parse_ics(source)
+
+		time.sleep(sleep_time)
 
 
-	except Exception, err:
-		logger.error("Exception: '%s'" % err)
+	# except Exception, err:
+	# 	logger.error("Exception: '%s'" % err)
 
 	logger.info("Close ICS handler")
 
@@ -182,11 +220,14 @@ def main():
 	# global
 	global myamqp
 	read_config()
+	init_timestamps()
 
 	# Connect to amqp bus
-	logger.debug("Start AMQP ...")
+	logger.info("Starting AMQP ...")
 	myamqp = camqp()
 	myamqp.start()
+
+	logger.info("Started AMQP ...")
 
 	wait_ics()
 
