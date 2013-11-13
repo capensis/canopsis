@@ -151,6 +151,18 @@ Ext.define('widgets.stream.stream' , {
 		logAuthor = '[widget][stream]';
 	},
 
+	afterContainerRender: function() {
+		if (global.websocketCtrl.connected) {
+			this.startStream();
+		}else {
+			this.displayUnavailableMessage()
+			global.websocketCtrl.on('transport_up', function() {
+				this.wcontainer.removeAll();
+				this.startStream();
+			}, this, {single: true});
+		}
+	},
+
 	getHistory: function(from, to, onSuccess) {
 		var me = this;
 		if (now && global.websocketCtrl.connected) {
@@ -158,7 +170,9 @@ Ext.define('widgets.stream.stream' , {
 				log.debug('Load ' + records.length + ' events', me.logAuthor);
 				if (records.length > 0) {
 					for (var i = 0; i < records.length; i++)
-							records[i] = Ext.create('widgets.stream.event', {id: me.get_event_id(records[i]), raw: records[i], stream: me});
+					{
+							records[i] = me.create_event(me.get_event_id(records[i]), records[i], me);
+					}
 
 					if (onSuccess)
 						onSuccess(records);
@@ -194,7 +208,7 @@ Ext.define('widgets.stream.stream' , {
 					'tags': this.tags
 				};
 
-			this.publishEvent('events', event_raw);
+			this.publishEvent('events', event_raw, true); //TODO test for non regression + unit test
 		}
 	},
 
@@ -242,6 +256,13 @@ Ext.define('widgets.stream.stream' , {
 		}
 	},
 
+	process_queue: function() {
+		// Check burst
+		if (! this.in_burst())
+			this.purge_queue();
+	},
+
+
 	add_events: function(events) {
 		if (events.length >= this.max)
 			this.wcontainer.removeAll(true);
@@ -253,6 +274,48 @@ Ext.define('widgets.stream.stream' , {
 			var item = this.wcontainer.getComponent(this.wcontainer.items.length - 1);
 			this.wcontainer.remove(item.id, true);
 		}
-	}
+	},
 
+	/**
+     * @see parent class
+     */
+
+	on_event: function(raw, rk) {
+
+		var id = this.get_event_id(raw);
+
+		var event = this.create_event(id, raw, this);
+		if (event.raw.event_type == 'comment') {
+			var to_event = this.wcontainer.getComponent(this.id + '.' + event.raw.referer);
+			if (to_event) {
+				log.debug('Add comment for ' + event.raw.referer, this.logAuthor);
+				to_event.comment(event);
+			}else {
+				log.debug("Impossible to find event '" + event.raw.referer + "' from container, maybe not displayed ?", this.logAuthor);
+			}
+
+		}else {
+			// Detect Burst or hidden
+			if (this.in_burst() || this.isHidden()) {
+				this.queue.push(event);
+
+				//Clean queue
+				if (this.queue.length > this.max) {
+					var event = this.queue.shift();
+					event.destroy();
+					delete event;
+				}
+			}else {
+				//Display event
+				this.process_queue();
+				this.add_events([event]);
+			}
+
+			this.last_push = new Date().getTime();
+		}
+	},
+
+	create_event: function(id, raw, stream) {
+		return Ext.create('widgets.stream.event', {id: id, raw: raw, stream: stream});
+	}
 });

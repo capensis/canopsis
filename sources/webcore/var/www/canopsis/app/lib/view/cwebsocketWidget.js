@@ -31,18 +31,7 @@ Ext.define('canopsis.lib.view.cwebsocketWidget', {
 		this.refreshInterval = 5;
 
 		this.callParent(arguments);
-	},
-
-	afterContainerRender: function() {
-		if (global.websocketCtrl.connected) {
-			this.startStream();
-		}else {
-			this.displayUnavailableMessage()
-			global.websocketCtrl.on('transport_up', function() {
-				this.wcontainer.removeAll();
-				this.startStream();
-			}, this, {single: true});
-		}
+		this.logAuthor = '[widget][cwebsocketWidget]';
 	},
 
 	startStream: function() {
@@ -95,12 +84,6 @@ Ext.define('canopsis.lib.view.cwebsocketWidget', {
 		global.websocketCtrl.unsubscribe('amqp', this.amqp_queue, this);
 	},
 
-	process_queue: function() {
-		// Check burst
-		if (! this.in_burst())
-			this.purge_queue();
-	},
-
 	purge_queue: function() {
 		if (this.queue.length) {
 			log.debug("Purge event's queue (" + this.queue.length + ')', this.logAuthor);
@@ -123,8 +106,11 @@ Ext.define('canopsis.lib.view.cwebsocketWidget', {
 	 * @param event the content of the message
      * @protected
      */
- 	publishEvent: function(queue, event) {
-		global.websocketCtrl.publish('amqp', queue, event);
+ 	publishEvent: function(queue, event, time_in_rk) {
+		if(!time_in_rk)
+			time_in_rk = false;
+
+		global.websocketCtrl.publish('amqp', queue, event, time_in_rk);
  	},
 
     /**
@@ -169,39 +155,6 @@ Ext.define('canopsis.lib.view.cwebsocketWidget', {
      */
 
 	on_event: function(raw, rk) {
-
-		var id = this.get_event_id(raw);
-
-		var event = Ext.create('widgets.stream.event', {id: id, raw: raw, stream: this});
-
-		if (event.raw.event_type == 'comment') {
-			var to_event = this.wcontainer.getComponent(this.id + '.' + event.raw.referer);
-			if (to_event) {
-				log.debug('Add comment for ' + event.raw.referer, this.logAuthor);
-				to_event.comment(event);
-			}else {
-				log.debug("Impossible to find event '" + event.raw.referer + "' from container, maybe not displayed ?", this.logAuthor);
-			}
-
-		}else {
-			// Detect Burst or hidden
-			if (this.in_burst() || this.isHidden()) {
-				this.queue.push(event);
-
-				//Clean queue
-				if (this.queue.length > this.max) {
-					var event = this.queue.shift();
-					event.destroy();
-					delete event;
-				}
-			}else {
-				//Display event
-				this.process_queue();
-				this.add_events([event]);
-			}
-
-			this.last_push = new Date().getTime();
-		}
 	},
 
 	/**
@@ -213,7 +166,6 @@ Ext.define('canopsis.lib.view.cwebsocketWidget', {
 		var id = undefined;
 		if (raw['_id'])
 			id = raw['_id'];
-
 		return id;
 	}
 });
