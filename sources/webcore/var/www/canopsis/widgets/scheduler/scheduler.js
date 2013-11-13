@@ -44,6 +44,7 @@ Ext.define('widgets.scheduler.scheduler', {
 
 		this.setOptions();
 		this.createChart();
+		this.setChartTitle();
 	},
 
 	setOptions: function() {
@@ -65,7 +66,7 @@ Ext.define('widgets.scheduler.scheduler', {
 				zoomType: 'y'
 			},
 			title: {
-				text: this.treeRk
+				text: undefined
 			},
 			legend: {
 				enabled: false
@@ -76,7 +77,7 @@ Ext.define('widgets.scheduler.scheduler', {
 				title: 'Duration'
 			},
 			xAxis: {
-				categories: ['Test']
+				categories: []
 			},
 			tooltip: {
 				formatter: function() {
@@ -117,8 +118,7 @@ Ext.define('widgets.scheduler.scheduler', {
 									me.treeRk = me.rootRk;
 								}
 
-								me.chart.setTitle({text: me.treeRk});
-
+								me.setChartTitle();
 								me.getNodeInfo(undefined, undefined);
 							}
 						}
@@ -144,6 +144,41 @@ Ext.define('widgets.scheduler.scheduler', {
 
 		this.chart.xAxis[0].setCategories([], false);
 		this.chart.series[0].setData([], false);
+	},
+
+	setChartTitle: function() {
+		var me = this;
+
+		var comps = this.treeRk.split('.');
+		var title = undefined;
+
+		for(var i = 0; i < comps.length; i++) {
+			var current_rk = comps.slice(0, 1 + i).join('.');
+
+			var button = '<span';
+			button += ' onclick="Ext.getCmp(\'' + this.id + '\').chartTitleButtonClick(\'' + current_rk + '\');"';
+			button += ' onmouseover="this.style.textDecoration=\'underline\';"';
+			button += ' onmouseout="this.style.textDecoration=\'none\';"';
+			button += '>' + comps[i] + '</span>';
+
+			if(!title) {
+				title = button;
+			}
+			else {
+				title += ' / ' + button;
+			}
+		}
+
+		log.debug('Set title: ' + title, this.logAuthor);
+		this.chart.setTitle({text: title, useHTML: true});
+	},
+
+	chartTitleButtonClick: function(current_rk) {
+		log.debug('Load schedule tree: ' + current_rk, this.logAuthor);
+
+		this.treeRk = current_rk;
+		this.setChartTitle();
+		this.getNodeInfo(undefined, undefined);
 	},
 
 	getUrl: function() {
@@ -237,7 +272,7 @@ Ext.define('widgets.scheduler.scheduler', {
 			log.dump(point);
 
 			/* add data on chart */
-			this.chart.xAxis[0].categories.push(point_name);
+			this.chart.xAxis[0].categories.push(point_name + ' (' + node.child_nodes.length + ')');
 
 			var serie = this.chart.series[0];
 			serie.addPoint(point, false);
