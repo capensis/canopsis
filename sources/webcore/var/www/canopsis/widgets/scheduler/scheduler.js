@@ -26,10 +26,6 @@ Ext.define('widgets.scheduler.scheduler', {
 
 	options: {},
 	chart: undefined,
-	legend: true,
-
-	steps: [],
-	checks: [],
 
 	initComponent: function() {
 		this.callParent(arguments);
@@ -38,8 +34,9 @@ Ext.define('widgets.scheduler.scheduler', {
 			this.treeRk = this.inventory[0];
 		}
 
-		log.debug('Tree RK:', this.logAuthor);
-		log.dump(this.treeRk);
+		this.rootRk = this.treeRk;
+
+		log.debug('Handling schedule tree: ' + this.treeRk, this.logAuthor);
 	},
 
 	afterContainerRender: function() {
@@ -50,8 +47,13 @@ Ext.define('widgets.scheduler.scheduler', {
 	},
 
 	setOptions: function() {
+		var me = this;
+
 		this.options = {
 			reportMode: this.reportMode,
+			cwidget: function() {
+				return me;
+			},
 
 			chart: {
 				renderTo: this.wcontainerId,
@@ -66,7 +68,7 @@ Ext.define('widgets.scheduler.scheduler', {
 				text: this.treeRk
 			},
 			legend: {
-				enabled: this.legend
+				enabled: false
 			},
 			yAxis: {
 				type: 'datetime',
@@ -94,29 +96,40 @@ Ext.define('widgets.scheduler.scheduler', {
 			series: [{
 				name: 'jobs',
 				type:'columnrange',
-				data: [{
-					color: '#FF0000',
-					low: 1364374000000,
-					high: 1364374300000
-				},{
-					color: '#00FF00',
-					low: 1364375000000,
-					high: 1364375300000
-				}]
+				data: []
 			}],
 			plotOptions: {
 				series: {
 					animation: false,
 					shadow: false
 				},
-				column: {}
+				columnrange: {
+					cursor: 'pointer',
+					point: {
+						events: {
+							click: function() {
+								var me = this.series.chart.options.cwidget();
+
+								if(this.node.child_nodes.length > 0) {
+									me.treeRk = this.node.rk;
+								}
+								else {
+									me.treeRk = me.rootRk;
+								}
+
+								me.chart.setTitle({text: me.treeRk});
+
+								me.getNodeInfo(undefined, undefined);
+							}
+						}
+					}
+				}
 			}
 		};
 	},
 
 	createChart: function() {
 		this.chart = new Highcharts.Chart(this.options);
-		this.chart.options.cwidget = this;
 		Highcharts.setOptions({
 			lang: {
 				months: [_('January'), _('February'), _('March'), _('April'), _('May'), _('June'), _('July'), _('August'), _('September'), _('October'), _('November'), _('December')],
@@ -124,6 +137,13 @@ Ext.define('widgets.scheduler.scheduler', {
 				shortMonths: [_('Jan'), _('Feb'), _('Mar'), _('Apr'), _('May'), _('Jun'), _('Jul'), _('Aug'), _('Sept'), _('Oct'), _('Nov'), _('Dec')]
 			}
 		});
+	},
+
+	clearGraph: function() {
+		log.debug('Cleaning graph', this.logAuthor);
+
+		this.chart.xAxis[0].setCategories([], false);
+		this.chart.series[0].setData([], false);
 	},
 
 	getUrl: function() {
@@ -170,9 +190,61 @@ Ext.define('widgets.scheduler.scheduler', {
 	},
 
 	onRefresh: function(tree, from, to) {
-		this.event = this.getEvent(tree.rk);
+		void(from, to);
 
-		console.log(this.event);
+		this.clearGraph();
+
+		for(var i = 0; i < tree.child_nodes.length; i++) {
+			var node = tree.child_nodes[i];
+			var evt  = this.getEvent(node.rk);
+
+			log.debug('Adding data for event:', this.logAuthor);
+			log.dump(evt);
+
+			var color = global.curvesCtrl.getRenderColors(evt.component, i)[0];
+
+			/* get metrics */
+			var startts = undefined;
+			var endts   = undefined;
+
+			for(var j = 0; j < evt.perf_data_array.length; j++) {
+				var perf = evt.perf_data_array[j];
+
+				if(perf.metric === 'cps_ts_start') {
+					startts = perf.value * 1000;
+				}
+				else if(perf.metric === 'cps_ts_end') {
+					endts = perf.value * 1000;
+				}
+			}
+
+			/* one of the metrics isn't present, so skip this one */
+			if(startts === undefined || endts === undefined) {
+				continue;
+			}
+
+			/* get data */
+			var point_name = evt.component.split(this.treeRk + '.')[1];
+			var point = {
+				node: node,
+				name: point_name,
+				color: color,
+				low: startts,
+				high: endts
+			};
+
+			log.debug('Add point:', this.logAuthor);
+			log.dump(point);
+
+			/* add data on chart */
+			this.chart.xAxis[0].categories.push(point_name);
+
+			var serie = this.chart.series[0];
+			serie.addPoint(point, false);
+		}
+
+		log.debug('Redraw chart.', this.logAuthor);
+		this.chart.redraw();
 	},
 
 	onResize: function() {

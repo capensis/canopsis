@@ -61,7 +61,7 @@ class engine(cengine):
 				record.data['rk'] = tree['rk']
 				record.data['child_nodes'] = tree['child_nodes']
 
-			record.save()
+			record.save(storage=self.storage)
 
 	def work(self, event, *args, **kwargs):
 		"""
