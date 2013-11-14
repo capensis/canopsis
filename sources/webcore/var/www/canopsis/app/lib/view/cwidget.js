@@ -35,8 +35,6 @@ Ext.define('canopsis.lib.view.cwidget' , {
 	baseUrl: '/rest/events/event',
 	uri: '/rest/events/event',
 
-	logAuthor: '[widget]',
-
 	wcontainer_layout: 'fit',
 	wcontainer_autoScroll: false,
 
