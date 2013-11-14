@@ -23,12 +23,12 @@
 					   },{
 							"xtype" : "textfield",
 							"name" : "tags",
-							"fieldLabel": "Tags (separated by space)",
+							"fieldLabel": "Tags to show in the calendar (separated by commas)",
 							"allowBlank": true
 					   },{
 							"xtype" : "textfield",
 							"name" : "ics_sources",
-							"fieldLabel": "ics_sources",
+							"fieldLabel": "Calendar event feeds (separated by commas)",
 							"allowBlank": true
 					   }]
 					}]
