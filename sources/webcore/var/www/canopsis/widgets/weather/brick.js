@@ -140,7 +140,7 @@ Ext.define('widgets.weather.brick' , {
 	extend: 'Ext.Component',
 	alias: 'widget.weather.brick',
 
-	logAuthor: '[widget][weather][brick]',
+	logAuthor: '[widgets][weather][brick]',
 
 	brick_number: undefined,
 	iconSet: 1,
@@ -165,6 +165,8 @@ Ext.define('widgets.weather.brick' , {
 	fullscreenMode: false,
 
 	initComponent: function() {
+		this.callParent(arguments);
+
 		log.debug(' + Initialize brick ' + this.data._id, this.logAuthor);
 
 		if(this.bg_color) {
@@ -179,8 +181,6 @@ Ext.define('widgets.weather.brick' , {
 		this.component = this.data.component;
 		this.resource = this.data.resource;
 
-		this.callParent(arguments);
-
 		this.on('resize', this.onResize, this);
 	},
 
@@ -190,13 +190,11 @@ Ext.define('widgets.weather.brick' , {
 		if(this.simple_display) {
 			this._html_template = widget_weather_simple_template;
 		}
+		else if(this.icon_on_left) {
+			this._html_template = widget_weather_template_left;
+		}
 		else {
-			if(this.icon_on_left) {
-				this._html_template = widget_weather_template_left;
-			}
-			else {
-				this._html_template = widget_weather_template;
-			}
+			this._html_template = widget_weather_template;
 		}
 
 		this.widget_base_config = {
@@ -211,13 +209,11 @@ Ext.define('widgets.weather.brick' , {
 		if(this.data.display_name) {
 			this.widget_base_config.title = this.data.display_name;
 		}
+		else if(this.component) {
+			this.widget_base_config.title = this.component;
+		}
 		else {
-			if(this.component) {
-				this.widget_base_config.title = this.component;
-			}
-			else {
-				this.widget_base_config.title = 'Unknown';
-			}
+			this.widget_base_config.title = 'Unknown';
 		}
 
 		var linkUrl = this.formatLink();
@@ -291,8 +287,6 @@ Ext.define('widgets.weather.brick' , {
 
 		//Hack for removing scrolling bar on ie
 		this.getEl().parent().setStyle('overflow-x', 'hidden');
-
-
 	},
 
 	onResize: function() {
@@ -306,7 +300,22 @@ Ext.define('widgets.weather.brick' , {
 	build: function(data) {
 		log.debug('  +  Build html for ' + data._id, this.logAuthor);
 
-		var widget_data = {};
+		var widget_data = {
+			id: undefined,
+			title: undefined,
+			title_font_size: undefined,
+			event_ts: undefined,
+			output: undefined,
+			admin: undefined,
+			derogation: undefined,
+			exportMode: undefined,
+			percent: undefined,
+			icon_src: undefined,
+			button_text: undefined,
+			alert_icon: undefined,
+			alert_msg: undefined,
+			legend: undefined
+		};
 
 		if(data.state !== undefined) {
 			widget_data.icon_src = this.getIcon(data.state);
