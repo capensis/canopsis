@@ -161,7 +161,12 @@ Ext.define('widgets.eventcalendar.editwindow' , {
 		this._form.down("#event_source").setDisabled(true);
 
 		this._form.down("#start_date").setValue(new Date(event.start));
-		this._form.down("#end_date").setValue(new Date(event.end));
+
+		if(event.end === null)
+			this._form.down("#end_date").setValue(new Date(event.start));
+		else
+			this._form.down("#end_date").setValue(new Date(event.end));
+
 		if(!event.all_day)
 		{
 			this._form.down("#start_time").setValue(event.start);
