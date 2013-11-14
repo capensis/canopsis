@@ -10,19 +10,6 @@
 	"locales": ["en","fr"],
 
 	"options":[{
-		"title": "Choose Metrics",
-			"items": [
-					{
-						"xtype": "cfilter",
-						"name": "filter",
-						"multiSelect": true,
-						"metrics": true,
-						"sharedStore":"eventcalendar",
-						"additional_field": [
-							"label","curve_color"
-						]
-					}]
-	},{
 		"title": "Options",
 			"items": [
 					{
