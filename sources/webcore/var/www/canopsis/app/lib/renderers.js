@@ -565,3 +565,37 @@ function rdr_access(val) {
 function rdr_rule_action(val) {
 	return "<span class='icon icon-rule-" + val + "' />";
 }
+
+rdr_file_help = function(val, metadata, record, rowIndex, colIndex, store) {
+	if ( typeof  record.raw['component'] != null && typeof record.raw['resource'] != null ) {
+		return '<a target="_blank" href="' + this.opt_file_help_uri + '/' + record.raw['component'] + '/' + record.raw[ 'resource' ] + '.' + this.opt_file_help_ext + '"><span class="icon icon-crecord_type-"></span></a>';
+	} else {
+		return ''
+	}
+};
+
+rdr_file_equipement = function(val, metadata, record, rowIndex, colIndex, store) {
+	if ( typeof  record.raw['component'] != null && typeof record.raw['resource'] != null ) {
+		return '<a target="_blank" href="' + this.opt_file_equipement_uri + '/' + record.raw['component'] + '/' + record.raw[ 'resource' ] + '.' + this.opt_file_equipement_ext + '"><span class="icon icon-about"></span></a>';
+	} else {
+		return ''
+	}
+};
+
+rdr_ticket = function(val, metadata, record, rowIndex, colIndex, store) {
+	if ( typeof record.raw['ticket'] != null && record.raw['ticket'] != undefined ) {
+		var reg=new RegExp( "<ticket>", "g" );
+		this.opt_ticket_url.replace( reg, record.raw['ticket'] ); 
+		return '<a href="' + this.opt_ticket_url.replace( reg, record.raw['ticket'] ) + '" target="_blank">' + record.raw['ticket'] + '</a>'
+	} else {
+		return ''
+	}
+};
+
+rdr_ack = function(val, metadata, record, rowIndex, colIndex, store ) {
+	if ( typeof record.raw['ack_state'] != null && record.raw['ack_state'] != undefined && record.raw['ack_state'] > 0 ) {
+		return '<span class="icon icon-ack-all" title="'+  record.raw['ack_output'] +'"></span>'
+	} else {
+		return ''
+	}
+}

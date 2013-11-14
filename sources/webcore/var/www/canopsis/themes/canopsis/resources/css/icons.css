@@ -546,3 +546,8 @@
 .icon-browser-firefox {
     background-image: url(../images/icons/browser/firefox-32.png) !important ;
 }
+
+.icon-ack-all {
+	background-image: url(../images/icons/maintenance-icon.png) !important;
+}
+

@@ -1,4 +1,5 @@
 /*
+#--------------------------------
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
@@ -15,6 +16,7 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
+# ---------------------------------
 */
 Ext.define('canopsis.lib.view.cgrid_state' , {
 	extend: 'canopsis.lib.view.cgrid',
@@ -31,6 +33,7 @@ Ext.define('canopsis.lib.view.cgrid_state' , {
 
 	opt_column_sortable: false,
 
+	opt_show_state_type: true,
 	opt_show_component: false,
 	opt_show_resource: true,
 	opt_show_state: true,
@@ -39,8 +42,8 @@ Ext.define('canopsis.lib.view.cgrid_state' , {
 	opt_show_last_check: true,
 	opt_show_output: true,
 	opt_show_tags: true,
-	opt_show_ack: true,
-
+	opt_show_ticket: true,
+	
 	opt_show_row_background: true,
 
 	opt_bar_delete: false,
@@ -53,9 +56,9 @@ Ext.define('canopsis.lib.view.cgrid_state' , {
 	pageSize: global.pageSize,
 
 	sorters: [{
-		property: 'state',
-		direction: 'DESC'
-	}],
+			property: 'state',
+			direction: 'DESC'
+		}],
 
 	columns: [],
 
@@ -65,18 +68,52 @@ Ext.define('canopsis.lib.view.cgrid_state' , {
 		this.columns = [];
 
 		//set columns
-		if(this.opt_show_source_type) {
+		if (this.opt_show_source_type) {
 			this.columns.push({
 				header: ' ',
 				width: 25,
 				sortable: this.opt_column_sortable,
+				//menuDisabled: true,
 				hideable: false,
 				dataIndex: 'source_type',
 				renderer: rdr_source_type
+				});
+		}
+		
+		if (this.opt_show_file_help) {
+			this.columns.push({
+				header: '<span class="icon icon-crecord_type-"></span>',
+				width: 25,
+				sortable: this.opt_column_sortable,
+				//menuDisabled: true,
+				hideable: true,
+				renderer: rdr_file_help
+			});
+		}
+		
+		if (this.opt_show_file_equipement) {
+			this.columns.push({
+				header: '<span class="icon icon-about"></span>',
+				width: 25,
+				sortable: this.opt_column_sortable,
+				//menuDisabled: true,
+				hideable: true,
+				renderer: rdr_file_equipement
+			});
+		}
+		
+		if (this.opt_show_ack) {
+			this.columns.push({
+				header: '<span class="icon"></span>',
+				width: 25,
+				sortable: this.opt_column_sortable,
+				//menuDisabled: true,
+				hideable: true,
+				renderer: rdr_ack
 			});
 		}
 
-		if(this.opt_show_state_type) {
+		if (this.opt_show_state_type) {
 			this.columns.push({
 				header: 'ST',
 				sortable: this.opt_column_sortable,
@@ -86,7 +123,7 @@ Ext.define('canopsis.lib.view.cgrid_state' , {
 			});
 		}
 
-		if(this.opt_show_state) {
+		if (this.opt_show_state) {
 			this.columns.push({
 				header: _('S'),
 				sortable: this.opt_column_sortable,
@@ -96,7 +133,17 @@ Ext.define('canopsis.lib.view.cgrid_state' , {
 			});
 		}
 
-		if(this.opt_show_last_check) {
+		if (this.opt_show_ticket) {
+			this.columns.push({
+				header: 'Ticket',
+				sortable: this.opt_column_sortable,
+				flex: 1,
+				dataIndex: 'state_type',
+				renderer: rdr_ticket
+			});
+		}
+
+		if (this.opt_show_last_check) {
 			this.columns.push({
 				header: _('Last check'),
 				sortable: this.opt_column_sortable,
@@ -106,7 +153,7 @@ Ext.define('canopsis.lib.view.cgrid_state' , {
 			});
 		}
 
-		if(this.opt_show_component) {
+		if (this.opt_show_component) {
 			this.columns.push({
 				header: _('Component'),
 				flex: 1,
@@ -115,7 +162,7 @@ Ext.define('canopsis.lib.view.cgrid_state' , {
 			});
 		}
 
-		if(this.opt_show_resource) {
+		if (this.opt_show_resource) {
 			this.columns.push({
 				header: _('Resource'),
 				flex: 1,
@@ -124,7 +171,7 @@ Ext.define('canopsis.lib.view.cgrid_state' , {
 			});
 		}
 
-		if(this.opt_show_output) {
+		if (this.opt_show_output) {
 			this.columns.push({
 				header: _('Message'),
 				flex: 4,
@@ -133,18 +180,7 @@ Ext.define('canopsis.lib.view.cgrid_state' , {
 			});
 		}
 
-		if(this.opt_show_ack) {
-			this.columns.push({
-				header: _('Acknowledgement'),
-				flex: 2,
-				hidden: true,
-				sortable: this.opt_column_sortable,
-				dataIndex: 'ack',
-				renderer: rdr_ack
-			});
-		}
-
-		if(this.opt_show_tags) {
+		if (this.opt_show_tags) {
 			this.columns.push({
 				header: _('Tags'),
 				flex: 4,
@@ -156,8 +192,9 @@ Ext.define('canopsis.lib.view.cgrid_state' , {
 
 
 		//store
-		if(!this.store) {
+		if (! this.store) {
 			this.store = Ext.create('canopsis.lib.store.cstore', {
+				//extend: 'canopsis.lib.store.cstore',
 				model: 'canopsis.model.Event',
 
 				pageSize: this.pageSize,
@@ -178,11 +215,11 @@ Ext.define('canopsis.lib.view.cgrid_state' , {
 				}
 			});
 
-			if(this.filter) {
+			if (this.filter) {
 				this.store.setFilter(this.filter);
 			}
 
-			if(this.autoload) {
+			if (this.autoload) {
 				this.store.load();
 			}
 		}
@@ -191,27 +228,182 @@ Ext.define('canopsis.lib.view.cgrid_state' , {
 			stripeRows: false
 		};
 
-		if(this.opt_show_row_background) {
+		if (this.opt_show_row_background) {
 			this.viewConfig.getRowClass = this.coloringRow;
 		}
+
+		// Look at the eventlog initComponent duplicate
+		//-----------filter button-------------------------
+		// if (this.fitler_buttons) {
+		// 		this.bar_search = [{
+		// 		xtype: 'button',
+		// 		iconCls: 'icon-crecord_type-resource',
+		// 		pack: 'end',
+		// 		tooltip: _('Show resource'),
+		// 		enableToggle: true,
+		// 		pressed: true,
+		// 		scope: this,
+		// 		toggleHandler: function(button, state) {
+		// 			if (!state) {
+		// 				button.filter_id = this.store.addFilter(
+		// 					{'source_type': {'$ne': 'resource'}}
+		// 				);
+		// 			}else {
+		// 				if (button.filter_id)
+		// 					this.store.deleteFilter(button.filter_id);
+		// 			}
+		// 			this.store.load();
+		// 		}
+		// 	},{
+		// 		xtype: 'button',
+		// 		iconCls: 'icon-crecord_type-component',
+		// 		pack: 'end',
+		// 		tooltip: _('Show component'),
+		// 		enableToggle: true,
+		// 		pressed: true,
+		// 		scope: this,
+		// 		toggleHandler: function(button, state) {
+		// 			if (!state) {
+		// 				button.filter_id = this.store.addFilter(
+		// 					{'source_type': {'$ne': 'component'}}
+		// 				);
+		// 			}else {
+		// 				if (button.filter_id)
+		// 					this.store.deleteFilter(button.filter_id);
+		// 			}
+		// 			this.store.load();
+		// 		}
+		// 	},{
+		// 		xtype: 'button',
+		// 		iconCls: 'icon-state-0',
+		// 		pack: 'end',
+		// 		tooltip: _('Show state ok'),
+		// 		enableToggle: true,
+		// 		pressed: true,
+		// 		scope: this,
+		// 		toggleHandler: function(button, state) {
+		// 			if (!state) {
+		// 				button.filter_id = this.store.addFilter(
+		// 					{'state': {'$ne': 0}}
+		// 				);
+		// 			}else {
+		// 				if (button.filter_id)
+		// 					this.store.deleteFilter(button.filter_id);
+		// 			}
+		// 			this.store.load();
+		// 		}
+		// 	},{
+		// 		xtype: 'button',
+		// 		iconCls: 'icon-state-1',
+		// 		pack: 'end',
+		// 		tooltip: _('Show state warning'),
+		// 		enableToggle: true,
+		// 		pressed: true,
+		// 		scope: this,
+		// 		toggleHandler: function(button, state) {
+		// 			if (!state) {
+		// 				button.filter_id = this.store.addFilter(
+		// 					{'state': {'$ne': 1}}
+		// 				);
+		// 			}else {
+		// 				if (button.filter_id)
+		// 					this.store.deleteFilter(button.filter_id);
+		// 			}
+		// 			this.store.load();
+		// 		}
+		// 	},{
+		// 		xtype: 'button',
+		// 		iconCls: 'icon-state-2',
+		// 		pack: 'end',
+		// 		tooltip: _('Show state critical'),
+		// 		enableToggle: true,
+		// 		pressed: true,
+		// 		scope: this,
+		// 		toggleHandler: function(button, state) {
+		// 			if (!state) {
+		// 				button.filter_id = this.store.addFilter(
+		// 					{'state': {'$ne': 2}}
+		// 				);
+		// 			}else {
+		// 				if (button.filter_id)
+		// 					this.store.deleteFilter(button.filter_id);
+		// 			}
+		// 			this.store.load();
+		// 		}
+		// 	},{
+		// 		xtype: 'button',
+		// 		iconCls: 'icon-state-3',
+		// 		pack: 'end',
+		// 		tooltip: _('Show state unknown'),
+		// 		enableToggle: true,
+		// 		pressed: true,
+		// 		scope: this,
+		// 		toggleHandler: function(button, state) {
+		// 			if (!state) {
+		// 				button.filter_id = this.store.addFilter(
+		// 					{'state': {'$ne': 3}}
+		// 				);
+		// 			}else {
+		// 				if (button.filter_id)
+		// 					this.store.deleteFilter(button.filter_id);
+		// 			}
+		// 			this.store.load();
+		// 		}
+		// 	},{
+		// 		xtype: 'button',
+		// 		iconCls: 'icon-state-type-0',
+		// 		pack: 'end',
+		// 		tooltip: _('Show soft state'),
+		// 		enableToggle: true,
+		// 		pressed: true,
+		// 		scope: this,
+		// 		toggleHandler: function(button, state) {
+		// 			if (!state) {
+		// 				button.filter_id = this.store.addFilter(
+		// 					{'state_type': {'$ne': 0}}
+		// 				);
+		// 			}else {
+		// 				if (button.filter_id)
+		// 					this.store.deleteFilter(button.filter_id);
+		// 			}
+		// 			this.store.load();
+		// 		}
+		// 	},{
+		// 		xtype: 'button',
+		// 		iconCls: 'icon-state-type-1',
+		// 		pack: 'end',
+		// 		tooltip: _('Show hard state'),
+		// 		enableToggle: true,
+		// 		pressed: true,
+		// 		scope: this,
+		// 		toggleHandler: function(button, state) {
+		// 			if (!state) {
+		// 				button.filter_id = this.store.addFilter(
+		// 					{'state_type': {'$ne': 1}}
+		// 				);
+		// 			}else {
+		// 				if (button.filter_id)
+		// 					this.store.deleteFilter(button.filter_id);
+		// 			}
+		// 			this.store.load();
+		// 		}
+		// 	},'-'];
+		// }
 
 		this.callParent(arguments);
 	},
 
-	coloringRow: function(record) {
+	coloringRow: function(record,index,rowParams,store) {
 		state = record.get('state');
-
-		if(state === 0) {
+		if (state == 0) {
 			return 'row-background-ok';
-		}
-		else if (state === 1) {
+		} else if (state == 1) {
 			return 'row-background-warning';
-		}
-		else if (state === 2) {
+		} else if (state == 2) {
 			return 'row-background-error';
-		}
-		else {
+		} else {
 			return 'row-background-unknown';
 		}
 	}
+
 });
