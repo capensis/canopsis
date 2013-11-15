@@ -124,6 +124,8 @@ Ext.define('widgets.eventcalendar.editwindow' , {
 	},
 
 	showNewEvent : function(start, end, allDay){
+		this.setTitle( _("New event"));
+
 		this.currentEditedEvent = {};
 		this.currentEditedEventHtml = null;
 		this.addMode = true;
@@ -151,6 +153,8 @@ Ext.define('widgets.eventcalendar.editwindow' , {
 	},
 
 	showEditEvent: function(event, eventHtml){
+		this.setTitle( _("Edit event"));
+
 		this.currentEditedEvent = event;
 		this.currentEditedEventHtml = eventHtml;
 		this.addMode = false;

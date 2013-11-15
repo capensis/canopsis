@@ -20,26 +20,38 @@
 */
 
 Ext.define('widgets.eventcalendar.eventswindow' , {
-	extend: 'canopsis.lib.view.cpopup',
+	extend: 'Ext.window.Window',
 
 	alias: 'widget.eventcalendar.eventswindow',
 
-	height: 550,
+	height: 500,
 	width: 800,
 	layout: 'fit',
-	items: {
-		border: false,
-	},
+
 	closeAction: 'hide',
 
 	addMode: true,
+	hasFooter: false,
 
 	initComponent: function() {
 		this.calendar = this.initialConfig.calendar;
+
+		this.setTitle( _("Event browsing"));
+		var form = this.buildForm();
+		this.items = [form];
 		this.callParent(arguments);
 	},
 
-	_buildForm: function() {
+	buildForm: function() {
+		this._form = Ext.create('Ext.form.Panel', {
+			layout: 'anchor',
+			bodyStyle: {
+				background: '#ededed'
+			},
+			bodyPadding: 10,
+			border: false
+		});
+
 		this._form.bodyPadding = 0;
 		this.grid = Ext.create('canopsis.lib.view.cgrid_state', {
 			exportMode: this.exportMode,
@@ -52,6 +64,8 @@ Ext.define('widgets.eventcalendar.eventswindow' , {
 			opt_paging:true
 		});
 		this._form.add(this.grid);
+
+		return this._form;
 	},
 
 	afterRender: function() {
