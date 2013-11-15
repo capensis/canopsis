@@ -69,5 +69,32 @@
 								"value": "month,agendaWeek,agendaDay"
 							}]
 					}]
+	},{
+		"title": "Style",
+			"items": [
+				{
+					"xtype": "radiogroup",
+					"fieldLabel": "event display size",
+					"columns": 1,
+					"vertical": true,
+					"items": [
+						{ "boxLabel": "tiny",   "name": "rb", "inputValue": "1" },
+						{ "boxLabel": "small",  "name": "rb", "inputValue": "2", "checked": true},
+						{ "boxLabel": "normal", "name": "rb", "inputValue": "3" },
+						{ "boxLabel": "big",    "name": "rb", "inputValue": "4" },
+						{ "boxLabel": "huge",   "name": "rb", "inputValue": "5" }
+					]
+				},{
+					"fieldLabel": "stacked events color",
+					"xtype":"ccolorfield"
+				}
+				]
+	},{
+		"title": "Customize sources",
+		"items" : [{
+					"xtype": "ccard",
+					"edit": true
+				}
+		]
 	}]
 }]
