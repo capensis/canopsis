@@ -1,3 +1,4 @@
+//need:widgets/weather/brick.js
 /*
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #

@@ -1,3 +1,4 @@
+//need:widgets/stream/event.js
 /*
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
