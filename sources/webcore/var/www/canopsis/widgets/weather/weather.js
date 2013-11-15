@@ -20,9 +20,13 @@
 
 Ext.define('widgets.weather.weather' , {
 	extend: 'canopsis.lib.view.cwidget',
-
 	alias: 'widget.weather',
-	logAuthor: '[widget][weather]',
+	logAuthor: '[widgets][weather]',
+
+	requires: [
+		'widgets.weather.brick'
+	],
+
 	border: false,
 
 	cls: 'widget-weather',

@@ -51,6 +51,29 @@ class Minimizer(object):
 			if fullpath not in self.exclude and not fnmatch.fnmatch(filename, '*lang*.js'):
 				self.files.append(fullpath)
 
+	def get_deps(self, filename):
+		files = []
+
+		with open(filename, 'r') as f:
+			first_line = f.readline()
+
+			# First line may contains dependencies in CSV formatted list
+			if first_line.startswith('//need:'):
+				requirements = first_line[7:]
+				parsed = csv.reader([requirements]).next()
+
+				# Add all required files if not excluded or already added
+				for required in parsed:
+					fullpath = os.path.join(self.canodir, required)
+
+					if fullpath not in self.exclude and fullpath not in self.added:
+						files += self.get_deps(fullpath)
+
+			# Now dependencies are in the list, just add this file now
+			files.append(filename)
+
+		return files
+
 	def minify(self):
 		# Find all JS files
 		os.path.walk(self.canodir, self.jsFinder, None)
@@ -106,23 +129,7 @@ class Minimizer(object):
 				continue
 
 			# Open file and read the first line
-			with open(filename, 'r') as f:
-				first_line = f.readline()
-
-				# First line may contains dependencies in CSV formatted list
-				if first_line.startswith('//need:'):
-					requirements = first_line[7:]
-					parsed = csv.reader([requirements]).next()
-
-					# Add all required files if not excluded or already added
-					for required in parsed:
-						fullpath = os.path.join(self.canodir, required)
-
-						if fullpath not in self.exclude and fullpath not in self.added:
-							self.added.append(fullpath)
-
-			# Now dependencies are in the list, just add this file now
-			self.added.append(filename)
+			self.added += self.get_deps(filename)
 
 		# Concatenate all files
 		print 'Open {0} for writing'.format(self.canopsisjs)
