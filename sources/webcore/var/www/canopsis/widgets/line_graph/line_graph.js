@@ -926,7 +926,7 @@ Ext.define('widgets.line_graph.line_graph', {
 			label = node.label;
 		}
 
-		if(curve) {
+		if(!label && curve) {
 			label = curve.get('label');
 		}
 
