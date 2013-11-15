@@ -1,3 +1,4 @@
+//need:app/lib/store/cstore.js
 /*
 #--------------------------------
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
@@ -20,6 +21,10 @@
 */
 Ext.define('widgets.stepeue.scenario', {
 	alias: 'widget.stepeue.scenario',
+
+	requires: [
+		'canopsis.lib.store.cstore'
+	],
 
 	logAuthor: '[widget][stepeue][scenario]',
 	scroll: true,

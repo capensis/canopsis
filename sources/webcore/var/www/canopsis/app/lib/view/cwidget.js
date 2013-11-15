@@ -16,7 +16,7 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 */
-Ext.define('canopsis.lib.view.cwidget' , {
+Ext.define('canopsis.lib.view.cwidget', {
 	extend: 'Ext.panel.Panel',
 
 	border: false,

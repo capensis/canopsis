@@ -1,4 +1,4 @@
-//need:app/lib/view/csparkline.js
+//need:app/lib/view/cperfstoreValueConsumerWidget.js,app/lib/view/csparkline.js
 /*
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #

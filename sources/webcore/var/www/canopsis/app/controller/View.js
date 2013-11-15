@@ -1,3 +1,4 @@
+//need:app/lib/controller/ctree.js,app/view/View/TreePanel.js,app/store/Views.js,app/store/TreeStoreViews.js,app/lib/view/cfile_window.js,app/view/Tabs/View_form.js
 /*
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
@@ -18,6 +19,11 @@
 */
 Ext.define('canopsis.controller.View', {
 	extend: 'canopsis.lib.controller.ctree',
+
+	requires: [
+		'canopsis.lib.view.cfile_window',
+		'canopsis.view.Tabs.View_form'
+	],
 
 	views: ['View.TreePanel'],
 	stores: ['Views', 'TreeStoreViews'],

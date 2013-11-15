@@ -1,3 +1,4 @@
+//need:app/lib/controller/cgrid.js,app/view/Derogation/Form.js,app/view/Derogation/Grid.js,app/store/Derogations.js
 /*
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #

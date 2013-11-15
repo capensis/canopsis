@@ -1,3 +1,4 @@
+//need:app/lib/view/cwizard.js,app/view/Tabs/View_form.js,app/view/ReportingBar/ReportingBar.js
 /*
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
@@ -20,6 +21,12 @@ Ext.define('canopsis.view.Tabs.Content' , {
 	extend: 'Ext.jq.Gridable',
 
 	alias: 'widget.TabsContent',
+
+	requires: [
+		'canopsis.lib.view.cwizard',
+		'canopsis.view.Tabs.View_form',
+		'canopsis.view.ReportingBar.ReportingBar'
+	],
 
 	logAuthor: '[view][tabs][content]',
 

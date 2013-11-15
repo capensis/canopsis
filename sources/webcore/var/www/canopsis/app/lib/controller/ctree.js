@@ -1,3 +1,4 @@
+//need:app/lib/view/crights.js
 /*
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
@@ -18,6 +19,10 @@
 */
 Ext.define('canopsis.lib.controller.ctree', {
 	extend: 'Ext.app.Controller',
+
+	requires: [
+		'canopsis.lib.view.crights'
+	],
 
 	logAuthor: '[controller][ctree]',
 

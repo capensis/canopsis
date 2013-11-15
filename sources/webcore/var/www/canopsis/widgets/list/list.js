@@ -1,3 +1,4 @@
+//need:app/lib/view/cwidget.js,app/lib/view/cgrid_state.js,app/lib/controller/cgrid.js
 /*
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
@@ -20,6 +21,11 @@ Ext.define('widgets.list.list' , {
 	extend: 'canopsis.lib.view.cwidget',
 
 	alias: 'widget.list',
+
+	requires: [
+		'canopsis.lib.view.cgrid_state',
+		'canopsis.lib.controller.cgrid'
+	],
 
 	//don't work
 	filter: {'source_type': 'component'},

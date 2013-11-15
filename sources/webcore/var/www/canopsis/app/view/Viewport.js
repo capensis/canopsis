@@ -1,3 +1,4 @@
+//need:app/view/Mainbar/Bar.js,app/view/Tabs/View.js
 /*
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
@@ -23,7 +24,9 @@ Ext.define('canopsis.view.Viewport', {
 	requires: [
 		'Ext.layout.container.Border',
 		'Ext.tab.Panel',
-		'Ext.panel.Header'
+		'Ext.panel.Header',
+		'canopsis.view.Mainbar.Bar',
+		'canopsis.view.Tabs.View'
 	],
 
 	layout: 'border',

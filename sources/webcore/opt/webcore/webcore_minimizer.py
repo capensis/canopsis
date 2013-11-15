@@ -66,13 +66,20 @@ class Minimizer(object):
 				for required in parsed:
 					fullpath = os.path.join(self.canodir, required)
 
-					if fullpath not in self.exclude and fullpath not in self.added:
+					if fullpath not in self.exclude and fullpath not in files and fullpath not in self.added:
 						files += self.get_deps(fullpath)
 
 			# Now dependencies are in the list, just add this file now
 			files.append(filename)
 
-		return files
+		# Be sure every file is unique
+		found = []
+
+		for f in files:
+			if f not in found:
+				found.append(f)
+
+		return found
 
 	def minify(self):
 		# Find all JS files

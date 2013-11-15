@@ -1,4 +1,4 @@
-//need:widgets/weather/brick.js
+//need:app/lib/view/cwidget.js,widgets/weather/brick.js
 /*
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #

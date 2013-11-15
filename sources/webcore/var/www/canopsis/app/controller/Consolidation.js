@@ -1,3 +1,4 @@
+//need:app/lib/controller/cgrid.js,app/view/Consolidation/Grid.js,app/view/Consolidation/Form.js,app/store/Consolidations.js
 /*
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #

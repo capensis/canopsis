@@ -1,3 +1,4 @@
+//need:app/view/Event/Log.js,app/store/EventLogs.js
 /*
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #

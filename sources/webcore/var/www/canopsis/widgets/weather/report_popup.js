@@ -1,3 +1,4 @@
+//need:app/lib/view/cpopup.js
 /*
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
@@ -17,7 +18,7 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-Ext.define('widgets.weather.report_popup' , {
+Ext.define('widgets.weather.report_popup', {
 	extend: 'canopsis.lib.view.cpopup',
 	alias: 'widget.weather.report_popup',
 

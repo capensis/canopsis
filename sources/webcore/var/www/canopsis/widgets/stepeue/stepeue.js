@@ -1,3 +1,4 @@
+//need:app/lib/view/cwidget.js,widgets/stepeue/feature.js
 /*
 #--------------------------------
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
@@ -21,6 +22,10 @@
 Ext.define('widgets.stepeue.stepeue', {
 	extend: 'canopsis.lib.view.cwidget',
 	alias: 'widget.stepeue',
+
+	requires: [
+		'widgets.stepeue.feature'
+	],
 
 	logAuthor: '[widget][stepeue]',
 	scroll: true,
