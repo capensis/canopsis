@@ -59,11 +59,11 @@ Ext.define('widgets.topology_viewer.topology_viewer' , {
 	// widget functions
 
 	initComponent: function() {
+		this.callParent(arguments);
+
 		if(this.background_color) {
 			this.bodyStyle = {'background-color': this.background_color};
 		}
-
-		this.callParent(arguments);
 
 		if(Ext.ieVersion <= 9 && Ext.ieVersion !== 0) {
 			this.setHtml('<center>' + _('Widget not supported by ie') + '</center>');
@@ -233,7 +233,10 @@ Ext.define('widgets.topology_viewer.topology_viewer' , {
 	},
 
 	sigmaDraw: function() {
+		var me = this;
+
 		log.debug('Redraw topolgy', this.logAuthor);
+		this.sigmaContainer.resize();
 		this.sigmaContainer.draw();
 		this.canvas = document.getElementById(this.sigmaContainer._core.domRoot.lastChild.id);
 		this.canvasContext = this.canvas.getContext('2d');
@@ -243,7 +246,9 @@ Ext.define('widgets.topology_viewer.topology_viewer' , {
 
 		this.sigmaContainer._core.mousecaptor.bind(
 			'stopinterpolate',
-			this.displayLastUpdate.bind(this)
+			function() {
+				me.displayLastUpdate();
+			}
 		);
 	},
 

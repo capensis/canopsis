@@ -1,3 +1,4 @@
+//need:widgets/stream/event.js
 /*
 #--------------------------------
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
@@ -30,6 +31,11 @@ Ext.define('widgets.stream.stream' , {
 	extend: 'canopsis.lib.view.cwebsocketWidget',
 
 	alias: 'widget.stream',
+	logAuthor: '[widgets][stream]',
+
+	requires: [
+		'widgets.stream.event'
+	],
 
 	cls: 'widget-stream',
 
@@ -58,7 +64,9 @@ Ext.define('widgets.stream.stream' , {
 	compact: true,
 
 	initComponent: function() {
-		if (this.fullscreenMode) {
+		this.callParent(arguments);
+
+		if(this.fullscreenMode) {
 			this.enable_userinputs = false;
 			this.enable_comments = false;
 		}
@@ -142,13 +150,13 @@ Ext.define('widgets.stream.stream' , {
 					}
 			]);
 
-			this.tbar = Ext.create('Ext.toolbar.Toolbar', {
+			this.addDocked({
+				xtype: 'toolbar',
+				dock: 'top',
+				vertical: false,
 				items: items
 			});
 		}
-
-		this.callParent(arguments);
-		logAuthor = '[widget][stream]';
 	},
 
 	afterContainerRender: function() {

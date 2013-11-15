@@ -90,12 +90,15 @@ Ext.define('canopsis.lib.form.field.ctopo' , {
 
 				for(var j = 0; j < node.conns.length; j++) {
 					var conn = node.conns[j];
-					var target = Ext.getCmp(conn.targetId);
-					var source = Ext.getCmp(conn.sourceId);
 
-					if(target && source) {
-						log.debug('   -> ' + source.id, this.logAuthor);
-						conns.push([source.id, target.id]);
+					if(conn) {
+						var target = Ext.getCmp(conn.targetId);
+						var source = Ext.getCmp(conn.sourceId);
+
+						if(target && source) {
+							log.debug('   -> ' + source.id, this.logAuthor);
+							conns.push([source.id, target.id]);
+						}
 					}
 				}
 
