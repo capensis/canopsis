@@ -32,6 +32,8 @@ Ext.define('canopsis.view.Topology.Grid' , {
 	opt_menu_rights: false,
 	opt_bar_enable: true,
 
+    opt_export_import: true,
+
 	columns: [
 		{
 			header: '',

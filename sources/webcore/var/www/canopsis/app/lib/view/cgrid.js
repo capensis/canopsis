@@ -84,6 +84,21 @@ Ext.define('canopsis.lib.view.cgrid' , {
 
 	logAuthor: '[view][cgrid]',
 
+    
+    export_column: {
+        xtype: 'actioncolumn',
+        width: 70,
+        text: _('Export'),
+        icon: './themes/canopsis/resources/images/icons/edit.png',
+        iconCls: 'icon-clickable',
+        handler: function(grid, rowIndex) {
+            var rec = grid.getStore().getAt(rowIndex).raw;
+            log.dump(rec);
+		    window.open('/ui/export/object/' + rec._id);
+        }
+    },
+
+
 	getTbar: function() {
 		var dockedItems = this.getDockedItems();
 
@@ -173,6 +188,19 @@ Ext.define('canopsis.lib.view.cgrid' , {
 						action: 'delete'
 					});
 				}
+
+                if (this.opt_export_import) {
+                    this.columns.push(this.export_column);
+
+                    bar_child.push({
+                        xtype: 'button',
+                        iconCls: 'icon-import',
+                        text: _('Import '+ this.model),
+                        disabled: false,
+                        action: 'import'
+                    });
+                }
+
 
 				if(this.opt_bar_customs) {
 					bar_child = bar_child.concat(this.opt_bar_customs);
@@ -380,6 +408,7 @@ Ext.define('canopsis.lib.view.cgrid' , {
 				})
 			];
 		}
+
 
 		this.callParent(arguments);
 
