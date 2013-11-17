@@ -215,10 +215,6 @@ def export_object(_id=None):
 
 		dump = record.dump()
 		del dump['_id']
-		keys = dump.keys()
-		for key in keys:
-			if key.startswith('aaa'):
-				del dump[key]
 	
 		return json.dumps(dump, sort_keys=True, indent=4)
 		
