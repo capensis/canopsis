@@ -36,6 +36,7 @@ Ext.define('canopsis.view.Perfdata.Grid' , {
 
 	opt_cell_edit: false,
 
+
 	columns: [
 		{
 			header: '',

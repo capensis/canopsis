@@ -84,6 +84,21 @@ Ext.define('canopsis.lib.view.cgrid' , {
 
 	logAuthor: '[view][cgrid]',
 
+    
+    export_column: {
+        xtype: 'actioncolumn',
+        width: 70,
+        text: _('Export'),
+        icon: 'themes/canopsis/resources/images/Tango-Blue-Materia/16x16/actions/gtk-indent.png',
+        iconCls: 'icon-clickable',
+        handler: function(grid, rowIndex) {
+            var rec = grid.getStore().getAt(rowIndex).raw;
+            log.dump(rec);
+		    window.open('/ui/export/object/' + rec._id);
+        }
+    },
+
+
 	getTbar: function() {
 		var dockedItems = this.getDockedItems();
 
@@ -103,6 +118,12 @@ Ext.define('canopsis.lib.view.cgrid' , {
 
 	TabOnHide: function() {
 		this.suspendLayout = true;
+	},
+
+	//This function purpose is to add a new item to the grid once import done properly
+	add_to_home: function (record, useless_boolean_here) {
+		log.debug(record);
+		this.store.insert(0, record);
 	},
 
 	initComponent: function() {
@@ -173,6 +194,26 @@ Ext.define('canopsis.lib.view.cgrid' , {
 						action: 'delete'
 					});
 				}
+
+				//This option manages import and export functions for a grid object system
+				if (this.opt_export_import) {
+				    this.columns.push(this.export_column);
+				    var model = this.model;
+				    var gridView = this;
+
+				    bar_child.push({
+					xtype: 'button',
+					iconCls: 'icon-import',
+					text: _('Import '+ this.model),
+					disabled: false,
+					action: 'import',
+					handler: function() {
+						var controller_common = Ext.create('canopsis.controller.common');
+						controller_common.filepopup(gridView, model);
+					},
+				    });
+				}
+
 
 				if(this.opt_bar_customs) {
 					bar_child = bar_child.concat(this.opt_bar_customs);
@@ -380,6 +421,7 @@ Ext.define('canopsis.lib.view.cgrid' , {
 				})
 			];
 		}
+
 
 		this.callParent(arguments);
 
