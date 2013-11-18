@@ -630,13 +630,14 @@ Ext.define('widgets.line_graph.line_graph', {
 				var e = serie.xAxis.getExtremes();
 				var time_window = e.max - e.min;
 
-				if(this.reportMode) {
-					this.stopTask();
-					serie.xAxis.setExtremes(from, to, false);
-				}
-				else {
+				if(!this.reportMode) {
 					serie.xAxis.setExtremes(now - time_window, now, false);
 				}
+			}
+
+			if(this.reportMode) {
+				this.stopTask();
+				this.chart.xAxis[0].setExtremes(from, to, false);
 			}
 
 			this.refreshNodes(from, to);
