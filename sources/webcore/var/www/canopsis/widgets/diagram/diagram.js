@@ -334,7 +334,6 @@ Ext.define('widgets.diagram.diagram', {
 	},
 
 	processPostParams: function(post_params) {
-		post_params['aggregate_timemodulation'] = false;
 		post_params['aggregate_max_points'] = 1;
 	},
 
