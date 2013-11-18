@@ -97,7 +97,7 @@
 							},{
 								"xtype": "numberfield",
 								"fieldLabel": "Icon type",
-								"maxValue": 2,
+								"maxValue": 4,
 								"minValue": 1,
 								"value": 1,
 								"name": "iconSet"
