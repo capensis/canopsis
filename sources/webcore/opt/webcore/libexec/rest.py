@@ -81,28 +81,25 @@ def rest_get_media(namespace, _id):
 	return base64.b64decode(media_bin)
 
 #### GET
-@get('/rest/:namespace/:ctype/:_id')
-@get('/rest/:namespace/:ctype')
-@get('/rest/:namespace')
-def rest_get(namespace, ctype=None, _id=None):
+def rest_get(namespace, ctype=None, _id=None, params=None):
 	#get the session (security)
 	account = get_account()
 
-	limit		= int(request.params.get('limit', default=20))
-	page		= int(request.params.get('page', default=0))
-	start		= int(request.params.get('start', default=0))
-	groups		= request.params.get('groups', default=None)
-	search		= request.params.get('search', default=None)
-	filter		= request.params.get('filter', default=None)
-	sort		= request.params.get('sort', default=None)
-	query		= request.params.get('query', default=None)
-	onlyWritable	= request.params.get('onlyWritable', default=False)
-	noInternal	= request.params.get('noInternal', default=False)
-	ids			= request.params.get('ids', default=[])
+	limit		= int(params.get('limit', default=20))
+	page		= int(params.get('page', default=0))
+	start		= int(params.get('start', default=0))
+	groups		= params.get('groups', default=None)
+	search		= params.get('search', default=None)
+	filter		= params.get('filter', default=None)
+	sort		= params.get('sort', default=None)
+	query		= params.get('query', default=None)
+	onlyWritable	= params.get('onlyWritable', default=False)
+	noInternal	= params.get('noInternal', default=False)
+	ids			= params.get('ids', default=[])
 	
-	get_id			= request.params.get('_id', default=None)
+	get_id			= params.get('_id', default=None)
 	
-	fields = request.params.get('fields', default=None)
+	fields = params.get('fields', default=None)
 	
 	if not _id and get_id:
 		_id  = get_id
@@ -247,6 +244,12 @@ def rest_get(namespace, ctype=None, _id=None):
 	output={'total': total, 'success': True, 'data': output}
 	
 	return output
+
+@get('/rest/:namespace/:ctype/:_id')
+@get('/rest/:namespace/:ctype')
+@get('/rest/:namespace')
+def rest_get_route(namespace, ctype=None, _id=None):
+	return rest_get(namespace, ctype, _id, request.params)
 	
 #### POST
 @post('/rest/:namespace/:ctype/:_id')
