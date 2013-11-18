@@ -143,6 +143,9 @@ Ext.define('canopsis.lib.view.cperfstoreValueConsumerWidget', {
 		if(this.aggregate_method) {
 			post_params['aggregate_method'] = this.aggregate_method;
 		}
+		else {
+			post_params['aggregate_method'] = '';
+		}
 
 		if(this.aggregate_interval) {
 			post_params['aggregate_interval'] = this.aggregate_interval;

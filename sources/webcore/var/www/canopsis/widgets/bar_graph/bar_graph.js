@@ -46,7 +46,7 @@ Ext.define('widgets.bar_graph.bar_graph', {
 	last_from: false,
 	pushPoints: false,
 
-	logAuthor: '[bar_graph]',
+	logAuthor: '[widgets][bar_graph]',
 
 	options: {},
 	chart: false,
