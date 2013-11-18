@@ -1,3 +1,4 @@
+//need:widgets/weather/report_popup.js
 /*
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
@@ -139,6 +140,10 @@ widget_weather_simple_template = Ext.create('Ext.XTemplate',
 Ext.define('widgets.weather.brick' , {
 	extend: 'Ext.Component',
 	alias: 'widget.weather.brick',
+
+	requires: [
+		'widgets.weather.report_popup'
+	],
 
 	logAuthor: '[widget][weather][brick]',
 

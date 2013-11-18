@@ -1,3 +1,4 @@
+//need:app/lib/view/cform.js,app/lib/form/field/cfieldset.js
 /*
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
@@ -20,6 +21,10 @@ Ext.define('canopsis.view.Schedule.Form', {
 	extend: 'canopsis.lib.view.cform',
 
 	alias: 'widget.ScheduleForm',
+
+	requires: [
+		'canopsis.lib.form.field.cfieldset'
+	],
 
 	items: [
 		{

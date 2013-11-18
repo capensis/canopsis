@@ -1,3 +1,4 @@
+//need:app/lib/controller/cgrid.js,app/view/Schedule/Grid.js,app/view/Schedule/Form.js,app/store/Schedules.js
 /*
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #

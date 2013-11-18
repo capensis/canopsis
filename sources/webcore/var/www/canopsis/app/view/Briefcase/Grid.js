@@ -1,3 +1,4 @@
+//need:app/lib/view/cgrid.js,app/view/Briefcase/Uploader.js,app/lib/controller/cgrid.js
 /*
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
@@ -20,6 +21,11 @@ Ext.define('canopsis.view.Briefcase.Grid' , {
 	extend: 'canopsis.lib.view.cgrid',
 
 	alias: 'widget.BriefcaseGrid',
+
+	requires: [
+		'canopsis.view.Briefcase.Uploader',
+		'canopsis.lib.controller.cgrid'
+	],
 
 	model: 'File',
 	store: 'Files',

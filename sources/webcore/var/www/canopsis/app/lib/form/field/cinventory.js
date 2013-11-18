@@ -1,4 +1,4 @@
-//need:app/lib/form/cfield.js
+//need:app/lib/form/cfield.js,app/lib/view/cgrid.js,app/lib/store/cstore.js,app/lib/controller/cgrid.js,app/lib/menu/cclear.js
 /*
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
@@ -23,6 +23,13 @@ Ext.define('canopsis.lib.form.field.cinventory' , {
 	mixins: ['canopsis.lib.form.cfield'],
 
 	alias: 'widget.cinventory',
+
+	requires: [
+		'canopsis.lib.view.cgrid',
+		'canopsis.lib.store.cstore',
+		'canopsis.lib.controller.cgrid',
+		'canopsis.lib.menu.cclear'
+	],
 
 	border: false,
 	search_grid_border: true,

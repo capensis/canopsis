@@ -1,5 +1,5 @@
+//need:app/lib/store/cstore.js,app/model/Event.js,widgets/stepeue/scenario.js
 /*
-#--------------------------------
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
@@ -16,10 +16,15 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
-# ---------------------------------
 */
 Ext.define('widgets.stepeue.feature', {
 	alias: 'widget.stepeue.feature',
+
+	requires: [
+		'canopsis.lib.store.cstore',
+		'canopsis.model.Event',
+		'widgets.stepeue.scenario'
+	],
 
 	logAuthor: '[widget][stepeue][feature]',
 	scroll: true,

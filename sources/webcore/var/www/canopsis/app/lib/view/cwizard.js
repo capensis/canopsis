@@ -49,7 +49,6 @@ Ext.define('canopsis.lib.view.cwizard', {
 		'canopsis.lib.form.field.cfieldset',
 		'canopsis.lib.form.field.cdate',
 		'canopsis.lib.form.field.cduration',
-		'canopsis.lib.form.field.cduration',
 		'canopsis.lib.form.field.ccolorfield',
 		'canopsis.lib.view.ccard'
 	],

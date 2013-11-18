@@ -1,4 +1,4 @@
-//need:app/lib/form/field/cdate.js
+//need:app/lib/view/cpopup.js,app/lib/form/field/cdate.js
 /*
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #

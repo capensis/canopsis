@@ -215,7 +215,7 @@ Ext.define('canopsis.auth', {
 	},
 
 	submit: function() {
-		log.debug("Sublit form", this.logAuthor);
+		log.debug("Submit form", this.logAuthor);
 
 		var form = this.getForm();
 

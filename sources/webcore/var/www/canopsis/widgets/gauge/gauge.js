@@ -1,3 +1,4 @@
+//need:app/lib/view/cwidget.js
 /*
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #

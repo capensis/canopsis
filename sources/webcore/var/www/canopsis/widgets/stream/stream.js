@@ -1,4 +1,4 @@
-//need:widgets/stream/event.js
+//need:app/lib/view/cwidget.js,widgets/stream/event.js
 /*
 #--------------------------------
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]

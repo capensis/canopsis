@@ -1,3 +1,4 @@
+//need:app/store/Groups.js
 /*
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
@@ -20,6 +21,10 @@ Ext.define('canopsis.lib.view.crights' , {
 	extend: 'Ext.window.Window',
 
 	alias: 'widget.crights',
+
+	requires: [
+		'canopsis.store.Groups'
+	],
 
 	logAuthor: '[crights]',
 

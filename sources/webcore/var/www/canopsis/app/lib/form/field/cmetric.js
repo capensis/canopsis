@@ -1,3 +1,4 @@
+//need:app/lib/form/cfield.js,app/lib/store/cstore.js,app/lib/controller/cgrid.js
 /*
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
@@ -20,6 +21,12 @@
 Ext.define('canopsis.lib.form.field.cmetric', {
 	extend: 'Ext.panel.Panel',
 	mixins: ['canopsis.lib.form.cfield'],
+
+	requires: [
+		'canopsis.lib.store.cstore',
+		'canopsis.lib.view.cgrid',
+		'canopsis.lib.controller.cgrid'
+	],
 
 	alias: 'widget.cmetric',
 

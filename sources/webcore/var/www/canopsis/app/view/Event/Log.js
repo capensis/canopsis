@@ -1,3 +1,4 @@
+//need:app/lib/view/cgrid_state.js,app/store/EventLogs.js
 /*
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
@@ -22,6 +23,11 @@ Ext.define('canopsis.view.Event.Log' , {
 	alias: 'widget.EventLog',
 
 	logAuthor: '[View][Event][Log]',
+
+	requires: [
+		'canopsis.lib.controller.cgrid',
+		'canopsis.store.EventLogs'
+	],
 
 	store: undefined,
 

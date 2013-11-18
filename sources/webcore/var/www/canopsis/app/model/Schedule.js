@@ -37,7 +37,7 @@ Ext.define('canopsis.model.Schedule', {
 
 				var kwargs = record.get('kwargs');
 
-				if(kwargs['mail'] !== undefined && kwargs['mail'].sendMail) {
+				if(kwargs['mail'] !== undefined && kwargs['mail'] !== null && kwargs['mail'].sendMail) {
 					return true;
 				}
 
