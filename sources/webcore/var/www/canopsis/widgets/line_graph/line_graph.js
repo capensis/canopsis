@@ -69,6 +69,7 @@ Ext.define('widgets.line_graph.line_graph', {
 	extend: 'canopsis.lib.view.cperfstoreValueConsumerWidget',
 
 	alias: 'widget.line_graph',
+	logAuthor: '[widgets][line_graph]',
 
 	layout: 'fit',
 
@@ -152,8 +153,6 @@ Ext.define('widgets.line_graph.line_graph', {
 
 	initComponent: function() {
 		this.callParent(arguments);
-
-		this.logAuthor = '[widgets][line_graph]';
 
 		this.backgroundColor        = check_color(this.backgroundColor);
 		this.borderColor            = check_color(this.borderColor);
