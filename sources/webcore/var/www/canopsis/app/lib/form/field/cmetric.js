@@ -1,4 +1,4 @@
-//need:app/lib/form/cfield.js,app/lib/store/cstore.js,app/lib/controller/cgrid.js
+//need:app/lib/form/cfield.js,app/lib/store/cstore.js,app/lib/view/cgrid.js,app/lib/controller/cgrid.js
 /*
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
