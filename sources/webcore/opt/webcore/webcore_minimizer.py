@@ -73,13 +73,7 @@ class Minimizer(object):
 			files.append(filename)
 
 		# Be sure every file is unique
-		found = []
-
-		for f in files:
-			if f not in found:
-				found.append(f)
-
-		return found
+		return list(set(files))
 
 	def minify(self):
 		# Find all JS files
@@ -148,12 +142,8 @@ class Minimizer(object):
 				print '- ', filename
 
 				with open(filename, 'r') as f:
-					line = f.readline()
-
-					while line:
+					for line in f:
 						canopsisjs.write(line)
-
-						line = f.readline()
 
 		print '{0} written'.format(self.canopsisjs)
 
