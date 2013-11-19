@@ -119,6 +119,9 @@ Ext.define('canopsis.lib.form.field.cmetric', {
 			{name: 'trend_curve', defaultValue: undefined},
 			{name: 'yAxis', defaultValue: undefined},
 
+			{name: 'threshold_warn', defaultValue: undefined},
+			{name: 'threshold_crit', defaultValue: undefined},
+
 			// widget: mini_chart
 			{name: 'printed_value', defaultValue: undefined},
 			{name: 'display_pct', defaultValue: undefined},
