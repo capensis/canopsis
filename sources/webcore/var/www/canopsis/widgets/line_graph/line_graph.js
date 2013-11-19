@@ -1084,6 +1084,7 @@ Ext.define('widgets.line_graph.line_graph', {
 		var values = data['values'];
 		var bunit = data['bunit'];
 		var node_id = data['node'];
+		var node = this.nodesByID[node_id];
 		var min = data['min'];
 		var max = data['max'];
 		var type = data['type'];
@@ -1142,9 +1143,21 @@ Ext.define('widgets.line_graph.line_graph', {
 		}
 
 		//Add war/crit line if on first serie
+		var thld_warn = data['thld_warn'];
+
+		if(!thld_warn) {
+			thld_warn = node['threshold_warn'];
+		}
+
+		var thld_crit = data['thld_crit'];
+
+		if(!thld_crit) {
+			thld_crit = node['threshold_crit'];
+		}
+
 		if(this.chart.series.length === 1 && this.showWarnCritLine) {
-			if(data['thld_warn']) {
-				value = data['thld_warn'];
+			if(thld_warn) {
+				value = thld_warn;
 
 				if(this.SeriePercent && serie.options.max > 0) {
 					value = getPct(value, serie.options.max);
@@ -1153,8 +1166,8 @@ Ext.define('widgets.line_graph.line_graph', {
 				this.addPlotlines('pl_warning', value, 'orange');
 			}
 
-			if(data['thld_crit']) {
-				value = data['thld_crit'];
+			if(thld_crit) {
+				value = thld_crit;
 
 				if(this.SeriePercent && serie.options.max > 0) {
 					value = getPct(value, serie.options.max);
