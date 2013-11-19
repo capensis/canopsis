@@ -1145,13 +1145,13 @@ Ext.define('widgets.line_graph.line_graph', {
 		//Add war/crit line if on first serie
 		var thld_warn = data['thld_warn'];
 
-		if(!thld_warn) {
+		if(node['threshold_warn']) {
 			thld_warn = node['threshold_warn'];
 		}
 
 		var thld_crit = data['thld_crit'];
 
-		if(!thld_crit) {
+		if(node['threshold_crit']) {
 			thld_crit = node['threshold_crit'];
 		}
 
