@@ -93,14 +93,17 @@ Ext.define('widgets.text.text' , {
 			log.dump(data);
 
 			log.debug('Parse perf_data_array', this.logAuthor);
-			for (var i=0; i<data.perf_data_array.length; i++) {
-				perf_data[data.perf_data_array[i].metric] = data.perf_data_array[i]; // get all metric fields
-				perf_data[data.perf_data_array[i].metric].value = undefined; // rmeove value because it should comes from perfstore
-			}
-			log.dump(perf_data);
+
+			var metrics = [];
+			
+			Ext.Object.each(this.perfdataMetricList, function(key, value) {
+				void(value);
+				var metric = key;
+				metrics.push(metric);
+			});
 
 			// prepare parameters for ajax request
-			var filter = {'$and': [{'co': data['component']}, {'re': data['resource']}]};
+			var filter = {'$and': [{'co': data['component']}, {'re': data['resource']}, {'me': {'$in': metrics}}]};
 			var metrics_params = {'filter': Ext.JSON.encode(filter), 'limit': 0, 'show_internals': true};
 
 			Ext.Ajax.request({
@@ -119,7 +122,7 @@ Ext.define('widgets.text.text' , {
 
 					for (var i=0; i<_data.length; i++) {
 						var __data = _data[i];
-						event_ids.push({id: __data['_id']});						
+						event_ids.push({id: __data['_id']});
 					}
 
 					var _from = parseInt(from / 1000);
@@ -147,9 +150,7 @@ Ext.define('widgets.text.text' , {
 
 							for(var i=0; i<_data.length; i++) {
 								var __data = _data[i];
-								if (perf_data[__data.metric] === undefined) {
-									perf_data[__data.metric] = __data;
-								}
+								perf_data[__data.metric] = __data;
 								perf_data[__data.metric].value = __data.values[0][1];								
 							}
 
