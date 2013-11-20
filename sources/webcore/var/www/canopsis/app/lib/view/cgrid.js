@@ -224,7 +224,15 @@ Ext.define('canopsis.lib.view.cgrid' , {
 								form.append(inputfield);
 							}
 
+							/* Firefox is unable to submit a form which is not in the DOM.
+							 * So we add it, hide it, submit it and remove it.
+							 */
+							form.hide();
+							$('body').append(form);
+
 							form.submit();
+
+							form.remove();
 						}
 					});
 				}
