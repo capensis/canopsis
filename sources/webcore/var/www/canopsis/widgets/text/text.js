@@ -44,10 +44,12 @@ Ext.define('widgets.text.text' , {
 				log.debug(' + ' + key, this.logAuthor);
 				var var_name = value[0];
 
-				if((var_name === "perfdata" || var_name === "perf_data") && value.length === 3) {
+				if((var_name === "perfdata" || var_name === "perf_data") && value.length >= 2) {
 					var_name = "perf_data";
 					var metric = value[1];
 					var attribut = value.length>=3? value[2] : 'value';
+
+					log.debug('attribute' + attribut);
 
 					var tpl_name = var_name + Math.ceil(Math.random() * 1000);
 
