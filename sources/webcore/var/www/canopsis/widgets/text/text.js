@@ -25,6 +25,10 @@ Ext.define('widgets.text.text' , {
 	logAuthor: '[textWidget]',
 	specialCharRegex: /\//g,
 
+	aggregate_method: 'LAST',
+
+	baseUrl: '/rest/events',
+
 	initComponent: function() {
 		//get special values by parsing
 		var raw_vars = this.extractVariables(this.text);
@@ -43,7 +47,7 @@ Ext.define('widgets.text.text' , {
 				if((var_name === "perfdata" || var_name === "perf_data") && value.length === 3) {
 					var_name = "perf_data";
 					var metric = value[1];
-					var attribut = value[2];
+					var attribut = value.length>=3? value[2] : 'value';
 
 					var tpl_name = var_name + Math.ceil(Math.random() * 1000);
 
@@ -73,59 +77,138 @@ Ext.define('widgets.text.text' , {
 		this.callParent(arguments);
 	},
 
+	/**
+	* This method can be called recursively twice if an event is selected.
+	* 
+	* The first time, input data is event.
+	* The second time, input data is event perfstore values.
+	*/
 	onRefresh: function(data, from, to) {
-		perf_data = {};
+		var perf_data = {};
 
-		if(data) {
-			if(data.perf_data_array) {
-				log.debug('Parse perf_data_array', this.logAuthor);
+		if(data) { // if an event is selected, add metrics property to perf_data
+			log.debug('The event ' + data + ' is selected ', this.logAuthor);
+			log.dump(data);
 
-				for(var i = 0; i < data.perf_data_array.length; i++) {
-					perf_data[data.perf_data_array[i]["metric"]] = data.perf_data_array[i];
-				}
-
-				log.dump(perf_data);
+			log.debug('Parse perf_data_array', this.logAuthor);
+			for (var i=0; i<data.perf_data_array.length; i++) {
+				perf_data[data.perf_data_array[i].metric] = data.perf_data_array[i]; // get all metric fields
+				perf_data[data.perf_data_array[i].metric].value = undefined; // rmeove value because it should comes from perfstore
 			}
+			log.dump(perf_data);
 
-			if(this.perfdataMetricList) {
-				log.debug('Parse template perf_data', this.logAuthor);
+			// prepare parameters for ajax request
+			var filter = {'$and': [{'co': data['component']}, {'re': data['resource']}]};
+			var metrics_params = {'filter': Ext.JSON.encode(filter), 'limit': 0, 'show_internals': true};
 
-				Ext.Object.each(this.perfdataMetricList, function(key, value) {
-					var metric = key;
-					var attribut = value.attribut;
-					var tpl_name = value.tpl_name;
+			Ext.Ajax.request({
+				url: '/perfstore',
+				scope: this,
+				params: metrics_params,
+				method: 'GET',
+				success: function(response) {
+					var _data = Ext.JSON.decode(response.responseText);
+					_data = _data.data;
+					log.dump(_data);
 
-					log.debug(' + ' + metric + '(' + tpl_name + ')' + ': ' + attribut, this.logAuthor);
+					log.debug('Get perf_data id from event: ', this.logAuthor);
 
-					var perf = perf_data[metric];
+					var event_ids = [];
 
-					if(perf && perf[attribut] !== undefined) {
-						var unit = perf["unit"];
-						value = perf[attribut];
-
-						if(Ext.isNumeric(value) && unit) {
-							log.dump(this);
-
-							if(this.humanReadable) {
-								value = rdr_humanreadable_value(value, unit);
-							}
-							else if(unit) {
-								value = value + ' ' + unit;
-							}
-						}
-
-						log.debug('   + ' + value, this.logAuthor);
-
-						data[tpl_name] = value;
+					for (var i=0; i<_data.length; i++) {
+						var __data = _data[i];
+						event_ids.push({id: __data['_id']});						
 					}
-				});
-			}
 
-			data.timestamp = rdr_tstodate(data.timestamp);
+					var _from = parseInt(from / 1000);
+					var _to = parseInt(to / 1000);
+
+					// ajax parameters
+					var perfdata_params = {
+						'nodes': Ext.JSON.encode(event_ids),
+						'aggregate_method': this.aggregate_method,
+						'aggregate_max_points': 1,
+						'timezone': new Date().getTimezoneOffset() * 60,
+					};
+
+					Ext.Ajax.request({
+						url: '/perfstore/values/' + _from + '/' + _to,
+						scope: this,
+						params: perfdata_params,
+						method: 'POST',
+						success: function(response) {
+							var _data = Ext.JSON.decode(response.responseText);
+							_data = _data.data;
+							log.dump(_data);
+
+							log.debug('Get perf_data from ids : ', this.logAuthor);	
+
+							for(var i=0; i<_data.length; i++) {
+								var __data = _data[i];
+								if (perf_data[__data.metric] === undefined) {
+									perf_data[__data.metric] = __data;
+								}
+								perf_data[__data.metric].value = __data.values[0][1];								
+							}
+
+							log.dump(perf_data);
+
+							this.fillData(data, from, to, perf_data);
+						},
+						failure: function(result, request) {
+							void(result);
+							log.error('Ajax request failed ... (' + request.url + ')', this.logAuthor);
+						}
+					});
+				},
+				failure: function(result, request) {
+					void(result);
+					log.error('Ajax request failed ... (' + request.url + ')', this.logAuthor);
+				}
+			});
+		} else {
+			this.fillData(data, from, to, perf_data);
 		}
-		else {
-			data = {};
+
+	},
+
+	fillData: function(data, from, to, perf_data) {
+
+		if(this.perfdataMetricList) {
+			log.debug('Fill perfdataMetricList', this.logAuthor);
+
+			Ext.Object.each(this.perfdataMetricList, function(key, value) {
+				var metric = key;
+				var attribut = value.attribut;
+				var tpl_name = value.tpl_name;
+
+				log.debug(' + ' + metric + '(' + tpl_name + ')' + ': ' + attribut, this.logAuthor);
+
+				var perf = perf_data[metric];
+
+				if(perf && perf[attribut] !== undefined) {
+					var unit = perf["unit"];
+					value = perf[attribut];
+
+					if(Ext.isNumeric(value) && unit) {
+						log.dump(this);
+
+						if(this.humanReadable) {
+							value = rdr_humanreadable_value(value, unit);
+						}
+						else if(unit) {
+							value = value + ' ' + unit;
+						}
+					}
+
+					log.debug('   + ' + value, this.logAuthor);
+
+					data[tpl_name] = value;
+				}
+			});
 		}
+
+		data.timestamp = rdr_tstodate(data.timestamp);
 
 		try {
 			if(from) {
@@ -137,45 +220,12 @@ Ext.define('widgets.text.text' , {
 			}
 
 			this.HTML = this.myTemplate.apply(data);
-		}
-		catch (err) {
+		} catch (err) {
+			log.error(err);
 			this.HTML = _('The model widget template is not supported, check if your variables use the correct template.');
 		}
 
 		this.setHtml(this.HTML);
-	},
-
-	getNodeInfo: function(from, to) {
-		//we override the function : if there is'nt any nodeId specified we call the onRefresh function
-		if(!this.inventory) {
-			this.onRefresh(undefined, from, to);
-		}
-		else {
-			Ext.Ajax.request({
-				url: this.baseUrl,
-				scope: this,
-				method: 'GET',
-				params: {_id: this.inventory},
-				success: function(response) {
-					var data = Ext.JSON.decode(response.responseText);
-
-					if(this.inventory.length > 1) {
-						data = data.data;
-					}
-					else {
-						data = data.data[0];
-					}
-
-					this._onRefresh(data, from, to);
-				},
-
-				failure: function(result, request) {
-					void(result);
-
-					log.error('Impossible to get Node informations, Ajax request failed ... (' + request.url + ')', this.logAuthor);
-				}
-			});
-		}
 	},
 
 	extractVariables: function(text) {
@@ -219,5 +269,40 @@ Ext.define('widgets.text.text' , {
 		}
 
 		return output;
+	},
+
+	getNodeInfoParams: function(from, to) {
+		void(from);
+		void(to);
+		var result = this.callParent(arguments);
+		result['noInternal'] = false;
+		result['limit'] = 0;
+		return result;
 	}
 });
+
+/*
+	{
+		"xtype": "combobox",
+		"name": "aggregate_method",
+		"multiselect": false,
+		"value": "LAST",
+		"valueField": "value",
+		"fieldLabel": "Aggregation method",
+		"displayField": "text",
+		"queryMode": "local",
+		"store": {
+			"xtype": "store",
+			"fields": ["value", "text"],
+			"data" : [
+				{"value": "LAST", "text": "Last"},
+				{"value": "FIRST", "text": "First"},
+				{"value": "MIN", "text": "Min"},
+				{"value": "MAX", "text": "Max"},
+				{"value": "SUM", "text": "Sum"},
+				{"value": "MEAN", "text": "Mean"},
+				{"value": "DELTA", "text": "Delta"}
+			]
+		}
+	}
+*/

@@ -254,6 +254,8 @@ Ext.define('canopsis.lib.view.cwidget', {
 			Ext.Ajax.request({
 				url: this.baseUrl + '/events/' + this.nodeId,
 				scope: this,
+				params: this.getNodeInfoParams(from, to),
+				method: 'GET',
 				success: function(response) {
 					var data = Ext.JSON.decode(response.responseText);
 
@@ -273,6 +275,10 @@ Ext.define('canopsis.lib.view.cwidget', {
 				}
 			});
 		}
+	},
+
+	getNodeInfoParams: function(from, to) {
+		return {};
 	},
 
 	setHtml: function(html) {
