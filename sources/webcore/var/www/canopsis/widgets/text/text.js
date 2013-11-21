@@ -29,6 +29,8 @@ Ext.define('widgets.text.text' , {
 
 	baseUrl: '/rest/events',
 
+	useLastRefresh: false,
+
 	initComponent: function() {
 		//get special values by parsing
 		var raw_vars = this.extractVariables(this.text);
@@ -55,7 +57,7 @@ Ext.define('widgets.text.text' , {
 
 					this.text = this.text.replace(new RegExp(key), '{' + tpl_name + '}');
 
-					this.perfdataMetricList[metric] = {
+					this.perfdataMetricList[tpl_name] = {
 						metric: metric,
 						attribut: attribut,
 						tpl_name: tpl_name
@@ -86,21 +88,26 @@ Ext.define('widgets.text.text' , {
 	* The second time, input data is event perfstore values.
 	*/
 	onRefresh: function(data, from, to) {
-		var perf_data = {};
 
-		if(data) { // if an event is selected, add metrics property to perf_data
+		if(data && this.perfdataMetricList) { // if an event is selected, add metrics property to perf_data
+
+			var perf_data = {};
+
 			log.debug('The event ' + data + ' is selected ', this.logAuthor);
 			log.dump(data);
 
 			log.debug('Parse perf_data_array', this.logAuthor);
-			for (var i=0; i<data.perf_data_array.length; i++) {
-				perf_data[data.perf_data_array[i].metric] = data.perf_data_array[i]; // get all metric fields
-				perf_data[data.perf_data_array[i].metric].value = undefined; // rmeove value because it should comes from perfstore
-			}
-			log.dump(perf_data);
+
+			var metrics = [];
+			
+			Ext.Object.each(this.perfdataMetricList, function(key, value) {
+				void(key);
+				var metric = value.metric;
+				metrics.push(metric);
+			});
 
 			// prepare parameters for ajax request
-			var filter = {'$and': [{'co': data['component']}, {'re': data['resource']}]};
+			var filter = {'$and': [{'co': data['component']}, {'re': data['resource']}, {'me': {'$in': metrics}}]};
 			var metrics_params = {'filter': Ext.JSON.encode(filter), 'limit': 0, 'show_internals': true};
 
 			Ext.Ajax.request({
@@ -119,7 +126,7 @@ Ext.define('widgets.text.text' , {
 
 					for (var i=0; i<_data.length; i++) {
 						var __data = _data[i];
-						event_ids.push({id: __data['_id']});						
+						event_ids.push({id: __data['_id']});
 					}
 
 					var _from = parseInt(from / 1000);
@@ -147,15 +154,44 @@ Ext.define('widgets.text.text' , {
 
 							for(var i=0; i<_data.length; i++) {
 								var __data = _data[i];
-								if (perf_data[__data.metric] === undefined) {
-									perf_data[__data.metric] = __data;
-								}
-								perf_data[__data.metric].value = __data.values[0][1];								
+								perf_data[__data.metric] = __data;
+								perf_data[__data.metric].value = __data.values[0][1];
+								perf_data[__data.metric].unit = __data.bunit;
 							}
 
 							log.dump(perf_data);
 
-							this.fillData(data, from, to, perf_data);
+							Ext.Object.each(this.perfdataMetricList, function(key, value) {
+								var metric = value.metric;
+								var attribut = value.attribut;
+								var tpl_name = key;
+
+								log.debug(' + ' + metric + '(' + tpl_name + ')' + ': ' + attribut, this.logAuthor);
+
+								var perf = perf_data[metric];
+
+								if(perf && perf[attribut] !== undefined) {
+									var unit = perf["unit"];
+									value = perf[attribut];
+
+									if(Ext.isNumeric(value) && unit) {
+										log.dump(this);
+
+										if(this.humanReadable) {
+											value = rdr_humanreadable_value(value, unit);
+										}
+										else if(unit) {
+											value = value + ' ' + unit;
+										}
+									}
+
+									log.debug('   + ' + value, this.logAuthor);
+
+									data[tpl_name] = value;
+								}
+							});
+
+							this.fillData(data, from, to);
 						},
 						failure: function(result, request) {
 							void(result);
@@ -169,46 +205,13 @@ Ext.define('widgets.text.text' , {
 				}
 			});
 		} else {
-			this.fillData(data, from, to, perf_data);
+			data = {};
+			this.fillData(data, from, to);
 		}
 
 	},
 
-	fillData: function(data, from, to, perf_data) {
-
-		if(this.perfdataMetricList) {
-			log.debug('Fill perfdataMetricList', this.logAuthor);
-
-			Ext.Object.each(this.perfdataMetricList, function(key, value) {
-				var metric = key;
-				var attribut = value.attribut;
-				var tpl_name = value.tpl_name;
-
-				log.debug(' + ' + metric + '(' + tpl_name + ')' + ': ' + attribut, this.logAuthor);
-
-				var perf = perf_data[metric];
-
-				if(perf && perf[attribut] !== undefined) {
-					var unit = perf["unit"];
-					value = perf[attribut];
-
-					if(Ext.isNumeric(value) && unit) {
-						log.dump(this);
-
-						if(this.humanReadable) {
-							value = rdr_humanreadable_value(value, unit);
-						}
-						else if(unit) {
-							value = value + ' ' + unit;
-						}
-					}
-
-					log.debug('   + ' + value, this.logAuthor);
-
-					data[tpl_name] = value;
-				}
-			});
-		}
+	fillData: function(data, from, to) {
 
 		data.timestamp = rdr_tstodate(data.timestamp);
 
@@ -282,29 +285,3 @@ Ext.define('widgets.text.text' , {
 		return result;
 	}
 });
-
-/*
-	{
-		"xtype": "combobox",
-		"name": "aggregate_method",
-		"multiselect": false,
-		"value": "LAST",
-		"valueField": "value",
-		"fieldLabel": "Aggregation method",
-		"displayField": "text",
-		"queryMode": "local",
-		"store": {
-			"xtype": "store",
-			"fields": ["value", "text"],
-			"data" : [
-				{"value": "LAST", "text": "Last"},
-				{"value": "FIRST", "text": "First"},
-				{"value": "MIN", "text": "Min"},
-				{"value": "MAX", "text": "Max"},
-				{"value": "SUM", "text": "Sum"},
-				{"value": "MEAN", "text": "Mean"},
-				{"value": "DELTA", "text": "Delta"}
-			]
-		}
-	}
-*/
