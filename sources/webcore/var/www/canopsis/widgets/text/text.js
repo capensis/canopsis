@@ -88,7 +88,7 @@ Ext.define('widgets.text.text' , {
 	onRefresh: function(data, from, to) {
 		var perf_data = {};
 
-		if(data) { // if an event is selected, add metrics property to perf_data
+		if(data && this.perfdataMetricList) { // if an event is selected, add metrics property to perf_data
 			log.debug('The event ' + data + ' is selected ', this.logAuthor);
 			log.dump(data);
 
