@@ -90,12 +90,13 @@ Ext.define('widgets.progressbar.progressbar', {
 	},
 
 	onRefresh: function(data) {
+		var progress_bar = this;
 		var pb_update = function(pb, value) {
-			this.setGradient(pb.id, value);
+			progress_bar.setGradient(pb.id, value);
 		};
 
 		var pb_afterrender = function(pb) {
-			this.setGradient(pb.id, pb.value);
+			progress_bar.setGradient(pb.id, pb.value);
 		};
 
 		for(var i = 0; i < data.length; i++) {
