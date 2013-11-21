@@ -53,6 +53,8 @@ Ext.define('canopsis.lib.view.cwidget', {
 
 	time_window_offset: 0,
 
+	useLastRefresh: true,
+
 	lastRefresh: undefined,
 
 	active: false,
@@ -220,7 +222,7 @@ Ext.define('canopsis.lib.view.cwidget', {
 			to = now - (this.time_window_offset * 1000);
 		}
 
-		if(!from && this.lastRefresh) {
+		if(!from && this.useLastRefresh && this.lastRefresh) {
 			from = this.lastRefresh;
 		}
 
@@ -251,9 +253,14 @@ Ext.define('canopsis.lib.view.cwidget', {
 
 	getNodeInfo: function(from, to) {
 		if(this.nodeId) {
+
+			var nodeInfoParams = this.getNodeInfoParams(from, to);
+
 			Ext.Ajax.request({
-				url: this.baseUrl + '/events/' + this.nodeId,
+				url: this.baseUrl + '/events' + (this.nodeId && this.nodeId.length? ('/' + this.nodeId) : ''),
 				scope: this,
+				params: nodeInfoParams,
+				method: 'GET',
 				success: function(response) {
 					var data = Ext.JSON.decode(response.responseText);
 
@@ -273,6 +280,12 @@ Ext.define('canopsis.lib.view.cwidget', {
 				}
 			});
 		}
+	},
+
+	getNodeInfoParams: function(from, to) {
+		void(from);
+		void(to);
+		return {};
 	},
 
 	setHtml: function(html) {

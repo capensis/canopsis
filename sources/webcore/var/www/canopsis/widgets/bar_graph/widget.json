@@ -349,6 +349,14 @@
 									"fieldLabel":"Trend",
 									"checked":true,
 									"name":"trend"
+								},{
+									"xtype": "numberfield",
+									"name": "threshold_warn",
+									"fieldLabel": "Custom Warning threshold"
+								},{
+									"xtype": "numberfield",
+									"name": "threshold_crit",
+									"fieldLabel": "Custom Critical threshold"
 								}]
 				}]
 	}]
