@@ -85,6 +85,20 @@ Ext.define('canopsis.lib.view.cgrid' , {
 
 	logAuthor: '[view][cgrid]',
 
+	listeners: {
+		selectionchange: function(selectionModel, selected) {
+			var store = selectionModel.getStore();
+			var all_selected = selected.length == store.count();
+
+			var cb = Ext.getCmp(this.cb_select_all_id);
+
+			if(cb.getValue() != all_selected) {
+				cb.onSelectionChange = true;
+				cb.setValue(all_selected);
+			}
+		}
+	},
+
 	getTbar: function() {
 		var dockedItems = this.getDockedItems();
 
@@ -107,12 +121,14 @@ Ext.define('canopsis.lib.view.cgrid' , {
 	},
 
 	//This function purpose is to add a new item to the grid once import done properly
-	add_to_home: function (record, useless_boolean_here) {
+	add_to_home: function(record) {
 		log.debug(record);
 		this.store.insert(0, record);
 	},
 
 	initComponent: function() {
+		this.cb_select_all_id = Ext.id();
+
 		// Multi select
 		if(this.opt_multiSelect === true) {
 			this.multiSelect = true;
@@ -224,25 +240,21 @@ Ext.define('canopsis.lib.view.cgrid' , {
 					});
 
 					bar_child.push({
-						xtype: 'button',
-						iconCls: 'icon-export',
-						text: _('Export all ' + this.model),
-						disabled: false,
-						action: 'exportall',
-						handler: function() {
-							var store = gridView.getStore();
+						xtype: 'checkboxfield',
+						id: this.cb_select_all_id,
+						boxLabel: _('Select all'),
+						onSelectionChange: false,
+						handler: function(checkbox, checked) {
+							if(!checkbox.onSelectionChange) {
+								if(checked) {
+									gridView.getSelectionModel().selectAll();
+								}
+								else {
+									gridView.getSelectionModel().deselectAll();
+								}
+							}
 
-							var data = [];
-
-							store.each(function(record) {
-								console.log(record);
-								data.push({
-									name: 'ids',
-									value: record.data._id
-								});
-							}, gridView);
-
-							postDataToURL('/ui/export/objects', data);
+							checkbox.onSelectionChange = false;
 						}
 					});
 				}

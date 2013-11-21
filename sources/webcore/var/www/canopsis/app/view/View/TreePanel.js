@@ -30,7 +30,23 @@ Ext.define('canopsis.view.View.TreePanel' , {
 	reporting: true,
 	opt_bar_export: true,
 
+	listeners: {
+		selectionchange: function(selectionModel, selected) {
+			var store = selectionModel.getStore();
+			var all_selected = selected.length == store.count();
+
+			var cb = Ext.getCmp(this.cb_select_all_id);
+
+			if(cb.getValue() != all_selected) {
+				cb.onSelectionChange = true;
+				cb.setValue(all_selected);
+			}
+		}
+	},
+
 	initComponent: function() {
+		this.cb_select_all_id = Ext.id();
+
 		this.columns = [{
 			xtype: 'treecolumn',
 			text: _('Name'),
@@ -194,6 +210,7 @@ Ext.define('canopsis.view.View.TreePanel' , {
 
 		this.callParent(arguments);
 
+		var me = this;
 		var buttons = [
 			{
 				xtype: 'button',
@@ -208,11 +225,23 @@ Ext.define('canopsis.view.View.TreePanel' , {
 				disabled: false,
 				action: 'exportjson'
 			},{
-				xtype: 'button',
-				iconCls: 'icon-export',
-				text: _('Export all views as JSON'),
+				xtype: 'checkboxfield',
+				id: this.cb_select_all_id,
+				boxLabel: _('Select all'),
 				disabled: false,
-				action: 'exportalljson'
+				onSelectionChange: false,
+				handler: function(checkbox, checked) {
+					if(!checkbox.onSelectionChange) {
+						if(checked) {
+							me.getSelectionModel().selectAll();
+						}
+						else {
+							me.getSelectionModel().deselectAll();
+						}
+					}
+
+					checkbox.onSelectionChange = false;
+				}
 			}
 		];
 

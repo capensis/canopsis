@@ -80,12 +80,6 @@ Ext.define('canopsis.controller.View', {
 			btns[i].on('click', this.exportSelection, this);
 		}
 
-		btns = Ext.ComponentQuery.query('#' + this.tree.id + ' [action=exportalljson]');
-
-		for(i = 0; i < btns.length; i++) {
-			btns[i].on('click', this.exportStore, this);
-		}
-
 		btns = Ext.ComponentQuery.query('#' + this.tree.contextMenu.id + ' [action=OpenViewOption]');
 
 		for(i = 0; i < btns.length; i++) {
@@ -311,27 +305,6 @@ Ext.define('canopsis.controller.View', {
 				value: select[i].data._id
 			});
 		}
-
-		postDataToURL('/ui/export/objects', data);
-	},
-
-	exportStore: function() {
-		var root = this.tree.getRootNode();
-
-		var data = [];
-
-		function addChildToData(node) {
-			data.push({
-				name: 'ids',
-				value: node.data._id
-			});
-
-			if(!node.isLeaf()) {
-				node.eachChild(addChildToData, this);
-			}
-		}
-
-		root.eachChild(addChildToData, this);
 
 		postDataToURL('/ui/export/objects', data);
 	},
