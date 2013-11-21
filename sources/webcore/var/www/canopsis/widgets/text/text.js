@@ -57,7 +57,7 @@ Ext.define('widgets.text.text' , {
 
 					this.text = this.text.replace(new RegExp(key), '{' + tpl_name + '}');
 
-					this.perfdataMetricList[metric] = {
+					this.perfdataMetricList[tpl_name] = {
 						metric: metric,
 						attribut: attribut,
 						tpl_name: tpl_name
@@ -101,8 +101,8 @@ Ext.define('widgets.text.text' , {
 			var metrics = [];
 			
 			Ext.Object.each(this.perfdataMetricList, function(key, value) {
-				void(value);
-				var metric = key;
+				void(key);
+				var metric = value.metric;
 				metrics.push(metric);
 			});
 
@@ -155,15 +155,16 @@ Ext.define('widgets.text.text' , {
 							for(var i=0; i<_data.length; i++) {
 								var __data = _data[i];
 								perf_data[__data.metric] = __data;
-								perf_data[__data.metric].value = __data.values[0][1];								
+								perf_data[__data.metric].value = __data.values[0][1];
+								perf_data[__data.metric].unit = __data.bunit;
 							}
 
 							log.dump(perf_data);
 
 							Ext.Object.each(this.perfdataMetricList, function(key, value) {
-								var metric = key;
+								var metric = value.metric;
 								var attribut = value.attribut;
-								var tpl_name = value.tpl_name;
+								var tpl_name = key;
 
 								log.debug(' + ' + metric + '(' + tpl_name + ')' + ': ' + attribut, this.logAuthor);
 
