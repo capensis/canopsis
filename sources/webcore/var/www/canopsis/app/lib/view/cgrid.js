@@ -222,6 +222,29 @@ Ext.define('canopsis.lib.view.cgrid' , {
 							postDataToURL('/ui/export/objects', data);
 						}
 					});
+
+					bar_child.push({
+						xtype: 'button',
+						iconCls: 'icon-export',
+						text: _('Export all ' + this.model),
+						disabled: false,
+						action: 'exportall',
+						handler: function() {
+							var store = gridView.getStore();
+
+							var data = [];
+
+							store.each(function(record) {
+								console.log(record);
+								data.push({
+									name: 'ids',
+									value: record.data._id
+								});
+							}, gridView);
+
+							postDataToURL('/ui/export/objects', data);
+						}
+					});
 				}
 
 

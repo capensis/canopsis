@@ -207,6 +207,12 @@ Ext.define('canopsis.view.View.TreePanel' , {
 				text: _('Export view as JSON'),
 				disabled: false,
 				action: 'exportjson'
+			},{
+				xtype: 'button',
+				iconCls: 'icon-export',
+				text: _('Export all views as JSON'),
+				disabled: false,
+				action: 'exportalljson'
 			}
 		];
 
