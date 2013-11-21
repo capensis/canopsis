@@ -321,13 +321,12 @@ Ext.define('canopsis.controller.View', {
 		var data = [];
 
 		function addChildToData(node) {
-			if(node.isLeaf()) {
-				data.push({
-					name: 'ids',
-					value: node.data._id
-				});
-			}
-			else {
+			data.push({
+				name: 'ids',
+				value: node.data._id
+			});
+
+			if(!node.isLeaf()) {
 				node.eachChild(addChildToData, this);
 			}
 		}
