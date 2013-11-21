@@ -1,4 +1,4 @@
-//need:app/lib/form/field/cdate.js
+//need:app/lib/form/field/cdate.js,app/controller/common.js
 /*
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
@@ -24,7 +24,8 @@ Ext.define('canopsis.lib.view.cgrid' , {
 		'Ext.grid.plugin.CellEditing',
 		'Ext.form.field.Text',
 		'Ext.toolbar.TextItem',
-		'canopsis.lib.form.field.cdate'
+		'canopsis.lib.form.field.cdate',
+		'canopsis.controller.common'
 	],
 
 	// Options
@@ -209,30 +210,16 @@ Ext.define('canopsis.lib.view.cgrid' , {
 							log.debug('Exporting selection:', gridView.logAuthor);
 							log.dump(selection);
 
-							var form = $('<form/>', {
-								method: 'POST',
-								action: '/ui/export/objects',
-								target: '_blank'
-							});
+							var data = [];
 
 							for(var i = 0; i < selection.length; i++) {
-								var inputfield = $('<input/>', {
+								data.push({
 									name: 'ids',
 									value: selection[i].data._id
 								});
-
-								form.append(inputfield);
 							}
 
-							/* Firefox is unable to submit a form which is not in the DOM.
-							 * So we add it, hide it, submit it and remove it.
-							 */
-							form.hide();
-							$('body').append(form);
-
-							form.submit();
-
-							form.remove();
+							postDataToURL('/ui/export/objects', data);
 						}
 					});
 				}

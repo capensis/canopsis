@@ -1,3 +1,4 @@
+//need:app/lib/view/cfile_window.js
 /*
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
@@ -18,7 +19,9 @@
 */
 //Common class provied usefull functions for controllers from canopsis lib. It allows code factorisation and easy fonction access
 Ext.define('canopsis.controller.common', {
-
+	requires: [
+		'canopsis.lib.view.cfile_window'
+	],
 	
 	//This method displays an import pop up that allows user to import an object from both a json file or json character data
 	//parent item refers to the window the pop up is linked to, object type defines the model to use in order to validate object import

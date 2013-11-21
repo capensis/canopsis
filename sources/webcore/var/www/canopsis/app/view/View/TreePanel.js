@@ -194,16 +194,25 @@ Ext.define('canopsis.view.View.TreePanel' , {
 
 		this.callParent(arguments);
 
-		var config = {
-			xtype: 'button',
-			iconCls: 'icon-import',
-			text: _('Import view'),
-			disabled: false,
-			action: 'import'
-		};
+		var buttons = [
+			{
+				xtype: 'button',
+				iconCls: 'icon-import',
+				text: _('Import view'),
+				disabled: false,
+				action: 'import'
+			},{
+				xtype: 'button',
+				iconCls: 'icon-export',
+				text: _('Export view as JSON'),
+				disabled: false,
+				action: 'exportjson'
+			}
+		];
 
-		this.dockedToolbar.add(config);
-
+		for(var i = 0; i < buttons.length; i++) {
+			this.dockedToolbar.add(buttons[i]);
+		}
 	},
 
 	export_pdf: function(view) {
