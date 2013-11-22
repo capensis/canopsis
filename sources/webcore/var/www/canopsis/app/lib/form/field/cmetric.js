@@ -1,4 +1,4 @@
-//need:app/lib/form/cfield.js,app/lib/store/cstore.js,app/lib/controller/cgrid.js
+//need:app/lib/form/cfield.js,app/lib/store/cstore.js,app/lib/view/cgrid.js,app/lib/controller/cgrid.js
 /*
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
@@ -118,6 +118,9 @@ Ext.define('canopsis.lib.form.field.cmetric', {
 			{name: 'area_color', defaultValue: undefined},
 			{name: 'trend_curve', defaultValue: undefined},
 			{name: 'yAxis', defaultValue: undefined},
+
+			{name: 'threshold_warn', defaultValue: undefined},
+			{name: 'threshold_crit', defaultValue: undefined},
 
 			// widget: mini_chart
 			{name: 'printed_value', defaultValue: undefined},

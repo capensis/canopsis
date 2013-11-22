@@ -53,31 +53,31 @@ ctype_to_group_access = {
 def rest_get_media(namespace, _id):
 	account = get_account()
 	storage = get_storage(namespace=namespace)
-	
+
 	logger.debug("Get media '%s' from '%s':" % (_id, namespace))
-	
+
 	try:
 		raw = storage.get(_id, account=account, namespace=namespace, mfields=["media_bin", "media_name", "media_type"], ignore_bin=False)
-		
+
 		media_type = raw.get('media_type', None)
 		media_name = raw.get('media_name', None)
 		media_bin = raw.get('media_bin', None)
-		
+
 	except Exception, err:
 		logger.error(err)
 		return HTTPError(404, err)
-	
+
 	if not media_type or not media_name or not media_bin:
 		logger.error("Insufficient field in record")
 		return HTTPError(404, "Insufficient field in record")
-		
-	logger.debug(" + media_type: %s" % media_type)	
+
+	logger.debug(" + media_type: %s" % media_type)
 	logger.debug(" + media_name: %s" % media_name)
 	logger.debug(" + media_bin:  %s" % len(media_bin))
-	
+
 	response.headers['Content-Disposition'] = 'attachment; filename="%s"' % media_name
 	response.headers['Content-Type'] = media_type
-	
+
 	return base64.b64decode(media_bin)
 
 #### GET
@@ -96,14 +96,14 @@ def rest_get(namespace, ctype=None, _id=None, params=None):
 	onlyWritable	= params.get('onlyWritable', default=False)
 	noInternal	= params.get('noInternal', default=False)
 	ids			= params.get('ids', default=[])
-	
-	get_id			= params.get('_id', default=None)
-	
-	fields = params.get('fields', default=None)
-	
+
+	get_id			= request.params.get('_id', default=None)
+
+	fields = request.params.get('fields', default=None)
+
 	if not _id and get_id:
 		_id  = get_id
-	
+
 	if not isinstance(ids, list):
 		try:
 			ids = json.loads(ids)
@@ -116,7 +116,7 @@ def rest_get(namespace, ctype=None, _id=None, params=None):
 		except Exception, err:
 			logger.error("Impossible to decode filter: %s: %s" % (filter, err))
 			filter = None
-			
+
 
 	msort = []
 	if sort:
@@ -128,7 +128,7 @@ def rest_get(namespace, ctype=None, _id=None, params=None):
 				direction = -1
 
 			msort.append((str(item['property']), direction))
-		
+
 
 	logger.debug("GET:")
 	logger.debug(" + User: "+str(account.user))
@@ -147,28 +147,28 @@ def rest_get(namespace, ctype=None, _id=None, params=None):
 	logger.debug(" + Search: "+str(search))
 	logger.debug(" + filter: "+str(filter))
 	logger.debug(" + query: "+str(query))
-	
+
 	storage = get_storage(namespace=namespace)
-	
+
 	total = 0
-	
+
 	mfilter = {}
 	if isinstance(filter, list):
 		if len(filter) > 0:
 			mfilter = filter[0]
 		else:
 			logger.error(" + Invalid filter format")
-			
+
 	elif isinstance(filter, dict):
 		mfilter = filter
-	
+
 	records = []
 	if ctype:
 		if mfilter:
 			mfilter['crecord_type'] = ctype
 		else:
 			mfilter = {'crecord_type': ctype}
-			
+
 	if query:
 		if mfilter:
 			mfilter['crecord_name'] = { '$regex' : '.*'+str(query)+'.*', '$options': 'i' }
@@ -178,8 +178,8 @@ def rest_get(namespace, ctype=None, _id=None, params=None):
 
 	if _id:
 		ids = _id.split(',')
-		
-	if ids:	
+
+	if ids:
 		try:
 			records = storage.get(ids, account=account)
 			if isinstance(records,crecord):
@@ -192,14 +192,14 @@ def rest_get(namespace, ctype=None, _id=None, params=None):
 		except Exception, err:
 			logger.info('Error: %s' % err)
 			total = 0
-		
+
 		if total == 0:
 			return HTTPError(404, str(ids) +" Not Found")
-						
+
 	else:
 		if search:
 			mfilter['_id'] = { '$regex' : '.*'+search+'.*', '$options': 'i' }
-		
+
 		logger.debug(" + mfilter: "+str(mfilter))
 
 		#clean mfilter
@@ -209,7 +209,7 @@ def rest_get(namespace, ctype=None, _id=None, params=None):
 		total =	storage.count(mfilter, account=account)
 
 	output = []
-	
+
 	#----------------dump record and post filtering-------
 	for record in records:
 		if record:
@@ -228,7 +228,7 @@ def rest_get(namespace, ctype=None, _id=None, params=None):
 				data['id'] = data['_id']
 				if data.has_key('next_run_time'):
 					data['next_run_time'] = str(data['next_run_time'])
-				
+
 				#Clean non wanted field
 				if fields:
 					fields_to_delete = []
@@ -237,12 +237,12 @@ def rest_get(namespace, ctype=None, _id=None, params=None):
 							fields_to_delete.append(item)
 					for field in fields_to_delete:
 						del data[field]
-							
-					
+
+
 				output.append(data)
 
 	output={'total': total, 'success': True, 'data': output}
-	
+
 	return output
 
 @get('/rest/:namespace/:ctype/:_id')
@@ -250,7 +250,7 @@ def rest_get(namespace, ctype=None, _id=None, params=None):
 @get('/rest/:namespace')
 def rest_get_route(namespace, ctype=None, _id=None):
 	return rest_get(namespace, ctype, _id, request.params)
-	
+
 #### POST
 @post('/rest/:namespace/:ctype/:_id')
 @post('/rest/:namespace/:ctype')
@@ -258,7 +258,7 @@ def rest_post(namespace, ctype, _id=None):
 	#get the session (security)
 	account = get_account()
 	storage = get_storage(namespace=namespace)
-	
+
 	#check rights on specific ctype (check ctype_to_group_access variable below)
 	if ctype in ctype_to_group_access:
 		if not check_group_rights(account,ctype_to_group_access[ctype]):
@@ -266,97 +266,101 @@ def rest_post(namespace, ctype, _id=None):
 
 	logger.debug("POST:")
 
-	data = request.body.readline()
-	if not data:
+	items = request.body.readline()
+	if not items:
 		return HTTPError(400, "No data received")
 
-	logger.debug(" + data: %s" % data)
-	logger.debug(" + data-type: %s" % type(data))
-		
-	if isinstance(data, str):
+	logger.debug(" + data: %s" % items)
+	logger.debug(" + data-type: %s" % type(items))
+
+	if isinstance(items, str):
 		try:
-			data = json.loads(data)
+			items = json.loads(items)
 		except Exception, err:
 			logger.error("PUT: Impossible to parse data (%s)" % err)
 			return HTTPError(404, "Impossible to parse data")
 
-	data['crecord_type'] = ctype
-	
-	if not _id:
+	if not isinstance(items, list):
+		items = [items]
+
+	for data in items:
+		data['crecord_type'] = ctype
+
+		if not _id:
+			try:
+				_id = str(data['_id'])
+			except:
+				pass
+
+			try:
+				_id = str(data['id'])
+			except:
+				pass
+
+		## Clean data
 		try:
-			_id = str(data['_id'])
+			del data['_id']
 		except:
 			pass
 
 		try:
-			_id = str(data['id'])
+			del data['id']
 		except:
 			pass
-	
-	## Clean data
-	try:
-		del data['_id']
-	except:
-		pass
 
-	try:
-		del data['id']
-	except:
-		pass
-	
-	logger.debug(" + _id:   %s" % _id)
-	logger.debug(" + ctype: %s" % ctype)
-	logger.debug(" + Data:  %s" % data)
-	
-	## Set group
-	if data.has_key('aaa_group'):
-		group = data['aaa_group']
-	else:
-		group = account.group
+		logger.debug(" + _id:   %s" % _id)
+		logger.debug(" + ctype: %s" % ctype)
+		logger.debug(" + Data:  %s" % data)
 
-	record = None
-	if _id:
+		## Set group
+		if data.has_key('aaa_group'):
+			group = data['aaa_group']
+		else:
+			group = account.group
+
+		record = None
+		if _id:
+			try:
+				record = storage.get(_id ,account=account)
+				logger.debug('Update record %s' % _id)
+			except:
+				logger.debug('Create record %s' % _id)
+
+		if record:
+			for key in dict(data).keys():
+				record.data[key] = data[key]
+
+			# Update Name
+			try:
+				record.name = data['crecord_name']
+			except:
+				pass
+
+		else:
+			raw_record = crecord(_id=_id, type=str(ctype)).dump()
+			logger.debug(' + raw_record: %s' % raw_record)
+
+			#logger.debug(' + _id: %s (%s)' % (raw_record['_id'], type(raw_record['_id'])))
+
+			for key in dict(data).keys():
+				raw_record[key] = data[key]
+
+			record = crecord(raw_record=raw_record)
+			logger.debug(' + dump record: %s' % record.dump())
+
+			record.chown(account.user)
+			record.chgrp(group)
+			#if ctype in ctype_to_group_access:
+				#record.admin_group = ctype_to_group_access[ctype]
+
+		logger.debug(' + Record: %s' % record.dump())
 		try:
-			record = storage.get(_id ,account=account)
-			logger.debug('Update record %s' % _id)
-		except:
-			logger.debug('Create record %s' % _id)
+			storage.put(record, namespace=namespace, account=account)
 
-	if record:
-		for key in dict(data).keys():
-			record.data[key] = data[key]
-			
-		# Update Name	
-		try:
-			record.name = data['crecord_name']
-		except:
-			pass
-		
-	else:
-		raw_record = crecord(_id=_id, type=str(ctype)).dump()
-		logger.debug(' + raw_record: %s' % raw_record)
+		except Exception, err:
+			logger.error('Impossible to put (%s)' % err)
+			return HTTPError(403, "Access denied")
 
-		#logger.debug(' + _id: %s (%s)' % (raw_record['_id'], type(raw_record['_id'])))
-
-		for key in dict(data).keys():
-			raw_record[key] = data[key]
-
-		record = crecord(raw_record=raw_record)
-		logger.debug(' + dump record: %s' % record.dump())
-
-		record.chown(account.user)
-		record.chgrp(group)
-		#if ctype in ctype_to_group_access:
-			#record.admin_group = ctype_to_group_access[ctype]
-	
-	logger.debug(' + Record: %s' % record.dump())
-	try:
-		storage.put(record, namespace=namespace, account=account)
-		
-	except Exception, err:
-		logger.error('Impossible to put (%s)' % err)
-		return HTTPError(403, "Access denied")
-		
 #### PUT
 @put('/rest/:namespace/:ctype/:_id')
 @put('/rest/:namespace/:ctype')
@@ -364,7 +368,7 @@ def rest_put(namespace, ctype, _id=None):
 	#get the session (security)
 	account = get_account()
 	storage = get_storage(namespace=namespace)
-	
+
 	#check rights on specific ctype (check ctype_to_group_access variable below)
 	if ctype in ctype_to_group_access:
 		if not check_group_rights(account,ctype_to_group_access[ctype]):
@@ -378,14 +382,14 @@ def rest_put(namespace, ctype, _id=None):
 
 	logger.debug(" + data: %s" % data)
 	logger.debug(" + data-type: %s" % type(data))
-		
+
 	if isinstance(data, str):
 		try:
 			data = json.loads(data)
 		except Exception, err:
 			logger.error("PUT: Impossible to parse data (%s)" % err)
 			return HTTPError(404, "Impossible to parse data")
-			
+
 	if not _id:
 		try:
 			_id = str(data['_id'])
@@ -396,7 +400,7 @@ def rest_put(namespace, ctype, _id=None):
 			_id = str(data['id'])
 		except:
 			pass
-	
+
 	## Clean data
 	try:
 		del data['_id']
@@ -407,14 +411,14 @@ def rest_put(namespace, ctype, _id=None):
 		del data['id']
 	except:
 		pass
-	
+
 	logger.debug(" + _id: "+str(_id))
 	logger.debug(" + ctype: "+str(ctype))
 	logger.debug(" + Data: "+str(data))
-	
+
 	try:
 		storage.update(_id, data, namespace=namespace, account=account)
-		
+
 	except Exception, err:
 		logger.error('Impossible to put (%s)' % err)
 		return HTTPError(403, "Access denied")
@@ -426,16 +430,16 @@ def rest_put(namespace, ctype, _id=None):
 def rest_delete(namespace, ctype, _id=None):
 	account = get_account()
 	storage = get_storage(namespace=namespace)
-	
+
 	logger.debug("DELETE:")
-	
+
 	data = request.body.readline()
 	if data:
 		try:
 			data = json.loads(data)
 		except:
 			logger.warning('Invalid data in request payload')
-			data = None	
+			data = None
 
 	if data:
 		logger.debug(" + Data: %s" % data)
@@ -443,11 +447,11 @@ def rest_delete(namespace, ctype, _id=None):
 		if isinstance(data, list):
 			logger.debug(" + Attempt to remove %i item from db" % len(data))
 			_id = []
-				
+
 			for item in data:
 				if isinstance(item,str):
 					_id.append(item)
-					
+
 				if isinstance(item,dict):
 					item_id = item.get('_id', item.get('id', None))
 					if item_id:
@@ -464,7 +468,7 @@ def rest_delete(namespace, ctype, _id=None):
 		return HTTPError(404, "No '_id' field in header ...")
 
 	logger.debug(" + _id: %s" % _id)
-	
+
 	try:
 		storage.remove(_id, account=account)
 	except:
