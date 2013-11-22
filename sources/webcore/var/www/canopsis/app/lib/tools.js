@@ -573,6 +573,28 @@ function expandMetric(node) {
 	return node;
 }
 
+function postDataToURL(url, data) {
+	var form = $('<form/>', {
+		method: 'POST',
+		action: url
+	});
+
+	for(var i = 0; i < data.length; i++) {
+		var inputfield = $('<input/>', data[i]);
+		form.append(inputfield);
+	}
+
+	/* Firefox is unable to submit a form which is not in the DOM.
+	 * So we add it, hide it, submit it and remove it.
+	 */
+	form.hide();
+	$('body').append(form);
+
+	form.submit();
+
+	form.remove();
+}
+
 var Canopsis = {
 	/* Check functions */
 
