@@ -24,8 +24,8 @@ Ext.define('widgets.eventcalendar.editwindow' , {
 
 	alias: 'widget.eventcalendar.editwindow',
 
-	height: 400,
-	width: 400,
+	height: 500,
+	width: 600,
 	layout: 'fit',
 	items: {
 		border: false,
@@ -46,76 +46,89 @@ Ext.define('widgets.eventcalendar.editwindow' , {
 	},
 
 	_buildForm: function() {
+		var me = this;
 		// The data store containing the list of states
-
 		this.sources = Ext.create('Ext.data.Store', {
-			fields: ['name'],
+			fields: ['component'],
 		});
 
-		this.calendar.computeIcsSources();
+		this.sources.add(this.calendar.sources);
 
-		for (var i = this.calendar.ics_sources_array.length - 1; i >= 0; i--) {
-			this.sources.add({'name' : this.calendar.ics_sources_array[i]});
-		};
-
-		//Title
-		this._form.add({
-			fieldLabel: _('Event title'),
-			xtype: 'textfield',
-			name: 'event_title',
-			itemId: 'event_title',
-			anchor: '100%',
-			emptyText: _('Type here the event title')
-		});
-
-		this._form.add({
-			xtype: 'combobox',
-			fieldLabel: _('Event source'),
-			store: this.sources,
-			itemId: 'event_source',
-			name: 'event_source',
-			editable: false,
-			queryMode: 'local',
-			displayField: 'name',
-			valueField: 'name',
-			emptyText: _('Type here the event source'),
-			allowBlank: false
-		});
-
-		this._form.add({
-			"xtype": "cfieldset",
-			"title": _('Start'),
-			"margin": 0,
-			"padding": 0,
-			"items": [{
-					fieldLabel: _('Date'),
-					xtype: 'datefield',
-					name: 'start_date',
-					itemId: 'start_date'
-				},{
-					fieldLabel: _('Time'),
-					xtype: 'timefield',
-					name: 'start_time',
-					itemId: 'start_time'
+		var tabs = Ext.create('Ext.tab.Panel', {
+				items: [{
+					title: 'Event',
+					itemId: 'tabEvent',
+					items:[{
+						fieldLabel: _('Event title'),
+						xtype: 'textfield',
+						name: 'event_title',
+						itemId: 'event_title',
+						anchor: '100%',
+						emptyText: _('Type here the event title')
+					},{
+						xtype: 'combobox',
+						fieldLabel: _('Event source'),
+						store: this.sources,
+						itemId: 'event_source',
+						name: 'event_source',
+						editable: false,
+						queryMode: 'local',
+						displayField: 'component',
+						valueField: 'component',
+						emptyText: _('Type here the event source'),
+						allowBlank: false
+					},{
+						"xtype": "cfieldset",
+						"title": _('Start'),
+						"margin": 0,
+						"padding": 0,
+						"items": [{
+							fieldLabel: _('Date'),
+							xtype: 'datefield',
+							name: 'start_date',
+							itemId: 'start_date'
+						},{
+							fieldLabel: _('Time'),
+							xtype: 'timefield',
+							name: 'start_time',
+							itemId: 'start_time'
+						}]
+					},{
+						"xtype": "cfieldset",
+						"title": _('End'),
+						"margin": 0,
+						"padding": 0,
+						"items": [{
+								fieldLabel: _('Date'),
+								xtype: 'datefield',
+								name: 'end_date',
+								itemId: 'end_date'
+							},{
+								fieldLabel: _('Time'),
+								xtype: 'timefield',
+								name: 'end_time',
+								itemId: 'end_time'
+							}]
+						}]
+				}, {
+					title: 'Recurrence',
+					itemId: 'tabRecurrence',
+					items:[{
+							xtype: 'textfield',
+							itemId: "rrule",
+							fieldLabel: "interval"
+					}]
 				}]
 		});
 
+		this._form.add(tabs);
+
 		this._form.add({
-			"xtype": "cfieldset",
-			"title": _('End'),
-			"margin": 0,
-			"padding": 0,
-			"items": [{
-					fieldLabel: _('Date'),
-					xtype: 'datefield',
-					name: 'end_date',
-					itemId: 'end_date'
-				},{
-					fieldLabel: _('Time'),
-					xtype: 'timefield',
-					name: 'end_time',
-					itemId: 'end_time'
-				}]
+			xtype:"button",
+			handler : function() {
+				me.testRule();
+			}
+
 		});
 	},
 
@@ -130,23 +143,27 @@ Ext.define('widgets.eventcalendar.editwindow' , {
 		this.currentEditedEventHtml = null;
 		this.addMode = true;
 
-		this._form.down("#event_title").setValue("");
+		var tabEvent = this._form.down("#tabEvent");
+		var tabRecurrence = this._form.down("#tabRecurrence");
+		tabRecurrence.down("#rrule").setValue("");
 
-		this._form.down("#event_source").setValue("");
-		this._form.down("#event_source").setDisabled(false);
+		tabEvent.down("#event_title").setValue("");
 
-		this._form.down("#start_date").setValue(start);
-		this._form.down("#end_date").setValue(end);
+		tabEvent.down("#event_source").setValue("");
+		tabEvent.down("#event_source").setDisabled(false);
+
+		tabEvent.down("#start_date").setValue(start);
+		tabEvent.down("#end_date").setValue(end);
 
 		if(!allDay)
 		{
-			this._form.down("#start_time").setValue(start);
-			this._form.down("#end_time").setValue(end);
+			tabEvent.down("#start_time").setValue(start);
+			tabEvent.down("#end_time").setValue(end);
 		}
 		else
 		{
-			this._form.down("#start_time").setValue(null);
-			this._form.down("#end_time").setValue(null);
+			tabEvent.down("#start_time").setValue(null);
+			tabEvent.down("#end_time").setValue(null);
 		}
 
 		this.show();
@@ -154,33 +171,41 @@ Ext.define('widgets.eventcalendar.editwindow' , {
 
 	showEditEvent: function(event, eventHtml){
 		this.setTitle( _("Edit event"));
+		var tabEvent = this._form.down("#tabEvent");
+
+		var tabRecurrence = this._form.down("#tabRecurrence");
 
 		this.currentEditedEvent = event;
 		this.currentEditedEventHtml = eventHtml;
 		this.addMode = false;
 
-		this._form.down("#event_title").setValue(event.title);
+		tabEvent.down("#event_title").setValue(event.title);
 
-		this._form.down("#event_source").setValue(event.component);
-		this._form.down("#event_source").setDisabled(true);
+		tabEvent.down("#event_source").setValue(event.component);
+		tabEvent.down("#event_source").setDisabled(true);
 
-		this._form.down("#start_date").setValue(new Date(event.start));
+		tabEvent.down("#start_date").setValue(new Date(event.start));
 
 		if(event.end === null)
 			event.end = event.start;
 
-		this._form.down("#end_date").setValue(new Date(event.end));
+		tabEvent.down("#end_date").setValue(new Date(event.end));
 
 		if(!event.allDay)
 		{
-			this._form.down("#start_time").setValue(event.start);
-			this._form.down("#end_time").setValue(event.end);
+			tabEvent.down("#start_time").setValue(event.start);
+			tabEvent.down("#end_time").setValue(event.end);
 		}
 		else
 		{
-			this._form.down("#start_time").setValue(null);
-			this._form.down("#end_time").setValue(null);
+			tabEvent.down("#start_time").setValue(null);
+			tabEvent.down("#end_time").setValue(null);
 		}
+
+		if(event.rrule !== null && event.rrule !== undefined)
+			tabRecurrence.down("#rrule").setValue(event.rrule);
+		else
+			tabRecurrence.down("#rrule").setValue("");
 
 		this.show();
 	},
@@ -188,7 +213,10 @@ Ext.define('widgets.eventcalendar.editwindow' , {
 	ok_button_function: function(){
 		var newEvent = {}; //TODO set this as a property to save hidden props
 
-		newEvent.title = this._form.down("#event_title").getValue();
+		var tabEvent = this._form.down("#tabEvent");
+		var tabRecurrence = this._form.down("#tabRecurrence");
+
+		newEvent.title = tabEvent.down("#event_title").getValue();
 
 		if(this.currentEditedEvent.id)
 			newEvent.id = this.currentEditedEvent.id;
@@ -199,9 +227,9 @@ Ext.define('widgets.eventcalendar.editwindow' , {
 		}
 
 		combine = function(me, date, time, all_day) {
-				if(Ext.isString(date)) date = me.parseDate(date);
+				if(Ext.isString(date)) date = new Date(date);
 				if(!date) date = new Date();
-				if(Ext.isString(time)) time = me.parseDate(time);
+				if(Ext.isString(time)) time = new Date(time);
 				if(!time) time = new Date();
 				var rv = new Date(date);
 				if(!all_day)
@@ -213,19 +241,24 @@ Ext.define('widgets.eventcalendar.editwindow' , {
 				return rv;
 			}
 
-		var startDateWidget = this._form.down("#start_date");
-		var startTimeWidget = this._form.down("#start_time");
-		var endDateWidget = this._form.down("#end_date");
-		var endTimeWidget = this._form.down("#end_time");
+		var startDateWidget = tabEvent.down("#start_date");
+		var startTimeWidget = tabEvent.down("#start_time");
+		var endDateWidget = tabEvent.down("#end_date");
+		var endTimeWidget = tabEvent.down("#end_time");
 
 		var start_datetime = combine(this, startDateWidget.getValue(), startTimeWidget.getValue());
 		var end_datetime = combine(this, endDateWidget.getValue(), endTimeWidget.getValue());
 		var all_day = startTimeWidget.getValue() === null || endTimeWidget.getValue() === null;
 
-		newEvent.component = this._form.down("#event_source").getValue();
+		newEvent.component = tabEvent.down("#event_source").getValue();
 
 		newEvent.start = start_datetime;
 		newEvent.end = end_datetime;
+
+		var rrule = tabRecurrence.down("#rrule").getValue();
+
+		if(rrule !== "")
+			newEvent.rrule = rrule;
 
 		var isHourfilledOnlyOnStartOrEnd = (startTimeWidget.getValue() === null && endTimeWidget.getValue() !== null)
 											|| (startTimeWidget.getValue() !== null && endTimeWidget.getValue() === null)
@@ -246,7 +279,7 @@ Ext.define('widgets.eventcalendar.editwindow' , {
 	},
 
 	hide: function() {
-		this.calendar.resetEventStyle(this.currentEditedEventHtml);
+		this.calendar.resetEventStyle(this.currentEditedEventHtml, this.currentEditedEvent);
 		this.callParent();
 	}
 

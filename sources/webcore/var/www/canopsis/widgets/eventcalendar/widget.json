@@ -68,33 +68,117 @@
 								"allowBlank": true,
 								"value": "month,agendaWeek,agendaDay"
 							}]
+					},{
+						"xtype": "cfieldset",
+						"title": "Event view popup columns",
+						"items": [{
+								"xtype": "checkbox",
+								"fieldLabel": "Component",
+								"inputValue": true,
+								"uncheckedValue": false,
+								"checked": true,
+								"name": "opt_show_component"
+							},{
+								"xtype": "checkbox",
+								"fieldLabel": "Resource",
+								"inputValue": true,
+								"uncheckedValue": false,
+								"checked": true,
+								"name": "opt_show_resource"
+							},{
+								"xtype": "checkbox",
+								"fieldLabel": "State",
+								"inputValue": true,
+								"uncheckedValue": false,
+								"checked": true,
+								"name": "opt_show_state"
+							},{
+								"xtype": "checkbox",
+								"fieldLabel": "State type",
+								"inputValue": true,
+								"uncheckedValue": false,
+								"checked": true,
+								"name": "opt_show_state_type"
+							},{
+								"xtype": "checkbox",
+								"fieldLabel": "Source type",
+								"inputValue": true,
+								"uncheckedValue": false,
+								"checked": true,
+								"name": "opt_show_source_type"
+							},{
+								"xtype": "checkbox",
+								"fieldLabel": "Last check",
+								"inputValue": true,
+								"uncheckedValue": false,
+								"checked": true,
+								"name": "opt_show_last_check"
+							},{
+								"xtype": "checkbox",
+								"fieldLabel": "Output",
+								"inputValue": true,
+								"uncheckedValue": false,
+								"checked": true,
+								"name": "opt_show_output"
+							},{
+								"xtype": "checkbox",
+								"fieldLabel": "Tags",
+								"inputValue": true,
+								"uncheckedValue": false,
+								"checked": true,
+								"name": "opt_show_tags"
+							}]
 					}]
 	},{
 		"title": "Style",
-			"items": [
-				{
-					"xtype": "radiogroup",
-					"fieldLabel": "event display size",
-					"columns": 1,
-					"vertical": true,
-					"items": [
-						{ "boxLabel": "tiny",   "name": "rb", "inputValue": "1" },
-						{ "boxLabel": "small",  "name": "rb", "inputValue": "2", "checked": true},
-						{ "boxLabel": "normal", "name": "rb", "inputValue": "3" },
-						{ "boxLabel": "big",    "name": "rb", "inputValue": "4" },
-						{ "boxLabel": "huge",   "name": "rb", "inputValue": "5" }
-					]
+			"items": [{
+						"xtype": "combobox",
+						"name": "event_display_size",
+						"fieldLabel": "Event display size",
+						"queryMode": "local",
+						"displayField": "text",
+						"valueField": "value",
+						"value": null,
+						"allowBlank": false,
+						"value": "normal_size",
+						"store": {
+							"xtype": "store",
+							"fields": ["value", "text"],
+							"data" : [
+								{"value": "tiny_size", "text": "Tiny"},
+								{"value": "small_size", "text": "Small"},
+								{"value": "normal_size", "text": "Normal"},
+								{"value": "big_size", "text":  "Big"},
+								{"value": "huge_size", "text":  "Huge"}
+						]}
 				},{
-					"fieldLabel": "stacked events color",
-					"xtype":"ccolorfield"
+					"fieldLabel": "Default events color",
+					"name": "defaultEventColor",
+					"xtype":"ccolorfield",
+					"value": "#3a87ad"
 				}
 				]
 	},{
 		"title": "Customize sources",
 		"items" : [{
-					"xtype": "ccard",
-					"edit": true
-				}
-		]
+					"xtype": "ccomponentlist",
+					"name" : "sources",
+					"showResource": false,
+					"event_type": "calendar",
+					"base_filter" : {"$or":[{"event_type":"calendar"}]},
+					"idKey" : "component",
+					"addForm": [{
+								"xtype" : "textfield",
+								"name" : "component",
+								"fieldLabel": "Source name",
+								"allowBlank": false
+							}],
+					"additional_field": {
+											"xtype":"textfield",
+											"name":"color",
+											"emptyText":"Color of events",
+											"hideLabel": true
+										}
+				}]
 	}]
 }]

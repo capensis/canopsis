@@ -35,10 +35,24 @@ Ext.define('widgets.eventcalendar.eventcalendar' , {
 	header_right: 'month,agendaWeek,agendaDay',
 	defaultView: 'month',
 
-    /**
-     * @see cwebsocketWidget
-     */
+	event_display_size : "normal_size",
+
+	opt_show_component : true,
+	opt_show_resource : true,
+	opt_show_state : true,
+	opt_show_state_type : true,
+	opt_show_source_type : true,
+	opt_show_last_check : true,
+	opt_show_output : true,
+	opt_show_tags : true,
+
+	defaultEventColor :"#3a87ad",
+	/**
+	 * @see cwebsocketWidget
+	 */
 	amqp_queue: 'alerts',
+	sources: [],
+	sources_byComponent:{},
 
 	initComponent: function() {
 		this.callParent(arguments);
@@ -53,22 +67,28 @@ Ext.define('widgets.eventcalendar.eventcalendar' , {
 			{
 				calendar: this
 			});
+
+		for (var i = this.sources.length - 1; i >= 0; i--) {
+			var currentSource = this.sources[i];
+			this.sources_byComponent[currentSource.component] = currentSource;
+		};
 	},
 
 	afterContainerRender: function() {
 		var calendarRoot = this;
 
-		var eventSources = []
+		var eventSources = [];
 
-		var tags_url = this.computeTagsUrl()
-		var ics_url = this.computeIcsUrl()
+		var tags_url = this.computeTagsUrl();
+		var ics_url = this.computeIcsUrl();
 		if(tags_url)
 			eventSources.push(tags_url);
 
 		if(ics_url)
-			eventSources.push(ics_url);
+			eventSources = eventSources.concat(ics_url);
 
 		$('#' + calendarRoot.id).fullCalendar({
+			firstDay:1,
 			height: calendarRoot.height,
 			events: calendarRoot.getEvents(),
 			eventSources: eventSources,
@@ -106,9 +126,38 @@ Ext.define('widgets.eventcalendar.eventcalendar' , {
 						calendarRoot.editwindow.showEditEvent(calEvent, this);
 					}
 				}
+			},
+			eventRender: function(event, element) {
+				if(!event.component)
+				{
+					log.debug('no component (ics source) for event, assuming the event is stacked regular events', calendarRoot.logAuthor);
 
-			}
+					element.css("background-color", calendarRoot.defaultEventColor);
+					element.css("border-color", calendarRoot.defaultEventColor);
+				}
+				else
+				{
+					var calElements = $('#' + calendarRoot.id + " ." + event.component);
+
+
+					if(!calendarRoot.sources_byComponent[event.component])
+					{
+						log.debug('component not found on calendar sources', calendarRoot.logAuthor);
+						return;
+					}
+
+					var sourceColor = calendarRoot.sources_byComponent[event.component].color;
+					if(!!sourceColor)
+					{
+						calElements.css("background-color", sourceColor);
+						calElements.css("border-color", sourceColor);
+					}
+				}
+    		},
+
 		});
+
+		$('#' + calendarRoot.id).addClass(calendarRoot.event_display_size);
 
 		this.subscribe();
 		this.callParent(arguments);
@@ -132,16 +181,16 @@ Ext.define('widgets.eventcalendar.eventcalendar' , {
 		var calendarRoot = this;
 
 		for (var i = calevents.length - 1; i >= 0; i--) {
-			var isoStartDatetime = calevents[i].start.toISOString();
-			var isoEndDatetime;
+			var tsStartDatetime = calevents[i].start.getTime();
+			var tsEndDatetime;
 			//if end datetime is not define, define it to start + 2h
 			if(calevents[i].end)
-				isoEndDatetime = calevents[i].end.toISOString();
+				tsEndDatetime = calevents[i].end.getTime();
 			else
 			{
 				var endDatetime = new Date(calevents[i].start);
 				endDatetime.setHours(endDatetime.getHours() + 2);
-				isoEndDatetime = endDatetime.toISOString();
+				tsEndDatetime = endDatetime.getTime();
 			}
 
 			var event_raw = {
@@ -153,10 +202,13 @@ Ext.define('widgets.eventcalendar.eventcalendar' , {
 				'resource': calevents[i].id,
 				'output': calevents[i].title,
 				'state': 0,
-				'start': isoStartDatetime,
-				'end': isoEndDatetime,
+				'start': tsStartDatetime / 1000,
+				'end': tsEndDatetime / 1000,
 				'all_day': calevents[i].allDay
 			};
+
+			if(calevents[i].rrule !== null && calevents[i].rrule !== undefined)
+				event_raw.rrule = calevents[i].rrule;
 
 			this.publishEvent('events', event_raw, false);
 		};
@@ -199,53 +251,31 @@ Ext.define('widgets.eventcalendar.eventcalendar' , {
 
 	computeIcsUrl: function(from, to){
 
-		this.computeIcsSources();
-
 		//TODO limit should be dynamic
-		//TODO manage several sources
-		if(this.ics_sources && this.ics_sources != "")
+		if(this.sources)
 		{
-			var url = "/rest/events/event?_dc=1383151536066&limit=2000&filter=";
-
-			var query = {
-						"$and": [
-							{ "timestamp": { "$gt": "!start!" } },
-							{ "timestamp": { "$lt": "!end!" } }
-						]
+			var urls = [];
+			for (var i = this.sources.length - 1; i >= 0; i--) {
+				var url = "/cal/" + this.sources[i].component + "/\"!start!\"/\"!end!\"";
+				url = encodeURI(url);
+				urls.push(url);
 			};
 
-			eventTypeQueryPart = {"event_type" : "calendar"}
-			icsSourcesQueryPart = {"component" : {"$in": this.ics_sources_array}}
-			query["$and"].push(eventTypeQueryPart);
-			query["$and"].push(icsSourcesQueryPart);
-
-			url += JSON.stringify(query);
-
-			return encodeURI(url);
+			return urls;
 		}
 		else
 			return null;
 	},
 
-	computeIcsSources: function() {
-		//TODO remove left and right spaces
-		//TODO call this only on sources updates
-		if(this.ics_sources && typeof this.ics_sources === "string" && this.ics_sources != "")
-			this.ics_sources_array = this.ics_sources.split(",");
-		else
-			this.ics_sources_array = [];
-	},
-
 	/**
-     * @see cwebsocketWidget
-     */
+	 * @see cwebsocketWidget
+	 */
 	on_event: function(raw, rk) {
-		this.computeIcsSources();
 		var me = this;
 
 		function in_sources_array(raw_component) {
-			for (var i = me.ics_sources_array.length - 1; i >= 0; i--) {
-				if(me.ics_sources_array[i] === raw_component)
+			for (var i = me.sources.length - 1; i >= 0; i--) {
+				if(me.sources[i].component === raw_component)
 					return true;
 			};
 			return false;
@@ -257,23 +287,29 @@ Ext.define('widgets.eventcalendar.eventcalendar' , {
 			var event = {
 					id: raw.resource,
 					title: raw.output,
-					start: new Date(raw.start),
-					end: new Date(raw.end),
+					start: new Date(raw.start * 1000),
+					end: new Date(raw.end * 1000),
 					allDay: raw.all_day,
-					type:raw.event_type,
-					component:raw.component
+					type: raw.event_type,
+					component: raw.component,
+					rrule: raw.rrule
 				};
 
 			$('#'+ this.id).fullCalendar('renderEvent',
 				event
 			);
+
+			if(!!event.rrule)
+			{
+				$('#'+ this.id).fullCalendar('refetchEvents');
+			}
 		}
 	},
 
-	resetEventStyle: function(eventHtml)
+	resetEventStyle: function(eventHtml, event)
 	{
 		if(eventHtml)
-			$(eventHtml).css('border-color', '');
+			$(eventHtml).css("border-color", this.sources_byComponent[event.component].color);
 
 		$('#'+ this.id).fullCalendar('unselect');
 	}

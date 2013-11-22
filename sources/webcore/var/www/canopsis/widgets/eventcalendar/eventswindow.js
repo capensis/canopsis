@@ -61,7 +61,15 @@ Ext.define('widgets.eventcalendar.eventswindow' , {
 			remoteSort: true,
 			height:490,
 			opt_bar_bottom:true,
-			opt_paging:true
+			opt_paging:true,
+			opt_show_component: this.calendar.opt_show_component,
+			opt_show_resource: this.calendar.opt_show_resource,
+			opt_show_state: this.calendar.opt_show_state,
+			opt_show_state_type: this.calendar.opt_show_state_type,
+			opt_show_source_type: this.calendar.opt_show_source_type,
+			opt_show_last_check: this.calendar.opt_show_last_check,
+			opt_show_output: this.calendar.opt_show_output,
+			opt_show_tags: this.calendar.opt_show_tags
 		});
 		this._form.add(this.grid);
 
