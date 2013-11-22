@@ -350,6 +350,7 @@ Ext.define('widgets.weather.weather' , {
 				var config = {
 					data: node._event,
 					link: this.external_link_dict[_id],
+					display_name: this.nodesByID[_id].display_name,
 					bg_color: (i % 2) ? this.bg_impair_color : this.bg_pair_color
 				};
 
