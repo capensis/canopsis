@@ -82,10 +82,10 @@ def cal_get(source, interval_start, interval_end):
 		dtstart = datetime.fromtimestamp(float(interval_start))
 		dtend = datetime.fromtimestamp(float(interval_end))
 
-		occurences = list(rrulestr(event["rrule"], dtstart=dtstart).between(dtstart, dtend))
-
 		eventStart = datetime.fromtimestamp(float(event["start"]))
 		eventEnd = datetime.fromtimestamp(float(event["end"]))
+
+		occurences = list(rrulestr(event["rrule"], dtstart=eventStart).between(dtstart, dtend))
 
 		eventDuration = eventEnd - eventStart
 
