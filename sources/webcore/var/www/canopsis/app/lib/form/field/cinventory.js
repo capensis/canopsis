@@ -223,6 +223,7 @@ Ext.define('canopsis.lib.form.field.cinventory' , {
 				],
 
 				viewConfig: {
+					markDirty: false,
 					plugins: {
 						ptype: 'gridviewdragdrop',
 						dragGroup: this.dragGroup,
@@ -270,25 +271,32 @@ Ext.define('canopsis.lib.form.field.cinventory' , {
 				];
 
 				for(i = 0; i < this.additional_fields.length; i++) {
+					var field = this.additional_fields[i];
+
 					var editor_config = {
-						header: this.additional_fields[i].title,
+						header: field.title,
 						sortable: false,
-						dataIndex: this.additional_fields[i].name,
-						editor: this.additional_fields[i],
+						dataIndex: field.name,
+						editor: field,
 						flex: 3
 					};
 
-					var emptyText = this.additional_fields[i].emptyText;
+					this.emptyText = field.emptyText;
 
-					if(this.additional_fields[i].name === 'link') {
+					if(field.name === 'link') {
 						editor_config.renderer = function(val) {
 							if(!val) {
-								return Ext.String.format('<span style="color:grey">{0}</span>', emptyText);
+								return Ext.String.format('<span style="color:grey">{0}</span>', this.emptyText);
 							}
 							else {
 								return val;
 							}
 						};
+					}
+
+					if(field.xtype === 'checkboxfield') {
+						editor_config.xtype = "checkcolumn";
+						delete editor_config.editor;
 					}
 
 					selection_grid_config.columns.push(editor_config);

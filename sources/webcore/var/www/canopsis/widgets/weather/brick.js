@@ -157,6 +157,7 @@ Ext.define('widgets.weather.brick' , {
 	display_report_button: false,
 	display_derogation_icon: false,
 
+	hide_title: false,
 	simple_display: false,
 	title_font_size: 14,
 
@@ -225,6 +226,10 @@ Ext.define('widgets.weather.brick' , {
 		}
 		else {
 			this.widget_base_config.title = 'Unknown';
+		}
+
+		if(this.hide_title) {
+			this.widget_base_config.title = '';
 		}
 
 		var linkUrl = this.formatLink();

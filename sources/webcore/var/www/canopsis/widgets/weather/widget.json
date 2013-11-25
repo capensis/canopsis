@@ -133,6 +133,11 @@
 						"title": "Custom Name",
 						"name": "display_name",
 						"emptyText": "Type custom name here"
+					},{
+						"xtype": "checkboxfield",
+						"title": "Hide Name",
+						"name": "hide_title",
+						"value": false
 					}],
 					"event_type": "selector",
 					"base_filter" : {"$or":[{"event_type":"selector"}, {"event_type":"sla"}, {"event_type":"topology"}]}
