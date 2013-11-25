@@ -87,14 +87,16 @@ Ext.define('canopsis.lib.view.cgrid' , {
 
 	listeners: {
 		selectionchange: function(selectionModel, selected) {
-			var store = selectionModel.getStore();
-			var all_selected = selected.length == store.count();
+			if(this.opt_export_import) {
+				var store = selectionModel.getStore();
+				var all_selected = selected.length == store.count();
 
-			var cb = Ext.getCmp(this.cb_select_all_id);
+				var cb = Ext.getCmp(this.cb_select_all_id);
 
-			if(cb.getValue() != all_selected) {
-				cb.onSelectionChange = true;
-				cb.setValue(all_selected);
+				if(cb.getValue() != all_selected) {
+					cb.onSelectionChange = true;
+					cb.setValue(all_selected);
+				}
 			}
 		}
 	},
