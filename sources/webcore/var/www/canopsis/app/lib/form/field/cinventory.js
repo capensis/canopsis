@@ -270,7 +270,7 @@ Ext.define('canopsis.lib.form.field.cinventory' , {
 					})
 				];
 
-				selection_grid_config.emptyText = {};
+				selection_grid_config.fieldsEmptyText = {};
 
 				for(i = 0; i < this.additional_fields.length; i++) {
 					var field = this.additional_fields[i];
@@ -283,14 +283,14 @@ Ext.define('canopsis.lib.form.field.cinventory' , {
 						flex: 3
 					};
 
-					selection_grid_config.emptyText[field.name] = field.emptyText;
+					selection_grid_config.fieldsEmptyText[field.name] = field.emptyText;
 
 					if(field.name === 'link' || field.name === 'display_name') {
 						editor_config.renderer = function(val, metaData, record, row, col) {
 							void(metaData, record, row);
 
 							var fieldName = this.columns[col].dataIndex;
-							var emptyText = this.emptyText[fieldName];
+							var emptyText = this.fieldsEmptyText[fieldName];
 
 							if(!val) {
 								return Ext.String.format('<span style="color:grey">{0}</span>', emptyText);
