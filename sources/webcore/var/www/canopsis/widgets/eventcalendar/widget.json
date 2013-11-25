@@ -22,51 +22,88 @@
 							"fieldLabel": "Editable"
 					   },{
 							"xtype" : "textfield",
-							"name" : "tags",
-							"fieldLabel": "Tags to show in the calendar (separated by commas)",
-							"allowBlank": true
-					   },{
-							"xtype" : "textfield",
-							"name" : "ics_sources",
-							"fieldLabel": "Calendar event feeds (separated by commas)",
-							"allowBlank": true
-					   }]
+							"name" : "defaultView",
+							"fieldLabel": "Default view",
+							"value": "month"
+						}]
 					}]
 	},{
 		"title": "Display",
 			"items": [
 				{
 						"xtype": "cfieldset",
-						"title": "Default view",
+						"title": "General",
 						"items": [
 							{
-								"xtype" : "textfield",
-								"name" : "defaultView",
-								"fieldLabel": "Default view",
-								"value": "month"
+								"xtype": "checkbox",
+								"fieldLabel": "Show weekends",
+								"inputValue": true,
+								"uncheckedValue": false,
+								"checked": true,
+								"value" : true,
+								"name": "show_weekends"
 							}]
 					},{
 						"xtype": "cfieldset",
 						"title": "Header",
 						"items": [
 							{
-								"xtype" : "textfield",
-								"name" : "header_left",
+								"xtype": "combobox",
+								"name": "header_left",
 								"fieldLabel": "left part of the header",
+								"queryMode": "local",
+								"displayField": "text",
+								"valueField": "text",
 								"allowBlank": true,
-								"value": "prev,next today"
+								"value": "prev,next today",
+								"store": {
+									"xtype": "store",
+									"fields": ["value", "text"],
+									"data" : [
+										{"text": "prev,next today"},
+										{"text": "title"},
+										{"text": "month,agendaWeek,agendaDay"},
+										{"text": "month,agendaWeek"},
+										{"text":  "month,basicWeek,basicDay"}
+								]}
 							},{
-								"xtype" : "textfield",
-								"name" : "header_center",
+								"xtype": "combobox",
+								"name": "header_center",
 								"fieldLabel": "center part of the header",
+								"queryMode": "local",
+								"displayField": "text",
+								"valueField": "text",
 								"allowBlank": true,
-								"value": "title"
+								"value": "title",
+								"store": {
+									"xtype": "store",
+									"fields": ["value", "text"],
+									"data" : [
+										{"text": "prev,next today"},
+										{"text": "title"},
+										{"text": "month,agendaWeek,agendaDay"},
+										{"text": "month,agendaWeek"},
+										{"text":  "month,basicWeek,basicDay"}
+								]}
 							},{
-								"xtype" : "textfield",
-								"name" : "header_right",
+								"xtype": "combobox",
+								"name": "header_right",
 								"fieldLabel": "right part of the header",
+								"queryMode": "local",
+								"displayField": "text",
+								"valueField": "text",
 								"allowBlank": true,
-								"value": "month,agendaWeek,agendaDay"
+								"value": "month,agendaWeek,agendaDay",
+								"store": {
+									"xtype": "store",
+									"fields": ["value", "text"],
+									"data" : [
+										{"text": "prev,next today"},
+										{"text": "title"},
+										{"text": "month,agendaWeek,agendaDay"},
+										{"text": "month,agendaWeek"},
+										{"text":  "month,basicWeek,basicDay"}
+								]}
 							}]
 					},{
 						"xtype": "cfieldset",
@@ -159,7 +196,7 @@
 				}
 				]
 	},{
-		"title": "Customize sources",
+		"title": "Calendar sources",
 		"items" : [{
 					"xtype": "ccomponentlist",
 					"name" : "sources",
@@ -179,6 +216,12 @@
 											"emptyText":"Color of events",
 											"hideLabel": true
 										}
+				}]
+	},{
+		"title": "Stashed events",
+		"items" : [{
+					"xtype": "cfilter",
+					"name" : "stashed_events_filter"
 				}]
 	}]
 }]
