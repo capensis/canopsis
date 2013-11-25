@@ -131,24 +131,14 @@
 						"items":[
 							{
 								"xtype": "textfield",
-								"fieldLabel": "Help File URI",
-								"name": "file_help_uri",
-								"emptyText":"http://help.doc.canopsis.com"
+								"fieldLabel": "Help File URL",
+								"name": "file_help_url",
+								"emptyText":"http://help.doc.canopsis.com/<composant>/<ressource>"
 							},{
 								"xtype": "textfield",
-								"fieldLabel": "Help File Extension",
-								"name": "file_help_ext",
-								"emptyText":".pdf"
-							},{
-								"xtype": "textfield",
-								"fieldLabel": "Equipement File URI",
-								"name": "file_equipement_uri",
-								"emptyText":"http://equipement.doc.canopsis.com"
-							},{
-								"xtype": "textfield",
-								"fieldLabel": "Equipement File Extension",
-								"name": "file_equipement_ext",
-								"emptyText":".pdf"
+								"fieldLabel": "Equipement File URL",
+								"name": "file_equipement_url",
+								"emptyText":"http://equipement.doc.canopsis.com/<composant>/<ressource>"
 							},{
 								"xtype": "textfield",
 								"fieldLabel": "Ticket URL",
@@ -160,41 +150,72 @@
 								"checked": false,
 								"name": "show_form_ack"
 							},{
+								"xtype": "cfieldset",
+								"title": "ACK State",
+								"items":[
+									{
+										"xtype": "checkbox",
+										"boxLabel": "Show help message",
+										"checked": true,
+										"name": "show_help_msg"
+									},{
+										"xtype": "textfield",
+										"fieldLabel": "Help Message",
+										"name": "help_msg",
+										"emptyText":"<component>,<resource>,<output>,<lastcheck>"
+									},{							
+										"xtype": "checkbox",
+										"boxLabel": "Show solved",
+										"checked": true,
+										"name": "show_ack_state_solved"
+									},{
+										"xtype": "checkbox",
+										"boxLabel": "Show pending for solved",
+										"checked": true,
+										"name": "show_ack_state_pendingsolved"
+									},{
+										"xtype": "checkbox",
+										"boxLabel": "Show pending for action",
+										"checked": true,
+										"name": "show_ack_state_pendingaction"
+									},{
+										"xtype": "checkbox",
+										"boxLabel": "Show pending for validation",
+										"checked": true,
+										"name": "show_ack_state_pendingvalidation"
+									}
+								]
+							},{
 								"xtype": "checkbox",
 								"boxLabel": "Show Edit Form",
 								"checked": false,
 								"name": "show_form_edit"
 							},{
-									"xtype": "cfieldset",
-									"title": "Dispplayed Field on edit form",
-									"items":[
-										{
-											"xtype": "checkbox",
-											"boxLabel": "Show Edit Form",
-											"checked": false,
-											"name": "show_form_edit"
-										},{
-											"xtype": "checkbox",
-											"boxLabel": "State type",
-											"checked": true,
-											"name": "show_edit_state_type"
-										},{
-											"xtype": "checkbox",
-											"boxLabel": "State",
-											"checked": true,
-											"name": "show_edit_state"
-										},{
-											"xtype": "checkbox",
-											"boxLabel": "Ticket",
-											"checked": false,
-											"name": "show_edit_ticket"
-										},{
-											"xtype": "checkbox",
-											"boxLabel": "Plugin message",
-											"checked": true,
-											"name": "show_edit_output"
-										}
-									]
+								"xtype": "cfieldset",
+								"title": "Dispplayed Field on edit form",
+								"items":[
+									{
+										"xtype": "checkbox",
+										"boxLabel": "State type",
+										"checked": true,
+										"name": "show_edit_state_type"
+									},{
+										"xtype": "checkbox",
+										"boxLabel": "State",
+										"checked": true,
+										"name": "show_edit_state"
+									},{
+										"xtype": "checkbox",
+										"boxLabel": "Ticket",
+										"checked": false,
+										"name": "show_edit_ticket"
+									},{
+										"xtype": "checkbox",
+										"boxLabel": "Plugin message",
+										"checked": true,
+										"name": "show_edit_output"
+									}
+								]
 							}]
 						}
 					]

@@ -56,9 +56,9 @@ Ext.define('canopsis.lib.view.cgrid_state' , {
 	pageSize: global.pageSize,
 
 	sorters: [{
-			property: 'state',
-			direction: 'DESC'
-		}],
+		property: 'state',
+		direction: 'DESC'
+	}],
 
 	columns: [],
 
@@ -67,6 +67,12 @@ Ext.define('canopsis.lib.view.cgrid_state' , {
 	initComponent: function() {
 		this.columns = [];
 
+		console.log( this );
+
+		if ( this.opt_show_form_ack && ( this.opt_show_ack_state_solved || this.opt_show_ack_state_pendingsolved || this.opt_show_ack_state_pendingaction || this.opt_show_ack_state_pendingvalidation ) ) {
+			this.selModel= Ext.create('Ext.selection.CheckboxModel');	
+			this.opt_bar_ack = true;
+		}
 		//set columns
 		if (this.opt_show_source_type) {
 			this.columns.push({
@@ -77,12 +83,12 @@ Ext.define('canopsis.lib.view.cgrid_state' , {
 				hideable: false,
 				dataIndex: 'source_type',
 				renderer: rdr_source_type
-				});
+			});
 		}
 		
-		if (this.opt_show_file_help) {
+		if (this.opt_show_file_help && this.opt_file_help_url != null && this.opt_file_help_url != "" ) {
 			this.columns.push({
-				header: '<span class="icon icon-crecord_type-"></span>',
+				header: '<span class="icon icon-file_help"></span>',
 				width: 25,
 				sortable: this.opt_column_sortable,
 				//menuDisabled: true,
@@ -91,9 +97,9 @@ Ext.define('canopsis.lib.view.cgrid_state' , {
 			});
 		}
 		
-		if (this.opt_show_file_equipement) {
+		if (this.opt_show_file_equipement && this.opt_file_equipement_url != null && this.opt_file_equipement_url != "" ) {
 			this.columns.push({
-				header: '<span class="icon icon-about"></span>',
+				header: '<span class="icon icon-file_equipement"></span>',
 				width: 25,
 				sortable: this.opt_column_sortable,
 				//menuDisabled: true,
@@ -234,6 +240,7 @@ Ext.define('canopsis.lib.view.cgrid_state' , {
 
 		// Look at the eventlog initComponent duplicate
 		//-----------filter button-------------------------
+
 		// if (this.fitler_buttons) {
 		// 		this.bar_search = [{
 		// 		xtype: 'button',

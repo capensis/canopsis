@@ -40,6 +40,7 @@ Ext.define('widgets.list.list' , {
 	show_file_equipement: true,
 	show_ticket: true,
 	show_ack: true,
+	show_help_msg: true,
 	
 	show_form_ack: false,
 	
@@ -96,17 +97,21 @@ Ext.define('widgets.list.list' , {
 			opt_show_file_help: this.show_file_help,
 			opt_show_file_equipement: this.show_file_equipement,
 			opt_show_ack: this.show_ack,
+			opt_show_help_msg: this.show_help_msg,
 
-			opt_file_help_uri: this.file_help_uri,
-			opt_file_help_ext: this.file_help_ext,
-			opt_file_equipement_uri: this.file_equipement_uri,
-			opt_file_equipement_ext: this.file_equipement_ext,
+			opt_help_msg: this.help_msg,
+			opt_file_help_url: this.file_help_url,
+			opt_file_equipement_url: this.file_equipement_url,
 			opt_ticket_url: this.ticket_url,
 
 			opt_column_sortable: this.column_sort,
 
 			opt_show_form_ack: this.show_form_ack,
-			
+			opt_show_ack_state_solved: this.show_ack_state_solved,
+			opt_show_ack_state_pendingsolved: this.show_ack_state_pendingsolved,
+			opt_show_ack_state_pendingaction: this.show_ack_state_pendingaction,
+			opt_show_ack_state_pendingvalidation: this.show_ack_state_pendingvalidation,
+
 			opt_show_form_edit: this.show_form_edit,
 			opt_show_edit_ticket: this.show_edit_ticket,
 			opt_show_edit_state: this.show_edit_state,
@@ -130,7 +135,7 @@ Ext.define('widgets.list.list' , {
 
 		});
 
-				// Bind buttons
+		// Bind buttons
 		this.ctrl = Ext.create('canopsis.lib.controller.cgrid');
 		this.on('afterrender', function() {
 			this.ctrl._bindGridEvents(this.grid);

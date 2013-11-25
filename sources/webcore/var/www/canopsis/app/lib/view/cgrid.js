@@ -174,6 +174,15 @@ Ext.define('canopsis.lib.view.cgrid' , {
 						action: 'delete'
 					});
 				}
+				if (this.opt_bar_ack) {
+					bar_child.push({
+						xtype: 'button',
+						iconCls: 'icon-ack-pendingsolved',
+						text: _('Mass_ACK'),
+						disabled: false,
+						action: 'mass_ack'
+					});
+				}
 
 				if (this.opt_bar_customs) {
 					bar_child = bar_child.concat(this.opt_bar_customs);
