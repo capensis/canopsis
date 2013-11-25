@@ -24,12 +24,9 @@ Ext.define('widgets.eventcalendar.editwindow' , {
 
 	alias: 'widget.eventcalendar.editwindow',
 
-	height: 500,
-	width: 600,
+	height: 400,
+	width: 500,
 	layout: 'fit',
-	items: {
-		border: false,
-	},
 
 	modal: true,
 	closeAction: 'hide',
@@ -55,6 +52,15 @@ Ext.define('widgets.eventcalendar.editwindow' , {
 		this.sources.add(this.calendar.sources);
 
 		var tabs = Ext.create('Ext.tab.Panel', {
+				plain: true,
+				border: false,
+				bodyStyle: 'padding:5px 5px 0',
+				border: 0,
+				deferredRender: false,
+				defaults: {
+					border: false,
+					autoScroll: true
+				},
 				items: [{
 					title: 'Event',
 					itemId: 'tabEvent',
@@ -117,19 +123,32 @@ Ext.define('widgets.eventcalendar.editwindow' , {
 							xtype: 'textfield',
 							itemId: "rrule",
 							fieldLabel: "interval"
+					},{
+							xtype: 'combobox',
+							itemId: "rrule_preset",
+							fieldLabel: "preset",
+							queryMode: "local",
+							valueField: "value",
+							store: {
+								xtype: "store",
+								fields: ["value", "text"],
+								data : [
+									{"value": "FREQ=DAILY", "text": "Daily"},
+									{"value": "FREQ=WEEKLY", "text": "Weekly"},
+									{"value": "FREQ=MONTHLY", "text": "Monthly"},
+									{"value": "FREQ=WEEKLY;COUNT=10", "text": "Weekly, for 10 occurences"},
+									{"value": "FREQ=WEEKLY;COUNT=10;BYDAY=TU,TH", "text": "Every Tuesday and Thursday for 10 occurences"},
+									{"value": "FREQ=MONTHLY;COUNT=10;BYDAY=1FR", "text": "Monthly on the 1st Friday for ten occurrences"}
+								]
+							}
 					}]
 				}]
 		});
 
 		this._form.add(tabs);
-
-		this._form.add({
-			xtype:"button",
-			handler : function() {
-				me.testRule();
-			}
-
-		});
+		this._form.bodyStyle = {
+				background: '#ffffff'
+			};
 	},
 
 	afterRender: function() {
