@@ -62,7 +62,7 @@ Ext.define('widgets.weather.weather' , {
 		this.nodeDict = {};
 		this.matchingDict = {};
 		this.secondNodeIds = [];
-		this.external_link_dict = {};
+		this.nodeMeta = {};
 
 		this.list_meta_id = [];
 		this.matchingDictMeta = {};
@@ -86,8 +86,9 @@ Ext.define('widgets.weather.weather' , {
 				this.firstNodeIds.push(node.id);
 			}
 
-			if(node.link) {
-				this.external_link_dict[node.id] = node.link;
+			this.nodeMeta[node.id] = {
+				link: node.link,
+				hide_title: node.hide_title
 			}
 		}
 
@@ -349,7 +350,9 @@ Ext.define('widgets.weather.weather' , {
 			if(node && node._event){
 				var config = {
 					data: node._event,
-					link: this.external_link_dict[_id],
+					link: this.nodeMeta[_id].link,
+					display_name: this.nodesByID[_id].display_name,
+					hide_title: this.nodeMeta[_id].hide_title,
 					bg_color: (i % 2) ? this.bg_impair_color : this.bg_pair_color
 				};
 
