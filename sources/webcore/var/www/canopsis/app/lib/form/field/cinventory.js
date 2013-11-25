@@ -270,6 +270,8 @@ Ext.define('canopsis.lib.form.field.cinventory' , {
 					})
 				];
 
+				selection_grid_config.emptyText = {};
+
 				for(i = 0; i < this.additional_fields.length; i++) {
 					var field = this.additional_fields[i];
 
@@ -281,12 +283,17 @@ Ext.define('canopsis.lib.form.field.cinventory' , {
 						flex: 3
 					};
 
-					this.emptyText = field.emptyText;
+					selection_grid_config.emptyText[field.name] = field.emptyText;
 
-					if(field.name === 'link') {
-						editor_config.renderer = function(val) {
+					if(field.name === 'link' || field.name === 'display_name') {
+						editor_config.renderer = function(val, metaData, record, row, col) {
+							void(metaData, record, row);
+
+							var fieldName = this.columns[col].dataIndex;
+							var emptyText = this.emptyText[fieldName];
+
 							if(!val) {
-								return Ext.String.format('<span style="color:grey">{0}</span>', this.emptyText);
+								return Ext.String.format('<span style="color:grey">{0}</span>', emptyText);
 							}
 							else {
 								return val;
@@ -296,6 +303,7 @@ Ext.define('canopsis.lib.form.field.cinventory' , {
 
 					if(field.xtype === 'checkboxfield') {
 						editor_config.xtype = "checkcolumn";
+						editor_config.flex = 1;
 						delete editor_config.editor;
 					}
 
