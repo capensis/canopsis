@@ -137,7 +137,7 @@ Ext.define('widgets.eventcalendar.editwindow' , {
 					items:[{
 							xtype: 'combobox',
 							itemId: "rrule_preset",
-							fieldLabel: "preset",
+							fieldLabel: "Preset",
 							queryMode: "local",
 							valueField: "value",
 							store: {
