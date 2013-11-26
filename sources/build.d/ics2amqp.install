@@ -1,0 +1,9 @@
+NAME="ics2amqp"
+
+function build(){
+	true
+}
+
+function install(){
+	install_basic_source $NAME
+}
