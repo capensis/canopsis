@@ -1257,7 +1257,7 @@ Ext.define('canopsis.lib.controller.cgrid', {
 									event = selection[i];
 
 									//Update event
-									if ( tabFormEdit && ( selection.length == 1 || ( selection.length != 1 && ( Ext.getCmp('tabFormEdit').getForm().getValues()['ticket'] != '' || Ext.getCmp('tabFormEdit').getForm().getValues()['ticket'] != null )  ) {
+									if ( tabFormEdit && ( selection.length == 1 || ( selection.length != 1 && ( Ext.getCmp('tabFormEdit').getForm().getValues()['ticket'] != '' || Ext.getCmp('tabFormEdit').getForm().getValues()['ticket'] != null ) ) ) ) {
 										for( item in Ext.getCmp('tabFormEdit').getForm().getValues() ){
 											event['data'][item] = Ext.getCmp('tabFormEdit').getForm().getValues()[item];
 										}	
