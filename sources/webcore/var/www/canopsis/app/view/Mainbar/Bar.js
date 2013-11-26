@@ -1,3 +1,4 @@
+//need:app/store/Files.js,app/view/Briefcase/Uploader.js,app/lib/menu/cspinner.js
 /*
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
@@ -16,10 +17,16 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 */
-Ext.define('canopsis.view.Mainbar.Bar' , {
+Ext.define('canopsis.view.Mainbar.Bar', {
 	extend: 'Ext.toolbar.Toolbar',
 
 	alias: 'widget.Mainbar',
+
+	requires: [
+		'canopsis.store.Files',
+		'canopsis.view.Briefcase.Uploader',
+		'canopsis.lib.menu.cspinner'
+	],
 
 	border: false,
 

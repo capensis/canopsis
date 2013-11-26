@@ -1,3 +1,4 @@
+//need:app/lib/store/cstore.js,app/model/Derogation.js
 /*
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #

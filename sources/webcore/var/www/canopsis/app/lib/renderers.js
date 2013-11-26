@@ -20,24 +20,11 @@ function rdr_tstodate(val) {
 	if(val) {
 		var dval = new Date(parseInt(val) * 1000);
 
-		var dval_day = Ext.Date.format(dval, 'Y-m-d');
-		var now_day = Ext.Date.format(new Date(), 'Y-m-d');
-
-		if(dval_day === now_day) {
-			if(is12Clock()) {
-				return Ext.Date.format(dval, 'h:i:s a');
-			}
-			else {
-				return Ext.Date.format(dval, 'H:i:s');
-			}
+		if(is12Clock()) {
+			return Ext.Date.format(dval, 'Y-m-d h:i:s a');
 		}
 		else {
-			if(is12Clock()) {
-				return Ext.Date.format(dval, 'Y-m-d h:i:s a');
-			}
-			else {
-				return Ext.Date.format(dval, 'Y-m-d H:i:s');
-			}
+			return Ext.Date.format(dval, 'Y-m-d H:i:s');
 		}
 	}
 	else {

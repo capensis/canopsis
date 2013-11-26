@@ -1,3 +1,4 @@
+//need:app/lib/form/field/cdate.js,app/lib/store/cstore.js
 /*
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
@@ -128,6 +129,10 @@ Ext.define('cfilter.array_field', {
 
 	cleanValue: function(value) {
 		if(Ext.isNumber(value)) {
+			return value;
+		}
+
+		if(isNaN(value)) {
 			return value;
 		}
 
@@ -355,7 +360,7 @@ Ext.define('cfilter.object', {
 			allowed_type = record.get('type');
 		}
 
-		if(!allowed_type) {
+		if(allowed_type) {
 			if(allowed_type !== 'all') {
 				if (allowed_type === 'object') {
 					if(!this.haveInnerCfilter) {
@@ -631,6 +636,10 @@ Ext.define('canopsis.lib.form.field.cfilter', {
 	mixins: ['canopsis.lib.form.cfield'],
 
 	alias: 'widget.cfilter',
+
+	requires: [
+		'canopsis.lib.store.cstore'
+	],
 
 	border: false,
 

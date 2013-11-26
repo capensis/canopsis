@@ -7,105 +7,102 @@
 	"description": "Display trend values",
 	"refreshInterval": 300,
 	"locales": ["en"],
-	"options": [
-		{
-			"title": "Options",
-			"items": [
-					{
-						"xtype": "cfieldset",
-						"title": "Style",
-						"advanced": true,
-						"items": [
-							{
-								"xtype": "checkbox",
-								"fieldLabel": "Display in pct",
-								"checked": true,
-								"name": "display_pct"
-							},{
-								"xtype" : "ccolorfield",
-								"name" : "colorLow",
-								"fieldLabel": "Low color",
-								"value": "#1BE01B"
-							},{
-								"xtype" : "ccolorfield",
-								"name" : "colorMid",
-								"fieldLabel": "Middle color",
-								"value": "#E0E0E0"
-							},{
-								"xtype" : "ccolorfield",
-								"name" : "colorHight",
-								"fieldLabel": "Hight color",
-								"value": "#E0251B"
-							}
-						]
-					}
-				]
-		},{
-			"title": "Choose Metrics",
-			"items": [
-					{
-						"xtype": "cmetric",
-						"name": "nodes",
-						"multiSelect": true,
-						"metrics": true,
-						"sharedStore": "trends",
-						"additional_field": [
-							"label","ma", "show_sparkline", "curve_color", "area_color", "chart_type"
-						]
-					}]
-		},{
-			"title": "Customize metrics",
+	"options": [{
+		"title": "Options",
+		"items": [{
+			"xtype": "cfieldset",
+			"title": "Style",
 			"advanced": true,
 			"items": [{
-						"xtype": "ccustom",
-						"sharedStore":"trends",
-						"customForm": [{
-										"xtype":"textfield",
-										"fieldLabel":"Custom label",
-										"name":"label",
-										"emptyText":"Type the new label here"
-									},{
-										"xtype":"numberfield",
-										"fieldLabel":"Max value",
-										"name":"ma",
-										"decimalPrecision": 5
-									},{
-										"xtype": "cfieldset",
-										"title": "Sparklines"
-									},{
-											"xtype": "checkbox",
-											"fieldLabel": "Show a thumb Graph",
-											"checked": false,
-											"name": "show_sparkline"
-										},{
-											"xtype" : "ccolorfield",
-											"name" : "curve_color",
-											"fieldLabel": "Curve color",
-											"replaceWhiteColor":true
-										},{
-											"xtype" : "ccolorfield",
-											"name" : "area_color",
-											"fieldLabel": "Area color",
-											"replaceWhiteColor":true
-	
-										},{
-											"xtype": "combobox",
-											"name": "chart_type",
-											"fieldLabel": "Chart Type",
-											"queryMode": "local",
-											"displayField": "text",
-											"valueField": "value",
-											"value": "line_graph",
-											"store": {
-												"xtype": "store",
-												"fields": ["value", "text"],
-												"data" : [
-													{"value": "line_graph", "text": "Line Graph"},
-													{"value": "column", "text": "Bar Graph"}
-												]
-											}
-
-										}]
-									}]
-					}]
+				"xtype": "checkbox",
+				"fieldLabel": "Display in pct",
+				"checked": true,
+				"name": "display_pct"
+			},{
+				"xtype" : "ccolorfield",
+				"name" : "colorLow",
+				"fieldLabel": "Low color",
+				"value": "#1BE01B"
+			},{
+				"xtype" : "ccolorfield",
+				"name" : "colorMid",
+				"fieldLabel": "Middle color",
+				"value": "#E0E0E0"
+			},{
+				"xtype" : "ccolorfield",
+				"name" : "colorHight",
+				"fieldLabel": "Hight color",
+				"value": "#E0251B"
+			}]
+		}]
+	},{
+		"title": "Choose Metrics",
+		"items": [{
+			"xtype": "cmetric",
+			"name": "nodes",
+			"multiSelect": true,
+			"metrics": true,
+			"sharedStore": "trends",
+			"additional_field": [
+				"label",
+				"ma",
+				"show_sparkline",
+				"curve_color",
+				"area_color",
+				"chart_type"
+			]
+		}]
+	},{
+		"title": "Customize metrics",
+		"advanced": true,
+		"items": [{
+			"xtype": "ccustom",
+			"sharedStore":"trends",
+			"customForm": [{
+				"xtype":"textfield",
+				"fieldLabel":"Custom label",
+				"name":"label",
+				"emptyText":"Type the new label here"
+			},{
+				"xtype":"numberfield",
+				"fieldLabel":"Max value",
+				"name":"ma",
+				"decimalPrecision": 5
+			},{
+				"xtype": "cfieldset",
+				"title": "Sparklines"
+			},{
+				"xtype": "checkbox",
+				"fieldLabel": "Show a thumb Graph",
+				"checked": false,
+				"name": "show_sparkline"
+			},{
+				"xtype" : "ccolorfield",
+				"name" : "curve_color",
+				"fieldLabel": "Curve color",
+				"replaceWhiteColor":true
+			},{
+				"xtype" : "ccolorfield",
+				"name" : "area_color",
+				"fieldLabel": "Area color",
+				"replaceWhiteColor":true
+			},{
+				"xtype": "combobox",
+				"name": "chart_type",
+				"fieldLabel": "Chart Type",
+				"queryMode": "local",
+				"displayField": "text",
+				"valueField": "value",
+				"value": "line_graph",
+				"store": {
+					"xtype": "store",
+					"fields": ["value", "text"],
+					"data" : [
+						{"value": "line_graph", "text": "Line Graph"},
+						{"value": "column", "text": "Bar Graph"}
+					]
+				}
+			}]
+		}]
+	}]
 }]

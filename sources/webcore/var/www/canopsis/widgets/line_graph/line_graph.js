@@ -1,3 +1,4 @@
+//need:app/lib/view/cperfstoreValueConsumerWidget.js
 /*
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
@@ -68,13 +69,12 @@ Ext.define('widgets.line_graph.line_graph', {
 	extend: 'canopsis.lib.view.cperfstoreValueConsumerWidget',
 
 	alias: 'widget.line_graph',
+	logAuthor: '[widgets][line_graph]',
 
 	layout: 'fit',
 
 	first: false,
 	pushPoints: false,
-
-	logAuthor: '[line_graph]',
 
 	options: {},
 	chart: false,
@@ -123,6 +123,7 @@ Ext.define('widgets.line_graph.line_graph', {
 	aggregate_method: 'MAX',
 	aggregate_interval: 0,
 	aggregate_max_points: 500,
+	aggregate_round_time: true,
 
 	SeriesType: 'area',
 
@@ -147,10 +148,12 @@ Ext.define('widgets.line_graph.line_graph', {
 
 	nbMavEventsDisplayed: 100,
 
-	autoShift: true,
+	autoShift: false,
 	lastShift: undefined,
 
 	initComponent: function() {
+		this.callParent(arguments);
+
 		this.backgroundColor        = check_color(this.backgroundColor);
 		this.borderColor            = check_color(this.borderColor);
 		this.legend_fontColor       = check_color(this.legend_fontColor);
@@ -196,7 +199,6 @@ Ext.define('widgets.line_graph.line_graph', {
 			}, this);
 		}
 
-
 		log.debug('nodesByID:', this.logAuthor);
 		log.dump(this.nodesByID);
 		log.debug('same_node: ' + this.same_node, this.logAuthor);
@@ -214,8 +216,6 @@ Ext.define('widgets.line_graph.line_graph', {
 			this.chartTitle = this.title;
 			this.title = '';
 		}
-
-		this.callParent(arguments);
 	},
 
 	afterContainerRender: function() {
@@ -456,6 +456,31 @@ Ext.define('widgets.line_graph.line_graph', {
 			this.options.xAxis['min'] = now - (this.time_window * 1000);
 			this.options.xAxis['max'] = now;
 		}
+
+		// Update axis color with curve color
+		for(var id in this.nodesByID) {
+			var node = this.nodesByID[id];
+
+			if(!node.yAxis) {
+				continue;
+			}
+
+			var axis_color = node.curve_color || node.area_color || undefined;
+
+			Ext.merge(this.options.yAxis[node.yAxis], {
+				labels: {
+					style: {
+						color: axis_color
+					}
+				},
+				title: {
+					text: (!this.options.legend.enabled ? node.label : null),
+					style: {
+						color: axis_color
+					}
+				}
+			});
+		}
 	},
 
 	y_formatter: function() {
@@ -468,7 +493,7 @@ Ext.define('widgets.line_graph.line_graph', {
 				return rdr_humanreadable_value(this.value, bunit);
 			}
 			else {
-				if(bunit !== undefined) {
+				if(bunit) {
 					return this.value + ' ' + bunit;
 				}
 				else {
@@ -502,15 +527,24 @@ Ext.define('widgets.line_graph.line_graph', {
 				if(me.humanReadable) {
 					value = rdr_humanreadable_value(value, options.bunit);
 				}
-				else if(options.bunit !== undefined) {
+				else if(options.bunit) {
 					value = value + ' ' + options.bunit;
 				}
 
 				return '<b>' + options.metric + ':</b> ' + value;
 			};
 
-			var s = '<b>' + rdr_tstodate(this.x / 1000) + '</b>';
+			var s = '<b>';
+			_x = this.x / 1000;
+			s += me.format_date(_x);
+			s += '</b>';
+			/*if (this.aggregate_method) {
 
+			} else {
+
+			}
+			s + rdr_tstodate(this.x / 1000) + '</b>';
+			*/
 			if(this['points']) {
 				// Shared
 				$.each(this.points, function(i, point) {
@@ -530,6 +564,27 @@ Ext.define('widgets.line_graph.line_graph', {
 			}
 
 			return s;
+		}
+	},
+
+	format_date: function(val) {
+		if(val) {
+			var dval = new Date(parseInt(val) * 1000);
+
+			if (this.aggregate_method || this.consolidation_method) {
+				switch(this.aggregate_interval) {
+					case 900: 
+					case 1800: 
+					case 3600: return Ext.Date.format(dval, 'Y-m-d h:i:s');
+					case 86400: 
+					case 604800: return Ext.Date.format(dval, 'Y-m-d');
+					case 2629800: return Ext.Date.format(dval, 'Y-m');
+					case 31557600: return Ext.Date.format(dval, 'Y');
+					default: return rdr_tstodate(val);
+				}
+			} else {
+				return rdr_tstodate(val);
+			}
 		}
 	},
 
@@ -553,7 +608,6 @@ Ext.define('widgets.line_graph.line_graph', {
 		var now = Ext.Date.now();
 
 		if(this.chart) {
-
 			if(this.timeNav) {
 				var time_limit = now - (this.timeNav_window * 1000);
 
@@ -570,21 +624,20 @@ Ext.define('widgets.line_graph.line_graph', {
 					return;
 				}
 
-				var time_window = to - from;
-
 				this.onDoRefresh = true;
 
 				var serie = this.chart.get('timeNav');
 				var e = serie.xAxis.getExtremes();
-				time_window = e.max - e.min;
+				var time_window = e.max - e.min;
 
-				if(this.reportMode) {
-					this.stopTask();
-					serie.xAxis.setExtremes(from, to, false);
-				}
-				else {
+				if(!this.reportMode) {
 					serie.xAxis.setExtremes(now - time_window, now, false);
 				}
+			}
+
+			if(this.reportMode) {
+				this.stopTask();
+				this.chart.xAxis[0].setExtremes(from, to, false);
 			}
 
 			this.refreshNodes(from, to);
@@ -631,9 +684,7 @@ Ext.define('widgets.line_graph.line_graph', {
 		if(this.chart) {
 			log.debug('On refresh', this.logAuthor);
 
-			if(this.aggregate_interval > 0) {
-				this.clearGraph();
-			}
+			this.clearGraph();
 
 			var toggle_max_percent = false;
 
@@ -651,6 +702,7 @@ Ext.define('widgets.line_graph.line_graph', {
 				}
 
 				for(var i = 0; i < data.length; i++) {
+
 					this.addDataOnChart(data[i]);
 
 					var node_id = data[i].node;
@@ -874,7 +926,7 @@ Ext.define('widgets.line_graph.line_graph', {
 			label = node.label;
 		}
 
-		if(curve) {
+		if(!label && curve) {
 			label = curve.get('label');
 		}
 
@@ -1032,6 +1084,7 @@ Ext.define('widgets.line_graph.line_graph', {
 		var values = data['values'];
 		var bunit = data['bunit'];
 		var node_id = data['node'];
+		var node = this.nodesByID[node_id];
 		var min = data['min'];
 		var max = data['max'];
 		var type = data['type'];
@@ -1048,6 +1101,9 @@ Ext.define('widgets.line_graph.line_graph', {
 			var states_data = [[], [], [], []];
 
 			for(var i = 0; i < data['values'].length; i++) {
+
+				value = data['values'][i];
+
 				state = parseInt(data['values'][i][1] / 100);
 
 				for(var j = 0; j < states.length; j++) {
@@ -1087,9 +1143,21 @@ Ext.define('widgets.line_graph.line_graph', {
 		}
 
 		//Add war/crit line if on first serie
+		var thld_warn = data['thld_warn'];
+
+		if(node['threshold_warn']) {
+			thld_warn = node['threshold_warn'];
+		}
+
+		var thld_crit = data['thld_crit'];
+
+		if(node['threshold_crit']) {
+			thld_crit = node['threshold_crit'];
+		}
+
 		if(this.chart.series.length === 1 && this.showWarnCritLine) {
-			if(data['thld_warn']) {
-				value = data['thld_warn'];
+			if(thld_warn) {
+				value = thld_warn;
 
 				if(this.SeriePercent && serie.options.max > 0) {
 					value = getPct(value, serie.options.max);
@@ -1098,8 +1166,8 @@ Ext.define('widgets.line_graph.line_graph', {
 				this.addPlotlines('pl_warning', value, 'orange');
 			}
 
-			if(data['thld_crit']) {
-				value = data['thld_crit'];
+			if(thld_crit) {
+				value = thld_crit;
 
 				if(this.SeriePercent && serie.options.max > 0) {
 					value = getPct(value, serie.options.max);
@@ -1473,5 +1541,21 @@ Ext.define('widgets.line_graph.line_graph', {
 			this.chart.destroy();
 			log.debug(' + Chart Destroyed', this.logAuthor);
 		}
+ 	},
+
+ 	processPostParam: function(post_param) { // patch in waiting that shift method is reused
+ 		if(post_param['from'] && post_param['to']) {
+ 			if(this.timeNav) {
+				var time_limit = (post_param['to'] - this.timeNav_window);
+				post_param['from'] = (post_param['to'] - this.timeNav_window);
+
+				if(post_param['from'] < time_limit) {
+					post_param['from'] = time_limit;
+				}
+			}
+			else if(!this.reportMode) {
+ 				post_param['from'] = (post_param['to'] - this.time_window);
+ 			}
+ 		}
  	}
 });

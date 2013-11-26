@@ -1,3 +1,4 @@
+//need:app/lib/view/cpopup.js,app/lib/form/field/cdate.js
 /*
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
@@ -20,6 +21,10 @@
 Ext.define('widgets.weather.advertisement_popup' , {
 	extend: 'canopsis.lib.view.cpopup',
 	alias: 'widget.weather.advertisement_popup',
+
+	requires: [
+		'canopsis.lib.form.field.cdate'
+	],
 
 	_component: undefined,
 	referer: undefined,

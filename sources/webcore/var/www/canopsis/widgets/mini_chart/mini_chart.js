@@ -1,3 +1,4 @@
+//need:app/lib/view/cperfstoreValueConsumerWidget.js,app/lib/view/csparkline.js
 /*
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
@@ -33,19 +34,21 @@
 
 */
 
-Ext.define('widgets.mini_chart.mini_chart' , {
+Ext.define('widgets.mini_chart.mini_chart', {
 	extend: 'canopsis.lib.view.cperfstoreValueConsumerWidget',
 
 	alias: 'widget.mini_chart',
-	requires: [ 'canopsis.lib.view.csparkline' ] ,
+	requires: [ 'canopsis.lib.view.csparkline' ],
 	wcontainer_layout: {
 		type: 'vbox',
 		align: 'center'
 	},
 
-	logAuthor: '[mini_chart]',
-
 	initComponent: function() {
+		this.callParent(arguments);
+
+		this.logAuthor = '[widgets][mini_chart]';
+
 		log.debug('initComponent', this.logAuthor);
 		log.debug('nodesByID:', this.logAuthor);
 
@@ -60,7 +63,6 @@ Ext.define('widgets.mini_chart.mini_chart' , {
 
 		this.series = {};
 		this.charts = {};
-		this.callParent(arguments);
 	},
 
 	doRefresh: function (from, to) {
@@ -72,49 +74,6 @@ Ext.define('widgets.mini_chart.mini_chart' , {
 		this.refreshNodes(from, to);
 
 		this.callParent(arguments);
-	},
-
-	buildParams: function(oFrom, oTo) {
-		var post_params = [];
-
-		Ext.Object.each(this.nodesByID, function(id, node) {
-			var nodeId = id;
-			var from = oFrom;
-			var to = oTo;
-
-			if (this.aggregate_interval) {
-				var aggregate_interval = this.aggregate_interval * 1000;
-
-				if (this.aggregate_interval < global.commonTs['month']) {
-					from = Math.floor(from / aggregate_interval) * aggregate_interval;
-				}
-				else if(this.aggregate_interval >= global.commonTs['month']) {
-					from = moment.unix(from / 1000).startOf('month').unix() * 1000;
-				}
-				else if(this.aggregate_interval >= global.commonTs['year']) {
-					from = moment.unix(from / 1000).startOf('year').unix() * 1000;
-				}
-			}
-
-			post_params.push({
-				id: nodeId,
-				metrics: node.metrics,
-				from: parseInt(from / 1000),
-				to: parseInt(to / 1000)
-			});
-		}, this);
-
-		return {
-			'nodes': Ext.JSON.encode(post_params),
-			'aggregate_method' : this.aggregate_method,
-			'aggregate_interval': this.aggregate_interval,
-			'aggregate_max_points': this.aggregate_max_points,
-			'consolidation_method': this.consolidation_method
-		};
-	},
-
-	makeUrl: function(from, to) {
-		return '/perfstore/values' + '/' + parseInt(from / 1000) + '/' + parseInt(to / 1000);
 	},
 
 	buildOptions : function(info, values, serie_panel, i) {

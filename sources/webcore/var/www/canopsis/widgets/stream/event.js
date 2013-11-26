@@ -148,7 +148,7 @@ Ext.define('widgets.stream.event', {
 	extend: 'Ext.Component',
 	alias: 'widget.stream.event',
 
-	logAuthor: '[widget][stream][event]',
+	logAuthor: '[widgets][stream][event]',
 
 	cls: 'event',
 

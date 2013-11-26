@@ -1,3 +1,4 @@
+//need:app/lib/controller/ctree.js,app/view/View/TreePanel.js,app/store/Views.js,app/store/TreeStoreViews.js,app/lib/view/cfile_window.js,app/view/Tabs/View_form.js
 /*
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
@@ -18,6 +19,11 @@
 */
 Ext.define('canopsis.controller.View', {
 	extend: 'canopsis.lib.controller.ctree',
+
+	requires: [
+		'canopsis.lib.view.cfile_window',
+		'canopsis.view.Tabs.View_form'
+	],
 
 	views: ['View.TreePanel'],
 	stores: ['Views', 'TreeStoreViews'],
@@ -66,6 +72,12 @@ Ext.define('canopsis.controller.View', {
 
 		for(var i = 0; i < btns.length; i++) {
 			btns[i].on('click', this.openFilepopup, this);
+		}
+
+		btns = Ext.ComponentQuery.query('#' + this.tree.id + ' [action=exportjson]');
+
+		for(i = 0; i < btns.length; i++) {
+			btns[i].on('click', this.exportSelection, this);
 		}
 
 		btns = Ext.ComponentQuery.query('#' + this.tree.contextMenu.id + ' [action=OpenViewOption]');
@@ -276,56 +288,25 @@ Ext.define('canopsis.controller.View', {
 		}
 	},
 
+	//Calls a controller common method that displays a file import popup
 	openFilepopup: function() {
-		log.debug('Open file popup', this.logAuthor);
-
-		var config = {
-			_fieldLabel: _('View dump'),
-			copyPasteZone: true,
-			constrainTo: this.tree.id
-		};
-
-		var popup = Ext.create('canopsis.lib.view.cfile_window', config);
-		popup.show();
-
-		popup.on('save', function(file) {
-			if(file.length > 0) {
-				var file_type = file[0].type;
-
-				if(file_type === '' || file_type === 'application/json') {
-					this.importFile(file);
-					popup.close();
-				}
-				else {
-					log.debug('Wrong file type: ' + file_type, this.logAuthor);
-					global.notify.notify(_('Wrong file type'), _('Please choose a correct json file'), 'info');
-				}
-			}
-
-			if(file.items) {
-				this.importView(file);
-				popup.close();
-			}
-		}, this);
+		var controller_common = Ext.create('canopsis.controller.common');
+		controller_common.filepopup(this, 'view');
 	},
 
-	importView: function(obj) {
-		var record = Ext.create('canopsis.model.View', obj);
-		record.set('_id', 'view.' + global.account.user + '.' + global.gen_id());
-		record.set('leaf', true);
-		this.add_to_home(record, false);
-	},
+	exportSelection: function() {
+		var select = this.tree.getSelectionModel().getSelection();
 
-	importFile: function(file) {
-		log.debug('Import view file', this.logAuthor);
+		var data = [];
 
-		var reader = new FileReader();
+		for(var i = 0; i < select.length; i++) {
+			data.push({
+				name: 'ids',
+				value: select[i].data._id
+			});
+		}
 
-		reader.onload = (function(e) {
-			this.importView(Ext.decode(e.target.result));
-		}).bind(this);
-
-		reader.readAsText(file[0]);
+		postDataToURL('/ui/export/objects', data);
 	},
 
 	getViewFile: function(view_id) {

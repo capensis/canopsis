@@ -97,7 +97,7 @@
 							},{
 								"xtype": "numberfield",
 								"fieldLabel": "Icon type",
-								"maxValue": 2,
+								"maxValue": 4,
 								"minValue": 1,
 								"value": 1,
 								"name": "iconSet"
@@ -115,18 +115,30 @@
 					"xtype":"cinventory",
 					"name" : "nodes",
 					"multiSelect": true,
-					"additional_field": {
-											"xtype":"combobox",
-											"name":"link",
-											"emptyText":"Type URL or view name",
-											"store":"Views",
-											"displayField":"crecord_name",
-											"valueField": "crecord_name",
-											"typeAhead": false,
-											"hideLabel": true,
-											"minChars": 2,
-											"queryMode": "remote"
-										},
+					"vertical_multiselect": true,
+					"additional_fields": [{
+						"xtype":"combobox",
+						"title": "Link",
+						"name":"link",
+						"emptyText":"Type URL or view name",
+						"store":"Views",
+						"displayField":"crecord_name",
+						"valueField": "crecord_name",
+						"typeAhead": false,
+						"hideLabel": true,
+						"minChars": 2,
+						"queryMode": "remote"
+					},{
+						"xtype": "textfield",
+						"title": "Custom Name",
+						"name": "display_name",
+						"emptyText": "Type custom name here"
+					},{
+						"xtype": "checkboxfield",
+						"title": "Hide Name",
+						"name": "hide_title",
+						"value": false
+					}],
 					"event_type": "selector",
 					"base_filter" : {"$or":[{"event_type":"selector"}, {"event_type":"sla"}, {"event_type":"topology"}]}
 				}]

@@ -1,3 +1,4 @@
+//need:app/lib/view/cgrid.js,app/lib/store/cstore.js
 /*
 #--------------------------------
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
@@ -20,6 +21,10 @@
 */
 Ext.define('canopsis.lib.view.cgrid_state' , {
 	extend: 'canopsis.lib.view.cgrid',
+
+	requires: [
+		'canopsis.lib.store.cstore'
+	],
 
 	store: false,
 	filter: false,

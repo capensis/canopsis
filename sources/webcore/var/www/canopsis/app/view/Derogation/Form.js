@@ -1,3 +1,4 @@
+//need:app/lib/view/cform.js,app/lib/form/cfield.js,app/lib/form/field/cdate.js,app/lib/form/field/cfieldset.js,app/lib/form/field/cduration.js
 /*
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
@@ -18,6 +19,12 @@
 */
 Ext.define('canopsis.view.Derogation.Form', {
 	extend: 'canopsis.lib.view.cform',
+
+	requires: [
+		'canopsis.lib.form.field.cdate',
+		'canopsis.lib.form.field.cduration'
+	],
+
 	alias: 'widget.DerogationForm',
 
 	width: 700,

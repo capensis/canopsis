@@ -1,3 +1,4 @@
+//need:app/lib/view/cgrid.js
 /*
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
@@ -34,6 +35,7 @@ Ext.define('canopsis.view.Perfdata.Grid' , {
 	opt_simple_search: true,
 
 	opt_cell_edit: false,
+
 
 	columns: [
 		{

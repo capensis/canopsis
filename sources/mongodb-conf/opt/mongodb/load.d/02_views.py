@@ -147,6 +147,10 @@ def update_view_for_new_metric_format():
 				if isinstance(itemNodes, list):
 					itemXtype = item['data']['xtype']
 
+					if itemXtype == 'weather':
+						print('Ignore for weather widget')
+						break
+
 					#update for text widget
 					if itemXtype == 'text' or itemXtype == 'topology_viewer':
 						print('Update widget text/topology_viewer format')

@@ -16,7 +16,7 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 */
-Ext.define('canopsis.lib.view.cwidget' , {
+Ext.define('canopsis.lib.view.cwidget', {
 	extend: 'Ext.panel.Panel',
 
 	border: false,
@@ -34,8 +34,6 @@ Ext.define('canopsis.lib.view.cwidget' , {
 
 	baseUrl: '/rest/events/event',
 	uri: '/rest/events/event',
-
-	logAuthor: '[widget]',
 
 	wcontainer_layout: 'fit',
 	wcontainer_autoScroll: false,
@@ -55,16 +53,28 @@ Ext.define('canopsis.lib.view.cwidget' , {
 
 	time_window_offset: 0,
 
+	useLastRefresh: true,
+
 	lastRefresh: undefined,
 
 	active: false,
 
 	initComponent: function() {
+		this.callParent(arguments);
+
 		this.active = true;
 
-		this.logAuthor = '[' + this.id + ']';
+		if(!this.logAuthor) {
+			this.logAuthor = '[widgets][' + this.xtype + ']';
+		}
 
-		log.debug('InitComponent ' + this.id + ' (reportMode: ' + this.reportMode + ', exportMode: ' + this.exportMode + ')', this.logAuthor);
+		log.debug('Initialize component:', this.logAuthor);
+		log.dump({
+			id: this.id,
+			type: this.xtype,
+			reportMode: this.reportMode,
+			exportMode: this.exportMode
+		});
 
 		if(this.title === '') {
 			this.title = false;
@@ -79,7 +89,7 @@ Ext.define('canopsis.lib.view.cwidget' , {
 			autoScroll: this.wcontainer_autoScroll
 		});
 
-		this.items = this.wcontainer;
+		this.items.add(this.wcontainer);
 
 		this.wcontainer.on('afterrender', function() {
 			log.debug('SetHeight of wcontainer', this.logAuthor);
@@ -87,8 +97,6 @@ Ext.define('canopsis.lib.view.cwidget' , {
 
 			this.afterContainerRender();
 		}, this);
-
-		this.callParent(arguments);
 
 		if(this.reportMode) {
 			this.refreshInterval = false;
@@ -214,7 +222,7 @@ Ext.define('canopsis.lib.view.cwidget' , {
 			to = now - (this.time_window_offset * 1000);
 		}
 
-		if(!from && this.lastRefresh) {
+		if(!from && this.useLastRefresh && this.lastRefresh) {
 			from = this.lastRefresh;
 		}
 
@@ -245,9 +253,14 @@ Ext.define('canopsis.lib.view.cwidget' , {
 
 	getNodeInfo: function(from, to) {
 		if(this.nodeId) {
+
+			var nodeInfoParams = this.getNodeInfoParams(from, to);
+
 			Ext.Ajax.request({
-				url: this.baseUrl + '/events/' + this.nodeId,
+				url: this.baseUrl + '/events' + (this.nodeId && this.nodeId.length? ('/' + this.nodeId) : ''),
 				scope: this,
+				params: nodeInfoParams,
+				method: 'GET',
 				success: function(response) {
 					var data = Ext.JSON.decode(response.responseText);
 
@@ -267,6 +280,12 @@ Ext.define('canopsis.lib.view.cwidget' , {
 				}
 			});
 		}
+	},
+
+	getNodeInfoParams: function(from, to) {
+		void(from);
+		void(to);
+		return {};
 	},
 
 	setHtml: function(html) {

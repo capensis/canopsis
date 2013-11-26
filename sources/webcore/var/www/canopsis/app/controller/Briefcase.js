@@ -1,3 +1,4 @@
+//need:app/lib/controller/cgrid.js,app/lib/view/cmail.js,app/view/Briefcase/Grid.js,app/view/Briefcase/Form.js,app/store/Files.js
 /*
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
@@ -18,6 +19,10 @@
 */
 Ext.define('canopsis.controller.Briefcase', {
 	extend: 'canopsis.lib.controller.cgrid',
+
+	requires: [
+		'canopsis.lib.view.cmail'
+	],
 
 	views: ['Briefcase.Grid', 'Briefcase.Form'],
 	stores: ['Files'],

@@ -106,7 +106,7 @@
 										{"value": "LAST", "text": "Last"},
 										{"value": "FIRST", "text": "First"},
 										{"value": "DELTA", "text": "Delta"},
-										{"value": "MEAN", "text": "Mean"},
+										{"value": "AVERAGE", "text": "Average"},
 										{"value": "SUM", "text": "Sum"}
 									]
 								}
@@ -293,6 +293,11 @@
 											"name" : "curve_color",
 											"fieldLabel": "Curve color",
 											"replaceWhiteColor":true
+										},{
+											"xtype": "textfield",
+											"fieldLabel": "Category",
+											"name": "category",
+											"emptyText": "Type category name here"
 										}]
 					}]
 		}]

@@ -1,3 +1,4 @@
+//need:app/lib/form/cfield.js,app/lib/store/cstore.js,app/lib/view/cgrid.js,app/lib/controller/cgrid.js
 /*
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
@@ -21,7 +22,15 @@ Ext.define('canopsis.lib.form.field.cmetric', {
 	extend: 'Ext.panel.Panel',
 	mixins: ['canopsis.lib.form.cfield'],
 
+	requires: [
+		'canopsis.lib.store.cstore',
+		'canopsis.lib.view.cgrid',
+		'canopsis.lib.controller.cgrid'
+	],
+
 	alias: 'widget.cmetric',
+
+	logAuthor: '[form][field][cmetric]',
 
 	border: false,
 	layout: {
@@ -36,7 +45,8 @@ Ext.define('canopsis.lib.form.field.cmetric', {
 	sharedStore : undefined,
 
 	initComponent: function() {
-		this.logAuthor = '[' + this.id + ']';
+		this.callParent(arguments);
+
 		log.debug('Initialize ...', this.logAuthor);
 
 		this.extra_field = [];
@@ -60,9 +70,8 @@ Ext.define('canopsis.lib.form.field.cmetric', {
 
 		container.add(this.meta_grid);
 
-		this.items = [container, this.selected_grid];
-
-		this.callParent(arguments);
+		this.items.add(container);
+		this.items.add(this.selected_grid);
 	},
 
 	afterRender: function(){
@@ -85,7 +94,41 @@ Ext.define('canopsis.lib.form.field.cmetric', {
 			{name: 're', defaultValue: undefined},
 			{name: 'me'},
 			{name: 't'},
-			{name: 'u'}
+			{name: 'u'},
+
+			// optional configuration for customize metrics tab in widget's wizard
+
+			{name: 'label', defaultValue: undefined},
+			{name: 'curve_color', defaultValue: undefined},
+
+			// widget: bar_graph
+			{name: 'trend', defaultValue: undefined},
+
+			// widget: diagram
+			{name: 'category', defaultValue: undefined},
+
+			// widget: gauge
+			{name: 'mi', defaultValue: undefined},
+			{name: 'tw', defaultValue: undefined},
+			{name: 'tc', defaultValue: undefined},
+			{name: 'ma', defaultValue: undefined},
+
+			// widget: line_graph
+			{name: 'curve_type', defaultValue: undefined},
+			{name: 'area_color', defaultValue: undefined},
+			{name: 'trend_curve', defaultValue: undefined},
+			{name: 'yAxis', defaultValue: undefined},
+
+			{name: 'threshold_warn', defaultValue: undefined},
+			{name: 'threshold_crit', defaultValue: undefined},
+
+			// widget: mini_chart
+			{name: 'printed_value', defaultValue: undefined},
+			{name: 'display_pct', defaultValue: undefined},
+
+			// widget: trends
+			{name: 'show_sparkline', defaultValue: undefined},
+			{name: 'chart_type', defaultValue: undefined}
 		];
 
 
@@ -424,17 +467,36 @@ Ext.define('canopsis.lib.form.field.cmetric', {
 
 	setValue: function(data) {
 		log.debug('Load values', this.logAuthor);
+		log.dump(data);
+
 		var metricList = [];
 
 		//retrocompatibility
 		if(Ext.isArray(data)) {
 			for(var i = 0; i < data.length; i++) {
-				var item = data[i];
+				var item = Ext.clone(data[i]);
+
+				if(!item.co) {
+					item.co = item.component;
+				}
+
+				if(!item.re) {
+					item.re = item.resource;
+				}
+
+				if(!item.t) {
+					item.t = item.type;
+				}
+
+				if(!item.me) {
+					item.me = item.metrics[0];
+				}
+
 				var config = {
 					id: item.id,
-					co: item.component,
-					re: item.resource,
-					me: item.metrics,
+					co: item.co,
+					re: item.re,
+					me: item.me,
 					t: item.type
 				};
 
@@ -448,9 +510,15 @@ Ext.define('canopsis.lib.form.field.cmetric', {
 
 				var item = Ext.clone(value);
 
-				if(!item.re || !item.co) {
+				if(!item.co) {
 					item.co = item.component;
+				}
+
+				if(!item.re) {
 					item.re = item.resource;
+				}
+
+				if(!item.t) {
 					item.t = item.type;
 				}
 

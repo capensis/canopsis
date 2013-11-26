@@ -1,3 +1,4 @@
+//need:app/lib/view/cwidget.js
 /*
 # Copyright (c) 2013 "Capensis" [http://www.capensis.com]
 #
@@ -47,9 +48,9 @@ Ext.define('canopsis.lib.view.cperfstoreValueConsumerWidget', {
 								return that.nodesByID[a['node']]['order']-that.nodesByID[b['node']]['order'];
 							});
 						}
-
-						this.onRefresh(data);
 					}
+
+					this.onRefresh(data);
 				},
 
 				failure: function(result, request) {
@@ -99,14 +100,11 @@ Ext.define('canopsis.lib.view.cperfstoreValueConsumerWidget', {
 					if(this.aggregate_interval < global.commonTs['month']) {
 						from = Math.floor(from / aggregate_interval) * aggregate_interval;
 					}
-					else {
-						if(this.aggregate_interval >= global.commonTs['month']) {
-							from = moment.unix(from / 1000).startOf('month').unix() * 1000;
-						}
-
-						if(this.aggregate_interval >= global.commonTs['year']) {
-							from = moment.unix(from / 1000).startOf('year').unix() * 1000;
-						}
+					else if(this.aggregate_interval >= global.commonTs['year']) {
+						from = moment.unix(from / 1000).startOf('year').unix() * 1000;
+					}
+					else if(this.aggregate_interval >= global.commonTs['month']) {
+						from = moment.unix(from / 1000).startOf('month').unix() * 1000;
 					}
 
 					var tzOffset = new Date().getTimezoneOffset();
@@ -125,10 +123,10 @@ Ext.define('canopsis.lib.view.cperfstoreValueConsumerWidget', {
 				metrics: node.metrics
 			}
 
-			if (from) {
+			if(from) {
 				post_param['from'] = parseInt(from / 1000);
 			}
-			if (to) {
+			if(to) {
 				post_param['to'] = parseInt(to / 1000);
 			}
 
@@ -139,6 +137,7 @@ Ext.define('canopsis.lib.view.cperfstoreValueConsumerWidget', {
 
 		post_params = {
 			'nodes': Ext.JSON.encode(post_params),
+			'timezone': new Date().getTimezoneOffset() * 60
 		};
 
 		if(this.aggregate_method) {
@@ -151,6 +150,10 @@ Ext.define('canopsis.lib.view.cperfstoreValueConsumerWidget', {
 
 		if(this.aggregate_max_points) {
 			post_params['aggregate_max_points'] = this.aggregate_max_points;
+		}
+
+		if(this.aggregate_round_time) {
+			post_params['aggregate_round_time'] = this.aggregate_round_time;
 		}
 
 		if(this.consolidation_method) {

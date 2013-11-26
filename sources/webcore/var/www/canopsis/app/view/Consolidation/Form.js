@@ -1,3 +1,4 @@
+//need:app/lib/view/cform.js,app/lib/form/field/cfieldset.js,app/lib/form/field/cfilter.js,app/model/Perfdata.js
 /*
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
@@ -18,6 +19,12 @@
 */
 Ext.define('canopsis.view.Consolidation.Form', {
 	extend: 'canopsis.lib.view.cform',
+
+	requires: [
+		'canopsis.lib.form.field.cfieldset',
+		'canopsis.lib.form.field.cfilter',
+		'canopsis.model.Perfdata'
+	],
 
 	alias: 'widget.ConsolidationForm',
 

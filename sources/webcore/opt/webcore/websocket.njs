@@ -372,7 +372,7 @@ var amqp_publish = function(exchange, rk, message){
 		}
 		
 		log.info("Publish message to '"+rk+"@"+exchange+"'", "amqp")
-		amqp_exchanges[exchange].publish(rk, message, {contentType: 'application/json'});
+		amqp_exchanges[exchange].publish(rk, message, {contentType: 'application/json', contentEncoding: 'utf-8'});
 	}
 }
 

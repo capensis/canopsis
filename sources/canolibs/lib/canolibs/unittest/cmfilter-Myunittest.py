@@ -23,7 +23,32 @@ import json
 
 import cmfilter
 
-event = {'connector': 'cengine', 'resource': 'Engine_perfstore2_rotate', 'event_type': 'check', 'long_output': None, 'timestamp': 1378713357, 'component': 'wpain-laptop', 'state_type': 1, 'source_type': 'resource', 'state': 0, 'connector_name': 'engine', 'output': '21.10 evt/sec, 0.02050 sec/evt', 'perf_data_array': [{'metric': 'cps_evt_per_sec', 'value': 21.1, 'unit': 'evt', 'retention': 3600}, {'metric': 'cps_sec_per_evt', 'value': 0.0205, 'warn': 0.6, 'crit': 0.9, 'unit': 's', 'retention': 3600}]}
+event = {
+	'connector': 'cengine',
+	'resource': 'Engine_perfstore2_rotate',
+	'event_type': 'check',
+	'long_output': None,
+	'timestamp': 1378713357,
+	'component': 'wpain-laptop',
+	'state_type': 1,
+	'source_type': 'resource',
+	'state': 0,
+	'connector_name': 'engine',
+	'output': '21.10 evt/sec, 0.02050 sec/evt',
+	'perf_data_array': [{
+		'metric': 'cps_evt_per_sec',
+		'value': 21.1,
+		'unit': 'evt',
+		'retention': 3600
+	},{
+		'metric': 'cps_sec_per_evt',
+		'value': 0.0205,
+		'warn': 0.6,
+		'crit': 0.9,
+		'unit': 's',
+		'retention': 3600
+	}]
+}
 
 class KnownValues(unittest.TestCase): 
 	def setUp(self):

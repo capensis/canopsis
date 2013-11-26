@@ -217,6 +217,11 @@
 										{"value": 31557600, "text": "1 year"}
 									]
 								}
+							}, {
+								"xtype": "checkbox",
+								"name": "aggregate_round_time",
+								"fieldLabel": "Round time (if interval)",
+								"checked": true
 							}
 						]
 					},{
@@ -480,6 +485,14 @@
 													{"value": 4, "text": "4th axis"}
 												]
 											}
+										},{
+											"xtype": "numberfield",
+											"name": "threshold_warn",
+											"fieldLabel": "Custom Warning threshold"
+										},{
+											"xtype": "numberfield",
+											"name": "threshold_crit",
+											"fieldLabel": "Custom Critical threshold"
 										}]
 					}]
 		}]

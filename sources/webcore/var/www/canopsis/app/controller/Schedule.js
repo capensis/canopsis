@@ -1,3 +1,4 @@
+//need:app/lib/controller/cgrid.js,app/view/Schedule/Grid.js,app/view/Schedule/Form.js,app/store/Schedules.js
 /*
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
@@ -210,7 +211,7 @@ Ext.define('canopsis.controller.Schedule', {
 			var viewName = item.get('_id');
 			var combo = form.down('combobox[name=view]');
 
-			if(combo !== undefined) {
+			if(combo !== null) {
 				combo.setValue(viewName);
 			}
 		}

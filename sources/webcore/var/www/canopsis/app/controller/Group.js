@@ -1,3 +1,4 @@
+//need:app/lib/controller/cgrid.js,app/view/Group/Grid.js,app/view/Group/Form.js,app/store/Groups.js
 /*
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #

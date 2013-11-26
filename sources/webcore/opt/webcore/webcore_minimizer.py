@@ -1,144 +1,183 @@
-#!/usr/bin/env python
+#!/usr/bin/env python2.7
+# -*- coding: utf-8 -*-
 
-import sys, os, fnmatch
-import shutil
-import getpass
+import subprocess
+import fnmatch
+import gzip
+import csv
+import os
 
-## Configurations
 
-if getpass.getuser() != 'canopsis':
-	install_path = "/opt/canopsis/"
-else:
-	install_path = os.path.expanduser('~')
-	
-webui_path = os.path.join(install_path, "var/www/canopsis")
+class Minimizer(object):
+	"""
+		Minimize JavaScript files.
+	"""
 
-cps_filename = "canopsis.js"
-cps_min_filename = "canopsis.min.js"
-cps_gz_filename = "canopsis.min.js.gz"
+	def __init__(self, *args, **kwargs):
+		super(Minimizer, self).__init__(*args, **kwargs)
 
-cps_filepath = os.path.join(webui_path, cps_filename)
-cps_min_filepath = os.path.join(webui_path, cps_min_filename)
-cps_gz_filepath = os.path.join(webui_path, cps_gz_filename)
+		self.rootdir = '/opt/canopsis'
+		self.canodir = os.path.join(self.rootdir, 'var', 'www', 'canopsis')
 
-debug = False
+		self.canopsisjs      = os.path.join(self.canodir, 'canopsis.js')
+		self.canopsisminjs   = os.path.join(self.canodir, 'canopsis.min.js')
+		self.canopsisminjsgz = os.path.join(self.canodir, 'canopsis.min.js.gz')
 
-exclude_files = [
-	os.path.join(webui_path, "app/lib/locale.js"),
-	os.path.join(webui_path, "app/lib/global.js"),
-	os.path.join(webui_path, "app/lib/global_options.js")
-]
+		self.nodejspath = os.path.join(self.rootdir, 'bin', 'node')
+		self.uglifypath = os.path.join(self.rootdir, 'bin', 'uglifyjs')
 
-paths = [
-	os.path.join(webui_path, "app/lib/log.js"),
-	os.path.join(webui_path, "app/lib/tools.js"),
-	os.path.join(webui_path, "auth.js"),
-	os.path.join(webui_path, "app.js"),
-	os.path.join(webui_path, "app/lib/renderers.js"),
-	os.path.join(webui_path, "app/lib/form/cfield.js"),
-	os.path.join(webui_path, "app/lib/form/field/cdate.js"),
-	os.path.join(webui_path, "app/lib/form/field/cdatePicker.js"),
-	os.path.join(webui_path, "app/lib/view/ccard.js"),
-	os.path.join(webui_path, "app/lib/view/cgrid.js"),
-	os.path.join(webui_path, "app/lib/view/cgrid_state.js"),
-	os.path.join(webui_path, "app/view/Tabs/Content.js"),
-	os.path.join(webui_path, "app/model"),
-	os.path.join(webui_path, "app/lib/store"),
-	os.path.join(webui_path, "app/store"),
-	os.path.join(webui_path, "app/lib/menu"),
-	os.path.join(webui_path, "app/lib/form"),
-	os.path.join(webui_path, "app/lib/view/cpopup.js"),
-	os.path.join(webui_path, "app/lib/view/cwidget.js"),
-	os.path.join(webui_path, "app/lib/view"),
-	os.path.join(webui_path, "app/view/Tabs/Content.js"),
-	os.path.join(webui_path, "app/view"),
-	os.path.join(webui_path, "app/lib"),
-	os.path.join(webui_path, "app/lib/controller"),
-	os.path.join(webui_path, "app/controller"),
-	os.path.join(webui_path, "widgets/line_graph/line_graph.js"),
-	os.path.join(webui_path, "widgets/"),
-	os.path.join(webui_path, "../widgets/"),
-	os.path.join(webui_path, "app/controller/Widgets.js"),
-	os.path.join(webui_path, "app/view/Viewport.js")
-]
+		self.exclude = [
+			os.path.join(self.canodir, 'resources'),
+			os.path.join(self.canodir, 'themes'),
 
-appended_files = []
+			os.path.join(self.canodir, 'canopsis.js'),
+			os.path.join(self.canodir, 'canopsis.min.js'),
 
-## Functions
+			os.path.join(self.canodir, 'app', 'lib', 'locale.js'),
+			os.path.join(self.canodir, 'app', 'lib', 'global.js'),
+			os.path.join(self.canodir, 'app', 'lib', 'global_options.js')
+		]
 
-def locate(pattern, root=os.curdir):
-    '''Locate all files matching supplied filename pattern in and below
-    supplied root directory.'''
-    for path, dirs, files in os.walk(os.path.abspath(root)):
-        for filename in fnmatch.filter(files, pattern):
-            yield os.path.join(path, filename)
+		self.files = []
+		self.added = []
 
-def append_file(file, file_path):
-	file.write("\n/* %s */\n" % file_path)
-	if debug:
-		file.write("console.log('   -> %s')\n" % file_path)
-	shutil.copyfileobj(open(file_path, 'r'), file)
-	appended_files.append(file_path)
+	def jsFinder(self, path, dirname, filenames):
+		if dirname in self.exclude:
+			return
 
-def exclude_locales(wpath):
-	for file_path in locate("*lang*.js", wpath):
-		exclude_files.append(file_path)
+		for filename in fnmatch.filter(filenames, '*.js'):
+			fullpath = os.path.join(dirname, filename)
 
-def concact_files(file, wpath):
-	if os.path.isfile(wpath):
-		file_path = wpath
-		if file_path not in exclude_files and file_path not in appended_files:
-			print "  + %s" % file_path
-			append_file(file, file_path)
-	else:
-		for file_path in locate("*.js", wpath):
-			if file_path not in exclude_files and file_path not in appended_files:
-				print "  + %s" % file_path
-				append_file(file, file_path)
+			if fullpath not in self.exclude and not fnmatch.fnmatch(filename, '*lang*.js'):
+				self.files.append(fullpath)
 
-## Main
+	def get_deps(self, filename):
+		files = []
 
-print "Remove old files"
-for path in [cps_filepath, cps_min_filepath, cps_gz_filepath]:
-	if os.path.exists(path):
-		print " + %s" % path
-		os.remove(path)
+		with open(filename, 'r') as f:
+			first_line = f.readline()
 
-print " + Exclude locales file"
-exclude_locales(webui_path)
+			# First line may contains dependencies in CSV formatted list
+			if first_line.startswith('//need:'):
+				requirements = first_line[7:]
+				parsed = csv.reader([requirements]).next()
 
-print "Open '%s' in write mode" % cps_filename
-file = open(cps_filepath, "w")
+				# Add all required files if not excluded or already added
+				for required in parsed:
+					fullpath = os.path.join(self.canodir, required)
 
-if debug:
-	file.write("console.log('Start canopsis.min.js')\n")
+					if fullpath not in self.exclude and fullpath not in files and fullpath not in self.added:
+						files += self.get_deps(fullpath)
 
-print " + Append files"
-if debug:
-	file.write("console.log(' + Load normal files')\n")
-for path in paths:
-	concact_files(file, path)
+			# Now dependencies are in the list, just add this file now
+			files.append(filename)
 
-print "Close '%s'" % cps_filepath
-if debug:
-	file.write("console.log('End canopsis.min.js')\n")
+		# Be sure every file is unique
+		found = []
 
-file.close()
-print "%s files appended in '%s'" % (len(appended_files), cps_filename)
+		for f in files:
+			if f not in found:
+				found.append(f)
 
-print "Minimify '%s' to '%s'" % (cps_filename, cps_min_filename)
-if not os.path.exists('%s/bin/uglifyjs' % install_path):
-	print " + Error: 'uglifyjs'"
-	sys.exit(1)
+		return found
 
-os.system("cd %s && bin/node bin/uglifyjs %s > %s" % (install_path, cps_filepath, cps_min_filepath))
+	def minify(self):
+		# Find all JS files
+		os.path.walk(self.canodir, self.jsFinder, None)
 
-print " + Done"
+		# Order files : lib, model, store, view, widgets, controller, general
+		
+		orderers = [
+			{
+				'path': os.path.join(self.canodir, 'app', 'lib'),
+				'files': []
+			},
+			{
+				'path': os.path.join(self.canodir, 'app', 'model'),
+				'files': []
+			},
+			{
+				'path': os.path.join(self.canodir, 'app', 'store'),
+				'files': []
+			},
+			{
+				'path': os.path.join(self.canodir, 'app', 'view'),
+				'files': []
+			},
+			{
+				'path': os.path.join(self.canodir, 'widgets'),
+				'files': []
+			},
+			{
+				'path': os.path.join(self.canodir, 'app', 'controller'),
+				'files': []
+			},
+			{
+				'path': self.canodir,
+				'files': []
+			},
+		]
 
-print "Compress '%s' to '%s'" % (cps_min_filename, cps_gz_filename)
-os.system("gzip -c -9 %s > %s" % (cps_min_filepath, cps_gz_filepath))
-if not os.path.exists(cps_gz_filepath):
-	print " + Error: Impossible to compress"
-	sys.exit(1)
+		for filename in self.files:
+			for orderer in orderers:
+				if filename.startswith(orderer['path']):
+					orderer['files'].append(filename)
+					break
 
-print " + Done"
+		self.files = []
+
+		for orderer in orderers:
+			self.files += orderer['files']
+
+		# Handle dependencies
+
+		for filename in self.files:
+			if filename in self.exclude or filename in self.added:
+				continue
+
+			# Open file and read the first line
+			self.added += self.get_deps(filename)
+
+		# Concatenate all files
+		print 'Open {0} for writing'.format(self.canopsisjs)
+
+		with open(self.canopsisjs, 'w') as canopsisjs:
+			for filename in self.added:
+				canopsisjs.write('\n/* file:{0} */\n'.format(filename))
+
+				print '- ', filename
+
+				with open(filename, 'r') as f:
+					line = f.readline()
+
+					while line:
+						canopsisjs.write(line)
+
+						line = f.readline()
+
+		print '{0} written'.format(self.canopsisjs)
+
+		# Minify canopsis.js
+		print 'Open {0} for writting'.format(self.canopsisminjs)
+
+		with open(self.canopsisminjs, 'w') as canopsisminjs:
+			subprocess.call(
+				[self.nodejspath, self.uglifypath, self.canopsisjs],
+				stdout=canopsisminjs
+			)
+
+		print '{0} written'.format(self.canopsisminjs)
+
+		# Compress in GZ format
+		print 'Open {0} for writting'.format(self.canopsisminjsgz)
+
+		with open(self.canopsisminjs, 'rb') as canopsisminjs:
+			with gzip.open(self.canopsisminjsgz, 'wb') as canopsisminjsgz:
+				canopsisminjsgz.writelines(canopsisminjs)
+
+		print '{0} written'.format(self.canopsisminjsgz)
+
+
+if __name__ == "__main__":
+	minimizer = Minimizer()
+	minimizer.minify()

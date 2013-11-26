@@ -1,3 +1,4 @@
+//need:app/lib/view/crights.js,app/lib/view/cauthkey.js
 /*
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
@@ -18,6 +19,11 @@
 */
 Ext.define('canopsis.lib.controller.cgrid', {
 	extend: 'Ext.app.Controller',
+
+	requires: [
+		'canopsis.lib.view.crights',
+		'canopsis.lib.view.cauthkey'
+	],
 
 	allowEdit: true,
 
@@ -535,7 +541,7 @@ Ext.define('canopsis.lib.controller.cgrid', {
 			record = this._preSave(record, data, form);
 			record.endEdit(true);
 
-			this._validateForm(store, data, form, record);
+			this._validateForm(fstore, data, form, record);
 
 		}
 		else {
@@ -709,7 +715,7 @@ Ext.define('canopsis.lib.controller.cgrid', {
 				form = Ext.getCmp(id);
 
 				if(form) {
-					log.debug("Window '" + id + "' allready open, just show it", this.logAuthor);
+					log.debug("Window '" + id + "' already open, just show it", this.logAuthor);
 					form.win.show();
 
 					return form;
@@ -891,7 +897,7 @@ Ext.define('canopsis.lib.controller.cgrid', {
 					var tab = Ext.getCmp(id);
 
 					if(tab) {
-						log.debug("Tab '" + id + "'allerady open, just show it", this.logAuthor);
+						log.debug("Tab '" + id + "'already open, just show it", this.logAuthor);
 						main_tabs.setActiveTab(tab);
 					}
 					else {
