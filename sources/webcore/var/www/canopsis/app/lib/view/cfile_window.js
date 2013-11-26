@@ -63,12 +63,18 @@ Ext.define('canopsis.lib.view.cfile_window' , {
 		var text = this._textArea.getValue();
 
 		if(fileList.length > 0) {
-			this.fireEvent('save', fileList);
+			this.fireEvent('save', {
+				file: true,
+				value: fileList
+			});
 		}
 		else {
 			if(text !== undefined) {
 				try {
-					this.fireEvent('save', Ext.decode(text));
+					this.fireEvent('save', {
+						file: false,
+						value: Ext.decode(text)
+					});
 				}
 				catch (err) {
 					log.dump(err);

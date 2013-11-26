@@ -572,3 +572,186 @@ function expandMetric(node) {
 
 	return node;
 }
+
+function postDataToURL(url, data) {
+	var form = $('<form/>', {
+		method: 'POST',
+		action: url
+	});
+
+	for(var i = 0; i < data.length; i++) {
+		var inputfield = $('<input/>', data[i]);
+		form.append(inputfield);
+	}
+
+	/* Firefox is unable to submit a form which is not in the DOM.
+	 * So we add it, hide it, submit it and remove it.
+	 */
+	form.hide();
+	$('body').append(form);
+
+	form.submit();
+
+	form.remove();
+}
+
+var Canopsis = {
+	/* Check functions */
+
+	isType: function(obj, t) {
+		var types = t;
+
+		if(!Canopsis.isArray(types)) {
+			types = [t];
+		}
+
+		for(var i = 0; i < types.length; i++) {
+			if(typeof(obj) === types[i]) {
+				return true;
+			}
+		}
+
+		return false;
+	},
+
+	isAtom: function(a) {
+		return Canopsis.isType(a, ['string', 'number', 'boolean']);
+	},
+
+	isNumber: function(a) {
+		return isFinite(a);
+	},
+
+	isObject: function(a) {
+		return Canopsis.isType(a, 'object');
+	},
+
+	isArray: function(a) {
+		return Ext.isArray(a);
+	},
+
+	isUndefined: function(a) {
+		return Canopsis.isType(a, 'undefined');
+	},
+
+	isNull: function(a) {
+		return Canopsis.isUndefined(a) || (Canopsis.isObject(a) && !a);
+	},
+
+	isEqn: function(n, m) {
+		return !Canopsis.gt(n, m) && !Canopsis.lt(n, m);
+	},
+
+	isEq: function(s, t) {
+		return s === t;
+	},
+
+	isEqan: function(a, b) {
+		if(Canopsis.isNumber(a) && Canopsis.isNumber(b)) {
+			return Canopsis.isEqn(a, b);
+		}
+		else if(Canopsis.isNumber(a) || Canopsis.isNumber(b)) {
+			return false;
+		}
+		else {
+			return Canopsis.isEq(a, b);
+		}
+	},
+
+	isZero: function(s) {
+		return s === 0;
+	},
+
+	gt: function(n, m) {
+		if(Canopsis.isZero(n)) {
+			return false;
+		}
+		else if(Canopsis.isZero(m)) {
+			return true;
+		}
+		else {
+			return Canopsis.gt(Canopsis.dec(n), Canopsis.dec(m));
+		}
+	},
+
+	lt: function(n, m) {
+		if(Canopsis.isZero(m)) {
+			return false;
+		}
+		else if(Canopsis.isZero(n)) {
+			return true;
+		}
+		else {
+			return Canopsis.lt(Canopsis.dec(n), Canopsis.dec(m));
+		}
+	},
+
+	isEqlist: function(l1, l2) {
+		if(Canopsis.isNull(l1) && Canopsis.isNull(l2)) {
+			return true;
+		}
+		else if(Canopsis.isNull(l1) || Canopsis.isNull(l2)) {
+			return false;
+		}
+		else if(Canopsis.isAtom(Canopsis.car(l1)) && Canopsis.isAtom(Canopsis.car(l2))) {
+			var eqan = Canopsis.isEqan(
+				Canopsis.car(l1),
+				Canopsis.car(l2)
+			);
+
+			var eqlist = Canopsis.isEqlist(
+				Canopsis.cdr(l1),
+				Canopsis.cdr(l2)
+			);
+
+			return eqan && eqlist;
+		}
+		else if(Canopsis.isAtom(Canopsis.car(l1)) || Canopsis.isAtom(Canopsis.car(l2))) {
+			return false;
+		}
+		else {
+			var car = Canopsis.isEqlist(Canopsis.car(l1), Canopsis.car(l2));
+			var cdr = Canopsis.isEqlist(Canopsis.cdr(l1), Canopsis.cdr(l2));
+
+			return car && cdr;
+		}
+	},
+
+	isEqual: function(s1, s2) {
+		if(Canopsis.isAtom(s1) && Canopsis.isAtom(s2)) {
+			return Canopsis.isEqan(s1, s2);
+		}
+		else if(Canopsis.isAtom(s1) || Canopsis.isAtom(s2)) {
+			return false;
+		}
+		else {
+			return Canopsis.isEqlist(s1, s2);
+		}
+	},
+
+	inArray: function(l, obj) {
+		if(!Canopsis.isNull(l) && !Canopsis.isNull(obj) && Canopsis.isArray(l)) {
+			for(var i = 0; i < l.length; i++) {
+				if(Canopsis.isEqual(l[i], obj)) {
+					return true;
+				}
+			}
+		}
+
+		return false;
+	},
+
+	/* Utilities */
+
+	dec: function(n) {
+		return n - 1;
+	},
+
+	car: function(s) {
+		return s[0];
+	},
+
+	cdr: function(s) {
+		return s[1];
+	},
+};
