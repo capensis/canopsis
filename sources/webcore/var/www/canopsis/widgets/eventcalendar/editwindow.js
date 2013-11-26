@@ -69,8 +69,8 @@ Ext.define('widgets.eventcalendar.editwindow' , {
 						xtype: 'textfield',
 						name: 'event_title',
 						itemId: 'event_title',
-						anchor: '100%',
-						emptyText: _('Type here the event title')
+						emptyText: _('Type here the event title'),
+						allowBlank: false
 					},{
 						xtype: 'combobox',
 						fieldLabel: _('Event source'),
@@ -84,11 +84,24 @@ Ext.define('widgets.eventcalendar.editwindow' , {
 						emptyText: _('Type here the event source'),
 						allowBlank: false
 					},{
-						"xtype": "cfieldset",
-						"title": _('Start'),
-						"margin": 0,
-						"padding": 0,
-						"items": [{
+						xtype: "checkbox",
+						fieldLabel: "All day event",
+						itemId: 'all_day_event',
+						inputValue: true,
+						uncheckedValue: false,
+						checked: true,
+						listeners : {
+								change: function(check, e, eOpts) {
+									check.nextSibling().getComponent("start_time").setDisabled(check.getValue());
+									check.nextSibling().nextSibling().getComponent("end_time").setDisabled(check.getValue());
+								}
+							}
+					},{
+						xtype: "cfieldset",
+						title: _('Start'),
+						margin: 0,
+						padding: 0,
+						items: [{
 							fieldLabel: _('Date'),
 							xtype: 'datefield',
 							name: 'start_date',
@@ -97,14 +110,15 @@ Ext.define('widgets.eventcalendar.editwindow' , {
 							fieldLabel: _('Time'),
 							xtype: 'timefield',
 							name: 'start_time',
-							itemId: 'start_time'
+							itemId: 'start_time',
+							disabled: true
 						}]
 					},{
-						"xtype": "cfieldset",
-						"title": _('End'),
-						"margin": 0,
-						"padding": 0,
-						"items": [{
+						xtype: "cfieldset",
+						title: _('End'),
+						margin: 0,
+						padding: 0,
+						items: [{
 								fieldLabel: _('Date'),
 								xtype: 'datefield',
 								name: 'end_date',
@@ -113,17 +127,14 @@ Ext.define('widgets.eventcalendar.editwindow' , {
 								fieldLabel: _('Time'),
 								xtype: 'timefield',
 								name: 'end_time',
-								itemId: 'end_time'
+								itemId: 'end_time',
+								disabled: true
 							}]
 						}]
 				}, {
 					title: 'Recurrence',
 					itemId: 'tabRecurrence',
 					items:[{
-							xtype: 'textfield',
-							itemId: "rrule",
-							fieldLabel: "interval"
-					},{
 							xtype: 'combobox',
 							itemId: "rrule_preset",
 							fieldLabel: "preset",
@@ -140,7 +151,17 @@ Ext.define('widgets.eventcalendar.editwindow' , {
 									{"value": "FREQ=WEEKLY;COUNT=10;BYDAY=TU,TH", "text": "Every Tuesday and Thursday for 10 occurences"},
 									{"value": "FREQ=MONTHLY;COUNT=10;BYDAY=1FR", "text": "Monthly on the 1st Friday for ten occurrences"}
 								]
+							},
+							listeners : {
+								change: function(combo, e, eOpts) {
+									combo.nextSibling().setValue(combo.getValue());
+
+								}
 							}
+					},{
+						xtype: 'textfield',
+						itemId: "rrule",
+						fieldLabel: "Advanced rule"
 					}]
 				}]
 		});
@@ -178,11 +199,13 @@ Ext.define('widgets.eventcalendar.editwindow' , {
 		{
 			tabEvent.down("#start_time").setValue(start);
 			tabEvent.down("#end_time").setValue(end);
+			tabEvent.down("#all_day_event").setValue(false);
 		}
 		else
 		{
 			tabEvent.down("#start_time").setValue(null);
 			tabEvent.down("#end_time").setValue(null);
+			tabEvent.down("#all_day_event").setValue(true);
 		}
 
 		this.show();
@@ -214,11 +237,13 @@ Ext.define('widgets.eventcalendar.editwindow' , {
 		{
 			tabEvent.down("#start_time").setValue(event.start);
 			tabEvent.down("#end_time").setValue(event.end);
+			tabEvent.down("#all_day_event").setValue(false);
 		}
 		else
 		{
 			tabEvent.down("#start_time").setValue(null);
 			tabEvent.down("#end_time").setValue(null);
+			tabEvent.down("#all_day_event").setValue(true);
 		}
 
 		if(event.rrule !== null && event.rrule !== undefined)
@@ -289,8 +314,7 @@ Ext.define('widgets.eventcalendar.editwindow' , {
 		else
 		{
 			newEvent.allDay = all_day;
-			//add the new event to the calendar
-
+			//add the new event to the calendar, by sending it to amqp
 			this.calendar.send_events([newEvent]);
 
 			this.hide();
@@ -301,5 +325,4 @@ Ext.define('widgets.eventcalendar.editwindow' , {
 		this.calendar.resetEventStyle(this.currentEditedEventHtml, this.currentEditedEvent);
 		this.callParent();
 	}
-
 });
