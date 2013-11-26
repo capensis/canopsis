@@ -11,190 +11,189 @@
 
 	"options":[{
 		"title": "Options",
-			"items": [
+		"items": [{
+					"xtype": "cfieldset",
+					"title": "Options",
+					"items": [
 					{
-						"xtype": "cfieldset",
-						"title": "Options",
-						"items": [
-						{
-							"xtype" : "checkboxfield",
-							"name" : "editable",
-							"fieldLabel": "Editable"
-					   },{
-							"xtype" : "textfield",
-							"name" : "defaultView",
-							"fieldLabel": "Default view",
-							"value": "month"
-						}]
+						"xtype" : "checkboxfield",
+						"name" : "editable",
+						"fieldLabel": "Editable"
+				   },{
+						"xtype" : "textfield",
+						"name" : "defaultView",
+						"fieldLabel": "Default view",
+						"value": "month"
 					}]
+				}]
 	},{
 		"title": "Display",
-			"items": [
-				{
-						"xtype": "cfieldset",
-						"title": "General",
-						"items": [
-							{
-								"xtype": "checkbox",
-								"fieldLabel": "Show weekends",
-								"inputValue": true,
-								"uncheckedValue": false,
-								"checked": true,
-								"value" : true,
-								"name": "show_weekends"
-							}]
-					},{
-						"xtype": "cfieldset",
-						"title": "Header",
-						"items": [
-							{
-								"xtype": "combobox",
-								"name": "header_left",
-								"fieldLabel": "left part of the header",
-								"queryMode": "local",
-								"displayField": "text",
-								"valueField": "text",
-								"allowBlank": true,
-								"value": "prev,next today",
-								"store": {
-									"xtype": "store",
-									"fields": ["value", "text"],
-									"data" : [
-										{"text": "prev,next today"},
-										{"text": "title"},
-										{"text": "month,agendaWeek,agendaDay"},
-										{"text": "month,agendaWeek"},
-										{"text":  "month,basicWeek,basicDay"}
-								]}
-							},{
-								"xtype": "combobox",
-								"name": "header_center",
-								"fieldLabel": "center part of the header",
-								"queryMode": "local",
-								"displayField": "text",
-								"valueField": "text",
-								"allowBlank": true,
-								"value": "title",
-								"store": {
-									"xtype": "store",
-									"fields": ["value", "text"],
-									"data" : [
-										{"text": "prev,next today"},
-										{"text": "title"},
-										{"text": "month,agendaWeek,agendaDay"},
-										{"text": "month,agendaWeek"},
-										{"text":  "month,basicWeek,basicDay"}
-								]}
-							},{
-								"xtype": "combobox",
-								"name": "header_right",
-								"fieldLabel": "right part of the header",
-								"queryMode": "local",
-								"displayField": "text",
-								"valueField": "text",
-								"allowBlank": true,
-								"value": "month,agendaWeek,agendaDay",
-								"store": {
-									"xtype": "store",
-									"fields": ["value", "text"],
-									"data" : [
-										{"text": "prev,next today"},
-										{"text": "title"},
-										{"text": "month,agendaWeek,agendaDay"},
-										{"text": "month,agendaWeek"},
-										{"text":  "month,basicWeek,basicDay"}
-								]}
-							}]
-					},{
-						"xtype": "cfieldset",
-						"title": "Event view popup columns",
-						"items": [{
-								"xtype": "checkbox",
-								"fieldLabel": "Component",
-								"inputValue": true,
-								"uncheckedValue": false,
-								"checked": true,
-								"name": "opt_show_component"
-							},{
-								"xtype": "checkbox",
-								"fieldLabel": "Resource",
-								"inputValue": true,
-								"uncheckedValue": false,
-								"checked": true,
-								"name": "opt_show_resource"
-							},{
-								"xtype": "checkbox",
-								"fieldLabel": "State",
-								"inputValue": true,
-								"uncheckedValue": false,
-								"checked": true,
-								"name": "opt_show_state"
-							},{
-								"xtype": "checkbox",
-								"fieldLabel": "State type",
-								"inputValue": true,
-								"uncheckedValue": false,
-								"checked": true,
-								"name": "opt_show_state_type"
-							},{
-								"xtype": "checkbox",
-								"fieldLabel": "Source type",
-								"inputValue": true,
-								"uncheckedValue": false,
-								"checked": true,
-								"name": "opt_show_source_type"
-							},{
-								"xtype": "checkbox",
-								"fieldLabel": "Last check",
-								"inputValue": true,
-								"uncheckedValue": false,
-								"checked": true,
-								"name": "opt_show_last_check"
-							},{
-								"xtype": "checkbox",
-								"fieldLabel": "Output",
-								"inputValue": true,
-								"uncheckedValue": false,
-								"checked": true,
-								"name": "opt_show_output"
-							},{
-								"xtype": "checkbox",
-								"fieldLabel": "Tags",
-								"inputValue": true,
-								"uncheckedValue": false,
-								"checked": true,
-								"name": "opt_show_tags"
-							}]
-					}]
+		"advanced": true,
+		"items": [{
+					"xtype": "cfieldset",
+					"title": "General",
+					"items": [
+						{
+							"xtype": "checkbox",
+							"fieldLabel": "Show weekends",
+							"inputValue": true,
+							"uncheckedValue": false,
+							"checked": true,
+							"value" : true,
+							"name": "show_weekends"
+						}]
+				},{
+					"xtype": "cfieldset",
+					"title": "Header",
+					"items": [
+						{
+							"xtype": "combobox",
+							"name": "header_left",
+							"fieldLabel": "left part of the header",
+							"queryMode": "local",
+							"displayField": "text",
+							"valueField": "text",
+							"allowBlank": true,
+							"value": "prev,next today",
+							"store": {
+								"xtype": "store",
+								"fields": ["value", "text"],
+								"data" : [
+									{"text": "prev,next today"},
+									{"text": "title"},
+									{"text": "month,agendaWeek,agendaDay"},
+									{"text": "month,agendaWeek"},
+									{"text":  "month,basicWeek,basicDay"}
+							]}
+						},{
+							"xtype": "combobox",
+							"name": "header_center",
+							"fieldLabel": "center part of the header",
+							"queryMode": "local",
+							"displayField": "text",
+							"valueField": "text",
+							"allowBlank": true,
+							"value": "title",
+							"store": {
+								"xtype": "store",
+								"fields": ["value", "text"],
+								"data" : [
+									{"text": "prev,next today"},
+									{"text": "title"},
+									{"text": "month,agendaWeek,agendaDay"},
+									{"text": "month,agendaWeek"},
+									{"text":  "month,basicWeek,basicDay"}
+							]}
+						},{
+							"xtype": "combobox",
+							"name": "header_right",
+							"fieldLabel": "right part of the header",
+							"queryMode": "local",
+							"displayField": "text",
+							"valueField": "text",
+							"allowBlank": true,
+							"value": "month,agendaWeek,agendaDay",
+							"store": {
+								"xtype": "store",
+								"fields": ["value", "text"],
+								"data" : [
+									{"text": "prev,next today"},
+									{"text": "title"},
+									{"text": "month,agendaWeek,agendaDay"},
+									{"text": "month,agendaWeek"},
+									{"text":  "month,basicWeek,basicDay"}
+							]}
+						}]
+				},{
+					"xtype": "cfieldset",
+					"title": "Event view popup columns",
+					"items": [{
+							"xtype": "checkbox",
+							"fieldLabel": "Component",
+							"inputValue": true,
+							"uncheckedValue": false,
+							"checked": true,
+							"name": "opt_show_component"
+						},{
+							"xtype": "checkbox",
+							"fieldLabel": "Resource",
+							"inputValue": true,
+							"uncheckedValue": false,
+							"checked": true,
+							"name": "opt_show_resource"
+						},{
+							"xtype": "checkbox",
+							"fieldLabel": "State",
+							"inputValue": true,
+							"uncheckedValue": false,
+							"checked": true,
+							"name": "opt_show_state"
+						},{
+							"xtype": "checkbox",
+							"fieldLabel": "State type",
+							"inputValue": true,
+							"uncheckedValue": false,
+							"checked": true,
+							"name": "opt_show_state_type"
+						},{
+							"xtype": "checkbox",
+							"fieldLabel": "Source type",
+							"inputValue": true,
+							"uncheckedValue": false,
+							"checked": true,
+							"name": "opt_show_source_type"
+						},{
+							"xtype": "checkbox",
+							"fieldLabel": "Last check",
+							"inputValue": true,
+							"uncheckedValue": false,
+							"checked": true,
+							"name": "opt_show_last_check"
+						},{
+							"xtype": "checkbox",
+							"fieldLabel": "Output",
+							"inputValue": true,
+							"uncheckedValue": false,
+							"checked": true,
+							"name": "opt_show_output"
+						},{
+							"xtype": "checkbox",
+							"fieldLabel": "Tags",
+							"inputValue": true,
+							"uncheckedValue": false,
+							"checked": true,
+							"name": "opt_show_tags"
+						}]
+				}]
 	},{
 		"title": "Style",
-			"items": [{
-						"xtype": "combobox",
-						"name": "event_display_size",
-						"fieldLabel": "Event display size",
-						"queryMode": "local",
-						"displayField": "text",
-						"valueField": "value",
-						"value": null,
-						"allowBlank": false,
-						"value": "normal_size",
-						"store": {
-							"xtype": "store",
-							"fields": ["value", "text"],
-							"data" : [
-								{"value": "tiny_size", "text": "Tiny"},
-								{"value": "small_size", "text": "Small"},
-								{"value": "normal_size", "text": "Normal"},
-								{"value": "big_size", "text":  "Big"},
-								{"value": "huge_size", "text":  "Huge"}
-						]}
-				},{
-					"fieldLabel": "Default events color",
-					"name": "defaultEventColor",
-					"xtype":"ccolorfield",
-					"value": "#3a87ad"
-				}
-				]
+		"advanced": true,
+		"items": [{
+					"xtype": "combobox",
+					"name": "event_display_size",
+					"fieldLabel": "Event display size",
+					"queryMode": "local",
+					"displayField": "text",
+					"valueField": "value",
+					"value": null,
+					"allowBlank": false,
+					"value": "normal_size",
+					"store": {
+						"xtype": "store",
+						"fields": ["value", "text"],
+						"data" : [
+							{"value": "tiny_size", "text": "Tiny"},
+							{"value": "small_size", "text": "Small"},
+							{"value": "normal_size", "text": "Normal"},
+							{"value": "big_size", "text":  "Big"},
+							{"value": "huge_size", "text":  "Huge"}
+					]}
+			},{
+				"fieldLabel": "Default events color",
+				"name": "defaultEventColor",
+				"xtype":"ccolorfield",
+				"value": "#3a87ad"
+			}]
 	},{
 		"title": "Calendar sources",
 		"items" : [{
