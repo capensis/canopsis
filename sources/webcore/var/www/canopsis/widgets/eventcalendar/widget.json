@@ -20,12 +20,25 @@
 						"name" : "editable",
 						"fieldLabel": "Editable"
 				   },{
-						"xtype" : "textfield",
-						"name" : "defaultView",
+						"xtype": "combobox",
+						"name": "defaultView",
 						"fieldLabel": "Default view",
-						"value": "month"
+						"queryMode": "local",
+						"displayField": "text",
+						"valueField": "text",
+						"allowBlank": true,
+						"value": "title",
+						"store": {
+							"xtype": "store",
+							"fields": ["text"],
+							"data" : [
+								{"text": "month"},
+								{"text": "basicWeek"},
+								{"text": "basicDay"},
+								{"text": "agendaWeek"},
+								{"text": "agendaDay"}
+						]}
 					}]
-				}]
 	},{
 		"title": "Display",
 		"advanced": true,
@@ -49,7 +62,7 @@
 						{
 							"xtype": "combobox",
 							"name": "header_left",
-							"fieldLabel": "left part of the header",
+							"fieldLabel": "Left part of the header",
 							"queryMode": "local",
 							"displayField": "text",
 							"valueField": "text",
@@ -57,7 +70,7 @@
 							"value": "prev,next today",
 							"store": {
 								"xtype": "store",
-								"fields": ["value", "text"],
+								"fields": ["text"],
 								"data" : [
 									{"text": "prev,next today"},
 									{"text": "title"},
@@ -68,7 +81,7 @@
 						},{
 							"xtype": "combobox",
 							"name": "header_center",
-							"fieldLabel": "center part of the header",
+							"fieldLabel": "Center part of the header",
 							"queryMode": "local",
 							"displayField": "text",
 							"valueField": "text",
@@ -76,7 +89,7 @@
 							"value": "title",
 							"store": {
 								"xtype": "store",
-								"fields": ["value", "text"],
+								"fields": ["text"],
 								"data" : [
 									{"text": "prev,next today"},
 									{"text": "title"},
@@ -87,7 +100,7 @@
 						},{
 							"xtype": "combobox",
 							"name": "header_right",
-							"fieldLabel": "right part of the header",
+							"fieldLabel": "Right part of the header",
 							"queryMode": "local",
 							"displayField": "text",
 							"valueField": "text",
