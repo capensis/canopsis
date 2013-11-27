@@ -28,7 +28,7 @@
 						"valueField": "text",
 						"allowBlank": true,
 						"editable": false,
-						"value": "title",
+						"value": "month",
 						"store": {
 							"xtype": "store",
 							"fields": ["text"],
