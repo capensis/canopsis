@@ -130,7 +130,7 @@ Ext.define('widgets.eventcalendar.eventcalendar' , {
 					}
 				}
 			},
-			eventAfterRender: function(event, element) {
+			eventRender: function(event, element) {
 				if(!event.component && event.type === "calendar")
 					throw new CalendarException("Event of type calendar does not have a component property", event);
 
@@ -139,18 +139,13 @@ Ext.define('widgets.eventcalendar.eventcalendar' , {
 					calendarRoot.sources_byComponent[currentSource.component] = currentSource;
 				};
 
-				if(!event.component)
+				if(!event.type === "calendar")
 				{
 					log.debug('no component (ics source) for event, assuming the event is stacked regular events', calendarRoot.logAuthor);
-
-					element.css("background-color", calendarRoot.defaultEventColor);
-					element.css("border-color", calendarRoot.defaultEventColor);
+					element.css({"background-color" : calendarRoot.defaultEventColor, "border-color" : calendarRoot.defaultEventColor});
 				}
 				else
 				{
-					var calElements = $('#' + calendarRoot.id + " ." + event.component);
-
-
 					if(!calendarRoot.sources_byComponent[event.component])
 					{
 						log.debug('component not found on calendar sources', calendarRoot.logAuthor);
@@ -158,12 +153,10 @@ Ext.define('widgets.eventcalendar.eventcalendar' , {
 					}
 
 					var sourceColor = calendarRoot.sources_byComponent[event.component].color;
+
 					if(!!sourceColor)
 					{
-						for (var i = calElements.length - 1; i >= 0; i--) {
-							var currentElement = calElements[i];
-							element.css({ "border-color" : sourceColor, "background-color" : sourceColor});
-						};
+						element.css({ "border-color" : sourceColor, "background-color" : sourceColor});
 					}
 				}
 				return true;
@@ -179,7 +172,6 @@ Ext.define('widgets.eventcalendar.eventcalendar' , {
 
 
 	onResize: function() {
-		console.log("resize, height :" + this.getHeight());
 		$('#'+ this.wcontainer.id).fullCalendar('option', 'height', this.getHeight());
 	},
 
