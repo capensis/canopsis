@@ -1112,6 +1112,8 @@ Ext.define('canopsis.lib.controller.cgrid', {
 		var selection = this.grid.getSelectionModel().getSelection();
 
 		if ( selection.length > 0 ) {
+			if ( selection.length == 1 ) { record = selection[0]; }
+
 			var tabFormAck;	
 			if ( this.grid.opt_show_form_ack && ( this.grid.opt_show_ack_state_solved || this.grid.opt_show_ack_state_pendingsolved || this.grid.opt_show_ack_state_pendingaction || this.grid.opt_show_ack_state_pendingvalidation ) ) {
 				tabFormAck = {
@@ -1203,7 +1205,7 @@ Ext.define('canopsis.lib.controller.cgrid', {
 						anchor:'95%'
 					});
 				}
-				if ( selection.length == 1 && his.grid.opt_show_edit_state ) {
+				if ( selection.length == 1 && this.grid.opt_show_edit_state ) {
 					tabFormEdit['items'][0]['items'].push({
 						xtype: 'combo',
 						fieldLabel: _('State'),
@@ -1298,25 +1300,30 @@ Ext.define('canopsis.lib.controller.cgrid', {
 
 								//Destroy
 								manageEvent.destroy();
-								
-								//Reload Store
-								//dataview.store.load();
-								dataview.store.filter( function(rec, id) {
-									var ans;
-									if ( rec.raw['event_type'] == 'ack' ) {
-										ans = false;
-									} else {
-										if ( rec.raw['rk'] == event_ack['ref_rk'] )  {
-											rec.raw['ack_state'] = event_ack['state']
-											rec.raw['ack_output'] = event_ack['output']
-										} 
-										ans = true;
-									}
-									return ans
-								}, dataview.store );
 
+								setTimeout(
+									function() {
+										//Reload Store
+										dataview = dataview.findParentByType( 'grid' );
+										dataview.store.load();
+										dataview.store.filter( function(rec, id) {
+											var ans;
+											if ( rec.raw['event_type'] == 'ack' ) {
+												ans = false;
+											} else {
+												if ( rec.raw['rk'] == event_ack['ref_rk'] )  {
+													rec.raw['ack_state'] = event_ack['state']
+													rec.raw['ack_output'] = event_ack['output']
+												} 
+												ans = true;
+											}
+											return ans
+										}, dataview.store );
+									}, 500
+								);
+								
 								//Refresh dataview
-								dataview.refresh();
+								//dataview.refresh();
 							}
 						}],
 					}
