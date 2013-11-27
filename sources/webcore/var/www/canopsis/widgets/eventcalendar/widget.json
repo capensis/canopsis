@@ -27,6 +27,7 @@
 						"displayField": "text",
 						"valueField": "text",
 						"allowBlank": true,
+						"editable": false,
 						"value": "title",
 						"store": {
 							"xtype": "store",
