@@ -4,11 +4,11 @@
 
 ## What is Canopsis ? 
 
-[Canopsis](http://canopsis.org) is an open-source [hypervisor](http://www.capensis.fr/solutions/hypervision/) whose goal is to [[aggregate/consolidate|consolidation]] information and events (containing [[metrics]] of different types such as performance, availability, etc.) coming from multiple sources to create a global solution for [[monitoring|Dashboard]] and [[administrating|engines]] resources.
+[Canopsis](http://canopsis.org) is an open-source [hypervisor](http://www.capensis.fr/solutions/hypervision/) whose goal is to <a href="https://github.com/capensis/canopsis/wiki/consolidation">aggregate/consolidate</a> information and events (containing <a href="https://github.com/capensis/canopsis/wiki/metrics">metrics</a> of different types such as performance, availability, etc.) coming from multiple sources to create a global solution for <a href="https://github.com/capensis/canopsis/wiki/Dashboard">monitoring</a> and <a href="https://github.com/capensis/canopsis/wiki/engines">administrating</a> resources.
 
 Built to last on top of [proven Open Source technologies by and for all IT professionals](http://www.capensis.fr/solutions/supervision/). It is an event based architecture and it is modular by design. Plug your infrastructure tools like `Syslog`, `Nagios`, [`Shinken`](https://github.com/naparuba/shinken), `...` to [Canopsis](http://canopsis.org) and you're ready to go.
 
-A [[Glossary]] page is also given for better descriptions about canopsis concepts.
+A <a href="https://github.com/capensis/canopsis/wiki/Glossary">Glossary</a> page is also given for better descriptions about canopsis concepts.
 
 ## How to try ?
 
@@ -36,12 +36,12 @@ Or your [`Shinken`](https://github.com/naparuba/shinken):
 
 ## How to use ?
 
-A [[Dashboard]] containing [[views]] and [[Widgets]] is provided in order to monitor and to [[administer|engines]] resources.
+A <a href="https://github.com/capensis/canopsis/wiki/Dashboard">Dashboard</a> containing <a href="https://github.com/capensis/canopsis/wiki/views">views</a> and <a href="https://github.com/capensis/canopsis/wiki/widgets">Widgets</a> is provided in order to monitor and to <a href="https://github.com/capensis/canopsis/wiki/engines">administer</a> resources.
 
-[[images/dashboard.png]]
+<img src="https://github.com/capensis/canopsis/wiki/images/dashboard.png"/>
 
 ## Links:
 * Wiki: https://github.com/capensis/canopsis/wiki/_pages
 * Community: http://www.canopsis.org
 * Forum (french): http://forums.monitoring-fr.org/index.php/board,127.0.html
-* [[Glossary]]
+* <a href="https://github.com/capensis/canopsis/wiki/Glossary">Glossary</a>
