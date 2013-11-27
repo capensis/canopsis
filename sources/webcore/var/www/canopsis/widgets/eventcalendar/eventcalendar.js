@@ -179,7 +179,8 @@ Ext.define('widgets.eventcalendar.eventcalendar' , {
 
 
 	onResize: function() {
-		$('#'+ this.wcontainer.id).fullCalendar('option', 'height', this.wcontainer.height);
+		console.log("resize, height :" + this.getHeight());
+		$('#'+ this.wcontainer.id).fullCalendar('option', 'height', this.getHeight());
 	},
 
 	send_events: function(calevents) {
