@@ -153,9 +153,11 @@ Ext.define('widgets.weather.brick' , {
 	state_as_icon_value: false,
 	bg_color: '#FFFFFF',
 
+	display_name: undefined,
 	display_report_button: false,
 	display_derogation_icon: false,
 
+	hide_title: false,
 	simple_display: false,
 	title_font_size: 14,
 
@@ -213,16 +215,21 @@ Ext.define('widgets.weather.brick' , {
 
 		//title
 
-		if(this.data.display_name) {
+		if(this.display_name) {
+			this.widget_base_config.title = this.display_name;
+		}
+		else if(this.data.display_name) {
 			this.widget_base_config.title = this.data.display_name;
 		}
+		else if(this.component) {
+			this.widget_base_config.title = this.component;
+		}
 		else {
-			if(this.component) {
-				this.widget_base_config.title = this.component;
-			}
-			else {
-				this.widget_base_config.title = 'Unknown';
-			}
+			this.widget_base_config.title = 'Unknown';
+		}
+
+		if(this.hide_title) {
+			this.widget_base_config.title = '';
 		}
 
 		var linkUrl = this.formatLink();
@@ -433,7 +440,7 @@ Ext.define('widgets.weather.brick' , {
 
 	//fast hack for freeze, open link in tab, will be changed in develop
 	formatLink: function() {
-		if(typeof(this.link) === 'string') {
+		if(typeof(this.link) === 'string' && !this.exportMode) {
 			if(this.link.indexOf('http://') !== -1 || this.link.indexOf('www.') !== -1 || this.link.indexOf('https://') !== -1) {
 				if(this.link.indexOf('http://') === -1 && this.link.indexOf('https://') === -1) {
 					this.link = 'http://' + this.link;
