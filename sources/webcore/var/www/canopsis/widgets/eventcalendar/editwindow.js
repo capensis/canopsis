@@ -52,6 +52,7 @@ Ext.define('widgets.eventcalendar.editwindow' , {
 		this.sources.add(this.calendar.sources);
 
 		var tabs = Ext.create('Ext.tab.Panel', {
+				itemId: "tabs",
 				plain: true,
 				border: false,
 				bodyStyle: 'padding:5px 5px 0',
@@ -183,6 +184,8 @@ Ext.define('widgets.eventcalendar.editwindow' , {
 		this.currentEditedEventHtml = null;
 		this.addMode = true;
 
+		this._form.down("#tabs").setActiveTab(0);
+
 		var tabEvent = this._form.down("#tabEvent");
 		var tabRecurrence = this._form.down("#tabRecurrence");
 		tabRecurrence.down("#rrule").setValue("");
@@ -213,6 +216,9 @@ Ext.define('widgets.eventcalendar.editwindow' , {
 
 	showEditEvent: function(event, eventHtml){
 		this.setTitle( _("Edit event"));
+
+		this._form.down("#tabs").setActiveTab(0);
+
 		var tabEvent = this._form.down("#tabEvent");
 
 		var tabRecurrence = this._form.down("#tabRecurrence");
