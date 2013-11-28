@@ -162,6 +162,8 @@ Ext.define('widgets.eventcalendar.editwindow' , {
 					},{
 						xtype: 'textfield',
 						itemId: "rrule",
+						maskRe: /([0-9a-zA-Z,;=]+)$/,
+						regex: /[0-9a-zA-Z,;=]/,
 						fieldLabel: "Advanced rule"
 					}]
 				}]
