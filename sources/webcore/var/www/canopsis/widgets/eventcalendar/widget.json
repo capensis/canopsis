@@ -235,7 +235,7 @@
 		"title": "Stashed events",
 		"items" : [{
 					"xtype": "cfilter",
-					"name" : "stashed_events_filter"
+					"name" : "stacked_events_filter"
 				}]
 	}]
 }]

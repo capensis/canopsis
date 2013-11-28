@@ -67,11 +67,11 @@ Ext.define('widgets.eventcalendar.eventcalendar' , {
 		this.logAuthor = '[eventcalendar]';
 
 		this.editwindow = Ext.create("widgets.eventcalendar.editwindow", {
-				calendar: this
+			calendar: this
 		});
 
 		this.eventswindow = Ext.create("widgets.eventcalendar.eventswindow", {
-				calendar: this
+			calendar: this
 		});
 
 		if(this.defaultView !== "month" || this.defaultView !== "agendaWeek" || this.defaultView !== "agendaDay" || this.defaultView !== "basicWeek" || this.defaultView !== "basicDay")
@@ -214,7 +214,7 @@ Ext.define('widgets.eventcalendar.eventcalendar' , {
 	},
 
 	computeTagsFilter: function(from, to) {
-		if(!!this.stashed_events_filter)
+		if(!!this.stacked_events_filter)
 		{
 			var query = {
 						"$and": [
@@ -223,13 +223,13 @@ Ext.define('widgets.eventcalendar.eventcalendar' , {
 						]
 			};
 
-			query["$and"].push(JSON.parse(this.stashed_events_filter));
+			query["$and"].push(JSON.parse(this.stacked_events_filter));
 			return query;
 		}
 	},
 
 	computeTagsUrl: function(from, to){
-		if(!!this.stashed_events_filter)
+		if(!!this.stacked_events_filter)
 		{
 			var url = "/rest/events/event?_dc=1383151536066&limit=2000&filter=";
 
