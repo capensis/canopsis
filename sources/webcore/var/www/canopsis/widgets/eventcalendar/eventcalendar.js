@@ -66,15 +66,16 @@ Ext.define('widgets.eventcalendar.eventcalendar' , {
 		this.callParent(arguments);
 		this.logAuthor = '[eventcalendar]';
 
-		this.editwindow = Ext.create("widgets.eventcalendar.editwindow",
-			{
+		this.editwindow = Ext.create("widgets.eventcalendar.editwindow", {
 				calendar: this
-			});
+		});
 
-		this.eventswindow = Ext.create("widgets.eventcalendar.eventswindow",
-			{
+		this.eventswindow = Ext.create("widgets.eventcalendar.eventswindow", {
 				calendar: this
-			});
+		});
+
+		if(this.defaultView !== "month" || this.defaultView !== "agendaWeek" || this.defaultView !== "agendaDay" || this.defaultView !== "basicWeek" || this.defaultView !== "basicDay")
+			this.defaultView = "month";
 	},
 
 	afterContainerRender: function() {
