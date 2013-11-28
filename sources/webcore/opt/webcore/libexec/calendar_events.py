@@ -79,26 +79,30 @@ def cal_get(source, interval_start, interval_end):
 	#TODO install dateutil
 
 	for event in recurrent_events["data"]:
-		dtstart = datetime.fromtimestamp(float(interval_start))
-		dtend = datetime.fromtimestamp(float(interval_end))
+		try:
+			dtstart = datetime.fromtimestamp(float(interval_start))
+			dtend = datetime.fromtimestamp(float(interval_end))
 
-		eventStart = datetime.fromtimestamp(float(event["start"]))
-		eventEnd = datetime.fromtimestamp(float(event["end"]))
+			eventStart = datetime.fromtimestamp(float(event["start"]))
+			eventEnd = datetime.fromtimestamp(float(event["end"]))
 
-		occurences = list(rrulestr(event["rrule"], dtstart=eventStart).between(dtstart, dtend))
+			occurences = list(rrulestr(event["rrule"], dtstart=eventStart).between(dtstart, dtend))
 
-		eventDuration = eventEnd - eventStart
+			eventDuration = eventEnd - eventStart
 
-		occurenceCount = 0
-		#instantiate an event occurence for each found date
-		for occurence in occurences:
-			occurenceCount += 1
-			newEvent = event.copy()
-			occurenceStart = mktime(occurence.timetuple())
-			occurenceEnd = occurence + eventDuration
-			occurenceEnd = mktime(occurenceEnd.timetuple())
-			newEvent["start"] = int(occurenceStart)
-			newEvent["end"] = int(occurenceEnd)
-			events["data"].append(newEvent)
+			occurenceCount = 0
+			#instantiate an event occurence for each found date
+			for occurence in occurences:
+				occurenceCount += 1
+				newEvent = event.copy()
+				occurenceStart = mktime(occurence.timetuple())
+				occurenceEnd = occurence + eventDuration
+				occurenceEnd = mktime(occurenceEnd.timetuple())
+				newEvent["start"] = int(occurenceStart)
+				newEvent["end"] = int(occurenceEnd)
+				events["data"].append(newEvent)
+		except Exception, e:
+			print "Error parsing rrule for an event : %s" % e
+
 
 	return events
