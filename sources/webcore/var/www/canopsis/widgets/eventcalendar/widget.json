@@ -225,7 +225,7 @@
 								"allowBlank": false
 							}],
 					"additional_field": {
-											"xtype":"textfield",
+											"xtype":"ccolorfield",
 											"name":"color",
 											"emptyText":"Color of events",
 											"hideLabel": true

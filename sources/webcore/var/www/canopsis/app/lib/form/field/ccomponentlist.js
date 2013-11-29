@@ -220,7 +220,7 @@ Ext.define('canopsis.lib.form.field.ccomponentlist' , {
 						dragGroup: this.dragGroup,
 						dropGroup: this.dropGroup
 					}
-				},
+				}
 			};
 
 			// additional field (if specified only)
@@ -228,7 +228,14 @@ Ext.define('canopsis.lib.form.field.ccomponentlist' , {
 				selection_grid_config.plugins = [
 					Ext.create('Ext.grid.plugin.CellEditing', {
 						clicksToEdit: 1,
-						autoCancel: true
+						autoCancel: true,
+						listeners: {
+							beforeedit: function( editor, e, eOpts )
+							{
+								//Dirty hack to make ccolorfield work with cellediting
+								this.record = e.record;
+							}
+						}
 					})
 				];
 
@@ -236,19 +243,22 @@ Ext.define('canopsis.lib.form.field.ccomponentlist' , {
 					sortable: false,
 					dataIndex: this.additional_field.name,
 					editor: this.additional_field,
+					maskOnDisable: false,
 					flex: 3
 				};
 
 				selection_grid_config.emptyText = this.additional_field.emptyText;
 
-				editor_config.renderer = function(val) {
-					if(!val) {
-						return Ext.String.format('<span style="color:grey">{0}</span>', this.emptyText);
-					}
-					else {
-						return val;
-					}
-				};
+				if(this.additional_field.name === 'link' || this.additional_field.name === 'display_name') {
+					editor_config.renderer = function(val) {
+						if(!val) {
+							return Ext.String.format('<span style="color:grey">{0}</span>', this.emptyText);
+						}
+						else {
+							return val;
+						}
+					};
+				}
 
 				selection_grid_config.columns.push(editor_config);
 				selection_grid_config.flex = 2;
@@ -360,7 +370,7 @@ Ext.define('canopsis.lib.form.field.ccomponentlist' , {
 			layout: {
 				type: 'vbox',
 				align: 'stretch'
-    		},
+			},
 			flex: 2
     	});
 
@@ -391,6 +401,19 @@ Ext.define('canopsis.lib.form.field.ccomponentlist' , {
 		}
 
 		return items;
+
+		console.log("AFTERREENNNNNNDERRRRR");
+		if(this.additional_field.name === 'color') {
+			//Dirty hack to make ccolofield work with cellediting
+			console.log("this.additional_field");
+			console.log(this.additional_field);
+			this.additional_field.menuListeners.select = function() {
+				this.setValue(d);
+				var rec =  this.ownerCt.editingPlugin.record;
+				rec.set('color', this.getValue());
+				this.ownerCt.editingPlugin.ccomponentlist.addRecord(rec);
+			}
+		}
 	},
 
 	getAddFormValues: function() {
