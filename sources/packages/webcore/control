@@ -1,8 +1,8 @@
 #!/bin/bash
 
 NAME="webcore"
-VERSION=0.6
-RELEASE=1
+VERSION=0.7
+RELEASE=0
 DESCRIPTION=""
 REQUIRES="canohome python canolibs supervisord-conf wkhtmltopdf-libs nodejs-libs"
 
