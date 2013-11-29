@@ -176,7 +176,7 @@ def parse_ics(source):
 		lastUpdate[source["name"]] = utc.localize(datetime(2000, 1, 1))
 
 	for event in cal.walk('vevent'):
-		if event.get('LAST-MODIFIED').dt > lastUpdate[source["name"]]:
+		if event.get('LAST-MODIFIED') and event.get('LAST-MODIFIED').dt > lastUpdate[source["name"]]:
 			send_event(source, event)
 
 			count = count + 1
