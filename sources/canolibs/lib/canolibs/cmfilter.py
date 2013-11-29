@@ -129,23 +129,22 @@ def check(mfilter, event):
 		# For each other case, just test the equality
 		elif key in event:
 			if isinstance(mfilter[key], dict):
-				if not field_check(mfilter, event, key):
-					return False
-
-				elif '$in' in mfilter[key]:
+				if '$in' in mfilter[key]:
 					if event[key] not in mfilter[key]['$in']:
 						return False
 
 				elif '$nin' in mfilter[key]:
-					if event[key] in mfilter[key]['$in']:
+					if event[key] in mfilter[key]['$nin']:
 						return False
 
 				else:
-					if event[key] != mfilter[key]:
+					if field_check(mfilter, event, key):
+						continue
+
+					elif event[key] != mfilter[key]:
 						return False
 
 			else:
-			
 				if event[key] != mfilter[key]:
 					return False
 
@@ -158,9 +157,9 @@ def check(mfilter, event):
 def regex_computeoptions(options):
 	if isinstance(options, basestring):
 		if "i" in options:
-			 return re.I
-	return 0
+			return re.I
 
+	return 0
 
 def regex_match(phrase, pattern, options=None):
 	options = regex_computeoptions(options)

@@ -440,7 +440,7 @@ Ext.define('widgets.weather.brick' , {
 
 	//fast hack for freeze, open link in tab, will be changed in develop
 	formatLink: function() {
-		if(typeof(this.link) === 'string') {
+		if(typeof(this.link) === 'string' && !this.exportMode) {
 			if(this.link.indexOf('http://') !== -1 || this.link.indexOf('www.') !== -1 || this.link.indexOf('https://') !== -1) {
 				if(this.link.indexOf('http://') === -1 && this.link.indexOf('https://') === -1) {
 					this.link = 'http://' + this.link;
