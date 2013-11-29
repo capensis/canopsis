@@ -120,7 +120,7 @@ Ext.define('widgets.line_graph.line_graph', {
 	maxZoom: 60 * 10,
 
 	interval: global.commonTs.hours,
-	aggregate_method: 'MAX',
+	aggregate_method: 'MEAN',
 	aggregate_interval: 0,
 	aggregate_max_points: 500,
 	aggregate_round_time: true,

@@ -174,7 +174,7 @@
 								"queryMode": "local",
 								"displayField": "text",
 								"valueField": "value",
-								"value": "AVERAGE",
+								"value": "MEAN",
 								"store": {
 									"xtype": "store",
 									"fields": ["value", "text"],
@@ -185,7 +185,7 @@
 										{"value": "LAST", "text": "Last"},
 										{"value": "FIRST", "text": "First"},
 										{"value": "DELTA", "text": "Delta"},
-										{"value": "AVERAGE", "text": "Average"},
+										{"value": "MEAN", "text": "Mean"},
 										{"value": "SUM", "text": "Sum"}
 									]
 								}
@@ -244,7 +244,7 @@
 										{"value": "max", "text": "Max"},
 										{"value": "min", "text": "Min"},
 										{"value": "sum", "text": "Sum"},
-										{"value": "average", "text": "Average"}
+										{"value": "mean", "text": "Mean"}
 									]
 								}
 							}
