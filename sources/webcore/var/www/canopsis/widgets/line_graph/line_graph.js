@@ -151,6 +151,8 @@ Ext.define('widgets.line_graph.line_graph', {
 	autoShift: false,
 	lastShift: undefined,
 
+	displayComponentsAndResourcesInLegend: false,
+
 	initComponent: function() {
 		this.callParent(arguments);
 
@@ -936,6 +938,17 @@ Ext.define('widgets.line_graph.line_graph', {
 
 		if(!label) {
 			label = metric_name;
+		}
+
+		if (this.displayComponentsAndResourcesInLegend) {
+			if (node.dn.length>0) {
+				var component_name = node.dn[0];
+				if (node.dn.length > 1) {
+					var resource_name = node.dn[1];
+					label = resource_name + '/' + label;
+				}
+				label = component_name + '/' + label;
+			}
 		}
 
 		log.debug('    + label: ' + label, this.logAuthor);
