@@ -313,6 +313,11 @@
 										{"value": "vertical", "text": "Vertical"}
 									]
 								}
+							},{
+								"xtype": "checkbox",
+								"name": "displayComponentsAndResourcesInLegend",
+								"fieldLabel": "Display component and resource",
+								"checked": false
 							}]
 					}]
 		},{
