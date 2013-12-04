@@ -35,13 +35,13 @@ class engine(cengine):
 		self.beat_interval = 5
 		self.nb_beat_publish = 10
 		self.nb_beat = 0
-		#self.beat_interval = 5
 		self.thd_warn_sec_per_evt = 1.5
 		self.thd_crit_sec_per_evt = 2
 		
 	
+
+	
 	def pre_run(self):
-		self.beat_lock = False
 		#load selectors
 		self.storage = get_storage(namespace='object', account=caccount(user="root", group="root"))
 		self.reload_selectors()
@@ -49,35 +49,35 @@ class engine(cengine):
 
 
 	def reload_selectors(self):
-		self.selectors = []
+		selectors = []
 		selectorsjson = self.storage.find({'crecord_type': 'selector', 'enable': True}, namespace="object")
 		
 		for	selectorjson in selectorsjson:
-			# let say selector is loaded
-			self.storage.update(selectorjson._id, {'loaded': True})
 			selector = cselector(storage=self.storage, record=selectorjson, logging_level=self.logging_level)
-			self.selectors.append(selector)
+			selectors.append(selector)
+		#Cache for work method is set in one atomic operation
+		self.selectors = selectors
 
-			
+
+
 			
 	def beat(self):
-
-		if self.beat_lock:
-			return 
-			
-		self.beat_lock = True
-		""" Reinitialize selectors and may publish event if they have to"""
-		self.reload_selectors()
-
-		publish = False
-		if self.nb_beat >= self.nb_beat_publish:
-			self.nb_beat = 0
-			publish = True
+		self.logger.debug('entered in selector BEAT')
+		# Refresh selectors for work method
+		self.nb_beat += 1
+		if self.nb_beat % 10 == 0:
+			self.logger.debug('Refresh selector records cache.')
+			self.reload_selectors()
 		
-		for selector in self.selectors:
-			
+	
+	def consume_dispatcher(self,  event, *args, **kargs):
+		self.logger.debug('entered in selector consume dispatcher')
+		# Gets crecord from amqp distribution
+		selector = self.get_ready_record(event)
+		if selector:
+			self.logger.debug('selector found, start processing..')			
 			# do I publish a selector event ? Yes if selector have to and it is time or we got to update status 
-			if selector.dostate and (publish or (selector._id in self.selector_refresh and self.selector_refresh[selector._id])):
+			if selector.dostate:
 				try:
 					#TODO improve this full mongo db request
 					rk, event = selector.event()
@@ -85,9 +85,6 @@ class engine(cengine):
 					self.logger.error({'msg': 'unable to select all event matching this selector in order to publish worst state one form them','exception':e})
 					event = None
 				
-
-					
-				if event:
 					# Publish Sla information when available
 					publishSla = selector.data.get('sla_rk', None)
 					if publishSla:
@@ -99,9 +96,11 @@ class engine(cengine):
 					self.logger.debug("Published event for selector '%s'" % (selector.name))
 					
 				self.selector_refresh[selector._id] = False
-
+			else:
+				self.logger.debug('Nothing to do with this selector')
 		self.nb_beat +=1
-		self.beat_lock = False
+		#set record free for dispatcher engine
+		self.storage.update(selector._id, {'loaded': False})
 		
 	def work(self, event, *args, **kargs):
 						

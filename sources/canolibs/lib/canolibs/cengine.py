@@ -26,6 +26,7 @@ import os, sys
 from cinit import cinit
 import traceback
 import cevent
+from caccount import caccount
 
 import itertools
 
@@ -55,7 +56,7 @@ class cengine(multiprocessing.Process):
 		self.amqp_queue = "Engine_%s" % name
 		self.routing_keys = routing_keys
 		self.exchange_name = exchange_name
-		
+
 		self.perfdata_retention = 3600
 
 		self.next_amqp_queues = next_amqp_queues
@@ -67,7 +68,7 @@ class cengine(multiprocessing.Process):
 		init 	= cinit()
 			
 		self.logger = init.getLogger(name, logging_level=self.logging_level)
-		
+	
 		logHandler = logging.FileHandler(filename=os.path.expanduser("~/var/log/engines/%s.log" % name))
 		logHandler.setFormatter(logging.Formatter("%(asctime)s %(levelname)s %(name)s %(message)s"))
 
@@ -94,12 +95,38 @@ class cengine(multiprocessing.Process):
 				
 		self.logger.info("Engine initialised")
 		
-	def create_amqp_queue(self):
+		self.dispatcher_crecords = ['selector','topology','derogation','consolidation']
+		
+
+	def get_ready_record(self, event):
+		"""
+		crecord dispatcher sent an event with type and crecord id.
+		So I load a crecord object instance (dynamically) from these informations
+		"""
+		if '_id' not in event or 'crecord_type' not in event or event['crecord_type'] not in self.dispatcher_crecords:
+			self.logger.warning('record type not found for received event')
+			return None
+		
+		record_object_name = 'c' + event['crecord_type']
+		record_object = None
+		try:
+			record_object = self.storage.get(event['_id'], account=caccount(user="root", group="root"))
+			if event['crecord_type'] in ['selector']:
+				# Loads associated class
+				module = __import__(record_object_name)
+				record_object = getattr(module, record_object_name)(storage=self.storage, record=record_object, logging_level=self.logging_level)
+		except Exception, e:
+			self.logger.critical('unable to retrieve crecord object of %s for record type %s : %s' % (str(self.dispatcher_crecords), event['crecord_type'], e) )
+		return record_object
+		
+	
+		
+	def create_amqp_queue(self, amqp_queue, routing_keys, on_amqp_event, exchange_name):
 		self.amqp.add_queue(
-			queue_name=self.amqp_queue,
-			routing_keys=self.routing_keys,
-			callback=self.on_amqp_event,
-			exchange_name=self.exchange_name,
+			queue_name=amqp_queue,
+			routing_keys=routing_keys,
+			callback=on_amqp_event,
+			exchange_name=exchange_name,
 			no_ack=True,
 			exclusive=False,
 			auto_delete=False
@@ -122,12 +149,18 @@ class cengine(multiprocessing.Process):
 		self.amqp = camqp(logging_level=logging.INFO, logging_name="%s-amqp" % self.name, on_ready=ready)
 		
 		if self.create_queue:
-			self.create_amqp_queue()
+			self.create_amqp_queue(self.amqp_queue, self.routing_keys, self.on_amqp_event, self.exchange_name)
+			
+			# This is an async engine and it needs engine dispatcher bindinds to be feed properly
+			if self.name in self.dispatcher_crecords:
+				rk = 'dispatcher.' + self.name
+				self.create_amqp_queue('Dispatcher_' + self.name, rk, self.consume_dispatcher, self.exchange_name) 
+
 		
 		self.amqp.start()
 		
 		self.pre_run()
-		
+
 		while self.RUN:
 			# Internal signals
 			try:

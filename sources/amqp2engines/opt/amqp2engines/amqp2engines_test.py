@@ -29,6 +29,7 @@ from camqp import camqp
 from cinit import cinit
 ## Engines path
 import sys, os
+import traceback
 sys.path.append(os.path.expanduser('~/opt/amqp2engines/engines/'))
 
 ## Configurations
@@ -51,16 +52,24 @@ def main():
 		sys.exit(1)
 
 	engine_name = sys.argv[1]
-
+	
 	logger.info(" + engine_name: %s" % engine_name)
 
+	module, engine = None, None
 	try:
 		module = __import__(engine_name)
-		engine = module.engine(logging_level=logging.DEBUG)
-	except Exception as err:
-		logger.error("Impossible to load '%s': %s" (engine_name, err))
+	except ImportError as err:
+		logger.error("\nImpossible to load '%s': %s error in script @ :" % (engine_name, err))
+		print traceback.format_exc()
 		sys.exit(1)
-
+	
+	try: 
+		engine = module.engine(logging_level=logging.DEBUG)	
+	except Exception, e:
+		logger.error('Constructor exception raised for engine %s : %s' % (engine_name, e))
+		print traceback.format_exc()
+		sys.exit(1)
+	
 	engine.start()
 	logger.info("Wait")
 	handler.wait()
