@@ -74,7 +74,10 @@ Ext.define('widgets.eventcalendar.eventcalendar' , {
 			calendar: this
 		});
 
-		if(this.defaultView !== "month" || this.defaultView !== "agendaWeek" || this.defaultView !== "agendaDay" || this.defaultView !== "basicWeek" || this.defaultView !== "basicDay")
+		console.log("this.defaultView");
+		console.log(this.defaultView);
+
+		if(this.defaultView !== "month" && this.defaultView !== "agendaWeek" && this.defaultView !== "agendaDay" && this.defaultView !== "basicWeek" && this.defaultView !== "basicDay")
 			this.defaultView = "month";
 	},
 
