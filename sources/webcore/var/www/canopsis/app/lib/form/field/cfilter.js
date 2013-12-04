@@ -1,3 +1,4 @@
+//need:app/lib/form/field/cdate.js,app/lib/store/cstore.js
 /*
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
@@ -635,6 +636,10 @@ Ext.define('canopsis.lib.form.field.cfilter', {
 	mixins: ['canopsis.lib.form.cfield'],
 
 	alias: 'widget.cfilter',
+
+	requires: [
+		'canopsis.lib.store.cstore'
+	],
 
 	border: false,
 

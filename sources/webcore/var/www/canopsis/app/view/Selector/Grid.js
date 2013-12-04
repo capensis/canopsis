@@ -1,3 +1,4 @@
+//need:app/lib/view/cgrid.js
 /*
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
@@ -34,6 +35,8 @@ Ext.define('canopsis.view.Selector.Grid' , {
 
 	opt_bar_search: true,
 	opt_bar_search_field: ['crecord_name', 'display_name', 'description'],
+
+	opt_export_import: true,
 
 	columns: [
 		{

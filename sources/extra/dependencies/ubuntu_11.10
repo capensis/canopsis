@@ -2,4 +2,4 @@
 
 apt-get update
 
-apt-get install -y libevent-dev bzip2 build-essential zlib1g-dev libreadline6-dev libdb4.8-dev libncurses5-dev libexpat1-dev xmlto libcurl4-gnutls-dev git-core libpcre++-dev libsqlite3-dev automake libtool libcairo2-dev librtmp-dev uuid-runtime curl libbz2-dev xvfb libsasl2-dev
+apt-get install -y libevent-dev bzip2 build-essential zlib1g-dev libreadline6-dev libdb4.8-dev libncurses5-dev libexpat1-dev xmlto libcurl4-gnutls-dev git-core libpcre++-dev libsqlite3-dev automake libtool libcairo2-dev librtmp-dev uuid-runtime curl libbz2-dev xvfb libssl-dev libsasl2-dev

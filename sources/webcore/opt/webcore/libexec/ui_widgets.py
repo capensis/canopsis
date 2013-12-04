@@ -92,7 +92,7 @@ def get_all_widgets():
 			if not os.path.exists("%s/widget.json" % widget_path):
 				continue
 
-		logger.debug("   + Load '%s' (%s)" % (widget, widget_path))
+		logger.info("   + Load '%s' (%s)" % (widget, widget_path))
 
 		widget_info = get_widget_json("%s/widget.json" % widget_path)
 

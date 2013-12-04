@@ -27,13 +27,15 @@ sys.path.append(os.path.expanduser('~/opt/amqp2engines/engines/'))
 import event_filter
 from cengine import DROP
 
-class KnownValues(unittest.TestCase): 
+
+class KnownValues(unittest.TestCase):
 	def setUp(self):
 		self.engine = event_filter.engine(logging_level=logging.DEBUG)
 		self.engine.beat()
 
-	def test_01_Init(self):	
+	def test_01_Init(self):
 		self.engine.drop_event_count = 0
+		self.engine.pass_event_count = 0
 		self.engine.configuration = {
 			'rules': [
 				{'mfilter': {'connector': 'nagios'}	, 'action': 'pass'},
@@ -46,8 +48,8 @@ class KnownValues(unittest.TestCase):
 				{'mfilter': {'connector': 'second_rule'}, 'action': 'pass'},
 				{'mfilter': {'connector': 'priority'}, 'action': 'drop'},
 				{'mfilter': {'test_field': { '$eq': 'cengine' } }, 'action': 'pass'},
-				{'mfilter': {'test_field': { '$gt': 1378713357 } },'action': 'drop'},	
-			], 
+				{'mfilter': {'test_field': { '$gt': 1378713357 } },'action': 'drop'},
+			],
 			'priority' : 2,
 			'default_action': 'drop',
 			'configuration': 'white_black_lists',
@@ -56,10 +58,8 @@ class KnownValues(unittest.TestCase):
 		# Test normal behaviors
 		event = {'connector': 'nagios'}
 
-
 		self.assertTrue(self.engine.work(event) == event)
 
-	
 		event['connector'] = 'collectd'
 		self.assertTrue(self.engine.work(event) == DROP)
 
@@ -79,19 +79,11 @@ class KnownValues(unittest.TestCase):
 		# rule priority validation sorted is the same used in beat method in the engine
 		event['connector'] = 'priority'
 		self.assertTrue(self.engine.work(event) == event)
-		# self.engine.configuration = sorted(self.engine.configurations, key=lambda x: x['priority'])
-		# self.assertTrue(self.engine.work(event) == DROP)
-
 
 		# No configuration, default configuration is loaded
 		self.engine.configuration = {}
 		self.assertTrue(self.engine.work(event) == event)
 
 
-
 if __name__ == "__main__":
-
 	unittest.main()
-	
-
-

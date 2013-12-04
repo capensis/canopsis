@@ -1,3 +1,4 @@
+//need:app/lib/view/ctree.js
 /*
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
@@ -29,7 +30,23 @@ Ext.define('canopsis.view.View.TreePanel' , {
 	reporting: true,
 	opt_bar_export: true,
 
+	listeners: {
+		selectionchange: function(selectionModel, selected) {
+			var store = selectionModel.getStore();
+			var all_selected = selected.length == store.count();
+
+			var cb = Ext.getCmp(this.cb_select_all_id);
+
+			if(cb.getValue() != all_selected) {
+				cb.onSelectionChange = true;
+				cb.setValue(all_selected);
+			}
+		}
+	},
+
 	initComponent: function() {
+		this.cb_select_all_id = Ext.id();
+
 		this.columns = [{
 			xtype: 'treecolumn',
 			text: _('Name'),
@@ -193,16 +210,44 @@ Ext.define('canopsis.view.View.TreePanel' , {
 
 		this.callParent(arguments);
 
-		var config = {
-			xtype: 'button',
-			iconCls: 'icon-import',
-			text: _('Import view'),
-			disabled: false,
-			action: 'import'
-		};
+		var me = this;
+		var buttons = [
+			{
+				xtype: 'button',
+				iconCls: 'icon-import',
+				text: _('Import view'),
+				disabled: false,
+				action: 'import'
+			},{
+				xtype: 'button',
+				iconCls: 'icon-export',
+				text: _('Export view as JSON'),
+				disabled: false,
+				action: 'exportjson'
+			},{
+				xtype: 'checkboxfield',
+				id: this.cb_select_all_id,
+				boxLabel: _('Select all'),
+				disabled: false,
+				onSelectionChange: false,
+				handler: function(checkbox, checked) {
+					if(!checkbox.onSelectionChange) {
+						if(checked) {
+							me.getSelectionModel().selectAll();
+						}
+						else {
+							me.getSelectionModel().deselectAll();
+						}
+					}
 
-		this.dockedToolbar.add(config);
+					checkbox.onSelectionChange = false;
+				}
+			}
+		];
 
+		for(var i = 0; i < buttons.length; i++) {
+			this.dockedToolbar.add(buttons[i]);
+		}
 	},
 
 	export_pdf: function(view) {

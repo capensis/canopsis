@@ -29,45 +29,42 @@ import amqp
 sys.path.append(os.path.expanduser('~/opt/amqp2engines/engines/'))
 import selector
 
-class KnownValues(unittest.TestCase): 
+
+class KnownValues(unittest.TestCase):
 	def setUp(self):
 		self.storage = get_storage(namespace='object', account=caccount(user="root", group="root"))
-		self.engine = selector.engine()#logging_level=logging.DEBUG		
+		self.engine = selector.engine()#logging_level=logging.DEBUG
 		self.engine.storage = self.storage
-		
-	def test_01_Init(self):	
+
+	def test_01_Init(self):
+		self.engine.pre_run()
 
 		selectorTest = cselector(self.storage, name='selectorTest')
 		selectorTest.mfilter = {'test_key': 'value'}
 		selectorTest.load(selectorTest.dump())
-			
-		
+
 		self.engine.selectors = [selectorTest]
-			
+
 		self.engine.work({'test_key':'not a value'})
 		self.assertTrue(self.engine.selector_refresh == {})
-			
+
 		self.engine.selectors = [selectorTest]
 		self.engine.work({'test_key':'value'})
 		self.assertTrue(self.engine.selector_refresh == {'selector.account.root.selectorTest': True})
-		
-		
-		
 
 		from camqp import camqp
 		self.engine.amqp = camqp(logging_level=logging.INFO, logging_name="test selector engine")
-		
+
 		for event_append in xrange(10):
 			self.engine.beat()
-			
+
 		self.engine.beat()
 
-		
-		#self.assertTrue(e == exception)
-		
-if __name__ == "__main__":
+		self.engine.post_run()
 
+
+if __name__ == "__main__":
 	unittest.main()
-	
+
 
 

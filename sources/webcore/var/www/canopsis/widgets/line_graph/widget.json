@@ -174,7 +174,7 @@
 								"queryMode": "local",
 								"displayField": "text",
 								"valueField": "value",
-								"value": "AVERAGE",
+								"value": "MEAN",
 								"store": {
 									"xtype": "store",
 									"fields": ["value", "text"],
@@ -185,7 +185,7 @@
 										{"value": "LAST", "text": "Last"},
 										{"value": "FIRST", "text": "First"},
 										{"value": "DELTA", "text": "Delta"},
-										{"value": "AVERAGE", "text": "Average"},
+										{"value": "MEAN", "text": "Mean"},
 										{"value": "SUM", "text": "Sum"}
 									]
 								}
@@ -244,14 +244,14 @@
 										{"value": "max", "text": "Max"},
 										{"value": "min", "text": "Min"},
 										{"value": "sum", "text": "Sum"},
-										{"value": "average", "text": "Average"}
+										{"value": "mean", "text": "Mean"}
 									]
 								}
 							}
 						]
 					}
 				]
-		},{					
+		},{
 			"title": "Style",
 			"advanced": true,
 			"items": [{
@@ -264,7 +264,7 @@
 								"fieldLabel": "Title font size",
 								"minValue": 1,
 								"value": 15
-                           }		
+                           }
 						]
 					},{
 						"xtype": "cfieldset",
@@ -376,6 +376,11 @@
 										{"value": "vertical", "text": "Vertical"}
 									]
 								}
+							},{
+								"xtype": "checkbox",
+								"name": "displayComponentsAndResourcesInLegend",
+								"fieldLabel": "Display component and resource",
+								"checked": false
 							}]
 					}]
 		},{
@@ -384,7 +389,7 @@
 			"items": [{
 				"xtype": "panel",
     			"border":0,
-				"layout": {                        
+				"layout": {
 					"type": "vbox",
 					"pack": "start",
 					"align" : "stretch"
@@ -485,6 +490,14 @@
 													{"value": 4, "text": "4th axis"}
 												]
 											}
+										},{
+											"xtype": "numberfield",
+											"name": "threshold_warn",
+											"fieldLabel": "Custom Warning threshold"
+										},{
+											"xtype": "numberfield",
+											"name": "threshold_crit",
+											"fieldLabel": "Custom Critical threshold"
 										}]
 					}]
 		}]

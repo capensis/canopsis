@@ -195,6 +195,63 @@ def exportView(_id=None):
 		logger.error(' + Error while fetching view : %s' % err)
 		return {"total": 0, "success": False, "data": {}}
 
+@get('/ui/export/object/:_id')
+def export_object(_id=None):
+	logger.debug('Prepare to return object json file')
+	account = get_account()
+	storage = get_storage(namespace='object', account=account)
+	
+	if not _id:
+		_id = request.params.get('_id', default=None)
+	
+	try:
+		logger.debug(' + Try to get object from database')
+		record = storage.get(_id, account=account)
+		
+		logger.debug(' + %s found' % record.name)
+		
+		response.headers['Content-Disposition'] = 'attachment; filename="%s.json"' % record.name
+		response.headers['Content-Type'] = 'application/json'
+
+		dump = record.dump()
+		del dump['_id']
+	
+		return json.dumps(dump, sort_keys=True, indent=4)
+		
+	except Exception,err:
+		logger.error(' + Error while fetching object : %s' % err)
+		return json.dumps({'error': str(err)}, sort_keys=True, indent=4)
+
+@post('/ui/export/objects')
+def export_objects():
+	logger.debug('Prepare to return objects json file')
+	account = get_account()
+	storage = get_storage(namespace='object', account=account)
+
+	ids = request.params.getall('ids')
+
+	try:
+		records = []
+
+		for _id in ids:
+			logger.debug(' + Try to get object: %s' % _id)
+			record = storage.get(_id, account=account)
+
+			logger.debug(' + %s found' % record.name)
+
+			dump = record.dump()
+			del dump['_id']
+
+			records.append(dump)
+
+		response.headers['Content-Disposition'] = 'attachment; filename="objects.json"'
+		response.headers['Content-Type'] = 'application/json'
+
+		return json.dumps(records, sort_keys=True, indent=4)
+
+	except Exception, err:
+		logger.error(' + Error while fetching objects : %s' % err)
+		return json.dumps({'error': str(err)}, sort_keys=True, indent=4)
 
 def add_view(views, storage, account):
 	if not isinstance(views, list):

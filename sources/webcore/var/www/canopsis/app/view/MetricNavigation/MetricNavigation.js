@@ -1,3 +1,4 @@
+//need:app/lib/form/field/cinventory.js
 /*
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
@@ -21,6 +22,10 @@ Ext.define('canopsis.view.MetricNavigation.MetricNavigation', {
 	extend: 'Ext.panel.Panel',
 
 	alias: 'widget.MetricNavigation',
+
+	requires: [
+		'canopsis.lib.form.field.cinventory'
+	],
 
 	border: false,
 

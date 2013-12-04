@@ -146,7 +146,7 @@
 								"queryMode": "local",
 								"displayField": "text",
 								"valueField": "value",
-								"value": "AVERAGE",
+								"value": "MEAN",
 								"store": {
 									"xtype": "store",
 									"fields": ["value", "text"],
@@ -157,7 +157,7 @@
 										{"value": "LAST", "text": "Last"},
 										{"value": "FIRST", "text": "First"},
 										{"value": "DELTA", "text": "Delta"},
-										{"value": "AVERAGE", "text": "Average"},
+										{"value": "MEAN", "text": "Mean"},
 										{"value": "SUM", "text": "Sum"}
 									]
 								}
@@ -313,6 +313,11 @@
 										{"value": "vertical", "text": "Vertical"}
 									]
 								}
+							},{
+								"xtype": "checkbox",
+								"name": "displayComponentsAndResourcesInLegend",
+								"fieldLabel": "Display component and resource",
+								"checked": false
 							}]
 					}]
 		},{
@@ -349,6 +354,14 @@
 									"fieldLabel":"Trend",
 									"checked":true,
 									"name":"trend"
+								},{
+									"xtype": "numberfield",
+									"name": "threshold_warn",
+									"fieldLabel": "Custom Warning threshold"
+								},{
+									"xtype": "numberfield",
+									"name": "threshold_crit",
+									"fieldLabel": "Custom Critical threshold"
 								}]
 				}]
 	}]

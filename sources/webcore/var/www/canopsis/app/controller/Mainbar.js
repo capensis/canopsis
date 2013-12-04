@@ -1,3 +1,4 @@
+//need:app/view/Mainbar/Bar.js,app/lib/view/cauthkey.js,app/model/Schedule.js
 /*
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
@@ -18,6 +19,11 @@
 */
 Ext.define('canopsis.controller.Mainbar', {
 	extend: 'Ext.app.Controller',
+
+	requires: [
+		'canopsis.lib.view.cauthkey',
+		'canopsis.model.Schedule'
+	],
 
 	views: ['Mainbar.Bar'],
 

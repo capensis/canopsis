@@ -1,3 +1,4 @@
+//need:app/lib/view/cperfstoreValueConsumerWidget.js,app/lib/view/csparkline.js
 /*
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
@@ -20,7 +21,9 @@ Ext.define('widgets.trends.trends' , {
 	extend: 'canopsis.lib.view.cperfstoreValueConsumerWidget',
 	alias: 'widget.trends',
 
-	requires: ['canopsis.lib.view.csparkline'],
+	requires: [
+		'canopsis.lib.view.csparkline'
+	],
 
 	wcontainer_layout: 'anchor',
 

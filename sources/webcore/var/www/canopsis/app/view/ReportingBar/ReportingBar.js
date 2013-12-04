@@ -1,3 +1,4 @@
+//need:app/lib/form/field/cdate.js
 /*
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
@@ -16,7 +17,7 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 */
-Ext.define('canopsis.view.ReportingBar.ReportingBar' , {
+Ext.define('canopsis.view.ReportingBar.ReportingBar', {
 	extend: 'Ext.toolbar.Toolbar',
 
 	requires: [

@@ -1,3 +1,4 @@
+//need:app/store/Tabs.js,app/view/Tabs/View.js,app/view/Tabs/Content.js
 /*
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #

@@ -1,3 +1,4 @@
+//need:app/lib/form/field/cdate.js,app/controller/common.js
 /*
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
@@ -23,7 +24,8 @@ Ext.define('canopsis.lib.view.cgrid' , {
 		'Ext.grid.plugin.CellEditing',
 		'Ext.form.field.Text',
 		'Ext.toolbar.TextItem',
-		'canopsis.lib.form.field.cdate'
+		'canopsis.lib.form.field.cdate',
+		'canopsis.controller.common'
 	],
 
 	// Options
@@ -83,6 +85,22 @@ Ext.define('canopsis.lib.view.cgrid' , {
 
 	logAuthor: '[view][cgrid]',
 
+	listeners: {
+		selectionchange: function(selectionModel, selected) {
+			if(this.opt_export_import) {
+				var store = selectionModel.getStore();
+				var all_selected = selected.length == store.count();
+
+				var cb = Ext.getCmp(this.cb_select_all_id);
+
+				if(cb.getValue() != all_selected) {
+					cb.onSelectionChange = true;
+					cb.setValue(all_selected);
+				}
+			}
+		}
+	},
+
 	getTbar: function() {
 		var dockedItems = this.getDockedItems();
 
@@ -104,7 +122,15 @@ Ext.define('canopsis.lib.view.cgrid' , {
 		this.suspendLayout = true;
 	},
 
+	//This function purpose is to add a new item to the grid once import done properly
+	add_to_home: function(record) {
+		log.debug(record);
+		this.store.insert(0, record);
+	},
+
 	initComponent: function() {
+		this.cb_select_all_id = Ext.id();
+
 		// Multi select
 		if(this.opt_multiSelect === true) {
 			this.multiSelect = true;
@@ -172,6 +198,69 @@ Ext.define('canopsis.lib.view.cgrid' , {
 						action: 'delete'
 					});
 				}
+
+				//This option manages import and export functions for a grid object system
+				if (this.opt_export_import) {
+					var model = this.model;
+					var gridView = this;
+
+					bar_child.push({
+						xtype: 'button',
+						iconCls: 'icon-import',
+						text: _('Import '+ this.model),
+						disabled: false,
+						action: 'import',
+						handler: function() {
+							var controller_common = Ext.create('canopsis.controller.common');
+							controller_common.filepopup(gridView, model);
+						},
+					});
+
+					bar_child.push({
+						xtype: 'button',
+						iconCls: 'icon-export',
+						text: _('Export '+ this.model),
+						disabled: false,
+						action: 'export',
+						handler: function() {
+							var selection = gridView.getSelectionModel().getSelection();
+
+							log.debug('Exporting selection:', gridView.logAuthor);
+							log.dump(selection);
+
+							var data = [];
+
+							for(var i = 0; i < selection.length; i++) {
+								data.push({
+									name: 'ids',
+									value: selection[i].data._id
+								});
+							}
+
+							postDataToURL('/ui/export/objects', data);
+						}
+					});
+
+					bar_child.push({
+						xtype: 'checkboxfield',
+						id: this.cb_select_all_id,
+						boxLabel: _('Select all'),
+						onSelectionChange: false,
+						handler: function(checkbox, checked) {
+							if(!checkbox.onSelectionChange) {
+								if(checked) {
+									gridView.getSelectionModel().selectAll();
+								}
+								else {
+									gridView.getSelectionModel().deselectAll();
+								}
+							}
+
+							checkbox.onSelectionChange = false;
+						}
+					});
+				}
+
 
 				if(this.opt_bar_customs) {
 					bar_child = bar_child.concat(this.opt_bar_customs);

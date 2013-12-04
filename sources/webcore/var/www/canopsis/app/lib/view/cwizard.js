@@ -1,3 +1,4 @@
+//need:app/lib/form/field/cinventory.js,app/lib/form/field/ccomponentlist.js,app/lib/form/field/cmetric.js,app/lib/form/field/ccustom.js,app/lib/form/field/cfilter.js,app/lib/form/field/cwlist.js,app/lib/form/field/ctag.js,app/lib/form/field/cfieldset.js,app/lib/form/field/cdate.js,app/lib/form/field/cduration.js,app/lib/form/field/cduration.js,app/lib/form/field/ccolorfield.js,app/lib/view/ccard.js
 /*
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
@@ -40,6 +41,7 @@ Ext.define('canopsis.lib.view.cwizard', {
 
 	requires: [
 		'canopsis.lib.form.field.cinventory',
+		'canopsis.lib.form.field.ccomponentlist',
 		'canopsis.lib.form.field.cmetric',
 		'canopsis.lib.form.field.ccustom',
 		'canopsis.lib.form.field.cfilter',
@@ -47,7 +49,6 @@ Ext.define('canopsis.lib.view.cwizard', {
 		'canopsis.lib.form.field.ctag',
 		'canopsis.lib.form.field.cfieldset',
 		'canopsis.lib.form.field.cdate',
-		'canopsis.lib.form.field.cduration',
 		'canopsis.lib.form.field.cduration',
 		'canopsis.lib.form.field.ccolorfield',
 		'canopsis.lib.view.ccard'

@@ -1,3 +1,4 @@
+//need:app/lib/view/cform.js,app/lib/form/field/cfieldset.js,app/lib/form/field/cinventory.js,app/lib/form/field/cfilter.js,app/lib/form/field/cduration.js
 /*
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #

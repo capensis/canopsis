@@ -1,3 +1,4 @@
+//need:app/lib/controller/cgrid.js,app/view/Selector/Grid.js,app/view/Selector/Form.js,app/store/Selectors.js
 /*
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
@@ -99,7 +100,7 @@ Ext.define('canopsis.controller.Selector', {
 			data.sla_output_tpl = message;
 		}
 
-		updateRecord('object', 'selector', 'canopsis.model.selector', _id, data, function() {
+		updateRecord('object', 'selector', 'canopsis.model.Selector', _id, data, function() {
 			global.notify.notify(_('Message updated'), 'The message will be display in few minutes', 'success');
 		});
 	}

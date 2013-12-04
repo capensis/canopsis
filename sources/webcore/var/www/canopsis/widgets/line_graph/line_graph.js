@@ -1,3 +1,4 @@
+//need:app/lib/view/cperfstoreValueConsumerWidget.js
 /*
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
@@ -68,6 +69,7 @@ Ext.define('widgets.line_graph.line_graph', {
 	extend: 'canopsis.lib.view.cperfstoreValueConsumerWidget',
 
 	alias: 'widget.line_graph',
+	logAuthor: '[widgets][line_graph]',
 
 	layout: 'fit',
 
@@ -118,7 +120,7 @@ Ext.define('widgets.line_graph.line_graph', {
 	maxZoom: 60 * 10,
 
 	interval: global.commonTs.hours,
-	aggregate_method: 'MAX',
+	aggregate_method: 'MEAN',
 	aggregate_interval: 0,
 	aggregate_max_points: 500,
 	aggregate_round_time: true,
@@ -149,10 +151,10 @@ Ext.define('widgets.line_graph.line_graph', {
 	autoShift: false,
 	lastShift: undefined,
 
+	displayComponentsAndResourcesInLegend: false,
+
 	initComponent: function() {
 		this.callParent(arguments);
-
-		this.logAuthor = '[widgets][line_graph]';
 
 		this.backgroundColor        = check_color(this.backgroundColor);
 		this.borderColor            = check_color(this.borderColor);
@@ -634,13 +636,14 @@ Ext.define('widgets.line_graph.line_graph', {
 				var e = serie.xAxis.getExtremes();
 				var time_window = e.max - e.min;
 
-				if(this.reportMode) {
-					this.stopTask();
-					serie.xAxis.setExtremes(from, to, false);
-				}
-				else {
+				if(!this.reportMode) {
 					serie.xAxis.setExtremes(now - time_window, now, false);
 				}
+			}
+
+			if(this.reportMode) {
+				this.stopTask();
+				this.chart.xAxis[0].setExtremes(from, to, false);
 			}
 
 			this.refreshNodes(from, to);
@@ -929,12 +932,23 @@ Ext.define('widgets.line_graph.line_graph', {
 			label = node.label;
 		}
 
-		if(curve) {
+		if(!label && curve) {
 			label = curve.get('label');
 		}
 
 		if(!label) {
 			label = metric_name;
+		}
+
+		if (this.displayComponentsAndResourcesInLegend) {
+			if (node.dn.length>0) {
+				var component_name = node.dn[0];
+				if (node.dn.length > 1) {
+					var resource_name = node.dn[1];
+					label = resource_name + '/' + label;
+				}
+				label = component_name + '/' + label;
+			}
 		}
 
 		log.debug('    + label: ' + label, this.logAuthor);
@@ -1087,6 +1101,7 @@ Ext.define('widgets.line_graph.line_graph', {
 		var values = data['values'];
 		var bunit = data['bunit'];
 		var node_id = data['node'];
+		var node = this.nodesByID[node_id];
 		var min = data['min'];
 		var max = data['max'];
 		var type = data['type'];
@@ -1145,9 +1160,21 @@ Ext.define('widgets.line_graph.line_graph', {
 		}
 
 		//Add war/crit line if on first serie
+		var thld_warn = data['thld_warn'];
+
+		if(node['threshold_warn']) {
+			thld_warn = node['threshold_warn'];
+		}
+
+		var thld_crit = data['thld_crit'];
+
+		if(node['threshold_crit']) {
+			thld_crit = node['threshold_crit'];
+		}
+
 		if(this.chart.series.length === 1 && this.showWarnCritLine) {
-			if(data['thld_warn']) {
-				value = data['thld_warn'];
+			if(thld_warn) {
+				value = thld_warn;
 
 				if(this.SeriePercent && serie.options.max > 0) {
 					value = getPct(value, serie.options.max);
@@ -1156,8 +1183,8 @@ Ext.define('widgets.line_graph.line_graph', {
 				this.addPlotlines('pl_warning', value, 'orange');
 			}
 
-			if(data['thld_crit']) {
-				value = data['thld_crit'];
+			if(thld_crit) {
+				value = thld_crit;
 
 				if(this.SeriePercent && serie.options.max > 0) {
 					value = getPct(value, serie.options.max);

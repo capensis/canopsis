@@ -1,3 +1,4 @@
+//need:app/lib/view/cperfstoreValueConsumerWidget.js
 /*
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
@@ -54,6 +55,7 @@ Ext.define('widgets.diagram.diagram', {
 	aggregate_method: 'LAST',
 	aggregate_interval: 0,
 	aggregate_max_points: 1,
+	aggregate_round_time: true,
 
 	nb_node: 0,
 	hide_other_column: false,
@@ -63,7 +65,7 @@ Ext.define('widgets.diagram.diagram', {
 	nameInLabelFormatter: false,
 	pctInLabel: true,
 
-	haveCounter: false,
+	useLastRefresh: false,
 
 	labelFormatter: function() {
 		if(this.y === 0) {
@@ -135,10 +137,6 @@ Ext.define('widgets.diagram.diagram', {
 		log.dump(this.nodesByID);
 
 		Ext.Object.each(this.nodesByID, function(id, node) {
-			if(node['type'] && node['type'] === 'COUNTER') {
-				this.haveCounter = true;
-			}
-
 			// initialize categories
 			if(node.category) {
 				if(Ext.Array.indexOf(this.categories, node.category) === -1) {
@@ -338,24 +336,10 @@ Ext.define('widgets.diagram.diagram', {
 	},
 
 	processPostParams: function(post_params) {
-		post_params['aggregate_timemodulation'] = false;
 		post_params['aggregate_max_points'] = 1;
 	},
 
 	doRefresh: function(from, to) {
-		// Get last point only
-		if(this.time_window && from === 0) {
-			from = to - (this.time_window * 1000);
-		}
-
-		if(!this.haveCounter) {
-			from = to;
-		}
-
-		if(this.haveCounter && this.time_window) {
-			from = to - (this.time_window * 1000);
-		}
-
 		log.debug('Get values from ' + new Date(from) + ' to ' + new Date(to), this.logAuthor);
 
 		this.refreshNodes(from, to);

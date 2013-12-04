@@ -1,3 +1,4 @@
+//need:app/lib/view/cform.js,app/lib/form/field/ctopo.js,app/lib/form/field/cinventory.js
 /*
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
@@ -18,8 +19,13 @@
 */
 Ext.define('canopsis.view.Topology.Form', {
 	extend: 'canopsis.lib.view.cform',
-
 	alias: 'widget.TopologyForm',
+
+	requires: [
+		'canopsis.lib.form.field.ctopo',
+		'canopsis.lib.form.field.cinventory'
+	],
+
 	layout: {
 		type: 'hbox',
 		align: 'stretch'

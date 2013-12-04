@@ -1,3 +1,4 @@
+//need:app/lib/form/cfield.js,app/lib/view/cgrid.js,app/lib/store/cstore.js,app/lib/controller/cgrid.js,app/lib/menu/cclear.js
 /*
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
@@ -23,6 +24,13 @@ Ext.define('canopsis.lib.form.field.cinventory' , {
 
 	alias: 'widget.cinventory',
 
+	requires: [
+		'canopsis.lib.view.cgrid',
+		'canopsis.lib.store.cstore',
+		'canopsis.lib.controller.cgrid',
+		'canopsis.lib.menu.cclear'
+	],
+
 	border: false,
 	search_grid_border: true,
 
@@ -36,6 +44,7 @@ Ext.define('canopsis.lib.form.field.cinventory' , {
 
 	inventory_url: '/rest/events/event',
 
+	additional_fields: [],
 	vertical_multiselect: false,
 	padding: 5,
 	base_filter: undefined,
@@ -110,8 +119,19 @@ Ext.define('canopsis.lib.form.field.cinventory' , {
 		// building model on the fly with the additionnal field if needed
 		var fields = this.fields;
 
-		if(this.additional_field) {
-			fields.push(this.additional_field.name);
+		//backward compatibility
+		if(this.additional_field && !Canopsis.inArray(this.additional_fields, this.additional_field)) {
+			this.additional_fields.push(this.additional_field);
+		}
+
+		if(this.additional_fields.length > 0) {
+			for(var i = 0; i < this.additional_fields.length; i++) {
+				var field = this.additional_fields[i];
+
+				if(!Canopsis.inArray(fields, field.name)) {
+					fields.push(field.name);
+				}
+			}
 		}
 
 		Ext.define('simplified_event', {
@@ -184,7 +204,7 @@ Ext.define('canopsis.lib.form.field.cinventory' , {
 				flex: 1,
 				height: selection_height,
 				store: this.selection_store,
-				hideHeaders: true,
+				hideHeaders: false,
 				autoScroll: true,
 				columns: [
 					{
@@ -194,6 +214,7 @@ Ext.define('canopsis.lib.form.field.cinventory' , {
 						dataIndex: 'source_type',
 						renderer: rdr_source_type
 					},{
+						header: _('Source'),
 						sortable: false,
 						dataIndex: 'id',
 						flex: 2,
@@ -202,6 +223,7 @@ Ext.define('canopsis.lib.form.field.cinventory' , {
 				],
 
 				viewConfig: {
+					markDirty: false,
 					plugins: {
 						ptype: 'gridviewdragdrop',
 						dragGroup: this.dragGroup,
@@ -240,7 +262,7 @@ Ext.define('canopsis.lib.form.field.cinventory' , {
 			};
 
 			// additional field (if specified only)
-			if(this.additional_field) {
+			if(this.additional_fields.length > 0) {
 				selection_grid_config.plugins = [
 					Ext.create('Ext.grid.plugin.CellEditing', {
 						clicksToEdit: 1,
@@ -248,28 +270,46 @@ Ext.define('canopsis.lib.form.field.cinventory' , {
 					})
 				];
 
-				var editor_config = {
-					sortable: false,
-					dataIndex: this.additional_field.name,
-					editor: this.additional_field,
-					flex: 3
-				};
+				selection_grid_config.fieldsEmptyText = {};
 
-				selection_grid_config.emptyText = this.additional_field.emptyText;
+				for(i = 0; i < this.additional_fields.length; i++) {
+					var field = this.additional_fields[i];
 
-				if(this.additional_field.name === 'link') {
-					editor_config.renderer = function(val) {
-						if(!val) {
-							return Ext.String.format('<span style="color:grey">{0}</span>', this.emptyText);
-						}
-						else {
-							return val;
-						}
+					var editor_config = {
+						header: field.title,
+						sortable: false,
+						dataIndex: field.name,
+						editor: field,
+						flex: 3
 					};
-				}
 
-				selection_grid_config.columns.push(editor_config);
-				selection_grid_config.flex = 2;
+					selection_grid_config.fieldsEmptyText[field.name] = field.emptyText;
+
+					if(field.name === 'link' || field.name === 'display_name') {
+						editor_config.renderer = function(val, metaData, record, row, col) {
+							void(metaData, record, row);
+
+							var fieldName = this.columns[col].dataIndex;
+							var emptyText = this.fieldsEmptyText[fieldName];
+
+							if(!val) {
+								return Ext.String.format('<span style="color:grey">{0}</span>', emptyText);
+							}
+							else {
+								return val;
+							}
+						};
+					}
+
+					if(field.xtype === 'checkboxfield') {
+						editor_config.xtype = "checkcolumn";
+						editor_config.flex = 1;
+						delete editor_config.editor;
+					}
+
+					selection_grid_config.columns.push(editor_config);
+					selection_grid_config.flex = 2;
+				}
 			}
 
 			this.selection_grid = Ext.create('canopsis.lib.view.cgrid', selection_grid_config);
@@ -391,8 +431,12 @@ Ext.define('canopsis.lib.form.field.cinventory' , {
 				}
 
 				//set additionnal value if needed
-				if(this.additional_field && this.loaded_value[record.data._id] !== undefined) {
-					record_data[this.additional_field.name] = this.loaded_value[record.data._id];
+				if(this.additional_fields.length > 0 && this.loaded_value[record.data._id] !== undefined) {
+					for(var i = 0; i < this.additional_fields.length; i++) {
+						var field = this.additional_fields[i];
+
+						record_data[field.name] = this.loaded_value[record.data._id][field.name];
+					}
 				}
 
 				if(index !== undefined) {
@@ -417,12 +461,17 @@ Ext.define('canopsis.lib.form.field.cinventory' , {
 				var id = record.data.id;
 				var obj = Ext.clone(record.data);
 
-				if(this.additional_field) {
-					var additional_value = record.data[this.additional_field.name];
+				if(this.additional_fields.length > 0) {
 					//double id is for compatibility
 					obj['id'] = id;
 					obj['_id'] = id;
-					obj[this.additional_field.name] = additional_value;
+
+					for(var i = 0; i < this.additional_fields.length; i++) {
+						var additional_value = record.data[this.additional_fields[i].name];
+						
+						obj[this.additional_fields[i].name] = additional_value;
+					}
+
 					dump.push(obj);
 				}
 				else {
@@ -448,7 +497,7 @@ Ext.define('canopsis.lib.form.field.cinventory' , {
 			var ids = [];
 
 			//Get only id
-			if(this.additional_field && Ext.isObject(data[0])) {
+			if(this.additional_fields.length > 0 && Ext.isObject(data[0])) {
 				//push id
 				for(var i = 0; i < data.length; i++) {
 					ids.push(data[i].id);
@@ -457,7 +506,15 @@ Ext.define('canopsis.lib.form.field.cinventory' , {
 				//list to dict
 				var dict = {};
 				for (i = 0; i < this.loaded_value.length; i++) {
-					dict[this.loaded_value[i].id] = this.loaded_value[i][this.additional_field.name];
+					var value = this.loaded_value[i];
+
+					dict[value.id] = {};
+
+					for(var j = 0; j < this.additional_fields.length; j++) {
+						var field = this.additional_fields[j];
+
+						dict[value.id][field.name] = value[field.name];
+					}
 				}
 
 				this.loaded_value = dict;

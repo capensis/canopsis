@@ -1,3 +1,4 @@
+//need:app/lib/store/cstore.js,app/model/Account.js
 /*
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #

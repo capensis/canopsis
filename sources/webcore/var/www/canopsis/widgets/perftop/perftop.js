@@ -1,3 +1,4 @@
+//need:app/lib/view/cwidget.js,app/store/Perfdatas.js,app/lib/view/cgrid.js
 /*
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
@@ -20,6 +21,11 @@ Ext.define('widgets.perftop.perftop' , {
 	extend: 'canopsis.lib.view.cwidget',
 
 	alias: 'widget.perftop',
+
+	requires: [
+		'canopsis.store.Perfdatas',
+		'canopsis.lib.view.cgrid'
+	],
 
 	//Default options
 	limit: 10,
