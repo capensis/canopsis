@@ -140,7 +140,7 @@ Ext.define('widgets.eventcalendar.eventcalendar' , {
 					calendarRoot.sources_byComponent[currentSource.component] = currentSource;
 				};
 
-				if(!event.type === "calendar")
+				if(event.type === "non-calendar")
 				{
 					log.debug('no component (ics source) for event, assuming the event is stacked regular events', calendarRoot.logAuthor);
 					element.css({"background-color" : calendarRoot.defaultEventColor, "border-color" : calendarRoot.defaultEventColor});
@@ -157,7 +157,7 @@ Ext.define('widgets.eventcalendar.eventcalendar' , {
 
 					if(!!sourceColor)
 					{
-						element.css({ "border-color" : sourceColor, "background-color" : sourceColor});
+						element.css({ "background-color" : sourceColor, "border-color" : sourceColor});
 					}
 				}
 				return true;
