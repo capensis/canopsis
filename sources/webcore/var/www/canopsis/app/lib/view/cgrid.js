@@ -122,12 +122,6 @@ Ext.define('canopsis.lib.view.cgrid' , {
 		this.suspendLayout = true;
 	},
 
-	//This function purpose is to add a new item to the grid once import done properly
-	add_to_home: function(record) {
-		log.debug(record);
-		this.store.insert(0, record);
-	},
-
 	initComponent: function() {
 		this.cb_select_all_id = Ext.id();
 
