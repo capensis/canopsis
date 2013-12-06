@@ -251,7 +251,7 @@
 						]
 					}
 				]
-		},{					
+		},{
 			"title": "Style",
 			"advanced": true,
 			"items": [{
@@ -264,7 +264,7 @@
 								"fieldLabel": "Title font size",
 								"minValue": 1,
 								"value": 15
-                           }		
+                           }
 						]
 					},{
 						"xtype": "cfieldset",
@@ -376,6 +376,11 @@
 										{"value": "vertical", "text": "Vertical"}
 									]
 								}
+							},{
+								"xtype": "checkbox",
+								"name": "displayComponentsAndResourcesInLegend",
+								"fieldLabel": "Display component and resource",
+								"checked": false
 							}]
 					}]
 		},{
@@ -384,7 +389,7 @@
 			"items": [{
 				"xtype": "panel",
     			"border":0,
-				"layout": {                        
+				"layout": {
 					"type": "vbox",
 					"pack": "start",
 					"align" : "stretch"
