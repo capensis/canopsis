@@ -1,5 +1,5 @@
+//need:app/lib/view/cpopup.js,app/lib/form/field/cdate.js
 /*
-#--------------------------------
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
@@ -16,12 +16,15 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
-# ---------------------------------
 */
 
 Ext.define('widgets.weather.advertisement_popup' , {
 	extend: 'canopsis.lib.view.cpopup',
 	alias: 'widget.weather.advertisement_popup',
+
+	requires: [
+		'canopsis.lib.form.field.cdate'
+	],
 
 	_component: undefined,
 	referer: undefined,
@@ -101,6 +104,7 @@ Ext.define('widgets.weather.advertisement_popup' , {
 					label_text: _('To')
 				}]
 		});
+
 		return this._form;
 	},
 

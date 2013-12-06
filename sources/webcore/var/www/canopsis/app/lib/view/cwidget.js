@@ -1,5 +1,4 @@
 /*
-#--------------------------------
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
@@ -16,9 +15,8 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
-# ---------------------------------
 */
-Ext.define('canopsis.lib.view.cwidget' , {
+Ext.define('canopsis.lib.view.cwidget', {
 	extend: 'Ext.panel.Panel',
 
 	border: false,
@@ -37,8 +35,6 @@ Ext.define('canopsis.lib.view.cwidget' , {
 	baseUrl: '/rest/events/event',
 	uri: '/rest/events/event',
 
-	logAuthor: '[widget]',
-
 	wcontainer_layout: 'fit',
 	wcontainer_autoScroll: false,
 
@@ -49,31 +45,51 @@ Ext.define('canopsis.lib.view.cwidget' , {
 	fullscreenMode: false,
 
 	autoTitle: false,
+	humanReadable: true,
 
 	barHeight: 27,
 
-	time_window: global.commonTs.day, //24 hours
+	time_window: global.commonTs.day,
 
 	time_window_offset: 0,
+
+	useLastRefresh: true,
 
 	lastRefresh: undefined,
 
 	active: false,
 
 	initComponent: function() {
+		this.callParent(arguments);
+
 		this.active = true;
 
-		this.logAuthor = '[' + this.id + ']';
+		if(!this.logAuthor) {
+			this.logAuthor = '[widgets][' + this.xtype + ']';
+		}
 
-		log.debug('InitComponent ' + this.id + ' (reportMode: ' + this.reportMode + ', exportMode: ' + this.exportMode + ')', this.logAuthor);
+		log.debug('Initialize component:', this.logAuthor);
+		log.dump({
+			id: this.id,
+			type: this.xtype,
+			reportMode: this.reportMode,
+			exportMode: this.exportMode
+		});
 
-		if (this.title == '')
+		if(this.title === '') {
 			this.title = false;
+		}
 
 		this.wcontainerId = this.id + '-content';
 
-		this.wcontainer = Ext.create('Ext.container.Container', { id: this.wcontainerId, border: false, layout: this.wcontainer_layout, autoScroll: this.wcontainer_autoScroll });
-		this.items = this.wcontainer;
+		this.wcontainer = Ext.create('Ext.container.Container', {
+			id: this.wcontainerId,
+			border: false,
+			layout: this.wcontainer_layout,
+			autoScroll: this.wcontainer_autoScroll
+		});
+
+		this.items.add(this.wcontainer);
 
 		this.wcontainer.on('afterrender', function() {
 			log.debug('SetHeight of wcontainer', this.logAuthor);
@@ -82,32 +98,33 @@ Ext.define('canopsis.lib.view.cwidget' , {
 			this.afterContainerRender();
 		}, this);
 
-		this.callParent(arguments);
-
-		if (this.reportMode) 
+		if(this.reportMode) {
 			this.refreshInterval = false;
-
-		//Compatibility
-		if (this.nodes) {
-			if (this.nodes.length > 0) {
-				log.debug('Nodes:', this.logAuthor);
-				log.dump(this.nodes);
-				this.nodeId = this.nodes;
-			}
 		}
 
-		if(this.inventory)
-			this.nodeId = this.inventory
+		//Compatibility
+		if(this.nodes && this.nodes.length > 0) {
+			log.debug('Nodes:', this.logAuthor);
+			log.dump(this.nodes);
+			this.nodeId = this.nodes;
+		}
 
-		if(Ext.isArray(this.nodes))
+		if(this.inventory) {
+			this.nodeId = this.inventory;
+		}
+
+		if(Ext.isArray(this.nodes)) {
 			this.nodesByID = parseNodes(this.nodes);
-		else
+		}
+		else {
 			this.nodesByID = expandAttributs(this.nodes);
+		}
 
 		//if reporting
-		if (!this.exportMode) {
-			if (this.refreshInterval) {
+		if(!this.exportMode) {
+			if(this.refreshInterval) {
 				log.debug(' + Refresh Interval: ' + this.refreshInterval, this.logAuthor);
+
 				this.task = {
 					run: this._doRefresh,
 					interval: this.refreshInterval * 1000,
@@ -129,42 +146,52 @@ Ext.define('canopsis.lib.view.cwidget' , {
 
 		var docks = this.getDockedItems();
 
-		if (docks) {
+		if(docks) {
 			height -= docks.length * 2;
-			for (var i = 0; i < docks.length; i++)
-				if (docks[i].dock == 'top' || docks[i].dock == 'bottom') { height -= this.barHeight }
+
+			for(var i = 0; i < docks.length; i++) {
+				if (docks[i].dock === 'top' || docks[i].dock === 'bottom') {
+					height -= this.barHeight;
+				}
+			}
 		}
 
-		if (this.border)
+		if(this.border) {
 			height -= this.border * 2;
+		}
 
 		return height;
 	},
 
 	ready: function() {
-		if (this.task)
+		if(this.task) {
 			this.startTask();
-		else 
-			if(this.exportMode)
+		}
+		else {
+			if(this.exportMode) {
 				this._doRefresh(this.export_from, this.export_to);
-			else
+			}
+			else {
 				this._doRefresh(undefined, parseInt(Ext.Date.now()));
+			}
+		}
 	},
 
 	startTask: function() {
-		if (! this.reportMode) {
-			if (this.task && ! this.task.active) {
+		if(!this.reportMode) {
+			if(this.task && ! this.task.active) {
 				log.debug('Start task, interval:  ' + this.refreshInterval + ' seconds', this.logAuthor);
 				Ext.TaskManager.start(this.task);
 				this.task.active = true;
-			}else {
+			}
+			else {
 				this._doRefresh(undefined, undefined);
 			}
 		}
 	},
 
 	stopTask: function() {
-		if (this.task && this.task.active) {
+		if(this.task && this.task.active) {
 			log.debug('Stop task', this.logAuthor);
 			Ext.TaskManager.stop(this.task);
 			this.task.active = false;
@@ -176,8 +203,9 @@ Ext.define('canopsis.lib.view.cwidget' , {
 		log.debug('Show', this.logAuthor);
 		this.active = true;
 
-		if (! this.isDisabled())
+		if(!this.isDisabled()) {
 			this.startTask();
+		}
 	},
 
 	TabOnHide: function() {
@@ -188,16 +216,19 @@ Ext.define('canopsis.lib.view.cwidget' , {
 	},
 
 	_doRefresh: function(from, to) {
-		var now = parseInt(Ext.Date.now())
+		var now = parseInt(Ext.Date.now());
 
-		if (! to)
+		if(!to) {
 			to = now - (this.time_window_offset * 1000);
-		
-		if (! from && this.lastRefresh)
-			from = this.lastRefresh;
+		}
 
-		if (! from) 
+		if(!from && this.useLastRefresh && this.lastRefresh) {
+			from = this.lastRefresh;
+		}
+
+		if(!from) {
 			from = to - (this.time_window * 1000);
+		}
 
 		this.doRefresh(from, to);
 		this.lastRefresh = to;
@@ -212,7 +243,7 @@ Ext.define('canopsis.lib.view.cwidget' , {
 		this.onRefresh(data, from, to);
 	},
 
-	onRefresh: function(data, from, to) {
+	onRefresh: function() {
 		log.debug('onRefresh', this.logAuthor);
 	},
 
@@ -221,31 +252,52 @@ Ext.define('canopsis.lib.view.cwidget' , {
 	},
 
 	getNodeInfo: function(from, to) {
-		if (this.nodeId) {
+		if(this.nodeId) {
+
+			var nodeInfoParams = this.getNodeInfoParams(from, to);
+
 			Ext.Ajax.request({
-				url: this.baseUrl + '/events/' + this.nodeId,
+				url: this.baseUrl + '/events' + (this.nodeId && this.nodeId.length? ('/' + this.nodeId) : ''),
 				scope: this,
+				params: nodeInfoParams,
+				method: 'GET',
 				success: function(response) {
 					var data = Ext.JSON.decode(response.responseText);
-					if (this.nodeId.length > 1)
+
+					if(this.nodeId.length > 1) {
 						data = data.data;
-					else
+					}
+					else {
 						data = data.data[0];
+					}
 
 					this._onRefresh(data, from, to);
 				},
 				failure: function(result, request) {
+					void(result);
+
 					log.error('Impossible to get Node informations, Ajax request failed ... (' + request.url + ')', this.logAuthor);
 				}
 			});
 		}
+	},
 
+	getNodeInfoParams: function(from, to) {
+		void(from);
+		void(to);
+		return {};
 	},
 
 	setHtml: function(html) {
 		log.debug('setHtml in widget', this.logAuthor);
+
 		this.wcontainer.removeAll();
-		this.wcontainer.add({html: html, border: false});
+
+		this.wcontainer.add({
+			html: html,
+			border: false
+		});
+
 		this.wcontainer.doLayout();
 	},
 
@@ -259,5 +311,4 @@ Ext.define('canopsis.lib.view.cwidget' , {
 		this.stopTask();
 		this.callParent(arguments);
  	}
-
 });

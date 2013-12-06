@@ -31,14 +31,18 @@ from cstorage import get_storage
 from crecord import crecord
 
 logger = logging.getLogger("auth")
+logger.setLevel(logging.DEBUG)
 
 #session variable
-session_accounts = {}
+session_accounts = {
+	'anonymous': caccount()
+}
 
 #########################################################################
 class checkAuthPlugin(object):
 	name='checkAuthPlugin'
-	def __init__(self,authorized_grp=[],unauthorized_grp=[]):
+
+	def __init__(self,authorized_grp=[], unauthorized_grp=[]):
 		self.authorized_grp = authorized_grp
 		self.unauthorized_grp = unauthorized_grp
 		self.keyword = None
@@ -51,75 +55,99 @@ class checkAuthPlugin(object):
 				"conflicting settings (non-unique keyword).")
 	
 	def apply(self, callback, context):
-		authorized_grp = None
-		unauthorized_grp = None
+		authorized_grp = []
+		unauthorized_grp = []
 		
 		if 'config' in context:
 			conf = context['config'].get('checkAuthPlugin',{})
 		if 'authorized_grp' in conf:
-			authorized_grp = conf.get('authorized_grp',None)
+			authorized_grp = conf.get('authorized_grp', [])
 		if 'unauthorized_grp' in conf:
-			unauthorized_grp = conf.get('unauthorized_grp',None)
+			unauthorized_grp = conf.get('unauthorized_grp', [])
+
+		if not isinstance(authorized_grp, list):
+			authorized_grp = [authorized_grp]
+
+		if not isinstance(unauthorized_grp, list):
+			unauthorized_grp = [unauthorized_grp]
 
 		def do_auth(*args, **kawrgs):
+			logger.debug("Auth query")
+			access = False
+
 			try:
 				path = bottle.request.path
 			except:
 				path = None
 				
 			url = bottle.request.url
-			s = bottle.request.environ.get('beaker.session')
 
-			if s.get('auth_on',False):
-				logger.debug(' + Session already open')
-				
-				account_id = s['account_id']
-				account_group = s['account_group']
-				account_groups = s['account_groups']
-				access = True
-			
-				if not (account_id == 'account.root' or  account_group == 'group.CPS_root' or 'group.CPS_root' in  account_groups):
-					if unauthorized_grp:
-						if account_group in unauthorized_grp:
-							access = False
-						for group in account_groups:
-							if group in unauthorized_grp:
-								access = False
-								
-					if authorized_grp:
-						access = False
-						if account_group in authorized_grp:
-							access = True
-						for group in account_groups:
-							if group in authorized_grp:
-								access = True
-						
-				logger.debug(" + Authentified, Session is Ok.")
-			else:
-				logger.debug(' + Session not open for this user')
-				if path == "/canopsis/auth.html":
+			account = get_account()
+
+			authkey = request.params.get('authkey', None)
+			if authkey:
+				logger.debug("Check authkey: '%s'" % authkey)
+
+				account = check_authkey(authkey)
+
+				if account:
+					create_session(account)
 					access = True
 				else:
-					access = False
+					logger.debug(" + Failed")
+			
+			if not account or account.user == 'anonymous':
+				return HTTPError(403, "Forbidden")
 
-			#check if authkey params
-			givenAuthkey = request.params.get('authkey',False)
-			if givenAuthkey:
-				logger.debug(" + found authkey (%s) in parameters" % givenAuthkey)
-				autoLogin(key=givenAuthkey)
-				if get_account().user != "anonymous":
-					access=True
+			logger.debug(" + _id: %s" % account._id)
+
+			if check_root(account):
+				access = True
+			else:
+				if not authorized_grp and not unauthorized_grp:
+					access = True
+				else:
+					logger.debug("Check authorized_grp: %s" % authorized_grp)
+					if authorized_grp:
+						for group in authorized_grp:
+							if check_group_rights(account, group):
+								access = True
+								break
+
+					logger.debug("Check unauthorized_grp and overwrite access: %s" % unauthorized_grp)
+					if unauthorized_grp:
+						for group in unauthorized_grp:
+							if check_group_rights(account, group):
+								access = False
+								break
+
+
+			#logger.debug("Check path: '%s'" % path)
+			#if path == "/canopsis/auth.html":
+			#	access = True
+
+			logger.debug(" + Access: %s" % access)
 
 			if access:
-				logger.debug(" + Valid auth")
+				logger.debug(" + Auth ok")
 				return callback(*args, **kawrgs)
 			else:
 				logger.error(" + Invalid auth")
 				return HTTPError(403, 'Insufficient rights')
+
 		return do_auth
 #########################################################################
 
+# Test checkAuthPlugin
+@get('/account/checkAuthPlugin1', checkAuthPlugin={'authorized_grp': 'group.Canopsis'})
+def account_checkAuthPlugin():
+	logger.info("Access granted by checkAuthPlugin")
+	return {'total': 0, 'success': True, 'data': []}
 
+@get('/account/checkAuthPlugin2', checkAuthPlugin={'unauthorized_grp': 'group.Canopsis'})
+def account_checkAuthPlugin():
+	logger.info("Access granted by checkAuthPlugin")
+	return {'total': 0, 'success': True, 'data': []}
 
 @get('/auth/:login/:password',skip=['checkAuthPlugin'])
 @get('/auth/:login',skip=['checkAuthPlugin'])
@@ -128,254 +156,262 @@ def auth(login=None, password=None):
 	if not login:
 		login = request.params.get('login', default=None)
 
-	shadow = request.params.get('shadow', default=False)
-	if shadow:
-		shadow = True
-	
-	cryptedKey = request.params.get('cryptedKey', default=False)
-
 	if not password:
 		password = request.params.get('password', default=None)
 
 	if not login or not password:
 		return HTTPError(400, "Invalid arguments")
 
-	_id = "account." + login
+	mode = 'plain'
 
-	logger.debug(" + _id: "+_id)
-	logger.debug(" + Login: "+login)
-	logger.debug(" + Password: "+password)
-	logger.debug("    + is Shadow: "+str(shadow))
-	logger.debug("    + is cryptedKey: "+str(cryptedKey))
+	if request.params.get('shadow', default=False):
+		mode = 'shadow'
+	
+	if request.params.get('cryptedKey', default=False) or request.params.get('crypted', default=False):
+		mode = 'crypted'
+
+	_id = "account.%s" % login
+
+	logger.debug(" + _id:      %s" % _id)
+	logger.debug(" + Login:    %s" % login)
+	logger.debug(" + Mode:     %s" % mode)
 
 	storage = get_storage(namespace='object')
+	account = None
 
+	## Local
 	try:
 		account = caccount(storage.get(_id, account=caccount(user=login)))
-		logger.debug(" + Check password ...")
-
-		if not account.is_enable():
-			return HTTPError(403, "This account is not enabled")
-
-		if shadow:
-			access = account.check_shadowpasswd(password)
-			
-		elif cryptedKey:
-			logger.debug(" + Valid auth key: %s" % (account.make_tmp_cryptedKey()))
-			access = account.check_tmp_cryptedKey(password)
-			
-		else:
-			access = account.check_passwd(password)
-
-		if access:
-			s = bottle.request.environ.get('beaker.session')
-			s['account_id'] = account._id
-			s['account_user'] = account.user
-			s['account_group'] = account.group
-			s['account_groups'] = account.groups
-			s['auth_on'] = True
-			s.save()
-
-			output = [ account.dump() ]
-			output = {'total': len(output), 'success': True, 'data': output}
-			return output
-		else:
-			logger.debug(" + Invalid password ...")
 	except Exception, err:
 		logger.error(err)
-		
-	return HTTPError(403, "Forbidden")
+
+	## External
+	# Try to provisionning account
+	if not account and mode == 'plain':
+		try:
+			account = external_prov(login, password)
+		except Exception, err:
+			logger.error(err)
+
+	## Check
+	if not account:
+		return HTTPError(403, "Forbidden")
+
+	logger.debug(" + Check password ...")
+
+	if not account.is_enable():
+		return HTTPError(403, "This account is not enabled")
+
+	if account.external and  mode != 'plain':
+		return HTTPError(403, "Send your password in plain text")
+
+	access = None
+
+	if account.external and mode == 'plain':
+		access = external_auth(login, password)
+
+	if access == None:
+		logger.debug(" + Check with local db")
+
+		if mode == 'plain':
+			access = account.check_passwd(password)
+
+		elif mode == 'shadow':
+			access = account.check_shadowpasswd(password)
+
+		elif mode == 'crypted':
+			access = account.check_tmp_cryptedKey(password)
+
+	if not access:
+		logger.debug(" + Invalid password ...")
+		return HTTPError(403, "Forbidden")
+
+	create_session(account)
+
+	output = [ account.dump() ]
+	output = {'total': len(output), 'success': True, 'data': output}
+	return output
 
 @get('/autoLogin/:key',skip=['checkAuthPlugin'])
 def autoLogin(key=None):
 	if not key:
 		return HTTPError(400, "No key provided")
-	#---------------------Get storage/account-------------------
-	storage = get_storage(namespace='object')
-	
-	mfilter = {
-				'crecord_type':'account',
-				'authkey':key,
-			}
-	
-	logger.debug('Try to find %s key' % key)
 
-	foundByKey = storage.find(mfilter=mfilter, account=caccount(user='root'))
-	#-------------------------if found, create session and redirect------------------------
-	if len(foundByKey) == 1:
-		account = caccount(foundByKey[0])
+	account = check_authkey(key)
 
-		if not account.is_enable():
-			return HTTPError(403, "This account is not enabled")
+	if not account:
+		return HTTPError(403, "Forbidden")
 
-		s = bottle.request.environ.get('beaker.session')
-		s['account_id'] = account._id
-		s['account_user'] = account.user
-		s['account_group'] = account.group
-		s['account_groups'] = account.groups
-		s['auth_on'] = True
-		s.save()
-		#logger.debug('Autologin success, redirecting browser')
-		#redirect('/static/canopsis/index.html')
-		account = caccount(foundByKey[0])
-		return {'total':1,'data':[account.dump()],'success':True}
-	else:
-		logger.debug('Autologin failed, no key match the provided one')
-		return {'total':0,'data':{},'success':False}
-
-@get('/keyAuth/:login/:key',skip=['checkAuthPlugin'])
-@get('/keyAuth/:login',skip=['checkAuthPlugin'])
-@get('/keyAuth',skip=['checkAuthPlugin'])
-def keyAuth(login=None, key=None):
-	#-----------------------Get info------------------------
-	if not login:
-		login = request.params.get('login', default=None)
-	if not key:
-		key = request.params.get('key', default=None)
-		
-	if not login or not key:
-		return HTTPError(404, "Invalid arguments")
-	
-	#---------------------Get storage/account-------------------
-	_id = "account.%s" % login
-	
-	logger.debug(" + _id: %s" % _id)
-	logger.debug(" + Login: %s" % login)
-	logger.debug(" + key: %s" % key)
-	
-	storage = get_storage(namespace='object')
-
-	try:
-		account = caccount(storage.get(_id, account=caccount(user=login)))
-	except Exception, err:
-		logger.error('Error while fetching %s : %s' % (_id,err))
-		return HTTPError(403, "There is no account for this login")
-	
 	if not account.is_enable():
-		return HTTPError(403, "This account is not enabled")
+		logger.debug(" + Account is disabled")
+		return HTTPError(403, "Account is disabled")
 
-	#---------------------Check key-------------------------
-	if account.check_authkey(key):
-		s = bottle.request.environ.get('beaker.session')
-		s['account_id'] = account._id
-		s['account_user'] = account.user
-		s['account_group'] = account.group
-		s['account_groups'] = account.groups
-		s['auth_on'] = True
-		s.save()
-		
-		logger.debug('Access granted and session open for %s' % _id)
-		
-		output = [account.dump()]
-		return {'total': len(output), 'success': True, 'data': output}
-	else:
-		logger.error('Wrong key given for %s' % _id)
-		return HTTPError(403, "Wrong key, access prohibited")
+	create_session(account)
+
+	return {'total':1,'data':[ account.dump() ], 'success':True}
 	
-	
-
-
 #Access for disconnect and clean session
-@get('/logout')
-@get('/disconnect')
+@get('/logout',		skip=['checkAuthPlugin'])
+@get('/disconnect', skip=['checkAuthPlugin'])
 def disconnect():
-	logger.error("Disconnect")
 	s = bottle.request.environ.get('beaker.session')
-	s.delete()
+	user = s.get('account_user', None)
+
+	if not user:
+		return HTTPError(403, "Forbidden")
+
+	logger.debug("Disconnect '%s'" % user)
+	delete_session()
 	return {'total': 0, 'success': True, 'data': []}
 
-
-#decorator in order to protect request
-def check_auth(callback):
-	def do_auth(*args, **kawrgs):
-		try:
-			path = kawrgs['path']
-		except:
-			path = None
-	
-		url = bottle.request.url
-		#get beaker session and test it right after
-		s = bottle.request.environ.get('beaker.session')
-		#add caccount to parameters
-		if s.get('auth_on',False) or path == "canopsis/auth.html":
-			logger.debug("Session is Ok.")
-			return callback(*args, **kawrgs)
-
-		logger.error("Invalid auth")
-		return {'total': 0, 'success': False, 'data': []}
-		#return redirect('/static/canopsis/auth.html' + '?url=' + url)
-
-	return do_auth
-	
 #find the account in memory, or try to find it from database, if not in db log anon
 def get_account(_id=None):
 	logger.debug("Get Account:")
+
 	if not _id:
 		s = bottle.request.environ.get('beaker.session')
-		_id = s.get('account_id',0)
-		logger.debug(" + Get _id from Beaker Session (%s)" % _id)
+		_id = s.get('account_id', None)
 
-	user = s.get('account_user',0)
+	logger.debug(" + _id: %s" % _id)
 
-	logger.debug(" + Try to load account %s ('%s') ..." % (user, _id))
+	if not _id:
+		logger.debug("  + Failed")
+		return session_accounts['anonymous']
 
-	storage = get_storage(namespace='object')
+	logger.debug("Load account from cache")
+	account = session_accounts.get(_id, None)
 
+	if account:
+		return account
+
+	logger.debug("  + Failed")
+
+	logger.debug("Load account from DB")
+	
 	try:
-		account = session_accounts[_id]
-		logger.debug(" + Load account from memory.")
-	except:
-		if _id:
-			record = storage.get(_id, account=caccount(user=user) )
-			logger.debug(" + Load account from DB.")
-			account = caccount(record)
-			session_accounts[_id] = account
-		else:
-			logger.debug(" + Impossible to load account, return Anonymous account.")
-			try:
-				return session_accounts['anonymous']
-			except:
-				session_accounts['anonymous'] = caccount()
-				return session_accounts['anonymous']
+		user = s.get('account_user', None)	
+		storage = get_storage(namespace='object')
+		account = caccount(storage.get(_id, account=caccount(user=user)))
+	except Exception as err:
+		logger.debug("  + Failed: %s" % err)
+		return session_accounts['anonymous']
 
+	session_accounts[_id] = account
 	return account
 
 #cache is cool, but when you change rights, cache still have old rights, so reload 
-def reload_account(_id=None,record=None):
+def reload_account(_id):
+	logger.info('Reload cache and session')
+
 	try:
-		logger.debug('Reload Account %s' % _id)
 		account = get_account()
 		storage = get_storage(namespace='object')
-		account_to_update = None
-		
-		if not record:
-			if _id:	
-				record = storage.get(_id, account=account)
-				account_to_update = caccount(record)
-			else:
-				record = storage.get(account._id, account=account )
-				account_to_update = caccount(record)
-				
-		if not account_to_update:
-			account_to_update = caccount(record)
-			
-		session_accounts[account_to_update._id] = account_to_update
-		s = bottle.request.environ.get('beaker.session')
-		logger.debug(s)
-		logger.debug(s['account_group'])
-		logger.debug(s['account_groups'])
-		s['account_group'] = account_to_update.group
-		s['account_groups'] = account_to_update.groups
-		logger.debug('Account %s is in following groups : %s' % (_id,str(account_to_update.groups)))
-		s.save()
-		return True
-	except Exception,err:
-		logger.error('Account reloading failed : %s' % err)
+		record = storage.get(_id, account=account)
+	except Exception as err:
+		logger.error('Impossible to load record: %s' % err)
 		return False
 
-def check_group_rights(account,group_id):
-	if not (account._id == 'account.root' or  account.group == 'group.CPS_root' or 'group.CPS_root' in account.groups):
-		if not group_id in account.groups and group_id != account.group:
-			logger.debug('%s is not in %s' % (account.user,group_id))
-			return False
+	account = caccount(record)
+
+	if not account:
+		logger.error('Impossible to load account')
+		return False
+
+	session_accounts[account._id] = account
+
+	logger.debug(' + Session and cache are reloaded')
 	return True
+
+def check_authkey(key, account=None):
+	storage = get_storage(namespace='object')
+	
+	mfilter = {
+		'crecord_type': 'account',
+		'authkey': key,
+	}
+	
+	logger.debug("Search authkey: '%s'" % key)
+
+	record = storage.find_one(mfilter=mfilter, account=caccount(user='root'))
+
+	if not record:
+		return None
+
+	logger.debug(" + Done")
+	key_account = caccount(record)
+
+	if account and account._id != key_account._id:
+		logger.debug(" + Account missmatch")
+		return None
+
+	return key_account
+
+def check_root(account):
+	if account._id == 'account.root' or  account.group == 'group.CPS_root':
+		return True
+
+	if 'group.CPS_root' in account.groups:
+		return True
+
+	return False
+
+def check_group_rights(account, group_id):
+	if check_root(account):
+		return True
+
+	if group_id == account.group:
+		return True
+
+	if group_id in account.groups:
+		return True
+
+	logger.debug("'%s' is not in '%s'" % (account.user,group_id))
+	return False
+
+def create_session(account):
+	session_accounts[account._id] = account
+
+	s = bottle.request.environ.get('beaker.session')
+	s['account_id'] = account._id
+	s['account_user'] = account.user
+	s['account_group'] = account.group
+	s['account_groups'] = account.groups
+	s['auth_on'] = True
+	s.save()
+
+	return s
+
+def delete_session(_id=None):
+	account = get_account()
+
+	if not _id:	
+		_id = account._id
+
+	if isinstance(_id, list):
+		ids = _id
+	else:
+		ids = [ _id ]
+
+	logger.debug("Delete session '%s'" % ids)
+
+	for _id in ids:
+		try:
+			del session_accounts[_id]
+		except:
+			pass
+
+	if account._id in ids:
+		s = bottle.request.environ.get('beaker.session')
+		s.delete()
+
+def external_prov(login, password):
+	import auth_ldap
+	
+	logger.debug(" + Check External provisionning")
+	return auth_ldap.prov(login, password)
+
+def external_auth(login=None, password=None):
+	import auth_ldap
+
+	logger.debug(" + Check External Auth")
+	return auth_ldap.auth(login, password)	

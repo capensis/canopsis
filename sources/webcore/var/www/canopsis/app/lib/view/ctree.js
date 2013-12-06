@@ -1,5 +1,4 @@
 /*
-#--------------------------------
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
@@ -16,7 +15,6 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
-# ---------------------------------
 */
 Ext.define('canopsis.lib.view.ctree' , {
 	extend: 'Ext.tree.Panel',
@@ -31,7 +29,6 @@ Ext.define('canopsis.lib.view.ctree' , {
 
 	//options
 	opt_bar: true,
-	//opt_bar_bottom: false,
 	opt_bar_add: true,
 	opt_bar_add_directory: true,
 	opt_bar_delete: true,
@@ -44,10 +41,9 @@ Ext.define('canopsis.lib.view.ctree' , {
 	opt_menu_rename: true,
 
 	initComponent: function() {
-
 		var bar_child = [];
 
-		if (this.opt_bar_add) {
+		if(this.opt_bar_add) {
 			bar_child.push({
 				xtype: 'button',
 				iconCls: 'icon-leaf-add',
@@ -56,7 +52,7 @@ Ext.define('canopsis.lib.view.ctree' , {
 			});
 		}
 
-		if (this.opt_bar_add_directory) {
+		if(this.opt_bar_add_directory) {
 			bar_child.push({
 				xtype: 'button',
 				iconCls: 'icon-folder-add',
@@ -65,7 +61,7 @@ Ext.define('canopsis.lib.view.ctree' , {
 			});
 		}
 
-		if (this.opt_bar_reload) {
+		if(this.opt_bar_reload) {
 			bar_child.push({
 				xtype: 'button',
 				iconCls: 'icon-reload',
@@ -73,17 +69,8 @@ Ext.define('canopsis.lib.view.ctree' , {
 				action: 'reload'
 			});
 		}
-		/*
-		if(this.opt_bar_duplicate){
-			bar_child.push({
-				xtype: 'button',
-				iconCls: 'icon-copy',
-				text: _('Duplicate'),
-				action: 'duplicate',
-			})
-		}
-		*/
-		if (this.opt_bar_delete) {
+
+		if(this.opt_bar_delete) {
 			bar_child.push({
 				xtype: 'button',
 				iconCls: 'icon-delete',
@@ -93,25 +80,27 @@ Ext.define('canopsis.lib.view.ctree' , {
 			});
 		}
 
-		//-----------------creating toolbar--------------------
-		if (this.opt_bar_bottom) {
+		// creating toolbar
+		if(this.opt_bar_bottom) {
 			this.bbar = Ext.create('Ext.toolbar.Toolbar', {
 				items: bar_child
 			});
+
 			this.dockedToolbar = this.bbar;
-		}else {
+		}
+		else {
 			this.tbar = Ext.create('Ext.toolbar.Toolbar', {
 				items: bar_child
 			});
+
 			this.dockedToolbar = this.tbar;
 		}
 
-
-		//--------------------Context menu---------------------
-		if (this.opt_bar) {
+		// Context menu
+		if(this.opt_bar) {
 			var myArray = [];
 
-			if (this.opt_bar_delete) {
+			if(this.opt_bar_delete) {
 				myArray.push(
 					Ext.create('Ext.Action', {
 						iconCls: 'icon-delete',
@@ -121,7 +110,7 @@ Ext.define('canopsis.lib.view.ctree' , {
 				);
 			}
 
-			if (this.opt_bar_duplicate) {
+			if(this.opt_bar_duplicate) {
 				myArray.push(
 					Ext.create('Ext.Action', {
 						iconCls: 'icon-copy',
@@ -131,7 +120,7 @@ Ext.define('canopsis.lib.view.ctree' , {
 				);
 			}
 
-			if (this.opt_menu_rights == true) {
+			if(this.opt_menu_rights === true) {
 				myArray.push(
 					Ext.create('Ext.Action', {
 						iconCls: 'icon-access',
@@ -141,7 +130,7 @@ Ext.define('canopsis.lib.view.ctree' , {
 				);
 			}
 
-			if (this.opt_menu_rename == true) {
+			if(this.opt_menu_rename === true) {
 				myArray.push(
 					Ext.create('Ext.Action', {
 						iconCls: 'icon-edit',
@@ -151,7 +140,7 @@ Ext.define('canopsis.lib.view.ctree' , {
 				);
 			}
 
-			if (this.opt_bar_export == true) {
+			if(this.opt_bar_export === true) {
 				myArray.push(
 					Ext.create('Ext.Action', {
 						iconCls: 'icon-mainbar-add-task',
@@ -161,25 +150,29 @@ Ext.define('canopsis.lib.view.ctree' , {
 				);
 			}
 
-			if(this.add_to_context_menu)
-				this.add_to_context_menu(myArray)
+			if(this.add_to_context_menu) {
+				this.add_to_context_menu(myArray);
+			}
 
-			if (myArray.length != 0) {
+			if(myArray.length !== 0) {
 				this.contextMenu = Ext.create('Ext.menu.Menu', {
 					items: myArray
 				});
 			}
 		}
-		//-------------------------------------------------------
+
 		this.callParent(arguments);
 
 		//fix the non destroy plugin with manualy instantiate it
 		var innerView = this.getView();
-		this.ddplugin = Ext.PluginManager.create({ptype: 'treeviewdragdrop'});
+
+		this.ddplugin = Ext.PluginManager.create({
+			ptype: 'treeviewdragdrop'
+		});
+
 		this.ddplugin.init(innerView);
 
 		innerView.animate = false;
-		//innerView.loadMask  = false
 	},
 
 	destroy: function() {
@@ -187,6 +180,4 @@ Ext.define('canopsis.lib.view.ctree' , {
 		this.ddplugin.destroy();
 		Ext.tree.Panel.superclass.destroy.call(this);
 	}
-
-
 });

@@ -1,5 +1,4 @@
 /*
-#--------------------------------
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
@@ -16,7 +15,6 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
-# ---------------------------------
 */
 var now = undefined;
 
@@ -30,6 +28,8 @@ var global = {
 	commit: '',
 
 	minimified: false,
+
+	auth_plain: false,
 
 	state_colors: {
 		up: '#50b432',
@@ -81,8 +81,8 @@ var global = {
 	],
 
 	gen_id: function() {
-			var timestamp = Ext.Date.now();
-			return timestamp + '-' + Math.floor(Math.random() * 10);
+		var timestamp = Ext.Date.now();
+		return timestamp + '-' + Math.floor(Math.random() * 10);
 	},
 
 	commonTs: {
@@ -112,7 +112,7 @@ var global = {
 
 	timeUnit: {
 		'y': _('Year'),
-		'm': _('Month'),
+		'M': _('Month'),
 		'w': _('Week'),
 		'd': _('Day'),
 		'h': _('Hour'),
@@ -123,29 +123,31 @@ var global = {
 	},
 
 	sizeTable: {
-		'KB':{multiple: 1024, unit:'B', pow: Math.pow(2,10)},
-		'MB':{multiple: 1024, unit:'B', pow: Math.pow(2,20)},
-		'GB':{multiple: 1024, unit:'B', pow: Math.pow(2,30)},
-		'TB':{multiple: 1024, unit:'B', pow: Math.pow(2,40)},
-		'PB':{multiple: 1024, unit:'B', pow: Math.pow(2,50)},
-		'KO':{multiple: 1024, unit:'O', pow: Math.pow(2,10)},
-		'MO':{multiple: 1024, unit:'O', pow: Math.pow(2,20)},
-		'GO':{multiple: 1024, unit:'O', pow: Math.pow(2,30)},
-		'TO':{multiple: 1024, unit:'O', pow: Math.pow(2,40)},
-		'PO':{multiple: 1024, unit:'O', pow: Math.pow(2,50)},
-		'MS':{multiple: 1000, unit:'S', pow: Math.pow(10,-3)},
-		'US':{multiple: 1000, unit:'S', pow: Math.pow(10,-6)},
-		'NS':{multiple: 1000, unit:'S', pow: Math.pow(10,-9)}
+		'KB': {multiple: 1024, unit: 'B', pow: Math.pow(2,10)},
+		'MB': {multiple: 1024, unit: 'B', pow: Math.pow(2,20)},
+		'GB': {multiple: 1024, unit: 'B', pow: Math.pow(2,30)},
+		'TB': {multiple: 1024, unit: 'B', pow: Math.pow(2,40)},
+		'PB': {multiple: 1024, unit: 'B', pow: Math.pow(2,50)},
+		'KO': {multiple: 1024, unit: 'O', pow: Math.pow(2,10)},
+		'MO': {multiple: 1024, unit: 'O', pow: Math.pow(2,20)},
+		'GO': {multiple: 1024, unit: 'O', pow: Math.pow(2,30)},
+		'TO': {multiple: 1024, unit: 'O', pow: Math.pow(2,40)},
+		'PO': {multiple: 1024, unit: 'O', pow: Math.pow(2,50)},
+		'MS': {multiple: 1000, unit: 'S', pow: Math.pow(10,-3)},
+		'US': {multiple: 1000, unit: 'S', pow: Math.pow(10,-6)},
+		'NS': {multiple: 1000, unit: 'S', pow: Math.pow(10,-9)}
 	},
 
 	untranslated: [],
-	dump_untranslated: function(){
-		var dump = ''
-		for (var i = 0; i < global.untranslated.length; i++){
-			dump += 'msgid "'+global.untranslated[i]+'"\n'
-			dump += 'msgstr "'+global.untranslated[i]+'"\n\n'
+	dump_untranslated: function() {
+		var dump = '';
+
+		for(var i = 0; i < global.untranslated.length; i++) {
+			dump += 'msgid "' + global.untranslated[i] + '"\n';
+			dump += 'msgstr "' + global.untranslated[i] + '"\n\n';
 		}
-		console.log(dump)
+
+		console.log(dump);
 		return dump;
 	},
 
@@ -156,5 +158,6 @@ var global = {
 	}
 };
 
-if (typeof(global_options) == 'object')
+if(typeof(global_options) === 'object') {
 	global = Ext.Object.merge(global, global_options);
+}

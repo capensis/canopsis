@@ -28,6 +28,8 @@ function install(){
 	easy_install_pylib kombu
 	easy_install_pylib polib
 	easy_install_pylib redis
+	easy_install_pylib python-ldap
+	easy_install_pylib psutil==1.0.1
 
 	# Todo: Very dirty patch, see https://github.com/Supervisor/supervisor/issues/141
 	sed -i "156i\            if isinstance(value, bool):\n                value = xmlrpclib.boolean(value)" $PREFIX/lib/python2.7/site-packages/supervisor-3.0a12-py2.7.egg/supervisor/xmlrpc.py

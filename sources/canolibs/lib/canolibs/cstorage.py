@@ -307,7 +307,7 @@ class cstorage(object):
 		if one:
 			sort = [('timestamp', -1)]
 
-		self.logger.debug("Find '%s' records ..." % mfilter)
+		self.logger.debug("Find records from mfilter" )
 		
 		(Read_mfilter, Write_mfilter) = self.make_mongofilter(account)
 

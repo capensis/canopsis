@@ -19,14 +19,14 @@ echo -n "Wait RabbitMQ ..."
 STATE=1
 TRY=0
 while [ $STATE -ne 0 ]; do
-    if [ $TRY -eq 30 ]; then
-        break
-    fi
-    sleep 1
-    rabbitmqadmin -H 127.0.0.1 list nodes &> /dev/null
-    STATE=$?
-    TRY=$((TRY + 1))
-    echo -n "."
+	if [ $TRY -eq 30 ]; then
+		break
+	fi
+	sleep 1
+	rabbitmqadmin -H 127.0.0.1 list nodes &> /dev/null
+	STATE=$?
+	TRY=$((TRY + 1))
+	echo -n "."
 done
 echo
 check_code $STATE "Failed to join RabbitMQ ..."
@@ -34,19 +34,22 @@ sleep 1
 
 cd $HOME
 
+mkdir -p var/log/unittest
+
 UNITTESTS=`find ./ | grep Myunittest.py`
 UNITTESTS="$UNITTESTS $HOME/opt/canotools/functional-test.py"
 
-for UNITTEST in $UNITTESTS; do 
-        echo "##### Proceed to $UNITTEST" 
-        python $UNITTEST
+for UNITTEST in $UNITTESTS; do
+	echo -n "- Proceed to $UNITTEST... " 
+	python $UNITTEST > var/log/unittest/$(basename ${UNITTEST%-Myunittest.py}).log 2>&1
 	EXCODE=$?
-	if [ $EXCODE -ne 0 ]; then 
-		hypcontrol stop
-       		check_code $EXCODE
+
+	if [ $EXCODE -eq 0 ]
+	then
+		echo "OK"
+	else
+		echo "FAIL"
 	fi
-        echo "#### END ####" 
-        echo 
 done 
 
 echo "Check celery and tasks"

@@ -1,5 +1,4 @@
 /*
-#--------------------------------
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
@@ -16,18 +15,21 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
-# ---------------------------------
 */
-Ext.define('widgets.categorized_graph.categorized_graph' , {
-	extend: 'Ext.panel.Panel',
+Ext.define('canopsis.model.DefaultRule', {
+	extend: 'Ext.data.Model',
+	fields: [
+		{name: '_id'},
+		{name: 'id', mapping: '_id'},
+		{name: 'crecord_type'},
+		{name: 'crecord_name'},
+		{name: 'action', defaultValue: 'pass'},
 
-	alias: 'widget.categorized_graph',
-
-	logAuthor: '[categorized_graph]',
-
-	initComponent: function() {
-			this.html = '<center><span/>' + _('This wiget is no longer available, please look at "diagram" widget') + '</center>',
-			this.callParent(arguments);
-	}
-
+		{name: 'aaa_access_group', defaultValue: undefined},
+		{name: 'aaa_access_other', defaultValue: undefined},
+		{name: 'aaa_access_owner', defaultValue: ['r', 'w']},
+		{name: 'aaa_admin_group', defaultValue: ['r']},
+		{name: 'aaa_group', defaultValue: 'group.CPS_rule_admin'},
+		{name: 'aaa_owner', defaultValue: undefined}
+	]
 });

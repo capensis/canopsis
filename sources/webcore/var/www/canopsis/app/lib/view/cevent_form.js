@@ -1,5 +1,4 @@
 /*
-#--------------------------------
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
@@ -16,7 +15,6 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
-# ---------------------------------
 */
 Ext.define('canopsis.lib.view.cevent_form' , {
 	extend: 'Ext.window.Window',
@@ -29,9 +27,6 @@ Ext.define('canopsis.lib.view.cevent_form' , {
 
 	constrain: true,
 
-	//width: 305,
-	//height: 350,
-
 	resizable: false,
 
 	border: false,
@@ -41,74 +36,80 @@ Ext.define('canopsis.lib.view.cevent_form' , {
 	initComponent: function() {
 		log.debug('Initializing...', this.logAuthor);
 
-		//--------------------creating bbar-------------------
+		// creating bbar
 		this.saveButton = Ext.widget('button', {
 			text: _('Save'),
 			iconCls: 'icon-save',
 			iconAlign: 'right'
-			});
+		});
+
 		this.cancelButton = Ext.widget('button', {
 			text: _('Cancel'),
 			iconCls: 'icon-cancel'
-			});
+		});
+
 		this.bbar = [this.cancelButton, '->', this.saveButton];
 
-		//-------------------binding events--------------------
-		this.saveButton.on('click', function() {this._save(this.data)},this);
-		this.cancelButton.on('click', function() {this.close()},this);
+		// binding events
+		this.saveButton.on('click', function() {
+			this._save(this.data);
+		}, this);
 
-		//------------------create inner form-------------------
-		var items = [{
-			xtype: 'textfield',
-			fieldLabel: _('Connector'),
-			name: 'connector',
-			allowBlank: false
-		},{
-			xtype: 'textfield',
-			fieldLabel: _('Connector Name'),
-			name: 'connector_name',
-			allowBlank: false
-		},{
-			xtype: 'textfield',
-			fieldLabel: _('Event type'),
-			name: 'event_type',
-			allowBlank: false
-		},{
-			xtype: 'textfield',
-			fieldLabel: _('Source type'),
-			name: 'source_type',
-			allowBlank: false
-		},{
-			xtype: 'textfield',
-			fieldLabel: _('Component'),
-			name: 'component',
-			allowBlank: false
-		},{
-			xtype: 'textfield',
-			fieldLabel: _('Resource'),
-			name: 'resource',
-			allowBlank: false
-		},{
-			xtype: 'textfield',
-			fieldLabel: _('State'),
-			name: ('state'),
-			allowBlank: false
-		},{
-			xtype: 'textfield',
-			fieldLabel: _('State type'),
-			name: 'state_type'
-			//allowBlank: false
-		},{
-			xtype: 'textfield',
-			fieldLabel: _('Message'),
-			name: 'output'
-			//allowBlank: false
-		},{
-			xtype: 'textfield',
-			fieldLabel: _('Long message'),
-			name: 'long_output'
-			//allowBlank: false
-		}];
+		this.cancelButton.on('click', function() {
+			this.close();
+		}, this);
+
+		// create inner form
+		var items = [
+			{
+				xtype: 'textfield',
+				fieldLabel: _('Connector'),
+				name: 'connector',
+				allowBlank: false
+			},{
+				xtype: 'textfield',
+				fieldLabel: _('Connector Name'),
+				name: 'connector_name',
+				allowBlank: false
+			},{
+				xtype: 'textfield',
+				fieldLabel: _('Event type'),
+				name: 'event_type',
+				allowBlank: false
+			},{
+				xtype: 'textfield',
+				fieldLabel: _('Source type'),
+				name: 'source_type',
+				allowBlank: false
+			},{
+				xtype: 'textfield',
+				fieldLabel: _('Component'),
+				name: 'component',
+				allowBlank: false
+			},{
+				xtype: 'textfield',
+				fieldLabel: _('Resource'),
+				name: 'resource',
+				allowBlank: false
+			},{
+				xtype: 'textfield',
+				fieldLabel: _('State'),
+				name: ('state'),
+				allowBlank: false
+			},{
+				xtype: 'textfield',
+				fieldLabel: _('State type'),
+				name: 'state_type'
+			},{
+				xtype: 'textfield',
+				fieldLabel: _('Message'),
+				name: 'output'
+			},{
+				xtype: 'textfield',
+				fieldLabel: _('Long message'),
+				name: 'long_output'
+			}
+		];
 
 		var config = {
 			border: false,
@@ -124,11 +125,12 @@ Ext.define('canopsis.lib.view.cevent_form' , {
 	},
 
 	_save: function() {
-		if (this.form.form.isValid()) {
+		if(this.form.form.isValid()) {
 			event = this.form.getValues();
 
 			global.eventsCtrl.sendEvent(event);
-		}else {
+		}
+		else {
 			global.notify.notify(_('Invalid form'), _('Please correct the form'), 'error');
 		}
 	}

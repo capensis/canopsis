@@ -1,5 +1,4 @@
 /*
-#--------------------------------
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
@@ -16,7 +15,6 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
-# ---------------------------------
 */
 Ext.define('canopsis.view.Account.Password', {
 	extend: 'Ext.window.Window',
@@ -38,8 +36,9 @@ Ext.define('canopsis.view.Account.Password', {
 			allowBlank: false,
 			listeners: {
 				specialkey: function(field, event) {
-					if (event.getKey() == event.ENTER)
+					if(event.getKey() === event.ENTER) {
 						field.up('form').getForm().submit();
+					}
 				}
 			}
 		},
@@ -59,23 +58,24 @@ Ext.define('canopsis.view.Account.Password', {
 			var form = this;
 			var values = form.getValues();
 
-			if (values["password"] != values["confirm"]){
-				form.markInvalid({"confirm": _("Pasword doesn't match")})
-				return
+			if(values["password"] !== values["confirm"]) {
+				form.markInvalid({"confirm": _("Pasword doesn't match")});
+				return;
 			}
 
-			if (! form.isValid())
-				return
+			if(!form.isValid()) {
+				return;
+			}
 
 			global.accountCtrl.setPassword(values["password"]);
 			win.close();
 		},
 
-		buttons: [
-			{
-				text: 'Submit',
-				handler: function(){ this.up('form').getForm().submit(); }
+		buttons: [{
+			text: 'Submit',
+			handler: function() {
+				this.up('form').getForm().submit();
 			}
-		]
+		}]
 	}]
 });

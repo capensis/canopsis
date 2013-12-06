@@ -1,5 +1,5 @@
+//need:app/lib/view/cgrid.js
 /*
-#--------------------------------
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
@@ -16,7 +16,6 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
-# ---------------------------------
 */
 Ext.define('canopsis.view.Group.Grid' , {
 	extend: 'canopsis.lib.view.cgrid',
@@ -34,22 +33,22 @@ Ext.define('canopsis.view.Group.Grid' , {
 
 	columns: [
 		{
-				header: '',
-				width: 25,
-				sortable: false,
-				renderer: rdr_crecord_type,
-	               dataIndex: 'crecord_type'
-        	},{
-				header: _('Name'),
-				flex: 2,
-				sortable: true,
-				dataIndex: 'crecord_name'
+			header: '',
+			width: 25,
+			sortable: false,
+			renderer: rdr_crecord_type,
+			dataIndex: 'crecord_type'
 		},{
-				header: _('Description'),
-				flex: 2,
-				sortable: true,
-				dataIndex: 'description',
-				editor: {xtype: 'textfield'}
+			header: _('Name'),
+			flex: 2,
+			sortable: true,
+			dataIndex: 'crecord_name'
+		},{
+			header: _('Description'),
+			flex: 2,
+			sortable: true,
+			dataIndex: 'description',
+			editor: {xtype: 'textfield'}
 		}
 
 	],
@@ -57,5 +56,4 @@ Ext.define('canopsis.view.Group.Grid' , {
 	initComponent: function() {
 		this.callParent(arguments);
 	}
-
 });

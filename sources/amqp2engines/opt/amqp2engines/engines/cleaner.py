@@ -35,8 +35,6 @@ class engine(cengine):
 		if not rk:
 			raise Exception("Invalid routing-key '%s' (%s)" % (rk, body))
 		
-		if rk == 'toto':
-			self.logger.debug("Event: %s" % rk)
 		#self.logger.info( body ) 	
 		## Try to decode event
 		if isinstance(body, dict):
@@ -84,5 +82,6 @@ class engine(cengine):
 
 		event["state"]		= event.get("state", 0)
 		event["state_type"] = event.get("state_type", 1)
+		event["event_type"] = event.get("event_type", "check")
 
 		return event

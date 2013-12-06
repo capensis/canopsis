@@ -24,12 +24,12 @@ import kombu.pools
 
 try:
 	from amqplib.client_0_8.exceptions import AMQPConnectionException as ConnectionError
-except:
+except ImportError as IE:
 	from amqp.exceptions import ConnectionError
 
 import socket
 
-import time, logging, threading, os
+import time, logging, threading, os, traceback
 
 #from kombu.pools import producers
 
@@ -110,13 +110,17 @@ class camqp(threading.Thread):
 							self.conn.drain_events(timeout=0.5)
 						else:
 							time.sleep(0.5)
+
 					except socket.timeout:
 						pass
-					except self.connection_errors, err:
+
+					except self.connection_errors as err:
 						self.logger.error("Connection error ! (%s)" % err)
 						break
-					except Exception, err:
-						self.logger.exception("Unknown error:")
+
+					except Exception as err:
+						self.logger.error("Unknown error: %s (%s)" % (err, type(err)))
+						traceback.print_exc(file=sys.stdout)
 						break
 					
 				self.disconnect()
@@ -144,7 +148,7 @@ class camqp(threading.Thread):
 				self.logger.info("Connected to AMQP Broker.")
 				self.producers = kombu.pools.Producers(limit=10)
 				self.connected = True
-			except Exception, err:
+			except Exception as err:
 				self.conn.release()
 				self.logger.error("Impossible to connect (%s)" % err)
 			
@@ -161,10 +165,10 @@ class camqp(threading.Thread):
 						for exchange_name in self.exchanges:
 							self.logger.debug(" + %s" % exchange_name)
 							self.exchanges[exchange_name](self.chan).declare()
-					except Exception, err:
+					except Exception as err:
 						self.logger.error("Impossible to declare exchange (%s)" % err)
 					
-				except Exception, err:
+				except Exception as err:
 					self.logger.error(err)
 		else:
 			self.logger.debug("Allready connected")
@@ -273,13 +277,22 @@ class camqp(threading.Thread):
 			self.logger.debug("Send message to %s in %s" % (routing_key, exchange_name))
 			with self.producers[self.conn].acquire(block=True) as producer:
 				try:
-					producer.publish(msg, serializer=serializer, compression=compression, routing_key=routing_key, exchange=self.get_exchange(exchange_name))
+					_msg = msg.copy()
+					camqp._clean_msg_for_serialization(_msg)
+					producer.publish(_msg, serializer=serializer, compression=compression, routing_key=routing_key, exchange=self.get_exchange(exchange_name))
 					self.logger.debug(" + Sended")
 				except Exception, err:
 					self.logger.error(" + Impossible to send (%s)" % err)
 		else:
 			self.logger.error("You are not connected ...")
-			
+
+	@staticmethod
+	def _clean_msg_for_serialization(msg):
+		from bson import objectid
+		for key in msg:
+			if isinstance(msg[key], objectid.ObjectId):
+				msg[key] = str(msg[key])
+
 	def cancel_queues(self):
 		if self.connected:
 			for queue_name in self.queues.keys():
@@ -305,10 +318,16 @@ class camqp(threading.Thread):
 				del exchange
 			self.exchanges = {}
 
-			kombu.pools.reset()
-			
-			self.conn.release()
-			del self.conn
+			try:
+				kombu.pools.reset()
+			except Exception as err:
+				self.logger.error("Impossible to reset kombu pools: %s (%s)" % (err, type(err)))
+
+			try:
+				self.conn.release()
+				del self.conn
+			except Exception as err:
+				self.logger.error("Impossible to release connection: %s (%s)" % (err, type(err)))
 
 			self.connected = False
 

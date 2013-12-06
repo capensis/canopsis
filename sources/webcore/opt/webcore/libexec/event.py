@@ -32,7 +32,7 @@ from camqp import camqp
 import cevent
 
 #import protection function
-from libexec.auth import check_auth, get_account, check_group_rights
+from libexec.auth import get_account, check_group_rights
 
 logger = logging.getLogger('Event')
 

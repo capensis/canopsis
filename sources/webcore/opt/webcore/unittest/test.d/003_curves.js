@@ -4,7 +4,7 @@
 
 var selector_curve_form = ".x-window-item";
 
-cgridOpen('build','buildCurve','cps_pct_by_state_0')
+cgridOpen('build','buildCurve','cps_pct_by_state_0');
 
 casper.then(function() {
 	casper.echo('> Fill fields and Save', 'COMMENT');
@@ -19,9 +19,9 @@ casper.then(function() {
 	casper.waitUntilVisible("div.ui-pnotify-container");
 });
 
-cgridEditRecord(selector_curve_form,'label', 'CasperLabelModified')
+cgridEditRecord(selector_curve_form,'label', 'CasperLabelModified');
 
-cgridRemoveRecord()
+cgridRemoveRecord();
 
 casper.then(function() {
 	casper.echo('> Close Tab', 'COMMENT');

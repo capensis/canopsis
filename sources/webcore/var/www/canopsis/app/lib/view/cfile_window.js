@@ -1,5 +1,5 @@
+//need:app/lib/view/cpopup.js
 /*
-#--------------------------------
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
@@ -16,10 +16,7 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
-# ---------------------------------
 */
-
-
 
 Ext.define('canopsis.lib.view.cfile_window' , {
 	extend: 'canopsis.lib.view.cpopup',
@@ -40,13 +37,11 @@ Ext.define('canopsis.lib.view.cfile_window' , {
 	copyPasteZone: false,
 
 	_buildForm: function() {
-
 		this._fileField = this._form.add(Ext.create('Ext.form.field.File', {
 			name: this._name,
 			fieldLabel: this._fieldLabel,
 			labelWidth: 80,
 			msgTarget: 'side',
-			//allowBlank: false,
 			anchor: '100%',
 			buttonText: this._buttonText
 		}));
@@ -59,7 +54,6 @@ Ext.define('canopsis.lib.view.cfile_window' , {
 			anchor: '100%'
 		}));
 
-
 		return this._form;
 	},
 
@@ -68,13 +62,21 @@ Ext.define('canopsis.lib.view.cfile_window' , {
 		var fileList = this._fileField.fileInputEl.dom.files;
 		var text = this._textArea.getValue();
 
-		if (fileList.length > 0) {
-			this.fireEvent('save', fileList);
-		}else {
-			if (text != undefined) {
+		if(fileList.length > 0) {
+			this.fireEvent('save', {
+				file: true,
+				value: fileList
+			});
+		}
+		else {
+			if(text !== undefined) {
 				try {
-					this.fireEvent('save', Ext.decode(text));
-				}catch (err) {
+					this.fireEvent('save', {
+						file: false,
+						value: Ext.decode(text)
+					});
+				}
+				catch (err) {
 					log.dump(err);
 					global.notify.notify(_('Wrong json'), _('This json is malformed'), 'info');
 				}

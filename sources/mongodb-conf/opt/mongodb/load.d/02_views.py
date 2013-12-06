@@ -85,9 +85,13 @@ def init():
 	data = { 'xtype': 'TopologyGrid'}
 	create_view('topology_manager', 'Topologies', data, internal=True)
 
-	### Aggragations
+	### Consolidation
 	data = { 'xtype': 'ConsolidationGrid'}
 	create_view('consolidation_manager', 'Consolidation', data, internal=True)
+
+	### Filter
+	data = { 'xtype': 'RuleGrid' }
+	create_view('rules_manager', 'Filter Rules', data, internal=True)
 
 	###metric_navigator
 	#data = {'xtype': 'MetricNavigation'}
@@ -138,6 +142,10 @@ def update_view_for_new_metric_format():
 
 				if isinstance(itemNodes, list):
 					itemXtype = item['data']['xtype']
+
+					if itemXtype == 'weather':
+						print('Ignore for weather widget')
+						break
 
 					#update for text widget
 					if itemXtype == 'text' or itemXtype == 'topology_viewer':

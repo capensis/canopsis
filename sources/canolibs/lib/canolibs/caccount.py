@@ -32,11 +32,12 @@ except:
 
 class caccount(crecord):
 	def __init__(self, record=None, user=None, group=None, lastname=None, firstname=None, mail=None, groups=[], authkey=None, *args, **kargs):
-		self.user = user
+		self.user = user or "anonymous"
 		self.groups = groups
+		self.group = group or "group.anonymous"
 		self.shadowpasswd = None
 		
-		self.authkey = authkey
+		self.authkey = authkey or self.generate_new_authkey()
 
 		self.lastname = lastname
 		self.firstname = firstname
@@ -44,27 +45,19 @@ class caccount(crecord):
 
 		self.type = "account"
 
-		if not self.user:
-			self.user = "anonymous"
-
-		if not group:
-			group = "group.anonymous"
-			
-		if not self.authkey:
-			self.generate_new_authkey()
-
-		if self.user:
-			self._id = self.type + "." + self.user
+		self._id = self.type + "." + self.user
 		
 		self.access_owner = ['r', 'w']
 		self.access_group = []
 		self.access_other = []
 		self.access_unauth = []
 
+		self.external = False
+
 		if isinstance(record, crecord):
 			crecord.__init__(self, _id=self._id, record=record, type=self.type, *args, **kargs)
 		else:
-			crecord.__init__(self, _id=self._id, owner="account.%s" % self.user, group=group, type=self.type, *args, **kargs)
+			crecord.__init__(self, _id=self._id, owner="account.%s" % self.user, group=self.group, type=self.type, *args, **kargs)
 
 	def get_full_mail(self):
 		return "\"%s %s\" <%s>" % (self.firstname, self.lastname, self.mail)
@@ -100,8 +93,6 @@ class caccount(crecord):
 		return hashlib.sha1(str(shadow).upper() + str( int( time.time() / 10)*10 )).hexdigest()
 
 	def get_authkey(self):
-		if not self.authkey:
-			return self.generate_new_authkey()
 		return self.authkey
 		
 	def check_authkey(self, authkey):
@@ -116,8 +107,7 @@ class caccount(crecord):
 		return m.hexdigest()
 
 	def generate_new_authkey(self):
-		self.authkey = hashlib.sha224(str(getrandbits(512))).hexdigest()
-		return self.authkey
+		return hashlib.sha224(str(getrandbits(512))).hexdigest()
 
 	def dump(self):
 		self.name = self.user
@@ -126,6 +116,7 @@ class caccount(crecord):
 		self.data['firstname'] = self.firstname
 		self.data['mail'] = self.mail
 		self.data['groups'] = list(self.groups)
+		self.data['external'] = self.external
 		'''
 		if self.group:
 			self.data['groups'].insert(0, self.group)
@@ -141,6 +132,7 @@ class caccount(crecord):
 		self.firstname = self.data['firstname']
 		self.mail = self.data['mail']
 		self.groups = self.data['groups']
+		self.external = self.data.get('external', self.external)
 		'''
 		if len(self.groups) > 0:
 			if self.groups[0] == self.group:
@@ -171,7 +163,7 @@ class caccount(crecord):
 		for group in groups:
 			if isinstance(group,cgroup):
 				group_list.append(group)
-			elif isinstance(group, str) or isinstance(group, unicode):
+			elif isinstance(group, basestring):
 				if storage:
 					try:
 						record = storage.get(group)

@@ -1,5 +1,4 @@
 /*
-#--------------------------------
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
@@ -16,10 +15,9 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
-# ---------------------------------
 */
 Ext.define('canopsis.model.Event', {
-    extend: 'Ext.data.Model',
+	extend: 'Ext.data.Model',
 
 	fields: [
 		{name: '_id'},
@@ -41,8 +39,7 @@ Ext.define('canopsis.model.Event', {
 
 		{name: 'event_id'},
 		{name: 'derogation_name'},
-		{name: 'derogation_description'}
-
+		{name: 'derogation_description'},
+		{name: 'ack'}
 	]
-
 });
