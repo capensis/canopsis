@@ -1,5 +1,5 @@
+//need:app/lib/controller/cgrid.js,app/view/Schedule/Grid.js,app/view/Schedule/Form.js,app/store/Schedules.js
 /*
-#--------------------------------
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
@@ -16,7 +16,6 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
-# ---------------------------------
 */
 Ext.define('canopsis.controller.Schedule', {
 	extend: 'canopsis.lib.controller.cgrid',
@@ -36,11 +35,12 @@ Ext.define('canopsis.controller.Schedule', {
 		this.callParent(arguments);
 	},
 
-	preSave: function(record,data) {
-		if(data.exporting_interval)
-			var interval = data.exporting_intervalLength * data.exporting_intervalUnit;
-		else
-			var interval = null
+	preSave: function(record, data) {
+		var interval = null;
+
+		if(data.exporting_interval) {
+			interval = data.exporting_intervalLength * data.exporting_intervalUnit;
+		}
 
 		record.set('exporting_interval', data.exporting_interval);
 		record.set('exporting_account', global.account.user);
@@ -48,42 +48,44 @@ Ext.define('canopsis.controller.Schedule', {
 		record.set('exporting_method', 'render_pdf');
 
 		var kwargs = {
-					viewName: record.get('exporting_viewName'),
-					//startTime: record.get('exporting_startTime'),
-					account: record.get('exporting_account'),
-					task: record.get('exporting_task'),
-					method: record.get('exporting_method'),
-					interval: interval,
-					_scheduled: record.get('crecord_name'),
-					owner: record.get('exporting_owner')
-				};
+			viewName: record.get('exporting_viewName'),
+			account: record.get('exporting_account'),
+			task: record.get('exporting_task'),
+			method: record.get('exporting_method'),
+			interval: interval,
+			_scheduled: record.get('crecord_name'),
+			owner: record.get('exporting_owner')
+		};
 
 		//check if a mail must be send
-		if (data.exporting_mail) {
-			if (data.exporting_recipients != '' && data.exporting_recipients != undefined) {
+		if(data.exporting_mail) {
+			if(data.exporting_recipients !== '' && data.exporting_recipients !== undefined) {
 				log.debug('sendMail is true', this.logAuthor);
 
-				 var stripped_recipients = data.exporting_recipients.replace(/ /g, '');
-				 var recipients = stripped_recipients.split(',');
-				 if (recipients.length == 1)
-					 recipients = stripped_recipients.split(';');
+				var stripped_recipients = data.exporting_recipients.replace(/ /g, '');
+				var recipients = stripped_recipients.split(',');
+
+				if(recipients.length === 1) {
+					recipients = stripped_recipients.split(';');
+				}
 
 				var mail = {
 					'recipients': recipients,
 					'subject': record.get('exporting_subject'),
 					'body': 'Scheduled task reporting'
 				};
+
 				kwargs['mail'] = mail;
 			}
-		}else{
-			kwargs['mail'] = null
+		}
+		else {
+			kwargs['mail'] = null;
 		}
 
-		record.set('kwargs',kwargs)
+		record.set('kwargs',kwargs);
 		record.set('loaded', false);
 
-		//----------------------formating crontab-----------------------
-		//log.dump(data)
+		// formating crontab
 		var time = stringTo24h(data.crontab_hours);
 
 		//apply offset to get utc
@@ -97,59 +99,74 @@ Ext.define('canopsis.controller.Schedule', {
 			hour: d.getUTCHours()
 		};
 
-		if (data.crontab_month)
+		if(data.crontab_month) {
 			crontab['month'] = data.crontab_month;
-		if (data.crontab_day_of_week)
+		}
+
+		if(data.crontab_day_of_week) {
 			crontab['day_of_week'] = data.crontab_day_of_week;
-		if (data.crontab_day)
+		}
+
+		if(data.crontab_day) {
 			crontab['day'] = data.crontab_day;
+		}
 
 		record.set('cron', crontab);
 
 		return record;
 	},
 
-	beforeload_EditForm: function(form,item) {
-		crontab = item.data.cron
-		if(crontab && crontab.hour != undefined && crontab.minute != undefined){
+	beforeload_EditForm: function(form, item) {
+		crontab = item.data.cron;
+
+		if(crontab && crontab.hour !== undefined && crontab.minute !== undefined) {
 			var d = new Date();
-			d.setUTCHours(crontab.hour,crontab.minute)
-			var minutes = d.getMinutes()
-			if(minutes < 10)
-				minutes = '0'+minutes
-			form.down('textfield[name=crontab_hours]').setValue(d.getHours()+':'+minutes)
+			d.setUTCHours(crontab.hour, crontab.minute);
+			var minutes = d.getMinutes();
+
+			if(minutes < 10) {
+				minutes = '0' + minutes;
+			}
+
+			form.down('textfield[name=crontab_hours]').setValue(d.getHours() + ':' + minutes);
 		}
 	},
 
 	validateForm: function(store, data, form) {
+		var field = undefined;
 
 		//check mail options
-		if (data['exporting_mail']) {
-			if (! data['exporting_subject'] || ! data['exporting_subject']) {
-				log.debug('Invalid mail options', this.logAuthor + '[validateForm]');
-				global.notify.notify(' Invalid mail options', '', 'error');
+		if(data['exporting_mail'] && !data['exporting_subject'] || !data['exporting_subject']) {
+			log.debug('Invalid mail options', this.logAuthor + '[validateForm]');
+			global.notify.notify(' Invalid mail options', '', 'error');
 
-				var field = form.findField('exporting_subject');
-				if (! data['exporting_subject'] && field)
-					field.markInvalid(_('Invalid field'));
+			field = form.findField('exporting_subject');
 
-				var field = form.findField('exporting_recipients');
-				if (! data['exporting_recipients'] && field)
-					field.markInvalid(_('Invalid field'));
-
-				return false;
+			if(!data['exporting_subject'] && field) {
+				field.markInvalid(_('Invalid field'));
 			}
+
+			field = form.findField('exporting_recipients');
+
+			if(!data['exporting_recipients'] && field) {
+				field.markInvalid(_('Invalid field'));
+			}
+
+			return false;
 		}
 
 		//Check duplicate
 		var already_exist = false;
-		if (!form.editing)
-			if (store.findExact('crecord_name', data['crecord_name']) >= 0)
-				already_exist = true;
 
-				var field = form.findField('crecord_name');
-				if (field)
-					field.markInvalid(_('Invalid field'));
+		if(!form.editing && store.findExact('crecord_name', data['crecord_name']) >= 0) {
+			already_exist = true;
+		}
+
+		field = form.findField('crecord_name');
+
+		if(field) {
+			field.markInvalid(_('Invalid field'));
+		}
 
 		if (already_exist) {
 			log.debug('Schedule already exist exist', this.logAuthor + '[validateForm]');
@@ -162,51 +179,66 @@ Ext.define('canopsis.controller.Schedule', {
 
 	runItem: function(item) {
 		log.debug('Clicked on run item', this.logAuthor);
-		
-		options = item.get('kwargs');
-		view_name = options.viewName;
-		start_time = undefined
-		if(options.interval)
-			start_time = Ext.Date.now() -  (options.interval *1000);
 
-		mail = options.mail;
-		if (mail)
+		var options    = item.get('kwargs');
+		var view_name  = options.viewName;
+		var start_time = undefined;
+
+		if(options.interval) {
+			start_time = Ext.Date.now() - (options.interval * 1000);
+		}
+
+		var mail = options.mail;
+
+		if(mail) {
 			mail = Ext.encode(mail);
+		}
 
 		this.getController('Reporting').launchReport(view_name, start_time, undefined, mail);
 	},
 
 	//call a window wizard to schedule Schedule with passed argument
-	scheduleWizard: function(item,renderTo) {
+	scheduleWizard: function(item, renderTo) {
 		//temporary hack, check if called by cgrid or ctree
-		var form = Ext.create('canopsis.view.Schedule.Form', {EditMethod: 'window', editing: false});
+		var form = Ext.create('canopsis.view.Schedule.Form', {
+			EditMethod: 'window',
+			editing: false
+		});
+
 		var store = Ext.getStore('Schedules');
 
-		if (item != undefined) {
+		if(item !== undefined) {
 			var viewName = item.get('_id');
 			var combo = form.down('combobox[name=view]');
-			if (combo != undefined)
+
+			if(combo !== null) {
 				combo.setValue(viewName);
+			}
 		}
 
 		var window_wizard = Ext.widget('window', {
-													title: _('Scheduling'),
-													items: [form],
-													constrain: true,
-													renderTo: renderTo
-												});
+			title: _('Scheduling'),
+			items: [form],
+			constrain: true,
+			renderTo: renderTo
+		});
 
 		form.win = window_wizard;
 
 		window_wizard.show();
 
-		//-------------------------binding events-----------------------
-		btns = form.down('button[action=save]');
-		btns.on('click', function() {this._saveForm(form, store)},this);
+		// binding events
+		var btns = form.down('button[action=save]');
+
+		btns.on('click', function() {
+			this._saveForm(form, store);
+		}, this);
 
 		btns = form.down('button[action=cancel]');
-		btns.on('click', function() {window_wizard.close();}, this);
 
+		btns.on('click', function() {
+			window_wizard.close();
+		}, this);
 	},
 
 	format_time: function(cron) {
@@ -219,20 +251,29 @@ Ext.define('canopsis.controller.Schedule', {
 		var hour = d.getHours();
 
 		//cosmetic
-		if (minute < 10)
+		if(minute < 10) {
 			minute = '0' + minute;
-		if (hour < 10)
+		}
+
+		if(hour < 10) {
 			hour = '0' + hour;
+		}
 
 		//check 12h / 24h clock
-		if (!is12Clock()) {
-			var hours = hour + ':' + minute;
-		}else {
-			if (hour > 12)
-				var hours = (hour - 12) + ':' + minute + ' pm';
-			else
-				var hours = hour + ':' + minute + ' am';
+		var hours = undefined;
+
+		if(!is12Clock()) {
+			hours = hour + ':' + minute;
 		}
+		else {
+			if(hour > 12) {
+				hours = (hour - 12) + ':' + minute + ' pm';
+			}
+			else {
+				hours = hour + ':' + minute + ' am';
+			}
+		}
+
 		return hours;
 	}
 });

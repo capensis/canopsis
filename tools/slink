@@ -29,12 +29,15 @@ rm -Rf $CPS/etc/tasks.d/task_reporting.py
 rm -Rf $CPS/etc/tasks.d/task_mail.py
 rm -Rf $CPS/etc/tasks.d/task_backup.py
 rm -Rf $CPS/etc/tasks.d/task_node.py
+rm -Rf $CPS/etc/tasks.d/task_pyperfstore.py
 rm -Rf $CPS/lib/wkhtmltopdf/*
+rm -Rf $CPS/lib/python2.7/site-packages/pyperfstore2-0.1-py2.7.egg/*
 
 if [ $LINK -eq 1 ]; then
 	ln -s $SRC/sources/wkhtmltopdf-libs/lib/wkhtmltopdf/* $CPS/lib/wkhtmltopdf/
 	ln -s $SRC/sources/celery-libs/etc/tasks.d/* $CPS/etc/tasks.d/
 	ln -s $SRC/sources/wkhtmltopdf-libs/etc/tasks.d/task_reporting.py $CPS/etc/tasks.d/
+	ln -s $SRC/sources/amqp2engines/etc/tasks.d/* $CPS/etc/tasks.d/
 	ln -s $SRC/sources/apscheduler-libs/bin/apsd $CPS/bin/
 	ln -s $SRC/sources/apscheduler-libs/lib/apschedulerlibs $CPS/lib/
 	ln -s $SRC/sources/externals/webcore-libs $CPS/var/www/
@@ -46,6 +49,7 @@ if [ $LINK -eq 1 ]; then
 	ln -s $SRC/sources/collectd-libs/opt/collectd-libs $CPS/opt/
 	ln -s $SRC/sources/amqp2engines/opt/amqp2engines $CPS/opt/
 	ln -s $SRC/sources/mongodb-conf/opt/mongodb $CPS/opt/
+	ln -s $SRC/sources/pyperfstore2/pyperfstore2 $CPS/lib/python2.7/site-packages/pyperfstore2-0.1-py2.7.egg/
 fi
 
 

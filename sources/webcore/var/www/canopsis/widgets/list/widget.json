@@ -12,9 +12,8 @@
 			"title": "Options",
 			"items": [
 					{
-						"xtype": "fieldset",
+						"xtype": "cfieldset",
 						"title": "Columns",
-						"collapsible": false,
 						"items": [
 							{
 								"xtype": "checkbox",
@@ -58,9 +57,8 @@
 								"name": "show_tags"
 							}]
 				},{
-						"xtype": "fieldset",
+						"xtype": "cfieldset",
 						"title": "Default sorting",
-						"collapsible": false,
 						"items":[
 							{
 								"xtype": "combobox",
@@ -109,10 +107,10 @@
 				}]
 		},{
 			"title": "Style",
+			"advanced": true,
 			"items": [{
-						"xtype": "fieldset",
+						"xtype": "cfieldset",
 						"title": "Style",
-						"collapsible": false,
 						"items": [
 							{
 								"xtype": "checkbox",

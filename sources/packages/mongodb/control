@@ -2,7 +2,7 @@
 
 NAME="mongodb"
 VERSION=2.2.0
-RELEASE=2
+RELEASE=3
 DESCRIPTION=""
 REQUIRES="canohome python canolibs"
 
@@ -30,7 +30,7 @@ function post_remove(){
 
 function pre_update(){
 	echo "Pre-update $NAME $VERSION-$RELEASE ..."
-	check_code $?
+	service mongodb stop
 }
 
 function post_update(){

@@ -1,5 +1,5 @@
+//need:app/lib/view/cgrid.js
 /*
-#--------------------------------
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
@@ -16,7 +16,6 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
-# ---------------------------------
 */
 Ext.define('canopsis.view.Perfdata.Grid' , {
 	extend: 'canopsis.lib.view.cgrid',
@@ -37,102 +36,111 @@ Ext.define('canopsis.view.Perfdata.Grid' , {
 
 	opt_cell_edit: false,
 
+
 	columns: [
 		{
 			header: '',
 			width: 25,
 			sortable: false,
-			renderer: function() {return "<span class='icon icon-mainbar-perfdata' />"}
-        },{
-				header: _('Component'),
-				flex: 1,
-				sortable: true,
-				dataIndex: 'co'
+			renderer: function() {
+				return "<span class='icon icon-mainbar-perfdata' />";
+			}
 		},{
-				header: _('Resource'),
-				flex: 1,
-				sortable: true,
-				dataIndex: 're'
+			header: _('Component'),
+			flex: 1,
+			sortable: true,
+			dataIndex: 'co'
 		},{
-				header: _('Metric'),
-				flex: 2,
-				sortable: true,
-				dataIndex: 'me',
-				 editor: {xtype: 'textfield'}
-		}/*,{
-				header: _('Retention') +' ' +  _('in seconds'),
-				width: 150,
-				sortable: true,
-				dataIndex: 'r',
-				align: 'center',
-				renderer: rdr_time_interval,
-				editor: {
-					xtype: 'numberfield',
-					minValue: 0,
-					step:60
-					}
-		}*/,{
-				header: _('First point'),
-				width: 150,
-				sortable: true,
-				dataIndex: 'fts',
-				align: 'center',
-				renderer: rdr_tstodate
+			header: _('Resource'),
+			flex: 1,
+			sortable: true,
+			dataIndex: 're'
 		},{
-				header: _('Last point'),
-				width: 150,
-				sortable: true,
-				dataIndex: 'lts',
-				align: 'center',
-				renderer: rdr_tstodate
+			header: _('Metric'),
+			flex: 2,
+			sortable: true,
+			dataIndex: 'me',
+			editor: {xtype: 'textfield'}
 		},{
-				header: _('Type'),
-				width: 70,
-				sortable: true,
-				dataIndex: 't',
-				align: 'center',
-				editor: {xtype: 'textfield'}
+			header: _('Retention') +' ' +  _('in seconds'),
+			width: 150,
+			sortable: true,
+			dataIndex: 'r',
+			align: 'center',
+			renderer: rdr_time_interval,
+			editor: {
+				xtype: 'numberfield',
+				minValue: 0,
+				step: 60
+			}
 		},{
-				header: _('Min'),
-				width: 100,
-				sortable: true,
-				dataIndex: 'mi',
-				align: 'right',
-				renderer: function(value, metaData, record) {
-						return rdr_humanreadable_value(value, record.get('u'));
-					}
+			header: _('First point'),
+			width: 150,
+			sortable: true,
+			dataIndex: 'fts',
+			align: 'center',
+			renderer: rdr_tstodate
 		},{
-				header: _('Max'),
-				width: 100,
-				sortable: true,
-				dataIndex: 'ma',
-				align: 'right',
-				renderer: function(value, metaData, record) {
-						return rdr_humanreadable_value(value, record.get('u'));
-					}
+			header: _('Last point'),
+			width: 150,
+			sortable: true,
+			dataIndex: 'lts',
+			align: 'center',
+			renderer: rdr_tstodate
 		},{
-				header: _('Last value'),
-				width: 100,
-				sortable: true,
-				dataIndex: 'lv',
-				align: 'right',
-				renderer: function(value, metaData, record) {
-						return rdr_humanreadable_value(value, record.get('u'));
-					}
+			header: _('Type'),
+			width: 70,
+			sortable: true,
+			dataIndex: 't',
+			align: 'center',
+			editor: {xtype: 'textfield'}
 		},{
-				header: _('Unit'),
-				width: 45,
-				sortable: true,
-				dataIndex: 'u',
-				align: 'center',
-				editor: {xtype: 'textfield'}
-		}/*,{
-				header: _('Tags'),
-				flex: 2,
-				sortable: false,
-				dataIndex: 'tg',
-				renderer: rdr_tags
-		}*/
+			header: _('Min'),
+			width: 100,
+			sortable: true,
+			dataIndex: 'mi',
+			align: 'right',
+			renderer: function(value, metaData, record) {
+				void(metaData);
+
+				return rdr_humanreadable_value(value, record.get('u'));
+			}
+		},{
+			header: _('Max'),
+			width: 100,
+			sortable: true,
+			dataIndex: 'ma',
+			align: 'right',
+			renderer: function(value, metaData, record) {
+				void(metaData);
+
+				return rdr_humanreadable_value(value, record.get('u'));
+			}
+		},{
+			header: _('Last value'),
+			width: 100,
+			sortable: true,
+			dataIndex: 'lv',
+			align: 'right',
+			renderer: function(value, metaData, record) {
+				void(metaData);
+
+				return rdr_humanreadable_value(value, record.get('u'));
+			}
+		},{
+			header: _('Unit'),
+			width: 45,
+			sortable: true,
+			dataIndex: 'u',
+			align: 'center',
+			editor: {xtype: 'textfield'}
+		},{
+			header: _('Tags'),
+			flex: 2,
+			sortable: false,
+			dataIndex: 'tg',
+			renderer: rdr_tags
+		}
 
 	],
 
@@ -145,21 +153,7 @@ Ext.define('canopsis.view.Perfdata.Grid' , {
 		action: 'toggle_internal_metric'
 	}],
 
-	/*menu_items: [
-		Ext.create('Ext.Action', {
-						iconCls: 'icon-clean',
-						text: _('Clean'),
-						action: 'clean'
-					}),
-		Ext.create('Ext.Action', {
-						iconCls: 'icon-clean',
-						text: _('Clean all'),
-						action: 'clean_all'
-					}),
-	],*/
-
 	initComponent: function() {
 		this.callParent(arguments);
 	}
-
 });

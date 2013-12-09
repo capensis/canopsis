@@ -42,7 +42,7 @@ import task_mail
 import task_reporting
 
 #import protection function
-from libexec.auth import check_auth, get_account
+from libexec.auth import get_account
 from libexec.account import check_group_rights
 
 logger = logging.getLogger('Reporting')

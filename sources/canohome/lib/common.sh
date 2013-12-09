@@ -5,7 +5,7 @@ HGROUP="canopsis"
 ARCH=`uname -m`
 SUDO="sudo -E"
 
-function check_code {
+function check_code() {
 	if [ $1 -ne 0 ]; then
 		echo -e "Error: Code: $1"
 		echo -e "Output:\n$2"
@@ -83,4 +83,13 @@ function launch_cmd() {
             fi
         fi
     fi
+}
+
+function detect_numa() {
+	local CMD=`which numactl`
+	if [ "x$CMD" != "x" ]; then
+		$CMD --hardware | grep 'node' | grep 'cpus' | wc -l
+	else
+		echo 0
+	fi
 }

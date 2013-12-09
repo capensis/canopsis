@@ -28,8 +28,24 @@ root = caccount(user="root", group="root")
 storage = get_storage(account=root, namespace='object')
 
 def init():
-	#logger.info(" + Create index of 'perfdata2'")
-	#storage.get_backend('perfdata2').ensure_index(['co', 're', 'me'], background = True)
+	logger.info(" + Create index of 'perfdata2'")
+	storage.get_backend('perfdata2').ensure_index([
+		('co',	1)
+	])
+	storage.get_backend('perfdata2').ensure_index([
+		('re',	1)
+	])
+	storage.get_backend('perfdata2').ensure_index([
+		('me',	1)
+	])
+	storage.get_backend('perfdata2').ensure_index([
+		('tg',	1)
+	])
+	storage.get_backend('perfdata2').ensure_index([
+		('co',	1),
+		('re',	1),
+		('me',	1)
+	])
 
 	logger.info(" + Create index of 'events'")
 	storage.get_backend('events').ensure_index([
@@ -41,7 +57,12 @@ def init():
 		('event_type',		1),
 	])
 	storage.get_backend('events').ensure_index([
-		('tags', 			1)
+		('tags', 			1),
+		('source_type',		1),
+	])
+	storage.get_backend('events').ensure_index([
+		('component',		1),
+
 	])
 	
 	logger.info(" + Create index of 'events_log'")

@@ -1,5 +1,5 @@
+//need:app/lib/controller/cgrid.js,app/lib/view/cmail.js,app/view/Briefcase/Grid.js,app/view/Briefcase/Form.js,app/store/Files.js
 /*
-#--------------------------------
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
@@ -16,10 +16,13 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
-# ---------------------------------
 */
 Ext.define('canopsis.controller.Briefcase', {
 	extend: 'canopsis.lib.controller.cgrid',
+
+	requires: [
+		'canopsis.lib.view.cmail'
+	],
 
 	views: ['Briefcase.Grid', 'Briefcase.Form'],
 	stores: ['Files'],
@@ -37,16 +40,19 @@ Ext.define('canopsis.controller.Briefcase', {
 
 	},
 
-	_viewElement: function(view, item, index) {
+	_viewElement: function(view, item) {
+		void(view);
+
 		log.debug('Clicked on element, function viewElement', this.logAuthor);
 		this.download(item.get('_id'));
-   },
+	},
 
 	_downloadButton: function() {
 		log.debug('clicked deleteButton', this.logAuthor);
 		var grid = this.grid;
 		var selection = grid.getSelectionModel().getSelection()[0];
-		if (selection) {
+
+		if(selection) {
 			this.download(selection.get('_id'));
 		}
 	},
@@ -62,8 +68,13 @@ Ext.define('canopsis.controller.Briefcase', {
 			constrain: true,
 			attachement: record.get('_id')
 		};
+
 		var cmail = Ext.create('canopsis.lib.view.cmail', config);
-		cmail.on('finish', function(mail) {this._ajaxRequest(mail)},this);
+
+		cmail.on('finish', function(mail) {
+			this._ajaxRequest(mail);
+		}, this);
+
 		cmail.show();
 	},
 
@@ -91,17 +102,20 @@ Ext.define('canopsis.controller.Briefcase', {
 			},
 			success: function(response) {
 				request = Ext.JSON.decode(response.responseText);
-				if (request.success) {
+
+				if(request.success) {
 					log.debug('Mail have been sent successfuly', this.logAuthor);
 					log.info('The server has returned : ' + request.data.output.output);
-					if (request.data.output.success == true) {
+
+					if(request.data.output.success === true) {
 						global.notify.notify(
 							_('Mail sent'),
 							_('The mail have been successfuly sent'),
 							'success'
 						);
 					}
-				} else {
+				}
+				else {
 					log.error('Mail have not been sent', this.logAuthor);
 					global.notify.notify(_('Failed'), _('Mail not sent, error with celery task'), 'error');
 				}

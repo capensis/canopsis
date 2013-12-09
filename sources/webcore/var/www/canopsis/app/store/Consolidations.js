@@ -1,5 +1,5 @@
+//need:app/lib/store/cstore.js,app/model/Consolidation.js
 /*
-#--------------------------------
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
@@ -16,7 +16,6 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
-# ---------------------------------
 */
 
 Ext.define('canopsis.store.Consolidations', {
@@ -32,7 +31,6 @@ Ext.define('canopsis.store.Consolidations', {
 		type: 'rest',
 		url: '/rest/object/consolidation',
 		batchActions: true,
-		//appendId: false,
 		reader: {
 			type: 'json',
 			root: 'data',
@@ -44,5 +42,4 @@ Ext.define('canopsis.store.Consolidations', {
 			writeAllFields: true
 		}
 	}
-
 });

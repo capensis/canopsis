@@ -1,5 +1,4 @@
 /*
-#--------------------------------
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
@@ -16,7 +15,6 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
-# ---------------------------------
 */
 Ext.define('canopsis.controller.ReportingBar', {
 	extend: 'Ext.app.Controller',
@@ -28,26 +26,28 @@ Ext.define('canopsis.controller.ReportingBar', {
 		log.debug('Initialize ...', this.logAuthor);
 
 		this.control({
-			'ReportingBar' : {afterrender: this._bindBarEvents},
-			'ReportingBar button[action="toggleMode"]' : {
+			'ReportingBar': {
+				afterrender: this._bindBarEvents
+			},
+			'ReportingBar button[action="toggleMode"]': {
 				click: this.toggle_mode
 			},
-			'ReportingBar button[action="search"]' : {
+			'ReportingBar button[action="search"]': {
 				click: this.launchReport
 			},
-			'ReportingBar button[action="save"]' : {
+			'ReportingBar button[action="save"]': {
 				click: this.saveButton
 			},
-			'ReportingBar button[action="link"]' : {
+			'ReportingBar button[action="link"]': {
 				click: this.htmlReport
 			},
-			'ReportingBar button[action="exit"]' : {
+			'ReportingBar button[action="exit"]': {
 				click: this.exitButton
 			},
-			'ReportingBar button[action="next"]' : {
+			'ReportingBar button[action="next"]': {
 				click: this.nextButton
 			},
-			'ReportingBar button[action="previous"]' : {
+			'ReportingBar button[action="previous"]': {
 				click: this.previousButton
 			}
 		});
@@ -70,14 +70,15 @@ Ext.define('canopsis.controller.ReportingBar', {
 		var startTimestamp = timestamps.start;
 		var stopTimestamp = timestamps.stop;
 
-		if (startTimestamp && stopTimestamp) {
+		if(startTimestamp && stopTimestamp) {
 			log.debug('------------------------Asked Report date-----------------------');
 			log.debug('from : ' + startTimestamp + ' To : ' + stopTimestamp, this.logAuthor);
 			log.debug('startReport date is : ' + Ext.Date.format(new Date(startTimestamp * 1000), 'Y-m-d H:i:s'), this.logAuthor);
 			log.debug('endReport date is : ' + Ext.Date.format(new Date(stopTimestamp * 1000), 'Y-m-d H:i:s'), this.logAuthor);
 			log.debug('----------------------------------------------------------------');
 			tab.setReportDate(startTimestamp * 1000, stopTimestamp * 1000);
-		} else {
+		}
+		else {
 			log.debug('Timestamps are, start: ' + startTimestamp + ' stop: ' + stopTimestamp, this.logAuthor);
 			global.notify.notify(_('Invalid date'), _('The selected date is invalid'));
 		}
@@ -90,16 +91,18 @@ Ext.define('canopsis.controller.ReportingBar', {
 		var selectedTime = dateField.getValue();
 		var timeUnit = this.bar.combo.getValue();
 
-		console.log('selected time : ' + selectedTime)
-		console.log('time unit : ' + timeUnit)
+		console.log('selected time : ' + selectedTime);
+		console.log('time unit : ' + timeUnit);
 
 		var timestamp = selectedTime + (timeUnit * this.bar.periodNumber.getValue());
 		dateField.setValue(timestamp);
 
-		if (dateField.isValid())
+		if(dateField.isValid()) {
 			this.launchReport();
-		else
+		}
+		else {
 			global.notify.notify(_('Invalid date'), _('The selected date is invalid'));
+		}
 	},
 
 	previousButton: function() {
@@ -112,10 +115,12 @@ Ext.define('canopsis.controller.ReportingBar', {
 		var timestamp = selectedTime - (timeUnit * this.bar.periodNumber.getValue());
 		dateField.setValue(timestamp);
 
-		if (dateField.isValid()) 
+		if (dateField.isValid()) {
 			this.launchReport();
-		else 
+		}
+		else {
 			global.notify.notify(_('Invalid date'), _('The selected date is invalid'));
+		}
 	},
 
 	saveButton: function() {
@@ -125,7 +130,7 @@ Ext.define('canopsis.controller.ReportingBar', {
 		var startTimestamp = timestamps.start;
 		var stopTimestamp = timestamps.stop;
 
-		if (startTimestamp && stopTimestamp) {
+		if(startTimestamp && stopTimestamp) {
 			var view_id = Ext.getCmp('main-tabs').getActiveTab().view_id;
 			var ctrl = this.getController('Reporting');
 
@@ -134,7 +139,8 @@ Ext.define('canopsis.controller.ReportingBar', {
 			log.debug('stopReport : ' + stopTimestamp * 1000, this.logAuthor);
 
 			ctrl.launchReport(view_id, startTimestamp * 1000, stopTimestamp * 1000);
-		} else {
+		}
+		else {
 			log.debug('Timestamps are, start: ' + startTimestamp + ' stop: ' + stopTimestamp, this.logAuthor);
 			global.notify.notify(_('Invalid date'), _('The selected date is in futur'));
 		}
@@ -147,40 +153,51 @@ Ext.define('canopsis.controller.ReportingBar', {
 		var startTimestamp = timestamps.start;
 		var stopTimestamp = timestamps.stop;
 
-		if (startTimestamp && stopTimestamp) {
+		if(startTimestamp && stopTimestamp) {
 			var ctrl = this.getController('Reporting');
 			var view = Ext.getCmp('main-tabs').getActiveTab().view_id;
 			ctrl.openHtmlReport(view, startTimestamp * 1000, stopTimestamp * 1000);
-		} else {
+		}
+		else {
 			log.debug('Timestamps are, start: ' + startTimestamp + ' stop: ' + stopTimestamp, this.logAuthor);
 			global.notify.notify(_('Invalid date'), _('The selected date is in futur'));
 		}
 	},
 
 	getReportTime: function() {
-		if (this.bar.advancedMode) {
-			var startTimestamp = this.bar.fromTs.getValue();
-			var stopTimestamp = this.bar.toTs.getValue();
-		} else {
-			var timeUnit = this.bar.combo.getValue();
-			var periodLength = this.bar.periodNumber.getValue();
-			var stopTimestamp = this.bar.toTs.getValue();
-			var startTimestamp = stopTimestamp - (timeUnit * periodLength);
+		var startTimestamp = undefined;
+		var stopTimestamp  = undefined;
+
+		if(this.bar.advancedMode) {
+			startTimestamp = this.bar.fromTs.getValue();
+			stopTimestamp  = this.bar.toTs.getValue();
 		}
-		return {start: startTimestamp, stop: stopTimestamp};
+		else {
+			var timeUnit     = this.bar.combo.getValue();
+			var periodLength = this.bar.periodNumber.getValue();
+
+			stopTimestamp  = this.bar.toTs.getValue();
+			startTimestamp = stopTimestamp - (timeUnit * periodLength);
+		}
+
+		return {
+			start: startTimestamp,
+			stop: stopTimestamp
+		};
 	},
 
 	getTimestamp: function(date_element,hour_element) {
 		var date = date_element;
 		var hour = hour_element;
 
-		if (date.isValid() && hour.isValid()) {
+		if(date.isValid() && hour.isValid()) {
 			var tsDate = parseInt(Ext.Date.format(date.getValue(), 'U'));
 			var hourObject = stringTo24h(hour.getValue());
 
 			//date + hour in seconds + minute in second
 			var timestamp = tsDate + (hourObject.hour * 60 * 60) + (hourObject.minute * 60);
-		}else {
+		}
+		else {
 			log.debug('getTimestamp Invalid', this.logAuthor);
 			return undefined;
 		}
@@ -202,7 +219,7 @@ Ext.define('canopsis.controller.ReportingBar', {
 	},
 
 	toggle_mode: function() {
-		if (this.bar.advancedMode) {
+		if(this.bar.advancedMode) {
 			this.bar.fromTs.hide();
 			this.bar.textFrom.hide();
 			this.bar.textTo.hide();
@@ -213,7 +230,8 @@ Ext.define('canopsis.controller.ReportingBar', {
 			this.bar.periodNumber.show();
 			this.bar.combo.show();
 			this.bar.advancedMode = false;
-		}else {
+		}
+		else {
 			this.bar.fromTs.show();
 			this.bar.textFrom.show();
 			this.bar.textTo.show();
@@ -228,12 +246,15 @@ Ext.define('canopsis.controller.ReportingBar', {
 
 	},
 
-	setMinDate: function(cdate,date) {
+	setMinDate: function(cdate, date) {
+		void(cdate);
+
 		this.bar.toTs.setMinDate(date);
 	},
 
-	setMaxDate: function(cdate,date) {
+	setMaxDate: function(cdate, date) {
+		void(cdate);
+
 		this.bar.fromTs.setMaxDate(date);
 	}
-
 });

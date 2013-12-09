@@ -1,5 +1,5 @@
+//need:app/lib/store/cstore.js,app/model/Widget.js
 /*
-#--------------------------------
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
@@ -16,10 +16,9 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
-# ---------------------------------
 */
 Ext.define('canopsis.store.Widgets', {
-    extend: 'canopsis.lib.store.cstore',
+	extend: 'canopsis.lib.store.cstore',
 	model: 'canopsis.model.Widget',
 
 	storeId: 'store.Widgets',
@@ -30,11 +29,11 @@ Ext.define('canopsis.store.Widgets', {
 	sortOnLoad: true,
 
 	sorters: [
-        {
-            property: 'name',
-            direction: 'DESC'
-        }
-    ],
+		{
+			property: 'name',
+			direction: 'DESC'
+		}
+	],
 
 	proxy: {
 		type: 'rest',
@@ -47,5 +46,4 @@ Ext.define('canopsis.store.Widgets', {
 			successProperty: 'success'
 		}
 	}
-
 });

@@ -1,5 +1,4 @@
 /*
-#--------------------------------
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
@@ -16,11 +15,10 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
-# ---------------------------------
 */
 Ext.define('canopsis.controller.Websocket', {
 	extend: 'Ext.app.Controller',
-	
+
 	views: [],
 	stores: [],
 
@@ -29,42 +27,45 @@ Ext.define('canopsis.controller.Websocket', {
 	autoconnect: true,
 	connected: false,
 
-    subscribe_cache: {},
-    auto_resubscribe: true,
+	subscribe_cache: {},
+	auto_resubscribe: true,
 
 	jsLoader: undefined,
 	jsLoaded: false,
 
-    init: function() {
+	init: function() {
 		global.websocketCtrl = this;
 		this.loadLibs();
-    },
+	},
 
-    loadLibs: function(){
-		if (this.jsLoader)
+	loadLibs: function(){
+		if(this.jsLoader) {
 			this.jsLoader.destroy();
+		}
 
-		this.jsLoader = new Ext.Element(document.createElement('script'))
+		this.jsLoader = new Ext.Element(document.createElement('script'));
 
-		if (Ext.isIE){
-
-			Ext.defer(function(){
-				if (typeof(now) != 'undefined') {
+		if(Ext.isIE) {
+			Ext.defer(function() {
+				if(typeof(now) !== 'undefined') {
 					this.jsLoaded = true;
 					this.bindNow();
-					if (this.autoconnect)
+
+					if(this.autoconnect) {
 						this.connect();
+					}
 				}
 			}, 2000, this);
-
-		}else{
-
+		}
+		else {
 			this.jsLoader.on('load', function() {
-				if (typeof(now) != 'undefined') {
+				if(typeof(now) !== 'undefined') {
 					this.jsLoaded = true;
 					this.bindNow();
-					if (this.autoconnect)
+
+					if(this.autoconnect) {
 						this.connect();
+					}
 				}
 			}, this, {single: true});
 		}
@@ -75,9 +76,9 @@ Ext.define('canopsis.controller.Websocket', {
 		});
 
 		document.getElementById('nowjs').appendChild(this.jsLoader.dom);
-    },
+	},
 
-    bindNow: function() {
+	bindNow: function() {
 		var me = this;
 
 		now.authToken = global.account.authkey;
@@ -87,7 +88,7 @@ Ext.define('canopsis.controller.Websocket', {
 			log.debug(' + Now ready', me.logAuthor);
 
 			now.core.socketio.on('disconnect', function() {
-				if (me.connected) {
+				if(me.connected) {
 					me.connected = false;
 					me.transport_down();
 					me.fireEvent('transport_down', this);
@@ -96,53 +97,55 @@ Ext.define('canopsis.controller.Websocket', {
 
 			now.auth(function() {
 				log.debug(' + Authed', me.logAuthor);
-				if (! me.connected) {
+				if(!me.connected) {
 					me.connected = true;
 					me.transport_up();
 					me.fireEvent('transport_up', this);
 				}
-
-				//me.subscribe('ui', 'events', me.on_event);
 			});
-
 		});
-    },
+	},
 
-    connect: function() {
+	connect: function() {
 		log.debug('Connect Websocket ...', this.logAuthor);
 
-		if (this.connected){
+		if(this.connected) {
 			log.debug(' + Already connected', this.logAuthor);
 			return;
 		}
 
-		if (! this.jsLoaded) {
+		if(!this.jsLoaded) {
 			log.error('NowJS Client not loaded. Try to load it.', this.logAuthor);
 			this.loadLibs();
 			return;
-		}else{
+		}
+		else {
 			log.debug(' + All is Ok, NowJS do reconnect automatically', this.logAuthor);
 		}
-    },
-
-    transport_down: function() {
-		log.info('Transport Down', this.logAuthor);
-		if (global.notify)
-			global.notify.notify(_('Info'), _('Disconnected from websocket.'), 'info');
 	},
 
-    transport_up: function() {
+	transport_down: function() {
+		log.info('Transport Down', this.logAuthor);
+
+		if(global.notify) {
+			global.notify.notify(_('Info'), _('Disconnected from websocket.'), 'info');
+		}
+	},
+
+	transport_up: function() {
 		log.info('Transport Up', this.logAuthor);
-		if (global.notify)
+
+		if(global.notify) {
 			global.notify.notify(_('Success'), _('Connected to websocket'), 'success');
+		}
 
 		//Re-open channel
-		if (this.subscribe_cache && this.auto_resubscribe) {
-			for (var i = 0; i < this.subscribe_cache.length; i++) {
-				var s = this.subscribe_cache[i]
+		if(this.subscribe_cache && this.auto_resubscribe) {
+			for(var i = 0; i < this.subscribe_cache.length; i++) {
+				var s = this.subscribe_cache[i];
 				delete this.subscribe_cache[i];
 
-				for (var j = 0; j < s.subscribers.length; j++) {
+				for(var j = 0; j < s.subscribers.length; j++) {
 					var t = s.subscribers[j];
 					this.subscribe(s.type, s.channel, t.on_message, t.scope);
 				}
@@ -150,24 +153,34 @@ Ext.define('canopsis.controller.Websocket', {
 		}
 	},
 
-    subscribe: function(type, channel, on_message, scope) {
+	subscribe: function(type, channel, on_message, scope) {
 		if (this.connected) {
-			if (! scope)
+			if (!scope) {
 				scope = this;
+			}
 
 			log.info(' + Subscribe to ' + type + '.' + channel + ' (' + scope.id + ')', this.logAuthor);
 
 			id = type + '-' + channel;
 
 			// Open one channel by id and distribute messages
-			if (! this.subscribe_cache[id]) {
-				this.subscribe_cache[id] = {type: type, channel: channel, subscribers: {} };
+			if(!this.subscribe_cache[id]) {
+				this.subscribe_cache[id] = {
+					type: type,
+					channel: channel,
+					subscribers: {}
+				};
 
-				this.subscribe_cache[id].subscribers[scope.id] = { on_message: on_message, scope: scope };
+				this.subscribe_cache[id].subscribers[scope.id] = {
+					on_message: on_message,
+					scope: scope
+				};
 
 				var me = this;
 				var callback = function(message, rk) {
-					Ext.Object.each(me.subscribe_cache[id].subscribers, function(key, subscriber, myself){
+					Ext.Object.each(me.subscribe_cache[id].subscribers, function(key, subscriber) {
+						void(key);
+
 						subscriber.on_message.apply(subscriber.scope, [message, rk]);
 					}, me);
 				};
@@ -177,37 +190,43 @@ Ext.define('canopsis.controller.Websocket', {
 
 				//subscribe to group
 				now.subscribe(type, channel);
-
-			}else {
-				this.subscribe_cache[id].subscribers[scope.id] = { on_message: on_message, scope: scope };
 			}
-
+			else {
+				this.subscribe_cache[id].subscribers[scope.id] = {
+					on_message: on_message,
+					scope: scope
+				};
+			}
 		}
 	},
 
-    unsubscribe: function(type, channel, scope) {
-		if (this.connected) {
-			if (! scope)
+	unsubscribe: function(type, channel, scope) {
+		if(this.connected) {
+			if(!scope) {
 				scope = this;
+			}
 
 			log.info(' + Unsubscribe to ' + type + '.' + channel + ' (' + scope.id + ')', this.logAuthor);
 
 			id = type + '-' + channel;
-			if (this.subscribe_cache[id]) {
+
+			if(this.subscribe_cache[id]) {
 				delete this.subscribe_cache[id].subscribers[scope.id];
 
-				if (isEmpty(this.subscribe_cache[id].subscribers)) {
-					log.info("  + Delete cache '" + id + "' and unsubscribe from remote queue", this.logAuthor)
+				if(isEmpty(this.subscribe_cache[id].subscribers)) {
+					log.info("  + Delete cache '" + id + "' and unsubscribe from remote queue", this.logAuthor);
 					delete this.subscribe_cache[id];
 
 					// Unsubscribe from group
-					now.unsubscribe(type, channel)
+					now.unsubscribe(type, channel);
 
 					//Delete callback
 					delete now[id];
 				}
-			}else
+			}
+			else {
 				log.error("  + Invalid queue id '" + id + "'", this.logAuthor);
+			}
 		}
 	},
 
@@ -216,31 +235,11 @@ Ext.define('canopsis.controller.Websocket', {
 
 	publish: function(type, channel, message) {
 		now.publish(type, channel, message);
-
-		/*this.faye_client.publish(this.faye_mount+"ui/events",{
-			author: global.account._id,
-			clientId: this.faye_client.getClientId(),
-			type: type,
-			id: id,
-			name: name,
-			timestamp: get_timestamp_utc()
-		});*/
 	},
 
-	on_event: function(raw) {
-		var me = global.websocketCtrl;
-		//console.log(raw);
-		/*if (raw.clientId != me.faye_client.getClientId()){
-			log.debug(raw.author+" "+raw.name+" "+raw.type+" "+raw.id, me.logAuthor)
-		}*/
+	on_event: function() {
 	},
 
-	on_pv: function(raw) {
-		/*var me = global.websocketCtrl
-		var me = global.websocketCtrl
-		if (raw.clientId != me.faye_client.getClientId()){
-			log.debug("PV: "+raw.author+": "+raw.message, me.logAuthor);
-		}*/
+	on_pv: function() {
 	}
-
 });

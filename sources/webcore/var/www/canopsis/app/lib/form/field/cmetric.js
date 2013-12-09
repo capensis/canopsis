@@ -1,5 +1,5 @@
+//need:app/lib/form/cfield.js,app/lib/store/cstore.js,app/lib/view/cgrid.js,app/lib/controller/cgrid.js
 /*
-#--------------------------------
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
@@ -16,27 +16,37 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
-# ---------------------------------
 */
 
-Ext.define('canopsis.lib.form.field.cmetric' , {
+Ext.define('canopsis.lib.form.field.cmetric', {
 	extend: 'Ext.panel.Panel',
 	mixins: ['canopsis.lib.form.cfield'],
 
+	requires: [
+		'canopsis.lib.store.cstore',
+		'canopsis.lib.view.cgrid',
+		'canopsis.lib.controller.cgrid'
+	],
+
 	alias: 'widget.cmetric',
+
+	logAuthor: '[form][field][cmetric]',
 
 	border: false,
 	layout: {
-        type: 'vbox',
-        align: 'stretch'
-    },
+		type: 'vbox',
+		align: 'stretch'
+	},
 
-    show_internals: false,
+	show_internals: false,
 
-    multiSelect: true,
+	multiSelect: true,
+
+	sharedStore : undefined,
 
 	initComponent: function() {
-		this.logAuthor = '[' + this.id + ']';
+		this.callParent(arguments);
+
 		log.debug('Initialize ...', this.logAuthor);
 
 		this.extra_field = [];
@@ -60,35 +70,71 @@ Ext.define('canopsis.lib.form.field.cmetric' , {
 
 		container.add(this.meta_grid);
 
-		this.items = [container, this.selected_grid];
+		this.items.add(container);
+		this.items.add(this.selected_grid);
+	},
 
+	afterRender: function(){
 		this.callParent(arguments);
+
+		if(this.sharedStore) {
+			this.parentWizard = this.findParentByType('cwizard');
+			this.parentWizard.childStores[this.sharedStore] = this.selected_store;
+		}
 	},
 
 	build_stores: function() {
 		log.debug('Build stores', this.logAuthor);
 
-		//---------------create model-----------------
+		// create model
 		var fields = [
-					{name: '_id'},
-					{name: 'id', mapping: '_id'},
-					{name: 'co'},
-					{name: 're', defaultValue: undefined},
-					{name: 'me'},
-					{name: 't'},
-					{name: 'u'}
-				];
+			{name: '_id'},
+			{name: 'id', mapping: '_id'},
+			{name: 'co'},
+			{name: 're', defaultValue: undefined},
+			{name: 'me'},
+			{name: 't'},
+			{name: 'u'},
 
-		if (this.additional_field) {
-			for (var i = 0; i < this.additional_field.length; i++) {
-				if (this.additional_field[i].name) {
-					var name = this.additional_field[i].name;
-					fields.push({name: name});
-				}else {
-					var name = this.additional_field[i].dataIndex;
-					fields.push({name: name});
-				}
-				this.extra_field.push(name);
+			// optional configuration for customize metrics tab in widget's wizard
+
+			{name: 'label', defaultValue: undefined},
+			{name: 'curve_color', defaultValue: undefined},
+
+			// widget: bar_graph
+			{name: 'trend', defaultValue: undefined},
+
+			// widget: diagram
+			{name: 'category', defaultValue: undefined},
+
+			// widget: gauge
+			{name: 'mi', defaultValue: undefined},
+			{name: 'tw', defaultValue: undefined},
+			{name: 'tc', defaultValue: undefined},
+			{name: 'ma', defaultValue: undefined},
+
+			// widget: line_graph
+			{name: 'curve_type', defaultValue: undefined},
+			{name: 'area_color', defaultValue: undefined},
+			{name: 'trend_curve', defaultValue: undefined},
+			{name: 'yAxis', defaultValue: undefined},
+
+			{name: 'threshold_warn', defaultValue: undefined},
+			{name: 'threshold_crit', defaultValue: undefined},
+
+			// widget: mini_chart
+			{name: 'printed_value', defaultValue: undefined},
+			{name: 'display_pct', defaultValue: undefined},
+
+			// widget: trends
+			{name: 'show_sparkline', defaultValue: undefined},
+			{name: 'chart_type', defaultValue: undefined}
+		];
+
+
+		if(this.additional_field) {
+			for(var i = 0; i < this.additional_field.length; i++) {
+				fields.push({name: this.additional_field[i]});
 			}
 		}
 
@@ -97,33 +143,41 @@ Ext.define('canopsis.lib.form.field.cmetric' , {
 			fields: fields
 		});
 
-		//--------------store----------------------
+		// store
 		this.meta_store = Ext.create('canopsis.lib.store.cstore', {
-				model: 'Meta',
-				remoteSort: true,
-				sorters: [{
-					 property: 'co',
-					 direction: 'ASC'
-				 }, {
-					 property: 're',
-					 direction: 'ASC'
-				 }],
-				proxy: {
-					 type: 'ajax',
-					 url: '/perfstore/get_all_metrics',
-					 extraParams: {'show_internals': this.show_internals},
-					 reader: {
-						 type: 'json',
-						 root: 'data'
-					}
-				 },
-				 autoLoad: true
+			model: 'Meta',
+			remoteSort: true,
+			sorters: [{
+				property: 'co',
+				direction: 'ASC'
+			},{
+				property: 're',
+				direction: 'ASC'
+			}],
+			proxy: {
+				type: 'ajax',
+				url: '/perfstore/get_all_metrics',
+				extraParams: {
+					'show_internals': this.show_internals
+				},
+				reader: {
+					type: 'json',
+					root: 'data'
+				}
+			},
+			autoLoad: true
 		});
 
-		this.selected_store = Ext.create('canopsis.lib.store.cstore', {
+		if(this.sharedStore) {
+			this.selected_store = Ext.create('canopsis.lib.store.cstore',
+				Ext.Object.merge({model: 'Meta'}, this.sharedStore)
+			);
+		}
+		else {
+			this.selected_store = Ext.create('canopsis.lib.store.cstore', {
 				model: 'Meta'
-		});
-
+			});
+		}
 	},
 
 	build_grids: function() {
@@ -136,6 +190,8 @@ Ext.define('canopsis.lib.form.field.cmetric' , {
 			tooltip: _('Display internal metrics'),
 			enableToggle: true,
 			toggleHandler: function(button, state) {
+				void(button);
+
 				this.show_internals = state;
 				this.meta_store.getProxy().extraParams.show_internals = this.show_internals;
 				this.meta_store.load();
@@ -143,7 +199,7 @@ Ext.define('canopsis.lib.form.field.cmetric' , {
 			scope: this
 		}];
 
-		//-------------------------first grid--------------------
+		// first grid
 		this.meta_grid = Ext.create('canopsis.lib.view.cgrid', {
 			store: this.meta_store,
 			flex: 2,
@@ -166,22 +222,22 @@ Ext.define('canopsis.lib.form.field.cmetric' , {
 			border: true,
 
 			columns: [
-					{
+				{
 					header: _('Component'),
 					sortable: false,
 					dataIndex: 'co',
 					flex: 1
-	       		},{
+				},{
 					header: _('Resource'),
 					sortable: false,
 					dataIndex: 're',
 					flex: 1
-	       		},{
+				},{
 					header: _('Metric'),
 					sortable: false,
 					dataIndex: 'me',
 					flex: 1
-	       		}
+				}
 			],
 			viewConfig: {
 				copy: true,
@@ -200,67 +256,37 @@ Ext.define('canopsis.lib.form.field.cmetric' , {
 		}, this);
 
 
-		//------------------------ Selection grid---------------------
+		// Selection grid
 		var _columns = [
-				{
-					xtype: 'actioncolumn',
-					width: 25,
-					align: 'center',
-					tooltip: _('Delete'),
-					icon: './themes/canopsis/resources/images/icons/bin_closed.png',
-					handler: function(view, rowIndex, colindex) {
-						var rec = view.getStore().removeAt(rowIndex);
-					}
-				},{
-					header: _('Component'),
-					sortable: false,
-					dataIndex: 'co',
-					flex: 1
-	       		},{
-					header: _('Resource'),
-					sortable: false,
-					dataIndex: 're',
-					flex: 1
-	       		},{
-					header: _('Metric'),
-					sortable: false,
-					dataIndex: 'me',
-					flex: 1
-	       		}
-			];
+			{
+				xtype: 'actioncolumn',
+				width: 25,
+				align: 'center',
+				tooltip: _('Delete'),
+				icon: './themes/canopsis/resources/images/icons/bin_closed.png',
+				handler: function(view, rowIndex) {
+					view.getStore().removeAt(rowIndex);
+				}
+			},{
+				header: _('Component'),
+				sortable: false,
+				dataIndex: 'co',
+				flex: 1
+			},{
+				header: _('Resource'),
+				sortable: false,
+				dataIndex: 're',
+				flex: 1
+			},{
+				header: _('Metric'),
+				sortable: false,
+				dataIndex: 'me',
+				flex: 1
+			}
+		];
 
 		//additionnal columns
 		var _plugins = [];
-		if (this.additional_field) {
-			for (var i = 0; i < this.additional_field.length; i++) {
-				if (this.additional_field[i].xtype == 'checkcolumn') {
-					_columns.push(this.additional_field[i]);
-				}else {
-
-					_columns.push({
-						header: _(this.additional_field[i].header),
-						sortable: false,
-						dataIndex: this.additional_field[i].name,
-						editor: this.additional_field[i]
-					});
-
-					if (_plugins.length == 0) {
-						_plugins.push(Ext.create('Ext.grid.plugin.RowEditing', {
-							clicksToEdit: 2,
-							autoCancel: true
-						}));
-					}
-
-				}
-			}
-		}
-
-		_columns.push({
-			header: _('Unit'),
-			sortable: false,
-			dataIndex: 'u',
-			flex: 1
-		});
 
 		//create grid
 		this.selected_grid = Ext.widget('grid', {
@@ -279,10 +305,9 @@ Ext.define('canopsis.lib.form.field.cmetric' , {
 			},
 			plugins: _plugins,
 			viewConfig: {
-    			markDirty: false,
+				markDirty: false,
 				plugins: {
 					ptype: 'gridviewdragdrop',
-					//enableDrag: false,
 					copy: false,
 					dragGroup: 'search_grid_DNDGroup',
 					dropGroup: 'search_grid_DNDGroup'
@@ -290,47 +315,58 @@ Ext.define('canopsis.lib.form.field.cmetric' , {
 			}
 		});
 
-		//---------------------build menu------------------------
+		// build menu
 		this.clearAllButton = Ext.create('Ext.Action', {
-							iconCls: 'icon-delete',
-							text: _('Clear all'),
-							action: 'clear'
-						});
+			iconCls: 'icon-delete',
+			text: _('Clear all'),
+			action: 'clear'
+		});
 
 		this.deleteButton = Ext.create('Ext.Action', {
-							iconCls: 'icon-delete',
-							text: _('Delete selected'),
-							action: 'delete'
-						});
+			iconCls: 'icon-delete',
+			text: _('Delete selected'),
+			action: 'delete'
+		});
 
 		this.contextMenu = Ext.create('Ext.menu.Menu', {
-						items: [this.deleteButton, this.clearAllButton]
-					});
+			items: [this.deleteButton, this.clearAllButton]
+		});
 	},
 
 	bind_event: function() {
 		log.debug('Binding events', this.logAuthor);
 
-		//---------------------Meta inventory----------------------
+		// Meta inventory
 		this.meta_grid.on('itemdblclick', function(view, record) {
-			this.select_meta(record);
-		},this);
+			void(view);
 
-		//----------------------drop function--------------------
-		this.selected_grid.getView().on('beforedrop', function(html_node,data,model,dropPosition,dropFunction,eOpts) {
+			this.select_meta(record);
+		}, this);
+
+		// drop function
+
+		this.selected_grid.getView().on('beforedrop', function(html_node, data) {
+			void(html_node);
+
 			//only do action if is not reorder
-			if (data.view.id != this.selected_grid.getView().id) {
+			if(data.view.id !== this.selected_grid.getView().id) {
 				var records = data.records;
-				for (var i = 0; i < records.length; i++)
+
+				for(var i = 0; i < records.length; i++) {
 					this.select_meta(records[i]);
+				}
 
 				return false;
 			}
-		},this);
+		}, this);
 
-		//-------------------------Menu option---------------------
+		// Menu option
 		this.selected_grid.on('itemcontextmenu', this.open_menu, this);
-		this.clearAllButton.setHandler(function() {this.selected_store.removeAll()},this);
+
+		this.clearAllButton.setHandler(function() {
+			this.selected_store.removeAll();
+		}, this);
+
 		this.deleteButton.setHandler(this.deleteSelected, this);
 	},
 
@@ -342,112 +378,174 @@ Ext.define('canopsis.lib.form.field.cmetric' , {
 		var node = record.get('node');
 		var dn = record.get('dn');
 
-		for (var i = 0; i < metrics.length; i++)
-			metric_array.push({'node': node, 'metric': metrics[i].dn, 'dn': dn});
+		for(var i = 0; i < metrics.length; i++) {
+			metric_array.push({
+				'node': node,
+				'metric': metrics[i].dn,
+				'dn': dn
+			});
+		}
 
 		return metric_array.sort(this.sort_by_metric);
 	},
 
-	sort_by_metric: function(a,b) {
+	sort_by_metric: function(a, b) {
 		a = a.metric;
 		b = b.metric;
-		if (a == b)
+
+		if(a === b) {
 			return 0;
-		if (a > b)
+		}
+		if (a > b) {
 			return 1;
-		else
+		}
+		else {
 			return -1;
+		}
 	},
 
 	select_meta: function(record) {
 		var _id = record.get('_id');
 		log.debug('Select Meta ' + _id, this.logAuthor);
-		if (! this.selected_store.getById(_id)) {
-			if (! this.multiSelect)
+
+		if(!this.selected_store.getById(_id)) {
+			if(!this.multiSelect) {
 				this.selected_store.removeAll();
+			}
+
 			this.selected_store.add(record.copy());
-		}else {
+		}
+		else {
 			log.debug(' + Already selected' , this.logAuthor);
 		}
 	},
 
 	open_menu: function(view, rec, node, index, e) {
+		void(node, index);
+
 		e.preventDefault();
 		//don't auto select if multi selecting
 		var selection = this.selected_grid.getSelectionModel().getSelection();
-		if (selection.length < 2)
+
+		if (selection.length < 2) {
 			view.select(rec);
+		}
 
 		this.contextMenu.showAt(e.getXY());
 		return false;
-    },
+	},
 
-    deleteSelected: function() {
+	deleteSelected: function() {
 		log.debug('delete selected metrics', this.logAuthor);
 		var selection = this.selected_grid.getSelectionModel().getSelection();
 
-		for (var i = 0; i < selection.length; i++)
+		for(var i = 0; i < selection.length; i++) {
 			this.selected_store.remove(selection[i]);
+		}
 	},
 
 	getValue: function() {
 		log.debug('Write values', this.logAuthor);
+
 		var output = [];
-		var nodes = {};
+		var order = 0;
 
 		this.selected_store.each(function(record) {
-			var _id = record.get('id');
-			var component = record.get('co');
-			var resource = record.get('re');
-			var metric = record.get('me');
-			var type = record.get('t');
-			if (!Ext.isArray(metric))
-				metric = [metric];
+			record.data.order = order++;
+			var data = Ext.clone(record.data);
 
-			var source_type = 'component';
-			if (resource)
-				source_type = 'resource';
-
-			var extra_field = {};
-			if (this.extra_field.length != 0) {
-				for (var i = 0; i < this.extra_field.length; i++) {
-					var value = record.get(this.extra_field[i]);
-					if (value != undefined)
-						extra_field[this.extra_field[i]] = value;
-				}
+			//clean that
+			if(data.me) {
+				data.metrics = [data.me];
 			}
 
-			if (source_type == 'resource')
-				output.push({'id': _id, 'metrics': metric, 'resource': resource, 'component': component, 'source_type': source_type, 'extra_field': extra_field, 'type': type});
-			else
-				output.push({'id': _id, 'metrics': metric, 'component': component, 'source_type': source_type, 'extra_field': extra_field, 'type': type});
-		},this);
+			output.push(data);
+		}, this);
 
 		return output;
 	},
 
 	setValue: function(data) {
 		log.debug('Load values', this.logAuthor);
-		for (var i = 0; i < data.length; i++) {
-			var item = data[i];
-			//standart
-			config = {
-				id: item.id,
-				co: item.component,
-				re: item.resource,
-				me: item.metrics,
-				t: item.type
-			};
+		log.dump(data);
 
-			//additionnal
-			if (item.extra_field && item.extra_field.length != 0)
-				Ext.Object.each(item.extra_field, function(key, value, myself) {
-					config[key] = value;
-				});
+		var metricList = [];
 
-			var record = Ext.create('Meta', config);
-			this.selected_store.add(record);
+		//retrocompatibility
+		if(Ext.isArray(data)) {
+			for(var i = 0; i < data.length; i++) {
+				var item = Ext.clone(data[i]);
+
+				if(!item.co) {
+					item.co = item.component;
+				}
+
+				if(!item.re) {
+					item.re = item.resource;
+				}
+
+				if(!item.t) {
+					item.t = item.type;
+				}
+
+				if(!item.me) {
+					item.me = item.metrics[0];
+				}
+
+				var config = {
+					id: item.id,
+					co: item.co,
+					re: item.re,
+					me: item.me,
+					t: item.type
+				};
+
+				metricList.push(Ext.create('Meta', config));
+			}
+		}
+
+		if(Ext.isObject(data)){
+			Ext.Object.each(data, function(key, value) {
+				void(key);
+
+				var item = Ext.clone(value);
+
+				if(!item.co) {
+					item.co = item.component;
+				}
+
+				if(!item.re) {
+					item.re = item.resource;
+				}
+
+				if(!item.t) {
+					item.t = item.type;
+				}
+
+				if(!item.me) {
+					item.me = item.metrics[0];
+				}
+
+				// TODO: check if next line is important
+				if(Ext.isArray) {
+					metricList.push(Ext.create('Meta', item));
+				}
+			}, this);
+		}
+
+		if(metricList.length > 0 && data[metricList[0].get('id')]['order'] !== undefined) {
+			metricList.sort(function(a, b) {
+				return data[a.get('id')]['order'] - data[b.get('id')]['order'];
+			});
+		}
+
+		this.selected_store.add(metricList);
+	},
+
+	beforeDestroy: function(){
+		//deference store
+		if(this.sharedStore && this.parentWizard) {
+			delete this.parentWizard.childStores[this.sharedStore];
 		}
 	}
-
 });

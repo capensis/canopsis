@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 # --------------------------------
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
@@ -18,17 +19,21 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-import sys, os, logging, json
+import sys
+import os
+import logging
+import json
 import gevent
 
 import bottle
-from bottle import route, get, delete, put,request, HTTPError, post, static_file, response
+from bottle import route, get, delete, put, request
+from bottle import HTTPError, post, static_file, response
 
-#gridfs
+# GridFS
 from pymongo import Connection
 import gridfs
 
-## Canopsis
+# Canopsis
 from caccount import caccount
 from cstorage import cstorage
 from cstorage import get_storage
@@ -38,10 +43,29 @@ from cfile import cfile
 from cfile import get_cfile
 from cfile import namespace
 
-#import protection function
-from libexec.auth import check_auth, get_account
+# Import protection function
+from libexec.auth import get_account
 
 logger = logging.getLogger('Files')
+
+# Defines allowed mime types
+_allowed_mimetypes = {
+	'application/pdf': ['pdf'],
+	'image/gif': ['gif'],
+	'image/jpeg': ['jpeg', 'jpg'],
+	'image/png': ['png'],
+	'video/ogg': ['ogg']
+}
+
+def get_reversed_http_mimetypes():
+	result = {}
+	for key, values in _allowed_mimetypes.items():
+		for value in values:
+			result[value] = key
+	return result
+allowed_mimetypes = get_reversed_http_mimetypes()
+# Max allowed upload file in megabytes
+max_size = 5
 
 #########################################################################
 
@@ -50,6 +74,11 @@ logger = logging.getLogger('Files')
 @get('/files')
 def files(metaId=None):
 	
+	# Arg option for attachement http option (default: True)
+	as_attachment = True
+	if request.params.get('as_attachment') in ['false', 'False', '0']:
+		as_attachment = False
+
 	if metaId:
 		account = get_account()
 		storage = get_storage(account=account, namespace=namespace)
@@ -63,7 +92,7 @@ def files(metaId=None):
 			return HTTPError(404, "File not found")
 		
 		file_name = rfile.data['file_name']
-		content_type = rfile.data['content_type']
+		content_type = rfile.data['content_type'] or 'application/octet-stream'
 		
 		logger.debug(" + File name:    %s" % file_name)
 		logger.debug(" + Content type: %s" % content_type)
@@ -75,11 +104,12 @@ def files(metaId=None):
 			logger.error('Error while file fetching: %s' % err)
 
 		if data:
-			try:
-				response.headers['Content-Disposition'] = 'attachment; filename="%s"' % file_name.encode("utf8")
-			except Exception as err:
-				logger.error(err)
-				return HTTPError(500, "Impossible to encode file_name.")
+			if as_attachment:
+				try:
+					response.headers['Content-Disposition'] = 'attachment; filename="%s"' % file_name.encode("utf8")
+				except Exception as err:
+					logger.error(err)
+					return HTTPError(500, "Impossible to encode file_name.")
 
 			response.headers['Content-Type'] = content_type
 			try:
@@ -91,6 +121,37 @@ def files(metaId=None):
 			return HTTPError(404, "File not found")
 	else:
 		return list_files()
+
+
+@post('/file')
+@post('/files')
+def add_file():
+	# Must be set as text/html cause of extjs upload file method
+	# http://docs.sencha.com/extjs/4.0.7/#!/api/Ext.form.Basic-method-hasUpload
+	# A json in a string will be return to avoid Bottle to automatically set header to json
+	response.headers['Content-Type'] = 'text/html'
+
+	data = request.files['file-path']
+
+	if data.filename and data.file:
+		if allowed_mimetypes.get(data.filename.split('.')[-1], False):
+			content_type = allowed_mimetypes[data.filename.split('.')[-1]]
+			account = get_account()
+			storage = get_storage(account=account, namespace=namespace)
+			cfile_record = cfile(storage=storage)
+			cfile_record.put_data(data.file.read(), file_name=data.filename, content_type=content_type)
+			try:
+				file_id = storage.put(cfile_record)
+				data = {'success': True, 'data': {'code': 200, 'message': 'File uploaded', 'filename': data.filename, 'file_id': str(file_id)}}
+			except Exception as err:
+				data = {'success': False, 'data': {'code': 500, 'message': err}}
+		else:
+			data = {'success': False, 'data': {'code': 415, 'message': 'Unsupported Media Type'}}
+	else:
+		data = {'success': False, 'data': {'code': 400, 'message': 'Bad request'}}
+
+	return json.dumps(data)
+
 
 @put('/files')
 @put('/files/:metaId')

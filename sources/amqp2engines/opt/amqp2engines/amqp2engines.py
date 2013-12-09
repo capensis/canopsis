@@ -19,187 +19,149 @@
 # ---------------------------------
 
 
+from ConfigParser import RawConfigParser, ConfigParser, ParsingError
+import importlib
+
 import unittest
 import time, json, logging
-from bson import BSON
 
-from camqp import camqp
 from cinit import cinit
+
 ## Engines path
 import sys, os
 sys.path.append(os.path.expanduser('~/opt/amqp2engines/engines/'))
 
 ## Configurations
-
 DAEMON_NAME="amqp2engines"
 
 init 	= cinit()
 logger 	= init.getLogger(DAEMON_NAME, level="INFO")
-#logger 	= init.getLogger(DAEMON_NAME)
 handler = init.getHandler(logger)
 
 engines=[]
-amqp = None
-next_event_engines = []
-next_alert_engines = []
 
-def clean_message(body, msg):
-	## Sanity Checks
-	rk = msg.delivery_info['routing_key']
-	if not rk:
-		raise Exception("Invalid routing-key '%s' (%s)" % (rk, body))
-		
-	#logger.debug("Event: %s" % rk)
-	#logger.info( body ) 	
-	## Try to decode event
-	if isinstance(body, dict):
-		event = body
-	else:
-		logger.debug(" + Decode JSON")
-		try:
-			if isinstance(body, str) or isinstance(body, unicode):
-				try:
-					event = json.loads(body)
-					logger.debug("   + Ok")
-				except Exception, err:
-					try:
-						logger.debug(" + Try hack for windows string")
-						# Hack for windows FS -_-
-						event = json.loads(body.replace('\\', '\\\\'))
-						logger.debug("   + Ok")
-					except Exception, err :
-						try:
-							logger.debug(" + Decode BSON")
-							bson = BSON (body)
-							event = bson.decode()
-							logger.debug("   + Ok")
-						except Exception, err:
-							raise Exception(err)
-		except Exception, err:
-			logger.error("   + Failed (%s)" % err)
-			logger.debug("RK: '%s', Body:" % rk)
-			logger.debug(body)
-			raise Exception("Impossible to parse event '%s'" % rk)
+## Very Dirty HACK !
+## Remove old queues (temporary workaround)
+amqp_config = RawConfigParser()
+section = 'master'
+amqp_config.read(os.path.expanduser("~/etc/amqp.conf"))
+amqp_host = amqp_config.get(section, "host")
+amqp_port = amqp_config.getint(section, "port")
+amqp_userid = amqp_config.get(section, "userid")
+amqp_password = amqp_config.get(section, "password")
+amqp_virtual_host = amqp_config.get(section, "virtual_host")
 
-	event['rk'] = rk
-	
-	# Clean tags field
-	event['tags'] = event.get('tags', [])
-	
-	if (isinstance(event['tags'], str) or isinstance(event['tags'], unicode)) and  event['tags'] != "":
-		event['tags'] = [ event['tags'] ]
-		
-	elif not isinstance(event['tags'], list):
-		event['tags'] = []
+import subprocess
+subprocess.call('rabbitmqadmin -H %s --vhost=%s --username=%s --password=%s delete queue name="amqp2engines"'
+	% (amqp_host, amqp_virtual_host, amqp_userid, amqp_password), shell=True)
+subprocess.call('rabbitmqadmin -H %s --vhost=%s --username=%s --password=%s delete queue name="amqp2engines_alerts"'
+	% (amqp_host, amqp_virtual_host, amqp_userid, amqp_password), shell=True)
 
-	event["timestamp"] 	= event.get("timestamp", time.time() )
-	event["timestamp"] 	= int(event["timestamp"])
+###### END of HACK ####
 
-	event["state"]		= event.get("state", 0)
-	event["state_type"] = event.get("state_type", 1)
-
-	return event
-
-def on_event(body, msg):
-	## Clean message	
-	event = clean_message(body, msg)
-	
-	event['exchange'] = amqp.exchange_name_events
-	
-	## Forward to engines
-	for engine in next_event_engines:
-		try:
-			engine.input_queue.put(event)
-		except Queue.Full:
-			logger.warngin("Internal queue of '%s' is full, forward event to AMQP queue." % engine.name)
-			amqp.publish(event, engine.amqp_queue, "amq.direct")
-
-	
-def on_alert(body, msg):	
-	## Clean message	
-	event = clean_message(body, msg)
-	
-	event['exchange'] = amqp.exchange_name_alerts
-	
-	## Forward to engines
-	for engine in next_alert_engines:
-		try:
-			engine.input_queue.put(event)
-		except Queue.Full:
-			logger.warngin("Internal queue of '%s' is full, forward event to AMQP queue." % engine.name)
-			amqp.publish(event, engine.amqp_queue, "amq.direct")
+CONFIG_PARAMS = {
+	'next': list,
+	'next_balanced': bool,
+	'name': basestring,
+	'beat_interval': int,
+	'exchange_name': basestring,
+	'routing_keys': list
+}
 
 def start_engines():
 	global engines
-	# Init Engines
-	## TODO: Use routing table for dynamic routing
-	### Route:
-	
-	# Events:
-	### Nagios/Icinga/Shinken... ----------------------------> canopsis.events -> tag -> perfstore -> eventstore
-	### collectd ------------------> amq.topic -> collectdgw |
-	
-	# Alerts:
-	### canopsis.alerts -> selector -> eventstore
-	
-	import perfstore2
-	import eventstore
-	import collectdgw
-	import tag
-	import selector
-	import sla
-	import alertcounter
-	import derogation
-	import topology
-	import consolidation
-	
 
-	engine_selector		= selector.engine(logging_level=logging.INFO)
-	engines.append(engine_selector)
-	
-	engine_topology		= topology.engine(next_engines=[engine_selector], logging_level=logging.INFO)
-	engines.append(engine_topology)
+	# Check if configuration exists
+	confpath = os.path.expanduser('~/etc/amqp2engines.conf')
+	if not os.path.exists(confpath):
+		logger.error("Can't find configuration file at '%s'" % confpath)
+		return False
 
-	engine_alertcounter	= alertcounter.engine(next_engines=[engine_topology], logging_level=logging.INFO)
-	#engine_alertcounter	= alertcounter.engine(next_engines=[engine_selector], logging_level=logging.INFO)
-	engines.append(engine_alertcounter)
-	
-	engine_collectdgw	= collectdgw.engine()
-	engines.append(engine_collectdgw)
-	
-	engine_eventstore	= eventstore.engine( logging_level=logging.INFO)
-	engines.append(engine_eventstore)
-	#engine_eventstore2	= eventstore.engine( logging_level=logging.INFO)
-	#engines.append(engine_eventstore2)
-	#engine_eventstore3	= eventstore.engine( logging_level=logging.INFO)
-	#engines.append(engine_eventstore3)
+	try:
+		config = ConfigParser()
+		config.read(confpath)
 
-	#engine_perfstore	= perfstore2.engine(next_engines=[engine_eventstore, engine_eventstore2, engine_eventstore3])
-	engine_perfstore	= perfstore2.engine(next_engines=[engine_eventstore])
-	engines.append(engine_perfstore)
-	
-	engine_tag			= tag.engine(		next_engines=[engine_perfstore])
-	engines.append(engine_tag)
-	
-	engine_derogation 	= derogation.engine( next_engines=[engine_tag], logging_level=logging.INFO)
-	engines.append(engine_derogation)
+	except ParsingError, err:
+		logger.error(str(err))
+		return False
 
-	engine_sla			= sla.engine(logging_level=logging.INFO)
-	engines.append(engine_sla)
-	
-	engine_consolidation		= consolidation.engine(logging_level=logging.INFO)
-	engines.append(engine_consolidation)
-	
-	# Set Next queue
-	## Events
-	next_event_engines.append(engine_derogation)
-	#next_event_engines.append(engine_tag)
-	## Alerts
-	next_alert_engines.append(engine_alertcounter)
-	
+	# Parse configuration
+
+	for section in config.sections():
+		# We only want engines
+		if not section.startswith('engine:'):
+			continue
+
+		# Ignore 'engine:' for engine's name
+		engine_name = section[7:]
+
+		# If there is more :, ignore the rest, it's just to make the section name unique
+		engine_name = engine_name.split(':')[0]
+
+		# Try to load the engine
+		try:
+			engine = importlib.import_module(engine_name)
+
+		except ImportError:
+			logger.error("No engine named '%s' found" % engine_name)
+			return False
+
+		# Engine loaded, get configuration
+		logger.info('Reading configuration for engine %s' % engine_name)
+
+		engine_conf = {}
+
+		for item in config.items(section):
+			param = item[0]
+			value = item[1]
+
+			if param not in CONFIG_PARAMS:
+				logger.warning("Unknown parameter '%s', ignoring" % param)
+				continue
+
+			# If the parameter is a list, then parse the list in CSV format
+			if CONFIG_PARAMS[param] is list:
+				import csv
+
+				parser = csv.reader([value])
+
+				value = []
+
+				for row in parser:
+					value += row
+
+			elif CONFIG_PARAMS[param] is int:
+				value = config.getint(section, param)
+
+			elif CONFIG_PARAMS[param] is bool:
+				value = config.getboolean(section, param)
+
+			elif CONFIG_PARAMS[param] is float:
+				value = config.getfloat(section, param)
+
+			# In all other case, we keep the original string value fetched via item[1]
+
+			engine_conf[param] = value
+
+		# Configuration loaded
+		logger.info("Loading engine '%s' with the following configuration: %s" % (engine_name, engine_conf))
+
+		# Now, we translate the 'next' parameter to the 'next_amqp_queues'
+		if 'next' in engine_conf:
+			engine_conf['next_amqp_queues'] = ['Engine_%s' % next for next in engine_conf['next']]
+			del engine_conf['next']
+
+		engines.append(engine.engine(**engine_conf))
+
+	##################
+	# Start engines
+	##################
+
 	logger.info("Start engines")
 	for engine in engines:
 		engine.start()
+
+	return True
 	
 def stop_engines():
 	logger.info("Stop engines")
@@ -217,29 +179,17 @@ def stop_engines():
 def main():
 	global amqp
 		
-	logger.info("Initialyze process")
+	logger.info("Initialize process")
 	handler.run()
 
 	logger.info("Start Engines")
-	start_engines()
 
-	# Safety wait
-	time.sleep(3)
+	if not start_engines():
+		logger.error("A problem occurred, exiting...")
+		sys.exit(1)
 	
-	# Init AMQP
-	amqp = camqp(logging_name="%s-amqp" % DAEMON_NAME)
-	amqp.add_queue(DAEMON_NAME, ['#'], on_event, amqp.exchange_name_events, auto_delete=False)
-	amqp.add_queue("%s_alerts" % DAEMON_NAME, ['#'], on_alert, amqp.exchange_name_alerts, auto_delete=False)
-	
-	# Start AMQP
-	amqp.start()
-	
-	logger.info("Wait")
+	logger.info("Waiting ...")
 	handler.wait()
-	
-	# Stop AMQP
-	amqp.stop()
-	amqp.join()
 	
 	stop_engines()
 

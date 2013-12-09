@@ -1,8 +1,8 @@
 #!/bin/bash
 
 NAME="canolibs"
-VERSION=0.5
-RELEASE=2
+VERSION=0.7
+RELEASE=0
 DESCRIPTION=""
 REQUIRES="canohome python python-libs"
 

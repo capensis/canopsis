@@ -75,6 +75,8 @@ def render_pdf(fileName=None, viewName=None, startTime=None, stopTime=None, inte
 	except:
 		raise Exception("Impossible to find view '%s' with account '%s'" % (viewName, account._id))
 
+	logger.info("Account '%s' ask a rendering of view '%s' (%s)" % (account.name, view_record.name, viewName,))
+
 	#set fileName
 	if fileName is None:
 		toDate = date.fromtimestamp(int(stopTime))

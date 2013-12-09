@@ -18,50 +18,52 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
+import logging
+import time
+import sys
+import os
+import ConfigParser
+
+import gridfs
+
 from pymongo import Connection
 from bson import objectid
 
 from pymongo import ASCENDING
 from pymongo import DESCENDING
 
-import gridfs
-
 from caccount import caccount
 from crecord import crecord
 from cfile import cfile
 
-import logging
-import time
-import sys, os
-import ConfigParser
-
 CONFIG = ConfigParser.RawConfigParser()
 CONFIG.read(os.path.expanduser('~/etc/cstorage.conf'))
+
 
 class cstorage(object):
 	def __init__(self, account, namespace='object', logging_level=logging.ERROR, mongo_host="127.0.0.1", mongo_port=27017, mongo_db='canopsis', mongo_autoconnect=True, groups=[], mongo_safe=True):
 
 		try:
-			self.mongo_host=CONFIG.get("master", "host")
+			self.mongo_host = CONFIG.get("master", "host")
 		except:
-			self.mongo_host=mongo_host
+			self.mongo_host = mongo_host
 
 		try:
-			self.mongo_port=CONFIG.getint("master", "port")
+			self.mongo_port = CONFIG.getint("master", "port")
 		except:
-			self.mongo_port=mongo_port
+			self.mongo_port = mongo_port
 
 		try:
-			self.mongo_db=CONFIG.get("master", "db")
+			self.mongo_db = CONFIG.get("master", "db")
 		except:	
-			self.mongo_db=mongo_db
+			self.mongo_db = mongo_db
 		
-		self.mongo_safe=mongo_safe
+		self.mongo_safe = mongo_safe
 
 		self.account = account
 		self.root_account = caccount(user="root", group="root")
 
-		self.namespace=namespace
+		self.namespace = namespace
 		self.backend = None
 
 		self.logger = logging.getLogger('cstorage')
@@ -305,7 +307,7 @@ class cstorage(object):
 		if one:
 			sort = [('timestamp', -1)]
 
-		self.logger.debug("Find '%s' records ..." % mfilter)
+		self.logger.debug("Find records from mfilter" )
 		
 		(Read_mfilter, Write_mfilter) = self.make_mongofilter(account)
 

@@ -1,4 +1,6 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 # --------------------------------
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
@@ -78,9 +80,10 @@ def main(argv):
 				print('Bad json string')
 				sys.exit()
 	
-	#---------------------------authentificate-------------------------
+	#---------------------------authenticate---------------------------
 	if not authkey:
-		print('You must provide a authkey to access to webserver')
+		print('You must provide an authkey to access the webserver.\n \
+			You can generate it from the Canopsis Web UI.')
 		usage()
 		sys.exit()
 		
@@ -93,10 +96,10 @@ def main(argv):
 	try:
 		response = json.loads(r.read())
 	except Exception, err:
-		print('Error: bad response from server %s' % err)
+		print('Error: Bad response from server %s' % err)
 		
 	if not response['success']:
-		print('Bad authkey, no matching with any user')
+		print('Error: The provided authkey does not match any existing user')
 		sys.exit()
 	
 	#------------------------------find event source-----------------------
@@ -138,6 +141,9 @@ def main(argv):
 	if event.get('perf_data_array', None):
 		event['perf_data_array'] = json.dumps(event['perf_data_array'])
 
+	if event.get('tags', None):
+		event['tags'] = json.dumps(event['tags'])
+
 	event['connector'] = 'Cli'
 	
 	if not event.get('connector_name', None):
@@ -150,7 +156,7 @@ def main(argv):
 	
 	request = urllib2.Request('http://%s/event/' % server,urllib.urlencode(clean_event))
 	r = opener.open(request)
-	print('Webserver have send :')
+	print('Webserver replied :')
 	print(r.read())
 
 

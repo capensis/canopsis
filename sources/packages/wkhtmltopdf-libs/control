@@ -1,8 +1,8 @@
 #!/bin/bash
 
 NAME="wkhtmltopdf-libs"
-VERSION="0.4"
-RELEASE=4
+VERSION=0.5
+RELEASE=1
 DESCRIPTION=""
 REQUIRES="wkhtmltopdf"
 

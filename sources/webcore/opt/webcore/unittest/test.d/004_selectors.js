@@ -5,7 +5,7 @@
 var selector_selector_form = ".x-window-item";
 
 //open and check
-cgridOpen('build','buildSelector')
+cgridOpen('build','buildSelector');
 
 casper.then(function() {
 	casper.echo('> Fill fields and Save', 'COMMENT');
@@ -18,9 +18,9 @@ casper.then(function() {
 	casper.waitUntilVisible("div.ui-pnotify-container");
 });
 
-cgridEditRecord(selector_selector_form, 'display_name', 'CasperModified')
+cgridEditRecord(selector_selector_form, 'display_name', 'CasperModified');
 
-cgridRemoveRecord()
+cgridRemoveRecord();
 
 casper.then(function() {
 	casper.echo('> Close Tab', 'COMMENT');

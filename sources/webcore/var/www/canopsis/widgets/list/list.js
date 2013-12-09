@@ -1,5 +1,5 @@
+//need:app/lib/view/cwidget.js,app/lib/view/cgrid_state.js,app/lib/controller/cgrid.js
 /*
-#--------------------------------
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
@@ -16,12 +16,16 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
-# ---------------------------------
 */
 Ext.define('widgets.list.list' , {
 	extend: 'canopsis.lib.view.cwidget',
 
 	alias: 'widget.list',
+
+	requires: [
+		'canopsis.lib.view.cgrid_state',
+		'canopsis.lib.controller.cgrid'
+	],
 
 	//don't work
 	filter: {'source_type': 'component'},
@@ -49,18 +53,14 @@ Ext.define('widgets.list.list' , {
 
 	default_sort_column: 'state',
 	default_sort_direction: 'DESC',
-	//..
 
 	afterContainerRender: function() {
-
-		if (this.reload || this.bar_search) { this.bar = true } else { this.bar = false }
+		this.bar = (this.reload || this.bar_search);
 
 		this.grid = Ext.create('canopsis.lib.view.cgrid_state', {
 			exportMode: this.exportMode,
-			//border: (this.title || this.fullmode) ? false : true,
 			opt_paging: this.paging,
 			filter: this.filter,
-			//autoload: true,
 			pageSize: this.pageSize,
 			remoteSort: true,
 			sorters: [{
@@ -91,9 +91,6 @@ Ext.define('widgets.list.list' , {
 			scroll: this.scroll,
 
 			fitler_buttons: this.fitler_buttons
-
-			//opt_view_element:'view.ComponentDetails'
-
 		});
 
 		// Bind buttons
@@ -108,9 +105,9 @@ Ext.define('widgets.list.list' , {
 		this.ready();
 	},
 
-	doRefresh: function(from, to) {
-		if (this.grid && this.grid.store.loaded)
+	doRefresh: function() {
+		if(this.grid && this.grid.store.loaded) {
 			this.grid.store.load();
+		}
 	}
-
 });

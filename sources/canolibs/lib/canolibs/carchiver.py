@@ -50,8 +50,11 @@ class carchiver(object):
 		else:
 			self.storage = storage
 
+		self.collection = self.storage.get_backend(namespace)
+
 	def check_event(self, _id, event):
 		changed = False
+		new_event = False
 
 		self.logger.debug(" + Event:")
 
@@ -67,13 +70,15 @@ class carchiver(object):
 		
 		try:
 			# Get old record
-			record = self.storage.get(_id, account=self.account)
+			#record = self.storage.get(_id, account=self.account)
+
+			devent = self.collection.find_one(_id, fields={'state': 1, 'state_type': 1, 'last_state_change': 1, 'perf_data_array': 1})
 			
 			self.logger.debug(" + Check with old record:")
-			old_state = record.data['state']
-			old_state_type = record.data['state_type']
+			old_state = devent['state']
+			old_state_type = devent['state_type']
 			
-			event['last_state_change'] = record.data.get('last_state_change', event['timestamp'])
+			event['last_state_change'] = devent.get('last_state_change', event['timestamp'])
 
 			self.logger.debug("   - State:\t\t'%s'" % legend[old_state])
 			self.logger.debug("   - State type:\t'%s'" % legend_type[old_state_type])
@@ -88,7 +93,7 @@ class carchiver(object):
 				self.logger.debug(" + No change.")
 			
 			try:
-				event = self.merge_perf_data(record.data, event)
+				event = self.merge_perf_data(devent, event)
 			except Exception, err:
 				self.logger.warning("merge_perf_data: %s" % err)
 
@@ -96,11 +101,15 @@ class carchiver(object):
 			# No old record
 			self.logger.debug(" + New event")
 			changed = True
+			new_event = True
 		
 		if changed:
 			event['last_state_change'] = event.get('timestamp', now)
 		
-		self.store_event(_id, event)
+		if new_event:
+			self.store_new_event(_id, event)
+		else:
+			self.store_update_event(_id, event)
 
 		mid = None
 		if changed and self.autolog:
@@ -136,13 +145,16 @@ class carchiver(object):
 		
 		return new_event
 
-	def store_event(self, _id, event):
+	def store_new_event(self, _id, event):
 		record = crecord(event)
 		record.type = "event"
 		record.chmod("o+r")
 		record._id = _id
 
 		self.storage.put(record, namespace=self.namespace, account=self.account)
+
+	def store_update_event(self, _id, event):
+		self.collection.update({'_id': _id}, {"$set": event}, safe=True)
 	
 	def log_event(self, _id, event):
 		self.logger.debug("Log event '%s' in %s ..." % (_id, self.namespace_log))

@@ -5,7 +5,7 @@
 var selector_consolidation_form = ".x-window-item";
 
 //open and check
-cgridOpen('build','buildConsolidation')
+cgridOpen('build','buildConsolidation');
 
 casper.then(function() {
 	casper.echo('> Fill fields and Save', 'COMMENT');
@@ -19,9 +19,9 @@ casper.then(function() {
 	casper.waitUntilVisible("div.ui-pnotify-container");
 });
 
-cgridEditRecord(selector_consolidation_form, 'component', 'CasperComponentModified')
+cgridEditRecord(selector_consolidation_form, 'component', 'CasperComponentModified');
 
-cgridRemoveRecord()
+cgridRemoveRecord();
 
 casper.then(function() {
 	casper.echo('> Close Tab', 'COMMENT');

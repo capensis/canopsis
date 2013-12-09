@@ -1,5 +1,5 @@
+//need:app/lib/view/cgrid.js,app/view/Briefcase/Uploader.js,app/lib/controller/cgrid.js
 /*
-#--------------------------------
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
@@ -16,12 +16,16 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
-# ---------------------------------
 */
 Ext.define('canopsis.view.Briefcase.Grid' , {
 	extend: 'canopsis.lib.view.cgrid',
 
 	alias: 'widget.BriefcaseGrid',
+
+	requires: [
+		'canopsis.view.Briefcase.Uploader',
+		'canopsis.lib.controller.cgrid'
+	],
 
 	model: 'File',
 	store: 'Files',
@@ -31,15 +35,24 @@ Ext.define('canopsis.view.Briefcase.Grid' , {
 	opt_bar_add: false,
 	opt_view_element: true,
 	opt_menu_rights: true,
-	//opt_bar_download: true,
-	//opt_menu_send_mail:true,
 
 	opt_menu_rename: true,
+	opt_menu_set_avatar: true,
 
 	opt_db_namespace: 'files',
 
 	opt_bar_search: true,
 	opt_bar_search_field: ['file_name'],
+
+	opt_bar_customs: [{
+		text: 'Add',
+		xtype: 'button',
+		iconCls: 'icon-add',
+		handler: function() {
+			var addFileWindow = Ext.create('canopsis.view.Briefcase.Uploader');
+			addFileWindow.show();
+		}
+	}],
 
 	columns: [{
 			header: '',
@@ -47,7 +60,7 @@ Ext.define('canopsis.view.Briefcase.Grid' , {
 			sortable: false,
 			renderer: rdr_file_type,
 			dataIndex: 'content_type'
-        },{
+		},{
 			header: _('Creation date'),
 			flex: 1,
 			sortable: true,
@@ -87,5 +100,113 @@ Ext.define('canopsis.view.Briefcase.Grid' , {
 			dataIndex: 'aaa_access_other',
 			renderer: rdr_access
 		}
-	]
+	],
+
+	toggleSearchBarButtons: function(button, state) {
+		if(!state) {
+			state = false;
+		}
+
+		var tbar = this.getTbar();
+		var items = tbar.items.items;
+
+		for(var y = 0; y < items.length; y++) {
+			var item = items[y];
+
+			if(item.xtype === "button" && item !== button) {
+				item.toggle(state);
+			}
+		}
+	},
+
+	initComponent: function() {
+		this.bar_search = [{
+			xtype: 'button',
+			iconCls: 'icon-mimetype-pdf',
+			pack: 'end',
+			tooltip: _('Show pdf'),
+			enableToggle: true,
+			scope: this,
+			toggleHandler: function(button, state) {
+				if(state) {
+					button.filter_id = this.store.addFilter(
+						{'content_type': 'application/pdf'}
+					);
+
+					this.toggleSearchBarButtons(button, false);
+				}
+				else if(button.filter_id) {
+					this.store.deleteFilter(button.filter_id);
+				}
+
+				this.store.load();
+			}
+		},{
+			xtype: 'button',
+			iconCls: 'icon-mimetype-png',
+			pack: 'end',
+			tooltip: _('Show images'),
+			enableToggle: true,
+			scope: this,
+			toggleHandler: function(button, state) {
+				if(state) {
+					button.filter_id = this.store.addFilter(
+						{'content_type': { $in: ['image/png', 'image/jpeg', 'image/gif', 'image/jpg']}}
+					);
+
+					this.toggleSearchBarButtons(button, false);
+				}
+				else if(button.filter_id) {
+					this.store.deleteFilter(button.filter_id);
+				}
+
+				this.store.load();
+			}
+		},{
+			xtype: 'button',
+			iconCls: 'icon-mimetype-video',
+			pack: 'end',
+			tooltip: _('Show videos'),
+			enableToggle: true,
+			scope: this,
+			toggleHandler: function(button, state) {
+				if(state) {
+					button.filter_id = this.store.addFilter(
+						{'content_type': 'video/ogg'}
+					);
+
+					this.toggleSearchBarButtons(button, false);
+				}
+				else if(button.filter_id) {
+					this.store.deleteFilter(button.filter_id);
+				}
+
+				this.store.load();
+			}
+		},{
+			xtype: 'button',
+			iconCls: 'icon-mimetype-unknown',
+			pack: 'end',
+			tooltip: _('Show unknown'),
+			enableToggle: true,
+			scope: this,
+			toggleHandler: function(button, state) {
+				if(state) {
+					button.filter_id = this.store.addFilter(
+						{'content_type': null}
+					);
+
+					this.toggleSearchBarButtons(button, false);
+				}
+				else if(button.filter_id) {
+					this.store.deleteFilter(button.filter_id);
+				}
+
+				this.store.load();
+			}
+		},'-'],
+
+		this.ctrl = Ext.create('canopsis.lib.controller.cgrid');
+		this.callParent(arguments);
+	}
 });

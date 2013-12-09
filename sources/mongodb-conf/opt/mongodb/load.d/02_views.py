@@ -85,9 +85,13 @@ def init():
 	data = { 'xtype': 'TopologyGrid'}
 	create_view('topology_manager', 'Topologies', data, internal=True)
 
-	### Aggragations
+	### Consolidation
 	data = { 'xtype': 'ConsolidationGrid'}
 	create_view('consolidation_manager', 'Consolidation', data, internal=True)
+
+	### Filter
+	data = { 'xtype': 'RuleGrid' }
+	create_view('rules_manager', 'Filter Rules', data, internal=True)
 
 	###metric_navigator
 	#data = {'xtype': 'MetricNavigation'}
@@ -95,6 +99,7 @@ def init():
 
 def update():
 	init()
+	update_view_for_new_metric_format()
 
 def create_view(_id, name, data, position=None, mod='o+r', autorm=True, internal=False):
 	#Delete old view
@@ -124,3 +129,56 @@ def create_view(_id, name, data, position=None, mod='o+r', autorm=True, internal
 	record.chmod(mod)
 	storage.put(record)
 	return record
+
+def update_view_for_new_metric_format():
+	records = storage.find({'crecord_type': 'view'}, namespace='object', account=root)
+	for view in records:
+		for item in view.data['items']:
+			nodesObject = {}
+
+			#check if old format
+			if 'nodes' in item['data']:
+				itemNodes = item['data']['nodes']
+
+				if isinstance(itemNodes, list):
+					itemXtype = item['data']['xtype']
+
+					if itemXtype == 'weather':
+						print('Ignore for weather widget')
+						break
+
+					#update for text widget
+					if itemXtype == 'text' or itemXtype == 'topology_viewer':
+						print('Update widget text/topology_viewer format')
+						item['data']['inventory'] = item['data']['nodes']
+						del item['data']['nodes']
+						break
+
+					for node in itemNodes:
+						try:
+							nodesObject[node['id']] = node
+
+							# write extra_fields in node root
+							if 'extra_field' in node:
+								nodesObject[node['id']].update(node['extra_field'])
+
+								#build ccustom in view
+								del node['extra_field']
+						except Exception as error:
+							print('An error occured for the following widget: %s' % error)
+							print(item)
+
+					item['data']['nodes'] = nodesObject
+					print(item['data']['nodes'])
+
+				#check between commits
+				if 'ccustom' in item['data']:
+					if isinstance(item['data']['ccustom'], dict):
+						for nodeId, customValue in item['data']['ccustom'].iteritems():
+							if nodeId in itemNodes:
+								itemNodes[nodeId].update(customValue)
+						del item['data']['ccustom']
+				
+	storage.put(records)
+				
+

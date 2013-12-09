@@ -28,7 +28,7 @@ class engine(cengine):
 	def __init__(self, *args, **kargs):
 		cengine.__init__(self, name=NAME, *args, **kargs)
 		
-		self.tags_ids = []
+		self.selByRk = {}
 		
 	def pre_run(self):
 		self.storage = get_storage(namespace='object', account=caccount(user="root", group="root"))		
@@ -56,20 +56,27 @@ class engine(cengine):
 		event = self.add_tag(event, 'resource')
 		
 		### Tag with dynamic tags
-		if self.tags_ids:
-			for data in self.tags_ids:
-				if event['rk'] in data[1]:
-					event = self.add_tag(event, value=data[0])
+
+		sels = self.selByRk.get(event['rk'], [])
+
+		for sel in sels:
+			event = self.add_tag(event, value=sel)
 			
 		return event
 
 	def beat(self):
-		self.tags_ids = []
+		self.selByRk = {}
 		
 		## Extract ids resolved by selectors
 		datas = self.storage.find({ 'crecord_type': 'selector', 'enable': True, 'rk': { '$exists' : True } }, mfields=['_id', 'crecord_name', 'ids'], namespace="object")
 		for data in datas:
 			_id = data.get('_id')
-			ids = data.get('ids')
-			if ids:
-				self.tags_ids.append( (data.get('crecord_name'), ids) )
+			sel = data.get('crecord_name')
+			ids = data.get('ids', [])
+				
+			if isinstance(ids, list):
+				for rk in ids:
+					try:
+						self.selByRk[rk].append(sel)
+					except:
+						self.selByRk[rk] = [ sel ]

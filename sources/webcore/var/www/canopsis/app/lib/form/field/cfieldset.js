@@ -1,5 +1,5 @@
+//need:app/lib/form/cfield.js
 /*
-#--------------------------------
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
@@ -16,7 +16,6 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
-# ---------------------------------
 */
 
 Ext.define('canopsis.lib.form.field.cfieldset' , {
@@ -25,14 +24,17 @@ Ext.define('canopsis.lib.form.field.cfieldset' , {
 
 	alias: 'widget.cfieldset',
 
-	checkboxToggle: true,
+	checkboxToggle: false,
 	inputValue: true,
-	collapsible: true,
-	collapsed: true,
+	collapsible: false,
+	collapsed: false,
+	border:false,
+	defaults: { labelWidth: 200 },
 
 	getName: function() {
 		return this.checkboxName;
 	},
+
 	getSubmitData: function() {
 		var data = {};
 		data[this.checkboxName] = this.getValue();
@@ -40,44 +42,64 @@ Ext.define('canopsis.lib.form.field.cfieldset' , {
 	},
 
 	initComponent: function() {
-		if (this.value == true)
-			this.collapsed = false;
-
-		if (!this.name)
+		if(!this.name) {
 			this.name = this.checkboxName;
+		}
 
-        this.callParent(arguments);
-    },
+		if(this.name !== undefined) {
+			this.collapsed = true;
+			this.checkboxToggle = true;
+		}
+
+		if(this.value === true) {
+			this.collapsed = false;
+		}
+
+		//don't move this, otherwise it won't work
+		this.style = {'border-width': "1px 0px 0px 0px"};
+
+		this.callParent(arguments);
+	},
 
 	getValue: function() {
-		if (this.checkboxCmp) {
+		if(this.checkboxCmp) {
 			var value = this.checkboxCmp.getValue();
-			if (value == 'on' || value == 1)
+
+			if(value) {
 				return true;
-			else
+			}
+			else {
 				return false;
-		}else{
+			}
+		}
+		else {
 			return this.value;
 		}
 	},
 
 	setValue: function(value) {
-		if (value == undefined && this.value)
-			value = this.value
+		if(value === undefined && this.value) {
+			value = this.value;
+		}
 
-		if (value == undefined)
+		if(value === undefined) {
 			value = false;
+		}
 
 		this.value = value;
 
-		if (this.checkboxCmp) {
+		if(this.checkboxCmp) {
 			this.checkboxCmp.setValue(value);
-		}else {
+		}
+		else {
 			this.collapsed = !value;
-			if (!value)
+
+			if(!value) {
 				this.collapse();
-			else
+			}
+			else {
 				this.expand();
+			}
 		}
 	},
 
@@ -85,7 +107,7 @@ Ext.define('canopsis.lib.form.field.cfieldset' , {
 		var checkbox = this.callParent(arguments);
 		checkbox.isFormField = false;
 		checkbox.uncheckedValue = false;
-		return checkbox;
-    }
 
+		return checkbox;
+	}
 });

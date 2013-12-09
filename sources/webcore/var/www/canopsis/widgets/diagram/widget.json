@@ -12,9 +12,8 @@
 			"title": "Options",
 			"items": [
 					{
-						"xtype": "fieldset",
+						"xtype": "cfieldset",
 						"title": "Title",
-						"collapsible": false,
 						"items": [
 							{
 								"xtype" : "numberfield",
@@ -22,12 +21,11 @@
 								"fieldLabel": "Font Size",
 								"minValue": 1,
 								"value": 15
-                           }		
+							}
 						]
 					},{
-						"xtype": "fieldset",
+						"xtype": "cfieldset",
 						"title": "Diagram",
-						"collapsible": false,
 						"items": [
 							{
 								"xtype": "combobox",
@@ -46,20 +44,14 @@
 									]
 								}
 							},{
-								"xtype" : "cduration",
-								"name" : "time_window",
-								"fieldLabel": "Time window (for counter)",
-								"value": 0
-                           },{
 								"xtype": "checkbox",
 								"fieldLabel": "Enable SVG Exporting",
 								"checked": false,
 								"name": "exporting_enabled"
 							}]
 					},{
-						"xtype": "fieldset",
+						"xtype": "cfieldset",
 						"title": "Bar graph specific options",
-						"collapsible": false,
 						"items": [{
 								"xtype": "checkbox",
 								"fieldLabel": "Vertical display (rotate graph)",
@@ -67,7 +59,7 @@
 								"name": "verticalDisplay"
 						}]
 					},{
-						"xtype": "fieldset",
+						"xtype": "cfieldset",
 						"title": "Pie specific options",
 						"collapsible": false,
 						"items": [
@@ -78,24 +70,24 @@
 								"value": 50,
 								"minValue": 1,
 								"maxValue": 100
-                           },{
+							},{
 								"xtype" : "textfield",
 								"name" : "other_label",
 								"fieldLabel": "Label",
 								"value": "Free"
-                           },{
+							},{
 								"xtype" : "numberfield",
 								"name" : "max",
 								"fieldLabel": "Total (by default use 'max' field of perfdata)"
-                           }
+							}
 						]
 					}]
 		},{
 			"title": "Aggregation",
+			"advanced": true,
 			"items": [{
-						"xtype": "fieldset",
+						"xtype": "cfieldset",
 						"title": "Aggregation",
-						"collapsible": false,
 						"items": [
 							{
 								"xtype": "combobox",
@@ -114,29 +106,8 @@
 										{"value": "LAST", "text": "Last"},
 										{"value": "FIRST", "text": "First"},
 										{"value": "DELTA", "text": "Delta"},
-										{"value": "MEAN", "text": "Mean"}
-									]
-								}
-							},{
-								"xtype": "combobox",
-								"name": "aggregate_interval",
-								"fieldLabel": "Aggregation Interval",
-								"queryMode": "local",
-								"displayField": "text",
-								"valueField": "value",
-								"value": 0,
-								"store": {
-									"xtype": "store",
-									"fields": ["value", "text"],
-									"data" : [
-										{"value": 0, "text": "None"},
-										{"value": 900, "text": "15 minutes"},
-										{"value": 1800, "text": "30 minutes"},
-										{"value": 3600, "text": "1 hour"},
-										{"value": 86400, "text": "1 day"},
-										{"value": 604800, "text": "1 week"},
-										{"value": 2629800, "text": "1 month"},
-										{"value": 31557600, "text": "1 year"}
+										{"value": "MEAN", "text": "Mean"},
+										{"value": "SUM", "text": "Sum"}
 									]
 								}
 							}
@@ -145,10 +116,10 @@
 
 		},{
 			"title": "Style",
+			"advanced": true,
 			"items": [{
-					"xtype": "fieldset",
+					"xtype": "cfieldset",
 					"title": "Diagram Style",
-					"collapsible": false,
 					"items": [
 						{
 							"xtype" : "colorfield",
@@ -171,12 +142,11 @@
 							"fieldLabel": "Border Width",
 							"minValue": 0,
 							"value": 0
-                       }
+						}
 					]
 				},{
-					"xtype": "fieldset",
+					"xtype": "cfieldset",
 					"title": "Legend Style",
-					"collapsible": false,
 					"items": [
 						{
 							"xtype": "checkbox",
@@ -189,33 +159,38 @@
 							"checked": false,
 							"name": "labels"
 						},{
-								"xtype": "checkbox",
-								"fieldLabel": "Display metric name in label",
-								"checked": false,
-								"name": "nameInLabelFormatter"
+							"xtype": "checkbox",
+							"fieldLabel": "Display metric name in label",
+							"checked": false,
+							"name": "nameInLabelFormatter"
+						},{
+							"xtype": "checkbox",
+							"fieldLabel": "Display percentage in label",
+							"checked": true,
+							"name": "pctInLabel"
 						},{
 							"xtype" : "numberfield",
 							"name" : "legend_fontSize",
 							"fieldLabel": "Font Size",
 							"minValue": 1,
 							"value": 12
-                       },{
+						},{
 							"xtype" : "numberfield",
 							"name" : "legend_borderWidth",
 							"fieldLabel": "Border Width",
 							"minValue": 0,
 							"value": 1
-                       },{
+						},{
 							"xtype" : "colorfield",
 							"name" : "legend_backgroundColor",
 							"fieldLabel": "Background color",
 							"value": "FFFFFF"
-                       },{
+						},{
 							"xtype" : "colorfield",
 							"name" : "legend_borderColor",
 							"fieldLabel": "Border color",
 							"value": "909090"
-                       },{
+						},{
 							"xtype": "combobox",
 							"name": "legend_verticalAlign",
 							"fieldLabel": "Legend vertical alignement",
@@ -275,17 +250,32 @@
 						"name": "nodes",
 						"multiSelect": true,
 						"metrics": true,
-						"additional_field": [{
+						"sharedStore":"line_graph",
+						"additional_field": [
+							"label","curve_color"
+						]
+					}]
+		},{
+			"title": "Customize metrics",
+			"advanced": true,
+			"items": [{
+						"xtype": "ccustom",
+						"sharedStore":"line_graph",
+						"customForm": [{
 											"xtype":"textfield",
-											"header":"Custom label",
+											"fieldLabel":"Custom label",
 											"name":"label",
-											"emptyText":"Type the new label here",
-											"flex":1
+											"emptyText":"Type the new label here"
 										},{
 											"xtype" : "ccolorfield",
 											"name" : "curve_color",
-											"header": "Curve color",
+											"fieldLabel": "Curve color",
 											"replaceWhiteColor":true
+										},{
+											"xtype": "textfield",
+											"fieldLabel": "Category",
+											"name": "category",
+											"emptyText": "Type category name here"
 										}]
 					}]
 		}]

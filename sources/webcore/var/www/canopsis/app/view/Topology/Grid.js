@@ -1,5 +1,5 @@
+//need:app/lib/view/cgrid.js
 /*
-#--------------------------------
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
@@ -16,7 +16,6 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
-# ---------------------------------
 */
 Ext.define('canopsis.view.Topology.Grid' , {
 	extend: 'canopsis.lib.view.cgrid',
@@ -33,6 +32,8 @@ Ext.define('canopsis.view.Topology.Grid' , {
 	opt_menu_rights: false,
 	opt_bar_enable: true,
 
+    opt_export_import: true,
+
 	columns: [
 		{
 			header: '',
@@ -40,7 +41,7 @@ Ext.define('canopsis.view.Topology.Grid' , {
 			sortable: false,
 			renderer: rdr_crecord_type,
 			dataIndex: 'crecord_type'
-        },{
+		},{
 			header: _('State'),
 			align: 'center',
 			width: 50,

@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 #--------------------------------
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
@@ -29,6 +29,9 @@ PIDFILE=$HOME/var/run/$NAME.pid
 
 LOGFILE=$LOGDIR/$NAME.log
 LOG_FILE_START=$LOGDIR/$NAME-daemon.log
+
+. $HOME/lib/common.sh
+NUMA=$(detect_numa)
 
 ERRCODE=0
 
@@ -85,8 +88,15 @@ wait_socket(){
 }
 
 start_server() {
-	$DAEMON $DAEMON_OPTS &> /dev/null &
-	return $?
+	if [ $NUMA -gt 1 ]; then
+		numactl --interleave=all $DAEMON $DAEMON_OPTS &> /dev/null &
+		CODE=$?
+	else
+		$DAEMON $DAEMON_OPTS &> /dev/null &
+		CODE=$?
+	fi
+
+	return $CODE
 }
 
 stop_server() {

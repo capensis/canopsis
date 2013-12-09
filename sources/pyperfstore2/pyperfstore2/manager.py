@@ -75,13 +75,31 @@ class manager(object):
 			
 		return _id
 		
+	def get_data(self, _id):
+		data = self.store.redis.lrange(_id, 0, -1)
+
+		def cleanPoint(p):
+			p[0] = int(p[0])
+			try:
+				p[1] = int(p[1])
+			except:
+				p[1] = float(p[1])
+			return p
+
+		data = [ cleanPoint(p.split('|')) for p in data ]
+
+		return data
+
 	def get_meta(self, _id=None, name=None, raw=False, mfields=None):
 		_id = self.get_id(_id, name)
 		
 		meta_data = self.store.get(_id, mfields=mfields)
-		
+
 		if not meta_data:
 			return None
+
+		if not mfields or mfields.get('d', False):
+			meta_data['d'] = self.get_data(_id)
 		
 		# Uncompress fields name
 		if not raw:
@@ -181,8 +199,7 @@ class manager(object):
 		if len(dca['d']):
 			plain_fts = dca['d'][0][0]
 			plain_lts = dca['d'][len(dca['d'])-1][0]
-		
-		
+			
 		self.logger.debug(" + plain_fts: %s" % plain_fts)
 		self.logger.debug(" + plain_lts: %s" % plain_lts)
 		
@@ -319,56 +336,98 @@ class manager(object):
 		else:
 			return point
 	
-	def rotateAll(self):
-		self.rotate()
+	def rotateAll(self, concurrency=1):
+		t = time.time()
+
+		if concurrency > 1:
+			from multiprocessing import Pool
+
+		self.logger.info("Rotate All DCA")
+		_ids = []
+		self.logger.info(" + Get all keys")
+		keys = self.store.redis.keys('*')
+
+		try:
+			keys.remove("perfstore2:rotate:plan")
+		except:
+			pass
+			
+		self.logger.info(" + Check length (%s keys)" % len(keys))
+		for key in keys:
+			self.store.redis_pipe.llen(key)
+	
+		result = self.store.redis_pipe.execute()
+
+		for index, key in enumerate(keys):
+			if result[index] >= self.dca_min_length:
+				_ids.append(key)
+
+		if not _ids:
+			self.logger.info("Nothing to do")
+			return
+
+		if concurrency <= 1:
+			for _id in _ids:
+				self.rotate(_id)
+		else:
+			_ids = split_list(_ids, wanted_parts=concurrency)
+
+			p = Pool(concurrency)
+			p.map(rotate_process, _ids)
+
+		t = time.time() - t
+		self.logger.info("All perfdata was rotate, elapsed: %.3f seconds" % t)
 		
 	def rotate(self, _id=None, name=None):
+		t = time.time()
 		try:
 			_id = self.get_id(_id, name)
 		except:
-			_id = None
-		
-		# Find yesterday DCA
-		if _id:
-			self.logger.debug("Rotate DCA '%s'" % _id)
-			dcas = self.find(_id=_id, mfilter={ 'd' : {'$ne': []} })
-		else:
-			self.logger.info("Rotate All DCA")
-			dcas = self.store.find(mfilter={'d' : {'$ne': []}})
-		
-		if not dcas.count():
-			self.logger.debug(" + Nothing to do")
+			_id = None			
+	
+		if not _id:
+			self.logger.info("Nothing to do")
 			return
 
-		for dca in dcas:
-			_id = dca['_id']
-			self.logger.debug(" + DCA: %s" % _id)
+		self.logger.debug("Start rotation of %s" % _id)
+
+		self.logger.debug(" + DCA: %s" % _id)
+
+		points = self.get_data(_id)
+		
+		if not points:
+			self.logger.debug("No points, Nothing to do")
+			return
+
+		fts = points[0][0]
+		lts = points[len(points)-1][0]
+						
+		self.logger.debug("  + Compress %s -> %s" % (fts, lts))
+		
+		data = utils.compress(points)
+
+		try:
+			bin_id = "%s%s" % (_id, lts)
+			self.logger.debug("   + Store in binary record")
+			self.store.create_bin(_id=bin_id, data=data)
 			
-			fts = dca['d'][0][0]
-			lts = dca['d'][len(dca['d'])-1][0]
+			self.logger.debug("   + Add bin_id in meta and clean meta")
+			##ofts = dca.get('fts', fts)
+			##self.store.update(_id=_id, mset={'fts': ofts, 'd': []}, mpush={'c': (fts, lts, bin_id)})
+			
+			self.store.update(_id=_id, mpush={'c': (fts, lts, bin_id)})
+			self.store.redis.delete(_id)
+			
+		except Exception,err:
+			self.logger.warning('Impossible to rotate %s: %s' % (_id, err))
 				
-			#check if must compress or not
-			if len(dca['d']) >= self.dca_min_length:				
-				self.logger.debug("  + Compress %s -> %s" % (fts, lts))
-				
-				data = utils.compress(dca['d'])
-							
-				try:
-					bin_id = "%s%s" % (_id, lts)
-					self.logger.debug("   + Store in binary record")
-					self.store.create_bin(_id=bin_id, data=data)
-					
-					self.logger.debug("   + Add bin_id in meta and clean meta")
-					ofts = dca.get('fts', fts)
-					self.store.update(_id=_id, mset={'fts': ofts, 'lts': lts, 'd': []}, mpush={'c': (fts, lts, bin_id)})
-					
-				except Exception,err:
-					self.logger.info('Impossible to rotate %s: %s' % (_id, err))
-					
-			else:
-				self.logger.debug("  + Not enough point in DCA")
-				ofts = dca.get('fts', fts)
-				self.store.update(_id=_id, mset={'fts': ofts})
+		#else:
+		#	self.logger.debug("  + Not enough point in DCA")
+		#	ofts = dca.get('fts', fts)
+		#	self.store.update(_id=_id, mset={'fts': ofts})
+
+		t = time.time() - t
+		self.logger.debug(" + Rotation of '%s' done in %.3f seconds" % (_id, t))
 			
 	def cleanAll(self, timestamp=None):
 		return self.clean(timestamp=timestamp)
@@ -404,7 +463,8 @@ class manager(object):
 			self.logger.debug("   + Start cleanning of %s metas" % nb_metas)
 					
 		for meta in metas:
-			self.logger.debug("   + Clean meta '%s'" % meta['_id'])
+			meta_id = meta['_id']
+			self.logger.debug("   + Clean meta '%s'" % meta_id)
 										
 			## Clean binaries
 			bin_fts = None
@@ -419,17 +479,17 @@ class manager(object):
 					self.store.grid.delete(bin_id)
 					
 					# Remove dca meta
-					self.store.update(_id=meta['_id'], mpop={ 'c' : -1  })
+					self.store.update(_id=meta_id, mpop={ 'c' : -1  })
 				else:
 					if not bin_fts:
 						bin_fts = fts
 			
 			## Clean plain
 			plain_fts = None
-			points = []
-			if len(meta['d']):
-				if meta['d'][0][0] <= timestamp:
-					for point in meta['d']:
+			points = self.get_data(meta_id)
+			if len(points):
+				if points[0][0] <= timestamp:
+					for point in points:
 						fts = point[0]
 						if fts <= timestamp:
 							self.logger.debug("     + Remove plain point")
@@ -438,14 +498,15 @@ class manager(object):
 							if not plain_fts:
 								plain_fts = fts
 					if points:
-						self.store.update(_id=meta['_id'], mset={ 'd': points})
+						points = ["%s|%s" % (p[0], p[1]) for p in points]
+						self.store.redis.lset(meta_id, points)
 			
 			## Set new fts
 			fts = plain_fts
 			if bin_fts < plain_fts:
 				fts = bin_fts
 			
-			self.store.update(_id=meta['_id'], mset={'fts': fts})
+			self.store.update(_id=meta_id, mset={'fts': fts})
 			cleaned += 1
 						
 		return cleaned
@@ -470,6 +531,7 @@ class manager(object):
 		bin_dcas = []
 
 		for _id in ids:
+			self.store.redis_pipe.delete(_id)
 			dca = self.get_meta(_id=_id, raw=True, mfields={'c': 1})
 			if dca:
 				dcas.append(dca)
@@ -477,6 +539,8 @@ class manager(object):
 				if len(binaries):
 					for bin_dca in binaries:
 						bin_dcas.append(bin_dca[2])
+
+		self.store.sync()
 
 		self.logger.debug(" + %s Meta DCA Found" % len(dcas))
 		self.logger.debug(" + %s Binaries Found" % len(bin_dcas))
@@ -493,7 +557,7 @@ class manager(object):
 				self.store.remove(_id=dcas[0]['_id'])
 			else:
 				self.store.remove(mfilter={'_id': {'$in': [ dca['_id'] for dca in dcas]}})
-	
+
 	def showStats(self):
 		metas = self.find(limit=0)
 		mcount = metas.count()
@@ -524,3 +588,16 @@ class manager(object):
 			
 			self.logger.info(" + Compressed DCA: %s" % len(meta.get('c', [])))
 			self.logger.info(" + Next Clean: %s" % meta.get('nc', None) )
+
+
+def split_list(alist, wanted_parts=1):
+    length = len(alist)
+    return [ alist[i*length // wanted_parts: (i+1)*length // wanted_parts] 
+             for i in range(wanted_parts) ]
+
+def rotate_process(_ids):
+	import pyperfstore2
+	manager = pyperfstore2.manager()
+
+	for _id in _ids:
+		manager.rotate(_id=_id)

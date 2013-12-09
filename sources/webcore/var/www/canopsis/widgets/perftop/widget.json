@@ -11,11 +11,11 @@
 	"locales": ["fr"],
 	"options": [{
 		"title": "Options",
+		"advanced": true,
 		"items": [
 			{
-				"xtype": "fieldset",
+				"xtype": "cfieldset",
 				"title": "General",
-				"collapsible": false,
 				"items": [
 					{
 						"xtype" : "numberfield",
@@ -54,11 +54,6 @@
 						"checked": false,
 						"name": "expand"
 					},{
-						"xtype": "cduration",
-						"name": "time_window",
-						"value": 86400,
-						"fieldLabel": "Time window (for counter)"
-					},{
 						"xtype": "combobox",
 						"name": "sort",
 						"fieldLabel": "Default direction",
@@ -82,9 +77,8 @@
 					}
 				]
 			},{
-				"xtype": "fieldset",
+				"xtype": "cfieldset",
 				"title": "Columns",
-				"collapsible": false,
 				"items": [
 					{
 						"xtype": "checkbox",
@@ -141,8 +135,7 @@
 		]
 	},{
 		"title": "Filter",
-		"layout":"fit",
-		"items": {
+		"items": [{
 			"xtype": "cfilter",
 			"name": "mfilter",
 			"url": "/perfstore",
@@ -173,6 +166,6 @@
 					"flex": 1
 		 		}
 		 	]
-		}
+		}]
 	}]
 }]

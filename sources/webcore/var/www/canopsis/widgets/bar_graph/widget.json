@@ -10,11 +10,11 @@
 	"locales": ["en", "fr"],
 	"options": [{
 			"title": "Options",
+			"advanced": true,
 			"items": [
 					{
-						"xtype": "fieldset",
+						"xtype": "cfieldset",
 						"title": "Title",
-						"collapsible": false,
 						"items": [
 							{
 								"xtype" : "numberfield",
@@ -22,12 +22,11 @@
 								"fieldLabel": "Font Size",
 								"minValue": 1,
 								"value": 15
-                           }		
+							}
 						]
 					},{
-						"xtype": "fieldset",
+						"xtype": "cfieldset",
 						"title": "Graph",
-						"collapsible": false,
 						"items": [
 							{
 								"xtype": "checkbox",
@@ -41,20 +40,19 @@
 								"name": "exporting_enabled"
 							},{
 								"xtype": "cduration",
-								"name": "time_window",
-								"value": 86400,
-								"fieldLabel": "Time window"
+								"name": "time_window_offset",
+								"value": 0,
+								"fieldLabel": "Time window offset"
 							},{
 								"xtype" : "numberfield",
 								"name" : "maxZoom",
 								"fieldLabel": "Max zoom (seconds)",
 								"minValue": 60,
 								"value": 600
-                           }]
+							}]
 					},{
-						"xtype": "fieldset",
+						"xtype": "cfieldset",
 						"title": "Columns Options",
-						"collapsible": false,
 						"items": [
 							{
 								"xtype": "checkbox",
@@ -63,9 +61,8 @@
 								"name": "columnDatalabels"
 							}]
 					},{
-						"xtype": "fieldset",
+						"xtype": "cfieldset",
 						"title": "Tooltype",
-						"collapsible": false,
 						"items": [
 							{
 								"xtype": "checkbox",
@@ -85,9 +82,8 @@
 							}
 						]
 					},{
-						"xtype": "fieldset",
+						"xtype": "cfieldset",
 						"title": "Extra",
-						"collapsible": false,
 						"items": [
 							{
 								"xtype": "checkbox",
@@ -131,17 +127,17 @@
 										{"value": "LongDash", "text": "LongDash"},
 										{"value": "DashDot", "text": "DashDot"},
 										{"value": "LongDashDot", "text": "LongDashDot"},
-										{"value": "LongDashDotDot", "text": "LongDashDotDot"}		
+										{"value": "LongDashDotDot", "text": "LongDashDotDot"}
 								]
 								}
 							}]
 					}]
 		},{
 			"title": "Aggregation",
-			"items": [{					
-						"xtype": "fieldset",
+			"advanced": true,
+			"items": [{
+						"xtype": "cfieldset",
 						"title": "Aggregation",
-						"collapsible": false,
 						"items": [
 							{
 								"xtype": "combobox",
@@ -161,7 +157,8 @@
 										{"value": "LAST", "text": "Last"},
 										{"value": "FIRST", "text": "First"},
 										{"value": "DELTA", "text": "Delta"},
-										{"value": "MEAN", "text": "Mean"}
+										{"value": "MEAN", "text": "Mean"},
+										{"value": "SUM", "text": "Sum"}
 									]
 								}
 							},{
@@ -170,7 +167,7 @@
 								"fieldLabel": "Max points (if no interval)",
 								"minValue": 2,
 								"value": 500
-                           },{
+							},{
 								"xtype": "combobox",
 								"name": "aggregate_interval",
 								"fieldLabel": "Aggregation Interval",
@@ -192,15 +189,20 @@
 										{"value": 31557600, "text": "1 year"}
 									]
 								}
-							}
+							}, {
+								"xtype": "checkbox",
+								"name": "aggregate_round_time",
+								"fieldLabel": "Round time (if interval)",
+								"checked": true
+							}							
 						]
 					}]
 		},{
 			"title": "Style",
+			"advanced": true,
 			"items": [{
-						"xtype": "fieldset",
+						"xtype": "cfieldset",
 						"title": "Graph Style",
-						"collapsible": false,
 						"items": [
 							{
 								"xtype": "checkbox",
@@ -212,23 +214,22 @@
 								"name" : "backgroundColor",
 								"fieldLabel": "Background color",
 								"value": "FFFFFF"
-                           },{
+							},{
 								"xtype" : "colorfield",
 								"name" : "borderColor",
 								"fieldLabel": "Border color",
 								"value": "FFFFFF"
-                           },{
+							},{
 								"xtype" : "numberfield",
 								"name" : "borderWidth",
 								"fieldLabel": "Border Width",
 								"minValue": 0,
 								"value": 0
-                           }					
+							}
 						]
 					},{
-						"xtype": "fieldset",
+						"xtype": "cfieldset",
 						"title": "Legend Style",
-						"collapsible": false,
 						"items": [
 							{
 								"xtype": "checkbox",
@@ -241,28 +242,28 @@
 								"fieldLabel": "Font Size",
 								"minValue": 1,
 								"value": 12
-                           },{
+							},{
 								"xtype" : "colorfield",
 								"name" : "legend_fontColor",
 								"fieldLabel": "Font color",
 								"value": "3E576F"
-                           },{
+							},{
 								"xtype" : "numberfield",
 								"name" : "legend_borderWidth",
 								"fieldLabel": "Border Width",
 								"minValue": 0,
 								"value": 1
-                           },{
+							},{
 								"xtype" : "colorfield",
 								"name" : "legend_backgroundColor",
 								"fieldLabel": "Background color",
 								"value": "FFFFFF"
-                           },{
+							},{
 								"xtype" : "colorfield",
 								"name" : "legend_borderColor",
 								"fieldLabel": "Border color",
 								"value": "909090"
-                           },{
+							},{
 								"xtype": "combobox",
 								"name": "legend_verticalAlign",
 								"fieldLabel": "Legend vertical alignement",
@@ -313,7 +314,7 @@
 									]
 								}
 							}]
-					}]			
+					}]
 		},{
 			"title": "Choose Metrics",
 			"items": [{
@@ -321,25 +322,43 @@
 						"name": "nodes",
 						"multiSelect": true,
 						"metrics": true,
-						"additional_field": [{
-											"xtype":"textfield",
-											"header":"Custom label",
-											"name":"label",
-											"emptyText":"Type the new label here",
-											"flex":1
-										},{
-											"xtype" : "ccolorfield",
-											"name" : "curve_color",
-											"header": "Curve color",
-											"value": "FFFFFF"
-										},{
-											"xtype":"checkcolumn",
-											"text":"Trend",
-											"dataIndex": "trend_curve",
-											"width": 55,
-											"checked":true
-										}]
+						"sharedStore":"barGraph",
+						"additional_field": [
+							"label","curve_color","Trend"
+						]
 					}]
-		}]
+		},{
+		"title": "Customize metrics",
+		"advanced": true,
+		"items": [{
+					"xtype": "ccustom",
+					"sharedStore":"barGraph",
+					"customForm": [{
+									"xtype":"textfield",
+									"fieldLabel":"Custom label",
+									"name":"label",
+									"emptyText":"Type the new label here"
+								},{
+									"xtype" : "ccolorfield",
+									"name" : "curve_color",
+									"fieldLabel": "Curve color",
+									"value": "FFFFFF"
+								},{
+									"xtype":"checkbox",
+									"text":"Trend",
+									"fieldLabel":"Trend",
+									"checked":true,
+									"name":"trend"
+								},{
+									"xtype": "numberfield",
+									"name": "threshold_warn",
+									"fieldLabel": "Custom Warning threshold"
+								},{
+									"xtype": "numberfield",
+									"name": "threshold_crit",
+									"fieldLabel": "Custom Critical threshold"
+								}]
+				}]
+	}]
 }]
 

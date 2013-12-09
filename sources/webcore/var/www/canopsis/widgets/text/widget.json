@@ -12,9 +12,10 @@
 	"options": [
 			{
 				"title" : "Inventory",
+				"advanced": true,
 				"items" : [{
 					"xtype":"cinventory",
-					"name" : "nodes",
+					"name" : "inventory",
 					"multiSelect": false
 				}]
 			},
@@ -24,10 +25,40 @@
 				"items" : [
 					{
 						"xtype": "htmleditor",
-						"anchor": "100%",
+						"anchor": "100% 99%",
 						"name": "text",
-						"height" : 350,
 						"value": ""
+					}
+				]
+			},
+			{
+				"title": "Options",
+				"advanced": true,
+				"items": [
+					{
+						"xtype": "cfieldset",
+						"title": "Aggregation",
+						"items": {
+							"xtype": "combobox",
+							"name": "aggregate_method",
+							"value": "LAST",
+							"displayField": "text",
+							"valueField": "value",
+							"fieldLabel": "Method",
+							"store": {
+								"xtype": "store",
+								"fields": ["value", "text"],
+								"data": [
+									{"value": "FIRST", "text": "First"},
+									{"value": "LAST", "text": "Last"},
+									{"value": "MEAN", "text": "Mean"},
+									{"value": "DELTA", "text": "Delta"},
+									{"value": "SUM", "text": "Sum"},
+									{"value": "MIN", "text": "Min"},
+									{"value": "MAX", "text": "Max"}
+								]
+							}
+						}
 					}
 				]
 			}

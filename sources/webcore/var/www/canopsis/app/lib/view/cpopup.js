@@ -1,5 +1,4 @@
 /*
-#--------------------------------
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
@@ -16,7 +15,6 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
-# ---------------------------------
 */
 
 Ext.define('canopsis.lib.view.cpopup' , {
@@ -25,7 +23,7 @@ Ext.define('canopsis.lib.view.cpopup' , {
 
 	logAuthor: '[cpopup]',
 
-	//cls: Ext.baseCSSPrefix + 'message-box',
+
 	constrain: true,
 	resizable: false,
 
@@ -33,39 +31,44 @@ Ext.define('canopsis.lib.view.cpopup' , {
 
 	initComponent: function() {
 		this.logAuthor = '[' + this.id + ']';
+
 		log.debug('Initialize cpopup', this.logAuthor);
 
-        var form = this.buildForm();
-        var bar = this.buildBar();
+		var form = this.buildForm();
+		var bar = this.buildBar();
 
-        this.dockedItems = [bar];
-        this.items = [form];
+		this.dockedItems = [bar];
+		this.items = [form];
 
-        this.callParent(arguments);
+		this.callParent(arguments);
 	},
 
 	show: function() {
 		this.callParent(arguments);
+
 		var elem = this.down('.textfield');
-		if (!elem)
+
+		if(!elem) {
 			elem = this.down('.textarea');
-
-		if (elem)
-			if (elem.focus)
-				elem.focus(false, 200);
+		}
+		else if (elem.focus) {
+			elem.focus(false, 200);
+		}
 	},
-
 
 	buildForm: function() {
 		this._form = Ext.create('Ext.form.Panel', {
 			layout: 'anchor',
-			bodyStyle: {'background': '#ededed'},
+			bodyStyle: {
+				background: '#ededed'
+			},
 			bodyPadding: 10,
 			border: false
 		});
 
-		if (this._buildForm)
+		if(this._buildForm) {
 			this._buildForm();
+		}
 
 		return this._form;
 	},
@@ -73,40 +76,43 @@ Ext.define('canopsis.lib.view.cpopup' , {
 	buildBar: function() {
 		var button_ok = Ext.create('Ext.button.Button', {
 			xtype: 'button',
-            handler: this.ok_button_function,
-            scope: this,
-            text: _('Ok'),
-            minWidth: 75
-        });
+			handler: this.ok_button_function,
+			scope: this,
+			text: _('Ok'),
+			minWidth: 75
+		});
 
 		var button_cancel = Ext.create('Ext.button.Button', {
 			xtype: 'button',
-            handler: function() {this.close()},
-            scope: this,
-            text: _('Cancel'),
-            minWidth: 75
-        });
+			handler: function() {
+				this.close();
+			},
+			scope: this,
+			text: _('Cancel'),
+			minWidth: 75
+		});
 
-       var bar = new Ext.toolbar.Toolbar({
-            ui: 'footer',
-            dock: 'bottom',
-            layout: {
-                pack: 'end'
-            },
-            items: [button_cancel, button_ok]
-        });
+		var bar = new Ext.toolbar.Toolbar({
+			ui: 'footer',
+			dock: 'bottom',
+			layout: {
+				pack: 'end'
+			},
+			items: [button_cancel, button_ok]
+		});
 
-        if (this._buildBar)
+		if(this._buildBar) {
 			this.buildBar(bar);
+		}
 
 		return bar;
 	},
 
 	ok_button_function: function() {
 		log.debug('clicked on ok button', this.logAuthor);
-		if (this._ok_button_function)
+
+		if(this._ok_button_function) {
 			this._ok_button_function();
+		}
 	}
-
-
 });

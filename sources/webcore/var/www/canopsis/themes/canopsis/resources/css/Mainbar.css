@@ -26,6 +26,10 @@
 	vertical-align: bottom;
 }
 
+.Mainbar .icon-mainbar {
+	margin-top: 2px;
+}
+
 .Mainbar .cps-title, .cps-account{
 	color: #FFFFFF;
 	margin-top: 3px;
@@ -61,6 +65,14 @@
 	border-radius: 0px;
 	-moz-border-radius: 0px;
 	-webkit-border-radius: 0px;
+}
+
+.Mainbar .icon-avatar-bar {
+	-webkit-border-radius: 2px;
+	-moz-border-radius: 2px;
+	border-radius: 2px;
+	background-size:16px 16px;
+	background-repeat:no-repeat;
 }
 
 /*
