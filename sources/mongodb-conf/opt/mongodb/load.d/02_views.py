@@ -73,6 +73,10 @@ def init():
 	data = {'xtype':'DerogationGrid'}
 	create_view('derogation_manager','Derogations',data, internal=True)
 	
+	###statemap
+	data = {'xtype': 'StatemapGrid'}
+	create_view('statemap_manager', 'Statemaps', data, internal=True)
+
 	###perfdata
 	data = {'xtype':'PerfdataGrid'}
 	create_view('perfdata','Perfdata',data, internal=True)

@@ -34,22 +34,32 @@ Ext.define('canopsis.controller.common', {
 		log.debug('Open file popup', this.logAuthor);
 		
 		var importView = function(objs) {
-			console.log(objs);
-
 			if(!Ext.isArray(objs)) {
 				objs = [objs];
 			}
+
+			var records = [];
 
 			for(var i = 0; i < objs.length; i++) {
 				var obj = objs[i];
 
 				var record = Ext.create('canopsis.model.' + objectTypeCapitalized, obj);
-				var recordId = objectType + '.' + global.account.user + '.' + global.gen_id();
 
-				record.set('_id', recordId);
-				record.set('id', recordId);
+				record.set('_id', undefined);
+				record.set('id', undefined);
 				record.set('leaf', true);
-				parentItem.add_to_home(record, false);
+
+				records.push(record);
+			}
+
+			// if we are dealing with the TreeStore of View's controller
+			if(parentItem instanceof canopsis.controller.View) {
+				for(i = 0; i < records.length; i++) {
+					parentItem.add_to_home(records[i], false);
+				}
+			}
+			else {
+				parentItem.store.insert(0, records);
 			}
 		};
 

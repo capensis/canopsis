@@ -1,5 +1,6 @@
 //need:app/lib/form/field/cdate.js,app/controller/common.js
 /*
+#--------------------------------
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
@@ -16,6 +17,7 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
+# ---------------------------------
 */
 Ext.define('canopsis.lib.view.cgrid' , {
 	extend: 'Ext.grid.Panel',
@@ -48,6 +50,8 @@ Ext.define('canopsis.lib.view.cgrid' , {
 	opt_bar_time: false,
 	opt_bar_enable: false,
 	opt_bar_time_search: false,
+
+	opt_show_consolesup: false,
 
 	opt_tags_search: true,
 	opt_cell_edit: false,
@@ -103,11 +107,9 @@ Ext.define('canopsis.lib.view.cgrid' , {
 
 	getTbar: function() {
 		var dockedItems = this.getDockedItems();
-
-		for(var i = 0;i < dockedItems.length; i++) {
+		for (var i=0;i < dockedItems.length;i++) {
 			var dockedItem = dockedItems[i];
-
-			if(dockedItem.dock === "top" && dockedItem.componentCls === "x-toolbar") {
+			if (dockedItem.dock == "top" && dockedItem.componentCls == "x-toolbar") {
 				return dockedItem;
 			}
 		}
@@ -117,60 +119,55 @@ Ext.define('canopsis.lib.view.cgrid' , {
 		this.suspendLayout = false;
 		this.doLayout();
 	},
-
 	TabOnHide: function() {
 		this.suspendLayout = true;
 	},
 
-	//This function purpose is to add a new item to the grid once import done properly
-	add_to_home: function(record) {
-		log.debug(record);
-		this.store.insert(0, record);
-	},
-
 	initComponent: function() {
+		/*if (this.opt_grouping){
+			var groupingFeature = Ext.create('Ext.grid.feature.Grouping',{
+				hideGroupedColumn: true,
+				groupHeaderTpl: '{name} ({rows.length} Item{[values.rows.length > 1 ? "s" : ""]})'
+			});
+			this.features.push(groupingFeature);
+		}*/
 		this.cb_select_all_id = Ext.id();
 
 		// Multi select
-		if(this.opt_multiSelect === true) {
+		if (this.opt_multiSelect == true)
 			this.multiSelect = true;
-		}
 
 		// Keynav_del
-		if(this.opt_bar_delete && this.opt_keynav_del === undefined) {
+		if (this.opt_bar_delete && this.opt_keynav_del == undefined)
 			this.opt_keynav_del = true;
-		}
 
 		// Set pageSize
-		if(this.store.pageSize === undefined) {
+		if (this.store.pageSize == undefined)
 			this.store.pageSize = global.accountCtrl.getConfig('pageSize');
-		}
 
 		// Hack
-		if(this.hideHeaders && this.border === false) {
-			this.bodyStyle = {
-				'border-width': 0
-			};
+		if (this.hideHeaders && this.border == false) {
+			this.bodyStyle = { 'border-width': 0 };
 		}
 
-		// Option docked bar
+		//------------------Option docked bar--------------
 		if (this.exportMode) {
 			this.border = false;
-		}
-		else {
-			if(this.opt_bar) {
+			//this.hideHeaders = true
+		}else {
+			if (this.opt_bar) {
 				var bar_child = [];
 
-				if(this.opt_bar_add) {
+				if (this.opt_bar_add) {
 					bar_child.push({
 						xtype: 'button',
 						iconCls: 'icon-add',
+						//cls: 'x-btn-default-toolbar-small',
 						text: _('Add'),
 						action: 'add'
 					});
 				}
-
-				if(this.opt_bar_reload) {
+				if (this.opt_bar_reload) {
 					bar_child.push({
 						xtype: 'button',
 						iconCls: 'icon-reload',
@@ -178,8 +175,7 @@ Ext.define('canopsis.lib.view.cgrid' , {
 						action: 'reload'
 					});
 				}
-
-				if(this.opt_bar_duplicate) {
+				if (this.opt_bar_duplicate) {
 					bar_child.push({
 						xtype: 'button',
 						iconCls: 'icon-copy',
@@ -188,8 +184,7 @@ Ext.define('canopsis.lib.view.cgrid' , {
 						action: 'duplicate'
 					});
 				}
-
-				if(this.opt_bar_delete) {
+				if (this.opt_bar_delete) {
 					bar_child.push({
 						xtype: 'button',
 						iconCls: 'icon-delete',
@@ -198,153 +193,165 @@ Ext.define('canopsis.lib.view.cgrid' , {
 						action: 'delete'
 					});
 				}
-
-				//This option manages import and export functions for a grid object system
-				if (this.opt_export_import) {
-					var model = this.model;
-					var gridView = this;
-
+				if (this.opt_bar_ack) {
 					bar_child.push({
 						xtype: 'button',
-						iconCls: 'icon-import',
-						text: _('Import '+ this.model),
+						iconCls: 'icon-ack-pendingsolved',
+						text: _('Mass_ACK'),
 						disabled: false,
-						action: 'import',
-						handler: function() {
-							var controller_common = Ext.create('canopsis.controller.common');
-							controller_common.filepopup(gridView, model);
-						},
+						action: 'mass_ack'
 					});
+				}
 
-					bar_child.push({
-						xtype: 'button',
-						iconCls: 'icon-export',
-						text: _('Export '+ this.model),
-						disabled: false,
-						action: 'export',
-						handler: function() {
-							var selection = gridView.getSelectionModel().getSelection();
+				if (this.opt_bar_customs) {
+					//This option manages import and export functions for a grid object system
+					if (this.opt_export_import) {
+						var model = this.model;
+						var gridView = this;
 
-							log.debug('Exporting selection:', gridView.logAuthor);
-							log.dump(selection);
+						bar_child.push({
+							xtype: 'button',
+							iconCls: 'icon-import',
+							text: _('Import '+ this.model),
+							disabled: false,
+							action: 'import',
+							handler: function() {
+								var controller_common = Ext.create('canopsis.controller.common');
+								controller_common.filepopup(gridView, model);
+							},
+						});
 
-							var data = [];
+						bar_child.push({
+							xtype: 'button',
+							iconCls: 'icon-export',
+							text: _('Export '+ this.model),
+							disabled: false,
+							action: 'export',
+							handler: function() {
+								var selection = gridView.getSelectionModel().getSelection();
 
-							for(var i = 0; i < selection.length; i++) {
-								data.push({
-									name: 'ids',
-									value: selection[i].data._id
-								});
-							}
+								log.debug('Exporting selection:', gridView.logAuthor);
+								log.dump(selection);
 
-							postDataToURL('/ui/export/objects', data);
-						}
-					});
+								var data = [];
 
-					bar_child.push({
-						xtype: 'checkboxfield',
-						id: this.cb_select_all_id,
-						boxLabel: _('Select all'),
-						onSelectionChange: false,
-						handler: function(checkbox, checked) {
-							if(!checkbox.onSelectionChange) {
-								if(checked) {
-									gridView.getSelectionModel().selectAll();
+								for(var i = 0; i < selection.length; i++) {
+									data.push({
+										name: 'ids',
+										value: selection[i].data._id
+									});
 								}
-								else {
-									gridView.getSelectionModel().deselectAll();
-								}
+
+								postDataToURL('/ui/export/objects', data);
 							}
+						});
 
-							checkbox.onSelectionChange = false;
-						}
-					});
-				}
+						bar_child.push({
+							xtype: 'checkboxfield',
+							id: this.cb_select_all_id,
+							boxLabel: _('Select all'),
+							onSelectionChange: false,
+							handler: function(checkbox, checked) {
+								if(!checkbox.onSelectionChange) {
+									if(checked) {
+										gridView.getSelectionModel().selectAll();
+									}
+									else {
+										gridView.getSelectionModel().deselectAll();
+									}
+								}
+
+								checkbox.onSelectionChange = false;
+							}
+						});
+					}
 
 
-				if(this.opt_bar_customs) {
-					bar_child = bar_child.concat(this.opt_bar_customs);
-				}
+					if(this.opt_bar_customs) {
+						bar_child = bar_child.concat(this.opt_bar_customs);
+					}
 
-				if(this.opt_bar_time_search) {
-					bar_child.push('-');
+					if (this.opt_bar_time_search) {
+						//bar_child.push({ xtype: 'tbspacer', width: 150 })
+						bar_child.push('-');
 
-					var yesterday = new Date();
- 					yesterday.setDate(yesterday.getDate() - 1);
+						var yesterday =  new Date();
+						yesterday.setDate(yesterday.getDate()-1);
 
-					bar_child.push({
-						xtype: 'cdate',
-						name: 'startTimeSearch',
-						date_value: yesterday
-					});
+						bar_child.push({
+							xtype: 'cdate',
+							name: 'startTimeSearch',
+							date_value: yesterday
+						});
 
-					bar_child.push({
-						xtype: 'cdate',
-						name: 'endTimeSearch',
-						now: true
-					});
+						bar_child.push({
+							xtype: 'cdate',
+							name: 'endTimeSearch',
+							now: true
+						});
 
-					bar_child.push({
-						xtype: 'button',
-						iconCls: 'icon-search',
-						action: 'search'
-					});
-				}
+						bar_child.push({
+							xtype: 'button',
+							//text: _('TimeDisplay'),
+							iconCls: 'icon-search',
+							action: 'search'
+						});
+					}
 
-				if(this.opt_bar_search) {
-					bar_child.push({
-						xtype: 'tbfill'
-					});
+					if (this.opt_bar_search) {
+						bar_child.push({xtype: 'tbfill'});
 
-					bar_child = bar_child.concat(this.bar_search);
+						bar_child = bar_child.concat(this.bar_search);
 
-					bar_child.push({
-						xtype: 'button',
-						action: 'clean_search',
-						iconCls: 'icon-clean',
-						pack: 'end'
-					});
+						bar_child.push({
+							xtype: 'button',
+							action: 'clean_search',
+							//text: _('Search'),
+							iconCls: 'icon-clean',
+							pack: 'end'
+						});
+						bar_child.push({
+							xtype: 'textfield',
+							isFormField: false,
+							name: 'searchField',
+							hideLabel: true,
+							width: 200,
+							pack: 'end'
+						});
+						bar_child.push({
+							xtype: 'button',
+							action: 'search',
+							//text: _('Search'),
+							iconCls: 'icon-search',
+							pack: 'end'
+						});
 
-					bar_child.push({
-						xtype: 'textfield',
-						isFormField: false,
-						name: 'searchField',
-						hideLabel: true,
-						width: 200,
-						pack: 'end'
-					});
+					}
 
-					bar_child.push({
-						xtype: 'button',
-						action: 'search',
-						iconCls: 'icon-search',
-						pack: 'end'
-					});
-				}
+					if (this.opt_bar_download) {
+						bar_child.push({
+							xtype: 'button',
+							//text: _('Download'),
+							iconCls: 'icon-download',
+							action: 'download'
+						});
+					}
 
-				if(this.opt_bar_download) {
-					bar_child.push({
-						xtype: 'button',
-						iconCls: 'icon-download',
-						action: 'download'
-					});
-				}
-
-				// Creating toolbar
-				if(this.opt_bar_bottom) {
-					this.bbar = Ext.create('Ext.toolbar.Toolbar', {
-						items: bar_child
-					});
-				}
-				else {
-					this.tbar = Ext.create('Ext.toolbar.Toolbar', {
-						items: bar_child
-					});
+					// Creating toolbar
+					if (this.opt_bar_bottom) {
+						this.bbar = Ext.create('Ext.toolbar.Toolbar', {
+							items: bar_child
+						});
+					}else {
+						this.tbar = Ext.create('Ext.toolbar.Toolbar', {
+							items: bar_child
+						});
+					}
 				}
 			}
 
-			// Paging toolbar
-			if(this.opt_paging) {
+			//--------------------Paging toolbar -----------------
+			if (this.opt_paging) {
 				this.pagingbar = Ext.create('Ext.PagingToolbar', {
 					store: this.store,
 					displayInfo: false,
@@ -353,13 +360,14 @@ Ext.define('canopsis.lib.view.cgrid' , {
 
 				this.bbar = this.pagingbar;
 				this.bbar.items.items[10].hide();
+
 			}
 
-			// Context menu
-			if(this.opt_bar) {
+			//--------------------Context menu---------------------
+			if (this.opt_bar) {
 				var myArray = [];
 
-				if(this.opt_bar_enable) {
+				if (this.opt_bar_enable) {
 					myArray.push(
 						Ext.create('Ext.Action', {
 							iconCls: 'icon-enable-disable',
@@ -369,7 +377,7 @@ Ext.define('canopsis.lib.view.cgrid' , {
 					);
 				}
 
-				if(this.opt_bar_delete) {
+				if (this.opt_bar_delete) {
 					myArray.push(
 						Ext.create('Ext.Action', {
 							iconCls: 'icon-delete',
@@ -379,7 +387,7 @@ Ext.define('canopsis.lib.view.cgrid' , {
 					);
 				}
 
-				if(this.opt_menu_rename === true) {
+				if (this.opt_menu_rename == true) {
 					myArray.push(
 						Ext.create('Ext.Action', {
 							iconCls: 'icon-edit',
@@ -389,7 +397,7 @@ Ext.define('canopsis.lib.view.cgrid' , {
 					);
 				}
 
-				if(this.opt_bar_duplicate === true) {
+				if (this.opt_bar_duplicate == true) {
 					myArray.push(
 						Ext.create('Ext.Action', {
 							iconCls: 'icon-copy',
@@ -399,7 +407,7 @@ Ext.define('canopsis.lib.view.cgrid' , {
 					);
 				}
 
-				if(this.opt_menu_rights === true) {
+				if (this.opt_menu_rights == true) {
 					myArray.push(
 						Ext.create('Ext.Action', {
 							iconCls: 'icon-access',
@@ -409,7 +417,7 @@ Ext.define('canopsis.lib.view.cgrid' , {
 					);
 				}
 
-				if(this.opt_menu_set_avatar === true) {
+				if (this.opt_menu_set_avatar == true) {
 					myArray.push(
 						Ext.create('Ext.Action', {
 							iconCls: 'icon-add',
@@ -419,7 +427,7 @@ Ext.define('canopsis.lib.view.cgrid' , {
 					);
 				}
 
-				if(this.opt_menu_authKey === true) {
+				if (this.opt_menu_authKey == true) {
 					myArray.push(
 						Ext.create('Ext.Action', {
 							iconCls: 'icon-access',
@@ -429,7 +437,7 @@ Ext.define('canopsis.lib.view.cgrid' , {
 					);
 				}
 
-				if(this.opt_menu_send_mail === true) {
+				if (this.opt_menu_send_mail == true) {
 					myArray.push(
 						Ext.create('Ext.Action', {
 							iconCls: 'icon-mail',
@@ -439,21 +447,20 @@ Ext.define('canopsis.lib.view.cgrid' , {
 					);
 				}
 
-				if(this.opt_menu_run_item === true) {
+				if (this.opt_menu_run_item == true) {
 					myArray.push(
 						Ext.create('Ext.Action', {
 							iconCls: 'icon-run',
 							text: _('Run now'),
-							action: 'run'
+								action: 'run'
 						})
 					);
 				}
 
-				if(this.menu_items) {
+				if (this.menu_items)
 					myArray = myArray.concat(this.menu_items);
-				}
 
-				if(myArray.length !== 0) {
+				if (myArray.length != 0) {
 					this.contextMenu = Ext.create('Ext.menu.Menu', {
 						items: myArray
 					});
@@ -461,10 +468,10 @@ Ext.define('canopsis.lib.view.cgrid' , {
 			}
 		}
 
-		if(this.opt_cell_edit) {
+		if (this.opt_cell_edit) {
 			this.plugins = [
-				Ext.create('Ext.grid.plugin.CellEditing', {
-					clicksToEdit: 1
+					Ext.create('Ext.grid.plugin.CellEditing', {
+						clicksToEdit: 1
 				})
 			];
 		}
@@ -472,10 +479,8 @@ Ext.define('canopsis.lib.view.cgrid' , {
 		this.callParent(arguments);
 
 		// Load Store if not loaded
-		if(this.store && this.store.proxy.url) {
-			log.debug("Store Loaded: " + this.store.loaded, this.logAuthor);
-
-			if(!this.store.loaded && !this.store.autoLoad) {
+		if (this.store && this.store.proxy.url){
+			if (! this.store.loaded && ! this.store.autoLoad) {
 				this.store.load();
 			}
 		}
@@ -483,9 +488,8 @@ Ext.define('canopsis.lib.view.cgrid' , {
 
 	beforeDestroy: function() {
 		log.debug('Cleaning cgrid elements', this.logAuthor);
-
-		if(this.window_form) {
+		if (this.window_form)
 			this.window_form.destroy();
-		}
-	}
+	},
+
 });

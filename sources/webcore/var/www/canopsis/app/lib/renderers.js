@@ -552,3 +552,52 @@ function rdr_access(val) {
 function rdr_rule_action(val) {
 	return "<span class='icon icon-rule-" + val + "' />";
 }
+
+rdr_file_help = function(val, metadata, record, rowIndex, colIndex, store) {
+	if ( typeof record.raw['component'] != null && typeof record.raw['resource'] != null && this.opt_file_help_url != null && this.opt_file_help_url != "" ) {
+		var reg_com=new RegExp( "<component>", "g" );
+		var reg_res=new RegExp( "<resource>", "g" );
+		return '<a target="_blank" href="' + this.opt_file_help_url.replace( reg_com, record.raw['component'] ).replace( reg_res, record.raw['resource'] ) + '" title="Support Directive"><span class="icon icon-file_help"></span></a>';
+	} else {
+		return ''
+	}
+};
+
+rdr_file_equipement = function(val, metadata, record, rowIndex, colIndex, store) {
+	if ( typeof  record.raw['component'] != null && typeof record.raw['resource'] != null && this.opt_file_equipement_url != null && this.opt_file_equipement_url != "" ) {
+			var reg_com=new RegExp( "<component>", "g" );
+			var reg_res=new RegExp( "<resource>", "g" );
+		return '<a target="_blank" href="' + this.opt_file_equipement_url.replace( reg_com, record.raw['component'] ).replace( reg_res, record.raw['resource'] ) + '" title="Equipement Information"><span class="icon icon-file_equipement"></span></a>';
+	} else {
+		return ''
+	}
+};
+
+rdr_ticket = function(val, metadata, record, rowIndex, colIndex, store) {
+	if ( typeof record.raw['ticket'] != null && record.raw['ticket'] != undefined ) {
+		var reg=new RegExp( "<ticket>", "g" );
+		return '<a href="' + this.opt_ticket_url.replace( reg, record.raw['ticket'] ) + '" target="_blank">' + record.raw['ticket'] + '</a>'
+	} else {
+		return ''
+	}
+};
+
+rdr_ack = function(val, metadata, record, rowIndex, colIndex, store ) {
+	if ( typeof record.raw['ack_state'] != null && record.raw['ack_state'] != undefined && record.raw['ack_state'] > 0 ) {
+		var cssClass = ""
+		switch( record.raw['ack_state'] ) {
+			case 1:
+				cssClass = "icon-ack-pendingsolved";
+				break;
+			case 2:
+				cssClass = "icon-ack-pendingaction";
+				break;
+			case 3:
+				cssClass = "icon-ack-pendingvalidation";
+				break;
+		}
+		return '<span class="icon '+cssClass+'" title="'+  record.raw['ack_output'] +'"></span>'
+	} else {
+		return ''
+	}
+}

@@ -67,6 +67,9 @@ Ext.define('canopsis.lib.controller.cgrid', {
 		}
 		else if(grid.opt_allow_edit === true) {
 			grid.on('itemdblclick', this._editRecord, this);
+		} 
+		else if ( grid.opt_show_consolesup == true ) {
+			grid.on('itemdblclick', this._consolesup, this );
 		}
 
 		//Binding action for contextMenu
@@ -228,6 +231,13 @@ Ext.define('canopsis.lib.controller.cgrid', {
 			btns[i].on('click', this._reloadButton, this);
 		}
 
+		// Mass ACK
+		btns = Ext.ComponentQuery.query('#' + id + ' button[action=mass_ack]');
+
+		for(i = 0; i < btns.length; i++) {
+			btns[i].on('click', this._consolesup, this);
+		}
+
 		// Download buttons
 		btns = Ext.ComponentQuery.query('#' + id + ' button[action=download]');
 
@@ -250,7 +260,6 @@ Ext.define('canopsis.lib.controller.cgrid', {
 		if(this.bindGridEvents) {
 			this.bindGridEvents(grid);
 		}
-
 	},
 
 	_bindFormEvents: function(form) {
@@ -540,7 +549,6 @@ Ext.define('canopsis.lib.controller.cgrid', {
 			global.notify.notify(_('Invalid form'), _('Please check your form'), 'error');
 			return;
 		}
-
 	},
 
 	_save: function(record, edit, store, form) {
@@ -805,7 +813,6 @@ Ext.define('canopsis.lib.controller.cgrid', {
 		}
 	},
 
-
 	_rename: function() {
 		log.debug('Clicked rename', this.logAuthor);
 		var grid = this.grid;
@@ -823,7 +830,6 @@ Ext.define('canopsis.lib.controller.cgrid', {
 			global.notify.notify(_('Access denied'), _('You don\'t have the rights to modify this object'), 'error');
 		}
 	},
-
 
 	_editRecord: function(view, record, item, index, e, eOpts, store) {
 		void(item, e, eOpts);
@@ -926,7 +932,7 @@ Ext.define('canopsis.lib.controller.cgrid', {
 						});
 
 						var win = Ext.create('widget.window', {
-							title: this.modelId,
+						 	title: this.modelId,
 							items: form,
 							closable: true,
 							resizable: false,
@@ -1099,5 +1105,230 @@ Ext.define('canopsis.lib.controller.cgrid', {
 
 		this.filter_id = store.addFilter(filter);
 		this._searchRecord();
+	},
+
+	_consolesup: function(dataview, record, item, index, e, store){
+
+		var selection = this.grid.getSelectionModel().getSelection();
+
+		if ( selection.length > 0 ) {
+			if ( selection.length == 1 ) { record = selection[0]; }
+
+			var tabFormAck;	
+			if ( this.grid.opt_show_form_ack && ( this.grid.opt_show_ack_state_solved || this.grid.opt_show_ack_state_pendingsolved || this.grid.opt_show_ack_state_pendingaction || this.grid.opt_show_ack_state_pendingvalidation ) ) {
+				tabFormAck = {
+					id: 'EventFormAck',
+					title: 'Acknowledge',
+					bodyStyle: 'padding:10px;',
+					items:[{
+						xtype:'form',
+						id: 'tabFormAck',
+						labelAlign: 'side',
+						border: false, 
+						frame: false,
+						items:[
+						]
+					}],
+				};
+
+				if ( this.grid.opt_show_help_msg && this.grid.opt_help_msg != "" && this.grid.opt_help_msg != null && selection.length == 1 ) {
+					var reg_com=new RegExp( "<component>", "g" );
+					var reg_res=new RegExp( "<resource>", "g" );
+					var reg_msg=new RegExp( "<output>", "g" );
+					var reg_date=new RegExp( "<lastcheck>", "g" );
+
+					if ( record.raw['output'] == null ) { record.raw['output'] = ""; }
+
+					var dt = new Date(record.raw['timestamp']*1000);
+					
+					tabFormAck['items'][0]['items'].push({
+						xtype:'textareafield',
+						fieldLabel: _('Help Message'),
+						name: 'ack_help_message',
+						anchor:'95%',
+						value: this.grid.opt_help_msg.replace( reg_com, record.raw['component'] ).replace( reg_res, record.raw['resource'] ).replace( reg_msg, record.raw['output'] ).replace( reg_date, dt.toLocaleString() ) 
+					});
+				}
+			
+				var ack_state = []
+				if ( this.grid.opt_show_ack_state_solved ) { ack_state.push( [0, 'Solved'] ) }
+				if ( this.grid.opt_show_ack_state_pendingsolved ) { ack_state.push( [1, 'Pending for solved'] ) }
+				if ( this.grid.opt_show_ack_state_pendingaction ) { ack_state.push( [2, 'Penging for action'] ) }
+				if ( this.grid.opt_show_ack_state_pendingvalidation ) { ack_state.push( [3, 'Pending for validation'] ) }
+
+				tabFormAck['items'][0]['items'].push({
+					xtype: 'combo',
+					fieldLabel: _('State'),
+					name: 'ack_state',
+					allowBlank: false,
+					//store: [ [0, 'Solved'], [1, 'Pending for solved'], [2, 'Penging for action'], [3, 'Pending for validation'] ],
+					store: ack_state,
+					//value: 1, //record['raw']['ack_state'],
+					anchor:'95%'
+				});
+				tabFormAck['items'][0]['items'].push({
+					xtype:'textareafield',
+					fieldLabel: _('Ack Message'),
+					name: 'ack_output',
+					anchor:'95%'
+				});
+
+				
+			} else {
+				tabFormAck = null;
+			}
+
+			var tabFormEdit;
+			if ( this.grid.opt_show_form_edit ) {
+				tabFormEdit = {
+					title: 'Edit Event',
+					bodyStyle: 'padding:10px;',
+					items:[{
+						xtype:'form',
+						id: 'tabFormEdit',
+						labelAlign: 'side',
+						border: false, 
+						frame: false,
+						items:[
+						]
+					}],
+				};
+
+				if ( selection.length == 1 && this.grid.opt_show_edit_state_type ) {
+					tabFormEdit['items'][0]['items'].push({
+						xtype: 'combo',
+						fieldLabel: _('State Type'),
+						name:'state_type',
+						store: [[0, 'Soft State'], [1, 'Hard State']],
+						allowBlank: false,
+						value: record['data']['state_type'],
+						anchor:'95%'
+					});
+				}
+				if ( selection.length == 1 && this.grid.opt_show_edit_state ) {
+					tabFormEdit['items'][0]['items'].push({
+						xtype: 'combo',
+						fieldLabel: _('State'),
+						store: [[0, _('OK')], [1, _('Warning')], [2, _('Critical')], [3, _('Unknow')]],
+						name: 'state',
+						value: record['data']['state'],
+						anchor:'95%'
+					});
+				}
+				if ( this.grid.opt_show_edit_ticket ) {
+					tabFormEdit['items'][0]['items'].push({
+						xtype: 'textfield',
+						fieldLabel: _('Ticket'),
+						name: 'ticket',
+						allowBlank: false,
+						value: (selection.length!=1?'':record['data']['ticket']),
+						anchor:'95%'
+					});
+				}
+				if ( selection.length == 1  && this.grid.opt_show_edit_output ) {
+					tabFormEdit['items'][0]['items'].push({
+						xtype: 'textareafield',
+						fieldLabel: _('Plugin Message'),
+						name: 'output',
+						allowBlank: false,
+						value: record['data']['output'],
+						anchor:'95%'
+					});
+				}
+			} else { 
+				tabFormEdit = null
+			}
+			
+			if ( tabFormAck != null || tabFormEdit != null ) {
+				if ( typeof manageEvent !== "undefined" ) manageEvent.destroy();
+				manageEvent = Ext.create('Ext.window.Window',
+					{
+						layout: 'fit',
+						id: "manageEvent",
+						title: 'Manage Event',
+						closable: true,
+						closeAction: 'destroy',
+						constrain: true,
+						width: 400,
+						height: 350,
+						items:[{
+							region: 'center',
+							xtype: 'tabpanel',
+							items:[ tabFormAck, tabFormEdit ]
+						}],
+						buttons: [{
+							text: _('Save'),
+							tooltip: _('Update event'),
+							handler: function() {
+								for(var i = 0; i < selection.length; i++) {
+									//Get event
+									event = selection[i];
+
+									//Update event
+									if ( tabFormEdit && ( selection.length == 1 || ( selection.length != 1 && ( Ext.getCmp('tabFormEdit').getForm().getValues()['ticket'] != '' || Ext.getCmp('tabFormEdit').getForm().getValues()['ticket'] != null ) ) ) ) {
+										for( item in Ext.getCmp('tabFormEdit').getForm().getValues() ){
+											event['data'][item] = Ext.getCmp('tabFormEdit').getForm().getValues()[item];
+										}	
+
+										//Save updated event
+										global.eventsCtrl.sendEvent(event['data']);
+									}
+									
+									//Update Ack 
+									if ( tabFormAck && typeof Ext.getCmp('tabFormAck').getForm().getValues()['ack_state'] != "undefined" ) {
+										event_ack = {
+											'connector_name': 'console_sup',
+											'connector': 'canopsis',
+											'event_type': 'ack',
+											'source_type': 'resource',
+											'component': event['data']['component'],
+											'resource': event['data']['resource'],
+											'referer': event['raw']['rk'],
+											'author': global.account.firstname + ' ' + global.account.lastname,
+											'state': Ext.getCmp('tabFormAck').getForm().getValues()['ack_state'],
+											'display_name': this.display_name,
+											'state_type': 1,
+											'output': Ext.getCmp('tabFormAck').getForm().getValues()['ack_output'],
+											'ref_rk': event['raw']['rk'],
+											'tags' : Ext.getCmp('tabFormAck').getForm().getValues()['tags']
+										};
+										
+										//Save updated event
+										global.eventsCtrl.sendEvent(event_ack);
+									}
+								}
+
+								//Destroy
+								manageEvent.destroy();
+
+								setTimeout(
+									function() {
+										//Reload Store
+										dataview = dataview.findParentByType( 'grid' );
+										dataview.store.load();
+										dataview.store.filter( function(rec, id) {
+											var ans;
+											if ( rec.raw['event_type'] == 'ack' ) {
+												ans = false;
+											} else {
+												if ( rec.raw['rk'] == event_ack['ref_rk'] )  {
+													rec.raw['ack_state'] = event_ack['state']
+													rec.raw['ack_output'] = event_ack['output']
+												} 
+												ans = true;
+											}
+											return ans
+										}, dataview.store );
+									}, 500
+								);
+								
+								//Refresh dataview
+								//dataview.refresh();
+							}
+						}],
+					}
+				).show();
+			}
+		}
 	}
 });

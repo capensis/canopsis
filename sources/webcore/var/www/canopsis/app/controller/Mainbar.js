@@ -106,6 +106,9 @@ Ext.define('canopsis.controller.Mainbar', {
 			},
 			'Mainbar menuitem[action="openDerogationManager"]': {
 				click: this.openViewMenu
+			},
+			'Mainbar menuitem[action="openStatemapManager"]' : {
+				click: this.openViewMenu
 			}
 		});
 

@@ -69,40 +69,44 @@ var log = {
 var build_event = function(event){
 
 	if (! event.component){
-		//event.component = 
+		//event.component =
 		log.error("Missing 'component' field", "build_event")
 		return undefined
 	}
-	
+
 	if (! event.resource)
 		event.source_type = 'component'
 	else
 		event.source_type = 'resource'
-	
+
 	if (! event.state)
 		event.state = 0
 
 	if (! event.event_type)
 		event.event_type = 'log'
-		
+
 	if (! event.output)
 		event.output = ''
-		
-	if (! event.connector_name)	
+
+	if (! event.connector_name)
 		event.connector_name = 'canopsis'
-		
+
 	event.connector = 'websocket'
 	event.timestamp = parseInt(new Date().getTime() / 1000)
-	
+
 	return event
 };
 
-var build_rk = function(event){
+var build_rk = function(event, time_in_rk){
 	//<connector>.<connector_name>.<event_type>.<source_type>.<component>[.<resource>]
+	var optional_date = ""
+	if(time_in_rk && time_in_rk === true)
+		optional_date = "." + new Date().getTime();
+
 	if (event.source_type == 'resource')
-		return event.connector +"."+ event.connector_name +"."+ event.event_type +"."+ event.source_type +"."+ event.component +"."+ event.resource + "." + new Date().getTime()
+		return event.connector +"."+ event.connector_name +"."+ event.event_type +"."+ event.source_type +"."+ event.component +"." + event.resource + optional_date
 	else
-		return event.connector +"."+ event.connector_name +"."+ event.event_type +"."+ event.source_type +"."+ event.component + "." + new Date().getTime()
+		return event.connector +"."+ event.connector_name +"."+ event.event_type +"."+ event.source_type +"."+ event.component + "." + optional_date
 }
 
 //####################################################
@@ -139,7 +143,7 @@ try {
 	var amqp   = require('amqp');
 	var util   = require('util');
 	var iniparser = require('iniparser');
-	
+
 } catch (err) {
 	log.error("Impossible to load modules", "main")
 	log.dump(err)
@@ -154,14 +158,14 @@ log.info(" + Ok", "main")
 
 //GLOBAL
 var config = {};
-	
+
 var read_config = function(callback){
-	
+
 	log.info("Read configuration's file ...", "config")
-	
+
 	var read_config_ini = function(file, field, section, callback){
 		log.info(" + Read "+file+"...", "config")
-		
+
 		iniparser.parse(file, function(err, data){
 			if (err) {
 				log.error(err, "config");
@@ -171,13 +175,13 @@ var read_config = function(callback){
 					config[field] = default_config[field].extend(data[section])
 				else
 					config[field] = default_config[field]
-					
+
 				log.info("   + Ok", "config")
 				callback()
 			}
-		});	
+		});
 	}
-	
+
 	// MongoDB
 	read_config_ini(process.env.HOME+'/etc/cstorage.conf', "mongodb", "master", function(){
 		// AMQP
@@ -219,7 +223,7 @@ var init_mongo = function(callback){
 var mongodb_getCollection = function(name){
 	if (mongodb_collections[name])
 		return mongodb_collections[name]
-		
+
 	mongodb_collections[name] = new mongodb.Collection(mongodb_client, name);
 	return mongodb_collections[name]
 }
@@ -228,7 +232,7 @@ var mongodb_getCollection = function(name){
 var mongodb_find = function(collection_name, filter, options, callback, callback_err){
 	if (! options)
 		options = {}
-	
+
 	if (mongodb_client){
 		mongodb_getCollection(collection_name).find(filter, {'media_bin': 0}, options).toArray(function(err, records){
 			if (err){
@@ -245,13 +249,13 @@ var mongodb_find = function(collection_name, filter, options, callback, callback
 		log.error("MongoDB Client is not ready", "mongodb");
 		if (callback_err)
 			callback_err()
-	}		
+	}
 }
 
 var mongodb_findOne = function(collection_name, filter, options, callback, callback_err){
 	if (!options)
 		options = {}
-		
+
 	if (mongodb_client){
 		mongodb_getCollection(collection_name).findOne(filter, options, function(err, record){
 			if (err){
@@ -271,7 +275,7 @@ var mongodb_findOne = function(collection_name, filter, options, callback, callb
 	}
 }
 
-var mongodb_count = function(collection_name, filter, callback, callback_err){		
+var mongodb_count = function(collection_name, filter, callback, callback_err){
 	if (mongodb_client)
 		mongodb_getCollection(collection_name).count(filter, function(err, count){
 			if (err){
@@ -282,7 +286,7 @@ var mongodb_count = function(collection_name, filter, callback, callback_err){
 			}else
 				return callback(count)
 		});
-			
+
 	return 0
 }
 
@@ -295,7 +299,7 @@ var amqp_connection = undefined
 
 var init_amqp = function(callback){
 	log.info("Connect to AMQP Broker ...", "amqp")
-	
+
 	amqp_connection = amqp.createConnection({
 		host: config.amqp.host,
 		port: config.amqp.port,
@@ -310,7 +314,7 @@ var init_amqp = function(callback){
 
 	amqp_connection.addListener('error', function(exception){
 		log.error(" + Disconnected", "amqp");
-	});	
+	});
 }
 
 
@@ -326,28 +330,28 @@ var amqp_subscribe_queue = function(queue_name){
 	var short_name = queue_name;
 	var queueId = "amqp-" + queue_name;
 	var queue_name = 'websocket_'+queueId
-	
+
 	log.info("Create Queue '"+queue_name+"'", "amqp")
 	if (! amqp_queues[queue_name]){
 		var queue = amqp_connection.queue(queue_name, {durable: false, exclusive: true}, function(){
 			log.debug(" + Ok", "amqp")
-				
+
 			log.debug("Subscribe Queue '"+queue_name+"'", "amqp")
 			this.subscribe( {ack:true}, function(message, headers, deliveryInfo){
 				if (message['media_bin'])
 					delete ['media_bin']
-					
+
 				nowjs.getGroup(queueId).now[queueId](message, deliveryInfo.routingKey)
 				queue.shift()
 			});
-			
+
 			log.debug("Bind '#' on '"+queue_name+"'", "amqp")
 			this.bind("canopsis."+short_name, "#");
 			this.on('queueBindOk', function() { log.debug(" + Ok", "amqp") });
-			
+
 			this.short_name = short_name
 
-			amqp_queues[queue_name] = this;	
+			amqp_queues[queue_name] = this;
 		});
 	}else{
 		log.info(" + Already exist", "amqp")
@@ -370,7 +374,7 @@ var amqp_publish = function(exchange, rk, message){
 			log.info("Open exchange '"+exchange+"'", "amqp")
 			amqp_exchanges[exchange] = amqp_connection.exchange(exchange, {type: "topic", durable: true, auto_delete: false});
 		}
-		
+
 		log.info("Publish message to '"+rk+"@"+exchange+"'", "amqp")
 		amqp_exchanges[exchange].publish(rk, message, {contentType: 'application/json', contentEncoding: 'utf-8'});
 	}
@@ -383,26 +387,26 @@ var amqp_publish = function(exchange, rk, message){
 
 var sessions = {
 	sessions: {},
-	clientIds: {}, 
-	
+	clientIds: {},
+
 	create: function(id, authId){
 		if (this.check(id))
 			return
-		
+
 		if (authId == undefined){
 			log.error("You must specify authId !", "session")
 			return
 		}
-			
+
 		log.debug("Create session "+id+" ("+authId+")", "session")
 		this.sessions[id] = authId
-		
+
 		if (this.clientIds[authId])
 			this.clientIds[authId].push(id)
 		else
 			this.clientIds[authId] = [ id ]
 	},
-	
+
 	drop: function(id){
 		if (this.sessions[id]){
 			var authId = this.sessions[id]
@@ -413,11 +417,11 @@ var sessions = {
 			log.warning("Unknown session "+id, "session")
 		}
 	},
-	
+
 	check: function(id){
 		return this.sessions[id]
 	},
-	
+
 	getclientIds: function(authId){
 		return this.clientIds[authId]
 	}
@@ -429,7 +433,7 @@ var init_now = function(callback){
 	server.listen(parseInt(config.nowjs.port));
 
 	everyone = nowjs.initialize(server, {socketio: {'log level': config.nowjs.socketio_loglevel}});
-	
+
 	////////////////// Utils
 	var check_session = function(event){
 		log.debug("Check session for "+event.now.authId+" ("+event.user.clientId+")", "nowjs");
@@ -440,39 +444,39 @@ var init_now = function(callback){
 		log.debug(" + Ok", "nowjs");
 		return true
 	}
-	
+
 	var check_authToken = function (clientId, authId, authToken, callback){
 		if (mongodb_client) {
-			mongodb_findOne('object', {'_id': authId}, {'fields': ['authkey']}, function(record){			
+			mongodb_findOne('object', {'_id': authId}, {'fields': ['authkey']}, function(record){
 				if (record.authkey == authToken){
 					log.info(" + Auth Ok", "nowjs")
 					sessions.create(clientId, authId)
 				} else {
 					log.info(" + "+clientId + ": Invalid auth (authId: '"+authId+"')", "nowjs");
-				}	
+				}
 				callback();
 			});
 		}else{
 			log.warning("MongoDB not ready.", "nowjs");
 		}
 	};
-	
-	////////////////// RPC	
+
+	////////////////// RPC
 	everyone.now.auth = function(callback){
 		var clientId = this.user.clientId
 		log.info("Auth " + this.now.authId + " ..." , "nowjs");
 		check_authToken(clientId, this.now.authId, this.now.authToken, callback)
 	}
-	
+
 	everyone.now.subscribe = function(type, queue_name){
 		if (check_session(this)){
 			var queueId = type+"-"+queue_name;
-			
+
 			log.info(this.now.authId + " subscribe to "+queueId, "nowjs");
-			
+
 			if (type == 'amqp')
 				amqp_subscribe_queue(queue_name)
-			
+
 			var group = nowjs.getGroup(queueId)
 			group.addUser(this.user.clientId);
 		}
@@ -481,23 +485,23 @@ var init_now = function(callback){
 	everyone.now.unsubscribe = function(type, queue_name){
 		if (check_session(this)){
 			var queueId = type+"-"+queue_name;
-			
+
 			log.info(this.now.authId + " unsubscribe from "+queueId, "nowjs");
-				
+
 			nowjs.getGroup(queueId).removeUser(this.user.clientId);
 		}
 	}
-	
-	everyone.now.publish = function(type, queue_name, message){
+
+	everyone.now.publish = function(type, queue_name, message, time_in_rk){
 		if (check_session(this)){
 			var queueId = type+"-"+queue_name;
-			
+
 			if (type == 'amqp'){
 				var event = build_event(message)
 				if (event){
 					event.clientId = this.user.clientId
 					event.authorId = sessions.check(this.user.clientId)
-					var rk = build_rk(event)
+					var rk = build_rk(event, time_in_rk)
 					amqp_publish('canopsis.events', rk, event)
 				}else{
 					log.error('Invalid event.', 'nowjs')
@@ -509,21 +513,21 @@ var init_now = function(callback){
 			}
 		}
 	}
-	
+
 	everyone.now.direct = function(authId, message){
 		if (check_session(this)){
 			var from_authId = sessions.check(this.user.clientId)
 			var to_clientIds = sessions.getclientIds(authId)
-			
+
 			log.info(this.now.authId + " send direct message to "+authId, "nowjs");
 			log.debug(" + from_authId:   "+ from_authId , "nowjs");
 			log.debug(" + from_clientId: "+ this.user.clientId , "nowjs");
-			
+
 			for (var i in to_clientIds){
 				var to_clientId = to_clientIds[i]
-				
+
 				log.debug(" + to_clientId: "+ to_clientId , "nowjs");
-			
+
 				if (to_clientId)
 					nowjs.getClient(to_clientId, function(){
 						if (this.now && this.now['on_direct'])
@@ -533,11 +537,11 @@ var init_now = function(callback){
 			}
 		}
 	}
-	
+
 	////////////////// Binding events
 	nowjs.on("connect", function(){
 		var clientId = this.user.clientId
-		var authId = this.now.authId 
+		var authId = this.now.authId
 		if (authId == undefined)
 			authId = 'Unknown'
 		log.info(authId + " connected ("+clientId+")", "nowjs");
@@ -548,7 +552,7 @@ var init_now = function(callback){
 		log.info(this.now.authId + " disconnected ("+clientId+")", "nowjs");
 		sessions.drop(clientId)
 	});
-	
+
 	callback()
 }
 
@@ -602,15 +606,15 @@ var stream_countComments = function(referer, callback){
 }
 var stream_getHistory= function(limit, tags, tags_op, from, to, callback){
 	log.debug("getHistory (tags: "+tags+" (op: "+tags_op+")) "+from+" -> "+to, "widget-stream")
-	
+
 	var mfilter = { "$and": [{"state_type": 1 }, {"event_type": {"$ne": "comment"}}]}
-	
+
 	if (tags)
 		if (tags_op)
 			mfilter["$and"].push({"tags": {"$all": tags}})
 		else
 			mfilter["$and"].push({"tags": {"$in": tags}})
-		
+
 	if (from && to)
 		mfilter["$and"].push({"timestamp": { "$gte": from, "$lte": to } })
 
@@ -646,19 +650,19 @@ process.on('SIGTERM', function () {
 read_config(function(){
 	log.debug("Configurations:", "main")
 	config.nowjs.debug = (config.nowjs.debug === 'true') || (config.nowjs.debug === 'True')
-	
+
 	// Force debug
 	//config.nowjs.debug = true
 
 	log.dump(config)
-	
+
 	init_mongo(function(){
 		init_amqp(function(){
 			init_now(function(){
 				log.info(" + heartbeat interval: " + config.nowjs.heartbeat + " sec", "main")
 				log.info("Initialization completed, Ready for action !", "main")
 				setInterval(heartbeat, config.nowjs.heartbeat * 1000);
-				
+
 				everyone.now.stream_getComments = stream_getComments;
 				everyone.now.stream_getHistory = stream_getHistory;
 				everyone.now.stream_countComments = stream_countComments;

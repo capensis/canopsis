@@ -371,6 +371,19 @@ Ext.define('canopsis.view.Mainbar.Bar', {
 			);
 		}
 
+		if (global.accountCtrl.checkRoot() || global.accountCtrl.checkGroup('group.CPS_statemap_admin')) {
+			menu_run = menu_run.concat(
+				[
+					{
+						iconCls: 'icon-crecord_type-statemap',
+						text: _('Statemap manager'),
+						action: 'openStatemapManager',
+						viewId: 'view.statemap_manager',
+					}
+				]
+			);
+		}
+
 		menu_run = menu_run.concat([
 			'-', this.viewSelector
 		]);

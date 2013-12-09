@@ -55,6 +55,7 @@ Ext.define('widgets.diagram.diagram', {
 	aggregate_method: 'LAST',
 	aggregate_interval: 0,
 	aggregate_max_points: 1,
+	aggregate_round_time: true,
 
 	nb_node: 0,
 	hide_other_column: false,
@@ -64,14 +65,14 @@ Ext.define('widgets.diagram.diagram', {
 	nameInLabelFormatter: false,
 	pctInLabel: true,
 
-	haveCounter: false,
+	useLastRefresh: false,
 
 	labelFormatter: function() {
 		if(this.y === 0) {
 			return;
 		}
 
-		var me = this.series.chart.options.cwidget;
+		var me = this.series.chart.options.cwidget();
 
 		var prefix = "";
 
@@ -136,10 +137,6 @@ Ext.define('widgets.diagram.diagram', {
 		log.dump(this.nodesByID);
 
 		Ext.Object.each(this.nodesByID, function(id, node) {
-			if(node['type'] && node['type'] === 'COUNTER') {
-				this.haveCounter = true;
-			}
-
 			// initialize categories
 			if(node.category) {
 				if(Ext.Array.indexOf(this.categories, node.category) === -1) {
@@ -214,8 +211,13 @@ Ext.define('widgets.diagram.diagram', {
 	},
 
 	setOptions: function() {
+		var me = this;
+
 		this.options = {
-			cwidget: this,
+			cwidget: function() {
+				return me;
+			},
+
 			chart: {
 				renderTo: this.wcontainerId,
 				defaultSeriesType: 'pie',
@@ -338,19 +340,6 @@ Ext.define('widgets.diagram.diagram', {
 	},
 
 	doRefresh: function(from, to) {
-		// Get last point only
-		if(this.time_window && from === 0) {
-			from = to - (this.time_window * 1000);
-		}
-
-		if(!this.haveCounter) {
-			from = to;
-		}
-
-		if(this.haveCounter && this.time_window) {
-			from = to - (this.time_window * 1000);
-		}
-
 		log.debug('Get values from ' + new Date(from) + ' to ' + new Date(to), this.logAuthor);
 
 		this.refreshNodes(from, to);
@@ -648,7 +637,7 @@ Ext.define('widgets.diagram.diagram', {
 	},
 
 	tooltip_formatter: function() {
-		var me = this.series.chart.options.cwidget;
+		var me = this.series.chart.options.cwidget();
 
 		var formatter = function(options, value) {
 			if(options.invert) {
@@ -700,7 +689,7 @@ Ext.define('widgets.diagram.diagram', {
 	},
 
 	y_formatter: function() {
-		var me = this.chart.options.cwidget;
+		var me = this.chart.options.cwidget();
 
 		if(this.chart.series.length) {
 			var bunit = this.chart.series[0].options.bunit;

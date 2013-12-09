@@ -22,6 +22,26 @@
 								"name": "show_source_type"
 							},{
 								"xtype": "checkbox",
+								"boxLabel": "Help File",
+								"checked": false,
+								"name": "show_file_help"
+							},{
+								"xtype": "checkbox",
+								"boxLabel": "Equipement File",
+								"checked": false,
+								"name": "show_file_equipement"
+							},{
+								"xtype": "checkbox",
+								"boxLabel": "Ack State",
+								"checked": false,
+								"name": "show_ack"
+							},{
+								"xtype": "checkbox",
+								"boxLabel": "Ticket",
+								"checked": false,
+								"name": "show_file_ticket"
+							},{
+								"xtype": "checkbox",
 								"boxLabel": "State type",
 								"checked": true,
 								"name": "show_state_type"
@@ -57,7 +77,7 @@
 								"name": "show_tags"
 							}]
 				},{
-						"xtype": "cfieldset",
+		  				"xtype": "cfieldset",
 						"title": "Default sorting",
 						"items":[
 							{
@@ -78,7 +98,8 @@
 										{"value": "timestamp", "text": "Timestamp"},
 										{"value": "component", "text": "Component"},
 										{"value": "resource", "text": "Resource"},
-										{"value": "output", "text": "Output"}
+										{"value": "output", "text": "Output"},
+										{"value": "ack", "text":"Ack State"}
 									]
 								}
 							},{
@@ -104,7 +125,101 @@
 								"name": "column_sort"
 							}						
 						]
-				}]
+				},{
+						"xtype": "cfieldset",
+						"title": "Console de supervision",
+						"items":[
+							{
+								"xtype": "textfield",
+								"fieldLabel": "Help File URL",
+								"name": "file_help_url",
+								"emptyText":"http://help.doc.canopsis.com/<composant>/<ressource>"
+							},{
+								"xtype": "textfield",
+								"fieldLabel": "Equipement File URL",
+								"name": "file_equipement_url",
+								"emptyText":"http://equipement.doc.canopsis.com/<composant>/<ressource>"
+							},{
+								"xtype": "textfield",
+								"fieldLabel": "Ticket URL",
+								"name": "ticket_url",
+								"emptyText":"https://ticket.canopsis.com/ticketId=<ticket>"
+							},{
+								"xtype": "checkbox",
+								"boxLabel": "Show ACK Form",
+								"checked": false,
+								"name": "show_form_ack"
+							},{
+								"xtype": "cfieldset",
+								"title": "ACK State",
+								"items":[
+									{
+										"xtype": "checkbox",
+										"boxLabel": "Show help message",
+										"checked": true,
+										"name": "show_help_msg"
+									},{
+										"xtype": "textfield",
+										"fieldLabel": "Help Message",
+										"name": "help_msg",
+										"emptyText":"<component>,<resource>,<output>,<lastcheck>"
+									},{							
+										"xtype": "checkbox",
+										"boxLabel": "Show solved",
+										"checked": true,
+										"name": "show_ack_state_solved"
+									},{
+										"xtype": "checkbox",
+										"boxLabel": "Show pending for solved",
+										"checked": true,
+										"name": "show_ack_state_pendingsolved"
+									},{
+										"xtype": "checkbox",
+										"boxLabel": "Show pending for action",
+										"checked": true,
+										"name": "show_ack_state_pendingaction"
+									},{
+										"xtype": "checkbox",
+										"boxLabel": "Show pending for validation",
+										"checked": true,
+										"name": "show_ack_state_pendingvalidation"
+									}
+								]
+							},{
+								"xtype": "checkbox",
+								"boxLabel": "Show Edit Form",
+								"checked": false,
+								"name": "show_form_edit"
+							},{
+								"xtype": "cfieldset",
+								"title": "Dispplayed Field on edit form",
+								"items":[
+									{
+										"xtype": "checkbox",
+										"boxLabel": "State type",
+										"checked": true,
+										"name": "show_edit_state_type"
+									},{
+										"xtype": "checkbox",
+										"boxLabel": "State",
+										"checked": true,
+										"name": "show_edit_state"
+									},{
+										"xtype": "checkbox",
+										"boxLabel": "Ticket",
+										"checked": false,
+										"name": "show_edit_ticket"
+									},{
+										"xtype": "checkbox",
+										"boxLabel": "Plugin message",
+										"checked": true,
+										"name": "show_edit_output"
+									}
+								]
+							}]
+						}
+					]
+			
 		},{
 			"title": "Style",
 			"advanced": true,
