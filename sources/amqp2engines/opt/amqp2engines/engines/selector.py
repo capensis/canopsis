@@ -75,6 +75,9 @@ class engine(cengine):
 		# Gets crecord from amqp distribution
 		selector = self.get_ready_record(event)
 		if selector:
+			event_id = event['_id']
+			# Loads associated class
+			selector = cselector(storage=self.storage, record=selector, logging_level=self.logging_level)
 			self.logger.debug('selector found, start processing..')			
 			# do I publish a selector event ? Yes if selector have to and it is time or we got to update status 
 			if selector.dostate:
@@ -100,7 +103,7 @@ class engine(cengine):
 				self.logger.debug('Nothing to do with this selector')
 		self.nb_beat +=1
 		#set record free for dispatcher engine
-		self.storage.update(selector._id, {'loaded': False})
+		self.storage.update(event_id, {'loaded': False})
 		
 	def work(self, event, *args, **kargs):
 						

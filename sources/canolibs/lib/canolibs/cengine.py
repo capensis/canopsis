@@ -95,7 +95,7 @@ class cengine(multiprocessing.Process):
 				
 		self.logger.info("Engine initialised")
 		
-		self.dispatcher_crecords = ['selector','topology','derogation','consolidation']
+		self.dispatcher_crecords = ['selector','topology','derogation','consolidation', 'sla']
 		
 
 	def get_ready_record(self, event):
@@ -111,10 +111,6 @@ class cengine(multiprocessing.Process):
 		record_object = None
 		try:
 			record_object = self.storage.get(event['_id'], account=caccount(user="root", group="root"))
-			if event['crecord_type'] in ['selector']:
-				# Loads associated class
-				module = __import__(record_object_name)
-				record_object = getattr(module, record_object_name)(storage=self.storage, record=record_object, logging_level=self.logging_level)
 		except Exception, e:
 			self.logger.critical('unable to retrieve crecord object of %s for record type %s : %s' % (str(self.dispatcher_crecords), event['crecord_type'], e) )
 		return record_object
@@ -149,12 +145,14 @@ class cengine(multiprocessing.Process):
 		self.amqp = camqp(logging_level=logging.INFO, logging_name="%s-amqp" % self.name, on_ready=ready)
 		
 		if self.create_queue:
-			self.create_amqp_queue(self.amqp_queue, self.routing_keys, self.on_amqp_event, self.exchange_name)
-			
+			self.create_amqp_queue(self.amqp_queue, self.routing_keys, self.on_amqp_event, self.exchange_name)	
 			# This is an async engine and it needs engine dispatcher bindinds to be feed properly
-			if self.name in self.dispatcher_crecords:
-				rk = 'dispatcher.' + self.name
-				self.create_amqp_queue('Dispatcher_' + self.name, rk, self.consume_dispatcher, self.exchange_name) 
+			
+
+		if self.name in self.dispatcher_crecords:
+			rk = 'dispatcher.' + self.name
+			self.logger.debug('Creating dispatcher queue for engine ' + self.name)
+			self.create_amqp_queue('Dispatcher_' + self.name, rk, self.consume_dispatcher, self.exchange_name) 
 
 		
 		self.amqp.start()
