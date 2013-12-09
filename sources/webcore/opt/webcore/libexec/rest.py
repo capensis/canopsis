@@ -47,7 +47,6 @@ ctype_to_group_access = {
 						}
 
 #########################################################################
-from restextend.ha import *
 
 #### GET Media
 @get('/rest/media/:namespace/:_id')
