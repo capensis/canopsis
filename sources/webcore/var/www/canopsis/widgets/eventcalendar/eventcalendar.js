@@ -26,6 +26,7 @@ function CalendarException (message, event) {
 }
 
 Ext.require('widgets.eventcalendar.editwindow');
+Ext.require('widgets.eventcalendar.calendar_ajax_handler');
 
 Ext.define('widgets.eventcalendar.eventcalendar' , {
 	extend: 'canopsis.lib.view.cwebsocketWidget',
@@ -70,6 +71,9 @@ Ext.define('widgets.eventcalendar.eventcalendar' , {
 			calendar: this
 		});
 
+		this.ajaxHandler = Ext.create("widgets.eventcalendar.calendar_ajax_handler");
+		this.ajaxHandler.load(this);
+
 		this.eventswindow = Ext.create("widgets.eventcalendar.eventswindow", {
 			calendar: this
 		});
@@ -83,8 +87,8 @@ Ext.define('widgets.eventcalendar.eventcalendar' , {
 
 		var eventSources = [];
 
-		var tags_url = this.computeStackedUrl("!start!", "!end!");
-		var ics_url = this.computeIcsUrl("\"!start!\"", "\"!end!\"");
+		var tags_url = this.ajaxHandler.computeStackedUrl("!start!", "!end!");
+		var ics_url = this.ajaxHandler.computeIcsUrl("\"!start!\"", "\"!end!\"");
 		if(tags_url)
 			eventSources.push(tags_url);
 
@@ -100,9 +104,7 @@ Ext.define('widgets.eventcalendar.eventcalendar' , {
 				var start_unixTimestamp = new Date(start).getTime() / 1000;
 				var end_unixTimestamp = new Date(end).getTime() / 1000;
 				// events = events.concat(calendarRoot.getCalendarEvents(start_unixTimestamp, end_unixTimestamp, callback));
-				calendarRoot.getStackedEvents(start_unixTimestamp, end_unixTimestamp, callback);
-
-				// callback(events);
+				calendarRoot.ajaxHandler.getStackedEvents(start_unixTimestamp, end_unixTimestamp, callback);
 			},
 			defaultView: this.defaultView,
 			weekends : this.show_weekends,
@@ -170,7 +172,7 @@ Ext.define('widgets.eventcalendar.eventcalendar' , {
 					}
 				}
 				return true;
-    		},
+			},
 
 		});
 
@@ -178,125 +180,6 @@ Ext.define('widgets.eventcalendar.eventcalendar' , {
 
 		this.subscribe();
 		this.callParent(arguments);
-	},
-
-	getStackedEvents: function(start, end, callback)
-	{
-		var calendarRoot = this;
-
-		var url = this.computeStackedUrl(start, end);
-
-		function groupBy(array, field){
-			var associativeArray = {};
-			for (var i = 0; i < array.length; i++) {
-				var item = array[i];
-				var associativeArrayItem = associativeArray[item[field]];
-				if(!associativeArray[item[field]])
-				{
-					associativeArray[item[field]] = {};
-					associativeArray[item[field]]["items"] = [item];
-					associativeArray[item[field]]["count"] = 1;
-				}
-				else
-				{
-					associativeArray[item[field]]["items"].push(item);
-					associativeArray[item[field]]["count"] ++;
-				}
-			};
-
-			return associativeArray;
-		};
-
-		$.ajax({
-            url: url,
-            dataType: 'json',
-			success: function(request_result) {
-				var events = request_result["data"] || [];
-				var result = [];
-
-				for (var i = 0; i < events.length; i++) {
-					var d = new Date(events[i].timestamp * 1000);
-					d.setHours(0);
-					d.setMinutes(0);
-					d.setSeconds(0);
-					events[i].day =  d / 1000;
-				};
-
-				events = groupBy(events, "day");
-
-				for(day in events)
-				{
-					var newEvent = {};
-					newEvent.start = day;
-
-					var evCount = events[day].count;
-					var evCountText = evCount === 1 ? " event" : " events";
-					newEvent.title = events[day].count.toString() + evCountText;
-					newEvent.type = "non-calendar";
-					newEvent.editable = false;
-					result.push(newEvent);
-				}
-
-				sendEventsToFullCalendar = function(calEvents){
-					result = result.concat(calEvents);
-					callback(result);
-				}
-
-				calendarRoot.getCalendarEvents(start,end, sendEventsToFullCalendar);
-
-			}
-		});
-	},
-
-	getCalendarEvents: function(start, end, callback, currentSource, calEventsStack)
-	{
-		var calendarRoot = this;
-		var urls = this.computeIcsUrl(start, end);
-
-		//this happens when recursion begins
-		if(currentSource === undefined)
-			currentSource = 0;
-		if(calEventsStack === undefined)
-			calEventsStack = [];
-
-		if(urls[currentSource] === undefined) {
-			callback(calEventsStack);
-		} else {
-			var url = urls[currentSource];
-
-			$.ajax({
-            url: url,
-            dataType: 'json',
-			success: function(request_result) {
-				var events = request_result["data"] || [];
-				var result = [];
-
-				for (var i = 0; i < events.length; i++) {
-					var startDate = new Date(events[i].start * 1000);
-					var endDate = new Date(events[i].end * 1000);
-
-					var newEvent = {};
-					newEvent.start = startDate;
-					newEvent.end = endDate;
-					newEvent.title = events[i].output;
-					newEvent.type = events[i].event_type;
-					newEvent.component = events[i].component;
-					newEvent.id = events[i].resource;
-					newEvent.rrule = events[i].rrule;
-
-					if(events[i].all_day && events[i].all_day === true)
-						newEvent.allDay = true;
-					else
-						newEvent.allDay = false;
-
-					result.push(newEvent);
-				}
-
-				calEventsStack = calEventsStack.concat(result);
-				calendarRoot.getCalendarEvents(start, end, callback, currentSource + 1, calEventsStack);
-			}
-		});
-		};
 	},
 
 	onResize: function() {
@@ -339,58 +222,7 @@ Ext.define('widgets.eventcalendar.eventcalendar' , {
 			this.publishEvent('events', event_raw, false);
 		};
 	},
-
-	computeTagsFilter: function(from, to) {
-		if(!!this.stacked_events_filter)
-		{
-			var query = {
-						"$and": [
-							{ "timestamp": { "$gt": from } },
-							{ "timestamp": { "$lt": to } }
-						]
-			};
-
-			query["$and"].push(JSON.parse(this.stacked_events_filter));
-			return query;
-		}
-	},
-
-	computeStackedUrl: function(start, end){
-		if(!!this.stacked_events_filter)
-		{
-			var url = "/events?_dc=1383151536066&limit=2000";
-
-			var filter = this.computeTagsFilter(start, end);
-			url += "&filter=";
-			url += JSON.stringify(filter);
-
-			var perfdata_history = { "start": start, "end": end};
-			url += "&perfdata_history=";
-			url += JSON.stringify(perfdata_history);
-
-			return encodeURI(url);
-		}
-		return null;
-	},
-
-	computeIcsUrl: function(start, end){
-
-		//TODO limit should be dynamic
-		if(this.sources)
-		{
-			var urls = [];
-			for (var i = this.sources.length - 1; i >= 0; i--) {
-				var url = "/cal/" + this.sources[i].component + "/" + start + "/" + end;
-				url = encodeURI(url);
-				urls.push(url);
-			};
-
-			return urls;
-		}
-		else
-			return null;
-	},
-
+	
 	/**
 	 * @see cwebsocketWidget
 	 */
