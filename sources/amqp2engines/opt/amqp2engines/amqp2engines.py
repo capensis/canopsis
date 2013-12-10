@@ -162,7 +162,7 @@ def start_engines():
 		engine.start()
 
 	return True
-	
+
 def stop_engines():
 	logger.info("Stop engines")
 	for engine in engines:
@@ -173,12 +173,12 @@ def stop_engines():
 		engine.join()
 		while engine.is_alive():
 			time.sleep(0.1)
-			
+
 	time.sleep(0.5)
 
 def main():
 	global amqp
-		
+
 	logger.info("Initialize process")
 	handler.run()
 
@@ -197,3 +197,4 @@ def main():
 	
 if __name__ == "__main__":
 	main()
+

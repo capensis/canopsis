@@ -29,7 +29,7 @@ Ext.define('canopsis.view.Derogation.Grid' , {
 
 	opt_paging: true,
 	opt_menu_delete: true,
-	opt_bar_add: false,
+	opt_bar_add: true,
 	opt_menu_rights: false,
 	opt_bar_search: true,
 	opt_bar_enable: true,
@@ -52,9 +52,8 @@ Ext.define('canopsis.view.Derogation.Grid' , {
 		return output;
 	},
 
-	rdr_actions: function(val) {
+	rdr_override: function(val) {
 		var output = '';
-
 		for(var i = 0; i < val.length; i++) {
 			var action = val[i];
 			var type = action['type'];
@@ -65,6 +64,19 @@ Ext.define('canopsis.view.Derogation.Grid' , {
 		}
 
 		return output;
+	},
+
+	rdr_statemap: function(val) {
+		var found = false;
+
+		for(var i = 0; i < val.length; ++i) {
+			if (val[i].type == 'requalificate') {
+				found = true;
+				break;
+			}
+		}
+
+		return rdr_boolean(found);
 	},
 
 	initComponent: function() {
@@ -96,24 +108,20 @@ Ext.define('canopsis.view.Derogation.Grid' , {
 				flex: 2,
 				dataIndex: 'description'
 			},{
-				header: _('ids'),
-				flex: 2,
-				dataIndex: 'ids'
-			},{
 				header: _('Condition'),
 				flex: 1,
 				dataIndex: 'time_conditions',
 				renderer: this.rdr_time_conditions
 			},{
-				header: _('Actions'),
+				header: _('Override'),
 				flex: 1,
 				dataIndex: 'actions',
-				renderer: this.rdr_actions
+				renderer: this.rdr_override
 			},{
-				header: _('Tags'),
+				header: _('Statemap'),
 				flex: 1,
-				dataIndex: 'tags',
-				renderer: rdr_tags
+				dataIndex: 'actions',
+				renderer: this.rdr_statemap,
 			}
 		];
 

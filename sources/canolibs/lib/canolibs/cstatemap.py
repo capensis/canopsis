@@ -1,4 +1,5 @@
-/*
+#!/usr/bin/env python
+#--------------------------------
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
@@ -15,35 +16,29 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
-*/
-Ext.define('canopsis.model.Event', {
-	extend: 'Ext.data.Model',
+# ---------------------------------
 
-	fields: [
-		{name: '_id'},
-		{name: 'connector'},
-		{name: 'connector_name'},
-		{name: 'event_type'},
-		{name: 'source_type'},
-		{name: 'component'},
-		{name: 'resource'},
-		{name: 'timestamp'},
-		{name: 'state'},
-		{name: 'state_type'},
-		{name: 'output'},
-		{name: 'long_output'},
-		{name: 'perf_data'},
-		{name: 'perf_data_array'},
-		{name: 'tags'},
-		{name: 'id'},
+from crecord import crecord
 
-		{name: 'event_id'},
-		{name: 'derogation_name'},
-		{name: 'derogation_description'},
-		{name: 'ack'},
+class cstatemap(crecord):
+	def __init__(self, statemap=None, *args, **kwargs):
+		self.type = "statemap"
 
-		{name: 'ticket'},
-		
-		{name: 'ref_rk'}
-	]
-});
+		if isinstance(statemap, list):
+			self.statemap = statemap
+
+		crecord.__init__(self, type=self.type, *args, **kwargs)
+
+	def dump(self):
+		self.data['statemap'] = self.statemap
+
+		return crecord.dump(self)
+
+	def load(self, dump):
+		crecord.load(self, dump)
+
+		self.statemap = self.data['statemap']
+
+	def get_mapped_state(self, state):
+		if state < len(self.statemap):
+			return self.statemap[state]

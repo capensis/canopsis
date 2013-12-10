@@ -22,7 +22,10 @@ from cengine import cengine
 from cstorage import get_storage
 from caccount import caccount
 import cevent
+from cstatemap import cstatemap
+import cmfilter
 import time
+import json
 
 NAME="derogation"
 
@@ -35,7 +38,7 @@ class engine(cengine):
 	def pre_run(self):
 		self.storage = get_storage(namespace='object', account=caccount(user="root", group="root"))		
 		self.beat()
-		
+
 	def time_conditions(self, derogation):
 		conditions = derogation.get('time_conditions', None)
 		
@@ -49,7 +52,13 @@ class engine(cengine):
 		now = time.time()
 		for condition in conditions:
 			if condition['type'] == 'time_interval':
-				if now >= condition['startTs'] and now < condition['stopTs']:
+				always = condition.get('always', False)
+
+				if always:
+					self.logger.debug(" + 'time_interval' is 'always'")
+					result = True
+
+				elif now >= condition['startTs'] and now < condition['stopTs']:
 					self.logger.debug(" + 'time_interval' Match")
 					result = True
 					
@@ -57,41 +66,108 @@ class engine(cengine):
 		
 	
 	def conditions(self, event, derogation):
-		return True
+		conditions_json = derogation.get('conditions', None)
+
+		try:
+			conditions = json.loads(conditions_json)
+
+		except ValueError:
+			self.logger.error("Invalid conditions field in '%s': %s" % (derogation['_id'], conditions_json))
+			self.logger.debug(derogation)
+
+			return False
+		
+		if conditions:
+			check = cmfilter.check(conditions, event)
+
+			self.logger.debug(" + 'conditions' check is %s" % check)
+
+			return check
+
+		else:
+			return True
 	
 	def actions(self, event, derogation):
-		actions = derogation.get('actions', None)
 		name = derogation.get('crecord_name', None)
-		
-		if not isinstance(actions, list):
-			self.logger.error("Invalid actions field in '%s': %s" % (derogation['_id'], actions))
+		description = derogation.get('description', None)
+		actions = derogation.get('actions', None)
+		_id = derogation.get('_id', None)
+
+		if not _id or not name or not description or not actions:
+			self.logger.error("Malformed derogation: %s" % derogation)
 			return event
+
+		# If _id is ObjectId(), transform it to str()
+		if not isinstance(_id, basestring):
+			_id = str(_id)
+
+		if not isinstance(actions, list):
+			self.logger.error("Invalid actions field in '%s': %s" % (_id, actions))
+			return event
+
+		derogated = False
 		
-		for action in derogation['actions']:
-			if action['type'] == "override":
-				self.logger.debug("    + %s: Override: '%s' -> '%s'" % (event['rk'], action['field'], action['value']))
-				event[action['field']] = action['value']
-				event["derogation_id"] = derogation['_id']
-				event["derogation_description"] = derogation['description']
-				event["derogation_name"] = derogation['crecord_name']
-				event["tags"].append(name)
-				event["tags"].append("derogated")
+		for action in actions:
+			atype = action.get('type', None)
+
+			if atype == "override":
+				afield = action.get('field', None)
+				avalue = action.get('value', None)
+
+				self.logger.debug("    + %s: Override: '%s' -> '%s'" % (event['rk'], afield, avalue))
+
+				if afield and avalue:
+					event[afield] = avalue
+
+					derogated = True
+
+				else:
+					self.logger.error("Action malformed (needs 'field' and 'value'): %s" % action)
+
+			elif atype == "requalificate":
+				statemap_id = action.get('statemap', None)
+
+				self.logger.debug("    + %s: Requalificate using statemap '%s'" % (event['rk'], statemap_id))
+
+				if statemap_id:
+					record = self.storage.find_one(mfilter={'crecord_type': 'statemap', '_id': statemap_id})
+
+					if not record:
+						self.logger.error("Statemap '%s' not found" % statemap_id)
+
+					statemap = cstatemap(record=record)
+
+					event['real_state'] = event['state']
+					event['state'] = statemap.get_mapped_state(event['real_state'])
+
+					derogated = True
+
+				else:
+					self.logger.error("Action malformed (needs 'statemap'): %s" % action)
+
 			else:
-				self.logger.warning("Unknown action '%s'" % action['type'])
+				self.logger.warning("Unknown action '%s'" % atype)
 				
+		# If the event was derogated, fill some informations
+		if derogated:
+			event["derogation_id"] = _id
+			event["derogation_description"] = description
+			event["derogation_name"] = name
+			event["tags"].append(name)
+			event["tags"].append("derogated")
+
 		return event
 	
 	def work(self, event, *args, **kargs):
 		for derogation in self.derogations:
-			# Check scope
-			if event['rk'] in derogation['ids']:
-				self.logger.debug("%s is in %s (%s)" % (event['rk'], derogation['crecord_name'], derogation['_id']))
-				# Check Time
-				if self.time_conditions(derogation):
-					# Check conditions
-					if self.conditions(event, derogation):
-						# Actions
-						return self.actions(event, derogation)
+			# Check Time
+			if self.time_conditions(derogation):
+				# Check conditions
+				if self.conditions(event, derogation):
+					self.logger.debug("%s is in %s (%s)" % (event['rk'], derogation['crecord_name'], derogation['_id']))
+
+					# Actions
+					return self.actions(event, derogation)
 		
 		return event
 		
@@ -118,16 +194,6 @@ class engine(cengine):
 				state = 1
 			else:
 				output = "Derogation '%s' is now inactive" % name
-			
-			
-			tags = derogation.get('tags', None)
-			self.logger.debug(" + Tags: '%s' (%s)" % (tags, type(tags)))
-			
-			if isinstance(tags, str) or isinstance(tags, unicode):
-				tags = [ tags ]
-			
-			if not isinstance(tags, list) or tags == "":
-				tags = None
 				
 			event = cevent.forger(
 				connector = "cengine",
@@ -137,8 +203,7 @@ class engine(cengine):
 				component=NAME,
 				state=state,
 				output=output,
-				long_output=derogation.get('description', None),
-				tags=tags
+				long_output=derogation.get('description', None)
 			)
 			rk = cevent.get_routingkey(event)
 			
@@ -150,19 +215,17 @@ class engine(cengine):
 		## Extract ids
 		records = self.storage.find( {	'crecord_type': 'derogation',
 										'enable': True,
-										'ids': { '$exists' : True },
 										'actions': { '$exists' : True },
 										'conditions': { '$exists' : True } },
 										namespace="object")
 		
 		for record in records:
-			if record.data.get('ids'):
-				derogation = record.dump()
-				if self.time_conditions(derogation):
-					self.set_derogation_state(derogation, True)	
-				else:
-					self.set_derogation_state(derogation, False)
-					
-				self.derogations.append(derogation)
+			derogation = record.dump()
+			if self.time_conditions(derogation):
+				self.set_derogation_state(derogation, True)	
+			else:
+				self.set_derogation_state(derogation, False)
+				
+			self.derogations.append(derogation)
 				
 		self.logger.debug("Load %s derogations." % len(self.derogations))

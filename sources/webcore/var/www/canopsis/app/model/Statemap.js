@@ -1,6 +1,4 @@
 /*
-# Copyright (c) 2011 "Capensis" [http://www.capensis.com]
-#
 # This file is part of Canopsis.
 #
 # Canopsis is free software: you can redistribute it and/or modify
@@ -15,35 +13,27 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
+# ---------------------------------
 */
-Ext.define('canopsis.model.Event', {
-	extend: 'Ext.data.Model',
-
-	fields: [
+Ext.define('canopsis.model.Statemap', {
+    extend: 'Ext.data.Model',
+    idProperty: '_id',
+    fields: [
 		{name: '_id'},
-		{name: 'connector'},
-		{name: 'connector_name'},
-		{name: 'event_type'},
-		{name: 'source_type'},
-		{name: 'component'},
-		{name: 'resource'},
-		{name: 'timestamp'},
-		{name: 'state'},
-		{name: 'state_type'},
-		{name: 'output'},
-		{name: 'long_output'},
-		{name: 'perf_data'},
-		{name: 'perf_data_array'},
-		{name: 'tags'},
-		{name: 'id'},
 
-		{name: 'event_id'},
-		{name: 'derogation_name'},
-		{name: 'derogation_description'},
-		{name: 'ack'},
+		{name: 'crecord_name'},
+		{name: 'description'},
 
-		{name: 'ticket'},
-		
-		{name: 'ref_rk'}
+		{name: 'statemap', defaultValue: []},
+
+		{name: 'aaa_access_group', defaultValue: ['r', 'w'] },
+		{name: 'aaa_access_owner', defaultValue: ['r', 'w'] },
+		{name: 'aaa_access_other', defaultValue: ['r'] },
+		{name: 'aaa_admin_group'},
+		{name: 'aaa_group', defaultValue: 'CPS_statemap_admin' },
+		{name: 'aaa_owner'},
+		{name: 'crecord_type'},
+
+		{name: 'enable', defaultValue: true},
 	]
 });

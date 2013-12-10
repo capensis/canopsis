@@ -287,15 +287,13 @@ def rest_post(namespace, ctype, _id=None):
 		data['crecord_type'] = ctype
 
 		if not _id:
-			try:
-				_id = str(data['_id'])
-			except:
-				pass
+			_id = data.get('_id', None)
 
-			try:
-				_id = str(data['id'])
-			except:
-				pass
+			if not _id:
+				_id = data.get('id', None)
+
+			if _id:
+				_id = str(_id)
 
 		## Clean data
 		try:
