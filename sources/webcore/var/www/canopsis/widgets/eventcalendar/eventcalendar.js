@@ -74,9 +74,6 @@ Ext.define('widgets.eventcalendar.eventcalendar' , {
 			calendar: this
 		});
 
-		console.log("this.defaultView");
-		console.log(this.defaultView);
-
 		if(this.defaultView !== "month" && this.defaultView !== "agendaWeek" && this.defaultView !== "agendaDay" && this.defaultView !== "basicWeek" && this.defaultView !== "basicDay")
 			this.defaultView = "month";
 	},
@@ -86,8 +83,8 @@ Ext.define('widgets.eventcalendar.eventcalendar' , {
 
 		var eventSources = [];
 
-		var tags_url = this.computeTagsUrl();
-		var ics_url = this.computeIcsUrl();
+		var tags_url = this.computeStackedUrl("!start!", "!end!");
+		var ics_url = this.computeIcsUrl("\"!start!\"", "\"!end!\"");
 		if(tags_url)
 			eventSources.push(tags_url);
 
@@ -97,7 +94,16 @@ Ext.define('widgets.eventcalendar.eventcalendar' , {
 		$('#' + calendarRoot.wcontainer.id).fullCalendar({
 			firstDay:1,
 			height: calendarRoot.wcontainer.height,
-			eventSources: eventSources,
+			// eventSources: eventSources,
+			events: function(start, end, callback){
+				var events = [];
+				var start_unixTimestamp = new Date(start).getTime() / 1000;
+				var end_unixTimestamp = new Date(end).getTime() / 1000;
+				// events = events.concat(calendarRoot.getCalendarEvents(start_unixTimestamp, end_unixTimestamp, callback));
+				calendarRoot.getStackedEvents(start_unixTimestamp, end_unixTimestamp, callback);
+
+				// callback(events);
+			},
 			defaultView: this.defaultView,
 			weekends : this.show_weekends,
 			header: {
@@ -174,6 +180,124 @@ Ext.define('widgets.eventcalendar.eventcalendar' , {
 		this.callParent(arguments);
 	},
 
+	getStackedEvents: function(start, end, callback)
+	{
+		var calendarRoot = this;
+
+		var url = this.computeStackedUrl(start, end);
+
+		function groupBy(array, field){
+			var associativeArray = {};
+			for (var i = 0; i < array.length; i++) {
+				var item = array[i];
+				var associativeArrayItem = associativeArray[item[field]];
+				if(!associativeArray[item[field]])
+				{
+					associativeArray[item[field]] = {};
+					associativeArray[item[field]]["items"] = [item];
+					associativeArray[item[field]]["count"] = 1;
+				}
+				else
+				{
+					associativeArray[item[field]]["items"].push(item);
+					associativeArray[item[field]]["count"] ++;
+				}
+			};
+
+			return associativeArray;
+		};
+
+		$.ajax({
+            url: url,
+            dataType: 'json',
+			success: function(request_result) {
+				var events = request_result["data"] || [];
+				var result = [];
+
+				for (var i = 0; i < events.length; i++) {
+					var d = new Date(events[i].timestamp * 1000);
+					d.setHours(0);
+					d.setMinutes(0);
+					d.setSeconds(0);
+					events[i].day =  d / 1000;
+				};
+
+				events = groupBy(events, "day");
+
+				for(day in events)
+				{
+					var newEvent = {};
+					newEvent.start = day;
+
+					var evCount = events[day].count;
+					var evCountText = evCount === 1 ? " event" : " events";
+					newEvent.title = events[day].count.toString() + evCountText;
+					newEvent.type = "non-calendar";
+					newEvent.editable = false;
+					result.push(newEvent);
+				}
+
+				sendEventsToFullCalendar = function(calEvents){
+					result = result.concat(calEvents);
+					callback(result);
+				}
+
+				calendarRoot.getCalendarEvents(start,end, sendEventsToFullCalendar);
+
+			}
+		});
+	},
+
+	getCalendarEvents: function(start, end, callback, currentSource, calEventsStack)
+	{
+		var calendarRoot = this;
+		var urls = this.computeIcsUrl(start, end);
+
+		//this happens when recursion begins
+		if(currentSource === undefined)
+			currentSource = 0;
+		if(calEventsStack === undefined)
+			calEventsStack = [];
+
+		if(urls[currentSource] === undefined) {
+			callback(calEventsStack);
+		} else {
+			var url = urls[currentSource];
+
+			$.ajax({
+            url: url,
+            dataType: 'json',
+			success: function(request_result) {
+				var events = request_result["data"] || [];
+				var result = [];
+
+				for (var i = 0; i < events.length; i++) {
+					var startDate = new Date(events[i].start * 1000);
+					var endDate = new Date(events[i].end * 1000);
+
+					var newEvent = {};
+					newEvent.start = startDate;
+					newEvent.end = endDate;
+					newEvent.title = events[i].output;
+					newEvent.type = events[i].event_type;
+					newEvent.component = events[i].component;
+					newEvent.id = events[i].resource;
+					newEvent.rrule = events[i].rrule;
+
+					if(events[i].all_day && events[i].all_day === true)
+						newEvent.allDay = true;
+					else
+						newEvent.allDay = false;
+
+					result.push(newEvent);
+				}
+
+				calEventsStack = calEventsStack.concat(result);
+				calendarRoot.getCalendarEvents(start, end, callback, currentSource + 1, calEventsStack);
+			}
+		});
+		};
+	},
 
 	onResize: function() {
 		$('#'+ this.wcontainer.id).fullCalendar('option', 'height', this.getHeight());
@@ -231,28 +355,32 @@ Ext.define('widgets.eventcalendar.eventcalendar' , {
 		}
 	},
 
-	computeTagsUrl: function(from, to){
+	computeStackedUrl: function(start, end){
 		if(!!this.stacked_events_filter)
 		{
-			var url = "/rest/events/event?_dc=1383151536066&limit=2000&filter=";
+			var url = "/events?_dc=1383151536066&limit=2000";
 
-			var filter = this.computeTagsFilter("!start!", "!end!");
-
+			var filter = this.computeTagsFilter(start, end);
+			url += "&filter=";
 			url += JSON.stringify(filter);
+
+			var perfdata_history = { "start": start, "end": end};
+			url += "&perfdata_history=";
+			url += JSON.stringify(perfdata_history);
 
 			return encodeURI(url);
 		}
 		return null;
 	},
 
-	computeIcsUrl: function(from, to){
+	computeIcsUrl: function(start, end){
 
 		//TODO limit should be dynamic
 		if(this.sources)
 		{
 			var urls = [];
 			for (var i = this.sources.length - 1; i >= 0; i--) {
-				var url = "/cal/" + this.sources[i].component + "/\"!start!\"/\"!end!\"";
+				var url = "/cal/" + this.sources[i].component + "/" + start + "/" + end;
 				url = encodeURI(url);
 				urls.push(url);
 			};
