@@ -26,6 +26,7 @@ function CalendarException (message, event) {
 }
 
 Ext.require('widgets.eventcalendar.editwindow');
+Ext.require('widgets.eventcalendar.calendar_ajax_handler');
 
 Ext.define('widgets.eventcalendar.eventcalendar' , {
 	extend: 'canopsis.lib.view.cwebsocketWidget',
@@ -70,12 +71,12 @@ Ext.define('widgets.eventcalendar.eventcalendar' , {
 			calendar: this
 		});
 
+		this.ajaxHandler = Ext.create("widgets.eventcalendar.calendar_ajax_handler");
+		this.ajaxHandler.load(this);
+
 		this.eventswindow = Ext.create("widgets.eventcalendar.eventswindow", {
 			calendar: this
 		});
-
-		console.log("this.defaultView");
-		console.log(this.defaultView);
 
 		if(this.defaultView !== "month" && this.defaultView !== "agendaWeek" && this.defaultView !== "agendaDay" && this.defaultView !== "basicWeek" && this.defaultView !== "basicDay")
 			this.defaultView = "month";
@@ -86,8 +87,8 @@ Ext.define('widgets.eventcalendar.eventcalendar' , {
 
 		var eventSources = [];
 
-		var tags_url = this.computeTagsUrl();
-		var ics_url = this.computeIcsUrl();
+		var tags_url = this.ajaxHandler.computeStackedUrl("!start!", "!end!");
+		var ics_url = this.ajaxHandler.computeIcsUrl("\"!start!\"", "\"!end!\"");
 		if(tags_url)
 			eventSources.push(tags_url);
 
@@ -97,7 +98,14 @@ Ext.define('widgets.eventcalendar.eventcalendar' , {
 		$('#' + calendarRoot.wcontainer.id).fullCalendar({
 			firstDay:1,
 			height: calendarRoot.wcontainer.height,
-			eventSources: eventSources,
+			// eventSources: eventSources,
+			events: function(start, end, callback){
+				var events = [];
+				var start_unixTimestamp = new Date(start).getTime() / 1000;
+				var end_unixTimestamp = new Date(end).getTime() / 1000;
+				// events = events.concat(calendarRoot.getCalendarEvents(start_unixTimestamp, end_unixTimestamp, callback));
+				calendarRoot.ajaxHandler.getStackedEvents(start_unixTimestamp, end_unixTimestamp, callback);
+			},
 			defaultView: this.defaultView,
 			weekends : this.show_weekends,
 			header: {
@@ -164,7 +172,7 @@ Ext.define('widgets.eventcalendar.eventcalendar' , {
 					}
 				}
 				return true;
-    		},
+			},
 
 		});
 
@@ -173,7 +181,6 @@ Ext.define('widgets.eventcalendar.eventcalendar' , {
 		this.subscribe();
 		this.callParent(arguments);
 	},
-
 
 	onResize: function() {
 		$('#'+ this.wcontainer.id).fullCalendar('option', 'height', this.getHeight());
@@ -215,54 +222,7 @@ Ext.define('widgets.eventcalendar.eventcalendar' , {
 			this.publishEvent('events', event_raw, false);
 		};
 	},
-
-	computeTagsFilter: function(from, to) {
-		if(!!this.stacked_events_filter)
-		{
-			var query = {
-						"$and": [
-							{ "timestamp": { "$gt": from } },
-							{ "timestamp": { "$lt": to } }
-						]
-			};
-
-			query["$and"].push(JSON.parse(this.stacked_events_filter));
-			return query;
-		}
-	},
-
-	computeTagsUrl: function(from, to){
-		if(!!this.stacked_events_filter)
-		{
-			var url = "/rest/events/event?_dc=1383151536066&limit=2000&filter=";
-
-			var filter = this.computeTagsFilter("!start!", "!end!");
-
-			url += JSON.stringify(filter);
-
-			return encodeURI(url);
-		}
-		return null;
-	},
-
-	computeIcsUrl: function(from, to){
-
-		//TODO limit should be dynamic
-		if(this.sources)
-		{
-			var urls = [];
-			for (var i = this.sources.length - 1; i >= 0; i--) {
-				var url = "/cal/" + this.sources[i].component + "/\"!start!\"/\"!end!\"";
-				url = encodeURI(url);
-				urls.push(url);
-			};
-
-			return urls;
-		}
-		else
-			return null;
-	},
-
+	
 	/**
 	 * @see cwebsocketWidget
 	 */
