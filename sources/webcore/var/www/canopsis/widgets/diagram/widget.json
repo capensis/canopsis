@@ -106,30 +106,8 @@
 										{"value": "LAST", "text": "Last"},
 										{"value": "FIRST", "text": "First"},
 										{"value": "DELTA", "text": "Delta"},
-										{"value": "AVERAGE", "text": "Average"},
+										{"value": "MEAN", "text": "Mean"},
 										{"value": "SUM", "text": "Sum"}
-									]
-								}
-							},{
-								"xtype": "combobox",
-								"name": "aggregate_interval",
-								"fieldLabel": "Aggregation Interval",
-								"queryMode": "local",
-								"displayField": "text",
-								"valueField": "value",
-								"value": 0,
-								"store": {
-									"xtype": "store",
-									"fields": ["value", "text"],
-									"data" : [
-										{"value": 0, "text": "None"},
-										{"value": 900, "text": "15 minutes"},
-										{"value": 1800, "text": "30 minutes"},
-										{"value": 3600, "text": "1 hour"},
-										{"value": 86400, "text": "1 day"},
-										{"value": 604800, "text": "1 week"},
-										{"value": 2629800, "text": "1 month"},
-										{"value": 31557600, "text": "1 year"}
 									]
 								}
 							}

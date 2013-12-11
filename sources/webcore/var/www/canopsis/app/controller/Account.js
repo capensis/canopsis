@@ -287,6 +287,10 @@ Ext.define('canopsis.controller.Account', {
 	validateForm: function(store, data, form) {
 		var already_exist = false;
 
+		if ( !store ) { 
+			var store = Ext.getStore('Groups');
+		}
+
 		// in creation mode
 		if(!form.editing && store.findExact('user', data['user']) >= 0) {
 			already_exist = true;

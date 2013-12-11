@@ -103,8 +103,8 @@ def perfstore_nodes_get_values(start=None, stop=None):
 
 	if consolidation_method and len(output) and aggregate_method != 0:
 		# select right function
-		if consolidation_method == 'average':
-			fn = pyperfstore2.utils.average
+		if consolidation_method == 'mean':
+			fn = pyperfstore2.utils.mean
 		elif consolidation_method == 'min':
 			fn = min
 		elif consolidation_method == 'max' :

@@ -84,9 +84,7 @@ Ext.define('canopsis.lib.view.cpopup' , {
 
 		var button_cancel = Ext.create('Ext.button.Button', {
 			xtype: 'button',
-			handler: function() {
-				this.close();
-			},
+			handler: this.cancel_button_function,
 			scope: this,
 			text: _('Cancel'),
 			minWidth: 75
@@ -114,5 +112,9 @@ Ext.define('canopsis.lib.view.cpopup' , {
 		if(this._ok_button_function) {
 			this._ok_button_function();
 		}
+	},
+
+	cancel_button_function: function(){
+		this.close();
 	}
 });

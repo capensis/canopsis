@@ -40,6 +40,7 @@ function normalApp() {
 			'MetricNavigation',
 			'Events',
 			'Selector',
+			'Statemap',
 			'Derogation',
 			'Perfdata',
 			'Topology',

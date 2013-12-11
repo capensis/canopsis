@@ -143,7 +143,7 @@ Ext.define('widgets.perftop.perftop' , {
 					renderer: function(value, metaData, record) {
 						void(metaData);
 
-						var me = this.cwidget;
+						var me = this.cwidget();
 						var unit = record.get('u');
 
 						if(me.humanReadable) {
@@ -214,6 +214,8 @@ Ext.define('widgets.perftop.perftop' , {
 				});
 			}
 
+			var me = this;
+
 			this.grid = Ext.create('canopsis.lib.view.cgrid', {
 				model: 'Perfdata',
 				store: this.store,
@@ -233,7 +235,9 @@ Ext.define('widgets.perftop.perftop' , {
 				opt_cell_edit: false,
 
 				columns: this.columns,
-				cwidget: this
+				cwidget: function() {
+					return me;
+				}
 			});
 
 			this.wcontainer.removeAll();

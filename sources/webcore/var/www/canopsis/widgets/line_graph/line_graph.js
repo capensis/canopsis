@@ -120,7 +120,7 @@ Ext.define('widgets.line_graph.line_graph', {
 	maxZoom: 60 * 10,
 
 	interval: global.commonTs.hours,
-	aggregate_method: 'MAX',
+	aggregate_method: 'MEAN',
 	aggregate_interval: 0,
 	aggregate_max_points: 500,
 	aggregate_round_time: true,
@@ -150,6 +150,8 @@ Ext.define('widgets.line_graph.line_graph', {
 
 	autoShift: false,
 	lastShift: undefined,
+
+	displayComponentsAndResourcesInLegend: false,
 
 	initComponent: function() {
 		this.callParent(arguments);
@@ -258,10 +260,14 @@ Ext.define('widgets.line_graph.line_graph', {
 	},
 
 	setOptions: function() {
+		var me = this;
+
 		this.options = {
 			reportMode: this.reportMode,
 
-			cwidget: this,
+			cwidget: function() {
+				return me;
+			},
 
 			chart: {
 				renderTo: this.wcontainerId,
@@ -426,7 +432,13 @@ Ext.define('widgets.line_graph.line_graph', {
 			marker: {
 				enabled: marker_enable,
 				symbol: this.marker_symbol,
-				radius: this.marker_radius
+				radius: this.marker_radius,
+
+				states: {
+					hover: {
+						enabled: marker_enable
+					}
+				}
 			}
 		};
 
@@ -484,7 +496,7 @@ Ext.define('widgets.line_graph.line_graph', {
 	},
 
 	y_formatter: function() {
-		var me = this.chart.options.cwidget;
+		var me = this.chart.options.cwidget();
 
 		if(this.axis.series.length) {
 			var bunit = this.axis.series[0].options.bunit;
@@ -513,10 +525,10 @@ Ext.define('widgets.line_graph.line_graph', {
 			var me;
 
 			if(this['points']) {
-				me = this.points[0].series.chart.options.cwidget;
+				me = this.points[0].series.chart.options.cwidget();
 			}
 			else {
-				me = this.series.chart.options.cwidget;
+				me = this.series.chart.options.cwidget();
 			}
 
 			var formatter = function(options, value) {
@@ -538,13 +550,7 @@ Ext.define('widgets.line_graph.line_graph', {
 			_x = this.x / 1000;
 			s += me.format_date(_x);
 			s += '</b>';
-			/*if (this.aggregate_method) {
 
-			} else {
-
-			}
-			s + rdr_tstodate(this.x / 1000) + '</b>';
-			*/
 			if(this['points']) {
 				// Shared
 				$.each(this.points, function(i, point) {
@@ -798,8 +804,8 @@ Ext.define('widgets.line_graph.line_graph', {
 			}
 		}
 
-		if(this.options && this.options.cwidget) {
-			me = this.options.cwidget;
+		if(this.options && this.options.cwidget()) {
+			me = this.options.cwidget();
 		}
 		else {
 			me = this;
@@ -932,6 +938,17 @@ Ext.define('widgets.line_graph.line_graph', {
 
 		if(!label) {
 			label = metric_name;
+		}
+
+		if (this.displayComponentsAndResourcesInLegend) {
+			if (node.dn.length>0) {
+				var component_name = node.dn[0];
+				if (node.dn.length > 1) {
+					var resource_name = node.dn[1];
+					label = resource_name + '/' + label;
+				}
+				label = component_name + '/' + label;
+			}
 		}
 
 		log.debug('    + label: ' + label, this.logAuthor);
@@ -1514,7 +1531,7 @@ Ext.define('widgets.line_graph.line_graph', {
 	},
 
 	afterSetExtremes: function(e) {
-		var me = this.chart.options.cwidget;
+		var me = this.chart.options.cwidget();
 
 		if(me.onDoRefresh) {
 			me.onDoRefresh = false;

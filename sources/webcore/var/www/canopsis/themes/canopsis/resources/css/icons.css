@@ -546,3 +546,20 @@
 .icon-browser-firefox {
     background-image: url(../images/icons/browser/firefox-32.png) !important ;
 }
+
+.icon-file_help {
+	background-image: url(../images/icons/file_help.png) !important;
+}
+.icon-file_equipement {
+	background-image: url(../images/icons/file_equipement.png) !important;
+}
+
+.icon-ack-pendingsolved {
+	background-image: url(../images/icons/ack_pending_solved.gif) !important;
+}
+.icon-ack-pendingaction {
+	background-image: url(../images/icons/ack_pending_action.png) !important;
+}
+.icon-ack-pendingvalidation {
+	background-image: url(../images/icons/ack_pending_validation.png) !important;
+}

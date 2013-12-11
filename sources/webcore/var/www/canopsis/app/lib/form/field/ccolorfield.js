@@ -21,5 +21,29 @@ Ext.define('canopsis.lib.form.field.ccolorfield', {
 	extend: 'Ext.ux.ColorField',
 
 	alias: 'widget.ccolorfield',
-	colors: global.default_colors
+	colors: global.default_colors,
+
+	
+    menuListeners : {
+        select: function(m, d){
+        	this.setValue(d);
+        	//dirty hack to make ccolorfield work in cellediting
+			if(this.ownerCt.editingPlugin && this.ownerCt.editingPlugin.record)
+			{
+				var rec =  this.ownerCt.editingPlugin.record;
+				rec.set('color', this.getValue());
+				this.ownerCt.editingPlugin.ccomponentlist.addRecord(rec);
+			}
+       },
+        show : function(){
+            this.onFocus();
+        },
+        hide : function(){
+            this.focus();
+            var ml = this.menuListeners;
+            this.menu.un("select", ml.select,  this);
+            this.menu.un("show", ml.show,  this);
+            this.menu.un("hide", ml.hide,  this);
+        }
+    }
 });

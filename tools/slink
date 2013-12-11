@@ -19,6 +19,7 @@ rm -Rf $CPS/var/www/canopsis
 rm -Rf $CPS/var/www/webcore-libs
 rm -Rf $CPS/lib/canolibs
 rm -Rf $CPS/opt/snmp2amqp
+rm -Rf $CPS/opt/ics2amqp
 rm -Rf $CPS/var/snmp
 rm -Rf $CPS/opt/collectd-libs
 rm -Rf $CPS/opt/amqp2engines
@@ -45,6 +46,7 @@ if [ $LINK -eq 1 ]; then
 	ln -s $SRC/sources/webcore/var/www/canopsis $CPS/var/www/
 	ln -s $SRC/sources/canolibs/lib/canolibs $CPS/lib/
 	ln -s $SRC/sources/snmp2amqp/opt/snmp2amqp $CPS/opt/
+	ln -s $SRC/sources/ics2amqp/opt/ics2amqp $CPS/opt/
 	ln -s $SRC/sources/snmp2amqp/var/snmp $CPS/var/
 	ln -s $SRC/sources/collectd-libs/opt/collectd-libs $CPS/opt/
 	ln -s $SRC/sources/amqp2engines/opt/amqp2engines $CPS/opt/

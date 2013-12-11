@@ -28,10 +28,9 @@ Ext.define('canopsis.model.Derogation', {
 		{name: 'ts_window', defaultValue: undefined},
 
 		{name: 'actions', defaultValue: []},
-		{name: 'conditions', defaultValue: []},
+		{name: 'conditions', defaultValue: undefined},
 		{name: 'time_conditions', defaultValue: []},
 
-		{name: 'ids', defaultValue: []},
 		{name: 'name', defaultValue: undefined},
 
 		{name: 'aaa_access_group', defaultValue: ['r', 'w'] },
@@ -46,7 +45,5 @@ Ext.define('canopsis.model.Derogation', {
 
 		{name: 'enable', defaultValue: true},
 		{name: 'active', defaultValue: false},
-
-		{name: 'tags', defaultValue: [], type: 'array'}
 	]
 });
