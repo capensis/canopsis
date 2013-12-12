@@ -39,12 +39,12 @@ class engine(cengine):
 		cengine.__init__(self, name=NAME, *args, **kargs)
 						
 		self.beat_interval = 60
-		
+		self.nb_beat = 0
 		# Operator cache
 		self.modules = {}
 		
 		# All ids in all topos
-		self.ids = []
+
 		self.stateById = {}
 		self.topos = []
 		
@@ -66,31 +66,21 @@ class engine(cengine):
 		if count:
 			self.logger.debug("Load topologies")
 			self.topos = self.storage.find({'crecord_type': 'topology', 'enable': True, 'loaded': False}, namespace="object", raw=True)
-			for topo in self.topos:
-				self.storage.update(topo['_id'], {'loaded': True})
-			
-		return count
 				
 	def topo_unload(self):
 		self.logger.debug("Unload topologies")
 		for topo in self.topos:
 			self.storage.update(topo['_id'], {'loaded': False})
 		
-		del self.ids
-		del self.topos
-		
-		self.ids = []
-		self.topos = []
 		
 	def topo_unloadAll(self):
 		records = self.storage.find({'crecord_type': 'topology', 'enable': True},  mfields=['_id'], namespace="object", raw=True)
 		for record in records:
 			self.storage.update(record['_id'], {'loaded': False})
 			
-		del self.ids
+
 		del self.topos
 		
-		self.ids = []
 		self.topos = []
 	
 	def default_Operator_fn(self, states, options={}):
@@ -123,17 +113,7 @@ class engine(cengine):
 				return self.calcul_state
 		else:
 			return module.operator	
-	
-	def topo_extractIds(self, topo):
-		nodes = topo['nodes']
-		ids = []
-		for key in nodes:
-			_id = nodes[key].get('_id', None)
-			if _id and _id  not in ids:
-				ids.append(_id)
-				if _id  not in self.ids:
-					self.ids.append(_id)
-		return ids
+
 		
 	def topo_fillChilds(self, topo):
 		for conn in topo['conns']:
@@ -231,88 +211,108 @@ class engine(cengine):
 	def post_run(self):
 		self.topo_unload()
 		
+			
 	def beat(self):
-		loaded_topo = self.topo_load()
+		self.logger.debug('entered in topology BEAT')
+		self.topo_load()
+		# Refresh selectors for work method
+		self.nb_beat += 1	
 		
-		if loaded_topo or self.doBeat or int(time.time()) >= (self.lastBeat + self.normal_beat_interval):
+	
+	def consume_dispatcher(self,  event, *args, **kargs):
+	
+		self.logger.debug('entered in topology consume dispatcher')
+		# Gets crecord from amqp distribution
+		topology = self.get_ready_record(event)
+		
+		if topology:	
+			event_id = event['_id']
+			ids = []
 			
-			self.lastBeat = int(time.time())
-			
-			if loaded_topo:
-				self.ids = []
+			# Parse topo
+			for topo in self.topos:				
+				self.logger.debug("Parse topo '%s': %s Nodes with %s Conns" % (topo['crecord_name'], len(topo['nodes']), len(topo['conns'])))
+									
+				nodes = topo['nodes']
+				topo['ids'] = []
+				for key in nodes:
+					_id = nodes[key].get('_id', None)
+					if _id and _id  not in ids:
+						topo['ids'].append(_id)
+						if _id  not in ids:
+							ids.append(_id)
 				
-				# Parse topo
-				for topo in self.topos:				
-					self.logger.debug("Parse topo '%s': %s Nodes with %s Conns" % (topo['crecord_name'], len(topo['nodes']), len(topo['conns'])))
+		
+				topo['nodesById'] = {}
+				
+				for key in topo['nodes']:
+					node = topo['nodes'][key]
 					
-					topo['ids'] = self.topo_extractIds(topo)
-			
-					topo['nodesById'] = {}
+					_id = node['_id']
 					
-					for key in topo['nodes']:
-						node = topo['nodes'][key]
+					if not node.get('calcul_state', None):
+						if node.get('event_type', None) == 'operator':
+							node['calcul_state'] = self.topo_getOperator_fn(_id)
+							_id = "%s-%s" % (_id, int(random() * 10000))
+							node['_id'] = _id
+						else:
+							node['calcul_state'] = self.default_Operator_fn
 						
-						_id = node['_id']
-						
-						if not node.get('calcul_state', None):
-							if node.get('event_type', None) == 'operator':
-								node['calcul_state'] = self.topo_getOperator_fn(_id)
-								_id = "%s-%s" % (_id, int(random() * 10000))
-								node['_id'] = _id
-							else:
-								node['calcul_state'] = self.default_Operator_fn
+					topo['nodesById'][_id] = node
+					node['childs'] = []
 							
-						topo['nodesById'][_id] = node
-						node['childs'] = []
-								
-					self.logger.debug("Fill node's childs")
-					self.topo_fillChilds(topo)
-				
+				self.logger.debug("Fill node's childs")
+				self.topo_fillChilds(topo)
 			
+		
 			# Get all states of all topos
 			self.stateById = {}
-			records = self.storage.find(mfilter={'_id': {'$in': self.ids}}, mfields=['state', 'state_type', 'previous_state'], namespace='events')
+			records = self.storage.find(mfilter={'_id': {'$in': ids}}, mfields=['state', 'state_type', 'previous_state'], namespace='events')
 			for record in records:
 				self.stateById[record['_id']] = {
 					'state': record['state'],
 					'state_type': record.get('state_type', 1),
 					'previous_state': record.get('previous_state', record['state'])
 				}
-			
-			# Get state by topo
-			for topo in self.topos:
-				## Parse tree for calcul state
-				self.logger.debug(" + Calcul state:")
-				states_info = self.topo_getState(topo)
-
-				self.logger.debug("'%s': State: %s" % (topo['crecord_name'], states_info))
-				self.storage.update(topo['_id'], {'state': states_info['state']})
-				
-				event = cevent.forger(
-					connector =			NAME,
-					connector_name =	"engine",
-					event_type =		"topology",
-					source_type =		"component",
-					component =			topo['crecord_name'],
-					state =				states_info['state'],
-					state_type =		states_info['state_type'],
-					output =			"",
-					long_output =		"",
-					#perf_data =			None,
-					#perf_data_array =	[],
-					display_name =		topo.get('display_name', None)
-				)
-				
-				# Extra fields			
-				event['nestedTree'] = self.topo_dump4Ui(topo)
 		
-				rk = cevent.get_routingkey(event)
-				
-				self.logger.debug("Publish event on %s" % rk)
-				self.amqp.publish(event, rk, self.amqp.exchange_name_events)
+
+			## Parse tree for calcul state
+			self.logger.debug(" + Calcul state:")
+			states_info = self.topo_getState(topo)
+
+			self.logger.debug("'%s': State: %s" % (topo['crecord_name'], states_info))
+			self.storage.update(topo['_id'], {'state': states_info['state']})
 			
-			self.doBeat = False
+			event = cevent.forger(
+				connector =			NAME,
+				connector_name =	"engine",
+				event_type =		"topology",
+				source_type =		"component",
+				component =			topo['crecord_name'],
+				state =				states_info['state'],
+				state_type =		states_info['state_type'],
+				output =			"",
+				long_output =		"",
+				#perf_data =			None,
+				#perf_data_array =	[],
+				display_name =		topo.get('display_name', None)
+			)
 			
+			# Extra fields			
+			event['nestedTree'] = self.topo_dump4Ui(topo)
+	
+
+			rk = cevent.get_routingkey(event)
+
+			self.logger.debug("Publish event on %s" % rk)
+			self.amqp.publish(event, rk, self.amqp.exchange_name_events)
+			self.crecord_task_complete(event_id)
+
+			
+		else:
+			self.logger.warning('topology not able to load crecord properly, topology not threaten.')		
+	
+	
 	def work(self, event, *args, **kargs):
 		if not self.doBeat:
 			for topo in self.topos:
