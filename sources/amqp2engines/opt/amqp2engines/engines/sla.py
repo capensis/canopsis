@@ -291,5 +291,6 @@ class engine(cengine):
 			sla_id = self.calcule_sla(_id, record_data)
 		
 			self.counter_event += 1
-			self.storage.update(event['_id'], {'loaded': False})
+			self.crecord_task_complete(event['_id'])
+
 				

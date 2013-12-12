@@ -238,8 +238,8 @@ class engine(cengine):
 		self.counter_worktime += beat_elapsed
 		
 		#set record free for dispatcher engine
-		self.storage.update(event['_id'], {'loaded': False})
-
+		self.crecord_task_complete(event['_id'])
+	
 	
 	def get_math_function(self, name):
 		if name == 'average' or name == 'mean':

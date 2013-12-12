@@ -240,8 +240,8 @@ class engine(cengine):
 					self.set_derogation_state(derogation, False)
 					
 				self.derogations.append(derogation)
-	
-			self.storage.update(event['_id'], {'loaded': False})
+
+			self.crecord_task_complete(event['_id'])
 
 			self.logger.debug("Load %s derogations." % len(self.derogations))
 

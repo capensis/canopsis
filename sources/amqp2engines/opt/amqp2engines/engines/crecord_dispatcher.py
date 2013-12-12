@@ -28,7 +28,7 @@ import logging, time
 		
 NAME="crecord_dispatcher"
 # Delay since the lock document is released in any cases
-UNLOCK_DELAY = 30
+UNLOCK_DELAY = 60
 
 class engine(cengine):
 	def __init__(self, *args, **kargs):
@@ -37,12 +37,7 @@ class engine(cengine):
 		self.delays = {}
 		self.beat_interval = 5
 		self.nb_beat = 0
-		self.crecords_types = {
-			'selector'		: {'ttl': 15, 'elapsed_time' : 0},
-			'topology'		: {'ttl': 10, 'elapsed_time' : 0},
-			'derogation'	: {'ttl': 5, 'elapsed_time' : 0},
-			'consolidation'	: {'ttl': 20, 'elapsed_time' : 0}}
-		#self.init_amqp()
+		self.crecords_types = ['selector', 'topology', 'derogation', 'consolidation']
 		
 	def init_amqp(self):	
 		self.logger.debug('Initiating amqp connection to dispatchers')
@@ -55,13 +50,14 @@ class engine(cengine):
 	def pre_run(self):
 		#load crecords from database
 		self.storage = get_storage(namespace='object', account=caccount(user="root", group="root"))
-		self.crecords = []
+
 		self.backend = self.storage.get_backend('object')
 		
 
 	def load_crecords(self):
 		
-		now = time.time()
+		crecords = []		
+		now = int(time.time())
 		
 		lock = self.backend.find_and_modify(
 			query  = {'crecord_type': 'dispatcher_lock'}, 
@@ -84,13 +80,25 @@ class engine(cengine):
 				#Information message
 				self.logger.debug('Dispatcher lock duration exeeded lock limit (%s seconds) , record selection will be performed' % (UNLOCK_DELAY))
 				
-			# Crecord selection can be performed now as lock is ready
-			crecords_json = self.storage.find({'crecord_type': {'$in': self.crecords_types.keys() }, 'enable': True, 'loaded': False}, namespace="object")
+			# Crecord selection can be performed now as lock is ready. Crecord are loaded again if last dispatch update is not set or < now - 60 seconds
+			crecords_json = self.storage.find({
+				'crecord_type': {'$in': self.crecords_types }, 
+				'enable': True,
+				'$or':[
+					{'next_ready_time'		: {'$exists': False}},# crecord is new
+					{'last_dispatch_update'	: {'$exists': False}},# crecord is new
+					{'last_dispatch_update' : {'$lte': now - 60}},# unlock case
+					{'$and': [					
+						{'next_ready_time' 	: {'$lte': now}}, # record is ready
+						{'loaded'			: False}
+					]}
+				]
+			}, namespace="object")
 			for	crecord_json in crecords_json:
 				# let say selector is loaded
-				self.storage.update(crecord_json._id, {'loaded': True})
+				self.storage.update(crecord_json._id, {'loaded': True, 'last_dispatch_update': now})
 				crecord = cselector(storage=self.storage, record=crecord_json, logging_level=self.logging_level)
-				self.crecords.append(crecord)
+				crecords.append(crecord)
 
 			#Updating lock status
 			self.backend.update(
@@ -101,6 +109,7 @@ class engine(cengine):
 			#New insert, no information being threaten this time
 			self.backend.insert({'crecord_type': 'dispatcher_lock', 'last_update': time.time(), 'lock': False})
 	
+		return crecords
 
 		
 	#Factorised code method
@@ -123,55 +132,38 @@ class engine(cengine):
 	def beat(self):		
 
 		""" Reinitialize crecords and may publish event related credort targeted to other engines crecord queues"""
-		self.load_crecords()
-					
-		# list of not yet sent crecords
-		crecords_not_ready = []
-		
-		for crecord_type in self.crecords_types: 
-			self.crecords_types[crecord_type]['elapsed_time'] += self.beat_interval
-	
+		crecords = self.load_crecords()
+						
 		# Loop until list is empty
-		self.logger.debug(' + %s beat, %s crecords queued to publish' % (self.name, len(self.crecords)))
+		self.logger.debug(' + %s beat, %s crecords queued to publish @ %s' % (self.name, len(crecords), int(time.time())))
 				# Connection
 		with Connection('amqp://guest:guest@localhost/canopsis') as conn:
 			# Get one producer
 			with producers[conn].acquire(block=True) as producer:
 		
-				while self.crecords:
-					crecord = self.crecords.pop()		
+				for crecord in crecords:
+
 					# Every crecord is sent to rabbit mq queues for each listening engines
 					dump = crecord.dump()
 					record_id = dump['_id']
-					#Is this crecord ready to be threaten by engines ? if yes then it is sent to amqp and removed from local records
-					if self.crecords_types[dump['crecord_type']]['elapsed_time'] > self.crecords_types[dump['crecord_type']]['ttl']:
-						#crecord is sent to other engines and is not kept anymore
+
+					#crecord is sent to other engines and is not kept anymore
+					if '_id' in dump:
+						dump['_id'] = str(dump['_id'])
 						try:
-							self.storage.update(record_id, {'last_dispatch': time.time()})
-							if '_id' in dump:
-								# just sending key and type to build back object from dedicated engines
-								dump['_id'] = str(dump['_id'])
-								
-								self.publish_record(dump, dump['crecord_type'], producer)
-								
-								#Special case: event targeted to SLA
-								if dump['crecord_type'] == 'selector' and 'rk' in dump and dump['rk'] and 'dosla' in dump and dump['dosla'] in [ True, 'on'] and 'dostate' in dump and dump['dostate'] in [ True, 'on']:
-									self.publish_record(dump, 'sla', producer)
-										
+							# just sending key and type to build back object from dedicated engines
+							self.publish_record(dump, dump['crecord_type'], producer)			
+						
+							#Special case: selector crecords targeted to SLA
+							if dump['crecord_type'] == 'selector' and 'rk' in dump and dump['rk'] and 'dosla' in dump and dump['dosla'] in [ True, 'on'] and 'dostate' in dump and dump['dostate'] in [ True, 'on']:
+								self.publish_record(dump, 'sla', producer)
+
+
 						except Exception, e:
 							#Crecord gets out of queue and will be reloaded on next beat
 							self.logger.error('Dispatcher was unable to send crecord_type error : %s' % (e))
 							self.storage.update(record_id, {'loaded': False})
-
-					else:
-						crecords_not_ready.append(crecord)
-
-		# New list with left items is kept
-		self.crecords = crecords_not_ready
-
-		for crecord_type in self.crecords_types: 
-			if self.crecords_types[crecord_type]['elapsed_time'] > self.crecords_types[crecord_type]['ttl']:
-				self.crecords_types[crecord_type]['elapsed_time'] = 0
-
+		
+						
 		
 		self.nb_beat +=1

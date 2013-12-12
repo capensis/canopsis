@@ -306,8 +306,8 @@ class engine(cengine):
 
 			self.logger.debug("Publish event on %s" % rk)
 			self.amqp.publish(event, rk, self.amqp.exchange_name_events)
+			self.crecord_task_complete(event_id)
 
-			self.storage.update(event_id, {'loaded': False})
 			
 		else:
 			self.logger.warning('topology not able to load crecord properly, topology not threaten.')		

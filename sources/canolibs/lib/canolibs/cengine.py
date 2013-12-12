@@ -31,6 +31,7 @@ from caccount import caccount
 import itertools
 
 DROP = -1
+DISPATCHER_READY_TIME = 30
 
 class cengine(multiprocessing.Process):
 
@@ -45,8 +46,8 @@ class cengine(multiprocessing.Process):
 		
 		multiprocessing.Process.__init__(self)
 		
-		self.logging_level = logging_level
-	
+		self.logging_level = logging.DEBUG
+
 		self.signal_queue = multiprocessing.Queue(maxsize=5)
 
 		self.RUN = True
@@ -98,6 +99,11 @@ class cengine(multiprocessing.Process):
 		self.dispatcher_crecords = ['selector','topology','derogation','consolidation', 'sla']
 		
 
+	def crecord_task_complete(self, crecord_id):
+		next_ready = time.time() + DISPATCHER_READY_TIME
+		self.storage.update(crecord_id, {'loaded': False, 'next_ready_time': next_ready})
+		self.logger.debug('next ready time for crecord %s : %s' % (crecord_id, next_ready))
+
 	def get_ready_record(self, event):
 		"""
 		crecord dispatcher sent an event with type and crecord id.
@@ -107,7 +113,6 @@ class cengine(multiprocessing.Process):
 			self.logger.warning('record type not found for received event')
 			return None
 		
-		record_object_name = 'c' + event['crecord_type']
 		record_object = None
 		try:
 			record_object = self.storage.get(event['_id'], account=caccount(user="root", group="root"))
@@ -117,7 +122,7 @@ class cengine(multiprocessing.Process):
 		
 	
 		
-	def create_amqp_queue(self, amqp_queue, routing_keys, on_amqp_event, exchange_name):
+	def new_amqp_queue(self, amqp_queue, routing_keys, on_amqp_event, exchange_name):
 		self.amqp.add_queue(
 			queue_name=amqp_queue,
 			routing_keys=routing_keys,
@@ -145,14 +150,14 @@ class cengine(multiprocessing.Process):
 		self.amqp = camqp(logging_level=logging.INFO, logging_name="%s-amqp" % self.name, on_ready=ready)
 		
 		if self.create_queue:
-			self.create_amqp_queue(self.amqp_queue, self.routing_keys, self.on_amqp_event, self.exchange_name)	
+			self.new_amqp_queue(self.amqp_queue, self.routing_keys, self.on_amqp_event, self.exchange_name)	
 			# This is an async engine and it needs engine dispatcher bindinds to be feed properly
 			
 
 		if self.name in self.dispatcher_crecords:
 			rk = 'dispatcher.' + self.name
 			self.logger.debug('Creating dispatcher queue for engine ' + self.name)
-			self.create_amqp_queue('Dispatcher_' + self.name, rk, self.consume_dispatcher, self.exchange_name) 
+			self.new_amqp_queue('Dispatcher_' + self.name, rk, self.consume_dispatcher, self.exchange_name) 
 
 		
 		self.amqp.start()
