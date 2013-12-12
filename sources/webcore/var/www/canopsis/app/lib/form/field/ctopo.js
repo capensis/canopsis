@@ -319,7 +319,7 @@ Ext.define('canopsis.lib.form.field.ctopo' , {
 		var source = Ext.getCmp(c.sourceId);
 
 		for(var i = 0; i < target.conns.length; i++) {
-			if(target.conns[i].connection.id === c.id) {
+			if(target.conns[i] && target.conns[i].connection && target.conns[i].connection.id === c.id) {
 				delete (target.conns[i]);
 			}
 		}

@@ -96,8 +96,8 @@ class engine(cengine):
 	
 	
 	def calcule_sla(self, _id, config):
-		rk = config['rk']
-		self.logger.debug(" + Calcul SLA of '%s'" % rk)
+		
+		self.logger.debug(" + Calcul SLA of '%s'" % config['name'])
 		
 		sla_timewindow = config.get('sla_timewindow', self.default_sla_timewindow)
 		thd_warn_sla_timewindow = config.get('thd_warn_sla_timewindow', self.thd_warn_sla_timewindow)
@@ -270,22 +270,27 @@ class engine(cengine):
 		self.storage.update(_id, {'sla_timewindow_lastcalcul': stop, 'sla_timewindow_perfdata': perf_data_array, 'sla_state': event['state'], 'sla_rk': rk})
 	
 	def beat(self):
-		start = time.time()
-		error = False
-
-		configs = {}
-		records = self.storage.find({ 'crecord_type': 'selector',  'enable': True, 'dosla': {'$in': [ True, 'on'] }, 'dostate': {'$in': [ True, 'on'] }, 'rk': { '$exists' : True } }, namespace="object")
-		for record in records:
-			configs[record._id] = record.data
-			configs[record._id]['name'] = record.name
-			configs[record._id]['_id'] =record._id
+		self.logger.debug('BEAT sla')	
+	
 		
-		for _id in configs:
-			config = configs[_id]
-			self.logger.debug("Load selector '%s' (%s)" % (config['name'], _id))
-			
-			sla_id = self.calcule_sla(_id, config)
-			
+	def consume_dispatcher(self,  event, *args, **kargs):
+	
+		self.logger.debug('entered in sla consume dispatcher')
+		# Gets crecord from amqp distribution
+		record = self.get_ready_record(event)
+		
+		if record:	
+			_id = event['_id']
+
+			record_data 		= record.data
+			record_data['name'] = record.name
+			record_data['_id'] 	= record._id
+
+			self.logger.debug("Load selector '%s' (%s)" % (record_data['name'], _id))
+		
+			sla_id = self.calcule_sla(_id, record_data)
+		
 			self.counter_event += 1
+			self.crecord_task_complete(event['_id'])
+
 				
-		self.counter_worktime += time.time() - start

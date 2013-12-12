@@ -34,8 +34,10 @@ class engine(cengine):
 
 	def __init__(self, *args, **kargs):
 		cengine.__init__(self, name=NAME, *args, **kargs)
-		self.account = caccount(user="root", group="root")
-
+		account = caccount(user="root", group="root")
+		self.storage = get_storage(logging_level=logging.DEBUG, account=account)
+		
+		
 	def pre_run(self):
 		self.drop_event_count = 0
 		self.pass_event_count = 0
@@ -44,7 +46,7 @@ class engine(cengine):
 
 	def work(self, event, *xargs, **kwargs):		
 
-		event_str = str(event)
+		rk = cevent.get_routingkey(event)
 
 		default_action = self.configuration.get('default_action', 'pass')
 
@@ -72,11 +74,11 @@ class engine(cengine):
 	
 		# No rules matched
 		if default_action == 'drop':
-			self.logger.debug("Event '%s' dropped by default action" % (event_str))
+			self.logger.debug("Event '%s' dropped by default action" % (rk))
 			self.drop_event_count += 1
 			return DROP
 		
-		self.logger.debug("Event '%s' passed by default action" % (event_str))
+		self.logger.debug("Event '%s' passed by default action" % (rk))
 		self.pass_event_count += 1
 
 		return event
@@ -84,8 +86,6 @@ class engine(cengine):
 
 	def beat(self, *args, **kargs):
 		""" Configuration reload for realtime ui changes handling """
-
-		self.storage = get_storage(logging_level=logging.DEBUG, account=self.account)
 
 		self.configuration = { 'rules' : [], 'default_action': self.find_default_action()}
 
@@ -133,13 +133,11 @@ class engine(cengine):
 
 
 	def find_default_action(self):
-		""" Find (via the rest API) the default action stored and returns it, else assume it default action is pass """
+		""" Find the default action stored and returns it, else assume it default action is pass """
 
 		records = self.storage.find({'crecord_type':'defaultrule'})
-
-		for record in records:
-			record_dump = record.dump()
-			return record_dump["action"]
+		if records:
+			return records[0].dump()["action"]
 
 		self.logger.debug("No default action found. Assuming default action is pass")
 		return 'pass'

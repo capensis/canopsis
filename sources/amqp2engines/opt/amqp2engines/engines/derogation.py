@@ -218,14 +218,30 @@ class engine(cengine):
 										'actions': { '$exists' : True },
 										'conditions': { '$exists' : True } },
 										namespace="object")
+	def beat(self):
+		self.logger.debug('Derogation BEAT')
 		
-		for record in records:
-			derogation = record.dump()
-			if self.time_conditions(derogation):
-				self.set_derogation_state(derogation, True)	
-			else:
-				self.set_derogation_state(derogation, False)
-				
-			self.derogations.append(derogation)
-				
-		self.logger.debug("Load %s derogations." % len(self.derogations))
+		
+
+	def consume_dispatcher(self,  event, *args, **kargs):
+		self.logger.debug("Consolidate metrics:")
+
+		now = time.time()
+		beat_elapsed = 0
+
+		record = self.get_ready_record(event)
+		if record:	
+
+			if record.data.get('ids'):
+				derogation = record.dump()
+				if self.time_conditions(derogation):
+					self.set_derogation_state(derogation, True)	
+				else:
+					self.set_derogation_state(derogation, False)
+					
+				self.derogations.append(derogation)
+
+			self.crecord_task_complete(event['_id'])
+
+			self.logger.debug("Load %s derogations." % len(self.derogations))
+

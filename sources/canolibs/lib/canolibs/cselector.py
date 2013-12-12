@@ -72,7 +72,7 @@ class cselector(crecord):
 
 		self.logger = logging.getLogger('cselector')
 		if logging_level:
-			self.logger.setLevel(logging_level)
+			self.logger.setLevel(logging.INFO)#logging_level)
 
 		## Init
 		if not record:
@@ -335,7 +335,7 @@ class cselector(crecord):
 			metric =  self.sel_metric_name % i
 			output_data[metric] = value
 			perf_data_array.append({"metric": metric, "value": value, "max": total})
-
+			self.logger.info('metric %s : %s' % (metric, value))
 		perf_data_array.append({"metric": self.sel_metric_prefix + "total", "value": total})
 
 		output_data['total'] = total
