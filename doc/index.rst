@@ -16,6 +16,7 @@ Contents:
    administrator-guide/index
    developper-guide/index
    changelogs
+   glossary
 
 
 Indices and tables
