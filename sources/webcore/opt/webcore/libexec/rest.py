@@ -80,6 +80,76 @@ def rest_get_media(namespace, _id):
 
 	return base64.b64decode(media_bin)
 
+@get('/rest/events_trees/:rk')
+@get('/rest/events_trees')
+def rest_trees_get(rk=None):
+	"""
+		REST API Handler to get events trees.
+	"""
+
+	account = get_account()
+	storage = get_storage(logging_level=logging.DEBUG, namespace='events_trees', account=account)
+
+
+	if not rk:
+		logger.debug('Getting whole collection.')
+
+		records = storage.find()
+
+		return {
+			'total': len(records),
+			'success': True,
+			'data': [r.dump() for r in records]
+		}
+
+	else:
+		logger.debug("Getting tree matching rk '{0}'".format(rk))
+
+	
+		# Get Routing Key components
+		rkcomps = rk.split('.')
+
+		# Fetch root tree
+		record = storage.find_one(mfilter={'rk': rkcomps[0]})
+
+		if not record:
+			logger.error('No matching root node for rk {0}'.format(rk))
+			return HTTPError(404, "There is no events tree matching the routing key")
+
+		# Now go to the matching node
+		tree = record.dump(json=True)
+
+		if rk == tree['rk']:
+			return {
+				'total': 1,
+				'success': True,
+				'data': tree
+			}
+
+		current_node = tree
+		current_rk = rkcomps[0]
+
+		for rkcomp in rkcomps[1:]:
+			current_rk = '{0}.{1}'.format(current_rk, rkcomp)
+
+			# Find the node in the children list
+			for child in current_node['child_nodes']:
+				if child['rk'] == current_rk:
+					current_node = child
+					break
+
+			# If not found, raise an error
+			else:
+				logger.error('No matching node for rk {0}'.format(rk))
+				return HTTPError(404, "There is no events tree matching the routing key")
+
+		# Return the sub-tree
+		return {
+			'total': 1,
+			'success': True,
+			'data': current_node
+		}
+
 #### GET
 def rest_get(namespace, ctype=None, _id=None, params=None):
 	#get the session (security)
