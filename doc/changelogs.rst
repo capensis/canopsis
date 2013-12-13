@@ -80,7 +80,7 @@ Version ``201311`` ``Ficus``
 
  * More than 140 bugfixes.
 
-Version `201307`
+Version ``201307``
 ----------------
 
 * Widget wizard refactoring with default and advanced mode
@@ -121,7 +121,7 @@ with "canopsis"
 	pyperfstore2 update
 
 
-Version `201303`
+Version ``201303``
 ----------------
 
 * All JavaScript core is minimized for better load time
