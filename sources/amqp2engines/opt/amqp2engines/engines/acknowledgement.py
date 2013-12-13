@@ -40,28 +40,7 @@ class engine(cengine):
 	def work(self, event, *args, **kargs):
 		# If event is of type acknowledgement, then acknowledge corresponding event
 		if event['event_type'] == 'ack':
-			if event['source_type'] == 'resource':
-				rk = event['referer'].split('.', 5)
-
-			elif event['source_type'] == 'component':
-				rk = event['referer'].split('.', 4)
-
-			new_event = cevent.forger(
-				connector = rk[0],
-				connector_name = rk[1],
-				event_type = rk[2],
-				source_type = rk[3],
-				component = rk[4],
-				state = event['state'],
-				output = u'Event acknowledged by {0}'.format(event['author']),
-				long_output = event['output']
-			)
-
-			if event['source_type'] == 'resource':
-				new_event['resource'] = rk[5]
-
-			rk = rk.join('.')
-			self.amqp.publish(new_event, rk, exchange_name=self.acknowledge_on)
+			rk = event['referer']
 
 			# add rk to acknowledged rks
 			record = self.storage.find_one(mfilter={'rk': rk})
