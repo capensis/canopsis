@@ -54,17 +54,43 @@ group_managing_access = ['group.CPS_perfdata_admin']
 #### POST@
 @post('/perfstore/values')
 @post('/perfstore/values/:start/:stop')
-def perfstore_nodes_get_values(start=None, stop=None):
+def perfstore_values_route(start = None, stop = None):
+	return perfstore_nodes_get_values( 	start = start,
+										stop = stop,
+										metas = request.params.get('nodes', default=None),
+										aggregate_method = request.params.get('aggregate_method', default=None),
+										aggregate_interval = request.params.get('aggregate_interval', default=None),
+										aggregate_max_points = request.params.get('aggregate_max_points', default=None),
+										aggregate_round_time = request.params.get('aggregate_round_time', default=None),
+										consolidation_method = request.params.get('consolidation_method', default=None),
+										timezone = request.params.get('timezone', default=0))
+
+
+@get('/perfstore')
+@get('/perfstore/get_all_metrics')
+def perfstore_get_all_metrics():
+	return perfstore_get_all_metrics(	limit = int(request.params.get('limit', default=20)),
+										start = int(request.params.get('start', default=0)),
+										search = request.params.get('search', default=None),
+										filter = request.params.get('filter', default=None),
+										sort = request.params.get('sort', default=None),
+										show_internals = request.params.get('show_internals', default=False))
+
+
+def perfstore_nodes_get_values( start = None,
+								stop = None,
+								metas = None,
+								aggregate_method = None,
+								aggregate_interval = None,
+								aggregate_max_points = None,
+								aggregate_round_time = None,
+								consolidation_method = None,
+								timezone = 0):
+
+	if manager == None:
+		load()
 
 	interval = None
-	metas = request.params.get('nodes', default=None)
-		
-	aggregate_method			= request.params.get('aggregate_method', default=None)
-	aggregate_interval			= request.params.get('aggregate_interval', default=None)
-	aggregate_max_points		= request.params.get('aggregate_max_points', default=None)
-	aggregate_round_time        = request.params.get('aggregate_round_time', default=None)
-	consolidation_method 		= request.params.get('consolidation_method', default=None)
-	timezone                    = request.params.get('timezone', default=0)
 
 	output = []
 	
@@ -127,19 +153,13 @@ def perfstore_nodes_get_values(start=None, stop=None):
 
 	output = {'total': len(output), 'success': True, 'data': output}
 	return output
+
+
+def perfstore_get_all_metrics(limit = 20, start = 0, search = None, filter = None, sort = None, show_internals = False):
+	logger.debug("perfstore_get_all_metrics:")
 	
-#### GET@
-@get('/perfstore')
-@get('/perfstore/get_all_metrics')
-def perstore_get_all_metrics():
-	logger.debug("perstore_get_all_metrics:")
-	
-	limit		= int(request.params.get('limit', default=20))
-	start		= int(request.params.get('start', default=0))
-	search		= request.params.get('search', default=None)
-	filter		= request.params.get('filter', default=None)
-	sort		= request.params.get('sort', default=None)
-	show_internals	= request.params.get('show_internals', default=False)
+	if manager == None:
+		load()
 	
 	if filter:
 		try:
