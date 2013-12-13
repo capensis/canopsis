@@ -1,4 +1,5 @@
 /*
+#--------------------------------
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
@@ -15,35 +16,36 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
+# ---------------------------------
 */
-Ext.define('canopsis.model.Event', {
-	extend: 'Ext.data.Model',
+Ext.define('canopsis.store.Statemaps', {
+    extend: 'canopsis.lib.store.cstore',
+	model: 'canopsis.model.Statemap',
 
-	fields: [
-		{name: '_id'},
-		{name: 'connector'},
-		{name: 'connector_name'},
-		{name: 'event_type'},
-		{name: 'source_type'},
-		{name: 'component'},
-		{name: 'resource'},
-		{name: 'timestamp'},
-		{name: 'state'},
-		{name: 'state_type'},
-		{name: 'output'},
-		{name: 'long_output'},
-		{name: 'perf_data'},
-		{name: 'perf_data_array'},
-		{name: 'tags'},
-		{name: 'id'},
+	storeId: 'store.Statemaps',
 
-		{name: 'event_id'},
-		{name: 'derogation_name'},
-		{name: 'derogation_description'},
-		{name: 'ack'},
+	logAuthor: '[store][Statemaps]',
 
-		{name: 'ticket'},
-		
-		{name: 'ref_rk'}
-	]
+	autoLoad: true,
+	autoSync: true,
+
+	sortOnLoad: true,
+
+	proxy: {
+		type: 'rest',
+		url: '/rest/object/statemap',
+		appendId: false,
+		batchActions: true,
+		reader: {
+			type: 'json',
+			root: 'data',
+			totalProperty: 'total',
+			successProperty: 'success'
+		},
+		writer: {
+			type: 'json',
+			writeAllFields: false
+		}
+	}
+
 });

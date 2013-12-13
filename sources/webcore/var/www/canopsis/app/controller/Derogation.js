@@ -87,23 +87,31 @@ Ext.define('canopsis.controller.Derogation', {
 		}
 
 		// Actions
+		var actions = [];
+
 		if(!Ext.isArray(data.actions)) {
-			record.set('actions', [data.actions]);
+			actions.push(data.actions);
 		}
 		else {
-			record.set('actions', data.actions);
+			actions = actions.concat(data.actions);
+		}
+
+		if(data.statemap) {
+			actions.push(data.statemap);
+		}
+
+		record.set('actions', actions);
+
+		// conditions
+		if(data.evfilter) {
+			record.set('conditions', data.evfilter);
 		}
 
 		return record;
 	},
 
-	getEditTitle: function(item) {
+	getEditTitle: function() {
 		var name = _(this.modelId);
-
-		if(item.raw.selector_name) {
-			name += ': ' + item.raw.selector_name;
-		}
-
 		return name;
 	},
 
@@ -134,35 +142,14 @@ Ext.define('canopsis.controller.Derogation', {
 					var value = action.value;
 					form.addNewField(field, value);
 				}
+				else if(action.type === 'requalificate') {
+					form.setRequalification(action.statemap);
+				}
 			}
 		}
-	},
 
-	derogate: function(id,name,now) {
-		var form = Ext.create('widget.' + this.formXtype, {
-			EditMethod: 'window',
-			store: Ext.getStore('Derogations'),
-			ids: [id],
-			selector_name: name,
-			now: now
-		});
-
-		var win_conf = {
-			title: 'Derogation',
-			items: form,
-			closable: false,
-			resizable: true,
-			constrain: true,
-			renderTo: Ext.getCmp('main-tabs').getActiveTab().id,
-			closeAction: 'destroy'
-		};
-
-		if(name) {
-			win_conf.title += ': ' + name;
-			form.getForm().setValues({'tags': [name]});
+		if(data.conditions) {
+			form.eventFilter.setValue(data.conditions);
 		}
-
-		form.win = Ext.create('widget.window', win_conf).show();
-		this._bindFormEvents(form);
 	}
 });

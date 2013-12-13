@@ -48,7 +48,9 @@ def forger(		connector,
 			domain=None,
 			reverse_lookup=True,
 			display_name=None,
-			tags=[]
+			tags=[],
+			ticket=None,
+			ref_rk=None
 		):
 
 	if not timestamp:
@@ -117,7 +119,7 @@ def forger(		connector,
 		'state':			state,
 		'state_type':		state_type,
 		'output':			output,
-		'long_output':		long_output
+		'long_output':		long_output,
 	}
 	
 	if perf_data:
@@ -137,6 +139,12 @@ def forger(		connector,
 	
 	if display_name:
 		dump["display_name"] = display_name
+
+	if ticket:
+		dump["ticket"] = ticket
+
+	if ref_rk:
+		dump["ref_rk"] = ref_rk
 
 	return dump
 

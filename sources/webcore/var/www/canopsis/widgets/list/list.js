@@ -1,5 +1,6 @@
 //need:app/lib/view/cwidget.js,app/lib/view/cgrid_state.js,app/lib/controller/cgrid.js
 /*
+#--------------------------------
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
@@ -16,6 +17,7 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
+# ---------------------------------
 */
 Ext.define('widgets.list.list' , {
 	extend: 'canopsis.lib.view.cwidget',
@@ -40,6 +42,21 @@ Ext.define('widgets.list.list' , {
 	show_last_check: true,
 	show_output: true,
 	show_tags: false,
+	show_file_help: false,
+	show_file_equipement: false,
+	show_ticket: false,
+	show_ack: true,
+	show_help_msg: true,
+	
+	show_form_ack: false,
+	
+	show_form_edit: false,
+	show_edit_state: true,
+	show_edit_state_type: false,
+	show_edit_ticket: true,
+	show_edit_output: true,
+
+	show_consolesup: false,
 
 	paging: true,
 	bar_search: true,
@@ -53,20 +70,26 @@ Ext.define('widgets.list.list' , {
 
 	default_sort_column: 'state',
 	default_sort_direction: 'DESC',
+	//..
 
 	afterContainerRender: function() {
-		this.bar = (this.reload || this.bar_search);
+
+		if (this.reload || this.bar_search) { this.bar = true } else { this.bar = false }
 
 		this.grid = Ext.create('canopsis.lib.view.cgrid_state', {
 			exportMode: this.exportMode,
+			//border: (this.title || this.fullmode) ? false : true,
 			opt_paging: this.paging,
 			filter: this.filter,
+			//autoload: true,
 			pageSize: this.pageSize,
 			remoteSort: true,
 			sorters: [{
 				property: this.default_sort_column,
 				direction: this.default_sort_direction
 			}],
+		
+			opt_show_consolesup: this.show_consolesup,
 
 			opt_show_component: this.show_component,
 			opt_show_resource: this.show_resource,
@@ -76,8 +99,30 @@ Ext.define('widgets.list.list' , {
 			opt_show_last_check: this.show_last_check,
 			opt_show_output: this.show_output,
 			opt_show_tags: this.show_tags,
+			opt_show_ticket: this.show_ticket,
+			opt_show_file_help: this.show_file_help,
+			opt_show_file_equipement: this.show_file_equipement,
+			opt_show_ack: this.show_ack,
+			opt_show_help_msg: this.show_help_msg,
+
+			opt_help_msg: this.help_msg,
+			opt_file_help_url: this.file_help_url,
+			opt_file_equipement_url: this.file_equipement_url,
+			opt_ticket_url: this.ticket_url,
 
 			opt_column_sortable: this.column_sort,
+
+			opt_show_form_ack: this.show_form_ack,
+			opt_show_ack_state_solved: this.show_ack_state_solved,
+			opt_show_ack_state_pendingsolved: this.show_ack_state_pendingsolved,
+			opt_show_ack_state_pendingaction: this.show_ack_state_pendingaction,
+			opt_show_ack_state_pendingvalidation: this.show_ack_state_pendingvalidation,
+
+			opt_show_form_edit: this.show_form_edit,
+			opt_show_edit_ticket: this.show_edit_ticket,
+			opt_show_edit_state: this.show_edit_state,
+			opt_show_edit_state_type: this.show_edit_state_type,
+			opt_show_edit_output: this.show_edit_output,
 
 			opt_bar: this.bar,
 			opt_bar_search: this.bar_search,
@@ -91,12 +136,32 @@ Ext.define('widgets.list.list' , {
 			scroll: this.scroll,
 
 			fitler_buttons: this.fitler_buttons
+
+			//opt_view_element:'view.ComponentDetails'
+
 		});
 
 		// Bind buttons
 		this.ctrl = Ext.create('canopsis.lib.controller.cgrid');
 		this.on('afterrender', function() {
 			this.ctrl._bindGridEvents(this.grid);
+		}, this);
+		
+		var event_ack = {}
+		this.grid.store.load();
+		this.grid.store.filter( function(rec, id) {
+		var ans;
+		if ( rec.raw['event_type'] == 'ack' ) {
+			event_ack[rec.raw['ref_rk']] = rec
+			ans = false;
+		} else {
+			if ( typeof event_ack[rec.raw['rk']] !==  "undefined" )  {
+				rec.raw['ack_state'] = event_ack[rec.raw['rk']].raw['state'] 
+				rec.raw['ack_output'] = event_ack[rec.raw['rk']].raw['output'] 
+			} 
+			ans = true;
+		}
+			return ans
 		}, this);
 
 		this.wcontainer.removeAll();
@@ -105,9 +170,9 @@ Ext.define('widgets.list.list' , {
 		this.ready();
 	},
 
-	doRefresh: function() {
-		if(this.grid && this.grid.store.loaded) {
+	doRefresh: function(from, to) {
+		if (this.grid && this.grid.store.loaded)
 			this.grid.store.load();
-		}
-	}
+	},
+
 });
