@@ -7,3 +7,5 @@ Contents:
    :maxdepth: 2
 
    install-from-packages
+   install-from-sources
+   canopsis-on-boot
