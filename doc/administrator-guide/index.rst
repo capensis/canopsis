@@ -9,3 +9,4 @@ Contents:
    install-from-packages
    install-from-sources
    canopsis-on-boot
+   admin-howto
