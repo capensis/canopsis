@@ -48,7 +48,7 @@ class engine(cengine):
 			return event
 
 		## Archive event
-		if event_type == 'perf' :
+		if event_type == 'perf':
 			pass
 
 		elif event_type == 'check' or event_type == 'selector' or event_type == 'sla' or event_type == 'eue' or event_type == 'topology' or event_type == 'consolidation':
