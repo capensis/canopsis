@@ -32,7 +32,7 @@ from bson.code import Code
 import time
 import json
 import logging
-import cmfilter
+
 
 class cselector(crecord):
 	def __init__(self, storage, _id=None, name=None, namespace='events', use_cache=True, record=None, cache_time=60, logging_level=None):
@@ -180,22 +180,6 @@ class cselector(crecord):
 
 		return {"$and": [{"$or": [mfilter, ifilter]}, efilter]}
 
-	def match(self, event):
-		"""Does event match this selector ?"""
-		# is event in always include list ?
-		if self.include_ids and len(self.include_ids) and event.get('_id',False) in self.include_ids:
-			return True
-
-		# is event always black listed ?
-		if self.exclude_ids and len(self.exclude_ids) and event.get('_id','') in self.exclude_ids:
-			return False
-
-		# is event matching selector filter ?
-		if not self.mfilter:
-			#mfilter is not set properly, then event shall match this invalid rule
-			return True
-
-		return cmfilter.check(self.mfilter, event)
 
 	def resolv(self):
 

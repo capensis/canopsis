@@ -21,19 +21,44 @@
 from cengine import cengine
 from cstorage import get_storage
 from caccount import caccount
+from cselector import cselector
+import cmfilter
+import json
 
 NAME="tag"
 
 class engine(cengine):
 	def __init__(self, *args, **kargs):
 		cengine.__init__(self, name=NAME, *args, **kargs)
-		
+		self.nb_beat = 0		
 		self.selByRk = {}
-		
+			
 	def pre_run(self):
 		self.storage = get_storage(namespace='object', account=caccount(user="root", group="root"))		
+		self.reload_selectors()
 		self.beat()
-				
+
+	def reload_selectors(self):
+
+		self.selectors = []
+		selectorsjson = self.storage.find({'crecord_type': 'selector', 'enable': True, 'dostate': True}, namespace="object")
+
+		for selectorjson in selectorsjson:
+			selector = cselector(storage=self.storage, record=selectorjson, logging_level=self.logging_level)
+
+			# Defined here only
+			selector.tags = []
+			dump = selectorjson.dump()
+			for selector_tag in ['crecord_name', 'display_name']:
+				if  selector_tag in dump and dump[selector_tag]:
+					selector.tags.append(dump[selector_tag])
+			self.selectors.append(selector)
+
+			#Cache for work method is set in one atomic operation
+
+		self.logger.debug('Reloaded %s selectors' % (len(self.selectors)))
+
+
 	def add_tag(self, event, field=None, value=None):
 		if not value and not field:
 			return event
@@ -47,6 +72,7 @@ class engine(cengine):
 		return event
 		
 	def work(self, event, *args, **kargs):
+	
 		event['tags'] = event.get('tags', [])
 		
 		event = self.add_tag(event, 'connector_name')
@@ -54,7 +80,30 @@ class engine(cengine):
 		event = self.add_tag(event, 'source_type')
 		event = self.add_tag(event, 'component')
 		event = self.add_tag(event, 'resource')
-		
+
+		self.logger.debug('Will process selector tag on event %s ' % (event['rk']))		
+		for selector in self.selectors:	
+			add_tag = False
+			cfilter = False
+			self.logger.debug('Super Filter %s: type %s' % (selector.mfilter, type(selector.mfilter)) )
+			if selector.mfilter:
+				cfilter = cmfilter.check(selector.mfilter, event)					
+				self.logger.debug('cfilter result %s' % (cfilter) )
+				
+			if 'rk' in event:
+				if event['rk'] not in selector.exclude_ids and (event['rk'] in selector.include_ids or cfilter):
+					self.logger.debug('swag')
+					add_tag = True
+			elif cfilter:
+				self.logger.debug('beauf')
+				add_tag = True
+			
+			if add_tag:
+				self.logger.debug('Will write tag to event: %s' % (selector.tags))
+				for tag in selector.tags:
+					if tag not in event['tags']:
+						event['tags'].append(tag)
+
 		### Tag with dynamic tags
 
 		sels = self.selByRk.get(event['rk'], [])
@@ -65,6 +114,13 @@ class engine(cengine):
 		return event
 
 	def beat(self):
+
+		self.nb_beat += 1
+
+		self.logger.debug('Refresh selector records cache for event tag by selector purposes.')
+		self.reload_selectors()
+
+	
 		self.selByRk = {}
 		
 		## Extract ids resolved by selectors
@@ -80,3 +136,5 @@ class engine(cengine):
 						self.selByRk[rk].append(sel)
 					except:
 						self.selByRk[rk] = [ sel ]
+												
+
