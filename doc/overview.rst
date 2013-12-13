@@ -14,12 +14,13 @@ What is Canopsis ?
 
 Built to last on top of `proven Open Source technologies by and for all IT professionals <http://www.capensis.fr/solutions/supervision/>`_. It is an event based architecture and it is modular by design. Plug your infrastructure tools like `Syslog`, `Nagios`, `Shinken <https://github.com/naparuba/shinken>`_, `...` to `Canopsis <http://canopsis.org>`_ and you're ready to go.
 
-A :doc:`glossary <Glossary>` page is also given for better descriptions about canopsis concepts.
+A :doc:`glossary <glossary>` page is also given for better descriptions about canopsis concepts.
 
 How to try ?
 ------------
 
 You can try Canopsis on demo platform:
+
 * Master branch (stable): http://demo.canopsis.org
 * Devel branch (unstable): http://demo-devel.canopsis.org
 
@@ -58,4 +59,4 @@ Links
 * Wiki: https://github.com/capensis/canopsis/wiki/_pages
 * Community: http://www.canopsis.org
 * Forum (french): http://forums.monitoring-fr.org/index.php/board,127.0.html
-* :doc:`Glossary`
+* :doc:`glossary`
