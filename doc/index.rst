@@ -11,8 +11,10 @@ Contents:
 .. toctree::
    :maxdepth: 2
 
-   Widgets
-   Engines
+   user-guide/index
+   administrator-guide/index
+   developper-guide/index
+   changelogs
 
 
 Indices and tables
