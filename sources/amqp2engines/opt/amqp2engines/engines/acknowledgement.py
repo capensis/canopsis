@@ -49,11 +49,47 @@ class engine(cengine):
 				record = crecord({'rk': rk})
 				self.storage.put(record)
 
+			referer_event = self.storage.find_one(mfilter={'rk': rk})
+
+			logevent = cevent.forger(
+				connector = "cengine",
+				connector_name = "engine",
+				event_type = "log",
+				source_type = referer_event['source_type'],
+				component = referer_event['component'],
+				resource = referer_event.get('resource', None),
+
+				state = 0,
+				state_type = 1,
+
+				output = u'Event {0} acknowledged by {1}'.format(rk, event['author']),
+				long_output = event['output']
+			)
+
+			self.amqp.publish(logevent, cevent.get_routingkey(logevent), exchange_name=self.acknowledge_on)
+
 		# If event is acknowledged, and went back to normal, remove the ack
 		elif event['state'] == 0:
 			record = self.storage.find_one(mfilter={'rk': event['rk']})
 
 			if record:
 				self.storage.remove(record._id)
+
+				logevent = cevent.forger(
+					connector = "cengine",
+					connector_name = "engine",
+					event_type = "log",
+					source_type = event['source_type'],
+					component = event['component'],
+					resource = event.get('resource', None),
+
+					state = 0,
+					state_type = 1,
+
+					output = u'Acknowledgement removed for event {0}'.format(rk),
+					long_output = u'Went back to normal'
+				)
+
+				self.amqp.publish(logevent, cevent.get_routingkey(logevent), exchange_name=self.acknowledge_on)
 
 		return event
