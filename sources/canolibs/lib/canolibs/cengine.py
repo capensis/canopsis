@@ -46,7 +46,7 @@ class cengine(multiprocessing.Process):
 		
 		multiprocessing.Process.__init__(self)
 		
-		self.logging_level = logging.DEBUG
+		self.logging_level = logging_level
 
 		self.signal_queue = multiprocessing.Queue(maxsize=5)
 
