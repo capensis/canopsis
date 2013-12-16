@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 #--------------------------------
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
@@ -38,6 +39,8 @@ class engine(cengine):
 		self.acknowledge_on = acknowledge_on
 		
 	def work(self, event, *args, **kargs):
+		logevent = None
+
 		# If event is of type acknowledgement, then acknowledge corresponding event
 		if event['event_type'] == 'ack':
 			rk = event['referer']
@@ -46,7 +49,13 @@ class engine(cengine):
 			record = self.storage.find_one(mfilter={'rk': rk})
 
 			if not record:
-				record = crecord({'rk': rk})
+				record = crecord({
+					'timestamp': event['timestamp'],
+					'rk': rk,
+					'author': event['author'],
+					'comment': event['output']
+				})
+
 				self.storage.put(record)
 
 			referer_event = self.storage.find_one(mfilter={'rk': rk})
@@ -65,8 +74,6 @@ class engine(cengine):
 				output = u'Event {0} acknowledged by {1}'.format(rk, event['author']),
 				long_output = event['output']
 			)
-
-			self.amqp.publish(logevent, cevent.get_routingkey(logevent), exchange_name=self.acknowledge_on)
 
 		# If event is acknowledged, and went back to normal, remove the ack
 		elif event['state'] == 0:
@@ -87,9 +94,10 @@ class engine(cengine):
 					state_type = 1,
 
 					output = u'Acknowledgement removed for event {0}'.format(rk),
-					long_output = u'Went back to normal'
+					long_output = u'Everything went back to normal'
 				)
 
-				self.amqp.publish(logevent, cevent.get_routingkey(logevent), exchange_name=self.acknowledge_on)
+		if logevent:
+			self.amqp.publish(logevent, cevent.get_routingkey(logevent), exchange_name=self.acknowledge_on)
 
 		return event
