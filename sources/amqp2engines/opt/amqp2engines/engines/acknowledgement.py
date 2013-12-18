@@ -93,9 +93,14 @@ class engine(cengine):
 
 		# If event is acknowledged, and went back to normal, remove the ack
 		elif event['state'] == 0:
+			solvedts = int(time.time())
+
 			record = self.stbackend.find_and_modify(
 				query = {'rk': event['rk'], 'solved': False},
-				update = {'$set': {'solved': True}}
+				update = {'$set': {
+					'solved': True,
+					'solvedts': solvedts
+				}}
 			)
 
 			if record:
@@ -117,7 +122,7 @@ class engine(cengine):
 					perf_data_array = [
 						{
 							'metric': 'ack_solved',
-							'value': record['ackts'] - int(time.time()),
+							'value': solvedts,
 							'unit': 's'
 						}
 					]
@@ -127,7 +132,10 @@ class engine(cengine):
 		else:
 			self.stbackend.find_and_modify(
 				query = {'rk': event['rk'], 'solved': True},
-				update = {'$set': {'solved': False}}
+				update = {'$set': {
+					'solved': False,
+					'solvedts': -1
+				}}
 			)
 
 		if logevent:
