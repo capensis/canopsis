@@ -13,6 +13,9 @@ This widget allows to display events in different types of calendars :
 * Basic week view
 * Basic day view
 
+.. image:: ../../_static/widgets/calendar_widget1.png
+.. image:: ../../_static/widgets/calendar_widget2.png
+
 There is two ways to display events on a calendar :
 
 * Stacked : events are shown on a per-day basis on the calendar, in one bubble. When the bubble is clicked, a popup is shown with an extended view of all these events
