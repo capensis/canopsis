@@ -84,8 +84,14 @@ def datetimeToTimestamp(_date):
 	return time.mktime(_date.timetuple())
 	return calendar.timegm(_date.timetuple())
 
-def get_overlap(a, b):
-	return max(0, min(a[1], b[1]) - max(a[0], b[0]))
+def is_in_interval(point, interval):
+	result = point >= interval[0] and point <= interval[1]
+	return result
+
+def intersection(interval1, interval2):
+	result = is_in_interval(interval1[0], interval2) or	is_in_interval(interval1[1], interval2) or is_in_interval(interval2[0], interval1) or is_in_interval(interval2[1], interval1)
+
+	return result
 
 def get_first_point(points):
 	if len(points):
@@ -546,44 +552,39 @@ def compress(points):
 	
 	# Remplace timestamp by interval
 	logger.debug(" + Remplace Timestamp by Interval and compress it")
-	i = 0
-	fts = points[0][0]
-	offset = points[0][0]
-	previous_interval = None
-
-	data = []
 	
+	fts = points[0][0]
+	last_timestamp = fts
+	last_interval = 0
+	value = points[0][1]
+
+	if float.is_integer(value):
+		value = int(value)
+
+	data = [value]
+
 	logger.debug(" + FTS: %s" % fts)
 
-	for point in points:
-		timestamp = point[0]
+	xr = xrange(1, len(points))
+
+	for i in xr:
+		point = points[i]
 		value = point[1]
-		
-		# If int, dont store float
+
 		if value == int(value):
 			value = int(value)
-	
-		if i == 0:
-			# first point
-			interval = timestamp - offset
-			data.append(value)
-		else:
-			# Others
-			interval = timestamp - offset
-			if interval == previous_interval:
-				data.append(value)
-			else:
-				previous_interval = interval
-				data.append([interval, value])
 
-		#logger.debug("    + %s: %s: %s" % (i, point, data[i]))
-		
-		offset = timestamp
-		i += 1
-	
+		interval = point[0] - last_timestamp
+		last_timestamp = point[0]
+
+		if interval != last_interval:
+			data.append([interval, value])
+			last_interval = interval
+		else:
+			data.append(value)
+
 	data = (fts, data)
 	# Pack and compress points
-	
 	points = zlib.compress(packer.pack(data), 9)
 
 	return points
@@ -607,7 +608,7 @@ def uncompress(data):
 	
 	logger.debug(" + Type of point: %s" % type(points))
 	
-	if type(points).__name__ != 'list':
+	if not isinstance(points, list):
 		raise ValueError("Invalid type (%s)" % type(points))
 	
 	rpoints = []
@@ -615,31 +616,23 @@ def uncompress(data):
 	#first point
 	rpoints.append([fts, points[0]])
 	logger.debug("   + First point: %s" % (rpoints[0]))
+	timestamp = fts
 
-	#second point
-	offset = points[1][0]
-	timestamp = fts + offset
-	rpoints.append([timestamp, points[1][1]])
-	
-	logger.debug("   + Second point: %s" % (rpoints[1]))
-	
-	logger.debug(" + Offset: %s", offset)
+	xr = xrange(1, len(points))
 
-	#others
-	for i in range(2, len(points)):
-		point = points[i]
-		
-		if isinstance(point ,list) or isinstance(point ,tuple):
-			offset = point[0]
-			#logger.debug(" + Offset: %s", offset)
-			timestamp += offset
-			rpoints.append([ timestamp, point[1] ])
-		else:
-			timestamp += offset
-			rpoints.append([ timestamp, point ])
-			
-		#logger.debug("  %i -> %s" % (i, rpoints[i]))
-	
+	interval = 0
+
+	for i in xr:
+		value = points[i]
+
+		if isinstance(value, list):
+			interval = value[0]
+			value = value[1]
+
+		timestamp += interval
+		rpoint = [timestamp, value]
+		rpoints.append(rpoint)
+
 	return rpoints
 
 ### aggregation serie function
