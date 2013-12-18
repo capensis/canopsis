@@ -127,7 +127,7 @@ def perfstore_nodes_get_values( start = None,
 											aggregate_round_time=aggregate_round_time,
 											timezone=time.timezone)
 
-	if consolidation_method and len(output) and aggregate_method != 0:
+	if aggregate_method and consolidation_method and len(output):
 		# select right function
 		if consolidation_method == 'mean':
 			fn = pyperfstore2.utils.mean
@@ -140,15 +140,28 @@ def perfstore_nodes_get_values( start = None,
 		elif consolidation_method == 'delta':
 			fn = lambda x: x[0] - x[-1]
 
-		series = []
+		# calculate methods
+		values = dict()
 		for serie in output:
-			series.append(serie["values"])
+			for point in serie['values']:
+				if not point[0] in values:
+					values[point[0]] = []
+				if point[1] is not None:
+					values[point[0]].append(point[1])
+
+		points = []
+		for timestamp, value in values.iteritems():
+			point = [timestamp, fn(value) if value else None]
+			points.append(point)
+
+		points = sorted(points, key=lambda point: point[0])
+
 		output = [{
 			'node': output[0]['node'],
 			'metric': consolidation_method,
 			'bunit': None,
 			'type': 'GAUGE',
-			'values': pyperfstore2.utils.consolidation(series, fn, 60)
+			'values': points
 		}]
 
 	output = {'total': len(output), 'success': True, 'data': output}
