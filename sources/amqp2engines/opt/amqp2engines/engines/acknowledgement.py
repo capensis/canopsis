@@ -19,6 +19,8 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
+import logging
+
 from cengine import cengine
 import cevent
 
