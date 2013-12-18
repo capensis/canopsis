@@ -2,7 +2,7 @@
 
 NAME="pyperfstore2"
 VERSION=2.4
-RELEASE=0
+RELEASE=1
 DESCRIPTION=""
 REQUIRES="canohome python redis redis-conf"
 
