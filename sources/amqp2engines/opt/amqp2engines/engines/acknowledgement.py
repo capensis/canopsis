@@ -59,6 +59,7 @@ class engine(cengine):
 					'rk': rk,
 					'author': event['author'],
 					'comment': event['output']
+
 				}},
 				upsert = True
 			)
@@ -121,8 +122,8 @@ class engine(cengine):
 
 					perf_data_array = [
 						{
-							'metric': 'ack_solved',
-							'value': solvedts,
+							'metric': 'ack_solved_delay',
+							'value': solvedts - record.data['ackts'],
 							'unit': 's'
 						}
 					]
