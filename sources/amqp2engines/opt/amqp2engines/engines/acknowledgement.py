@@ -25,6 +25,7 @@ import cevent
 from caccount import caccount
 from cstorage import get_storage
 from crecord import crecord
+import time
 
 NAME="acknowledgement"
 
@@ -51,6 +52,7 @@ class engine(cengine):
 			if not record:
 				record = crecord({
 					'timestamp': event['timestamp'],
+					'ackts': int(time.time()),
 					'rk': rk,
 					'author': event['author'],
 					'comment': event['output']
@@ -58,22 +60,32 @@ class engine(cengine):
 
 				self.storage.put(record)
 
-			referer_event = self.storage.find_one(mfilter={'rk': rk})
+				# Emit an event log
+				referer_event = self.storage.find_one(mfilter={'rk': rk})
 
-			logevent = cevent.forger(
-				connector = "cengine",
-				connector_name = "engine",
-				event_type = "log",
-				source_type = referer_event['source_type'],
-				component = referer_event['component'],
-				resource = referer_event.get('resource', None),
+				logevent = cevent.forger(
+					connector = "cengine",
+					connector_name = NAME,
+					event_type = "log",
+					source_type = referer_event['source_type'],
+					component = referer_event['component'],
+					resource = referer_event.get('resource', None),
 
-				state = 0,
-				state_type = 1,
+					state = 0,
+					state_type = 1,
 
-				output = u'Event {0} acknowledged by {1}'.format(rk, event['author']),
-				long_output = event['output']
-			)
+					referer = event['rk'],
+					output = u'Event {0} acknowledged by {1}'.format(rk, event['author']),
+					long_output = event['output'],
+
+					perf_data_array = [
+						{
+							'metric': 'ack_delay',
+							'value': record['ackts'] - record['timestamp'],
+							'unit': 's'
+						}
+					]
+				)
 
 		# If event is acknowledged, and went back to normal, remove the ack
 		elif event['state'] == 0:
@@ -84,7 +96,7 @@ class engine(cengine):
 
 				logevent = cevent.forger(
 					connector = "cengine",
-					connector_name = "engine",
+					connector_name = NAME,
 					event_type = "log",
 					source_type = event['source_type'],
 					component = event['component'],
@@ -93,8 +105,17 @@ class engine(cengine):
 					state = 0,
 					state_type = 1,
 
-					output = u'Acknowledgement removed for event {0}'.format(rk),
-					long_output = u'Everything went back to normal'
+					referer = event['rk'],
+					output = u'Acknowledgement removed for event {0}'.format(event['rk']),
+					long_output = u'Everything went back to normal',
+
+					perf_data_array = [
+						{
+							'metric': 'ack_solved',
+							'value': record['ackts'] - int(time.time()),
+							'unit': 's'
+						}
+					]
 				)
 
 		if logevent:
