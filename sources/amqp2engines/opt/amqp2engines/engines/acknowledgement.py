@@ -51,7 +51,7 @@ class engine(cengine):
 			rk = event['referer']
 
 			# add rk to acknowledged rks
-			record = self.stbackend.find_and_modify(
+			response = self.stbackend.find_and_modify(
 				query = {'rk': rk, 'solved': False},
 				update = {'$set': {
 					'timestamp': event['timestamp'],
@@ -61,12 +61,16 @@ class engine(cengine):
 					'comment': event['output']
 
 				}},
-				upsert = True
+				upsert = True,
+				full_response = True,
+				new = True
 			)
 
-			if not record:
+			if not response['lastErrorObject']['updatedExisting']:
+				record = crecord(response['value'])
+
 				# Emit an event log
-				referer_event = self.storage.find_one(mfilter={'rk': rk})
+				referer_event = self.storage.find_one(mfilter={'rk': rk}, namespace='event')
 
 				logevent = cevent.forger(
 					connector = "cengine",
@@ -86,7 +90,7 @@ class engine(cengine):
 					perf_data_array = [
 						{
 							'metric': 'ack_delay',
-							'value': record['ackts'] - record['timestamp'],
+							'value': record.data['ackts'] - record.data['timestamp'],
 							'unit': 's'
 						}
 					]
@@ -96,15 +100,19 @@ class engine(cengine):
 		elif event['state'] == 0:
 			solvedts = int(time.time())
 
-			record = self.stbackend.find_and_modify(
+			response = self.stbackend.find_and_modify(
 				query = {'rk': event['rk'], 'solved': False},
 				update = {'$set': {
 					'solved': True,
 					'solvedts': solvedts
-				}}
+				}},
+				full_response = True,
+				new = True
 			)
 
-			if record:
+			if response['value']:
+				record = crecord(response['value'])
+
 				logevent = cevent.forger(
 					connector = "cengine",
 					connector_name = NAME,
@@ -135,7 +143,11 @@ class engine(cengine):
 				query = {'rk': event['rk'], 'solved': True},
 				update = {'$set': {
 					'solved': False,
-					'solvedts': -1
+					'solvedts': -1,
+					'ackts': -1,
+					'timestamp': -1,
+					'author': '',
+					'comment': ''
 				}}
 			)
 
