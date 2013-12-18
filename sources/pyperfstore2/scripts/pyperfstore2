@@ -81,7 +81,7 @@ elif   action == "update":
 		if dca:
 			logger.info(" + Move plain data of %s in Redis" % _id)
 			points = ['%s|%s' % (point[0], point[1]) for point in dca ]
-			[ manager.store.redis_pipe.lpush(_id, point) for point in points ]
+			[ manager.store.redis_pipe.rpush(_id, point) for point in points ]
 			manager.store.sync()
 			manager.store.collection.update({'_id': _id}, {"$unset": {"d": True}})
 

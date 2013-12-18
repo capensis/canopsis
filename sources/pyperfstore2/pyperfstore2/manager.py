@@ -77,7 +77,6 @@ class manager(object):
 		
 	def get_data(self, _id):
 		data = self.store.redis.lrange(_id, 0, -1)
-
 		def cleanPoint(p):
 			p[0] = int(p[0])
 			try:
@@ -87,14 +86,12 @@ class manager(object):
 			return p
 
 		data = [ cleanPoint(p.split('|')) for p in data ]
-
 		return data
 
 	def get_meta(self, _id=None, name=None, raw=False, mfields=None):
 		_id = self.get_id(_id, name)
 		
 		meta_data = self.store.get(_id, mfields=mfields)
-
 		if not meta_data:
 			return None
 
@@ -134,7 +131,7 @@ class manager(object):
 					del meta[field]
 				except:
 					pass
-				return meta		
+				return meta
 
 		for field in self.fields_map:
 			meta_data = set_meta(meta_data, field, self.fields_map[field][0], self.fields_map[field][1])
@@ -153,15 +150,12 @@ class manager(object):
 		
 		if meta_data:
 			meta_data = self.compress_meta_fields(meta_data)
-		
 		self.store.push(_id=_id, point=point, meta_data=meta_data)
 		
 	def find(self, _id=None, name=None, mfilter=None, limit=0, skip=0, data=True, sort=None):
 		mfields = None
-		
 		if _id or name:
 			_id = self.get_id(_id, name)
-		
 		if _id:
 			if mfilter:
 				mfilter={"$and":[{'_id': _id}, mfilter]}
@@ -178,28 +172,23 @@ class manager(object):
 		
 	def get_points(self, _id=None, name=None, tstart=None, tstop=None, raw=False, return_meta=False, add_prev_point=False, add_next_point=False):
 		_id = self.get_id(_id, name)
-		
 		if tstop == None:
 			tstop = int(time.time())
-			
 		if tstart == None:
-			tstart = tstop			
-		
+			tstart = tstop
 		self.logger.debug("Get points: %s (%s -> %s)" % (_id, datetime.utcfromtimestamp(tstart), datetime.utcfromtimestamp(tstop)))
 		points = []
 		
 		dca = self.get_meta(_id=_id)
-		
 		if not dca :
 			raise Exception('Invalid _id, not found %s' % _id)
 		
 		plain_fts = None
 		plain_lts = None
 		
-		if len(dca['d']):
+		if dca.get('d', False):
 			plain_fts = dca['d'][0][0]
-			plain_lts = dca['d'][len(dca['d'])-1][0]
-			
+			plain_lts = dca['d'][-1][0]
 		self.logger.debug(" + plain_fts: %s" % plain_fts)
 		self.logger.debug(" + plain_lts: %s" % plain_lts)
 		
@@ -212,15 +201,13 @@ class manager(object):
 				fts = bin_meta[0]
 				lts = bin_meta[1]
 				bin_id = bin_meta[2]
-				
 				self.logger.debug(" + Parse DCA:\t\t%s (%s -> %s)" % (bin_id, datetime.utcfromtimestamp(fts), datetime.utcfromtimestamp(lts)))
 				if tstart == tstop and tstart >= fts and tstart <= lts:
 					bin_ids.append(bin_id)
 					self.logger.debug("   + Append")
-				elif utils.get_overlap([fts, lts], [tstart, tstop]):
+				elif utils.intersection([fts, lts], [tstart, tstop]):
 					bin_ids.append(bin_id)
 					self.logger.debug("   + Append")
-			
 			for bin_id in bin_ids:
 				data = self.store.get_bin(_id=bin_id)
 				points += utils.uncompress(data)
@@ -234,10 +221,9 @@ class manager(object):
 			elif tstart == tstop and tstart >= plain_lts:
 				points += dca['d']
 				self.logger.debug("   + Append")
-			elif utils.get_overlap([plain_fts, plain_lts], [tstart, tstop]):
+			elif utils.intersection([plain_fts, plain_lts], [tstart, tstop]):
 				points += dca['d']
 				self.logger.debug("   + Append")
-		
 		## Drop data of meta
 		del dca['d']
 		
@@ -245,7 +231,6 @@ class manager(object):
 		
 		## Sort and Split Points
 		points = sorted(points, key=lambda point: point[0])
-		
 		if add_prev_point or add_next_point:
 			self.logger.debug("Find previous and next points")
 			
@@ -270,7 +255,6 @@ class manager(object):
 			# If tstop > last point
 			if add_prev_point and prev_index == None and next_index != None and next_index < len(points):
 				prev_index  = next_index
-			
 			self.logger.debug(" + len(points):  %s" % len(points))
 			self.logger.debug(" + len(rpoints): %s" % len(rpoints))
 			self.logger.debug(" + prev_index:   %s" % prev_index)
@@ -283,17 +267,15 @@ class manager(object):
 				if (dca['type'] == 'DERIVE' and tstart == tstop and prev_index-1 >= 0):
 					self.logger.debug("   + Add prev for DERIVE")
 					rpoints.insert(0, points[prev_index-1])
-				
 			if add_next_point and next_index != None and next_index < len(points):
 				self.logger.debug("   + Add next")
-				rpoints.append(points[next_index])				
-				
+				rpoints.append(points[next_index])
+
 			self.logger.debug(" + len(rpoints): %s" % len(rpoints))
-			
+
 			points = rpoints
 		else:
 			points = [ point for point in points if point[0] >= tstart and point[0] <= tstop ]
-		
 		if raw:
 			if not return_meta:
 				return points
@@ -304,7 +286,7 @@ class manager(object):
 		dtype = dca.get('type', None)
 		if dtype:
 			points = utils.parse_dst(points,dtype)
-		
+
 		if not return_meta:
 			return points
 		else:
@@ -400,7 +382,7 @@ class manager(object):
 			return
 
 		fts = points[0][0]
-		lts = points[len(points)-1][0]
+		lts = points[-1][0]
 						
 		self.logger.debug("  + Compress %s -> %s" % (fts, lts))
 		
