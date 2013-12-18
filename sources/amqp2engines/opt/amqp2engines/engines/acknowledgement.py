@@ -35,7 +35,9 @@ class engine(cengine):
 		cengine.__init__(self, name=name, *args, **kargs)
 
 		account = caccount(user="root", group="root")
+
 		self.storage = get_storage(namespace='ack', account=account, logging_level=logging.DEBUG)
+		self.stbackend = self.storage.get_backend('ack')
 
 		self.acknowledge_on = acknowledge_on
 		
@@ -47,19 +49,19 @@ class engine(cengine):
 			rk = event['referer']
 
 			# add rk to acknowledged rks
-			record = self.storage.find_one(mfilter={'rk': rk})
-
-			if not record:
-				record = crecord({
+			record = self.stbackend.find_and_modify(
+				query = {'rk': rk, 'solved': False},
+				update = {'$set': {
 					'timestamp': event['timestamp'],
 					'ackts': int(time.time()),
 					'rk': rk,
 					'author': event['author'],
 					'comment': event['output']
-				})
+				}},
+				upsert = True
+			)
 
-				self.storage.put(record)
-
+			if not record:
 				# Emit an event log
 				referer_event = self.storage.find_one(mfilter={'rk': rk})
 
@@ -89,11 +91,12 @@ class engine(cengine):
 
 		# If event is acknowledged, and went back to normal, remove the ack
 		elif event['state'] == 0:
-			record = self.storage.find_one(mfilter={'rk': event['rk']})
+			record = self.stbackend.find_and_modify(
+				query = {'rk': event['rk'], 'solved': False},
+				update = {'$set': {'solved': True}}
+			)
 
 			if record:
-				self.storage.remove(record._id)
-
 				logevent = cevent.forger(
 					connector = "cengine",
 					connector_name = NAME,
@@ -117,6 +120,13 @@ class engine(cengine):
 						}
 					]
 				)
+
+		# If the event is in problem state, update the solved state of acknowledgement
+		else:
+			self.stbackend.find_and_modify(
+				query = {'rk': event['rk'], 'solved': True},
+				update = {'$set': {'solved': False}}
+			)
 
 		if logevent:
 			self.amqp.publish(logevent, cevent.get_routingkey(logevent), exchange_name=self.acknowledge_on)
