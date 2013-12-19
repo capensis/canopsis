@@ -1,5 +1,5 @@
 Developper guide
-================
+****************
 
 Contents:
 
@@ -8,3 +8,4 @@ Contents:
 
    event-spec
    rest-api
+   create-your-own-widgets
