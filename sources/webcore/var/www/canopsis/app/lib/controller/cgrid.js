@@ -68,7 +68,7 @@ Ext.define('canopsis.lib.controller.cgrid', {
 		else if(grid.opt_allow_edit === true) {
 			grid.on('itemdblclick', this._editRecord, this);
 		} 
-		else if ( grid.opt_show_consolesup == true ) {
+		else if(grid.opt_show_consolesup === true ) {
 			grid.on('itemdblclick', this._consolesup, this );
 		}
 
@@ -427,7 +427,7 @@ Ext.define('canopsis.lib.controller.cgrid', {
 		if(!ack) {
 			record.set('ack', 'cancel');
 		}
-		else if (ack === 'cancel') {
+		else if(ack === 'cancel') {
 			record.set('ack', 'cancelled');
 		}
 		else {

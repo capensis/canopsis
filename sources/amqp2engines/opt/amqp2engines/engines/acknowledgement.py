@@ -66,11 +66,13 @@ class engine(cengine):
 				new = True
 			)
 
+			self.logger.error(str(response))
+
 			if not response['lastErrorObject']['updatedExisting']:
-				record = crecord(response['value'])
+				record = response['value']
 
 				# Emit an event log
-				referer_event = self.storage.find_one(mfilter={'rk': rk}, namespace='event')
+				referer_event = self.storage.find_one(mfilter={'rk': rk}, namespace='events').dump()
 
 				logevent = cevent.forger(
 					connector = "cengine",
@@ -90,7 +92,7 @@ class engine(cengine):
 					perf_data_array = [
 						{
 							'metric': 'ack_delay',
-							'value': record.data['ackts'] - record.data['timestamp'],
+							'value': record['ackts'] - record['timestamp'],
 							'unit': 's'
 						}
 					]
@@ -110,8 +112,8 @@ class engine(cengine):
 				new = True
 			)
 
-			if response['value']:
-				record = crecord(response['value'])
+			if response and response['value']:
+				record = response['value']
 
 				logevent = cevent.forger(
 					connector = "cengine",
@@ -131,7 +133,7 @@ class engine(cengine):
 					perf_data_array = [
 						{
 							'metric': 'ack_solved_delay',
-							'value': solvedts - record.data['ackts'],
+							'value': solvedts - record['ackts'],
 							'unit': 's'
 						}
 					]

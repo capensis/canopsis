@@ -124,50 +124,48 @@ Ext.define('canopsis.lib.view.cgrid' , {
 	},
 
 	initComponent: function() {
-		/*if (this.opt_grouping){
-			var groupingFeature = Ext.create('Ext.grid.feature.Grouping',{
-				hideGroupedColumn: true,
-				groupHeaderTpl: '{name} ({rows.length} Item{[values.rows.length > 1 ? "s" : ""]})'
-			});
-			this.features.push(groupingFeature);
-		}*/
 		this.cb_select_all_id = Ext.id();
 
 		// Multi select
-		if (this.opt_multiSelect == true)
+		if(this.opt_multiSelect === true) {
 			this.multiSelect = true;
-
-		// Keynav_del
-		if (this.opt_bar_delete && this.opt_keynav_del == undefined)
-			this.opt_keynav_del = true;
-
-		// Set pageSize
-		if (this.store.pageSize == undefined)
-			this.store.pageSize = global.accountCtrl.getConfig('pageSize');
-
-		// Hack
-		if (this.hideHeaders && this.border == false) {
-			this.bodyStyle = { 'border-width': 0 };
 		}
 
-		//------------------Option docked bar--------------
+		// Keynav_del
+		if(this.opt_bar_delete && this.opt_keynav_del === undefined) {
+			this.opt_keynav_del = true;
+		}
+
+		// Set pageSize
+		if(this.store.pageSize === undefined) {
+			this.store.pageSize = global.accountCtrl.getConfig('pageSize');
+		}
+
+		// Hack
+		if(this.hideHeaders && this.border === false) {
+			this.bodyStyle = {
+				'border-width': 0
+			};
+		}
+
+		// Option docked bar
 		if (this.exportMode) {
 			this.border = false;
-			//this.hideHeaders = true
-		}else {
+		}
+		else {
 			if (this.opt_bar) {
 				var bar_child = [];
 
-				if (this.opt_bar_add) {
+				if(this.opt_bar_add) {
 					bar_child.push({
 						xtype: 'button',
 						iconCls: 'icon-add',
-						//cls: 'x-btn-default-toolbar-small',
 						text: _('Add'),
 						action: 'add'
 					});
 				}
-				if (this.opt_bar_reload) {
+
+				if(this.opt_bar_reload) {
 					bar_child.push({
 						xtype: 'button',
 						iconCls: 'icon-reload',
@@ -175,7 +173,8 @@ Ext.define('canopsis.lib.view.cgrid' , {
 						action: 'reload'
 					});
 				}
-				if (this.opt_bar_duplicate) {
+
+				if(this.opt_bar_duplicate) {
 					bar_child.push({
 						xtype: 'button',
 						iconCls: 'icon-copy',
@@ -184,7 +183,8 @@ Ext.define('canopsis.lib.view.cgrid' , {
 						action: 'duplicate'
 					});
 				}
-				if (this.opt_bar_delete) {
+
+				if(this.opt_bar_delete) {
 					bar_child.push({
 						xtype: 'button',
 						iconCls: 'icon-delete',
@@ -193,7 +193,8 @@ Ext.define('canopsis.lib.view.cgrid' , {
 						action: 'delete'
 					});
 				}
-				if (this.opt_bar_ack) {
+
+				if(this.opt_bar_ack) {
 					bar_child.push({
 						xtype: 'button',
 						iconCls: 'icon-ack-pendingsolved',
@@ -203,9 +204,9 @@ Ext.define('canopsis.lib.view.cgrid' , {
 					});
 				}
 
-				if (this.opt_bar_customs) {
+				if(this.opt_bar_customs) {
 					//This option manages import and export functions for a grid object system
-					if (this.opt_export_import) {
+					if(this.opt_export_import) {
 						var model = this.model;
 						var gridView = this;
 
@@ -271,8 +272,7 @@ Ext.define('canopsis.lib.view.cgrid' , {
 						bar_child = bar_child.concat(this.opt_bar_customs);
 					}
 
-					if (this.opt_bar_time_search) {
-						//bar_child.push({ xtype: 'tbspacer', width: 150 })
+					if(this.opt_bar_time_search) {
 						bar_child.push('-');
 
 						var yesterday =  new Date();
@@ -292,13 +292,12 @@ Ext.define('canopsis.lib.view.cgrid' , {
 
 						bar_child.push({
 							xtype: 'button',
-							//text: _('TimeDisplay'),
 							iconCls: 'icon-search',
 							action: 'search'
 						});
 					}
 
-					if (this.opt_bar_search) {
+					if(this.opt_bar_search) {
 						bar_child.push({xtype: 'tbfill'});
 
 						bar_child = bar_child.concat(this.bar_search);
@@ -306,7 +305,6 @@ Ext.define('canopsis.lib.view.cgrid' , {
 						bar_child.push({
 							xtype: 'button',
 							action: 'clean_search',
-							//text: _('Search'),
 							iconCls: 'icon-clean',
 							pack: 'end'
 						});
@@ -321,28 +319,27 @@ Ext.define('canopsis.lib.view.cgrid' , {
 						bar_child.push({
 							xtype: 'button',
 							action: 'search',
-							//text: _('Search'),
 							iconCls: 'icon-search',
 							pack: 'end'
 						});
 
 					}
 
-					if (this.opt_bar_download) {
+					if(this.opt_bar_download) {
 						bar_child.push({
 							xtype: 'button',
-							//text: _('Download'),
 							iconCls: 'icon-download',
 							action: 'download'
 						});
 					}
 
 					// Creating toolbar
-					if (this.opt_bar_bottom) {
+					if(this.opt_bar_bottom) {
 						this.bbar = Ext.create('Ext.toolbar.Toolbar', {
 							items: bar_child
 						});
-					}else {
+					}
+					else {
 						this.tbar = Ext.create('Ext.toolbar.Toolbar', {
 							items: bar_child
 						});
@@ -350,8 +347,8 @@ Ext.define('canopsis.lib.view.cgrid' , {
 				}
 			}
 
-			//--------------------Paging toolbar -----------------
-			if (this.opt_paging) {
+			// Paging toolbar
+			if(this.opt_paging) {
 				this.pagingbar = Ext.create('Ext.PagingToolbar', {
 					store: this.store,
 					displayInfo: false,
@@ -363,11 +360,11 @@ Ext.define('canopsis.lib.view.cgrid' , {
 
 			}
 
-			//--------------------Context menu---------------------
-			if (this.opt_bar) {
+			// Context menu
+			if(this.opt_bar) {
 				var myArray = [];
 
-				if (this.opt_bar_enable) {
+				if(this.opt_bar_enable) {
 					myArray.push(
 						Ext.create('Ext.Action', {
 							iconCls: 'icon-enable-disable',
@@ -377,7 +374,7 @@ Ext.define('canopsis.lib.view.cgrid' , {
 					);
 				}
 
-				if (this.opt_bar_delete) {
+				if(this.opt_bar_delete) {
 					myArray.push(
 						Ext.create('Ext.Action', {
 							iconCls: 'icon-delete',
@@ -387,7 +384,7 @@ Ext.define('canopsis.lib.view.cgrid' , {
 					);
 				}
 
-				if (this.opt_menu_rename == true) {
+				if(this.opt_menu_rename === true) {
 					myArray.push(
 						Ext.create('Ext.Action', {
 							iconCls: 'icon-edit',
@@ -397,7 +394,7 @@ Ext.define('canopsis.lib.view.cgrid' , {
 					);
 				}
 
-				if (this.opt_bar_duplicate == true) {
+				if(this.opt_bar_duplicate === true) {
 					myArray.push(
 						Ext.create('Ext.Action', {
 							iconCls: 'icon-copy',
@@ -407,7 +404,7 @@ Ext.define('canopsis.lib.view.cgrid' , {
 					);
 				}
 
-				if (this.opt_menu_rights == true) {
+				if(this.opt_menu_rights === true) {
 					myArray.push(
 						Ext.create('Ext.Action', {
 							iconCls: 'icon-access',
@@ -417,7 +414,7 @@ Ext.define('canopsis.lib.view.cgrid' , {
 					);
 				}
 
-				if (this.opt_menu_set_avatar == true) {
+				if(this.opt_menu_set_avatar === true) {
 					myArray.push(
 						Ext.create('Ext.Action', {
 							iconCls: 'icon-add',
@@ -427,7 +424,7 @@ Ext.define('canopsis.lib.view.cgrid' , {
 					);
 				}
 
-				if (this.opt_menu_authKey == true) {
+				if(this.opt_menu_authKey === true) {
 					myArray.push(
 						Ext.create('Ext.Action', {
 							iconCls: 'icon-access',
@@ -437,7 +434,7 @@ Ext.define('canopsis.lib.view.cgrid' , {
 					);
 				}
 
-				if (this.opt_menu_send_mail == true) {
+				if(this.opt_menu_send_mail === true) {
 					myArray.push(
 						Ext.create('Ext.Action', {
 							iconCls: 'icon-mail',
@@ -447,7 +444,7 @@ Ext.define('canopsis.lib.view.cgrid' , {
 					);
 				}
 
-				if (this.opt_menu_run_item == true) {
+				if(this.opt_menu_run_item === true) {
 					myArray.push(
 						Ext.create('Ext.Action', {
 							iconCls: 'icon-run',
@@ -457,10 +454,11 @@ Ext.define('canopsis.lib.view.cgrid' , {
 					);
 				}
 
-				if (this.menu_items)
+				if(this.menu_items) {
 					myArray = myArray.concat(this.menu_items);
+				}
 
-				if (myArray.length != 0) {
+				if(myArray.length !== 0) {
 					this.contextMenu = Ext.create('Ext.menu.Menu', {
 						items: myArray
 					});
@@ -468,7 +466,7 @@ Ext.define('canopsis.lib.view.cgrid' , {
 			}
 		}
 
-		if (this.opt_cell_edit) {
+		if(this.opt_cell_edit) {
 			this.plugins = [
 					Ext.create('Ext.grid.plugin.CellEditing', {
 						clicksToEdit: 1
@@ -479,8 +477,8 @@ Ext.define('canopsis.lib.view.cgrid' , {
 		this.callParent(arguments);
 
 		// Load Store if not loaded
-		if (this.store && this.store.proxy.url){
-			if (! this.store.loaded && ! this.store.autoLoad) {
+		if(this.store && this.store.proxy.url) {
+			if(!this.store.loaded && !this.store.autoLoad) {
 				this.store.load();
 			}
 		}
@@ -488,8 +486,8 @@ Ext.define('canopsis.lib.view.cgrid' , {
 
 	beforeDestroy: function() {
 		log.debug('Cleaning cgrid elements', this.logAuthor);
-		if (this.window_form)
+		if(this.window_form) {
 			this.window_form.destroy();
-	},
-
+		}
+	}
 });
