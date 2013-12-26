@@ -133,70 +133,97 @@
 							}]
 					}]
 		},{
-			"title": "Aggregation",
+			"title": "Aggregation/consolidation",
 			"advanced": true,
-			"items": [{
-						"xtype": "cfieldset",
-						"title": "Aggregation",
-						"items": [
-							{
-								"xtype": "combobox",
-								"name": "aggregate_method",
-								"fieldLabel": "Aggregation Method",
-								"queryMode": "local",
-								"displayField": "text",
-								"valueField": "value",
-								"value": "MEAN",
-								"store": {
-									"xtype": "store",
-									"fields": ["value", "text"],
-									"data" : [
-										{"value": "", "text": "None"},
-										{"value": "MAX", "text": "Max"},
-										{"value": "MIN", "text": "Min"},
-										{"value": "LAST", "text": "Last"},
-										{"value": "FIRST", "text": "First"},
-										{"value": "DELTA", "text": "Delta"},
-										{"value": "MEAN", "text": "Mean"},
-										{"value": "SUM", "text": "Sum"}
-									]
-								}
-							},{
-								"xtype" : "numberfield",
-								"name" : "aggregate_max_points",
-								"fieldLabel": "Max points (if no interval)",
-								"minValue": 2,
-								"value": 500
-							},{
-								"xtype": "combobox",
-								"name": "aggregate_interval",
-								"fieldLabel": "Aggregation Interval",
-								"queryMode": "local",
-								"displayField": "text",
-								"valueField": "value",
-								"value": 0,
-								"store": {
-									"xtype": "store",
-									"fields": ["value", "text"],
-									"data" : [
-										{"value": 0, "text": "None"},
-										{"value": 900, "text": "15 minutes"},
-										{"value": 1800, "text": "30 minutes"},
-										{"value": 3600, "text": "1 hour"},
-										{"value": 86400, "text": "1 day"},
-										{"value": 604800, "text": "1 week"},
-										{"value": 2629800, "text": "1 month"},
-										{"value": 31557600, "text": "1 year"}
-									]
-								}
-							}, {
-								"xtype": "checkbox",
-								"name": "aggregate_round_time",
-								"fieldLabel": "Round time (if interval)",
-								"checked": true
-							}							
-						]
-					}]
+			"items": [
+				{
+					"xtype": "cfieldset",
+					"title": "Aggregation",
+					"items": [
+						{
+							"xtype": "combobox",
+							"name": "aggregate_method",
+							"fieldLabel": "Aggregation Method",
+							"queryMode": "local",
+							"displayField": "text",
+							"valueField": "value",
+							"value": "MEAN",
+							"store": {
+								"xtype": "store",
+								"fields": ["value", "text"],
+								"data" : [
+									{"value": "", "text": "None"},
+									{"value": "MAX", "text": "Max"},
+									{"value": "MIN", "text": "Min"},
+									{"value": "LAST", "text": "Last"},
+									{"value": "FIRST", "text": "First"},
+									{"value": "DELTA", "text": "Delta"},
+									{"value": "MEAN", "text": "Mean"},
+									{"value": "SUM", "text": "Sum"}
+								]
+							}
+						},{
+							"xtype" : "numberfield",
+							"name" : "aggregate_max_points",
+							"fieldLabel": "Max points (if no interval)",
+							"minValue": 2,
+							"value": 500
+						},{
+							"xtype": "combobox",
+							"name": "aggregate_interval",
+							"fieldLabel": "Aggregation Interval",
+							"queryMode": "local",
+							"displayField": "text",
+							"valueField": "value",
+							"value": 0,
+							"store": {
+								"xtype": "store",
+								"fields": ["value", "text"],
+								"data" : [
+									{"value": 0, "text": "None"},
+									{"value": 900, "text": "15 minutes"},
+									{"value": 1800, "text": "30 minutes"},
+									{"value": 3600, "text": "1 hour"},
+									{"value": 86400, "text": "1 day"},
+									{"value": 604800, "text": "1 week"},
+									{"value": 2629800, "text": "1 month"},
+									{"value": 31557600, "text": "1 year"}
+								]
+							}
+						}, {
+							"xtype": "checkbox",
+							"name": "aggregate_round_time",
+							"fieldLabel": "Round time (if interval)",
+							"checked": true
+						}
+					]
+				}, {
+					"xtype": "cfieldset",
+					"title": "Consolidation between metrics",
+					"items": [
+						{
+							"xtype": "combobox",
+							"name": "consolidation_method",
+							"fieldLabel": "Consolidation Method",
+							"queryMode": "local",
+							"displayField": "text",
+							"valueField": "value",
+							"value":"",
+							"store": {
+								"xtype": "store",
+								"fields": ["value", "text"],
+								"data" : [
+									{"value": "", "text": "None"},
+									{"value": "max", "text": "Max"},
+									{"value": "min", "text": "Min"},
+									{"value": "sum", "text": "Sum"},
+									{"value": "mean", "text": "Mean"}
+								]
+							}
+						}
+					]
+				}
+			]
 		},{
 			"title": "Style",
 			"advanced": true,
