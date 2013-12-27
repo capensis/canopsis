@@ -35,7 +35,11 @@ class engine(cengine):
 	def __init__(self, *args, **kargs):
 		cengine.__init__(self, name=NAME, *args, **kargs)
 
-	def create_amqp_queue(self):
+	def new_amqp_queue(self, *args, **kwargs):
+		"""
+			Override AMQP queue creation (ignore possible parameters, they aren't needed here)
+		"""
+
 		self.amqp.add_queue(self.amqp_queue, ['collectd'], self.on_collectd_event, "amq.topic", auto_delete=False)
 		
 	def on_collectd_event(self, body, msg):
