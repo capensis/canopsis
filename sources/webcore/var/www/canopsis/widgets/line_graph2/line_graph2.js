@@ -39,5 +39,13 @@ Ext.define('widgets.line_graph2.line_graph2', {
 				show: false
 			}
 		};
+	},
+
+	getSerieForNode: function(nodeid) {
+		var node = this.nodesByID[nodeid];
+
+		var serie = {
+			label: node.label,
+		}
 	}
 });

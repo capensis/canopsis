@@ -22,13 +22,13 @@ Ext.define('canopsis.lib.view.cwidgetGraph', {
 
     logAuthor: '[widgets][graph]',
 
-    time_window: global.commonTs.day,
+    max_points: 500,
 
     initComponent: function() {
         this.callParent(arguments);
 
         this.setChartOptions();
-        this.series = [];
+        this.series = {};
 
         this.chart = undefined;
 
@@ -46,6 +46,7 @@ Ext.define('canopsis.lib.view.cwidgetGraph', {
 
     setChartOptions: function() {
         var me = this;
+        var now = Ext.Date.now();
 
         this.options = {
             cwidget: function() {
@@ -68,6 +69,8 @@ Ext.define('canopsis.lib.view.cwidgetGraph', {
             },
 
             xaxis: {
+                min: now - this.time_window * 1000,
+                max: now,
                 position: 'bottom',
                 mode: 'time',
                 timeformat: '%H:%M:%S'
@@ -76,36 +79,42 @@ Ext.define('canopsis.lib.view.cwidgetGraph', {
     },
 
     createChart: function() {
+        log.debug('Create chart:');
+        log.dump(this.series);
+        log.dump(this.options);
+
         this.plotcontainer = $('#' + this.wcontainerId);
-        this.chart = $.plot(this.plotcontainer, this.series, this.options);
+        this.chart = $.plot(this.plotcontainer, this.getSeriesConf(), this.options);
     },
 
     renderChart: function() {
         log.debug('Rendering chart');
 
-        this.chart.destroy();
-        this.createChart();
-
+        this.chart.setData(this.getSeriesConf());
+        this.chart.setupGrid();
         this.chart.draw();
     },
 
-    addSerie: function(config) {
-        log.debug('Add serie:');
-        log.dump(config);
+    getSeriesConf: function() {
+        var series = [];
 
-        this.series.push(config);
+        Ext.Object.each(this.series, function(serieId, serie) {
+            series.push(serie);
+        });
+
+        return series;
     },
 
-    getSerie: function(serieId) {
-        for(var i = 0; i < this.series.length; i++) {
-            var serie = this.series[i];
+    getSerieForNode: function(nodeid) {
+        var node = this.nodesByID[nodeid];
 
-            if(serieId === serie.serieId) {
-                return serie;
-            }
-        }
+        var serie = {
+            label: node.label,
+            data: [],
+            last_timestamp: -1
+        };
 
-        return null;
+        return serie;
     },
 
     doRefresh: function(from, to) {
@@ -115,33 +124,43 @@ Ext.define('canopsis.lib.view.cwidgetGraph', {
     onRefresh: function(data, from, to) {
         this.callParent(arguments);
 
-        console.log(data);
+        log.debug('Received data:');
+        log.dump(data);
 
         if(data.length > 0) {
             for(var i = 0; i < data.length; i++) {
                 var info = data[i];
                 var node = this.nodesByID[info.node];
+                var serieId = info.node + '.' + node.metrics[0];
 
-                var serie = this.getSerie(info.node);
+                if(!this.series[serieId]) {
+                    log.debug('Create serie: ' + serieId);
 
-                if(serie === null) {
-                    serie = {
-                        serieId: info.node,
-                        label: node.label,
-                        data: []
-                    };
-
-                    this.addSerie(serie);
+                    this.series[serieId] = this.getSerieForNode(info.node);
                 }
 
                 for(var j = 0; j < info.values.length; j++) {
                     var value = info.values[j];
 
-                    serie.data.push([value[0] * 1000, value[1]]);
+                    log.debug(' + Add data: ' + value);
+
+                    this.series[serieId].data.push([value[0] * 1000, value[1]]);
+                    this.series[serieId].last_timestamp = value[0] * 1000;
                 }
             }
         }
 
+        if(this.reportMode) {
+            this.options.xaxis.min = from;
+        }
+        else {
+            this.options.xaxis.min = to - this.time_window * 1000;
+        }
+
+        this.options.xaxis.max = to;
+
+        this.chart.destroy();
+        this.createChart();
         this.renderChart();
     }
 });
