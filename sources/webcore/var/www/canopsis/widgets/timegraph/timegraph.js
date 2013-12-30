@@ -34,6 +34,8 @@ Ext.define('widgets.timegraph.timegraph', {
 	setChartOptions: function() {
 		this.callParent(arguments);
 
+		var now = Ext.Date.now();
+
 		this.options.xaxes.push({
 			position: 'bottom',
 			mode: 'time',
@@ -56,14 +58,39 @@ Ext.define('widgets.timegraph.timegraph', {
 
 		if(this.timeNav) {
 			/* copy options, but override some */
-			this.options_overview = Ext.clone(this.options);
+			this.options_overview = {
+				crosshair: {
+					mode: 'x'
+				},
 
-			this.options_overview.xaxis.show = false;
-			this.options_overview.xaxis.min = now - this.timeNav_window * 1000;
-			this.options_overview.xaxis.max = now;
+				selection: {
+					mode: 'x'
+				},
 
-			this.options_overview.yaxis.show = false;
-			this.options_overview.legend.show = false;
+				grid: {
+					borderWidth: {
+						top: 0,
+						bottom: 0,
+						right: 0,
+						left: 0
+					},
+					hoverable: true,
+					clickable: true
+				},
+
+				xaxis: {
+					min: now - this.timeNav_window * 1000,
+					max: now,
+					show: false
+				},
+				yaxis: {
+					show: false
+				},
+
+				legend: {
+					show: false
+				}
+			};
 		}
 	},
 
@@ -72,15 +99,18 @@ Ext.define('widgets.timegraph.timegraph', {
 
 		/* initialize time navigation parameters if needed */
 		if(this.timeNav) {
+			var overview_h = this.getHeight() / 5;
+
 			// NB: this.plotcontainer doesn't exist yet.
 			var plotcontainer = $('#' + this.wcontainerId);
+			plotcontainer.nextAll().remove();
 
 			this.plotoverview = $('<div/>');
-			this.plotoverview.width(this.getWidth());
-			this.plotoverview.height(100);
+			this.plotoverview.width(this.wcontainer.getWidth());
+			this.plotoverview.height(overview_h);
 
 			this.plotoverview.attr('class', plotcontainer.attr('class'));
-			plotcontainer.height(this.getHeight() - 100);
+			plotcontainer.height(this.getHeight() - overview_h);
 
 			plotcontainer.after(this.plotoverview);
 		}
@@ -96,8 +126,11 @@ Ext.define('widgets.timegraph.timegraph', {
 			this.plotcontainer.bind('plotselected', function(event, ranges) {
 				void(event);
 
-				me.options.xaxis.min = ranges.from;
-				me.options.xaxis.max = ranges.to;
+				console.log("Selected Range: " + ranges.xaxis.from + ' -> ' + ranges.xaxis.to);
+
+				me.chart.getOptions().xaxes[0].min = ranges.xaxis.from;
+				me.chart.getOptions().xaxes[0].max = ranges.xaxis.to;
+				me.chart.clearSelection(true);
 
 				me.chart.setupGrid();
 				me.chart.draw();
@@ -117,14 +150,16 @@ Ext.define('widgets.timegraph.timegraph', {
 	renderChart: function() {
 		/* update container size before rendering */
 		if(this.timeNav) {
-			this.plotcontainer.height(this.getHeight() - 100);
+			var overview_h = this.getHeight() / 5;
+
+			this.plotcontainer.height(this.getHeight() - overview_h);
 		}
 
 		this.callParent(arguments);
 
 		/* now render overview chart */
 		if(this.timeNav) {
-			this.chart_overview.setData(this.getSeriesConf());
+			this.chart_overview.setData(Ext.clone(this.getSeriesConf()));
 			this.chart_overview.setupGrid();
 			this.chart_overview.draw();
 		}
@@ -182,6 +217,16 @@ Ext.define('widgets.timegraph.timegraph', {
 			from = now - this.timeNav_window * 1000;
 		}
 
-		this.callParent(arguments);
+		this.refreshNodes(from, to);
+	},
+
+	dblclick: function() {
+		log.debug('Zoom Out', this.logAuthor);
+
+		this.chart.getOptions().xaxes[0].min = this.chart.getOptions().xaxis.min;
+		this.chart.getOptions().xaxes[0].max = this.chart.getOptions().xaxis.max;
+
+		this.chart.setupGrid();
+		this.chart.draw();
 	}
 });

@@ -35,8 +35,13 @@ Ext.define('canopsis.lib.view.cwidgetGraph', {
 
 		this.chart = undefined;
 
-		this.on('boxready', this.createChart, this);
-		this.on('resize', this.renderChart, this);
+		this.on('boxready', function() {
+			this.createChart();
+		}, this);
+
+		this.on('resize', function() {
+			this.renderChart();
+		}, this);
 	},
 
 	afterContainerRender: function() {
@@ -48,7 +53,6 @@ Ext.define('canopsis.lib.view.cwidgetGraph', {
 	},
 
 	setChartOptions: function() {
-		var me = this;
 		var now = Ext.Date.now();
 
 		this.options = {
@@ -190,6 +194,7 @@ Ext.define('canopsis.lib.view.cwidgetGraph', {
 		}
 
 		this.destroyChart();
+		this.setChartOptions();
 		this.createChart();
 		this.renderChart();
 	}
