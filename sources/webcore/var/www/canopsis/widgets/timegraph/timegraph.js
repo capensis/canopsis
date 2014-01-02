@@ -61,8 +61,11 @@ Ext.define('widgets.timegraph.timegraph', {
 
 			this.options.tooltipOpts = {};
 			this.options.tooltipOpts.content = "<b>%x<br/>%s :</b> %y";
-
 		}
+
+		this.options.legend = {
+			hideable: true
+		};
 
 		if(this.timeNav) {
 			/* copy options, but override some */
@@ -96,6 +99,7 @@ Ext.define('widgets.timegraph.timegraph', {
 				},
 
 				legend: {
+					hideable: true,
 					show: false
 				}
 			};
