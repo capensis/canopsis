@@ -55,6 +55,17 @@
 							"value": 604800
 						}
 					]
+				},{
+					"xtype": "cfieldset",
+					"title": "Tooltip",
+					"items": [
+						{
+							"xtype": "checkbox",
+							"fieldLabel": "Enable Tooltip",
+							"checked": true,
+							"name": "tooltip"
+						}
+					]
 				}
 			]
 		},{

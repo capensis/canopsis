@@ -56,6 +56,14 @@ Ext.define('widgets.timegraph.timegraph', {
 			}
 		};
 
+		if(this.tooltip) {
+			this.options.tooltip = this.tooltip;
+
+			this.options.tooltipOpts = {};
+			this.options.tooltipOpts.content = "<b>%x<br/>%s :</b> %y";
+
+		}
+
 		if(this.timeNav) {
 			/* copy options, but override some */
 			this.options_overview = {
