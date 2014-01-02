@@ -13,25 +13,14 @@ function build(){
 	fi
 	cd  $NAME
 
-	echo "   + Clean ..."
-	make clean 1>> $LOG 2>> $LOG
-	#check_code $?
-
-	echo "   + Autoreconf ..."
-	autoreconf -i 1>> $LOG 2>> $LOG
-	check_code $? 'Impossible to autoreconf'
-	echo "   + Configure ..."
-	./configure --prefix=$PREFIX 1>> $LOG 2>> $LOG
-	check_code $? 'Impossible to configure'
-
-	echo "   + Build ..."
-	make 1>> $LOG 2>> $LOG
-	check_code $? 'Impossible to make'
+	echo "   + python setup.py build"
+	python setup.py build 1>> $LOG 2>> $LOG
+	check_code $? 'Impossible to build'
 }
 
 function install(){
 	cd $SRC_PATH/externals/$NAME
 
-	make install 1>> $LOG 2>> $LOG
+	python setup.py install 1>> $LOG 2>> $LOG
 	check_code $? 'Impossible to install'
 }
