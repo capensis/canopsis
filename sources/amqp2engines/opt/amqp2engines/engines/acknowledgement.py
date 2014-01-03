@@ -59,7 +59,6 @@ class engine(cengine):
 					'rk': rk,
 					'author': event['author'],
 					'comment': event['output']
-
 				}},
 				upsert = True,
 				full_response = True,
@@ -103,7 +102,11 @@ class engine(cengine):
 			solvedts = int(time.time())
 
 			response = self.stbackend.find_and_modify(
-				query = {'rk': event['rk'], 'solved': False},
+				query = {
+					'rk': event['rk'],
+					'solved': False,
+					'ackts': {'$gt': -1}
+				},
 				update = {'$set': {
 					'solved': True,
 					'solvedts': solvedts
