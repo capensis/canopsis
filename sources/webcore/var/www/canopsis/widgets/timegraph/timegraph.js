@@ -42,11 +42,23 @@ Ext.define('widgets.timegraph.timegraph', {
 			timeformat: '%d %b - %H:%M:%S'
 		});
 
+		if( !this.displayVerticalLines)
+		{
+			this.options.xaxis.tickLength = 0;
+		}
+
+		if( !this.displayHorizontalLines)
+		{
+			this.options.yaxis.tickLength = 0;
+		}
+
 		this.options.series = {
+			shadowSize :0,
 			stack: this.stacked_graph,
 			lines: {
 				show: (this.SeriesType === 'area' || this.SeriesType === 'line'),
-				fill: (this.SeriesType === 'area')
+				fill: (this.SeriesType === 'area'),
+				lineWidth: this.lineWidth
 			},
 			points: {
 				show: false
@@ -92,10 +104,10 @@ Ext.define('widgets.timegraph.timegraph', {
 				xaxis: {
 					min: now - this.timeNav_window * 1000,
 					max: now,
-					show: false
+					show: false,
 				},
 				yaxis: {
-					show: false
+					show: false,
 				},
 
 				legend: {
