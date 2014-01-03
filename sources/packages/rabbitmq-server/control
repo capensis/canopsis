@@ -1,7 +1,7 @@
 #!/bin/bash
 
 NAME="rabbitmq-server"
-VERSION=2.8.6
+VERSION=3.2.2
 RELEASE=2
 DESCRIPTION=""
 REQUIRES="canohome erlang"

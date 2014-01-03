@@ -21,42 +21,52 @@ function post_install(){
 	launch_cmd 1 service rabbitmq-server start
 
 	echo -n "Safe wait ..."
-
-	STATE=1
+	
+	STATE=0
 	TRY=0
-	while [ $STATE -ne 0 ]; do
+	while [ $STATE -eq 0 ]; do
 	    if [ $TRY -eq 30 ]; then
 	        break
 	    fi
 	    sleep 1
-	    launch_cmd 0 "rabbitmqadmin -H 127.0.0.1 list nodes" &> /dev/null
-	    STATE=$?
+	    STATE=`su - canopsis -c "service rabbitmq-server status | grep RUNNING | wc -l"`
 	    TRY=$((TRY + 1))
 	    echo -n "."
 	done
 	echo
-	check_code $STATE "Failed to join API ..."
+	
+	if [ $STATE -eq 0 ]
+	then
+		check_code 1 "Failed to test rabbit service ..."
+	fi
 	sleep 1
 
 	CODE=0
-	echo " + Declare Admin user ..."
-	$PREFIX/bin/rabbitmqadmin -H 127.0.0.1 declare user name=admin password=admin tags=administrator
-	RCODE=$?
-	if [ $RCODE -ne 0 ]; then CODE=$RCODE; fi
+	VHOST_EXISTS=`su - canopsis -c "rabbitmqctl list_vhosts | grep canopsis | wc -l"`
+	# Is this a first install or an update
+	if [ $VHOST_EXISTS -ne 1 ]
+	then
+		
+		echo " + Declare Admin user ..."
+		su - canopsis -c "$PREFIX/bin/rabbitmqctl add_user admin admin"
+		RCODE=$?
+		if [ $RCODE -ne 0 ]; then CODE=$RCODE; fi
+		echo $CODE	
+		su - canopsis -c "$PREFIX/bin/rabbitmqctl set_user_tags admin administrator"
+		RCODE=$?
+		if [ $RCODE -ne 0 ]; then CODE=$RCODE; fi
+		
+		echo " + Declare vhost ..."
+		su - canopsis -c "$PREFIX/bin/rabbitmqctl add_vhost canopsis"
+		RCODE=$?
+		if [ $RCODE -ne 0 ]; then CODE=$RCODE; fi
 
-	echo " + Declare vhost ..."
-	$PREFIX/bin/rabbitmqadmin -H 127.0.0.1 declare vhost name=canopsis
-	RCODE=$?
-	if [ $RCODE -ne 0 ]; then CODE=$RCODE; fi
-
-	echo " + Declare permissions for guest user ..."
-	$PREFIX/bin/rabbitmqadmin -H 127.0.0.1 -V canopsis declare permission vhost=canopsis user=guest configure=".*" write=".*" read=".*"
-	RCODE=$?
-	if [ $RCODE -ne 0 ]; then CODE=$RCODE; fi
-
-	#echo " + Remove old queues ..."
-	#$PREFIX/bin/rabbitmqadmin -H 127.0.0.1 --vhost=canopsis --username=guest --password=guest delete queue name="amqp2engines" &> /dev/null
-	#$PREFIX/bin/rabbitmqadmin -H 127.0.0.1 --vhost=canopsis --username=guest --password=guest delete queue name="amqp2engines_alerts" &> /dev/null
+		echo " + Declare permissions for guest user ..."
+		su - canopsis -c "$PREFIX/bin/rabbitmqctl set_permissions -p canopsis guest \".*\" \".*\" \".*\""
+		RCODE=$?
+		echo $CODE	
+		if [ $RCODE -ne 0 ]; then CODE=$RCODE; fi
+	fi
 
 	launch_cmd 1 service rabbitmq-server stop
 
