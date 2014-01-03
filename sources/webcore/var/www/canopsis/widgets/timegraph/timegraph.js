@@ -146,6 +146,7 @@ Ext.define('widgets.timegraph.timegraph', {
 
 				me.chart.setupGrid();
 				me.chart.draw();
+				me.chart.autoScale();
 
 				me.chart_overview.setSelection(ranges, true);
 
@@ -240,5 +241,6 @@ Ext.define('widgets.timegraph.timegraph', {
 
 		this.chart.setupGrid();
 		this.chart.draw();
+		this.chart.autoScale();
 	}
 });
