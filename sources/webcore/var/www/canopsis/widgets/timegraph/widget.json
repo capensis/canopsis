@@ -53,6 +53,12 @@
 							"fieldLabel": "History time window",
 							"name": "timeNav_window",
 							"value": 604800
+						},{
+								"xtype" : "numberfield",
+								"name" : "lineWidth",
+								"fieldLabel": "Line Width",
+								"minValue": 1,
+								"value": 1
 						}
 					]
 				},{
@@ -64,6 +70,28 @@
 							"fieldLabel": "Enable Tooltip",
 							"checked": true,
 							"name": "tooltip"
+						}
+					]
+				}
+			]
+		},{
+			"title": "Style",
+			"advanced": true,
+			"items": [{
+					"xtype": "cfieldset",
+					"title": "Grid",
+					"items": [
+						{
+							"xtype": "checkbox",
+							"name": "displayVerticalLines",
+							"fieldLabel": "Display vertical lines",
+							"value": false
+						},
+						{
+							"xtype": "checkbox",
+							"name": "displayHorizontalLines",
+							"fieldLabel": "Display horizontal lines",
+							"value": true
 						}
 					]
 				}
