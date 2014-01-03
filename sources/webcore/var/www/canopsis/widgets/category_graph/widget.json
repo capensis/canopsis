@@ -1,0 +1,198 @@
+[{
+	"name":  "Category graph",
+	"version": 0.1,
+	"author": "capensis",
+	"website": "http://www.canopsis.org",
+	"xtype": "category_graph",
+	"description": "Compare values in a pie or a categorized bar graph.",
+	"description-fr": "Comparer des valeurs dans un camembert ou un histogramme catégorisé..",
+	"refreshInterval": 300,
+	"locales": ["en", "fr"],
+	"options": [
+		{
+			"title": "Options",
+			"items": [
+				{
+					"xtype": "cfieldset",
+					"title": "Default graph options",
+					"items": [
+						{
+							"xtype": "combobox",
+							"fieldLabel": "Graph Type",
+							"name": "graph_type",
+							"queryMode": "local",
+							"displayField": "text",
+							"valueField": "value",
+							"value": "pie",
+							"store": {
+								"xtype": "store",
+								"fields": ["value", "text"],
+								"data": [
+									{"value": "pie", "text": "Pie"},
+									{"value": "column", "text": "Bar"}
+								]
+							}
+						},{
+							"xtype": "cduration",
+							"fieldLabel": "Time window offset",
+							"name": "time_window_offset",
+							"value": 0
+						},{
+							"xtype": "checkbox",
+							"fieldLabel": "History navigation",
+							"name": "timeNav",
+							"checked": false
+						},{
+							"xtype": "cduration",
+							"fieldLabel": "History time window",
+							"name": "timeNav_window",
+							"value": 604800
+						}
+					]
+				},{
+					"xtype": "cfieldset",
+					"title": "Tooltip",
+					"items": [
+						{
+							"xtype": "checkbox",
+							"fieldLabel": "Enable Tooltip",
+							"checked": true,
+							"name": "tooltip"
+						}
+					]
+				},{
+					"xtype": "cfieldset",
+					"title": "Bar graph specific options",
+					"items": [
+						{
+							"xtype": "checkbox",
+							"fieldLabel": "Vertical display (rotate graph)",
+							"checked": false,
+							"name": "vertical_display"
+						},{
+							"xtype": "checkbox",
+							"fieldLabel": "Stacked",
+							"name": "stacked_graph",
+							"checked": false
+						}
+					]
+				},{
+					"xtype": "cfieldset",
+					"title": "Pie specific options",
+					"collapsible": false,
+					"items": [
+						{
+							"xtype" : "numberfield",
+							"name" : "pie_size",
+							"fieldLabel": "Pie Size %",
+							"value": 50,
+							"minValue": 1,
+							"maxValue": 100
+						},{
+							"xtype" : "textfield",
+							"name" : "other_label",
+							"fieldLabel": "Other label",
+							"value": "Free"
+						},{
+							"xtype" : "numberfield",
+							"name" : "max",
+							"fieldLabel": "Total (by default use 'max' field of perfdata)"
+						},{
+							"xtype" : "numberfield",
+							"name" : "innerRadius",
+							"fieldLabel": "Donut hole",
+							"value": "0"
+						},
+						{
+							"xtype" : "numberfield",
+							"name" : "tilt",
+							"fieldLabel": "Tilt",
+							"value": "1"
+						}
+					]
+				}
+			]
+		},{
+			"title": "Choose Metrics",
+			"items": [
+				{
+					"xtype": "cmetric",
+					"name": "nodes",
+					"multiSelect": true,
+					"metrics": true,
+					"sharedStore": "category_graph",
+					"additional_field": [
+						"label",
+						"curve_type",
+						"curve_color",
+						"area_color",
+						"trend_curve",
+						"u",
+						"yAxis"
+					]
+				}
+			]
+		},{
+			"title": "Aggregation",
+			"advanced": true,
+			"items": [
+				{
+					"xtype": "cfieldset",
+					"title": "Aggregation",
+					"items": [
+						{
+							"xtype": "combobox",
+							"name": "aggregate_method",
+							"fieldLabel": "Aggregation Method",
+							"queryMode": "local",
+							"displayField": "text",
+							"valueField": "value",
+							"value": "LAST",
+							"store": {
+								"xtype": "store",
+								"fields": ["value", "text"],
+								"data" : [
+									{"value": "MAX", "text": "Max"},
+									{"value": "MIN", "text": "Min"},
+									{"value": "LAST", "text": "Last"},
+									{"value": "FIRST", "text": "First"},
+									{"value": "DELTA", "text": "Delta"},
+									{"value": "MEAN", "text": "Mean"},
+									{"value": "SUM", "text": "Sum"}
+								]
+							}
+						}
+					]
+				}
+			]
+		},{
+			"title": "Customize Metrics",
+			"advanced": true,
+			"items": [
+				{
+					"xtype": "ccustom",
+					"sharedStore": "category_graph",
+					"customForm": [
+						{
+							"xtype": "textfield",
+							"fieldLabel": "Custom Label",
+							"name": "label",
+							"emptyText": "Type custom label here..."
+						}, {
+							"xtype": "ccolorfield",
+							"fieldLabel": "Curve color",
+							"name": "curve_color",
+							"replaceWhiteColor": true
+						}, {
+							"xtype": "textfield",
+							"fieldLabel": "Category",
+							"name": "category",
+							"emptyText": "Type category name here"
+						}
+					]
+				}
+			]
+		}
+	]
+}]
+

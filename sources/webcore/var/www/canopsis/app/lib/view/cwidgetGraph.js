@@ -1,6 +1,6 @@
 //need:app/lib/view/cperfstoreValueConsumerWidget.js
 /*
- * Copyright (c) 2011 "Capensis" [http://www.capensis.com]
+ * Copyright (c) 2013 "Capensis" [http://www.capensis.com]
  *
  * This file is part of Canopsis.
  *
@@ -59,36 +59,6 @@ Ext.define('canopsis.lib.view.cwidgetGraph', {
 			cwidget: function() {
 				return me;
 			},
-
-			crosshair: {
-				mode: 'x'
-			},
-
-			selection: {
-				mode: 'x'
-			},
-
-			grid: {
-				borderWidth: {
-					top: 0,
-					bottom: 0,
-					right: 0,
-					left: 0
-				},
-				hoverable: true,
-				clickable: true
-			},
-
-			xaxis: {
-				min: now - this.time_window * 1000,
-				max: now
-			},
-			yaxis: {},
-
-			xaxes: [],
-			yaxes: [],
-
-			legend: {}
 		};
 	},
 
@@ -135,6 +105,7 @@ Ext.define('canopsis.lib.view.cwidgetGraph', {
 			last_timestamp: -1,
 			xaxis: 1,
 			yaxis: node.yAxis,
+			color: node.curve_color? node.curve_color : undefined
 		};
 
 		return serie;
@@ -184,18 +155,17 @@ Ext.define('canopsis.lib.view.cwidgetGraph', {
 			}
 		}
 
-		if(this.reportMode || this.exportMode) {
-			this.options.xaxis.min = from;
-			this.options.xaxis.max = to;
-		}
-		else {
-			this.options.xaxis.min = to - (this.time_window + this.time_window_offset) * 1000;
-			this.options.xaxis.max = to - this.time_window_offset * 1000;
-		}
+		this.updateAxis(from, to);
 
 		this.destroyChart();
 		this.setChartOptions();
 		this.createChart();
 		this.renderChart();
+	},
+
+	updateAxis: function(from, to) {
+		void(from);
+		void(to);
 	}
+
 });
