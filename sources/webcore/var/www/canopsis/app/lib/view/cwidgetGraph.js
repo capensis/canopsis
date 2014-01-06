@@ -129,6 +129,7 @@ Ext.define('canopsis.lib.view.cwidgetGraph', {
 
 		log.debug('Received data:');
 		log.dump(data);
+		this.series = {};
 
 		if(data.length > 0) {
 			for(var i = 0; i < data.length; i++) {
