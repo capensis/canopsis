@@ -229,6 +229,26 @@
 							"fieldLabel": "Area color",
 							"name": "area_color",
 							"replaceWhiteColor": true
+						},{
+							"xtype": "combobox",
+							"fieldLabel": "Point shape",
+							"name": "point_shape",
+							"queryMode": "local",
+							"displayField": "text",
+							"valueField": "value",
+							"value": "default",
+							"store": {
+								"xtype": "store",
+								"fields": ["value", "text"],
+								"data": [
+									{"value": "undefined", "text": "Point"},
+									{"value": "circle",    "text": "Circle"},
+									{"value": "square",    "text": "Square"},
+									{"value": "diamond",    "text": "Diamond"},
+									{"value": "triangle",    "text": "Triangle"},
+									{"value": "cross",    "text": "Cross"}
+								]
+							}
 						}
 					]
 				}

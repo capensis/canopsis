@@ -18,14 +18,53 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-Ext.define('widgets.timegraph.timegraph', {
+Ext.define('widgets.timegraph.category_graph', {
 	extend: 'canopsis.lib.view.cwidgetGraph',
-	alias: 'widget.timegraph',
+	alias: 'widget.category_graph',
 
-	logAuthor: '[widgets][timegraph]',
+	logAuthor: '[widgets][category_graph]',
 
 	timeNav: false,
 	timeNav_window: global.commonTs.week,
+
+	graph_type: 'pie',
+	aggregate_max_points: 1,
+	aggregate_method: 'LAST',
+	aggregate_round_time: true,
+
+	//Default Options
+	max: undefined,
+
+	// Layout options
+	other_label: 'Free',
+
+	// pie specific options
+	pie_size: 60,
+	innerRadius: 0,
+
+	// Bar specific options
+	stacked_graph: false,
+	vertical_display: false,
+
+	backgroundColor: '#FFFFFF',
+	borderColor: '#FFFFFF',
+	borderWidth: 0,
+	title_fontSize: 15,
+
+	legend_verticalAlign: 'bottom',
+	legend_align: 'center',
+	legend_layout: 'horizontal',
+	legend_backgroundColor: null,
+	legend_borderColor: '#909090',
+	legend_borderWidth: 1,
+	legend_fontSize: 12,
+	legend_fontColor: '#3E576F',
+
+	labels: false,
+	gradientColor: false,
+	pctInLabel: false,
+
+	tooltip: true,
 
 	initComponent: function() {
 		this.callParent(arguments);
@@ -34,87 +73,39 @@ Ext.define('widgets.timegraph.timegraph', {
 	setChartOptions: function() {
 		this.callParent(arguments);
 
-		var now = Ext.Date.now();
-
 		$.extend(this.options,
 			{
-
-				zoom: {
-					interactive: true
-				},
-
-				selection: {
-					mode: 'x'
-				},
-
-				crosshair: {
-					mode: 'x'
-				},
-
-				grid: {
-					borderWidth: {
-						top: 0,
-						bottom: 0,
-						right: 0,
-						left: 0
+				series: {
+				//stack: this.stacked_graph,
+					pie: {
+						show: (this.graph_type === 'pie'),
+						innerRadius: this.innerRadius,
+						label: {
+							show: this.labels,
+						},
+						tilt: this.tilt,
 					},
+					bars: {
+						show: (this.graph_type === 'column')
+					},
+					stack: this.stacked_graph
+				},
+				grid: {
 					hoverable: true,
-					clickable: true
+					clickable: true,
 				},
-
-				xaxis: {
-					min: now - this.time_window * 1000,
-					max: now
-				},
-
-				xaxes: [
-					{
-						position: 'bottom',
-						mode: 'time',
-						timeformat: '%d %b - %H:%M:%S'
-					}
-				],
-
-				yaxes: [],
-
 				legend: {
 					hideable: true
 				},
-
-				series: {
-					shadowSize: 0,
-					stack: this.stacked_graph,
-					lines: {
-						show: (this.SeriesType === 'area' || this.SeriesType === 'line'),
-						fill: (this.SeriesType === 'area'),
-						lineWidth: this.lineWidth
-					},
-					points: {
-						show: false
-					},
-					bars: {
-						show: (this.SeriesType === 'bars')
-					}
+				xaxis: {
+					show: false
+				},
+				yaxis: {
+					min: 0,
+					show: (this.graph_type === 'column')
 				}
 			}
 		);
-
-		if( !this.displayVerticalLines)
-		{
-			this.options.xaxis.tickLength = 0;
-		}
-
-		if( !this.displayHorizontalLines)
-		{
-			this.options.yaxis.tickLength = 0;
-		}
-
-		if(this.tooltip) {
-			this.options.tooltip = this.tooltip;
-
-			this.options.tooltipOpts = {};
-			this.options.tooltipOpts.content = "<b>%x<br/>%s :</b> %y";
-		}
 
 		if(this.timeNav) {
 			/* copy options, but override some */
@@ -141,11 +132,11 @@ Ext.define('widgets.timegraph.timegraph', {
 				xaxis: {
 					min: now - this.timeNav_window * 1000,
 					max: now,
-					show: false,
+					show: false
 				},
 
 				yaxis: {
-					show: false,
+					show: false
 				},
 
 				legend: {
@@ -158,16 +149,13 @@ Ext.define('widgets.timegraph.timegraph', {
 	createChart: function() {
 		var me = this;
 
-		this.legendContainer = $('<div/>');
-
-		// NB: this.plotcontainer doesn't exist yet.
-		var plotcontainer = $('#' + this.wcontainerId);
-		plotcontainer.nextAll().remove();
-
 		/* initialize time navigation parameters if needed */
 		if(this.timeNav) {
 			var overview_h = this.getHeight() / 5;
 
+			// NB: this.plotcontainer doesn't exist yet.
+			var plotcontainer = $('#' + this.wcontainerId);
+			plotcontainer.nextAll().remove();
 
 			this.plotoverview = $('<div/>');
 			this.plotoverview.width(this.wcontainer.getWidth());
@@ -177,13 +165,7 @@ Ext.define('widgets.timegraph.timegraph', {
 			plotcontainer.height(this.getHeight() - overview_h);
 
 			plotcontainer.after(this.plotoverview);
-			this.plotoverview.after(this.legendContainer);
 		}
-		else
-			plotcontainer.after(this.legendContainer);
-
-		this.options.legend.container = this.legendContainer;
-		this.options.legend.noColumns = 99;
 
 		/* create chart with modified plotcontainer */
 		this.callParent(arguments);
@@ -204,9 +186,9 @@ Ext.define('widgets.timegraph.timegraph', {
 
 				me.chart.setupGrid();
 				me.chart.draw();
-				me.chart.autoScale();
 
 				me.chart_overview.setSelection(ranges, true);
+
 			});
 
 			this.plotoverview.bind('plotselected', function(event, ranges) {
@@ -215,7 +197,6 @@ Ext.define('widgets.timegraph.timegraph', {
 				me.chart.setSelection(ranges);
 			});
 		}
-
 	},
 
 	renderChart: function() {
@@ -223,7 +204,7 @@ Ext.define('widgets.timegraph.timegraph', {
 		if(this.timeNav) {
 			var overview_h = this.getHeight() / 5;
 
-			this.plotcontainer.height(this.getHeight() - overview_h - this.legendContainer.height());
+			this.plotcontainer.height(this.getHeight() - overview_h);
 		}
 
 		this.callParent(arguments);
@@ -248,39 +229,13 @@ Ext.define('widgets.timegraph.timegraph', {
 		var serie = this.callParent(arguments);
 		var node = serie.node;
 
-		var curve_type = this.SeriesType;
-
-		if(node.curve_type && node.curve_type !== 'default') {
-			curve_type = node.curve_type;
-		}
-
-		serie.lines = {
-			show: (curve_type === 'area' || curve_type === 'line'),
-			fill: (curve_type === 'area'),
-			points: {
-				symbol: node.point_shape? node.point_shape : undefined,
-			}
-		};
-
-		serie.bars = {
-			show: (curve_type === 'bars')
-		};
-
 		return serie;
 	},
 
 	addPoint: function(serieId, value) {
-		this.series[serieId].data.push([value[0] * 1000, value[1]]);
-		this.series[serieId].last_timestamp = value[0] * 1000;
-	},
-
-	shiftSerie: function(serieId) {
-		var now = Ext.Date.now();
-		var timestamp = now - this.timeNav_window * 1000;
-
-		while(this.series[serieId].data[0][0] < timestamp) {
-			this.series[serieId].data.shift();
-		}
+		var serie = this.series[serieId];
+		serie.data = this.graph_type=='pie'? value[1] : [[0, value[1]]];
+		serie.last_timestamp = value[0] * 1000;
 	},
 
 	doRefresh: function(from, to) {
@@ -302,19 +257,5 @@ Ext.define('widgets.timegraph.timegraph', {
 
 		this.chart.setupGrid();
 		this.chart.draw();
-		this.chart.autoScale();
-	},
-
-	updateAxis: function(from, to) {
-		if(this.reportMode || this.exportMode) {
-			this.updateAxis();
-			this.options.xaxis.min = from;
-			this.options.xaxis.max = to;
-		}
-		else {
-			this.options.xaxis.min = to - (this.time_window + this.time_window_offset) * 1000;
-			this.options.xaxis.max = to - this.time_window_offset * 1000;
-		}
 	}
-
 });
