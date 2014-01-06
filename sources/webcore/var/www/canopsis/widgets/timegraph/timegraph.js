@@ -121,13 +121,16 @@ Ext.define('widgets.timegraph.timegraph', {
 	createChart: function() {
 		var me = this;
 
+		this.legendContainer = $('<div/>');
+
+		// NB: this.plotcontainer doesn't exist yet.
+		var plotcontainer = $('#' + this.wcontainerId);
+		plotcontainer.nextAll().remove();
+
 		/* initialize time navigation parameters if needed */
 		if(this.timeNav) {
 			var overview_h = this.getHeight() / 5;
 
-			// NB: this.plotcontainer doesn't exist yet.
-			var plotcontainer = $('#' + this.wcontainerId);
-			plotcontainer.nextAll().remove();
 
 			this.plotoverview = $('<div/>');
 			this.plotoverview.width(this.wcontainer.getWidth());
@@ -137,7 +140,13 @@ Ext.define('widgets.timegraph.timegraph', {
 			plotcontainer.height(this.getHeight() - overview_h);
 
 			plotcontainer.after(this.plotoverview);
+			this.plotoverview.after(this.legendContainer);
 		}
+		else
+			plotcontainer.after(this.legendContainer);
+
+		this.options.legend.container = this.legendContainer;
+		this.options.legend.noColumns = 99;
 
 		/* create chart with modified plotcontainer */
 		this.callParent(arguments);
@@ -161,7 +170,6 @@ Ext.define('widgets.timegraph.timegraph', {
 				me.chart.autoScale();
 
 				me.chart_overview.setSelection(ranges, true);
-
 			});
 
 			this.plotoverview.bind('plotselected', function(event, ranges) {
@@ -177,7 +185,7 @@ Ext.define('widgets.timegraph.timegraph', {
 		if(this.timeNav) {
 			var overview_h = this.getHeight() / 5;
 
-			this.plotcontainer.height(this.getHeight() - overview_h);
+			this.plotcontainer.height(this.getHeight() - overview_h - this.legendContainer.height());
 		}
 
 		this.callParent(arguments);
