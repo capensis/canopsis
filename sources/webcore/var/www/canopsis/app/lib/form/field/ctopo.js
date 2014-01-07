@@ -475,7 +475,7 @@ Ext.define('canopsis.lib.form.field.ctopo' , {
 			nodeEl.getEl().on('dblclick', function() {
 				log.debug('Destroy node ' + nodeEl._id, me.logAuthor);
 
-				if(me.rootNode !== nodeEl.id) {
+				if(me.rootNode !== nodeEl.id && !nodeEl.notRemovable) {
 					var connections_out = me.jsPlumbInstance.getConnections({
 						source: nodeEl.id
 					});
