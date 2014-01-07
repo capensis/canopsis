@@ -106,6 +106,9 @@ Ext.define('widgets.timegraph.timegraph', {
 
 		if( !this.displayHorizontalLines)
 		{
+			if(this.options.yaxis === undefined)
+				this.options.yaxis = {};
+
 			this.options.yaxis.tickLength = 0;
 		}
 
@@ -158,7 +161,7 @@ Ext.define('widgets.timegraph.timegraph', {
 	createChart: function() {
 		var me = this;
 
-		this.legendContainer = $('<div/>');
+		this.legendContainer = $('<div class="flotchart legend"/>');
 
 		// NB: this.plotcontainer doesn't exist yet.
 		var plotcontainer = $('#' + this.wcontainerId);
@@ -168,13 +171,10 @@ Ext.define('widgets.timegraph.timegraph', {
 		if(this.timeNav) {
 			var overview_h = this.getHeight() / 5;
 
-
 			this.plotoverview = $('<div/>');
-			this.plotoverview.width(this.wcontainer.getWidth());
 			this.plotoverview.height(overview_h);
 
 			this.plotoverview.attr('class', plotcontainer.attr('class'));
-			plotcontainer.height(this.getHeight() - overview_h);
 
 			plotcontainer.after(this.plotoverview);
 			this.plotoverview.after(this.legendContainer);
@@ -183,7 +183,9 @@ Ext.define('widgets.timegraph.timegraph', {
 			plotcontainer.after(this.legendContainer);
 
 		this.options.legend.container = this.legendContainer;
-		this.options.legend.noColumns = 99;
+
+		if(this.legend_layout === "horizontal")
+			this.options.legend.noColumns = 99;
 
 		/* create chart with modified plotcontainer */
 		this.callParent(arguments);
@@ -219,12 +221,6 @@ Ext.define('widgets.timegraph.timegraph', {
 	},
 
 	renderChart: function() {
-		/* update container size before rendering */
-		if(this.timeNav) {
-			var overview_h = this.getHeight() / 5;
-
-			this.plotcontainer.height(this.getHeight() - overview_h - this.legendContainer.height());
-		}
 
 		this.callParent(arguments);
 
@@ -234,6 +230,10 @@ Ext.define('widgets.timegraph.timegraph', {
 			this.chart_overview.setupGrid();
 			this.chart_overview.draw();
 		}
+
+		this.chart.recomputePositions(this);
+		this.chart.setupGrid();
+		this.chart.draw();
 	},
 
 	destroyChart: function() {
