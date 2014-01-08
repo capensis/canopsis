@@ -32,6 +32,7 @@ Ext.define('widgets.timegraph.timegraph', {
 	},
 
 	setChartOptions: function() {
+		console.log("timegraph setChartOptions");
 		this.callParent(arguments);
 
 		var now = Ext.Date.now();
@@ -118,44 +119,11 @@ Ext.define('widgets.timegraph.timegraph', {
 			this.options.tooltipOpts = {};
 			this.options.tooltipOpts.content = "<b>%x<br/>%s :</b> %y";
 		}
+	},
 
-		if(this.timeNav) {
-			/* copy options, but override some */
-			this.options_overview = {
-				crosshair: {
-					mode: 'x'
-				},
-
-				selection: {
-					mode: 'x'
-				},
-
-				grid: {
-					borderWidth: {
-						top: 0,
-						bottom: 0,
-						right: 0,
-						left: 0
-					},
-					hoverable: true,
-					clickable: true
-				},
-
-				xaxis: {
-					min: now - this.timeNav_window * 1000,
-					max: now,
-					show: false,
-				},
-
-				yaxis: {
-					show: false,
-				},
-
-				legend: {
-					show: false
-				}
-			};
-		}
+	insertGraphExtraComponents: function(){
+		/* initialize time navigation parameters if needed */
+		this.plotcontainer.parent().append(this.legendContainer);
 	},
 
 	createChart: function() {
@@ -164,84 +132,29 @@ Ext.define('widgets.timegraph.timegraph', {
 		this.legendContainer = $('<div class="flotchart legend"/>');
 
 		// NB: this.plotcontainer doesn't exist yet.
-		var plotcontainer = $('#' + this.wcontainerId);
-		plotcontainer.nextAll().remove();
-
-		/* initialize time navigation parameters if needed */
-		if(this.timeNav) {
-			var overview_h = this.getHeight() / 5;
-
-			this.plotoverview = $('<div/>');
-			this.plotoverview.height(overview_h);
-
-			this.plotoverview.attr('class', plotcontainer.attr('class'));
-
-			plotcontainer.after(this.plotoverview);
-			this.plotoverview.after(this.legendContainer);
-		}
-		else
-			plotcontainer.after(this.legendContainer);
+		this.plotcontainer = $('#' + this.wcontainerId);
+		this.plotcontainer.nextAll().remove();
 
 		this.options.legend.container = this.legendContainer;
+
+		this.insertGraphExtraComponents();
 
 		if(this.legend_layout === "horizontal")
 			this.options.legend.noColumns = 99;
 
 		/* create chart with modified plotcontainer */
 		this.callParent(arguments);
-
-		/* create the overview chart */
-		if(this.timeNav) {
-			this.chart_overview = $.plot(this.plotoverview, this.getSeriesConf(), this.options_overview);
-
-			/* connect the two charts */
-			this.plotcontainer.bind('plotselected', function(event, ranges) {
-				void(event);
-
-				console.log("Selected Range: " + ranges.xaxis.from + ' -> ' + ranges.xaxis.to);
-
-				me.chart.getOptions().xaxes[0].min = ranges.xaxis.from;
-				me.chart.getOptions().xaxes[0].max = ranges.xaxis.to;
-				me.chart.clearSelection(true);
-
-				me.chart.setupGrid();
-				me.chart.draw();
-				me.chart.autoScale();
-
-				me.chart_overview.setSelection(ranges, true);
-			});
-
-			this.plotoverview.bind('plotselected', function(event, ranges) {
-				void(event);
-
-				me.chart.setSelection(ranges);
-			});
-		}
-
 	},
 
 	renderChart: function() {
-
 		this.callParent(arguments);
 
-		/* now render overview chart */
-		if(this.timeNav) {
-			this.chart_overview.setData(Ext.clone(this.getSeriesConf()));
-			this.chart_overview.setupGrid();
-			this.chart_overview.draw();
-		}
-
-		this.chart.recomputePositions(this);
 		this.chart.setupGrid();
 		this.chart.draw();
 	},
 
 	destroyChart: function() {
 		this.callParent(arguments);
-
-		if(this.timeNav) {
-			this.chart_overview.destroy();
-		}
 	},
 
 	getSerieForNode: function(nodeid) {
@@ -274,23 +187,16 @@ Ext.define('widgets.timegraph.timegraph', {
 		this.series[serieId].last_timestamp = value[0] * 1000;
 	},
 
-	shiftSerie: function(serieId) {
-		var now = Ext.Date.now();
-		var timestamp = now - this.timeNav_window * 1000;
+	// shiftSerie: function(serieId) {
+	// 	var now = Ext.Date.now();
+	// 	var timestamp = now - this.timeNav_window * 1000;
 
-		while(this.series[serieId].data[0][0] < timestamp) {
-			this.series[serieId].data.shift();
-		}
-	},
+	// 	while(this.series[serieId].data[0][0] < timestamp) {
+	// 		this.series[serieId].data.shift();
+	// 	}
+	// },
 
 	doRefresh: function(from, to) {
-		if(this.timeNav) {
-			var now = Ext.Date.now();
-
-			to = now;
-			from = now - this.timeNav_window * 1000;
-		}
-
 		this.refreshNodes(from, to);
 	},
 
