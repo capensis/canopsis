@@ -40,7 +40,8 @@ Ext.define('canopsis.lib.view.cwidgetGraph', {
 		}, this);
 
 		this.on('resize', function() {
-			this.renderChart();
+			if(this.chart !== undefined)
+				this.renderChart();
 		}, this);
 	},
 
@@ -61,6 +62,15 @@ Ext.define('canopsis.lib.view.cwidgetGraph', {
 		this.options.cwidget = function() {
 			return me;
 		};
+	},
+
+	insertGraphExtraComponents: function(){
+		this.legendContainer = $('<div class="flotchart legend"/>');
+		this.options.legend.container = this.legendContainer;
+		this.plotcontainer.parent().append(this.legendContainer);
+
+		if(this.legend_layout === "horizontal")
+			this.options.legend.noColumns = 99;
 	},
 
 	createChart: function() {

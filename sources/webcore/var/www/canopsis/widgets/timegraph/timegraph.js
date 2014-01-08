@@ -122,25 +122,17 @@ Ext.define('widgets.timegraph.timegraph', {
 	},
 
 	insertGraphExtraComponents: function(){
-		/* initialize time navigation parameters if needed */
-		this.plotcontainer.parent().append(this.legendContainer);
+		this.callParent(arguments);
 	},
 
 	createChart: function() {
 		var me = this;
 
-		this.legendContainer = $('<div class="flotchart legend"/>');
-
 		// NB: this.plotcontainer doesn't exist yet.
 		this.plotcontainer = $('#' + this.wcontainerId);
 		this.plotcontainer.nextAll().remove();
 
-		this.options.legend.container = this.legendContainer;
-
 		this.insertGraphExtraComponents();
-
-		if(this.legend_layout === "horizontal")
-			this.options.legend.noColumns = 99;
 
 		/* create chart with modified plotcontainer */
 		this.callParent(arguments);
