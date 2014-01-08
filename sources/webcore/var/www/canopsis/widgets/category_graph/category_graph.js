@@ -33,7 +33,7 @@ Ext.define('widgets.timegraph.category_graph', {
 	aggregate_round_time: true,
 
 	//Default Options
-	max: undefined,
+	max: 0,
 
 	// Layout options
 	other_label: 'Free',
@@ -60,15 +60,11 @@ Ext.define('widgets.timegraph.category_graph', {
 	legend_fontSize: 12,
 	legend_fontColor: '#3E576F',
 
-	labels: false,
+	labels: true,
+	legend: true,
 	gradientColor: false,
 	pctInLabel: false,
-
 	tooltip: true,
-
-	initComponent: function() {
-		this.callParent(arguments);
-	},
 
 	setChartOptions: function() {
 		this.callParent(arguments);
@@ -83,7 +79,7 @@ Ext.define('widgets.timegraph.category_graph', {
 						label: {
 							show: this.labels,
 						},
-						tilt: this.tilt,
+						tilt: this.tilt
 					},
 					bars: {
 						show: (this.graph_type === 'column')
@@ -95,7 +91,8 @@ Ext.define('widgets.timegraph.category_graph', {
 					clickable: true,
 				},
 				legend: {
-					hideable: true
+					hideable: (this.graph_type === 'column'),
+					show: this.legend
 				},
 				xaxis: {
 					show: false
@@ -103,159 +100,37 @@ Ext.define('widgets.timegraph.category_graph', {
 				yaxis: {
 					min: 0,
 					show: (this.graph_type === 'column')
+				},
+				tooltip: this.tooltip,
+				tooltipOpts : {
+					content: "%s: %y"
 				}
 			}
 		);
+	},
 
-		if(this.timeNav) {
-			/* copy options, but override some */
-			this.options_overview = {
-				crosshair: {
-					mode: 'x'
-				},
+	getSeriesConf: function() {
+		var series = this.callParent(arguments);
 
-				selection: {
-					mode: 'x'
-				},
-
-				grid: {
-					borderWidth: {
-						top: 0,
-						bottom: 0,
-						right: 0,
-						left: 0
-					},
-					hoverable: true,
-					clickable: true
-				},
-
-				xaxis: {
-					min: now - this.timeNav_window * 1000,
-					max: now,
-					show: false
-				},
-
-				yaxis: {
-					show: false
-				},
-
-				legend: {
-					show: false
+		if (this.max > 0) {
+			var total = 0;
+			for (var index=0; index < series.length; index++) {
+				var serie = series[index];
+				if (serie.data.length === 1) {
+					total += series[index].data[0][1];
 				}
-			};
-		}
-	},
-
-	createChart: function() {
-		var me = this;
-
-		/* initialize time navigation parameters if needed */
-		if(this.timeNav) {
-			var overview_h = this.getHeight() / 5;
-
-			// NB: this.plotcontainer doesn't exist yet.
-			var plotcontainer = $('#' + this.wcontainerId);
-			plotcontainer.nextAll().remove();
-
-			this.plotoverview = $('<div/>');
-			this.plotoverview.width(this.wcontainer.getWidth());
-			this.plotoverview.height(overview_h);
-
-			this.plotoverview.attr('class', plotcontainer.attr('class'));
-			plotcontainer.height(this.getHeight() - overview_h);
-
-			plotcontainer.after(this.plotoverview);
+			}
+			// add other serie if total is less than this.max
+			if (this.max > total) {
+				var other_serie = {
+					label: this.other_label,
+					data: [[0, this.max - total]]
+				};
+				series.push(other_serie);
+			}
 		}
 
-		/* create chart with modified plotcontainer */
-		this.callParent(arguments);
-
-		/* create the overview chart */
-		if(this.timeNav) {
-			this.chart_overview = $.plot(this.plotoverview, this.getSeriesConf(), this.options_overview);
-
-			/* connect the two charts */
-			this.plotcontainer.bind('plotselected', function(event, ranges) {
-				void(event);
-
-				console.log("Selected Range: " + ranges.xaxis.from + ' -> ' + ranges.xaxis.to);
-
-				me.chart.getOptions().xaxes[0].min = ranges.xaxis.from;
-				me.chart.getOptions().xaxes[0].max = ranges.xaxis.to;
-				me.chart.clearSelection(true);
-
-				me.chart.setupGrid();
-				me.chart.draw();
-
-				me.chart_overview.setSelection(ranges, true);
-
-			});
-
-			this.plotoverview.bind('plotselected', function(event, ranges) {
-				void(event);
-
-				me.chart.setSelection(ranges);
-			});
-		}
+		return series;
 	},
 
-	renderChart: function() {
-		/* update container size before rendering */
-		if(this.timeNav) {
-			var overview_h = this.getHeight() / 5;
-
-			this.plotcontainer.height(this.getHeight() - overview_h);
-		}
-
-		this.callParent(arguments);
-
-		/* now render overview chart */
-		if(this.timeNav) {
-			this.chart_overview.setData(Ext.clone(this.getSeriesConf()));
-			this.chart_overview.setupGrid();
-			this.chart_overview.draw();
-		}
-	},
-
-	destroyChart: function() {
-		this.callParent(arguments);
-
-		if(this.timeNav) {
-			this.chart_overview.destroy();
-		}
-	},
-
-	getSerieForNode: function(nodeid) {
-		var serie = this.callParent(arguments);
-		var node = serie.node;
-
-		return serie;
-	},
-
-	addPoint: function(serieId, value) {
-		var serie = this.series[serieId];
-		serie.data = this.graph_type=='pie'? value[1] : [[0, value[1]]];
-		serie.last_timestamp = value[0] * 1000;
-	},
-
-	doRefresh: function(from, to) {
-		if(this.timeNav) {
-			var now = Ext.Date.now();
-
-			to = now;
-			from = now - this.timeNav_window * 1000;
-		}
-
-		this.refreshNodes(from, to);
-	},
-
-	dblclick: function() {
-		log.debug('Zoom Out', this.logAuthor);
-
-		this.chart.getOptions().xaxes[0].min = this.chart.getOptions().xaxis.min;
-		this.chart.getOptions().xaxes[0].max = this.chart.getOptions().xaxis.max;
-
-		this.chart.setupGrid();
-		this.chart.draw();
-	}
 });

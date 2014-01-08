@@ -104,7 +104,7 @@ Ext.define('canopsis.lib.view.cwidgetGraph', {
 			data: [],
 			last_timestamp: -1,
 			xaxis: 1,
-			yaxis: node.yAxis,
+			//yaxis: node.yAxis,
 			color: node.curve_color? node.curve_color : undefined
 		};
 
