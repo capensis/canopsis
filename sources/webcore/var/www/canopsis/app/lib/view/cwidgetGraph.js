@@ -55,15 +55,15 @@ Ext.define('canopsis.lib.view.cwidgetGraph', {
 	setChartOptions: function() {
 		var now = Ext.Date.now();
 
-		this.options = {
-			cwidget: function() {
-				return me;
-			},
+		if(this.options === undefined)
+			this.options = {};
+
+		this.options.cwidget = function() {
+			return me;
 		};
 	},
 
 	createChart: function() {
-		log.debug('Create chart:');
 		log.dump(this.series);
 		log.dump(this.options);
 
@@ -71,10 +71,12 @@ Ext.define('canopsis.lib.view.cwidgetGraph', {
 
 		/* create the main chart */
 		this.chart = $.plot(this.plotcontainer, this.getSeriesConf(), this.options);
+		if(this.timeNav)
+			this.chart.initializeTimeNavigation(this);
 	},
 
 	renderChart: function() {
-		log.debug('Rendering chart');
+		this.chart.recomputePositions(this);
 
 		this.chart.setData(this.getSeriesConf());
 		this.chart.setupGrid();
@@ -129,7 +131,6 @@ Ext.define('canopsis.lib.view.cwidgetGraph', {
 
 		log.debug('Received data:');
 		log.dump(data);
-		this.series = {};
 
 		if(data.length > 0) {
 			for(var i = 0; i < data.length; i++) {
