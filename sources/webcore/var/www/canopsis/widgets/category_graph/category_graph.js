@@ -30,7 +30,6 @@ Ext.define('widgets.timegraph.category_graph', {
 	graph_type: 'pie',
 	aggregate_max_points: 1,
 	aggregate_method: 'LAST',
-	aggregate_round_time: true,
 
 	//Default Options
 	max: 0,
