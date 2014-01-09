@@ -18,7 +18,7 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-Ext.define('widgets.timegraph.category_graph', {
+Ext.define('widgets.category_graph.category_graph', {
 	extend: 'canopsis.lib.view.cwidgetGraph',
 	alias: 'widget.category_graph',
 
@@ -30,7 +30,6 @@ Ext.define('widgets.timegraph.category_graph', {
 	graph_type: 'pie',
 	aggregate_max_points: 1,
 	aggregate_method: 'LAST',
-	aggregate_round_time: true,
 
 	//Default Options
 	max: 0,
