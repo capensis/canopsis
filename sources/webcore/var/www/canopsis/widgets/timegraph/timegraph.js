@@ -39,7 +39,6 @@ Ext.define('widgets.timegraph.timegraph', {
 
 		$.extend(this.options,
 			{
-
 				zoom: {
 					interactive: true
 				},
@@ -112,13 +111,6 @@ Ext.define('widgets.timegraph.timegraph', {
 
 			this.options.yaxis.tickLength = 0;
 		}
-
-		if(this.tooltip) {
-			this.options.tooltip = this.tooltip;
-
-			this.options.tooltipOpts = {};
-			this.options.tooltipOpts.content = "<b>%x<br/>%s :</b> %y";
-		}
 	},
 
 	insertGraphExtraComponents: function(){
@@ -131,8 +123,6 @@ Ext.define('widgets.timegraph.timegraph', {
 		// NB: this.plotcontainer doesn't exist yet.
 		this.plotcontainer = $('#' + this.wcontainerId);
 		this.plotcontainer.nextAll().remove();
-
-		this.insertGraphExtraComponents();
 
 		/* create chart with modified plotcontainer */
 		this.callParent(arguments);
@@ -187,10 +177,6 @@ Ext.define('widgets.timegraph.timegraph', {
 	// 		this.series[serieId].data.shift();
 	// 	}
 	// },
-
-	doRefresh: function(from, to) {
-		this.refreshNodes(from, to);
-	},
 
 	dblclick: function() {
 		log.debug('Zoom Out', this.logAuthor);

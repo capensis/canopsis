@@ -77,12 +77,18 @@ Ext.define('canopsis.lib.view.cwidgetGraph', {
 		log.dump(this.series);
 		log.dump(this.options);
 
+
 		this.plotcontainer = $('#' + this.wcontainerId);
+
+		this.insertGraphExtraComponents();
 
 		/* create the main chart */
 		this.chart = $.plot(this.plotcontainer, this.getSeriesConf(), this.options);
 		if(this.timeNav)
 			this.chart.initializeTimeNavigation(this);
+		if(this.tooltip)
+			this.chart.initializeTooltip(this);
+
 	},
 
 	renderChart: function() {
