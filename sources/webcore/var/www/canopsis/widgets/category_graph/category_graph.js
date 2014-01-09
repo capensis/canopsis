@@ -18,7 +18,7 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-Ext.define('widgets.timegraph.category_graph', {
+Ext.define('widgets.category_graph.category_graph', {
 	extend: 'canopsis.lib.view.cwidgetGraph',
 	alias: 'widget.category_graph',
 
