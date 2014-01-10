@@ -17,7 +17,7 @@ Contents:
    developper-guide/index
    changelogs
    glossary
-
+.. #EXTRA_SECTIONS#
 
 Indices and tables
 ==================
