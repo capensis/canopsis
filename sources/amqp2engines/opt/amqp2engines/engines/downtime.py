@@ -45,12 +45,6 @@ class engine(cengine):
 		self.dt_backend = self.storage.get_backend('downtime')
 		self.evt_backend = self.storage.get_backend('events')
 
-		self.logfilter = {
-			'connector': 'cengine',
-			'connector_name': engine_ack.NAME,
-			'event_type': 'log'
-		}
-
 	def beat(self):
 		self.logger.debug('Removing expired downtime entries')
 
@@ -162,45 +156,6 @@ class engine(cengine):
 				},
 				multi = True
 			)
-
-		# If the event is a notification from acknowledgement engine
-		elif cmfilter.check(self.logfilter, event):
-			self.logger.debug('Notification from acknowledgement engine received: %s', event['rk'])
-
-			# Check if the acknowledged component/resource is in a downtime period
-			records = self.storage.find({
-				'connector': event['acknowledged_connector'],
-				'source': event['acknowledged_source'],
-				'component': event['component'],
-				'resource': event.get('resource', None)
-			})
-
-			# If the acknowledged component/resource is in a downtime period
-			for record in records:
-				downtime_info = record.dump()
-
-				# Ignore record if we are not yet in the downtime
-				if not (downtime_info['start'] <= now <= downtime_info['end']):
-					continue
-
-				# Look for the metric ack_solved_delay
-
-				for perfdata in event['perf_data_array']:
-					if perfdata['metric'] == 'ack_solved_delay':
-						# Modify the value of 'ack_solved_delay' to exclude the downtime period
-
-						# The problem was solved during the downtime
-						if downtime_info['start'] < event['solved_at'] < downtime_info['end']:
-							perfdata['value'] = perfdata['value'] - (event['solved_at'] - downtime_info['start'])
-
-						# The problem was solved after the downtime
-						elif downtime_info['end'] < event['solved_at']:
-							perfdata['value'] = perfdata['value'] - downtime_info['duration']
-
-						# If the problem was solved before the downtime, do nothing.
-						# That case should probably never happen
-
-						break
 
 		# For every other case, check if the event is in downtime
 		else:
