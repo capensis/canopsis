@@ -1134,10 +1134,10 @@ Ext.define('canopsis.lib.controller.cgrid', {
 				};
 
 				if(this.grid.opt_show_help_msg && this.grid.opt_help_msg !== "" && this.grid.opt_help_msg !== null && selection.length === 1 ) {
-					var reg_com = new RegExp( "<component>", "g");
-					var reg_res = new RegExp( "<resource>", "g");
-					var reg_msg = new RegExp( "<output>", "g");
-					var reg_date = new RegExp( "<lastcheck>", "g");
+					var reg_com = new RegExp("<component>", "g");
+					var reg_res = new RegExp("<resource>", "g");
+					var reg_msg = new RegExp("<output>", "g");
+					var reg_date = new RegExp("<lastcheck>", "g");
 
 					if (!record.raw['output']) {
 						record.raw['output'] = "";
