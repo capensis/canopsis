@@ -34,7 +34,7 @@ Ext.define('canopsis.lib.view.cwizard', {
 
 	bbar: [
 		{iconCls: 'icon-previous', text:'previous', _name: 'bbarPrevious'},
-		{iconCls: 'icon-advanced', text: _('Advance mode'), _name: 'bbarAdvance', enableToggle: true }, '->',
+		{iconCls: 'icon-advanced', text: _('Advanced mode'), _name: 'bbarAdvance', enableToggle: true }, '->',
 		{iconCls: 'icon-next', iconAlign: 'right', text: 'Next', _name: 'bbarNext'},
 		{iconCls: 'icon-save', iconAlign: 'right',  text: 'Finish', _name: 'bbarFinish', hidden: true, disabled: true}
 	],
