@@ -32,7 +32,6 @@ Ext.define('widgets.timegraph.timegraph', {
 	},
 
 	setChartOptions: function() {
-		console.log("timegraph setChartOptions");
 		this.callParent(arguments);
 
 		var now = Ext.Date.now();
@@ -52,12 +51,6 @@ Ext.define('widgets.timegraph.timegraph', {
 				},
 
 				grid: {
-					borderWidth: {
-						top: 0,
-						bottom: 0,
-						right: 0,
-						left: 0
-					},
 					hoverable: true,
 					clickable: true
 				},
@@ -70,8 +63,7 @@ Ext.define('widgets.timegraph.timegraph', {
 				xaxes: [
 					{
 						position: 'bottom',
-						mode: 'time',
-						timeformat: '%d %b - %H:%M:%S'
+						mode: 'time'
 					}
 				],
 
@@ -121,8 +113,8 @@ Ext.define('widgets.timegraph.timegraph', {
 		var me = this;
 
 		// NB: this.plotcontainer doesn't exist yet.
-		this.plotcontainer = $('#' + this.wcontainerId);
-		this.plotcontainer.nextAll().remove();
+		if(!!this.plotcontainer)
+			this.plotcontainer.nextAll().remove();
 
 		/* create chart with modified plotcontainer */
 		this.callParent(arguments);
@@ -179,14 +171,6 @@ Ext.define('widgets.timegraph.timegraph', {
 	// },
 
 	dblclick: function() {
-		log.debug('Zoom Out', this.logAuthor);
-
-		this.chart.getOptions().xaxes[0].min = this.chart.getOptions().xaxis.min;
-		this.chart.getOptions().xaxes[0].max = this.chart.getOptions().xaxis.max;
-
-		this.chart.setupGrid();
-		this.chart.draw();
-		this.chart.autoScale();
 	},
 
 	updateAxis: function(from, to) {
