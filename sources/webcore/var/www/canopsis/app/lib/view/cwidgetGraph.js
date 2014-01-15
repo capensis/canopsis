@@ -37,9 +37,9 @@ Ext.define('canopsis.lib.view.cwidgetGraph', {
 
 		this.on('boxready', function() {
 			this.createChart();
-			
-			if(this.timeNav)
-				this.chart.initializeTimeNavigation(this);
+
+			this.chart.initializeTimeNavigation(this);
+
 			if(this.tooltip)
 				this.chart.initializeTooltip(this);
 
