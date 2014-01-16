@@ -243,7 +243,7 @@ Ext.define('widgets.text.text' , {
 
 		while(loop) {
 			//search for val
-			var begin = _string.search(/{(.+:)+.+}/);
+			var begin = _string.search(/{(.+:?)+.+}/);
 
 			if(begin !== -1) {
 				//search end of val
