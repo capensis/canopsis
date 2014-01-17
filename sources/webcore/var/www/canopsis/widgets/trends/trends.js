@@ -93,6 +93,7 @@ Ext.define('widgets.trends.trends' , {
 				if(values[j] && values[j][0] && values[j][1]) {
 					x.push(values[j][0]);
 					y.push(values[j][1]);
+					values[j][0] = values[j][0] * 1000;
 				}
 			}
 
@@ -104,9 +105,9 @@ Ext.define('widgets.trends.trends' , {
 
 			if(values.length >= 2) {
 				var v1 = values[0][1];
-				var t1 = values[0][0];
+				var t1 = values[0][0]/1000;
 				var v2 = values[values.length-1][1];
-				var t2 = values[values.length-1][0];
+				var t2 = values[values.length-1][0]/1000;
 
 				v1 = ret[0]*t1 + ret[1];
 				v2 = ret[0]*t2 + ret[1];
