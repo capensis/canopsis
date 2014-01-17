@@ -37,16 +37,6 @@
 							"fieldLabel": "Time window offset",
 							"name": "time_window_offset",
 							"value": 0
-						},{
-							"xtype": "checkbox",
-							"fieldLabel": "History navigation",
-							"name": "timeNav",
-							"checked": false
-						},{
-							"xtype": "cduration",
-							"fieldLabel": "History time window",
-							"name": "timeNav_window",
-							"value": 604800
 						}
 					]
 				},{

@@ -27,7 +27,7 @@ Ext.define('widgets.category_graph.category_graph', {
 	timeNav: false,
 	timeNav_window: global.commonTs.week,
 
-	graph_type: 'pie',
+	graph_type: 'pie', // 'column'
 	aggregate_max_points: 1,
 	aggregate_method: 'LAST',
 
@@ -81,7 +81,10 @@ Ext.define('widgets.category_graph.category_graph', {
 						tilt: this.tilt
 					},
 					bars: {
-						show: (this.graph_type === 'column')
+						show: (this.graph_type === 'column'),
+						horizontal: !this.vertical_display,
+						barWidth: 1,
+						zero: true
 					},
 					stack: this.stacked_graph
 				},
@@ -94,11 +97,10 @@ Ext.define('widgets.category_graph.category_graph', {
 					show: this.legend
 				},
 				xaxis: {
-					show: false
+					show: (this.graph_type === 'column' && !this.vertical_display)
 				},
 				yaxis: {
-					min: 0,
-					show: (this.graph_type === 'column')
+					show: (this.graph_type === 'column' && this.vertical_display)
 				},
 				tooltip: this.tooltip,
 				tooltipOpts : {
@@ -106,6 +108,11 @@ Ext.define('widgets.category_graph.category_graph', {
 				}
 			}
 		);
+	},
+
+	addPoint: function(serieId, value, serieIndex) {
+		var point = [this.graph_type === 'column' && !this.stacked_graph? serieIndex : 0, value[1]];
+		this.series[serieId].data = [point];
 	},
 
 	getSeriesConf: function() {
@@ -121,9 +128,11 @@ Ext.define('widgets.category_graph.category_graph', {
 			}
 			// add other serie if total is less than this.max
 			if (this.max > total) {
+				// set x=0 only if graph is in stacking mode and is column
+				var point = [this.graph_type === 'column' && !this.stacked_graph? series.length: 0, this.max - total];
 				var other_serie = {
 					label: this.other_label,
-					data: [[0, this.max - total]]
+					data: [point]
 				};
 				series.push(other_serie);
 			}

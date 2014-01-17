@@ -129,7 +129,8 @@ Ext.define('canopsis.lib.view.cwidgetGraph', {
 		return serie;
 	},
 
-	addPoint: function(serieId, value) {
+	addPoint: function(serieId, value, serieIndex) {
+		void(serieIndex);
 		this.series[serieId].data.push(Ext.clone(value));
 	},
 
@@ -165,7 +166,7 @@ Ext.define('canopsis.lib.view.cwidgetGraph', {
 				for(var j = 0; j < info.values.length; j++) {
 					var value = info.values[j];
 
-					this.addPoint(serieId, value);
+					this.addPoint(serieId, value, i);
 				}
 
 				/* shifting serie */
