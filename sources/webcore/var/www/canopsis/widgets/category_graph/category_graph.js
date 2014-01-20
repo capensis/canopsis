@@ -39,6 +39,8 @@ Ext.define('widgets.category_graph.category_graph', {
 
 	// pie specific options
 	pie_size: 60,
+	startAngle: 0,
+	radius: 0.9,
 	innerRadius: 0,
 
 	// Bar specific options
@@ -60,6 +62,7 @@ Ext.define('widgets.category_graph.category_graph', {
 	legend_fontColor: '#3E576F',
 
 	labels: true,
+	labels_size: "x-small",
 	legend: true,
 	gradientColor: false,
 	pctInLabel: false,
@@ -77,8 +80,11 @@ Ext.define('widgets.category_graph.category_graph', {
 						innerRadius: this.innerRadius,
 						label: {
 							show: this.labels,
+							size: this.labels_size
 						},
-						tilt: this.tilt
+						tilt: this.tilt,
+						startAngle: this.startAngle,
+						radius: this.radius
 					},
 					bars: {
 						show: (this.graph_type === 'column'),
@@ -104,7 +110,9 @@ Ext.define('widgets.category_graph.category_graph', {
 				},
 				tooltip: this.tooltip,
 				tooltipOpts : {
-					content: "%s: %y"
+					content: function(label, xval, yval, flotItem) {
+                        return "<b>" + label + "<br/></b>" + yval + "%";
+                    }
 				}
 			}
 		);
