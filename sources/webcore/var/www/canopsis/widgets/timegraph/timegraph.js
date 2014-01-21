@@ -44,7 +44,6 @@ Ext.define('widgets.timegraph.timegraph', {
 
 		$.extend(this.options,
 			{
-
 				selection: {
 					mode: 'x'
 				},
@@ -157,6 +156,37 @@ Ext.define('widgets.timegraph.timegraph', {
 		};
 
 		return serie;
+	},
+
+	getSeriesConf: function() {
+
+		var series = this.callParent(arguments);
+
+		for (var series_index = (series.length - 1); series_index >= 0; series_index--) {
+			var serie = series[series_index];
+			if (serie.node.trend_curve && serie.data.length > 1) {
+				var x = [], y = [];
+				for (var serie_index = 0; serie_index < serie.data.length; serie_index++) {
+					var data = serie.data[serie_index];
+					x.push(data[0]);
+					y.push(data[1]);
+				}
+				var ret = linearRegression(x, y);
+				var trend_serie = this.getSerieForNode(serie.node.id);
+				function getY(x) {
+					return x * ret[0] + ret[1];
+				}
+				function getLinearRegressionPoint(point) {
+					return [point[0], getY(point[0])]
+				}
+				var data = [getLinearRegressionPoint(serie.data[0]), getLinearRegressionPoint(serie.data[serie.data.length-1])];
+				trend_serie.label += '_trend';
+				trend_serie.data = data;
+				series.splice(series_index+1, 0, trend_serie);
+			}
+		}
+
+		return series;
 	},
 
 	addPoint: function(serieId, value) {
