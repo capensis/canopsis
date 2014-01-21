@@ -27,6 +27,12 @@ Ext.define('widgets.timegraph.timegraph', {
 	timeNav: false,
 	timeNav_window: global.commonTs.week,
 
+	interval: global.commonTs.hours,
+	aggregate_method: 'MEAN',
+	aggregate_interval: 0,
+	aggregate_max_points: 500,
+	aggregate_round_time: true,
+
 	initComponent: function() {
 		this.callParent(arguments);
 	},

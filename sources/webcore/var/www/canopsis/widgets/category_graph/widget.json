@@ -37,16 +37,6 @@
 							"fieldLabel": "Time window offset",
 							"name": "time_window_offset",
 							"value": 0
-						},{
-							"xtype": "checkbox",
-							"fieldLabel": "History navigation",
-							"name": "timeNav",
-							"checked": false
-						},{
-							"xtype": "cduration",
-							"fieldLabel": "History time window",
-							"name": "timeNav_window",
-							"value": 604800
 						}
 					]
 				},{
@@ -63,6 +53,11 @@
 							"fieldLabel": "Show labels",
 							"checked": true,
 							"name": "labels"
+						}, {
+							"xtype": "textfield",
+							"name": "labels_size",
+							"fieldLabel": "Label size",
+							"value": "x-small"
 						}, {
 							"xtype": "checkbox",
 							"fieldLabel": "Enable Tooltip",
@@ -109,10 +104,24 @@
 							"fieldLabel": "Total (by default use 'max' field of perfdata)"
 						},{
 							"xtype" : "numberfield",
+							"name" : "startAngle",
+							"fieldLabel": "Start Angle",
+							"value": "0",
+							"stepValue": 0.1
+						},{
+							"xtype" : "numberfield",
+							"name" : "radius",
+							"fieldLabel": "Radius",
+							"value": 0.9,
+							"minValue": 0,
+							"maxValue": 1,
+							"stepValue": 0.1
+						},{
+							"xtype" : "numberfield",
 							"name" : "innerRadius",
 							"fieldLabel": "Donut hole",
 							"value": "0",
-							"increment": 0.1
+							"stepValue": 0.1
 						}, {
 							"xtype" : "numberfield",
 							"name" : "tilt",
