@@ -43,9 +43,11 @@ Ext.define('canopsis.lib.view.cwidgetGraph', {
 			if(this.tooltip)
 				this.chart.initializeTooltip(this);
 
+			this.chart.initializeHiddenGraphs(this);
 			this.chart.initializeCurveStyleManager(this);
 			this.chart.initializeThresholds(this);
 			this.chart.initializeGraphStyleManager(this);
+			this.chart.initializeLegendManager(this);
 		}, this);
 
 		this.on('resize', function() {
@@ -74,12 +76,6 @@ Ext.define('canopsis.lib.view.cwidgetGraph', {
 	},
 
 	insertGraphExtraComponents: function(){
-		this.legendContainer = $('<div class="flotchart legend"/>');
-		this.options.legend.container = this.legendContainer;
-		this.plotcontainer.parent().append(this.legendContainer);
-
-		if(this.legend_layout === "horizontal")
-			this.options.legend.noColumns = 99;
 	},
 
 	createChart: function() {
@@ -157,7 +153,7 @@ Ext.define('canopsis.lib.view.cwidgetGraph', {
 
 				/* create the serie if it doesn't exist */
 				if(!(serieId in this.series) || this.series[serieId] === undefined) {
-					log.debug('Create serie: ' + serieId);
+					// log.debug('Create serie: ' + serieId);
 
 					this.series[serieId] = this.getSerieForNode(info.node);
 				}
@@ -174,12 +170,19 @@ Ext.define('canopsis.lib.view.cwidgetGraph', {
 			}
 		}
 
+
 		this.updateAxis(from, to);
+
+		this.updateSeriesConfig();
 
 		this.destroyChart();
 		this.setChartOptions();
 		this.createChart();
 		this.renderChart();
+	},
+
+	updateSeriesConfig: function() {
+
 	},
 
 	updateAxis: function(from, to) {

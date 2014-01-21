@@ -44,6 +44,10 @@ Ext.define('widgets.timegraph.timegraph', {
 
 		$.extend(this.options,
 			{
+				zoom: {
+					interactive: false
+				},
+
 				selection: {
 					mode: 'x'
 				},

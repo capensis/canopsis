@@ -155,6 +155,33 @@
 						"checkboxName": "legend",
 						"value": true,
 						"items": [{
+									"xtype" : "numberfield",
+									"name" : "legend_fontSize",
+									"fieldLabel": "Font Size",
+									"minValue": 1,
+									"value": 12
+								},{
+									"xtype" : "colorfield",
+									"name" : "legend_fontColor",
+									"fieldLabel": "Font color",
+									"value": "3E576F"
+								},{
+									"xtype" : "numberfield",
+									"name" : "legend_borderWidth",
+									"fieldLabel": "Border Width",
+									"minValue": 0,
+									"value": 1
+								},{
+									"xtype" : "colorfield",
+									"name" : "legend_backgroundColor",
+									"fieldLabel": "Background color",
+									"value": "FFFFFF"
+								},{
+									"xtype" : "colorfield",
+									"name" : "legend_borderColor",
+									"fieldLabel": "Border color",
+									"value": "909090"
+								},{
 									"xtype": "combobox",
 									"name": "legend_verticalAlign",
 									"fieldLabel": "Legend vertical alignement",
