@@ -10,6 +10,18 @@
 	"locales": ["en", "fr"],
 	"options": [
 		{
+			"xtype": "cfieldset",
+			"title": "Title",
+			"items": [
+				{
+					"xtype" : "numberfield",
+					"name" : "title_fontSize",
+					"fieldLabel": "Font Size",
+					"minValue": 1,
+					"value": 15
+				}
+			]
+		},{
 			"title": "Options",
 			"items": [
 				{
@@ -19,7 +31,7 @@
 						{
 							"xtype": "combobox",
 							"fieldLabel": "Graph Type",
-							"name": "graph_type",
+							"name": "diagram_type",
 							"queryMode": "local",
 							"displayField": "text",
 							"valueField": "value",
@@ -73,7 +85,7 @@
 							"xtype": "checkbox",
 							"fieldLabel": "Vertical display (rotate graph)",
 							"checked": false,
-							"name": "vertical_display"
+							"name": "verticalDisplay"
 						},{
 							"xtype": "checkbox",
 							"fieldLabel": "Stacked",

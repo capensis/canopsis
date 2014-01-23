@@ -27,6 +27,8 @@ Ext.define('canopsis.lib.view.cwidgetGraph', {
 	time_window: global.commonTs.day,
 	time_window_offset: 0,
 
+	lineWidth: 1,
+
 	initComponent: function() {
 		this.callParent(arguments);
 
