@@ -235,34 +235,46 @@ Ext.define('widgets.text.text' , {
 
 	extractVariables: function(text) {
 		log.debug("extractVariables:", this.logAuthor);
+		var var_array  = text.replace(/^[^{]*\{/, "")	// trim everything before first accolade
+				.replace(/\}[^{]*$/, "")				// trim everything after last accolade
+				.split(/\}[^{]*\{/);					// split between accolades
 
-		//search specific value
-		var loop = true;
-		var _string = text;
-		var var_array = [];
+		for (var i = var_array.length - 1; i >= 0; i--) {
+			var_array[i] = "{" + var_array[i] + "}";
+		};
 
-		while(loop) {
-			//search for val
-			var begin = _string.search(/{(.+:?)+.+}/);
-
-			if(begin !== -1) {
-				//search end of val
-				var end = begin;
-
-				while(_string.charAt(end) !== '}' && end <= _string.length) {
-					end = end + 1;
-				}
-
-				var_array.push(_string.slice(begin, end + 1));
-				_string = _string.slice(end, _string.length);
-			}
-			else {
-				loop = false;
-			}
-		}
-
-		log.dump(var_array);
 		return var_array;
+	},
+
+	getNodeInfo: function(from, to) {
+		if(this.nodeId) {
+
+			var nodeInfoParams = this.getNodeInfoParams(from, to);
+
+			Ext.Ajax.request({
+				url: this.baseUrl + '/event' + (this.nodeId && this.nodeId.length? ('/' + this.nodeId) : ''),
+				scope: this,
+				params: nodeInfoParams,
+				method: 'GET',
+				success: function(response) {
+					var data = Ext.JSON.decode(response.responseText);
+
+					if(this.nodeId.length > 1) {
+						data = data.data;
+					}
+					else {
+						data = data.data[0];
+					}
+
+					this._onRefresh(data, from, to);
+				},
+				failure: function(result, request) {
+					void(result);
+
+					log.error('Impossible to get Node informations, Ajax request failed ... (' + request.url + ')', this.logAuthor);
+				}
+			});
+		}
 	},
 
 	// return :  ['{var1:var2}',['var1','var2']]
@@ -281,7 +293,7 @@ Ext.define('widgets.text.text' , {
 		void(to);
 		var result = this.callParent(arguments);
 		result['noInternal'] = false;
-		result['limit'] = 0;
+		result['limit'] = 1;
 		return result;
 	}
 });
