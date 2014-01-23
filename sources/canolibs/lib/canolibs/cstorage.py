@@ -135,6 +135,17 @@ class cstorage(object):
 		try:
 			backend = self.backend[namespace]
 			self.logger.debug("Use %s collection" % namespace)
+
+			backend.ensure_index('crecord_type')
+			backend.ensure_index('crecord_name')
+
+			backend.ensure_index('connector')
+			backend.ensure_index('connector_name')
+			backend.ensure_index('event_type')
+			backend.ensure_index('source_type')
+			backend.ensure_index('component')
+			backend.ensure_index('resource')
+
 			return backend
 		except:
 			self.backend[namespace] = self.db[namespace]
