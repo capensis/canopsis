@@ -43,6 +43,7 @@ function normalApp() {
 			'Statemap',
 			'Derogation',
 			'Perfdata',
+			'SLA',
 			'Topology',
 			'Consolidation',
 			'Rule',
