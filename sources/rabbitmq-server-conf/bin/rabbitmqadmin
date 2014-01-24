@@ -12,25 +12,41 @@
 #
 #   The Original Code is RabbitMQ Management Plugin.
 #
-#   The Initial Developer of the Original Code is VMware, Inc.
-#   Copyright (c) 2010-2012 VMware, Inc.  All rights reserved.
+#   The Initial Developer of the Original Code is GoPivotal, Inc.
+#   Copyright (c) 2010-2013 GoPivotal, Inc.  All rights reserved.
 
-from ConfigParser import ConfigParser
-from ConfigParser import Error as ConfigParserError
-from optparse import OptionParser, TitledHelpFormatter
 import sys
+if sys.version_info[0] < 2 or sys.version_info[1] < 6:
+    print "Sorry, rabbitmqadmin requires at least Python 2.6."
+    sys.exit(1)
+
+from ConfigParser import ConfigParser, NoSectionError
+from optparse import OptionParser, TitledHelpFormatter
 import httplib
 import urllib
+import urlparse
 import base64
 import json
 import os
 import socket
 
-LISTABLE = {'connections': False, 'channels': False, 'exchanges': True,
-            'queues': True, 'bindings': True, 'users': False,
-            'vhosts': False, 'permissions': False, 'nodes': False}
+VERSION = '%%VSN%%'
 
-SHOWABLE = {'overview': False}
+LISTABLE = {'connections': {'vhost': False},
+            'channels':    {'vhost': False},
+            'exchanges':   {'vhost': True},
+            'queues':      {'vhost': True},
+            'bindings':    {'vhost': True},
+            'users':       {'vhost': False},
+            'vhosts':      {'vhost': False},
+            'permissions': {'vhost': False},
+            'nodes':       {'vhost': False},
+            'parameters':  {'vhost': False,
+                            'json':  ['value']},
+            'policies':    {'vhost': False,
+                            'json':  ['definition']}}
+
+SHOWABLE = {'overview': {'vhost': False}}
 
 PROMOTE_COLUMNS = ['vhost', 'name', 'type',
                    'source', 'destination', 'destination_type', 'routing_key']
@@ -42,25 +58,37 @@ URIS = {
     'binding_del':'/bindings/{vhost}/e/{source}/{destination_char}/{destination}/{properties_key}',
     'vhost':      '/vhosts/{name}',
     'user':       '/users/{name}',
-    'permission': '/permissions/{vhost}/{user}'
+    'permission': '/permissions/{vhost}/{user}',
+    'parameter':  '/parameters/{component}/{vhost}/{name}',
+    'policy':     '/policies/{vhost}/{name}'
     }
 
 DECLARABLE = {
     'exchange':   {'mandatory': ['name', 'type'],
+                   'json':      ['arguments'],
                    'optional':  {'auto_delete': 'false', 'durable': 'true',
-                                 'internal': 'false'}},
+                                 'internal': 'false', 'arguments': {}}},
     'queue':      {'mandatory': ['name'],
+                   'json':      ['arguments'],
                    'optional':  {'auto_delete': 'false', 'durable': 'true',
-                                 'node': None}},
-    'binding':    {'mandatory': ['source', 'destination_type', 'destination',
-                                 'routing_key'],
-                   'optional':  {}},
+                                 'arguments': {}, 'node': None}},
+    'binding':    {'mandatory': ['source', 'destination'],
+                   'json':      ['arguments'],
+                   'optional':  {'destination_type': 'queue',
+                                 'routing_key': '', 'arguments': {}}},
     'vhost':      {'mandatory': ['name'],
-                   'optional':  {}},
+                   'optional':  {'tracing': None}},
     'user':       {'mandatory': ['name', 'password', 'tags'],
                    'optional':  {}},
     'permission': {'mandatory': ['vhost', 'user', 'configure', 'write', 'read'],
-                   'optional':  {}}
+                   'optional':  {}},
+    'parameter':  {'mandatory': ['component', 'name', 'value'],
+                   'json':      ['value'],
+                   'optional':  {}},
+    # Priority is 'json' to convert to int
+    'policy':     {'mandatory': ['name', 'pattern', 'definition'],
+                   'json':      ['definition', 'priority'],
+                   'optional':  {'priority' : 0, 'apply-to': None}}
     }
 
 DELETABLE = {
@@ -70,7 +98,9 @@ DELETABLE = {
                                  'properties_key']},
     'vhost':      {'mandatory': ['name']},
     'user':       {'mandatory': ['name']},
-    'permission': {'mandatory': ['vhost', 'user']}
+    'permission': {'mandatory': ['vhost', 'user']},
+    'parameter':  {'mandatory': ['component', 'name']},
+    'policy':     {'mandatory': ['name']}
     }
 
 CLOSABLE = {
@@ -156,7 +186,7 @@ def config_usage():
 
   [host_normal]
   hostname = localhost
-  port = 55672
+  port = 15672
   username = guest
   password = guest
   declare_vhost = / # Used as default for declare / delete only
@@ -164,7 +194,7 @@ def config_usage():
 
   [host_ssl]
   hostname = otherhost
-  port = 55672
+  port = 15672
   username = guest
   password = guest
   ssl = True
@@ -204,7 +234,7 @@ def fmt_usage_stanza(root, verb):
     return text
 
 default_options = { "hostname"        : "localhost",
-                    "port"            : "55672",
+                    "port"            : "15672",
                     "declare_vhost"   : "/",
                     "username"        : "guest",
                     "password"        : "guest",
@@ -263,40 +293,65 @@ def make_parser():
         help="PEM format certificate file for SSL")
     add("-f", "--format", dest="format",
         help="format for listing commands - one of [" + ", ".join(FORMATS.keys())  + "]")
+    add("-S", "--sort", dest="sort", help="sort key for listing queries")
+    add("-R", "--sort-reverse", action="store_true", dest="sort_reverse",
+        help="reverse the sort order")
     add("-d", "--depth", dest="depth",
         help="maximum depth to recurse for listing tables")
     add("--bash-completion", action="store_true",
         dest="bash_completion",
         help="Print bash completion script")
+    add("--version", action="store_true",
+        dest="version",
+        help="Display version and exit")
+
+def default_config():
+    home = os.getenv('USERPROFILE') or os.getenv('HOME')
+    if home is not None:
+        config_file = home + os.sep + ".rabbitmqadmin.conf"
+        if os.path.isfile(config_file):
+            return config_file
+    return None
 
 def make_configuration():
     make_parser()
     (options, args) = parser.parse_args()
     setattr(options, "declare_vhost", None)
+    if options.version:
+        print_version()
+    if options.config is None:
+        config_file = default_config()
+        if config_file is not None:
+            setattr(options, "config", config_file)
+    else:
+        if not os.path.isfile(options.config):
+            assert_usage(False,
+                "Could not read config file '%s'" % options.config)
+
     if options.node is None and options.config:
         options.node = "default"
-    elif options.node and options.config is None:
-        home = os.getenv('USERPROFILE') or os.getenv('HOME')
-        setattr(options, "config", home + os.sep + ".rabbitmqadmin.conf")
-    if options.node:
+    else:
+        options.node = options.node
+    for (key, val) in default_options.items():
+        if getattr(options, key) is None:
+            setattr(options, key, val)
+
+    if options.config is not None:
         config = ConfigParser()
         try:
             config.read(options.config)
             new_conf = dict(config.items(options.node))
-        except ConfigParserError as error:
-            assert_usage(False, ("Could not read section '%s' in config file"  +
-                         " '%s':\n   %s") %
-                         (options.node, options.config, error))
-        new_opts = default_options.copy()
-        for (key, val) in new_conf.items():
-            new_opts[key] = val
-        for (key, val) in new_opts.items():
-            if getattr(options, key) is None:
+        except NoSectionError, error:
+            if options.node == "default":
+                pass
+            else:
+                assert_usage(False, ("Could not read section '%s' in config file"  +
+                             " '%s':\n   %s") %
+                             (options.node, options.config, error))
+        else:
+            for key, val in new_conf.items():
                 setattr(options, key, val)
-    else:
-        for (key, val) in default_options.items():
-            if getattr(options, key) is None:
-                setattr(options, key, val)
+
     return (options, args)
 
 def assert_usage(expr, error):
@@ -304,6 +359,10 @@ def assert_usage(expr, error):
         output("\nERROR: {0}\n".format(error))
         output("{0} --help for help\n".format(os.path.basename(sys.argv[0])))
         sys.exit(1)
+
+def print_version():
+    output("rabbitmqadmin {0}".format(VERSION))
+    sys.exit(0)
 
 def column_sort_key(col):
     if col in PROMOTE_COLUMNS:
@@ -345,16 +404,16 @@ class Management:
         self.args = args
 
     def get(self, path):
-        return self.http("GET", path, "")
+        return self.http("GET", "/api%s" % path, "")
 
     def put(self, path, body):
-        return self.http("PUT", path, body)
+        return self.http("PUT", "/api%s" % path, body)
 
     def post(self, path, body):
-        return self.http("POST", path, body)
+        return self.http("POST", "/api%s" % path, body)
 
     def delete(self, path):
-        return self.http("DELETE", path, "")
+        return self.http("DELETE", "/api%s" % path, "")
 
     def http(self, method, path, body):
         if self.options.ssl:
@@ -371,8 +430,8 @@ class Management:
         if body != "":
             headers["Content-Type"] = "application/json"
         try:
-            conn.request(method, "/api%s" % path, body, headers)
-        except socket.error as e:
+            conn.request(method, path, body, headers)
+        except socket.error, e:
             die("Could not connect: {0}".format(e))
         resp = conn.getresponse()
         if resp.status == 400:
@@ -381,6 +440,12 @@ class Management:
             die("Access refused: {0}".format(path))
         if resp.status == 404:
             die("Not found: {0}".format(path))
+        if resp.status == 301:
+            url = urlparse.urlparse(resp.getheader('location'))
+            [host, port] = url.netloc.split(':')
+            self.options.hostname = host
+            self.options.port = int(port)
+            return self.http(method, url.path + '?' + url.query, body)
         if resp.status < 200 or resp.status > 400:
             raise Exception("Received %d %s for path %s\n%s"
                             % (resp.status, resp.reason, path, resp.read()))
@@ -395,16 +460,19 @@ class Management:
         return self.args[0]
 
     def invoke_help(self):
-        help_cmd = self.get_arg()
-        if help_cmd == 'subcommands':
-            usage = subcommands_usage()
-        elif help_cmd == 'config':
-            usage = config_usage()
+        if len(self.args) == 0:
+            parser.print_help()
         else:
-            assert_usage(False, """help topic must be one of:
+            help_cmd = self.get_arg()
+            if help_cmd == 'subcommands':
+                usage = subcommands_usage()
+            elif help_cmd == 'config':
+                usage = config_usage()
+            else:
+                assert_usage(False, """help topic must be one of:
   subcommands
   config""")
-        print usage
+            print usage
         exit(0)
 
     def invoke_publish(self):
@@ -430,47 +498,58 @@ class Management:
             write_payload_file(payload_file, result)
             columns = ['routing_key', 'exchange', 'message_count',
                        'payload_bytes', 'redelivered']
-            format_list(result, columns, self.options)
+            format_list(result, columns, {}, self.options)
         else:
-            format_list(result, [], self.options)
+            format_list(result, [], {}, self.options)
 
     def invoke_export(self):
         path = self.get_arg()
         definitions = self.get("/definitions")
-        with open(path, 'w') as f:
-            f.write(definitions)
+        f = open(path, 'w')
+        f.write(definitions)
+        f.close()
         self.verbose("Exported definitions for %s to \"%s\""
                      % (self.options.hostname, path))
 
     def invoke_import(self):
         path = self.get_arg()
-        with open(path, 'r') as f:
-            definitions = f.read()
+        f = open(path, 'r')
+        definitions = f.read()
+        f.close()
         self.post("/definitions", definitions)
         self.verbose("Imported definitions for %s from \"%s\""
                      % (self.options.hostname, path))
 
     def invoke_list(self):
         cols = self.args[1:]
-        uri = self.list_show_uri(LISTABLE, 'list', cols)
-        format_list(self.get(uri), cols, self.options)
+        (uri, obj_info) = self.list_show_uri(LISTABLE, 'list', cols)
+        format_list(self.get(uri), cols, obj_info, self.options)
 
     def invoke_show(self):
         cols = self.args[1:]
-        uri = self.list_show_uri(SHOWABLE, 'show', cols)
-        format_list('[{0}]'.format(self.get(uri)), cols, self.options)
+        (uri, obj_info) = self.list_show_uri(SHOWABLE, 'show', cols)
+        format_list('[{0}]'.format(self.get(uri)), cols, obj_info, self.options)
 
     def list_show_uri(self, obj_types, verb, cols):
         obj_type = self.args[0]
         assert_usage(obj_type in obj_types,
                      "Don't know how to {0} {1}".format(verb, obj_type))
-        vhostable = obj_types[obj_type]
+        obj_info = obj_types[obj_type]
         uri = "/%s" % obj_type
-        if vhostable and self.options.vhost:
+        query = []
+        if obj_info['vhost'] and self.options.vhost:
             uri += "/%s" % urllib.quote_plus(self.options.vhost)
         if cols != []:
-            uri += "?columns=" + ",".join(cols)
-        return uri
+            query.append("columns=" + ",".join(cols))
+        sort = self.options.sort
+        if sort:
+            query.append("sort=" + sort)
+        if self.options.sort_reverse:
+            query.append("sort_reverse=true")
+        query = "&".join(query)
+        if query != "":
+            uri += "?" + query
+        return (uri, obj_info)
 
     def invoke_declare(self):
         (obj_type, uri, upload) = self.declare_delete_parse(DECLARABLE)
@@ -518,24 +597,33 @@ class Management:
             (name, value) = arg.split("=", 1)
             assert_usage(name in mandatory or name in optional.keys(),
                          'Argument "{0}" not recognised'.format(name))
-            upload[name] = value
+            if 'json' in obj and name in obj['json']:
+                upload[name] = self.parse_json(value)
+            else:
+                upload[name] = value
         for m in mandatory:
             assert_usage(m in upload.keys(),
                          'mandatory argument "{0}" required'.format(m))
-        upload['arguments'] = {}
         if 'vhost' not in mandatory:
             upload['vhost'] = self.options.vhost or self.options.declare_vhost
         uri_args = {}
         for k in upload:
             v = upload[k]
-            if v:
+            if v and isinstance(v, basestring):
                 uri_args[k] = urllib.quote_plus(v)
                 if k == 'destination_type':
                     uri_args['destination_char'] = v[0]
         uri = uri_template.format(**uri_args)
         return (uri, upload)
 
-def format_list(json_list, columns, options):
+    def parse_json(self, text):
+        try:
+            return json.loads(text)
+        except ValueError:
+            print "Could not parse JSON:\n  {0}".format(text)
+            sys.exit(1)
+
+def format_list(json_list, columns, args, options):
     format = options.format
     formatter = None
     if format == "raw_json":
@@ -549,7 +637,7 @@ def format_list(json_list, columns, options):
         formatter = FORMATS[format]
     assert_usage(formatter != None,
                  "Format {0} not recognised".format(format))
-    formatter_instance = formatter(columns, options)
+    formatter_instance = formatter(columns, args, options)
     formatter_instance.display(json_list)
 
 class Lister:
@@ -578,8 +666,11 @@ class Lister:
                 column = prefix == '' and key or (prefix + '.' + key)
                 subitem = item[key]
                 if type(subitem) == dict:
-                    if depth < max_depth:
-                        add(column, depth + 1, subitem, fun)
+                    if self.obj_info.has_key('json') and key in self.obj_info['json']:
+                        fun(column, json.dumps(subitem))
+                    else:
+                        if depth < max_depth:
+                            add(column, depth + 1, subitem, fun)
                 elif type(subitem) == list:
                     # The first branch has slave nodes in queues in
                     # mind (which come out looking decent); the second
@@ -618,8 +709,9 @@ class Lister:
         return (columns, table)
 
 class TSVList(Lister):
-    def __init__(self, columns, options):
+    def __init__(self, columns, obj_info, options):
         self.columns = columns
+        self.obj_info = obj_info
         self.options = options
 
     def display_list(self, columns, table):
@@ -631,8 +723,9 @@ class TSVList(Lister):
             output(line)
 
 class LongList(Lister):
-    def __init__(self, columns, options):
+    def __init__(self, columns, obj_info, options):
         self.columns = columns
+        self.obj_info = obj_info
         self.options = options
 
     def display_list(self, columns, table):
@@ -648,8 +741,9 @@ class LongList(Lister):
             output(sep)
 
 class TableList(Lister):
-    def __init__(self, columns, options):
+    def __init__(self, columns, obj_info, options):
         self.columns = columns
+        self.obj_info = obj_info
         self.options = options
 
     def display_list(self, columns, table):
@@ -684,8 +778,9 @@ class TableList(Lister):
         output(txt)
 
 class KeyValueList(Lister):
-    def __init__(self, columns, options):
+    def __init__(self, columns, obj_info, options):
         self.columns = columns
+        self.obj_info = obj_info
         self.options = options
 
     def display_list(self, columns, table):
@@ -697,8 +792,9 @@ class KeyValueList(Lister):
 
 # TODO handle spaces etc in completable names
 class BashList(Lister):
-    def __init__(self, columns, options):
+    def __init__(self, columns, obj_info, options):
         self.columns = columns
+        self.obj_info = obj_info
         self.options = options
 
     def display_list(self, columns, table):
@@ -726,12 +822,13 @@ def write_payload_file(payload_file, json_list):
     result = json.loads(json_list)[0]
     payload = result['payload']
     payload_encoding = result['payload_encoding']
-    with open(payload_file, 'w') as f:
-        if payload_encoding == 'base64':
-            data = base64.b64decode(payload)
-        else:
-            data = payload
-        f.write(data)
+    f = open(payload_file, 'w')
+    if payload_encoding == 'base64':
+        data = base64.b64decode(payload)
+    else:
+        data = payload
+    f.write(data)
+    f.close()
 
 def print_bash_completion():
     script = """# This is a bash completion script for rabbitmqadmin.
@@ -745,7 +842,7 @@ _rabbitmqadmin()
     prev="${COMP_WORDS[COMP_CWORD-1]}"
 
     opts="list show declare delete close purge import export get publish help"
-    fargs="--help --host --port --vhost --username --password --format --depth"
+    fargs="--help --host --port --vhost --username --password --format --depth --sort --sort-reverse"
 
     case "${prev}" in
 	list)
@@ -785,21 +882,39 @@ _rabbitmqadmin()
 	    COMPREPLY=( $(compgen -W "${opts}"  -- ${cur}) )
             return 0
             ;;
-	-@(H|-host))
+	-H)
 	    COMPREPLY=( $(compgen -A hostname ${cur}) )
             return 0
             ;;
-	-@(V|-vhost))
+	--host)
+	    COMPREPLY=( $(compgen -A hostname ${cur}) )
+            return 0
+            ;;
+	-V)
             opts="$(rabbitmqadmin -q -f bash list vhosts)"
 	    COMPREPLY=( $(compgen -W "${opts}"  -- ${cur}) )
             return 0
             ;;
-	-@(u|-username))
+	--vhost)
+            opts="$(rabbitmqadmin -q -f bash list vhosts)"
+	    COMPREPLY=( $(compgen -W "${opts}"  -- ${cur}) )
+            return 0
+            ;;
+	-u)
             opts="$(rabbitmqadmin -q -f bash list users)"
 	    COMPREPLY=( $(compgen -W "${opts}"  -- ${cur}) )
             return 0
             ;;
-	-@(f|-format))
+	--username)
+            opts="$(rabbitmqadmin -q -f bash list users)"
+	    COMPREPLY=( $(compgen -W "${opts}"  -- ${cur}) )
+            return 0
+            ;;
+	-f)
+	    COMPREPLY=( $(compgen -W \"""" + " ".join(FORMATS.keys()) + """\"  -- ${cur}) )
+            return 0
+            ;;
+	--format)
 	    COMPREPLY=( $(compgen -W \"""" + " ".join(FORMATS.keys()) + """\"  -- ${cur}) )
             return 0
             ;;

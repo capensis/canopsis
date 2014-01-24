@@ -51,7 +51,6 @@ function post_install(){
 		su - canopsis -c "$PREFIX/bin/rabbitmqctl add_user admin admin"
 		RCODE=$?
 		if [ $RCODE -ne 0 ]; then CODE=$RCODE; fi
-		echo $CODE	
 		su - canopsis -c "$PREFIX/bin/rabbitmqctl set_user_tags admin administrator"
 		RCODE=$?
 		if [ $RCODE -ne 0 ]; then CODE=$RCODE; fi
@@ -64,7 +63,6 @@ function post_install(){
 		echo " + Declare permissions for guest user ..."
 		su - canopsis -c "$PREFIX/bin/rabbitmqctl set_permissions -p canopsis guest \".*\" \".*\" \".*\""
 		RCODE=$?
-		echo $CODE	
 		if [ $RCODE -ne 0 ]; then CODE=$RCODE; fi
 	fi
 
