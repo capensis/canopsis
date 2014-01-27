@@ -26,12 +26,42 @@ Ext.define('widgets.timegraph.timegraph', {
 
 	timeNav: false,
 	timeNav_window: global.commonTs.week,
+	time_window_offset: 0,
 
 	interval: global.commonTs.hours,
 	aggregate_method: 'MEAN',
 	aggregate_interval: 0,
 	aggregate_max_points: 500,
 	aggregate_round_time: true,
+	consolidation_method: "",
+
+	legend: true,
+	legend_fontSize: 12,
+	legend_fontColor: "3E576F",
+	legend_borderWidth: 1,
+	legend_backgroundColor: "FFFFFF",
+	legend_borderColor: "909090",
+	legend_verticalAlign: "bottom",
+	legend_align: "center",
+	legend_layout: "horizontal",
+
+	tooltip: true,
+	tooltip_crosshairs: true, // TODO: to manage
+
+	SeriesType: 'area',
+	lineWidth: 1,
+	marker_symbol: null,
+	marker_radius: 0,
+	stacked_graph: false,
+
+	tooltip_shared: false,
+	zoom: true,
+	backgroundColor: "FFFFFF",
+	borderColor: "FFFFFF",
+	borderWidth: 0,
+
+	displayVerticalLines: false,
+	displayHorizontalLines: true,
 
 	initComponent: function() {
 		this.callParent(arguments);
@@ -76,7 +106,8 @@ Ext.define('widgets.timegraph.timegraph', {
 				yaxes: [],
 
 				legend: {
-					hideable: true
+					hideable: true,
+					legend: this.legend,
 				},
 
 				series: {
@@ -93,7 +124,9 @@ Ext.define('widgets.timegraph.timegraph', {
 					bars: {
 						show: (this.SeriesType === 'bars')
 					}
-				}
+				},
+
+				tooltip: this.tooltip
 			}
 		);
 

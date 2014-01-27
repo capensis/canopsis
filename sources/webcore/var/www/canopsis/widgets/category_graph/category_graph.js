@@ -27,9 +27,10 @@ Ext.define('widgets.category_graph.category_graph', {
 	timeNav: false,
 	timeNav_window: global.commonTs.week,
 
-	diagram_type: 'pie', // 'column'
+	diagram_type: 'pie', // 'or column'
 	aggregate_max_points: 1,
 	aggregate_method: 'LAST',
+	aggregate_round_time: true,
 
 	//Default Options
 	max: 0,
@@ -38,9 +39,8 @@ Ext.define('widgets.category_graph.category_graph', {
 	other_label: 'Free',
 
 	// pie specific options
-	pie_size: 60,
+	pie_size: 0.8,
 	startAngle: 1.5,
-	radius: 0.8,
 	innerRadius: 0,
 
 	// Bar specific options
@@ -52,19 +52,19 @@ Ext.define('widgets.category_graph.category_graph', {
 	borderWidth: 0,
 	title_fontSize: 15,
 
-	legend_verticalAlign: 'bottom',
-	legend_align: 'center',
-	legend_layout: 'horizontal',
-	legend_backgroundColor: null,
-	legend_borderColor: '#909090',
-	legend_borderWidth: 1,
-	legend_fontSize: 12,
-	legend_fontColor: '#3E576F',
+	legend_verticalAlign: 'bottom', // TODO: this property are not managed by flotchart
+	legend_align: 'center', // TODO: this property are not managed by flotchart
+	legend_layout: 'horizontal', // TODO: this property are not managed by flotchart
+	legend_backgroundColor: null, // TODO: this property are not managed by flotchart
+	legend_borderColor: '#909090', // TODO: this property are not managed by flotchart
+	legend_borderWidth: 1, // TODO: this property are not managed by flotchart
+	legend_fontSize: 12, // TODO: this property are not managed by flotchart
+	legend_fontColor: '#3E576F', // TODO: this property are not managed by flotchart
 
 	labels: true,
 	labels_size: "x-small",
 	legend: true,
-	gradientColor: false,
+	gradientColor: false, // TODO: this property are not managed by flotchart
 	pctInLabel: false,
 	tooltip: true,
 
@@ -87,7 +87,7 @@ Ext.define('widgets.category_graph.category_graph', {
 						},
 						tilt: this.tilt,
 						startAngle: this.startAngle,
-						radius: this.radius
+						radius: this.pie_size / 100
 					},
 					bars: {
 						show: (this.diagram_type === 'column'),
