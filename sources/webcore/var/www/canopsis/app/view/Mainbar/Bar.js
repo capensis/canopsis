@@ -261,6 +261,18 @@ Ext.define('canopsis.view.Mainbar.Bar', {
 			]);
 		}
 
+		//SLA menu
+		if(global.accountCtrl.checkRoot() || global.accountCtrl.checkGroup('group.CPS_SLA_admin')) {
+			menu_build = menu_build.concat([
+				{
+					iconCls: 'icon-mainbar-sla',
+					text: _('SLA'),
+					action: 'openViewMenu',
+					viewId: 'view.sla'
+				}
+			]);
+		}
+
 		//Build menu
 		if(global.accountCtrl.checkRoot() || global.accountCtrl.checkGroup('group.CPS_view_admin') || global.accountCtrl.checkGroup('group.CPS_view')) {
 			menu_build = menu_build.concat([

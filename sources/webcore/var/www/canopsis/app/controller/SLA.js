@@ -1,3 +1,4 @@
+//need:app/view/SLA/View.js,app/store/SLA.js
 /*
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
@@ -16,50 +17,16 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 */
+Ext.define('canopsis.controller.SLA', {
+	extend: 'Ext.app.Controller',
 
-Ext.define('canopsis.lib.form.cfield', {
-	isFormField: true,
-	name: undefined,
+	logAuthor: '[controller][SLA]',
 
-	getName: function() {
-		return this.name;
-	},
+	views: ['SLA.View'],
 
-	isValid: function() {
-		return true;
-	},
+	init: function() {
+		this.callParent(arguments);
 
-	validate: function() {
-		return this.isValid();
-	},
-
-	getSubmitData: function() {
-		var data = {};
-		data[this.name] = this.getValue();
-		return data;
-	},
-
-	isDirty: function() {
-		return false;
-	},
-
-	getModelData: function() {
-		return this.getSubmitData();
-	},
-
-	getValue: function() {
-		return undefined;
-	},
-
-	reset: function() {
-		this.setValue(this.originalValue);
-	},
-
-	resetOriginalValue: function() {
-		this.originalValue = this.getValue();
-	},
-
-	clearInvalid: function() {
-		;
+		global.slaCtrl = this;
 	}
 });

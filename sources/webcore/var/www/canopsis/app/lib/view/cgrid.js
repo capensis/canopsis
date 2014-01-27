@@ -21,6 +21,7 @@
 */
 Ext.define('canopsis.lib.view.cgrid' , {
 	extend: 'Ext.grid.Panel',
+	alias: 'widget.cgrid',
 
 	requires: [
 		'Ext.grid.plugin.CellEditing',
