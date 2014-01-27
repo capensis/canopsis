@@ -39,13 +39,13 @@ Ext.define('widgets.category_graph.category_graph', {
 
 	// pie specific options
 	pie_size: 60,
-	startAngle: 0,
-	radius: 0.9,
+	startAngle: 1.5,
+	radius: 0.8,
 	innerRadius: 0,
 
 	// Bar specific options
 	stacked_graph: false,
-	verticalDisplay: false,
+	verticalDisplay: true,
 
 	backgroundColor: '#FFFFFF',
 	borderColor: '#FFFFFF',
@@ -75,6 +75,9 @@ Ext.define('widgets.category_graph.category_graph', {
 			{
 				series: {
 				//stack: this.stacked_graph,
+					lines: {
+						show: false,
+					},
 					pie: {
 						show: (this.diagram_type === 'pie'),
 						innerRadius: this.innerRadius,
@@ -90,7 +93,8 @@ Ext.define('widgets.category_graph.category_graph', {
 						show: (this.diagram_type === 'column'),
 						horizontal: !this.verticalDisplay,
 						barWidth: 1,
-						zero: true
+						zero: true,
+						dataLabels: this.labels
 					},
 					stack: this.stacked_graph
 				},
@@ -99,7 +103,7 @@ Ext.define('widgets.category_graph.category_graph', {
 					clickable: true,
 				},
 				legend: {
-					hideable: (this.diagram_type === 'column'),
+					hideable: true,
 					show: this.legend
 				},
 				xaxis: {
@@ -111,7 +115,9 @@ Ext.define('widgets.category_graph.category_graph', {
 				tooltip: this.tooltip,
 				tooltipOpts : {
 					content: function(label, xval, yval, flotItem) {
-                        return "<b>" + label + "<br/></b>" + yval + "%";
+						void(xval);
+						void(flotItem);
+                        return "<b>" + label + "<br/></b>" + yval;
                     }
 				}
 			}
@@ -130,7 +136,7 @@ Ext.define('widgets.category_graph.category_graph', {
 			var total = 0;
 			for (var index=0; index < series.length; index++) {
 				var serie = series[index];
-				if (serie.data.length === 1) {
+				if (serie.show && serie.data.length === 1) {
 					total += series[index].data[0][1];
 				}
 			}
