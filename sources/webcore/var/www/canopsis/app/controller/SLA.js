@@ -1,4 +1,4 @@
-//need:app/view/SLA/View.js;app/store/SLA.js
+//need:app/view/SLA/View.js,app/store/SLA.js
 /*
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #

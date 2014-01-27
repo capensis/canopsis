@@ -1,4 +1,4 @@
-//need:app/store/SLA.js;app/lib/view/cform.js;app/lib/form/field/cdate.js
+//need:app/store/SLA.js,app/lib/view/cform.js,app/lib/form/field/cdate.js,app/lib/form/field/cduration.js
 /*
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
@@ -25,7 +25,8 @@ Ext.define('canopsis.view.SLA.View', {
 		'canopsis.store.SLA',
 		'canopsis.model.SLA',
 		'canopsis.lib.view.cform',
-		'canopsis.lib.form.field.cdate'
+		'canopsis.lib.form.field.cdate',
+		'canopsis.lib.form.field.cduration'
 	],
 
 	logAuthor: '[SLA]',
@@ -37,7 +38,17 @@ Ext.define('canopsis.view.SLA.View', {
 		this.period = null;
 
 		/* load configuration */
+		this.store_crit = Ext.create('canopsis.store.SLA', {
+			filters: [{
+				property: 'objclass',
+				value: 'crit'
+			}]
+		});
+
+		this.store_crit.load();
+
 		this.store = Ext.create('canopsis.store.SLA', {});
+
 		this.store.load(function() {
 			/* get macro configuration */
 			this.macro = this.store.findRecord('objclass', 'macro');
@@ -124,42 +135,149 @@ Ext.define('canopsis.view.SLA.View', {
 		});
 	},
 
-	buildConfigWindow: function() {
+	buildConfigCrit: function() {
+		this.critGridEdit = Ext.create('Ext.grid.plugin.RowEditing', {
+			autoCancel: false
+		});
+
 		this.critGrid = Ext.widget({
 			xtype: 'grid',
-			border: false,
 			title: 'Criticality',
+			multiSelect: true,
 
 			tbar: [{
 				xtype: 'button',
-				text: 'Add',
+				text: _('Add'),
 				iconCls: 'icon-add',
-				handler: this.addCriticality.bind(this)
+				action: 'add'
 			},{
 				xtype: 'button',
-				text: 'Delete',
+				text: _('Reload'),
+				iconCls: 'icon-reload',
+				action: 'reload'
+			},{
+				xtype: 'button',
+				text: _('Delete'),
 				iconCls: 'icon-delete',
-				handler: this.removeCriticality.bind(this)
+				action: 'delete'
+			},{
+				xtype: 'button',
+				text: _('Save'),
+				iconCls: 'icon-save',
+				action: 'sync'
 			}],
 
 			columns: [{
 				text: 'Criticality',
 				dataIndex: 'crit',
-				flex: 1
+				flex: 1,
+				editor: {
+					allowBlank: false
+				}
 			},{
 				text: 'Delay',
 				dataIndex: 'delay',
 				renderer: rdr_time_interval,
-				flex: 1
+				flex: 1,
+				editor: {
+					xtype: 'cduration',
+					allowBlank: false
+				}
 			}],
 
-			store: Ext.create('canopsis.store.SLA', {
-				filters: [{
-					property: 'objclass',
-					value: 'crit'
-				}]
-			})
+			plugins: [this.critGridEdit],
+			store: this.store_crit
 		});
+
+		/* bind actions */
+		var actions = {
+			add: this.addCrit,
+			reload: this.reloadCrit,
+			delete: this.removeCrit,
+			sync: this.saveCrit
+		};
+
+		for(var name in actions) {
+			var btns = Ext.ComponentQuery.query('#' + this.critGrid.id + ' [action=' + name + ']');
+
+			for(var i = 0; i < btns.length; i++) {
+				btns[i].on('click', actions[name], this);
+			}
+		}
+	},
+
+	buildConfigMacro: function() {
+		this.macroForm = Ext.widget({
+			title: 'Macro',
+			xtype: 'cform',
+
+			items: [{
+				xtype: 'textfield',
+				name: 'warn',
+				fieldLabel: 'Warning',
+				value: this.macro.get('mWarn')
+			},{
+				xtype: 'textfield',
+				name: 'crit',
+				fieldLabel: 'Critical',
+				value: this.macro.get('mCrit')
+			}]
+		});
+
+		/* bind form actions */
+		var actions = {
+			save: this.saveMacro,
+			cancel: this.restoreMacro
+		};
+
+		for(var name in actions) {
+			var btns = Ext.ComponentQuery.query('#' + this.macroForm.id + ' [action=' + name + ']');
+
+			for(var i = 0; i < btns.length; i++) {
+				btns[i].on('click', actions[name], this);
+			}
+		}
+	},
+
+	buildConfigPeriod: function() {
+		this.periodForm = Ext.widget({
+			title: 'Period',
+			xtype: 'cform',
+
+			items: [{
+				xtype: 'cdate',
+				name: 'from',
+				label_text: 'From',
+				value: this.period.get('from')
+			},{
+				xtype: 'cdate',
+				name: 'to',
+				label_text: 'To',
+				value: this.period.get('to')
+			}]
+		});
+
+		/* bind form actions */
+		var actions = {
+			save: this.savePeriod,
+			cancel: this.restorePeriod
+		};
+
+		for(var name in actions) {
+			var btns = Ext.ComponentQuery.query('#' + this.periodForm.id + ' [action=' + name + ']');
+
+			for(var i = 0; i < btns.length; i++) {
+				btns[i].on('click', actions[name], this);
+			}
+		}
+	},
+
+	buildConfigWindow: function() {
+		this.buildConfigCrit();
+		this.buildConfigMacro();
+		this.buildConfigPeriod();
+
+		/* create configuration window */
 
 		this.winconfig = Ext.create('Ext.window.Window', {
 			title: 'Configure SLA',
@@ -171,33 +289,11 @@ Ext.define('canopsis.view.SLA.View', {
 
 			items: {
 				xtype: 'tabpanel',
-				items: [this.critGrid, {
-					title: 'Macro',
-					xtype: 'cform',
-
-					items: [{
-						xtype: 'textfield',
-						fieldLabel: 'Warning',
-						value: this.macro.get('mWarn')
-					},{
-						xtype: 'textfield',
-						fieldLabel: 'Critical',
-						value: this.macro.get('mCrit')
-					}]
-				},{
-					title: 'Period',
-					xtype: 'cform',
-
-					items: [{
-						xtype: 'cdate',
-						label_text: 'From',
-						value: this.period.get('from')
-					},{
-						xtype: 'cdate',
-						label_text: 'To',
-						value: this.period.get('to')
-					}]
-				}]
+				items: [
+					this.critGrid,
+					this.macroForm,
+					this.periodForm
+				]
 			}
 		});
 	},
@@ -206,12 +302,77 @@ Ext.define('canopsis.view.SLA.View', {
 		this.winconfig.show();
 	},
 
-	addCriticality: function() {
-		console.log('Add');
+	addCrit: function() {
+		log.debug('Adding crit', this.logAuthor);
+
+		this.critGridEdit.cancelEdit();
+
+		var crit = Ext.create('canopsis.model.SLA', {
+			objclass: 'crit'
+		});
+
+		this.store_crit.insert(0, crit);
+		this.critGridEdit.startEdit(0, 0);
 	},
 
-	removeCriticality: function()  {
-		console.log('Remove');
+	reloadCrit: function() {
+		log.debug('Reloading crit store', this.logAuthor);
+		this.store_crit.load();
+	},
+
+	removeCrit: function() {
+		log.debug('Removing selected crits', this.logAuthor);
+
+		var sm = this.critGrid.getSelectionModel();
+
+		this.critGridEdit.cancelEdit();
+
+		this.store_crit.remove(sm.getSelection());
+
+		if(this.store_crit.getCount() > 0) {
+			sm.select(0);
+		}
+
+		this.store_crit.sync();
+	},
+
+	saveCrit: function() {
+		log.debug('Synchronize crit store', this.logAuthor);
+		this.store_crit.sync();
+	},
+
+	saveMacro: function() {
+		var record = this.macroForm.getValues();
+
+		this.macro = this.store.findRecord('objclass', 'macro');
+		this.macro.set('mWarn', record.warn);
+		this.macro.set('mCrit', record.crit);
+
+		this.store.sync();
+	},
+
+	restoreMacro: function() {
+		this.macroForm.getForm().setValues({
+			warn: this.macro.get('mWarn'),
+			crit: this.macro.get('mCrit')
+		});
+	},
+
+	savePeriod: function() {
+		var record = this.periodForm.getValues();
+
+		this.period = this.store.findRecord('objclass', 'period');
+		this.period.set('from', record.from);
+		this.period.set('to', record.to);
+
+		this.store.sync();
+	},
+
+	restorePeriod: function() {
+		this.periodForm.getForm().setValues({
+			from: this.period.get('from'),
+			to: this.period.get('to')
+		});
 	},
 
 	selectSlaType: function(combo, records) {

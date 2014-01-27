@@ -49,5 +49,17 @@ Ext.define('canopsis.lib.form.cfield', {
 
 	getValue: function() {
 		return undefined;
+	},
+
+	reset: function() {
+		this.setValue(this.originalValue);
+	},
+
+	resetOriginalValue: function() {
+		this.originalValue = this.getValue();
+	},
+
+	clearInvalid: function() {
+		;
 	}
 });
