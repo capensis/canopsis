@@ -254,7 +254,7 @@ Ext.define('canopsis.view.Mainbar.Bar', {
 			menu_build = menu_build.concat([
 				{
 					iconCls: 'icon-mainbar-topology',
-					text: _('Topologies') + ' (BETA)',
+					text: _('Topologies'),
 					action: 'openViewMenu',
 					viewId: 'view.topology_manager'
 				}

@@ -47,7 +47,7 @@ ctype_to_group_access = {
 						}
 
 #########################################################################
-
+from restextend import ha
 #### GET Media
 @get('/rest/media/:namespace/:_id')
 def rest_get_media(namespace, _id):
