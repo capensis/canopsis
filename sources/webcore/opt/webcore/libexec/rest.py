@@ -187,7 +187,6 @@ def rest_get(namespace, ctype=None, _id=None, params=None):
 			logger.error("Impossible to decode filter: %s: %s" % (filter, err))
 			filter = None
 
-
 	msort = []
 	if sort:
 		#[{"property":"timestamp","direction":"DESC"}]
@@ -224,10 +223,8 @@ def rest_get(namespace, ctype=None, _id=None, params=None):
 
 	mfilter = {}
 	if isinstance(filter, list):
-		if len(filter) > 0:
-			mfilter = filter[0]
-		else:
-			logger.error(" + Invalid filter format")
+		for item in filter:
+			mfilter[item['property']] = item['value']
 
 	elif isinstance(filter, dict):
 		mfilter = filter
