@@ -1,4 +1,4 @@
-//need:app/store/SLA.js,app/lib/view/cform.js,app/lib/form/field/cdate.js,app/lib/form/field/cduration.js
+//need:app/store/SLA.js,app/lib/view/cform.js,app/lib/form/field/cdate.js,app/lib/form/field/cduration.js,app/view/SLA/BarWidget.js
 /*
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
@@ -62,7 +62,8 @@ Ext.define('canopsis.view.SLA.View', {
 		'canopsis.model.SLA',
 		'canopsis.lib.view.cform',
 		'canopsis.lib.form.field.cdate',
-		'canopsis.lib.form.field.cduration'
+		'canopsis.lib.form.field.cduration',
+		'canopsis.view.SLA.BarWidget'
 	],
 
 	logAuthor: '[SLA]',
@@ -81,50 +82,50 @@ Ext.define('canopsis.view.SLA.View', {
 			}]
 		});
 
-		this.store_crit.load(this.buildView.bind(this));
-
 		this.store = Ext.create('canopsis.store.SLA', {});
 
-		this.store.load(function() {
-			/* get macro configuration */
-			this.macro = this.store.findRecord('objclass', 'macro');
+		this.store_crit.load(function() {
+			this.store.load(function() {
+				/* get macro configuration */
+				this.macro = this.store.findRecord('objclass', 'macro');
 
-			if(this.macro === null) {
-				this.macro = Ext.create('canopsis.model.SLA', {
-					objclass: 'macro'
-				});
+				if(this.macro === null) {
+					this.macro = Ext.create('canopsis.model.SLA', {
+						objclass: 'macro'
+					});
 
-				this.store.add(this.macro);
-			}
+					this.store.add(this.macro);
+				}
 
-			/* get period configuration */
-			this.period = this.store.findRecord('objclass', 'period');
+				/* get period configuration */
+				this.period = this.store.findRecord('objclass', 'period');
 
-			if(this.period === null) {
-				var to = new Date() / 1000;
-				var from = new Date(to * 1000 - global.commonTs.week * 1000) / 1000;
+				if(this.period === null) {
+					var to = new Date() / 1000;
+					var from = new Date(to * 1000 - global.commonTs.week * 1000) / 1000;
 
-				this.period = Ext.create('canopsis.model.SLA', {
-					objclass: 'period',
-					from: from,
-					to: to
-				});
+					this.period = Ext.create('canopsis.model.SLA', {
+						objclass: 'period',
+						from: from,
+						to: to
+					});
 
-				this.store.add(this.period);
-			}
+					this.store.add(this.period);
+				}
 
-			log.debug('Configuration loaded:', this.logAuthor);
-			log.dump(this.macro);
-			log.dump(this.period);
+				log.debug('Configuration loaded:', this.logAuthor);
+				log.dump(this.macro);
+				log.dump(this.period);
 
-			/* synchronize the store */
-			this.store.sync();
+				/* synchronize the store */
+				this.store.sync();
 
-			/* build UI */
-			this.buildConfigWindow();
+				/* build UI */
+				this.buildToolbar();
+				this.buildConfigWindow();
+				this.buildView();
+			}.bind(this));
 		}.bind(this));
-
-		this.buildToolbar();
 	},
 
 	buildToolbar: function() {
@@ -173,22 +174,41 @@ Ext.define('canopsis.view.SLA.View', {
 
 	buildView: function() {
 		this.graphs = Ext.create('Ext.container.Container', {
-			layout: 'vbox',
+			layout: {
+				type: 'vbox',
+				align: 'stretch'
+			}
 		});
 
 		this.store_crit.each(function(record) {
 			var graph = Ext.create('Ext.container.Container', {
-				layout: 'hbox',
+				layout: {
+					type: 'hbox',
+					align: 'stretch'
+				},
 
 				items: [{
 					xtype: 'label',
-					text: record.get('crit') + ' acknowledgement'
+					text: record.get('crit') + ' acknowledgement',
+					flex: 1
+				},{
+					xtype: 'slabarwidget',
+					flex: 2,
+
+					crit: record.get('crit'),
+					delay: record.get('delay'),
+
+					from: function() {
+						return this.period.get('from');
+					}.bind(this),
+
+					to: function() {
+						return this.period.get('to');
+					}.bind(this)
 				},{
 					xtype: 'button',
-					text: 'Test'
-				},{
-					xtype: 'button',
-					text: 'Test2'
+					text: 'Test2',
+					flex: 2
 				}]
 			});
 
