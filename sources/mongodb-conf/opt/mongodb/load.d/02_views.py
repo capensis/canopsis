@@ -57,6 +57,10 @@ def init():
 	data = { 'xtype': 'SLAView' }
 	create_view('sla', 'SLA', data, internal=True)
 
+	### Top 10
+	data = { 'xtype': 'top10' }
+	create_view('top10', 'Top 10', data, internal=True)
+
 	### View manager
 	data = { 'xtype': 'ViewTreePanel'}
 	create_view('view_manager', 'Views', data, internal=True)

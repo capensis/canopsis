@@ -29,6 +29,8 @@ from bottle import route, get, post, put, delete, request, HTTPError, response
 from libexec.auth import get_account
 
 # Modules
+from cstorage import get_storage
+
 from ctools import parse_perfdata, clean_mfilter
 from ctools import cleanTimestamp
 from ctools import internal_metrics
@@ -299,6 +301,7 @@ def perfstore_perftop(start=None, stop=None):
 	limit					= int(request.params.get('limit', default=10))
 	sort					= int(request.params.get('sort', default=1))
 	mfilter					= request.params.get('mfilter', default={})
+	get_output				= request.params.get('output', default=False)
 	time_window				= int(request.params.get('time_window', default=86400))
 	threshold				= request.params.get('threshold', default=None)
 	threshold_direction 	= int(request.params.get('threshold_direction', default=-1))
@@ -353,6 +356,7 @@ def perfstore_perftop(start=None, stop=None):
 
 	logger.debug("PerfTop:")
 	logger.debug(" + mfilter:     %s" % mfilter)
+	logger.debug(" + get_output:  %s" % get_output)
 	logger.debug(" + limit:       %s" % limit)
 	logger.debug(" + threshold:   %s" % threshold)
 	logger.debug(" + threshold_direction:   %s" % threshold_direction)
@@ -471,7 +475,43 @@ def perfstore_perftop(start=None, stop=None):
 
 							if check_threshold(val):
 								data.append(metric)
-				
+
+		# Calculate most recurrent output
+		if get_output:
+			logs = get_storage(namespace='events_log', account=get_account())
+
+			for item in data:
+				evfilter = {'$and': [
+					{
+						'component': item['co'],
+						'resource': item.get('re', {'$exists': False}),
+					},{
+						'timestamp': {'$gt': start}
+					},{
+						'timestamp': {'$lt': stop}
+					}
+				]}
+
+				records = logs.find(evfilter)
+
+				outputs = {}
+
+				for record in records:
+					output = record.data['output']
+
+					if output not in outputs:
+						outputs[output] = 1
+
+					else:
+						outputs[output] += 1
+
+				last_max = 0
+
+				for output in outputs:
+					if outputs[output] > last_max:
+						item['output'] = output
+						last_max = outputs[output]
+
 		reverse = True
 		if sort == 1:
 			reverse = False	
