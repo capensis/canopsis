@@ -85,11 +85,16 @@ def get_specific_entity(etype, ename):
 def get_entities_with_custom_filter():
 	try:
 		mfilter = request.body.readline()
-		mfilter = json.loads(mfilter)
+		mfilter = json.loads(mfilter)['filter']
 
 	except ValueError, err:
 		if 'filter' not in request.params:
-			return HTTPError(500, 'No filter could be decoded')
+			return HTTPError(500, json.dumps({
+				'total': 0,
+				'data': [],
+				'success': False,
+				'error': str(err)
+			}))
 
 		mfilter = request.params['filter']
 
