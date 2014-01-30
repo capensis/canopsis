@@ -17,9 +17,45 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 */
+
+var sla_table_template = Ext.create('Ext.XTemplate',
+	'<table class="sla-table">',
+		'<thead>',
+			'<tr>',
+				'<th></th>',
+				'<th></th>',
+				'<th>SLA OK</th>',
+				'<th>SLA NOK</th>',
+				'<th>NOT ACK</th>',
+				'<th>SLA OK Rate</th>',
+			'</tr>',
+		'</thead>',
+		'<tbody>',
+			'<tpl for="crits">',
+				'<tr>',
+					'<td rowspan="2">{name}</td>',
+					'<td>Warning</td>',
+					'<td>{nb_warn_sla_ok}</td>',
+					'<td>{nb_warn_sla_nok}</td>',
+					'<td>{nb_warn_not_ack}</td>',
+					'<td>{pct_warn_sla_ok}</td>',
+				'</tr>',
+				'<tr>',
+					'<td>Critical</td>',
+					'<td>{nb_crit_sla_ok}</td>',
+					'<td>{nb_crit_sla_nok}</td>',
+					'<td>{nb_crit_not_ack}</td>',
+					'<td>{pct_crit_sla_ok}</td>',
+				'</tr>',
+			'</tpl>',
+		'</tbody>',
+	'</table>'
+);
+
 Ext.define('canopsis.view.SLA.View', {
 	extend: 'Ext.panel.Panel',
 	alias: 'widget.SLAView',
+	layout: 'fit',
 
 	requires: [
 		'canopsis.store.SLA',
@@ -45,7 +81,7 @@ Ext.define('canopsis.view.SLA.View', {
 			}]
 		});
 
-		this.store_crit.load();
+		this.store_crit.load(this.buildView.bind(this));
 
 		this.store = Ext.create('canopsis.store.SLA', {});
 
@@ -133,6 +169,33 @@ Ext.define('canopsis.view.SLA.View', {
 				handler: this.configureSla.bind(this)
 			}]
 		});
+	},
+
+	buildView: function() {
+		this.graphs = Ext.create('Ext.container.Container', {
+			layout: 'vbox',
+		});
+
+		this.store_crit.each(function(record) {
+			var graph = Ext.create('Ext.container.Container', {
+				layout: 'hbox',
+
+				items: [{
+					xtype: 'label',
+					text: record.get('crit') + ' acknowledgement'
+				},{
+					xtype: 'button',
+					text: 'Test'
+				},{
+					xtype: 'button',
+					text: 'Test2'
+				}]
+			});
+
+			this.graphs.add(graph);
+		}, this);
+
+		this.add(this.graphs);
 	},
 
 	buildConfigCrit: function() {
