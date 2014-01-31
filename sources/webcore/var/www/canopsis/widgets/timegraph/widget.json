@@ -85,6 +85,11 @@
 							"fieldLabel": "History time window",
 							"name": "timeNav_window",
 							"value": 604800
+						},{
+							"xtype": "checkbox",
+							"fieldLabel": "Display downtimes",
+							"name": "show_downtimes",
+							"value": false
 						}
 					]
 				},{
@@ -346,6 +351,23 @@
 						"u",
 						"yAxis"
 					]
+				}
+			]
+		},{
+			"title": "Downtimes",
+			"advanced": true,
+			"items": [
+				{
+					"xtype": "cinventory",
+					"name" : "downtimes",
+					"showResource": true,
+					"idKey" : "component",
+					"additional_field": {
+											"xtype":"ccolorfield",
+											"name":"color",
+											"emptyText":"Color of events",
+											"hideLabel": true
+										}
 				}
 			]
 		},{

@@ -46,6 +46,7 @@ Ext.define('canopsis.lib.view.cwidgetGraph', {
 			this.chart.initializeHiddenGraphs(this);
 			this.chart.initializeCurveStyleManager(this);
 			this.chart.initializeThresholds(this);
+			this.chart.initializeDowntimes(this);
 			this.chart.initializeGraphStyleManager(this);
 			this.chart.initializeLegendManager(this);
 		}, this);
