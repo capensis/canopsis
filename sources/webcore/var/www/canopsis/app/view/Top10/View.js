@@ -96,6 +96,21 @@ Ext.define('canopsis.view.Top10.View' , {
 		},{
 			header: '',
 			width: 25,
+			align: 'center',
+			sortable: false,
+			renderer: function(value, metaData, record) {
+				void(value, metaData);
+
+				if(record.get('me') === 'cps_statechange_1') {
+					return '<span class="icon icon-state-1" />';
+				}
+				else {
+					return '<span class="icon icon-state-2" />';
+				}
+			}
+		},{
+			header: '',
+			width: 25,
 			sortable: false,
 			renderer: function() {
 				return "<span class='icon icon-mainbar-perfdata' />";

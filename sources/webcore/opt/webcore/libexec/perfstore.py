@@ -485,6 +485,7 @@ def perfstore_perftop(start=None, stop=None):
 					{
 						'component': item['co'],
 						'resource': item.get('re', {'$exists': False}),
+						'state': {'$ne': 0}
 					},{
 						'timestamp': {'$gt': start}
 					},{
