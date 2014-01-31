@@ -8,11 +8,17 @@ Look at rabbitmq's logs in ``var/log/rabbitmq/rabbit@<hostname>.log`` for any co
 
 * Did you changed machine's name after Canopsis installation?
 
-If so, you can stop all canopsis services:
+If yes, then modify ``etc/rabbitmq/rabbitmq-env.conf`` this way:
 
 .. code-block:: bash
 
-    hypcontrol stop
-    pkill -9 -u canopsis
+    NODENAME=rabbit@<old hostname>
 
-Reinstall Canopsis the way you want (only tested with source install), then restart it.
+The hostname is used by RabbitMQ to store datas (mnesia database, logs…), if you change it, be sure to modify this variable.
+
+Now you can restart canopsis:
+
+.. code-block:: bash
+
+    su - canopsis
+    hypstart canopsis restart
