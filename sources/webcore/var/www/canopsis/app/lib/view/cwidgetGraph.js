@@ -48,6 +48,7 @@ Ext.define('canopsis.lib.view.cwidgetGraph', {
 			this.chart.initializeThresholds(this);
 			this.chart.initializeGraphStyleManager(this);
 			this.chart.initializeLegendManager(this);
+			this.chart.initializeHumanReadable(this);
 		}, this);
 
 		this.on('resize', function() {
