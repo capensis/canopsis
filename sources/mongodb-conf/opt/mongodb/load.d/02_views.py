@@ -140,6 +140,20 @@ def update_view_for_new_metric_format():
 		for item in view.data['items']:
 			nodesObject = {}
 
+			# check with flotchart migration from highchart
+			if 'xtype' in item['data']:
+				xtype = item['data']['xtype']
+
+				if xtype == 'line_graph':
+					xtype = 'timegraph'
+				elif xtype == 'bar_graph':
+					xtype = 'timegraph'
+					item['data']['SeriesType'] = 'bars'
+				elif xtype == 'diagram':
+					xtype = 'category_graph'
+
+				item['data']['xtype'] = xtype
+
 			#check if old format
 			if 'nodes' in item['data']:
 				itemNodes = item['data']['nodes']

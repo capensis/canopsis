@@ -27,9 +27,10 @@ Ext.define('widgets.category_graph.category_graph', {
 	timeNav: false,
 	timeNav_window: global.commonTs.week,
 
-	graph_type: 'pie', // 'column'
+	diagram_type: 'pie', // 'or column'
 	aggregate_max_points: 1,
 	aggregate_method: 'LAST',
+	aggregate_round_time: true,
 
 	//Default Options
 	max: 0,
@@ -38,33 +39,32 @@ Ext.define('widgets.category_graph.category_graph', {
 	other_label: 'Free',
 
 	// pie specific options
-	pie_size: 60,
-	startAngle: 0,
-	radius: 0.9,
+	pie_size: 0.8,
+	startAngle: 1.5,
 	innerRadius: 0,
 
 	// Bar specific options
 	stacked_graph: false,
-	vertical_display: false,
+	verticalDisplay: true,
 
 	backgroundColor: '#FFFFFF',
 	borderColor: '#FFFFFF',
 	borderWidth: 0,
 	title_fontSize: 15,
 
-	legend_verticalAlign: 'bottom',
-	legend_align: 'center',
-	legend_layout: 'horizontal',
-	legend_backgroundColor: null,
-	legend_borderColor: '#909090',
-	legend_borderWidth: 1,
-	legend_fontSize: 12,
-	legend_fontColor: '#3E576F',
+	legend_verticalAlign: 'bottom', // TODO: this property are not managed by flotchart
+	legend_align: 'center', // TODO: this property are not managed by flotchart
+	legend_layout: 'horizontal', // TODO: this property are not managed by flotchart
+	legend_backgroundColor: null, // TODO: this property are not managed by flotchart
+	legend_borderColor: '#909090', // TODO: this property are not managed by flotchart
+	legend_borderWidth: 1, // TODO: this property are not managed by flotchart
+	legend_fontSize: 12, // TODO: this property are not managed by flotchart
+	legend_fontColor: '#3E576F', // TODO: this property are not managed by flotchart
 
 	labels: true,
 	labels_size: "x-small",
 	legend: true,
-	gradientColor: false,
+	gradientColor: false, // TODO: this property are not managed by flotchart
 	pctInLabel: false,
 	tooltip: true,
 
@@ -75,8 +75,11 @@ Ext.define('widgets.category_graph.category_graph', {
 			{
 				series: {
 				//stack: this.stacked_graph,
+					lines: {
+						show: false,
+					},
 					pie: {
-						show: (this.graph_type === 'pie'),
+						show: (this.diagram_type === 'pie'),
 						innerRadius: this.innerRadius,
 						label: {
 							show: this.labels,
@@ -84,13 +87,14 @@ Ext.define('widgets.category_graph.category_graph', {
 						},
 						tilt: this.tilt,
 						startAngle: this.startAngle,
-						radius: this.radius
+						radius: this.pie_size / 100
 					},
 					bars: {
-						show: (this.graph_type === 'column'),
-						horizontal: !this.vertical_display,
+						show: (this.diagram_type === 'column'),
+						horizontal: !this.verticalDisplay,
 						barWidth: 1,
-						zero: true
+						zero: true,
+						dataLabels: this.labels
 					},
 					stack: this.stacked_graph
 				},
@@ -99,19 +103,21 @@ Ext.define('widgets.category_graph.category_graph', {
 					clickable: true,
 				},
 				legend: {
-					hideable: (this.graph_type === 'column'),
+					hideable: true,
 					show: this.legend
 				},
 				xaxis: {
-					show: (this.graph_type === 'column' && !this.vertical_display)
+					show: (this.diagram_type === 'column' && !this.verticalDisplay)
 				},
 				yaxis: {
-					show: (this.graph_type === 'column' && this.vertical_display)
+					show: (this.diagram_type === 'column' && this.verticalDisplay)
 				},
 				tooltip: this.tooltip,
 				tooltipOpts : {
 					content: function(label, xval, yval, flotItem) {
-                        return "<b>" + label + "<br/></b>" + yval + "%";
+						void(xval);
+						void(flotItem);
+                        return "<b>" + label + "<br/></b>" + yval;
                     }
 				}
 			}
@@ -119,7 +125,7 @@ Ext.define('widgets.category_graph.category_graph', {
 	},
 
 	addPoint: function(serieId, value, serieIndex) {
-		var point = [this.graph_type === 'column' && !this.stacked_graph? serieIndex : 0, value[1]];
+		var point = [this.diagram_type === 'column' && !this.stacked_graph? serieIndex : 0, value[1]];
 		this.series[serieId].data = [point];
 	},
 
@@ -130,14 +136,14 @@ Ext.define('widgets.category_graph.category_graph', {
 			var total = 0;
 			for (var index=0; index < series.length; index++) {
 				var serie = series[index];
-				if (serie.data.length === 1) {
+				if (serie.show && serie.data.length === 1) {
 					total += series[index].data[0][1];
 				}
 			}
 			// add other serie if total is less than this.max
 			if (this.max > total) {
 				// set x=0 only if graph is in stacking mode and is column
-				var point = [this.graph_type === 'column' && !this.stacked_graph? series.length: 0, this.max - total];
+				var point = [this.diagram_type === 'column' && !this.stacked_graph? series.length: 0, this.max - total];
 				var other_serie = {
 					label: this.other_label,
 					data: [point]
