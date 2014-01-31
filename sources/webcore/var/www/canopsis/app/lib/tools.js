@@ -176,6 +176,21 @@ function getMidnight(timestamp) {
 	return new_time;
 }
 
+function hex2rgba(hex, opacity) {
+	var rgb = hex.replace('#', '').match(/(.{2})/g);
+
+	var i = 3;
+	while (i--) {
+	rgb[i] = parseInt(rgb[i], 16);
+	}
+
+	if (typeof opacity == 'undefined') {
+	return 'rgb(' + rgb.join(', ') + ')';
+	}
+
+	return 'rgba(' + rgb.join(', ') + ', ' + opacity + ')';
+};
+
 function check_color(color) {
 	if(!color) {
 		return color;
