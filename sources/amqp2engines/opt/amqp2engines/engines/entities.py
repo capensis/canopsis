@@ -197,7 +197,13 @@ class engine(cengine):
 						'resource': resource,
 						'name': perfdata['metric'],
 						'nodeid': nodeid,
-						'last_point': event['timestamp']
+						'last': [event['timestamp'], perfdata['value'],
+						'min': perfdata.get('min', None),
+						'max': perfdata.get('max', None),
+						'warn': perfdata.get('warn', None),
+						'crit': perfdata.get('crit', None),
+						'unit': perfdata.get('unit', None),
+						'perftype': perfdata.get('type', 'GAUGE')
 					}
 				},
 				upsert = True
