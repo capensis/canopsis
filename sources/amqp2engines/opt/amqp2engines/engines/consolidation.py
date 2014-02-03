@@ -232,13 +232,15 @@ class engine(cengine):
 			else:
 				self.logger.debug("Not the moment to process this consolidation")
 
+			#set record free for dispatcher engine
+			self.crecord_task_complete(_id)
+
 		if not beat_elapsed:
 			beat_elapsed = time.time() - now
 
 		self.counter_worktime += beat_elapsed
 		
-		#set record free for dispatcher engine
-		self.crecord_task_complete(event['_id'])
+
 	
 	
 	def get_math_function(self, name):

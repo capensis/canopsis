@@ -197,7 +197,7 @@ class engine(cengine):
 						'resource': resource,
 						'name': perfdata['metric'],
 						'nodeid': nodeid,
-						'last': [event['timestamp'], perfdata['value'],
+						'last': [event['timestamp'], perfdata['value']],
 						'min': perfdata.get('min', None),
 						'max': perfdata.get('max', None),
 						'warn': perfdata.get('warn', None),
