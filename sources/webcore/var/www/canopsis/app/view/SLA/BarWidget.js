@@ -44,72 +44,72 @@ Ext.define('canopsis.view.SLA.BarWidget', {
 
 	refreshNodes: function() {
 		Ext.Ajax.request({
-			url: '/perfstore/get_all_metrics',
-			method: 'GET',
+			url: '/entities/',
 			scope: this,
+			method: 'POST',
 
-			params: {
-				show_internals: true,
-				limit: 0
+			jsonData: {
+				filter: {
+					'$or': [
+						{'type': {'$in': ['component', 'resource', 'ack', 'downtime']}},
+						{'type': 'metric', 'name': 'cps_state'}
+					]
+				}
 			},
 
 			success: function(response) {
 				var data = Ext.JSON.decode(response.responseText);
 
-				var nodes = [];
+				var payload = {};
+				var key;
 
+				/* parse response from server */
 				for(var i = 0; i < data.data.length; i++) {
-					var metric = data.data[i];
+					var entity = data.data[i];
 
-					if(metric.me === 'cps_state') {
-						/* get component associated to the metric */
-						var response = null;
+					if(entity.type === 'component' || entity.type === 'resource') {
+						key = entity.type + ':' + entity.name;
 
-						if(!('re' in metric)) {
-							response = Ext.Ajax.request({
-								url: '/entities/',
-								method: 'POST',
-								async: false,
-
-								jsonData: {
-									filter: {
-										'type': 'component',
-										'name': metric.co
-									}
-								}
-							});
+						payload[key] = entity;
+					}
+					else if(entity.type === 'ack' || entity.type === 'downtime') {
+						if(entity.resource) {
+							key = 'resource:' + entity.resource;
 						}
 						else {
-							response = Ext.Ajax.request({
-								url: '/entities/',
-								method: 'POST',
-								async: false,
-								
-								jsonData: {
-									filter: {
-										'type': 'resource',
-										'name': metric.re,
-										'component': metric.co
-									}
-								}
-							});
+							key = 'component:' + entity.component;
 						}
 
-						response = Ext.JSON.decode(response.responseText);
-
-						if(response.data.length >= 1) {
-							/* add node only if the criticity match */
-							//if(response.data[0].mCrit === this.crit || response.data[0].mWarn === this.crit) {
-								this.nodes[metric._id] = response.data[0];
-
-								nodes.push({
-									id: metric._id,
-									from: this.from(),
-									to: this.to()
-								});
-							//}
+						if(!payload[key][entity.type]) {
+							payload[key][entity.type] = [];
 						}
+
+						payload[key][entity.type].push(entity);
 					}
+					else if(entity.type === 'metric') {
+						this.nodes[entity.nodeid] = {
+							id: entity.nodeid,
+							from: this.from(),
+							to: this.to(),
+							co: entity.component,
+							re: entity.resource,
+							me: entity.name
+						};
+					}
+				}
+
+				/* save payload */
+				this.payload = [];
+
+				for(key in payload) {
+					this.payload.push(payload[key]);
+				}
+
+				/* ask nodes */
+				var nodes = [];
+
+				for(var nodeid in this.nodes) {
+					nodes.push(this.nodes[nodeid]);
 				}
 
 				Ext.Ajax.request({
@@ -118,14 +118,28 @@ Ext.define('canopsis.view.SLA.BarWidget', {
 					method: 'POST',
 
 					params: {
-						'nodes': Ext.JSON.encode(nodes),
-						'timezone': new Date().getTimezoneOffset() * 60
+						'nodes': nodes
 					},
 
 					success: function(response) {
 						var data = Ext.JSON.decode(response.responseText);
 
-						this.onRefresh(data.data);
+						for(var i = 0; i < data.data.length; i++) {
+							var info = data.data[i];
+							var node = this.nodes[info.node];
+							var entity;
+
+							if(node.re) {
+								entity = payload['resource:' + node.re];
+							}
+							else {
+								entity = payload['component:' + node.co];
+							}
+
+							entity.states = info.values;
+
+							this.onRefresh(this.payload);
+						}
 					}
 				});
 			}
@@ -133,122 +147,6 @@ Ext.define('canopsis.view.SLA.BarWidget', {
 	},
 
 	onRefresh: function(data) {
-		var sla = {
-			warn: {
-				ok: 0,
-				nok: 0,
-				out: 0
-			},
-			crit: {
-				ok: 0,
-				nok: 0,
-				out: 0
-			}
-		};
-
-		for(var i = 0; i < data.length; i++) {
-			var metric = data[i];
-			var node = this.nodes[metric.node];
-
-			var warning_periods = [];
-			var critical_periods = [];
-
-			var last_perf = [-1, -1];
-			var inperiod = false;
-
-			/* get warning/critical periods */
-			for(var j = 0; j < metric.values.length; j++) {
-				var perfdata = metric.values[j];
-				var state = parseInt(this.getState(perfdata[1])[0]);
-
-				/* a problem occured, save the perfdata */
-				if(state !== 0) {
-					last_perf = [perfdata[0], state];
-					inperiod = true;
-				}
-				/* went back to normal, calculate period */
-				else {
-					inperiod = false;
-
-					/* it's a warning period ? */
-					if(last_perf[1] === 1 && node.mWarn === this.crit) {
-						warning_periods.push({
-							from: last_perf[0],
-							to: perfdata[0],
-							duration: perfdata[0] - last_perf[0]
-						});
-					}
-					/* or a critical period ? */
-					else if(last_perf[1] >= 2 && node.mCrit === this.crit) {
-						critical_periods.push({
-							from: last_perf[0],
-							to: perfdata[0],
-							duration: perfdata[0] - last_perf[0]
-						});
-					}
-
-					/* NB: unknown status are critical periods too */
-				}
-			}
-
-			console.log(warning_periods);
-			console.log(critical_periods);
-
-			/* get acknowledgements */
-			Ext.Ajax.request({
-				url: '/entities/',
-				scope: this,
-				method: 'POST',
-
-				jsonData: {
-					filter: {
-						'type': 'ack',
-						'component': node.component,
-						'resource': node.resource
-					}
-				},
-
-				success: function(response) {
-					var data = Ext.JSON.decode(response.responseText);
-
-					for(var k = 0; k < data.data.length; k++) {
-						var ack = data.data[k];
-
-						/* check SLA for warning periods */
-						for(var l = 0; l < warning_periods.length; l++) {
-							var period = warning_periods[l];
-
-							if(!(period.from <= ack.timestamp && ack.timestamp <= period.to)) {
-								sla.warn.out++;
-							}
-							else if(period.duration >= this.delay) {
-								sla.warn.nok++;
-							}
-							else {
-								sla.warn.ok++;
-							}
-						}
-
-						/* check SLA for critical periods */
-						for(var l = 0; l < critical_periods.length; l++) {
-							var period = critical_periods[l];
-
-							if(!(period.from <= ack.timestamp && ack.timestamp <= period.to)) {
-								sla.crit.out++;
-							}
-							else if(period.duration >= this.delay) {
-								sla.crit.nok++;
-							}
-							else {
-								sla.crit.ok++;
-							}
-						}
-					}
-
-					console.log(sla);
-				}
-			});
-		}
 	},
 
 	getState: function(cps_state) {
