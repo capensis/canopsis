@@ -56,6 +56,9 @@ class CanopsisLogger(logging.Logger):
     Logger dedicated to Canopsis files.
     """
 
+    # static namespace for global scope information
+    __SCOPE__ = '__SCOPE__'
+
     def __init__(self, name, level=logging.INFO):
         """
         Create a default file handler where filename corresponds to input name.
@@ -64,7 +67,14 @@ class CanopsisLogger(logging.Logger):
 
         super(CanopsisLogger, self).__init__(name, level)
 
-        path = self.getLogPath()
+        self.setScope()
+
+    def setScope(self, scope=None):
+        """
+        Change scope, i.e. file handler target.
+        """
+
+        path = self.getLogPath(scope)
 
         # create log file if not exists
         if not os.path.exists(path):
@@ -75,11 +85,15 @@ class CanopsisLogger(logging.Logger):
         self.handler = logging.FileHandler(path, 'a')
         self.addHandler()
 
-    def getLogPath(self):
+    def getLogPath(self, scope=None):
         """
         Get log file path corresponding to its name.
         """
-        filename = self.name.replace('.', os.path.sep) + '.log'
+
+        if scope is None:
+            scope = globals().get(CanopsisLogger.__SCOPE__, self.name)
+
+        filename = scope.replace('.', os.path.sep) + '.log'
         result = os.path.join(LOG_DIRECTORY, filename)
 
         return result
@@ -125,6 +139,7 @@ class CanopsisLogger(logging.Logger):
 
         f = logging.currentframe().f_back
         rv = "(unknown file)", 0, "(unknown function)"
+
         while hasattr(f, "f_code"):
             co = f.f_code
             filename = os.path.normcase(co.co_filename)
@@ -134,6 +149,7 @@ class CanopsisLogger(logging.Logger):
                 continue
             rv = (filename, f.f_lineno, co.co_name)
             break
+
         return rv
 
     def addHandler(self, handler=None):
@@ -142,6 +158,8 @@ class CanopsisLogger(logging.Logger):
         """
 
         if handler is None:
+            if self.handler is not None:
+                self.removeHandler(self.handler)
             handler = self.handler
         else:
             self.handler = None
@@ -153,7 +171,7 @@ logging.setLoggerClass(CanopsisLogger)
 import inspect
 
 
-def getLogger(name=None):
+def getLogger(name=None, scope=None):
     """
     Get a logger related to callee module.
     """
@@ -169,6 +187,10 @@ def getLogger(name=None):
                 name = name[:-3]
 
     result = logging.getLogger(name)
+
+    if scope is not None:
+        result.setScope(scope)
+
     return result
 
 # instantiate a logger
