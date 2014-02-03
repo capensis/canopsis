@@ -49,7 +49,6 @@ class engine(cengine):
 		self.topos = []
 
 		# Beat
-		self.doBeat = False
 		self.normal_beat_interval = 300
 		self.lastBeat = int(time.time()) - self.normal_beat_interval
 
@@ -311,8 +310,4 @@ class engine(cengine):
 
 
 	def work(self, event, *args, **kargs):
-		if not self.doBeat:
-			for topo in self.topos:
-				if  event['rk'] in topo['ids']:
-					self.doBeat = True
-					break
+		return event
