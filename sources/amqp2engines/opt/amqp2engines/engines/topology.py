@@ -266,7 +266,15 @@ class engine(cengine):
 
 				# Get all states of all topos
 				self.stateById = {}
-				records = self.storage.find(mfilter={'_id': {'$in': ids}}, mfields=['state', 'state_type', 'previous_state'], namespace='events')
+
+				and_clause = [{'_id': {'$in': ids}}]
+				#Adds downtime elements to ignore in query
+				downtime = cdowntime.get_filter()
+				if downtime:
+					and_clause.append(downtime)
+
+
+				records = self.storage.find(mfilter={'$and': and_clause}, mfields=['state', 'state_type', 'previous_state'], namespace='events')
 				for record in records:
 					self.stateById[record['_id']] = {
 						'state': record['state'],

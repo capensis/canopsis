@@ -33,6 +33,8 @@ import time
 import json
 import logging
 
+from cdowntime import Cdowntime
+
 
 class cselector(crecord):
 	def __init__(self, storage, _id=None, name=None, namespace='events', use_cache=True, record=None, cache_time=60, logging_level=None):
@@ -73,6 +75,8 @@ class cselector(crecord):
 		self.logger = logging.getLogger('cselector')
 		if logging_level:
 			self.logger.setLevel(logging.INFO)#logging_level)
+
+		self.cdowntime = Cdowntime(self.storage)
 
 		## Init
 		if not record:
@@ -178,7 +182,14 @@ class cselector(crecord):
 		if mfilter and not ifilter and efilter:
 			return {"$and": [mfilter, efilter]}
 
-		return {"$and": [{"$or": [mfilter, ifilter]}, efilter]}
+		and_clause = [{"$or": [mfilter, ifilter]}, efilter]
+
+		#Adds downtime elements to ignore in query
+		downtime = cdowntime.get_filter()
+		if downtime:
+			and_clause.append(downtime)
+
+		return {"$and": and_clause}
 
 
 	def resolv(self):

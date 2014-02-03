@@ -32,6 +32,7 @@ import json
 import time
 from datetime import datetime
 from ctools import internal_metrics, roundSignifiantDigit
+from cdowntime import Cdowntime
 
 NAME="consolidation"
 
@@ -49,13 +50,14 @@ class engine(cengine):
 	def pre_run(self):
 		self.storage = get_storage(namespace='object', account=caccount(user="root", group="root"))
 		self.manager = pyperfstore2.manager(logging_level=logging.INFO)
-				
+		self.cdowntime = Cdowntime(self.storage)
+
 		self.beat()
 
 	def beat(self):
 		self.logger.debug('Consolidation BEAT')
-		pass
-		
+		self.cdowntime.reload(self.beat_interval)
+
 	def consume_dispatcher(self,  event, *args, **kargs):
 		self.logger.debug("Consolidate metrics:")
 
@@ -63,8 +65,11 @@ class engine(cengine):
 		beat_elapsed = 0
 
 		record = self.get_ready_record(event)
-		if record:	
-			record = record.dump()		
+		is_downtime = self.cdowntime.is_downtime(record.get('component'), record.get('resource'))
+
+		if record and not is_downtime:
+
+			record = record.dump()
 
 			_id = record.get('_id')
 			name = record.get('crecord_name')
@@ -90,8 +95,15 @@ class engine(cengine):
 
 				self.logger.debug(' + mfilter: %s' % mfilter)
 
+				and_clause = [mfilter, {'me': {'$nin':internal_metrics}}]
+
+				#Adds downtime elements to ignore in query
+				downtime = self.cdowntime.get_filter()
+				if downtime:
+					and_clause.append(downtime)
+
 				# Exclude internal metrics
-				mfilter = {'$and': [mfilter, {'me': {'$nin':internal_metrics}}]}
+				mfilter = {'$and': and_clause}
 
 				metric_list = self.manager.store.find(mfilter=mfilter)
 
