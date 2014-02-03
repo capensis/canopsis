@@ -160,7 +160,7 @@ Ext.define('canopsis.view.Top10.View' , {
 			model: 'Perfdata',
 			store: this.store,
 
-			opt_bar: false,
+			opt_bar: true,
 			opt_paging: false,
 			opt_menu_delete: false,
 			opt_bar_add: false,
@@ -169,6 +169,29 @@ Ext.define('canopsis.view.Top10.View' , {
 
 			opt_tags_search: false,
 			opt_simple_search: false,
+
+			opt_bar_customs: [{
+				xtype: 'button',
+				iconCls: 'icon-export',
+				text: _('Export'),
+				handler: function() {
+					var params = [
+						{name: 'csv', value: true},
+						{name: 'fields', value: Ext.JSON.encode(['co', 're', 'me', 'output', 'lv'])}
+					];
+
+					for(var key in this.store.proxy.extraParams) {
+						params.push({
+							name: key,
+							value: this.store.proxy.extraParams[key]
+						});
+					}
+
+					console.log(params);
+
+					getDataFromURL(this.store.proxy['url'], params);
+				}.bind(this)
+			}],
 
 			hideHeaders: this.hideHeaders,
 

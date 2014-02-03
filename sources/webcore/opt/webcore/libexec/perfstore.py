@@ -41,6 +41,7 @@ import pyperfstore2.utils
 manager = None
 
 logger = logging.getLogger("perfstore")
+logger.setLevel(logging.DEBUG)
 
 def load():
 	global manager
@@ -310,6 +311,9 @@ def perfstore_perftop(start=None, stop=None):
 	threshold_on_pct		= request.params.get('threshold_on_pct', default=False)
 	report					= request.params.get('report', default=False)
 
+	export_csv				= request.params.get('csv', default=False)
+	export_fields			= request.params.get('fields', default="[]")
+
 	if percent == 'true':
 		percent = True
 	elif percent == 'false':
@@ -335,6 +339,14 @@ def perfstore_perftop(start=None, stop=None):
 		except Exception, err:
 			logger.error("Impossible to decode mfilter: %s: %s" % (mfilter, err))
 			mfilter = None
+
+	try:
+		export_fields = json.loads(export_fields)
+
+	except ValueError, err:
+		logger.error("Impossible to decode export_fields: %s: %s" % (export_fields, err))
+		export_fields = []
+
 
 	if threshold:
 		threshold = float(threshold)
@@ -368,6 +380,8 @@ def perfstore_perftop(start=None, stop=None):
 	logger.debug(" + time_window: %s" % time_window)
 	logger.debug(" + start:       %s (%s)" % (start, datetime.utcfromtimestamp(start)))
 	logger.debug(" + stop:        %s (%s)" % (stop, datetime.utcfromtimestamp(stop)))
+	logger.debug(" + export csv:  %s" % export_csv)
+	logger.debug(" + export fields: %s" % str(export_fields))
 
 	mfilter =  clean_mfilter(mfilter)
 	
@@ -527,7 +541,41 @@ def perfstore_perftop(start=None, stop=None):
 	else:
 		logger.debug("No records found")
 	
-	return {'success': True, 'data' : data, 'total' : len(data)}
+	if not export_csv:
+		return {'success': True, 'data' : data, 'total' : len(data)}
+
+	else:
+		response.headers['Content-Disposition'] = 'attachment; filename="perftop.csv"'
+		response.headers['Content-Type'] = 'text/csv'
+
+		exported = None
+
+		logger.debug(' + Data: %s' % str(data))
+
+		for entry in data:
+			row = []
+
+			for field in export_fields:
+				value = entry.get(field, '')
+
+				if isinstance(value, basestring):
+					value = value.replace('"', '""')
+					value = u'"{0}"'.format(value)
+
+				else:
+					value = str(value)
+
+				row.append(value)
+
+			if exported:
+				exported = u"{0}\n{1}".format(exported, u','.join(row))
+
+			else:
+				exported = u','.join(row)
+
+		logger.debug(' + Exported: %s' % exported)
+
+		return exported
 
 ########################################################################
 # Functions
