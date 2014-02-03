@@ -23,6 +23,7 @@ from caccount import caccount
 from cstorage import get_storage
 import cevent
 import time
+import md5
 
 NAME="entities"
 
@@ -176,18 +177,33 @@ class engine(cengine):
 
 		# Create metrics entities
 		for perfdata in event['perf_data_array']:
+			nodeid = md5.new()
+
+			nodeid.update(component)
+
+			if resource:
+				nodeid.update(resource)
+
+			nodeid.update(perfdata['metric'])
+			nodeid = nodeid.hexdigest()
+
 			self.backend.update({
 					'type': 'metric',
-					'component': component,
-					'resource': resource,
-					'name': perfdata['metric']
+					'nodeid': nodeid
 				},{
 					'$set': {
 						'type': 'metric',
 						'component': component,
 						'resource': resource,
 						'name': perfdata['metric'],
-						'last_point': event['timestamp']
+						'nodeid': nodeid,
+						'last': [event['timestamp'], perfdata['value'],
+						'min': perfdata.get('min', None),
+						'max': perfdata.get('max', None),
+						'warn': perfdata.get('warn', None),
+						'crit': perfdata.get('crit', None),
+						'unit': perfdata.get('unit', None),
+						'perftype': perfdata.get('type', 'GAUGE')
 					}
 				},
 				upsert = True
