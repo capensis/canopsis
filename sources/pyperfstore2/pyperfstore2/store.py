@@ -73,13 +73,8 @@ class store(object):
 		self.redis_port = redis_port
 		self.redis_host = redis_host
 
-		try:
-			self.redis_host = config.get('redis', 'host') if config.get('redis', 'host') != "" and not redis_host else redis_host
-			self.redis_port = config.get('redis', 'port') if config.get('redis', 'port') != "" and not redis_port else redis_port
-			self.logger.debug('Will connect to Redis with following URI -> %s:%s' % (self.redis_host, self.redis_port))
-		except:
-			self.logger.debug('could not find redis configuration, using mongo host instead')
-			self.redis_host = self.mongo_host
+		if not redis_host :
+			self.redis_host = mongo_host
 
 		self.connected = False
 		

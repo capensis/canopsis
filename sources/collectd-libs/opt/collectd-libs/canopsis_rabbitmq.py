@@ -23,7 +23,7 @@ import ConfigParser
 import json
 import urllib2
 import os
-import httplib, base64, urlparse
+import httplib, base64, urlparse, socket
 
 
 
