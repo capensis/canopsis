@@ -74,7 +74,7 @@ class cselector(crecord):
 
 		self.logger = logging.getLogger('cselector')
 		if logging_level:
-			self.logger.setLevel(logging.logging_level)
+			self.logger.setLevel(logging_level)
 
 		self.cdowntime = Cdowntime(self.storage)
 

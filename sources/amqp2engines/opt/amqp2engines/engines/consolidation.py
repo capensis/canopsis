@@ -38,7 +38,7 @@ NAME="consolidation"
 class engine(cengine):
 	def __init__(self, *args, **kargs):
 		self.metrics_list = {}
-		self.timestamps = {} 
+		self.timestamps = {}
 		self.default_interval = 60
 
 		self.thd_warn_sec_per_evt = 8
@@ -54,7 +54,6 @@ class engine(cengine):
 
 	def beat(self):
 		self.logger.debug('Consolidation BEAT')
-		self.cdowntime.reload(self.beat_interval)
 
 	def consume_dispatcher(self,  event, *args, **kargs):
 		self.logger.debug("Consolidate metrics:")
@@ -159,7 +158,7 @@ class engine(cengine):
 						tstart = now - aggregation_interval
 
 					self.logger.debug(
-						" + From: %s To %s "% 
+						" + From: %s To %s "%
 						(datetime.fromtimestamp(tstart).strftime('%Y-%m-%d %H:%M:%S'),
 						datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S'))
 					)
@@ -184,7 +183,7 @@ class engine(cengine):
 						self.logger.debug("Step 3: Consolidate (%s)" % consolidation_methods)
 
 						perf_data_array = []
-				
+
 						for consolidation_method in consolidation_methods:
 							fn = self.get_math_function(consolidation_method)
 							value = fn(values)
@@ -198,7 +197,7 @@ class engine(cengine):
 								'max': maxSum if consolidation_method == 'sum' else mMax,
 								'min': mMin,
 								'type': 'GAUGE'
-							}) 
+							})
 
 						self.logger.debug("Step 4: Send event")
 
@@ -243,10 +242,10 @@ class engine(cengine):
 			beat_elapsed = time.time() - now
 
 		self.counter_worktime += beat_elapsed
-		
 
-	
-	
+
+
+
 	def get_math_function(self, name):
 		if name == 'average' or name == 'mean':
 			return lambda x: sum(x) / len(x)
