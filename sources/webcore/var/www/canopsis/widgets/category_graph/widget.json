@@ -138,7 +138,8 @@
 		},{
 			"title": "Style",
 			"advanced": true,
-			"items": [{
+			"items": [
+				{
 					"xtype": "cfieldset",
 					"title": "Diagram Style",
 					"items": [
@@ -174,21 +175,6 @@
 							"fieldLabel": "Enable legend",
 							"checked": true,
 							"name": "legend"
-						},{
-							"xtype": "checkbox",
-							"fieldLabel": "Enable labels",
-							"checked": false,
-							"name": "labels"
-						},{
-							"xtype": "checkbox",
-							"fieldLabel": "Display metric name in label",
-							"checked": false,
-							"name": "nameInLabelFormatter"
-						},{
-							"xtype": "checkbox",
-							"fieldLabel": "Display percentage in label",
-							"checked": true,
-							"name": "pctInLabel"
 						},{
 							"xtype" : "numberfield",
 							"name" : "legend_fontSize",
@@ -261,8 +247,36 @@
 									{"value": "vertical", "text": "Vertical"}
 								]
 							}
-						}]
-					}]
+						}
+					]
+				}, {
+					"xtype": "cfieldset",
+					"title": "Label Style",
+					"items": [
+						{
+							"xtype": "checkbox",
+							"fieldLabel": "Enable labels",
+							"checked": false,
+							"name": "labels"
+						},{
+							"xtype": "checkbox",
+							"fieldLabel": "Display metric name in label",
+							"checked": false,
+							"name": "nameInLabelFormatter"
+						},{
+							"xtype": "checkbox",
+							"fieldLabel": "Display percentage in label",
+							"checked": true,
+							"name": "pctInLabel"
+						},{
+							"xtype": "textfield",
+							"name": "labels_size",
+							"fieldLabel": "Label size",
+							"value": "x-small"
+						}
+					]
+				}
+			]
 		},{
 			"title": "Choose Metrics",
 			"items": [
