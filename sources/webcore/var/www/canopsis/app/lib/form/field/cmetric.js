@@ -128,7 +128,12 @@ Ext.define('canopsis.lib.form.field.cmetric', {
 
 			// widget: trends
 			{name: 'show_sparkline', defaultValue: undefined},
-			{name: 'chart_type', defaultValue: undefined}
+			{name: 'chart_type', defaultValue: undefined},
+
+			// widget: timegraph
+			{name: 'point_shape', defaultValue: undefined}
+
+
 		];
 
 

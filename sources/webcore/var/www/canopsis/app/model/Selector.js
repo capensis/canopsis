@@ -23,6 +23,7 @@ Ext.define('canopsis.model.Selector', {
 		{name: 'id', mapping: '_id'},
 		{name: 'crecord_type', defaultValue: 'selector'},
 		{name: 'description'},
+		{name: 'downtimes_as_ok', defaultValue: false},
 		{name: 'mfilter'},
 		{name: 'include_ids', type: 'array'},
 		{name: 'exclude_ids', type: 'array'},
