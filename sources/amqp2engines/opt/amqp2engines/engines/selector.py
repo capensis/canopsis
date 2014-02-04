@@ -28,6 +28,13 @@ import logging
 NAME="selector"
 
 class engine(cengine):
+	"""
+		This engine's goal is to compute an aggregated information from an event selection.
+		The event selection is done thanks to a filter whitch can include event, exclude events or select them from a cfilter.
+		The worst state is then computed on the selected event set and a new event holding this information is produced.
+		This computation is triggered each time the crecord dispatcher emit a crecord event of selector type.
+	"""
+
 	def __init__(self, *args, **kargs):
 		cengine.__init__(self, name=NAME, *args, **kargs)
 		self.selectors = []
@@ -39,17 +46,23 @@ class engine(cengine):
 		#load selectors
 		self.storage = get_storage(namespace='object', account=caccount(user="root", group="root"))
 
+<<<<<<< HEAD
 
 	def beat(self):
 		self.logger.debug('entered in selector BEAT')
 		# Refresh selectors for work method
 
+=======
+	def beat(self):
+		self.logger.debug('entered in selector BEAT')
+>>>>>>> downtimes
 
 	def consume_dispatcher(self,  event, *args, **kargs):
 		self.logger.debug('entered in selector consume dispatcher')
 		# Gets crecord from amqp distribution
 
 		selector = self.get_ready_record(event)
+
 		if selector:
 
 			event_id = event['_id']

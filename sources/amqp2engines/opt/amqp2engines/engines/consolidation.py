@@ -38,7 +38,7 @@ NAME="consolidation"
 class engine(cengine):
 	def __init__(self, *args, **kargs):
 		self.metrics_list = {}
-		self.timestamps = {} 
+		self.timestamps = {}
 		self.default_interval = 60
 
 		self.thd_warn_sec_per_evt = 8
@@ -49,13 +49,12 @@ class engine(cengine):
 	def pre_run(self):
 		self.storage = get_storage(namespace='object', account=caccount(user="root", group="root"))
 		self.manager = pyperfstore2.manager(logging_level=logging.INFO)
-				
+
 		self.beat()
 
 	def beat(self):
 		self.logger.debug('Consolidation BEAT')
-		pass
-		
+
 	def consume_dispatcher(self,  event, *args, **kargs):
 		self.logger.debug("Consolidate metrics:")
 
@@ -63,8 +62,10 @@ class engine(cengine):
 		beat_elapsed = 0
 
 		record = self.get_ready_record(event)
-		if record:	
-			record = record.dump()		
+
+		if record:
+
+			record = record.dump()
 
 			_id = record.get('_id')
 			name = record.get('crecord_name')
@@ -79,19 +80,21 @@ class engine(cengine):
 			elapsed = now - last_run
 
 			self.logger.debug(" + elapsed: %s" % elapsed)
-			
+
 			mfilter = record.get('mfilter')
-			 
+
 			#Nothing to do if no filter set
 			if mfilter and (elapsed == 0 or elapsed >= aggregation_interval):
 				self.logger.debug("Step 1: Select metrics")
-				
+
 				mfilter = json.loads(mfilter)
 
 				self.logger.debug(' + mfilter: %s' % mfilter)
 
+				and_clause = [mfilter, {'me': {'$nin':internal_metrics}}]
+
 				# Exclude internal metrics
-				mfilter = {'$and': [mfilter, {'me': {'$nin':internal_metrics}}]}
+				mfilter = {'$and': and_clause}
 
 				metric_list = self.manager.store.find(mfilter=mfilter)
 
@@ -127,7 +130,7 @@ class engine(cengine):
 								mMin = metric.get('mi')
 							if metric.get('ma') > mMax :
 								mMax = metric.get('ma')
-							if 'sum' in consolidation_methods and mMax:
+							if  'ma' in metric and 'sum' in consolidation_methods and mMax:
 								maxSum += metric.get('ma')
 							if metric.get('u') != mUnit :
 								self.logger.warning("%s: too many units" % name)
@@ -155,7 +158,7 @@ class engine(cengine):
 						tstart = now - aggregation_interval
 
 					self.logger.debug(
-						" + From: %s To %s "% 
+						" + From: %s To %s "%
 						(datetime.fromtimestamp(tstart).strftime('%Y-%m-%d %H:%M:%S'),
 						datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S'))
 					)
@@ -180,7 +183,7 @@ class engine(cengine):
 						self.logger.debug("Step 3: Consolidate (%s)" % consolidation_methods)
 
 						perf_data_array = []
-				
+
 						for consolidation_method in consolidation_methods:
 							fn = self.get_math_function(consolidation_method)
 							value = fn(values)
@@ -194,7 +197,7 @@ class engine(cengine):
 								'max': maxSum if consolidation_method == 'sum' else mMax,
 								'min': mMin,
 								'type': 'GAUGE'
-							}) 
+							})
 
 						self.logger.debug("Step 4: Send event")
 
@@ -239,10 +242,10 @@ class engine(cengine):
 			beat_elapsed = time.time() - now
 
 		self.counter_worktime += beat_elapsed
-		
 
-	
-	
+
+
+
 	def get_math_function(self, name):
 		if name == 'average' or name == 'mean':
 			return lambda x: sum(x) / len(x)

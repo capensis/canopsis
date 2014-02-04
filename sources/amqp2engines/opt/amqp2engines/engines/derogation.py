@@ -26,29 +26,32 @@ from cstatemap import cstatemap
 import cmfilter
 import time
 import json
+from cdowntime import Cdowntime
 
 NAME="derogation"
 
 class engine(cengine):
 	def __init__(self, *args, **kargs):
 		cengine.__init__(self, name=NAME, *args, **kargs)
-		
+
 		self.derogations = []
-		
+
 	def pre_run(self):
-		self.storage = get_storage(namespace='object', account=caccount(user="root", group="root"))		
+		self.storage = get_storage(namespace='object', account=caccount(user="root", group="root"))
+		self.cdowntime = Cdowntime(self.storage)
+		self.cdowntime.reload()
 		self.beat()
 
 	def time_conditions(self, derogation):
 		conditions = derogation.get('time_conditions', None)
-		
+
 		if not isinstance(conditions, list):
 			self.logger.error("Invalid time conditions field in '%s': %s" % (derogation['_id'], conditions))
 			self.logger.debug(derogation)
 			return False
-		
+
 		result = False
-		
+
 		now = time.time()
 		for condition in conditions:
 			if condition['type'] == 'time_interval':
@@ -61,10 +64,10 @@ class engine(cengine):
 				elif now >= condition['startTs'] and now < condition['stopTs']:
 					self.logger.debug(" + 'time_interval' Match")
 					result = True
-					
-		return result		
-		
-	
+
+		return result
+
+
 	def conditions(self, event, derogation):
 		conditions_json = derogation.get('conditions', None)
 
@@ -76,7 +79,7 @@ class engine(cengine):
 			self.logger.debug(derogation)
 
 			return False
-		
+
 		if conditions:
 			check = cmfilter.check(conditions, event)
 
@@ -86,7 +89,7 @@ class engine(cengine):
 
 		else:
 			return True
-	
+
 	def actions(self, event, derogation):
 		name = derogation.get('crecord_name', None)
 		description = derogation.get('description', None)
@@ -106,7 +109,7 @@ class engine(cengine):
 			return event
 
 		derogated = False
-		
+
 		for action in actions:
 			atype = action.get('type', None)
 
@@ -147,7 +150,7 @@ class engine(cengine):
 
 			else:
 				self.logger.warning("Unknown action '%s'" % atype)
-				
+
 		# If the event was derogated, fill some informations
 		if derogated:
 			event["derogation_id"] = _id
@@ -157,8 +160,14 @@ class engine(cengine):
 			event["tags"].append("derogated")
 
 		return event
-	
+
 	def work(self, event, *args, **kargs):
+		if 'component' in event and 'resource' in event and self.cdowntime.is_downtime(event['component'], event['resource']):
+			event['state'] = 0
+			self.logger.debug('derogation to apply on event')
+		else:
+			self.logger.debug('no derogation to apply on event %s ' , (str(event)) )
+
 		for derogation in self.derogations:
 			# Check Time
 			if self.time_conditions(derogation):
@@ -168,15 +177,15 @@ class engine(cengine):
 
 					# Actions
 					return self.actions(event, derogation)
-		
+
 		return event
-		
+
 	def set_derogation_state(self, derogation, active):
 		dactive = derogation.get('active', False)
 		name = derogation.get('crecord_name', None)
 		notify = False
 		state = 0
-		
+
 		if active:
 			if not dactive:
 				self.logger.info("%s (%s) is now active" % (derogation['crecord_name'], derogation['_id']))
@@ -187,14 +196,14 @@ class engine(cengine):
 				self.logger.info("%s (%s) is now inactive" % (derogation['crecord_name'], derogation['_id']))
 				self.storage.update(derogation['_id'], {'active': False})
 				notify = True
-				
+
 		if notify:
 			if active:
 				output = "Derogation '%s' is now active" % name
 				state = 1
 			else:
 				output = "Derogation '%s' is now inactive" % name
-				
+
 			event = cevent.forger(
 				connector = "cengine",
 				connector_name = "engine",
@@ -206,12 +215,13 @@ class engine(cengine):
 				long_output=derogation.get('description', None)
 			)
 			rk = cevent.get_routingkey(event)
-			
+
 			self.amqp.publish(event, rk, self.amqp.exchange_name_events)
 
 	def beat(self):
+		self.cdowntime.reload()
 		self.derogations = []
-		
+
 		## Extract ids
 		records = self.storage.find( {	'crecord_type': 'derogation',
 										'enable': True,
@@ -220,8 +230,8 @@ class engine(cengine):
 										namespace="object")
 	def beat(self):
 		self.logger.debug('Derogation BEAT')
-		
-		
+
+
 
 	def consume_dispatcher(self,  event, *args, **kargs):
 		self.logger.debug("Consolidate metrics:")
@@ -230,15 +240,15 @@ class engine(cengine):
 		beat_elapsed = 0
 
 		record = self.get_ready_record(event)
-		if record:	
+		if record:
 
 			if record.data.get('ids'):
 				derogation = record.dump()
 				if self.time_conditions(derogation):
-					self.set_derogation_state(derogation, True)	
+					self.set_derogation_state(derogation, True)
 				else:
 					self.set_derogation_state(derogation, False)
-					
+
 				self.derogations.append(derogation)
 
 			self.crecord_task_complete(event['_id'])

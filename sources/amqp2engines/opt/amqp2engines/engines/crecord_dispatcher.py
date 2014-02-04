@@ -25,7 +25,7 @@ from cselector import cselector
 from kombu.pools import producers
 from kombu import Connection, Queue, Exchange
 import logging, time
-		
+
 NAME="crecord_dispatcher"
 # Delay since the lock document is released in any cases
 UNLOCK_DELAY = 60
@@ -38,8 +38,8 @@ class engine(cengine):
 		self.beat_interval = 5
 		self.nb_beat = 0
 		self.crecords_types = ['selector', 'topology', 'derogation', 'consolidation']
-		
-	def init_amqp(self):	
+
+	def init_amqp(self):
 		self.logger.debug('Initiating amqp connection to dispatchers')
 		# Connection
 		with Connection('amqp://guest:guest@localhost/canopsis') as conn:
@@ -52,43 +52,52 @@ class engine(cengine):
 		self.storage = get_storage(namespace='object', account=caccount(user="root", group="root"))
 
 		self.backend = self.storage.get_backend('object')
-		
+
+		self.connect_amqp()
+
+	def connect_amqp(self):
+
+		# Connection
+		self.amqp_connection = Connection('amqp://guest:guest@localhost/canopsis')
+		# Get one producer
+		self.producer = producers[self.amqp_connection].acquire(block=True)
+
 
 	def load_crecords(self):
-		
-		crecords = []		
+
+		crecords = []
 		now = int(time.time())
-		
+
 		lock = self.backend.find_and_modify(
-			query  = {'crecord_type': 'dispatcher_lock'}, 
-			update = {'$set': {'lock': True}}, 
+			query  = {'crecord_type': 'dispatcher_lock'},
+			update = {'$set': {'lock': True}},
 		)
-				
+
 		if lock:
 
 			#init cases
 			if 'lock' not in lock:
 				lock['lock'] = False
-			if 'last_update' not in lock: 
+			if 'last_update' not in lock:
 				lock['last_update'] = time.time()
 
 			if lock['lock'] and now - lock['last_update'] < UNLOCK_DELAY:
 				self.logger.debug('Information beeing threan by another dispatcher engine. Nothing has to be done. delay : %s' % (now - lock['last_update']))
 				return
-			
+
 			elif now - lock['last_update'] > UNLOCK_DELAY:
 				#Information message
 				self.logger.debug('Dispatcher lock duration exeeded lock limit (%s seconds) , record selection will be performed' % (UNLOCK_DELAY))
-				
+
 			# Crecord selection can be performed now as lock is ready. Crecord are loaded again if last dispatch update is not set or < now - 60 seconds
 			crecords_json = self.storage.find({
-				'crecord_type': {'$in': self.crecords_types }, 
+				'crecord_type': {'$in': self.crecords_types },
 				'enable': True,
 				'$or':[
 					{'next_ready_time'		: {'$exists': False}},# crecord is new
 					{'last_dispatch_update'	: {'$exists': False}},# crecord is new
 					{'last_dispatch_update' : {'$lte': now - 60}},# unlock case
-					{'$and': [					
+					{'$and': [
 						{'next_ready_time' 	: {'$lte': now}}, # record is ready
 						{'loaded'			: False}
 					]}
@@ -102,68 +111,80 @@ class engine(cengine):
 
 			#Updating lock status
 			self.backend.update(
-				{'crecord_type': 'dispatcher_lock'}, 
+				{'crecord_type': 'dispatcher_lock'},
 				{'$set': {'lock': False, 'last_update': time.time()}}
 			)
 		else:
 			#New insert, no information being threaten this time
 			self.backend.insert({'crecord_type': 'dispatcher_lock', 'last_update': time.time(), 'lock': False})
-	
+
 		return crecords
 
-		
+
 	#Factorised code method
-	def publish_record(self, event, crecord_type, producer):
+	def publish_record(self, event, crecord_type):
 
 		rk = 'dispatcher.' + crecord_type
 		exchange = Exchange('media', 'direct', durable=True)
 		queue = Queue('Dispatcher_' + crecord_type, exchange=exchange, routing_key=rk)
 
-		producer.publish(
-			event, 
-			serializer='json', 
-			exchange=exchange, 
-			routing_key=rk, 
-			declare=[queue])					
+		self.producer.publish(
+			event,
+			serializer='json',
+			exchange=exchange,
+			routing_key=rk,
+			declare=[queue])
 		self.logger.debug('publishing on queue : Dispatcher_' + crecord_type)
-						
-			
-			
-	def beat(self):		
+
+
+
+	def beat(self):
 
 		""" Reinitialize crecords and may publish event related credort targeted to other engines crecord queues"""
 		crecords = self.load_crecords()
-						
+		if not crecords:
+			self.logger.debug('Nothig to do for now')
+			return
+
+		if not self.producer:
+			self.connect_amqp()
+
 		# Loop until list is empty
 		self.logger.debug(' + %s beat, %s crecords queued to publish @ %s' % (self.name, len(crecords), int(time.time())))
-				# Connection
-		with Connection('amqp://guest:guest@localhost/canopsis') as conn:
-			# Get one producer
-			with producers[conn].acquire(block=True) as producer:
-		
-				for crecord in crecords:
-
-					# Every crecord is sent to rabbit mq queues for each listening engines
-					dump = crecord.dump()
-					record_id = dump['_id']
-
-					#crecord is sent to other engines and is not kept anymore
-					if '_id' in dump:
-						dump['_id'] = str(dump['_id'])
-						try:
-							# just sending key and type to build back object from dedicated engines
-							self.publish_record(dump, dump['crecord_type'], producer)			
-						
-							#Special case: selector crecords targeted to SLA
-							if dump['crecord_type'] == 'selector' and 'rk' in dump and dump['rk'] and 'dosla' in dump and dump['dosla'] in [ True, 'on'] and 'dostate' in dump and dump['dostate'] in [ True, 'on']:
-								self.publish_record(dump, 'sla', producer)
 
 
-						except Exception, e:
-							#Crecord gets out of queue and will be reloaded on next beat
-							self.logger.error('Dispatcher was unable to send crecord_type error : %s' % (e))
-							self.storage.update(record_id, {'loaded': False})
-		
-						
-		
+		for crecord in crecords:
+
+			# Every crecord is sent to rabbit mq queues for each listening engines
+			dump = crecord.dump()
+			record_id = dump['_id']
+
+			#crecord is sent to other engines and is not kept anymore
+			if '_id' in dump:
+				dump['_id'] = str(dump['_id'])
+				try:
+					# just sending key and type to build back object from dedicated engines
+					self.publish_record(dump, dump['crecord_type'])
+
+					#Special case: selector crecords targeted to SLA
+					if dump['crecord_type'] == 'selector' and 'rk' in dump and dump['rk'] and 'dosla' in dump and dump['dosla'] in [ True, 'on'] and 'dostate' in dump and dump['dostate'] in [ True, 'on']:
+						self.publish_record(dump, 'sla')
+
+
+				except Exception, e:
+					#Crecord gets out of queue and will be reloaded on next beat
+					self.logger.error('Dispatcher was unable to send crecord_type error : %s' % (e))
+					self.storage.update(record_id, {'loaded': False})
+
+
+
 		self.nb_beat +=1
+
+	def post_run(self):
+		try:
+			self.producer.close()
+			self.connect_amqp.close()
+			self.logger.debug('Amqp connection closed properly')
+		except Exception, e:
+			self.logger.warning('Unable to disconnect properly from AMQP' + str(e))
+
