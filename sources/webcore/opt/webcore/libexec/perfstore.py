@@ -248,9 +248,9 @@ def perfstore_get_all_metrics(limit = 20, start = 0, search = None, filter = Non
 	
 	mfilter = clean_mfilter(mfilter)
 
-	data  = manager.find(limit=0, skip=0, mfilter=mfilter, data=False, sort=msort)
+	data  = manager.find(limit=limit, skip=start, mfilter=mfilter, data=False, sort=msort)
 	total = data.count()
-	data  = [meta for meta in data.skip(start).limit(limit)]
+	data  = list(data)
 	
 	return {'success': True, 'data' : data, 'total' : total}
 

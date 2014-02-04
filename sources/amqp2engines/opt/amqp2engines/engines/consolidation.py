@@ -124,7 +124,7 @@ class engine(cengine):
 							mMin = metric.get('mi')
 							mMax = metric.get('ma')
 							mUnit = metric.get('u')
-							if sum_in_consolidation_methods and mMan is not None:
+							if sum_in_consolidation_methods and mMax is not None:
 								maxSum = mMax
 						else:
 							mi = metric.get('mi')

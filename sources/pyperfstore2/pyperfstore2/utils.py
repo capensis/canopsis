@@ -364,7 +364,7 @@ def _getTimeSteps(start, stop, periodtime, periodtype, roundtime, timezone=time.
 	
 	timeSteps.reverse()
 	
-	logger.debug('   + timeSteps: ', timeSteps)
+	logger.debug('   + timeSteps: %s', timeSteps)
 
 	return timeSteps
 
@@ -396,7 +396,7 @@ def getTimeSteps(start, stop, interval, roundtime=True, timezone=time.timezone):
 	
 	timeSteps.reverse()
 	
-	logger.debug('   + timeSteps: ', timeSteps)
+	logger.debug('   + timeSteps: %s', timeSteps)
 
 	return timeSteps
 
