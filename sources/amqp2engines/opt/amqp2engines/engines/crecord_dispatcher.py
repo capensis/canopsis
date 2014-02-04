@@ -53,6 +53,15 @@ class engine(cengine):
 
 		self.backend = self.storage.get_backend('object')
 
+		self.connect_amqp()
+
+	def connect_amqp(self):
+
+		# Connection
+		self.amqp_connection = Connection('amqp://guest:guest@localhost/canopsis')
+		# Get one producer
+		self.producer = producers[self.amqp_connection].acquire(block=True)
+
 
 	def load_crecords(self):
 
@@ -113,13 +122,13 @@ class engine(cengine):
 
 
 	#Factorised code method
-	def publish_record(self, event, crecord_type, producer):
+	def publish_record(self, event, crecord_type):
 
 		rk = 'dispatcher.' + crecord_type
 		exchange = Exchange('media', 'direct', durable=True)
 		queue = Queue('Dispatcher_' + crecord_type, exchange=exchange, routing_key=rk)
 
-		producer.publish(
+		self.producer.publish(
 			event,
 			serializer='json',
 			exchange=exchange,
@@ -133,37 +142,49 @@ class engine(cengine):
 
 		""" Reinitialize crecords and may publish event related credort targeted to other engines crecord queues"""
 		crecords = self.load_crecords()
+		if not crecords:
+			self.logger.debug('Nothig to do for now')
+			return
+
+		if not self.producer:
+			self.connect_amqp()
 
 		# Loop until list is empty
 		self.logger.debug(' + %s beat, %s crecords queued to publish @ %s' % (self.name, len(crecords), int(time.time())))
-				# Connection
-		with Connection('amqp://guest:guest@localhost/canopsis') as conn:
-			# Get one producer
-			with producers[conn].acquire(block=True) as producer:
-
-				for crecord in crecords:
-
-					# Every crecord is sent to rabbit mq queues for each listening engines
-					dump = crecord.dump()
-					record_id = dump['_id']
-
-					#crecord is sent to other engines and is not kept anymore
-					if '_id' in dump:
-						dump['_id'] = str(dump['_id'])
-						try:
-							# just sending key and type to build back object from dedicated engines
-							self.publish_record(dump, dump['crecord_type'], producer)
-
-							#Special case: selector crecords targeted to SLA
-							if dump['crecord_type'] == 'selector' and 'rk' in dump and dump['rk'] and 'dosla' in dump and dump['dosla'] in [ True, 'on'] and 'dostate' in dump and dump['dostate'] in [ True, 'on']:
-								self.publish_record(dump, 'sla', producer)
 
 
-						except Exception, e:
-							#Crecord gets out of queue and will be reloaded on next beat
-							self.logger.error('Dispatcher was unable to send crecord_type error : %s' % (e))
-							self.storage.update(record_id, {'loaded': False})
+		for crecord in crecords:
+
+			# Every crecord is sent to rabbit mq queues for each listening engines
+			dump = crecord.dump()
+			record_id = dump['_id']
+
+			#crecord is sent to other engines and is not kept anymore
+			if '_id' in dump:
+				dump['_id'] = str(dump['_id'])
+				try:
+					# just sending key and type to build back object from dedicated engines
+					self.publish_record(dump, dump['crecord_type'])
+
+					#Special case: selector crecords targeted to SLA
+					if dump['crecord_type'] == 'selector' and 'rk' in dump and dump['rk'] and 'dosla' in dump and dump['dosla'] in [ True, 'on'] and 'dostate' in dump and dump['dostate'] in [ True, 'on']:
+						self.publish_record(dump, 'sla')
+
+
+				except Exception, e:
+					#Crecord gets out of queue and will be reloaded on next beat
+					self.logger.error('Dispatcher was unable to send crecord_type error : %s' % (e))
+					self.storage.update(record_id, {'loaded': False})
 
 
 
 		self.nb_beat +=1
+
+	def post_run(self):
+		try:
+			self.producer.close()
+			self.connect_amqp.close()
+			self.logger.debug('Amqp connection closed properly')
+		except Exception, e:
+			self.logger.warning('Unable to disconnect properly from AMQP' + str(e))
+

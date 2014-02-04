@@ -218,7 +218,6 @@ class engine(cengine):
 			topo['nodesById'] = {}
 
 			for key in topo['nodes']:
-				self.logger.error(' TOPO key > '+ str(key))
 				node = topo['nodes'][key]
 
 				_id = node['_id']

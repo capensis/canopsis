@@ -130,7 +130,7 @@ class engine(cengine):
 								mMin = metric.get('mi')
 							if metric.get('ma') > mMax :
 								mMax = metric.get('ma')
-							if 'sum' in consolidation_methods and mMax:
+							if  'ma' in metric and 'sum' in consolidation_methods and mMax:
 								maxSum += metric.get('ma')
 							if metric.get('u') != mUnit :
 								self.logger.warning("%s: too many units" % name)
