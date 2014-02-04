@@ -30,6 +30,22 @@ class engine(cengine):
 
 		self.archiver = carchiver(namespace='events',  autolog=True, logging_level=self.logging_level)
 
+		self.event_types = [
+			'calendar',
+			'check',
+			'comment',
+			'consolidation',
+			'eue',
+			'log',
+			'perf',
+			'selector',
+			'sla',
+			'topology',
+			'trap',
+			'user',
+			'ack'
+		]
+
 	def work(self, event, *args, **kargs):
 		event_id = event['rk']
 
@@ -40,18 +56,17 @@ class engine(cengine):
 		except:
 			pass
 
-		event_types = ['calendar','check','comment','consolidation','eue','log','perf','selector','sla','topology','trap','user']
 		event_type = event['event_type']
 
-		if event_type not in event_types:
+		if event_type not in self.event_types:
 			self.logger.warning("Unknown event type '%s', id: '%s', event:\n%s" % (event_type, event_id, event))
 			return event
 
 		## Archive event
-		if event_type == 'perf' :
+		if event_type == 'perf':
 			pass
 
-		elif event_type == 'check' or event_type == 'selector' or event_type == 'sla' or event_type == 'eue' or event_type == 'topology' or event_type == 'consolidation':
+		elif event_type in ['check', 'selector', 'sla', 'eue', 'topology', 'consolidation']:
 			_id = self.archiver.check_event(event_id, event)
 			if _id:
 				event['_id'] = _id
@@ -59,7 +74,7 @@ class engine(cengine):
 				## Event to Alert
 				self.amqp.publish(event, event_id, self.amqp.exchange_name_alerts)
 
-		elif event_type == 'trap' or event_type == 'log' or event_type == 'calendar':
+		elif event_type in ['trap', 'log', 'calendar', 'ack']:
 
 			## passthrough
 			self.archiver.store_new_event(event_id, event)
@@ -70,7 +85,7 @@ class engine(cengine):
 			## Event to Alert
 			self.amqp.publish(event, event_id, self.amqp.exchange_name_alerts)
 
-		elif event_type == 'user' or event_type == 'comment':
+		elif event_type in ['user', 'comment']:
 
 			## passthrough
 			_id = self.archiver.log_event(event_id, event)

@@ -73,8 +73,8 @@ class store(object):
 		self.redis_port = redis_port
 		self.redis_host = redis_host
 
-		if not redis_host:
-			self.redis_host = self.mongo_host
+		if not redis_host :
+			self.redis_host = mongo_host
 
 		self.connected = False
 		

@@ -558,7 +558,7 @@ def compress(points):
 	last_interval = 0
 	value = points[0][1]
 
-	if float.is_integer(value):
+	if isinstance(value, float) and float.is_integer(value):
 		value = int(value)
 
 	data = [value]

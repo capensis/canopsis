@@ -73,15 +73,17 @@ Ext.define('widgets.list.list' , {
 	//..
 
 	afterContainerRender: function() {
-
-		if (this.reload || this.bar_search) { this.bar = true } else { this.bar = false }
+		if(this.reload || this.bar_search) {
+			this.bar = true;
+		}
+		else {
+			this.bar = false;
+		}
 
 		this.grid = Ext.create('canopsis.lib.view.cgrid_state', {
 			exportMode: this.exportMode,
-			//border: (this.title || this.fullmode) ? false : true,
 			opt_paging: this.paging,
 			filter: this.filter,
-			//autoload: true,
 			pageSize: this.pageSize,
 			remoteSort: true,
 			sorters: [{
@@ -136,9 +138,6 @@ Ext.define('widgets.list.list' , {
 			scroll: this.scroll,
 
 			fitler_buttons: this.fitler_buttons
-
-			//opt_view_element:'view.ComponentDetails'
-
 		});
 
 		// Bind buttons
@@ -147,21 +146,26 @@ Ext.define('widgets.list.list' , {
 			this.ctrl._bindGridEvents(this.grid);
 		}, this);
 		
-		var event_ack = {}
+		var event_ack = {};
+
 		this.grid.store.load();
-		this.grid.store.filter( function(rec, id) {
-		var ans;
-		if ( rec.raw['event_type'] == 'ack' ) {
-			event_ack[rec.raw['ref_rk']] = rec
-			ans = false;
-		} else {
-			if ( typeof event_ack[rec.raw['rk']] !==  "undefined" )  {
-				rec.raw['ack_state'] = event_ack[rec.raw['rk']].raw['state'] 
-				rec.raw['ack_output'] = event_ack[rec.raw['rk']].raw['output'] 
-			} 
-			ans = true;
-		}
-			return ans
+		this.grid.store.filter(function(rec, id) {
+			var ans;
+
+			if(rec.raw['event_type'] === 'ack') {
+				event_ack[rec.raw['ref_rk']] = rec;
+				ans = false;
+			}
+			else {
+				if(typeof(event_ack[rec.raw['rk']]) !== 'undefined') {
+					rec.raw['ack_state'] = event_ack[rec.raw['rk']].raw['state'];
+					rec.raw['ack_output'] = event_ack[rec.raw['rk']].raw['output'];
+				}
+
+				ans = true;
+			}
+
+			return ans;
 		}, this);
 
 		this.wcontainer.removeAll();
@@ -171,8 +175,8 @@ Ext.define('widgets.list.list' , {
 	},
 
 	doRefresh: function(from, to) {
-		if (this.grid && this.grid.store.loaded)
+		if(this.grid && this.grid.store.loaded) {
 			this.grid.store.load();
-	},
-
+		}
+	}
 });

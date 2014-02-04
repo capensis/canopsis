@@ -350,6 +350,10 @@
 	background-image: url(../images/icons/chart_organisation.png) !important; 
 }
 
+.icon-mainbar-sla{
+    background-image: url(../images/icons/calculator.png) !important;
+}
+
 .icon-mainbar-sources{
 	background-image: url(../images/icons/script_link.png) !important; 
 }

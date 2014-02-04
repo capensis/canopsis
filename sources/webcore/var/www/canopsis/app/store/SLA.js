@@ -1,3 +1,4 @@
+//need:app/lib/store/cstore.js,app/model/SLA.js
 /*
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
@@ -16,50 +17,23 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 */
+Ext.define('canopsis.store.SLA', {
+	extend: 'canopsis.lib.store.cstore',
+	model: 'canopsis.model.SLA',
+	storeId: 'store.SLA',
 
-Ext.define('canopsis.lib.form.cfield', {
-	isFormField: true,
-	name: undefined,
+	proxy: {
+		type: 'rest',
+		url: '/rest/object/sla',
 
-	getName: function() {
-		return this.name;
-	},
-
-	isValid: function() {
-		return true;
-	},
-
-	validate: function() {
-		return this.isValid();
-	},
-
-	getSubmitData: function() {
-		var data = {};
-		data[this.name] = this.getValue();
-		return data;
-	},
-
-	isDirty: function() {
-		return false;
-	},
-
-	getModelData: function() {
-		return this.getSubmitData();
-	},
-
-	getValue: function() {
-		return undefined;
-	},
-
-	reset: function() {
-		this.setValue(this.originalValue);
-	},
-
-	resetOriginalValue: function() {
-		this.originalValue = this.getValue();
-	},
-
-	clearInvalid: function() {
-		;
+		reader: {
+			type: 'json',
+			root: 'data',
+			totalProperty: 'total',
+			successProperty: 'success'
+		},
+		writer: {
+			type: 'json'
+		}
 	}
 });

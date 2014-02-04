@@ -67,8 +67,8 @@ Ext.define('canopsis.lib.controller.cgrid', {
 		}
 		else if(grid.opt_allow_edit === true) {
 			grid.on('itemdblclick', this._editRecord, this);
-		} 
-		else if ( grid.opt_show_consolesup == true ) {
+		}
+		else if(grid.opt_show_consolesup === true ) {
 			grid.on('itemdblclick', this._consolesup, this );
 		}
 
@@ -427,7 +427,7 @@ Ext.define('canopsis.lib.controller.cgrid', {
 		if(!ack) {
 			record.set('ack', 'cancel');
 		}
-		else if (ack === 'cancel') {
+		else if(ack === 'cancel') {
 			record.set('ack', 'cancelled');
 		}
 		else {
@@ -1107,54 +1107,70 @@ Ext.define('canopsis.lib.controller.cgrid', {
 		this._searchRecord();
 	},
 
-	_consolesup: function(dataview, record, item, index, e, store){
-
+	_consolesup: function(dataview, record, item, index, e, store) {
 		var selection = this.grid.getSelectionModel().getSelection();
 
-		if ( selection.length > 0 ) {
-			if ( selection.length == 1 ) { record = selection[0]; }
+		if(selection.length > 0) {
+			if(selection.length === 1) {
+				record = selection[0];
+			}
 
-			var tabFormAck;	
-			if ( this.grid.opt_show_form_ack && ( this.grid.opt_show_ack_state_solved || this.grid.opt_show_ack_state_pendingsolved || this.grid.opt_show_ack_state_pendingaction || this.grid.opt_show_ack_state_pendingvalidation ) ) {
+			var tabFormAck;
+
+			if(this.grid.opt_show_form_ack && (this.grid.opt_show_ack_state_solved || this.grid.opt_show_ack_state_pendingsolved || this.grid.opt_show_ack_state_pendingaction || this.grid.opt_show_ack_state_pendingvalidation)) {
 				tabFormAck = {
 					id: 'EventFormAck',
 					title: 'Acknowledge',
 					bodyStyle: 'padding:10px;',
-					items:[{
+					items: [{
 						xtype:'form',
 						id: 'tabFormAck',
 						labelAlign: 'side',
-						border: false, 
+						border: false,
 						frame: false,
 						items:[
 						]
-					}],
+					}]
 				};
 
-				if ( this.grid.opt_show_help_msg && this.grid.opt_help_msg != "" && this.grid.opt_help_msg != null && selection.length == 1 ) {
-					var reg_com=new RegExp( "<component>", "g" );
-					var reg_res=new RegExp( "<resource>", "g" );
-					var reg_msg=new RegExp( "<output>", "g" );
-					var reg_date=new RegExp( "<lastcheck>", "g" );
+				if(this.grid.opt_show_help_msg && this.grid.opt_help_msg !== "" && this.grid.opt_help_msg !== null && selection.length === 1 ) {
+					var reg_com = new RegExp( "<component>", "g");
+					var reg_res = new RegExp( "<resource>", "g");
+					var reg_msg = new RegExp( "<output>", "g");
+					var reg_date = new RegExp( "<lastcheck>", "g");
 
-					if ( record.raw['output'] == null ) { record.raw['output'] = ""; }
+					if (!record.raw['output']) {
+						record.raw['output'] = "";
+					}
 
-					var dt = new Date(record.raw['timestamp']*1000);
-					
+					var dt = new Date(record.raw['timestamp'] * 1000);
+
 					tabFormAck['items'][0]['items'].push({
 						xtype:'textareafield',
 						fieldLabel: _('Help Message'),
 						name: 'ack_help_message',
 						anchor:'95%',
-						value: this.grid.opt_help_msg.replace( reg_com, record.raw['component'] ).replace( reg_res, record.raw['resource'] ).replace( reg_msg, record.raw['output'] ).replace( reg_date, dt.toLocaleString() ) 
+						value: this.grid.opt_help_msg.replace(reg_com, record.raw['component']).replace(reg_res, record.raw['resource']).replace(reg_msg, record.raw['output']).replace(reg_date, dt.toLocaleString())
 					});
 				}
-			
-				var ack_state = []
-				if ( this.grid.opt_show_ack_state_solved ) { ack_state.push( [0, 'Solved'] ) }
-				if ( this.grid.opt_show_ack_state_pendingsolved ) { ack_state.push( [1, 'Pending for solved'] ) }
-				if ( this.grid.opt_show_ack_state_pendingaction ) { ack_state.push( [2, 'Penging for action'] ) }
-				if ( this.grid.opt_show_ack_state_pendingvalidation ) { ack_state.push( [3, 'Pending for validation'] ) }
+
+				var ack_state = [];
+
+				if(this.grid.opt_show_ack_state_solved) {
+					ack_state.push([0, 'Solved']);
+				}
+
+				if(this.grid.opt_show_ack_state_pendingsolved) {
+					ack_state.push([1, 'Pending for solved']);
+				}
+
+				if(this.grid.opt_show_ack_state_pendingaction) {
+					ack_state.push([2, 'Penging for action']);
+				}
+
+				if(this.grid.opt_show_ack_state_pendingvalidation) {
+					ack_state.push([3, 'Pending for validation']);
+				}
 
 				tabFormAck['items'][0]['items'].push({
 					xtype: 'combo',
@@ -1166,20 +1182,21 @@ Ext.define('canopsis.lib.controller.cgrid', {
 					//value: 1, //record['raw']['ack_state'],
 					anchor:'95%'
 				});
+
 				tabFormAck['items'][0]['items'].push({
 					xtype:'textareafield',
 					fieldLabel: _('Ack Message'),
 					name: 'ack_output',
 					anchor:'95%'
 				});
-
-				
-			} else {
+			}
+			else {
 				tabFormAck = null;
 			}
 
 			var tabFormEdit;
-			if ( this.grid.opt_show_form_edit ) {
+
+			if(this.grid.opt_show_form_edit) {
 				tabFormEdit = {
 					title: 'Edit Event',
 					bodyStyle: 'padding:10px;',
@@ -1187,14 +1204,13 @@ Ext.define('canopsis.lib.controller.cgrid', {
 						xtype:'form',
 						id: 'tabFormEdit',
 						labelAlign: 'side',
-						border: false, 
+						border: false,
 						frame: false,
-						items:[
-						]
-					}],
+						items: []
+					}]
 				};
 
-				if ( selection.length == 1 && this.grid.opt_show_edit_state_type ) {
+				if(selection.length === 1 && this.grid.opt_show_edit_state_type) {
 					tabFormEdit['items'][0]['items'].push({
 						xtype: 'combo',
 						fieldLabel: _('State Type'),
@@ -1205,7 +1221,8 @@ Ext.define('canopsis.lib.controller.cgrid', {
 						anchor:'95%'
 					});
 				}
-				if ( selection.length == 1 && this.grid.opt_show_edit_state ) {
+
+				if(selection.length === 1 && this.grid.opt_show_edit_state) {
 					tabFormEdit['items'][0]['items'].push({
 						xtype: 'combo',
 						fieldLabel: _('State'),
@@ -1215,17 +1232,19 @@ Ext.define('canopsis.lib.controller.cgrid', {
 						anchor:'95%'
 					});
 				}
-				if ( this.grid.opt_show_edit_ticket ) {
+
+				if(this.grid.opt_show_edit_ticket) {
 					tabFormEdit['items'][0]['items'].push({
 						xtype: 'textfield',
 						fieldLabel: _('Ticket'),
 						name: 'ticket',
 						allowBlank: false,
-						value: (selection.length!=1?'':record['data']['ticket']),
+						value: (selection.length !== 1 ? '' : record['data']['ticket']),
 						anchor:'95%'
 					});
 				}
-				if ( selection.length == 1  && this.grid.opt_show_edit_output ) {
+
+				if(selection.length === 1  && this.grid.opt_show_edit_output) {
 					tabFormEdit['items'][0]['items'].push({
 						xtype: 'textareafield',
 						fieldLabel: _('Plugin Message'),
@@ -1235,99 +1254,99 @@ Ext.define('canopsis.lib.controller.cgrid', {
 						anchor:'95%'
 					});
 				}
-			} else { 
-				tabFormEdit = null
 			}
-			
-			if ( tabFormAck != null || tabFormEdit != null ) {
-				if ( typeof manageEvent !== "undefined" ) manageEvent.destroy();
-				manageEvent = Ext.create('Ext.window.Window',
-					{
-						layout: 'fit',
-						id: "manageEvent",
-						title: 'Manage Event',
-						closable: true,
-						closeAction: 'destroy',
-						constrain: true,
-						width: 400,
-						height: 350,
-						items:[{
-							region: 'center',
-							xtype: 'tabpanel',
-							items:[ tabFormAck, tabFormEdit ]
-						}],
-						buttons: [{
-							text: _('Save'),
-							tooltip: _('Update event'),
-							handler: function() {
-								for(var i = 0; i < selection.length; i++) {
-									//Get event
-									event = selection[i];
+			else {
+				tabFormEdit = null;
+			}
 
-									//Update event
-									if ( tabFormEdit && ( selection.length == 1 || ( selection.length != 1 && ( Ext.getCmp('tabFormEdit').getForm().getValues()['ticket'] != '' || Ext.getCmp('tabFormEdit').getForm().getValues()['ticket'] != null ) ) ) ) {
-										for( item in Ext.getCmp('tabFormEdit').getForm().getValues() ){
-											event['data'][item] = Ext.getCmp('tabFormEdit').getForm().getValues()[item];
-										}	
+			if(tabFormAck !== null || tabFormEdit !== null ) {
+				if(typeof(manageEvent) !== "undefined") {
+					manageEvent.destroy();
+				}
 
-										//Save updated event
-										global.eventsCtrl.sendEvent(event['data']);
+				manageEvent = Ext.create('Ext.window.Window', {
+					layout: 'fit',
+					id: "manageEvent",
+					title: 'Manage Event',
+					closable: true,
+					closeAction: 'destroy',
+					constrain: true,
+					width: 400,
+					height: 350,
+					items: [{
+						region: 'center',
+						xtype: 'tabpanel',
+						items: [tabFormAck, tabFormEdit]
+					}],
+					buttons: [{
+						text: _('Save'),
+						tooltip: _('Update event'),
+						handler: function() {
+							for(var i = 0; i < selection.length; i++) {
+								//Get event
+								var event = selection[i];
+
+								//Update event
+								if (tabFormEdit && (selection.length === 1 || ( selection.length !== 1 && ( Ext.getCmp('tabFormEdit').getForm().getValues()['ticket'] || Ext.getCmp('tabFormEdit').getForm().getValues()['ticket'])))) {
+									for(var item in Ext.getCmp('tabFormEdit').getForm().getValues()) {
+										event['data'][item] = Ext.getCmp('tabFormEdit').getForm().getValues()[item];
 									}
-									
-									//Update Ack 
-									if ( tabFormAck && typeof Ext.getCmp('tabFormAck').getForm().getValues()['ack_state'] != "undefined" ) {
-										event_ack = {
-											'connector_name': 'console_sup',
-											'connector': 'canopsis',
-											'event_type': 'ack',
-											'source_type': 'resource',
-											'component': event['data']['component'],
-											'resource': event['data']['resource'],
-											'referer': event['raw']['rk'],
-											'author': global.account.firstname + ' ' + global.account.lastname,
-											'state': Ext.getCmp('tabFormAck').getForm().getValues()['ack_state'],
-											'display_name': this.display_name,
-											'state_type': 1,
-											'output': Ext.getCmp('tabFormAck').getForm().getValues()['ack_output'],
-											'ref_rk': event['raw']['rk'],
-											'tags' : Ext.getCmp('tabFormAck').getForm().getValues()['tags']
-										};
-										
-										//Save updated event
-										global.eventsCtrl.sendEvent(event_ack);
-									}
+
+									//Save updated event
+									global.eventsCtrl.sendEvent(event['data']);
 								}
 
-								//Destroy
-								manageEvent.destroy();
+								//Update Ack
+								if(tabFormAck && typeof(Ext.getCmp('tabFormAck').getForm().getValues()['ack_state']) !== "undefined") {
+									event_ack = {
+										'connector_name': 'console_sup',
+										'connector': 'canopsis',
+										'event_type': 'ack',
+										'source_type': 'resource',
+										'component': event['data']['component'],
+										'resource': event['data']['resource'],
+										'referer': event['raw']['rk'],
+										'author': global.account.firstname + ' ' + global.account.lastname,
+										'state': Ext.getCmp('tabFormAck').getForm().getValues()['ack_state'],
+										'display_name': this.display_name,
+										'state_type': 1,
+										'output': Ext.getCmp('tabFormAck').getForm().getValues()['ack_output'],
+										'ref_rk': event['raw']['rk'],
+										'tags' : Ext.getCmp('tabFormAck').getForm().getValues()['tags']
+									};
 
-								setTimeout(
-									function() {
-										//Reload Store
-										dataview = dataview.findParentByType( 'grid' );
-										dataview.store.load();
-										dataview.store.filter( function(rec, id) {
-											var ans;
-											if ( rec.raw['event_type'] == 'ack' ) {
-												ans = false;
-											} else {
-												if ( rec.raw['rk'] == event_ack['ref_rk'] )  {
-													rec.raw['ack_state'] = event_ack['state']
-													rec.raw['ack_output'] = event_ack['output']
-												} 
-												ans = true;
-											}
-											return ans
-										}, dataview.store );
-									}, 500
-								);
-								
-								//Refresh dataview
-								//dataview.refresh();
+									//Save updated event
+									global.eventsCtrl.sendEvent(event_ack);
+								}
 							}
-						}],
-					}
-				).show();
+
+							//Destroy
+							manageEvent.destroy();
+
+							setTimeout(function() {
+								//Reload Store
+								dataview = dataview.findParentByType('grid');
+								dataview.store.load();
+								dataview.store.filter(function(rec, id) {
+									var ans = true;
+
+									if(rec.raw['event_type'] === 'ack' ) {
+										ans = false;
+									}
+									else if (rec.raw['rk'] === event_ack['ref_rk']) {
+										rec.raw['ack_state'] = event_ack['state'];
+										rec.raw['ack_output'] = event_ack['output'];
+									}
+
+									return ans;
+								}, dataview.store);
+							}, 500);
+
+							//Refresh dataview
+							//dataview.refresh();
+						}
+					}]
+				}).show();
 			}
 		}
 	}
