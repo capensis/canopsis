@@ -122,6 +122,15 @@ class store(object):
 			self.logger.debug("Get collections")
 			self.collection = self.db[self.mongo_collection]
 
+			self.collection.ensure_index('co')
+			self.collection.ensure_index('re')
+			self.collection.ensure_index('me')
+			self.collection.ensure_index('lv')
+			self.collection.ensure_index('u')
+			self.collection.ensure_index('ma')
+			self.collection.ensure_index('lts')
+			self.collection.ensure_index('t')
+
 			self.grid = GridFS(self.db, self.mongo_collection+"_bin")
 			self.connected = True
 			self.logger.debug(" + Success")
