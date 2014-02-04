@@ -53,7 +53,7 @@ def init():
         ('component', 1),
         ('state', 1),
         ('state_type', 1),
-        ('event_type', 1),
+        ('event_type', 1)
     ])
     storage.get_backend('events').ensure_index([
         ('tags', 1),
@@ -61,11 +61,11 @@ def init():
     ])
     storage.get_backend('events').ensure_index([
         ('component', 1),
-        ('resource', 1)
+        ('resource', 1),
         ('event_type', 1)
     ])
     storage.get_backend('events').ensure_index([
-        ('resource', 1)
+        ('resource', 1),
         ('event_type', 1)
     ])
     storage.get_backend('events').ensure_index([
