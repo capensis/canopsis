@@ -114,24 +114,28 @@ class engine(cengine):
 					self.logger.debug(" + consolidation_methods: %s" % consolidation_methods)
 
 					mType = mUnit = mMin = mMax = None
-
+					sum_in_consolidation_methods = 'sum' in consolidation_methods
+					maxSum = 0
 					# Get metrics
 					metrics = []
 					for index, metric in enumerate(metric_list):
-						if  index == 0 :
+						if index == 0 :
 							#mType = metric.get('t')
 							mMin = metric.get('mi')
 							mMax = metric.get('ma')
 							mUnit = metric.get('u')
-							if 'sum' in consolidation_methods:
+							if sum_in_consolidation_methods and mMan is not None:
 								maxSum = mMax
 						else:
-							if  metric.get('mi') < mMin :
-								mMin = metric.get('mi')
-							if metric.get('ma') > mMax :
-								mMax = metric.get('ma')
-							if  'ma' in metric and 'sum' in consolidation_methods and mMax:
-								maxSum += metric.get('ma')
+							mi = metric.get('mi')
+							if mi is not None and (mMin is None or mi < mMin):
+								mMin = mi
+							ma = metric.get('ma')
+							if ma is not None:
+								if mMax is None or ma > mMax:
+									mMax = ma
+								if sum_in_consolidation_methods and mMax is not None:
+									maxSum += ma
 							if metric.get('u') != mUnit :
 								self.logger.warning("%s: too many units" % name)
 								output_message = "warning : too many units"

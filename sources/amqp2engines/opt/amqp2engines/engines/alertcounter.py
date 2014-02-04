@@ -128,7 +128,7 @@ class engine(cengine):
 				# Update global counter
 				self.count_alert(
 					component = '__canopsis__',
-					resource = None;
+					resource = None,
 					state = event['state'],
 					value = 1
 				)

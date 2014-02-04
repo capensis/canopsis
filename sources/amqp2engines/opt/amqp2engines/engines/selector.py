@@ -46,16 +46,8 @@ class engine(cengine):
 		#load selectors
 		self.storage = get_storage(namespace='object', account=caccount(user="root", group="root"))
 
-<<<<<<< HEAD
-
 	def beat(self):
 		self.logger.debug('entered in selector BEAT')
-		# Refresh selectors for work method
-
-=======
-	def beat(self):
-		self.logger.debug('entered in selector BEAT')
->>>>>>> downtimes
 
 	def consume_dispatcher(self,  event, *args, **kargs):
 		self.logger.debug('entered in selector consume dispatcher')
