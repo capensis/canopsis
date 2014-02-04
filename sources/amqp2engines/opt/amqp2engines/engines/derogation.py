@@ -164,6 +164,9 @@ class engine(cengine):
 	def work(self, event, *args, **kargs):
 		if 'component' in event and 'resource' in event and self.cdowntime.is_downtime(event['component'], event['resource']):
 			event['state'] = 0
+			self.logger.debug('derogation to apply on event')
+		else:
+			self.logger.debug('no derogation to apply on event %s ' , (str(event)) )
 
 		for derogation in self.derogations:
 			# Check Time
