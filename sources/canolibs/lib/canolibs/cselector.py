@@ -74,7 +74,7 @@ class cselector(crecord):
 
 		self.logger = logging.getLogger('cselector')
 		if logging_level:
-			self.logger.setLevel(logging.INFO)#logging_level)
+			self.logger.setLevel(logging.logging_level)
 
 		self.cdowntime = Cdowntime(self.storage)
 
@@ -162,32 +162,52 @@ class cselector(crecord):
 		self.logger.debug(" + efilter: %s" % efilter)
 		self.logger.debug(" + mfilter: %s" % mfilter)
 
+
+		#Adds downtime elements to ignore in query
+		downtime = self.cdowntime.get_filter()
+		if downtime:
+			self.logger.debug(' + Selector downtime exclusion %s' % (str(downtime)))
+
+
 		## Tweaks
 		if not mfilter and not ifilter and not efilter:
 			self.logger.warning("%s: Invalid filter" % self.name)
 			return None
 
 		if mfilter and not ifilter and not efilter:
-			return mfilter
+			if downtime:
+				return {'$and': [downtime, mfilter]}
+			else:
+				return mfilter
 
 		if not mfilter and ifilter and not efilter:
-			return ifilter
+			if downtime:
+				return {'$and': [downtime, ifilter]}
+			else:
+				return ifilter
 
 		if not mfilter and not ifilter and efilter:
 			return None
 
 		if mfilter and ifilter and not efilter:
-			return {"$or": [mfilter, ifilter]}
+			filters = {"$or": [mfilter, ifilter]}
+			if downtime:
+				return {'$and': [downtime, filters]}
+			else:
+				return filters
 
 		if mfilter and not ifilter and efilter:
-			return {"$and": [mfilter, efilter]}
+			filters = [mfilter, efilter]
+
+			if downtime:
+				filters = [downtime] + filters
+			return {'$and': filters}
+
 
 		and_clause = [{"$or": [mfilter, ifilter]}, efilter]
 
-		#Adds downtime elements to ignore in query
-		downtime = cdowntime.get_filter()
 		if downtime:
-			and_clause.append(downtime)
+			and_clause = dowtime + and_clause
 
 		return {"$and": and_clause}
 
@@ -204,7 +224,7 @@ class cselector(crecord):
 			self.logger.debug("do_resolv:")
 			ids = []
 			mfilter = self.makeMfilter()
-			self.logger.debug(" + filter: %s" % mfilter)
+			self.logger.error(" + filter: %s" % mfilter)
 			if not mfilter:
 				self.logger.debug("  + Invalid mfilter" )
 				return []

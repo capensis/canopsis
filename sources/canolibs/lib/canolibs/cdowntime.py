@@ -47,8 +47,9 @@ class Cdowntime(crecord):
 		}
 		downtimes = self.backend.find(query)
 		self.downtimes = [downtime for downtime in downtimes]
+		return self.downtimes
 
-	""" #Not used yet
+
 	def is_downtime(self, component, resource):
 		#Tests whether or not given component/resource information exists in downtime list.
 		#If any, it s downtime and engines should operate consequently
@@ -58,22 +59,37 @@ class Cdowntime(crecord):
 			if downtime['component'] == component and downtime['resource'] == resource and downtime['start'] < now and downtime['end'] > now:
 				return True
 		return False
-	"""
 
-	def get_filter(self):
+	def get_filter(self, mini=False):
 
-		""" Builds a mongodb filter for downtime exclustion."""
+		""" Builds a mongodb filter for downtime exclustion. mini is used for metric queries."""
 
 		self.reload()
+
+		if mini:
+			component 	= 'co'
+			resource 	= 're'
+		else:
+			component 	= 'component'
+			resource 	= 'resource'
+
 
 		if not self.downtimes:
 			return None
 
-		or_field = []
+		new_field = []
 		for downtime in self.downtimes:
-			or_field.append({'$and': 
-				[{'$ne'	: {'component': downtime['component']}}, 
-				{'$ne'	: {'resource': downtime['resource']}}]
-			})
+			new_filter = [
+				{'$ne'	: {component: downtime['component']}}, 
+				{'$ne'	: {resource: downtime['resource']}}
+			]
+			if mini:
+				new_field += new_filter
+			else:
+				new_field.append({'$and': new_filter})
 
-		return {'$and': or_field}
+
+		if mini:
+			return new_field
+		else:
+			return {'$and': new_field}
