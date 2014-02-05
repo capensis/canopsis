@@ -360,7 +360,7 @@ Ext.define('canopsis.view.Tabs.Content' , {
 	addReportingBar: function() {
 		if(!this.report_window) {
 			var config = {
-				width: 620,
+				width: 660,
 				border: false,
 				title: _('Live reporting toolbar'),
 				constrain: true,
@@ -419,13 +419,16 @@ Ext.define('canopsis.view.Tabs.Content' , {
 		}
 	},
 
-	setReportDate: function(from, to) {
+	setReportDate: function(from, to, additionalFilters) {
 		log.debug('Send report data for widgets', this.logAuthor);
+
+		console.log("content::setReportDate::additionalFilters");
+		console.log(additionalFilters);
 
 		var cmps = this.getCmps();
 
 		for(var i = 0; i < cmps.length; i++) {
-			cmps[i]._doRefresh(from, to);
+			cmps[i]._doRefresh(from, to, additionalFilters);
 		}
 	},
 
