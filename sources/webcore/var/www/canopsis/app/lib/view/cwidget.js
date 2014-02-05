@@ -215,7 +215,10 @@ Ext.define('canopsis.lib.view.cwidget', {
 		this.stopTask();
 	},
 
-	_doRefresh: function(from, to) {
+	_doRefresh: function(from, to, advancedFilters) {
+		console.log("cwidget::_doRefresh::advancedFilters");
+		console.log(advancedFilters);
+
 		var now = parseInt(Ext.Date.now());
 
 		if(!to) {
@@ -230,12 +233,12 @@ Ext.define('canopsis.lib.view.cwidget', {
 			from = to - (this.time_window * 1000);
 		}
 
-		this.doRefresh(from, to);
+		this.doRefresh(from, to, advancedFilters);
 		this.lastRefresh = to;
 	},
 
-	doRefresh: function(from, to) {
-		this.getNodeInfo(from, to);
+	doRefresh: function(from, to, advancedFilters) {
+		this.getNodeInfo(from, to, advancedFilters);
 	},
 
 	_onRefresh: function(data, from, to) {
