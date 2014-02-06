@@ -225,9 +225,9 @@ def perstore_get_all_metrics():
 	
 	mfilter = clean_mfilter(mfilter)
 
-	data  = manager.find(limit=0, skip=0, mfilter=mfilter, data=False, sort=msort)
+	data  = manager.find(limit=limit, skip=start, mfilter=mfilter, data=False, sort=msort)
 	total = data.count()
-	data  = [meta for meta in data.skip(start).limit(limit)]
+	data  = list(data)
 	
 	return {'success': True, 'data' : data, 'total' : total}
 
