@@ -95,14 +95,8 @@ Ext.define('canopsis.view.ReportingBar.ReportingBar', {
 			xtype: 'button',
 			enableToggle: true,
 			cls: 'x-btn-icon x-group-by-icon',
-			action: 'toggleAdvancedFilters'
-		});
-
-		this.buttonExpandAdvancedMode = this.toolbar.add({
-			xtype: 'button',
-			enableToggle: true,
-			cls: 'x-btn-icon',
-			action: 'computeAdvancedFilters'
+			action: 'toggleAdvancedFilters',
+			hidden: true
 		});
 
 		this.textFrom = this.toolbar.add({xtype: 'tbtext', text: _('From') + ': ', hidden: true});
@@ -180,27 +174,38 @@ Ext.define('canopsis.view.ReportingBar.ReportingBar', {
 			wizardSteps:[{
 				title:"Filter",
 				items: [{
-					xtype: "combobox",
-					itemId: "filterKey",
-					name: "key",
-					fieldLabel: "Key",
-					queryMode: "local",
-					displayField: "text",
-					valueField: "value",
+					xtype:"cgrid",
+					itemId:"componentResourceGrid",
 					store: {
 						xtype: "store",
-						fields: ["value", "text"],
-						data : [
-							{value: "component", text: "Component"},
-							{value: "resource", text: "Resource"}
-						]
-					}
-				},{
-					xtype:"textfield",
-					fieldLabel:"Value",
-					name:"value",
-					itemId: "filterValue",
-					emptyText:""
+						fields: ["component", "resource"],
+						reader: {
+							type: 'json'
+						}
+					},
+					columns:[{
+						header: "Component",
+						sortable: false,
+						dataIndex: "component",
+						editor: "field",
+						// renderer: rdr_tstodate,
+						flex: 3
+					},{
+						header: "Resource",
+						sortable: false,
+						dataIndex: "resource",
+						editor: "field",
+						// renderer: rdr_tstodate,
+						flex: 3
+					}],
+					height:100,
+					opt_bar_reload: false,
+			        queryMode: 'local',
+			        opt_keynav_del : true,
+					opt_menu_delete: true,
+			        opt_bar_delete : true,
+					opt_bar_enable: false,
+					opt_confirmation_delete: false
 				}],
 			},{
 				title:"Exclusion Intervals",
@@ -244,6 +249,7 @@ Ext.define('canopsis.view.ReportingBar.ReportingBar', {
 		this.addExclusionIntervalWindow = Ext.create('Ext.window.Window', {
 			closeAction:'hide',
 			cls: 'addExclusionIntervalWindow',
+			modal:true,
 			items:[{
 				xtype: "panel",
 				items:[{
@@ -262,16 +268,28 @@ Ext.define('canopsis.view.ReportingBar.ReportingBar', {
 			}]
 		});
 
+		this.addComponentResourceWindow = Ext.create('Ext.window.Window', {
+			closeAction:'hide',
+			cls: 'addComponentResourceWindow',
+			modal:true,
+			items:[{
+				xtype: "panel",
+				items:[{
+					xtype: "textfield",
+					itemId: "component",
+					fieldLabel: "Component"
+				},{
+					xtype: "textfield",
+					itemId: "resource",
+					fieldLabel: "Resource"
+				},{
+					xtype: "button",
+					text: "Save",
+					action: "addComponentResource"
+				}]
+			}]
+		});
+
 		// this.advancedFilters.cfilterTab.cfilter = this.advancedFilters.cfilterTab.add({xtype:cfilter});
-	},
-
-	afterRender: function() {
-		console.log("timeNav afterRender");
-
-		var grid = this.down("#exclusionIntervalGrid");
-		console.log(grid);
-
-		this.callParent(arguments);
 	}
-
 });
