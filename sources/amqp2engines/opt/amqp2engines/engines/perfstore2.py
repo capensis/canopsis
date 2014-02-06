@@ -27,13 +27,13 @@ from datetime import datetime
 
 from cengine import cengine
 from camqp import camqp
-
+import logging
 NAME="perfstore2"
 INTERNAL_QUEUE="beat_perfstore2"
 
 class engine(cengine):
 	def __init__(self, *args, **kargs):
-		cengine.__init__(self, name=NAME, *args, **kargs)
+		cengine.__init__(self, name=NAME,logging_level=logging.DEBUG, *args, **kargs)
 
 		self.beat_interval =  300
 

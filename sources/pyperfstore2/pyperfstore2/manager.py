@@ -76,7 +76,7 @@ class manager(object):
 		return _id
 		
 	def get_data(self, _id):
-		data = self.store.redis.lrange(_id, 0, -1)
+		data = self.store.daily_collection.find({'_id': _id})
 		def cleanPoint(p):
 			p[0] = int(p[0])
 			try:
@@ -85,8 +85,15 @@ class manager(object):
 				p[1] = float(p[1])
 			return p
 
-		data = [ cleanPoint(p.split('|')) for p in data ]
-		return data
+
+		points = []
+		if 'values' not in data:
+			return points
+
+		for key in data['values']:
+			points.append(cleanPoint(data['values'][key]))
+
+		return points
 
 	def get_meta(self, _id=None, name=None, raw=False, mfields=None):
 		_id = self.get_id(_id, name)
@@ -147,9 +154,10 @@ class manager(object):
 		point = (timestamp, value)
 		
 		meta_data = meta_data.copy()
-		
+		self.logger.warning("TU PEUX PAS TEST 2")
 		if meta_data:
 			meta_data = self.compress_meta_fields(meta_data)
+		self.logger.debug('----- XOXO ----')
 		self.store.push(_id=_id, point=point, meta_data=meta_data)
 		
 	def find(self, _id=None, name=None, mfilter=None, limit=0, skip=0, data=True, sort=None):
@@ -374,64 +382,48 @@ class manager(object):
 			from multiprocessing import Pool
 
 		self.logger.info("Rotate All DCA")
-		_ids = []
+		keys = []
 		self.logger.info(" + Get all keys")
-		keys = self.store.redis.keys('*')
+		selectAll = self.store.daily_collection.find({'count': {'$gte': self.dca_min_length}}, {'_id': 1, 'values': 1})
+		keys = {item['_id']:item['values'] for item in selectAll}
 
-		try:
-			keys.remove("perfstore2:rotate:plan")
-		except:
-			pass
+		plan_key = 'perfstore2:rotate:plan'
+		if plan_key in keys:
+			del keys[plan_key]
 			
 		self.logger.info(" + Check length (%s keys)" % len(keys))
-		for key in keys:
-			self.store.redis_pipe.llen(key)
-	
-		result = self.store.redis_pipe.execute()
 
-		for index, key in enumerate(keys):
-			if result[index] >= self.dca_min_length:
-				_ids.append(key)
-
-		if not _ids:
+		if not keys:
 			self.logger.info("Nothing to do")
 			return
 
-		if concurrency <= 1:
-			for _id in _ids:
-				self.rotate(_id)
-		else:
-			_ids = split_list(_ids, wanted_parts=concurrency)
+#		if concurrency <= 1:
+		for _id in keys:
+			self.rotate(_id, keys[_id])
+#		else:
+#			_ids = split_list(_ids, wanted_parts=concurrency)
 
-			p = Pool(concurrency)
-			p.map(rotate_process, _ids)
+#			p = Pool(concurrency)
+#			p.map(rotate_process, _ids)
 
 		t = time.time() - t
 		self.logger.info("All perfdata was rotate, elapsed: %.3f seconds" % t)
 		
-	def rotate(self, _id=None, name=None):
+	def rotate(self, _id, values):
 		t = time.time()
-		try:
-			_id = self.get_id(_id, name)
-		except:
-			_id = None			
-	
-		if not _id:
-			self.logger.info("Nothing to do")
-			return
 
 		self.logger.debug("Start rotation of %s" % _id)
 
 		self.logger.debug(" + DCA: %s" % _id)
 
-		points = self.get_data(_id)
-		
-		if not points:
-			self.logger.debug("No points, Nothing to do")
-			return
+		timestamps = [float(x) for x in values.keys()]
+		timestamps.sort()
+		points = []
+		for timestamp in timestamps:
+			points.append(timestamps[timestamp])
 
-		fts = points[0][0]
-		lts = points[-1][0]
+		fts = values[timestamps[0]][0]
+		lts = values[timestamps[-1]][0]
 						
 		self.logger.debug("  + Compress %s -> %s" % (fts, lts))
 		
@@ -443,20 +435,14 @@ class manager(object):
 			self.store.create_bin(_id=bin_id, data=data)
 			
 			self.logger.debug("   + Add bin_id in meta and clean meta")
-			##ofts = dca.get('fts', fts)
-			##self.store.update(_id=_id, mset={'fts': ofts, 'd': []}, mpush={'c': (fts, lts, bin_id)})
 			
 			self.store.update(_id=_id, mpush={'c': (fts, lts, bin_id)})
-			self.store.redis.delete(_id)
+			self.store.daily_collection.remove({'_id': _id})
+			
 			
 		except Exception,err:
 			self.logger.warning('Impossible to rotate %s: %s' % (_id, err))
 				
-		#else:
-		#	self.logger.debug("  + Not enough point in DCA")
-		#	ofts = dca.get('fts', fts)
-		#	self.store.update(_id=_id, mset={'fts': ofts})
-
 		t = time.time() - t
 		self.logger.debug(" + Rotation of '%s' done in %.3f seconds" % (_id, t))
 			
@@ -627,6 +613,7 @@ def split_list(alist, wanted_parts=1):
              for i in range(wanted_parts) ]
 
 def rotate_process(_ids):
+	raise('TODO')
 	import pyperfstore2
 	manager = pyperfstore2.manager()
 

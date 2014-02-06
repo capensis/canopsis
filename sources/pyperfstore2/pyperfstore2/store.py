@@ -23,7 +23,6 @@ import os, sys, json, logging, time
 from bson.errors import InvalidStringData
 from pymongo import Connection
 from gridfs import GridFS
-import redis
 
 import threading
 
@@ -36,14 +35,14 @@ class store(object):
 			mongo_user=None,
 			mongo_pass=None,
 			mongo_safe=False,
-			redis_host=None,
-			redis_port=6379,
-			redis_db=0,
-			redis_sync_interval=10,
 			logging_level=logging.INFO):
 
 		self.logger = logging.getLogger('store')
 		self.logger.setLevel(logging_level)
+
+		# keep dayly track of ids in cache, 
+		# TODO must be cleared in beat method
+		self.daily_ids = {}
 
 		self.logger.debug(" + Init MongoDB Store")
 
@@ -68,25 +67,14 @@ class store(object):
 		self.mongo_user = mongo_user if mongo_user != "" else None
 		self.mongo_pass = mongo_pass if mongo_pass != "" else None
 
-		self.redis_sync_interval = redis_sync_interval
-		self.redis_db = redis_db
-		self.redis_port = redis_port
-		self.redis_host = redis_host
-
-		if not redis_host :
-			self.redis_host = mongo_host
-
 		self.connected = False
 
 		self.connect()
-
-		self.last_sync = time.time()
 
 		self.last_rate_time = time.time()
 		self.rate_interval = 10
 		self.rate_threshold = 20
 		self.last_rate = 0
-		self.pipe_size = 0
 		self.pushed_values = 0
 
 	def connect(self):
@@ -105,9 +93,6 @@ class store(object):
 
 			self.db=self.conn[self.mongo_db]
 
-			self.redis = redis.StrictRedis(host=self.redis_host, port=self.redis_port, db=self.redis_db)
-			self.redis_pipe = self.redis.pipeline()
-
 			try:
 				if self.mongo_user and self.mongo_pass != None:
 						self.logger.debug("Try to auth '%s'" % self.mongo_user)
@@ -122,6 +107,7 @@ class store(object):
 			self.logger.debug("Get collections")
 			self.collection = self.db[self.mongo_collection]
 
+			self.daily_collection = self.db[self.mongo_collection + '_daily']
 			self.grid = GridFS(self.db, self.mongo_collection+"_bin")
 			self.connected = True
 			self.logger.debug(" + Success")
@@ -152,12 +138,6 @@ class store(object):
 		if data:
 			return self.collection.update({'_id': _id}, data, upsert=upsert)
 
-	def sync(self):
-		self.logger.debug("Sync pipeline to Redis")
-		self.redis_pipe.execute()
-		self.last_sync = time.time()
-		self.pipe_size = 0
-
 	def push(self, _id, point, meta_data={}, bulk=True):
 		self.check_connection()
 		self.logger.debug("Push point '%s' in '%s'" % (point, _id))
@@ -165,9 +145,9 @@ class store(object):
 		meta_data['lts'] = point[0]
 		meta_data['lv'] = point[1]
 
-		# Update meta data on mongo
-		if not self.redis.exists(_id):
+		if not _id in self.daily_ids:
 			self.update(_id=_id, mset=meta_data)
+			self.daily_ids[_id] = True
 
 		now = time.time()
 
@@ -180,21 +160,13 @@ class store(object):
 
 		# Disable bulk mode in lower rate
 		if bulk and self.last_rate < self.rate_threshold:
-			bulk = False
-
-		if bulk and self.pipe_size == 0:
+			bulk = False		
+		if bulk:
 			self.logger.debug("Bulk mode is enabled (rate: %s push/sec)" % self.last_rate)
 
 		# Push perfdata to db
-		if not bulk and self.pipe_size == 0:
-			self.redis.rpush(_id, '%s|%s' % (point[0], point[1]))
-		else:
-			self.redis_pipe.rpush(_id, '%s|%s' % (point[0], point[1]))
-			self.pipe_size += 1
-
-		# Sync DB if need
-		if self.pipe_size and self.redis_sync_interval and (self.last_sync + self.redis_sync_interval) < now:
-			self.sync()
+		self.logger.debug('Will insert to daily collection ---------------------------------')
+		self.daily_collection.update({'_id': _id}, {'$setOnInsert':{'insert_date': time.time()}, '$set': {'values.' + str(int(time.time())): [point[0], point[1]]}}, upsert=True)
 
 		self.pushed_values += 1
 
@@ -254,17 +226,10 @@ class store(object):
 		self.db.drop_collection(self.mongo_collection)
 		self.db.drop_collection(self.mongo_collection+"_bin.chunks")
 		self.db.drop_collection(self.mongo_collection+"_bin.files")
-		self.redis.flushdb()
-
+		
 	def disconnect(self):
-		# Sync redis
-		self.sync()
-
 		if self.connected:
 			self.logger.debug("Disconnect from MongoDB")
 			self.conn.disconnect()
 		else:
 			self.logger.warning("Impossible to disconnect, you are not connected")
-
-	#def __del__(self):
-	#	self.disconnect()
