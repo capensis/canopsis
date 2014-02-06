@@ -135,6 +135,7 @@ class cstorage(object):
 		try:
 			backend = self.backend[namespace]
 			self.logger.debug("Use %s collection" % namespace)
+
 			return backend
 		except:
 			self.backend[namespace] = self.db[namespace]

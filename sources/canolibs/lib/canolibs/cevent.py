@@ -151,7 +151,7 @@ def forger(		connector,
 def get_routingkey(event):
 	rk = "%s.%s.%s.%s.%s" % (event['connector'], event['connector_name'], event['event_type'], event['source_type'], event['component'])
 
-	if event['resource']:
+	if 'resource' in event and event['resource']:
 		rk += ".%s" % event['resource']
 
 	return rk

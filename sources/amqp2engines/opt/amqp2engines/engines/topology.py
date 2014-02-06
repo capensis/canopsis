@@ -28,6 +28,7 @@ from cstorage import get_storage
 import time
 from datetime import datetime
 from random import random
+from cdowntime import Cdowntime
 
 NAME="topology"
 
@@ -46,41 +47,18 @@ class engine(cengine):
 		# All ids in all topos
 
 		self.stateById = {}
-		self.topos = []
+
 
 		# Beat
-		self.doBeat = False
 		self.normal_beat_interval = 300
 		self.lastBeat = int(time.time()) - self.normal_beat_interval
 
 	def pre_run(self):
 		self.storage = get_storage(namespace='object', account=caccount(user="root", group="root"))
-
-		# TODO: Not compatible with HA !
-		self.topo_unloadAll()
+		self.cdowntime = Cdowntime(self.storage)
 
 		self.beat()
 
-	def topo_load(self):
-		count = self.storage.count({'crecord_type': 'topology', 'enable': True, 'loaded': False}, namespace="object")
-		if count:
-			self.logger.debug("Load topologies")
-			self.topos = self.storage.find({'crecord_type': 'topology', 'enable': True, 'loaded': False}, namespace="object", raw=True)
-
-	def topo_unload(self):
-		self.logger.debug("Unload topologies")
-		for topo in self.topos:
-			self.storage.update(topo['_id'], {'loaded': False})
-
-	def topo_unloadAll(self):
-		records = self.storage.find({'crecord_type': 'topology', 'enable': True},  mfields=['_id'], namespace="object", raw=True)
-		for record in records:
-			self.storage.update(record['_id'], {'loaded': False})
-
-
-		del self.topos
-
-		self.topos = []
 
 	def default_Operator_fn(self, states, options={}):
 		self.logger.debug("Calcul state of sample: %s" % states)
@@ -132,12 +110,8 @@ class engine(cengine):
 			state = self.stateById.get(_id, {})
 			childIds = parent.get('childs', [])
 
-			## For DEBUG
-			prefix = ""
-			for i in range(0, level):
-				prefix = "  " + prefix
 
-			self.logger.debug("%s|-> %s (State: %s, type: %s)" % (prefix, _id , state.get('state', None), state.get('state_type', None)))
+			self.logger.debug('' * level + "|-> %s (State: %s, type: %s)" % (_id , state.get('state', None), state.get('state_type', None)))
 
 			states = []
 
@@ -208,12 +182,11 @@ class engine(cengine):
 		return tree
 
 	def post_run(self):
-		self.topo_unload()
+		pass
 
 
 	def beat(self):
 		self.logger.debug('entered in topology BEAT')
-		self.topo_load()
 		# Refresh selectors for work method
 		self.nb_beat += 1
 
@@ -223,96 +196,105 @@ class engine(cengine):
 		self.logger.debug('entered in topology consume dispatcher')
 		# Gets crecord from amqp distribution
 		topology = self.get_ready_record(event)
-
+		self.logger.error('will test topo')
 		if topology:
+			topo = topology.dump()
+			self.logger.error('will topo is ok')
 			event_id = event['_id']
 			ids = []
 
-			# Parse topo
-			for topo in self.topos:
-				self.logger.debug("Parse topo '%s': %s Nodes with %s Conns" % (topo['crecord_name'], len(topo['nodes']), len(topo['conns'])))
 
-				nodes = topo['nodes']
-				topo['ids'] = []
-				for key in nodes:
-					_id = nodes[key].get('_id', None)
-					if _id and _id  not in ids:
-						topo['ids'].append(_id)
-						if _id  not in ids:
-							ids.append(_id)
+			self.logger.debug("Parse topo '%s': %s Nodes with %s Conns" % (topo['crecord_name'], len(topo['nodes']), len(topo['conns'])))
 
+			nodes = topo['nodes']
+			topo['ids'] = []
+			for key in nodes:
+				_id = nodes[key].get('_id', None)
+				if _id and _id  not in ids:
+					topo['ids'].append(_id)
+					if _id  not in ids:
+						ids.append(_id)
 
-				topo['nodesById'] = {}
+			topo['nodesById'] = {}
 
-				for key in topo['nodes']:
-					node = topo['nodes'][key]
+			for key in topo['nodes']:
+				node = topo['nodes'][key]
 
-					_id = node['_id']
+				_id = node['_id']
 
-					if not node.get('calcul_state', None):
-						if node.get('event_type', None) == 'operator':
-							node['calcul_state'] = self.topo_getOperator_fn(_id)
-							_id = "%s-%s" % (_id, int(random() * 10000))
-							node['_id'] = _id
-						else:
-							node['calcul_state'] = self.default_Operator_fn
+				if not node.get('calcul_state', None):
+					if node.get('event_type', None) == 'operator':
+						node['calcul_state'] = self.topo_getOperator_fn(_id)
+						_id = "%s-%s" % (_id, int(random() * 10000))
+						node['_id'] = _id
+					else:
+						node['calcul_state'] = self.default_Operator_fn
 
-					topo['nodesById'][_id] = node
-					node['childs'] = []
+				topo['nodesById'][_id] = node
+				node['childs'] = []
 
-				self.logger.debug("Fill node's childs")
-				self.topo_fillChilds(topo)
+			self.logger.debug("Fill node's childs")
+			self.topo_fillChilds(topo)
 
+			# Get all states of all topos
+			self.stateById = {}
 
-				# Get all states of all topos
-				self.stateById = {}
-				records = self.storage.find(mfilter={'_id': {'$in': ids}}, mfields=['state', 'state_type', 'previous_state'], namespace='events')
-				for record in records:
-					self.stateById[record['_id']] = {
-						'state': record['state'],
-						'state_type': record.get('state_type', 1),
-						'previous_state': record.get('previous_state', record['state'])
-					}
+			# Allow downtime matching with selected events
+			downtimes = self.cdowntime.reload()
 
+			records = self.storage.find(mfilter={'$and': [{'_id': {'$in': ids}}]}, mfields=['state', 'state_type', 'previous_state', 'component', 'resource'], namespace='events')
+			for record in records:
 
-				## Parse tree for calcul state
-				self.logger.debug(" + Calcul state:")
-				states_info = self.topo_getState(topo)
+				self.logger.debug({'record':record})
+				state = record['state']
 
-				self.logger.debug("'%s': State: %s" % (topo['crecord_name'], states_info))
-				self.storage.update(topo['_id'], {'state': states_info['state']})
+				if downtimes:
+					if 'component' in record and 'resource' in record and self.cdowntime.is_downtime(record['component'], record['resource']):
+						self.logger.debug('downtime detected, will set state to 0 for this event')
+						state = 0
 
-				event = cevent.forger(
-					connector =			NAME,
-					connector_name =	"engine",
-					event_type =		"topology",
-					source_type =		"component",
-					component =			topo['crecord_name'],
-					state =				states_info['state'],
-					state_type =		states_info['state_type'],
-					output =			"",
-					long_output =		"",
-					#perf_data =			None,
-					#perf_data_array =	[],
-					display_name =		topo.get('display_name', None)
-				)
-
-				# Extra fields
-				event['nestedTree'] = self.topo_dump4Ui(topo)
+				self.stateById[record['_id']] = {
+					'state': state,
+					'state_type': record.get('state_type', 1),
+					'previous_state': record.get('previous_state', record['state'])
+				}
 
 
-				rk = cevent.get_routingkey(event)
+			## Parse tree for calcul state
+			self.logger.debug(" + Calcul state:")
+			states_info = self.topo_getState(topo)
 
-				self.logger.debug("Publish event on %s" % rk)
-				self.amqp.publish(event, rk, self.amqp.exchange_name_events)
-				self.crecord_task_complete(event_id)
+			self.logger.debug("'%s': State: %s" % (topo['crecord_name'], states_info))
+			self.storage.update(topo['_id'], {'state': states_info['state']})
+
+			event = cevent.forger(
+				connector =			NAME,
+				connector_name =	"engine",
+				event_type =		"topology",
+				source_type =		"component",
+				component =			topo['crecord_name'],
+				state =				states_info['state'],
+				state_type =		states_info['state_type'],
+				output =			"",
+				long_output =		"",
+				#perf_data =			None,
+				#perf_data_array =	[],
+				display_name =		topo.get('display_name', None)
+			)
+
+			# Extra fields
+			event['nestedTree'] = self.topo_dump4Ui(topo)
+
+
+			rk = cevent.get_routingkey(event)
+
+			self.logger.debug("Publish event on %s" % rk)
+			self.amqp.publish(event, rk, self.amqp.exchange_name_events)
+			self.crecord_task_complete(event_id)
 		else:
 			self.logger.warning('topology not able to load crecord properly, topology not threaten.')
 
 
 	def work(self, event, *args, **kargs):
-		if not self.doBeat:
-			for topo in self.topos:
-				if  event['rk'] in topo['ids']:
-					self.doBeat = True
-					break
+		return event
+
