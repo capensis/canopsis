@@ -19,6 +19,7 @@
 # ---------------------------------
 
 from cengine import cengine
+import cevent
 import pyperfstore2
 
 from cstorage import get_storage
@@ -28,6 +29,7 @@ import time
 import logging
 
 NAME="alertcounter"
+INTERNAL_COMPONENT = '__canopsis__'
 
 class engine(cengine):
 	def __init__(self, *args, **kargs):
@@ -53,7 +55,7 @@ class engine(cengine):
 			del storage
 
 
-	def count_alert(self, component, state, value, resource=None, tags=[]):
+	def count_alert(self, component, state, state_type, value, resource=None, cmp_problem=False, tags=[]):
 		# Update cps_statechange{,_0,_1,_2,_3} for component/resource
 
 		if resource:
@@ -94,6 +96,53 @@ class engine(cengine):
 			self.logger.debug(" + Increment '%s': %s" % (metric, cvalue))
 			self.manager.push(name="%s%s" % (name, metric), value=cvalue, meta_data=meta_data)
 
+		# Update cps_statechange_{hard,soft}
+
+		for cstate_type in [0, 1]:
+			cvalue = 0
+
+			if cstate_type == state_type:
+				cvalue = value
+
+			metric = "cps_statechange_{0}".format(
+				'hard' if cstate_type == 1 else 'soft'
+			)
+
+			meta_data['me'] = metric
+
+			self.logger.debug("Increment %s: %s: %s" % (name, metric, cvalue))
+			self.manager.push(name="%s%s" % (name, metric), value=cvalue, meta_data=meta_data)
+
+		# Update cps_statechange_{component,service,service_from_component}
+
+		if component == INTERNAL_COMPONENT:
+			for cevtype in ['component', 'service', 'service_from_component']:
+				cvalue = 0
+
+				if cevtype == 'component' and not resource:
+					cvalue = value
+
+				elif cevtype == 'service' and resource and not cmp_problem:
+					cvalue = value
+
+				elif cevtype == 'service_from_component' and resource and cmp_problem:
+					cvalue = value
+
+				metric = "cps_statechange_{0}".format(cevtype)
+				meta_data['me'] = metric
+
+				self.logger.debug("Increment %s: %s: %s" % (name, metric, cvalue))
+				self.manager.push(name="%s%s" % (name, metric), value=cvalue, meta_data=meta_data)
+
+		# Update cps_alerts_not_ack
+
+		if state != 0:
+			metric = "cps_alerts_not_ack"
+			meta_data['me'] = metric
+
+			self.logger.debug("Increment %s: %s: %s" % (name, metric, value))
+			self.manager.push(name="%s%s" % (name, metric), value=value, meta_data=meta_data)
+
 	def work(self, event, *args, **kargs):
 		if event['event_type'] in self.listened_event_type:
 
@@ -111,7 +160,9 @@ class engine(cengine):
 								self.count_alert(
 									component	= tag,
 									resource	= 'selector',
+									cmp_problem = event['component_problem'],
 									state		= event['state'],
+									state_type	= event['state_type'],
 									value		= 1,
 									tags		= event['tags']
 							)
@@ -119,26 +170,43 @@ class engine(cengine):
 				# By name
 				self.count_alert(
 					component	= event['component'],
+					cmp_problem = event['component_problem'],
 					resource	= event.get('resource', None),
 					state		= event['state'],
+					state_type	= event['state_type'],
 					value		= 1,
 					tags		= event['tags']
 				)
 
 				# Update global counter
-				self.count_alert(
-					component = '__canopsis__',
-					resource = None,
+				event = cevent.forger(
+					connector = "cengine",
+					connector_name = NAME,
+					event_type = "check",
+					source_type = "component",
+					component = INTERNAL_COMPONENT,
+
 					state = event['state'],
-					value = 1
+					state_type = event['state_type'],
+					component_problem = event['component_problem']
 				)
 
+				self.amqp.publish(event, cevent.get_routingkey(event), self.amqp.exchange_name_events)
+
 				for hostgroup in event.get('hostgroups', []):
-					self.count_alert(
-						component = '__canopsis__',
+					event = cevent.forger(
+						connector = "cengine",
+						connector_name = NAME,
+						event_type = "check",
+						source_type = "resource",
+						component = INTERNAL_COMPONENT,
 						resource = hostgroup,
+
 						state = event['state'],
-						value = 1
+						state_type = event['state_type'],
+						component_problem = event['component_problem']
 					)
+
+					self.amqp.publish(event, cevent.get_routingkey(event), self.amqp.exchange_name_events)
 
 		return event

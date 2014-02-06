@@ -66,7 +66,8 @@ def perfstore_values_route(start = None, stop = None):
 										aggregate_max_points = request.params.get('aggregate_max_points', default=None),
 										aggregate_round_time = request.params.get('aggregate_round_time', default=None),
 										consolidation_method = request.params.get('consolidation_method', default=None),
-										timezone = request.params.get('timezone', default=0))
+										timezone = request.params.get('timezone', default=0),
+										exclusions = request.params.get('exclusions', default={}))
 
 
 @get('/perfstore')
@@ -88,7 +89,8 @@ def perfstore_nodes_get_values( start = None,
 								aggregate_max_points = None,
 								aggregate_round_time = None,
 								consolidation_method = None,
-								timezone = 0):
+								timezone = 0,
+								exclusions = {}):
 
 	if manager == None:
 		load()
@@ -128,7 +130,8 @@ def perfstore_nodes_get_values( start = None,
 											aggregate_interval=aggregate_interval,
 											aggregate_max_points=aggregate_max_points,
 											aggregate_round_time=aggregate_round_time,
-											timezone=time.timezone)
+											timezone=time.timezone,
+											exclusions=exclusions)
 
 	if aggregate_method and consolidation_method and len(output):
 		# select right function
@@ -581,7 +584,7 @@ def perfstore_perftop(start=None, stop=None):
 # Functions
 ########################################################################
 
-def perfstore_get_values(_id, start=None, stop=None, aggregate_method=None, aggregate_interval=None, aggregate_max_points=None, aggregate_round_time=True, timezone=0):
+def perfstore_get_values(_id, start=None, stop=None, aggregate_method=None, aggregate_interval=None, aggregate_max_points=None, aggregate_round_time=True, timezone=0, exclusions={}):
 	
 	if start and not stop:
 		stop = start
@@ -621,10 +624,10 @@ def perfstore_get_values(_id, start=None, stop=None, aggregate_method=None, aggr
 	if aggregate_interval:
 		aggregate_max_points = int( round((stop - start) / aggregate_interval + 0.5) )
 		fill = True
-	
+
 	try:
 		points = []
-		
+
 		if start == stop:
 			# Get only one point
 			logger.debug("   + Get one point at %s: %s" % (stop, datetime.utcfromtimestamp(start)))
@@ -633,15 +636,19 @@ def perfstore_get_values(_id, start=None, stop=None, aggregate_method=None, aggr
 												return_meta=True)
 			if point:
 				points = [ point ]
-				
+				# Computes exclusion on metric point(s)
+				points = exclude_points(points, exclusions)
+
 			logger.debug('Point: %s' % points)
-				
+
 		else:
-			
+
 			(meta, points) = manager.get_points(	_id=_id,
 													tstart=start,
 													tstop=stop,
 													return_meta=True)
+			# Computes exclusion on metric point(s)
+			points = exclude_points(points, exclusions)
 
 			# For UI display
 			if len(points) == 0 and meta['type'] == 'COUNTER':
@@ -667,5 +674,36 @@ def perfstore_get_values(_id, start=None, stop=None, aggregate_method=None, aggr
 
 	if points and meta:
 		output.append({'node': _id, 'metric': meta['me'], 'values': points, 'bunit': meta['unit'], 'min': meta['min'], 'max': meta['max'], 'thld_warn': meta['thd_warn'], 'thld_crit': meta['thd_crit'], 'type': meta['type']})
-				
+
 	return output
+
+def exclude_points(points, exclusions={}):
+	"""unit test
+	assert(exclude_points([[0,1],[0.5,2],[1,1],[2,3],[4,5],[3,1],[5,2]],{'intervals':[{'from':1,'to':3}]})\
+	 == [[0, 1], [0.5, 2], [1, None], [2, None], [4, 5], [3, None], [5, 2]], True)
+	"""
+	# Compute exclusion periods and set a point to None value (for UI purposes) if point is in any exclusion period.
+	exclusion_points = []
+	if exclusions and 'intervals' in exclusions:
+		logger.debug('Interval exclusion detected, will apply it to output data')
+		# Iterate over database point list for current metric.
+		for value in points:
+			is_excluded = False
+			# Takes care of exclusion intervals given in parameters.
+			for interval in exclusions['intervals']:
+				if value[0] >= interval['from'] and value[0] <= interval['to']:
+					is_excluded = True
+					break
+			if is_excluded:
+				# Add a point that UI won t dispay.
+				exclusion_points.append([value[0], None])
+			else:
+				# Nothing to do, just keep the original point
+				exclusion_points.append(value)
+		# returns the new computed point list for given exclusion interval
+		return exclusion_points
+	else:
+		return points
+
+
+
