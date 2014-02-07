@@ -29,6 +29,8 @@ from bottle import route, get, post, put, delete, request, HTTPError, response
 from libexec.auth import get_account
 
 # Modules
+from cstorage import get_storage
+
 from ctools import parse_perfdata, clean_mfilter
 from ctools import cleanTimestamp
 from ctools import internal_metrics
@@ -39,6 +41,7 @@ import pyperfstore2.utils
 manager = None
 
 logger = logging.getLogger("perfstore")
+logger.setLevel(logging.DEBUG)
 
 def load():
 	global manager
@@ -63,7 +66,8 @@ def perfstore_values_route(start = None, stop = None):
 										aggregate_max_points = request.params.get('aggregate_max_points', default=None),
 										aggregate_round_time = request.params.get('aggregate_round_time', default=None),
 										consolidation_method = request.params.get('consolidation_method', default=None),
-										timezone = request.params.get('timezone', default=0))
+										timezone = request.params.get('timezone', default=0),
+										exclusions = request.params.get('exclusions', default={}))
 
 
 @get('/perfstore')
@@ -85,7 +89,8 @@ def perfstore_nodes_get_values( start = None,
 								aggregate_max_points = None,
 								aggregate_round_time = None,
 								consolidation_method = None,
-								timezone = 0):
+								timezone = 0,
+								exclusions = {}):
 
 	if manager == None:
 		load()
@@ -125,7 +130,8 @@ def perfstore_nodes_get_values( start = None,
 											aggregate_interval=aggregate_interval,
 											aggregate_max_points=aggregate_max_points,
 											aggregate_round_time=aggregate_round_time,
-											timezone=time.timezone)
+											timezone=time.timezone,
+											exclusions=exclusions)
 
 	if aggregate_method and consolidation_method and len(output):
 		# select right function
@@ -245,9 +251,9 @@ def perfstore_get_all_metrics(limit = 20, start = 0, search = None, filter = Non
 	
 	mfilter = clean_mfilter(mfilter)
 
-	data  = manager.find(limit=0, skip=0, mfilter=mfilter, data=False, sort=msort)
+	data  = manager.find(limit=limit, skip=start, mfilter=mfilter, data=False, sort=msort)
 	total = data.count()
-	data  = [meta for meta in data.skip(start).limit(limit)]
+	data  = list(data)
 	
 	return {'success': True, 'data' : data, 'total' : total}
 
@@ -299,6 +305,7 @@ def perfstore_perftop(start=None, stop=None):
 	limit					= int(request.params.get('limit', default=10))
 	sort					= int(request.params.get('sort', default=1))
 	mfilter					= request.params.get('mfilter', default={})
+	get_output				= request.params.get('output', default=False)
 	time_window				= int(request.params.get('time_window', default=86400))
 	threshold				= request.params.get('threshold', default=None)
 	threshold_direction 	= int(request.params.get('threshold_direction', default=-1))
@@ -306,6 +313,9 @@ def perfstore_perftop(start=None, stop=None):
 	percent					= request.params.get('percent', default=False)
 	threshold_on_pct		= request.params.get('threshold_on_pct', default=False)
 	report					= request.params.get('report', default=False)
+
+	export_csv				= request.params.get('csv', default=False)
+	export_fields			= request.params.get('fields', default="[]")
 
 	if percent == 'true':
 		percent = True
@@ -333,6 +343,14 @@ def perfstore_perftop(start=None, stop=None):
 			logger.error("Impossible to decode mfilter: %s: %s" % (mfilter, err))
 			mfilter = None
 
+	try:
+		export_fields = json.loads(export_fields)
+
+	except ValueError, err:
+		logger.error("Impossible to decode export_fields: %s: %s" % (export_fields, err))
+		export_fields = []
+
+
 	if threshold:
 		threshold = float(threshold)
 
@@ -353,6 +371,7 @@ def perfstore_perftop(start=None, stop=None):
 
 	logger.debug("PerfTop:")
 	logger.debug(" + mfilter:     %s" % mfilter)
+	logger.debug(" + get_output:  %s" % get_output)
 	logger.debug(" + limit:       %s" % limit)
 	logger.debug(" + threshold:   %s" % threshold)
 	logger.debug(" + threshold_direction:   %s" % threshold_direction)
@@ -364,6 +383,8 @@ def perfstore_perftop(start=None, stop=None):
 	logger.debug(" + time_window: %s" % time_window)
 	logger.debug(" + start:       %s (%s)" % (start, datetime.utcfromtimestamp(start)))
 	logger.debug(" + stop:        %s (%s)" % (stop, datetime.utcfromtimestamp(stop)))
+	logger.debug(" + export csv:  %s" % export_csv)
+	logger.debug(" + export fields: %s" % str(export_fields))
 
 	mfilter =  clean_mfilter(mfilter)
 	
@@ -471,7 +492,44 @@ def perfstore_perftop(start=None, stop=None):
 
 							if check_threshold(val):
 								data.append(metric)
-				
+
+		# Calculate most recurrent output
+		if get_output:
+			logs = get_storage(namespace='events_log', account=get_account())
+
+			for item in data:
+				evfilter = {'$and': [
+					{
+						'component': item['co'],
+						'resource': item.get('re', {'$exists': False}),
+						'state': {'$ne': 0}
+					},{
+						'timestamp': {'$gt': start}
+					},{
+						'timestamp': {'$lt': stop}
+					}
+				]}
+
+				records = logs.find(evfilter)
+
+				outputs = {}
+
+				for record in records:
+					output = record.data['output']
+
+					if output not in outputs:
+						outputs[output] = 1
+
+					else:
+						outputs[output] += 1
+
+				last_max = 0
+
+				for output in outputs:
+					if outputs[output] > last_max:
+						item['output'] = output
+						last_max = outputs[output]
+
 		reverse = True
 		if sort == 1:
 			reverse = False	
@@ -486,13 +544,47 @@ def perfstore_perftop(start=None, stop=None):
 	else:
 		logger.debug("No records found")
 	
-	return {'success': True, 'data' : data, 'total' : len(data)}
+	if not export_csv:
+		return {'success': True, 'data' : data, 'total' : len(data)}
+
+	else:
+		response.headers['Content-Disposition'] = 'attachment; filename="perftop.csv"'
+		response.headers['Content-Type'] = 'text/csv'
+
+		exported = None
+
+		logger.debug(' + Data: %s' % str(data))
+
+		for entry in data:
+			row = []
+
+			for field in export_fields:
+				value = entry.get(field, '')
+
+				if isinstance(value, basestring):
+					value = value.replace('"', '""')
+					value = u'"{0}"'.format(value)
+
+				else:
+					value = str(value)
+
+				row.append(value)
+
+			if exported:
+				exported = u"{0}\n{1}".format(exported, u','.join(row))
+
+			else:
+				exported = u','.join(row)
+
+		logger.debug(' + Exported: %s' % exported)
+
+		return exported
 
 ########################################################################
 # Functions
 ########################################################################
 
-def perfstore_get_values(_id, start=None, stop=None, aggregate_method=None, aggregate_interval=None, aggregate_max_points=None, aggregate_round_time=True, timezone=0):
+def perfstore_get_values(_id, start=None, stop=None, aggregate_method=None, aggregate_interval=None, aggregate_max_points=None, aggregate_round_time=True, timezone=0, exclusions={}):
 	
 	if start and not stop:
 		stop = start
@@ -532,10 +624,10 @@ def perfstore_get_values(_id, start=None, stop=None, aggregate_method=None, aggr
 	if aggregate_interval:
 		aggregate_max_points = int( round((stop - start) / aggregate_interval + 0.5) )
 		fill = True
-	
+
 	try:
 		points = []
-		
+
 		if start == stop:
 			# Get only one point
 			logger.debug("   + Get one point at %s: %s" % (stop, datetime.utcfromtimestamp(start)))
@@ -544,15 +636,19 @@ def perfstore_get_values(_id, start=None, stop=None, aggregate_method=None, aggr
 												return_meta=True)
 			if point:
 				points = [ point ]
-				
+				# Computes exclusion on metric point(s)
+				points = exclude_points(points, exclusions)
+
 			logger.debug('Point: %s' % points)
-				
+
 		else:
-			
+
 			(meta, points) = manager.get_points(	_id=_id,
 													tstart=start,
 													tstop=stop,
 													return_meta=True)
+			# Computes exclusion on metric point(s)
+			points = exclude_points(points, exclusions)
 
 			# For UI display
 			if len(points) == 0 and meta['type'] == 'COUNTER':
@@ -578,5 +674,36 @@ def perfstore_get_values(_id, start=None, stop=None, aggregate_method=None, aggr
 
 	if points and meta:
 		output.append({'node': _id, 'metric': meta['me'], 'values': points, 'bunit': meta['unit'], 'min': meta['min'], 'max': meta['max'], 'thld_warn': meta['thd_warn'], 'thld_crit': meta['thd_crit'], 'type': meta['type']})
-				
+
 	return output
+
+def exclude_points(points, exclusions={}):
+	"""unit test
+	assert(exclude_points([[0,1],[0.5,2],[1,1],[2,3],[4,5],[3,1],[5,2]],{'intervals':[{'from':1,'to':3}]})\
+	 == [[0, 1], [0.5, 2], [1, None], [2, None], [4, 5], [3, None], [5, 2]], True)
+	"""
+	# Compute exclusion periods and set a point to None value (for UI purposes) if point is in any exclusion period.
+	exclusion_points = []
+	if exclusions and 'intervals' in exclusions:
+		logger.debug('Interval exclusion detected, will apply it to output data')
+		# Iterate over database point list for current metric.
+		for value in points:
+			is_excluded = False
+			# Takes care of exclusion intervals given in parameters.
+			for interval in exclusions['intervals']:
+				if value[0] >= interval['from'] and value[0] <= interval['to']:
+					is_excluded = True
+					break
+			if is_excluded:
+				# Add a point that UI won t dispay.
+				exclusion_points.append([value[0], None])
+			else:
+				# Nothing to do, just keep the original point
+				exclusion_points.append(value)
+		# returns the new computed point list for given exclusion interval
+		return exclusion_points
+	else:
+		return points
+
+
+

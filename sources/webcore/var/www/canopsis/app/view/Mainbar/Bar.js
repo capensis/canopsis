@@ -1,4 +1,4 @@
-//need:app/store/Files.js,app/view/Briefcase/Uploader.js,app/lib/menu/cspinner.js
+//need:app/store/Files.js,app/view/Top10/View.js,app/view/Briefcase/Uploader.js,app/lib/menu/cspinner.js
 /*
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
@@ -24,6 +24,7 @@ Ext.define('canopsis.view.Mainbar.Bar', {
 
 	requires: [
 		'canopsis.store.Files',
+		'canopsis.view.Top10.View',
 		'canopsis.view.Briefcase.Uploader',
 		'canopsis.lib.menu.cspinner'
 	],
@@ -254,9 +255,33 @@ Ext.define('canopsis.view.Mainbar.Bar', {
 			menu_build = menu_build.concat([
 				{
 					iconCls: 'icon-mainbar-topology',
-					text: _('Topologies') + ' (BETA)',
+					text: _('Topologies'),
 					action: 'openViewMenu',
 					viewId: 'view.topology_manager'
+				}
+			]);
+		}
+
+		//SLA menu
+		if(global.accountCtrl.checkRoot() || global.accountCtrl.checkGroup('group.CPS_SLA_admin')) {
+			menu_build = menu_build.concat([
+				{
+					iconCls: 'icon-mainbar-sla',
+					text: _('SLA'),
+					action: 'openViewMenu',
+					viewId: 'view.sla'
+				}
+			]);
+		}
+
+		//Top 10 menu
+		if(global.accountCtrl.checkRoot() || global.accountCtrl.checkGroup('group.CPS_Top10_admin')) {
+			menu_build = menu_build.concat([
+				{
+					iconCls: 'icon-mainbar-perfdata',
+					text: _('Top 10'),
+					action: 'openViewMenu',
+					viewId: 'view.top10'
 				}
 			]);
 		}

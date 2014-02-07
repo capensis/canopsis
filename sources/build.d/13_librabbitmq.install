@@ -27,6 +27,7 @@ function build(){
 	echo "   + Build ..."
 	make 1>> $LOG 2>> $LOG
 	check_code $? 'Impossible to make'
+
 }
 
 function install(){

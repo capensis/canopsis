@@ -42,21 +42,23 @@ Ext.define('canopsis.lib.view.cwidgetGraph', {
 
 			this.chart.initializeTimeNavigation(this);
 
-			if(this.tooltip)
+			if(this.tooltip) {
 				this.chart.initializeTooltip(this);
+			}
 
 			this.chart.initializeHiddenGraphs(this);
 			this.chart.initializeCurveStyleManager(this);
 			this.chart.initializeThresholds(this);
-			this.chart.initializeDowntimes(this);
+			//this.chart.initializeDowntimes(this);
 			this.chart.initializeGraphStyleManager(this);
 			this.chart.initializeLegendManager(this);
 			this.chart.initializeHumanReadable(this);
 		}, this);
 
 		this.on('resize', function() {
-			if(this.chart !== undefined)
+			if(this.chart !== undefined) {
 				this.renderChart();
+			}
 		}, this);
 	},
 
@@ -71,15 +73,16 @@ Ext.define('canopsis.lib.view.cwidgetGraph', {
 	setChartOptions: function() {
 		var now = Ext.Date.now();
 
-		if(this.options === undefined)
+		if(this.options === undefined) {
 			this.options = {};
+		}
 
 		this.options.cwidget = function() {
-			return me;
-		};
+			return this;
+		}.bind(this);
 	},
 
-	insertGraphExtraComponents: function(){
+	insertGraphExtraComponents: function() {
 	},
 
 	createChart: function() {
@@ -176,7 +179,6 @@ Ext.define('canopsis.lib.view.cwidgetGraph', {
 
 
 		this.updateAxis(from, to);
-
 		this.updateSeriesConfig();
 
 		this.destroyChart();

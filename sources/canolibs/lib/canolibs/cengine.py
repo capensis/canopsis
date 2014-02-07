@@ -31,7 +31,7 @@ from caccount import caccount
 import itertools
 
 DROP = -1
-DISPATCHER_READY_TIME = 30
+DISPATCHER_READY_TIME = 5
 
 class cengine(multiprocessing.Process):
 
@@ -209,8 +209,6 @@ class cengine(multiprocessing.Process):
 		error = False
 		try:
 			wevent = self.work(event, msg, *args, **kargs)
-			
-			#self.logger.debug("Forward event '%s' to next engines" % event['rk'])
 
 			if wevent == DROP:
 				pass
@@ -222,8 +220,7 @@ class cengine(multiprocessing.Process):
 		except Exception, err:
 			error = True
 			self.logger.error("Worker raise exception: %s" % err)
-			traceback.print_exc(file=sys.stdout)
-			#self.logger.error("Event: %s" % event)
+			self.logger.error(traceback.format_exc())
 	
 		if error:
 			self.counter_error +=1

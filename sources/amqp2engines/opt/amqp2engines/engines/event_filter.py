@@ -36,15 +36,15 @@ class engine(cengine):
 		cengine.__init__(self, name=NAME, *args, **kargs)
 		account = caccount(user="root", group="root")
 		self.storage = get_storage(logging_level=logging.DEBUG, account=account)
-		
-		
+
+
 	def pre_run(self):
 		self.drop_event_count = 0
 		self.pass_event_count = 0
 		self.beat()
 
 
-	def work(self, event, *xargs, **kwargs):		
+	def work(self, event, *xargs, **kwargs):
 
 		rk = cevent.get_routingkey(event)
 
@@ -56,7 +56,7 @@ class engine(cengine):
 			action = filterItem.get('action')
 
 			name = filterItem.get('name', 'no_name')
-		
+
 			# Try filter rules on current event
 			if cmfilter.check(filterItem['mfilter'], event):
 				if action == 'pass':
@@ -71,18 +71,18 @@ class engine(cengine):
 
 				else:
 					self.logger.warning("Unknown action '%s'" % action)
-	
+
 		# No rules matched
 		if default_action == 'drop':
 			self.logger.debug("Event '%s' dropped by default action" % (rk))
 			self.drop_event_count += 1
 			return DROP
-		
+
 		self.logger.debug("Event '%s' passed by default action" % (rk))
 		self.pass_event_count += 1
 
 		return event
-		
+
 
 	def beat(self, *args, **kargs):
 		""" Configuration reload for realtime ui changes handling """
@@ -128,7 +128,7 @@ class engine(cengine):
 		rk = cevent.get_routingkey(event)
 		self.amqp.publish(event, rk, self.amqp.exchange_name_events)
 
-		self.drop_event_count = 0				
+		self.drop_event_count = 0
 		self.pass_event_count = 0
 
 

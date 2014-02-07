@@ -23,6 +23,10 @@ import ConfigParser
 import json
 import urllib2
 import os
+import httplib, base64, urlparse, socket
+
+
+
 
 plugin_name = "canopsis_rabbitmq"
 
@@ -30,7 +34,7 @@ url = "None"
 
 canopsis_exchanges = ['canopsis.events','canopsis.alerts']
 
-opener = None
+#opener = None
 
 filename = '~/etc/amqp.conf'
 filename = os.path.expanduser(filename)
@@ -70,29 +74,16 @@ def init_callback():
 		log(' + url is not defined !')
 		return
 
-	log('url: %s' % url)
-
-	global opener
-
-	proxy_handler = urllib2.ProxyHandler({})
-
-	password_mgr = urllib2.HTTPPasswordMgrWithDefaultRealm()
-	password_mgr.add_password(None, url, amqp_userid, amqp_password)
-	handler = urllib2.HTTPBasicAuthHandler(password_mgr)
-	
-	opener = urllib2.build_opener(handler, proxy_handler)
-
 def config_callback(config):
 	log('Config plugin')
 
 def read_callback(data=None):
-	if not url or not opener:
-		return
 
-	f = opener.open(url+"/exchanges")
+	#f = opener.open(url+"/exchanges")
+	exchanges = api("GET", "/api/exchanges", "", 'localhost', '15672', amqp_userid, amqp_password)
 	
 	try:
-		exchanges = json.loads(f.read())
+		exchanges = json.loads(exchanges)
 		for exchange in exchanges:
 			name = exchange['name']
 			if name in canopsis_exchanges:
@@ -118,9 +109,41 @@ def read_callback(data=None):
 		log("Impossible to read json data (%s)" % err)
 		pass
 		
-	f.close()
-	pass
-	
+
+
+def api(method, path, body, hostname, port, username, password):
+
+        #TODO SSL
+        ssl = False
+        if ssl:
+            conn = httplib.HTTPSConnection(hostname, port, ssl_key_file, ssl_cert_file)
+        else:
+            conn = httplib.HTTPConnection(hostname, port)
+        headers = {"Authorization": "Basic " + base64.b64encode(username + ":" + password)}
+
+        if body != "":
+            headers["Content-Type"] = "application/json"
+        try:
+            conn.request(method, path, body, headers)
+        except socket.error, e:
+            die("Could not connect: {0}".format(e))
+        resp = conn.getresponse()
+        if resp.status == 400:
+            die(json.loads(resp.read())['reason'])
+        if resp.status == 401:
+            die("Access refused: {0}".format(path))
+        if resp.status == 404:
+            die("Not found: {0}".format(path))
+        if resp.status == 301:
+            url = urlparse.urlparse(resp.getheader('location'))
+            [host, port] = url.netloc.split(':')
+            raise Exception("Error while retreiving rabbit information")
+        if resp.status < 200 or resp.status > 400:
+            raise Exception("Received %d %s for path %s\n%s"
+                            % (resp.status, resp.reason, path, resp.read()))
+        return resp.read()
+
+
 
 ### MAIN ###
 collectd.register_config(config_callback)

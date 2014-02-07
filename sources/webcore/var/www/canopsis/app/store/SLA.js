@@ -1,3 +1,4 @@
+//need:app/lib/store/cstore.js,app/model/SLA.js
 /*
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
@@ -16,30 +17,23 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 */
-Ext.define('canopsis.model.Perfdata', {
-	extend: 'Ext.data.Model',
-	idProperty: '_id',
-	fields: [
-		{name: '_id'},
-		{name: 'id', mapping: '_id'},
-		{name: 'me'},
-		{name: 're'},
-		{name: 'co'},
-		{name: 'u'},
-		{name: 'r'},
-		{name: 't'},
-		{name: 'lts'},
-		{name: 'fts'},
-		{name: 'lv'},
-		{name: 'ma'},
-		{name: 'tg'},
-		{name: 'mi'},
-		{name: 'pct'},
-		{name: 'output'},
+Ext.define('canopsis.store.SLA', {
+	extend: 'canopsis.lib.store.cstore',
+	model: 'canopsis.model.SLA',
+	storeId: 'store.SLA',
 
-		{name: 'aaa_access_owner', defaultValue: ['r', 'w']},
-		{name: 'aaa_access_group', defaultValue: ['r']},
-		{name: 'aaa_access_other', defaultValue: []},
-		{name: 'aaa_admin_group', defaultValue: 'group.CPS_perfdata_admin'}
-	]
+	proxy: {
+		type: 'rest',
+		url: '/rest/object/sla',
+
+		reader: {
+			type: 'json',
+			root: 'data',
+			totalProperty: 'total',
+			successProperty: 'success'
+		},
+		writer: {
+			type: 'json'
+		}
+	}
 });

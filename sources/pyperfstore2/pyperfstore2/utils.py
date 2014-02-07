@@ -364,7 +364,7 @@ def _getTimeSteps(start, stop, periodtime, periodtype, roundtime, timezone=time.
 	
 	timeSteps.reverse()
 	
-	logger.debug('   + timeSteps: ', timeSteps)
+	logger.debug('   + timeSteps: %s', timeSteps)
 
 	return timeSteps
 
@@ -396,7 +396,7 @@ def getTimeSteps(start, stop, interval, roundtime=True, timezone=time.timezone):
 	
 	timeSteps.reverse()
 	
-	logger.debug('   + timeSteps: ', timeSteps)
+	logger.debug('   + timeSteps: %s', timeSteps)
 
 	return timeSteps
 
@@ -558,7 +558,7 @@ def compress(points):
 	last_interval = 0
 	value = points[0][1]
 
-	if float.is_integer(value):
+	if isinstance(value, float) and float.is_integer(value):
 		value = int(value)
 
 	data = [value]

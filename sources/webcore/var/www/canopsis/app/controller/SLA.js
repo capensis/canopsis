@@ -1,3 +1,4 @@
+//need:app/view/SLA/View.js,app/store/SLA.js
 /*
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
@@ -16,30 +17,16 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 */
-Ext.define('canopsis.model.Perfdata', {
-	extend: 'Ext.data.Model',
-	idProperty: '_id',
-	fields: [
-		{name: '_id'},
-		{name: 'id', mapping: '_id'},
-		{name: 'me'},
-		{name: 're'},
-		{name: 'co'},
-		{name: 'u'},
-		{name: 'r'},
-		{name: 't'},
-		{name: 'lts'},
-		{name: 'fts'},
-		{name: 'lv'},
-		{name: 'ma'},
-		{name: 'tg'},
-		{name: 'mi'},
-		{name: 'pct'},
-		{name: 'output'},
+Ext.define('canopsis.controller.SLA', {
+	extend: 'Ext.app.Controller',
 
-		{name: 'aaa_access_owner', defaultValue: ['r', 'w']},
-		{name: 'aaa_access_group', defaultValue: ['r']},
-		{name: 'aaa_access_other', defaultValue: []},
-		{name: 'aaa_admin_group', defaultValue: 'group.CPS_perfdata_admin'}
-	]
+	logAuthor: '[controller][SLA]',
+
+	views: ['SLA.View'],
+
+	init: function() {
+		this.callParent(arguments);
+
+		global.slaCtrl = this;
+	}
 });

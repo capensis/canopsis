@@ -92,8 +92,8 @@ Ext.define('widgets.timegraph.timegraph', {
 				},
 
 				xaxis: {
-					min: now - this.time_window * 1000,
-					max: now
+					min: now - (this.time_window_offset + this.time_window) * 1000,
+					max: now - this.time_window_offset * 1000
 				},
 
 				xaxes: [
@@ -130,15 +130,14 @@ Ext.define('widgets.timegraph.timegraph', {
 			}
 		);
 
-		if( !this.displayVerticalLines)
-		{
+		if(!this.displayVerticalLines) {
 			this.options.xaxis.tickLength = 0;
 		}
 
-		if( !this.displayHorizontalLines)
-		{
-			if(this.options.yaxis === undefined)
+		if(!this.displayHorizontalLines) {
+			if(this.options.yaxis === undefined) {
 				this.options.yaxis = {};
+			}
 
 			this.options.yaxis.tickLength = 0;
 		}
@@ -152,21 +151,11 @@ Ext.define('widgets.timegraph.timegraph', {
 		var me = this;
 
 		// NB: this.plotcontainer doesn't exist yet.
-		if(!!this.plotcontainer)
+		if(!!this.plotcontainer) {
 			this.plotcontainer.nextAll().remove();
+		}
 
 		/* create chart with modified plotcontainer */
-		this.callParent(arguments);
-	},
-
-	renderChart: function() {
-		this.callParent(arguments);
-
-		this.chart.setupGrid();
-		this.chart.draw();
-	},
-
-	destroyChart: function() {
 		this.callParent(arguments);
 	},
 
@@ -184,7 +173,7 @@ Ext.define('widgets.timegraph.timegraph', {
 			show: (curve_type === 'area' || curve_type === 'line'),
 			fill: (curve_type === 'area'),
 			points: {
-				symbol: node.point_shape? node.point_shape : undefined,
+				symbol: node.point_shape ? node.point_shape : undefined,
 			}
 		};
 
@@ -196,30 +185,40 @@ Ext.define('widgets.timegraph.timegraph', {
 	},
 
 	getSeriesConf: function() {
-
 		var series = this.callParent(arguments);
 
-		for (var series_index = (series.length - 1); series_index >= 0; series_index--) {
+		function getY(reg, x) {
+			return x * reg[0] + reg[1];
+		}
+
+		function getLinearRegressionPoint(reg, point) {
+			return [point[0], getY(reg, point[0])];
+		}
+
+		for(var series_index = (series.length - 1); series_index >= 0; series_index--) {
 			var serie = series[series_index];
-			if (serie.node.trend_curve && serie.data.length > 1) {
+
+			if(serie.node.trend_curve && serie.data.length > 1) {
 				var x = [], y = [];
-				for (var serie_index = 0; serie_index < serie.data.length; serie_index++) {
+
+				for(var serie_index = 0; serie_index < serie.data.length; serie_index++) {
 					var data = serie.data[serie_index];
 					x.push(data[0]);
 					y.push(data[1]);
 				}
+
 				var ret = linearRegression(x, y);
 				var trend_serie = this.getSerieForNode(serie.node.id);
-				function getY(x) {
-					return x * ret[0] + ret[1];
-				}
-				function getLinearRegressionPoint(point) {
-					return [point[0], getY(point[0])]
-				}
-				var data = [getLinearRegressionPoint(serie.data[0]), getLinearRegressionPoint(serie.data[serie.data.length-1])];
+
+				var data = [
+					getLinearRegressionPoint(ret, serie.data[0]),
+					getLinearRegressionPoint(ret, serie.data[serie.data.length - 1])
+				];
+
 				trend_serie.label += '_trend';
 				trend_serie.data = data;
-				series.splice(series_index+1, 0, trend_serie);
+
+				series.splice(series_index + 1, 0, trend_serie);
 			}
 		}
 
@@ -245,7 +244,6 @@ Ext.define('widgets.timegraph.timegraph', {
 
 	updateAxis: function(from, to) {
 		if(this.reportMode || this.exportMode) {
-			this.updateAxis();
 			this.options.xaxis.min = from;
 			this.options.xaxis.max = to;
 		}
@@ -254,5 +252,4 @@ Ext.define('widgets.timegraph.timegraph', {
 			this.options.xaxis.max = to - this.time_window_offset * 1000;
 		}
 	}
-
 });

@@ -52,6 +52,8 @@ Ext.define('widgets.category_graph.category_graph', {
 	borderWidth: 0,
 	title_fontSize: 15,
 
+	// legend
+	legend: true,
 	legend_verticalAlign: 'bottom', // TODO: this property are not managed by flotchart
 	legend_align: 'center', // TODO: this property are not managed by flotchart
 	legend_layout: 'horizontal', // TODO: this property are not managed by flotchart
@@ -61,11 +63,14 @@ Ext.define('widgets.category_graph.category_graph', {
 	legend_fontSize: 12, // TODO: this property are not managed by flotchart
 	legend_fontColor: '#3E576F', // TODO: this property are not managed by flotchart
 
+	// label
 	labels: true,
+	nameInLabelFormatter: false,
+	pctInLabel: true,
 	labels_size: "x-small",
-	legend: true,
+
 	gradientColor: false, // TODO: this property are not managed by flotchart
-	pctInLabel: false,
+
 	tooltip: true,
 
 	setChartOptions: function() {
@@ -74,7 +79,6 @@ Ext.define('widgets.category_graph.category_graph', {
 		$.extend(this.options,
 			{
 				series: {
-				//stack: this.stacked_graph,
 					lines: {
 						show: false,
 					},
@@ -104,7 +108,12 @@ Ext.define('widgets.category_graph.category_graph', {
 				},
 				legend: {
 					hideable: true,
-					show: this.legend
+					show: this.legend,
+					labelFormatter: function(label, series) {
+						result = nameInLabelFormatter? ("<b>" + label + "</b><br/>") : "";
+						result += pctInLabel? (series.data[0] + "%") : yval; // calculate pourcent
+                        return result;
+                    }
 				},
 				xaxis: {
 					show: (this.diagram_type === 'column' && !this.verticalDisplay)
@@ -117,7 +126,8 @@ Ext.define('widgets.category_graph.category_graph', {
 					content: function(label, xval, yval, flotItem) {
 						void(xval);
 						void(flotItem);
-                        return "<b>" + label + "<br/></b>" + yval;
+						result = "<b>" + label + "</b><br/>" + yval;
+                        return result;
                     }
 				}
 			}
@@ -125,7 +135,7 @@ Ext.define('widgets.category_graph.category_graph', {
 	},
 
 	addPoint: function(serieId, value, serieIndex) {
-		var point = [this.diagram_type === 'column' && !this.stacked_graph? serieIndex : 0, value[1]];
+		var point = [this.stacked_graph? 0 : serieIndex, value[1]];
 		this.series[serieId].data = [point];
 	},
 
@@ -143,7 +153,7 @@ Ext.define('widgets.category_graph.category_graph', {
 			// add other serie if total is less than this.max
 			if (this.max > total) {
 				// set x=0 only if graph is in stacking mode and is column
-				var point = [this.diagram_type === 'column' && !this.stacked_graph? series.length: 0, this.max - total];
+				var point = [this.stacked_graph? 0: series.length, this.max - total];
 				var other_serie = {
 					label: this.other_label,
 					data: [point]
