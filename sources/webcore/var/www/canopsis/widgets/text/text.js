@@ -33,6 +33,10 @@ Ext.define('widgets.text.text' , {
 
 	initComponent: function() {
 		//get special values by parsing
+		function replaceAll(find, replace, str) {
+			return str.replace(new RegExp(find, 'g'), replace);
+		}
+
 		var raw_vars = this.extractVariables(this.text);
 
 		if(raw_vars.length !== 0) {
@@ -54,8 +58,7 @@ Ext.define('widgets.text.text' , {
 					log.debug('attribute' + attribut);
 
 					var tpl_name = var_name + Math.ceil(Math.random() * 1000);
-
-					this.text = this.text.replace(new RegExp(key), '{' + tpl_name + '}');
+					this.text = replaceAll(key, '{' + tpl_name + '}', this.text);
 
 					this.perfdataMetricList[tpl_name] = {
 						metric: metric,
@@ -192,6 +195,7 @@ Ext.define('widgets.text.text' , {
 							});
 
 							this.fillData(data, from, to);
+							this.computeMathOperations();
 						},
 						failure: function(result, request) {
 							void(result);
@@ -246,6 +250,7 @@ Ext.define('widgets.text.text' , {
 			var begin = _string.search(/{(.+:)+.+}/);
 
 			if(begin !== -1) {
+
 				//search end of val
 				var end = begin;
 
@@ -261,6 +266,7 @@ Ext.define('widgets.text.text' , {
 			}
 		}
 
+		console.log("var_array");
 		log.dump(var_array);
 		return var_array;
 	},
@@ -283,5 +289,15 @@ Ext.define('widgets.text.text' , {
 		result['noInternal'] = false;
 		result['limit'] = 0;
 		return result;
+	},
+
+	computeMathOperations: function() {
+		var math = mathjs();
+
+		console.log("math expressions");
+		console.log($("#" + this.id)[0]);
+		$("#"+ this.id + " .mathexpression").each(function(){
+			$(this).html(math.eval($(this).html()));
+		});
 	}
 });
