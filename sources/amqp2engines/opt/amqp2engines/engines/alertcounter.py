@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #--------------------------------
-# Copyright (c) 2011 "Capensis" [http://www.capensis.com]
+# Copyright (c) 2014 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
 #
@@ -18,121 +18,191 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
+import logging
+import time
+
+from copy import deepcopy
+
 from cengine import cengine
 import cevent
-import pyperfstore2
 
 from cstorage import get_storage
 from caccount import caccount
-import time
-
-import logging
+import pyperfstore2
 
 NAME="alertcounter"
 INTERNAL_COMPONENT = '__canopsis__'
+PROC_CRITICAL = 'PROC_CRITICAL'
+PROC_WARNING = 'PROC_WARNING'
 
 class engine(cengine):
 	def __init__(self, *args, **kargs):
-		cengine.__init__(self, name=NAME, *args, **kargs)
+		super(engine, self).__init__(name=NAME, *args, **kargs)
 
 	def pre_run(self):
 		self.listened_event_type = ['check','selector','eue','sla', 'log']
-		#self.manager = pyperfstore2.manager(logging_level=self.logging_level)
 		self.manager = pyperfstore2.manager()
+
+		# Get SLA configuration
+		self.storage = get_storage(namespace='object', account=caccount(user="root", group="root"))
+		self.entities = self.storage.get_backend('entities')
+
+		self.mCrit = PROC_CRITICAL
+		self.mWarn = PROC_WARNING
+
+		record = self.storage.find_one({'crecord_type': 'sla', 'objclass': 'macro'})
+
+		if record:
+			self.mCrit = record.data['mCrit']
+			self.mWarn = record.data['mWarn']
+
+		self.crits = {}
+
+		records = self.storage.find({'crecord_type': 'sla', 'objclass': 'crit'})
+
+		for record in records:
+			self.crits[record.data['crit']] = record.data['delay']
 
 		self.selectors_name = []
 		self.last_resolv = 0
 
-	def resolve_selectors_name(self):
-		if int(time.time()) > (self.last_resolv + 60):
-			storage = get_storage(namespace='object', account=caccount(user="root", group="root"))
-			records = storage.find(mfilter={'crecord_type': 'selector'}, mfields=['crecord_name'])
+	def perfdata_key(self, meta):
+		if 're' in meta and meta['re']:
+			return '{0}{1}{2}'.format(meta['co'], meta['re'], meta['me'])
 
-			self.selectors_name = [record['crecord_name'] for record in records]
+		else:
+			return '{0}{1}'.format(meta['co'], meta['me'])
 
-			self.last_resolv = int(time.time())
+	def increment_counter(self, key, meta, value):
+		self.logger.debug("Increment {0}: {1}".format(key, value))
+		self.manager.push(name=key, value=value, meta_data=meta)
 
-			del storage
+	def update_global_counter(self, event):
+		# Update global counter
+		event = cevent.forger(
+			connector = "cengine",
+			connector_name = NAME,
+			event_type = "check",
+			source_type = "component",
+			component = INTERNAL_COMPONENT,
+
+			state = event['state'],
+			state_type = event['state_type'],
+			component_problem = event['component_problem']
+		)
+
+		self.amqp.publish(event, cevent.get_routingkey(event), self.amqp.exchange_name_events)
+
+		event['source_type'] = 'resource'
+
+		for hostgroup in event.get('hostgroups', []):
+			event['resource'] = hostgroup
+
+			self.amqp.publish(event, cevent.get_routingkey(event), self.amqp.exchange_name_events)
 
 
-	def count_alert(self, component, state, state_type, value, resource=None, cmp_problem=False, tags=[]):
+	def count_sla(slatype, delay):
+		meta_data = {'type': 'COUNTER', 'co': INTERNAL_COMPONENT }
+		now = int(time.time())
+
+		if delay < (now - event['last_state_change']):
+			ack = self.entities.find_one({
+				'type': 'ack',
+				'timestamp': {
+					'$gt': event['last_state_change'],
+					'$lt': event['previous_state']
+				}
+			})
+
+			meta_data['me'] = 'cps_sla_{0}_{1}_{2}'.format(
+				slatype,
+				warn.lower(),
+				'nok' if ack else 'out'
+			)
+
+		else:
+			meta_data['me'] = 'cps_sla_{0}_{1}_ok'.format(slatype, warn.lower())
+
+		key = self.perfdata_key(meta_data)
+		self.increment_counter(key, meta_data, 1)
+
+	def count_by_crits(self, event):
+		if event['state'] == 0 and event.get('state_type', 1) == 1:
+			warn = event.get(self.mWarn, None)
+			crit = event.get(self.mCrit, None)
+
+			if warn and event['previous_state'] == 1:
+				self.count_sla('warn', self.crits[warn])
+
+			elif crit and event['previous_state'] == 2:
+				self.count_sla('crit', self.crits[crit])
+
+	def count_alert(self, event):
+		component = event['component']
+		resource = event.get('resource', None)
+		tags = event.get('tags', [])
+
 		# Update cps_statechange{,_0,_1,_2,_3} for component/resource
 
-		if resource:
-			meta_data = {'type': 'COUNTER', 'co': component, 're': resource }
-			name = "%s%s" % (meta_data['co'], meta_data['re'])
-		else:
-			meta_data = {'type': 'COUNTER', 'co': component }
-			name = meta_data['co']
+		meta_data = {
+			'type': 'COUNTER',
+			'co': component,
+			're': resource,
+			'tg': tags
+		}
 
-		if tags:
-			meta_data['tg'] = tags
+		meta_data['me'] = "cps_statechange"
+		key = self.perfdata_key(meta_data)
 
-		metric = "cps_statechange"
-		meta_data['me'] = metric
+		self.increment_counter(key, meta_data, value)
 
-		self.logger.debug("Increment %s: %s: %s" % (name, metric, value))
-		self.manager.push(name="%s%s" % (name, metric), value=value, meta_data=meta_data)
+		meta_data['me'] = "cps_statechange_nok"
+		key = self.perfdata_key(meta_data)
 
-		metric = "cps_statechange_nok"
-		meta_data['me'] = metric
+		cvalue = value if state != 0 else 0
 
-		cvalue = 0
-		if state != 0:
-			cvalue = value
+		self.increment_counter(key, meta_data, cvalue)
 
-		self.logger.debug("Increment %s: %s: %s" % (name, metric, cvalue))
-		self.manager.push(name="%s%s" % (name, metric), value=cvalue, meta_data=meta_data)
+		for cstate in range(3):
+			cvalue = value if cstate == state else 0
 
-		for cstate in [ 0, 1, 2, 3 ]:
-			cvalue = 0
-			if cstate == state:
-				cvalue = value
+			meta_data['me'] = "cps_statechange_{0}".format(cstate)
+			key = self.perfdata_key(meta_data)
 
-			metric = "cps_statechange_%s" % cstate
-			meta_data['me'] = metric
-			meta_data['type'] = 'COUNTER'
-
-			self.logger.debug(" + Increment '%s': %s" % (metric, cvalue))
-			self.manager.push(name="%s%s" % (name, metric), value=cvalue, meta_data=meta_data)
+			self.increment_counter(key, meta_data, cvalue)
 
 		# Update cps_statechange_{hard,soft}
 
-		for cstate_type in [0, 1]:
-			cvalue = 0
+		for cstate_type in range(1):
+			cvalue = value if cstate_type == state_type else 0
 
-			if cstate_type == state_type:
-				cvalue = value
-
-			metric = "cps_statechange_{0}".format(
+			meta_data['me'] = "cps_statechange_{0}".format(
 				'hard' if cstate_type == 1 else 'soft'
 			)
 
-			meta_data['me'] = metric
+			key = self.perfdata_key(meta_data)
 
-			self.logger.debug("Increment %s: %s: %s" % (name, metric, cvalue))
-			self.manager.push(name="%s%s" % (name, metric), value=cvalue, meta_data=meta_data)
+			self.increment_counter(key, meta_data, cvalue)
 
-		# Update cps_statechange_{component,service,service_from_component}
+		# Update cps_statechange_{component,resource,resource_by_component}
 
 		if component == INTERNAL_COMPONENT:
-			for cevtype in ['component', 'service', 'service_from_component']:
+			for cevtype in ['component', 'resource', 'resource_by_component']:
 				cvalue = 0
 
 				if cevtype == 'component' and not resource:
 					cvalue = value
 
-				elif cevtype == 'service' and resource and not cmp_problem:
+				elif cevtype == 'resource' and resource and not cmp_problem:
 					cvalue = value
 
-				elif cevtype == 'service_from_component' and resource and cmp_problem:
+				elif cevtype == 'resource_by_component' and resource and cmp_problem:
 					cvalue = value
 
-				metric = "cps_statechange_{0}".format(cevtype)
-				meta_data['me'] = metric
+				meta_data['me'] = "cps_statechange_{0}".format(cevtype)
+				key = self.perfdata_key(meta_data)
 
-				self.logger.debug("Increment %s: %s: %s" % (name, metric, cvalue))
-				self.manager.push(name="%s%s" % (name, metric), value=cvalue, meta_data=meta_data)
+				self.increment_counter(key, meta_data, cvalue)
 
 		# Update cps_alerts_not_ack
 
@@ -143,70 +213,45 @@ class engine(cengine):
 			self.logger.debug("Increment %s: %s: %s" % (name, metric, value))
 			self.manager.push(name="%s%s" % (name, metric), value=value, meta_data=meta_data)
 
+	def resolve_selectors_name(self):
+		if int(time.time()) > (self.last_resolv + 60):
+			records = self.storage.find(mfilter={'crecord_type': 'selector'}, mfields=['crecord_name'])
+
+			self.selectors_name = [record['crecord_name'] for record in records]
+
+			self.last_resolv = int(time.time())
+
+		return self.selectors_name
+
+	def count_by_tags(self, event, value):
+		if event['event_type'] != 'selector':
+			tags = event.get('tags', [])
+			tags = [tag for tag in tags if tag in self.resolve_selectors_name()]
+
+			for tag in tags:
+				self.logger.debug("Increment Tag: '%s'" % tag)
+				tagevent = deepcopy(event)
+				tagevent['component'] = tag
+				tagevent['resource'] = 'selector'
+
+				self.count_alert(tagevent, value)
+
 	def work(self, event, *args, **kargs):
-		if event['event_type'] in self.listened_event_type:
+		validation = event['event_type'] in self.listened_event_type
+		validation = validation and event.get('state_type', 1) == 1
+		validation = validation and event['component'] != 'derogation'
 
-			# Hard state
-			if event.get('state_type', 1) == 1 and event['component'] != 'derogation':
+		if validation:
+			self.update_global_counter(event)
+			self.count_by_crits(event)
 
-				# By Tags (Selector)
-				if event['event_type'] != 'selector':
-					tags = event.get('tags', [])
-					if tags:
-						self.resolve_selectors_name()
-						for tag in tags:
-							if tag in self.selectors_name:
-								self.logger.debug("Increment Tag: '%s'" % tag)
-								self.count_alert(
-									component	= tag,
-									resource	= 'selector',
-									cmp_problem = event['component_problem'],
-									state		= event['state'],
-									state_type	= event['state_type'],
-									value		= 1,
-									tags		= event['tags']
-							)
+			# By name
+			self.count_alert(event, 1)
 
-				# By name
-				self.count_alert(
-					component	= event['component'],
-					cmp_problem = event['component_problem'],
-					resource	= event.get('resource', None),
-					state		= event['state'],
-					state_type	= event['state_type'],
-					value		= 1,
-					tags		= event['tags']
-				)
+			# By tags (selector)
+			self.count_by_tags(event, 1)
 
-				# Update global counter
-				event = cevent.forger(
-					connector = "cengine",
-					connector_name = NAME,
-					event_type = "check",
-					source_type = "component",
-					component = INTERNAL_COMPONENT,
-
-					state = event['state'],
-					state_type = event['state_type'],
-					component_problem = event['component_problem']
-				)
-
-				self.amqp.publish(event, cevent.get_routingkey(event), self.amqp.exchange_name_events)
-
-				for hostgroup in event.get('hostgroups', []):
-					event = cevent.forger(
-						connector = "cengine",
-						connector_name = NAME,
-						event_type = "check",
-						source_type = "resource",
-						component = INTERNAL_COMPONENT,
-						resource = hostgroup,
-
-						state = event['state'],
-						state_type = event['state_type'],
-						component_problem = event['component_problem']
-					)
-
-					self.amqp.publish(event, cevent.get_routingkey(event), self.amqp.exchange_name_events)
+			# By crits
+			self.count_by_crits(event, 1)
 
 		return event
