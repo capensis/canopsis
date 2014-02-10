@@ -113,7 +113,7 @@ class engine(cengine):
 			self.amqp.publish(event, cevent.get_routingkey(event), self.amqp.exchange_name_events)
 
 
-	def count_sla(self, event, slatype, delay, value):
+	def count_sla(self, event, slatype, slaname, delay, value):
 		meta_data = {'type': 'COUNTER', 'co': INTERNAL_COMPONENT }
 		now = int(time.time())
 
@@ -128,12 +128,12 @@ class engine(cengine):
 
 			meta_data['me'] = 'cps_sla_{0}_{1}_{2}'.format(
 				slatype,
-				warn.lower(),
+				slaname.lower(),
 				'nok' if ack else 'out'
 			)
 
 		else:
-			meta_data['me'] = 'cps_sla_{0}_{1}_ok'.format(slatype, warn.lower())
+			meta_data['me'] = 'cps_sla_{0}_{1}_ok'.format(slatype, slaname.lower())
 
 		key = self.perfdata_key(meta_data)
 		self.increment_counter(key, meta_data, value)
@@ -144,10 +144,10 @@ class engine(cengine):
 			crit = event.get(self.mCrit, None)
 
 			if warn and warn in self.crits and event['previous_state'] == 1:
-				self.count_sla(event, 'warn', self.crits[warn], value)
+				self.count_sla(event, 'warn', warn, self.crits[warn], value)
 
 			elif crit and crit in self.crits and event['previous_state'] == 2:
-				self.count_sla(event, 'crit', self.crits[crit], value)
+				self.count_sla(event, 'crit', crit, self.crits[crit], value)
 
 	def count_alert(self, event, value):
 		component = event['component']
