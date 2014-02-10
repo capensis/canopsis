@@ -143,10 +143,10 @@ class engine(cengine):
 			warn = event.get(self.mWarn, None)
 			crit = event.get(self.mCrit, None)
 
-			if warn and event['previous_state'] == 1:
+			if warn and warn in self.crits and event['previous_state'] == 1:
 				self.count_sla('warn', self.crits[warn])
 
-			elif crit and event['previous_state'] == 2:
+			elif crit and crit in self.crits and event['previous_state'] == 2:
 				self.count_sla('crit', self.crits[crit])
 
 	def count_alert(self, event):
