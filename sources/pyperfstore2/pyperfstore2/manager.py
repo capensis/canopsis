@@ -171,6 +171,21 @@ class manager(object):
 		return self.store.find(mfilter=mfilter, limit=limit, skip=skip, mfields=mfields, sort=sort)
 
 	def subset_selection_apply(self, dca, subset_selection):
+		"""unit tests
+		class Self:
+    		def __init__(self):
+        		import logging
+        		self.logger = logging.setLogger('unittest')
+		assert(subset_selection_apply(Self(), {'unit_test_1':1}, {'no_meta_filter'}) == {'unit_test_1':1})
+		assert(subset_selection_apply(Self(), {'unit_test_2':1}, {'metas_filter':1}) == {'hg': None, 'unit_test_2': 1})
+		assert(subset_selection_apply(Self(), {'re':'resource', 'co':'component'}, {'metas_filter':[{'keep':0}]})['d'] == [])
+		assert(subset_selection_apply(Self(), {'d': ['test'], 're':'resource', 'co':'component'}, {'metas_filter':[{'component': 'component', 'resource': 'resource'}]}) == {'co': 'component', 'd': ['test'], 'hg': None, 're': 'resource'})
+		assert(subset_selection_apply(Self(), {'d': ['test'], 're':'resource', 'co':'component'}, {'metas_filter':[{'component': 'component'}]}) == {'co': 'component', 'd': ['test'], 'hg': None, 're': 'resource'})
+		assert(subset_selection_apply(Self(), {'d': ['test'], 're':'resource', 'co':'component'}, {'metas_filter':[{'resource': 'resource'}]}) == {'co': 'component', 'd': ['test'], 'hg': None, 're': 'resource'})
+		assert(subset_selection_apply(Self(), {'d': ['test'], 're':'resource', 'co':'component'}, {'metas_filter':[{}]}) == {'co': 'component', 'd': [], 'hg': None, 're': 'resource'})
+		assert(subset_selection_apply(Self(), {'d': ['test'], 're':'resource', 'co':'component', 'hg': 'hostgroup'}, {'metas_filter':[{'hostgroup':'hostgroup'}]}) == {'co': 'component', 'd': ['test'], 'hg': 'hostgroup', 're': 'resource'})
+		"""
+
 
 		if 'metas_filter' not in subset_selection:
 			self.logger.debug('no meta filter to apply for this dca')
