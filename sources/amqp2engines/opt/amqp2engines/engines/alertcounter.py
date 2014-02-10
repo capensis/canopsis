@@ -100,7 +100,7 @@ class engine(cengine):
 
 			state = event['state'],
 			state_type = event['state_type'],
-			component_problem = event['component_problem']
+			component_problem = event.get('component_problem', False)
 		)
 
 		self.amqp.publish(event, cevent.get_routingkey(event), self.amqp.exchange_name_events)
@@ -113,7 +113,7 @@ class engine(cengine):
 			self.amqp.publish(event, cevent.get_routingkey(event), self.amqp.exchange_name_events)
 
 
-	def count_sla(slatype, delay):
+	def count_sla(slatype, delay, value):
 		meta_data = {'type': 'COUNTER', 'co': INTERNAL_COMPONENT }
 		now = int(time.time())
 
@@ -136,23 +136,25 @@ class engine(cengine):
 			meta_data['me'] = 'cps_sla_{0}_{1}_ok'.format(slatype, warn.lower())
 
 		key = self.perfdata_key(meta_data)
-		self.increment_counter(key, meta_data, 1)
+		self.increment_counter(key, meta_data, value)
 
-	def count_by_crits(self, event):
+	def count_by_crits(self, event, value):
 		if event['state'] == 0 and event.get('state_type', 1) == 1:
 			warn = event.get(self.mWarn, None)
 			crit = event.get(self.mCrit, None)
 
 			if warn and warn in self.crits and event['previous_state'] == 1:
-				self.count_sla('warn', self.crits[warn])
+				self.count_sla('warn', self.crits[warn], value)
 
 			elif crit and crit in self.crits and event['previous_state'] == 2:
-				self.count_sla('crit', self.crits[crit])
+				self.count_sla('crit', self.crits[crit], value)
 
-	def count_alert(self, event):
+	def count_alert(self, event, value):
 		component = event['component']
 		resource = event.get('resource', None)
 		tags = event.get('tags', [])
+		state = event['state']
+		state_type = event.get('state_type', 1)
 
 		# Update cps_statechange{,_0,_1,_2,_3} for component/resource
 
@@ -219,11 +221,10 @@ class engine(cengine):
 		# Update cps_alerts_not_ack
 
 		if state != 0:
-			metric = "cps_alerts_not_ack"
-			meta_data['me'] = metric
+			meta_data['me'] = "cps_alerts_not_ack"
+			key = self.perfdata_key(meta_data)
 
-			self.logger.debug("Increment %s: %s: %s" % (name, metric, value))
-			self.manager.push(name="%s%s" % (name, metric), value=value, meta_data=meta_data)
+			self.increment_counter(key, meta_data, value)
 
 	def resolve_selectors_name(self):
 		if int(time.time()) > (self.last_resolv + 60):
@@ -255,15 +256,12 @@ class engine(cengine):
 
 		if validation:
 			self.update_global_counter(event)
-			self.count_by_crits(event)
+			self.count_by_crits(event, 1)
 
 			# By name
 			self.count_alert(event, 1)
 
 			# By tags (selector)
 			self.count_by_tags(event, 1)
-
-			# By crits
-			self.count_by_crits(event, 1)
 
 		return event
