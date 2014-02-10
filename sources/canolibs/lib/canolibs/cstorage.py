@@ -297,7 +297,7 @@ class cstorage(object):
 	def count(self, *args, **kargs):
 		return self.find(count=True, *args, **kargs)
 
-	def find(self, mfilter={}, mfields=None, account=None, namespace=None, one=False, count=False, sort=None, limit=0, offset=0, for_write=False, ignore_bin=True, raw=False):
+	def find(self, mfilter={}, mfields=None, account=None, namespace=None, one=False, count=False, sort=None, limit=0, offset=0, for_write=False, ignore_bin=True, raw=False, with_total=False):
 		if not account:
 			account = self.account
 			
@@ -332,15 +332,29 @@ class cstorage(object):
 				raw_records = []
 		else:
 			raw_records = backend.find(mfilter, fields=mfields, safe=self.mongo_safe)
+
+			# process limit, offset and sort independently of pymongo because sort does not use index
+
+			total = raw_records.count()
+
 			if count:
-				return raw_records.count()
-			## Limit output
-			if raw_records and limit:
-				raw_records = raw_records.limit(limit)
-			if raw_records and offset:
-				raw_records = raw_records.skip(offset)
-			if raw_records and sort:
-				raw_records.sort(sort)
+				return total
+
+			if sort is not None:
+				for s in sort:
+					key = s[0]
+					desc = s[1] == -1
+					def _sort(raw_record):
+						return raw_record
+					raw_records = sorted(raw_records, key=_sort, reverse=desc)
+
+			# and get a sub list of raw_records
+			if limit != 0 and offset != 0:
+				raw_records = raw_records[offset: offset + limit]
+			elif limit != 0:
+				raw_records = raw_records[:limit]
+			elif offset != 0:
+				raw_records = raw_records[offset:]
 
 		records=[]
 		if not mfields:
@@ -369,6 +383,9 @@ class cstorage(object):
 			else:
 				return None
 		else:
+			if with_total: # returns the couple of records, total
+				return records, total
+
 			return records
 
 	def get(self, _id_or_ids, account=None, namespace=None, mfields=None, ignore_bin=True):
