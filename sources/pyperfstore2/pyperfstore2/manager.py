@@ -28,7 +28,7 @@ import pyperfstore2.utils as utils
 class manager(object):
 	def __init__(self, retention=0, dca_min_length = 250, logging_level=logging.INFO, cache=True, **kwargs):
 		self.logger = logging.getLogger('manager')
-		self.logger.setLevel(logging.DEBUG)#logging_level)
+		self.logger.setLevel(logging_level)
 
 		# Store
 		self.store = store(logging_level=logging_level, **kwargs)
