@@ -48,7 +48,11 @@ class engine(cengine):
 
 		# If event is of type acknowledgement, then acknowledge corresponding event
 		if event['event_type'] == 'ack':
-			rk = event['referer']
+			rk = event.get('referer', event.get('ref_rk', None))
+
+			if not rk:
+				self.logger.error("Cannot get acknowledged event, missing key referer or ref_rk")
+				return event
 
 			# add rk to acknowledged rks
 			response = self.stbackend.find_and_modify(
@@ -97,6 +101,40 @@ class engine(cengine):
 					]
 				)
 
+			# Now update counters
+			alerts_event = cevent.forger(
+				connector = "cengine",
+				connector_name = NAME,
+				event_type = "perf",
+				source_type = "component",
+				component = "__canopsis__",
+
+				perf_data_array = [
+					{'metric': 'cps_alerts_ack', 'value': 1, 'type': 'COUNTER'},
+					{'metric': 'cps_alerts_not_ack', 'value': -1, 'type': 'COUNTER'}
+				]
+			)
+
+			self.amqp.publish(alerts_event, cevent.get_routingkey(alerts_event), self.amqp.exchange_name_events)
+
+			for hostgroup in event.get('hostgroups', []):
+				alerts_event = cevent.forger(
+					connector = "cengine",
+					connector_name = NAME,
+					event_type = "perf",
+					source_type = "resource",
+					component = "__canopsis__",
+					resource = hostgroup,
+
+					perf_data_array = [
+						{'metric': 'cps_alerts_ack', 'value': 1, 'type': 'COUNTER'},
+						{'metric': 'cps_alerts_not_ack', 'value': -1, 'type': 'COUNTER'}
+					]
+				)
+
+				self.amqp.publish(alerts_event, cevent.get_routingkey(alerts_event), self.amqp.exchange_name_events)
+
+
 		# If event is acknowledged, and went back to normal, remove the ack
 		elif event['state'] == 0 and event.get('state_type', 1) == 1:
 			solvedts = int(time.time())
@@ -141,6 +179,11 @@ class engine(cengine):
 						}
 					]
 				)
+
+				logevent['acknowledged_connector'] = event['connector']
+				logevent['acknowledged_source'] = event['connector_name']
+				logevent['acknowledged_at'] = record['ackts']
+				logevent['solved_at'] = solvedts
 
 		# If the event is in problem state, update the solved state of acknowledgement
 		elif event['state'] != 0 and event.get('state_type', 1) == 1:
