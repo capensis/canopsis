@@ -247,9 +247,6 @@ class engine(cengine):
 
 		self.counter_worktime += beat_elapsed
 
-
-
-
 	def get_math_function(self, name):
 		if name == 'average' or name == 'mean':
 			return lambda x: sum(x) / len(x)

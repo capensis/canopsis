@@ -271,6 +271,37 @@ Ext.define('widgets.text.text' , {
 		return var_array;
 	},
 
+	getNodeInfo: function(from, to) {
+		if(this.nodeId && this.nodeId.length>0) {
+
+			var nodeInfoParams = this.getNodeInfoParams(from, to);
+
+			Ext.Ajax.request({
+				url: this.baseUrl + '/event' + (this.nodeId && this.nodeId.length? ('/' + this.nodeId) : ''),
+				scope: this,
+				params: nodeInfoParams,
+				method: 'GET',
+				success: function(response) {
+					var data = Ext.JSON.decode(response.responseText);
+
+					if(this.nodeId.length > 1) {
+						data = data.data;
+					}
+					else {
+						data = data.data[0];
+					}
+
+					this._onRefresh(data, from, to);
+				},
+				failure: function(result, request) {
+					void(result);
+
+					log.error('Impossible to get Node informations, Ajax request failed ... (' + request.url + ')', this.logAuthor);
+				}
+			});
+		}
+	},
+
 	// return :  ['{var1:var2}',['var1','var2']]
 	cleanVars: function(array) {
 		var output = {};
