@@ -43,7 +43,8 @@ class engine(cengine):
 			'topology',
 			'trap',
 			'user',
-			'ack'
+			'ack',
+			'downtime'
 		]
 
 	def work(self, event, *args, **kargs):
@@ -74,7 +75,7 @@ class engine(cengine):
 				## Event to Alert
 				self.amqp.publish(event, event_id, self.amqp.exchange_name_alerts)
 
-		elif event_type in ['trap', 'log', 'calendar', 'ack']:
+		elif event_type in ['trap', 'log', 'calendar', 'ack', 'downtime']:
 
 			## passthrough
 			self.archiver.store_new_event(event_id, event)
