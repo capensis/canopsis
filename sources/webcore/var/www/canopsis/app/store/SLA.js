@@ -17,15 +17,27 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 */
+
 Ext.define('canopsis.store.SLA', {
 	extend: 'canopsis.lib.store.cstore',
 	model: 'canopsis.model.SLA',
+
 	storeId: 'store.SLA',
+	pageSize: 5000,
+	autoLoad: true,
+	autoSync: true,
+
+	sorters: [
+		{
+			property: 'criticity',
+			direction: 'ASC'
+		}
+	],
 
 	proxy: {
 		type: 'rest',
 		url: '/rest/object/sla',
-
+		appendId: true,
 		reader: {
 			type: 'json',
 			root: 'data',
@@ -33,7 +45,8 @@ Ext.define('canopsis.store.SLA', {
 			successProperty: 'success'
 		},
 		writer: {
-			type: 'json'
+			type: 'json',
+			writeAllFields: false
 		}
 	}
 });

@@ -1,4 +1,4 @@
-//need:app/lib/controller/cgrid.js,app/view/Rule/Grid.js,app/view/Rule/Form.js,app/store/Rules.js
+//need:app/lib/view/cform.js,app/lib/form/field/cfieldset.js,app/lib/form/field/cfilter.js
 /*
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
@@ -17,25 +17,38 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 */
-Ext.define('canopsis.controller.SLA', {
-	extend: 'canopsis.lib.controller.cgrid',
+Ext.define('canopsis.view.SLA.Form', {
+	extend: 'canopsis.lib.view.cform',
 
-	views: ['SLA.Grid', 'SLA.Form'],
-	stores: ['SLA'],
-	models: ['SLA'],
+	alias: 'widget.SLAForm',
 
-	logAuthor: '[controller][sla]',
+	requires: [
+		'canopsis.lib.form.field.cfieldset',
+		'canopsis.lib.form.field.cfilter'
+	],
 
-	storeDefaultAction: undefined,
+	fieldDefaults: {
+		labelWidth: 150
+	},
 
-	init: function() {
-		log.debug('Initialize ...', this.logAuthor);
+	defaultType: 'textfield',
 
-		this.formXtype = 'SLAForm';
-		this.listXtype = 'SLAGrid';
+	initComponent: function() {
+		this.items = [
+			{
+				xtype: 'textfield',
+				fieldLabel: _('Criticity'),
+				name: 'crit',
+				allowBlank: false
+			},
+			{
+				xtype: "cduration",
+				fieldLabel: _('Delay'),
+				name: 'delay',
+				allowBlank: false
+			}
+		];
 
-		this.modelId = 'SLA';
-
-		this.callParent(arguments);
+		this.callParent();
 	}
 });

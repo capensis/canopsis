@@ -36,16 +36,12 @@ Ext.define('canopsis.model.SLA', {
 		 *  Define which type of SLA object we are dealing with.
 		 *  Possible values are :
 		 *   - crit: Define a new level of criticality
-		 *   - period: Define the SLA period
 		 *   - macro: Define the macro for Critical SLA and Warning SLA
 		 */
-		{name: 'objclass', defaultValue: undefined},
+		{name: 'objclass', defaultValue: 'crit'},
 
 		{name: 'crit', defaultValue: undefined},
 		{name: 'delay', defaultValue: undefined},
-
-		{name: 'from', defaultValue: undefined},
-		{name: 'to', defaultValue: undefined},
 
 		{name: 'mCrit', defaultValue: 'PROC_CRITICAL'},
 		{name: 'mWarn', defaultValue: 'PROC_WARNING'}
