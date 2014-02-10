@@ -48,7 +48,11 @@ class engine(cengine):
 
 		# If event is of type acknowledgement, then acknowledge corresponding event
 		if event['event_type'] == 'ack':
-			rk = event['referer']
+			rk = event.get('referer', event.get('ref_rk', None))
+
+			if not rk:
+				self.logger.error("Cannot get acknowledged event, missing key referer or ref_rk")
+				return event
 
 			# add rk to acknowledged rks
 			response = self.stbackend.find_and_modify(
@@ -175,6 +179,11 @@ class engine(cengine):
 						}
 					]
 				)
+
+				logevent['acknowledged_connector'] = event['connector']
+				logevent['acknowledged_source'] = event['connector_name']
+				logevent['acknowledged_at'] = record['ackts']
+				logevent['solved_at'] = solvedts
 
 		# If the event is in problem state, update the solved state of acknowledgement
 		elif event['state'] != 0 and event.get('state_type', 1) == 1:

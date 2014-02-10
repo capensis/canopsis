@@ -165,6 +165,11 @@ Ext.define('widgets.list.list' , {
 				ans = true;
 			}
 
+			/* exclude events that are in downtime period */
+			if(rec.raw['state'] !== 0 && rec.raw['downtime']) {
+				ans = false;
+			}
+
 			return ans;
 		}, this);
 
