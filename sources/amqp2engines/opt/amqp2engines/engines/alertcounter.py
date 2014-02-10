@@ -149,6 +149,24 @@ class engine(cengine):
 			elif crit and crit in self.crits and event['previous_state'] == 2:
 				self.count_sla(event, 'crit', crit, self.crits[crit], value)
 
+			# Update others
+			meta_data = {'type': 'COUNTER', 'co': INTERNAL_COMPONENT }
+
+			for _crit in self.crits:
+				# Update warning counters
+				if _crit != warn:
+					for slatype in ['ok', 'nok', 'out']:
+						meta_data['me'] = 'cps_sla_warn_{0}_{1}'.format(_crit, slatype)
+						key = self.perfdata_key(meta_data)
+						self.increment_counter(key, meta_data, 0)
+
+				# Update critical counters
+				if _crit != crit:
+					for slatype in ['ok', 'nok', 'out']:
+						meta_data['me'] = 'cps_sla_crit_{0}_{1}'.format(_crit, slatype)
+						key = self.perfdata_key(meta_data)
+						self.increment_counter(key, meta_data, 0)
+
 	def count_alert(self, event, value):
 		component = event['component']
 		resource = event.get('resource', None)
@@ -221,10 +239,17 @@ class engine(cengine):
 		# Update cps_alerts_not_ack
 
 		if state != 0:
-			meta_data['me'] = "cps_alerts_not_ack"
+			meta_data['me'] = 'cps_alerts_not_ack'
 			key = self.perfdata_key(meta_data)
-
 			self.increment_counter(key, meta_data, value)
+
+			meta_data['me'] = 'cps_alerts_ack'
+			key = self.perfdata_key(meta_data)
+			self.increment_counter(key, meta_data, 0)
+
+			meta_data['me'] = 'cps_alerts_ack_by_host'
+			key = self.perfdata_key(meta_data)
+			self.increment_counter(key, meta_data, 0)
 
 	def resolve_selectors_name(self):
 		if int(time.time()) > (self.last_resolv + 60):

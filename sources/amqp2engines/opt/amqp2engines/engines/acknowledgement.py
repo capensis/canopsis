@@ -111,6 +111,7 @@ class engine(cengine):
 
 				perf_data_array = [
 					{'metric': 'cps_alerts_ack', 'value': 1, 'type': 'COUNTER'},
+					{'metric': 'cps_alerts_ack_by_host', 'value': 0, 'type': 'COUNTER'},
 					{'metric': 'cps_alerts_not_ack', 'value': -1, 'type': 'COUNTER'}
 				]
 			)
@@ -128,6 +129,7 @@ class engine(cengine):
 
 					perf_data_array = [
 						{'metric': 'cps_alerts_ack', 'value': 1, 'type': 'COUNTER'},
+						{'metric': 'cps_alerts_ack_by_host', 'value': 0, 'type': 'COUNTER'},
 						{'metric': 'cps_alerts_not_ack', 'value': -1, 'type': 'COUNTER'}
 					]
 				)
