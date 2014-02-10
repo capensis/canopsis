@@ -36,6 +36,8 @@ from caccount import caccount
 from crecord import crecord
 from cfile import cfile
 
+from operator import itemgetter
+
 CONFIG = ConfigParser.RawConfigParser()
 CONFIG.read(os.path.expanduser('~/etc/cstorage.conf'))
 
@@ -340,13 +342,13 @@ class cstorage(object):
 			if count:
 				return total
 
+			raw_records = list(raw_records)
+
 			if sort is not None:
 				for s in sort:
 					key = s[0]
 					desc = s[1] == -1
-					def _sort(raw_record):
-						return raw_record
-					raw_records = sorted(raw_records, key=_sort, reverse=desc)
+					raw_records = sorted(raw_records, key=itemgetter(key), reverse=desc)
 
 			# and get a sub list of raw_records
 			if limit != 0 and offset != 0:
