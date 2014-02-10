@@ -50,7 +50,7 @@ Ext.define('canopsis.lib.view.cperfstoreValueConsumerWidget', {
 						}
 					}
 
-					this.onRefresh(data);
+					this.onRefresh(data, from, to);
 				},
 
 				failure: function(result, request) {
@@ -84,7 +84,7 @@ Ext.define('canopsis.lib.view.cperfstoreValueConsumerWidget', {
 			var serie = this.series !== undefined ? this.series[serieId] : undefined;
 
 			if(from) {
-				if(!this.reportMode) {
+				if(!this.reportMode && !this.timeNav) {
 					if(serie && serie['last_timestamp']) {
 						from = serie['last_timestamp'];
 					}

@@ -33,6 +33,10 @@ Ext.define('widgets.text.text' , {
 
 	initComponent: function() {
 		//get special values by parsing
+		function replaceAll(find, replace, str) {
+			return str.replace(new RegExp(find, 'g'), replace);
+		}
+
 		var raw_vars = this.extractVariables(this.text);
 
 		if(raw_vars.length !== 0) {
@@ -54,8 +58,7 @@ Ext.define('widgets.text.text' , {
 					log.debug('attribute' + attribut);
 
 					var tpl_name = var_name + Math.ceil(Math.random() * 1000);
-
-					this.text = this.text.replace(new RegExp(key), '{' + tpl_name + '}');
+					this.text = replaceAll(key, '{' + tpl_name + '}', this.text);
 
 					this.perfdataMetricList[tpl_name] = {
 						metric: metric,
@@ -192,6 +195,7 @@ Ext.define('widgets.text.text' , {
 							});
 
 							this.fillData(data, from, to);
+							this.computeMathOperations();
 						},
 						failure: function(result, request) {
 							void(result);
@@ -235,46 +239,36 @@ Ext.define('widgets.text.text' , {
 
 	extractVariables: function(text) {
 		log.debug("extractVariables:", this.logAuthor);
-		var var_array  = text.replace(/^[^{]*\{/, "")	// trim everything before first accolade
-				.replace(/\}[^{]*$/, "")				// trim everything after last accolade
-				.split(/\}[^{]*\{/);					// split between accolades
 
-		for (var i = var_array.length - 1; i >= 0; i--) {
-			var_array[i] = "{" + var_array[i] + "}";
-		};
+		//search specific value
+		var loop = true;
+		var _string = text;
+		var var_array = [];
 
-		return var_array;
-	},
+		while(loop) {
+			//search for val
+			var begin = _string.search(/{(.+:)+.+}/);
 
-	getNodeInfo: function(from, to) {
-		if(this.nodeId) {
+			if(begin !== -1) {
 
-			var nodeInfoParams = this.getNodeInfoParams(from, to);
+				//search end of val
+				var end = begin;
 
-			Ext.Ajax.request({
-				url: this.baseUrl + '/event' + (this.nodeId && this.nodeId.length? ('/' + this.nodeId) : ''),
-				scope: this,
-				params: nodeInfoParams,
-				method: 'GET',
-				success: function(response) {
-					var data = Ext.JSON.decode(response.responseText);
-
-					if(this.nodeId.length > 1) {
-						data = data.data;
-					}
-					else {
-						data = data.data[0];
-					}
-
-					this._onRefresh(data, from, to);
-				},
-				failure: function(result, request) {
-					void(result);
-
-					log.error('Impossible to get Node informations, Ajax request failed ... (' + request.url + ')', this.logAuthor);
+				while(_string.charAt(end) !== '}' && end <= _string.length) {
+					end = end + 1;
 				}
-			});
+
+				var_array.push(_string.slice(begin, end + 1));
+				_string = _string.slice(end, _string.length);
+			}
+			else {
+				loop = false;
+			}
 		}
+
+		console.log("var_array");
+		log.dump(var_array);
+		return var_array;
 	},
 
 	// return :  ['{var1:var2}',['var1','var2']]
@@ -293,7 +287,17 @@ Ext.define('widgets.text.text' , {
 		void(to);
 		var result = this.callParent(arguments);
 		result['noInternal'] = false;
-		result['limit'] = 1;
+		result['limit'] = 0;
 		return result;
+	},
+
+	computeMathOperations: function() {
+		var math = mathjs();
+
+		console.log("math expressions");
+		console.log($("#" + this.id)[0]);
+		$("#"+ this.id + " .mathexpression").each(function(){
+			$(this).html(math.eval($(this).html()));
+		});
 	}
 });
