@@ -53,18 +53,23 @@ def init():
         ('component', 1),
         ('state', 1),
         ('state_type', 1),
-        ('event_type', 1),
+        ('event_type', 1)
     ])
     storage.get_backend('events').ensure_index([
-        ('tags',             1),
-        ('source_type',        1)
+        ('tags', 1),
+        ('source_type', 1)
     ])
     storage.get_backend('events').ensure_index([
         ('component', 1),
-        ('resource', 1)
+        ('resource', 1),
+        ('event_type', 1)
     ])
     storage.get_backend('events').ensure_index([
-        ('resource', 1)
+        ('resource', 1),
+        ('event_type', 1)
+    ])
+    storage.get_backend('events').ensure_index([
+        ('event_type', 1)
     ])
 
     logger.info(" + Create index of 'events_log'")
@@ -74,6 +79,18 @@ def init():
         ('component',        1),
         ('state',            1),
         ('event_type',        1)
+    ])
+    storage.get_backend('events_log').ensure_index([
+        ('component', 1),
+        ('resource', 1),
+        ('event_type', 1)
+    ])
+    storage.get_backend('events_log').ensure_index([
+        ('resource', 1),
+        ('event_type', 1)
+    ])
+    storage.get_backend('events_log').ensure_index([
+        ('event_type', 1)
     ])
     storage.get_backend('events_log').ensure_index([
         ('state_type', 1)
@@ -87,7 +104,6 @@ def init():
     storage.get_backend('events_log').ensure_index([
         ('timestamp', 1)
     ])
-
 
 def update():
     init()

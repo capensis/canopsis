@@ -169,8 +169,53 @@ class manager(object):
 			mfields = { 'd': 0 }
 		
 		return self.store.find(mfilter=mfilter, limit=limit, skip=skip, mfields=mfields, sort=sort)
-		
-	def get_points(self, _id=None, name=None, tstart=None, tstop=None, raw=False, return_meta=False, add_prev_point=False, add_next_point=False):
+
+	def subset_selection_apply(self, dca, subset_selection):
+		"""unit tests
+		class Self:
+    		def __init__(self):
+        		import logging
+        		self.logger = logging.setLogger('unittest')
+		assert(subset_selection_apply(Self(), {'unit_test_1':1}, {'no_meta_filter'}) == {'unit_test_1':1})
+		assert(subset_selection_apply(Self(), {'unit_test_2':1}, {'metas_filter':1}) == {'hg': None, 'unit_test_2': 1})
+		assert(subset_selection_apply(Self(), {'re':'resource', 'co':'component'}, {'metas_filter':[{'keep':0}]})['d'] == [])
+		assert(subset_selection_apply(Self(), {'d': ['test'], 're':'resource', 'co':'component'}, {'metas_filter':[{'component': 'component', 'resource': 'resource'}]}) == {'co': 'component', 'd': ['test'], 'hg': None, 're': 'resource'})
+		assert(subset_selection_apply(Self(), {'d': ['test'], 're':'resource', 'co':'component'}, {'metas_filter':[{'component': 'component'}]}) == {'co': 'component', 'd': ['test'], 'hg': None, 're': 'resource'})
+		assert(subset_selection_apply(Self(), {'d': ['test'], 're':'resource', 'co':'component'}, {'metas_filter':[{'resource': 'resource'}]}) == {'co': 'component', 'd': ['test'], 'hg': None, 're': 'resource'})
+		assert(subset_selection_apply(Self(), {'d': ['test'], 're':'resource', 'co':'component'}, {'metas_filter':[{}]}) == {'co': 'component', 'd': [], 'hg': None, 're': 'resource'})
+		assert(subset_selection_apply(Self(), {'d': ['test'], 're':'resource', 'co':'component', 'hg': 'hostgroup'}, {'metas_filter':[{'hostgroup':'hostgroup'}]}) == {'co': 'component', 'd': ['test'], 'hg': 'hostgroup', 're': 'resource'})
+		"""
+
+
+		if 'metas_filter' not in subset_selection:
+			self.logger.debug('no meta filter to apply for this dca')
+			return dca
+
+		if 'hg' not in dca:
+			# Retro compatibility key
+			dca['hg'] = None
+
+		if 're' not in dca or 'co' not in dca:
+			self.logger.debug('Malformed dca, Nothing to test. for metas.')
+			return dca
+
+		metas = subset_selection['metas_filter']
+
+		keep = False
+		for meta in metas:
+			if ('component' in meta and dca['co'] == meta['component']) \
+			or ('resource' in meta and dca['re'] == meta['resource']) \
+			or ('hostgroup' in meta and dca['hg'] == meta['hostgroup']):
+				keep = True
+				break
+
+		if not keep:
+			self.logger.debug('Filter met on metas, will skip all data')
+			dca['d'] = []
+		return dca
+
+
+	def get_points(self, _id=None, name=None, tstart=None, tstop=None, raw=False, return_meta=False, add_prev_point=False, add_next_point=False, subset_selection={}):
 		_id = self.get_id(_id, name)
 		if tstop == None:
 			tstop = int(time.time())
@@ -178,11 +223,14 @@ class manager(object):
 			tstart = tstop
 		self.logger.debug("Get points: %s (%s -> %s)" % (_id, datetime.utcfromtimestamp(tstart), datetime.utcfromtimestamp(tstop)))
 		points = []
-		
+
 		dca = self.get_meta(_id=_id)
+
 		if not dca :
 			raise Exception('Invalid _id, not found %s' % _id)
-		
+
+		dca = self.subset_selection_apply(dca, subset_selection)
+
 		plain_fts = None
 		plain_lts = None
 		
@@ -295,7 +343,7 @@ class manager(object):
 	def get_last_point(self, *args, **kargs):
 		return self.get_point(*args, ts=None, **kargs)
 	
-	def get_point(self, _id=None, ts=None, name=None, return_meta=False):
+	def get_point(self, _id=None, ts=None, name=None, return_meta=False, subset_selection={}):
 		_id = self.get_id(_id, name)
 		
 		meta = None
@@ -303,9 +351,10 @@ class manager(object):
 		
 		if not ts:
 			dca = self.get_meta(_id=_id)
+			dca = self.subset_selection_apply(dca, subset_selection)
 			points = dca.get('d', [])
 		else:
-			(meta, points) = self.get_points(_id=_id, tstart=ts, tstop=ts, add_prev_point=True, return_meta=True)	
+			(meta, points) = self.get_points(_id=_id, tstart=ts, tstop=ts, add_prev_point=True, return_meta=True, subset_selection={})
 		
 		if len(points):
 			point = points.pop()

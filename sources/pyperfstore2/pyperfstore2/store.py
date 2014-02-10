@@ -121,6 +121,7 @@ class store(object):
 
 			self.logger.debug("Get collections")
 			self.collection = self.db[self.mongo_collection]
+
 			self.grid = GridFS(self.db, self.mongo_collection+"_bin")
 			self.connected = True
 			self.logger.debug(" + Success")

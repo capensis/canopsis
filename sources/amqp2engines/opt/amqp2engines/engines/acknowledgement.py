@@ -97,6 +97,40 @@ class engine(cengine):
 					]
 				)
 
+			# Now update counters
+			alerts_event = cevent.forger(
+				connector = "cengine",
+				connector_name = NAME,
+				event_type = "perf",
+				source_type = "component",
+				component = "__canopsis__",
+
+				perf_data_array = [
+					{'metric': 'cps_alerts_ack', 'value': 1, 'type': 'COUNTER'},
+					{'metric': 'cps_alerts_not_ack', 'value': -1, 'type': 'COUNTER'}
+				]
+			)
+
+			self.amqp.publish(alerts_event, cevent.get_routingkey(alerts_event), self.amqp.exchange_name_events)
+
+			for hostgroup in event.get('hostgroups', []):
+				alerts_event = cevent.forger(
+					connector = "cengine",
+					connector_name = NAME,
+					event_type = "perf",
+					source_type = "resource",
+					component = "__canopsis__",
+					resource = hostgroup,
+
+					perf_data_array = [
+						{'metric': 'cps_alerts_ack', 'value': 1, 'type': 'COUNTER'},
+						{'metric': 'cps_alerts_not_ack', 'value': -1, 'type': 'COUNTER'}
+					]
+				)
+
+				self.amqp.publish(alerts_event, cevent.get_routingkey(alerts_event), self.amqp.exchange_name_events)
+
+
 		# If event is acknowledged, and went back to normal, remove the ack
 		elif event['state'] == 0 and event.get('state_type', 1) == 1:
 			solvedts = int(time.time())

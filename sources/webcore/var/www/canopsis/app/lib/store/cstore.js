@@ -109,10 +109,16 @@ Ext.define('canopsis.lib.store.cstore', {
 	},
 
 	getOrFilter: function(filter) {
+		if (filter.length === 1) {
+			return filter[0];
+		}
 		return {'$or': filter};
 	},
 
 	getAndFilter: function(filter) {
+		if (filter.length === 1) {
+			return filter[0];
+		}
 		return {'$and': filter};
 	},
 
