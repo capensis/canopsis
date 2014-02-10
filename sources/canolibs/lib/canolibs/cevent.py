@@ -50,7 +50,8 @@ def forger(		connector,
 			display_name=None,
 			tags=[],
 			ticket=None,
-			ref_rk=None
+			ref_rk=None,
+			component_problem=False
 		):
 
 	if not timestamp:
@@ -145,6 +146,9 @@ def forger(		connector,
 
 	if ref_rk:
 		dump["ref_rk"] = ref_rk
+
+	if event_type == 'check' and source_type == 'resource':
+		dump['component_problem'] = component_problem
 
 	return dump
 

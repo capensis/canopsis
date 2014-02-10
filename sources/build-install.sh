@@ -488,7 +488,7 @@ if [ $OPT_BUILD -eq 1 ]; then
 					check_code $? "Make package failure"
 				fi
 			else
-				echo " + Allready install"
+				echo " + Already install"
 			fi
 		else
 			echo "Impossible to build $NAME ..."
