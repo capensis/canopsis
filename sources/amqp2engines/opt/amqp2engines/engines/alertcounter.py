@@ -47,6 +47,11 @@ class engine(cengine):
 		self.storage = get_storage(namespace='object', account=caccount(user="root", group="root"))
 		self.entities = self.storage.get_backend('entities')
 
+		self.beat()
+
+	def load_macro(self):
+		self.logger.debug('Load record for macros')
+
 		self.mCrit = PROC_CRITICAL
 		self.mWarn = PROC_WARNING
 
@@ -55,6 +60,9 @@ class engine(cengine):
 		if record:
 			self.mCrit = record.data['mCrit']
 			self.mWarn = record.data['mWarn']
+
+	def load_crits(self):
+		self.logger.debug('Load records for criticalness')
 
 		self.crits = {}
 
@@ -65,6 +73,10 @@ class engine(cengine):
 
 		self.selectors_name = []
 		self.last_resolv = 0
+
+	def beat(self):
+		self.load_macro()
+		self.load_crits()
 
 	def perfdata_key(self, meta):
 		if 're' in meta and meta['re']:
