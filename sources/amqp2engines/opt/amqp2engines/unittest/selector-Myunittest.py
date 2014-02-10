@@ -18,9 +18,8 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-import 	unittest
-import 	sys, os
-import 	logging
+import unittest
+import sys, os
 from 	cstorage 	import get_storage
 from 	caccount 	import caccount
 from 	cselector 	import cselector
@@ -53,7 +52,7 @@ class KnownValues(unittest.TestCase):
 		self.assertTrue(self.engine.selector_refresh == {'selector.account.root.selectorTest': True})
 
 		from camqp import camqp
-		self.engine.amqp = camqp(logging_level=logging.INFO, logging_name="test selector engine")
+		self.engine.amqp = camqp(logging_name="test selector engine")
 
 		for event_append in xrange(10):
 			self.engine.beat()

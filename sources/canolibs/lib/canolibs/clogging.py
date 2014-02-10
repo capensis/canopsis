@@ -173,7 +173,9 @@ import inspect
 
 def getLogger(name=None, scope=None):
     """
-    Get a logger related to callee module.
+    Get a logger in a Canopsis environment.
+    - name: name of new logger. If None, iname is callee module.
+    - scope: output scope identity. If None, use the last defined.
     """
 
     if name is None:
@@ -185,6 +187,8 @@ def getLogger(name=None, scope=None):
             name = f_back.f_code.co_filename
             if name.endswith('.py'):
                 name = name[:-3]
+            elif name.endswith('.pyc'):
+                name = name[:-4]
 
     result = logging.getLogger(name)
 
@@ -195,6 +199,32 @@ def getLogger(name=None, scope=None):
 
 # instantiate a logger
 _logger = getLogger()
+
+
+def getChildLogger(name=None):
+    """
+    Get a child logger related to previous frame.
+    """
+
+    f_back = inspect.currentframe().f_back
+    # get previous frame module name
+    parent = f_back.f_back.f_globals['__name__']
+    if parent == '__main__':
+        # get filename in case of main process
+        parent = f_back.f_back.f_code.co_filename
+        if parent.endswith('.py'):
+            parent = parent[:-3]
+        elif parent.endswith('.pyc'):
+            parent = parent[:-4]
+
+    if name is not None:
+        name = "{0}.{1}".format(parent, name)
+    else:
+        name = parent
+
+    result = logging.getLogger(name)
+
+    return result
 
 
 def getRootLogger():

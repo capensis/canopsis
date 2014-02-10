@@ -1,14 +1,7 @@
 import sys
 sys.path.append("/opt/canopsis/opt/webcore/") 
 
-import logging
 import traceback
-
-logging.basicConfig(
-	format=r"%(asctime)s [%(process)d] [%(name)s] [%(levelname)s] %(message)s",
-	datefmt=r"%Y-%m-%d %H:%M:%S",
-	level=logging.DEBUG
-)
 
 import wsgi_webserver
 from webtest import TestApp

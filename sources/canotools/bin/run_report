@@ -19,7 +19,7 @@
 # ---------------------------------
 
 import sys, os, getopt, urllib2, urllib, cookielib, traceback, argparse
-import logging
+import clogging
 import time
 from datetime import date
 from optparse import OptionParser
@@ -47,9 +47,7 @@ def authentificate(server,authkey):
 
 	return opener
 
-
-logging.basicConfig()
-logger = logging.getLogger('launch_report')
+logger = clogging.getLogger()
 unit = {"s" : 1, "m" : 60, "h" : 60*60, "d" : 60*60*24, "w" : 60*60*24*7, "M" : 60*60*24*30, "y" : 60*60*24*365}
 
 parser = argparse.ArgumentParser(description='Launch canopsis report through cmd (type "run_report your_authkey -l" to list views)')

@@ -25,8 +25,6 @@ from cstorage import get_storage
 from caccount import caccount
 import time
 
-import logging
-		
 NAME="alertcounter"
 
 class engine(cengine):
@@ -35,7 +33,6 @@ class engine(cengine):
 		
 	def pre_run(self):
 		self.listened_event_type = ['check','selector','eue','sla', 'log']
-		#self.manager = pyperfstore2.manager(logging_level=self.logging_level)	
 		self.manager = pyperfstore2.manager()	
 		
 		self.selectors_name = []

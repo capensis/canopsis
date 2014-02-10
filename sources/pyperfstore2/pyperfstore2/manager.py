@@ -28,12 +28,11 @@ import pyperfstore2.utils as utils
 
 
 class manager(object):
-    def __init__(self, retention=0, dca_min_length=250, logging_level=logging.INFO, cache=True, **kwargs):
-        self.logger = clogging.getLogger('manager')
-        self.logger.setLevel(logging_level)
+    def __init__(self, retention=0, dca_min_length=250, cache=True, **kwargs):
+        self.logger = clogging.getChildLogger("manager")
 
         # Store
-        self.store = store(logging_level=logging_level, **kwargs)
+        self.store = store(**kwargs)
 
         self.dca_min_length = dca_min_length
 
@@ -47,13 +46,13 @@ class manager(object):
         self.md5_cache = {}
 
         self.fields_map = {
-                'retention':    ('r', self.retention),
-                'type':            ('t', 'GAUGE'),
-                'unit':            ('u', None),
-                'min':            ('mi', None),
-                'max':            ('ma', None),
-                'thd_warn':        ('tw', None),
-                'thd_crit':        ('tc', None)
+            'retention':    ('r', self.retention),
+            'type':            ('t', 'GAUGE'),
+            'unit':            ('u', None),
+            'min':            ('mi', None),
+            'max':            ('ma', None),
+            'thd_warn':        ('tw', None),
+            'thd_crit':        ('tc', None)
         }
 
     def gen_id(self, name):
@@ -88,7 +87,7 @@ class manager(object):
                 p[1] = float(p[1])
             return p
 
-        data = [ cleanPoint(p.split('|')) for p in data ]
+        data = [cleanPoint(p.split('|')) for p in data]
         return data
 
     def get_meta(self, _id=None, name=None, raw=False, mfields=None):
@@ -169,7 +168,7 @@ class manager(object):
                 mfilter = {}
 
         if not data:
-            mfields = { 'd': 0 }
+            mfields = {'d': 0}
 
         return self.store.find(mfilter=mfilter, limit=limit, skip=skip, mfields=mfields, sort=sort)
 

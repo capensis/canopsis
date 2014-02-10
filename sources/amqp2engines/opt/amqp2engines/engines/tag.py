@@ -67,7 +67,7 @@ class engine(cengine):
 			# Put selector witch can tag event in cache
 			if 'dostate' in selector_dump and selector_dump['dostate']:
 				
-				selector = cselector(storage=self.storage, record=selector_json, logging_level=self.logging_level)
+				selector = cselector(storage=self.storage, record=selector_json)
 
 				# tag field is defined here only
 				selector.tags = []

@@ -21,7 +21,7 @@
 
 import sys
 import os
-import logging
+import clogging
 import json
 import bottle
 
@@ -43,8 +43,7 @@ except:
 from libexec.auth import get_account, delete_session, reload_account, check_group_rights
 
 
-logger = logging.getLogger('Account')
-#logger.setLevel(logging.DEBUG)
+logger = clogging.getLogger()
 
 #group who have right to access 
 group_managing_access = ['group.CPS_account_admin']

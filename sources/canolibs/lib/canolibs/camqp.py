@@ -29,17 +29,16 @@ except ImportError as IE:
 
 import socket
 
-import time, logging, threading, os, traceback
+import time, clogging, threading, os, traceback
 import sys
 #from kombu.pools import producers
 
 
 class camqp(threading.Thread):
-	def __init__(self, host="localhost", port=5672, userid="guest", password="guest", virtual_host="canopsis", exchange_name="canopsis", logging_name="camqp", logging_level=logging.INFO, read_config_file=True, auto_connect=True, on_ready=None):
+	def __init__(self, host="localhost", port=5672, userid="guest", password="guest", virtual_host="canopsis", exchange_name="canopsis", logging_name="camqp", read_config_file=True, auto_connect=True, on_ready=None):
 		threading.Thread.__init__(self)
 		
-		self.logger = logging.getLogger(logging_name)
-		
+		self.logger = clogging.getChildLogger(logging_name)
 		
 		self.host=host
 		self.port=port
@@ -47,14 +46,11 @@ class camqp(threading.Thread):
 		self.password=password
 		self.virtual_host=virtual_host
 		self.exchange_name=exchange_name
-		self.logging_level = logging_level
 		
 		if (read_config_file):
 			self.read_config("amqp")
 		
 		self.amqp_uri = "amqp://%s:%s@%s:%s/%s" % (self.userid, self.password, self.host, self.port, self.virtual_host)
-		
-		self.logger.setLevel(logging_level)
 		
 		self.exchange_name_events=exchange_name+".events"
 		self.exchange_name_alerts=exchange_name+".alerts"

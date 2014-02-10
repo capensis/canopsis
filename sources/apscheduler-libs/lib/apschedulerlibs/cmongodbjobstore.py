@@ -23,15 +23,15 @@ from apscheduler.job import Job
 
 from datetime import datetime,timedelta
 
-import logging
+import clogging
 
 try:
     import cPickle as pickle
 except ImportError:  # pragma: nocover
     import pickle
 
-logger = logging.getLogger('MongoDbStore')
-logger.setLevel(logging.DEBUG)
+logger = clogging.getLogger()
+
 
 class CMongoDBJobStore(MongoDBJobStore):
 	

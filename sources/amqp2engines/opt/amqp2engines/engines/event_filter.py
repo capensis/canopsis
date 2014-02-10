@@ -24,7 +24,6 @@ from cengine import DROP
 from caccount import caccount
 from cstorage import get_storage
 import cevent
-import logging
 import cmfilter
 import ast
 
@@ -35,7 +34,7 @@ class engine(cengine):
 	def __init__(self, *args, **kargs):
 		cengine.__init__(self, name=NAME, *args, **kargs)
 		account = caccount(user="root", group="root")
-		self.storage = get_storage(logging_level=logging.DEBUG, account=account)
+		self.storage = get_storage(account=account)
 		
 		
 	def pre_run(self):

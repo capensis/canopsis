@@ -21,7 +21,7 @@
 import multiprocessing
 import time
 import Queue
-import logging
+import clogging
 import os, sys
 from cinit import cinit
 import traceback
@@ -40,13 +40,10 @@ class cengine(multiprocessing.Process):
 			next_balanced=False,
 			name="worker1",
 			beat_interval=60,
-			logging_level=logging.INFO,
 			exchange_name='amq.direct',
 			routing_keys=[]):
 		
 		multiprocessing.Process.__init__(self)
-		
-		self.logging_level = logging_level
 
 		self.signal_queue = multiprocessing.Queue(maxsize=5)
 
@@ -68,13 +65,7 @@ class cengine(multiprocessing.Process):
 		
 		init 	= cinit()
 			
-		self.logger = init.getLogger(name, logging_level=self.logging_level)
-	
-		logHandler = logging.FileHandler(filename=os.path.expanduser("~/var/log/engines/%s.log" % name))
-		logHandler.setFormatter(logging.Formatter("%(asctime)s %(levelname)s %(name)s %(message)s"))
-
-		# Log in file
-		self.logger.addHandler(logHandler)	
+		self.logger = clogging.getChildLogger(name)
 		
 		self.counter_error = 0
 		self.counter_event = 0
@@ -147,7 +138,7 @@ class cengine(multiprocessing.Process):
 		
 		from camqp import camqp
 		
-		self.amqp = camqp(logging_level=logging.INFO, logging_name="%s-amqp" % self.name, on_ready=ready)
+		self.amqp = camqp(on_ready=ready)
 		
 		if self.create_queue:
 			self.new_amqp_queue(self.amqp_queue, self.routing_keys, self.on_amqp_event, self.exchange_name)	
