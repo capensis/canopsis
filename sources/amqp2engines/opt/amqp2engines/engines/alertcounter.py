@@ -113,7 +113,7 @@ class engine(cengine):
 			self.amqp.publish(event, cevent.get_routingkey(event), self.amqp.exchange_name_events)
 
 
-	def count_sla(slatype, delay, value):
+	def count_sla(self, slatype, delay, value):
 		meta_data = {'type': 'COUNTER', 'co': INTERNAL_COMPONENT }
 		now = int(time.time())
 
