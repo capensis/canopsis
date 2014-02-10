@@ -18,7 +18,7 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-import logging, time
+import clogging, time
 from cstorage import get_storage
 from caccount import caccount
 from crecord import crecord
@@ -30,10 +30,9 @@ from ctools import parse_perfdata
 legend_type = ['soft', 'hard']
 
 class carchiver(object):
-	def __init__(self, namespace, storage=None, autolog=False, logging_level=logging.ERROR):
+	def __init__(self, namespace, storage=None, autolog=False):
 
-		self.logger = logging.getLogger('carchiver')
-		self.logger.setLevel(logging_level)
+		self.logger = clogging.getLogger('carchiver-{0}'.format(namespace))
 
 		self.namespace = namespace
 		self.namespace_log = namespace + '_log'
@@ -46,7 +45,7 @@ class carchiver(object):
 
 		if not storage:
 			self.logger.debug(" + Get storage")
-			self.storage = get_storage(namespace=namespace, logging_level=logging_level)
+			self.storage = get_storage(namespace=namespace)
 		else:
 			self.storage = storage
 

@@ -21,7 +21,7 @@
 
 import sys
 import os
-import logging
+import clogging
 import json
 import gevent
 
@@ -46,7 +46,7 @@ from cfile import namespace
 # Import protection function
 from libexec.auth import get_account
 
-logger = logging.getLogger('Files')
+logger = clogging.getLogger()
 
 # Defines allowed mime types
 _allowed_mimetypes = {

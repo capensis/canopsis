@@ -21,7 +21,7 @@
 
 import sys
 import os
-import logging
+import clogging
 import json
 import gevent
 from datetime import datetime
@@ -32,7 +32,7 @@ import bottle
 from bottle import route, get, delete, put, request
 from bottle import HTTPError, post, static_file, response
 
-logger = logging.getLogger('calendar')
+logger = clogging.getLogger()
 
 from libexec.rest import *
 

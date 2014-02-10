@@ -18,7 +18,6 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-#import logging
 from crecord import crecord
 
 from ctools import calcul_pct
@@ -31,13 +30,13 @@ from bson.code import Code
 
 import time
 import json
-import logging
+import clogging
 
 from cdowntime import Cdowntime
 
 
 class cselector(crecord):
-	def __init__(self, storage, _id=None, name=None, namespace='events', use_cache=True, record=None, cache_time=60, logging_level=None):
+	def __init__(self, storage, _id=None, name=None, namespace='events', use_cache=True, record=None, cache_time=60):
 		self.type = 'selector'
 		self.storage = storage
 
@@ -72,11 +71,9 @@ class cselector(crecord):
 
 		self._ids = None
 
-		self.logger = logging.getLogger('cselector')
-		if logging_level:
-			self.logger.setLevel(logging_level)
 
 		self.cdowntime = Cdowntime(self.storage)
+		self.logger = clogging.getLogger()
 
 		## Init
 		if not record:

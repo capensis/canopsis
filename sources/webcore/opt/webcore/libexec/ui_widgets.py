@@ -18,7 +18,7 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-import sys, os, logging, json
+import sys, os, clogging, json
 import re
 
 import bottle
@@ -28,7 +28,7 @@ from bottle import route, get, put, delete, request, HTTPError, response
 from cstorage import get_storage
 from libexec.auth import get_account
 
-logger = logging.getLogger("ui-widgets")
+logger = clogging.getLogger()
 
 #########################################################################
 
