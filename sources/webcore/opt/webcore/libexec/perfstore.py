@@ -41,7 +41,6 @@ import pyperfstore2.utils
 manager = None
 
 logger = logging.getLogger("perfstore")
-logger.setLevel(logging_level)
 
 def load():
 	global manager
