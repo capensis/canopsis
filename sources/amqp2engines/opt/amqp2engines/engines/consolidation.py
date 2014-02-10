@@ -240,7 +240,7 @@ class engine(cengine):
 
 		self.records = {}
 
-		records = self.storage.find({ '$and' :[ {'crecord_type': 'consolidation'}, {'enable': True}] }, namespace="object")
+		records = self.storage.find({'crecord_type': 'consolidation', 'enable': True}, namespace="object")
 
 		for item in records:
 			self.storage.update(item._id, {'loaded': True})
@@ -249,7 +249,7 @@ class engine(cengine):
 		self.logger.debug(' + %i loaded' % len(records))
 				
 	def unload_consolidation(self):
-		records = self.storage.find({ '$and': [{'crecord_type': 'consolidation' }, {'loaded':True}]}, namespace="object")
+		records = self.storage.find({'crecord_type': 'consolidation', 'loaded':True}, namespace="object")
 		for item in records :
 			self.storage.update(item._id, {
 				'loaded': False

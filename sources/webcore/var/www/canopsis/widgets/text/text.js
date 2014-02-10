@@ -247,7 +247,7 @@ Ext.define('widgets.text.text' , {
 	},
 
 	getNodeInfo: function(from, to) {
-		if(this.nodeId) {
+		if(this.nodeId.length>0) {
 
 			var nodeInfoParams = this.getNodeInfoParams(from, to);
 

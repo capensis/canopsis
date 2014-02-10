@@ -120,7 +120,6 @@ def rest_get(namespace, ctype=None, _id=None):
 			logger.error("Impossible to decode filter: %s: %s" % (filter, err))
 			filter = None
 
-
 	msort = []
 	if sort:
 		#[{"property":"timestamp","direction":"DESC"}]
@@ -208,8 +207,7 @@ def rest_get(namespace, ctype=None, _id=None):
 		#clean mfilter
 		mfilter = clean_mfilter(mfilter)
 
-		records =  storage.find(mfilter, sort=msort, limit=limit, offset=start, account=account)
-		total =	storage.count(mfilter, account=account)
+		records, total = storage.find(mfilter, sort=msort, limit=limit, offset=start, account=account, with_total=True)
 
 	output = []
 

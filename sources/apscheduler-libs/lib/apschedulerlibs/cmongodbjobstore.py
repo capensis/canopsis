@@ -114,7 +114,7 @@ class CMongoDBJobStore(MongoDBJobStore):
 	def check_and_refresh(self):
 		count = None
 		try:
-			count = self.collection.find({ "$and": [{"loaded": False}, {'crecord_type': 'schedule'}]}).count()
+			count = self.collection.find({"loaded": False, 'crecord_type': 'schedule'}).count()
 			count += abs(self.collection.find({'crecord_type': 'schedule'}).count() - len(self.jobs))
 		except Exception, err:
 			logger.error('Task count failed : %s' % err)
