@@ -266,7 +266,14 @@ Ext.define('canopsis.lib.form.field.cinventory' , {
 				selection_grid_config.plugins = [
 					Ext.create('Ext.grid.plugin.CellEditing', {
 						clicksToEdit: 1,
-						autoCancel: true
+						autoCancel: true,
+						listeners: {
+							beforeedit: function( editor, e, eOpts )
+							{
+								//Dirty hack to make ccolorfield work with cellediting
+								this.record = e.record;
+							}
+						}
 					})
 				];
 

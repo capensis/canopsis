@@ -402,7 +402,6 @@ Ext.define('canopsis.lib.form.field.ccomponentlist' , {
 
 		return items;
 
-		console.log("AFTERREENNNNNNDERRRRR");
 		if(this.additional_field.name === 'color') {
 			//Dirty hack to make ccolofield work with cellediting
 			console.log("this.additional_field");
