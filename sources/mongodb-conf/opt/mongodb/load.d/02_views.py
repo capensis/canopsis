@@ -54,7 +54,7 @@ def init():
 	create_view('resources', 'Resources', data, internal=True)
 
 	### SLA
-	data = { 'xtype': 'SLAView' }
+	data = { 'xtype': 'SLAGrid' }
 	create_view('sla', 'SLA', data, internal=True)
 
 	### Top 10
