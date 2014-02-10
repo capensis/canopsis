@@ -31,7 +31,7 @@ from caccount import caccount
 import itertools
 
 DROP = -1
-DISPATCHER_READY_TIME = 30
+DISPATCHER_READY_TIME = 5
 
 class cengine(multiprocessing.Process):
 

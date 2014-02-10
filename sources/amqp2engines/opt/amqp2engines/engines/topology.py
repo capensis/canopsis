@@ -49,7 +49,6 @@ class engine(cengine):
 		self.topos = []
 
 		# Beat
-		self.doBeat = False
 		self.normal_beat_interval = 300
 		self.lastBeat = int(time.time()) - self.normal_beat_interval
 
@@ -306,15 +305,9 @@ class engine(cengine):
 				self.logger.debug("Publish event on %s" % rk)
 				self.amqp.publish(event, rk, self.amqp.exchange_name_events)
 				self.crecord_task_complete(event_id)
-
-
-			else:
-				self.logger.warning('topology not able to load crecord properly, topology not threaten.')
+		else:
+			self.logger.warning('topology not able to load crecord properly, topology not threaten.')
 
 
 	def work(self, event, *args, **kargs):
-		if not self.doBeat:
-			for topo in self.topos:
-				if  event['rk'] in topo['ids']:
-					self.doBeat = True
-					break
+		return event

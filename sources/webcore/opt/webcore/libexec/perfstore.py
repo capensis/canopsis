@@ -29,6 +29,8 @@ from bottle import route, get, post, put, delete, request, HTTPError, response
 from libexec.auth import get_account
 
 # Modules
+from cstorage import get_storage
+
 from ctools import parse_perfdata, clean_mfilter
 from ctools import cleanTimestamp
 from ctools import internal_metrics
@@ -39,6 +41,7 @@ import pyperfstore2.utils
 manager = None
 
 logger = logging.getLogger("perfstore")
+logger.setLevel(logging.DEBUG)
 
 def load():
 	global manager
@@ -299,6 +302,7 @@ def perfstore_perftop(start=None, stop=None):
 	limit					= int(request.params.get('limit', default=10))
 	sort					= int(request.params.get('sort', default=1))
 	mfilter					= request.params.get('mfilter', default={})
+	get_output				= request.params.get('output', default=False)
 	time_window				= int(request.params.get('time_window', default=86400))
 	threshold				= request.params.get('threshold', default=None)
 	threshold_direction 	= int(request.params.get('threshold_direction', default=-1))
@@ -306,6 +310,9 @@ def perfstore_perftop(start=None, stop=None):
 	percent					= request.params.get('percent', default=False)
 	threshold_on_pct		= request.params.get('threshold_on_pct', default=False)
 	report					= request.params.get('report', default=False)
+
+	export_csv				= request.params.get('csv', default=False)
+	export_fields			= request.params.get('fields', default="[]")
 
 	if percent == 'true':
 		percent = True
@@ -333,6 +340,14 @@ def perfstore_perftop(start=None, stop=None):
 			logger.error("Impossible to decode mfilter: %s: %s" % (mfilter, err))
 			mfilter = None
 
+	try:
+		export_fields = json.loads(export_fields)
+
+	except ValueError, err:
+		logger.error("Impossible to decode export_fields: %s: %s" % (export_fields, err))
+		export_fields = []
+
+
 	if threshold:
 		threshold = float(threshold)
 
@@ -353,6 +368,7 @@ def perfstore_perftop(start=None, stop=None):
 
 	logger.debug("PerfTop:")
 	logger.debug(" + mfilter:     %s" % mfilter)
+	logger.debug(" + get_output:  %s" % get_output)
 	logger.debug(" + limit:       %s" % limit)
 	logger.debug(" + threshold:   %s" % threshold)
 	logger.debug(" + threshold_direction:   %s" % threshold_direction)
@@ -364,6 +380,8 @@ def perfstore_perftop(start=None, stop=None):
 	logger.debug(" + time_window: %s" % time_window)
 	logger.debug(" + start:       %s (%s)" % (start, datetime.utcfromtimestamp(start)))
 	logger.debug(" + stop:        %s (%s)" % (stop, datetime.utcfromtimestamp(stop)))
+	logger.debug(" + export csv:  %s" % export_csv)
+	logger.debug(" + export fields: %s" % str(export_fields))
 
 	mfilter =  clean_mfilter(mfilter)
 	
@@ -471,7 +489,44 @@ def perfstore_perftop(start=None, stop=None):
 
 							if check_threshold(val):
 								data.append(metric)
-				
+
+		# Calculate most recurrent output
+		if get_output:
+			logs = get_storage(namespace='events_log', account=get_account())
+
+			for item in data:
+				evfilter = {'$and': [
+					{
+						'component': item['co'],
+						'resource': item.get('re', {'$exists': False}),
+						'state': {'$ne': 0}
+					},{
+						'timestamp': {'$gt': start}
+					},{
+						'timestamp': {'$lt': stop}
+					}
+				]}
+
+				records = logs.find(evfilter)
+
+				outputs = {}
+
+				for record in records:
+					output = record.data['output']
+
+					if output not in outputs:
+						outputs[output] = 1
+
+					else:
+						outputs[output] += 1
+
+				last_max = 0
+
+				for output in outputs:
+					if outputs[output] > last_max:
+						item['output'] = output
+						last_max = outputs[output]
+
 		reverse = True
 		if sort == 1:
 			reverse = False	
@@ -486,7 +541,41 @@ def perfstore_perftop(start=None, stop=None):
 	else:
 		logger.debug("No records found")
 	
-	return {'success': True, 'data' : data, 'total' : len(data)}
+	if not export_csv:
+		return {'success': True, 'data' : data, 'total' : len(data)}
+
+	else:
+		response.headers['Content-Disposition'] = 'attachment; filename="perftop.csv"'
+		response.headers['Content-Type'] = 'text/csv'
+
+		exported = None
+
+		logger.debug(' + Data: %s' % str(data))
+
+		for entry in data:
+			row = []
+
+			for field in export_fields:
+				value = entry.get(field, '')
+
+				if isinstance(value, basestring):
+					value = value.replace('"', '""')
+					value = u'"{0}"'.format(value)
+
+				else:
+					value = str(value)
+
+				row.append(value)
+
+			if exported:
+				exported = u"{0}\n{1}".format(exported, u','.join(row))
+
+			else:
+				exported = u','.join(row)
+
+		logger.debug(' + Exported: %s' % exported)
+
+		return exported
 
 ########################################################################
 # Functions

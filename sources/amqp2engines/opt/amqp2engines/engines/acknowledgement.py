@@ -98,7 +98,7 @@ class engine(cengine):
 				)
 
 		# If event is acknowledged, and went back to normal, remove the ack
-		elif event['state'] == 0:
+		elif event['state'] == 0 and event.get('state_type', 1) == 1:
 			solvedts = int(time.time())
 
 			response = self.stbackend.find_and_modify(
@@ -143,7 +143,7 @@ class engine(cengine):
 				)
 
 		# If the event is in problem state, update the solved state of acknowledgement
-		else:
+		elif event['state'] != 0 and event.get('state_type', 1) == 1:
 			self.stbackend.find_and_modify(
 				query = {'rk': event['rk'], 'solved': True},
 				update = {'$set': {
