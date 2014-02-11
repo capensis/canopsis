@@ -38,7 +38,7 @@ class store(object):
 			logging_level=logging.INFO):
 
 		self.logger = logging.getLogger('store')
-		self.logger.setLevel(logging_level)
+		self.logger.setLevel(logging.DEBUG)#logging_level)
 
 		# keep dayly track of ids in cache, 
 		# TODO must be cleared in beat method
@@ -139,6 +139,7 @@ class store(object):
 			return self.collection.update({'_id': _id}, data, upsert=upsert)
 
 	def push(self, _id, point, meta_data={}, bulk=True):
+
 		self.check_connection()
 		self.logger.debug("Push point '%s' in '%s'" % (point, _id))
 
@@ -163,10 +164,12 @@ class store(object):
 			bulk = False		
 		if bulk:
 			self.logger.debug("Bulk mode is enabled (rate: %s push/sec)" % self.last_rate)
-
-		# Push perfdata to db
-		self.logger.debug('Will insert to daily collection ---------------------------------')
-		self.daily_collection.update({'_id': _id}, {'$setOnInsert':{'insert_date': time.time()}, '$set': {'values.' + str(int(time.time())): [point[0], point[1]]}}, upsert=True)
+		if self.daily_collection.find_one({'_id': _id}):
+			# update perfdata to db
+			self.daily_collection.update({'_id': _id}, {'$inc': {'count': 1}, '$set': {'values.' + str(int(time.time())): [point[0], point[1]]}}, upsert=True)
+		else:
+			insert_date = int(time.time())
+			self.daily_collection.insert({'_id': _id, 'count': 1, 'insert_date': insert_date ,'values': {str(insert_date): [point[0], point[1]]}})
 
 		self.pushed_values += 1
 

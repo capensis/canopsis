@@ -36,13 +36,13 @@ class engine(cengine):
 		
 		self.kplan = "perfstore2:rotate:plan"
 
-		self.rotation_interval = 60 #* 60 * 24 # 24 hours
+		self.rotation_interval = 60 *10#* 60 * 24 # 24 hours
 
 
 		self.last_build = time.time()
 		
 	def pre_run(self):
-		self.manager = pyperfstore2.manager(logging_level=logging.INFO)
+		self.manager = pyperfstore2.manager(logging_level=logging.DEBUG)
 
 		self.beat()
 
@@ -50,7 +50,7 @@ class engine(cengine):
 		self.logger.debug("Start rotation")
 		start = time.time()
 
-		metric_to_rotate = self.manager.store.daily_collection.find({'insert_date': {'$gte': start - self.rotation_interval}})
+		metric_to_rotate = self.manager.store.daily_collection.find({'insert_date': {'$lte': start - self.rotation_interval}})
 
 		metric_count = 0
 		for metric in metric_to_rotate:

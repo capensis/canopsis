@@ -28,7 +28,7 @@ import pyperfstore2.utils as utils
 class manager(object):
 	def __init__(self, retention=0, dca_min_length = 250, logging_level=logging.INFO, cache=True, **kwargs):
 		self.logger = logging.getLogger('manager')
-		self.logger.setLevel(logging_level)
+		self.logger.setLevel(logging.INFO)#logging_level)
 
 		# Store
 		self.store = store(logging_level=logging_level, **kwargs)
@@ -76,7 +76,13 @@ class manager(object):
 		return _id
 
 	def get_data(self, _id):
-		data = self.store.daily_collection.find({'_id': _id})
+
+		points = []
+
+		data = self.store.daily_collection.find_one({'_id': _id})
+		if not data or 'values' not in data:
+			return points
+
 		def cleanPoint(p):
 			p[0] = int(p[0])
 			try:
@@ -85,13 +91,10 @@ class manager(object):
 				p[1] = float(p[1])
 			return p
 
-
-		points = []
-		if 'values' not in data:
-			return points
-
-		for key in data['values']:
-			points.append(cleanPoint(data['values'][key]))
+		metrics = data['values'].values()
+		metrics.sort()
+		for key in metrics:
+			points.append(cleanPoint(key))
 
 		return points
 
@@ -412,29 +415,29 @@ class manager(object):
 	def rotate(self, _id, values):
 		t = time.time()
 
-		self.logger.debug("Start rotation of %s" % _id)
+		self.logger.warning("Start rotation of %s" % _id)
 
-		self.logger.debug(" + DCA: %s" % _id)
+		self.logger.warning(" + DCA: %s" % _id)
 
-		timestamps = [float(x) for x in values.keys()]
+		timestamps = [x for x in values.keys()]
 		timestamps.sort()
 		points = []
 		for timestamp in timestamps:
-			points.append(timestamps[timestamp])
+			points.append(values[timestamp])
 
 		fts = values[timestamps[0]][0]
 		lts = values[timestamps[-1]][0]
 
-		self.logger.debug("  + Compress %s -> %s" % (fts, lts))
+		self.logger.warning("  + Compress %s -> %s" % (fts, lts))
 
 		data = utils.compress(points)
 
 		try:
 			bin_id = "%s%s" % (_id, lts)
-			self.logger.debug("   + Store in binary record")
+			self.logger.warning("   + Store in binary record")
 			self.store.create_bin(_id=bin_id, data=data)
 
-			self.logger.debug("   + Add bin_id in meta and clean meta")
+			self.logger.warning("   + Add bin_id in meta and clean meta")
 
 			self.store.update(_id=_id, mpush={'c': (fts, lts, bin_id)})
 			self.store.daily_collection.remove({'_id': _id})
