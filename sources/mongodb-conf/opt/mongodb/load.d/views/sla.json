@@ -1,0 +1,8 @@
+{
+     "id": "sla",
+     "name": "sla",
+     "items": {
+          "xtype": "SLAView"
+     },
+     "internal": true
+}
