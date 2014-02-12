@@ -96,6 +96,17 @@ Ext.define('widgets.timegraph.timegraph', {
 					max: now - this.time_window_offset * 1000
 				},
 
+				yaxis: {
+					tickFormatter: function(val, axis) {
+						if(this.humanReadable) {
+							return rdr_humanreadable_value(val, axis.options.unit);
+						}
+						else {
+							return val + ' ' + axis.options.unit;
+						}
+					}.bind(this)
+				},
+
 				xaxes: [
 					{
 						position: 'bottom',
@@ -135,10 +146,6 @@ Ext.define('widgets.timegraph.timegraph', {
 		}
 
 		if(!this.displayHorizontalLines) {
-			if(this.options.yaxis === undefined) {
-				this.options.yaxis = {};
-			}
-
 			this.options.yaxis.tickLength = 0;
 		}
 	},
