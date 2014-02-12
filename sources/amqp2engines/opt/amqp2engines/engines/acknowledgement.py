@@ -88,7 +88,7 @@ class engine(cengine):
 					state = 0,
 					state_type = 1,
 
-					referer = event['rk'],
+					ref_rk = event['rk'],
 					output = u'Event {0} acknowledged by {1}'.format(rk, event['author']),
 					long_output = event['output'],
 
@@ -169,7 +169,7 @@ class engine(cengine):
 					state = 0,
 					state_type = 1,
 
-					referer = event['rk'],
+					ref_rk = event['rk'],
 					output = u'Acknowledgement removed for event {0}'.format(event['rk']),
 					long_output = u'Everything went back to normal',
 
