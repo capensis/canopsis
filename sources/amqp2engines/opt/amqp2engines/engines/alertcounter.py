@@ -46,6 +46,9 @@ class engine(cengine):
 		self.storage = get_storage(namespace='object', account=caccount(user="root", group="root"))
 		self.entities = self.storage.get_backend('entities')
 
+		self.selectors_name = []
+		self.last_resolv = 0
+
 		self.beat()
 
 	def load_macro(self):
@@ -70,9 +73,6 @@ class engine(cengine):
 		for record in records:
 			self.crits[record.data['crit']] = record.data['delay']
 
-		self.selectors_name = []
-		self.last_resolv = 0
-
 	def beat(self):
 		self.load_macro()
 		self.load_crits()
@@ -86,31 +86,46 @@ class engine(cengine):
 
 	def increment_counter(self, key, meta, value):
 		self.logger.debug("Increment {0}: {1}".format(key, value))
+		self.logger.debug(str(meta))
 		self.manager.push(name=key, value=value, meta_data=meta)
 
 	def update_global_counter(self, event):
-		# Update global counter
-		event = cevent.forger(
-			connector = "cengine",
-			connector_name = NAME,
-			event_type = "check",
-			source_type = "component",
-			component = INTERNAL_COMPONENT,
+		if event['component'] != INTERNAL_COMPONENT:
+			# Comment action (ensure the component exists in database)
+			logevent = cevent.forger(
+				connector = 'cengine',
+				connector_name = NAME,
+				event_type = 'log',
+				source_type = 'component',
+				component = INTERNAL_COMPONENT,
 
-			state = event['state'],
-			state_type = event['state_type'],
-			component_problem = event.get('component_problem', False)
-		)
+				output = 'Updating global counter'
+			)
 
-		self.amqp.publish(event, cevent.get_routingkey(event), self.amqp.exchange_name_events)
+			self.amqp.publish(logevent, cevent.get_routingkey(logevent), self.amqp.exchange_name_events)
 
-		event['source_type'] = 'resource'
+			# Update counter
+			new_event = deepcopy(event)
+			new_event['connector']      = 'cengine'
+			new_event['connector_name'] = NAME
+			new_event['event_type']     = 'check'
+			new_event['source_type']    = 'component'
+			new_event['component']      = INTERNAL_COMPONENT
 
-		for hostgroup in event.get('hostgroups', []):
-			event['resource'] = hostgroup
+			del new_event['resource']
 
-			self.amqp.publish(event, cevent.get_routingkey(event), self.amqp.exchange_name_events)
+			self.count_alert(new_event, 1)
 
+			logevent['source_type'] = 'resource'
+			new_event['source_type'] = 'resource'
+
+			for hostgroup in event.get('hostgroups', []):
+				logevent['resource'] = hostgroup
+				new_event['resource'] = hostgroup
+
+				self.count_alert(new_event, 1)
+
+				self.amqp.publish(logevent, cevent.get_routingkey(logevent), self.amqp.exchange_name_events)
 
 	def count_sla(self, event, slatype, slaname, delay, value):
 		meta_data = {'type': 'COUNTER', 'co': INTERNAL_COMPONENT }
@@ -178,9 +193,11 @@ class engine(cengine):
 		meta_data = {
 			'type': 'COUNTER',
 			'co': component,
-			're': resource,
 			'tg': tags
 		}
+
+		if resource:
+			meta_data['re'] = resource
 
 		meta_data['me'] = "cps_statechange"
 		key = self.perfdata_key(meta_data)
@@ -194,7 +211,7 @@ class engine(cengine):
 
 		self.increment_counter(key, meta_data, cvalue)
 
-		for cstate in range(3):
+		for cstate in [0, 1, 2, 3]:
 			cvalue = value if cstate == state else 0
 
 			meta_data['me'] = "cps_statechange_{0}".format(cstate)
@@ -204,7 +221,7 @@ class engine(cengine):
 
 		# Update cps_statechange_{hard,soft}
 
-		for cstate_type in range(1):
+		for cstate_type in [0, 1]:
 			cvalue = value if cstate_type == state_type else 0
 
 			meta_data['me'] = "cps_statechange_{0}".format(
@@ -216,24 +233,25 @@ class engine(cengine):
 			self.increment_counter(key, meta_data, cvalue)
 
 		# Update cps_statechange_{component,resource,resource_by_component}
+		meta_data['co'] = INTERNAL_COMPONENT
+		meta_data['re'] = None
 
-		if component == INTERNAL_COMPONENT:
-			for cevtype in ['component', 'resource', 'resource_by_component']:
-				cvalue = 0
+		for cevtype in ['component', 'resource', 'resource_by_component']:
+			cvalue = 0
 
-				if cevtype == 'component' and not resource:
-					cvalue = value
+			if cevtype == 'component' and not resource:
+				cvalue = value
 
-				elif cevtype == 'resource' and resource and not cmp_problem:
-					cvalue = value
+			elif cevtype == 'resource' and resource and not event.get('component_problem', False):
+				cvalue = value
 
-				elif cevtype == 'resource_by_component' and resource and cmp_problem:
-					cvalue = value
+			elif cevtype == 'resource_by_component' and resource and event.get('component_problem', False):
+				cvalue = value
 
-				meta_data['me'] = "cps_statechange_{0}".format(cevtype)
-				key = self.perfdata_key(meta_data)
+			meta_data['me'] = "cps_statechange_{0}".format(cevtype)
+			key = self.perfdata_key(meta_data)
 
-				self.increment_counter(key, meta_data, cvalue)
+			self.increment_counter(key, meta_data, cvalue)
 
 		# Update cps_alerts_not_ack
 
@@ -275,7 +293,6 @@ class engine(cengine):
 
 	def work(self, event, *args, **kargs):
 		validation = event['event_type'] in self.listened_event_type
-		validation = validation and event.get('state_type', 1) == 1
 		validation = validation and event['component'] != 'derogation'
 
 		if validation:
