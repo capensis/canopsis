@@ -154,18 +154,6 @@ Ext.define('widgets.timegraph.timegraph', {
 		this.callParent(arguments);
 	},
 
-	createChart: function() {
-		var me = this;
-
-		// NB: this.plotcontainer doesn't exist yet.
-		if(!!this.plotcontainer) {
-			this.plotcontainer.nextAll().remove();
-		}
-
-		/* create chart with modified plotcontainer */
-		this.callParent(arguments);
-	},
-
 	getSerieForNode: function(nodeid) {
 		var serie = this.callParent(arguments);
 		var node = serie.node;
