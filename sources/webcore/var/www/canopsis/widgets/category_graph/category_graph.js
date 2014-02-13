@@ -112,8 +112,8 @@ Ext.define('widgets.category_graph.category_graph', {
 					labelFormatter: function(label, series) {
 						result = nameInLabelFormatter? ("<b>" + label + "</b><br/>") : "";
 						result += pctInLabel? (series.data[0] + "%") : yval; // calculate pourcent
-                        return result;
-                    }
+	                        return result;
+	                    }
 				},
 				xaxis: {
 					show: (this.diagram_type === 'column' && !this.verticalDisplay)
@@ -127,8 +127,8 @@ Ext.define('widgets.category_graph.category_graph', {
 						void(xval);
 						void(flotItem);
 						result = "<b>" + label + "</b><br/>" + yval;
-                        return result;
-                    }
+	                        return result;
+	                    }
 				}
 			}
 		);
