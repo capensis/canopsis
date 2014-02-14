@@ -187,7 +187,6 @@ class manager(object):
 		assert(subset_selection_apply(Self(), {'d': ['test'], 're':'resource', 'co':'component', 'hg': 'hostgroup'}, {'metas_filter':[{'hostgroup':'hostgroup'}]}) == {'co': 'component', 'd': ['test'], 'hg': 'hostgroup', 're': 'resource'})
 		"""
 
-
 		if 'metas_filter' not in subset_selection:
 			self.logger.debug('no meta filter to apply for this dca')
 			return dca
