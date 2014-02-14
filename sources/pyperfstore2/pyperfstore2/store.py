@@ -18,7 +18,7 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-import os, sys, json, logging, time
+import os, sys, json, clogging, time
 
 from bson.errors import InvalidStringData
 from pymongo import Connection
@@ -39,11 +39,9 @@ class store(object):
 			redis_host=None,
 			redis_port=6379,
 			redis_db=0,
-			redis_sync_interval=10,
-			logging_level=logging.INFO):
+			redis_sync_interval=10):
 
-		self.logger = logging.getLogger('store')
-		self.logger.setLevel(logging_level)
+		self.logger = clogging.getLogger()
 
 		self.logger.debug(" + Init MongoDB Store")
 

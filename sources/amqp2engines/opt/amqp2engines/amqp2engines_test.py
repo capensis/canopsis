@@ -20,7 +20,7 @@
 
 
 import unittest
-import time, json, logging
+import time, json, clogging
 from bson import BSON
 
 import logging
@@ -37,8 +37,7 @@ sys.path.append(os.path.expanduser('~/opt/amqp2engines/engines/'))
 DAEMON_NAME="amqp2engines_test"
 
 init 	= cinit()
-logger 	= init.getLogger(DAEMON_NAME, level="INFO")
-#logger 	= init.getLogger(DAEMON_NAME)
+logger 	= clogging.getLogger()
 handler = init.getHandler(logger)
 
 def main():

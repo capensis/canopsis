@@ -20,7 +20,6 @@
 
 import time
 import hashlib
-# import logging
 
 from crecord import crecord
 from random import getrandbits

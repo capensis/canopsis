@@ -1,0 +1,8 @@
+{
+     "id": "topology_manager",
+     "name": "Topologies",
+     "items": {
+          "xtype": "TopologyGrid"
+     },
+     "internal": true
+}

@@ -21,6 +21,7 @@
 import sys
 from ctools import dynmodloads
 from cinit import cinit
+import clogging
 init = cinit()
 
 if len(sys.argv) != 2:
@@ -34,7 +35,7 @@ if action != "update" and action != "init":
 	sys.exit(1)
 
 ## Logger
-logger 	= init.getLogger("mongodb-conf", "INFO")
+logger 	= clogging.getLogger()
 
 ## Load
 modules = dynmodloads("~/opt/mongodb/load.d")

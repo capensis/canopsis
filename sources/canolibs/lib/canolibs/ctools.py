@@ -18,11 +18,11 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-import re, logging, socket, time, math
+import re, clogging, socket, time, math
 
 legend = ['ok','warning','critical','unknown']
 
-logger = logging.getLogger('ctools')
+logger = clogging.getLogger()
 
 internal_metrics = [
 	'cps_state',

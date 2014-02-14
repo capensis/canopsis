@@ -23,8 +23,6 @@ from cstorage import get_storage
 from caccount import caccount
 from cselector import cselector
 
-import logging
-
 NAME="selector"
 
 class engine(cengine):
@@ -60,7 +58,7 @@ class engine(cengine):
 			event_id = event['_id']
 
 			# Loads associated class
-			selector = cselector(storage=self.storage, record=selector, logging_level=self.logging_level)
+			selector = cselector(storage=self.storage, record=selector)
 
 			self.logger.debug('%s found, start processing..' % (event_id))
 			# do I publish a selector event ? Yes if selector have to and it is time or we got to update status

@@ -1,0 +1,86 @@
+{
+	"id": "_default_.dashboard",
+	"name": "Dashboard",
+	"items": [
+		{
+			"position": {
+				"width": 8,
+				"top": 2,
+				"left": 8,
+				"height": 7
+			},
+			"data": {
+				"bar_search": false,
+				"show_last_check": true,
+				"xtype": "list",
+				"pageSize": 100,
+				"title": "Resource problems",
+				"show_source_type": true,
+				"border": true,
+				"default_sort_direction": "DESC",
+				"scroll": true,
+				"filter": "{ \"$and\": [ {\"source_type\":\"resource\"}, {\"state\": { \"$ne\": 0 }}, {\"component\": {\"$ne\": \"__canopsis__\"}} ]}",
+				"default_sort_column": "state",
+				"paging": false,
+				"show_resource": true,
+				"reload": false,
+				"show_state": true,
+				"refreshInterval": 300,
+				"show_output": true,
+				"show_state_type": true,
+				"column_sort": true,
+				"hideHeaders": false,
+				"show_component": true
+			},
+			"id": "1336723949800-5"
+		},{
+			"position": {
+				"width": 8,
+				"top": 2,
+				"left": 0,
+				"height": 7
+			},
+			"data": {
+				"bar_search": false,
+				"show_last_check": true,
+				"xtype": "list",
+				"pageSize": 100,
+				"title": "Component problems",
+				"show_source_type": true,
+				"border": true,
+				"default_sort_direction": "DESC",
+				"scroll": true,
+				"filter": "{ \"$and\": [ {\"source_type\":\"component\"}, {\"state\": { \"$ne\" : 0 }}, {\"component\": {\"$ne\": \"__canopsis__\"}} ]}",
+				"default_sort_column": "state",
+				"paging": false,
+				"show_resource": false,
+				"reload": false,
+				"show_state": true,
+				"refreshInterval": 300,
+				"show_output": true,
+				"show_state_type": true,
+				"column_sort": true,
+				"hideHeaders": false,
+				"show_component": true
+			},
+			"id": "1336724023524-4"
+		},{
+			"position": {
+				"width": 4,
+				"top": 0,
+				"left": 0,
+				"height": 2
+			},
+			"data": {
+				"refreshInterval": 0,
+				"title": "",
+				"border": false,
+				"xtype": "text",
+				"text": "<img src=\"themes/canopsis/resources/images/logo_canopsis.png\" height=\"100%\">"
+			},
+			"id": "1336724801997-7"
+		}
+	],
+
+	"autorm": false
+}

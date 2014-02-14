@@ -1,0 +1,8 @@
+{
+     "id": "schedule_manager",
+     "name": "Schedules",
+     "items": {
+          "xtype": "ScheduleGrid"
+     },
+     "internal": true
+}

@@ -20,7 +20,6 @@
 
 from cengine import cengine
 import cevent
-import logging
 
 from caccount import caccount
 from cstorage import get_storage

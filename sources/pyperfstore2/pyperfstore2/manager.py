@@ -18,20 +18,21 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-import os, sys, json, logging, time
+import time
 import hashlib
+import clogging
 from datetime import datetime
 
 from pyperfstore2.store import store
 import pyperfstore2.utils as utils
 
+
 class manager(object):
-	def __init__(self, retention=0, dca_min_length = 250, logging_level=logging.INFO, cache=True, **kwargs):
-		self.logger = logging.getLogger('manager')
-		self.logger.setLevel(logging_level)
+	def __init__(self, retention=0, dca_min_length = 250, cache=True, **kwargs):
+		self.logger = clogging.getLogger()
 
 		# Store
-		self.store = store(logging_level=logging_level, **kwargs)
+		self.store = store(**kwargs)
 		
 		self.dca_min_length = dca_min_length
 		
@@ -620,15 +621,14 @@ class manager(object):
 			self.logger.info(" + Compressed DCA: %s" % len(meta.get('c', [])))
 			self.logger.info(" + Next Clean: %s" % meta.get('nc', None) )
 
-
 def split_list(alist, wanted_parts=1):
     length = len(alist)
-    return [ alist[i*length // wanted_parts: (i+1)*length // wanted_parts] 
+    return [ alist[i*length // wanted_parts: (i+1)*length // wanted_parts]
              for i in range(wanted_parts) ]
 
 def rotate_process(_ids):
-	import pyperfstore2
-	manager = pyperfstore2.manager()
+    import pyperfstore2
+    manager = pyperfstore2.manager()
 
-	for _id in _ids:
-		manager.rotate(_id=_id)
+    for _id in _ids:
+        manager.rotate(_id=_id)

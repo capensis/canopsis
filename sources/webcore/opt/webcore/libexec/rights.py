@@ -18,7 +18,7 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-import sys, os, logging, json
+import sys, os, clogging, json
 
 import bottle
 from bottle import route, get, put, delete, request, HTTPError, post
@@ -32,14 +32,14 @@ from crecord import crecord
 #import protection function
 from libexec.auth import get_account
 
-logger = logging.getLogger("rights")
+logger = clogging.getLogger()
 
 #########################################################################
 
 @put('/rights/:namespace/:crecord_id')
 def change_rights(namespace,crecord_id=None):
 	account = get_account()
-	storage = get_storage(namespace=namespace, account=account, logging_level=logging.DEBUG)
+	storage = get_storage(namespace=namespace, account=account)
 	
 	#get put data
 	aaa_owner = request.params.get('aaa_owner', default=None)

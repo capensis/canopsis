@@ -18,7 +18,7 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-import sys, os, logging, json, subprocess
+import sys, os, clogging, json, subprocess
 import gevent
 
 import bottle
@@ -45,7 +45,7 @@ import task_reporting
 from libexec.auth import get_account
 from libexec.account import check_group_rights
 
-logger = logging.getLogger('Reporting')
+logger = clogging.getLogger()
 
 #group who have right to access 
 group_managing_access = ['group.CPS_reporting_admin']
