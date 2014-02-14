@@ -90,7 +90,9 @@ Ext.define('widgets.text.text' , {
 	* The first time, input data is event.
 	* The second time, input data is event perfstore values.
 	*/
-	onRefresh: function(data, from, to) {
+	onRefresh: function(data, from, to, advancedFilters) {
+		console.log("text onRefresh");
+		console.log(advancedFilters);
 
 		if(data && this.perfdataMetricList) { // if an event is selected, add metrics property to perf_data
 
@@ -108,6 +110,8 @@ Ext.define('widgets.text.text' , {
 				var metric = value.metric;
 				metrics.push(metric);
 			});
+
+			//TODO component resource filter here ask what eric have done and what should be done on the client side
 
 			// prepare parameters for ajax request
 			var filter = {'$and': [{'co': data['component']}, {'re': data['resource']}, {'me': {'$in': metrics}}]};
@@ -271,10 +275,10 @@ Ext.define('widgets.text.text' , {
 		return var_array;
 	},
 
-	getNodeInfo: function(from, to) {
+	getNodeInfo: function(from, to, advancedFilters) {
 		if(this.nodeId && this.nodeId.length>0) {
 
-			var nodeInfoParams = this.getNodeInfoParams(from, to);
+			var nodeInfoParams = this.getNodeInfoParams(from, to, advancedFilters);
 
 			Ext.Ajax.request({
 				url: this.baseUrl + '/event' + (this.nodeId && this.nodeId.length? ('/' + this.nodeId) : ''),
@@ -291,7 +295,7 @@ Ext.define('widgets.text.text' , {
 						data = data.data[0];
 					}
 
-					this._onRefresh(data, from, to);
+					this._onRefresh(data, from, to, advancedFilters);
 				},
 				failure: function(result, request) {
 					void(result);
@@ -313,7 +317,7 @@ Ext.define('widgets.text.text' , {
 		return output;
 	},
 
-	getNodeInfoParams: function(from, to) {
+	getNodeInfoParams: function(from, to, advancedFilters) {
 		void(from);
 		void(to);
 		var result = this.callParent(arguments);
