@@ -150,7 +150,7 @@ Ext.define('widgets.timegraph.timegraph', {
 		}
 	},
 
-	insertGraphExtraComponents: function(){
+	insertGraphExtraComponents: function() {
 		this.callParent(arguments);
 	},
 
@@ -225,14 +225,14 @@ Ext.define('widgets.timegraph.timegraph', {
 		this.series[serieId].last_timestamp = value[0] * 1000;
 	},
 
-	// shiftSerie: function(serieId) {
-	// 	var now = Ext.Date.now();
-	// 	var timestamp = now - this.timeNav_window * 1000;
+	shiftSerie: function(serieId) {
+		var now = Ext.Date.now();
+		var timestamp = now - this.timeNav_window * 1000;
 
-	// 	while(this.series[serieId].data[0][0] < timestamp) {
-	// 		this.series[serieId].data.shift();
-	// 	}
-	// },
+		while(this.series[serieId].data[0][0] < timestamp) {
+			this.series[serieId].data.shift();
+		}
+	},
 
 	dblclick: function() {
 	},
