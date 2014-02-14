@@ -60,7 +60,7 @@ class CanopsisLogger(logging.Logger):
 	"""
 
 	# static namespace for global scope information
-	__SCOPE__ = '__SCOPE__'
+	__SCOPE__ = None
 
 	def __init__(self, name, level=logging.INFO):
 		"""
@@ -77,6 +77,12 @@ class CanopsisLogger(logging.Logger):
 		Change scope, i.e. file handler target.
 		"""
 
+		# update scope if necessary
+		if scope is None:
+			if CanopsisLogger.__SCOPE__ is None:
+				CanopsisLogger.__SCOPE__ = self.name
+			scope = CanopsisLogger.__SCOPE__
+
 		path = self.getLogPath(scope)
 
 		# create log file if not exists
@@ -90,14 +96,17 @@ class CanopsisLogger(logging.Logger):
 
 	def getLogPath(self, scope=None):
 		"""
-		Get log file path corresponding to its name.
+		Get log file path corresponding to the scope.
 		"""
 
-		if scope is None:
-			scope = globals().get(CanopsisLogger.__SCOPE__, self.name)
+		result = scope
 
-		filename = scope.replace('.', os.path.sep) + '.log'
-		result = os.path.join(LOG_DIRECTORY, filename)
+		if result is None:
+			result = CanopsisLogger.__SCOPE__
+
+		if result is not None:
+			filename = scope.replace('.', os.path.sep) + '.log'
+			result = os.path.join(LOG_DIRECTORY, filename)
 
 		return result
 
@@ -173,8 +182,8 @@ class CanopsisLogger(logging.Logger):
 
 		super(CanopsisLogger, self).addHandler(handler)
 
-
 logging.setLoggerClass(CanopsisLogger)
+
 
 def getLogger(name=None, scope=None):
 	"""
@@ -190,7 +199,8 @@ def getLogger(name=None, scope=None):
 
 		if name == '__main__':
 			# get filename in case of main process
-			name = f_back.f_code.co_filename
+			filename = f_back.f_code.co_filename
+			name = os.path.basename(filename)
 
 			if name.endswith('.py'):
 				name = name[:-3]
@@ -200,15 +210,15 @@ def getLogger(name=None, scope=None):
 
 	result = logging.getLogger(name)
 
-	if scope is not None:
-		result.setScope(scope)
+	result.setScope(scope)
 
 	return result
 
 # instantiate a logger
 _logger = getLogger()
 
-def getChildLogger(name=None):
+
+def getChildLogger(name=None, scope=None):
 	"""
 	Get a child logger related to previous frame.
 	"""
@@ -216,9 +226,11 @@ def getChildLogger(name=None):
 	f_back = inspect.currentframe().f_back
 	# get previous frame module name
 	parent = f_back.f_back.f_globals['__name__']
+
 	if parent == '__main__':
 		# get filename in case of main process
-		parent = f_back.f_back.f_code.co_filename
+		filename = f_back.f_back.f_code.co_filename
+		parent = os.path.basename(filename)
 
 		if parent.endswith('.py'):
 			parent = parent[:-3]
@@ -232,7 +244,7 @@ def getChildLogger(name=None):
 	else:
 		name = parent
 
-	result = logging.getLogger(name)
+	result = getLogger(name, scope)
 
 	return result
 
@@ -243,6 +255,7 @@ def getRootLogger():
 	"""
 
 	result = logging.getLogger()
+
 	return result
 
 # bind observers to both configuration files
@@ -250,12 +263,6 @@ def getRootLogger():
 # register file configuration changes into the global configuration file
 LEVEL = 'level'
 
-LEVELS = {
-	'info': logging.INFO,
-	'warning': logging.WARNING,
-	'error': logging.ERROR,
-	'debug': logging.DEBUG
-}
 
 def loadConfigurationFile(src_path):
 	"""
