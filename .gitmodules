@@ -1,3 +1,3 @@
 [submodule "sources/externals"]
 	path = sources/externals
-	url = git://github.com/capensis/canopsis-externals
+	url = https://github.com/capensis/canopsis-externals

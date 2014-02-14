@@ -17,7 +17,7 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
-import sys, os, logging, json
+import sys, os, clogging, json
 
 import bottle
 from bottle import route, get, put, delete, request, HTTPError, post, response
@@ -28,7 +28,7 @@ from libexec.auth import get_account
 #group_managing_access = ['']
 #########################################################################
 
-logger = logging.getLogger("ui_topology")
+logger = clogging.getLogger()
 
 import sys, os
 operators_path=os.path.expanduser('~/opt/amqp2engines/engines/topology')

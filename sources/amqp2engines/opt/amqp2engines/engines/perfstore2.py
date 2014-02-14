@@ -41,10 +41,9 @@ class engine(cengine):
 		super(engine, self).create_amqp_queue()
 
 	def pre_run(self):
-		import logging
-		self.manager = pyperfstore2.manager(logging_level=logging.INFO)
+		self.manager = pyperfstore2.manager()
 
-		self.internal_amqp = camqp(logging_level=logging.INFO, logging_name="%s-internal-amqp" % self.name)
+		self.internal_amqp = camqp()
 		self.internal_amqp.add_queue(
 			queue_name=INTERNAL_QUEUE,
 			routing_keys=["#"],

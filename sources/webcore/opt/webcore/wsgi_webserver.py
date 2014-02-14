@@ -18,7 +18,7 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-import os, sys, time, logging
+import os, sys, time, logging, clogging
 
 import ConfigParser
 
@@ -82,9 +82,7 @@ except Exception, err:
 logging_level=logging.INFO
 if debug:
 	logging_level=logging.DEBUG
-	
-logging.basicConfig(format=r"%(asctime)s [%(process)d] [%(name)s] [%(levelname)s] %(message)s", datefmt=r"%Y-%m-%d %H:%M:%S", level=logging_level)
-logger 	= logging.getLogger("webserver")
+logger 	= clogging.getLogger()
 	
 bottle.debug(debug)
 
