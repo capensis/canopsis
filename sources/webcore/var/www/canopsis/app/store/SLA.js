@@ -29,7 +29,7 @@ Ext.define('canopsis.store.SLA', {
 
 	sorters: [
 		{
-			property: 'criticity',
+			property: 'crit',
 			direction: 'ASC'
 		}
 	],
