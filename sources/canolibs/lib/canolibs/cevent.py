@@ -18,10 +18,10 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-import socket, time, logging
+import socket, time, clogging
 import re
 
-logger = logging.getLogger('cevent')
+logger = clogging.getLogger()
 
 # Change default timeout from 1 to 3 , conflict with gunicorn
 socket.setdefaulttimeout(3)

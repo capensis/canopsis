@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 import time
-import logging
+import clogging
 import sys
 
 from camqp import camqp
@@ -17,10 +17,7 @@ DAEMON_TYPE = "logger"
 
 AMQP_HOST = "localhost"
 
-logging.basicConfig(level=logging.DEBUG,
-                    format='%(asctime)s %(name)s %(levelname)s %(message)s',
-                    )
-logger = logging.getLogger(DAEMON_NAME)
+logger = clogging.getLogger()
 amqp = None
 
 ########################################################

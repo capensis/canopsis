@@ -19,8 +19,6 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-import logging
-
 from cengine import cengine
 import cevent
 
@@ -41,7 +39,7 @@ class engine(cengine):
 
 		account = caccount(user="root", group="root")
 
-		self.storage = get_storage(namespace='downtime', account=account, logging_level=logging.DEBUG)
+		self.storage = get_storage(namespace='downtime', account=account)
 		self.dt_backend = self.storage.get_backend('downtime')
 		self.evt_backend = self.storage.get_backend('events')
 

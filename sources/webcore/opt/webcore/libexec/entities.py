@@ -18,7 +18,7 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-import logging
+import clogging
 
 from bottle import get, post, request, HTTPError
 
@@ -31,7 +31,7 @@ from bson import json_util
 import json
 
 
-logger = logging.getLogger('Entities')
+logger = clogging.getLogger()
 
 
 def get_entities_from_db(mfilter):

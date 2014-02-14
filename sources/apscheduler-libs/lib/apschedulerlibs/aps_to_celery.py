@@ -16,7 +16,7 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
-import logging
+import clogging
 
 from cinit import cinit
 from caccount import caccount
@@ -28,12 +28,12 @@ from camqp import camqp
 import cevent
 
 init 	= cinit()
-logger = init.getLogger('aps')
+logger = clogging.getLogger()
 
 def launch_celery_task(*args,**kwargs):
 	if kwargs.has_key('task') and kwargs.has_key('method'):
 		try:
-			amqp = camqp(logging_name="aps-amqp")
+			amqp = camqp()
 			amqp.start()
 
 			timer_begin = int(time.time())

@@ -19,17 +19,13 @@
 # ---------------------------------
 
 import urllib, urllib2, cookielib, json
-import logging
+import clogging
 
-logging.basicConfig(level=logging.DEBUG,
-                    format='%(asctime)s %(name)s %(levelname)s %(message)s',
-                    )
 
 class cwebservices(object):
-	def __init__(self, host="127.0.0.1", port=8082, logging_level=logging.DEBUG):
+	def __init__(self, host="127.0.0.1", port=8082):
 
-		self.logger = logging.getLogger('cwebservice')
-		self.logger.setLevel(logging_level)
+		self.logger = clogging.getLogger()
 
 		self.logger.debug('Init urlib object ...')
 		self.base_url = 'http://' + host + ':' + str(port)

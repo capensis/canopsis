@@ -37,23 +37,7 @@ Ext.define('canopsis.lib.view.cwidgetGraph', {
 
 		this.chart = undefined;
 
-		this.on('boxready', function() {
-			this.createChart();
-
-			this.chart.initializeTimeNavigation(this);
-
-			if(this.tooltip) {
-				this.chart.initializeTooltip(this);
-			}
-
-			this.chart.initializeHiddenGraphs(this);
-			this.chart.initializeCurveStyleManager(this);
-			this.chart.initializeThresholds(this);
-			//this.chart.initializeDowntimes(this);
-			this.chart.initializeGraphStyleManager(this);
-			this.chart.initializeLegendManager(this);
-			this.chart.initializeHumanReadable(this);
-		}, this);
+		this.on('boxready', this.createChart, this);
 
 		this.on('resize', function() {
 			if(this.chart !== undefined) {
@@ -92,6 +76,24 @@ Ext.define('canopsis.lib.view.cwidgetGraph', {
 
 		/* create the main chart */
 		this.chart = $.plot(this.plotcontainer, this.getSeriesConf(), this.options);
+
+		/* initialize plugins */
+		this.chart.initializeCurveStyleManager(this);
+
+		if(this.tooltip) {
+			this.chart.initializeTooltip(this);
+		}
+
+		this.chart.initializeHiddenGraphs(this);
+		this.chart.initializeThresholds(this);
+		//this.chart.initializeDowntimes(this);
+		this.chart.initializeGraphStyleManager(this);
+		this.chart.initializeLegendManager(this);
+		this.chart.initializeHumanReadable(this);
+
+		if(this.timeNav) {
+			this.chart.initializeTimeNavigation(this);
+		}
 	},
 
 	renderChart: function() {
@@ -125,8 +127,8 @@ Ext.define('canopsis.lib.view.cwidgetGraph', {
 			data: [],
 			last_timestamp: -1,
 			xaxis: 1,
-			yaxis: node.yAxis,
-			color: node.curve_color ? node.curve_color : undefined
+			//yaxis: node.yAxis,
+			//color: node.curve_color ? node.curve_color : undefined
 		};
 
 		return serie;

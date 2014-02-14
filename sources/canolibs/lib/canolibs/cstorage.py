@@ -18,7 +18,7 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-import logging
+import clogging
 import time
 import sys
 import os
@@ -43,7 +43,7 @@ CONFIG.read(os.path.expanduser('~/etc/cstorage.conf'))
 
 
 class cstorage(object):
-	def __init__(self, account, namespace='object', logging_level=logging.ERROR, mongo_host="127.0.0.1", mongo_port=27017, mongo_db='canopsis', mongo_autoconnect=True, groups=[], mongo_safe=True):
+	def __init__(self, account, namespace='object', mongo_host="127.0.0.1", mongo_port=27017, mongo_db='canopsis', mongo_autoconnect=True, groups=[], mongo_safe=True):
 
 		try:
 			self.mongo_host = CONFIG.get("master", "host")
@@ -57,9 +57,9 @@ class cstorage(object):
 
 		try:
 			self.mongo_db = CONFIG.get("master", "db")
-		except:	
+		except:
 			self.mongo_db = mongo_db
-		
+
 		self.mongo_safe = mongo_safe
 
 		self.account = account
@@ -68,24 +68,23 @@ class cstorage(object):
 		self.namespace = namespace
 		self.backend = None
 
-		self.logger = logging.getLogger('cstorage')
-		self.logger.setLevel(logging_level)
-		
+		self.logger = clogging.getLogger("cstorage-{0}".format(namespace))
+
 		self.gridfs_namespace = "binaries"
 
 		self.logger.debug("Object initialised.")
 
 		self.backend = {}
-		
+
 		if mongo_autoconnect:
 			self.backend_connect()
-	
+
 	def clean_id(self, _id):
 		try:
 			int(_id, 16)
 			return objectid.ObjectId(_id)
 		except:
-			return _id	
+			return _id
 
 	def make_mongofilter(self, account):
 		Read_mfilter = {}
@@ -100,7 +99,7 @@ class cstorage(object):
 				{'aaa_admin_group':{'$in': account.groups}},
 				{'aaa_access_unauth': 'r'}
 			] }
-	
+
 			Write_mfilter = { '$or': [
 				{'aaa_owner': account._id, 'aaa_access_owner': 'w'},
 				{'aaa_group': account.group, 'aaa_access_group': 'w'},
@@ -120,12 +119,12 @@ class cstorage(object):
 	def backend_connect(self):
 		self.conn=Connection(self.mongo_host, self.mongo_port)
 		self.db=self.conn[self.mongo_db]
-		
+
 		try:
 			self.gridfs_namespace = CONFIG.get("master", "gridfs_namespace")
 		except:
 			pass
-		
+
 		self.fs = gridfs.GridFS(self.db, self.gridfs_namespace)
 
 		self.logger.debug("Connected.")
@@ -143,14 +142,13 @@ class cstorage(object):
 			self.backend[namespace] = self.db[namespace]
 			self.logger.debug("Connected to %s collection." % namespace)
 			return self.backend[namespace]
-			
-			
+
 	def update(self, _id, data, namespace=None, account=None):
 		if not isinstance(data, dict):
 			raise Exception('Invalid data, must be a dict ...')
 
 		data['crecord_write_time'] = int(time.time())
-		
+
 		# Check if record exist
 		count = self.count({'_id': _id}, namespace=namespace, account=account, for_write=True)
 		if count:
@@ -158,7 +156,7 @@ class cstorage(object):
 			backend.update({ '_id': self.clean_id(_id) }, { "$set": data });
 		else:
 			raise KeyError("'%s' not found ..." % _id)
-		
+
 	def put(self, _record_or_records, account=None, namespace=None, mset=False):
 		if not account:
 			account = self.account
@@ -166,12 +164,11 @@ class cstorage(object):
 		records = []
 		return_ids = []
 
-
 		if isinstance(_record_or_records, crecord):
 			records = [_record_or_records]
 		elif isinstance(_record_or_records, list):
 			records = _record_or_records
-			
+
 		backend = self.get_backend(namespace)
 
 		self.logger.debug("Put %s record(s) ..." % len(records))
@@ -180,12 +177,12 @@ class cstorage(object):
 
 			if not record.owner:
 				record.chown(account.user)
-	
+
 			if not record.group:
 				record.chgrp(account.group)
-			
+
 			access = False
-			
+
 			new_record = True
 			oldrecord = None
 			if _id:
@@ -194,42 +191,42 @@ class cstorage(object):
 					new_record = False
 				except:
 					pass
-			
+
 			if not new_record:
 				self.logger.debug("Check rights of %s" % _id)
 				if account.user == 'root':
 					access = True
 				else:
-					access = oldrecord.check_write(account)	
+					access = oldrecord.check_write(account)
 			else:
 				## New record
 				## Todo: check if account have right to create record ...
-				access = True			
-	
+				access = True
+
 			if not access:
 				self.logger.error("Puts: Access denied ...")
 				raise ValueError("Access denied")
-	
+
 			if new_record:
 				## Insert new record
 				self.logger.debug("Insert new record")
-				
+
 				try:
 					## Check if record have binary and store in grid fs
 					if record.binary:
 						record.data['binary_id'] = self.put_binary(record.binary, record.data['file_name'], record.data['content_type'])
-							
+
 					record.write_time = int(time.time())
 					data = record.dump()
 					data['crecord_creation_time'] = record.write_time
-					
+
 					## Del it if 'None'
 					if not data['_id']:
 						del data['_id']
 
 					_id = backend.insert(data, safe=self.mongo_safe)
 					self.logger.debug("Successfully inserted (_id: '%s')" % _id)
-					
+
 				except Exception, err:
 					self.logger.error("Impossible to store !\nReason: %s" % err)
 					self.logger.debug("Record dump:\n%s" % record.dump())
@@ -240,18 +237,18 @@ class cstorage(object):
 			else:
 				## Update record
 				self.logger.debug("Update record '%s'" % _id)
-				
+
 				try:
 					## Check if record have binary and store in grid fs
 					if record.binary:
 						record.data['binary_id'] = self.put_binary(record.binary, record.data['file_name'], record.data['content_type'])
-					
+
 					record.write_time = int(time.time())
 					data = record.dump()
-					
+
 					del data['_id']
 					_id = self.clean_id(_id)
-					
+
 					if mset:
 						ret = backend.update({'_id': _id}, {"$set": data}, upsert=True, safe=self.mongo_safe)
 					else:
@@ -271,8 +268,6 @@ class cstorage(object):
 				record._id = _id
 				return_ids.append(_id)
 
-			
-
 		if len(return_ids) == 1:
 			return return_ids[0]
 		else:
@@ -281,17 +276,16 @@ class cstorage(object):
 	#warning : not tested
 	def recursive_put(self, record,depth=0, account=None, namespace=None):
 		depth += 1
-		
+
 		children_ids = []
-		
+
 		for child in record.children:
 			self.recursive_put(child,depth,account=account,namespace=namespace)
 			children_ids.append(child._id)
-			
+
 		record.children = children_ids
 		self.put(record,account=None, namespace=None)
-	'''	
-		
+	'''
 
 	def find_one(self, *args, **kargs):
 		return self.find(one=True, *args, **kargs)
@@ -302,7 +296,7 @@ class cstorage(object):
 	def find(self, mfilter={}, mfields=None, account=None, namespace=None, one=False, count=False, sort=None, limit=0, offset=0, for_write=False, ignore_bin=True, raw=False, with_total=False):
 		if not account:
 			account = self.account
-			
+
 		# Clean Id
 		if mfilter.get('_id', None):
 			mfilter['_id'] = self.clean_id(mfilter['_id'])
@@ -311,7 +305,7 @@ class cstorage(object):
 			sort = [('timestamp', -1)]
 
 		self.logger.debug("Find records from mfilter" )
-		
+
 		(Read_mfilter, Write_mfilter) = self.make_mongofilter(account)
 
 		if for_write:
@@ -365,12 +359,12 @@ class cstorage(object):
 					# Remove binary (base64)
 					if ignore_bin and raw_record.get('media_bin', None):
 						del raw_record['media_bin']
-					
+
 					if not raw:
 						records.append(crecord(raw_record=raw_record))
 					else:
 						records.append(raw_record)
-						
+
 				except Exception, err:
 					## Not record format ..
 					self.logger.error("Impossible parse record ('%s') !" % err)
@@ -399,30 +393,30 @@ class cstorage(object):
 			_ids = _id_or_ids
 			dolist = True
 		else:
-			_ids = [ _id_or_ids ]
+			_ids = [_id_or_ids]
 
 		backend = self.get_backend(namespace)
-		
+
 		self.logger.debug(" + Get record(s) '%s'" % _ids)
 		if not len(_ids):
 			self.logger.debug("   + No ids")
 			return []
-		
+
 		self.logger.debug("   + fields : %s" % mfields)
-		
+
 		self.logger.debug("   + Clean ids")
 		_ids = [self.clean_id(_id) for _id in _ids]
 
 		#Build basic filter
 		(Read_mfilter, Write_mfilter) = self.make_mongofilter(account)
-		
+
 		if len(_ids) == 1:
 			mfilter = {'_id': _ids[0]}
 		else:
 			mfilter = {'_id': {'$in': _ids }}
-		
+
 		mfilter = { '$and': [ mfilter, Read_mfilter ] }
-		
+
 		#self.logger.debug("   + mfilter: %s" % mfilter)
 		records = []
 		try:
@@ -432,14 +426,14 @@ class cstorage(object):
 				# Remove binary (base64)
 				if ignore_bin and raw_record and raw_record.get('media_bin', None):
 					del raw_record['media_bin']
-					
+
 				if raw_record and mfields:
 					records.append(raw_record)
 				elif raw_record:
 					records.append(crecord(raw_record=raw_record))
 			else:
 				raw_records = backend.find(mfilter, fields=mfields, safe=self.mongo_safe)
-				
+
 				if mfields:
 					records = [raw_record for raw_record in raw_records]
 				else:
@@ -447,16 +441,16 @@ class cstorage(object):
 						# Remove binary (base64)
 						if ignore_bin and raw_record.get('media_bin', None):
 							del raw_record['media_bin']
-							
+
 						records.append(crecord(raw_record=raw_record))
-				
+
 		except Exception, err:
 			self.logger.error("Impossible get record '%s' !\nReason: %s" % (_ids, err))
 
 		self.logger.debug(" + Found %s records" % len(records))
 		if not len(records):
 			raise KeyError("'%s' not found ..." % _ids)
-		
+
 		if len(_ids) == 1 and not dolist:
 			return records[0]
 		else:
@@ -481,11 +475,11 @@ class cstorage(object):
 			_ids = [ _id_or_ids ]
 
 		backend = self.get_backend(namespace)
-	
+
 		self.logger.debug("Remove %s record(s) ..." % len(_ids))
 		for _id in _ids:
 			self.logger.debug(" + Remove record '%s'" % _id)
-			
+
 			oid = self.clean_id(_id)
 			if account.user == 'root':
 				access = True
@@ -494,17 +488,17 @@ class cstorage(object):
 					oldrecord = self.get(oid, account=account)
 				except Exception, err:
 					raise ValueError("Access denied or id not found")
-					
-				access = oldrecord.check_write(account)			
-	
+
+				access = oldrecord.check_write(account)
+
 			if access:
 				try:
 					backend.remove({'_id': oid}, safe=self.mongo_safe)
 				except Exception, err:
 					self.logger.error("Impossible remove record '%s' !\nReason: %s" % (_id, err))
-					
+
 				self.logger.debug(" + Success removed")
-			else:				
+			else:
 				self.logger.error("Remove: Access denied ...")
 				raise ValueError("Access denied ...")
 
@@ -523,7 +517,7 @@ class cstorage(object):
 				raise ValueError("Invalid filter")
 
 		backend = self.get_backend(namespace)
-		
+
 		(Read_mfilter, Write_mfilter) = self.make_mongofilter(account)
 		#mfilter = dict(mfilter.items() + Read_mfilter.items())
 		if Read_mfilter != {}:
@@ -538,7 +532,6 @@ class cstorage(object):
 			self.logger.debug("Nor record matching filter")
 
 		return output
-						
 
 	def drop_namespace(self, namespace):
 		self.db.drop_collection(namespace)
@@ -546,7 +539,7 @@ class cstorage(object):
 	def get_namespace_size(self, namespace=None):
 		if not namespace:
 			namespace = self.namespace
-		
+
 		try:
 			return self.db.command("collstats", namespace)['size']
 		except:
@@ -568,24 +561,23 @@ class cstorage(object):
 				record.children.append(rec)
 			except Exception, err:
 				self.logger.debug(err)
-	
-	
-	'''		
+
+	'''
 	def recursive_dump(self, record, depth=0,account=None, namespace=None):
 		depth += 1
 		childs = record.children
 		if len(childs) == 0:
 			return
-			
+
 		jsonRecord = record.dump(json=True)
 		jsonRecord['children'] = []
-		
+
 		for child in childs:
 			rec = self.get(child,account=account,namespace=namespace)
 			self.set_record_tree(rec, depth,account=account,namespace=namespace)
 			#record.children_record.append(rec)
 			jsonRecord['children'].append(rec.dump(json=True))
-			
+
 		return jsonRecord
 	'''
 
@@ -599,7 +591,6 @@ class cstorage(object):
 			records.append(self.get(str(_id),account=account, namespace=namespace))
 
 		return records
-				
 
 	def print_record_tree(self, record, depth=0):
 		depth+=1
@@ -620,23 +611,22 @@ class cstorage(object):
 			for i in range(depth):
 				prefix += "--"
 			print prefix + "> " + str(child.name)
-	
-			self.print_record_tree(child, depth)
 
+			self.print_record_tree(child, depth)
 
 	def get_childs_of_parent(self, record_or_id, rtype=None, account=None):
 
 		if isinstance(record_or_id, crecord):
 			_id = record_or_id._id
 		else:
-			_id = record_or_id		
+			_id = record_or_id
 
 		mfilter = {'parent': _id}
 
 		if rtype:
 			mfilter['crecord_type'] = rtype
-		
-		return self.find(mfilter, account=account)		
+
+		return self.find(mfilter, account=account)
 
 	def get_parents_of_child(self, record_or_id, rtype=None, account=None):
 
@@ -651,7 +641,7 @@ class cstorage(object):
 			mfilter['crecord_type'] = rtype
 
 		return self.find(mfilter, account=account)
-	'''		
+	'''
 	def add_children(self, parent_record, child_record, autosave=True):
 		_id = child_record._id
 
@@ -670,7 +660,7 @@ class cstorage(object):
 			if autosave:
 				parent_record.save()
 				child_record.save()
-				
+
 	def remove_children(self, parent_record, child_record, autosave=True):
 		_id = child_record._id
 
@@ -689,7 +679,7 @@ class cstorage(object):
 			if autosave:
 				parent_record.save()
 				child_record.save()
-	'''			
+	'''
 	def is_parent(self, parent_record, child_record):
 		if str(child_record._id) in parent_record.children:
 			return True
@@ -701,7 +691,7 @@ class cstorage(object):
 		return bin_id
 
 	def get_binary(self, _id):
-		cursor = self.fs.get(_id)			
+		cursor = self.fs.get(_id)
 		return cursor.read()
 
 	def remove_binary(self, _id):
@@ -709,10 +699,10 @@ class cstorage(object):
 			self.fs.delete(_id)
 		except Exception, err:
 			self.logger.error('Error when remove binarie', err)
-	
+
 	def check_binary(self, _id):
 		return self.fs.exists(_id)
-	
+
 	def __del__(self):
 		self.logger.debug("Object deleted. (namespace: %s)" % self.namespace)
 
@@ -721,19 +711,18 @@ class cstorage(object):
 #        return_one = False
 #        if isinstance(docs, dict):
 #            return_one = True
-#            docs = [docs]	
+#            docs = [docs]
 ##################
 
 ## Cache storage
 STORAGES = {}
-def get_storage(namespace='object', account=None, logging_level=logging.INFO):
+def get_storage(namespace='object', account=None):
 	global STORAGES
 	try:
 		return STORAGES[namespace]
 	except:
 		if not account:
 			account = caccount()
-		
-		STORAGES[namespace] = cstorage(account, namespace=namespace, logging_level=logging_level)
-		return STORAGES[namespace]
 
+		STORAGES[namespace] = cstorage(account, namespace=namespace)
+		return STORAGES[namespace]

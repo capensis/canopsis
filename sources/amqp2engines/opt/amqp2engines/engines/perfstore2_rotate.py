@@ -23,7 +23,6 @@ from cstorage import get_storage
 from caccount import caccount
 
 import pyperfstore2
-import logging
 import time
 
 NAME="perfstore2_rotate"
@@ -43,7 +42,7 @@ class engine(cengine):
 		self.last_build = time.time()
 		
 	def pre_run(self):
-		self.manager = pyperfstore2.manager(logging_level=logging.INFO)
+		self.manager = pyperfstore2.manager()
 		self.redis = self.manager.store.redis
 
 		if not self.redis.exists(self.kplan):
@@ -80,7 +79,7 @@ class engine(cengine):
 		self.logger.info(" + Add %s keys", len(to_add))
 		for key in to_add:
 			rp.zadd(self.kplan, 0, key)
-	
+
 		rp.execute()
 
 		self.logger.info(" + Remove %s keys", len(to_rem))
