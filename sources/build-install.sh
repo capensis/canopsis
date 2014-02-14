@@ -9,7 +9,11 @@ fi
 mongo_status=$(su - canopsis -c "service mongodb status" | grep Running | wc -l)
 
 if [ "$mongo_status" = "1" ]
+<<<<<<< HEAD
 then
+=======
+	then
+>>>>>>> bugfixes
     su - canopsis -c "service mongodb stop"
 fi
 
