@@ -19,7 +19,6 @@
 # ---------------------------------
 from celery.task import task
 from celery.task.sets import subtask
-from cinit import cinit
 from caccount import caccount
 from crecord import crecord
 from cstorage import cstorage
@@ -36,8 +35,9 @@ import hashlib
 import task_mail
 from wkhtmltopdf.wrapper import Wrapper 
 
-init 	= cinit()
-logger 	= init.getLogger('Reporting Task') 
+import clogging
+
+logger = clogging.getLogger('Reporting Task')
 
 @task
 @decorators.log_task
