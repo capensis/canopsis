@@ -242,6 +242,16 @@
 							"name": "labels"
 						},{
 							"xtype": "checkbox",
+							"fieldLabel": "Add component for metric labels",
+							"checked": false,
+							"name": "component_in_label"
+						},{
+							"xtype": "checkbox",
+							"fieldLabel": "Add resource for metric labels",
+							"checked": false,
+							"name": "resource_in_label"
+						},{
+							"xtype": "checkbox",
 							"fieldLabel": "Display metric name in label",
 							"checked": false,
 							"name": "nameInLabelFormatter"

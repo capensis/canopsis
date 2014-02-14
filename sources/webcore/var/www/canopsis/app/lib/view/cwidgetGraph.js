@@ -162,9 +162,18 @@ Ext.define('canopsis.lib.view.cwidgetGraph', {
 
 				/* create the serie if it doesn't exist */
 				if(!(serieId in this.series) || this.series[serieId] === undefined) {
-					// log.debug('Create serie: ' + serieId);
-
 					this.series[serieId] = this.getSerieForNode(info.node);
+
+					//Show component/resource in labels ?
+					var serie = this.series[serieId];
+					var types = ['resource', 'component'];
+					for (type in types) {
+						if (serie.node[types[type]] && this[types[type] + '_in_label']) {
+							serie.label = serie.node[types[type]] + ' ' + serie.label;
+						}
+					}
+
+
 				}
 
 				/* add data to the serie */
