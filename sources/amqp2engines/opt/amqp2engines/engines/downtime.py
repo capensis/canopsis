@@ -25,9 +25,9 @@ import cevent
 from caccount import caccount
 from cstorage import get_storage
 from crecord import crecord
+from cdowntime import Cdowntime
 import cmfilter
 import time
-
 import acknowledgement as engine_ack
 
 NAME="downtime"
@@ -36,22 +36,31 @@ NAME="downtime"
 class engine(cengine):
 	def __init__(self, name=NAME, *args, **kwargs):
 		cengine.__init__(self, name=name, *args, **kwargs)
-
+		self.logger.setLevel('DEBUG')
 		account = caccount(user="root", group="root")
 
 		self.storage = get_storage(namespace='downtime', account=account)
 		self.dt_backend = self.storage.get_backend('downtime')
 		self.evt_backend = self.storage.get_backend('events')
+		self.cdowntime = Cdowntime(self.storage)
+		self.beat()
 
 	def beat(self):
-		self.logger.debug('Removing expired downtime entries')
 
-		now = time.time()
+		self.logger.debug('Refresh downtimes list')
+		#refresh downtimes
+		self.cdowntime.reload(delta_beat=self.beat_interval)
+
+
+	def consume_dispatcher(self,  event, *args, **kargs):
+		""" Event is useless as downtime just does clean, this dispatch only prevent ha multi execution at the same time """
+
+		self.logger.debug('consume_dispatcher method called. Removing expired downtime entries')
 
 		# Remove downtime that are expired
 		records = self.storage.find({
 			'_expire': {
-				'$lt': now
+				'$lt': time.time()
 			}
 		})
 
@@ -87,7 +96,6 @@ class engine(cengine):
 		)
 
 	def work(self, event, *args, **kwargs):
-		now = time.time()
 
 		# If the event is a downtime event, add entry to the downtime collection
 		if event['event_type'] == 'downtime':
@@ -161,20 +169,7 @@ class engine(cengine):
 
 			event['downtime'] = False
 
-			records = self.storage.find({
-				'connector': event['connector'],
-				'source': event['connector_name'],
-				'component': event['component'],
-				'resource': event.get('resource', None)
-			})
-
-			for record in records:
-				downtime_info = record.dump()
-
-				# If the downtime is active
-				if (downtime_info['start'] <= now <= downtime_info['end']):
-					# Set the event as 'in downtime'
-					event['downtime'] = True
-					break
+			if self.cdowntime.is_downtime(event.get('component', ''), event.get('resource', '')):
+				event['downtime'] = True
 
 		return event
