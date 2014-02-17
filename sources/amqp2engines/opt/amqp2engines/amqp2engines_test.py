@@ -40,6 +40,8 @@ init 	= cinit()
 logger 	= init.getLogger()
 handler = init.getHandler(logger)
 
+print logger.__SCOPE__, logger.handler.level
+
 def main():
 	global ready
 		
@@ -63,7 +65,7 @@ def main():
 		sys.exit(1)
 	
 	try: 
-		engine = module.engine(logging_level=logging.DEBUG)	
+		engine = module.engine()	
 	except Exception, e:
 		logger.error('Constructor exception raised for engine %s : %s' % (engine_name, e))
 		print traceback.format_exc()

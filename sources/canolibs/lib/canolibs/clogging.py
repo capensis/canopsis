@@ -81,6 +81,7 @@ class CanopsisLogger(logging.Logger):
 		if scope is None:
 			if CanopsisLogger.__SCOPE__ is None:
 				CanopsisLogger.__SCOPE__ = self.name
+
 			scope = CanopsisLogger.__SCOPE__
 
 		path = self.getLogPath(scope)
@@ -92,6 +93,7 @@ class CanopsisLogger(logging.Logger):
 				os.makedirs(directory)
 
 		self.handler = logging.FileHandler(path, 'a')
+		self.handler.setLevel(self.level)
 		self.addHandler()
 
 	def getLogPath(self, scope=None):
@@ -208,7 +210,7 @@ def getLogger(name=None, scope=None):
 			elif name.endswith('.pyc'):
 				name = name[:-4]
 
-	result = logging.getLogger(name)
+	result = logging.getLogger(name=name)
 
 	result.setScope(scope)
 
@@ -216,6 +218,8 @@ def getLogger(name=None, scope=None):
 
 # instantiate a logger
 _logger = getLogger()
+# Cancel default clogging scope
+CanopsisLogger.__SCOPE__ = None
 
 
 def getChildLogger(name=None, scope=None):
@@ -223,13 +227,13 @@ def getChildLogger(name=None, scope=None):
 	Get a child logger related to previous frame.
 	"""
 
-	f_back = inspect.currentframe().f_back
+	f_back = inspect.currentframe().f_back.f_back
 	# get previous frame module name
-	parent = f_back.f_back.f_globals['__name__']
+	parent = f_back.f_globals['__name__']
 
 	if parent == '__main__':
 		# get filename in case of main process
-		filename = f_back.f_back.f_code.co_filename
+		filename = f_back.f_code.co_filename
 		parent = os.path.basename(filename)
 
 		if parent.endswith('.py'):
@@ -240,11 +244,10 @@ def getChildLogger(name=None, scope=None):
 
 	if name is not None:
 		name = "{0}.{1}".format(parent, name)
-
 	else:
 		name = parent
 
-	result = getLogger(name, scope)
+	result = getLogger(name=name, scope=scope)
 
 	return result
 
