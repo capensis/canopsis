@@ -42,7 +42,7 @@ timestamps_file=os.path.expanduser('~/var/lib/ics2amqp/ics2amqp.timestamps')
 
 
 init 	= cinit()
-logger 	= init.getLogger(DAEMON_NAME)
+logger 	= init.getLogger()
 handler = init.getHandler(logger)
 
 sleep_time = 1

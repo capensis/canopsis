@@ -11,11 +11,10 @@ import string
 import threading
 
 from cinit import cinit
-import clogging
 
 # Logger
 init 	= cinit()
-logger 	= clogging.getLogger('apsd')
+logger 	= init.getLogger()
 handler = init.getHandler(logger)
 
 # Init

@@ -23,7 +23,7 @@ from ConfigParser import RawConfigParser, ConfigParser, ParsingError
 import importlib
 
 import unittest
-import time, json, clogging
+import time, json
 
 from cinit import cinit
 
@@ -35,7 +35,7 @@ sys.path.append(os.path.expanduser('~/opt/amqp2engines/engines/'))
 DAEMON_NAME="amqp2engines"
 
 init 	= cinit()
-logger 	= clogging.getLogger()
+logger 	= init.getLogger()
 handler = init.getHandler(logger)
 
 engines=[]

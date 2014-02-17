@@ -24,14 +24,13 @@ from pyparsing import Word, alphas, Suppress, Combine, nums, string, Optional, R
 from camqp import camqp
 
 from cinit import cinit
-import clogging
 
 import cevent
 
 DAEMON_NAME='gelf2amqp'
 
 init 	= cinit()
-logger 	= clogging.getLogger(DAEMON_NAME)
+logger 	= init.getLogger(DAEMON_NAME)
 handler = init.getHandler(logger)
 
 gelf_port = 5555
