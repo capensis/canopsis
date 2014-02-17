@@ -333,12 +333,15 @@ class cstorage(object):
 			else:
 				raw_records = []
 		else:
-			raw_records = backend.find(mfilter, fields=mfields, safe=self.mongo_safe)
-
-			# process limit, offset and sort independently of pymongo because sort does not use index
+			if sort is None:
+				raw_records = backend.find(mfilter, fields=mfields, safe=self.mongo_safe, start=offset, limit=limit)
+				total = raw_records.count()
+			else:
+				raw_records = backend.find(mfilter, fields=mfields, safe=self.mongo_safe)
 
 			total = raw_records.count()
 
+			# process limit, offset and sort independently of pymongo because sort does not use index
 			if count:
 				return total
 
@@ -350,13 +353,13 @@ class cstorage(object):
 					desc = s[1] == -1
 					raw_records = sorted(raw_records, key=itemgetter(key), reverse=desc)
 
-			# and get a sub list of raw_records
-			if limit != 0 and offset != 0:
-				raw_records = raw_records[offset: offset + limit]
-			elif limit != 0:
-				raw_records = raw_records[:limit]
-			elif offset != 0:
-				raw_records = raw_records[offset:]
+				# and get a sub list of raw_records
+				if limit != 0 and offset != 0:
+					raw_records = raw_records[offset: offset + limit]
+				elif limit != 0:
+					raw_records = raw_records[:limit]
+				elif offset != 0:
+					raw_records = raw_records[offset:]
 
 		records=[]
 		if not mfields:
