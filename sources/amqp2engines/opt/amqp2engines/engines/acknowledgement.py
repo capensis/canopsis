@@ -40,7 +40,21 @@ class engine(cengine):
 		self.stbackend = self.storage.get_backend('ack')
 
 		self.acknowledge_on = acknowledge_on
-		
+
+	def pre_run(self):
+		self.beat()
+
+	def beat():
+		query = self.stbackend.find({
+			'solved': False,
+			'ackts': {'$gt': -1}
+		}, {'rk': 1})
+
+		# dictionary is faster than list for key test existance, value is useless
+		self.cache_acks = {}
+		for ack in query:
+			self.cache_acks[ack['rk']] = 1
+
 	def work(self, event, *args, **kargs):
 		logevent = None
 
@@ -136,54 +150,55 @@ class engine(cengine):
 
 
 		# If event is acknowledged, and went back to normal, remove the ack
+		# This test concerns most of case and could not perform query for each event
 		elif event['state'] == 0 and event.get('state_type', 1) == 1:
 			solvedts = int(time.time())
 
-			response = self.stbackend.find_and_modify(
-				query = {
+			if self.cache_acks[event['rk']]:
+				# we have an ack to process for this event
+				ack = self.stbackend.find_one({
 					'rk': event['rk'],
 					'solved': False,
 					'ackts': {'$gt': -1}
-				},
-				update = {'$set': {
-					'solved': True,
-					'solvedts': solvedts
-				}},
-				full_response = True,
-				new = True
-			)
+				})
 
-			if response and response['value']:
-				record = response['value']
+				if ack:
 
-				logevent = cevent.forger(
-					connector = "cengine",
-					connector_name = NAME,
-					event_type = "log",
-					source_type = event['source_type'],
-					component = event['component'],
-					resource = event.get('resource', None),
-
-					state = 0,
-					state_type = 1,
-
-					ref_rk = event['rk'],
-					output = u'Acknowledgement removed for event {0}'.format(event['rk']),
-					long_output = u'Everything went back to normal',
-
-					perf_data_array = [
-						{
-							'metric': 'ack_solved_delay',
-							'value': solvedts - record['ackts'],
-							'unit': 's'
+					self.stbackend.update({
+						'$set': {
+							'solved': True,
+							'solvedts': solvedts
 						}
-					]
-				)
+					})
 
-				logevent['acknowledged_connector'] = event['connector']
-				logevent['acknowledged_source'] = event['connector_name']
-				logevent['acknowledged_at'] = record['ackts']
-				logevent['solved_at'] = solvedts
+					logevent = cevent.forger(
+						connector = "cengine",
+						connector_name = NAME,
+						event_type = "log",
+						source_type = event['source_type'],
+						component = event['component'],
+						resource = event.get('resource', None),
+
+						state = 0,
+						state_type = 1,
+
+						ref_rk = event['rk'],
+						output = u'Acknowledgement removed for event {0}'.format(event['rk']),
+						long_output = u'Everything went back to normal',
+
+						perf_data_array = [
+							{
+								'metric': 'ack_solved_delay',
+								'value': solvedts - ack['ackts'],
+								'unit': 's'
+							}
+						]
+					)
+
+					logevent['acknowledged_connector'] = event['connector']
+					logevent['acknowledged_source'] = event['connector_name']
+					logevent['acknowledged_at'] = record['ackts']
+					logevent['solved_at'] = solvedts
 
 		# If the event is in problem state, update the solved state of acknowledgement
 		elif event['state'] != 0 and event.get('state_type', 1) == 1:
