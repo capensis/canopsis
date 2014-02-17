@@ -61,6 +61,7 @@ Ext.define('canopsis.lib.view.cwidgetGraph', {
 			this.options = {};
 		}
 
+		this.options.cwidgetId = this.id;
 		this.options.cwidget = function() {
 			return this;
 		}.bind(this);
