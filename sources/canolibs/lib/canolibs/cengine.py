@@ -27,7 +27,6 @@ from cinit import cinit
 import traceback
 import cevent
 from caccount import caccount
-import clogging
 
 import itertools
 
