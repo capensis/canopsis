@@ -2,7 +2,7 @@
      "id": "sla",
      "name": "sla",
      "items": {
-          "xtype": "SLAView"
+          "xtype": "SLAGrid"
      },
      "internal": true
 }
