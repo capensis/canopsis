@@ -79,6 +79,10 @@ Ext.define('canopsis.view.Selector.Form', {
 										fieldLabel: _('Description'),
 										xtype: 'textareafield',
 										name: 'description'
+									},{
+										fieldLabel: _('Take downtimes as Ok status.'),
+										xtype: 'checkboxfield',
+										name: 'downtimes_as_ok'
 									}
 								]
 							},{

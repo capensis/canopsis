@@ -63,26 +63,109 @@ Ext.define('widgets.eventcalendar.calendar_ajax_handler' , {
 			return null;
 	},
 
-	getStackedEvents: function(start, end, callback)
+	getEvents: function(start, end, callback)
 	{
 		var calendarRoot = this.calendar;
 		var ajaxHandler = this;
 
 		var result = [];
 
-		var url = this.computeStackedUrl(start, end);
-		if(url === null)
-		{
-			sendEventsToFullCalendar = function(calEvents){
-				result = result.concat(calEvents);
-				callback(result);
-			}
+		var stackedUrl = this.computeStackedUrl(start, end);
+		var icsUrls = this.computeIcsUrl(start, end);
 
-			ajaxHandler.getCalendarEvents(start, end, sendEventsToFullCalendar);
-		}
-		else
+		var promises = [];
+
+		if(stackedUrl !== undefined && stackedUrl !== null)
 		{
-			function groupBy(array, field){
+			var ajaxRequest = $.ajax({
+				url: stackedUrl,
+				dataType: 'json',
+			});
+
+			ajaxRequest.eventsType = "stacked";
+			promises.push(ajaxRequest);
+		}
+
+		for (var i = icsUrls.length - 1; i >= 0; i--) {
+			var ajaxRequest = $.ajax({
+				url: icsUrls[i],
+				dataType: 'json',
+			});
+
+			ajaxRequest.eventsType = "calendar";
+
+			promises.push(ajaxRequest);
+		}
+
+		if(this.calendar.downtimes !== undefined && this.calendar.downtimes !== []) {
+			var ajaxRequest = $.ajax({
+				url: "/rest/events",
+				dataType: 'json',
+				data: this.getDowntimesParams()
+			});
+
+			ajaxRequest.eventsType = "downtimes";
+			promises.push(ajaxRequest);
+		}
+
+		$.when.apply($, promises).then(function(schemas) {
+			var result = []
+
+			for (var i = arguments.length - 1; i >= 0; i--) {
+				var request = arguments[i];
+
+				if(request !== undefined)
+				{
+					var data = request[0].data;
+
+					events = ajaxHandler.format_events(data, request[2].eventsType);
+					result = result.concat(events);
+				}
+				else
+				{
+					console.warning("request undefined");
+				}
+			};
+
+			callback(result);
+		});
+
+	},
+
+	format_events: function(events, eventsType) {
+		calEvents = [];
+
+		if(eventsType === "calendar")
+		{
+			for(key in events)
+			{
+				var event = events[key];
+
+				var startDate = new Date(event.start * 1000);
+				var endDate = new Date(event.end * 1000);
+
+				var newEvent = {};
+				newEvent.start = startDate;
+				newEvent.end = endDate;
+				newEvent.title = event.output;
+				newEvent.type = event.event_type;
+				newEvent.component = event.component;
+				newEvent.id = event.resource;
+				newEvent.rrule = event.rrule;
+
+				if(event.all_day && event.all_day === true)
+					newEvent.allDay = true;
+				else
+					newEvent.allDay = false;
+
+				calEvents.push(newEvent);
+			}
+			return calEvents;
+		}
+
+		if(eventsType === "stacked")
+		{
+			function groupBy(array, field) {
 				var associativeArray = {};
 				for (var i = 0; i < array.length; i++) {
 					var item = array[i];
@@ -103,96 +186,77 @@ Ext.define('widgets.eventcalendar.calendar_ajax_handler' , {
 				return associativeArray;
 			};
 
-			$.ajax({
-				url: url,
-				dataType: 'json',
-				success: function(request_result) {
-					var events = request_result["data"] || [];
+			for (var i = 0; i < events.length; i++) {
+				var d = new Date(events[i].timestamp * 1000);
+				d.setHours(0);
+				d.setMinutes(0);
+				d.setSeconds(0);
+				events[i].day =  d / 1000;
+			};
 
-					for (var i = 0; i < events.length; i++) {
-						var d = new Date(events[i].timestamp * 1000);
-						d.setHours(0);
-						d.setMinutes(0);
-						d.setSeconds(0);
-						events[i].day =  d / 1000;
-					};
+			events = groupBy(events, "day");
 
-					events = groupBy(events, "day");
+			for(day in events)
+			{
+				var newEvent = {};
+				newEvent.start = day;
 
-					for(day in events)
-					{
-						var newEvent = {};
-						newEvent.start = day;
-
-						var evCount = events[day].count;
-						var evCountText = evCount === 1 ? " event" : " events";
-						newEvent.title = events[day].count.toString() + evCountText;
-						newEvent.type = "non-calendar";
-						newEvent.editable = false;
-						result.push(newEvent);
-					}
-
-					sendEventsToFullCalendar = function(calEvents){
-						result = result.concat(calEvents);
-						callback(result);
-					}
-
-					ajaxHandler.getCalendarEvents(start,end, sendEventsToFullCalendar);
-				}
-			});
-		}
-	},
-
-	getCalendarEvents: function(start, end, callback, currentSource, calEventsStack)
-	{
-		var calendarRoot = this.calendar;
-		var ajaxHandler = this;
-
-		var urls = this.computeIcsUrl(start, end);
-
-		//this happens when recursion begins
-		if(currentSource === undefined)
-			currentSource = 0;
-		if(calEventsStack === undefined)
-			calEventsStack = [];
-
-		if(urls[currentSource] === undefined) {
-			callback(calEventsStack);
-		} else {
-			var url = urls[currentSource];
-
-			$.ajax({
-			url: url,
-			dataType: 'json',
-			success: function(request_result) {
-				var events = request_result["data"] || [];
-				var result = [];
-
-				for (var i = 0; i < events.length; i++) {
-					var startDate = new Date(events[i].start * 1000);
-					var endDate = new Date(events[i].end * 1000);
-
-					var newEvent = {};
-					newEvent.start = startDate;
-					newEvent.end = endDate;
-					newEvent.title = events[i].output;
-					newEvent.type = events[i].event_type;
-					newEvent.component = events[i].component;
-					newEvent.id = events[i].resource;
-					newEvent.rrule = events[i].rrule;
-
-					if(events[i].all_day && events[i].all_day === true)
-						newEvent.allDay = true;
-					else
-						newEvent.allDay = false;
-
-					result.push(newEvent);
-				}
-
-				calEventsStack = calEventsStack.concat(result);
-				ajaxHandler.getCalendarEvents(start, end, callback, currentSource + 1, calEventsStack);
+				var evCount = events[day].count;
+				var evCountText = evCount === 1 ? " event" : " events";
+				newEvent.title = events[day].count.toString() + evCountText;
+				newEvent.editable = false;
+				newEvent.type = "stacked";
+				calEvents.push(newEvent);
 			}
-		});
-		};
+
+			return calEvents;
+		}
+
+		if(eventsType === "downtimes")
+		{
+			var result = [];
+
+			for(key in events)
+			{
+				var event = events[key];
+				var newEvent = {};
+				newEvent.title = event.output;
+				newEvent.start = event.start;
+				newEvent.end = event.end;
+				newEvent.allDay = false;
+				newEvent.editable = false;
+				newEvent.type = "downtime";
+
+				result.push(newEvent);
+			}
+			return result;
+		}
+
+		return events;
 	},
+
+	getDowntimesParams: function() {
+		var filter = {};
+		filter["$or"] = [];
+
+		// for (var i = cwidgetObject.nodes.length - 1; i >= 0; i--) {
+		for(key in this.calendar.downtimes) {
+			var downtime = this.calendar.downtimes[key];
+			var currentFilterPart = { "$and" : [
+						{component : downtime.component},
+						{resource  : downtime.resource},
+						{event_type  : "downtime"}
+						// {"$or": [{end: { "$gt" : from}},
+						// 		{start: { "$lt" : to}}]}
+						// end: { "$gt" : from}
+					]};
+			filter["$or"].push(currentFilterPart);
+		}
+
+		var post_param = {
+			filter: JSON.stringify(filter, undefined, 8)
+		};
+
+		return post_param;
+	}
 });
