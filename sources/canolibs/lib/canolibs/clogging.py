@@ -84,6 +84,8 @@ class CanopsisLogger(logging.Logger):
 				CanopsisLogger.__SCOPE__ = self.name
 
 			scope = CanopsisLogger.__SCOPE__
+		else:
+			CanopsisLogger.__SCOPE__ = scope
 
 		path = self.getLogPath(scope)
 
