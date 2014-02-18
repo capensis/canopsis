@@ -19,13 +19,17 @@
 # ---------------------------------
 
 import time
-import clogging
+import logging
 
+logging.basicConfig(level=logging.DEBUG,
+                    format='%(asctime)s %(name)s %(levelname)s %(message)s',
+                    )
 
 class ctimer(object):
-	def __init__(self):
+	def __init__(self, logging_level=logging.INFO):
 		self.started = False
-		self.logger = clogging.getLogger()
+		self.logger = logging.getLogger('timer')
+		self.logger.setLevel(logging_level)
 		self.RUN = True
 
 	def start(self):

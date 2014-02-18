@@ -19,6 +19,8 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
+import logging
+
 from cengine import cengine
 import cevent
 
@@ -36,7 +38,7 @@ class engine(cengine):
 
 		account = caccount(user="root", group="root")
 
-		self.storage = get_storage(namespace='ack', account=account)
+		self.storage = get_storage(namespace='ack', account=account, logging_level=logging.DEBUG)
 		self.stbackend = self.storage.get_backend('ack')
 
 		self.acknowledge_on = acknowledge_on

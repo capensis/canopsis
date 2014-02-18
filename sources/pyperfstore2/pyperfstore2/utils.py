@@ -17,8 +17,9 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
-import clogging
-logger = clogging.getLogger()
+import logging
+logger = logging.getLogger('utils')
+logger.setLevel(logging.DEBUG)
 
 import zlib
 import time

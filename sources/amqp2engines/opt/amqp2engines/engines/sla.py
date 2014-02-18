@@ -25,6 +25,7 @@ from cstorage import get_storage
 #from pyperfstore import mongostore
 import pyperfstore2
 import cevent
+import logging
 
 import time
 from datetime import datetime
@@ -58,7 +59,7 @@ class engine(cengine):
 
 	def pre_run(self):
 		self.storage = get_storage(namespace='object', account=caccount(user="root", group="root"))
-		self.manager = pyperfstore2.manager()
+		self.manager = pyperfstore2.manager(logging_level=self.logging_level)
 
 	def split_state(self, value):
 		# cps_state = state * 100 + state_type * 10 + state_extra

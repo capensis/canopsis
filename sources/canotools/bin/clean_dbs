@@ -18,11 +18,12 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-import clogging, time, argparse
+import logging, time, argparse
 from cstorage import get_storage
 from caccount import caccount
 
 import pyperfstore2
+import logging
 
 from docopt import docopt
 from datetime import datetime
@@ -64,7 +65,8 @@ if options["verbose"]:
 else:
 	logger_level = logging.INFO
 
-logger 	= clogging.getLogger()
+logging.basicConfig(format='%(asctime)s %(levelname)s %(name)s %(message)s',level=logger_level)
+logger 	= logging.getLogger('clean_dbs')
 
 
 logger.debug("Option:")
@@ -97,8 +99,8 @@ logger.info("Threshold:  %s: %s" % (threshold, datetime.fromtimestamp(threshold)
 logger.info("Event type: %s" %	options["event_type"])
 
 logger.debug("Init all Storages")
-storage = get_storage(namespace='events', account=caccount(user="root", group="root"))
-manager = pyperfstore2.manager()
+storage = get_storage(namespace='events', logging_level=logger_level, account=caccount(user="root", group="root"))
+manager = pyperfstore2.manager(logging_level=logger_level)
 
 if not options["do"]:
 	logger.info("/!\\ Simulation Mode, nothing to do /!\\")

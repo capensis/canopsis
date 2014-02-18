@@ -19,7 +19,7 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-import sys, os, clogging, json, time
+import sys, os, logging, json, time
 from datetime import datetime
 
 import bottle
@@ -40,11 +40,11 @@ import pyperfstore2.utils
 
 manager = None
 
-logger = clogging.getLogger()
+logger = logging.getLogger("perfstore")
 
 def load():
 	global manager
-	manager = pyperfstore2.manager()
+	manager = pyperfstore2.manager(logging_level=logging.INFO)
 
 def unload():
 	global manager
