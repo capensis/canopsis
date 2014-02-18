@@ -18,9 +18,22 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-import signal, time
+import signal, time, clogging
 
 class cinit(object):
+	"""
+	Class to use in any canopsis process.
+	"""
+
+	def getLogger(self, scope=None):
+		"""
+		Get a logger with specific scope.
+		"""
+
+		result = clogging.getChildLogger(scope=scope)
+
+		return result
+
 	class getHandler(object):
 		def __init__(self, logger):
 			self.logger = logger

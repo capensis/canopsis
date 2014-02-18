@@ -37,23 +37,7 @@ Ext.define('canopsis.lib.view.cwidgetGraph', {
 
 		this.chart = undefined;
 
-		this.on('boxready', function() {
-			this.createChart();
-
-			this.chart.initializeTimeNavigation(this);
-
-			if(this.tooltip) {
-				this.chart.initializeTooltip(this);
-			}
-
-			this.chart.initializeHiddenGraphs(this);
-			this.chart.initializeCurveStyleManager(this);
-			this.chart.initializeThresholds(this);
-			//this.chart.initializeDowntimes(this);
-			this.chart.initializeGraphStyleManager(this);
-			this.chart.initializeLegendManager(this);
-			this.chart.initializeHumanReadable(this);
-		}, this);
+		this.on('boxready', this.createChart, this);
 
 		this.on('resize', function() {
 			if(this.chart !== undefined) {
@@ -77,6 +61,7 @@ Ext.define('canopsis.lib.view.cwidgetGraph', {
 			this.options = {};
 		}
 
+		this.options.cwidgetId = this.id;
 		this.options.cwidget = function() {
 			return this;
 		}.bind(this);
@@ -92,12 +77,27 @@ Ext.define('canopsis.lib.view.cwidgetGraph', {
 
 		/* create the main chart */
 		this.chart = $.plot(this.plotcontainer, this.getSeriesConf(), this.options);
+
+		/* initialize plugins */
+		this.chart.initializeCurveStyleManager(this);
+
+		if(this.tooltip) {
+			this.chart.initializeTooltip(this);
+		}
+
+		this.chart.initializeHiddenGraphs(this);
+		this.chart.initializeThresholds(this);
+		//this.chart.initializeDowntimes(this);
+		this.chart.initializeGraphStyleManager(this);
+		this.chart.initializeLegendManager(this);
+		this.chart.initializeHumanReadable(this);
+		this.chart.initializeTimeNavigation(this);
 	},
 
 	renderChart: function() {
 		this.chart.recomputePositions(this);
 
-		this.chart.setData(this.getSeriesConf());
+		//this.chart.setData(this.getSeriesConf());
 		this.chart.setupGrid();
 		this.chart.draw();
 	},
@@ -125,8 +125,6 @@ Ext.define('canopsis.lib.view.cwidgetGraph', {
 			data: [],
 			last_timestamp: -1,
 			xaxis: 1
-			//yaxis: node.yAxis,
-			// color: node.curve_color? node.curve_color : undefined
 		};
 
 		return serie;
@@ -163,9 +161,18 @@ Ext.define('canopsis.lib.view.cwidgetGraph', {
 
 				/* create the serie if it doesn't exist */
 				if(!(serieId in this.series) || this.series[serieId] === undefined) {
-					// log.debug('Create serie: ' + serieId);
-
 					this.series[serieId] = this.getSerieForNode(info.node);
+
+					//Show component/resource in labels ?
+					var serie = this.series[serieId];
+					var types = ['resource', 'component'];
+					for (type in types) {
+						if (serie.node[types[type]] && this[types[type] + '_in_label']) {
+							serie.label = serie.node[types[type]] + ' ' + serie.label;
+						}
+					}
+
+
 				}
 
 				/* add data to the serie */
@@ -180,12 +187,13 @@ Ext.define('canopsis.lib.view.cwidgetGraph', {
 			}
 		}
 
+		this.destroyChart();
+
+		this.setChartOptions();
 
 		this.updateAxis(from, to);
 		this.updateSeriesConfig();
 
-		this.destroyChart();
-		this.setChartOptions();
 		this.createChart();
 		this.renderChart();
 	},

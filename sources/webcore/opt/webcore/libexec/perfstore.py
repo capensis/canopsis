@@ -683,6 +683,7 @@ def exclude_points(points, subset_selection={}):
 	assert(exclude_points([[0,1],[0.5,2],[1,1],[2,3],[4,5],[3,1],[5,2]],{'intervals':[{'from':1,'to':3}]})\
 	 == [[0, 1], [0.5, 2], [1, None], [2, None], [4, 5], [3, None], [5, 2]], True)
 	"""
+
 	# Compute exclusion periods and set a point to None value (for UI purposes) if point is in any exclusion period.
 	exclusion_points = []
 	if subset_selection and 'excusion_intervals' in subset_selection:

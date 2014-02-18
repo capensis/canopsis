@@ -303,6 +303,8 @@ Ext.define('widgets.text.text' , {
 					log.error('Impossible to get Node informations, Ajax request failed ... (' + request.url + ')', this.logAuthor);
 				}
 			});
+		} else {
+			this.onRefresh(undefined, from, to);
 		}
 	},
 

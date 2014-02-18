@@ -1,9 +1,9 @@
 from celery.task import task
-from cinit import cinit
 from caccount import caccount
 from cstorage import cstorage
 from cfile import cfile
 from celerylibs import decorators
+import clogging
 
 import re
 import string
@@ -17,8 +17,7 @@ from email.MIMEText import MIMEText
 from email.MIMEMultipart import MIMEMultipart
 from email.Utils import formatdate
 
-init 	= cinit()
-logger	= init.getLogger('Mail Task')
+logger = clogging.getLogger('Mail Task')
 
 @task
 @decorators.log_task

@@ -14,7 +14,7 @@ from cinit import cinit
 
 # Logger
 init 	= cinit()
-logger 	= init.getLogger('apsd', level="INFO")
+logger 	= init.getLogger()
 handler = init.getHandler(logger)
 
 # Init

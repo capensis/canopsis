@@ -21,10 +21,9 @@
 
 from ConfigParser import RawConfigParser, ConfigParser, ParsingError
 import importlib
-import inspect
 
 import unittest
-import time, json, clogging
+import time, json
 
 from cinit import cinit
 
@@ -36,7 +35,7 @@ sys.path.append(os.path.expanduser('~/opt/amqp2engines/engines/'))
 DAEMON_NAME="amqp2engines"
 
 init 	= cinit()
-logger 	= clogging.getLogger()
+logger 	= init.getLogger()
 handler = init.getHandler(logger)
 
 engines=[]
@@ -60,21 +59,13 @@ subprocess.call('rabbitmqadmin -H %s --vhost=%s --username=%s --password=%s dele
 
 ###### END of HACK ####
 
-LOGLEVELS = {
-	'info': logging.INFO,
-	'warning': logging.WARNING,
-	'error': logging.ERROR,
-	'debug': logging.DEBUG
-}
-
 CONFIG_PARAMS = {
 	'next': list,
 	'next_balanced': bool,
 	'name': basestring,
 	'beat_interval': int,
 	'exchange_name': basestring,
-	'routing_keys': list,
-	'logging_level': lambda lvl: LOGLEVELS[lvl]
+	'routing_keys': list
 }
 
 def start_engines():
@@ -150,9 +141,6 @@ def start_engines():
 
 			elif CONFIG_PARAMS[param] is float:
 				value = config.getfloat(section, param)
-
-			elif not inspect.isclass(CONFIG_PARAMS[param]) and callable(CONFIG_PARAMS[param]):
-				value = CONFIG_PARAMS[param](value)
 
 			# In all other case, we keep the original string value fetched via item[1]
 

@@ -98,7 +98,8 @@ Ext.define('widgets.category_graph.category_graph', {
 						horizontal: !this.verticalDisplay,
 						barWidth: 1,
 						zero: true,
-						dataLabels: this.labels
+						dataLabels: this.labels,
+						showNumbers: this.labels
 					},
 					stack: this.stacked_graph
 				},
@@ -112,8 +113,8 @@ Ext.define('widgets.category_graph.category_graph', {
 					labelFormatter: function(label, series) {
 						result = nameInLabelFormatter? ("<b>" + label + "</b><br/>") : "";
 						result += pctInLabel? (series.data[0] + "%") : yval; // calculate pourcent
-                        return result;
-                    }
+	                        return result;
+	                    }
 				},
 				xaxis: {
 					show: (this.diagram_type === 'column' && !this.verticalDisplay)
@@ -127,8 +128,8 @@ Ext.define('widgets.category_graph.category_graph', {
 						void(xval);
 						void(flotItem);
 						result = "<b>" + label + "</b><br/>" + yval;
-                        return result;
-                    }
+	                        return result;
+	                    }
 				}
 			}
 		);
@@ -139,30 +140,47 @@ Ext.define('widgets.category_graph.category_graph', {
 		this.series[serieId].data = [point];
 	},
 
-	getSeriesConf: function() {
-		var series = this.callParent(arguments);
+	createChart: function() {
 
+		/* Computes the difference between the series sum and max user input value and then add it to series if max value > series sum */
+		//clean series first
+		delete this.series['max_diff'];
 		if (this.max > 0) {
-			var total = 0;
-			for (var index=0; index < series.length; index++) {
-				var serie = series[index];
-				if (serie.show && serie.data.length === 1) {
-					total += series[index].data[0][1];
+
+			var total = 0,
+				serie_count = 0,
+				node_id,
+				serie;
+
+			//gets series sum
+			for (node_id in this.series) {
+
+				serie_count++;
+
+				console.log(this.series[node_id]);
+				if ((this.series[node_id].show === undefined || this.series[node_id].show) && this.series[node_id].data.length === 1) {
+					total += this.series[node_id].data[0][1];
 				}
 			}
-			// add other serie if total is less than this.max
-			if (this.max > total) {
-				// set x=0 only if graph is in stacking mode and is column
-				var point = [this.stacked_graph? 0: series.length, this.max - total];
-				var other_serie = {
-					label: this.other_label,
-					data: [point]
+
+			if (total < this.max) {
+				//data is a list of point with a single computed point (barchart)
+				var label 	= this.other_label,
+					stacked = this.stacked_graph,
+					max 	= this.max;
+
+				this.series.max_diff = {
+					label: label,
+					data: [[stacked ? 0: serie_count, max - total]],
+					node: {},
 				};
-				series.push(other_serie);
+
 			}
+
 		}
 
-		return series;
+		this.callParent(arguments);
 	},
+
 
 });

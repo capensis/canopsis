@@ -53,39 +53,15 @@
 					]
 				},{
 					"xtype": "cfieldset",
-					"title": "Tooltip",
-					"items": [
-						{
-							"xtype": "checkbox",
-							"fieldLabel": "Show Legend",
-							"checked": true,
-							"name": "legend"
-						}, {
-							"xtype": "checkbox",
-							"fieldLabel": "Show labels",
-							"checked": true,
-							"name": "labels"
-						}, {
-							"xtype": "textfield",
-							"name": "labels_size",
-							"fieldLabel": "Label size",
-							"value": "x-small"
-						}, {
-							"xtype": "checkbox",
-							"fieldLabel": "Enable Tooltip",
-							"checked": true,
-							"name": "tooltip"
-						}
-					]
-				},{
-					"xtype": "cfieldset",
 					"title": "Bar graph specific options",
 					"items": [
 						{
 							"xtype": "checkbox",
 							"fieldLabel": "Vertical display (rotate graph)",
-							"checked": false,
-							"name": "verticalDisplay"
+							"checked": true,
+							"name": "verticalDisplay",
+							"disabled": true
+
 						},{
 							"xtype": "checkbox",
 							"fieldLabel": "Stacked",
@@ -113,7 +89,7 @@
 						},{
 							"xtype" : "numberfield",
 							"name" : "max",
-							"fieldLabel": "Total (by default use 'max' field of perfdata)"
+							"fieldLabel": "delta between series sum and this value."
 						},{
 							"xtype" : "numberfield",
 							"name" : "startAngle",
@@ -254,10 +230,26 @@
 					"title": "Label Style",
 					"items": [
 						{
+							"xtype": "textfield",
+							"name": "labels_size",
+							"fieldLabel": "Label size",
+							"value": "x-small"
+						},
+						{
 							"xtype": "checkbox",
 							"fieldLabel": "Enable labels",
 							"checked": false,
 							"name": "labels"
+						},{
+							"xtype": "checkbox",
+							"fieldLabel": "Add component for metric labels",
+							"checked": false,
+							"name": "component_in_label"
+						},{
+							"xtype": "checkbox",
+							"fieldLabel": "Add resource for metric labels",
+							"checked": false,
+							"name": "resource_in_label"
 						},{
 							"xtype": "checkbox",
 							"fieldLabel": "Display metric name in label",

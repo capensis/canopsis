@@ -3,7 +3,7 @@ from celerylibs import decorators
 from subprocess import Popen
 from tempfile import mkdtemp
 from ubik import core as ubik_api
-import logging, os, shutil
+import clogging, os, shutil
 
 home_path = os.path.expanduser('~/')
 backup_path = '%s/var/backups' % home_path
@@ -11,7 +11,7 @@ backup_path = '%s/var/backups' % home_path
 @task
 @decorators.log_task
 def mongo(host='localhost'):
-	logger = logging.getLogger()
+	logger = clogging.getLogger()
 	logger.debug('Mongo Backup start:')
 	logger.debug(' + Host  : %s' % host)
 	logger.debug(' + Backup path: %s' % backup_path)
@@ -59,7 +59,7 @@ def mongo(host='localhost'):
 @task
 @decorators.log_task
 def config():
-	logger = logging.getLogger()
+	logger = clogging.getLogger()
 	logger.debug('Config Backup start:')
 
 	archive_name = 'backup_config'

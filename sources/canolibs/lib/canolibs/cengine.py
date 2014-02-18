@@ -21,12 +21,11 @@
 import multiprocessing
 import time
 import Queue
-import clogging
 import os, sys
-from cinit import cinit
 import traceback
 import cevent
 from caccount import caccount
+import clogging
 
 import itertools
 
@@ -63,9 +62,7 @@ class cengine(multiprocessing.Process):
 		## Get from internal or external queue
 		self.next_balanced = next_balanced
 		
-		init 	= cinit()
-			
-		self.logger = clogging.getChildLogger(name)
+		self.logger = clogging.getLogger(name)
 		
 		self.counter_error = 0
 		self.counter_event = 0

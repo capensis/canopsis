@@ -1,4 +1,4 @@
-//need:app/view/MetricNavigation/MetricNavigation.js,widgets/line_graph/line_graph.js
+//need:app/view/MetricNavigation/MetricNavigation.js,widgets/timegraph/timegraph.js
 /*
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
@@ -102,7 +102,7 @@ Ext.define('canopsis.controller.MetricNavigation', {
 			layout: 'fit'
 		};
 
-		var graph = Ext.widget('line_graph', config);
+		var graph = Ext.widget('timegraph', config);
 		this.renderContent.add(graph);
 
 		return graph;

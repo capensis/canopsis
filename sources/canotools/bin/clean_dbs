@@ -21,7 +21,6 @@
 import clogging, time, argparse
 from cstorage import get_storage
 from caccount import caccount
-from cinit import cinit
 
 import pyperfstore2
 
