@@ -42,9 +42,11 @@ class engine(cengine):
 		self.acknowledge_on = acknowledge_on
 
 	def pre_run(self):
+		self.logger.setLevel('DEBUG')
 		self.beat()
 
-	def beat():
+
+	def beat(self):
 		query = self.stbackend.find({
 			'solved': False,
 			'ackts': {'$gt': -1}
@@ -60,6 +62,9 @@ class engine(cengine):
 
 		# If event is of type acknowledgement, then acknowledge corresponding event
 		if event['event_type'] == 'ack':
+
+			self.logger.debug('Ack event found, will proceed ack.')
+
 			rk = event.get('referer', event.get('ref_rk', None))
 
 			if not rk:
@@ -129,6 +134,7 @@ class engine(cengine):
 			)
 
 			self.amqp.publish(alerts_event, cevent.get_routingkey(alerts_event), self.amqp.exchange_name_events)
+			self.logger.debug('Ack internal metric sent.')
 
 			for hostgroup in event.get('hostgroups', []):
 				alerts_event = cevent.forger(
@@ -154,7 +160,11 @@ class engine(cengine):
 		elif event['state'] == 0 and event.get('state_type', 1) == 1:
 			solvedts = int(time.time())
 
-			if self.cache_acks[event['rk']]:
+			self.logger.debug('Event has state 0 and state_type 1, will test if ack exists for current RK')
+
+			if event['rk'] in self.cache_acks:
+				self.logger.debug('Ack exists for this event, and has to be recovered.')
+
 				# we have an ack to process for this event
 				ack = self.stbackend.find_one({
 					'rk': event['rk'],
@@ -202,6 +212,9 @@ class engine(cengine):
 
 		# If the event is in problem state, update the solved state of acknowledgement
 		elif event['state'] != 0 and event.get('state_type', 1) == 1:
+
+			self.logger.debug('Event on error, an ack has to be triggered by a user, let write this to db.')
+
 			self.stbackend.find_and_modify(
 				query = {'rk': event['rk'], 'solved': True},
 				update = {'$set': {
