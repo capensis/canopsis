@@ -49,6 +49,7 @@ class cselector(crecord):
 
 		self.dostate = True
 		self.state_algorithm = 0
+		self.downtimes_as_ok = False
 
 		self.mfilter = {}
 		self.include_ids = []
@@ -99,6 +100,7 @@ class cselector(crecord):
 		self.data['output_tpl']		= self.output_tpl
 		self.data['dostate']		= self.dostate
 		self.data['state_algorithm']= self.state_algorithm
+		self.data['downtimes_as_ok']= self.downtimes_as_ok
 
 		return crecord.dump(self)
 
@@ -115,6 +117,7 @@ class cselector(crecord):
 		self.exclude_ids	= self.data.get('exclude_ids',self.exclude_ids)
 		self.dostate		= self.data.get('dostate', self.dostate)
 		self.state_algorithm= self.data.get('state_algorithm ', self.state_algorithm )
+		self.downtimes_as_ok= self.data.get('downtimes_as_ok ', self.downtimes_as_ok )
 		output_tpl			= self.data.get('output_tpl', None)
 
 		if output_tpl and output_tpl != "":

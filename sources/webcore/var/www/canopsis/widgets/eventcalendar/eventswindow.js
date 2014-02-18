@@ -24,7 +24,7 @@ Ext.define('widgets.eventcalendar.eventswindow' , {
 
 	alias: 'widget.eventcalendar.eventswindow',
 
-	height: 500,
+	height: 520,
 	width: 800,
 	layout: 'fit',
 
@@ -94,7 +94,7 @@ Ext.define('widgets.eventcalendar.eventswindow' , {
 
 		var endOfDayTimestamp = d / 1000;
 
-		var filter = this.calendar.computeTagsFilter(startOfDayTimestamp, endOfDayTimestamp);
+		var filter = this.calendar.ajaxHandler.computeTagsFilter(startOfDayTimestamp, endOfDayTimestamp);
 
 		this.grid.store.setFilter(filter);
 		this.grid.store.load();
