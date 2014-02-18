@@ -40,8 +40,6 @@ init 	= cinit()
 logger 	= init.getLogger()
 handler = init.getHandler(logger)
 
-print logger.__SCOPE__, logger.handler.level
-
 def main():
 	global ready
 		

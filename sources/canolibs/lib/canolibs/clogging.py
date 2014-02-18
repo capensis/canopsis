@@ -69,6 +69,7 @@ class CanopsisLogger(logging.Logger):
 		"""
 
 		super(CanopsisLogger, self).__init__(name, level)
+		self.handler = None
 
 		self.setScope()
 
@@ -92,9 +93,12 @@ class CanopsisLogger(logging.Logger):
 			if not os.path.exists(directory):
 				os.makedirs(directory)
 
-		self.handler = logging.FileHandler(path, 'a')
-		self.handler.setLevel(self.level)
-		self.addHandler()
+		if self.handler is not None:
+			self.removeHandler(self.handler)
+
+		self.handler = logging.FileHandler(path, 'a+')
+		self.handler.setLevel(logging.DEBUG)
+		self.addHandler(self.handler)
 
 	def getLogPath(self, scope=None):
 		"""
@@ -143,7 +147,7 @@ class CanopsisLogger(logging.Logger):
 
 		# log debug message for this
 		if self is not _logger:
-			_logger.debug('log:%s, level: %s, msg: %s', self.name, level, msg)
+			_logger.debug('log: %s, level: %s, msg: %s', self.name, level, msg)
 
 	def findCaller(self):
 		"""
@@ -167,22 +171,6 @@ class CanopsisLogger(logging.Logger):
 			break
 
 		return rv
-
-	def addHandler(self, handler=None):
-		"""
-		Check if the call has been done during self initialization.
-		"""
-
-		if handler is None:
-			if self.handler is not None:
-				self.removeHandler(self.handler)
-
-			handler = self.handler
-
-		else:
-			self.handler = None
-
-		super(CanopsisLogger, self).addHandler(handler)
 
 logging.setLoggerClass(CanopsisLogger)
 

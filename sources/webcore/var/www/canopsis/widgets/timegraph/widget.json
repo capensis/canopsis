@@ -1,0 +1,473 @@
+[{
+	"name":  "TimeGraph",
+	"version": 0.2,
+	"author": "capensis",
+	"website": "http://www.canopsis.org",
+	"xtype":"timegraph",
+	"description": "Displays time series on interactive customizable graph.",
+	"description-fr":"Affiche des séries temporelles sur un graphique interactif et personalisable.",
+	"refreshInterval": 300,
+	"locales": ["en", "fr"],
+	"options": [
+		{
+			"title": "Options",
+			"items": [
+				{
+					"xtype": "cfieldset",
+					"title": "Options",
+					"items": [
+						{
+							"xtype": "combobox",
+							"fieldLabel": "Series Type",
+							"name": "SeriesType",
+							"queryMode": "local",
+							"displayField": "text",
+							"valueField": "value",
+							"value": "area",
+							"store": {
+								"xtype": "store",
+								"fields": ["value", "text"],
+								"data": [
+									{"value": "area", "text": "Area"},
+									{"value": "line", "text": "Line"},
+									{"value": "bars", "text": "Bars"}
+								]
+							}
+						},{
+							"xtype" : "numberfield",
+							"name" : "lineWidth",
+							"fieldLabel": "Line Width",
+							"minValue": 1,
+							"value": 1
+						},{
+							"xtype": "combobox",
+							"name": "marker_symbol",
+							"fieldLabel": "Marker",
+							"queryMode": "local",
+							"displayField": "text",
+							"valueField": "value",
+							"value": null,
+							"store": {
+								"xtype": "store",
+								"fields": ["value", "text"],
+								"data" : [
+									{"value": null, "text": "None"},
+									{"value": "circle", "text": "Circle"},
+									{"value": "square", "text": "Square"},
+									{"value": "diamond", "text": "Diamond"},
+									{"value": "triangle", "text":  "Triangle"},
+									{"value": "triangle-down", "text":  "Triangle Down"}
+								]
+							}
+						},{
+							"xtype" : "numberfield",
+							"name" : "marker_radius",
+							"fieldLabel": "Marker radius",
+							"minValue": 0,
+							"value": 2
+						},{
+							"xtype": "checkbox",
+							"fieldLabel": "Stacked",
+							"name": "stacked_graph",
+							"checked": false
+						},{
+							"xtype": "cduration",
+							"fieldLabel": "Time window offset",
+							"name": "time_window_offset",
+							"value": 0
+						},{
+							"xtype": "checkbox",
+							"fieldLabel": "History navigation",
+							"name": "timeNav",
+							"checked": false
+						},{
+							"xtype": "cduration",
+							"fieldLabel": "History time window",
+							"name": "timeNav_window",
+							"value": 604800
+						},{
+							"xtype": "checkbox",
+							"fieldLabel": "Display downtimes",
+							"name": "show_downtimes",
+							"value": false
+						}
+					]
+				},{
+					"xtype": "cfieldset",
+					"title": "Tooltip",
+					"items": [
+						{
+							"xtype": "checkbox",
+							"fieldLabel": "Enable Tooltip",
+							"checked": true,
+							"name": "tooltip"
+						},{
+								"xtype": "checkbox",
+								"fieldLabel": "Shared",
+								"checked": false,
+								"name": "tooltip_shared"
+						}
+					]
+				}
+			]
+		},{
+			"title": "Style",
+			"advanced": true,
+			"items": [{
+						"xtype": "cfieldset",
+						"title": "Graph Style",
+						"items": [
+							{
+								"xtype": "checkbox",
+								"fieldLabel": "Zoom",
+								"checked": true,
+								"name": "zoom"
+							},{
+								"xtype" : "colorfield",
+								"name" : "backgroundColor",
+								"fieldLabel": "Background color",
+								"value": "FFFFFF"
+                           },{
+								"xtype" : "colorfield",
+								"name" : "borderColor",
+								"fieldLabel": "Border color",
+								"value": "FFFFFF"
+                           },{
+								"xtype" : "numberfield",
+								"name" : "borderWidth",
+								"fieldLabel": "Border Width",
+								"minValue": 0,
+								"value": 0
+                           }
+						]
+					},{
+					"xtype": "cfieldset",
+					"title": "Grid",
+					"items": [
+						{
+							"xtype": "checkbox",
+							"name": "displayVerticalLines",
+							"fieldLabel": "Display vertical lines",
+							"value": false
+						},{
+							"xtype": "checkbox",
+							"name": "displayHorizontalLines",
+							"fieldLabel": "Display horizontal lines",
+							"value": true
+						},{
+						"xtype": "cfieldset",
+						"title": "Legend",
+						"checkboxName": "legend",
+						"value": true,
+						"items": [{
+									"xtype": "checkbox",
+									"fieldLabel": "Add component for metric labels",
+									"checked": false,
+									"name": "component_in_label"
+								},{
+									"xtype": "checkbox",
+									"fieldLabel": "Add resource for metric labels",
+									"checked": false,
+									"name": "resource_in_label"
+								},{
+									"xtype" : "numberfield",
+									"name" : "legend_fontSize",
+									"fieldLabel": "Font Size",
+									"minValue": 1,
+									"value": 12
+								},{
+									"xtype" : "colorfield",
+									"name" : "legend_fontColor",
+									"fieldLabel": "Font color",
+									"value": "3E576F"
+								},{
+									"xtype" : "numberfield",
+									"name" : "legend_borderWidth",
+									"fieldLabel": "Border Width",
+									"minValue": 0,
+									"value": 1
+								},{
+									"xtype" : "colorfield",
+									"name" : "legend_backgroundColor",
+									"fieldLabel": "Background color",
+									"value": "FFFFFF"
+								},{
+									"xtype" : "colorfield",
+									"name" : "legend_borderColor",
+									"fieldLabel": "Border color",
+									"value": "909090"
+								},{
+									"xtype": "combobox",
+									"name": "legend_verticalAlign",
+									"fieldLabel": "Legend vertical alignement",
+									"queryMode": "local",
+									"displayField": "text",
+									"valueField": "value",
+									"value": "bottom",
+									"store": {
+										"xtype": "store",
+										"fields": ["value", "text"],
+										"data" : [
+											{"value": "top", "text": "Top"},
+											{"value": "middle", "text": "Middle"},
+											{"value": "bottom", "text": "Bottom"}
+										]
+									}
+								},{
+									"xtype": "combobox",
+									"name": "legend_align",
+									"fieldLabel": "Legend horizontal alignement",
+									"queryMode": "local",
+									"displayField": "text",
+									"valueField": "value",
+									"value": "center",
+									"store": {
+										"xtype": "store",
+										"fields": ["value", "text"],
+										"data" : [
+											{"value": "left", "text": "Left"},
+											{"value": "center", "text": "Center"},
+											{"value": "right", "text": "Right"}
+										]
+									}
+								},{
+									"xtype": "combobox",
+									"name": "legend_layout",
+									"fieldLabel": "Legend layout",
+									"queryMode": "local",
+									"displayField": "text",
+									"valueField": "value",
+									"value": "horizontal",
+									"store": {
+										"xtype": "store",
+										"fields": ["value", "text"],
+										"data" : [
+											{"value": "horizontal", "text": "Horizontal"},
+											{"value": "vertical", "text": "Vertical"}
+										]
+									}
+								}
+							]
+						}
+					]
+				}
+			]
+		},{
+			"title": "Aggregation / Consolidation",
+			"advanced": true,
+			"items" : [{
+						"xtype": "cfieldset",
+						"title": "Aggregation",
+						"items": [
+							{
+								"xtype": "combobox",
+								"name": "aggregate_method",
+								"fieldLabel": "Aggregation Method",
+								"queryMode": "local",
+								"displayField": "text",
+								"valueField": "value",
+								"value": "MEAN",
+								"store": {
+									"xtype": "store",
+									"fields": ["value", "text"],
+									"data" : [
+										{"value": "", "text": "None"},
+										{"value": "MAX", "text": "Max"},
+										{"value": "MIN", "text": "Min"},
+										{"value": "LAST", "text": "Last"},
+										{"value": "FIRST", "text": "First"},
+										{"value": "DELTA", "text": "Delta"},
+										{"value": "MEAN", "text": "Mean"},
+										{"value": "SUM", "text": "Sum"}
+									]
+								}
+							},{
+								"xtype" : "numberfield",
+								"name" : "aggregate_max_points",
+								"fieldLabel": "Max points (if no interval)",
+								"minValue": 2,
+								"value": 500
+							},{
+								"xtype": "combobox",
+								"name": "aggregate_interval",
+								"fieldLabel": "Aggregation Interval",
+								"queryMode": "local",
+								"displayField": "text",
+								"valueField": "value",
+								"value": 0,
+								"store": {
+									"xtype": "store",
+									"fields": ["value", "text"],
+									"data" : [
+										{"value": 0, "text": "None"},
+										{"value": 900, "text": "15 minutes"},
+										{"value": 1800, "text": "30 minutes"},
+										{"value": 3600, "text": "1 hour"},
+										{"value": 86400, "text": "1 day"},
+										{"value": 604800, "text": "1 week"},
+										{"value": 2629800, "text": "1 month"},
+										{"value": 31557600, "text": "1 year"}
+									]
+								}
+							}, {
+								"xtype": "checkbox",
+								"name": "aggregate_round_time",
+								"fieldLabel": "Round time (if interval)",
+								"checked": true
+							}
+						]
+					},{
+						"xtype": "cfieldset",
+						"title": "Consolidation between metrics",
+						"items": [
+							{
+								"xtype": "combobox",
+								"name": "consolidation_method",
+								"fieldLabel": "Consolidation Method",
+								"queryMode": "local",
+								"displayField": "text",
+								"valueField": "value",
+								"value":"",
+								"store": {
+									"xtype": "store",
+									"fields": ["value", "text"],
+									"data" : [
+										{"value": "", "text": "None"},
+										{"value": "max", "text": "Max"},
+										{"value": "min", "text": "Min"},
+										{"value": "sum", "text": "Sum"},
+										{"value": "mean", "text": "Mean"}
+									]
+								}
+							}
+						]
+					}
+				]
+		},{
+			"title": "Choose Metrics",
+			"items": [
+				{
+					"xtype": "cmetric",
+					"name": "nodes",
+					"multiSelect": true,
+					"metrics": true,
+					"sharedStore": "timegraph",
+					"additional_field": [
+						"label",
+						"curve_type",
+						"curve_color",
+						"area_color",
+						"trend_curve",
+						"u",
+						"yAxis"
+					]
+				}
+			]
+		},{
+			"title": "Downtimes",
+			"advanced": true,
+			"items": [
+				{
+					"xtype": "cinventory",
+					"name" : "downtimes",
+					"showResource": true,
+					"idKey" : "component",
+					"additional_field": {
+											"xtype":"ccolorfield",
+											"name":"color",
+											"emptyText":"Color of events",
+											"hideLabel": true
+										}
+				}
+			]
+		},{
+			"title": "Customize Metrics",
+			"advanced": true,
+			"items": [
+				{
+					"xtype": "ccustom",
+					"sharedStore": "timegraph",
+					"customForm": [
+						{
+							"xtype": "textfield",
+							"fieldLabel": "Custom Label",
+							"name": "label",
+							"emptyText": "Type custom label here..."
+						},{
+							"xtype": "textfield",
+							"fieldLabel": "Unit",
+							"name": "u"
+						},{
+							"xtype": "numberfield",
+							"fieldLabel": "Y axis",
+							"name": "yAxis",
+							"min": 0
+						},{
+							"xtype": "checkbox",
+							"fieldLabel": "Trend",
+							"name": "trend_curve",
+							"checked": false
+						},{
+							"xtype": "numberfield",
+							"fieldLabel": "Custom Warning threshold",
+							"name": "threshold_warn"
+						},{
+							"xtype": "numberfield",
+							"fieldLabel": "Custom Critical threshold",
+							"name": "threshold_crit"
+						},{
+							"xtype": "combobox",
+							"fieldLabel": "Curve Type",
+							"name": "curve_type",
+							"queryMode": "local",
+							"displayField": "text",
+							"valueField": "value",
+							"value": "default",
+							"store": {
+								"xtype": "store",
+								"fields": ["value", "text"],
+								"data": [
+									{"value": "default", "text": "Default"},
+									{"value": "area",    "text": "Area"},
+									{"value": "line",    "text": "Line"},
+									{"value": "bars",    "text": "Bars"}
+								]
+							}
+						},{
+							"xtype": "ccolorfield",
+							"fieldLabel": "Curve color",
+							"name": "curve_color",
+							"replaceWhiteColor": true
+						},{
+							"xtype": "ccolorfield",
+							"fieldLabel": "Area color",
+							"name": "area_color",
+							"replaceWhiteColor": true
+						},{
+							"xtype": "combobox",
+							"fieldLabel": "Point shape",
+							"name": "point_shape",
+							"queryMode": "local",
+							"displayField": "text",
+							"valueField": "value",
+							"value": "default",
+							"store": {
+								"xtype": "store",
+								"fields": ["value", "text"],
+								"data": [
+									{"value": "undefined", "text": "Point"},
+									{"value": "circle",    "text": "Circle"},
+									{"value": "square",    "text": "Square"},
+									{"value": "diamond",    "text": "Diamond"},
+									{"value": "triangle",    "text": "Triangle"},
+									{"value": "cross",    "text": "Cross"}
+								]
+							}
+						}
+					]
+				}
+			]
+		}
+	]
+}]
+
