@@ -3,7 +3,7 @@ from caccount import caccount
 from cstorage import cstorage
 from cfile import cfile
 from celerylibs import decorators
-import clogging
+import logging
 
 import re
 import string
@@ -17,7 +17,7 @@ from email.MIMEText import MIMEText
 from email.MIMEMultipart import MIMEMultipart
 from email.Utils import formatdate
 
-logger = clogging.getLogger('Mail Task')
+logger = logging.getLogger('Mail Task')
 
 @task
 @decorators.log_task

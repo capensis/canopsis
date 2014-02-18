@@ -35,9 +35,9 @@ import hashlib
 import task_mail
 from wkhtmltopdf.wrapper import Wrapper 
 
-import clogging
+import logging
 
-logger = clogging.getLogger('Reporting Task')
+logger = logging.getLogger('Reporting Task')
 
 @task
 @decorators.log_task

@@ -19,7 +19,7 @@
 # ---------------------------------
 
 import time
-import clogging
+import logging
 import sys
 
 from camqp import camqp
@@ -39,11 +39,15 @@ import pyperfstore2
 
 AMQP_HOST = "localhost"
 
-logger = clogging.getLogger()
+logging.basicConfig(level=logging.INFO,
+                    format='%(asctime)s %(name)s %(levelname)s %(message)s',
+                    )
+
+logger = logging.getLogger("bench")
 amqp = camqp()
 
 storage = get_storage(namespace='events', account=caccount(user="root", group="root"))
-manager = pyperfstore2.manager()
+manager = pyperfstore2.manager(logging_level=logging.INFO)
 
 base_component_event = cevent.forger(
 					connector =			'bench',

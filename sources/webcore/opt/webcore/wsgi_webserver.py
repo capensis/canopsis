@@ -18,8 +18,8 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-import os, sys, time, logging, cinit
-from cinit import cinit
+import os, sys, time, logging
+
 import ConfigParser
 
 import bottle
@@ -82,8 +82,9 @@ except Exception, err:
 logging_level=logging.INFO
 if debug:
 	logging_level=logging.DEBUG
-init = cinit()
-logger 	= init.getLogger()
+	
+logging.basicConfig(format=r"%(asctime)s [%(process)d] [%(name)s] [%(levelname)s] %(message)s", datefmt=r"%Y-%m-%d %H:%M:%S", level=logging_level)
+logger 	= logging.getLogger("webserver")
 	
 bottle.debug(debug)
 

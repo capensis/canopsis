@@ -18,7 +18,7 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-import sys, os, clogging, json
+import sys, os, logging, json
 
 import bottle
 from bottle import route, get, put, delete, request, HTTPError, post, response
@@ -34,7 +34,7 @@ from ctools import clean_mfilter
 #import protection function
 from libexec.auth import get_account ,check_group_rights
 
-logger = clogging.getLogger()
+logger = logging.getLogger("rest")
 
 # dirty hack for now
 try:
@@ -93,7 +93,7 @@ def rest_trees_get(rk=None):
 	"""
 
 	account = get_account()
-	storage = get_storage(namespace='events_trees', account=account)
+	storage = get_storage(logging_level=logging.DEBUG, namespace='events_trees', account=account)
 
 
 	if not rk:

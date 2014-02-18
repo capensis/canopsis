@@ -29,6 +29,8 @@ from cstorage import get_storage
 from caccount import caccount
 import pyperfstore2
 
+import logging
+		
 NAME="alertcounter"
 INTERNAL_COMPONENT = '__canopsis__'
 PROC_CRITICAL = 'PROC_CRITICAL'
@@ -269,7 +271,9 @@ class engine(cengine):
 			self.increment_counter(key, meta_data, 0)
 
 	def resolve_selectors_name(self):
+
 		if int(time.time()) > (self.last_resolv + 60):
+
 			records = self.storage.find(mfilter={'crecord_type': 'selector'}, mfields=['crecord_name'])
 
 			self.selectors_name = [record['crecord_name'] for record in records]

@@ -24,8 +24,8 @@ from caccount import caccount
 from cselector import cselector
 from kombu.pools import producers
 from kombu import Connection, Queue, Exchange
-import time
-
+import logging, time
+		
 NAME="crecord_dispatcher"
 # Delay since the lock document is released in any cases
 UNLOCK_DELAY = 60
@@ -106,7 +106,7 @@ class engine(cengine):
 			for	crecord_json in crecords_json:
 				# let say selector is loaded
 				self.storage.update(crecord_json._id, {'loaded': True, 'last_dispatch_update': now})
-				crecord = cselector(storage=self.storage, record=crecord_json)
+				crecord = cselector(storage=self.storage, record=crecord_json, logging_level=self.logging_level)
 				crecords.append(crecord)
 
 			#Updating lock status
