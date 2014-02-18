@@ -18,8 +18,8 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-import sys, os, clogging, json
-import bottle, hashlib, json
+import sys, os, logging, json
+import bottle, logging, hashlib, json
 from bottle import error, route, get, request, post, HTTPError, redirect
 
 from beaker.middleware import SessionMiddleware
@@ -30,7 +30,8 @@ from cstorage import cstorage
 from cstorage import get_storage
 from crecord import crecord
 
-logger = clogging.getLogger()
+logger = logging.getLogger("auth")
+logger.setLevel(logging.DEBUG)
 
 #session variable
 session_accounts = {

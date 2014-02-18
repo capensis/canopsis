@@ -23,7 +23,7 @@ from crecord import crecord
 from caccount import caccount
 from ctimer import ctimer
 
-import random
+import logging, random
 
 def go(account, nb):
 	storage.account=account
@@ -71,8 +71,8 @@ def go(account, nb):
 
 namespace = "bench-"+str(random.randint(0,1000))
 account = caccount()
-storage = cstorage(account=account, namespace=namespace)
-timer = ctimer()
+storage = cstorage(account=account, namespace=namespace, logging_level=logging.INFO)
+timer = ctimer(logging_level=logging.INFO)
 
 print "Bench with 'anonymous' account ..."
 account = caccount()

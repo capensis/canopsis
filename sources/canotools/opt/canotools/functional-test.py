@@ -19,7 +19,7 @@
 # ---------------------------------
 
 import unittest
-import time, json, sys
+import time, json, logging, sys
 import cevent
 import uuid
 import re
@@ -32,6 +32,10 @@ from ctools import parse_perfdata
 import pyperfstore2
 
 from subprocess import Popen
+
+logging.basicConfig(level=logging.DEBUG,
+                    format='%(asctime)s %(name)s %(levelname)s %(message)s',
+                    )
 
 event = cevent.forger(connector='canopsis', connector_name='unittest', event_type='check', source_type = "component", component="test1", state=0, output="Output_1", perf_data="mymetric=1s;10;20;0;30", tags = ['check', 'component', 'test1', 'unittest'])
 rk = cevent.get_routingkey(event)
@@ -73,10 +77,10 @@ class KnownValues(unittest.TestCase):
 		time.sleep(1)
 		
 		global storage
-		storage = cstorage(caccount(user="root", group="root"), namespace='events')
+		storage = cstorage(caccount(user="root", group="root"), namespace='events', logging_level=logging.DEBUG)
 		
 		global perfstore
-		perfstore = pyperfstore2.manager()
+		perfstore = pyperfstore2.manager(logging_level=logging.DEBUG)
 		
 		clean()
 		
