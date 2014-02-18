@@ -50,7 +50,7 @@ Ext.define('canopsis.lib.view.cperfstoreValueConsumerWidget', {
 						}
 					}
 
-					this.onRefresh(data);
+					this.onRefresh(data, from, to);
 				},
 
 				failure: function(result, request) {
