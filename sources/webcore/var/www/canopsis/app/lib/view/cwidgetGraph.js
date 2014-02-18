@@ -91,10 +91,7 @@ Ext.define('canopsis.lib.view.cwidgetGraph', {
 		this.chart.initializeGraphStyleManager(this);
 		this.chart.initializeLegendManager(this);
 		this.chart.initializeHumanReadable(this);
-
-		if(this.timeNav) {
-			this.chart.initializeTimeNavigation(this);
-		}
+		this.chart.initializeTimeNavigation(this);
 	},
 
 	renderChart: function() {
