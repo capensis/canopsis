@@ -1,3 +1,4 @@
+//need:widgets/eventcalendar/calendar_ajax_handler.js,widgets/eventcalendar/editwindow.js,app/lib/view/cwebsocketWidget.js
 /*
 #--------------------------------
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
