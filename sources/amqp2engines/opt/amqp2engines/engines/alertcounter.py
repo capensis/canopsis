@@ -92,42 +92,41 @@ class engine(cengine):
 		self.manager.push(name=key, value=value, meta_data=meta)
 
 	def update_global_counter(self, event):
-		if event['component'] != INTERNAL_COMPONENT:
-			# Comment action (ensure the component exists in database)
-			logevent = cevent.forger(
-				connector = 'cengine',
-				connector_name = NAME,
-				event_type = 'log',
-				source_type = 'component',
-				component = INTERNAL_COMPONENT,
+		# Comment action (ensure the component exists in database)
+		logevent = cevent.forger(
+			connector = 'cengine',
+			connector_name = NAME,
+			event_type = 'log',
+			source_type = 'component',
+			component = INTERNAL_COMPONENT,
 
-				output = 'Updating global counter'
-			)
+			output = 'Updating global counter'
+		)
 
-			self.amqp.publish(logevent, cevent.get_routingkey(logevent), self.amqp.exchange_name_events)
+		self.amqp.publish(logevent, cevent.get_routingkey(logevent), self.amqp.exchange_name_events)
 
-			# Update counter
-			new_event = deepcopy(event)
-			new_event['connector']      = 'cengine'
-			new_event['connector_name'] = NAME
-			new_event['event_type']     = 'check'
-			new_event['source_type']    = 'component'
-			new_event['component']      = INTERNAL_COMPONENT
+		# Update counter
+		new_event = deepcopy(event)
+		new_event['connector']      = 'cengine'
+		new_event['connector_name'] = NAME
+		new_event['event_type']     = 'check'
+		new_event['source_type']    = 'component'
+		new_event['component']      = INTERNAL_COMPONENT
 
-			del new_event['resource']
+		del new_event['resource']
+
+		self.count_alert(new_event, 1)
+
+		logevent['source_type'] = 'resource'
+		new_event['source_type'] = 'resource'
+
+		for hostgroup in event.get('hostgroups', []):
+			logevent['resource'] = hostgroup
+			new_event['resource'] = hostgroup
 
 			self.count_alert(new_event, 1)
 
-			logevent['source_type'] = 'resource'
-			new_event['source_type'] = 'resource'
-
-			for hostgroup in event.get('hostgroups', []):
-				logevent['resource'] = hostgroup
-				new_event['resource'] = hostgroup
-
-				self.count_alert(new_event, 1)
-
-				self.amqp.publish(logevent, cevent.get_routingkey(logevent), self.amqp.exchange_name_events)
+			self.amqp.publish(logevent, cevent.get_routingkey(logevent), self.amqp.exchange_name_events)
 
 	def count_sla(self, event, slatype, slaname, delay, value):
 		meta_data = {'type': 'COUNTER', 'co': INTERNAL_COMPONENT }
@@ -224,7 +223,7 @@ class engine(cengine):
 		# Update cps_statechange_{hard,soft}
 
 		for cstate_type in [0, 1]:
-			cvalue = value if cstate_type == state_type else 0
+			cvalue = value if cstate_type == state_type and state != 0 else 0
 
 			meta_data['me'] = "cps_statechange_{0}".format(
 				'hard' if cstate_type == 1 else 'soft'
@@ -297,7 +296,7 @@ class engine(cengine):
 
 	def work(self, event, *args, **kargs):
 		validation = event['event_type'] in self.listened_event_type
-		validation = validation and event['component'] != 'derogation'
+		validation = validation and event['component'] not in ['derogation', INTERNAL_COMPONENT]
 
 		if validation:
 			self.update_global_counter(event)
