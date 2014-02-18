@@ -62,7 +62,7 @@ class cengine(multiprocessing.Process):
 		## Get from internal or external queue
 		self.next_balanced = next_balanced
 		
-		self.logger = clogging.getChildLogger(name)
+		self.logger = clogging.getLogger(name)
 		
 		self.counter_error = 0
 		self.counter_event = 0
