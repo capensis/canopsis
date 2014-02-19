@@ -49,6 +49,9 @@ class engine(cengine):
 
 
 	def beat(self):
+		self.reload_ack_cache()
+
+	def reload_ack_cache(self):
 		query = self.stbackend.find({
 			'solved': False,
 			'ackts': {'$gt': -1}
@@ -58,6 +61,8 @@ class engine(cengine):
 		self.cache_acks = {}
 		for ack in query:
 			self.cache_acks[ack['rk']] = 1
+			self.logger.debug(' + ack cache key > ' + ack['rk'])
+
 
 	def work(self, event, *args, **kargs):
 		logevent = None
@@ -87,8 +92,6 @@ class engine(cengine):
 				full_response = True,
 				new = True
 			)
-
-			self.logger.error(str(response))
 
 			if not response['lastErrorObject']['updatedExisting']:
 				record = response['value']
@@ -156,32 +159,37 @@ class engine(cengine):
 
 				self.amqp.publish(alerts_event, cevent.get_routingkey(alerts_event), self.amqp.exchange_name_events)
 
+			self.logger.debug('Reloading ack cache')
+			self.reload_ack_cache()
 
 		# If event is acknowledged, and went back to normal, remove the ack
 		# This test concerns most of case and could not perform query for each event
 		elif event['state'] == 0 and event.get('state_type', 1) == 1:
 			solvedts = int(time.time())
 
-			self.logger.debug('Event has state 0 and state_type 1, will test if ack exists for current RK')
 
 			if event['rk'] in self.cache_acks:
-				self.logger.debug('Ack exists for this event, and has to be recovered.')
+				self.logger.debug('Ack exists for this event, and has to be recovered. ##############')
 
 				# we have an ack to process for this event
-				ack = self.stbackend.find_one({
+				query = {
 					'rk': event['rk'],
 					'solved': False,
 					'ackts': {'$gt': -1}
-				})
+				}
+				ack = self.stbackend.find_one(query)
 
 				if ack:
 
-					self.stbackend.update({
-						'$set': {
-							'solved': True,
-							'solvedts': solvedts
+					self.stbackend.update(
+						query,
+						{
+							'$set': {
+								'solved': True,
+								'solvedts': solvedts
+							}
 						}
-					})
+					)
 
 					logevent = cevent.forger(
 						connector = "cengine",
@@ -209,7 +217,7 @@ class engine(cengine):
 
 					logevent['acknowledged_connector'] = event['connector']
 					logevent['acknowledged_source'] = event['connector_name']
-					logevent['acknowledged_at'] = record['ackts']
+					logevent['acknowledged_at'] = ack['ackts']
 					logevent['solved_at'] = solvedts
 
 		# If the event is in problem state, update the solved state of acknowledgement

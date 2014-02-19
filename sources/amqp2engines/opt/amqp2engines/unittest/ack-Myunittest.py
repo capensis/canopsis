@@ -26,7 +26,10 @@ from caccount 	import caccount
 from cselector	import cselector
 
 
+
 sys.path.append(os.path.expanduser('~/opt/amqp2engines/engines/'))
+
+before_ack_sent = time.time()
 
 def get_rk(event):
 	routing_key = "%s.%s.%s.%s.%s" % (event['connector'], event['connector_name'], event['event_type'], event['source_type'], event['component'])
@@ -36,8 +39,8 @@ def get_rk(event):
 
 def publish(event):
 	with Connection(hostname='localhost', userid='guest', virtual_host='canopsis') as conn:
-	    with producers[conn].acquire(block=True) as producer:
-	        producer.publish(
+		with producers[conn].acquire(block=True) as producer:
+			producer.publish(
 	            event,
 	            serializer='json',
 	            exchange='canopsis.events',
@@ -63,7 +66,9 @@ class KnownValues(unittest.TestCase):
 		}
 		self.rk = get_rk(self.event)
 
-	def test_01_Ack_and_solve(self):
+
+	def test_01_send_error_event_to_ack(self):
+
 
 
 		log('Send an erroneous event to be ack')
@@ -76,12 +81,16 @@ class KnownValues(unittest.TestCase):
 		log('Wait until event is inserted before acquiting')
 		time.sleep(3)
 
+	def test_02_send_ack_to_error_event(self):
+
+
 		event = self.event.copy()
 		event['referer'] = self.rk
 		event['event_type'] = 'ack'
 		event['author'] = 'canopsis_unit_test'
 		#publishing ack event
 		publish(event)
+
 
 		log('Wait for ack event beeing threaten')
 		time.sleep(3)
@@ -92,30 +101,34 @@ class KnownValues(unittest.TestCase):
 		self.assertTrue(ack_insert)
 		self.assertFalse(ack_insert['solved'])
 
+
+	def test_03_send_ok_event_ack_solved(self):
+
+
 		# Tests solved ack by setting event to ok state
-		event['state'] = 0
-		publish(event)
+		self.event['state'] = 0
+		publish(self.event)
 		log('Wait for valid event to solve ack')
 		time.sleep(3)
 
 		ack_insert = self.ack.find_one({'rk': self.rk})
 		self.assertTrue(ack_insert)
 		self.assertTrue(ack_insert['solved'])
+		self.assertTrue(ack_insert['solvedts'] > before_ack_sent)
 
-	def test_02_Ack_no_handled(self):
-		pass
+	def test_04_send_again_error_event_ack_reset(self):
 
-	def test_03_Ack_auto_before_alert(self):
-		pass
+		# Tests solved ack by setting event to ok state
+		self.event['state'] = 1
+		publish(self.event)
+		log('Wait for invalid event to reset ack')
+		time.sleep(3)
 
-	def test_04_Downtime_insert(self):
-		pass
-
-	def test_05_Downtime_select_perfdata(self):
-		pass
-
-	def test_06_Downtime_select_event(self):
-		pass
+		ack_insert = self.ack.find_one({'rk': self.rk})
+		self.assertTrue(ack_insert)
+		self.assertFalse(ack_insert['solved'])
+		self.assertTrue(ack_insert['solvedts'] == -1)
+		self.assertTrue(ack_insert['timestamp'] == -1)
 
 if __name__ == "__main__":
 	unittest.main()
