@@ -19,6 +19,8 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
+import logging
+
 from cengine import cengine
 import cevent
 
@@ -36,16 +38,40 @@ class engine(cengine):
 
 		account = caccount(user="root", group="root")
 
-		self.storage = get_storage(namespace='ack', account=account)
+		self.storage = get_storage(namespace='ack', account=account, logging_level=logging.DEBUG)
 		self.stbackend = self.storage.get_backend('ack')
 
 		self.acknowledge_on = acknowledge_on
-		
+
+	def pre_run(self):
+		self.logger.setLevel('DEBUG')
+		self.beat()
+
+
+	def beat(self):
+		self.reload_ack_cache()
+
+	def reload_ack_cache(self):
+		query = self.stbackend.find({
+			'solved': False,
+			'ackts': {'$gt': -1}
+		}, {'rk': 1})
+
+		# dictionary is faster than list for key test existance, value is useless
+		self.cache_acks = {}
+		for ack in query:
+			self.cache_acks[ack['rk']] = 1
+			self.logger.debug(' + ack cache key > ' + ack['rk'])
+
+
 	def work(self, event, *args, **kargs):
 		logevent = None
 
 		# If event is of type acknowledgement, then acknowledge corresponding event
 		if event['event_type'] == 'ack':
+
+			self.logger.debug('Ack event found, will proceed ack.')
+
 			rk = event.get('referer', event.get('ref_rk', None))
 
 			if not rk:
@@ -66,8 +92,6 @@ class engine(cengine):
 				full_response = True,
 				new = True
 			)
-
-			self.logger.error(str(response))
 
 			if not response['lastErrorObject']['updatedExisting']:
 				record = response['value']
@@ -115,6 +139,7 @@ class engine(cengine):
 			)
 
 			self.amqp.publish(alerts_event, cevent.get_routingkey(alerts_event), self.amqp.exchange_name_events)
+			self.logger.debug('Ack internal metric sent.')
 
 			for hostgroup in event.get('hostgroups', []):
 				alerts_event = cevent.forger(
@@ -134,59 +159,72 @@ class engine(cengine):
 
 				self.amqp.publish(alerts_event, cevent.get_routingkey(alerts_event), self.amqp.exchange_name_events)
 
+			self.logger.debug('Reloading ack cache')
+			self.reload_ack_cache()
 
 		# If event is acknowledged, and went back to normal, remove the ack
+		# This test concerns most of case and could not perform query for each event
 		elif event['state'] == 0 and event.get('state_type', 1) == 1:
 			solvedts = int(time.time())
 
-			response = self.stbackend.find_and_modify(
+
+			if event['rk'] in self.cache_acks:
+				self.logger.debug('Ack exists for this event, and has to be recovered. ##############')
+
+				# we have an ack to process for this event
 				query = {
 					'rk': event['rk'],
 					'solved': False,
 					'ackts': {'$gt': -1}
-				},
-				update = {'$set': {
-					'solved': True,
-					'solvedts': solvedts
-				}},
-				full_response = True,
-				new = True
-			)
+				}
+				ack = self.stbackend.find_one(query)
 
-			if response and response['value']:
-				record = response['value']
+				if ack:
 
-				logevent = cevent.forger(
-					connector = "cengine",
-					connector_name = NAME,
-					event_type = "log",
-					source_type = event['source_type'],
-					component = event['component'],
-					resource = event.get('resource', None),
-
-					state = 0,
-					state_type = 1,
-
-					ref_rk = event['rk'],
-					output = u'Acknowledgement removed for event {0}'.format(event['rk']),
-					long_output = u'Everything went back to normal',
-
-					perf_data_array = [
+					self.stbackend.update(
+						query,
 						{
-							'metric': 'ack_solved_delay',
-							'value': solvedts - record['ackts'],
-							'unit': 's'
+							'$set': {
+								'solved': True,
+								'solvedts': solvedts
+							}
 						}
-					]
-				)
+					)
 
-				logevent['acknowledged_connector'] = event['connector']
-				logevent['acknowledged_source'] = event['connector_name']
-				logevent['acknowledged_at'] = record['ackts']
-				logevent['solved_at'] = solvedts
+					logevent = cevent.forger(
+						connector = "cengine",
+						connector_name = NAME,
+						event_type = "log",
+						source_type = event['source_type'],
+						component = event['component'],
+						resource = event.get('resource', None),
+
+						state = 0,
+						state_type = 1,
+
+						ref_rk = event['rk'],
+						output = u'Acknowledgement removed for event {0}'.format(event['rk']),
+						long_output = u'Everything went back to normal',
+
+						perf_data_array = [
+							{
+								'metric': 'ack_solved_delay',
+								'value': solvedts - ack['ackts'],
+								'unit': 's'
+							}
+						]
+					)
+
+					logevent['acknowledged_connector'] = event['connector']
+					logevent['acknowledged_source'] = event['connector_name']
+					logevent['acknowledged_at'] = ack['ackts']
+					logevent['solved_at'] = solvedts
 
 		# If the event is in problem state, update the solved state of acknowledgement
 		elif event['state'] != 0 and event.get('state_type', 1) == 1:
+
+			self.logger.debug('Event on error, an ack has to be triggered by a user, let write this to db.')
+
 			self.stbackend.find_and_modify(
 				query = {'rk': event['rk'], 'solved': True},
 				update = {'$set': {

@@ -29,6 +29,8 @@ from cstorage import get_storage
 from caccount import caccount
 import pyperfstore2
 
+import logging
+		
 NAME="alertcounter"
 INTERNAL_COMPONENT = '__canopsis__'
 PROC_CRITICAL = 'PROC_CRITICAL'
@@ -84,48 +86,48 @@ class engine(cengine):
 		else:
 			return '{0}{1}'.format(meta['co'], meta['me'])
 
-	def increment_counter(self, key, meta, value):
+	def increment_counter(self, meta, value):
+		key = self.perfdata_key(meta)
 		self.logger.debug("Increment {0}: {1}".format(key, value))
 		self.logger.debug(str(meta))
 		self.manager.push(name=key, value=value, meta_data=meta)
 
 	def update_global_counter(self, event):
-		if event['component'] != INTERNAL_COMPONENT:
-			# Comment action (ensure the component exists in database)
-			logevent = cevent.forger(
-				connector = 'cengine',
-				connector_name = NAME,
-				event_type = 'log',
-				source_type = 'component',
-				component = INTERNAL_COMPONENT,
+		# Comment action (ensure the component exists in database)
+		logevent = cevent.forger(
+			connector = 'cengine',
+			connector_name = NAME,
+			event_type = 'log',
+			source_type = 'component',
+			component = INTERNAL_COMPONENT,
 
-				output = 'Updating global counter'
-			)
+			output = 'Updating global counter'
+		)
 
-			self.amqp.publish(logevent, cevent.get_routingkey(logevent), self.amqp.exchange_name_events)
+		self.amqp.publish(logevent, cevent.get_routingkey(logevent), self.amqp.exchange_name_events)
 
-			# Update counter
-			new_event = deepcopy(event)
-			new_event['connector']      = 'cengine'
-			new_event['connector_name'] = NAME
-			new_event['event_type']     = 'check'
-			new_event['source_type']    = 'component'
-			new_event['component']      = INTERNAL_COMPONENT
+		# Update counter
+		new_event = deepcopy(event)
+		new_event['connector']      = 'cengine'
+		new_event['connector_name'] = NAME
+		new_event['event_type']     = 'check'
+		new_event['source_type']    = 'component'
+		new_event['component']      = INTERNAL_COMPONENT
 
-			del new_event['resource']
+		del new_event['resource']
+
+		self.count_alert(new_event, 1)
+
+		logevent['source_type'] = 'resource'
+		new_event['source_type'] = 'resource'
+
+		for hostgroup in event.get('hostgroups', []):
+			logevent['resource'] = hostgroup
+			new_event['resource'] = hostgroup
 
 			self.count_alert(new_event, 1)
 
-			logevent['source_type'] = 'resource'
-			new_event['source_type'] = 'resource'
-
-			for hostgroup in event.get('hostgroups', []):
-				logevent['resource'] = hostgroup
-				new_event['resource'] = hostgroup
-
-				self.count_alert(new_event, 1)
-
-				self.amqp.publish(logevent, cevent.get_routingkey(logevent), self.amqp.exchange_name_events)
+			self.amqp.publish(logevent, cevent.get_routingkey(logevent), self.amqp.exchange_name_events)
 
 	def count_sla(self, event, slatype, slaname, delay, value):
 		meta_data = {'type': 'COUNTER', 'co': INTERNAL_COMPONENT }
@@ -149,8 +151,7 @@ class engine(cengine):
 		else:
 			meta_data['me'] = 'cps_sla_{0}_{1}_ok'.format(slatype, slaname.lower())
 
-		key = self.perfdata_key(meta_data)
-		self.increment_counter(key, meta_data, value)
+		self.increment_counter(meta_data, value)
 
 	def count_by_crits(self, event, value):
 		if event['state'] == 0 and event.get('state_type', 1) == 1:
@@ -171,15 +172,13 @@ class engine(cengine):
 				if _crit != warn:
 					for slatype in ['ok', 'nok', 'out']:
 						meta_data['me'] = 'cps_sla_warn_{0}_{1}'.format(_crit, slatype)
-						key = self.perfdata_key(meta_data)
-						self.increment_counter(key, meta_data, 0)
+						self.increment_counter(meta_data, 0)
 
 				# Update critical counters
 				if _crit != crit:
 					for slatype in ['ok', 'nok', 'out']:
 						meta_data['me'] = 'cps_sla_crit_{0}_{1}'.format(_crit, slatype)
-						key = self.perfdata_key(meta_data)
-						self.increment_counter(key, meta_data, 0)
+						self.increment_counter(meta_data, 0)
 
 	def count_alert(self, event, value):
 		component = event['component']
@@ -200,76 +199,70 @@ class engine(cengine):
 			meta_data['re'] = resource
 
 		meta_data['me'] = "cps_statechange"
-		key = self.perfdata_key(meta_data)
-
-		self.increment_counter(key, meta_data, value)
+		self.increment_counter(meta_data, value)
 
 		meta_data['me'] = "cps_statechange_nok"
-		key = self.perfdata_key(meta_data)
-
 		cvalue = value if state != 0 else 0
-
-		self.increment_counter(key, meta_data, cvalue)
+		self.increment_counter(meta_data, cvalue)
 
 		for cstate in [0, 1, 2, 3]:
 			cvalue = value if cstate == state else 0
 
 			meta_data['me'] = "cps_statechange_{0}".format(cstate)
-			key = self.perfdata_key(meta_data)
-
-			self.increment_counter(key, meta_data, cvalue)
+			self.increment_counter(meta_data, cvalue)
 
 		# Update cps_statechange_{hard,soft}
 
 		for cstate_type in [0, 1]:
-			cvalue = value if cstate_type == state_type else 0
+			cvalue = value if cstate_type == state_type and state != 0 else 0
 
 			meta_data['me'] = "cps_statechange_{0}".format(
 				'hard' if cstate_type == 1 else 'soft'
 			)
 
-			key = self.perfdata_key(meta_data)
+			self.increment_counter(meta_data, cvalue)
 
-			self.increment_counter(key, meta_data, cvalue)
+	def count_by_type(self, event, value):
+		state = event['state']
+
+		meta_data = {
+			'type': 'COUNTER',
+			'co': INTERNAL_COMPONENT,
+			'tg': event.get('tags', [])
+		}
 
 		# Update cps_statechange_{component,resource,resource_by_component}
-		meta_data['co'] = INTERNAL_COMPONENT
-		meta_data['re'] = None
-
 		for cevtype in ['component', 'resource', 'resource_by_component']:
 			cvalue = 0
 
-			if cevtype == 'component' and not resource:
-				cvalue = value
+			if state != 0:
+				if event['source_type'] == cevtype:
+					cvalue = value
 
-			elif cevtype == 'resource' and resource and not event.get('component_problem', False):
-				cvalue = value
-
-			elif cevtype == 'resource_by_component' and resource and event.get('component_problem', False):
-				cvalue = value
+				elif cevtype == 'resource_by_component' and event['source_type'] == 'resource':
+					if cevent.is_component_problem(event):
+						cvalue = value
 
 			meta_data['me'] = "cps_statechange_{0}".format(cevtype)
-			key = self.perfdata_key(meta_data)
-
-			self.increment_counter(key, meta_data, cvalue)
+			self.increment_counter(meta_data, cvalue)
 
 		# Update cps_alerts_not_ack
 
 		if state != 0:
 			meta_data['me'] = 'cps_alerts_not_ack'
-			key = self.perfdata_key(meta_data)
-			self.increment_counter(key, meta_data, value)
+			self.increment_counter(meta_data, 1)
 
 			meta_data['me'] = 'cps_alerts_ack'
-			key = self.perfdata_key(meta_data)
-			self.increment_counter(key, meta_data, 0)
+			self.increment_counter(meta_data, 0)
 
+			cvalue = value if ackhost else 0
 			meta_data['me'] = 'cps_alerts_ack_by_host'
-			key = self.perfdata_key(meta_data)
-			self.increment_counter(key, meta_data, 0)
+			self.increment_counter(meta_data, 0)
 
 	def resolve_selectors_name(self):
+
 		if int(time.time()) > (self.last_resolv + 60):
+
 			records = self.storage.find(mfilter={'crecord_type': 'selector'}, mfields=['crecord_name'])
 
 			self.selectors_name = [record['crecord_name'] for record in records]
@@ -293,7 +286,7 @@ class engine(cengine):
 
 	def work(self, event, *args, **kargs):
 		validation = event['event_type'] in self.listened_event_type
-		validation = validation and event['component'] != 'derogation'
+		validation = validation and event['component'] not in ['derogation', INTERNAL_COMPONENT]
 
 		if validation:
 			self.update_global_counter(event)
@@ -301,6 +294,9 @@ class engine(cengine):
 
 			# By name
 			self.count_alert(event, 1)
+
+			# By Type and ACK
+			self.count_by_type(event, 1)
 
 			# By tags (selector)
 			self.count_by_tags(event, 1)

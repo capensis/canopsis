@@ -18,7 +18,7 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-import sys, os, clogging, json
+import sys, os, logging, json
 import re
 
 import polib
@@ -26,7 +26,7 @@ import polib
 import bottle
 from bottle import route, get, put, delete, request, HTTPError, response
 
-logger = clogging.getLogger()
+logger = logging.getLogger("ui_locales")
 
 #########################################################################
 base_path = os.path.expanduser("~/var/www/canopsis/")

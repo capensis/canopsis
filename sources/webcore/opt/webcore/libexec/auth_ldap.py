@@ -1,5 +1,5 @@
 import ldap
-import clogging
+import logging
 
 from caccount import caccount
 from cstorage import get_storage
@@ -8,7 +8,8 @@ from account import create_account
 
 storage = get_storage(namespace='object')
 
-logger = clogging.getLogger()
+logger = logging.getLogger("auth-ldap")
+logger.setLevel(logging.DEBUG)
 
 OPT_NETWORK_TIMEOUT = 1
 CONFIG=None

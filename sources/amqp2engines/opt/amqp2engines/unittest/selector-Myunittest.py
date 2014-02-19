@@ -18,8 +18,9 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-import unittest
-import sys, os
+import 	unittest
+import 	sys, os
+import 	logging
 from 	cstorage 	import get_storage
 from 	caccount 	import caccount
 from 	cselector 	import cselector
@@ -37,7 +38,7 @@ class KnownValues(unittest.TestCase):
 
 	def test_01_Init(self):
 		self.engine.pre_run()
-
+		"""
 		selectorTest = cselector(self.storage, name='selectorTest')
 		selectorTest.mfilter = {'test_key': 'value'}
 		selectorTest.load(selectorTest.dump())
@@ -52,7 +53,7 @@ class KnownValues(unittest.TestCase):
 		self.assertTrue(self.engine.selector_refresh == {'selector.account.root.selectorTest': True})
 
 		from camqp import camqp
-		self.engine.amqp = camqp(logging_name="test selector engine")
+		self.engine.amqp = camqp(logging_level=logging.INFO, logging_name="test selector engine")
 
 		for event_append in xrange(10):
 			self.engine.beat()
@@ -60,7 +61,7 @@ class KnownValues(unittest.TestCase):
 		self.engine.beat()
 
 		self.engine.post_run()
-
+		"""
 
 if __name__ == "__main__":
 	unittest.main()

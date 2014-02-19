@@ -18,11 +18,11 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-import os, sys, json, clogging, time
+import os, sys, json, logging, time
 
 from bson.errors import InvalidStringData
 from pymongo import Connection
-from gridfs import GridFS
+from gridfs import GridFS, errors
 import redis
 
 import threading
@@ -39,10 +39,12 @@ class store(object):
 			redis_host=None,
 			redis_port=6379,
 			redis_db=0,
-			redis_sync_interval=10):
+			redis_sync_interval=10,
+			logging_level=logging.INFO):
 
-		self.logger = clogging.getLogger()
-
+		self.logger = logging.getLogger('store')
+		self.logger.setLevel(logging_level)
+		
 		self.logger.debug(" + Init MongoDB Store")
 
 		# Read db option from conf
@@ -237,8 +239,14 @@ class store(object):
 		return self.collection.find_one({'_id': _id}, fields=mfields)
 
 	def get_bin(self, _id):
+		result = None
 		self.check_connection()
-		return self.grid.get(_id).read()
+		try:
+			document = self.grid.get(_id)
+			result = document.read()
+		except errors.NoFile as nf:
+			self.logger.error(nf)
+		return result
 
 	def find(self, limit=0, skip=0, mfilter={}, mfields=None, sort=None):
 		self.check_connection()

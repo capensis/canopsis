@@ -99,7 +99,7 @@ Ext.define('widgets.category_graph.category_graph', {
 						barWidth: 1,
 						zero: true,
 						dataLabels: this.labels,
-						showNumbers: this.labels
+						showNumbers: (this.labels && this.diagram_type === 'column')
 					},
 					stack: this.stacked_graph
 				},

@@ -21,6 +21,8 @@
 from cengine import cengine
 from caccount import caccount
 from cstorage import get_storage
+import cevent
+import time
 import md5
 
 NAME="entities"
@@ -30,7 +32,7 @@ class engine(cengine):
 		super(engine, self).__init__(name=name, *args, **kwargs)
 
 		self.account = caccount(user='root', group='root')
-		self.storage = get_storage(namespace='entities', account=self.account)
+		self.storage = get_storage(namespace='entities', logging_level=self.logging_level, account=self.account)
 		self.backend = self.storage.get_backend()
 
 	def work(self, event, *args, **kwargs):
@@ -59,14 +61,13 @@ class engine(cengine):
 		data = {
 			'type': 'component',
 			'name': component,
-			'hostgroups': hostgroups,
-			'mCrit': None,
-			'mWarn': None
+			'hostgroups': hostgroups
 		}
 
 		if event['source_type'] == 'component':
 			data['mCrit'] = event.get(mCrit, None)
 			data['mWarn'] = event.get(mWarn, None)
+			data['state'] = event['state']
 
 		self.backend.update({
 				'type': 'component',
@@ -90,7 +91,10 @@ class engine(cengine):
 						'hostgroups': hostgroups,
 						'servicegroups': servicegroups,
 						'mCrit': event.get(mCrit, None),
-						'mWarn': event.get(mWarn, None)
+						'mWarn': event.get(mWarn, None),
+
+						'state': event['state'],
+						'state_type': event['state_type']
 					}
 				},
 				upsert = True

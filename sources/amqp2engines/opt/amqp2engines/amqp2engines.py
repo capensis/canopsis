@@ -23,7 +23,8 @@ from ConfigParser import RawConfigParser, ConfigParser, ParsingError
 import importlib
 
 import unittest
-import time, json
+import time, json, logging
+import inspect
 
 from cinit import cinit
 
@@ -35,7 +36,7 @@ sys.path.append(os.path.expanduser('~/opt/amqp2engines/engines/'))
 DAEMON_NAME="amqp2engines"
 
 init 	= cinit()
-logger 	= init.getLogger()
+logger 	= init.getLogger(DAEMON_NAME, level="INFO")
 handler = init.getHandler(logger)
 
 engines=[]
@@ -59,13 +60,21 @@ subprocess.call('rabbitmqadmin -H %s --vhost=%s --username=%s --password=%s dele
 
 ###### END of HACK ####
 
+LOGLEVELS = {
+	'info': logging.INFO,
+	'warning': logging.WARNING,
+	'error': logging.ERROR,
+	'debug': logging.DEBUG
+}
+
 CONFIG_PARAMS = {
 	'next': list,
 	'next_balanced': bool,
 	'name': basestring,
 	'beat_interval': int,
 	'exchange_name': basestring,
-	'routing_keys': list
+	'routing_keys': list,
+	'logging_level': lambda lvl: LOGLEVELS[lvl]
 }
 
 def start_engines():
@@ -142,6 +151,9 @@ def start_engines():
 			elif CONFIG_PARAMS[param] is float:
 				value = config.getfloat(section, param)
 
+			elif not inspect.isclass(CONFIG_PARAMS[param]) and callable(CONFIG_PARAMS[param]):
+				value = CONFIG_PARAMS[param](value)
+
 			# In all other case, we keep the original string value fetched via item[1]
 
 			engine_conf[param] = value
@@ -206,4 +218,3 @@ def main():
 	
 if __name__ == "__main__":
 	main()
-

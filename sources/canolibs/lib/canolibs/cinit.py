@@ -18,21 +18,9 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-import signal, time, clogging
+import signal, time, logging
 
 class cinit(object):
-	"""
-	Class to use in any canopsis process.
-	"""
-
-	def getLogger(self, scope=None):
-		"""
-		Get a logger with specific scope.
-		"""
-
-		result = clogging.getChildLogger(scope=scope)
-
-		return result
 
 	class getHandler(object):
 		def __init__(self, logger):
@@ -66,3 +54,26 @@ class cinit(object):
 				except:
 					break
 			self.stop()
+
+	def getLogger(self, name, level="INFO", logging_level=None):
+		if not logging_level:
+			if level == "INFO":
+				self.level = logging.INFO
+			elif level == "WARNING":
+				self.level = logging.WARNING
+			elif level == "ERROR":
+				self.level = logging.ERROR
+			elif level == "CRITICAL":
+				self.level = logging.CRITICAL
+			elif level == "EXCEPTION":
+				self.level = logging.EXCEPTION
+			elif level == "DEBUG":
+				self.level = logging.DEBUG
+		else:
+			self.level = logging_level
+			
+		logging.basicConfig(format='%(asctime)s %(levelname)s %(name)s %(message)s')
+		self.logger = logging.getLogger(name)
+		self.logger.setLevel(self.level)
+		
+		return self.logger

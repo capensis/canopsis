@@ -18,7 +18,7 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-import clogging
+import logging
 import time
 import sys
 import os
@@ -43,7 +43,7 @@ CONFIG.read(os.path.expanduser('~/etc/cstorage.conf'))
 
 
 class cstorage(object):
-	def __init__(self, account, namespace='object', mongo_host="127.0.0.1", mongo_port=27017, mongo_db='canopsis', mongo_autoconnect=True, groups=[], mongo_safe=True):
+	def __init__(self, account, namespace='object', logging_level=logging.ERROR, mongo_host="127.0.0.1", mongo_port=27017, mongo_db='canopsis', mongo_autoconnect=True, groups=[], mongo_safe=True):
 
 		try:
 			self.mongo_host = CONFIG.get("master", "host")
@@ -68,7 +68,8 @@ class cstorage(object):
 		self.namespace = namespace
 		self.backend = None
 
-		self.logger = clogging.getLogger("cstorage-{0}".format(namespace))
+		self.logger = logging.getLogger('cstorage')
+		self.logger.setLevel(logging_level)
 
 		self.gridfs_namespace = "binaries"
 
@@ -143,6 +144,7 @@ class cstorage(object):
 			self.logger.debug("Connected to %s collection." % namespace)
 			return self.backend[namespace]
 
+
 	def update(self, _id, data, namespace=None, account=None):
 		if not isinstance(data, dict):
 			raise Exception('Invalid data, must be a dict ...')
@@ -163,6 +165,7 @@ class cstorage(object):
 
 		records = []
 		return_ids = []
+
 
 		if isinstance(_record_or_records, crecord):
 			records = [_record_or_records]
@@ -268,6 +271,8 @@ class cstorage(object):
 				record._id = _id
 				return_ids.append(_id)
 
+
+
 		if len(return_ids) == 1:
 			return return_ids[0]
 		else:
@@ -287,6 +292,7 @@ class cstorage(object):
 		self.put(record,account=None, namespace=None)
 	'''
 
+
 	def find_one(self, *args, **kargs):
 		return self.find(one=True, *args, **kargs)
 
@@ -296,6 +302,9 @@ class cstorage(object):
 	def find(self, mfilter={}, mfields=None, account=None, namespace=None, one=False, count=False, sort=None, limit=0, offset=0, for_write=False, ignore_bin=True, raw=False, with_total=False):
 		if not account:
 			account = self.account
+
+		if isinstance(sort, basestring):
+			sort = [(sort, 1)]
 
 		# Clean Id
 		if mfilter.get('_id', None):
@@ -396,7 +405,7 @@ class cstorage(object):
 			_ids = _id_or_ids
 			dolist = True
 		else:
-			_ids = [_id_or_ids]
+			_ids = [ _id_or_ids ]
 
 		backend = self.get_backend(namespace)
 
@@ -536,6 +545,7 @@ class cstorage(object):
 
 		return output
 
+
 	def drop_namespace(self, namespace):
 		self.db.drop_collection(namespace)
 
@@ -564,6 +574,7 @@ class cstorage(object):
 				record.children.append(rec)
 			except Exception, err:
 				self.logger.debug(err)
+
 
 	'''
 	def recursive_dump(self, record, depth=0,account=None, namespace=None):
@@ -595,6 +606,7 @@ class cstorage(object):
 
 		return records
 
+
 	def print_record_tree(self, record, depth=0):
 		depth+=1
 
@@ -616,6 +628,7 @@ class cstorage(object):
 			print prefix + "> " + str(child.name)
 
 			self.print_record_tree(child, depth)
+
 
 	def get_childs_of_parent(self, record_or_id, rtype=None, account=None):
 
@@ -719,7 +732,7 @@ class cstorage(object):
 
 ## Cache storage
 STORAGES = {}
-def get_storage(namespace='object', account=None):
+def get_storage(namespace='object', account=None, logging_level=logging.INFO):
 	global STORAGES
 	try:
 		return STORAGES[namespace]
@@ -727,5 +740,6 @@ def get_storage(namespace='object', account=None):
 		if not account:
 			account = caccount()
 
-		STORAGES[namespace] = cstorage(account, namespace=namespace)
+		STORAGES[namespace] = cstorage(account, namespace=namespace, logging_level=logging_level)
 		return STORAGES[namespace]
+

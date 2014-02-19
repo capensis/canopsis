@@ -1,9 +1,13 @@
 #!/usr/bin/env python
-import sys, hashlib, getpass, time, argparse, clogging
+import sys, hashlib, getpass, time, argparse, logging
 from caccount import caccount, caccount_get, caccount_getall
 from cstorage import cstorage
 from pymongo import Connection
 from crecord import crecord
+
+logging.basicConfig(level=logging.DEBUG,
+                    format='%(asctime)s %(name)s %(levelname)s %(message)s',
+                    )
 
 parser = argparse.ArgumentParser()
 parser.add_argument('-list', '--list-users',action='store_const',const=True)
@@ -29,7 +33,7 @@ else:
 	verbosity = logging.ERROR
 
 whoami = caccount(user="root", group="root")
-my_storage = cstorage(whoami, namespace='object')
+my_storage = cstorage(whoami, namespace='object', logging_level=verbosity)
 
 def user_exist(cstorage, user_name):
 	try:
