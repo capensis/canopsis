@@ -87,8 +87,7 @@ class engine(cengine):
 		""" Configuration reload for realtime ui changes handling """
 
 		self.configuration = { 'rules' : [], 'default_action': self.find_default_action()}
-		if 1:
-		#try:
+		try:
 			records = self.storage.find({'crecord_type':'rule'}, sort='priority')
 
 			for record in records:
@@ -98,8 +97,8 @@ class engine(cengine):
 
 			self.send_stat_event()
 
-		#except Exception, e:
-			#self.logger.warning(str(e))
+		except Exception, e:
+			self.logger.warning(str(e))
 
 
 	def send_stat_event(self):
