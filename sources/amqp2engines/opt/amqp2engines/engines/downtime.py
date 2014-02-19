@@ -43,12 +43,13 @@ class engine(cengine):
 		self.dt_backend = self.storage.get_backend('downtime')
 		self.evt_backend = self.storage.get_backend('events')
 		self.cdowntime = Cdowntime(self.storage)
+		self.cdowntime.reload(delta_beat=self.beat_interval)
 		self.beat()
 
 	def beat(self):
 
 		self.logger.debug('Refresh downtimes list')
-		#refresh downtimes
+		#refresh downtimes since now to now + delta_beat
 		self.cdowntime.reload(delta_beat=self.beat_interval)
 
 
@@ -162,14 +163,18 @@ class engine(cengine):
 				},
 				multi = True
 			)
+			# Takes care of the new downtime
+			self.cdowntime.reload(delta_beat=self.beat_interval)
+
 
 		# For every other case, check if the event is in downtime
 		else:
-			self.logger.debug('Received event: {0}'.format(event['rk']))
 
 			event['downtime'] = False
-
+			self.logger.debug('self.cdowntime.downtimes')
+			self.logger.debug(self.cdowntime.downtimes)
 			if self.cdowntime.is_downtime(event.get('component', ''), event.get('resource', '')):
 				event['downtime'] = True
 
+			self.logger.debug('Received event: {0}, and set downtime to {1}'.format(event['rk'], event['downtime']))
 		return event
