@@ -16,12 +16,12 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 */
-Ext.define('canopsis.model.SLA', {
+Ext.define('canopsis.model.SLACrit', {
 	extend: 'Ext.data.Model',
 	fields: [
 		{name: '_id'},
 		{name: 'id', mapping: '_id'},
-		{name: 'crecord_type', defaultValue: 'sla'},
+		{name: 'crecord_type', defaultValue: 'slacrit'},
 
 		{name: 'enable', defaultValue: true},
 
@@ -32,18 +32,7 @@ Ext.define('canopsis.model.SLA', {
 		{name: 'aaa_group', defaultValue: undefined},
 		{name: 'aaa_owner', defaultValue: undefined},
 
-		/* objclass:
-		 *  Define which type of SLA object we are dealing with.
-		 *  Possible values are :
-		 *   - crit: Define a new level of criticality
-		 *   - macro: Define the macro for Critical SLA and Warning SLA
-		 */
-		{name: 'objclass', defaultValue: 'crit'},
-
 		{name: 'crit', defaultValue: undefined},
-		{name: 'delay', defaultValue: undefined},
-
-		{name: 'mCrit', defaultValue: 'PROC_CRITICAL'},
-		{name: 'mWarn', defaultValue: 'PROC_WARNING'}
+		{name: 'delay', defaultValue: undefined}
 	]
 });

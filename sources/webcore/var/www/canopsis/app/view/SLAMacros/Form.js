@@ -1,4 +1,4 @@
-//need:app/lib/controller/cgrid.js,app/view/Rule/Grid.js,app/view/Rule/Form.js,app/store/Rules.js
+//need:app/lib/view/cform.js
 /*
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
@@ -17,25 +17,36 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 */
-Ext.define('canopsis.controller.SLA', {
-	extend: 'canopsis.lib.controller.cgrid',
+Ext.define('canopsis.view.SLAMacros.Form', {
+	extend: 'canopsis.lib.view.cform',
 
-	views: ['SLA.Grid', 'SLA.Form'],
-	stores: ['SLA'],
-	models: ['SLA'],
+	alias: 'widget.SLAMacrosForm',
 
-	logAuthor: '[controller][sla]',
+	iconCls: 'icon-mainbar-edit-task',
 
-	storeDefaultAction: undefined,
+	logAuthor: '[Controller][SLAMacros][Form]',
 
-	init: function() {
-		log.debug('Initialize ...', this.logAuthor);
+	layout: 'fit',
 
-		this.formXtype = 'SLAForm';
-		this.listXtype = 'SLAGrid';
+	width: 500,
+	height: 150,
 
-		this.modelId = 'SLA';
-
-		this.callParent(arguments);
-	}
+	items: [{
+		xtype: 'fieldset',
+		defaultType: 'textfield',
+		border: false,
+		defaults: {
+			width: 450,
+			labelWidth: 150
+		},
+		items: [{
+			fieldLabel: _('mCrit'),
+			name: 'mCrit',
+			allowBlank: false
+		},{
+			fieldLabel: _('mWarn'),
+			name: 'mWarn',
+			allowBlank: false
+		}]
+	}]
 });

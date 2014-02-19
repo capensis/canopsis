@@ -17,13 +17,13 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 */
-Ext.define('canopsis.view.SLA.Grid' , {
+Ext.define('canopsis.view.SLACrit.Grid' , {
 	extend: 'canopsis.lib.view.cgrid',
 
-	alias: 'widget.SLAGrid',
+	alias: 'widget.SLACritGrid',
 
-	model: 'SLA',
-	store: 'SLA',
+	model: 'SLACrit',
+	store: 'SLACrit',
 
 	opt_db_namespace: 'object',
 
@@ -51,27 +51,34 @@ Ext.define('canopsis.view.SLA.Grid' , {
 	// 	}
 	// }],
 
-columns: [
-	{
-		header: '',
-		width: 25,
-		sortable: false,
-		renderer: rdr_crecord_type,
-		dataIndex: 'crecord_type'
-	},{
-		header: 'Criticity',
-		sortable: true,
-		// renderer: rdr_crecord_type,
-		dataIndex: 'crit'
-	},{
-		header: 'Delay',
-		sortable: true,
-		renderer: rdr_time_interval,
-		dataIndex: 'delay'
-	}
+	opt_bar_customs: [{
+		text: 'Macros',
+		xtype: 'button',
+		iconCls: 'icon-mainbar-edit-task',
+		action: 'edit-macros-button',
+	}],
+
+	columns: [
+		{
+			header: '',
+			width: 25,
+			sortable: false,
+			renderer: rdr_crecord_type,
+			dataIndex: 'crecord_type'
+		},{
+			header: 'Criticity',
+			sortable: true,
+			// renderer: rdr_crecord_type,
+			dataIndex: 'crit'
+		},{
+			header: 'Delay',
+			sortable: true,
+			renderer: rdr_time_interval,
+			dataIndex: 'delay'
+		}
 	],
+
 	initComponent: function() {
 		this.callParent(arguments);
 	}
-
 });

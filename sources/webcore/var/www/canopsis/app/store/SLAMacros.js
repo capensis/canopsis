@@ -18,25 +18,19 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-Ext.define('canopsis.store.SLA', {
+Ext.define('canopsis.store.SLAMacros', {
 	extend: 'canopsis.lib.store.cstore',
-	model: 'canopsis.model.SLA',
+	model: 'canopsis.model.SLAMacros',
 
-	storeId: 'store.SLA',
+	storeId: 'store.SLAMacros',
 	pageSize: 5000,
 	autoLoad: true,
 	autoSync: true,
 
-	sorters: [
-		{
-			property: 'crit',
-			direction: 'ASC'
-		}
-	],
-
 	proxy: {
 		type: 'rest',
-		url: '/rest/object/sla',
+		url: '/rest/object/slamacros',
+
 		appendId: true,
 		reader: {
 			type: 'json',

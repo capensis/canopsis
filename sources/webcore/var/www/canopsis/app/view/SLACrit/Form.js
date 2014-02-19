@@ -17,10 +17,10 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 */
-Ext.define('canopsis.view.SLA.Form', {
+Ext.define('canopsis.view.SLACrit.Form', {
 	extend: 'canopsis.lib.view.cform',
 
-	alias: 'widget.SLAForm',
+	alias: 'widget.SLACritForm',
 
 	requires: [
 		'canopsis.lib.form.field.cfieldset',
