@@ -21,6 +21,9 @@
 import socket, time, logging
 import re
 
+from cstorage import get_storage
+from caccount import caccount
+
 logger = logging.getLogger('cevent')
 
 # Change default timeout from 1 to 3 , conflict with gunicorn
@@ -159,3 +162,32 @@ def get_routingkey(event):
 		rk += ".%s" % event['resource']
 
 	return rk
+
+def is_component_problem(event):
+	if event['source_type'] == 'resource' and event['state'] != 0:
+		storage = get_storage(namespace='entities', account=caccount(user='root', group='root')).get_backend()
+
+		component = storage.find_one({
+			'type': 'component',
+			'name': event['component']
+		})
+
+		if component and component['state'] != 0:
+			return True
+
+	return False
+
+def is_host_acknowledged(event):
+	if is_component_problem(event):
+		storage = get_storage(namespace='entities', account=caccount(user='root', group='root')).get_backend()
+
+		ack = storage.find_one({
+			'type': 'ack',
+			'component': event['component'],
+			'resource': None
+		})
+
+		if ack:
+			return True
+
+	return False
