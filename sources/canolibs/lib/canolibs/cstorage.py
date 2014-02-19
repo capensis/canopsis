@@ -303,6 +303,8 @@ class cstorage(object):
 		if not account:
 			account = self.account
 
+		if isinstance(sort, basestring):
+			sort = [(sort, 1)]
 		# Clean Id
 		if mfilter.get('_id', None):
 			mfilter['_id'] = self.clean_id(mfilter['_id'])
