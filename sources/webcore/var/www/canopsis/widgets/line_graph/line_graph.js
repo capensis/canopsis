@@ -261,7 +261,7 @@ Ext.define('widgets.line_graph.line_graph', {
 		this.options = {
 			reportMode: this.reportMode,
 
-			cwidget: this,
+			cwidget: function() { return this; }.bind(this),
 
 			chart: {
 				renderTo: this.wcontainerId,
