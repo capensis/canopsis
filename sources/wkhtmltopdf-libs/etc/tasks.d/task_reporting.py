@@ -118,7 +118,7 @@ def render_pdf(fileName=None, viewName=None, startTime=None, stopTime=None, inte
 
 	logger.info('Put it in grid fs: %s' % file_path)
 	doc_id = put_in_grid_fs(file_path, fileName, account,owner)
-	logger.debug('Remove tmp report file with docId: %s' % doc_id)
+	logger.info('Remove tmp report file with docId: %s' % doc_id)
 	os.remove(file_path)
 
 	#Subtask mail (if needed)
