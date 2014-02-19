@@ -38,7 +38,7 @@ NAME="consolidation"
 class engine(cengine):
 	def __init__(self, *args, **kargs):
 		self.metrics_list = {}
-		self.timestamps = {}
+		self.timestamps = {} 
 		self.default_interval = 60
 
 		self.thd_warn_sec_per_evt = 8
@@ -49,7 +49,7 @@ class engine(cengine):
 	def pre_run(self):
 		self.storage = get_storage(namespace='object', account=caccount(user="root", group="root"))
 		self.manager = pyperfstore2.manager(logging_level=logging.INFO)
-
+				
 		self.beat()
 
 	def beat(self):
@@ -62,10 +62,8 @@ class engine(cengine):
 		beat_elapsed = 0
 
 		record = self.get_ready_record(event)
-
-		if record:
-
-			record = record.dump()
+		if record:	
+			record = record.dump()		
 
 			_id = record.get('_id')
 			name = record.get('crecord_name')

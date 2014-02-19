@@ -34,7 +34,7 @@ if action != "update" and action != "init":
 	sys.exit(1)
 
 ## Logger
-logger 	= init.getLogger("mongodb-conf", "INFO")
+logger 	= init.getLogger('filldb')
 
 ## Load
 modules = dynmodloads("~/opt/mongodb/load.d")

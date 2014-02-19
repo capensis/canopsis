@@ -30,7 +30,7 @@ class Cdowntime(crecord):
 	"""
 	def __init__(self, storage):
 		self.storage = storage
-		self.backend = storage.get_backend('entities')
+		self.backend = storage.get_backend('downtime')
 
 
 	def reload(self, delta_beat=0):
@@ -39,12 +39,11 @@ class Cdowntime(crecord):
 				it should be equal to 0
 		"""
 		now = time.time()
-		query = {'type': 'downtime', '$and':
-			[
-				{'start': { '$lte': now - delta_beat}},
-				{'end'	: { '$gte': now +  delta_beat}}
-			]
+		query = {
+			'start': { '$lte': now - delta_beat},
+			'end'	: { '$gte': now +  delta_beat}
 		}
+
 		downtimes = self.backend.find(query)
 		self.downtimes = [downtime for downtime in downtimes]
 		return self.downtimes

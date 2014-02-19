@@ -24,7 +24,7 @@ from caccount import caccount
 from cselector import cselector
 
 import logging
-
+		
 NAME="selector"
 
 class engine(cengine):
@@ -62,13 +62,13 @@ class engine(cengine):
 			# Loads associated class
 			selector = cselector(storage=self.storage, record=selector, logging_level=self.logging_level)
 
-			self.logger.debug('%s found, start processing..' % (event_id))
-			# do I publish a selector event ? Yes if selector have to and it is time or we got to update status
+			self.logger.debug('%s found, start processing..' % (event_id))			
+			# do I publish a selector event ? Yes if selector have to and it is time or we got to update status 
 			if selector.dostate:
 				try:
 					#TODO improve this full mongo db request
 					rk, selector_event = selector.event()
-					self.logger.info('%s properly computed' % (event_id))
+					self.logger.info('%s properly computed' % (event_id))		
 
 				except Exception as e:
 					self.logger.error('Unable to select all event matching this selector in order to publish worst state one form them. Exception : ' + str(e))

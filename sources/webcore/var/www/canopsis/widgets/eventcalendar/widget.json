@@ -208,6 +208,16 @@
 				"name": "defaultEventColor",
 				"xtype":"ccolorfield",
 				"value": "#3a87ad"
+			},{
+				"fieldLabel": "Stacked events color",
+				"name": "stackedEventColor",
+				"xtype":"ccolorfield",
+				"value": "#3a87ad"
+			},{
+				"fieldLabel": "Downtime events color",
+				"name": "downtimeEventColor",
+				"xtype":"ccolorfield",
+				"value": "#3a87ad"
 			}]
 	},{
 		"title": "Calendar sources",
@@ -237,5 +247,22 @@
 					"xtype": "cfilter",
 					"name" : "stacked_events_filter"
 				}]
-	}]
+	},{
+			"title": "Downtimes",
+			"advanced": true,
+			"items": [
+				{
+					"xtype": "cinventory",
+					"name" : "downtimes",
+					"showResource": true,
+					"idKey" : "component",
+					"additional_field": {
+											"xtype":"ccolorfield",
+											"name":"color",
+											"emptyText":"Color of events",
+											"hideLabel": true
+										}
+				}
+			]
+		}]
 }]

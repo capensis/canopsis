@@ -161,7 +161,7 @@ class store(object):
 
 		# Disable bulk mode in lower rate
 		if bulk and self.last_rate < self.rate_threshold:
-			bulk = False		
+			bulk = False
 		if bulk:
 			self.logger.debug("Bulk mode is enabled (rate: %s push/sec)" % self.last_rate)
 		if self.daily_collection.find_one({'_id': _id}):
@@ -214,8 +214,14 @@ class store(object):
 		return self.collection.find_one({'_id': _id}, fields=mfields)
 
 	def get_bin(self, _id):
+		result = None
 		self.check_connection()
-		return self.grid.get(_id).read()
+		try:
+			document = self.grid.get(_id)
+			result = document.read()
+		except errors.NoFile as nf:
+			self.logger.error(nf)
+		return result
 
 	def find(self, limit=0, skip=0, mfilter={}, mfields=None, sort=None):
 		self.check_connection()
@@ -229,7 +235,7 @@ class store(object):
 		self.db.drop_collection(self.mongo_collection)
 		self.db.drop_collection(self.mongo_collection+"_bin.chunks")
 		self.db.drop_collection(self.mongo_collection+"_bin.files")
-		
+
 	def disconnect(self):
 		if self.connected:
 			self.logger.debug("Disconnect from MongoDB")

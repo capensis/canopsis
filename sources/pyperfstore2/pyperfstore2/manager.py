@@ -18,8 +18,9 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-import os, sys, json, logging, time
+import time
 import hashlib
+import logging
 from datetime import datetime
 
 from pyperfstore2.store import store
@@ -182,11 +183,12 @@ class manager(object):
 		return self.store.find(mfilter=mfilter, limit=limit, skip=skip, mfields=mfields, sort=sort)
 
 	def subset_selection_apply(self, dca, subset_selection):
-		"""unit tests
+		"""
+		unit tests
 		class Self:
-    		def __init__(self):
-        		import logging
-        		self.logger = logging.setLogger('unittest')
+			def __init__(self):
+			import logging
+				self.logger = logging.setLogger('unittest')
 		assert(subset_selection_apply(Self(), {'unit_test_1':1}, {'no_meta_filter'}) == {'unit_test_1':1})
 		assert(subset_selection_apply(Self(), {'unit_test_2':1}, {'metas_filter':1}) == {'hg': None, 'unit_test_2': 1})
 		assert(subset_selection_apply(Self(), {'re':'resource', 'co':'component'}, {'metas_filter':[{'keep':0}]})['d'] == [])
@@ -196,7 +198,6 @@ class manager(object):
 		assert(subset_selection_apply(Self(), {'d': ['test'], 're':'resource', 'co':'component'}, {'metas_filter':[{}]}) == {'co': 'component', 'd': [], 'hg': None, 're': 'resource'})
 		assert(subset_selection_apply(Self(), {'d': ['test'], 're':'resource', 'co':'component', 'hg': 'hostgroup'}, {'metas_filter':[{'hostgroup':'hostgroup'}]}) == {'co': 'component', 'd': ['test'], 'hg': 'hostgroup', 're': 'resource'})
 		"""
-
 
 		if 'metas_filter' not in subset_selection:
 			self.logger.debug('no meta filter to apply for this dca')
@@ -224,7 +225,6 @@ class manager(object):
 			self.logger.debug('Filter met on metas, will skip all data')
 			dca['d'] = []
 		return dca
-
 
 	def get_points(self, _id=None, name=None, tstart=None, tstop=None, raw=False, return_meta=False, add_prev_point=False, add_next_point=False, subset_selection={}):
 		_id = self.get_id(_id, name)
@@ -419,7 +419,7 @@ class manager(object):
 
 		self.logger.warning(" + DCA: %s" % _id)
 
-		timestamps = [x for x in values.keys()]
+		timestamps = values.keys()
 		timestamps.sort()
 		points = []
 		for timestamp in timestamps:
@@ -609,7 +609,6 @@ class manager(object):
 			self.logger.info(" + Compressed DCA: %s" % len(meta.get('c', [])))
 			self.logger.info(" + Next Clean: %s" % meta.get('nc', None) )
 
-
 def split_list(alist, wanted_parts=1):
     length = len(alist)
     return [ alist[i*length // wanted_parts: (i+1)*length // wanted_parts]
@@ -620,5 +619,5 @@ def rotate_process(_ids):
 	import pyperfstore2
 	manager = pyperfstore2.manager()
 
-	for _id in _ids:
-		manager.rotate(_id=_id)
+    for _id in _ids:
+        manager.rotate(_id=_id)

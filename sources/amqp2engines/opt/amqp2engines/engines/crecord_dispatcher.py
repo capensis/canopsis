@@ -25,7 +25,7 @@ from cselector import cselector
 from kombu.pools import producers
 from kombu import Connection, Queue, Exchange
 import logging, time
-
+		
 NAME="crecord_dispatcher"
 # Delay since the lock document is released in any cases
 UNLOCK_DELAY = 60
@@ -169,7 +169,12 @@ class engine(cengine):
 					#Special case: selector crecords targeted to SLA
 					if dump['crecord_type'] == 'selector' and 'rk' in dump and dump['rk'] and 'dosla' in dump and dump['dosla'] in [ True, 'on'] and 'dostate' in dump and dump['dostate'] in [ True, 'on']:
 						self.publish_record(dump, 'sla')
+					self.logger.error('PLAUPE !!!!!!!!!')
 
+					#This event will run only once the list below consumer's dispatch method. This ensure those engine methods are run once in ha mode
+					for trigger_consume_dispatch in ['downtime']:
+						self.logger.error('DISPATCHIN DOWNTIME')
+						self.publish({'event': 'engine process trigger'}, trigger_consume_dispatch)
 
 				except Exception, e:
 					#Crecord gets out of queue and will be reloaded on next beat
@@ -183,7 +188,6 @@ class engine(cengine):
 	def post_run(self):
 		try:
 			self.producer.close()
-			self.connect_amqp.close()
 			self.logger.debug('Amqp connection closed properly')
 		except Exception, e:
 			self.logger.warning('Unable to disconnect properly from AMQP' + str(e))

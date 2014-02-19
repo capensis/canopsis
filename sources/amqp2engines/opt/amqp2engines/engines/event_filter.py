@@ -36,8 +36,7 @@ class engine(cengine):
 		cengine.__init__(self, name=NAME, *args, **kargs)
 		account = caccount(user="root", group="root")
 		self.storage = get_storage(logging_level=logging.DEBUG, account=account)
-
-
+		
 	def pre_run(self):
 		self.drop_event_count = 0
 		self.pass_event_count = 0
@@ -88,9 +87,8 @@ class engine(cengine):
 		""" Configuration reload for realtime ui changes handling """
 
 		self.configuration = { 'rules' : [], 'default_action': self.find_default_action()}
-
 		try:
-			records = self.storage.find({'crecord_type':'rule'}, sort="priority")
+			records = self.storage.find({'crecord_type':'rule'}, sort='priority')
 
 			for record in records:
 				record_dump = record.dump()
