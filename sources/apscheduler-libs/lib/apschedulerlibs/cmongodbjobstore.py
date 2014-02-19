@@ -35,6 +35,20 @@ logger.setLevel(logging.DEBUG)
 
 TRIGGER = 'trigger'
 
+MONTHS = [
+	'January',
+	'February',
+	'March',
+	'April',
+	'May',
+	'June',
+	'Jully',
+	'August',
+	'September',
+	'October',
+	'November',
+	'December']
+
 class CMongoDBJobStore(MongoDBJobStore):
 
 	def __init__(self, database='canopsis', collection='objects',connection=None, pickle_protocol=pickle.HIGHEST_PROTOCOL,**connect_args):
@@ -45,7 +59,7 @@ class CMongoDBJobStore(MongoDBJobStore):
 		jobs = []
 		for job_dict in self.collection.find({'crecord_type': 'schedule'}):
 			try:
-				job = Job()
+				job = Job.__new__(Job)
 
 				if job_dict['aaa_owner'] != 'account.root':
 					if job_dict['kwargs']['task'] != 'task_reporting':
@@ -74,6 +88,9 @@ class CMongoDBJobStore(MongoDBJobStore):
 					else: #try to get crontab
 						cron = job_dict.get('cron')
 						if cron is not None:
+							month = cron.get('month')
+							if month is not None and isinstance(month, basestring):
+								cron['month'] = (MONTHS.index(month) + 1)
 							job_dict[TRIGGER] = CronTrigger(**cron)
 
 				if TRIGGER not in job_dict:
