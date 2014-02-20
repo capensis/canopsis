@@ -618,6 +618,3 @@ def rotate_process(_ids):
 	raise('TODO')
 	import pyperfstore2
 	manager = pyperfstore2.manager()
-
-    for _id in _ids:
-        manager.rotate(_id=_id)
