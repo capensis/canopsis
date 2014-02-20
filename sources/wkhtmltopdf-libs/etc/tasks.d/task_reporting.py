@@ -28,16 +28,16 @@ from ctools import cleanTimestamp
 from datetime import date
 from celerylibs import decorators
 from random import randint
-import os, sys, json 
+import os, sys, json
 import time
 
 import hashlib
 
 import task_mail
-from wkhtmltopdf.wrapper import Wrapper 
+from wkhtmltopdf.wrapper import Wrapper
 
 init 	= cinit()
-logger 	= init.getLogger('Reporting Task') 
+logger 	= init.getLogger('Reporting Task')
 
 @task
 @decorators.log_task
@@ -50,15 +50,15 @@ def render_pdf(fileName=None, viewName=None, startTime=None, stopTime=None, inte
 			startTime = stopTime - interval
 		else:
 			startTime = -1
-	
+
 	if viewName is None:
 		raise ValueError("task_render_pdf: you must at least provide a viewName")
-	
+
 	#check if the account is just a name or a real caccount
 	if isinstance(account ,str) or isinstance(account ,unicode):
 		root_account = caccount(user='root',group='root',mail='root@localhost.local')
 		root_storage = cstorage(account=root_account, namespace='object')
-		
+
 		bd_account = root_storage.find_one(mfilter={'_id':'account.%s' % str(account)})
 
 		if isinstance(bd_account, crecord):
@@ -67,7 +67,7 @@ def render_pdf(fileName=None, viewName=None, startTime=None, stopTime=None, inte
 		else:
 			account = caccount(mail='anonymous@localhost.local')
 			logger.info('Anonymous account created')
-	
+
 	#get view options
 	storage = cstorage(account=account, namespace='object')
 	try:
@@ -82,13 +82,13 @@ def render_pdf(fileName=None, viewName=None, startTime=None, stopTime=None, inte
 		toDate = date.fromtimestamp(int(stopTime))
 		if startTime and startTime != -1:
 			fromDate = date.fromtimestamp(int(startTime))
-			fileName = '%s_From_%s_To_%s.pdf' % (view_record.name, fromDate, toDate) 
+			fileName = '%s_From_%s_To_%s.pdf' % (view_record.name, fromDate, toDate)
 		else:
-			fileName = '%s_%s.pdf' % (view_record.name,toDate) 
+			fileName = '%s_%s.pdf' % (view_record.name,toDate)
 
 	logger.info('fileName: %s' % fileName)
 	ascii_fileName = hashlib.md5(fileName.encode('ascii', 'ignore')).hexdigest()
-	
+
 	#get orientation and pagesize
 	view_options = view_record.data.get('view_options', {})
 	if isinstance(view_options, dict):
@@ -118,9 +118,9 @@ def render_pdf(fileName=None, viewName=None, startTime=None, stopTime=None, inte
 
 	logger.info('Put it in grid fs: %s' % file_path)
 	doc_id = put_in_grid_fs(file_path, fileName, account,owner)
-	logger.debug('Remove tmp report file with docId: %s' % doc_id)
+	logger.info('Remove tmp report file with docId: %s' % doc_id)
 	os.remove(file_path)
-	
+
 	#Subtask mail (if needed)
 	if isinstance(mail, dict):
 
@@ -131,22 +131,22 @@ def render_pdf(fileName=None, viewName=None, startTime=None, stopTime=None, inte
 			meta.__class__ = cfile
 		except Exception, err:
 			logger.error('Error while fetching cfile : %s' % err)
-		
+
 		try:
 			mail['account'] = account
 			mail['attachments'] = meta
 			result = task_mail.send.subtask(kwargs=mail).delay()
 			result.get()
 			result = result.result
-			
+
 			#if subtask fail, raise exception
 			if(result['success'] == False):
 				raise Exception('Subtask mail have failed : %s' % result['celery_output'][0])
-			
+
 		except Exception, err:
 			logger.error(err)
 			raise Exception('Impossible to send mail')
-		
+
 	return doc_id
 
 @task
@@ -154,13 +154,13 @@ def put_in_grid_fs(file_path, file_name, account,owner=None):
 	storage = cstorage(account, namespace='files')
 	report = cfile(storage=storage)
 	report.put_file(file_path, file_name, content_type='application/pdf')
-	
+
 	if owner:
 		report.chown(owner)
-	
+
 	id = storage.put(report)
 	if not report.check(storage):
 		logger.error('Report not in grid fs')
 		return False
 	else:
-		return id	
+		return id

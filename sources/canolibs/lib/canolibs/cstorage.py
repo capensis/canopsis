@@ -36,6 +36,8 @@ from caccount import caccount
 from crecord import crecord
 from cfile import cfile
 
+from operator import itemgetter
+
 CONFIG = ConfigParser.RawConfigParser()
 CONFIG.read(os.path.expanduser('~/etc/cstorage.conf'))
 
@@ -135,16 +137,6 @@ class cstorage(object):
 		try:
 			backend = self.backend[namespace]
 			self.logger.debug("Use %s collection" % namespace)
-
-			backend.ensure_index('crecord_type')
-			backend.ensure_index('crecord_name')
-
-			backend.ensure_index('connector')
-			backend.ensure_index('connector_name')
-			backend.ensure_index('event_type')
-			backend.ensure_index('source_type')
-			backend.ensure_index('component')
-			backend.ensure_index('resource')
 
 			return backend
 		except:
@@ -307,10 +299,13 @@ class cstorage(object):
 	def count(self, *args, **kargs):
 		return self.find(count=True, *args, **kargs)
 
-	def find(self, mfilter={}, mfields=None, account=None, namespace=None, one=False, count=False, sort=None, limit=0, offset=0, for_write=False, ignore_bin=True, raw=False):
+	def find(self, mfilter={}, mfields=None, account=None, namespace=None, one=False, count=False, sort=None, limit=0, offset=0, for_write=False, ignore_bin=True, raw=False, with_total=False):
 		if not account:
 			account = self.account
 			
+		if isinstance(sort, basestring):
+			sort = [(sort, 1)]
+
 		# Clean Id
 		if mfilter.get('_id', None):
 			mfilter['_id'] = self.clean_id(mfilter['_id'])
@@ -341,16 +336,33 @@ class cstorage(object):
 			else:
 				raw_records = []
 		else:
-			raw_records = backend.find(mfilter, fields=mfields, safe=self.mongo_safe)
+			if sort is None:
+				raw_records = backend.find(mfilter, fields=mfields, safe=self.mongo_safe, start=offset, limit=limit)
+				total = raw_records.count()
+			else:
+				raw_records = backend.find(mfilter, fields=mfields, safe=self.mongo_safe)
+
+			total = raw_records.count()
+
+			# process limit, offset and sort independently of pymongo because sort does not use index
 			if count:
-				return raw_records.count()
-			## Limit output
-			if raw_records and limit:
-				raw_records = raw_records.limit(limit)
-			if raw_records and offset:
-				raw_records = raw_records.skip(offset)
-			if raw_records and sort:
-				raw_records.sort(sort)
+				return total
+
+			raw_records = list(raw_records)
+
+			if sort is not None:
+				for s in sort:
+					key = s[0]
+					desc = s[1] == -1
+					raw_records = sorted(raw_records, key=itemgetter(key), reverse=desc)
+
+				# and get a sub list of raw_records
+				if limit != 0 and offset != 0:
+					raw_records = raw_records[offset: offset + limit]
+				elif limit != 0:
+					raw_records = raw_records[:limit]
+				elif offset != 0:
+					raw_records = raw_records[offset:]
 
 		records=[]
 		if not mfields:
@@ -379,6 +391,9 @@ class cstorage(object):
 			else:
 				return None
 		else:
+			if with_total: # returns the couple of records, total
+				return records, total
+
 			return records
 
 	def get(self, _id_or_ids, account=None, namespace=None, mfields=None, ignore_bin=True):

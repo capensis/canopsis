@@ -247,7 +247,7 @@ Ext.define('widgets.text.text' , {
 	},
 
 	getNodeInfo: function(from, to) {
-		if(this.nodeId) {
+		if(this.nodeId && this.nodeId.length>0) {
 
 			var nodeInfoParams = this.getNodeInfoParams(from, to);
 
@@ -274,6 +274,8 @@ Ext.define('widgets.text.text' , {
 					log.error('Impossible to get Node informations, Ajax request failed ... (' + request.url + ')', this.logAuthor);
 				}
 			});
+		} else {
+			this.onRefresh(undefined, from, to);
 		}
 	},
 

@@ -210,7 +210,8 @@ class manager(object):
 					self.logger.debug("   + Append")
 			for bin_id in bin_ids:
 				data = self.store.get_bin(_id=bin_id)
-				points += utils.uncompress(data)
+				if data is not None:
+					points += utils.uncompress(data)
 					
 		## Check Plain DCA
 		self.logger.debug(" + Search in plain DCA")

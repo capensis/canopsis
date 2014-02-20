@@ -6,6 +6,23 @@ if [ `id -u` -ne 0 ]; then
 	exit 1	
 fi
 
+mongo_status=$(su - canopsis -c "service mongodb status" | grep Running | wc -l)
+
+if [ "$mongo_status" = "1" ]
+	then
+    su - canopsis -c "service mongodb stop"
+fi
+
+mongo_status=$(su - canopsis -c "service mongodb status" | grep Running | wc -l)
+
+if [ "$mongo_status" = "1" ]
+then
+    echo "Unable to stop mongo properly cannot process build-install"
+    exit 1
+fi
+
+rm -rf /opt/canopsis/var/lib/mongodb/mongod.lock
+
 
 ### Configurations
 SRC_PATH=`pwd`
