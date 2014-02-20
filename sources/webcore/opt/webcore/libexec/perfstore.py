@@ -41,7 +41,6 @@ import pyperfstore2.utils
 manager = None
 
 logger = logging.getLogger("perfstore")
-logger.setLevel(logging.DEBUG)
 
 def load():
 	global manager
@@ -58,6 +57,7 @@ group_managing_access = ['group.CPS_perfdata_admin']
 @post('/perfstore/values')
 @post('/perfstore/values/:start/:stop')
 def perfstore_values_route(start = None, stop = None):
+	"""subset selection param allow filter metrics with exclusion periods and component,resource,hostgroup exclusion"""
 	return perfstore_nodes_get_values( 	start = start,
 										stop = stop,
 										metas = request.params.get('nodes', default=None),
@@ -66,7 +66,8 @@ def perfstore_values_route(start = None, stop = None):
 										aggregate_max_points = request.params.get('aggregate_max_points', default=None),
 										aggregate_round_time = request.params.get('aggregate_round_time', default=None),
 										consolidation_method = request.params.get('consolidation_method', default=None),
-										timezone = request.params.get('timezone', default=0))
+										timezone = request.params.get('timezone', default=0),
+										subset_selection = request.params.get('subset_selection', default={}))
 
 
 @get('/perfstore')
@@ -88,7 +89,8 @@ def perfstore_nodes_get_values( start = None,
 								aggregate_max_points = None,
 								aggregate_round_time = None,
 								consolidation_method = None,
-								timezone = 0):
+								timezone = 0,
+								subset_selection = {}):
 
 	if manager == None:
 		load()
@@ -128,7 +130,8 @@ def perfstore_nodes_get_values( start = None,
 											aggregate_interval=aggregate_interval,
 											aggregate_max_points=aggregate_max_points,
 											aggregate_round_time=aggregate_round_time,
-											timezone=time.timezone)
+											timezone=time.timezone,
+											subset_selection=subset_selection)
 
 	if aggregate_method and consolidation_method and len(output):
 		# select right function
@@ -248,9 +251,9 @@ def perfstore_get_all_metrics(limit = 20, start = 0, search = None, filter = Non
 	
 	mfilter = clean_mfilter(mfilter)
 
-	data  = manager.find(limit=0, skip=0, mfilter=mfilter, data=False, sort=msort)
+	data  = manager.find(limit=limit, skip=start, mfilter=mfilter, data=False, sort=msort)
 	total = data.count()
-	data  = [meta for meta in data.skip(start).limit(limit)]
+	data  = list(data)
 	
 	return {'success': True, 'data' : data, 'total' : total}
 
@@ -581,7 +584,7 @@ def perfstore_perftop(start=None, stop=None):
 # Functions
 ########################################################################
 
-def perfstore_get_values(_id, start=None, stop=None, aggregate_method=None, aggregate_interval=None, aggregate_max_points=None, aggregate_round_time=True, timezone=0):
+def perfstore_get_values(_id, start=None, stop=None, aggregate_method=None, aggregate_interval=None, aggregate_max_points=None, aggregate_round_time=True, timezone=0, subset_selection={}):
 	
 	if start and not stop:
 		stop = start
@@ -621,27 +624,32 @@ def perfstore_get_values(_id, start=None, stop=None, aggregate_method=None, aggr
 	if aggregate_interval:
 		aggregate_max_points = int( round((stop - start) / aggregate_interval + 0.5) )
 		fill = True
-	
+
 	try:
 		points = []
-		
+
 		if start == stop:
 			# Get only one point
 			logger.debug("   + Get one point at %s: %s" % (stop, datetime.utcfromtimestamp(start)))
 			(meta, point) = manager.get_point(	_id=_id,
 												ts=start,
-												return_meta=True)
+												return_meta=True,
+												subset_selection={})
 			if point:
 				points = [ point ]
-				
+				# Computes exclusion on metric point(s)
+				points = exclude_points(points, subset_selection)
+
 			logger.debug('Point: %s' % points)
-				
+
 		else:
-			
 			(meta, points) = manager.get_points(	_id=_id,
 													tstart=start,
 													tstop=stop,
-													return_meta=True)
+													return_meta=True,
+													subset_selection={})
+			# Computes exclusion on metric point(s)
+			points = exclude_points(points, subset_selection)
 
 			# For UI display
 			if len(points) == 0 and meta['type'] == 'COUNTER':
@@ -667,5 +675,37 @@ def perfstore_get_values(_id, start=None, stop=None, aggregate_method=None, aggr
 
 	if points and meta:
 		output.append({'node': _id, 'metric': meta['me'], 'values': points, 'bunit': meta['unit'], 'min': meta['min'], 'max': meta['max'], 'thld_warn': meta['thd_warn'], 'thld_crit': meta['thd_crit'], 'type': meta['type']})
-				
+
 	return output
+
+def exclude_points(points, subset_selection={}):
+	"""unit test
+	assert(exclude_points([[0,1],[0.5,2],[1,1],[2,3],[4,5],[3,1],[5,2]],{'intervals':[{'from':1,'to':3}]})\
+	 == [[0, 1], [0.5, 2], [1, None], [2, None], [4, 5], [3, None], [5, 2]], True)
+	"""
+
+	# Compute exclusion periods and set a point to None value (for UI purposes) if point is in any exclusion period.
+	exclusion_points = []
+	if subset_selection and 'excusion_intervals' in subset_selection:
+		logger.debug('Interval exclusion detected, will apply it to output data')
+		# Iterate over database point list for current metric.
+		for value in points:
+			is_excluded = False
+			# Takes care of exclusion intervals given in parameters.
+			for interval in subset_selection['excusion_intervals']:
+				if value[0] >= interval['from'] and value[0] <= interval['to']:
+					is_excluded = True
+					break
+			if is_excluded:
+				# Add a point that UI won t dispay.
+				exclusion_points.append([value[0], None])
+			else:
+				# Nothing to do, just keep the original point
+				exclusion_points.append(value)
+		# returns the new computed point list for given exclusion interval
+		return exclusion_points
+	else:
+		return points
+
+
+

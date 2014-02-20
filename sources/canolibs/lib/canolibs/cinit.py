@@ -21,6 +21,7 @@
 import signal, time, logging
 
 class cinit(object):
+
 	class getHandler(object):
 		def __init__(self, logger):
 			self.logger = logger

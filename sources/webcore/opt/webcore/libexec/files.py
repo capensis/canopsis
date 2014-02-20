@@ -269,8 +269,7 @@ def list_files():
 	
 	###########search
 	try:
-		records = storage.find(filter, sort=msort,limit=limit, offset=start,account=account)
-		total = storage.count(filter, account=account)
+		records, total = storage.find(filter, sort=msort,limit=limit, offset=start,account=account, with_total=True)
 	except Exception, err:
 		logger.error('Error while fetching records: %s' % err)
 		return HTTPError(500, "Error while fetching records: %s" % err)

@@ -85,6 +85,11 @@
 							"fieldLabel": "History time window",
 							"name": "timeNav_window",
 							"value": 604800
+						},{
+							"xtype": "checkbox",
+							"fieldLabel": "Display downtimes",
+							"name": "show_downtimes",
+							"value": false
 						}
 					]
 				},{
@@ -155,6 +160,16 @@
 						"checkboxName": "legend",
 						"value": true,
 						"items": [{
+									"xtype": "checkbox",
+									"fieldLabel": "Add component for metric labels",
+									"checked": false,
+									"name": "component_in_label"
+								},{
+									"xtype": "checkbox",
+									"fieldLabel": "Add resource for metric labels",
+									"checked": false,
+									"name": "resource_in_label"
+								},{
 									"xtype" : "numberfield",
 									"name" : "legend_fontSize",
 									"fieldLabel": "Font Size",
@@ -346,6 +361,23 @@
 						"u",
 						"yAxis"
 					]
+				}
+			]
+		},{
+			"title": "Downtimes",
+			"advanced": true,
+			"items": [
+				{
+					"xtype": "cinventory",
+					"name" : "downtimes",
+					"showResource": true,
+					"idKey" : "component",
+					"additional_field": {
+											"xtype":"ccolorfield",
+											"name":"color",
+											"emptyText":"Color of events",
+											"hideLabel": true
+										}
 				}
 			]
 		},{

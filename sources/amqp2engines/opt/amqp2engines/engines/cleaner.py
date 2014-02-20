@@ -84,4 +84,7 @@ class engine(cengine):
 		event["state_type"] = event.get("state_type", 1)
 		event["event_type"] = event.get("event_type", "check")
 
+		if event['event_type'] == 'check':
+			event['component_problem'] = event.get('component_problem', False)
+
 		return event

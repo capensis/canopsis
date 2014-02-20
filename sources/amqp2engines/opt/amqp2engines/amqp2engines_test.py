@@ -64,7 +64,7 @@ def main():
 		sys.exit(1)
 	
 	try: 
-		engine = module.engine(logging_level=logging.DEBUG)	
+		engine = module.engine()	
 	except Exception, e:
 		logger.error('Constructor exception raised for engine %s : %s' % (engine_name, e))
 		print traceback.format_exc()

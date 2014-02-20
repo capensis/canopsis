@@ -1,0 +1,8 @@
+{
+	"id": "group_manager",
+	"name": "Groups",
+	"items": {
+		"xtype": "GroupGrid"
+	},
+	"internal": true
+}

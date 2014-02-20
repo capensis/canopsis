@@ -22,92 +22,40 @@ from caccount import caccount
 from cstorage import get_storage
 from crecord import crecord
 
+import os
+import sys
+import json
+
 logger = None
+
+views_path = os.path.expanduser('~/opt/mongodb/load.d/views')
 
 ##set root account
 root = caccount(user="root", group="root")
 storage = get_storage(account=root, namespace='object')
 
 def init():
-	### Default Dasboard
-	data = [{'position': {'width': 8, 'top': 2, 'left': 8, 'height': 7}, 'data': {'bar_search': False, 'show_last_check': True, 'xtype': 'list', 'pageSize': 100, 'title': 'Resource problems', 'show_source_type': True, 'border': True, 'default_sort_direction': 'DESC', 'scroll': True, 'filter': '{ "$and": [ {"source_type":"resource"}, {"state": { "$ne": 0 }} ]}', 'default_sort_column': 'state', 'paging': False, 'show_resource': True, 'reload': False, 'show_state': True, 'refreshInterval': 300, 'show_output': True, 'show_state_type': True, 'column_sort': True, 'hideHeaders': False, 'show_component': True}, 'id': '1336723949800-5'}, {'position': {'width': 8, 'top': 2, 'left': 0, 'height': 7}, 'data': {'bar_search': False, 'show_last_check': True, 'xtype': 'list', 'pageSize': 100, 'title': 'Component problems', 'show_source_type': True, 'border': True, 'default_sort_direction': 'DESC', 'scroll': True, 'filter': '{ "$and": [ {"source_type":"component"}, {"state": { "$ne" : 0 }} ]}', 'default_sort_column': 'state', 'paging': False, 'show_resource': False, 'reload': False, 'show_state': True, 'refreshInterval': 300, 'show_output': True, 'show_state_type': True, 'column_sort': True, 'hideHeaders': False, 'show_component': True}, 'id': '1336724023524-4'}, {'position': {'width': 4, 'top': 0, 'left': 0, 'height': 2}, 'data': {'refreshInterval': 0, 'title': '', 'border': False, 'xtype': 'text', 'text': '<img src="themes/canopsis/resources/images/logo_canopsis.png" height="100%">'}, 'id': '1336724801997-7'}]
-	create_view('_default_.dashboard', 'Dashboard', data, autorm=False)
+	for path, folders, files in os.walk(views_path):
+		print "Loading views:", views_path
 
-	### Account
-	data = { 'xtype': 'AccountGrid'}
-	create_view('account_manager', 'Accounts', data, internal=True)
+		for filename in files:
+			print "Loading view: ", filename
 
-	### Group
-	data = { 'xtype': 'GroupGrid'}
-	create_view('group_manager', 'Groups', data, internal=True)
-	
-	### Selector
-	data = { 'xtype': 'SelectorGrid'}
-	create_view('selector_manager', 'Selectors', data, internal=True)
+			filepath = os.path.join(path, filename)
 
-	### Components
-	data = { 'xtype': 'list', 'show_tags': True,'fitler_buttons': True, 'filter': '{"$and": [{"source_type":"component"}, {"event_type": {"$ne": "comment"}}, {"event_type": {"$ne": "user"}}]}', 'show_resource': False}
-	create_view('components', 'Components', data, internal=True)
+			with open(filepath) as f:
+				data = json.loads(f.read())
 
-	### Resources
-	data = { 'xtype': 'list', 'show_tags': True,'fitler_buttons': True, 'filter': '{"$and": [{"source_type":"resource"}, {"event_type": {"$ne": "comment"}}, {"event_type": {"$ne": "user"}}]}'}
-	create_view('resources', 'Resources', data, internal=True)
+				try:
+					_id = data.pop('id')
+					name = data.pop('name')
+					items = data.pop('items')
 
-	### SLA
-	data = { 'xtype': 'SLAView' }
-	create_view('sla', 'SLA', data, internal=True)
+				except KeyError, err:
+					print >>sys.stderr, "Can't parse view, missing key:", err
+					sys.exit(1)
 
-	### Top 10
-	data = { 'xtype': 'top10' }
-	create_view('top10', 'Top 10', data, internal=True)
-
-	### View manager
-	data = { 'xtype': 'ViewTreePanel'}
-	create_view('view_manager', 'Views', data, internal=True)
-
-	###task
-	data = { 'xtype': 'ScheduleGrid'}
-	create_view('schedule_manager', 'Schedules', data, internal=True)
-
-	###briefcase
-	data = { 'xtype': 'BriefcaseGrid'}
-	create_view('briefcase', 'Briefcase', data, internal=True)
-	
-	###curves
-	data = { 'xtype': 'CurvesGrid'}
-	create_view('curves', 'Curves', data, internal=True)
-	
-	###derogation
-	data = {'xtype':'DerogationGrid'}
-	create_view('derogation_manager','Derogations',data, internal=True)
-	
-	###statemap
-	data = {'xtype': 'StatemapGrid'}
-	create_view('statemap_manager', 'Statemaps', data, internal=True)
-
-	###perfdata
-	data = {'xtype':'PerfdataGrid'}
-	create_view('perfdata','Perfdata',data, internal=True)
-
-	###Event log navigation
-	data = { 'xtype': 'EventLog'}
-	create_view('eventLog_navigation', 'Events log navigation', data, internal=True)
-	
-	### Topology
-	data = { 'xtype': 'TopologyGrid'}
-	create_view('topology_manager', 'Topologies', data, internal=True)
-
-	### Consolidation
-	data = { 'xtype': 'ConsolidationGrid'}
-	create_view('consolidation_manager', 'Consolidation', data, internal=True)
-
-	### Filter
-	data = { 'xtype': 'RuleGrid' }
-	create_view('rules_manager', 'Filter Rules', data, internal=True)
-
-	###metric_navigator
-	#data = {'xtype': 'MetricNavigation'}
-	#create_view('metric_navigation', 'Metrics Navigation', data)
+				create_view(_id, name, items, **data)
 
 def update():
 	init()
@@ -147,6 +95,20 @@ def update_view_for_new_metric_format():
 	for view in records:
 		for item in view.data['items']:
 			nodesObject = {}
+
+			# check with flotchart migration from highchart
+			if 'xtype' in item['data']:
+				xtype = item['data']['xtype']
+
+				if xtype == 'line_graph':
+					xtype = 'timegraph'
+				elif xtype == 'bar_graph':
+					xtype = 'timegraph'
+					item['data']['SeriesType'] = 'bars'
+				elif xtype == 'diagram':
+					xtype = 'category_graph'
+
+				item['data']['xtype'] = xtype
 
 			#check if old format
 			if 'nodes' in item['data']:

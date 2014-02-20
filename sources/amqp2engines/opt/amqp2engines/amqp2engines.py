@@ -21,10 +21,10 @@
 
 from ConfigParser import RawConfigParser, ConfigParser, ParsingError
 import importlib
-import inspect
 
 import unittest
 import time, json, logging
+import inspect
 
 from cinit import cinit
 
@@ -218,4 +218,3 @@ def main():
 	
 if __name__ == "__main__":
 	main()
-

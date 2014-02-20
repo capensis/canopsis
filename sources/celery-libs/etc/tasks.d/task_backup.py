@@ -11,7 +11,7 @@ backup_path = '%s/var/backups' % home_path
 @task
 @decorators.log_task
 def mongo(host='localhost'):
-	logger = logging.getLogger()
+	logger = logging.getLogger('task_backup')
 	logger.debug('Mongo Backup start:')
 	logger.debug(' + Host  : %s' % host)
 	logger.debug(' + Backup path: %s' % backup_path)
@@ -59,7 +59,7 @@ def mongo(host='localhost'):
 @task
 @decorators.log_task
 def config():
-	logger = logging.getLogger()
+	logger = logging.getLogger('task_backup')
 	logger.debug('Config Backup start:')
 
 	archive_name = 'backup_config'

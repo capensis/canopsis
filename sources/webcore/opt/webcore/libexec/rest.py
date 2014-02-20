@@ -36,6 +36,12 @@ from libexec.auth import get_account ,check_group_rights
 
 logger = logging.getLogger("rest")
 
+# dirty hack for now
+try:
+	from ha import *
+except:
+	logger.debug('unable to load ha module')
+
 ctype_to_group_access = {
 							'schedule' : 'group.CPS_schedule_admin',
 							'curve' : 'group.CPS_curve_admin',
@@ -47,7 +53,6 @@ ctype_to_group_access = {
 						}
 
 #########################################################################
-from restextend import ha
 #### GET Media
 @get('/rest/media/:namespace/:_id')
 def rest_get_media(namespace, _id):
@@ -272,8 +277,7 @@ def rest_get(namespace, ctype=None, _id=None, params=None):
 		#clean mfilter
 		mfilter = clean_mfilter(mfilter)
 
-		records =  storage.find(mfilter, sort=msort, limit=limit, offset=start, account=account)
-		total =	storage.count(mfilter, account=account)
+		records, total = storage.find(mfilter, sort=msort, limit=limit, offset=start, account=account, with_total=True)
 
 	output = []
 
