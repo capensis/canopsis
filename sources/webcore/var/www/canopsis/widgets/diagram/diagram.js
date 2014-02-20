@@ -211,8 +211,10 @@ Ext.define('widgets.diagram.diagram', {
 	},
 
 	setOptions: function() {
+		var me = this;
+
 		this.options = {
-			cwidget: function() { return this; }.bind(this),
+			cwidget: function() { return me; },
 			chart: {
 				renderTo: this.wcontainerId,
 				defaultSeriesType: 'pie',

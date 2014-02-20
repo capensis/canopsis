@@ -258,10 +258,12 @@ Ext.define('widgets.line_graph.line_graph', {
 	},
 
 	setOptions: function() {
+		var me = this;
+
 		this.options = {
 			reportMode: this.reportMode,
 
-			cwidget: this,
+			cwidget: function() { return me; },
 
 			chart: {
 				renderTo: this.wcontainerId,
