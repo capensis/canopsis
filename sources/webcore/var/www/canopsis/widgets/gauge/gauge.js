@@ -163,7 +163,7 @@ Ext.define('widgets.gauge.gauge' , {
 		this.gauge.refresh(this.lastValue);
 	},
 
-	getNodeInfo: function(from,to) {
+	getNodeInfo: function(from, to, advancedFilters) {
 		this.processNodes();
 
 		if(!this.haveCounter || !this.time_window) {
@@ -184,6 +184,21 @@ Ext.define('widgets.gauge.gauge' , {
 					}
 					else {
 						data = data.data[0];
+					}
+
+					console.log("::gauge data");
+					console.log(data);
+					if(advancedFilters !== undefined && advancedFilters.keyFilter !== undefined)
+					{
+						for (var i = advancedFilters.keyFilter.length - 1; i >= 0; i--) {
+							var filter = advancedFilters.keyFilter[i];
+
+							console.log("comparing keys");
+							console.log(filter);
+							if(data[filter.key] != filter.value) {
+								data.values[0][1] = 0;
+							}
+						}
 					}
 
 					this._onRefresh(data);

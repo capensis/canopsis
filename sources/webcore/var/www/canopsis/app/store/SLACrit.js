@@ -1,4 +1,4 @@
-//need:app/lib/store/cstore.js,app/model/SLA.js
+//need:app/lib/store/cstore.js,app/model/SLACrit.js
 /*
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
@@ -17,15 +17,27 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 */
-Ext.define('canopsis.store.SLA', {
+
+Ext.define('canopsis.store.SLACrit', {
 	extend: 'canopsis.lib.store.cstore',
-	model: 'canopsis.model.SLA',
-	storeId: 'store.SLA',
+	model: 'canopsis.model.SLACrit',
+
+	storeId: 'store.SLACrit',
+	pageSize: 5000,
+	autoLoad: true,
+	autoSync: true,
+
+	sorters: [
+		{
+			property: 'crit',
+			direction: 'ASC'
+		}
+	],
 
 	proxy: {
 		type: 'rest',
-		url: '/rest/object/sla',
-
+		url: '/rest/object/slacrit',
+		appendId: true,
 		reader: {
 			type: 'json',
 			root: 'data',
@@ -33,7 +45,8 @@ Ext.define('canopsis.store.SLA', {
 			successProperty: 'success'
 		},
 		writer: {
-			type: 'json'
+			type: 'json',
+			writeAllFields: false
 		}
 	}
 });

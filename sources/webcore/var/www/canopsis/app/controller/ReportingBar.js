@@ -49,8 +49,28 @@ Ext.define('canopsis.controller.ReportingBar', {
 			},
 			'ReportingBar button[action="previous"]': {
 				click: this.previousButton
+			},
+			'ReportingBar button[action="toggleAdvancedFilters"]': {
+				click: this.toggleAdvancedFilters
+			},
+			'ReportingBar button[action="computeAdvancedFilters"]': {
+				click: this.getAdvancedFilters
+			},
+			'ReportingBar cgrid#componentResourceGrid button[action="add"]': {
+				click: this.showAddComponentResourceWindow
+			},
+			'ReportingBar cgrid#exclusionIntervalGrid button[action="add"]': {
+				click: this.showAddExclusionIntervalWindow
+			},
+			'window[cls=addExclusionIntervalWindow] button[action="addExclusionInterval"]': {
+				click: this.addExclusionInterval
+			},
+			'window[cls=addComponentResourceWindow] button[action="addComponentResource"]': {
+				click: this.addComponentResource
 			}
 		});
+
+		this.ctrl = Ext.create('canopsis.lib.controller.cgrid');
 
 		this.callParent(arguments);
 	},
@@ -61,6 +81,11 @@ Ext.define('canopsis.controller.ReportingBar', {
 
 		bar.toTs.on('select', this.setMaxDate, this);
 		bar.fromTs.on('select', this.setMinDate, this);
+
+		var grid = this.bar.advancedFilters.down("#componentResourceGrid");
+		console.log("grid");
+		console.log(grid);
+		this.ctrl._bindGridEvents(grid);
 	},
 
 	launchReport: function() {
@@ -70,13 +95,16 @@ Ext.define('canopsis.controller.ReportingBar', {
 		var startTimestamp = timestamps.start;
 		var stopTimestamp = timestamps.stop;
 
+		var advancedFilters = this.getAdvancedFilters();
+
 		if(startTimestamp && stopTimestamp) {
 			log.debug('------------------------Asked Report date-----------------------');
 			log.debug('from : ' + startTimestamp + ' To : ' + stopTimestamp, this.logAuthor);
 			log.debug('startReport date is : ' + Ext.Date.format(new Date(startTimestamp * 1000), 'Y-m-d H:i:s'), this.logAuthor);
 			log.debug('endReport date is : ' + Ext.Date.format(new Date(stopTimestamp * 1000), 'Y-m-d H:i:s'), this.logAuthor);
+			log.dump(advancedFilters);
 			log.debug('----------------------------------------------------------------');
-			tab.setReportDate(startTimestamp * 1000, stopTimestamp * 1000);
+			tab.setReportDate(startTimestamp * 1000, stopTimestamp * 1000, advancedFilters);
 		}
 		else {
 			log.debug('Timestamps are, start: ' + startTimestamp + ' stop: ' + stopTimestamp, this.logAuthor);
@@ -229,6 +257,7 @@ Ext.define('canopsis.controller.ReportingBar', {
 			this.bar.nextButton.show();
 			this.bar.periodNumber.show();
 			this.bar.combo.show();
+			this.bar.buttonExpandAdvancedMode.hide();
 			this.bar.advancedMode = false;
 		}
 		else {
@@ -241,9 +270,57 @@ Ext.define('canopsis.controller.ReportingBar', {
 			this.bar.nextButton.hide();
 			this.bar.periodNumber.hide();
 			this.bar.combo.hide();
+			this.bar.buttonExpandAdvancedMode.show();
 			this.bar.advancedMode = true;
 		}
 
+	},
+
+	toggleAdvancedFilters: function() {
+		if(this.advancedFiltersShown === true)
+		{
+			this.bar.advancedFilters.hide();
+			this.advancedFiltersShown = false;
+			this.bar.setHeight(this.bar.toolbar.getHeight());
+		}
+		else
+		{
+			this.bar.advancedFilters.show();
+			this.advancedFiltersShown = true;
+			this.bar.setHeight(300);
+		}
+	},
+
+	showAddExclusionIntervalWindow: function() {
+		console.log("showAddExclusionIntervalWindow");
+		this.bar.addExclusionIntervalWindow.show();
+	},
+
+	showAddComponentResourceWindow: function() {
+		console.log("showAddComponentResourceWindow");
+		this.bar.addComponentResourceWindow.show();
+	},
+
+	addExclusionInterval: function() {
+		console.log("new exclusion interval");
+		var from = this.bar.addExclusionIntervalWindow.down("#newExclusionInterval_from").getValue();
+		var to = this.bar.addExclusionIntervalWindow.down("#newExclusionInterval_to").getValue();
+
+		this.bar.addExclusionIntervalWindow.hide();
+
+		var grid = this.bar.down("#exclusionIntervalGrid");
+		grid.store.add({from: from, to: to});
+	},
+
+	addComponentResource: function() {
+		console.log("new component resource");
+		var component = this.bar.addComponentResourceWindow.down("#component").getValue();
+		var resource = this.bar.addComponentResourceWindow.down("#resource").getValue();
+
+		this.bar.addComponentResourceWindow.hide();
+
+		var grid = this.bar.down("#componentResourceGrid");
+		grid.store.add({component: component, resource: resource});
 	},
 
 	setMinDate: function(cdate, date) {
@@ -256,5 +333,45 @@ Ext.define('canopsis.controller.ReportingBar', {
 		void(cdate);
 
 		this.bar.fromTs.setMaxDate(date);
+	},
+
+	getAdvancedFilters: function() {
+		var result= {};
+		var exclusions = this.computeExclusionFilter();
+		var keyFilter = this.computeKeyFilter();
+
+		result.exclusions = exclusions;
+		result.keyFilter = keyFilter;
+		console.log("advancedFilters");
+		console.log(result);
+		return result;
+	},
+
+	computeExclusionFilter: function() {
+		var result = [];
+		var grid = this.bar.down("#exclusionIntervalGrid");
+
+		for (var i = grid.store.data.items.length - 1; i >= 0; i--) {
+			var from = grid.store.data.items[i].data.from;
+			var to = grid.store.data.items[i].data.to;
+			result.push({"from": from, "to": to});
+		};
+
+		return result;
+	},
+
+	computeKeyFilter: function() {
+		var result = [];
+
+		var grid = this.bar.down("#componentResourceGrid");
+
+		for (var i = grid.store.data.items.length - 1; i >= 0; i--) {
+			var component = grid.store.data.items[i].data.component;
+			var resource = grid.store.data.items[i].data.resource;
+
+			result.push({"component": component, "resource": resource});
+		};
+
+		return result;
 	}
 });
