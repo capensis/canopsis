@@ -63,10 +63,10 @@ Ext.define('widgets.progressbar.progressbar', {
 		log.dump(this.nodesByID);
 	},
 
-	getNodeInfo: function(from, to) {
+	getNodeInfo: function(from, to, advancedFilters) {
 		this.processNodes();
 
-		this.refreshNodes(from, to);
+		this.refreshNodes(from, to, advancedFilters);
 	},
 
 	setGradient: function(_id, value) {

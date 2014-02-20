@@ -140,8 +140,11 @@ Ext.define('canopsis.lib.view.cwidgetGraph', {
 		return;
 	},
 
-	doRefresh: function(from, to) {
-		this.refreshNodes(from, to);
+	doRefresh: function(from, to, advancedFilters) {
+		console.log("cwidgetGraph::doRefresh::advancedFilters");
+		console.log(advancedFilters);
+		console.log(arguments);
+		this.refreshNodes(from, to, advancedFilters);
 	},
 
 	onRefresh: function(data, from, to) {

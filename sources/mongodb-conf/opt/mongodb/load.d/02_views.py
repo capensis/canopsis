@@ -35,6 +35,7 @@ root = caccount(user="root", group="root")
 storage = get_storage(account=root, namespace='object')
 
 def init():
+
 	for path, folders, files in os.walk(views_path):
 		print "Loading views:", views_path
 
