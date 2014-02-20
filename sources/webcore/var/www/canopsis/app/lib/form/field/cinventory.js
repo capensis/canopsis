@@ -38,6 +38,7 @@ Ext.define('canopsis.lib.form.field.cinventory' , {
 
 	select: true,
 	multiSelect: true,
+	reload_button: true,
 
 	dropGroup: 'search_grid_DNDGroup',
 	dragGroup: 'search_grid_DNDGroup',
@@ -356,7 +357,7 @@ Ext.define('canopsis.lib.form.field.cinventory' , {
 			opt_bar_add: false,
 			opt_allow_edit: false,
 			opt_bar_duplicate: false,
-			opt_bar_reload: true,
+			opt_bar_reload: this.reload_button,
 			opt_bar_delete: false,
 			opt_bar_search_field: ['_id'],
 			border: this.search_grid_border,

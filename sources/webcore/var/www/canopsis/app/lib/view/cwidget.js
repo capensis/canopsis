@@ -239,11 +239,9 @@ Ext.define('canopsis.lib.view.cwidget', {
 		this.getNodeInfo(from, to);
 	},
 
-	_onRefresh: function(data, from, to, advancedFilters) {
-		console.log("cwidget::_onRefresh");
-		console.log(advancedFilters);
+	_onRefresh: function(data, from, to) {
 		this.data = data;
-		this.onRefresh(data, from, to, advancedFilters);
+		this.onRefresh(data, from, to);
 	},
 
 	onRefresh: function() {
@@ -254,9 +252,7 @@ Ext.define('canopsis.lib.view.cwidget', {
 		log.debug('onRezize', this.logAuthor);
 	},
 
-	getNodeInfo: function(from, to, advancedFilters) {
-		console.log("cwidget::getNodeInfo");
-		console.log(advancedFilters);
+	getNodeInfo: function(from, to) {
 		if(this.nodeId) {
 
 			var nodeInfoParams = this.getNodeInfoParams(from, to);
@@ -276,7 +272,7 @@ Ext.define('canopsis.lib.view.cwidget', {
 						data = data.data[0];
 					}
 
-					this._onRefresh(data, from, to, advancedFilters);
+					this._onRefresh(data, from, to);
 				},
 				failure: function(result, request) {
 					void(result);

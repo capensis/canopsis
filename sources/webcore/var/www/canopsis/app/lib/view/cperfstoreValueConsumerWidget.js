@@ -26,18 +26,14 @@ Ext.define('canopsis.lib.view.cperfstoreValueConsumerWidget', {
 		return url;
 	},
 
-<<<<<<< HEAD
 	refreshNodes: function(from, to) {
-=======
-	refreshNodes: function(from, to, advancedFilters) {
->>>>>>> develop
 		if(this.nodesByID && Ext.Object.getSize(this.nodesByID) != 0) {
 			var url = this.getUrl(from, to);
 
 			Ext.Ajax.request({
 				url: url,
 				scope: this,
-				params: this.getParams(from, to, advancedFilters),
+				params: this.getParams(from, to),
 				method: 'POST',
 
 				success: function(response) {
@@ -54,7 +50,7 @@ Ext.define('canopsis.lib.view.cperfstoreValueConsumerWidget', {
 						}
 					}
 
-					this.onRefresh(data, from, to, advancedFilters);
+					this.onRefresh(data, from, to);
 				},
 
 				failure: function(result, request) {
@@ -79,7 +75,7 @@ Ext.define('canopsis.lib.view.cperfstoreValueConsumerWidget', {
 		return this.chart;
 	},
 
-	getParams: function(from, to, advancedFilters) {
+	getParams: function(from, to) {
 		var post_params = [];
 
 		Ext.Object.each(this.nodesByID, function(id, node) {
