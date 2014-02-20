@@ -82,7 +82,7 @@ Ext.define('widgets.trends.trends' , {
 			}
 
 			if(this.display_pct) {
-				max = 100;
+				//max = 100;
 			}
 
 			log.debug("Node: " + _id, this.logAuthor);
