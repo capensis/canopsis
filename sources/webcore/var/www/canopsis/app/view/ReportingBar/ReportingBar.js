@@ -172,7 +172,7 @@ Ext.define('canopsis.view.ReportingBar.ReportingBar', {
 			hidden: true,
 			height:300,
 			wizardSteps:[{
-				title:"Filter",
+				title:"Component/Resource",
 				items: [{
 					xtype:"cgrid",
 					itemId:"componentResourceGrid",
@@ -194,6 +194,35 @@ Ext.define('canopsis.view.ReportingBar.ReportingBar', {
 						header: "Resource",
 						sortable: false,
 						dataIndex: "resource",
+						editor: "field",
+						// renderer: rdr_tstodate,
+						flex: 3
+					}],
+					height:100,
+					opt_bar_reload: false,
+			        queryMode: 'local',
+			        opt_keynav_del : true,
+					opt_menu_delete: true,
+			        opt_bar_delete : true,
+					opt_bar_enable: false,
+					opt_confirmation_delete: false
+				}],
+			},{
+				title:"Hostgroups",
+				items: [{
+					xtype:"cgrid",
+					itemId:"hostgroupsGrid",
+					store: {
+						xtype: "store",
+						fields: ["hostgroup"],
+						reader: {
+							type: 'json'
+						}
+					},
+					columns:[{
+						header: "Hostgroup",
+						sortable: false,
+						dataIndex: "hostgroup",
 						editor: "field",
 						// renderer: rdr_tstodate,
 						flex: 3
@@ -243,6 +272,15 @@ Ext.define('canopsis.view.ReportingBar.ReportingBar', {
 					opt_bar_enable: false,
 					opt_confirmation_delete: false
 				}]
+			},{
+				title:"Downtimes",
+				items: [{
+
+					xtype:"cinventory",
+					name : "Downtimes",
+					multiSelect: true,
+					vertical_multiselect: true,
+				}],
 			}]
 		});
 
@@ -286,6 +324,24 @@ Ext.define('canopsis.view.ReportingBar.ReportingBar', {
 					xtype: "button",
 					text: "Save",
 					action: "addComponentResource"
+				}]
+			}]
+		});
+
+		this.addHostgroupWindow = Ext.create('Ext.window.Window', {
+			closeAction:'hide',
+			cls: 'addHostgroupWindow',
+			modal:true,
+			items:[{
+				xtype: "panel",
+				items:[{
+					xtype: "textfield",
+					itemId: "hostgroup",
+					fieldLabel: "Hostgroup"
+				},{
+					xtype: "button",
+					text: "Save",
+					action: "addHostgroup"
 				}]
 			}]
 		});

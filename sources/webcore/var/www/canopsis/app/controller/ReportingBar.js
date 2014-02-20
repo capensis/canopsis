@@ -59,6 +59,9 @@ Ext.define('canopsis.controller.ReportingBar', {
 			'ReportingBar cgrid#componentResourceGrid button[action="add"]': {
 				click: this.showAddComponentResourceWindow
 			},
+			'ReportingBar cgrid#hostgroupsGrid button[action="add"]': {
+				click: this.showAddHostgroupWindow
+			},
 			'ReportingBar cgrid#exclusionIntervalGrid button[action="add"]': {
 				click: this.showAddExclusionIntervalWindow
 			},
@@ -67,6 +70,9 @@ Ext.define('canopsis.controller.ReportingBar', {
 			},
 			'window[cls=addComponentResourceWindow] button[action="addComponentResource"]': {
 				click: this.addComponentResource
+			},
+			'window[cls=addHostgroupWindow] button[action="addHostgroup"]': {
+				click: this.addHostgroup
 			}
 		});
 
@@ -301,6 +307,11 @@ Ext.define('canopsis.controller.ReportingBar', {
 		this.bar.addComponentResourceWindow.show();
 	},
 
+	showAddHostgroupWindow: function() {
+		console.log("showAddHostgroupWindow");
+		this.bar.addHostgroupWindow.show();
+	},
+
 	addExclusionInterval: function() {
 		console.log("new exclusion interval");
 		var from = this.bar.addExclusionIntervalWindow.down("#newExclusionInterval_from").getValue();
@@ -323,6 +334,16 @@ Ext.define('canopsis.controller.ReportingBar', {
 		grid.store.add({component: component, resource: resource});
 	},
 
+	addHostgroup: function() {
+		console.log("new hostgroup");
+		var hostgroup = this.bar.addHostgroupWindow.down("#hostgroup").getValue();
+
+		this.bar.addHostgroupWindow.hide();
+
+		var grid = this.bar.down("#hostgroupsGrid");
+		grid.store.add({hostgroup: hostgroup});
+	},
+
 	setMinDate: function(cdate, date) {
 		void(cdate);
 
@@ -339,10 +360,12 @@ Ext.define('canopsis.controller.ReportingBar', {
 		var result= {};
 		var exclusions = this.computeExclusionFilter();
 		var keyFilter = this.computeKeyFilter();
+		var downtimes = this.computeDowntimes();
 
-		result.exclusions = exclusions;
-		result.keyFilter = keyFilter;
-		console.log("advancedFilters");
+		result.excusion_intervals = exclusions;
+		result.hostgroup_component_resource_filter = keyFilter;
+		result.downtimes = downtimes;
+		console.log("subset_selection");
 		console.log(result);
 		return result;
 	},
@@ -370,6 +393,37 @@ Ext.define('canopsis.controller.ReportingBar', {
 			var resource = grid.store.data.items[i].data.resource;
 
 			result.push({"component": component, "resource": resource});
+		};
+
+		grid = this.bar.down("#hostgroupsGrid");
+
+		for (var i = grid.store.data.items.length - 1; i >= 0; i--) {
+			var hostgroup = grid.store.data.items[i].data.hostgroup;
+
+			result.push({"hostgroup": hostgroup});
+		};
+
+		return result;
+	},
+
+	computeDowntimes: function() {
+		var result = [];
+
+		var grid = this.bar.down("#componentResourceGrid");
+
+		for (var i = grid.store.data.items.length - 1; i >= 0; i--) {
+			var component = grid.store.data.items[i].data.component;
+			var resource = grid.store.data.items[i].data.resource;
+
+			result.push({"component": component, "resource": resource});
+		};
+
+		grid = this.bar.down("#hostgroupsGrid");
+
+		for (var i = grid.store.data.items.length - 1; i >= 0; i--) {
+			var hostgroup = grid.store.data.items[i].data.hostgroup;
+
+			result.push({"hostgroup": hostgroup});
 		};
 
 		return result;
