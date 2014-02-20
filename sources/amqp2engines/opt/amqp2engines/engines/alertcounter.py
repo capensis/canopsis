@@ -255,7 +255,6 @@ class engine(cengine):
 			meta_data['me'] = 'cps_alerts_ack'
 			self.increment_counter(meta_data, 0)
 
-			cvalue = value if ackhost else 0
 			meta_data['me'] = 'cps_alerts_ack_by_host'
 			self.increment_counter(meta_data, 0)
 
