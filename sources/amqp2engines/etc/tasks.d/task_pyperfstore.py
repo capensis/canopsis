@@ -21,15 +21,14 @@ from celery.task import task
 from celery.task.sets import subtask
 from celerylibs import decorators
 
-from cinit import cinit
+import logging
 
 import os, sys, json 
 import time
 
 import pyperfstore2
 
-init 	= cinit()
-logger 	= init.getLogger('Pyperfstore Task') 
+logger = logging.getLogger('Pyperfstore Task')
 
 @task
 @decorators.log_task

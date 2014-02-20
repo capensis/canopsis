@@ -17,7 +17,7 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
-
+import sys
 import kombu
 from kombu import Connection, Exchange, Queue
 import kombu.pools
@@ -37,10 +37,10 @@ import sys
 class camqp(threading.Thread):
 	def __init__(self, host="localhost", port=5672, userid="guest", password="guest", virtual_host="canopsis", exchange_name="canopsis", logging_name="camqp", logging_level=logging.INFO, read_config_file=True, auto_connect=True, on_ready=None):
 		threading.Thread.__init__(self)
-		
+
 		self.logger = logging.getLogger(logging_name)
-		
-		
+
+
 		self.host=host
 		self.port=port
 		self.userid=userid
@@ -48,61 +48,61 @@ class camqp(threading.Thread):
 		self.virtual_host=virtual_host
 		self.exchange_name=exchange_name
 		self.logging_level = logging_level
-		
+
 		if (read_config_file):
 			self.read_config("amqp")
-		
+
 		self.amqp_uri = "amqp://%s:%s@%s:%s/%s" % (self.userid, self.password, self.host, self.port, self.virtual_host)
-		
+
 		self.logger.setLevel(logging_level)
-		
+
 		self.exchange_name_events=exchange_name+".events"
 		self.exchange_name_alerts=exchange_name+".alerts"
 		self.exchange_name_incidents=exchange_name+".incidents"
-		
+
 		self.chan = None
 		self.conn = None
 		self.connected = False
 		self.on_ready = on_ready
-		
+
 		self.RUN = True
-	
-		self.exchanges = {}	
-		
+
+		self.exchanges = {}
+
 		self.queues = {}
-		
+
 		self.paused = False
-		
+
 		self.connection_errors = (	 ConnectionError,
 									 socket.error,
 									 IOError,
 									 OSError,)
 									 #AttributeError)
-									 						 
+
 		## create exchange
 		self.logger.debug("Create exchanges object")
 		for exchange_name in [self.exchange_name, self.exchange_name_events, self.exchange_name_alerts, self.exchange_name_incidents]:
 			self.logger.debug(" + %s" % exchange_name)
 			self.get_exchange(exchange_name)
-		
+
 		if auto_connect:
 			self.connect()
-		
+
 		self.logger.debug("Object canamqp initialized")
 
 	def run(self):
 		self.logger.debug("Start thread ...")
 		reconnect = False
-		
+
 		while self.RUN:
-			
+
 			self.connect()
-			
+
 			#self.wait_connection()
-			
+
 			if self.connected:
 				self.init_queue(reconnect=reconnect)
-				
+
 				self.logger.debug("Drain events ...")
 				while self.RUN:
 					try:
@@ -122,24 +122,24 @@ class camqp(threading.Thread):
 						self.logger.error("Unknown error: %s (%s)" % (err, type(err)))
 						traceback.print_exc(file=sys.stdout)
 						break
-					
+
 				self.disconnect()
-		
+
 			if self.RUN:
 				self.logger.error("Connection loss, try to reconnect in few seconds ...")
 				reconnect = True
 				self.wait_connection(timeout=5)
-			
+
 		self.logger.debug("End of thread ...")
-		
+
 	def stop(self):
 		self.logger.debug("Stop thread ...")
-		self.RUN = False	
+		self.RUN = False
 
 	def connect(self):
 		if not self.connected:
 			self.logger.info("Connect to AMQP Broker (%s:%s)" % (self.host, self.port))
-			
+
 			self.conn = Connection(self.amqp_uri)
 
 			try:
@@ -151,14 +151,14 @@ class camqp(threading.Thread):
 			except Exception as err:
 				self.conn.release()
 				self.logger.error("Impossible to connect (%s)" % err)
-			
+
 			if self.connected:
 				self.logger.debug(" + Open channel")
 				try:
 					self.chan = self.conn.channel()
-					
+
 					self.logger.debug("Channel openned. Ready to send messages")
-					
+
 					try:
 						## declare exchange
 						self.logger.debug("Declare exchanges")
@@ -167,12 +167,12 @@ class camqp(threading.Thread):
 							self.exchanges[exchange_name](self.chan).declare()
 					except Exception as err:
 						self.logger.error("Impossible to declare exchange (%s)" % err)
-					
+
 				except Exception as err:
 					self.logger.error(err)
 		else:
 			self.logger.debug("Allready connected")
-	
+
 	def get_exchange(self, name):
 		if name:
 			try:
@@ -185,14 +185,14 @@ class camqp(threading.Thread):
 				return self.exchanges[name]
 		else:
 			return None
-		
+
 	def init_queue(self, reconnect=False):
 		if self.queues:
 			self.logger.debug("Init queues")
 			for queue_name in self.queues.keys():
 				self.logger.debug(" + %s" % queue_name)
 				qsettings = self.queues[queue_name]
-				
+
 				if not qsettings['queue']:
 					self.logger.debug("   + Create queue")
 
@@ -233,14 +233,14 @@ class camqp(threading.Thread):
 				if not qsettings['consumer']:
 					self.logger.debug("   + Create Consumer")
 					qsettings['consumer'] = self.conn.Consumer(qsettings['queue'], callbacks=[ qsettings['callback'] ])
-				
+
 				self.logger.debug("   + Consume queue")
 				qsettings['consumer'].consume()
-			
+
 			if self.on_ready:
 				self.on_ready()
 
-	
+
 	def add_queue(self, queue_name, routing_keys, callback, exchange_name=None, no_ack=True, exclusive=False, auto_delete=True):
 		#if exchange_name == "amq.direct":
 		#	routing_keys = queue_name
@@ -252,10 +252,10 @@ class camqp(threading.Thread):
 				c_routing_keys = [ routing_keys ]
 		else:
 			c_routing_keys = routing_keys
-		
+
 		if not exchange_name:
-			exchange_name = self.exchange_name		
-		
+			exchange_name = self.exchange_name
+
 		self.queues[queue_name]={	'queue': False,
 									'consumer': False,
 									'queue_name': queue_name,
@@ -273,7 +273,7 @@ class camqp(threading.Thread):
 		if self.connected:
 			if not exchange_name:
 				exchange_name = self.exchange_name
-				
+
 			self.logger.debug("Send message to %s in %s" % (routing_key, exchange_name))
 			with self.producers[self.conn].acquire(block=True) as producer:
 				try:
@@ -302,16 +302,16 @@ class camqp(threading.Thread):
 						self.queues[queue_name]['consumer'].cancel()
 					except:
 						pass
-						
+
 					del(self.queues[queue_name]['consumer'])
 					self.queues[queue_name]['consumer'] = False
 					del(self.queues[queue_name]['queue'])
-					self.queues[queue_name]['queue'] = False		
-	
+					self.queues[queue_name]['queue'] = False
+
 	def disconnect(self):
  		if self.connected:
 			self.logger.info("Disconnect from AMQP Broker")
-	
+
 			self.cancel_queues()
 
 			for exchange in self.exchanges:
@@ -362,6 +362,6 @@ class camqp(threading.Thread):
 
 		except Exception, err:
 			self.logger.error("Impossible to load configurations (%s), use default ..." % err)
-			
+
 	def __del__(self):
 		self.stop()

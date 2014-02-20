@@ -22,7 +22,7 @@ import os, sys, json, logging, time
 
 from bson.errors import InvalidStringData
 from pymongo import Connection
-from gridfs import GridFS
+from gridfs import GridFS, errors
 import redis
 
 import threading
@@ -44,7 +44,7 @@ class store(object):
 
 		self.logger = logging.getLogger('store')
 		self.logger.setLevel(logging_level)
-
+		
 		self.logger.debug(" + Init MongoDB Store")
 
 		# Read db option from conf
@@ -121,6 +121,7 @@ class store(object):
 
 			self.logger.debug("Get collections")
 			self.collection = self.db[self.mongo_collection]
+
 			self.grid = GridFS(self.db, self.mongo_collection+"_bin")
 			self.connected = True
 			self.logger.debug(" + Success")
@@ -238,8 +239,14 @@ class store(object):
 		return self.collection.find_one({'_id': _id}, fields=mfields)
 
 	def get_bin(self, _id):
+		result = None
 		self.check_connection()
-		return self.grid.get(_id).read()
+		try:
+			document = self.grid.get(_id)
+			result = document.read()
+		except errors.NoFile as nf:
+			self.logger.error(nf)
+		return result
 
 	def find(self, limit=0, skip=0, mfilter={}, mfields=None, sort=None):
 		self.check_connection()

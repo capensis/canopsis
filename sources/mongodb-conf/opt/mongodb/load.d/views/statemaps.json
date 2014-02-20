@@ -1,0 +1,8 @@
+{
+     "id": "statemap_manager",
+     "name": "Statemaps",
+     "items": {
+          "xtype": "StatemapGrid"
+     },
+     "internal": true
+}

@@ -48,6 +48,8 @@ Ext.define('widgets.perftop.perftop' , {
 	show_position: true,
 	expand: false,
 
+	useLastRefresh: false,
+
 	afterContainerRender: function() {
 		if(this.mfilter && this.mfilter !== '') {
 			this.store = Ext.create('canopsis.store.Perfdatas', {

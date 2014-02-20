@@ -26,12 +26,42 @@ Ext.define('widgets.timegraph.timegraph', {
 
 	timeNav: false,
 	timeNav_window: global.commonTs.week,
+	time_window_offset: 0,
 
 	interval: global.commonTs.hours,
 	aggregate_method: 'MEAN',
 	aggregate_interval: 0,
 	aggregate_max_points: 500,
 	aggregate_round_time: true,
+	consolidation_method: "",
+
+	legend: true,
+	legend_fontSize: 12,
+	legend_fontColor: "3E576F",
+	legend_borderWidth: 1,
+	legend_backgroundColor: "FFFFFF",
+	legend_borderColor: "909090",
+	legend_verticalAlign: "bottom",
+	legend_align: "center",
+	legend_layout: "horizontal",
+
+	tooltip: true,
+	tooltip_crosshairs: true, // TODO: to manage
+
+	SeriesType: 'area',
+	lineWidth: 1,
+	marker_symbol: null,
+	marker_radius: 0,
+	stacked_graph: false,
+
+	tooltip_shared: false,
+	zoom: true,
+	backgroundColor: "FFFFFF",
+	borderColor: "FFFFFF",
+	borderWidth: 0,
+
+	displayVerticalLines: false,
+	displayHorizontalLines: true,
 
 	initComponent: function() {
 		this.callParent(arguments);
@@ -62,8 +92,19 @@ Ext.define('widgets.timegraph.timegraph', {
 				},
 
 				xaxis: {
-					min: now - this.time_window * 1000,
-					max: now
+					min: now - (this.time_window_offset + this.time_window) * 1000,
+					max: now - this.time_window_offset * 1000
+				},
+
+				yaxis: {
+					tickFormatter: function(val, axis) {
+						if(this.humanReadable) {
+							return rdr_humanreadable_value(val, axis.options.unit);
+						}
+						else {
+							return val + ' ' + axis.options.unit;
+						}
+					}.bind(this)
 				},
 
 				xaxes: [
@@ -76,7 +117,8 @@ Ext.define('widgets.timegraph.timegraph', {
 				yaxes: [],
 
 				legend: {
-					hideable: true
+					hideable: true,
+					legend: this.legend,
 				},
 
 				series: {
@@ -93,47 +135,22 @@ Ext.define('widgets.timegraph.timegraph', {
 					bars: {
 						show: (this.SeriesType === 'bars')
 					}
-				}
+				},
+
+				tooltip: this.tooltip
 			}
 		);
 
-		if( !this.displayVerticalLines)
-		{
+		if(!this.displayVerticalLines) {
 			this.options.xaxis.tickLength = 0;
 		}
 
-		if( !this.displayHorizontalLines)
-		{
-			if(this.options.yaxis === undefined)
-				this.options.yaxis = {};
-
+		if(!this.displayHorizontalLines) {
 			this.options.yaxis.tickLength = 0;
 		}
 	},
 
-	insertGraphExtraComponents: function(){
-		this.callParent(arguments);
-	},
-
-	createChart: function() {
-		var me = this;
-
-		// NB: this.plotcontainer doesn't exist yet.
-		if(!!this.plotcontainer)
-			this.plotcontainer.nextAll().remove();
-
-		/* create chart with modified plotcontainer */
-		this.callParent(arguments);
-	},
-
-	renderChart: function() {
-		this.callParent(arguments);
-
-		this.chart.setupGrid();
-		this.chart.draw();
-	},
-
-	destroyChart: function() {
+	insertGraphExtraComponents: function() {
 		this.callParent(arguments);
 	},
 
@@ -151,7 +168,7 @@ Ext.define('widgets.timegraph.timegraph', {
 			show: (curve_type === 'area' || curve_type === 'line'),
 			fill: (curve_type === 'area'),
 			points: {
-				symbol: node.point_shape? node.point_shape : undefined,
+				symbol: node.point_shape ? node.point_shape : undefined,
 			}
 		};
 
@@ -162,26 +179,66 @@ Ext.define('widgets.timegraph.timegraph', {
 		return serie;
 	},
 
+	getSeriesConf: function() {
+		var series = this.callParent(arguments);
+
+		function getY(reg, x) {
+			return x * reg[0] + reg[1];
+		}
+
+		function getLinearRegressionPoint(reg, point) {
+			return [point[0], getY(reg, point[0])];
+		}
+
+		for(var series_index = (series.length - 1); series_index >= 0; series_index--) {
+			var serie = series[series_index];
+
+			if(serie.node.trend_curve && serie.data.length > 1) {
+				var x = [], y = [];
+
+				for(var serie_index = 0; serie_index < serie.data.length; serie_index++) {
+					var data = serie.data[serie_index];
+					x.push(data[0]);
+					y.push(data[1]);
+				}
+
+				var ret = linearRegression(x, y);
+				var trend_serie = this.getSerieForNode(serie.node.id);
+
+				var data = [
+					getLinearRegressionPoint(ret, serie.data[0]),
+					getLinearRegressionPoint(ret, serie.data[serie.data.length - 1])
+				];
+
+				trend_serie.label += '_trend';
+				trend_serie.data = data;
+
+				series.splice(series_index + 1, 0, trend_serie);
+			}
+		}
+
+		return series;
+	},
+
 	addPoint: function(serieId, value) {
 		this.series[serieId].data.push([value[0] * 1000, value[1]]);
 		this.series[serieId].last_timestamp = value[0] * 1000;
 	},
 
-	// shiftSerie: function(serieId) {
-	// 	var now = Ext.Date.now();
-	// 	var timestamp = now - this.timeNav_window * 1000;
+	shiftSerie: function(serieId) {
+		var now = Ext.Date.now();
+		var timestamp = now - this.timeNav_window * 1000;
 
-	// 	while(this.series[serieId].data[0][0] < timestamp) {
-	// 		this.series[serieId].data.shift();
-	// 	}
-	// },
+		while(this.series[serieId].data[0][0] < timestamp) {
+			this.series[serieId].data.shift();
+		}
+	},
 
 	dblclick: function() {
 	},
 
 	updateAxis: function(from, to) {
 		if(this.reportMode || this.exportMode) {
-			this.updateAxis();
 			this.options.xaxis.min = from;
 			this.options.xaxis.max = to;
 		}
@@ -190,5 +247,4 @@ Ext.define('widgets.timegraph.timegraph', {
 			this.options.xaxis.max = to - this.time_window_offset * 1000;
 		}
 	}
-
 });

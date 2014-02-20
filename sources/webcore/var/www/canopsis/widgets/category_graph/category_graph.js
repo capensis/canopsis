@@ -27,9 +27,10 @@ Ext.define('widgets.category_graph.category_graph', {
 	timeNav: false,
 	timeNav_window: global.commonTs.week,
 
-	graph_type: 'pie', // 'column'
+	diagram_type: 'pie', // 'or column'
 	aggregate_max_points: 1,
 	aggregate_method: 'LAST',
+	aggregate_round_time: true,
 
 	//Default Options
 	max: 0,
@@ -38,34 +39,38 @@ Ext.define('widgets.category_graph.category_graph', {
 	other_label: 'Free',
 
 	// pie specific options
-	pie_size: 60,
-	startAngle: 0,
-	radius: 0.9,
+	pie_size: 0.8,
+	startAngle: 1.5,
 	innerRadius: 0,
 
 	// Bar specific options
 	stacked_graph: false,
-	vertical_display: false,
+	verticalDisplay: true,
 
 	backgroundColor: '#FFFFFF',
 	borderColor: '#FFFFFF',
 	borderWidth: 0,
 	title_fontSize: 15,
 
-	legend_verticalAlign: 'bottom',
-	legend_align: 'center',
-	legend_layout: 'horizontal',
-	legend_backgroundColor: null,
-	legend_borderColor: '#909090',
-	legend_borderWidth: 1,
-	legend_fontSize: 12,
-	legend_fontColor: '#3E576F',
-
-	labels: true,
-	labels_size: "x-small",
+	// legend
 	legend: true,
-	gradientColor: false,
-	pctInLabel: false,
+	legend_verticalAlign: 'bottom', // TODO: this property are not managed by flotchart
+	legend_align: 'center', // TODO: this property are not managed by flotchart
+	legend_layout: 'horizontal', // TODO: this property are not managed by flotchart
+	legend_backgroundColor: null, // TODO: this property are not managed by flotchart
+	legend_borderColor: '#909090', // TODO: this property are not managed by flotchart
+	legend_borderWidth: 1, // TODO: this property are not managed by flotchart
+	legend_fontSize: 12, // TODO: this property are not managed by flotchart
+	legend_fontColor: '#3E576F', // TODO: this property are not managed by flotchart
+
+	// label
+	labels: true,
+	nameInLabelFormatter: false,
+	pctInLabel: true,
+	labels_size: "x-small",
+
+	gradientColor: false, // TODO: this property are not managed by flotchart
+
 	tooltip: true,
 
 	setChartOptions: function() {
@@ -74,9 +79,11 @@ Ext.define('widgets.category_graph.category_graph', {
 		$.extend(this.options,
 			{
 				series: {
-				//stack: this.stacked_graph,
+					lines: {
+						show: false,
+					},
 					pie: {
-						show: (this.graph_type === 'pie'),
+						show: (this.diagram_type === 'pie'),
 						innerRadius: this.innerRadius,
 						label: {
 							show: this.labels,
@@ -84,13 +91,15 @@ Ext.define('widgets.category_graph.category_graph', {
 						},
 						tilt: this.tilt,
 						startAngle: this.startAngle,
-						radius: this.radius
+						radius: this.pie_size / 100
 					},
 					bars: {
-						show: (this.graph_type === 'column'),
-						horizontal: !this.vertical_display,
+						show: (this.diagram_type === 'column'),
+						horizontal: !this.verticalDisplay,
 						barWidth: 1,
-						zero: true
+						zero: true,
+						dataLabels: this.labels,
+						showNumbers: (this.labels && this.diagram_type === 'column')
 					},
 					stack: this.stacked_graph
 				},
@@ -99,54 +108,79 @@ Ext.define('widgets.category_graph.category_graph', {
 					clickable: true,
 				},
 				legend: {
-					hideable: (this.graph_type === 'column'),
-					show: this.legend
+					hideable: true,
+					show: this.legend,
+					labelFormatter: function(label, series) {
+						result = nameInLabelFormatter? ("<b>" + label + "</b><br/>") : "";
+						result += pctInLabel? (series.data[0] + "%") : yval; // calculate pourcent
+	                        return result;
+	                    }
 				},
 				xaxis: {
-					show: (this.graph_type === 'column' && !this.vertical_display)
+					show: (this.diagram_type === 'column' && !this.verticalDisplay)
 				},
 				yaxis: {
-					show: (this.graph_type === 'column' && this.vertical_display)
+					show: (this.diagram_type === 'column' && this.verticalDisplay)
 				},
 				tooltip: this.tooltip,
 				tooltipOpts : {
 					content: function(label, xval, yval, flotItem) {
-                        return "<b>" + label + "<br/></b>" + yval + "%";
-                    }
+						void(xval);
+						void(flotItem);
+						result = "<b>" + label + "</b><br/>" + yval;
+	                        return result;
+	                    }
 				}
 			}
 		);
 	},
 
 	addPoint: function(serieId, value, serieIndex) {
-		var point = [this.graph_type === 'column' && !this.stacked_graph? serieIndex : 0, value[1]];
+		var point = [this.stacked_graph? 0 : serieIndex, value[1]];
 		this.series[serieId].data = [point];
 	},
 
-	getSeriesConf: function() {
-		var series = this.callParent(arguments);
+	createChart: function() {
 
+		/* Computes the difference between the series sum and max user input value and then add it to series if max value > series sum */
+		//clean series first
+		delete this.series['max_diff'];
 		if (this.max > 0) {
-			var total = 0;
-			for (var index=0; index < series.length; index++) {
-				var serie = series[index];
-				if (serie.data.length === 1) {
-					total += series[index].data[0][1];
+
+			var total = 0,
+				serie_count = 0,
+				node_id,
+				serie;
+
+			//gets series sum
+			for (node_id in this.series) {
+
+				serie_count++;
+
+				console.log(this.series[node_id]);
+				if ((this.series[node_id].show === undefined || this.series[node_id].show) && this.series[node_id].data.length === 1) {
+					total += this.series[node_id].data[0][1];
 				}
 			}
-			// add other serie if total is less than this.max
-			if (this.max > total) {
-				// set x=0 only if graph is in stacking mode and is column
-				var point = [this.graph_type === 'column' && !this.stacked_graph? series.length: 0, this.max - total];
-				var other_serie = {
-					label: this.other_label,
-					data: [point]
+
+			if (total < this.max) {
+				//data is a list of point with a single computed point (barchart)
+				var label 	= this.other_label,
+					stacked = this.stacked_graph,
+					max 	= this.max;
+
+				this.series.max_diff = {
+					label: label,
+					data: [[stacked ? 0: serie_count, max - total]],
+					node: {},
 				};
-				series.push(other_serie);
+
 			}
+
 		}
 
-		return series;
+		this.callParent(arguments);
 	},
+
 
 });

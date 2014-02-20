@@ -50,7 +50,8 @@ def forger(		connector,
 			display_name=None,
 			tags=[],
 			ticket=None,
-			ref_rk=None
+			ref_rk=None,
+			component_problem=False
 		):
 
 	if not timestamp:
@@ -146,12 +147,15 @@ def forger(		connector,
 	if ref_rk:
 		dump["ref_rk"] = ref_rk
 
+	if event_type == 'check' and source_type == 'resource':
+		dump['component_problem'] = component_problem
+
 	return dump
 
 def get_routingkey(event):
 	rk = "%s.%s.%s.%s.%s" % (event['connector'], event['connector_name'], event['event_type'], event['source_type'], event['component'])
 
-	if event['resource']:
+	if 'resource' in event and event['resource']:
 		rk += ".%s" % event['resource']
 
 	return rk
