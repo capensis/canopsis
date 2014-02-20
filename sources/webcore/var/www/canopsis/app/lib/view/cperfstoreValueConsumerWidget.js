@@ -26,7 +26,11 @@ Ext.define('canopsis.lib.view.cperfstoreValueConsumerWidget', {
 		return url;
 	},
 
+<<<<<<< HEAD
 	refreshNodes: function(from, to) {
+=======
+	refreshNodes: function(from, to, advancedFilters) {
+>>>>>>> develop
 		if(this.nodesByID && Ext.Object.getSize(this.nodesByID) != 0) {
 			var url = this.getUrl(from, to);
 
@@ -130,9 +134,7 @@ Ext.define('canopsis.lib.view.cperfstoreValueConsumerWidget', {
 				post_param['to'] = parseInt(to / 1000);
 			}
 
-			console.log("advancedFilters???");
 			if(advancedFilters) {
-				console.log("add advancedFilters");
 				post_param['subset_selection'] = advancedFilters;
 			}
 
