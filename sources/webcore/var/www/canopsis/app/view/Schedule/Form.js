@@ -107,7 +107,7 @@ Ext.define('canopsis.view.Schedule.Form', {
 					queryMode: 'local',
 					displayField: 'text',
 					valueField: 'value',
-					value: _('January'),
+					value: 1,
 					disabled: true,
 					store: {
 						xtype: 'store',
@@ -188,6 +188,13 @@ Ext.define('canopsis.view.Schedule.Form', {
 			checkboxName: 'exporting_interval',
 			items: [
 				{
+					xtype: 'numberfield',
+					name: 'exporting_intervalUnit',
+					allowBlank: false,
+					minValue: 1,
+					value: 1,
+					width: 160
+				},	{
 					xtype: 'combobox',
 					name: 'exporting_intervalLength',
 					queryMode: 'local',
@@ -200,19 +207,13 @@ Ext.define('canopsis.view.Schedule.Form', {
 						xtype: 'store',
 						fields: ['value', 'text'],
 						data: [
-							{value: global.commonTs.day, text: _('Day')},
-							{value: global.commonTs.week, text: _('Week')},
-							{value: global.commonTs.month, text: _('Month')},
-							{value: global.commonTs.year, text: _('Year')}
+							{value: global.commonTs.hours, text: _('Hour')+'(s)'},
+							{value: global.commonTs.day, text: _('Day')+'(s)'},
+							{value: global.commonTs.week, text: _('Week')+'(s)'},
+							{value: global.commonTs.month, text: _('Month')+'(s)'},
+							{value: global.commonTs.year, text: _('Year')+'(s)'}
 						]
 					}
-				},{
-					xtype: 'numberfield',
-					name: 'exporting_intervalUnit',
-					fieldLabel: _('The last'),
-					minValue: 1,
-					value: 1,
-					width: 160
 				}
 			]
 		},{
@@ -242,12 +243,12 @@ Ext.define('canopsis.view.Schedule.Form', {
 
 		this.callParent(arguments);
 
-		var durationCombo = this.down('*[name="frequency"]');
+		var frequencyCombo = this.down('*[name="frequency"]');
 		dayCombo = this.down('*[name="crontab_day"]');
 		dayWeekCombo = this.down('*[name="crontab_day_of_week"]');
 		monthCombo = this.down('*[name="crontab_month"]');
 
-		durationCombo.on('change', function(combo, value) {
+		frequencyCombo.on('change', function(combo, value) {
 			void(combo);
 
 			switch (value) {
@@ -280,6 +281,8 @@ Ext.define('canopsis.view.Schedule.Form', {
 					break;
 			}
 		}, this);
+
+		var frequencyCombo = this.down('*[name="exporting_intervalLength"]');
 
 		this.down('*[name="exporting_owner"]').setValue(global.account.user);
 	}
