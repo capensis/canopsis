@@ -33,7 +33,7 @@ Ext.define('canopsis.lib.view.cperfstoreValueConsumerWidget', {
 			Ext.Ajax.request({
 				url: url,
 				scope: this,
-				params: this.getParams(from, to),
+				params: this.getParams(from, to, advancedFilters),
 				method: 'POST',
 
 				success: function(response) {
@@ -50,7 +50,7 @@ Ext.define('canopsis.lib.view.cperfstoreValueConsumerWidget', {
 						}
 					}
 
-					this.onRefresh(data, from, to);
+					this.onRefresh(data, from, to, advancedFilters);
 				},
 
 				failure: function(result, request) {
@@ -75,7 +75,7 @@ Ext.define('canopsis.lib.view.cperfstoreValueConsumerWidget', {
 		return this.chart;
 	},
 
-	getParams: function(from, to) {
+	getParams: function(from, to, advancedFilters) {
 		var post_params = [];
 
 		Ext.Object.each(this.nodesByID, function(id, node) {
@@ -128,6 +128,12 @@ Ext.define('canopsis.lib.view.cperfstoreValueConsumerWidget', {
 			}
 			if(to) {
 				post_param['to'] = parseInt(to / 1000);
+			}
+
+			console.log("advancedFilters???");
+			if(advancedFilters) {
+				console.log("add advancedFilters");
+				post_param['subset_selection'] = advancedFilters;
 			}
 
 			this.processPostParam(post_param);

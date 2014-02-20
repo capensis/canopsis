@@ -240,7 +240,7 @@ class engine(cengine):
 					cvalue = value
 
 				elif cevtype == 'resource_by_component' and event['source_type'] == 'resource':
-					if event.get('component_problem', False):
+					if cevent.is_component_problem(event):
 						cvalue = value
 
 			meta_data['me'] = "cps_statechange_{0}".format(cevtype)
@@ -250,7 +250,7 @@ class engine(cengine):
 
 		if state != 0:
 			meta_data['me'] = 'cps_alerts_not_ack'
-			self.increment_counter(meta_data, value)
+			self.increment_counter(meta_data, 1)
 
 			meta_data['me'] = 'cps_alerts_ack'
 			self.increment_counter(meta_data, 0)

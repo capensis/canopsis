@@ -41,6 +41,8 @@ Ext.define('widgets.trends.trends' , {
 	colorHight: "#E0251B",
 	display_pct: true,
 
+	useLastRefresh: false,
+
 	initComponent: function() {
 		this.callParent(arguments);
 

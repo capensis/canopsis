@@ -61,14 +61,15 @@ class engine(cengine):
 		data = {
 			'type': 'component',
 			'name': component,
-			'hostgroups': hostgroups,
-			'mCrit': None,
-			'mWarn': None
+			'hostgroups': hostgroups
 		}
 
 		if event['source_type'] == 'component':
 			data['mCrit'] = event.get(mCrit, None)
 			data['mWarn'] = event.get(mWarn, None)
+
+			data['state'] = event['state']
+			data['state_type'] = event['state_type']
 
 		self.backend.update({
 				'type': 'component',
@@ -92,7 +93,10 @@ class engine(cengine):
 						'hostgroups': hostgroups,
 						'servicegroups': servicegroups,
 						'mCrit': event.get(mCrit, None),
-						'mWarn': event.get(mWarn, None)
+						'mWarn': event.get(mWarn, None),
+
+						'state': event['state'],
+						'state_type': event['state_type']
 					}
 				},
 				upsert = True

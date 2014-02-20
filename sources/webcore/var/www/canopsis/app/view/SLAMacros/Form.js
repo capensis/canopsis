@@ -1,4 +1,4 @@
-//need:app/view/SLA/View.js,app/store/SLA.js
+//need:app/lib/view/cform.js
 /*
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
@@ -17,16 +17,36 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 */
-Ext.define('canopsis.controller.SLA', {
-	extend: 'Ext.app.Controller',
+Ext.define('canopsis.view.SLAMacros.Form', {
+	extend: 'canopsis.lib.view.cform',
 
-	logAuthor: '[controller][SLA]',
+	alias: 'widget.SLAMacrosForm',
 
-	views: ['SLA.View'],
+	iconCls: 'icon-mainbar-edit-task',
 
-	init: function() {
-		this.callParent(arguments);
+	logAuthor: '[Controller][SLAMacros][Form]',
 
-		global.slaCtrl = this;
-	}
+	layout: 'fit',
+
+	width: 500,
+	height: 150,
+
+	items: [{
+		xtype: 'fieldset',
+		defaultType: 'textfield',
+		border: false,
+		defaults: {
+			width: 450,
+			labelWidth: 150
+		},
+		items: [{
+			fieldLabel: _('mCrit'),
+			name: 'mCrit',
+			allowBlank: false
+		},{
+			fieldLabel: _('mWarn'),
+			name: 'mWarn',
+			allowBlank: false
+		}]
+	}]
 });
