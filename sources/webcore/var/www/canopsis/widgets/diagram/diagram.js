@@ -72,7 +72,7 @@ Ext.define('widgets.diagram.diagram', {
 			return;
 		}
 
-		var me = this.series.chart.options.cwidget;
+		var me = this.series.chart.options.cwidget();
 
 		var prefix = "";
 
@@ -212,7 +212,7 @@ Ext.define('widgets.diagram.diagram', {
 
 	setOptions: function() {
 		this.options = {
-			cwidget: this,
+			cwidget: function() { return this; }.bind(this),
 			chart: {
 				renderTo: this.wcontainerId,
 				defaultSeriesType: 'pie',
@@ -632,7 +632,7 @@ Ext.define('widgets.diagram.diagram', {
 	},
 
 	tooltip_formatter: function() {
-		var me = this.series.chart.options.cwidget;
+		var me = this.series.chart.options.cwidget();
 
 		var formatter = function(options, value) {
 			if(options.invert) {
@@ -684,7 +684,7 @@ Ext.define('widgets.diagram.diagram', {
 	},
 
 	y_formatter: function() {
-		var me = this.chart.options.cwidget;
+		var me = this.chart.options.cwidget();
 
 		if(this.chart.series.length) {
 			var bunit = this.chart.series[0].options.bunit;

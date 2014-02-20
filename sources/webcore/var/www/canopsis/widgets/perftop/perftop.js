@@ -143,7 +143,7 @@ Ext.define('widgets.perftop.perftop' , {
 					renderer: function(value, metaData, record) {
 						void(metaData);
 
-						var me = this.cwidget;
+						var me = this.cwidget();
 						var unit = record.get('u');
 
 						if(me.humanReadable) {
@@ -233,7 +233,7 @@ Ext.define('widgets.perftop.perftop' , {
 				opt_cell_edit: false,
 
 				columns: this.columns,
-				cwidget: this
+				cwidget: function() { return this; }.bind(this)
 			});
 
 			this.wcontainer.removeAll();

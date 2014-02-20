@@ -150,7 +150,7 @@ Ext.define('widgets.gauge.gauge' , {
 		log.debug('Gauge options:', this.logAuthor);
 		log.dump(opts);
 
-		opts['cwidget'] = this;
+		opts['cwidget'] = function() { return this; }.bind(this)
 		this.gauge = new JustGage(opts);
 	},
 
