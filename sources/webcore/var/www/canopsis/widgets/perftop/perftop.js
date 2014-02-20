@@ -51,6 +51,8 @@ Ext.define('widgets.perftop.perftop' , {
 	useLastRefresh: false,
 
 	afterContainerRender: function() {
+		var me = this;
+
 		if(this.mfilter && this.mfilter !== '') {
 			this.store = Ext.create('canopsis.store.Perfdatas', {
 				model: 'canopsis.model.Perfdata',
@@ -237,9 +239,8 @@ Ext.define('widgets.perftop.perftop' , {
 				opt_cell_edit: false,
 
 				columns: this.columns,
-				cwidget: function() {
-					return me;
-				}
+
+				cwidget: function() { return me; }
 			});
 
 			this.wcontainer.removeAll();
