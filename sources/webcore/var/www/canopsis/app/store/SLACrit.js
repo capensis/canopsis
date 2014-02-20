@@ -1,4 +1,4 @@
-//need:app/lib/store/cstore.js,app/model/SLA.js
+//need:app/lib/store/cstore.js,app/model/SLACrit.js
 /*
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
