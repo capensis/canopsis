@@ -90,10 +90,7 @@ Ext.define('widgets.text.text' , {
 	* The first time, input data is event.
 	* The second time, input data is event perfstore values.
 	*/
-	onRefresh: function(data, from, to, advancedFilters) {
-		console.log("text onRefresh");
-		console.log(advancedFilters);
-
+	onRefresh: function(data, from, to) {
 		if(data && this.perfdataMetricList) { // if an event is selected, add metrics property to perf_data
 
 			var perf_data = {};
@@ -275,10 +272,10 @@ Ext.define('widgets.text.text' , {
 		return var_array;
 	},
 
-	getNodeInfo: function(from, to, advancedFilters) {
+	getNodeInfo: function(from, to) {
 		if(this.nodeId && this.nodeId.length>0) {
 
-			var nodeInfoParams = this.getNodeInfoParams(from, to, advancedFilters);
+			var nodeInfoParams = this.getNodeInfoParams(from, to);
 
 			Ext.Ajax.request({
 				url: this.baseUrl + '/event' + (this.nodeId && this.nodeId.length? ('/' + this.nodeId) : ''),
@@ -295,7 +292,7 @@ Ext.define('widgets.text.text' , {
 						data = data.data[0];
 					}
 
-					this._onRefresh(data, from, to, advancedFilters);
+					this._onRefresh(data, from, to);
 				},
 				failure: function(result, request) {
 					void(result);
@@ -319,7 +316,7 @@ Ext.define('widgets.text.text' , {
 		return output;
 	},
 
-	getNodeInfoParams: function(from, to, advancedFilters) {
+	getNodeInfoParams: function(from, to) {
 		void(from);
 		void(to);
 		var result = this.callParent(arguments);
