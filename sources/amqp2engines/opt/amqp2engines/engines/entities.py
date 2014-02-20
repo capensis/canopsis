@@ -67,7 +67,9 @@ class engine(cengine):
 		if event['source_type'] == 'component':
 			data['mCrit'] = event.get(mCrit, None)
 			data['mWarn'] = event.get(mWarn, None)
+
 			data['state'] = event['state']
+			data['state_type'] = event['state_type']
 
 		self.backend.update({
 				'type': 'component',
