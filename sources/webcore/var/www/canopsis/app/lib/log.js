@@ -23,6 +23,9 @@ var log = {
 
 	console: true,
 
+	grep: '',
+	data_dump: false,
+
 	info: function(msg, author) {
 		if(this.level >= 1) {
 			this.writeMsg(msg, 1, author);
@@ -79,9 +82,18 @@ var log = {
 		// Chech if firebug console ...
 		if(this.console) {
 			try {
-				console.log(msg);
+				if(this.grep) {
+					if ( typeof msg !== 'string' && this.data_dump === true) {
+						console.log(msg)
+					} else if (typeof msg === 'string' && msg.toLowerCase().indexOf(this.grep.toLowerCase()) !== -1) {
+						console.log(msg);
+					}
+				} else {
+					console.log(msg)
+				}
 			}
 			catch (err) {
+				console.log(err);
 				this.console = false;
 			}
 		}

@@ -69,7 +69,6 @@ class engine(cengine):
 
 		# If event is of type acknowledgement, then acknowledge corresponding event
 		if event['event_type'] == 'ack':
-
 			self.logger.debug('Ack event found, will proceed ack.')
 
 			rk = event.get('referer', event.get('ref_rk', None))
@@ -124,6 +123,12 @@ class engine(cengine):
 				)
 
 			# Now update counters
+			ackhost = cevent.is_host_acknowledged(event)
+			cvalues = [
+				1 if not ackhost else 0,
+				1 if ackhost else 0
+			]
+
 			alerts_event = cevent.forger(
 				connector = "cengine",
 				connector_name = NAME,
@@ -132,8 +137,8 @@ class engine(cengine):
 				component = "__canopsis__",
 
 				perf_data_array = [
-					{'metric': 'cps_alerts_ack', 'value': 1, 'type': 'COUNTER'},
-					{'metric': 'cps_alerts_ack_by_host', 'value': 0, 'type': 'COUNTER'},
+					{'metric': 'cps_alerts_ack', 'value': cvalues[0], 'type': 'COUNTER'},
+					{'metric': 'cps_alerts_ack_by_host', 'value': cvalues[1], 'type': 'COUNTER'},
 					{'metric': 'cps_alerts_not_ack', 'value': -1, 'type': 'COUNTER'}
 				]
 			)
@@ -151,8 +156,8 @@ class engine(cengine):
 					resource = hostgroup,
 
 					perf_data_array = [
-						{'metric': 'cps_alerts_ack', 'value': 1, 'type': 'COUNTER'},
-						{'metric': 'cps_alerts_ack_by_host', 'value': 0, 'type': 'COUNTER'},
+						{'metric': 'cps_alerts_ack', 'value': cvalues[0], 'type': 'COUNTER'},
+						{'metric': 'cps_alerts_ack_by_host', 'value': cvalues[1], 'type': 'COUNTER'},
 						{'metric': 'cps_alerts_not_ack', 'value': -1, 'type': 'COUNTER'}
 					]
 				)
@@ -167,9 +172,8 @@ class engine(cengine):
 		elif event['state'] == 0 and event.get('state_type', 1) == 1:
 			solvedts = int(time.time())
 
-
 			if event['rk'] in self.cache_acks:
-				self.logger.debug('Ack exists for this event, and has to be recovered. ##############')
+				self.logger.debug('Ack exists for this event, and has to be recovered.')
 
 				# we have an ack to process for this event
 				query = {
@@ -177,10 +181,10 @@ class engine(cengine):
 					'solved': False,
 					'ackts': {'$gt': -1}
 				}
+
 				ack = self.stbackend.find_one(query)
 
 				if ack:
-
 					self.stbackend.update(
 						query,
 						{
@@ -222,7 +226,6 @@ class engine(cengine):
 
 		# If the event is in problem state, update the solved state of acknowledgement
 		elif event['state'] != 0 and event.get('state_type', 1) == 1:
-
 			self.logger.debug('Event on error, an ack has to be triggered by a user, let write this to db.')
 
 			self.stbackend.find_and_modify(
