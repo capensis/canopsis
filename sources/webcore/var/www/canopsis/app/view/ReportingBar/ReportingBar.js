@@ -170,42 +170,15 @@ Ext.define('canopsis.view.ReportingBar.ReportingBar', {
 		this.advancedFilters = this.add({
 			xtype: 'ccard',
 			hidden: true,
-			height:300,
+			height:260,
 			wizardSteps:[{
-				title:"Component/Resource",
+				title:"Component Resource",
 				items: [{
-					xtype:"cgrid",
-					itemId:"componentResourceGrid",
-					store: {
-						xtype: "store",
-						fields: ["component", "resource"],
-						reader: {
-							type: 'json'
-						}
-					},
-					columns:[{
-						header: "Component",
-						sortable: false,
-						dataIndex: "component",
-						editor: "field",
-						// renderer: rdr_tstodate,
-						flex: 3
-					},{
-						header: "Resource",
-						sortable: false,
-						dataIndex: "resource",
-						editor: "field",
-						// renderer: rdr_tstodate,
-						flex: 3
-					}],
-					height:100,
-					opt_bar_reload: false,
-			        queryMode: 'local',
-			        opt_keynav_del : true,
-					opt_menu_delete: true,
-			        opt_bar_delete : true,
-					opt_bar_enable: false,
-					opt_confirmation_delete: false
+					xtype:"cinventory",
+					itemId : "component_resource",
+					reload_button:false,
+					multiSelect: true,
+					vertical_multiselect: false
 				}],
 			},{
 				title:"Hostgroups",
@@ -227,7 +200,6 @@ Ext.define('canopsis.view.ReportingBar.ReportingBar', {
 						// renderer: rdr_tstodate,
 						flex: 3
 					}],
-					height:100,
 					opt_bar_reload: false,
 			        queryMode: 'local',
 			        opt_keynav_del : true,
@@ -275,11 +247,12 @@ Ext.define('canopsis.view.ReportingBar.ReportingBar', {
 			},{
 				title:"Downtimes",
 				items: [{
-
 					xtype:"cinventory",
 					name : "Downtimes",
+					reload_button:false,
 					multiSelect: true,
-					vertical_multiselect: true,
+					inventory_url: '/rest/downtime',
+					vertical_multiselect: false
 				}],
 			}]
 		});
