@@ -26,9 +26,7 @@ Ext.define('canopsis.lib.view.cperfstoreValueConsumerWidget', {
 		return url;
 	},
 
-	refreshNodes: function(from, to, advancedFilters) {
-		console.log("@@@@@ cpsvc refreshNodes");
-		console.log(advancedFilters);
+	refreshNodes: function(from, to) {
 		if(this.nodesByID && Ext.Object.getSize(this.nodesByID) != 0) {
 			var url = this.getUrl(from, to);
 
@@ -49,45 +47,6 @@ Ext.define('canopsis.lib.view.cperfstoreValueConsumerWidget', {
 							data.sort(function(a,b) {
 								return that.nodesByID[a['node']]['order']-that.nodesByID[b['node']]['order'];
 							});
-
-							console.log("ONREFRESH     advancedFilters");
-							console.log(data);
-							//TODO bad check (exclusions should actually not be there)
-							if(advancedFilters !== undefined)
-							{
-								for (var i = 0; i < data.length; i++) {
-									var node = data[i];
-
-									console.log(" ++++ node");
-									console.log(node);
-
-									for (var j = node.values.length - 1; j >= 0; j--) {
-										var value = node.values[j];
-										for (var k = advancedFilters.exclusions.length - 1; k >= 0; k--) {
-											var exclusion = advancedFilters.exclusions[k];
-											if(value[0] > exclusion.from && value[0] < exclusion.to)
-											{
-												//remove the point from array
-												// data[i].values.splice(j, 1);
-											}
-										}
-									}
-
-									for (var i = advancedFilters.keyFilter.length - 1; i >= 0; i--) {
-										var filter = advancedFilters.keyFilter[i];
-
-										console.log("comparing keys");
-										console.log(filter);
-										console.log(node[filter.key]);
-										console.log(filter.value);
-										if(node[filter.key] != filter.value) {
-											console.log("delete key ");
-											console.log(data[i]);
-											data.splice(i, 1);
-										}
-									}
-								}
-							}
 						}
 					}
 
@@ -180,6 +139,14 @@ Ext.define('canopsis.lib.view.cperfstoreValueConsumerWidget', {
 			'nodes': Ext.JSON.encode(post_params),
 			'timezone': new Date().getTimezoneOffset() * 60
 		};
+
+		if (this.subset_selection) {
+
+			log.debug('Adding live reporting advanced filter to post param');
+			post_params['subset_selection'] = Ext.JSON.encode(this.subset_selection);
+			//remove subset selection to avoid further side effects
+			this.subset_selection = undefined;
+		}
 
 		if(this.aggregate_method) {
 			post_params['aggregate_method'] = this.aggregate_method;

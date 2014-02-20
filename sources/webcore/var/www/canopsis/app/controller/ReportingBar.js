@@ -119,8 +119,8 @@ Ext.define('canopsis.controller.ReportingBar', {
 		var selectedTime = dateField.getValue();
 		var timeUnit = this.bar.combo.getValue();
 
-		console.log('selected time : ' + selectedTime);
-		console.log('time unit : ' + timeUnit);
+		log.debug('selected time : ' + selectedTime);
+		log.debug('time unit : ' + timeUnit);
 
 		var timestamp = selectedTime + (timeUnit * this.bar.periodNumber.getValue());
 		dateField.setValue(timestamp);
@@ -292,17 +292,17 @@ Ext.define('canopsis.controller.ReportingBar', {
 	},
 
 	showAddExclusionIntervalWindow: function() {
-		console.log("showAddExclusionIntervalWindow");
+		log.debug("showAddExclusionIntervalWindow");
 		this.bar.addExclusionIntervalWindow.show();
 	},
 
 	showAddComponentResourceWindow: function() {
-		console.log("showAddComponentResourceWindow");
+		log.debug("showAddComponentResourceWindow");
 		this.bar.addComponentResourceWindow.show();
 	},
 
 	addExclusionInterval: function() {
-		console.log("new exclusion interval");
+		log.debug("new exclusion interval");
 		var from = this.bar.addExclusionIntervalWindow.down("#newExclusionInterval_from").getValue();
 		var to = this.bar.addExclusionIntervalWindow.down("#newExclusionInterval_to").getValue();
 
@@ -313,7 +313,7 @@ Ext.define('canopsis.controller.ReportingBar', {
 	},
 
 	addComponentResource: function() {
-		console.log("new component resource");
+		log.debug("new component resource");
 		var component = this.bar.addComponentResourceWindow.down("#component").getValue();
 		var resource = this.bar.addComponentResourceWindow.down("#resource").getValue();
 
@@ -342,8 +342,8 @@ Ext.define('canopsis.controller.ReportingBar', {
 
 		result.exclusions = exclusions;
 		result.keyFilter = keyFilter;
-		console.log("advancedFilters");
-		console.log(result);
+		log.debug("advancedFilters");
+		log.debug(result);
 		return result;
 	},
 
