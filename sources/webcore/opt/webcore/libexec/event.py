@@ -45,14 +45,14 @@ group_managing_access = 'group.CPS_event_admin'
 def load():
 	global amqp
 	amqp = camqp(logging_name="Event-amqp")
-	amqp.start()	
-	
+	amqp.start()
+
 def unload():
 	global amqp
 	if amqp:
 		amqp.stop()
 		amqp.join()
-	
+
 ##################################################################################
 
 ## Handlers
@@ -61,7 +61,7 @@ def unload():
 @post('/event/:routing_key',checkAuthPlugin={'authorized_grp':group_managing_access})
 def send_event(	routing_key=None):
 	account = get_account()
-	
+
 	connector = None
 	connector_name = None
 	event_type = None
@@ -83,12 +83,12 @@ def send_event(	routing_key=None):
 	#--------------------explode routing key----------
 	if routing_key :
 		logger.debug('The routing key is : %s' % str(routing_key))
-		
+
 		routing_key = routing_key.split('.')
 		if len(routing_key) > 6 or len(routing_key) < 5:
 			logger.error('Bad routing key')
 			return HTTPError(400, 'Bad routing key')
-			
+
 		connector = routing_key[0]
 		connector_name = routing_key[1]
 		event_type = routing_key[2]
@@ -96,72 +96,72 @@ def send_event(	routing_key=None):
 		component = routing_key[4]
 		if routing_key[5]:
 			resource = routing_key[5]
-	
+
 	try:
 		data = request.body.readline()
 		data = json.loads(data)
 	except:
 		data = request.params
-	
+
 	#-----------------------get params-------------------
 	if not timestamp:
 		timestamp = data.get('timestamp', None)
-	
+
 	#fix timestamp type
 	if timestamp and not isinstance(timestamp, int):
 		timestamp = int(timestamp)
-		
+
 	if not display_name:
 		display_name = data.get('display_name', None)
-	
+
 	if not connector:
 		connector = data.get('connector', None)
 		if not connector :
 			logger.error('No connector argument')
 			return HTTPError(400, 'Missing connector argument')
-			
+
 	if not connector_name:
 		connector_name = data.get('connector_name', None)
 		if not connector_name:
 			logger.error('No connector name argument')
 			return HTTPError(400, 'Missing connector name argument')
-			
+
 	if not event_type:
 		event_type = data.get('event_type', None)
 		if not event_type:
 			logger.error('No event_type argument')
 			return HTTPError(400, 'Missing event type argument')
-		
+
 	if not source_type:
 		source_type = data.get('source_type', None)
 		if not source_type:
 			logger.error('No source_type argument')
 			return HTTPError(400, 'Missing source type argument')
-	
+
 	if not component:
 		component = data.get('component', None)
 		if not component:
 			logger.error('No component argument')
 			return HTTPError(400, 'Missing component argument')
-	
+
 	if not resource:
 		resource = data.get('resource', None)
 		if not resource:
 			logger.error('No resource argument')
 			return HTTPError(400, 'Missing resource argument')
-		
+
 	if not state:
 		state = data.get('state', None)
 		if state == None:
 			logger.error('No state argument')
 			return HTTPError(400, 'Missing state argument')
-		
+
 	if not state_type:
 		state_type = data.get('state_type', 1)
-		
+
 	if not output:
 		output = data.get('output', None)
-		
+
 	if not long_output:
 		long_output = data.get('long_output', None)
 
@@ -175,10 +175,10 @@ def send_event(	routing_key=None):
 
 		if not isinstance(tags, list):
 			tags = []
-		
+
 	if not perf_data:
 		perf_data = data.get('perf_data', None)
-		
+
 	if not perf_data_array:
 		perf_data_array = data.get('perf_data_array', None)
 		if perf_data_array:
@@ -189,10 +189,10 @@ def send_event(	routing_key=None):
 
 		if not isinstance(perf_data_array, list):
 			perf_data_array = []
-	
+
 	if not ticket:
 		ticket = data.get('ticket', None )
-	
+
 	if not ref_rk:
 		ref_rk = data.get('ref_rk', None )
 
@@ -217,19 +217,19 @@ def send_event(	routing_key=None):
 				ticket = ticket,
 				ref_rk = ref_rk
 			)
-	
+
 	logger.debug(type(perf_data_array))
 	logger.debug(perf_data_array)
 	logger.debug('The forged event is : ')
 	logger.debug(str(event))
-	
+
 	#------------------------------AMQP Part--------------------------------------
-	
+
 	key = cevent.get_routingkey(event)
-	
+
 	global amqp
 	amqp.publish(event, key, amqp.exchange_name_events)
-		
+
 	logger.debug('Amqp event published')
-	
+
 	return {'total':1,'success':True,'data':{'event':event}}
