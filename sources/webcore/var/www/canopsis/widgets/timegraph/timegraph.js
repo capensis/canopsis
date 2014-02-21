@@ -110,7 +110,8 @@ Ext.define('widgets.timegraph.timegraph', {
 				xaxes: [
 					{
 						position: 'bottom',
-						mode: 'time'
+						mode: 'time',
+						timezone: 'browser'
 					}
 				],
 
@@ -235,7 +236,14 @@ Ext.define('widgets.timegraph.timegraph', {
 
 	shiftSerie: function(serieId) {
 		var now = Ext.Date.now();
-		var timestamp = now - this.timeNav_window * 1000;
+		var timestamp;
+
+		if(this.timeNav) {
+			timestamp = now - this.timeNav_window * 1000;
+		}
+		else {
+			timestamp = now - this.time_window * 1000;
+		}
 
 		while(this.series[serieId].data[0][0] < timestamp) {
 			this.series[serieId].data.shift();
