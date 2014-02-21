@@ -248,7 +248,7 @@ Ext.define('canopsis.view.ReportingBar.ReportingBar', {
 				title:"Downtimes",
 				items: [{
 					xtype:"cinventory",
-					name : "Downtimes",
+					itemId : "Downtimes",
 					reload_button:false,
 					multiSelect: true,
 					inventory_url: '/rest/downtime',
