@@ -171,8 +171,6 @@ Ext.define('canopsis.lib.view.cwidgetGraph', {
 							serie.label = serie.node[types[type]] + ' ' + serie.label;
 						}
 					}
-
-
 				}
 
 				/* add data to the serie */
