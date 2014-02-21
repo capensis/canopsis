@@ -175,23 +175,29 @@ class manager(object):
 
 	def subset_selection_apply(self, dca, subset_selection):
 
-		if 'metas_filter' not in subset_selection or 'hostgroup' not in subset_selection['metas_filter']:
-			self.logger.debug('no meta filter to apply for this dca')
+		if 'hostgroups' not in subset_selection and 'component_resource' not in subset_selection:
+			self.logger.debug('no filter to apply for this dca')
 			return dca
 
 		if 're' not in dca or 'co' not in dca:
 			self.logger.debug('Malformed dca, Nothing to test. for metas.')
 			return dca
 
-		metas = subset_selection['metas_filter']
+		exclude_hostgroups = exclude_component_resource = False
 
-		exclude = False
-		query = self.store.get_backend('entities').find({ 'hostgroups' : { '$in' : metas['hostgroups'] }}, {'component':1, 'resource': 1})
-		for result in query:
-			if 'component' in result and 'resource' in result and result['component'] == dca['co'] and result['resource'] == dca['re']:
-				exclude = True
+		if 'hostgroups' in subset_selection:
+			query = self.store.get_backend('entities').find({ 'hostgroups' : { '$in' : subset_selection['hostgroups'] }}, {'component':1, 'resource': 1})
+			for result in query:
+				if 'component' in result and 'resource' in result and result['component'] == dca['co'] and result['resource'] == dca['re']:
+					exclude_hostgroups = True
 
-		if exclude:
+		if 'component_resource' in subset_selection:
+			for component_resource in subset_selection['component_resource']:
+				if 'component' in component_resource and 'resource' in component_resource and component_resource['component'] == dca['co'] and component_resource['resource'] == dca['re']:
+					exclude_component_resource = True
+
+
+		if exclude_component_resource or exclude_hostgroups:
 			self.logger.debug('Filter met on metas, will skip all data')
 			dca['d'] = []
 
