@@ -336,7 +336,7 @@ Ext.define('canopsis.controller.ReportingBar', {
 		// var downtimes = this.computeDowntimes();
 
 		result.exclusion_intervals = exclusions;
-		result.hostgroup_component_resource_filter = component_resources;
+		result.metas_filter = component_resources;
 		// result.downtimes = downtimes;
 		console.log("subset_selection");
 		console.log(result);

@@ -174,29 +174,10 @@ class manager(object):
 		return self.store.find(mfilter=mfilter, limit=limit, skip=skip, mfields=mfields, sort=sort)
 
 	def subset_selection_apply(self, dca, subset_selection):
-		"""
-		unit tests
-		class Self:
-			def __init__(self):
-			import logging
-				self.logger = logging.setLogger('unittest')
-		assert(subset_selection_apply(Self(), {'unit_test_1':1}, {'no_meta_filter'}) == {'unit_test_1':1})
-		assert(subset_selection_apply(Self(), {'unit_test_2':1}, {'metas_filter':1}) == {'hg': None, 'unit_test_2': 1})
-		assert(subset_selection_apply(Self(), {'re':'resource', 'co':'component'}, {'metas_filter':[{'keep':0}]})['d'] == [])
-		assert(subset_selection_apply(Self(), {'d': ['test'], 're':'resource', 'co':'component'}, {'metas_filter':[{'component': 'component', 'resource': 'resource'}]}) == {'co': 'component', 'd': ['test'], 'hg': None, 're': 'resource'})
-		assert(subset_selection_apply(Self(), {'d': ['test'], 're':'resource', 'co':'component'}, {'metas_filter':[{'component': 'component'}]}) == {'co': 'component', 'd': ['test'], 'hg': None, 're': 'resource'})
-		assert(subset_selection_apply(Self(), {'d': ['test'], 're':'resource', 'co':'component'}, {'metas_filter':[{'resource': 'resource'}]}) == {'co': 'component', 'd': ['test'], 'hg': None, 're': 'resource'})
-		assert(subset_selection_apply(Self(), {'d': ['test'], 're':'resource', 'co':'component'}, {'metas_filter':[{}]}) == {'co': 'component', 'd': [], 'hg': None, 're': 'resource'})
-		assert(subset_selection_apply(Self(), {'d': ['test'], 're':'resource', 'co':'component', 'hg': 'hostgroup'}, {'metas_filter':[{'hostgroup':'hostgroup'}]}) == {'co': 'component', 'd': ['test'], 'hg': 'hostgroup', 're': 'resource'})
-		"""
 
-		if 'metas_filter' not in subset_selection:
+		if 'metas_filter' not in subset_selection or 'hostgroup' not in subset_selection['metas_filter']:
 			self.logger.debug('no meta filter to apply for this dca')
 			return dca
-
-		if 'hg' not in dca:
-			# Retro compatibility key
-			dca['hg'] = None
 
 		if 're' not in dca or 'co' not in dca:
 			self.logger.debug('Malformed dca, Nothing to test. for metas.')
@@ -204,17 +185,16 @@ class manager(object):
 
 		metas = subset_selection['metas_filter']
 
-		keep = False
-		for meta in metas:
-			if ('component' in meta and dca['co'] == meta['component']) \
-			or ('resource' in meta and dca['re'] == meta['resource']) \
-			or ('hostgroup' in meta and dca['hg'] == meta['hostgroup']):
-				keep = True
-				break
+		exclude = False
+		query = self.store.get_backend('entities').find({ 'hostgroups' : { '$in' : metas['hostgroups'] }}, {'component':1, 'resource': 1})
+		for result in query:
+			if 'component' in result and 'resource' in result and result['component'] == dca['co'] and result['resource'] == dca['re']:
+				exclude = True
 
-		if not keep:
+		if exclude:
 			self.logger.debug('Filter met on metas, will skip all data')
 			dca['d'] = []
+
 		return dca
 
 	def get_points(self, _id=None, name=None, tstart=None, tstop=None, raw=False, return_meta=False, add_prev_point=False, add_next_point=False, subset_selection={}):
@@ -230,7 +210,6 @@ class manager(object):
 
 		if not dca :
 			raise Exception('Invalid _id, not found %s' % _id)
-
 		dca = self.subset_selection_apply(dca, subset_selection)
 
 		plain_fts = None

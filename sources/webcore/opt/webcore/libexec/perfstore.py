@@ -95,7 +95,9 @@ def perfstore_nodes_get_values( start = None,
 	if subset_selection:
 		try:
 			subset_selection = json.loads(subset_selection)
+			logger.debug('subset selection found : ' + str(subset_selection))
 		except:
+			subset_selection = {}
 			logger.warning('Unable to load subset_selection filters from params')
 
 	if manager == None:
@@ -640,7 +642,7 @@ def perfstore_get_values(_id, start=None, stop=None, aggregate_method=None, aggr
 			(meta, point) = manager.get_point(	_id=_id,
 												ts=start,
 												return_meta=True,
-												subset_selection={})
+												subset_selection=subset_selection)
 			if point:
 				points = [ point ]
 				# Computes exclusion on metric point(s)
@@ -653,7 +655,7 @@ def perfstore_get_values(_id, start=None, stop=None, aggregate_method=None, aggr
 													tstart=start,
 													tstop=stop,
 													return_meta=True,
-													subset_selection={})
+													subset_selection=subset_selection)
 			# Computes exclusion on metric point(s)
 			points = exclude_points(points, subset_selection)
 
