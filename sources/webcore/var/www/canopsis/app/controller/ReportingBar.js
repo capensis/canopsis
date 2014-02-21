@@ -386,9 +386,9 @@ Ext.define('canopsis.controller.ReportingBar', {
 
 		var inventory_downtimes = this.bar.down("#Downtimes");
 
-		for (var i = grid.inventory_downtimes.data.items.length - 1; i >= 0; i--) {
-			var component = grid.inventory_downtimes.data.items[i].data.component;
-			var resource = grid.inventory_downtimes.data.items[i].data.resource;
+		for (var i = inventory_downtimes.selection_store.data.items.length - 1; i >= 0; i--) {
+			var component = inventory_downtimes.selection_store.data.items[i].data.component;
+			var resource = inventory_downtimes.selection_store.data.items[i].data.resource;
 
 			result.push({"component": component, "resource": resource});
 		};
