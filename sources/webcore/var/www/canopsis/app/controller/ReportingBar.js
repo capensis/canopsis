@@ -332,11 +332,11 @@ Ext.define('canopsis.controller.ReportingBar', {
 	getAdvancedFilters: function() {
 		var result= {};
 		var exclusions = this.computeExclusionFilter();
-		//TODO //var component_resources = this.computeComponentResource();
+		var component_resources = this.computeComponentResource();
 		// var downtimes = this.computeDowntimes();
 
 		result.exclusion_intervals = exclusions;
-		//TODO // result.hostgroup_component_resource_filter = component_resources;
+		result.hostgroup_component_resource_filter = component_resources;
 		// result.downtimes = downtimes;
 		console.log("subset_selection");
 		console.log(result);
@@ -360,11 +360,12 @@ Ext.define('canopsis.controller.ReportingBar', {
 	computeComponentResource: function() {
 		var result = [];
 
-		var grid = this.bar.down("#componentResourceGrid");
+		var inventory_components_resources = this.bar.down("#component_resource");
+		var components_resources = inventory_components_resources.getValue();
 
-		for (var i = grid.store.data.items.length - 1; i >= 0; i--) {
-			var component = grid.store.data.items[i].data.component;
-			var resource = grid.store.data.items[i].data.resource;
+		for (var i = inventory_components_resources.selection_store.data.items.length - 1; i >= 0; i--) {
+			var component = inventory_components_resources.selection_store.data.items[i].data.component;
+			var resource = inventory_components_resources.selection_store.data.items[i].data.resource;
 
 			result.push({"component": component, "resource": resource});
 		};
