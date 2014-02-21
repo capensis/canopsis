@@ -1263,9 +1263,9 @@ Ext.define('widgets.line_graph.line_graph', {
 
 			var line = [];
 
-			for(var i = 0; i < referent_serie.data.length; i++) {
-				var point = referent_serie.data[i];
-				line.push([point.x, point.y]);
+			for(var i = 0; i < referent_serie.options.data.length; i++) {
+				var point = referent_serie.options.data[i];
+				line.push([point[0], point[1]]);
 			}
 
 			var reg = fitData(line);

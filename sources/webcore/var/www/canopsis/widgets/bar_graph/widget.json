@@ -380,7 +380,7 @@
 									"text":"Trend",
 									"fieldLabel":"Trend",
 									"checked":true,
-									"name":"trend"
+									"name":"trend_curve"
 								},{
 									"xtype": "numberfield",
 									"name": "threshold_warn",
