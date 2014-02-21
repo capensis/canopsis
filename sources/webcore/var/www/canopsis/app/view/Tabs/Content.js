@@ -429,7 +429,7 @@ Ext.define('canopsis.view.Tabs.Content' , {
 
 		for(var i = 0; i < cmps.length; i++) {
 			cmps[i].subset_selection = additionalFilters;
-			cmps[i]._doRefresh(from, to, {});
+			cmps[i]._doRefresh(from, to);
 		}
 	},
 
