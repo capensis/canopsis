@@ -130,6 +130,10 @@ Ext.define('canopsis.lib.view.cperfstoreValueConsumerWidget', {
 				post_param['to'] = parseInt(to / 1000);
 			}
 
+			if(advancedFilters) {
+				post_param['subset_selection'] = advancedFilters;
+			}
+
 			this.processPostParam(post_param);
 
 			post_params.push(post_param);
