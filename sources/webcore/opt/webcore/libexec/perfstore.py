@@ -635,7 +635,6 @@ def perfstore_get_values(_id, start=None, stop=None, aggregate_method=None, aggr
 
 	try:
 		points = []
-
 		if start == stop:
 			# Get only one point
 			logger.debug("   + Get one point at %s: %s" % (stop, datetime.utcfromtimestamp(start)))

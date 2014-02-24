@@ -330,18 +330,12 @@ Ext.define('canopsis.controller.ReportingBar', {
 	},
 
 	getAdvancedFilters: function() {
-		var result= {};
-		var exclusions = this.computeExclusionFilter();
-		var component_resources = this.computeComponentResource();
-		var downtimes = this.computeDowntimes();
-
-		result.exclusion_intervals = exclusions;
-		result.component_resources = component_resources;
-		result.downtimes = downtimes;
-		console.log("subset_selection");
-		console.log(result);
-
-		return result;
+		return {
+			component_resources: this.computeComponentResource(),
+			exclusions: this.computeExclusionFilter(),
+			hostgroups: this.computeHostgroups(),
+			downtimes: 	this.computeDowntimes(),
+		};
 	},
 
 	computeExclusionFilter: function() {
@@ -369,13 +363,17 @@ Ext.define('canopsis.controller.ReportingBar', {
 
 			result.push({"component": component, "resource": resource});
 		};
+		return result;
+	},
+
+	computeHostgroups: function() {
+		var result = [];
 
 		grid = this.bar.down("#hostgroupsGrid");
 
 		for (var i = grid.store.data.items.length - 1; i >= 0; i--) {
 			var hostgroup = grid.store.data.items[i].data.hostgroup;
-
-			result.push({"hostgroup": hostgroup});
+			result.push(hostgroup);
 		};
 
 		return result;
