@@ -64,7 +64,8 @@ Ext.define('canopsis.view.Top10.View' , {
 						'me': {'$in': [
 							'cps_statechange_1',
 							'cps_statechange_2'
-						]}
+						]},
+						'co': {'$ne': '__canopsis__'}
 					}),
 					'output': true,
 					'threshold': this.threshold,
