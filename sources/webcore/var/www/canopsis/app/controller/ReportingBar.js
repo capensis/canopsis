@@ -330,29 +330,12 @@ Ext.define('canopsis.controller.ReportingBar', {
 	},
 
 	getAdvancedFilters: function() {
-<<<<<<< HEAD
-		var result= {};
-		var exclusions = this.computeExclusionFilter();
-		var component_resources = this.computeComponentResource();
-		var downtimes = this.computeDowntimes();
-		var hostgroups = this.computeHostgroups();
-
-		result.exclusion_intervals = exclusions;
-		result.component_resources = component_resources;
-		result.downtimes = downtimes;
-		result.hostgroups = hostgroups;
-		console.log("subset_selection");
-		console.log(result);
-
-		return result;
-=======
 		return {
 			component_resources: this.computeComponentResource(),
 			exclusions: this.computeExclusionFilter(),
 			hostgroups: this.computeHostgroups(),
 			downtimes: 	this.computeDowntimes(),
 		};
->>>>>>> develop
 	},
 
 	computeExclusionFilter: function() {
