@@ -160,11 +160,16 @@ Ext.define('widgets.text.text', {
 					var r_nodes = Ext.JSON.decode(response.responseText);
 
 					var nodes = [];
+					var nodesByID = {};
 
 					for(var i = 0; i < r_nodes.data.length; i++) {
+						var node = r_nodes.data[i];
+
 						nodes.push({
-							id: r_nodes.data[i]._id
+							id: node._id
 						});
+
+						nodesByID[node._id] = node;
 					}
 
 					Ext.Ajax.request({
@@ -181,37 +186,44 @@ Ext.define('widgets.text.text', {
 						success: function(response) {
 							var r_vals = Ext.JSON.decode(response.responseText);
 
-							for(var i = 0; i < r_vals.data.length; i++) {
-								var metric = r_vals.data[i];
+							function genKey(prefix, metric, data, component, resource) {
+								var key = prefix + ':' + metric + ':' + data;
 
-								var key = 'perfdata:' + metric.metric;
+								if(component) {
+									key = key + ':' + component;
 
-								var keyval = key + ':value';
-								var keyunit = key + ':unit';
-								var keyco = key + ':component';
-								var keyre = key + ':resource';
-
-								template_data[keyval]  = metric.values[0][1];
-								template_data[keyunit] = metric.bunit;
-								template_data[keyco]   = metric.co;
-								template_data[keyre]   = metric.re;
-
-								keyval  = keyval + ':' + metric.co;
-								keyunit = keyunit + ':' + metric.co;
-								keyco   = keyco + ':' + metric.co;
-								keyre   = keyre + ':' + metric.co;
-
-								if(metric.re) {
-									keyval  = keyval + ':' + metric.re;
-									keyunit = keyunit + ':' + metric.re;
-									keyco   = keyco + ':' + metric.re;
-									keyre   = keyre + ':' + metric.re;
+									if(resource) {
+										key = key + ':' + resource;
+									}
 								}
 
-								template_data[keyval]  = metric.values[0][1];
-								template_data[keyunit] = metric.bunit;
-								template_data[keyco]   = metric.co;
-								template_data[keyre]   = metric.re;
+								return key;
+							}
+
+							for(var i = 0; i < r_vals.data.length; i++) {
+								var metric = r_vals.data[i];
+								var node = nodesByID[metric.node];
+
+								var datas = {
+									'value': metric.values[0][1],
+									'unit': metric.bunit,
+									'component': node.co,
+									'resource': node.re
+								};
+
+								for(var k in datas) {
+									var key = genKey('perfdata', metric.metric, k);
+									template_data[key] = datas[k];
+
+									key = genKey('perfdata', metric.metric, k, node.co, node.re);
+									template_data[key] = datas[k];
+
+									key = genKey('perf_data', metric.metric, k);
+									template_data[key] = datas[k];
+
+									key = genKey('perf_data', metric.metric, k, node.co, node.re);
+									template_data[key] = datas[k];
+								}
 							}
 
 							this.fillData(template_data, from, to);
@@ -228,6 +240,8 @@ Ext.define('widgets.text.text', {
 	},
 
 	fillData: function(data, from, to) {
+		console.log(data);
+
 		for(var i = 0; i < this.variables.length; i++) {
 			var variable = this.variables[i];
 
