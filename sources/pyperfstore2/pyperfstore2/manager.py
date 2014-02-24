@@ -25,14 +25,15 @@ from datetime import datetime
 
 from pyperfstore2.store import store
 import pyperfstore2.utils as utils
-
+from cstorage import get_storage
+from caccount import caccount
 
 class manager(object):
 
 	def __init__(self, retention=0, dca_min_length = 250, logging_level=logging.INFO, cache=True, **kwargs):
 		self.logger = logging.getLogger('manager')
-		self.logger.setLevel(logging_level)
-
+		self.logger.setLevel(logging.DEBUG)#_level)
+		self.storage = get_storage(account=caccount(user="root", group="root"))
 		# Store
 		self.store = store(logging_level=logging_level, **kwargs)
 
@@ -175,31 +176,49 @@ class manager(object):
 
 	def subset_selection_apply(self, dca, subset_selection):
 
-		if 'hostgroups' not in subset_selection and 'component_resource' not in subset_selection:
-			self.logger.debug('no filter to apply for this dca')
+		#is there some exclude/include information in subset selection
+		no_host_group = no_component_resources = False
+		if 'hostgroups' not in subset_selection or not subset_selection['hostgroups']:
+			self.logger.debug('no hostgroup to apply for this dca')
+			no_host_group = True
+
+		if 'component_resources' not in subset_selection or not subset_selection['component_resources']:
+			self.logger.debug('no component_resource to apply for this dca')
+			no_component_resources = True
+
+		if no_component_resources and no_host_group:
+			self.logger.debug('no subset selection to apply')
 			return dca
 
 		if 're' not in dca or 'co' not in dca:
 			self.logger.debug('Malformed dca, Nothing to test. for metas.')
 			return dca
 
-		exclude_hostgroups = exclude_component_resource = False
+		keep_hostgroups = keep_component_resource = False
 
 		if 'hostgroups' in subset_selection:
-			query = self.store.get_backend('entities').find({ 'hostgroups' : { '$in' : subset_selection['hostgroups'] }}, {'component':1, 'resource': 1})
+			query = self.storage.get_backend('entities').find({ 'component': dca['co'], 'resource': dca['re'], 'hostgroups' : {'$exists': True}}, {'hostgroups': 1})
 			for result in query:
-				if 'component' in result and 'resource' in result and result['component'] == dca['co'] and result['resource'] == dca['re']:
-					exclude_hostgroups = True
+				if 'hostgroups' in result:
+					for hostgroup in subset_selection['hostgroups']:
+						if hostgroup in result['hostgroups']:
+							self.logger.info('KEEPING HG')
+							keep_hostgroups = True
+							break
 
-		if 'component_resource' in subset_selection:
-			for component_resource in subset_selection['component_resource']:
-				if 'component' in component_resource and 'resource' in component_resource and component_resource['component'] == dca['co'] and component_resource['resource'] == dca['re']:
-					exclude_component_resource = True
+		if 'component_resources' in subset_selection:
+			for component_resources in subset_selection['component_resources']:
+				if 'component' in component_resources and 'resource' in component_resources \
+				and component_resources['component'] == dca['co'] and component_resources['resource'] == dca['re']:
+					keep_component_resource = True
+					break
 
-
-		if exclude_component_resource or exclude_hostgroups:
-			self.logger.debug('Filter met on metas, will skip all data')
-			dca['d'] = []
+		if keep_component_resource or keep_hostgroups:
+			self.logger.debug('Filter met on metas, will keep all data')
+		else:
+			self.logger.debug('Filter not met on metas, removing data')
+			for point in dca['d']:
+				point[1] = None
 
 		return dca
 
@@ -341,7 +360,7 @@ class manager(object):
 			dca = self.subset_selection_apply(dca, subset_selection)
 			points = dca.get('d', [])
 		else:
-			(meta, points) = self.get_points(_id=_id, tstart=ts, tstop=ts, add_prev_point=True, return_meta=True, subset_selection={})
+			(meta, points) = self.get_points(_id=_id, tstart=ts, tstop=ts, add_prev_point=True, return_meta=True, subset_selection=subset_selection)
 
 		if len(points):
 			point = points.pop()

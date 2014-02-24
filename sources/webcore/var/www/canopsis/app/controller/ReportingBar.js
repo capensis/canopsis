@@ -330,6 +330,7 @@ Ext.define('canopsis.controller.ReportingBar', {
 	},
 
 	getAdvancedFilters: function() {
+<<<<<<< HEAD
 		var result= {};
 		var exclusions = this.computeExclusionFilter();
 		var component_resources = this.computeComponentResource();
@@ -344,6 +345,14 @@ Ext.define('canopsis.controller.ReportingBar', {
 		console.log(result);
 
 		return result;
+=======
+		return {
+			component_resources: this.computeComponentResource(),
+			exclusions: this.computeExclusionFilter(),
+			hostgroups: this.computeHostgroups(),
+			downtimes: 	this.computeDowntimes(),
+		};
+>>>>>>> develop
 	},
 
 	computeExclusionFilter: function() {
@@ -371,13 +380,17 @@ Ext.define('canopsis.controller.ReportingBar', {
 
 			result.push({"component": component, "resource": resource});
 		};
+		return result;
+	},
+
+	computeHostgroups: function() {
+		var result = [];
 
 		grid = this.bar.down("#hostgroupsGrid");
 
 		for (var i = grid.store.data.items.length - 1; i >= 0; i--) {
 			var hostgroup = grid.store.data.items[i].data.hostgroup;
-
-			result.push({"hostgroup": hostgroup});
+			result.push(hostgroup);
 		};
 
 		return result;
