@@ -632,6 +632,14 @@ function getDataFromURL(url, data) {
 	form.remove();
 }
 
+function escapeRegExp(str) {
+	return str.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&");
+}
+
+function replaceAll(find, replace, str) {
+	return str.replace(new RegExp(escapeRegExp(find), 'g'), replace);
+}
+
 var Canopsis = {
 	/* Check functions */
 
