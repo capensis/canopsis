@@ -122,7 +122,7 @@ Ext.define('canopsis.lib.view.csparkline' , {
 		var html;
 
 		if(options.userOptions.chart_type === 'line_graph') {
-			html = '<b>' + rdr_tstodate(Math.round(fields['x'])) + '</b><br>' + options.userOptions.metric + ': ' + fields['y'] + ' ' + options.userOptions.unit;
+			html = '<b>' + rdr_tstodate(Math.round(fields['x'] / 1000)) + '</b><br>' + options.userOptions.metric + ': ' + fields['y'] + ' ' + options.userOptions.unit;
 		}
 		else {
 			html = '<b>' + rdr_tstodate(Math.round(options.userOptions.original_values[fields[0].offset][0] / 1000)) + '</b><br />' + options.userOptions.metric + ' : ' + fields[0].value + ' ' + options.userOptions.unit;

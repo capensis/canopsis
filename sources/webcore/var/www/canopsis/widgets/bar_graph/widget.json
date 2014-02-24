@@ -379,8 +379,8 @@
 									"xtype":"checkbox",
 									"text":"Trend",
 									"fieldLabel":"Trend",
-									"checked":true,
-									"name":"trend"
+									"checked":false,
+									"name":"trend_curve"
 								},{
 									"xtype": "numberfield",
 									"name": "threshold_warn",
