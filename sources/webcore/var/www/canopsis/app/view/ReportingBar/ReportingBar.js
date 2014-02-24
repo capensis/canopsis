@@ -170,35 +170,36 @@ Ext.define('canopsis.view.ReportingBar.ReportingBar', {
 		this.advancedFilters = this.add({
 			xtype: 'ccard',
 			hidden: true,
-			height:300,
+			height:260,
 			wizardSteps:[{
-				title:"Filter",
+				title:"Component Resource",
+				items: [{
+					xtype:"cinventory",
+					itemId : "component_resource",
+					reload_button:false,
+					multiSelect: true,
+					vertical_multiselect: false
+				}],
+			},{
+				title:"Hostgroups",
 				items: [{
 					xtype:"cgrid",
-					itemId:"componentResourceGrid",
+					itemId:"hostgroupsGrid",
 					store: {
 						xtype: "store",
-						fields: ["component", "resource"],
+						fields: ["hostgroup"],
 						reader: {
 							type: 'json'
 						}
 					},
 					columns:[{
-						header: "Component",
+						header: "Hostgroup",
 						sortable: false,
-						dataIndex: "component",
-						editor: "field",
-						// renderer: rdr_tstodate,
-						flex: 3
-					},{
-						header: "Resource",
-						sortable: false,
-						dataIndex: "resource",
+						dataIndex: "hostgroup",
 						editor: "field",
 						// renderer: rdr_tstodate,
 						flex: 3
 					}],
-					height:100,
 					opt_bar_reload: false,
 			        queryMode: 'local',
 			        opt_keynav_del : true,
@@ -243,6 +244,16 @@ Ext.define('canopsis.view.ReportingBar.ReportingBar', {
 					opt_bar_enable: false,
 					opt_confirmation_delete: false
 				}]
+			},{
+				title:"Downtimes",
+				items: [{
+					xtype:"cinventory",
+					itemId : "Downtimes",
+					reload_button:false,
+					multiSelect: true,
+					inventory_url: '/rest/downtime',
+					vertical_multiselect: false
+				}],
 			}]
 		});
 
@@ -286,6 +297,24 @@ Ext.define('canopsis.view.ReportingBar.ReportingBar', {
 					xtype: "button",
 					text: "Save",
 					action: "addComponentResource"
+				}]
+			}]
+		});
+
+		this.addHostgroupWindow = Ext.create('Ext.window.Window', {
+			closeAction:'hide',
+			cls: 'addHostgroupWindow',
+			modal:true,
+			items:[{
+				xtype: "panel",
+				items:[{
+					xtype: "textfield",
+					itemId: "hostgroup",
+					fieldLabel: "Hostgroup"
+				},{
+					xtype: "button",
+					text: "Save",
+					action: "addHostgroup"
 				}]
 			}]
 		});

@@ -56,8 +56,8 @@ Ext.define('canopsis.controller.ReportingBar', {
 			'ReportingBar button[action="computeAdvancedFilters"]': {
 				click: this.getAdvancedFilters
 			},
-			'ReportingBar cgrid#componentResourceGrid button[action="add"]': {
-				click: this.showAddComponentResourceWindow
+			'ReportingBar cgrid#hostgroupsGrid button[action="add"]': {
+				click: this.showAddHostgroupWindow
 			},
 			'ReportingBar cgrid#exclusionIntervalGrid button[action="add"]': {
 				click: this.showAddExclusionIntervalWindow
@@ -65,8 +65,8 @@ Ext.define('canopsis.controller.ReportingBar', {
 			'window[cls=addExclusionIntervalWindow] button[action="addExclusionInterval"]': {
 				click: this.addExclusionInterval
 			},
-			'window[cls=addComponentResourceWindow] button[action="addComponentResource"]': {
-				click: this.addComponentResource
+			'window[cls=addHostgroupWindow] button[action="addHostgroup"]': {
+				click: this.addHostgroup
 			}
 		});
 
@@ -81,11 +81,6 @@ Ext.define('canopsis.controller.ReportingBar', {
 
 		bar.toTs.on('select', this.setMaxDate, this);
 		bar.fromTs.on('select', this.setMinDate, this);
-
-		var grid = this.bar.advancedFilters.down("#componentResourceGrid");
-		console.log("grid");
-		console.log(grid);
-		this.ctrl._bindGridEvents(grid);
 	},
 
 	launchReport: function() {
@@ -119,8 +114,8 @@ Ext.define('canopsis.controller.ReportingBar', {
 		var selectedTime = dateField.getValue();
 		var timeUnit = this.bar.combo.getValue();
 
-		console.log('selected time : ' + selectedTime);
-		console.log('time unit : ' + timeUnit);
+		log.debug('selected time : ' + selectedTime);
+		log.debug('time unit : ' + timeUnit);
 
 		var timestamp = selectedTime + (timeUnit * this.bar.periodNumber.getValue());
 		dateField.setValue(timestamp);
@@ -292,17 +287,17 @@ Ext.define('canopsis.controller.ReportingBar', {
 	},
 
 	showAddExclusionIntervalWindow: function() {
-		console.log("showAddExclusionIntervalWindow");
+		log.debug("showAddExclusionIntervalWindow");
 		this.bar.addExclusionIntervalWindow.show();
 	},
 
-	showAddComponentResourceWindow: function() {
-		console.log("showAddComponentResourceWindow");
-		this.bar.addComponentResourceWindow.show();
+	showAddHostgroupWindow: function() {
+		console.log("showAddHostgroupWindow");
+		this.bar.addHostgroupWindow.show();
 	},
 
 	addExclusionInterval: function() {
-		console.log("new exclusion interval");
+		log.debug("new exclusion interval");
 		var from = this.bar.addExclusionIntervalWindow.down("#newExclusionInterval_from").getValue();
 		var to = this.bar.addExclusionIntervalWindow.down("#newExclusionInterval_to").getValue();
 
@@ -312,15 +307,14 @@ Ext.define('canopsis.controller.ReportingBar', {
 		grid.store.add({from: from, to: to});
 	},
 
-	addComponentResource: function() {
-		console.log("new component resource");
-		var component = this.bar.addComponentResourceWindow.down("#component").getValue();
-		var resource = this.bar.addComponentResourceWindow.down("#resource").getValue();
+	addHostgroup: function() {
+		console.log("new hostgroup");
+		var hostgroup = this.bar.addHostgroupWindow.down("#hostgroup").getValue();
 
-		this.bar.addComponentResourceWindow.hide();
+		this.bar.addHostgroupWindow.hide();
 
-		var grid = this.bar.down("#componentResourceGrid");
-		grid.store.add({component: component, resource: resource});
+		var grid = this.bar.down("#hostgroupsGrid");
+		grid.store.add({hostgroup: hostgroup});
 	},
 
 	setMinDate: function(cdate, date) {
@@ -338,12 +332,15 @@ Ext.define('canopsis.controller.ReportingBar', {
 	getAdvancedFilters: function() {
 		var result= {};
 		var exclusions = this.computeExclusionFilter();
-		var keyFilter = this.computeKeyFilter();
+		var component_resources = this.computeComponentResource();
+		var downtimes = this.computeDowntimes();
 
-		result.exclusions = exclusions;
-		result.keyFilter = keyFilter;
-		console.log("advancedFilters");
+		result.exclusion_intervals = exclusions;
+		result.component_resources = component_resources;
+		result.downtimes = downtimes;
+		console.log("subset_selection");
 		console.log(result);
+
 		return result;
 	},
 
@@ -360,14 +357,38 @@ Ext.define('canopsis.controller.ReportingBar', {
 		return result;
 	},
 
-	computeKeyFilter: function() {
+	computeComponentResource: function() {
 		var result = [];
 
-		var grid = this.bar.down("#componentResourceGrid");
+		var inventory_components_resources = this.bar.down("#component_resource");
+		var components_resources = inventory_components_resources.getValue();
+
+		for (var i = inventory_components_resources.selection_store.data.items.length - 1; i >= 0; i--) {
+			var component = inventory_components_resources.selection_store.data.items[i].data.component;
+			var resource = inventory_components_resources.selection_store.data.items[i].data.resource;
+
+			result.push({"component": component, "resource": resource});
+		};
+
+		grid = this.bar.down("#hostgroupsGrid");
 
 		for (var i = grid.store.data.items.length - 1; i >= 0; i--) {
-			var component = grid.store.data.items[i].data.component;
-			var resource = grid.store.data.items[i].data.resource;
+			var hostgroup = grid.store.data.items[i].data.hostgroup;
+
+			result.push({"hostgroup": hostgroup});
+		};
+
+		return result;
+	},
+
+	computeDowntimes: function() {
+		var result = [];
+
+		var inventory_downtimes = this.bar.down("#Downtimes");
+
+		for (var i = inventory_downtimes.selection_store.data.items.length - 1; i >= 0; i--) {
+			var component = inventory_downtimes.selection_store.data.items[i].data.component;
+			var resource = inventory_downtimes.selection_store.data.items[i].data.resource;
 
 			result.push({"component": component, "resource": resource});
 		};

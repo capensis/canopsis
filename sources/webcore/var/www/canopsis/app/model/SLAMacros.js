@@ -21,7 +21,7 @@ Ext.define('canopsis.model.SLAMacros', {
 	fields: [
 		{name: '_id'},
 		{name: 'id', mapping: '_id'},
-		{name: 'crecord_type', defaultValue: 'sla'},
+		{name: 'crecord_type', defaultValue: 'slamacro'},
 
 		{name: 'enable', defaultValue: true},
 
@@ -31,14 +31,6 @@ Ext.define('canopsis.model.SLAMacros', {
 		{name: 'aaa_admin_group', defaultValue: undefined},
 		{name: 'aaa_group', defaultValue: undefined},
 		{name: 'aaa_owner', defaultValue: undefined},
-
-		/* objclass:
-		 *  Define which type of SLA object we are dealing with.
-		 *  Possible values are :
-		 *   - crit: Define a new level of criticality
-		 *   - macro: Define the macro for Critical SLA and Warning SLA
-		 */
-		{name: 'objclass', defaultValue: 'macro'},
 
 		{name: 'mCrit', defaultValue: 'PROC_CRITICAL'},
 		{name: 'mWarn', defaultValue: 'PROC_WARNING'}

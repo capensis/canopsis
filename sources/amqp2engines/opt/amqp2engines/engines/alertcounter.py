@@ -59,7 +59,7 @@ class engine(cengine):
 		self.mCrit = PROC_CRITICAL
 		self.mWarn = PROC_WARNING
 
-		record = self.storage.find_one({'crecord_type': 'sla', 'objclass': 'macro'})
+		record = self.storage.find_one({'crecord_type': 'slamacros'})
 
 		if record:
 			self.mCrit = record.data['mCrit']
@@ -70,7 +70,7 @@ class engine(cengine):
 
 		self.crits = {}
 
-		records = self.storage.find({'crecord_type': 'sla', 'objclass': 'crit'})
+		records = self.storage.find({'crecord_type': 'slacrit'})
 
 		for record in records:
 			self.crits[record.data['crit']] = record.data['delay']

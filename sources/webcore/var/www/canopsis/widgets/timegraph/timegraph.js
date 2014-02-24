@@ -222,8 +222,16 @@ Ext.define('widgets.timegraph.timegraph', {
 	},
 
 	addPoint: function(serieId, value) {
-		this.series[serieId].data.push([value[0] * 1000, value[1]]);
-		this.series[serieId].last_timestamp = value[0] * 1000;
+		// insert point only if it appends after the last of the serie.
+		var points = this.series[serieId].data,
+			last_point = points[points.length - 1],
+			value_ts = value[0] * 1000;
+
+		if (last_point === undefined || last_point[0] < value_ts) {
+			this.series[serieId].data.push([value_ts, value[1]]);
+			this.series[serieId].last_timestamp = value_ts;
+		}
+
 	},
 
 	shiftSerie: function(serieId) {

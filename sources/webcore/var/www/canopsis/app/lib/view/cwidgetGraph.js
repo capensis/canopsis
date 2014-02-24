@@ -248,6 +248,9 @@ Ext.define('canopsis.lib.view.cwidgetGraph', {
 					}
 				}
 
+				if(this.reportMode || this.exportMode) {
+					this.series[serieId].data = [];
+				}
 				/* add data to the serie */
 				for(var j = 0; j < info.values.length; j++) {
 					var value = info.values[j];

@@ -26,14 +26,14 @@ Ext.define('canopsis.lib.view.cperfstoreValueConsumerWidget', {
 		return url;
 	},
 
-	refreshNodes: function(from, to, advancedFilters) {
+	refreshNodes: function(from, to) {
 		if(this.nodesByID && Ext.Object.getSize(this.nodesByID) != 0) {
 			var url = this.getUrl(from, to);
 
 			Ext.Ajax.request({
 				url: url,
 				scope: this,
-				params: this.getParams(from, to, advancedFilters),
+				params: this.getParams(from, to),
 				method: 'POST',
 
 				success: function(response) {
@@ -50,7 +50,7 @@ Ext.define('canopsis.lib.view.cperfstoreValueConsumerWidget', {
 						}
 					}
 
-					this.onRefresh(data, from, to, advancedFilters);
+					this.onRefresh(data, from, to);
 				},
 
 				failure: function(result, request) {
@@ -75,7 +75,7 @@ Ext.define('canopsis.lib.view.cperfstoreValueConsumerWidget', {
 		return this.chart;
 	},
 
-	getParams: function(from, to, advancedFilters) {
+	getParams: function(from, to) {
 		var post_params = [];
 
 		Ext.Object.each(this.nodesByID, function(id, node) {
@@ -130,10 +130,6 @@ Ext.define('canopsis.lib.view.cperfstoreValueConsumerWidget', {
 				post_param['to'] = parseInt(to / 1000);
 			}
 
-			if(advancedFilters) {
-				post_param['subset_selection'] = advancedFilters;
-			}
-
 			this.processPostParam(post_param);
 
 			post_params.push(post_param);
@@ -143,6 +139,14 @@ Ext.define('canopsis.lib.view.cperfstoreValueConsumerWidget', {
 			'nodes': Ext.JSON.encode(post_params),
 			'timezone': new Date().getTimezoneOffset() * 60
 		};
+
+		if (this.subset_selection) {
+
+			log.debug('Adding live reporting advanced filter to post param');
+			post_params['subset_selection'] = Ext.JSON.encode(this.subset_selection);
+			//remove subset selection to avoid further side effects
+			this.subset_selection = undefined;
+		}
 
 		if(this.aggregate_method) {
 			post_params['aggregate_method'] = this.aggregate_method;

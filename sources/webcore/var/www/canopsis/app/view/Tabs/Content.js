@@ -422,13 +422,14 @@ Ext.define('canopsis.view.Tabs.Content' , {
 	setReportDate: function(from, to, additionalFilters) {
 		log.debug('Send report data for widgets', this.logAuthor);
 
-		console.log("content::setReportDate::additionalFilters");
-		console.log(additionalFilters);
+		log.debug("content::setReportDate::additionalFilters");
+		log.debug(additionalFilters);
 
 		var cmps = this.getCmps();
 
 		for(var i = 0; i < cmps.length; i++) {
-			cmps[i]._doRefresh(from, to, additionalFilters);
+			cmps[i].subset_selection = additionalFilters;
+			cmps[i]._doRefresh(from, to);
 		}
 	},
 
