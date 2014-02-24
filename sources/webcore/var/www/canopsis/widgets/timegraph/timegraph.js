@@ -238,15 +238,19 @@ Ext.define('widgets.timegraph.timegraph', {
 		var now = Ext.Date.now();
 		var timestamp;
 
-		if(this.timeNav) {
-			timestamp = now - this.timeNav_window * 1000;
-		}
-		else {
-			timestamp = now - this.time_window * 1000;
-		}
+		if (this.series[serieId].data.length > 0) {
 
-		while(this.series[serieId].data[0][0] < timestamp) {
-			this.series[serieId].data.shift();
+			if(this.timeNav) {
+				timestamp = now - this.timeNav_window * 1000;
+			}
+			else {
+				timestamp = now - this.time_window * 1000;
+			}
+
+			while(this.series[serieId].data[0][0] < timestamp) {
+				this.series[serieId].data.shift();
+			}
+
 		}
 	},
 
