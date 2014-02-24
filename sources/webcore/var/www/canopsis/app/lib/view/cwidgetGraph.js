@@ -100,6 +100,84 @@ Ext.define('canopsis.lib.view.cwidgetGraph', {
 		//this.chart.setData(this.getSeriesConf());
 		this.chart.setupGrid();
 		this.chart.draw();
+		this.add_csv_download_button();
+	},
+
+	add_csv_download_button: function() {
+		//@see jqgridable for mouseover
+		if(this.get_csv_data !== undefined) {
+			this.get_csv_data.remove();
+			this.get_csv_data = undefined;
+		}
+
+		this.get_csv_data = $('<div/>', {
+			class: 'chart_button',
+			text: 'download as csv'
+		});
+
+		this.get_csv_data.css({
+			display: 'inline-block',
+			position: 'absolute',
+			top: 5,
+			left: 30,
+		});
+
+		this.plotcontainer.parent().append(this.get_csv_data);
+
+		var that = this;
+
+		$(this.plotcontainer.parent()).mouseenter(function() {
+			if(that.get_csv_data !== undefined) {
+				$(that.get_csv_data).show();
+			}
+		});
+		$(this.plotcontainer.parent()).mouseleave(function() {
+			if(that.get_csv_data !== undefined) {
+				$(that.get_csv_data).hide();
+			}
+		});
+
+		$(this.get_csv_data).hide();
+		var that = this,
+			csv_content = '"component";"resource";"metric";"type"\n';
+
+		this.get_csv_data.click(function (){
+			var serie,
+				line_timestamps,
+				line_values,
+				line_start;
+
+			for (var serieId in that.series) {
+				serie = that.series[serieId];
+				var node = serie.node,
+					position,
+					values = ['values'],
+					timestamps = ['timestamps'],
+					point,
+					head;
+
+				for (var position in serie.data) {
+					point = serie.data[position];
+					timestamps.push(point[0]);
+					values.push(point[1])
+				}
+
+				head = [node.component, node.resource, node.metric];
+				line_start = '"' + head.join('";"') + '";"';
+				line_values 	= line_start + values.join('";"') + '"\n';
+				line_timestamps = line_start + timestamps.join('";"') + '"\n';
+
+				csv_content += line_values + line_timestamps;
+
+				log.debug(' + CSV FILE :')
+				log.debug(csv_content);
+
+			}
+
+			downloadFile(head.join('-') + '.csv', csv_content);
+		});
+
+
 	},
 
 	destroyChart: function() {
@@ -140,11 +218,8 @@ Ext.define('canopsis.lib.view.cwidgetGraph', {
 		return;
 	},
 
-	doRefresh: function(from, to, advancedFilters) {
-		console.log("cwidgetGraph::doRefresh::advancedFilters");
-		console.log(advancedFilters);
-		console.log(arguments);
-		this.refreshNodes(from, to, advancedFilters);
+	doRefresh: function(from, to) {
+		this.refreshNodes(from, to);
 	},
 
 	onRefresh: function(data, from, to) {
