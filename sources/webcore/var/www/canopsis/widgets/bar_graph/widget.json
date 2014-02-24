@@ -379,7 +379,7 @@
 									"xtype":"checkbox",
 									"text":"Trend",
 									"fieldLabel":"Trend",
-									"checked":true,
+									"checked":false,
 									"name":"trend_curve"
 								},{
 									"xtype": "numberfield",
