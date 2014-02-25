@@ -139,7 +139,7 @@ Ext.define('canopsis.lib.view.cwidgetGraph', {
 
 		$(this.get_csv_data).hide();
 		var that = this,
-			csv_content = '"component";"resource";"metric";"type"\n';
+			csv_content = '"component";"resource";"metric";"type"<br>';
 
 		this.get_csv_data.click(function (){
 			var serie,
@@ -164,17 +164,17 @@ Ext.define('canopsis.lib.view.cwidgetGraph', {
 
 				head = [node.component, node.resource, node.metric];
 				line_start = '"' + head.join('";"') + '";"';
-				line_values 	= line_start + values.join('";"') + '"\n';
-				line_timestamps = line_start + timestamps.join('";"') + '"\n';
+				line_values 	= line_start + values.join('";"') + '"<br>';
+				line_timestamps = line_start + timestamps.join('";"') + '"<br>';
 
 				csv_content += line_values + line_timestamps;
 
-				log.debug(' + CSV FILE :')
-				log.debug(csv_content);
-
 			}
-
-			downloadFile(head.join('-') + '.csv', csv_content);
+			postDataToURL('/echo', [
+				{'name': 'filename',	'value': head.join('-') + '.csv'},
+				{'name': 'content',		'value': csv_content},
+				{'name': 'header',		'value': 'text/csv'}
+			]);
 		});
 
 

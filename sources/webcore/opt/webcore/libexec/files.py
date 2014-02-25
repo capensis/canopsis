@@ -135,7 +135,7 @@ def echo():
 	logger.debug(params)
 	response.headers['Content-Type'] 	= params.get('header','text/html')[0]
 	response.headers["Content-Disposition"] = "attachment; filename=" + params.get('filename','file.ext')[0]
-	data = params.get('content','no content')[0]
+	data = params.get('content','no content')[0].replace('<br>', "\n")
 
 	return data
 
