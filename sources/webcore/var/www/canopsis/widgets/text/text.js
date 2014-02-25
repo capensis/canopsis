@@ -252,7 +252,7 @@ Ext.define('widgets.text.text', {
 	},
 
 	fillData: function(data, from, to) {
-		console.log(data);
+
 		var text = this.text;
 
 		for(var i = 0; i < this.variables.length; i++) {
@@ -288,7 +288,17 @@ Ext.define('widgets.text.text', {
 		var math = mathjs();
 
 		$('#' + this.wcontainerId + ' .mathexpression').each(function() {
-			$(this).html(math.eval($(this).html()));
+			try {
+				var expression = $(this).html();
+				expression = expression.replace(' ','');
+				expression = math.eval(expression);
+				if(typeof expression === 'object' || isNaN(expression)){
+					expression = 0;
+				}
+				$(this).html(expression);
+			} catch(err) {
+				log.warning('unable to compute math expression' + $(this).html())
+			}
 		});
 	}
 });
