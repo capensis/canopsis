@@ -23,6 +23,7 @@ Ext.define('widgets.text.text', {
 	alias: 'widget.text',
 
 	logAuthor: '[widgets][text]',
+	useLastRefresh: false,
 
 	initComponent: function() {
 		this.callParent(arguments);
@@ -209,8 +210,14 @@ Ext.define('widgets.text.text', {
 								var metric = r_vals.data[i];
 								var node = nodesByID[metric.node];
 
+								var value = metric.values[0][1];
+
+								if(this.humanReadable) {
+									value = rdr_humanreadable_value(value, metric.bunit);
+								}
+
 								var datas = {
-									'value': metric.values[0][1],
+									'value': value,
 									'unit': metric.bunit,
 									'component': node.co,
 									'resource': node.re
