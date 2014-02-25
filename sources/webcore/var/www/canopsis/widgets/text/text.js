@@ -35,7 +35,7 @@ Ext.define('widgets.text.text', {
 
 	extractVariables: function(text) {
 		/* extract variables from template */
-		var vars = text.match(/({.*.})/g);
+		var vars = text.match(/({.*?})/g);
 
 		if(!vars) {
 			return;
@@ -102,8 +102,6 @@ Ext.define('widgets.text.text', {
 	onRefresh: function(data, from, to, advancedFilters) {
 		var template_data = {};
 
-		this.fillData(template_data, from, to);
-
 		for(var i = 0; i < data.length; i++) {
 			var evt = Ext.create('canopsis.model.Event', data[i]);
 			var co = evt.get('component');
@@ -116,7 +114,6 @@ Ext.define('widgets.text.text', {
 
 				if(field !== 'perf_data' && field !== 'perf_data_array') {
 					var key = field + ':' + co;
-
 
 					if(re) {
 						key = key + ':' + re;
