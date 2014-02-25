@@ -144,12 +144,12 @@ class engine(cengine):
 
 			meta_data['me'] = 'cps_sla_{0}_{1}_{2}'.format(
 				slatype,
-				slaname.lower(),
+				slaname,
 				'nok' if ack else 'out'
 			)
 
 		else:
-			meta_data['me'] = 'cps_sla_{0}_{1}_ok'.format(slatype, slaname.lower())
+			meta_data['me'] = 'cps_sla_{0}_{1}_ok'.format(slatype, slaname)
 
 		self.increment_counter(meta_data, value)
 
