@@ -135,8 +135,36 @@ Ext.define('widgets.category_graph.category_graph', {
 		);
 	},
 
+	prepareData: function() {
+		var label_axis_group = {};
+		var label_axis_group_count = 0;
+
+		for(node_id in this.series)
+		{
+			var serie = this.series[node_id];
+			if(label_axis_group[serie.label] === undefined) {
+				label_axis_group[serie.label] = label_axis_group_count;
+				label_axis_group_count ++;
+			}
+
+			serie.label_axis_group = label_axis_group[serie.label];
+		}
+	},
+
 	addPoint: function(serieId, value, serieIndex) {
-		var point = [this.stacked_graph? 0 : serieIndex, value[1]];
+		var serie = this.series[serieId];
+		var x = serie.label_axis_group;
+
+		if(this.groupby_metric !== undefined && this.groupby_metric === true)
+			x = serie.label_axis_group;
+		else if( this.stacked_graph !== undefined && this.stacked_graph === true)
+		{
+			x= 0;
+		}
+		else {
+			x = serieIndex;
+		}
+		var point = [x, value[1]];
 		this.series[serieId].data = [point];
 	},
 
@@ -157,7 +185,6 @@ Ext.define('widgets.category_graph.category_graph', {
 
 				serie_count++;
 
-				console.log(this.series[node_id]);
 				if ((this.series[node_id].show === undefined || this.series[node_id].show) && this.series[node_id].data.length === 1) {
 					total += this.series[node_id].data[0][1];
 				}
