@@ -32,6 +32,9 @@ Ext.define('canopsis.lib.view.cwidgetGraph', {
 	initComponent: function() {
 		this.callParent(arguments);
 
+		this.clearHooks();
+		this.initHooks();
+
 		this.setChartOptions();
 		this.series = {};
 
@@ -44,6 +47,84 @@ Ext.define('canopsis.lib.view.cwidgetGraph', {
 				this.renderChart();
 			}
 		}, this);
+	},
+
+	initHooks: function() {
+		var me = this;
+
+		me.baseMethods = {};
+
+		function initHook(name) {
+			me.baseMethods[name] = me[name];
+
+			me[name] = function() {
+				var currentHook = {
+					params: arguments,
+					result: undefined,
+					cancel: false
+				};
+
+				me.runHook(name, true, [currentHook]);
+
+				if(currentHook.cancel) {
+					return currentHook.result;
+				}
+
+				currentHook.result = me.baseMethods[name].apply(me, currentHook.params);
+
+				me.runHook(name, false, [currentHook]);
+
+				return currentHook.result;
+			}
+		}
+
+		for(var hook in this.hooks) {
+			initHook(hook);
+		}
+	},
+
+	addHook: function(name, callback, prehook, id) {
+		if(name in this.hooks) {
+			log.debug('Add ' + (!!prehook ? 'pre' : 'post') + '-hook: ' + name, this.logAuthor);
+
+			this.hooks[name][id] = {
+				prehook: !!prehook,
+				func: callback
+			};
+		}
+	},
+
+	clearHooks: function() {
+		log.debug('Clear hooks', this.logAuthor);
+
+		this.hooks = {
+			insertGraphExtraComponents: {},
+			setChartOptions: {},
+			createChart: {},
+			renderChart: {},
+			destroyChart: {},
+			getSerieForNode: {},
+			updateSeriesConfig: {},
+			doRefresh: {},
+			onRefresh: {},
+			dblclick: {}
+		};
+	},
+
+	runHook: function(name, prehook, args) {
+		if(name in this.hooks) {
+			var selectPrehook = !!prehook;
+
+			log.debug('Run ' + (!!prehook ? 'pre' : 'post') + '-hooks: ' + name, this.logAuthor);
+
+			for(var hookId in this.hooks[name]) {
+				var hook = this.hooks[name][hookId];
+
+				if(hook.prehook === selectPrehook) {
+					hook.func.apply(this, args);
+				}
+			}
+		}
 	},
 
 	afterContainerRender: function() {
@@ -87,7 +168,7 @@ Ext.define('canopsis.lib.view.cwidgetGraph', {
 
 		this.chart.initializeHiddenGraphs(this);
 		this.chart.initializeThresholds(this);
-		//this.chart.initializeDowntimes(this);
+		this.chart.initializeDowntimes(this);
 		this.chart.initializeGraphStyleManager(this);
 		this.chart.initializeLegendManager(this);
 		this.chart.initializeAutoScale(this);
@@ -185,6 +266,7 @@ Ext.define('canopsis.lib.view.cwidgetGraph', {
 	},
 
 	getSeriesConf: function() {
+
 		var series = [];
 
 		Ext.Object.each(this.series, function(serieId, serie) {

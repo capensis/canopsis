@@ -35,7 +35,7 @@ Ext.define('widgets.text.text', {
 
 	extractVariables: function(text) {
 		/* extract variables from template */
-		var vars = text.match(/({.*.})/g);
+		var vars = text.match(/({.*?})/g);
 
 		if(!vars) {
 			return;
@@ -102,8 +102,6 @@ Ext.define('widgets.text.text', {
 	onRefresh: function(data, from, to, advancedFilters) {
 		var template_data = {};
 
-		this.fillData(template_data, from, to);
-
 		for(var i = 0; i < data.length; i++) {
 			var evt = Ext.create('canopsis.model.Event', data[i]);
 			var co = evt.get('component');
@@ -114,15 +112,16 @@ Ext.define('widgets.text.text', {
 			for(var j = 0; j < fields.length; j++) {
 				var field = fields[j].name;
 
-				var key = field + ':' + co;
+				if(field !== 'perf_data' && field !== 'perf_data_array') {
+					var key = field + ':' + co;
 
+					if(re) {
+						key = key + ':' + re;
+					}
 
-				if(re) {
-					key = key + ':' + re;
+					template_data[key] = evt.get(field);
+					template_data[field] = evt.get(field);
 				}
-
-				template_data[key] = evt.get(field);
-				template_data[field] = evt.get(field);
 			}
 		}
 
@@ -133,10 +132,16 @@ Ext.define('widgets.text.text', {
 		for(var variable in this.wanted_metrics) {
 			var metric = this.wanted_metrics[variable];
 			var filter = {
-				'me': metric.metric,
-				'co': metric.component,
-				're': metric.resource
+				'me': metric.metric
 			};
+
+			if(metric.component) {
+				filter.co = metric.component;
+			}
+
+			if(metric.resource) {
+				filter.re = metric.resource;
+			}
 
 			perfRequest['$or'].push(filter);
 		}
@@ -241,12 +246,16 @@ Ext.define('widgets.text.text', {
 
 	fillData: function(data, from, to) {
 		console.log(data);
+		var text = this.text;
 
 		for(var i = 0; i < this.variables.length; i++) {
 			var variable = this.variables[i];
 
 			if(data[variable] !== undefined) {
-				this.text = replaceAll('{' + variable + '}', data[variable], this.text);
+				text = replaceAll('{' + variable + '}', data[variable], text);
+			}
+			else {
+				text = replaceAll('{' + variable + '}', 'undefined', text);
 			}
 		}
 
@@ -259,7 +268,7 @@ Ext.define('widgets.text.text', {
 				data.to = rdr_tstodate(parseInt(to / 1000));
 			}
 
-			var template = new Ext.XTemplate('<div>' + this.text + '</div>');
+			var template = new Ext.XTemplate('<div>' + text + '</div>');
 
 			this.setHtml(template.apply(data));
 		}
