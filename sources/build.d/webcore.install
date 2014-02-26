@@ -9,8 +9,9 @@ function install(){
 
 	chown $HUSER $PREFIX/var/www/canopsis/resources/locales
 	su - $HUSER -c "export http_proxy=$http_proxy && export https_proxy=$https_proxy && webcore_update_locales"
-	if [ $? -ne 0 ] 
-	then 
+
+	if [ $? -ne 0 ]
+	then
 		echo "Impossible to download locales"
 	fi
 
