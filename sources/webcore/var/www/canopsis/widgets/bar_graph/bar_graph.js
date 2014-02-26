@@ -116,17 +116,19 @@ Ext.define('widgets.bar_graph.bar_graph', {
 	setOptions: function() {
 		this.callParent(arguments);
 
+		var that = this;
+
 		if(this.columnDatalabels) {
 			this.options.plotOptions.column.dataLabels = {
 				enabled: true,
 				formatter: function() {
 					if(this.y) {
-						if(this.humanReadable) {
-							return rdr_humanreadable_value(this.y, this.point.bunit);
+						if(that.humanReadable) {
+							return rdr_humanreadable_value(this.y, this.series.options.bunit);
 						}
 						else {
-							if(this.point.bunit) {
-								return this.y + ' ' + this.point.bunit;
+							if(this.series.options.bunit) {
+								return this.y + ' ' + this.series.options.bunit;
 							}
 							else {
 								return this.y;
