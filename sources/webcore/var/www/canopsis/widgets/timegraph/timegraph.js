@@ -63,6 +63,11 @@ Ext.define('widgets.timegraph.timegraph', {
 	displayVerticalLines: false,
 	displayHorizontalLines: true,
 
+	flagRadius: 10,
+	flagLineWidth: 1,
+	flagLineColor: '#003300',
+	flagHeight: 35,
+
 	initComponent: function() {
 		this.callParent(arguments);
 
@@ -122,6 +127,56 @@ Ext.define('widgets.timegraph.timegraph', {
 		this.callParent(arguments);
 		var me = this;
 
+		var tooltip = undefined;
+
+		this.plotcontainer.click(function(e) {
+			if(tooltip !== undefined) {
+				tooltip.remove();
+				tooltip = undefined;
+			}
+
+			for(var i = 0; i < me.logevents.length; i++) {
+				var evt = me.logevents[i];
+				var coord = me.chart.p2c(evt);
+
+				var d2 = Math.pow(coord.left - e.offsetX, 2) + Math.pow(coord.top - me.flagHeight - e.offsetY, 2);
+
+				if(d2 <= Math.pow(me.flagRadius, 2)) {
+					tooltip = $('<div/>', {
+						id: me.wcontainerId + '-flag-tooltip'
+					});
+
+					tooltip.css({
+						position: 'absolute',
+						padding: '5px',
+						'border-radius': '5px',
+						left: coord.left,
+						top: coord.top - me.flagHeight - me.flagRadius,
+						border: '1px solid black',
+						background: '#FFFFFF'
+					});
+
+					tooltip.append('<p><b>' + evt.event.display_name + '</b></p><ul>');
+
+					if(evt.event.source_type === 'component') {
+						tooltip.append('<li><em>Source:</em> ' + evt.event.component + '</li>');
+					}
+					else {
+						tooltip.append('<li><em>Source:</em> ' + evt.event.component + '/' + evt.event.resource + '</li>');						
+					}
+
+					tooltip.append('<li><em>Message:</em> ' + (evt.event.output ? evt.event.output : '') + '</li></ul>');
+
+					if(evt.event.long_output) {
+						tooltip.append('<p>' + evt.event.long_output + '</p>');
+					}
+
+					$('body').append(tooltip);
+					return;
+				}
+			}
+		});
+
 		this.chart.hooks.drawOverlay.push(function(plot, ctx) {
 			me.addLogEventsToChart(ctx);
 		});
@@ -139,16 +194,16 @@ Ext.define('widgets.timegraph.timegraph', {
 			var evt = this.logevents[i];
 			var coord = this.chart.p2c(evt);
 
-			ctx.lineWidth = 1;
-			ctx.strokeStyle = '#003300';
+			ctx.lineWidth = this.flagLineWidth;
+			ctx.strokeStyle = this.flagLineColor;
 
 			ctx.beginPath();
-			ctx.moveTo(coord.left, coord.top - 35);
+			ctx.moveTo(coord.left, coord.top - this.flagHeight);
 			ctx.lineTo(coord.left, coord.top + 7);
 			ctx.stroke();
 
 			ctx.beginPath();
-			ctx.arc(coord.left, coord.top - 35, 10, 0, 2 * Math.PI, false);
+			ctx.arc(coord.left, coord.top - this.flagHeight, this.flagRadius, 0, 2 * Math.PI, false);
 			ctx.fillStyle = state_colors[evt.event.state];
 			ctx.fill();
 			ctx.stroke();
