@@ -65,6 +65,94 @@ Ext.define('widgets.timegraph.timegraph', {
 
 	initComponent: function() {
 		this.callParent(arguments);
+
+		this.logevents = [];
+	},
+
+	doRefresh: function(from, to) {
+		this.callParent(arguments);
+
+		if(this.flagFilter) {
+			var filter = {'$and': [
+				{
+					'timestamp': {
+						'$gte': parseInt(from / 1000),
+						'$lte': parseInt(to / 1000)
+					}
+				},{
+					'state_type': 1
+				},
+				Ext.JSON.decode(this.flagFilter)
+			]};
+
+			Ext.Ajax.request({
+				url: '/rest/events_log',
+				method: 'GET',
+				params: {
+					filter: Ext.JSON.encode(filter),
+					limit: this.nbMaxEventsDisplayed
+				},
+				scope: this,
+
+				success: function(response) {
+					var data = Ext.JSON.decode(response.responseText);
+					data = data.data;
+
+					// add events to the list
+					for(var i = 0; i < data.length; i++) {
+						this.logevents.push({
+							x: data[i].timestamp * 1000,
+							y: 0,
+							event: data[i]
+						});
+					}
+
+					// then shift it
+					if(this.logevents.length > this.nbMaxEventsDisplayed) {
+						this.logevents = this.logevents.slice(this.logevents.length - this.nbMaxEventsDisplayed);
+					}
+
+					this.chart.triggerRedrawOverlay();
+				}
+			});
+		}
+	},
+
+	createChart: function() {
+		this.callParent(arguments);
+		var me = this;
+
+		this.chart.hooks.drawOverlay.push(function(plot, ctx) {
+			me.addLogEventsToChart(ctx);
+		});
+	},
+
+	addLogEventsToChart: function(ctx) {
+		var state_colors = [
+			'green',  // 0 : OK
+			'yellow', // 1 : WARNING
+			'red',    // 2 : CRITICAL
+			'orange'  // 3 : UNKNOWN
+		];
+
+		for(var i = 0; i < this.logevents.length; i++) {
+			var evt = this.logevents[i];
+			var coord = this.chart.p2c(evt);
+
+			ctx.lineWidth = 1;
+			ctx.strokeStyle = '#003300';
+
+			ctx.beginPath();
+			ctx.moveTo(coord.left, coord.top - 35);
+			ctx.lineTo(coord.left, coord.top + 7);
+			ctx.stroke();
+
+			ctx.beginPath();
+			ctx.arc(coord.left, coord.top - 35, 10, 0, 2 * Math.PI, false);
+			ctx.fillStyle = state_colors[evt.event.state];
+			ctx.fill();
+			ctx.stroke();
+		}
 	},
 
 	setChartOptions: function() {
