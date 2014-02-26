@@ -67,6 +67,7 @@ Ext.define('widgets.timegraph.timegraph', {
 	flagLineWidth: 1,
 	flagLineColor: '#003300',
 	flagHeight: 35,
+	flagTooltip: undefined,
 
 	initComponent: function() {
 		this.callParent(arguments);
@@ -127,12 +128,10 @@ Ext.define('widgets.timegraph.timegraph', {
 		this.callParent(arguments);
 		var me = this;
 
-		var tooltip = undefined;
-
 		this.plotcontainer.click(function(e) {
-			if(tooltip !== undefined) {
-				tooltip.remove();
-				tooltip = undefined;
+			if(me.flagTooltip !== undefined) {
+				me.flagTooltip.remove();
+				me.flagTooltip = undefined;
 			}
 
 			for(var i = 0; i < me.logevents.length; i++) {
@@ -142,11 +141,11 @@ Ext.define('widgets.timegraph.timegraph', {
 				var d2 = Math.pow(coord.left - e.offsetX, 2) + Math.pow(coord.top - me.flagHeight - e.offsetY, 2);
 
 				if(d2 <= Math.pow(me.flagRadius, 2)) {
-					tooltip = $('<div/>', {
+					me.flagTooltip = $('<div/>', {
 						id: me.wcontainerId + '-flag-tooltip'
 					});
 
-					tooltip.css({
+					me.flagTooltip.css({
 						position: 'absolute',
 						padding: '5px',
 						'border-radius': '5px',
@@ -156,22 +155,22 @@ Ext.define('widgets.timegraph.timegraph', {
 						background: '#FFFFFF'
 					});
 
-					tooltip.append('<p><b>' + evt.event.display_name + '</b></p><ul>');
+					me.flagTooltip.append('<p><b>' + evt.event.display_name + '</b></p><ul>');
 
 					if(evt.event.source_type === 'component') {
-						tooltip.append('<li><em>Source:</em> ' + evt.event.component + '</li>');
+						me.flagTooltip.append('<li><em>Source:</em> ' + evt.event.component + '</li>');
 					}
 					else {
-						tooltip.append('<li><em>Source:</em> ' + evt.event.component + '/' + evt.event.resource + '</li>');						
+						me.flagTooltip.append('<li><em>Source:</em> ' + evt.event.component + '/' + evt.event.resource + '</li>');						
 					}
 
-					tooltip.append('<li><em>Message:</em> ' + (evt.event.output ? evt.event.output : '') + '</li></ul>');
+					me.flagTooltip.append('<li><em>Message:</em> ' + (evt.event.output ? evt.event.output : '') + '</li></ul>');
 
 					if(evt.event.long_output) {
-						tooltip.append('<p>' + evt.event.long_output + '</p>');
+						me.flagTooltip.append('<p>' + evt.event.long_output + '</p>');
 					}
 
-					$('body').append(tooltip);
+					$('body').append(me.flagTooltip);
 					return;
 				}
 			}
