@@ -249,6 +249,8 @@ Ext.define('widgets.text.text', {
 			this.fillData(template_data, from, to);
 			this.computeMathOperations();
 		}
+
+		this.add_csv_download_button();
 	},
 
 	fillData: function(data, from, to) {
@@ -287,18 +289,76 @@ Ext.define('widgets.text.text', {
 	computeMathOperations: function() {
 		var math = mathjs();
 
+		var expressionCounter = 1;
+
 		$('#' + this.wcontainerId + ' .mathexpression').each(function() {
 			try {
 				var expression = $(this).html();
+
 				expression = expression.replace(' ','');
 				expression = math.eval(expression);
 				if(typeof expression === 'object' || isNaN(expression)){
 					expression = 0;
 				}
+
+				var variableName = "mathexpression_" + expressionCounter;
+
 				$(this).html(expression);
 			} catch(err) {
-				log.warning('unable to compute math expression' + $(this).html())
+				log.warning('unable to compute math expression' + $(this).html());
+				console.error(err.stack);
+			}
+		});
+	},
+
+	add_csv_download_button: function() {
+		log.debug("@@@ add_csv_download_button");
+		//@see jqgridable for mouseover
+		if(this.get_csv_data !== undefined) {
+			this.get_csv_data.remove();
+			this.get_csv_data = undefined;
+		}
+
+		this.get_csv_data = $('<div/>', {
+			class: 'chart_button',
+			text: 'download as csv'
+		});
+
+		this.get_csv_data.css({
+			display: 'inline-block',
+			position: 'absolute',
+			top: 5,
+			left: 30,
+		});
+
+		$('#' + this.wcontainerId).append(this.get_csv_data);
+
+		var that = this;
+
+		$('#' + this.wcontainerId).mouseenter(function() {
+			if(that.get_csv_data !== undefined) {
+				$(that.get_csv_data).show();
+			}
+		});
+		$('#' + this.wcontainerId).mouseleave(function() {
+			if(that.get_csv_data !== undefined) {
+				$(that.get_csv_data).hide();
+			}
+		});
+
+		$(this.get_csv_data).hide();
+		var that = this;
+
+		this.get_csv_data.click(function (){
+			if($('#' + that.wcontainerId + " table.exportable").size() === 0) {
+				global.notify.notify(_('Issue'), _("No table with class \"exportable\" found in the text cell."), 'info');
+			}
+			else
+			{
+				var csv = $('#' + that.wcontainerId + " table.exportable").table2CSV({delivery:'value'});
+				window.location.href = 'data:text/csv;charset=UTF-8,' + encodeURIComponent(csv);
 			}
 		});
 	}
+
 });
