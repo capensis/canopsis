@@ -224,7 +224,7 @@ Ext.define('widgets.perftop.perftop' , {
 				model: 'Perfdata',
 				store: this.store,
 
-				opt_bar: false,
+				opt_bar: true,
 				opt_paging: false,
 				opt_menu_delete: false,
 				opt_bar_add: false,
@@ -235,6 +235,38 @@ Ext.define('widgets.perftop.perftop' , {
 				opt_simple_search: false,
 
 				hideHeaders: this.hideHeaders,
+
+				opt_bar_customs: [{
+					xtype: 'button',
+					iconCls: 'icon-export',
+					text: _('Export'),
+					handler: function() {
+						var Perfdata = Ext.ModelManager.getModel('canopsis.model.Perfdata');
+
+						var _fields = Perfdata.getFields();
+						var fields = [];
+
+						for(var i = 0; i < _fields.length; i++) {
+							fields.push(_fields[i].name);
+						}
+
+						var params = [
+							{name: 'csv', value: true},
+							{name: 'fields', value: Ext.JSON.encode(fields)}
+						];
+
+						for(var key in this.store.proxy.extraParams) {
+							params.push({
+								name: key,
+								value: this.store.proxy.extraParams[key]
+							});
+						}
+
+						console.log(params);
+
+						getDataFromURL(this.store.proxy['url'], params);
+					}.bind(this)
+				}],
 
 				opt_cell_edit: false,
 
