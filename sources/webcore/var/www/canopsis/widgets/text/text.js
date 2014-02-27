@@ -24,6 +24,7 @@ Ext.define('widgets.text.text', {
 
 	logAuthor: '[widgets][text]',
 	useLastRefresh: false,
+	aggregate_method: 'LAST',
 
 	initComponent: function() {
 		this.callParent(arguments);
@@ -183,7 +184,7 @@ Ext.define('widgets.text.text', {
 						method: 'POST',
 						params: {
 							'nodes': Ext.JSON.encode(nodes),
-							'aggregate_method': 'LAST',
+							'aggregate_method': this.aggregate_method,
 							'aggregate_max_points': 1,
 							'timezone': new Date().getTimezoneOffset() * 60
 						},

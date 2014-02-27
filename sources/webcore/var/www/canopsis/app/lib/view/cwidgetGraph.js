@@ -366,9 +366,8 @@ Ext.define('canopsis.lib.view.cwidgetGraph', {
 		this.renderChart();
 	},
 
-	updateSeriesConfig: function() {
-
-	},
+	updateSeriesConfig: function() {},
+	dblclick: function() {},
 
 	updateAxis: function(from, to) {
 		void(from);

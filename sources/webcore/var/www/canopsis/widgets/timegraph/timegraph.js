@@ -396,9 +396,6 @@ Ext.define('widgets.timegraph.timegraph', {
 		}
 	},
 
-	dblclick: function() {
-	},
-
 	updateAxis: function(from, to) {
 		if(this.reportMode || this.exportMode) {
 			this.options.xaxis.min = from;
