@@ -1,4 +1,4 @@
-*#!/usr/bin/env python
+#!/usr/bin/env python
 #--------------------------------
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
@@ -39,7 +39,7 @@ def forger(		connector,
 			event_type,
 			source_type='component',
 			component=None,
-			resource=None,	
+			resource=None,
 			timestamp=None,
 			state=0,
 			state_type=1,
@@ -67,13 +67,13 @@ def forger(		connector,
 
 	if not state:
 		state = 0
-		
+
 	if not address:
 		if bool(regexp_ip.match(component)):
 			address = component
 			if reverse_lookup:
 				dns = None
-				
+
 				# get from cache
 				try:
 					(timestamp, dns) = dns_cache[address.replace('.', '-')]
@@ -84,7 +84,7 @@ def forger(		connector,
 						dns = None
 				except:
 					logger.info(" + '%s' not in cache" % address)
-					
+
 				# reverse lookup
 				if not dns:
 					try:
@@ -94,9 +94,9 @@ def forger(		connector,
 						dns_cache[address.replace('.', '-')] = (int(time.time()), dns)
 					except:
 						logger.info(" + Failed");
-						
+
 				# Dns ok
-				if dns:	
+				if dns:
 					# Split FQDN
 					fqdn = dns[0]
 					component = fqdn.split('.', 1)[0]
@@ -105,7 +105,7 @@ def forger(		connector,
 							domain = fqdn.split('.', 1)[1]
 						except:
 							pass
-				
+
 				if dns:
 					logger.info(" + Component: %s" % component);
 					logger.info(" + Address:   %s" % address);
@@ -118,29 +118,29 @@ def forger(		connector,
 		'event_type':		event_type,
 		'source_type':		source_type,
 		'component':		component,
-		'resource':			resource,	
+		'resource':			resource,
 		'timestamp':		timestamp,
 		'state':			state,
 		'state_type':		state_type,
 		'output':			output,
 		'long_output':		long_output,
 	}
-	
+
 	if perf_data:
 		dump["perf_data"] = perf_data
-	
+
 	if perf_data_array:
 		dump["perf_data_array"] = perf_data_array
-	
+
 	if address:
 		dump["address"] = address
-	
+
 	if domain:
 		dump["domain"] = domain
-	
+
 	if tags:
 		dump["tags"] = tags
-	
+
 	if display_name:
 		dump["display_name"] = display_name
 
