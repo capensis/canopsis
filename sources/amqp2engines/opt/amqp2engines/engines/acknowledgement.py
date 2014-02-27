@@ -38,13 +38,12 @@ class engine(cengine):
 
 		account = caccount(user="root", group="root")
 
-		self.storage = get_storage(namespace='ack', account=account, logging_level=logging.DEBUG)
+		self.storage = get_storage(namespace='ack', account=account)
 		self.stbackend = self.storage.get_backend('ack')
 
 		self.acknowledge_on = acknowledge_on
 
 	def pre_run(self):
-		self.logger.setLevel('DEBUG')
 		self.beat()
 
 

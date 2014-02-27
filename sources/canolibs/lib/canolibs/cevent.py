@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+*#!/usr/bin/env python
 #--------------------------------
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
@@ -172,7 +172,7 @@ def is_component_problem(event):
 			'name': event['component']
 		})
 
-		if component and component['state'] != 0:
+		if component and 'state' in component and component['state'] != 0:
 			return True
 
 	return False
