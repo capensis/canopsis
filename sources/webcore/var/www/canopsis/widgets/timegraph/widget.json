@@ -364,6 +364,35 @@
 				}
 			]
 		},{
+			"title": "Choose Log Events",
+			"advanced": true,
+			"items": [
+				{
+					"xtype": "panel",
+					"border": 0,
+					"layout": {
+						"type": "vbox",
+						"pack": "start",
+						"align": "stretch"
+					},
+					"items": [
+						{
+							"xtype": "cfilter",
+							"name": "flagFilter",
+							"flex": 1
+						},{
+							"xtype": "numberfield",
+							"name": "nbMaxEventsDisplayed",
+							"fieldLabel": "Maximum number of events displayed (0 for no limit)",
+							"labelWidth": 200,
+							"value": 100,
+							"minValue": 0,
+							"flex": 0
+						}
+					]
+				}
+			]
+		},{
 			"title": "Downtimes",
 			"advanced": true,
 			"items": [

@@ -67,6 +67,11 @@
 							"fieldLabel": "Stacked",
 							"name": "stacked_graph",
 							"checked": false
+						},{
+							"xtype": "checkbox",
+							"fieldLabel": "Group by metric label",
+							"name": "groupby_metric",
+							"checked": false
 						}
 					]
 				},{

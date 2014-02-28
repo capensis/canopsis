@@ -1,0 +1,68 @@
+<div class="doc_custom">
+<h1 id="documentation-dexploitation-decathlon">Documentation d'exploitation</h1>
+<h2 id="vue-alerte">Vue alerte:</h2>
+<ol>
+<li>
+<p>les vues</p>
+<ul>
+<li>
+<p>status view</p>
+<p>Affiche le nombre d'alertes sur la période réparties par status (toutes alertes confondues soft/hard)</p>
+</li>
+<li>
+<p>type view</p>
+<p>Affiche le nombre d'alertes sur la période réparties par types (tous états, tous status)</p>
+</li>
+<li>
+<p>state view</p>
+<p>Affiche le nombre d'alertes répartiespar états (hard /soft)</p>
+</li>
+<li>
+<p>acknowlegment view</p>
+<p>Affiche le nombre d'alertes sur la période réparties par acknowlegment (ack,not ack, ack by host)</p>
+</li>
+</ul>
+</li>
+<li>
+<p>Autres règles de calcul:</p>
+<ul>
+<li>les alertes qui disparaissent seules comptées comme des alertes non acknowlegées.</li>
+<li>les alertes survenues pendant un downtime ne sont pas prises en comptes.</li>
+</ul>
+</li>
+</ol>
+<h2 id="vue-sla">Vue SLA:</h2>
+<ol>
+<li>
+<p>La vue SLA à pour but d'afficher le nombre d'alertes traitées sur la période avec pour chaque criticité:</p>
+<ul>
+<li>un graphique en barre pour les status warning et critical</li>
+<li>le nombre d'alertes en SLA OK / hors SLA OK (NOK) / non traitées (résolution spontanée non accqitées)</li>
+<li>un diagrame circulaire détaillant les ratios des elements ci dessus</li>
+<li>un tableau des elements ci dessus</li>
+<li>un tableau recapitulatif qui détaille les SLA par jour et par période</li>
+<li>un tableau récapitulatif qui détaille les SLA par hostgroup et par période</li>
+</ul>
+</li>
+<li>
+<p>Calculs spécifiques à ne pas prendre en compte dans les calculs</p>
+<ul>
+<li>une alerte repassant en état OK avant sa limite de temps et acknowlegée dans ou après SLA ou résolue spontanément apres les SLA</li>
+<li>les alertes en timeout</li>
+<li>les ack de service dus à un ack de l'hote</li>
+</ul>
+</li>
+</ol>
+<h2 id="unsolved-alerts">Unsolved alerts:</h2>
+<p>Le tableau de bord par défaut de canopsis affiche la liste des alertes non résolues en cours.</p>
+<h2 id="vue-top-10">Vue top 10:</h2>
+<ul>
+<li>fournit la liste des 10 services ayant générés le plus d'alerte sur une période donnée répartis par status</li>
+<li>la liste fournit les informations suivantes: host parent, service concerné, nombre d'alertes, output le plus récurrent</li>
+<li>cette liste est exportable au format CSV à l'aide du bouton export</li>
+</ul>
+<h2 id="affichage-dynamique-des-informations">Affichage dynamique des informations:</h2>
+<p>Canopsis permet d'afficher toutes les vues proposées en fonction du temps et d'hostgroups spécifiques. Pour cela, il faut passer en mode live reporting.</p>
+<p>Ce mode spécifique permet de spécifier une date de début et une date de fin de prise en compte des données à afficher sur les différentes vues de canopsis. Il est possible à l'aide de cet outil de définir des hostgroups à exclure pour l'affichage en cours au travers des fonctionnalitées avancées du live reporting.</p>
+<p>Ces fonctionnalitées avancées sont accessibles à l'aide du bouton <em>fonctions avancées</em> dans le panneau du live reporting dans lequel il est possible de définir des <em>hostgroups composant/resources, downtimes et périodes d'exclusion</em> à prendre en compte lors de du rafraichissement des données.</p>
+</div>

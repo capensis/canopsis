@@ -1,6 +1,6 @@
 //need:app/lib/view/cwidget.js
 /*
-# Copyright (c) 2011 "Capensis" [http://www.capensis.com]
+# Copyright (c) 2014 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
 #
@@ -17,203 +17,257 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 */
-Ext.define('widgets.text.text' , {
+
+Ext.define('widgets.text.text', {
 	extend: 'canopsis.lib.view.cwidget',
 	alias: 'widget.text',
 
-	perfdataMetricList: undefined,
-	logAuthor: '[textWidget]',
-	specialCharRegex: /\//g,
-
+	logAuthor: '[widgets][text]',
+	useLastRefresh: false,
 	aggregate_method: 'LAST',
 
-	baseUrl: '/rest/events',
-
-	useLastRefresh: false,
-
 	initComponent: function() {
-		//get special values by parsing
-		var raw_vars = this.extractVariables(this.text);
-
-		if(raw_vars.length !== 0) {
-			this.perfdataMetricList = {};
-
-			var vars = this.cleanVars(raw_vars);
-
-			log.debug('Rebuild vars form user template', this.logAuthor);
-
-			Ext.Object.each(vars, function(key, value){
-				log.debug(' + ' + key, this.logAuthor);
-				var var_name = value[0];
-
-				if((var_name === "perfdata" || var_name === "perf_data") && value.length >= 2) {
-					var_name = "perf_data";
-					var metric = value[1];
-					var attribut = value.length>=3? value[2] : 'value';
-
-					log.debug('attribute' + attribut);
-
-					var tpl_name = var_name + Math.ceil(Math.random() * 1000);
-
-					this.text = this.text.replace(new RegExp(key), '{' + tpl_name + '}');
-
-					this.perfdataMetricList[tpl_name] = {
-						metric: metric,
-						attribut: attribut,
-						tpl_name: tpl_name
-					};
-				}
-			}, this);
-
-			log.dump(this.perfdataMetricList);
-		}
-
-		//Initialisation of ext JS template
-		this.myTemplate = new Ext.XTemplate('<div>' + this.text + '</div>');
-
-		//Compilation of template ( to accelerate the render )
-		this.myTemplate.compile();
-
-		// contains the html
-		this.HTML = '';
-
-		// Initialization globale of the template
 		this.callParent(arguments);
+
+		this.wanted_metrics = {};
+		this.variables = [];
+
+		this.extractVariables(this.text);
 	},
 
-	/**
-	* This method can be called recursively twice if an event is selected.
-	* 
-	* The first time, input data is event.
-	* The second time, input data is event perfstore values.
-	*/
-	onRefresh: function(data, from, to) {
+	extractVariables: function(text) {
+		/* extract variables from template */
+		var vars = text.match(/({.*?})/g);
 
-		if(data && this.perfdataMetricList) { // if an event is selected, add metrics property to perf_data
-
-			var perf_data = {};
-
-			log.debug('The event ' + data + ' is selected ', this.logAuthor);
-			log.dump(data);
-
-			log.debug('Parse perf_data_array', this.logAuthor);
-
-			var metrics = [];
-			
-			Ext.Object.each(this.perfdataMetricList, function(key, value) {
-				void(key);
-				var metric = value.metric;
-				metrics.push(metric);
-			});
-
-			// prepare parameters for ajax request
-			var filter = {'$and': [{'co': data['component']}, {'re': data['resource']}, {'me': {'$in': metrics}}]};
-			var metrics_params = {'filter': Ext.JSON.encode(filter), 'limit': 0, 'show_internals': true};
-
-			Ext.Ajax.request({
-				url: '/perfstore',
-				scope: this,
-				params: metrics_params,
-				method: 'GET',
-				success: function(response) {
-					var _data = Ext.JSON.decode(response.responseText);
-					_data = _data.data;
-					log.dump(_data);
-
-					log.debug('Get perf_data id from event: ', this.logAuthor);
-
-					var event_ids = [];
-
-					for (var i=0; i<_data.length; i++) {
-						var __data = _data[i];
-						event_ids.push({id: __data['_id']});
-					}
-
-					var _from = parseInt(from / 1000);
-					var _to = parseInt(to / 1000);
-
-					// ajax parameters
-					var perfdata_params = {
-						'nodes': Ext.JSON.encode(event_ids),
-						'aggregate_method': this.aggregate_method,
-						'aggregate_max_points': 1,
-						'timezone': new Date().getTimezoneOffset() * 60,
-					};
-
-					Ext.Ajax.request({
-						url: '/perfstore/values/' + _from + '/' + _to,
-						scope: this,
-						params: perfdata_params,
-						method: 'POST',
-						success: function(response) {
-							var _data = Ext.JSON.decode(response.responseText);
-							_data = _data.data;
-							log.dump(_data);
-
-							log.debug('Get perf_data from ids : ', this.logAuthor);	
-
-							for(var i=0; i<_data.length; i++) {
-								var __data = _data[i];
-								perf_data[__data.metric] = __data;
-								perf_data[__data.metric].value = __data.values[0][1];
-								perf_data[__data.metric].unit = __data.bunit;
-							}
-
-							log.dump(perf_data);
-
-							Ext.Object.each(this.perfdataMetricList, function(key, value) {
-								var metric = value.metric;
-								var attribut = value.attribut;
-								var tpl_name = key;
-
-								log.debug(' + ' + metric + '(' + tpl_name + ')' + ': ' + attribut, this.logAuthor);
-
-								var perf = perf_data[metric];
-
-								if(perf && perf[attribut] !== undefined) {
-									var unit = perf["unit"];
-									value = perf[attribut];
-
-									if(Ext.isNumeric(value) && unit) {
-										log.dump(this);
-
-										if(this.humanReadable) {
-											value = rdr_humanreadable_value(value, unit);
-										}
-										else if(unit) {
-											value = value + ' ' + unit;
-										}
-									}
-
-									log.debug('   + ' + value, this.logAuthor);
-
-									data[tpl_name] = value;
-								}
-							});
-
-							this.fillData(data, from, to);
-						},
-						failure: function(result, request) {
-							void(result);
-							log.error('Ajax request failed ... (' + request.url + ')', this.logAuthor);
-						}
-					});
-				},
-				failure: function(result, request) {
-					void(result);
-					log.error('Ajax request failed ... (' + request.url + ')', this.logAuthor);
-				}
-			});
-		} else {
-			data = {};
-			this.fillData(data, from, to);
+		if(!vars) {
+			return;
 		}
 
+		for(var i = 0; i < vars.length; i++) {
+			var variable = vars[i].slice(1, -1);
+			var parts = variable.split(':');
+
+			/* detect wanted components/resources/metrics from variables */
+			if(parts[0] === 'perfdata' || parts[0] === 'perf_data') {
+				this.wanted_metrics[variable] = {
+					metric: parts[1],
+					info: parts[2],
+					component: parts[3],
+					resource: parts[4]
+				};
+			}
+
+			if(this.variables.indexOf(variable) === -1) {
+				this.variables.push(variable);
+			}
+		}
+	},
+
+	getPerfdataUrl: function(from, to) {
+		var url = '/perfstore/values';
+
+		if(from) {
+			url = url + '/' + parseInt(from / 1000);
+
+			if(!to) {
+				to = Ext.Date.now();
+			}
+
+			url = url + '/' + parseInt(to / 1000);
+		}
+
+		return url;
+	},
+
+	getNodeInfo: function(from, to, advancedFilters) {
+		if(this.nodeId && this.nodeId.length > 0) {
+			Ext.Ajax.request({
+				url: '/rest/events/event',
+				method: 'GET',
+				params: {
+					ids: Ext.JSON.encode(this.nodeId)
+				},
+				scope: this,
+
+				success: function(response) {
+					var data = Ext.JSON.decode(response.responseText);
+
+					this._onRefresh(data.data, from, to, advancedFilters);
+				}
+			});
+		}
+		else {
+			this._onRefresh([], from, to, advancedFilters);
+		}
+	},
+
+	onRefresh: function(data, from, to, advancedFilters) {
+		var template_data = {};
+
+		for(var i = 0; i < data.length; i++) {
+			var evt = Ext.create('canopsis.model.Event', data[i]);
+			var co = evt.get('component');
+			var re = evt.get('resource');
+
+			var fields = Ext.ModelManager.getModel('canopsis.model.Event').getFields();
+
+			for(var j = 0; j < fields.length; j++) {
+				var field = fields[j].name;
+
+				if(field !== 'perf_data' && field !== 'perf_data_array') {
+					var key = field + ':' + co;
+
+					if(re) {
+						key = key + ':' + re;
+					}
+
+					template_data[key] = evt.get(field);
+					template_data[field] = evt.get(field);
+				}
+			}
+		}
+
+		var perfRequest = {
+			'$or': []
+		};
+
+		for(var variable in this.wanted_metrics) {
+			var metric = this.wanted_metrics[variable];
+			var filter = {
+				'me': metric.metric
+			};
+
+			if(metric.component) {
+				filter.co = metric.component;
+			}
+
+			if(metric.resource) {
+				filter.re = metric.resource;
+			}
+
+			perfRequest['$or'].push(filter);
+		}
+
+		if(perfRequest['$or'].length > 0) {
+			if(perfRequest['$or'].length === 1) {
+				perfRequest = perfRequest['$or'][0];
+			}
+
+			Ext.Ajax.request({
+				url: '/perfstore/get_all_metrics',
+				method: 'GET',
+				params: {
+					'filter': Ext.JSON.encode(perfRequest),
+					'limit': 0,
+					'show_internals': true
+				},
+				scope: this,
+
+				success: function(response) {
+					var r_nodes = Ext.JSON.decode(response.responseText);
+
+					var nodes = [];
+					var nodesByID = {};
+
+					for(var i = 0; i < r_nodes.data.length; i++) {
+						var node = r_nodes.data[i];
+
+						nodes.push({
+							id: node._id
+						});
+
+						nodesByID[node._id] = node;
+					}
+
+					Ext.Ajax.request({
+						url: this.getPerfdataUrl(from, to),
+						method: 'POST',
+						params: {
+							'nodes': Ext.JSON.encode(nodes),
+							'aggregate_method': this.aggregate_method,
+							'aggregate_max_points': 1,
+							'timezone': new Date().getTimezoneOffset() * 60
+						},
+						scope: this,
+
+						success: function(response) {
+							var r_vals = Ext.JSON.decode(response.responseText);
+
+							function genKey(prefix, metric, data, component, resource) {
+								var key = prefix + ':' + metric + ':' + data;
+
+								if(component) {
+									key = key + ':' + component;
+
+									if(resource) {
+										key = key + ':' + resource;
+									}
+								}
+
+								return key;
+							}
+
+							for(var i = 0; i < r_vals.data.length; i++) {
+								var metric = r_vals.data[i];
+								var node = nodesByID[metric.node];
+
+								var value = metric.values[0][1];
+
+								if(this.humanReadable) {
+									value = rdr_humanreadable_value(value, metric.bunit);
+								}
+
+								var datas = {
+									'value': value,
+									'unit': metric.bunit,
+									'component': node.co,
+									'resource': node.re
+								};
+
+								for(var k in datas) {
+									var key = genKey('perfdata', metric.metric, k);
+									template_data[key] = datas[k];
+
+									key = genKey('perfdata', metric.metric, k, node.co, node.re);
+									template_data[key] = datas[k];
+
+									key = genKey('perf_data', metric.metric, k);
+									template_data[key] = datas[k];
+
+									key = genKey('perf_data', metric.metric, k, node.co, node.re);
+									template_data[key] = datas[k];
+								}
+							}
+
+							this.fillData(template_data, from, to);
+							this.computeMathOperations();
+						}
+					});
+				}
+			});
+		}
+		else {
+			this.fillData(template_data, from, to);
+			this.computeMathOperations();
+		}
+
+		this.add_csv_download_button();
 	},
 
 	fillData: function(data, from, to) {
 
-		data.timestamp = rdr_tstodate(data.timestamp);
+		var text = this.text;
+
+		for(var i = 0; i < this.variables.length; i++) {
+			var variable = this.variables[i];
+
+			if(data[variable] !== undefined) {
+				text = replaceAll('{' + variable + '}', data[variable], text);
+			}
+			else {
+				text = replaceAll('{' + variable + '}', 'undefined', text);
+			}
+		}
 
 		try {
 			if(from) {
@@ -224,78 +278,88 @@ Ext.define('widgets.text.text' , {
 				data.to = rdr_tstodate(parseInt(to / 1000));
 			}
 
-			this.HTML = this.myTemplate.apply(data);
-		} catch (err) {
-			log.error(err);
-			this.HTML = _('The model widget template is not supported, check if your variables use the correct template.');
+			var template = new Ext.XTemplate('<div>' + text + '</div>');
+
+			this.setHtml(template.apply(data));
 		}
-
-		this.setHtml(this.HTML);
+		catch(err) {
+			this.setHtml(err);
+		}
 	},
 
-	extractVariables: function(text) {
-		log.debug("extractVariables:", this.logAuthor);
-		var var_array  = text.replace(/^[^{]*\{/, "")	// trim everything before first accolade
-				.replace(/\}[^{]*$/, "")				// trim everything after last accolade
-				.split(/\}[^{]*\{/);					// split between accolades
+	computeMathOperations: function() {
+		var math = mathjs();
 
-		for (var i = var_array.length - 1; i >= 0; i--) {
-			var_array[i] = "{" + var_array[i] + "}";
-		};
+		var expressionCounter = 1;
 
-		return var_array;
-	},
+		$('#' + this.wcontainerId + ' .mathexpression').each(function() {
+			try {
+				var expression = $(this).html();
 
-	getNodeInfo: function(from, to) {
-		if(this.nodeId && this.nodeId.length>0) {
-
-			var nodeInfoParams = this.getNodeInfoParams(from, to);
-
-			Ext.Ajax.request({
-				url: this.baseUrl + '/event' + (this.nodeId && this.nodeId.length? ('/' + this.nodeId) : ''),
-				scope: this,
-				params: nodeInfoParams,
-				method: 'GET',
-				success: function(response) {
-					var data = Ext.JSON.decode(response.responseText);
-
-					if(this.nodeId.length > 1) {
-						data = data.data;
-					}
-					else {
-						data = data.data[0];
-					}
-
-					this._onRefresh(data, from, to);
-				},
-				failure: function(result, request) {
-					void(result);
-
-					log.error('Impossible to get Node informations, Ajax request failed ... (' + request.url + ')', this.logAuthor);
+				expression = expression.replace(' ','');
+				expression = math.eval(expression);
+				if(typeof expression === 'object' || isNaN(expression)){
+					expression = 0;
 				}
-			});
-		} else {
-			this.onRefresh(undefined, from, to);
-		}
+
+				var variableName = "mathexpression_" + expressionCounter;
+
+				$(this).html(expression);
+			} catch(err) {
+				log.warning('unable to compute math expression' + $(this).html());
+				console.error(err.stack);
+			}
+		});
 	},
 
-	// return :  ['{var1:var2}',['var1','var2']]
-	cleanVars: function(array) {
-		var output = {};
-
-		for(var i = 0; i < array.length; i++) {
-			output[array[i]] = array[i].slice(1, -1).split(':');
+	add_csv_download_button: function() {
+		log.debug("@@@ add_csv_download_button");
+		//@see jqgridable for mouseover
+		if(this.get_csv_data !== undefined) {
+			this.get_csv_data.remove();
+			this.get_csv_data = undefined;
 		}
 
-		return output;
-	},
+		this.get_csv_data = $('<div/>', {
+			class: 'chart_button',
+			text: 'download as csv'
+		});
 
-	getNodeInfoParams: function(from, to) {
-		void(from);
-		void(to);
-		var result = this.callParent(arguments);
-		result['noInternal'] = false;
-		result['limit'] = 1;
-		return result;
+		this.get_csv_data.css({
+			display: 'inline-block',
+			position: 'absolute',
+			top: 5,
+			left: 30,
+		});
+
+		$('#' + this.wcontainerId).append(this.get_csv_data);
+
+		var that = this;
+
+		$('#' + this.wcontainerId).mouseenter(function() {
+			if(that.get_csv_data !== undefined) {
+				$(that.get_csv_data).show();
+			}
+		});
+		$('#' + this.wcontainerId).mouseleave(function() {
+			if(that.get_csv_data !== undefined) {
+				$(that.get_csv_data).hide();
+			}
+		});
+
+		$(this.get_csv_data).hide();
+		var that = this;
+
+		this.get_csv_data.click(function (){
+			if($('#' + that.wcontainerId + " table.exportable").size() === 0) {
+				global.notify.notify(_('Issue'), _("No table with class \"exportable\" found in the text cell."), 'info');
+			}
+			else
+			{
+				var csv = $('#' + that.wcontainerId + " table.exportable").table2CSV({delivery:'value'});
+				window.location.href = 'data:text/csv;charset=UTF-8,' + encodeURIComponent(csv);
+			}
+		});
 	}
+
 });

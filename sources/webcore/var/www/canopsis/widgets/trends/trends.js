@@ -41,6 +41,8 @@ Ext.define('widgets.trends.trends' , {
 	colorHight: "#E0251B",
 	display_pct: true,
 
+	useLastRefresh: false,
+
 	initComponent: function() {
 		this.callParent(arguments);
 
@@ -77,10 +79,6 @@ Ext.define('widgets.trends.trends' , {
 
 			if(node.max) {
 				max = node.max;
-			}
-
-			if(this.display_pct) {
-				max = 100;
 			}
 
 			log.debug("Node: " + _id, this.logAuthor);

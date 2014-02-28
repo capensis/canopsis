@@ -150,9 +150,7 @@ Ext.define('widgets.gauge.gauge' , {
 		log.debug('Gauge options:', this.logAuthor);
 		log.dump(opts);
 
-		opts['cwidget'] = function() {
-			return me;
-		};
+		opts['cwidget'] = function() { return me; };
 
 		this.gauge = new JustGage(opts);
 	},
@@ -165,7 +163,7 @@ Ext.define('widgets.gauge.gauge' , {
 		this.gauge.refresh(this.lastValue);
 	},
 
-	getNodeInfo: function(from,to) {
+	getNodeInfo: function(from, to) {
 		this.processNodes();
 
 		if(!this.haveCounter || !this.time_window) {
@@ -187,6 +185,9 @@ Ext.define('widgets.gauge.gauge' , {
 					else {
 						data = data.data[0];
 					}
+
+					console.log("::gauge data");
+					console.log(data);
 
 					this._onRefresh(data);
 				},

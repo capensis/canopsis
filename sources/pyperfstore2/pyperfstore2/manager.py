@@ -25,12 +25,22 @@ from datetime import datetime
 
 from pyperfstore2.store import store
 import pyperfstore2.utils as utils
+<<<<<<< HEAD
+=======
+from cstorage import get_storage
+from caccount import caccount
+>>>>>>> develop
 
 class manager(object):
 	def __init__(self, retention=0, dca_min_length = 250, logging_level=logging.INFO, cache=True, **kwargs):
 		self.logger = logging.getLogger('manager')
+<<<<<<< HEAD
 		self.logger.setLevel(logging.INFO)#logging_level)
 
+=======
+		self.logger.setLevel(logging.DEBUG)#_level)
+		self.storage = get_storage(account=caccount(user="root", group="root"))
+>>>>>>> develop
 		# Store
 		self.store = store(logging_level=logging_level, **kwargs)
 
@@ -183,47 +193,51 @@ class manager(object):
 		return self.store.find(mfilter=mfilter, limit=limit, skip=skip, mfields=mfields, sort=sort)
 
 	def subset_selection_apply(self, dca, subset_selection):
-		"""
-		unit tests
-		class Self:
-			def __init__(self):
-			import logging
-				self.logger = logging.setLogger('unittest')
-		assert(subset_selection_apply(Self(), {'unit_test_1':1}, {'no_meta_filter'}) == {'unit_test_1':1})
-		assert(subset_selection_apply(Self(), {'unit_test_2':1}, {'metas_filter':1}) == {'hg': None, 'unit_test_2': 1})
-		assert(subset_selection_apply(Self(), {'re':'resource', 'co':'component'}, {'metas_filter':[{'keep':0}]})['d'] == [])
-		assert(subset_selection_apply(Self(), {'d': ['test'], 're':'resource', 'co':'component'}, {'metas_filter':[{'component': 'component', 'resource': 'resource'}]}) == {'co': 'component', 'd': ['test'], 'hg': None, 're': 'resource'})
-		assert(subset_selection_apply(Self(), {'d': ['test'], 're':'resource', 'co':'component'}, {'metas_filter':[{'component': 'component'}]}) == {'co': 'component', 'd': ['test'], 'hg': None, 're': 'resource'})
-		assert(subset_selection_apply(Self(), {'d': ['test'], 're':'resource', 'co':'component'}, {'metas_filter':[{'resource': 'resource'}]}) == {'co': 'component', 'd': ['test'], 'hg': None, 're': 'resource'})
-		assert(subset_selection_apply(Self(), {'d': ['test'], 're':'resource', 'co':'component'}, {'metas_filter':[{}]}) == {'co': 'component', 'd': [], 'hg': None, 're': 'resource'})
-		assert(subset_selection_apply(Self(), {'d': ['test'], 're':'resource', 'co':'component', 'hg': 'hostgroup'}, {'metas_filter':[{'hostgroup':'hostgroup'}]}) == {'co': 'component', 'd': ['test'], 'hg': 'hostgroup', 're': 'resource'})
-		"""
 
-		if 'metas_filter' not in subset_selection:
-			self.logger.debug('no meta filter to apply for this dca')
+		#is there some exclude/include information in subset selection
+		no_host_group = no_component_resources = False
+		if 'hostgroups' not in subset_selection or not subset_selection['hostgroups']:
+			self.logger.debug('no hostgroup to apply for this dca')
+			no_host_group = True
+
+		if 'component_resources' not in subset_selection or not subset_selection['component_resources']:
+			self.logger.debug('no component_resource to apply for this dca')
+			no_component_resources = True
+
+		if no_component_resources and no_host_group:
+			self.logger.debug('no subset selection to apply')
 			return dca
-
-		if 'hg' not in dca:
-			# Retro compatibility key
-			dca['hg'] = None
 
 		if 're' not in dca or 'co' not in dca:
 			self.logger.debug('Malformed dca, Nothing to test. for metas.')
 			return dca
 
-		metas = subset_selection['metas_filter']
+		keep_hostgroups = keep_component_resource = False
 
-		keep = False
-		for meta in metas:
-			if ('component' in meta and dca['co'] == meta['component']) \
-			or ('resource' in meta and dca['re'] == meta['resource']) \
-			or ('hostgroup' in meta and dca['hg'] == meta['hostgroup']):
-				keep = True
-				break
+		if 'hostgroups' in subset_selection:
+			query = self.storage.get_backend('entities').find({ 'component': dca['co'], 'resource': dca['re'], 'hostgroups' : {'$exists': True}}, {'hostgroups': 1})
+			for result in query:
+				if 'hostgroups' in result:
+					for hostgroup in subset_selection['hostgroups']:
+						if hostgroup in result['hostgroups']:
+							self.logger.info('KEEPING HG')
+							keep_hostgroups = True
+							break
 
-		if not keep:
-			self.logger.debug('Filter met on metas, will skip all data')
-			dca['d'] = []
+		if 'component_resources' in subset_selection:
+			for component_resources in subset_selection['component_resources']:
+				if 'component' in component_resources and 'resource' in component_resources \
+				and component_resources['component'] == dca['co'] and component_resources['resource'] == dca['re']:
+					keep_component_resource = True
+					break
+
+		if keep_component_resource or keep_hostgroups:
+			self.logger.debug('Filter met on metas, will keep all data')
+		else:
+			self.logger.debug('Filter not met on metas, removing data')
+			for point in dca['d']:
+				point[1] = None
+
 		return dca
 
 	def get_points(self, _id=None, name=None, tstart=None, tstop=None, raw=False, return_meta=False, add_prev_point=False, add_next_point=False, subset_selection={}):
@@ -239,7 +253,6 @@ class manager(object):
 
 		if not dca :
 			raise Exception('Invalid _id, not found %s' % _id)
-
 		dca = self.subset_selection_apply(dca, subset_selection)
 
 		plain_fts = None
@@ -365,7 +378,7 @@ class manager(object):
 			dca = self.subset_selection_apply(dca, subset_selection)
 			points = dca.get('d', [])
 		else:
-			(meta, points) = self.get_points(_id=_id, tstart=ts, tstop=ts, add_prev_point=True, return_meta=True, subset_selection={})
+			(meta, points) = self.get_points(_id=_id, tstart=ts, tstop=ts, add_prev_point=True, return_meta=True, subset_selection=subset_selection)
 
 		if len(points):
 			point = points.pop()

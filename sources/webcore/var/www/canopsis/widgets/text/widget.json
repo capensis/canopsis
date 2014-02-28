@@ -16,7 +16,7 @@
 				"items" : [{
 					"xtype":"cinventory",
 					"name" : "inventory",
-					"multiSelect": false
+					"multiSelect": true
 				}]
 			},
 			{	

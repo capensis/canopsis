@@ -216,6 +216,7 @@ Ext.define('canopsis.lib.view.cwidget', {
 	},
 
 	_doRefresh: function(from, to) {
+
 		var now = parseInt(Ext.Date.now());
 
 		if(!to) {

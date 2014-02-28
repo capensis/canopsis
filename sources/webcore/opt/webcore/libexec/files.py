@@ -123,6 +123,22 @@ def files(metaId=None):
 		return list_files()
 
 
+@post('/echo')
+def echo():
+	try:
+		from cgi import parse_qs
+		params = parse_qs(request.body.read())
+	except:
+		params = {'content': ['error while parsing'], 'header': [], 'filename': []}
+
+	logger.debug('echo params')
+	logger.debug(params)
+	response.headers['Content-Type'] 	= params.get('header','text/html')[0]
+	response.headers["Content-Disposition"] = "attachment; filename=" + params.get('filename','file.ext')[0]
+	data = params.get('content','no content')[0].replace('<br>', "\n")
+
+	return data
+
 @post('/file')
 @post('/files')
 def add_file():

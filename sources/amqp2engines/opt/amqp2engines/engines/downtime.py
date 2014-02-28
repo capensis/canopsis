@@ -173,6 +173,5 @@ class engine(cengine):
 			event['downtime'] = False
 			if self.cdowntime.is_downtime(event.get('component', ''), event.get('resource', '')):
 				event['downtime'] = True
-
-			self.logger.debug('Received event: {0}, and set downtime to {1}'.format(event['rk'], event['downtime']))
+				self.logger.debug('Received event: {0}, and set downtime to {1}'.format(event['rk'], event['downtime']))
 		return event

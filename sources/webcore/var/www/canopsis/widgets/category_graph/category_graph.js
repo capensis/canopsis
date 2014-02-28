@@ -54,14 +54,14 @@ Ext.define('widgets.category_graph.category_graph', {
 
 	// legend
 	legend: true,
-	legend_verticalAlign: 'bottom', // TODO: this property are not managed by flotchart
-	legend_align: 'center', // TODO: this property are not managed by flotchart
-	legend_layout: 'horizontal', // TODO: this property are not managed by flotchart
-	legend_backgroundColor: null, // TODO: this property are not managed by flotchart
-	legend_borderColor: '#909090', // TODO: this property are not managed by flotchart
-	legend_borderWidth: 1, // TODO: this property are not managed by flotchart
-	legend_fontSize: 12, // TODO: this property are not managed by flotchart
-	legend_fontColor: '#3E576F', // TODO: this property are not managed by flotchart
+	legend_verticalAlign: 'bottom', // TODO: this property is not managed by flotchart
+	legend_align: 'center', // TODO: this property is not managed by flotchart
+	legend_layout: 'horizontal', // TODO: this property is not managed by flotchart
+	legend_backgroundColor: null, // TODO: this property is not managed by flotchart
+	legend_borderColor: '#909090', // TODO: this property is not managed by flotchart
+	legend_borderWidth: 1, // TODO: this property is not managed by flotchart
+	legend_fontSize: 12, // TODO: this property is not managed by flotchart
+	legend_fontColor: '#3E576F', // TODO: this property is not managed by flotchart
 
 	// label
 	labels: true,
@@ -69,12 +69,14 @@ Ext.define('widgets.category_graph.category_graph', {
 	pctInLabel: true,
 	labels_size: "x-small",
 
-	gradientColor: false, // TODO: this property are not managed by flotchart
+	gradientColor: false, // TODO: this property is not managed by flotchart
 
 	tooltip: true,
 
 	setChartOptions: function() {
 		this.callParent(arguments);
+
+		var me = this;
 
 		$.extend(this.options,
 			{
@@ -111,10 +113,10 @@ Ext.define('widgets.category_graph.category_graph', {
 					hideable: true,
 					show: this.legend,
 					labelFormatter: function(label, series) {
-						result = nameInLabelFormatter? ("<b>" + label + "</b><br/>") : "";
-						result += pctInLabel? (series.data[0] + "%") : yval; // calculate pourcent
-	                        return result;
-	                    }
+						result = me.nameInLabelFormatter ? ("<b>" + label + "</b><br/>") : "";
+						result += me.pctInLabel ? (series.data[0] + "%") : yval; // calculate percent
+						return result;
+					}
 				},
 				xaxis: {
 					show: (this.diagram_type === 'column' && !this.verticalDisplay)
@@ -123,64 +125,95 @@ Ext.define('widgets.category_graph.category_graph', {
 					show: (this.diagram_type === 'column' && this.verticalDisplay)
 				},
 				tooltip: this.tooltip,
-				tooltipOpts : {
+				tooltipOpts: {
 					content: function(label, xval, yval, flotItem) {
-						void(xval);
-						void(flotItem);
-						result = "<b>" + label + "</b><br/>" + yval;
-	                        return result;
-	                    }
+						if(me.humanReadable) {
+							for(var serieId in me.series) {
+								var serie = me.series[serieId];
+
+								if(serie.label === label) {
+									yval = rdr_humanreadable_value(yval, serie.node.bunit);
+									break;
+								}
+							}
+						}
+
+						return "<b>" + label + ":</b>" + yval;
+					}
 				}
 			}
 		);
 	},
 
+	prepareData: function() {
+		var label_axis_group = {};
+		var label_axis_group_count = 0;
+
+		for(var node_id in this.series) {
+			var serie = this.series[node_id];
+
+			if(label_axis_group[serie.label] === undefined) {
+				label_axis_group[serie.label] = label_axis_group_count;
+				label_axis_group_count ++;
+			}
+
+			serie.label_axis_group = label_axis_group[serie.label];
+		}
+	},
+
 	addPoint: function(serieId, value, serieIndex) {
-		var point = [this.stacked_graph? 0 : serieIndex, value[1]];
+		var serie = this.series[serieId];
+		var x = serie.label_axis_group;
+
+		if(this.groupby_metric !== undefined && this.groupby_metric === true) {
+			x = serie.label_axis_group;
+		}
+		else if(this.stacked_graph !== undefined && this.stacked_graph === true) {
+			x = 0;
+		}
+		else {
+			x = serieIndex;
+		}
+
+		var point = [x, value[1]];
+
 		this.series[serieId].data = [point];
 	},
 
 	createChart: function() {
-
 		/* Computes the difference between the series sum and max user input value and then add it to series if max value > series sum */
 		//clean series first
 		delete this.series['max_diff'];
-		if (this.max > 0) {
 
-			var total = 0,
-				serie_count = 0,
-				node_id,
-				serie;
+		if(this.max > 0) {
+			var total = 0;
+			var serie_count = 0;
+			var node_id = undefined;
+			var serie = undefined;
 
 			//gets series sum
-			for (node_id in this.series) {
-
+			for(node_id in this.series) {
 				serie_count++;
 
-				console.log(this.series[node_id]);
-				if ((this.series[node_id].show === undefined || this.series[node_id].show) && this.series[node_id].data.length === 1) {
+				if((this.series[node_id].show === undefined || this.series[node_id].show) && this.series[node_id].data.length === 1) {
 					total += this.series[node_id].data[0][1];
 				}
 			}
 
-			if (total < this.max) {
+			if(total < this.max) {
 				//data is a list of point with a single computed point (barchart)
-				var label 	= this.other_label,
-					stacked = this.stacked_graph,
-					max 	= this.max;
+				var label = this.other_label;
+				var stacked = this.stacked_graph;
+				var max = this.max;
 
 				this.series.max_diff = {
 					label: label,
 					data: [[stacked ? 0: serie_count, max - total]],
 					node: {},
 				};
-
 			}
-
 		}
 
 		this.callParent(arguments);
-	},
-
-
+	}
 });

@@ -63,8 +63,150 @@ Ext.define('widgets.timegraph.timegraph', {
 	displayVerticalLines: false,
 	displayHorizontalLines: true,
 
+	flagRadius: 10,
+	flagLineWidth: 1,
+	flagLineColor: '#003300',
+	flagHeight: 35,
+	flagTooltip: undefined,
+
 	initComponent: function() {
 		this.callParent(arguments);
+
+		this.logevents = [];
+	},
+
+	doRefresh: function(from, to) {
+		this.callParent(arguments);
+
+		if(this.flagFilter) {
+			var filter = {'$and': [
+				{
+					'timestamp': {
+						'$gte': parseInt(from / 1000),
+						'$lte': parseInt(to / 1000)
+					}
+				},{
+					'state_type': 1
+				},
+				Ext.JSON.decode(this.flagFilter)
+			]};
+
+			Ext.Ajax.request({
+				url: '/rest/events_log',
+				method: 'GET',
+				params: {
+					filter: Ext.JSON.encode(filter),
+					limit: this.nbMaxEventsDisplayed
+				},
+				scope: this,
+
+				success: function(response) {
+					var data = Ext.JSON.decode(response.responseText);
+					data = data.data;
+
+					// add events to the list
+					for(var i = 0; i < data.length; i++) {
+						this.logevents.push({
+							x: data[i].timestamp * 1000,
+							y: 0,
+							event: data[i]
+						});
+					}
+
+					// then shift it
+					if(this.logevents.length > this.nbMaxEventsDisplayed) {
+						this.logevents = this.logevents.slice(this.logevents.length - this.nbMaxEventsDisplayed);
+					}
+
+					this.chart.triggerRedrawOverlay();
+				}
+			});
+		}
+	},
+
+	createChart: function() {
+		this.callParent(arguments);
+		var me = this;
+
+		this.plotcontainer.click(function(e) {
+			if(me.flagTooltip !== undefined) {
+				me.flagTooltip.remove();
+				me.flagTooltip = undefined;
+			}
+
+			for(var i = 0; i < me.logevents.length; i++) {
+				var evt = me.logevents[i];
+				var coord = me.chart.p2c(evt);
+
+				var d2 = Math.pow(coord.left - e.offsetX, 2) + Math.pow(coord.top - me.flagHeight - e.offsetY, 2);
+
+				if(d2 <= Math.pow(me.flagRadius, 2)) {
+					me.flagTooltip = $('<div/>', {
+						id: me.wcontainerId + '-flag-tooltip'
+					});
+
+					me.flagTooltip.css({
+						position: 'absolute',
+						padding: '5px',
+						'border-radius': '5px',
+						left: coord.left,
+						top: coord.top - me.flagHeight - me.flagRadius,
+						border: '1px solid black',
+						background: '#FFFFFF'
+					});
+
+					me.flagTooltip.append('<p><b>' + evt.event.display_name + '</b></p><ul>');
+
+					if(evt.event.source_type === 'component') {
+						me.flagTooltip.append('<li><em>Source:</em> ' + evt.event.component + '</li>');
+					}
+					else {
+						me.flagTooltip.append('<li><em>Source:</em> ' + evt.event.component + '/' + evt.event.resource + '</li>');						
+					}
+
+					me.flagTooltip.append('<li><em>Message:</em> ' + (evt.event.output ? evt.event.output : '') + '</li></ul>');
+
+					if(evt.event.long_output) {
+						me.flagTooltip.append('<p>' + evt.event.long_output + '</p>');
+					}
+
+					$('body').append(me.flagTooltip);
+					return;
+				}
+			}
+		});
+
+		this.chart.hooks.drawOverlay.push(function(plot, ctx) {
+			me.addLogEventsToChart(ctx);
+		});
+	},
+
+	addLogEventsToChart: function(ctx) {
+		var state_colors = [
+			'green',  // 0 : OK
+			'yellow', // 1 : WARNING
+			'red',    // 2 : CRITICAL
+			'orange'  // 3 : UNKNOWN
+		];
+
+		for(var i = 0; i < this.logevents.length; i++) {
+			var evt = this.logevents[i];
+			var coord = this.chart.p2c(evt);
+
+			ctx.lineWidth = this.flagLineWidth;
+			ctx.strokeStyle = this.flagLineColor;
+
+			ctx.beginPath();
+			ctx.moveTo(coord.left, coord.top - this.flagHeight);
+			ctx.lineTo(coord.left, coord.top + 7);
+			ctx.stroke();
+
+			ctx.beginPath();
+			ctx.arc(coord.left, coord.top - this.flagHeight, this.flagRadius, 0, 2 * Math.PI, false);
+			ctx.fillStyle = state_colors[evt.event.state];
+			ctx.fill();
+			ctx.stroke();
+		}
 	},
 
 	setChartOptions: function() {
@@ -110,7 +252,8 @@ Ext.define('widgets.timegraph.timegraph', {
 				xaxes: [
 					{
 						position: 'bottom',
-						mode: 'time'
+						mode: 'time',
+						timezone: 'browser'
 					}
 				],
 
@@ -221,20 +364,36 @@ Ext.define('widgets.timegraph.timegraph', {
 	},
 
 	addPoint: function(serieId, value) {
-		this.series[serieId].data.push([value[0] * 1000, value[1]]);
-		this.series[serieId].last_timestamp = value[0] * 1000;
+		// insert point only if it appends after the last of the serie.
+		var points = this.series[serieId].data,
+			last_point = points[points.length - 1],
+			value_ts = value[0] * 1000;
+
+		if (last_point === undefined || last_point[0] < value_ts) {
+			this.series[serieId].data.push([value_ts, value[1]]);
+			this.series[serieId].last_timestamp = value_ts;
+		}
+
 	},
 
 	shiftSerie: function(serieId) {
 		var now = Ext.Date.now();
-		var timestamp = now - this.timeNav_window * 1000;
+		var timestamp;
 
-		while(this.series[serieId].data[0][0] < timestamp) {
-			this.series[serieId].data.shift();
+		if (this.series[serieId].data.length > 0) {
+
+			if(this.timeNav) {
+				timestamp = now - this.timeNav_window * 1000;
+			}
+			else {
+				timestamp = now - this.time_window * 1000;
+			}
+
+			while(this.series[serieId].data[0][0] < timestamp) {
+				this.series[serieId].data.shift();
+			}
+
 		}
-	},
-
-	dblclick: function() {
 	},
 
 	updateAxis: function(from, to) {

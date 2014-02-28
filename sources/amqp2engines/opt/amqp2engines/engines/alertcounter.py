@@ -59,7 +59,7 @@ class engine(cengine):
 		self.mCrit = PROC_CRITICAL
 		self.mWarn = PROC_WARNING
 
-		record = self.storage.find_one({'crecord_type': 'sla', 'objclass': 'macro'})
+		record = self.storage.find_one({'crecord_type': 'slamacros'})
 
 		if record:
 			self.mCrit = record.data['mCrit']
@@ -70,7 +70,7 @@ class engine(cengine):
 
 		self.crits = {}
 
-		records = self.storage.find({'crecord_type': 'sla', 'objclass': 'crit'})
+		records = self.storage.find({'crecord_type': 'slacrit'})
 
 		for record in records:
 			self.crits[record.data['crit']] = record.data['delay']
@@ -144,12 +144,12 @@ class engine(cengine):
 
 			meta_data['me'] = 'cps_sla_{0}_{1}_{2}'.format(
 				slatype,
-				slaname.lower(),
+				slaname,
 				'nok' if ack else 'out'
 			)
 
 		else:
-			meta_data['me'] = 'cps_sla_{0}_{1}_ok'.format(slatype, slaname.lower())
+			meta_data['me'] = 'cps_sla_{0}_{1}_ok'.format(slatype, slaname)
 
 		self.increment_counter(meta_data, value)
 
@@ -240,7 +240,7 @@ class engine(cengine):
 					cvalue = value
 
 				elif cevtype == 'resource_by_component' and event['source_type'] == 'resource':
-					if event.get('component_problem', False):
+					if cevent.is_component_problem(event):
 						cvalue = value
 
 			meta_data['me'] = "cps_statechange_{0}".format(cevtype)
@@ -250,7 +250,7 @@ class engine(cengine):
 
 		if state != 0:
 			meta_data['me'] = 'cps_alerts_not_ack'
-			self.increment_counter(meta_data, value)
+			self.increment_counter(meta_data, 1)
 
 			meta_data['me'] = 'cps_alerts_ack'
 			self.increment_counter(meta_data, 0)

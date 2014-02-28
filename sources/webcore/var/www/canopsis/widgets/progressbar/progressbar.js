@@ -38,6 +38,8 @@ Ext.define('widgets.progressbar.progressbar', {
 
 	gHeight: 20,
 
+	useLastRefresh: false,
+
 	initComponent: function() {
 		log.debug("initComponent", this.logAuthor);
 
@@ -97,6 +99,7 @@ Ext.define('widgets.progressbar.progressbar', {
 
 		var pb_afterrender = function(pb) {
 			progress_bar.setGradient(pb.id, pb.value);
+
 		};
 
 		for(var i = 0; i < data.length; i++) {

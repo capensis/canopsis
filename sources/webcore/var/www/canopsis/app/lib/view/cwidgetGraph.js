@@ -32,6 +32,9 @@ Ext.define('canopsis.lib.view.cwidgetGraph', {
 	initComponent: function() {
 		this.callParent(arguments);
 
+		this.clearHooks();
+		this.initHooks();
+
 		this.setChartOptions();
 		this.series = {};
 
@@ -44,6 +47,84 @@ Ext.define('canopsis.lib.view.cwidgetGraph', {
 				this.renderChart();
 			}
 		}, this);
+	},
+
+	initHooks: function() {
+		var me = this;
+
+		me.baseMethods = {};
+
+		function initHook(name) {
+			me.baseMethods[name] = me[name];
+
+			me[name] = function() {
+				var currentHook = {
+					params: arguments,
+					result: undefined,
+					cancel: false
+				};
+
+				me.runHook(name, true, [currentHook]);
+
+				if(currentHook.cancel) {
+					return currentHook.result;
+				}
+
+				currentHook.result = me.baseMethods[name].apply(me, currentHook.params);
+
+				me.runHook(name, false, [currentHook]);
+
+				return currentHook.result;
+			}
+		}
+
+		for(var hook in this.hooks) {
+			initHook(hook);
+		}
+	},
+
+	addHook: function(name, callback, prehook, id) {
+		if(name in this.hooks) {
+			log.debug('Add ' + (!!prehook ? 'pre' : 'post') + '-hook: ' + name, this.logAuthor);
+
+			this.hooks[name][id] = {
+				prehook: !!prehook,
+				func: callback
+			};
+		}
+	},
+
+	clearHooks: function() {
+		log.debug('Clear hooks', this.logAuthor);
+
+		this.hooks = {
+			insertGraphExtraComponents: {},
+			setChartOptions: {},
+			createChart: {},
+			renderChart: {},
+			destroyChart: {},
+			getSerieForNode: {},
+			updateSeriesConfig: {},
+			doRefresh: {},
+			onRefresh: {},
+			dblclick: {}
+		};
+	},
+
+	runHook: function(name, prehook, args) {
+		if(name in this.hooks) {
+			var selectPrehook = !!prehook;
+
+			log.debug('Run ' + (!!prehook ? 'pre' : 'post') + '-hooks: ' + name, this.logAuthor);
+
+			for(var hookId in this.hooks[name]) {
+				var hook = this.hooks[name][hookId];
+
+				if(hook.prehook === selectPrehook) {
+					hook.func.apply(this, args);
+				}
+			}
+		}
 	},
 
 	afterContainerRender: function() {
@@ -87,19 +168,97 @@ Ext.define('canopsis.lib.view.cwidgetGraph', {
 
 		this.chart.initializeHiddenGraphs(this);
 		this.chart.initializeThresholds(this);
-		//this.chart.initializeDowntimes(this);
+		this.chart.initializeDowntimes(this);
 		this.chart.initializeGraphStyleManager(this);
 		this.chart.initializeLegendManager(this);
-		this.chart.initializeHumanReadable(this);
+		this.chart.initializeAutoScale(this);
 		this.chart.initializeTimeNavigation(this);
 	},
 
 	renderChart: function() {
 		this.chart.recomputePositions(this);
 
-		//this.chart.setData(this.getSeriesConf());
+		// this.chart.setData(this.getSeriesConf());
 		this.chart.setupGrid();
 		this.chart.draw();
+		this.add_csv_download_button();
+	},
+
+	add_csv_download_button: function() {
+		//@see jqgridable for mouseover
+		if(this.get_csv_data !== undefined) {
+			this.get_csv_data.remove();
+			this.get_csv_data = undefined;
+		}
+
+		this.get_csv_data = $('<div/>', {
+			class: 'chart_button',
+			text: 'download as csv'
+		});
+
+		this.get_csv_data.css({
+			display: 'inline-block',
+			position: 'absolute',
+			top: 5,
+			left: 30,
+		});
+
+		this.plotcontainer.parent().append(this.get_csv_data);
+
+		var that = this;
+
+		$(this.plotcontainer.parent()).mouseenter(function() {
+			if(that.get_csv_data !== undefined) {
+				$(that.get_csv_data).show();
+			}
+		});
+		$(this.plotcontainer.parent()).mouseleave(function() {
+			if(that.get_csv_data !== undefined) {
+				$(that.get_csv_data).hide();
+			}
+		});
+
+		$(this.get_csv_data).hide();
+		var that = this,
+			csv_content = '"component";"resource";"metric";"type"<br>';
+
+		this.get_csv_data.click(function (){
+			var serie,
+				line_timestamps,
+				line_values,
+				line_start;
+
+			for (var serieId in that.series) {
+				serie = that.series[serieId];
+				var node = serie.node,
+					position,
+					values = ['values'],
+					timestamps = ['timestamps'],
+					point,
+					head;
+
+				for (var position in serie.data) {
+					point = serie.data[position];
+					timestamps.push(point[0]);
+					values.push(point[1])
+				}
+
+				head = [node.component, node.resource, node.metric];
+				line_start = '"' + head.join('";"') + '";"';
+				line_values 	= line_start + values.join('";"') + '"<br>';
+				line_timestamps = line_start + timestamps.join('";"') + '"<br>';
+
+				csv_content += line_values + line_timestamps;
+
+			}
+			postDataToURL('/echo', [
+				{'name': 'filename',	'value': head.join('-') + '.csv'},
+				{'name': 'content',		'value': csv_content},
+				{'name': 'header',		'value': 'text/csv'}
+			]);
+		});
+
+
 	},
 
 	destroyChart: function() {
@@ -107,12 +266,18 @@ Ext.define('canopsis.lib.view.cwidgetGraph', {
 	},
 
 	getSeriesConf: function() {
+
 		var series = [];
 
 		Ext.Object.each(this.series, function(serieId, serie) {
 			series.push(serie);
 		});
 
+		if(this.groupby_metric) {
+			series = series.sort(function (a, b) {
+				return a.label.localeCompare( b.label );
+			});
+		}
 		return series;
 	},
 
@@ -168,8 +333,14 @@ Ext.define('canopsis.lib.view.cwidgetGraph', {
 							serie.label = serie.node[types[type]] + ' ' + serie.label;
 						}
 					}
+				}
 
+				if(this.reportMode || this.exportMode) {
+					this.series[serieId].data = [];
+				}
 
+				if(this.prepareData !== undefined) {
+					this.prepareData();
 				}
 
 				/* add data to the serie */
@@ -195,9 +366,8 @@ Ext.define('canopsis.lib.view.cwidgetGraph', {
 		this.renderChart();
 	},
 
-	updateSeriesConfig: function() {
-
-	},
+	updateSeriesConfig: function() {},
+	dblclick: function() {},
 
 	updateAxis: function(from, to) {
 		void(from);

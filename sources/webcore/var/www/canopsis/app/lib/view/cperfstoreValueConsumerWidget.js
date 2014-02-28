@@ -140,6 +140,14 @@ Ext.define('canopsis.lib.view.cperfstoreValueConsumerWidget', {
 			'timezone': new Date().getTimezoneOffset() * 60
 		};
 
+		if (this.subset_selection) {
+
+			log.debug('Adding live reporting advanced filter to post param');
+			post_params['subset_selection'] = Ext.JSON.encode(this.subset_selection);
+			//remove subset selection to avoid further side effects
+			this.subset_selection = undefined;
+		}
+
 		if(this.aggregate_method) {
 			post_params['aggregate_method'] = this.aggregate_method;
 		}

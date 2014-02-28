@@ -201,53 +201,57 @@ def parse_dst(points, dtype, first_point=[]):
 				
 				value = point[1]
 				timestamp = point[0]
-				
-				previous_timestamp = None
-				previous_value = None
-				
-				## Get previous value and timestamp
-				if i != 0:
-					previous_value 		= points[i-1][1]
-					previous_timestamp	= points[i-1][0]
-				elif i == 0 and first_point:
-					previous_value		= first_point[1]
-					previous_timestamp	= first_point[0]
-				
-				
-				## Calcul Value
-				if dtype != "COUNTER":
-					if previous_value:
-						if value > previous_value:
-							value -= previous_value
-						else:
-							value = 0
-				
-				## Derive
-				if previous_timestamp and dtype == "DERIVE":	
-					interval = abs(timestamp - previous_timestamp)
-					if interval:
-						value = round(float(value) / interval, 3)
-				
-				## Abs
-				if dtype == "ABSOLUTE":
-					value = abs(value)
-					
-				## COUNTER
-				if dtype == "COUNTER":
-					value = value + counter
-					counter = value
 
-				## if new dca start, value = 0 and no first_point: wait second point ...
-				if dtype == "DERIVE" and i == 0 and not first_point:
-					## Drop this point
-					pass
-				else:
+				if value == None:
 					rpoints.append([timestamp, value])
-					
-				i += 1
-				
+				else:
+
+					previous_timestamp = None
+					previous_value = None
+
+					## Get previous value and timestamp
+					if i != 0:
+						previous_value 		= points[i-1][1]
+						previous_timestamp	= points[i-1][0]
+					elif i == 0 and first_point:
+						previous_value		= first_point[1]
+						previous_timestamp	= first_point[0]
+
+
+					## Calcul Value
+					if dtype != "COUNTER":
+						if previous_value:
+							if value > previous_value:
+								value -= previous_value
+							else:
+								value = 0
+
+					## Derive
+					if previous_timestamp and dtype == "DERIVE":
+						interval = abs(timestamp - previous_timestamp)
+						if interval:
+							value = round(float(value) / interval, 3)
+
+					## Abs
+					if dtype == "ABSOLUTE":
+						value = abs(value)
+
+					## COUNTER
+					if dtype == "COUNTER":
+						value = value + counter
+						counter = value
+
+					## if new dca start, value = 0 and no first_point: wait second point ...
+					if dtype == "DERIVE" and i == 0 and not first_point:
+						## Drop this point
+						pass
+					else:
+						rpoints.append([timestamp, value])
+
+					i += 1
+
 			return rpoints
-	
+
 	return points
 
 def _roundtime(utcdate, periodtime=1, periodtype=T_HOUR, timezone=time.timezone):
