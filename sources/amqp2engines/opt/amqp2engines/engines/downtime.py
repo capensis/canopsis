@@ -36,7 +36,6 @@ NAME="downtime"
 class engine(cengine):
 	def __init__(self, name=NAME, *args, **kwargs):
 		cengine.__init__(self, name=name, *args, **kwargs)
-		self.logger.setLevel('DEBUG')
 		account = caccount(user="root", group="root")
 
 		self.storage = get_storage(namespace='downtime', account=account)
