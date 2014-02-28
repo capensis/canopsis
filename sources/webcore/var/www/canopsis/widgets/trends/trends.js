@@ -41,6 +41,8 @@ Ext.define('widgets.trends.trends' , {
 	colorHight: "#E0251B",
 	display_pct: true,
 
+	points_in_calcul: "2", // {2 - ALL}
+
 	useLastRefresh: false,
 
 	initComponent: function() {
@@ -87,11 +89,25 @@ Ext.define('widgets.trends.trends' , {
 			var x = [];
 			var y = [];
 
-			for(var j = 0; j < values.length; j++) {
-				if(values[j] && values[j][0] && values[j][1]) {
-					x.push(values[j][0]);
-					y.push(values[j][1]);
-					values[j][0] = values[j][0] * 1000;
+			if (this.points_in_calcul == "2") {
+				if(values.length >= 2 && values[0][0] && values[0][1] && values[1][0] && values[1][1]) {
+					x.push(values[0][0]);
+					x.push(values[values.length-1][0]);
+					y.push(values[0][1]);
+					y.push(values[values.length-1][1]);
+				}
+				for(var j = 0; j < values.length; j++) {
+					if(values[j] && values[j][0]) {
+						values[j][0] = values[j][0] * 1000;
+					}
+				}
+			} else {
+				for(var j = 0; j < values.length; j++) {
+					if(values[j] && values[j][0] && values[j][1]) {
+						x.push(values[j][0]);
+						y.push(values[j][1]);
+						values[j][0] = values[j][0] * 1000;
+					}
 				}
 			}
 
