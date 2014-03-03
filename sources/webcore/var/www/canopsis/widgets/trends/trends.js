@@ -77,14 +77,9 @@ Ext.define('widgets.trends.trends' , {
 			var bunit = data[i].bunit;
 			var node = this.nodesByID[_id];
 
-			var max = data[i].max;
-
-			if(node.max) {
-				max = node.max;
-			}
+			var max = 0;
 
 			log.debug("Node: " + _id, this.logAuthor);
-			log.debug(" + Max: " + max, this.logAuthor);
 
 			var x = [];
 			var y = [];
@@ -110,6 +105,17 @@ Ext.define('widgets.trends.trends' , {
 					}
 				}
 			}
+
+			// get max value
+			if (y.length > 0) {
+				for (var j = 0; j < y.length; j++) {
+					if (max < y[j]) {
+						max = y[j];
+					}
+				}
+			}
+
+			log.debug(" + Max: " + max, this.logAuthor);
 
 			var ret = linearRegression(x, y);
 

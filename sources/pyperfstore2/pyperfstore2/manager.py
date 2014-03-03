@@ -392,18 +392,25 @@ class manager(object):
 		try:
 			bin_id = "%s%s" % (_id, lts)
 			self.logger.debug("   + Store in binary record")
-			self.store.create_bin(_id=bin_id, data=data)
+
+			try:
+				self.store.create_bin(_id=bin_id, data=data)
+			except gridfs.errors.FileExists as fe:
+				pass
 			
 			self.logger.debug("   + Add bin_id in meta and clean meta")
 			##ofts = dca.get('fts', fts)
 			##self.store.update(_id=_id, mset={'fts': ofts, 'd': []}, mpush={'c': (fts, lts, bin_id)})
 			
-			self.store.update(_id=_id, mpush={'c': (fts, lts, bin_id)})
+			perfdata = self.store.get(_id=_id)
+			to_push = [fts, lts, bin_id]
+			if to_push not in perfdata['c']:
+				self.store.update(_id=_id, mpush={'c': (fts, lts, bin_id)})
+
 			self.store.redis.delete(_id)
 			
 		except Exception,err:
 			self.logger.warning('Impossible to rotate %s: %s' % (_id, err))
-				
 		#else:
 		#	self.logger.debug("  + Not enough point in DCA")
 		#	ofts = dca.get('fts', fts)
