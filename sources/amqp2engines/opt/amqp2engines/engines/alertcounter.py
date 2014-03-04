@@ -114,7 +114,8 @@ class engine(cengine):
 		new_event['source_type']    = 'component'
 		new_event['component']      = INTERNAL_COMPONENT
 
-		del new_event['resource']
+		if 'resource' in new_event:
+			del new_event['resource']
 
 		self.count_alert(new_event, 1)
 
