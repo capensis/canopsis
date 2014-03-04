@@ -30,7 +30,7 @@ from caccount import caccount
 import pyperfstore2
 
 import logging
-		
+
 NAME="alertcounter"
 INTERNAL_COMPONENT = '__canopsis__'
 PROC_CRITICAL = 'PROC_CRITICAL'
@@ -50,7 +50,8 @@ class engine(cengine):
 
 		self.selectors_name = []
 		self.last_resolv = 0
-
+		#last sla is for testing purposes
+		self.last_sla_state = None
 		self.beat()
 
 	def load_macro(self):
@@ -133,8 +134,13 @@ class engine(cengine):
 	def count_sla(self, event, slatype, slaname, delay, value):
 		meta_data = {'type': 'COUNTER', 'co': INTERNAL_COMPONENT }
 		now = int(time.time())
+		#last_state_change field is updated in event store, so here we have no real previous date
+		if 'previous_state_change_ts' in event:
+			compare_date = event['previous_state_change_ts']
+		else:
+			compare_date = event['last_state_change']
 
-		if delay < (now - event['last_state_change']):
+		if delay < (now - compare_date):
 			ack = self.entities.find_one({
 				'type': 'ack',
 				'timestamp': {
@@ -143,10 +149,11 @@ class engine(cengine):
 				}
 			})
 
+			self.last_sla_state = 'nok' if ack else 'out'
 			meta_data['me'] = 'cps_sla_{0}_{1}_{2}'.format(
 				slatype,
 				slaname,
-				'nok' if ack else 'out'
+				self.last_sla_state
 			)
 
 		else:
