@@ -289,7 +289,7 @@ Ext.define('widgets.text.text', {
 
 	computeMathOperations: function() {
 		var math = mathjs();
-
+		var that = this;
 		var expressionCounter = 1;
 
 		$('#' + this.wcontainerId + ' .mathexpression').each(function() {
@@ -301,7 +301,9 @@ Ext.define('widgets.text.text', {
 				if(typeof expression === 'object' || isNaN(expression)){
 					expression = 0;
 				}
-
+				if (that.round_math_expression !== undefined) {
+					expression = parseFloat(expression).toFixed(that.round_math_expression);
+				}
 				var variableName = "mathexpression_" + expressionCounter;
 
 				$(this).html(expression);

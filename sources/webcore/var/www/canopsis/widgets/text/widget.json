@@ -59,6 +59,14 @@
 								]
 							}
 						}
+					},
+					{
+						"xtype" : "numberfield",
+						"name" : "round_math_expression",
+						"fieldLabel": "round math expression (decimal count)",
+						"value": 2,
+						"minValue": 0,
+						"maxValue": 10
 					}
 				]
 			}
