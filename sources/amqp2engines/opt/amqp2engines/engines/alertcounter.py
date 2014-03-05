@@ -233,27 +233,42 @@ class engine(cengine):
 	def count_by_type(self, event, value):
 		state = event['state']
 
+		#Shortcut
+		def increment(increment_type, value):
+			self.increment_counter({
+				'type': 'COUNTER',
+				'co': INTERNAL_COMPONENT,
+				'tg': event.get('tags', []),
+				'me': "cps_statechange_{0}".format(increment_type)
+			}, value)
+
+		#Keep only logic. increment component if on error
+		if event['source_type'] == 'component':
+			if state != 0:
+				increment('component', value)
+			else:
+				increment('component', 0)
+
+		# increment resource if in error. status depends on it s component. increment resource by component if in error by component
+		if event['source_type'] == 'resource':
+
+			component_problem = False
+			if cevent.is_component_problem(event):
+				component_problem = True
+				increment('resource_by_component', value)
+			else:
+				increment('resource_by_component', 0)
+
+			if state != 0 or component_problem:
+				increment('resource', value)
+			else:
+				increment('resource', 0)
+
 		meta_data = {
 			'type': 'COUNTER',
 			'co': INTERNAL_COMPONENT,
 			'tg': event.get('tags', [])
 		}
-
-		# Update cps_statechange_{component,resource,resource_by_component}
-		for cevtype in ['component', 'resource', 'resource_by_component']:
-			cvalue = 0
-
-			if state != 0:
-				if event['source_type'] == cevtype:
-					cvalue = value
-
-				elif cevtype == 'resource_by_component' and event['source_type'] == 'resource':
-					if cevent.is_component_problem(event):
-						cvalue = value
-
-			meta_data['me'] = "cps_statechange_{0}".format(cevtype)
-			self.increment_counter(meta_data, cvalue)
-
 		# Update cps_alerts_not_ack
 
 		if state != 0:
