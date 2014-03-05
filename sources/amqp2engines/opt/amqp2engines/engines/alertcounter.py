@@ -144,8 +144,8 @@ class engine(cengine):
 			ack = self.entities.find_one({
 				'type': 'ack',
 				'timestamp': {
-					'$gt': event['last_state_change'],
-					'$lt': event['previous_state']
+					'$gt': compare_date,
+					'$lt': now
 				}
 			})
 
@@ -162,7 +162,8 @@ class engine(cengine):
 		self.increment_counter(meta_data, value)
 
 	def count_by_crits(self, event, value):
-		if event['state'] == 0 and event.get('state_type', 1) == 1:
+
+		if 'previous_state'in event and event['state'] == 0 and event.get('state_type', 1) == 1:
 			warn = event.get(self.mWarn, None)
 			crit = event.get(self.mCrit, None)
 

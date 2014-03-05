@@ -95,38 +95,39 @@ class engine(cengine):
 				record = response['value']
 
 				# Emit an event log
-				referer_event = self.storage.find_one(mfilter={'rk': rk}, namespace='events').dump()
+				referer_event = self.storage.find_one(mfilter={'rk': rk}, namespace='events')
+				if referer_event:
+					referer_event = referer_event.dump()
 
-				logevent = cevent.forger(
-					connector = "cengine",
-					connector_name = NAME,
-					event_type = "log",
-					source_type = referer_event['source_type'],
-					component = referer_event['component'],
-					resource = referer_event.get('resource', None),
+					logevent = cevent.forger(
+						connector = "cengine",
+						connector_name = NAME,
+						event_type = "log",
+						source_type = referer_event['source_type'],
+						component = referer_event['component'],
+						resource = referer_event.get('resource', None),
 
-					state = 0,
-					state_type = 1,
+						state = 0,
+						state_type = 1,
 
-					ref_rk = event['rk'],
-					output = u'Event {0} acknowledged by {1}'.format(rk, event['author']),
-					long_output = event['output'],
+						ref_rk = event['rk'],
+						output = u'Event {0} acknowledged by {1}'.format(rk, event['author']),
+						long_output = event['output'],
 
-					perf_data_array = [
-						{
-							'metric': 'ack_delay',
-							'value': record['ackts'] - record['timestamp'],
-							'unit': 's'
-						}
-					]
-				)
+						perf_data_array = [
+							{
+								'metric': 'ack_delay',
+								'value': record['ackts'] - record['timestamp'],
+								'unit': 's'
+							}
+						]
+					)
 
 			# Now update counters
 			ackhost = cevent.is_host_acknowledged(event)
-			cvalues = [
-				1 if not ackhost else 0,
-				1 if ackhost else 0
-			]
+			# Cast response to ! 0|1
+			cvalues = int(not ackhost)
+
 
 			alerts_event = cevent.forger(
 				connector = "cengine",
@@ -136,8 +137,7 @@ class engine(cengine):
 				component = "__canopsis__",
 
 				perf_data_array = [
-					{'metric': 'cps_alerts_ack', 'value': cvalues[0], 'type': 'COUNTER'},
-					{'metric': 'cps_alerts_ack_by_host', 'value': cvalues[1], 'type': 'COUNTER'},
+					{'metric': 'cps_alerts_ack', 'value': cvalues, 'type': 'COUNTER'},
 					{'metric': 'cps_alerts_not_ack', 'value': -1, 'type': 'COUNTER'}
 				]
 			)
@@ -155,8 +155,7 @@ class engine(cengine):
 					resource = hostgroup,
 
 					perf_data_array = [
-						{'metric': 'cps_alerts_ack', 'value': cvalues[0], 'type': 'COUNTER'},
-						{'metric': 'cps_alerts_ack_by_host', 'value': cvalues[1], 'type': 'COUNTER'},
+						{'metric': 'cps_alerts_ack', 'value': cvalues, 'type': 'COUNTER'},
 						{'metric': 'cps_alerts_not_ack', 'value': -1, 'type': 'COUNTER'}
 					]
 				)
@@ -225,7 +224,7 @@ class engine(cengine):
 
 		# If the event is in problem state, update the solved state of acknowledgement
 		elif event['state'] != 0 and event.get('state_type', 1) == 1:
-			self.logger.debug('Event on error, an ack has to be triggered by a user, let write this to db.')
+			self.logger.debug('Alert on event, preparing ACK statement.')
 
 			self.stbackend.find_and_modify(
 				query = {'rk': event['rk'], 'solved': True},
@@ -238,6 +237,38 @@ class engine(cengine):
 					'comment': ''
 				}}
 			)
+
+			if 'event_type' in event and 'source_type' in event \
+			and event['event_type'] == 'check' and event['source_type'] == 'resource':
+
+				self.logger.debug('Found a resource event that may be ack by it s host.')
+				storage = get_storage(namespace='ack', account=caccount(user='root', group='root')).get_backend()
+				component_event = event.copy()
+				component_event['source_type'] = 'component'
+				routing_key = cevent.get_routingkey(component_event)
+
+				ackhost = storage.find_one({
+					'rk' : event['rk'],
+					'solved': False,
+				})
+
+				if ackhost:
+					self.logger.debug('Host has an ACK for now, let increment metric.')
+					alerts_event = cevent.forger(
+						connector = "cengine",
+						connector_name = NAME,
+						event_type = "perf",
+						source_type = "component",
+						component = "__canopsis__",
+
+						perf_data_array = [
+							{'metric': 'cps_alerts_ack_by_host', 'value': 1, 'type': 'COUNTER'},
+						]
+					)
+
+					self.amqp.publish(alerts_event, cevent.get_routingkey(alerts_event), self.amqp.exchange_name_events)
+					self.logger.debug('Updated cps_alerts_ack_by_host metric.')
+
 
 		if logevent:
 			self.amqp.publish(logevent, cevent.get_routingkey(logevent), exchange_name=self.acknowledge_on)
