@@ -25,22 +25,15 @@ from datetime import datetime
 
 from pyperfstore2.store import store
 import pyperfstore2.utils as utils
-<<<<<<< HEAD
-=======
 from cstorage import get_storage
 from caccount import caccount
->>>>>>> develop
 
 class manager(object):
 	def __init__(self, retention=0, dca_min_length = 250, logging_level=logging.INFO, cache=True, **kwargs):
 		self.logger = logging.getLogger('manager')
-<<<<<<< HEAD
-		self.logger.setLevel(logging.INFO)#logging_level)
 
-=======
 		self.logger.setLevel(logging.DEBUG)#_level)
 		self.storage = get_storage(account=caccount(user="root", group="root"))
->>>>>>> develop
 		# Store
 		self.store = store(logging_level=logging_level, **kwargs)
 
