@@ -104,6 +104,8 @@ class carchiver(object):
 			new_event = True
 		
 		if changed:
+			if 'last_state_change' in event:
+				event['previous_state_change_ts'] = event['last_state_change']
 			event['last_state_change'] = event.get('timestamp', now)
 		
 		if new_event:

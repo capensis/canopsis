@@ -30,7 +30,7 @@ from caccount import caccount
 import pyperfstore2
 
 import logging
-		
+
 NAME="alertcounter"
 INTERNAL_COMPONENT = '__canopsis__'
 PROC_CRITICAL = 'PROC_CRITICAL'
@@ -50,7 +50,8 @@ class engine(cengine):
 
 		self.selectors_name = []
 		self.last_resolv = 0
-
+		#last sla is for testing purposes
+		self.last_sla_state = None
 		self.beat()
 
 	def load_macro(self):
@@ -114,7 +115,8 @@ class engine(cengine):
 		new_event['source_type']    = 'component'
 		new_event['component']      = INTERNAL_COMPONENT
 
-		del new_event['resource']
+		if 'resource' in new_event:
+			del new_event['resource']
 
 		self.count_alert(new_event, 1)
 
@@ -132,20 +134,26 @@ class engine(cengine):
 	def count_sla(self, event, slatype, slaname, delay, value):
 		meta_data = {'type': 'COUNTER', 'co': INTERNAL_COMPONENT }
 		now = int(time.time())
+		#last_state_change field is updated in event store, so here we have no real previous date
+		if 'previous_state_change_ts' in event:
+			compare_date = event['previous_state_change_ts']
+		else:
+			compare_date = event['last_state_change']
 
-		if delay < (now - event['last_state_change']):
+		if delay < (now - compare_date):
 			ack = self.entities.find_one({
 				'type': 'ack',
 				'timestamp': {
-					'$gt': event['last_state_change'],
-					'$lt': event['previous_state']
+					'$gt': compare_date,
+					'$lt': now
 				}
 			})
 
+			self.last_sla_state = 'nok' if ack else 'out'
 			meta_data['me'] = 'cps_sla_{0}_{1}_{2}'.format(
 				slatype,
 				slaname,
-				'nok' if ack else 'out'
+				self.last_sla_state
 			)
 
 		else:
@@ -154,7 +162,8 @@ class engine(cengine):
 		self.increment_counter(meta_data, value)
 
 	def count_by_crits(self, event, value):
-		if event['state'] == 0 and event.get('state_type', 1) == 1:
+
+		if 'previous_state'in event and event['state'] == 0 and event.get('state_type', 1) == 1:
 			warn = event.get(self.mWarn, None)
 			crit = event.get(self.mCrit, None)
 
@@ -225,27 +234,42 @@ class engine(cengine):
 	def count_by_type(self, event, value):
 		state = event['state']
 
+		#Shortcut
+		def increment(increment_type, value):
+			self.increment_counter({
+				'type': 'COUNTER',
+				'co': INTERNAL_COMPONENT,
+				'tg': event.get('tags', []),
+				'me': "cps_statechange_{0}".format(increment_type)
+			}, value)
+
+		#Keep only logic. increment component if on error
+		if event['source_type'] == 'component':
+			if state != 0:
+				increment('component', value)
+			else:
+				increment('component', 0)
+
+		# increment resource if in error. status depends on it s component. increment resource by component if in error by component
+		if event['source_type'] == 'resource':
+
+			component_problem = False
+			if cevent.is_component_problem(event):
+				component_problem = True
+				increment('resource_by_component', value)
+			else:
+				increment('resource_by_component', 0)
+
+			if state != 0 or component_problem:
+				increment('resource', value)
+			else:
+				increment('resource', 0)
+
 		meta_data = {
 			'type': 'COUNTER',
 			'co': INTERNAL_COMPONENT,
 			'tg': event.get('tags', [])
 		}
-
-		# Update cps_statechange_{component,resource,resource_by_component}
-		for cevtype in ['component', 'resource', 'resource_by_component']:
-			cvalue = 0
-
-			if state != 0:
-				if event['source_type'] == cevtype:
-					cvalue = value
-
-				elif cevtype == 'resource_by_component' and event['source_type'] == 'resource':
-					if cevent.is_component_problem(event):
-						cvalue = value
-
-			meta_data['me'] = "cps_statechange_{0}".format(cevtype)
-			self.increment_counter(meta_data, cvalue)
-
 		# Update cps_alerts_not_ack
 
 		if state != 0:
