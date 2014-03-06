@@ -27,7 +27,7 @@ import logging
 import time
 
 NAME="perfstore2_rotate"
-
+MAX_METRIC_COUNT = 10000
 class engine(cengine):
 	def __init__(self, *args, **kargs):
 		cengine.__init__(self, name=NAME,logging_level=logging.DEBUG, *args, **kargs)
@@ -36,7 +36,7 @@ class engine(cengine):
 		
 		self.kplan = "perfstore2:rotate:plan"
 
-		self.rotation_interval = 60 *10#* 60 * 24 # 24 hours
+		self.rotation_interval = 60 * 60 * 24 # 24 hours
 
 
 		self.last_build = time.time()
@@ -49,8 +49,7 @@ class engine(cengine):
 	def beat(self):
 		self.logger.debug("Start rotation")
 		start = time.time()
-
-		metric_to_rotate = self.manager.store.daily_collection.find({'insert_date': {'$lte': start - self.rotation_interval}})
+		metric_to_rotate = self.manager.store.daily_collection.find({'$or': [{'insert_date': {'$lte': start - self.rotation_interval}}, {'count': {'$gte': MAX_METRIC_COUNT}}]})
 
 		metric_count = 0
 		for metric in metric_to_rotate:
