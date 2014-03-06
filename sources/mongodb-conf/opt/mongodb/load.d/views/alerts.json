@@ -1,479 +1,572 @@
 {
 	"id": "alerts",
 	"name": "Alerts",
-	"items": [
+	"items" : [
 		{
-			"data": {
-				"aggregate_method": "LAST",
-				"autoTitle": false,
-				"backgroundColor": "#FFFFFF",
-				"border": true,
-				"borderColor": "#FFFFFF",
-				"borderWidth": 0,
-				"category": ["", "", ""],
-				"ccustom": null,
-				"curve_color": ["", "", ""],
-				"diagram_type": "pie",
-				"gradientColor": true,
-				"humanReadable": true,
-				"innerRadius": 0,
-				"label": ["Warning", "Critical", "Unknown"],
-				"labels": true,
-				"labels_size": "x-small",
-				"legend": true,
-				"legend_align": "center",
-				"legend_backgroundColor": "#FFFFFF",
-				"legend_borderColor": "#909090",
-				"legend_borderWidth": 1,
-				"legend_fontSize": 12,
-				"legend_layout": "horizontal",
-				"legend_verticalAlign": "bottom",
-				"max": null,
-				"nameInLabelFormatter": true,
-				"nodes": {
-					"0667c821c1d2b608721e232e7c2b70b4": {
-						"_id": "0667c821c1d2b608721e232e7c2b70b4",
-						"area_color": "",
-						"category": "",
-						"co": "__canopsis__",
-						"curve_color": "",
-						"curve_type": "",
-						"id": "0667c821c1d2b608721e232e7c2b70b4",
-						"label": "Warning",
-						"me": "cps_statechange_1",
-						"metrics": ["cps_statechange_1"],
-						"order": 0,
-						"t": "COUNTER",
-						"trend_curve": "",
-						"u": "",
-						"yAxis": ""
+			"position" : {
+				"width" : 4,
+				"top" : 0,
+				"height" : 4,
+				"left" : 0
+			},
+			"data" : {
+				"xtype" : "category_graph",
+				"legend_backgroundColor" : "#FFFFFF",
+				"labels" : true,
+				"humanReadable" : true,
+				"pctInLabel" : true,
+				"labels_size" : "x-small",
+				"pie_size" : 50,
+				"label" : [
+					"Warning",
+					"Critical",
+					"Unknown"
+				],
+				"border" : true,
+				"legend_borderColor" : "#909090",
+				"borderColor" : "#FFFFFF",
+				"legend_borderWidth" : 1,
+				"legend_layout" : "horizontal",
+				"tilt" : 1,
+				"tooltip" : true,
+				"aggregate_method" : "LAST",
+				"ccustom" : null,
+				"time_window_offset" : 0,
+				"stacked_graph" : false,
+				"diagram_type" : "pie",
+				"startAngle" : 0,
+				"nodes" : {
+					"0667c821c1d2b608721e232e7c2b70b4" : {
+						"category" : "",
+						"me" : "cps_statechange_1",
+						"co" : "__canopsis__",
+						"curve_type" : "",
+						"yAxis" : "",
+						"curve_color" : "",
+						"label" : "Warning",
+						"metrics" : [
+							"cps_statechange_1"
+						],
+						"u" : "",
+						"t" : "COUNTER",
+						"id" : "0667c821c1d2b608721e232e7c2b70b4",
+						"trend_curve" : "",
+						"_id" : "0667c821c1d2b608721e232e7c2b70b4",
+						"order" : 0,
+						"area_color" : ""
 					},
-					"6c3eebfd5ff0b1353e04a9a292cd3dab": {
-						"_id": "6c3eebfd5ff0b1353e04a9a292cd3dab",
-						"area_color": "",
-						"category": "",
-						"co": "__canopsis__",
-						"curve_color": "",
-						"curve_type": "",
-						"id": "6c3eebfd5ff0b1353e04a9a292cd3dab",
-						"label": "Unknown",
-						"me": "cps_statechange_3",
-						"metrics": ["cps_statechange_3"],
-						"order": 2,
-						"t": "COUNTER",
-						"trend_curve": "",
-						"u": "",
-						"yAxis": ""
+					"6c3eebfd5ff0b1353e04a9a292cd3dab" : {
+						"category" : "",
+						"me" : "cps_statechange_3",
+						"co" : "__canopsis__",
+						"curve_type" : "",
+						"yAxis" : "",
+						"curve_color" : "",
+						"label" : "Unknown",
+						"metrics" : [
+							"cps_statechange_3"
+						],
+						"u" : "",
+						"t" : "COUNTER",
+						"id" : "6c3eebfd5ff0b1353e04a9a292cd3dab",
+						"trend_curve" : "",
+						"_id" : "6c3eebfd5ff0b1353e04a9a292cd3dab",
+						"order" : 2,
+						"area_color" : ""
 					},
-					"806482b4a43587c4949efab3737c36d6": {
-						"_id": "806482b4a43587c4949efab3737c36d6",
-						"area_color": "",
-						"category": "",
-						"co": "__canopsis__",
-						"curve_color": "",
-						"curve_type": "",
-						"id": "806482b4a43587c4949efab3737c36d6",
-						"label": "Critical",
-						"me": "cps_statechange_2",
-						"metrics": ["cps_statechange_2"],
-						"order": 1,
-						"t": "COUNTER",
-						"trend_curve": "",
-						"u": "",
-						"yAxis": ""
+					"806482b4a43587c4949efab3737c36d6" : {
+						"category" : "",
+						"me" : "cps_statechange_2",
+						"co" : "__canopsis__",
+						"curve_type" : "",
+						"yAxis" : "",
+						"curve_color" : "",
+						"label" : "Critical",
+						"metrics" : [
+							"cps_statechange_2"
+						],
+						"u" : "",
+						"t" : "COUNTER",
+						"id" : "806482b4a43587c4949efab3737c36d6",
+						"trend_curve" : "",
+						"_id" : "806482b4a43587c4949efab3737c36d6",
+						"order" : 1,
+						"area_color" : ""
 					}
 				},
-				"other_label": "Free",
-				"pctInLabel": true,
-				"pie_size": 50,
-				"refreshInterval": 60,
-				"stacked_graph": false,
-				"startAngle": 0,
-				"tilt": 1,
-				"time_window": 86400,
-				"time_window_offset": 0,
-				"title": "Status View",
-				"title_fontSize": 15,
-				"tooltip": true,
-				"verticalDisplay": false,
-				"xtype": "category_graph"
-			},
-			"position": {
-				"height": 4,
-				"left": 0,
-				"top": 0,
-				"width": 4
+				"verticalDisplay" : false,
+				"other_label" : "Free",
+				"gradientColor" : true,
+				"category" : [
+					"",
+					"",
+					""
+				],
+				"backgroundColor" : "#FFFFFF",
+				"time_window" : 86400,
+				"legend_align" : "center",
+				"curve_color" : [
+					"",
+					"",
+					""
+				],
+				"refreshInterval" : 60,
+				"legend" : true,
+				"innerRadius" : 0,
+				"legend_fontSize" : 12,
+				"max" : null,
+				"legend_verticalAlign" : "bottom",
+				"autoTitle" : false,
+				"borderWidth" : 0,
+				"title_fontSize" : 15,
+				"title" : "Status View",
+				"nameInLabelFormatter" : true
 			}
-		},{
-			"data": {
-				"aggregate_method": "LAST",
-				"autoTitle": false,
-				"backgroundColor": "#FFFFFF",
-				"border": true,
-				"borderColor": "#FFFFFF",
-				"borderWidth": 0,
-				"category": ["", "", ""],
-				"ccustom": null,
-				"curve_color": ["", "", ""],
-				"diagram_type": "pie",
-				"gradientColor": true,
-				"humanReadable": true,
-				"innerRadius": 0,
-				"label": ["Component",
-				"Resource",
-				"Resource by Component"],
-				"labels": true,
-				"labels_size": "x-small",
-				"legend": true,
-				"legend_align": "center",
-				"legend_backgroundColor": "#FFFFFF",
-				"legend_borderColor": "#909090",
-				"legend_borderWidth": 1,
-				"legend_fontSize": 12,
-				"legend_layout": "horizontal",
-				"legend_verticalAlign": "bottom",
-				"max": null,
-				"nameInLabelFormatter": true,
-				"nodes": {
-					"111184f2d4f834d6f4b94d5b65d354cb": {
-						"_id": "111184f2d4f834d6f4b94d5b65d354cb",
-						"area_color": "",
-						"category": "",
-						"co": "__canopsis__",
-						"curve_color": "",
-						"curve_type": "",
-						"id": "111184f2d4f834d6f4b94d5b65d354cb",
-						"label": "Resource",
-						"me": "cps_statechange_resource",
-						"metrics": ["cps_statechange_resource"],
-						"order": 1,
-						"re": null,
-						"t": "COUNTER",
-						"trend_curve": "",
-						"u": "",
-						"yAxis": ""
+		},
+		{
+			"position" : {
+				"width" : 4,
+				"top" : 0,
+				"height" : 4,
+				"left" : 4
+			},
+			"data" : {
+				"xtype" : "category_graph",
+				"legend_backgroundColor" : "#FFFFFF",
+				"labels" : true,
+				"humanReadable" : true,
+				"pctInLabel" : true,
+				"labels_size" : "x-small",
+				"pie_size" : 50,
+				"label" : [
+					"Component",
+					"Resource",
+					"Resource by Component"
+				],
+				"border" : true,
+				"legend_borderColor" : "#909090",
+				"borderColor" : "#FFFFFF",
+				"legend_borderWidth" : 1,
+				"legend_layout" : "horizontal",
+				"tilt" : 1,
+				"tooltip" : true,
+				"aggregate_method" : "LAST",
+				"ccustom" : null,
+				"time_window_offset" : 0,
+				"stacked_graph" : false,
+				"diagram_type" : "pie",
+				"startAngle" : 0,
+				"nodes" : {
+					"111184f2d4f834d6f4b94d5b65d354cb" : {
+						"category" : "",
+						"me" : "cps_statechange_resource",
+						"co" : "__canopsis__",
+						"curve_type" : "",
+						"yAxis" : "",
+						"curve_color" : "",
+						"label" : "Resource",
+						"metrics" : [
+							"cps_statechange_resource"
+						],
+						"re" : null,
+						"u" : "",
+						"t" : "COUNTER",
+						"id" : "111184f2d4f834d6f4b94d5b65d354cb",
+						"trend_curve" : "",
+						"_id" : "111184f2d4f834d6f4b94d5b65d354cb",
+						"order" : 1,
+						"area_color" : ""
 					},
-					"50a2a1e550eb84b751ba4fe58f8b3691": {
-						"_id": "50a2a1e550eb84b751ba4fe58f8b3691",
-						"area_color": "",
-						"category": "",
-						"co": "__canopsis__",
-						"curve_color": "",
-						"curve_type": "",
-						"id": "50a2a1e550eb84b751ba4fe58f8b3691",
-						"label": "Component",
-						"me": "cps_statechange_component",
-						"metrics": ["cps_statechange_component"],
-						"order": 0,
-						"t": "COUNTER",
-						"trend_curve": "",
-						"u": "",
-						"yAxis": ""
+					"9e7b3562dcd3283061369f9f83a707ca" : {
+						"category" : "",
+						"me" : "cps_statechange_resource_by_component",
+						"co" : "__canopsis__",
+						"curve_type" : "",
+						"yAxis" : "",
+						"curve_color" : "",
+						"label" : "Resource by Component",
+						"metrics" : [
+							"cps_statechange_resource_by_component"
+						],
+						"re" : null,
+						"u" : "",
+						"t" : "COUNTER",
+						"id" : "9e7b3562dcd3283061369f9f83a707ca",
+						"trend_curve" : "",
+						"_id" : "9e7b3562dcd3283061369f9f83a707ca",
+						"order" : 2,
+						"area_color" : ""
 					},
-					"9e7b3562dcd3283061369f9f83a707ca": {
-						"_id": "9e7b3562dcd3283061369f9f83a707ca",
-						"area_color": "",
-						"category": "",
-						"co": "__canopsis__",
-						"curve_color": "",
-						"curve_type": "",
-						"id": "9e7b3562dcd3283061369f9f83a707ca",
-						"label": "Resource by Component",
-						"me": "cps_statechange_resource_by_component",
-						"metrics": ["cps_statechange_resource_by_component"],
-						"order": 2,
-						"re": null,
-						"t": "COUNTER",
-						"trend_curve": "",
-						"u": "",
-						"yAxis": ""
+					"50a2a1e550eb84b751ba4fe58f8b3691" : {
+						"category" : "",
+						"me" : "cps_statechange_component",
+						"co" : "__canopsis__",
+						"curve_type" : "",
+						"yAxis" : "",
+						"curve_color" : "",
+						"label" : "Component",
+						"metrics" : [
+							"cps_statechange_component"
+						],
+						"u" : "",
+						"t" : "COUNTER",
+						"id" : "50a2a1e550eb84b751ba4fe58f8b3691",
+						"trend_curve" : "",
+						"_id" : "50a2a1e550eb84b751ba4fe58f8b3691",
+						"order" : 0,
+						"area_color" : ""
 					}
 				},
-				"other_label": "Free",
-				"pctInLabel": true,
-				"pie_size": 50,
-				"refreshInterval": 60,
-				"stacked_graph": false,
-				"startAngle": 0,
-				"tilt": 1,
-				"time_window": 86400,
-				"time_window_offset": 0,
-				"title": "Type View",
-				"title_fontSize": 15,
-				"tooltip": true,
-				"verticalDisplay": false,
-				"xtype": "category_graph"
-			},
-			"position": {
-				"height": 4,
-				"left": 4,
-				"top": 0,
-				"width": 4
+				"verticalDisplay" : false,
+				"other_label" : "Free",
+				"gradientColor" : true,
+				"category" : [
+					"",
+					"",
+					""
+				],
+				"backgroundColor" : "#FFFFFF",
+				"time_window" : 86400,
+				"legend_align" : "center",
+				"curve_color" : [
+					"",
+					"",
+					""
+				],
+				"refreshInterval" : 60,
+				"legend" : true,
+				"innerRadius" : 0,
+				"legend_fontSize" : 12,
+				"max" : null,
+				"legend_verticalAlign" : "bottom",
+				"autoTitle" : false,
+				"borderWidth" : 0,
+				"title_fontSize" : 15,
+				"title" : "Type View",
+				"nameInLabelFormatter" : true
 			}
-		},{
-			"data": {
-				"aggregate_method": "LAST",
-				"autoTitle": true,
-				"border": false,
-				"humanReadable": true,
-				"inventory": ["cengine.alertcounter.log.component.__canopsis__"],
-				"refreshInterval": 300,
-				"text": "<table style=\"width: 100%; margin: auto; border: 1px solid black; border-collapse: collapse;\">\n<tbody>\n<tr>\n<th style=\"border: 1px solid black; text-align: center; padding: 5px; font-weight: bold;\">Critical</th>\n<th style=\"border: 1px solid black; text-align: center; padding: 5px; font-weight: bold;\">Warning</th>\n<th style=\"border: 1px solid black; text-align: center; padding: 5px; font-weight: bold;\">Unknown</th>\n</tr>\n<tr>\n<td style=\"border: 1px solid black; text-align: right; padding: 5px;\">{perfdata:cps_statechange_2:value}</td>\n<td style=\"border: 1px solid black; text-align: right; padding: 5px;\">{perfdata:cps_statechange_1:value}</td>\n<td style=\"border: 1px solid black; text-align: right; padding: 5px;\">{perfdata:cps_statechange_3:value}</td></tr>\n</tbody>\n</table>",
-				"time_window": 86400,
-				"title": "",
-				"xtype": "text"
+		},
+		{
+			"position" : {
+				"width" : 4,
+				"top" : 4,
+				"height" : 2,
+				"left" : 0
 			},
-			"position": {
-				"height": 1,
-				"left": 0,
-				"top": 4,
-				"width": 4
+			"data" : {
+				"time_window" : 86400,
+				"xtype" : "text",
+				"title" : "",
+				"text" : "<center>\n<table class=\"custom_table\" style=\"width:100%\">\n<tbody>\n<tr>\n<th>Critical</th>\n<th>Warning</th>\n<th>Unknown</th>\n</tr>\n<tr>\n<td>{perfdata:cps_statechange_2:value:__canopsis__}</td>\n<td>{perfdata:cps_statechange_1:value:__canopsis__}</td>\n<td>{perfdata:cps_statechange_3:value:__canopsis__}</td></tr>\n</tbody>\n</table>\n</center>",
+				"autoTitle" : true,
+				"humanReadable" : true,
+				"aggregate_method" : "LAST",
+				"inventory" : [
+					"cengine.alertcounter.log.component.__canopsis__"
+				],
+				"refreshInterval" : 300,
+				"border" : false,
+				"undefined" : {
+
+				}
 			}
-		},{
-			"data": {
-				"aggregate_method": "LAST",
-				"autoTitle": true,
-				"border": false,
-				"humanReadable": true,
-				"inventory": ["cengine.alertcounter.log.component.__canopsis__"],
-				"refreshInterval": 300,
-				"text": "<table style=\"width: 100%; margin: auto; border: 1px solid black; border-collapse: collapse;\">\n<tbody>\n<tr>\n<th style=\"border: 1px solid black; text-align: center; padding: 5px; font-weight: bold;\">Component</th>\n<th style=\"border: 1px solid black; text-align: center; padding: 5px; font-weight: bold;\">Resource</th>\n<th style=\"border: 1px solid black; text-align: center; padding: 5px; font-weight: bold;\">Resource By Component</th>\n</tr>\n<tr>\n<td style=\"border: 1px solid black; text-align: right; padding: 5px;\">{perfdata:cps_statechange_component:value}</td>\n<td style=\"border: 1px solid black; text-align: right; padding: 5px;\">{perfdata:cps_statechange_resource:value}</td>\n<td style=\"border: 1px solid black; text-align: right; padding: 5px;\">{perfdata:cps_statechange_resource_by_component:value}</td></tr>\n</tbody>\n</table>",
-				"time_window": 86400,
-				"title": "",
-				"xtype": "text"
+		},
+		{
+			"position" : {
+				"width" : 4,
+				"top" : 4,
+				"height" : 2,
+				"left" : 4
 			},
-			"position": {
-				"height": 1,
-				"left": 4,
-				"top": 4,
-				"width": 4
+			"data" : {
+				"time_window" : 86400,
+				"xtype" : "text",
+				"title" : "",
+				"text" : "<center>\n<table class=\"custom_table\"  style=\"width:100%\">\n<tbody>\n<tr>\n<th>Component</th>\n<th>Resource</th>\n<th>Resource By Component</th>\n</tr>\n<tr>\n<td>{perfdata:cps_statechange_component:value:__canopsis__}</td>\n<td>{perfdata:cps_statechange_resource:value:__canopsis__}</td>\n<td>{perfdata:cps_statechange_resource_by_component:value:__canopsis__}</td></tr>\n</tbody>\n</table>\n</center>",
+				"autoTitle" : true,
+				"humanReadable" : true,
+				"aggregate_method" : "LAST",
+				"inventory" : [
+					"cengine.alertcounter.log.component.__canopsis__"
+				],
+				"refreshInterval" : 300,
+				"border" : false,
+				"undefined" : {
+
+				}
 			}
-		},{
-			"data": {
-				"aggregate_method": "LAST",
-				"autoTitle": false,
-				"backgroundColor": "#FFFFFF",
-				"border": true,
-				"borderColor": "#FFFFFF",
-				"borderWidth": 0,
-				"category": ["", ""],
-				"ccustom": null,
-				"curve_color": ["", ""],
-				"diagram_type": "pie",
-				"gradientColor": true,
-				"humanReadable": true,
-				"innerRadius": 0,
-				"label": ["Hard", "Soft"],
-				"labels": true,
-				"labels_size": "x-small",
-				"legend": true,
-				"legend_align": "center",
-				"legend_backgroundColor": "#FFFFFF",
-				"legend_borderColor": "#909090",
-				"legend_borderWidth": 1,
-				"legend_fontSize": 12,
-				"legend_layout": "horizontal",
-				"legend_verticalAlign": "bottom",
-				"max": null,
-				"nameInLabelFormatter": true,
-				"nodes": {
-					"9e06cad80cd4f2cab4fcf674a1dbccee": {
-						"_id": "9e06cad80cd4f2cab4fcf674a1dbccee",
-						"area_color": "",
-						"category": "",
-						"co": "__canopsis__",
-						"curve_color": "",
-						"curve_type": "",
-						"id": "9e06cad80cd4f2cab4fcf674a1dbccee",
-						"label": "Hard",
-						"me": "cps_statechange_hard",
-						"metrics": ["cps_statechange_hard"],
-						"order": 0,
-						"t": "COUNTER",
-						"trend_curve": "",
-						"u": "",
-						"yAxis": ""
+		},
+		{
+			"position" : {
+				"width" : 4,
+				"top" : 0,
+				"height" : 4,
+				"left" : 8
+			},
+			"data" : {
+				"xtype" : "category_graph",
+				"legend_backgroundColor" : "#FFFFFF",
+				"labels" : true,
+				"humanReadable" : true,
+				"pctInLabel" : true,
+				"labels_size" : "x-small",
+				"pie_size" : 50,
+				"label" : [
+					"Hard",
+					"Soft"
+				],
+				"border" : true,
+				"legend_borderColor" : "#909090",
+				"borderColor" : "#FFFFFF",
+				"legend_borderWidth" : 1,
+				"legend_layout" : "horizontal",
+				"tilt" : 1,
+				"tooltip" : true,
+				"aggregate_method" : "LAST",
+				"ccustom" : null,
+				"time_window_offset" : 0,
+				"stacked_graph" : false,
+				"diagram_type" : "pie",
+				"startAngle" : 0,
+				"nodes" : {
+					"9e06cad80cd4f2cab4fcf674a1dbccee" : {
+						"category" : "",
+						"me" : "cps_statechange_hard",
+						"co" : "__canopsis__",
+						"curve_type" : "",
+						"yAxis" : "",
+						"curve_color" : "",
+						"label" : "Hard",
+						"metrics" : [
+							"cps_statechange_hard"
+						],
+						"u" : "",
+						"t" : "COUNTER",
+						"id" : "9e06cad80cd4f2cab4fcf674a1dbccee",
+						"trend_curve" : "",
+						"_id" : "9e06cad80cd4f2cab4fcf674a1dbccee",
+						"order" : 0,
+						"area_color" : ""
 					},
-					"fafb8e528fef81fc2ff66cd8f9c3bb8a": {
-						"_id": "fafb8e528fef81fc2ff66cd8f9c3bb8a",
-						"area_color": "",
-						"category": "",
-						"co": "__canopsis__",
-						"curve_color": "",
-						"curve_type": "",
-						"id": "fafb8e528fef81fc2ff66cd8f9c3bb8a",
-						"label": "Soft",
-						"me": "cps_statechange_soft",
-						"metrics": ["cps_statechange_soft"],
-						"order": 1,
-						"t": "COUNTER",
-						"trend_curve": "",
-						"u": "",
-						"yAxis": ""
+					"fafb8e528fef81fc2ff66cd8f9c3bb8a" : {
+						"category" : "",
+						"me" : "cps_statechange_soft",
+						"co" : "__canopsis__",
+						"curve_type" : "",
+						"yAxis" : "",
+						"curve_color" : "",
+						"label" : "Soft",
+						"metrics" : [
+							"cps_statechange_soft"
+						],
+						"u" : "",
+						"t" : "COUNTER",
+						"id" : "fafb8e528fef81fc2ff66cd8f9c3bb8a",
+						"trend_curve" : "",
+						"_id" : "fafb8e528fef81fc2ff66cd8f9c3bb8a",
+						"order" : 1,
+						"area_color" : ""
 					}
 				},
-				"other_label": "Free",
-				"pctInLabel": true,
-				"pie_size": 50,
-				"refreshInterval": 60,
-				"stacked_graph": false,
-				"startAngle": 0,
-				"tilt": 1,
-				"time_window": 86400,
-				"time_window_offset": 0,
-				"title": "State View",
-				"title_fontSize": 15,
-				"tooltip": true,
-				"verticalDisplay": false,
-				"xtype": "category_graph"
-			},
-			"position": {
-				"height": 4,
-				"left": 8,
-				"top": 0,
-				"width": 4
+				"verticalDisplay" : false,
+				"other_label" : "Free",
+				"gradientColor" : true,
+				"category" : [
+					"",
+					""
+				],
+				"backgroundColor" : "#FFFFFF",
+				"time_window" : 86400,
+				"legend_align" : "center",
+				"curve_color" : [
+					"",
+					""
+				],
+				"refreshInterval" : 60,
+				"legend" : true,
+				"innerRadius" : 0,
+				"legend_fontSize" : 12,
+				"max" : null,
+				"legend_verticalAlign" : "bottom",
+				"autoTitle" : false,
+				"borderWidth" : 0,
+				"title_fontSize" : 15,
+				"title" : "State View",
+				"nameInLabelFormatter" : true
 			}
-		},{
-			"data": {
-				"aggregate_method": "LAST",
-				"autoTitle": true,
-				"border": false,
-				"humanReadable": true,
-				"inventory": ["cengine.alertcounter.log.component.__canopsis__"],
-				"refreshInterval": 300,
-				"text": "<table style=\"width: 100%; margin: auto; border: 1px solid black; border-collapse: collapse;\">\n<tbody>\n<tr>\n<th style=\"border: 1px solid black; text-align: center; padding: 5px; font-weight: bold;\">Hard</th>\n<th style=\"border: 1px solid black; text-align: center; padding: 5px; font-weight: bold;\">Soft</th>\n</tr>\n<tr>\n<td style=\"border: 1px solid black; text-align: right; padding: 5px;\">{perfdata:cps_statechange_hard:value}</td>\n<td style=\"border: 1px solid black; text-align: right; padding: 5px;\">{perfdata:cps_statechange_soft:value}</td>\n</tr>\n</tbody>\n</table>",
-				"time_window": 86400,
-				"title": "",
-				"xtype": "text"
+		},
+		{
+			"position" : {
+				"width" : 4,
+				"top" : 4,
+				"height" : 2,
+				"left" : 8
 			},
-			"position": {
-				"height": 1,
-				"left": 8,
-				"top": 4,
-				"width": 4
+			"data" : {
+				"time_window" : 86400,
+				"xtype" : "text",
+				"title" : "",
+				"text" : "<center>\n<table class=\"custom_table\"  style=\"width:100%\">\n<tbody>\n<tr>\n<th>Hard</th>\n<th>Soft</th>\n</tr>\n<tr>\n<td>{perfdata:cps_statechange_hard:value:__canopsis__}</td>\n<td>{perfdata:cps_statechange_soft:value:__canopsis__}</td>\n</tr>\n</tbody>\n</table>\n</center>",
+				"autoTitle" : true,
+				"humanReadable" : true,
+				"aggregate_method" : "LAST",
+				"inventory" : [
+					"cengine.alertcounter.log.component.__canopsis__"
+				],
+				"refreshInterval" : 300,
+				"border" : false,
+				"undefined" : {
+
+				}
 			}
-		},{
-			"data": {
-				"aggregate_method": "LAST",
-				"autoTitle": false,
-				"backgroundColor": "#FFFFFF",
-				"border": true,
-				"borderColor": "#FFFFFF",
-				"borderWidth": 0,
-				"category": ["", "", ""],
-				"ccustom": null,
-				"curve_color": ["", "", ""],
-				"diagram_type": "pie",
-				"gradientColor": true,
-				"humanReadable": true,
-				"innerRadius": 0,
-				"label": ["Not ACK", "ACK", "ACK by Host"],
-				"labels": true,
-				"labels_size": "x-small",
-				"legend": true,
-				"legend_align": "center",
-				"legend_backgroundColor": "#FFFFFF",
-				"legend_borderColor": "#909090",
-				"legend_borderWidth": 1,
-				"legend_fontSize": 12,
-				"legend_layout": "horizontal",
-				"legend_verticalAlign": "bottom",
-				"max": null,
-				"nameInLabelFormatter": true,
-				"nodes": {
-					"328bff6c2b5a9e320807acc8eb07418d": {
-						"_id": "328bff6c2b5a9e320807acc8eb07418d",
-						"area_color": "",
-						"category": "",
-						"co": "__canopsis__",
-						"curve_color": "",
-						"curve_type": "",
-						"id": "328bff6c2b5a9e320807acc8eb07418d",
-						"label": "ACK by Host",
-						"me": "cps_alerts_ack_by_host",
-						"metrics": ["cps_alerts_ack_by_host"],
-						"order": 2,
-						"t": "COUNTER",
-						"trend_curve": "",
-						"u": "",
-						"yAxis": ""
+		},
+		{
+			"position" : {
+				"width" : 4,
+				"top" : 0,
+				"height" : 4,
+				"left" : 12
+			},
+			"data" : {
+				"xtype" : "category_graph",
+				"legend_backgroundColor" : "#FFFFFF",
+				"labels" : true,
+				"humanReadable" : true,
+				"pctInLabel" : true,
+				"labels_size" : "x-small",
+				"pie_size" : 50,
+				"label" : [
+					"Not ACK",
+					"ACK",
+					"ACK by Host"
+				],
+				"border" : true,
+				"legend_borderColor" : "#909090",
+				"borderColor" : "#FFFFFF",
+				"legend_borderWidth" : 1,
+				"legend_layout" : "horizontal",
+				"tilt" : 1,
+				"tooltip" : true,
+				"aggregate_method" : "LAST",
+				"ccustom" : null,
+				"time_window_offset" : 0,
+				"stacked_graph" : false,
+				"diagram_type" : "pie",
+				"startAngle" : 0,
+				"nodes" : {
+					"f2baa96aa5516ea5a4bddcf2ed963d85" : {
+						"category" : "",
+						"me" : "cps_alerts_not_ack",
+						"co" : "__canopsis__",
+						"curve_type" : "",
+						"yAxis" : "",
+						"curve_color" : "",
+						"label" : "Not ACK",
+						"metrics" : [
+							"cps_alerts_not_ack"
+						],
+						"u" : "",
+						"t" : "COUNTER",
+						"id" : "f2baa96aa5516ea5a4bddcf2ed963d85",
+						"trend_curve" : "",
+						"_id" : "f2baa96aa5516ea5a4bddcf2ed963d85",
+						"order" : 0,
+						"area_color" : ""
 					},
-					"8dc6d7e5a96041bdbf80d94f0ba22a01": {
-						"_id": "8dc6d7e5a96041bdbf80d94f0ba22a01",
-						"area_color": "",
-						"category": "",
-						"co": "__canopsis__",
-						"curve_color": "",
-						"curve_type": "",
-						"id": "8dc6d7e5a96041bdbf80d94f0ba22a01",
-						"label": "ACK",
-						"me": "cps_alerts_ack",
-						"metrics": ["cps_alerts_ack"],
-						"order": 1,
-						"t": "COUNTER",
-						"trend_curve": "",
-						"u": "",
-						"yAxis": ""
+					"328bff6c2b5a9e320807acc8eb07418d" : {
+						"category" : "",
+						"me" : "cps_alerts_ack_by_host",
+						"co" : "__canopsis__",
+						"curve_type" : "",
+						"yAxis" : "",
+						"curve_color" : "",
+						"label" : "ACK by Host",
+						"metrics" : [
+							"cps_alerts_ack_by_host"
+						],
+						"u" : "",
+						"t" : "COUNTER",
+						"id" : "328bff6c2b5a9e320807acc8eb07418d",
+						"trend_curve" : "",
+						"_id" : "328bff6c2b5a9e320807acc8eb07418d",
+						"order" : 2,
+						"area_color" : ""
 					},
-					"f2baa96aa5516ea5a4bddcf2ed963d85": {
-						"_id": "f2baa96aa5516ea5a4bddcf2ed963d85",
-						"area_color": "",
-						"category": "",
-						"co": "__canopsis__",
-						"curve_color": "",
-						"curve_type": "",
-						"id": "f2baa96aa5516ea5a4bddcf2ed963d85",
-						"label": "Not ACK",
-						"me": "cps_alerts_not_ack",
-						"metrics": ["cps_alerts_not_ack"],
-						"order": 0,
-						"t": "COUNTER",
-						"trend_curve": "",
-						"u": "",
-						"yAxis": ""
+					"8dc6d7e5a96041bdbf80d94f0ba22a01" : {
+						"category" : "",
+						"me" : "cps_alerts_ack",
+						"co" : "__canopsis__",
+						"curve_type" : "",
+						"yAxis" : "",
+						"curve_color" : "",
+						"label" : "ACK",
+						"metrics" : [
+							"cps_alerts_ack"
+						],
+						"u" : "",
+						"t" : "COUNTER",
+						"id" : "8dc6d7e5a96041bdbf80d94f0ba22a01",
+						"trend_curve" : "",
+						"_id" : "8dc6d7e5a96041bdbf80d94f0ba22a01",
+						"order" : 1,
+						"area_color" : ""
 					}
 				},
-				"other_label": "Free",
-				"pctInLabel": true,
-				"pie_size": 50,
-				"refreshInterval": 300,
-				"stacked_graph": false,
-				"startAngle": 0,
-				"tilt": 1,
-				"time_window": 86400,
-				"time_window_offset": 0,
-				"title": "Acknowledgement View",
-				"title_fontSize": 15,
-				"tooltip": true,
-				"verticalDisplay": false,
-				"xtype": "category_graph"
-			},
-			"position": {
-				"height": 4,
-				"left": 12,
-				"top": 0,
-				"width": 4
+				"verticalDisplay" : false,
+				"other_label" : "Free",
+				"gradientColor" : true,
+				"category" : [
+					"",
+					"",
+					""
+				],
+				"backgroundColor" : "#FFFFFF",
+				"time_window" : 86400,
+				"legend_align" : "center",
+				"curve_color" : [
+					"",
+					"",
+					""
+				],
+				"refreshInterval" : 300,
+				"legend" : true,
+				"innerRadius" : 0,
+				"legend_fontSize" : 12,
+				"max" : null,
+				"legend_verticalAlign" : "bottom",
+				"autoTitle" : false,
+				"borderWidth" : 0,
+				"title_fontSize" : 15,
+				"title" : "Acknowledgement View",
+				"nameInLabelFormatter" : true
 			}
-		},{
-			"data": {
-				"aggregate_method": "LAST",
-				"autoTitle": true,
-				"border": false,
-				"humanReadable": true,
-				"inventory": ["cengine.alertcounter.log.component.__canopsis__"],
-				"refreshInterval": 300,
-				"text": "<table style=\"width: 100%; margin: auto; border: 1px solid black; border-collapse: collapse;\">\n<tbody>\n<tr>\n<th style=\"border: 1px solid black; text-align: center; padding: 5px; font-weight: bold;\">ACK</th>\n<th style=\"border: 1px solid black; text-align: center; padding: 5px; font-weight: bold;\">Not ACK</th>\n<th style=\"border: 1px solid black; text-align: center; padding: 5px; font-weight: bold;\">ACK by Host</th>\n</tr>\n<tr>\n<td style=\"border: 1px solid black; text-align: right; padding: 5px;\">{perfdata:cps_alerts_ack:value}</td>\n<td style=\"border: 1px solid black; text-align: right; padding: 5px;\">{perfdata:cps_alerts_not_ack:value}</td>\n<td style=\"border: 1px solid black; text-align: right; padding: 5px;\">{perfdata:cps_alerts_ack_by_host:value}</td></tr>\n</tbody>\n</table>",
-				"time_window": 86400,
-				"title": "",
-				"xtype": "text"
+		},
+		{
+			"position" : {
+				"width" : 4,
+				"top" : 4,
+				"height" : 2,
+				"left" : 12
 			},
-			"position": {
-				"height": 1,
-				"left": 12,
-				"top": 4,
-				"width": 4
+			"data" : {
+				"time_window" : 86400,
+				"xtype" : "text",
+				"title" : "",
+				"text" : "<center>\n<table class=\"custom_table\"  style=\"width:100%\">\n<tbody>\n<tr>\n<th>ACK</th>\n<th>Not ACK</th>\n<th>ACK by Host</th>\n</tr>\n<tr>\n<td>{perfdata:cps_alerts_ack:value:__canopsis__}</td>\n<td>{perfdata:cps_alerts_not_ack:value:__canopsis__}</td>\n<td>{perfdata:cps_alerts_ack_by_host:value:__canopsis__}</td></tr>\n</tbody>\n</table>\n</center>",
+				"autoTitle" : true,
+				"humanReadable" : true,
+				"aggregate_method" : "LAST",
+				"inventory" : [
+					"cengine.alertcounter.log.component.__canopsis__"
+				],
+				"refreshInterval" : 300,
+				"border" : false,
+				"undefined" : {
+
+				}
 			}
 		}
 	],
+
 	"autorm": false
 }
