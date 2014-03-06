@@ -162,7 +162,7 @@ class engine(cengine):
 				self.last_sla_state
 			)
 
-		else if ack:
+		elif ack:
 			meta_data['me'] = 'cps_sla_{0}_{1}_ok'.format(slatype, slaname)
 
 		self.increment_counter(meta_data, value)
