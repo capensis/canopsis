@@ -140,14 +140,20 @@ class engine(cengine):
 		else:
 			compare_date = event['last_state_change']
 
+		ack = self.entities.find_one({
+			'type': 'ack',
+			'timestamp': {
+				'$gt': compare_date,
+				'$lt': now
+			}
+		})
+
+		"""
+			when time elapsed exceed deadline, produce an SLA out increment or nok if alert was ack
+			else, if only event was ack, SLA ok is incremented
+
+		"""
 		if delay < (now - compare_date):
-			ack = self.entities.find_one({
-				'type': 'ack',
-				'timestamp': {
-					'$gt': compare_date,
-					'$lt': now
-				}
-			})
 
 			self.last_sla_state = 'nok' if ack else 'out'
 			meta_data['me'] = 'cps_sla_{0}_{1}_{2}'.format(
@@ -156,7 +162,7 @@ class engine(cengine):
 				self.last_sla_state
 			)
 
-		else:
+		else if ack:
 			meta_data['me'] = 'cps_sla_{0}_{1}_ok'.format(slatype, slaname)
 
 		self.increment_counter(meta_data, value)
