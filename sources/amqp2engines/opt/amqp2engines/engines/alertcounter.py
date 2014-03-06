@@ -312,16 +312,18 @@ class engine(cengine):
 		validation = validation and event['component'] not in ['derogation', INTERNAL_COMPONENT]
 
 		if validation:
-			self.update_global_counter(event)
-			self.count_by_crits(event, 1)
+			if 'downtime' not in event or not event['downtime']:
 
-			# By name
-			self.count_alert(event, 1)
+				self.update_global_counter(event)
+				self.count_by_crits(event, 1)
 
-			# By Type and ACK
-			self.count_by_type(event, 1)
+				# By name
+				self.count_alert(event, 1)
 
-			# By tags (selector)
-			self.count_by_tags(event, 1)
+				# By Type and ACK
+				self.count_by_type(event, 1)
+
+				# By tags (selector)
+				self.count_by_tags(event, 1)
 
 		return event
