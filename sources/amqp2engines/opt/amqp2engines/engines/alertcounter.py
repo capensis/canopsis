@@ -161,11 +161,11 @@ class engine(cengine):
 				slaname,
 				self.last_sla_state
 			)
+			self.increment_counter(meta_data, value)
 
 		elif ack:
 			meta_data['me'] = 'cps_sla_{0}_{1}_ok'.format(slatype, slaname)
-
-		self.increment_counter(meta_data, value)
+			self.increment_counter(meta_data, value)
 
 	def count_by_crits(self, event, value):
 
