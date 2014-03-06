@@ -262,18 +262,6 @@ Ext.define('canopsis.view.Mainbar.Bar', {
 			]);
 		}
 
-		//Alerts menu
-		if(global.accountCtrl.checkRoot() || global.accountCtrl.checkGroup('group.CPS_Alerts_admin')) {
-			menu_build = menu_build.concat([
-				{
-					iconCls: 'icon-state-2',
-					text: _('Alerts'),
-					action: 'openViewMenu',
-					viewId: 'view.alerts'
-				}
-			]);
-		}
-
 		//SLA menu
 		if(global.accountCtrl.checkRoot() || global.accountCtrl.checkGroup('group.CPS_SLA_admin')) {
 			menu_build = menu_build.concat([
