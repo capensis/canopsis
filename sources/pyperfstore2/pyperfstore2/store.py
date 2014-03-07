@@ -164,12 +164,17 @@ class store(object):
 			bulk = False
 		if bulk:
 			self.logger.debug("Bulk mode is enabled (rate: %s push/sec)" % self.last_rate)
-		if self.daily_collection.find_one({'_id': _id}):
-			# update perfdata to db
-			self.daily_collection.update({'_id': _id}, {'$inc': {'count': 1}, '$set': {'values.' + str(int(time.time())): [point[0], point[1]]}}, upsert=True)
+
+		metric_document = self.daily_collection.find_one({'_id': _id}, {'last_update_date': 1})
+
+		if metric_document:
+			# Prevent from updating more than once a second the document
+			if metric_document['last_update_date'] != int(now):
+				# update perfdata to db
+				self.daily_collection.update({'_id': _id}, {'$inc': {'count': 1}, '$set': {'last_update_date': int(now), 'values.' + str(int(time.time())): [point[0], point[1]]}}, upsert=True)
 		else:
 			insert_date = int(time.time())
-			self.daily_collection.insert({'_id': _id, 'count': 1, 'insert_date': insert_date ,'values': {str(insert_date): [point[0], point[1]]}})
+			self.daily_collection.insert({'_id': _id, 'count': 1, 'last_update_date': int(now), 'insert_date': insert_date ,'values': {str(insert_date): [point[0], point[1]]}})
 
 		self.pushed_values += 1
 

@@ -49,7 +49,8 @@ class engine(cengine):
 	def beat(self):
 		self.logger.debug("Start rotation")
 		start = time.time()
-		metric_to_rotate = self.manager.store.daily_collection.find({'$or': [{'insert_date': {'$lte': start - self.rotation_interval}}, {'count': {'$gte': MAX_METRIC_COUNT}}]})
+		metric_to_rotate = self.manager.store.daily_collection.find({'insert_date': {'$lte': start - self.rotation_interval}})
+		#{'$or': [{'insert_date': {'$lte': start - self.rotation_interval}}, {'count': {'$gte': MAX_METRIC_COUNT}}]})
 
 		metric_count = 0
 		for metric in metric_to_rotate:
