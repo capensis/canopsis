@@ -132,40 +132,49 @@ class engine(cengine):
 			self.amqp.publish(logevent, cevent.get_routingkey(logevent), self.amqp.exchange_name_events)
 
 	def count_sla(self, event, slatype, slaname, delay, value):
-		meta_data = {'type': 'COUNTER', 'co': INTERNAL_COMPONENT }
 		now = int(time.time())
-		#last_state_change field is updated in event store, so here we have no real previous date
-		if 'previous_state_change_ts' in event:
-			compare_date = event['previous_state_change_ts']
-		else:
-			compare_date = event['last_state_change']
 
-		ack = self.entities.find_one({
-			'type': 'ack',
-			'timestamp': {
-				'$gt': compare_date,
-				'$lt': now
-			}
-		})
+		def increment_SLA( event, slatype, slaname, delay, value, hostgroup=None ):
+			meta_data = {'type': 'COUNTER', 'co': INTERNAL_COMPONENT}
+			if hostgroup != None:
+				meta_data['re'] = hostgroup
+			#last_state_change field is updated in event store, so here we have no real previous date
+			if 'previous_state_change_ts' in event:
+				compare_date = event['previous_state_change_ts']
+			else:
+				compare_date = event['last_state_change']
 
-		"""
-			when time elapsed exceed deadline, produce an SLA out increment or nok if alert was ack
-			else, if only event was ack, SLA ok is incremented
+			ack = self.entities.find_one({
+				'type': 'ack',
+				'timestamp': {
+					'$gt': compare_date,
+					'$lt': now
+				}
+			})
 
-		"""
-		if delay < (now - compare_date):
+			"""
+				when time elapsed exceed deadline, produce an SLA out increment or nok if alert was ack
+				else, if only event was ack, SLA ok is incremented
 
-			self.last_sla_state = 'nok' if ack else 'out'
-			meta_data['me'] = 'cps_sla_{0}_{1}_{2}'.format(
-				slatype,
-				slaname,
-				self.last_sla_state
-			)
-			self.increment_counter(meta_data, value)
+			"""
+			if delay < (now - compare_date):
 
-		elif ack:
-			meta_data['me'] = 'cps_sla_{0}_{1}_ok'.format(slatype, slaname)
-			self.increment_counter(meta_data, value)
+				self.last_sla_state = 'nok' if ack else 'out'
+				meta_data['me'] = 'cps_sla_{0}_{1}_{2}'.format(
+					slatype,
+					slaname,
+					self.last_sla_state
+				)
+				self.increment_counter(meta_data, value)
+
+			elif ack:
+				meta_data['me'] = 'cps_sla_{0}_{1}_ok'.format(slatype, slaname)
+				self.increment_counter(meta_data, value)
+
+		for hostgroup in event.get('hostgroups', []):
+			increment_SLA( event, slatype, slaname, delay, value, hostgroup)
+
+		increment_SLA( event, slatype, slaname, delay, value)
 
 	def count_by_crits(self, event, value):
 
