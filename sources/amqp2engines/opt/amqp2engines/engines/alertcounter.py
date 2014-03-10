@@ -47,11 +47,10 @@ class engine(cengine):
 		# Get SLA configuration
 		self.storage = get_storage(namespace='object', account=caccount(user="root", group="root"))
 		self.entities = self.storage.get_backend('entities')
+		self.objects_backend = self.storage.get_backend('object')
 
 		self.selectors_name = []
 		self.last_resolv = 0
-		#last sla is for testing purposes
-		self.last_sla_state = None
 		self.beat()
 
 	def load_macro(self):
@@ -76,9 +75,20 @@ class engine(cengine):
 		for record in records:
 			self.crits[record.data['crit']] = record.data['delay']
 
+	def reload_ack_comments(self):
+
+		# reload comment for ack comparison
+		self.comments = {}
+		query = self.objects_backend.find({'crecord_type': 'comment', 'referer_event_rks': {'$exists': True} }, {'referer_event_rks':1})
+		for comment in query:
+			for rk in comment['referer_event_rks']:
+				self.comments[rk['rk']] = 1
+		self.logger.warning('loaded %s referer key comments' % len(self.comments))
+
 	def beat(self):
 		self.load_macro()
 		self.load_crits()
+		self.reload_ack_comments()
 
 	def perfdata_key(self, meta):
 		if 're' in meta and meta['re']:
@@ -157,19 +167,31 @@ class engine(cengine):
 				else, if only event was ack, SLA ok is incremented
 
 			"""
-			if delay < (now - compare_date):
 
-				self.last_sla_state = 'nok' if ack else 'out'
+			sla_states = {
+				'out': 0,
+				'nok': 0,
+				'ok': 0
+			}
+
+			# set increment 1 depending on computation rules
+			if delay < (now - compare_date):
+				if ack:
+					sla_states['nok'] = 1
+				else:
+					sla_states['out'] = 1
+			elif ack:
+				sla_states['ok'] = 1
+
+			# increment all counts with computed value
+			for sla_state in sla_states:
 				meta_data['me'] = 'cps_sla_{0}_{1}_{2}'.format(
 					slatype,
 					slaname,
-					self.last_sla_state
+					sla_state
 				)
-				self.increment_counter(meta_data, value)
+				self.increment_counter(meta_data, sla_states[sla_state])
 
-			elif ack:
-				meta_data['me'] = 'cps_sla_{0}_{1}_ok'.format(slatype, slaname)
-				self.increment_counter(meta_data, value)
 
 		for hostgroup in event.get('hostgroups', []):
 			increment_SLA( event, slatype, slaname, delay, value, hostgroup)
@@ -323,11 +345,15 @@ class engine(cengine):
 				self.count_alert(tagevent, value)
 
 	def work(self, event, *args, **kargs):
+
+		if event['rk'] in self.comments:
+			# This event is exclided from counts because it's ack contained a special comment that matched withs configuration ones.
+			return event
+
 		validation = event['event_type'] in self.listened_event_type
 		validation = validation and event['component'] not in ['derogation', INTERNAL_COMPONENT]
 
 		if validation:
-			if 'downtime' not in event or not event['downtime']:
 
 				self.update_global_counter(event)
 				self.count_by_crits(event, 1)
