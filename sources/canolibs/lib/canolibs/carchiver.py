@@ -102,9 +102,11 @@ class carchiver(object):
 			self.logger.debug(" + New event")
 			changed = True
 			new_event = True
+			old_state = state
 		
 		if changed:
-			if 'last_state_change' in event:
+			# Tests if change is from alert to non alert
+			if 'last_state_change' in event and (state == 0 or (state > 0 and old_state == 0)):
 				event['previous_state_change_ts'] = event['last_state_change']
 			event['last_state_change'] = event.get('timestamp', now)
 		
