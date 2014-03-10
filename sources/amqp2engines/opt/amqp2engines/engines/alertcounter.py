@@ -50,8 +50,6 @@ class engine(cengine):
 
 		self.selectors_name = []
 		self.last_resolv = 0
-		#last sla is for testing purposes
-		self.last_sla_state = None
 		self.beat()
 
 	def load_macro(self):
@@ -157,19 +155,31 @@ class engine(cengine):
 				else, if only event was ack, SLA ok is incremented
 
 			"""
-			if delay < (now - compare_date):
 
-				self.last_sla_state = 'nok' if ack else 'out'
+			sla_states = {
+				'out': 0,
+				'nok': 0,
+				'ok': 0
+			}
+
+			# set increment 1 depending on computation rules
+			if delay < (now - compare_date):
+				if ack:
+					sla_states['nok'] = 1
+				else:
+					sla_states['out'] = 1
+			elif ack:
+				sla_states['ok'] = 1
+
+			# increment all counts with computed value
+			for sla_state in sla_states:
 				meta_data['me'] = 'cps_sla_{0}_{1}_{2}'.format(
 					slatype,
 					slaname,
-					self.last_sla_state
+					sla_state
 				)
-				self.increment_counter(meta_data, value)
+				self.increment_counter(meta_data, sla_states[sla_state])
 
-			elif ack:
-				meta_data['me'] = 'cps_sla_{0}_{1}_ok'.format(slatype, slaname)
-				self.increment_counter(meta_data, value)
 
 		for hostgroup in event.get('hostgroups', []):
 			increment_SLA( event, slatype, slaname, delay, value, hostgroup)
