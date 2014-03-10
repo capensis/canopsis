@@ -256,27 +256,6 @@ class engine(cengine):
 				}}
 			)
 
-			if event.get('event_type', 'check') == 'check' and event.get('source_type', None) == 'resource':
-				self.logger.debug('Found a resource event that may be ack by its host.')
-
-				if cevent.is_host_acknowledged(event):
-					self.logger.debug('Host has an ACK for now, let increment metric.')
-					alerts_event = cevent.forger(
-						connector = "cengine",
-						connector_name = NAME,
-						event_type = "perf",
-						source_type = "component",
-						component = "__canopsis__",
-
-						perf_data_array = [
-							{'metric': 'cps_alerts_ack_by_host', 'value': 1, 'type': 'COUNTER'},
-							{'metric': 'cps_alerts_not_ack', 'value': -1, 'type': 'COUNTER'}
-						]
-					)
-
-					self.amqp.publish(alerts_event, cevent.get_routingkey(alerts_event), self.amqp.exchange_name_events)
-					self.logger.debug('Updated cps_alerts_ack_by_host metric.')
-
 		if logevent:
 			self.amqp.publish(logevent, cevent.get_routingkey(logevent), exchange_name=self.acknowledge_on)
 

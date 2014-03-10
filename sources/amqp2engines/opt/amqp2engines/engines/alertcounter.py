@@ -310,14 +310,18 @@ class engine(cengine):
 		# Update cps_alerts_not_ack
 
 		if state != 0:
+			ackhost = cevent.is_host_acknowledged(event)
+			cvalue0 = int(not ackhost)
+			cvalue1 = int(not not ackhost)
+
 			meta_data['me'] = 'cps_alerts_not_ack'
-			self.increment_counter(meta_data, 1)
+			self.increment_counter(meta_data, cvalue0)
 
 			meta_data['me'] = 'cps_alerts_ack'
 			self.increment_counter(meta_data, 0)
 
 			meta_data['me'] = 'cps_alerts_ack_by_host'
-			self.increment_counter(meta_data, 0)
+			self.increment_counter(meta_data, cvalue1)
 
 	def resolve_selectors_name(self):
 
