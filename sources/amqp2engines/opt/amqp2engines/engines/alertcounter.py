@@ -351,6 +351,12 @@ class engine(cengine):
 	def work(self, event, *args, **kargs):
 
 		if event['rk'] in self.comments:
+			self.increment_counter({
+				'type': 'COUNTER',
+				'co': INTERNAL_COMPONENT,
+				'tg': event.get('tags', []),
+				'me': 'cps_alerts_mass_ack'
+			}, 1)
 			# This event is exclided from counts because it's ack contained a special comment that matched withs configuration ones.
 			return event
 
