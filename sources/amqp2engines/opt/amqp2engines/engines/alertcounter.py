@@ -360,21 +360,23 @@ class engine(cengine):
 			# This event is exclided from counts because it's ack contained a special comment that matched withs configuration ones.
 			return event
 
-		validation = event['event_type'] in self.listened_event_type
-		validation = validation and event['component'] not in ['derogation', INTERNAL_COMPONENT]
+		if 'downtime' not in event or not event['downtime']:
 
-		if validation:
+			validation = event['event_type'] in self.listened_event_type
+			validation = validation and event['component'] not in ['derogation', INTERNAL_COMPONENT]
 
-				self.update_global_counter(event)
-				self.count_by_crits(event, 1)
+			if validation:
 
-				# By name
-				self.count_alert(event, 1)
+					self.update_global_counter(event)
+					self.count_by_crits(event, 1)
 
-				# By Type and ACK
-				self.count_by_type(event, 1)
+					# By name
+					self.count_alert(event, 1)
 
-				# By tags (selector)
-				self.count_by_tags(event, 1)
+					# By Type and ACK
+					self.count_by_type(event, 1)
 
-		return event
+					# By tags (selector)
+					self.count_by_tags(event, 1)
+
+			return event
