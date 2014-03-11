@@ -103,7 +103,9 @@ Ext.define('widgets.text.text' , {
 			Ext.Object.each(this.perfdataMetricList, function(key, value) {
 				void(key);
 				var metric = value.metric;
-				metrics.push(metric);
+				if (! (metric in metrics)) {
+					metrics.push(metric);
+				}
 			});
 
 			// prepare parameters for ajax request
@@ -189,7 +191,7 @@ Ext.define('widgets.text.text' , {
 
 									data[tpl_name] = value;
 								}
-							});
+							}, this);
 
 							this.fillData(data, from, to);
 						},
