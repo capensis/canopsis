@@ -330,6 +330,8 @@ function show_help(){
 #	echo "    -m [ARGUMENT]       ->  Install deps, build and make a package"
 	echo "    -p 		->  Make packages"
 	echo "    -d		->  Don't check dependencies"
+	echo "    -D		->  Force distribution"
+	echo "    -V		->  Force distribution version"
 	echo "    -i		->  Just build installer"
 	echo "    -h, help	->  Print this help"
 	exit 1
@@ -352,8 +354,10 @@ OPT_WUT=0
 OPT_MPKG=0
 OPT_DCD=0
 OPT_MINSTALLER=0
+OPT_DIST=0
+OPT_DISTVERS=0
 
-while getopts "cnupdhi" opt; do
+while getopts "cnupdhiD:V:" opt; do
 	case $opt in
 		c) OPT_CLEAN=1 ;;
 		n) OPT_NOBUILD=1 ;;
@@ -361,6 +365,10 @@ while getopts "cnupdhi" opt; do
 		p) OPT_MPKG=1 ;;
 		i) OPT_MINSTALLER=1; OPT_BUILD=0;;
 		d) OPT_DCD=1;;
+		D) OPT_DIST=$OPTARG
+		   echo Using $OPTARG as distribution name;;
+		V) OPT_DISTVERS=$OPTARG
+		   echo Using $OPTARG as distribution version;;
 		h) show_help ;;
 		\?)
 			echo "Invalid option: -$OPTARG" >&2
