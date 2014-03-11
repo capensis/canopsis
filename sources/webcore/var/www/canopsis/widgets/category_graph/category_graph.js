@@ -89,9 +89,44 @@ Ext.define('widgets.category_graph.category_graph', {
 						innerRadius: this.innerRadius,
 						label: {
 							show: this.labels,
-							size: this.labels_size
+							size: this.labels_size,
+							formatter: function(label, slice) {
+								var outer = $('<div/>');
+								var inner = $('<div/>');
+
+								inner.css({
+									'font-size': 'x-small',
+									'text-align': 'center',
+									'padding': '2px',
+									'color': slice.color
+								});
+
+								outer.append(inner);
+
+								// generate result
+								var result = '';
+
+								if(me.nameInLabelFormatter) {
+									result += '<b>' + label + '</b><br/>';
+								}
+
+								if(me.pctInLabel) {
+									result += slice.percent.toFixed(1) + '%';
+								}
+								else {
+									result += slice.data[0][1];
+								}
+
+								// build HTML
+								inner.html(result);
+								return outer.html();
+							}
 						},
 						tilt: this.tilt,
+						stroke:{
+							color: "fff",
+							width: this.stroke_width
+						},
 						startAngle: this.startAngle,
 						radius: this.pie_size / 100
 					},
@@ -111,12 +146,7 @@ Ext.define('widgets.category_graph.category_graph', {
 				},
 				legend: {
 					hideable: true,
-					show: this.legend,
-					labelFormatter: function(label, series) {
-						result = me.nameInLabelFormatter ? ("<b>" + label + "</b><br/>") : "";
-						result += me.pctInLabel ? (series.data[0] + "%") : yval; // calculate percent
-						return result;
-					}
+					show: this.legend
 				},
 				xaxis: {
 					show: (this.diagram_type === 'column' && !this.verticalDisplay)
@@ -126,19 +156,21 @@ Ext.define('widgets.category_graph.category_graph', {
 				},
 				tooltip: this.tooltip,
 				tooltipOpts: {
-					content: function(label, xval, yval, flotItem) {
+					content: function(label, xval, yval, item) {
+						var val = item.series.data[item.dataIndex][1];
+
 						if(me.humanReadable) {
 							for(var serieId in me.series) {
 								var serie = me.series[serieId];
 
 								if(serie.label === label) {
-									yval = rdr_humanreadable_value(yval, serie.node.bunit);
+									val = rdr_humanreadable_value(val, serie.node.bunit);
 									break;
 								}
 							}
 						}
 
-						return "<b>" + label + ":</b>" + yval;
+						return "<b>" + label + ":</b>" + val;
 					}
 				}
 			}
@@ -151,13 +183,6 @@ Ext.define('widgets.category_graph.category_graph', {
 
 		for(var node_id in this.series) {
 			var serie = this.series[node_id];
-
-			if(label_axis_group[serie.label] === undefined) {
-				label_axis_group[serie.label] = label_axis_group_count;
-				label_axis_group_count ++;
-			}
-
-			serie.label_axis_group = label_axis_group[serie.label];
 		}
 	},
 
@@ -165,8 +190,14 @@ Ext.define('widgets.category_graph.category_graph', {
 		var serie = this.series[serieId];
 		var x = serie.label_axis_group;
 
-		if(this.groupby_metric !== undefined && this.groupby_metric === true) {
-			x = serie.label_axis_group;
+		log.debug("addPoint");
+		log.dump(serie);
+		if(serie.node.xpos !== undefined && serie.node.xpos != "")
+		{
+			log.debug("x pos : " + serie.node.xpos + "for serie :");
+			log.dump(serie);
+
+			x = serie.node.xpos;
 		}
 		else if(this.stacked_graph !== undefined && this.stacked_graph === true) {
 			x = 0;
