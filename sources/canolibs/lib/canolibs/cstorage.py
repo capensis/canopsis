@@ -171,6 +171,8 @@ class cstorage(object):
 			records = [_record_or_records]
 		elif isinstance(_record_or_records, list):
 			records = _record_or_records
+		else:
+			self.logger.error("Invalid record type")
 
 		backend = self.get_backend(namespace)
 
