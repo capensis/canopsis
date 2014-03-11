@@ -123,6 +123,10 @@ Ext.define('widgets.category_graph.category_graph', {
 							}
 						},
 						tilt: this.tilt,
+						stroke:{
+							color: "fff",
+							width: this.stroke_width
+						},
 						startAngle: this.startAngle,
 						radius: this.pie_size / 100
 					},
@@ -179,13 +183,6 @@ Ext.define('widgets.category_graph.category_graph', {
 
 		for(var node_id in this.series) {
 			var serie = this.series[node_id];
-
-			if(label_axis_group[serie.label] === undefined) {
-				label_axis_group[serie.label] = label_axis_group_count;
-				label_axis_group_count ++;
-			}
-
-			serie.label_axis_group = label_axis_group[serie.label];
 		}
 	},
 
@@ -193,8 +190,14 @@ Ext.define('widgets.category_graph.category_graph', {
 		var serie = this.series[serieId];
 		var x = serie.label_axis_group;
 
-		if(this.groupby_metric !== undefined && this.groupby_metric === true) {
-			x = serie.label_axis_group;
+		log.debug("addPoint");
+		log.dump(serie);
+		if(serie.node.xpos !== undefined && serie.node.xpos != "")
+		{
+			log.debug("x pos : " + serie.node.xpos + "for serie :");
+			log.dump(serie);
+
+			x = serie.node.xpos;
 		}
 		else if(this.stacked_graph !== undefined && this.stacked_graph === true) {
 			x = 0;
