@@ -152,19 +152,21 @@ Ext.define('widgets.category_graph.category_graph', {
 				},
 				tooltip: this.tooltip,
 				tooltipOpts: {
-					content: function(label, xval, yval, flotItem) {
+					content: function(label, xval, yval, item) {
+						var val = item.series.data[item.dataIndex][1];
+
 						if(me.humanReadable) {
 							for(var serieId in me.series) {
 								var serie = me.series[serieId];
 
 								if(serie.label === label) {
-									yval = rdr_humanreadable_value(yval, serie.node.bunit);
+									val = rdr_humanreadable_value(val, serie.node.bunit);
 									break;
 								}
 							}
 						}
 
-						return "<b>" + label + ":</b>" + yval;
+						return "<b>" + label + ":</b>" + val;
 					}
 				}
 			}
