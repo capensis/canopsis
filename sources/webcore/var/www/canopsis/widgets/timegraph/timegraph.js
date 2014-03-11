@@ -76,7 +76,11 @@ Ext.define('widgets.timegraph.timegraph', {
 	},
 
 	doRefresh: function(from, to) {
-		this.callParent(arguments);
+		if(this.aggregate_method) {
+			from = to - (this.time_window * 1000);
+		}
+
+		this.refreshNodes(from, to);
 
 		if(this.flagFilter) {
 			var filter = {'$and': [
@@ -363,6 +367,14 @@ Ext.define('widgets.timegraph.timegraph', {
 		return series;
 	},
 
+	prepareData: function(serieId) {
+		this.callParent(arguments);
+
+		if(this.aggregate_method) {
+			this.series[serieId].data = [];
+		}
+	},
+
 	addPoint: function(serieId, value) {
 		// insert point only if it appends after the last of the serie.
 		var points = this.series[serieId].data,
@@ -371,7 +383,7 @@ Ext.define('widgets.timegraph.timegraph', {
 
 		if (last_point === undefined || last_point[0] < value_ts) {
 			this.series[serieId].data.push([value_ts, value[1]]);
-			this.series[serieId].last_timestamp = value_ts;
+			this.series[serieId].last_timestamp = (this.aggregate_method ? undefined : value_ts);
 		}
 
 	},
