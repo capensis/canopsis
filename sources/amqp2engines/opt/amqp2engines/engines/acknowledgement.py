@@ -40,7 +40,7 @@ class engine(cengine):
 
 		self.storage = get_storage(namespace='ack', account=account)
 		self.stbackend = self.storage.get_backend('ack')
-
+		self.objects_backend = self.storage.get_backend('object')
 		self.acknowledge_on = acknowledge_on
 
 	def pre_run(self):
@@ -49,6 +49,16 @@ class engine(cengine):
 
 	def beat(self):
 		self.reload_ack_cache()
+		self.reload_ack_comments()
+
+	def reload_ack_comments(self):
+
+		# reload comment for ack comparison
+		self.comments = []
+		query = self.objects_backend.find({'crecord_type': 'comment'}, {'comment':1, '_id': 1})
+		for comment in query:
+			self.comments.append(comment)
+
 
 	def reload_ack_cache(self):
 		query = self.stbackend.find({
@@ -75,6 +85,14 @@ class engine(cengine):
 			if not rk:
 				self.logger.error("Cannot get acknowledged event, missing key referer or ref_rk")
 				return event
+
+			for comment in self.comments:
+				if event['output'] in comment['comment']:
+					#an ack comment is contained into a defined comment, then let save referer key to the comment
+					#set referer rk to last update date
+					self.objects_backend.update({'_id': comment['_id']}, { "$addToSet": {'referer_event_rks' : {'rk': rk}}}, upsert=True)
+					self.logger.info('Added a referer rk to the comment ' + comment['comment'])
+
 
 			# add rk to acknowledged rks
 			response = self.stbackend.find_and_modify(
@@ -237,38 +255,6 @@ class engine(cengine):
 					'comment': ''
 				}}
 			)
-
-			if 'event_type' in event and 'source_type' in event \
-			and event['event_type'] == 'check' and event['source_type'] == 'resource':
-
-				self.logger.debug('Found a resource event that may be ack by it s host.')
-				storage = get_storage(namespace='ack', account=caccount(user='root', group='root')).get_backend()
-				component_event = event.copy()
-				component_event['source_type'] = 'component'
-				routing_key = cevent.get_routingkey(component_event)
-
-				ackhost = storage.find_one({
-					'rk' : event['rk'],
-					'solved': False,
-				})
-
-				if ackhost:
-					self.logger.debug('Host has an ACK for now, let increment metric.')
-					alerts_event = cevent.forger(
-						connector = "cengine",
-						connector_name = NAME,
-						event_type = "perf",
-						source_type = "component",
-						component = "__canopsis__",
-
-						perf_data_array = [
-							{'metric': 'cps_alerts_ack_by_host', 'value': 1, 'type': 'COUNTER'},
-						]
-					)
-
-					self.amqp.publish(alerts_event, cevent.get_routingkey(alerts_event), self.amqp.exchange_name_events)
-					self.logger.debug('Updated cps_alerts_ack_by_host metric.')
-
 
 		if logevent:
 			self.amqp.publish(logevent, cevent.get_routingkey(logevent), exchange_name=self.acknowledge_on)

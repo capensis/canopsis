@@ -89,7 +89,38 @@ Ext.define('widgets.category_graph.category_graph', {
 						innerRadius: this.innerRadius,
 						label: {
 							show: this.labels,
-							size: this.labels_size
+							size: this.labels_size,
+							formatter: function(label, slice) {
+								var outer = $('<div/>');
+								var inner = $('<div/>');
+
+								inner.css({
+									'font-size': 'x-small',
+									'text-align': 'center',
+									'padding': '2px',
+									'color': slice.color
+								});
+
+								outer.append(inner);
+
+								// generate result
+								var result = '';
+
+								if(me.nameInLabelFormatter) {
+									result += '<b>' + label + '</b><br/>';
+								}
+
+								if(me.pctInLabel) {
+									result += slice.percent.toFixed(1) + '%';
+								}
+								else {
+									result += slice.data[0][1];
+								}
+
+								// build HTML
+								inner.html(result);
+								return outer.html();
+							}
 						},
 						tilt: this.tilt,
 						stroke:{
@@ -115,12 +146,7 @@ Ext.define('widgets.category_graph.category_graph', {
 				},
 				legend: {
 					hideable: true,
-					show: this.legend,
-					labelFormatter: function(label, series) {
-						result = me.nameInLabelFormatter ? ("<b>" + label + "</b><br/>") : "";
-						result += me.pctInLabel ? (series.data[0] + "%") : yval; // calculate percent
-						return result;
-					}
+					show: this.legend
 				},
 				xaxis: {
 					show: (this.diagram_type === 'column' && !this.verticalDisplay)

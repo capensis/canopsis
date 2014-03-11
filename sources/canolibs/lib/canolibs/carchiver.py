@@ -65,19 +65,19 @@ class carchiver(object):
 		self.logger.debug("   - State type:\t'%s'" % legend_type[state_type])
 
 		now = int(time.time())
-		
+
 		event['timestamp'] = event.get('timestamp', now)
-		
+
 		try:
 			# Get old record
 			#record = self.storage.get(_id, account=self.account)
 
 			devent = self.collection.find_one(_id, fields={'state': 1, 'state_type': 1, 'last_state_change': 1, 'perf_data_array': 1})
-			
+
 			self.logger.debug(" + Check with old record:")
 			old_state = devent['state']
 			old_state_type = devent['state_type']
-			
+
 			event['last_state_change'] = devent.get('last_state_change', event['timestamp'])
 
 			self.logger.debug("   - State:\t\t'%s'" % legend[old_state])
@@ -91,7 +91,7 @@ class carchiver(object):
 				changed = True
 			else:
 				self.logger.debug(" + No change.")
-			
+
 			try:
 				event = self.merge_perf_data(devent, event)
 			except Exception, err:
@@ -103,13 +103,13 @@ class carchiver(object):
 			changed = True
 			new_event = True
 			old_state = state
-		
+
 		if changed:
 			# Tests if change is from alert to non alert
 			if 'last_state_change' in event and (state == 0 or (state > 0 and old_state == 0)):
 				event['previous_state_change_ts'] = event['last_state_change']
 			event['last_state_change'] = event.get('timestamp', now)
-		
+
 		if new_event:
 			self.store_new_event(_id, event)
 		else:
@@ -117,36 +117,36 @@ class carchiver(object):
 
 		mid = None
 		if changed and self.autolog:
-			mid = self.log_event(_id, event)			
+			mid = self.log_event(_id, event)
 
 		return mid
-		
+
 	def merge_perf_data(self, old_event, new_event):
 		old_event['perf_data_array'] = old_event.get('perf_data_array', [])
 		new_event['perf_data_array'] = new_event.get('perf_data_array', [])
-		
+
 		if new_event['perf_data_array'] != []:
 			perf_data_array = old_event['perf_data_array']
-			
+
 			new_metrics = [ perf['metric'] for perf in new_event['perf_data_array'] ]
 			old_metrics = [ perf['metric'] for perf in old_event['perf_data_array'] ]
-						
+
 			if new_metrics == old_metrics:
 				new_event['perf_data_metrics'] = new_metrics
 				return new_event
-			
+
 			new_event['perf_data_metrics'] = uniq(new_metrics + old_metrics)
-			
+
 			for new_metric in new_metrics:
 				if new_metric in old_metrics:
 					perf_data_array[old_metrics.index(new_metric)] = new_event['perf_data_array'][new_metrics.index(new_metric)]
 				else:
 					perf_data_array.append(new_event['perf_data_array'][new_metrics.index(new_metric)])
-						
+
 			new_event['perf_data_array'] = perf_data_array
-			
-		
-		
+
+
+
 		return new_event
 
 	def store_new_event(self, _id, event):
@@ -159,7 +159,7 @@ class carchiver(object):
 
 	def store_update_event(self, _id, event):
 		self.collection.update({'_id': _id}, {"$set": event}, safe=True)
-	
+
 	def log_event(self, _id, event):
 		self.logger.debug("Log event '%s' in %s ..." % (_id, self.namespace_log))
 		record = crecord(event)
@@ -179,5 +179,5 @@ class carchiver(object):
 
 		self.storage.drop_namespace(self.namespace)
 		self.storage.drop_namespace(self.namespace_log)
-		
-	
+
+

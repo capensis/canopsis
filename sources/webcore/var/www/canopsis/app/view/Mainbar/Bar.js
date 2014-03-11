@@ -286,6 +286,20 @@ Ext.define('canopsis.view.Mainbar.Bar', {
 			]);
 		}
 
+		//mass ack menu
+		if(global.accountCtrl.checkRoot() || global.accountCtrl.checkGroup('group.CPS_view_admin') || global.accountCtrl.checkGroup('group.CPS_view')) {
+			menu_build = menu_build.concat(
+				[
+					{
+						iconCls: 'icon-crecord_type-derogation',
+						text: _('ack comments'),
+						action: 'openViewMenu',
+						viewId: 'view.comments'
+					}
+				]
+			);
+		}
+
 		//Build menu
 		if(global.accountCtrl.checkRoot() || global.accountCtrl.checkGroup('group.CPS_view_admin') || global.accountCtrl.checkGroup('group.CPS_view')) {
 			menu_build = menu_build.concat([
@@ -300,6 +314,8 @@ Ext.define('canopsis.view.Mainbar.Bar', {
 				}
 			]);
 		}
+
+
 
 		//Reporting menu
 		if(global.accountCtrl.checkRoot() || global.accountCtrl.checkGroup('group.CPS_reporting_admin')) {

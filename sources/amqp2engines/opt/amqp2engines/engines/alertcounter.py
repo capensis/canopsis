@@ -47,6 +47,7 @@ class engine(cengine):
 		# Get SLA configuration
 		self.storage = get_storage(namespace='object', account=caccount(user="root", group="root"))
 		self.entities = self.storage.get_backend('entities')
+		self.objects_backend = self.storage.get_backend('object')
 
 		self.selectors_name = []
 		self.last_resolv = 0
@@ -74,9 +75,20 @@ class engine(cengine):
 		for record in records:
 			self.crits[record.data['crit']] = record.data['delay']
 
+	def reload_ack_comments(self):
+
+		# reload comment for ack comparison
+		self.comments = {}
+		query = self.objects_backend.find({'crecord_type': 'comment', 'referer_event_rks': {'$exists': True} }, {'referer_event_rks':1})
+		for comment in query:
+			for rk in comment['referer_event_rks']:
+				self.comments[rk['rk']] = 1
+		self.logger.warning('loaded %s referer key comments' % len(self.comments))
+
 	def beat(self):
 		self.load_macro()
 		self.load_crits()
+		self.reload_ack_comments()
 
 	def perfdata_key(self, meta):
 		if 're' in meta and meta['re']:
@@ -298,14 +310,18 @@ class engine(cengine):
 		# Update cps_alerts_not_ack
 
 		if state != 0:
+			ackhost = cevent.is_host_acknowledged(event)
+			cvalue0 = int(not ackhost)
+			cvalue1 = int(not not ackhost)
+
 			meta_data['me'] = 'cps_alerts_not_ack'
-			self.increment_counter(meta_data, 1)
+			self.increment_counter(meta_data, cvalue0)
 
 			meta_data['me'] = 'cps_alerts_ack'
 			self.increment_counter(meta_data, 0)
 
 			meta_data['me'] = 'cps_alerts_ack_by_host'
-			self.increment_counter(meta_data, 0)
+			self.increment_counter(meta_data, cvalue1)
 
 	def resolve_selectors_name(self):
 
@@ -333,11 +349,21 @@ class engine(cengine):
 				self.count_alert(tagevent, value)
 
 	def work(self, event, *args, **kargs):
+
+		if event['rk'] in self.comments:
+			self.increment_counter({
+				'type': 'COUNTER',
+				'co': INTERNAL_COMPONENT,
+				'tg': event.get('tags', []),
+				'me': 'cps_alerts_mass_ack'
+			}, 1)
+			# This event is exclided from counts because it's ack contained a special comment that matched withs configuration ones.
+			return event
+
 		validation = event['event_type'] in self.listened_event_type
 		validation = validation and event['component'] not in ['derogation', INTERNAL_COMPONENT]
 
 		if validation:
-			if 'downtime' not in event or not event['downtime']:
 
 				self.update_global_counter(event)
 				self.count_by_crits(event, 1)

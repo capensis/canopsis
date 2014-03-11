@@ -158,7 +158,7 @@ Ext.define('canopsis.view.Top10.View' , {
 		}];
 
 		this.grid = Ext.create('canopsis.lib.view.cgrid', {
-			model: 'Perfdata',
+			model: 'canopsis.model.Perfdata',
 			store: this.store,
 
 			opt_bar: true,

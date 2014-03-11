@@ -48,6 +48,7 @@ function normalApp() {
 			'Topology',
 			'Consolidation',
 			'Rule',
+			'Comments',
 			'Tabs'
 		],
 
