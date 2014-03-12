@@ -83,7 +83,7 @@ class engine(cengine):
 		for comment in query:
 			for rk in comment['referer_event_rks']:
 				self.comments[rk['rk']] = 1
-		self.logger.info('loaded %s referer key comments' % len(self.comments))
+		self.logger.debug('loaded %s referer key comments' % len(self.comments))
 
 	def beat(self):
 		self.load_macro()
