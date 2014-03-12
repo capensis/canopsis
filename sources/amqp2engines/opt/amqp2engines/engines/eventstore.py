@@ -46,8 +46,9 @@ class engine(cengine):
 			'ack',
 			'downtime'
 		]
-		self.beat()
 		self.cdowntime = Cdowntime()
+		self.beat()
+
 	def beat(self):
 		self.cdowntime.reload(self.beat_interval)
 

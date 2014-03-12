@@ -83,7 +83,7 @@ class engine(cengine):
 		for comment in query:
 			for rk in comment['referer_event_rks']:
 				self.comments[rk['rk']] = 1
-		self.logger.warning('loaded %s referer key comments' % len(self.comments))
+		self.logger.info('loaded %s referer key comments' % len(self.comments))
 
 	def beat(self):
 		self.load_macro()
@@ -187,8 +187,8 @@ class engine(cengine):
 				# it must be not count, so decrement alert counter
 				if event['state'] in [1,2,3]:
 					meta_data_decrement = {
-						'type': 'COUNTER', 
-						'co': INTERNAL_COMPONENT
+						'type': 'COUNTER',
+						'co': INTERNAL_COMPONENT,
 						'me': "cps_statechange_{0}".format(event['state'])
 					}
 					self.increment_counter(meta_data, -1)
