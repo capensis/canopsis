@@ -26,7 +26,6 @@ from cstatemap import cstatemap
 import cmfilter
 import time
 import json
-from cdowntime import Cdowntime
 
 NAME="derogation"
 
@@ -38,8 +37,6 @@ class engine(cengine):
 
 	def pre_run(self):
 		self.storage = get_storage(namespace='object', account=caccount(user="root", group="root"))
-		self.cdowntime = Cdowntime(self.storage)
-		self.cdowntime.reload()
 		self.beat()
 
 	def time_conditions(self, derogation):
@@ -162,7 +159,7 @@ class engine(cengine):
 		return event
 
 	def work(self, event, *args, **kargs):
-		if 'component' in event and 'resource' in event and self.cdowntime.is_downtime(event['component'], event['resource']):
+		if 'downtime' in event and event['downtime']:
 			event['state'] = 0
 			self.logger.debug('derogation to apply on event')
 		else:
@@ -219,7 +216,6 @@ class engine(cengine):
 			self.amqp.publish(event, rk, self.amqp.exchange_name_events)
 
 	def beat(self):
-		self.cdowntime.reload()
 		self.derogations = []
 
 		## Extract ids

@@ -21,7 +21,7 @@
 from carchiver import carchiver
 
 from cengine import cengine
-
+from cdowntime import Cdowntime
 NAME="eventstore"
 
 class engine(cengine):
@@ -46,6 +46,11 @@ class engine(cengine):
 			'ack',
 			'downtime'
 		]
+		self.cdowntime = Cdowntime()
+		self.beat()
+
+	def beat(self):
+		self.cdowntime.reload(self.beat_interval)
 
 	def work(self, event, *args, **kargs):
 		event_id = event['rk']
@@ -69,6 +74,9 @@ class engine(cengine):
 
 		elif event_type in ['check', 'selector', 'sla', 'eue', 'topology', 'consolidation']:
 			_id = self.archiver.check_event(event_id, event)
+			if 'downtime' in event and event['downtime']:
+				event['previous_state_change_ts'] = cdowntime.get_downtime_end_date(event['component'], event.get('resource',''))
+
 			if _id:
 				event['_id'] = _id
 				event['event_id'] = event_id
