@@ -113,6 +113,9 @@ Ext.define('widgets.category_graph.category_graph', {
 								if(me.pctInLabel) {
 									result += slice.percent.toFixed(1) + '%';
 								}
+								else if(me.humanReadable) {
+									result += rdr_humanreadable_value(slice.data[0][1], slice.node.bunit);
+								}
 								else {
 									result += slice.data[0][1];
 								}
@@ -152,7 +155,15 @@ Ext.define('widgets.category_graph.category_graph', {
 					show: (this.diagram_type === 'column' && !this.verticalDisplay)
 				},
 				yaxis: {
-					show: (this.diagram_type === 'column' && this.verticalDisplay)
+					show: (this.diagram_type === 'column' && this.verticalDisplay),
+					tickFormatter: function(val, axis) {
+						if(me.humanReadable) {
+							return rdr_humanreadable_value(val, axis.options.unit);
+						}
+						else {
+							return val + ' ' + axis.options.unit;
+						}
+					}
 				},
 				tooltip: this.tooltip,
 				tooltipOpts: {
