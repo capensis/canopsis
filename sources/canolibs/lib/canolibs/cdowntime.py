@@ -21,14 +21,19 @@
 from crecord import crecord
 
 import time
-
+from cstorage import get_storage
+from caccount import caccount
 
 
 class Cdowntime(crecord):
 	"""
 		This class provide easy management for downtime by allowing component/resource test against any downtime at now time
 	"""
-	def __init__(self, storage):
+	def __init__(self, storage=None):
+
+		if not storage:
+			storage = get_storage(namespace='object', account=caccount(user="root", group="root"))
+
 		self.storage = storage
 		self.backend = storage.get_backend('downtime')
 
@@ -47,6 +52,17 @@ class Cdowntime(crecord):
 		downtimes = self.backend.find(query)
 		self.downtimes = [downtime for downtime in downtimes]
 		return self.downtimes
+
+	def get_downtime_end_date(self, component, resource):
+		now = time.time()
+
+		downtimes_end = [now]
+
+		for downtime in self.downtimes:
+			if downtime['component'] == component and downtime['resource'] == resource and downtime['start'] < now and downtime['end'] > now:
+				downtimes_end.append(downtime['end'])
+
+		return max(downtimes_end)
 
 
 	def is_downtime(self, component, resource):
