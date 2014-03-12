@@ -178,6 +178,8 @@ Ext.define('widgets.category_graph.category_graph', {
 	},
 
 	prepareData: function() {
+		this.callParent(arguments);
+
 		var label_axis_group = {};
 		var label_axis_group_count = 0;
 

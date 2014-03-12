@@ -27,6 +27,19 @@
 
     <title>Canopsis</title>
 
+	<script type="text/javascript">
+		if(!Function.prototype.bind) {
+			Function.prototype.bind = function(ctx) {
+				var func = this;
+				var args = Array.prototype.slice.call(arguments, 1);
+
+				return function() {
+					return func.apply(ctx, args.concat(Array.prototype.slice.call(arguments)));
+				};
+			};
+		}
+	</script>
+
 	<!-- Theme -->
 	<link rel="stylesheet" type="text/css" href="/static/webcore-libs/bootstrap/css/pnotify_bootstrap.css">
 	
@@ -92,7 +105,7 @@
 	<script type="text/javascript" src="/static/webcore-libs/moment.min.js"></script> 
 
 	<!-- FlotCharts -->
-	<script type="application/javascript" src="/static/webcore-libs/flot/jquery.flot.js"></script>
+	<script type="application/javascript" src="/static/webcore-libs/flot/jquery.flot.canopsis.js"></script>
 	<script type="application/javascript" src="/static/webcore-libs/flot/jquery.flot.resize.js"></script>
 	<script type="application/javascript" src="/static/webcore-libs/flot/jquery.flot.time.js"></script>
 	<script type="application/javascript" src="/static/webcore-libs/flot/jquery.flot.crosshair.js"></script>
