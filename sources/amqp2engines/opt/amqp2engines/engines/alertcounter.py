@@ -182,6 +182,16 @@ class engine(cengine):
 					sla_states['out'] = 1
 			elif ack:
 				sla_states['ok'] = 1
+			elif hostgroup == None:
+				# spontaneous solve case
+				# it must be not count, so decrement alert counter
+				if event['state'] in [1,2,3]:
+					meta_data_decrement = {
+						'type': 'COUNTER', 
+						'co': INTERNAL_COMPONENT
+						'me': "cps_statechange_{0}".format(event['state'])
+					}
+					self.increment_counter(meta_data, -1)
 
 			# increment all counts with computed value
 			for sla_state in sla_states:
