@@ -56,21 +56,14 @@ class engine(cengine):
 		event_id = event['rk']
 
 		exchange = None
-		try:
-			exchange = event['exchange']
+		if 'exchange' in event:
 			del event['exchange']
-		except:
-			pass
 
 		event_type = event['event_type']
 
 		if event_type not in self.event_types:
 			self.logger.warning("Unknown event type '%s', id: '%s', event:\n%s" % (event_type, event_id, event))
 			return event
-
-		## Archive event
-		if event_type == 'perf':
-			pass
 
 		elif event_type in ['check', 'selector', 'sla', 'eue', 'topology', 'consolidation']:
 			_id = self.archiver.check_event(event_id, event)
