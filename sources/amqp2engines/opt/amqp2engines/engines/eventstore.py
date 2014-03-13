@@ -46,7 +46,7 @@ class engine(cengine):
 			'ack',
 			'downtime'
 		]
-		self.cdowntime = Cdowntime()
+		self.cdowntime = Cdowntime(self.logger)
 		self.beat()
 
 	def beat(self):
@@ -75,7 +75,7 @@ class engine(cengine):
 		elif event_type in ['check', 'selector', 'sla', 'eue', 'topology', 'consolidation']:
 			_id = self.archiver.check_event(event_id, event)
 			if 'downtime' in event and event['downtime']:
-				event['previous_state_change_ts'] = cdowntime.get_downtime_end_date(event['component'], event.get('resource',''))
+				event['previous_state_change_ts'] = self.cdowntime.get_downtime_end_date(event['component'], event.get('resource',''))
 
 			if _id:
 				event['_id'] = _id
