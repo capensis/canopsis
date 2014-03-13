@@ -36,14 +36,123 @@ import hashlib
 import task_mail
 from wkhtmltopdf.wrapper import Wrapper
 
+from datetime import timedelta, datetime
+import calendar
+
+from dateutil.relativedelta import relativedelta
+
 init 	= cinit()
 logger 	= init.getLogger('Reporting Task')
+logger.setLevel('DEBUG')
 
 @task
 @decorators.log_task
-def render_pdf(fileName=None, viewName=None, startTime=None, stopTime=None, interval=None, account=None, mail=None, owner=None, orientation='Portrait', pagesize='A4'):
+def render_pdf(fileName=None, viewName=None, startTime=None, stopTime=None, interval=None, account=None, mail=None, owner=None, orientation='Portrait', pagesize='A4', _from=None, _to=None, timezone=0):
+
+	logger.info('start render')
+
+	logger.debug("fileName: %s " % fileName)
+	logger.debug("viewName: %s " % viewName)
+	logger.debug("startTime: %s " % startTime)
+	logger.debug("stopTime: %s " % stopTime)
+	logger.debug("interval: %s " % interval)
+	logger.debug("account: %s " % account)
+	logger.debug("mail: %s " % mail)
+	logger.debug("_from: %s " % _from)
+	logger.debug("_to: %s " % _to)
+	logger.debug("timezone: %s " % timezone)
+
+	now = time.time()
+
+	timezone = int(timezone)
+
+	def get_timestamp(_time):
+		"""
+		Get a timestamp from an input _time struct.
+		"""
+		result = 0
+
+		_datetime = datetime.utcfromtimestamp(now)
+
+		td = timedelta(seconds=timezone)
+		_datetime -= td
+
+		kwargs = dict()
+
+		day = _time.get('day')
+		if day is not None:
+			logger.debug("day %s" % day)
+			kwargs['day'] = int(day)
+
+		month = _time.get('month')
+		if month is not None:
+			logger.debug("month %s" % month)
+			kwargs['month'] = int(month)
+
+		hour = _time.get('hour')
+		if hour is not None:
+			logger.debug("hour %s" % hour)
+			kwargs['hour'] = int(hour)
+
+		minute = _time.get('minute')
+		if minute is not None:
+			logger.debug("minute %s" % minute)
+			kwargs['minute'] = int(minute)
+
+		logger.debug(_datetime)
+
+		_datetime = _datetime.replace(**kwargs)
+
+		logger.debug(_datetime)
+
+		day_of_week = _time.get('day_of_week')
+		if day_of_week is not None:
+			logger.debug("day_of_week %s" % day_of_week)
+			day_of_week = int(day_of_week)
+			weekday = calendar.weekday(_datetime.year, _datetime.month, _datetime.day)
+			day = weekday - day_of_week
+			logger.debug("day %s" % day)
+			td = timedelta(days=day)
+			_datetime -= td
+
+		result = time.mktime(_datetime.timetuple())
+
+		logger.debug('result %s ' % result)
+
+		return result
+
+	if _from is not None and _from:
+		if _from['type'] == 'Duration':
+			date = datetime.now()
+			kwargs = {_from['intervalLength']: float(_from['intervalUnit'])}
+			rd = relativedelta(**kwargs)
+			date -= rd
+			startTime = time.mktime(date.timetuple())
+		elif _from['type'] == 'Date and Time':
+			startTime = get_timestamp(_from)
+		else:
+			logger.error('type value is not understood _from: {0}'.format(_from['type']))
+
+	if startTime is not None:
+		logger.info('_from : {0} and startTime : {1} ({2})'.format(_from, startTime, datetime.utcfromtimestamp(startTime)))
+
+	if startTime and _to is not None and _to:
+		if _to['type'] == 'Duration':
+			date = datetime.fromtimestamp(startTime)
+			kwargs = {_to['intervalLength']: float(_to['intervalUnit'])}
+			rd = relativedelta(**kwargs)
+			date += rd
+			stopTime = time.mktime(date.timetuple())
+		elif _to['type'] == 'Date and Time':
+			stopTime = get_timestamp(_to)
+		else:
+			logger.error('type value is not understood in _to: {0}'.format(_to['type']))
+
+	if stopTime is not None:
+		logger.info('_to : {0} and stopTime : {1} ({2})'.format(_to, stopTime, datetime.utcfromtimestamp(stopTime)))
+
 	if not stopTime:
-		stopTime = int(time.time())
+		stopTime = int(time.mktime(datetime.now().timetuple()))
 
 	if not startTime:
 		if interval:
@@ -79,9 +188,13 @@ def render_pdf(fileName=None, viewName=None, startTime=None, stopTime=None, inte
 
 	#set fileName
 	if fileName is None:
-		toDate = date.fromtimestamp(int(stopTime))
+		toDate = datetime.utcfromtimestamp(int(stopTime))
+		td = timedelta(seconds=timezone)
+		toDate -= td
 		if startTime and startTime != -1:
-			fromDate = date.fromtimestamp(int(startTime))
+			fromDate = datetime.utcfromtimestamp(int(startTime))
+			td = timedelta(seconds=timezone)
+			fromDate -= td
 			fileName = '%s_From_%s_To_%s.pdf' % (view_record.name, fromDate, toDate)
 		else:
 			fileName = '%s_%s.pdf' % (view_record.name,toDate)
@@ -112,12 +225,19 @@ def render_pdf(fileName=None, viewName=None, startTime=None, stopTime=None, inte
 							orientation=orientation,
 							pagesize=pagesize)
 
+	wkhtml_wrapper.logger = logger
+
 	# Run rendering
-	logger.debug('Run pdf rendering')
+	logger.info('Run pdf rendering')
 	wkhtml_wrapper.run_report()
 
 	logger.info('Put it in grid fs: %s' % file_path)
-	doc_id = put_in_grid_fs(file_path, fileName, account,owner)
+	try:
+		doc_id = put_in_grid_fs(file_path, fileName, account,owner)
+	except Exception as e:
+		import inspect
+		inspect.trace()
+		logger.info('dafuck %s, %s ' % (e, inspect.trace()))
 	logger.info('Remove tmp report file with docId: %s' % doc_id)
 	os.remove(file_path)
 

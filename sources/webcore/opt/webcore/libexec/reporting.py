@@ -29,7 +29,7 @@ from pymongo import Connection
 import gridfs
 
 import time
-from datetime import date
+from datetime import datetime
 
 ## Canopsis
 from caccount import caccount
@@ -46,17 +46,19 @@ from libexec.auth import get_account
 from libexec.account import check_group_rights
 
 logger = logging.getLogger('Reporting')
+logger.setLevel('DEBUG')
 
 #group who have right to access 
 group_managing_access = ['group.CPS_reporting_admin']
 
 #########################################################################
 
+@post('/reporting/:startTime/:stopTime/:view_name/:mail/:timezone',checkAuthPlugin={'authorized_grp':group_managing_access})
 @post('/reporting/:startTime/:stopTime/:view_name/:mail',checkAuthPlugin={'authorized_grp':group_managing_access})
 @post('/reporting/:startTime/:stopTime/:view_name',checkAuthPlugin={'authorized_grp':group_managing_access})
-def generate_report(startTime, stopTime,view_name,mail=None):
-	stopTime = int(stopTime)
-	startTime = int(startTime)
+def generate_report(startTime, stopTime,view_name,mail=None, timezone=0):
+	stopTime = int(stopTime) + int(timezone)
+	startTime = int(startTime) + int(timezone)
 
 	account = get_account()
 	storage = cstorage(account=account, namespace='object')
@@ -66,17 +68,16 @@ def generate_report(startTime, stopTime,view_name,mail=None):
 			mail = json.loads(mail)
 		except Exception, err:
 			logger.error('Error while transform string mail to object' % err)
-			mail=None
+			mail = None
 	try:
 		record = storage.get(view_name,account=account)
 	except Exception, err:
 		logger.error(err)
 		return {'total': 1, 'success': False, 'data': [str(err)] }
-		
 
-	toDate = str(date.fromtimestamp(int(stopTime)))
+	toDate = datetime.utcfromtimestamp(int(stopTime))
 	if startTime and startTime != -1:
-		fromDate = str(date.fromtimestamp(int(startTime)))
+		fromDate = datetime.utcfromtimestamp(int(startTime))
 		file_name = '%s_From_%s_To_%s.pdf' % (record.name,fromDate,toDate)
 	else:
 		file_name = '%s_%s.pdf' % (record.name,toDate)
@@ -85,6 +86,7 @@ def generate_report(startTime, stopTime,view_name,mail=None):
 	logger.debug('view_name:   %s' % view_name)
 	logger.debug('startTime:   %s' % startTime)
 	logger.debug('stopTime:    %s' % stopTime)
+	logger.debug('timezone:    %s' % timezone)
 	logger.debug('mail:    %s' % mail)
 
 	result = None

@@ -29,6 +29,9 @@ Ext.define('canopsis.model.Schedule', {
 		{name: 'kwargs' , defaultsValue: {}},
 		{name: 'next_run_time'},
 		{name: 'cron', defaultValue: undefined},
+		{name: 'timezone', defaultValue: (new Date().getTimezoneOffset() / 60)},
+		{name: 'from', defaultValue: undefined},
+		{name: 'to', defaultValue: undefined},
 		{name: 'log'},
 		{
 			name: 'mail',
@@ -52,10 +55,7 @@ Ext.define('canopsis.model.Schedule', {
 		{name: 'aaa_group'},
 		{name: 'aaa_owner'},
 
-		{name: 'exporting_intervalLength'},
-		{name: 'exporting_intervalUnit'},
 		{name: 'frequency',defaultValue:'day'},
-
 
 		{name: 'exporting_interval'},
 		{name: 'exporting_account'},
@@ -64,12 +64,11 @@ Ext.define('canopsis.model.Schedule', {
 		{name: 'exporting_owner'},
 		{name: 'exporting_viewName'},
 
-		{name: 'exporting_mail'},
 		{name: 'exporting_recipients'},
 		{name: 'exporting_subject'},
 
 		{name: 'crontab_month'},
 		{name: 'crontab_day_of_week'},
-		{name: 'crontab_day'}
+		{name: 'crontab_day'},
 	]
 });

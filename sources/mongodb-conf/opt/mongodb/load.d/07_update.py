@@ -22,6 +22,7 @@ import logging, math
 from cstorage import get_storage
 from caccount import caccount
 from datetime import timedelta
+import time
 
 logger = None
 root = caccount(user="root", group="root")
@@ -73,9 +74,6 @@ def update_schedule():
 		if 'starttime' in kwargs:
 			del kwargs['starttime']
 
-		#if 'hour' in cron and 'minute':
-		#	record.data['crontab_hours'] = '%i:%02d' % (int(cron['hour']),int(cron['minute']))
-
 		if 'day_of_week' in cron:
 			record.data['crontab_day_of_week'] = cron['day_of_week']
 
@@ -89,23 +87,74 @@ def update_schedule():
 			record.data['frequency'] = record.data['every']
 			del record.data['every']
 
+		record.data['kwargs'] = kwargs
+
 		if 'interval' in kwargs and kwargs['interval']:
 			nbDays = timedelta(seconds=kwargs['interval']).days
 
+			if 'from' not in record.data:
+				record.data['from'] = {'type': 'Duration'}
+
+			if 'to' not in record.data:
+				record.data['to'] = {'type': 'Duration'}
+
+			exporting = dict()
+
 			if nbDays >= 365:
-				record.data['exporting_intervalLength'] = 31557600
-				record.data['exporting_intervalUnit'] = int(nbDays/365)
+				exporting['intervalLength'] = 'years'
+				exporting['intervalUnit'] = int(nbDays/365)
 			elif nbDays >= 30:
-				record.data['exporting_intervalLength'] = 2629800
-				record.data['exporting_intervalUnit'] = int(nbDays/30)
+				exporting['intervalLength'] = 'months'
+				exporting['intervalUnit'] = int(nbDays/30)
 			elif nbDays >= 7:
-				record.data['exporting_intervalLength'] = 604800
-				record.data['exporting_intervalUnit'] = int(nbDays/7)
+				exporting['intervalLength'] = 'weeks'
+				exporting['intervalUnit'] = int(nbDays/7)
+			elif nbDays >= 1:
+				exporting['intervalLength'] = 'days'
+				exporting['intervalUnit'] = math.floor(nbDays)
 			else:
-				record.data['exporting_intervalLength'] = 86400
-				record.data['exporting_intervalUnit'] = math.floor(nbDays)
+				exporting['intervalLength'] = 'hours'
+				exporting['intervalUnit'] = math.floor(nbDays)
 
-			record.data['exporting_interval'] = True
+			record.data['from'].update(exporting)
+			record.data['kwargs']['_from'] = record.data['from']
+			record.data['to'].update(exporting)
+			record.data['kwargs']['_to'] = record.data['to']
 
-		record.data['kwargs'] = kwargs
+		if 'exporting_intervalUnit' in record.data:
+			exporting = {
+				'type': 'Duration',
+				'intervalUnit': record.data['exporting_intervalUnit']
+			}
+
+			lengths_by_time = {
+				31557600: 'years',
+				2629800: 'months',
+				604800: 'weeks',
+				86400: 'days',
+				3600: 'hours'
+			}
+
+			exporting_intervalLength = record.data.get('exporting_intervalLength')
+			if exporting_intervalLength is not None:
+				exporting_intervalLength = lengths_by_time.get(exporting_intervalLength, 'days')
+
+			if 'from' not in record.data:
+				record.data['from'] = exporting
+			else:
+				record.data['from'].update(exporting)
+			record.data['kwargs']['_from'] = record.data['from']
+
+			if 'to' not in record.data:
+				record.data['to'] = exporting
+			else:
+				record.data['to'].update(exporting)
+			record.data['kwargs']['_to'] = record.data['to']
+
+			del record.data['exporting_intervalLength']
+			del record.data['exporting_intervalUnit']
+
+		if 'timezone' not in record.data:
+			record.data['timezone'] = time.timezone
+
 		storage.put(record)
