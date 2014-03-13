@@ -120,4 +120,5 @@ class Wrapper(object):
 			waitTime = waitTime + 2
 			if waitTime >= self.settings.get('timeout',300):
 				result.kill()
+				self.logger.debug('Process failed')
 		self.logger.debug('Pdf rendered, leaving wrapper')
