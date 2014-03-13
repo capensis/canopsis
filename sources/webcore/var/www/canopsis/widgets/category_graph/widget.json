@@ -295,8 +295,7 @@
 						"area_color",
 						"trend_curve",
 						"u",
-						"yAxis",
-						"xpos"
+						"yAxis"
 					]
 				}
 			]
@@ -356,10 +355,6 @@
 							"fieldLabel": "Category",
 							"name": "category",
 							"emptyText": "Type category name here"
-						},{
-							"xtype": "numberfield",
-							"fieldLabel": "X position (Bar graph specific option)",
-							"name": "xpos"
 						}
 					]
 				}

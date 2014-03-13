@@ -278,6 +278,7 @@ Ext.define('canopsis.lib.view.cwidgetGraph', {
 				return a.label.localeCompare( b.label );
 			});
 		}
+
 		return series;
 	},
 
