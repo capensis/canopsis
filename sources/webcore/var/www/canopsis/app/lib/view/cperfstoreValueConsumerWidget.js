@@ -62,8 +62,6 @@ Ext.define('canopsis.lib.view.cperfstoreValueConsumerWidget', {
 		}
 		else {
 			log.debug('No nodes specified', this.logAuthor);
-
-			this.getChart().showLoading(_('Please choose a valid metric in wizard'));
 		}
 	},
 
