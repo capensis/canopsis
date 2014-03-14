@@ -271,24 +271,20 @@ Ext.define('widgets.category_graph.category_graph', {
 		);
 	},
 
-	prepareData: function(serieId) {
-		this.callParent(arguments);
-	},
+	addPoint: function(serieId, value, serieIndex) {
+		var point = [(this.stacked_graph ? 0 : serieIndex), value[1]];
 
-	addPoint: function(serieId, value) {
-		this.series[serieId].data = [value];
+		this.series[serieId].data = [point];
 	},
 
 	getSeriesConf: function() {
-		var series = this.callParent(arguments);
-
 		// check if categories are set
 		// By default, it contains the null object, so empty is 1
 		if(this.categories.length === 1) {
-			return series;
+			return this.callParent(arguments);
 		}
 
-		series = [];
+		var series = [];
 
 		for(var i = 0; i < this.categories.length; i++) {
 			var category = this.categories[i];
