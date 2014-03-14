@@ -73,6 +73,46 @@ Ext.define('widgets.category_graph.category_graph', {
 
 	tooltip: true,
 
+	initComponent: function() {
+		this.callParent(arguments);
+
+		// list nodes by categories
+		this.categories = [null];
+		this.nodesByCategories = {};
+		this.nodesNoCategory = [];
+
+		for(var nodeId in this.nodesByID) {
+			var node = this.nodesByID[nodeId];
+
+			// classify the node if category is set
+			if(node.category) {
+				// try to find the category index
+				var catIdx = this.categories.indexOf(node.category);
+
+				if(catIdx === -1) {
+					catIdx = this.categories.push(node.category) - 1;
+				}
+
+				node.categoryIndex = catIdx;
+
+				// create the category if needed
+				if(!this.nodesByCategories[node.category]) {
+					this.nodesByCategories[node.category] = [];
+				}
+
+				this.nodesByCategories[node.category].push(node);
+			}
+			else {
+				node.categoryIndex = 0;
+				this.nodesNoCategory.push(node);
+			}
+		}
+
+		if(this.categories.length > 1) {
+			this.stacked_graph = false;
+		}
+	},
+
 	setChartOptions: function() {
 		this.callParent(arguments);
 
@@ -113,6 +153,9 @@ Ext.define('widgets.category_graph.category_graph', {
 								if(me.pctInLabel) {
 									result += slice.percent.toFixed(1) + '%';
 								}
+								else if(me.humanReadable) {
+									result += rdr_humanreadable_value(slice.data[0][1], slice.node.bunit);
+								}
 								else {
 									result += slice.data[0][1];
 								}
@@ -152,67 +195,172 @@ Ext.define('widgets.category_graph.category_graph', {
 					show: (this.diagram_type === 'column' && !this.verticalDisplay)
 				},
 				yaxis: {
-					show: (this.diagram_type === 'column' && this.verticalDisplay)
+					show: (this.diagram_type === 'column' && this.verticalDisplay),
+					tickFormatter: function(val, axis) {
+						if(me.humanReadable) {
+							return rdr_humanreadable_value(val, axis.options.unit);
+						}
+						else {
+							return val + ' ' + axis.options.unit;
+						}
+					}
 				},
 				tooltip: this.tooltip,
 				tooltipOpts: {
-					content: function(label, xval, yval, flotItem) {
-						if(me.humanReadable) {
+					content: function(label, xval, yval, item) {
+						var val = item.series.data[item.dataIndex][1];
+
+						if(me.categories.length > 1) {
+							for(var i = 0; i < me.categories.length; i++) {
+								var category = me.categories[i];
+								var serie = me.getSerieForCategory(category);
+								var nodes = (category ? me.nodesByCategories[category] : me.nodesNoCategory);
+
+								if(serie.label === label) {
+									var output = '<p><b>Category: ' + label + '</b></p><p>';
+
+									// add total
+									output += '<b>Total:</b> ';
+
+									if(me.humanReadable) {
+										val = rdr_humanreadable_value(val, serie.node.bunit);
+									}
+
+									output += val;
+
+									// add each categorized series value
+									for(var j = 0; j < nodes.length; j++) {
+										var node = nodes[j];
+										var serieId = node.id + '.' + node.metrics[0];
+										var serie = me.series[serieId];
+
+										output += '<br/><b>' + serie.label + ':</b> ';
+
+										var subval = serie.data[0][1];
+
+										if(me.humanReadable) {
+											subval = rdr_humanreadable_value(subval, serie.node.bunit);
+										}
+
+										output += subval;
+									}
+
+									// finalize output
+									output += '</p>';
+
+									return output;
+								}
+							}
+						}
+						else {
 							for(var serieId in me.series) {
 								var serie = me.series[serieId];
 
 								if(serie.label === label) {
-									yval = rdr_humanreadable_value(yval, serie.node.bunit);
-									break;
+									if(me.humanReadable) {
+										val = rdr_humanreadable_value(val, serie.node.bunit);
+									}
+
+									return '<b>' + label + ':</b> ' + val;
 								}
 							}
 						}
-
-						return "<b>" + label + ":</b>" + yval;
 					}
 				}
 			}
 		);
 	},
 
-	prepareData: function() {
-		var label_axis_group = {};
-		var label_axis_group_count = 0;
-
-		for(var node_id in this.series) {
-			var serie = this.series[node_id];
-		}
+	prepareData: function(serieId) {
+		this.callParent(arguments);
 	},
 
-	addPoint: function(serieId, value, serieIndex) {
-		var serie = this.series[serieId];
-		var x = serie.label_axis_group;
+	addPoint: function(serieId, value) {
+		this.series[serieId].data = [value];
+	},
 
-		log.debug("addPoint");
-		log.dump(serie);
-		if(serie.node.xpos !== undefined && serie.node.xpos != "")
-		{
-			log.debug("x pos : " + serie.node.xpos + "for serie :");
-			log.dump(serie);
+	getSeriesConf: function() {
+		var series = this.callParent(arguments);
 
-			x = serie.node.xpos;
+		// check if categories are set
+		// By default, it contains the null object, so empty is 1
+		if(this.categories.length === 1) {
+			return series;
 		}
-		else if(this.stacked_graph !== undefined && this.stacked_graph === true) {
-			x = 0;
+
+		series = [];
+
+		for(var i = 0; i < this.categories.length; i++) {
+			var category = this.categories[i];
+			var serie = this.getSerieForCategory(category);
+
+			series.push(serie);
+		}
+
+		return series;
+	},
+
+	getSerieForCategory: function(category) {
+		// fetch nodes
+		var nodes;
+
+		if(category === null) {
+			nodes = this.nodesNoCategory;
+			category = 'No Category';
 		}
 		else {
-			x = serieIndex;
+			nodes = this.nodesByCategories[category];
 		}
 
-		var point = [x, value[1]];
+		// generate series
+		var cat_serie = {
+			node: {
+				id: 'category',
+				metrics: [category]
+			},
+			label: category,
+			data: [],
+			xaxis: 1,
+			yaxis: 1
+		};
 
-		this.series[serieId].data = [point];
+		// consolidates points in the same category
+		var val = 0;
+		var idx = 0;
+
+		for(var i = 0; i < nodes.length; i++) {
+			var node = nodes[i];
+			var serieId = node.id + '.' + node.metrics[0];
+			var serie = this.series[serieId];
+
+			if(!serie) {
+				serie = this.getSerieForNode(node.id);
+			}
+
+			if(serie.data.length > 0) {
+				val += serie.data[0][1];
+			}
+
+			if(node.categoryIndex) {
+				idx = node.categoryIndex;
+			}
+
+			cat_serie.node.bunit = node.bunit;
+		}
+
+		cat_serie.data = [[idx, val]];
+
+		// add new serie to series
+		var catSerieId = 'category.' + category;
+		this.series[catSerieId] = cat_serie;
+
+		return cat_serie;
 	},
 
 	createChart: function() {
 		/* Computes the difference between the series sum and max user input value and then add it to series if max value > series sum */
 		//clean series first
-		delete this.series['max_diff'];
+		delete this.series['internal.max_diff'];
 
 		if(this.max > 0) {
 			var total = 0;
@@ -235,10 +383,13 @@ Ext.define('widgets.category_graph.category_graph', {
 				var stacked = this.stacked_graph;
 				var max = this.max;
 
-				this.series.max_diff = {
+				this.series['internal.max_diff'] = {
 					label: label,
 					data: [[stacked ? 0: serie_count, max - total]],
-					node: {},
+					node: {
+						id: 'internal',
+						metrics: ['max_diff']
+					},
 				};
 			}
 		}

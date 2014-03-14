@@ -1,4 +1,4 @@
-//need:app/lib/form/field/cdate.js,app/lib/store/cstore.js
+ //need:app/lib/form/field/cdate.js,app/lib/store/cstore.js
 /*
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
@@ -255,6 +255,7 @@ Ext.define('cfilter.object', {
 			margin: '0 0 0 5',
 			value: true,
 			hidden: true,
+			editable: false,
 			isFormField: false,
 			displayField: 'text',
 			valueField: 'value',
