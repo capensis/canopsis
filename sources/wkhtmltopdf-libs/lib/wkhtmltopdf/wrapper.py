@@ -26,7 +26,7 @@ from time import time
 logging.basicConfig()
 
 class Wrapper(object):
-	def __init__(self,filename, viewName, startTime, stopTime, account, wrapper_conf_file, orientation='Portrait', pagesize='A4'):
+	def __init__(self,filename, viewName, startTime, stopTime, subset_selection, account, wrapper_conf_file, orientation='Portrait', pagesize='A4'):
 		self.logger = logging.getLogger('[Wkhtml wrapper]')
 		self.logger.setLevel(logging.DEBUG)
 
@@ -37,6 +37,7 @@ class Wrapper(object):
 		self.settings['viewName'] = viewName
 		self.settings['startTime'] = startTime
 		self.settings['stopTime'] = stopTime
+		self.settings['subset_selection'] = subset_selection
 		self.settings['account'] = account
 		self.settings['orientation'] = orientation
 		self.settings['pagesize'] = pagesize
@@ -91,7 +92,7 @@ class Wrapper(object):
 
 		cmd = "wkhtmltopdf -O %s -s %s %s %s %s --window-status %s\
 				-T 21mm --header-line --header-spacing 5\
-				'http://127.0.0.1:8082/%s/static/canopsis/index.html?exportMode=true&view_id=%s&from=%s&to=%s&authkey=%s'\
+				'http://127.0.0.1:8082/%s/static/canopsis/index.html?exportMode=true&view_id=%s&from=%s&to=%s&subset_selection=%s&authkey=%s'\
 				'%s/%s' 2>&1 | grep -v\
 				'settings.windowStatus:ready'" % (
 													self.settings['orientation'], 
@@ -104,6 +105,7 @@ class Wrapper(object):
 													self.settings['viewName'],
 													export_from,
 													self.settings.get('stopTime', int(time())),
+													self.settings.get('subset_selection', "{}"),
 													self.settings['account'].get_authkey(),
 													self.settings['report_dir'], 
 													self.settings['filename']

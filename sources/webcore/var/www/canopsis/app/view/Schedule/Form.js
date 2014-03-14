@@ -203,6 +203,7 @@ Ext.define('canopsis.view.Schedule.Form', {
 					valueField: 'value',
 					padding: '0 0 5 5',
 					value: global.commonTs.day,
+
 					store: {
 						xtype: 'store',
 						fields: ['value', 'text'],
@@ -285,5 +286,108 @@ Ext.define('canopsis.view.Schedule.Form', {
 		var frequencyCombo = this.down('*[name="exporting_intervalLength"]');
 
 		this.down('*[name="exporting_owner"]').setValue(global.account.user);
+
+		this.initializePopups();
+	},
+
+	initializePopups: function() {
+		this.addExclusionIntervalWindow = Ext.create('Ext.window.Window', {
+			closeAction:'hide',
+			cls: 'scheduleAddExclusionIntervalWindow',
+			modal:true,
+			items:[{
+				xtype: "panel",
+				items:[{
+					xtype: "cdate",
+					itemId: "newExclusionInterval_from",
+					label_text: "From"
+				},{
+					xtype: "cdate",
+					itemId: "newExclusionInterval_to",
+					label_text: "To"
+				},{
+					xtype: "button",
+					text: "Save",
+					action: "addExclusionInterval"
+				}]
+			}]
+		});
+
+		this.addComponentResourceWindow = Ext.create('Ext.window.Window', {
+			closeAction:'hide',
+			cls: 'scheduleAddComponentResourceWindow',
+			modal:true,
+			items:[{
+				xtype: "panel",
+				items:[{
+					xtype: "textfield",
+					itemId: "component",
+					fieldLabel: "Component"
+				},{
+					xtype: "textfield",
+					itemId: "resource",
+					fieldLabel: "Resource"
+				},{
+					xtype: "button",
+					text: "Save",
+					action: "addComponentResource"
+				}]
+			}]
+		});
+
+		this.addHostgroupWindow = Ext.create('Ext.window.Window', {
+			closeAction:'hide',
+			cls: 'scheduleAddHostgroupWindow',
+			modal:true,
+			items:[{
+				xtype: "panel",
+				items:[{
+					xtype: "textfield",
+					itemId: "hostgroup",
+					fieldLabel: "Hostgroup"
+				},{
+					xtype: "button",
+					text: "Save",
+					action: "addHostgroup"
+				}]
+			}]
+		});
+
+		// this.down('cgrid#scheduleHostgroupsGrid button[action="add"]').handler = this.showAddHostgroupWindow.bind(this);
+		// this.down('cgrid#scheduleExclusionIntervalGrid button[action="add"]').handler = this.showAddExclusionIntervalWindow.bind(this);
+
+		// this.addExclusionIntervalWindow.down('button[action="addExclusionInterval"]').handler = this.addExclusionInterval.bind(this);
+		// this.addHostgroupWindow.down('button[action="addHostgroup"]').handler = this.addHostgroup.bind(this);
+	},
+
+	showAddExclusionIntervalWindow: function() {
+		log.debug("showAddExclusionIntervalWindow");
+		this.addExclusionIntervalWindow.show();
+	},
+
+	showAddHostgroupWindow: function() {
+		log.debug("showAddHostgroupWindow");
+		this.addHostgroupWindow.show();
+	},
+
+	addExclusionInterval: function() {
+		log.debug("new exclusion interval");
+		var from = this.addExclusionIntervalWindow.down("#newExclusionInterval_from").getValue();
+		var to = this.addExclusionIntervalWindow.down("#newExclusionInterval_to").getValue();
+
+		this.addExclusionIntervalWindow.hide();
+
+		var grid = this.down("#scheduleExclusionIntervalGrid");
+		grid.store.add({from: from, to: to});
+	},
+
+	addHostgroup: function() {
+		log.debug("new hostgroup");
+		var hostgroup = this.addHostgroupWindow.down("#hostgroup").getValue();
+
+		this.addHostgroupWindow.hide();
+
+		var grid = this.down("#scheduleHostgroupsGrid");
+		grid.store.add({hostgroup: hostgroup});
 	}
 });

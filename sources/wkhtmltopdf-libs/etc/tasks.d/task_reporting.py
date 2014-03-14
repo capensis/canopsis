@@ -41,7 +41,7 @@ logger = logging.getLogger('Reporting Task')
 
 @task
 @decorators.log_task
-def render_pdf(fileName=None, viewName=None, startTime=None, stopTime=None, interval=None, account=None, mail=None, owner=None, orientation='Portrait', pagesize='A4'):
+def render_pdf(fileName=None, viewName=None, startTime=None, stopTime=None, subset_selection=None, interval=None, account=None, mail=None, owner=None, orientation='Portrait', pagesize='A4'):
 	if not stopTime:
 		stopTime = int(time.time())
 
@@ -107,6 +107,7 @@ def render_pdf(fileName=None, viewName=None, startTime=None, stopTime=None, inte
 							viewName,
 							startTime,
 							stopTime,
+							subset_selection,
 							account,
 							wrapper_conf_file,
 							orientation=orientation,
