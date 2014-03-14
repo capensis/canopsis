@@ -39,6 +39,35 @@ Ext.define('canopsis.lib.view.cperfstoreValueConsumerWidget', {
 				success: function(response) {
 					var data = Ext.JSON.decode(response.responseText);
 					data = data.data;
+					var node,
+						filtered_data = [],
+						exclude_count = 0;
+
+					if (this.previous_subset_selection && this.previous_subset_selection.hostgroups) {
+						log.debug(this.previous_subset_selection)
+						for (position in data) {
+							var node = this.nodesByID[data[position].node],
+								keep = false;
+
+							for (hostgroup_position in this.previous_subset_selection.hostgroups){
+								exclude_count++;
+
+								var hostgroup = this.previous_subset_selection.hostgroups[hostgroup_position];
+
+								log.debug('GOT - > re ' + node.resource + '  co '  + node.component  +  ' hg ' + hostgroup);
+								if (node.resource && node.component && node.component === '__canopsis__' && node.resource === hostgroup) {
+									keep = true;
+								}
+							}
+							if (keep) {
+								filtered_data.push(data[position]);
+								log.debug(filtered_data)
+							} else {
+								data[position].values = [[0,null]]
+								log.debug('exclude data from selection because of hostgroup')
+							}
+						}
+					}
 
 					if(data.length > 0) {
 						if(this.nodesByID[data[0]['node']]['order'] !== undefined) {
@@ -143,6 +172,7 @@ Ext.define('canopsis.lib.view.cperfstoreValueConsumerWidget', {
 			log.debug('Adding live reporting advanced filter to post param');
 			post_params['subset_selection'] = Ext.JSON.encode(this.subset_selection);
 			//remove subset selection to avoid further side effects
+			this.previous_subset_selection = this.subset_selection;
 			this.subset_selection = undefined;
 		}
 
