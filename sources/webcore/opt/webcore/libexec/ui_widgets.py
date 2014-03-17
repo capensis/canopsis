@@ -78,29 +78,31 @@ def get_all_widgets():
 	output = []
 
 	logger.debug(" + Search all widgets ...")
-	widgets =  get_internal_widgets()
-	widgets += get_external_widgets()
 
-	for widget in widgets:
-		# Externals
-		widget_path = "%s/widgets/%s/" % (www_path, widget)
-		url_path = "canopsis/widgets/%s/" % widget
-		if not os.path.exists("%s/widget.json" % widget_path):
-			# Internals
-			widget_path = "%s/widgets/%s/" % (base_path, widget)
-			url_path = "widgets/%s/" % widget
-			if not os.path.exists("%s/widget.json" % widget_path):
-				continue
+	def handle_widget(base, widget, internal=True):
+		wpath = '{0}/widgets/{1}/'.format(base, widget)
+		wurl  = 'widgets/{0}/'.format(widget)
+		wjson = '{0}/widget.json'.format(wpath)
 
-		logger.info("   + Load '%s' (%s)" % (widget, widget_path))
+		if not os.path.exists(wjson):
+			return
 
-		widget_info = get_widget_json("%s/widget.json" % widget_path)
+		logger.info('   + Load {0} ({1})'.format(widget, wpath))
 
-		widget_info["thumb"] = get_thumb_url(widget_path, url_path)
+		winfo = get_widget_json(wjson)
 
-		if widget_info:
-			output.append(widget_info)
-		
+		if winfo:
+			winfo['thumb'] = get_thumb_url(wpath, wurl)
+			winfo['thirdparty'] = not internal
+
+		return winfo
+
+	for widget in get_internal_widgets():
+		output.append(handle_widget(base_path, widget))
+
+	for widget in get_external_widgets():
+		output.append(handle_widget(www_path, widget, internal=False))
+
 	output={'total': len(output), 'success': True, 'data': output}
 	return output
 

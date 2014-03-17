@@ -286,7 +286,9 @@ Ext.define('widgets.category_graph.category_graph', {
 
 		var series = [];
 
-		for(var i = 0; i < this.categories.length; i++) {
+		var start = ((this.categories.length - 1) === this.nodes.length) ? 1 : 0;
+
+		for(var i = start; i < this.categories.length; i++) {
 			var category = this.categories[i];
 			var serie = this.getSerieForCategory(category);
 
