@@ -1,3 +1,4 @@
 [submodule "sources/externals"]
 	path = sources/externals
 	url = https://github.com/capensis/canopsis-externals
+	ignore = dirty

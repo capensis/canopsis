@@ -54,7 +54,7 @@ Ext.define('canopsis.controller.Schedule', {
 			method: record.get('exporting_method'),
 			interval: interval,
 			_scheduled: record.get('crecord_name'),
-			owner: record.get('exporting_owner')
+			owner: record.get('exporting_owner'),
 		};
 
 		//check if a mail must be send
@@ -290,6 +290,7 @@ Ext.define('canopsis.controller.Schedule', {
 	},
 
 	fillAdvancedFilters: function(form, subset_selection) {
+		console.log("fillAdvancedFilters");
 		var exclusion_grid = form.down("#scheduleExclusionIntervalGrid");
 
 		for(key in subset_selection.exclusions)
@@ -301,7 +302,7 @@ Ext.define('canopsis.controller.Schedule', {
 		var hostgroups_grid = form.down("#scheduleHostgroupsGrid");
 		for(key in subset_selection.hostgroups)
 		{
-			var exclusion = subset_selection.hostgroups[key];
+			var hostgroup = subset_selection.hostgroups[key];
 			hostgroups_grid.store.add({hostgroup: hostgroup});
 		}
 
@@ -337,7 +338,7 @@ Ext.define('canopsis.controller.Schedule', {
 	computeComponentResource: function(form) {
 		var result = [];
 
-		var inventory_components_resources = form.down("#component_resource");
+		var inventory_components_resources = form.down("#scheduleComponentRessource");
 		var components_resources = inventory_components_resources.getValue();
 
 		for (var i = inventory_components_resources.selection_store.data.items.length - 1; i >= 0; i--) {

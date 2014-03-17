@@ -379,18 +379,6 @@ Ext.define('canopsis.controller.ReportingBar', {
 		return result;
 	},
 
-	computeHostgroups: function() {
-		var result = [];
-		var grid = this.bar.down("#hostgroupsGrid");
-
-		for (var i = grid.store.data.items.length - 1; i >= 0; i--) {
-			var hostgroup = grid.store.data.items[i].data.hostgroup;
-			result.push(hostgroup);
-		};
-
-		return result;
-	},
-
 	computeDowntimes: function() {
 		var result = [];
 
