@@ -308,7 +308,8 @@ Ext.define('widgets.text.text', {
 			try {
 				var expression = $(this).html();
 
-				expression = expression.replace(' ','');
+				expression = expression.replace(/\ /g,'');
+				expression = expression.replace(/undefined/g,'0');
 				expression = math.eval(expression);
 				if(typeof expression === 'object' || isNaN(expression)){
 					expression = 0;
