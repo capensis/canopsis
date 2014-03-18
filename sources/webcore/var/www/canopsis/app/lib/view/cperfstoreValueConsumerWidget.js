@@ -43,7 +43,7 @@ Ext.define('canopsis.lib.view.cperfstoreValueConsumerWidget', {
 						filtered_data = [],
 						exclude_count = 0;
 
-					if (this.previous_subset_selection && this.previous_subset_selection.hostgroups) {
+					if (this.previous_subset_selection && this.previous_subset_selection.hostgroups && this.previous_subset_selection.hostgroups.length > 0) {
 						log.debug(this.previous_subset_selection)
 						for (position in data) {
 							var node = this.nodesByID[data[position].node],
