@@ -295,7 +295,9 @@ Ext.define('widgets.category_graph.category_graph', {
 			series.push(serie);
 		}
 
-		return series;
+		return series.sort(function(a, b) {
+			return a.node.catorder - b.node.catorder;
+		});
 	},
 
 	getSerieForCategory: function(category) {
@@ -343,6 +345,7 @@ Ext.define('widgets.category_graph.category_graph', {
 				idx = node.categoryIndex;
 			}
 
+			cat_serie.node.catorder = node.catorder;
 			cat_serie.node.bunit = node.bunit;
 		}
 

@@ -291,6 +291,7 @@ Ext.define('widgets.text.text', {
 			}
 
 			var template = new Ext.XTemplate('<div>' + text + '</div>');
+			this.tmpldata = data;
 
 			this.setHtml(template.apply(data));
 		}
