@@ -422,7 +422,12 @@ Ext.define('canopsis.view.Schedule.Form', {
 		});
 
 		this.down('cgrid#scheduleHostgroupsGrid button[action="add"]').handler = this.showAddHostgroupWindow.bind(this);
+		this.down('cgrid#scheduleHostgroupsGrid button[action="delete"]').handler = this.deleteHostGroup.bind(this);
+		this.down('cgrid#scheduleHostgroupsGrid button[action="delete"]').disabled = false;
+
 		this.down('cgrid#scheduleExclusionIntervalGrid button[action="add"]').handler = this.showAddExclusionIntervalWindow.bind(this);
+		this.down('cgrid#scheduleExclusionIntervalGrid button[action="delete"]').handler = this.deleteExclusionInterval.bind(this);
+		this.down('cgrid#scheduleExclusionIntervalGrid button[action="delete"]').disabled = false;
 
 		this.addExclusionIntervalWindow.down('button[action="addExclusionInterval"]').handler = this.addExclusionInterval.bind(this);
 		this.addHostgroupWindow.down('button[action="addHostgroup"]').handler = this.addHostgroup.bind(this);
@@ -457,5 +462,15 @@ Ext.define('canopsis.view.Schedule.Form', {
 
 		var grid = this.down("#scheduleHostgroupsGrid");
 		grid.store.add({hostgroup: hostgroup});
+	},
+
+	deleteExclusionInterval: function() {
+		var cgrid = this.down('cgrid#scheduleExclusionIntervalGrid');
+		cgrid.store.remove(cgrid.getSelectionModel().getSelection());
+	},
+
+	deleteHostGroup: function() {
+		var cgrid = this.down('cgrid#scheduleHostgroupsGrid');
+		cgrid.store.remove(cgrid.getSelectionModel().getSelection());
 	}
 });
