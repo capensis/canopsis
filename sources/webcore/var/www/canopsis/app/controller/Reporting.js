@@ -46,6 +46,11 @@ Ext.define('canopsis.controller.Reporting', {
 			from = parseInt(from/1000);
 		}
 
+		if(typeof subset_selection === 'object')
+		{
+			subset_selection = JSON.stringify(subset_selection);
+		}
+
 		var url = '/reporting/'+ from + '/' + to + '/' + view_id;
 
 		if(mail !== undefined) {
