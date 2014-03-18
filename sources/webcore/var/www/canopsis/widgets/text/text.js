@@ -25,6 +25,7 @@ Ext.define('widgets.text.text', {
 	logAuthor: '[widgets][text]',
 	useLastRefresh: false,
 	aggregate_method: 'LAST',
+	undefined_value_replacement: "undefined",
 
 	initComponent: function() {
 		this.callParent(arguments);
@@ -188,7 +189,7 @@ Ext.define('widgets.text.text', {
 
 					if (this.subset_selection) {
 
-						log.debug('Adding live reporting advanced filter to post param');
+						log.debug('Adding live reporting advanced filter to post param', this.logAuthor);
 						requestParams['subset_selection'] = Ext.JSON.encode(this.subset_selection);
 						//remove subset selection to avoid further side effects
 						this.subset_selection = undefined;
@@ -277,7 +278,7 @@ Ext.define('widgets.text.text', {
 				text = replaceAll('{' + templateVariable + '}', data[templateVariable], text);
 			}
 			else {
-				text = replaceAll('{' + templateVariable + '}', 'undefined', text);
+				text = replaceAll('{' + templateVariable + '}', this.undefined_value_replacement, text);
 			}
 		}
 
