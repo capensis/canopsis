@@ -355,6 +355,11 @@
 							"fieldLabel": "Category",
 							"name": "category",
 							"emptyText": "Type category name here"
+						},{
+							"xtype": "numberfield",
+							"fieldLabel": "Category Order",
+							"name": "catorder",
+							"value": 0
 						}
 					]
 				}
