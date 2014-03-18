@@ -401,7 +401,7 @@ Ext.define('widgets.timegraph.timegraph', {
 				timestamp = now - this.time_window * 1000;
 			}
 
-			while(this.series[serieId].data[0][0] < timestamp) {
+			while(this.series[serieId].data.length > 0 && this.series[serieId].data[0][0] < timestamp) {
 				this.series[serieId].data.shift();
 			}
 

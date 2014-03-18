@@ -80,6 +80,8 @@ function normalApp() {
 }
 
 function exportApp() {
+	var subset_selection = {};
+
 	// parse dates
 	var to   = new Date().getTime();
 
@@ -97,6 +99,10 @@ function exportApp() {
 		if(ENV["from"]) {
 			from = ENV["from"] * 1000;
 		}
+	}
+
+	if(ENV['subset_selection']) {
+		subset_selection = ENV['subset_selection'];
 	}
 
 	log.debug('Exporting options:');
@@ -150,7 +156,8 @@ function exportApp() {
 				reportMode: true,
 				exportMode: true,
 				export_from: from,
-				export_to: to
+				export_to: to,
+				export_advancedFilters: subset_selection
 			});
 
 			// Hack fix manual height
@@ -277,6 +284,15 @@ function createApplication(account) {
 		}
 		catch(err) {
 			log.error("Impossible to parse: " + url_options['to'], "[app]");
+		}
+	}
+
+	if(url_options['subset_selection']) {
+		try {
+			ENV['subset_selection'] = Ext.JSON.decode(url_options['subset_selection']);
+		}
+		catch(err) {
+			log.error('Impossible to decode JSON: ' + url_options['subset_selection'], '[app]');
 		}
 	}
 

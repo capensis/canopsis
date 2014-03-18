@@ -130,7 +130,7 @@ Ext.define('canopsis.view.Tabs.Content' , {
 			exportMode: this.exportMode,
 			export_from: this.export_from,
 			export_to: this.export_to,
-			export_advancedFilters: this.export_advancedFilters,
+			subset_selection: this.export_advancedFilters,
 			fullscreenMode: this.fullscreenMode
 		};
 
