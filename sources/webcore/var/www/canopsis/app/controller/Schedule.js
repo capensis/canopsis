@@ -185,16 +185,13 @@ Ext.define('canopsis.controller.Schedule', {
 
 	runItem: function(item) {
 		log.debug('Clicked on run item', this.logAuthor);
-		
+		log.dump(options);
+
 		var options    = item.get('kwargs');
 		var view_name  = options.viewName;
 		var start_time = undefined;
 
-		log.debug('run item');
-		log.dump(item);
-		log.dump(options);
-
-		options.subset_selection = JSON.stringify(options.subset_selection);
+		options.subset_selection = options.subset_selection;
 
 		if(options.interval) {
 			start_time = Ext.Date.now() - (options.interval * 1000);
@@ -307,11 +304,30 @@ Ext.define('canopsis.controller.Schedule', {
 		}
 
 		var downtimes_inventory = form.down("#scheduleDowntimes");
+
+		for(key in subset_selection.downtimes)
+		{
+			var downtime = subset_selection.downtimes[key];
+			downtimes_inventory.selection_store.add({
+				component: downtime.component,
+				resource: downtime.resource
+			});
+		}
+
+		var component_resources_inventory = form.down("#scheduleComponentRessource");
+		for(key in subset_selection.component_resources)
+		{
+			var component_resource = subset_selection.component_resources[key];
+			component_resources_inventory.selection_store.add({
+				component: component_resource.component,
+				resource: component_resource.resource
+			});
+		}
 	},
 
 	getAdvancedFilters: function(form) {
 		var advancedFilters = {
-			// component_resources: this.computeComponentResource(),
+			component_resources: this.computeComponentResource(form),
 			exclusions: this.computeExclusionFilter(form),
 			hostgroups: this.computeHostgroups(form),
 			downtimes: 	this.computeDowntimes(form),
@@ -339,7 +355,6 @@ Ext.define('canopsis.controller.Schedule', {
 		var result = [];
 
 		var inventory_components_resources = form.down("#scheduleComponentRessource");
-		var components_resources = inventory_components_resources.getValue();
 
 		for (var i = inventory_components_resources.selection_store.data.items.length - 1; i >= 0; i--) {
 			var component = inventory_components_resources.selection_store.data.items[i].data.component;
