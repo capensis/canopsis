@@ -61,6 +61,7 @@ Ext.define('canopsis.controller.SLACrit', {
 			'event_type': 'perf',
 			'source_type': 'component',
 			'component': '__canopsis__',
+			'state': 0,
 			'perf_data_array': []
 		};
 
@@ -79,7 +80,7 @@ Ext.define('canopsis.controller.SLACrit', {
 		log.debug('Send event', this.logAuthor);
 		log.debug(evt);
 
-		global.websocketCtrl.publish('amqp', null, evt);
+		global.eventsCtrl.sendEvent(evt);
 
 		return record;
 	}
