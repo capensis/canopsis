@@ -100,11 +100,11 @@ Ext.define('widgets.category_graph.category_graph', {
 					this.nodesByCategories[node.category] = [];
 				}
 
-				this.nodesByCategories[node.category].push(node);
+				node.catSubIndex = this.nodesByCategories[node.category].push(node) - 1;
 			}
 			else {
 				node.categoryIndex = 0;
-				this.nodesNoCategory.push(node);
+				node.catSubIndex = this.nodesNoCategory.push(node) - 1;
 			}
 		}
 	},
@@ -232,16 +232,47 @@ Ext.define('widgets.category_graph.category_graph', {
 		});
 	},
 
+	getSerieForNode: function() {
+		var serie = this.callParent(arguments);
+
+		if(!this.stacked_graph && this.categories.length > 1) {
+			var category = serie.node.category;
+
+			if(category) {
+				serie.bars = {
+					barWidth: 1 / (this.nodesByCategories[category].length + 2)
+				};
+			}
+			else {
+				serie.bars = {
+					barWidth: 1 / (this.nodesNoCategory.length + 2)
+				};
+			}
+		}
+
+		return serie;
+	},
+
 	addPoint: function(serieId, value, serieIndex) {
 		var serie = this.series[serieId];
 		var point = [serieIndex, value[1]];
 
 		if(this.categories.length > 1) {
+			var category = undefined;
+
 			if(serie.node.category) {
+				category = this.nodesByCategories[serie.node.category];
 				point[0] = serie.node.categoryIndex;
 			}
 			else {
+				category = this.nodesNoCategory;
 				point[0] = 0;
+			}
+
+			if(!this.stacked_graph) {
+				var step = 1 / (category.length + 2);
+
+				point[0] += step + serie.node.catSubIndex * step;
 			}
 		}
 
