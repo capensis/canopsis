@@ -53,12 +53,11 @@ group_managing_access = ['group.CPS_reporting_admin']
 
 #########################################################################
 
-@post('/reporting/:startTime/:stopTime/:view_name/:mail/:timezone',checkAuthPlugin={'authorized_grp':group_managing_access})
 @post('/reporting/:startTime/:stopTime/:view_name/:mail',checkAuthPlugin={'authorized_grp':group_managing_access})
 @post('/reporting/:startTime/:stopTime/:view_name',checkAuthPlugin={'authorized_grp':group_managing_access})
-def generate_report(startTime, stopTime,view_name,mail=None, timezone=0):
-	stopTime = int(stopTime) + int(timezone)
-	startTime = int(startTime) + int(timezone)
+def generate_report(startTime, stopTime,view_name,mail=None):
+	stopTime = int(stopTime)
+	startTime = int(startTime)
 
 	account = get_account()
 	storage = cstorage(account=account, namespace='object')
@@ -75,9 +74,9 @@ def generate_report(startTime, stopTime,view_name,mail=None, timezone=0):
 		logger.error(err)
 		return {'total': 1, 'success': False, 'data': [str(err)] }
 
-	toDate = datetime.utcfromtimestamp(int(stopTime))
+	toDate = datetime.fromtimestamp(int(stopTime))
 	if startTime and startTime != -1:
-		fromDate = datetime.utcfromtimestamp(int(startTime))
+		fromDate = datetime.fromtimestamp(int(startTime))
 		file_name = '%s_From_%s_To_%s.pdf' % (record.name,fromDate,toDate)
 	else:
 		file_name = '%s_%s.pdf' % (record.name,toDate)
@@ -86,7 +85,6 @@ def generate_report(startTime, stopTime,view_name,mail=None, timezone=0):
 	logger.debug('view_name:   %s' % view_name)
 	logger.debug('startTime:   %s' % startTime)
 	logger.debug('stopTime:    %s' % stopTime)
-	logger.debug('timezone:    %s' % timezone)
 	logger.debug('mail:    %s' % mail)
 
 	result = None

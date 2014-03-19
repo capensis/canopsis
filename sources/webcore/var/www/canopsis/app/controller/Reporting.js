@@ -28,7 +28,7 @@ Ext.define('canopsis.controller.Reporting', {
 		this.callParent(arguments);
 	},
 
-	launchReport: function(view_id, from, to, mail, orientation, pagesize, timezone) {
+	launchReport: function(view_id, from, to, mail, orientation, pagesize) {
 		log.debug('Launch Report on view ' + view_id, this.logAuthor);
 
 		//if no date given
@@ -50,9 +50,6 @@ Ext.define('canopsis.controller.Reporting', {
 
 		if(mail !== undefined) {
 			url += '/' + mail;
-			if (timezone !== undefined) {
-				url += '/' + timezone;
-			}
 		}
 
 		global.notify.notify(_('Please Wait'), _('Your document is rendering, a popup will ask you where to save in few seconds'));

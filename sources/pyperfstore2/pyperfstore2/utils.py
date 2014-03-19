@@ -84,7 +84,6 @@ def datetimeToTimestamp(_date=None):
 	if _date is None:
 		_date = datetime.now()
 	return time.mktime(_date.timetuple())
-	return calendar.timegm(_date.timetuple())
 
 def is_in_interval(point, interval):
 	result = point >= interval[0] and point <= interval[1]

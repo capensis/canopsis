@@ -29,9 +29,10 @@ Ext.define('canopsis.model.Schedule', {
 		{name: 'kwargs' , defaultsValue: {}},
 		{name: 'next_run_time'},
 		{name: 'cron', defaultValue: undefined},
-		{name: 'timezone', defaultValue: (new Date().getTimezoneOffset() / 60)},
+		{name: 'timezone', defaultValue: new Date().getTimezoneOffset() * 60},
 		{name: 'from', defaultValue: undefined},
 		{name: 'to', defaultValue: undefined},
+		{name: 'before', defaultValue: undefined},
 		{name: 'log'},
 		{
 			name: 'mail',
@@ -66,6 +67,10 @@ Ext.define('canopsis.model.Schedule', {
 
 		{name: 'exporting_recipients'},
 		{name: 'exporting_subject'},
+
+		{name: 'exporting_type', defaultValue: 'duration'},
+		{name: 'exporting_intervalLength', defaultValue: 1},
+		{name: 'exporting_intervalUnit', defaultValue: 'days'},
 
 		{name: 'crontab_month'},
 		{name: 'crontab_day_of_week'},
