@@ -30,16 +30,14 @@ NAME="entities"
 class engine(cengine):
 	def __init__(self, name=NAME, *args, **kwargs):
 		super(engine, self).__init__(name=name, *args, **kwargs)
-
 		self.account = caccount(user='root', group='root')
 		self.storage = get_storage(namespace='entities', logging_level=self.logging_level, account=self.account)
 		self.backend = self.storage.get_backend()
+		self.beat()
 
-	def work(self, event, *args, **kwargs):
-		mCrit = 'PROC_CRITICAL'
-		mWarn = 'PROC_WARNING'
 
-		record = self.storage.find_one(
+	def beat(self):
+		self.sla = self.storage.find_one(
 			mfilter = {
 				'crecord_type': 'sla',
 				'objclass': 'macro'
@@ -47,9 +45,15 @@ class engine(cengine):
 			namespace='object'
 		)
 
-		if record:
-			mCrit = record.data['mCrit']
-			mWarn = record.data['mWarn']
+	def work(self, event, *args, **kwargs):
+		mCrit = 'PROC_CRITICAL'
+		mWarn = 'PROC_WARNING'
+
+
+
+		if self.sla:
+			mCrit = self.sla.data['mCrit']
+			mWarn = self.sla.data['mWarn']
 
 		# Get event informations
 		component = event['component']
