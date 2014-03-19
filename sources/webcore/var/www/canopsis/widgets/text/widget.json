@@ -67,6 +67,11 @@
 						"value": 2,
 						"minValue": 0,
 						"maxValue": 10
+					},{
+						"xtype" : "textfield",
+						"name" : "undefined_value_replacement",
+						"fieldLabel": "Replacement for undefined values",
+						"value": "undefined"
 					}
 				]
 			}

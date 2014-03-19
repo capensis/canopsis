@@ -24,7 +24,7 @@ plugin_name = "canopsis_mongodb"
 
 storage = None
 
-namespaces = ['object', 'cache', 'events', 'events_log' ]
+namespaces = ['object', 'cache', 'events', 'events_log', 'ack', 'entities' ]
 
 ### Functions
 def put_value(metric, value, type='gauge'):

@@ -61,6 +61,10 @@ def generate_report(startTime, stopTime,view_name,mail=None):
 	account = get_account()
 	storage = cstorage(account=account, namespace='object')
 
+	subset_selection = request.params.get('subset_selection', default=None)
+
+	logger.error('subset_selection: %s' % subset_selection)
+
 	if mail:
 		try:
 			mail = json.loads(mail)
@@ -72,7 +76,7 @@ def generate_report(startTime, stopTime,view_name,mail=None):
 	except Exception, err:
 		logger.error(err)
 		return {'total': 1, 'success': False, 'data': [str(err)] }
-		
+
 
 	toDate = str(date.fromtimestamp(int(stopTime)))
 	if startTime and startTime != -1:
@@ -85,10 +89,11 @@ def generate_report(startTime, stopTime,view_name,mail=None):
 	logger.debug('view_name:   %s' % view_name)
 	logger.debug('startTime:   %s' % startTime)
 	logger.debug('stopTime:    %s' % stopTime)
+	logger.debug('subset_selection:    %s' % subset_selection)
 	logger.debug('mail:    %s' % mail)
 
 	result = None
-	
+
 	try:
 		logger.debug('Run celery task')
 		result = task_reporting.render_pdf.delay(
@@ -96,6 +101,7 @@ def generate_report(startTime, stopTime,view_name,mail=None):
 										viewName=view_name,
 										startTime=startTime,
 										stopTime=stopTime,
+										subset_selection=subset_selection,
 										account=account,
 										mail=mail
 										)

@@ -101,11 +101,9 @@ Ext.define('canopsis.lib.form.field.cmetric', {
 			{name: 'label', defaultValue: undefined},
 			{name: 'curve_color', defaultValue: undefined},
 
-			// widget: bar_graph
-			{name: 'trend', defaultValue: undefined},
-
-			// widget: diagram
+			// widget: category_graph
 			{name: 'category', defaultValue: undefined},
+			{name: 'catorder', defaultValue: undefined},
 
 			// widget: gauge
 			{name: 'mi', defaultValue: undefined},
@@ -131,9 +129,8 @@ Ext.define('canopsis.lib.form.field.cmetric', {
 			{name: 'chart_type', defaultValue: undefined},
 
 			// widget: timegraph
-			{name: 'point_shape', defaultValue: undefined}
-
-
+			{name: 'point_shape', defaultValue: undefined},
+			{name: 'trend', defaultValue: undefined}
 		];
 
 
