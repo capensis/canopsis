@@ -77,7 +77,7 @@ Ext.define('widgets.category_graph.category_graph', {
 		this.callParent(arguments);
 
 		// list nodes by categories
-		this.categories = [null];
+		this.categories = ['No Category'];
 		this.nodesByCategories = {};
 		this.nodesNoCategory = [];
 
@@ -107,10 +107,6 @@ Ext.define('widgets.category_graph.category_graph', {
 				this.nodesNoCategory.push(node);
 			}
 		}
-
-		if(this.categories.length > 1) {
-			this.stacked_graph = false;
-		}
 	},
 
 	setChartOptions: function() {
@@ -121,6 +117,7 @@ Ext.define('widgets.category_graph.category_graph', {
 		$.extend(this.options,
 			{
 				series: {
+					shadowSize: 0,
 					lines: {
 						show: false,
 					},
@@ -192,10 +189,10 @@ Ext.define('widgets.category_graph.category_graph', {
 					show: this.legend
 				},
 				xaxis: {
-					show: (this.diagram_type === 'column' && !this.verticalDisplay)
+					show: (this.diagram_type === 'column')
 				},
 				yaxis: {
-					show: (this.diagram_type === 'column' && this.verticalDisplay),
+					show: (this.diagram_type === 'column'),
 					tickFormatter: function(val, axis) {
 						if(me.humanReadable) {
 							return rdr_humanreadable_value(val, axis.options.unit);
@@ -210,59 +207,15 @@ Ext.define('widgets.category_graph.category_graph', {
 					content: function(label, xval, yval, item) {
 						var val = item.series.data[item.dataIndex][1];
 
-						if(me.categories.length > 1) {
-							for(var i = 0; i < me.categories.length; i++) {
-								var category = me.categories[i];
-								var serie = me.getSerieForCategory(category);
-								var nodes = (category ? me.nodesByCategories[category] : me.nodesNoCategory);
+						for(var serieId in me.series) {
+							var serie = me.series[serieId];
 
-								if(serie.label === label) {
-									var output = '<p><b>Category: ' + label + '</b></p><p>';
-
-									// add total
-									output += '<b>Total:</b> ';
-
-									if(me.humanReadable) {
-										val = rdr_humanreadable_value(val, serie.node.bunit);
-									}
-
-									output += val;
-
-									// add each categorized series value
-									for(var j = 0; j < nodes.length; j++) {
-										var node = nodes[j];
-										var serieId = node.id + '.' + node.metrics[0];
-										var serie = me.series[serieId];
-
-										output += '<br/><b>' + serie.label + ':</b> ';
-
-										var subval = serie.data[0][1];
-
-										if(me.humanReadable) {
-											subval = rdr_humanreadable_value(subval, serie.node.bunit);
-										}
-
-										output += subval;
-									}
-
-									// finalize output
-									output += '</p>';
-
-									return output;
+							if(serie.label === label) {
+								if(me.humanReadable) {
+									val = rdr_humanreadable_value(val, serie.node.bunit);
 								}
-							}
-						}
-						else {
-							for(var serieId in me.series) {
-								var serie = me.series[serieId];
 
-								if(serie.label === label) {
-									if(me.humanReadable) {
-										val = rdr_humanreadable_value(val, serie.node.bunit);
-									}
-
-									return '<b>' + label + ':</b> ' + val;
-								}
+								return '<b>' + label + ':</b> ' + val;
 							}
 						}
 					}
@@ -271,91 +224,28 @@ Ext.define('widgets.category_graph.category_graph', {
 		);
 	},
 
-	addPoint: function(serieId, value, serieIndex) {
-		var point = [(this.stacked_graph ? 0 : serieIndex), value[1]];
-
-		this.series[serieId].data = [point];
-	},
-
 	getSeriesConf: function() {
-		// check if categories are set
-		// By default, it contains the null object, so empty is 1
-		if(this.categories.length === 1) {
-			return this.callParent(arguments);
-		}
-
-		var series = [];
-
-		var start = ((this.categories.length - 1) === this.nodes.length) ? 1 : 0;
-
-		for(var i = start; i < this.categories.length; i++) {
-			var category = this.categories[i];
-			var serie = this.getSerieForCategory(category);
-
-			series.push(serie);
-		}
+		var series = this.callParent(arguments);
 
 		return series.sort(function(a, b) {
-			return a.node.catorder - b.node.catorder;
+			return a.node.categoryIndex - b.node.categoryIndex;
 		});
 	},
 
-	getSerieForCategory: function(category) {
-		// fetch nodes
-		var nodes;
+	addPoint: function(serieId, value, serieIndex) {
+		var serie = this.series[serieId];
+		var point = [serieIndex, value[1]];
 
-		if(category === null) {
-			nodes = this.nodesNoCategory;
-			category = 'No Category';
-		}
-		else {
-			nodes = this.nodesByCategories[category];
-		}
-
-		// generate series
-		var cat_serie = {
-			node: {
-				id: 'category',
-				metrics: [category]
-			},
-			label: category,
-			data: [],
-			xaxis: 1,
-			yaxis: 1
-		};
-
-		// consolidates points in the same category
-		var val = 0;
-		var idx = 0;
-
-		for(var i = 0; i < nodes.length; i++) {
-			var node = nodes[i];
-			var serieId = node.id + '.' + node.metrics[0];
-			var serie = this.series[serieId];
-
-			if(!serie) {
-				serie = this.getSerieForNode(node.id);
+		if(this.categories.length > 1) {
+			if(serie.node.category) {
+				point[0] = serie.node.categoryIndex;
 			}
-
-			if(serie.data.length > 0) {
-				val += serie.data[0][1];
+			else {
+				point[0] = 0;
 			}
-
-			if(node.categoryIndex) {
-				idx = node.categoryIndex;
-			}
-
-			cat_serie.node.catorder = node.catorder;
-			cat_serie.node.bunit = node.bunit;
 		}
 
-		cat_serie.data = [[idx, val]];
-
-		// add new serie to series
-		var catSerieId = 'category.' + category;
-		this.series[catSerieId] = cat_serie;
-
-		return cat_serie;
+		this.series[serieId].data = [point];
 	},
 
 	createChart: function() {
