@@ -235,17 +235,24 @@ Ext.define('widgets.category_graph.category_graph', {
 	getSerieForNode: function() {
 		var serie = this.callParent(arguments);
 
-		if(!this.stacked_graph && this.categories.length > 1) {
-			var category = serie.node.category;
+		if(this.categories.length > 1) {
+			var category = undefined;
 
-			if(category) {
+			if(serie.node.category) {
+				category = this.nodesByCategories[serie.node.category];
+			}
+			else {
+				category = this.nodesNoCategory;
+			}
+
+			if(this.stacked_graph) {
 				serie.bars = {
-					barWidth: 1 / (this.nodesByCategories[category].length + 2)
+					barWidth: 0.8
 				};
 			}
 			else {
 				serie.bars = {
-					barWidth: 1 / (this.nodesNoCategory.length + 2)
+					barWidth: 0.8 / (category.length)
 				};
 			}
 		}
@@ -270,9 +277,17 @@ Ext.define('widgets.category_graph.category_graph', {
 			}
 
 			if(!this.stacked_graph) {
-				var step = 1 / (category.length + 2);
+				var step = 0.8 / (category.length);
 
-				point[0] += step + serie.node.catSubIndex * step;
+				point[0] += 0.1 + serie.node.catSubIndex * step;
+			}
+			else {
+				point[0] += 0.1;
+			}
+
+			var real_point = point[0] - 0.2;
+			if(this.minPoint === undefined || real_point < this.minPoint) {
+				this.minPoint = real_point;
 			}
 		}
 
