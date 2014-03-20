@@ -161,11 +161,11 @@ function rdr_task_crontab(val) {
 		}
 
 		if(val.month !== undefined && val.day !== undefined) {
-			output += '   |    ' + _('month') + ' : ' + global.numberToMonth[val.month] + ' |  day : ' + val.day;
+			output += '   |    ' + _('month') + ' : ' + global.numberToMonth[val.month] + ' |  day : ' + (""+val.day);
 		}
 
 		if(val.day_of_week !== undefined) {
-			output += '   |   ' + _('day') + ' : ' + _(val.day_of_week);
+			output += '   |   ' + _('day') + ' : ' + _(""+val.day_of_week);
 		}
 	}
 

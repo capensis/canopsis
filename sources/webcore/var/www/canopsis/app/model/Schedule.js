@@ -30,8 +30,8 @@ Ext.define('canopsis.model.Schedule', {
 		{name: 'next_run_time'},
 		{name: 'cron', defaultValue: undefined},
 		{name: 'timezone', defaultValue: new Date().getTimezoneOffset() * 60},
-		{name: 'from', defaultValue: undefined},
-		{name: 'to', defaultValue: undefined},
+		{name: 'from', defaultValue: {hour: 0, minute: 0, day: 1, day_of_week: 0, month: 1}},
+		{name: 'to', defaultValue: {hour: 0, minute: 0, day: 1, day_of_week: 0, month: 1, enable: false}},
 		{name: 'before', defaultValue: undefined},
 		{name: 'log'},
 		{

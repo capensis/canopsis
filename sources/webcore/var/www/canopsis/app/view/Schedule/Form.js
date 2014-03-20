@@ -636,7 +636,6 @@ Ext.define('canopsis.view.Schedule.Form', {
 					log.debug('Wrong value');
 					break;
 			}
-			renewDateAndTimeDisplay();
 		}, this);
 
 		this.down('*[name="exporting_owner"]').setValue(global.account.user);
