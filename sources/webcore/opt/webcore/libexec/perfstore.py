@@ -693,13 +693,13 @@ def exclude_points(points, subset_selection={}):
 
 	# Compute exclusion periods and set a point to None value (for UI purposes) if point is in any exclusion period.
 	exclusion_points = []
-	if subset_selection and 'exclusion_intervals' in subset_selection:
-		logger.debug('Interval exclusion detected, will apply it to output data')
+	if subset_selection and 'exclusions' in subset_selection:
+		logger.debug('Interval exclusions detected, will apply it to output data')
 		# Iterate over database point list for current metric.
 		for value in points:
 			is_excluded = False
 			# Takes care of exclusion intervals given in parameters.
-			for interval in subset_selection['exclusion_intervals']:
+			for interval in subset_selection['exclusions']:
 				if value[0] >= interval['from'] and value[0] <= interval['to']:
 					is_excluded = True
 					break
