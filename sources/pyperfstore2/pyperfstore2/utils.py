@@ -19,7 +19,7 @@
 # ---------------------------------
 import logging
 logger = logging.getLogger('utils')
-logger.setLevel(logging.DEBUG)
+logger.setLevel(logging.INFO)
 
 import zlib
 import time
