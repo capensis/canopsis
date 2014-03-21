@@ -87,7 +87,7 @@ class engine(cengine):
 				return event
 
 			for comment in self.comments:
-				if event['output'] in comment['comment']:
+				if comment['comment'] in event['output']:
 					#an ack comment is contained into a defined comment, then let save referer key to the comment
 					#set referer rk to last update date
 					self.objects_backend.update({'_id': comment['_id']}, { "$addToSet": {'referer_event_rks' : {'rk': rk}}}, upsert=True)

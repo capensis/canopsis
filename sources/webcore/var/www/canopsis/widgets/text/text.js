@@ -25,31 +25,32 @@ Ext.define('widgets.text.text', {
 	logAuthor: '[widgets][text]',
 	useLastRefresh: false,
 	aggregate_method: 'LAST',
+	undefined_value_replacement: "undefined",
 
 	initComponent: function() {
 		this.callParent(arguments);
 
 		this.wanted_metrics = {};
-		this.variables = [];
+		this.templateVariables = [];
 
-		this.extractVariables(this.text);
+		this.extractTemplateVariables(this.text);
 	},
 
-	extractVariables: function(text) {
+	extractTemplateVariables: function(text) {
 		/* extract variables from template */
-		var vars = text.match(/({.*?})/g);
+		var extractedTemplateVars = text.match(/({.*?})/g);
 
-		if(!vars) {
+		if(!extractedTemplateVars) {
 			return;
 		}
 
-		for(var i = 0; i < vars.length; i++) {
-			var variable = vars[i].slice(1, -1);
-			var parts = variable.split(':');
+		for(var i = 0; i < extractedTemplateVars.length; i++) {
+			var templateVariable = extractedTemplateVars[i].slice(1, -1);
+			var parts = templateVariable.split(':');
 
 			/* detect wanted components/resources/metrics from variables */
 			if(parts[0] === 'perfdata' || parts[0] === 'perf_data') {
-				this.wanted_metrics[variable] = {
+				this.wanted_metrics[templateVariable] = {
 					metric: parts[1],
 					info: parts[2],
 					component: parts[3],
@@ -57,8 +58,8 @@ Ext.define('widgets.text.text', {
 				};
 			}
 
-			if(this.variables.indexOf(variable) === -1) {
-				this.variables.push(variable);
+			if(this.templateVariables.indexOf(templateVariable) === -1) {
+				this.templateVariables.push(templateVariable);
 			}
 		}
 	},
@@ -101,7 +102,7 @@ Ext.define('widgets.text.text', {
 		}
 	},
 
-	onRefresh: function(data, from, to, advancedFilters) {
+	onRefresh: function(data, from, to) {
 		var template_data = {};
 
 		for(var i = 0; i < data.length; i++) {
@@ -131,8 +132,8 @@ Ext.define('widgets.text.text', {
 			'$or': []
 		};
 
-		for(var variable in this.wanted_metrics) {
-			var metric = this.wanted_metrics[variable];
+		for(var templateVariable in this.wanted_metrics) {
+			var metric = this.wanted_metrics[templateVariable];
 			var filter = {
 				'me': metric.metric
 			};
@@ -179,18 +180,30 @@ Ext.define('widgets.text.text', {
 						nodesByID[node._id] = node;
 					}
 
-					Ext.Ajax.request({
-						url: this.getPerfdataUrl(from, to),
-						method: 'POST',
-						params: {
+					var requestParams = {
 							'nodes': Ext.JSON.encode(nodes),
 							'aggregate_method': this.aggregate_method,
 							'aggregate_max_points': 1,
-							'timezone': new Date().getTimezoneOffset() * 60
-						},
+							'timezone': new Date().getTimezoneOffset() * 60,
+						};
+
+					if (this.subset_selection) {
+
+						log.debug('Adding live reporting advanced filter to post param', this.logAuthor);
+						requestParams['subset_selection'] = Ext.JSON.encode(this.subset_selection);
+						//remove subset selection to avoid further side effects
+						this.subset_selection = undefined;
+					}
+
+					Ext.Ajax.request({
+						url: this.getPerfdataUrl(from, to),
+						method: 'POST',
+						params: requestParams,
 						scope: this,
 
 						success: function(response) {
+							log.debug("+++ request success");
+							log.dump(response);
 							var r_vals = Ext.JSON.decode(response.responseText);
 
 							function genKey(prefix, metric, data, component, resource) {
@@ -258,14 +271,14 @@ Ext.define('widgets.text.text', {
 
 		var text = this.text;
 
-		for(var i = 0; i < this.variables.length; i++) {
-			var variable = this.variables[i];
+		for(var i = 0; i < this.templateVariables.length; i++) {
+			var templateVariable = this.templateVariables[i];
 
-			if(data[variable] !== undefined) {
-				text = replaceAll('{' + variable + '}', data[variable], text);
+			if(data[templateVariable] !== undefined) {
+				text = replaceAll('{' + templateVariable + '}', data[templateVariable], text);
 			}
 			else {
-				text = replaceAll('{' + variable + '}', 'undefined', text);
+				text = replaceAll('{' + templateVariable + '}', this.undefined_value_replacement, text);
 			}
 		}
 
@@ -279,6 +292,7 @@ Ext.define('widgets.text.text', {
 			}
 
 			var template = new Ext.XTemplate('<div>' + text + '</div>');
+			this.tmpldata = data;
 
 			this.setHtml(template.apply(data));
 		}
@@ -296,7 +310,8 @@ Ext.define('widgets.text.text', {
 			try {
 				var expression = $(this).html();
 
-				expression = expression.replace(' ','');
+				expression = expression.replace(/\ /g,'');
+				expression = expression.replace(/undefined/g,'0');
 				expression = math.eval(expression);
 				if(typeof expression === 'object' || isNaN(expression)){
 					expression = 0;
@@ -304,7 +319,6 @@ Ext.define('widgets.text.text', {
 				if (that.round_math_expression !== undefined) {
 					expression = parseFloat(expression).toFixed(that.round_math_expression);
 				}
-				var variableName = "mathexpression_" + expressionCounter;
 
 				$(this).html(expression);
 			} catch(err) {

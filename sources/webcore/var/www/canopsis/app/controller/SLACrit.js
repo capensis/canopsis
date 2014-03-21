@@ -48,5 +48,40 @@ Ext.define('canopsis.controller.SLACrit', {
 		for(var i = 0; i < btns.length; i++) {
 			btns[i].on('click', slaMacrosCtrl.slaButton, slaMacrosCtrl);
 		}
+	},
+
+	preSave: function(record) {
+		var slatypes = ['warn', 'crit'];
+		var slastates = ['ok', 'nok', 'out'];
+		var crit = record.get('crit');
+
+		var evt = {
+			'connector': 'canopsis',
+			'connector_name': 'sla',
+			'event_type': 'perf',
+			'source_type': 'component',
+			'component': '__canopsis__',
+			'state': 0,
+			'perf_data_array': []
+		};
+
+		for(var i = 0; i < slatypes.length; i++) {
+			for(var j = 0; j < slastates.length; j++) {
+				var metric = 'cps_sla_' + slatypes[i] + '_' + crit + '_' + slastates[j];
+
+				evt.perf_data_array.push({
+					'metric': metric,
+					'value': 0,
+					'type': 'COUNTER'
+				});
+			}
+		}
+
+		log.debug('Send event', this.logAuthor);
+		log.debug(evt);
+
+		global.eventsCtrl.sendEvent(evt);
+
+		return record;
 	}
 });

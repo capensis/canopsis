@@ -83,7 +83,7 @@ class engine(cengine):
 		for comment in query:
 			for rk in comment['referer_event_rks']:
 				self.comments[rk['rk']] = 1
-		self.logger.warning('loaded %s referer key comments' % len(self.comments))
+		self.logger.debug('loaded %s referer key comments' % len(self.comments))
 
 	def beat(self):
 		self.load_macro()
@@ -182,6 +182,16 @@ class engine(cengine):
 					sla_states['out'] = 1
 			elif ack:
 				sla_states['ok'] = 1
+			elif hostgroup == None:
+				# spontaneous solve case
+				# it must be not count, so decrement alert counter
+				if event['state'] in [1,2,3]:
+					meta_data_decrement = {
+						'type': 'COUNTER',
+						'co': INTERNAL_COMPONENT,
+						'me': "cps_statechange_{0}".format(event['state'])
+					}
+					self.increment_counter(meta_data, -1)
 
 			# increment all counts with computed value
 			for sla_state in sla_states:
@@ -360,21 +370,23 @@ class engine(cengine):
 			# This event is exclided from counts because it's ack contained a special comment that matched withs configuration ones.
 			return event
 
-		validation = event['event_type'] in self.listened_event_type
-		validation = validation and event['component'] not in ['derogation', INTERNAL_COMPONENT]
+		if 'downtime' not in event or not event['downtime']:
 
-		if validation:
+			validation = event['event_type'] in self.listened_event_type
+			validation = validation and event['component'] not in ['derogation', INTERNAL_COMPONENT]
 
-				self.update_global_counter(event)
-				self.count_by_crits(event, 1)
+			if validation:
 
-				# By name
-				self.count_alert(event, 1)
+					self.update_global_counter(event)
+					self.count_by_crits(event, 1)
 
-				# By Type and ACK
-				self.count_by_type(event, 1)
+					# By name
+					self.count_alert(event, 1)
 
-				# By tags (selector)
-				self.count_by_tags(event, 1)
+					# By Type and ACK
+					self.count_by_type(event, 1)
 
-		return event
+					# By tags (selector)
+					self.count_by_tags(event, 1)
+
+			return event

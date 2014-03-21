@@ -73,6 +73,42 @@ Ext.define('widgets.category_graph.category_graph', {
 
 	tooltip: true,
 
+	initComponent: function() {
+		this.callParent(arguments);
+
+		// list nodes by categories
+		this.categories = ['No Category'];
+		this.nodesByCategories = {};
+		this.nodesNoCategory = [];
+
+		for(var nodeId in this.nodesByID) {
+			var node = this.nodesByID[nodeId];
+
+			// classify the node if category is set
+			if(node.category) {
+				// try to find the category index
+				var catIdx = this.categories.indexOf(node.category);
+
+				if(catIdx === -1) {
+					catIdx = this.categories.push(node.category) - 1;
+				}
+
+				node.categoryIndex = catIdx;
+
+				// create the category if needed
+				if(!this.nodesByCategories[node.category]) {
+					this.nodesByCategories[node.category] = [];
+				}
+
+				node.catSubIndex = this.nodesByCategories[node.category].push(node) - 1;
+			}
+			else {
+				node.categoryIndex = 0;
+				node.catSubIndex = this.nodesNoCategory.push(node) - 1;
+			}
+		}
+	},
+
 	setChartOptions: function() {
 		this.callParent(arguments);
 
@@ -81,6 +117,7 @@ Ext.define('widgets.category_graph.category_graph', {
 		$.extend(this.options,
 			{
 				series: {
+					shadowSize: 0,
 					lines: {
 						show: false,
 					},
@@ -89,9 +126,47 @@ Ext.define('widgets.category_graph.category_graph', {
 						innerRadius: this.innerRadius,
 						label: {
 							show: this.labels,
-							size: this.labels_size
+							size: this.labels_size,
+							formatter: function(label, slice) {
+								var outer = $('<div/>');
+								var inner = $('<div/>');
+
+								inner.css({
+									'font-size': 'x-small',
+									'text-align': 'center',
+									'padding': '2px',
+									'color': slice.color
+								});
+
+								outer.append(inner);
+
+								// generate result
+								var result = '';
+
+								if(me.nameInLabelFormatter) {
+									result += '<b>' + label + '</b><br/>';
+								}
+
+								if(me.pctInLabel) {
+									result += slice.percent.toFixed(1) + '%';
+								}
+								else if(me.humanReadable) {
+									result += rdr_humanreadable_value(slice.data[0][1], slice.node.bunit);
+								}
+								else {
+									result += slice.data[0][1];
+								}
+
+								// build HTML
+								inner.html(result);
+								return outer.html();
+							}
 						},
 						tilt: this.tilt,
+						stroke:{
+							color: "fff",
+							width: this.stroke_width
+						},
 						startAngle: this.startAngle,
 						radius: this.pie_size / 100
 					},
@@ -101,7 +176,20 @@ Ext.define('widgets.category_graph.category_graph', {
 						barWidth: 1,
 						zero: true,
 						dataLabels: this.labels,
-						showNumbers: (this.labels && this.diagram_type === 'column')
+						numbers: {
+							show: (this.labels && this.diagram_type === 'column'),
+							labelFormatter: function(serie, text) {
+								if(me.humanReadable) {
+									text = rdr_humanreadable_value(text, serie.node.bunit);
+								}
+
+								if(me.nameInLabelFormatter) {
+									text = serie.node.label + ': ' + text;
+								}
+
+								return text;
+							}
+						}
 					},
 					stack: this.stacked_graph
 				},
@@ -111,71 +199,110 @@ Ext.define('widgets.category_graph.category_graph', {
 				},
 				legend: {
 					hideable: true,
-					show: this.legend,
-					labelFormatter: function(label, series) {
-						result = me.nameInLabelFormatter ? ("<b>" + label + "</b><br/>") : "";
-						result += me.pctInLabel ? (series.data[0] + "%") : yval; // calculate percent
-						return result;
-					}
+					show: this.legend
 				},
 				xaxis: {
-					show: (this.diagram_type === 'column' && !this.verticalDisplay)
+					show: (this.diagram_type === 'column')
 				},
 				yaxis: {
-					show: (this.diagram_type === 'column' && this.verticalDisplay)
+					show: (this.diagram_type === 'column'),
+					tickFormatter: function(val, axis) {
+						if(me.humanReadable) {
+							return rdr_humanreadable_value(val, axis.options.unit);
+						}
+						else {
+							return val + ' ' + axis.options.unit;
+						}
+					}
 				},
 				tooltip: this.tooltip,
 				tooltipOpts: {
-					content: function(label, xval, yval, flotItem) {
-						if(me.humanReadable) {
-							for(var serieId in me.series) {
-								var serie = me.series[serieId];
+					content: function(label, xval, yval, item) {
+						var val = item.series.data[item.dataIndex][1];
 
-								if(serie.label === label) {
-									yval = rdr_humanreadable_value(yval, serie.node.bunit);
-									break;
+						for(var serieId in me.series) {
+							var serie = me.series[serieId];
+
+							if(serie.label === label) {
+								if(me.humanReadable) {
+									val = rdr_humanreadable_value(val, serie.node.bunit);
 								}
+
+								return '<b>' + label + ':</b> ' + val;
 							}
 						}
-
-						return "<b>" + label + ":</b>" + yval;
 					}
 				}
 			}
 		);
 	},
 
-	prepareData: function() {
-		var label_axis_group = {};
-		var label_axis_group_count = 0;
+	getSeriesConf: function() {
+		var series = this.callParent(arguments);
 
-		for(var node_id in this.series) {
-			var serie = this.series[node_id];
+		return series.sort(function(a, b) {
+			return a.node.categoryIndex - b.node.categoryIndex;
+		});
+	},
 
-			if(label_axis_group[serie.label] === undefined) {
-				label_axis_group[serie.label] = label_axis_group_count;
-				label_axis_group_count ++;
+	getSerieForNode: function() {
+		var serie = this.callParent(arguments);
+
+		if(this.categories.length > 1) {
+			var category = undefined;
+
+			if(serie.node.category) {
+				category = this.nodesByCategories[serie.node.category];
+			}
+			else {
+				category = this.nodesNoCategory;
 			}
 
-			serie.label_axis_group = label_axis_group[serie.label];
+			if(this.stacked_graph) {
+				serie.bars = {
+					barWidth: 0.8
+				};
+			}
+			else {
+				serie.bars = {
+					barWidth: 0.8 / (category.length)
+				};
+			}
 		}
+
+		return serie;
 	},
 
 	addPoint: function(serieId, value, serieIndex) {
 		var serie = this.series[serieId];
-		var x = serie.label_axis_group;
+		var point = [serieIndex, value[1]];
 
-		if(this.groupby_metric !== undefined && this.groupby_metric === true) {
-			x = serie.label_axis_group;
-		}
-		else if(this.stacked_graph !== undefined && this.stacked_graph === true) {
-			x = 0;
-		}
-		else {
-			x = serieIndex;
-		}
+		if(this.categories.length > 1) {
+			var category = undefined;
 
-		var point = [x, value[1]];
+			if(serie.node.category) {
+				category = this.nodesByCategories[serie.node.category];
+				point[0] = serie.node.categoryIndex;
+			}
+			else {
+				category = this.nodesNoCategory;
+				point[0] = 0;
+			}
+
+			if(!this.stacked_graph) {
+				var step = 0.8 / (category.length);
+
+				point[0] += 0.1 + serie.node.catSubIndex * step;
+			}
+			else {
+				point[0] += 0.1;
+			}
+
+			var real_point = point[0] - 0.2;
+			if(this.minPoint === undefined || real_point < this.minPoint) {
+				this.minPoint = real_point;
+			}
+		}
 
 		this.series[serieId].data = [point];
 	},
@@ -183,7 +310,7 @@ Ext.define('widgets.category_graph.category_graph', {
 	createChart: function() {
 		/* Computes the difference between the series sum and max user input value and then add it to series if max value > series sum */
 		//clean series first
-		delete this.series['max_diff'];
+		delete this.series['internal.max_diff'];
 
 		if(this.max > 0) {
 			var total = 0;
@@ -206,10 +333,13 @@ Ext.define('widgets.category_graph.category_graph', {
 				var stacked = this.stacked_graph;
 				var max = this.max;
 
-				this.series.max_diff = {
+				this.series['internal.max_diff'] = {
 					label: label,
 					data: [[stacked ? 0: serie_count, max - total]],
-					node: {},
+					node: {
+						id: 'internal',
+						metrics: ['max_diff']
+					},
 				};
 			}
 		}

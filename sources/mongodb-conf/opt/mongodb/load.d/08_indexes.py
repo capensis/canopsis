@@ -105,5 +105,31 @@ def init():
         ('timestamp', 1)
     ])
 
+    #Entities indexes
+    storage.get_backend('entities').ensure_index([
+        ('type', 1),
+        ('name',1)
+    ])
+    storage.get_backend('entities').ensure_index([
+        ('type', 1),
+        ('component',1),
+        ('resource',1),
+        ('id', 1)
+    ])
+    storage.get_backend('entities').ensure_index([
+        ('type', 1),
+        ('timestamp', 1),
+        ('component', 1),
+        ('resource', 1)
+    ])
+    storage.get_backend('entities').ensure_index([
+        ('type', 1),
+        ('nodeid', 1)
+    ])
+    storage.get_backend('entities').ensure_index([
+        ('crecord_type', 1),
+        ('objclass', 1)
+    ])
+
 def update():
     init()

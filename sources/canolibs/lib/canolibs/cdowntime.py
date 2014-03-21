@@ -20,15 +20,21 @@
 
 from crecord import crecord
 
-import time
-
+import time, datetime
+from cstorage import get_storage
+from caccount import caccount
 
 
 class Cdowntime(crecord):
 	"""
 		This class provide easy management for downtime by allowing component/resource test against any downtime at now time
 	"""
-	def __init__(self, storage):
+	def __init__(self, logger, storage=None):
+
+		self.logger = logger
+		if not storage:
+			storage = get_storage(namespace='object', account=caccount(user="root", group="root"))
+
 		self.storage = storage
 		self.backend = storage.get_backend('downtime')
 
@@ -38,15 +44,29 @@ class Cdowntime(crecord):
 				delta_beat takes care of engines beat interval. for accurate measure,
 				it should be equal to 0
 		"""
+		self.logger.debug('Reloading downtimes @ %s' % (str(datetime.datetime.now())))
 		now = time.time()
 		query = {
-			'start': { '$lte': now - delta_beat},
-			'end'	: { '$gte': now +  delta_beat}
+			'start': { '$lte': now + delta_beat},
+			'end'	: { '$gte': now -  delta_beat}
 		}
 
 		downtimes = self.backend.find(query)
 		self.downtimes = [downtime for downtime in downtimes]
+		self.logger.debug('Got %s downtimes loaded' % (len(self.downtimes)))
+
 		return self.downtimes
+
+	def get_downtime_end_date(self, component, resource):
+		now = time.time()
+
+		downtimes_end = [now]
+
+		for downtime in self.downtimes:
+			if downtime['component'] == component and downtime['resource'] == resource and downtime['start'] < now and downtime['end'] > now:
+				downtimes_end.append(downtime['end'])
+
+		return max(downtimes_end)
 
 
 	def is_downtime(self, component, resource):

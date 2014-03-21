@@ -76,7 +76,11 @@ Ext.define('widgets.timegraph.timegraph', {
 	},
 
 	doRefresh: function(from, to) {
-		this.callParent(arguments);
+		if(this.aggregate_method) {
+			from = to - (this.time_window * 1000);
+		}
+
+		this.refreshNodes(from, to);
 
 		if(this.flagFilter) {
 			var filter = {'$and': [
@@ -291,6 +295,21 @@ Ext.define('widgets.timegraph.timegraph', {
 		if(!this.displayHorizontalLines) {
 			this.options.yaxis.tickLength = 0;
 		}
+
+		for(var serieId in this.series) {
+			var serie = this.series[serieId];
+			var idx = serie.yaxis - 1;
+
+			if(!this.options.yaxes[idx]) {
+				this.options.yaxes[idx] = {
+					position: ((idx % 2) === 0) ? 'left' : 'right'
+				};
+			}
+
+			this.options.yaxes[idx].font = {
+				color: serie.color
+			};
+		}
 	},
 
 	insertGraphExtraComponents: function() {
@@ -363,6 +382,14 @@ Ext.define('widgets.timegraph.timegraph', {
 		return series;
 	},
 
+	prepareData: function(serieId) {
+		this.callParent(arguments);
+
+		if(this.aggregate_method) {
+			this.series[serieId].data = [];
+		}
+	},
+
 	addPoint: function(serieId, value) {
 		// insert point only if it appends after the last of the serie.
 		var points = this.series[serieId].data,
@@ -371,7 +398,7 @@ Ext.define('widgets.timegraph.timegraph', {
 
 		if (last_point === undefined || last_point[0] < value_ts) {
 			this.series[serieId].data.push([value_ts, value[1]]);
-			this.series[serieId].last_timestamp = value_ts;
+			this.series[serieId].last_timestamp = (this.aggregate_method ? undefined : value_ts);
 		}
 
 	},
@@ -389,7 +416,7 @@ Ext.define('widgets.timegraph.timegraph', {
 				timestamp = now - this.time_window * 1000;
 			}
 
-			while(this.series[serieId].data[0][0] < timestamp) {
+			while(this.series[serieId].data.length > 0 && this.series[serieId].data[0][0] < timestamp) {
 				this.series[serieId].data.shift();
 			}
 

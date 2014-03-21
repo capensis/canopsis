@@ -173,6 +173,7 @@ Ext.define('canopsis.lib.view.cwidgetGraph', {
 		this.chart.initializeLegendManager(this);
 		this.chart.initializeAutoScale(this);
 		this.chart.initializeTimeNavigation(this);
+		this.chart.initializeBarLabels(this);
 	},
 
 	renderChart: function() {
@@ -278,6 +279,7 @@ Ext.define('canopsis.lib.view.cwidgetGraph', {
 				return a.label.localeCompare( b.label );
 			});
 		}
+
 		return series;
 	},
 
@@ -339,9 +341,7 @@ Ext.define('canopsis.lib.view.cwidgetGraph', {
 					this.series[serieId].data = [];
 				}
 
-				if(this.prepareData !== undefined) {
-					this.prepareData();
-				}
+				this.prepareData(serieId);
 
 				/* add data to the serie */
 				for(var j = 0; j < info.values.length; j++) {
@@ -366,6 +366,7 @@ Ext.define('canopsis.lib.view.cwidgetGraph', {
 		this.renderChart();
 	},
 
+	prepareData: function(serieId) {},
 	updateSeriesConfig: function() {},
 	dblclick: function() {},
 

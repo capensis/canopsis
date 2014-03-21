@@ -25,12 +25,12 @@ else
 	echo " :: Archive detected ($FULLPATH)"
 fi
 
-if ! [[ ${FILENAME: -4} == ".tar.gz" || $(exit $?) == 1 ]]; then
-	echo " ## Package format must be *.tar.gz (${FILENAME: -4})"
+if ! [[ ${FILENAME: -7} == ".tar.gz" || $(exit $?) == 1 ]]; then
+	echo " ## Package format must be *.tar.gz (${FILENAME: -7})"
 	echo " ## Failed"
 	exit 1
 else
-	echo " :: Good archive format (${FILENAME: -4})"
+	echo " :: Good archive format (${FILENAME: -7})"
 fi
 
 ARCHIVE="${FILENAME%.[^.]*}"

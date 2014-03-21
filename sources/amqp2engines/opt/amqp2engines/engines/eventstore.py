@@ -21,7 +21,7 @@
 from carchiver import carchiver
 
 from cengine import cengine
-
+from cdowntime import Cdowntime
 NAME="eventstore"
 
 class engine(cengine):
@@ -46,16 +46,18 @@ class engine(cengine):
 			'ack',
 			'downtime'
 		]
+		self.cdowntime = Cdowntime(self.logger)
+		self.beat()
+
+	def beat(self):
+		self.cdowntime.reload(self.beat_interval)
 
 	def work(self, event, *args, **kargs):
 		event_id = event['rk']
 
 		exchange = None
-		try:
-			exchange = event['exchange']
+		if 'exchange' in event:
 			del event['exchange']
-		except:
-			pass
 
 		event_type = event['event_type']
 
@@ -63,12 +65,11 @@ class engine(cengine):
 			self.logger.warning("Unknown event type '%s', id: '%s', event:\n%s" % (event_type, event_id, event))
 			return event
 
-		## Archive event
-		if event_type == 'perf':
-			pass
-
 		elif event_type in ['check', 'selector', 'sla', 'eue', 'topology', 'consolidation']:
 			_id = self.archiver.check_event(event_id, event)
+			if 'downtime' in event and event['downtime']:
+				event['previous_state_change_ts'] = self.cdowntime.get_downtime_end_date(event['component'], event.get('resource',''))
+
 			if _id:
 				event['_id'] = _id
 				event['event_id'] = event_id

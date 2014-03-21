@@ -107,10 +107,15 @@
 							"fieldLabel": "Donut hole",
 							"value": "0",
 							"stepValue": 0.1
-						}, {
+						},{
 							"xtype" : "numberfield",
 							"name" : "tilt",
 							"fieldLabel": "Tilt",
+							"value": "1"
+						},{
+							"xtype" : "numberfield",
+							"name" : "stroke_width",
+							"fieldLabel": "Stroke width",
 							"value": "1"
 						}
 					]
@@ -350,6 +355,11 @@
 							"fieldLabel": "Category",
 							"name": "category",
 							"emptyText": "Type category name here"
+						},{
+							"xtype": "numberfield",
+							"fieldLabel": "Category Order",
+							"name": "catorder",
+							"value": 0
 						}
 					]
 				}

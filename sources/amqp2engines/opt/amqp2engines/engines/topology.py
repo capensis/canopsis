@@ -28,7 +28,6 @@ from cstorage import get_storage
 import time
 from datetime import datetime
 from random import random
-from cdowntime import Cdowntime
 
 NAME="topology"
 
@@ -55,8 +54,6 @@ class engine(cengine):
 
 	def pre_run(self):
 		self.storage = get_storage(namespace='object', account=caccount(user="root", group="root"))
-		self.cdowntime = Cdowntime(self.storage)
-
 		self.beat()
 
 
@@ -239,19 +236,15 @@ class engine(cengine):
 			# Get all states of all topos
 			self.stateById = {}
 
-			# Allow downtime matching with selected events
-			downtimes = self.cdowntime.reload()
-
 			records = self.storage.find(mfilter={'$and': [{'_id': {'$in': ids}}]}, mfields=['state', 'state_type', 'previous_state', 'component', 'resource'], namespace='events')
 			for record in records:
 
 				self.logger.debug({'record':record})
 				state = record['state']
 
-				if downtimes:
-					if 'component' in record and 'resource' in record and self.cdowntime.is_downtime(record['component'], record['resource']):
-						self.logger.debug('downtime detected, will set state to 0 for this event')
-						state = 0
+				if 'downtime' in event and event['downtime']:
+					self.logger.debug('downtime detected, will set state to 0 for this event')
+					state = 0
 
 				self.stateById[record['_id']] = {
 					'state': state,

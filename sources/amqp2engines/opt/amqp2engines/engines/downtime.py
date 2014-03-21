@@ -29,6 +29,7 @@ from cdowntime import Cdowntime
 import cmfilter
 import time
 import acknowledgement as engine_ack
+import datetime
 
 NAME="downtime"
 
@@ -41,14 +42,11 @@ class engine(cengine):
 		self.storage = get_storage(namespace='downtime', account=account)
 		self.dt_backend = self.storage.get_backend('downtime')
 		self.evt_backend = self.storage.get_backend('events')
-		self.cdowntime = Cdowntime(self.storage)
+		self.cdowntime = Cdowntime(self.logger, storage=self.storage)
 		self.cdowntime.reload(delta_beat=self.beat_interval)
 		self.beat()
 
 	def beat(self):
-
-		self.logger.debug('Refresh downtimes list')
-		#refresh downtimes since now to now + delta_beat
 		self.cdowntime.reload(delta_beat=self.beat_interval)
 
 
@@ -164,7 +162,6 @@ class engine(cengine):
 			)
 			# Takes care of the new downtime
 			self.cdowntime.reload(delta_beat=self.beat_interval)
-
 
 		# For every other case, check if the event is in downtime
 		else:

@@ -35,6 +35,7 @@ import cevent
 from libexec.auth import get_account, check_group_rights
 
 logger = logging.getLogger('Event')
+logger.setLevel(logging.DEBUG)
 
 amqp = None
 group_managing_access = 'group.CPS_event_admin'
@@ -146,7 +147,7 @@ def send_event(	routing_key=None):
 
 	if not resource:
 		resource = data.get('resource', None)
-		if not resource:
+		if not resource and source_type == 'resource':
 			logger.error('No resource argument')
 			return HTTPError(400, 'Missing resource argument')
 

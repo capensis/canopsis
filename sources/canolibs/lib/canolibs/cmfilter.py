@@ -165,6 +165,6 @@ def regex_match(phrase, pattern, options=None):
 	options = regex_computeoptions(options)
 	if not phrase or not pattern or not options:
 		return False
-	return bool(re.search(pattern, phrase, options))
+	return bool(re.search(str(pattern), str(phrase), options))
 
 	
