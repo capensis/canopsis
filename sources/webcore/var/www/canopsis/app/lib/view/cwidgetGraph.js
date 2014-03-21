@@ -173,6 +173,7 @@ Ext.define('canopsis.lib.view.cwidgetGraph', {
 		this.chart.initializeLegendManager(this);
 		this.chart.initializeAutoScale(this);
 		this.chart.initializeTimeNavigation(this);
+		this.chart.initializeBarLabels(this);
 	},
 
 	renderChart: function() {
