@@ -295,6 +295,22 @@ Ext.define('widgets.timegraph.timegraph', {
 		if(!this.displayHorizontalLines) {
 			this.options.yaxis.tickLength = 0;
 		}
+
+		for(var serieId in this.series) {
+			var serie = this.series[serieId];
+			var idx = serie.yaxis - 1;
+
+			if(!this.options.yaxes[idx]) {
+				this.options.yaxes[idx] = {
+					position: ((idx % 2) === 0) ? 'left' : 'right'
+				};
+			}
+
+			this.options.yaxes[idx].color = serie.color;
+			this.options.yaxes[idx].font = {
+				color: serie.color
+			};
+		}
 	},
 
 	insertGraphExtraComponents: function() {

@@ -176,7 +176,20 @@ Ext.define('widgets.category_graph.category_graph', {
 						barWidth: 1,
 						zero: true,
 						dataLabels: this.labels,
-						showNumbers: (this.labels && this.diagram_type === 'column')
+						numbers: {
+							show: (this.labels && this.diagram_type === 'column'),
+							labelFormatter: function(serie, text) {
+								if(me.humanReadable) {
+									text = rdr_humanreadable_value(text, serie.node.bunit);
+								}
+
+								if(me.nameInLabelFormatter) {
+									text = serie.node.label + ': ' + text;
+								}
+
+								return text;
+							}
+						}
 					},
 					stack: this.stacked_graph
 				},
