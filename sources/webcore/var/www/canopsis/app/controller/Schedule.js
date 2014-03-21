@@ -38,10 +38,6 @@ Ext.define('canopsis.controller.Schedule', {
 	preSave: function(record, data) {
 		var interval = null;
 
-		if(data.exporting_interval) {
-			interval = data.exporting_intervalLength * data.exporting_intervalUnit;
-		}
-
 		record.set('exporting_account', global.account.user);
 		record.set('exporting_task', 'task_reporting');
 		record.set('exporting_method', 'render_pdf');
@@ -84,74 +80,74 @@ Ext.define('canopsis.controller.Schedule', {
 		function time2struct(hours, day, day_of_week, month, type, intervalLength, intervalUnit){
 			var result = {};
 			var date = new Date();
-			switch(type === undefined? 'Date and Time' : type) {
-				case 'Date and Time':
-					switch(data.frequency) {
-						case 'year':
-							if (month !== undefined && month !== null) {
-								result['month'] = month;
-							} else {
-								result['month'] = date.getMonth();
-							}
-						case 'month':
-							if (day !== undefined && day !== null) {
-								result['day'] = month;
-							} else {
-								result['day'] = date.getDate();
-							}
-						case 'week':
-							if (data.frequency === 'week'){
-								if(day_of_week !== undefined && day_of_week !== null) {
-									result['day_of_week'] = day_of_week;
-								} else {
-									result['day_of_week'] = date.getDay();
-								}
-							}
-						case 'day':
-							if (hours !== undefined && hours !== null) {
-								var time = stringTo24h(hours);
-								var d = new Date();
-								d.setHours(time.hour);
-								d.setMinutes(time.minute, 10);
-								result['minute'] = d.getUTCMinutes();
-								result['hour'] = d.getUTCHours();
-							}
-							break;
-						default:
-							console.log('Wrong frequency: ' + frequency);
-							break;
+			switch(data.frequency) {
+				case 'year':
+					if (month !== undefined && month !== null) {
+						result['month'] = month;
+					} else {
+						result['month'] = date.getMonth();
 					}
-					break;
-				case 'Duration':
-					if (intervalLength !== undefined) {
-						result['intervalLength'] = intervalLength;
+				case 'month':
+					if (day !== undefined && day !== null) {
+						result['day'] = month;
+					} else {
+						result['day'] = date.getDate();
 					}
-					if (intervalUnit !== undefined) {
-						result['intervalUnit'] = intervalUnit;
+				case 'week':
+					if (data.frequency === 'week'){
+						if(day_of_week !== undefined && day_of_week !== null) {
+							result['day_of_week'] = day_of_week;
+						} else {
+							result['day_of_week'] = date.getDay();
+						}
+					}
+				case 'day':
+					if (hours !== undefined && hours !== null) {
+						var time = stringTo24h(hours);
+						var d = new Date();
+						d.setHours(time.hour);
+						d.setMinutes(time.minute, 10);
+						result['minute'] = d.getUTCMinutes();
+						result['hour'] = d.getUTCHours();
 					}
 					break;
 				default:
-					console.log('Wrong type: ' + type);
+					console.log('Wrong frequency: ' + frequency);
 					break;
-			}
-			if (type !== undefined) {
-				result['type'] = type;
 			}
 			return result;
 		}
 
 		var crontab = time2struct(data.crontab_hours, data.cron_tab_day, data.cron_tab_day_of_week, data.crontab_month);
-		var from = time2struct(data.from_hours, data.from_day, data.from_day_of_week, data.from_month, data.from_type, data.from_intervalLength, data.from_intervalUnit);
-		var to = time2struct(data.to_hours, data.to_day, data.to_day_of_week, data.to_month, data.to_type, data.to_intervalLength, data.to_intervalUnit);
+		var from = time2struct(data.from_hours, data.from_day, data.from_day_of_week, data.from_month);
+		var to = time2struct(data.to_hours, data.to_day, data.to_day_of_week, data.to_month);
 
 		record.set('cron', crontab);
 		record.set('from', from);
+
+		to.enable = data.to_enable === "on";
+
 		record.set('to', to);
 
 		kwargs['_to'] = to;
 		kwargs['_from'] = from;
 
-		kwargs['timezone'] = data.timezone * -3600;
+		var before = {
+			unit: data.frequency + 's',
+			count: data.exporting_before === "on"? 1 : 0
+		};
+
+		record.set('before', before);
+		kwargs['before'] = before;
+
+		record.set('exporting_type', data.exporting_advanced === 'on' ? 'fixed' : 'duration');
+
+		record.set('exporting_intervalLength', data.exporting_intervalLength);
+		record.set('exporting_intervalUnit', data.exporting_intervalUnit);
+
+		kwargs['exporting_type'] = record.get('exporting_type');
+		kwargs['exporting_intervalUnit'] = record.get('exporting_intervalUnit');
+		kwargs['exporting_intervalLength'] = record.get('exporting_intervalLength');
 
 		record.set('kwargs',kwargs);
 
@@ -159,7 +155,7 @@ Ext.define('canopsis.controller.Schedule', {
 	},
 
 	beforeload_EditForm: function(form, item) {
-		crontab = item.data.cron;
+		var crontab = item.data.cron;
 
 		if(crontab && crontab.hour !== undefined && crontab.minute !== undefined) {
 			var d = new Date();
@@ -173,26 +169,9 @@ Ext.define('canopsis.controller.Schedule', {
 			form.down('textfield[name=crontab_hours]').setValue(d.getHours() + ':' + minutes);
 		}
 
-		timezone = item.data.timezone;
-
-		if (timezone === undefined) {
-			timezone = new Date().getTimezoneOffset() / -60;
-		} else {
-			timezone /= 3600;
-		}
-
-		form.down('*[name=timezone]').setValue(timezone);
-
-		from = item.data.from;
+		var from = item.data.from;
 
 		if (from !== undefined) {
-			form.down('*[name=from_type]').setValue(from.type);
-			if (from.intervalLength !== undefined) {
-				form.down('*[name=from_intervalLength]').setValue(from.intervalLength);
-			}
-			if (from.intervalUnit !== undefined) {
-				form.down('*[name=from_intervalUnit]').setValue(from.intervalUnit);
-			}
 			if (from.hour !== undefined) {
 				var d = new Date();
 				d.setUTCHours(from.hour, from.minute);
@@ -213,16 +192,9 @@ Ext.define('canopsis.controller.Schedule', {
 			}
 		}
 
-		to = item.data.to;
+		var to = item.data.to;
 
 		if (to !== undefined) {
-			form.down('*[name=to_type]').setValue(to.type);
-			if (to.intervalLength !== undefined) {
-				form.down('*[name=to_intervalLength]').setValue(to.intervalLength);
-			}
-			if (to.intervalUnit !== undefined) {
-				form.down('*[name=to_intervalUnit]').setValue(to.intervalUnit);
-			}
 			if (to.hour !== undefined) {
 				var d = new Date();
 				d.setUTCHours(to.hour, to.minute);
@@ -230,7 +202,11 @@ Ext.define('canopsis.controller.Schedule', {
 				if (minutes < 10) {
 					minutes = '0' + minutes;
 				}
-				form.down('*[name=to_hours]').setValue(d.getHours() + ':' + minutes);
+				hours = d.getHours();
+				if (hours < 10) {
+					hours = '0' + hours;
+				}
+				form.down('*[name=to_hours]').setValue(hours + ':' + minutes);
 			}
 			if (to.month !== undefined) {
 				form.down('*[name=to_month]').setValue(to.month);
@@ -241,7 +217,24 @@ Ext.define('canopsis.controller.Schedule', {
 			if (to.day_of_week !== undefined) {
 				form.down('*[name=to_day_of_week]').setValue(to.day_of_week);
 			}
+			form.down('*[name=to_enable]').setValue(to.enable);
 		}
+
+		var before = item.data.before;
+
+		if (before !== undefined && before !== null) {
+			form.down('*[name=exporting_before]').setValue(before.count > 0);
+		}
+
+		var exporting_intervalLength = item.data.exporting_intervalLength;
+		var exporting_intervalUnit = item.data.exporting_intervalUnit;
+
+		var exporting_advanced = item.data.exporting_type === 'fixed' ? true : false;
+
+		form.down('*[name=exporting_intervalLength]').setValue(exporting_intervalLength);
+		form.down('*[name=exporting_intervalUnit]').setValue(exporting_intervalUnit);
+		form.down('*[name=exporting_advanced]').setValue(exporting_advanced);
+
 	},
 
 	validateForm: function(store, data, form) {
@@ -277,94 +270,99 @@ Ext.define('canopsis.controller.Schedule', {
 		var start_time = undefined;
 		var stop_time = undefined;
 
-		var now = new Date().getTime();
+		var now = new Date();
 
-		function convert_struct_to_timestamp(struct) {
-			var result = undefined;
-			var date = undefined;
-			switch(struct.type) {
-				case 'Duration':
-					var intervalUnit = parseFloat(struct.intervalUnit);
-					date = start_time === undefined ? new Date() : new Date(start_time);
-					switch(struct.intervalLength) {
-						case 'hours':
-							if (start_time === undefined) {
-								date.setHours(date.getHours() - intervalUnit);
-							} else {
-								date.setHours(date.getHours() + intervalUnit);
-							}
-							break;
-						case 'days':
-							if (start_time === undefined) {
-								date.setDate(date.getDate() - intervalUnit);
-							} else {
-								date.setDate(date.getDate() + intervalUnit);
-							}
-							break;
-						case 'weeks':
-							if (start_time === undefined) {
-								date.setDate(date.getDate() - 7 * intervalUnit);
-							} else {
-								date.setDate(date.getDate() + 7 * intervalUnit);
-							}
-							break;
-						case 'months':
-							if (start_time === undefined) {
-								date.setMonth(date.getMonth() - intervalUnit);
-							} else {
-								date.setMonth(date.getMonth() + intervalUnit);
-							}
-							break;
-						case 'years':
-							if (start_time === undefined) {
-								date.setYear(date.getYear() - intervalUnit);
-							} else {
-								date.setYear(date.getYear() + intervalUnit);
-							}
-							break;
-						default:
-							console.log("Wrong interval length: " + struct.intervalLength);
+		var exporting_type = item.data.exporting_type;
+
+		switch(exporting_type) {
+			case 'fixed':
+				function update_date_with_before(date, before) {
+					if (before !== undefined) {
+						switch(options.before.unit) {
+							case 'days':
+								date.setDate(date.getDate() - 1);
+								break;
+							case 'weeks':
+								date.setDate(date.getDate() - 7);
+								break;
+							case 'months':
+								date.setMonth(date.getMonth() - 1);
+								break;
+							case 'years':
+								date.setYear(date.getYear() - 1);
+								break;
+							default:
+								console.log('Wrong before unit : ' + before.unit);
+								break;
+						}
 					}
-					break;
-				case 'Date and Time':
-					date = new Date();
-					switch(item.frequency) {
-						case 'year':
-							if (struct.month !== undefined && struct.month !== null) {
-								date.setMonth(struct.month);
-							}
-						case 'month':
-							if (struct.day !== undefined && struct.day !== null) {
-								date.setDate(struct.day);
-							}
-						case 'week':
-							if (item.frequency === 'week' && struct.day_of_week !== undefined && struct.day_of_week !== null) {
-								day.setDate(date.getDate() + date.getDay() - struct.day_of_week);
-							}
-						case 'day':
-							if (struct.hour !== undefined && struct.hour !== null) {
-								day.setHours(struct.hour);
-							}
-							if (struct.minute !== undefined && struct.minute !== null) {
-								day.setMinutes(struct.minute);
-							}
-							break;
-						default:
-						console.log('Error of frequency: ' + item.frequency);
+				}
+
+				update_date_with_before(now, options.before);
+
+				function convert_struct_to_timestamp(struct) {
+					var result = undefined;
+					var date = new Date(now.getTime());
+
+					if (item.data.frequency === "year") {
+						if (struct.month !== undefined && struct.month !== null) {
+							date.setMonth(struct.month);
+						}
+					}
+					if (item.data.frequency === "month") {
+						if (struct.day !== undefined && struct.day !== null) {
+							date.setDate(struct.day);
+						}
+					}
+					if (item.data.frequency === "week") {
+						if (item.data.frequency === "week" && struct.day_of_week !== undefined && struct.day_of_week !== null) {
+							date.setDate(date.getDate() + date.getDay() - struct.day_of_week);
+						}
+					}
+					if (item.data.frequency === "day") {
+						if (struct.hour !== undefined && struct.hour !== null) {
+							date.setHours(struct.hour);
+						}
+						if (struct.minute !== undefined && struct.minute !== null) {
+							date.setMinutes(struct.minute);
+						}
+					}
+
+					result = date.getTime();
+					return result;
+				}
+
+				if (options._from !== undefined && options._from !== null) {
+					start_time = convert_struct_to_timestamp(options._from);
+					stop_time = (options._to === undefined || options._to === null || ! options._to.enable) ? (now.getTime()) : convert_struct_to_timestamp(options._to);
+				}
+				break;
+			case 'duration':
+				var exporting_intervalUnit = item.data.exporting_intervalUnit;
+				var exporting_intervalLength = parseInt(item.data.exporting_intervalLength, 10);
+				var date = new Date(now.getTime());
+				switch(exporting_intervalUnit) {
+					case "hours":
+						date.setHours(date.getHours() - exporting_intervalLength);
 						break;
-					}
-					break;
-				default:
-					console.log('Error of type: ' + struct.type);
-					break;
-			}
-			result = date.getTime();
-			return result;
-		}
-
-		if (options._from !== undefined && options._from !== null) {
-			start_time = convert_struct_to_timestamp(options._from);
-			stop_time = options._to === undefined || options._to === null ? (now) : convert_struct_to_timestamp(options._to);
+					case "days":
+						date.setDate(date.getDate() - exporting_intervalLength);
+						break;
+					case "weeks":
+						date.setDate(date.getDate() - 7 * exporting_intervalLength);
+						break;
+					case "months":
+						date.setMonth(date.getMonth() - exporting_intervalLength);
+						break;
+					case "years":
+						date.setYear(date.getYear() - exporting_intervalLength);
+						break;
+					default:
+						console.error('Wrong exporting unit : ' + exporting_intervalUnit);
+				}
+				start_time = date.getTime();
+				stop_time = now.getTime();
+				break;
 		}
 
 		var mail = options.mail;
@@ -373,7 +371,7 @@ Ext.define('canopsis.controller.Schedule', {
 			mail = Ext.encode(mail);
 		}
 
-		this.getController('Reporting').launchReport(view_name, start_time, stop_time, mail, undefined, undefined, options.timezone);
+		this.getController('Reporting').launchReport(view_name, start_time, stop_time, mail, undefined, undefined);
 	},
 
 	//call a window wizard to schedule Schedule with passed argument

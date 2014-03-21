@@ -47,7 +47,7 @@ logger.setLevel('DEBUG')
 
 @task
 @decorators.log_task
-def render_pdf(fileName=None, viewName=None, startTime=None, stopTime=None, interval=None, account=None, mail=None, owner=None, orientation='Portrait', pagesize='A4', _from=None, _to=None, timezone=0):
+def render_pdf(fileName=None, viewName=None, startTime=None, stopTime=None, interval=None, account=None, mail=None, owner=None, orientation='Portrait', pagesize='A4', before=None, _from=None, _to=None, exporting_type='fixed', exporting_intervalLength=1, exporting_intervalUnit='days'):
 
 	logger.info('start render')
 
@@ -60,99 +60,107 @@ def render_pdf(fileName=None, viewName=None, startTime=None, stopTime=None, inte
 	logger.debug("mail: %s " % mail)
 	logger.debug("_from: %s " % _from)
 	logger.debug("_to: %s " % _to)
-	logger.debug("timezone: %s " % timezone)
+	logger.debug("exporting_type: %s " % exporting_type)
+	logger.debug("exporting_intervalLength: %s" % exporting_intervalLength)
+	logger.debug("exporting_intervalUnit: %s" % exporting_intervalUnit)
 
 	now = time.time()
 
-	timezone = int(timezone)
+	logger.debug("now: %s " % now)
 
-	def get_timestamp(_time):
-		"""
-		Get a timestamp from an input _time struct.
-		"""
-		result = 0
+	if exporting_type == 'duration':
 
-		_datetime = datetime.utcfromtimestamp(now)
+		logger.debug('duration exporting type')
+		date = datetime.fromtimestamp(now)
+		kwargs = {exporting_intervalUnit: int(exporting_intervalLength)}
+		logger.debug(kwargs)
+		rd = relativedelta(**kwargs)
+		logger.debug("rd: %s" % rd)
+		date -= rd
+		startTime = time.mktime(date.timetuple())
+		stopTime = now
 
-		td = timedelta(seconds=timezone)
-		_datetime -= td
-
-		kwargs = dict()
-
-		day = _time.get('day')
-		if day is not None:
-			logger.debug("day %s" % day)
-			kwargs['day'] = int(day)
-
-		month = _time.get('month')
-		if month is not None:
-			logger.debug("month %s" % month)
-			kwargs['month'] = int(month)
-
-		hour = _time.get('hour')
-		if hour is not None:
-			logger.debug("hour %s" % hour)
-			kwargs['hour'] = int(hour)
-
-		minute = _time.get('minute')
-		if minute is not None:
-			logger.debug("minute %s" % minute)
-			kwargs['minute'] = int(minute)
-
-		logger.debug(_datetime)
-
-		_datetime = _datetime.replace(**kwargs)
-
-		logger.debug(_datetime)
-
-		day_of_week = _time.get('day_of_week')
-		if day_of_week is not None:
-			logger.debug("day_of_week %s" % day_of_week)
-			day_of_week = int(day_of_week)
-			weekday = calendar.weekday(_datetime.year, _datetime.month, _datetime.day)
-			day = weekday - day_of_week
-			logger.debug("day %s" % day)
-			td = timedelta(days=day)
-			_datetime -= td
-
-		result = time.mktime(_datetime.timetuple())
-
-		logger.debug('result %s ' % result)
-
-		return result
-
-	if _from is not None and _from:
-		if _from['type'] == 'Duration':
-			date = datetime.now()
-			kwargs = {_from['intervalLength']: float(_from['intervalUnit'])}
+	elif exporting_type == 'fixed':
+		if before is not None:
+			unit = before['unit']
+			count = before['count']
+			_datetime = datetime.fromtimestamp(now)
+			kwargs = {before['unit']: before['count']}
 			rd = relativedelta(**kwargs)
-			date -= rd
-			startTime = time.mktime(date.timetuple())
-		elif _from['type'] == 'Date and Time':
+			_datetime -= rd
+			now = time.mktime(_datetime.timetuple())
+
+		logger.debug('now: %s' % now)
+
+		def get_timestamp(_time):
+			"""
+			Get a timestamp from an input _time struct.
+			"""
+			result = 0
+
+			_datetime = datetime.fromtimestamp(now)
+
+			kwargs = dict()
+
+			day = _time.get('day')
+			if day is not None:
+				logger.debug("day %s" % day)
+				kwargs['day'] = int(day)
+
+			month = _time.get('month')
+			if month is not None:
+				logger.debug("month %s" % month)
+				kwargs['month'] = int(month)
+
+			hour = _time.get('hour')
+			if hour is not None:
+				logger.debug("hour %s" % hour)
+				kwargs['hour'] = int(hour)
+
+			minute = _time.get('minute')
+			if minute is not None:
+				logger.debug("minute %s" % minute)
+				kwargs['minute'] = int(minute)
+
+			logger.debug(_datetime)
+
+			_datetime = _datetime.replace(**kwargs)
+
+			logger.debug(_datetime)
+
+			day_of_week = _time.get('day_of_week')
+			if day_of_week is not None:
+				logger.debug("day_of_week %s" % day_of_week)
+				day_of_week = int(day_of_week)
+				weekday = calendar.weekday(_datetime.year, _datetime.month, _datetime.day)
+				day = weekday - day_of_week
+				logger.debug("day %s" % day)
+				td = timedelta(days=day)
+				_datetime -= td
+
+			result = time.mktime(_datetime.timetuple())
+
+			logger.debug('result %s ' % result)
+
+			return result
+
+		if _from is not None and _from:
 			startTime = get_timestamp(_from)
-		else:
-			logger.error('type value is not understood _from: {0}'.format(_from['type']))
 
-	if startTime is not None:
-		logger.info('_from : {0} and startTime : {1} ({2})'.format(_from, startTime, datetime.utcfromtimestamp(startTime)))
+		if startTime is not None:
+			logger.info('_from : {0} and startTime : {1} ({2})'.format(_from, startTime, datetime.fromtimestamp(startTime)))
 
-	if startTime and _to is not None and _to:
-		if _to['type'] == 'Duration':
-			date = datetime.fromtimestamp(startTime)
-			kwargs = {_to['intervalLength']: float(_to['intervalUnit'])}
-			rd = relativedelta(**kwargs)
-			date += rd
-			stopTime = time.mktime(date.timetuple())
-		elif _to['type'] == 'Date and Time':
+		if startTime and _to is not None and _to.get('enable', False):
 			stopTime = get_timestamp(_to)
-		else:
-			logger.error('type value is not understood in _to: {0}'.format(_to['type']))
 
-	if stopTime is not None:
-		logger.info('_to : {0} and stopTime : {1} ({2})'.format(_to, stopTime, datetime.utcfromtimestamp(stopTime)))
+		if stopTime is not None:
+			logger.info('_to : {0} and stopTime : {1} ({2})'.format(_to, stopTime, datetime.fromtimestamp(stopTime)))
 
-	if not stopTime:
-		stopTime = int(time.mktime(datetime.now().timetuple()))
+		if not stopTime:
+			stopTime = int(time.mktime(datetime.now().timetuple()))
+
+	else:
+		logger.error('Wrong exporting type %s' % exporting_type)
 
 	if not startTime:
 		if interval:
@@ -188,13 +196,9 @@ def render_pdf(fileName=None, viewName=None, startTime=None, stopTime=None, inte
 
 	#set fileName
 	if fileName is None:
-		toDate = datetime.utcfromtimestamp(int(stopTime))
-		td = timedelta(seconds=timezone)
-		toDate -= td
+		toDate = datetime.fromtimestamp(int(stopTime))
 		if startTime and startTime != -1:
-			fromDate = datetime.utcfromtimestamp(int(startTime))
-			td = timedelta(seconds=timezone)
-			fromDate -= td
+			fromDate = datetime.fromtimestamp(int(startTime))
 			fileName = '%s_From_%s_To_%s.pdf' % (view_record.name, fromDate, toDate)
 		else:
 			fileName = '%s_%s.pdf' % (view_record.name,toDate)

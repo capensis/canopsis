@@ -92,69 +92,24 @@ def update_schedule():
 		if 'interval' in kwargs and kwargs['interval']:
 			nbDays = timedelta(seconds=kwargs['interval']).days
 
-			if 'from' not in record.data:
-				record.data['from'] = {'type': 'Duration'}
+			record.data['exporting_type'] = 'duration'
 
-			if 'to' not in record.data:
-				record.data['to'] = {'type': 'Duration'}
-
-			exporting = dict()
+			del kwargs['interval']
 
 			if nbDays >= 365:
-				exporting['intervalLength'] = 'years'
-				exporting['intervalUnit'] = int(nbDays/365)
+				record.data['exporting_intervalUnit'] = 'years'
+				record.data['exporting_intervalLength'] = int(nbDays/365)
 			elif nbDays >= 30:
-				exporting['intervalLength'] = 'months'
-				exporting['intervalUnit'] = int(nbDays/30)
+				record.data['exporting_intervalUnit'] = 'months'
+				record.data['exporting_intervalLength'] = int(nbDays/30)
 			elif nbDays >= 7:
-				exporting['intervalLength'] = 'weeks'
-				exporting['intervalUnit'] = int(nbDays/7)
+				record.data['exporting_intervalUnit'] = 'weeks'
+				record.data['exporting_intervalLength'] = int(nbDays/7)
 			elif nbDays >= 1:
-				exporting['intervalLength'] = 'days'
-				exporting['intervalUnit'] = math.floor(nbDays)
+				record.data['exporting_intervalUnit'] = 'days'
+				record.data['exporting_intervalLength'] = math.floor(nbDays)
 			else:
-				exporting['intervalLength'] = 'hours'
-				exporting['intervalUnit'] = math.floor(nbDays)
-
-			record.data['from'].update(exporting)
-			record.data['kwargs']['_from'] = record.data['from']
-			record.data['to'].update(exporting)
-			record.data['kwargs']['_to'] = record.data['to']
-
-		if 'exporting_intervalUnit' in record.data:
-			exporting = {
-				'type': 'Duration',
-				'intervalUnit': record.data['exporting_intervalUnit']
-			}
-
-			lengths_by_time = {
-				31557600: 'years',
-				2629800: 'months',
-				604800: 'weeks',
-				86400: 'days',
-				3600: 'hours'
-			}
-
-			exporting_intervalLength = record.data.get('exporting_intervalLength')
-			if exporting_intervalLength is not None:
-				exporting_intervalLength = lengths_by_time.get(exporting_intervalLength, 'days')
-
-			if 'from' not in record.data:
-				record.data['from'] = exporting
-			else:
-				record.data['from'].update(exporting)
-			record.data['kwargs']['_from'] = record.data['from']
-
-			if 'to' not in record.data:
-				record.data['to'] = exporting
-			else:
-				record.data['to'].update(exporting)
-			record.data['kwargs']['_to'] = record.data['to']
-
-			del record.data['exporting_intervalLength']
-			del record.data['exporting_intervalUnit']
-
-		if 'timezone' not in record.data:
-			record.data['timezone'] = time.timezone
+				record.data['exporting_intervalUnit'] = 'hours'
+				record.data['exporting_intervalLength'] = math.floor(nbDays)
 
 		storage.put(record)

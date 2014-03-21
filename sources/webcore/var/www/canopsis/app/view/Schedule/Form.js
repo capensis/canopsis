@@ -189,57 +189,50 @@ Ext.define('canopsis.view.Schedule.Form', {
 					title: _('Exporting interval'),
 					items: [
 						{
-							xtype: "numberfield",
-							value: - (new Date().getTimezoneOffset() / 60),
-							fieldLabel: _('Time zone (hr)'),
-							name: 'timezone'
+							xtype: "checkbox",
+							fieldLabel: _('advanced'),
+							checked: false,
+							name: 'exporting_advanced'
 						}, {
 							xtype: 'cfieldset',
-							title: _('From'),
-							layout: 'vbox',
+							layout: "hbox",
+							title: _('Duration'),
+							itemId: 'exporting_duration',
 							items: [
 								{
+									xtype: "numberfield",
+									name: "exporting_intervalLength",
+									value: 1,
+									minValue: 0
+								},	{
 									xtype: 'combobox',
-									name: 'from_type',
+									name: 'exporting_intervalUnit',
 									queryMode: 'local',
 									displayField: 'text',
 									valueField: 'value',
-									padding: '0 0 5 5',
-									value: 'Duration',
-									store: {
-										xtype: 'store',
-										fields: ['value', 'text'],
-										data: [
-											{value: 'Duration', text: _('Duration')},
-											{value: 'Date and Time', text: _('Date and Time')}
-										]
-									},
-								},	{
-									xtype: 'numberfield',
-									name: 'from_intervalUnit',
-									allowBlank: false,
-									minValue: 1,
-									value: 1
-								},	{
-									xtype: 'combobox',
-									name: 'from_intervalLength',
-									queryMode: 'local',
-									displayField: 'text',
-									valueField: 'value',
-									padding: '0 0 5 5',
 									value: 'days',
 									store: {
 										xtype: 'store',
 										fields: ['value', 'text'],
 										data: [
-											{value: 'hours', text: _('Hour')+'(s)'},
-											{value: 'days', text: _('Day')+'(s)'},
-											{value: 'weeks', text: _('Week')+'(s)'},
-											{value: 'months', text: _('Month')+'(s)'},
-											{value: 'years', text: _('Year')+'(s)'}
+											{value: 'hours', text: _('Hours')},
+											{value: 'days', text: _('Day')},
+											{value: 'weeks', text: _('Week')},
+											{value: 'months', text: _('Month')},
+											{value: 'years', text: _('Year')}
 										]
 									}
-								}, {
+								}
+							]
+						},  {
+							xtype: 'cfieldset',
+							title: _('From'),
+							layout: 'vbox',
+							itemId: 'from',
+							disabled: true,
+							hidden: true,
+							items: [
+								{
 									xtype: 'combobox',
 									name: 'from_month',
 									fieldLabel: _('Month'),
@@ -317,8 +310,6 @@ Ext.define('canopsis.view.Schedule.Form', {
 									xtype: 'textfield',
 									name: 'from_hours',
 									fieldLabel: _('Hours (local time)'),
-									disabled: true,
-									hidden: true,
 									allowBlank: false,
 									value: '00:00',
 									regex: getTimeRegex()
@@ -326,51 +317,18 @@ Ext.define('canopsis.view.Schedule.Form', {
 							]
 						}, {
 							xtype: 'cfieldset',
-							title: _('To'),
+							title: _('To (scheduling date by default)'),
 							layout: 'vbox',
+							disabled: true,
+							hidden: true,
+							itemId: 'to',
 							items: [
 								{
-									xtype: 'combobox',
-									name: 'to_type',
-									queryMode: 'local',
-									displayField: 'text',
-									valueField: 'value',
-									padding: '0 0 5 5',
-									value: 'Duration',
-									store: {
-										xtype: 'store',
-										fields: ['value', 'text'],
-										data: [
-											{value: 'Duration', text: _('Duration')},
-											{value: 'Date and Time', text: _('Date and Time')}
-										]
-									},
-								}, {
-									xtype: 'numberfield',
-									name: 'to_intervalUnit',
-									allowBlank: false,
-									minValue: 1,
-									value: 1
-								}, {
-									xtype: 'combobox',
-									name: 'to_intervalLength',
-									queryMode: 'local',
-									displayField: 'text',
-									valueField: 'value',
-									padding: '0 0 5 5',
-									value: 'days',
-									store: {
-										xtype: 'store',
-										fields: ['value', 'text'],
-										data: [
-											{value: 'hours', text: _('Hour')+'(s)'},
-											{value: 'days', text: _('Day')+'(s)'},
-											{value: 'weeks', text: _('Week')+'(s)'},
-											{value: 'months', text: _('Month')+'(s)'},
-											{value: 'years', text: _('Year')+'(s)'}
-										]
-									}
-								}, {
+									xtype: 'checkbox',
+									name: 'to_enable',
+									checked: false,
+									fieldLabel: _('Enable')
+								},	{
 									xtype: 'combobox',
 									name: 'to_month',
 									fieldLabel: _('Month'),
@@ -449,8 +407,32 @@ Ext.define('canopsis.view.Schedule.Form', {
 									name: 'to_hours',
 									fieldLabel: _('Hours (local time)'),
 									allowBlank: false,
-									disabled: true,
 									hidden: true,
+									disabled: true,
+									value: '00:00',
+									regex: getTimeRegex()
+								}
+							]
+						}, {
+							xtype: 'cfieldset',
+							title: _('Advanced Options'),
+							layout: 'vbox',
+							itemId: 'exporting_fixed_advanced',
+							hidden: true,
+							disabled: true,
+							items: [
+								{
+									xtype: 'checkbox',
+									name: 'exporting_before',
+									fieldLabel: _('The day before'),
+									checked: false
+								}, {
+									xtype: 'textfield',
+									name: 'timezone',
+									fieldLabel: _('Time zone (GMT)'),
+									allowBlank: false,
+									hidden: true,
+									enable: false, // enable when timezone in client/server side
 									value: '00:00',
 									regex: getTimeRegex()
 								}
@@ -489,170 +471,171 @@ Ext.define('canopsis.view.Schedule.Form', {
 		var dayWeekCombo = this.down('*[name="crontab_day_of_week"]');
 		var monthCombo = this.down('*[name="crontab_month"]');
 
-		var from_type = this.down('*[name="from_type"]');
-		var from_intervalUnit = this.down('*[name="from_intervalUnit"]');
-		var from_intervalLength = this.down('*[name="from_intervalLength"]');
 		var from_month = this.down('*[name="from_month"]');
 		var from_day = this.down('*[name="from_day"]');
 		var from_day_of_week = this.down('*[name="from_day_of_week"]');
 		var from_hours = this.down('*[name="from_hours"]');
 
-		var to_type = this.down('*[name="to_type"]');
-		var to_intervalUnit = this.down('*[name="to_intervalUnit"]');
-		var to_intervalLength = this.down('*[name="to_intervalLength"]');
 		var to_month = this.down('*[name="to_month"]');
 		var to_day = this.down('*[name="to_day"]');
 		var to_day_of_week = this.down('*[name="to_day_of_week"]');
 		var to_hours = this.down('*[name="to_hours"]');
 
-		from_type.on('change', function(elt, e, eOpts) {
-			void(elt);
-			void(eOpts);
+		var exporting_before = this.down('*[name="exporting_before"]');
 
-			switch(e) {
-				case 'Date and Time':
-					from_intervalLength.hide().disable();
-					from_intervalUnit.hide().disable();
-					frequencyComboValue = frequencyCombo.getValue();
-					switch (frequencyComboValue) {
-						case 'day':
-							from_day.hide().setDisabled(true);
-							from_day_of_week.hide().setDisabled(true);
-							from_month.hide().setDisabled(true);
-							break;
+		var to_enable = this.down('*[name="to_enable"]');
 
-						case 'week':
-							from_day_of_week.show().setDisabled(false);
-							from_day.hide().setDisabled(true);
-							from_month.hide().setDisabled(true);
-							break;
+		var exporting_advanced = this.down('*[name="exporting_advanced"]');
 
-						case 'month':
-							from_day_of_week.hide().setDisabled(true);
-							from_day.show().setDisabled(false);
-							from_month.hide().setDisabled(true);
-							break;
+		var exporting_duration = this.down('#exporting_duration');
 
-						case 'year':
-							from_day.show().setDisabled(false);
-							from_day_of_week.hide().setDisabled(true);
-							from_month.show().setDisabled(false);
-							break;
+		var to = this.down('#to');
+		var from = this.down('#from');
 
-						default:
-							log.debug('Wrong value');
-							break;
-					}
-					from_hours.show().enable();
+		var exporting_fixed_advanced = this.down('#exporting_fixed_advanced');
+
+		exporting_advanced.on('change', function(component, value) {
+			switch(value) {
+				case true:
+					exporting_duration.hide().setDisabled(true);
+					from.show().setDisabled(false);
+					to.show().setDisabled(false);
+					exporting_fixed_advanced.show().setDisabled(false);
 					break;
 
-				case 'Duration':
-					from_intervalLength.show().enable();
-					from_intervalUnit.show().enable();
-					from_month.hide().disable();
-					from_day.hide().disable();
-					from_day_of_week.hide().disable();
-					from_hours.hide().disable();
+				case false:
+					exporting_duration.show().setDisabled(false);
+					from.hide().setDisabled(true);
+					to.hide().setDisabled(true);
+					exporting_fixed_advanced.hide().setDisabled(true);
 					break;
 			}
-		}, this);
+		});
 
-		to_type.on('change', function(elt, e, eOpts) {
-			void(elt);
-			void(eOpts);
+		to_enable.on('change', function(component, value) {
+			void(component);
+			void(value);
 
-			switch(e) {
-				case 'Date and Time':
-					to_intervalLength.hide().disable();
-					to_intervalUnit.hide().disable();
-					frequencyComboValue = frequencyCombo.getValue();
-					switch (frequencyComboValue) {
+			switch(value) {
+				case true:
+					switch(frequencyCombo.getValue()) {
 						case 'day':
+							to_month.hide().setDisabled(true);
 							to_day.hide().setDisabled(true);
 							to_day_of_week.hide().setDisabled(true);
-							to_month.hide().setDisabled(true);
+							to_hours.show().setDisabled(false);
 							break;
 
 						case 'week':
+							to_month.hide().setDisabled(true);
+							to_day.hide().setDisabled(true);
 							to_day_of_week.show().setDisabled(false);
-							to_day.hide().setDisabled(true);
-							to_month.hide().setDisabled(true);
+							to_hours.show().setDisabled(false);
 							break;
 
 						case 'month':
-							to_day_of_week.hide().setDisabled(true);
-							to_day.show().setDisabled(false);
 							to_month.hide().setDisabled(true);
+							to_day.show().setDisabled(false);
+							to_day_of_week.hide().setDisabled(true);
+							to_hours.show().setDisabled(false);
 							break;
 
 						case 'year':
+							to_month.show().setDisabled(false);
 							to_day.show().setDisabled(false);
 							to_day_of_week.hide().setDisabled(true);
-							to_month.show().setDisabled(false);
+							to_hours.show().setDisabled(false);
 							break;
 
 						default:
 							log.debug('Wrong value');
 							break;
 					}
-					to_hours.show().enable();
 					break;
 
-				case 'Duration':
-					to_intervalLength.show().enable();
-					to_intervalUnit.show().enable();
-					to_month.hide().disable();
-					to_day.hide().disable();
-					to_day_of_week.hide().disable();
-					to_hours.hide().disable();
+				case false:
+					to_month.hide().setDisabled(true);
+					to_day.hide().setDisabled(true);
+					to_day_of_week.hide().setDisabled(true);
+					to_hours.hide().setDisabled(true);
 					break;
 			}
-		}, this);
-
-		function renewDateAndTimeDisplay() {
-			if (from_type.getValue()==='Day and Time') {
-				from_type.setValue('');
-				from_type.setValue('Day and Time');
-			}
-			if (to_type.getValue()==='Day and Time') {
-				to_type.setValue('');
-				to_type.setValue('Day and Time');
-			}
-		}
+		});
 
 		frequencyCombo.on('change', function(combo, value) {
 			void(combo);
+
+			exporting_before.setFieldLabel(_("The " + value + " before"));
 
 			switch (value) {
 				case 'day':
 					dayCombo.hide().setDisabled(true);
 					dayWeekCombo.hide().setDisabled(true);
 					monthCombo.hide().setDisabled(true);
+					if (exporting_advanced.getValue()) {
+						from_month.hide().setDisabled(true);
+						from_day.hide().setDisabled(true);
+						from_day_of_week.hide().setDisabled(true);
+						if (to_enable.getValue()) {
+							to_month.hide().setDisabled(true);
+							to_day.hide().setDisabled(true);
+							to_day_of_week.hide().setDisabled(true);
+						}
+					}
 					break;
 
 				case 'week':
 					dayWeekCombo.show().setDisabled(false);
 					dayCombo.hide().setDisabled(true);
 					monthCombo.hide().setDisabled(true);
+					if (exporting_advanced.getValue()) {
+						from_month.hide().setDisabled(true);
+						from_day.hide().setDisabled(true);
+						from_day_of_week.show().setDisabled(false);
+						if (to_enable.getValue()) {
+							to_month.hide().setDisabled(true);
+							to_day.hide().setDisabled(true);
+							to_day_of_week.show().setDisabled(false);
+						}
+					}
 					break;
 
 				case 'month':
 					dayWeekCombo.hide().setDisabled(true);
 					dayCombo.show().setDisabled(false);
 					monthCombo.hide().setDisabled(true);
+					if (exporting_advanced.getValue()) {
+						from_month.hide().setDisabled(true);
+						from_day.show().setDisabled(false);
+						from_day_of_week.hide().setDisabled(true);
+						if (to_enable.getValue()) {
+							to_month.hide().setDisabled(true);
+							to_day.show().setDisabled(false);
+							to_day_of_week.hide().setDisabled(true);
+						}
+					}
 					break;
 
 				case 'year':
 					dayCombo.show().setDisabled(false);
 					dayWeekCombo.hide().setDisabled(true);
 					monthCombo.show().setDisabled(false);
+					if (exporting_advanced.getValue()) {
+						from_month.show().setDisabled(false);
+						from_day.show().setDisabled(false);
+						from_day_of_week.hide().setDisabled(true);
+						if (to_enable.getValue()) {
+							to_month.show().setDisabled(false);
+							to_day.show().setDisabled(false);
+							to_day_of_week.hide().setDisabled(true);
+						}
+					}
 					break;
 
 				default:
 					log.debug('Wrong value');
 					break;
 			}
-			renewDateAndTimeDisplay();
 		}, this);
 
 		this.down('*[name="exporting_owner"]').setValue(global.account.user);

@@ -71,7 +71,7 @@ class cinit(object):
 		else:
 			self.level = logging_level
 			
-		logging.basicConfig(format='%(asctime)s %(levelname)s %(name)s %(message)s')
+		logging.basicConfig(format='%(asctime)s %(levelname)s %(name)s [%(module)s %(lineno)s] %(message)s')
 		self.logger = logging.getLogger(name)
 		self.logger.setLevel(self.level)
 		
