@@ -306,7 +306,6 @@ Ext.define('widgets.timegraph.timegraph', {
 				};
 			}
 
-			this.options.yaxes[idx].color = serie.color;
 			this.options.yaxes[idx].font = {
 				color: serie.color
 			};
