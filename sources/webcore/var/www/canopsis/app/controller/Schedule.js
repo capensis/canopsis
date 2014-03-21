@@ -145,9 +145,9 @@ Ext.define('canopsis.controller.Schedule', {
 		record.set('exporting_intervalLength', data.exporting_intervalLength);
 		record.set('exporting_intervalUnit', data.exporting_intervalUnit);
 
-		kwargs['exporting_type'] = data.exporting_type;
-		kwargs['exporting_intervalUnit'] = data.exporting_intervalUnit;
-		kwargs['exporting_intervalLength'] = data.exporting_intervalLength;
+		kwargs['exporting_type'] = record.get('exporting_type');
+		kwargs['exporting_intervalUnit'] = record.get('exporting_intervalUnit');
+		kwargs['exporting_intervalLength'] = record.get('exporting_intervalLength');
 
 		record.set('kwargs',kwargs);
 
@@ -338,9 +338,9 @@ Ext.define('canopsis.controller.Schedule', {
 				}
 				break;
 			case 'duration':
-				exporting_intervalUnit = item.data.exporting_intervalUnit;
-				exporting_intervalLength = item.data.exporting_intervalLength;
-				date = new Date(now.getTime());
+				var exporting_intervalUnit = item.data.exporting_intervalUnit;
+				var exporting_intervalLength = parseInt(item.data.exporting_intervalLength, 10);
+				var date = new Date(now.getTime());
 				switch(exporting_intervalUnit) {
 					case "hours":
 						date.setHours(date.getHours() - exporting_intervalLength);

@@ -47,7 +47,7 @@ logger.setLevel('DEBUG')
 
 @task
 @decorators.log_task
-def render_pdf(fileName=None, viewName=None, startTime=None, stopTime=None, interval=None, account=None, mail=None, owner=None, orientation='Portrait', pagesize='A4', before=None, _from=None, _to=None, exporting_type='fixed', exporting_intervalLength=1, exporting_intervalUnit='day'):
+def render_pdf(fileName=None, viewName=None, startTime=None, stopTime=None, interval=None, account=None, mail=None, owner=None, orientation='Portrait', pagesize='A4', before=None, _from=None, _to=None, exporting_type='fixed', exporting_intervalLength=1, exporting_intervalUnit='days'):
 
 	logger.info('start render')
 
@@ -61,6 +61,8 @@ def render_pdf(fileName=None, viewName=None, startTime=None, stopTime=None, inte
 	logger.debug("_from: %s " % _from)
 	logger.debug("_to: %s " % _to)
 	logger.debug("exporting_type: %s " % exporting_type)
+	logger.debug("exporting_intervalLength: %s" % exporting_intervalLength)
+	logger.debug("exporting_intervalUnit: %s" % exporting_intervalUnit)
 
 	now = time.time()
 
@@ -68,9 +70,12 @@ def render_pdf(fileName=None, viewName=None, startTime=None, stopTime=None, inte
 
 	if exporting_type == 'duration':
 
+		logger.debug('duration exporting type')
 		date = datetime.fromtimestamp(now)
-		kwargs = {exporting_intervalUnit: exporting_intervalLength}
+		kwargs = {exporting_intervalUnit: int(exporting_intervalLength)}
+		logger.debug(kwargs)
 		rd = relativedelta(**kwargs)
+		logger.debug("rd: %s" % rd)
 		date -= rd
 		startTime = time.mktime(date.timetuple())
 		stopTime = now

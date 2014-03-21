@@ -165,7 +165,29 @@ function rdr_task_crontab(val) {
 		}
 
 		if(val.day_of_week !== undefined) {
-			output += '   |   ' + _('day') + ' : ' + _(""+val.day_of_week);
+
+			function rdr_get_day_of_week(day_of_week) {
+				switch(day_of_week) {
+					case 0:
+						return "Monday";
+					case 1:
+						return "Tuesday";
+					case 2:
+						return "Wednesday";
+					case 3:
+						return "Thursday";
+					case 4:
+						return "Friday";
+					case 5:
+						return "Saturday";
+					case 6:
+						return "Sunday";
+					default:
+						return day_of_week;
+				}
+			}
+
+			output += '   |   ' + _('day') + ' : ' + _(rdr_get_day_of_week(val.day_of_week));
 		}
 	}
 
