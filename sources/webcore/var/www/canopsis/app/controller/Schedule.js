@@ -89,7 +89,7 @@ Ext.define('canopsis.controller.Schedule', {
 					}
 				case 'month':
 					if (day !== undefined && day !== null) {
-						result['day'] = month;
+						result['day'] = day;
 					} else {
 						result['day'] = date.getDate();
 					}
@@ -107,8 +107,8 @@ Ext.define('canopsis.controller.Schedule', {
 						var d = new Date();
 						d.setHours(time.hour);
 						d.setMinutes(time.minute, 10);
-						result['minute'] = d.getUTCMinutes();
-						result['hour'] = d.getUTCHours();
+						result['minute'] = d.getMinutes();
+						result['hour'] = d.getHours();
 					}
 					break;
 				default:
@@ -123,14 +123,17 @@ Ext.define('canopsis.controller.Schedule', {
 		var to = time2struct(data.to_hours, data.to_day, data.to_day_of_week, data.to_month);
 
 		record.set('cron', crontab);
-		record.set('from', from);
 
+		from.before = data.from_before === "on";
 		to.enable = data.to_enable === "on";
 
+		to.before = data.to_before === "on";
+
+		record.set('from', from);
 		record.set('to', to);
 
-		kwargs['_to'] = to;
 		kwargs['_from'] = from;
+		kwargs['_to'] = to;
 
 		var before = {
 			unit: data.frequency + 's',
@@ -155,7 +158,7 @@ Ext.define('canopsis.controller.Schedule', {
 	},
 
 	beforeload_EditForm: function(form, item) {
-		var crontab = item.data.cron;
+		var crontab = item.get('cron');
 
 		if(crontab && crontab.hour !== undefined && crontab.minute !== undefined) {
 			var d = new Date();
@@ -169,7 +172,7 @@ Ext.define('canopsis.controller.Schedule', {
 			form.down('textfield[name=crontab_hours]').setValue(d.getHours() + ':' + minutes);
 		}
 
-		var from = item.data.from;
+		var from = item.get('from');
 
 		if (from !== undefined) {
 			if (from.hour !== undefined) {
@@ -185,14 +188,17 @@ Ext.define('canopsis.controller.Schedule', {
 				form.down('*[name=from_month]').setValue(from.month);
 			}
 			if (from.day !== undefined) {
-				form.down('*[name=from_month]').setValue(from.day);
+				form.down('*[name=from_day]').setValue(from.day);
+			}
+			if (from.before !== undefined) {
+				form.down('*[name=from_before]').setValue(from.before);
 			}
 			if (from.day_of_week !== undefined) {
 				form.down('*[name=from_day_of_week]').setValue(from.day_of_week);
 			}
 		}
 
-		var to = item.data.to;
+		var to = item.get('to');
 
 		if (to !== undefined) {
 			if (to.hour !== undefined) {
@@ -212,24 +218,27 @@ Ext.define('canopsis.controller.Schedule', {
 				form.down('*[name=to_month]').setValue(to.month);
 			}
 			if (to.day !== undefined) {
-				form.down('*[name=to_month]').setValue(to.day);
+				form.down('*[name=to_day]').setValue(to.day);
 			}
 			if (to.day_of_week !== undefined) {
 				form.down('*[name=to_day_of_week]').setValue(to.day_of_week);
 			}
+			if (to.before !== undefined) {
+				form.down('*[name=to_before]').setValue(to.before);
+			}
 			form.down('*[name=to_enable]').setValue(to.enable);
 		}
 
-		var before = item.data.before;
+		var before = item.get('before');
 
 		if (before !== undefined && before !== null) {
 			form.down('*[name=exporting_before]').setValue(before.count > 0);
 		}
 
-		var exporting_intervalLength = item.data.exporting_intervalLength;
-		var exporting_intervalUnit = item.data.exporting_intervalUnit;
+		var exporting_intervalLength = item.get('exporting_intervalLength');
+		var exporting_intervalUnit = item.get('exporting_intervalUnit');
 
-		var exporting_advanced = item.data.exporting_type === 'fixed' ? true : false;
+		var exporting_advanced = item.get('exporting_type') === 'fixed' ? true : false;
 
 		form.down('*[name=exporting_intervalLength]').setValue(exporting_intervalLength);
 		form.down('*[name=exporting_intervalUnit]').setValue(exporting_intervalUnit);
@@ -272,12 +281,12 @@ Ext.define('canopsis.controller.Schedule', {
 
 		var now = new Date();
 
-		var exporting_type = item.data.exporting_type;
+		var exporting_type = item.get('exporting_type');
 
 		switch(exporting_type) {
 			case 'fixed':
-				function update_date_with_before(date, before) {
-					if (before !== undefined) {
+				function update_date_with_before(date) {
+					if (options.before !== undefined) {
 						switch(options.before.unit) {
 							case 'days':
 								date.setDate(date.getDate() - 1);
@@ -292,40 +301,45 @@ Ext.define('canopsis.controller.Schedule', {
 								date.setYear(date.getYear() - 1);
 								break;
 							default:
-								console.log('Wrong before unit : ' + before.unit);
+								console.log('Wrong before unit : ' + options.before.unit);
 								break;
 						}
 					}
 				}
 
-				update_date_with_before(now, options.before);
-
 				function convert_struct_to_timestamp(struct) {
 					var result = undefined;
 					var date = new Date(now.getTime());
 
-					if (item.data.frequency === "year") {
-						if (struct.month !== undefined && struct.month !== null) {
-							date.setMonth(struct.month);
-						}
+					if (struct.before === true) {
+						update_date_with_before(date);
 					}
-					if (item.data.frequency === "month") {
-						if (struct.day !== undefined && struct.day !== null) {
-							date.setDate(struct.day);
-						}
-					}
-					if (item.data.frequency === "week") {
-						if (item.data.frequency === "week" && struct.day_of_week !== undefined && struct.day_of_week !== null) {
-							date.setDate(date.getDate() + date.getDay() - struct.day_of_week);
-						}
-					}
-					if (item.data.frequency === "day") {
-						if (struct.hour !== undefined && struct.hour !== null) {
-							date.setHours(struct.hour);
-						}
-						if (struct.minute !== undefined && struct.minute !== null) {
-							date.setMinutes(struct.minute);
-						}
+
+					var frequency = item.get('frequency');
+
+					switch(frequency) {
+						case "year":
+							if (struct.month !== undefined && struct.month !== null) {
+								date.setMonth(struct.month);
+							}
+						case "month":
+							if (struct.day !== undefined && struct.day !== null) {
+								date.setDate(struct.day);
+							}
+						case "week":
+							if (item.data.frequency === "week" && struct.day_of_week !== undefined && struct.day_of_week !== null) {
+								date.setDate(date.getDate() + date.getDay() - struct.day_of_week);
+							}
+						case "day":
+							if (struct.hour !== undefined && struct.hour !== null) {
+								date.setHours(struct.hour);
+							}
+							if (struct.minute !== undefined && struct.minute !== null) {
+								date.setMinutes(struct.minute);
+							}
+							break;
+						default:
+							console.logger("Wrong frequency: " + frequency);
 					}
 
 					result = date.getTime();
@@ -337,6 +351,7 @@ Ext.define('canopsis.controller.Schedule', {
 					stop_time = (options._to === undefined || options._to === null || ! options._to.enable) ? (now.getTime()) : convert_struct_to_timestamp(options._to);
 				}
 				break;
+
 			case 'duration':
 				var exporting_intervalUnit = item.data.exporting_intervalUnit;
 				var exporting_intervalLength = parseInt(item.data.exporting_intervalLength, 10);

@@ -47,7 +47,7 @@ logger.setLevel('DEBUG')
 
 @task
 @decorators.log_task
-def render_pdf(fileName=None, viewName=None, startTime=None, stopTime=None, interval=None, account=None, mail=None, owner=None, orientation='Portrait', pagesize='A4', before=None, _from=None, _to=None, exporting_type='fixed', exporting_intervalLength=1, exporting_intervalUnit='days'):
+def render_pdf(fileName=None, viewName=None, startTime=None, stopTime=None, interval=None, account=None, mail=None, owner=None, orientation='Portrait', pagesize='A4', before=None, _from=None, _to=None, exporting_type='fixed', exporting_intervalLength=1, exporting_intervalUnit='day'):
 
 	logger.info('start render')
 
@@ -58,11 +58,10 @@ def render_pdf(fileName=None, viewName=None, startTime=None, stopTime=None, inte
 	logger.debug("interval: %s " % interval)
 	logger.debug("account: %s " % account)
 	logger.debug("mail: %s " % mail)
+	logger.debug("before: %s" % before)
 	logger.debug("_from: %s " % _from)
 	logger.debug("_to: %s " % _to)
 	logger.debug("exporting_type: %s " % exporting_type)
-	logger.debug("exporting_intervalLength: %s" % exporting_intervalLength)
-	logger.debug("exporting_intervalUnit: %s" % exporting_intervalUnit)
 
 	now = time.time()
 
@@ -70,25 +69,23 @@ def render_pdf(fileName=None, viewName=None, startTime=None, stopTime=None, inte
 
 	if exporting_type == 'duration':
 
-		logger.debug('duration exporting type')
 		date = datetime.fromtimestamp(now)
-		kwargs = {exporting_intervalUnit: int(exporting_intervalLength)}
-		logger.debug(kwargs)
+		kwargs = {exporting_intervalUnit: exporting_intervalLength}
 		rd = relativedelta(**kwargs)
-		logger.debug("rd: %s" % rd)
 		date -= rd
 		startTime = time.mktime(date.timetuple())
 		stopTime = now
 
 	elif exporting_type == 'fixed':
+
+		rd = relativedelta()
+
 		if before is not None:
 			unit = before['unit']
 			count = before['count']
 			_datetime = datetime.fromtimestamp(now)
 			kwargs = {before['unit']: before['count']}
 			rd = relativedelta(**kwargs)
-			_datetime -= rd
-			now = time.mktime(_datetime.timetuple())
 
 		logger.debug('now: %s' % now)
 
@@ -99,6 +96,9 @@ def render_pdf(fileName=None, viewName=None, startTime=None, stopTime=None, inte
 			result = 0
 
 			_datetime = datetime.fromtimestamp(now)
+
+			if _time.get('before', False):
+				_datetime -= rd
 
 			kwargs = dict()
 

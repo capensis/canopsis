@@ -32,7 +32,6 @@ Ext.define('canopsis.model.Schedule', {
 		{name: 'timezone', defaultValue: new Date().getTimezoneOffset() * 60},
 		{name: 'from', defaultValue: {hour: 0, minute: 0, day: 1, day_of_week: 0, month: 1}},
 		{name: 'to', defaultValue: {hour: 0, minute: 0, day: 1, day_of_week: 0, month: 1, enable: false}},
-		{name: 'before', defaultValue: undefined},
 		{name: 'log'},
 		{
 			name: 'mail',

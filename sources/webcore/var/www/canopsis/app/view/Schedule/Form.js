@@ -313,6 +313,11 @@ Ext.define('canopsis.view.Schedule.Form', {
 									allowBlank: false,
 									value: '00:00',
 									regex: getTimeRegex()
+								}, {
+									xtype: 'checkbox',
+									name: 'from_before',
+									fieldLabel: _('The day before'),
+									checked: false
 								}
 							]
 						}, {
@@ -411,30 +416,13 @@ Ext.define('canopsis.view.Schedule.Form', {
 									disabled: true,
 									value: '00:00',
 									regex: getTimeRegex()
-								}
-							]
-						}, {
-							xtype: 'cfieldset',
-							title: _('Advanced Options'),
-							layout: 'vbox',
-							itemId: 'exporting_fixed_advanced',
-							hidden: true,
-							disabled: true,
-							items: [
-								{
-									xtype: 'checkbox',
-									name: 'exporting_before',
-									fieldLabel: _('The day before'),
-									checked: false
 								}, {
-									xtype: 'textfield',
-									name: 'timezone',
-									fieldLabel: _('Time zone (GMT)'),
-									allowBlank: false,
+									xtype: 'checkbox',
+									name: 'to_before',
+									fieldLabel: _('The day before'),
+									checked: false,
 									hidden: true,
-									enable: false, // enable when timezone in client/server side
-									value: '00:00',
-									regex: getTimeRegex()
+									disabled: true
 								}
 							]
 						}
@@ -476,12 +464,14 @@ Ext.define('canopsis.view.Schedule.Form', {
 		var from_day_of_week = this.down('*[name="from_day_of_week"]');
 		var from_hours = this.down('*[name="from_hours"]');
 
+		var from_before = this.down('*[name="from_before"]');
+
 		var to_month = this.down('*[name="to_month"]');
 		var to_day = this.down('*[name="to_day"]');
 		var to_day_of_week = this.down('*[name="to_day_of_week"]');
 		var to_hours = this.down('*[name="to_hours"]');
 
-		var exporting_before = this.down('*[name="exporting_before"]');
+		var to_before = this.down('*[name="to_before"]');
 
 		var to_enable = this.down('*[name="to_enable"]');
 
@@ -492,7 +482,18 @@ Ext.define('canopsis.view.Schedule.Form', {
 		var to = this.down('#to');
 		var from = this.down('#from');
 
-		var exporting_fixed_advanced = this.down('#exporting_fixed_advanced');
+		from_before.on('change', function(component, value) {
+			switch(value) {
+				case true:
+					if (to_enable.getValue()) {
+						to_before.show().setDisabled(false);
+					}
+					break;
+				case false:
+					to_before.hide().setDisabled(true);
+					break;
+			}
+		});
 
 		exporting_advanced.on('change', function(component, value) {
 			switch(value) {
@@ -500,14 +501,12 @@ Ext.define('canopsis.view.Schedule.Form', {
 					exporting_duration.hide().setDisabled(true);
 					from.show().setDisabled(false);
 					to.show().setDisabled(false);
-					exporting_fixed_advanced.show().setDisabled(false);
 					break;
 
 				case false:
 					exporting_duration.show().setDisabled(false);
 					from.hide().setDisabled(true);
 					to.hide().setDisabled(true);
-					exporting_fixed_advanced.hide().setDisabled(true);
 					break;
 			}
 		});
@@ -518,6 +517,11 @@ Ext.define('canopsis.view.Schedule.Form', {
 
 			switch(value) {
 				case true:
+					if (from_before.getValue()) {
+						to_before.show().setDisabled(false);
+					} else {
+						to_before.hide().setDisabled(true);
+					}
 					switch(frequencyCombo.getValue()) {
 						case 'day':
 							to_month.hide().setDisabled(true);
@@ -558,6 +562,7 @@ Ext.define('canopsis.view.Schedule.Form', {
 					to_day.hide().setDisabled(true);
 					to_day_of_week.hide().setDisabled(true);
 					to_hours.hide().setDisabled(true);
+					to_before.hide().setDisabled(true);
 					break;
 			}
 		});
@@ -565,7 +570,8 @@ Ext.define('canopsis.view.Schedule.Form', {
 		frequencyCombo.on('change', function(combo, value) {
 			void(combo);
 
-			exporting_before.setFieldLabel(_("The " + value + " before"));
+			from_before.setFieldLabel(_("The " + value + " before"));
+			to_before.setFieldLabel(_("The " + value + " before"));
 
 			switch (value) {
 				case 'day':
