@@ -197,16 +197,20 @@ class manager(object):
 		keep_hostgroups = keep_component_resource = False
 
 		if 'hostgroups' in subset_selection:
-			query = self.storage.get_backend('entities').find({ 'component': dca['co'], 'resource': dca['re'], 'hostgroups' : {'$exists': True}}, {'hostgroups': 1})
-			for result in query:
-				if 'hostgroups' in result:
-					for hostgroup in subset_selection['hostgroups']:
-						if hostgroup in result['hostgroups']:
-							self.logger.info('KEEPING HG')
-							keep_hostgroups = True
-							break
+			if dca['co'] == '__canopsis__' and dca['re'] in subset_selection['hostgroups']:
+				keep_hostgroups = True
 
-		if 'component_resources' in subset_selection:
+			if not keep_hostgroups:
+				query = self.storage.get_backend('entities').find({ 'component': dca['co'], 'resource': dca['re'], 'hostgroups' : {'$exists': True}}, {'hostgroups': 1})
+				for result in query:
+					if 'hostgroups' in result:
+						for hostgroup in subset_selection['hostgroups']:
+							if hostgroup in result['hostgroups']:
+								self.logger.info('KEEPING HG')
+								keep_hostgroups = True
+								break
+
+		if not keep_hostgroups and 'component_resources' in subset_selection:
 			for component_resources in subset_selection['component_resources']:
 				if 'component' in component_resources and 'resource' in component_resources \
 				and component_resources['component'] == dca['co'] and component_resources['resource'] == dca['re']:
