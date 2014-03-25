@@ -98,10 +98,14 @@ def get_all_widgets():
 		return winfo
 
 	for widget in get_internal_widgets():
-		output.append(handle_widget(base_path, widget))
+		handle = handle_widget(base_path, widget)
+		if handle:
+			output.append(handle)
 
 	for widget in get_external_widgets():
-		output.append(handle_widget(www_path, widget, internal=False))
+		handle = handle_widget(www_path, widget, internal=False)
+		if handle:
+			output.append(handle)
 
 	output={'total': len(output), 'success': True, 'data': output}
 	return output
