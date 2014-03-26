@@ -47,7 +47,6 @@ Ext.define('canopsis.controller.Schedule', {
 			account: record.get('exporting_account'),
 			task: record.get('exporting_task'),
 			method: record.get('exporting_method'),
-			interval: interval,
 			_scheduled: record.get('crecord_name'),
 			owner: record.get('exporting_owner')
 		};
@@ -77,28 +76,35 @@ Ext.define('canopsis.controller.Schedule', {
 
 		record.set('loaded', false);
 
-		function time2struct(hours, day, day_of_week, month, type, intervalLength, intervalUnit){
+		function time2struct(hours, day, day_of_week, month, before){
 			var result = {};
 			var date = new Date();
+
+			if (before === 'on') {
+				var frequency_unit = data.frequency + 's';
+				result['before'] = {};
+				result['before'][frequency_unit] = 1;
+			}
+
 			switch(data.frequency) {
 				case 'year':
 					if (month !== undefined && month !== null) {
 						result['month'] = month;
 					} else {
-						result['month'] = date.getMonth();
+						result['month'] = date.getUTCMonth();
 					}
 				case 'month':
 					if (day !== undefined && day !== null) {
 						result['day'] = day;
 					} else {
-						result['day'] = date.getDate();
+						result['day'] = date.getUTCDate();
 					}
 				case 'week':
 					if (data.frequency === 'week'){
 						if(day_of_week !== undefined && day_of_week !== null) {
 							result['day_of_week'] = day_of_week;
 						} else {
-							result['day_of_week'] = date.getDay();
+							result['day_of_week'] = date.getUTCDay();
 						}
 					}
 				case 'day':
@@ -107,8 +113,8 @@ Ext.define('canopsis.controller.Schedule', {
 						var d = new Date();
 						d.setHours(time.hour);
 						d.setMinutes(time.minute, 10);
-						result['minute'] = d.getMinutes();
-						result['hour'] = d.getHours();
+						result['minute'] = d.getUTCMinutes();
+						result['hour'] = d.getUTCHours();
 					}
 					break;
 				default:
@@ -119,40 +125,41 @@ Ext.define('canopsis.controller.Schedule', {
 		}
 
 		var crontab = time2struct(data.crontab_hours, data.cron_tab_day, data.cron_tab_day_of_week, data.crontab_month);
-		var from = time2struct(data.from_hours, data.from_day, data.from_day_of_week, data.from_month);
-		var to = time2struct(data.to_hours, data.to_day, data.to_day_of_week, data.to_month);
+		var from = time2struct(data.from_hours, data.from_day, data.from_day_of_week, data.from_month, data.from_before);
+		var to = time2struct(data.to_hours, data.to_day, data.to_day_of_week, data.to_month, data.to_before);
 
 		record.set('cron', crontab);
 
-		from.before = data.from_before === "on";
 		to.enable = data.to_enable === "on";
 
-		to.before = data.to_before === "on";
+		var timezone_type = data.timezone_type;
+		if (timezone_type === undefined || timezone_type === null) {
+			timezone_type = "local";
+		}
+		var timezone_value = data.timezone_value;
+		if (timezone_value === null || timezone_value === undefined) {
+			timezone_value = new Date().getTimezoneOffset() * 60;
+		}
 
-		record.set('from', from);
-		record.set('to', to);
+		var timezone = {
+			type: timezone_type,
+			value: timezone_value
+		}
 
-		kwargs['_from'] = from;
-		kwargs['_to'] = to;
-
-		var before = {
-			unit: data.frequency + 's',
-			count: data.exporting_before === "on"? 1 : 0
+		var exporting = {
+			length: data.exporting_intervalLength,
+			unit: data.exporting_intervalUnit,
+			type: data.exporting_advanced === 'on' ? "fixed" : "duration",
+			from: from,
+			to: to,
+			timezone: timezone
 		};
 
-		record.set('before', before);
-		kwargs['before'] = before;
+		record.set("exporting", exporting);
 
-		record.set('exporting_type', data.exporting_advanced === 'on' ? 'fixed' : 'duration');
+		kwargs['exporting'] = exporting;
 
-		record.set('exporting_intervalLength', data.exporting_intervalLength);
-		record.set('exporting_intervalUnit', data.exporting_intervalUnit);
-
-		kwargs['exporting_type'] = record.get('exporting_type');
-		kwargs['exporting_intervalUnit'] = record.get('exporting_intervalUnit');
-		kwargs['exporting_intervalLength'] = record.get('exporting_intervalLength');
-
-		record.set('kwargs',kwargs);
+		record.set('kwargs', kwargs);
 
 		return record;
 	},
@@ -172,77 +179,71 @@ Ext.define('canopsis.controller.Schedule', {
 			form.down('textfield[name=crontab_hours]').setValue(d.getHours() + ':' + minutes);
 		}
 
-		var from = item.get('from');
+		var exporting = item.get('exporting');
 
-		if (from !== undefined) {
-			if (from.hour !== undefined) {
-				var d = new Date();
-				d.setUTCHours(from.hour, from.minute);
-				var minutes = d.getMinutes();
-				if (minutes < 10) {
-					minutes = '0' + minutes;
+		function update_forms_from_timestruct(timestruct, name) {
+			if (timestruct !== undefined) {
+				if (timestruct.hour !== undefined) {
+					var d = new Date();
+					d.setUTCHours(timestruct.hour, timestruct.minute);
+					var minutes = d.getMinutes();
+					if (minutes < 10) {
+						minutes = '0' + minutes;
+					}
+					form.down('*[name='+name+'_hours]').setValue(d.getHours() + ':' + minutes);
 				}
-				form.down('*[name=from_hours]').setValue(d.getHours() + ':' + minutes);
-			}
-			if (from.month !== undefined) {
-				form.down('*[name=from_month]').setValue(from.month);
-			}
-			if (from.day !== undefined) {
-				form.down('*[name=from_day]').setValue(from.day);
-			}
-			if (from.before !== undefined) {
-				form.down('*[name=from_before]').setValue(from.before);
-			}
-			if (from.day_of_week !== undefined) {
-				form.down('*[name=from_day_of_week]').setValue(from.day_of_week);
+				if (timestruct.month !== undefined) {
+					form.down('*[name='+name+'_month]').setValue(timestruct.month);
+				}
+				if (timestruct.day !== undefined) {
+					form.down('*[name='+name+'_day]').setValue(timestruct.day);
+				}
+				if (timestruct.day_of_week !== undefined) {
+					form.down('*[name='+name+'_day_of_week]').setValue(timestruct.day_of_week);
+				}
+				if (timestruct.before !== undefined) {
+					for (before_type in timestruct.before) {
+						if (timestruct.before[before_type] === 1) {
+							form.down('*[name='+name+'_before]').setValue(true);
+							break;
+						}
+					}
+				}
 			}
 		}
 
-		var to = item.get('to');
+		var from = exporting.from;
+		var to = exporting.to;
 
-		if (to !== undefined) {
-			if (to.hour !== undefined) {
-				var d = new Date();
-				d.setUTCHours(to.hour, to.minute);
-				var minutes = d.getMinutes();
-				if (minutes < 10) {
-					minutes = '0' + minutes;
-				}
-				hours = d.getHours();
-				if (hours < 10) {
-					hours = '0' + hours;
-				}
-				form.down('*[name=to_hours]').setValue(hours + ':' + minutes);
-			}
-			if (to.month !== undefined) {
-				form.down('*[name=to_month]').setValue(to.month);
-			}
-			if (to.day !== undefined) {
-				form.down('*[name=to_day]').setValue(to.day);
-			}
-			if (to.day_of_week !== undefined) {
-				form.down('*[name=to_day_of_week]').setValue(to.day_of_week);
-			}
-			if (to.before !== undefined) {
-				form.down('*[name=to_before]').setValue(to.before);
-			}
+		update_forms_from_timestruct(from, 'from');
+		update_forms_from_timestruct(to, 'to');
+
+		if (to !== null && to !== undefined && to.enable) {
 			form.down('*[name=to_enable]').setValue(to.enable);
 		}
 
-		var before = item.get('before');
+		var exporting_intervalLength = exporting.length;
+		var exporting_intervalUnit = exporting.unit;
+		var exporting_advanced = exporting.type === 'fixed';
 
-		if (before !== undefined && before !== null) {
-			form.down('*[name=exporting_before]').setValue(before.count > 0);
+		if (exporting_intervalLength !== undefined && exporting_intervalLength !== null) {
+			form.down('*[name=exporting_intervalLength]').setValue(exporting_intervalLength);
 		}
-
-		var exporting_intervalLength = item.get('exporting_intervalLength');
-		var exporting_intervalUnit = item.get('exporting_intervalUnit');
-
-		var exporting_advanced = item.get('exporting_type') === 'fixed' ? true : false;
-
-		form.down('*[name=exporting_intervalLength]').setValue(exporting_intervalLength);
-		form.down('*[name=exporting_intervalUnit]').setValue(exporting_intervalUnit);
+		if (exporting_intervalUnit !== undefined && exporting_intervalUnit !== null) {
+			form.down('*[name=exporting_intervalUnit]').setValue(exporting_intervalUnit);
+		}
 		form.down('*[name=exporting_advanced]').setValue(exporting_advanced);
+
+		var timezone = exporting.timezone;
+		if (timezone !== null && timezone !== undefined) {
+			var timezone_type = timezone.type;
+			var timezone_value = timezone.value;
+
+			form.down('*[name=timezone_type]').setValue(timezone_type);
+			if (timezone_value !== undefined && timezone_value !== null) {
+				form.down('*[name=timezone_value]').setValue(timezone_value);
+			}
+		}
 
 	},
 
@@ -281,28 +282,32 @@ Ext.define('canopsis.controller.Schedule', {
 
 		var now = new Date();
 
-		var exporting_type = item.get('exporting_type');
+		var exporting = item.get('exporting');
+
+		var exporting_type = exporting.type;
 
 		switch(exporting_type) {
 			case 'fixed':
-				function update_date_with_before(date) {
-					if (options.before !== undefined) {
-						switch(options.before.unit) {
-							case 'days':
-								date.setDate(date.getDate() - 1);
-								break;
-							case 'weeks':
-								date.setDate(date.getDate() - 7);
-								break;
-							case 'months':
-								date.setMonth(date.getMonth() - 1);
-								break;
-							case 'years':
-								date.setYear(date.getYear() - 1);
-								break;
-							default:
-								console.log('Wrong before unit : ' + options.before.unit);
-								break;
+				function update_date_with_before(date, before) {
+					if (before !== undefined) {
+						for (unit in before) {
+							switch(unit) {
+								case 'days':
+									date.setDate(date.getUTCDate() - before[unit]);
+									break;
+								case 'weeks':
+									date.setDate(date.getUTCDate() - before[unit] * 7);
+									break;
+								case 'months':
+									date.setMonth(date.getUTCMonth() - before[unit]);
+									break;
+								case 'years':
+									date.setYear(date.getYear() - before[unit]);
+									break;
+								default:
+									console.log('Wrong before unit : ' + unit);
+									break;
+							}
 						}
 					}
 				}
@@ -311,31 +316,29 @@ Ext.define('canopsis.controller.Schedule', {
 					var result = undefined;
 					var date = new Date(now.getTime());
 
-					if (struct.before === true) {
-						update_date_with_before(date);
-					}
+					update_date_with_before(date, struct.before);
 
 					var frequency = item.get('frequency');
 
 					switch(frequency) {
 						case "year":
 							if (struct.month !== undefined && struct.month !== null) {
-								date.setMonth(struct.month);
+								date.setUTCMonth(struct.month);
 							}
 						case "month":
 							if (struct.day !== undefined && struct.day !== null) {
-								date.setDate(struct.day);
+								date.setUTCDate(struct.day);
 							}
 						case "week":
 							if (item.data.frequency === "week" && struct.day_of_week !== undefined && struct.day_of_week !== null) {
-								date.setDate(date.getDate() + date.getDay() - struct.day_of_week);
+								date.setUTCDate(date.getUTCDate() + date.getUTCDay() - struct.day_of_week);
 							}
 						case "day":
 							if (struct.hour !== undefined && struct.hour !== null) {
-								date.setHours(struct.hour);
+								date.setUTCHours(struct.hour);
 							}
 							if (struct.minute !== undefined && struct.minute !== null) {
-								date.setMinutes(struct.minute);
+								date.setUTCMinutes(struct.minute);
 							}
 							break;
 						default:
@@ -346,28 +349,34 @@ Ext.define('canopsis.controller.Schedule', {
 					return result;
 				}
 
-				if (options._from !== undefined && options._from !== null) {
-					start_time = convert_struct_to_timestamp(options._from);
-					stop_time = (options._to === undefined || options._to === null || ! options._to.enable) ? (now.getTime()) : convert_struct_to_timestamp(options._to);
+				var from = exporting.from;
+
+				if (from !== undefined && from !== null) {
+					start_time = convert_struct_to_timestamp(from);
+					var to = exporting.to;
+					stop_time = (to === undefined || to === null || ! to.enable) ?
+						(now.getTime())
+						:
+						convert_struct_to_timestamp(to);
 				}
 				break;
 
 			case 'duration':
-				var exporting_intervalUnit = item.data.exporting_intervalUnit;
-				var exporting_intervalLength = parseInt(item.data.exporting_intervalLength, 10);
+				var exporting_intervalUnit = exporting.unit;
+				var exporting_intervalLength = parseInt(exporting.length, 10);
 				var date = new Date(now.getTime());
 				switch(exporting_intervalUnit) {
 					case "hours":
-						date.setHours(date.getHours() - exporting_intervalLength);
+						date.setHours(date.getUTCHours() - exporting_intervalLength);
 						break;
 					case "days":
-						date.setDate(date.getDate() - exporting_intervalLength);
+						date.setDate(date.getUTCDate() - exporting_intervalLength);
 						break;
 					case "weeks":
-						date.setDate(date.getDate() - 7 * exporting_intervalLength);
+						date.setDate(date.getUTCDate() - 7 * exporting_intervalLength);
 						break;
 					case "months":
-						date.setMonth(date.getMonth() - exporting_intervalLength);
+						date.setMonth(date.getUTCMonth() - exporting_intervalLength);
 						break;
 					case "years":
 						date.setYear(date.getYear() - exporting_intervalLength);
@@ -384,6 +393,11 @@ Ext.define('canopsis.controller.Schedule', {
 
 		if(mail) {
 			mail = Ext.encode(mail);
+		}
+
+		var timezone = exporting['timezone'];
+		if (timezone !== undefined) {
+			timezone = timezone['value'];
 		}
 
 		this.getController('Reporting').launchReport(view_name, start_time, stop_time, mail, undefined, undefined);
@@ -439,8 +453,8 @@ Ext.define('canopsis.controller.Schedule', {
 		d.setUTCHours(parseInt(cron.hour, 10));
 		d.setUTCMinutes(parseInt(cron.minute, 10));
 
-		var minute = d.getMinutes();
-		var hour = d.getHours();
+		var minute = d.getUTCMinutes();
+		var hour = d.getUTCHours();
 
 		//cosmetic
 		if(minute < 10) {

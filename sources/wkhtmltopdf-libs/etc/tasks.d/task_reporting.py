@@ -47,45 +47,45 @@ logger.setLevel('DEBUG')
 
 @task
 @decorators.log_task
-def render_pdf(fileName=None, viewName=None, startTime=None, stopTime=None, interval=None, account=None, mail=None, owner=None, orientation='Portrait', pagesize='A4', before=None, _from=None, _to=None, exporting_type='fixed', exporting_intervalLength=1, exporting_intervalUnit='day'):
+def render_pdf(fileName=None, viewName=None, exporting={"type": "duration", "length": 1, "unit": "days"}, account=None, mail=None, owner=None, orientation='Portrait', pagesize='A4'):
 
 	logger.info('start render')
 
 	logger.debug("fileName: %s " % fileName)
 	logger.debug("viewName: %s " % viewName)
-	logger.debug("startTime: %s " % startTime)
-	logger.debug("stopTime: %s " % stopTime)
-	logger.debug("interval: %s " % interval)
+	logger.debug("exporting: %s " % exporting)
 	logger.debug("account: %s " % account)
 	logger.debug("mail: %s " % mail)
-	logger.debug("before: %s" % before)
-	logger.debug("_from: %s " % _from)
-	logger.debug("_to: %s " % _to)
-	logger.debug("exporting_type: %s " % exporting_type)
 
 	now = time.time()
 
 	logger.debug("now: %s " % now)
 
-	if exporting_type == 'duration':
+	timezone = exporting.get(
+		'timezone',
+		{"type": "local", "value": 0})
+	if timezone.get('type') == 'utc':
+		timezone['value'] = 0
+	elif timezone.get('type') == 'server':
+		timezone['value'] = time.timezone
+	elif 'value' not in timezone:
+		timezone['value'] = 0
+		logger.error('timezone value does not exist')
 
-		date = datetime.fromtimestamp(now)
-		kwargs = {exporting_intervalUnit: exporting_intervalLength}
+	if exporting.get('type', 'duration') == 'duration':
+
+		_datetime = datetime.fromtimestamp(now)
+
+		kwargs = {
+			exporting.get('unit', 'days'): int(exporting.get('length', 1))
+		}
 		rd = relativedelta(**kwargs)
-		date -= rd
-		startTime = time.mktime(date.timetuple())
+		_datetime -= rd
+
+		startTime = time.mktime(_datetime.timetuple())
 		stopTime = now
 
-	elif exporting_type == 'fixed':
-
-		rd = relativedelta()
-
-		if before is not None:
-			unit = before['unit']
-			count = before['count']
-			_datetime = datetime.fromtimestamp(now)
-			kwargs = {before['unit']: before['count']}
-			rd = relativedelta(**kwargs)
+	elif exporting['type'] == 'fixed':
 
 		logger.debug('now: %s' % now)
 
@@ -95,78 +95,76 @@ def render_pdf(fileName=None, viewName=None, startTime=None, stopTime=None, inte
 			"""
 			result = 0
 
-			_datetime = datetime.fromtimestamp(now)
+			_datetime = datetime.utcfromtimestamp(now)
 
-			if _time.get('before', False):
+			before = _time.get('before')
+			if before is not None:
+				for key in before:
+					before[key] = int(before[key])
+				rd = relativedelta(**before)
 				_datetime -= rd
 
 			kwargs = dict()
 
 			day = _time.get('day')
 			if day is not None:
-				logger.debug("day %s" % day)
+				logger.debug("day: %s" % day)
 				kwargs['day'] = int(day)
 
 			month = _time.get('month')
 			if month is not None:
-				logger.debug("month %s" % month)
+				logger.debug("month: %s" % month)
 				kwargs['month'] = int(month)
 
 			hour = _time.get('hour')
 			if hour is not None:
-				logger.debug("hour %s" % hour)
+				logger.debug("hour: %s" % hour)
 				kwargs['hour'] = int(hour)
 
 			minute = _time.get('minute')
 			if minute is not None:
-				logger.debug("minute %s" % minute)
+				logger.debug("minute: %s" % minute)
 				kwargs['minute'] = int(minute)
 
-			logger.debug(_datetime)
+			logger.debug("_datetime: %s" % _datetime)
 
 			_datetime = _datetime.replace(**kwargs)
 
-			logger.debug(_datetime)
+			logger.debug("_datetime: %s" % _datetime)
 
 			day_of_week = _time.get('day_of_week')
 			if day_of_week is not None:
-				logger.debug("day_of_week %s" % day_of_week)
+				logger.debug("day_of_week: %s" % day_of_week)
 				day_of_week = int(day_of_week)
 				weekday = calendar.weekday(_datetime.year, _datetime.month, _datetime.day)
-				day = weekday - day_of_week
-				logger.debug("day %s" % day)
-				td = timedelta(days=day)
+				days = weekday - day_of_week
+				logger.debug("days %s" % days)
+				td = timedelta(days=days)
 				_datetime -= td
 
-			result = time.mktime(_datetime.timetuple())
+			result = time.mktime(_datetime.utctimetuple())
+			result -= timezone['value']
 
-			logger.debug('result %s ' % result)
+			logger.debug('result: %s' % result)
 
 			return result
 
+		startTime = None
+		_from = exporting.get('from')
 		if _from is not None and _from:
-			startTime = get_timestamp(_from)
+			startTime = int(_from.get('timestamp', get_timestamp(_from)))
 
-		if startTime is not None:
-			logger.info('_from : {0} and startTime : {1} ({2})'.format(_from, startTime, datetime.fromtimestamp(startTime)))
+		logger.info('from : {0} and startTime : {1} ({2})'.format(_from, startTime, datetime.utcfromtimestamp(startTime)))
 
+		stopTime = now
+		_to = exporting.get('to')
 		if startTime and _to is not None and _to.get('enable', False):
-			stopTime = get_timestamp(_to)
+			stopTime = int(_to.get('timestamp', get_timestamp(_to)))
 
-		if stopTime is not None:
-			logger.info('_to : {0} and stopTime : {1} ({2})'.format(_to, stopTime, datetime.fromtimestamp(stopTime)))
-
-		if not stopTime:
-			stopTime = int(time.mktime(datetime.now().timetuple()))
+		logger.info('to : {0} and stopTime : {1} ({2})'.format(_to, stopTime, datetime.utcfromtimestamp(stopTime)))
 
 	else:
-		logger.error('Wrong exporting type %s' % exporting_type)
-
-	if not startTime:
-		if interval:
-			startTime = stopTime - interval
-		else:
-			startTime = -1
+		logger.error('Wrong exporting type %s' % exporting['type'])
 
 	if viewName is None:
 		raise ValueError("task_render_pdf: you must at least provide a viewName")
@@ -194,14 +192,26 @@ def render_pdf(fileName=None, viewName=None, startTime=None, stopTime=None, inte
 
 	logger.info("Account '%s' ask a rendering of view '%s' (%s)" % (account.name, view_record.name, viewName,))
 
+	timezone_td = timedelta(
+		seconds=int(timezone.get('value', 0)))
+
+	def get_datetime_with_timezone(timestamp):
+		result = datetime.utcfromtimestamp(timestamp)
+		result -= timezone_td
+		return result
+
 	#set fileName
 	if fileName is None:
-		toDate = datetime.fromtimestamp(int(stopTime))
+		toDate = get_datetime_with_timezone(int(stopTime))
 		if startTime and startTime != -1:
-			fromDate = datetime.fromtimestamp(int(startTime))
-			fileName = '%s_From_%s_To_%s.pdf' % (view_record.name, fromDate, toDate)
+			fromDate = get_datetime_with_timezone(int(startTime))
+			fileName = '%s_From_%s_To_%s' % (view_record.name, fromDate, toDate)
 		else:
-			fileName = '%s_%s.pdf' % (view_record.name,toDate)
+			fileName = '%s_%s' % (view_record.name,toDate)
+
+		fileName += '_Tz_%s_%s' % (timezone.get('type', 'server'), (timezone.get('value', 0) if timezone.get('value', 0) >= 0 \
+			else 'minus_%s' % -timezone['value']))
+		fileName += '.pdf'
 
 	logger.info('fileName: %s' % fileName)
 	ascii_fileName = hashlib.md5(fileName.encode('ascii', 'ignore')).hexdigest()
@@ -241,7 +251,7 @@ def render_pdf(fileName=None, viewName=None, startTime=None, stopTime=None, inte
 	except Exception as e:
 		import inspect
 		inspect.trace()
-		logger.info('dafuck %s, %s ' % (e, inspect.trace()))
+		logger.info('Error in generating file (try to not use slink): %s, %s ' % (e, inspect.trace()))
 	logger.info('Remove tmp report file with docId: %s' % doc_id)
 	os.remove(file_path)
 

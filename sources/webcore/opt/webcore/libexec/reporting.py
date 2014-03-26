@@ -45,17 +45,20 @@ import task_reporting
 from libexec.auth import get_account
 from libexec.account import check_group_rights
 
+import time
+
 logger = logging.getLogger('Reporting')
 logger.setLevel('DEBUG')
 
-#group who have right to access 
+#group who have right to access
 group_managing_access = ['group.CPS_reporting_admin']
 
 #########################################################################
 
-@post('/reporting/:startTime/:stopTime/:view_name/:mail',checkAuthPlugin={'authorized_grp':group_managing_access})
-@post('/reporting/:startTime/:stopTime/:view_name',checkAuthPlugin={'authorized_grp':group_managing_access})
-def generate_report(startTime, stopTime,view_name,mail=None):
+@post('/reporting/:startTime/:stopTime/:view_name/:mail/:timezone/',checkAuthPlugin={'authorized_grp':group_managing_access})
+@post('/reporting/:startTime/:stopTime/:view_name/:mail/',checkAuthPlugin={'authorized_grp':group_managing_access})
+@post('/reporting/:startTime/:stopTime/:view_name/',checkAuthPlugin={'authorized_grp':group_managing_access})
+def generate_report(startTime, stopTime,view_name,mail=None, timezone=time.timezone):
 	stopTime = int(stopTime)
 	startTime = int(startTime)
 
@@ -91,11 +94,18 @@ def generate_report(startTime, stopTime,view_name,mail=None):
 	
 	try:
 		logger.debug('Run celery task')
+
+		exporting = {
+			"from": {"timestamp": startTime},
+			"to": {"timestamp": stopTime, 'enable': True},
+			"type": "fixed",
+			"timezone": {"type": "local", "value": timezone}
+		}
+
 		result = task_reporting.render_pdf.delay(
 										fileName=file_name,
 										viewName=view_name,
-										startTime=startTime,
-										stopTime=stopTime,
+										exporting=exporting,
 										account=account,
 										mail=mail
 										)

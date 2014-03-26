@@ -189,6 +189,37 @@ Ext.define('canopsis.view.Schedule.Form', {
 					title: _('Exporting interval'),
 					items: [
 						{
+							xtype: 'cfieldset',
+							title: _('Time zone'),
+							layout: "hbox",
+							items: [
+								{
+									xtype: 'combobox',
+									name: 'timezone_type',
+									fieldLabel: _('Type'),
+									queryMode: 'local',
+									displayField: 'text',
+									valueField: 'value',
+									value: 'local',
+									store: {
+										xtype: 'store',
+										fields: ['value', 'text'],
+										data: [
+											{value: 'local', text: _('Local')},
+											{value: 'utc', text: _('UTC')},
+											{value: 'server', text: _('Server')},
+											{value: 'custom', text: _('Custom (in minutes)')}
+										]
+									}
+								}, {
+									xtype: 'numberfield',
+									hidden: true,
+									disabled: true,
+									name: 'timezone_value',
+									value: new Date().getTimezoneOffset() * 60
+								}
+							]
+						}, {
 							xtype: "checkbox",
 							fieldLabel: _('advanced'),
 							checked: false,
@@ -481,6 +512,24 @@ Ext.define('canopsis.view.Schedule.Form', {
 
 		var to = this.down('#to');
 		var from = this.down('#from');
+
+		var timezone_type = this.down('*[name=timezone_type]');
+		var timezone_value = this.down('*[name=timezone_value]');
+
+		timezone_type.on('change', function(component, value) {
+			switch(value) {
+				case 'local':
+				case 'server':
+				case 'utc':
+					timezone_value.hide().setDisabled(true);
+					break;
+				case 'custom':
+					timezone_value.show().setDisabled(false);
+					break;
+				default:
+					console.error('Wrong timezone type: ' + value);
+			}
+		});
 
 		from_before.on('change', function(component, value) {
 			switch(value) {

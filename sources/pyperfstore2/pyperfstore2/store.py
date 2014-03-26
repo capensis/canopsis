@@ -251,10 +251,12 @@ class store(object):
 	def find(self, limit=0, skip=0, mfilter={}, mfields=None, sort=None):
 		self.check_connection()
 		if limit == 1:
-			return self.collection.find_one(mfilter, limit=limit, fields=mfields, sort=sort)
-		else:		
-			return self.collection.find(mfilter, limit=limit, skip=skip, fields=mfields, sort=sort)
-							
+			result = self.collection.find_one(mfilter, limit=limit, fields=mfields, sort=sort)
+		else:
+			result = self.collection.find(mfilter, limit=limit, skip=skip, fields=mfields, sort=sort)
+		
+		return result
+
 	def drop(self):
 		self.check_connection()
 		self.db.drop_collection(self.mongo_collection)

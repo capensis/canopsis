@@ -37,7 +37,11 @@ def update():
 
 def update_schedule():
 
-	records = storage.find({'crecord_type': 'schedule'}, namespace='object', account=root)
+	records = storage.find(
+		{'crecord_type': 'schedule'},
+		namespace='object',
+		account=root)
+
 	for record in records:
 		kwargs = record.data['kwargs']
 		cron = record.data['cron']
@@ -87,29 +91,50 @@ def update_schedule():
 			record.data['frequency'] = record.data['every']
 			del record.data['every']
 
-		record.data['kwargs'] = kwargs
+		exporting = {
+			"type": "duration",
+			"unit": "day",
+			"length": 1
+		}
 
-		if 'interval' in kwargs and kwargs['interval']:
+		exporting.update(
+			record.data.get('exporting', dict()))
+
+		if 'interval' in kwargs:
 			nbDays = timedelta(seconds=kwargs['interval']).days
-
-			record.data['exporting_type'] = 'duration'
 
 			del kwargs['interval']
 
 			if nbDays >= 365:
-				record.data['exporting_intervalUnit'] = 'years'
-				record.data['exporting_intervalLength'] = int(nbDays/365)
+				exporting['unit'] = 'years'
+				exporting['length'] = int(nbDays/365)
 			elif nbDays >= 30:
-				record.data['exporting_intervalUnit'] = 'months'
-				record.data['exporting_intervalLength'] = int(nbDays/30)
+				exporting['unit'] = 'months'
+				exporting['length'] = int(nbDays/30)
 			elif nbDays >= 7:
-				record.data['exporting_intervalUnit'] = 'weeks'
-				record.data['exporting_intervalLength'] = int(nbDays/7)
+				exporting['unit'] = 'weeks'
+				exporting['length'] = int(nbDays/7)
 			elif nbDays >= 1:
-				record.data['exporting_intervalUnit'] = 'days'
-				record.data['exporting_intervalLength'] = math.floor(nbDays)
+				exporting['unit'] = 'days'
+				exporting['length'] = math.floor(nbDays)
 			else:
-				record.data['exporting_intervalUnit'] = 'hours'
-				record.data['exporting_intervalLength'] = math.floor(nbDays)
+				exporting['unit'] = 'hours'
+				exporting['length'] = math.floor(nbDays)
+
+		if "exporting_intervalUnit" in kwargs and "exporting_intervalLength" in kwargs:
+			exporting.update({
+				"type": kwargs["exporting_advanced"],
+				"length": kwargs['exporting_intervalLength'],
+				"unit": kwargs['exporting_intervalUnit']
+			})
+
+			del kwargs['exporting_intervalLength']
+			del kwargs['exporting_intervalUnit']
+			del kwargs['exporting_advanced']
+
+		kwargs['exporting'] = exporting
+		record.data['exporting'] = exporting
+
+		record.data['kwargs'] = kwargs
 
 		storage.put(record)
