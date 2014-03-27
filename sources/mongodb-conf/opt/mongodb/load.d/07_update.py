@@ -123,7 +123,7 @@ def update_schedule():
 
 		if "exporting_intervalUnit" in kwargs and "exporting_intervalLength" in kwargs:
 			exporting.update({
-				"type": kwargs["exporting_advanced"],
+				"type": kwargs.get("exporting_advanced", "duration"),
 				"length": kwargs['exporting_intervalLength'],
 				"unit": kwargs['exporting_intervalUnit']
 			})
