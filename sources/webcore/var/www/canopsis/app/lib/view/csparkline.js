@@ -120,7 +120,7 @@ Ext.define('canopsis.lib.view.csparkline' , {
 
 		$('.tooltip-sparkline').css('border-color', options.userOptions.lineColor);
 
-		var html = undefined;
+		var html = '';
 
 		if(options.userOptions.chart_type === 'line_graph') {
 			html = '<b>' + rdr_tstodate(Math.round(fields['x'] / 1000)) + '</b><br>';
