@@ -79,6 +79,8 @@ Ext.define('widgets.mini_chart.mini_chart', {
 	buildOptions : function(info, values, serie_panel, i) {
 		var node = info['node'];
 
+		var me = this;
+
 		//Find the print label
 		var label;
 
@@ -145,7 +147,16 @@ Ext.define('widgets.mini_chart.mini_chart', {
 				$(document).find('.tooltip-minichart').css('border', '2px solid ' + curve_color);
 
 				if(options.userOptions.chart_type === 'line_graph') {
-					return '<b>' + rdr_tstodate(Math.round(fields['x']/1000)) + '</b><br>' + options.userOptions.metric + ': ' + fields['y'] + ' ' + options.userOptions.unit;
+					result = '<b>' + rdr_tstodate(Math.round(fields['x']/1000)) + '</b><br>' + options.userOptions.metric + ': ';
+					var value = undefined;
+					if(me.humanReadable) {
+						value = rdr_humanreadable_value(fields['y'], options.userOptions.unit);
+					} else if (options.userOptions.unit) {
+						value = fields['y'] + ' ' + options.userOptions.unit;
+					} else {
+						value = fields['y'];
+					}
+					return result + value;
 				}
 
 				return '<b>' + rdr_tstodate(Math.round(options.userOptions.original_values[fields[0].offset][0] / 1000)) + '</b><br/>' + options.userOptions.metric + ' : ' + fields[0].value + ' ' + options.userOptions.unit;
