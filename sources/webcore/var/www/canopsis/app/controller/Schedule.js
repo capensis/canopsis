@@ -124,7 +124,7 @@ Ext.define('canopsis.controller.Schedule', {
 			return result;
 		}
 
-		var crontab = time2struct(data.crontab_hours, data.cron_tab_day, data.cron_tab_day_of_week, data.crontab_month);
+		var crontab = time2struct(data.crontab_hours, data.crontab_day, data.crontab_day_of_week, data.crontab_month);
 		var from = time2struct(data.from_hours, data.from_day, data.from_day_of_week, data.from_month, data.from_before);
 		var to = time2struct(data.to_hours, data.to_day, data.to_day_of_week, data.to_month, data.to_before);
 
@@ -167,18 +167,6 @@ Ext.define('canopsis.controller.Schedule', {
 	beforeload_EditForm: function(form, item) {
 		var crontab = item.get('cron');
 
-		if(crontab && crontab.hour !== undefined && crontab.minute !== undefined) {
-			var d = new Date();
-			d.setUTCHours(crontab.hour, crontab.minute);
-			var minutes = d.getMinutes();
-
-			if(minutes < 10) {
-				minutes = '0' + minutes;
-			}
-
-			form.down('textfield[name=crontab_hours]').setValue(d.getHours() + ':' + minutes);
-		}
-
 		var exporting = item.get('exporting');
 
 		function update_forms_from_timestruct(timestruct, name) {
@@ -215,6 +203,7 @@ Ext.define('canopsis.controller.Schedule', {
 		var from = exporting.from;
 		var to = exporting.to;
 
+		update_forms_from_timestruct(crontab, 'crontab');
 		update_forms_from_timestruct(from, 'from');
 		update_forms_from_timestruct(to, 'to');
 
