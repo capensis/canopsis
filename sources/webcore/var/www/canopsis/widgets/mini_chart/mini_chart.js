@@ -237,7 +237,8 @@ Ext.define('widgets.mini_chart.mini_chart', {
 						info: Ext.clone(info),
 						flex: 4,
 						chart_type: this.chart_type,
-						border: false
+						border: false,
+						humanReadable: this.humanReadable
 					});
 
 					this.charts[node] = true;

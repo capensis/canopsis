@@ -240,7 +240,8 @@ Ext.define('widgets.trends.trends' , {
 					flex: 3,
 					chart_type: node.chart_type,
 					height: this.item_height,
-					border: false
+					border: false,
+					humanReadable: this.humanReadable
 				});
 			}
 
