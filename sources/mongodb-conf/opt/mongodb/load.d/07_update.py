@@ -100,8 +100,8 @@ def update_schedule():
 		exporting.update(
 			record.data.get('exporting', dict()))
 
-		if 'interval' in kwargs:
-			nbDays = timedelta(seconds=kwargs['interval']).days
+		if 'interval' in kwargs and kwargs['interval'] is not None:
+			nbDays = timedelta(seconds=int(kwargs['interval'])).days
 
 			del kwargs['interval']
 
