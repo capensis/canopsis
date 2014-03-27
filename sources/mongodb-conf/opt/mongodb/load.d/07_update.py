@@ -130,7 +130,8 @@ def update_schedule():
 
 			del kwargs['exporting_intervalLength']
 			del kwargs['exporting_intervalUnit']
-			del kwargs['exporting_advanced']
+			if 'exporting_advanced' in kwargs:
+				del kwargs['exporting_advanced']
 
 		kwargs['exporting'] = exporting
 		record.data['exporting'] = exporting
