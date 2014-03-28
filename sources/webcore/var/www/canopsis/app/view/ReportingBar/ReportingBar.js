@@ -319,6 +319,22 @@ Ext.define('canopsis.view.ReportingBar.ReportingBar', {
 			}]
 		});
 
+		this.down('cgrid#exclusionIntervalGrid button[action="delete"]').handler = this.deleteExclusionInterval.bind(this);
+		this.down('cgrid#exclusionIntervalGrid button[action="delete"]').disabled = false;
+
+		this.down('cgrid#hostgroupsGrid button[action="delete"]').handler = this.deleteHostgroup.bind(this);
+		this.down('cgrid#hostgroupsGrid button[action="delete"]').disabled = false;
+
 		// this.advancedFilters.cfilterTab.cfilter = this.advancedFilters.cfilterTab.add({xtype:cfilter});
+	},
+
+	deleteExclusionInterval: function() {
+		var cgrid = this.down('cgrid#exclusionIntervalGrid');
+		cgrid.store.remove(cgrid.getSelectionModel().getSelection());
+	},
+
+	deleteHostgroup: function() {
+		var cgrid = this.down('cgrid#hostgroupsGrid');
+		cgrid.store.remove(cgrid.getSelectionModel().getSelection());
 	}
 });

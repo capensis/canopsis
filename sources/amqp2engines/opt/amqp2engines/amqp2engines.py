@@ -30,7 +30,7 @@ from cinit import cinit
 
 ## Engines path
 import sys, os
-sys.path.append(os.path.expanduser('~/opt/amqp2engines/engines/'))
+sys.path.insert(0, os.path.expanduser('~/opt/amqp2engines/engines/'))
 
 ## Configurations
 DAEMON_NAME="amqp2engines"
