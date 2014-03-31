@@ -319,7 +319,7 @@ class engine(cengine):
 		}
 		# Update cps_alerts_not_ack
 
-		if state != 0:
+		if state != 0 and event['state_type'] == 1:
 			ackhost = cevent.is_host_acknowledged(event)
 			cvalue0 = int(not ackhost)
 			cvalue1 = int(not not ackhost)
