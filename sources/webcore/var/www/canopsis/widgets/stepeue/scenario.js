@@ -58,6 +58,7 @@ Ext.define('widgets.stepeue.scenario', {
 			cps_state: rdr_status(node.raw.state)
 		};
 
+		var duration = 0;
 		for(var i = 0; i < node.raw.perf_data_array.length; i++) {
 			if(node.raw.perf_data_array[i].metric == 'duration') {
 				duration = Math.round(node.raw.perf_data_array[i].value * 100) / 100;
@@ -132,7 +133,7 @@ Ext.define('widgets.stepeue.scenario', {
 
 	buildMainView: function() {
 		var arrayName = this.mainScenario.raw.resource.split('.');
-		var scenarioName = arrayName[2];
+		var scenarioName = arrayName[1];
 		var loc = rdr_country(this.mainScenario.raw.cntxt_localization);
 		var OSname = rdr_os(this.mainScenario.raw.cntxt_os);
 		var browserName = rdr_browser(this.mainScenario.raw.cntxt_browser);
@@ -179,10 +180,10 @@ Ext.define('widgets.stepeue.scenario', {
 			fields : [
 				{ 'name': 'state', 'type': 'string'},
 				{ 'name': 'timestamp', 'type': 'float'},
-				{ 'name': 'cntxt_localization', "type":"string"},
+				{ 'name': 'rk', "type":"string"}/*,
 				{ 'name': 'cntxt_os', "type": "string"},
 				{ 'name': 'cntxt_browser', "type": "string" }, 
-				{ 'name': 'perf_data_array', "type": "object"} 
+				{ 'name': 'perf_data_array', "type": "object"} */
 			]
 		});
 
@@ -191,7 +192,7 @@ Ext.define('widgets.stepeue.scenario', {
 			pageSize: 30,
 			proxy: {
 				type: 'rest',
-				url: '/rest/events_log/event',
+				url: '/rest/events/event',
 				reader: {
 					type: 'json',
 					root: 'data',
@@ -204,45 +205,51 @@ Ext.define('widgets.stepeue.scenario', {
 
 		var filter = {
 			'$and': [{
-				'child': node
+				'child': {
+					'$regex': '^' + node
+				}
 			},{
-				'type_message': 'scenario'
-			},{
+				'type_message': 'step'
+			},/*{
 				'state': {
 					'$ne': 0
 				}
-			},{
+			},*//*{
 				'resource': {
-					'$regex': 'GLPI.*'+this.name+''
+					'$regex': '^'+this.name+'*'
 				}
-			}]
+			}*/]
 		};
 
 		scenario_errors.setFilter(filter);
 
 		var grid = Ext.create('Ext.grid.Panel', {
 			layout: 'fit',
-			title: 'Scenario Execution errors [' + this.name + ']',
+			title: 'Scenario Step summary for ' + this.name, /*Scenario Execution errors [' + this.name + ']',*/
 			columns: [{
 				header: 'Status',
 				dataIndex: 'state',
+				flex: 1,
 				renderer: function(value) {
-					return rdr_status(value);
+					return rdr_status(parseInt(value));
 				}
 			},{
 				header: 'Date',
 				dataIndex: 'timestamp',
 				align: 'center',
+				flex: 1,
 				renderer: function(value) {
 					return rdr_tstodate(value);
 				}
 			},{
-				header: 'Localization',
-				dataIndex: 'cntxt_localization',
+				header: 'Name',
+				dataIndex: 'rk',
+				flex: 7,
 				renderer: function(value) {
-					return rdr_country(value);
+					rkTab = value.split('.');
+					return rkTab[7]; 
 				}
-			},{
+			}/*,{
 				header: 'OS',
 				dataIndex: 'cntxt_os',
 				renderer: function(value) {
@@ -258,9 +265,9 @@ Ext.define('widgets.stepeue.scenario', {
 				header: 'Duration',
 				dataIndex: 'perf_data_array',
 				renderer: function (value) {
-					return Math.round( value[0].value*100 ) / 100 + " " + value[0].unit;
+					//return Math.round( value[0].value*100 ) / 100 + " " + value[0].unit;
 				}
-			}],
+			}*/],
 			store: scenario_errors
 		});
 
