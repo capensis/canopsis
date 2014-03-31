@@ -172,6 +172,7 @@ class engine(cengine):
 				'nok': 0,
 				'ok': 0
 			}
+
 			# set increment 1 depending on computation rules
 			if delay < (now - compare_date):
 				if ack:
@@ -180,16 +181,17 @@ class engine(cengine):
 					sla_states['out'] = 1
 			elif ack:
 				sla_states['ok'] = 1
-			elif hostgroup == None:
+			else:
 				# spontaneous solve case
-				# it must be not count, so decrement alert counter
-				if event['state'] in [1,2,3]:
-					meta_data_decrement = {
+				if event['state'] == 0:
+					meta_data_auto = {
 						'type': 'COUNTER',
 						'co': INTERNAL_COMPONENT,
-						'me': "cps_sla_auto_solve"
+						'me': "cps_sla_autosolve_{0}".format(slaname) ,
 					}
-					self.increment_counter(meta_data, 1)
+					if hostgroup != None:
+						meta_data_auto['re'] = hostgroup
+					self.increment_counter(meta_data_auto, 1)
 
 			# increment all counts with computed value
 
