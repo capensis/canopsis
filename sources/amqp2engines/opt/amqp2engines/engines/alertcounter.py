@@ -33,8 +33,8 @@ import logging
 
 NAME="alertcounter"
 INTERNAL_COMPONENT = '__canopsis__'
-PROC_CRITICAL = 'PROC_CRITICAL'
-PROC_WARNING = 'PROC_WARNING'
+MACRO = 'CAN_PRIORITY'
+
 
 class engine(cengine):
 	def __init__(self, *args, **kargs):
@@ -56,14 +56,13 @@ class engine(cengine):
 	def load_macro(self):
 		self.logger.debug('Load record for macros')
 
-		self.mCrit = PROC_CRITICAL
-		self.mWarn = PROC_WARNING
+		self.MACRO = MACRO
+
 
 		record = self.storage.find_one({'crecord_type': 'slamacros'})
 
 		if record:
-			self.mCrit = record.data['mCrit']
-			self.mWarn = record.data['mWarn']
+			self.MACRO = record.data['macro']
 
 	def load_crits(self):
 		self.logger.debug('Load records for criticalness')
@@ -173,7 +172,6 @@ class engine(cengine):
 				'nok': 0,
 				'ok': 0
 			}
-
 			# set increment 1 depending on computation rules
 			if delay < (now - compare_date):
 				if ack:
@@ -189,11 +187,12 @@ class engine(cengine):
 					meta_data_decrement = {
 						'type': 'COUNTER',
 						'co': INTERNAL_COMPONENT,
-						'me': "cps_statechange_{0}".format(event['state'])
+						'me': "cps_sla_auto_solve"
 					}
-					self.increment_counter(meta_data, -1)
+					self.increment_counter(meta_data, 1)
 
 			# increment all counts with computed value
+
 			for sla_state in sla_states:
 				meta_data['me'] = 'cps_sla_{0}_{1}_{2}'.format(
 					slatype,
@@ -211,30 +210,26 @@ class engine(cengine):
 	def count_by_crits(self, event, value):
 
 		if 'previous_state'in event and event['state'] == 0 and event.get('state_type', 1) == 1:
-			warn = event.get(self.mWarn, None)
-			crit = event.get(self.mCrit, None)
 
-			if warn and warn in self.crits and event['previous_state'] == 1:
-				self.count_sla(event, 'warn', warn, self.crits[warn], value)
+			sla_field = event.get(self.MACRO, None)
 
-			elif crit and crit in self.crits and event['previous_state'] == 2:
-				self.count_sla(event, 'crit', crit, self.crits[crit], value)
+			if sla_field and sla_field in self.crits:
+				if event['previous_state'] == 1:
+					self.count_sla(event, 'warn', sla_field, self.crits[sla_field], value)
+
+				if event['previous_state'] == 2:
+					self.count_sla(event, 'crit', sla_field, self.crits[sla_field], value)
 
 			# Update others
 			meta_data = {'type': 'COUNTER', 'co': INTERNAL_COMPONENT }
 
 			for _crit in self.crits:
 				# Update warning counters
-				if _crit != warn:
+				if _crit != sla_field:
 					for slatype in ['ok', 'nok', 'out']:
 						meta_data['me'] = 'cps_sla_warn_{0}_{1}'.format(_crit, slatype)
 						self.increment_counter(meta_data, 0)
 
-				# Update critical counters
-				if _crit != crit:
-					for slatype in ['ok', 'nok', 'out']:
-						meta_data['me'] = 'cps_sla_crit_{0}_{1}'.format(_crit, slatype)
-						self.increment_counter(meta_data, 0)
 
 	def count_alert(self, event, value):
 		component = event['component']

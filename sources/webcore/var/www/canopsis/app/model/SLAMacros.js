@@ -32,7 +32,6 @@ Ext.define('canopsis.model.SLAMacros', {
 		{name: 'aaa_group', defaultValue: undefined},
 		{name: 'aaa_owner', defaultValue: undefined},
 
-		{name: 'mCrit', defaultValue: 'PROC_CRITICAL'},
-		{name: 'mWarn', defaultValue: 'PROC_WARNING'}
+		{name: 'macro', defaultValue: 'CAN_PRIORITY'},
 	]
 });
