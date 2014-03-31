@@ -119,6 +119,7 @@ Ext.define('widgets.stepeue.feature', {
 					log.debug("feature's Scenario are  loaded", me.logAuthor);
 					
 					//determine the context
+					//console.log( records )
 					cntxtBrowser = records[0].raw.cntxt_browser;
 					cntxtLoc = records[0].raw.cntxt_localization;
 					cntxtOS = records[0].raw.cntxt_os;
@@ -126,10 +127,11 @@ Ext.define('widgets.stepeue.feature', {
 					scenariosNameArray = new Array(); //Contains all the scenarioName
 
 					for(var i = 0; i < records.length; i++) {
+						//console.log( records[i] )
 						//foreach scenario we determine if it the main scenario or if the context it's different and we build scenario object
 						infoScenario = records[i].raw.resource.split('.');
-						scenario_name = infoScenario[2];
-
+						scenario_name = infoScenario[1];
+						
 						if (me.scenarios.hasOwnProperty(scenario_name) && me.scenarios[scenario_name] != undefined) {
 							me.scenarios[scenario_name].addScenario(records[i]);
 						}
@@ -289,6 +291,8 @@ Ext.define('widgets.stepeue.feature', {
 			data: listScenarios
 		});
 
+		//console.log( storeScenar )
+
 		var grid = Ext.create('Ext.grid.Panel', {
 			height: '100%',
 			columns: [{
@@ -308,11 +312,12 @@ Ext.define('widgets.stepeue.feature', {
 				flex: 1,
 				sortable: false,
 				align: 'center'
-			},{
+			},/*{
 				header: 'Graph',
 				dataIndex: 'scenario',
 
 				renderer: function(value) {
+					console.log( me )
 					var component = me.scenarios[value].mainScenario.raw.component;
 					var resource = me.scenarios[value].mainScenario.raw.resource;
 					var metric = 'duration';
@@ -331,12 +336,12 @@ Ext.define('widgets.stepeue.feature', {
 				renderer: function(value) {
 					return me.scenarios[value].getScreenShotLogo();
 				}
-			},{
+			},*/{
 				header: 'Scenario Name',
 				dataIndex: 'scenario',
 				flex: 2,
 				sortable: false,
-				align: 'center'
+				align: 'left'
 			},{
 				header: 'Localization',
 				dataIndex: 'localization',
@@ -356,12 +361,13 @@ Ext.define('widgets.stepeue.feature', {
 				xtype: 'actioncolumn',
 				items: [{
 					icon: '/static/canopsis/themes/canopsis/resources/images/icons/date_error.png',
-					tooltip: 'Last Errors Execution',
+					tooltip: 'Step Summary', /*Last Errors Execution',*/
 
 					handler: function(grid, rowIndex, colIndex) {
 						var rec = grid.getStore().getAt(rowIndex);
 
-						grid = me.scenarios[rec.get('scenario')].displayLastExecutionsErrors(me.node);
+						grid = me.scenarios[rec.get('scenario')].displayLastExecutionsErrors(me.node+'.'+me.scenarios[rec.get('scenario')].name);
+						console.log( me )
 
 						var gwidth = Ext.getBody().getWidth() * 0.6;
 						var gheight = Ext.getBody().getHeight() * 0.8;
@@ -378,7 +384,7 @@ Ext.define('widgets.stepeue.feature', {
 							modal: true
 						}).show().center();
 					}
-				},{
+				}/*,{
 					icon: '/static/canopsis/themes/canopsis/resources/images/icons/table.png',
 					tooltip: 'Tests with other configuration for this scenario',
 
@@ -415,7 +421,7 @@ Ext.define('widgets.stepeue.feature', {
 							}).show().center();
 						}
 					}
-				}]
+				}*/]
 			}
 
 			],
