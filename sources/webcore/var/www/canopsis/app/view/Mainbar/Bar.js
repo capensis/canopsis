@@ -24,7 +24,6 @@ Ext.define('canopsis.view.Mainbar.Bar', {
 
 	requires: [
 		'canopsis.store.Files',
-		'canopsis.view.Top10.View',
 		'canopsis.view.Briefcase.Uploader',
 		'canopsis.lib.menu.cspinner'
 	],
@@ -270,18 +269,6 @@ Ext.define('canopsis.view.Mainbar.Bar', {
 					text: _('SLA'),
 					action: 'openViewMenu',
 					viewId: 'view.sla'
-				}
-			]);
-		}
-
-		//Top 10 menu
-		if(global.accountCtrl.checkRoot() || global.accountCtrl.checkGroup('group.CPS_Top10_admin')) {
-			menu_build = menu_build.concat([
-				{
-					iconCls: 'icon-mainbar-perfdata',
-					text: _('Top 10'),
-					action: 'openViewMenu',
-					viewId: 'view.top10'
 				}
 			]);
 		}
