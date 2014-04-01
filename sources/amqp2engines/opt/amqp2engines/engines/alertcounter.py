@@ -144,7 +144,9 @@ class engine(cengine):
 		now = int(time.time())
 
 		def increment_SLA( event, slatype, slaname, delay, value, hostgroup=None ):
+
 			meta_data = {'type': 'COUNTER', 'co': INTERNAL_COMPONENT}
+
 			if hostgroup != None:
 				meta_data['re'] = hostgroup
 			#last_state_change field is updated in event store, so here we have no real previous date
@@ -161,11 +163,7 @@ class engine(cengine):
 				}
 			})
 
-			"""
-				when time elapsed exceed deadline, produce an SLA out increment or nok if alert was ack
-				else, if only event was ack, SLA ok is incremented
-
-			"""
+			#when time elapsed exceed deadline, produce an SLA out increment or nok if alert was ack else, auto increment if only event was not ack ack, SLA ok otherwise
 
 			sla_states = {
 				'out': 0,
@@ -277,58 +275,68 @@ class engine(cengine):
 
 	def count_by_type(self, event, value):
 		state = event['state']
+		def count_by_type_hostgroups(event, value, hostgroup=None):
+			#Shortcut
+			def increment(increment_type, value, hostgroup):
+				metas = {
+					'type': 'COUNTER',
+					'co': INTERNAL_COMPONENT,
+					'tg': event.get('tags', []),
+					'me': "cps_statechange_{0}".format(increment_type)
+				}
+				if hostgroup:
+					metas['re'] = hostgroup
+				self.increment_counter(metas, value)
 
-		#Shortcut
-		def increment(increment_type, value):
-			self.increment_counter({
+			#Keep only logic. increment component if on error
+			if event['source_type'] == 'component':
+				if state != 0:
+					increment('component', value, hostgroup)
+				else:
+					increment('component', 0, hostgroup)
+
+			# increment resource if in error. status depends on it s component. increment resource by component if in error by component
+			if event['source_type'] == 'resource':
+
+				component_problem = False
+				if cevent.is_component_problem(event):
+					component_problem = True
+					increment('resource_by_component', value, hostgroup)
+				else:
+					increment('resource_by_component', 0, hostgroup)
+
+				if state != 0 or component_problem:
+					increment('resource', value, hostgroup)
+				else:
+					increment('resource', 0, hostgroup)
+
+			meta_data = {
 				'type': 'COUNTER',
 				'co': INTERNAL_COMPONENT,
-				'tg': event.get('tags', []),
-				'me': "cps_statechange_{0}".format(increment_type)
-			}, value)
+				'tg': event.get('tags', [])
+			}
+			if hostgroup:
+				meta_data['re'] = hostgroup
+			# Update cps_alerts_not_ack
 
-		#Keep only logic. increment component if on error
-		if event['source_type'] == 'component':
-			if state != 0:
-				increment('component', value)
-			else:
-				increment('component', 0)
+			if state != 0 and event['state_type'] == 1:
+				ackhost = cevent.is_host_acknowledged(event)
+				cvalue0 = int(not ackhost)
+				cvalue1 = int(not not ackhost)
 
-		# increment resource if in error. status depends on it s component. increment resource by component if in error by component
-		if event['source_type'] == 'resource':
+				meta_data['me'] = 'cps_alerts_not_ack'
+				self.increment_counter(meta_data, cvalue0)
 
-			component_problem = False
-			if cevent.is_component_problem(event):
-				component_problem = True
-				increment('resource_by_component', value)
-			else:
-				increment('resource_by_component', 0)
+				meta_data['me'] = 'cps_alerts_ack'
+				self.increment_counter(meta_data, 0)
 
-			if state != 0 or component_problem:
-				increment('resource', value)
-			else:
-				increment('resource', 0)
+				meta_data['me'] = 'cps_alerts_ack_by_host'
+				self.increment_counter(meta_data, cvalue1)
 
-		meta_data = {
-			'type': 'COUNTER',
-			'co': INTERNAL_COMPONENT,
-			'tg': event.get('tags', [])
-		}
-		# Update cps_alerts_not_ack
+		for hostgroup in event.get('hostgroups', []):
+			count_by_type_hostgroups(event, value, hostgroup)
 
-		if state != 0 and event['state_type'] == 1:
-			ackhost = cevent.is_host_acknowledged(event)
-			cvalue0 = int(not ackhost)
-			cvalue1 = int(not not ackhost)
-
-			meta_data['me'] = 'cps_alerts_not_ack'
-			self.increment_counter(meta_data, cvalue0)
-
-			meta_data['me'] = 'cps_alerts_ack'
-			self.increment_counter(meta_data, 0)
-
-			meta_data['me'] = 'cps_alerts_ack_by_host'
-			self.increment_counter(meta_data, cvalue1)
+		count_by_type_hostgroups(event, value)
 
 	def resolve_selectors_name(self):
 
