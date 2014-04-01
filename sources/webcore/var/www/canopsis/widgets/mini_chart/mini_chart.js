@@ -139,33 +139,7 @@ Ext.define('widgets.mini_chart.mini_chart', {
 			metric: label,
 			unit: unit,
 			chart_type: this.chart_type,
-			original_values: values,
-
-			tooltipFormatter: function(sparkline, options, fields) {
-				void(sparkline);
-
-				$(document).find('.tooltip-minichart').css('border', '2px solid ' + curve_color);
-
-				var result = '';
-
-				if(options.userOptions.chart_type === 'line_graph') {
-					result = '<b>' + rdr_tstodate(Math.round(fields['x']/1000)) + '</b><br>';
-				} else {
-					result = '<b>' + rdr_tstodate(Math.round(options.userOptions.original_values[fields[0].offset][0] / 1000)) + '</b><br/>';
-				}
-
-				result += options.userOptions.metric + ' : ';
-
-				if(me.humanReadable) {
-					result += rdr_humanreadable_value(fields['y'], options.userOptions.unit);
-				} else if (options.userOptions.unit) {
-					result += fields['y'] + ' ' + options.userOptions.unit;
-				} else {
-					result += fields['y'];
-				}
-
-				return result;
-			}
+			original_values: values
 		};
 
 		return options;
