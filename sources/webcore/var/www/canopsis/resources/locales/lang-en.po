@@ -2034,3 +2034,261 @@ msgstr "Saturday"
 
 msgid "Ldap"
 msgstr "Ldap"
+
+msgid "Statemap manager"
+msgstr "Statemap manager"
+
+msgid "Ack comments"
+msgstr "Ack comments"
+
+msgid "Filter Rules"
+msgstr "Filter Rules"
+
+msgid "Human readable values"
+msgstr "Human readable values"
+
+msgid "Stacked"
+msgstr "Stacked"
+
+msgid "History navigation"
+msgstr "History navigation"
+
+msgid "History time window"
+msgstr "History time window"
+
+msgid "Display time window"
+msgstr "Display time window"
+
+msgid "Display downtimes"
+msgstr "Display downtimes"
+
+msgid "Choose Log Events"
+msgstr "Choose Log Events"
+
+msgid "Downtimes"
+msgstr "Downtimes"
+
+msgid "Customize Metrics"
+msgstr "Customize Metrics"
+
+msgid "Tooltip"
+msgstr "Tooltip"
+
+msgid "Grid"
+msgstr "Grid"
+
+msgid "Display vertical lines"
+msgstr "Display vertical lines"
+
+msgid "Display horizontal lines"
+msgstr "Display horizontal lines"
+
+msgid "Add component for metric labels"
+msgstr "Add component for metric labels"
+
+msgid "Add resource for metric labels"
+msgstr "Add resource for metric labels"
+
+msgid "Round time (if interval)"
+msgstr "Round time (if interval)"
+
+msgid "Maximum number of events displayed (0 for no limit)"
+msgstr "Maximum number of events displayed (0 for no limit)"
+
+msgid "Line Graph"
+msgstr "Line Graph"
+
+msgid "Bar Graph"
+msgstr "Bar Graph"
+
+msgid "Average"
+msgstr "Average"
+
+msgid "Graph Type"
+msgstr "Graph Type"
+
+msgid "Group by metric label"
+msgstr "Group by metric label"
+
+msgid "Other label"
+msgstr "Other label"
+
+msgid "Delta between series sum and this value."
+msgstr "Delta between series sum and this value."
+
+msgid "Start Angle"
+msgstr "Start Angle"
+
+msgid "Donut hole"
+msgstr "Donut hole"
+
+msgid "Tilt"
+msgstr "Tilt"
+
+msgid "Stroke width"
+msgstr "Stroke width"
+
+msgid "Label Style"
+msgstr "Label Style"
+
+msgid "Label Size"
+msgstr "Label Size"
+
+msgid "Add component for metric labels"
+msgstr "Add component for metric labels"
+
+msgid "Add resource for metric labels"
+msgstr "Add resource for metric labels"
+
+msgid "Advanced mode"
+msgstr "Advanced mode"
+
+msgid "Method"
+msgstr "Method"
+
+msgid "Round math expression (decimal count)"
+msgstr "Round math expression (decimal count)"
+
+msgid "Replacement for undefined values"
+msgstr "Replacement for undefined values"
+
+msgid "Editable"
+msgstr "Editable"
+
+msgid "Default view"
+msgstr "Default view"
+
+msgid "basicWeek"
+msgstr "basicWeek"
+
+msgid "basicDay"
+msgstr "basicDay"
+
+msgid "agendaWeek"
+msgstr "agendaWeek"
+
+msgid "agendaDay"
+msgstr "agendaDay"
+
+msgid "show weekends"
+msgstr "show weekends"
+
+msgid "Left part of the header"
+msgstr "Left part of the header"
+
+msgid "Center part of the header"
+msgstr "Center part of the header"
+
+msgid "Right part of the header"
+msgstr "Right part of the header"
+
+msgid "prev,next,today"
+msgstr "prev,next,today"
+
+msgid "month,agendaWeek,agendaDay"
+msgstr "month,agendaWeek,agendaDay"
+
+msgid "month,agendaWeek"
+msgstr "month,agendaWeek"
+
+msgid "month,basicWeek,basicDay"
+msgstr "month,basicWeek,basicDay"
+
+msgid "Header"
+msgstr "Header"
+
+msgid "Show weekends"
+msgstr "Show weekends"
+
+msgid "Event view popup columns"
+msgstr "Event view popup columns"
+
+msgid "Event display size"
+msgstr "Event display size"
+
+msgid "Default events color"
+msgstr "Default events color"
+
+msgid "Stacked events color"
+msgstr "Stacked events color"
+
+msgid "Downtime events color"
+msgstr "Downtime events color"
+
+msgid "Calendar sources"
+msgstr "Calendar sources"
+
+msgid "Stashed events"
+msgstr "Stashed events"
+
+msgid "Help File"
+msgstr "Help File"
+
+msgid "Equipement File"
+msgstr "Equipement File"
+
+msgid "Ack State"
+msgstr "Ack State"
+
+msgid "Ticket"
+msgstr "Ticket"
+
+msgid "Monitoring console"
+msgstr "Monitoring console"
+
+msgid "Help File URL"
+msgstr "Help File URL"
+
+msgid "Equipement File URL"
+msgstr "Equipement File URL"
+
+msgid "Ticket URL"
+msgstr "Ticket URL"
+
+msgid "Show ACK Form"
+msgstr "Show ACK Form"
+
+msgid "ACK State"
+msgstr "ACK State"
+
+msgid "Show Help message"
+msgstr "Show Help message"
+
+msgid "Help message"
+msgstr "Help message"
+
+msgid "Show solved"
+msgstr "Show solved"
+
+msgid "Show pending for solved"
+msgstr "Show pending for solved"
+
+msgid "Show pending for action"
+msgstr "Show pending for action"
+
+msgid "Show pending for validation"
+msgstr "Show pending for validation"
+
+msgid "Show Edit Form"
+msgstr "Show Edit Form"
+
+msgid "Displayed Field on edit Form"
+msgstr "Displayed Field on edit Form"
+
+msgid "Ticket"
+msgstr "Ticket"
+
+msgid "Selectors Topologies"
+msgstr "Selectors Topologies"
+
+msgid "Computation points"
+msgstr "Computation points"
+
+msgid "First and Last"
+msgstr "First and Last"
+
+msgid "All"
+msgstr "All"
+
+msgid "More options"
+msgstr "More options"

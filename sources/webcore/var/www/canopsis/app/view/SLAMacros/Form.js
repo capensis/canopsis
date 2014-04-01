@@ -40,12 +40,8 @@ Ext.define('canopsis.view.SLAMacros.Form', {
 			labelWidth: 150
 		},
 		items: [{
-			fieldLabel: _('mCrit'),
-			name: 'mCrit',
-			allowBlank: false
-		},{
-			fieldLabel: _('mWarn'),
-			name: 'mWarn',
+			fieldLabel: _('macro'),
+			name: 'macro',
 			allowBlank: false
 		}]
 	}]

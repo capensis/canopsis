@@ -33,8 +33,8 @@ import logging
 
 NAME="alertcounter"
 INTERNAL_COMPONENT = '__canopsis__'
-PROC_CRITICAL = 'PROC_CRITICAL'
-PROC_WARNING = 'PROC_WARNING'
+MACRO = 'CAN_PRIORITY'
+
 
 class engine(cengine):
 	def __init__(self, *args, **kargs):
@@ -56,14 +56,13 @@ class engine(cengine):
 	def load_macro(self):
 		self.logger.debug('Load record for macros')
 
-		self.mCrit = PROC_CRITICAL
-		self.mWarn = PROC_WARNING
+		self.MACRO = MACRO
+
 
 		record = self.storage.find_one({'crecord_type': 'slamacros'})
 
 		if record:
-			self.mCrit = record.data['mCrit']
-			self.mWarn = record.data['mWarn']
+			self.MACRO = record.data['macro']
 
 	def load_crits(self):
 		self.logger.debug('Load records for criticalness')
@@ -145,7 +144,9 @@ class engine(cengine):
 		now = int(time.time())
 
 		def increment_SLA( event, slatype, slaname, delay, value, hostgroup=None ):
+
 			meta_data = {'type': 'COUNTER', 'co': INTERNAL_COMPONENT}
+
 			if hostgroup != None:
 				meta_data['re'] = hostgroup
 			#last_state_change field is updated in event store, so here we have no real previous date
@@ -162,11 +163,7 @@ class engine(cengine):
 				}
 			})
 
-			"""
-				when time elapsed exceed deadline, produce an SLA out increment or nok if alert was ack
-				else, if only event was ack, SLA ok is incremented
-
-			"""
+			#when time elapsed exceed deadline, produce an SLA out increment or nok if alert was ack else, auto increment if only event was not ack ack, SLA ok otherwise
 
 			sla_states = {
 				'out': 0,
@@ -182,18 +179,20 @@ class engine(cengine):
 					sla_states['out'] = 1
 			elif ack:
 				sla_states['ok'] = 1
-			elif hostgroup == None:
+			else:
 				# spontaneous solve case
-				# it must be not count, so decrement alert counter
-				if event['state'] in [1,2,3]:
-					meta_data_decrement = {
+				if event['state'] == 0:
+					meta_data_auto = {
 						'type': 'COUNTER',
 						'co': INTERNAL_COMPONENT,
-						'me': "cps_statechange_{0}".format(event['state'])
+						'me': "cps_sla_autosolve_{0}".format(slaname) ,
 					}
-					self.increment_counter(meta_data, -1)
+					if hostgroup != None:
+						meta_data_auto['re'] = hostgroup
+					self.increment_counter(meta_data_auto, 1)
 
 			# increment all counts with computed value
+
 			for sla_state in sla_states:
 				meta_data['me'] = 'cps_sla_{0}_{1}_{2}'.format(
 					slatype,
@@ -211,30 +210,26 @@ class engine(cengine):
 	def count_by_crits(self, event, value):
 
 		if 'previous_state'in event and event['state'] == 0 and event.get('state_type', 1) == 1:
-			warn = event.get(self.mWarn, None)
-			crit = event.get(self.mCrit, None)
 
-			if warn and warn in self.crits and event['previous_state'] == 1:
-				self.count_sla(event, 'warn', warn, self.crits[warn], value)
+			sla_field = event.get(self.MACRO, None)
 
-			elif crit and crit in self.crits and event['previous_state'] == 2:
-				self.count_sla(event, 'crit', crit, self.crits[crit], value)
+			if sla_field and sla_field in self.crits:
+				if event['previous_state'] == 1:
+					self.count_sla(event, 'warn', sla_field, self.crits[sla_field], value)
+
+				if event['previous_state'] == 2:
+					self.count_sla(event, 'crit', sla_field, self.crits[sla_field], value)
 
 			# Update others
 			meta_data = {'type': 'COUNTER', 'co': INTERNAL_COMPONENT }
 
 			for _crit in self.crits:
 				# Update warning counters
-				if _crit != warn:
+				if _crit != sla_field:
 					for slatype in ['ok', 'nok', 'out']:
 						meta_data['me'] = 'cps_sla_warn_{0}_{1}'.format(_crit, slatype)
 						self.increment_counter(meta_data, 0)
 
-				# Update critical counters
-				if _crit != crit:
-					for slatype in ['ok', 'nok', 'out']:
-						meta_data['me'] = 'cps_sla_crit_{0}_{1}'.format(_crit, slatype)
-						self.increment_counter(meta_data, 0)
 
 	def count_alert(self, event, value):
 		component = event['component']
@@ -280,58 +275,68 @@ class engine(cengine):
 
 	def count_by_type(self, event, value):
 		state = event['state']
+		def count_by_type_hostgroups(event, value, hostgroup=None):
+			#Shortcut
+			def increment(increment_type, value, hostgroup):
+				metas = {
+					'type': 'COUNTER',
+					'co': INTERNAL_COMPONENT,
+					'tg': event.get('tags', []),
+					'me': "cps_statechange_{0}".format(increment_type)
+				}
+				if hostgroup:
+					metas['re'] = hostgroup
+				self.increment_counter(metas, value)
 
-		#Shortcut
-		def increment(increment_type, value):
-			self.increment_counter({
+			#Keep only logic. increment component if on error
+			if event['source_type'] == 'component':
+				if state != 0:
+					increment('component', value, hostgroup)
+				else:
+					increment('component', 0, hostgroup)
+
+			# increment resource if in error. status depends on it s component. increment resource by component if in error by component
+			if event['source_type'] == 'resource':
+
+				component_problem = False
+				if cevent.is_component_problem(event):
+					component_problem = True
+					increment('resource_by_component', value, hostgroup)
+				else:
+					increment('resource_by_component', 0, hostgroup)
+
+				if state != 0 or component_problem:
+					increment('resource', value, hostgroup)
+				else:
+					increment('resource', 0, hostgroup)
+
+			meta_data = {
 				'type': 'COUNTER',
 				'co': INTERNAL_COMPONENT,
-				'tg': event.get('tags', []),
-				'me': "cps_statechange_{0}".format(increment_type)
-			}, value)
+				'tg': event.get('tags', [])
+			}
+			if hostgroup:
+				meta_data['re'] = hostgroup
+			# Update cps_alerts_not_ack
 
-		#Keep only logic. increment component if on error
-		if event['source_type'] == 'component':
-			if state != 0:
-				increment('component', value)
-			else:
-				increment('component', 0)
+			if state != 0 and event['state_type'] == 1:
+				ackhost = cevent.is_host_acknowledged(event)
+				cvalue0 = int(not ackhost)
+				cvalue1 = int(not not ackhost)
 
-		# increment resource if in error. status depends on it s component. increment resource by component if in error by component
-		if event['source_type'] == 'resource':
+				meta_data['me'] = 'cps_alerts_not_ack'
+				self.increment_counter(meta_data, cvalue0)
 
-			component_problem = False
-			if cevent.is_component_problem(event):
-				component_problem = True
-				increment('resource_by_component', value)
-			else:
-				increment('resource_by_component', 0)
+				meta_data['me'] = 'cps_alerts_ack'
+				self.increment_counter(meta_data, 0)
 
-			if state != 0 or component_problem:
-				increment('resource', value)
-			else:
-				increment('resource', 0)
+				meta_data['me'] = 'cps_alerts_ack_by_host'
+				self.increment_counter(meta_data, cvalue1)
 
-		meta_data = {
-			'type': 'COUNTER',
-			'co': INTERNAL_COMPONENT,
-			'tg': event.get('tags', [])
-		}
-		# Update cps_alerts_not_ack
+		for hostgroup in event.get('hostgroups', []):
+			count_by_type_hostgroups(event, value, hostgroup)
 
-		if state != 0:
-			ackhost = cevent.is_host_acknowledged(event)
-			cvalue0 = int(not ackhost)
-			cvalue1 = int(not not ackhost)
-
-			meta_data['me'] = 'cps_alerts_not_ack'
-			self.increment_counter(meta_data, cvalue0)
-
-			meta_data['me'] = 'cps_alerts_ack'
-			self.increment_counter(meta_data, 0)
-
-			meta_data['me'] = 'cps_alerts_ack_by_host'
-			self.increment_counter(meta_data, cvalue1)
+		count_by_type_hostgroups(event, value)
 
 	def resolve_selectors_name(self):
 

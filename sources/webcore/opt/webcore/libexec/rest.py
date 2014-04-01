@@ -36,12 +36,6 @@ from libexec.auth import get_account ,check_group_rights
 
 logger = logging.getLogger("rest")
 
-# dirty hack for now
-try:
-	from ha import *
-except:
-	logger.debug('unable to load ha module')
-
 ctype_to_group_access = {
 							'schedule' : 'group.CPS_schedule_admin',
 							'curve' : 'group.CPS_curve_admin',

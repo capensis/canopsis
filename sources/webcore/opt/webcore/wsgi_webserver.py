@@ -41,12 +41,19 @@ mongodb_beaker.log.setLevel(logging.INFO)
 #from gevent import monkey; monkey.patch_all()
 
 ## Configurations
-webservices = ['account',  'auth', 'calendar_events', 'entities', 'event', 'files', 'perfstore', 'reporting', 'rest', 'rights', 'ui_view', 'ui_widgets', 'ui_topology', 'ui_locales']
-webservices_mods = {}
-
 config_filename	= os.path.expanduser('~/etc/webserver.conf')
 config		= ConfigParser.RawConfigParser()
 config.read(config_filename)
+
+webservices = []
+webservices_mods = {}
+
+for webservice,enabled in config.items('webservices'):
+	enabled = int(enabled)
+
+	if enabled and webservice not in webservices:
+		webservices.append(webservice)
+
 
 mongo_config_file = os.path.expanduser('~/etc/cstorage.conf')
 mongo_config = ConfigParser.RawConfigParser()

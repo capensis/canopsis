@@ -24,7 +24,6 @@ Ext.define('canopsis.view.Mainbar.Bar', {
 
 	requires: [
 		'canopsis.store.Files',
-		'canopsis.view.Top10.View',
 		'canopsis.view.Briefcase.Uploader',
 		'canopsis.lib.menu.cspinner'
 	],
@@ -274,25 +273,13 @@ Ext.define('canopsis.view.Mainbar.Bar', {
 			]);
 		}
 
-		//Top 10 menu
-		if(global.accountCtrl.checkRoot() || global.accountCtrl.checkGroup('group.CPS_Top10_admin')) {
-			menu_build = menu_build.concat([
-				{
-					iconCls: 'icon-mainbar-perfdata',
-					text: _('Top 10'),
-					action: 'openViewMenu',
-					viewId: 'view.top10'
-				}
-			]);
-		}
-
 		//mass ack menu
 		if(global.accountCtrl.checkRoot() || global.accountCtrl.checkGroup('group.CPS_view_admin') || global.accountCtrl.checkGroup('group.CPS_view')) {
 			menu_build = menu_build.concat(
 				[
 					{
 						iconCls: 'icon-crecord_type-derogation',
-						text: _('ack comments'),
+						text: _('Ack comments'),
 						action: 'openViewMenu',
 						viewId: 'view.comments'
 					}
