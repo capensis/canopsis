@@ -41,8 +41,9 @@ manager = None
 logger = logging.getLogger("perfstore")
 
 def load():
+	global logger
 	global manager
-	manager = pyperfstore2.manager(logging_level=logging.INFO)
+	manager = pyperfstore2.manager(logging_level='DEBUG')
 
 def unload():
 	global manager
@@ -145,6 +146,7 @@ def perfstore_nodes_get_values(start=None, stop=None):
 @get('/perfstore')
 @get('/perfstore/get_all_metrics')
 def perstore_get_all_metrics():
+
 	logger.debug("perstore_get_all_metrics:")
 	
 	limit		= int(request.params.get('limit', default=20))
@@ -226,6 +228,7 @@ def perstore_get_all_metrics():
 	mfilter = clean_mfilter(mfilter)
 
 	data  = manager.find(limit=limit, skip=start, mfilter=mfilter, data=False, sort=msort)
+
 	total = data.count()
 	data  = list(data)
 	
@@ -236,6 +239,7 @@ def perstore_get_all_metrics():
 @delete('/perfstore',checkAuthPlugin={'authorized_grp':group_managing_access})
 @delete('/perfstore/:_id',checkAuthPlugin={'authorized_grp':group_managing_access})
 def remove_meta(_id=None):
+
 	if not _id:
 		_id =  json.loads(request.body.readline())
 	if not _id:
@@ -245,17 +249,16 @@ def remove_meta(_id=None):
 		_id = [_id]
 	
 	logger.debug('delete %s: ' % str(_id))
-	
 	for item in _id:
 		if isinstance(item,dict):
 			manager.remove(_id=item['_id'], purge=False)
 		else:
 			manager.remove(_id=item, purge=False)
-			
+
 @put('/perfstore',checkAuthPlugin={'authorized_grp':group_managing_access})
 def update_meta(_id=None):
 	data = json.loads(request.body.readline())
-	
+
 	if not isinstance(data,list):
 		data = [data]
 	
@@ -266,6 +269,7 @@ def update_meta(_id=None):
 			if '_id' in item:
 				del item['_id']
 			manager.store.update(_id=_id, mset=item)
+
 		except Exception, err:
 			logger.warning('Error while updating meta_id: %s' % err)
 			return HTTPError(500, "Error while updating meta_id: %s" % err)
@@ -346,7 +350,7 @@ def perfstore_perftop(start=None, stop=None):
 	logger.debug(" + stop:        %s (%s)" % (stop, datetime.utcfromtimestamp(stop)))
 
 	mfilter =  clean_mfilter(mfilter)
-	
+
 	mtype = manager.store.find(mfilter=mfilter, limit=1, mfields=['t'])
 	
 	def check_threshold(value):
@@ -465,7 +469,7 @@ def perfstore_perftop(start=None, stop=None):
 			data = sorted(data, key=lambda k: k['lv'], reverse=reverse)[:limit]
 	else:
 		logger.debug("No records found")
-	
+
 	return {'success': True, 'data' : data, 'total' : len(data)}
 
 ########################################################################
@@ -473,7 +477,7 @@ def perfstore_perftop(start=None, stop=None):
 ########################################################################
 
 def perfstore_get_values(_id, start=None, stop=None, aggregate_method=None, aggregate_interval=None, aggregate_max_points=None, aggregate_round_time=True, timezone=0):
-	
+
 	if start and not stop:
 		stop = start
 	
@@ -499,7 +503,7 @@ def perfstore_get_values(_id, start=None, stop=None, aggregate_method=None, aggr
 	logger.debug(' + interval :   %s' % aggregate_interval)
 	logger.debug(' + round time : %s' % aggregate_round_time)
 	logger.debug(' + max_points : %s' % aggregate_max_points)
-	
+
 	output=[]
 	meta = None
 	
@@ -558,5 +562,5 @@ def perfstore_get_values(_id, start=None, stop=None, aggregate_method=None, aggr
 
 	if points and meta:
 		output.append({'node': _id, 'metric': meta['me'], 'values': points, 'bunit': meta['unit'], 'min': meta['min'], 'max': meta['max'], 'thld_warn': meta['thd_warn'], 'thld_crit': meta['thd_crit'], 'type': meta['type']})
-				
+
 	return output

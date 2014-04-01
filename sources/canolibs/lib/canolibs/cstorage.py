@@ -77,8 +77,10 @@ class cstorage(object):
 
 		self.backend = {}
 		
+		self.connected = False
+
 		if mongo_autoconnect:
-			self.backend_connect()
+			self.connect()
 	
 	def clean_id(self, _id):
 		try:
@@ -117,8 +119,11 @@ class cstorage(object):
 		return (Read_mfilter, Write_mfilter)
 
 
-	def backend_connect(self):
-		self.conn=Connection(self.mongo_host, self.mongo_port)
+	def connect(self):
+		if self.connected:
+			return True
+
+		self.conn=Connection(self.mongo_host, self.mongo_port, safe=True)
 		self.db=self.conn[self.mongo_db]
 		
 		try:
@@ -128,9 +133,26 @@ class cstorage(object):
 		
 		self.fs = gridfs.GridFS(self.db, self.gridfs_namespace)
 
-		self.logger.debug("Connected.")
+		self.connected = True
+
+		self.logger.debug("Connected %s" % id(self))
+
+	def disconnect(self):
+		if self.connected:
+			self.conn.fsync()
+			del self.conn
+			self.connected = False
+
+	def check_connected(self):
+		"""
+		Check if self is connected to db.
+		"""
+		if not self.connected:
+			raise Exception("CSTORAGE is not connected %s" % id(self))
 
 	def get_backend(self, namespace=None):
+		self.check_connected()
+
 		if not namespace:
 			namespace = self.namespace
 
@@ -146,6 +168,8 @@ class cstorage(object):
 			
 			
 	def update(self, _id, data, namespace=None, account=None):
+		self.check_connected()
+
 		if not isinstance(data, dict):
 			raise Exception('Invalid data, must be a dict ...')
 
@@ -160,6 +184,8 @@ class cstorage(object):
 			raise KeyError("'%s' not found ..." % _id)
 		
 	def put(self, _record_or_records, account=None, namespace=None, mset=False):
+		self.check_connected()
+
 		if not account:
 			account = self.account
 
@@ -300,6 +326,8 @@ class cstorage(object):
 		return self.find(count=True, *args, **kargs)
 
 	def find(self, mfilter={}, mfields=None, account=None, namespace=None, one=False, count=False, sort=None, limit=0, offset=0, for_write=False, ignore_bin=True, raw=False, with_total=False):
+		self.check_connected()
+
 		if not account:
 			account = self.account
 			
@@ -397,6 +425,8 @@ class cstorage(object):
 			return records
 
 	def get(self, _id_or_ids, account=None, namespace=None, mfields=None, ignore_bin=True):
+		self.check_connected()
+
 		if not account:
 			account = self.account
 
@@ -469,6 +499,8 @@ class cstorage(object):
 			return records
 
 	def remove(self, _id_or_ids, account=None, namespace=None):
+		self.check_connected()
+
 		if not account:
 			account = self.account
 
@@ -515,6 +547,8 @@ class cstorage(object):
 				raise ValueError("Access denied ...")
 
 	def map_reduce(self, mfilter_or_ids, mmap, mreduce, account=None, namespace=None):
+		self.check_connected()
+
 		if not account:
 			account = self.account
 
@@ -547,9 +581,13 @@ class cstorage(object):
 						
 
 	def drop_namespace(self, namespace):
+		self.check_connected()
+
 		self.db.drop_collection(namespace)
 
 	def get_namespace_size(self, namespace=None):
+		self.check_connected()
+
 		if not namespace:
 			namespace = self.namespace
 		
@@ -559,6 +597,8 @@ class cstorage(object):
 			return 0
 
 	def recursive_get(self, record, depth=0,account=None, namespace=None):
+		self.check_connected()
+
 		depth += 1
 		childs = record.children
 		if len(childs) == 0:
@@ -596,6 +636,8 @@ class cstorage(object):
 	'''
 
 	def get_record_childs(self, record,account=None, namespace=None):
+		self.check_connected()
+		
 		child_ids = record.children
 		if len(child_ids) == 0:
 			return []
@@ -608,6 +650,8 @@ class cstorage(object):
 				
 
 	def print_record_tree(self, record, depth=0):
+		self.check_connected()
+		
 		depth+=1
 
 		childs = record.children_record
@@ -631,7 +675,8 @@ class cstorage(object):
 
 
 	def get_childs_of_parent(self, record_or_id, rtype=None, account=None):
-
+		self.check_connected()
+		
 		if isinstance(record_or_id, crecord):
 			_id = record_or_id._id
 		else:
@@ -645,7 +690,8 @@ class cstorage(object):
 		return self.find(mfilter, account=account)		
 
 	def get_parents_of_child(self, record_or_id, rtype=None, account=None):
-
+		self.check_connected()
+		
 		if isinstance(record_or_id, crecord):
 			_id = record_or_id._id
 		else:
@@ -697,29 +743,40 @@ class cstorage(object):
 				child_record.save()
 	'''			
 	def is_parent(self, parent_record, child_record):
+		self.check_connected()
+		
 		if str(child_record._id) in parent_record.children:
 			return True
 		else:
 			return False
 
 	def put_binary(self, data, file_name, content_type):
+		self.check_connected()
+		
 		bin_id = self.fs.put(data, filename=file_name, content_type=content_type)
 		return bin_id
 
 	def get_binary(self, _id):
+		self.check_connected()
+
 		cursor = self.fs.get(_id)			
 		return cursor.read()
 
 	def remove_binary(self, _id):
+		self.check_connected()
+		
 		try:
 			self.fs.delete(_id)
 		except Exception, err:
 			self.logger.error('Error when remove binarie', err)
 	
 	def check_binary(self, _id):
+		self.check_connected()
+		
 		return self.fs.exists(_id)
 	
 	def __del__(self):
+		self.disconnect()
 		self.logger.debug("Object deleted. (namespace: %s)" % self.namespace)
 
 #####
@@ -733,13 +790,19 @@ class cstorage(object):
 ## Cache storage
 STORAGES = {}
 def get_storage(namespace='object', account=None, logging_level=logging.INFO):
-	global STORAGES
+	return cstorage(account, namespace=namespace, logging_level=logging_level)
+	"""global STORAGES
 	try:
-		return STORAGES[namespace]
+		result = STORAGES[namespace]
+		if result.connected:
+			result.disconnect()
+			result = cstorage(account, namespace=namespace, logging_level=logging_level)
+			STORAGES[namespace] = result
+			return result
 	except:
 		if not account:
 			account = caccount()
 		
 		STORAGES[namespace] = cstorage(account, namespace=namespace, logging_level=logging_level)
 		return STORAGES[namespace]
-
+	"""

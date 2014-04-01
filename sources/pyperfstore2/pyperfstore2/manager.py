@@ -31,7 +31,7 @@ class manager(object):
 		self.logger.setLevel(logging_level)
 
 		# Store
-		self.store = store(logging_level=logging_level, **kwargs)
+		self.store = store(logging_level=self.logger.level, **kwargs)
 		
 		self.dca_min_length = dca_min_length
 		
@@ -90,7 +90,6 @@ class manager(object):
 
 	def get_meta(self, _id=None, name=None, raw=False, mfields=None):
 		_id = self.get_id(_id, name)
-		
 		meta_data = self.store.get(_id, mfields=mfields)
 		if not meta_data:
 			return None
@@ -167,7 +166,7 @@ class manager(object):
 		
 		if not data:
 			mfields = { 'd': 0 }
-		
+
 		return self.store.find(mfilter=mfilter, limit=limit, skip=skip, mfields=mfields, sort=sort)
 		
 	def get_points(self, _id=None, name=None, tstart=None, tstop=None, raw=False, return_meta=False, add_prev_point=False, add_next_point=False):
@@ -578,6 +577,14 @@ class manager(object):
 			
 			self.logger.info(" + Compressed DCA: %s" % len(meta.get('c', [])))
 			self.logger.info(" + Next Clean: %s" % meta.get('nc', None) )
+
+	def disconnect(self):
+		self.logger.debug("DISCONNECT MANAGER")
+		self.store.disconnect()
+
+	def __del__(self):
+		self.logger.debug("del MANAGER %s" % self)
+		self.disconnect()
 
 
 def split_list(alist, wanted_parts=1):
