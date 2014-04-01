@@ -279,7 +279,7 @@ Ext.define('canopsis.view.Mainbar.Bar', {
 				[
 					{
 						iconCls: 'icon-crecord_type-derogation',
-						text: _('ack comments'),
+						text: _('Ack comments'),
 						action: 'openViewMenu',
 						viewId: 'view.comments'
 					}

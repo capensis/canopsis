@@ -94,7 +94,7 @@
 						},{
 							"xtype" : "numberfield",
 							"name" : "max",
-							"fieldLabel": "delta between series sum and this value."
+							"fieldLabel": "Delta between series sum and this value."
 						},{
 							"xtype" : "numberfield",
 							"name" : "startAngle",
@@ -242,7 +242,7 @@
 						{
 							"xtype": "textfield",
 							"name": "labels_size",
-							"fieldLabel": "Label size",
+							"fieldLabel": "Label Size",
 							"value": "x-small"
 						},
 						{
@@ -273,7 +273,7 @@
 						},{
 							"xtype": "textfield",
 							"name": "labels_size",
-							"fieldLabel": "Label size",
+							"fieldLabel": "Label Size",
 							"value": "x-small"
 						}
 					]

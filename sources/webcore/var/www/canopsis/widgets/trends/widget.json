@@ -36,7 +36,7 @@
 			},{
 				"xtype": "combobox",
 				"name": "points_in_calcul",
-				"fieldLabel": "Points in calcul",
+				"fieldLabel": "Computation points",
 				"queryMode": "local",
 				"displayField": "text",
 				"valueField": "value",
