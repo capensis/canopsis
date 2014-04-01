@@ -25,35 +25,27 @@ function detect_os(){
 	ARCHL=`if [ -e /etc/arch-release ]; then echo 1; fi`
 	DIST_VERS=""
 	
-	if [ -n "$OPT_DIST" ]; then
-		DIST=$OPT_DIST
-	fi
-	if [ -n "$OPT_DISTVERS" ]; then
-		DISTVERS=$OPT_DISTVERS
-		return
-	fi
-
-	if [ "$DEBIAN" -ne 0 ]; then
+	if [ $DEBIAN -ne 0 ]; then
 		DIST="debian"
 		DIST_VERS=`cat /etc/debian_version | cut -d '.' -f1`
 		echo " + $DIST $DIST_VERS"
-	elif [ "$UBUNTU" -ne 0 ]; then
+	elif [ $UBUNTU -ne 0 ]; then
 		DIST="ubuntu"
 		DIST_VERS=`lsb_release -r | cut -f2`
 		echo " + $DIST $DIST_VERS"
-	elif [ "$REDHAT" -ne 0 ]; then
+	elif [ $REDHAT -ne 0 ]; then
 		DIST="redhat"
 		DIST_VERS=`lsb_release -r | cut -f2 | cut -d '.' -f1`
 		echo " + $DIST $DIST_VERS"
-	elif [ "$CENTOS" -ne 0 ]; then
+	elif [ $CENTOS -ne 0 ]; then
 		DIST="centos"
 		DIST_VERS=`lsb_release -r | cut -f2 | cut -d '.' -f1`
 		echo " + $DIST $DIST_VERS"
-	elif [ "$FC" -ne 0 ]; then
+	elif [ $FC -ne 0 ]; then
 		DIST="fedora"
 		DIST_VERS=`lsb_release -r | cut -f2 | cut -d '.' -f1`
 		echo " + $DIST $DIST_VERS"
-	elif [ "$ARCHL" -ne 0 ]; then
+	elif [ $ARCHL -ne 0 ]; then
 		DIST="archlinux"
 		DIST_VERS=`pacman -Q glibc | cut -d ' ' -f2 | cut -d '-' -f1`
 		echo " + $DIST $DIST_VERS"
@@ -61,7 +53,6 @@ function detect_os(){
 		echo " + Impossible to find distribution ..."
 		exit 1
 	fi
-	
 }
 
 function launch_cmd() {

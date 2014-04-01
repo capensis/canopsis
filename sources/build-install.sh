@@ -6,22 +6,6 @@ if [ `id -u` -ne 0 ]; then
 	exit 1	
 fi
 
-mongo_status=$(su - canopsis -c "service mongodb status" | grep Running | wc -l)
-
-if [ "$mongo_status" = "1" ]; then
-    su - canopsis -c "service mongodb stop"
-fi
-
-mongo_status=$(su - canopsis -c "service mongodb status" | grep Running | wc -l)
-
-if [ "$mongo_status" = "1" ]
-then
-	echo "Unable to stop mongo properly cannot process build-install"
-	exit 1
-fi
-
-rm -rf /opt/canopsis/var/lib/mongodb/mongod.lock
-
 
 ### Configurations
 SRC_PATH=`pwd`
@@ -330,8 +314,6 @@ function show_help(){
 #	echo "    -m [ARGUMENT]       ->  Install deps, build and make a package"
 	echo "    -p 		->  Make packages"
 	echo "    -d		->  Don't check dependencies"
-	echo "    -D		->  Force distribution"
-	echo "    -V		->  Force distribution version"
 	echo "    -i		->  Just build installer"
 	echo "    -h, help	->  Print this help"
 	exit 1
@@ -354,10 +336,8 @@ OPT_WUT=0
 OPT_MPKG=0
 OPT_DCD=0
 OPT_MINSTALLER=0
-OPT_DIST=0
-OPT_DISTVERS=0
 
-while getopts "cnupdhiD:V:" opt; do
+while getopts "cnupdhi" opt; do
 	case $opt in
 		c) OPT_CLEAN=1 ;;
 		n) OPT_NOBUILD=1 ;;
@@ -365,10 +345,6 @@ while getopts "cnupdhiD:V:" opt; do
 		p) OPT_MPKG=1 ;;
 		i) OPT_MINSTALLER=1; OPT_BUILD=0;;
 		d) OPT_DCD=1;;
-		D) OPT_DIST=$OPTARG
-		   echo Using $OPTARG as distribution name;;
-		V) OPT_DISTVERS=$OPTARG
-		   echo Using $OPTARG as distribution version;;
 		h) show_help ;;
 		\?)
 			echo "Invalid option: -$OPTARG" >&2
@@ -512,7 +488,7 @@ if [ $OPT_BUILD -eq 1 ]; then
 					check_code $? "Make package failure"
 				fi
 			else
-				echo " + Already install"
+				echo " + Allready install"
 			fi
 		else
 			echo "Impossible to build $NAME ..."
