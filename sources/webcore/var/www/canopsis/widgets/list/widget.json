@@ -123,11 +123,11 @@
 								"boxLabel": "Column sortable",
 								"checked": true,
 								"name": "column_sort"
-							}						
+							}
 						]
 				},{
 						"xtype": "cfieldset",
-						"title": "Console de supervision",
+						"title": "Monitoring console",
 						"items":[
 							{
 								"xtype": "textfield",
