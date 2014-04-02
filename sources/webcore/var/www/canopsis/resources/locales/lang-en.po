@@ -3,6 +3,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Language: en\n"
+"Langage-Team=en"
 
 msgid "Forum"
 msgstr "Forum"
@@ -2083,9 +2084,6 @@ msgstr "Display vertical lines"
 msgid "Display horizontal lines"
 msgstr "Display horizontal lines"
 
-msgid "Add component for metric labels"
-msgstr "Add component for metric labels"
-
 msgid "Add resource for metric labels"
 msgstr "Add resource for metric labels"
 
@@ -2136,9 +2134,6 @@ msgstr "Label Size"
 
 msgid "Add component for metric labels"
 msgstr "Add component for metric labels"
-
-msgid "Add resource for metric labels"
-msgstr "Add resource for metric labels"
 
 msgid "Advanced mode"
 msgstr "Advanced mode"
@@ -2248,9 +2243,6 @@ msgstr "Ticket URL"
 msgid "Show ACK Form"
 msgstr "Show ACK Form"
 
-msgid "ACK State"
-msgstr "ACK State"
-
 msgid "Show Help message"
 msgstr "Show Help message"
 
@@ -2274,12 +2266,6 @@ msgstr "Show Edit Form"
 
 msgid "Displayed Field on edit Form"
 msgstr "Displayed Field on edit Form"
-
-msgid "Ticket"
-msgstr "Ticket"
-
-msgid "Selectors Topologies"
-msgstr "Selectors Topologies"
 
 msgid "Computation points"
 msgstr "Computation points"
