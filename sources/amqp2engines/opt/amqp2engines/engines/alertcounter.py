@@ -59,10 +59,10 @@ class engine(cengine):
 		self.MACRO = MACRO
 
 
-		record = self.storage.find_one({'crecord_type': 'slamacros'})
+		record = self.storage.get_backend('object').find_one({'crecord_type': 'slamacros'})
 
-		if record:
-			self.MACRO = record.data['macro']
+		if record and 'macro' in record:
+			self.MACRO = record['macro']
 
 	def load_crits(self):
 		self.logger.debug('Load records for criticalness')

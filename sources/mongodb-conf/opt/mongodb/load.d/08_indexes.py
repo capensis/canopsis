@@ -112,6 +112,10 @@ def init():
     ])
     storage.get_backend('entities').ensure_index([
         ('type', 1),
+        ('timestamp',1)
+    ])
+    storage.get_backend('entities').ensure_index([
+        ('type', 1),
         ('component',1),
         ('resource',1),
         ('id', 1)
