@@ -164,14 +164,33 @@ Ext.define('canopsis.controller.Mainbar', {
 	setClock: function(item) {
 		log.debug('Set Clock', this.logAuthor);
 
+		var m_names = new Array("January", "February", "March",
+		"April", "May", "June", "July", "August", "September",
+		"October", "November", "December");
+
+		function addZero(i)	{
+			if (i<10) {
+			  	i="0" + i;
+			}
+			return i + '';
+		}
+
+		var d = new Date();
+		var hours = d.getHours();
+		var minutes = d.getMinutes();
+		var curr_date = d.getDate();
+		var curr_month = d.getMonth();
+		var curr_year = d.getFullYear();
+		var canopsis_date = addZero(curr_date) + " " + _(m_names[curr_month]) + " " + curr_year + ' ' + addZero(hours) + ':' + addZero(minutes);
+
 		var refreshClock = function() {
 			var thisTime = new Date();
 
 			if(is12Clock()) {
-				item.update("<div class='cps-account' >" + Ext.Date.format(thisTime, 'g:i a - l d F Y') + '</div>');
+				item.update("<div class='cps-account' >" +canopsis_date + '</div>');
 			}
 			else {
-				item.update("<div class='cps-account' >" + Ext.Date.format(thisTime, 'G:i - l d F Y') + '</div>');
+				item.update("<div class='cps-account' >" + canopsis_date + '</div>');
 			}
 		};
 
