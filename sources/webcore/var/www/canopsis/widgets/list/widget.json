@@ -192,7 +192,7 @@
 								"name": "show_form_edit"
 							},{
 								"xtype": "cfieldset",
-								"title": "Dispplayed Field on edit form",
+								"title": "Displayed Field on edit form",
 								"items":[
 									{
 										"xtype": "checkbox",

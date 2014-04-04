@@ -2222,9 +2222,6 @@ msgstr "Help File"
 msgid "Equipement File"
 msgstr "Equipement File"
 
-msgid "Ack State"
-msgstr "Ack State"
-
 msgid "Ticket"
 msgstr "Ticket"
 
@@ -2278,3 +2275,72 @@ msgstr "All"
 
 msgid "More options"
 msgstr "More options"
+
+msgid "Stream"
+msgstr "Stream"
+
+msgid "Options & Aggregation"
+msgstr "Options & Aggregation"
+
+msgid "Default graph options"
+msgstr "Default graph options"
+
+msgid "Tiny"
+msgstr "Tiny"
+
+msgid "Small"
+msgstr "Small"
+
+msgid "Normal"
+msgstr "Normal"
+
+msgid "Big"
+msgstr "Big"
+
+msgid "Huge"
+msgstr "Huge"
+
+msgid "Ack State"
+msgstr "Ack State"
+
+msgid "Show help message"
+msgstr "Show help message"
+
+msgid "Select all"
+msgstr "Select all"
+
+msgid "Import Selector"
+msgstr "Import Selector"
+
+msgid "Export Selector"
+msgstr "Export Selector"
+
+msgid "Import Consolidation"
+msgstr "Import Consolidation"
+
+msgid "Export Consolidation"
+msgstr "Export Consolidation"
+
+msgid "Add auto ack comment"
+msgstr "Add auto ack comment"
+
+msgid "SLAMacros"
+msgstr "SLAMacros"
+
+msgid "macro"
+msgstr "macro"
+
+msgid "Take downtimes as Ok status."
+msgstr "Take downtimes as Ok status."
+
+msgid "Export view as JSON"
+msgstr "Export view as JSON"
+
+msgid "Override"
+msgstr "Override"
+
+msgid "Statemap"
+msgstr "Statemap"
+
+msgid "Failed"
+msgstr "Failed"
