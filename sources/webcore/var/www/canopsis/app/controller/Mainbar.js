@@ -175,28 +175,22 @@ Ext.define('canopsis.controller.Mainbar', {
 			return i + '';
 		}
 
-		var d = new Date();
-		var hours = d.getHours();
-		var minutes = d.getMinutes();
-		var curr_date = d.getDate();
-		var curr_month = d.getMonth();
-		var curr_year = d.getFullYear();
-		var canopsis_date = addZero(curr_date) + " " + _(m_names[curr_month]) + " " + curr_year + ' ' + addZero(hours) + ':' + addZero(minutes);
 
 		var refreshClock = function() {
-			var thisTime = new Date();
-
-			if(is12Clock()) {
-				item.update("<div class='cps-account' >" +canopsis_date + '</div>');
-			}
-			else {
-				item.update("<div class='cps-account' >" + canopsis_date + '</div>');
-			}
+			//is12Clock()
+			var d = new Date();
+			var hours = d.getHours();
+			var minutes = d.getMinutes();
+			var curr_date = d.getDate();
+			var curr_month = d.getMonth();
+			var curr_year = d.getFullYear();
+			var canopsis_date = addZero(curr_date) + " " + _(m_names[curr_month]) + " " + curr_year + ' ' + addZero(hours) + ':' + addZero(minutes);
+			item.update("<div class='cps-account' >" +canopsis_date + '</div>');
 		};
 
 		Ext.TaskManager.start({
 			run: refreshClock,
-			interval: 60000
+			interval: 60
 		});
 	},
 
