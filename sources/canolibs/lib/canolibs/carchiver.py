@@ -161,9 +161,6 @@ class carchiver(object):
 
 		self.storage.put(record, namespace=self.namespace, account=self.account)
 
-	def store_update_event(self, _id, event):
-		self.collection.update({'_id': _id}, {"$set": event}, safe=True)
-
 	def log_event(self, _id, event):
 		self.logger.debug("Log event '%s' in %s ..." % (_id, self.namespace_log))
 		record = crecord(event)
