@@ -432,7 +432,7 @@ def perfstore_perftop(start=None, stop=None):
 				if check_threshold(val):
 					data.append(metric)
 		else:
-			# Compute values
+
 			metric_limit = 0
 
 			if expand:
@@ -441,8 +441,8 @@ def perfstore_perftop(start=None, stop=None):
 			#clean mfilter
 			mfilter =  clean_mfilter(mfilter)
 
-			metrics =  manager.store.find(mfilter=mfilter, mfields=['_id', 'co', 're', 'me', 'lv', 'u', 'ma', 'lts', 't'], limit=metric_limit)
-
+			metrics =  manager.store.find(mfilter=mfilter, mfields=['_id', 'co', 're', 'me', 'lv', 'u', 'ma', 'lts', 't'], limit=limit)
+			metrics.sort('lv', sort)
 			if isinstance(metrics, dict):
 				metrics = [metrics]
 
