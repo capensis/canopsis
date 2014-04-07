@@ -117,7 +117,6 @@ class carchiver(object):
 				if key in event and key in devent and devent[key] != event[key]:
 					change[key] = event[key]
 			if change:
-				self.logger.info('some change appened on > {0}: {1}'.format(_id, change.keys()) )
 				self.storage.get_backend('events').update({'_id': _id}, {'$set': change})
 
 		mid = None
