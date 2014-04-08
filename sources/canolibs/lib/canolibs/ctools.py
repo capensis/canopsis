@@ -119,7 +119,7 @@ def parse_perfdata(perf_data_raw):
 									else:
 										logger.debug("Invalid value, '%s' = '%s'" % (key, perf_data[key]))
 
-						if 'value' in perf_data_clean and 'metric' in perf_data_clean
+						if 'value' in perf_data_clean and 'metric' in perf_data_clean:
 							perf_data_array.append(perf_data_clean)
 
 						if not perf_data_clean.get('unit', None):
