@@ -119,16 +119,8 @@ def parse_perfdata(perf_data_raw):
 									else:
 										logger.debug("Invalid value, '%s' = '%s'" % (key, perf_data[key]))
 
-								#logger.debug("   + %s: %s" % (key, perf_data_clean[key]))
-
-
-						try:
-							value = perf_data_clean['value']
-							metric = perf_data_clean['metric']
+						if 'value' in perf_data_clean and 'metric' in perf_data_clean
 							perf_data_array.append(perf_data_clean)
-						except Exception, err:
-							logger.warning("perf_data: Missing fields %s (%s)" % (err, perf_data_clean))
-							logger.warning("perf_data: Raw: %s" % perf_data_raw)
 
 						if not perf_data_clean.get('unit', None):
 							# split: g[in_bps]= ...
