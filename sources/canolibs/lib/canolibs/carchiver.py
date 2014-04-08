@@ -71,7 +71,7 @@ class carchiver(object):
 		try:
 			# Get old record
 			#record = self.storage.get(_id, account=self.account)
-			change_fields = {'state': 1, 'state_type': 1, 'last_state_change': 1, 'perf_data_array': 1, 'output': 1}
+			change_fields = {'state': 1, 'state_type': 1, 'last_state_change': 1, 'perf_data_array': 1, 'output': 1, 'timestamp': 1}
 			devent = self.collection.find_one(_id, fields=change_fields)
 			self.logger.debug(" + Check with old record:")
 			old_state = devent['state']
