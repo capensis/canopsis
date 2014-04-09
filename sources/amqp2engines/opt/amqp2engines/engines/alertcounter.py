@@ -91,14 +91,14 @@ class engine(cengine):
 
 	def perfdata_key(self, meta):
 		if 're' in meta and meta['re']:
-			return '{0}{1}{2}'.format(meta['co'], meta['re'], meta['me'])
+			return u'{0}{1}{2}'.format(meta['co'], meta['re'], meta['me'])
 
 		else:
-			return '{0}{1}'.format(meta['co'], meta['me'])
+			return u'{0}{1}'.format(meta['co'], meta['me'])
 
 	def increment_counter(self, meta, value):
 		key = self.perfdata_key(meta)
-		self.logger.debug("Increment {0}: {1}".format(key, value))
+		self.logger.debug(u"Increment {0}: {1}".format(key, value))
 		self.logger.debug(str(meta))
 		self.manager.push(name=key, value=value, meta_data=meta)
 

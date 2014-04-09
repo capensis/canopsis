@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 #--------------------------------
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
@@ -59,7 +60,7 @@ class manager(object):
 		}
 
 	def gen_id(self, name):
-		return hashlib.md5(name).hexdigest()
+		return hashlib.md5(name.encode("utf-8")).hexdigest()
 
 	def get_id(self, _id=None, name=None):
 		if not _id and not name:
