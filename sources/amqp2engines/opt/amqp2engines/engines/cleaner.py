@@ -69,7 +69,7 @@ class engine(cengine):
 		event['rk'] = rk
 
 		event["component"] = event.get("component").encode("utf-8")
-		if event["resource"] is not None:
+		if event.get("resource") is not None:
 			event["resource"] =  event.get("resource", "").encode("utf-8")
 
 		# Clean tags field
