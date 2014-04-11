@@ -49,17 +49,18 @@ Ext.define('canopsis.controller.View', {
 
 		this.store.proxy.on('exception', function(proxy, response) {
 			void(proxy);
+			if (response.status !== 200) {
+				log.error('Error in request', this.logAuthor);
 
-			log.error('Error in request', this.logAuthor);
+				var message = Ext.String.format(
+					'{0}<br>{1}: {2}',
+					 _('Error in request:'),
+					 response.status,
+					 response.statusText
+				);
 
-			var message = Ext.String.format(
-				'{0}<br>{1}: {2}',
-				 _('Error in request:'),
-				 response.status,
-				 response.statusText
-			);
-
-			global.notify.notify(_('View'), message, 'error');
+				global.notify.notify(_('View'), message, 'error');
+			}
 		}, this);
 
 		this.callParent(arguments);

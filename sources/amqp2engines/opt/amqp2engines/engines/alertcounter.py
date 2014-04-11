@@ -59,10 +59,10 @@ class engine(cengine):
 		self.MACRO = MACRO
 
 
-		record = self.storage.find_one({'crecord_type': 'slamacros'})
+		record = self.storage.get_backend('object').find_one({'crecord_type': 'slamacros'})
 
-		if record:
-			self.MACRO = record.data['macro']
+		if record and 'macro' in record:
+			self.MACRO = record['macro']
 
 	def load_crits(self):
 		self.logger.debug('Load records for criticalness')
@@ -91,14 +91,14 @@ class engine(cengine):
 
 	def perfdata_key(self, meta):
 		if 're' in meta and meta['re']:
-			return '{0}{1}{2}'.format(meta['co'], meta['re'], meta['me'])
+			return u'{0}{1}{2}'.format(meta['co'], meta['re'], meta['me'])
 
 		else:
-			return '{0}{1}'.format(meta['co'], meta['me'])
+			return u'{0}{1}'.format(meta['co'], meta['me'])
 
 	def increment_counter(self, meta, value):
 		key = self.perfdata_key(meta)
-		self.logger.debug("Increment {0}: {1}".format(key, value))
+		self.logger.debug(u"Increment {0}: {1}".format(key, value))
 		self.logger.debug(str(meta))
 		self.manager.push(name=key, value=value, meta_data=meta)
 

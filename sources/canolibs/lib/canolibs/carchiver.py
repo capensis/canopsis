@@ -71,9 +71,8 @@ class carchiver(object):
 		try:
 			# Get old record
 			#record = self.storage.get(_id, account=self.account)
-
-			devent = self.collection.find_one(_id, fields={'state': 1, 'state_type': 1, 'last_state_change': 1, 'perf_data_array': 1})
-
+			change_fields = {'state': 1, 'state_type': 1, 'last_state_change': 1, 'perf_data_array': 1, 'output': 1, 'timestamp': 1}
+			devent = self.collection.find_one(_id, fields=change_fields)
 			self.logger.debug(" + Check with old record:")
 			old_state = devent['state']
 			old_state_type = devent['state_type']
@@ -113,7 +112,12 @@ class carchiver(object):
 		if new_event:
 			self.store_new_event(_id, event)
 		else:
-			self.store_update_event(_id, event)
+			change = {}
+			for key in change_fields:
+				if key in event and key in devent and devent[key] != event[key]:
+					change[key] = event[key]
+			if change:
+				self.storage.get_backend('events').update({'_id': _id}, {'$set': change})
 
 		mid = None
 		if changed and self.autolog:
@@ -156,9 +160,6 @@ class carchiver(object):
 		record._id = _id
 
 		self.storage.put(record, namespace=self.namespace, account=self.account)
-
-	def store_update_event(self, _id, event):
-		self.collection.update({'_id': _id}, {"$set": event}, safe=True)
 
 	def log_event(self, _id, event):
 		self.logger.debug("Log event '%s' in %s ..." % (_id, self.namespace_log))

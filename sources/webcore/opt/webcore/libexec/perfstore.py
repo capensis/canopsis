@@ -106,15 +106,15 @@ def perfstore_nodes_get_values( start = None,
 	interval = None
 
 	output = []
-	
+
 	if not metas:
 		logger.warning("Invalid arguments")
 		return HTTPError(404, "Invalid arguments")
 
 	metas = json.loads(metas)
-	
+
 	logger.debug("POST:")
-	logger.debug(" + metas: %s" % metas)	
+	logger.debug(" + metas: %s" % metas)
 	logger.debug(" + aggregate_method: %s" % aggregate_method)
 	logger.debug(" + aggregate_interval: %s" % aggregate_interval)
 	logger.debug(" + aggregate_max_points: %s" % aggregate_max_points)
@@ -184,23 +184,23 @@ def perfstore_nodes_get_values( start = None,
 
 def perfstore_get_all_metrics(limit = 20, start = 0, search = None, filter = None, sort = None, show_internals = False):
 	logger.debug("perfstore_get_all_metrics:")
-	
+
 	if manager == None:
 		load()
-	
+
 	if filter:
 		try:
 			filter = json.loads(filter)
 		except Exception, err:
 			logger.error("Impossible to decode filter: %s: %s" % (filter, err))
 			filter = None
-	
-	
+
+
 	if show_internals == "true":
 		show_internals = True
 	else:
 		show_internals = False
-		
+
 	msort = []
 	if sort:
 		sort = json.loads(sort)
@@ -211,7 +211,7 @@ def perfstore_get_all_metrics(limit = 20, start = 0, search = None, filter = Non
 			msort.append((str(item['property']), direction))
 	else:
 		msort.append(('co', 1))
-	
+
 	logger.debug(" + limit:   %s" % limit)
 	logger.debug(" + start:   %s" % start)
 	logger.debug(" + search:  %s" % search)
@@ -219,18 +219,18 @@ def perfstore_get_all_metrics(limit = 20, start = 0, search = None, filter = Non
 	logger.debug(" + msort: "+str(msort))
 	logger.debug(" + filter:  %s" % filter)
 	logger.debug(" + show_internals:  %s" % show_internals)
-	
+
 	mfilter = None
-	
+
 	if isinstance(filter, list):
 		if len(filter) > 0:
 			mfilter = filter[0]
 		else:
 			logger.error(" + Invalid filter format")
-			
+
 	elif isinstance(filter, dict):
 		mfilter = filter
-	
+
 	if search:
 		# Todo: Tweak this ...
 		fields = ['co', 're', 'me']
@@ -239,30 +239,30 @@ def perfstore_get_all_metrics(limit = 20, start = 0, search = None, filter = Non
 		if len(search) == 1:
 			for field in fields:
 				mor.append({field: {'$regex': '.*%s.*' % search[0], '$options': 'i'}})
-				
+
 			mfilter = {'$or': mor}
 		else:
 			mfilter = {'$and': []}
 			for word in search:
 				mor = []
 				for field in fields:
-					mor.append({field: {'$regex': '.*%s.*' % word, '$options': 'i'}})	
+					mor.append({field: {'$regex': '.*%s.*' % word, '$options': 'i'}})
 				mfilter['$and'].append({'$or': mor})
-	
+
 	if not show_internals:
 		if mfilter:
 			mfilter = {'$and': [mfilter, {'me': {'$nin':internal_metrics  }}]}
 		else:
 			mfilter = {'me': {'$nin': internal_metrics  }}
-		
+
 	logger.debug(" + mfilter:  %s" % mfilter)
-	
+
 	mfilter = clean_mfilter(mfilter)
 
 	data  = manager.find(limit=limit, skip=start, mfilter=mfilter, data=False, sort=msort)
 	total = data.count()
 	data  = list(data)
-	
+
 	return {'success': True, 'data' : data, 'total' : total}
 
 
@@ -274,25 +274,25 @@ def remove_meta(_id=None):
 		_id =  json.loads(request.body.readline())
 	if not _id:
 		return HTTPError(400, "No ids provided, bad request")
-		
+
 	if not isinstance(_id,list):
 		_id = [_id]
-	
+
 	logger.debug('delete %s: ' % str(_id))
-	
+
 	for item in _id:
 		if isinstance(item,dict):
 			manager.remove(_id=item['_id'], purge=False)
 		else:
 			manager.remove(_id=item, purge=False)
-			
+
 @put('/perfstore',checkAuthPlugin={'authorized_grp':group_managing_access})
 def update_meta(_id=None):
 	data = json.loads(request.body.readline())
-	
+
 	if not isinstance(data,list):
 		data = [data]
-	
+
 	for item in data:
 		try:
 			if not _id:
@@ -309,7 +309,7 @@ def update_meta(_id=None):
 @route('/perfstore/perftop/:start/:stop')
 def perfstore_perftop(start=None, stop=None):
 	data = []
-	
+
 	limit					= int(request.params.get('limit', default=10))
 	sort					= int(request.params.get('sort', default=1))
 	mfilter					= request.params.get('mfilter', default={})
@@ -339,7 +339,7 @@ def perfstore_perftop(start=None, stop=None):
 		threshold_on_pct = True
 	elif threshold_on_pct == 'false':
 		threshold_on_pct = False
-	
+
 	sort_on_percent = False
 	if percent == True:
 		sort_on_percent = True
@@ -371,7 +371,7 @@ def perfstore_perftop(start=None, stop=None):
 		stop = int(stop)
 	else:
 		stop = int(time.time())
-		
+
 	if start:
 		start = int(start)
 	else:
@@ -395,9 +395,8 @@ def perfstore_perftop(start=None, stop=None):
 	logger.debug(" + export fields: %s" % str(export_fields))
 
 	mfilter =  clean_mfilter(mfilter)
-	
+
 	mtype = manager.store.find(mfilter=mfilter, limit=1, mfields=['t'])
-	
 	def check_threshold(value):
 		if threshold:
 			if threshold_direction == -1 and value >= threshold:
@@ -413,18 +412,18 @@ def perfstore_perftop(start=None, stop=None):
 		mtype = mtype.get('t', 'GAUGE')
 
 		logger.debug(" + mtype:    %s" % mtype)
-		
+
 		if mtype != 'COUNTER' and not expand and not report:
 			# Quick method, use last value
 			metrics = manager.store.find(mfilter=mfilter, mfields=['_id', 'co', 're', 'me', 'lv', 'u', 'ma', 'lts'], sort=[('lv', sort)], limit=limit)
-			
+
 			if isinstance(metrics, dict):
 				metrics = [metrics]
 
 			for metric in metrics:
 				if (percent or threshold_on_pct) and 'ma' in metric and 'lv' in metric:
 					metric['pct'] = round(((metric['lv'] * 100)/ metric['ma']) * 100) / 100
-				
+
 				if threshold_on_pct:
 					val = metric['pct']
 				else:
@@ -433,17 +432,17 @@ def perfstore_perftop(start=None, stop=None):
 				if check_threshold(val):
 					data.append(metric)
 		else:
-			# Compute values
+
 			metric_limit = 0
-			
+
 			if expand:
 				metric_limit = 1
 
 			#clean mfilter
 			mfilter =  clean_mfilter(mfilter)
 
-			metrics =  manager.store.find(mfilter=mfilter, mfields=['_id', 'co', 're', 'me', 'lv', 'u', 'ma', 'lts', 't'], limit=metric_limit)
-
+			metrics =  manager.store.find(mfilter=mfilter, mfields=['_id', 'co', 're', 'me', 'lv', 'u', 'ma', 'lts', 't'], limit=limit)
+			metrics.sort('lv', sort)
 			if isinstance(metrics, dict):
 				metrics = [metrics]
 
@@ -476,7 +475,7 @@ def perfstore_perftop(start=None, stop=None):
 
 					if len(points):
 						if expand:
-							del metric['_id']	
+							del metric['_id']
 							for point in points:
 								if check_threshold(point[1]):
 									nmetric = metric.copy()
@@ -485,7 +484,7 @@ def perfstore_perftop(start=None, stop=None):
 									if (percent or threshold_on_pct) and 'ma' in nmetric and 'lv' in nmetric:
 										nmetric['pct'] = round(((nmetric['lv'] * 100)/ nmetric['ma']) * 100) / 100
 									data.append(nmetric)
-						else:		
+						else:
 							# keep last point
 							metric['lts'] = points[len(points)-1][0]
 							metric['lv'] = points[len(points)-1][1]
@@ -540,7 +539,7 @@ def perfstore_perftop(start=None, stop=None):
 
 		reverse = True
 		if sort == 1:
-			reverse = False	
+			reverse = False
 
 		if sort_on_percent:
 			for item in data:
@@ -551,7 +550,7 @@ def perfstore_perftop(start=None, stop=None):
 			data = sorted(data, key=lambda k: k['lv'], reverse=reverse)[:limit]
 	else:
 		logger.debug("No records found")
-	
+
 	if not export_csv:
 		return {'success': True, 'data' : data, 'total' : len(data)}
 
@@ -593,15 +592,15 @@ def perfstore_perftop(start=None, stop=None):
 ########################################################################
 
 def perfstore_get_values(_id, start=None, stop=None, aggregate_method=None, aggregate_interval=None, aggregate_max_points=None, aggregate_round_time=True, timezone=0, subset_selection={}):
-	
+
 	if start and not stop:
 		stop = start
-	
+
 	if stop:
 		stop = int(stop)
 	else:
 		stop = int(time.time())
-		
+
 	if start:
 		start = int(start)
 	else:
@@ -609,7 +608,7 @@ def perfstore_get_values(_id, start=None, stop=None, aggregate_method=None, aggr
 
 	if aggregate_interval:
 		aggregate_interval = int(aggregate_interval)
-	
+
 	logger.debug("Perfstore get points:")
 	logger.debug(" + meta _id:    %s" % _id)
 	logger.debug(" + start:       %s (%s)" % (start, datetime.utcfromtimestamp(start)))
@@ -619,14 +618,14 @@ def perfstore_get_values(_id, start=None, stop=None, aggregate_method=None, aggr
 	logger.debug(' + interval :   %s' % aggregate_interval)
 	logger.debug(' + round time : %s' % aggregate_round_time)
 	logger.debug(' + max_points : %s' % aggregate_max_points)
-	
+
 	output=[]
 	meta = None
-	
+
 	if not _id:
 		logger.error("Invalid _id '%s'" % _id)
 		return output
-	
+
 	fill = False
 
 	if aggregate_interval:

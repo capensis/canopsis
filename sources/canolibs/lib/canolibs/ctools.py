@@ -118,16 +118,9 @@ def parse_perfdata(perf_data_raw):
 										perf_data_clean[key] = perf_data[key]
 									else:
 										logger.debug("Invalid value, '%s' = '%s'" % (key, perf_data[key]))
-								
-								#logger.debug("   + %s: %s" % (key, perf_data_clean[key]))	
-					
-						try:
-							value = perf_data_clean['value']
-							metric = perf_data_clean['metric']
+
+						if 'value' in perf_data_clean and 'metric' in perf_data_clean:
 							perf_data_array.append(perf_data_clean)
-						except Exception, err:
-							logger.warning("perf_data: Missing fields %s (%s)" % (err, perf_data_clean))
-							logger.warning("perf_data: Raw: %s" % perf_data_raw)
 
 						if not perf_data_clean.get('unit', None):
 							# split: g[in_bps]= ...
@@ -140,12 +133,12 @@ def parse_perfdata(perf_data_raw):
 									 perf_data_clean['unit'] = metric[1]
 
 						logger.debug(" + %s" % perf_data_clean)
-						
+
 					except Exception, err:
-						
+
 						logger.error("perf_data: Raw: %s" % perf_data_raw)
 						logger.error("perf_data: Impossible to clean '%s': %s" % (perf_data, err))
-	
+
 					perf_data = {}
 					i=0
 
@@ -176,7 +169,7 @@ def dynmodloads(path=".", subdef=False, pattern=".*"):
 
 						module = __import__(name)
 						loaded[name] = module
-	
+
 						if subdef:
 							alldefs = dir(module)
 							for mydef in alldefs:
@@ -185,8 +178,8 @@ def dynmodloads(path=".", subdef=False, pattern=".*"):
 										logger.debug(" + From %s import %s ..." % (name, mydef))
 										#exec "from %s import %s" % (name, mydef)
 										exec "loaded[mydef] = module.%s" % mydef
-						
-						 
+
+
 						logger.debug(" + Success")
 					except Exception, err:
 						logger.error("\t%s" % err)
@@ -201,18 +194,18 @@ def dynmodloads(path=".", subdef=False, pattern=".*"):
 
 def Str2Number(string):
 	value = float(string)
-	
+
 	if int(value) == value:
 		value = int(value)
-		
+
 	return value
 
 ##	Remove duplicate entry
 def uniq(alist):
 	set = {}
 	return [set.setdefault(e,e) for e in alist if e not in set]
-	
-## - Convert { '$not': {'$regex': "..." }} to {'$not': re.compile("...")} 
+
+## - Convert { '$not': {'$regex': "..." }} to {'$not': re.compile("...")}
 def clean_mfilter(mfilter, isnot=False):
 	if not mfilter or isinstance(mfilter,int):
 		return mfilter
@@ -220,7 +213,7 @@ def clean_mfilter(mfilter, isnot=False):
 	for key in mfilter:
 		if key == '$not':
 				isnot = True
-		
+
 		#logger.error("filter is : %s" % mfilter)
 		#logger.error("key is : %s" % key)
 

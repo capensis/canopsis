@@ -279,7 +279,6 @@ Ext.define('widgets.perftop.perftop' , {
 			this.wcontainer.add(this.grid);
 		}
 
-		this.ready();
 	},
 
 	doRefresh: function(from, to) {
