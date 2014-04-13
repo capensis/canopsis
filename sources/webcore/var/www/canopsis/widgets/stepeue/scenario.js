@@ -59,11 +59,11 @@ Ext.define('widgets.stepeue.scenario', {
 		};
 
 		var duration = 0;
-		for(var i = 0; i < node.raw.perf_data_array.length; i++) {
+		/*for(var i = 0; i < node.raw.perf_data_array.length; i++) {
 			if(node.raw.perf_data_array[i].metric == 'duration') {
 				duration = Math.round(node.raw.perf_data_array[i].value * 100) / 100;
 			}
-		}
+		}*/
 
 		object.dur = duration;
 		this.scenarios.push(object);
@@ -133,33 +133,36 @@ Ext.define('widgets.stepeue.scenario', {
 
 	buildMainView: function() {
 		var arrayName = this.mainScenario.raw.resource.split('.');
-		var scenarioName = arrayName[1];
+		/*var scenarioName = arrayName[1];
 		var loc = rdr_country(this.mainScenario.raw.cntxt_localization);
 		var OSname = rdr_os(this.mainScenario.raw.cntxt_os);
 		var browserName = rdr_browser(this.mainScenario.raw.cntxt_browser);
 		var dte = rdr_tstodate(this.mainScenario.raw.timestamp);
-		var duration;
+
 		var state = rdr_status(this.mainScenario.raw.state);
+		var uniqueKey = rdr_status(this.mainScenario.raw.uniqueKey);*/
+		/*var duration;
 
 		for (var i = 0; i < this.mainScenario.raw.perf_data_array.length; i++) {
 			if (this.mainScenario.raw.perf_data_array[i].metric == 'duration') {
 				duration = Math.round(this.mainScenario.raw.perf_data_array[i].value * 100) / 100;
 			}
 
-		}
+		}*/
 
 		return {
-			cps_state: state,
-			date: dte,
-			scenario: scenarioName,
-			localization: loc,
-			os: OSname,
-			browser: browserName,
-			dur: duration
+			cps_state: rdr_status(this.mainScenario.raw.state),
+			date: rdr_tstodate(this.mainScenario.raw.timestamp),
+			scenario: arrayName[1],
+			localization: rdr_country(this.mainScenario.raw.cntxt_localization),
+			os: rdr_os(this.mainScenario.raw.cntxt_os),
+			browser: rdr_browser(this.mainScenario.raw.cntxt_browser),
+			dur: this.mainScenario.raw.duration,
+			uniqueKey: rdr_status(this.mainScenario.raw.uniqueKey)
 		};
 	},
 
-	getScreenShotLogo: function() {
+	/*getScreenShotLogo: function() {
 		var imgObject = {
 			src: '/rest/media/events/' + this.mainScenario.raw._id,
 			width: '64px',
@@ -172,15 +175,16 @@ Ext.define('widgets.stepeue.scenario', {
 			'</a>');
 
 		return imageTpl.applyTemplate(imgObject);
-	},
+	},*/
 
-	displayLastExecutionsErrors : function( node ) {
+	displayLastExecutionsErrors : function( node, uniqueKey ) {
 		var model = Ext.define('Scenarios', {
 			extend : "Ext.data.Model",
 			fields : [
 				{ 'name': 'state', 'type': 'string'},
 				{ 'name': 'timestamp', 'type': 'float'},
-				{ 'name': 'rk', "type":"string"}/*,
+				{ 'name': 'rk', "type":"string"},
+				{ 'name': 'duration', "type":"int"}/*,
 				{ 'name': 'cntxt_os', "type": "string"},
 				{ 'name': 'cntxt_browser', "type": "string" }, 
 				{ 'name': 'perf_data_array', "type": "object"} */
@@ -206,8 +210,10 @@ Ext.define('widgets.stepeue.scenario', {
 		var filter = {
 			'$and': [{
 				'child': {
-					'$regex': '^' + node
+					'$regex': node,
 				}
+			},{
+				'uniqueKey': uniqueKey,
 			},{
 				'type_message': 'step'
 			},/*{
@@ -222,6 +228,10 @@ Ext.define('widgets.stepeue.scenario', {
 		};
 
 		scenario_errors.setFilter(filter);
+		scenario_errors.sort({
+			property: 'rk',
+			direction: 'DESC'
+		});
 
 		var grid = Ext.create('Ext.grid.Panel', {
 			layout: 'fit',
@@ -230,6 +240,7 @@ Ext.define('widgets.stepeue.scenario', {
 				header: 'Status',
 				dataIndex: 'state',
 				flex: 1,
+				sortable: false,
 				renderer: function(value) {
 					return rdr_status(parseInt(value));
 				}
@@ -238,6 +249,7 @@ Ext.define('widgets.stepeue.scenario', {
 				dataIndex: 'timestamp',
 				align: 'center',
 				flex: 1,
+				sortable: false,
 				renderer: function(value) {
 					return rdr_tstodate(value);
 				}
@@ -245,6 +257,7 @@ Ext.define('widgets.stepeue.scenario', {
 				header: 'Name',
 				dataIndex: 'rk',
 				flex: 7,
+				sortable: false,
 				renderer: function(value) {
 					rkTab = value.split('.');
 					return rkTab[7]; 
@@ -261,20 +274,20 @@ Ext.define('widgets.stepeue.scenario', {
 				renderer: function(value) {
 					return rdr_browser(value);
 				}
-			},{
+			}*/,{
 				header: 'Duration',
-				dataIndex: 'perf_data_array',
-				renderer: function (value) {
+				dataIndex: 'duration',
+				/*renderer: function (value) {
 					//return Math.round( value[0].value*100 ) / 100 + " " + value[0].unit;
-				}
-			}*/],
+				}*/
+			}],
 			store: scenario_errors
 		});
 
 		return grid; 
 	},
 
-	buildDetailsView: function () {
+	/*buildDetailsView: function () {
 		log.debug('Build details view', this.logAuthor);
 
 		var scenarData = this.scenarios;
@@ -311,5 +324,5 @@ Ext.define('widgets.stepeue.scenario', {
 		});
 
 		return [grid];
-	}
+	}*/
 });

@@ -8,6 +8,7 @@ fi
 
 LINK=1
 if [ "x$1" == "x-u" ]; then
+	echo "Uninstall"
 	LINK=0
 fi
 

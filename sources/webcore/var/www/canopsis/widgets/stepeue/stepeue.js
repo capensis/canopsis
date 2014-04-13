@@ -97,6 +97,7 @@ Ext.define('widgets.stepeue.stepeue', {
 	},
 
 	buildHtml: function() {
+		//console.log( 'Zut' )
 		if (this.nodes.length != 0) {
 			//If there are nodes it means that there are features to print, otherwise we print "no features selected"
 			log.debug('Build the view of the widget', this.logAuthor);
@@ -118,7 +119,6 @@ Ext.define('widgets.stepeue.stepeue', {
 
 							var idString = tab.id.split(':');
 							var id = idString[2]; //id of the features
-
 							me.features[id].init(me.nodes[id], me, tab); //we build the feature view after initialization
 
 						}

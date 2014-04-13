@@ -350,6 +350,9 @@ Ext.define('canopsis.lib.form.field.cinventory' , {
 
 		this.search_store.load();
 
+		console.log( this.columns )
+		console.log( this.search_store )
+
 		this.search_grid = Ext.create('canopsis.lib.view.cgrid', {
 			multiSelect: this.multiSelect,
 			opt_bar: true,
