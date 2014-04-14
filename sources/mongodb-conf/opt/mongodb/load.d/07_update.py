@@ -121,8 +121,8 @@ def update_schedule():
 				exporting['unit'] = 'hours'
 				exporting['length'] = math.floor(nbDays)
 
-        if 'interval' in kwargs :
-            del kwargs['interval']
+		if 'interval' in kwargs :
+			del kwargs['interval']
 
 		if "exporting_intervalUnit" in kwargs and "exporting_intervalLength" in kwargs:
 			exporting.update({
