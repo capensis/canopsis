@@ -9,7 +9,7 @@ from account import create_account
 storage = get_storage(namespace='object')
 
 logger = logging.getLogger("auth-ldap")
-logger.setLevel(logging.DEBUG)
+logger.setLevel(logging.INFO)
 
 OPT_NETWORK_TIMEOUT = 1
 CONFIG=None

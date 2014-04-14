@@ -31,7 +31,7 @@ from cstorage import get_storage
 from crecord import crecord
 
 logger = logging.getLogger("auth")
-logger.setLevel(logging.DEBUG)
+logger.setLevel(logging.INFO)
 
 #session variable
 session_accounts = {
