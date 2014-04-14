@@ -16,15 +16,18 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 */
-function rdr_tstodate(val) {
+function rdr_tstodate(val, format) {
+	if (!format) {
+		format = is12Clock() ? 'Y-m-d h:i:s a' : 'Y-m-d H:i:s';
+	}
 	if(val) {
 		var dval = new Date(parseInt(val) * 1000);
 
 		if(is12Clock()) {
-			return Ext.Date.format(dval, 'Y-m-d h:i:s a');
+			return Ext.Date.format(dval, format);
 		}
 		else {
-			return Ext.Date.format(dval, 'Y-m-d H:i:s');
+			return Ext.Date.format(dval, format);
 		}
 	}
 	else {
