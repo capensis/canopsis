@@ -54,6 +54,7 @@ Ext.define('canopsis.model.Schedule', {
 
 		{name: 'frequency',defaultValue:'day'},
 
+		{name: 'exporting_enable'},
 		{name: 'exporting_interval'},
 		{name: 'exporting_account'},
 		{name: 'exporting_task'},

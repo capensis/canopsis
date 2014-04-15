@@ -47,7 +47,7 @@ logger.setLevel('DEBUG')
 
 @task
 @decorators.log_task
-def render_pdf(fileName=None, viewName=None, exporting={"type": "duration", "length": 1, "unit": "days"}, account=None, mail=None, owner=None, orientation='Portrait', pagesize='A4'):
+def render_pdf(fileName=None, viewName=None, exporting=None, account=None, mail=None, owner=None, orientation='Portrait', pagesize='A4'):
 
 	logger.info('start render')
 
@@ -57,7 +57,13 @@ def render_pdf(fileName=None, viewName=None, exporting={"type": "duration", "len
 	logger.debug("account: %s " % account)
 	logger.debug("mail: %s " % mail)
 
+	if exporting is None:
+		exporting = {"enable": False}
+
 	now = time.time()
+
+	startTime = None
+	stopTime = None
 
 	logger.debug("now: %s " % now)
 
@@ -72,7 +78,10 @@ def render_pdf(fileName=None, viewName=None, exporting={"type": "duration", "len
 		timezone['value'] = 0
 		logger.error('timezone value does not exist')
 
-	if exporting.get('type', 'duration') == 'duration':
+	if not exporting.get('enable', False):
+		stopTime = now
+
+	elif exporting.get('type', 'duration') == 'duration':
 
 		_datetime = datetime.fromtimestamp(now)
 

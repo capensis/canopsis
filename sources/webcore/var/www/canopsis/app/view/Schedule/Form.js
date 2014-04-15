@@ -189,8 +189,15 @@ Ext.define('canopsis.view.Schedule.Form', {
 					title: _('Exporting interval'),
 					items: [
 						{
+							xtype: 'checkbox',
+							name: 'exporting_enable',
+							checked: false,
+							fieldLabel: _('Enable')
+						},
+						{
 							xtype: 'cfieldset',
 							title: _('Time zone'),
+							itemId: 'exporting_timezone',
 							layout: "hbox",
 							items: [
 								{
@@ -515,6 +522,15 @@ Ext.define('canopsis.view.Schedule.Form', {
 
 		var timezone_type = this.down('*[name=timezone_type]');
 		var timezone_value = this.down('*[name=timezone_value]');
+
+		var exporting_enable = this.down('*[exporting_enable]');
+
+		/*exporting_enable.on('change', function(component, value) {
+			switch(value) {
+				case true:
+				case false:
+			}
+		});*/
 
 		timezone_type.on('change', function(component, value) {
 			switch(value) {
