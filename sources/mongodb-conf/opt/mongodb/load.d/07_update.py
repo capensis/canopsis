@@ -103,6 +103,8 @@ def update_schedule():
 		if 'interval' in kwargs and kwargs['interval'] is not None:
 			nbDays = timedelta(seconds=int(kwargs['interval'])).days
 
+			exporting['enable'] = True
+
 			del kwargs['interval']
 
 			if nbDays >= 365:

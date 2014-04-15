@@ -147,6 +147,7 @@ Ext.define('canopsis.controller.Schedule', {
 		}
 
 		var exporting = {
+			enable: data.exporting_enable,
 			length: data.exporting_intervalLength,
 			unit: data.exporting_intervalUnit,
 			type: data.exporting_advanced === 'on' ? "fixed" : "duration",
@@ -215,6 +216,12 @@ Ext.define('canopsis.controller.Schedule', {
 		var exporting_intervalUnit = exporting.unit;
 		var exporting_advanced = exporting.type === 'fixed';
 
+		var exporting_enable = exporting.enable;
+
+		if (exporting_enable) {
+			form.down('*[name=exporting_enable]').setValue(exporting_enable);
+		}
+
 		if (exporting_intervalLength !== undefined && exporting_intervalLength !== null) {
 			form.down('*[name=exporting_intervalLength]').setValue(exporting_intervalLength);
 		}
@@ -275,107 +282,110 @@ Ext.define('canopsis.controller.Schedule', {
 
 		var exporting_type = exporting.type;
 
-		switch(exporting_type) {
-			case 'fixed':
-				function update_date_with_before(date, before) {
-					if (before !== undefined) {
-						for (unit in before) {
-							switch(unit) {
-								case 'days':
-									date.setDate(date.getUTCDate() - before[unit]);
-									break;
-								case 'weeks':
-									date.setDate(date.getUTCDate() - before[unit] * 7);
-									break;
-								case 'months':
-									date.setMonth(date.getUTCMonth() - before[unit]);
-									break;
-								case 'years':
-									date.setYear(date.getYear() - before[unit]);
-									break;
-								default:
-									console.log('Wrong before unit : ' + unit);
-									break;
+		if (exporting.enable) {
+
+			switch(exporting_type) {
+				case 'fixed':
+					function update_date_with_before(date, before) {
+						if (before !== undefined) {
+							for (unit in before) {
+								switch(unit) {
+									case 'days':
+										date.setDate(date.getUTCDate() - before[unit]);
+										break;
+									case 'weeks':
+										date.setDate(date.getUTCDate() - before[unit] * 7);
+										break;
+									case 'months':
+										date.setMonth(date.getUTCMonth() - before[unit]);
+										break;
+									case 'years':
+										date.setYear(date.getYear() - before[unit]);
+										break;
+									default:
+										console.log('Wrong before unit : ' + unit);
+										break;
+								}
 							}
 						}
 					}
-				}
 
-				function convert_struct_to_timestamp(struct) {
-					var result = undefined;
-					var date = new Date(now.getTime());
+					function convert_struct_to_timestamp(struct) {
+						var result = undefined;
+						var date = new Date(now.getTime());
 
-					update_date_with_before(date, struct.before);
+						update_date_with_before(date, struct.before);
 
-					var frequency = item.get('frequency');
+						var frequency = item.get('frequency');
 
-					switch(frequency) {
-						case "year":
-							if (struct.month !== undefined && struct.month !== null) {
-								date.setUTCMonth(struct.month);
-							}
-						case "month":
-							if (struct.day !== undefined && struct.day !== null) {
-								date.setUTCDate(struct.day);
-							}
-						case "week":
-							if (item.data.frequency === "week" && struct.day_of_week !== undefined && struct.day_of_week !== null) {
-								date.setUTCDate(date.getUTCDate() + date.getUTCDay() - struct.day_of_week);
-							}
-						case "day":
-							if (struct.hour !== undefined && struct.hour !== null) {
-								date.setUTCHours(struct.hour);
-							}
-							if (struct.minute !== undefined && struct.minute !== null) {
-								date.setUTCMinutes(struct.minute);
-							}
-							break;
-						default:
-							console.logger("Wrong frequency: " + frequency);
+						switch(frequency) {
+							case "year":
+								if (struct.month !== undefined && struct.month !== null) {
+									date.setUTCMonth(struct.month);
+								}
+							case "month":
+								if (struct.day !== undefined && struct.day !== null) {
+									date.setUTCDate(struct.day);
+								}
+							case "week":
+								if (item.data.frequency === "week" && struct.day_of_week !== undefined && struct.day_of_week !== null) {
+									date.setUTCDate(date.getUTCDate() + date.getUTCDay() - struct.day_of_week);
+								}
+							case "day":
+								if (struct.hour !== undefined && struct.hour !== null) {
+									date.setUTCHours(struct.hour);
+								}
+								if (struct.minute !== undefined && struct.minute !== null) {
+									date.setUTCMinutes(struct.minute);
+								}
+								break;
+							default:
+								console.logger("Wrong frequency: " + frequency);
+						}
+
+						result = date.getTime();
+						return result;
 					}
 
-					result = date.getTime();
-					return result;
-				}
+					var from = exporting.from;
 
-				var from = exporting.from;
+					if (from !== undefined && from !== null) {
+						start_time = convert_struct_to_timestamp(from);
+						var to = exporting.to;
+						stop_time = (to === undefined || to === null || ! to.enable) ?
+							(now.getTime())
+							:
+							convert_struct_to_timestamp(to);
+					}
+					break;
 
-				if (from !== undefined && from !== null) {
-					start_time = convert_struct_to_timestamp(from);
-					var to = exporting.to;
-					stop_time = (to === undefined || to === null || ! to.enable) ?
-						(now.getTime())
-						:
-						convert_struct_to_timestamp(to);
-				}
-				break;
-
-			case 'duration':
-				var exporting_intervalUnit = exporting.unit;
-				var exporting_intervalLength = parseInt(exporting.length, 10);
-				var date = new Date(now.getTime());
-				switch(exporting_intervalUnit) {
-					case "hours":
-						date.setHours(date.getUTCHours() - exporting_intervalLength);
-						break;
-					case "days":
-						date.setDate(date.getUTCDate() - exporting_intervalLength);
-						break;
-					case "weeks":
-						date.setDate(date.getUTCDate() - 7 * exporting_intervalLength);
-						break;
-					case "months":
-						date.setMonth(date.getUTCMonth() - exporting_intervalLength);
-						break;
-					case "years":
-						date.setYear(date.getYear() - exporting_intervalLength);
-						break;
-					default:
-						console.error('Wrong exporting unit : ' + exporting_intervalUnit);
-				}
-				start_time = date.getTime();
-				stop_time = now.getTime();
-				break;
+				case 'duration':
+					var exporting_intervalUnit = exporting.unit;
+					var exporting_intervalLength = parseInt(exporting.length, 10);
+					var date = new Date(now.getTime());
+					switch(exporting_intervalUnit) {
+						case "hours":
+							date.setHours(date.getUTCHours() - exporting_intervalLength);
+							break;
+						case "days":
+							date.setDate(date.getUTCDate() - exporting_intervalLength);
+							break;
+						case "weeks":
+							date.setDate(date.getUTCDate() - 7 * exporting_intervalLength);
+							break;
+						case "months":
+							date.setMonth(date.getUTCMonth() - exporting_intervalLength);
+							break;
+						case "years":
+							date.setYear(date.getYear() - exporting_intervalLength);
+							break;
+						default:
+							console.error('Wrong exporting unit : ' + exporting_intervalUnit);
+					}
+					start_time = date.getTime();
+					stop_time = now.getTime();
+					break;
+			}
 		}
 
 		var mail = options.mail;
