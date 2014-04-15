@@ -105,6 +105,7 @@ def init():
         ('timestamp', 1)
     ])
 
+    logger.info(" + Create index of 'entities'")
     #Entities indexes
     storage.get_backend('entities').ensure_index([
         ('type', 1),
