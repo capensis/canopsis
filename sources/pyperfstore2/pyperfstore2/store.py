@@ -51,14 +51,27 @@ class store(object):
 		import ConfigParser
 		config = ConfigParser.RawConfigParser()
 		config.read(os.path.expanduser('~/etc/cstorage.conf'))
-
+		
 		try:
-			mongo_host = config.get('master', 'host')		if config.get('master', 'host') != "" and not mongo_host else mongo_host
-			mongo_port = config.getint('master', 'port')	if config.get('master', 'port') != "" and not mongo_port else mongo_port
-			mongo_user = config.get('master', 'userid')		if config.get('master', 'userid') != "" and not mongo_user else mongo_user
-			mongo_pass = config.get('master', 'password')	if config.get('master', 'password') != "" and not mongo_pass else mongo_pass
-		except:
-			pass
+			host = config.get('master', 'host')
+			port = config.getint('master', 'port')
+			user = config.get('master', 'userid')
+			passwd = config.get('master', 'password')
+
+			if host:
+				mongo_host = host
+
+			if port:
+				mongo_port = port
+
+			if user:
+				mongo_user = user
+
+			if passwd:
+				mongo_pass = passwd
+
+		except (ConfigParser.NoOptionError, ConfigParser.NoSectionError), err:
+			self.logger.error('Impossible to parse cstorage.conf: {0}'.format(str(err)))
 
 		self.mongo_host = mongo_host
 		self.mongo_port = mongo_port
