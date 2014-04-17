@@ -113,21 +113,21 @@ var build_rk = function(event, time_in_rk){
 //#  Extend object (http://onemoredigit.com/post/1527191998/extending-objects-in-node-js)
 //####################################################
 Object.defineProperty(Object.prototype, "extend", {
-    enumerable: false,
-    value: function(from) {
-        var props = Object.getOwnPropertyNames(from);
-        var dest = this;
-        props.forEach(function(name) {
-            if (name in dest) {
-                var destination = Object.getOwnPropertyDescriptor(from, name);
-                Object.defineProperty(dest, name, destination);
-            }else{
+	enumerable: false,
+	value: function(from) {
+		var props = Object.getOwnPropertyNames(from);
+		var dest = this;
+		props.forEach(function(name) {
+			if (name in dest) {
+				var destination = Object.getOwnPropertyDescriptor(from, name);
+				Object.defineProperty(dest, name, destination);
+			}else{
 				// Hack
 				dest[name] = Object.getOwnPropertyDescriptor(from, name).value;
 			}
-        });
-        return this;
-    }
+		});
+		return this;
+	}
 });
 
 //####################################################
@@ -206,18 +206,37 @@ var mongodb_client = undefined
 var mongodb_collections = {}
 
 var init_mongo = function(callback){
-	log.info("Connect to MongoDB ...", "mongodb")
-	mongodb_server = new mongodb.Server(config.mongodb.host, parseInt(config.mongodb.port), {})
-	mongodb_client = new mongodb.Db(config.mongodb.db, mongodb_server, {safe:false});
+		log.info("Connect to MongoDB ...", "mongodb")
 
-	mongodb_client.open(function(err, p_client) {
-		if (err) {
-			log.error(err, "mongodb");
-		} else {
-			log.info(" + Ok", "mongodb")
-			callback()
+		var hosts = config.mongodb.host.split(',');
+
+		if(hosts.length > 1) {
+				hosts[hosts.length - 1] = hosts[hosts.length - 1] + ':' + config.mongodb.port;
+
+				var servers = [];
+
+				for(var i = 0; i < hosts.length; i++) {
+						host = hosts[i].split(':');
+
+						servers.push(new mongodb.Server(host[0], parseInt(host[1])));
+				}
+
+				mongodb_server = new mongodb.ReplSetServers(servers);
 		}
-	});
+		else {
+				mongodb_server = new mongodb.Server(config.mongodb.host, parseInt(config.mongodb.port), {});
+		}
+
+		mongodb_client = new mongodb.Db(config.mongodb.db, mongodb_server, {safe:false});
+
+		mongodb_client.open(function(err, p_client) {
+				if (err) {
+						log.error(err, "mongodb");
+				} else {
+						log.info(" + Ok", "mongodb")
+						callback()
+				}
+		});
 }
 
 var mongodb_getCollection = function(name){
