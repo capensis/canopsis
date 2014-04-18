@@ -87,7 +87,7 @@ def rest_trees_get(rk=None):
 	"""
 
 	account = get_account()
-	storage = get_storage(logging_level=logging.DEBUG, namespace='events_trees', account=account)
+	storage = get_storage(logging_level=logging.INFO, namespace='events_trees', account=account)
 
 
 	if not rk:

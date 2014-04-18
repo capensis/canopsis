@@ -27,6 +27,8 @@ Ext.define('widgets.text.text', {
 	aggregate_method: 'LAST',
 	undefined_value_replacement: "undefined",
 
+	date_format: '',
+
 	initComponent: function() {
 		this.callParent(arguments);
 
@@ -284,11 +286,11 @@ Ext.define('widgets.text.text', {
 
 		try {
 			if(from) {
-				data.from = rdr_tstodate(parseInt(from / 1000));
+				data.from = rdr_tstodate(parseInt(from / 1000), this.date_format);
 			}
 
 			if(to) {
-				data.to = rdr_tstodate(parseInt(to / 1000));
+				data.to = rdr_tstodate(parseInt(to / 1000), this.date_format);
 			}
 
 			var template = new Ext.XTemplate('<div>' + text + '</div>');

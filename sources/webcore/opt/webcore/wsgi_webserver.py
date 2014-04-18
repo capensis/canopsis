@@ -60,7 +60,7 @@ mongo_config = ConfigParser.RawConfigParser()
 mongo_config.read(mongo_config_file)
 
 ## default config
-debug		= True
+debug		= False
 
 #mongo config
 mongo_host = mongo_config.get("master", "host")

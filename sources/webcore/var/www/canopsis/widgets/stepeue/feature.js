@@ -44,6 +44,8 @@ Ext.define('widgets.stepeue.feature', {
 			}]
 		};
 
+		console.log( filter );
+
 		this.model = Ext.ModelManager.getModel('canopsis.model.Event');
 		this.featureEvent = Ext.create('canopsis.lib.store.cstore', {
 			model: this.model,
@@ -84,7 +86,9 @@ Ext.define('widgets.stepeue.feature', {
 	findScenario: function() {
 		var filter = {
 			'$and': [{
-				'child': this.node
+				'child': { 
+					'$regex' : '^'  + this.node
+				}
 			}, {
 				'type_message': 'scenario'
 			}]
@@ -162,7 +166,7 @@ Ext.define('widgets.stepeue.feature', {
 		});
 	},
 
-	displayLastErrorsVideos: function() {
+	/*displayLastErrorsVideos: function() {
 		var filter = {
 			'$and': [{
 				'event_id': this.record.internalId
@@ -272,7 +276,7 @@ Ext.define('widgets.stepeue.feature', {
 				}
 			}
 		});
-	},
+	},*/
 
 	getFeatureViewObject: function() {
 		log.debug('Listing the scenario of the feature', this.logAuthor);
@@ -287,7 +291,7 @@ Ext.define('widgets.stepeue.feature', {
 		listScenarios.reverse();
 
 		var storeScenar = Ext.create('Ext.data.Store', {
-			fields: ['cps_state', 'date', 'scenario', 'localization', 'os', 'browser', 'dur'],
+			fields: ['cps_state', 'date', 'scenario', 'localization', 'os', 'browser', 'dur', 'uniqueKey'],
 			data: listScenarios
 		});
 
@@ -295,106 +299,89 @@ Ext.define('widgets.stepeue.feature', {
 
 		var grid = Ext.create('Ext.grid.Panel', {
 			height: '100%',
-			columns: [{
-				header: 'Status',
-				dataIndex: 'cps_state',
-				flex: 1,
-				sortable: false
-			},{
-				header: 'Date',
-				dataIndex: 'date',
-				flex: 2,
-				sortable: false,
-				align: 'center'
-			},{
-				header: 'Duration',
-				dataIndex: 'dur',
-				flex: 1,
-				sortable: false,
-				align: 'center'
-			},/*{
-				header: 'Graph',
-				dataIndex: 'scenario',
+			columns: [
+				{
+					header: 'Status',
+					dataIndex: 'cps_state',
+					flex: 1,
+					sortable: false
+				},{
+					header: 'Date',
+					dataIndex: 'date',
+					flex: 2,
+					sortable: false,
+					align: 'center'
+				},{
+					header: 'Duration',
+					dataIndex: 'dur',
+					flex: 1,
+					sortable: false,
+					align: 'center'
+				},/*{
+					header: 'Graph',
+					dataIndex: 'scenario',
 
-				renderer: function(value) {
-					console.log( me )
-					var component = me.scenarios[value].mainScenario.raw.component;
-					var resource = me.scenarios[value].mainScenario.raw.resource;
-					var metric = 'duration';
-
-					return '<span class=\"line-graph\" id=\"' + me.widget.wcontainer.id + 'eue-' + getMetaId(component, resource, metric) + '\"></span>';
-				},
-				flex: 3,
-				sortable: false
-			},{
-				header: 'Screenshot',
-				dataIndex: 'scenario',
-				flex: 2,
-				sortable: false,
-				align: 'center',
-
-				renderer: function(value) {
-					return me.scenarios[value].getScreenShotLogo();
-				}
-			},*/{
-				header: 'Scenario Name',
-				dataIndex: 'scenario',
-				flex: 2,
-				sortable: false,
-				align: 'left'
-			},{
-				header: 'Localization',
-				dataIndex: 'localization',
-				flex: 1,
-				sortable: false
-			},{
-				header: 'OS',
-				dataIndex: 'os',
-				flex: 1,
-				sortable: false
-			},{
-				header: 'Browser',
-				dataIndex: 'browser',
-				flex: 1,
-				sortable: false
-			},{
-				xtype: 'actioncolumn',
-				items: [{
-					icon: '/static/canopsis/themes/canopsis/resources/images/icons/date_error.png',
-					tooltip: 'Step Summary', /*Last Errors Execution',*/
-
-					handler: function(grid, rowIndex, colIndex) {
-						var rec = grid.getStore().getAt(rowIndex);
-
-						grid = me.scenarios[rec.get('scenario')].displayLastExecutionsErrors(me.node+'.'+me.scenarios[rec.get('scenario')].name);
+					renderer: function(value) {
 						console.log( me )
+						var component = me.scenarios[value].mainScenario.raw.component;
+						var resource = me.scenarios[value].mainScenario.raw.resource;
+						var metric = 'duration';
 
-						var gwidth = Ext.getBody().getWidth() * 0.6;
-						var gheight = Ext.getBody().getHeight() * 0.8;
+						return '<span class=\"line-graph\" id=\"' + me.widget.wcontainer.id + 'eue-' + getMetaId(component, resource, metric) + '\"></span>';
+					},
+					flex: 3,
+					sortable: false
+				},{
+					header: 'Screenshot',
+					dataIndex: 'scenario',
+					flex: 2,
+					sortable: false,
+					align: 'center',
 
-						Ext.create('Ext.window.Window', {
-							xtype: 'panel',
-							layout: 'fit',
-							id: 'window-screenshot',
-							autoScroll: true,
-							width: gwidth,
-							height: gheight,
-							items: [grid],
-							renderTo: Ext.getBody(),
-							modal: true
-						}).show().center();
+					renderer: function(value) {
+						return me.scenarios[value].getScreenShotLogo();
 					}
-				}/*,{
-					icon: '/static/canopsis/themes/canopsis/resources/images/icons/table.png',
-					tooltip: 'Tests with other configuration for this scenario',
+				},*/{
+					header: 'Scenario Name',
+					dataIndex: 'scenario',
+					flex: 4,
+					sortable: false,
+					align: 'left'
+				},{
+					header: 'Localization',
+					dataIndex: 'localization',
+					flex: 1,
+					sortable: false
+				},{
+					header: 'OS',
+					dataIndex: 'os',
+					flex: 1,
+					sortable: false
+				},{
+					header: 'Browser',
+					dataIndex: 'browser',
+					flex: 1,
+					sortable: false
+				},{
+					header: 'Unique Key',
+					dataIndex: 'uniqueKey',
+					flex: 0,
+					sortable: false,
+					hidden: true,
+				},{
+					xtype: 'actioncolumn',
+					items: [{
+						icon: '/static/canopsis/themes/canopsis/resources/images/icons/date_error.png',
+						tooltip: 'Step Summary', /*Last Errors Execution',*/
 
-					handler: function(grid, rowIndex, ColIndex) {
-						var rec = grid.getStore().getAt(rowIndex);
-						var scen_name = rec.get('scenario');
-						var gwidth = Ext.getBody().getWidth() * 0.6;
-						var gheight = Ext.getBody().getHeight() * 0.8;
+						handler: function(grid, rowIndex, colIndex) {
+							var rec = grid.getStore().getAt(rowIndex);
 
-						if (me.scenarios[scen_name].scenarios.length > 0) {
+							grid = me.scenarios[rec.get('scenario')].displayLastExecutionsErrors(me.node+'.'+me.scenarios[rec.get('scenario')].name, rec.get('uniqueKey') );
+
+							var gwidth = Ext.getBody().getWidth() * 0.6;
+							var gheight = Ext.getBody().getHeight() * 0.8;
+
 							Ext.create('Ext.window.Window', {
 								xtype: 'panel',
 								layout: 'fit',
@@ -402,31 +389,53 @@ Ext.define('widgets.stepeue.feature', {
 								autoScroll: true,
 								width: gwidth,
 								height: gheight,
-								items: me.scenarios[scen_name].buildDetailsView(),
+								items: [grid],
 								renderTo: Ext.getBody(),
 								modal: true
 							}).show().center();
 						}
-						else {
-							Ext.create('Ext.window.Window', {
-								xtype: 'panel',
-								layout: 'fit',
-								id: 'window-screenshot',
-								autoScroll: true,
-								width: gwidth,
-								height: gheight,
-								html: 'No other configuration for this test',
-								renderTo: Ext.getBody(),
-								modal: true
-							}).show().center();
-						}
-					}
-				}*/]
-			}
+					}/*,{
+						icon: '/static/canopsis/themes/canopsis/resources/images/icons/table.png',
+						tooltip: 'Tests with other configuration for this scenario',
 
+						handler: function(grid, rowIndex, ColIndex) {
+							var rec = grid.getStore().getAt(rowIndex);
+							var scen_name = rec.get('scenario');
+							var gwidth = Ext.getBody().getWidth() * 0.6;
+							var gheight = Ext.getBody().getHeight() * 0.8;
+
+							if (me.scenarios[scen_name].scenarios.length > 0) {
+								Ext.create('Ext.window.Window', {
+									xtype: 'panel',
+									layout: 'fit',
+									id: 'window-screenshot',
+									autoScroll: true,
+									width: gwidth,
+									height: gheight,
+									items: me.scenarios[scen_name].buildDetailsView(),
+									renderTo: Ext.getBody(),
+									modal: true
+								}).show().center();
+							}
+							else {
+								Ext.create('Ext.window.Window', {
+									xtype: 'panel',
+									layout: 'fit',
+									id: 'window-screenshot',
+									autoScroll: true,
+									width: gwidth,
+									height: gheight,
+									html: 'No other configuration for this test',
+									renderTo: Ext.getBody(),
+									modal: true
+								}).show().center();
+							}
+						}
+					}*/]
+				}
 			],
 			store: storeScenar,
-			listeners: {
+			/*listeners: {
 				viewready: function() {
 					Ext.Object.each(me.scenarios, function(i, value) {
 						me.scenarios[i].getPerfData();
@@ -446,66 +455,22 @@ Ext.define('widgets.stepeue.feature', {
 						fixedNavigation: true
 					});
 				}
-			},
+			},*/
 			autoScroll: true,
 			border: false
 		});
 
-		var card1 = Ext.create('Ext.Panel', {
-			layout: 'fit',
-			xtype: 'panel',
-			title: this.record.raw.description,
-			tools: [{
-				type: 'next',
-				tooltip: 'play the video',
-
-				handler: function() {
-					var gwidth = Ext.getBody().getWidth() * 0.8;
-					var gheight = Ext.getBody().getHeight() * 0.95;
-
-					var object = {
-						description: me.record.raw.description,
-						src: '/rest/media/events/' + me.record.raw._id,
-						alt: 'The feature video can not be played',
-						className: 'title-feature',
-						videoWidth: '60%',
-						timestamp: rdr_tstodate(me.record.raw.timestamp)
-					};
-
-					var tpl = new Ext.XTemplate(
-						'<div class="{className}">{description}</div>',
-						'<div class="align-center">',
-						'<video autoplay="autoplay" controls="controls" width="{videoWidth}" src="{src}">{alt}</video>',
-						'<div class="align-center video-date">{timestamp}</div>',
-						'</div>');
-
-					var oHtml = tpl.apply(object);
-
-					Ext.create('Ext.window.Window', {
-						xtype: 'xpanel',
-						layout: 'fit',
-						autoScroll: false,
-						title: 'Last Execution Video',
-						height: gheight,
-						html: oHtml,
-						renderTo: Ext.getBody(),
-						modal: true,
-						width: gwidth,
-						height: gheight
-					}).show().center();
-				}
-			}, {
-				type: 'gear',
-				tooltip: 'display last errors video',
-				handler: function() {
-					me.displayLastErrorsVideos();
-				}
-			}],
-			items: [grid],
-			border: false,
-			height: '100%',
-			autoScroll: true
-		});
+		for ( key in this.record ) {
+			var card1 = Ext.create('Ext.Panel', {
+				layout: 'fit',
+				xtype: 'panel',
+				title: this.record.raw.description,
+				items: [grid],
+				border: false,
+				height: '100%',
+				autoScroll: true
+			}); 
+		}
 
 		this.content = card1;
 		this.elementContainer.removeAll();

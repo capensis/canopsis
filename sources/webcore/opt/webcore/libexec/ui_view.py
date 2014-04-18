@@ -34,7 +34,7 @@ from libexec.auth import get_account, check_group_rights
 
 logger = logging.getLogger("ui_view")
 
-#group who have right to access 
+#group who have right to access
 group_managing_access = ['group.CPS_view_admin','group.CPS_view']
 export_fields = ['items','crecord_name']
 
@@ -44,19 +44,19 @@ export_fields = ['items','crecord_name']
 def tree_get():
 	namespace = 'object'
 	account = get_account()
-		
+
 	storage = get_storage(namespace=namespace, account=account, logging_level=logging.DEBUG)
-	
+
 	node = request.params.get('node', default= None)
-	
+
 	output = []
 	total = 0
-		
+
 	if node:
 		parentNode = storage.get('directory.root', account=account)
 		storage.recursive_get(parentNode,account=account)
 		output = parentNode.recursive_dump(json=True)
-			
+
 	return output
 
 
@@ -66,7 +66,7 @@ def tree_delete(_id=None):
 	logger.debug('DELETE:')
 	account = get_account()
 	storage = get_storage(namespace='object', account=account, logging_level=logging.DEBUG)
-	
+
 	ids = []
 
 	try:
@@ -80,7 +80,7 @@ def tree_delete(_id=None):
 		ids.append(_id)
 
 	output = {}
-	
+
 	for _id in ids:
 		try:
 			record = storage.get(_id, account=account)
@@ -88,7 +88,7 @@ def tree_delete(_id=None):
 			logger.info(' + Record not found: %s' %_id)
 			output[_id] = {'success':False, 'output':'Record not found'}
 			continue
-			
+
 		if len(record.children) == 0:
 			if record.check_write(account=account):
 				#remove record from its parent child list
@@ -113,7 +113,7 @@ def tree_delete(_id=None):
 		else:
 			output[record.name] = {'success':False,'output':'This record have children, remove those child before'}
 			logger.warning('This record have children, remove those child before')
-	
+
 	return {"total": len(ids), "success": True, "data": output}
 
 @post('/ui/view',checkAuthPlugin={'authorized_grp':group_managing_access})
@@ -122,11 +122,11 @@ def tree_add(_id=None):
 	logger.debug('POST:')
 	account = get_account()
 	storage = get_storage(namespace='object', account=account)
-	
+
 	data = json.loads(request.body.readline())
-		
+
 	output = add_view(data, storage, account)
-			
+
 	return {"total": len(data), "success": True, "data": output}
 
 @put('/ui/view',checkAuthPlugin={'authorized_grp':group_managing_access})
@@ -135,9 +135,9 @@ def update_view_relatives(_id=None):
 	logger.debug('PUT:')
 	account = get_account()
 	storage = get_storage(namespace='object', account=account)
-	
+
 	data = json.loads(request.body.readline())
-	
+
 	output = update_view(data, storage, account)
 
 	return {"total": len(data), "success": True, "data": output}
@@ -147,9 +147,9 @@ def update_view_relatives(_id=None):
 def check_exist(name=None):
 	account = get_account()
 	storage = get_storage(namespace='object', account=account)
-	
+
 	mfilter = {'crecord_name':name}
-	
+
 	try:
 		logger.debug('try to get view')
 		record_child = storage.find_one(mfilter=mfilter, account=account)
@@ -166,31 +166,31 @@ def exportView(_id=None):
 	logger.debug('Prepare to return view json file')
 	account = get_account()
 	storage = get_storage(namespace='object', account=account)
-	
+
 	if not _id:
 		_id = request.params.get('_id', default=None)
-	
+
 	try:
 		logger.debug(' + Try to get view from database')
 		record = storage.get(_id, account=account)
-		
+
 		logger.debug(' + %s found' % record.name)
-		
+
 		response.headers['Content-Disposition'] = 'attachment; filename="%s.json"' % record.name
 		response.headers['Content-Type'] = 'application/json'
-		
+
 		record.parent = []
 		record._id = None
-		
+
 		dump = record.dump()
 		output = {}
-		
+
 		for item in dump:
 			if item in export_fields:
 				output[item] = dump[item]
-		
+
 		return json.dumps(output, sort_keys=True, indent=4)
-		
+
 	except Exception,err:
 		logger.error(' + Error while fetching view : %s' % err)
 		return {"total": 0, "success": False, "data": {}}
@@ -200,24 +200,24 @@ def export_object(_id=None):
 	logger.debug('Prepare to return object json file')
 	account = get_account()
 	storage = get_storage(namespace='object', account=account)
-	
+
 	if not _id:
 		_id = request.params.get('_id', default=None)
-	
+
 	try:
 		logger.debug(' + Try to get object from database')
 		record = storage.get(_id, account=account)
-		
+
 		logger.debug(' + %s found' % record.name)
-		
+
 		response.headers['Content-Disposition'] = 'attachment; filename="%s.json"' % record.name
 		response.headers['Content-Type'] = 'application/json'
 
 		dump = record.dump()
 		del dump['_id']
-	
+
 		return json.dumps(dump, sort_keys=True, indent=4)
-		
+
 	except Exception,err:
 		logger.error(' + Error while fetching object : %s' % err)
 		return json.dumps({'error': str(err)}, sort_keys=True, indent=4)
@@ -262,7 +262,7 @@ def add_view(views, storage, account):
 
 	for view in views:
 		view_name = view.get('crecord_name', view['_id'])
-		
+
 		record_parent = None
 		try:
 			logger.debug(' + Get future parent record')
@@ -270,7 +270,7 @@ def add_view(views, storage, account):
 		except:
 			logger.info("You don't have right on the parent record: %s" % view['parentId'])
 			output[view_name] = {'success':False,'output':"You don't have right on the parent record"}
-		
+
 		record_child = None
 		try:
 			record_child = storage.get(view['_id'], account=account)
@@ -278,7 +278,7 @@ def add_view(views, storage, account):
 			output[view['_id']] = {'success':False,'output':"View already exist"}
 		except:
 			logger.debug(' + View not found')
-			
+
 		if record_parent and not record_child:
 			if record_parent.check_write(account=account):
 				try:
@@ -292,13 +292,13 @@ def add_view(views, storage, account):
 					logger.info('Error while building view/directory crecord : %s' % err)
 					output[view_name] = {'success':False,'output':"Error while building crecord: %s" % err}
 					record = None
-					
+
 				if isinstance(record,crecord):
 					record.chown(account._id)
 					record.chgrp(account.group)
 
 					record.access_group = []
-					
+
 					storage.put(record,account=account)
 					record_parent.add_children(record)
 
@@ -323,10 +323,10 @@ def update_view(views, storage, account):
 		view_name = view.get('crecord_name',view['_id'])
 		_id = view.get('_id', None)
 		parent_id = view.get('parentId', None)
-		
+
 		logger.debug(' + View to update is %s' % _id)
 		logger.debug(' + Parent is %s' % parent_id)
-		
+
 		#get records
 		record_child=None
 		try:
@@ -336,27 +336,27 @@ def update_view(views, storage, account):
 			#output[view_name] = {'success':False,'output':str(err)}
 			#### TODO: Check why update was called
 			output[view_name] = add_view(view, storage, account)[view_name]
-		
+
 		#check action to do
 		if record_child:
 			# Change tree
 			if parent_id and not parent_id in record_child.parent:
 				try:
 					record_parent = storage.get(parent_id, account=account)
-					logger.debug(' + Update relations')	
+					logger.debug(' + Update relations')
 					record_parent_old = storage.get(record_child.parent[0], account=account)
 					logger.debug('   + Remove children %s from %s' % (record_child._id, record_parent_old._id))
-					
+
 					if not record_parent.check_write(account=account) or not record_parent_old.check_write(account=account):
 						raise Exception('No rights on parent record')
-					
+
 					record_parent_old.remove_children(record_child)
-					
+
 					logger.debug('   + Add children %s to %s' % (record_child._id, record_parent._id))
 					record_parent.add_children(record_child)
-					
+
 					logger.debug('   + Updating all records')
-		
+
 					storage.put([record_parent,record_child,record_parent_old],account=account)
 				except Exception, err:
 					output[view_name] = {'success':False,'output':str(err)}
@@ -364,15 +364,15 @@ def update_view(views, storage, account):
 
 			# Rename view
 			elif view['crecord_name'] and record_child.name != view['crecord_name']:
-				logger.debug(' + Rename record')	
+				logger.debug(' + Rename record')
 				logger.debug('   + old name : %s' % record_child.name)
 				logger.debug('   + new name : %s' % view['crecord_name'])
 				record_child.name = view['crecord_name']
 				storage.put(record_child,account=account)
-			
+
 			else :
 				logger.debug(' + Records are same, nothing to do')
-			
+
 			if not view_name in output:
 				output[view_name] = {'success':True,'output':""}
 

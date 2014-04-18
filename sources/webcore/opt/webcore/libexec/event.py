@@ -35,7 +35,7 @@ import cevent
 from libexec.auth import get_account, check_group_rights
 
 logger = logging.getLogger('Event')
-logger.setLevel(logging.DEBUG)
+logger.setLevel(logging.INFO)
 
 amqp = None
 group_managing_access = 'group.CPS_event_admin'
