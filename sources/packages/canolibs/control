@@ -17,6 +17,7 @@ function pre_install(){
 
 function post_install(){
 	echo "Post-install $NAME $VERSION-$RELEASE ..."
+	sed -i s:@PREFIX@:$PREFIX:g $PREFIX/etc/python-logging.conf
 	check_code $? 
 }
 
