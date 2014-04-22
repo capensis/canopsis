@@ -56,6 +56,9 @@ function post_install(){
 	chown $HUSER:$HGROUP $PREFIX
 	chown $HUSER:$HGROUP -R $PREFIX/*
 	check_code $?
+
+	echo "{\"canopsis\": {\"user\": \"$HUSER\", \"group\": \"$HGROUP\", \"prefix\": \"$PREFIX\"}}" > $PREFIX/etc/canopsis-env.json
+	check_code $?
 }
 
 function pre_remove(){
