@@ -29,7 +29,7 @@ function post_install(){
 	        break
 	    fi
 	    sleep 1
-	    STATE=`su - canopsis -c "service rabbitmq-server status | grep RUNNING | wc -l"`
+	    STATE=`su - $HUSER -c "service rabbitmq-server status | grep RUNNING | wc -l"`
 	    TRY=$((TRY + 1))
 	    echo -n "."
 	done
