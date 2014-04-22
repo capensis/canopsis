@@ -237,15 +237,16 @@ def perstore_get_all_metrics():
 
 	if use_hint:
 		data.hint([('co',1),('re',1),('me',1)])
+		total = data.count()
+	else:
+		result = storage.get_backend('object').find_one({'crecord_name':'perfdata2_count_no_internal'})
+		if result and 'count' in result:
+			total = result['count']
+		else:
+			total = 0
 
 	data  = list(data)
 
-	result = storage.get_backend('object').find_one({'crecord_name':'perfdata2_count_no_internal'})
-	if result and 'count' in result:
-		total = result['count']
-	else:
-		total = len(data)
-	
 	return {'success': True, 'data' : data, 'total' : total}
 
 
