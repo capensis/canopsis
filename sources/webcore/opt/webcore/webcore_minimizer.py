@@ -16,7 +16,7 @@ class Minimizer(object):
 	def __init__(self, *args, **kwargs):
 		super(Minimizer, self).__init__(*args, **kwargs)
 
-		self.rootdir = '/opt/canopsis'
+		self.rootdir = os.path.expanduser('~')
 		self.canodir = os.path.join(self.rootdir, 'var', 'www', 'canopsis')
 
 		self.canopsisjs      = os.path.join(self.canodir, 'canopsis.js')

@@ -14,7 +14,7 @@ function pre_install(){
 function post_install(){
 	echo "Post-install $NAME $VERSION-$RELEASE ..."
 
-        update_pylibs &> /dev/null
+        su - $HUSER -c "update_pylibs &> /dev/null"
         check_code $? "Error when update pylibs listing ..."
 }
 
@@ -36,7 +36,7 @@ function pre_update(){
 function post_update(){
 	echo "Post-update $NAME $VERSION-$RELEASE ..."
 
-        update_pylibs &> /dev/null
+        su - $HUSER -c "update_pylibs &> /dev/null"
         check_code $? "Error when update pylibs listing ..."
 }
 

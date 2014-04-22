@@ -1,7 +1,7 @@
 #!/bin/bash
 
-libs=$(ls -1 /opt/canopsis/lib/python2.7/site-packages | grep .egg$)
-easy_install_pth="/opt/canopsis/lib/python2.7/site-packages/easy-install.pth"
+libs=$(ls -1 $HOME/lib/python2.7/site-packages | grep .egg$)
+easy_install_pth="$HOME/lib/python2.7/site-packages/easy-install.pth"
 
 echo "Update easy_install.pth:"
 echo "import sys; sys.__plen = len(sys.path)" > $easy_install_pth

@@ -29,7 +29,7 @@ function post_install(){
 	        break
 	    fi
 	    sleep 1
-	    STATE=`su - canopsis -c "service rabbitmq-server status | grep RUNNING | wc -l"`
+	    STATE=`su - $HUSER -c "service rabbitmq-server status | grep RUNNING | wc -l"`
 	    TRY=$((TRY + 1))
 	    echo -n "."
 	done
@@ -42,26 +42,26 @@ function post_install(){
 	sleep 1
 
 	CODE=0
-	VHOST_EXISTS=`su - canopsis -c "rabbitmqctl list_vhosts | grep canopsis | wc -l"`
+	VHOST_EXISTS=`su - $HUSER -c "rabbitmqctl list_vhosts | grep canopsis | wc -l"`
 	# Is this a first install or an update
 	if [ $VHOST_EXISTS -ne 1 ]
 	then
 		
 		echo " + Declare Admin user ..."
-		su - canopsis -c "$PREFIX/bin/rabbitmqctl add_user admin admin"
+		su - $HUSER -c "$PREFIX/bin/rabbitmqctl add_user admin admin"
 		RCODE=$?
 		if [ $RCODE -ne 0 ]; then CODE=$RCODE; fi
-		su - canopsis -c "$PREFIX/bin/rabbitmqctl set_user_tags admin administrator"
+		su - $HUSER -c "$PREFIX/bin/rabbitmqctl set_user_tags admin administrator"
 		RCODE=$?
 		if [ $RCODE -ne 0 ]; then CODE=$RCODE; fi
 		
 		echo " + Declare vhost ..."
-		su - canopsis -c "$PREFIX/bin/rabbitmqctl add_vhost canopsis"
+		su - $HUSER -c "$PREFIX/bin/rabbitmqctl add_vhost canopsis"
 		RCODE=$?
 		if [ $RCODE -ne 0 ]; then CODE=$RCODE; fi
 
 		echo " + Declare permissions for guest user ..."
-		su - canopsis -c "$PREFIX/bin/rabbitmqctl set_permissions -p canopsis guest \".*\" \".*\" \".*\""
+		su - $HUSER -c "$PREFIX/bin/rabbitmqctl set_permissions -p canopsis guest \".*\" \".*\" \".*\""
 		RCODE=$?
 		if [ $RCODE -ne 0 ]; then CODE=$RCODE; fi
 	fi

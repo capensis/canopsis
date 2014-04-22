@@ -21,12 +21,15 @@ function pre_install(){
 
 function post_install(){
 	echo "Post-install $NAME $VERSION-$RELEASE ..."
-	update_pylibs &> /dev/null
+	su - $HUSER -c "update_pylibs &> /dev/null"
 	check_code $? "Error when update pylibs listing ..."
 
 	if [ ! -e $PREFIX/etc/ubik.conf ]; then
 		cp $PREFIX/etc/ubik.conf.ori $PREFIX/etc/ubik.conf
 	fi
+
+	sed -i s:@PREFIX@:$PREFIX:g $PREFIX/etc/ubik.conf
+	check_code $?
 }
 
 function pre_remove(){

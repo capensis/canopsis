@@ -14,7 +14,7 @@ function pre_install(){
 function post_install(){
 	echo "Post-install $NAME $VERSION-$RELEASE ..."
 
-        update_pylibs &> /dev/null
+        su - $HUSER -c "update_pylibs &> /dev/null"
         check_code $? "Error when update pylibs listing ..."
 }
 
@@ -28,7 +28,7 @@ function post_remove(){
 	launch_cmd 1 easy_install -mxN $NAME
 	launch_cmd 1 rm -rf $PREFIX/lib/python2.7/site-packages/$NAME-$VERSION*.egg
 
-        update_pylibs &> /dev/null
+        su - $HUSER -c "update_pylibs &> /dev/null"
         check_code $? "Error when update pylibs listing ..."
 }
 
