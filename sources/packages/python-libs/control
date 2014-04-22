@@ -36,7 +36,7 @@ function pre_update(){
 function post_update(){
 	echo "Post-update $NAME $VERSION-$RELEASE ..."
 
-        update_pylibs &> /dev/null
+        su - $HUSER -c "update_pylibs &> /dev/null"
         check_code $? "Error when update pylibs listing ..."
 }
 
