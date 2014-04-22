@@ -11,9 +11,9 @@
 ### END INIT INFO
 
 NAME=canopsis
-USER=canopsis
+USER=@USER@
 
-CANOPSIS_PATH="/opt/canopsis"
+CANOPSIS_PATH="@PREFIX@"
 
 case $1 in
 	start)		
