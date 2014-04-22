@@ -222,9 +222,11 @@ def perstore_get_all_metrics():
 					mor.append({field: {'$regex': '.*%s.*' % word, '$options': 'i'}})	
 				mfilter['$and'].append({'$or': mor})
 	
+	use_hint = False
 	if not show_internals:
 		if mfilter:
 			mfilter = {'$and': [mfilter, {'me': {'$nin':internal_metrics  }}]}
+			use_hint = True
 		else:
 			mfilter = {'me': {'$nin': internal_metrics  }}
 		
@@ -232,6 +234,10 @@ def perstore_get_all_metrics():
 	
 	mfilter = clean_mfilter(mfilter)
 	data  = manager.find(limit=limit, skip=start, mfilter=mfilter, data=False, sort=msort)
+
+	if use_hint:
+		data.hint([('co',1),('re',1),('me',1)])
+
 	data  = list(data)
 
 	result = storage.get_backend('object').find_one({'crecord_name':'perfdata2_count_no_internal'})
