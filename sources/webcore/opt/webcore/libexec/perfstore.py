@@ -233,20 +233,22 @@ def perstore_get_all_metrics():
 	logger.debug(" + mfilter:  %s" % mfilter)
 	
 	mfilter = clean_mfilter(mfilter)
-	data  = manager.find(limit=limit, skip=start, mfilter=mfilter, data=False, sort=msort)
+	data  = manager.find(limit=limit + 1, skip=start, mfilter=mfilter, data=False, sort=msort)
 
 	if use_hint:
 		data.hint([('co',1),('re',1),('me',1)])
-		total = data.count()
+
+	data  = list(data)
+
+	if use_hint:
+		total = start + len(data)
 	else:
 		result = storage.get_backend('object').find_one({'crecord_name':'perfdata2_count_no_internal'})
 		if result and 'count' in result:
 			total = result['count']
 		else:
-			total = 0
-
-	data  = list(data)
-
+			total = len(data)
+	
 	return {'success': True, 'data' : data, 'total' : total}
 
 
