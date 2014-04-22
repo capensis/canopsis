@@ -26,7 +26,7 @@ function post_install(){
 	
 	mkdir -p $PREFIX/var/www/widgets
 
-	$PREFIX/bin/webcore_minimizer
+	su - $HUSER -c $PREFIX/bin/webcore_minimizer
 	check_code $? 
 }
 
