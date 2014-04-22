@@ -25,8 +25,12 @@ from ctools import parse_perfdata
 from ctools import Str2Number
 from datetime import datetime
 
+from cstorage import get_storage
+from caccount import caccount
+
 from cengine import cengine
 from camqp import camqp
+from ctools import internal_metrics
 
 NAME="perfstore2"
 INTERNAL_QUEUE="beat_perfstore2"
@@ -36,6 +40,7 @@ class engine(cengine):
 		cengine.__init__(self, name=NAME, *args, **kargs)
 
 		self.beat_interval =  300
+		self.storage = get_storage(namespace='object', account=caccount(user="root", group="root"))
 
 	def create_amqp_queue(self):
 		super(engine, self).create_amqp_queue()
@@ -55,6 +60,7 @@ class engine(cengine):
 		)
 
 		self.internal_amqp.start()
+		self.beat()
 
 	def post_run(self):
 		self.internal_amqp.cancel_queues()
@@ -203,3 +209,17 @@ class engine(cengine):
 
 			except Exception, err:
 				self.logger.warning("Impossible to store: %s ('%s')" % (perf_data_array, err))
+
+	def beat(self):
+		# Counts metric not in internal metrics for webserver cache purposes
+		self.logger.warning('Computing cache value for perfdata2 metric count')
+		count = self.storage.get_backend('perfdata2').find({'me': {'$nin': internal_metrics  }}).count()
+		
+		self.storage.get_backend('object').update(
+			{'crecord_name':'perfdata2_count_no_internal'}, 
+			{'$set': 
+				{'count': count }
+			}, 
+			upsert=True
+		)
+		self.logger.warning('Cache value for perfdata2 metric count computed > ' + str(count))
