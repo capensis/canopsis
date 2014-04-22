@@ -27,7 +27,7 @@ function pre_install(){
 
 	echo " + Create Canopsis user ('$HUSER')..."
 	groupadd $HGROUP &> /dev/null || true
-	id canopsis &> /dev/null
+	id $HUSER &> /dev/null
 	if [ $? -ne 0 ]; then
 		userdel $HUSER &> /dev/null || true
 		useradd -s /bin/bash -d $PREFIX -g $HGROUP $HUSER &> /dev/null
