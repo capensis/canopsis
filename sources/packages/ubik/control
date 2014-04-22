@@ -27,6 +27,9 @@ function post_install(){
 	if [ ! -e $PREFIX/etc/ubik.conf ]; then
 		cp $PREFIX/etc/ubik.conf.ori $PREFIX/etc/ubik.conf
 	fi
+
+	sed -i s:@PREFIX@:$PREFIX:g $PREFIX/etc/ubik.conf
+	check_code $?
 }
 
 function pre_remove(){
