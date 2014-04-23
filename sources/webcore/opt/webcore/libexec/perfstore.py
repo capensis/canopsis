@@ -1,4 +1,3 @@
-
 #!/usr/bin/env python
 # --------------------------------
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
@@ -238,7 +237,10 @@ def perstore_get_all_metrics():
 	if use_hint:
 		data.hint([('co',1),('re',1),('me',1)])
 
-	data  = list(data)
+	if data is not None:
+		data  = list(data)
+	else:
+		data = []
 
 	if use_hint:
 		total = start + len(data)
