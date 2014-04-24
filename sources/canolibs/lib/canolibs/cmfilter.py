@@ -22,8 +22,16 @@
 # http://docs.mongodb.org/manual/reference/operator/
 
 import re
+import operator
 
 def field_check(mfilter, event, key):
+	cond = {'$lt': operator.lt,
+		'$lte': operator.le,
+		'$gt': operator.gt,
+		'$gte': operator.ge,
+		'$ne': operator.ne,
+		'$eq': operator.eq}
+
 	for op in mfilter[key]:
 		if op == '$exists':
 			#check if key is in event
@@ -35,32 +43,12 @@ def field_check(mfilter, event, key):
 				if key in event:
 					return False
 
-		elif op == '$eq':
-			if event[key] != mfilter[key][op]:
+		elif op in ['$eq', '$ne', '$gt', '$gte', '$lt', '$lte']:
+			if not cond[op](event[key], mfilter[key][op]):
 				return False
 
 		elif op == '$regex' or (op == '$options' and "$regex" in mfilter[key]):
 			if not regex_match(event[key], mfilter[key]["$regex"], mfilter[key].get("$options", None)):
-				return False
-
-		elif op == '$ne':
-			if event[key] == mfilter[key][op]:
-				return False
-
-		elif op == '$gt':
-			if event[key] <= mfilter[key][op]:
-				return False
-
-		elif op == '$gte':
-			if event[key] < mfilter[key][op]:
-				return False
-
-		elif op == '$lt':
-			if event[key] >= mfilter[key][op]:
-				return False
-
-		elif op == '$lte':
-			if event[key] > mfilter[key][op]:
 				return False
 
 		elif op == '$in':
@@ -167,4 +155,4 @@ def regex_match(phrase, pattern, options=None):
 		return False
 	return bool(re.search(str(pattern), str(phrase), options))
 
-	
+
