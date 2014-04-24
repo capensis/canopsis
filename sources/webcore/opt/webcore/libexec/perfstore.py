@@ -232,15 +232,17 @@ def perstore_get_all_metrics():
 	logger.debug(" + mfilter:  %s" % mfilter)
 	
 	mfilter = clean_mfilter(mfilter)
-	data  = manager.find(limit=limit + 1, skip=start, mfilter=mfilter, data=False, sort=msort)
+	data  = manager.find(limit=limit, skip=start, mfilter=mfilter, data=False, sort=msort)
 
 	if use_hint:
 		data.hint([('co',1),('re',1),('me',1)])
 
-	if data is not None:
-		data  = list(data)
+	if isinstance(data, dict):
+		data = [data]
+	elif data is not None:
+		data = list(data)
 	else:
-		data = []
+		data = list()
 
 	if use_hint:
 		total = start + len(data)
