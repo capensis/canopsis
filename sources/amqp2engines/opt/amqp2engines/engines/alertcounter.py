@@ -39,8 +39,6 @@ MACRO = 'CAN_PRIORITY'
 class engine(cengine):
 	def __init__(self, *args, **kargs):
 		super(engine, self).__init__(name=NAME, *args, **kargs)
-
-	def pre_run(self):
 		self.listened_event_type = ['check','selector','eue','sla', 'log']
 		self.manager = pyperfstore2.manager()
 
@@ -48,9 +46,11 @@ class engine(cengine):
 		self.storage = get_storage(namespace='object', account=caccount(user="root", group="root"))
 		self.entities = self.storage.get_backend('entities')
 		self.objects_backend = self.storage.get_backend('object')
-
+		self.comments = {}
 		self.selectors_name = []
 		self.last_resolv = 0
+
+	def pre_run(self):
 		self.beat()
 
 	def load_macro(self):

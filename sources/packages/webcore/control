@@ -26,6 +26,10 @@ function post_install(){
 	
 	mkdir -p $PREFIX/var/www/widgets
 
+	echo " + Fix permissions"
+	chown -R $HUSER:$HGROUP $PREFIX/var/www
+	check_code $?
+
 	su - $HUSER -c $PREFIX/bin/webcore_minimizer
 	check_code $? 
 }

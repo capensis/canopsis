@@ -14,7 +14,6 @@ function pre_install(){
 function post_install(){
 	echo "Post-install $NAME $VERSION-$RELEASE ..."
 	mkdir -p $PREFIX/etc/collectd.d
-	sed -i s:@PREFIX@:$PREFIX:g $PREFIX/etc/collectd.conf
 	check_code $?
 }
 

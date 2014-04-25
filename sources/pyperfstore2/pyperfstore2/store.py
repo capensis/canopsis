@@ -92,7 +92,7 @@ class store(object):
 
 	def connect(self):
 		if self.connected:
-			self.logger.warning("Impossible to connect, already connected")
+			self.logger.debug("Impossible to connect, already connected")
 			return True
 		else:
 			self.logger.debug("Connect to MongoDB (%s/%s@%s:%s)" % (self.mongo_db, self.mongo_collection, self.mongo_host, self.mongo_port))
