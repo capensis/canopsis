@@ -25,7 +25,7 @@ from cselector import cselector
 from kombu.pools import producers
 from kombu import Connection, Queue, Exchange
 import logging, time
-		
+
 NAME="crecord_dispatcher"
 # Delay since the lock document is released in any cases
 UNLOCK_DELAY = 60
@@ -38,6 +38,11 @@ class engine(cengine):
 		self.beat_interval = 5
 		self.nb_beat = 0
 		self.crecords_types = ['selector', 'topology', 'derogation', 'consolidation']
+		self.beat_interval_trigger = {
+			'downtime': {'delay': 60, 'elapsed_since_last_beat' : 0},
+			'perfstore2_rotate': {'delay': 60, 'elapsed_since_last_beat' : 0}
+		}
+
 
 	def init_amqp(self):
 		self.logger.debug('Initiating amqp connection to dispatchers')
@@ -54,6 +59,8 @@ class engine(cengine):
 		self.backend = self.storage.get_backend('object')
 
 		self.connect_amqp()
+
+		self.beat()
 
 	def connect_amqp(self):
 
@@ -139,6 +146,19 @@ class engine(cengine):
 
 
 	def beat(self):
+		self.logger.debug('cdispatcher beat 1')
+
+		#These events will run only once the list below consumer's dispatch method.
+		#This ensure those engine methods are run once in ha mode
+		#Event are triggered only at engine's delay duration
+		for trigger_engine in self.beat_interval_trigger:
+			if self.beat_interval_trigger[trigger_engine]['delay'] > self.beat_interval_trigger[trigger_engine]['elapsed_since_last_beat']:
+				self.logger.warning('triggering dispatch for ' + trigger_engine)
+				self.publish_record({'event': 'engine process trigger'}, trigger_engine)
+				#update deplay
+				self.beat_interval_trigger[trigger_engine]['elapsed_since_last_beat'] = 0
+			#reset delay
+			self.beat_interval_trigger[trigger_engine]['elapsed_since_last_beat'] += self.beat_interval
 
 		""" Reinitialize crecords and may publish event related credort targeted to other engines crecord queues"""
 		crecords = self.load_crecords()
@@ -170,9 +190,6 @@ class engine(cengine):
 					if dump['crecord_type'] == 'selector' and 'rk' in dump and dump['rk'] and 'dosla' in dump and dump['dosla'] in [ True, 'on'] and 'dostate' in dump and dump['dostate'] in [ True, 'on']:
 						self.publish_record(dump, 'sla')
 
-					#This event will run only once the list below consumer's dispatch method. This ensure those engine methods are run once in ha mode
-					for trigger_consume_dispatch in ['downtime']:
-						self.publish_record({'event': 'engine process trigger'}, trigger_consume_dispatch)
 
 				except Exception, e:
 					#Crecord gets out of queue and will be reloaded on next beat

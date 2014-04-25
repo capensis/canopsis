@@ -96,7 +96,7 @@ class cengine(multiprocessing.Process):
 
 		self.logger.info("Engine initialised")
 
-		self.dispatcher_crecords = ['selector','topology','derogation','consolidation', 'sla']
+		self.dispatcher_crecords = ['selector','topology','derogation','consolidation', 'sla', 'downtime', 'perfstore2_rotate']
 
 
 	def crecord_task_complete(self, crecord_id):
