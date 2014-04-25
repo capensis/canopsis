@@ -55,34 +55,41 @@ class KnownValues(unittest.TestCase):
 			'configuration': 'white_black_lists',
 		}
 
-		# Test normal behaviors
-		event = {'connector': 'nagios'}
+		event = {'connector': '',
+			 'connector_name': '',
+			 'event_type': '',
+			 'source_type': '',
+			 'component': ''
+			}
 
-		self.assertTrue(self.engine.work(event) == event)
+		# Test normal behaviors
+		event['connector'] = 'nagios'
+
+		self.assertEqual(self.engine.work(event), event)
 
 		event['connector'] = 'collectd'
-		self.assertTrue(self.engine.work(event) == DROP)
+		self.assertEqual(self.engine.work(event), DROP)
 
 		# second rule matched
 		event['connector'] = 'second_rule'
-		self.assertTrue(self.engine.work(event) == event)
+		self.assertEqual(self.engine.work(event), event)
 
 		# Test default actions
 		event['connector'] = 'default_drop'
-		self.assertTrue(self.engine.work(event) == DROP)
+		self.assertEqual(self.engine.work(event), DROP)
 
 		# Change default action
 		self.engine.configuration['default_action'] = 'pass'
 		event['connector'] = 'default_pass'
-		self.assertTrue(self.engine.work(event) == event)
+		self.assertEqual(self.engine.work(event), event)
 
 		# rule priority validation sorted is the same used in beat method in the engine
 		event['connector'] = 'priority'
-		self.assertTrue(self.engine.work(event) == event)
+		self.assertEqual(self.engine.work(event), event)
 
 		# No configuration, default configuration is loaded
 		self.engine.configuration = {}
-		self.assertTrue(self.engine.work(event) == event)
+		self.assertEqual(self.engine.work(event), event)
 
 
 if __name__ == "__main__":
