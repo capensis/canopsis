@@ -38,17 +38,48 @@ class KnownValues(unittest.TestCase):
 		self.engine.pass_event_count = 0
 		self.engine.configuration = {
 			'rules': [
-				{'mfilter': {'connector': 'nagios'}	, 'action': 'pass'},
-				{'mfilter': {'connector': 'collectd'}, 'action': 'drop'},
-				{'mfilter': {'connector': 'priority'}, 'action': 'pass'},
-				{'mfilter': {'test_field': { '$eq': 'cengine' } }, 'action': 'pass'},
-				{'mfilter': {'test_field': { '$gt': 1378713357 } },'action': 'drop'},
-				{'mfilter': {"tags": {"$in": "collectd2event"}}},
-				{'mfilter': {'connector': 'nagios'}	, 'action': 'pass'},
-				{'mfilter': {'connector': 'second_rule'}, 'action': 'pass'},
-				{'mfilter': {'connector': 'priority'}, 'action': 'drop'},
-				{'mfilter': {'test_field': { '$eq': 'cengine' } }, 'action': 'pass'},
-				{'mfilter': {'test_field': { '$gt': 1378713357 } },'action': 'drop'},
+				{'mfilter': {'connector': 'nagios'},
+				 'action': 'pass',
+				 'name': 'check-connector-pass'},
+
+				{'mfilter': {'connector': 'collectd'},
+				 'action': 'drop',
+				 'name': 'check-connector-drop'},
+
+				{'mfilter': {'connector': 'priority'},
+				 'action': 'pass',
+				 'name': 'check-connector-pass2'},
+
+				{'mfilter': {'test_field': { '$eq': 'cengine' } },
+				 'action': 'pass',
+				 'name': 'check-eq-pass'},
+
+				{'mfilter': {'test_field': { '$gt': 1378713357 } },
+				 'action': 'drop',
+				 'name': 'check-gt-drop'},
+
+				{'mfilter': {"tags": {"$in": "collectd2event"} },
+				 'name': 'check-in-default'},
+
+				{'mfilter': {'connector': 'nagios'},
+				 'action': 'pass',
+				 'name': 'chec-connector-pass3'},
+
+				{'mfilter': {'connector': 'second_rule'},
+				 'action': 'pass',
+				 'name': 'chec-connector-pass4'},
+
+				{'mfilter': {'connector': 'priority'},
+				 'action': 'drop',
+				 'name': 'check-connector-drop2'},
+
+				{'mfilter': {'test_field': { '$eq': 'cengine' } },
+				 'action': 'pass',
+				 'name': 'check-eq-pass2'},
+
+				{'mfilter': {'test_field': { '$gt': 1378713357 } },
+				 'action': 'drop',
+				 'name': 'check-gt-drop2'},
 			],
 			'priority' : 2,
 			'default_action': 'drop',
