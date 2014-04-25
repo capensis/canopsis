@@ -199,6 +199,8 @@ Ext.define('canopsis.view.Schedule.Form', {
 							title: _('Time zone'),
 							itemId: 'exporting_timezone',
 							layout: "hbox",
+							hidden: true,
+							disabled: true,
 							items: [
 								{
 									xtype: 'combobox',
@@ -230,12 +232,16 @@ Ext.define('canopsis.view.Schedule.Form', {
 							xtype: "checkbox",
 							fieldLabel: _('advanced'),
 							checked: false,
-							name: 'exporting_advanced'
+							name: 'exporting_advanced',
+							hidden: true,
+							disabled: true,
 						}, {
 							xtype: 'cfieldset',
 							layout: "hbox",
 							title: _('Duration'),
 							itemId: 'exporting_duration',
+							hidden: true,
+							disabled: true,
 							items: [
 								{
 									xtype: "numberfield",
@@ -533,9 +539,15 @@ Ext.define('canopsis.view.Schedule.Form', {
 				case true:
 					exporting_timezone.show().setDisabled(false);
 					exporting_advanced.show().setDisabled(false);
-					exporting_duration.show().setDisabled(false);
-					to.show().setDisabled(false);
-					from.show().setDisabled(false);
+					switch(exporting_advanced.getValue()) {
+						case true:
+							to.show().setDisabled(false);
+							from.show().setDisabled(false);
+							break;
+						case false:
+							exporting_duration.show().setDisabled(false);
+							break;
+					}
 					break;
 				case false:
 					exporting_timezone.hide().setDisabled(true);
