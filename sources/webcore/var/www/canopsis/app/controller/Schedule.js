@@ -147,7 +147,7 @@ Ext.define('canopsis.controller.Schedule', {
 		}
 
 		var exporting = {
-			enable: data.exporting_enable,
+			enable: data.exporting_enable === 'on',
 			length: data.exporting_intervalLength,
 			unit: data.exporting_intervalUnit,
 			type: data.exporting_advanced === 'on' ? "fixed" : "duration",
@@ -216,11 +216,9 @@ Ext.define('canopsis.controller.Schedule', {
 		var exporting_intervalUnit = exporting.unit;
 		var exporting_advanced = exporting.type === 'fixed';
 
-		var exporting_enable = exporting.enable;
+		var exporting_enable = exporting.enable === true;
 
-		if (exporting_enable) {
-			form.down('*[name=exporting_enable]').setValue(exporting_enable);
-		}
+		form.down('*[name=exporting_enable]').setValue(exporting_enable);
 
 		if (exporting_intervalLength !== undefined && exporting_intervalLength !== null) {
 			form.down('*[name=exporting_intervalLength]').setValue(exporting_intervalLength);
