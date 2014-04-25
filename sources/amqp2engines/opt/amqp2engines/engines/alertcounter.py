@@ -42,6 +42,7 @@ class engine(cengine):
 		self.listened_event_type = ['check','selector','eue','sla', 'log']
 		self.manager = pyperfstore2.manager()
 
+		self.comments = {}
 		# Get SLA configuration
 		self.storage = get_storage(namespace='object', account=caccount(user="root", group="root"))
 		self.entities = self.storage.get_backend('entities')
