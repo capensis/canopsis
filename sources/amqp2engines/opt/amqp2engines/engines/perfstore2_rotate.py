@@ -27,7 +27,6 @@ import logging
 import time
 
 NAME="perfstore2_rotate"
-MAX_METRIC_COUNT = 10000
 LOCK_DELAY = 300
 LOCK_QUERY = {'crecord_name':'lock_perfstore2_rotate'}
 
@@ -69,10 +68,6 @@ class engine(cengine):
 				for metric in metric_to_rotate:
 					self.manager.rotate(metric['_id'], metric['values'])
 					metric_count += 1
-				self.logger.info('sleep for 10 seconds')
-				import random
-				time.sleep(random.randint(1,10))
-				self.logger.info('sleep ended')
 
 				elapsed = time.time() - start
 				self.counter_event += metric_count

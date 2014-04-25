@@ -45,7 +45,10 @@ def init():
     storage.get_backend('perfdata2').ensure_index([
         ('tg',    1)
     ])
-
+    logger.info(" + Create index of 'perfdata2_daily'")
+    storage.get_backend('perfdata2_daily').ensure_index([
+        ('insert_date', 1),
+    ])
     logger.info(" + Create index of 'events'")
     storage.get_backend('events').ensure_index([
         ('connector_name', 1),
