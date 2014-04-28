@@ -210,6 +210,9 @@ def clean_mfilter(mfilter, isnot=False):
 	if not mfilter or isinstance(mfilter,int):
 		return mfilter
 
+	if None in mfilter:
+		del mfilter[None]
+
 	for key in mfilter:
 		if key == '$not':
 				isnot = True
