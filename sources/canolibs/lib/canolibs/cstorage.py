@@ -155,7 +155,7 @@ class cstorage(object):
 		count = self.count({'_id': _id}, namespace=namespace, account=account, for_write=True)
 		if count:
 			backend = self.get_backend(namespace)
-			backend.update({ '_id': self.clean_id(_id) }, { "$set": data });
+			backend.update({ '_id': self.clean_id(_id) }, { "$set": data }, safe=True, w=1)
 		else:
 			raise KeyError("'%s' not found ..." % _id)
 
@@ -229,7 +229,7 @@ class cstorage(object):
 					if not data['_id']:
 						del data['_id']
 
-					_id = backend.insert(data, safe=self.mongo_safe)
+					_id = backend.insert(data, safe=self.mongo_safe, w=1)
 					self.logger.debug("Successfully inserted (_id: '%s')" % _id)
 
 				except Exception, err:
@@ -255,9 +255,9 @@ class cstorage(object):
 					_id = self.clean_id(_id)
 
 					if mset:
-						ret = backend.update({'_id': _id}, {"$set": data}, upsert=True, safe=self.mongo_safe)
+						ret = backend.update({'_id': _id}, {"$set": data}, upsert=True, safe=self.mongo_safe, w=1)
 					else:
-						ret = backend.update({'_id': _id}, data, upsert=True, safe=self.mongo_safe)
+						ret = backend.update({'_id': _id}, data, upsert=True, safe=self.mongo_safe, w=1)
 
 					if self.mongo_safe:
 						if ret['updatedExisting']:

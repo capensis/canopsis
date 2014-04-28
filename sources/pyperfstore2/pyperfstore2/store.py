@@ -149,7 +149,7 @@ class store(object):
 			data['$pop'] = mpop
 
 		if data:
-			return self.collection.update({'_id': _id}, data, upsert=upsert)
+			return self.collection.update({'_id': _id}, data, upsert=upsert, safe=True, w=1)
 
 	def push(self, _id, point, meta_data={}, bulk=True):
 
@@ -160,7 +160,7 @@ class store(object):
 		meta_data['lv'] = point[1]
 
 		if not _id in self.daily_ids:
-			self.update(_id=_id, mset=meta_data)
+			self.update(_id=_id, mset=meta_data, safe=True, w=1)
 			self.daily_ids[_id] = True
 
 		now = time.time()
@@ -184,10 +184,10 @@ class store(object):
 			# Prevent from updating more than once a second the document
 			if metric_document['last_update_date'] != int(now):
 				# update perfdata to db
-				self.daily_collection.update({'_id': _id}, {'$inc': {'count': 1}, '$set': {'last_update_date': int(now), 'values.' + str(int(time.time())): [point[0], point[1]]}}, upsert=True)
+				self.daily_collection.update({'_id': _id}, {'$inc': {'count': 1}, '$set': {'last_update_date': int(now), 'values.' + str(int(time.time())): [point[0], point[1]]}}, upsert=True, safe=True, w=1)
 		else:
 			insert_date = int(time.time())
-			self.daily_collection.insert({'_id': _id, 'count': 1, 'last_update_date': int(now), 'insert_date': insert_date ,'values': {str(insert_date): [point[0], point[1]]}})
+			self.daily_collection.insert({'_id': _id, 'count': 1, 'last_update_date': int(now), 'insert_date': insert_date ,'values': {str(insert_date): [point[0], point[1]]}}, safe=True, w=1)
 
 		self.pushed_values += 1
 
