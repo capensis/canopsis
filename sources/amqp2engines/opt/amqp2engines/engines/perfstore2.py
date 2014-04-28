@@ -30,7 +30,6 @@ from caccount import caccount
 
 from cengine import cengine
 from camqp import camqp
-<<<<<<< HEAD
 
 import logging
 
