@@ -210,6 +210,9 @@ def clean_mfilter(mfilter, isnot=False):
 	if not mfilter or isinstance(mfilter,int):
 		return mfilter
 
+	if type(mfilter) is dict and None in mfilter:
+		del mfilter[None]
+
 	for key in mfilter:
 		if key == '$not':
 				isnot = True

@@ -1,4 +1,3 @@
-
 #!/usr/bin/env python
 # --------------------------------
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
@@ -266,12 +265,18 @@ def perfstore_get_all_metrics(limit = 20, start = 0, search = None, filter = Non
  	logger.debug(" + mfilter:  %s" % mfilter)
 
  	mfilter = clean_mfilter(mfilter)
-	data  = manager.find(limit=limit + 1, skip=start, mfilter=mfilter, data=False, sort=msort)
+	data  = manager.find(limit=limit, skip=start, mfilter=mfilter, data=False, sort=msort)
 
 	if use_hint:
 		data.hint([('co',1),('re',1),('me',1)])
 
- 	data  = list(data)
+	if isinstance(data, dict):
+		data = [data]
+	elif data is not None:
+		data = list(data)
+	else:
+		data = list()
+
 
 	if use_hint:
 		total = start + len(data)
