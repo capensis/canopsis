@@ -231,8 +231,13 @@ def perstore_get_all_metrics():
 		
 	logger.debug(" + mfilter:  %s" % mfilter)
 	
+	if limit > 0:
+    	extra_limit = 1
+	else:
+		extra_limit = 0
+
 	mfilter = clean_mfilter(mfilter)
-	data  = manager.find(limit=limit, skip=start, mfilter=mfilter, data=False, sort=msort)
+	data  = manager.find(limit=limit + extra_limit, skip=start, mfilter=mfilter, data=False, sort=msort)
 
 	if use_hint:
 		data.hint([('co',1),('re',1),('me',1)])
