@@ -224,9 +224,6 @@ class engine(cengine):
 										'actions': { '$exists' : True },
 										'conditions': { '$exists' : True } },
 										namespace="object")
-	def beat(self):
-		self.logger.debug('Derogation BEAT')
-
 
 
 	def consume_dispatcher(self,  event, *args, **kargs):

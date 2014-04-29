@@ -229,9 +229,7 @@ class cstorage(object):
 					if not data['_id']:
 						del data['_id']
 
-
-					_id = backend.update({'_id': _id}, data, safe=self.mongo_safe, upsert=True, w=1)
-
+					backend.update({'_id': _id}, data, safe=self.mongo_safe, upsert=True, w=1)
 					self.logger.debug("Successfully inserted (_id: '%s')" % _id)
 
 				except Exception, err:
