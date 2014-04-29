@@ -160,7 +160,7 @@ class store(object):
 		meta_data['lv'] = point[1]
 
 		if not _id in self.daily_ids:
-			self.update(_id=_id, mset=meta_data, safe=True, w=1)
+			self.update(_id=_id, mset=meta_data)
 			self.daily_ids[_id] = True
 
 		now = time.time()
