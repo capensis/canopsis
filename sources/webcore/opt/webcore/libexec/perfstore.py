@@ -232,7 +232,7 @@ def perstore_get_all_metrics():
 	logger.debug(" + mfilter:  %s" % mfilter)
 	
 	if limit > 0:
-    	extra_limit = 1
+		extra_limit = 1
 	else:
 		extra_limit = 0
 
