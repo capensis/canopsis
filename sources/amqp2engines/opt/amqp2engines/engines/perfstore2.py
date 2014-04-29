@@ -49,11 +49,9 @@ class engine(cengine):
 		super(engine, self).create_amqp_queue()
 
 	def pre_run(self):
-		import logging
 		self.manager = pyperfstore2.manager(logging_level=self.logging_level)
 
-		self.internal_amqp = camqp(logging_level=self.logging_level, logging_name="%s-internal-amqp" % self.name)
-		self.internal_amqp.add_queue(
+		self.amqp.add_queue(
 			queue_name=INTERNAL_QUEUE,
 			routing_keys=["#"],
 			callback=self.on_internal_event,
@@ -62,13 +60,7 @@ class engine(cengine):
 			auto_delete=False
 		)
 
-		self.internal_amqp.start()
 		self.beat()
-
-	def post_run(self):
-		self.internal_amqp.cancel_queues()
-		self.internal_amqp.stop()
-		self.internal_amqp.join()
 
 	def to_perfstore(self, rk, perf_data, timestamp, component, resource=None, tags=None):
 
@@ -177,7 +169,7 @@ class engine(cengine):
 
 		event['perf_data_array'] = perf_data_array
 
-		self.internal_amqp.publish(event, INTERNAL_QUEUE)
+		self.amqp.publish(event, INTERNAL_QUEUE)
 
 		# Clean perfdata keys
 		for index, perf_data in enumerate(event['perf_data_array']):
