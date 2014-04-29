@@ -775,9 +775,6 @@ class cstorage(object):
 		
 		return self.fs.exists(_id)
 	
-	def __del__(self):
-		self.disconnect()
-		self.logger.debug("Object deleted. (namespace: %s)" % self.namespace)
 
 #####
 #       docs = doc_or_docs
@@ -790,19 +787,13 @@ class cstorage(object):
 ## Cache storage
 STORAGES = {}
 def get_storage(namespace='object', account=None, logging_level=logging.INFO):
-	return cstorage(account, namespace=namespace, logging_level=logging_level)
-	"""global STORAGES
+	global STORAGES
 	try:
-		result = STORAGES[namespace]
-		if result.connected:
-			result.disconnect()
-			result = cstorage(account, namespace=namespace, logging_level=logging_level)
-			STORAGES[namespace] = result
-			return result
+		return STORAGES[namespace]
 	except:
 		if not account:
 			account = caccount()
-		
+
 		STORAGES[namespace] = cstorage(account, namespace=namespace, logging_level=logging_level)
 		return STORAGES[namespace]
-	"""
+

@@ -582,10 +582,6 @@ class manager(object):
 		self.logger.debug("DISCONNECT MANAGER")
 		self.store.disconnect()
 
-	def __del__(self):
-		self.logger.debug("del MANAGER %s" % self)
-		self.disconnect()
-
 
 def split_list(alist, wanted_parts=1):
     length = len(alist)

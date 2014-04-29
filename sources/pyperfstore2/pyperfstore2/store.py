@@ -276,5 +276,3 @@ class store(object):
 		else:
 			self.logger.warning("Impossible to disconnect, you are not connected")
 
-	def __del__(self):
-		self.disconnect()
