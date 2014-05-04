@@ -31,14 +31,16 @@ import pyperfstore2
 
 import logging
 
-NAME="alertcounter"
 INTERNAL_COMPONENT = '__canopsis__'
 MACRO = 'CAN_PRIORITY'
 
 
 class engine(cengine):
+	etype = "alertcounter"
+
 	def __init__(self, *args, **kargs):
-		super(engine, self).__init__(name=NAME, *args, **kargs)
+		super(engine, self).__init__(*args, **kargs)
+
 		self.listened_event_type = ['check','selector','eue','sla', 'log']
 		self.manager = pyperfstore2.manager()
 
@@ -107,7 +109,7 @@ class engine(cengine):
 		# Comment action (ensure the component exists in database)
 		logevent = cevent.forger(
 			connector = 'cengine',
-			connector_name = NAME,
+			connector_name = self.etype,
 			event_type = 'log',
 			source_type = 'component',
 			component = INTERNAL_COMPONENT,
@@ -120,7 +122,7 @@ class engine(cengine):
 		# Update counter
 		new_event = deepcopy(event)
 		new_event['connector']      = 'cengine'
-		new_event['connector_name'] = NAME
+		new_event['connector_name'] = self.etype
 		new_event['event_type']     = 'check'
 		new_event['source_type']    = 'component'
 		new_event['component']      = INTERNAL_COMPONENT

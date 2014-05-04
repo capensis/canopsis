@@ -29,12 +29,12 @@ from cstorage import get_storage
 from crecord import crecord
 import time
 
-NAME="acknowledgement"
-
 
 class engine(cengine):
-	def __init__(self, name=NAME, acknowledge_on='canopsis.events', *args, **kargs):
-		cengine.__init__(self, name=name, *args, **kargs)
+	etype = "acknowledgement"
+
+	def __init__(self, acknowledge_on='canopsis.events', *args, **kargs):
+		super(engine, self).__init__(*args, **kargs)
 
 		account = caccount(user="root", group="root")
 
@@ -45,7 +45,6 @@ class engine(cengine):
 
 	def pre_run(self):
 		self.beat()
-
 
 	def beat(self):
 		self.reload_ack_cache()
@@ -119,7 +118,7 @@ class engine(cengine):
 
 					logevent = cevent.forger(
 						connector = "cengine",
-						connector_name = NAME,
+						connector_name = self.etype,
 						event_type = "log",
 						source_type = referer_event['source_type'],
 						component = referer_event['component'],
@@ -149,7 +148,7 @@ class engine(cengine):
 
 			alerts_event = cevent.forger(
 				connector = "cengine",
-				connector_name = NAME,
+				connector_name = self.etype,
 				event_type = "perf",
 				source_type = "component",
 				component = "__canopsis__",
@@ -166,7 +165,7 @@ class engine(cengine):
 			for hostgroup in event.get('hostgroups', []):
 				alerts_event = cevent.forger(
 					connector = "cengine",
-					connector_name = NAME,
+					connector_name = self.etype,
 					event_type = "perf",
 					source_type = "resource",
 					component = "__canopsis__",
@@ -213,7 +212,7 @@ class engine(cengine):
 
 					logevent = cevent.forger(
 						connector = "cengine",
-						connector_name = NAME,
+						connector_name = self.etype,
 						event_type = "log",
 						source_type = event['source_type'],
 						component = event['component'],

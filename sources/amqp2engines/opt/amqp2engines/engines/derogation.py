@@ -27,11 +27,12 @@ import cmfilter
 import time
 import json
 
-NAME="derogation"
 
 class engine(cengine):
+	etype = "derogation"
+
 	def __init__(self, *args, **kargs):
-		cengine.__init__(self, name=NAME, *args, **kargs)
+		super(engine, self).__init__(*args, **kargs)
 
 		self.derogations = []
 
@@ -206,7 +207,7 @@ class engine(cengine):
 				connector_name = "engine",
 				event_type = "log",
 				source_type="component",
-				component=NAME,
+				component=self.etype,
 				state=state,
 				output=output,
 				long_output=derogation.get('description', None)

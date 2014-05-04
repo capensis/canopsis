@@ -29,14 +29,14 @@ import time
 from datetime import datetime
 from random import random
 
-NAME="topology"
-
 import sys, os
-sys.path.append(os.path.expanduser('~/opt/amqp2engines/engines/%s/' % NAME))
+sys.path.append(os.path.expanduser('~/opt/amqp2engines/engines/topology/'))
 
 class engine(cengine):
+	etype = 'topology'
+
 	def __init__(self, *args, **kargs):
-		cengine.__init__(self, name=NAME, *args, **kargs)
+		super(engine, self).__init__(*args, **kargs)
 
 		self.beat_interval = 60
 		self.nb_beat = 0
@@ -46,7 +46,6 @@ class engine(cengine):
 		# All ids in all topos
 
 		self.stateById = {}
-
 
 		# Beat
 		self.normal_beat_interval = 300
@@ -261,7 +260,7 @@ class engine(cengine):
 			self.storage.update(topo['_id'], {'state': states_info['state']})
 
 			event = cevent.forger(
-				connector =			NAME,
+				connector =			self.etype,
 				connector_name =	"engine",
 				event_type =		"topology",
 				source_type =		"component",

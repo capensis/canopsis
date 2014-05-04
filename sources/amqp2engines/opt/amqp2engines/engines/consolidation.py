@@ -33,10 +33,13 @@ import time
 from datetime import datetime
 from ctools import internal_metrics, roundSignifiantDigit
 
-NAME="consolidation"
 
 class engine(cengine):
+	etype = 'consolidation'
+
 	def __init__(self, *args, **kargs):
+		super(engine, self).__init__(*args, **kargs)
+
 		self.metrics_list = {}
 		self.timestamps = {} 
 		self.default_interval = 60
@@ -44,11 +47,10 @@ class engine(cengine):
 		self.thd_warn_sec_per_evt = 8
 		self.thd_crit_sec_per_evt = 10
 
-		cengine.__init__(self, name=NAME, *args, **kargs)
 
 	def pre_run(self):
 		self.storage = get_storage(namespace='object', account=caccount(user="root", group="root"))
-		self.manager = pyperfstore2.manager(logging_level=logging.INFO)
+		self.manager = pyperfstore2.manager(logging_level=self.logging_level)
 				
 		self.beat()
 

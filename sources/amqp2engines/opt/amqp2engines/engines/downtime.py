@@ -31,12 +31,13 @@ import time
 import acknowledgement as engine_ack
 import datetime
 
-NAME="downtime"
-
 
 class engine(cengine):
-	def __init__(self, name=NAME, *args, **kwargs):
-		cengine.__init__(self, name=name, *args, **kwargs)
+	etype = 'downtime'
+
+	def __init__(self, *args, **kwargs):
+		super(engine, self).__init__(*args, **kwargs)
+
 		account = caccount(user="root", group="root")
 
 		self.storage = get_storage(namespace='downtime', account=account)
@@ -122,7 +123,7 @@ class engine(cengine):
 
 			logevent = cevent.forger(
 				connector = "cengine",
-				connector_name = NAME,
+				connector_name = self.etype,
 				event_type = "log",
 				source_type = event['source_type'],
 				component = event['component'],

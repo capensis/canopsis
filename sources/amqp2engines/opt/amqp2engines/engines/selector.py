@@ -24,8 +24,7 @@ from caccount import caccount
 from cselector import cselector
 
 import logging
-		
-NAME="selector"
+
 
 class engine(cengine):
 	"""
@@ -35,8 +34,11 @@ class engine(cengine):
 		This computation is triggered each time the crecord dispatcher emit a crecord event of selector type.
 	"""
 
+	etype = 'selector'
+
 	def __init__(self, *args, **kargs):
-		cengine.__init__(self, name=NAME, *args, **kargs)
+		super(engine, self).__init__(*args, **kargs)
+
 		self.selectors = []
 		self.nb_beat = 0
 		self.thd_warn_sec_per_evt = 1.5

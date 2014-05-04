@@ -23,11 +23,12 @@ from bson import BSON
 import json
 import time
 
-NAME="cleaner"
 
 class engine(cengine):
-	def __init__(self, name=NAME, *args, **kargs):
-		cengine.__init__(self, name=name, *args, **kargs)
+	etype = "cleaner"
+
+	def __init__(self, *args, **kargs):
+		super(engine, self).__init__(*args, **kargs)
 		
 	def work(self, body, msg, *args, **kargs):
 		## Sanity Checks

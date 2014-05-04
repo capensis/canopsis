@@ -22,11 +22,13 @@ from carchiver import carchiver
 
 from cengine import cengine
 from cdowntime import Cdowntime
-NAME="eventstore"
+
 
 class engine(cengine):
+	etype = 'eventstore'
+
 	def __init__(self, *args, **kargs):
-		cengine.__init__(self, name=NAME, *args, **kargs)
+		super(engine, self).__init__(*args, **kargs)
 
 		self.archiver = carchiver(namespace='events',  autolog=True, logging_level=self.logging_level)
 

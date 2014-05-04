@@ -32,12 +32,15 @@ from cengine import cengine
 from camqp import camqp
 from ctools import internal_metrics
 
-NAME="perfstore2"
+
 INTERNAL_QUEUE="beat_perfstore2"
 
+
 class engine(cengine):
+	etype = 'perfstore2'
+
 	def __init__(self, *args, **kargs):
-		cengine.__init__(self, name=NAME, *args, **kargs)
+		super(engine, self).__init__(*args, **kargs)
 
 		self.beat_interval =  300
 		self.storage = get_storage(namespace='object', account=caccount(user="root", group="root"))
@@ -47,9 +50,9 @@ class engine(cengine):
 
 	def pre_run(self):
 		import logging
-		self.manager = pyperfstore2.manager(logging_level=logging.INFO)
+		self.manager = pyperfstore2.manager(logging_level=self.logging_level)
 
-		self.internal_amqp = camqp(logging_level=logging.INFO, logging_name="%s-internal-amqp" % self.name)
+		self.internal_amqp = camqp(logging_level=self.logging_level, logging_name="%s-internal-amqp" % self.name)
 		self.internal_amqp.add_queue(
 			queue_name=INTERNAL_QUEUE,
 			routing_keys=["#"],

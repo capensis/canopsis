@@ -25,12 +25,12 @@ from cselector import cselector
 import cmfilter
 import json
 
-NAME="tag"
 
 class engine(cengine):
+	etype = 'tag'
 
 	def __init__(self, *args, **kargs):
-		cengine.__init__(self, name=NAME, *args, **kargs)
+		super(engine, self).__init__(*args, **kargs)
 		self.nb_beat = 0
 
 	def pre_run(self):

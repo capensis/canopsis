@@ -24,14 +24,18 @@ from caccount import caccount
 from cselector import cselector
 from kombu import Exchange
 import logging, time
-		
-NAME="crecord_dispatcher"
+
+
 # Delay since the lock document is released in any cases
 UNLOCK_DELAY = 60
 
+
 class engine(cengine):
+	etype = "crecord_dispatcher"
+	
 	def __init__(self, *args, **kargs):
-		super(engine, self).__init__(name=NAME, *args, **kargs)
+		super(engine, self).__init__(*args, **kargs)
+
 		self.crecords = []
 		self.delays = {}
 		self.beat_interval = 5
@@ -44,7 +48,6 @@ class engine(cengine):
 		self.backend = self.storage.get_backend('object')
 
 	def load_crecords(self):
-
 		crecords = []
 		now = int(time.time())
 
@@ -142,7 +145,5 @@ class engine(cengine):
 					#Crecord gets out of queue and will be reloaded on next beat
 					self.logger.error('Dispatcher was unable to send crecord_type error : %s' % (e))
 					self.storage.update(record_id, {'loaded': False})
-
-
 
 		self.nb_beat +=1
