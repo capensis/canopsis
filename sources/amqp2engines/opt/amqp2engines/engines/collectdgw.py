@@ -19,21 +19,20 @@
 # ---------------------------------
 
 from ctools import Str2Number
-
-NAME="collectdgw"
-
 from cengine import cengine
 import cevent
 import time
 
 import sys, os
-sys.path.append(os.path.expanduser('~/opt/amqp2engines/engines/%s/' % NAME))
+sys.path.append(os.path.expanduser('~/opt/amqp2engines/engines/collectdgw/'))
 
 from collectd import types
 
 class engine(cengine):
+	etype = 'collectdgw'
+
 	def __init__(self, *args, **kargs):
-		cengine.__init__(self, name=NAME, *args, **kargs)
+		super(engine, self).__init__(*args, **kargs)
 
 	def new_amqp_queue(self, *args, **kwargs):
 		"""

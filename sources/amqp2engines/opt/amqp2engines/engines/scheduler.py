@@ -28,12 +28,11 @@ import datetime
 import time
 
 
-NAME='scheduler'
-
-
 class engine(cengine):
+	etype = 'scheduler'
+
 	def __init__(self, *args, **kwargs):
-		super(engine, self).__init__(name=NAME, *args, **kwargs)
+		super(engine, self).__init__(*args, **kwargs)
 
 		account = caccount(user='root', group='root')
 		self.storage = get_storage('jobs', account=account).get_backend()

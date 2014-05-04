@@ -26,11 +26,13 @@ import cevent
 import time
 import md5
 
-NAME="entities"
 
 class engine(cengine):
-	def __init__(self, name=NAME, *args, **kwargs):
-		super(engine, self).__init__(name=name, *args, **kwargs)
+	etype = 'entities'
+
+	def __init__(self, *args, **kwargs):
+		super(engine, self).__init__(*args, **kwargs)
+
 		self.account = caccount(user='root', group='root')
 		self.storage = get_storage(namespace='entities', logging_level=self.logging_level, account=self.account)
 		self.backend = self.storage.get_backend()

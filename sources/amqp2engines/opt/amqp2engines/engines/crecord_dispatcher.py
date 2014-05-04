@@ -26,13 +26,14 @@ from kombu.pools import producers
 from kombu import Connection, Queue, Exchange
 import logging, time
 
-NAME="crecord_dispatcher"
 # Delay since the lock document is released in any cases
 UNLOCK_DELAY = 60
 
 class engine(cengine):
+	etype = "crecord_dispatcher"
+	
 	def __init__(self, *args, **kargs):
-		super(engine, self).__init__(name=NAME, *args, **kargs)
+		super(engine, self).__init__(*args, **kargs)
 		
 		self.crecords = []
 		self.delays = {}

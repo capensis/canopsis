@@ -1,7 +1,7 @@
 
-PREFIX="/opt/canopsis"
-HUSER="canopsis"
-HGROUP="canopsis"
+PREFIX="/opt/ratp/canopsis"
+HUSER="canopsis-ratp"
+HGROUP="canopsis-ratp"
 ARCH=`uname -m`
 SUDO="sudo -E"
 

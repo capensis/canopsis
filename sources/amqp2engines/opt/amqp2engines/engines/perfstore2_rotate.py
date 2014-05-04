@@ -26,13 +26,14 @@ import pyperfstore2
 import logging
 import time
 
-NAME="perfstore2_rotate"
 LOCK_DELAY = 300
 LOCK_QUERY = {'crecord_name':'lock_perfstore2_rotate'}
 
 class engine(cengine):
+	etype = 'perfstore2_rotate'
+
 	def __init__(self, *args, **kargs):
-		cengine.__init__(self, name=NAME,logging_level=logging.DEBUG, *args, **kargs)
+		super(engine, self).__init__(*args, **kargs)
 
 		self.beat_interval=10
 
@@ -40,11 +41,10 @@ class engine(cengine):
 
 		self.rotation_interval = 60 * 60 * 24 # 24 hours
 
-
 		self.last_build = time.time()
 
 	def pre_run(self):
-		self.manager = pyperfstore2.manager(logging_level=logging.INFO)
+		self.manager = pyperfstore2.manager(logging_level=self.logging_level)
 		self.storage = get_storage(namespace='object', account=caccount(user="root", group="root"))
 		self.beat()
 

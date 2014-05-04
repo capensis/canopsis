@@ -30,8 +30,6 @@ import logging
 import time
 from datetime import datetime
 
-NAME="sla"
-
 #states_str = ("Ok", "Warning", "Critical", "Unknown", "Undetermined")
 #states = {0: 0, 1:0, 2:0, 3:0, 4:0}
 
@@ -39,8 +37,10 @@ states_str = ("Ok", "Warning", "Critical", "Unknown")
 states = {0: 0, 1:0, 2:0, 3:0}
 
 class engine(cengine):
+	etype = 'sla'
+
 	def __init__(self, *args, **kargs):
-		cengine.__init__(self, name=NAME, *args, **kargs)
+		super(engine, self).__init__(*args, **kargs)
 
 		self.create_queue = False
 

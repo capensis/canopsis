@@ -36,12 +36,14 @@ import logging
 from ctools import internal_metrics
 
 
-NAME="perfstore2"
 INTERNAL_QUEUE="beat_perfstore2"
 
+
 class engine(cengine):
+	etype = 'perfstore2'
+
 	def __init__(self, *args, **kargs):
-		super(engine, self).__init__(name=NAME, *args, **kargs)
+		super(engine, self).__init__(*args, **kargs)
 
 		self.beat_interval =  300
 		self.storage = get_storage(namespace='object', account=caccount(user="root", group="root"))

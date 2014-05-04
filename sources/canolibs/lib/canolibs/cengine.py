@@ -18,22 +18,25 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-import multiprocessing
-import time
-import Queue
-import logging
-import os, sys
 from cinit import cinit
-import traceback
-import cevent
+from camqp import camqp
 from caccount import caccount
+import cevent
 
+import traceback
 import itertools
+import logging
+import time
+import sys
+import os
+
 
 DROP = -1
 DISPATCHER_READY_TIME = 5
 
-class cengine(multiprocessing.Process):
+
+class cengine(object):
+	etype = 'cengine'
 
 	def __init__(self,
 			next_amqp_queues=[],
@@ -42,19 +45,18 @@ class cengine(multiprocessing.Process):
 			beat_interval=60,
 			logging_level=logging.INFO,
 			exchange_name='amq.direct',
-			routing_keys=[]):
+			routing_keys=[],
+			*args, **kwargs):
 
-		multiprocessing.Process.__init__(self)
+		super(cengine, self).__init__(*args, **kwargs)
 
 		self.logging_level = logging_level
-
-		self.signal_queue = multiprocessing.Queue(maxsize=5)
 
 		self.RUN = True
 
 		self.name = name
 
-		self.amqp_queue = "Engine_%s" % name
+		self.amqp_queue = "Engine_{0}".format(self.name)
 		self.routing_keys = routing_keys
 		self.exchange_name = exchange_name
 
@@ -98,7 +100,6 @@ class cengine(multiprocessing.Process):
 
 		self.dispatcher_crecords = ['selector','topology','derogation','consolidation', 'sla', 'downtime', 'perfstore2_rotate']
 
-
 	def crecord_task_complete(self, crecord_id):
 		next_ready = time.time() + DISPATCHER_READY_TIME
 		self.storage.update(crecord_id, {'loaded': False, 'next_ready_time': next_ready})
@@ -106,21 +107,23 @@ class cengine(multiprocessing.Process):
 
 	def get_ready_record(self, event):
 		"""
-		crecord dispatcher sent an event with type and crecord id.
-		So I load a crecord object instance (dynamically) from these informations
+			crecord dispatcher sent an event with type and crecord id.
+			So I load a crecord object instance (dynamically) from these informations
 		"""
+
 		if '_id' not in event or 'crecord_type' not in event or event['crecord_type'] not in self.dispatcher_crecords:
 			self.logger.warning('record type not found for received event')
 			return None
 
 		record_object = None
+
 		try:
 			record_object = self.storage.get(event['_id'], account=caccount(user="root", group="root"))
+
 		except Exception, e:
 			self.logger.critical('unable to retrieve crecord object of %s for record type %s : %s' % (str(self.dispatcher_crecords), event['crecord_type'], e) )
+
 		return record_object
-
-
 
 	def new_amqp_queue(self, amqp_queue, routing_keys, on_amqp_event, exchange_name):
 		self.amqp.add_queue(
@@ -145,46 +148,39 @@ class cengine(multiprocessing.Process):
 
 		self.logger.info("Start Engine with pid %s" % (os.getpid()))
 
-		from camqp import camqp
-
-		self.amqp = camqp(logging_level=logging.INFO, logging_name="%s-amqp" % self.name, on_ready=ready)
+		self.amqp = camqp(logging_level=self.logging_level, logging_name="%s-amqp" % self.name, on_ready=ready)
 
 		if self.create_queue:
 			self.new_amqp_queue(self.amqp_queue, self.routing_keys, self.on_amqp_event, self.exchange_name)
 			# This is an async engine and it needs engine dispatcher bindinds to be feed properly
 
-
-		if self.name in self.dispatcher_crecords:
-			rk = 'dispatcher.' + self.name
-			self.logger.debug('Creating dispatcher queue for engine ' + self.name)
-			self.new_amqp_queue('Dispatcher_' + self.name, rk, self.consume_dispatcher, self.exchange_name)
-
+		if self.etype in self.dispatcher_crecords:
+			rk = 'dispatcher.' + self.etype
+			self.logger.debug('Creating dispatcher queue for engine ' + self.etype)
+			self.new_amqp_queue('Dispatcher_' + self.etype, rk, self.consume_dispatcher, self.exchange_name)
 
 		self.amqp.start()
 
 		self.pre_run()
 
 		while self.RUN:
-			# Internal signals
-			try:
-				signal = self.signal_queue.get_nowait()
-				self.logger.debug("Signal: %s" % signal)
-				if signal == "STOP":
-					self.RUN = False
-			except Queue.Empty:
-				pass
-
 			# Beat
 			if self.beat_interval:
 				now = time.time()
+
 				if now > (self.beat_last + self.beat_interval):
 					self._beat()
 					self.beat_last = now
 
 			try:
 				time.sleep(1)
+
 			except Exception as err:
 				self.logger.error("Error in break time: %s" % err)
+				self.RUN = False
+
+			except KeyboardInterrupt:
+				self.logger.info('Stop request')
 				self.RUN = False
 
 		self.post_run()
@@ -196,6 +192,7 @@ class cengine(multiprocessing.Process):
 	def on_amqp_event(self, event, msg):
 		try:
 			self._work(event, msg)
+
 		except Exception as err:
 			if event['rk'] not in self.rk_on_error:
 				self.logger.error(err)
@@ -207,13 +204,16 @@ class cengine(multiprocessing.Process):
 	def _work(self, event, msg=None, *args, **kargs):
 		start = time.time()
 		error = False
+
 		try:
 			wevent = self.work(event, msg, *args, **kargs)
 
 			if wevent == DROP:
 				pass
+
 			elif isinstance(wevent, dict):
 				self.next_queue(wevent)
+
 			else:
 				self.next_queue(event)
 
@@ -248,7 +248,6 @@ class cengine(multiprocessing.Process):
 				self.amqp.publish(event, queue_name, "amq.direct")
 
 	def _beat(self):
-
 		now = int(time.time())
 
 		if self.last_stat + 60 <= now:
@@ -301,16 +300,17 @@ class cengine(multiprocessing.Process):
 				rk = cevent.get_routingkey(event)
 				self.amqp.publish(event, rk, self.amqp.exchange_name_events)
 
-
 			self.counter_error = 0
 			self.counter_event = 0
 			self.counter_worktime = 0
 
 		try:
 			self.beat()
+
 		except Exception, err:
 			self.logger.error("Beat raise exception: %s" % err)
 			traceback.print_exc(file=sys.stdout)
+
 		finally:
 			self.beat_lock = False
 
@@ -325,6 +325,4 @@ class cengine(multiprocessing.Process):
 
 		self.amqp.stop()
 		self.amqp.join()
-		self.signal_queue.empty()
-		del self.signal_queue
 		self.logger.debug(" + Stopped")

@@ -17,6 +17,7 @@ function install(){
 	easy_install_pylib $SRC_PATH/externals/Ubik-toolbelt.tgz
 
 	cp $SRC_PATH/bootstrap/ubik.conf $PREFIX/etc/ubik.conf.ori
+	sed -i s:@PREFIX@:$PREFIX: $PREFIX/etc/ubik.conf.ori
 
 	rm -Rf $PREFIX/bin/ubik &> /dev/null || true
 	if [ -e $PREFIX/bin/ubik.ori ]; then

@@ -35,12 +35,11 @@ import time
 import re
 
 
-NAME='task_mail'
-
-
 class engine(TaskHandler):
+	etype = 'task_mail'
+
 	def __init__(self, *args, **kwargs):
-		super(engine, self).__init__(name=NAME, *args, **kwargs)
+		super(engine, self).__init__(*args, **kwargs)
 
 	def handle_task(self, job):
 		user = job.get('user', 'root')

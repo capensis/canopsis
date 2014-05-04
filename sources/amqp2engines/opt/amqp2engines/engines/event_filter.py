@@ -24,18 +24,18 @@ from cengine import DROP
 from caccount import caccount
 from cstorage import get_storage
 import cevent
-import logging
 import cmfilter
 import ast
 
-NAME='event_filter'
 
 class engine(cengine):
+	etype = 'event_filter'
 
 	def __init__(self, *args, **kargs):
-		cengine.__init__(self, name=NAME, *args, **kargs)
+		super(engine, self).__init__(*args, **kargs)
+
 		account = caccount(user="root", group="root")
-		self.storage = get_storage(logging_level=logging.DEBUG, account=account)
+		self.storage = get_storage(logging_level=self.logging_level, account=account)
 		
 	def pre_run(self):
 		self.drop_event_count = 0
