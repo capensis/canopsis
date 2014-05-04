@@ -32,7 +32,8 @@ UNLOCK_DELAY = 60
 
 class engine(cengine):
 	def __init__(self, *args, **kargs):
-		cengine.__init__(self, name=NAME, *args, **kargs)
+		super(engine, self).__init__(name=NAME, *args, **kargs)
+		
 		self.crecords = []
 		self.delays = {}
 		self.beat_interval = 5
@@ -43,32 +44,12 @@ class engine(cengine):
 			'perfstore2_rotate': {'delay': 60, 'elapsed_since_last_beat' : 0}
 		}
 
-
-	def init_amqp(self):
-		self.logger.debug('Initiating amqp connection to dispatchers')
-		# Connection
-		with Connection('amqp://guest:guest@localhost/canopsis') as conn:
-			# Get one producer
-			with producers[conn].acquire(block=True) as producer:
-				self.amqp_producer = producer
-
 	def pre_run(self):
 		#load crecords from database
 		self.storage = get_storage(namespace='object', account=caccount(user="root", group="root"))
-
 		self.backend = self.storage.get_backend('object')
 
-		self.connect_amqp()
-
 		self.beat()
-
-	def connect_amqp(self):
-
-		# Connection
-		self.amqp_connection = Connection('amqp://guest:guest@localhost/canopsis')
-		# Get one producer
-		self.producer = producers[self.amqp_connection].acquire(block=True)
-
 
 	def load_crecords(self):
 
@@ -130,20 +111,10 @@ class engine(cengine):
 
 	#Factorised code method
 	def publish_record(self, event, crecord_type):
+          rk = 'dispatcher.{0}'.format(crecord_type)
 
-		rk = 'dispatcher.' + crecord_type
-		exchange = Exchange('media', 'direct', durable=True)
-		queue = Queue('Dispatcher_' + crecord_type, exchange=exchange, routing_key=rk)
-
-		self.producer.publish(
-			event,
-			serializer='json',
-			exchange=exchange,
-			routing_key=rk,
-			declare=[queue])
-		self.logger.debug('publishing on queue : Dispatcher_' + crecord_type)
-
-
+          self.amqp.exchanges['media'] = Exchange('media', 'direct', durable=True)
+          self.amqp.publish(event, rk, exchange_name='media')
 
 	def beat(self):
 		self.logger.debug('cdispatcher beat 1')
@@ -166,12 +137,8 @@ class engine(cengine):
 			self.logger.debug('Nothig to do for now')
 			return
 
-		if not self.producer:
-			self.connect_amqp()
-
 		# Loop until list is empty
 		self.logger.debug(' + %s beat, %s crecords queued to publish @ %s' % (self.name, len(crecords), int(time.time())))
-
 
 		for crecord in crecords:
 
@@ -196,14 +163,4 @@ class engine(cengine):
 					self.logger.error('Dispatcher was unable to send crecord_type error : %s' % (e))
 					self.storage.update(record_id, {'loaded': False})
 
-
-
 		self.nb_beat +=1
-
-	def post_run(self):
-		try:
-			self.producer.close()
-			self.logger.debug('Amqp connection closed properly')
-		except Exception, e:
-			self.logger.warning('Unable to disconnect properly from AMQP' + str(e))
-
