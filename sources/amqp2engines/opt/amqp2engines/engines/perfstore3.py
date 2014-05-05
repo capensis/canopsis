@@ -34,6 +34,7 @@ import time
 
 from md5 import new as md5
 
+from copy import deepcopy
 
 class Period(object):
 	"""
@@ -281,6 +282,8 @@ class engine(cengine):
 		return event
 
 	def on_internal_event(self, event, msg=None):
+		event = deepcopy(event)
+
 		## Metrology
 		timestamp = event.get('timestamp', None)
 
@@ -302,7 +305,6 @@ class engine(cengine):
 
 						# get node id
 						md5_id = md5()
-
 						# add component in id
 						md5_id.update(component.encode('ascii', 'ignore'))
 						# add resource in id
