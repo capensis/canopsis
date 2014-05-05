@@ -27,9 +27,10 @@ import cevent
 
 from cstorage import get_storage
 from caccount import caccount
-import pyperfstore2
 
-import logging
+from pyperfstore3 import Manager
+
+from md5 import new as md5
 
 INTERNAL_COMPONENT = '__canopsis__'
 MACRO = 'CAN_PRIORITY'
@@ -42,7 +43,7 @@ class engine(cengine):
 		super(engine, self).__init__(*args, **kargs)
 
 		self.listened_event_type = ['check','selector','eue','sla', 'log']
-		self.manager = pyperfstore2.manager()
+		self.manager = Manager()
 
 		self.comments = {}
 		# Get SLA configuration
@@ -60,7 +61,6 @@ class engine(cengine):
 		self.logger.debug('Load record for macros')
 
 		self.MACRO = MACRO
-
 
 		record = self.storage.get_backend('object').find_one({'crecord_type': 'slamacros'})
 
@@ -103,7 +103,10 @@ class engine(cengine):
 		key = self.perfdata_key(meta)
 		self.logger.debug(u"Increment {0}: {1}".format(key, value))
 		self.logger.debug(str(meta))
-		self.manager.push(name=key, value=value, meta_data=meta)
+
+		metric_id = Manager.get_metric_id(meta['co'], meta.get('re'), meta['me'])
+
+		self.manager.put_data(metric_id=metric_id, value=value, meta=meta)
 
 	def update_global_counter(self, event):
 		# Comment action (ensure the component exists in database)
