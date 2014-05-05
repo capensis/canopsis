@@ -153,12 +153,12 @@ class engine(cengine):
 			})
 		count = len(metrics_cursor)
 
-		self.object.update(
-			{'crecord_name': 'perfdata2_count_no_internal'},
-			{'$set':
-				{'count': count}
+		self.object.save(
+			{
+				'_id': 'perfdata2_count_no_internal',
+				'crecord_name': 'perfdata2_count_no_internal',
+				'count': count
 			},
-			upsert=True,
 			w=1
 		)
 		self.logger.info('Cache value for perfdata3 metric count computed > {0}'.format(count))
