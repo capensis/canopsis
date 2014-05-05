@@ -112,32 +112,44 @@ def init():
     #Entities indexes
     storage.get_backend('entities').ensure_index([
         ('type', 1),
-        ('name',1)
+        ('name', 1)
     ])
-    storage.get_backend('entities').ensure_index([
+    storage.get_backend('entities').ensure_index([  # specific to downtime
         ('type', 1),
-        ('timestamp',1)
-    ])
-    storage.get_backend('entities').ensure_index([
-        ('type', 1),
-        ('component',1),
-        ('resource',1),
+        ('component', 1),
+        ('resource', 1),
         ('id', 1)
     ])
-    storage.get_backend('entities').ensure_index([
+    storage.get_backend('entities').ensure_index([  # specific to ack
         ('type', 1),
         ('timestamp', 1),
         ('component', 1),
         ('resource', 1)
     ])
-    storage.get_backend('entities').ensure_index([
+    storage.get_backend('entities').ensure_index([  # specific to perfdata
         ('type', 1),
         ('nodeid', 1)
     ])
-    storage.get_backend('entities').ensure_index([
-        ('crecord_type', 1),
-        ('objclass', 1)
+    storage.get_backend('entities').ensure_index([  # specific to metric
+        ('type', 1),
+        ('component', 1),
+        ('resource', 1),
+        ('name', 1)
     ])
+
+    logger.info(" + Create index of 'perfdata3'")
+    #Perfdata3 indexes
+    storage.get_backend('perfdata3').ensure_index([
+        ('_id', 1),
+        ('unit', 1)
+        ])
+
+    logger.info(" + Create index of 'perfdata3'")
+    #Perfdata3_meta indexes
+    storage.get_backend('perfdata3_meta').ensure_index([
+        ('_id', 1),
+        ('timestamp', 1)
+        ])
 
 def update():
     init()
