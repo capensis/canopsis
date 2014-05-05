@@ -52,8 +52,6 @@ class engine(cengine):
 		mCrit = 'PROC_CRITICAL'
 		mWarn = 'PROC_WARNING'
 
-
-
 		if self.sla:
 			mCrit = self.sla.data['mCrit']
 			mWarn = self.sla.data['mWarn']

@@ -197,7 +197,7 @@ Ext.define('canopsis.view.ReportingBar.ReportingBar', {
 						sortable: false,
 						dataIndex: "hostgroup",
 						editor: "field",
-						// renderer: rdr_tstodate,
+						// renderer: function(data) { return rdr_tstodate(data); },
 						flex: 3
 					}],
 					opt_bar_reload: false,
@@ -225,14 +225,14 @@ Ext.define('canopsis.view.ReportingBar.ReportingBar', {
 						sortable: false,
 						dataIndex: "from",
 						editor: "field",
-						renderer: rdr_tstodate,
+						renderer: function(data) { return rdr_tstodate(data); },
 						flex: 3
 					},{
 						header: "to",
 						sortable: false,
 						dataIndex: "to",
 						editor: "field",
-						renderer: rdr_tstodate,
+						renderer: function(data) { return rdr_tstodate(data); },
 						flex: 3
 					}],
 					height:100,

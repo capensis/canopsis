@@ -102,14 +102,14 @@ Ext.define('canopsis.view.View.TreePanel' , {
 			align: 'center',
 			text: _('Last modified'),
 			dataIndex: 'crecord_write_time',
-			renderer: rdr_tstodate
+			renderer: function(data) { return rdr_tstodate(data); }
 		},{
 			width: 130,
 			align: 'center',
 			text: _('Creation date'),
 			dataIndex: 'crecord_creation_time',
 			hidden: true,
-			renderer: rdr_tstodate
+			renderer: function(data) { return rdr_tstodate(data); }
 		},{
 			xtype: 'actioncolumn',
 			width: 25,
