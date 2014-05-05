@@ -34,8 +34,6 @@ import time
 
 from md5 import new as md5
 
-INTERNAL_QUEUE = "beat_perfdata3"
-
 
 class Period(object):
 	"""
@@ -83,8 +81,6 @@ class Period(object):
 		return result
 
 	def sliding_timestamp(self, timestamp, timezone=0):
-
-		datetime.fromutctimestamp(timestamp)
 
 		utcdatetime = datetime.utcfromtimestamp(timestamp)
 
@@ -221,40 +217,11 @@ class engine(cengine):
 
 		super(engine, self).__init__(*args, **kargs)
 
-	"""
-	def create_amqp_queue(self):
-
-		super(engine, self).create_amqp_queue()
-	"""
-
-	def pre_run(self):
-
 		storage = get_storage(logging_level=self.logger.level)
 		perfdata3 = storage.get_backend('perfdata3')
+		self.entities = storage.get_backend('entities')
 
 		self.manager = Manager(perfdata3, self.logger)
-
-		"""
-		self.internal_amqp = camqp(logging_level=logging.INFO, logging_name="%s-internal-amqp" % self.name)
-		self.internal_amqp.add_queue(
-			queue_name=INTERNAL_QUEUE,
-			routing_keys=["#"],
-			callback=self.on_internal_event,
-			no_ack=True,
-			exclusive=False,
-			auto_delete=False
-		)
-
-		self.internal_amqp.start()
-		"""
-
-	"""
-	def post_run(self):
-
-		self.internal_amqp.cancel_queues()
-		self.internal_amqp.stop()
-		self.internal_amqp.join()
-	"""
 
 	def work(self, event, *args, **kargs):
 
@@ -375,6 +342,8 @@ class engine(cengine):
 		)
 		self.logger.info('Cache value for perfdata3 metric count computed > {0}'.format(count))
 
+from operator import itemgetter
+
 
 class Manager(object):
 
@@ -382,7 +351,7 @@ class Manager(object):
 
 	def __init__(self, perfdata3, logger):
 
-		super(Manager).__init__()
+		super(Manager, self).__init__()
 		self.perfdata3 = perfdata3
 		self.logger = logger
 
@@ -453,9 +422,9 @@ class Manager(object):
 
 		stop = sliding_period.sliding_timestamp(interval.stop)
 
-		dt = datetime.fromutctimestamp(start)
+		dt = datetime.utcfromtimestamp(start)
 
-		dtstop = datetime.fromutctimestamp(stop)
+		dtstop = datetime.utcfromtimestamp(stop)
 
 		ids = list()
 
@@ -477,8 +446,24 @@ class Manager(object):
 
 		request = {"_id": {'$in': ids}}
 
-		result = self.perfdata3.find(
+		documents = self.perfdata3.find(
 			request,
 			projection={'timestamp': 1, 'values': 1, 'meta': 1})
+
+		meta = None
+
+		result = list()
+
+		for document in documents:
+			if meta is None:
+				meta = document.get('meta')
+
+			timestamp = int(document.get('timestamp'))
+			values = document.get('values')
+
+			for t, value in values.iteritems():
+				result.append( (timestamp + int(t), value) )
+
+		result.sort(key=itemgetter(0))
 
 		return result
