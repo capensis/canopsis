@@ -88,7 +88,7 @@ class engine(cengine):
 		# Create Resource entity
 		if resource:
 			doc = {
-				'_id': 'resource.{0}'.format(resource),
+				'_id': 'resource.{0}.{1}'.format(component, resource),
 				'type': 'resource',
 				'name': resource,
 				'component': component,
@@ -101,7 +101,7 @@ class engine(cengine):
 				'state_type': event['state_type']
 			}
 
-			self.update(doc, [('type', 1), ('name', 1)])
+			self.update(doc, [('type', 1), ('component', 1), ('name', 1)])
 
 		# Create Hostgroups entities
 		for hostgroup in hostgroups:
@@ -158,7 +158,7 @@ class engine(cengine):
 				'comment': event['output'],
 			}
 
-			self.update(doc, [('type', 1), ('component', 1), ('resource', 1), ('timestamp', 1)])
+			self.update(doc, [('type', 1), ('component', 1), ('resource', 1)])
 
 		# Create metrics entities
 		for perfdata in event['perf_data_array']:
