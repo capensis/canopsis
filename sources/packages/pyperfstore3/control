@@ -1,10 +1,10 @@
 #!/bin/bash
 
-NAME="pyperfstore2"
-VERSION=2.4
+NAME="pyperfstore3"
+VERSION=3.0
 RELEASE=1
 DESCRIPTION=""
-REQUIRES="canohome python redis redis-conf"
+REQUIRES="canohome python"
 
 NO_ARCH=true
 NO_DIST=true
