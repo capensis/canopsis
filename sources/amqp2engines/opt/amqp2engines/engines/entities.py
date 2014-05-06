@@ -38,6 +38,9 @@ class engine(cengine):
 		self.backend = self.storage.get_backend()
 		self.beat()
 
+	def update(self, doc, hint):
+		if not self.backend.find_one(doc).hint(hint):
+			self.backend.save(doc)
 
 	def beat(self):
 		self.sla = self.storage.find_one(
@@ -46,7 +49,7 @@ class engine(cengine):
 				'objclass': 'macro'
 			},
 			namespace='object'
-		)
+		).hint([('crecord_type', 1)])
 
 	def work(self, event, *args, **kwargs):
 		mCrit = 'PROC_CRITICAL'
@@ -82,7 +85,7 @@ class engine(cengine):
 			doc['state'] = event['state']
 			doc['state_type'] = event['state_type']
 
-		self.backend.save(doc, w=1)
+		self.update(doc, [('type', 1), ('name', 1)])
 
 		# Create Resource entity
 		if resource:
@@ -100,7 +103,7 @@ class engine(cengine):
 				'state_type': event['state_type']
 			}
 
-			self.backend.save(doc, w=1)
+			self.update(doc, [('type', 1), ('name', 1)])
 
 		# Create Hostgroups entities
 		for hostgroup in hostgroups:
@@ -110,7 +113,7 @@ class engine(cengine):
 				'name': hostgroup
 			}
 
-			self.backend.save(doc, w=1)
+			self.update(doc, [('type', 1), ('name', 1)])
 
 		# Create Servicegroups entities
 		for servicegroup in servicegroups:
@@ -120,7 +123,7 @@ class engine(cengine):
 				'name': servicegroup
 			}
 
-			self.backend.save(doc, w=1)
+			self.update(doc, [('type', 1), ('name', 1)])
 
 		# Create Downtime entity
 		if event['event_type'] == 'downtime':
@@ -142,7 +145,7 @@ class engine(cengine):
 				'entry': event['entry']
 			}
 
-			self.backend.save(doc, w=1)
+			self.update(doc, [('type', 1), ('component', 1), ('resource', 1), ('id', 1)])
 
 		# Create acknowledgement entity
 		elif event['event_type'] == 'ack':
@@ -157,7 +160,7 @@ class engine(cengine):
 				'comment': event['output'],
 			}
 
-			self.backend.save(doc, w=1)
+			self.update(doc, [('type', 1), ('component', 1), ('resource', 1), ('timestamp', 1)])
 
 		# Create metrics entities
 		for perfdata in event['perf_data_array']:
@@ -187,6 +190,6 @@ class engine(cengine):
 				'perftype': perfdata.get('type', 'GAUGE')
 			}
 
-			self.backend.save(doc, w=1)
+			self.update(doc, [('type', 1), ('nodeid', 1)])
 
 		return event
