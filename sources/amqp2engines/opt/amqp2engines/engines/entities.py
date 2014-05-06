@@ -182,14 +182,7 @@ class engine(cengine):
 				'component': component,
 				'resource': resource,
 				'name': perfdata['metric'],
-				'nodeid': nodeid,
-				'last': [event['timestamp'], perfdata['value']],
-				'min': perfdata.get('min', None),
-				'max': perfdata.get('max', None),
-				'warn': perfdata.get('warn', None),
-				'crit': perfdata.get('crit', None),
-				'unit': perfdata.get('unit', None),
-				'perftype': perfdata.get('type', 'GAUGE')
+				'nodeid': nodeid
 			}
 
 			self.update(doc, [('type', 1), ('nodeid', 1)])
