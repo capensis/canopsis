@@ -133,11 +133,13 @@ class engine(cengine):
 
 					if metric is not None:
 
-						metric_id = Manager.get(component, resource, metric)
+						if metric in internal_metrics:
 
-						value = perf_data.pop('value', None)
+							metric_id = Manager.get(component, resource, metric)
 
-						self.manager.put_data(metric_id, timestamp, value, perf_data)
+							value = perf_data.pop('value', None)
+
+							self.manager.put_data(metric_id, timestamp, value, perf_data)
 
 					else:
 						self.logger.warning('metric name does not exist: {0}'.format(event))
