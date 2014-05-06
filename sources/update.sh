@@ -16,6 +16,8 @@ else
 	exit 1
 fi
 
+export_env
+
 for pkg in $SRC_PATH/packages/*
 do
 	pkg=`basename $pkg`
@@ -25,6 +27,11 @@ do
 		echo "==> Updating package: $pkg"
 
 		cd $SRC_PATH/$pkg
+
+		if [ "$pkg" == "pyperfstore2" ] || [ "$pkg" == "pyperfstore3" ]
+		then
+			python setup.py install
+		fi
 
 		echo "-- Packaging (without /etc)..."
 		tar cf $SRC_PATH/$pkg.tar . --exclude=etc || exit 1
