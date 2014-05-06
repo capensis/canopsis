@@ -43,13 +43,14 @@ class engine(cengine):
 		super(engine, self).__init__(*args, **kargs)
 
 		self.listened_event_type = ['check','selector','eue','sla', 'log']
-		self.manager = Manager()
 
 		self.comments = {}
 		# Get SLA configuration
 		self.storage = get_storage(namespace='object', account=caccount(user="root", group="root"))
 		self.entities = self.storage.get_backend('entities')
 		self.objects_backend = self.storage.get_backend('object')
+		perfdata3 = self.storage.get_backend('perfdata3')
+		self.manager = Manager(perfdata3, self.logger)
 		self.comments = {}
 		self.selectors_name = []
 		self.last_resolv = 0

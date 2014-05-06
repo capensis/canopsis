@@ -135,7 +135,7 @@ class engine(cengine):
 
 						if metric in internal_metrics:
 
-							metric_id = Manager.get(component, resource, metric)
+							metric_id = Manager.get_metric_id(component, resource, metric)
 
 							value = perf_data.pop('value', None)
 
