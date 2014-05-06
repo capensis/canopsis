@@ -36,6 +36,8 @@ class engine(cengine):
 		self.account = caccount(user='root', group='root')
 		self.storage = get_storage(namespace='entities', logging_level=self.logging_level, account=self.account)
 		self.backend = self.storage.get_backend()
+		
+		self.sla = None
 		self.beat()
 
 	def update(self, doc, hint):
