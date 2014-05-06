@@ -39,17 +39,17 @@ class engine(cengine):
 		self.beat()
 
 	def update(self, doc, hint):
-		if not self.backend.find_one(doc).hint(hint):
+		if not self.backend.find(doc).hint(hint).limit(-1).count():
 			self.backend.save(doc)
 
 	def beat(self):
-		self.sla = self.storage.find_one(
-			mfilter = {
-				'crecord_type': 'sla',
-				'objclass': 'macro'
-			},
-			namespace='object'
-		).hint([('crecord_type', 1)])
+		cursor = self.storage.get_backend('object').find({
+			'crecord_type': 'sla',
+			'objclass': 'macro'
+		}).hint([('crecord_type', 1)]).limit(-1)
+
+		if cursor.count():
+			self.sla = cursor[0]
 
 	def work(self, event, *args, **kwargs):
 		mCrit = 'PROC_CRITICAL'
