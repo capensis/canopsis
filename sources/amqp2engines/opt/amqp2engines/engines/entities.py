@@ -43,7 +43,7 @@ class engine(cengine):
 			self.backend.save(doc)
 
 	def beat(self):
-		cursor = self.storage.find({
+		cursor = self.storage.get_backend('object').find({
 			'crecord_type': 'sla',
 			'objclass': 'macro'
 		}).hint([('crecord_type', 1)]).limit(-1)
