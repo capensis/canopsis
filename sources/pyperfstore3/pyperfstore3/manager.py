@@ -86,16 +86,21 @@ class Manager(object):
 
 		field_name = "values.{0}".format(timestamp - id_timestamp)
 
-		result = self.perfdata3.save(
+		result = self.perfdata3.update(
 			{
-				'_id': _id,
-				'period': period.to_dict(),
-				'metric_id': metric_id,
-				'timestamp': id_timestamp,
-				'last_update': timestamp,
-				field_name: value,
-				'meta': meta
+				'_id': _id
 			},
+			{
+				'$set': {
+					'period': period.to_dict(),
+					'metric_id': metric_id,
+					'timestamp': id_timestamp,
+					'last_update': timestamp,
+					field_name: value,
+					'meta': meta
+				}
+			},
+			upsert=1,
 			w=1)
 
 		error = result.get("writeConcernError", None)
