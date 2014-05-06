@@ -63,12 +63,13 @@ class Manager(object):
 
 		md5_result = md5()
 
+		md5_result.update(metric_id.encode('ascii', 'ignore'))
 		# add id_timestamp in id
 		md5_result.update(str(timestamp).encode('ascii', 'ignore'))
 		# add period in id
 		md5_result.update(period.unit.encode('ascii', 'ignore'))
 
-		result = metric_id.join(md5_result.hexdigest())
+		result = md5_result.hexdigest()
 
 		return result
 
