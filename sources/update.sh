@@ -31,24 +31,24 @@ do
 		if [ "$pkg" == "pyperfstore2" ] || [ "$pkg" == "pyperfstore3" ]
 		then
 			python setup.py install
-		fi
+		else
+			echo "-- Packaging (without /etc)..."
+			tar cf $SRC_PATH/$pkg.tar . --exclude=etc || exit 1
 
-		echo "-- Packaging (without /etc)..."
-		tar cf $SRC_PATH/$pkg.tar . --exclude=etc || exit 1
+			echo "-- Extracting to $PREFIX..."
+			tar xf $SRC_PATH/$pkg.tar -C $PREFIX || exit 1
 
-		echo "-- Extracting to $PREFIX..."
-		tar xf $SRC_PATH/$pkg.tar -C $PREFIX || exit 1
-
-		echo "-- Fix permissions..."
-		for f in `tar tf $SRC_PATH/$pkg.tar`
-		do
-			chown $HUSER:$HGROUP $PREFIX/$f || exit 1
-		done
-		
-		if [ -e $SRC_PATH/$pkg.tar ]
-		then
-			echo "-- Cleaning..."
-			rm -rf $SRC_PATH/$pkg.tar
+			echo "-- Fix permissions..."
+			for f in `tar tf $SRC_PATH/$pkg.tar`
+			do
+				chown $HUSER:$HGROUP $PREFIX/$f || exit 1
+			done
+			
+			if [ -e $SRC_PATH/$pkg.tar ]
+			then
+				echo "-- Cleaning..."
+				rm -rf $SRC_PATH/$pkg.tar
+			fi
 		fi
 	fi
 done
