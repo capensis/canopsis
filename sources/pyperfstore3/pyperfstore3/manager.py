@@ -100,7 +100,7 @@ class Manager(object):
 					'meta': meta
 				}
 			},
-			upsert=1,
+			upsert=True,
 			w=1)
 
 		error = result.get("writeConcernError", None)
