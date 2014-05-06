@@ -118,11 +118,11 @@ def check(mfilter, event):
 		elif key in event:
 			if isinstance(mfilter[key], dict):
 				if '$in' in mfilter[key]:
-					if event[key] not in mfilter[key]['$in']:
+					if not len([x for x in event[key] if any(y in x for y in mfilter[key]['$in'])]):
 						return False
 
 				elif '$nin' in mfilter[key]:
-					if event[key] in mfilter[key]['$nin']:
+					if len([x for x in event[key] if any(y in x for y in mfilter[key]['$in'])]):
 						return False
 
 				else:
