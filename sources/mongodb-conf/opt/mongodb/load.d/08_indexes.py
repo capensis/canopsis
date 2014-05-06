@@ -27,134 +27,94 @@ logger = None
 root = caccount(user="root", group="root")
 storage = get_storage(account=root, namespace='object')
 
+INDEXES = {
+	'object': [
+		[('crecord_type', 1)]
+	],
+	'perfdata2': [
+		[('co', 1), ('re', 1), ('me', 1)],
+		[('re', 1), ('me', 1)],
+		[('me', 1)],
+		[('tg', 1)]
+	],
+	'perfdata2_daily': [
+		[('insert_date', 1)]
+	],
+	'events': [
+		[
+			('connector_name', 1),
+			('event_type', 1),
+			('component', 1),
+			('resource', 1),
+			('state_type', 1),
+			('state', 1)
+		],[
+			('source_type', 1),
+			('tags', 1)
+		],[
+			('event_type', 1),
+			('component', 1),
+			('resource', 1)
+		],[
+			('event_type', 1),
+			('resource', 1)
+		],[
+			('event_type', 1)
+		]
+	],
+	'events_log': [
+		[
+			('connector_name', 1),
+			('event_type', 1),
+			('component', 1),
+			('resource', 1),
+			('state_type', 1),
+			('state', 1)
+		],[
+			('source_type', 1),
+			('tags', 1)
+		],[
+			('event_type', 1),
+			('component', 1),
+			('resource', 1)
+		],[
+			('event_type', 1),
+			('resource', 1)
+		],[
+			('event_type', 1)
+		],[
+			('state_type', 1)
+		],[
+			('tags', 1)
+		],[
+			('referer', 1)
+		]
+	],
+	'entities': [
+		[('type', 1)],
+		[('type', 1), ('name', 1)],
+		[('type', 1), ('component', 1), ('name', 1)],
+		[('type', 1), ('component', 1), ('resource', 1), ('id', 1)],
+		[('type', 1), ('component', 1), ('resource', 1)],
+		[('type', 1), ('nodeid', 1)]
+	],
+	'perfdata3': [
+		[('_id', 1), ('unit', 1)]
+	],
+	'perfdata3_meta': [
+		[('_id', 1), ('timestamp', 1)]
+	]
+}
+
 
 def init():
-    logger.info(" + Create index of 'object'")
-    storage.get_backend('object').ensure_index([
-        ('crecord_type', 1)
-    ])
+	for collection in INDEXES:
+		logger.info(' + Create indexes for collection {0}'.format(collection))
+		col = storage.get_backend(collection)
+		col.drop_indexes()
 
-    logger.info(" + Create index of 'perfdata2'")
-    storage.get_backend('perfdata2').ensure_index([
-        ('co', 1),
-        ('re', 1),
-        ('me', 1)
-    ])
-    storage.get_backend('perfdata2').ensure_index([
-        ('re', 1),
-        ('me', 1)
-    ])
-    storage.get_backend('perfdata2').ensure_index([
-        ('me', 1)
-    ])
-    storage.get_backend('perfdata2').ensure_index([
-        ('tg',    1)
-    ])
-    logger.info(" + Create index of 'perfdata2_daily'")
-    storage.get_backend('perfdata2_daily').ensure_index([
-        ('insert_date', 1),
-    ])
-    logger.info(" + Create index of 'events'")
-    storage.get_backend('events').ensure_index([
-        ('connector_name', 1),
-        ('resource', 1),
-        ('component', 1),
-        ('state', 1),
-        ('state_type', 1),
-        ('event_type', 1)
-    ])
-    storage.get_backend('events').ensure_index([
-        ('tags', 1),
-        ('source_type', 1)
-    ])
-    storage.get_backend('events').ensure_index([
-        ('component', 1),
-        ('resource', 1),
-        ('event_type', 1)
-    ])
-    storage.get_backend('events').ensure_index([
-        ('resource', 1),
-        ('event_type', 1)
-    ])
-    storage.get_backend('events').ensure_index([
-        ('event_type', 1)
-    ])
-
-    logger.info(" + Create index of 'events_log'")
-    storage.get_backend('events_log').ensure_index([
-        ('connector_name',    1),
-        ('resource',        1),
-        ('component',        1),
-        ('state',            1),
-        ('event_type',        1)
-    ])
-    storage.get_backend('events_log').ensure_index([
-        ('component', 1),
-        ('resource', 1),
-        ('event_type', 1)
-    ])
-    storage.get_backend('events_log').ensure_index([
-        ('resource', 1),
-        ('event_type', 1)
-    ])
-    storage.get_backend('events_log').ensure_index([
-        ('event_type', 1)
-    ])
-    storage.get_backend('events_log').ensure_index([
-        ('state_type', 1)
-    ])
-    storage.get_backend('events_log').ensure_index([
-        ('tags', 1)
-    ])
-    storage.get_backend('events_log').ensure_index([
-        ('referer', 1)
-    ])
-    storage.get_backend('events_log').ensure_index([
-        ('timestamp', 1)
-    ])
-
-    logger.info(" + Create index of 'entities'")
-    #Entities indexes
-    storage.get_backend('entities').ensure_index([
-        ('type', 1),
-        ('name', 1)
-    ])
-    storage.get_backend('entities').ensure_index([  # specific to downtime
-        ('type', 1),
-        ('component', 1),
-        ('resource', 1),
-        ('id', 1)
-    ])
-    storage.get_backend('entities').ensure_index([  # specific to ack
-        ('type', 1),
-        ('timestamp', 1),
-        ('component', 1),
-        ('resource', 1)
-    ])
-    storage.get_backend('entities').ensure_index([  # specific to perfdata
-        ('type', 1),
-        ('nodeid', 1)
-    ])
-    storage.get_backend('entities').ensure_index([  # specific to metric
-        ('type', 1),
-        ('component', 1),
-        ('resource', 1),
-        ('name', 1)
-    ])
-
-    logger.info(" + Create index of 'perfdata3'")
-    #Perfdata3 indexes
-    storage.get_backend('perfdata3').ensure_index([
-        ('_id', 1),
-        ('unit', 1)
-        ])
-
-    logger.info(" + Create index of 'perfdata3'")
-    #Perfdata3_meta indexes
-    storage.get_backend('perfdata3_meta').ensure_index([
-        ('_id', 1),
-        ('timestamp', 1)
-        ])
+		for index in INDEXES[collection]:
+			col.ensure_index(index)
 
 def update():
-    init()
+	init()
