@@ -38,6 +38,9 @@ class engine(cengine):
 		self.backend = self.storage.get_backend()
 		self.beat()
 
+	def update(self, doc, hint):
+		if not self.backend.find_one(doc).hint(hint):
+			self.backend.save(doc)
 
 	def beat(self):
 		self.sla = self.storage.find_one(
@@ -46,7 +49,7 @@ class engine(cengine):
 				'objclass': 'macro'
 			},
 			namespace='object'
-		)
+		).hint([('crecord_type', 1)])
 
 	def work(self, event, *args, **kwargs):
 		mCrit = 'PROC_CRITICAL'
@@ -78,113 +81,82 @@ class engine(cengine):
 			data['state'] = event['state']
 			data['state_type'] = event['state_type']
 
-		self.backend.update({
-				'type': 'component',
-				'name': component
-			},{
-				'$set': data
-			},
-			upsert = True
-		)
+		self.update(doc, [('type', 1), ('name', 1)])
 
 		# Create Resource entity
 		if resource:
-			self.backend.update({
-					'type': 'resource',
-					'name': resource
-				},{
-					'$set': {
-						'type': 'resource',
-						'name': resource,
-						'component': component,
-						'hostgroups': hostgroups,
-						'servicegroups': servicegroups,
-						'mCrit': event.get(mCrit, None),
-						'mWarn': event.get(mWarn, None),
+			doc = {
+				'_id': 'resource.{0}'.format(resource),
+				'type': 'resource',
+				'name': resource,
+				'component': component,
+				'hostgroups': hostgroups,
+				'servicegroups': servicegroups,
+				'mCrit': event.get(mCrit, None),
+				'mWarn': event.get(mWarn, None),
 
-						'state': event['state'],
-						'state_type': event['state_type']
-					}
-				},
-				upsert = True
-			)
+				'state': event['state'],
+				'state_type': event['state_type']
+			}
+
+			self.update(doc, [('type', 1), ('name', 1)])
 
 		# Create Hostgroups entities
 		for hostgroup in hostgroups:
-			self.backend.update({
-					'type': 'hostgroup',
-					'name': hostgroup
-				},{
-					'$set': {
-						'type': 'hostgroup',
-						'name': hostgroup
-					}
-				},
-				upsert = True
-			)
+			doc = {
+				'_id': 'hostgroup.{0}'.format(hostgroup),
+				'type': 'hostgroup',
+				'name': hostgroup
+			}
+
+			self.update(doc, [('type', 1), ('name', 1)])
 
 		# Create Servicegroups entities
 		for servicegroup in servicegroups:
-			self.backend.update({
-					'type': 'servicegroup',
-					'name': servicegroup
-				},{
-					'$set': {
-						'type': 'servicegroup',
-						'name': servicegroup
-					}
-				},
-				upsert = True
-			)
+			doc = {
+				'_id': 'servicegroup.{0}'.format(servicegroup),
+				'type': 'servicegroup',
+				'name': servicegroup
+			}
+
+			self.update(doc, [('type', 1), ('name', 1)])
 
 		# Create Downtime entity
 		if event['event_type'] == 'downtime':
-			self.backend.update({
-					'type': 'downtime',
-					'component': component,
-					'resource': resource,
-					'id': event['downtime_id']
-				},{
-					'$set': {
-						'type': 'downtime',
-						'component': component,
-						'resource': resource,
-						'id': event['downtime_id'],
+			doc = {
+				'_id': 'downtime.{0}.{1}.{2}'.format(component, resource, event['downtime_id']),
+				'type': 'downtime',
+				'component': component,
+				'resource': resource,
+				'id': event['downtime_id'],
 
-						'author': event['author'],
-						'comment': event['output'],
+				'author': event['author'],
+				'comment': event['output'],
 
-						'start': event['start'],
-						'end': event['end'],
-						'duration': event['duration'],
+				'start': event['start'],
+				'end': event['end'],
+				'duration': event['duration'],
 
-						'fixed': event['fixed'],
-						'entry': event['entry']
-					}
-				},
-				upsert = True
-			)
+				'fixed': event['fixed'],
+				'entry': event['entry']
+			}
+
+			self.update(doc, [('type', 1), ('component', 1), ('resource', 1), ('id', 1)])
 
 		# Create acknowledgement entity
 		elif event['event_type'] == 'ack':
-			self.backend.update({
-					'type': 'ack',
-					'timestamp': event['timestamp'],
-					'component': component,
-					'resource': resource,
-				},{
-					'$set': {
-						'type': 'ack',
-						'timestamp': event['timestamp'],
-						'component': component,
-						'resource': resource,
+			doc = {
+				'_id': 'ack.{0}.{1}.{2}'.format(component, resource, event['timestamp']),
+				'type': 'ack',
+				'timestamp': event['timestamp'],
+				'component': component,
+				'resource': resource,
 
-						'author': event['author'],
-						'comment': event['output'],
-					}
-				},
-				upsert = True
-			)
+				'author': event['author'],
+				'comment': event['output'],
+			}
+
+			self.update(doc, [('type', 1), ('component', 1), ('resource', 1), ('timestamp', 1)])
 
 		# Create metrics entities
 		for perfdata in event['perf_data_array']:
@@ -198,26 +170,22 @@ class engine(cengine):
 			nodeid.update(perfdata['metric'])
 			nodeid = nodeid.hexdigest()
 
-			self.backend.update({
-					'type': 'metric',
-					'nodeid': nodeid
-				},{
-					'$set': {
-						'type': 'metric',
-						'component': component,
-						'resource': resource,
-						'name': perfdata['metric'],
-						'nodeid': nodeid,
-						'last': [event['timestamp'], perfdata['value']],
-						'min': perfdata.get('min', None),
-						'max': perfdata.get('max', None),
-						'warn': perfdata.get('warn', None),
-						'crit': perfdata.get('crit', None),
-						'unit': perfdata.get('unit', None),
-						'perftype': perfdata.get('type', 'GAUGE')
-					}
-				},
-				upsert = True
-			)
+			doc = {
+				'_id': 'metric.{0}'.format(nodeid),
+				'type': 'metric',
+				'component': component,
+				'resource': resource,
+				'name': perfdata['metric'],
+				'nodeid': nodeid,
+				'last': [event['timestamp'], perfdata['value']],
+				'min': perfdata.get('min', None),
+				'max': perfdata.get('max', None),
+				'warn': perfdata.get('warn', None),
+				'crit': perfdata.get('crit', None),
+				'unit': perfdata.get('unit', None),
+				'perftype': perfdata.get('type', 'GAUGE')
+			}
+
+			self.update(doc, [('type', 1), ('nodeid', 1)])
 
 		return event
