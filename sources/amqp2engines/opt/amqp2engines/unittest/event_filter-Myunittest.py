@@ -24,13 +24,13 @@ import logging
 
 sys.path.append(os.path.expanduser('~/opt/amqp2engines/engines/'))
 
-import event_filter
+import filters
 from cengine import DROP
 
 
 class KnownValues(unittest.TestCase):
 	def setUp(self):
-		self.engine = event_filter.engine(logging_level=logging.DEBUG)
+		self.engine = filters.engine(logging_level=logging.DEBUG)
 		self.engine.beat()
 
 	def test_01_Init(self):
@@ -38,47 +38,74 @@ class KnownValues(unittest.TestCase):
 		self.engine.pass_event_count = 0
 		self.engine.configuration = {
 			'rules': [
-				{'mfilter': {'connector': 'nagios'},
-				 'action': 'pass',
+				{
+				 'description': 'unit test rule',
+				 '_id': 'unittestidrule',
+				 'mfilter': {'connector': 'changeme'},
+				 'actions': [{'type':'override',
+					      'field':'connector',
+					      'value':'it_works'
+					      },
+					     {'type':'pass'}],
+				 'name': 'change-connector-name'},
+
+				{'description': 'unit test rule',
+				 '_id': 'unittestidrule',
+				 'mfilter': {'connector': 'nagios'},
+				 'actions': [{'type':'pass'}],
 				 'name': 'check-connector-pass'},
 
-				{'mfilter': {'connector': 'collectd'},
-				 'action': 'drop',
+				{'description': 'unit test rule',
+				 '_id': 'unittestidrule',
+				 'mfilter': {'connector': 'collectd'},
+				 'actions': [{'type':'drop'}],
 				 'name': 'check-connector-drop'},
 
-				{'mfilter': {'connector': 'priority'},
-				 'action': 'pass',
+				{'description': 'unit test rule',
+				 '_id': 'unittestidrule',
+				 'mfilter': {'connector': 'priority'},
+				 'actions': [{'type':'pass'}],
 				 'name': 'check-connector-pass2'},
 
-				{'mfilter': {'test_field': { '$eq': 'cengine' } },
-				 'action': 'pass',
-				 'name': 'check-eq-pass'},
-
-				{'mfilter': {'test_field': { '$gt': 1378713357 } },
-				 'action': 'drop',
+				{'description': 'unit test rule',
+				 '_id': 'unittestidrule',
+				 'mfilter': {'test_field': { '$gt': 1378713357 } },
+				 'actions': [{'type':'drop'}],
 				 'name': 'check-gt-drop'},
 
-				{'mfilter': {"tags": {"$in": "collectd2event"} },
+				{'description': 'unit test rule',
+				 '_id': 'unittestidrule',
+				 'mfilter': {"tags": {"$in": ["collectd2event"]} },
 				 'name': 'check-in-default'},
 
-				{'mfilter': {'connector': 'nagios'},
-				 'action': 'pass',
+				{'description': 'unit test rule',
+				 '_id': 'unittestidrule',
+				 'mfilter': {'connector': 'nagios'},
+				 'actions': [{'type':'pass'}],
 				 'name': 'chec-connector-pass3'},
 
-				{'mfilter': {'connector': 'second_rule'},
-				 'action': 'pass',
+				{'description': 'unit test rule',
+				 '_id': 'unittestidrule',
+				 'mfilter': {'connector': 'second_rule'},
+				 'actions': [{'type':'pass'}],
 				 'name': 'chec-connector-pass4'},
 
-				{'mfilter': {'connector': 'priority'},
-				 'action': 'drop',
+				{'description': 'unit test rule',
+				 '_id': 'unittestidrule',
+				 'mfilter': {'connector': 'priority'},
+				 'actions': [{'type':'drop'}],
 				 'name': 'check-connector-drop2'},
 
-				{'mfilter': {'test_field': { '$eq': 'cengine' } },
-				 'action': 'pass',
+				{'description': 'unit test rule',
+				 '_id': 'unittestidrule',
+				 'mfilter': {'test_field': { '$eq': 'cengine' } },
+				 'actions': [{'type':'pass'}],
 				 'name': 'check-eq-pass2'},
 
-				{'mfilter': {'test_field': { '$gt': 1378713357 } },
-				 'action': 'drop',
+				{'description': 'unit test rule',
+				 '_id': 'unittestidrule',
+				 'mfilter': {'test_field': { '$gt': 1378713357 } },
+				 'actions': [{'type':'drop'}],
 				 'name': 'check-gt-drop2'},
 			],
 			'priority' : 2,
@@ -90,8 +117,16 @@ class KnownValues(unittest.TestCase):
 			 'connector_name': '',
 			 'event_type': '',
 			 'source_type': '',
-			 'component': ''
+			 'component': '',
+			 'tags': [],
+			 'rk': ''
 			}
+
+
+		event['connector'] = 'changeme'
+		event = self.engine.work(event)
+
+		self.assertEqual("it_works", event['connector'])
 
 		# Test normal behaviors
 		event['connector'] = 'nagios'
@@ -100,6 +135,7 @@ class KnownValues(unittest.TestCase):
 
 		event['connector'] = 'collectd'
 		self.assertEqual(self.engine.work(event), DROP)
+
 
 		# second rule matched
 		event['connector'] = 'second_rule'
