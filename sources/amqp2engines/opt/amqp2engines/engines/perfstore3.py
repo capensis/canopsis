@@ -19,7 +19,6 @@
 # ---------------------------------
 
 from ctools import parse_perfdata
-from datetime import timedelta
 
 from cstorage import get_storage
 
@@ -27,16 +26,8 @@ from cengine import cengine
 
 from ctools import internal_metrics
 
-import calendar
-
-from datetime import datetime
-import time
-
-from md5 import new as md5
-
 from copy import deepcopy
 
-from pyperfstore3.timewindow import TimeWindow, Period
 from pyperfstore3.manager import Manager
 
 
@@ -102,7 +93,8 @@ class engine(cengine):
 		for index, perf_data in enumerate(event['perf_data_array']):
 
 			event['perf_data_array'][index] = \
-				dict(((key, value) for key, value in perf_data.iteritems() if value is not None))
+				dict(((key, value) for key, value in perf_data.iteritems()
+					if value is not None))
 
 		self.logger.debug('perf_data_array: {0}'.format(perf_data_array))
 
@@ -163,4 +155,5 @@ class engine(cengine):
 			},
 			w=1
 		)
-		self.logger.info('Cache value for perfdata3 metric count computed > {0}'.format(count))
+		self.logger.info(
+			'Cache value for perfdata3 metric count computed > {0}'.format(count))
