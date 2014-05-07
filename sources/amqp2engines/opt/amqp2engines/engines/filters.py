@@ -140,13 +140,6 @@ class engine(cengine):
 
 
 	def work(self, event, *xargs, **kwargs):
-		if 'downtime' in event and event['downtime']:
-			event['state'] = 0
-			self.logger.debug('derogation to apply on event')
-		else:
-			self.logger.debug('no derogation to apply on event %s ',
-					  (str(event)))
-
 		rk = cevent.get_routingkey(event)
 		default_action = self.configuration.get('default_action', 'pass')
 
@@ -171,6 +164,13 @@ class engine(cengine):
 
 					elif (action['type'] == 'override'
 					      or action['type'] == 'requalificate'):
+						if 'downtime' in event and event['downtime']:
+							event['state'] = 0
+							self.logger.debug('derogation to apply on event')
+						else:
+							self.logger.debug('no derogation to apply on event %s ',
+									  (str(event)))
+
 						#if self.time_conditions(filterItem):
 						self.logger.debug("Event changed by rule '%s'" % name)
 						return self.override(event, filterItem, action)
@@ -255,71 +255,3 @@ class engine(cengine):
 
 		self.logger.debug("No default action found. Assuming default action is pass")
 		return 'pass'
-
-
-
-	def set_derogation_state(self, derogation, active):
-		dactive = derogation.get('active', False)
-		name = derogation.get('crecord_name', None)
-		notify = False
-		state = 0
-
-		if active and not dactive:
-			self.logger.info(("%s (%s) is now active"
-					  % (derogation['crecord_name'],
-					     derogation['_id'])))
-			self.storage.update(derogation['_id'], {'active': True})
-			notify = True
-
-		elif not active and dactive:
-			self.logger.info(("%s (%s) is now inactive"
-					  % (derogation['crecord_name'],
-					     derogation['_id'])))
-			self.storage.update(derogation['_id'], {'active': False})
-			notify = True
-
-		if notify:
-			if active:
-				output = "Derogation '%s' is now active" % name
-				state = 1
-			else:
-				output = "Derogation '%s' is now inactive" % name
-
-			event = cevent.forger(
-				connector = "cengine",
-				connector_name = "engine",
-				event_type = "log",
-				source_type = "component",
-				component = NAME,
-				state = state,
-				output = output,
-				long_output = derogation.get('description', None)
-			)
-			rk = cevent.get_routingkey(event)
-
-			self.amqp.publish(event, rk, self.amqp.exchange_name_events)
-
-
-
-	def consume_dispatcher(self,  event, *args, **kargs):
-		self.logger.debug("Consolidate metrics:")
-		now = time.time()
-		beat_elapsed = 0
-		record = self.get_ready_record(event)
-
-		if record:
-			if record.data.get('ids'):
-				derogation = record.dump()
-
-				if self.time_conditions(derogation):
-					self.set_derogation_state(derogation, True)
-				else:
-					self.set_derogation_state(derogation, False)
-
-				self.derogations.append(derogation)
-
-			self.crecord_task_complete(event['_id'])
-			self.logger.debug(("Load %s derogations."
-					   % len(self.derogations)))
-
-
