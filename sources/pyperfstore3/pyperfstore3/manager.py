@@ -73,48 +73,70 @@ class Manager(object):
 
 		return result
 
-	def put_data(self, metric_id, value, timestamp=time.time(), meta=dict(), period=Period(unit=Period.MINUTE, value=60)):
+	def put_data(self, metric_id, timestamp_with_values, meta=dict(), period=Period(unit=Period.MINUTE, value=60)):
+		"""
+		Put a list of couple (timestamp, value), a meta into perfdata3 related to input period.
+		"""
 
 		sliding_period = period.next_period()
 
-		timestamp = int(timestamp)
+		values_by_value_field_by_timestamp = dict()
 
-		id_timestamp = sliding_period.sliding_timestamp(timestamp)
+		_ids_by_timestamp = dict()
 
-		self.logger.debug(' + id_timestamp: {0}'.format(id_timestamp))
+		for timestamp, value in timestamp_with_values:
 
-		_id = self.get_document_id(metric_id, id_timestamp, period)
+			timestamp = int(timestamp)
 
-		field_name = "values.{0}".format(timestamp - id_timestamp)
+			id_timestamp = int(sliding_period.sliding_timestamp(timestamp))
 
-		result = self.perfdata3.update(
-			{
-				'_id': _id
-			},
-			{
-				'$set': {
-					'period': period.to_dict(),
-					'metric_id': metric_id,
-					'timestamp': id_timestamp,
-					'last_update': timestamp,
-					field_name: value,
-					'meta': meta
-				}
-			},
-			upsert=True,
-			w=1)
+			values_by_value_field = values_by_value_field_by_timestamp.setdefault(
+				id_timestamp, dict())
 
-		error = result.get("writeConcernError", None)
+			self.logger.debug(' + id_timestamp: {0}'.format(id_timestamp))
 
-		if error is not None:
-			self.logger.error(' error in updating document: {0}'.format(error))
+			if id_timestamp not in _ids_by_timestamp:
+				_id = self.get_document_id(metric_id, id_timestamp, period)
+				_ids_by_timestamp[id_timestamp] = _id
+			else:
+				_id = _ids_by_timestamp[id_timestamp]
 
-		error = result.get("writeError")
+			field_name = "values.{0}".format(timestamp - id_timestamp)
 
-		if error is not None:
-			self.logger.error(' error in updating document: {0}'.format(error))
+			values_by_value_field[field_name] = value
 
-		self.logger.debug(' + metric updated: {0}'.format(meta))
+		for id_timestamp, document in values_by_value_field_by_timestamp.iteritems():
+
+			_set = {
+				'period': period.to_dict(),
+				'metric_id': metric_id,
+				'timestamp': id_timestamp,
+				'last_update': timestamp,
+				'meta': meta
+			}
+			_set.update(document)
+
+			result = self.perfdata3.update(
+				{
+					'_id': _id
+				},
+				{
+					'$set': _set
+				},
+				upsert=True,
+				w=1)
+
+			error = result.get("writeConcernError", None)
+
+			if error is not None:
+				self.logger.error(' error in updating document: {0}'.format(error))
+
+			error = result.get("writeError")
+
+			if error is not None:
+				self.logger.error(' error in updating document: {0}'.format(error))
+
+			self.logger.debug(' + metric updated: {0}'.format(meta))
 
 	def get_data(self, metric_id, interval, period=Period(unit=Period.MINUTE, value=60)):
 

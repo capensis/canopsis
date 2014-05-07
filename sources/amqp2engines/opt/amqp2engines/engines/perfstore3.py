@@ -132,7 +132,10 @@ class engine(cengine):
 
 							value = perf_data.pop('value', None)
 
-							self.manager.put_data(metric_id, timestamp, value, perf_data)
+							self.manager.put_data(
+								metric_id=metric_id,
+								timestamp_with_values=((timestamp, value)),
+								meta=perf_data)
 
 					else:
 						self.logger.warning('metric name does not exist: {0}'.format(event))
