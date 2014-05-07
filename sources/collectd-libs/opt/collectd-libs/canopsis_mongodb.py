@@ -24,7 +24,8 @@ plugin_name = "canopsis_mongodb"
 
 storage = None
 
-namespaces = ['object', 'cache', 'events', 'events_log', 'ack', 'entities' ]
+namespaces = ['object', 'cache', 'events', 'events_log', 'ack', 'entities',
+	'perfdata3', 'perfdata2', 'perfdata2_daily']
 
 ### Functions
 def put_value(metric, value, type='gauge'):
@@ -58,17 +59,23 @@ def read_callback(data=None):
 		put_value(namespace+"_size", storage.get_namespace_size(namespace))		
 		
 	## Pyperfstore
-	size = storage.get_namespace_size("perfdata2_bin.chunks") 
-	size += storage.get_namespace_size("perfdata2_bin.files")
-	size += storage.get_namespace_size("perfdata2")
-	put_value("perfdata_size", size)
-	
+	perfdata2_size = storage.get_namespace_size("perfdata2_bin.chunks") 
+	perfdata2_size += storage.get_namespace_size("perfdata2_bin.files")
+	perfdata2_size += storage.get_namespace_size("perfdata2")
+	perfdata2_size += storage.get_namespace_size("perfdata2_daily")
+	put_value("perfdata2_size", perfdata2_size)
+
 	## Briefcase
-	size = storage.get_namespace_size("binaries.chunks") 
-	size += storage.get_namespace_size("binaries.files")
-	size += storage.get_namespace_size("files")
-	put_value("files_size", size)	
+	files_size = storage.get_namespace_size("binaries.chunks") 
+	files_size += storage.get_namespace_size("binaries.files")
+	files_size += storage.get_namespace_size("files")
+	put_value("files_size", files_size)
 	
+	size = perfdata2_size + files_size
+
+	for namespace in namespaces:
+		size += storage.get_namespace_size(namespace)
+	put_value("size", size)
 
 ### MAIN ###
 collectd.register_config(config_callback)
