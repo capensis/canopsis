@@ -27,7 +27,7 @@ from operator import itemgetter
 
 from datetime import datetime
 
-from .timewindow import TimeWindow, Period
+from pyperfstore3.timewindow import TimeWindow, Period
 
 
 class Manager(object):
@@ -96,7 +96,7 @@ class Manager(object):
 			self.logger.debug(' + id_timestamp: {0}'.format(id_timestamp))
 
 			if id_timestamp not in _ids_by_timestamp:
-				_id = self.get_document_id(metric_id, id_timestamp, period)
+				_id = Manager.get_document_id(metric_id, id_timestamp, period)
 				_ids_by_timestamp[id_timestamp] = _id
 			else:
 				_id = _ids_by_timestamp[id_timestamp]
@@ -138,15 +138,27 @@ class Manager(object):
 
 			self.logger.debug(' + metric updated: {0}'.format(meta))
 
-	def get_data(self, metric_id, interval, period=Period(unit=Period.MINUTE, value=60)):
+	def put_one_data(self, metric_id, value=None, timestamp=time.time(), period=Period(unit=Period.MINUTE, value=60)):
+		"""
+		Shortcut for put_data with one data.
+		"""
 
-		timewindow = TimeWindow(**interval)
+		self.put_data(metric_id=metric_id, timestamp_with_values=((timestamp, value)), period=period)
+
+
+	def get_data(self, metric_id, timewindow, period=Period(unit=Period.MINUTE, value=60), return_meta=True):
+		"""
+		Get a set of data related to input metric_id on the timewindow and input period.
+		If return_meta, result is the couple (set of data, meta)
+		"""
+
+		timewindow = TimeWindow(**timewindow)
 
 		sliding_period = period.next_period()
 
-		start = sliding_period.sliding_timestamp(interval.start)
+		start = sliding_period.sliding_timestamp(timewindow.start)
 
-		stop = sliding_period.sliding_timestamp(interval.stop)
+		stop = sliding_period.sliding_timestamp(timewindow.stop)
 
 		dt = datetime.utcfromtimestamp(start)
 
@@ -193,5 +205,8 @@ class Manager(object):
 				result.append( (timestamp + int(t), value) )
 
 		result.sort(key=itemgetter(0))
+
+		if return_meta:
+			result = (result, meta)
 
 		return result
