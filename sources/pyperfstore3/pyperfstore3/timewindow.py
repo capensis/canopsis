@@ -70,7 +70,9 @@ class Period(object):
 		return result
 
 	def sliding_timestamp(self, timestamp, timezone=0):
-
+		"""
+		Get round timestamp relative to an input timestamp and a timezone.
+		"""
 		utcdatetime = datetime.utcfromtimestamp(timestamp)
 
 		utcdatetime = self.sliding_datetime(utcdate=utcdatetime, timezone=timezone)
@@ -79,11 +81,9 @@ class Period(object):
 
 		return result
 
-
 	def sliding_datetime(self, utcdate, timezone=0):
 		"""
-		Calculate roudtime relative to an UTC date, a period time/type
-		and a timezone.
+		Calculate roudtime relative to an UTC date and a timezone.
 		"""
 
 		result = utcdate
@@ -137,21 +137,25 @@ class TimeWindow(object):
 	(couple of START, STOP timestamp).
 	"""
 
-	__slots__ = ['start', 'stop', 'exclusion_intervals', '_delta']
+	__slots__ = ['start', 'stop', 'exclusion_intervals', 'timezone']
 
 	def __init__(self, start, stop=time.time(), exclusion_intervals=[], timezone=0):
+
 		self.start = start if start else stop - 60 * 60 * 24
 		self.stop = stop
 		self.exclusion_intervals = exclusion_intervals
 		self._get_exclusion_intervals(exclusion_intervals)
-		self._delta = None
+		self.timezone = timezone
 
 	def __repr__(self):
-		message = "start = %s, stop = %s, exclusion_intervals = %s"
-		result = message % (self.start, self.stop, self.exclusion_intervals)
+
+		message = "start = {0}, stop = {1}, exclusion_intervals = {2}"
+		result = message.format(self.start, self.stop, self.exclusion_intervals)
+
 		return result
 
 	def _get_exclusion_intervals(self, exclusion_intervals):
+
 		# should sort and simplify exclusion intervals
 		return exclusion_intervals
 
@@ -163,6 +167,7 @@ class TimeWindow(object):
 		delta = self.stop - self.start
 		# remove exclusion_intervals
 		result = delta.total_seconds()
+
 		return result
 
 	def get_next_date(self, date, period, delta=None):
@@ -174,6 +179,7 @@ class TimeWindow(object):
 		delta = period.get_delta(date, delta)
 		# check if next date is in exclusion dates of the input timewindow
 		result = date + delta
+
 		return result
 
 	def get_previous_date(self, date, delta=None):
@@ -185,6 +191,7 @@ class TimeWindow(object):
 		delta = self.period.get_delta(date, delta)
 		# check if next date is in exclusion dates of the input timewindow
 		result = date - delta
+
 		return result
 
 	@staticmethod
@@ -195,4 +202,5 @@ class TimeWindow(object):
 
 		dt = timedelta(seconds=timezone)
 		result = datetime.utcfromtimestamp(timestamp) - dt
+
 		return result
