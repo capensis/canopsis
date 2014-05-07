@@ -29,6 +29,7 @@ from ctools import internal_metrics
 from copy import deepcopy
 
 from pyperfstore3.manager import Manager
+from pyperfstore3.custom import perfstore3_get_perfdata_to_process
 
 
 class engine(cengine):
@@ -117,7 +118,7 @@ class engine(cengine):
 
 				resource = event.get('resource', None)
 
-				perf_data_array = event.get('perf_data_array')
+				perf_data_array = perfstore3_get_perfdata_to_process(event)
 
 				for perf_data in perf_data_array:
 
@@ -131,7 +132,10 @@ class engine(cengine):
 
 							value = perf_data.pop('value', None)
 
-							self.manager.put_data(metric_id, timestamp, value, perf_data)
+							self.manager.put_data(
+								metric_id=metric_id,
+								timestamp_with_values=((timestamp, value)),
+								meta=perf_data)
 
 					else:
 						self.logger.warning('metric name does not exist: {0}'.format(event))

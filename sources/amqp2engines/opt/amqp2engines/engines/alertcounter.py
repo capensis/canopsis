@@ -107,7 +107,10 @@ class engine(cengine):
 
 		metric_id = Manager.get_metric_id(meta['co'], meta.get('re'), meta['me'])
 
-		self.manager.put_data(metric_id=metric_id, value=value, meta=meta)
+		self.manager.put_data(
+			metric_id=metric_id,
+			meta=meta,
+			timestamp_with_values=((time.time(), value)))
 
 	def update_global_counter(self, event):
 		# Comment action (ensure the component exists in database)

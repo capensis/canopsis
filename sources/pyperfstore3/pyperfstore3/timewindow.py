@@ -59,7 +59,8 @@ class Period(object):
 
 		try:
 			index = Period.UNITS.index(self.unit)
-			result = Period(unit=Period.UNITS[index+step])  # TODO: set right value
+			next_unit = Period.UNITS[index+step]
+			result = Period(unit=next_unit)  # TODO: set right value
 
 		except ValueError:
 			pass

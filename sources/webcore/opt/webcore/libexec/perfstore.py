@@ -18,7 +18,11 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-import sys, os, logging, json, time
+import sys
+import os
+import logging
+import json
+import time
 from datetime import datetime
 
 import bottle
