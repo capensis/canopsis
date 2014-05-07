@@ -46,6 +46,9 @@ internal_metrics = [
 	'cps_sel_state_3'
 ]
 
+def metric_is_internal(metric_name):
+	return metric_name.startswith('cps_')
+
 #############################################
 
 def calcul_pct(data, total=None):
