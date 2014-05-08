@@ -15,7 +15,7 @@ function check_code() {
 
 function detect_os(){
 	echo "Linux Distribution:"
-	VERSION=`cat /proc/version`
+	VERSION=`lsb_release -s -d`
 	check_code $?
 	DEBIAN=`echo "$VERSION" | grep -i debian | wc -l`
 	UBUNTU=`echo "$VERSION" | grep -i ubuntu | wc -l`
