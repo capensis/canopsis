@@ -76,7 +76,9 @@ class engine(cengine):
 
 
 
-	def override(self, event, derogation, action):
+	def a_modify(self, event, derogation, action):
+		self.logger.debug("Event changed by rule '%s'" % name)
+
 		name = derogation.get('name', None)
 		description = derogation.get('description', None)
 		_id = derogation.get('_id', None)
@@ -104,6 +106,31 @@ class engine(cengine):
 
 			else:
 				self.logger.error("Action malformed (needs 'field' and 'value'): %s" % action)
+
+		elif atype == "remove":
+			akey = action.get('key', None)
+			aelement = action.get('element', None)
+
+			if akey:
+				if aelement:
+					if isinstance(aelement, dict):
+						del event[akey][aelement]
+					elif isinstance(aelement, list):
+						del event[akey][event[akey].index(aelement)]
+
+					self.logger("    + %s: Removed: '%s' from '%s'"
+                                                   % (event['rk'], aelement, akey))
+
+				else:
+					del event[akey]
+					self.logger("    + %s: Removed: '%s'"
+						    % (event['rk'], akey))
+
+				derogated = True
+
+			else:
+				self.logger.error("Action malformed (needs 'key' and/or 'element'): %s" % action)
+
 
 		elif atype == "requalificate":
 			statemap_id = action.get('statemap', None)
@@ -139,9 +166,26 @@ class engine(cengine):
 
 
 
+	def a_drop(self, event, derogation, action):
+		self.logger.debug("Event dropped by rule '%s'" % name)
+		self.drop_event_count += 1
+
+
+	def a_pass(self, event, derogation, action):
+		self.logger.debug("Event passed by rule '%s'" % name)
+		self.pass_event_count += 1
+
+
+
 	def work(self, event, *xargs, **kwargs):
 		rk = cevent.get_routingkey(event)
 		default_action = self.configuration.get('default_action', 'pass')
+
+		actionMap = {'drop': a_drop,
+			     'pass': a_pass,
+			     'override': a_modify,
+			     'requalificate': a_modify,
+			     'remove': a_modify}
 
 		# When list configuration then check black and
 		# white lists depending on json configuration
@@ -152,28 +196,8 @@ class engine(cengine):
 			# Try filter rules on current event
 			if cmfilter.check(filterItem['mfilter'], event):
 				for action in actions:
-					if action['type'] == 'pass':
-						self.logger.debug("Event passed by rule '%s'" % name)
-						self.pass_event_count += 1
-						return event
-
-					elif action['type'] == 'drop':
-						self.logger.debug("Event dropped by rule '%s'" % name)
-						self.drop_event_count += 1
-						return DROP
-
-					elif (action['type'] == 'override'
-					      or action['type'] == 'requalificate'):
-						if 'downtime' in event and event['downtime']:
-							event['state'] = 0
-							self.logger.debug('derogation to apply on event')
-						else:
-							self.logger.debug('no derogation to apply on event %s ',
-									  (str(event)))
-
-						#if self.time_conditions(filterItem):
-						self.logger.debug("Event changed by rule '%s'" % name)
-						return self.override(event, filterItem, action)
+					if (actionMap[action['type']]):
+						actionMap[action['type']](event, filterItem, action)
 
 					else:
 						self.logger.warning("Unknown action '%s'" % action)
