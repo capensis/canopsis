@@ -33,4 +33,4 @@ def perfstore3_get_perfdata_to_process(event):
 	Returns a list of metrics to process by perfstore3.
 	"""
 
-	return event['perf_data_array']
+	return event.get('perf_data_array', list())
