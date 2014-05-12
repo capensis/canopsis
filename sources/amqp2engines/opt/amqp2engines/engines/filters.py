@@ -113,9 +113,9 @@ class engine(cengine):
 
 			if akey:
 				if aelement:
-					if isinstance(aelement, dict):
+					if isinstance(akey, dict):
 						del event[akey][aelement]
-					elif isinstance(aelement, list):
+					elif isinstance(akey, list):
 						del event[akey][event[akey].index(aelement)]
 
 					self.logger("    + %s: Removed: '%s' from '%s'"
