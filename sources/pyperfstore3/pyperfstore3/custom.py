@@ -33,5 +33,4 @@ def perfstore3_get_perfdata_to_process(event):
 	Returns a list of metrics to process by perfstore3.
 	"""
 
-	return [perfdata for perfdata in event['perf_data_array']
-			if perfdata.get('metric', '') not in internal_metrics]
+	return event.get('perf_data_array', list())
