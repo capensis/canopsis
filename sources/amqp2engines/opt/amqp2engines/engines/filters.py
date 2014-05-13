@@ -76,9 +76,70 @@ class engine(cengine):
 
 
 
-	def a_modify(self, event, derogation, action):
-		self.logger.debug("Event changed by rule '%s'" % name)
+	def a_override(self, event, action):
+		afield = action.get('field', None)
+		avalue = action.get('value', None)
 
+		if afield and avalue:
+			event[afield] = avalue
+			self.logger.debug(("    + %s: Override: '%s' -> '%s'"
+						   % (event['rk'], afield, avalue)))
+			return (True)
+
+		else:
+			self.logger.error("Action malformed (needs 'field' and 'value'): %s" % action)
+			return (False)
+
+
+
+	def a_remove(self, event, action):
+		akey = action.get('key', None)
+		aelement = action.get('element', None)
+
+		if akey:
+			if aelement:
+				if isinstance(event[akey], dict):
+					del event[akey][aelement]
+				elif isinstance(event[akey], list):
+					del event[akey][event[akey].index(aelement)]
+
+				self.logger.debug("    + %s: Removed: '%s' from '%s'"
+					    % (event['rk'], aelement, akey))
+
+			else:
+				del event[akey]
+				self.logger.debug("    + %s: Removed: '%s'"
+					    % (event['rk'], akey))
+
+			return (True)
+
+		else:
+			self.logger.error("Action malformed (needs 'key' and/or 'element'): %s" % action)
+			return (False)
+
+
+
+	def a_requalificate(self, event, action):
+		statemap_id = action.get('statemap', None)
+		self.logger.debug("    + %s: Requalificate using statemap '%s'" % (event['rk'], statemap_id))
+
+		if statemap_id:
+			record = self.storage.find_one(mfilter={'crecord_type': 'statemap', '_id': statemap_id})
+
+			if not record:
+				self.logger.error("Statemap '%s' not found" % statemap_id)
+				statemap = cstatemap(record=record)
+				event['real_state'] = event['state']
+				event['state'] = statemap.get_mapped_state(event['real_state'])
+				return (True)
+
+			else:
+				self.logger.error("Action malformed (needs 'statemap'): %s" % action)
+				return (False)
+
+
+
+	def a_modify(self, event, derogation, action, _name):
 		name = derogation.get('name', None)
 		description = derogation.get('description', None)
 		_id = derogation.get('_id', None)
@@ -93,63 +154,12 @@ class engine(cengine):
 
 		derogated = False
 		atype = action.get('type', None)
+		actionMap = {'override': self.a_override,
+			     'requalificate': self.a_requalificate,
+			     'remove': self.a_remove}
 
-		if atype == "override":
-			afield = action.get('field', None)
-			avalue = action.get('value', None)
-
-			if afield and avalue:
-				event[afield] = avalue
-				derogated = True
-				self.logger.debug(("    + %s: Override: '%s' -> '%s'"
-						   % (event['rk'], afield, avalue)))
-
-			else:
-				self.logger.error("Action malformed (needs 'field' and 'value'): %s" % action)
-
-		elif atype == "remove":
-			akey = action.get('key', None)
-			aelement = action.get('element', None)
-
-			if akey:
-				if aelement:
-					if isinstance(akey, dict):
-						del event[akey][aelement]
-					elif isinstance(akey, list):
-						del event[akey][event[akey].index(aelement)]
-
-					self.logger("    + %s: Removed: '%s' from '%s'"
-                                                   % (event['rk'], aelement, akey))
-
-				else:
-					del event[akey]
-					self.logger("    + %s: Removed: '%s'"
-						    % (event['rk'], akey))
-
-				derogated = True
-
-			else:
-				self.logger.error("Action malformed (needs 'key' and/or 'element'): %s" % action)
-
-
-		elif atype == "requalificate":
-			statemap_id = action.get('statemap', None)
-
-			self.logger.debug("    + %s: Requalificate using statemap '%s'" % (event['rk'], statemap_id))
-
-			if statemap_id:
-				record = self.storage.find_one(mfilter={'crecord_type': 'statemap', '_id': statemap_id})
-
-				if not record:
-					self.logger.error("Statemap '%s' not found" % statemap_id)
-
-					statemap = cstatemap(record=record)
-					event['real_state'] = event['state']
-					event['state'] = statemap.get_mapped_state(event['real_state'])
-					derogated = True
-
-			else:
-				self.logger.error("Action malformed (needs 'statemap'): %s" % action)
+		if actionMap[atype]:
+			derogated = actionMap[atype](event, action)
 
 		else:
 			self.logger.warning("Unknown action '%s'" % atype)
@@ -161,19 +171,23 @@ class engine(cengine):
 			event["derogation_name"] = name
 			event["tags"].append(name)
 			event["tags"].append("derogated")
+			self.logger.debug("Event changed by rule '%s'" % name)
 
-		return event
+		return None
 
 
 
-	def a_drop(self, event, derogation, action):
+	def a_drop(self, event, derogation, action, name):
 		self.logger.debug("Event dropped by rule '%s'" % name)
 		self.drop_event_count += 1
+		return DROP
 
 
-	def a_pass(self, event, derogation, action):
+
+	def a_pass(self, event, derogation, action, name):
 		self.logger.debug("Event passed by rule '%s'" % name)
 		self.pass_event_count += 1
+		return event
 
 
 
@@ -181,11 +195,11 @@ class engine(cengine):
 		rk = cevent.get_routingkey(event)
 		default_action = self.configuration.get('default_action', 'pass')
 
-		actionMap = {'drop': a_drop,
-			     'pass': a_pass,
-			     'override': a_modify,
-			     'requalificate': a_modify,
-			     'remove': a_modify}
+		actionMap = {'drop': self.a_drop,
+			     'pass': self.a_pass,
+			     'override': self.a_modify,
+			     'requalificate': self.a_modify,
+			     'remove': self.a_modify}
 
 		# When list configuration then check black and
 		# white lists depending on json configuration
@@ -197,7 +211,10 @@ class engine(cengine):
 			if cmfilter.check(filterItem['mfilter'], event):
 				for action in actions:
 					if (actionMap[action['type']]):
-						actionMap[action['type']](event, filterItem, action)
+						ret = actionMap[action['type']](event, filterItem,
+										action, name)
+						if ret:
+							return (DROP if ret == DROP else event)
 
 					else:
 						self.logger.warning("Unknown action '%s'" % action)
