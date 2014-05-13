@@ -104,6 +104,41 @@ class KnownValues(unittest.TestCase):
 
 				{'description': 'unit test rule',
 				 '_id': 'unittestidrule',
+				 'mfilter': {'tags': { '$in': ["tag2"]} },
+				 'actions': [{'type':'remove',
+					      'key': 'tags',
+					      'element': 'tag2'},
+					     {'type':'pass'}],
+				 'name': 'change-tag-pass'},
+
+				{'description': 'unit test rule',
+				 '_id': 'unittestidrule',
+				 'mfilter': {'perfdatas': { '$in': ["perf1"]} },
+				 'actions': [{'type':'remove',
+					      'key': 'perfdatas',
+					      'element': 'perf1'},
+					     {'type':'pass'}],
+				 'name': 'remove-perdata-pass'},
+
+				{'description': 'unit test rule',
+				 '_id': 'unittestidrule',
+				 'mfilter': {'remove_me': "True"},
+				 'actions': [{'type':'remove',
+					      'key': 'remove_me'},
+					     {'type':'pass'}],
+				 'name': 'remove-eventfield-pass'},
+
+				{'description': 'unit test rule',
+				 '_id': 'unittestidrule',
+				 'mfilter': {'connector': "add_here"},
+				 'actions': [{'type':'override',
+					      'field': 'added_field',
+					      'value': "this_was_added_at_runtime"},
+					     {'type':'pass'}],
+				 'name': 'add-eventfield-pass'},
+
+				{'description': 'unit test rule',
+				 '_id': 'unittestidrule',
 				 'mfilter': {'test_field': { '$gt': 1378713357 } },
 				 'actions': [{'type':'drop'}],
 				 'name': 'check-gt-drop2'},
@@ -153,6 +188,32 @@ class KnownValues(unittest.TestCase):
 		# rule priority validation sorted is the same used in beat method in the engine
 		event['connector'] = 'priority'
 		self.assertEqual(self.engine.work(event), event)
+
+		# remove 'tag2'
+		event['connector'] = ""
+		event['tags'] = ['tag1', 'tag2', 'tag3']
+		event = self.engine.work(event)
+		self.assertEqual(event['tags'][1], "tag3")
+
+		# remove 'perf1'
+		event['perfdatas'] = {'perf1': 13374242,
+				      'perf2': 42421337,
+				      'perf3': 42}
+		event = self.engine.work(event)
+		self.assertEqual(('perf1' in event['perfdatas']), False)
+
+		# add field
+		event['connector'] = "add_here"
+		event = self.engine.work(event)
+		self.assertEqual(event['added_field'], "this_was_added_at_runtime")
+
+		# remove field
+		event['connector'] = ""
+		event['remove_me'] = 'True'
+		event['tags'] = []
+		del event['perfdatas']
+		event = self.engine.work(event)
+		self.assertEqual(('remove_me' in event), False)
 
 		# No configuration, default configuration is loaded
 		self.engine.configuration = {}
