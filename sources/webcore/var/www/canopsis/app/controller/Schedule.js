@@ -218,7 +218,6 @@ Ext.define('canopsis.controller.Schedule', {
 		}
 
 		this.fillAdvancedFilters(form, item.data.kwargs.subset_selection);
-	},
 
 		var exporting_intervalLength = exporting.length;
 		var exporting_intervalUnit = exporting.unit;
@@ -286,6 +285,7 @@ Ext.define('canopsis.controller.Schedule', {
 
 		if(options.interval) {
 			start_time = Ext.Date.now() - (options.interval * 1000);
+		}
 
 		var stop_time = undefined;
 

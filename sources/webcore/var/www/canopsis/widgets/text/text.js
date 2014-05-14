@@ -264,7 +264,7 @@ Ext.define('widgets.text.text', {
 									key = genKey('perf_data', metric.metric, k, node.co, node.re);
 									template_data[key] = datas[k];
 								}
-							}, this);
+							}
 
 							this.fillData(template_data, from, to);
 							this.computeMathOperations();
