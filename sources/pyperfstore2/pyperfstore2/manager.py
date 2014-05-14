@@ -19,7 +19,7 @@
 # ---------------------------------
 
 import os, sys, json, logging, time
-import hashlib
+import hashlib, gridfs, traceback
 from datetime import datetime
 
 from pyperfstore2.store import store
@@ -395,7 +395,8 @@ class manager(object):
 			try:
 				self.store.create_bin(_id=bin_id, data=data)
 			except gridfs.errors.FileExists as fe:
-				pass
+				self.logger.debug('Impossible to create gridfs bin {} because it exists'.format(fe))
+
 
 			self.logger.debug("   + Add bin_id in meta and clean meta")
 			##ofts = dca.get('fts', fts)
@@ -410,6 +411,7 @@ class manager(object):
 
 		except Exception,err:
 			self.logger.warning('Impossible to rotate %s: %s' % (_id, err))
+			self.logger.error(traceback.format_exc())
 		#else:
 		#	self.logger.debug("  + Not enough point in DCA")
 		#	ofts = dca.get('fts', fts)
