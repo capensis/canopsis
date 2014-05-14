@@ -51,14 +51,27 @@ class store(object):
 		import ConfigParser
 		config = ConfigParser.RawConfigParser()
 		config.read(os.path.expanduser('~/etc/cstorage.conf'))
-
+		
 		try:
-			mongo_host = config.get('master', 'host')		if config.get('master', 'host') != "" and not mongo_host else mongo_host
-			mongo_port = config.getint('master', 'port')	if config.get('master', 'port') != "" and not mongo_port else mongo_port
-			mongo_user = config.get('master', 'userid')		if config.get('master', 'userid') != "" and not mongo_user else mongo_user
-			mongo_pass = config.get('master', 'password')	if config.get('master', 'password') != "" and not mongo_pass else mongo_pass
-		except:
-			pass
+			host = config.get('master', 'host')
+			port = config.getint('master', 'port')
+			user = config.get('master', 'userid')
+			passwd = config.get('master', 'password')
+
+			if host:
+				mongo_host = host
+
+			if port:
+				mongo_port = port
+
+			if user:
+				mongo_user = user
+
+			if passwd:
+				mongo_pass = passwd
+
+		except (ConfigParser.NoOptionError, ConfigParser.NoSectionError), err:
+			self.logger.error('Impossible to parse cstorage.conf: {0}'.format(str(err)))
 
 		self.mongo_host = mongo_host
 		self.mongo_port = mongo_port
@@ -91,11 +104,10 @@ class store(object):
 
 	def connect(self):
 		if self.connected:
-			self.logger.warning("Impossible to connect, already connected")
+			self.logger.debug("Impossible to connect, already connected")
 			return True
 		else:
 			self.logger.debug("Connect to MongoDB (%s/%s@%s:%s)" % (self.mongo_db, self.mongo_collection, self.mongo_host, self.mongo_port))
-
 			try:
 				self.conn=Connection(host=self.mongo_host, port=self.mongo_port, safe=self.mongo_safe)
 				self.logger.debug(" + Success")
@@ -128,11 +140,11 @@ class store(object):
 			return True
 
 	def check_connection(self):
-		if not self.connected:
-			if not self.connect():
-				raise Exception('Impossible to deal with DB, you are not connected ...')
+		if not self.connected or not self.connect():
+			raise Exception('Impossible to deal with DB, you are not connected ...')
 
 	def count(self, _id):
+		self.check_connection()
 		return self.collection.find({'_id': _id}).count()
 
 	def update(self, _id, mset=None, munset=None, mpush=None, mpush_all=None, mpop=None, upsert=True):
@@ -153,10 +165,11 @@ class store(object):
 			return self.collection.update({'_id': _id}, data, upsert=upsert)
 
 	def sync(self):
-		self.logger.debug("Sync pipeline to Redis")
-		self.redis_pipe.execute()
-		self.last_sync = time.time()
-		self.pipe_size = 0
+		if self.connected:
+			self.logger.debug("Sync pipeline to Redis")
+			self.redis_pipe.execute()
+			self.last_sync = time.time()
+			self.pipe_size = 0
 
 	def push(self, _id, point, meta_data={}, bulk=True):
 		self.check_connection()
@@ -268,9 +281,9 @@ class store(object):
 
 		if self.connected:
 			self.logger.debug("Disconnect from MongoDB")
-			self.conn.disconnect()
+			self.conn.fsync()
+			del self.conn
+			self.connected = False
 		else:
 			self.logger.warning("Impossible to disconnect, you are not connected")
 
-	#def __del__(self):
-	#	self.disconnect()

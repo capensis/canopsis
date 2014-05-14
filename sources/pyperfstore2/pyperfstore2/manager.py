@@ -19,9 +19,8 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-import time
-import hashlib
-import logging
+import os, sys, json, logging, time
+import hashlib, gridfs, traceback
 from datetime import datetime
 
 from pyperfstore2.store import store
@@ -31,12 +30,13 @@ from caccount import caccount
 
 class manager(object):
 
-	def __init__(self, retention=0, dca_min_length = 250, logging_level=logging.INFO, cache=True, **kwargs):
+	def __init__(self, retention=0, dca_min_length=250, logging_level=logging.INFO, cache=True, **kwargs):
+
 		self.logger = logging.getLogger('manager')
 		self.logger.setLevel(logging_level)
 		self.storage = get_storage(account=caccount(user="root", group="root"))
 		# Store
-		self.store = store(logging_level=logging_level, **kwargs)
+		self.store = store(logging_level=self.logger.level, **kwargs)
 
 		self.dca_min_length = dca_min_length
 
@@ -240,6 +240,7 @@ class manager(object):
 
 		if not dca :
 			raise Exception('Invalid _id, not found %s' % _id)
+
 		dca = self.subset_selection_apply(dca, subset_selection)
 
 		plain_fts = None
@@ -269,7 +270,9 @@ class manager(object):
 					self.logger.debug("   + Append")
 			for bin_id in bin_ids:
 				data = self.store.get_bin(_id=bin_id)
-				points += utils.uncompress(data)
+
+				if data is not None:
+					points += utils.uncompress(data)
 
 		## Check Plain DCA
 		self.logger.debug(" + Search in plain DCA")
@@ -452,21 +455,22 @@ class manager(object):
 			bin_id = "%s%s" % (_id, lts)
 			self.logger.debug("   + Store in binary record")
 			self.store.create_bin(_id=bin_id, data=data)
+		except gridfs.errors.FileExists as fe:
+			self.logger.debug('Impossible to create gridfs bin {} because it exists'.format(fe))
 
 			self.logger.debug("   + Add bin_id in meta and clean meta")
-			##ofts = dca.get('fts', fts)
-			##self.store.update(_id=_id, mset={'fts': ofts, 'd': []}, mpush={'c': (fts, lts, bin_id)})
 
-			self.store.update(_id=_id, mpush={'c': (fts, lts, bin_id)})
+			#Kept bugfix change on 14/04/13 merge but issue with c value remains
+			perfdata = self.store.get(_id=_id)
+			to_push = [fts, lts, bin_id]
+			if to_push not in perfdata['c']:
+				self.store.update(_id=_id, mpush={'c': (fts, lts, bin_id)})
+
 			self.store.redis.delete(_id)
 
 		except Exception,err:
 			self.logger.warning('Impossible to rotate %s: %s' % (_id, err))
-
-		#else:
-		#	self.logger.debug("  + Not enough point in DCA")
-		#	ofts = dca.get('fts', fts)
-		#	self.store.update(_id=_id, mset={'fts': ofts})
+			self.logger.error(traceback.format_exc())
 
 		t = time.time() - t
 		self.logger.debug(" + Rotation of '%s' done in %.3f seconds" % (_id, t))
@@ -630,6 +634,11 @@ class manager(object):
 
 			self.logger.info(" + Compressed DCA: %s" % len(meta.get('c', [])))
 			self.logger.info(" + Next Clean: %s" % meta.get('nc', None) )
+
+	def disconnect(self):
+		self.logger.debug("DISCONNECT MANAGER")
+		self.store.disconnect()
+
 
 def split_list(alist, wanted_parts=1):
     length = len(alist)

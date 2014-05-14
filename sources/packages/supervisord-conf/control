@@ -17,6 +17,9 @@ function pre_install(){
 
 function post_install(){
 	echo "Post-install $NAME $VERSION-$RELEASE ..."
+	
+	sed -i s:@PREFIX@:$PREFIX:g $PREFIX/etc/supervisord.conf
+	check_code $?
 }
 	
 function pre_remove(){

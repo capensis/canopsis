@@ -73,6 +73,10 @@ class carchiver(object):
 			#record = self.storage.get(_id, account=self.account)
 			change_fields = {'state': 1, 'state_type': 1, 'last_state_change': 1, 'perf_data_array': 1, 'output': 1, 'timestamp': 1}
 			devent = self.collection.find_one(_id, fields=change_fields)
+
+			if not devent:
+				new_event = True
+
 			self.logger.debug(" + Check with old record:")
 			old_state = devent['state']
 			old_state_type = devent['state_type']
@@ -100,7 +104,6 @@ class carchiver(object):
 			# No old record
 			self.logger.debug(" + New event")
 			changed = True
-			new_event = True
 			old_state = state
 
 		if changed:

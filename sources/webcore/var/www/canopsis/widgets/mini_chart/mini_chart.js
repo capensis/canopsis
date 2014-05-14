@@ -79,6 +79,8 @@ Ext.define('widgets.mini_chart.mini_chart', {
 	buildOptions : function(info, values, serie_panel, i) {
 		var node = info['node'];
 
+		var me = this;
+
 		//Find the print label
 		var label;
 
@@ -137,19 +139,7 @@ Ext.define('widgets.mini_chart.mini_chart', {
 			metric: label,
 			unit: unit,
 			chart_type: this.chart_type,
-			original_values: values,
-
-			tooltipFormatter: function(sparkline, options, fields) {
-				void(sparkline);
-
-				$(document).find('.tooltip-minichart').css('border', '2px solid ' + curve_color);
-
-				if(options.userOptions.chart_type === 'line_graph') {
-					return '<b>' + rdr_tstodate(Math.round(fields['x']/1000)) + '</b><br>' + options.userOptions.metric + ': ' + fields['y'] + ' ' + options.userOptions.unit;
-				}
-
-				return '<b>' + rdr_tstodate(Math.round(options.userOptions.original_values[fields[0].offset][0] / 1000)) + '</b><br/>' + options.userOptions.metric + ' : ' + fields[0].value + ' ' + options.userOptions.unit;
-			}
+			original_values: values
 		};
 
 		return options;
@@ -221,7 +211,8 @@ Ext.define('widgets.mini_chart.mini_chart', {
 						info: Ext.clone(info),
 						flex: 4,
 						chart_type: this.chart_type,
-						border: false
+						border: false,
+						humanReadable: this.humanReadable
 					});
 
 					this.charts[node] = true;

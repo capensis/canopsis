@@ -23,7 +23,7 @@ function post_install(){
 	#launch_cmd 1 tar xfz $PREFIX/tmp/$NAME.tgz -C /opt/canopsis/tmp/
 	#launch_cmd 1 "cd $PREFIX/tmp/$NAME && python setup.py install"
 
-        update_pylibs &> /dev/null
+        su - $HUSER -c "update_pylibs &> /dev/null"
         check_code $? "Error when update pylibs listing ..."
 }
 
@@ -44,7 +44,7 @@ function pre_update(){
 
 function post_update(){
 	echo "Post-update $NAME $VERSION-$RELEASE ..."
-        update_pylibs &> /dev/null
+        su - $HUSER -c "update_pylibs &> /dev/null"
         check_code $? "Error when update pylibs listing ..."
 }
 

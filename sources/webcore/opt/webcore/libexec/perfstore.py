@@ -1,4 +1,3 @@
-
 #!/usr/bin/env python
 # --------------------------------
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
@@ -38,13 +37,20 @@ from ctools import internal_metrics
 import pyperfstore2
 import pyperfstore2.utils
 
+from cstorage import get_storage
+from caccount import caccount
+
+storage = get_storage(namespace='object', account=caccount(user="root", group="root"))
+
+
 manager = None
 
 logger = logging.getLogger("perfstore")
 
 def load():
+	global logger
 	global manager
-	manager = pyperfstore2.manager(logging_level=logging.INFO)
+	manager = pyperfstore2.manager(logging_level='DEBUG')
 
 def unload():
 	global manager
@@ -249,27 +255,51 @@ def perfstore_get_all_metrics(limit = 20, start = 0, search = None, filter = Non
 					mor.append({field: {'$regex': '.*%s.*' % word, '$options': 'i'}})
 				mfilter['$and'].append({'$or': mor})
 
+	use_hint = False
 	if not show_internals:
 		if mfilter:
 			mfilter = {'$and': [mfilter, {'me': {'$nin':internal_metrics  }}]}
+			use_hint = True
 		else:
 			mfilter = {'me': {'$nin': internal_metrics  }}
 
 	logger.debug(" + mfilter:  %s" % mfilter)
 
+	if limit > 0:
+		extra_limit = 1
+	else:
+		extra_limit = 0
+
 	mfilter = clean_mfilter(mfilter)
+	data  = manager.find(limit=limit + extra_limit, skip=start, mfilter=mfilter, data=False, sort=msort)
 
-	data  = manager.find(limit=limit, skip=start, mfilter=mfilter, data=False, sort=msort)
-	total = data.count()
-	data  = list(data)
+	if use_hint:
+		data.hint([('co',1),('re',1),('me',1)])
 
-	return {'success': True, 'data' : data, 'total' : total}
+	if isinstance(data, dict):
+		data = [data]
+	elif data is not None:
+		data = list(data)
+	else:
+		data = list()
+
+	if use_hint:
+		total = start + len(data)
+	else:
+		result = storage.get_backend('object').find_one({'crecord_name':'perfdata2_count_no_internal'})
+		if result and 'count' in result:
+			total = result['count']
+		else:
+			total = len(data)
+
+ 	return {'success': True, 'data' : data, 'total' : total}
 
 
 ### manipulating meta
 @delete('/perfstore',checkAuthPlugin={'authorized_grp':group_managing_access})
 @delete('/perfstore/:_id',checkAuthPlugin={'authorized_grp':group_managing_access})
 def remove_meta(_id=None):
+
 	if not _id:
 		_id =  json.loads(request.body.readline())
 	if not _id:
@@ -279,7 +309,6 @@ def remove_meta(_id=None):
 		_id = [_id]
 
 	logger.debug('delete %s: ' % str(_id))
-
 	for item in _id:
 		if isinstance(item,dict):
 			manager.remove(_id=item['_id'], purge=False)
@@ -300,6 +329,7 @@ def update_meta(_id=None):
 			if '_id' in item:
 				del item['_id']
 			manager.store.update(_id=_id, mset=item)
+
 		except Exception, err:
 			logger.warning('Error while updating meta_id: %s' % err)
 			return HTTPError(500, "Error while updating meta_id: %s" % err)

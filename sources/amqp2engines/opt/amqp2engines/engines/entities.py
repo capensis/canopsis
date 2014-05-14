@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding: UTF-8 -*-
 #--------------------------------
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
@@ -187,10 +188,10 @@ class engine(cengine):
 		for perfdata in event['perf_data_array']:
 			nodeid = md5.new()
 
-			nodeid.update(component)
+			nodeid.update(component.encode('ascii', 'ignore'))
 
 			if resource:
-				nodeid.update(resource)
+				nodeid.update(resource.encode('ascii', 'ignore'))
 
 			nodeid.update(perfdata['metric'])
 			nodeid = nodeid.hexdigest()
