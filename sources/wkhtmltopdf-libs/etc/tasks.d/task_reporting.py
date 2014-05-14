@@ -25,6 +25,7 @@ from cstorage import cstorage
 from cfile import cfile
 from ctools import cleanTimestamp
 from datetime import date
+from cinit import cinit
 from celerylibs import decorators
 from random import randint
 import os, sys, json
