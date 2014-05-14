@@ -29,6 +29,8 @@ Ext.define('widgets.text.text', {
 
 	date_format: '',
 
+	date_format: '',
+
 	initComponent: function() {
 		this.callParent(arguments);
 
@@ -144,6 +146,16 @@ Ext.define('widgets.text.text', {
 				filter.co = metric.component;
 			}
 
+			var metrics = [];
+
+			Ext.Object.each(this.perfdataMetricList, function(key, value) {
+				void(key);
+				var metric = value.metric;
+				if (! (metric in metrics)) {
+					metrics.push(metric);
+				}
+			});
+
 			if(metric.resource) {
 				filter.re = metric.resource;
 			}
@@ -252,7 +264,7 @@ Ext.define('widgets.text.text', {
 									key = genKey('perf_data', metric.metric, k, node.co, node.re);
 									template_data[key] = datas[k];
 								}
-							}
+							}, this);
 
 							this.fillData(template_data, from, to);
 							this.computeMathOperations();

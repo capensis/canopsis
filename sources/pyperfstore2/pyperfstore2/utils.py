@@ -19,7 +19,7 @@
 # ---------------------------------
 import logging
 logger = logging.getLogger('utils')
-logger.setLevel('INFO')
+logger.setLevel(logging.INFO)
 
 import zlib
 import time
@@ -80,9 +80,10 @@ intervalToRelativeDelta = {
 }
 
 #### Utils fn
-def datetimeToTimestamp(_date):
+def datetimeToTimestamp(_date=None):
+	if _date is None:
+		_date = datetime.now()
 	return time.mktime(_date.timetuple())
-	return calendar.timegm(_date.timetuple())
 
 def is_in_interval(point, interval):
 	result = point >= interval[0] and point <= interval[1]
@@ -118,11 +119,11 @@ def get_last_value(points):
 		return point[1]
 	else:
 		return None
-		
+
 def delta(points):
 	if len(points) == 1:
 		return points[0][1]
-		
+
 	vfirst = get_first_value(points)
 	vlast = get_last_value(points)
 	return vlast - vfirst
@@ -186,7 +187,7 @@ def parse_dst(points, dtype, first_point=[]):
 	logger.debug("Parse Data Source Type %s on %s points" % (dtype, len(points)))
 
 	dtype = dtype.upper()
-		
+
 	if dtype == "DERIVE" or dtype == "COUNTER" or dtype == "ABSOLUTE":
 		if points:
 			rpoints = []
@@ -194,11 +195,11 @@ def parse_dst(points, dtype, first_point=[]):
 			i=0
 			last_value=0
 			counter = 0
-			
+
 			logger.debug('There is %s values' % len(values))
-			
+
 			for point in points:
-				
+
 				value = point[1]
 				timestamp = point[0]
 
@@ -285,9 +286,9 @@ def _roundtime(utcdate, periodtime=1, periodtype=T_HOUR, timezone=time.timezone)
 				week = weeks[index]
 				if result.day in week:
 					result = result.replace(day=week[0] if week[0] != 0 else 1)
-					break			
+					break
 		elif periodtype == T_MONTH:
-			result = result.replace(second=0, minute=0, hour=0, day=1)			
+			result = result.replace(second=0, minute=0, hour=0, day=1)
 		elif periodtype == T_YEAR:
 			result = result.replace(second=0, minute=0, hour=0, day=1, month=1)
 
@@ -342,7 +343,7 @@ def roundTime(date, interval, timezone=time.timezone):
 def _getTimeSteps(start, stop, periodtime, periodtype, roundtime, timezone=time.timezone):
 	logger.debug('getTimeSteps:')
 	timeSteps = []
-	
+
 	logger.debug('   + Interval: %s' % interval)
 
 	start_datetime 	= datetime.utcfromtimestamp(start)
@@ -353,7 +354,7 @@ def _getTimeSteps(start, stop, periodtime, periodtype, roundtime, timezone=time.
 
 	if periodtype != None:
 
-		relativeinterval = relativeDeltas[periodtype] * periodtime	
+		relativeinterval = relativeDeltas[periodtype] * periodtime
 
 		if relativeinterval != None:
 			date = stop_datetime
@@ -365,9 +366,9 @@ def _getTimeSteps(start, stop, periodtime, periodtype, roundtime, timezone=time.
 	else:
 		logger.debug('   + Use interval')
 		timeSteps = range(stop, start-periodtime, -periodtime)
-	
+
 	timeSteps.reverse()
-	
+
 	logger.debug('   + timeSteps: %s', timeSteps)
 
 	return timeSteps
@@ -375,7 +376,7 @@ def _getTimeSteps(start, stop, periodtime, periodtype, roundtime, timezone=time.
 def getTimeSteps(start, stop, interval, roundtime=True, timezone=time.timezone):
 	logger.debug('getTimeSteps:')
 	timeSteps = []
-	
+
 	logger.debug('   + Interval: %s' % interval)
 
 	start_datetime 	= datetime.utcfromtimestamp(start)
@@ -390,16 +391,16 @@ def getTimeSteps(start, stop, interval, roundtime=True, timezone=time.timezone):
 		date = stop_datetime
 		start_datetime_minus_relativeinterval = start_datetime - relativeinterval
 
-		while date > start_datetime_minus_relativeinterval:			
-			ts = calendar.timegm(date.timetuple())			
+		while date > start_datetime_minus_relativeinterval:
+			ts = calendar.timegm(date.timetuple())
 			timeSteps.append(ts)
 			date -= relativeinterval
 	else:
 		logger.debug('   + Use interval')
 		timeSteps = range(stop, start-interval, -interval)
-	
+
 	timeSteps.reverse()
-	
+
 	logger.debug('   + timeSteps: %s', timeSteps)
 
 	return timeSteps
@@ -413,19 +414,19 @@ def aggregate(points, start=None, stop=None, max_points=None, interval=None, aty
 		mode = 'by_point'
 	elif mode != 'by_point':
 		mode = 'by_interval'
-	
+
 	if not max_points:
 		max_points=1450
-		
+
 	if interval:
 		interval = int(interval)
 		mode = 'by_interval'
-				
+
 	if max_points != None:
 		 max_points = int(max_points)
 
 	atype = atype.upper()
-	
+
 	logger.debug("Aggregate %s points (max: %s, interval: %s, method: %s, mode: %s)" % (len(points), max_points, interval, atype, mode))
 
 	if not agfn:
@@ -450,23 +451,23 @@ def aggregate(points, start=None, stop=None, max_points=None, interval=None, aty
 	#logger.debug(" + Points: %s" % points)
 
 	rpoints=[]
-	
+
 	if mode == 'by_point':
 		if len(points) < max_points:
 			logger.debug(" + Useless (%s < %s)" % (len(points), max_points))
 			return points
-		
+
 		interval = int(round(len(points) / float(max_points)))
 		logger.debug(" + point interval: %s" % interval)
-		
+
 		for x in range(0, len(points), interval):
 			sample = points[x:x+interval]
 			value = agfn(sample)
 			timestamp = sample[len(sample)-1][0]
 			rpoints.append([timestamp, value])
-		
+
 	elif mode == 'by_interval':
-		
+
 		if not start:
 			start = points[0][0]
 
@@ -475,7 +476,7 @@ def aggregate(points, start=None, stop=None, max_points=None, interval=None, aty
 
 		if len(points) == 1:
 			return [ [start, points[0][1]] ]
-		
+
 		logger.debug(' + Start: %s' %  datetime.utcfromtimestamp(start))
 		logger.debug(' + Stop:  %s' %  datetime.utcfromtimestamp(stop))
 
@@ -490,9 +491,9 @@ def aggregate(points, start=None, stop=None, max_points=None, interval=None, aty
 		for index in xrange(1, len(timeSteps)):
 
 			timestamp = timeSteps[index]
-			
+
 			previous_timestamp = timeSteps[index-1]
-			
+
 			logger.debug("   + Interval %s -> %s" % (previous_timestamp, timestamp))
 
 			while i < len(points) and points[i][0] < timestamp:
@@ -530,7 +531,7 @@ def aggregate(points, start=None, stop=None, max_points=None, interval=None, aty
 
 def get_aggregation_point(points_to_aggregate, fn, timestamp, fill):
 	if points_to_aggregate:
-		
+
 		logger.debug("     + %s points to aggregate" % (len(points_to_aggregate)))
 
 		agvalue = round(fn(points_to_aggregate), 2)
@@ -548,15 +549,15 @@ def get_aggregation_point(points_to_aggregate, fn, timestamp, fill):
 
 def compress(points):
 	logger.debug("Compress timeserie")
-	
+
 	# Create packer
 	global packer
 	if not packer:
 		packer = msgpack.Packer()
-	
+
 	# Remplace timestamp by interval
 	logger.debug(" + Remplace Timestamp by Interval and compress it")
-	
+
 	fts = points[0][0]
 	last_timestamp = fts
 	last_interval = 0
@@ -595,7 +596,7 @@ def compress(points):
 
 def uncompress(data):
 	logger.debug("Uncompress timeserie")
-	
+
 	if not data:
 		raise ValueError("Invalid data type (%s)" % type(data))
 
@@ -603,18 +604,18 @@ def uncompress(data):
 	global unpacker
 	if not unpacker:
 		unpacker = msgpack.Unpacker(use_list=True)
-	
+
 	unpacker.feed(str(zlib.decompress(data)))
 	data = unpacker.unpack()
-	
+
 	fts = data[0]
 	points = data[1]
-	
+
 	logger.debug(" + Type of point: %s" % type(points))
-	
+
 	if not isinstance(points, list):
 		raise ValueError("Invalid type (%s)" % type(points))
-	
+
 	rpoints = []
 
 	#first point
@@ -641,7 +642,7 @@ def uncompress(data):
 
 ### aggregation serie function
 def consolidation(series, fn, interval=None):
-	
+
 	# Todo calcul interval
 	if not interval:
 		interval = 300

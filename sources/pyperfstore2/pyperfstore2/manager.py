@@ -19,9 +19,14 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
+<<<<<<< HEAD
 import time
 import hashlib
 import logging
+=======
+import os, sys, json, logging, time
+import hashlib, gridfs, traceback
+>>>>>>> bugfixes
 from datetime import datetime
 
 from pyperfstore2.store import store
@@ -30,13 +35,21 @@ from cstorage import get_storage
 from caccount import caccount
 
 class manager(object):
+<<<<<<< HEAD
 
 	def __init__(self, retention=0, dca_min_length = 250, logging_level=logging.INFO, cache=True, **kwargs):
+=======
+	def __init__(self, retention=0, dca_min_length=250, logging_level=logging.INFO, cache=True, **kwargs):
+>>>>>>> bugfixes
 		self.logger = logging.getLogger('manager')
 		self.logger.setLevel(logging_level)
 		self.storage = get_storage(account=caccount(user="root", group="root"))
 		# Store
+<<<<<<< HEAD
 		self.store = store(logging_level=logging_level, **kwargs)
+=======
+		self.store = store(logging_level=self.logger.level, **kwargs)
+>>>>>>> bugfixes
 
 		self.dca_min_length = dca_min_length
 
@@ -60,7 +73,11 @@ class manager(object):
 		}
 
 	def gen_id(self, name):
+<<<<<<< HEAD
 		return hashlib.md5(name.encode("utf-8")).hexdigest()
+=======
+		return hashlib.md5(name).hexdigest()
+>>>>>>> bugfixes
 
 	def get_id(self, _id=None, name=None):
 		if not _id and not name:
@@ -95,7 +112,10 @@ class manager(object):
 
 	def get_meta(self, _id=None, name=None, raw=False, mfields=None):
 		_id = self.get_id(_id, name)
+<<<<<<< HEAD
 
+=======
+>>>>>>> bugfixes
 		meta_data = self.store.get(_id, mfields=mfields)
 		if not meta_data:
 			return None
@@ -175,6 +195,7 @@ class manager(object):
 
 		return self.store.find(mfilter=mfilter, limit=limit, skip=skip, mfields=mfields, sort=sort)
 
+<<<<<<< HEAD
 	def subset_selection_apply(self, dca, subset_selection):
 
 		#is there some exclude/include information in subset selection
@@ -228,6 +249,9 @@ class manager(object):
 		return dca
 
 	def get_points(self, _id=None, name=None, tstart=None, tstop=None, raw=False, return_meta=False, add_prev_point=False, add_next_point=False, subset_selection={}):
+=======
+	def get_points(self, _id=None, name=None, tstart=None, tstop=None, raw=False, return_meta=False, add_prev_point=False, add_next_point=False):
+>>>>>>> bugfixes
 		_id = self.get_id(_id, name)
 		if tstop == None:
 			tstop = int(time.time())
@@ -240,7 +264,10 @@ class manager(object):
 
 		if not dca :
 			raise Exception('Invalid _id, not found %s' % _id)
+<<<<<<< HEAD
 		dca = self.subset_selection_apply(dca, subset_selection)
+=======
+>>>>>>> bugfixes
 
 		plain_fts = None
 		plain_lts = None
@@ -269,7 +296,12 @@ class manager(object):
 					self.logger.debug("   + Append")
 			for bin_id in bin_ids:
 				data = self.store.get_bin(_id=bin_id)
+<<<<<<< HEAD
 				points += utils.uncompress(data)
+=======
+				if data is not None:
+					points += utils.uncompress(data)
+>>>>>>> bugfixes
 
 		## Check Plain DCA
 		self.logger.debug(" + Search in plain DCA")
@@ -452,21 +484,22 @@ class manager(object):
 			bin_id = "%s%s" % (_id, lts)
 			self.logger.debug("   + Store in binary record")
 			self.store.create_bin(_id=bin_id, data=data)
+		except gridfs.errors.FileExists as fe:
+			self.logger.debug('Impossible to create gridfs bin {} because it exists'.format(fe))
 
 			self.logger.debug("   + Add bin_id in meta and clean meta")
-			##ofts = dca.get('fts', fts)
-			##self.store.update(_id=_id, mset={'fts': ofts, 'd': []}, mpush={'c': (fts, lts, bin_id)})
 
-			self.store.update(_id=_id, mpush={'c': (fts, lts, bin_id)})
+			#Kept bugfix change on 14/04/13 merge but issue with c value remains
+			perfdata = self.store.get(_id=_id)
+			to_push = [fts, lts, bin_id]
+			if to_push not in perfdata['c']:
+				self.store.update(_id=_id, mpush={'c': (fts, lts, bin_id)})
+
 			self.store.redis.delete(_id)
 
 		except Exception,err:
 			self.logger.warning('Impossible to rotate %s: %s' % (_id, err))
-
-		#else:
-		#	self.logger.debug("  + Not enough point in DCA")
-		#	ofts = dca.get('fts', fts)
-		#	self.store.update(_id=_id, mset={'fts': ofts})
+			self.logger.error(traceback.format_exc())
 
 		t = time.time() - t
 		self.logger.debug(" + Rotation of '%s' done in %.3f seconds" % (_id, t))
@@ -630,6 +663,11 @@ class manager(object):
 
 			self.logger.info(" + Compressed DCA: %s" % len(meta.get('c', [])))
 			self.logger.info(" + Next Clean: %s" % meta.get('nc', None) )
+
+	def disconnect(self):
+		self.logger.debug("DISCONNECT MANAGER")
+		self.store.disconnect()
+
 
 def split_list(alist, wanted_parts=1):
     length = len(alist)

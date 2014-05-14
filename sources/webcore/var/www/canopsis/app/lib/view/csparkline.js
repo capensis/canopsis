@@ -98,7 +98,8 @@ Ext.define('canopsis.lib.view.csparkline' , {
 			unit: unit,
 			chart_type: this.chart_type,
 			original_values: Ext.clone(this.values),
-			tooltipFormatter: this.tooltipFormatter
+			tooltipFormatter: this.tooltipFormatter,
+			me: this
 		};
 
 		this.options = options;
@@ -119,13 +120,20 @@ Ext.define('canopsis.lib.view.csparkline' , {
 
 		$('.tooltip-sparkline').css('border-color', options.userOptions.lineColor);
 
-		var html;
+		var html = '';
 
 		if(options.userOptions.chart_type === 'line_graph') {
-			html = '<b>' + rdr_tstodate(Math.round(fields['x'] / 1000)) + '</b><br>' + options.userOptions.metric + ': ' + fields['y'] + ' ' + options.userOptions.unit;
+			html = '<b>' + rdr_tstodate(Math.round(fields['x'] / 1000)) + '</b><br>';
+		} else {
+			html = '<b>' + rdr_tstodate(Math.round(options.userOptions.original_values[fields[0].offset][0] / 1000)) + '</b><br />';
 		}
-		else {
-			html = '<b>' + rdr_tstodate(Math.round(options.userOptions.original_values[fields[0].offset][0] / 1000)) + '</b><br />' + options.userOptions.metric + ' : ' + fields[0].value + ' ' + options.userOptions.unit;
+
+		html += options.userOptions.metric + ': ';
+
+		if (options.mergedOptions.me.humanReadable) {
+			html += rdr_humanreadable_value(fields['y'], options.userOptions.unit);
+		} else {
+			html += fields['y'] + ' ' + options.userOptions.unit;
 		}
 
 		return html;

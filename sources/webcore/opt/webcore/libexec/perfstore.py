@@ -48,8 +48,9 @@ manager = None
 logger = logging.getLogger("perfstore")
 
 def load():
+	global logger
 	global manager
-	manager = pyperfstore2.manager(logging_level=logging.INFO)
+	manager = pyperfstore2.manager(logging_level='DEBUG')
 
 def unload():
 	global manager
@@ -255,17 +256,22 @@ def perfstore_get_all_metrics(limit = 20, start = 0, search = None, filter = Non
 				mfilter['$and'].append({'$or': mor})
 
 	use_hint = False
- 	if not show_internals:
- 		if mfilter:
- 			mfilter = {'$and': [mfilter, {'me': {'$nin':internal_metrics  }}]}
+	if not show_internals:
+		if mfilter:
+			mfilter = {'$and': [mfilter, {'me': {'$nin':internal_metrics  }}]}
 			use_hint = True
- 		else:
- 			mfilter = {'me': {'$nin': internal_metrics  }}
+		else:
+			mfilter = {'me': {'$nin': internal_metrics  }}
 
- 	logger.debug(" + mfilter:  %s" % mfilter)
+	logger.debug(" + mfilter:  %s" % mfilter)
 
- 	mfilter = clean_mfilter(mfilter)
-	data  = manager.find(limit=limit, skip=start, mfilter=mfilter, data=False, sort=msort)
+	if limit > 0:
+		extra_limit = 1
+	else:
+		extra_limit = 0
+
+	mfilter = clean_mfilter(mfilter)
+	data  = manager.find(limit=limit + extra_limit, skip=start, mfilter=mfilter, data=False, sort=msort)
 
 	if use_hint:
 		data.hint([('co',1),('re',1),('me',1)])
@@ -276,7 +282,6 @@ def perfstore_get_all_metrics(limit = 20, start = 0, search = None, filter = Non
 		data = list(data)
 	else:
 		data = list()
-
 
 	if use_hint:
 		total = start + len(data)
@@ -294,6 +299,7 @@ def perfstore_get_all_metrics(limit = 20, start = 0, search = None, filter = Non
 @delete('/perfstore',checkAuthPlugin={'authorized_grp':group_managing_access})
 @delete('/perfstore/:_id',checkAuthPlugin={'authorized_grp':group_managing_access})
 def remove_meta(_id=None):
+
 	if not _id:
 		_id =  json.loads(request.body.readline())
 	if not _id:
@@ -303,7 +309,6 @@ def remove_meta(_id=None):
 		_id = [_id]
 
 	logger.debug('delete %s: ' % str(_id))
-
 	for item in _id:
 		if isinstance(item,dict):
 			manager.remove(_id=item['_id'], purge=False)
@@ -324,6 +329,7 @@ def update_meta(_id=None):
 			if '_id' in item:
 				del item['_id']
 			manager.store.update(_id=_id, mset=item)
+
 		except Exception, err:
 			logger.warning('Error while updating meta_id: %s' % err)
 			return HTTPError(500, "Error while updating meta_id: %s" % err)

@@ -28,7 +28,7 @@ Ext.define('canopsis.controller.Reporting', {
 		this.callParent(arguments);
 	},
 
-	launchReport: function(view_id, from, to, subset_selection, mail, orientation, pagesize) {
+	launchReport: function(view_id, from, to, subset_selection, mail, orientation, pagesize, timezone) {
 		log.debug('Launch Report on view ' + view_id, this.logAuthor);
 
 		//if no date given
@@ -51,10 +51,13 @@ Ext.define('canopsis.controller.Reporting', {
 			subset_selection = JSON.stringify(subset_selection);
 		}
 
-		var url = '/reporting/'+ from + '/' + to + '/' + view_id;
+		var url = '/reporting/'+ from + '/' + to + '/' + view_id + '/';
 
 		if(mail !== undefined) {
-			url += '/' + mail;
+			url += mail + '/';
+			if (timezone !== undefined) {
+				url += timezone + '/';
+			}
 		}
 
 		global.notify.notify(_('Please Wait'), _('Your document is rendering, a popup will ask you where to save in few seconds'));
