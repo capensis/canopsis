@@ -65,7 +65,7 @@ Ext.define('canopsis.view.Briefcase.Grid' , {
 			flex: 1,
 			sortable: true,
 			dataIndex: 'crecord_creation_time',
-			renderer: rdr_tstodate
+			renderer: function(data) { return rdr_tstodate(data); }
 		},{
 			header: _('Name'),
 			flex: 4,
