@@ -68,18 +68,24 @@ class engine(cengine):
 		servicegroups = event.get('servicegroups', [])
 
 		# Create Component entity
-		data = {
-			'type': 'component',
-			'name': component,
-			'hostgroups': hostgroups
-		}
+		doc_id = 'component.{0}'.format(component)
+		doc = self.backend.find_one(doc_id)
+
+		if not doc:
+			doc = {
+				'_id': doc_id,
+				'type': 'component',
+				'name': component
+			}
+
+		doc['hostgroups'] = hostgroups
 
 		if event['source_type'] == 'component':
-			data['mCrit'] = event.get(mCrit, None)
-			data['mWarn'] = event.get(mWarn, None)
+			doc['mCrit'] = event.get(mCrit, None)
+			doc['mWarn'] = event.get(mWarn, None)
 
-			data['state'] = event['state']
-			data['state_type'] = event['state_type']
+			doc['state'] = event['state']
+			doc['state_type'] = event['state_type']
 
 		self.update(doc, [('type', 1), ('name', 1)])
 

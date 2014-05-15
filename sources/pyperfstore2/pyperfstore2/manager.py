@@ -463,7 +463,7 @@ class manager(object):
 			#Kept bugfix change on 14/04/13 merge but issue with c value remains
 			perfdata = self.store.get(_id=_id)
 			to_push = [fts, lts, bin_id]
-			if to_push not in perfdata['c']:
+			if to_push not in perfdata.get('c', []):
 				self.store.update(_id=_id, mpush={'c': (fts, lts, bin_id)})
 
 			self.store.redis.delete(_id)
