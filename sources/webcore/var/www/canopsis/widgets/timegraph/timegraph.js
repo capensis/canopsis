@@ -392,12 +392,17 @@ Ext.define('widgets.timegraph.timegraph', {
 
 	addPoint: function(serieId, value) {
 		// insert point only if it appends after the last of the serie.
+		//gets invert information
+		var invert = global.curvesCtrl.getRenderInfo(this.series[serieId].node.label).data.invert;
+
 		var points = this.series[serieId].data,
 			last_point = points[points.length - 1],
 			value_ts = value[0] * 1000;
 
 		if (last_point === undefined || last_point[0] < value_ts) {
-			this.series[serieId].data.push([value_ts, value[1]]);
+			//invert metric depending on it s curve information
+			var value = invert ? -value[1] : value[1];
+			this.series[serieId].data.push([value_ts, value]);
 			this.series[serieId].last_timestamp = (this.aggregate_method ? undefined : value_ts);
 		}
 
