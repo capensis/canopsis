@@ -37,10 +37,10 @@ class ccmd(cmd.Cmd):
 		return True
 
 	def help_quit(self):
-		print "Exit CLI"
+		print ("Exit CLI")
 
 	def help_help(self):
-		print "Show help message (type help <topic>)"
+		print ("Show help message (type help <topic>)")
 
 	# shortcuts
 	do_exit = do_quit
@@ -49,17 +49,19 @@ class ccmd(cmd.Cmd):
 
 class cbrowser(ccmd):
 	def __init__(self, prompt, account, namespace='object', crecord_type=None):
-		ccmd.__init__(self, prompt)
+		super(cbrowser, self).__init__(prompt)
 		self.account = account
 		self.namespace = namespace
 		self.crecord_type = crecord_type
 		self.storage = cstorage(account, namespace=namespace, logging_level=logging.INFO)
 
 	def do_ls(self, crecord_type=None):
-		if   self.crecord_type:
+		if self.crecord_type:
 			records = self.storage.find({'crecord_type': self.crecord_type})
+
 		elif crecord_type:
 			records = self.storage.find({'crecord_type': crecord_type})
+
 		else:
 			records = self.storage.find()
 
@@ -69,35 +71,42 @@ class cbrowser(ccmd):
 		try:
 			if _id == '*':
 				pass
+
 			else:
 				record = self.storage.get(_id)
 				record.cat()
-		except Exception, err:
-			print "Impossible to cat",_id,":", err
+
+		except Exception as err:
+			print ("Impossible to cat {0}: {1}".format(_id, err))
 
 	def do_dump(self, _id):
 		try:
 			if _id == '*':
 				pass
+
 			else:
 				record = self.storage.get(_id)
 				record.cat(dump=True)
-		except Exception, err:
-			print "Impossible to dump",_id,":", err
+
+		except Exception as err:
+			print ("Impossible to dump {0}: {1}".format(_id, err))
 
 	def do_rm(self, _id):
 		try:
 			self.storage.remove(_id)
-		except Exception, err:
-			print "Impossible to remove", _id,":", err
+
+		except Exception as err:
+			print ("Impossible to remove {0}: {1}".format(_id, err))
 
 	def do_cd(self, path):
 		if path == "..":
 			return True
 
 	def print_records(self, records):
-		print "Total:", len(records)
+		print ("Total: {0}".format(len(records)))
+
 		lines = []
+
 		for record in records:
 			line = []
 
@@ -136,7 +145,6 @@ class cbrowser(ccmd):
 					max_ln[i] = len(word)
 
 				i+=1
-
 		
 		#new_lines = []
 		for line in lines:
@@ -153,11 +161,3 @@ class cbrowser(ccmd):
 				i+=1
 
 			print new_line
-
-		
-
-
-				
-
-
-	

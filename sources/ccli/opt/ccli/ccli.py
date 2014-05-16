@@ -1,6 +1,6 @@
-#!/usr/bin/env python
+#!/usr/bin/env python2.7
 #--------------------------------
-# Copyright (c) 2011 "Capensis" [http://www.capensis.com]
+# Copyright (c) 2014 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
 #
@@ -18,65 +18,81 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-import readline, os, sys
-from ccmd import ccmd
+import readline
 import socket
+import imp
+import sys
+import os
 
-## Config
+from ccmd import ccmd
 
-hostname = socket.gethostname()
-user = "root"
-welcome = "Welcome to Canopsis CLI, have fun !"
-prompt = user+'@'+hostname+":"
-
-libexec_dir=os.path.expanduser("~/opt/ccli/libexec")
-sys.path.append(libexec_dir)
-
-## Import libexec
-libexec_list = []
-for libexec in os.listdir(libexec_dir):
-	if libexec[0] != "." :
-		ext = libexec.split(".")[1]
-		module = libexec.split(".")[0]
-		if ext == "py":
-			try:
-				exec "import %s" % module
-				libexec_list.append(module)
-			except Exception, err:
-				print("Impossible to load %s:\n\t%s" % (module, err))
+modules_path = os.path.expanduser('~/opt/ccli/libexec')
+sys.path.append(modules_path)
 
 
-## Main object
-class cli(ccmd):
-	def __init__(self):
-		ccmd.__init__(self, prompt + '/')
+class Application(object):
+	class cli(ccmd):
+		def __init__(self, app):
+			ccmd.__init__(self, '{0}/'.format(app.prompt))
 
-	for libexec in libexec_list:
-		exec "def do_%s(self, line): %s.start_cli(prompt)" % (libexec, libexec)
+			self.app = app
+
+	def __init__(self, *args, **kwargs):
+		super(Application, self).__init__(*args, **kwargs)
+
+		self.hostname = socket.gethostname()
+		self.user = 'root'
+
+		self.prompt = '{0}@{1}:'.format(self.user, self.hostname)
+
+		self.modules = {}
+
+		for module in os.listdir(modules_path):
+			if module[0] != '.':
+				modname, ext = os.path.splitext(module)
+
+				if ext == '.py':
+					abspath = os.path.join(modules_path, module)
+					self.modules[modname] = imp.load_source(modname, abspath)
+
+		for modname in self.modules:
+			module = self.modules[modname]
+
+			def caller(s, line):
+				module.start_cli(s.app.prompt)
+
+			fname = 'do_{0}'.format(modname)
+			caller.__name__ = fname
+			Application.cli.__dict__[fname] = caller
+
+	def do_help(self):
+		print ("Usage: ccli [module]\n")
+		print ("Modules:")
+
+		for modname in self.modules:
+			print (" - {0}".format(modname))
+
+	def __call__(self):
+		print ('Welcome to Canopsis CLI')
+
+		try:
+			if len(sys.argv) == 2:
+				if sys.argv[1] == 'help':
+					self.do_help()
+
+				else:
+					module = sys.argv[1]
+
+					self.modules[module].start_cli(self.prompt)
+
+			else:
+				Application.cli(self).cmdloop()
+
+		except KeyboardInterrupt:
+			print ('Received KeyboardInterrupt, exiting...')
+			sys.exit(0)
 
 
-
-## Launch CLI
-try:
-	print welcome
-
-	try:
-		if sys.argv[1]:
-			try:
-				exec "%s.start_cli(prompt)" % sys.argv[1]
-			except KeyboardInterrupt:
-				print
-				sys.exit(1)
-			except Exception, err:
-				print err
-	except:
-		pass
-	try:
-		cli().cmdloop()
-	except KeyboardInterrupt:
-		print
-		sys.exit(1)
-	except Exception, err:
-		print err
-except:
-	pass
+if __name__ == '__main__':
+	app = Application()
+	app()
