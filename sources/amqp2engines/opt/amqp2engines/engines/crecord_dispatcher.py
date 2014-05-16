@@ -108,7 +108,7 @@ class engine(cengine):
 	def publish_record(self, event, crecord_type):
 		rk = 'dispatcher.{0}'.format(crecord_type)
 
-		self.amqp.exchanges['media'] = Exchange('media', 'direct', durable=True)
+		self.amqp.get_exchange('media')
 		self.amqp.publish(event, rk, exchange_name='media')
 
 	def beat(self):

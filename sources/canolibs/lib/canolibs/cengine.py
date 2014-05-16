@@ -157,7 +157,9 @@ class cengine(object):
 		if self.etype in self.dispatcher_crecords:
 			rk = 'dispatcher.' + self.etype
 			self.logger.debug('Creating dispatcher queue for engine ' + self.etype)
-			self.new_amqp_queue('Dispatcher_' + self.etype, rk, self.consume_dispatcher, self.exchange_name)
+
+			self.amqp.get_exchange('media')
+			self.new_amqp_queue('Dispatcher_' + self.etype, rk, self.consume_dispatcher, 'media')
 
 		self.amqp.start()
 
