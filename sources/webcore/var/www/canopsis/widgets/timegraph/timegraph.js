@@ -377,6 +377,7 @@ Ext.define('widgets.timegraph.timegraph', {
 
 				trend_serie.label += '_trend';
 				trend_serie.data = data;
+				trend_serie.node.trend_curve = true;
 
 				series.splice(series_index + 1, 0, trend_serie);
 			}
