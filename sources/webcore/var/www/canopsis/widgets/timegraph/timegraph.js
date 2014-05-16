@@ -393,7 +393,11 @@ Ext.define('widgets.timegraph.timegraph', {
 	addPoint: function(serieId, value) {
 		// insert point only if it appends after the last of the serie.
 		//gets invert information
-		var invert = global.curvesCtrl.getRenderInfo(this.series[serieId].node.label).data.invert;
+		var style = global.curvesCtrl.getRenderInfo(this.series[serieId].node.label)
+		var invert = false;
+		if (style && style.data.invert) {
+			invert = true;
+		}
 
 		var points = this.series[serieId].data,
 			last_point = points[points.length - 1],
