@@ -30,14 +30,15 @@ import time
 import json
 import ast
 
-NAME='filters'
 
 class engine(cengine):
+	etype = 'event_filter'
 
 	def __init__(self, *args, **kargs):
-		cengine.__init__(self, name=NAME, *args, **kargs)
+		super(engine, self).__init__(*args, **kargs)
+
 		account = caccount(user="root", group="root")
-		self.storage = get_storage(logging_level=logging.DEBUG, account=account)
+		self.storage = get_storage(logging_level=self.logging_level, account=account)
 		self.derogations = []
 
 	def pre_run(self):
