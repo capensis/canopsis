@@ -274,20 +274,23 @@ Ext.define('widgets.timegraph.timegraph', {
 					lines: {
 						show: (this.SeriesType === 'area' || this.SeriesType === 'line'),
 						fill: (this.SeriesType === 'area'),
-						lineWidth: this.lineWidth
+						lineWidth: this.lineWidth,
+						barWidth: this.lineWidth
 					},
 					points: {
 						show: false
 					},
 					bars: {
-						show: (this.SeriesType === 'bars')
+						show: (this.SeriesType === 'bars'),
+						lineWidth: this.lineWidth,
+						barWidth: this.lineWidth
+
 					}
 				},
 
 				tooltip: this.tooltip
 			}
 		);
-
 		if(!this.displayVerticalLines) {
 			this.options.xaxis.tickLength = 0;
 		}
