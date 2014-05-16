@@ -19,10 +19,6 @@
 # ---------------------------------
 
 from ccmd import ccmd
-
-from csla import csla
-
-
 from caccount import caccount
 
 class cli(ccmd):
