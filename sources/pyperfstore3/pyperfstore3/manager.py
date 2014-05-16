@@ -19,8 +19,8 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
+from time import mktime, time
 
-import time
 from md5 import new as md5
 
 from operator import itemgetter
@@ -28,18 +28,36 @@ from operator import itemgetter
 from datetime import datetime
 
 from pyperfstore3.timewindow import TimeWindow, Period
+from pyperfstore3.store import Store
+
+from collections import Iterable
+
+from sys import maxint
+
+import logging
 
 
 class Manager(object):
 
+	class ManagerError(Exception):
+		pass
+
 	__slots__ = ['perfdata3', 'logger']
 
-	def __init__(self, perfdata3, logger):
+	def __init__(self, perfdata3=None, logger=None):
 
 		super(Manager, self).__init__()
 
-		self.perfdata3 = perfdata3
+		if logger is None:
+			logger = logging.getLogger(Manager.__name__)
 		self.logger = logger
+
+		if perfdata3 is None:
+
+			store = Store(logging_level=self.logger.level)
+			perfdata3 = store.collection
+
+		self.perfdata3 = perfdata3
 
 	@staticmethod
 	def get_metric_id(component, resource, metric):
@@ -63,58 +81,130 @@ class Manager(object):
 
 		md5_result = md5()
 
+		# add metric_id in id
 		md5_result.update(metric_id.encode('ascii', 'ignore'))
+
 		# add id_timestamp in id
 		md5_result.update(str(timestamp).encode('ascii', 'ignore'))
-		# add period in id
-		md5_result.update(period.unit.encode('ascii', 'ignore'))
 
+		# add period in id
+		unit_with_value = period.get_max_unit()
+		if unit_with_value is None:
+			raise Manager.ManagerError(
+				"period {0} must contain at least one valid unit among {1}".
+				format(period, Period.UNITS))
+		md5_result.update(unit_with_value[Period.UNIT].encode('ascii', 'ignore'))
+
+		# resolve md5
 		result = md5_result.hexdigest()
 
 		return result
 
-	def put_data(self, metric_id, timestamp_with_values, meta=dict(), period=Period(unit=Period.MINUTE, value=60)):
+	@staticmethod
+	def get_document(timewindow, period):
 		"""
-		Put a list of couple (timestamp, value), a meta into perfdata3 related to input period.
+		Get id timestamps related to input timewindow and period.
 		"""
 
-		sliding_period = period.next_period()
+		# get minimal timestamp
+		start_timestamp = int(period.sliding_timestamp(timewindow.start(), normalize=True))
+		# and maximal timestamp
+		stop_timestamp = int(period.sliding_timestamp(timewindow.stop(), normalize=True))
+		stop_datetime = datetime.fromtimestamp(stop_timestamp)
+		delta = period.get_delta()
+		stop_datetime += delta
+		stop_timestamp = mktime(stop_datetime.timetuple())
 
-		values_by_value_field_by_timestamp = dict()
+		result = start_timestamp, stop_timestamp
 
-		_ids_by_timestamp = dict()
+		return result
 
-		for timestamp, value in timestamp_with_values:
+	@staticmethod
+	def get_documents_query(metric_id, timewindow, period):
+		"""
+		Get mongo documents query about metric_id, timewindow and period.
+
+		If period is None and timewindow is not None, period takes default period value for metric_id.
+		"""
+
+		query = {"metric_id": metric_id}
+
+		if period is not None:  # manage specific period
+			query['period'] = period.unit_values
+
+		if timewindow is not None:  # manage specific timewindow
+			if period is None:
+				period = Manager.get_default_period(metric_id)  # TODO : remove all documents whatever timestamps if period is None
+			start_timestamp, stop_timestamp = Manager.get_document(timewindow, period)
+			query['timestamp'] = {'$gte': start_timestamp, '$lte': stop_timestamp}
+
+		return query
+
+	@staticmethod
+	def get_default_period(metric_id):
+		"""
+		Get default period related to input metric_id.
+		"""
+
+		result = Period(minute=60)
+
+		return result
+
+	def put_data(self, metric_id, points, meta=dict(), period=None, **kwargs):
+		"""
+		Put a (list of) couple (timestamp, value), a meta into perfdata3 related to input period.
+		kwargs will be added to all document in order to extend perfdata3 documents.
+		"""
+
+		if period is None:
+			period = Manager.get_default_period(metric_id)
+
+		# if points is a couple, transform it into a tuple of couple
+		if len(points) > 0:
+			if not isinstance(points[0], Iterable):
+				points = (points,)
+
+		# initialize a dictionary of perfdata value by value field and id_timestamp
+		document_properties_by_id_timestamp = dict()
+		# previous variable contains a dictionary of entries to put in the related document
+
+		# prepare data to insert/update in db
+		for timestamp, value in points:
 
 			timestamp = int(timestamp)
-
-			id_timestamp = int(sliding_period.sliding_timestamp(timestamp))
-
-			values_by_value_field = values_by_value_field_by_timestamp.setdefault(
-				id_timestamp, dict())
+			id_timestamp = int(period.sliding_timestamp(timestamp, normalize=True))
+			document_properties = document_properties_by_id_timestamp.setdefault(
+				id_timestamp, kwargs.copy())
 
 			self.logger.debug(' + id_timestamp: {0}'.format(id_timestamp))
 
-			if id_timestamp not in _ids_by_timestamp:
-				_id = Manager.get_document_id(metric_id, id_timestamp, period)
-				_ids_by_timestamp[id_timestamp] = _id
+			if '_id' not in document_properties:
+				document_properties['_id'] = Manager.get_document_id(
+					metric_id, id_timestamp, period)
+				document_properties['last_update'] = timestamp
+
 			else:
-				_id = _ids_by_timestamp[id_timestamp]
+				if document_properties['last_update'] < timestamp:
+					document_properties['last_update'] = timestamp
 
 			field_name = "values.{0}".format(timestamp - id_timestamp)
 
-			values_by_value_field[field_name] = value
+			document_properties[field_name] = value
 
-		for id_timestamp, document in values_by_value_field_by_timestamp.iteritems():
+		for id_timestamp, document_properties in document_properties_by_id_timestamp.iteritems():
+
+			# remove _id and last_update
+			_id = document_properties.pop('_id')
 
 			_set = {
-				'period': period.to_dict(),
+				'period': period.unit_values,
 				'metric_id': metric_id,
 				'timestamp': id_timestamp,
-				'last_update': timestamp,
-				'meta': meta
+				'meta': meta  # TODO : add meta in the dedicated collection perfdata3_meta
 			}
-			_set.update(document)
+			_set.update(document_properties)
+
+			document_properties['_id'] = _id
 
 			result = self.perfdata3.update(
 				{
@@ -138,75 +228,75 @@ class Manager(object):
 
 			self.logger.debug(' + metric updated: {0}'.format(meta))
 
-	def put_one_data(self, metric_id, value=None, timestamp=time.time(), period=Period(unit=Period.MINUTE, value=60)):
-		"""
-		Shortcut for put_data with one data.
-		"""
-
-		self.put_data(metric_id=metric_id, timestamp_with_values=((timestamp, value)), period=period)
-
-
-	def get_data(self, metric_id, timewindow, period=Period(unit=Period.MINUTE, value=60), return_meta=True):
+	def get_data(self, metric_id, timewindow=None, period=None, return_meta=False):
 		"""
 		Get a set of data related to input metric_id on the timewindow and input period.
 		If return_meta, result is the couple (set of data, meta)
 		"""
 
-		timewindow = TimeWindow(**timewindow)
+		if period is None:
+			period = Manager.get_default_period(metric_id)
 
-		sliding_period = period.next_period()
+		query = Manager.get_documents_query(
+			metric_id=metric_id, timewindow=timewindow, period=period)
 
-		start = sliding_period.sliding_timestamp(timewindow.start)
+		projection = {
+			'timestamp': 1,
+			'values': 1
+		}
+		if return_meta:
+			projection['meta'] = 1
 
-		stop = sliding_period.sliding_timestamp(timewindow.stop)
+		cursor = self.perfdata3.find(query,	projection=projection)
 
-		dt = datetime.utcfromtimestamp(start)
+		cursor.hint([('metric_id', 1), ('period', 1), ('timestamp', 1)])
 
-		dtstop = datetime.utcfromtimestamp(stop)
-
-		ids = list()
-
-		start_id = Manager.get_document_id(metric_id, start, period)
-		ids.append(start_id)
-
-		stop_id = Manager.get_document_id(metric_id, stop, period)
-		ids.append(stop_id)
-
-		while dt <= dtstop:
-
-			dt = timewindow.get_next_date(dt, period)
-
-			t = time.mktime(dt)
-
-			t_id = Manager.get_document_id(metric_id, t, period)
-
-			ids.append(t_id)
-
-		request = {"_id": {'$in': ids}}
-
-		documents = self.perfdata3.find(
-			request,
-			projection={'timestamp': 1, 'values': 1, 'meta': 1})
-
-		documents.hint([('_id', 1)])
-
-		meta = None
+		meta = (0, None)
 
 		result = list()
 
-		for document in documents:
-			if meta is None:
-				meta = document.get('meta')
+		for document in cursor:
 
 			timestamp = int(document.get('timestamp'))
+
+			# get last meta information
+			if return_meta and timestamp > meta[0]:
+					meta = (timestamp, document.get('meta'))
+
 			values = document.get('values')
 
 			for t, value in values.iteritems():
-				result.append( (timestamp + int(t), value) )
+				value_timestamp = timestamp + int(t)
+
+				if timewindow is None or value_timestamp in timewindow:
+					result.append( (value_timestamp, value) )
 
 		result.sort(key=itemgetter(0))
 
+		result = tuple(result)
+
 		if return_meta:
-			result = (result, meta)
+			result = (result, meta[1])
 
 		return result
+
+	def remove(self, metric_id, timewindow=None, period=None):
+		"""
+		Remove values and meta of one metric.
+		"""
+
+		if period is None:
+			period = Manager.get_default_period(metric_id)
+
+		query = Manager.get_documents_query(metric_id, timewindow, period)
+
+		# TODO : only remove values where timestamps are in document which contain more values than in timewindow
+		# for example, remove values in the set ([start_timestamp; start_timestamp + period.value] - [start_timestamp; start])
+
+		self.perfdata3.remove(query)
+
+	def update_meta(self, metric_id, meta, timewindow=None, period=None):
+		"""
+		"""
+
+		raise NotImplemented()

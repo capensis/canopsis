@@ -26,4 +26,5 @@ setup(
 	packages=['pyperfstore3'],
 	scripts=['scripts/pyperfstore3'],
 	long_description=read('README'),
+	test_suite="test"
 )

@@ -18,20 +18,28 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-import os, sys, json, logging, time
+import os
+import sys
+import json
+import logging
+import time
 
 from bson.errors import InvalidStringData
 from pymongo import Connection
-from gridfs import GridFS
 
-import threading
 
-class store(object):
+class Store(object):
+
+	class ConnectionError(Exception):
+		def __init__(self):
+			super(Store.ConnectionError, self).__init__(
+				"store can not connect")
+
 	def __init__(self,
 			mongo_host="127.0.0.1",
 			mongo_port=27017,
 			mongo_db='canopsis',
-			mongo_collection='perfdata2',
+			mongo_collection='perfdata3',
 			mongo_user=None,
 			mongo_pass=None,
 			mongo_safe=False,
@@ -40,7 +48,7 @@ class store(object):
 		self.logger = logging.getLogger('store')
 		self.logger.setLevel(logging.DEBUG)#logging_level)
 
-		# keep dayly track of ids in cache, 
+		# keep dayly track of ids in cache,
 		# TODO must be cleared in beat method
 		self.daily_ids = {}
 
@@ -50,7 +58,7 @@ class store(object):
 		import ConfigParser
 		config = ConfigParser.RawConfigParser()
 		config.read(os.path.expanduser('~/etc/cstorage.conf'))
-		
+
 		try:
 			host = config.get('master', 'host')
 			port = config.getint('master', 'port')
@@ -82,7 +90,8 @@ class store(object):
 
 		self.connected = False
 
-		self.connect()
+		if not self.connect():
+			raise Store.ConnectionError()
 
 		self.last_rate_time = time.time()
 		self.rate_interval = 10
@@ -98,7 +107,7 @@ class store(object):
 			self.logger.debug("Connect to MongoDB (%s/%s@%s:%s)" % (self.mongo_db, self.mongo_collection, self.mongo_host, self.mongo_port))
 
 			try:
-				self.conn=Connection(host=self.mongo_host, port=self.mongo_port, safe=self.mongo_safe)
+				self.conn = Connection(host=self.mongo_host, port=self.mongo_port, safe=self.mongo_safe)
 				self.logger.debug(" + Success")
 			except Exception, err:
 				self.logger.error(" + %s" % err)
@@ -120,8 +129,6 @@ class store(object):
 			self.logger.debug("Get collections")
 			self.collection = self.db[self.mongo_collection]
 
-			self.daily_collection = self.db[self.mongo_collection + '_daily']
-			self.grid = GridFS(self.db, self.mongo_collection+"_bin")
 			self.connected = True
 			self.logger.debug(" + Success")
 			return True
@@ -191,11 +198,6 @@ class store(object):
 
 		self.pushed_values += 1
 
-	def create_bin(self, _id, data):
-		self.check_connection()
-		self.logger.debug("Create bin record '%s'" % _id)
-		return self.grid.put(data, _id=_id)
-
 	def remove(self, _id=None, mfilter=None):
 		self.check_connection()
 		if mfilter:
@@ -212,34 +214,12 @@ class store(object):
 			self.logger.warning("Impossible to read Collecion Size")
 
 		self.logger.info(" + Collection:    %0.2f MB" % (size/1024.0/1024.0))
-		try:
-			bin_size = self.db.command("collstats", self.mongo_collection+"_bin.files")['size']
-			self.logger.info(" + Binaries Meta: %0.2f MB" % (bin_size /1024.0/1024.0))
-
-			chunks_size = self.db.command("collstats", self.mongo_collection+"_bin.chunks")['size']
-			self.logger.info(" + Binaries:      %0.2f MB" % (chunks_size /1024.0/1024.0))
-
-			size += chunks_size + bin_size
-		except:
-			self.logger.warning("Impossible to read GridFS Size")
-			pass
-
 
 		return size
 
 	def get(self, _id, mfields=None):
 		self.check_connection()
 		return self.collection.find_one({'_id': _id}, fields=mfields)
-
-	def get_bin(self, _id):
-		result = None
-		self.check_connection()
-		try:
-			document = self.grid.get(_id)
-			result = document.read()
-		except errors.NoFile as nf:
-			self.logger.error(nf)
-		return result
 
 	def find(self, limit=0, skip=0, mfilter={}, mfields=None, sort=None):
 		self.check_connection()
@@ -251,8 +231,6 @@ class store(object):
 	def drop(self):
 		self.check_connection()
 		self.db.drop_collection(self.mongo_collection)
-		self.db.drop_collection(self.mongo_collection+"_bin.chunks")
-		self.db.drop_collection(self.mongo_collection+"_bin.files")
 
 	def disconnect(self):
 		if self.connected:

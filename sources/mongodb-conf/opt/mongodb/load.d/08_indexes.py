@@ -99,10 +99,12 @@ INDEXES = {
 		[('type', 1), ('nodeid', 1)]
 	],
 	'perfdata3': [
-		[('_id', 1), ('unit', 1)]
+		[('_id', 1)],
+		[('metric_id', 1), ('period', 1), ('timestamp', 1)]
 	],
 	'perfdata3_meta': [
-		[('_id', 1), ('timestamp', 1)]
+		[('_id', 1), ('timestamp', 1)],
+		[('_id', 1), ('metric_id', 1), ('timestamp', 1)]
 	]
 }
 
