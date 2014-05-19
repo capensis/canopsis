@@ -167,7 +167,6 @@ Ext.define('widgets.mini_chart.mini_chart', {
 				values[i][1] = -values[i][1];
 			}
 
-			values[i][0] = values[i][0] / 1000;
 		}
 
 		return values;
