@@ -38,8 +38,10 @@ class engine(cengine):
 		super(engine, self).__init__(*args, **kargs)
 
 		account = caccount(user="root", group="root")
-		self.storage = get_storage(logging_level=self.logging_level, account=account)
+		self.storage = get_storage(logging_level=self.logging_level,
+					   account=account)
 		self.derogations = []
+		self.name = kargs['name']
 
 	def pre_run(self):
 		self.drop_event_count = 0
@@ -192,6 +194,17 @@ class engine(cengine):
 
 
 
+	def a_route(self, event, derogation, action, name):
+		if action["route"]:
+			self.next_amqp_queues = [action["route"]]
+			self.logger.debug("Event re-routed by rule '%s'" % name)
+		else:
+			self.logger.error("Action malformed (needs 'route'): %s" % action)
+
+		return None
+
+
+
 	def work(self, event, *xargs, **kwargs):
 		rk = cevent.get_routingkey(event)
 		default_action = self.configuration.get('default_action', 'pass')
@@ -200,7 +213,8 @@ class engine(cengine):
 			     'pass': self.a_pass,
 			     'override': self.a_modify,
 			     'requalificate': self.a_modify,
-			     'remove': self.a_modify}
+			     'remove': self.a_modify,
+			     'route': self.a_route}
 
 		# When list configuration then check black and
 		# white lists depending on json configuration
@@ -240,7 +254,7 @@ class engine(cengine):
 				      'default_action': self.find_default_action()}
 
 		try:
-			records = self.storage.find({'crecord_type':'rule'},
+			records = self.storage.find({'crecord_type': self.name},
 						    sort='priority')
 
 			for record in records:

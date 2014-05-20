@@ -30,10 +30,11 @@ from cengine import DROP
 
 class KnownValues(unittest.TestCase):
 	def setUp(self):
-		self.engine = filters.engine(logging_level=logging.DEBUG)
+		self.engine = filters.engine(**{'name':'passdropity', 'logging_level':logging.DEBUG})
 		self.engine.beat()
 
 	def test_01_Init(self):
+		self.engine.next_amqp_queues = ["consolidation"]
 		self.engine.drop_event_count = 0
 		self.engine.pass_event_count = 0
 		self.engine.configuration = {
@@ -142,6 +143,14 @@ class KnownValues(unittest.TestCase):
 				 'mfilter': {'test_field': { '$gt': 1378713357 } },
 				 'actions': [{'type':'drop'}],
 				 'name': 'check-gt-drop2'},
+
+
+				{'description': 're route',
+				 '_id': 'unittestidrule',
+				 'mfilter': {'connector': 'route_me'},
+				 'actions': [{'type':'route',
+					      'route': 'new_route_defined'}],
+				 'name': 're-route'},
 			],
 			'priority' : 2,
 			'default_action': 'drop',
@@ -215,10 +224,14 @@ class KnownValues(unittest.TestCase):
 		event = self.engine.work(event)
 		self.assertEqual(('remove_me' in event), False)
 
+		event['connector'] = 'route_me'
+		event['remove_me'] = 'False'
+		event = self.engine.work(event)
+		self.assertEqual(self.engine.next_amqp_queues[0], "new_route_defined")
+
 		# No configuration, default configuration is loaded
 		self.engine.configuration = {}
 		self.assertEqual(self.engine.work(event), event)
-
 
 if __name__ == "__main__":
 	unittest.main()
