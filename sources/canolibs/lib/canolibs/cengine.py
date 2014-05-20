@@ -98,7 +98,7 @@ class cengine(object):
 
 		self.logger.info("Engine initialised")
 
-		self.dispatcher_crecords = ['selector','topology','derogation','consolidation', 'sla']
+		self.dispatcher_crecords = ['selector','topology','derogation','consolidation', 'sla', 'downtime']
 
 	def crecord_task_complete(self, crecord_id):
 		next_ready = time.time() + DISPATCHER_READY_TIME
