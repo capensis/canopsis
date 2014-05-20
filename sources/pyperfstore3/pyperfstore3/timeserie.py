@@ -29,13 +29,20 @@ from datetime import datetime
 import calendar
 
 
+# TODO: add a dynamic aggregation operator manager
+
 class TimeSerie(object):
 	"""
-	Time serie management. Contain a TimeWindow, a period, a sliding_time,
-	an operation and fill property.
+	Time serie management. Contain a period and operation of aggregation,
+	and a round time and a fill boolean properties.
+
+	- period: interval of steps of aggregated points.
+	- aggregation: aggregation operation name.
+	- round_time: round_time of input timewindow during calculations.
+	- fill: change None values by 0.
 	"""
 
-	__slots__ = ('period', 'sliding_time', 'operation', 'fill')
+	__slots__ = ('period', 'round_time', 'aggregation', 'fill')
 
 	MAX_POINTS = 500
 
@@ -51,28 +58,30 @@ class TimeSerie(object):
 		self,
 		max_points=MAX_POINTS,
 		period=None,
-		sliding_time=True,
-		operation=MEAN,
+		round_time=True,
+		aggregation=MEAN,
 		fill=False):
 
 		self.period = self._get_period(max_points=max_points, period=period)
-		self.sliding_time = sliding_time
-		self.operation = operation
+		self.round_time = round_time
+		self.aggregation = aggregation
 		self.fill = fill
 
 	def __repr__(self):
 
-		message = "period: {0}, sliding_time: {1}" + \
-			", operation: {2}, fill: {3}"
+		message = "TimeSerie(period: {0}, round_time: {1}" + \
+			", aggregation: {2}, fill: {3})"
 		result = message.format(
-			self.period, self.sliding_time, self.operation, self.fill)
+			self.period, self.round_time, self.aggregation, self.fill)
 
 		return result
 
 	def _get_period(self, max_points, period):
+		"""
+		Get a period related to input max_points or a period.
+		"""
 
-		result = Period(value=period.value, unit=period.unit) \
-			if period is not None else None
+		result = period.copy() if period is not None else None
 
 		if result is None and max_points:
 			interval = self.timewindow.stop - self.timewindow.start
@@ -83,6 +92,9 @@ class TimeSerie(object):
 		return result
 
 	def getTimeSteps(self, timewindow):
+		"""
+		Get a list of same longer intervals inside timewindow.
+		"""
 
 		logger.debug('getTimeSteps:')
 
@@ -90,13 +102,11 @@ class TimeSerie(object):
 
 		logger.debug(' + TimeSerie: {0}'.format(self))
 
-		start_datetime = datetime.utcfromtimestamp(timewindow.start)
-		stop_datetime = datetime.utcfromtimestamp(timewindow.stop)
+		start_datetime = datetime.utcfromtimestamp(timewindow.start())
+		stop_datetime = datetime.utcfromtimestamp(timewindow.stop())
 
-		if self.sliding_time:
-			stop_datetime = self.period.sliding_time(
-				stop_datetime,
-				self.timezone)
+		if self.round_time:
+			stop_datetime = self.period.round_time(stop_datetime, self.timezone)
 
 		date = stop_datetime
 		start_delta = self.period.get_delta(start_datetime)
@@ -118,38 +128,33 @@ class TimeSerie(object):
 
 	def get_operation(self):
 		"""
-		Get self operation.
+		Get self aggregation.
 		"""
 
-		if self.operation == TimeSerie.MEAN or not self.operation:
+		if self.aggregation == TimeSerie.MEAN or not self.aggregation:
 			result = lambda x: sum(x) / float(len(x))
-		elif self.operation == TimeSerie.MIN:
+		elif self.aggregation == TimeSerie.MIN:
 			result = lambda x: min(x)
-		elif self.operation == TimeSerie.MAX:
+		elif self.aggregation == TimeSerie.MAX:
 			result = lambda x: max(x)
-		elif self.operation == TimeSerie.FIRST:
+		elif self.aggregation == TimeSerie.FIRST:
 			result = lambda x: x[0]
-		elif self.operation == TimeSerie.LAST:
+		elif self.aggregation == TimeSerie.LAST:
 			result = lambda x: x[-1]
-		elif self.operation == TimeSerie.DELTA:
+		elif self.aggregation == TimeSerie.DELTA:
 			result = lambda x: (max(x) - min(x)) / 2.
 
 		return result
 
-	def calculate_points(
-		self,
-		points,
-		timewindow):
+	def calculate_points(self, points, timewindow):
 		"""
-		Calculate an array of points.
+		Do self aggregation on input points with input timewindow.
 		"""
 
 		result = []
 
-		logger.debug("Calculate {0} points (timeserie: {1}, timewindow: {2})".format(
-			len(points),
-			self,
-			timewindow))
+		logger.debug("Calculate {0} point(s) (timeserie: {1}, timewindow: {2})"\
+			.format(len(points), self, timewindow))
 
 		agfn = self.get_operation()
 
@@ -179,13 +184,13 @@ class TimeSerie(object):
 
 				i += 1
 
-			if self.operation == TimeSerie.DELTA and last_point:
+			if self.aggregation == TimeSerie.DELTA and last_point:
 				points_to_aggregate.insert(0, last_point)
 
-			aggregation_point = self.get_aggregation_point(
-				points_to_aggregate,
-				agfn,
-				previous_timestamp)
+			aggregation_value = self.get_aggregation_value(
+				points_to_aggregate, agfn)
+
+			aggregation_point = previous_timestamp, aggregation_value
 
 			result.append(aggregation_point)
 
@@ -198,13 +203,13 @@ class TimeSerie(object):
 
 			points_to_aggregate = [point[1] for point in points[i:]]
 
-			if self.operation == TimeSerie.DELTA and last_point:
+			if self.aggregation == TimeSerie.DELTA and last_point:
 				points_to_aggregate.insert(0, last_point)
 
-			aggregation_point = self.get_aggregation_point(
-				points_to_aggregate,
-				agfn,
-				timeSteps[-1])
+			aggregation_value = self.get_aggregation_value(
+				points_to_aggregate, agfn)
+
+			aggregation_point = timeSteps[-1], aggregation_value
 
 			result.append(aggregation_point)
 
@@ -212,31 +217,29 @@ class TimeSerie(object):
 
 		return result
 
-	def get_aggregation_point(self, points_to_aggregate, fn, timestamp):
+	def get_aggregation_value(self, points_to_aggregate, fn):
+		"""
+		Get the aggregated point related to input points_to_aggregate,
+		a specific function and a timestamp.
+		"""
 
-		if points_to_aggregate:
-
-			logger.debug(
-				" + {0} points to aggregate".format(
-					(len(points_to_aggregate))))
+		if len(points_to_aggregate) > 0:
 
 			_points_to_aggregate = \
 				[point for point in points_to_aggregate if point is None]
 
-			agvalue = round(fn(_points_to_aggregate), 2)
-
-			result = [timestamp, agvalue]
+			result = round(fn(_points_to_aggregate), 2)
 
 		else:
-			logger.debug(" + No points")
 
-			result = [timestamp, 0 if self.fill else None]
-
-		logger.debug(" + Point : {0} ".format(result))
+			result = 0 if self.fill else None
 
 		return result
 
 	def crush_series(self, series, timewindow):
+		"""
+		Crush input series with timewindow parameters into a new serie of points.
+		"""
 
 		points = list()
 

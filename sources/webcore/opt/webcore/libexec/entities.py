@@ -31,12 +31,13 @@ from bson import json_util
 import json
 
 
+TABLE_NAME = 'entities'
 logger = logging.getLogger('Entities')
 
 
 def get_entities_from_db(mfilter):
 	account = get_account()
-	storage = get_storage(namespace='entities', account=account)
+	storage = get_storage(namespace=TABLE_NAME, account=account)
 	backend = storage.get_backend()
 
 	entities = backend.find(mfilter)
@@ -55,17 +56,22 @@ def get_entities_from_db(mfilter):
 
 	return response
 
-@get('/entities/')
+SERVICE_NAME = TABLE_NAME
+
+
+@get('/{0}/'.format(SERVICE_NAME))
 def get_all_entities():
 	return get_entities_from_db({})
 
-@get('/entities/:etype')
+
+@get('/{0}/:etype'.format(SERVICE_NAME))
 def get_all_typed_entities(etype):
 	return get_entities_from_db({
 		'type': etype
 	})
 
-@get('/entities/:etype/:ename')
+
+@get('/{0}/:etype/:ename'.format(SERVICE_NAME))
 def get_specific_entity(etype, ename):
 	identifier = 'name'
 
@@ -76,12 +82,15 @@ def get_specific_entity(etype, ename):
 	elif etype == 'ack':
 		identifier = 'timestamp'
 
-	return get_entities_from_db({
+	query = {
 		'type': etype,
 		identifier: ename
-	})
+	}
 
-@post('/entities/')
+	return get_entities_from_db(query)
+
+
+@post('/{0}/'.format(SERVICE_NAME))
 def get_entities_with_custom_filter():
 	try:
 		mfilter = request.body.readline()

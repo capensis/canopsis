@@ -19,7 +19,7 @@
 # ---------------------------------
 
 from pyperfstore3.manager import Manager
-from pyperfstore3.store import Store
+from pyperfstore3.store import PeriodicStore, TimedStore
 
 # Common functions
 

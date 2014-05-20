@@ -2,23 +2,23 @@ import unittest
 
 from pyperfstore3.manager import Manager
 from pyperfstore3.timewindow import Period, TimeWindow
-import logging
 
 
 class ManagerTest(unittest.TestCase):
 
 	def setUp(self):
-		logger = logging.getLogger()
-		logger.setLevel("DEBUG")
-		self.manager = Manager(logger=logger)
+		self.manager = Manager()
 
 	def test_put_get_data(self):
 
 		timewindow = TimeWindow()
 
-		metric_id = 'test_manager'
+		data_id = 'test_manager'
 
-		self.manager.remove(metric_id=metric_id)
+		self.manager.remove(data_id=data_id, with_meta=True)
+
+		count = self.manager.count(data_id=data_id)
+		self.assertEqual(count, 0)
 
 		tv0 = (int(timewindow.start()), None)
 		tv1 = (int(timewindow.start() + 1), 0)
@@ -26,73 +26,77 @@ class ManagerTest(unittest.TestCase):
 		tv3 = (int(timewindow.stop() + 1000000), 3)
 
 		# set values with timestamp without order
-		points = (tv0, tv2, tv1, tv3)
+		points = [tv0, tv2, tv1, tv3]
 
 		meta = {'plop': None}
 
 		period = Period(minute=60)
 
-		self.manager.put_data(
-			metric_id=metric_id,
-			points=points,
+		self.manager.put(
+			data_id=data_id,
+			points_or_point=points,
 			meta=meta,
 			period=period)
 
-		data, _meta = self.manager.get_data(
-			metric_id=metric_id,
+		data, _meta = self.manager.get(
+			data_id=data_id,
 			timewindow=timewindow,
 			period=period,
-			return_meta=True)
+			with_meta=True)
 
-		self.assertEqual(meta, _meta)
+		self.assertEqual(meta, _meta[0][1])
 
-		self.assertEqual((tv0, tv1, tv2), data)
+		self.assertEqual([tv0, tv1, tv2], data)
 
 		# remove 1 data at stop point
 		_interval = (timewindow.stop(), timewindow.stop())
 		_timewindow = TimeWindow(_interval)
 
-		self.manager.remove(metric_id, _timewindow, period=period)
+		self.manager.remove(
+			data_id=data_id,
+			timewindow=_timewindow,
+			period=period)
 
-		data, _meta = self.manager.get_data(
-			metric_id=metric_id,
+		data, _meta = self.manager.get(
+			data_id=data_id,
 			timewindow=timewindow,
 			period=period,
-			return_meta=True)
+			with_meta=True)
 
-		self.assertEqual(meta, _meta)
+		self.assertEqual(meta, _meta[0][1])
 
-		self.assertEqual(data, (tv0, tv1))
+		self.assertEqual(data, [tv0, tv1])
 
 		# get data on timewindow
-		data, _meta = self.manager.get_data(
-			metric_id=metric_id,
+		data, _meta = self.manager.get(
+			data_id=data_id,
 			timewindow=timewindow,
 			period=period,
-			return_meta=True)
+			with_meta=True)
 
-		self.assertEqual(meta, _meta)
+		self.assertEqual(meta, _meta[0][1])
 
 		# get all data
-		data, _meta = self.manager.get_data(
-			metric_id=metric_id,
+		data, _meta = self.manager.get(
+			data_id=data_id,
 			period=period,
-			return_meta=True)
+			with_meta=True)
 
-		self.assertEqual(meta, _meta)
+		self.assertEqual(meta, _meta[0][1])
 
 		self.assertEqual(len(data), 3)
 
 		# remove all data
 		self.manager.remove(
-			metric_id=metric_id)
+			data_id=data_id,
+			with_meta=True)
 
-		data, _meta = self.manager.get_data(
-			metric_id=metric_id,
+		data, _meta = self.manager.get(
+			data_id=data_id,
 			period=period,
-			return_meta=True)
+			with_meta=True)
 
-		self.assertEqual(None, _meta)
+		self.assertEqual(len(_meta), 0)
 
 		self.assertEqual(len(data), 0)
 

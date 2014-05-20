@@ -90,13 +90,13 @@ class Period(object):
 
 		return result
 
-	def sliding_timestamp(self, timestamp, normalize=False):
+	def round_timestamp(self, timestamp, normalize=False):
 		"""
 		Get round timestamp relative to an input timestamp.
 		"""
 
 		datetime = dt.utcfromtimestamp(float(timestamp))
-		datetime = self.sliding_datetime(datetime=datetime, normalize=normalize)
+		datetime = self.round_datetime(datetime=datetime, normalize=normalize)
 
 		utctimetuple = datetime.utctimetuple()
 		result = calendar.timegm(utctimetuple)
@@ -107,7 +107,7 @@ class Period(object):
 
 		return result
 
-	def sliding_datetime(self, datetime, normalize=False):
+	def round_datetime(self, datetime, normalize=False):
 		"""
 		Calculate roudtime relative to an UTC date.
 		normalize unsure to set to 0 for not given units under the minimal unit.
@@ -126,12 +126,12 @@ class Period(object):
 						break
 			else:
 				datetime_value = getattr(datetime, unit)
-			sliding_period_value = datetime_value % value
-			parameters[unit] = sliding_period_value
+			rounding_period_value = datetime_value % value
+			parameters[unit] = rounding_period_value
 
-		sliding_period = Period(**parameters)
-		#print sliding_period
-		delta = sliding_period.get_delta()
+		rounding_period = Period(**parameters)
+		#print rounding_period
+		delta = rounding_period.get_delta()
 
 		result = datetime - delta
 
@@ -167,6 +167,15 @@ class Period(object):
 		for unit in units:
 			if unit in self.unit_values:
 				result = {Period.UNIT: unit, Period.VALUE: self.unit_values[unit]}
+
+		return result
+
+	def copy(self):
+		"""
+		Get a period which is a copy of self.
+		"""
+
+		result = Period(**self.unit_values)
 
 		return result
 

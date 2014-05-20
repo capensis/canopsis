@@ -19,284 +19,168 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from time import mktime, time
-
 from md5 import new as md5
 
 from operator import itemgetter
 
-from datetime import datetime
-
-from pyperfstore3.timewindow import TimeWindow, Period
-from pyperfstore3.store import Store
+from .timewindow import Period
+from pyperfstore3.store import TimedStore, PeriodicStore
 
 from collections import Iterable
 
-from sys import maxint
-
 import logging
+
+from cstorage import get_storage
+
+DEFAULT_PERIOD = Period(**{Period.MINUTE: 60})
+DEFAULT_AGGREGATION = 'MEAN'
 
 
 class Manager(object):
+	"""
+	Dedicated to access to timed and peridic data (via stores).
+	"""
 
 	class ManagerError(Exception):
 		pass
 
-	__slots__ = ['perfdata3', 'logger']
+	DATA_NAME = 'metric'
 
-	def __init__(self, perfdata3=None, logger=None):
+	def __init__(self, timed_store=None, periodic_store=None,
+		logging_level=logging.INFO, data_name=DATA_NAME):
 
 		super(Manager, self).__init__()
 
-		if logger is None:
-			logger = logging.getLogger(Manager.__name__)
-		self.logger = logger
+		self.logger = logging.getLogger(__name__)
+		self.logger.setLevel(logging_level)
 
-		if perfdata3 is None:
+		if timed_store is None:
+			timed_store = TimedStore(logging_level=logging_level, data_name=data_name)
 
-			store = Store(logging_level=self.logger.level)
-			perfdata3 = store.collection
+		self.timed_store = timed_store
 
-		self.perfdata3 = perfdata3
+		if periodic_store is None:
+			periodic_store = PeriodicStore(logging_level=logging_level,
+				data_name=data_name)
 
-	@staticmethod
-	def get_metric_id(component, resource, metric):
+		self.periodic_store = periodic_store
 
-		metric_id_md5 = md5()
-		# add co in id
-		metric_id_md5.update(component.encode('ascii', 'ignore'))
+		self.entities = get_storage('entities')
 
-		if resource is not None:
-			# add re in id
-			metric_id_md5.update(resource.encode('ascii', 'ignore'))
-		# add me in id
-		metric_id_md5.update(metric.encode('ascii', 'ignore'))
+	def count(self, data_id, aggregation=None, period=None, timewindow=None):
 
-		result = metric_id_md5.hexdigest()
+		aggregation, period = self.get_aggregation_and_period(data_id=data_id,
+			aggregation=aggregation, period=period)
+
+		result = self.periodic_store.count(data_id=data_id, aggregation=aggregation,
+			period=period, timewindow=timewindow)
 
 		return result
 
-	@staticmethod
-	def get_document_id(metric_id, timestamp, period):
+	def get(self, data_id, with_meta=True, aggregation=None, period=None,
+		timewindow=None):
+		"""
+		Get a set of data related to input data_id on the timewindow and input period.
+		If with_meta, result is a couple of (points, list of meta by timestamp)
+		"""
 
-		md5_result = md5()
+		aggregation, period = self.get_aggregation_and_period(data_id=data_id,
+			aggregation=aggregation, period=period)
 
-		# add metric_id in id
-		md5_result.update(metric_id.encode('ascii', 'ignore'))
+		result = self.periodic_store.get(data_id=data_id,
+			aggregation=aggregation, period=period, timewindow=timewindow)
 
-		# add id_timestamp in id
-		md5_result.update(str(timestamp).encode('ascii', 'ignore'))
+		if with_meta is not None:
 
-		# add period in id
-		unit_with_value = period.get_max_unit()
-		if unit_with_value is None:
-			raise Manager.ManagerError(
-				"period {0} must contain at least one valid unit among {1}".
-				format(period, Period.UNITS))
-		md5_result.update(unit_with_value[Period.UNIT].encode('ascii', 'ignore'))
+			meta = self.timed_store.get(data_id=data_id, timewindow=timewindow)
 
-		# resolve md5
-		result = md5_result.hexdigest()
+			result = result, meta
 
 		return result
 
-	@staticmethod
-	def get_document(timewindow, period):
+	def put(self, data_id, points_or_point, meta=None, aggregation=None,
+		period=None):
 		"""
-		Get id timestamps related to input timewindow and period.
-		"""
-
-		# get minimal timestamp
-		start_timestamp = int(period.sliding_timestamp(timewindow.start(), normalize=True))
-		# and maximal timestamp
-		stop_timestamp = int(period.sliding_timestamp(timewindow.stop(), normalize=True))
-		stop_datetime = datetime.fromtimestamp(stop_timestamp)
-		delta = period.get_delta()
-		stop_datetime += delta
-		stop_timestamp = mktime(stop_datetime.timetuple())
-
-		result = start_timestamp, stop_timestamp
-
-		return result
-
-	@staticmethod
-	def get_documents_query(metric_id, timewindow, period):
-		"""
-		Get mongo documents query about metric_id, timewindow and period.
-
-		If period is None and timewindow is not None, period takes default period value for metric_id.
+		Put a (list of) couple (timestamp, value), a meta into rated_documents related to input period.
+		kwargs will be added to all document in order to extend rated_documents documents.
 		"""
 
-		query = {"metric_id": metric_id}
+		# if points_or_point is a point, transform it into a tuple of couple
+		if len(points_or_point) > 0:
+			if not isinstance(points_or_point[0], Iterable):
+				points_or_point = (points_or_point,)
 
-		if period is not None:  # manage specific period
-			query['period'] = period.unit_values
+		aggregation, period = self.get_aggregation_and_period(data_id=data_id,
+			aggregation=aggregation, period=period)
 
-		if timewindow is not None:  # manage specific timewindow
-			if period is None:
-				period = Manager.get_default_period(metric_id)  # TODO : remove all documents whatever timestamps if period is None
-			start_timestamp, stop_timestamp = Manager.get_document(timewindow, period)
-			query['timestamp'] = {'$gte': start_timestamp, '$lte': stop_timestamp}
+		self.periodic_store.put(data_id=data_id, aggregation=aggregation,
+			period=period, points=points_or_point)
 
-		return query
+		if meta is not None:
 
-	@staticmethod
-	def get_default_period(metric_id):
-		"""
-		Get default period related to input metric_id.
-		"""
+			min_timestamp = min( [point[0] for point in points_or_point] )
+			self.timed_store.put(data_id=data_id, value=meta, timestamp=min_timestamp)
 
-		result = Period(minute=60)
-
-		return result
-
-	def put_data(self, metric_id, points, meta=dict(), period=None, **kwargs):
-		"""
-		Put a (list of) couple (timestamp, value), a meta into perfdata3 related to input period.
-		kwargs will be added to all document in order to extend perfdata3 documents.
-		"""
-
-		if period is None:
-			period = Manager.get_default_period(metric_id)
-
-		# if points is a couple, transform it into a tuple of couple
-		if len(points) > 0:
-			if not isinstance(points[0], Iterable):
-				points = (points,)
-
-		# initialize a dictionary of perfdata value by value field and id_timestamp
-		document_properties_by_id_timestamp = dict()
-		# previous variable contains a dictionary of entries to put in the related document
-
-		# prepare data to insert/update in db
-		for timestamp, value in points:
-
-			timestamp = int(timestamp)
-			id_timestamp = int(period.sliding_timestamp(timestamp, normalize=True))
-			document_properties = document_properties_by_id_timestamp.setdefault(
-				id_timestamp, kwargs.copy())
-
-			self.logger.debug(' + id_timestamp: {0}'.format(id_timestamp))
-
-			if '_id' not in document_properties:
-				document_properties['_id'] = Manager.get_document_id(
-					metric_id, id_timestamp, period)
-				document_properties['last_update'] = timestamp
-
-			else:
-				if document_properties['last_update'] < timestamp:
-					document_properties['last_update'] = timestamp
-
-			field_name = "values.{0}".format(timestamp - id_timestamp)
-
-			document_properties[field_name] = value
-
-		for id_timestamp, document_properties in document_properties_by_id_timestamp.iteritems():
-
-			# remove _id and last_update
-			_id = document_properties.pop('_id')
-
-			_set = {
-				'period': period.unit_values,
-				'metric_id': metric_id,
-				'timestamp': id_timestamp,
-				'meta': meta  # TODO : add meta in the dedicated collection perfdata3_meta
-			}
-			_set.update(document_properties)
-
-			document_properties['_id'] = _id
-
-			result = self.perfdata3.update(
-				{
-					'_id': _id
-				},
-				{
-					'$set': _set
-				},
-				upsert=True,
-				w=1)
-
-			error = result.get("writeConcernError", None)
-
-			if error is not None:
-				self.logger.error(' error in updating document: {0}'.format(error))
-
-			error = result.get("writeError")
-
-			if error is not None:
-				self.logger.error(' error in updating document: {0}'.format(error))
-
-			self.logger.debug(' + metric updated: {0}'.format(meta))
-
-	def get_data(self, metric_id, timewindow=None, period=None, return_meta=False):
-		"""
-		Get a set of data related to input metric_id on the timewindow and input period.
-		If return_meta, result is the couple (set of data, meta)
-		"""
-
-		if period is None:
-			period = Manager.get_default_period(metric_id)
-
-		query = Manager.get_documents_query(
-			metric_id=metric_id, timewindow=timewindow, period=period)
-
-		projection = {
-			'timestamp': 1,
-			'values': 1
-		}
-		if return_meta:
-			projection['meta'] = 1
-
-		cursor = self.perfdata3.find(query,	projection=projection)
-
-		cursor.hint([('metric_id', 1), ('period', 1), ('timestamp', 1)])
-
-		meta = (0, None)
-
-		result = list()
-
-		for document in cursor:
-
-			timestamp = int(document.get('timestamp'))
-
-			# get last meta information
-			if return_meta and timestamp > meta[0]:
-					meta = (timestamp, document.get('meta'))
-
-			values = document.get('values')
-
-			for t, value in values.iteritems():
-				value_timestamp = timestamp + int(t)
-
-				if timewindow is None or value_timestamp in timewindow:
-					result.append( (value_timestamp, value) )
-
-		result.sort(key=itemgetter(0))
-
-		result = tuple(result)
-
-		if return_meta:
-			result = (result, meta[1])
-
-		return result
-
-	def remove(self, metric_id, timewindow=None, period=None):
+	def remove(self, data_id, with_meta=False, aggregation=None, period=None,
+		timewindow=None):
 		"""
 		Remove values and meta of one metric.
+		meta_names is a list of meta_data to remove. An empty list ensure that no meta data is removed.
+		if meta_names is None, then all meta_names are removed.
 		"""
 
-		if period is None:
-			period = Manager.get_default_period(metric_id)
+		aggregation, period = self.get_aggregation_and_period(data_id=data_id,
+			aggregation=aggregation, period=period)
 
-		query = Manager.get_documents_query(metric_id, timewindow, period)
+		self.periodic_store.remove(data_id=data_id, aggregation=aggregation,
+			period=period, timewindow=timewindow)
 
-		# TODO : only remove values where timestamps are in document which contain more values than in timewindow
-		# for example, remove values in the set ([start_timestamp; start_timestamp + period.value] - [start_timestamp; start])
+		if with_meta:
+			self.timed_store.remove(data_id=data_id, timewindow=timewindow)
 
-		self.perfdata3.remove(query)
-
-	def update_meta(self, metric_id, meta, timewindow=None, period=None):
+	def update_meta(self, data_id, meta, timestamp=None):
 		"""
+		Update meta information.
 		"""
 
-		raise NotImplemented()
+		self.timed_store.put(data_id=data_id, value=meta, timestamp=timestamp)
+
+	def remove_meta(self, data_id, timewindow=None):
+		"""
+		Remove meta information.
+		"""
+
+		self.timed_store.remove(data_id=data_id, timewindow=timewindow)
+
+	def get_aggregation_and_period(self, data_id, aggregation=None, period=None):
+		"""
+		Get default aggregation and period related to input data_id.
+		(DEFAULT_AGGREGATION, DEFAULT_PERIOD) if related entity does not exist or
+		does not contain a default aggregation or period.
+		"""
+
+		result = aggregation, period
+
+		if None in result:
+
+			if aggregation is None:
+				aggregation = DEFAULT_AGGREGATION
+
+			if period is None:
+				period = DEFAULT_PERIOD
+
+			entity = self.entities.find_one({'nodeid': data_id})
+
+			if entity is not None:
+				if result[0] is None:
+					result[0] = entity.get('aggregation', DEFAULT_AGGREGATION)
+
+				if result[1] is None:
+					result[1] = entity.get('period', DEFAULT_PERIOD)
+
+			else:
+				result = (
+					aggregation if aggregation is not None else DEFAULT_AGGREGATION,
+					period if period is not None else DEFAULT_PERIOD)
+
+		return result

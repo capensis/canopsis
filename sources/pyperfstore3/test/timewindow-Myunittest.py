@@ -15,7 +15,7 @@ import calendar
 
 class PeriodTest(unittest.TestCase):
 
-	def test_sliding_datetime(self):
+	def test_round_datetime(self):
 
 		# get current datetime
 		dt = datetime.now()
@@ -24,13 +24,13 @@ class PeriodTest(unittest.TestCase):
 
 			period = Period(**{unit: 1})
 
-			round_dt = period.sliding_datetime(dt)
+			round_dt = period.round_datetime(dt)
 			self.assertEqual(round_dt, dt)
 
 			value = getattr(dt, unit, None)
 			if value is not None:
 				period.unit_values[unit] = value + 1 if unit is not Period.YEAR else 2000
-				round_dt = period.sliding_datetime(dt)
+				round_dt = period.round_datetime(dt)
 				round_value = getattr(round_dt, unit)
 
 				if round_value is not None:
@@ -45,7 +45,7 @@ class PeriodTest(unittest.TestCase):
 						self.assertEqual(round_value, 0)
 
 			if Period.MICROSECOND is not unit:
-				normalized_dt = period.sliding_datetime(dt, normalize=True)
+				normalized_dt = period.round_datetime(dt, normalize=True)
 				for _unit in Period.UNITS[0:Period.UNITS.index(unit)-1]:
 					if _unit is not Period.WEEK:
 						if _unit is Period.MONTH or _unit is Period.DAY:
@@ -53,13 +53,13 @@ class PeriodTest(unittest.TestCase):
 						else:
 							self.assertEqual(getattr(normalized_dt, _unit), 0)
 
-	def test_sliding_timestamp(self):
+	def test_round_timestamp(self):
 
 		t = time()
 
 		for unit in Period.UNITS:
 			period = Period(**{unit: 1})
-			st = period.sliding_timestamp(t)
+			st = period.round_timestamp(t)
 			self.assertEqual(t, st)
 
 from pyperfstore3.timewindow import Interval
