@@ -64,6 +64,7 @@ class cengine(object):
 
 		self.next_amqp_queues = next_amqp_queues
 		self.get_amqp_queue = itertools.cycle(self.next_amqp_queues)
+		self.original_next_amqp_queues = list(self.next_amqp_queues)
 
 		## Get from internal or external queue
 		self.next_balanced = next_balanced
@@ -98,7 +99,7 @@ class cengine(object):
 
 		self.logger.info("Engine initialised")
 
-		self.dispatcher_crecords = ['selector','topology','derogation','consolidation', 'sla', 'downtime']
+		self.dispatcher_crecords = ['selector','topology','derogation','consolidation', 'sla']
 
 	def crecord_task_complete(self, crecord_id):
 		next_ready = time.time() + DISPATCHER_READY_TIME
@@ -248,6 +249,10 @@ class cengine(object):
 			for queue_name in self.next_amqp_queues:
 				#self.logger.debug(" + Forward via amqp to '%s'" % engine.amqp_queue)
 				self.amqp.publish(event, queue_name, "amq.direct")
+				if (len(set(self.original_next_amqp_queues).intersection(self.next_amqp_queues))
+				    != len(self.original_next_amqp_queues)):
+					self.next_amqp_queues = list(self.original_next_amqp_queues)
+
 
 	def _beat(self):
 		now = int(time.time())
