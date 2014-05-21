@@ -18,6 +18,9 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
+# provide only TimeSerie
+__all__ = ('TimeSerie')
+
 import logging
 
 logger = logging.getLogger('utils')
@@ -25,11 +28,10 @@ logger.setLevel(logging.DEBUG)
 
 from pyperfstore3.timewindow import Period
 
-from datetime import datetime
-import calendar
+from .aggregation import get_aggregations
+from operator import itemgetter
+from time import mktime
 
-
-# TODO: add a dynamic aggregation operator manager
 
 class TimeSerie(object):
 	"""
@@ -42,27 +44,20 @@ class TimeSerie(object):
 	- fill: change None values by 0.
 	"""
 
-	__slots__ = ('period', 'round_time', 'aggregation', 'fill')
+	__slots__ = ('period', 'max_points', 'round_time', 'aggregation', 'fill')
 
 	MAX_POINTS = 500
-
-	MEAN = 'MEAN'
-	LAST = 'LAST'
-	FIRST = 'FIRST'
-	DELTA = 'DELTA'
-	SUM = 'SUM'
-	MAX = 'MAX'
-	MIN = 'MIN'
 
 	def __init__(
 		self,
 		max_points=MAX_POINTS,
 		period=None,
 		round_time=True,
-		aggregation=MEAN,
+		aggregation='MEAN',
 		fill=False):
 
-		self.period = self._get_period(max_points=max_points, period=period)
+		self.period = period
+		self.max_points = max_points
 		self.round_time = round_time
 		self.aggregation = aggregation
 		self.fill = fill
@@ -76,178 +71,142 @@ class TimeSerie(object):
 
 		return result
 
-	def _get_period(self, max_points, period):
+	def _get_period(self, timewindow):
 		"""
 		Get a period related to input max_points or a period.
 		"""
 
-		result = period.copy() if period is not None else None
+		result = self.period
 
-		if result is None and max_points:
-			interval = self.timewindow.stop - self.timewindow.start
-			# may reduce value with timewindow.exclusion_intervals
-			seconds = interval.total_seconds() / max_points
-			result = Period(value=seconds)
+		if result is None:
+			seconds = (timewindow.stop() - timewindow.start()) / self.max_points
+			result = Period(second=seconds)
 
 		return result
 
-	def getTimeSteps(self, timewindow):
+	def timesteps(self, timewindow):
 		"""
 		Get a list of same longer intervals inside timewindow.
+		The upper bound is timewindow.stop_datetime()
 		"""
 
-		logger.debug('getTimeSteps:')
-
-		timeSteps = []
-
-		logger.debug(' + TimeSerie: {0}'.format(self))
-
-		start_datetime = datetime.utcfromtimestamp(timewindow.start())
-		stop_datetime = datetime.utcfromtimestamp(timewindow.stop())
-
-		if self.round_time:
-			stop_datetime = self.period.round_time(stop_datetime, self.timezone)
-
-		date = stop_datetime
-		start_delta = self.period.get_delta(start_datetime)
-		start_datetime_minus_delta = start_datetime - start_delta
-
-		date_delta = self.period.get_delta(date)
-
-		while date > start_datetime_minus_delta:
-			ts = calendar.timegm(date.timetuple())
-			timeSteps.append(ts)
-			date_delta = self.period.get_delta(date, date_delta)
-			date -= date_delta
-
-		timeSteps.reverse()
-
-		logger.debug(' + timeSteps: {0}'.format(timeSteps))
-
-		return timeSteps
-
-	def get_operation(self):
-		"""
-		Get self aggregation.
-		"""
-
-		if self.aggregation == TimeSerie.MEAN or not self.aggregation:
-			result = lambda x: sum(x) / float(len(x))
-		elif self.aggregation == TimeSerie.MIN:
-			result = lambda x: min(x)
-		elif self.aggregation == TimeSerie.MAX:
-			result = lambda x: max(x)
-		elif self.aggregation == TimeSerie.FIRST:
-			result = lambda x: x[0]
-		elif self.aggregation == TimeSerie.LAST:
-			result = lambda x: x[-1]
-		elif self.aggregation == TimeSerie.DELTA:
-			result = lambda x: (max(x) - min(x)) / 2.
-
-		return result
-
-	def calculate_points(self, points, timewindow):
-		"""
-		Do self aggregation on input points with input timewindow.
-		"""
+		# get the right period to apply on timewindow
+		period = self._get_period(timewindow=timewindow)
 
 		result = []
 
-		logger.debug("Calculate {0} point(s) (timeserie: {1}, timewindow: {2})"\
-			.format(len(points), self, timewindow))
+		# set start and stop datetime
+		start_datetime = timewindow.start_datetime()
+		stop_datetime = timewindow.stop_datetime()
 
-		agfn = self.get_operation()
+		if self.round_time: # normalize if round time is True
+			start_datetime = period.round_datetime(
+				datetime=start_datetime, normalize=True)
 
-		if len(points) == 1:
-			return [[timewindow.start, points[0][1]]]
+		current_datetime = start_datetime
+		delta = period.get_delta()
 
-		timeSteps = self.getTimeSteps(timewindow)
+		while current_datetime < stop_datetime:
+			ts = mktime(current_datetime.timetuple())
+			result.append(ts)
+			current_datetime += delta
 
-		#initialize variables for loop
-		i = 0
-		points_to_aggregate = []
-		last_point = None
-
-		for index in range(1, len(timeSteps)):
-
-			timestamp = timeSteps[index]
-
-			previous_timestamp = timeSteps[index-1]
-
-			logger.debug(
-				" + Interval {0} -> {1}".format(
-					(previous_timestamp, timestamp)))
-
-			while i < len(points) and points[i][0] < timestamp:
-
-				points_to_aggregate.append(points[i][1])
-
-				i += 1
-
-			if self.aggregation == TimeSerie.DELTA and last_point:
-				points_to_aggregate.insert(0, last_point)
-
-			aggregation_value = self.get_aggregation_value(
-				points_to_aggregate, agfn)
-
-			aggregation_point = previous_timestamp, aggregation_value
-
-			result.append(aggregation_point)
-
-			if points_to_aggregate:
-				last_point = points_to_aggregate[-1]
-
-			points_to_aggregate = []
-
-		if i < len(points):
-
-			points_to_aggregate = [point[1] for point in points[i:]]
-
-			if self.aggregation == TimeSerie.DELTA and last_point:
-				points_to_aggregate.insert(0, last_point)
-
-			aggregation_value = self.get_aggregation_value(
-				points_to_aggregate, agfn)
-
-			aggregation_point = timeSteps[-1], aggregation_value
-
-			result.append(aggregation_point)
-
-		logger.debug(" + Nb points: {0}".format(len(result)))
+		result.append(timewindow.stop())
 
 		return result
 
-	def get_aggregation_value(self, points_to_aggregate, fn):
+	def calculate(self, points, timewindow, fn=None):
 		"""
-		Get the aggregated point related to input points_to_aggregate,
+		Do an operation on all points with input timewindow.
+
+		If fn is None, then self aggregation operation is used.
+
+		Return points su as follow:
+		Let points of the form: [(T0, V0), ..., (Tn, Vn)]
+		and
+		[(T0, fn(V0, V1)), (T2, fn(V2, V3), ...]
+		"""
+
+		result = list()
+
+		# first, get the right function
+		if fn is None:
+			fn = get_aggregations()[self.aggregation]
+
+		if len(points) == 1:  # if 1 point, return it
+			result = [(timewindow.start(), points[0][1])]
+
+		elif len(points) > 0:
+			timesteps = self.timesteps(timewindow)
+
+			#initialize variables for loop
+			i = 0
+			values_to_aggregate = []
+			last_point = None
+
+			# iterate on all timesteps in order to get points
+			# between [previous_timestamp, timestamp[
+			for index in range(1, len(timesteps)):
+
+				timestamp = timesteps[index]
+
+				previous_timestamp = timesteps[index-1]
+
+				# fill the values_to_aggregate array
+				while i < len(points) and points[i][0] < timestamp:
+
+					if points[i][1] is not None:
+						values_to_aggregate.append(points[i][1])
+
+					i += 1
+
+				if self.aggregation == "DELTA" and last_point:
+					values_to_aggregate.insert(0, last_point)
+
+				_aggregation_value = self._aggregation_value(
+					values_to_aggregate, fn)
+
+				aggregation_point = previous_timestamp, _aggregation_value
+
+				result.append(aggregation_point)
+
+				if len(values_to_aggregate) > 0:
+					last_point = values_to_aggregate[-1]
+
+				values_to_aggregate = []
+			"""
+			if i < len(points):
+
+				values_to_aggregate = [point[1] for point in points[i:] if point[1] is not None]
+
+				if self.aggregation == "DELTA" and last_point:
+					values_to_aggregate.insert(0, last_point)
+
+				_aggregation_value = self._aggregation_value(
+					values_to_aggregate, fn)
+
+				aggregation_point = timesteps[-1], _aggregation_value
+
+				result.append(aggregation_point)
+			"""
+
+		return result
+
+	def _aggregation_value(self, values_to_aggregate, fn=None):
+		"""
+		Get the aggregated value related to input values_to_aggregate,
 		a specific function and a timestamp.
 		"""
 
-		if len(points_to_aggregate) > 0:
+		if fn is None:
+			fn = get_aggregations()[self.aggregation]
 
-			_points_to_aggregate = \
-				[point for point in points_to_aggregate if point is None]
+		if len(values_to_aggregate) > 0:
 
-			result = round(fn(_points_to_aggregate), 2)
+			result = round(fn(values_to_aggregate), 2)
 
 		else:
 
 			result = 0 if self.fill else None
-
-		return result
-
-	def crush_series(self, series, timewindow):
-		"""
-		Crush input series with timewindow parameters into a new serie of points.
-		"""
-
-		points = list()
-
-		for serie in series:
-			points += serie['values']
-
-		points.sort(key=lambda x: x[0])
-
-		result = self.calculate_points(points, timewindow)
 
 		return result

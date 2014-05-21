@@ -11,9 +11,50 @@ sys.path.append(os.path.abspath('.'))
 from pyperfstore3.timewindow import Period
 
 import calendar
+from random import random
 
 
 class PeriodTest(unittest.TestCase):
+
+	@staticmethod
+	def _new_period():
+
+		unit_values = dict()
+
+		for unit in Period.UNITS:
+			unit_values[unit] = random() * 10
+
+		result = Period(**unit_values)
+
+		return result
+
+	def test_copy(self):
+
+		period = PeriodTest._new_period()
+
+		copy = period.copy()
+
+		self.assertEqual(copy, period)
+		self.assertFalse(copy is period)
+
+	def test_delta(self):
+		period = PeriodTest._new_period()
+
+		delta = period.get_delta()
+
+		for unit, value in period.unit_values.iteritems():
+			if unit is Period.WEEK or unit is Period.DAY:
+				value_to_compare = int(delta.days)
+				value = int(period.unit_values['day'] + 7 * period.unit_values['week'])
+
+			else:
+				unit = "{0}s".format(unit)
+				value_to_compare = getattr(delta, unit)
+
+			self.assertEqual(value, value_to_compare)
+
+	def test_next_period(self):
+		raise NotImplementedError()
 
 	def test_round_datetime(self):
 
@@ -62,10 +103,42 @@ class PeriodTest(unittest.TestCase):
 			st = period.round_timestamp(t)
 			self.assertEqual(t, st)
 
+	def test_get_max_unit(self):
+		raise NotImplementedError()
+
 from pyperfstore3.timewindow import Interval
+from random import randint
 
 
 class IntervalTest(unittest.TestCase):
+
+	def test_copy(self):
+
+		sub_intervals = list()
+		for i in range(randint(1, 99)):
+			sub_intervals += (i-random(), i+random())
+
+		interval = Interval(*sub_intervals)
+
+		copy = Interval(interval)
+
+		self.assertEqual(copy, interval)
+
+	def test_is_empty(self):
+		interval = Interval()
+
+		self.assertTrue(interval.is_empty())
+
+		interval = Interval(10**-99)
+
+		self.assertFalse(interval.is_empty())
+
+		interval = Interval(0)
+
+		self.assertFalse(interval.is_empty())
+
+	def test_sort_and_join_intersections(self):
+		raise NotImplementedError()
 
 	def test_min_max_empty(self):
 
@@ -278,8 +351,37 @@ class TimeWindowTest(unittest.TestCase):
 	def setUp(self):
 		self.timewindow = TimeWindow()
 
+	def test_copy(self):
+
+		copy = self.timewindow.copy()
+
+		self.assertEqual(copy, self.timewindow)
+
 	def test_total_seconds(self):
-		self.assertEqual(self.timewindow.total_seconds(), TimeWindow.DEFAULT_DURATION)
+		self.assertEqual(
+			self.timewindow.total_seconds(),
+			TimeWindow.DEFAULT_DURATION)
+
+	def test_start_stop(self):
+
+		start = random()
+		stop = start + random()
+		timewindow = TimeWindow(interval=(start, stop))
+
+		self.assertEqual(timewindow.start(), int(start))
+		self.assertEqual(timewindow.stop(), int(stop))
+
+	def test_get_datetime(self):
+		raise NotImplementedError()
+
+	def test_convert_to_seconds_interval(self):
+		raise NotImplementedError()
+
+	def test_start_datetime(self):
+		raise NotImplementedError()
+
+	def test_stop_datetime(self):
+		raise NotImplementedError()
 
 if __name__ == '__main__':
 	unittest.main()

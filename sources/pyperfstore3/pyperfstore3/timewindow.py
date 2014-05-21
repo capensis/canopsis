@@ -19,7 +19,6 @@
 # ---------------------------------
 
 from time import time
-from datetime import datetime as dt, timedelta as td
 from dateutil.relativedelta import relativedelta as rd
 import calendar
 
@@ -39,10 +38,10 @@ class Period(object):
 	WEEK = 'week'
 	MONTH = 'month'
 	YEAR = 'year'
-	CENTURY = 'century'
-	MILLENARY = 'millenary'
 
 	UNITS = (MICROSECOND, SECOND, MINUTE, HOUR, DAY, WEEK, MONTH, YEAR)
+
+	MAX_UNIT_VALUES = (10000000, 60, 60, 24, 7, 4, 31, 100)
 
 	UNIT = 'unit'
 	VALUE = 'value'
@@ -52,6 +51,16 @@ class Period(object):
 		super(Period, self).__init__()
 
 		self.unit_values = unit_values
+
+	def __repr__(self):
+
+		return "Period{0}".format(self.unit_values)
+
+	def __eq__(self, other):
+
+		result = isinstance(other, Period) and repr(self) == repr(other)
+
+		return result
 
 	def get_delta(self):
 		"""
@@ -179,10 +188,6 @@ class Period(object):
 
 		return result
 
-	def __repr__(self):
-
-		return "Period{0}".format(self.unit_values)
-
 from collections import Iterable
 from operator import itemgetter
 
@@ -204,6 +209,12 @@ class Interval(object):
 		super(Interval, self).__init__()
 
 		self.sub_intervals = Interval.sort_and_join_intersections(*intervals)
+
+	def __eq__(self, other):
+
+		result = isinstance(other, Interval) and repr(self) == repr(other)
+
+		return result
 
 	def __repr__(self):
 
@@ -350,7 +361,7 @@ class Interval(object):
 		for index, interval in enumerate(intervals):
 
 			if isinstance(interval, Interval):
-				result += interval.sub_intervals
+				result += tuple(interval.sub_intervals)
 
 			elif isinstance(interval, Iterable):
 				if len(interval) != 2:
@@ -403,6 +414,9 @@ class Interval(object):
 
 		return result
 
+from datetime import datetime as dt
+from dateutil.tz import tzoffset
+
 
 class TimeWindow(object):
 	"""
@@ -438,6 +452,12 @@ class TimeWindow(object):
 
 		self.timezone = timezone
 
+	def __eq__(self, other):
+
+		result = isinstance(other, TimeWindow) and repr(self) == repr(other)
+
+		return result
+
 	def __repr__(self):
 
 		message = "TimeWindow(tz:{0}):{1}"
@@ -454,12 +474,30 @@ class TimeWindow(object):
 
 		return result
 
+	def copy(self):
+		"""
+		Get a copy of self.
+		"""
+
+		result = TimeWindow(interval=Interval(self.interval), timezone=self.timezone)
+
+		return result
+
 	def start(self):
 		"""
 		Get first timestamp.
 		"""
 
 		result = float(self.interval.min())
+
+		return result
+
+	def start_datetime(self, utc=False):
+		"""
+		Get start datetime.
+		"""
+
+		result = TimeWindow.get_datetime(self.start(), self.timezone if utc else 0)
 
 		return result
 
@@ -472,6 +510,15 @@ class TimeWindow(object):
 
 		return result
 
+	def stop_datetime(self, utc=False):
+		"""
+		Get stop datetime.
+		"""
+
+		result = TimeWindow.get_datetime(self.stop(), self.timezone if utc else 0)
+
+		return result
+
 	def total_seconds(self):
 		"""
 		Returns seconds inside this timewindow.
@@ -481,40 +528,14 @@ class TimeWindow(object):
 
 		return result
 
-	def get_next_date(self, date, period, delta=None):
-		"""
-		Get next date of input date with timewindow parameters,
-		period and optionaly a previous calculated delta.
-		"""
-
-		if delta is None:
-			delta = period.get_delta(date)
-		# check if next date is in exclusion dates of the input timewindow
-		result = date + delta
-
-		return result
-
-	def get_previous_date(self, date, period, delta=None):
-		"""
-		Get previous date of input date with timewindow parameters,
-		period and optionaly a previous calculated delta.
-		"""
-
-		if delta is None:
-			delta = period.get_delta(date)
-		# check if next date is in exclusion dates of the input timewindow
-		result = date - delta
-
-		return result
-
 	@staticmethod
 	def get_datetime(timestamp, timezone=0):
 		"""
 		Get the datetime corresponding to both input timestamp and timezone.
 		"""
 
-		td = td(seconds=timezone)
-		result = dt.fromtimestamp(timestamp, td)
+		tz = tzoffset(None, timezone)
+		result = dt.fromtimestamp(timestamp, tz)
 
 		return result
 
