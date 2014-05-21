@@ -85,6 +85,11 @@ def field_check(mfilter, event, key):
 	return True
 
 def check(mfilter, event):
+	# Check connector_name
+	if 'connector_name' in mfilter and 'connector_name' in event:
+		if mfilter['connector_name'] != event['connector_name']:
+			return False
+
 	# For each key of filter
 	for key in mfilter:
 		if key == '$and':
