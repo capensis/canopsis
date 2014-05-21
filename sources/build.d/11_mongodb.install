@@ -11,7 +11,8 @@ function build(){
 	cd $SRC_PATH/externals
 
 	if [ ! -e $BASE ]; then
-		extract_archive "$BASE.tgz"
+		echo " + Extracting mongo binaries"
+		tar xf "$SRC_PATH/externals/$BASE.tgz"
 	fi
 }
 
@@ -21,7 +22,7 @@ function install(){
 
 	cp -R bin/* $PREFIX/bin/
 	check_code $?
-	
+
 	chown $HUSER:$HGROUP $PREFIX/bin/mongo*
 	check_code $?
 

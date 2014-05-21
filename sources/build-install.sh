@@ -460,8 +460,14 @@ if [ $OPT_BUILD -eq 1 ]; then
 			echo "# $NAME $VERSION"
 			echo "################################"
 
+			FORCE_UPDATE=0
+
+			if [ $(echo $ITEM | grep "11_mongodb" | wc -l) == 1 ]; then
+				FORCE_UPDATE=1
+			fi
+
 			## Build and install
-			if [ ! -e $FCHECK ]; then
+			if [ $FORCE_UPDATE -eq 1 ] || [ ! -e $FCHECK ]; then
 
 				if [ $OPT_NOBUILD -ne 1 ]; then
 					echo " + Build ..."
@@ -488,7 +494,7 @@ if [ $OPT_BUILD -eq 1 ]; then
 					check_code $? "Make package failure"
 				fi
 			else
-				echo " + Allready install"
+				echo " + Already install"
 			fi
 		else
 			echo "Impossible to build $NAME ..."
