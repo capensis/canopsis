@@ -195,7 +195,7 @@ class engine(cengine):
 
 
 	def a_route(self, event, derogation, action, name):
-		if action["route"]:
+		if "route" in action:
 			self.next_amqp_queues = [action["route"]]
 			self.logger.debug("Event re-routed by rule '%s'" % name)
 		else:
@@ -225,7 +225,7 @@ class engine(cengine):
 			# Try filter rules on current event
 			if cmfilter.check(filterItem['mfilter'], event):
 				for action in actions:
-					if (actionMap[action['type']]):
+					if (action['type'] in actionMap):
 						ret = actionMap[action['type']](event, filterItem,
 										action, name)
 						if ret:
