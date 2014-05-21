@@ -19,9 +19,11 @@
 # ---------------------------------
 
 from carchiver import carchiver
-
 from cengine import cengine
 from cdowntime import Cdowntime
+from cstorage import CONFIG
+
+import csv
 
 
 class engine(cengine):
@@ -32,27 +34,42 @@ class engine(cengine):
 
 		self.archiver = carchiver(namespace='events',  autolog=True, logging_level=self.logging_level)
 
-		self.event_types = [
-			'calendar',
-			'check',
-			'comment',
-			'consolidation',
-			'eue',
-			'log',
-			'perf',
-			'selector',
-			'sla',
-			'topology',
-			'trap',
-			'user',
-			'ack',
-			'downtime'
-		]
+
+		self.event_types = csv.reader([CONFIG.get('events', 'types')]).next()
+		self.check_types = csv.reader([CONFIG.get('events', 'checks')]).next()
+		self.log_types = csv.reader([CONFIG.get('events', 'logs')]).next()
+		self.comment_types = csv.reader([CONFIG.get('events', 'comments')]).next()
+
 		self.cdowntime = Cdowntime(self.logger)
 		self.beat()
 
 	def beat(self):
 		self.cdowntime.reload(self.beat_interval)
+
+	def store_check(self, event):
+		_id = self.archiver.check_event(event['rk'], event)
+
+		if event.get('downtime', False):
+			event['previous_state_change_ts'] = self.cdowntime.get_downtime_end_date(event['component'], event.get('resource',''))
+
+		if _id:
+			event['_id'] = _id
+			event['event_id'] = event_id
+			## Event to Alert
+			self.amqp.publish(event, event_id, self.amqp.exchange_name_alerts)
+
+	def store_log(self, event, store_new_event=True):
+		## passthrough
+
+		if store_new_event:
+			self.archiver.store_new_event(event['rk'], event)
+
+		_id = self.archiver.log_event(event['rk'], event)
+		event['_id'] = _id
+		event['event_id'] = event_id
+
+		## Event to Alert
+		self.amqp.publish(event, event_id, self.amqp.exchange_name_alerts)
 
 	def work(self, event, *args, **kargs):
 		event_id = event['rk']
@@ -67,36 +84,13 @@ class engine(cengine):
 			self.logger.warning("Unknown event type '%s', id: '%s', event:\n%s" % (event_type, event_id, event))
 			return event
 
-		elif event_type in ['check', 'selector', 'sla', 'eue', 'topology', 'consolidation']:
-			_id = self.archiver.check_event(event_id, event)
-			if 'downtime' in event and event['downtime']:
-				event['previous_state_change_ts'] = self.cdowntime.get_downtime_end_date(event['component'], event.get('resource',''))
+		elif event_type in self.check_types:
+			self.store_check(event)
 
-			if _id:
-				event['_id'] = _id
-				event['event_id'] = event_id
-				## Event to Alert
-				self.amqp.publish(event, event_id, self.amqp.exchange_name_alerts)
+		elif event_type in self.log_types:
+			self.store_log(event)
 
-		elif event_type in ['trap', 'log', 'calendar', 'ack', 'downtime']:
-
-			## passthrough
-			self.archiver.store_new_event(event_id, event)
-			_id = self.archiver.log_event(event_id, event)
-			event['_id'] = _id
-			event['event_id'] = event_id
-
-			## Event to Alert
-			self.amqp.publish(event, event_id, self.amqp.exchange_name_alerts)
-
-		elif event_type in ['user', 'comment']:
-
-			## passthrough
-			_id = self.archiver.log_event(event_id, event)
-			event['_id'] = _id
-			event['event_id'] = event_id
-
-			## Event to Alert
-			self.amqp.publish(event, event_id, self.amqp.exchange_name_alerts)
+		elif event_type in self.comment_types:
+			self.store_log(event, store_new_event=False)
 
 		return event
