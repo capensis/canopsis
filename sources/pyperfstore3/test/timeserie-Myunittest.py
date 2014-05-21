@@ -21,7 +21,7 @@ class AggregationTest(unittest.TestCase):
 		now = time()
 		# create an interval of 5 year every 30 minutes
 		five_year = 60 * 60 * 24 * 365 * 5  # five years in seconds
-		result = TimeWindow((now - five_year, now))
+		result = TimeWindow(start=now - five_year, stop=now)
 
 		return result
 
@@ -53,7 +53,7 @@ class AggregationTest(unittest.TestCase):
 					kwargs = {'period': Period(**{unit: value})}
 					period_length = unit_length * value
 
-				timeserie = TimeSerie(round_time=round_time, **kwargs)
+				timeserie = TimeSerie(aggregation="MEAN", round_time=round_time, **kwargs)
 
 				timesteps = timeserie.timesteps(timewindow)
 
@@ -71,10 +71,14 @@ class AggregationTest(unittest.TestCase):
 
 					all_aggregated_points.append(aggregated_points)
 
-					self.assertEqual(len(timesteps), len(aggregated_points) + 1)
+					len_aggregated_points = len(aggregated_points)
+					self.assertTrue((len(timesteps) - 1) in (len_aggregated_points, len_aggregated_points + 1))
 
 				unit_length *= max_value_unit
 
+	def test_no_point(self):
+
+		raise NotImplementedError()
 
 if __name__ == '__main__':
 	unittest.main()

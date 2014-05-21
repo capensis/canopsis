@@ -95,7 +95,6 @@ INDEXES = {
 		[('type', 1), ('name', 1)],
 		[('type', 1), ('component', 1), ('name', 1)],
 		[('type', 1), ('component', 1), ('resource', 1), ('id', 1)],
-		[('type', 1), ('component', 1), ('resource', 1)],
 		[('type', 1), ('nodeid', 1)]
 	],
 	'perfdata3': [

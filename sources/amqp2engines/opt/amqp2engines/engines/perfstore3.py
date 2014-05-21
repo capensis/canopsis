@@ -24,12 +24,14 @@ from cstorage import get_storage
 
 from cengine import cengine
 
-from ctools import internal_metrics
+from ctools import metric_is_internal, internal_metrics
 
 from copy import deepcopy
 
 from pyperfstore3.manager import Manager
 from pyperfstore3.custom import perfstore3_get_perfdata_to_process
+
+from md5 import md5
 
 
 class engine(cengine):
@@ -41,10 +43,9 @@ class engine(cengine):
 		super(engine, self).__init__(*args, **kargs)
 
 		storage = get_storage(logging_level=self.logger.level)
-		perfdata3 = storage.get_backend('perfdata3')
 		self.entities = storage.get_backend('entities')
 
-		self.manager = Manager(perfdata3, self.logger)
+		self.manager = Manager(logging_level=self.logger.level)
 
 	def work(self, event, *args, **kargs):
 
@@ -126,15 +127,23 @@ class engine(cengine):
 
 					if metric is not None:
 
-						if metric in internal_metrics:
+						if not metric_is_internal(metric):
 
-							metric_id = Manager.get_metric_id(component, resource, metric)
+							nodeid = md5()
+
+							nodeid.update(component.encode('ascii', 'ignore'))
+
+							if resource:
+								nodeid.update(resource.encode('ascii', 'ignore'))
+
+							nodeid.update(metric.encode('ascii', 'ignore'))
+							nodeid = nodeid.hexdigest()
 
 							value = perf_data.pop('value', None)
 
-							self.manager.put_data(
-								metric_id=metric_id,
-								timestamp_with_values=((timestamp, value)),
+							self.manager.put(
+								data_id=nodeid,
+								points_or_point=(timestamp, value),
 								meta=perf_data)
 
 					else:

@@ -25,8 +25,6 @@ In this way, we ensure that engines stay generics while this module adds \
 specific parts.
 """
 
-from ctools import internal_metrics
-
 
 def perfstore3_get_perfdata_to_process(event):
 	"""

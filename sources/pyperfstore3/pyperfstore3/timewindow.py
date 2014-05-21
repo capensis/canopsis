@@ -18,6 +18,9 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
+# provide only
+__all__ = ('Period', 'Interval', 'TimeWindow', 'get_offset_timewindow')
+
 from time import time
 from dateutil.relativedelta import relativedelta as rd
 import calendar
@@ -62,6 +65,24 @@ class Period(object):
 
 		return result
 
+	def __getitem__(self, name):
+
+		return self.unit_values[name]
+
+	def __delitem__(self, name):
+
+		del self.unit_values[name]
+
+	def __setitem__(self, name, value):
+
+		self.unit_values[name] = value
+
+	def __iter__(self):
+
+		result = iter([unit for unit in Period.UNITS if unit in self.unit_values])
+
+		return result
+
 	def get_delta(self):
 		"""
 		Get a delta object in order to add/remove a period on a datetime.
@@ -81,9 +102,9 @@ class Period(object):
 		Get next period with input step or none if next period can't be associated to a specific unit.
 		"""
 
-		result = None
+		result = Period()
 
-		counts_with_unit = list(Period.MAX_VALUE_WITH_UNITS)
+		counts_with_unit = zip(Period.UNITS, Period.MAX_UNIT_VALUES)
 		previous_unit, previous_count = counts_with_unit.pop(-1)
 		counts_with_unit.reverse()
 
@@ -91,9 +112,8 @@ class Period(object):
 			value = self.unit_values.get(unit)
 
 			if value is not None:
-				next_value = value / count
-				self.unit_values[previous_unit] = next_value
-				del self.unit_values[unit]
+				next_value = value * count
+				result[previous_unit] = next_value
 
 			previous_unit = unit
 
@@ -146,17 +166,17 @@ class Period(object):
 
 		if normalize:  # set to minimal value for all units before self minimal unit
 			parameters = dict()
-			if Period.MICROSECOND not in self.unit_values:
+			if Period.MICROSECOND not in self:
 				parameters[Period.MICROSECOND] = 0
-				if Period.SECOND not in self.unit_values:
+				if Period.SECOND not in self:
 					parameters[Period.SECOND] = 0
-					if Period.MINUTE not in self.unit_values:
+					if Period.MINUTE not in self:
 						parameters[Period.MINUTE] = 0
-						if Period.HOUR not in self.unit_values:
+						if Period.HOUR not in self:
 							parameters[Period.HOUR] = 0
-							if Period.DAY not in self.unit_values:
+							if Period.DAY not in self:
 								parameters[Period.DAY] = 1
-								if Period.MONTH not in self.unit_values:
+								if Period.MONTH not in self:
 									parameters[Period.MONTH] = 1
 			result = result.replace(**parameters)
 
@@ -174,8 +194,8 @@ class Period(object):
 		units.reverse()
 
 		for unit in units:
-			if unit in self.unit_values:
-				result = {Period.UNIT: unit, Period.VALUE: self.unit_values[unit]}
+			if unit in self:
+				result = {Period.UNIT: unit, Period.VALUE: self[unit]}
 
 		return result
 
@@ -194,7 +214,8 @@ from operator import itemgetter
 
 class Interval(object):
 	"""
-	Manage points interval with sub intervals which are tuple of two numbers.
+	Manage points interval with sub intervals
+	which are (lower value, upper value).
 	"""
 
 	class IntervalError(Exception):
@@ -430,20 +451,35 @@ class TimeWindow(object):
 
 	__slots__ = ['interval', 'timezone']
 
-	def __init__(self, interval=None, timezone=0):
+	def __init__(self, start=None, stop=None, intervals=None, timezone=0):
 		"""
-		interval is an Interval of timestamps, or one minimal timestamp until now or
-		else a couple of timestamp.
+		this interval is created from:
+
+		- an interval with stop, start :
+			- stop is now if None.
+			- start is stop - TimeWindow.DEFAULT_DURATION if None.
+			- if intervals is not empty and start and stop equal None
+			then they are not calculated.
+		- intervals is a list of (lower timestamp, upper timestamp) or Intervals.
 		"""
 
 		super(TimeWindow, self).__init__()
 
-		if interval is None:
-			stop = int(time())
-			interval = Interval((stop - TimeWindow.DEFAULT_DURATION, stop))
+		# if stop is None, stop = now
+		if stop is None:
+			stop = round(time())
 
-		self.interval = interval if isinstance(interval, Interval) \
-			else Interval(interval)
+		# if start is None, start is stop - TimeWindow.DEFAULT_DURATION
+		if start is None:
+			start = stop - TimeWindow.DEFAULT_DURATION
+
+		if intervals is None:
+			intervals = list()
+
+		# if no interval is proposed
+		intervals.append((start, stop))
+
+		self.interval = Interval(*intervals)
 
 		if self.interval.is_empty():
 			raise TimeWindow.TimeWindowError("Interval can not be empty")
@@ -479,7 +515,8 @@ class TimeWindow(object):
 		Get a copy of self.
 		"""
 
-		result = TimeWindow(interval=Interval(self.interval), timezone=self.timezone)
+		result = TimeWindow(
+			intervals=[Interval(self.interval)], timezone=self.timezone)
 
 		return result
 
@@ -545,11 +582,17 @@ class TimeWindow(object):
 		Get interval in seconds from an interval.
 		"""
 
-		sub_intervals = []
-
-		for sub_interval in interval:
-			sub_intervals.append((int(sub_interval[0]), int(sub_interval[1])))
+		sub_intervals = [
+			(int(sub_interval[0]), int(sub_interval[1])) for sub_interval in interval]
 
 		result = Interval(*sub_intervals)
 
 		return result
+
+
+def get_offset_timewindow(offset):
+	"""
+	Get a timewindow with one point.
+	"""
+
+	return TimeWindow(start=offset, stop=offset)

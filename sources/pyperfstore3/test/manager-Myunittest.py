@@ -1,7 +1,7 @@
 import unittest
 
 from pyperfstore3.manager import Manager
-from pyperfstore3.timewindow import Period, TimeWindow
+from pyperfstore3.timewindow import Period, TimeWindow, get_offset_timewindow
 
 
 class ManagerTest(unittest.TestCase):
@@ -49,8 +49,7 @@ class ManagerTest(unittest.TestCase):
 		self.assertEqual([tv0, tv1, tv2], data)
 
 		# remove 1 data at stop point
-		_interval = (timewindow.stop(), timewindow.stop())
-		_timewindow = TimeWindow(_interval)
+		_timewindow = get_offset_timewindow(timewindow.stop())
 
 		self.manager.remove(
 			data_id=data_id,

@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #--------------------------------
-# Copyright (c) 2011 "Capensis" [http://www.capensis.com]
+# Copyright (c) 2014 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
 #
@@ -21,46 +21,46 @@
 import time
 import random
 import logging
-
+from pyperfstore3.manager import Manager
 
 logging.basicConfig(level=logging.INFO,
 	format='%(name)s %(levelname)s %(message)s',
 )
 
-
-import pyperfstore2
-
 interval = 300
 day = 30
+duration = 60 * 60 * 24 * day
 
-name = 'nagios.Central.check.service.localhost'
-manager = pyperfstore2.manager(mongo_collection='bench_perfdata2')
-manager.store.drop()
+NAME = 'bench'
+DATA_ID = NAME
+manager = Manager(data_name=NAME)
+manager.remove(data_id=DATA_ID, with_meta=True)
 
-def bench_store(interval=60, duration=60*60*24):
-	print "Start Bench ..."
-	
+
+def bench_store(interval=interval, duration=60*60*24):
+	print("Start Bench ...")
+
 	msize = manager.store.size()
-	
+
 	# 1 value / 5 min = 8928 values/month = 107136 values/year
 	timestamp = int(time.time())
 	bench_start = timestamp
-	
+
 	nb = duration / interval
 	print " + write %s loop" % nb
-	
+
 	start = time.time()
 	for i in range(1,nb+1):
 		manager.push(name="%s%s" % (name, 'state'), value=1, timestamp=timestamp)
 		manager.push(name="%s%s" % (name, 'state-downtime'), value=1, timestamp=timestamp)
-		
+
 		value = random.random() * 10
 		manager.push(name="%s%s" % (name, 'load1'), value=value, timestamp=timestamp)
 		manager.push(name="%s%s" % (name, 'load5'), value=value, timestamp=timestamp)
 		manager.push(name="%s%s" % (name, 'load15'), value=value, timestamp=timestamp)
 
 		timestamp += interval
-		
+
 		mod = (i * interval)%86400
 		if mod == 0:
 			manager.midnight = timestamp
@@ -70,7 +70,7 @@ def bench_store(interval=60, duration=60*60*24):
 
 	nb = nb * 3
 	elapsed = time.time() - start
-	
+
 	print " + WRITE:"
 	print "    + %.2f days" % (duration / (60*60*24))
 	msize = manager.store.size()
@@ -90,7 +90,7 @@ def bench_store(interval=60, duration=60*60*24):
 	values = manager.get_points(name="%s%s" % (name, 'load5'), tstart=bench_start, tstop=bench_stop)
 	nb += len(values)
 	values = manager.get_points(name="%s%s" % (name, 'load15'), tstart=bench_start, tstop=bench_stop)
-	nb += len(values)	
+	nb += len(values)
 	elapsed = time.time() - start
 	print " + READ:"
 	print "    + %s values in %s seconds" % ( nb, elapsed)
@@ -98,8 +98,6 @@ def bench_store(interval=60, duration=60*60*24):
 	print ""
 
 
-bench_store(	interval=interval,
-				duration=60*60*24*day)
-				
-manager.store.drop()
+bench_store(interval=interval, duration= 60 * 60 * 24 * day)
 
+manager.remove(data_id=DATA_ID)

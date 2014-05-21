@@ -1,7 +1,7 @@
 import unittest
 
 from datetime import datetime
-from time import time
+from time import time, mktime, timezone
 
 import sys
 import os.path
@@ -54,7 +54,18 @@ class PeriodTest(unittest.TestCase):
 			self.assertEqual(value, value_to_compare)
 
 	def test_next_period(self):
-		raise NotImplementedError()
+
+		period = self._new_period()
+
+		del period.unit_values[Period.YEAR]
+		del period.unit_values[Period.HOUR]
+
+		next_period = period.next_period()
+
+		self.assertTrue(Period.YEAR in next_period)
+		self.assertTrue(Period.HOUR in next_period.unit_values)
+
+		self.assertEqual(next_period[Period.YEAR], Period.MAX_UNIT_VALUES[-2] * period[Period.MONTH])
 
 	def test_round_datetime(self):
 
@@ -104,7 +115,13 @@ class PeriodTest(unittest.TestCase):
 			self.assertEqual(t, st)
 
 	def test_get_max_unit(self):
-		raise NotImplementedError()
+
+		period = self._new_period()
+
+		max_unit = period.get_max_unit()
+
+		self.assertTrue(max_unit[Period.UNIT], Period.YEAR)
+
 
 from pyperfstore3.timewindow import Interval
 from random import randint
@@ -364,24 +381,30 @@ class TimeWindowTest(unittest.TestCase):
 
 	def test_start_stop(self):
 
-		start = random()
-		stop = start + random()
-		timewindow = TimeWindow(interval=(start, stop))
+		start = random() * 10000
+		stop = start + random() * 10000
+		timewindow = TimeWindow(start=start, stop=stop)
+		#print stop, timewindow.stop(), round(stop), timewindow
 
 		self.assertEqual(timewindow.start(), int(start))
 		self.assertEqual(timewindow.stop(), int(stop))
 
 	def test_get_datetime(self):
-		raise NotImplementedError()
 
-	def test_convert_to_seconds_interval(self):
-		raise NotImplementedError()
+		now = time()
 
-	def test_start_datetime(self):
-		raise NotImplementedError()
+		dt = TimeWindow.get_datetime(now)
+		ts_now = mktime(dt.timetuple())
 
-	def test_stop_datetime(self):
-		raise NotImplementedError()
+		ri = randint(1, 500000)
+
+		dt = TimeWindow.get_datetime(now+ri)
+		self.assertEqual(ts_now+ri, mktime(dt.timetuple()))
+
+		dt = TimeWindow.get_datetime(now, timezone)
+		ts = mktime(dt.timetuple())
+
+		self.assertEqual(ts, ts_now + timezone)
 
 if __name__ == '__main__':
 	unittest.main()

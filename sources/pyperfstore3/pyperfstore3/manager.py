@@ -65,7 +65,9 @@ class Manager(object):
 
 		self.periodic_store = periodic_store
 
-		self.entities = get_storage('entities')
+		self.entities = get_storage('entities').get_backend()
+
+		self.data_name = data_name
 
 	def count(self, data_id, aggregation=None, period=None, timewindow=None):
 
@@ -152,6 +154,30 @@ class Manager(object):
 
 		self.timed_store.remove(data_id=data_id, timewindow=timewindow)
 
+	def get_entity(self, data_id):
+		"""
+		Get entity related to input data_id.
+
+		TODO: ensure the access is provided by a referential API instead of MONGODB
+		"""
+
+		result = None
+
+		query = {
+			'nodeid': data_id,
+			'type': self.data_name
+		}
+
+		cursor = self.entities.find(query)
+		cursor.hint([('type', 1), ('nodeid', 1)])
+
+		try:
+			result = cursor[0]
+		except IndexError:
+			pass
+
+		return result
+
 	def get_aggregation_and_period(self, data_id, aggregation=None, period=None):
 		"""
 		Get default aggregation and period related to input data_id.
@@ -169,7 +195,7 @@ class Manager(object):
 			if period is None:
 				period = DEFAULT_PERIOD
 
-			entity = self.entities.find_one({'nodeid': data_id})
+			entity = self.get_entity(data_id=data_id)
 
 			if entity is not None:
 				if result[0] is None:

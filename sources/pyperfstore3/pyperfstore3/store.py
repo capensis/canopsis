@@ -327,7 +327,7 @@ class TimedStore(Store):
 		Put a dictionary of value by name in collection.
 		"""
 
-		timewindow = TimeWindow(interval=(timestamp, timestamp))
+		timewindow = TimeWindow(start=timestamp, stop=timestamp)
 
 		data = self.get(data_id=data_id, timewindow=timewindow, with_id=True)
 

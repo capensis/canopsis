@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # --------------------------------
-# Copyright (c) 2011 "Capensis" [http://www.capensis.com]
+# Copyright (c) 2014 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
 #
@@ -25,7 +25,6 @@ import json
 import time
 from datetime import datetime
 
-import bottle
 from bottle import route, get, post, put, delete, request, HTTPError, response
 
 #import protection function
@@ -38,22 +37,27 @@ from ctools import parse_perfdata, clean_mfilter
 from ctools import cleanTimestamp
 from ctools import internal_metrics
 
-import pyperfstore2
-import pyperfstore2.utils
+from pyperfstore3.manager import Manager
+from pyperfstore3.timewindow import TimeWindow, Period
+from pyperfstore3.timeserie import TimeSerie
 
 from cstorage import get_storage
 from caccount import caccount
 
-storage = get_storage(namespace='object', account=caccount(user="root", group="root"))
-
+storage = get_storage(
+	namespace='object', account=caccount(user="root", group="root"))
 
 manager = None
 
-logger = logging.getLogger("perfstore")
+SERVICE_NAME = 'perfstore'
+
+logger = logging.getLogger(SERVICE_NAME)
+
 
 def load():
 	global manager
-	manager = pyperfstore2.manager(logging_level=logging.INFO)
+	manager = Manager(logging_level=logging.INFO)
+
 
 def unload():
 	global manager
@@ -62,63 +66,82 @@ def unload():
 group_managing_access = ['group.CPS_perfdata_admin']
 #########################################################################
 
+
 #### POST@
-@post('/perfstore/values')
-@post('/perfstore/values/:start/:stop')
-def perfstore_values_route(start = None, stop = None):
+@post('/{0}/values'.format(SERVICE_NAME))
+@post('/{0}/values/:start/:stop'.format(SERVICE_NAME))
+def perfstore_values_route(start=None, stop=None):
 	"""subset selection param allow filter metrics with exclusion periods and component,resource,hostgroup exclusion"""
-	return perfstore_nodes_get_values( 	start = start,
-										stop = stop,
-										metas = request.params.get('nodes', default=None),
-										aggregate_method = request.params.get('aggregate_method', default=None),
-										aggregate_interval = request.params.get('aggregate_interval', default=None),
-										aggregate_max_points = request.params.get('aggregate_max_points', default=None),
-										aggregate_round_time = request.params.get('aggregate_round_time', default=None),
-										consolidation_method = request.params.get('consolidation_method', default=None),
-										timezone = request.params.get('timezone', default=0),
-										subset_selection = request.params.get('subset_selection', default={}))
+	return perfstore_nodes_get_values(
+		start=start,
+		stop=stop,
+		metas=request.params.get('nodes', default=None),
+		aggregate_method=request.params.get('aggregate_method', default=None),
+		aggregate_interval=request.params.get('aggregate_interval', default=None),
+		aggregate_max_points=request.params.get('aggregate_max_points', default=None),
+		aggregate_round_time=request.params.get('aggregate_round_time', default=None),
+		consolidation_method=request.params.get('consolidation_method', default=None),
+		timezone=request.params.get('timezone', default=0),
+		subset_selection=request.params.get('subset_selection', default={}))
 
 
-@get('/perfstore')
-@get('/perfstore/get_all_metrics')
+@get('/{0}'.format(SERVICE_NAME))
+@get('/{0}/get_all_metrics'.format(SERVICE_NAME))
 def perfstore_get_all_metrics():
-	return perfstore_get_all_metrics(	limit = int(request.params.get('limit', default=20)),
-										start = int(request.params.get('start', default=0)),
-										search = request.params.get('search', default=None),
-										filter = request.params.get('filter', default=None),
-										sort = request.params.get('sort', default=None),
-										show_internals = request.params.get('show_internals', default=False))
+	return perfstore_get_all_metrics(
+		limit=int(request.params.get('limit', default=20)),
+		start=int(request.params.get('start', default=0)),
+		search=request.params.get('search', default=None),
+		filter=request.params.get('filter', default=None),
+		sort=request.params.get('sort', default=None),
+		show_internals=request.params.get('show_internals', default=False))
 
 
-def perfstore_nodes_get_values( start = None,
-								stop = None,
-								metas = None,
-								aggregate_method = None,
-								aggregate_interval = None,
-								aggregate_max_points = None,
-								aggregate_round_time = None,
-								consolidation_method = None,
-								timezone = 0,
-								subset_selection = {}):
+def perfstore_nodes_get_values(
+	start=None,
+	stop=None,
+	metas=None,
+	aggregate_method=None,
+	aggregate_interval=None,
+	aggregate_max_points=None,
+	aggregate_round_time=None,
+	consolidation_method=None,
+	timezone=0,
+	subset_selection=dict()):
 
+	# set subset_selection
 	if subset_selection:
 		try:
 			subset_selection = json.loads(subset_selection)
-			logger.debug('subset selection found : ' + str(subset_selection))
+			logger.debug('subset selection found: {0}'.format(subset_selection))
 		except:
 			subset_selection = {}
 			logger.warning('Unable to load subset_selection filters from params')
 
-	if manager == None:
-		load()
+	# set timewindow
+	timewindow = TimeWindow(start=None, stop=None, timezone=timezone)
 
-	interval = None
+	# set timeserie if required
+	if aggregate_method is not None:
+		timeserie_kwargs = {
+			'max_points': aggregate_max_points,
+			'period': Period(second=int(aggregate_interval)) if aggregate_interval is not None else None,
+			'round_time': aggregate_round_time,
+			'aggregation': aggregate_method,
+		}
+
+		timeserie = TimeSerie(**timeserie_kwargs)
+	else:
+		timeserie = None
+
+	if manager is None:
+		load()
 
 	output = []
 
 	if not metas:
 		logger.warning("Invalid arguments")
-		return HTTPError(404, "Invalid arguments")
+		return HTTPError(400, "Invalid arguments. metas are necassaries")
 
 	metas = json.loads(metas)
 
@@ -131,53 +154,34 @@ def perfstore_nodes_get_values( start = None,
 	logger.debug(" + consolidation_method: %s" % consolidation_method)
 	logger.debug(" + timezone: %s" % timezone)
 
-	output = []
-
 	for meta in metas:
 		_id = meta.get('id', None)
 
-		# TODO: for futur version, use only this !
-		mstart = meta.get('from', start)
-		mstop = meta.get('to', stop)
-		if _id:
-			output += perfstore_get_values(	_id=meta['id'],
-											start=mstart,
-											stop=mstop,
-											aggregate_method=aggregate_method,
-											aggregate_interval=aggregate_interval,
-											aggregate_max_points=aggregate_max_points,
-											aggregate_round_time=aggregate_round_time,
-											timezone=time.timezone,
-											subset_selection=subset_selection)
+		# update specific timewindow
+		mstart = meta.get('from', timewindow.start())
+		mstop = meta.get('to', timewindow.stop())
+		meta_timewindow = TimeWindow(start=mstart, stop=mstop, timezone=timezone)
 
-	if aggregate_method and consolidation_method and len(output):
-		# select right function
-		if consolidation_method == 'mean':
-			fn = pyperfstore2.utils.mean
-		elif consolidation_method == 'min':
-			fn = min
-		elif consolidation_method == 'max' :
-			fn = max
-		elif consolidation_method == 'sum':
-			fn = sum
-		elif consolidation_method == 'delta':
-			fn = lambda x: x[0] - x[-1]
+		# get perfdata values for each meta
+		if _id is not None:
+			output += perfstore_get_values(
+				meta=meta,
+				timewindow=meta_timewindow,
+				timeserie=timeserie,
+				subset_selection=subset_selection)
 
-		# calculate methods
-		values = dict()
-		for serie in output:
-			for point in serie['values']:
-				if not point[0] in values:
-					values[point[0]] = []
-				if point[1] is not None:
-					values[point[0]].append(point[1])
+	if aggregate_method and consolidation_method and timeserie and len(output):
+		consolidation_serie = TimeSerie(
+			aggregation=consolidation_method,
+			fill = timeserie.fill,
+			round_time=timeserie.round_time,
+			period=timeserie.period)
 
-		points = []
-		for timestamp, value in values.iteritems():
-			point = [timestamp, fn(value) if value else None]
-			points.append(point)
+		points = [point for point in [result['values'] for result in output]]
 
-		points = sorted(points, key=lambda point: point[0])
+		points.sort(key=itemgetter(0))
+
+		consolidation_serie.calculate(points=points, timewindow=timewindow)
 
 		output = [{
 			'node': output[0]['node'],
@@ -188,10 +192,11 @@ def perfstore_nodes_get_values( start = None,
 		}]
 
 	output = {'total': len(output), 'success': True, 'data': output}
+
 	return output
 
 
-def perfstore_get_all_metrics(limit = 20, start = 0, search = None, filter = None, sort = None, show_internals = False):
+def perfstore_get_all_metrics(limit=20, start=0, search=None, filter=None, sort=None, show_internals=False):
 	logger.debug("perfstore_get_all_metrics:")
 
 	if manager == None:
@@ -200,15 +205,11 @@ def perfstore_get_all_metrics(limit = 20, start = 0, search = None, filter = Non
 	if filter:
 		try:
 			filter = json.loads(filter)
-		except Exception, err:
-			logger.error("Impossible to decode filter: %s: %s" % (filter, err))
+		except ValueError as ve:
+			logger.error("Impossible to decode filter: {0}: {1}".format(filter, ve))
 			filter = None
 
-
-	if show_internals == "true":
-		show_internals = True
-	else:
-		show_internals = False
+	show_internals = show_internals == "true"
 
 	msort = []
 	if sort:
@@ -219,15 +220,15 @@ def perfstore_get_all_metrics(limit = 20, start = 0, search = None, filter = Non
 				direction = -1
 			msort.append((str(item['property']), direction))
 	else:
-		msort.append(('co', 1))
+		msort.append(('component', 1))
 
-	logger.debug(" + limit:   %s" % limit)
-	logger.debug(" + start:   %s" % start)
-	logger.debug(" + search:  %s" % search)
-	logger.debug(" + sort: "+str(sort))
-	logger.debug(" + msort: "+str(msort))
-	logger.debug(" + filter:  %s" % filter)
-	logger.debug(" + show_internals:  %s" % show_internals)
+	logger.debug(" + limit: {0}".format(limit))
+	logger.debug(" + start: {0}".format(start))
+	logger.debug(" + search: {0}".format(search))
+	logger.debug(" + sort: {0}".format(sort))
+	logger.debug(" + msort: {0}".format(msort))
+	logger.debug(" + filter: {0}".format(filter))
+	logger.debug(" + show_internals: {0}".format(show_internals))
 
 	mfilter = None
 
@@ -242,12 +243,12 @@ def perfstore_get_all_metrics(limit = 20, start = 0, search = None, filter = Non
 
 	if search:
 		# Todo: Tweak this ...
-		fields = ['co', 're', 'me']
+		fields = ['component', 'resource', 'name']
 		mor = []
 		search = search.split(' ')
 		if len(search) == 1:
 			for field in fields:
-				mor.append({field: {'$regex': '.*%s.*' % search[0], '$options': 'i'}})
+				mor.append({field: {'$regex': '.*{0}.*'.format(search[0]), '$options': 'i'}})
 
 			mfilter = {'$or': mor}
 		else:
@@ -255,24 +256,25 @@ def perfstore_get_all_metrics(limit = 20, start = 0, search = None, filter = Non
 			for word in search:
 				mor = []
 				for field in fields:
-					mor.append({field: {'$regex': '.*%s.*' % word, '$options': 'i'}})
+					mor.append({field: {'$regex': '.*{0}.*'.format(word), '$options': 'i'}})
 				mfilter['$and'].append({'$or': mor})
 
 	use_hint = False
  	if not show_internals:
  		if mfilter:
- 			mfilter = {'$and': [mfilter, {'me': {'$nin':internal_metrics  }}]}
+ 			mfilter = {'$and': [mfilter, {'name': {'$nin': internal_metrics}}]}
 			use_hint = True
  		else:
- 			mfilter = {'me': {'$nin': internal_metrics  }}
+ 			mfilter = {'name': {'$nin': internal_metrics}}
 
- 	logger.debug(" + mfilter:  %s" % mfilter)
+ 	logger.debug(" + mfilter: {0}".format(mfilter))
 
  	mfilter = clean_mfilter(mfilter)
-	data  = manager.find(limit=limit, skip=start, mfilter=mfilter, data=False, sort=msort)
+ 	mfilter['type'] = 'metric'
+	data = manager.entities.find(limit=limit, skip=start, mfilter=mfilter, data=False, sort=msort)
 
 	if use_hint:
-		data.hint([('co',1),('re',1),('me',1)])
+		data.hint([('type', 1), ('component',1), ('resource',1), ('id', 1)])
 
 	if isinstance(data, dict):
 		data = [data]
@@ -280,7 +282,6 @@ def perfstore_get_all_metrics(limit = 20, start = 0, search = None, filter = Non
 		data = list(data)
 	else:
 		data = list()
-
 
 	if use_hint:
 		total = start + len(data)
@@ -310,9 +311,9 @@ def remove_meta(_id=None):
 
 	for item in _id:
 		if isinstance(item,dict):
-			manager.remove(_id=item['_id'], purge=False)
+			manager.entities.remove(_id=item['_id'])
 		else:
-			manager.remove(_id=item, purge=False)
+			manager.entities.remove(_id=item)
 
 @put('/perfstore',checkAuthPlugin={'authorized_grp':group_managing_access})
 def update_meta(_id=None):
@@ -327,7 +328,7 @@ def update_meta(_id=None):
 				_id = item['_id']
 			if '_id' in item:
 				del item['_id']
-			manager.store.update(_id=_id, mset=item)
+			manager.entities.update({'_id': _id}, {'$set': item})
 		except Exception, err:
 			logger.warning('Error while updating meta_id: %s' % err)
 			return HTTPError(500, "Error while updating meta_id: %s" % err)
@@ -375,15 +376,15 @@ def perfstore_perftop(start=None, stop=None):
 	if mfilter:
 		try:
 			mfilter = json.loads(mfilter)
-		except Exception, err:
-			logger.error("Impossible to decode mfilter: %s: %s" % (mfilter, err))
+		except ValueError as err:
+			logger.error("Impossible to decode mfilter: {0}: {1}".format(mfilter, err))
 			mfilter = None
 
 	try:
 		export_fields = json.loads(export_fields)
 
-	except ValueError, err:
-		logger.error("Impossible to decode export_fields: %s: %s" % (export_fields, err))
+	except ValueError as err:
+		logger.error("Impossible to decode export_fields: {0}: {1}".format(export_fields, err))
 		export_fields = []
 
 
@@ -424,7 +425,8 @@ def perfstore_perftop(start=None, stop=None):
 
 	mfilter =  clean_mfilter(mfilter)
 
-	mtype = manager.store.find(mfilter=mfilter, limit=1, mfields=['t'])
+	mtype = manager.entities.find(mfilter, limit=1, fields=['t'])
+
 	def check_threshold(value):
 		if threshold:
 			if threshold_direction == -1 and value >= threshold:
@@ -443,19 +445,20 @@ def perfstore_perftop(start=None, stop=None):
 
 		if mtype != 'COUNTER' and not expand and not report:
 			# Quick method, use last value
-			metrics = manager.store.find(mfilter=mfilter, mfields=['_id', 'co', 're', 'me', 'lv', 'u', 'ma', 'lts'], sort=[('lv', sort)], limit=limit)
+			mfilter['type'] = metric
+			metrics = manager.entities.find(mfilter, fields={'max': 1, 'last_value': 1, 'pct': 1}, sort=[('last_value', sort)], limit=limit)
 
 			if isinstance(metrics, dict):
 				metrics = [metrics]
 
 			for metric in metrics:
-				if (percent or threshold_on_pct) and 'ma' in metric and 'lv' in metric:
-					metric['pct'] = round(((metric['lv'] * 100)/ metric['ma']) * 100) / 100
+				if (percent or threshold_on_pct) and 'max' in metric and 'last_value' in metric:
+					metric['pct'] = round(((metric['last_value'] * 100)/ metric['max']) * 100) / 100
 
 				if threshold_on_pct:
 					val = metric['pct']
 				else:
-					val = metric['lv']
+					val = metric['last_value']
 
 				if check_threshold(val):
 					data.append(metric)
@@ -468,25 +471,25 @@ def perfstore_perftop(start=None, stop=None):
 
 			#clean mfilter
 			mfilter =  clean_mfilter(mfilter)
-
-			metrics =  manager.store.find(mfilter=mfilter, mfields=['_id', 'co', 're', 'me', 'lv', 'u', 'ma', 'lts', 't'], limit=limit)
-			metrics.sort('lv', sort)
+			mfilter['type'] = metric
+			metrics =  manager.entities.find(mfilter, fields={'max': 1, 'pct': 1, 'name': 1, 'type': 1, 'last_value': 1}, limit=limit)
+			metrics.sort('last_value', sort)
 			if isinstance(metrics, dict):
 				metrics = [metrics]
 
 			for metric in metrics:
 				# Recheck type
-				mtype = metric.get('t', 'GAUGE')
+				mtype = metric.get('type', 'GAUGE')
 				if mtype != 'COUNTER' and not expand and not report:
-					logger.debug(" + Metric '%s' (%s) is not a COUNTER" % (metric['me'], metric['_id']))
+					logger.debug(" + Metric '%s' (%s) is not a COUNTER" % (metric['name'], metric['_id']))
 
-					if (percent or threshold_on_pct) and 'ma' in metric and 'lv' in metric:
-							metric['pct'] = round(((metric['lv'] * 100)/ metric['ma']) * 100) / 100
+					if (percent or threshold_on_pct) and 'max' in metric and 'last_value' in metric:
+							metric['pct'] = round(((metric['last_value'] * 100)/ metric['max']) * 100) / 100
 
 					if threshold_on_pct:
 						val = metric['pct']
 					else:
-						val = metric['lv']
+						val = metric['last_value']
 
 					if check_threshold(val):
 						data.append(metric)
@@ -494,12 +497,14 @@ def perfstore_perftop(start=None, stop=None):
 					points = []
 					if mtype != 'COUNTER' and not expand:
 						# Get only one point
-						point = manager.get_point(_id=metric['_id'], ts=stop)
+						timewindow = TimeWindow(start=stop, stop=stop)
+						point = manager.get_point(_id=metric['_id'], timewindow=timewindow)
 						if point:
 							points = [point]
 					else:
 						# grt points from 'start' to 'stop'
-						points = manager.get_points(_id=metric['_id'], tstart=start, tstop=stop)
+						timewindow = TimeWindow(start=start, stop=stop)
+						points = manager.get_points(_id=metric['_id'], timewindow=timewindow)
 
 					if len(points):
 						if expand:
@@ -507,23 +512,23 @@ def perfstore_perftop(start=None, stop=None):
 							for point in points:
 								if check_threshold(point[1]):
 									nmetric = metric.copy()
-									nmetric['lts'] = point[0]
-									nmetric['lv'] = point[1]
-									if (percent or threshold_on_pct) and 'ma' in nmetric and 'lv' in nmetric:
-										nmetric['pct'] = round(((nmetric['lv'] * 100)/ nmetric['ma']) * 100) / 100
+									nmetric['last_timestamp'] = point[0]
+									nmetric['last_value'] = point[1]
+									if (percent or threshold_on_pct) and 'max' in nmetric and 'last_value' in nmetric:
+										nmetric['pct'] = round(((nmetric['last_value'] * 100)/ nmetric['max']) * 100) / 100
 									data.append(nmetric)
 						else:
 							# keep last point
-							metric['lts'] = points[len(points)-1][0]
-							metric['lv'] = points[len(points)-1][1]
+							metric['last_timestamp'] = points[len(points)-1][0]
+							metric['last_value'] = points[len(points)-1][1]
 
-							if (percent or threshold_on_pct) and 'ma' in metric and 'lv' in metric:
-									metric['pct'] = round(((metric['lv'] * 100)/ metric['ma']) * 100) / 100
+							if (percent or threshold_on_pct) and 'max' in metric and 'last_value' in metric:
+									metric['pct'] = round(((metric['last_value'] * 100)/ metric['max']) * 100) / 100
 
 							if threshold_on_pct:
 								val = metric['pct']
 							else:
-								val = metric['lv']
+								val = metric['last_value']
 
 							if check_threshold(val):
 								data.append(metric)
@@ -575,7 +580,7 @@ def perfstore_perftop(start=None, stop=None):
 					item['pct'] = -1
 			data = sorted(data, key=lambda k: k['pct'] , reverse=reverse)[:limit]
 		else:
-			data = sorted(data, key=lambda k: k['lv'], reverse=reverse)[:limit]
+			data = sorted(data, key=lambda k: k['last_value'], reverse=reverse)[:limit]
 	else:
 		logger.debug("No records found")
 
@@ -619,98 +624,48 @@ def perfstore_perftop(start=None, stop=None):
 # Functions
 ########################################################################
 
-def perfstore_get_values(_id, start=None, stop=None, aggregate_method=None, aggregate_interval=None, aggregate_max_points=None, aggregate_round_time=True, timezone=0, subset_selection={}):
+def perfstore_get_values(meta, timewindow, timeserie, subset_selection={}):
 
-	if start and not stop:
-		stop = start
+	logger.debug("Perfstore get values:")
+	logger.debug(" + meta: {0}".format(meta))
+	logger.debug(" + timewindow: {0}".format(timewindow))
+	logger.debug(" + timeserie: {0}".format(timeserie))
 
-	if stop:
-		stop = int(stop)
-	else:
-		stop = int(time.time())
+	result = list()
 
-	if start:
-		start = int(start)
-	else:
-		start = stop - 86400
+	period = meta.get(Manager.PERIOD)
+	aggregation = meta.get(Manager.AGGREGATION)
 
-	if aggregate_interval:
-		aggregate_interval = int(aggregate_interval)
+	points = []
 
-	logger.debug("Perfstore get points:")
-	logger.debug(" + meta _id:    %s" % _id)
-	logger.debug(" + start:       %s (%s)" % (start, datetime.utcfromtimestamp(start)))
-	logger.debug(" + stop:        %s (%s)" % (stop, datetime.utcfromtimestamp(stop)))
-	logger.debug('Aggregate:')
-	logger.debug(' + method :     %s' % aggregate_method)
-	logger.debug(' + interval :   %s' % aggregate_interval)
-	logger.debug(' + round time : %s' % aggregate_round_time)
-	logger.debug(' + max_points : %s' % aggregate_max_points)
+	points, meta_data = manager.get(data_id=_id, with_meta=True, period=period, aggregation=aggregation, timewindow=timewindow)
 
-	output=[]
-	meta = None
+	points = exclude_points(points, subset_selection)
 
-	if not _id:
-		logger.error("Invalid _id '%s'" % _id)
-		return output
+	# For UI display
+	if len(points) == 0 and meta['type'] == 'COUNTER':
+		points = [(start, 0), (stop, 0)]
 
-	fill = False
+	if len(points) and meta['type'] == 'COUNTER':
+		# Insert null point for aggregation
+		points.insert(0, [points[0][0], 0])
 
-	if aggregate_interval:
-		aggregate_max_points = int( round((stop - start) / aggregate_interval + 0.5) )
-		fill = True
-
-	try:
-		points = []
-		if start == stop:
-			# Get only one point
-			logger.debug("   + Get one point at %s: %s" % (stop, datetime.utcfromtimestamp(start)))
-			(meta, point) = manager.get_point(	_id=_id,
-												ts=start,
-												return_meta=True,
-												subset_selection=subset_selection)
-			if point:
-				points = [ point ]
-				# Computes exclusion on metric point(s)
-				points = exclude_points(points, subset_selection)
-
-			logger.debug('Point: %s' % points)
-
-		else:
-			(meta, points) = manager.get_points(	_id=_id,
-													tstart=start,
-													tstop=stop,
-													return_meta=True,
-													subset_selection=subset_selection)
-			# Computes exclusion on metric point(s)
-			points = exclude_points(points, subset_selection)
-
-			# For UI display
-			if len(points) == 0 and meta['type'] == 'COUNTER':
-				points = [(start, 0), (stop, 0)]
-
-			if len(points) and meta['type'] == 'COUNTER':
-				# Insert null point for aggreagation
-				points.insert(0, [points[0][0], 0])
-
-			if len(points) and aggregate_method:
-				points =  pyperfstore2.utils.aggregate(	points=points,
-														max_points=aggregate_max_points,
-														interval=aggregate_interval,
-														atype=aggregate_method,
-														start=start,
-														stop=stop,
-														fill=fill,
-														roundtime = aggregate_round_time,
-														timezone=timezone)
-
-	except Exception, err:
-		logger.error("Error when getting points: %s" % err)
+	if timeserie is not None:
+		points = timeserie.calculate(points=points, timewindow=timewindow)
 
 	if points and meta:
-		output.append({'node': _id, 'metric': meta['me'], 'values': points, 'bunit': meta['unit'], 'min': meta['min'], 'max': meta['max'], 'thld_warn': meta['thd_warn'], 'thld_crit': meta['thd_crit'], 'type': meta['type']})
+		result.append(
+			{'node': _id,
+			'metric': meta.get('metric'),
+			'values': points,
+			'bunit': meta_data.get('unit'),
+			'min': meta_data.get('min'),
+			'max': meta_data.get('max'),
+			'thld_warn': meta_data.get('thd_warn'),
+			'thld_crit': meta_data.get('thd_crit'),
+			'type': meta_data.get('type')})
 
-	return output
+	return result
 
 def exclude_points(points, subset_selection={}):
 	"""unit test
