@@ -192,10 +192,8 @@ class engine(cengine):
 		self.logger.debug('entered in topology consume dispatcher')
 		# Gets crecord from amqp distribution
 		topology = self.get_ready_record(event)
-		self.logger.error('will test topo')
 		if topology:
 			topo = topology.dump()
-			self.logger.error('will topo is ok')
 			event_id = event['_id']
 			ids = []
 
