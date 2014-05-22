@@ -51,6 +51,11 @@ class engine(cengine):
 		self.storage = get_storage(namespace='object', account=caccount(user="root", group="root"))
 		self.backend = self.storage.get_backend('object')
 
+		self.ha_engine_triggers = {'downtime': {
+			'last_update': time.time(),
+			'delay': 60
+		}}
+
 		self.beat()
 
 	def load_crecords(self):
@@ -112,7 +117,7 @@ class engine(cengine):
 
 	#Factorised code method
 	def publish_record(self, event, crecord_type):
-          rk = 'dispatcher.{0}'.format(crecord_type)
+		rk = 'dispatcher.{0}'.format(crecord_type)
 
 		self.amqp.get_exchange('media')
 		self.amqp.publish(event, rk, exchange_name='media')
