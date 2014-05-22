@@ -40,6 +40,7 @@ from ctools import internal_metrics
 from pyperfstore3.manager import Manager
 from pyperfstore3.timewindow import TimeWindow, Period
 from pyperfstore3.timeserie import TimeSerie
+from pyperfstore3.store import PeriodicStore
 
 from cstorage import get_storage
 from caccount import caccount
@@ -56,7 +57,8 @@ logger = logging.getLogger(SERVICE_NAME)
 
 def load():
 	global manager
-	manager = Manager(logging_level=logging.INFO)
+	global logger
+	manager = Manager(logging_level=logger.level)
 
 
 def unload():
@@ -123,9 +125,17 @@ def perfstore_nodes_get_values(
 
 	# set timeserie if required
 	if aggregate_method is not None:
+		if aggregate_max_points:
+			aggregate_max_points = int(aggregate_max_points)
+		if aggregate_round_time:
+			aggregate_round_time = aggregate_round_time == 'true'
+		if aggregate_interval:
+			period = Period(second=int(aggregate_interval))
+		else:
+			period = None
 		timeserie_kwargs = {
 			'max_points': aggregate_max_points,
-			'period': Period(second=int(aggregate_interval)) if aggregate_interval is not None else None,
+			'period': period,
 			'round_time': aggregate_round_time,
 			'aggregation': aggregate_method,
 		}
@@ -197,6 +207,7 @@ def perfstore_nodes_get_values(
 
 
 def perfstore_get_all_metrics(limit=20, start=0, search=None, filter=None, sort=None, show_internals=False):
+
 	logger.debug("perfstore_get_all_metrics:")
 
 	if manager == None:
@@ -218,7 +229,14 @@ def perfstore_get_all_metrics(limit=20, start=0, search=None, filter=None, sort=
 			direction = 1
 			if str(item['direction']) == "DESC":
 				direction = -1
-			msort.append((str(item['property']), direction))
+			_property = str(item['property'])
+			if _property == 'co':
+				_property = 'component'
+			elif _property == 're':
+				_property = 'resource'
+			elif _property == 'me':
+				_property = 'name'
+			msort.append((_property, direction))
 	else:
 		msort.append(('component', 1))
 
@@ -271,7 +289,7 @@ def perfstore_get_all_metrics(limit=20, start=0, search=None, filter=None, sort=
 
  	mfilter = clean_mfilter(mfilter)
  	mfilter['type'] = 'metric'
-	data = manager.entities.find(limit=limit, skip=start, mfilter=mfilter, data=False, sort=msort)
+	data = manager.entities.find(mfilter, limit=limit, skip=start, data=False, sort=msort)
 
 	if use_hint:
 		data.hint([('type', 1), ('component',1), ('resource',1), ('id', 1)])
@@ -279,12 +297,21 @@ def perfstore_get_all_metrics(limit=20, start=0, search=None, filter=None, sort=
 	if isinstance(data, dict):
 		data = [data]
 	elif data is not None:
-		data = list(data)
+		l = list()
+		for document in data:
+			document['co'] = document.get('component')
+			document['re'] = document.get('resource')
+			document['me'] = document.get('name')
+			l.append(document)
+		data = l
 	else:
 		data = list()
 
+	logger.debug(" + data: {0}".format(data))
+
 	if use_hint:
 		total = start + len(data)
+
 	else:
 		result = storage.get_backend('object').find_one({'crecord_name':'perfdata2_count_no_internal'})
 		if result and 'count' in result:
@@ -292,8 +319,11 @@ def perfstore_get_all_metrics(limit=20, start=0, search=None, filter=None, sort=
 		else:
 			total = len(data)
 
- 	return {'success': True, 'data' : data, 'total' : total}
+ 	result = {'success': True, 'data' : data, 'total' : total}
 
+ 	logger.debug(" + result: {0}".format(result))
+
+ 	return result
 
 ### manipulating meta
 @delete('/perfstore',checkAuthPlugin={'authorized_grp':group_managing_access})
@@ -633,25 +663,36 @@ def perfstore_get_values(meta, timewindow, timeserie, subset_selection={}):
 
 	result = list()
 
-	period = meta.get(Manager.PERIOD)
-	aggregation = meta.get(Manager.AGGREGATION)
+	period = meta.get(PeriodicStore.PERIOD)
+	aggregation = meta.get(PeriodicStore.AGGREGATION)
 
 	points = []
 
-	points, meta_data = manager.get(data_id=_id, with_meta=True, period=period, aggregation=aggregation, timewindow=timewindow)
+	_id = meta.get('id')
+
+	points, meta_data = manager.get(
+		data_id=_id,
+		with_meta=True,
+		period=period,
+		aggregation=aggregation,
+		timewindow=timewindow)
 
 	points = exclude_points(points, subset_selection)
 
+	logger.debug(" + points: {0}, meta_data: {1}".format(points, meta_data))
+
 	# For UI display
-	if len(points) == 0 and meta['type'] == 'COUNTER':
+	if len(points) == 0 and meta_data and meta_data[0][1]['type'] == 'COUNTER':
 		points = [(start, 0), (stop, 0)]
 
-	if len(points) and meta['type'] == 'COUNTER':
+	if len(points) and meta_data and meta_data[0][1]['type'] == 'COUNTER':
 		# Insert null point for aggregation
 		points.insert(0, [points[0][0], 0])
 
 	if timeserie is not None:
 		points = timeserie.calculate(points=points, timewindow=timewindow)
+
+	meta_data = meta_data[0][1]
 
 	if points and meta:
 		result.append(

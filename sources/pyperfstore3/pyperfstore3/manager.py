@@ -19,10 +19,6 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from md5 import new as md5
-
-from operator import itemgetter
-
 from .timewindow import Period
 from pyperfstore3.store import TimedStore, PeriodicStore
 
@@ -199,10 +195,10 @@ class Manager(object):
 
 			if entity is not None:
 				if result[0] is None:
-					result[0] = entity.get('aggregation', DEFAULT_AGGREGATION)
+					result = entity.get('aggregation', DEFAULT_AGGREGATION), result[1]
 
 				if result[1] is None:
-					result[1] = entity.get('period', DEFAULT_PERIOD)
+					result = result[0], entity.get('period', DEFAULT_PERIOD)
 
 			else:
 				result = (

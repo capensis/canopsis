@@ -65,9 +65,9 @@ class TimeSerie(object):
 	def __repr__(self):
 
 		message = "TimeSerie(period: {0}, round_time: {1}" + \
-			", aggregation: {2}, fill: {3})"
+			", aggregation: {2}, fill: {3}, max_points: {4})"
 		result = message.format(
-			self.period, self.round_time, self.aggregation, self.fill)
+			self.period, self.round_time, self.aggregation, self.fill, self.max_points)
 
 		return result
 
@@ -145,6 +145,8 @@ class TimeSerie(object):
 		# start to exclude points which are not in timewindow
 		points = [point for point in points if point[0] in timewindow]
 		points_len = len(points)
+
+		fn = None
 
 		# if no period and max_points > len(points)
 		if self.period is None and self.max_points > points_len:

@@ -229,6 +229,18 @@ class Store(object):
 
 		raise NotImplementedError()
 
+	def _get_data_id(self, data_id):
+		"""
+		Get data id if data_id is an entity _id
+		"""
+
+		result = data_id
+
+		if data_id.startswith(self.data_name):
+			result = data_id[len(self.data_name)+1:]
+
+		return result
+
 from .timewindow import TimeWindow
 
 
@@ -264,6 +276,8 @@ class TimedStore(Store):
 		"""
 
 		result = list()
+
+		data_id = self._get_data_id(data_id)
 
 		# set a where clause for the search
 		where = {
@@ -312,6 +326,9 @@ class TimedStore(Store):
 		Get number of timed documents for input data_id.
 		"""
 		self.check_connection()
+
+		data_id = self._get_data_id(data_id)
+
 		query = {
 			TimedStore.DATA_ID: data_id
 		}
@@ -328,6 +345,8 @@ class TimedStore(Store):
 		"""
 
 		timewindow = TimeWindow(start=timestamp, stop=timestamp)
+
+		data_id = self._get_data_id(data_id)
 
 		data = self.get(data_id=data_id, timewindow=timewindow, with_id=True)
 
@@ -359,6 +378,8 @@ class TimedStore(Store):
 		"""
 		Remove timed_data existing on input timewindow.
 		"""
+
+		data_id = self._get_data_id(data_id)
 
 		where = {
 			TimedStore.DATA_ID: data_id
@@ -492,8 +513,6 @@ class PeriodicStore(Store):
 			document_properties = \
 				document_properties_by_id_timestamp.setdefault(id_timestamp, dict())
 
-			self.logger.debug(' + id_timestamp: {0}'.format(id_timestamp))
-
 			if '_id' not in document_properties:
 				document_properties['_id'] = PeriodicStore._get_document_id(
 					data_id=data_id, aggregation=aggregation,
@@ -542,7 +561,7 @@ class PeriodicStore(Store):
 		Get a list of points.
 		"""
 
-		query = PeriodicStore._get_documents_query(data_id=data_id,
+		query = self._get_documents_query(data_id=data_id,
 			aggregation=aggregation, timewindow=timewindow, period=period)
 
 		projection = {
@@ -590,7 +609,7 @@ class PeriodicStore(Store):
 		If period is None
 		"""
 
-		query = PeriodicStore._get_documents_query(data_id=data_id,
+		query = self._get_documents_query(data_id=data_id,
 			aggregation=aggregation, timewindow=timewindow, period=period)
 
 		if timewindow is not None:
@@ -639,14 +658,14 @@ class PeriodicStore(Store):
 
 		return result
 
-
-	@staticmethod
-	def _get_documents_query(data_id, aggregation, timewindow, period):
+	def _get_documents_query(self, data_id, aggregation, timewindow, period):
 		"""
 		Get mongo documents query about data_id, timewindow and period.
 
 		If period is None and timewindow is not None, period takes default period value for data_id.
 		"""
+
+		data_id = self._get_data_id(data_id)
 
 		result = {
 			PeriodicStore.DATA_ID: data_id
