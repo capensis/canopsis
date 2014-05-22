@@ -274,20 +274,23 @@ Ext.define('widgets.timegraph.timegraph', {
 					lines: {
 						show: (this.SeriesType === 'area' || this.SeriesType === 'line'),
 						fill: (this.SeriesType === 'area'),
-						lineWidth: this.lineWidth
+						lineWidth: this.lineWidth,
+						barWidth: this.lineWidth
 					},
 					points: {
 						show: false
 					},
 					bars: {
-						show: (this.SeriesType === 'bars')
+						show: (this.SeriesType === 'bars'),
+						lineWidth: this.lineWidth,
+						barWidth: this.lineWidth
+
 					}
 				},
 
 				tooltip: this.tooltip
 			}
 		);
-
 		if(!this.displayVerticalLines) {
 			this.options.xaxis.tickLength = 0;
 		}
@@ -374,6 +377,7 @@ Ext.define('widgets.timegraph.timegraph', {
 
 				trend_serie.label += '_trend';
 				trend_serie.data = data;
+				trend_serie.node.trend_curve = true;
 
 				series.splice(series_index + 1, 0, trend_serie);
 			}
@@ -392,12 +396,21 @@ Ext.define('widgets.timegraph.timegraph', {
 
 	addPoint: function(serieId, value) {
 		// insert point only if it appends after the last of the serie.
+		//gets invert information
+		var style = global.curvesCtrl.getRenderInfo(this.series[serieId].node.label)
+		var invert = false;
+		if (style && style.data.invert) {
+			invert = true;
+		}
+
 		var points = this.series[serieId].data,
 			last_point = points[points.length - 1],
 			value_ts = value[0] * 1000;
 
 		if (last_point === undefined || last_point[0] < value_ts) {
-			this.series[serieId].data.push([value_ts, value[1]]);
+			//invert metric depending on it s curve information
+			var value = invert ? -value[1] : value[1];
+			this.series[serieId].data.push([value_ts, value]);
 			this.series[serieId].last_timestamp = (this.aggregate_method ? undefined : value_ts);
 		}
 

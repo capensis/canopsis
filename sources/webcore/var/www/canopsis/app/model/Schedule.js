@@ -52,10 +52,7 @@ Ext.define('canopsis.model.Schedule', {
 		{name: 'aaa_group'},
 		{name: 'aaa_owner'},
 
-		{name: 'exporting_intervalLength'},
-		{name: 'exporting_intervalUnit'},
 		{name: 'frequency',defaultValue:'day'},
-
 
 		{name: 'exporting_interval'},
 		{name: 'exporting_account'},
@@ -64,12 +61,13 @@ Ext.define('canopsis.model.Schedule', {
 		{name: 'exporting_owner'},
 		{name: 'exporting_viewName'},
 
-		{name: 'exporting_mail'},
 		{name: 'exporting_recipients'},
 		{name: 'exporting_subject'},
 
+		{name: 'exporting', defaultValue: undefined},
+
 		{name: 'crontab_month'},
 		{name: 'crontab_day_of_week'},
-		{name: 'crontab_day'}
+		{name: 'crontab_day'},
 	]
 });

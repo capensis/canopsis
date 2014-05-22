@@ -29,7 +29,7 @@ from pymongo import Connection
 import gridfs
 
 import time
-from datetime import date
+from datetime import datetime
 
 ## Canopsis
 from caccount import caccount
@@ -45,16 +45,20 @@ import task_reporting
 from libexec.auth import get_account
 from libexec.account import check_group_rights
 
-logger = logging.getLogger('Reporting')
+import time
 
-#group who have right to access 
+logger = logging.getLogger('Reporting')
+logger.setLevel('DEBUG')
+
+#group who have right to access
 group_managing_access = ['group.CPS_reporting_admin']
 
 #########################################################################
 
-@post('/reporting/:startTime/:stopTime/:view_name/:mail',checkAuthPlugin={'authorized_grp':group_managing_access})
-@post('/reporting/:startTime/:stopTime/:view_name',checkAuthPlugin={'authorized_grp':group_managing_access})
-def generate_report(startTime, stopTime,view_name,mail=None):
+@post('/reporting/:startTime/:stopTime/:view_name/:mail/:timezone/',checkAuthPlugin={'authorized_grp':group_managing_access})
+@post('/reporting/:startTime/:stopTime/:view_name/:mail/',checkAuthPlugin={'authorized_grp':group_managing_access})
+@post('/reporting/:startTime/:stopTime/:view_name/',checkAuthPlugin={'authorized_grp':group_managing_access})
+def generate_report(startTime, stopTime,view_name,mail=None, timezone=time.timezone):
 	stopTime = int(stopTime)
 	startTime = int(startTime)
 
@@ -70,17 +74,16 @@ def generate_report(startTime, stopTime,view_name,mail=None):
 			mail = json.loads(mail)
 		except Exception, err:
 			logger.error('Error while transform string mail to object' % err)
-			mail=None
+			mail = None
 	try:
 		record = storage.get(view_name,account=account)
 	except Exception, err:
 		logger.error(err)
 		return {'total': 1, 'success': False, 'data': [str(err)] }
 
-
-	toDate = str(date.fromtimestamp(int(stopTime)))
+	toDate = datetime.fromtimestamp(int(stopTime))
 	if startTime and startTime != -1:
-		fromDate = str(date.fromtimestamp(int(startTime)))
+		fromDate = datetime.fromtimestamp(int(startTime))
 		file_name = '%s_From_%s_To_%s.pdf' % (record.name,fromDate,toDate)
 	else:
 		file_name = '%s_%s.pdf' % (record.name,toDate)
@@ -96,12 +99,21 @@ def generate_report(startTime, stopTime,view_name,mail=None):
 
 	try:
 		logger.debug('Run celery task')
+
+		exporting = {
+			"from": {"timestamp": startTime},
+			"to": {"timestamp": stopTime, 'enable': True},
+			"type": "fixed",
+			"timezone": {"type": "local", "value": timezone}
+		}
+
 		result = task_reporting.render_pdf.delay(
 										fileName=file_name,
 										viewName=view_name,
 										startTime=startTime,
 										stopTime=stopTime,
 										subset_selection=subset_selection,
+										exporting=exporting,
 										account=account,
 										mail=mail
 										)
@@ -116,10 +128,10 @@ def generate_report(startTime, stopTime,view_name,mail=None):
 		return {'total': 0, 'success': False, 'data': [result['celery_output']] }
 
 	_id = str(result['data'][0])
-	
+
 	logger.debug(' + File Id: %s' % _id)
 	return {'total': 1, 'success': True, 'data': [{'id': _id}] }
-	
+
 @post('/sendreport')
 def send_report():
 	account = get_account()
@@ -129,10 +141,10 @@ def send_report():
 	_id = request.params.get('_id', default=None)
 	body = request.params.get('body', default=None)
 	subject = request.params.get('subject', default=None)
-	
+
 	meta = reportStorage.get(_id)
 	meta.__class__ = cfile
-	
+
 	mail = {
 		'account':account,
 		'attachments': meta,
@@ -140,7 +152,7 @@ def send_report():
 		'subject':subject,
 		'body': body,
 	}
-	
+
 	try:
 		task = task_mail.send.delay(**mail)
 		output = task.get()
@@ -155,17 +167,17 @@ def send_report():
 def export_svg():
 	filename = request.params.get('filename', default=None)
 	svg = request.params.get('svg', default=None)
-	
+
 	if not filename:
 		filename = "chart.svg"
 	else:
 		filename += ".svg"
-		
-	
+
+
 	logger.debug("Export SVG image: %s" % filename)
-	
+
 	if svg and filename:
 		response.set_header('Content-Disposition', 'attachment; filename="%s"' % filename)
 		response.content_type = 'image/svg+xml'
 		return svg
-	
+

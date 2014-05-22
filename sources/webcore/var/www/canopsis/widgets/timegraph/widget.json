@@ -56,7 +56,8 @@
 									{"value": "square", "text": "Square"},
 									{"value": "diamond", "text": "Diamond"},
 									{"value": "triangle", "text":  "Triangle"},
-									{"value": "triangle-down", "text":  "Triangle Down"}
+									{"value": "triangle-down", "text":  "Triangle Down"},
+									{"value": "cross", "text": "Cross"}
 								]
 							}
 						},{
@@ -489,6 +490,7 @@
 									{"value": "square",    "text": "Square"},
 									{"value": "diamond",    "text": "Diamond"},
 									{"value": "triangle",    "text": "Triangle"},
+									{"value": "triangle-down", "text":  "Triangle Down"},
 									{"value": "cross",    "text": "Cross"}
 								]
 							}

@@ -29,12 +29,13 @@ import logging, time
 # Delay since the lock document is released in any cases
 UNLOCK_DELAY = 60
 
+
 class engine(cengine):
 	etype = "crecord_dispatcher"
-	
+
 	def __init__(self, *args, **kargs):
 		super(engine, self).__init__(*args, **kargs)
-		
+
 		self.crecords = []
 		self.delays = {}
 		self.beat_interval = 5
@@ -53,7 +54,6 @@ class engine(cengine):
 		self.beat()
 
 	def load_crecords(self):
-
 		crecords = []
 		now = int(time.time())
 
@@ -114,8 +114,8 @@ class engine(cengine):
 	def publish_record(self, event, crecord_type):
           rk = 'dispatcher.{0}'.format(crecord_type)
 
-          self.amqp.exchanges['media'] = Exchange('media', 'direct', durable=True)
-          self.amqp.publish(event, rk, exchange_name='media')
+		self.amqp.get_exchange('media')
+		self.amqp.publish(event, rk, exchange_name='media')
 
 	def beat(self):
 		self.logger.debug('cdispatcher beat 1')
@@ -133,10 +133,14 @@ class engine(cengine):
 			self.beat_interval_trigger[trigger_engine]['elapsed_since_last_beat'] += self.beat_interval
 
 		""" Reinitialize crecords and may publish event related credort targeted to other engines crecord queues"""
+		#Triggers consume dispatch method within engines.
+		#This ensure those engine methods are run once in ha mode
+		for ha_engine_trigger in self.ha_engine_triggers:
+			if time.time() - self.ha_engine_triggers[ha_engine_trigger]['last_update'] > self.ha_engine_triggers[ha_engine_trigger]['delay']:
+				self.publish_record({'crecord_type': ha_engine_trigger}, ha_engine_trigger)
+				self.ha_engine_triggers[ha_engine_trigger]['last_update'] = time.time()
+
 		crecords = self.load_crecords()
-		if not crecords:
-			self.logger.debug('Nothig to do for now')
-			return
 
 		# Loop until list is empty
 		self.logger.debug(' + %s beat, %s crecords queued to publish @ %s' % (self.name, len(crecords), int(time.time())))
@@ -157,7 +161,6 @@ class engine(cengine):
 					#Special case: selector crecords targeted to SLA
 					if dump['crecord_type'] == 'selector' and 'rk' in dump and dump['rk'] and 'dosla' in dump and dump['dosla'] in [ True, 'on'] and 'dostate' in dump and dump['dostate'] in [ True, 'on']:
 						self.publish_record(dump, 'sla')
-
 
 				except Exception, e:
 					#Crecord gets out of queue and will be reloaded on next beat

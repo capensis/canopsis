@@ -56,10 +56,10 @@ logger = logging.getLogger(SERVICE_NAME)
 
 
 def load():
-	global manager
 	global logger
-	manager = Manager(logging_level=logger.level)
+	global manager
 
+	manager = Manager(logging_level=logger.level)
 
 def unload():
 	global manager
@@ -278,6 +278,7 @@ def perfstore_get_all_metrics(limit=20, start=0, search=None, filter=None, sort=
 				mfilter['$and'].append({'$or': mor})
 
 	use_hint = False
+
  	if not show_internals:
  		if mfilter:
  			mfilter = {'$and': [mfilter, {'name': {'$nin': internal_metrics}}]}
@@ -329,6 +330,7 @@ def perfstore_get_all_metrics(limit=20, start=0, search=None, filter=None, sort=
 @delete('/perfstore',checkAuthPlugin={'authorized_grp':group_managing_access})
 @delete('/perfstore/:_id',checkAuthPlugin={'authorized_grp':group_managing_access})
 def remove_meta(_id=None):
+
 	if not _id:
 		_id =  json.loads(request.body.readline())
 	if not _id:
@@ -338,7 +340,6 @@ def remove_meta(_id=None):
 		_id = [_id]
 
 	logger.debug('delete %s: ' % str(_id))
-
 	for item in _id:
 		if isinstance(item,dict):
 			manager.entities.remove(_id=item['_id'])
@@ -358,7 +359,9 @@ def update_meta(_id=None):
 				_id = item['_id']
 			if '_id' in item:
 				del item['_id']
+
 			manager.entities.update({'_id': _id}, {'$set': item})
+
 		except Exception, err:
 			logger.warning('Error while updating meta_id: %s' % err)
 			return HTTPError(500, "Error while updating meta_id: %s" % err)
@@ -736,6 +739,3 @@ def exclude_points(points, subset_selection={}):
 		return exclusion_points
 	else:
 		return points
-
-
-

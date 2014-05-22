@@ -64,7 +64,7 @@ def read_callback(data=None):
 	perfdata2_size += storage.get_namespace_size("perfdata2")
 	perfdata2_size += storage.get_namespace_size("perfdata2_daily")
 	put_value("perfdata2_size", perfdata2_size)
-	
+
 	perfdata3_size = storage.get_namespace_size("perfdata3_bin.chunks") 
 	perfdata3_size += storage.get_namespace_size("perfdata3_bin.files")
 	perfdata3_size += storage.get_namespace_size("perfdata3")
@@ -75,7 +75,7 @@ def read_callback(data=None):
 	files_size += storage.get_namespace_size("binaries.files")
 	files_size += storage.get_namespace_size("files")
 	put_value("files_size", files_size)
-	
+
 	size = perfdata2_size + perfdata3_size + files_size
 
 	for namespace in namespaces:

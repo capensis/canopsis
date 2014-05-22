@@ -29,6 +29,7 @@ import time
 LOCK_DELAY = 300
 LOCK_QUERY = {'crecord_name':'lock_perfstore2_rotate'}
 
+
 class engine(cengine):
 	etype = 'perfstore2_rotate'
 

@@ -29,6 +29,8 @@ Ext.define('widgets.text.text', {
 
 	date_format: '',
 
+	date_format: '',
+
 	initComponent: function() {
 		this.callParent(arguments);
 
@@ -143,6 +145,16 @@ Ext.define('widgets.text.text', {
 			if(metric.component) {
 				filter.co = metric.component;
 			}
+
+			var metrics = [];
+
+			Ext.Object.each(this.perfdataMetricList, function(key, value) {
+				void(key);
+				var metric = value.metric;
+				if (! (metric in metrics)) {
+					metrics.push(metric);
+				}
+			});
 
 			if(metric.resource) {
 				filter.re = metric.resource;

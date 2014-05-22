@@ -1,8 +1,8 @@
 #!/bin/bash
 
 NAME="mongodb"
-VERSION=2.2.0
-RELEASE=3
+VERSION=2.6.1
+RELEASE=4
 DESCRIPTION=""
 REQUIRES="canohome python canolibs"
 

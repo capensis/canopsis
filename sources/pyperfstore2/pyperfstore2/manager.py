@@ -19,9 +19,8 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-import time
-import hashlib
-import logging
+import os, sys, json, logging, time
+import hashlib, gridfs, traceback
 from datetime import datetime
 
 from pyperfstore2.store import store
@@ -30,12 +29,12 @@ from cstorage import get_storage
 from caccount import caccount
 
 class manager(object):
-	def __init__(self, retention=0, dca_min_length = 250, logging_level=logging.INFO, cache=True, **kwargs):
+	def __init__(self, retention=0, dca_min_length=250, logging_level=logging.INFO, cache=True, **kwargs):
 		self.logger = logging.getLogger('manager')
 		self.logger.setLevel(logging_level)
 		self.storage = get_storage(account=caccount(user="root", group="root"))
 		# Store
-		self.store = store(logging_level=logging_level, **kwargs)
+		self.store = store(logging_level=self.logger.level, **kwargs)
 
 		self.dca_min_length = dca_min_length
 
@@ -250,6 +249,7 @@ class manager(object):
 
 		if not dca :
 			raise Exception('Invalid _id, not found %s' % _id)
+
 		dca = self.subset_selection_apply(dca, subset_selection)
 
 		plain_fts = None
@@ -279,7 +279,9 @@ class manager(object):
 					self.logger.debug("   + Append")
 			for bin_id in bin_ids:
 				data = self.store.get_bin(_id=bin_id)
-				points += utils.uncompress(data)
+
+				if data is not None:
+					points += utils.uncompress(data)
 
 		## Check Plain DCA
 		self.logger.debug(" + Search in plain DCA")
@@ -446,6 +448,8 @@ class manager(object):
 			bin_id = "%s%s" % (_id, lts)
 			self.logger.warning("   + Store in binary record")
 			self.store.create_bin(_id=bin_id, data=data)
+		except gridfs.errors.FileExists as fe:
+			self.logger.debug('Impossible to create gridfs bin {} because it exists'.format(fe))
 
 			self.logger.warning("   + Add bin_id in meta and clean meta")
 
@@ -453,7 +457,7 @@ class manager(object):
 			self.store.daily_collection.remove({'_id': _id})
 
 
-		except Exception,err:
+		except Exception as err:
 			self.logger.warning('Impossible to rotate %s: %s' % (_id, err))
 
 		t = time.time() - t
@@ -618,6 +622,11 @@ class manager(object):
 
 			self.logger.info(" + Compressed DCA: %s" % len(meta.get('c', [])))
 			self.logger.info(" + Next Clean: %s" % meta.get('nc', None) )
+
+	def disconnect(self):
+		self.logger.debug("DISCONNECT MANAGER")
+		self.store.disconnect()
+
 
 def split_list(alist, wanted_parts=1):
     length = len(alist)
