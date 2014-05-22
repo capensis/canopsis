@@ -8,11 +8,12 @@ rm -f $LOG &> /dev/null
 
 
 function build(){
+	su - $HUSER -c "service mongodb stop"
+
 	cd $SRC_PATH/externals
 
 	if [ ! -e $BASE ]; then
-		echo " + Extracting mongo binaries"
-		tar xf "$SRC_PATH/externals/$BASE.tgz"
+		extract_archive "$BASE.tar.xz"
 	fi
 }
 
@@ -27,4 +28,5 @@ function install(){
 	check_code $?
 
 	install_init "mongodb"
+
 }
