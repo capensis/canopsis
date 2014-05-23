@@ -211,13 +211,14 @@ class cengine(object):
 		try:
 			wevent = self.work(event, msg, *args, **kargs)
 
-			if wevent == DROP:
-				pass
+			if wevent != DROP:
+				if isinstance(wevent, dict):
+					event = wevent
 
-			elif isinstance(wevent, dict):
-				self.next_queue(wevent)
+				if 'processing' not in event:
+					event['processing'] = {}
 
-			else:
+				event['processing'][self.etype] = start
 				self.next_queue(event)
 
 		except Exception, err:
