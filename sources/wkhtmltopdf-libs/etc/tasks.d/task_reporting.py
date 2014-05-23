@@ -25,6 +25,7 @@ from cstorage import cstorage
 from cfile import cfile
 from ctools import cleanTimestamp
 from datetime import date
+from cinit import cinit
 from celerylibs import decorators
 from random import randint
 import os, sys, json
@@ -35,21 +36,145 @@ import hashlib
 import task_mail
 from wkhtmltopdf.wrapper import Wrapper
 
-import logging
 
-logger = logging.getLogger('Reporting Task')
+from datetime import timedelta, datetime
+import calendar
+
+from dateutil.relativedelta import relativedelta
+
+init 	= cinit()
+logger 	= init.getLogger('Reporting Task')
+logger.setLevel('DEBUG')
 
 @task
 @decorators.log_task
-def render_pdf(fileName=None, viewName=None, startTime=None, stopTime=None, subset_selection=None, interval=None, account=None, mail=None, owner=None, orientation='Portrait', pagesize='A4'):
-	if not stopTime:
-		stopTime = int(time.time())
+def render_pdf(fileName=None, viewName=None, exporting=None, account=None, mail=None, owner=None, orientation='Portrait', pagesize='A4'):
 
-	if not startTime:
-		if interval:
-			startTime = stopTime - interval
-		else:
-			startTime = -1
+	logger.info('start render')
+
+	logger.debug("fileName: %s " % fileName)
+	logger.debug("viewName: %s " % viewName)
+	logger.debug("exporting: %s " % exporting)
+	logger.debug("account: %s " % account)
+	logger.debug("mail: %s " % mail)
+
+	if exporting is None:
+		exporting = {"enable": False}
+
+	now = time.time()
+
+	startTime = None
+	stopTime = None
+
+	logger.debug("now: %s " % now)
+
+	timezone = exporting.get(
+		'timezone',
+		{"type": "local", "value": 0})
+	if timezone.get('type') == 'utc':
+		timezone['value'] = 0
+	elif timezone.get('type') == 'server':
+		timezone['value'] = time.timezone
+	elif 'value' not in timezone:
+		timezone['value'] = 0
+		logger.error('timezone value does not exist')
+
+	if not exporting.get('enable', False):
+		stopTime = now
+
+	elif exporting.get('type', 'duration') == 'duration':
+
+		_datetime = datetime.fromtimestamp(now)
+
+		kwargs = {
+			exporting.get('unit', 'days'): int(exporting.get('length', 1))
+		}
+		rd = relativedelta(**kwargs)
+		_datetime -= rd
+
+		startTime = time.mktime(_datetime.timetuple())
+		stopTime = now
+
+	elif exporting['type'] == 'fixed':
+
+		logger.debug('now: %s' % now)
+
+		def get_timestamp(_time):
+			"""
+			Get a timestamp from an input _time struct.
+			"""
+			result = 0
+
+			_datetime = datetime.utcfromtimestamp(now)
+
+			before = _time.get('before')
+			if before is not None:
+				for key in before:
+					before[key] = int(before[key])
+				rd = relativedelta(**before)
+				_datetime -= rd
+
+			kwargs = dict()
+
+			day = _time.get('day')
+			if day is not None:
+				logger.debug("day: %s" % day)
+				kwargs['day'] = int(day)
+
+			month = _time.get('month')
+			if month is not None:
+				logger.debug("month: %s" % month)
+				kwargs['month'] = int(month)
+
+			hour = _time.get('hour')
+			if hour is not None:
+				logger.debug("hour: %s" % hour)
+				kwargs['hour'] = int(hour)
+
+			minute = _time.get('minute')
+			if minute is not None:
+				logger.debug("minute: %s" % minute)
+				kwargs['minute'] = int(minute)
+
+			logger.debug("_datetime: %s" % _datetime)
+
+			_datetime = _datetime.replace(**kwargs)
+
+			logger.debug("_datetime: %s" % _datetime)
+
+			day_of_week = _time.get('day_of_week')
+			if day_of_week is not None:
+				logger.debug("day_of_week: %s" % day_of_week)
+				day_of_week = int(day_of_week)
+				weekday = calendar.weekday(_datetime.year, _datetime.month, _datetime.day)
+				days = weekday - day_of_week
+				logger.debug("days %s" % days)
+				td = timedelta(days=days)
+				_datetime -= td
+
+			result = time.mktime(_datetime.utctimetuple())
+			result -= timezone['value']
+
+			logger.debug('result: %s' % result)
+
+			return result
+
+		startTime = None
+		_from = exporting.get('from')
+		if _from is not None and _from:
+			startTime = int(_from.get('timestamp', get_timestamp(_from)))
+
+		logger.info('from : {0} and startTime : {1} ({2})'.format(_from, startTime, datetime.utcfromtimestamp(startTime)))
+
+		stopTime = now
+		_to = exporting.get('to')
+		if startTime and _to is not None and _to.get('enable', False):
+			stopTime = int(_to.get('timestamp', get_timestamp(_to)))
+
+		logger.info('to : {0} and stopTime : {1} ({2})'.format(_to, stopTime, datetime.utcfromtimestamp(stopTime)))
+
+	else:
+		logger.error('Wrong exporting type %s' % exporting['type'])
 
 	if viewName is None:
 		raise ValueError("task_render_pdf: you must at least provide a viewName")
@@ -77,14 +202,26 @@ def render_pdf(fileName=None, viewName=None, startTime=None, stopTime=None, subs
 
 	logger.info("Account '%s' ask a rendering of view '%s' (%s)" % (account.name, view_record.name, viewName,))
 
+	timezone_td = timedelta(
+		seconds=int(timezone.get('value', 0)))
+
+	def get_datetime_with_timezone(timestamp):
+		result = datetime.utcfromtimestamp(timestamp)
+		result -= timezone_td
+		return result
+
 	#set fileName
 	if fileName is None:
-		toDate = date.fromtimestamp(int(stopTime))
+		toDate = get_datetime_with_timezone(int(stopTime))
 		if startTime and startTime != -1:
-			fromDate = date.fromtimestamp(int(startTime))
-			fileName = '%s_From_%s_To_%s.pdf' % (view_record.name, fromDate, toDate)
+			fromDate = get_datetime_with_timezone(int(startTime))
+			fileName = '%s_From_%s_To_%s' % (view_record.name, fromDate, toDate)
 		else:
-			fileName = '%s_%s.pdf' % (view_record.name,toDate)
+			fileName = '%s_%s' % (view_record.name,toDate)
+
+		fileName += '_Tz_%s_%s' % (timezone.get('type', 'server'), (timezone.get('value', 0) if timezone.get('value', 0) >= 0 \
+			else 'minus_%s' % -timezone['value']))
+		fileName += '.pdf'
 
 	logger.info('fileName: %s' % fileName)
 	ascii_fileName = hashlib.md5(fileName.encode('ascii', 'ignore')).hexdigest()
@@ -113,12 +250,19 @@ def render_pdf(fileName=None, viewName=None, startTime=None, stopTime=None, subs
 							orientation=orientation,
 							pagesize=pagesize)
 
+	wkhtml_wrapper.logger = logger
+
 	# Run rendering
-	logger.debug('Run pdf rendering')
+	logger.info('Run pdf rendering')
 	wkhtml_wrapper.run_report()
 
 	logger.info('Put it in grid fs: %s' % file_path)
-	doc_id = put_in_grid_fs(file_path, fileName, account,owner)
+	try:
+		doc_id = put_in_grid_fs(file_path, fileName, account,owner)
+	except Exception as e:
+		import inspect
+		inspect.trace()
+		logger.info('Error in generating file (try to not use slink): %s, %s ' % (e, inspect.trace()))
 	logger.info('Remove tmp report file with docId: %s' % doc_id)
 	os.remove(file_path)
 

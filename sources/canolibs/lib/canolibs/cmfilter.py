@@ -85,6 +85,11 @@ def field_check(mfilter, event, key):
 	return True
 
 def check(mfilter, event):
+	# Check connector_name
+	if 'connector_name' in mfilter and 'connector_name' in event:
+		if mfilter['connector_name'] != event['connector_name']:
+			return False
+
 	# For each key of filter
 	for key in mfilter:
 		if key == '$and':
@@ -118,11 +123,11 @@ def check(mfilter, event):
 		elif key in event:
 			if isinstance(mfilter[key], dict):
 				if '$in' in mfilter[key]:
-					if event[key] not in mfilter[key]['$in']:
+					if not len([x for x in event[key] if any(y in x for y in mfilter[key]['$in'])]):
 						return False
 
 				elif '$nin' in mfilter[key]:
-					if event[key] in mfilter[key]['$nin']:
+					if len([x for x in event[key] if any(y in x for y in mfilter[key]['$in'])]):
 						return False
 
 				else:

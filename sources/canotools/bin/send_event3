@@ -1,8 +1,8 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
 # --------------------------------
-# Copyright (c) 2014 "Capensis" [http://www.capensis.com]
+# Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
 #
@@ -20,7 +20,13 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-import sys, os, getopt, urllib2, urllib, cookielib, traceback
+import traceback
+import getopt
+import sys
+import os
+
+import urllib
+import http.cookiejar
 
 try:
 	import json
@@ -86,16 +92,19 @@ def main(argv):
 		usage()
 		sys.exit()
 		
-	cj = cookielib.CookieJar()
-	opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cj))
+	cj = http.cookiejar.CookieJar()
+	opener = urllib.request.build_opener(urllib.request.HTTPCookieProcessor(cj))
 	#print('http://%s/autoLogin/%s' % (server,authkey))
 	r = opener.open('http://%s/autoLogin/%s' % (server,authkey))
 	r = opener.open('http://%s/account/me' % server)
-	
+
+	charset = r.info().get_param('charset', 'utf8')
+
 	try:
-		response = json.loads(r.read())
+		response = json.loads(r.read().decode(charset))
 	except Exception as err:
-		print('Error: Bad response from server %s' % err)
+		print(('Error: Bad response from server %s' % err))
+		sys.exit()
 		
 	if not response['success']:
 		print('Error: The provided authkey does not match any existing user')
@@ -113,14 +122,15 @@ def main(argv):
 			sys.exit()
 			
 		if not os.path.exists(file_path):
-			print('Error: File not found (%s)' % file_path)
+			print(('Error: File not found (%s)' % file_path))
 			sys.exit()
 			
 		#------------------read file-------------------	
 		try:
-			event = json.loads(open(file_path, "r").read().decode('utf-8-sig'))
+			with open(file_path) as f:
+				event = json.load(f)
 		except Exception as err:
-			print('Invalid json file: %s' % err)
+			print(('Invalid json file: %s' % err))
 			sys.exit()
 			
 		
@@ -150,13 +160,13 @@ def main(argv):
 
 	#-----------------------------send event-----------------------------
 	clean_event = {}
-	for k, v in event.iteritems():
-		clean_event[k] = unicode(v).encode('utf-8')
+	for k, v in event.items():
+		clean_event[k] = str(v).encode('utf-8')
 	
-	request = urllib2.Request('http://%s/event/' % server,urllib.urlencode(clean_event))
+	request = urllib.request.Request('http://%s/event/' % server,urllib.parse.urlencode(clean_event).encode('ascii'))
 	r = opener.open(request)
 	print('Webserver replied :')
-	print(r.read())
+	print((r.read()))
 
 
 if __name__ == "__main__":

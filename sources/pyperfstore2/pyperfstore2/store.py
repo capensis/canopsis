@@ -96,7 +96,6 @@ class store(object):
 			return True
 		else:
 			self.logger.debug("Connect to MongoDB (%s/%s@%s:%s)" % (self.mongo_db, self.mongo_collection, self.mongo_host, self.mongo_port))
-
 			try:
 				self.conn=Connection(host=self.mongo_host, port=self.mongo_port, safe=self.mongo_safe)
 				self.logger.debug(" + Success")
@@ -127,11 +126,11 @@ class store(object):
 			return True
 
 	def check_connection(self):
-		if not self.connected:
-			if not self.connect():
-				raise Exception('Impossible to deal with DB, you are not connected ...')
+		if not self.connected or not self.connect():
+			raise Exception('Impossible to deal with DB, you are not connected ...')
 
 	def count(self, _id):
+		self.check_connection()
 		return self.collection.find({'_id': _id}).count()
 
 	def update(self, _id, mset=None, munset=None, mpush=None, mpush_all=None, mpop=None, upsert=True):
@@ -257,6 +256,8 @@ class store(object):
 	def disconnect(self):
 		if self.connected:
 			self.logger.debug("Disconnect from MongoDB")
-			self.conn.disconnect()
+			self.conn.fsync()
+			del self.conn
+			self.connected = False
 		else:
 			self.logger.warning("Impossible to disconnect, you are not connected")

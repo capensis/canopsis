@@ -107,7 +107,6 @@ INDEXES = {
 	]
 }
 
-
 def init():
 	for collection in INDEXES:
 		logger.info(' + Create indexes for collection {0}'.format(collection))

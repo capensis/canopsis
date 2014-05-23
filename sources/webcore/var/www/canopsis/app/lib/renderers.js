@@ -16,10 +16,14 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 */
-function rdr_tstodate(val, format) {
-	if (!format) {
-		format = is12Clock() ? 'Y-m-d h:i:s a' : 'Y-m-d H:i:s';
+function rdr_tstodate(val, custom_format) {
+
+	var format = is12Clock() ? 'Y-m-d h:i:s a' : 'Y-m-d H:i:s';
+
+	if (custom_format !== undefined && typeof(custom_format) == 'string') {
+		format = custom_format;
 	}
+
 	if(val) {
 		var dval = new Date(parseInt(val) * 1000);
 
@@ -164,11 +168,33 @@ function rdr_task_crontab(val) {
 		}
 
 		if(val.month !== undefined && val.day !== undefined) {
-			output += '   |    ' + _('month') + ' : ' + global.numberToMonth[val.month] + ' |  day : ' + val.day;
+			output += '   |    ' + _('month') + ' : ' + global.numberToMonth[val.month] + ' |  day : ' + (""+val.day);
 		}
 
 		if(val.day_of_week !== undefined) {
-			output += '   |   ' + _('day') + ' : ' + _(val.day_of_week);
+
+			function rdr_get_day_of_week(day_of_week) {
+				switch(day_of_week) {
+					case 0:
+						return "Monday";
+					case 1:
+						return "Tuesday";
+					case 2:
+						return "Wednesday";
+					case 3:
+						return "Thursday";
+					case 4:
+						return "Friday";
+					case 5:
+						return "Saturday";
+					case 6:
+						return "Sunday";
+					default:
+						return day_of_week;
+				}
+			}
+
+			output += '   |   ' + _('day') + ' : ' + _(rdr_get_day_of_week(val.day_of_week));
 		}
 	}
 

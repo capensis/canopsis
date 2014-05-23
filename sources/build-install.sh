@@ -3,7 +3,7 @@
 ### Check user
 if [ `id -u` -ne 0 ]; then
 	echo "You must be root ..."
-	exit 1	
+	exit 1
 fi
 
 
@@ -46,10 +46,12 @@ function extract_archive () {
 		exit 1
 	fi
 
+	EXTCMD="tar xf"
+
 	if [ `echo $1 | grep 'tar.bz2$' | wc -l` -eq 1 ]; then EXTCMD="tar xfj"; fi
 	if [ `echo $1 | grep 'tar.gz$' | wc -l` -eq 1 ]; then EXTCMD="tar xfz"; fi
 	if [ `echo $1 | grep 'tgz$' | wc -l` -eq 1 ]; then EXTCMD="tar xfz"; fi
-	
+
 	if [ "$EXTCMD" != "" ]; then
 		echo " + Extract '$1' ('$EXTCMD') ..."
 		$EXTCMD $1
@@ -134,7 +136,7 @@ function make_package_archive(){
 	tar cfj $PPATH/files.bz2 -T $PPATH/files.lst
 	check_code $? "Files archive creation failure"
 	cd - &> /dev/null
-	
+
 	echo "    + Check control script ..."
 	touch $PPATH/control
 	chmod +x $PPATH/control
@@ -161,13 +163,13 @@ function update_packages_list() {
 	PNAME=$1
 	PPATH=$SRC_PATH/packages/$PNAME
 	echo "    + Update Packages list Db ..."
-	
+
 	PKGLIST=$SRC_PATH/../binaries/Packages.list
 	touch $PKGLIST
 
 	. $PPATH/control
 	check_code $? "Source control file failure"
-	
+
 	PKGMD5=$(md5sum $SRC_PATH/../binaries/$P_ARCH/$P_DIST/$P_DISTVERS/$PNAME.tar | awk '{ print $1 }')
 
 	sed "/^$PNAME/d" -i $PKGLIST
@@ -191,12 +193,12 @@ function files_listing(){
 
 function make_package(){
 	PNAME=$1
-		
+
 	echo " + Make package $PNAME ..."
 	PPATH=$SRC_PATH/packages/$PNAME
 	FLIST=$SRC_PATH/packages/files.lst
 	FLIST_TMP=$SRC_PATH/packages/files.tmp
-	
+
 	mkdir -p $PPATH
 
 	echo "    + Purge old build ..."
@@ -205,7 +207,7 @@ function make_package(){
 	#if [ ! -f $PPATH/files.lst ]; then
 		echo "    + Make files listing ..."
 		files_listing "$FLIST_TMP"
-	
+
 		diff $FLIST $FLIST_TMP  | grep ">" | grep -v "\.pid$" | sed 's#> ##g' > $PPATH/files.lst
 		check_code $?
 
@@ -221,9 +223,9 @@ function make_package(){
 		rm $FLIST_TMP
 		check_code $? 'Impossible to delete tmp files listing ...'
 	#fi
-		
-	make_package_archive "$PNAME"	
-	#update_packages_list "$PNAME"	
+
+	make_package_archive "$PNAME"
+	#update_packages_list "$PNAME"
 }
 
 function install_basic_source(){
@@ -243,7 +245,7 @@ function install_basic_source(){
 		echo "Error: Impossible to find '$NAME'"
 		exit 1
 	fi
-	
+
 }
 
 function extra_deps(){
@@ -252,7 +254,7 @@ function extra_deps(){
     if [ -e $DEPS_FILE ]; then
         bash $DEPS_FILE
     else
-        echo " + Impossible to find dependencies file ($DEPS_FILE)..." 
+        echo " + Impossible to find dependencies file ($DEPS_FILE)..."
     fi
     check_code $? "Install extra dependencies failure"
 }
@@ -326,7 +328,7 @@ ARG1=$1
 ARG2=$2
 
 if [ "x$ARG1" == "xhelp" ]; then
-	show_help	
+	show_help
 fi
 
 OPT_BUILD=1
@@ -374,7 +376,7 @@ check_code $? "Impossible to move to externals"
 git submodule init && git submodule update
 check_code $? "Impossible to init externals submodules"
 cd $SRC_PATH/..
-	
+
 export_env
 detect_os
 
@@ -383,7 +385,7 @@ if [ $OPT_BUILD -eq 1 ]; then
 	if [ $OPT_DCD -ne 1 ]; then
 		extra_deps
 	fi
-	
+
 	if [ $OPT_MPKG -eq 1 ]; then
 		echo "Purge old binaries ..."
 		rm -R $SRC_PATH/../binaries/$ARCH || true
@@ -399,11 +401,11 @@ if [ $OPT_BUILD -eq 1 ]; then
 	#find ./ -type f > $SRC_PATH/packages/files.lst
 	#find ./ -type l >> $SRC_PATH/packages/files.lst
 	#cd - &> /dev/null|| true
-	
+
 	VARLIB_PATH="$PREFIX/var/lib/pkgmgr/packages"
 	mkdir -p $VARLIB_PATH
 	touch $PREFIX/var/lib/pkgmgr/local_db
-	
+
 	######################################
 	#  Build all packages
 	######################################
@@ -412,14 +414,14 @@ if [ $OPT_BUILD -eq 1 ]; then
 	if [ -e "$SRC_PATH/pre-build.sh" ]; then
 		. $SRC_PATH/pre-build.sh
 	fi
-	
+
 	ITEMS=`ls -1 $INST_CONF | grep ".install$"`
-	
+
 	for ITEM in $ITEMS; do
 		cd $SRC_PATH
-	
+
 		export MAKEFLAGS="-j$((`cat /proc/cpuinfo  | grep processor | wc -l` + 1))"
-	
+
 		NAME="x"
 		VERSION="0.1"
 		RELEASE="0"
@@ -427,14 +429,14 @@ if [ $OPT_BUILD -eq 1 ]; then
 		P_ARCH=$ARCH
 		P_DIST=$DIST
 		P_DISTVERS=$DIST_VERS
-	
+
 		NO_ARCH=false
 		NO_DIST=false
 		NO_DISTVERS=false
-	
+
 		function pre_install(){	true; }
 		function post_install(){ true; }
-	
+
 		. /$INST_CONF/$ITEM
 		if [ "$NAME" != 'x' ]; then
 			## Check package sources
@@ -448,54 +450,60 @@ if [ $OPT_BUILD -eq 1 ]; then
 				sed "s#@RELEASE@#$RELEASE#g" -i packages/$NAME/control
 				. packages/$NAME/control
 			fi
-	
+
 			pkg_options
-	
+
 			function install(){ true; }
 			function build(){ true; }
-	
+
 			. /$INST_CONF/$ITEM
-	
+
 			echo "################################"
 			echo "# $NAME $VERSION"
-			echo "################################"	
-	
+			echo "################################"
+
+			FORCE_UPDATE=0
+
+			if [ $(echo $ITEM | grep "11_mongodb" | wc -l) == 1 ]; then
+				FORCE_UPDATE=1
+			fi
+
 			## Build and install
-			if [ ! -e $FCHECK ]; then
-	
+			if [ $FORCE_UPDATE -eq 1 ] || [ ! -e $FCHECK ]; then
+
 				if [ $OPT_NOBUILD -ne 1 ]; then
 					echo " + Build ..."
 					build
 					check_code $? "Build failure"
 				fi
-	
+
 				if [ $OPT_MPKG -eq 1 ]; then
 					files_listing "$SRC_PATH/packages/files.lst"
 				fi
-		
-				echo " + Pre-install ..."	
+
+				echo " + Pre-install ..."
 				pre_install
-	
+
 				echo " + Install ..."
 				install
 				check_code $? "Install failure"
-	
+
 				echo " + Post-install ..."
 				post_install
-				
+
 				if [ $OPT_MPKG -eq 1 ]; then
 					make_package $NAME
 					check_code $? "Make package failure"
 				fi
 			else
-				echo " + Allready install"
+				echo " + Already install"
 			fi
 		else
 			echo "Impossible to build $NAME ..."
 			exit 1
 		fi
 	done
-	
+
 	echo "################################"
 	echo "# Fix permissions"
 	echo "################################"
@@ -508,7 +516,7 @@ if [ $OPT_BUILD -eq 1 ]; then
 	if [ -e "$SRC_PATH/post-build.sh" ]; then
 		. $SRC_PATH/post-build.sh
 	fi
-	
+
 	if [ $OPT_WUT -eq 1 ]; then
 		echo "################################"
 		echo "# Launch Unit Tests"

@@ -56,10 +56,10 @@ logger = logging.getLogger(SERVICE_NAME)
 
 
 def load():
-	global manager
 	global logger
-	manager = Manager(logging_level=logger.level)
+	global manager
 
+	manager = Manager(logging_level=logger.level)
 
 def unload():
 	global manager
@@ -278,6 +278,7 @@ def perfstore_get_all_metrics(limit=20, start=0, search=None, filter=None, sort=
 				mfilter['$and'].append({'$or': mor})
 
 	use_hint = False
+
  	if not show_internals:
  		if mfilter:
  			mfilter['internal'] = False
@@ -325,6 +326,7 @@ def perfstore_get_all_metrics(limit=20, start=0, search=None, filter=None, sort=
 @delete('/perfstore', checkAuthPlugin={'authorized_grp': group_managing_access})
 @delete('/perfstore/:_id', checkAuthPlugin={'authorized_grp': group_managing_access})
 def remove_meta(_id=None):
+
 	if not _id:
 		_id =  json.loads(request.body.readline())
 	if not _id:
@@ -760,6 +762,3 @@ def exclude_points(points, subset_selection={}):
 		return exclusion_points
 	else:
 		return points
-
-
-
