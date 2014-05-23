@@ -33,6 +33,9 @@ class Store(object):
 	Manage periodic and timed access to data_name in a mongo collection.
 	"""
 
+	ASC = 1  # ASC order
+	DESC = -1  # DESC order
+
 	class StoreError(Exception):
 		def __init__(self):
 			super(Store.StoreError, self).__init__(
@@ -241,7 +244,7 @@ class Store(object):
 
 		return result
 
-from .timewindow import TimeWindow
+from .timewindow import get_offset_timewindow
 
 
 class TimedStore(Store):
@@ -252,6 +255,7 @@ class TimedStore(Store):
 	DATA_ID = 'd'
 	VALUE = 'v'
 	TIMESTAMP = 't'
+	LAST_VALUE = 'l'
 
 	def _get_indexes(self):
 
@@ -269,7 +273,7 @@ class TimedStore(Store):
 
 		return "timed"
 
-	def get(self, data_id, timewindow=None, with_id=False):
+	def get(self, data_id, timewindow=None, with_id=False, limit=0, sort=None):
 		"""
 		Get a sorted list of couple of (timestamp, dict(data_name, data_value)).
 		If timewindow is None, the list contains at most one element where timestamp is now.
@@ -297,12 +301,17 @@ class TimedStore(Store):
 		# do the query
 		cursor = self.collection.find(where, projection=projection)
 
-		# if timewindow is None, get only the last document before now
-		if timewindow is None:
-			cursor.limit(1)
+		# if timewindow is None or contains only one point, get only last document
+		# respectively before now or before the one point
+		if limit != 0:
+			cursor.limit(limit)
 
 		# apply a specific index
 		cursor.hint(TimedStore._get_query_hint())
+
+		if sort is not None:
+			_sort = [item if isinstance(item, tuple) else (item, Store.ASC) for item in sort]
+			cursor.sort(_sort)
 
 		# iterate on all documents
 		for document in cursor:
@@ -339,22 +348,26 @@ class TimedStore(Store):
 
 		return result
 
-	def put(self, data_id, value, timestamp):
+	def put(self, data_id, value, timestamp, fields_to_override=dict()):
 		"""
 		Put a dictionary of value by name in collection.
+
+		fields_to_override are added after the search operation.
 		"""
 
-		timewindow = TimeWindow(start=timestamp, stop=timestamp)
+		timewindow = get_offset_timewindow(offset=timestamp)
 
 		data_id = self._get_data_id(data_id)
 
-		data = self.get(data_id=data_id, timewindow=timewindow, with_id=True)
+		data = self.get(
+			data_id=data_id, timewindow=timewindow, with_id=True, limit=1)
 
-		_set = {
+		_set = fields_to_override.copy()
+		_set.update({
 					TimedStore.DATA_ID: data_id,
 					TimedStore.TIMESTAMP: timestamp,
-					TimedStore.VALUE: value
-				}
+					TimedStore.VALUE: value,
+				})
 
 		if len(data) == 0 or data[0][0] != timestamp:
 			values_to_insert = {
@@ -493,6 +506,55 @@ class PeriodicStore(Store):
 
 		return result
 
+	def get(self, data_id, aggregation, period, timewindow=None, limit=0):
+		"""
+		Get a list of points.
+		"""
+
+		query = self._get_documents_query(data_id=data_id,
+			aggregation=aggregation, timewindow=timewindow, period=period)
+
+		projection = {
+			PeriodicStore.TIMESTAMP: 1,
+			PeriodicStore.VALUES: 1
+		}
+
+		if aggregation is None:
+			projection[PeriodicStore.AGGREGATION] = 1
+
+		if period is None:
+			projection[PeriodicStore.PERIOD] = 1
+
+		cursor = self.collection.find(query, projection=projection)
+
+		cursor.hint(PeriodicStore._get_query_hint())
+
+		result = list()
+
+		doc_aggregation = aggregation
+		doc_period = period
+
+		if limit != 0:
+			cursor = cursor[:limit]
+
+		for document in cursor:
+
+			doc_aggregation = document.get(PeriodicStore.AGGREGATION, aggregation)
+			doc_period = document.get(PeriodicStore.PERIOD, period)
+			timestamp = int(document[PeriodicStore.TIMESTAMP])
+
+			values = document[PeriodicStore.VALUES]
+
+			for t, value in values.iteritems():
+				value_timestamp = timestamp + int(t)
+
+				if timewindow is None or value_timestamp in timewindow:
+					result.append( (value_timestamp, value) )
+
+		result.sort(key=itemgetter(0))
+
+		return result
+
 	def put(self, data_id, aggregation, period, points):
 		"""
 		Put periodic points in periodic collection with specific aggregation and
@@ -555,52 +617,6 @@ class PeriodicStore(Store):
 				w=1)
 
 			self._manage_query_error(result)
-
-	def get(self, data_id, aggregation, period, timewindow=None):
-		"""
-		Get a list of points.
-		"""
-
-		query = self._get_documents_query(data_id=data_id,
-			aggregation=aggregation, timewindow=timewindow, period=period)
-
-		projection = {
-			PeriodicStore.TIMESTAMP: 1,
-			PeriodicStore.VALUES: 1
-		}
-
-		if aggregation is None:
-			projection[PeriodicStore.AGGREGATION] = 1
-
-		if period is None:
-			projection[PeriodicStore.PERIOD] = 1
-
-		cursor = self.collection.find(query, projection=projection)
-
-		cursor.hint(PeriodicStore._get_query_hint())
-
-		result = list()
-
-		doc_aggregation = aggregation
-		doc_period = period
-
-		for document in cursor:
-
-			doc_aggregation = document.get(PeriodicStore.AGGREGATION, aggregation)
-			doc_period = document.get(PeriodicStore.PERIOD, period)
-			timestamp = int(document[PeriodicStore.TIMESTAMP])
-
-			values = document[PeriodicStore.VALUES]
-
-			for t, value in values.iteritems():
-				value_timestamp = timestamp + int(t)
-
-				if timewindow is None or value_timestamp in timewindow:
-					result.append( (value_timestamp, value) )
-
-		result.sort(key=itemgetter(0))
-
-		return result
 
 	def remove(self, data_id, aggregation=None, period=None, timewindow=None):
 		"""

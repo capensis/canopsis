@@ -21,6 +21,7 @@
 
 from .timewindow import Period
 from pyperfstore3.store import TimedStore, PeriodicStore
+from pyperfstore3.timewindow import get_offset_timewindow, TimeWindow
 
 from collections import Iterable
 
@@ -76,23 +77,53 @@ class Manager(object):
 		return result
 
 	def get(self, data_id, with_meta=True, aggregation=None, period=None,
-		timewindow=None):
+		timewindow=None, limit=0):
 		"""
 		Get a set of data related to input data_id on the timewindow and input period.
-		If with_meta, result is a couple of (points, list of meta by timestamp)
+		If with_meta, result is a couple of (points, list of meta by timestamp).
 		"""
 
 		aggregation, period = self.get_aggregation_and_period(data_id=data_id,
 			aggregation=aggregation, period=period)
 
 		result = self.periodic_store.get(data_id=data_id,
-			aggregation=aggregation, period=period, timewindow=timewindow)
+			aggregation=aggregation, period=period, timewindow=timewindow, limit=limit)
 
 		if with_meta is not None:
 
 			meta = self.timed_store.get(data_id=data_id, timewindow=timewindow)
 
 			result = result, meta
+
+		return result
+
+	def get_point(self, data_id, with_meta=True, aggregation=None, period=None, timestamp=time()):
+		"""
+		Get the closest point before input timestamp. Add meta informations if with_meta.
+		"""
+
+		aggregation, period = self.get_aggregation_and_period(data_id=data_id,
+			aggregation=aggregation, period=period)
+
+		result = self.periodic_store.get(data_id=data_id,
+			aggregation=aggregation, period=period, timewindow=timewindow, limit=limit)
+
+		if with_meta is not None:
+
+			meta = self.timed_store.get(data_id=data_id, timewindow=timewindow)
+
+			result = result, meta
+
+		return result
+
+	def get_meta(self, data_id, timewindow=None, limit=0, sort=None):
+		"""
+		Get the meta data related to input data_id and timewindow.
+		"""
+
+		if timewindow is None:
+			timewindow = get_offset_timewindow()
+		result = self.timed_store.get(data_id=data_id, timewindow=timewindow, limit=limit, sort=sort)
 
 		return result
 
@@ -116,8 +147,15 @@ class Manager(object):
 
 		if meta is not None:
 
-			min_timestamp = min( [point[0] for point in points_or_point] )
-			self.timed_store.put(data_id=data_id, value=meta, timestamp=min_timestamp)
+			min_timestamp = min([point[0] for point in points_or_point])
+
+			if len(points_or_point) > 0:
+				last_value = points_or_point[-1][1]
+
+			fields_to_override = {Manager.LAST_VALUE: last_value}
+
+			self.timed_store.put(data_id=data_id, value=meta, timestamp=min_timestamp,
+				fields_to_override=fields_to_override)
 
 	def remove(self, data_id, with_meta=False, aggregation=None, period=None,
 		timewindow=None):

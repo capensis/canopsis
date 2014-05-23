@@ -29,14 +29,14 @@ class engine(cengine):
 
 	def __init__(self, *args, **kargs):
 		super(engine, self).__init__(*args, **kargs)
-		
+
 	def work(self, body, msg, *args, **kargs):
 		## Sanity Checks
 		rk = msg.delivery_info['routing_key']
 		if not rk:
 			raise Exception("Invalid routing-key '%s' (%s)" % (rk, body))
-		
-		#self.logger.info( body ) 	
+
+		#self.logger.info( body )
 		## Try to decode event
 		if isinstance(body, dict):
 			event = body
@@ -75,10 +75,10 @@ class engine(cengine):
 
 		# Clean tags field
 		event['tags'] = event.get('tags', [])
-		
+
 		if (isinstance(event['tags'], str) or isinstance(event['tags'], unicode)) and  event['tags'] != "":
 			event['tags'] = [ event['tags'] ]
-			
+
 		elif not isinstance(event['tags'], list):
 			event['tags'] = []
 

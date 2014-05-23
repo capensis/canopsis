@@ -590,7 +590,7 @@ class TimeWindow(object):
 		return result
 
 
-def get_offset_timewindow(offset):
+def get_offset_timewindow(offset=time()):
 	"""
 	Get a timewindow with one point.
 	"""

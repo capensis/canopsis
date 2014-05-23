@@ -22,8 +22,6 @@
 from cengine import cengine
 from caccount import caccount
 from cstorage import get_storage
-import cevent
-import time
 import md5
 
 
@@ -36,7 +34,7 @@ class engine(cengine):
 		self.account = caccount(user='root', group='root')
 		self.storage = get_storage(namespace='entities', logging_level=self.logging_level, account=self.account)
 		self.backend = self.storage.get_backend()
-		
+
 		self.sla = None
 		self.beat()
 
@@ -182,7 +180,8 @@ class engine(cengine):
 				'component': component,
 				'resource': resource,
 				'name': perfdata['metric'],
-				'nodeid': nodeid
+				'nodeid': nodeid,
+				'internal': perfdata['metric'].startswith('cps_')
 			}
 
 			self.update(doc, [('type', 1), ('nodeid', 1)])

@@ -23,15 +23,15 @@ from caccount import caccount
 from cstorage import get_storage
 #from pyperfstore import node
 #from pyperfstore import mongostore
-import pyperfstore2
-import pyperfstore2.utils
+from pyperfstore3.manager import Manager
+from pyperfstore3.timeserie import TimeSerie
+from pyperfstore3.timewindow import TimeWindow, Period
 import cevent
-import logging
 import json
 
 import time
 from datetime import datetime
-from ctools import internal_metrics, roundSignifiantDigit
+from ctools import roundSignifiantDigit
 
 
 class engine(cengine):
@@ -41,7 +41,7 @@ class engine(cengine):
 		super(engine, self).__init__(*args, **kargs)
 
 		self.metrics_list = {}
-		self.timestamps = {} 
+		self.timestamps = {}
 		self.default_interval = 60
 
 		self.thd_warn_sec_per_evt = 8
@@ -49,9 +49,10 @@ class engine(cengine):
 
 
 	def pre_run(self):
-		self.storage = get_storage(namespace='object', account=caccount(user="root", group="root"))
-		self.manager = pyperfstore2.manager(logging_level=self.logging_level)
-				
+		self.storage = get_storage(namespace='object',
+			account=caccount(user="root", group="root"))
+		self.manager = Manager(logging_level=self.logging_level)
+
 		self.beat()
 
 	def beat(self):
@@ -64,22 +65,26 @@ class engine(cengine):
 		beat_elapsed = 0
 
 		record = self.get_ready_record(event)
-		if record:	
-			record = record.dump()		
+		if record:
+			record = record.dump()
 
 			_id = record.get('_id')
 			name = record.get('crecord_name')
 
 			aggregation_interval = record.get('aggregation_interval')
+			period = Period(second=aggregation_interval)
 
-			self.logger.debug("'%s':" % name)
+			self.logger.debug(" + name: {0}':".format(name))
 			self.logger.debug(" + interval: %s" % aggregation_interval)
+			self.logger.debug(" + period: {0}".format(aggregation_interval))
 
 			last_run = record.get('consolidation_ts', now)
 
 			elapsed = now - last_run
 
-			self.logger.debug(" + elapsed: %s" % elapsed)
+			timewindow = TimeWindow(start=last_run, stop=now)
+
+			self.logger.debug(" + elapsed: {0}, timewindow: {1}".format(elapsed, timewindow))
 
 			mfilter = record.get('mfilter')
 
@@ -89,23 +94,24 @@ class engine(cengine):
 
 				mfilter = json.loads(mfilter)
 
-				self.logger.debug(' + mfilter: %s' % mfilter)
+				self.logger.debug(' + mfilter: {0}'.format(mfilter))
 
-				and_clause = [mfilter, {'me': {'$nin':internal_metrics}}]
+				mfilter['internal'] = False
 
-				# Exclude internal metrics
-				mfilter = {'$and': and_clause}
+				metric_list = self.manager.entities.find(mfilter=mfilter)
+				metric_list.hint([('type', 1), ('component', 1), ('resource', 1), ('name', 1)])
 
-				metric_list = self.manager.store.find(mfilter=mfilter)
-
-				self.logger.debug(" + %s metrics found" % metric_list.count())
+				self.logger.debug(" + {0} metrics found".format(metric_list.count()))
 
 				if not metric_list.count():
-					self.storage.update(_id, { 'output_engine': "No metrics, check your filter" })
+					self.storage.update(_id, {'output_engine': "No metrics, check your filter" })
+
 				else:
 
 					aggregation_method = record.get('aggregation_method')
+					aggregation_timeserie = TimeSerie(aggregation=aggregation_method)
 					self.logger.debug(" + aggregation_method: %s" % aggregation_method)
+					self.logger.debug(" + aggregation_method: {0}:".format(aggregation_method))
 
 					consolidation_methods = record.get('consolidation_method')
 					if not isinstance(consolidation_methods, list):
@@ -249,22 +255,3 @@ class engine(cengine):
 			beat_elapsed = time.time() - now
 
 		self.counter_worktime += beat_elapsed
-
-	def get_math_function(self, name):
-		if name == 'average' or name == 'mean':
-			return lambda x: sum(x) / len(x)
-		elif name == 'min' :
-			return lambda x: min(x)
-		elif name == 'max' :
-			return lambda x: max(x)
-		elif name == 'sum':
-			return lambda x: sum(x)
-		elif name == 'delta':
-			return lambda x: x[0] - x[-1]
-		elif name == 'last':
-			return lambda x: x[len(x)-1]
-		else:
-			return None
-
-	def post_run(self):
-		pass
