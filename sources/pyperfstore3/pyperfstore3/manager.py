@@ -21,13 +21,15 @@
 
 from .timewindow import Period
 from pyperfstore3.store import TimedStore, PeriodicStore
-from pyperfstore3.timewindow import get_offset_timewindow, TimeWindow
+from pyperfstore3.timewindow import get_offset_timewindow
 
 from collections import Iterable
 
 import logging
 
 from cstorage import get_storage
+
+from time import time
 
 DEFAULT_PERIOD = Period(**{Period.MINUTE: 60})
 DEFAULT_AGGREGATION = 'MEAN'
@@ -42,6 +44,9 @@ class Manager(object):
 		pass
 
 	DATA_NAME = 'metric'
+
+	LAST_VALUE = 'last_value'
+	LAST_TIMESTAMP = 'last_timestamp'
 
 	def __init__(self, timed_store=None, periodic_store=None,
 		logging_level=logging.INFO, data_name=DATA_NAME):
@@ -79,7 +84,8 @@ class Manager(object):
 	def get(self, data_id, with_meta=True, aggregation=None, period=None,
 		timewindow=None, limit=0):
 		"""
-		Get a set of data related to input data_id on the timewindow and input period.
+		Get a set of data related to input data_id on the timewindow \
+		and input period.
 		If with_meta, result is a couple of (points, list of meta by timestamp).
 		"""
 
@@ -97,16 +103,21 @@ class Manager(object):
 
 		return result
 
-	def get_point(self, data_id, with_meta=True, aggregation=None, period=None, timestamp=time()):
+	def get_point(self, data_id, with_meta=True, aggregation=None, period=None,
+		timestamp=time()):
 		"""
-		Get the closest point before input timestamp. Add meta informations if with_meta.
+		Get the closest point before input timestamp. Add meta informations \
+		if with_meta.
 		"""
 
 		aggregation, period = self.get_aggregation_and_period(data_id=data_id,
 			aggregation=aggregation, period=period)
 
+		timewindow = get_offset_timewindow(timestamp)
+
 		result = self.periodic_store.get(data_id=data_id,
-			aggregation=aggregation, period=period, timewindow=timewindow, limit=limit)
+			aggregation=aggregation, period=period, timewindow=timewindow,
+			limit=1)
 
 		if with_meta is not None:
 
@@ -123,15 +134,18 @@ class Manager(object):
 
 		if timewindow is None:
 			timewindow = get_offset_timewindow()
-		result = self.timed_store.get(data_id=data_id, timewindow=timewindow, limit=limit, sort=sort)
+		result = self.timed_store.get(
+			data_id=data_id, timewindow=timewindow, limit=limit, sort=sort)
 
 		return result
 
 	def put(self, data_id, points_or_point, meta=None, aggregation=None,
 		period=None):
 		"""
-		Put a (list of) couple (timestamp, value), a meta into rated_documents related to input period.
-		kwargs will be added to all document in order to extend rated_documents documents.
+		Put a (list of) couple (timestamp, value), a meta into rated_documents
+		related to input period.
+		kwargs will be added to all document in order to extend periodic_documents
+		documents.
 		"""
 
 		# if points_or_point is a point, transform it into a tuple of couple
@@ -161,7 +175,8 @@ class Manager(object):
 		timewindow=None):
 		"""
 		Remove values and meta of one metric.
-		meta_names is a list of meta_data to remove. An empty list ensure that no meta data is removed.
+		meta_names is a list of meta_data to remove. An empty list ensure that
+		no meta data is removed.
 		if meta_names is None, then all meta_names are removed.
 		"""
 

@@ -26,8 +26,6 @@ from os.path import expanduser
 
 import logging
 
-from types import FunctionType, NoneType
-
 
 class Configurable(object):
 	"""
@@ -39,24 +37,24 @@ class Configurable(object):
 
 	def __init__(self,
 		configuration_file=DEFAULT_CONFIGURATION_FILE, auto_conf=True,
-		naming_rule=None, logging_level=logging.INFO):
-		"""
-		:type parsers_by_options_by_sections: dict
-		"""
+		naming_rule=None, logging_level=logging.INFO, _ready_to_conf=True,
+		*args, **kwargs):
 
-		super(Configurable, self).__init__()
+		super(Configurable, self).__init__(*args, **kwargs)
 
 		self.configuration_file = configuration_file
-
-		self.parsers_by_options_by_sections
 
 		self.auto_conf = auto_conf
 
 		self.logging_level = logging_level
 
-		if self.auto_conf:
+		self.logger = logging.getLogger(type(self).__name__)
+
+		self.naming_rule = naming_rule
+
+		if _ready_to_conf and self.auto_conf:
 			self.apply_configuration(
-				parsers_by_options_by_sections=self.get_parsers_by_option_by_section(),
+				parsers_by_option_by_section=self.get_parsers_by_option_by_section(),
 				configuration_file=self.configuration_file,
 				naming_rule=self.naming_rule)
 
@@ -93,34 +91,34 @@ class Configurable(object):
 		3. set destination attributes with options values where attribute names
 		are option names in minuscule.
 
-		:param parsers_by_options_by_sections: struct to use
+		:param parsers_by_option_by_section: struct to use
 		in order to get values from configuration_file. If None, use
 		self.get_parsers_by_option_by_section.
 		:param configuration_file: configuration file.
 		:param naming_rule: option naming rule for setvalues on self.
 
-		:type parsers_by_options_by_sections: dict
+		:type parsers_by_option_by_section: dict
 		:type configuration_file: str
-		:type naming_rule: FunctionType or NoneType
+		:type naming_rule: function or method
 
 		:return: a dictionary of errors or parsers respectively for
 		option parsing errors or not found options.
 		:rtype: dict
 		"""
 
-		if parsers_by_options_by_sections is None:
-			parsers_by_options_by_sections = self.get_parsers_by_option_by_section()
+		if parsers_by_option_by_section is None:
+			parsers_by_option_by_section = self.get_parsers_by_option_by_section()
 
 		if configuration_file is None:
-			configuration_file = self.get_configuration_file()
+			configuration_file = self.configuration_file
 
 		config = ConfigParser.RawConfigParser()
 		config.read(expanduser(configuration_file))
 
-		result = self.parsers_by_options_by_sections.copy()
+		result = parsers_by_option_by_section.copy()
 
 		for section, parsers_by_options in \
-			self.parsers_by_options_by_sections.iteritems():
+			parsers_by_option_by_section.iteritems():
 
 			if config.has_section(section):
 
@@ -133,8 +131,8 @@ class Configurable(object):
 							value = parser(option_value)
 						except Exception as e:
 							result[section][option] = e
-							em = 'Impossible to parse {0}/{1} in {2}: {3}'.
-								format(section, option, configuration_file, e)
+							em = 'Impossible to parse {0}/{1} in {2}: {3}'
+							em = em.format(section, option, configuration_file, e)
 							self.logger.error(em)
 						else:
 							try:  # naming option
@@ -149,9 +147,9 @@ class Configurable(object):
 								try:  # setattr
 									setattr(self, name, value)
 								except TypeError as e:
-									result[section][option] = te
+									result[section][option] = e
 									em = 'Impossible to set attribute {0}.{1} \
-									to {2}: {3}'.format(self, name, value, te)
+									to {2}: {3}'.format(self, name, value, e)
 									self.logger.error(em)
 								else:
 									del result[section][option]
@@ -166,7 +164,7 @@ class Configurable(object):
 					del result[section]
 
 			else:
-				wm = 'section {0} not found in {2}'.format(
+				wm = 'section {0} not found in {1}'.format(
 					section, configuration_file)
 				self.logger.warning(wm)
 

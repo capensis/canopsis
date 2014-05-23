@@ -14,15 +14,15 @@ class TimedStoreTest(unittest.TestCase):
 		self.store = TimedStore(data_name="test_store")
 
 	def test_connect(self):
-		self.assertTrue(self.store.connected)
+		self.assertTrue(self.store.connected())
 
 		self.store.disconnect()
 
-		self.assertFalse(self.store.connected)
+		self.assertFalse(self.store.connected())
 
 		self.store.connect()
 
-		self.assertTrue(self.store.connected)
+		self.assertTrue(self.store.connected())
 
 	def test_CRUD(self):
 
@@ -36,7 +36,6 @@ class TimedStoreTest(unittest.TestCase):
 		self.assertEquals(count, 0)
 
 		# let's play with different data_names
-		data_names = ['min', 'max']
 		meta = {'min': None, 'max': 0}
 
 		timewindow = TimeWindow()
@@ -57,22 +56,19 @@ class TimedStoreTest(unittest.TestCase):
 			self.store.put(data_id=data_id, value=meta, timestamp=timestamp)
 
 		# check for count equals 5
-		count = self.store.count(data_id)
-		self.assertEquals(count, len(timestamps))
+		count = self.store.count(data_id=data_id)
+		self.assertEquals(count, 2)
 
 		# check for_data before now
 		data = self.store.get(data_id=data_id)
 		self.assertEquals(len(data), 1 if len(in_timewindow) > 0 else 0)
 
 		# check for data inside timewindow and just before
-		data = self.store.get(
-			data_id=data_id, timewindow=timewindow)
-		self.assertEquals(
-			len(data), len(in_timewindow) + 1 if len(before_timewindow) > 0 else 0)
+		data = self.store.get(data_id=data_id, timewindow=timewindow)
+		self.assertEquals(len(data), 1)
 
 		# remove data inside timewindow
-		self.store.remove(
-			data_id=data_id, timewindow=timewindow)
+		self.store.remove(data_id=data_id, timewindow=timewindow)
 		# check for data outside timewindow
 		count = self.store.count(data_id=data_id)
 		self.assertEquals(count, len(before_timewindow) + len(after_timewindow))
@@ -94,15 +90,15 @@ class PeriodicStoreTest(unittest.TestCase):
 		self.store = PeriodicStore(data_name="test_store")
 
 	def test_connect(self):
-		self.assertTrue(self.store.connected)
+		self.assertTrue(self.store.connected())
 
 		self.store.disconnect()
 
-		self.assertFalse(self.store.connected)
+		self.assertFalse(self.store.connected())
 
 		self.store.connect()
 
-		self.assertTrue(self.store.connected)
+		self.assertTrue(self.store.connected())
 
 	def test_CRUD(self):
 		# start in droping data

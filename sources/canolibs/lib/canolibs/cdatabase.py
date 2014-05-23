@@ -52,22 +52,27 @@ class DataBase(Configurable):
 		pass
 
 	PARSERS_BY_OPTIONS_BY_SECTIONS = {
-			'MASTER': {
-				'HOST': str,
-				'PORT': int,
-				'DB': str,
-				'AUTO_CONNECT': bool,
-				'BACKEND': str,
-				'JOURNALING': str,
-				'SSL': bool,
-				'SSL_KEYFILE': str,
-				'SSL_CERTFILE': str
+			'DATABASE': {
+				'host': str,
+				'port': int,
+				'db': str,
+				'auto_connect': bool,
+				'journaling': str,
+				'safe': bool,
+				'ssl': bool,
+				'ssl_keyfile': str,
+				'ssl_certfile': str,
+				'user': str,
+				'pwd': str
 			}
 		}
 
-	def __init__(self, host=None, port=0, db=None, auto_connect=False,
-		journaling=False, ssl=False, ssl_keyfile=None, ssl_certfile=None,
-		**kwargs):
+	ASC = 1  # ASC order
+	DESC = -1  # DESC order
+
+	def __init__(self, host='localhost', port=0, db='canopsis', auto_connect=True,
+		journaling=False, safe=False, ssl=False, ssl_keyfile=None, ssl_certfile=None,
+		user=None, pwd=None, _ready_to_connect=True, *args, **kwargs):
 		"""
 		:param host: db host name
 		:param port: db port
@@ -75,9 +80,12 @@ class DataBase(Configurable):
 		:param auto_connect: auto connect to database when initialised.
 		:param backend: default backend to use.
 		:param journaling: journaling mode enabling.
+		:param safe: ensure writing data.
 		:param ssl: ssl mode
 		:param ssl_keyfile: ssl keys file.
 		:param ssl_certfile: ssl certification file.
+		:param user: user
+		:param pwd: password
 
 		:type host: str
 		:type port: int
@@ -85,36 +93,44 @@ class DataBase(Configurable):
 		:type auto_connect: bool
 		:type backend: str
 		:type journaling: bool
+		:type safe: bool
 		:type ssl: bool
 		:type ssl_keyfile: str
 		:type ssl_certfile: str
+		:type user: str
+		:type pwd: str
 		"""
 
-		super(DataBase, self).__init__(**kwargs)
+		super(DataBase, self).__init__(*args, **kwargs)
 
 		# initialize instance properties with default values
-		self.host = None
-		self.port = 0
-		self.db = None
-		self.auto_connect = False
-		self.backend = None
-		self.journaling = False
-		self.ssl = False
-		self.ssl_keyfile = None
-		self.ssl_certfile = None
+		self.host = host
+		self.port = port
+		self.db = db
+		self.auto_connect = auto_connect
+		self.journaling = journaling
+		self.safe = safe
+		self.ssl = ssl
+		self.ssl_keyfile = ssl_keyfile
+		self.ssl_certfile = ssl_certfile
+		self.user = user
+		self.pwd = pwd
 
-	def get_parsers_by_option_by_section(self, **kwargs):
+		if _ready_to_connect and self.auto_connect:
+			self.connect()
+
+	def get_parsers_by_option_by_section(self, *args, **kwargs):
 
 		result = super(DataBase, self).get_parsers_by_option_by_section()
 
-		result.update({
+		result.update(
 			DataBase.PARSERS_BY_OPTIONS_BY_SECTIONS
-			})
+			)
 
 		return result
 
 	def apply_configuration(self, parsers_by_option_by_section=None,
-		configuration_file=None, naming_rule=None, **kwargs):
+		configuration_file=None, naming_rule=None, *args, **kwargs):
 		"""
 		Load configuration file and connect if self.auto_connect.
 		"""
@@ -124,37 +140,10 @@ class DataBase(Configurable):
 			configuration_file=configuration_file, naming_rule=naming_rule)
 
 		if self.auto_connect:
+			self.disconnect()
 			self.connect()
 
-	def get_backend(self, backend=None):
-		"""
-		Get a reference to a specific backend where name is input backend.
-		If input backend is None, self.backend is used.
-
-		:param backend: backend name. If None, self.backend is used.
-		:type backend: basestring
-
-		:returns: backend reference.
-
-		:raises: NotImplementedError
-		.. seealso: DataBase.set_backend(self, backend)
-		"""
-
-		raise NotImplementedError()
-
-	def set_backend(self, backend):
-		"""
-		Change of backend with input backend.
-
-		:note:
-
-		:raises: NotImplementedError
-		.. seealso: DataBase.get_backend(self, backend=None)
-		"""
-
-		raise NotImplementedError()
-
-	def connect(self):
+	def connect(self, *args, **kwargs):
 		"""
 		Connect this database.
 
@@ -165,7 +154,7 @@ class DataBase(Configurable):
 
 		raise NotImplementedError()
 
-	def disconnect(self):
+	def disconnect(self, *args, **kwargs):
 		"""
 		Disconnect this database.
 
@@ -174,14 +163,14 @@ class DataBase(Configurable):
 
 		raise NotImplementedError()
 
-	def connected(self):
+	def connected(self, *args, **kwargs):
 		"""
 		:returns: True if this is connected.
 		"""
 
 		raise NotImplementedError()
 
-	def get_element(self, id, backend=None):
+	def get_element(self, id, backend=None, *args, **kwargs):
 		"""
 		:param id: id of the element to get.
 		:type id: basestring
@@ -194,14 +183,18 @@ class DataBase(Configurable):
 
 		raise NotImplementedError()
 
-	def delete_element(self, id, backend=None):
+	def delete_element(self, id, backend=None, *args, **kwargs):
 
 		raise NotImplementedError()
 
-	def update_element(self, id, element, backend=None):
+	def update_element(self, id, element, backend=None, *args, **kwargs):
 
 		raise NotImplementedError()
 
-	def drop(self, backend=None):
+	def drop(self, backend=None, *args, **kwargs):
+
+		raise NotImplementedError()
+
+	def size(self, criteria=None, backend=None, *args, **kwargs):
 
 		raise NotImplementedError()

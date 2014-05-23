@@ -18,173 +18,41 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-import os
-import sys
-import json
-import logging
 from time import time
 
-from bson.errors import InvalidStringData
-from pymongo import Connection
+from cmongo import MongoDB
 
 
-class Store(object):
+class Store(MongoDB):
 	"""
 	Manage periodic and timed access to data_name in a mongo collection.
 	"""
 
-	ASC = 1  # ASC order
-	DESC = -1  # DESC order
+	DEFAULT_CONFIGURATION_FILE = '~/etc/store.conf'
 
-	class StoreError(Exception):
-		def __init__(self):
-			super(Store.StoreError, self).__init__(
-				"store can not connect")
+	def __init__(self, data_name="metric", *args, **kwargs):
 
-	def __init__(self,
-			data_name="metric",
-			mongo_host="127.0.0.1",
-			mongo_port=27017,
-			mongo_db='canopsis',
-			mongo_user=None,
-			mongo_pass=None,
-			mongo_safe=False,
-			logging_level=logging.INFO):
+		super(Store, self).__init__(
+			backend=self.get_collection_name(data_name=data_name),
+			_ready_to_conf=False, _ready_to_connect=False, *args, **kwargs)
 
-		super(Store, self).__init__()
+		self._data_name = data_name
 
-		self.logger = logging.getLogger(__name__)
-		self.logger.setLevel(logging.DEBUG)#logging_level)
+		if self.auto_conf:
+			self.apply_configuration()
 
-		# keep dayly track of ids in cache,
-		# TODO must be cleared in beat method
-		self.daily_ids = {}
+	def get_parsers_by_option_by_section(self, *args, **kwargs):
 
-		self.logger.debug(" + Init MongoDB Store")
+		result = dict()
 
-		# Read db option from conf
-		import ConfigParser
-		config = ConfigParser.RawConfigParser()
-		config.read(os.path.expanduser('~/etc/cstorage.conf'))
+		mongodb_parsers = super(MongoDB, self).get_parsers_by_option_by_section()
 
-		try:
-			host = config.get('master', 'host')
-			port = config.getint('master', 'port')
-			user = config.get('master', 'userid')
-			passwd = config.get('master', 'password')
+		for section in list(mongodb_parsers.keys()):
+			new_section_name = "{0}_{1}_{2}".format(
+				section, type(self), self._data_name)
+			result[new_section_name] = mongodb_parsers[section]
 
-			if host:
-				mongo_host = host
-
-			if port:
-				mongo_port = port
-
-			if user:
-				mongo_user = user
-
-			if passwd:
-				mongo_pass = passwd
-
-		except (ConfigParser.NoOptionError, ConfigParser.NoSectionError) as err:
-			self.logger.error('Impossible to parse cstorage.conf: {0}'.format(str(err)))
-
-		self.mongo_host = mongo_host
-		self.mongo_port = mongo_port
-		self.mongo_db = mongo_db
-		self.data_name = data_name
-		self.mongo_safe = mongo_safe
-		self.mongo_user = mongo_user if mongo_user != "" else None
-		self.mongo_pass = mongo_pass if mongo_pass != "" else None
-
-		self.connected = False
-
-		if not self.connect():
-			raise Store.StoreError()
-
-		indexes = self._get_indexes()
-		for index in indexes:
-			self.collection.ensure_index(index)
-
-		self.last_rate_time = time()
-		self.rate_interval = 10
-		self.rate_threshold = 20
-		self.last_rate = 0
-		self.pushed_values = 0
-
-	def connect(self):
-		if self.connected:
-			self.logger.debug("Impossible to connect, already connected")
-			return True
-		else:
-			self.logger.debug("Connect to MongoDB ({0}/{1}@{2}:{3})".
-				format(
-					self.mongo_db, self.get_collection_name(), self.mongo_host, self.mongo_port))
-
-			try:
-				self.conn = Connection(
-					host=self.mongo_host, port=self.mongo_port, safe=self.mongo_safe)
-				self.logger.debug(" + Success")
-			except Exception, err:
-				self.logger.error(" + %s" % err)
-				return False
-
-			self.db = self.conn[self.mongo_db]
-
-			try:
-				if self.mongo_user and self.mongo_pass is not None:
-						self.logger.debug("Try to auth '{0}'".format(self.mongo_user))
-						if not self.db.authenticate(self.mongo_user, self.mongo_pass):
-							raise Exception('Invalid user or pass.')
-						self.logger.debug(" + Success")
-			except Exception, err:
-				self.logger.error(" + Impossible to authenticate: {0}".format(err))
-				self.disconnect()
-				return False
-
-			self.logger.debug("Get collections")
-
-			collection_name = self.get_collection_name()
-
-			self.collection = self.db[collection_name]
-
-			self.connected = True
-			self.logger.debug(" + Success")
-			return True
-
-	def disconnect(self):
-		"""
-		Diconnect from mongo data base.
-		"""
-
-		if self.connected:
-			self.logger.debug("Disconnect from MongoDB")
-			self.conn.disconnect()
-			self.connected = False
-		else:
-			self.logger.warning("Impossible to disconnect, you are not connected")
-
-	def check_connection(self):
-		if not self.connected:
-			if not self.connect():
-				raise Exception('Impossible to deal with DB, you are not connected ...')
-
-	def size(self):
-		"""
-		Get size of collection. None if a connection error occured.
-		"""
-
-		self.logger.info("Size of dbs:")
-		size = 0
-		try:
-			size = self.db.command("collstats", self.collection)['size']
-		except Exception as e:
-			self.logger.warning("Impossible to read Collecion Size: {0}".format(e))
-			size = None
-			print e
-		else:
-			self.logger.info(" + Collection: %0.2f MB" % (size/1024.0/1024.0))
-
-		return size
+		return result
 
 	def _get_collection_prefix(self):
 		"""
@@ -193,12 +61,16 @@ class Store(object):
 
 		raise NotImplementedError()
 
-	def get_collection_name(self):
+	def get_collection_name(self, data_name=None):
 		"""
 		Get collection name managed by this store related to input data_name.
 		"""
 
-		result = "{0}_{1}".format(self._get_collection_prefix(), self.data_name)
+		if data_name is None:
+			data_name = self._data_name
+
+		result = "{0}_{1}".format(
+			self._get_collection_prefix(), data_name)
 
 		return result
 
@@ -222,15 +94,7 @@ class Store(object):
 		Drop all data.
 		"""
 
-		self.check_connection()
-		self.collection.remove()
-
-	def _get_indexes(self):
-		"""
-		Get collection indexes. Must be overriden.
-		"""
-
-		raise NotImplementedError()
+		self._get_backend().remove()
 
 	def _get_data_id(self, data_id):
 		"""
@@ -239,8 +103,8 @@ class Store(object):
 
 		result = data_id
 
-		if data_id.startswith(self.data_name):
-			result = data_id[len(self.data_name)+1:]
+		if data_id.startswith(self._data_name):
+			result = data_id[len(self._data_name) + 1:]
 
 		return result
 
@@ -255,14 +119,12 @@ class TimedStore(Store):
 	DATA_ID = 'd'
 	VALUE = 'v'
 	TIMESTAMP = 't'
-	LAST_VALUE = 'l'
 
 	def _get_indexes(self):
 
-		result = [
-			'_id',
-			TimedStore._get_query_hint()
-		]
+		result = super(TimedStore, self)._get_indexes()
+
+		result.append(TimedStore._get_query_hint())
 
 		return result
 
@@ -273,10 +135,13 @@ class TimedStore(Store):
 
 		return "timed"
 
-	def get(self, data_id, timewindow=None, with_id=False, limit=0, sort=None):
+	def get(self, data_id, timewindow=None, with_meta=False, limit=0, sort=None):
 		"""
-		Get a sorted list of couple of (timestamp, dict(data_name, data_value)).
-		If timewindow is None, the list contains at most one element where timestamp is now.
+		Get a sorted list of couple of dictionary
+		(timestamp, dict(data_name, data_value)).
+		If timewindow is None, the list contains at most one element where timestamp
+		is now.
+		If with_meta is True, the third field contains meta information.
 		"""
 
 		result = list()
@@ -299,7 +164,7 @@ class TimedStore(Store):
 		}
 
 		# do the query
-		cursor = self.collection.find(where, projection=projection)
+		cursor = self._get_backend().find(where, projection=projection)
 
 		# if timewindow is None or contains only one point, get only last document
 		# respectively before now or before the one point
@@ -310,17 +175,18 @@ class TimedStore(Store):
 		cursor.hint(TimedStore._get_query_hint())
 
 		if sort is not None:
-			_sort = [item if isinstance(item, tuple) else (item, Store.ASC) for item in sort]
+			_sort = [item if isinstance(item, tuple) else (item, Store.ASC)
+					for item in sort]
 			cursor.sort(_sort)
 
 		# iterate on all documents
 		for document in cursor:
-			timestamp = document[TimedStore.TIMESTAMP]
-			value = document[TimedStore.VALUE]
+			timestamp = document.pop(TimedStore.TIMESTAMP)
+			value = document.pop(TimedStore.VALUE)
 
 			value_to_append = (timestamp, value,)
-			if with_id:
-				value_to_append += (document['_id'],)
+			if with_meta:
+				value_to_append += (document,)
 
 			result.append(value_to_append)
 
@@ -334,7 +200,6 @@ class TimedStore(Store):
 		"""
 		Get number of timed documents for input data_id.
 		"""
-		self.check_connection()
 
 		data_id = self._get_data_id(data_id)
 
@@ -342,7 +207,7 @@ class TimedStore(Store):
 			TimedStore.DATA_ID: data_id
 		}
 
-		cursor = self.collection.find(query)
+		cursor = self._get_backend().find(query)
 		cursor.hint(TimedStore._get_query_hint())
 		result = cursor.count()
 
@@ -360,32 +225,35 @@ class TimedStore(Store):
 		data_id = self._get_data_id(data_id)
 
 		data = self.get(
-			data_id=data_id, timewindow=timewindow, with_id=True, limit=1)
+			data_id=data_id, timewindow=timewindow, with_meta=True, limit=1)
 
-		_set = fields_to_override.copy()
-		_set.update({
-					TimedStore.DATA_ID: data_id,
-					TimedStore.TIMESTAMP: timestamp,
-					TimedStore.VALUE: value,
-				})
+		# if we have to update previous value
+		if data and data[0][1] == value:
+			_id = data[0][2].pop('_id')
+			if fields_to_override and data[0][2] != fields_to_override:
+				# impossible to replace native fields by fields_to_override
+				_set = fields_to_override.copy()
+				_set.update(
+					{
+						TimedStore.DATA_ID: data_id,
+						TimedStore.TIMESTAMP: timestamp,
+						TimedStore.VALUE: value
+					})
+				self._get_backend().update(
+					{'_id': _id},
+					{
+						'$set': _set
+					},
+					w=1)
 
-		if len(data) == 0 or data[0][0] != timestamp:
-			values_to_insert = {
+		else:  # let's insert a document
+			values_to_insert = fields_to_override.copy()
+			values_to_insert.update({
 					TimedStore.DATA_ID: data_id,
 					TimedStore.TIMESTAMP: timestamp,
 					TimedStore.VALUE: value
-				}
-			self.collection.insert(values_to_insert, w=1)
-
-		else:
-			_id = data[0][2]
-			value_to_update = {TimedStore.VALUE: value}
-			self.collection.update(
-				{'_id': _id},
-				{
-					'$set': value_to_update
-				},
-				w=1)
+				})
+			self._get_backend().insert(values_to_insert, w=1)
 
 	def remove(self, data_id, timewindow=None):
 		"""
@@ -402,7 +270,7 @@ class TimedStore(Store):
 			where[TimedStore.TIMESTAMP] = \
 				{'$gte': timewindow.start(), '$lte': timewindow.stop()}
 
-		self.collection.remove(where, w=1)
+		self._get_backend().remove(where, w=1)
 
 	@staticmethod
 	def _get_query_hint():
@@ -443,15 +311,17 @@ class PeriodicStore(Store):
 	PERIOD = 'p'
 	LAST_UPDATE = 'l'
 
+	class PeriodicStoreError(Exception):
+		pass
+
 	def _get_indexes(self):
 		"""
 		Get indexes.
 		"""
 
-		result = [
-			'_id',
-			PeriodicStore._get_query_hint()
-		]
+		result = super(PeriodicStore, self)._get_indexes()
+
+		result.append(PeriodicStore._get_query_hint())
 
 		return result
 
@@ -468,8 +338,6 @@ class PeriodicStore(Store):
 		"""
 		Get number of periodic documents for input data_id.
 		"""
-
-		self.check_connection()
 
 		data = self.get(data_id=data_id, aggregation=aggregation,
 			timewindow=timewindow, period=period)
@@ -499,7 +367,7 @@ class PeriodicStore(Store):
 		if period is not None:
 			where[PeriodicStore.PERIOD] = period
 
-		cursor = self.collection.find(where)
+		cursor = self._get_backend().find(where)
 		cursor.hint(PeriodicStore._get_query_hint())
 
 		result = cursor.count()
@@ -525,22 +393,17 @@ class PeriodicStore(Store):
 		if period is None:
 			projection[PeriodicStore.PERIOD] = 1
 
-		cursor = self.collection.find(query, projection=projection)
+		cursor = self._get_backend().find(query, projection=projection)
 
 		cursor.hint(PeriodicStore._get_query_hint())
 
 		result = list()
-
-		doc_aggregation = aggregation
-		doc_period = period
 
 		if limit != 0:
 			cursor = cursor[:limit]
 
 		for document in cursor:
 
-			doc_aggregation = document.get(PeriodicStore.AGGREGATION, aggregation)
-			doc_period = document.get(PeriodicStore.PERIOD, period)
 			timestamp = int(document[PeriodicStore.TIMESTAMP])
 
 			values = document[PeriodicStore.VALUES]
@@ -549,7 +412,7 @@ class PeriodicStore(Store):
 				value_timestamp = timestamp + int(t)
 
 				if timewindow is None or value_timestamp in timewindow:
-					result.append( (value_timestamp, value) )
+					result.append((value_timestamp, value))
 
 		result.sort(key=itemgetter(0))
 
@@ -565,15 +428,15 @@ class PeriodicStore(Store):
 
 		# initialize a dictionary of perfdata value by value field and id_timestamp
 		document_properties_by_id_timestamp = dict()
-		# previous variable contains a dictionary of entries to put in the related document
+		# previous variable contains a dict of entries to put in the related document
 
 		# prepare data to insert/update in db
 		for timestamp, value in points:
 
 			timestamp = int(timestamp)
 			id_timestamp = int(period.round_timestamp(timestamp, normalize=True))
-			document_properties = \
-				document_properties_by_id_timestamp.setdefault(id_timestamp, dict())
+			document_properties = document_properties_by_id_timestamp.setdefault(
+				id_timestamp, dict())
 
 			if '_id' not in document_properties:
 				document_properties['_id'] = PeriodicStore._get_document_id(
@@ -606,7 +469,7 @@ class PeriodicStore(Store):
 
 			document_properties['_id'] = _id
 
-			result = self.collection.update(
+			result = self._get_backend().update(
 				{
 					'_id': _id
 				},
@@ -635,17 +498,17 @@ class PeriodicStore(Store):
 				PeriodicStore.VALUES: 1
 			}
 
-			documents = self.collection.find(query, projection=projection)
+			documents = self._get_backend().find(query, projection=projection)
 
 			for document in documents:
 				timestamp = document.get(PeriodicStore.TIMESTAMP)
 				values = document.get(PeriodicStore.VALUES)
-				values_to_save = \
-					{t: v for t, v in values.iteritems() if (timestamp + int(t)) not in timewindow}
+				values_to_save = {t: v for t, v in values.iteritems()
+					if (timestamp + int(t)) not in timewindow}
 				_id = document.get('_id')
 
 				if len(values_to_save) > 0:
-					self.collection.update(
+					self._get_backend().update(
 						{
 							'_id': _id
 						},
@@ -654,10 +517,10 @@ class PeriodicStore(Store):
 						},
 						w=1)
 				else:
-					self.collection.remove(_id, w=1)
+					self._get_backend().remove(_id, w=1)
 
 		else:
-			self.collection.remove(query)
+			self._get_backend().remove(query)
 
 	@staticmethod
 	def _get_query_hint():
@@ -678,7 +541,8 @@ class PeriodicStore(Store):
 		"""
 		Get mongo documents query about data_id, timewindow and period.
 
-		If period is None and timewindow is not None, period takes default period value for data_id.
+		If period is None and timewindow is not None, period takes default period
+		value for data_id.
 		"""
 
 		data_id = self._get_data_id(data_id)
@@ -696,8 +560,9 @@ class PeriodicStore(Store):
 		if timewindow is not None:  # manage specific timewindow
 			start_timestamp, stop_timestamp = \
 				PeriodicStore._get_id_timestamps(timewindow=timewindow, period=period)
-			result[PeriodicStore.TIMESTAMP] = \
-				{'$gte': start_timestamp, '$lte': stop_timestamp}
+			result[PeriodicStore.TIMESTAMP] = {
+				'$gte': start_timestamp,
+				'$lte': stop_timestamp}
 
 		return result
 
@@ -743,9 +608,10 @@ class PeriodicStore(Store):
 		# add period in id
 		unit_with_value = period.get_max_unit()
 		if unit_with_value is None:
-			raise Manager.ManagerError(
+			raise PeriodicStore.PeriodicStoreError(
 				"period {0} must contain at least one valid unit among {1}".
 				format(period, Period.UNITS))
+
 		md5_result.update(unit_with_value[Period.UNIT].encode('ascii', 'ignore'))
 
 		# resolve md5

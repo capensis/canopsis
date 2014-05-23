@@ -718,7 +718,11 @@ def perfstore_get_values(meta, timewindow, timeserie, subset_selection={}):
 	if timeserie is not None:
 		points = timeserie.calculate(points=points, timewindow=timewindow)
 
-	meta_data = meta_data[0][1]
+	if meta_data:
+		meta_data = meta_data[0][1]
+
+	else:
+		meta_data = dict()
 
 	if points and meta:
 		result.append(
@@ -733,6 +737,7 @@ def perfstore_get_values(meta, timewindow, timeserie, subset_selection={}):
 			'type': meta_data.get('type')})
 
 	return result
+
 
 def exclude_points(points, subset_selection={}):
 	"""unit test
