@@ -210,7 +210,7 @@ def perfstore_get_all_metrics(limit=20, start=0, search=None, filter=None, sort=
 
 	logger.debug("perfstore_get_all_metrics:")
 
-	if manager == None:
+	if manager is None:
 		load()
 
 	if filter:
@@ -280,10 +280,10 @@ def perfstore_get_all_metrics(limit=20, start=0, search=None, filter=None, sort=
 	use_hint = False
  	if not show_internals:
  		if mfilter:
- 			mfilter = {'$and': [mfilter, {'name': {'$nin': internal_metrics}}]}
+ 			mfilter['internal'] = False
 			use_hint = True
  		else:
- 			mfilter = {'name': {'$nin': internal_metrics}}
+ 			mfilter = {'internal': False}
 
  	logger.debug(" + mfilter: {0}".format(mfilter))
 
@@ -292,81 +292,85 @@ def perfstore_get_all_metrics(limit=20, start=0, search=None, filter=None, sort=
 	data = manager.entities.find(mfilter, limit=limit, skip=start, data=False, sort=msort)
 
 	if use_hint:
-		data.hint([('type', 1), ('component',1), ('resource',1), ('id', 1)])
+		data.hint([('type', 1), ('component', 1), ('resource', 1), ('id', 1)])
+
+	total = data.count()
 
 	if isinstance(data, dict):
 		data = [data]
+
 	elif data is not None:
 		l = list()
 		for document in data:
-			document['co'] = document.get('component')
-			document['re'] = document.get('resource')
-			document['me'] = document.get('name')
+			# TODO : remove this when uiv2 will be available
+			document['component'], document['co'] = document.get('co'), document.get('component')
+			document['resource'], document['re'] = document.get('re'), document.get('resource')
+			document['name'], document['me'] = document.get('me'), document.get('name')
 			l.append(document)
 		data = l
+
 	else:
 		data = list()
 
 	logger.debug(" + data: {0}".format(data))
 
-	if use_hint:
-		total = start + len(data)
+	result = {'success': True, 'data' : data, 'total' : total}
 
-	else:
-		result = storage.get_backend('object').find_one({'crecord_name':'perfdata2_count_no_internal'})
-		if result and 'count' in result:
-			total = result['count']
-		else:
-			total = len(data)
+	logger.debug(" + result: {0}".format(result))
 
- 	result = {'success': True, 'data' : data, 'total' : total}
+	return result
 
- 	logger.debug(" + result: {0}".format(result))
-
- 	return result
 
 ### manipulating meta
-@delete('/perfstore',checkAuthPlugin={'authorized_grp':group_managing_access})
-@delete('/perfstore/:_id',checkAuthPlugin={'authorized_grp':group_managing_access})
+@delete('/perfstore', checkAuthPlugin={'authorized_grp': group_managing_access})
+@delete('/perfstore/:_id', checkAuthPlugin={'authorized_grp': group_managing_access})
 def remove_meta(_id=None):
 	if not _id:
 		_id =  json.loads(request.body.readline())
 	if not _id:
-		return HTTPError(400, "No ids provided, bad request")
+		return HTTPError(500, "No ids provided, bad request")
 
-	if not isinstance(_id,list):
+	if not isinstance(_id, list):
 		_id = [_id]
 
-	logger.debug('delete %s: ' % str(_id))
+	logger.debug('delete {0}: '.format(_id))
 
 	for item in _id:
-		if isinstance(item,dict):
+		if isinstance(item, dict):
 			manager.entities.remove(_id=item['_id'])
 		else:
 			manager.entities.remove(_id=item)
 
-@put('/perfstore',checkAuthPlugin={'authorized_grp':group_managing_access})
+
+@put('/perfstore', checkAuthPlugin={'authorized_grp': group_managing_access})
 def update_meta(_id=None):
 	data = json.loads(request.body.readline())
 
-	if not isinstance(data,list):
+	if not isinstance(data, list):
 		data = [data]
 
 	for item in data:
 		try:
 			if not _id:
 				_id = item['_id']
+
 			if '_id' in item:
 				del item['_id']
+
 			manager.entities.update({'_id': _id}, {'$set': item})
+
 		except Exception, err:
-			logger.warning('Error while updating meta_id: %s' % err)
-			return HTTPError(500, "Error while updating meta_id: %s" % err)
+			logger.warning('Error while updating meta_id: {0}'.format(err))
+			return HTTPError(500, "Error while updating meta_id: {0}".format(err))
+
+from pyperfstore3.store import Store
+
 
 #### POST@
 @route('/perfstore/perftop')
 @route('/perfstore/perftop/:start/:stop')
 def perfstore_perftop(start=None, stop=None):
+
 	data = []
 
 	limit					= int(request.params.get('limit', default=10))
@@ -400,7 +404,7 @@ def perfstore_perftop(start=None, stop=None):
 		threshold_on_pct = False
 
 	sort_on_percent = False
-	if percent == True:
+	if percent is True:
 		sort_on_percent = True
 
 	if mfilter:
@@ -455,35 +459,49 @@ def perfstore_perftop(start=None, stop=None):
 
 	mfilter =  clean_mfilter(mfilter)
 
-	mtype = manager.entities.find(mfilter, limit=1, fields=['t'])
+	# find the right type entity
+	entities = manager.entities.find(mfilter, limit=1, projection={'nodeid'})
+	entities.hint([('type', 1), ('component', 1), ('resource', 1), ('name', 1)])
+
+	entity = None
+
+	try:
+		entity = entities[0]
+	except KeyError:
+		logger.error('No entity found with filter: {0}'.format(mfilter))
+		return HTTPError(500, 'No entity found with filter: {0}'.format(mfilter))
+
+	meta_data = manager.get_meta(data_id=entity['nodeid'], limit=1)
+	mtype = None
+
+	try:
+		mtype = meta[0]
+	except KeyError:
+		pass
 
 	def check_threshold(value):
+		result = True
 		if threshold:
-			if threshold_direction == -1 and value >= threshold:
-				return True
-			elif threshold_direction == 1 and value <= threshold:
-				return True
-			else:
-				return False
-		else:
-			return True
+			result = (threshold_direction == -1 and value >= threshold) or \
+				(threshold_direction == 1 and value <= threshold)
+		return result
 
 	if mtype:
-		mtype = mtype.get('t', 'GAUGE')
+		mtype = mtype.get('type', 'GAUGE')
 
 		logger.debug(" + mtype:    %s" % mtype)
 
 		if mtype != 'COUNTER' and not expand and not report:
+
 			# Quick method, use last value
-			mfilter['type'] = metric
-			metrics = manager.entities.find(mfilter, fields={'max': 1, 'last_value': 1, 'pct': 1}, sort=[('last_value', sort)], limit=limit)
+			metrics = manager.get_meta(data_id=entity['nodeid'], sort=[('last_value', Store.ASC)], limit=limit)
 
 			if isinstance(metrics, dict):
 				metrics = [metrics]
 
 			for metric in metrics:
 				if (percent or threshold_on_pct) and 'max' in metric and 'last_value' in metric:
-					metric['pct'] = round(((metric['last_value'] * 100)/ metric['max']) * 100) / 100
+					metric['pct'] = round(((metric['last_value'] * 100) / metric['max']) * 100) / 100
 
 				if threshold_on_pct:
 					val = metric['pct']
@@ -492,6 +510,7 @@ def perfstore_perftop(start=None, stop=None):
 
 				if check_threshold(val):
 					data.append(metric)
+
 		else:
 
 			metric_limit = 0
@@ -501,8 +520,9 @@ def perfstore_perftop(start=None, stop=None):
 
 			#clean mfilter
 			mfilter =  clean_mfilter(mfilter)
-			mfilter['type'] = metric
-			metrics =  manager.entities.find(mfilter, fields={'max': 1, 'pct': 1, 'name': 1, 'type': 1, 'last_value': 1}, limit=limit)
+
+			metrics = manager.get_meta(data_id=entity['nodeid'], limit=limit)
+
 			metrics.sort('last_value', sort)
 			if isinstance(metrics, dict):
 				metrics = [metrics]
@@ -514,31 +534,35 @@ def perfstore_perftop(start=None, stop=None):
 					logger.debug(" + Metric '%s' (%s) is not a COUNTER" % (metric['name'], metric['_id']))
 
 					if (percent or threshold_on_pct) and 'max' in metric and 'last_value' in metric:
-							metric['pct'] = round(((metric['last_value'] * 100)/ metric['max']) * 100) / 100
+							metric['pct'] = round(((metric[Manager.LAST_VALUE] * 100)/ metric['max']) * 100) / 100
 
 					if threshold_on_pct:
 						val = metric['pct']
+
 					else:
-						val = metric['last_value']
+						val = metric[Manager.LAST_VALUE]
 
 					if check_threshold(val):
 						data.append(metric)
+
 				else:
+
 					points = []
 					if mtype != 'COUNTER' and not expand:
 						# Get only one point
 						timewindow = TimeWindow(start=stop, stop=stop)
-						point = manager.get_point(_id=metric['_id'], timewindow=timewindow)
+						point = manager.get_point(data_id=metric[TimedStore.DATA_ID], timestamp=stop)
 						if point:
 							points = [point]
 					else:
 						# grt points from 'start' to 'stop'
 						timewindow = TimeWindow(start=start, stop=stop)
-						points = manager.get_points(_id=metric['_id'], timewindow=timewindow)
+						points = manager.get_points(data_id=metric[TimedStore.DATA_ID], timewindow=timewindow)
 
 					if len(points):
 						if expand:
-							del metric['_id']
+
+							del metric[TimedStore.DATA_ID]
 							for point in points:
 								if check_threshold(point[1]):
 									nmetric = metric.copy()
