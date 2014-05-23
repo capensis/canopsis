@@ -79,6 +79,7 @@ class engine(cengine):
 
 
 
+	# Override/adds 'field' of event with 'value'
 	def a_override(self, event, action):
 		afield = action.get('field', None)
 		avalue = action.get('value', None)
@@ -95,6 +96,8 @@ class engine(cengine):
 
 
 
+	# Remove field 'key', if element is specified,
+	# remove 'element' in 'key' instead
 	def a_remove(self, event, action):
 		akey = action.get('key', None)
 		aelement = action.get('element', None)
@@ -122,6 +125,7 @@ class engine(cengine):
 
 
 
+	# Change state of event according to a statemap
 	def a_requalificate(self, event, action):
 		statemap_id = action.get('statemap', None)
 		self.logger.debug("    + %s: Requalificate using statemap '%s'" % (event['rk'], statemap_id))
@@ -142,6 +146,7 @@ class engine(cengine):
 
 
 
+	# Wrap modification action functions
 	def a_modify(self, event, derogation, action, _name):
 		name = derogation.get('name', None)
 		description = derogation.get('description', None)
@@ -180,6 +185,7 @@ class engine(cengine):
 
 
 
+	# simple drop
 	def a_drop(self, event, derogation, action, name):
 		self.logger.debug("Event dropped by rule '%s'" % name)
 		self.drop_event_count += 1
@@ -187,6 +193,7 @@ class engine(cengine):
 
 
 
+	# simple pass
 	def a_pass(self, event, derogation, action, name):
 		self.logger.debug("Event passed by rule '%s'" % name)
 		self.pass_event_count += 1
@@ -194,6 +201,8 @@ class engine(cengine):
 
 
 
+	# Change next_amqp_queues of engine
+	# (will be reseted in cengine after this current call)
 	def a_route(self, event, derogation, action, name):
 		if "route" in action:
 			self.next_amqp_queues = [action["route"]]
@@ -209,10 +218,12 @@ class engine(cengine):
 		rk = cevent.get_routingkey(event)
 		default_action = self.configuration.get('default_action', 'pass')
 
+		# list of actions supported
 		actionMap = {'drop': self.a_drop,
 			     'pass': self.a_pass,
 			     'override': self.a_modify,
-			     'requalificate': self.a_modify,
+			     # possibly deprecated
+			     #'requalificate': self.a_modify,
 			     'remove': self.a_modify,
 			     'route': self.a_route}
 
@@ -228,6 +239,7 @@ class engine(cengine):
 					if (action['type'] in actionMap):
 						ret = actionMap[action['type']](event, filterItem,
 										action, name)
+						# If pass then ret == event; end loop
 						if ret:
 							return (DROP if ret == DROP else event)
 
