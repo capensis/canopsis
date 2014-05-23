@@ -74,7 +74,6 @@ class engine(cengine):
 	def work(self, event, *args, **kargs):
 		event_id = event['rk']
 
-		exchange = None
 		if 'exchange' in event:
 			del event['exchange']
 
