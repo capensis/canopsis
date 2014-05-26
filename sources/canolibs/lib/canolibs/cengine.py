@@ -351,7 +351,7 @@ class cengine(object):
 			).get_backend()
 
 			self.engine = engine
-			self.lock = None
+			self.lock = {}
 
 		def own(self):
 			now = time.time()
