@@ -74,7 +74,6 @@ function translateDate(date){
 			dateDict = dateDicts[position];
 			for(var dateToken in dateDict) {
 				if (date.indexOf(dateToken.toLowerCase()) !== -1) {
-					console.log('---------------------> dates', date, dateToken, Ext.util.Cookies.get('locale'));
 					date = date.replace(dateToken.toLowerCase(), dateDict[dateToken]);
 				}
 			}
