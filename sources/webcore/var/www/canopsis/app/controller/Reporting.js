@@ -28,7 +28,7 @@ Ext.define('canopsis.controller.Reporting', {
 		this.callParent(arguments);
 	},
 
-	launchReport: function(view_id, from, to, subset_selection, mail, orientation, pagesize, timezone) {
+	launchReport: function(view_id, from, to, mail, orientation, pagesize, timezone) {
 		log.debug('Launch Report on view ' + view_id, this.logAuthor);
 
 		//if no date given
@@ -44,11 +44,6 @@ Ext.define('canopsis.controller.Reporting', {
 		}
 		else {
 			from = parseInt(from/1000);
-		}
-
-		if(typeof subset_selection === 'object')
-		{
-			subset_selection = JSON.stringify(subset_selection);
 		}
 
 		var url = '/reporting/'+ from + '/' + to + '/' + view_id + '/';
@@ -67,8 +62,7 @@ Ext.define('canopsis.controller.Reporting', {
 			scope: this,
 			params: {
 				'orientation': orientation,
-				'pagesize': pagesize,
-				'subset_selection': subset_selection
+				'pagesize': pagesize
 			},
 			success: function(response) {
 				var data = Ext.JSON.decode(response.responseText);

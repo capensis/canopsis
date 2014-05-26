@@ -199,8 +199,6 @@ Ext.define('canopsis.view.Schedule.Form', {
 							title: _('Time zone'),
 							itemId: 'exporting_timezone',
 							layout: "hbox",
-							hidden: true,
-							disabled: true,
 							items: [
 								{
 									xtype: 'combobox',
@@ -232,16 +230,12 @@ Ext.define('canopsis.view.Schedule.Form', {
 							xtype: "checkbox",
 							fieldLabel: _('advanced'),
 							checked: false,
-							name: 'exporting_advanced',
-							hidden: true,
-							disabled: true,
+							name: 'exporting_advanced'
 						}, {
 							xtype: 'cfieldset',
 							layout: "hbox",
 							title: _('Duration'),
 							itemId: 'exporting_duration',
-							hidden: true,
-							disabled: true,
 							items: [
 								{
 									xtype: "numberfield",
@@ -539,15 +533,9 @@ Ext.define('canopsis.view.Schedule.Form', {
 				case true:
 					exporting_timezone.show().setDisabled(false);
 					exporting_advanced.show().setDisabled(false);
-					switch(exporting_advanced.getValue()) {
-						case true:
-							to.show().setDisabled(false);
-							from.show().setDisabled(false);
-							break;
-						case false:
-							exporting_duration.show().setDisabled(false);
-							break;
-					}
+					exporting_duration.show().setDisabled(false);
+					to.show().setDisabled(false);
+					from.show().setDisabled(false);
 					break;
 				case false:
 					exporting_timezone.hide().setDisabled(true);
@@ -737,101 +725,5 @@ Ext.define('canopsis.view.Schedule.Form', {
 		}, this);
 
 		this.down('*[name="exporting_owner"]').setValue(global.account.user);
-
-		this.initializePopups();
-	},
-
-	initializePopups: function() {
-		this.addExclusionIntervalWindow = Ext.create('Ext.window.Window', {
-			closeAction:'hide',
-			cls: 'scheduleAddExclusionIntervalWindow',
-			modal:true,
-			items:[{
-				xtype: "panel",
-				items:[{
-					xtype: "cdate",
-					itemId: "newExclusionInterval_from",
-					label_text: "From"
-				},{
-					xtype: "cdate",
-					itemId: "newExclusionInterval_to",
-					label_text: "To"
-				},{
-					xtype: "button",
-					text: "Save",
-					action: "addExclusionInterval"
-				}]
-			}]
-		});
-
-		this.addHostgroupWindow = Ext.create('Ext.window.Window', {
-			closeAction:'hide',
-			cls: 'scheduleAddHostgroupWindow',
-			modal:true,
-			items:[{
-				xtype: "panel",
-				items:[{
-					xtype: "textfield",
-					itemId: "hostgroup",
-					fieldLabel: "Hostgroup"
-				},{
-					xtype: "button",
-					text: "Save",
-					action: "addHostgroup"
-				}]
-			}]
-		});
-
-		this.down('cgrid#scheduleHostgroupsGrid button[action="add"]').handler = this.showAddHostgroupWindow.bind(this);
-		this.down('cgrid#scheduleHostgroupsGrid button[action="delete"]').handler = this.deleteHostGroup.bind(this);
-		this.down('cgrid#scheduleHostgroupsGrid button[action="delete"]').disabled = false;
-
-		this.down('cgrid#scheduleExclusionIntervalGrid button[action="add"]').handler = this.showAddExclusionIntervalWindow.bind(this);
-		this.down('cgrid#scheduleExclusionIntervalGrid button[action="delete"]').handler = this.deleteExclusionInterval.bind(this);
-		this.down('cgrid#scheduleExclusionIntervalGrid button[action="delete"]').disabled = false;
-
-		this.addExclusionIntervalWindow.down('button[action="addExclusionInterval"]').handler = this.addExclusionInterval.bind(this);
-		this.addHostgroupWindow.down('button[action="addHostgroup"]').handler = this.addHostgroup.bind(this);
-	},
-
-	showAddExclusionIntervalWindow: function() {
-		log.debug("showAddExclusionIntervalWindow");
-		this.addExclusionIntervalWindow.show();
-	},
-
-	showAddHostgroupWindow: function() {
-		log.debug("showAddHostgroupWindow");
-		this.addHostgroupWindow.show();
-	},
-
-	addExclusionInterval: function() {
-		log.debug("new exclusion interval");
-		var from = this.addExclusionIntervalWindow.down("#newExclusionInterval_from").getValue();
-		var to = this.addExclusionIntervalWindow.down("#newExclusionInterval_to").getValue();
-
-		this.addExclusionIntervalWindow.hide();
-
-		var grid = this.down("#scheduleExclusionIntervalGrid");
-		grid.store.add({from: from, to: to});
-	},
-
-	addHostgroup: function() {
-		log.debug("new hostgroup");
-		var hostgroup = this.addHostgroupWindow.down("#hostgroup").getValue();
-
-		this.addHostgroupWindow.hide();
-
-		var grid = this.down("#scheduleHostgroupsGrid");
-		grid.store.add({hostgroup: hostgroup});
-	},
-
-	deleteExclusionInterval: function() {
-		var cgrid = this.down('cgrid#scheduleExclusionIntervalGrid');
-		cgrid.store.remove(cgrid.getSelectionModel().getSelection());
-	},
-
-	deleteHostGroup: function() {
-		var cgrid = this.down('cgrid#scheduleHostgroupsGrid');
-		cgrid.store.remove(cgrid.getSelectionModel().getSelection());
 	}
 });

@@ -65,10 +65,6 @@ def generate_report(startTime, stopTime,view_name,mail=None, timezone=time.timez
 	account = get_account()
 	storage = cstorage(account=account, namespace='object')
 
-	subset_selection = request.params.get('subset_selection', default=None)
-
-	logger.error('subset_selection: %s' % subset_selection)
-
 	if mail:
 		try:
 			mail = json.loads(mail)
@@ -92,11 +88,10 @@ def generate_report(startTime, stopTime,view_name,mail=None, timezone=time.timez
 	logger.debug('view_name:   %s' % view_name)
 	logger.debug('startTime:   %s' % startTime)
 	logger.debug('stopTime:    %s' % stopTime)
-	logger.debug('subset_selection:    %s' % subset_selection)
 	logger.debug('mail:    %s' % mail)
 
 	result = None
-
+	
 	try:
 		logger.debug('Run celery task')
 
@@ -110,9 +105,6 @@ def generate_report(startTime, stopTime,view_name,mail=None, timezone=time.timez
 		result = task_reporting.render_pdf.delay(
 										fileName=file_name,
 										viewName=view_name,
-										startTime=startTime,
-										stopTime=stopTime,
-										subset_selection=subset_selection,
 										exporting=exporting,
 										account=account,
 										mail=mail
@@ -128,10 +120,10 @@ def generate_report(startTime, stopTime,view_name,mail=None, timezone=time.timez
 		return {'total': 0, 'success': False, 'data': [result['celery_output']] }
 
 	_id = str(result['data'][0])
-
+	
 	logger.debug(' + File Id: %s' % _id)
 	return {'total': 1, 'success': True, 'data': [{'id': _id}] }
-
+	
 @post('/sendreport')
 def send_report():
 	account = get_account()
@@ -141,10 +133,10 @@ def send_report():
 	_id = request.params.get('_id', default=None)
 	body = request.params.get('body', default=None)
 	subject = request.params.get('subject', default=None)
-
+	
 	meta = reportStorage.get(_id)
 	meta.__class__ = cfile
-
+	
 	mail = {
 		'account':account,
 		'attachments': meta,
@@ -152,7 +144,7 @@ def send_report():
 		'subject':subject,
 		'body': body,
 	}
-
+	
 	try:
 		task = task_mail.send.delay(**mail)
 		output = task.get()
@@ -167,17 +159,17 @@ def send_report():
 def export_svg():
 	filename = request.params.get('filename', default=None)
 	svg = request.params.get('svg', default=None)
-
+	
 	if not filename:
 		filename = "chart.svg"
 	else:
 		filename += ".svg"
-
-
+		
+	
 	logger.debug("Export SVG image: %s" % filename)
-
+	
 	if svg and filename:
 		response.set_header('Content-Disposition', 'attachment; filename="%s"' % filename)
 		response.content_type = 'image/svg+xml'
 		return svg
-
+	
