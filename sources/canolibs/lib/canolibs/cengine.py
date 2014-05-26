@@ -20,6 +20,7 @@
 
 from cinit import cinit
 from camqp import camqp
+from cstorage import get_storage
 from caccount import caccount
 import cevent
 
@@ -334,3 +335,57 @@ class cengine(object):
 		self.amqp.stop()
 		self.amqp.join()
 		self.logger.debug(" + Stopped")
+
+
+	class Lock(object):
+		def __init__(self, engine, name, *args, **kwargs):
+			super(cengine.Lock, self).__init__(*args, **kwargs)
+
+			self.name = name
+			self.lock_id = '{0}.{1}'.format(engine.etype, name)
+
+			self.storage = get_storage(
+				namespace='lock',
+				logging_level=engine.logging_level,
+				account=caccount(user='root', group='root')
+			).get_backend()
+
+			self.engine = engine
+			self.lock = {}
+
+		def own(self):
+			now = time.time()
+			last = self.lock.get('t', now)
+
+			if self.lock.get('l', False) and (now - last) < self.engine.beat_interval:
+				self.engine.logger.debug('Another engine {0} is already holding the lock {1}'.format(self.engine.etype, self.name))
+
+				return False
+
+			else:
+				self.engine.logger.debug('Lock {1} on engine {0}, processing...'.format(self.engine.etype, self.name))
+				return True
+
+			return False
+
+		def __enter__(self):
+			self.lock = self.storage.find_and_modify(
+				query = {'_id': self.lock_id},
+				update = {'$set': {'l': True}},
+				upsert = True
+			)
+
+			if 't' not in self.lock:
+				self.lock['t'] = 0
+
+			return self
+
+		def __exit__(self, type, value, tb):
+			if self.own():
+				self.engine.logger.debug('Release lock {1} on engine {0}'.format(self.engine.etype, self.name))
+
+				self.storage.save({
+					'_id': self.lock_id,
+					'l': False,
+					't': time.time()
+				})

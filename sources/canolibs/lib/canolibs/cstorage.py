@@ -799,7 +799,8 @@ def get_storage(namespace='object', account=None, logging_level=logging.INFO):
 	global STORAGES
 	try:
 		return STORAGES[namespace]
-	except:
+
+	except KeyError:
 		if not account:
 			account = caccount()
 
