@@ -105,6 +105,7 @@ class Wrapper(object):
 					self.settings['viewName'],
 					export_from,
 					self.settings.get('stopTime', int(time())),
+					self.settings['subset_selection'],
 					self.settings['account'].get_authkey(),
 					self.settings['report_dir'],
 					self.settings['filename']
