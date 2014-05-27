@@ -1,22 +1,21 @@
 from setuptools import setup
 
 install_requires = [
-	#"pymongo", "ctimeserie", "cstorage"
 ]
 
 setup(
-	name="cmongo",
+	name="ccontext",
 	version="0.1",
 	author="Capensis",
 	author_email="canopsis@capensis.fr",
-	description=("Mongo for canopsis"),
+	description=("Store ccontext"),
 	license="AGPL v3",
 	zip_safe=False,
-	keywords="store performance mongo canopsis",
+	keywords="ccontext storage store canopsis ccontext",
 	install_requires=install_requires,
-	url = "http://www.canopsis.org",
-	packages=['cmongo'],
-	scripts=['scripts/cmongo'],
+	url="http://www.canopsis.org",
+	packages=['ccontext'],
+	scripts=['scripts/ccontext'],
 	long_description=open('README').read(),
 	test_suite="test"
 )
