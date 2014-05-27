@@ -25,10 +25,12 @@ logger = None
 
 manager = pyperfstore2.manager(logging_level=logging.DEBUG)
 
+
 def init():
 	logger.info(" + Drop 'pyperfstore2' collections")
 	manager.store.drop()
 	add_rotate_task()
+
 
 def update():
 	add_rotate_task()
@@ -37,8 +39,11 @@ def update():
 	metrics = manager.find(mfilter={"co": "stat", "me": {"$regex": "^cps_.*"}})
 
 	for metric in metrics:
-		logger.info(" + Move '%s.%s.%s' to '%s.%s.%s'" % (metric["co"], metric["re"], metric["me"], metric["re"], "selector", metric["me"]))
-		
+		logger.info(
+			" + Move '%s.%s.%s' to '%s.%s.%s'" % (
+				metric["co"], metric["re"], metric["me"], metric["re"], "selector",
+				metric["me"]))
+
 		old_id = metric["_id"]
 		del metric["_id"]
 
@@ -54,7 +59,6 @@ def update():
 def add_rotate_task():
 	#### TODO: Remove this !!
 
-	from crecord import crecord
 	from caccount import caccount
 	from cstorage import get_storage
 

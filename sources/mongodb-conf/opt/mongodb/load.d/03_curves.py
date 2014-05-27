@@ -29,9 +29,10 @@ root = caccount(user="root", group="root")
 
 logger = None
 
+
 def init():
 	storage = get_storage(account=root, namespace='object')
-	
+
 	curves = [
 		{'line_color': 'B7CA79', 'dashStyle': 'Solid', 'invert': False, 'area_opacity': 75, 'zIndex': 0, 'area_color': None, 'label': 'Free', 'metric': 'free'},
 		{'line_color': 'B1221C', 'dashStyle': 'Solid', 'invert': True, 'area_opacity': 50, 'zIndex': 0, 'area_color': None, 'label': 'Upload', 'metric': 'if_octets-tx'},
@@ -64,7 +65,7 @@ def init():
 		{'line_color': 'B7CA79', 'dashStyle': 'Solid', 'metric': 'cps_statechange_0', 'label': 'Ok', 'zIndex': -30, 'area_opacity': 20, 'area_color': None, 'invert': False},
 		{'line_color': 'B9121B', 'dashStyle': 'Solid', 'metric': 'cps_statechange_nok', 'label': 'Not ok', 'zIndex': -30, 'area_opacity': 20, 'area_color': None, 'invert': False}
 	]
-	
+
 	for curve in curves:
 		_id = hashlib.sha1(curve['metric']).hexdigest().upper()
 		try:
@@ -76,7 +77,7 @@ def init():
 			record.chmod('o+r')
 			record.chgrp('group.CPS_curve_admin')
 			storage.put(record)
-	
-def update():
-	init();
 
+
+def update():
+	init()

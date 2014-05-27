@@ -21,6 +21,9 @@
 from caccount import caccount
 from cstorage import get_storage
 
+from pyperfstore3.store import TimedStore, PeriodicStore
+from pyperfstore3.manager import Manager
+
 logger = None
 
 ##set root account
@@ -48,17 +51,17 @@ INDEXES = {
 			('resource', 1),
 			('state_type', 1),
 			('state', 1)
-		],[
+		], [
 			('source_type', 1),
 			('tags', 1)
-		],[
+		], [
 			('event_type', 1),
 			('component', 1),
 			('resource', 1)
-		],[
+		], [
 			('event_type', 1),
 			('resource', 1)
-		],[
+		], [
 			('event_type', 1)
 		]
 	],
@@ -70,23 +73,23 @@ INDEXES = {
 			('resource', 1),
 			('state_type', 1),
 			('state', 1)
-		],[
+		], [
 			('source_type', 1),
 			('tags', 1)
-		],[
+		], [
 			('event_type', 1),
 			('component', 1),
 			('resource', 1)
-		],[
+		], [
 			('event_type', 1),
 			('resource', 1)
-		],[
+		], [
 			('event_type', 1)
-		],[
+		], [
 			('state_type', 1)
-		],[
+		], [
 			('tags', 1)
-		],[
+		], [
 			('referer', 1)
 		]
 	],
@@ -94,18 +97,15 @@ INDEXES = {
 		[('type', 1), ('name', 1)],
 		[('type', 1), ('component', 1), ('name', 1)],
 		[('type', 1), ('component', 1), ('resource', 1), ('id', 1)],  # downtime
-		[('type', 1), ('component', 1), ('resource', 1), ('name', 1)],  # contextual data like metric
+		[('type', 1), ('component', 1), ('resource', 1), ('name', 1)],
 		[('type', 1), ('nodeid', 1)]  # contextual data like metric
 	],
-	'perfdata3': [
-		[('_id', 1)],
-		[('metric_id', 1), ('period', 1), ('timestamp', 1)]
-	],
-	'perfdata3_meta': [
-		[('_id', 1), ('timestamp', 1)],
-		[('_id', 1), ('metric_id', 1), ('timestamp', 1)]
-	]
+	PeriodicStore(data_name=Manager.DEFAULT_DATA_NAME).get_collection_name():
+		PeriodicStore._get_indexes(),
+	TimedStore(data_name=Manager.DEFAULT_DATA_NAME).get_collection_name():
+		TimedStore._get_indexes()
 }
+
 
 def init():
 	for collection in INDEXES:
@@ -115,6 +115,7 @@ def init():
 
 		for index in INDEXES[collection]:
 			col.ensure_index(index)
+
 
 def update():
 	init()

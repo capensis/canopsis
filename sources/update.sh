@@ -37,7 +37,7 @@ do
 
 		cd $SRC_PATH/$pkg
 
-		if [ "$pkg" == "pyperfstore2" ] || [ "$pkg" == "pyperfstore3" ]
+		if [ "$pkg" == "pyperfstore2" ] || [ "$pkg" == "ctimeserie"] || [ "$pkg" == "cstorage"] || [ "$pkg" == "cmongo"] || [ "$pkg" == "cperfdata" ]
 		then
 			python setup.py install
 		else
@@ -52,7 +52,7 @@ do
 			do
 				chown $HUSER:$HGROUP $PREFIX/$f || exit 1
 			done
-			
+
 			if [ -e $SRC_PATH/$pkg.tar ]
 			then
 				echo "-- Cleaning..."
@@ -63,4 +63,4 @@ do
 done
 
 echo "==> Minimizing JavaScript..."
-su - $HUSER -c "webcore_minimizer"		
+su - $HUSER -c "webcore_minimizer"

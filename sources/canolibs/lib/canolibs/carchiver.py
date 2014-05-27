@@ -18,19 +18,21 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-import logging, time
+import logging
+import time
 from cstorage import get_storage
 from caccount import caccount
 from crecord import crecord
 
 from ctools import legend
 from ctools import uniq
-from ctools import parse_perfdata
 
 legend_type = ['soft', 'hard']
 
+
 class carchiver(object):
-	def __init__(self, namespace, storage=None, autolog=False, logging_level=logging.ERROR):
+	def __init__(
+		self, namespace, storage=None, autolog=False, logging_level=logging.ERROR):
 
 		self.logger = logging.getLogger('carchiver')
 		self.logger.setLevel(logging_level)
@@ -71,7 +73,8 @@ class carchiver(object):
 		try:
 			# Get old record
 			#record = self.storage.get(_id, account=self.account)
-			change_fields = {'state': 1, 'state_type': 1, 'last_state_change': 1, 'perf_data_array': 1, 'output': 1, 'timestamp': 1}
+			change_fields = {'state': 1, 'state_type': 1, 'last_state_change': 1,
+			'perf_data_array': 1, 'output': 1, 'timestamp': 1}
 			devent = self.collection.find_one(_id, fields=change_fields)
 
 			if not devent:
@@ -81,7 +84,8 @@ class carchiver(object):
 			old_state = devent['state']
 			old_state_type = devent['state_type']
 
-			event['last_state_change'] = devent.get('last_state_change', event['timestamp'])
+			event['last_state_change'] = devent.get(
+				'last_state_change', event['timestamp'])
 
 			self.logger.debug("   - State:\t\t'%s'" % legend[old_state])
 			self.logger.debug("   - State type:\t'%s'" % legend_type[old_state_type])
@@ -97,7 +101,7 @@ class carchiver(object):
 
 			try:
 				event = self.merge_perf_data(devent, event)
-			except Exception, err:
+			except Exception as err:
 				self.logger.warning("merge_perf_data: %s" % err)
 
 		except:
@@ -108,7 +112,8 @@ class carchiver(object):
 
 		if changed:
 			# Tests if change is from alert to non alert
-			if 'last_state_change' in event and (state == 0 or (state > 0 and old_state == 0)):
+			if 'last_state_change' in event and (state == 0 or
+				(state > 0 and old_state == 0)):
 				event['previous_state_change_ts'] = event['last_state_change']
 			event['last_state_change'] = event.get('timestamp', now)
 
@@ -135,8 +140,8 @@ class carchiver(object):
 		if new_event['perf_data_array'] != []:
 			perf_data_array = old_event['perf_data_array']
 
-			new_metrics = [ perf['metric'] for perf in new_event['perf_data_array'] ]
-			old_metrics = [ perf['metric'] for perf in old_event['perf_data_array'] ]
+			new_metrics = [perf['metric'] for perf in new_event['perf_data_array']]
+			old_metrics = [perf['metric'] for perf in old_event['perf_data_array']]
 
 			if new_metrics == old_metrics:
 				new_event['perf_data_metrics'] = new_metrics
@@ -146,13 +151,13 @@ class carchiver(object):
 
 			for new_metric in new_metrics:
 				if new_metric in old_metrics:
-					perf_data_array[old_metrics.index(new_metric)] = new_event['perf_data_array'][new_metrics.index(new_metric)]
+					perf_data_array[old_metrics.index(new_metric)] = \
+						new_event['perf_data_array'][new_metrics.index(new_metric)]
 				else:
-					perf_data_array.append(new_event['perf_data_array'][new_metrics.index(new_metric)])
+					perf_data_array.append(
+						new_event['perf_data_array'][new_metrics.index(new_metric)])
 
 			new_event['perf_data_array'] = perf_data_array
-
-
 
 		return new_event
 
@@ -176,12 +181,11 @@ class carchiver(object):
 		return record._id
 
 	def get_logs(self, _id, start=None, stop=None):
-		return self.storage.find({'event_id': _id}, namespace=self.namespace_log, account=self.account)
+		return self.storage.find(
+			{'event_id': _id}, namespace=self.namespace_log, account=self.account)
 
 	def remove_all(self):
 		self.logger.debug("Remove all logs and state archives")
 
 		self.storage.drop_namespace(self.namespace)
 		self.storage.drop_namespace(self.namespace_log)
-
-

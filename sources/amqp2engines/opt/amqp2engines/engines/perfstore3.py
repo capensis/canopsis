@@ -65,7 +65,8 @@ class engine(cengine):
 				perf_data_array = parse_perfdata(perf_data)
 
 			except Exception as err:
-				self.logger.error("Impossible to parse: {0} ('{1}')".format(perf_data, err))
+				self.logger.error(
+					"Impossible to parse: {0} ('{1}')".format(perf_data, err))
 
 		self.logger.debug(' + perf_data_array: {0}'.format(perf_data_array))
 
@@ -147,7 +148,8 @@ class engine(cengine):
 								meta=perf_data)
 
 					else:
-						self.logger.warning('metric name does not exist: {0}'.format(event))
+						self.logger.warning(
+							'metric name does not exist: {0}'.format(event))
 
 	def beat(self):
 		# Counts metric not in internal metrics for webserver cache purposes

@@ -20,7 +20,6 @@
 
 from caccount import caccount
 from cstorage import get_storage
-from crecord import crecord
 
 logger = None
 
@@ -28,23 +27,10 @@ logger = None
 root = caccount(user="root", group="root")
 storage = get_storage(account=root, namespace='object')
 
+
 def init():
 	pass
 
+
 def update():
-	## Update 201111 -> 201201
-	#search all user view and add them to root directory
-	#	views = storage.find({'crecord_type':'view'}, account=account)
-	#	for view in views:
-	#		#if this account is the owner of the view
-	#		if view.owner == user:
-	#			#if view is not in administration views
-	#			if view._id not in ['view._default_.dashboard','view.ComponentDetails','view.components','view.resources','view.group_manager','view.account_manager','view.view_manager']:
-	#				if not view.parent:
-	#					print(view.dump()['crecord_name'])
-	#					view.data['items'] = []
-	#					view.data['leaf'] = True
-	#					userdir.add_children(view)
-	#					storage.put(view)
-	#	storage.put(userdir)
 	pass

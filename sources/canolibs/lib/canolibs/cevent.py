@@ -18,7 +18,9 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-import socket, time, logging
+import socket
+import time
+import logging
 import re
 
 from cstorage import get_storage
@@ -29,10 +31,12 @@ logger = logging.getLogger('cevent')
 # Change default timeout from 1 to 3 , conflict with gunicorn
 socket.setdefaulttimeout(3)
 
-regexp_ip = re.compile("([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})")
+regexp_ip = re.compile(
+	"([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})")
 
 dns_cache = {}
-cache_time = 1800 #30min
+cache_time = 1800  # 30min
+
 
 def forger(		connector,
 			connector_name,
@@ -58,7 +62,7 @@ def forger(		connector,
 		):
 
 	if not timestamp:
-		timestamp=int(time.time())
+		timestamp = int(time.time())
 
 	if not component:
 		component = socket.getfqdn()
@@ -93,7 +97,7 @@ def forger(		connector,
 						logger.info(" + Succes: '%s'" % dns[0])
 						dns_cache[address.replace('.', '-')] = (int(time.time()), dns)
 					except:
-						logger.info(" + Failed");
+						logger.info(" + Failed")
 
 				# Dns ok
 				if dns:
@@ -107,23 +111,22 @@ def forger(		connector,
 							pass
 
 				if dns:
-					logger.info(" + Component: %s" % component);
-					logger.info(" + Address:   %s" % address);
-					logger.info(" + Domain:    %s" % domain);
-
+					logger.info(" + Component: %s" % component)
+					logger.info(" + Address:   %s" % address)
+					logger.info(" + Domain:    %s" % domain)
 
 	dump = {
-		'connector':		connector,
-		'connector_name':	connector_name,
-		'event_type':		event_type,
-		'source_type':		source_type,
-		'component':		component,
-		'resource':			resource,
-		'timestamp':		timestamp,
-		'state':			state,
-		'state_type':		state_type,
-		'output':			output,
-		'long_output':		long_output,
+		'connector': connector,
+		'connector_name': connector_name,
+		'event_type': event_type,
+		'source_type': source_type,
+		'component': component,
+		'resource': resource,
+		'timestamp': timestamp,
+		'state': state,
+		'state_type': state_type,
+		'output': output,
+		'long_output': long_output,
 	}
 
 	if perf_data:
@@ -155,17 +158,23 @@ def forger(		connector,
 
 	return dump
 
+
 def get_routingkey(event):
-	rk = "%s.%s.%s.%s.%s" % (event['connector'], event['connector_name'], event['event_type'], event['source_type'], event['component'])
+	rk = "%s.%s.%s.%s.%s" % (
+		event['connector'], event['connector_name'], event['event_type'],
+		event['source_type'], event['component'])
 
 	if 'resource' in event and event['resource']:
 		rk += ".%s" % event['resource']
 
 	return rk
 
+
 def is_component_problem(event):
 	if event['source_type'] == 'resource' and event['state'] != 0:
-		storage = get_storage(namespace='entities', account=caccount(user='root', group='root')).get_backend()
+		storage = get_storage(
+			namespace='entities',
+			account=caccount(user='root', group='root')).get_backend()
 
 		component = storage.find_one({
 			'type': 'component',
@@ -177,9 +186,12 @@ def is_component_problem(event):
 
 	return False
 
+
 def is_host_acknowledged(event):
 	if is_component_problem(event):
-		storage = get_storage(namespace='entities', account=caccount(user='root', group='root')).get_backend()
+		storage = get_storage(
+			namespace='entities',
+			account=caccount(user='root', group='root')).get_backend()
 
 		ack = storage.find_one({
 			'type': 'ack',

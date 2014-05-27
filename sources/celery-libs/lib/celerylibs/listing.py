@@ -1,10 +1,9 @@
 import os
-from caccount import caccount
-from cstorage import cstorage
+
 
 def tasks(path):
 	path = os.path.expanduser(path)
-	dirList=os.listdir(path)
+	dirList = os.listdir(path)
 	list_tasks = []
 	for mfile in dirList:
 		ext = mfile.split(".")[1]

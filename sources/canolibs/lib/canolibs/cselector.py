@@ -21,13 +21,8 @@
 #import logging
 from crecord import crecord
 
-from ctools import calcul_pct
 import cevent
 
-from caccount import caccount
-#from cstorage import get_storage
-
-from bson.code import Code
 
 import time
 import json
@@ -37,7 +32,9 @@ from cdowntime import Cdowntime
 
 
 class cselector(crecord):
-	def __init__(self, storage, _id=None, name=None, namespace='events', use_cache=True, record=None, cache_time=60, logging_level=None):
+	def __init__(
+		self, storage, _id=None, name=None, namespace='events', use_cache=True,
+		record=None, cache_time=60, logging_level=None):
 		self.type = 'selector'
 		self.storage = storage
 
@@ -66,7 +63,8 @@ class cselector(crecord):
 
 		self.last_event = None
 
-		self.output_tpl="{cps_sel_state_0} Ok, {cps_sel_state_1} Warning, {cps_sel_state_2} Critical"
+		self.output_tpl = "{cps_sel_state_0} Ok, {cps_sel_state_1} \
+		Warning, {cps_sel_state_2} Critical"
 
 		self.sel_metric_prefix = "cps_sel_"
 		self.sel_metric_name = self.sel_metric_prefix + "state_%s"
@@ -89,18 +87,20 @@ class cselector(crecord):
 			crecord.__init__(self, record=record, storage=storage)
 		else:
 			self.logger.debug("Init new record.")
-			crecord.__init__(self, name=name, _id=self._id, account=storage.account, type=self.type, storage=storage)
+			crecord.__init__(
+				self, name=name, _id=self._id, account=storage.account,
+				type=self.type, storage=storage)
 
 	def dump(self):
-		self.data['include_ids']	= self.include_ids
-		self.data['exclude_ids']	= self.exclude_ids
-		self.data['mfilter']		= json.dumps(self.mfilter)
-		self.data['namespace']		= self.namespace
-		self.data['rk']				= self.rk
-		self.data['output_tpl']		= self.output_tpl
-		self.data['dostate']		= self.dostate
-		self.data['state_algorithm']= self.state_algorithm
-		self.data['downtimes_as_ok']= self.downtimes_as_ok
+		self.data['include_ids'] = self.include_ids
+		self.data['exclude_ids'] = self.exclude_ids
+		self.data['mfilter'] = json.dumps(self.mfilter)
+		self.data['namespace'] = self.namespace
+		self.data['rk'] = self.rk
+		self.data['output_tpl'] = self.output_tpl
+		self.data['dostate'] = self.dostate
+		self.data['state_algorithm'] = self.state_algorithm
+		self.data['downtimes_as_ok'] = self.downtimes_as_ok
 
 		return crecord.dump(self)
 
@@ -111,14 +111,16 @@ class cselector(crecord):
 		except:
 			pass
 
-		self.namespace		= self.data.get('namespace', self.namespace)
-		self.rk 			= self.data.get('rk', self.rk)
-		self.include_ids	= self.data.get('include_ids', self.include_ids)
-		self.exclude_ids	= self.data.get('exclude_ids',self.exclude_ids)
-		self.dostate		= self.data.get('dostate', self.dostate)
-		self.state_algorithm= self.data.get('state_algorithm ', self.state_algorithm )
-		self.downtimes_as_ok= self.data.get('downtimes_as_ok ', self.downtimes_as_ok )
-		output_tpl			= self.data.get('output_tpl', None)
+		self.namespace = self.data.get('namespace', self.namespace)
+		self.rk = self.data.get('rk', self.rk)
+		self.include_ids = self.data.get('include_ids', self.include_ids)
+		self.exclude_ids = self.data.get('exclude_ids', self.exclude_ids)
+		self.dostate = self.data.get('dostate', self.dostate)
+		self.state_algorithm = self.data.get(
+			'state_algorithm ', self.state_algorithm)
+		self.downtimes_as_ok = self.data.get(
+			'downtimes_as_ok ', self.downtimes_as_ok)
+		output_tpl = self.data.get('output_tpl', None)
 
 		if output_tpl and output_tpl != "":
 			self.output_tpl = output_tpl
@@ -163,12 +165,10 @@ class cselector(crecord):
 		self.logger.debug(" + efilter: %s" % efilter)
 		self.logger.debug(" + mfilter: %s" % mfilter)
 
-
 		#Adds downtime elements to ignore in query
 		downtime = self.cdowntime.get_filter()
 		if downtime:
 			self.logger.debug(' + Selector downtime exclusion %s' % (str(downtime)))
-
 
 		## Tweaks
 		if not mfilter and not ifilter and not efilter:
@@ -204,18 +204,17 @@ class cselector(crecord):
 				filters = [downtime] + filters
 			return {'$and': filters}
 
-
 		and_clause = [{"$or": [mfilter, ifilter]}, efilter]
 
 		if downtime:
-			and_clause = dowtime + and_clause
+			and_clause = downtime + and_clause
 
 		return {"$and": and_clause}
 
-
 	def resolv(self):
 
-		"""	resolv computes every database event that matches with current selector filter and set current selector _ids to events id list
+		"""	resolv computes every database event that matches with current selector
+		filter and set current selector _ids to events id list
 
 		Returns:
 			list. The selector events id list
@@ -227,7 +226,7 @@ class cselector(crecord):
 			mfilter = self.makeMfilter()
 			self.logger.error(" + filter: %s" % mfilter)
 			if not mfilter:
-				self.logger.debug("  + Invalid mfilter" )
+				self.logger.debug("  + Invalid mfilter")
 				return []
 			self.logger.debug(" + namespace: %s" % self.namespace)
 
@@ -245,7 +244,7 @@ class cselector(crecord):
 
 			return ids
 
-		if self.changed or self._ids == None:
+		if self.changed or self._ids is None:
 			self.logger.debug("Selector has change, get new ids")
 			self._ids = do_resolv(self)
 
@@ -267,7 +266,7 @@ class cselector(crecord):
 		# Build MongoDB filter
 		mfilter = self.makeMfilter()
 		if not mfilter:
-			self.logger.debug("  + Invalid filter" )
+			self.logger.debug("  + Invalid filter")
 			return ({}, 3, 1)
 
 		# Check filter
@@ -275,24 +274,19 @@ class cselector(crecord):
 
 		self.logger.debug(" + selector statment agregation")
 		result = self.storage.get_backend(namespace=self.namespace).aggregate([
-				{ '$match': mfilter },
-				{ '$project': {
+				{'$match': mfilter},
+				{'$project': {
 						'_id': True,
 						'state': True,
 						'state_type': True,
-						'previous_state': True
-					}
-				},
-				{ '$group': {
+						'previous_state': True}},
+				{'$group': {
 						'_id': {
 							'state': '$state',
 							'state_type': "$state_type",
 							'previous_state': "$previous_state"
 						},
-						'count': { '$sum' : 1 }
-					}
-				}
-		])
+						'count': {'$sum': 1}}}])
 
 		self.logger.debug(" + result: %s" % result)
 
@@ -348,11 +342,12 @@ class cselector(crecord):
 			except:
 				pass
 
-			metric =  self.sel_metric_name % i
+			metric = self.sel_metric_name % i
 			output_data[metric] = value
 			perf_data_array.append({"metric": metric, "value": value, "max": total})
 			self.logger.info('metric %s : %s' % (metric, value))
-		perf_data_array.append({"metric": self.sel_metric_prefix + "total", "value": total})
+		perf_data_array.append(
+			{"metric": self.sel_metric_prefix + "total", "value": total})
 
 		output_data['total'] = total
 
@@ -373,9 +368,9 @@ class cselector(crecord):
 
 		# Build Event
 		event = cevent.forger(
-			connector = "selector",
-			connector_name = "engine",
-			event_type = "selector",
+			connector="selector",
+			connector_name="engine",
+			event_type="selector",
 			source_type="component",
 			component=self.name,
 			#resource=None,

@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*- 
+# -*- coding: utf-8 -*-
 #!/usr/bin/env python
 #--------------------------------
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
@@ -25,16 +25,17 @@ import re
 re_owner = re.compile("^account\..*")
 re_group = re.compile("^group\..*")
 
+
 class crecord(object):
 	def __init__(self, data = {}, _id=None, name="noname", owner=None, group=None, raw_record=None, record=None, storage=None, account=None,admin_group=None, type='raw'):
 		self.write_time = None
 
 		self.owner = None
 		self.group = None
-		
+
 		self.chown(owner)
 		self.chgrp(group)
-		
+
 		self.admin_group=admin_group
 		self.type= type
 		self.access_owner=['r','w']
@@ -52,11 +53,11 @@ class crecord(object):
 		if account:
 			self.chown(account.user)
 			self.chgrp(account.group)
-		
+
 		#set admin account
 		if not self.admin_group:
 			self.admin_group = 'group.CPS_%s_admin' % self.type
-		
+
 
 		try:
 			self._id = data['_id']
@@ -85,16 +86,16 @@ class crecord(object):
 		self.children = dump['children']
 		self.parent = dump['parent']
 		self.enable = dump['enable']
-		
+
 		if not dump.get('crecord_creation_time', None):
 			dump['crecord_creation_time'] = self.write_time
-		
+
 		if 'aaa_admin_group' in dump:
 			self.admin_group = str(dump['aaa_admin_group'])
 			del dump['aaa_admin_group']
 		else:
 			self.admin_group = 'group.CPS_%s_admin' % self.type
-		
+
 		#security
 		if not self.access_owner:
 			self.access_owner = []
@@ -104,7 +105,7 @@ class crecord(object):
 			self.access_other = []
 		if not self.access_unauth:
 			self.access_unauth = []
-		
+
 		dump['_id'] = dump.get('_id', None)
 
 		self._id = dump['_id']
@@ -121,7 +122,7 @@ class crecord(object):
 		del dump['crecord_write_time']
 		del dump['crecord_name']
 		del dump['children']
-		del dump['parent']			
+		del dump['parent']
 
 		self.data = dump.copy()
 
@@ -131,7 +132,7 @@ class crecord(object):
 				raise Exception('For save you must specify storage')
 			else:
 				storage = self.storage
-				
+
 		return storage.put(self)
 
 	def dump(self, json=False):
@@ -147,10 +148,10 @@ class crecord(object):
 		dump['crecord_write_time'] = self.write_time
 		dump['crecord_name'] = self.name
 		dump['enable'] = self.enable
-	
+
 		dump['parent'] =  self.parent
 		dump['children'] =  self.children
-		
+
 		dump['aaa_admin_group'] = self.admin_group
 
 		if json:
@@ -158,7 +159,7 @@ class crecord(object):
 			for key in dump:
 				if isinstance(dump[key], objectid.ObjectId):
 					dump[key] = str(dump[key])
-		
+
 			items  = []
 			for item in dump['parent']:
 				items.append(str(item))
@@ -170,34 +171,21 @@ class crecord(object):
 			dump['children'] = list(items)
 
 		return dump
-	
+
 	def recursive_dump(self, json=False):
 		dump = self.dump(json=json)
 		dump['children'] = []
-		
+
 		for child in self.children:
 			if isinstance(child, crecord):
 				formated = child.recursive_dump(json=json)
 				dump['children'].append(formated)
-			
+
 		return dump
-	
 
 	def cat(self, dump=False):
-		for_str=False
+		for_str = False
 
-		#print "Id:\t", self._id
-		#print "Owner:\t", self.owner
-		#print "Group:\t", self.group
-		#print "Type:\t", self.type
-		#print "Writed:\t", self.write_time
-		#print "Access:"
-		#print "  Owner:\t", self.access_owner
-		#print "  Group:\t", self.access_group
-		#print "  Other:\t", self.access_other
-		#print "  Anonymous:\t", self.access_unauth
-		#print "Data:\n", self.data, "\n"
-	
 		if dump:
 			data = self.dump()
 		else:
@@ -213,8 +201,7 @@ class crecord(object):
 		if for_str:
 			return output
 		else:
-			print output
-			
+			print(output)
 
 	def __str__(self):
 		return str(self.dump())
@@ -223,7 +210,7 @@ class crecord(object):
 		if account:
 			if account.user == 'root' or account.group == 'group.CPS_root' or 'group.CPS_root' in account.groups:
 				return True
-	
+
 			elif ((account._id == self.owner) and ('w' in self.access_owner)):
 				return True
 			elif ((account.group == self.group) and ('w' in self.access_group)):
@@ -233,7 +220,7 @@ class crecord(object):
 			elif self.admin_group in account.groups or self.admin_group == account.group:
 				return True
 		return False
-	
+
 	def chown(self, owner):
 		#if isinstance(owner, caccount):
 		#	self.owner = owner.user
@@ -288,7 +275,7 @@ class crecord(object):
 		else:
 			raise ValueError("Invalid argument ...")
 
-	
+
 	def add_children(self, record, autosave=True):
 		_id = record._id
 
@@ -307,7 +294,7 @@ class crecord(object):
 			if autosave and self.storage and record.storage:
 				self.save()
 				record.save()
-			
+
 
 	def remove_children(self, record, autosave=True):
 		_id = record._id
@@ -327,7 +314,7 @@ class crecord(object):
 			if autosave and self.storage and record.storage:
 				self.save()
 				record.save()
-		
+
 
 	def is_parent(self, record):
 		if str(record._id) in self.children:
@@ -338,7 +325,7 @@ class crecord(object):
 
 	def is_enable(self):
 		return self.enable
-	
+
 	def set_enable(self, autosave=True):
 		self.enable = True
 		if autosave and self.storage:

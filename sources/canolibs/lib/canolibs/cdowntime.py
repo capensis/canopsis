@@ -20,35 +20,38 @@
 
 from crecord import crecord
 
-import time, datetime
+import time
+import datetime
 from cstorage import get_storage
 from caccount import caccount
 
 
 class Cdowntime(crecord):
 	"""
-		This class provide easy management for downtime by allowing component/resource test against any downtime at now time
+		This class provide easy management for downtime by allowing
+		component/resource test against any downtime at now time
 	"""
 	def __init__(self, logger, storage=None):
 
 		self.logger = logger
 		if not storage:
-			storage = get_storage(namespace='object', account=caccount(user="root", group="root"))
+			storage = get_storage(
+				namespace='object', account=caccount(user="root", group="root"))
 
 		self.storage = storage
 		self.backend = storage.get_backend('downtime')
-
 
 	def reload(self, delta_beat=0):
 		""" Loads current downtimes being active
 				delta_beat takes care of engines beat interval. for accurate measure,
 				it should be equal to 0
 		"""
-		self.logger.debug('Reloading downtimes @ %s' % (str(datetime.datetime.now())))
+		self.logger.debug(
+			'Reloading downtimes @ %s' % (str(datetime.datetime.now())))
 		now = time.time()
 		query = {
-			'start': { '$lte': now + delta_beat},
-			'end'	: { '$gte': now -  delta_beat}
+			'start': {'$lte': now + delta_beat},
+			'end'	: {'$gte': now - delta_beat}
 		}
 
 		downtimes = self.backend.find(query)
@@ -63,35 +66,39 @@ class Cdowntime(crecord):
 		downtimes_end = [now]
 
 		for downtime in self.downtimes:
-			if downtime['component'] == component and downtime['resource'] == resource and downtime['start'] < now and downtime['end'] > now:
+			if downtime['component'] == component \
+				and downtime['resource'] == resource and downtime['start'] < now \
+				and downtime['end'] > now:
 				downtimes_end.append(downtime['end'])
 
 		return max(downtimes_end)
 
-
 	def is_downtime(self, component, resource):
-		#Tests whether or not given component/resource information exists in downtime list.
+		#Tests whether or not given component/resource information exists in
+		# downtime list.
 		#If any, it s downtime and engines should operate consequently
 
 		now = time.time()
 		for downtime in self.downtimes:
-			if downtime['component'] == component and downtime['resource'] == resource and downtime['start'] < now and downtime['end'] > now:
+			if downtime['component'] == component \
+				and downtime['resource'] == resource and downtime['start'] < now \
+				and downtime['end'] > now:
 				return True
 		return False
 
 	def get_filter(self, mini=False):
 
-		""" Builds a mongodb filter for downtime exclustion. mini is used for metric queries."""
+		""" Builds a mongodb filter for downtime exclustion.
+		mini is used for metric queries."""
 
 		self.reload()
 
 		if mini:
-			component 	= 'co'
-			resource 	= 're'
+			component = 'co'
+			resource = 're'
 		else:
-			component 	= 'component'
-			resource 	= 'resource'
-
+			component = 'component'
+			resource = 'resource'
 
 		if not self.downtimes:
 			return None
@@ -99,14 +106,13 @@ class Cdowntime(crecord):
 		new_field = []
 		for downtime in self.downtimes:
 			new_filter = [
-				{'$ne'	: {component: downtime['component']}}, 
+				{'$ne'	: {component: downtime['component']}},
 				{'$ne'	: {resource: downtime['resource']}}
 			]
 			if mini:
 				new_field += new_filter
 			else:
 				new_field.append({'$and': new_filter})
-
 
 		if mini:
 			return new_field

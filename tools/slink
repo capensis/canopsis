@@ -35,8 +35,10 @@ rm -Rf $CPS/etc/tasks.d/task_backup.py
 rm -Rf $CPS/etc/tasks.d/task_node.py
 rm -Rf $CPS/etc/tasks.d/task_pyperfstore.py
 rm -Rf $CPS/lib/wkhtmltopdf/*
-rm -Rf $CPS/lib/python2.7/site-packages/pyperfstore2-0.1-py2.7.egg/*
-rm -Rf $CPS/lib/python2.7/site-packages/pyperfstore3-0.1-py2.7.egg/*
+rm -Rf $CPS/lib/python2.7/site-packages/cperfdata-0.1-py2.7.egg/*
+rm -Rf $CPS/lib/python2.7/site-packages/ctimeserie-0.1-py2.7.egg/*
+rm -Rf $CPS/lib/python2.7/site-packages/cstorage-0.1-py2.7.egg/*
+rm -Rf $CPS/lib/python2.7/site-packages/cmongo-0.1-py2.7.egg/*
 
 if [ $LINK -eq 1 ]; then
 	ln -s $SRC/sources/wkhtmltopdf-libs/lib/wkhtmltopdf/* $CPS/lib/wkhtmltopdf/
@@ -57,8 +59,10 @@ if [ $LINK -eq 1 ]; then
 	ln -s $SRC/sources/amqp2engines/opt/amqp2engines $CPS/opt/
 	ln -s $SRC/sources/canotools/opt/canotools $CPS/opt/
 	ln -s $SRC/sources/mongodb-conf/opt/mongodb $CPS/opt/
-	ln -s $SRC/sources/pyperfstore2/pyperfstore2 $CPS/lib/python2.7/site-packages/pyperfstore2-0.1-py2.7.egg/
-	ln -s $SRC/sources/pyperfstore3/pyperfstore3 $CPS/lib/python2.7/site-packages/pyperfstore3-0.1-py2.7.egg/
+	ln -s $SRC/sources/cperfdata/cperfdata $CPS/lib/python2.7/site-packages/cperfdata-0.1-py2.7.egg/
+	ln -s $SRC/sources/ctimeserie/ctimeserie $CPS/lib/python2.7/site-packages/ctimeserie-0.1-py2.7.egg/
+	ln -s $SRC/sources/cstorage/cstorage $CPS/lib/python2.7/site-packages/cstorage-0.1-py2.7.egg/
+	ln -s $SRC/sources/cmongo/cmongo $CPS/lib/python2.7/site-packages/cmongo-0.1-py2.7.egg/
 fi
 
 

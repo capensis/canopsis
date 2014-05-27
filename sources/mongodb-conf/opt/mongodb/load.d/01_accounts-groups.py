@@ -29,27 +29,29 @@ logger = None
 root = caccount(user="root", group="root")
 
 #need this in two functions, key:group_name , value : group_description
-groups =  {
-	'CPS_root':'Have all rights.',
-	'Canopsis':'Base canopsis group.',
-	'CPS_curve_admin':'Create and modify curves parameters for UI.',
-	'CPS_view_admin':'Manage all view in canopsis, add, remove or edit.',
-	'CPS_view':'Create and manage his own view.',
-	'CPS_schedule_admin':'View and create his own reporting schedules.',
-	'CPS_reporting_admin':'Launch and export report, use live reporting.',
-	'CPS_account_admin':'Manage all account and groups in canopsis.',
-	'CPS_event_admin':'Send event by the webservice or websocket.',
-	'CPS_selector_admin':'Manage all selectors in canopsis, add, remove or edit.',
-	'CPS_perfdata_admin':'Manage all perfdata in canopsis, remove or edit',
-	'CPS_derogation_admin':'Manage and create derogation on canopsis',
-	'CPS_authkey':'Give the ability to renew the account authkey',
-	'CPS_consolidation_admin':'Manage and create consolidations',
-	'CPS_rule_admin':'Manage and create rules (black and white lists for incoming events)'
+groups = {
+	'CPS_root': 'Have all rights.',
+	'Canopsis': 'Base canopsis group.',
+	'CPS_curve_admin': 'Create and modify curves parameters for UI.',
+	'CPS_view_admin': 'Manage all view in canopsis, add, remove or edit.',
+	'CPS_view': 'Create and manage his own view.',
+	'CPS_schedule_admin': 'View and create his own reporting schedules.',
+	'CPS_reporting_admin': 'Launch and export report, use live reporting.',
+	'CPS_account_admin': 'Manage all account and groups in canopsis.',
+	'CPS_event_admin': 'Send event by the webservice or websocket.',
+	'CPS_selector_admin': 'Manage all selectors in canopsis, add, remove or edit.',
+	'CPS_perfdata_admin': 'Manage all perfdata in canopsis, remove or edit',
+	'CPS_derogation_admin': 'Manage and create derogation on canopsis',
+	'CPS_authkey': 'Give the ability to renew the account authkey',
+	'CPS_consolidation_admin': 'Manage and create consolidations',
+	'CPS_rule_admin': 'Manage and create rules (black and white lists for incoming events)'
 }
+
 
 def init():
 	base_init()
 	update_for_new_rights()
+
 
 def update():
 	base_init()
@@ -57,13 +59,14 @@ def update():
 	check_and_create_authkey()
 	add_description_to_group()
 
+
 def base_init():
 	storage = get_storage(account=root, namespace='object')
-	
+
 	# (0'login', 1'pass', 2'group', 3'lastname', 4'firstname', 5'groups' ,6'email')
 	accounts = [
-		('root','root', 'CPS_root', 'Lastname', 'Firstname', [] ,''),
-		('canopsis','canopsis', 'Canopsis', 'Psis', 'Cano', ['group.CPS_view'],'')
+		('root', 'root', 'CPS_root', 'Lastname', 'Firstname', [], ''),
+		('canopsis', 'canopsis', 'Canopsis', 'Psis', 'Cano', ['group.CPS_view'], '')
 	]
 
 	for name in groups:
@@ -74,13 +77,14 @@ def base_init():
 			storage.put(record)
 		except:
 			logger.info(" + Create group '%s'" % name)
-			record = crecord({'_id': 'group.%s' % name }, type='group', name=name, group='group.CPS_account_admin')
+			record = crecord({'_id': 'group.%s' % name}, type='group', name=name,
+				group='group.CPS_account_admin')
 			record.admin_group = 'group.CPS_account_admin'
 			record.data['description'] = groups[name]
 			record.data['internal'] = True
 			record.chmod('o+r')
 			storage.put(record)
-		
+
 	for account in accounts:
 		user = account[0]
 		try:
@@ -88,7 +92,7 @@ def base_init():
 			record = storage.get('account.%s' % user)
 		except:
 			logger.info(" + Create account '%s'" % user)
-			
+
 			record = caccount(user=user, group=account[2])
 			record.firstname = account[4]
 			record.lastname = account[3]
@@ -100,7 +104,6 @@ def base_init():
 			record.passwd(account[1])
 			record.generate_new_authkey()
 			storage.put(record)
-		
 
 	###Root directory
 	try:
@@ -108,20 +111,25 @@ def base_init():
 		rootdir = storage.get('directory.root')
 	except:
 		logger.info(" + Create root directory")
-		rootdir = crecord({'_id': 'directory.root','id': 'directory.root','expanded':'true'},type='view_directory', name="root directory")
+		rootdir = crecord(
+			{'_id': 'directory.root', 'id': 'directory.root', 'expanded': 'true'},
+			type='view_directory', name="root directory")
 		rootdir.chmod('o+r')
 		storage.put(rootdir)
-	
-	records = storage.find({'crecord_type': 'account'}, namespace='object', account=root)
+
+	records = storage.find(
+		{'crecord_type': 'account'}, namespace='object', account=root)
 	for record in records:
 		user = record.data['user']
-		
+
 		try:
 			# Check if exist
 			record = storage.get('directory.root.%s' % user)
 		except:
 			logger.info(" + Create '%s' directory" % user)
-			userdir = crecord({'_id': 'directory.root.%s' % user,'id': 'directory.root.%s' % user ,'expanded':'true'}, type='view_directory', name=user)
+			userdir = crecord(
+				{'_id': 'directory.root.%s' % user, 'id': 'directory.root.%s' % user,
+				'expanded': 'true'}, type='view_directory', name=user)
 			userdir.chown('account.%s' % user)
 			userdir.chgrp('group.%s' % user)
 			userdir.admin_group = 'group.CPS_view_admin'
@@ -136,7 +144,7 @@ def base_init():
 
 
 #add CPS_view to canopsis if needed
-def check_user_canopsis_groups() :
+def check_user_canopsis_groups():
 	try:
 		storage = get_storage(account=root, namespace='object')
 		record = storage.get('account.canopsis')
@@ -147,8 +155,7 @@ def check_user_canopsis_groups() :
 	except:
 		pass
 
-	
-	
+
 def add_description_to_group():
 	storage = get_storage(account=root, namespace='object')
 	for name in groups:
@@ -161,16 +168,18 @@ def add_description_to_group():
 		except:
 			pass
 
-	
+
 def check_and_create_authkey():
 	storage = get_storage(account=root, namespace='object')
-	records = storage.find({'crecord_type': 'account'}, namespace='object', account=root)
+	records = storage.find(
+		{'crecord_type': 'account'}, namespace='object', account=root)
 	accounts = []
 	for record in records:
 		if not 'authkey' in record.data:
 			#caccount auto create authkey if not provided
 			accounts.append(caccount(record))
 	storage.put(accounts)
+
 
 def update_for_new_rights():
 	#Enable rights , update old record
@@ -195,59 +204,57 @@ def update_for_new_rights():
 					account = 'account.%s' % account
 	storage.put(dump)
 
-	
 	#---------------rename canopsis group, root group and curve admin-------------
-	
 	try:
 		storage.remove('group.root')
-		records = storage.find({'aaa_group':'group.root'})
+		records = storage.find({'aaa_group': 'group.root'})
 		for record in records:
 			record.chgrp('CPS_root')
 		storage.put(records)
 	except:
 		pass
-		
+
 	try:
 		storage.remove('group.canopsis')
-		records = storage.find({'aaa_group':'group.canopsis'})
+		records = storage.find({'aaa_group': 'group.canopsis'})
 		for record in records:
 			record.chgrp('CPS_canopsis')
 		storage.put(records)
 	except:
 		pass
-		
+
 	try:
 		storage.remove('group.CPS_canopsis')
-		records = storage.find({'aaa_group':'group.CPS_canopsis'})
+		records = storage.find({'aaa_group': 'group.CPS_canopsis'})
 		for record in records:
 			record.chgrp('Canopsis')
 		storage.put(records)
 	except:
 		pass
-		
+
 	try:
 		storage.remove('group.curves_admin')
-		records = storage.find({'aaa_group':'group.curves_admin'})
+		records = storage.find({'aaa_group': 'group.curves_admin'})
 		for record in records:
 			record.chgrp('CPS_curves_admin')
 		storage.put(records)
 	except:
 		pass
 
-
-	
-		
 	#clean all groups in account.groups
 	try:
-		group_list = ['group.canopsis','group.root','canopsis','root','curves_admin','group.curves_admin']
-		records = storage.find({'crecord_type':'account','groups':{'$in':group_list}})
-		if not isinstance(records,list):
+		group_list = ['group.canopsis', 'group.root', 'canopsis', 'root',
+		'curves_admin', 'group.curves_admin']
+		records = storage.find(
+			{'crecord_type': 'account', 'groups': {'$in': group_list}})
+		if not isinstance(records, list):
 			records = [records]
-		
+
 		for record in records:
 			new_groups_array = []
 			for group in record.data['groups']:
-				if group == 'group.canopsis' or group == 'canopsis' or group == 'CPS_canopsis' or group == 'group.CPS_canopsis':
+				if group == 'group.canopsis' or group == 'canopsis' or \
+					group == 'CPS_canopsis' or group == 'group.CPS_canopsis':
 					group = 'Canopsis'
 				if group == 'group.root' or group == 'root':
 					group = 'CPS_root'
@@ -261,25 +268,27 @@ def update_for_new_rights():
 		pass
 	#---------------------update each record type--------------------
 	#update view
-	dump = storage.find({'$or': [{'crecord_type':'view'},{'crecord_type':'view_directory'}]})
+	dump = storage.find(
+		{'$or': [{'crecord_type': 'view'}, {'crecord_type': 'view_directory'}]})
 	for record in dump:
 		record.chgrp('group.CPS_view_admin')
 		record.admin_group = 'group.CPS_view_admin'
 		record.chmod('g+w')
 		record.chmod('g+r')
 	storage.put(dump, account=root)
-	
+
 	#update schedule
-	dump = storage.find({'crecord_type':'schedule'})
+	dump = storage.find({'crecord_type': 'schedule'})
 	for record in dump:
 		record.chgrp('group.CPS_schedule_admin')
 		record.admin_group = 'group.CPS_schedule_admin'
 		record.chmod('g+w')
 		record.chmod('g+r')
 	storage.put(dump)
-	
+
 	#update accounts
-	dump = storage.find({'$or': [{'crecord_type':'account'},{'crecord_type':'group'}]})
+	dump = storage.find(
+		{'$or': [{'crecord_type': 'account'}, {'crecord_type': 'group'}]})
 	for record in dump:
 		#record.chgrp('group.CPS_account_admin')
 		record.admin_group = 'group.CPS_account_admin'

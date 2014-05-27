@@ -30,13 +30,14 @@ try:
 except:
 	pass
 
+
 class caccount(crecord):
 	def __init__(self, record=None, user=None, group=None, lastname=None, firstname=None, mail=None, groups=[], authkey=None, *args, **kargs):
 		self.user = user or "anonymous"
 		self.groups = groups
 		self.group = group or "group.anonymous"
 		self.shadowpasswd = None
-		
+
 		self.authkey = authkey or self.generate_new_authkey()
 
 		self.lastname = lastname
@@ -46,7 +47,7 @@ class caccount(crecord):
 		self.type = "account"
 
 		self._id = self.type + "." + self.user
-		
+
 		self.access_owner = ['r', 'w']
 		self.access_group = []
 		self.access_other = []
@@ -74,33 +75,33 @@ class caccount(crecord):
 			return True
 
 		return False
-		
+
 	def make_shadow(self, passwd):
 		return hashlib.sha1(str(passwd)).hexdigest()
-	
-	
+
+
 	def check_tmp_cryptedKey(self, authkey):
 		authkey =  str(authkey).upper()
 		if authkey == str(self.make_tmp_cryptedKey(self.shadowpasswd)).upper():
 			return True
-		
+
 		return False
-		
+
 	def make_tmp_cryptedKey(self, shadow=None):
 		if not shadow:
 			shadow = self.shadowpasswd
-			
+
 		return hashlib.sha1(str(shadow).upper() + str( int( time.time() / 10)*10 )).hexdigest()
 
 	def get_authkey(self):
 		return self.authkey
-		
+
 	def check_authkey(self, authkey):
 		if str(authkey).upper() == str(self.get_authkey()).upper():
 			return True
 		else:
 			return False
-		
+
 	def get_mail_md5(self):
 		m = hashlib.md5()
 		m.update(self.mail)
@@ -143,21 +144,21 @@ class caccount(crecord):
 			self.authkey = self.data['authkey']
 
 	def cat(self):
-		print "Id:\t", self._id
-		print " + Fullname:\t", self.firstname, self.lastname
-		print " + User:\t", self.user
-		print " + Mail:\t", self.mail
-		print " + Owner:\t", self.owner
-		print " + Group:\t", self.group
-		print " + Groups:\t", self.groups, "\n"
-		
+		print("Id:\t", self._id)
+		print(" + Fullname:\t", self.firstname, self.lastname)
+		print(" + User:\t", self.user)
+		print(" + Mail:\t", self.mail)
+		print(" + Owner:\t", self.owner)
+		print(" + Group:\t", self.group)
+		print(" + Groups:\t", self.groups, "\n")
+
 	def add_in_groups(self, groups, storage=None):
 		if not storage:
 			storage = self.storage
-		
+
 		if not isinstance(groups,list):
 			groups = [groups]
-			
+
 		# String _id to cgroup
 		group_list = []
 		for group in groups:
@@ -170,26 +171,26 @@ class caccount(crecord):
 						group_list.append(cgroup(record,storage=storage))
 					except Exception,err:
 						raise Exception('Group not found: %s', err)
-												
+
 		# Add to groups
 		for group in group_list:
 				if unicode(group._id) not in self.groups:
 					self.groups.append(unicode(group._id))
 					if self.storage:
 						self.save()
-					
+
 				if unicode(self._id) not in group.account_ids:
 					group.account_ids.append(unicode(self._id))
 					if group.storage:
 						group.save()
-	
+
 	def remove_from_groups(self, groups, storage=None):
 		if not storage:
 			storage = self.storage
-		
+
 		if not isinstance(groups,list):
 				groups = [groups]
-				
+
 		# String _id to cgroup
 		group_list = []
 		for group in groups:
@@ -208,7 +209,7 @@ class caccount(crecord):
 					self.groups.remove(group._id)
 					if self.storage:
 						self.save()
-					
+
 				if unicode(self._id) in group.account_ids:
 					group.account_ids.remove(self._id)
 					if group.storage:
@@ -221,7 +222,7 @@ def caccount_getall(storage):
 	records = storage.find({'crecord_type': 'account'})
 	for record in records:
 		accounts.append(caccount(record))
-	
+
 	return accounts
 
 def caccount_get(storage, user):

@@ -36,6 +36,7 @@ logger = logging.getLogger('Entities')
 
 
 def get_entities_from_db(mfilter):
+
 	account = get_account()
 	storage = get_storage(namespace=TABLE_NAME, account=account)
 	backend = storage.get_backend()
@@ -96,7 +97,7 @@ def get_entities_with_custom_filter():
 		mfilter = request.body.readline()
 		mfilter = json.loads(mfilter)['filter']
 
-	except ValueError, err:
+	except ValueError as err:
 		if 'filter' not in request.params:
 			return HTTPError(500, json.dumps({
 				'total': 0,

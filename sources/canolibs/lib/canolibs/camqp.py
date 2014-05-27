@@ -52,7 +52,7 @@ class camqp(threading.Thread):
 		if (read_config_file):
 			self.read_config("amqp")
 
-		self.amqp_uri = "amqp://%s:%s@%s:%s/%s" % (self.userid, self.password, self.host, self.port, self.virtual_host)
+		self.amqp_uri = "amqp://%s:%s@%s:%s/%s" % (self.userid, self.password, selfdd.host, self.port, self.virtual_host)
 
 		self.logger.setLevel(logging_level)
 

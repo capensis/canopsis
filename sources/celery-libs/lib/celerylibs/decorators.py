@@ -30,22 +30,24 @@ import logging
 
 logger = logging.getLogger('Task result to db')
 
+
 def simple_decorator(decorator):
-    def new_decorator(f):
-        g = decorator(f)
-        g.__name__ = f.__name__
-        g.__module__ = f.__module__
-        g.__doc__ = f.__doc__
-        g.__dict__.update(f.__dict__)
-        return g
-    new_decorator.__name__ = decorator.__name__
-    new_decorator.__doc__ = decorator.__doc__
-    new_decorator.__dict__.update(decorator.__dict__)
-    return new_decorator
+	def new_decorator(f):
+		g = decorator(f)
+		g.__name__ = f.__name__
+		g.__module__ = f.__module__
+		g.__doc__ = f.__doc__
+		g.__dict__.update(f.__dict__)
+		return g
+	new_decorator.__name__ = decorator.__name__
+	new_decorator.__doc__ = decorator.__doc__
+	new_decorator.__dict__.update(decorator.__dict__)
+	return new_decorator
+
 
 @simple_decorator
-def log_task(func):	
-	def wrapper(*args,**kwargs):
+def log_task(func):
+	def wrapper(*args, **kwargs):
 		'''
 		try:
 			task_name = kwargs['_scheduled']
@@ -54,12 +56,12 @@ def log_task(func):
 			task_name = None
 			logger.info('Not scheduled task')
 		'''
-		
+
 		try:
 			result = func(*args, **kwargs)
 			success = True
 			logger.info('Task successfully done')
-		except Exception, err:
+		except Exception as err:
 			success = False
 			function_error = str(err)
 			logger.error(err)
@@ -73,11 +75,11 @@ def log_task(func):
 		except:
 			logger.info('No account specified in the task')
 			account = caccount()
-			
+
 		storage = cstorage(account=account, namespace='task_log')
 		taskStorage = cstorage(account=account, namespace='task')
 		'''
-		
+
 		timestamp = int(time.time())
 
 		# The function have succeed ?
@@ -91,16 +93,14 @@ def log_task(func):
 					'total': len(data),
 					'celery_output': 'Celery task done',
 					'timestamp': timestamp,
-					'data': data
-					}
+					'data': data}
 		else:
 			log = {	'success': False,
 					'total': 0,
-					'celery_output': [ str(function_error) ],
-					'timestamp':timestamp,
-					'data': []
-				  }
-		
+					'celery_output': [str(function_error)],
+					'timestamp': timestamp,
+					'data': []}
+
 		'''
 		#Put the log
 		try:
@@ -108,7 +108,7 @@ def log_task(func):
 			if task_name:
 				logger.info('Task scheduled')
 				log_record = crecord(log,name=task_name)
-				
+
 				# Replace last log with this one
 				try:
 					mfilter = {'crecord_name':task_name}
@@ -122,17 +122,17 @@ def log_task(func):
 						logger.error('Task not found in db, can\'t update')
 				except Exception, err:
 					logger.error('Error when put log in task_log %s' % err)
-				
+
 			else:
 				logger.info('Not a scheduled task, put log in db')
 				log_record = crecord(log)
-				
+
 			# Put log in storage
 			storage.put(log_record)
 		except Exception, err:
 			logger.error('Error when put log in task_log %s' % err)
 
-		
+
 		# Publish Amqp event
 		if success:
 			status=0
@@ -149,12 +149,12 @@ def log_task(func):
 			)
 		logger.debug('Send Event: %s' % event)
 		key = cevent.get_routingkey(event)
-		
+
 		amqp = camqp()
 		amqp.start()
-		
+
 		amqp.publish(event, key, amqp.exchange_name_events)
-		
+
 		amqp.stop()
 		amqp.join()
 		'''

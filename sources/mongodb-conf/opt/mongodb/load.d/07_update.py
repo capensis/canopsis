@@ -18,22 +18,24 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-import logging, math
+import math
 from cstorage import get_storage
 from caccount import caccount
 from datetime import timedelta
-import time
 
 logger = None
 root = caccount(user="root", group="root")
 storage = get_storage(account=root, namespace='object')
 
+
 def init():
 	logger.info(' + init')
+
 
 def update():
 	init()
 	update_schedule()
+
 
 def update_schedule():
 
@@ -109,13 +111,13 @@ def update_schedule():
 
 			if nbDays >= 365:
 				exporting['unit'] = 'years'
-				exporting['length'] = int(nbDays/365)
+				exporting['length'] = int(nbDays / 365)
 			elif nbDays >= 30:
 				exporting['unit'] = 'months'
-				exporting['length'] = int(nbDays/30)
+				exporting['length'] = int(nbDays / 30)
 			elif nbDays >= 7:
 				exporting['unit'] = 'weeks'
-				exporting['length'] = int(nbDays/7)
+				exporting['length'] = int(nbDays / 7)
 			elif nbDays >= 1:
 				exporting['unit'] = 'days'
 				exporting['length'] = math.floor(nbDays)
@@ -123,10 +125,11 @@ def update_schedule():
 				exporting['unit'] = 'hours'
 				exporting['length'] = math.floor(nbDays)
 
-		if 'interval' in kwargs :
+		if 'interval' in kwargs:
 			del kwargs['interval']
 
-		if "exporting_intervalUnit" in kwargs and "exporting_intervalLength" in kwargs:
+		if "exporting_intervalUnit" in kwargs and \
+			"exporting_intervalLength" in kwargs:
 			exporting.update({
 				"type": kwargs.get("exporting_advanced", "duration"),
 				"length": kwargs['exporting_intervalLength'],

@@ -29,7 +29,7 @@ from pyperfstore3.timewindow import TimeWindow, Period
 import cevent
 import json
 
-import time
+from time import time
 from datetime import datetime
 from ctools import roundSignifiantDigit
 
@@ -47,24 +47,19 @@ class engine(cengine):
 		self.thd_warn_sec_per_evt = 8
 		self.thd_crit_sec_per_evt = 10
 
-
 	def pre_run(self):
 		self.storage = get_storage(namespace='object',
 			account=caccount(user="root", group="root"))
 		self.manager = Manager(logging_level=self.logging_level)
 
-		self.beat()
-
-	def beat(self):
-		self.logger.debug('Consolidation BEAT')
-
-	def consume_dispatcher(self,  event, *args, **kargs):
+	def consume_dispatcher(self, event, *args, **kargs):
 		self.logger.debug("Consolidate metrics:")
 
-		now = time.time()
+		now = time()
 		beat_elapsed = 0
 
 		record = self.get_ready_record(event)
+
 		if record:
 			record = record.dump()
 
@@ -84,7 +79,8 @@ class engine(cengine):
 
 			timewindow = TimeWindow(start=last_run, stop=now)
 
-			self.logger.debug(" + elapsed: {0}, timewindow: {1}".format(elapsed, timewindow))
+			self.logger.debug(" + elapsed: {0}, timewindow: {1}".format(
+				elapsed, timewindow))
 
 			mfilter = record.get('mfilter')
 
@@ -170,7 +166,7 @@ class engine(cengine):
 					self.logger.debug(
 						" + From: %s To %s "%
 						(datetime.fromtimestamp(tstart).strftime('%Y-%m-%d %H:%M:%S'),
-						datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S'))
+						datetime.fromtimestamp(time()).strftime('%Y-%m-%d %H:%M:%S'))
 					)
 
 					values = []
@@ -235,7 +231,7 @@ class engine(cengine):
 
 						self.logger.debug("Step 5: Update configuration")
 
-						beat_elapsed = time.time() - now
+						beat_elapsed = time() - now
 
 						self.storage.update(_id, {
 							'consolidation_ts': int(now),
@@ -252,6 +248,6 @@ class engine(cengine):
 		self.crecord_task_complete(_id)
 
 		if not beat_elapsed:
-			beat_elapsed = time.time() - now
+			beat_elapsed = time() - now
 
 		self.counter_worktime += beat_elapsed

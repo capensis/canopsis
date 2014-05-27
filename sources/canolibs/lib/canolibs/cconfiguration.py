@@ -35,9 +35,22 @@ class Configurable(object):
 
 	DEFAULT_CONFIGURATION_FILE = '~/etc/conf.conf'
 
+	MASTER = 'MASTER'
+
+	AUTO_CONF = 'auto_conf'
+	LOGGING_LEVEL = 'logging_level'
+
+	PARSING_RULES = {
+		MASTER:
+			{
+				AUTO_CONF: bool,
+				LOGGING_LEVEL: str
+			}
+	}
+
 	def __init__(self,
 		configuration_file=DEFAULT_CONFIGURATION_FILE, auto_conf=True,
-		naming_rule=None, logging_level=logging.INFO, _ready_to_conf=True,
+		logging_level=logging.INFO, _ready_to_conf=True,
 		*args, **kwargs):
 
 		super(Configurable, self).__init__(*args, **kwargs)
@@ -50,38 +63,24 @@ class Configurable(object):
 
 		self.logger = logging.getLogger(type(self).__name__)
 
-		self.naming_rule = naming_rule
-
 		if _ready_to_conf and self.auto_conf:
 			self.apply_configuration(
-				parsers_by_option_by_section=self.get_parsers_by_option_by_section(),
-				configuration_file=self.configuration_file,
-				naming_rule=self.naming_rule)
+				parsing_rules=self.get_parsing_rules(),
+				configuration_file=self.configuration_file)
 
-	def _set_logging_level(self, option_value):
-		self.logger.setLevel(option_value)
-		return option_value
-
-	def get_parsers_by_option_by_section(self):
+	def get_parsing_rules(self, *args, **kwargs):
 		"""
 		Get the right structure to use to parse a configuration file.
 
-		:rtype: dict
+		:rtype: list of dict(section, dict(option, parser(option)))
 		"""
 
-		result = {
-			'OPTIONS':
-				{
-					'auto_conf': bool,
-					'logging_level': self._set_logging_level,
-					'naming_rule': lambda option_value: eval(option_value)
-				}
-		}
+		result = [Configurable.PARSING_RULES]
 
 		return result
 
-	def apply_configuration(self, parsers_by_option_by_section=None,
-		configuration_file=None, naming_rule=None):
+	def apply_configuration(self, parsing_rules=None,
+		configuration_file=None, *args, **kwargs):
 		"""
 		Apply configuration on a destination in 3 phases:
 
@@ -91,81 +90,70 @@ class Configurable(object):
 		3. set destination attributes with options values where attribute names
 		are option names in minuscule.
 
-		:param parsers_by_option_by_section: struct to use
+		:param parsing_rules: struct to use
 		in order to get values from configuration_file. If None, use
-		self.get_parsers_by_option_by_section.
+		self.get_parsing_rules.
 		:param configuration_file: configuration file.
-		:param naming_rule: option naming rule for setvalues on self.
 
-		:type parsers_by_option_by_section: dict
+		:type parsing_rules: dict
 		:type configuration_file: str
-		:type naming_rule: function or method
-
-		:return: a dictionary of errors or parsers respectively for
-		option parsing errors or not found options.
-		:rtype: dict
 		"""
 
-		if parsers_by_option_by_section is None:
-			parsers_by_option_by_section = self.get_parsers_by_option_by_section()
+		if parsing_rules is None:
+			parsing_rules = self.get_parsing_rules()
 
 		if configuration_file is None:
 			configuration_file = self.configuration_file
 
+		if isinstance(configuration_file, str):
+			configuration_file = [configuration_file]
+
 		config = ConfigParser.RawConfigParser()
 		config.read(expanduser(configuration_file))
 
-		result = parsers_by_option_by_section.copy()
+		parameters = dict()
+		error_parameters = dict()
 
-		for section, parsers_by_options in \
-			parsers_by_option_by_section.iteritems():
+		log_message = '{0}/{1}'.format(configuration_file, '{0}/{1}')
 
-			if config.has_section(section):
+		for parsing_rule in parsing_rules:
 
-				for option, parser in parsers_by_options.iteritems():
+			for section, parsers_by_options in parsing_rule.iteritems():
 
-					if config.has_option(section, option):
+				if config.has_section(section):
 
-						try:  # parsing option
+					for option, parser in parsers_by_options.iteritems():
+
+						option_log_message = '{0} = {1}'.format(
+							log_message.format(section, option), '{0}')
+
+						if config.has_option(section, option):
+
 							option_value = config.get(section, option)
-							value = parser(option_value)
-						except Exception as e:
-							result[section][option] = e
-							em = 'Impossible to parse {0}/{1} in {2}: {3}'
-							em = em.format(section, option, configuration_file, e)
-							self.logger.error(em)
-						else:
-							try:  # naming option
-								name = naming_rule(option)
+
+							try:  # parsing option
+								value = parser(option_value)
+
 							except Exception as e:
-								result[section][option] = e
-								em = 'Impossible to rename option {0}/{1} in \
-									{2}: {3}'.format(
-										section, option, configuration_file, e)
-								self.logger.error(em)
+								error_parameters[option] = e
+								parameters.pop(option, None)
+								error_message = option_log_message.format(e)
+								self.logger.error(error_message)
+
 							else:
-								try:  # setattr
-									setattr(self, name, value)
-								except TypeError as e:
-									result[section][option] = e
-									em = 'Impossible to set attribute {0}.{1} \
-									to {2}: {3}'.format(self, name, value, e)
-									self.logger.error(em)
-								else:
-									del result[section][option]
+								parameters[option] = value
+								error_parameters.pop(option, None)
+								info_message = option_log_message.format(value)
+								self.logger.info(info_message)
 
-					else:
-						wm = 'option {0}/{1} not found in {2}'.format(
-							section, option, configuration_file)
-						self.logger.warning(wm)
+		self._set_parameters(parameters, error_parameters)
 
-				# if no option, remove the section
-				if not result[section]:
-					del result[section]
+	def _set_parameters(self, parameters, error_parameters, *args, **kwargs):
 
-			else:
-				wm = 'section {0} not found in {1}'.format(
-					section, configuration_file)
-				self.logger.warning(wm)
+		logging_level = parameters.get(Configurable.LOGGING_LEVEL)
+		if logging_level is not None:
+			self.logger.setLevel(logging_level)
 
-		return result
+		auto_conf = parameters.get(Configurable.AUTO_CONF)
+		if auto_conf is not None:
+			self.auto_conf = auto_conf
