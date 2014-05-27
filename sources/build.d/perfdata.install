@@ -1,4 +1,4 @@
-NAME="pyperfstore3"
+NAME="perfdata"
 
 LOG="$LOG_PATH/$NAME.log"
 rm -f $LOG &> /dev/null
