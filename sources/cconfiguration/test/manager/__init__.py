@@ -151,7 +151,7 @@ class ConfigurationManagerTest(TestCase):
         self.full_parameters['FOO'][ConfigurationManagerTest.ERROR_PARAMETER]\
             = 'er'
 
-        self.configuration_file = self._get_configuration_file()
+        self.configuration_file = self.get_configuration_file()
 
         # remove configuration file
         try:
@@ -172,13 +172,9 @@ class ConfigurationManagerTest(TestCase):
         except OSError:
             pass
 
-    def _get_configuration_file(self):
+    def get_configuration_file(self):
 
         return '/tmp/cconfiguration.conf'
-
-    def _get_configuration_manager(self):
-
-        return ConfigurationManager()
 
     def test_get_parameters(self):
 
@@ -209,6 +205,12 @@ class ConfigurationManagerTest(TestCase):
                 name: type(value) for name, value in
                     self.parameters.iteritems()}
         })
+
+    def _get_configuration_manager(self):
+        """
+        Only one method to override by sub tests
+        """
+        return ConfigurationManager()
 
 if __name__ == '__main__':
     main()

@@ -19,28 +19,18 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from unittest import TestCase, main
+from unittest import main
+
+from test.manager import ConfigurationManagerTest
 
 from cconfiguration.manager.ini import ConfigurationManager
 
 
-class ConfigurationManagerTest(TestCase):
+class ConfigurationManagerTest(ConfigurationManagerTest):
 
-    PATH = './ini.conf'
+    def _get_configuration_manager(self):
 
-    def setUp(self):
-        self.manager = ConfigurationManager()
-        self.resource = self.manager._get_config_resource(
-            ConfigurationManagerTest.PATH, logger=None)
-
-    def test_get_parameters(self):
-
-        self.manager.get_parameters(
-            config_resource=self.resource,
-            configuration_file=PATH, )
-
-    def test_set_parameters(self):
-        raise NotImplementedError()
+        return ConfigurationManager()
 
 if __name__ == '__main__':
     main()

@@ -19,21 +19,18 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from unittest import TestCase, main
+from unittest import main
 
-from cconfiguration.language.json import ConfigurationLanguageManager
+from test.manager import ConfigurationManagerTest
+
+from cconfiguration.manager.json import ConfigurationManager
 
 
-class ConfigurationLanguageManagerTest(TestCase):
+class ConfigurationManagerTest(ConfigurationManagerTest):
 
-    def setUp(self):
-        self.manager = ConfigurationLanguageManager()
+    def _get_configuration_manager(self):
 
-    def test_get_parameters(self):
-        raise NotImplementedError()
-
-    def test_set_parameters(self):
-        raise NotImplementedError()
+        return ConfigurationManager()
 
 if __name__ == '__main__':
     main()
