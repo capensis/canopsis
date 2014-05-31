@@ -44,7 +44,8 @@ class ConfigurationManager(ConfigurationManager):
         result = None
 
         try:
-            result = load(open(configuration_file))
+            with open(configuration_file, 'a') as handle:
+                result = load(handle)
 
         except Exception:
             pass
@@ -63,4 +64,10 @@ class ConfigurationManager(ConfigurationManager):
         config_resource[category][parameter_name] = parameter
 
     def _write_config_resource(config_resource, configuration_file):
-        dump(open(config_resource, 'w+'))
+
+        try:
+            with open(configuration_file, 'a') as handle:
+                dump(handle)
+
+        except Exception:
+            pass
