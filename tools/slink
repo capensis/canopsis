@@ -39,6 +39,7 @@ rm -Rf $CPS/lib/python2.7/site-packages/cperfdata-0.1-py2.7.egg/*
 rm -Rf $CPS/lib/python2.7/site-packages/ctimeserie-0.1-py2.7.egg/*
 rm -Rf $CPS/lib/python2.7/site-packages/cstorage-0.1-py2.7.egg/*
 rm -Rf $CPS/lib/python2.7/site-packages/cmongo-0.1-py2.7.egg/*
+rm -Rf $CPS/lib/python2.7/site-packages/cconfiguration-0.1-py2.7.egg/*
 
 if [ $LINK -eq 1 ]; then
 	ln -s $SRC/sources/wkhtmltopdf-libs/lib/wkhtmltopdf/* $CPS/lib/wkhtmltopdf/
@@ -63,6 +64,7 @@ if [ $LINK -eq 1 ]; then
 	ln -s $SRC/sources/ctimeserie/ctimeserie $CPS/lib/python2.7/site-packages/ctimeserie-0.1-py2.7.egg/
 	ln -s $SRC/sources/cstorage/cstorage $CPS/lib/python2.7/site-packages/cstorage-0.1-py2.7.egg/
 	ln -s $SRC/sources/cmongo/cmongo $CPS/lib/python2.7/site-packages/cmongo-0.1-py2.7.egg/
+	ln -s $SRC/sources/cconfiguration/cconfiguration $CPS/lib/python2.7/site-packages/cconfiguration-0.1-py2.7.egg/
 fi
 
 

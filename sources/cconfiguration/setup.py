@@ -1,22 +1,21 @@
 from setuptools import setup
 
 install_requires = [
-	#"pymongo", "ctimeserie", "cstorage"
 ]
 
 setup(
-	name="cmongo",
+	name="cconfiguration",
 	version="0.1",
 	author="Capensis",
 	author_email="canopsis@capensis.fr",
-	description=("Mongo for canopsis"),
+	description=("Canopsis configuration"),
 	license="AGPL v3",
 	zip_safe=False,
-	keywords="store mongo canopsis",
+	keywords="configuration canopsis",
 	install_requires=install_requires,
 	url = "http://www.canopsis.org",
-	packages=['cmongo'],
-	scripts=['scripts/cmongo'],
+	packages=['cconfiguration'],
+	scripts=['scripts/cconfiguration'],
 	long_description=open('README').read(),
 	test_suite="test"
 )

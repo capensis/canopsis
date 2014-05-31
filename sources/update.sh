@@ -37,7 +37,7 @@ do
 
 		cd $SRC_PATH/$pkg
 
-		if [ "$pkg" == "pyperfstore2" ] || [ "$pkg" == "ctimeserie"] || [ "$pkg" == "cstorage"] || [ "$pkg" == "cmongo"] || [ "$pkg" == "cperfdata" ]
+		if [ "$pkg" == "pyperfstore2" ] || [ "$pkg" == "ctimeserie"] || [ "$pkg" == "cstorage"] || [ "$pkg" == "cmongo"] || [ "$pkg" == "cperfdata" ] || [ "$pkg" == "cconfiguration" ]
 		then
 			python setup.py install
 		else

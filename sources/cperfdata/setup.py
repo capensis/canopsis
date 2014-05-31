@@ -1,7 +1,6 @@
 from setuptools import setup
 
 install_requires = [
-	"pymongo", "ctimeserie", "cstorage"
 ]
 
 setup(
