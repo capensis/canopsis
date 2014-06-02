@@ -47,6 +47,7 @@ class cengine(object):
 			logging_level=logging.INFO,
 			exchange_name='amq.direct',
 			routing_keys=[],
+			camqp_custom=None,
 			*args, **kwargs):
 
 		super(cengine, self).__init__(*args, **kwargs)
@@ -56,6 +57,12 @@ class cengine(object):
 		self.RUN = True
 
 		self.name = name
+
+		#Set parametrized camqp for testing purposes
+		if camqp_custom == None:
+			self.camqp = camqp
+		else:
+			self.camqp = camqp_custom
 
 		self.amqp_queue = "Engine_{0}".format(self.name)
 		self.routing_keys = routing_keys
@@ -150,7 +157,7 @@ class cengine(object):
 
 		self.logger.info("Start Engine with pid %s" % (os.getpid()))
 
-		self.amqp = camqp(logging_level=self.logging_level, logging_name="%s-amqp" % self.name, on_ready=ready)
+		self.amqp = self.camqp(logging_level=self.logging_level, logging_name="%s-amqp" % self.name, on_ready=ready)
 
 		if self.create_queue:
 			self.new_amqp_queue(self.amqp_queue, self.routing_keys, self.on_amqp_event, self.exchange_name)
@@ -318,7 +325,7 @@ class cengine(object):
 
 		except Exception, err:
 			self.logger.error("Beat raise exception: %s" % err)
-			traceback.print_exc(file=sys.stdout)
+			self.logger.error(traceback.print_exc())
 
 		finally:
 			self.beat_lock = False
