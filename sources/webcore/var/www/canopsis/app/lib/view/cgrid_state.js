@@ -47,8 +47,8 @@ Ext.define('canopsis.lib.view.cgrid_state' , {
 	opt_show_last_check: true,
 	opt_show_output: true,
 	opt_show_tags: true,
-	opt_show_ticket: true,
-	
+	//opt_show_ticket: true,
+		
 	opt_show_row_background: true,
 
 	opt_bar_delete: false,
@@ -71,8 +71,6 @@ Ext.define('canopsis.lib.view.cgrid_state' , {
 
 	initComponent: function() {
 		this.columns = [];
-
-		console.log( this );
 
 		if ( this.opt_show_form_ack && ( this.opt_show_ack_state_solved || this.opt_show_ack_state_pendingsolved || this.opt_show_ack_state_pendingaction || this.opt_show_ack_state_pendingvalidation ) ) {
 			this.selModel= Ext.create('Ext.selection.CheckboxModel');	
@@ -149,7 +147,7 @@ Ext.define('canopsis.lib.view.cgrid_state' , {
 				header: 'Ticket',
 				sortable: this.opt_column_sortable,
 				flex: 1,
-				dataIndex: 'state_type',
+				dataIndex: 'ticket',
 				renderer: rdr_ticket
 			});
 		}
@@ -178,7 +176,8 @@ Ext.define('canopsis.lib.view.cgrid_state' , {
 				header: _('Resource'),
 				flex: 1,
 				sortable: this.opt_column_sortable,
-				dataIndex: 'resource'
+				dataIndex: 'resource',
+				renderer: rdr_resource
 			});
 		}
 
@@ -201,6 +200,114 @@ Ext.define('canopsis.lib.view.cgrid_state' , {
 			});
 		}
 
+		if (this.opt_show_eue_step) {
+			this.columns.push({
+				xtype: 'actioncolumn',
+				header: _('EUE'),
+				width: 25,
+				items: [{
+					icon: '/static/canopsis/themes/canopsis/resources/images/icons/date_error.png',
+					tooltip: 'Step Summary',
+
+					handler: function(grid, rowIndex, colIndex) {
+						var varTmp = grid.store.data.items[rowIndex].data.resource.split('.')
+				
+						var model = Ext.define('Scenarios', {
+							extend : "Ext.data.Model",
+							fields : [
+								{ 'name': 'resource', 'type': 'string'},
+								{ 'name': 'state', 'type': 'string'},
+								{ 'name': 'timestamp', 'type': 'float'},
+								{ 'name': 'duration', "type":"int"},
+								{ 'name': 'output', "type":"string"}
+							]
+						});
+						var scenario_errors  = Ext.create('canopsis.lib.store.cstore', {
+							model: model,
+							pageSize: 30,
+							proxy: {
+								type: 'rest',
+								url: '/rest/events/event',
+								reader: {
+									type: 'json',
+									root: 'data',
+									totalProperty: 'total',
+									successProperty: 'success'
+								}
+							},
+							autoLoad: true
+						});
+					 	var filter = {
+							'$and': [{
+								'child': {
+									'$regex': varTmp[0]+'.'+varTmp[1],
+								}
+							},{
+								'uniqueKey': grid.store.data.items[rowIndex].data.uniqueKey,
+							},{
+								'type_message': 'step'
+							}]
+						};
+						scenario_errors.setFilter(filter);
+						scenario_errors.sort({
+							property: 'resource',
+							direction: 'ASC'
+						});
+					  	var grid = Ext.create('Ext.grid.Panel', {
+							layout: 'fit',
+							title: 'Scenario Step',
+							columns: [{
+								dataIndex: 'state',
+								width: 25,
+								sortable: false,
+								renderer: function(value) {
+									return rdr_status(parseInt(value));
+								}
+							},{
+								header: 'Date',
+								dataIndex: 'timestamp',
+								align: 'center',
+								width: 150,
+								sortable: false,
+								renderer: function(value) {
+									return rdr_tstodate(value);
+								}
+							},{
+								header: 'Name',
+								dataIndex: 'resource',
+								flex: 7,
+								sortable: false,
+								renderer: function(value) {
+									rkTab = value.split('.');
+									return rkTab[2];
+								}
+ 							},{
+								header: 'Message',
+								dataIndex: 'output',
+								flex: 7,
+								sortable: false,
+							}],
+							store: scenario_errors
+						});
+
+						var gwidth = Ext.getBody().getWidth() * 0.4;
+						var gheight = Ext.getBody().getHeight() * 0.6;
+
+						Ext.create('Ext.window.Window', {
+							xtype: 'panel',
+							layout: 'fit',
+							id: 'window-screenshot',
+							autoScroll: true,
+							width: gwidth,
+							height: gheight,
+							items: [grid],
+							renderTo: Ext.getBody(),
+							modal: true
+						}).show().center();
+					}
+				}]
+			})
+		}
 
 		//store
 		if (! this.store) {

@@ -72,7 +72,6 @@ class cengine(object):
 
 		self.next_amqp_queues = next_amqp_queues
 		self.get_amqp_queue = itertools.cycle(self.next_amqp_queues)
-		self.original_next_amqp_queues = list(self.next_amqp_queues)
 
 		## Get from internal or external queue
 		self.next_balanced = next_balanced
@@ -258,9 +257,6 @@ class cengine(object):
 			for queue_name in self.next_amqp_queues:
 				#self.logger.debug(" + Forward via amqp to '%s'" % engine.amqp_queue)
 				self.amqp.publish(event, queue_name, "amq.direct")
-				if (len(set(self.original_next_amqp_queues).intersection(self.next_amqp_queues))
-				    != len(self.original_next_amqp_queues)):
-					self.next_amqp_queues = list(self.original_next_amqp_queues)
 
 
 	def _beat(self):
