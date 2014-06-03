@@ -66,12 +66,15 @@ Ext.define('widgets.mini_chart.mini_chart', {
 	},
 
 	doRefresh: function (from, to) {
-		this.from = from;
-		this.to = to;
+		//TODO take care of live reporting.
+		var now = Ext.Date.now();
 
-		log.debug('Get values from ' + new Date(from) + ' to ' + new Date(to), this.logAuthor);
+		this.from = now - this.time_window;
+		this.to = now;
 
-		this.refreshNodes(from, to);
+		log.debug('Get values from ' + new Date(this.from) + ' to ' + new Date(this.to), this.logAuthor);
+
+		this.refreshNodes(now - this.from, now);
 
 		this.callParent(arguments);
 	},
