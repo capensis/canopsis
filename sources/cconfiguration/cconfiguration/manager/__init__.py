@@ -35,6 +35,9 @@ class MetaConfigurationManager(type):
             # add it among managers
             ConfigurationManager._MANAGERS.add(self)
 
+from stat import ST_SIZE
+from os import stat, isfile
+
 
 class ConfigurationManager(object):
     """
@@ -158,79 +161,90 @@ class ConfigurationManager(object):
 
         config_resource = None
 
-        try:
-            # first, read configuration file
-            config_resource = self._get_config_resource(
-                configuration_file=configuration_file, logger=logger)
+        # ensure configuration_file exists and is not empty.
+        if isfile(configuration_file) and stat(configuration_file)[ST_SIZE]:
 
-        except Exception as e:
-            # if an error occured, add it in error_parameters at
-            # ConfigurationLanguage
-            config_resource_error = error_parameters.setdefault(
-                ConfigurationManager.CONFIGURATION_FILE, list())
-            config_resource_error.append(e)
-            logger.error(
-                'Impossible to parse configuration_file {0}: {1}'.format(
-                    configuration_file, e))
+            try:
+                # first, read configuration file
+                config_resource = self._get_config_resource(
+                    configuration_file=configuration_file, logger=logger)
 
-        else:  # else process configuration file
+            except Exception as e:
+                # if an error occured, add it in error_parameters at
+                # ConfigurationLanguage
+                config_resource_error = error_parameters.setdefault(
+                    ConfigurationManager.CONFIGURATION_FILE, list())
+                config_resource_error.append(e)
+                logger.error(
+                    'Impossible to parse configuration_file {0}: {1}'.format(
+                        configuration_file, e))
 
-            # get generic logging message
-            log_message = '{0}/{1}'.format(configuration_file, '{0}/{1}')
+            else:  # else process configuration file
 
-            # for each parsing rule in the ascending order
-            for parsing_rule in parsing_rules:
+                # get generic logging message
+                log_message = '{0}/{1}'.format(configuration_file, '{0}/{1}')
 
-                # iterate on all category
-                for category, parsers_by_parameter in parsing_rule.iteritems():
+                # for each parsing rule in the ascending order
+                for parsing_rule in parsing_rules:
 
-                    # if parsing_rule category exists in configuration_files
-                    if self._has_category(
-                        config_resource=config_resource, category=category,
-                            logger=logger):
+                    # iterate on all category
+                    for category, parsers_by_parameter in \
+                            parsing_rule.iteritems():
 
-                        # iterate on all parameter_name
-                        for name, parser in parsers_by_parameter.iteritems():
+                        # if parsing_rule category exists in
+                        # configuration_files
+                        if self._has_category(
+                            config_resource=config_resource, category=category,
+                                logger=logger):
 
-                            # if parameter_name exists
-                            if self._has_parameter(
-                                config_resource=config_resource,
-                                category=category,
-                                parameter_name=name,
-                                    logger=logger):
+                            # iterate on all parameter_name
+                            for name, parser in \
+                                    parsers_by_parameter.iteritems():
 
-                                # construct generic log message for each name
-                                option_log_message = '{0} = {1}'.format(
-                                    log_message.format(category, name), '{0}')
-
-                                # get sub_category_value
-                                sub_category_value = self._get_parameter(
+                                # if parameter_name exists
+                                if self._has_parameter(
                                     config_resource=config_resource,
                                     category=category,
                                     parameter_name=name,
-                                    logger=logger)
+                                        logger=logger):
 
-                                try:  # parse parameter_name
-                                    value = parser(sub_category_value)
+                                    # construct generic log message for each
+                                    # name
+                                    option_log_message = '{0} = {1}'.format(
+                                        log_message.format(
+                                            category, name),
+                                        '{0}')
 
-                                # if an exception occured
-                                except Exception as e:
-                                    # set error among errors result
-                                    error_parameters[name] = e
-                                    # remove value from parameters result
-                                    parameters.pop(name, None)
-                                    error_message = option_log_message.format(
-                                        e)
-                                    logger.error(error_message)
+                                    # get sub_category_value
+                                    sub_category_value = self._get_parameter(
+                                        config_resource=config_resource,
+                                        category=category,
+                                        parameter_name=name,
+                                        logger=logger)
 
-                                else:  # if parsing is ok
-                                    # set value for parameters result
-                                    parameters[name] = value
-                                    # remove exception from errors result
-                                    error_parameters.pop(name, None)
-                                    info_message = option_log_message.format(
-                                        value)
-                                    logger.info(info_message)
+                                    try:  # parse parameter_name
+                                        value = parser(sub_category_value)
+
+                                    # if an exception occured
+                                    except Exception as e:
+                                        # set error among errors result
+                                        error_parameters[name] = e
+                                        # remove value from parameters result
+                                        parameters.pop(name, None)
+                                        error_message = \
+                                            option_log_message.format(
+                                                e)
+                                        logger.error(error_message)
+
+                                    else:  # if parsing is ok
+                                        # set value for parameters result
+                                        parameters[name] = value
+                                        # remove exception from errors result
+                                        error_parameters.pop(name, None)
+                                        info_message = \
+                                            option_log_message.format(
+                                                value)
+                                        logger.info(info_message)
 
         # set the result with a tuple of parameters and error_parameters
         result = parameters, error_parameters

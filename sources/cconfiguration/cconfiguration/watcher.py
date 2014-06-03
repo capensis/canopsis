@@ -20,7 +20,7 @@
 # ---------------------------------
 
 """
-
+Dictionary of configurables by configuration file.
 """
 _CONFIGURABLE_BY_CONFIGURATION_FILES = dict()
 

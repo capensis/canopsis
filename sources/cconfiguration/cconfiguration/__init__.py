@@ -27,6 +27,8 @@ import logging
 
 from cconfiguration.manager import ConfigurationManager
 
+from cconfiguration.watcher import add_configurable, remove_configurable
+
 
 class Configurable(object):
     """
@@ -104,8 +106,10 @@ class Configurable(object):
         Change of configuration_files in adding it in watching list.
         """
 
+        # remove previous watching
         remove_configurable(self)
         self._configuration_files = value
+        # add new watching
         add_configurable(self)
 
     @property
