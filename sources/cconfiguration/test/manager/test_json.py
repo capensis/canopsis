@@ -21,15 +21,26 @@
 
 from unittest import main
 
-from test.manager import ConfigurationManagerTest
-
 from cconfiguration.manager.json import ConfigurationManager
+
+try:
+    from test.manager import ConfigurationManagerTest
+
+except ImportError:
+    # add path for ensuring import
+    #path_to_add = '{0}{1}..{1}..{1}'.format(dirname(realpath(__file__)), sep)
+    from os.path import realpath, dirname, sep
+    from sys import path
+
+    path_to_add = '{0}{1}..{1}'.format(dirname(realpath(__file__)), sep)
+    path.append(path_to_add)
+
+    from manager import ConfigurationManagerTest
 
 
 class ConfigurationManagerTest(ConfigurationManagerTest):
 
     def _get_configuration_manager(self):
-
         return ConfigurationManager()
 
 if __name__ == '__main__':

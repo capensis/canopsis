@@ -49,16 +49,18 @@ class ConfigurationManager(ConfigurationManager):
         return parameter_name in config_resource[category]
 
     def _get_config_resource(
-        self, configuration_file, logger, *args, **kwargs
+        self, logger, configuration_file=None, *args, **kwargs
     ):
 
         result = dict()
 
-        with open(configuration_file, 'a+') as handle:
-            try:
-                result = loads(handle.read())
-            except Exception:
-                pass
+        if configuration_file is not None:
+
+            with open(configuration_file, 'a+') as handle:
+                try:
+                    result = loads(handle.read())
+                except Exception:
+                    pass
 
         return result
 
@@ -153,11 +155,11 @@ class ConfigurationManagerTest(TestCase):
 
         self.configuration_file = self.get_configuration_file()
 
-        # remove configuration file
+        # empty configuration file
         try:
-            remove(self.configuration_file)
-        except OSError:  # do nothing if file does not exist
-            pass
+            open(self.configuration_file, 'w').close()
+        except OSError as ose:  # do nothing if file does not exist
+            print(ose)
 
         # fill configuration file with set_parameters
         self.manager.set_parameters(

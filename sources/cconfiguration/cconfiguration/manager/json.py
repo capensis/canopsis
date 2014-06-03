@@ -19,9 +19,12 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from cconfiguration.language import ConfigurationManager
+from cconfiguration.manager import ConfigurationManager
 
-from json import load, dump
+try:
+    from json import loads, dump
+except ImportError:
+    from simplejson import loads, dump
 
 
 class ConfigurationManager(ConfigurationManager):
@@ -34,40 +37,55 @@ class ConfigurationManager(ConfigurationManager):
     """
     __register__ = True
 
-    def _has_category(config_resource, category, logger):
+    def _has_category(
+        self, config_resource, category, logger, *args, **kwargs
+    ):
         return category in config_resource
 
-    def _has_parameter(config_resource, category, parameter_name, logger):
+    def _has_parameter(
+        self, config_resource, category, parameter_name, logger,
+        *args, **kwargs
+    ):
         return parameter_name in config_resource[category]
 
-    def _get_config_resource(configuration_file, logger):
-        result = None
+    def _get_config_resource(
+        self, logger, configuration_file=None, *args, **kwargs
+    ):
+        result = dict()
 
-        try:
-            with open(configuration_file, 'a') as handle:
-                result = load(handle)
+        if configuration_file is not None:
+            try:
+                with open(configuration_file, 'r') as handle:
+                    result = loads(handle.read())
 
-        except Exception:
-            pass
+            except Exception:
+                pass
 
         return result
 
-    def _get_parameter(config_resource, category, parameter_name):
+    def _get_parameter(
+        self, config_resource, category, parameter_name, *args, **kwargs
+    ):
         return config_resource[category][parameter_name]
 
-    def _set_category(config_resource, category, logger):
+    def _set_category(
+        self, config_resource, category, logger, *args, **kwargs
+    ):
         config_resource.setdefault(category, dict())
 
     def _set_parameter(
-        config_resource, category, parameter_name, parameter, logger
+        self, config_resource, category, parameter_name, parameter, logger,
+        *args, **kwargs
     ):
         config_resource[category][parameter_name] = parameter
 
-    def _write_config_resource(config_resource, configuration_file):
+    def _write_config_resource(
+        self, config_resource, configuration_file, *args, **kwargs
+    ):
 
         try:
             with open(configuration_file, 'a') as handle:
-                dump(handle)
+                dump(config_resource, handle)
 
         except Exception:
             pass

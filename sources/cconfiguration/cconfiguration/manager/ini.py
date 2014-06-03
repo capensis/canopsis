@@ -19,7 +19,7 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from cconfiguration.language import ConfigurationManager
+from cconfiguration.manager import ConfigurationManager
 
 from ConfigParser import RawConfigParser, DuplicateSectionError
 
@@ -34,35 +34,51 @@ class ConfigurationManager(ConfigurationManager):
     """
     __register__ = True
 
-    def _has_category(config_resource, category, logger):
+    def _has_category(
+        self, config_resource, category, logger, *args, **kwargs
+    ):
         return config_resource.has_section(category)
 
-    def _has_parameter(config_resource, category, parameter_name, logger):
+    def _has_parameter(
+        self, config_resource, category, parameter_name, logger,
+        *args, **kwargs
+    ):
         return config_resource.has_option(category, parameter_name)
 
-    def _get_config_resource(configuration_file, logger):
-        result = None
-        configParser = RawConfigParser()
-        files = configParser.read(configuration_file)
+    def _get_config_resource(
+        self, logger, configuration_file=None, *args, **kwargs
+    ):
+        result = RawConfigParser()
 
-        if files:
-            result = configParser
+        if configuration_file is not None:
+
+            files = result.read(configuration_file)
+
+            if not files:
+                result = None
 
         return result
 
-    def _get_parameter(config_resource, category, parameter_name):
+    def _get_parameter(
+        self, config_resource, category, parameter_name, *args, **kwargs
+    ):
         return config_resource.get(category, parameter_name)
 
-    def _set_category(config_resource, category, logger):
+    def _set_category(
+        self, config_resource, category, logger, *args, **kwargs
+    ):
         try:
             config_resource.add_section(category)
         except (DuplicateSectionError, ValueError):
             pass
 
     def _set_parameter(
-        config_resource, category, parameter_name, parameter, logger
+        self, config_resource, category, parameter_name, parameter, logger,
+        *args, **kwargs
     ):
         config_resource.set(category, parameter_name, parameter)
 
-    def _write_config_resource(config_resource, configuration_file):
-        config_resource.write(open(configuration_file))
+    def _write_config_resource(
+        self, config_resource, configuration_file, *args, **kwargs
+    ):
+        config_resource.write(open(configuration_file, 'a'))

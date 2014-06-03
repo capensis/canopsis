@@ -92,8 +92,22 @@ class ConfigurationManager(object):
         raise NotImplementedError()
 
     def _get_config_resource(
-        self, configuration_file, logger, *args, **kwargs
+        self, logger, configuration_file=None, *args, **kwargs
     ):
+        """
+        Get config resource.
+
+        :param configuration_file: if not None, the config resource is \
+            configuration_file content.
+        :type configuration_file: str
+
+        :param logger: logger used to log processing information
+        :type logger: logging.Logger
+
+        :return: empty config resource if configuration_file is None, else \
+            configuration_file content.
+        """
+
         raise NotImplementedError()
 
     def _get_parameter(
@@ -112,7 +126,9 @@ class ConfigurationManager(object):
         config_resource = self._get_config_resource(
             configuration_file=configuration_file, logger=logger)
 
-        return config_resource is not None
+        result = config_resource is not None
+
+        return result
 
     def get_parameters(
         self, configuration_file, parsing_rules, logger, *args, **kwargs
@@ -249,10 +265,12 @@ class ConfigurationManager(object):
         """
 
         result = None
+        config_resource = None
 
         try:  # get config_resource
             config_resource = self._get_config_resource(
-                configuration_file, logger=logger)
+                configuration_file=configuration_file,
+                logger=logger)
 
         except Exception as e:
             # if an error occured, stop processing
@@ -261,31 +279,34 @@ class ConfigurationManager(object):
                     configuration_file, e))
             result = e
 
-        else:
+        # if configuration_file can not be loaded, get default config resource
+        if config_resource is None:
 
-            # else iterate on all parameter_by_categories items
-            for category, parameters in parameter_by_categories.iteritems():
+            config_resource = self._get_config_resource(logger=logger)
 
-                # set category
-                self._set_category(
-                    config_resource=config_resource, category=category,
+        # iterate on all parameter_by_categories items
+        for category, parameters in parameter_by_categories.iteritems():
+
+            # set category
+            self._set_category(
+                config_resource=config_resource, category=category,
+                logger=logger)
+
+            # iterate on parameters
+            for parameter_name, parameter_value in parameters.iteritems():
+
+                # set parameter
+                self._set_parameter(
+                    config_resource=config_resource,
+                    category=category,
+                    parameter_name=parameter_name,
+                    parameter=parameter_value,
                     logger=logger)
 
-                # iterate on parameters
-                for parameter_name, parameter_value in parameters.iteritems():
-
-                    # set parameter
-                    self._set_parameter(
-                        config_resource=config_resource,
-                        category=category,
-                        parameter_name=parameter_name,
-                        parameter=parameter_value,
-                        logger=logger)
-
-            # write conf_resource in configuration file
-            self._write_config_resource(
-                config_resource=config_resource,
-                configuration_file=configuration_file)
+        # write conf_resource in configuration file
+        self._write_config_resource(
+            config_resource=config_resource,
+            configuration_file=configuration_file)
 
         return result
 

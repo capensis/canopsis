@@ -19,48 +19,63 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-try:
-    from pyinotify import\
-        ProcessEvent, ALL_EVENTS, WatchManager, ThreadedNotifier
+"""
 
-except ImportError:
-    # implement our own ProcessEvent and MASKS
-    pass
-
-from os.path import expanduser
-
-_CONFIGURATION_PATH = expanduser('~/etc/')
-_CONFIGURABLES_BY_CONFIGURATION_FILE = dict()
-
-_WATCH_MANAGER = WatchManager()
+"""
+_CONFIGURABLE_BY_CONFIGURATION_FILES = dict()
 
 
-class _EventHandler(ProcessEvent):
+def add_configurable(configurable):
+    """
+    Add input configurable to list of watchers.
 
-    def process_default(self, event):
-
-        configuration_file = event.pathname
-
-        configurables = _CONFIGURABLES_BY_CONFIGURATION_FILE.get(
-            configuration_file)
-
-        for configurable in configurables:
-            configurable.apply_configuration(
-                configuration_files=[expanduser(configuration_file)])
-
-
-_NOTIFIER = ThreadedNotifier(_WATCH_MANAGER, _EventHandler())
-
-_WATCH_MANAGER.add_watch(_CONFIGURATION_PATH, ALL_EVENTS, rec=True)
-
-_NOTIFIER.start()
-
-
-def add_watch(configurable):
+    :param configurable: configurable to add
+    :type configurable: cconfiguration.Configurable
+    """
 
     for configuration_file in configurable.configuration_files:
 
-        configurables = _CONFIGURABLES_BY_CONFIGURATION_FILE.setdefault(
+        configurables = _CONFIGURABLE_BY_CONFIGURATION_FILES.setdefault(
             configuration_file, set())
 
         configurables.add(configurable)
+
+
+def remove_configurable(configurable):
+    """
+    Remove configurable to list of watchers.
+
+    :param configurable: configurable to remove
+    :type configurable: cconfiguration.Configurable
+    """
+
+    for configuration_file in configurable.configuration_files:
+
+        configurables = _CONFIGURABLE_BY_CONFIGURATION_FILES.setdefault(
+            configuration_file, set())
+
+        configurables.remove(configurable)
+
+        if not configurables:
+
+            del _CONFIGURABLE_BY_CONFIGURATION_FILES[configuration_file]
+
+
+def on_update_configuration_file(configuration_file):
+    """
+    Apply configuration on all configurables which watch input
+    configuration_file.
+
+    :param configuration_file: configuration file to reconfigure.
+    :type configuration_file: str
+    """
+
+    configurables = _CONFIGURABLE_BY_CONFIGURATION_FILES.get(
+        configuration_file)
+
+    if configurables:
+
+        for configurable in configurables:
+
+            configurable.apply_configuration(
+                configuration_file=configuration_file)

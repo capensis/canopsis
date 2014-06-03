@@ -27,28 +27,6 @@ import logging
 
 from cconfiguration.manager import ConfigurationManager
 
-try:
-    # is pyinotify been loaded
-    import pyinotify
-
-    wm = pyinotify.WatchManager()
-
-    mask = pyinotify.IN_CREATE | pyinotify.IN_MODIFY
-
-    class EventHandler(pyinotify.ProcessEvent):
-        def process_IN_MODIFY(self, event):
-            pass
-
-    handler = EventHandler()
-    notifier = pyinotify.ThreadedNotifier(wm, handler)
-
-    wdd = wm.add_watch('/tmp', mask, rec=True)
-
-    notifier.start()
-
-except ImportError:
-    pass
-
 
 class Configurable(object):
     """
@@ -115,7 +93,20 @@ class Configurable(object):
         :return: self configuration files
         :rtype: tuple
         """
-        return tuple(self._configuration_files)
+
+        result = tuple(self._configuration_files)
+
+        return result
+
+    @configuration_files.setter
+    def configuration_files(self, value):
+        """
+        Change of configuration_files in adding it in watching list.
+        """
+
+        remove_configurable(self)
+        self._configuration_files = value
+        add_configurable(self)
 
     @property
     def auto_conf(self):
