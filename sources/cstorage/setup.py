@@ -1,22 +1,26 @@
 from setuptools import setup
 
+import cstorage
+
 install_requires = [
 	"pymongo",
 ]
 
+with open('README') as f:
+	desc = f.read()
+
 setup(
-	name="cstorage",
-	version="0.1",
+	name=cstorage.__name__,
+	version=cstorage.__version__,
 	author="Capensis",
 	author_email="canopsis@capensis.fr",
 	description=("Store data"),
 	license="AGPL v3",
-	zip_safe=False,
 	keywords="storage store canopsis",
 	install_requires=install_requires,
 	url="http://www.canopsis.org",
-	packages=['cstorage'],
+	packages=[cstorage.__name__],
 	scripts=['scripts/cstorage'],
-	long_description=open('README').read(),
+	long_description=desc,
 	test_suite="test"
 )

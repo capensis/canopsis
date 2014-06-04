@@ -1,11 +1,16 @@
 from setuptools import setup
 
+import cperfdata
+
 install_requires = [
 ]
 
+with open('README') as f:
+	desc = f.read()
+
 setup(
-	name="cperfdata",
-	version="0.1",
+	name=cperfdata.__name__,
+	version=cperfdata.__version__,
 	author="Capensis",
 	author_email="canopsis@capensis.fr",
 	description=("performance data"),
@@ -14,8 +19,8 @@ setup(
 	keywords="nagios perfdata storage store performance canopsis",
 	install_requires=install_requires,
 	url="http://www.canopsis.org",
-	packages=['cperfdata'],
+	packages=[cperfdata.__name__],
 	scripts=['scripts/cperfdata'],
-	long_description=open('README').read(),
+	long_description=desc,
 	test_suite="test"
 )
