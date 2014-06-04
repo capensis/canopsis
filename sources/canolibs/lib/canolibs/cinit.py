@@ -18,7 +18,11 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-import signal, time, logging
+import logging
+import signal
+import time
+import os
+
 
 class cinit(object):
 
@@ -77,3 +81,38 @@ class cinit(object):
 		self.logger.setLevel(self.level)
 		
 		return self.logger
+
+	def get_confpath(self, conftype):
+		"""
+			Get path to config file.
+
+			:param conftype: Type of configuration (webserver, websocket, amqp, storage, ...)
+			:type conftype: basestring
+
+			:returns: Absolute path to config file
+		"""
+
+		envvar = 'CPS_CONFPATH_{0}'.format(conftype.upper())
+
+		if conftype == 'webcore':
+			default = '~/etc/webserver.conf'
+
+		elif conftype == 'websocket':
+			default = '~/etc/websocket.conf'
+
+		elif conftype == 'amqp':
+			default = '~/etc/amqp.conf'
+
+		elif conftype == 'storage':
+			default = '~/etc/cstorage.conf'
+
+		elif conftype == 'engines':
+			default = '~/etc/amqp2engines'
+
+		elif conftype == 'logging':
+			default = '~/etc/logging.conf'
+
+		else:
+			default = None
+
+		return os.path.expanduser(os.getenv(envvar, default))
