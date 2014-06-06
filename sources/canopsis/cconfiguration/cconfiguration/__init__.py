@@ -28,13 +28,12 @@ from os.path import expanduser
 import logging
 
 from cconfiguration.manager import ConfigurationManager
-
 from cconfiguration.watcher import add_configurable, remove_configurable
 
 
 class Configurable(object):
     """
-    Manages class configuration synchronisation with a configuration file.
+    Manages class configuration synchronisation with configuration files.
     """
 
     DEFAULT_CONFIGURATION_FILE = '~/etc/conf.conf'
@@ -57,7 +56,7 @@ class Configurable(object):
     def __init__(
         self,
         configuration_files=None, auto_conf=True, logging_level=logging.INFO,
-        _ready_to_conf=True, *args, **kwargs
+        managers=None, _ready_to_conf=True, *args, **kwargs
     ):
         """
         :param configuration_files: configuration_files to parse.
@@ -79,9 +78,9 @@ class Configurable(object):
         if configuration_files is None:
             configuration_files = [Configurable.DEFAULT_CONFIGURATION_FILE]
 
-        self._configuration_files = configuration_files
+        self.configuration_files = configuration_files
 
-        self._auto_conf = auto_conf
+        self.auto_conf = auto_conf
 
         self._logger = logging.getLogger(type(self).__name__)
         self._logger.setLevel(logging_level)
@@ -90,6 +89,10 @@ class Configurable(object):
             self.apply_configuration(
                 parsing_rules=self.get_parsing_rules(),
                 configuration_files=self.configuration_files)
+
+        # set managers
+        if managers is None:
+            self.managers = ConfigurationManager.get_managers()
 
     @property
     def configuration_files(self):
@@ -115,20 +118,25 @@ class Configurable(object):
         add_configurable(self)
 
     @property
-    def auto_conf(self):
+    def logging_level(self):
         """
-        :return: self auto_conf
-        :rtype: bool
-        """
-        return bool(self._auto_conf)
+        Get this logger.
 
-    @property
-    def logger(self):
-        """
         :return: self logger
         :rtype: logging.Logger
         """
-        return self._logger
+        return self._logger.level
+
+    @logging_level.setter
+    def logging_level(self, value):
+        """
+        Change of logging level.
+
+        :param value: new logging_level to set up.
+        :type value: str
+        """
+
+        self._logger.setLevel(value)
 
     def get_parsing_rules(self, *args, **kwargs):
         """
@@ -149,17 +157,18 @@ class Configurable(object):
         return result
 
     def apply_configuration(
-        self, parsing_rules=None, configuration_files=None, *args, **kwargs
+        self, parsing_rules=None, configuration_files=None,
+        managers=None, *args, **kwargs
     ):
         """
-        Apply configuration on a destination in 3 phases:
+        Apply configuration on a destination in 5 phases:
 
         1. identify the right manager to use with configuration_files to parse.
         2. for all configuration_files, get parameters which match
             with input parsing_rules.
         3. apply parsing rules on configuration_file parameters.
         4. put values and parsing errors in two different dictionaries.
-        5. returns both dictionaries.
+        5. returns both dictionaries of parameter values and errors.
 
         :param parsing_rules: Iterable of parsing_rule.
         :type parsing_rules: Iterable
@@ -173,6 +182,7 @@ class Configurable(object):
         parameters, error_parameters = self.get_parameters(
             parsing_rules=parsing_rules,
             configuration_files=configuration_files,
+            managers=managers,
             *args, **kwargs)
 
         self.configure(
@@ -182,7 +192,7 @@ class Configurable(object):
     def get_parameters(
         self,
         parsing_rules=None, configuration_files=None, logger=None,
-        *args, **kwargs
+        managers=None, *args, **kwargs
     ):
         """
         Get a dictionary of parameters by name from parsing_rules,
@@ -217,12 +227,15 @@ class Configurable(object):
 
         parameters, error_parameters = dict(), dict()
 
+        if managers is None:
+            managers = self.managers
+
         # iterate on all configuration_files
         for configuration_file in configuration_files:
 
             config_manager = self._get_manager(
                 configuration_file=configuration_file,
-                logger=logger)
+                logger=logger, managers=managers)
 
             # if a config_resource is not None
             if config_manager is not None:
@@ -313,7 +326,7 @@ class Configurable(object):
         # set logging_level
         logging_level = parameters.get(Configurable.LOGGING_LEVEL)
         if logging_level is not None:
-            self.logger.setLevel(logging_level)
+            self.logging_level = logging_level
 
         # set auto_conf
         auto_conf = parameters.get(Configurable.AUTO_CONF)
@@ -330,7 +343,7 @@ class Configurable(object):
 
     @staticmethod
     def _get_manager(
-        configuration_file, logger
+        configuration_file, logger, managers
     ):
         """
         Get the first manager able to handle input configuration_file.
@@ -341,8 +354,6 @@ class Configurable(object):
         """
 
         result = None, None
-
-        managers = ConfigurationManager.get_managers()
 
         for manager in managers:
             manager = manager()

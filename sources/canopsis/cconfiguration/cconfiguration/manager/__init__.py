@@ -20,6 +20,10 @@
 # ---------------------------------
 from utils import resolve_element
 
+from stat import ST_SIZE
+from os import stat
+from os.path import isfile
+
 
 class MetaConfigurationManager(type):
     """
@@ -34,9 +38,6 @@ class MetaConfigurationManager(type):
         if self.__register__:
             # add it among managers
             ConfigurationManager._MANAGERS.add(self)
-
-from stat import ST_SIZE
-from os import stat, isfile
 
 
 class ConfigurationManager(object):

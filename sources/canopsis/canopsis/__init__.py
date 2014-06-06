@@ -1,6 +1,7 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 #--------------------------------
-# Copyright (c) 2011 "Capensis" [http://www.capensis.com]
+# Copyright (c) 2014 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
 #
@@ -18,18 +19,5 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-"""
-Python utility library.
-"""
+__version__ = "0.1"
 
-
-def resolve_element(name):
-	"""
-	Get element reference from input element name.
-	"""
-
-	mod = __import__(name)
-	components = name.split('.')
-	for comp in components[1:]:
-		mod = getattr(mod, comp)
-	return mod
