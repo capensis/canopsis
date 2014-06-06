@@ -62,7 +62,7 @@ class cengine(object):
 		if camqp_custom == None:
 			self.camqp = camqp
 		else:
-			self.camqp = camqp_custom
+			self.amqp = camqp_custom(self)
 
 		self.amqp_queue = "Engine_{0}".format(self.name)
 		self.routing_keys = routing_keys
