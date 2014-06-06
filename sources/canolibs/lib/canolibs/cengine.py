@@ -47,7 +47,6 @@ class cengine(object):
 			logging_level=logging.INFO,
 			exchange_name='amq.direct',
 			routing_keys=[],
-			camqp_custom=None,
 			*args, **kwargs):
 
 		super(cengine, self).__init__(*args, **kwargs)
@@ -58,11 +57,7 @@ class cengine(object):
 
 		self.name = name
 
-		#Set parametrized camqp for testing purposes
-		if camqp_custom == None:
-			self.camqp = camqp
-		else:
-			self.amqp = camqp_custom(self)
+		self.camqp = camqp
 
 		self.amqp_queue = "Engine_{0}".format(self.name)
 		self.routing_keys = routing_keys

@@ -93,9 +93,11 @@ class engine(cengine):
 		self.reload_ack_comments()
 
 	def perfdata_key(self, meta):
+		if 'co' not in meta or 'me' not in meta:
+			return u'missing component or metric key'
+
 		if 're' in meta and meta['re']:
 			return u'{0}{1}{2}'.format(meta['co'], meta['re'], meta['me'])
-
 		else:
 			return u'{0}{1}'.format(meta['co'], meta['me'])
 
