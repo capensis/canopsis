@@ -1189,6 +1189,14 @@ Ext.define('canopsis.lib.controller.cgrid', {
 					name: 'ack_output',
 					anchor:'95%'
 				});
+
+				tabFormAck['items'][0]['items'].push({
+					xtype: 'textfield',
+					fieldLabel: _('Ticket'),
+					name: 'ticket',
+					allowBlank: false,
+					anchor:'95%'
+				});
 			}
 			else {
 				tabFormAck = null;
@@ -1229,17 +1237,6 @@ Ext.define('canopsis.lib.controller.cgrid', {
 						store: [[0, _('OK')], [1, _('Warning')], [2, _('Critical')], [3, _('Unknow')]],
 						name: 'state',
 						value: record['data']['state'],
-						anchor:'95%'
-					});
-				}
-
-				if(this.grid.opt_show_edit_ticket) {
-					tabFormEdit['items'][0]['items'].push({
-						xtype: 'textfield',
-						fieldLabel: _('Ticket'),
-						name: 'ticket',
-						allowBlank: false,
-						value: (selection.length !== 1 ? '' : record['data']['ticket']),
 						anchor:'95%'
 					});
 				}
@@ -1293,7 +1290,7 @@ Ext.define('canopsis.lib.controller.cgrid', {
 									}
 
 									//Save updated event
-									global.eventsCtrl.sendEvent(event['data']);
+									//global.eventsCtrl.sendEvent(event['data']);
 								}
 
 								//Update Ack
@@ -1305,14 +1302,15 @@ Ext.define('canopsis.lib.controller.cgrid', {
 										'source_type': 'resource',
 										'component': event['data']['component'],
 										'resource': event['data']['resource'],
-										'referer': event['raw']['rk'],
+										//'referer': event['raw']['rk'],
 										'author': global.account.firstname + ' ' + global.account.lastname,
 										'state': Ext.getCmp('tabFormAck').getForm().getValues()['ack_state'],
 										'display_name': this.display_name,
 										'state_type': 1,
 										'output': Ext.getCmp('tabFormAck').getForm().getValues()['ack_output'],
 										'ref_rk': event['raw']['rk'],
-										'tags' : Ext.getCmp('tabFormAck').getForm().getValues()['tags']
+										'ticket': Ext.getCmp('tabFormAck').getForm().getValues()['ticket'],
+										//'tags : Ext.getCmp('tabFormAck').getForm().getValues()['tags']
 									};
 
 									//Save updated event

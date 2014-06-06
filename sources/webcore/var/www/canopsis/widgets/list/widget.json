@@ -39,7 +39,7 @@
 								"xtype": "checkbox",
 								"boxLabel": "Ticket",
 								"checked": false,
-								"name": "show_file_ticket"
+								"name": "show_ticket"
 							},{
 								"xtype": "checkbox",
 								"boxLabel": "State type",
@@ -75,7 +75,13 @@
 								"boxLabel": "Tags",
 								"checked": false,
 								"name": "show_tags"
+							},{
+								"xtype": "checkbox",
+								"boxLabel": "EUE Step",
+								"checked": false,
+								"name": "show_eue_step"
 							}]
+
 				},{
 		  				"xtype": "cfieldset",
 						"title": "Default sorting",
@@ -130,6 +136,11 @@
 						"title": "Monitoring console",
 						"items":[
 							{
+								"xtype": "checkbox",
+								"boxLabel": "Console de supervision",
+								"checked": false,
+								"name": "show_consolesup"
+							},{
 								"xtype": "textfield",
 								"fieldLabel": "Help File URL",
 								"name": "file_help_url",
@@ -162,7 +173,7 @@
 										"xtype": "textfield",
 										"fieldLabel": "Help Message",
 										"name": "help_msg",
-										"emptyText":"<component>,<resource>,<output>,<lastcheck>"
+										"emptyText":"<component><resource><output><lastcheck>"
 									},{							
 										"xtype": "checkbox",
 										"boxLabel": "Show solved",
@@ -204,11 +215,6 @@
 										"boxLabel": "State",
 										"checked": true,
 										"name": "show_edit_state"
-									},{
-										"xtype": "checkbox",
-										"boxLabel": "Ticket",
-										"checked": false,
-										"name": "show_edit_ticket"
 									},{
 										"xtype": "checkbox",
 										"boxLabel": "Plugin message",

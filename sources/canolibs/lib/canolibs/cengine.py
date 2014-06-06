@@ -20,6 +20,7 @@
 
 from cinit import cinit
 from camqp import camqp
+from cstorage import get_storage
 from caccount import caccount
 import cevent
 
@@ -46,6 +47,7 @@ class cengine(object):
 			logging_level=logging.INFO,
 			exchange_name='amq.direct',
 			routing_keys=[],
+			camqp_custom=None,
 			*args, **kwargs):
 
 		super(cengine, self).__init__(*args, **kwargs)
@@ -56,6 +58,12 @@ class cengine(object):
 
 		self.name = name
 
+		#Set parametrized camqp for testing purposes
+		if camqp_custom == None:
+			self.camqp = camqp
+		else:
+			self.camqp = camqp_custom
+
 		self.amqp_queue = "Engine_{0}".format(self.name)
 		self.routing_keys = routing_keys
 		self.exchange_name = exchange_name
@@ -64,7 +72,6 @@ class cengine(object):
 
 		self.next_amqp_queues = next_amqp_queues
 		self.get_amqp_queue = itertools.cycle(self.next_amqp_queues)
-		self.original_next_amqp_queues = list(self.next_amqp_queues)
 
 		## Get from internal or external queue
 		self.next_balanced = next_balanced
@@ -149,7 +156,7 @@ class cengine(object):
 
 		self.logger.info("Start Engine with pid %s" % (os.getpid()))
 
-		self.amqp = camqp(logging_level=self.logging_level, logging_name="%s-amqp" % self.name, on_ready=ready)
+		self.amqp = self.camqp(logging_level=self.logging_level, logging_name="%s-amqp" % self.name, on_ready=ready)
 
 		if self.create_queue:
 			self.new_amqp_queue(self.amqp_queue, self.routing_keys, self.on_amqp_event, self.exchange_name)
@@ -250,9 +257,6 @@ class cengine(object):
 			for queue_name in self.next_amqp_queues:
 				#self.logger.debug(" + Forward via amqp to '%s'" % engine.amqp_queue)
 				self.amqp.publish(event, queue_name, "amq.direct")
-				if (len(set(self.original_next_amqp_queues).intersection(self.next_amqp_queues))
-				    != len(self.original_next_amqp_queues)):
-					self.next_amqp_queues = list(self.original_next_amqp_queues)
 
 	def _beat(self):
 		now = int(time.time())
@@ -316,7 +320,7 @@ class cengine(object):
 
 		except Exception, err:
 			self.logger.error("Beat raise exception: %s" % err)
-			traceback.print_exc(file=sys.stdout)
+			self.logger.error(traceback.print_exc())
 
 		finally:
 			self.beat_lock = False
@@ -333,3 +337,57 @@ class cengine(object):
 		self.amqp.stop()
 		self.amqp.join()
 		self.logger.debug(" + Stopped")
+
+
+	class Lock(object):
+		def __init__(self, engine, name, *args, **kwargs):
+			super(cengine.Lock, self).__init__(*args, **kwargs)
+
+			self.name = name
+			self.lock_id = '{0}.{1}'.format(engine.etype, name)
+
+			self.storage = get_storage(
+				namespace='lock',
+				logging_level=engine.logging_level,
+				account=caccount(user='root', group='root')
+			).get_backend()
+
+			self.engine = engine
+			self.lock = {}
+
+		def own(self):
+			now = time.time()
+			last = self.lock.get('t', now)
+
+			if self.lock.get('l', False) and (now - last) < self.engine.beat_interval:
+				self.engine.logger.debug('Another engine {0} is already holding the lock {1}'.format(self.engine.etype, self.name))
+
+				return False
+
+			else:
+				self.engine.logger.debug('Lock {1} on engine {0}, processing...'.format(self.engine.etype, self.name))
+				return True
+
+			return False
+
+		def __enter__(self):
+			self.lock = self.storage.find_and_modify(
+				query = {'_id': self.lock_id},
+				update = {'$set': {'l': True}},
+				upsert = True
+			)
+
+			if 't' not in self.lock:
+				self.lock['t'] = 0
+
+			return self
+
+		def __exit__(self, type, value, tb):
+			if self.own():
+				self.engine.logger.debug('Release lock {1} on engine {0}'.format(self.engine.etype, self.name))
+
+				self.storage.save({
+					'_id': self.lock_id,
+					'l': False,
+					't': time.time()
+				})

@@ -16,9 +16,77 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 */
+
+function translateDate(date){
+	var daysLong = {
+		'Monday' : 'Lundi',
+		'Tuesday' : 'Mardi',
+		'Wednesday' : 'Mercredi',
+		'Thursday' : 'Jeudi',
+		'Friday' : 'Vendredi',
+		'Saturday' : 'Samedi',
+		'Sunday' : 'Dimanche',
+
+	};
+	var daysShort = {
+		'Mon' : 'Lun',
+		'Tue' : 'Mar',
+		'Wed' : 'Mer',
+		'Thu' : 'Jeu',
+		'Fri' : 'Ven',
+		'Sat' : 'Sam',
+		'Sun' : 'Dim',
+
+	};
+	var monthsLong = {
+		'January': 'Janvier',
+		'February': 'Fevrier',
+		'March': 'Mars',
+		'April': 'Avril',
+		'May': 'Mai',
+		'June': 'Juin',
+		'July': 'Juillet',
+		'August': 'Aout',
+		'September': 'Septembre',
+		'October': 'Octobre',
+		'November': 'Novembre',
+		'December': 'Decembre',
+	};
+	var monthsShort = {
+		'Jan': 'Jan',
+		'Feb': 'Fev',
+		'Mar': 'Mar',
+		'Apr': 'Avr',
+		'May': 'Mai',
+		'Jun': 'Jui',
+		'Jul': 'Jui',
+		'Aug': 'Aou',
+		'Sep': 'Sep',
+		'Oct': 'Oct',
+		'Nov': 'Nov',
+		'Dec': 'Dec',
+	};
+
+	if(Ext.util.Cookies.get('locale') === 'fr'){
+		date = date.toLowerCase();
+		dateDicts = [daysLong, daysShort, monthsLong, monthsShort];
+		for (var position in dateDicts) {
+			dateDict = dateDicts[position];
+			for(var dateToken in dateDict) {
+				if (date.indexOf(dateToken.toLowerCase()) !== -1) {
+					date = date.replace(dateToken.toLowerCase(), dateDict[dateToken]);
+				}
+			}
+		}
+	}
+
+	return date;
+}
+
 function rdr_tstodate(val, custom_format) {
 
 	var format = is12Clock() ? 'Y-m-d h:i:s a' : 'Y-m-d H:i:s';
+	var returnDate = '';
 
 	if (custom_format !== undefined && typeof(custom_format) == 'string') {
 		format = custom_format;
@@ -28,15 +96,15 @@ function rdr_tstodate(val, custom_format) {
 		var dval = new Date(parseInt(val) * 1000);
 
 		if(is12Clock()) {
-			return Ext.Date.format(dval, format);
+			returnDate = Ext.Date.format(dval, format);
 		}
 		else {
-			return Ext.Date.format(dval, format);
+			returnDate = Ext.Date.format(dval, format);
 		}
 	}
-	else {
-		return '';
-	}
+
+	return translateDate(returnDate);
+
 }
 
 function rdr_utcToLocal(val) {
@@ -604,8 +672,16 @@ rdr_file_equipement = function(val, metadata, record, rowIndex, colIndex, store)
 
 rdr_ticket = function(val, metadata, record, rowIndex, colIndex, store) {
 	if ( typeof record.raw['ticket'] != null && record.raw['ticket'] != undefined ) {
+		var varTmp = record.raw['ticket'].split('|')
+		if ( varTmp.length > 1 ) {
+			display = varTmp[0]
+			ahref = varTmp[1]
+		} else {
+			display = record.raw['ticket']
+			ahref = display
+		}
 		var reg=new RegExp( "<ticket>", "g" );
-		return '<a href="' + this.opt_ticket_url.replace( reg, record.raw['ticket'] ) + '" target="_blank">' + record.raw['ticket'] + '</a>'
+		return '<a href="' + this.opt_ticket_url.replace( reg, ahref ) + '" target="_blank">' + display + '</a>'
 	} else {
 		return ''
 	}
@@ -630,3 +706,11 @@ rdr_ack = function(val, metadata, record, rowIndex, colIndex, store ) {
 		return ''
 	}
 }
+
+rdr_resource = function(val, metadata, record, rowIndex, colIndex, store) {
+	if ( typeof record.raw['type_message'] != null && record.raw['type_message'] != undefined && record.raw['type_message'] == 'scenario' ) {
+		var varTab = val.split('.');
+		val = varTab[1];
+	}
+	return val
+};

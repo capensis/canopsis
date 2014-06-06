@@ -48,7 +48,18 @@ logger.setLevel('DEBUG')
 
 @task
 @decorators.log_task
-def render_pdf(fileName=None, viewName=None, exporting=None, account=None, mail=None, owner=None, orientation='Portrait', pagesize='A4'):
+def render_pdf(
+	fileName=None,
+	viewName=None,
+	exporting=None,
+	account=None,
+	mail=None,
+	startTime=None,
+	stopTime=None,
+	owner=None,
+	subset_selection=None,
+	orientation='Portrait',
+	pagesize='A4'):
 
 	logger.info('start render')
 

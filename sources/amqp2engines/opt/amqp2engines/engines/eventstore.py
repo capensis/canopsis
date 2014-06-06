@@ -53,9 +53,9 @@ class engine(cengine):
 
 		if _id:
 			event['_id'] = _id
-			event['event_id'] = event_id
+			event['event_id'] = event['rk']
 			## Event to Alert
-			self.amqp.publish(event, event_id, self.amqp.exchange_name_alerts)
+			self.amqp.publish(event, event['rk'], self.amqp.exchange_name_alerts)
 
 	def store_log(self, event, store_new_event=True):
 		## passthrough
@@ -65,13 +65,12 @@ class engine(cengine):
 
 		_id = self.archiver.log_event(event['rk'], event)
 		event['_id'] = _id
-		event['event_id'] = event_id
+		event['event_id'] = event['rk']
 
 		## Event to Alert
-		self.amqp.publish(event, event_id, self.amqp.exchange_name_alerts)
+		self.amqp.publish(event, event['rk'], self.amqp.exchange_name_alerts)
 
 	def work(self, event, *args, **kargs):
-		event_id = event['rk']
 
 		if 'exchange' in event:
 			del event['exchange']
@@ -79,7 +78,7 @@ class engine(cengine):
 		event_type = event['event_type']
 
 		if event_type not in self.event_types:
-			self.logger.warning("Unknown event type '%s', id: '%s', event:\n%s" % (event_type, event_id, event))
+			self.logger.warning("Unknown event type '%s', id: '%s', event:\n%s" % (event_type, event['rk'], event))
 			return event
 
 		elif event_type in self.check_types:

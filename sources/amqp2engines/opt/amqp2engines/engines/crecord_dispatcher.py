@@ -62,56 +62,28 @@ class engine(cengine):
 		crecords = []
 		now = int(time.time())
 
-		lock = self.backend.find_and_modify(
-			query  = {'crecord_type': 'dispatcher_lock'},
-			update = {'$set': {'lock': True}},
-		)
+		with self.Lock(self, 'load_crecords') as l:
+			if l.own():
+				# Crecord selection can be performed now as lock is ready. Crecord are loaded again if last dispatch update is not set or < now - 60 seconds
+				crecords_json = self.storage.find({
+					'crecord_type': {'$in': self.crecords_types },
+					'enable': True,
+					'$or': [
+						{'next_ready_time': {'$exists': False}},# crecord is new
+						{'last_dispatch_update': {'$exists': False}},# crecord is new
+						{'last_dispatch_update': {'$lte': now - 60}},# unlock case
+						{'$and': [
+							{'next_ready_time': {'$lte': now}}, # record is ready
+							{'loaded': False}
+						]}
+					]
+				}, namespace="object")
 
-		if lock:
-
-			#init cases
-			if 'lock' not in lock:
-				lock['lock'] = False
-			if 'last_update' not in lock:
-				lock['last_update'] = time.time()
-
-			if lock['lock'] and now - lock['last_update'] < UNLOCK_DELAY:
-				self.logger.debug('Information beeing threan by another dispatcher engine. Nothing has to be done. delay : %s' % (now - lock['last_update']))
-				return
-
-			elif now - lock['last_update'] > UNLOCK_DELAY:
-				#Information message
-				self.logger.debug('Dispatcher lock duration exeeded lock limit (%s seconds) , record selection will be performed' % (UNLOCK_DELAY))
-
-			# Crecord selection can be performed now as lock is ready. Crecord are loaded again if last dispatch update is not set or < now - 60 seconds
-			crecords_json = self.storage.find({
-				'crecord_type': {'$in': self.crecords_types },
-				'enable': True,
-				'$or':[
-					{'next_ready_time'		: {'$exists': False}},# crecord is new
-					{'last_dispatch_update'	: {'$exists': False}},# crecord is new
-					{'last_dispatch_update' : {'$lte': now - 60}},# unlock case
-					{'$and': [
-						{'next_ready_time' 	: {'$lte': now}}, # record is ready
-						{'loaded'			: False}
-					]}
-				]
-			}, namespace="object")
-			for	crecord_json in crecords_json:
-				# let say selector is loaded
-				self.storage.update(crecord_json._id, {'loaded': True, 'last_dispatch_update': now})
-				crecord = cselector(storage=self.storage, record=crecord_json, logging_level=self.logging_level)
-				crecords.append(crecord)
-
-			#Updating lock status
-			self.backend.update(
-				{'crecord_type': 'dispatcher_lock'},
-				{'$set': {'lock': False, 'last_update': time.time()}}
-			)
-		else:
-			#New insert, no information being threaten this time
-			self.backend.insert({'crecord_type': 'dispatcher_lock', 'last_update': time.time(), 'lock': False})
-
+				for crecord_json in crecords_json:
+					# let say selector is loaded
+					self.storage.update(crecord_json._id, {'loaded': True, 'last_dispatch_update': now})
+					crecord = cselector(storage=self.storage, record=crecord_json, logging_level=self.logging_level)
+					crecords.append(crecord)
 		return crecords
 
 

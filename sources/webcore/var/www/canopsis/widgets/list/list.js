@@ -45,9 +45,10 @@ Ext.define('widgets.list.list' , {
 	show_file_help: false,
 	show_file_equipement: false,
 	show_ticket: false,
+	show_eue_step: false,	
 	show_ack: true,
 	show_help_msg: true,
-	
+
 	show_form_ack: false,
 	
 	show_form_edit: false,
@@ -101,6 +102,7 @@ Ext.define('widgets.list.list' , {
 			opt_show_last_check: this.show_last_check,
 			opt_show_output: this.show_output,
 			opt_show_tags: this.show_tags,
+			opt_show_eue_step: this.show_eue_step,
 			opt_show_ticket: this.show_ticket,
 			opt_show_file_help: this.show_file_help,
 			opt_show_file_equipement: this.show_file_equipement,
