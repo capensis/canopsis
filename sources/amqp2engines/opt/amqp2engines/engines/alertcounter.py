@@ -145,10 +145,10 @@ class engine(cengine):
 
 			self.amqp.publish(logevent, cevent.get_routingkey(logevent), self.amqp.exchange_name_events)
 
-	def count_sla(self, event, slatype, slaname, delay, value):
+	def count_sla(self, event, slatype, slaname, delay):
 		now = int(time.time())
 
-		def increment_SLA( event, slatype, slaname, delay, value, hostgroup=None ):
+		def increment_SLA( event, slatype, slaname, delay, hostgroup=None ):
 
 			meta_data = {'type': 'COUNTER', 'co': INTERNAL_COMPONENT}
 
@@ -208,11 +208,11 @@ class engine(cengine):
 
 
 		for hostgroup in event.get('hostgroups', []):
-			increment_SLA( event, slatype, slaname, delay, value, hostgroup)
+			increment_SLA( event, slatype, slaname, delay, hostgroup)
 
-		increment_SLA( event, slatype, slaname, delay, value)
+		increment_SLA( event, slatype, slaname, delay)
 
-	def count_by_crits(self, event, value):
+	def count_by_crits(self, event):
 
 		if 'previous_state'in event and event['state'] == 0 and event.get('state_type', 1) == 1:
 
@@ -220,10 +220,10 @@ class engine(cengine):
 
 			if sla_field and sla_field in self.crits:
 				if event['previous_state'] == 1:
-					self.count_sla(event, 'warn', sla_field, self.crits[sla_field], value)
+					self.count_sla(event, 'warn', sla_field, self.crits[sla_field])
 
 				if event['previous_state'] == 2:
-					self.count_sla(event, 'crit', sla_field, self.crits[sla_field], value)
+					self.count_sla(event, 'crit', sla_field, self.crits[sla_field])
 
 			# Update others
 			meta_data = {'type': 'COUNTER', 'co': INTERNAL_COMPONENT }
@@ -388,7 +388,7 @@ class engine(cengine):
 			if validation:
 
 					self.update_global_counter(event)
-					self.count_by_crits(event, 1)
+					self.count_by_crits(event)
 
 					# By name
 					self.count_alert(event, 1)

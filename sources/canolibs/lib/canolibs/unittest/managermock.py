@@ -10,4 +10,7 @@ class ManagerMock(object):
 	def push(self, name=None, value=None, meta_data=None):
 		self.data.append({'name': name, 'value': value, 'meta_data': 'meta_data'})
 
+	def clean(self):
+		self.data = []
+
 	#TODO some other mock methods

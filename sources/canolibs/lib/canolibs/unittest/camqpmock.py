@@ -10,4 +10,7 @@ class CamqpMock(object):
 	def publish(self, event, rk, exchange_name):
 		self.events.append(event)
 
+	def clean(self):
+		self.events = []
+
 	#TODO some other mock methods

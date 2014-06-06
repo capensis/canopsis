@@ -21,6 +21,7 @@
 import unittest
 import sys, os
 import logging
+import time
 
 sys.path.append(os.path.expanduser('~/opt/amqp2engines/engines/'))
 sys.path.append(os.path.expanduser('~/lib/canolibs/unittest/'))
@@ -36,7 +37,7 @@ from caccount import caccount
 class KnownValues(unittest.TestCase):
 	def setUp(self):
 		self.engine = alertcounter.engine(
-			logging_level=logging.INFO,
+			logging_level=logging.WARNING,
 		)
 		# mocking the manager
 		self.engine.amqp = camqpmock.CamqpMock(self.engine)
@@ -44,7 +45,12 @@ class KnownValues(unittest.TestCase):
 		self.storage = get_storage(namespace='object', account=caccount(user="root", group="root"))
 
 
-	def get_event(self):
+	"""
+	Tests methods has engine method names
+	"""
+
+	def test_01_Work(self):
+
 		event = {
 			'connector': 'test',
 			'connector_name': 'test',
@@ -56,12 +62,6 @@ class KnownValues(unittest.TestCase):
 		}
 		routing_key = "%s.%s.%s.%s.%s" % (event['connector'], event['connector_name'], event['event_type'], event['source_type'], event['component'])
 		event['rk'] = routing_key
-		return event
-
-
-	def test_01_Work(self):
-
-		event = self.get_event()
 
 		# asserts event was not validated
 		self.engine.work(event)
@@ -83,33 +83,8 @@ class KnownValues(unittest.TestCase):
 		#effective test
 		self.engine.load_macro()
 		assert(self.engine.MACRO == macro_name)
+		self.reset_data()
 
-	def test_03_load_crits(self):
-		pass
-		"""
-		crit_name = 'criticity'
-		delay_value = 1
-
-		crit = crecord({
-			'_id':'test',
-			'crit': crit_name,
-			'delay': delay_value,
-			'crecord_type': 'slacrit',
-		}).dump()
-
-		self.storage.get_backend('object').update(
-			{'crecord_type': 'slacrit'},
-			{'$set': crit},
-			upsert=True
-		)
-
-		#effective test
-		self.engine.load_crits()
-
-		print self.engine.crits
-
-		assert(self.engine.crits[crit_name] == delay_value)
-		"""
 
 	def test_04_load_crits(self):
 		self.storage.get_backend('object').remove({'crecord_type': 'comment'})
@@ -129,6 +104,7 @@ class KnownValues(unittest.TestCase):
 
 		key = self.engine.perfdata_key({})
 		assert(key == 'missing component or metric key')
+		self.reset_data()
 
 
 	def test_06_increment_counter(self):
@@ -140,6 +116,7 @@ class KnownValues(unittest.TestCase):
 		del meta['re']
 		self.engine.increment_counter(meta, 2)
 		assert(self.engine.manager.data.pop() == {'meta_data': 'meta_data', 'name': u'come', 'value': 2})
+		self.reset_data()
 
 	def test_07_update_global_counter(self):
 		#generated metrics names are listed below.
@@ -153,6 +130,7 @@ class KnownValues(unittest.TestCase):
 			"__canopsis__cps_statechange_3": [0,0,0,1],
 			"__canopsis__cps_statechange_nok": [0,1,1,1]
 		}
+		self.reset_data()
 
 
 		#data driven testing
@@ -183,12 +161,111 @@ class KnownValues(unittest.TestCase):
 
 		#8 basic metrics + 8 for hostgroup
 		assert(len(self.engine.manager.data) == 16)
+		#reset data
 		self.engine.manager.data = []
 
 		while self.engine.amqp.events:
 			event = self.engine.amqp.events.pop()
 			assert(event['resource'] == host_group)
 
+		self.reset_data()
+
+
+	def test_08_count_sla(self):
+		truth_table = {
+			"__canopsis__cps_sla_slatype_slaname_out": [1, 0, 0],
+			"__canopsis__cps_sla_slatype_slaname_ok": [0, 0, 1],
+			"__canopsis__cps_sla_slatype_slaname_nok": [0, 1, 0],
+		}
+		now = time.time()
+		slatype = 'slatype'
+		slaname = 'slaname'
+		event = {'last_state_change': 1, 'state': 1}
+
+		def test_sla(index,  delay=1):
+
+			self.engine.count_sla(event,slatype, slaname, delay)
+			while self.engine.manager.data:
+				metric = self.engine.manager.data.pop()
+				assert(metric['name'] in truth_table)
+				#using state as postition in truth table
+				assert(truth_table[metric['name']][index] == metric['value'])
+
+		#Test general cases
+		self.storage.get_backend('entities').remove({'type': 'ack'})
+		test_sla(0)
+		self.storage.get_backend('entities').insert({'type': 'ack', 'timestamp': 2})
+		test_sla(1)
+		test_sla(2, delay=now + 1)
+
+
+		#test other stuff like hostgroup care and event state == 0 that publish a new metric
+		self.storage.get_backend('entities').remove({'type': 'ack'})
+
+		event ['hostgroups'] = ['hostgroup_test']
+		self.engine.count_sla(event,slatype, slaname, 1)
+		assert(len(self.engine.manager.data) == 6)
+
+		self.reset_data()
+
+		event ['hostgroups'] = ['hostgroup_test']
+		self.engine.count_sla(event,slatype, slaname, 1)
+		assert(len(self.engine.manager.data) == 6)
+
+		self.reset_data()
+
+
+
+	def test_09_count_by_crits(self):
+		self.engine.MACRO = 'MACRO'
+		self.engine.crits = {'macro_value': 1}
+		event = {
+			'last_state_change':1,
+			'previous_state':1,
+			'state' : 0,
+			'MACRO': 'macro_value'
+		}
+
+		#check metric name is properly built
+		self.engine.count_by_crits(event)
+		while self.engine.manager.data:
+			metric = self.engine.manager.data.pop()
+			assert('warn' in metric['name'])
+
+		event['previous_state'] = 2
+		self.engine.count_by_crits(event)
+		while self.engine.manager.data:
+			metric = self.engine.manager.data.pop()
+			assert('crit' in metric['name'])
+
+		#macro is a part of the metric name
+		self.engine.crits['mock_test_macro'] = 1
+		self.engine.count_by_crits(event)
+		#test update other section
+		for metric in self.engine.manager.data[3:]:
+			metric = self.engine.manager.data.pop()
+			assert('mock_test_macro' in metric['name'])
+
+		self.reset_data()
+
+	def test_10_count_alert(self):
+		self.engine.count_alert({'component': 1, 'state': 1}, 1)
+		pass
+
+	def reset_data(self):
+		#init engine as needed
+
+		self.engine.manager.clean()
+		self.engine.amqp.clean()
+
+
+	def show(self):
+		print 'DATA'
+		for d in self.engine.manager.data:
+			print d
+		print 'Events'
+		for e in self.engine.amqp.events:
+			print e
 
 if __name__ == "__main__":
 	unittest.main()
