@@ -43,7 +43,6 @@ def run_cmd(cmd):
         sub_path = join(path, sub_directory)
         # change directory
         with cd(sub_path):
-            run('pwd')
             # run setup command
             run(cmd_path.format(sub_directory))
 
