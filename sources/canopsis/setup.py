@@ -1,25 +1,23 @@
 from setuptools import setup, find_packages
 
 install_requires = [
-    "pymongo", 'cconfiguration'
 ]
 
 with open('README') as f:
     desc = f.read()
 
 setup(
-    name='cstorage',
+    name='canopsis',
     version='0.1',
     author="Capensis",
     author_email="canopsis@capensis.fr",
-    description=("Store data"),
+    description=("Hypervisor"),
     license="AGPL v3",
     zip_safe=False,
-    keywords="storage store canopsis",
+    keywords="canopsis hypervision hypervisor monitoring",
     install_requires=install_requires,
     url="http://www.canopsis.org",
-    packages=find_packages(exclude='test'),
-    scripts=['scripts/cstorage'],
+    packages=find_packages(exclude=['test']),
     long_description=desc,
-    test_suite="test"
+    scripts=['scripts/canopsis']
 )

@@ -18,7 +18,7 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
-from utils import resolve_element
+from canopsis.utils import resolve_element
 
 from stat import ST_SIZE
 from os import stat

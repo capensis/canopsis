@@ -19,13 +19,66 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from fabric.api import *
-import os
-cd = os.getcwd()
-def setup():
-    filelist = os.listdir('.')
-    for filename in filelist:
-        filepath = '{}/{}'.format(cd, filename)
-        if os.path.isdir(filepath):
-            run('python {}/setup.py'.format(filepath))
-    #run('uname -a')
+from fabric.api import run
+from fabric.context_managers import cd
+from os.path import dirname, abspath, join
+
+
+def run_cmd(cmd):
+    """
+    Run setup cmd on all projects.
+    """
+
+    # find __file__ directory
+    path = dirname(abspath(__file__))
+
+    cmd_path = "python {0}/{1}/setup.py {2}".format(path, '{0}', cmd)
+
+    def run_cmd_path(sub_directory=''):
+        """
+        Call fabric run function on sub_directory setup.py.
+        """
+
+        # get absolute sub-path
+        sub_path = join(path, sub_directory)
+        # change directory
+        with cd(sub_path):
+            run('pwd')
+            # run setup command
+            run(cmd_path.format(sub_directory))
+
+    # setup canopsis
+    run_cmd_path()
+
+    # setup cconfiguration
+    run_cmd_path("cconfiguration")
+
+    # setup timeserie
+    run_cmd_path("ctimeserie")
+
+    # setup cstorage
+    run_cmd_path("cstorage")
+
+    # setup ccontext
+    run_cmd_path("ccontext")
+
+    # setup cperfdata
+    run_cmd_path("cperfdata")
+
+    # setup ctopology
+    run_cmd_path("ctopology")
+
+    # setup cmongo
+    run_cmd_path("cmongo")
+
+
+if __name__ == '__main__':
+
+    from sys import argv
+
+    cmd = 'install'
+
+    if len(argv) == 2:
+        cmd = argv[1]
+
+    run_cmd(cmd)
