@@ -4,7 +4,7 @@ install_requires = [
     'cstorage'
 ]
 
-with open('README').read() as f:
+with open('README') as f:
     desc = f.read()
 
 setup(
