@@ -23,8 +23,18 @@ from fabric.api import run
 from fabric.context_managers import cd
 from os.path import dirname, abspath, join
 
+projects = (
+    '',
+    'cconfiguration',
+    'ctimeserie',
+    'cstorage',
+    'ccontext',
+    'cperfdata',
+    'ctopology',
+    'cmongo')
 
-def run_cmd(cmd):
+
+def run_cmd(cmd="install"):
     """
     Run setup cmd on all projects.
     """
@@ -46,38 +56,5 @@ def run_cmd(cmd):
             # run setup command
             run(cmd_path.format(sub_directory))
 
-    # setup canopsis
-    run_cmd_path()
-
-    # setup cconfiguration
-    run_cmd_path("cconfiguration")
-
-    # setup timeserie
-    run_cmd_path("ctimeserie")
-
-    # setup cstorage
-    run_cmd_path("cstorage")
-
-    # setup ccontext
-    run_cmd_path("ccontext")
-
-    # setup cperfdata
-    run_cmd_path("cperfdata")
-
-    # setup ctopology
-    run_cmd_path("ctopology")
-
-    # setup cmongo
-    run_cmd_path("cmongo")
-
-
-if __name__ == '__main__':
-
-    from sys import argv
-
-    cmd = 'install'
-
-    if len(argv) == 2:
-        cmd = argv[1]
-
-    run_cmd(cmd)
+    for project in projects:
+        run_cmd_path(project)
