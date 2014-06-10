@@ -1,10 +1,11 @@
 from setuptools import setup, find_packages
+import os
 
 install_requires = [
     "pymongo", "cstorage"
 ]
 
-with open('README') as f:
+with open(os.path.join(os.path.dirname(__file__), 'README')) as f:
     desc = f.read()
 
 setup(
@@ -19,7 +20,6 @@ setup(
     install_requires=install_requires,
     url = "http://www.canopsis.org",
     packages=find_packages(exclude='test'),
-    scripts=['scripts/cmongo'],
     long_description=desc,
     test_suite="test"
 )

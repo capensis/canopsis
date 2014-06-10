@@ -1,11 +1,12 @@
 from setuptools import setup, find_packages
-
-with open('README') as f:
-    desc = f.read()
+import os
 
 install_requires = [
     'cconfiguration'
 ]
+
+with open(os.path.join(os.path.dirname(__file__), 'README')) as f:
+    desc = f.read()
 
 setup(
     name='ctimeserie',
@@ -19,7 +20,6 @@ setup(
     install_requires=install_requires,
     url="http://www.canopsis.org",
     packages=find_packages(exclude='test'),
-    scripts=['scripts/ctimeserie'],
     long_description=desc,
     test_suite="test"
 )

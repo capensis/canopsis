@@ -8,6 +8,9 @@ function build(){
 }
 
 function install(){
+	cd $SRC_PATH/canopsis
+	fab -H canopsis@localhost run_cmd:$HUSER
+
 	easy_install_pylib simplejson
 	easy_install_pylib pymongo
 	easy_install_pylib pycurl
@@ -38,4 +41,6 @@ function install(){
 	# Todo: Very dirty patch, see https://github.com/Supervisor/supervisor/issues/141
 	sed -i "156i\            if isinstance(value, bool):\n                value = xmlrpclib.boolean(value)" $PREFIX/lib/python2.7/site-packages/supervisor-3.0a12-py2.7.egg/supervisor/xmlrpc.py
 	rm $PREFIX/lib/python2.7/site-packages/supervisor-3.0a12-py2.7.egg/supervisor/*.pyc
+
+
 }

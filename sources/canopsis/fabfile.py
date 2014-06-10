@@ -20,8 +20,9 @@
 # ---------------------------------
 
 from fabric.api import run
-from fabric.context_managers import cd
-from os.path import dirname, abspath, join
+import os
+import sys
+import getpass
 
 projects = (
     '.',
@@ -33,22 +34,15 @@ projects = (
     'ctopology',
     'cmongo')
 
-
-def run_cmd(cmd="install"):
+def run_cmd(huser="canopsis", cmd="install"):
     """
     Run setup cmd on all projects.
     """
-
     # find __file__ directory
-    path = dirname(abspath(__file__))
-
-    cmd_path = "python {0}/{1}/setup.py {2}".format(path, '{0}', cmd)
+    path = os.path.dirname(os.path.abspath(__file__))
 
     for project in projects:
+        command = "python {0}/{1}/setup.py {2}".format(path, project, cmd)
+        # run setup command
+        run(command)
 
-        # get absolute sub-path
-        sub_path = join(path, project)
-        # change directory
-        with cd(sub_path):
-            # run setup command
-            run(cmd_path.format(project))

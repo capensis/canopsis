@@ -1,9 +1,10 @@
 from setuptools import setup, find_packages
+import os
 
 install_requires = [
 ]
 
-with open('README') as f:
+with open(os.path.join(os.path.dirname(__file__), 'README')) as f:
     desc = f.read()
 
 setup(
@@ -18,6 +19,5 @@ setup(
     install_requires=install_requires,
     url="http://www.canopsis.org",
     packages=find_packages(exclude=['test']),
-    long_description=desc,
-    scripts=['scripts/canopsis']
+    long_description=desc
 )
