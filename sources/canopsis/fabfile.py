@@ -24,7 +24,7 @@ from fabric.context_managers import cd
 from os.path import dirname, abspath, join
 
 projects = (
-    '',
+    '.',
     'cconfiguration',
     'ctimeserie',
     'cstorage',
@@ -44,17 +44,11 @@ def run_cmd(cmd="install"):
 
     cmd_path = "python {0}/{1}/setup.py {2}".format(path, '{0}', cmd)
 
-    def run_cmd_path(sub_directory=''):
-        """
-        Call fabric run function on sub_directory setup.py.
-        """
+    for project in projects:
 
         # get absolute sub-path
-        sub_path = join(path, sub_directory)
+        sub_path = join(path, project)
         # change directory
         with cd(sub_path):
             # run setup command
-            run(cmd_path.format(sub_directory))
-
-    for project in projects:
-        run_cmd_path(project)
+            run(cmd_path.format(project))
