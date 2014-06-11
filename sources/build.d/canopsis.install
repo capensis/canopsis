@@ -3,11 +3,26 @@ NAME="canopsis"
 LOG="$LOG_PATH/$NAME.log"
 rm -f $LOG &> /dev/null
 
+PROJECTS[0]='ccommon'
+PROJECTS[1]='cconfiguration'
+PROJECTS[2]='cstorage'
+PROJECTS[3]='ccontext'
+PROJECTS[4]='ctimeserie'
+PROJECTS[5]='cperfdata'
+PROJECTS[6]='cmongo'
+
 function build(){
     true
 }
 
 function install(){
-    cd $SRC_PATH/$NAME
-    fab -H localhost -u canopsis -p canopsis setup 1>> $LOG 2>> $LOG
+
+    for project in "${PROJECTS[@]}";
+    do
+        cd $SRC_PATH/$NAME/$project;
+        python setup.py install >> $LOG 2>&1 || break
+    done
+
+    # TODO when fabric will be available
+    # fab -H localhost -u canopsis -p canopsis setup 1>> $LOG 2>> $LOG
 }

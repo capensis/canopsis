@@ -22,30 +22,22 @@ from setuptools import setup as _setup, find_packages
 
 from os.path import join, dirname, expanduser, abspath, basename
 
-from sys import path
-
-from inspect import currentframe
+from sys import path, argv
 
 AUTHOR = 'Capensis'
-AUTHOR_EMAIL = "canopsis@capensis.fr"
+AUTHOR_EMAIL = 'canopsis@capensis.fr'
 LICENSE = 'AGPL V3'
 ZIP_SAFE = False
 URL = 'http://www.canopsis.org'
 KEYWORDS = ' Canopsis Hypervision Hypervisor Monitoring'
 
-# get relative path from sources
-_relative_path = abspath(expanduser(join(dirname(__file__), '..', '..')))
-
-
-def _path(path, rp=_relative_path):
-    return join(_relative_path, path)
-
 
 def setup(description, keywords, **kwargs):
 
-    filename = currentframe().f_back.f_code.co_filename
+    # get setup path which corresponds to first python argument
+    filename = argv[0]
 
-    _path = abspath(expanduser(dirname(filename)))
+    _path = expanduser(dirname(abspath(filename)))
     name = basename(_path)
 
     path.append(_path)

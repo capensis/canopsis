@@ -24,6 +24,8 @@ __all__ = ('DataBase', 'Storage')
 
 from cconfiguration import Configurable
 
+from ccommon.utils import resolve_element
+
 
 class DataBase(Configurable):
 	"""
@@ -275,8 +277,6 @@ class DataBase(Configurable):
 
 		raise NotImplementedError()
 
-from utils import resolve_element
-
 
 class Storage(DataBase):
 	"""
@@ -342,7 +342,7 @@ class Storage(DataBase):
 		result = storage_type(data_type=data_type, *args, **kwargs)
 
 		return result
-
+"""
 import logging
 import time
 import sys
@@ -470,9 +470,6 @@ class cstorage(object):
 			self.connected = False
 
 	def check_connected(self):
-		"""
-		Check if self is connected to db.
-		"""
 		if not self.connected:
 			raise Exception("CSTORAGE is not connected %s" % id(self))
 
@@ -1125,3 +1122,4 @@ def get_storage(namespace='object', account=None, logging_level=logging.INFO):
 		STORAGES[namespace] = cstorage(
 			account, namespace=namespace, logging_level=logging_level)
 		return STORAGES[namespace]
+"""

@@ -8,9 +8,6 @@ function build(){
 }
 
 function install(){
-	cd $SRC_PATH/canopsis
-	fab -H canopsis@localhost run_cmd:$HUSER
-
 	easy_install_pylib simplejson
 	easy_install_pylib pymongo
 	easy_install_pylib pycurl

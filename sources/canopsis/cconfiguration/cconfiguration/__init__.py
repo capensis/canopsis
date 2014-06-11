@@ -45,18 +45,17 @@ class Configurable(object):
     LOGGING_LEVEL = 'logging_level'
 
     PARSING_RULES = {
-        CONF:
-            {
-                AUTO_CONF: bool,
-                LOGGING_LEVEL: str,
-                MANAGERS: str
-            }
+        CONF: {
+            AUTO_CONF: bool,
+            LOGGING_LEVEL: str,
+            MANAGERS: str
+        }
     }
 
     def __init__(
         self,
         configuration_files=None, auto_conf=True, logging_level=logging.INFO,
-        managers=None, _ready_to_conf=True, *args, **kwargs
+        managers=None, parsing_rules=None, _ready_to_conf=True, *args, **kwargs
     ):
         """
         :param configuration_files: configuration_files to parse.
@@ -64,6 +63,10 @@ class Configurable(object):
 
         :param auto_conf: true force auto conf as soon as parameter change
         :type auto_conf: bool
+
+        :param parsing_rules: list of callable parser by parameter name
+            and category name
+        :type parsing_rules: list of dict of dict of callable
 
         :param logging_level: logging level
         :type logging_level: str
@@ -85,14 +88,15 @@ class Configurable(object):
         self._logger = logging.getLogger(type(self).__name__)
         self._logger.setLevel(logging_level)
 
+        self.parsing_rules = (Configurable.PARSING_RULES,) \
+            if parsing_rules is None else parsing_rules
+
         # set managers
         self.managers = ConfigurationManager.get_managers() \
             if managers is None else managers
 
         if _ready_to_conf and self.auto_conf:
-            self.apply_configuration(
-                parsing_rules=self.get_parsing_rules(),
-                configuration_files=self.configuration_files)
+            self.apply_configuration()
 
     @property
     def configuration_files(self):
@@ -113,7 +117,7 @@ class Configurable(object):
 
         # remove previous watching
         remove_configurable(self)
-        self._configuration_files = value
+        self._configuration_files = tuple(value)
         # add new watching
         add_configurable(self)
 
@@ -137,24 +141,6 @@ class Configurable(object):
         """
 
         self._logger.setLevel(value)
-
-    def get_parsing_rules(self, *args, **kwargs):
-        """
-        Get a list of parsing rules.
-
-        One parsing rule is such as follow:
-        dict(category, dict(parameter_name, parser))
-
-        The order permits to define the order of overriding during
-        the parsing phase.
-
-        :return: tuple of dict(category, dict(parameter name, parser))
-        :rtype: tuple of dict(str, dict(str, func(str)))
-        """
-
-        result = (Configurable.PARSING_RULES, )
-
-        return result
 
     def apply_configuration(
         self, parsing_rules=None, configuration_files=None,
@@ -212,7 +198,7 @@ class Configurable(object):
             logger = self._logger
 
         if parsing_rules is None:
-            parsing_rules = self.get_parsing_rules()
+            parsing_rules = self.parsing_rules
 
         if configuration_files is None:
             configuration_files = self._configuration_files
@@ -297,12 +283,14 @@ class Configurable(object):
         result = None
 
         if logger is None:
-            logger = self.logger
+            logger = self._logger
 
         # try to find a good conf_manager if conf_manager is None
         if config_manager is None:
             config_manager = self._get_manager(
-                configuration_file=configuration_file, logger=logger)
+                configuration_file=configuration_file,
+                logger=logger,
+                managers=self.managers)
 
         if config_manager is not None:
             config_manager.set_parameters(
