@@ -22,7 +22,6 @@
 from fabric.api import run
 import os
 import sys
-import getpass
 
 projects = (
     '.',
