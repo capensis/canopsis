@@ -86,4 +86,7 @@ function install(){
 	cd $SRC_PATH
 	install_pylib "setuptools" "0.6c11"
 	chown $HUSER:$HGROUP -R $PREFIX/lib/python2.7
+
+	cd $SRC_PATH/python
+	fab -H canopsis@localhost setup
 }

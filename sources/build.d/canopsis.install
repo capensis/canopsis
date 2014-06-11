@@ -9,5 +9,5 @@ function build(){
 
 function install(){
     cd $SRC_PATH/$NAME
-    python setup.py install 1>> $LOG 2>> $LOG
+    fab -H localhost -u canopsis -p canopsis setup 1>> $LOG 2>> $LOG
 }

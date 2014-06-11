@@ -85,14 +85,14 @@ class Configurable(object):
         self._logger = logging.getLogger(type(self).__name__)
         self._logger.setLevel(logging_level)
 
+        # set managers
+        self.managers = ConfigurationManager.get_managers() \
+            if managers is None else managers
+
         if _ready_to_conf and self.auto_conf:
             self.apply_configuration(
                 parsing_rules=self.get_parsing_rules(),
                 configuration_files=self.configuration_files)
-
-        # set managers
-        if managers is None:
-            self.managers = ConfigurationManager.get_managers()
 
     @property
     def configuration_files(self):
@@ -101,7 +101,7 @@ class Configurable(object):
         :rtype: tuple
         """
 
-        result = tuple(self._configuration_files)
+        result = tuple(getattr(self, '_configuration_files', list()))
 
         return result
 

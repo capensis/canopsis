@@ -35,12 +35,16 @@ rm -Rf $CPS/etc/tasks.d/task_backup.py
 rm -Rf $CPS/etc/tasks.d/task_node.py
 rm -Rf $CPS/etc/tasks.d/task_pyperfstore.py
 rm -Rf $CPS/lib/wkhtmltopdf/*
-rm -Rf $CPS/lib/python2.7/site-packages/cperfdata-0.1-py2.7.egg/*
+
+rm -Rf $CPS/lib/python2.7/site-packages/ccommon-0.1-py2.7.egg/*
+rm -Rf $CPS/lib/python2.7/site-packages/cconfiguration-0.1-py2.7.egg/*
 rm -Rf $CPS/lib/python2.7/site-packages/ctimeserie-0.1-py2.7.egg/*
 rm -Rf $CPS/lib/python2.7/site-packages/cstorage-0.1-py2.7.egg/*
+rm -Rf $CPS/lib/python2.7/site-packages/ccontext-0.1-py2.7.egg/*
+rm -Rf $CPS/lib/python2.7/site-packages/cperfdata-0.1-py2.7.egg/*
+rm -Rf $CPS/lib/python2.7/site-packages/ctopology-0.1-py2.7.egg/*
 rm -Rf $CPS/lib/python2.7/site-packages/cmongo-0.1-py2.7.egg/*
-rm -Rf $CPS/lib/python2.7/site-packages/cconfiguration-0.1-py2.7.egg/*
-rm -Rf $CPS/lib/python2.7/site-packages/canopsis-0.1-py2.7.egg/*
+
 
 if [ $LINK -eq 1 ]; then
 	ln -s $SRC/sources/wkhtmltopdf-libs/lib/wkhtmltopdf/* $CPS/lib/wkhtmltopdf/
@@ -61,12 +65,15 @@ if [ $LINK -eq 1 ]; then
 	ln -s $SRC/sources/amqp2engines/opt/amqp2engines $CPS/opt/
 	ln -s $SRC/sources/canotools/opt/canotools $CPS/opt/
 	ln -s $SRC/sources/mongodb-conf/opt/mongodb $CPS/opt/
-	ln -s $SRC/sources/cperfdata/cperfdata $CPS/lib/python2.7/site-packages/cperfdata-0.1-py2.7.egg/
-	ln -s $SRC/sources/ctimeserie/ctimeserie $CPS/lib/python2.7/site-packages/ctimeserie-0.1-py2.7.egg/
-	ln -s $SRC/sources/cstorage/cstorage $CPS/lib/python2.7/site-packages/cstorage-0.1-py2.7.egg/
-	ln -s $SRC/sources/cmongo/cmongo $CPS/lib/python2.7/site-packages/cmongo-0.1-py2.7.egg/
-	ln -s $SRC/sources/cconfiguration/cconfiguration $CPS/lib/python2.7/site-packages/cconfiguration-0.1-py2.7.egg/
-	ln -s $SRC/sources/canopsis/canopsis $CPS/lib/python2.7/site-packages/canopsis-0.1-py2.7.egg/
+
+	ln -s $SRC/sources/canopsis/ccommon/ccommon $CPS/lib/python2.7/site-packages/ccommon-0.1-py2.7.egg/
+	ln -s $SRC/sources/canopsis/cconfiguration/cconfiguration $CPS/lib/python2.7/site-packages/cconfiguration-0.1-py2.7.egg/
+	ln -s $SRC/sources/canopsis/ctimeserie/ctimeserie $CPS/lib/python2.7/site-packages/ctimeserie-0.1-py2.7.egg/
+	ln -s $SRC/sources/canopsis/cstorage/cstorage $CPS/lib/python2.7/site-packages/cstorage-0.1-py2.7.egg/
+	ln -s $SRC/sources/canopsis/ccontext/ccontext $CPS/lib/python2.7/site-packages/ccontext-0.1-py2.7.egg/
+	ln -s $SRC/sources/canopsis/ctopology/ctopology $CPS/lib/python2.7/site-packages/ctopology-0.1-py2.7.egg/
+	ln -s $SRC/sources/canopsis/cperfdata/cperfdata $CPS/lib/python2.7/site-packages/cperfdata-0.1-py2.7.egg/
+	ln -s $SRC/sources/canopsis/cmongo/cmongo $CPS/lib/python2.7/site-packages/cmongo-0.1-py2.7.egg/
 fi
 
 
