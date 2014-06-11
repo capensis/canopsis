@@ -37,13 +37,11 @@ def setup(cmd="install", projects=projects):
     """
     Run setup cmd on all projects.
     """
-
     # find __file__ directory
     path = dirname(expanduser(__file__))
 
     cmd_path = "python {0}/{{0}}/setup.py {1}".format(path, cmd)
 
     for project in projects:
-
         # run setup command
         run(cmd_path.format(project))
