@@ -20,11 +20,10 @@
 # ---------------------------------
 
 from fabric.api import run
-from fabric.context_managers import cd
-from os.path import dirname, abspath, join
+from os.path import dirname, expanduser
 
 projects = (
-    '.',
+    'ccommon',
     'cconfiguration',
     'ctimeserie',
     'cstorage',
@@ -34,21 +33,17 @@ projects = (
     'cmongo')
 
 
-def run_cmd(cmd="install"):
+def setup(cmd="install", projects=projects):
     """
     Run setup cmd on all projects.
     """
 
     # find __file__ directory
-    path = dirname(abspath(__file__))
+    path = dirname(expanduser(__file__))
 
-    cmd_path = "python {0}/{1}/setup.py {2}".format(path, '{0}', cmd)
+    cmd_path = "python {0}/{{0}}/setup.py {1}".format(path, cmd)
 
     for project in projects:
 
-        # get absolute sub-path
-        sub_path = join(path, project)
-        # change directory
-        with cd(sub_path):
-            # run setup command
-            run(cmd_path.format(project))
+        # run setup command
+        run(cmd_path.format(project))
