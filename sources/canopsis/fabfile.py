@@ -20,6 +20,8 @@
 # ---------------------------------
 
 from fabric.api import run
+import os
+import sys
 from os.path import dirname, expanduser
 
 projects = (
