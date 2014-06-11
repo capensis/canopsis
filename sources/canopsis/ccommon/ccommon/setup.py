@@ -24,6 +24,7 @@ from os.path import join, dirname, expanduser, abspath, basename
 
 from sys import path, argv
 
+# TODO: set values in a dedicated configuration file
 AUTHOR = 'Capensis'
 AUTHOR_EMAIL = 'canopsis@capensis.fr'
 LICENSE = 'AGPL V3'
