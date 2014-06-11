@@ -22,9 +22,10 @@
 from fabric.api import run
 import os
 import sys
+from os.path import dirname, expanduser
 
 projects = (
-    '.',
+    'ccommon',
     'cconfiguration',
     'ctimeserie',
     'cstorage',
@@ -33,15 +34,16 @@ projects = (
     'ctopology',
     'cmongo')
 
-def run_cmd(huser="canopsis", cmd="install"):
+
+def setup(cmd="install", projects=projects):
     """
     Run setup cmd on all projects.
     """
     # find __file__ directory
-    path = os.path.dirname(os.path.abspath(__file__))
+    path = dirname(expanduser(__file__))
+
+    cmd_path = "python {0}/{{0}}/setup.py {1}".format(path, cmd)
 
     for project in projects:
-        command = "python {0}/{1}/setup.py {2}".format(path, project, cmd)
         # run setup command
-        run(command)
-
+        run(cmd_path.format(project))

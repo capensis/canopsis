@@ -18,11 +18,13 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
+from os.path import dirname, expanduser
+from sys import path
+
+path.append(expanduser(dirname(__file__)))
+
 from ccommon.setup import setup
 
-install_requires = ['cstorage']
-
 setup(
-    description='Canopsis context',
-    install_requires=install_requires,
-    keywords='context')
+    description=('Common library'),
+    keywords='common library')

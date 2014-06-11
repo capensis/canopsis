@@ -1,25 +1,28 @@
-from setuptools import setup, find_packages
-import os
+#!/usr/bin/env python
+#--------------------------------
+# Copyright (c) 2014 "Capensis" [http://www.capensis.com]
+#
+# This file is part of Canopsis.
+#
+# Canopsis is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# Canopsis is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Affero General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public License
+# along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
+# ---------------------------------
 
-install_requires = [
-    "pymongo", 'cconfiguration'
-]
+from ccommon.setup import setup
 
-with open(os.path.join(os.path.dirname(__file__), 'README')) as f:
-    desc = f.read()
+install_requires = ["pymongo", 'cconfiguration']
 
 setup(
-    name='cstorage',
-    version='0.1',
-    author="Capensis",
-    author_email="canopsis@capensis.fr",
-    description=("Store data"),
-    license="AGPL v3",
-    zip_safe=False,
-    keywords="storage store canopsis",
+    description='Canopsis storage',
     install_requires=install_requires,
-    url="http://www.canopsis.org",
-    packages=find_packages(exclude='test'),
-    long_description=desc,
-    test_suite="test"
-)
+    keywords='storage')
