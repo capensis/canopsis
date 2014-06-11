@@ -23,13 +23,37 @@ Python utility library.
 """
 
 
-def resolve_element(name):
+def resolve_element(path):
     """
-    Get element reference from input element name.
+    Get element reference from input full path element.
+
+    :limitations: does not resolve class method.
+
+    :param path: full path to a python element.
+        Examples:
+            - __builtin__.open
+            - ccommon.utils.resolve_element
+    :type path: str
+
+    :return: python object which is accessible thourgh input path.
+    :rtype: object
     """
 
-    mod = __import__(name)
-    components = name.split('.')
-    for comp in components[1:]:
-        mod = getattr(mod, comp)
-    return mod
+    components = path.split('.')
+
+    # if mod does not exist
+    result = None
+
+    try:  # check if name is defined from an external module
+        result = __import__(components[0])
+
+    except ImportError:  # try to get result from globals
+        pass
+
+    # if result exist
+    if result is not None:
+        # path its content
+        for comp in components[1:]:
+            result = getattr(result, comp)
+
+    return result
