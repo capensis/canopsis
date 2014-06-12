@@ -21,7 +21,10 @@
 
 from cconfiguration.manager import ConfigurationManager
 
-from ConfigParser import RawConfigParser, DuplicateSectionError
+from ConfigParser import RawConfigParser, DuplicateSectionError,\
+    MissingSectionHeaderError
+
+from cconfiguration import Category, Parameter, Configuration
 
 
 class ConfigurationManager(ConfigurationManager):
@@ -35,50 +38,76 @@ class ConfigurationManager(ConfigurationManager):
     __register__ = True
 
     def _has_category(
-        self, config_resource, category, logger, *args, **kwargs
+        self, conf_resource, category, logger, *args, **kwargs
     ):
-        return config_resource.has_section(category)
+        return conf_resource.has_section(category.name)
 
     def _has_parameter(
-        self, config_resource, category, parameter_name, logger,
+        self, conf_resource, category, parameter, logger,
         *args, **kwargs
     ):
-        return config_resource.has_option(category, parameter_name)
+        return conf_resource.has_option(category.name, parameter.name)
 
-    def _get_config_resource(
-        self, logger, configuration_file=None, *args, **kwargs
+    def _get_conf_resource(
+        self, logger, conf_file=None, *args, **kwargs
     ):
         result = RawConfigParser()
 
-        if configuration_file is not None:
+        if conf_file is not None:
 
-            files = result.read(configuration_file)
+            files = list()
+
+            try:
+                files = result.read(conf_file)
+
+            except MissingSectionHeaderError:
+                pass
 
             if not files:
                 result = None
 
         return result
 
+    def _get_configuration(self, conf_resource, logger, *args, **kwargs):
+
+        result = Configuration()
+
+        for section in conf_resource.sections():
+
+            category = Category(section)
+
+            for option in conf_resource.options(section):
+
+                value = conf_resource.get(section, option)
+
+                parameter = Parameter(option, value=value)
+
+                category.put(parameter)
+
+            result.categories.append(category)
+
+        return result
+
     def _get_parameter(
-        self, config_resource, category, parameter_name, *args, **kwargs
+        self, conf_resource, category, parameter, *args, **kwargs
     ):
-        return config_resource.get(category, parameter_name)
+        return conf_resource.get(category.name, parameter.name)
 
     def _set_category(
-        self, config_resource, category, logger, *args, **kwargs
+        self, conf_resource, category, logger, *args, **kwargs
     ):
         try:
-            config_resource.add_section(category)
+            conf_resource.add_section(category.name)
         except (DuplicateSectionError, ValueError):
             pass
 
     def _set_parameter(
-        self, config_resource, category, parameter_name, parameter, logger,
+        self, conf_resource, category, parameter, logger,
         *args, **kwargs
     ):
-        config_resource.set(category, parameter_name, parameter)
+        conf_resource.set(category.name, parameter.name, parameter.value)
 
-    def _write_config_resource(
-        self, config_resource, configuration_file, *args, **kwargs
+    def _write_conf_resource(
+        self, conf_resource, conf_file, *args, **kwargs
     ):
-        config_resource.write(open(configuration_file, 'a'))
+        conf_resource.write(open(conf_file, 'w'))

@@ -21,6 +21,8 @@
 
 from cconfiguration.manager import ConfigurationManager
 
+from cconfiguration import Configuration, Category, Parameter
+
 try:
     from json import loads, dump
 except ImportError:
@@ -38,24 +40,24 @@ class ConfigurationManager(ConfigurationManager):
     __register__ = True
 
     def _has_category(
-        self, config_resource, category, logger, *args, **kwargs
+        self, conf_resource, category, logger, *args, **kwargs
     ):
-        return category in config_resource
+        return category.name in conf_resource
 
     def _has_parameter(
-        self, config_resource, category, parameter_name, logger,
+        self, conf_resource, category, parameter, logger,
         *args, **kwargs
     ):
-        return parameter_name in config_resource[category]
+        return parameter.name in conf_resource[category.name]
 
-    def _get_config_resource(
-        self, logger, configuration_file=None, *args, **kwargs
+    def _get_conf_resource(
+        self, logger, conf_file=None, *args, **kwargs
     ):
         result = dict()
 
-        if configuration_file is not None:
+        if conf_file is not None:
             try:
-                with open(configuration_file, 'r') as handle:
+                with open(conf_file, 'r') as handle:
                     result = loads(handle.read())
 
             except Exception:
@@ -63,29 +65,47 @@ class ConfigurationManager(ConfigurationManager):
 
         return result
 
+    def _get_configuration(self, conf_resource, logger, *args, **kwargs):
+
+        result = Configuration()
+
+        for category, parameters in conf_resource.iteritems():
+
+            category = Category(category)
+
+            for name, value in parameters.iteritems():
+
+                parameter = Parameter(name, value=value)
+
+                category.put(parameter)
+
+            result.categories.append(category)
+
+        return result
+
     def _get_parameter(
-        self, config_resource, category, parameter_name, *args, **kwargs
+        self, conf_resource, category, parameter, *args, **kwargs
     ):
-        return config_resource[category][parameter_name]
+        return conf_resource[category.name][parameter.name]
 
     def _set_category(
-        self, config_resource, category, logger, *args, **kwargs
+        self, conf_resource, category, logger, *args, **kwargs
     ):
-        config_resource.setdefault(category, dict())
+        conf_resource.setdefault(category.name, dict())
 
     def _set_parameter(
-        self, config_resource, category, parameter_name, parameter, logger,
+        self, conf_resource, category, parameter, logger,
         *args, **kwargs
     ):
-        config_resource[category][parameter_name] = parameter
+        conf_resource[category.name][parameter.name] = parameter.value
 
-    def _write_config_resource(
-        self, config_resource, configuration_file, *args, **kwargs
+    def _write_conf_resource(
+        self, conf_resource, conf_file, *args, **kwargs
     ):
 
         try:
-            with open(configuration_file, 'a') as handle:
-                dump(config_resource, handle)
+            with open(conf_file, 'w') as handle:
+                dump(conf_resource, handle)
 
         except Exception:
             pass

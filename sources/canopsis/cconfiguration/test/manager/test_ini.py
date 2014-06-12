@@ -21,8 +21,6 @@
 
 from unittest import main
 
-from cconfiguration.manager.ini import ConfigurationManager
-
 try:
     from test.manager import ConfigurationManagerTest
 
@@ -37,11 +35,22 @@ except ImportError:
 
     from manager import ConfigurationManagerTest
 
+from cconfiguration.manager.ini import ConfigurationManager
+
 
 class ConfigurationManagerTest(ConfigurationManagerTest):
 
     def _get_configuration_manager(self):
+
         return ConfigurationManager()
+
+    def _get_manager_path(self):
+
+        return 'cconfiguration.manager.ini.ConfigurationManager'
+
+    def _get_manager(self):
+
+        return ConfigurationManager
 
 if __name__ == '__main__':
     main()

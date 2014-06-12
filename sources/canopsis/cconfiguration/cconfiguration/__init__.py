@@ -92,9 +92,37 @@ class Category(dict):
         :param parameters: Parameters
         :type parameters: list of Parameter
         """
-        super(Category, self).__init__(name=name, **kwargs)
+        super(Category, self).__init__(**kwargs)
+        self.name = name
         # set parameter by names.
         self.update({parameter.name: parameter for parameter in parameters})
+
+    def put(self, parameter, *args, **kwargs):
+        """
+        Put a new parameter in self.parameters.
+
+        :param parameter: parameter to put in self.parameters
+        :type parameter: Parameter
+        """
+
+        self[parameter.name] = parameter
+
+    def copy(self, name, *args, **kwargs):
+        """
+        Get a copy of this category with new input name.
+
+        :param name: copied category name
+        :type name: str
+
+        :return: new category which is a copy of this with a new name
+        :rtype: Category
+        """
+
+        result = self.copy()
+
+        result.name = name
+
+        return result
 
 
 class Parameter(object):
@@ -118,6 +146,33 @@ class Parameter(object):
 
         super(Parameter, self).__init__(*args, **kwargs)
         self.name = name
+        self.value = value
+        self.parser = parser
+
+    def parse(self, serialized_value, logger, *args, **kwargs):
+        """
+        Call self.parser(serialized_value) and returns the result or the
+        parsing operation or the raised exception.
+
+        :param serialized_value: serialized value to parse
+        :type serialized_value: callable
+
+        :return: parsing result or exception if raised during parsing.
+        :rtype: object or Exception
+        """
+
+        result = None
+
+        try:
+            result = self.parser(serialized_value)
+
+        except Exception as result:
+            logger.error(
+                'exception {0} raised during parsing {1} from {2}'.format(
+                    result, serialized_value, self))
+            pass
+
+        return result
 
 
 class Configurable(object):
@@ -125,20 +180,21 @@ class Configurable(object):
     Manages class configuration synchronisation with configuration files.
     """
 
-    DEFAULT_CONF_FILE = '~/etc/conf.conf'
+    CONF_FILE = '~/etc/conf.conf'
 
     CONF = 'CONF'
 
     AUTO_CONF = 'auto_conf'
+    CONFIGURE = 'configure'
     MANAGERS = 'conf_managers'
     LOGGING_LEVEL = 'logging_level'
 
     CONFIGURATION = Configuration(
-        Category(
-            name=CONF,
-            Parameter(name=AUTO_CONF, parser=bool),
-            Parameter(name=MANAGERS),
-            Parameter(name=LOGGING_LEVEL)))
+        Category(CONF,
+            Parameter(AUTO_CONF, parser=bool),
+            Parameter(MANAGERS),
+            Parameter(LOGGING_LEVEL),
+            Parameter(CONFIGURE, parser=bool)))
 
     PARSING_RULES = {
         CONF: {
@@ -175,7 +231,7 @@ class Configurable(object):
         super(Configurable, self).__init__(*args, **kwargs)
 
         if conf_files is None:
-            conf_files = [Configurable.DEFAULT_CONF_FILE]
+            conf_files = [Configurable.CONF_FILE]
 
         self.conf_files = conf_files
 
@@ -408,20 +464,48 @@ class Configurable(object):
 
         return result
 
+    def _configure(self, parameters, error_parameters, *args, **kwargs):
+        """
+        Configure this class with input parameters only if auto_conf or
+        configure is true.
+
+        :param parameters: dictionary of parameter value by name
+        :type parameters: dict
+
+        :param error_parameters: dictionary of parameter parsing error by name
+        :type error_parameters: dict
+
+        :param configure: if True, force full self configuration
+        :type configure: bool
+        """
+
+        # set configure
+        configure = parameters.get(Configurable.CONFIGURE)
+
+        # set auto_conf
+        auto_conf = parameters.get(Configurable.AUTO_CONF)
+        if auto_conf is not None:
+            self.auto_conf = auto_conf
+
+        if configure or auto_conf:
+
+            self._configure(parameters, error_parameters, *args, **kwargs)
+
     def configure(self, parameters, error_parameters, *args, **kwargs):
         """
-        Configure this class with input parameters.
+        Update self properties with input parameters.
+
+        :param parameters: dictionary of parameter value by name
+        :type parameters: dict
+
+        :param error_parameters: dictionary of parameter parsing error by name
+        :type error_parameters: dict
         """
 
         # set logging_level
         logging_level = parameters.get(Configurable.LOGGING_LEVEL)
         if logging_level is not None:
             self.logging_level = logging_level
-
-        # set auto_conf
-        auto_conf = parameters.get(Configurable.AUTO_CONF)
-        if auto_conf is not None:
-            self.auto_conf = auto_conf
 
         # set conf_managers
         conf_managers = parameters.get(Configurable.MANAGERS)

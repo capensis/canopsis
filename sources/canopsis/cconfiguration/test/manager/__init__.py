@@ -27,6 +27,8 @@ from cconfiguration.manager import ConfigurationManager
 
 from pickle import loads, dump
 
+from os import remove
+
 
 class ConfigurationManager(ConfigurationManager):
     """
@@ -36,65 +38,67 @@ class ConfigurationManager(ConfigurationManager):
     __register__ = True
 
     def _has_category(
-        self, config_resource, category, logger, *args, **kwargs
+        self, conf_resource, category, logger, *args, **kwargs
     ):
 
-        return category in config_resource
+        return category in conf_resource
 
     def _has_parameter(
-        self, config_resource, category, parameter_name, logger,
+        self, conf_resource, category, parameter_name, logger,
         *args, **kwargs
     ):
 
-        return parameter_name in config_resource[category]
+        return parameter_name in conf_resource[category]
 
-    def _get_config_resource(
-        self, logger, configuration_file=None, *args, **kwargs
+    def _get_conf_resource(
+        self, logger, conf_file=None, *args, **kwargs
     ):
 
         result = dict()
 
-        if configuration_file is not None:
+        if conf_file is not None:
 
-            with open(configuration_file, 'a+') as handle:
+            with open(conf_file, 'r') as handle:
+
                 try:
                     result = loads(handle.read())
+
                 except Exception:
                     pass
 
         return result
 
     def _get_parameter(
-        self, config_resource, category, parameter_name, logger,
+        self, conf_resource, category, parameter_name, logger,
         *args, **kwargs
     ):
 
-        return config_resource[category][parameter_name]
+        return conf_resource[category][parameter_name]
 
     def _set_category(
-        self, config_resource, category, logger, *args, **kwargs
+        self, conf_resource, category, logger, *args, **kwargs
     ):
 
-        config_resource.setdefault(category, dict())
+        conf_resource.setdefault(category, dict())
 
     def _set_parameter(
-        self, config_resource, category, parameter_name, parameter, logger,
+        self, conf_resource, category, parameter_name, parameter, logger,
         *args, **kwargs
     ):
 
-        config_resource[category][parameter_name] = parameter
+        conf_resource[category][parameter_name] = parameter
 
-    def _write_config_resource(
-        self, config_resource, configuration_file, *args, **kwargs
+    def _write_conf_resource(
+        self, conf_resource, conf_file, *args, **kwargs
     ):
 
-        with open(configuration_file, 'a+') as handle:
+        with open(conf_file, 'w') as handle:
+
             try:
-                dump(config_resource, handle)
+                dump(conf_resource, handle)
+
             except Exception:
                 pass
-
-from os import remove
 
 
 class ConfigurationManagerTest(TestCase):
@@ -144,6 +148,7 @@ class ConfigurationManagerTest(TestCase):
         ]
         # add parameters in parsing_rules to full_parameters
         for parsing_rule in self.parsing_rules:
+
             for category in parsing_rule:
                 self.full_parameters[category] = self.parameters.copy()
 
@@ -153,24 +158,26 @@ class ConfigurationManagerTest(TestCase):
         self.full_parameters['FOO'][ConfigurationManagerTest.ERROR_PARAMETER]\
             = 'er'
 
-        self.configuration_file = self.get_configuration_file()
+        self.conf_file = self.get_configuration_file()
 
         # empty configuration file
         try:
-            open(self.configuration_file, 'w').close()
+            open(self.conf_file, 'w').close()
+
         except OSError as ose:  # do nothing if file does not exist
             print(ose)
 
         # fill configuration file with set_parameters
         self.manager.set_parameters(
-            configuration_file=self.configuration_file,
+            conf_file=self.conf_file,
             parameter_by_categories=self.full_parameters,
             logger=self.logger)
 
     def tearDown(self):
         # remove self configuration file
         try:
-            remove(self.configuration_file)
+            remove(self.conf_file)
+
         except OSError:
             pass
 
@@ -181,7 +188,7 @@ class ConfigurationManagerTest(TestCase):
     def test_get_parameters(self):
 
         parameters, error_parameters = self.manager.get_parameters(
-            configuration_file=self.configuration_file,
+            conf_file=self.conf_file,
             parsing_rules=self.parsing_rules,
             logger=self.logger)
 
@@ -198,7 +205,7 @@ class ConfigurationManagerTest(TestCase):
         }
 
         self.manager.set_parameters(
-            configuration_file=self.configuration_file,
+            conf_file=self.conf_file,
             parameter_by_categories=parameters_by_categories,
             logger=self.logger)
 
@@ -213,6 +220,20 @@ class ConfigurationManagerTest(TestCase):
         Only one method to override by sub tests
         """
         return ConfigurationManager()
+
+    def test_manager(self):
+
+        manager = ConfigurationManager.add_manager(self._get_manager_path())
+
+        self.assertTrue(manager is self._get_manager())
+
+    def _get_manager_path(self):
+
+        return 'test.manager.ConfigurationManager'
+
+    def _get_manager(self):
+
+        return ConfigurationManager
 
 if __name__ == '__main__':
     main()

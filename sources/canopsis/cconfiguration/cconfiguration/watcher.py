@@ -22,7 +22,7 @@
 """
 Dictionary of configurables by configuration file.
 """
-_CONFIGURABLE_BY_CONFIGURATION_FILES = dict()
+_CONFIGURABLE_BY_CONF_FILES = dict()
 
 
 def add_configurable(configurable):
@@ -33,10 +33,10 @@ def add_configurable(configurable):
     :type configurable: cconfiguration.Configurable
     """
 
-    for configuration_file in configurable.configuration_files:
+    for conf_file in configurable.conf_files:
 
-        configurables = _CONFIGURABLE_BY_CONFIGURATION_FILES.setdefault(
-            configuration_file, set())
+        configurables = _CONFIGURABLE_BY_CONF_FILES.setdefault(
+            conf_file, set())
 
         configurables.add(configurable)
 
@@ -49,33 +49,33 @@ def remove_configurable(configurable):
     :type configurable: cconfiguration.Configurable
     """
 
-    for configuration_file in configurable.configuration_files:
+    for conf_file in configurable.conf_files:
 
-        configurables = _CONFIGURABLE_BY_CONFIGURATION_FILES.setdefault(
-            configuration_file, set())
+        configurables = _CONFIGURABLE_BY_CONF_FILES.setdefault(
+            conf_file, set())
 
         configurables.remove(configurable)
 
         if not configurables:
 
-            del _CONFIGURABLE_BY_CONFIGURATION_FILES[configuration_file]
+            del _CONFIGURABLE_BY_CONF_FILES[conf_file]
 
 
-def on_update_configuration_file(configuration_file):
+def on_update_conf_file(conf_file):
     """
     Apply configuration on all configurables which watch input
-    configuration_file.
+    conf_file.
 
-    :param configuration_file: configuration file to reconfigure.
-    :type configuration_file: str
+    :param conf_file: configuration file to reconfigure.
+    :type conf_file: str
     """
 
-    configurables = _CONFIGURABLE_BY_CONFIGURATION_FILES.get(
-        configuration_file)
+    configurables = _CONFIGURABLE_BY_CONF_FILES.get(
+        conf_file)
 
     if configurables:
 
         for configurable in configurables:
 
             configurable.apply_configuration(
-                configuration_file=configuration_file)
+                conf_file=conf_file)

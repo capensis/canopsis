@@ -19,18 +19,19 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-
 from unittest import TestCase, main
 
-
 from cconfiguration import Configurable
+from cconfiguration.manager import ConfigurationManager
+
+from os import remove
 
 
 class ConfigurableTest(TestCase):
 
     def setUp(self):
 
-        self.configuration_files = (
+        self.conf_files = (
             '/tmp/ConfigurableTest0',
             '/tmp/ConfigurableTest1'
         )
@@ -69,18 +70,18 @@ class ConfigurableTest(TestCase):
     def test_configuration_files(self):
 
         configurable = Configurable()
-        configurable.configuration_files = self.configuration_files
+        configurable.conf_files = self.conf_files
 
         self.assertEquals(
-            configurable.configuration_files,
-            self.configuration_files)
+            configurable.conf_files,
+            self.conf_files)
 
         configurable = Configurable(
-            configuration_files=self.configuration_files)
+            conf_files=self.conf_files)
 
         self.assertEquals(
-            configurable.configuration_files,
-            self.configuration_files)
+            configurable.conf_files,
+            self.conf_files)
 
     def test_auto_conf(self):
 
@@ -106,8 +107,9 @@ class ConfigurableTest(TestCase):
 
         self.assertTrue(configurable.logging_level, 'INFO')
 
-    def test_get_parameters(self):
+    def test_parameters(self):
 
+        # test to get from no file
         configurable = Configurable()
 
         parameters, errors = configurable.get_parameters()
@@ -115,48 +117,66 @@ class ConfigurableTest(TestCase):
         self.assertEquals(len(parameters), 0)
         self.assertEquals(len(errors), 0)
 
-        configurable.configuration_files = self.configuration_files
+        # test to get from files which do not exist
+        configurable.conf_files = self.conf_files
+
+        for conf_file in self.conf_files:
+            try:
+                remove(conf_file)
+            except OSError:
+                pass
 
         parameters, errors = configurable.get_parameters()
 
         self.assertEquals(len(parameters), 0)
         self.assertEquals(len(errors), 0)
 
+        # get parameters from empty files
+        for conf_file in self.conf_files:
+            open(conf_file, 'w').close()
+
+        parameters, errors = configurable.get_parameters()
+
+        self.assertEquals(len(parameters), 0)
+        self.assertEquals(len(errors), 0)
+
+        # get parameters from empty files and empty parsing_rules
         parameters, errors = configurable.get_parameters(
             parsing_rules=dict())
 
         self.assertEquals(len(parameters), 0)
         self.assertEquals(len(errors), 0)
 
+        # fill files
         configurable = Configurable(
-            configuration_files=self.configuration_files,
+            conf_files=self.conf_files,
             parsing_rules=self.parsing_rules)
 
         # add A section in conf file[0]
         configurable.set_parameters(
-            configuration_file=self.configuration_files[0],
-            parameter_by_categories=self.parameters0)
+            conf_file=self.conf_files[0],
+            parameter_by_categories=self.parameters0,
+            conf_manager=tuple(configurable.managers)[0])
 
         # add A section in conf file[1]
         configurable.set_parameters(
-            configuration_file=self.configuration_files[1],
-            parameter_by_categories=self.parameters0)
+            conf_file=self.conf_files[1],
+            parameter_by_categories=self.parameters0,
+            conf_manager=tuple(configurable.managers)[1])
         # add B section in conf file[1]
         configurable.set_parameters(
-            configuration_file=self.configuration_files[1],
-            parameter_by_categories=self.parameters1)
+            conf_file=self.conf_files[1],
+            parameter_by_categories=self.parameters1,
+            conf_manager=tuple(configurable.managers)[1])
 
         parameters, errors = configurable.get_parameters()
+
+        print parameters, errors, configurable.managers
 
         self.assertTrue('a' in parameters)
         self.assertTrue('2' in parameters)
         self.assertTrue('b' in parameters)
         self.assertTrue('None' in errors)
-
-        print parameters, errors
-
-    def test_set_parameters(self):
-        raise NotImplementedError()
 
     def test_reconfigure(self):
         raise NotImplementedError()

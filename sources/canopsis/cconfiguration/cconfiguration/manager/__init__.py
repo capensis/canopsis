@@ -18,11 +18,12 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
-from canopsis.utils import resolve_element
+from ccommon.utils import resolve_element
 
 from stat import ST_SIZE
+
 from os import stat
-from os.path import isfile
+from os.path import exists
 
 
 class MetaConfigurationManager(type):
@@ -57,9 +58,188 @@ class ConfigurationManager(object):
     """
     __register__ = False
 
-    CONFIGURATION_FILE = 'CONFIGURATION_FILE'
+    CONF_FILE = 'CONF_FILE'
 
     _MANAGERS = set()
+
+    def handle(self, conf_file, logger, *args, **kwargs):
+        """
+        True iif input conf_file can be handled by self.
+
+        :return: True iif input conf_file can be handled by self.
+        :rtype: bool
+        """
+
+        conf_resource = self._get_conf_resource(
+            conf_file=conf_file, logger=logger)
+
+        result = conf_resource is not None
+
+        return result
+
+    def get_configuration(self, conf_file, logger, *args, **kwargs):
+        """
+        Get conf_file content through a configuration or None if no
+        configuration is available.
+
+        :rtype: cconfiguration.Configuration
+        """
+
+        result = None
+
+        conf_resource = self._get_conf_resource(conf_file)
+
+        if conf_resource is not None:
+
+            result = self._get_configuration(conf_resource=conf_resource,
+                logger=logger, *args, **kwargs)
+
+        return result
+
+    def update_configuration(
+        self, conf_file, configuration, logger, *args, **kwargs
+    ):
+        """
+        Parse a configuration_files with input configuration and returns
+        parameters and errors by parameter name.
+
+        :param conf_file: configuration file to parse and from get parameters
+        :type conf_file: str
+
+        :param configuration: configuration to fill with conf_file values and
+            configuration parameter names.
+        :type configuration: cconfiguration.Configuration
+
+        :param logger: logger to use in order to trace information/error
+        :type logger: logging.Logger
+        """
+
+        conf_resource = None
+
+        # ensure conf_file exists and is not empty.
+        if exists(conf_file) and stat(conf_file)[ST_SIZE]:
+
+            try:
+                # first, read configuration file
+                conf_resource = self._get_conf_resource(
+                    conf_file=conf_file, logger=logger)
+
+            except Exception as e:
+                # if an error occured, log it
+                logger.error(
+                    'Impossible to parse conf_file {0}: {1}'.format(
+                        conf_file, e))
+
+            else:  # else process configuration file
+
+                # get generic logging message
+                log_message = '{0}/{{0}}/{{1}}'.format(conf_file)
+
+                # for each parsing rule in the ascending order
+                for category in configuration.categories:
+
+                    if self._has_category(
+                        conf_resource=conf_resource,
+                        category=category,
+                            logger=logger):
+
+                        for name, parameter in category.iteritems():
+
+                            # if parameter_name exists
+                            if self._has_parameter(
+                                conf_resource=conf_resource,
+                                category=category,
+                                parameter=parameter,
+                                    logger=logger):
+
+                                # construct generic log message for each
+                                # name
+                                option_log_message = '{0} = {{0}}'.format(
+                                    log_message.format(category.name, name))
+
+                                # get sub_category_value
+                                value = self._get_parameter(
+                                    conf_resource=conf_resource,
+                                    category=category,
+                                    parameter=parameter,
+                                    logger=logger)
+
+                                parsed_value = parameter.parse(value, logger)
+
+                                # if an exception occured
+                                if isinstance(parsed_value, Exception):
+                                    # set error among errors result
+                                    error_message = option_log_message.format(
+                                        parsed_value)
+                                    logger.error(error_message)
+
+                                # set value on parameter
+                                parameter.value = parsed_value
+                                info_message = option_log_message.format(
+                                    parsed_value)
+                                logger.info(info_message)
+
+    def set_configuration(
+        self, conf_file, configuration, logger,
+        *args, **kwargs
+    ):
+        """
+        Set input configuration in input conf_file.
+
+        :param conf_file:
+        :type conf_file: str
+
+        :param configuration: configuration to write in conf_file.
+        :type configuration: cconfiguration.Configuration
+
+        :param logger: used to log info/errors
+        :type logger: logging.Logger
+        """
+
+        result = None
+        conf_resource = None
+
+        try:  # get conf_resource
+            conf_resource = self._get_conf_resource(
+                conf_file=conf_file,
+                logger=logger)
+
+        except Exception as e:
+            # if an error occured, stop processing
+            logger.error(
+                'Impossible to parse conf_file {0}: {1}'.format(
+                    conf_file, e))
+            result = e
+
+        # if conf_file can not be loaded, get default config resource
+        if conf_resource is None:
+
+            conf_resource = self._get_conf_resource(logger=logger)
+
+        # iterate on all configuration items
+        for category in configuration.categories:
+
+            # set category
+            self._set_category(
+                conf_resource=conf_resource, category=category,
+                logger=logger)
+
+            # iterate on parameters
+            for parameter_name, parameter in category.iteritems():
+
+                # set parameter
+                self._set_parameter(
+                    conf_resource=conf_resource,
+                    category=category,
+                    parameter=parameter,
+                    logger=logger)
+
+        # write conf_resource in configuration file
+        self._write_conf_resource(
+            conf_resource=conf_resource,
+            conf_file=conf_file)
+
+        return result
 
     @staticmethod
     def get_managers():
@@ -67,7 +247,7 @@ class ConfigurationManager(object):
         Get global defined managers.
         """
 
-        return tuple(ConfigurationManager._MANAGERS)
+        return set(ConfigurationManager._MANAGERS)
 
     @staticmethod
     def add_manager(path):
@@ -81,249 +261,100 @@ class ConfigurationManager(object):
 
         result = resolve_element(path)
 
+        # add it to _MANAGERS
+        ConfigurationManager._MANAGERS.add(result)
+
         return result
 
+    def _get_configuration(self, conf_resource, logger, *args, **kwargs):
+        """
+        Update input configuration with input conf_resource.
+        """
+
+        raise NotImplementedError()
+
     def _has_category(
-        self, config_resource, category, logger, *args, **kwargs
+        self, conf_resource, category, logger, *args, **kwargs
     ):
+        """
+        True iif input conf_resource contains input category.
+        """
+
         raise NotImplementedError()
 
     def _has_parameter(
         self,
-        config_resource, category, parameter_name, logger,
+        conf_resource, category, parameter, logger,
         *args, **kwargs
     ):
+        """
+        True iif input conf_resource has input parameter_name in input category
+        """
+
         raise NotImplementedError()
 
-    def _get_config_resource(
-        self, logger, configuration_file=None, *args, **kwargs
+    def _get_conf_resource(
+        self, logger, conf_file=None, *args, **kwargs
     ):
         """
         Get config resource.
 
-        :param configuration_file: if not None, the config resource is \
-            configuration_file content.
-        :type configuration_file: str
+        :param conf_file: if not None, the config resource is \
+            conf_file content.
+        :type conf_file: str
 
         :param logger: logger used to log processing information
         :type logger: logging.Logger
 
-        :return: empty config resource if configuration_file is None, else \
-            configuration_file content.
+        :return: empty config resource if conf_file is None, else \
+            conf_file content.
+        """
+
+        raise NotImplementedError()
+
+    def _get_default_conf_resource(self, logger, *args, **kwargs):
+        """
+        Get default conf resource.
         """
 
         raise NotImplementedError()
 
     def _get_parameter(
-        self, config_resource, category, parameter_name, *args, **kwargs
+        self, conf_resource, category, parameter, *args, **kwargs
     ):
+        """
+        Get a parameter related to input conf_resource, category and parameter
+        """
+
         raise NotImplementedError()
 
-    def handle(self, configuration_file, logger, *args, **kwargs):
-        """
-        True iif input configuration_file can be handled by self.
-
-        :return: True iif input configuration_file can be handled by self.
-        :rtype: bool
-        """
-
-        config_resource = self._get_config_resource(
-            configuration_file=configuration_file, logger=logger)
-
-        result = config_resource is not None
-
-        return result
-
-    def get_parameters(
-        self, configuration_file, parsing_rules, logger, *args, **kwargs
-    ):
-        """
-        Parse a configuration_files with input parsing_rules and returns
-        parameters and errors by parameter name.
-
-        Args:
-            - configuration_files list(str) or str:
-                path to configuration_files.
-            - parsing_rules list(dict(str: dict(str: callable))):
-                a list of dictionaries of parsers  by parameter name and
-                category.
-            - logger (logging.Logger): logger to use instead of raising
-                exceptions.
-
-        Returns:
-            tuple of 2 dictionaries containing respectively parameter name with
-            - value.
-            - parsing error.
-        """
-
-        # initialize return values
-        parameters = dict()
-        error_parameters = dict()
-
-        config_resource = None
-
-        # ensure configuration_file exists and is not empty.
-        if isfile(configuration_file) and stat(configuration_file)[ST_SIZE]:
-
-            try:
-                # first, read configuration file
-                config_resource = self._get_config_resource(
-                    configuration_file=configuration_file, logger=logger)
-
-            except Exception as e:
-                # if an error occured, add it in error_parameters at
-                # ConfigurationLanguage
-                config_resource_error = error_parameters.setdefault(
-                    ConfigurationManager.CONFIGURATION_FILE, list())
-                config_resource_error.append(e)
-                logger.error(
-                    'Impossible to parse configuration_file {0}: {1}'.format(
-                        configuration_file, e))
-
-            else:  # else process configuration file
-
-                # get generic logging message
-                log_message = '{0}/{1}'.format(configuration_file, '{0}/{1}')
-
-                # for each parsing rule in the ascending order
-                for parsing_rule in parsing_rules:
-
-                    # iterate on all category
-                    for category, parsers_by_parameter in \
-                            parsing_rule.iteritems():
-
-                        # if parsing_rule category exists in
-                        # configuration_files
-                        if self._has_category(
-                            config_resource=config_resource, category=category,
-                                logger=logger):
-
-                            # iterate on all parameter_name
-                            for name, parser in \
-                                    parsers_by_parameter.iteritems():
-
-                                # if parameter_name exists
-                                if self._has_parameter(
-                                    config_resource=config_resource,
-                                    category=category,
-                                    parameter_name=name,
-                                        logger=logger):
-
-                                    # construct generic log message for each
-                                    # name
-                                    option_log_message = '{0} = {1}'.format(
-                                        log_message.format(
-                                            category, name),
-                                        '{0}')
-
-                                    # get sub_category_value
-                                    sub_category_value = self._get_parameter(
-                                        config_resource=config_resource,
-                                        category=category,
-                                        parameter_name=name,
-                                        logger=logger)
-
-                                    try:  # parse parameter_name
-                                        value = parser(sub_category_value)
-
-                                    # if an exception occured
-                                    except Exception as e:
-                                        # set error among errors result
-                                        error_parameters[name] = e
-                                        # remove value from parameters result
-                                        parameters.pop(name, None)
-                                        error_message = \
-                                            option_log_message.format(
-                                                e)
-                                        logger.error(error_message)
-
-                                    else:  # if parsing is ok
-                                        # set value for parameters result
-                                        parameters[name] = value
-                                        # remove exception from errors result
-                                        error_parameters.pop(name, None)
-                                        info_message = \
-                                            option_log_message.format(
-                                                value)
-                                        logger.info(info_message)
-
-        # set the result with a tuple of parameters and error_parameters
-        result = parameters, error_parameters
-
-        return result
-
     def _set_category(
-        self, config_resource, category, logger, *args, **kwargs
+        self, conf_resource, category, logger, *args, **kwargs
     ):
+        """
+        Set category on conf_resource.
+        """
+
         raise NotImplementedError()
 
     def _set_parameter(
-        self, config_resource, category, parameter_name, parameter, logger,
-        *args, **kwargs
-    ):
-        raise NotImplementedError()
-
-    def _write_config_resource(
-        self, config_resource, configuration_file, *args, **kwargs
-    ):
-        raise NotImplementedError()
-
-    def set_parameters(
-        self, configuration_file, parameter_by_categories, logger,
+        self, conf_resource, category, parameter, logger,
         *args, **kwargs
     ):
         """
-        Args:
-            - configuration_files (str):
-            - parameter_by_categories (dict(str: dict(str: object)):
-            - logger (logging.Logger):
+        Set parameter in conf_resource.
         """
 
-        result = None
-        config_resource = None
+        raise NotImplementedError()
 
-        try:  # get config_resource
-            config_resource = self._get_config_resource(
-                configuration_file=configuration_file,
-                logger=logger)
+    def _write_conf_resource(
+        self, conf_resource, conf_file, *args, **kwargs
+    ):
+        """
+        Write conf_resource into conf_file.
+        """
 
-        except Exception as e:
-            # if an error occured, stop processing
-            logger.error(
-                'Impossible to parse configuration_file {0}: {1}'.format(
-                    configuration_file, e))
-            result = e
-
-        # if configuration_file can not be loaded, get default config resource
-        if config_resource is None:
-
-            config_resource = self._get_config_resource(logger=logger)
-
-        # iterate on all parameter_by_categories items
-        for category, parameters in parameter_by_categories.iteritems():
-
-            # set category
-            self._set_category(
-                config_resource=config_resource, category=category,
-                logger=logger)
-
-            # iterate on parameters
-            for parameter_name, parameter_value in parameters.iteritems():
-
-                # set parameter
-                self._set_parameter(
-                    config_resource=config_resource,
-                    category=category,
-                    parameter_name=parameter_name,
-                    parameter=parameter_value,
-                    logger=logger)
-
-        # write conf_resource in configuration file
-        self._write_config_resource(
-            config_resource=config_resource,
-            configuration_file=configuration_file)
-
-        return result
+        raise NotImplementedError()
 
 """
 Load automatically all library managers.
