@@ -20,7 +20,7 @@
 
 from ccommon.setup import setup
 
-install_requires = ["pymongo", 'cconfiguration']
+install_requires = ['cconfiguration', 'ctimeserie']
 
 setup(
     description='Canopsis storage',
