@@ -21,7 +21,7 @@
 
 from unittest import TestCase, main
 
-from ccommon.utils import resolve_element
+from ccommon.utils import resolve_element, path
 
 
 def _test():
@@ -60,6 +60,15 @@ class UtilsTest(TestCase):
 
         self.assertTrue(_resolve_element is resolve_element)
 
+    def test_path(self):
+
+        open_path = path(open)
+
+        self.assertEqual(open_path, '__builtin__.open')
+
+        self.assertEqual(path(UtilsTest), 'test.utils.UtilsTest')
+
+        self.assertEqual(resolve_element(path(open)), open)
 
 if __name__ == '__main__':
     main()
