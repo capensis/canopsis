@@ -258,33 +258,25 @@ class Parameter(object):
 
         super(Parameter, self).__init__(*args, **kwargs)
         self.name = name
-        self.value = value
+        self._value = value
         self.parser = parser
 
-    def parse(self, serialized_value, logger, *args, **kwargs):
-        """
-        Call self.parser(serialized_value) and returns the result or the
-        parsing operation or the raised exception.
+    @property
+    def value(self):
+        return self._value
 
-        :param serialized_value: serialized value to parse
-        :type serialized_value: callable
+    @value.setter
+    def value(self, value):
+        if isinstance(value, str):
+            # parse value if str
+            try:
+                self._value = self.parser(value)
 
-        :return: parsing result or exception if raised during parsing.
-        :rtype: object or Exception
-        """
+            except Exception as e:
+                self._value = e
 
-        result = None
-
-        try:
-            result = self.parser(serialized_value)
-
-        except Exception as result:
-            logger.error(
-                'exception {0} raised during parsing {1} from {2}'.format(
-                    result, serialized_value, self))
-            pass
-
-        return result
+        else:
+            self._value = value
 
     def copy(self, name=None, *args, **kwargs):
 

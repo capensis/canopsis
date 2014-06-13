@@ -157,10 +157,7 @@ class ConfigurationManager(object):
                                 parameter=parameter,
                                 logger=logger)
 
-                            parsed_value = parameter.parse(
-                                value, logger=logger)
-
-                            parameter.value = parsed_value
+                            parameter.value = value
 
                 else:
 
@@ -196,21 +193,18 @@ class ConfigurationManager(object):
                                         parameter=parameter,
                                         logger=logger)
 
-                                    parsed_value = parameter.parse(
-                                        value, logger)
+                                    parameter.value = value
 
                                     # if an exception occured
-                                    if isinstance(parsed_value, Exception):
+                                    if isinstance(parameter.value, Exception):
                                         # set error among errors result
                                         error_message = \
                                             option_log_message.format(
-                                                parsed_value)
+                                                parameter.value)
                                         logger.error(error_message)
 
-                                    # set value on parameter
-                                    parameter.value = parsed_value
                                     info_message = option_log_message.format(
-                                        parsed_value)
+                                        parameter.value)
                                     logger.info(info_message)
 
         return result
