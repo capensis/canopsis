@@ -5,9 +5,9 @@ rm -f $LOG &> /dev/null
 
 PROJECTS[0]='ccommon'
 PROJECTS[1]='cconfiguration'
-PROJECTS[2]='cstorage'
-PROJECTS[3]='ccontext'
-PROJECTS[4]='ctimeserie'
+PROJECTS[2]='ctimeserie'
+PROJECTS[3]='cstorage'
+PROJECTS[4]='ccontext'
 PROJECTS[5]='cperfdata'
 PROJECTS[6]='cmongo'
 
