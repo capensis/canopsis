@@ -79,14 +79,14 @@ Ext.define('canopsis.view.Perfdata.Grid' , {
 			sortable: true,
 			dataIndex: 'fts',
 			align: 'center',
-			renderer: rdr_tstodate
+			renderer: function(data) { return rdr_tstodate(data); }
 		},{
 			header: _('Last point'),
 			width: 150,
 			sortable: true,
 			dataIndex: 'lts',
 			align: 'center',
-			renderer: rdr_tstodate
+			renderer: function(data) { return rdr_tstodate(data); }
 		},{
 			header: _('Type'),
 			width: 70,

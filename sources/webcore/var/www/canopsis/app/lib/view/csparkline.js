@@ -107,10 +107,14 @@ Ext.define('canopsis.lib.view.csparkline' , {
 
 	addValues: function(values) {
 		this.values = this.values.slice(values.length);
-
+		var new_values = [];
 		for(var i = 0; i < values.length; i++) {
-			this.values.push(values[i]);
+			if (i === 0 || values[i-1][0] < values[i][0])
+			{
+				new_values.push(values[i]);
+			}
 		}
+		this.values = new_values;
 
 		this.buildSparkline();
 	},

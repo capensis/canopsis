@@ -44,6 +44,8 @@ Ext.define('widgets.mini_chart.mini_chart', {
 		align: 'center'
 	},
 
+	useLastRefresh: false,
+
 	initComponent: function() {
 		this.callParent(arguments);
 
@@ -66,9 +68,6 @@ Ext.define('widgets.mini_chart.mini_chart', {
 	},
 
 	doRefresh: function (from, to) {
-		this.from = from;
-		this.to = to;
-
 		log.debug('Get values from ' + new Date(from) + ' to ' + new Date(to), this.logAuthor);
 
 		this.refreshNodes(from, to);
@@ -167,7 +166,6 @@ Ext.define('widgets.mini_chart.mini_chart', {
 				values[i][1] = -values[i][1];
 			}
 
-			values[i][0] = values[i][0] / 1000;
 		}
 
 		return values;

@@ -397,7 +397,6 @@ class manager(object):
 			except gridfs.errors.FileExists as fe:
 				self.logger.debug('Impossible to create gridfs bin {} because it exists'.format(fe))
 
-
 			self.logger.debug("   + Add bin_id in meta and clean meta")
 
 			perfdata = self.store.get(_id=_id)
