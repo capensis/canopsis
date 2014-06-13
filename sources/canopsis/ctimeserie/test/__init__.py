@@ -1,4 +1,4 @@
-import unittest
+"""import unittest
 
 from ctimeserie import TimeSerie
 from ctimeserie.timewindow import TimeWindow, Period
@@ -13,9 +13,6 @@ class AggregationTest(unittest.TestCase):
 		pass
 
 	def _five_years_timewidow(self):
-		"""
-		Get a 5 years old timewindow.
-		"""
 
 		now = time()
 		# create an interval of 5 year every 30 minutes
@@ -87,3 +84,4 @@ class AggregationTest(unittest.TestCase):
 
 if __name__ == '__main__':
 	unittest.main()
+"""

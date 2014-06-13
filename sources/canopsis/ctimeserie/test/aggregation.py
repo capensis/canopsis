@@ -1,10 +1,10 @@
-import unittest
+from unittest import TestCase, main
 
-from ctimewindow.aggregation import get_aggregation_value
+from ctimeserie.aggregation import get_aggregation_value
 from random import random
 
 
-class AggregationTest(unittest.TestCase):
+class AggregationTest(TestCase):
 
 	def setUp(self):
 
@@ -40,4 +40,4 @@ class AggregationTest(unittest.TestCase):
 
 
 if __name__ == "__main__":
-	unittest.main()
+	main()
