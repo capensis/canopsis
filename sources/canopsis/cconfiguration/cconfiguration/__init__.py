@@ -371,8 +371,11 @@ class Configurable(object):
         self._log_lvl = log_lvl
         self._log_name = log_name if log_name is not None else \
             type(self).__name__
+        self._log_debug_format = log_debug_format
         self._log_info_format = log_info_format
-        self._log_debug_msg = log_debug_format
+        self._log_warning_format = log_warning_format
+        self._log_error_format = log_error_format
+        self._log_critical_format = log_critical_format
 
         self._logger = self.newLogger()
 
@@ -399,7 +402,7 @@ class Configurable(object):
 
         def setHandler(logger, lvl, path, format):
 
-            class Filter(Filter):
+            class filter(Filter):
                 def filter(self, record):
                     return record.levelno == lvl
 
@@ -416,19 +419,19 @@ class Configurable(object):
 
         setHandler(result, 'DEBUG', path, self.log_debug_format)
         setHandler(result, 'INFO', path, self.log_info_format)
-        setHandler(result, 'WARNING', path, self.log_warn_format)
-        setHandler(result, 'ERROR', path, self.log_err_format)
-        setHandler(result, 'CRITICAL', path, self.log_crit_format)
+        setHandler(result, 'WARNING', path, self.log_warning_format)
+        setHandler(result, 'ERROR', path, self.log_error_format)
+        setHandler(result, 'CRITICAL', path, self.log_critical_format)
 
         return result
 
     @property
     def log_debug_format(self):
-        return self._log_debug_msg
+        return self._log_debug_format
 
     @log_debug_format.setter
     def log_debug_format(self, value):
-        self._log_debug_msg = value
+        self._log_debug_format = value
         self._logger = self.newLogger()
 
     @property
@@ -442,29 +445,29 @@ class Configurable(object):
 
     @property
     def log_warning_format(self):
-        return self._log_warning_msg
+        return self._log_warning_format
 
     @log_warning_format.setter
     def log_warning_format(self, value):
-        self._log_warning_msg = value
+        self._log_warning_format = value
         self._logger = self.newLogger()
 
     @property
     def log_error_format(self):
-        return self._log_error_msg
+        return self._log_error_format
 
     @log_error_format.setter
     def log_error_format(self, value):
-        self._log_error_msg = value
+        self._log_error_format = value
         self._logger = self.newLogger()
 
     @property
     def log_critical_format(self):
-        return self._log_critical_msg
+        return self._log_critical_format
 
     @log_critical_format.setter
     def log_critical_format(self, value):
-        self._log_critical_msg = value
+        self._log_critical_format = value
         self._logger = self.newLogger()
 
     @property

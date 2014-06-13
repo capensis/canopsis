@@ -93,7 +93,7 @@ class ConfigurableTest(TestCase):
 
         configuration = configurable.get_configuration()
 
-        self.assertEquals(len(configuration), 1)
+        self.assertEquals(len(configuration), len(self.configuration))
 
         # test to get from files which do not exist
         configurable.conf_files = self.conf_files
@@ -106,7 +106,7 @@ class ConfigurableTest(TestCase):
 
         configuration = configurable.get_configuration()
 
-        self.assertEquals(len(configuration), 1)
+        self.assertEquals(len(configuration), len(self.configuration))
 
         # get parameters from empty files
         for conf_file in self.conf_files:
@@ -114,7 +114,7 @@ class ConfigurableTest(TestCase):
 
         configuration = configurable.get_configuration()
 
-        self.assertEquals(len(configuration), 1)
+        self.assertEquals(len(configuration), len(self.configuration))
 
         # get parameters from empty files and empty parsing_rules
         configuration = Configuration()

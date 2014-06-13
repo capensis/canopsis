@@ -19,10 +19,23 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
+try:
+    from threading import Timer
+except ImportError:
+    from dummythreading import Timer
+
+from stat import ST_MTIME
+
+from os import stat
+from os.path import exists, expanduser
+
+from cconfiguration import Configuration, Parameter, Category, Configurable
+
 """
-Dictionary of configurables by configuration file.
+Dictionary of (mtime, configurables) by configuration file.
 """
-_CONFIGURABLE_BY_CONF_FILES = dict()
+_CONFIGURABLES_BY_CONF_FILES = dict()
+_MTIME_BY_CONF_FILES = dict()
 
 
 def add_configurable(configurable):
@@ -35,7 +48,7 @@ def add_configurable(configurable):
 
     for conf_file in configurable.conf_files:
 
-        configurables = _CONFIGURABLE_BY_CONF_FILES.setdefault(
+        configurables = _CONFIGURABLES_BY_CONF_FILES.setdefault(
             conf_file, set())
 
         configurables.add(configurable)
@@ -51,14 +64,13 @@ def remove_configurable(configurable):
 
     for conf_file in configurable.conf_files:
 
-        configurables = _CONFIGURABLE_BY_CONF_FILES.setdefault(
-            conf_file, set())
+        configurables = _CONFIGURABLES_BY_CONF_FILES.get(conf_file)
 
-        configurables.remove(configurable)
+        if configurables:
+            configurables.remove(configurable)
 
-        if not configurables:
-
-            del _CONFIGURABLE_BY_CONF_FILES[conf_file]
+            if not configurables:
+                del _CONFIGURABLES_BY_CONF_FILES[conf_file]
 
 
 def on_update_conf_file(conf_file):
@@ -70,12 +82,85 @@ def on_update_conf_file(conf_file):
     :type conf_file: str
     """
 
-    configurables = _CONFIGURABLE_BY_CONF_FILES.get(
-        conf_file)
+    conf_file = expanduser(conf_file)
+
+    configurables = _CONFIGURABLES_BY_CONF_FILES.get(conf_file)
 
     if configurables:
 
         for configurable in configurables:
 
-            configurable.apply_configuration(
-                conf_file=conf_file)
+            configurable.apply_configuration(conf_file=conf_file)
+
+# default value for sleeping_time
+SLEEPING_TIME = 5
+
+
+class Watcher(Configurable):
+    """
+    Watches all sleeping_time
+    """
+
+    CATEGORY = 'WATCHER'
+    SLEEP = 'sleeping_time'
+
+    DEFAULT_CONFIGURATION = Configuration(
+        Category(CATEGORY,
+            Parameter(SLEEP, value=SLEEPING_TIME, parser=int)))
+
+    def __init__(self, sleeping_time=SLEEPING_TIME, *args, **kwargs):
+
+        super(Watcher, self).__init__(*args, **kwargs)
+
+        self._sleeping_time = sleeping_time
+
+        self.start()
+
+    @property
+    def sleeping_time(self):
+        return self._sleeping_time
+
+    @sleeping_time.setter
+    def sleeping_time(self, value):
+        """
+        Change value of sleeping_time
+        """
+        self._sleeping_time = value
+        # restart the timer
+        self.stop()
+        self.start()
+
+    def _configure(self, parameters, error_parameters, *args, **kwargs):
+
+        super(Watcher, self)._configure(
+            parameters=parameters, error_parameters=error_parameters,
+            *args, **kwargs)
+
+        self.sleeping_time = parameters.get(Watcher.SLEEP, self.sleeping_time)
+
+    def run(self):
+        global _CONFIGURABLES_BY_CONF_FILES
+
+        for conf_file in _CONFIGURABLES_BY_CONF_FILES:
+
+            conf_file = expanduser(conf_file)
+            # check file exists
+            if exists(conf_file):
+                # get mtime
+                mtime = stat(conf_file)[ST_MTIME]
+                # compare with old mtime
+                old_mtime = _MTIME_BY_CONF_FILES.setdefault(conf_file, mtime)
+                if old_mtime != mtime:
+                    on_update_conf_file(conf_file)
+
+    def _run(self):
+        self._timer = Timer(self.sleeping_time, self._run)
+        self._timer.start()
+        self.run()
+
+    def start(self):
+        self._timer = Timer(self.sleeping_time, self._run)
+        self._timer.start()
+
+    def stop(self):
+        self._timer.cancel()
