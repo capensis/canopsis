@@ -41,7 +41,7 @@ class ConfigurableTest(TestCase):
             Category('A',
                 Parameter('a', value='a'),
                 Parameter('2', value=2, parser=int),
-                Parameter('error', value=None, parser=float)),
+                Parameter('error', value='error', parser=float)),
             Category('B',
                 Parameter('a', value='b'),
                 Parameter('b', value='b')))

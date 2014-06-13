@@ -30,8 +30,6 @@ from stat import ST_SIZE
 from os.path import expanduser, exists, sep
 from os import stat
 
-from cconfiguration.watcher import add_configurable, remove_configurable
-
 from collections import OrderedDict
 
 from inspect import isclass
@@ -523,6 +521,9 @@ class Configurable(object):
         """
         Change of conf_files in adding it in watching list.
         """
+
+        from cconfiguration.watcher import add_configurable,\
+            remove_configurable
 
         # remove previous watching
         remove_configurable(self)
