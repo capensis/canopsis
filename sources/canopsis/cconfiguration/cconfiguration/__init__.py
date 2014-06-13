@@ -23,7 +23,7 @@ __version__ = "0.1"
 
 __all__ = ('Configurable')
 
-from logging import INFO, Formatter, getLogger, FileHandler, Filter, DEBUG
+from logging import Formatter, getLogger, FileHandler, Filter
 
 from stat import ST_SIZE
 
@@ -296,32 +296,47 @@ class Configurable(object):
     CONF_FILE = '~/etc/conf.conf'
 
     CONF = 'CONF'
+    LOG = 'LOG'
 
     AUTO_CONF = 'auto_conf'
     CONFIGURE = 'configure'
     MANAGERS = 'conf_managers'
+    LOG_NAME = 'log_name'
     LOG_LVL = 'log_lvl'
-    INFO_MSG = 'info_msg'
-    DEBUG_MSG = 'debug_msg'
+    LOG_DEBUG_FORMAT = 'log_debug_format'
+    LOG_INFO_FORMAT = 'log_info_format'
+    LOG_WARNING_FORMAT = 'log_warning_format'
+    LOG_ERROR_FORMAT = 'log_error_format'
+    LOG_CRITICAL_FORMAT = 'log_critical_format'
 
     DEFAULT_CONFIGURATION = Configuration(
         Category(CONF,
             Parameter(AUTO_CONF, parser=bool),
             Parameter(MANAGERS),
+            Parameter(CONFIGURE, parser=bool)),
+        Category(LOG,
+            Parameter(LOG_NAME),
             Parameter(LOG_LVL),
-            Parameter(INFO_MSG),
-            Parameter(DEBUG_MSG),
-            Parameter(CONFIGURE, parser=bool)))
+            Parameter(LOG_DEBUG_FORMAT),
+            Parameter(LOG_INFO_FORMAT),
+            Parameter(LOG_WARNING_FORMAT),
+            Parameter(LOG_ERROR_FORMAT),
+            Parameter(LOG_CRITICAL_FORMAT)))
 
-    DEBUG_MSG = "[%(asctime)s] [%(levelname)s] [%(name)s] \
+    DEBUG_FORMAT = "[%(asctime)s] [%(levelname)s] [%(name)s] \
 [%(process)d] [%(thread)d] [%(pathname)s] [%(lineno)d] %(message)s"
-    INFO_MSG = "[%(asctime)s] [%(levelname)s] [%(name)s] %(message)s"
+    INFO_FORMAT = "[%(asctime)s] [%(levelname)s] [%(name)s] %(message)s"
+    WARNING_FORMAT = INFO_FORMAT
+    ERROR_FORMAT = WARNING_FORMAT
+    CRITICAL_FORMAT = ERROR_FORMAT
 
     def __init__(
         self,
         conf_files=None, auto_conf=True,
         managers=None, configuration=DEFAULT_CONFIGURATION.copy(),
-        log_lvl=INFO, log_name=None, info_msg=INFO_MSG, debug_msg=DEBUG_MSG,
+        log_lvl='INFO', log_name=None, log_info_format=INFO_FORMAT,
+        log_debug_format=DEBUG_FORMAT, log_warning_format=WARNING_FORMAT,
+        log_error_format=ERROR_FORMAT, log_critical_format=CRITICAL_FORMAT,
         _ready_to_conf=True,
         *args, **kwargs
     ):
@@ -356,8 +371,8 @@ class Configurable(object):
         self._log_lvl = log_lvl
         self._log_name = log_name if log_name is not None else \
             type(self).__name__
-        self._info_msg = info_msg
-        self._debug_msg = debug_msg
+        self._log_info_format = log_info_format
+        self._log_debug_msg = log_debug_format
 
         self._logger = self.newLogger()
 
@@ -382,57 +397,105 @@ class Configurable(object):
         result = getLogger(self.log_name)
         result.setLevel(self.log_lvl)
 
-        infoFormatter = Formatter(Configurable.INFO_MSG)
-        debugFormatter = Formatter(Configurable.DEBUG_MSG)
+        def setHandler(logger, lvl, path, format):
 
-        class InfoFilter(Filter):
-            def filter(self, record):
-                return record.levelno >= INFO
+            class Filter(Filter):
+                def filter(self, record):
+                    return record.levelno == lvl
 
-        class DebugFilter(Filter):
-            def filter(self, record):
-                return record.levelno == DEBUG
+            handler = FileHandler(path)
+            handler.addFilter(Filter())
+            handler.setLevel(lvl)
+            formatter = Formatter(format)
+            handler.setFormatter(formatter)
+            logger.addHandler(handler)
+            setattr(logger, lvl, handler)
 
         filename = self.log_name.replace('.', sep)
         path = expanduser('~/var/log/{0}.log'.format(filename))
 
-        infoHandler = FileHandler(path)
-        infoHandler.addFilter(InfoFilter())
-        infoHandler.setLevel(INFO)
-        infoHandler.setFormatter(infoFormatter)
-        result.infoHandler = infoHandler
-        result.addHandler(infoHandler)
-
-        debugHandler = FileHandler(path)
-        debugHandler.addFilter(DebugFilter())
-        debugHandler.setLevel(DEBUG)
-        infoHandler.setFormatter(debugFormatter)
-        result.debugHandler = debugHandler
-        result.addHandler(debugHandler)
+        setHandler(result, 'DEBUG', path, self.log_debug_format)
+        setHandler(result, 'INFO', path, self.log_info_format)
+        setHandler(result, 'WARNING', path, self.log_warn_format)
+        setHandler(result, 'ERROR', path, self.log_err_format)
+        setHandler(result, 'CRITICAL', path, self.log_crit_format)
 
         return result
 
     @property
-    def info_msg(self):
-        return self._info_msg
+    def log_debug_format(self):
+        return self._log_debug_msg
 
-    @info_msg.setter
-    def info_msg(self, value):
-        self._info_msg = value
-        self._logger.infoHandler.setFormatter(Formatter(self._info_msg))
+    @log_debug_format.setter
+    def log_debug_format(self, value):
+        self._log_debug_msg = value
+        self._logger = self.newLogger()
 
     @property
-    def debug_msg(self):
-        return self._debug_msg
+    def log_info_format(self):
+        return self._log_info_format
 
-    @debug_msg.setter
-    def debug_msg(self, value):
-        self._debug_msg = value
-        self._logger.debugHandler.setFormatter(Formatter(self._debug_msg))
+    @log_info_format.setter
+    def log_info_format(self, value):
+        self._log_info_format = value
+        self._logger = self.newLogger()
+
+    @property
+    def log_warning_format(self):
+        return self._log_warning_msg
+
+    @log_warning_format.setter
+    def log_warning_format(self, value):
+        self._log_warning_msg = value
+        self._logger = self.newLogger()
+
+    @property
+    def log_error_format(self):
+        return self._log_error_msg
+
+    @log_error_format.setter
+    def log_error_format(self, value):
+        self._log_error_msg = value
+        self._logger = self.newLogger()
+
+    @property
+    def log_critical_format(self):
+        return self._log_critical_msg
+
+    @log_critical_format.setter
+    def log_critical_format(self, value):
+        self._log_critical_msg = value
+        self._logger = self.newLogger()
 
     @property
     def log_name(self):
         return self._log_name
+
+    @log_name.setter
+    def log_name(self, value):
+        self._log_name = value
+        self._logger = self.newLogger()
+
+    @property
+    def log_lvl(self):
+        """
+        Get this logger lvl.
+
+        :return: self logger lvl
+        :rtype: str
+        """
+        return self._log_lvl
+
+    @log_lvl.setter
+    def log_lvl(self, value):
+        """
+        Change of logging level.
+
+        :param value: new log_lvl to set up.
+        :type value: str
+        """
+
+        self._logger.setLevel(value)
 
     @property
     def logger(self):
@@ -463,27 +526,6 @@ class Configurable(object):
         self._conf_files = tuple(value)
         # add new watching
         add_configurable(self)
-
-    @property
-    def log_lvl(self):
-        """
-        Get this logger.
-
-        :return: self logger
-        :rtype: logging.Logger
-        """
-        return self._log_lvl
-
-    @log_lvl.setter
-    def log_lvl(self, value):
-        """
-        Change of logging level.
-
-        :param value: new log_lvl to set up.
-        :type value: str
-        """
-
-        self._logger.setLevel(value)
 
     def apply_configuration(
         self, configuration=None, conf_files=None,
@@ -693,10 +735,25 @@ class Configurable(object):
         # set log_lvl
         self.log_lvl = parameters.get(Configurable.LOG_LVL, self.log_lvl)
 
-        # set info_msg
-        self.info_msg = parameters.get(Configurable.INFO_MSG, self.info_msg)
+        # set log_debug_format
+        self.log_debug_format = parameters.get(
+            Configurable.LOG_DEBUG_FORMAT, self.log_debug_format)
 
-        self.debug_msg = parameters.get(Configurable.DEBUG_MSG, self.debug_msg)
+        # set log_info_format
+        self.log_info_format = parameters.get(
+            Configurable.LOG_INFO_FORMAT, self.log_info_format)
+
+        # set log_warning_format
+        self.log_warning_format = parameters.get(
+            Configurable.LOG_WARNING_FORMAT, self.log_warning_format)
+
+        # set log_error_format
+        self.log_error_format = parameters.get(
+            Configurable.LOG_ERROR_FORMAT, self.log_error_format)
+
+        # set log_critical_format
+        self.log_critical_format = parameters.get(
+            Configurable.LOG_CRITICAL_FORMAT, self.log_critical_format)
 
         from cconfiguration.manager import ConfigurationManager
 
