@@ -57,3 +57,18 @@ def resolve_element(path):
             result = getattr(result, comp)
 
     return result
+
+
+def path(element):
+    """
+    Get full path of a given element.
+
+    Do the inverse of resolve_element
+
+    :param element: must be directly defined into a module or a package
+    :type element: object
+    """
+
+    result = '{0}.{1}'.format(element.__module__, element.__name__)
+
+    return result
