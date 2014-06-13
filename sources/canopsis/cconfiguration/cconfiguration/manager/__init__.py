@@ -18,6 +18,7 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
+
 from ccommon.utils import resolve_element
 
 from stat import ST_SIZE
@@ -25,12 +26,15 @@ from stat import ST_SIZE
 from os import stat
 from os.path import exists
 
+from cconfiguration import Configuration, Parameter, Category
+
 
 class MetaConfigurationManager(type):
     """
     ConfigurationManager meta class which register all manager in a global
     set of managers.
     """
+
     def __init__(self, name, bases, attrs):
 
         super(MetaConfigurationManager, self).__init__(name, bases, attrs)
@@ -60,6 +64,9 @@ class ConfigurationManager(object):
 
     CONF_FILE = 'CONF_FILE'
 
+    """
+    Private set of shared manager types.
+    """
     _MANAGERS = set()
 
     def handle(self, conf_file, logger, *args, **kwargs):
@@ -77,27 +84,9 @@ class ConfigurationManager(object):
 
         return result
 
-    def get_configuration(self, conf_file, logger, *args, **kwargs):
-        """
-        Get conf_file content through a configuration or None if no
-        configuration is available.
-
-        :rtype: cconfiguration.Configuration
-        """
-
-        result = None
-
-        conf_resource = self._get_conf_resource(conf_file)
-
-        if conf_resource is not None:
-
-            result = self._get_configuration(conf_resource=conf_resource,
-                logger=logger, *args, **kwargs)
-
-        return result
-
-    def update_configuration(
-        self, conf_file, configuration, logger, *args, **kwargs
+    def get_configuration(
+        self, conf_file, logger, configuration=None, fill=False,
+        *args, **kwargs
     ):
         """
         Parse a configuration_files with input configuration and returns
@@ -112,9 +101,14 @@ class ConfigurationManager(object):
 
         :param logger: logger to use in order to trace information/error
         :type logger: logging.Logger
+
+        :param fill: result is all conf_file content
+        :type fill: bool
         """
 
         conf_resource = None
+
+        result = None
 
         # ensure conf_file exists and is not empty.
         if exists(conf_file) and stat(conf_file)[ST_SIZE]:
@@ -132,52 +126,94 @@ class ConfigurationManager(object):
 
             else:  # else process configuration file
 
+                if conf_resource is None:
+                    return result
+
+                result = Configuration() if configuration is None \
+                    else configuration
+
                 # get generic logging message
                 log_message = '{0}/{{0}}/{{1}}'.format(conf_file)
 
-                # for each parsing rule in the ascending order
-                for category in configuration.categories:
+                if fill:
 
-                    if self._has_category(
-                        conf_resource=conf_resource,
-                        category=category,
-                            logger=logger):
+                    for category in self._get_categories(
+                            conf_resource=conf_resource, logger=logger):
 
-                        for name, parameter in category.iteritems():
+                        category = result.setdefault(
+                            category, Category(category))
 
-                            # if parameter_name exists
-                            if self._has_parameter(
+                        for parameter in self._get_parameters(
+                                conf_resource=conf_resource,
+                                category=category,
+                                logger=logger):
+
+                            parameter = category.setdefault(
+                                parameter, Parameter(parameter))
+
+                            value = self._get_value(
                                 conf_resource=conf_resource,
                                 category=category,
                                 parameter=parameter,
-                                    logger=logger):
+                                logger=logger)
 
-                                # construct generic log message for each
-                                # name
-                                option_log_message = '{0} = {{0}}'.format(
-                                    log_message.format(category.name, name))
+                            parsed_value = parameter.parse(
+                                value, logger=logger)
 
-                                # get sub_category_value
-                                value = self._get_parameter(
+                            parameter.value = parsed_value
+
+                else:
+
+                    # for each parsing rule in the ascending order
+                    for category in result:
+
+                        if self._has_category(
+                            conf_resource=conf_resource,
+                            category=category,
+                                logger=logger):
+
+                            for parameter in category:
+
+                                name = parameter.name
+
+                                # if parameter_name exists
+                                if self._has_parameter(
                                     conf_resource=conf_resource,
                                     category=category,
                                     parameter=parameter,
-                                    logger=logger)
+                                        logger=logger):
 
-                                parsed_value = parameter.parse(value, logger)
+                                    # construct generic log message for each
+                                    # name
+                                    option_log_message = '{0} = {{0}}'.format(
+                                        log_message.format(
+                                            category.name, name))
 
-                                # if an exception occured
-                                if isinstance(parsed_value, Exception):
-                                    # set error among errors result
-                                    error_message = option_log_message.format(
+                                    # get sub_category_value
+                                    value = self._get_value(
+                                        conf_resource=conf_resource,
+                                        category=category,
+                                        parameter=parameter,
+                                        logger=logger)
+
+                                    parsed_value = parameter.parse(
+                                        value, logger)
+
+                                    # if an exception occured
+                                    if isinstance(parsed_value, Exception):
+                                        # set error among errors result
+                                        error_message = \
+                                            option_log_message.format(
+                                                parsed_value)
+                                        logger.error(error_message)
+
+                                    # set value on parameter
+                                    parameter.value = parsed_value
+                                    info_message = option_log_message.format(
                                         parsed_value)
-                                    logger.error(error_message)
+                                    logger.info(info_message)
 
-                                # set value on parameter
-                                parameter.value = parsed_value
-                                info_message = option_log_message.format(
-                                    parsed_value)
-                                logger.info(info_message)
+        return result
 
     def set_configuration(
         self, conf_file, configuration, logger,
@@ -217,7 +253,7 @@ class ConfigurationManager(object):
             conf_resource = self._get_conf_resource(logger=logger)
 
         # iterate on all configuration items
-        for category in configuration.categories:
+        for category in configuration:
 
             # set category
             self._set_category(
@@ -225,7 +261,7 @@ class ConfigurationManager(object):
                 logger=logger)
 
             # iterate on parameters
-            for parameter_name, parameter in category.iteritems():
+            for parameter in category:
 
                 # set parameter
                 self._set_parameter(
@@ -235,7 +271,7 @@ class ConfigurationManager(object):
                     logger=logger)
 
         # write conf_resource in configuration file
-        self._write_conf_resource(
+        self._update_conf_file(
             conf_resource=conf_resource,
             conf_file=conf_file)
 
@@ -266,9 +302,18 @@ class ConfigurationManager(object):
 
         return result
 
-    def _get_configuration(self, conf_resource, logger, *args, **kwargs):
+    def _get_categories(self, conf_resource, logger, *args, **kwargs):
         """
-        Update input configuration with input conf_resource.
+        Get a list of category names in conf_resource
+        """
+
+        raise NotImplementedError()
+
+    def _get_parameters(
+        self, conf_resource, category, logger, *args, **kwargs
+    ):
+        """
+        Get a list of parameter names in conf_resource related to category
         """
 
         raise NotImplementedError()
@@ -312,14 +357,7 @@ class ConfigurationManager(object):
 
         raise NotImplementedError()
 
-    def _get_default_conf_resource(self, logger, *args, **kwargs):
-        """
-        Get default conf resource.
-        """
-
-        raise NotImplementedError()
-
-    def _get_parameter(
+    def _get_value(
         self, conf_resource, category, parameter, *args, **kwargs
     ):
         """
@@ -342,12 +380,12 @@ class ConfigurationManager(object):
         *args, **kwargs
     ):
         """
-        Set parameter in conf_resource.
+        Set parameter on conf_resource.
         """
 
         raise NotImplementedError()
 
-    def _write_conf_resource(
+    def _update_conf_file(
         self, conf_resource, conf_file, *args, **kwargs
     ):
         """

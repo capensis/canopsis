@@ -23,6 +23,7 @@ from logging import getLogger
 
 from unittest import main, TestCase
 
+from cconfiguration import Configuration, Category, Parameter
 from cconfiguration.manager import ConfigurationManager
 
 from pickle import loads, dump
@@ -44,11 +45,19 @@ class ConfigurationManager(ConfigurationManager):
         return category in conf_resource
 
     def _has_parameter(
-        self, conf_resource, category, parameter_name, logger,
+        self, conf_resource, category, parameter, logger,
         *args, **kwargs
     ):
 
-        return parameter_name in conf_resource[category]
+        return parameter.name in conf_resource[category.name]
+
+    def _get_categories(self, conf_resource, logger, *args, **kwargs):
+        return conf_resource.keys()
+
+    def _get_parameters(
+        self, conf_resource, category, logger, *args, **kwargs
+    ):
+        return conf_resource[category.name].keys()
 
     def _get_conf_resource(
         self, logger, conf_file=None, *args, **kwargs
@@ -68,27 +77,26 @@ class ConfigurationManager(ConfigurationManager):
 
         return result
 
-    def _get_parameter(
-        self, conf_resource, category, parameter_name, logger,
+    def _get_value(
+        self, conf_resource, category, parameter, logger,
         *args, **kwargs
     ):
 
-        return conf_resource[category][parameter_name]
+        return conf_resource[category.name][parameter.name]
 
     def _set_category(
         self, conf_resource, category, logger, *args, **kwargs
     ):
 
-        conf_resource.setdefault(category, dict())
+        conf_resource.setdefault(category.name, dict())
 
     def _set_parameter(
-        self, conf_resource, category, parameter_name, parameter, logger,
+        self, conf_resource, category, parameter, logger,
         *args, **kwargs
     ):
+        conf_resource[category.name][parameter.name] = parameter.value
 
-        conf_resource[category][parameter_name] = parameter
-
-    def _write_conf_resource(
+    def _update_conf_file(
         self, conf_resource, conf_file, *args, **kwargs
     ):
 
@@ -113,107 +121,84 @@ class ConfigurationManagerTest(TestCase):
 
         self.manager = self._get_configuration_manager()
 
-        # configuration files content
-        self.full_parameters = {
-            'FOO_0': {
-                'foo_0.0': 0,
-                'foo_0.1': True,
-                'foo_0.2': 'foo'
-            },
-            'FOO_1': {
-                'foo_0.0': 1,
-                'foo_0.1': False,
-                'foo_0.2': 'foo'
-            }
-        }
-
-        # parameters to read/write
-        self.parameters = {
-            'foo': 1,
-            'foo2': True,
-            'foo3': 'foo'
-        }
-
-        # parsing rules
-        self.parsing_rules = [
-            {
-                'FOO': {
-                    name: type(value)
-                    for name, value in self.parameters.iteritems()}
-            }, {
-                'FOOFOO': {
-                    name: type(value)
-                    for name, value in self.parameters.iteritems()}
-            }
-        ]
-        # add parameters in parsing_rules to full_parameters
-        for parsing_rule in self.parsing_rules:
-
-            for category in parsing_rule:
-                self.full_parameters[category] = self.parameters.copy()
-
-        # introduce an error in parsing_rules
-        self.parsing_rules[0]['FOO'][ConfigurationManagerTest.ERROR_PARAMETER]\
-            = int
-        self.full_parameters['FOO'][ConfigurationManagerTest.ERROR_PARAMETER]\
-            = 'er'
+        self.configuration = Configuration(
+            Category('A',
+                Parameter('a', value=0, parser=int),  # a is 0
+                Parameter('b', value=True, parser=bool)),  # b is overriden
+            Category('B',
+                Parameter('b', value=1, parser=int),  # b is 1
+                Parameter('c', value='er', parser=int)))  # error
 
         self.conf_file = self.get_configuration_file()
-
-        # empty configuration file
-        try:
-            open(self.conf_file, 'w').close()
-
-        except OSError as ose:  # do nothing if file does not exist
-            print(ose)
-
-        # fill configuration file with set_parameters
-        self.manager.set_parameters(
-            conf_file=self.conf_file,
-            parameter_by_categories=self.full_parameters,
-            logger=self.logger)
-
-    def tearDown(self):
-        # remove self configuration file
-        try:
-            remove(self.conf_file)
-
-        except OSError:
-            pass
 
     def get_configuration_file(self):
 
         return '/tmp/cconfiguration.conf'
 
-    def test_get_parameters(self):
+    def test_configuration(self):
 
-        parameters, error_parameters = self.manager.get_parameters(
+        # try to get configuration from not existing file
+        try:
+            remove(self.conf_file)
+        except OSError:
+            pass
+
+        configuration = self.manager.get_configuration(
             conf_file=self.conf_file,
-            parsing_rules=self.parsing_rules,
             logger=self.logger)
 
-        self.assertEqual(parameters, self.parameters)
+        self.assertEquals(configuration, None)
 
-        self.assertEqual(len(error_parameters), 1)
-        self.assertTrue(
-            ConfigurationManagerTest.ERROR_PARAMETER in error_parameters)
+        # get configuration from an empty file
+        try:
+            open(self.conf_file, 'w').close()
+        except OSError:
+            pass
 
-    def test_set_parameters(self):
-
-        parameters_by_categories = {
-            '_': self.parameters
-        }
-
-        self.manager.set_parameters(
+        configuration = self.manager.get_configuration(
             conf_file=self.conf_file,
-            parameter_by_categories=parameters_by_categories,
             logger=self.logger)
 
-        self.parsing_rules.append({
-            '_': {
-                name: type(value) for name, value in
-                    self.parameters.iteritems()}
-        })
+        self.assertTrue(configuration is None)
+
+        # get full configuration
+        self.manager.set_configuration(
+            conf_file=self.conf_file,
+            configuration=self.configuration,
+            logger=self.logger)
+
+        configuration = self.manager.get_configuration(
+            conf_file=self.conf_file,
+            configuration=self.configuration,
+            logger=self.logger,
+            fill=True)
+
+        self.assertFalse(configuration is None)
+        self.assertEquals(len(configuration), 2)
+
+        parameters, errors = configuration.get_parameters()
+
+        self.assertTrue('a' in parameters and 'a' not in errors)
+        self.assertTrue('b' in parameters and 'b' not in errors)
+        self.assertTrue('c' in errors and 'c' not in parameters)
+        self.assertEqual(parameters['a'], 0)
+        self.assertEqual(parameters['b'], 1)
+
+        # get some configuration
+        configuration = Configuration(
+            self.configuration['B'])
+
+        configuration = self.manager.get_configuration(
+            conf_file=self.conf_file,
+            configuration=configuration,
+            logger=self.logger)
+
+        parameters, errors = configuration.get_parameters()
+
+        self.assertTrue('a' not in parameters and 'a' not in errors)
+        self.assertTrue('b' in parameters and 'b' not in errors)
+        self.assertTrue('c' in errors and 'c' not in parameters)
+        self.assertEqual(parameters['b'], 1)
 
     def _get_configuration_manager(self):
         """

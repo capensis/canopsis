@@ -24,8 +24,6 @@ from cconfiguration.manager import ConfigurationManager
 from ConfigParser import RawConfigParser, DuplicateSectionError,\
     MissingSectionHeaderError
 
-from cconfiguration import Category, Parameter, Configuration
-
 
 class ConfigurationManager(ConfigurationManager):
     """
@@ -68,27 +66,15 @@ class ConfigurationManager(ConfigurationManager):
 
         return result
 
-    def _get_configuration(self, conf_resource, logger, *args, **kwargs):
+    def _get_categories(self, conf_resource, logger, *args, **kwargs):
+        return conf_resource.sections()
 
-        result = Configuration()
+    def _get_parameters(
+        self, conf_resource, category, logger, *args, **kwargs
+    ):
+        return conf_resource.options(category.name)
 
-        for section in conf_resource.sections():
-
-            category = Category(section)
-
-            for option in conf_resource.options(section):
-
-                value = conf_resource.get(section, option)
-
-                parameter = Parameter(option, value=value)
-
-                category.put(parameter)
-
-            result.categories.append(category)
-
-        return result
-
-    def _get_parameter(
+    def _get_value(
         self, conf_resource, category, parameter, *args, **kwargs
     ):
         return conf_resource.get(category.name, parameter.name)
@@ -107,7 +93,7 @@ class ConfigurationManager(ConfigurationManager):
     ):
         conf_resource.set(category.name, parameter.name, parameter.value)
 
-    def _write_conf_resource(
+    def _update_conf_file(
         self, conf_resource, conf_file, *args, **kwargs
     ):
         conf_resource.write(open(conf_file, 'w'))

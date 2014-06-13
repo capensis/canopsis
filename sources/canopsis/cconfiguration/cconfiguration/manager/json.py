@@ -21,8 +21,6 @@
 
 from cconfiguration.manager import ConfigurationManager
 
-from cconfiguration import Configuration, Category, Parameter
-
 try:
     from json import loads, dump
 except ImportError:
@@ -56,34 +54,27 @@ class ConfigurationManager(ConfigurationManager):
         result = dict()
 
         if conf_file is not None:
+            result = None
+
             try:
                 with open(conf_file, 'r') as handle:
-                    result = loads(handle.read())
+                    content = handle.read()
+                    result = loads(content)
 
             except Exception:
                 pass
 
         return result
 
-    def _get_configuration(self, conf_resource, logger, *args, **kwargs):
+    def _get_categories(self, conf_resource, logger, *args, **kwargs):
+        return conf_resource.keys()
 
-        result = Configuration()
+    def _get_parameters(
+        self, conf_resource, category, logger, *args, **kwargs
+    ):
+        return conf_resource[category.name].keys()
 
-        for category, parameters in conf_resource.iteritems():
-
-            category = Category(category)
-
-            for name, value in parameters.iteritems():
-
-                parameter = Parameter(name, value=value)
-
-                category.put(parameter)
-
-            result.categories.append(category)
-
-        return result
-
-    def _get_parameter(
+    def _get_value(
         self, conf_resource, category, parameter, *args, **kwargs
     ):
         return conf_resource[category.name][parameter.name]
@@ -99,7 +90,7 @@ class ConfigurationManager(ConfigurationManager):
     ):
         conf_resource[category.name][parameter.name] = parameter.value
 
-    def _write_conf_resource(
+    def _update_conf_file(
         self, conf_resource, conf_file, *args, **kwargs
     ):
 
