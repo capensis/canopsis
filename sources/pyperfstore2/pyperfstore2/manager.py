@@ -454,16 +454,17 @@ class manager(object):
 		try:
 			bin_id = "%s%s" % (_id, lts)
 			self.logger.debug("   + Store in binary record")
-			self.store.create_bin(_id=bin_id, data=data)
-		except gridfs.errors.FileExists as fe:
-			self.logger.debug('Impossible to create gridfs bin {} because it exists'.format(fe))
+
+			try:
+				self.store.create_bin(_id=bin_id, data=data)
+			except gridfs.errors.FileExists as fe:
+				self.logger.debug('Impossible to create gridfs bin {} because it exists'.format(fe))
 
 			self.logger.debug("   + Add bin_id in meta and clean meta")
 
-			#Kept bugfix change on 14/04/13 merge but issue with c value remains
 			perfdata = self.store.get(_id=_id)
 			to_push = [fts, lts, bin_id]
-			if to_push not in perfdata.get('c', []):
+			if 'c' in perfdata and to_push not in perfdata['c']:
 				self.store.update(_id=_id, mpush={'c': (fts, lts, bin_id)})
 
 			self.store.redis.delete(_id)
