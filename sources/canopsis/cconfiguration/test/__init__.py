@@ -51,14 +51,14 @@ class ConfigurableTest(TestCase):
         configurable = Configurable()
         configurable.conf_files = self.conf_files
 
-        self.assertEquals(
+        self.assertEqual(
             configurable.conf_files,
             self.conf_files)
 
         configurable = Configurable(
             conf_files=self.conf_files)
 
-        self.assertEquals(
+        self.assertEqual(
             configurable.conf_files,
             self.conf_files)
 
@@ -93,7 +93,7 @@ class ConfigurableTest(TestCase):
 
         configuration = configurable.get_configuration()
 
-        self.assertEquals(len(configuration), len(self.configuration))
+        self.assertEqual(len(configuration), len(self.configuration))
 
         # test to get from files which do not exist
         configurable.conf_files = self.conf_files
@@ -106,7 +106,7 @@ class ConfigurableTest(TestCase):
 
         configuration = configurable.get_configuration()
 
-        self.assertEquals(len(configuration), len(self.configuration))
+        self.assertEqual(len(configuration), len(self.configuration))
 
         # get parameters from empty files
         for conf_file in self.conf_files:
@@ -114,18 +114,18 @@ class ConfigurableTest(TestCase):
 
         configuration = configurable.get_configuration()
 
-        self.assertEquals(len(configuration), len(self.configuration))
+        self.assertEqual(len(configuration), len(self.configuration))
 
         # get parameters from empty files and empty parsing_rules
         configuration = Configuration()
         configurable.get_configuration(configuration=configuration)
 
-        self.assertEquals(len(configuration), 0)
+        self.assertEqual(len(configuration), 0)
 
         # fill files
         configurable = Configurable(
             conf_files=self.conf_files,
-            configuration=self.configuration)
+            parsers=self.configuration)
 
         # add first category in conf file[0]
         configurable.set_configuration(
@@ -144,13 +144,71 @@ class ConfigurableTest(TestCase):
         parameters, errors = configuration.get_parameters()
 
         self.assertTrue('a' in parameters and 'a' not in errors)
+        self.assertEqual(parameters['a'], 'b')
         self.assertTrue('2' in parameters and '2' not in errors)
+        self.assertEqual(parameters['2'], 2)
         self.assertTrue('b' in parameters and 'b' not in errors)
+        self.assertEqual(parameters['b'], 'b')
         self.assertTrue('error' in errors and 'error' not in parameters)
 
     def test_reconfigure(self):
-        raise NotImplementedError()
 
+        self.assertTrue(self.configurable.auto_conf)
+
+        configuration = Configuration(
+            Category('TEST',
+                Parameter('auto_conf', value=False)))
+
+        self.configurable.configure(configuration=configuration)
+
+        self.assertFalse(self.configurable.auto_conf)
+
+        self.assertTrue(self.configurable.log_lvl is 'INFO')
+
+        configuration = Configuration(
+            Category('TEST',
+                Parameter('log_lvl', value='DEBUG')))
+
+        self.configurable.configure(configuration=configuration)
+
+        self.assertTrue(self.configurable.log_lvl is 'INFO')
+
+        self.configurable.once = True
+
+        self.configurable.configure(configuration=configuration)
+
+        self.assertTrue(self.configurable.log_lvl is 'DEBUG')
+
+        self.assertFalse(self.configurable.once)
+
+        self.configurable.log_lvl = 'INFO'
+
+        self.configurable.auto_conf = True
+
+        self.configurable.configure(configuration=configuration)
+
+        self.assertTrue(self.configurable.log_lvl is 'DEBUG')
+
+    def test_parser_inheritance(self):
+
+        class _Configurable(Configurable):
+
+            def get_parsers(self, *args, **kwargs):
+
+                result = super(_Configurable, self).get_parsers(
+                    *args, **kwargs)
+
+                result += Category('PLOP')
+
+                return result
+
+        configurable = Configurable()
+
+        _configurable = _Configurable()
+
+        self.assertEqual(
+            len(configurable.get_parsers()) + 1,
+            len(_configurable.get_parsers()))
 
 if __name__ == '__main__':
     main()

@@ -75,6 +75,18 @@ class Configuration(object):
 
         return len(self.categories)
 
+    def __iadd__(self, other):
+
+        # if other is a configuration add a copy of all other categories
+        if isinstance(other, Configuration):
+            for category in other:
+                self += category.copy()
+
+        else:
+            self.categories[other.name] = other.copy()
+
+        return self
+
     def get(self, category_name, default=None, *args, **kwargs):
 
         return self.categories.get(category_name, default)
@@ -196,6 +208,14 @@ class Category(object):
 
         return len(self.parameters)
 
+    def __eq__(self, other):
+
+        return isinstance(other, Category) and other.name == self.name
+
+    def __hash__(self):
+
+        return hash(self.name)
+
     def setdefault(self, parameter_name, parameter, *args, **kwargs):
 
         return self.parameters.setdefault(parameter_name, parameter)
@@ -238,7 +258,7 @@ class Category(object):
 class Parameter(object):
     """
     Parameter identified among a category by its name.
-    Provide a value and a parser (str by default).
+    Provide a value (None by default) and a parser (str by default).
     """
 
     def __init__(self, name, value=None, parser=str, *args, **kwargs):
@@ -258,6 +278,14 @@ class Parameter(object):
         self.name = name
         self._value = value
         self.parser = parser
+
+    def __eq__(self, other):
+
+        return isinstance(other, Parameter) and other.name == self.name
+
+    def __hash__(self):
+
+        return hash(self.name)
 
     @property
     def value(self):
@@ -297,7 +325,7 @@ class Configurable(object):
     LOG = 'LOG'
 
     AUTO_CONF = 'auto_conf'
-    CONFIGURE = 'configure'
+    ONCE = 'once'
     MANAGERS = 'conf_managers'
     LOG_NAME = 'log_name'
     LOG_LVL = 'log_lvl'
@@ -311,7 +339,7 @@ class Configurable(object):
         Category(CONF,
             Parameter(AUTO_CONF, parser=bool),
             Parameter(MANAGERS),
-            Parameter(CONFIGURE, parser=bool)),
+            Parameter(ONCE, parser=bool)),
         Category(LOG,
             Parameter(LOG_NAME),
             Parameter(LOG_LVL),
@@ -330,12 +358,11 @@ class Configurable(object):
 
     def __init__(
         self,
-        conf_files=None, auto_conf=True,
-        managers=None, configuration=DEFAULT_CONFIGURATION.copy(),
+        conf_files=None, parsers=None, managers=None,
+        auto_conf=True, once=False,
         log_lvl='INFO', log_name=None, log_info_format=INFO_FORMAT,
         log_debug_format=DEBUG_FORMAT, log_warning_format=WARNING_FORMAT,
         log_error_format=ERROR_FORMAT, log_critical_format=CRITICAL_FORMAT,
-        _ready_to_conf=True,
         *args, **kwargs
     ):
         """
@@ -345,15 +372,15 @@ class Configurable(object):
         :param auto_conf: true force auto conf as soon as parameter change
         :type auto_conf: bool
 
-        :param configuration: configuration with parsing rules
-        :type configuration: Configuration
+        :param once: true force auto conf once as soon as parameter change
+        :type once: bool
+
+        :param parsers: parsers with parsing rules. If None,
+            use DEFAULT_CONFIGURATION
+        :type parsers: Configuration
 
         :param log_lvl: logging level
         :type log_lvl: str
-
-        :param _ready_to_conf: protected parameter permetting to deactivate
-            auto_conf processing in this call
-        :type _ready_to_conf: bool
         """
 
         super(Configurable, self).__init__(*args, **kwargs)
@@ -364,6 +391,7 @@ class Configurable(object):
         self.conf_files = conf_files
 
         self.auto_conf = auto_conf
+        self.once = once
 
         # set logging properties
         self._log_lvl = log_lvl
@@ -377,7 +405,9 @@ class Configurable(object):
 
         self._logger = self.newLogger()
 
-        self.configuration = configuration
+        self._parsers = (
+            Configurable.DEFAULT_CONFIGURATION if parsers is None
+            else parsers).copy()
 
         # set managers
         if managers is None:
@@ -386,9 +416,6 @@ class Configurable(object):
             managers = ConfigurationManager.get_managers()
 
         self.managers = set(managers)
-
-        if _ready_to_conf and self.auto_conf:
-            self.apply_configuration()
 
     def newLogger(self):
         """
@@ -399,16 +426,27 @@ class Configurable(object):
         result.setLevel(self.log_lvl)
 
         def setHandler(logger, lvl, path, format):
+            """
+            Set right handler related to input lvl, path and format
+            """
 
             class filter(Filter):
+                """
+                Ensure message will be given for specific lvl
+                """
                 def filter(self, record):
-                    return record.levelno == lvl
+                    return record.levelname == lvl
 
+            # get the rights formatter and filter to set on a file handler
             handler = FileHandler(path)
             handler.addFilter(Filter())
             handler.setLevel(lvl)
             formatter = Formatter(format)
             handler.setFormatter(formatter)
+            # if an old handler exist, remove it from logger
+            if hasattr(logger, lvl):
+                old_handler = getattr(logger, lvl)
+                logger.removeHandler(old_handler)
             logger.addHandler(handler)
             setattr(logger, lvl, handler)
 
@@ -422,6 +460,12 @@ class Configurable(object):
         setHandler(result, 'CRITICAL', path, self.log_critical_format)
 
         return result
+
+    def get_parsers(self, *args, **kwargs):
+        """
+        Get self parser rules.
+        """
+        return self._parsers
 
     @property
     def log_debug_format(self):
@@ -495,8 +539,8 @@ class Configurable(object):
         :param value: new log_lvl to set up.
         :type value: str
         """
-
-        self._logger.setLevel(value)
+        self._log_lvl = value
+        self._logger.setLevel(self._log_lvl)
 
     @property
     def logger(self):
@@ -545,7 +589,7 @@ class Configurable(object):
         4. put values and parsing errors in two different dictionaries.
         5. returns both dictionaries of parameter values and errors.
 
-        :param configuration: configuration from where get parsers
+        :param configuration: configuration from where get configuration
         :type configuration: Configuration
 
         :param conf_files: configuration files to parse. If
@@ -596,7 +640,7 @@ class Configurable(object):
             logger = self._logger
 
         if configuration is None:
-            configuration = self.configuration
+            configuration = self.get_parsers()
 
         if conf_files is None:
             conf_files = self._conf_files
@@ -704,6 +748,8 @@ class Configurable(object):
         - parameter configuration 'configure' is True
         - parameter configuration 'auto_conf' is True
 
+        This method may not be overriden. see _configure instead
+
         :param configuration: object from where get paramters
         :type configuration: Configuration
         """
@@ -711,20 +757,21 @@ class Configurable(object):
         parameters, error_parameters = configuration.get_parameters()
 
         # set configure
-        self.configure = parameters.get(Configurable.CONFIGURE, self.configure)
-
+        self.once = parameters.get(Configurable.ONCE, self.once)
         # set auto_conf
         self.auto_conf = parameters.get(Configurable.AUTO_CONF, self.auto_conf)
 
-        if self.configure or self.auto_conf:
+        if self.once or self.auto_conf:
             self._configure(parameters, error_parameters, *args, **kwargs)
+            # when configuration succeed, deactive once
+            self.once = False
 
     def _configure(self, parameters, error_parameters, *args, **kwargs):
         """
         Configure this class with input parameters only if auto_conf or
         configure is true.
 
-        This method shouldn't be overriden.
+        This method should be overriden for specific configuration
 
         :param parameters: dictionary of parameter value by name
         :type parameters: dict

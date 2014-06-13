@@ -48,6 +48,8 @@ def add_configurable(configurable):
 
     for conf_file in configurable.conf_files:
 
+        conf_file = expanduser(conf_file)
+
         configurables = _CONFIGURABLES_BY_CONF_FILES.setdefault(
             conf_file, set())
 
@@ -63,6 +65,8 @@ def remove_configurable(configurable):
     """
 
     for conf_file in configurable.conf_files:
+
+        conf_file = expanduser(conf_file)
 
         configurables = _CONFIGURABLES_BY_CONF_FILES.get(conf_file)
 
@@ -143,7 +147,6 @@ class Watcher(Configurable):
 
         for conf_file in _CONFIGURABLES_BY_CONF_FILES:
 
-            conf_file = expanduser(conf_file)
             # check file exists
             if exists(conf_file):
                 # get mtime

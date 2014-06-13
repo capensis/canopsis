@@ -147,7 +147,7 @@ class ConfigurationManagerTest(TestCase):
             conf_file=self.conf_file,
             logger=self.logger)
 
-        self.assertEquals(configuration, None)
+        self.assertEqual(configuration, None)
 
         # get configuration from an empty file
         try:
@@ -174,15 +174,15 @@ class ConfigurationManagerTest(TestCase):
             fill=True)
 
         self.assertFalse(configuration is None)
-        self.assertEquals(len(configuration), 2)
+        self.assertEqual(len(configuration), 2)
 
         parameters, errors = configuration.get_parameters()
 
         self.assertTrue('a' in parameters and 'a' not in errors)
-        self.assertTrue('b' in parameters and 'b' not in errors)
-        self.assertTrue('c' in errors and 'c' not in parameters)
         self.assertEqual(parameters['a'], 0)
+        self.assertTrue('b' in parameters and 'b' not in errors)
         self.assertEqual(parameters['b'], 1)
+        self.assertTrue('c' in errors and 'c' not in parameters)
 
         # get some configuration
         configuration = Configuration(
@@ -197,8 +197,8 @@ class ConfigurationManagerTest(TestCase):
 
         self.assertTrue('a' not in parameters and 'a' not in errors)
         self.assertTrue('b' in parameters and 'b' not in errors)
-        self.assertTrue('c' in errors and 'c' not in parameters)
         self.assertEqual(parameters['b'], 1)
+        self.assertTrue('c' in errors and 'c' not in parameters)
 
     def _get_configuration_manager(self):
         """
