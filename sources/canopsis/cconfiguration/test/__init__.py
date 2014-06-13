@@ -124,25 +124,23 @@ class ConfigurableTest(TestCase):
 
         # fill files
         configurable = Configurable(
-            conf_files=self.conf_files,
-            parsers=self.configuration)
+            conf_files=self.conf_files)
 
         # add first category in conf file[0]
         configurable.set_configuration(
             conf_file=self.conf_files[0],
             configuration=Configuration(self.configuration['A']),
-            conf_manager=tuple(configurable.managers)[0])
+            manager=configurable._managers[0])
 
         # add second category in conf file[1]
         configurable.set_configuration(
             conf_file=self.conf_files[1],
             configuration=Configuration(self.configuration['B']),
-            conf_manager=tuple(configurable.managers)[1])
+            manager=configurable._managers[1])
 
-        configuration = configurable.get_configuration(fill=True)
+        configuration = configurable.get_configuration(fill=True, configuration=self.configuration)
 
         parameters, errors = configuration.get_parameters()
-
         self.assertTrue('a' in parameters and 'a' not in errors)
         self.assertEqual(parameters['a'], 'b')
         self.assertTrue('2' in parameters and '2' not in errors)
@@ -193,9 +191,9 @@ class ConfigurableTest(TestCase):
 
         class _Configurable(Configurable):
 
-            def get_parsers(self, *args, **kwargs):
+            def _configuration(self, *args, **kwargs):
 
-                result = super(_Configurable, self).get_parsers(
+                result = super(_Configurable, self)._configuration(
                     *args, **kwargs)
 
                 result += Category('PLOP')
@@ -207,8 +205,8 @@ class ConfigurableTest(TestCase):
         _configurable = _Configurable()
 
         self.assertEqual(
-            len(configurable.get_parsers()) + 1,
-            len(_configurable.get_parsers()))
+            len(configurable.configuration) + 1,
+            len(_configurable.configuration))
 
 if __name__ == '__main__':
     main()

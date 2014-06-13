@@ -208,7 +208,7 @@ class ConfigurationManagerTest(TestCase):
 
     def test_manager(self):
 
-        manager = ConfigurationManager.add_manager(self._get_manager_path())
+        manager = ConfigurationManager.get_manager(self._get_manager_path())
 
         self.assertTrue(manager is self._get_manager())
 

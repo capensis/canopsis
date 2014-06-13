@@ -34,6 +34,8 @@ from collections import OrderedDict
 
 from inspect import isclass
 
+from functools import reduce
+
 
 class Configuration(object):
     """
@@ -87,6 +89,10 @@ class Configuration(object):
 
         return self
 
+    def __repr__(self):
+
+        return 'Configuration({0})'.format(self.categories)
+
     def get(self, category_name, default=None, *args, **kwargs):
 
         return self.categories.get(category_name, default)
@@ -133,6 +139,21 @@ class Configuration(object):
                         del to_delete[parameter.name]
 
         return result
+
+    def add_specific_category(self, name, *args, **kwargs):
+        """
+        Add a category with input name which takes all parameters provided
+        by other categories
+
+        :param name: new category name
+        :type name: str
+        """
+
+        category = Category(name)
+
+        for category in self:
+            for parameter in category:
+                category.put(parameter.copy())
 
     def clean(self, *args, **kwargs):
         """
@@ -216,6 +237,10 @@ class Category(object):
 
         return hash(self.name)
 
+    def __repr__(self):
+
+        return 'Category({0}, {1})'.format(self.name, self.parameters)
+
     def setdefault(self, parameter_name, parameter, *args, **kwargs):
 
         return self.parameters.setdefault(parameter_name, parameter)
@@ -287,6 +312,11 @@ class Parameter(object):
 
         return hash(self.name)
 
+    def __repr__(self):
+
+        return 'Parameter({0}, {1}, {2})'.format(
+            self.name, self.value, self.parser)
+
     @property
     def value(self):
         return self._value
@@ -319,6 +349,9 @@ class Configurable(object):
     Manages class configuration synchronisation with configuration files.
     """
 
+    DEFAULT_MANAGERS = 'cconfiguration.manager.json.ConfigurationManager,\
+cconfiguration.manager.ini.ConfigurationManager'
+
     CONF_FILE = '~/etc/conf.conf'
 
     CONF = 'CONF'
@@ -335,20 +368,6 @@ class Configurable(object):
     LOG_ERROR_FORMAT = 'log_error_format'
     LOG_CRITICAL_FORMAT = 'log_critical_format'
 
-    DEFAULT_CONFIGURATION = Configuration(
-        Category(CONF,
-            Parameter(AUTO_CONF, parser=bool),
-            Parameter(MANAGERS),
-            Parameter(ONCE, parser=bool)),
-        Category(LOG,
-            Parameter(LOG_NAME),
-            Parameter(LOG_LVL),
-            Parameter(LOG_DEBUG_FORMAT),
-            Parameter(LOG_INFO_FORMAT),
-            Parameter(LOG_WARNING_FORMAT),
-            Parameter(LOG_ERROR_FORMAT),
-            Parameter(LOG_CRITICAL_FORMAT)))
-
     DEBUG_FORMAT = "[%(asctime)s] [%(levelname)s] [%(name)s] \
 [%(process)d] [%(thread)d] [%(pathname)s] [%(lineno)d] %(message)s"
     INFO_FORMAT = "[%(asctime)s] [%(levelname)s] [%(name)s] %(message)s"
@@ -358,7 +377,7 @@ class Configurable(object):
 
     def __init__(
         self,
-        conf_files=None, parsers=None, managers=None,
+        conf_files=None, managers=DEFAULT_MANAGERS,
         auto_conf=True, once=False,
         log_lvl='INFO', log_name=None, log_info_format=INFO_FORMAT,
         log_debug_format=DEBUG_FORMAT, log_warning_format=WARNING_FORMAT,
@@ -374,10 +393,6 @@ class Configurable(object):
 
         :param once: true force auto conf once as soon as parameter change
         :type once: bool
-
-        :param parsers: parsers with parsing rules. If None,
-            use DEFAULT_CONFIGURATION
-        :type parsers: Configuration
 
         :param log_lvl: logging level
         :type log_lvl: str
@@ -405,17 +420,15 @@ class Configurable(object):
 
         self._logger = self.newLogger()
 
-        self._parsers = (
-            Configurable.DEFAULT_CONFIGURATION if parsers is None
-            else parsers).copy()
+        self.managers = managers
 
-        # set managers
-        if managers is None:
-            from cconfiguration.manager import ConfigurationManager
+    @property
+    def managers(self):
+        return reduce(lambda x, y: x + ',' + y, self._managers)
 
-            managers = ConfigurationManager.get_managers()
-
-        self.managers = set(managers)
+    @managers.setter
+    def managers(self, value):
+        self._managers = value.split(',')
 
     def newLogger(self):
         """
@@ -461,11 +474,41 @@ class Configurable(object):
 
         return result
 
-    def get_parsers(self, *args, **kwargs):
+    @property
+    def configuration(self):
         """
-        Get self parser rules.
+        Get configuration with parsers and self property values
         """
-        return self._parsers
+        return self._configuration()
+
+    def _configuration(self, *args, **kwargs):
+        """
+        Protected method to override in order to specify which configuration
+        return with parsers and default values
+        """
+
+        result = Configuration(
+            Category(Configurable.CONF,
+                Parameter(
+                    Configurable.AUTO_CONF, self.auto_conf, parser=bool),
+                Parameter(Configurable.MANAGERS, self.managers),
+                Parameter(Configurable.ONCE, self.once, parser=bool)),
+            Category(Configurable.LOG,
+                Parameter(Configurable.LOG_NAME, self.log_name),
+                Parameter(Configurable.LOG_LVL, self.log_lvl),
+                Parameter(
+                    Configurable.LOG_DEBUG_FORMAT, self.log_debug_format),
+                Parameter(Configurable.LOG_INFO_FORMAT, self.log_info_format),
+                Parameter(
+                    Configurable.LOG_WARNING_FORMAT, self.log_warning_format),
+                Parameter(
+                    Configurable.LOG_ERROR_FORMAT, self.log_warning_format),
+                Parameter(
+                    Configurable.LOG_CRITICAL_FORMAT,
+                    self.log_critical_format)
+            ))
+
+        return result
 
     @property
     def log_debug_format(self):
@@ -598,7 +641,7 @@ class Configurable(object):
         """
 
         if configuration is None:
-            configuration = self.configuration.copy()
+            configuration = self.configuration
 
         configuration = self.get_configuration(
             configuration=configuration, conf_files=conf_files,
@@ -640,7 +683,7 @@ class Configurable(object):
             logger = self._logger
 
         if configuration is None:
-            configuration = self.get_parsers()
+            configuration = self.configuration
 
         if conf_files is None:
             conf_files = self._conf_files
@@ -720,8 +763,15 @@ class Configurable(object):
         elif isclass(manager):
             manager = manager()
 
+        else:
+            manager = self._get_manager(
+                conf_file=None,
+                logger=logger,
+                managers=manager)
+
         # if prev manager is not the new manager
-        if type(manager) is not type(prev_manager):
+        if prev_conf is not None \
+                and type(manager) is not type(prev_manager):
             # update prev_conf with input configuration
             prev_conf.update(configuration)
             configuration = prev_conf
@@ -783,39 +833,56 @@ class Configurable(object):
         :type configure: bool
         """
 
-        # set log_lvl
-        self.log_lvl = parameters.get(Configurable.LOG_LVL, self.log_lvl)
+        new_logger = False
 
-        # set log_debug_format
-        self.log_debug_format = parameters.get(
-            Configurable.LOG_DEBUG_FORMAT, self.log_debug_format)
+        log_properties = [parameter.name for parameter in
+            self.configuration[Configurable.LOG]]
 
-        # set log_info_format
-        self.log_info_format = parameters.get(
-            Configurable.LOG_INFO_FORMAT, self.log_info_format)
+        for log_property in log_properties:
+            new_logger = new_logger | self._update_property(
+                parameters, log_property)
 
-        # set log_warning_format
-        self.log_warning_format = parameters.get(
-            Configurable.LOG_WARNING_FORMAT, self.log_warning_format)
-
-        # set log_error_format
-        self.log_error_format = parameters.get(
-            Configurable.LOG_ERROR_FORMAT, self.log_error_format)
-
-        # set log_critical_format
-        self.log_critical_format = parameters.get(
-            Configurable.LOG_CRITICAL_FORMAT, self.log_critical_format)
-
-        from cconfiguration.manager import ConfigurationManager
+        # if needed, renew the logger
+        if new_logger:
+            self._logger = self.newLogger()
 
         # set managers
-        managers = parameters.get(Configurable.MANAGERS)
-        if managers is not None:
-            self.managers = list()
-            managers = managers.split(',')
-            for manager in managers:
-                manager = ConfigurationManager.add_manager(manager)
-                self.managers.add(manager)
+        self._update_property(
+            parameters, Configurable.MANAGERS, public_property=True)
+
+    def _update_property(
+        self, parameters, parameter_name, public_property=False,
+        *args, **kwargs
+    ):
+        """
+        True if a property update is required and do it.
+
+        Check if a parameter exist in paramters where name is parameter_name.
+        Then update self property depending on input public_property:
+        - True => name is parameter_name
+        - False => name is '_{parameter_name}'
+
+        :param parameters: set of couple parameter (name, value)
+        :type parameters: dict
+
+        :param parameter_name: parameter name to find in parameters
+        :type parameter_name: str
+
+        :param public_property: If False (default), update directly private
+            property, else update public property in using the property.setter
+        :type property_name: bool
+        """
+
+        result = False
+
+        parameter = parameters.get(parameter_name)
+        if parameter is not None:
+            property_name = '{0}{1}'.format(
+                '' if public_property else '_', parameter_name)
+            setattr(self, property_name, parameter)
+            result = True
+
+        return result
 
     @staticmethod
     def _get_manager(
@@ -829,12 +896,18 @@ class Configurable(object):
         :rtype: ConfigurationManager
         """
 
-        result = None, None
+        result = None
+
+        managers = managers.split(',')
+
+        from cconfiguration.manager import ConfigurationManager
 
         for manager in managers:
+            manager = ConfigurationManager.get_manager(manager)
             manager = manager()
 
-            handle = manager.handle(conf_file=conf_file, logger=logger)
+            handle = conf_file is None \
+                or manager.handle(conf_file=conf_file, logger=logger)
 
             if handle:
                 result = manager

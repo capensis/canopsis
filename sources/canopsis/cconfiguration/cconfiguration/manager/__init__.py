@@ -19,7 +19,7 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from ccommon.utils import resolve_element
+from ccommon.utils import resolve_element, path
 
 from stat import ST_SIZE
 
@@ -42,7 +42,7 @@ class MetaConfigurationManager(type):
         # if the class claims to be registered
         if self.__register__:
             # add it among managers
-            ConfigurationManager._MANAGERS.add(self)
+            ConfigurationManager._MANAGERS[path(self)] = self
 
 
 class ConfigurationManager(object):
@@ -67,7 +67,7 @@ class ConfigurationManager(object):
     """
     Private set of shared manager types.
     """
-    _MANAGERS = set()
+    _MANAGERS = dict()
 
     def handle(self, conf_file, logger, *args, **kwargs):
         """
@@ -277,10 +277,10 @@ class ConfigurationManager(object):
         Get global defined managers.
         """
 
-        return set(ConfigurationManager._MANAGERS)
+        return set(ConfigurationManager._MANAGERS.values())
 
     @staticmethod
-    def add_manager(path):
+    def get_manager(path):
         """
         Add a configuration manager by its path definition.
 
@@ -289,10 +289,14 @@ class ConfigurationManager(object):
         :type path: str
         """
 
-        result = resolve_element(path)
+        # try to get if from global definition
+        result = ConfigurationManager._MANAGERS.get(path)
 
-        # add it to _MANAGERS
-        ConfigurationManager._MANAGERS.add(result)
+        # if not already added
+        if result is None:
+            # resolve it and add it in global definition
+            result = resolve_element(path)
+            ConfigurationManager._MANAGERS[path] = result
 
         return result
 
@@ -387,8 +391,3 @@ class ConfigurationManager(object):
         """
 
         raise NotImplementedError()
-
-"""
-Load automatically all library managers.
-"""
-from cconfiguration.manager import *
