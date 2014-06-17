@@ -45,10 +45,17 @@ def resolve_element(path):
     # if mod does not exist
     result = None
 
-    try:  # check if name is defined from an external module
-        result = __import__(components[0])
+    module_name = components[0]
+    index = 0
 
-    except ImportError:  # try to get result from globals
+    try:  # check if name is defined from an external module
+        # find the right module
+
+        for index in range(0, len(components)):
+            result = __import__(module_name)
+            module_name = '{0}.{1}'.format(module_name, components[index + 1])
+
+    except ImportError:
         pass
 
     # if result exist

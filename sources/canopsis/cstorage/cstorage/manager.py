@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 #--------------------------------
 # Copyright (c) 2014 "Capensis" [http://www.capensis.com]
 #
@@ -18,170 +19,193 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from cconfiguration import Configurable
-from utils import resolve_element
+from cconfiguration import Configurable, Category, Parameter, Configuration
+from ccommon.utils import resolve_element
 
 
 class Manager(Configurable):
 
-	CONFIGURATION_FILE = '~/etc/storage.conf'
+    CONF_FILE = '~/etc/manager.conf'
 
-	TIMED_STORAGE = 'timed_storage'
-	PERIODIC_STORAGE = 'periodic_storage'
-	ONE_VALUE_STORAGE = 'one_value_storage'
+    TIMED_STORAGE = 'timed_storage'
+    PERIODIC_STORAGE = 'periodic_storage'
+    LAST_VALUE_STORAGE = 'last_value_storage'
+    SHARED = 'shared'
 
-	SHARED = 'shared'
+    CATEGORY = 'MANAGER'
 
-	STORAGE = 'STORAGE'
+    STORAGE_SUFFIX = '_storage'
 
-	PARSING_RULES = {
-		STORAGE: {
-			TIMED_STORAGE: str,
-			PERIODIC_STORAGE: str,
-			ONE_VALUE_STORAGE: str,
-			SHARED: bool
-		}
-	}
+    _STORAGE_BY_DATA_TYPE_BY_TYPE = dict()
 
-	_STORAGE_BY_DATA_TYPE_BY_TYPE = dict()
+    def __init__(
+        self, shared=True,
+        last_value_storage=None, timed_storage=None, periodic_storage=None,
+        *args, **kwargs
+    ):
 
-	def __init__(self, configuration_file=CONFIGURATION_FILE, shared=False,
-		*args, **kwargs):
+        super(Manager, self).__init__(*args, **kwargs)
 
-		super(Manager, self).__init__(
-			configuration_file=configuration_file, *args, **kwargs)
+        self.shared = shared
 
-		self.shared = shared
+        self.periodic_storage = periodic_storage
+        self.timed_storage = timed_storage
+        self.last_value_storage = last_value_storage
 
-	def get_parsing_rules(self, *args, **kwargs):
-		"""
-		Get the right structure to use to parse a configuration file.
+    @property
+    def shared(self):
+        return self._shared
 
-		:rtype: list of dict(section, dict(option, parser(option)))
-		"""
+    @shared.setter
+    def shared(self, value):
+        self._shared = value
 
-		result = super(Manager, self).get_parsing_rules(*args, **kwargs)
+    @property
+    def periodic_storage(self):
+        return self._periodic_storage
 
-		parsing_rule = Manager.PARSING_RULES.copy()
+    @periodic_storage.setter
+    def periodic_storage(self, value):
+        self._periodic_storage = value
 
-		for timed_type in self._get_timed_types():
-			parsing_rule[Manager.STORAGE][timed_type] = str
+    @property
+    def timed_storage(self):
+        return self._timed_storage
 
-		for periodic_type in self._get_periodic_types():
-			parsing_rule[Manager.STORAGE][periodic_type] = str
+    @timed_storage.setter
+    def timed_storage(self, value):
+        self._timed_storage = value
 
-		for one_value_type in self._get_one_value_types():
-			parsing_rule[Manager.STORAGE][one_value_type] = str
+    @property
+    def last_value_storage(self):
+        return self._last_value_storage
 
-		result.append(parsing_rule)
+    @last_value_storage.setter
+    def last_value_storage(self, value):
+        self._last_value_storage = value
 
-		return result
+    def get_storage(
+        self, data_type, storage_type, shared=None, *args, **kwargs
+    ):
+        """
+        Load a storage related to input data type and storage type.
 
-	def get_storage(self, data_type, storage_type, self_storage_type=None,
-		shared=None, *args, **kwargs):
+        If shared, the result instance is shared among same storage type and
+        data type.
 
-		if shared is None:
-			shared = self.shared
+        :param data_type: storage data type
+        :type data_type: str
 
-		if storage_type is None:
-			storage_type = self_storage_type
+        :param storage_type: storage type (among timed, last_value ,etc.)
+        :type storage_type: Storage or str
 
-		elif isinstance(storage_type, str):
-			storage_type = resolve_element(storage_type)
+        :param shared: if True, the result is a shared storage instance among
+            managers. If None, use self.shared
+        :type shared: bool
 
-		elif callable(storage_type):
-			pass
+        :return: storage instance corresponding to input storage_type
+        :rtype: Storage
+        """
 
-		if shared and \
-			storage_type in Manager._STORAGE_BY_DATA_TYPE_BY_TYPE \
-			and data_type in Manager._STORAGE_BY_DATA_TYPE_BY_TYPE[storage_type]:
-				result = Manager._STORAGE_BY_DATA_TYPE_BY_TYPE[storage_type][data_type]
+        result = None
 
-		else:
-			result = storage_type(data_type=data_type, *args, **kwargs)
+        if shared is None:
+            shared = self.shared
 
-		if shared:
-			Manager._STORAGE_BY_DATA_TYPE_BY_TYPE[storage_type][data_type] = result
+        if isinstance(storage_type, str):
+            storage_type = resolve_element(storage_type)
 
-		return result
+        elif callable(storage_type):
+            pass
 
-	def get_timed_storage(self, data_type, timed_type=None, shared=None,
-		*args, **kwargs):
+        # if shared, try to find an instance with same storage and data types
+        if shared:
+            # search among isntances registred on storage_type
+            storage_by_data_type = \
+                Manager._STORAGE_BY_DATA_TYPE_BY_TYPE.setdefault(
+                    storage_type, dict())
 
-		result = self.get_storage(data_type=data_type, shared=shared,
-			storage_type=timed_type, self_storage_type=self.timed_type,
-			*args, **kwargs)
+            if data_type not in storage_by_data_type:
+                storage_by_data_type[data_type] = storage_type(
+                    data_type=data_type, *args, **kwargs)
 
-		return result
+            result = storage_by_data_type[data_type]
 
-	def get_periodic_storage(self, data_type, periodic_type=None, shared=None,
-		*args, **kwargs):
+        else:
+            result = storage_type(data_type=data_type, *args, **kwargs)
 
-		result = self.get_storage(data_type=data_type, shared=shared,
-			storage_type=periodic_type, self_storage_type=self.periodic_type,
-			*args, **kwargs)
+        return result
 
-		return result
+    def get_timed_storage(
+        self, data_type, timed_type=None, shared=None,
+        *args, **kwargs
+    ):
 
-	def get_one_value_storage(self, data_type, one_value_type=None, shared=None,
-		*args, **kwargs):
+        if timed_type is None:
+            timed_type = self.timed_storage
 
-		result = self.get_storage(data_type=data_type, shared=shared,
-			storage_type=one_value_type, self_storage_type=self.one_value_type,
-			*args, **kwargs)
+        result = self.get_storage(
+            data_type=data_type, storage_type=timed_type, shared=shared,
+            *args, **kwargs)
 
-		return result
+        return result
 
-	def _set_parameters(self, parameters, error_parameters, *args, **kwargs):
+    def get_periodic_storage(
+        self, data_type, periodic_type=None, shared=None,
+        *args, **kwargs
+    ):
 
-		# set default timed type
-		timed_type = parameters.get(Manager.TIMED_STORAGE)
-		if timed_type is not None:
-			self.timed_type = resolve_element(timed_type)
+        if periodic_type is None:
+            periodic_type = self.periodic_storage
 
-		# set default periodic type
-		periodic_type = parameters.get(Manager.PERIODIC_STORAGE)
-		if periodic_type is not None:
-			self.periodic_type = resolve_element(periodic_type)
+        result = self.get_storage(data_type=data_type, shared=shared,
+            storage_type=periodic_type, *args, **kwargs)
 
-		# set default one value type
-		one_value_type = parameters.get(Manager.ONE_VALUE_STORAGE)
-		if one_value_type is not None:
-			self.one_value_type = resolve_element(one_value_type)
+        return result
 
-		shared = parameters.get(Manager.SHARED)
-		if shared is not None:
-			self.shared = shared
+    def get_last_value_storage(
+        self, data_type, last_value_type=None, shared=None,
+        *args, **kwargs
+    ):
 
-		storage_types = {
-			Manager.TIMED_STORAGE: self.timed_type,
-			Manager.PERIODIC_STORAGE: self.periodic_type,
-			Manager.ONE_VALUE_STORAGE: self.one_value_type
-		}
+        if last_value_type is None:
+            last_value_type = self.last_value_storage
 
-		# set attributes with input parameters where name are data_type
-		for name, parameter in parameters.iteritems():
+        result = self.get_storage(data_type=data_type, shared=shared,
+            storage_type=last_value_type, *args, **kwargs)
 
-			storage = None
+        return result
 
-			# if parameter is default storage type
-			if parameter in storage_types:
-				storage = self.get_storage(
-					data_type=name, storage_type=storage_types[parameter])
+    def _get_conf_files(self, *args, **kwargs):
 
-			else:  # get dynamic storage type
-				storage = self.get_storage(data_type=name, storage_type=parameter)
+        result = super(Manager, self)._get_conf_files(*args, **kwargs)
 
-			setattr(self, name, storage)
+        result.append(Manager.CONF_FILE)
 
-	def _get_timed_types(self, *args, **kwargs):
+        return result
 
-		return []
+    def _conf(self, *args, **kwargs):
 
-	def _get_periodic_types(self, *args, **kwargs):
+        result = super(Manager, self)._conf(*args, **kwargs)
 
-		return []
+        result += Category(Manager.CATEGORY,
+            Parameter(Manager.TIMED_STORAGE),
+            Parameter(Manager.PERIODIC_STORAGE),
+            Parameter(Manager.LAST_VALUE_STORAGE),
+            Parameter(Manager.SHARED, parser=bool))
 
-	def _get_one_value_types(self, *args, **kwargs):
+        return result
 
-		return []
+    def _configure(self, conf, *args, **kwargs):
+
+        super(Manager, self)._configure(conf=conf, *args, **kwargs)
+
+        values = conf[Configuration.VALUES]
+
+        # set shared
+        self._update_parameter(values, Manager.SHARED)
+
+        # set all storages
+        for parameter in values:
+            if parameter.name.endswith(Manager.STORAGE_SUFFIX):
+                self._update_parameter(values, parameter.name)

@@ -47,7 +47,7 @@ class MetaConfigurationManager(type):
 
 class ConfigurationManager(object):
     """
-    Base class for managing configuration.
+    Base class for managing conf.
     """
 
     """
@@ -57,7 +57,7 @@ class ConfigurationManager(object):
     __metaclass__ = MetaConfigurationManager
 
     """
-    Static parameter which allows this class to be automatically registered
+    Static param which allows this class to be automatically registered
     among managers.
     """
     __register__ = False
@@ -85,19 +85,19 @@ class ConfigurationManager(object):
         return result
 
     def get_configuration(
-        self, conf_file, logger, configuration=None, fill=False,
+        self, conf_file, logger, conf=None, fill=False,
         *args, **kwargs
     ):
         """
-        Parse a configuration_files with input configuration and returns
-        parameters and errors by parameter name.
+        Parse a configuration_files with input conf and returns
+        parameters and errors by param name.
 
-        :param conf_file: configuration file to parse and from get parameters
+        :param conf_file: conf file to parse and from get parameters
         :type conf_file: str
 
-        :param configuration: configuration to fill with conf_file values and
-            configuration parameter names.
-        :type configuration: cconfiguration.Configuration
+        :param conf: conf to fill with conf_file values and
+            conf param names.
+        :type conf: cconfiguration.Configuration
 
         :param logger: logger to use in order to trace information/error
         :type logger: logging.Logger
@@ -114,7 +114,7 @@ class ConfigurationManager(object):
         if exists(conf_file) and stat(conf_file)[ST_SIZE]:
 
             try:
-                # first, read configuration file
+                # first, read conf file
                 conf_resource = self._get_conf_resource(
                     conf_file=conf_file, logger=logger)
 
@@ -124,13 +124,13 @@ class ConfigurationManager(object):
                     'Impossible to parse conf_file {0}: {1}'.format(
                         conf_file, e))
 
-            else:  # else process configuration file
+            else:  # else process conf file
 
                 if conf_resource is None:
                     return result
 
-                result = Configuration() if configuration is None \
-                    else configuration
+                result = Configuration() if conf is None \
+                    else conf
 
                 # get generic logging message
                 log_message = '{0}/{{0}}/{{1}}'.format(conf_file)
@@ -143,21 +143,21 @@ class ConfigurationManager(object):
                         category = result.setdefault(
                             category, Category(category))
 
-                        for parameter in self._get_parameters(
+                        for param in self._get_parameters(
                                 conf_resource=conf_resource,
                                 category=category,
                                 logger=logger):
 
-                            parameter = category.setdefault(
-                                parameter, Parameter(parameter))
+                            param = category.setdefault(
+                                param, Parameter(param))
 
                             value = self._get_value(
                                 conf_resource=conf_resource,
                                 category=category,
-                                parameter=parameter,
+                                param=param,
                                 logger=logger)
 
-                            parameter.value = value
+                            param.value = value
 
                 else:
 
@@ -169,15 +169,15 @@ class ConfigurationManager(object):
                             category=category,
                                 logger=logger):
 
-                            for parameter in category:
+                            for param in category:
 
-                                name = parameter.name
+                                name = param.name
 
                                 # if parameter_name exists
                                 if self._has_parameter(
                                     conf_resource=conf_resource,
                                     category=category,
-                                    parameter=parameter,
+                                    param=param,
                                         logger=logger):
 
                                     # construct generic log message for each
@@ -190,37 +190,37 @@ class ConfigurationManager(object):
                                     value = self._get_value(
                                         conf_resource=conf_resource,
                                         category=category,
-                                        parameter=parameter,
+                                        param=param,
                                         logger=logger)
 
-                                    parameter.value = value
+                                    param.value = value
 
                                     # if an exception occured
-                                    if isinstance(parameter.value, Exception):
+                                    if isinstance(param.value, Exception):
                                         # set error among errors result
                                         error_message = \
                                             option_log_message.format(
-                                                parameter.value)
+                                                param.value)
                                         logger.error(error_message)
 
                                     info_message = option_log_message.format(
-                                        parameter.value)
+                                        param.value)
                                     logger.info(info_message)
 
         return result
 
     def set_configuration(
-        self, conf_file, configuration, logger,
+        self, conf_file, conf, logger,
         *args, **kwargs
     ):
         """
-        Set input configuration in input conf_file.
+        Set input conf in input conf_file.
 
         :param conf_file:
         :type conf_file: str
 
-        :param configuration: configuration to write in conf_file.
-        :type configuration: cconfiguration.Configuration
+        :param conf: conf to write in conf_file.
+        :type conf: cconfiguration.Configuration
 
         :param logger: used to log info/errors
         :type logger: logging.Logger
@@ -246,8 +246,8 @@ class ConfigurationManager(object):
 
             conf_resource = self._get_conf_resource(logger=logger)
 
-        # iterate on all configuration items
-        for category in configuration:
+        # iterate on all conf items
+        for category in conf:
 
             # set category
             self._set_category(
@@ -255,16 +255,16 @@ class ConfigurationManager(object):
                 logger=logger)
 
             # iterate on parameters
-            for parameter in category:
+            for param in category:
 
-                # set parameter
+                # set param
                 self._set_parameter(
                     conf_resource=conf_resource,
                     category=category,
-                    parameter=parameter,
+                    param=param,
                     logger=logger)
 
-        # write conf_resource in configuration file
+        # write conf_resource in conf file
         self._update_conf_file(
             conf_resource=conf_resource,
             conf_file=conf_file)
@@ -282,7 +282,7 @@ class ConfigurationManager(object):
     @staticmethod
     def get_manager(path):
         """
-        Add a configuration manager by its path definition.
+        Add a conf manager by its path definition.
 
         :param path: manager path to add. Must be a full path from a known
             package/module
@@ -311,7 +311,7 @@ class ConfigurationManager(object):
         self, conf_resource, category, logger, *args, **kwargs
     ):
         """
-        Get a list of parameter names in conf_resource related to category
+        Get a list of param names in conf_resource related to category
         """
 
         raise NotImplementedError()
@@ -327,7 +327,7 @@ class ConfigurationManager(object):
 
     def _has_parameter(
         self,
-        conf_resource, category, parameter, logger,
+        conf_resource, category, param, logger,
         *args, **kwargs
     ):
         """
@@ -356,10 +356,10 @@ class ConfigurationManager(object):
         raise NotImplementedError()
 
     def _get_value(
-        self, conf_resource, category, parameter, *args, **kwargs
+        self, conf_resource, category, param, *args, **kwargs
     ):
         """
-        Get a parameter related to input conf_resource, category and parameter
+        Get a param related to input conf_resource, category and param
         """
 
         raise NotImplementedError()
@@ -374,11 +374,11 @@ class ConfigurationManager(object):
         raise NotImplementedError()
 
     def _set_parameter(
-        self, conf_resource, category, parameter, logger,
+        self, conf_resource, category, param, logger,
         *args, **kwargs
     ):
         """
-        Set parameter on conf_resource.
+        Set param on conf_resource.
         """
 
         raise NotImplementedError()

@@ -323,7 +323,7 @@ class DataBase(Configurable):
         if reconnect and self.auto_connect:
             self.reconnect()
 
-    def _configuration(self, *args, **kwargs):
+    def _conf(self, *args, **kwargs):
 
         result = super(DataBase, self)._configuration(*args, **kwargs)
 
@@ -351,8 +351,6 @@ class Storage(DataBase):
     """
 
     DATA_TYPE = 'data_type'
-
-    CATEGORY = 'STORAGE'
 
     def __init__(self, data_type, *args, **kwargs):
 

@@ -25,19 +25,21 @@ from cconfiguration import Configurable, Configuration, Category, Parameter
 
 from os import remove
 
+from tempfile import NamedTemporaryFile
+
 
 class ConfigurableTest(TestCase):
 
     def setUp(self):
 
         self.conf_files = (
-            '/tmp/ConfigurableTest0',
-            '/tmp/ConfigurableTest1'
+            NamedTemporaryFile().name,
+            NamedTemporaryFile().name
         )
 
         self.configurable = Configurable()
 
-        self.configuration = Configuration(
+        self.conf = Configuration(
             Category('A',
                 Parameter('a', value='a'),
                 Parameter('2', value=2, parser=int),
@@ -91,9 +93,9 @@ class ConfigurableTest(TestCase):
         # test to get from no file
         configurable = Configurable()
 
-        configuration = configurable.get_configuration()
+        conf = configurable.get_configuration()
 
-        self.assertEqual(len(configuration), len(self.configuration))
+        self.assertEqual(len(conf), len(self.conf))
 
         # test to get from files which do not exist
         configurable.conf_files = self.conf_files
@@ -104,23 +106,23 @@ class ConfigurableTest(TestCase):
             except OSError:
                 pass
 
-        configuration = configurable.get_configuration()
+        conf = configurable.get_configuration()
 
-        self.assertEqual(len(configuration), len(self.configuration))
+        self.assertEqual(len(conf), len(self.conf))
 
         # get parameters from empty files
         for conf_file in self.conf_files:
             open(conf_file, 'w').close()
 
-        configuration = configurable.get_configuration()
+        conf = configurable.get_configuration()
 
-        self.assertEqual(len(configuration), len(self.configuration))
+        self.assertEqual(len(conf), len(self.conf))
 
         # get parameters from empty files and empty parsing_rules
-        configuration = Configuration()
-        configurable.get_configuration(configuration=configuration)
+        conf = Configuration()
+        configurable.get_configuration(conf=conf)
 
-        self.assertEqual(len(configuration), 0)
+        self.assertEqual(len(conf), 0)
 
         # fill files
         configurable = Configurable(
@@ -129,51 +131,55 @@ class ConfigurableTest(TestCase):
         # add first category in conf file[0]
         configurable.set_configuration(
             conf_file=self.conf_files[0],
-            configuration=Configuration(self.configuration['A']),
-            manager=configurable._managers[0])
+            conf=Configuration(self.conf['A']),
+            manager=configurable._managers.split(',')[0])
 
         # add second category in conf file[1]
         configurable.set_configuration(
             conf_file=self.conf_files[1],
-            configuration=Configuration(self.configuration['B']),
-            manager=configurable._managers[1])
+            conf=Configuration(self.conf['B']),
+            manager=configurable._managers.split(',')[1])
 
-        configuration = configurable.get_configuration(fill=True, configuration=self.configuration)
+        conf = configurable.get_configuration(
+            fill=True, conf=self.conf)
 
-        parameters, errors = configuration.get_parameters()
+        unified_configuration = conf.unify()
+        parameters = unified_configuration[Configuration.VALUES]
+        errors = unified_configuration[Configuration.ERRORS]
+
         self.assertTrue('a' in parameters and 'a' not in errors)
-        self.assertEqual(parameters['a'], 'b')
+        self.assertEqual(parameters['a'].value, 'b')
         self.assertTrue('2' in parameters and '2' not in errors)
-        self.assertEqual(parameters['2'], 2)
+        self.assertEqual(parameters['2'].value, 2)
         self.assertTrue('b' in parameters and 'b' not in errors)
-        self.assertEqual(parameters['b'], 'b')
+        self.assertEqual(parameters['b'].value, 'b')
         self.assertTrue('error' in errors and 'error' not in parameters)
 
     def test_reconfigure(self):
 
         self.assertTrue(self.configurable.auto_conf)
 
-        configuration = Configuration(
+        conf = Configuration(
             Category('TEST',
                 Parameter('auto_conf', value=False)))
 
-        self.configurable.configure(configuration=configuration)
+        self.configurable.configure(conf=conf)
 
         self.assertFalse(self.configurable.auto_conf)
 
         self.assertTrue(self.configurable.log_lvl is 'INFO')
 
-        configuration = Configuration(
+        conf = Configuration(
             Category('TEST',
                 Parameter('log_lvl', value='DEBUG')))
 
-        self.configurable.configure(configuration=configuration)
+        self.configurable.configure(conf=conf)
 
         self.assertTrue(self.configurable.log_lvl is 'INFO')
 
         self.configurable.once = True
 
-        self.configurable.configure(configuration=configuration)
+        self.configurable.configure(conf=conf)
 
         self.assertTrue(self.configurable.log_lvl is 'DEBUG')
 
@@ -183,7 +189,7 @@ class ConfigurableTest(TestCase):
 
         self.configurable.auto_conf = True
 
-        self.configurable.configure(configuration=configuration)
+        self.configurable.configure(conf=conf)
 
         self.assertTrue(self.configurable.log_lvl is 'DEBUG')
 
@@ -191,9 +197,9 @@ class ConfigurableTest(TestCase):
 
         class _Configurable(Configurable):
 
-            def _configuration(self, *args, **kwargs):
+            def _conf(self, *args, **kwargs):
 
-                result = super(_Configurable, self)._configuration(
+                result = super(_Configurable, self)._conf(
                     *args, **kwargs)
 
                 result += Category('PLOP')
@@ -205,8 +211,8 @@ class ConfigurableTest(TestCase):
         _configurable = _Configurable()
 
         self.assertEqual(
-            len(configurable.configuration) + 1,
-            len(_configurable.configuration))
+            len(configurable.conf) + 1,
+            len(_configurable.conf))
 
 if __name__ == '__main__':
     main()

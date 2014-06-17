@@ -27,22 +27,24 @@ from logging import Formatter, getLogger, FileHandler, Filter
 
 from stat import ST_SIZE
 
-from os.path import expanduser, exists, sep
+from os.path import expanduser, exists, sep, abspath
+
 from os import stat
 
 from collections import OrderedDict
 
 from inspect import isclass
 
-from functools import reduce
-
 
 class Configuration(object):
     """
-    Manage configuration such as a list of Categories.
+    Manage conf such as a list of Categories.
 
-    The order of categories permit to ensure parameter overriding.
+    The order of categories permit to ensure param overriding.
     """
+
+    ERRORS = 'ERRORS'
+    VALUES = 'VALUES'
 
     def __init__(self, *categories, **kwargs):
         """
@@ -78,14 +80,17 @@ class Configuration(object):
         return len(self.categories)
 
     def __iadd__(self, other):
+        """
+        Add categories or conf categories in self
+        """
 
-        # if other is a configuration add a copy of all other categories
+        # if other is a conf add a copy of all other categories
         if isinstance(other, Configuration):
             for category in other:
-                self += category.copy()
+                self += category
 
         else:
-            self.categories[other.name] = other.copy()
+            self.categories[other.name] = other
 
         return self
 
@@ -110,54 +115,70 @@ class Configuration(object):
         self.categories[category.name] = category
         return result
 
-    def get_parameters(self, *args, **kwargs):
+    def unify(self, copy=False, *args, **kwargs):
         """
-        Get values and errors of parameters in respecting parameter overriding.
+        Get a conf which contains only two categories:
+        - VALUES where params are all self params where values are not
+            exceptions.contains all values
+        - ERRORS where params are all self params where values are
+            exceptions
 
-        :return: two dictionaries respectively with values and errors by name.
-        :rtype: dict, dict
+        :param copy: copy self params (default False)
+        :type côpy: bool
+
+        :return: two categories named respectivelly VALUES and ERRORS and
+            contain respectivelly self param values and parsing errors
+        :rtype: Configuration
         """
 
-        values = dict()
-        errors = dict()
+        result = Configuration()
 
-        result = values, errors
+        values = Category(Configuration.VALUES)
+        errors = Category(Configuration.ERRORS)
 
         for category in self:
 
-            for parameter in category:
+            for param in category:
 
-                if parameter.value is not None:
+                if param.value is not None:
 
                     to_update, to_delete = (errors, values) if \
-                        isinstance(parameter.value, Exception) \
+                        isinstance(param.value, Exception) \
                         else (values, errors)
 
-                    to_update[parameter.name] = parameter.value
+                    to_update.put(param.copy() if copy else param)
 
-                    if parameter.name in to_delete:
-                        del to_delete[parameter.name]
+                    if param.name in to_delete:
+                        del to_delete[param.name]
+
+        result += values
+        result += errors
 
         return result
 
-    def add_specific_category(self, name, *args, **kwargs):
+    def add_unified_category(self, name, copy=False, *args, **kwargs):
         """
-        Add a category with input name which takes all parameters provided
+        Add a category with input name which takes all params provided
         by other categories
 
         :param name: new category name
         :type name: str
+
+        :param copy: copy self params (default False)
+        :type copy: bool
         """
 
         category = Category(name)
 
         for category in self:
-            for parameter in category:
-                category.put(parameter.copy())
+            for param in category:
+                category.put(param.copy() if copy else param)
+
+        self += category
 
     def clean(self, *args, **kwargs):
         """
-        Clean this parameters in setting value to None.
+        Clean this params in setting value to None.
         """
 
         for category in self:
@@ -176,58 +197,58 @@ class Configuration(object):
 
         return result
 
-    def update(self, configuration, *args, **kwargs):
+    def update(self, conf, *args, **kwargs):
         """
-        Update this content with input configuration
+        Update this content with input conf
         """
 
-        for category in configuration:
+        for category in conf:
             category = self.setdefault(
                 category.name, category.copy())
 
-            for parameter in category:
-                parameter = category.setdefault(
-                    parameter.name, parameter.copy())
+            for param in category:
+                param = category.setdefault(
+                    param.name, param.copy())
 
 
 class Category(object):
     """
-    Parameter category which contains a dictionary of parameters.
+    Parameter category which contains a dictionary of params.
     """
 
-    def __init__(self, name, *parameters, **kwargs):
+    def __init__(self, name, *params, **kwargs):
         """
-        :param name: unique in a configuration.
+        :param name: unique in a conf.
         :type name: str
 
-        :param parameters: Parameters
-        :type parameters: list of Parameter
+        :param params: Parameters
+        :type params: list of Parameter
         """
         super(Category, self).__init__(**kwargs)
         self.name = name
-        # set parameter by names.
-        self.parameters = {
-            parameter.name: parameter for parameter in parameters}
+        # set param by names.
+        self.params = {
+            param.name: param for param in params}
 
     def __iter__(self, *args, **kwargs):
 
-        return iter(self.parameters.values())
+        return iter(self.params.values())
 
-    def __delitem__(self, parameter_name, *args, **kwargs):
+    def __delitem__(self, param_name, *args, **kwargs):
 
-        del self.parameters[parameter_name]
+        del self.params[param_name]
 
-    def __getitem__(self, parameter_name, *args, **kwargs):
+    def __getitem__(self, param_name, *args, **kwargs):
 
-        return self.parameters[parameter_name]
+        return self.params[param_name]
 
-    def __contains__(self, parameter_name, *args, **kwargs):
+    def __contains__(self, param_name, *args, **kwargs):
 
-        return parameter_name in self.parameters
+        return param_name in self.params
 
     def __len__(self):
 
-        return len(self.parameters)
+        return len(self.params)
 
     def __eq__(self, other):
 
@@ -239,33 +260,33 @@ class Category(object):
 
     def __repr__(self):
 
-        return 'Category({0}, {1})'.format(self.name, self.parameters)
+        return 'Category({0}, {1})'.format(self.name, self.params)
 
-    def setdefault(self, parameter_name, parameter, *args, **kwargs):
+    def setdefault(self, param_name, param, *args, **kwargs):
 
-        return self.parameters.setdefault(parameter_name, parameter)
+        return self.params.setdefault(param_name, param)
 
-    def get(self, parameter_name, default=None, *args, **kwargs):
+    def get(self, param_name, default=None, *args, **kwargs):
 
-        return self.parameters.get(parameter_name, default)
+        return self.params.get(param_name, default)
 
-    def put(self, parameter, *args, **kwargs):
+    def put(self, param, *args, **kwargs):
         """
-        Put a parameter and return the previous one if exist
+        Put a param and return the previous one if exist
         """
 
-        result = self.get(parameter.name)
-        self.parameters[parameter.name] = parameter
+        result = self.get(param.name)
+        self.params[param.name] = param
         return result
 
     def clean(self, *args, **kwargs):
         """
-        Clean this parameters in setting value to None.
+        Clean this params in setting value to None.
         """
 
-        for parameter in self.parameters.values():
+        for param in self.params.values():
 
-            parameter.clean()
+            param.clean()
 
     def copy(self, name=None, *args, **kwargs):
 
@@ -274,8 +295,8 @@ class Category(object):
 
         result = Category(name)
 
-        for parameter in self:
-            result.put(parameter.copy())
+        for param in self:
+            result.put(param.copy())
 
         return result
 
@@ -291,10 +312,10 @@ class Parameter(object):
         :param name: unique by category
         :type name: str
 
-        :param value: parameter value. None if not given.
+        :param value: param value. None if not given.
         :type value: object
 
-        :param parser: parameter test deserializer which takes in parameter
+        :param parser: param test deserializer which takes in param
             a str.
         :type parser: callable
         """
@@ -343,10 +364,17 @@ class Parameter(object):
 
         return result
 
+    def clean(self, *args, **kwargs):
+        """
+        Clean this param in removing values
+        """
+
+        self._value = None
+
 
 class Configurable(object):
     """
-    Manages class configuration synchronisation with configuration files.
+    Manages class conf synchronisation with conf files.
     """
 
     DEFAULT_MANAGERS = 'cconfiguration.manager.json.ConfigurationManager,\
@@ -354,7 +382,7 @@ cconfiguration.manager.ini.ConfigurationManager'
 
     CONF_FILE = '~/etc/conf.conf'
 
-    CONF = 'CONF'
+    CONF = 'CONFIGURATION'
     LOG = 'LOG'
 
     AUTO_CONF = 'auto_conf'
@@ -388,10 +416,10 @@ cconfiguration.manager.ini.ConfigurationManager'
         :param conf_files: conf_files to parse
         :type conf_files: Iterable or str
 
-        :param auto_conf: true force auto conf as soon as parameter change
+        :param auto_conf: true force auto conf as soon as param change
         :type auto_conf: bool
 
-        :param once: true force auto conf once as soon as parameter change
+        :param once: true force auto conf once as soon as param change
         :type once: bool
 
         :param log_lvl: logging level
@@ -400,13 +428,14 @@ cconfiguration.manager.ini.ConfigurationManager'
 
         super(Configurable, self).__init__(*args, **kwargs)
 
-        if conf_files is None:
-            conf_files = [Configurable.CONF_FILE]
-
-        self.conf_files = conf_files
-
         self.auto_conf = auto_conf
         self.once = once
+
+        # set conf files
+        self._init_conf_files(conf_files)
+
+        # set managers
+        self.managers = managers
 
         # set logging properties
         self._log_lvl = log_lvl
@@ -420,15 +449,13 @@ cconfiguration.manager.ini.ConfigurationManager'
 
         self._logger = self.newLogger()
 
-        self.managers = managers
-
     @property
     def managers(self):
-        return reduce(lambda x, y: x + ',' + y, self._managers)
+        return self._managers
 
     @managers.setter
     def managers(self, value):
-        self._managers = value.split(',')
+        self._managers = value
 
     def newLogger(self):
         """
@@ -475,15 +502,15 @@ cconfiguration.manager.ini.ConfigurationManager'
         return result
 
     @property
-    def configuration(self):
+    def conf(self):
         """
-        Get configuration with parsers and self property values
+        Get conf with parsers and self property values
         """
-        return self._configuration()
+        return self._conf()
 
-    def _configuration(self, *args, **kwargs):
+    def _conf(self, *args, **kwargs):
         """
-        Protected method to override in order to specify which configuration
+        Protected method to override in order to specify which conf
         return with parsers and default values
         """
 
@@ -592,7 +619,9 @@ cconfiguration.manager.ini.ConfigurationManager'
     @property
     def conf_files(self):
         """
-        :return: self configuration files
+        Get all type conf files and user files.
+
+        :return: self conf files
         :rtype: tuple
         """
 
@@ -619,50 +648,50 @@ cconfiguration.manager.ini.ConfigurationManager'
         add_configurable(self)
 
     def apply_configuration(
-        self, configuration=None, conf_files=None,
+        self, conf=None, conf_files=None,
         managers=None, *args, **kwargs
     ):
         """
-        Apply configuration on a destination in 5 phases:
+        Apply conf on a destination in 5 phases:
 
         1. identify the right manager to use with conf_files to parse.
-        2. for all conf_files, get configuration which match
-            with input configuration.
-        3. apply parsing rules on conf_file parameters.
+        2. for all conf_files, get conf which match
+            with input conf.
+        3. apply parsing rules on conf_file params.
         4. put values and parsing errors in two different dictionaries.
-        5. returns both dictionaries of parameter values and errors.
+        5. returns both dictionaries of param values and errors.
 
-        :param configuration: configuration from where get configuration
-        :type configuration: Configuration
+        :param conf: conf from where get conf
+        :type conf: Configuration
 
-        :param conf_files: configuration files to parse. If
+        :param conf_files: conf files to parse. If
             conf_files is a str, it is automatically putted into a list
         :type conf_files: list of str
         """
 
-        if configuration is None:
-            configuration = self.configuration
+        if conf is None:
+            conf = self.conf
 
-        configuration = self.get_configuration(
-            configuration=configuration, conf_files=conf_files,
+        conf = self.get_configuration(
+            conf=conf, conf_files=conf_files,
             managers=managers, *args, **kwargs)
 
-        self.configure(configuration=configuration, *args, **kwargs)
+        self.configure(conf=conf, *args, **kwargs)
 
     def get_configuration(
         self,
-        configuration=None, conf_files=None, logger=None,
+        conf=None, conf_files=None, logger=None,
         managers=None, fill=False, *args, **kwargs
     ):
         """
-        Get a dictionary of parameters by name from configuration,
+        Get a dictionary of params by name from conf,
         conf_files and conf_managers
 
-        :param configuration: configuration to update. If None, use \
-            self.configuration
-        :type configuration: Configuration
+        :param conf: conf to update. If None, use \
+            self.conf
+        :type conf: Configuration
 
-        :param conf_files: list of configuration files. If None, use \
+        :param conf_files: list of conf files. If None, use \
             self.conf_files
         :type conf_files: list of str
 
@@ -673,17 +702,20 @@ cconfiguration.manager.ini.ConfigurationManager'
         :param managers: conf managers to use. If None, use self.managers
         :type managers: list of ConfigurationManager
 
-        :param fill: if True (False by default) load in configuration all \
+        :param fill: if True (False by default) load in conf all \
             conf_files content
         :type fill: bool
         """
 
-        # start to initialize input parameters
+        # start to initialize input params
         if logger is None:
             logger = self._logger
 
-        if configuration is None:
-            configuration = self.configuration
+        if conf is None:
+            conf = self.conf
+
+        # remove values from conf
+        conf.clean()
 
         if conf_files is None:
             conf_files = self._conf_files
@@ -691,9 +723,9 @@ cconfiguration.manager.ini.ConfigurationManager'
         if isinstance(conf_files, str):
             conf_files = [conf_files]
 
-        # clean configuration file list
+        # clean conf file list
         conf_files = [
-            expanduser(conf_file) for conf_file
+            abspath(expanduser(conf_file)) for conf_file
             in conf_files]
 
         if managers is None:
@@ -712,8 +744,8 @@ cconfiguration.manager.ini.ConfigurationManager'
             # if a config_resource is not None
             if conf_manager is not None:
 
-                configuration = conf_manager.get_configuration(
-                    configuration=configuration, fill=fill,
+                conf = conf_manager.get_configuration(
+                    conf=conf, fill=fill,
                     conf_file=conf_file, logger=logger)
 
             else:
@@ -721,20 +753,20 @@ cconfiguration.manager.ini.ConfigurationManager'
                 logger.warning('No manager found among {0} for {1}'.format(
                     conf_file))
 
-        return configuration
+        return conf
 
     def set_configuration(
-        self, conf_file, configuration, manager=None,
+        self, conf_file, conf, manager=None,
         logger=None, *args, **kwargs
     ):
         """
-        Set parameters on input conf_file.
+        Set params on input conf_file.
 
         Args:
             - conf_files (str): conf_file to udate with
-                parameters
+                params
             - parameter_by_categories (dict(str: dict(str: object)):
-            - logger (logging.Logger): logger to use to set parameters.
+            - logger (logging.Logger): logger to use to set params.
         """
 
         result = None
@@ -772,75 +804,80 @@ cconfiguration.manager.ini.ConfigurationManager'
         # if prev manager is not the new manager
         if prev_conf is not None \
                 and type(manager) is not type(prev_manager):
-            # update prev_conf with input configuration
-            prev_conf.update(configuration)
-            configuration = prev_conf
+            # update prev_conf with input conf
+            prev_conf.update(conf)
+            conf = prev_conf
 
         if manager is not None:
             manager.set_configuration(
                 conf_file=conf_file,
-                configuration=configuration,
+                conf=conf,
                 logger=logger)
 
         else:
             logger.error(
                 'No ConfigurationManager found for \
-                configuration file {0}'.format(
+                conf file {0}'.format(
                     conf_file))
 
         return result
 
-    def configure(self, configuration, *args, **kwargs):
+    def configure(self, conf, *args, **kwargs):
         """
-        Update self properties with input parameters only if:
+        Update self properties with input params only if:
         - self.configure is True
         - self.auto_conf is True
-        - parameter configuration 'configure' is True
-        - parameter configuration 'auto_conf' is True
+        - param conf 'configure' is True
+        - param conf 'auto_conf' is True
 
         This method may not be overriden. see _configure instead
 
-        :param configuration: object from where get paramters
-        :type configuration: Configuration
+        :param conf: object from where get paramters
+        :type conf: Configuration
         """
 
-        parameters, error_parameters = configuration.get_parameters()
+        unified_conf = conf.unify()
+
+        values = unified_conf[Configuration.VALUES]
 
         # set configure
-        self.once = parameters.get(Configurable.ONCE, self.once)
+        once_parameter = values.get(Configurable.ONCE)
+        if once_parameter is not None:
+            self.once = once_parameter.value
+
         # set auto_conf
-        self.auto_conf = parameters.get(Configurable.AUTO_CONF, self.auto_conf)
+        auto_conf_parameter = values.get(Configurable.AUTO_CONF)
+        if auto_conf_parameter is not None:
+            self.auto_conf = auto_conf_parameter.value
 
         if self.once or self.auto_conf:
-            self._configure(parameters, error_parameters, *args, **kwargs)
-            # when configuration succeed, deactive once
+            self._configure(unified_conf, *args, **kwargs)
+            # when conf succeed, deactive once
             self.once = False
 
-    def _configure(self, parameters, error_parameters, *args, **kwargs):
+    def _configure(self, unified_conf, *args, **kwargs):
         """
-        Configure this class with input parameters only if auto_conf or
+        Configure this class with input conf only if auto_conf or
         configure is true.
 
-        This method should be overriden for specific configuration
+        This method should be overriden for specific conf
 
-        :param parameters: dictionary of parameter value by name
-        :type parameters: dict
+        :param unified_conf: Configuration with two categories
+            VALUES and ERRORS
+        :type params: Configuration
 
-        :param error_parameters: dictionary of parameter parsing error by name
-        :type error_parameters: dict
-
-        :param configure: if True, force full self configuration
+        :param configure: if True, force full self conf
         :type configure: bool
         """
 
         new_logger = False
 
-        log_properties = [parameter.name for parameter in
-            self.configuration[Configurable.LOG]]
+        log_properties = [param.name for param in
+            self.conf[Configurable.LOG]]
 
         for log_property in log_properties:
             new_logger = new_logger | self._update_property(
-                parameters, log_property)
+                unified_conf, log_property)
 
         # if needed, renew the logger
         if new_logger:
@@ -848,25 +885,25 @@ cconfiguration.manager.ini.ConfigurationManager'
 
         # set managers
         self._update_property(
-            parameters, Configurable.MANAGERS, public_property=True)
+            unified_conf, Configurable.MANAGERS, public_property=True)
 
     def _update_property(
-        self, parameters, parameter_name, public_property=False,
+        self, unified_conf, param_name, public_property=False,
         *args, **kwargs
     ):
         """
         True if a property update is required and do it.
 
-        Check if a parameter exist in paramters where name is parameter_name.
+        Check if a param exist in paramters where name is param_name.
         Then update self property depending on input public_property:
-        - True => name is parameter_name
-        - False => name is '_{parameter_name}'
+        - True => name is param_name
+        - False => name is '_{param_name}'
 
-        :param parameters: set of couple parameter (name, value)
-        :type parameters: dict
+        :param unified_conf: unified conf
+        :type params: Configuration
 
-        :param parameter_name: parameter name to find in parameters
-        :type parameter_name: str
+        :param param_name: param name to find in params
+        :type param_name: str
 
         :param public_property: If False (default), update directly private
             property, else update public property in using the property.setter
@@ -875,12 +912,24 @@ cconfiguration.manager.ini.ConfigurationManager'
 
         result = False
 
-        parameter = parameters.get(parameter_name)
-        if parameter is not None:
+        param = unified_conf[Configuration.VALUES].get(
+            param_name)
+        if param is not None:
             property_name = '{0}{1}'.format(
-                '' if public_property else '_', parameter_name)
-            setattr(self, property_name, parameter)
+                '' if public_property else '_', param_name)
+            setattr(self, property_name, param.value)
             result = True
+
+        return result
+
+    def _init_conf_files(self, conf_files, *args, **kwargs):
+
+        self.conf_files = self._get_conf_files(*args, **kwargs) \
+            if conf_files is None else conf_files
+
+    def _get_conf_files(self, *args, **kwargs):
+
+        result = [Configurable.CONF_FILE]
 
         return result
 
@@ -898,11 +947,9 @@ cconfiguration.manager.ini.ConfigurationManager'
 
         result = None
 
-        managers = managers.split(',')
-
         from cconfiguration.manager import ConfigurationManager
 
-        for manager in managers:
+        for manager in managers.split(','):
             manager = ConfigurationManager.get_manager(manager)
             manager = manager()
 
@@ -912,5 +959,9 @@ cconfiguration.manager.ini.ConfigurationManager'
             if handle:
                 result = manager
                 break
+
+        logger.warning(
+            'No manager found among {0} for processing file {1}'.format(
+                managers, conf_file))
 
         return result

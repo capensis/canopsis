@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 #--------------------------------
 # Copyright (c) 2014 "Capensis" [http://www.capensis.com]
 #
@@ -18,69 +19,76 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from storage import Storage
+from cstorage import Storage
 
 
 class PeriodicStorage(Storage):
-	"""
-	Storage dedicated to manage periodic data.
-	"""
+    """
+    Storage dedicated to manage periodic data.
+    """
 
-	class Index:
+    DATA_ID = 'data_id'
+    TIMESTAMP = 'timestamp'
+    AGGREGATION = 'aggregation'
+    VALUES = 'values'
+    PERIOD = 'period'
+    LAST_UPDATE = 'last_update'
 
-		DATA_ID = 'data_id'
-		TIMESTAMP = 'timestamp'
-		AGGREGATION = 'aggregation'
-		VALUES = 'values'
-		PERIOD = 'period'
-		LAST_UPDATE = 'last_update'
+    class PeriodicStoreError(Exception):
+        pass
 
-	class PeriodicStoreError(Exception):
-		pass
+    def count(
+        self, data_id, aggregation, period, timewindow=None, *args, **kwargs
+    ):
+        """
+        Get number of periodic documents for input data_id.
+        """
 
-	def count(
-		self, data_id, aggregation, period, timewindow=None
-	):
-		"""
-		Get number of periodic documents for input data_id.
-		"""
+        raise NotImplementedError()
 
-		raise NotImplementedError()
+    def size(
+        self, data_id=None, aggregation=None, period=None, timewindow=None,
+        *args, **kwargs
+    ):
+        """
+        Get size occupied by research filter data_id
+        """
 
-	def size(self, data_id=None, aggregation=None, period=None, timewindow=None):
-		"""
-		Get size occupied by research filter data_id
-		"""
+        raise NotImplementedError()
 
-		raise NotImplementedError()
+    def get(self,
+        data_id, aggregation, period, timewindow=None,
+        limit=0, skip=0, sort=None,
+        *args, **kwargs
+    ):
+        """
+        Get a list of points.
+        """
 
-	def get(self,
-		data_id, aggregation, period, timewindow=None, limit=0, skip=0, sort=None):
-		"""
-		Get a list of points.
-		"""
+        raise NotImplementedError()
 
-		raise NotImplementedError()
+    def put(self, data_id, aggregation, period, points, *args, **kwargs):
+        """
+        Put periodic points in periodic collection with specific aggregation
+        and period values.
 
-	def put(self, data_id, aggregation, period, points):
-		"""
-		Put periodic points in periodic collection with specific aggregation and
-		period values.
+        points is an iterable of (timestamp, value)
+        """
 
-		points is an iterable of (timestamp, value)
-		"""
+        raise NotImplementedError()
 
-		raise NotImplementedError()
+    def remove(
+        self, data_id, aggregation=None, period=None, timewindow=None,
+        *args, **kwargs
+    ):
+        """
+        Remove periodic data related to data_id, timewindow and period.
+        If timewindow is None, remove all periodic_data with input period.
+        If period is None
+        """
 
-	def remove(self, data_id, aggregation=None, period=None, timewindow=None):
-		"""
-		Remove periodic data related to data_id, timewindow and period.
-		If timewindow is None, remove all periodic_data with input period.
-		If period is None
-		"""
+        raise NotImplementedError()
 
-		raise NotImplementedError()
+    def _get_storage_type(self):
 
-	def _get_storage_type(self):
-
-		return 'periodic'
+        return 'periodic'

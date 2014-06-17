@@ -156,9 +156,6 @@ class IntervalTest(unittest.TestCase):
 
 		self.assertFalse(interval.is_empty())
 
-	def test_sort_and_join_intersections(self):
-		raise NotImplementedError()
-
 	def test_min_max_empty(self):
 
 		interval = Interval()

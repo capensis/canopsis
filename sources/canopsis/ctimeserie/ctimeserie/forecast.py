@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 #--------------------------------
 # Copyright (c) 2014 "Capensis" [http://www.capensis.com]
 #
@@ -22,728 +23,677 @@ import logging
 
 logger = logging.getLogger('forecasting_statsMethods')
 
-#----------------------------forecast methods----------------------------------
-###############################################################################
-# validateSerie : Recovery of last continued background of numerical serie
-#
-#
-###############################################################################
-def validateSerie( aggregatedValuesByTime ):
 
-	logger.debug( 'validate_serie' )
+def validateSerie(aggregatedValuesByTime):
+    """
+    Recovery of last continued background of numerical serie
+    """
 
-	validity = '' 
-		
-	length_AggregatedValuesByTime = len( aggregatedValuesByTime )
-	aggregatedValues = [ value[1] for value in aggregatedValuesByTime ]
-		
-		   
-	try :
-		none = aggregatedValues.index(None)
-		logger.debug( 'there is None in aggregation list : %s', str( none) )
-		noneValueIndices = []
+    logger.debug('validate_serie')
 
-		for indice in xrange( length_AggregatedValuesByTime ):
+    validity = ''
 
-			if aggregatedValues[ indice ]==None :
-				noneValueIndices.append( indice )
-					
-		logger.debug( 'None value number : %s' % len( noneValueIndices ) )
+    length_AggregatedValuesByTime = len(aggregatedValuesByTime)
+    aggregatedValues = [value[1] for value in aggregatedValuesByTime]
 
-		if len( noneValueIndices ) == length_AggregatedValuesByTime :
-			validity = 'none'
-			firstValidIndice = -1
+    try:
+        none = aggregatedValues.index(None)
+        logger.debug('there is None in aggregation list : %s', str(none))
+        noneValueIndices = []
 
-		else:
-			validity = 'by period'
-			firstValidIndice = noneValueIndices[-1]+1
+        for indice in range(length_AggregatedValuesByTime):
 
+            if aggregatedValues[indice] is None:
+                noneValueIndices.append(indice)
 
-	except Exception, e: 
-		logger.debug( 'Error : %s', e )
-		logger.debug( 'No "None" in the dataset' )
-		validity = 'all'
-		firstValidIndice = 0
+        logger.debug('None value number : %s' % len(noneValueIndices))
 
-	logger.debug( 'validity : %s' % validity )
-	logger.debug( 'firstValidIndice : %s' % firstValidIndice )
+        if len(noneValueIndices) == length_AggregatedValuesByTime:
+            validity = 'none'
+            firstValidIndice = -1
 
+        else:
+            validity = 'by period'
+            firstValidIndice = noneValueIndices[-1] + 1
 
-	return { 'validity' : validity, 
-			 'firstValidIndice' : firstValidIndice }
+    except Exception as e:
+        logger.debug('Error : %s', e)
+        logger.debug('No "None" in the dataset')
+        validity = 'all'
+        firstValidIndice = 0
 
-###############################################################################
-#   :Detect if values in the serie correspond in alerts
-#
-#
-###############################################################################
+    logger.debug('validity : %s' % validity)
+    logger.debug('firstValidIndice : %s' % firstValidIndice)
 
-def detectAlerts( serie, alertList ):
-	logger.debug('detectAlerts')
+    return {'validity': validity, 'firstValidIndice': firstValidIndice}
 
-	for alert in alertList :
-			
-		alertValue = alert[0]
-		alertOperator = alert[1]
-		detectedAlerts = list()
 
-		if alertOperator == '=' :
+def detectAlerts(serie, alertList):
+    """
+    Detect if values in the serie correspond in alerts
+    """
+    logger.debug('detectAlerts')
 
-			for value in serie :
+    for alert in alertList:
 
-				if value[1] == alertValue :
-					detectedAlerts.append( value[0], value[1], alert)
-					break
+        alertValue = alert[0]
+        alertOperator = alert[1]
+        detectedAlerts = list()
 
-		elif alertOperator == '<=' :
+        if alertOperator == '=':
 
-			for value in serie :
+            for value in serie:
 
-				if value[1] <= alertValue :
-					detectedAlerts.append( value[0], value[1], alert)
-					break
+                if value[1] == alertValue:
+                    detectedAlerts.append(value[0], value[1], alert)
+                    break
 
-		elif alertOperator == '>=':
+        elif alertOperator == '<=':
 
-			for value in serie :
+            for value in serie:
 
-				if value[1] >= alertValue :
-					detectedAlerts.append( value[0], value[1], alert)
-					break
+                if value[1] <= alertValue:
+                    detectedAlerts.append(value[0], value[1], alert)
+                    break
 
-		elif alertOperator == '<':
+        elif alertOperator == '>=':
 
-			for value in serie :
+            for value in serie:
 
-				if value[1] < alertValue :
-					detectedAlerts.append( value[0], value[1], alert)
-					break
+                if value[1] >= alertValue:
+                    detectedAlerts.append(value[0], value[1], alert)
+                    break
 
-		elif alertOperator == '>' :
+        elif alertOperator == '<':
 
-			for value in serie :
+            for value in serie:
 
-				if value[1] > alertValue :
-					detectedAlerts.append( value[0], value[1], alert)
-					break
+                if value[1] < alertValue:
+                    detectedAlerts.append(value[0], value[1], alert)
+                    break
 
-	return detectedAlerts
+        elif alertOperator == '>':
 
-#------------------------ Mathematical methods --------------------------------
+            for value in serie:
 
-###############################################################################
-# calculateRMSE
-#
-#
-###############################################################################
-def calculateRMSE(  dataset1, dataset2 ):
+                if value[1] > alertValue:
+                    detectedAlerts.append(value[0], value[1], alert)
+                    break
 
-	logger.debug(  'calculateRMSE')
+    return detectedAlerts
 
-	timePointNb = len(dataset1)
 
-	if timePointNb != len(dataset2) :
-		logger.debug(  'length of datasets no compatible' )
-		return -1
-	else:
-		SCR = 0
+def calculateRMSE(dataset1, dataset2):
 
-		logger.debug(  'dataset1 : %s' % dataset1 )
-		logger.debug(  'dataset2 : %s' % dataset2 )
+    logger.debug('calculateRMSE')
 
-		#for timePoint1,timePoint2 in dataset1,dataset2 :
-		for t in xrange( timePointNb ) :
-			#logger.debug( "t : %s" % t)
-			timePoint1 = dataset1[t]
-			timePoint2 = dataset2[t]
-			#logger.debug( "tp1 : %s" % timePoint1)
-			#logger.debug( "tp2 : %s" % timePoint2)
-			SCR+=float( ( timePoint1[1]-timePoint2[1] )**2 )
+    timePointNb = len(dataset1)
 
-		MSE = SCR/float(timePointNb)
+    if timePointNb != len(dataset2):
+        logger.debug('length of datasets no compatible')
+        return -1
+    else:
+        SCR = 0
 
-		logger.debug(  'MSE : %s ' % MSE )
+        logger.debug('dataset1 : %s' % dataset1)
+        logger.debug('dataset2 : %s' % dataset2)
 
-		RMSE = MSE**0.5
+        #for timePoint1,timePoint2 in dataset1,dataset2 :
+        for t in range(timePointNb):
+            #logger.debug( "t : %s" % t)
+            timePoint1 = dataset1[t]
+            timePoint2 = dataset2[t]
+            #logger.debug( "tp1 : %s" % timePoint1)
+            #logger.debug( "tp2 : %s" % timePoint2)
+            SCR += float((timePoint1[1] - timePoint2[1]) ** 2)
 
-		logger.debug(  'RMSE : %s ' % RMSE )
+        MSE = SCR / float(timePointNb)
 
-		return RMSE
+        logger.debug('MSE : %s ' % MSE)
 
+        RMSE = MSE ** 0.5
 
-###############################################################################
-#
-###############################################################################
-def calculateAutoCorrelation(  serie ):
+        logger.debug('RMSE : %s ' % RMSE)
 
-	logger.debug(  'calculateAutoCorrelation')
+        return RMSE
 
-	y0 = [ 0 for val in serie ]
-	autoCorrelationSerie = [ [0,0] for val in serie ]
-	serieValues = [ val[1] for val in serie  ]
 
-	serieMean = sum( serieValues )/len(serieValues)
+def calculateAutoCorrelation(serie):
 
-	for p in xrange( len(serie) ):
-		autoCorrelationSerie[p][0] = p 	
-						
-		for n in xrange( len(serie) ):
-			autoCorrelationSerie[p][1]+=(serie[n][1]-serieMean)*(serie[n-p][1]-serieMean)
+    logger.debug('calculateAutoCorrelation')
 
+    y0 = [0 for val in serie]
+    autoCorrelationSerie = [[0,0] for val in serie]
+    serieValues = [val[1] for val in serie]
 
-	logger.debug(  'Auto-correlation serie : %s ' % autoCorrelationSerie ) 
-	return autoCorrelationSerie
+    serieMean = sum(serieValues) / len(serieValues)
 
-###############################################################################
-#
-###############################################################################
-def calculateMobileMean( serie, degree ):
-	serie_size = len( serie )
-	mobileAverageSerie  = list()
-	foot = int(degree)/2
+    for p in range(len(serie)):
+        autoCorrelationSerie[p][0] = p
 
-	if degree%2 != 0 :
+        for n in range(len(serie)):
+            autoCorrelationSerie[p][1] += \
+                (serie[n][1] - serieMean) * (serie[n - p][1] - serieMean)
 
-		for i in xrange( foot, serie_size - foot):
-			mobileMean = 0.0
+    logger.debug('Auto-correlation serie : %s ' % autoCorrelationSerie)
+    return autoCorrelationSerie
 
-			for f in xrange(-foot,foot+1):
-				mobileMean+= float( serie[i+f][1] )
 
-			mobileMean/=float(degree)
+def calculateMobileMean(serie, degree):
+    serie_size = len(serie)
+    mobileAverageSerie = list()
+    foot = int(degree) / 2
 
-			mobileAverageSerie.append( [ serie[i][0], mobileMean ] )
+    if degree % 2 != 0:
 
-	else:
+        for i in range(foot, serie_size - foot):
+            mobileMean = 0.0
 
-		for i in xrange( foot, serie_size - foot):
+            for f in range(- foot, foot + 1):
+                mobileMean += float(serie[i + f][1])
 
-			mobileMean = float( serie[i-foot][1])/2.0
+            mobileMean /= float(degree)
 
-			for f in xrange( -foot+1, foot ):
-				mobileMean+=float(serie[i+f][1])
+            mobileAverageSerie.append([serie[i][0], mobileMean])
 
-			mobileMean+= float(serie[i+foot][1])/2.0
-			mobileMean/=float(degree)
+    else:
+        for i in range( foot, serie_size - foot):
 
-			mobileAverageSerie.append( [ serie[i][0], mobileMean ] )
+            mobileMean = float(serie[i - foot][1]) / 2.0
 
-	logger.debug( 'mobileAverageSerie : %s' % mobileAverageSerie )
+            for f in range(- foot + 1, foot):
+                mobileMean += float(serie[i + f][1])
 
-	return mobileAverageSerie
+            mobileMean += float(serie[i + foot][1]) / 2.0
+            mobileMean /= float(degree)
 
+            mobileAverageSerie.append([serie[i][0], mobileMean])
 
-#------------------------ Optimization methods --------------------------------
+    logger.debug('mobileAverageSerie : %s' % mobileAverageSerie)
 
+    return mobileAverageSerie
 
-###############################################################################
-#
-###############################################################################
-def detectParticularPoints( serie ):
-	logger.debug(  ' detectParticularPoints ')
 
-	summits = list()
-	hollow = list()
-	passes = list()
+def detectParticularPoints(serie):
+    logger.debug(' detectParticularPoints ')
 
-	for i in xrange( 1,len(serie)-1 ):
-  
-		if( serie[i-1][1] < serie[i][1] and serie[i+1][1] < serie[i][1] ):
-			summits.append(serie[i])
+    summits = list()
+    hollow = list()
+    passes = list()
 
-		if( serie[i-1][1] > serie[i][1] and serie[i+1][1] > serie[i][1] ):
-			hollow.append(serie[i])			
+    for i in range(1, len(serie) - 1):
 
-		if( ( serie[i][1] > 0 and serie[i+1][1] < 0 ) or 
-			   ( serie[i][1] < 0 and serie[i+1][1] > 0 ) ):
-			passes.append(serie[i])
+        if(serie[i - 1][1] < serie[i][1] and serie[i + 1][1] < serie[i][1]):
+            summits.append(serie[i])
 
-	logger.debug(  'summits : %s' % summits )
-	logger.debug( '' )
-	logger.debug(  'hollow : %s' % hollow )
-	logger.debug( '' )
-	logger.debug(  'passes : %s' % passes )
+        if( serie[i-1][1] > serie[i][1] and serie[i+1][1] > serie[i][1] ):
+            hollow.append(serie[i])
 
-	return {'summits' : summits, 
-			'hollow' : hollow,
-			'passes' : passes }
+        if( ( serie[i][1] > 0 and serie[i+1][1] < 0 ) or
+               ( serie[i][1] < 0 and serie[i+1][1] > 0 ) ):
+            passes.append(serie[i])
 
+    logger.debug(  'summits : %s' % summits )
+    logger.debug( '' )
+    logger.debug(  'hollow : %s' % hollow )
+    logger.debug( '' )
+    logger.debug(  'passes : %s' % passes )
 
-###############################################################################
-#
-###############################################################################
+    return {'summits' : summits,
+            'hollow' : hollow,
+            'passes' : passes }
+
+
 def calculateSeasonality( serie ):
 
-	autoCorrelationSerie = calculateAutoCorrelation(serie)
-	autoCorrelationParticularPoints = detectParticularPoints(autoCorrelationSerie)
-	passNb = len( autoCorrelationParticularPoints['passes'] )
+    autoCorrelationSerie = calculateAutoCorrelation(serie)
+    autoCorrelationParticularPoints = detectParticularPoints(autoCorrelationSerie)
+    passNb = len( autoCorrelationParticularPoints['passes'] )
 
-	if passNb == 2  :
-		logger.debug( 'Serie is linear and doesnt have periodicity ')
-		return None
-			
-	else:
-		hollowMean = 0
-		hollowNb = 0
-		if len( autoCorrelationParticularPoints['hollow'] ) != 0 :
-			#seasonality = float( len( autoCorrelationSerie) )/ float(len( autoCorrelationParticularPoints['hollow'] ) )
-			for h in xrange( len( autoCorrelationParticularPoints['hollow'])-1):
-				hollowNb+=1
-				hollowMean+=(autoCorrelationParticularPoints['hollow'][h+1][0]-autoCorrelationParticularPoints['hollow'][h][0])
+    if passNb == 2  :
+        logger.debug( 'Serie is linear and doesnt have periodicity ')
+        return None
 
-			seasonality = int(float(hollowMean)/float(hollowNb))
-		else:
-			return None
+    else:
+        hollowMean = 0
+        hollowNb = 0
+        if len( autoCorrelationParticularPoints['hollow'] ) != 0 :
+            #seasonality = float( len( autoCorrelationSerie) )/ float(len( autoCorrelationParticularPoints['hollow'] ) )
+            for h in xrange( len( autoCorrelationParticularPoints['hollow'])-1):
+                hollowNb+=1
+                hollowMean+=(autoCorrelationParticularPoints['hollow'][h+1][0]-autoCorrelationParticularPoints['hollow'][h][0])
 
-		logger.debug( 'Seasonality of the serie : %s' % seasonality )
-	
-		return seasonality
+            seasonality = int(float(hollowMean)/float(hollowNb))
+        else:
+            return None
 
+        logger.debug( 'Seasonality of the serie : %s' % seasonality )
 
-###############################################################################
-#
-###############################################################################
-def detectOutliersOrTrendChanges( serie,smoothing, maxError ):
-
-	logger.debug(  'detectOutliersOrTrendChanges')
-	logger.debug(  '')
-	logger.debug(  'serie : %s' % serie )
-	logger.debug(  '')
-	logger.debug(  'smoothing : %s' % smoothing )
-	indiceRecord = {}
-	indiceRecord['trendChange'] = -1
-	outliers = []
-
-	timePointNb = len(serie)
-
-	if timePointNb != len(smoothing) :
-		logger.debug(  'length of datasets no compatible' )
-		return -1
-	else:
-
-		outlier = False
-
-		for t in xrange(timePointNb) :
-			timePoint1 = serie[t]
-			timePoint2 = smoothing[t]
-			RMSE = calculateRMSE( [timePoint1], [timePoint2] )
-
-			maxValue = max(timePoint1,timePoint2)
-			
-			if maxValue != 0.0 :
-				relativeError = abs(RMSE/maxValue)
-			else:
-				relativeError = 0.0
-
-			logger.debug( "t : %s, relative error : %s " % (t,relativeError))
-
-			if relativeError > maxError :
-
-				for tbis in xrange(t+1,timePointNb) :
-					timePoint1 = serie[tbis]
-					timePoint2 = smoothing[tbis]
-					RMSE = calculateRMSE( [timePoint1], [timePoint2] )
-
-					if timePoint2[1] != 0.0 :
-						relativeError = abs(RMSE/timePoint2[1])
-					elif timePoint1[1] != 0.0 :
-						relativeError = abs(RMSE/timePoint1[1])
-					else:
-						relativeError = 0.0
-
-					if relativeError < maxError :
-						outliers.append(t)
-						outlier = True
-						break
-
-				if outlier == False :
-					indiceRecord['trendChange'] = t
-					indiceRecord['outliers'] = outliers
-					return indiceRecord
+        return seasonality
 
 
-	logger.debug( 'outlier list : %s' % outliers )
-	indiceRecord['outliers'] = outliers 
-	return indiceRecord
+def detectOutliersOrTrendChanges(serie, smoothing, maxError):
 
-###############################################################################
-#
-##############################################################################
+    logger.debug(  'detectOutliersOrTrendChanges')
+    logger.debug(  '')
+    logger.debug(  'serie : %s' % serie )
+    logger.debug(  '')
+    logger.debug(  'smoothing : %s' % smoothing )
+    indiceRecord = {}
+    indiceRecord['trendChange'] = -1
+    outliers = []
+
+    timePointNb = len(serie)
+
+    if timePointNb != len(smoothing) :
+        logger.debug(  'length of datasets no compatible' )
+        return -1
+    else:
+
+        outlier = False
+
+        for t in range(timePointNb) :
+            timePoint1 = serie[t]
+            timePoint2 = smoothing[t]
+            RMSE = calculateRMSE( [timePoint1], [timePoint2] )
+
+            maxValue = max(timePoint1,timePoint2)
+
+            if maxValue != 0.0 :
+                relativeError = abs(RMSE/maxValue)
+            else:
+                relativeError = 0.0
+
+            logger.debug( "t : %s, relative error : %s " % (t,relativeError))
+
+            if relativeError > maxError :
+
+                for tbis in range(t+1,timePointNb) :
+                    timePoint1 = serie[tbis]
+                    timePoint2 = smoothing[tbis]
+                    RMSE = calculateRMSE( [timePoint1], [timePoint2] )
+
+                    if timePoint2[1] != 0.0 :
+                        relativeError = abs(RMSE/timePoint2[1])
+                    elif timePoint1[1] != 0.0 :
+                        relativeError = abs(RMSE/timePoint1[1])
+                    else:
+                        relativeError = 0.0
+
+                    if relativeError < maxError :
+                        outliers.append(t)
+                        outlier = True
+                        break
+
+                if outlier is False:
+                    indiceRecord['trendChange'] = t
+                    indiceRecord['outliers'] = outliers
+                    return indiceRecord
+
+
+    logger.debug( 'outlier list : %s' % outliers )
+    indiceRecord['outliers'] = outliers
+    return indiceRecord
+
+
 def deleteOutliers(serie, outliers ):
-	serieWithoutOutliers = []
+    serieWithoutOutliers = []
 
-	for indice in xrange( len(serie) ) :
+    for indice in xrange( len(serie) ) :
 
-		if indice not in outliers :
-			serieWithoutOutliers.append(serie[indice])
+        if indice not in outliers :
+            serieWithoutOutliers.append(serie[indice])
 
-	logger.debug( 'outlier list : %s' % serieWithoutOutliers )
-	return serieWithoutOutliers
+    logger.debug( 'outlier list : %s' % serieWithoutOutliers )
+    return serieWithoutOutliers
 
-###############################################################################
-#
-###############################################################################
+
 def repairOutliers(serie, outliers, optimizedParameters ):
-	correctedSerie = list( serie )
+    correctedSerie = list( serie )
 
-	for indice in outliers :
-		logger.debug("indice : %s" % indice )
-		
-		#Search first data in serie who isn't in outlier lsit
-		for i in xrange(1, indice):
-			indice_noOutlier = indice-i
-			if indice_noOutlier not in outliers :
-				break
+    for indice in outliers :
+        logger.debug("indice : %s" % indice )
 
-
-
-		if optimizedParameters['method'] == 'h_linear' :
-			forecast = calculateHoltWintersLinearMethod( correctedSerie[0:indice_noOutlier+1], 
-														 indice-indice_noOutlier,
-														 optimizedParameters['alpha'],
-														 optimizedParameters['beta'] )
-
-		elif optimizedParameters['method'] == 'hw_additive' :
-			forecast = calculateHoltWintersAdditiveSeasonalMethod( correctedSerie[0:indice_noOutlier+1], 
-																   indice-indice_noOutlier,
-																   optimizedParameters['seasonality'],
-																   optimizedParameters['alpha'],
-																   optimizedParameters['beta'],
-																   optimizedParameters['gamma'] )
-
-		elif optimizedParameters['method'] == 'hw_multiplicative' :
-			forecast = calculateHoltWintersMultiplicativeSeasonalMethod( correctedSerie[0:indice_noOutlier+1],
-																		 indice-indice_noOutlier,
-																		 optimizedParameters['seasonality'],
-																		 optimizedParameters['alpha'],
-																		 optimizedParameters['beta'],
-																		 optimizedParameters['gamma'] )
-
-		logger.debug("old | new value : %s | %s" % (correctedSerie[indice],
-													forecast[-1] ) )
-		correctedSerie[indice] = forecast[-1]
+        #Search first data in serie who isn't in outlier lsit
+        for i in xrange(1, indice):
+            indice_noOutlier = indice-i
+            if indice_noOutlier not in outliers :
+                break
 
 
-	return correctedSerie
+
+        if optimizedParameters['method'] == 'h_linear' :
+            forecast = calculateHoltWintersLinearMethod( correctedSerie[0:indice_noOutlier+1],
+                                                         indice-indice_noOutlier,
+                                                         optimizedParameters['alpha'],
+                                                         optimizedParameters['beta'] )
+
+        elif optimizedParameters['method'] == 'hw_additive' :
+            forecast = calculateHoltWintersAdditiveSeasonalMethod( correctedSerie[0:indice_noOutlier+1],
+                                                                   indice-indice_noOutlier,
+                                                                   optimizedParameters['seasonality'],
+                                                                   optimizedParameters['alpha'],
+                                                                   optimizedParameters['beta'],
+                                                                   optimizedParameters['gamma'] )
+
+        elif optimizedParameters['method'] == 'hw_multiplicative' :
+            forecast = calculateHoltWintersMultiplicativeSeasonalMethod( correctedSerie[0:indice_noOutlier+1],
+                                                                         indice-indice_noOutlier,
+                                                                         optimizedParameters['seasonality'],
+                                                                         optimizedParameters['alpha'],
+                                                                         optimizedParameters['beta'],
+                                                                         optimizedParameters['gamma'] )
+
+        logger.debug("old | new value : %s | %s" % (correctedSerie[indice],
+                                                    forecast[-1] ) )
+        correctedSerie[indice] = forecast[-1]
 
 
-###############################################################################
-#
-#
-###############################################################################
+    return correctedSerie
+
+
 def optimiseHoltWintersAlgorithm( serie, seasonality=None, method=None ):
-	logger.debug('optimiseHoltWintersAlgorithm')
+    logger.debug('optimiseHoltWintersAlgorithm')
 
-	alpha = [ 0.1*i for i in xrange(1,10) ]
-	beta = [ 0.1*i for i in xrange(1,10) ]
-	gamma = [ 0.1*i for i in xrange(1,10) ]
+    alpha = [ 0.1*i for i in xrange(1,10) ]
+    beta = [ 0.1*i for i in xrange(1,10) ]
+    gamma = [ 0.1*i for i in xrange(1,10) ]
 
-	if seasonality == None :
-		seasonality = calculateSeasonality(serie)
-	
-	if seasonality == None :
-		method = 'h_linear'
+    if seasonality == None :
+        seasonality = calculateSeasonality(serie)
 
-	logger.debug(" seasonality : %s" % seasonality )
-	logger.debug(" method : %s" % method )
+    if seasonality == None :
+        method = 'h_linear'
 
-	optimizeCoeffAndMethod = { 'seasonality' : seasonality }
-	optimizeCoeffAndMethod['alpha']= 0.1
-	optimizeCoeffAndMethod['beta'] = 0.1
+    logger.debug(" seasonality : %s" % seasonality )
+    logger.debug(" method : %s" % method )
 
-	serieLength = len(serie)
-	serieTestLength = int(float(serieLength)/2.0)
-	serieTest = serie[0:serieTestLength]
-	duration = serieLength - serieTestLength
+    optimizeCoeffAndMethod = { 'seasonality' : seasonality }
+    optimizeCoeffAndMethod['alpha']= 0.1
+    optimizeCoeffAndMethod['beta'] = 0.1
 
-	if method == None :
+    serieLength = len(serie)
+    serieTestLength = int(float(serieLength)/2.0)
+    serieTest = serie[0:serieTestLength]
+    duration = serieLength - serieTestLength
 
-		optimizeCoeffAndMethod['gamma'] = 0.1
+    if method == None :
 
-		for a in alpha :
+        optimizeCoeffAndMethod['gamma'] = 0.1
 
-			for b in beta :
+        for a in alpha :
 
-				for c in gamma :
-					addForecastingTest = calculateHoltWintersAdditiveSeasonalMethod( serieTest, 
-																					 duration,
-																					 seasonality,
-																					 a,b,c )
+            for b in beta :
 
-					multiForecastingTest = calculateHoltWintersMultiplicativeSeasonalMethod( serieTest,
-																							 duration,
-																							 seasonality, 
-																							 a,b,c )
+                for c in gamma :
+                    addForecastingTest = calculateHoltWintersAdditiveSeasonalMethod( serieTest,
+                                                                                     duration,
+                                                                                     seasonality,
+                                                                                     a,b,c )
 
-					addError = calculateRMSE(serie,addForecastingTest[:serieLength])
+                    multiForecastingTest = calculateHoltWintersMultiplicativeSeasonalMethod( serieTest,
+                                                                                             duration,
+                                                                                             seasonality,
+                                                                                             a,b,c )
 
-					multiError = calculateRMSE(serie,multiForecastingTest[:serieLength])
-					
-					#logger.debug( 'addError,multiError : %s,%s ' % ( addError,multiError ) )
+                    addError = calculateRMSE(serie,addForecastingTest[:serieLength])
 
-					if b==0.1 and a==0.1 and c==0.1 :
-						error = addError
+                    multiError = calculateRMSE(serie,multiForecastingTest[:serieLength])
 
+                    #logger.debug( 'addError,multiError : %s,%s ' % ( addError,multiError ) )
 
-					if addError > multiError and error > multiError :
-						error = multiError	
-						method='hw_multiplicative'
-						optimizeCoeffAndMethod['alpha']= a
-						optimizeCoeffAndMethod['beta'] = b
-						optimizeCoeffAndMethod['gamma'] = c
-
-					elif multiError > addError and error > addError :
-						error = addError
-						method='hw_additive'
-						optimizeCoeffAndMethod['alpha']= a
-						optimizeCoeffAndMethod['beta'] = b
-						optimizeCoeffAndMethod['gamma'] = c
-
-	else:
-
-		if method == 'h_linear':
-
-			for a in alpha :
-
-				for b in beta :	
-					#logger.debug(  'a,b : %s,%s' % (a,b) )
-					linearForecastingTest = calculateHoltWintersLinearMethod(serieTest, duration, a,b )
-					linearForecastingError = calculateRMSE(serie,linearForecastingTest[:serieLength])
-
-					if b==0.1 and a==0.1 :
-						error = linearForecastingError
-
-					#logger.debug(  'linearForecastingError : ',linearForecastingError
-					if error > linearForecastingError :
-						error = linearForecastingError
-						optimizeCoeffAndMethod['alpha']= a
-						optimizeCoeffAndMethod['beta'] = b
-
-		elif method == 'hw_additive' : 
-			optimizeCoeffAndMethod['gamma'] = 0.1
-
-			for a in alpha :
-
-				for b in beta :
-
-					for c in gamma :
-						addForecastingTest = calculateHoltWintersAdditiveSeasonalMethod( serieTest, 
-																					 duration,
-																					 seasonality,
-																					 a,b,c )
-
-						addError = calculateRMSE(serie,addForecastingTest[:serieLength])
-
-						if b==0.1 and a==0.1 and c==0.1:
-							error = addError
-
-						if error > addError :
-							error = addError
-							optimizeCoeffAndMethod['alpha']= a
-							optimizeCoeffAndMethod['beta'] = b
-							optimizeCoeffAndMethod['gamma'] = c
+                    if b==0.1 and a==0.1 and c==0.1 :
+                        error = addError
 
 
-		elif method == 'hw_multiplicative' : 
+                    if addError > multiError and error > multiError :
+                        error = multiError
+                        method='hw_multiplicative'
+                        optimizeCoeffAndMethod['alpha']= a
+                        optimizeCoeffAndMethod['beta'] = b
+                        optimizeCoeffAndMethod['gamma'] = c
 
-			optimizeCoeffAndMethod['gamma'] = 0.1
+                    elif multiError > addError and error > addError :
+                        error = addError
+                        method='hw_additive'
+                        optimizeCoeffAndMethod['alpha']= a
+                        optimizeCoeffAndMethod['beta'] = b
+                        optimizeCoeffAndMethod['gamma'] = c
 
-			for a in alpha :
+    else:
 
-				for b in beta :
+        if method == 'h_linear':
 
-					for c in gamma :
-						multiForecastingTest = calculateHoltWintersMultiplicativeSeasonalMethod( serieTest, 
-																							   duration,
-																							   seasonality,
-																							   a,b,c )
+            for a in alpha :
 
-						multiError = calculateRMSE(serie,multiForecastingTest[:serieLength])
+                for b in beta :
+                    #logger.debug(  'a,b : %s,%s' % (a,b) )
+                    linearForecastingTest = calculateHoltWintersLinearMethod(serieTest, duration, a,b )
+                    linearForecastingError = calculateRMSE(serie,linearForecastingTest[:serieLength])
 
-						if b==0.1 and a==0.1 and c==0.1 :
-							error = multiError
+                    if b==0.1 and a==0.1 :
+                        error = linearForecastingError
 
-						if error > multiError :
-							error = multiError
-							optimizeCoeffAndMethod['alpha']= a
-							optimizeCoeffAndMethod['beta'] = b
-							optimizeCoeffAndMethod['gamma'] = c
+                    #logger.debug(  'linearForecastingError : ',linearForecastingError
+                    if error > linearForecastingError :
+                        error = linearForecastingError
+                        optimizeCoeffAndMethod['alpha']= a
+                        optimizeCoeffAndMethod['beta'] = b
 
-	optimizeCoeffAndMethod['method'] = method
+        elif method == 'hw_additive' :
+            optimizeCoeffAndMethod['gamma'] = 0.1
 
-	logger.debug(  'optimizeCoeffAndMethod : %s' % optimizeCoeffAndMethod )
+            for a in alpha :
 
-	return optimizeCoeffAndMethod
+                for b in beta :
 
-#---------------------- Holt-Winters methods ---------------------------------- 
+                    for c in gamma :
+                        addForecastingTest = calculateHoltWintersAdditiveSeasonalMethod( serieTest,
+                                                                                     duration,
+                                                                                     seasonality,
+                                                                                     a,b,c )
 
-###############################################################################
-#
-#
-#
-###############################################################################
+                        addError = calculateRMSE(serie,addForecastingTest[:serieLength])
+
+                        if b==0.1 and a==0.1 and c==0.1:
+                            error = addError
+
+                        if error > addError :
+                            error = addError
+                            optimizeCoeffAndMethod['alpha']= a
+                            optimizeCoeffAndMethod['beta'] = b
+                            optimizeCoeffAndMethod['gamma'] = c
+
+
+        elif method == 'hw_multiplicative' :
+
+            optimizeCoeffAndMethod['gamma'] = 0.1
+
+            for a in alpha :
+
+                for b in beta :
+
+                    for c in gamma :
+                        multiForecastingTest = calculateHoltWintersMultiplicativeSeasonalMethod( serieTest,
+                                                                                               duration,
+                                                                                               seasonality,
+                                                                                               a,b,c )
+
+                        multiError = calculateRMSE(serie,multiForecastingTest[:serieLength])
+
+                        if b==0.1 and a==0.1 and c==0.1 :
+                            error = multiError
+
+                        if error > multiError :
+                            error = multiError
+                            optimizeCoeffAndMethod['alpha']= a
+                            optimizeCoeffAndMethod['beta'] = b
+                            optimizeCoeffAndMethod['gamma'] = c
+
+    optimizeCoeffAndMethod['method'] = method
+
+    logger.debug(  'optimizeCoeffAndMethod : %s' % optimizeCoeffAndMethod )
+
+    return optimizeCoeffAndMethod
+
 
 def calculateHoltWintersLinearMethod( serie, duration, alpha=0.3, beta=0.1,callback=None ):
-	logger.debug('calculateHoltWintersLinearMethod')	
-	#logger.debug(  "##########################################################" )
-	#logger.debug(  " Initial values " )
-	#logger.debug(  '%s' % serie )
-	#logger.debug(  "##########################################################" )
+    logger.debug('calculateHoltWintersLinearMethod')
+    #logger.debug(  "##########################################################" )
+    #logger.debug(  " Initial values " )
+    #logger.debug(  '%s' % serie )
+    #logger.debug(  "##########################################################" )
 
-	serieLength = len(serie)
-	logger.debug( 'Length of the serie : %s' % serieLength )
+    serieLength = len(serie)
+    logger.debug( 'Length of the serie : %s' % serieLength )
 
-	if serieLength < duration :
-		logger.debug(  ' We  have a insufficient number of numerical values to calculate forecasting ' )
-		return []
-		 
-	else:  
-		forecastingDuration = serieLength + duration
+    if serieLength < duration :
+        logger.debug(  ' We  have a insufficient number of numerical values to calculate forecasting ' )
+        return []
 
-		# Serie of coefficients ( trend ) 
-		level = [0]*serieLength
-		trend = [0]*serieLength
-		forecastingSerie = [0]*forecastingDuration
-	
-		logger.debug(  ' forecasting duration :  %s ' % forecastingDuration )
-		
-		# Initialization
-		level[0] = serie[0][1]
-		trend[0] = serie[1][1] - serie[0][1] 
-		forecastingSerie[0] = [ serie[0][0], level[0] ]
-		forecastingSerie[1] = [ serie[1][0], level[0] + trend[0] ]
+    else:
+        forecastingDuration = serieLength + duration
 
-		if 1 >= serieLength - duration  :
-			tp = serie[0][0] + duration*( serie[-1][0]-serie[-2][0] )
-			forecastingSerie[ duration ] = [ tp, level[0]+duration*trend[0] ] 
+        # Serie of coefficients ( trend )
+        level = [0]*serieLength
+        trend = [0]*serieLength
+        forecastingSerie = [0]*forecastingDuration
 
-		for t in xrange( 1, serieLength ):    
-			#logger.debug(  ' t :  %s ' % t )                   
-			level[t] = alpha*serie[t][1] + (1-alpha)*(level[t-1]+trend[t-1])
-			trend[t] = beta*(level[t]-level[t-1]) + (1-beta)*trend[t-1] 
+        logger.debug(  ' forecasting duration :  %s ' % forecastingDuration )
 
-			if t+1 < serieLength :
-				  forecastingSerie[ t+1 ] = [ serie[t+1][0], level[t]+trend[t] ]
+        # Initialization
+        level[0] = serie[0][1]
+        trend[0] = serie[1][1] - serie[0][1]
+        forecastingSerie[0] = [ serie[0][0], level[0] ]
+        forecastingSerie[1] = [ serie[1][0], level[0] + trend[0] ]
 
-			if t+1 >= serieLength - duration  :
-				tp = serie[t][0] + duration*( serie[-1][0]-serie[-2][0] )
-				forecastingSerie[ t+duration ] = [ tp, level[t]+duration*trend[t] ] 
+        if 1 >= serieLength - duration  :
+            tp = serie[0][0] + duration*( serie[-1][0]-serie[-2][0] )
+            forecastingSerie[ duration ] = [ tp, level[0]+duration*trend[0] ]
 
-			#logger.debug( 'forecast serie in progress: %s ' % forecastingSerie )		
-		logger.debug( '  ' )
-		logger.debug( ' Linear forecast serie : %s ' % forecastingSerie )
+        for t in xrange( 1, serieLength ):
+            #logger.debug(  ' t :  %s ' % t )
+            level[t] = alpha*serie[t][1] + (1-alpha)*(level[t-1]+trend[t-1])
+            trend[t] = beta*(level[t]-level[t-1]) + (1-beta)*trend[t-1]
 
-		return forecastingSerie
+            if t+1 < serieLength :
+                  forecastingSerie[ t+1 ] = [ serie[t+1][0], level[t]+trend[t] ]
 
-###############################################################################
-#
-###############################################################################
+            if t+1 >= serieLength - duration  :
+                tp = serie[t][0] + duration*( serie[-1][0]-serie[-2][0] )
+                forecastingSerie[ t+duration ] = [ tp, level[t]+duration*trend[t] ]
+
+            #logger.debug( 'forecast serie in progress: %s ' % forecastingSerie )
+        logger.debug( '  ' )
+        logger.debug( ' Linear forecast serie : %s ' % forecastingSerie )
+
+        return forecastingSerie
+
+
 def calculateHoltWintersAdditiveSeasonalMethod( serie, duration, season,
-												alpha=0.3, beta=0.3, gamma=0.3 ):
-	
-	logger.debug('calculateHoltWintersAdditiveSeasonalMethod')
+                                                alpha=0.3, beta=0.3, gamma=0.3 ):
 
-	serieLength  =  len( serie )
+    logger.debug('calculateHoltWintersAdditiveSeasonalMethod')
 
-	if serieLength < duration :
-		logger.debug(  ' We have an insufficient value number to calculate forecasting ' )
-		return {}
+    serieLength  =  len( serie )
 
-	else:
-		# Serie of coefficients ( trend ) 
-		forecastingDuration = serieLength + duration
-		level = [0]*serieLength
-		trend = [0]*serieLength
-		seasonality =[0]*serieLength
+    if serieLength < duration :
+        logger.debug(  ' We have an insufficient value number to calculate forecasting ' )
+        return {}
 
-		# forecast value list
-		forecastingSerie = [0]*forecastingDuration
+    else:
+        # Serie of coefficients ( trend )
+        forecastingDuration = serieLength + duration
+        level = [0]*serieLength
+        trend = [0]*serieLength
+        seasonality =[0]*serieLength
+
+        # forecast value list
+        forecastingSerie = [0]*forecastingDuration
 
 
-		# Initialization
-		level[0] = sum( [ i[1] for i in serie[0:season] ]) / float(season)
-		trend[0] = ( sum( [i[1] for i in serie[season:2 *season] ] ) - sum( [ i[1] for i in serie[:season] ] ))/float( season**2 )
-		seasonality[0] = serie[0][1]/level[0]
-		forecastingSerie[0] = [ serie[0][0], level[0] ]
-		forecastingSerie[1] = [ serie[1][0], level[0] + trend[0] + seasonality[0] ]
+        # Initialization
+        level[0] = sum( [ i[1] for i in serie[0:season] ]) / float(season)
+        trend[0] = ( sum( [i[1] for i in serie[season:2 *season] ] ) - sum( [ i[1] for i in serie[:season] ] ))/float( season**2 )
+        seasonality[0] = serie[0][1]/level[0]
+        forecastingSerie[0] = [ serie[0][0], level[0] ]
+        forecastingSerie[1] = [ serie[1][0], level[0] + trend[0] + seasonality[0] ]
 
-		#logger.debug(  'level0 : %s' % level[0] )
-		#logger.debug(  'trend0 : %s' % trend[0] )
-		#logger.debug(  'seasonality0 : %s' % seasonality[0] ) 
+        #logger.debug(  'level0 : %s' % level[0] )
+        #logger.debug(  'trend0 : %s' % trend[0] )
+        #logger.debug(  'seasonality0 : %s' % seasonality[0] )
 
-		for t in xrange( 1, serieLength ):   
-			level[t] = alpha*(serie[t][1]-seasonality[t-1]) + (1-alpha)*( level[t-1]+trend[t-1])
+        for t in xrange( 1, serieLength ):
+            level[t] = alpha*(serie[t][1]-seasonality[t-1]) + (1-alpha)*( level[t-1]+trend[t-1])
 
-			trend[t] = (1-beta)*trend[t-1] +beta*(level[t]-level[t-1])
+            trend[t] = (1-beta)*trend[t-1] +beta*(level[t]-level[t-1])
 
-			seasonality[t] = gamma*(serie[t][1]-level[t]) + (1-gamma)*seasonality[t-1]
+            seasonality[t] = gamma*(serie[t][1]-level[t]) + (1-gamma)*seasonality[t-1]
 
-			if( t+1 < serieLength):
-				forecastingSerie[t+1] = [ serie[t+1][0], level[t] +trend[t] + seasonality[t] ]
+            if( t+1 < serieLength):
+                forecastingSerie[t+1] = [ serie[t+1][0], level[t] +trend[t] + seasonality[t] ]
 
-			if t+1 >= serieLength - duration  :					
-				tp = serie[t][0] + (duration)*( serie[-1][0]-serie[-2][0] )
+            if t+1 >= serieLength - duration  :
+                tp = serie[t][0] + (duration)*( serie[-1][0]-serie[-2][0] )
 
-				forecastingSerie[t+duration] = [tp, level[t] + duration*trend[t] + seasonality[t] ]
+                forecastingSerie[t+duration] = [tp, level[t] + duration*trend[t] + seasonality[t] ]
 
-				#logger.debug(  "Value for t+duration : %s" % forecastingSerie[t+duration] )
+                #logger.debug(  "Value for t+duration : %s" % forecastingSerie[t+duration] )
 
-		#logger.debug( ' Additive forecast serie : %s ' % forecastingSerie )
+        #logger.debug( ' Additive forecast serie : %s ' % forecastingSerie )
 
-		return forecastingSerie
+        return forecastingSerie
 
-###############################################################################
-#
-###############################################################################
+
 def calculateHoltWintersMultiplicativeSeasonalMethod(  serie, duration,
-												   season, alpha=0.3, 
-												   beta=0.3, gamma=0.3 ):
+                                                   season, alpha=0.3,
+                                                   beta=0.3, gamma=0.3 ):
 
-	logger.debug('calculateHoltWintersMultiplicativeSeasonalMethod')
+    logger.debug('calculateHoltWintersMultiplicativeSeasonalMethod')
 
-	serieLength  =  len( serie )
+    serieLength  =  len( serie )
 
-	if serieLength < duration :
-		logger.debug(  ' We  have a insufficient number of serie to calculate forecasting ' )
-		return {}
+    if serieLength < duration :
+        logger.debug(  ' We  have a insufficient number of serie to calculate forecasting ' )
+        return {}
 
-	else:
-		# Serie of coefficients ( trend ) 
-		forecastingDuration = serieLength + duration
-		level = [0]*serieLength
-		trend = [0]*serieLength
-		seasonality = [0]*serieLength
+    else:
+        # Serie of coefficients ( trend )
+        forecastingDuration = serieLength + duration
+        level = [0]*serieLength
+        trend = [0]*serieLength
+        seasonality = [0]*serieLength
 
-		# forecast value list
-		forecastingSerie = [0]*forecastingDuration
+        # forecast value list
+        forecastingSerie = [0]*forecastingDuration
 
 
-		# Initialization
-		level[0] = sum( [ i[1] for i in serie[0:season] ]) / float(season)
-		trend[0] = ( sum( [i[1] for i in serie[season:2 *season] ] ) - sum( [ i[1] for i in serie[:season] ] ))/float( season**2 )
-		seasonality[0] = serie[0][1]/level[0]
-		forecastingSerie[0] = [ serie[0][0], level[0] ]
-		forecastingSerie[1] = [ serie[1][0], level[0] + trend[0] + seasonality[0] ]
-		#logger.debug(  'level0 : %s' % level[0] )
-		#logger.debug(  'trend0 : %s' % trend[0] )
-		#logger.debug(  'seasonality0 : %s' % seasonality[0] ) 
-				
-		for t in xrange( 1, serieLength ):   
-			level[t] = alpha*(serie[t][1]/seasonality[t-1]) + (1-alpha)*( level[t-1]+trend[t-1])
-			trend[t] = (1-beta)*trend[t-1] +beta*(level[t]-level[t-1])
-			seasonality[t] = gamma*(serie[t][1]/level[t]) + (1-gamma)*seasonality[t-1]
+        # Initialization
+        level[0] = sum( [ i[1] for i in serie[0:season] ]) / float(season)
+        trend[0] = ( sum( [i[1] for i in serie[season:2 *season] ] ) - sum( [ i[1] for i in serie[:season] ] ))/float( season**2 )
+        seasonality[0] = serie[0][1]/level[0]
+        forecastingSerie[0] = [ serie[0][0], level[0] ]
+        forecastingSerie[1] = [ serie[1][0], level[0] + trend[0] + seasonality[0] ]
+        #logger.debug(  'level0 : %s' % level[0] )
+        #logger.debug(  'trend0 : %s' % trend[0] )
+        #logger.debug(  'seasonality0 : %s' % seasonality[0] )
 
-			if( t+1 < serieLength):
-				forecastingSerie[t+1] = [ serie[t][0], (level[t] +trend[t])*seasonality[t] ]
+        for t in xrange( 1, serieLength ):
+            level[t] = alpha*(serie[t][1]/seasonality[t-1]) + (1-alpha)*( level[t-1]+trend[t-1])
+            trend[t] = (1-beta)*trend[t-1] +beta*(level[t]-level[t-1])
+            seasonality[t] = gamma*(serie[t][1]/level[t]) + (1-gamma)*seasonality[t-1]
 
-			if t+1 >= serieLength - duration  :				
-				tp = serie[t][0] + (duration)*( serie[-1][0]-serie[-2][0] )
-				forecastingSerie[t+duration] = [tp, (level[t] + duration*trend[t])*seasonality[t] ]
-				#logger.debug(  "Value for t+duration : %s" % forecastingSerie[t+duration] )
+            if( t+1 < serieLength):
+                forecastingSerie[t+1] = [ serie[t][0], (level[t] +trend[t])*seasonality[t] ]
 
-		#logger.debug( ' Multiplicative forecast serie : %s ' % forecastingSerie )
+            if t+1 >= serieLength - duration  :
+                tp = serie[t][0] + (duration)*( serie[-1][0]-serie[-2][0] )
+                forecastingSerie[t+duration] = [tp, (level[t] + duration*trend[t])*seasonality[t] ]
+                #logger.debug(  "Value for t+duration : %s" % forecastingSerie[t+duration] )
 
-		return forecastingSerie
+        #logger.debug( ' Multiplicative forecast serie : %s ' % forecastingSerie )
+
+        return forecastingSerie
 
 import sys
 import logging
@@ -753,7 +703,7 @@ import time
 
 from datetime import datetime
 
-from .threshold import Threshold
+from ctimeserie.threshold import Threshold
 
 
 class Forecast(object):
@@ -841,8 +791,8 @@ class Forecast(object):
             forecast=True):
         """
         y - time series data.
-        alpha(0.2) , beta(0.1), gamma(0.05) - exponential smoothing coefficients
-                                          for level, trend, seasonal components.
+        alpha(0.2) , beta(0.1), gamma(0.05): exponential smoothing coefficients
+                                        for level, trend, seasonal components.
         c -  extrapolated future data points.
               4 quarterly
               7 weekly.
@@ -855,7 +805,7 @@ class Forecast(object):
             "y = %s, alpha = %s, beta = %s, gamma = %s, c = %s" %
             (y, alpha, beta, gamma, c))
 
-        #Compute initial b and intercept using the first two complete c periods.
+        #Compute initial b and intercept using the first two complete c periods
         ylen = len(y)
 
         c = min(c, ylen >> 1)
@@ -882,9 +832,9 @@ class Forecast(object):
             S[i] = (I[i] + I[i + c]) / 2.0
 
         #Normalize so S[i] for i in [0, c)  will add to c.
-        tS = c / sum([S[i] for i in xrange(c)])
+        tS = c / sum([S[i] for i in range(c)])
 
-        for i in xrange(c):
+        for i in range(c):
             S[i] *= tS
             logger.debug("S[%s]=%s" % (i, S[i]))
 
@@ -894,7 +844,7 @@ class Forecast(object):
 
         At = a0
         Bt = b0
-        for i in xrange(ylen):
+        for i in range(ylen):
             Atm1 = At
             Btm1 = Bt
             At = alpha * y[i] / S[i] + (1.0 - alpha) * (Atm1 + Btm1)
@@ -904,7 +854,7 @@ class Forecast(object):
             logger.debug(
                 "i=%s, y=%s, S=%s, Atm1=%s, Btm1=%s, \
                 At=%s, Bt=%s, S[i+c]=%s, F=%s" %
-                (i + 1, y[i], S[i], Atm1, Btm1, At, Bt, S[i+c], F[i]))
+                (i + 1, y[i], S[i], Atm1, Btm1, At, Bt, S[i + c], F[i]))
 
         if forecast:
             Forecast.holtwinters_forecast(y, c, At, Bt, F, S)
@@ -915,7 +865,7 @@ class Forecast(object):
     def holtwinters_forecast(y, c, At, Bt, F, S):
         ylen = len(y)
         #Forecast for next c periods:
-        for m in xrange(c):
+        for m in range(c):
             F[ylen + m] = (At + Bt * (m + 1)) * S[ylen + m]
             logger.debug("forecast: %s" % F[ylen + m])
 
@@ -931,7 +881,8 @@ class Forecast(object):
             calculate_forecast=True):
         """
         Identify best category for forecasting input y list.
-        Returns count of forecasting points, At and Bt params and holtwinter list.
+        Returns count of forecasting points, At and Bt params and
+        holtwinter list.
         This list is filled if calculate_forecast is True.
         """
 
@@ -959,7 +910,7 @@ class Forecast(object):
         Get forecasted points from points and forecast properties.
         """
 
-        logger.debug('forecast: points: %s, forecast: %s' % (points, forecast))
+        logger.debug('forecast: points: %s' % points)
 
         noneindexes = \
             [index for index, point in enumerate(points) if point[1] is None]
@@ -972,9 +923,7 @@ class Forecast(object):
         # calculate forecasted points
         if self.parameters is None:  # best effort
             forecast_parameters, c, At, Bt, F = Forecast.forecast_best_effort(
-                y,
-                Forecast.FORECAST_PARAMETERS,
-                c)
+                y, Forecast.FORECAST_PARAMETERS, c)
             self.parameters = forecast_parameters
 
         else:
@@ -988,7 +937,7 @@ class Forecast(object):
         # add None in F
         def insertnonevalues(F, noneindexes, index=0):
             noneindexeslen = len(noneindexes)
-            for _index in xrange(0, noneindexeslen):
+            for _index in range(0, noneindexeslen):
                 nonindex = noneindexes[_index]
                 F.insert(nonindex + index, None)
 
@@ -1001,7 +950,7 @@ class Forecast(object):
 
         logger.debug('last_point: %s, date: %s' % (points[-1], date))
 
-        for index in xrange(len(points), len(F)):
+        for index in range(len(points), len(F)):
             date = timewindow.get_next_date(
                 date,
                 self.timeserie.period)

@@ -45,11 +45,11 @@ class ConfigurationManager(ConfigurationManager):
         return category in conf_resource
 
     def _has_parameter(
-        self, conf_resource, category, parameter, logger,
+        self, conf_resource, category, param, logger,
         *args, **kwargs
     ):
 
-        return parameter.name in conf_resource[category.name]
+        return param.name in conf_resource[category.name]
 
     def _get_categories(self, conf_resource, logger, *args, **kwargs):
         return conf_resource.keys()
@@ -78,11 +78,11 @@ class ConfigurationManager(ConfigurationManager):
         return result
 
     def _get_value(
-        self, conf_resource, category, parameter, logger,
+        self, conf_resource, category, param, logger,
         *args, **kwargs
     ):
 
-        return conf_resource[category.name][parameter.name]
+        return conf_resource[category.name][param.name]
 
     def _set_category(
         self, conf_resource, category, logger, *args, **kwargs
@@ -91,10 +91,10 @@ class ConfigurationManager(ConfigurationManager):
         conf_resource.setdefault(category.name, dict())
 
     def _set_parameter(
-        self, conf_resource, category, parameter, logger,
+        self, conf_resource, category, param, logger,
         *args, **kwargs
     ):
-        conf_resource[category.name][parameter.name] = parameter.value
+        conf_resource[category.name][param.name] = param.value
 
     def _update_conf_file(
         self, conf_resource, conf_file, *args, **kwargs
@@ -121,7 +121,7 @@ class ConfigurationManagerTest(TestCase):
 
         self.manager = self._get_configuration_manager()
 
-        self.configuration = Configuration(
+        self.conf = Configuration(
             Category('A',
                 Parameter('a', value=0, parser=int),  # a is 0
                 Parameter('b', value=True, parser=bool)),  # b is overriden
@@ -137,67 +137,72 @@ class ConfigurationManagerTest(TestCase):
 
     def test_configuration(self):
 
-        # try to get configuration from not existing file
+        # try to get conf from not existing file
         try:
             remove(self.conf_file)
         except OSError:
             pass
 
-        configuration = self.manager.get_configuration(
+        conf = self.manager.get_configuration(
             conf_file=self.conf_file,
             logger=self.logger)
 
-        self.assertEqual(configuration, None)
+        self.assertEqual(conf, None)
 
-        # get configuration from an empty file
+        # get conf from an empty file
         try:
             open(self.conf_file, 'w').close()
         except OSError:
             pass
 
-        configuration = self.manager.get_configuration(
+        conf = self.manager.get_configuration(
             conf_file=self.conf_file,
             logger=self.logger)
 
-        self.assertTrue(configuration is None)
+        self.assertTrue(conf is None)
 
-        # get full configuration
+        # get full conf
         self.manager.set_configuration(
             conf_file=self.conf_file,
-            configuration=self.configuration,
+            conf=self.conf,
             logger=self.logger)
 
-        configuration = self.manager.get_configuration(
+        conf = self.manager.get_configuration(
             conf_file=self.conf_file,
-            configuration=self.configuration,
+            conf=self.conf,
             logger=self.logger,
             fill=True)
 
-        self.assertFalse(configuration is None)
-        self.assertEqual(len(configuration), 2)
+        self.assertFalse(conf is None)
+        self.assertEqual(len(conf), 2)
 
-        parameters, errors = configuration.get_parameters()
+        unified_conf = conf.unify()
+
+        parameters = unified_conf[Configuration.VALUES]
+        errors = unified_conf[Configuration.ERRORS]
 
         self.assertTrue('a' in parameters and 'a' not in errors)
-        self.assertEqual(parameters['a'], 0)
+        self.assertEqual(parameters['a'].value, 0)
         self.assertTrue('b' in parameters and 'b' not in errors)
-        self.assertEqual(parameters['b'], 1)
+        self.assertEqual(parameters['b'].value, 1)
         self.assertTrue('c' in errors and 'c' not in parameters)
 
-        # get some configuration
-        configuration = Configuration(
-            self.configuration['B'])
+        # get some conf
+        conf = Configuration(self.conf['B'])
 
-        configuration = self.manager.get_configuration(
+        conf = self.manager.get_configuration(
             conf_file=self.conf_file,
-            configuration=configuration,
+            conf=conf,
             logger=self.logger)
 
-        parameters, errors = configuration.get_parameters()
+        unified_conf = conf.unify()
+
+        parameters = unified_conf[Configuration.VALUES]
+        errors = unified_conf[Configuration.ERRORS]
 
         self.assertTrue('a' not in parameters and 'a' not in errors)
         self.assertTrue('b' in parameters and 'b' not in errors)
-        self.assertEqual(parameters['b'], 1)
+        self.assertEqual(parameters['b'].value, 1)
         self.assertTrue('c' in errors and 'c' not in parameters)
 
     def _get_configuration_manager(self):

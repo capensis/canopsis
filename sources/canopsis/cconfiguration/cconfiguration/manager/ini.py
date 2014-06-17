@@ -41,10 +41,10 @@ class ConfigurationManager(ConfigurationManager):
         return conf_resource.has_section(category.name)
 
     def _has_parameter(
-        self, conf_resource, category, parameter, logger,
+        self, conf_resource, category, param, logger,
         *args, **kwargs
     ):
-        return conf_resource.has_option(category.name, parameter.name)
+        return conf_resource.has_option(category.name, param.name)
 
     def _get_conf_resource(
         self, logger, conf_file=None, *args, **kwargs
@@ -75,9 +75,9 @@ class ConfigurationManager(ConfigurationManager):
         return conf_resource.options(category.name)
 
     def _get_value(
-        self, conf_resource, category, parameter, *args, **kwargs
+        self, conf_resource, category, param, *args, **kwargs
     ):
-        return conf_resource.get(category.name, parameter.name)
+        return conf_resource.get(category.name, param.name)
 
     def _set_category(
         self, conf_resource, category, logger, *args, **kwargs
@@ -88,10 +88,10 @@ class ConfigurationManager(ConfigurationManager):
             pass
 
     def _set_parameter(
-        self, conf_resource, category, parameter, logger,
+        self, conf_resource, category, param, logger,
         *args, **kwargs
     ):
-        conf_resource.set(category.name, parameter.name, parameter.value)
+        conf_resource.set(category.name, param.name, param.value)
 
     def _update_conf_file(
         self, conf_resource, conf_file, *args, **kwargs

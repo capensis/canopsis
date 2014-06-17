@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 #--------------------------------
 # Copyright (c) 2014 "Capensis" [http://www.capensis.com]
 #
@@ -18,64 +19,62 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from storage import Storage
+__all__ = ('TimedStorage')
+
+from cstorage import Storage
 
 
 class TimedStorage(Storage):
-	"""
-	Store dedicated to manage timed data.
-	"""
+    """
+    Store dedicated to manage timed data.
+    """
 
-	TIMESTAMP_INDEX = 0
-	VALUE_INDEX = 1
+    TIMESTAMP_INDEX = 0
+    VALUE_INDEX = 1
 
-	class Index:
+    DATA_ID = 'data_id'
+    VALUE = 'values'
+    TIMESTAMP = 'timestamp'
 
-		DATA_ID = 'data_id'
-		VALUE = 'values'
-		TIMESTAMP = 'timestamp'
+    def get(
+        self, data_ids, timewindow=None, limit=0, skip=0, sort=None,
+        *args, **kwargs
+    ):
+        """
+        Get a sorted list of triplet of dictionaries such as :
+        tuple(
+            timestamp,
+            dict(data_type, data_value), dict(meta_name, meta_value)).
 
-	def get(self, data_id, timewindow=None, limit=0, skip=0, sort=None):
-		"""
-		Get a sorted list of triplet of dictionaries such as :
-		tuple(timestamp, dict(data_type, data_value), dict(meta_name, meta_value)).
+        If timewindow is None, result is all timed document.
+        """
 
-		If timewindow is None, result is all timed document.
-		"""
+        raise NotImplementedError()
 
-		raise NotImplementedError()
+    def count(self, data_id, *args, **kwargs):
+        """
+        Get number of timed documents for input data_id.
+        """
 
-	def count(self, data_id):
-		"""
-		Get number of timed documents for input data_id.
-		"""
+        raise NotImplementedError()
 
-		raise NotImplementedError()
+    def put(self, data_id, value, timestamp, *args, **kwargs):
+        """
+        Put a dictionary of value by name in collection.
+        """
 
-	def put(self, data_id, value, timestamp):
-		"""
-		Put a dictionary of value by name in collection.
-		"""
+        raise NotImplementedError()
 
-		raise NotImplementedError()
+    def remove(self, data_ids, timewindow=None, *args, **kwargs):
+        """
+        Remove timed_data existing on input timewindow.
+        """
 
-	def remove(self, data_id, timewindow=None):
-		"""
-		Remove timed_data existing on input timewindow.
-		"""
+        raise NotImplementedError()
 
-		raise NotImplementedError()
+    def _get_storage_type(self, *args, **kwargs):
+        """
+        Get collection prefix.
+        """
 
-	def size(self, data_id=None):
-		"""
-		Get documents size for data if data_id else for the entire collection.
-		"""
-
-		raise NotImplementedError()
-
-	def _get_storage_type(self):
-		"""
-		Get collection prefix.
-		"""
-
-		return "timed"
+        return "timed"
