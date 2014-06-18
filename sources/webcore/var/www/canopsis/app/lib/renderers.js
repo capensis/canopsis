@@ -116,7 +116,6 @@ function rdr_tstodate(val, custom_format) {
 		format = custom_format;
 	}
 
->>>>>>> bugfixes
 	if(val) {
 		var dval = new Date(parseInt(val) * 1000);
 
