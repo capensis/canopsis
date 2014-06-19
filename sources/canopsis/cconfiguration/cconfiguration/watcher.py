@@ -97,7 +97,7 @@ def on_update_conf_file(conf_file):
             configurable.apply_configuration(conf_file=conf_file)
 
 # default value for sleeping_time
-SLEEPING_TIME = 5
+DEFAULT_SLEEPING_TIME = 5
 
 
 class Watcher(Configurable):
@@ -105,20 +105,20 @@ class Watcher(Configurable):
     Watches all sleeping_time
     """
 
+    CONF_FILE = '~/etc/watcher.conf'
+
     CATEGORY = 'WATCHER'
-    SLEEP = 'sleeping_time'
+    SLEEPING_TIME = 'sleeping_time'
 
     DEFAULT_CONFIGURATION = Configuration(
         Category(CATEGORY,
-            Parameter(SLEEP, value=SLEEPING_TIME, parser=int)))
+            Parameter(SLEEPING_TIME, value=DEFAULT_SLEEPING_TIME, parser=int)))
 
-    def __init__(self, sleeping_time=SLEEPING_TIME, *args, **kwargs):
+    def __init__(self, sleeping_time=DEFAULT_SLEEPING_TIME, *args, **kwargs):
 
         super(Watcher, self).__init__(*args, **kwargs)
 
         self._sleeping_time = sleeping_time
-
-        self.start()
 
     @property
     def sleeping_time(self):
@@ -134,13 +134,33 @@ class Watcher(Configurable):
         self.stop()
         self.start()
 
-    def _configure(self, parameters, error_parameters, *args, **kwargs):
+    def _configure(self, unified_conf, *args, **kwargs):
 
         super(Watcher, self)._configure(
-            parameters=parameters, error_parameters=error_parameters,
-            *args, **kwargs)
+            unified_conf=unified_conf, *args, **kwargs)
 
-        self.sleeping_time = parameters.get(Watcher.SLEEP, self.sleeping_time)
+        self._update_property(
+            unified_conf=unified_conf, param_name=Watcher.SLEEPING_TIME,
+            public=True)
+
+    def _get_conf_files(self, *args, **kwargs):
+
+        result = super(Watcher, self)._get_conf_files(*args, **kwargs)
+
+        result.append(Watcher.CONF_FILE)
+
+        return result
+
+    def _conf(self, *args, **kwargs):
+
+        result = super(Watcher, self)._conf(*args, **kwargs)
+
+        result.add_unified_category(
+            name=Watcher.CATEGORY,
+            new_content=(
+                Parameter(Watcher.SLEEPING_TIME, self.sleeping_time, int)))
+
+        return result
 
     def run(self):
         global _CONFIGURABLES_BY_CONF_FILES
@@ -167,3 +187,31 @@ class Watcher(Configurable):
 
     def stop(self):
         self._timer.cancel()
+
+
+_WATCHER = Watcher()
+_WATCHER.apply_configuration()
+
+
+def start_watch():
+    """
+    Start default watcher
+    """
+
+    _WATCHER.start()
+
+
+def stop_watch():
+    """
+    Stop default watcher
+    """
+
+    _WATCHER.Stop()
+
+
+def change_sleeping_time(sleeping_time):
+    """
+    Change of sleeping_time for default watcher
+    """
+
+    _WATCHER.sleeping_time = sleeping_time
