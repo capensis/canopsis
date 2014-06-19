@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 # --------------------------------
 # Copyright (c) 2014 "Capensis" [http://www.capensis.com]
 #
@@ -20,19 +21,14 @@
 
 from cstorage.manager import Manager
 
-DEFAULT_TABLE = 'context'
 
+class Topology(Manager):
+    """
+    Manage access to topologies
+    """
 
-class Manager(Manager):
-	"""
-	Manage access to context (connector, component, resource) entities
-	and context data (metric, downtime, etc.) related to context entities.
-	"""
+    CONF_FILE = '~/etc/topology.conf'
 
-	DEFAULT_CONFIGURATION_FILE = '~/etc/context.conf'
+    CATEGORY = 'TOPOLOGY'
 
-	CONTEXT = 'context'
-
-	def _get_timed_types(self):
-
-		return [Manager.CONTEXT]
+    DATA_TYPE = 'topology'

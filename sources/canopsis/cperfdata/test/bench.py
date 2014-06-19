@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 #--------------------------------
 # Copyright (c) 2014 "Capensis" [http://www.capensis.com]
 #
@@ -21,23 +22,22 @@
 import time
 import random
 import logging
-from pyperfstore3.manager import Manager
+from pyperfstore2.manager import Manager
 
 logging.basicConfig(level=logging.INFO,
-	format='%(name)s %(levelname)s %(message)s',
-)
+	format='%(name)s %(levelname)s %(message)s')
 
 interval = 300
 day = 30
 duration = 60 * 60 * 24 * day
 
-NAME = 'bench'
-DATA_ID = NAME
-manager = Manager(data_name=NAME)
+name = 'bench'
+DATA_ID = name
+manager = Manager(data_name=name)
 manager.remove(data_id=DATA_ID, with_meta=True)
 
 
-def bench_store(interval=interval, duration=60*60*24):
+def bench_store(interval=interval, duration=60 * 60 * 24):
 	print("Start Bench ...")
 
 	msize = manager.store.size()
@@ -47,21 +47,23 @@ def bench_store(interval=interval, duration=60*60*24):
 	bench_start = timestamp
 
 	nb = duration / interval
-	print " + write %s loop" % nb
+	print(" + write %s loop" % nb)
 
 	start = time.time()
-	for i in range(1,nb+1):
+	for i in range(1, nb + 1):
 		manager.push(name="%s%s" % (name, 'state'), value=1, timestamp=timestamp)
-		manager.push(name="%s%s" % (name, 'state-downtime'), value=1, timestamp=timestamp)
+		manager.push(
+			name="%s%s" % (name, 'state-downtime'), value=1, timestamp=timestamp)
 
 		value = random.random() * 10
 		manager.push(name="%s%s" % (name, 'load1'), value=value, timestamp=timestamp)
 		manager.push(name="%s%s" % (name, 'load5'), value=value, timestamp=timestamp)
-		manager.push(name="%s%s" % (name, 'load15'), value=value, timestamp=timestamp)
+		manager.push(
+			name="%s%s" % (name, 'load15'), value=value, timestamp=timestamp)
 
 		timestamp += interval
 
-		mod = (i * interval)%86400
+		mod = (i * interval) % 86400
 		if mod == 0:
 			manager.midnight = timestamp
 			manager.rotateAll()
@@ -71,33 +73,36 @@ def bench_store(interval=interval, duration=60*60*24):
 	nb = nb * 3
 	elapsed = time.time() - start
 
-	print " + WRITE:"
-	print "    + %.2f days" % (duration / (60*60*24))
+	print(" + WRITE:")
+	print("    + %.2f days" % (duration / (60 * 60 * 24)))
 	msize = manager.store.size()
-	print "    + %.2f MB (%.2f MB/Year)" % ((msize / 1024.0 / 1024.0), ((msize / float(duration))/ 1024.0 / 1024.0) *  60*60*24*365)
-	#nsize = mynode.size()
-	#print "    + %.2f MB (%.2f MB/Year)" % ((nsize / 1024.0 / 1024.0), ((nsize / float(duration))/ 1024.0 / 1024.0) *  60*60*24*365)
-	#print "    + Delta: %s B" % (msize - nsize)
-	print "    + %s values in %s seconds" % ( nb, elapsed)
-	print "    + %s values per second" % (int(nb/elapsed))
-	print ""
+	print(
+		"    + %.2f MB (%.2f MB/Year)" % (
+			(msize / 1024.0 / 1024.0),
+			((msize / float(duration)) / 1024.0 / 1024.0) * 60 * 60 * 24 * 365))
+	print("    + %s values in %s seconds" % (nb, elapsed))
+	print("    + %s values per second" % (int(nb / elapsed)))
+	print()
 
 	nb = 0
 	start = time.time()
-	print "Get values between %s and %s" % (bench_start, bench_stop)
-	values = manager.get_points(name="%s%s" % (name, 'load1'), tstart=bench_start, tstop=bench_stop)
+	print("Get values between %s and %s" % (bench_start, bench_stop))
+	values = manager.get_points(
+		name="%s%s" % (name, 'load1'), tstart=bench_start, tstop=bench_stop)
 	nb += len(values)
-	values = manager.get_points(name="%s%s" % (name, 'load5'), tstart=bench_start, tstop=bench_stop)
+	values = manager.get_points(
+		name="%s%s" % (name, 'load5'), tstart=bench_start, tstop=bench_stop)
 	nb += len(values)
-	values = manager.get_points(name="%s%s" % (name, 'load15'), tstart=bench_start, tstop=bench_stop)
+	values = manager.get_points(
+		name="%s%s" % (name, 'load15'), tstart=bench_start, tstop=bench_stop)
 	nb += len(values)
 	elapsed = time.time() - start
-	print " + READ:"
-	print "    + %s values in %s seconds" % ( nb, elapsed)
-	print "    + %s values per second" % (int(nb/elapsed))
-	print ""
+	print(" + READ:")
+	print("    + %s values in %s seconds" % (nb, elapsed))
+	print("    + %s values per second" % (int(nb / elapsed)))
+	print()
 
 
-bench_store(interval=interval, duration= 60 * 60 * 24 * day)
+bench_store(interval=interval, duration=60 * 60 * 24 * day)
 
 manager.remove(data_id=DATA_ID)

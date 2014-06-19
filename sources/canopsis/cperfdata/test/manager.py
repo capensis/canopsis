@@ -21,24 +21,24 @@
 
 from unittest import TestCase, main
 
-from cstorage.manager import Manager
+from cperfdata.manager import PerfData
 from ctimeserie.timewindow import TimeWindow, get_offset_timewindow, Period
 
 
-class ManagerTest(TestCase):
+class PerfDataTest(TestCase):
 
     def setUp(self):
-        self.manager = Manager()
+        self.perfdata = PerfData()
 
     def test_put_get_data(self):
 
         timewindow = TimeWindow()
 
-        data_id = 'test_manager'
+        metric_id = 'test_manager'
 
-        self.manager.remove(data_id=data_id, with_meta=True)
+        self.perfdata.remove(metric_id=metric_id, with_meta=True)
 
-        count = self.manager.count(data_id=data_id)
+        count = self.perfdata.count(metric_id=metric_id)
         self.assertEqual(count, 0)
 
         tv0 = (int(timewindow.start()), None)
@@ -53,14 +53,14 @@ class ManagerTest(TestCase):
 
         period = Period()
 
-        self.manager.put(
-            data_id=data_id,
+        self.perfdata.put(
+            metric_id=metric_id,
             points_or_point=points,
             meta=meta,
             period=period)
 
-        data, _meta = self.manager.get(
-            data_id=data_id,
+        data, _meta = self.perfdata.get(
+            metric_id=metric_id,
             timewindow=timewindow,
             period=period,
             with_meta=True)
@@ -72,13 +72,13 @@ class ManagerTest(TestCase):
         # remove 1 data at stop point
         _timewindow = get_offset_timewindow(timewindow.stop())
 
-        self.manager.remove(
-            data_id=data_id,
+        self.perfdata.remove(
+            metric_id=metric_id,
             timewindow=_timewindow,
             period=period)
 
-        data, _meta = self.manager.get(
-            data_id=data_id,
+        data, _meta = self.perfdata.get(
+            metric_id=metric_id,
             timewindow=timewindow,
             period=period,
             with_meta=True)
@@ -88,8 +88,8 @@ class ManagerTest(TestCase):
         self.assertEqual(data, [tv0, tv1])
 
         # get data on timewindow
-        data, _meta = self.manager.get(
-            data_id=data_id,
+        data, _meta = self.perfdata.get(
+            metric_id=metric_id,
             timewindow=timewindow,
             period=period,
             with_meta=True)
@@ -97,8 +97,8 @@ class ManagerTest(TestCase):
         self.assertEqual(meta, _meta[0][1])
 
         # get all data
-        data, _meta = self.manager.get(
-            data_id=data_id,
+        data, _meta = self.perfdata.get(
+            metric_id=metric_id,
             period=period,
             with_meta=True)
 
@@ -107,12 +107,12 @@ class ManagerTest(TestCase):
         self.assertEqual(len(data), 3)
 
         # remove all data
-        self.manager.remove(
-            data_id=data_id,
+        self.perfdata.remove(
+            metric_id=metric_id,
             with_meta=True)
 
-        data, _meta = self.manager.get(
-            data_id=data_id,
+        data, _meta = self.perfdata.get(
+            metric_id=metric_id,
             period=period,
             with_meta=True)
 
