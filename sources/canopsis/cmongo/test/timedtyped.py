@@ -21,18 +21,19 @@
 
 from unittest import TestCase, main
 
-from cstorage.timed import TimedStorage
+from cmongo.timedtyped import TimedTypedStorage
 from ctimeserie.timewindow import TimeWindow
 
 
-class TimedStorageTest(TestCase):
+class TimedTypedStorageTest(TestCase):
     """
-    pyperfstore3.store.TimedStorage UT on data_type = "test_store"
+    TimedTypedStorage UT on data_type = "test_store"
     """
 
     def setUp(self):
         # create a store on test_store collections
-        self.store = TimedStorage(data_type="test_store")
+        self.store = TimedTypedStorage(data_type="test_store", safe=True)
+        self.store.connect()
 
     def test_connect(self):
         self.assertTrue(self.store.connected())
@@ -49,11 +50,13 @@ class TimedStorageTest(TestCase):
 
         data_id = 'test_store_id'
 
+        data_type = 'test'
+
         # start in droping data
         self.store.drop()
 
         # ensure count is 0
-        count = self.store.count(data_id=data_id)
+        count = self.store.count(data_id=data_id, data_type=data_type)
         self.assertEquals(count, 0)
 
         # let's play with different data_names
@@ -74,31 +77,35 @@ class TimedStorageTest(TestCase):
 
         for timestamp in timestamps:
             # add a document at starting time window
-            self.store.put(data_id=data_id, value=meta, timestamp=timestamp)
+            self.store.put(
+                data_id=data_id, value=meta, data_type=data_type,
+                timestamp=timestamp)
 
         # check for count equals 5
-        count = self.store.count(data_id=data_id)
+        count = self.store.count(data_id=data_id, data_type=data_type)
         self.assertEquals(count, 2)
 
         # check for_data before now
-        data = self.store.get(data_id=data_id)
-        self.assertEquals(len(data), 2)
+        data = self.store.get(data_ids=[data_id], data_type=data_type)
+        self.assertEquals(len(data[data_id]), 2)
 
         # check for data inside timewindow and just before
-        data = self.store.get(data_id=data_id, timewindow=timewindow)
+        data = self.store.get(
+            data_ids=[data_id], timewindow=timewindow, data_type=data_type)
         self.assertEquals(len(data), 1)
 
         # remove data inside timewindow
-        self.store.remove(data_id=data_id, timewindow=timewindow)
+        self.store.remove(
+            data_ids=[data_id], data_type=data_type, timewindow=timewindow)
         # check for data outside timewindow
-        count = self.store.count(data_id=data_id)
+        count = self.store.count(data_id=data_id, data_type=data_type)
         self.assertEquals(
             count, len(before_timewindow) + len(after_timewindow))
 
         # remove all data
-        self.store.remove(data_id=data_id)
+        self.store.remove(data_ids=[data_id], data_type=data_type)
         # check for count equals 0
-        count = self.store.count(data_id=data_id)
+        count = self.store.count(data_id=data_id, data_type=data_type)
         self.assertEquals(count, 0)
 
 if __name__ == '__main__':

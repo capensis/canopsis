@@ -267,6 +267,9 @@ class TimeSerie(Configurable):
 
         result = super(TimeSerie, self)._conf(*args, **kwargs)
 
+        category = result.get_unified_category(TimeSerie.CATEGORY)
+        result += category
+
         result += Category(TimeSerie.CATEGORY,
             Parameter(TimeSerie.AGGREGATION),
             Parameter(

@@ -19,7 +19,7 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from cconfiguration import Configurable, Category, Parameter, Configuration
+from cconfiguration import Configurable, Parameter, Configuration
 from ccommon.utils import resolve_element
 
 
@@ -188,7 +188,7 @@ class Manager(Configurable):
 
         result = super(Manager, self)._conf(*args, **kwargs)
 
-        result += Category(Manager.CATEGORY,
+        result.add_unified_category(Manager.CATEGORY,
             Parameter(Manager.TIMED_STORAGE),
             Parameter(Manager.PERIODIC_STORAGE),
             Parameter(Manager.LAST_VALUE_STORAGE),

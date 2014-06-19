@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# --------------------------------
+#--------------------------------
 # Copyright (c) 2014 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
@@ -18,33 +18,3 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
-
-from cstorage.manager import Manager
-
-DEFAULT_TABLE = 'ccontext'
-
-
-class Context(Manager):
-    """
-    Manage access to ccontext (connector, component, resource) entities
-    and ccontext data (metric, downtime, etc.) related to ccontext entities.
-    """
-
-    CONF_FILE = '~/etc/context.conf'
-
-    CONTEXT = 'ccontext'
-
-    def _init_conf_files(self, conf_files, *args, **kwargs):
-
-        result = super(Context, self)._init_conf_files(
-            conf_files, *args, **kwargs)
-
-        result.append(Context.CONF_FILE)
-
-        return result
-
-    def get_element(self, id, )
-
-    def _get_timed_types(self):
-
-        return [Manager.CONTEXT]

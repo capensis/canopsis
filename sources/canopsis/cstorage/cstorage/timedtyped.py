@@ -22,23 +22,26 @@
 from cstorage import Storage
 
 
-class TimedStorage(Storage):
+class TimedTypedStorage(Storage):
     """
-    Store dedicated to manage timed data.
+    Store dedicated to manage timed typed data.
     """
 
     class Index:
 
         TIMESTAMP = 0
         VALUE = 1
-        DOCUMENT_ID = 2
+        TYPE = 2
+        DOCUMENT_ID = 3
 
     DATA_ID = 'data_id'
     VALUE = 'value'
     TIMESTAMP = 'timestamp'
+    TYPE = 'type'
 
     def get(
-        self, data_ids, timewindow=None, limit=0, skip=0, sort=None,
+        self, data_ids, data_type=None, timewindow=None,
+        limit=0, skip=0, sort=None,
         *args, **kwargs
     ):
         """
@@ -51,27 +54,48 @@ class TimedStorage(Storage):
 
         If timewindow is None, result is all timed document.
 
+        :param data_ids: list of data_id to find
+        :type data_ids: list of str
+
+        :param data_type: data type to find if not None
+        :type data_type: str
+
+        :param timewindow: timewindow
+        :type timewindow: ctimeserie.timewindow.TimeWindow
+
+        :param limit: max number of data to get
+        :type limit: int
+
+        :param skip: starting index of research if multi data to get
+        :type skip: int
+
+        :param sort: couples of field (name, value) to sort with ASC/DESC
+            Storage fields
+        :type sort: dict
+
         :return:
         :rtype: dict of tuple(float, dict, str)
         """
 
         raise NotImplementedError()
 
-    def count(self, data_id, *args, **kwargs):
+    def count(self, data_id=None, data_type=None, *args, **kwargs):
         """
         Get number of timed documents for input data_id.
         """
 
         raise NotImplementedError()
 
-    def put(self, data_id, value, timestamp, *args, **kwargs):
+    def put(self, data_id, data_type, value, timestamp, *args, **kwargs):
         """
         Put a dictionary of value by name in collection.
         """
 
         raise NotImplementedError()
 
-    def remove(self, data_ids, timewindow=None, *args, **kwargs):
+    def remove(
+        self, data_ids=None, data_type=None, timewindow=None, *args, **kwargs
+    ):
         """
         Remove timed_data existing on input timewindow.
         """

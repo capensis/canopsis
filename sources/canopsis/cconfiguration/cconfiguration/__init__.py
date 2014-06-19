@@ -89,8 +89,15 @@ class Configuration(object):
             for category in other:
                 self += category
 
-        else:
-            self.categories[other.name] = other
+        else:  # in case of category
+            category = self.get(other.name)
+
+            if category is None:
+                self.put(other)
+
+            else:
+                for param in other:
+                    category.put(param)
 
         return self
 
@@ -156,7 +163,7 @@ class Configuration(object):
 
         return result
 
-    def add_unified_category(self, name, copy=False, *args, **kwargs):
+    def get_unified_category(self, name, copy=False, *args, **kwargs):
         """
         Add a category with input name which takes all params provided
         by other categories
@@ -174,7 +181,7 @@ class Configuration(object):
             for param in category:
                 category.put(param.copy() if copy else param)
 
-        self += category
+        return category
 
     def clean(self, *args, **kwargs):
         """

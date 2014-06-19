@@ -21,18 +21,19 @@
 
 from unittest import TestCase, main
 
-from cstorage.lastvalue import LastValueStorage
+from cmongo.timed import TimedStorage
 from ctimeserie.timewindow import TimeWindow
 
 
-class LastValueStorageTest(TestCase):
+class TimedStorageTest(TestCase):
     """
-    cstorage.LastValueStorage UT on data_type = "test_store"
+    TimedStorage UT on data_type = "test_store"
     """
 
     def setUp(self):
         # create a store on test_store collections
-        self.store = LastValueStorage(data_type="test")
+        self.store = TimedStorage(data_type="test_store", safe=True)
+        self.store.connect()
 
     def test_connect(self):
         self.assertTrue(self.store.connected())
@@ -81,22 +82,22 @@ class LastValueStorageTest(TestCase):
         self.assertEquals(count, 2)
 
         # check for_data before now
-        data = self.store.get(data_id=data_id)
-        self.assertEquals(len(data), 2)
+        data = self.store.get(data_ids=[data_id])
+        self.assertEquals(len(data[data_id]), 2)
 
         # check for data inside timewindow and just before
-        data = self.store.get(data_id=data_id, timewindow=timewindow)
+        data = self.store.get(data_ids=[data_id], timewindow=timewindow)
         self.assertEquals(len(data), 1)
 
         # remove data inside timewindow
-        self.store.remove(data_id=data_id, timewindow=timewindow)
+        self.store.remove(data_ids=[data_id], timewindow=timewindow)
         # check for data outside timewindow
         count = self.store.count(data_id=data_id)
         self.assertEquals(
             count, len(before_timewindow) + len(after_timewindow))
 
         # remove all data
-        self.store.remove(data_id=data_id)
+        self.store.remove(data_ids=[data_id])
         # check for count equals 0
         count = self.store.count(data_id=data_id)
         self.assertEquals(count, 0)

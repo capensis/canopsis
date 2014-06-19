@@ -29,7 +29,6 @@ class PeriodicStorage(Storage):
 
     DATA_ID = 'data_id'
     TIMESTAMP = 'timestamp'
-    AGGREGATION = 'aggregation'
     VALUES = 'values'
     PERIOD = 'period'
     LAST_UPDATE = 'last_update'
@@ -38,7 +37,7 @@ class PeriodicStorage(Storage):
         pass
 
     def count(
-        self, data_id, aggregation, period, timewindow=None, *args, **kwargs
+        self, data_id, period, timewindow=None, *args, **kwargs
     ):
         """
         Get number of periodic documents for input data_id.
@@ -47,7 +46,7 @@ class PeriodicStorage(Storage):
         raise NotImplementedError()
 
     def size(
-        self, data_id=None, aggregation=None, period=None, timewindow=None,
+        self, data_id=None, period=None, timewindow=None,
         *args, **kwargs
     ):
         """
@@ -56,8 +55,9 @@ class PeriodicStorage(Storage):
 
         raise NotImplementedError()
 
-    def get(self,
-        data_id, aggregation, period, timewindow=None,
+    def get(
+        self,
+        data_id, period, timewindow=None,
         limit=0, skip=0, sort=None,
         *args, **kwargs
     ):
@@ -67,10 +67,9 @@ class PeriodicStorage(Storage):
 
         raise NotImplementedError()
 
-    def put(self, data_id, aggregation, period, points, *args, **kwargs):
+    def put(self, data_id, period, points, *args, **kwargs):
         """
-        Put periodic points in periodic collection with specific aggregation
-        and period values.
+        Put periodic points in periodic collection with specific period values.
 
         points is an iterable of (timestamp, value)
         """
@@ -78,7 +77,7 @@ class PeriodicStorage(Storage):
         raise NotImplementedError()
 
     def remove(
-        self, data_id, aggregation=None, period=None, timewindow=None,
+        self, data_id, period=None, timewindow=None,
         *args, **kwargs
     ):
         """

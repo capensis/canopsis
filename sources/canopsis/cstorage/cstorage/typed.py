@@ -22,26 +22,29 @@
 from cstorage import Storage
 
 
-class LastValueStorage(Storage):
+class TypedStorage(Storage):
     """
-    Storage dedicated to manage last value data.
+    Storage dedicated to manage typed data.
     """
 
     VALUE = 'value'
+    TYPE = 'type'
 
-    class LastValueStorageError(Exception):
+    class TypedStorageError(Exception):
         pass
 
     def get(
-        self, data_ids=None, limit=0, skip=0, sort=None,
+        self, _ids=None, data_type=None, limit=0, skip=0, sort=None,
         *args, **kwargs
     ):
         """
-        Get a list of data in limiting number of document, skipping and sorting
-            the result
+        Get a list of data identified among data_ids or a type
 
         :param data_ids: data ids to get
         :type data_id: list of str
+
+        :param data_type: data_id type to get if not None
+        :type data_type: str
 
         :param limit: max number of data to get
         :type limit: int
@@ -60,26 +63,35 @@ class LastValueStorage(Storage):
 
         raise NotImplementedError()
 
-    def put(self, values_by_id, *args, **kwargs):
+    def put(self, _id, data, data_type=None, *args, **kwargs):
         """
-        Put a set of data by id
+        Put a data related to an id
 
-        :param values_by_id: couples of data by id
-        :type data_id: dict
+        :param _id: data id
+        :type _id: str
+
+        :param data_type: data type to update
+        :type data_type: str
+
+        :param data: data to update
+        :type data: dict
         """
 
         raise NotImplementedError()
 
-    def remove(self, data_ids=None, *args, **kwargs):
+    def remove(self, _ids=None, data_type=None, *args, **kwargs):
         """
-        Remove data_ids
+        Remove data from ids or type
 
-        :param data_ids: list of data id
-        :type data_ids: list
+        :param _ids: list of data id
+        :type _ids: list
+
+        :param data_type: data type to remove if not None
+        :type data_type: str
         """
 
         raise NotImplementedError()
 
     def _get_storage_type(self, *args, **kwargs):
 
-        return 'last_value'
+        return 'typed'
