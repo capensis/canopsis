@@ -308,10 +308,10 @@ class DataBase(Configurable):
 
         return result
 
-    def _configure(self, unified_configuration, *args, **kwargs):
+    def _configure(self, unified_conf, *args, **kwargs):
 
         super(DataBase, self)._configure(
-            unified_configuration=unified_configuration, *args, **kwargs)
+            unified_conf=unified_conf, *args, **kwargs)
 
         reconnect = False
 
@@ -320,7 +320,7 @@ class DataBase(Configurable):
 
         for db_property in db_properties:
             reconnect = reconnect or self._update_property(
-                unified_configuration, parameter_name=db_property,
+                unified_conf=unified_conf, parameter_name=db_property,
                 public_property=False)
 
         if reconnect and self.auto_connect:
@@ -330,21 +330,20 @@ class DataBase(Configurable):
 
         result = super(DataBase, self)._configuration(*args, **kwargs)
 
-        category = result.get_unified_category(DataBase.DATABASE)
-        result += category
-
-        result += Category(DataBase.DATABASE,
-            Parameter(DataBase.HOST, 'localhost'),
-            Parameter(DataBase.PORT, 80000, int),
-            Parameter(DataBase.DB, 'canopsis'),
-            Parameter(DataBase.AUTO_CONNECT, True, bool),
-            Parameter(DataBase.SAFE, True, bool),
-            Parameter(DataBase.WTIMEOUT, 100, int),
-            Parameter(DataBase.SSL, False, bool),
-            Parameter(DataBase.SSL_KEY),
-            Parameter(DataBase.SSL_CERT),
-            Parameter(DataBase.USER),
-            Parameter(DataBase.PWD))
+        result.add_unified_category(
+            name=DataBase.DATABASE,
+            new_content=(
+                Parameter(DataBase.HOST, 'localhost'),
+                Parameter(DataBase.PORT, 80000, int),
+                Parameter(DataBase.DB, 'canopsis'),
+                Parameter(DataBase.AUTO_CONNECT, True, bool),
+                Parameter(DataBase.SAFE, True, bool),
+                Parameter(DataBase.WTIMEOUT, 100, int),
+                Parameter(DataBase.SSL, False, bool),
+                Parameter(DataBase.SSL_KEY),
+                Parameter(DataBase.SSL_CERT),
+                Parameter(DataBase.USER),
+                Parameter(DataBase.PWD)))
 
         return result
 
@@ -373,7 +372,9 @@ class Storage(DataBase):
 
         self.data_type = data_type
 
-    def get_elements(self, ids=None, limit=0, skip=0, sort=None, *args, **kwargs):
+    def get_elements(
+        self, ids=None, limit=0, skip=0, sort=None, *args, **kwargs
+    ):
         """
         Get a list of elements where id are input ids
 

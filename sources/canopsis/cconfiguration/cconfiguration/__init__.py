@@ -31,7 +31,7 @@ from os.path import expanduser, exists, sep, abspath
 
 from os import stat
 
-from collections import OrderedDict
+from collections import OrderedDict, Iterable
 
 from inspect import isclass
 
@@ -183,6 +183,19 @@ class Configuration(object):
 
         return category
 
+    def add_unified_category(
+        self, name, copy=False, new_content=None, *args, **kwargs
+    ):
+        """
+        Add a unified category to self and add new_content if not None
+        """
+        category = self.get_unified_category(name=name, copy=copy)
+
+        if new_content is not None:
+            category += new_content
+
+        self += category
+
     def clean(self, *args, **kwargs):
         """
         Clean this params in setting value to None.
@@ -268,6 +281,25 @@ class Category(object):
     def __repr__(self):
 
         return 'Category({0}, {1})'.format(self.name, self.params)
+
+    def __iadd__(self, value):
+
+        if isinstance(value, Category):
+            self += value.params.values()
+
+        elif isinstance(value, Iterable):
+            for content in value:
+                self += content
+
+        elif isinstance(value, Parameter):
+            self.put(value)
+
+        else:
+            raise Exception('Wrong type to add {0} to {1}. \
+Must be a Category, a Parameter or a list of {Parameter, Category}'.format(
+                value, self))
+
+        return self
 
     def setdefault(self, param_name, param, *args, **kwargs):
 
@@ -858,7 +890,7 @@ cconfiguration.manager.ini.ConfigurationManager'
             self.auto_conf = auto_conf_parameter.value
 
         if self.once or self.auto_conf:
-            self._configure(unified_conf, *args, **kwargs)
+            self._configure(unified_conf=unified_conf, *args, **kwargs)
             # when conf succeed, deactive once
             self.once = False
 

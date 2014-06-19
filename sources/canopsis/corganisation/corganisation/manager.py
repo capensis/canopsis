@@ -95,10 +95,10 @@ class Organisation(Manager):
             data_ids=element_ids, data_type=element_type,
             timewindow=timewindow, *args, **kwargs)
 
-    def _init_conf_files(self, conf_files, *args, **kwargs):
+    def _get_conf_files(self, conf_files, *args, **kwargs):
 
-        result = super(Organisation, self)._init_conf_files(
-            conf_files, *args, **kwargs)
+        result = super(Organisation, self)._get_conf_files(
+            conf_files=conf_files, *args, **kwargs)
 
         result.append(Organisation.CONF_FILE)
 

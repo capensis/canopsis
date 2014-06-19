@@ -19,7 +19,7 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from cconfiguration import Configurable, Parameter, Configuration
+from cconfiguration import Configurable, Parameter, Configuration, Category
 from ccommon.utils import resolve_element
 
 
@@ -225,26 +225,30 @@ class Manager(Configurable):
 
         result = super(Manager, self)._conf(*args, **kwargs)
 
-        result.add_unified_category(Manager.CATEGORY,
-            Parameter(Manager.TIMED_STORAGE, self.timed_storage),
-            Parameter(Manager.PERIODIC_STORAGE, self.periodic_storage),
-            Parameter(Manager.STORAGE, self.storage),
-            Parameter(Manager.TYPED_STORAGE, self.typed_storage),
-            Parameter(Manager.TIMED_TYPED_STORAGE, self.timed_typed_storage),
-            Parameter(Manager.SHARED, parser=bool))
+        result.add_unified_category(
+            name=Manager.CATEGORY,
+            new_content=(
+                Parameter(Manager.TIMED_STORAGE, self.timed_storage),
+                Parameter(Manager.PERIODIC_STORAGE, self.periodic_storage),
+                Parameter(Manager.STORAGE, self.storage),
+                Parameter(Manager.TYPED_STORAGE, self.typed_storage),
+                Parameter(Manager.TIMED_TYPED_STORAGE, self.timed_typed_storage),
+                Parameter(Manager.SHARED, parser=bool)))
 
         return result
 
-    def _configure(self, conf, *args, **kwargs):
+    def _configure(self, unified_conf, *args, **kwargs):
 
-        super(Manager, self)._configure(conf=conf, *args, **kwargs)
-
-        values = conf[Configuration.VALUES]
+        super(Manager, self)._configure(
+            unified_conf=unified_conf, *args, **kwargs)
 
         # set shared
-        self._update_parameter(values, Manager.SHARED)
+        self._update_property(unified_conf=unified_conf, param_name=Manager.SHARED)
+
+        values = unified_conf[Configuration.VALUES]
 
         # set all storages
         for parameter in values:
             if parameter.name.endswith(Manager.STORAGE_SUFFIX):
-                self._update_parameter(values, parameter.name)
+                self._update_property(
+                    unified_conf=unified_conf, param_name=parameter.name)

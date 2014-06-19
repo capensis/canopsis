@@ -228,9 +228,11 @@ class PerfData(Manager):
 
         result = super(PerfData, self)._conf(*args, **kwargs)
 
-        result += Category(PerfData.CATEGORY,
-            Parameter(PerfData.CONTEXT),
-            Parameter(PerfData.PERFDATA_STORAGE))
+        result.add_unified_category(
+            name=PerfData.CATEGORY,
+            new_content=(
+                Parameter(PerfData.CONTEXT),
+                Parameter(PerfData.PERFDATA_STORAGE)))
 
         return result
 

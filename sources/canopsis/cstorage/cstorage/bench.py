@@ -89,12 +89,14 @@ class Benchmark(Manager):
 
         result = super(Benchmark, self)._conf(*args, **kwargs)
 
-        result.add_unified_category(Benchmark.CATEGORY,
-            Parameter(Benchmark.STORAGES, self.storages),
-            Parameter(Benchmark.COUNT, self.count, int),
-            Parameter(Benchmark.SIZE, self.size, int),
-            Parameter(Benchmark.TIME, self.time, int),
-            Parameter(Benchmark.SCENARIOS, self.scenarios, str))
+        result.add_unified_category(
+            name=Benchmark.CATEGORY,
+            new_content=(
+                Parameter(Benchmark.STORAGES, self.storages),
+                Parameter(Benchmark.COUNT, self.count, int),
+                Parameter(Benchmark.SIZE, self.size, int),
+                Parameter(Benchmark.TIME, self.time, int),
+                Parameter(Benchmark.SCENARIOS, self.scenarios, str)))
 
         return result
 

@@ -85,9 +85,11 @@ class Synchronizer(Manager):
 
         result = super(Synchronizer, self)._conf(*args, **kwargs)
 
-        result.add_unified_category(Synchronizer.CATEGORY,
-            Parameter(Synchronizer.SOURCE_STORAGE),
-            Parameter(Synchronizer.TARGET_STORAGES))
+        result.add_unified_category(
+            name=Synchronizer.CATEGORY,
+            new_content=(
+                Parameter(Synchronizer.SOURCE_STORAGE),
+                Parameter(Synchronizer.TARGET_STORAGES)))
 
         return result
 

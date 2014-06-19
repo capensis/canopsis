@@ -21,6 +21,7 @@
 
 from cstorage.manager import Manager
 from md5 import new as md5
+from cconfiguration import Parameter
 
 
 class Context(Manager):
@@ -37,6 +38,9 @@ class Context(Manager):
 
     DATA_TYPE = 'context'
 
+    CATEGORY = 'CONTEXT'
+
+    CTX_STORAGE = 'ctx_storage'
     CONTEXT = 'context'
 
     def __init__(self, ctx_storage=None, *args, **kwargs):
@@ -117,6 +121,25 @@ class Context(Manager):
             *args, **kwargs)
 
         result.append(Context.CONF_FILE)
+
+        return result
+
+    def _configure(self, unified_conf, *args, **kwargs):
+
+        super(Context, self)._configure(
+            unified_conf=unified_conf, *args, **kwargs)
+
+        self._update_property(
+            unified_conf=unified_conf, param_name=Context.CTX_STORAGE)
+
+    def _conf(self, unified_conf, *args, **kwargs):
+
+        result = super(Context, self)._conf(
+            unified_conf=unified_conf, *args, **kwargs)
+
+        result.add_unified_category(
+            name=Context.CATEGORY,
+            new_content=Parameter(Context.CTX_STORAGE, self.ctx_storage))
 
         return result
 

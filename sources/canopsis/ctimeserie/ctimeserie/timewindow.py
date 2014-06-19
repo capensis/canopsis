@@ -244,7 +244,7 @@ class Interval(object):
 
     __slots__ = ['sub_intervals']
 
-    _NUMBER = (float, long, int, complex)
+    _NUMBER = (float, int, complex)
 
     def __init__(self, *intervals):
 
