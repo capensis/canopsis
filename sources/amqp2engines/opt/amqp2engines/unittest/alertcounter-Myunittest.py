@@ -65,12 +65,12 @@ class KnownValues(unittest.TestCase):
 
 		# asserts event was not validated
 		self.engine.work(event)
-		assert(self.engine.amqp.events == [])
+		self.assertTrue(self.engine.amqp.events == [])
 
 		# asserts event is being threaten thanks to it s type
 		event['event_type'] = 'check'
 		self.engine.work(event)
-		assert(self.engine.amqp.events != [])
+		self.assertTrue(self.engine.amqp.events != [])
 
 	def test_02_load_macros(self):
 		macro_name = 'TEST_MACRO'
@@ -82,7 +82,7 @@ class KnownValues(unittest.TestCase):
 
 		#effective test
 		self.engine.load_macro()
-		assert(self.engine.MACRO == macro_name)
+		self.assertTrue(self.engine.MACRO == macro_name)
 		self.reset_data()
 
 
@@ -93,29 +93,29 @@ class KnownValues(unittest.TestCase):
 			'referer_event_rks': [{'rk': 'test_rk_1'}]
 		})
 		self.engine.reload_ack_comments()
-		assert(self.engine.comments['test_rk_1'] == 1)
+		self.assertTrue(self.engine.comments['test_rk_1'] == 1)
 
 	def test_05_perfdata_key(self):
 		key = self.engine.perfdata_key({'co': 'co', 're': 're', 'me': 'me'})
-		assert(key == 'coreme')
+		self.assertTrue(key == 'coreme')
 
 		key = self.engine.perfdata_key({'co': 'co', 'me': 'me'})
-		assert(key == 'come')
+		self.assertTrue(key == 'come')
 
 		key = self.engine.perfdata_key({})
-		assert(key == 'missing component or metric key')
+		self.assertTrue(key == 'missing component or metric key')
 		self.reset_data()
 
 
 	def test_06_increment_counter(self):
 		meta = {'co': 'co', 're': 're', 'me': 'me'}
 		self.engine.increment_counter(meta, 1)
-		assert(self.engine.manager.data.pop() == {'meta_data': 'meta_data', 'name':
+		self.assertTrue(self.engine.manager.data.pop() == {'meta_data': 'meta_data', 'name':
 			u'coreme', 'value': 1})
 		self.engine.increment_counter({'co': 'co', 're': 're', 'me': 'me'}, 1)
 		del meta['re']
 		self.engine.increment_counter(meta, 2)
-		assert(self.engine.manager.data.pop() == {'meta_data': 'meta_data', 'name': u'come', 'value': 2})
+		self.assertTrue(self.engine.manager.data.pop() == {'meta_data': 'meta_data', 'name': u'come', 'value': 2})
 		self.reset_data()
 
 	def test_07_update_global_counter(self):
@@ -139,18 +139,18 @@ class KnownValues(unittest.TestCase):
 			self.engine.update_global_counter({'state': state, 'resource': 'resource'})
 			event = self.engine.amqp.events.pop()
 
-			assert(event['state'] == 0)
-			assert(event['connector'] == 'cengine')
-			assert(event['connector_name'] == self.engine.etype)
-			assert(event['source_type'] == 'resource')
-			assert(event['component'] == alertcounter.INTERNAL_COMPONENT)
-			assert(event['resource'] == None)
+			self.assertTrue(event['state'] == 0)
+			self.assertTrue(event['connector'] == 'cengine')
+			self.assertTrue(event['connector_name'] == self.engine.etype)
+			self.assertTrue(event['source_type'] == 'resource')
+			self.assertTrue(event['component'] == alertcounter.INTERNAL_COMPONENT)
+			self.assertTrue(event['resource'] == None)
 			#Let test if they are all generated
 			while self.engine.manager.data:
 				metric = self.engine.manager.data.pop()
-				assert(metric['name'] in truth_table)
+				self.assertTrue(metric['name'] in truth_table)
 				#using state as postition in truth table
-				assert(truth_table[metric['name']][state] == metric['value'])
+				self.assertTrue(truth_table[metric['name']][state] == metric['value'])
 
 		# all statuses : ok, warning, error, unknown
 		for state in xrange(4):
@@ -160,13 +160,13 @@ class KnownValues(unittest.TestCase):
 		self.engine.update_global_counter({'state': state, 'resource': 'resource', 'hostgroups': [host_group]})
 
 		#8 basic metrics + 8 for hostgroup
-		assert(len(self.engine.manager.data) == 16)
+		self.assertTrue(len(self.engine.manager.data) == 16)
 		#reset data
 		self.engine.manager.data = []
 
 		while self.engine.amqp.events:
 			event = self.engine.amqp.events.pop()
-			assert(event['resource'] == host_group)
+			self.assertTrue(event['resource'] == host_group)
 
 		self.reset_data()
 
@@ -187,9 +187,9 @@ class KnownValues(unittest.TestCase):
 			self.engine.count_sla(event,slatype, slaname, delay)
 			while self.engine.manager.data:
 				metric = self.engine.manager.data.pop()
-				assert(metric['name'] in truth_table)
+				self.assertTrue(metric['name'] in truth_table)
 				#using state as postition in truth table
-				assert(truth_table[metric['name']][index] == metric['value'])
+				self.assertTrue(truth_table[metric['name']][index] == metric['value'])
 
 		#Test general cases
 		self.storage.get_backend('entities').remove({'type': 'ack'})
@@ -204,13 +204,13 @@ class KnownValues(unittest.TestCase):
 
 		event ['hostgroups'] = ['hostgroup_test']
 		self.engine.count_sla(event,slatype, slaname, 1)
-		assert(len(self.engine.manager.data) == 6)
+		self.assertTrue(len(self.engine.manager.data) == 6)
 
 		self.reset_data()
 
 		event ['hostgroups'] = ['hostgroup_test']
 		self.engine.count_sla(event,slatype, slaname, 1)
-		assert(len(self.engine.manager.data) == 6)
+		self.assertTrue(len(self.engine.manager.data) == 6)
 
 		self.reset_data()
 
@@ -230,13 +230,13 @@ class KnownValues(unittest.TestCase):
 		self.engine.count_by_crits(event)
 		while self.engine.manager.data:
 			metric = self.engine.manager.data.pop()
-			assert('warn' in metric['name'])
+			self.assertTrue('warn' in metric['name'])
 
 		event['previous_state'] = 2
 		self.engine.count_by_crits(event)
 		while self.engine.manager.data:
 			metric = self.engine.manager.data.pop()
-			assert('crit' in metric['name'])
+			self.assertTrue('crit' in metric['name'])
 
 		#macro is a part of the metric name
 		self.engine.crits['mock_test_macro'] = 1
@@ -244,7 +244,7 @@ class KnownValues(unittest.TestCase):
 		#test update other section
 		for metric in self.engine.manager.data[3:]:
 			metric = self.engine.manager.data.pop()
-			assert('mock_test_macro' in metric['name'])
+			self.assertTrue('mock_test_macro' in metric['name'])
 
 		self.reset_data()
 
