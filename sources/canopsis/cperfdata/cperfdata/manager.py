@@ -25,7 +25,7 @@ from ctimeserie.timewindow import Period, get_offset_timewindow
 
 from cstorage.manager import Manager
 
-from ccontext import Context
+from ccontext.manager import Context
 
 from collections import Iterable
 
@@ -49,14 +49,6 @@ class PerfData(Manager):
 
     DATA_TYPE = 'metric'
 
-    def _get_conf_files(self, *args, **kwargs):
-
-        result = super(PerfData, self)._get_conf_files(*args, **kwargs)
-
-        result.append(PerfData.CONF_FILE)
-
-        return result
-
     def __init__(
         self,
         context=None,
@@ -64,8 +56,9 @@ class PerfData(Manager):
         *args, **kwargs
     ):
 
-        super(Manager, self).__init__(data_type=data_type, *args, **kwargs)
+        super(PerfData, self).__init__(*args, **kwargs)
 
+        self.data_type = data_type
         self.perfdata_storage = perfdata_storage
         self.meta_storage = meta_storage
 
@@ -186,7 +179,7 @@ class PerfData(Manager):
         """
 
         aggregation, period = self.get_period(
-            data_id=metric_id, period=period)
+            metric_id=metric_id, period=period)
 
         self.perfdata_storage.remove(
             data_id=metric_id, period=period, timewindow=timewindow)
@@ -238,5 +231,13 @@ class PerfData(Manager):
         result += Category(PerfData.CATEGORY,
             Parameter(PerfData.CONTEXT),
             Parameter(PerfData.PERFDATA_STORAGE))
+
+        return result
+
+    def _get_conf_files(self, *args, **kwargs):
+
+        result = super(PerfData, self)._get_conf_files(*args, **kwargs)
+
+        result.append(PerfData.CONF_FILE)
 
         return result
