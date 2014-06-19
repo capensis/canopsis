@@ -43,9 +43,7 @@ class PeriodicStorage(Storage, PeriodicStorage):
 
         QUERY = [(DATA_ID, 1), (PERIOD, 1), (TIMESTAMP, 1)]
 
-    def count(
-        self, data_id, period, timewindow=None, *args, **kwargs
-    ):
+    def count(self, data_id, period, timewindow=None, *args, **kwargs):
 
         data = self.get(data_id=data_id,
             timewindow=timewindow, period=period)
