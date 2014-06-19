@@ -361,6 +361,12 @@ class Storage(DataBase):
     ASC = 1  # ASC order
     DESC = -1  # DESC order
 
+    class StorageError(Exception):
+        """
+        Handle Storage errors
+        """
+        pass
+
     def __init__(self, data_type, *args, **kwargs):
 
         super(Storage, self).__init__(*args, **kwargs)
@@ -428,6 +434,62 @@ class Storage(DataBase):
             self._get_storage_type(), self.data_type).upper()
 
         return result
+
+    def copy(self, target, *args, **kwargs):
+        """
+        Copy self content into target storage.
+        target type must implement the same class in cstorage packege as self.
+        If self implements directly cstorage.Storage, we don't care about
+        target type
+
+        :param target: target storage where copy content
+        :type target: same as self or any storage if type(self) is Storage
+        """
+
+        result = 0
+
+        from cstorage.periodic import PeriodicStorage
+        from cstorage.timed import TimedStorage
+        from cstorage.timedtyped import TimedTypedStorage
+        from cstorage.typed import TypedStorage
+
+        storage_types = [
+            PeriodicStorage, TimedStorage, TimedTypedStorage, TypedStorage]
+
+        if not isinstance(self, storage_types):
+            pass
+        else:
+            for storage_type in storage_types:
+                if isinstance(self, storage_types):
+                    if not isinstance(target, storage_types):
+                        raise Storage.StorageError(
+                            'Impossible to copy {0} content into {1}. \
+Storage types must be of the same type.'.format(self, target))
+                    else:
+                        self._copy(target)
+
+            result = -1
+
+        return result
+
+    def _copy(self, target, *args, **kwargs):
+        """
+        Called by Storage.copy(self, target) in order to ensure than target
+        type is the same as self
+        """
+
+        for element in self.get_elements():
+            _id = self._element_id(element)
+            target.put_element(_id=_id, element=element)
+
+        raise NotImplementedError()
+
+    def _element_id(self, element):
+        """
+        Get element id related to self behavior
+        """
+
+        raise NotImplementedError()
 
     def _get_category(self, *args, **kwargs):
         """

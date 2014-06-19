@@ -213,6 +213,10 @@ class Storage(DataBase, Storage):
 
         self._update(_id={'_id': _id}, document={'$set': element}, multi=False)
 
+    def _element_id(self, element):
+
+        return element['_id']
+
     def _get_indexes(self):
         """
         Get collection indexes. Must be overriden.

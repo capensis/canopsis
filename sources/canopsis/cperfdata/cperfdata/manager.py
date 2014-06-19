@@ -34,105 +34,127 @@ from time import time
 DEFAULT_PERIOD = Period(**{Period.HOUR: 24})
 DEFAULT_AGGREGATION = 'MEAN'
 
-DEFAULT_DATA_TYPE = 'metric'
-
 
 class PerfData(Manager):
     """
     Dedicated to access to perfdata (via periodic and timed stores).
     """
 
-    DEFAULT_CONFIGURATION_FILE = '~/etc/perfdata.conf'
+    CONF_FILE = '~/etc/perfdata.conf'
+
+    CATEGORY = 'PERFDATA'
 
     CONTEXT = 'context'
     PERFDATA_STORAGE = 'perfdata_storage'
 
+    DATA_TYPE = 'metric'
+
+    def _get_conf_files(self, *args, **kwargs):
+
+        result = super(PerfData, self)._get_conf_files(*args, **kwargs)
+
+        result.append(PerfData.CONF_FILE)
+
+        return result
+
     def __init__(
-        self, context=None, data_type=DEFAULT_DATA_TYPE,
+        self,
+        context=None,
+        data_type=DATA_TYPE, perfdata_storage=None, meta_storage=None,
         *args, **kwargs
     ):
 
         super(Manager, self).__init__(data_type=data_type, *args, **kwargs)
 
         self.perfdata_storage = perfdata_storage
+        self.meta_storage = meta_storage
 
-        self.context = context
+        self.context = Context() if context is None else context
 
-    def count(self, data_id, aggregation=None, period=None, timewindow=None):
+    def count(self, metric_id, period=None, timewindow=None):
 
-        aggregation, period = self.get_aggregation_and_period(data_id=data_id,
-            aggregation=aggregation, period=period)
+        period = self.get_period(data_id=metric_id, period=period)
 
-        result = self.periodic_store.count(data_id=data_id, aggregation=aggregation,
-            period=period, timewindow=timewindow)
+        result = self.perfdata_storage.count(
+            data_id=metric_id, period=period, timewindow=timewindow)
 
         return result
 
-    def get(self, data_id, with_meta=True, aggregation=None, period=None,
-        timewindow=None, limit=0):
+    def get(
+        self, metric_id, with_meta=True, period=None, timewindow=None,
+        limit=0, skip=0, *args, **kwargs
+    ):
         """
         Get a set of data related to input data_id on the timewindow \
         and input period.
-        If with_meta, result is a couple of (points, list of meta by timestamp).
+        If with_meta, result is a couple of (points, list of meta by timestamp)
         """
 
-        aggregation, period = self.get_aggregation_and_period(data_id=data_id,
-            aggregation=aggregation, period=period)
+        period = self.get_period(data_id=metric_id, period=period)
 
-        result = self.periodic_store.get(data_id=data_id,
-            aggregation=aggregation, period=period, timewindow=timewindow, limit=limit)
+        result = self.periodic_store.get(
+            data_id=metric_id, period=period, timewindow=timewindow,
+            limit=limit, skip=skip)
 
         if with_meta is not None:
 
-            meta = self.timed_store.get(data_id=data_id, timewindow=timewindow)
+            meta = self.meta_storage.get(
+                data_id=metric_id, timewindow=timewindow)
 
             result = result, meta
 
         return result
 
-    def get_point(self, data_id, with_meta=True, aggregation=None, period=None,
-        timestamp=time()):
+    def get_point(
+        self, metric_id, with_meta=True, period=None, timestamp=time(),
+        *args, **kwargs
+    ):
         """
         Get the closest point before input timestamp. Add meta informations \
         if with_meta.
         """
 
-        aggregation, period = self.get_aggregation_and_period(data_id=data_id,
-            aggregation=aggregation, period=period)
+        period = self.get_period(data_id=metric_id, period=period)
 
         timewindow = get_offset_timewindow(timestamp)
 
-        result = self.periodic_store.get(data_id=data_id,
-            aggregation=aggregation, period=period, timewindow=timewindow,
+        result = self.perfdata_storage.get(
+            data_id=metric_id, period=period, timewindow=timewindow,
             limit=1)
 
         if with_meta is not None:
 
-            meta = self.timed_store.get(data_id=data_id, timewindow=timewindow)
+            meta = self.meta_storage.get(
+                data_id=metric_id, timewindow=timewindow)
 
             result = result, meta
 
         return result
 
-    def get_meta(self, data_id, timewindow=None, limit=0, sort=None):
+    def get_meta(
+        self, metric_id, timewindow=None, limit=0, sort=None, *args, **kwargs
+    ):
         """
         Get the meta data related to input data_id and timewindow.
         """
 
         if timewindow is None:
             timewindow = get_offset_timewindow()
-        result = self.timed_store.get(
-            data_id=data_id, timewindow=timewindow, limit=limit, sort=sort)
+
+        result = self.meta_storage.get(
+            data_id=metric_id, timewindow=timewindow, limit=limit, sort=sort)
 
         return result
 
-    def put(self, data_id, points_or_point, meta=None, aggregation=None,
-        period=None):
+    def put(
+        self, metric_id, points_or_point, meta=None, period=None,
+        *args, **kwargs
+    ):
         """
         Put a (list of) couple (timestamp, value), a meta into rated_documents
         related to input period.
-        kwargs will be added to all document in order to extend periodic_documents
-        documents.
+        kwargs will be added to all document in order to extend
+        periodic_documents
         """
 
         # if points_or_point is a point, transform it into a tuple of couple
@@ -140,20 +162,22 @@ class PerfData(Manager):
             if not isinstance(points_or_point[0], Iterable):
                 points_or_point = (points_or_point,)
 
-        aggregation, period = self.get_aggregation_and_period(data_id=data_id,
-            aggregation=aggregation, period=period)
+        period = self.get_period(data_id=metric_id, period=period)
 
-        self.periodic_store.put(data_id=data_id, aggregation=aggregation,
-            period=period, points=points_or_point)
+        self.perfdata_storage.put(
+            data_id=metric_id, period=period, points=points_or_point)
 
         if meta is not None:
 
             min_timestamp = min([point[0] for point in points_or_point])
 
-            self.timed_store.put(data_id=data_id, value=meta, timestamp=min_timestamp)
+            self.meta_storage.put(
+                data_id=metric_id, value=meta, timestamp=min_timestamp)
 
-    def remove(self, data_id, with_meta=False, aggregation=None, period=None,
-        timewindow=None):
+    def remove(
+        self, metric_id, with_meta=False, period=None, timewindow=None,
+        *args, **kwargs
+    ):
         """
         Remove values and meta of one metric.
         meta_names is a list of meta_data to remove. An empty list ensure that
@@ -161,83 +185,49 @@ class PerfData(Manager):
         if meta_names is None, then all meta_names are removed.
         """
 
-        aggregation, period = self.get_aggregation_and_period(data_id=data_id,
-            aggregation=aggregation, period=period)
+        aggregation, period = self.get_period(
+            data_id=metric_id, period=period)
 
-        self.periodic_store.remove(data_id=data_id, aggregation=aggregation,
-            period=period, timewindow=timewindow)
+        self.perfdata_storage.remove(
+            data_id=metric_id, period=period, timewindow=timewindow)
 
         if with_meta:
-            self.timed_store.remove(data_id=data_id, timewindow=timewindow)
+            self.perfdata_storage.remove(
+                data_id=metric_id, timewindow=timewindow)
 
-    def update_meta(self, data_id, meta, timestamp=None):
+    def update_meta(self, metric_id, meta, timestamp=None, *args, **kwargs):
         """
         Update meta information.
         """
 
-        self.timed_store.put(data_id=data_id, value=meta, timestamp=timestamp)
+        self.perfdata_storage.put(
+            data_id=metric_id, value=meta, timestamp=timestamp)
 
-    def remove_meta(self, data_id, timewindow=None):
+    def remove_meta(self, metric_id, timewindow=None, *args, **kwargs):
         """
         Remove meta information.
         """
 
-        self.timed_store.remove(data_id=data_id, timewindow=timewindow)
+        self.perfdata_storage.remove(data_id=metric_id, timewindow=timewindow)
 
-    def get_entity(self, data_id):
+    def get_period(self, metric_id, aggregation=None, period=None):
         """
-        Get entity related to input data_id.
-
-        TODO: ensure the access is provided by a referential API instead of MONGODB
-        """
-
-        result = None
-
-        query = {
-            'nodeid': data_id,
-            'type': self.data_type
-        }
-
-        cursor = self.entities.find(query)
-        cursor.hint([('type', 1), ('nodeid', 1)])
-
-        try:
-            result = cursor[0]
-        except IndexError:
-            pass
-
-        return result
-
-    def get_aggregation_and_period(self, data_id, aggregation=None, period=None):
-        """
-        Get default aggregation and period related to input data_id.
-        (DEFAULT_AGGREGATION, DEFAULT_PERIOD) if related entity does not exist or
-        does not contain a default aggregation or period.
+        Get default period related to input metric_id.
+        DEFAULT_PERIOD if related entity does not exist or does not contain
+        a default period.
         """
 
-        result = aggregation, period
+        result = period
 
-        if None in result:
+        if result is None:
 
-            if aggregation is None:
-                aggregation = DEFAULT_AGGREGATION
+            result = DEFAULT_PERIOD
 
-            if period is None:
-                period = DEFAULT_PERIOD
+            entity = self.context.get(
+                element_id=metric_id, element_type=PerfData.DATA_TYPE)
 
-            entity = self.get_entity(data_id=data_id)
-
-            if entity is not None:
-                if result[0] is None:
-                    result = entity.get('aggregation', DEFAULT_AGGREGATION), result[1]
-
-                if result[1] is None:
-                    result = result[0], entity.get('period', DEFAULT_PERIOD)
-
-            else:
-                result = (
-                    aggregation if aggregation is not None else DEFAULT_AGGREGATION,
-                    period if period is not None else DEFAULT_PERIOD)
+            result = DEFAULT_PERIOD if entity is None else entity.get(
+                'period', DEFAULT_PERIOD)
 
         return result
 
@@ -245,10 +235,8 @@ class PerfData(Manager):
 
         result = super(PerfData, self)._conf(*args, **kwargs)
 
-        category = self._get_category()
-
-        result += Category(category,
-            Parameter(Perfdata.CONTEXT),
-            Parameter(Perfdata.PERFDATA_STORAGE))
+        result += Category(PerfData.CATEGORY,
+            Parameter(PerfData.CONTEXT),
+            Parameter(PerfData.PERFDATA_STORAGE))
 
         return result

@@ -29,17 +29,23 @@ class ManagerTest(TestCase):
     def setUp(self):
         self.timed_storage = 'cstorage.timed.TimedStorage'
         self.periodic_storage = 'cstorage.periodic.PeriodicStorage'
-        self.last_value_storage = 'cstorage.last_value.LastValueStorage'
+        self.storage = 'cstorage.Storage'
+        self.timed_typed_storage = 'cstorage.timedtyped.TimedTypedStorage'
+        self.typed_storage = 'cstorage.typed.TypedStorage'
 
         self.storage_names = [
             'timed_storage',
             'periodic_storage',
-            'last_value_storage']
+            'storage',
+            'typed_storage',
+            'timed_typed_storage']
 
         self.manager = Manager(
             timed_storage=self.timed_storage,
             periodic_storage=self.periodic_storage,
-            last_value_storage=self.last_value_storage)
+            storage=self.storage,
+            typed_storage=self.typed_storage,
+            timed_typed_storage=self.timed_typed_storage)
         self.data_types = ['data_type_0', 'data_type_1']
 
     def test_get_storage(self):

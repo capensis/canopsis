@@ -29,18 +29,21 @@ class Manager(Configurable):
 
     TIMED_STORAGE = 'timed_storage'
     PERIODIC_STORAGE = 'periodic_storage'
-    LAST_VALUE_STORAGE = 'last_value_storage'
+    STORAGE = 'storage'
+    TYPED_STORAGE = 'typed_storage'
+    TIMED_TYPED_STORAGE = 'timed_typed_storage'
     SHARED = 'shared'
 
     CATEGORY = 'MANAGER'
 
-    STORAGE_SUFFIX = '_storage'
+    STORAGE_SUFFIX = 'storage'
 
     _STORAGE_BY_DATA_TYPE_BY_TYPE = dict()
 
     def __init__(
         self, shared=True,
-        last_value_storage=None, timed_storage=None, periodic_storage=None,
+        storage=None, timed_storage=None, periodic_storage=None,
+        typed_storage=None, timed_typed_storage=None,
         *args, **kwargs
     ):
 
@@ -50,7 +53,9 @@ class Manager(Configurable):
 
         self.periodic_storage = periodic_storage
         self.timed_storage = timed_storage
-        self.last_value_storage = last_value_storage
+        self.storage = storage
+        self.typed_storage = typed_storage
+        self.timed_typed_storage = timed_typed_storage
 
     @property
     def shared(self):
@@ -77,15 +82,31 @@ class Manager(Configurable):
         self._timed_storage = value
 
     @property
-    def last_value_storage(self):
-        return self._last_value_storage
+    def storage(self):
+        return self._storage
 
-    @last_value_storage.setter
-    def last_value_storage(self, value):
-        self._last_value_storage = value
+    @storage.setter
+    def storage(self, value):
+        self._storage = value
+
+    @property
+    def typed_storage(self):
+        return self._typed_storage
+
+    @typed_storage.setter
+    def typed_storage(self, value):
+        self._typed_storage = value
+
+    @property
+    def timed_typed_storage(self):
+        return self._timed_typed_storage
+
+    @timed_typed_storage.setter
+    def timed_typed_storage(self, value):
+        self._timed_typed_storage = value
 
     def get_storage(
-        self, data_type, storage_type, shared=None, *args, **kwargs
+        self, data_type, storage_type=None, shared=None, *args, **kwargs
     ):
         """
         Load a storage related to input data type and storage type.
@@ -108,6 +129,9 @@ class Manager(Configurable):
         """
 
         result = None
+
+        if storage_type is None:
+            storage_type = self.storage
 
         if shared is None:
             shared = self.shared
@@ -163,16 +187,29 @@ class Manager(Configurable):
 
         return result
 
-    def get_last_value_storage(
-        self, data_type, last_value_type=None, shared=None,
+    def get_typed_storage(
+        self, data_type, typed_type=None, shared=None,
         *args, **kwargs
     ):
 
-        if last_value_type is None:
-            last_value_type = self.last_value_storage
+        if typed_type is None:
+            typed_type = self.typed_storage
 
         result = self.get_storage(data_type=data_type, shared=shared,
-            storage_type=last_value_type, *args, **kwargs)
+            storage_type=typed_type, *args, **kwargs)
+
+        return result
+
+    def get_timed_typed_storage(
+        self, data_type, timed_typed_type=None, shared=None,
+        *args, **kwargs
+    ):
+
+        if timed_typed_type is None:
+            timed_typed_type = self.timed_typed_storage
+
+        result = self.get_storage(data_type=data_type, shared=shared,
+            storage_type=timed_typed_type, *args, **kwargs)
 
         return result
 
@@ -189,9 +226,11 @@ class Manager(Configurable):
         result = super(Manager, self)._conf(*args, **kwargs)
 
         result.add_unified_category(Manager.CATEGORY,
-            Parameter(Manager.TIMED_STORAGE),
-            Parameter(Manager.PERIODIC_STORAGE),
-            Parameter(Manager.LAST_VALUE_STORAGE),
+            Parameter(Manager.TIMED_STORAGE, self.timed_storage),
+            Parameter(Manager.PERIODIC_STORAGE, self.periodic_storage),
+            Parameter(Manager.STORAGE, self.storage),
+            Parameter(Manager.TYPED_STORAGE, self.typed_storage),
+            Parameter(Manager.TIMED_TYPED_STORAGE, self.timed_typed_storage),
             Parameter(Manager.SHARED, parser=bool))
 
         return result

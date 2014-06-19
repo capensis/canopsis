@@ -20,19 +20,96 @@
 # ---------------------------------
 
 from cstorage.manager import Manager
-
-DEFAULT_TABLE = 'ccontext'
+from md5 import new as md5
 
 
 class Context(Manager):
     """
-    Manage access to ccontext (connector, component, resource) entities
-    and ccontext data (metric, downtime, etc.) related to ccontext entities.
+    Manage access to a context (connector, component, resource) elements
+    and context data (metric, downtime, etc.)
+
+    For example, in following entities:
+        - component: data_id is component_id and data_type is component
+        - connector: data_id
     """
 
     CONF_FILE = '~/etc/context.conf'
 
-    CONTEXT = 'ccontext'
+    DATA_TYPE = 'context'
+
+    CONTEXT = 'context'
+
+    def __init__(self, ctx_storage=None, *args, **kwargs):
+
+        super(Context, self).__init__(self, *args, **kwargs)
+
+        self.ctx_storage = ctx_storage
+
+    @property
+    def ctx_storage(self):
+        return self._ctx_storage
+
+    @ctx_storage.setter
+    def ctx_storage(self, value):
+        self._ctx_storage = value
+        if value is not None:
+            self._ctx = self.get_timed_typed_storage(
+                data_type=Context.DATA_TYPE)
+
+    def get(
+        self,
+        element_type,
+        connector=None, connector_type=None, component=None, resource=None,
+        other=None,
+        element_ids=None, timewindow=None,
+        *args, **kwargs
+    ):
+        """
+        Get all elements which have a element_id among input element_ids, or
+        type equals to element_type or inside timewindow if specified
+        """
+
+        if element_ids is None:
+            element_id = Context.get_element_id(
+                connector, connector_type, component, resource, other)
+            element_ids = [element_id]
+
+        return self._ctx.get(
+            data_ids=element_ids, data_type=element_type,
+            timewindow=timewindow, *args, **kwargs)
+
+    def get_by_name(
+        self,
+        element_type, name=None, *args, **kwargs
+    ):
+
+        return self.get(element_id=name, element_type=element_type)
+
+    def put(
+        self, element_id, element_type, element, timestamp=None,
+        *args, **kwargs
+    ):
+        """
+        Put an element designated by the element_id, element_type and element.
+        If timestamp is None, time.now is used.
+        """
+
+        return self._ctx.put(
+            data_id=element_id, data_type=element_type, data=element,
+            timestamp=timestamp, *args, **kwargs)
+
+    def remove(
+        self, element_ids=None, element_type=None, timewindow=None,
+        *args, **kwargs
+    ):
+        """
+        Remove a set of elements identified by element_ids, an element type or
+        a timewindow
+        """
+
+        return self._ctx.remove(
+            data_ids=element_ids, data_type=element_type,
+            timewindow=timewindow, *args, **kwargs)
 
     def _init_conf_files(self, conf_files, *args, **kwargs):
 
@@ -43,8 +120,23 @@ class Context(Manager):
 
         return result
 
-    def get_element(self, id, )
+    @staticmethod
+    def get_element_id(*context_elements):
+        """
+        Get element id from information context
+        """
 
-    def _get_timed_types(self):
+        md5_result = md5()
 
-        return [Manager.CONTEXT]
+        # remove None values from context_elements
+        context_elements = [ce for ce in context_elements if ce is not None]
+
+        for context_element in context_elements:
+            if context_element is None:
+                break
+            md5_result.update(context_element.encode('ascii', 'ignore'))
+
+        # resolve md5
+        result = md5_result.hexdigest()
+
+        return result
