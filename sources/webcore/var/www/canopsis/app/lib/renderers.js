@@ -16,20 +16,95 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 */
-function rdr_tstodate(val) {
+
+function translateDate(date){
+	var daysLong = {
+		'Monday' : 'Lundi',
+		'Tuesday' : 'Mardi',
+		'Wednesday' : 'Mercredi',
+		'Thursday' : 'Jeudi',
+		'Friday' : 'Vendredi',
+		'Saturday' : 'Samedi',
+		'Sunday' : 'Dimanche',
+
+	};
+	var daysShort = {
+		'Mon' : 'Lun',
+		'Tue' : 'Mar',
+		'Wed' : 'Mer',
+		'Thu' : 'Jeu',
+		'Fri' : 'Ven',
+		'Sat' : 'Sam',
+		'Sun' : 'Dim',
+
+	};
+	var monthsLong = {
+		'January': 'Janvier',
+		'February': 'Fevrier',
+		'March': 'Mars',
+		'April': 'Avril',
+		'May': 'Mai',
+		'June': 'Juin',
+		'July': 'Juillet',
+		'August': 'Aout',
+		'September': 'Septembre',
+		'October': 'Octobre',
+		'November': 'Novembre',
+		'December': 'Decembre',
+	};
+	var monthsShort = {
+		'Jan': 'Jan',
+		'Feb': 'Fev',
+		'Mar': 'Mar',
+		'Apr': 'Avr',
+		'May': 'Mai',
+		'Jun': 'Jui',
+		'Jul': 'Jui',
+		'Aug': 'Aou',
+		'Sep': 'Sep',
+		'Oct': 'Oct',
+		'Nov': 'Nov',
+		'Dec': 'Dec',
+	};
+
+	if(Ext.util.Cookies.get('locale') === 'fr'){
+		date = date.toLowerCase();
+		dateDicts = [daysLong, daysShort, monthsLong, monthsShort];
+		for (var position in dateDicts) {
+			dateDict = dateDicts[position];
+			for(var dateToken in dateDict) {
+				if (date.indexOf(dateToken.toLowerCase()) !== -1) {
+					date = date.replace(dateToken.toLowerCase(), dateDict[dateToken]);
+				}
+			}
+		}
+	}
+
+	return date;
+}
+
+function rdr_tstodate(val, custom_format) {
+
+	var format = is12Clock() ? 'Y-m-d h:i:s a' : 'Y-m-d H:i:s';
+	var returnDate = '';
+
+	if (custom_format !== undefined && typeof(custom_format) == 'string') {
+		format = custom_format;
+	}
+
 	if(val) {
 		var dval = new Date(parseInt(val) * 1000);
 
 		if(is12Clock()) {
-			return Ext.Date.format(dval, 'Y-m-d h:i:s a');
+			returnDate = Ext.Date.format(dval, format);
 		}
 		else {
-			return Ext.Date.format(dval, 'Y-m-d H:i:s');
+			returnDate = Ext.Date.format(dval, format);
 		}
 	}
-	else {
-		return '';
-	}
+
+	return translateDate(returnDate);
+
 }
 
 function rdr_utcToLocal(val) {
@@ -161,11 +236,33 @@ function rdr_task_crontab(val) {
 		}
 
 		if(val.month !== undefined && val.day !== undefined) {
-			output += '   |    ' + _('month') + ' : ' + global.numberToMonth[val.month] + ' |  day : ' + val.day;
+			output += '   |    ' + _('month') + ' : ' + global.numberToMonth[val.month] + ' |  day : ' + (""+val.day);
 		}
 
 		if(val.day_of_week !== undefined) {
-			output += '   |   ' + _('day') + ' : ' + _(val.day_of_week);
+
+			function rdr_get_day_of_week(day_of_week) {
+				switch(day_of_week) {
+					case 0:
+						return "Monday";
+					case 1:
+						return "Tuesday";
+					case 2:
+						return "Wednesday";
+					case 3:
+						return "Thursday";
+					case 4:
+						return "Friday";
+					case 5:
+						return "Saturday";
+					case 6:
+						return "Sunday";
+					default:
+						return day_of_week;
+				}
+			}
+
+			output += '   |   ' + _('day') + ' : ' + _(rdr_get_day_of_week(val.day_of_week));
 		}
 	}
 

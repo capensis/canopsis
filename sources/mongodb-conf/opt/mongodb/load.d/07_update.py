@@ -22,6 +22,7 @@ import logging, math
 from cstorage import get_storage
 from caccount import caccount
 from datetime import timedelta
+import time
 
 logger = None
 root = caccount(user="root", group="root")
@@ -36,7 +37,11 @@ def update():
 
 def update_schedule():
 
-	records = storage.find({'crecord_type': 'schedule'}, namespace='object', account=root)
+	records = storage.find(
+		{'crecord_type': 'schedule'},
+		namespace='object',
+		account=root)
+
 	for record in records:
 		kwargs = record.data['kwargs']
 		cron = record.data['cron']
@@ -73,9 +78,6 @@ def update_schedule():
 		if 'starttime' in kwargs:
 			del kwargs['starttime']
 
-		#if 'hour' in cron and 'minute':
-		#	record.data['crontab_hours'] = '%i:%02d' % (int(cron['hour']),int(cron['minute']))
-
 		if 'day_of_week' in cron:
 			record.data['crontab_day_of_week'] = cron['day_of_week']
 
@@ -89,23 +91,56 @@ def update_schedule():
 			record.data['frequency'] = record.data['every']
 			del record.data['every']
 
-		if 'interval' in kwargs and kwargs['interval']:
-			nbDays = timedelta(seconds=kwargs['interval']).days
+		exporting = {
+			"type": "duration",
+			"unit": "day",
+			"length": 1
+		}
+
+		exporting.update(
+			record.data.get('exporting', dict()))
+
+		if 'interval' in kwargs and kwargs['interval'] is not None:
+			nbDays = timedelta(seconds=int(kwargs['interval'])).days
+
+			exporting['enable'] = True
+
+			del kwargs['interval']
 
 			if nbDays >= 365:
-				record.data['exporting_intervalLength'] = 31557600
-				record.data['exporting_intervalUnit'] = int(nbDays/365)
+				exporting['unit'] = 'years'
+				exporting['length'] = int(nbDays/365)
 			elif nbDays >= 30:
-				record.data['exporting_intervalLength'] = 2629800
-				record.data['exporting_intervalUnit'] = int(nbDays/30)
+				exporting['unit'] = 'months'
+				exporting['length'] = int(nbDays/30)
 			elif nbDays >= 7:
-				record.data['exporting_intervalLength'] = 604800
-				record.data['exporting_intervalUnit'] = int(nbDays/7)
+				exporting['unit'] = 'weeks'
+				exporting['length'] = int(nbDays/7)
+			elif nbDays >= 1:
+				exporting['unit'] = 'days'
+				exporting['length'] = math.floor(nbDays)
 			else:
-				record.data['exporting_intervalLength'] = 86400
-				record.data['exporting_intervalUnit'] = math.floor(nbDays)
+				exporting['unit'] = 'hours'
+				exporting['length'] = math.floor(nbDays)
 
-			record.data['exporting_interval'] = True
+		if 'interval' in kwargs :
+			del kwargs['interval']
+
+		if "exporting_intervalUnit" in kwargs and "exporting_intervalLength" in kwargs:
+			exporting.update({
+				"type": kwargs.get("exporting_advanced", "duration"),
+				"length": kwargs['exporting_intervalLength'],
+				"unit": kwargs['exporting_intervalUnit']
+			})
+
+			del kwargs['exporting_intervalLength']
+			del kwargs['exporting_intervalUnit']
+			if 'exporting_advanced' in kwargs:
+				del kwargs['exporting_advanced']
+
+		kwargs['exporting'] = exporting
+		record.data['exporting'] = exporting
 
 		record.data['kwargs'] = kwargs
+
 		storage.put(record)

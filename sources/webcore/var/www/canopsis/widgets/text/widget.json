@@ -59,6 +59,24 @@
 								]
 							}
 						}
+					},{
+						"xtype": "combobox",
+						"name": "date_format",
+						"fieldLabel": "Date format",
+						"queryMode": "local",
+						"displayField": "text",
+						"valueField": "value",
+						"value": null,
+						"store": {
+							"xtype": "store",
+							"fields": ["value", "text"],
+							"data" : [
+								{"value": "Y-m-D", "text": "Y-m-D --> 2014-04-12"},
+								{"value": "D-m-Y", "text": "D-m-Y --> 12-04-2014"},
+								{"value": "D-m-Y H:i:s", "text": "D-m-Y H:i:s -> 12-04-2014 12:14:05"},
+								{"value": "D/m/Y H:i:s", "text": "D/m/Y H:i:s -> 12/04/2014 12:14:05"}
+							]
+						}
 					}
 				]
 			}

@@ -94,20 +94,20 @@ class Wrapper(object):
 				'http://127.0.0.1:8082/%s/static/canopsis/index.html?exportMode=true&view_id=%s&from=%s&to=%s&authkey=%s'\
 				'%s/%s' 2>&1 | grep -v\
 				'settings.windowStatus:ready'" % (
-													self.settings['orientation'], 
-													self.settings['pagesize'], 
-													opts, 
-													self.settings['header'], 
-													self.settings['footer'], 
-													self.settings['windowstatus'], 
-													self.settings['account'].data.get('locale', 'en'),
-													self.settings['viewName'],
-													export_from,
-													self.settings.get('stopTime', int(time())),
-													self.settings['account'].get_authkey(),
-													self.settings['report_dir'], 
-													self.settings['filename']
-													)
+					self.settings['orientation'], 
+					self.settings['pagesize'], 
+					opts, 
+					self.settings['header'], 
+					self.settings['footer'], 
+					self.settings['windowstatus'], 
+					self.settings['account'].data.get('locale', 'en'),
+					self.settings['viewName'],
+					export_from,
+					self.settings.get('stopTime', int(time())),
+					self.settings['account'].get_authkey(),
+					self.settings['report_dir'], 
+					self.settings['filename']
+					)
 
 		self.logger.debug('wkhtmltopdf will be launched with the following command:')
 		self.logger.debug(cmd)
@@ -120,4 +120,5 @@ class Wrapper(object):
 			waitTime = waitTime + 2
 			if waitTime >= self.settings.get('timeout',300):
 				result.kill()
+				self.logger.debug('Process failed')
 		self.logger.debug('Pdf rendered, leaving wrapper')

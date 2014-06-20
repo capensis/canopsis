@@ -52,7 +52,7 @@ ctype_to_group_access = {
 @get('/rest/media/:namespace/:_id')
 def rest_get_media(namespace, _id):
 	account = get_account()
-	storage = get_storage(namespace=namespace)
+	storage = get_storage(namespace=namespace, logging_level=logger.level)
 
 	logger.debug("Get media '%s' from '%s':" % (_id, namespace))
 
@@ -150,7 +150,7 @@ def rest_get(namespace, ctype=None, _id=None):
 	logger.debug(" + filter: "+str(filter))
 	logger.debug(" + query: "+str(query))
 
-	storage = get_storage(namespace=namespace)
+	storage = get_storage(namespace=namespace, logging_level=logger.level)
 
 	total = 0
 
@@ -252,7 +252,7 @@ def rest_get(namespace, ctype=None, _id=None):
 def rest_post(namespace, ctype, _id=None):
 	#get the session (security)
 	account = get_account()
-	storage = get_storage(namespace=namespace)
+	storage = get_storage(namespace=namespace, logging_level=logger.level)
 
 	#check rights on specific ctype (check ctype_to_group_access variable below)
 	if ctype in ctype_to_group_access:
@@ -360,7 +360,7 @@ def rest_post(namespace, ctype, _id=None):
 def rest_put(namespace, ctype, _id=None):
 	#get the session (security)
 	account = get_account()
-	storage = get_storage(namespace=namespace)
+	storage = get_storage(namespace=namespace, logging_level=logger.level)
 
 	#check rights on specific ctype (check ctype_to_group_access variable below)
 	if ctype in ctype_to_group_access:
@@ -422,7 +422,7 @@ def rest_put(namespace, ctype, _id=None):
 @delete('/rest/:namespace/:ctype')
 def rest_delete(namespace, ctype, _id=None):
 	account = get_account()
-	storage = get_storage(namespace=namespace)
+	storage = get_storage(namespace=namespace, logging_level=logger.level)
 
 	logger.debug("DELETE:")
 

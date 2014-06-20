@@ -19,7 +19,7 @@
 # ---------------------------------
 import logging
 logger = logging.getLogger('utils')
-logger.setLevel(logging.DEBUG)
+logger.setLevel(logging.INFO)
 
 import zlib
 import time
@@ -80,9 +80,10 @@ intervalToRelativeDelta = {
 }
 
 #### Utils fn
-def datetimeToTimestamp(_date):
+def datetimeToTimestamp(_date=None):
+	if _date is None:
+		_date = datetime.now()
 	return time.mktime(_date.timetuple())
-	return calendar.timegm(_date.timetuple())
 
 def is_in_interval(point, interval):
 	result = point >= interval[0] and point <= interval[1]
@@ -223,7 +224,7 @@ def parse_dst(points, dtype, first_point=[]):
 							value = 0
 				
 				## Derive
-				if previous_timestamp and dtype == "DERIVE":	
+				if previous_timestamp and dtype == "DERIVE":
 					interval = abs(timestamp - previous_timestamp)
 					if interval:
 						value = round(float(value) / interval, 3)
@@ -281,9 +282,9 @@ def _roundtime(utcdate, periodtime=1, periodtype=T_HOUR, timezone=time.timezone)
 				week = weeks[index]
 				if result.day in week:
 					result = result.replace(day=week[0] if week[0] != 0 else 1)
-					break			
+					break
 		elif periodtype == T_MONTH:
-			result = result.replace(second=0, minute=0, hour=0, day=1)			
+			result = result.replace(second=0, minute=0, hour=0, day=1)
 		elif periodtype == T_YEAR:
 			result = result.replace(second=0, minute=0, hour=0, day=1, month=1)
 

@@ -214,7 +214,7 @@ Ext.define('widgets.perftop.perftop' , {
 					width: 130,
 					dataIndex: 'lts',
 					align: 'center',
-					renderer: rdr_tstodate
+					renderer: function(data) { return rdr_tstodate(data); }
 				});
 			}
 

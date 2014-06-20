@@ -19,31 +19,31 @@
 # ---------------------------------
 
 import os, sys, json, logging, time
-import hashlib
+import hashlib, gridfs, traceback
 from datetime import datetime
 
 from pyperfstore2.store import store
 import pyperfstore2.utils as utils
 
 class manager(object):
-	def __init__(self, retention=0, dca_min_length = 250, logging_level=logging.INFO, cache=True, **kwargs):
+	def __init__(self, retention=0, dca_min_length=250, logging_level=logging.INFO, cache=True, **kwargs):
 		self.logger = logging.getLogger('manager')
 		self.logger.setLevel(logging_level)
 
 		# Store
-		self.store = store(logging_level=logging_level, **kwargs)
-		
+		self.store = store(logging_level=self.logger.level, **kwargs)
+
 		self.dca_min_length = dca_min_length
-		
+
 		# Seconds
 		self.retention = retention
-		
+
 		# Cache
 		self.cache = cache
 		self.cache_max_size = 5000
 		self.cache_size = 0
 		self.md5_cache = {}
-		
+
 		self.fields_map = {
 				'retention':	('r', self.retention),
 				'type':			('t', 'GAUGE'),
@@ -53,14 +53,14 @@ class manager(object):
 				'thd_warn':		('tw', None),
 				'thd_crit':		('tc', None)
 		}
-				
+
 	def gen_id(self, name):
 		return hashlib.md5(name).hexdigest()
-		
+
 	def get_id(self, _id=None, name=None):
 		if not _id and not name:
 			raise Exception('Invalid args')
-		
+
 		if not _id:
 			if self.cache:
 				if self.cache_size <= self.cache_max_size:
@@ -69,12 +69,12 @@ class manager(object):
 						_id = self.gen_id(name)
 						self.md5_cache[name] = _id
 						self.cache_size += 1
-		
+
 		if not _id:
 			_id = self.gen_id(name)
-			
+
 		return _id
-		
+
 	def get_data(self, _id):
 		data = self.store.redis.lrange(_id, 0, -1)
 		def cleanPoint(p):
@@ -90,20 +90,19 @@ class manager(object):
 
 	def get_meta(self, _id=None, name=None, raw=False, mfields=None):
 		_id = self.get_id(_id, name)
-		
 		meta_data = self.store.get(_id, mfields=mfields)
 		if not meta_data:
 			return None
 
 		if not mfields or mfields.get('d', False):
 			meta_data['d'] = self.get_data(_id)
-		
+
 		# Uncompress fields name
 		if not raw:
 			meta_data = self.uncompress_meta_fields(meta_data)
-		
+
 		return meta_data
-		
+
 	def uncompress_meta_fields(self, meta_data):
 		for field in self.fields_map:
 			value = meta_data.get(self.fields_map[field][0], self.fields_map[field][1])
@@ -112,15 +111,15 @@ class manager(object):
 				del meta_data[self.fields_map[field][0]]
 			except:
 				pass
-				
+
 		return meta_data
-	
+
 	def compress_meta_fields(self, meta_data):
 		# Compress fields name
 		def set_meta(meta, field, new_field, default):
 			# Check if field is already compressed
 			data = meta.get(new_field, None)
-			
+
 			if data != None:
 				return meta
 			else:
@@ -135,23 +134,23 @@ class manager(object):
 
 		for field in self.fields_map:
 			meta_data = set_meta(meta_data, field, self.fields_map[field][0], self.fields_map[field][1])
-			
+
 		return meta_data
 
 	def push(self, value, _id=None, name=None, timestamp=None, meta_data={}):
 		_id = self.get_id(_id, name)
-						
+
 		if not timestamp:
 			timestamp = int(time.time())
-			
+
 		point = (timestamp, value)
-		
+
 		meta_data = meta_data.copy()
-		
+
 		if meta_data:
 			meta_data = self.compress_meta_fields(meta_data)
 		self.store.push(_id=_id, point=point, meta_data=meta_data)
-		
+
 	def find(self, _id=None, name=None, mfilter=None, limit=0, skip=0, data=True, sort=None):
 		mfields = None
 		if _id or name:
@@ -164,12 +163,12 @@ class manager(object):
 		else:
 			if not mfilter:
 				mfilter = {}
-		
+
 		if not data:
 			mfields = { 'd': 0 }
-		
+
 		return self.store.find(mfilter=mfilter, limit=limit, skip=skip, mfields=mfields, sort=sort)
-		
+
 	def get_points(self, _id=None, name=None, tstart=None, tstop=None, raw=False, return_meta=False, add_prev_point=False, add_next_point=False):
 		_id = self.get_id(_id, name)
 		if tstop == None:
@@ -178,25 +177,25 @@ class manager(object):
 			tstart = tstop
 		self.logger.debug("Get points: %s (%s -> %s)" % (_id, datetime.utcfromtimestamp(tstart), datetime.utcfromtimestamp(tstop)))
 		points = []
-		
+
 		dca = self.get_meta(_id=_id)
 		if not dca :
 			raise Exception('Invalid _id, not found %s' % _id)
-		
+
 		plain_fts = None
 		plain_lts = None
-		
+
 		if dca.get('d', False):
 			plain_fts = dca['d'][0][0]
 			plain_lts = dca['d'][-1][0]
 		self.logger.debug(" + plain_fts: %s" % plain_fts)
 		self.logger.debug(" + plain_lts: %s" % plain_lts)
-		
+
 		## Check Compressed DCA
 		if not plain_fts or tstart < plain_fts:
 			self.logger.debug(" + Search in compressed DCA")
 			bin_ids = []
-			
+
 			for bin_meta in dca.get('c', []):
 				fts = bin_meta[0]
 				lts = bin_meta[1]
@@ -212,7 +211,7 @@ class manager(object):
 				data = self.store.get_bin(_id=bin_id)
 				if data is not None:
 					points += utils.uncompress(data)
-					
+
 		## Check Plain DCA
 		self.logger.debug(" + Search in plain DCA")
 		if plain_fts and plain_lts:
@@ -227,14 +226,14 @@ class manager(object):
 				self.logger.debug("   + Append")
 		## Drop data of meta
 		del dca['d']
-		
+
 		self.logger.debug(" + len(points):  %s" % len(points))
-		
+
 		## Sort and Split Points
 		points = sorted(points, key=lambda point: point[0])
 		if add_prev_point or add_next_point:
 			self.logger.debug("Find previous and next points")
-			
+
 			prev_index = None
 			next_index = None
 			rpoints = []
@@ -242,17 +241,17 @@ class manager(object):
 			for point in points:
 				if point[0] >= tstart and point[0] <= tstop:
 					rpoints.append(point)
-	
+
 				if not prev_index and point[0] >= tstart:
 					prev_index = i - 1
-	
+
 				i+=1
-				
+
 				if point[0] > tstop:
 					break
-					
+
 			next_index = i-1
-			
+
 			# If tstop > last point
 			if add_prev_point and prev_index == None and next_index != None and next_index < len(points):
 				prev_index  = next_index
@@ -260,7 +259,7 @@ class manager(object):
 			self.logger.debug(" + len(rpoints): %s" % len(rpoints))
 			self.logger.debug(" + prev_index:   %s" % prev_index)
 			self.logger.debug(" + next_index:   %s" % next_index)
-			
+
 			# Add points
 			if add_prev_point and prev_index != None and prev_index >= 0:
 				self.logger.debug("   + Add prev")
@@ -282,7 +281,7 @@ class manager(object):
 				return points
 			else:
 				return (dca, points)
-			
+
 		#parse_dst
 		dtype = dca.get('type', None)
 		if dtype:
@@ -292,33 +291,33 @@ class manager(object):
 			return points
 		else:
 			return (dca, points)
-	
+
 	def get_last_point(self, *args, **kargs):
 		return self.get_point(*args, ts=None, **kargs)
-	
+
 	def get_point(self, _id=None, ts=None, name=None, return_meta=False):
 		_id = self.get_id(_id, name)
-		
+
 		meta = None
 		point = None
-		
+
 		if not ts:
 			dca = self.get_meta(_id=_id)
 			points = dca.get('d', [])
 		else:
-			(meta, points) = self.get_points(_id=_id, tstart=ts, tstop=ts, add_prev_point=True, return_meta=True)	
-		
+			(meta, points) = self.get_points(_id=_id, tstart=ts, tstop=ts, add_prev_point=True, return_meta=True)
+
 		if len(points):
 			point = points.pop()
-			
+
 		if not meta and return_meta:
 			meta = self.get_meta(_id=_id)
-			
+
 		if return_meta:
 			return (meta, point)
 		else:
 			return point
-	
+
 	def rotateAll(self, concurrency=1):
 		t = time.time()
 
@@ -334,11 +333,11 @@ class manager(object):
 			keys.remove("perfstore2:rotate:plan")
 		except:
 			pass
-			
+
 		self.logger.info(" + Check length (%s keys)" % len(keys))
 		for key in keys:
 			self.store.redis_pipe.llen(key)
-	
+
 		result = self.store.redis_pipe.execute()
 
 		for index, key in enumerate(keys):
@@ -360,14 +359,14 @@ class manager(object):
 
 		t = time.time() - t
 		self.logger.info("All perfdata was rotate, elapsed: %.3f seconds" % t)
-		
+
 	def rotate(self, _id=None, name=None):
 		t = time.time()
 		try:
 			_id = self.get_id(_id, name)
 		except:
-			_id = None			
-	
+			_id = None
+
 		if not _id:
 			self.logger.info("Nothing to do")
 			return
@@ -377,33 +376,41 @@ class manager(object):
 		self.logger.debug(" + DCA: %s" % _id)
 
 		points = self.get_data(_id)
-		
+
 		if not points:
 			self.logger.debug("No points, Nothing to do")
 			return
 
 		fts = points[0][0]
 		lts = points[-1][0]
-						
+
 		self.logger.debug("  + Compress %s -> %s" % (fts, lts))
-		
+
 		data = utils.compress(points)
 
 		try:
 			bin_id = "%s%s" % (_id, lts)
 			self.logger.debug("   + Store in binary record")
-			self.store.create_bin(_id=bin_id, data=data)
-			
+
+			try:
+				self.store.create_bin(_id=bin_id, data=data)
+			except gridfs.errors.FileExists as fe:
+				self.logger.debug('Impossible to create gridfs bin {} because it exists'.format(fe))
+
 			self.logger.debug("   + Add bin_id in meta and clean meta")
 			##ofts = dca.get('fts', fts)
 			##self.store.update(_id=_id, mset={'fts': ofts, 'd': []}, mpush={'c': (fts, lts, bin_id)})
-			
-			self.store.update(_id=_id, mpush={'c': (fts, lts, bin_id)})
+
+			perfdata = self.store.get(_id=_id)
+			to_push = [fts, lts, bin_id]
+			if to_push not in perfdata['c']:
+				self.store.update(_id=_id, mpush={'c': (fts, lts, bin_id)})
+
 			self.store.redis.delete(_id)
-			
+
 		except Exception,err:
 			self.logger.warning('Impossible to rotate %s: %s' % (_id, err))
-				
+			self.logger.error(traceback.format_exc())
 		#else:
 		#	self.logger.debug("  + Not enough point in DCA")
 		#	ofts = dca.get('fts', fts)
@@ -411,23 +418,23 @@ class manager(object):
 
 		t = time.time() - t
 		self.logger.debug(" + Rotation of '%s' done in %.3f seconds" % (_id, t))
-			
+
 	def cleanAll(self, timestamp=None):
 		return self.clean(timestamp=timestamp)
-	
+
 	def clean(self, _id=None, name=None, timestamp=None):
 		try:
 			_id = self.get_id(_id, name)
 		except:
 			_id = None
-		
+
 		if not timestamp:
 			timestamp = int(time.time())
-		
+
 		cleaned = 0
-		
+
 		self.logger.debug("Remove DCA when 'fts' is older than %s:" % timestamp)
-		
+
 		if _id:
 			meta = self.find(limit=1, mfilter={'_id': _id, 'fts': {'$lt': timestamp}})
 			if meta:
@@ -444,29 +451,29 @@ class manager(object):
 			return cleaned
 		else:
 			self.logger.debug("   + Start cleanning of %s metas" % nb_metas)
-					
+
 		for meta in metas:
 			meta_id = meta['_id']
 			self.logger.debug("   + Clean meta '%s'" % meta_id)
-										
+
 			## Clean binaries
 			bin_fts = None
 			for dca_meta in meta['c']:
 				fts = dca_meta[0]
 				lts = dca_meta[1]
 				bin_id = dca_meta[2]
-				
+
 				# check lts
 				if  lts  <= timestamp:
 					self.logger.debug("     + Remove binarie DCA '%s'" %  bin_id)
 					self.store.grid.delete(bin_id)
-					
+
 					# Remove dca meta
 					self.store.update(_id=meta_id, mpop={ 'c' : -1  })
 				else:
 					if not bin_fts:
 						bin_fts = fts
-			
+
 			## Clean plain
 			plain_fts = None
 			points = self.get_data(meta_id)
@@ -483,21 +490,21 @@ class manager(object):
 					if points:
 						points = ["%s|%s" % (p[0], p[1]) for p in points]
 						self.store.redis.lset(meta_id, points)
-			
+
 			## Set new fts
 			fts = plain_fts
 			if bin_fts < plain_fts:
 				fts = bin_fts
-			
+
 			self.store.update(_id=meta_id, mset={'fts': fts})
 			cleaned += 1
-						
+
 		return cleaned
-	
+
 	def update(self, _id=None, name=None, data=None):
 		_id = self.get_id(_id, name)
 		self.store.update(_id, mset=data)
-	
+
 	def remove(self, _id=None, name=None, purge=True):
 		ids = []
 		if isinstance(_id, list):
@@ -509,7 +516,7 @@ class manager(object):
 			self.logger.debug("Remove: %s DCA" % len(ids))
 		else:
 			self.logger.debug("Remove: %s" % ids)
-		
+
 		dcas = []
 		bin_dcas = []
 
@@ -545,37 +552,41 @@ class manager(object):
 		metas = self.find(limit=0)
 		mcount = metas.count()
 		size = self.store.size()
-		
+
 		self.logger.info("Metas:       %s" % mcount)
 		if mcount:
 			self.logger.info("Size/metric: %.3f KB" % ((float(size)/mcount)/1024.0))
 		self.logger.info("Total size:  %.3f MB" % (size/1024.0/1024.0))
-	
+
 	def showAll(self):
 		metas = self.find(limit=0)
 		for meta in metas:
 			self.show(meta=self.uncompress_meta_fields(meta))
-			
+
 	def show(self, _id=None, name=None, meta=None):
 		if not meta:
 			_id = self.get_id(_id, name)
 			meta = self.get_meta(_id=_id)
 		else:
 			_id = meta['_id']
-		
+
 		if meta and _id:
 			self.logger.info("Metadata:'%s'" % meta['_id'])
 			for key in meta:
 				if key != '_id' and key != 'c' and key != 'd' and key != 'nc':
 					self.logger.info(" + %s: %s" % (key, meta[key]))
-			
+
 			self.logger.info(" + Compressed DCA: %s" % len(meta.get('c', [])))
 			self.logger.info(" + Next Clean: %s" % meta.get('nc', None) )
+
+	def disconnect(self):
+		self.logger.debug("DISCONNECT MANAGER")
+		self.store.disconnect()
 
 
 def split_list(alist, wanted_parts=1):
     length = len(alist)
-    return [ alist[i*length // wanted_parts: (i+1)*length // wanted_parts] 
+    return [ alist[i*length // wanted_parts: (i+1)*length // wanted_parts]
              for i in range(wanted_parts) ]
 
 def rotate_process(_ids):

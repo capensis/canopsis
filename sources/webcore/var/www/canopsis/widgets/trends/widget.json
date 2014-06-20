@@ -33,6 +33,22 @@
 				"name" : "colorHight",
 				"fieldLabel": "Hight color",
 				"value": "#E0251B"
+			},{
+				"xtype": "combobox",
+				"name": "points_in_calcul",
+				"fieldLabel": "Points in calcul",
+				"queryMode": "local",
+				"displayField": "text",
+				"valueField": "value",
+				"value": "2",
+				"store": {
+					"xtype": "store",
+					"fields": ["value", "text"],
+					"data" : [
+						{"value": "2", "text": "First and Last"},
+						{"value": "*", "text": "All"}
+					]
+				}
 			}]
 		}]
 	},{

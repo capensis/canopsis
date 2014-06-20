@@ -107,7 +107,7 @@ Ext.define('canopsis.lib.view.cgrid_state' , {
 				sortable: this.opt_column_sortable,
 				flex: 1,
 				dataIndex: 'timestamp',
-				renderer: rdr_tstodate
+				renderer: function(data) { return rdr_tstodate(data); }
 			});
 		}
 

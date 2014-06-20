@@ -29,7 +29,7 @@ from pymongo import Connection
 import gridfs
 
 import time
-from datetime import date
+from datetime import datetime
 
 ## Canopsis
 from caccount import caccount
@@ -45,16 +45,20 @@ import task_reporting
 from libexec.auth import get_account
 from libexec.account import check_group_rights
 
-logger = logging.getLogger('Reporting')
+import time
 
-#group who have right to access 
+logger = logging.getLogger('Reporting')
+logger.setLevel('DEBUG')
+
+#group who have right to access
 group_managing_access = ['group.CPS_reporting_admin']
 
 #########################################################################
 
-@post('/reporting/:startTime/:stopTime/:view_name/:mail',checkAuthPlugin={'authorized_grp':group_managing_access})
-@post('/reporting/:startTime/:stopTime/:view_name',checkAuthPlugin={'authorized_grp':group_managing_access})
-def generate_report(startTime, stopTime,view_name,mail=None):
+@post('/reporting/:startTime/:stopTime/:view_name/:mail/:timezone/',checkAuthPlugin={'authorized_grp':group_managing_access})
+@post('/reporting/:startTime/:stopTime/:view_name/:mail/',checkAuthPlugin={'authorized_grp':group_managing_access})
+@post('/reporting/:startTime/:stopTime/:view_name/',checkAuthPlugin={'authorized_grp':group_managing_access})
+def generate_report(startTime, stopTime,view_name,mail=None, timezone=time.timezone):
 	stopTime = int(stopTime)
 	startTime = int(startTime)
 
@@ -66,17 +70,16 @@ def generate_report(startTime, stopTime,view_name,mail=None):
 			mail = json.loads(mail)
 		except Exception, err:
 			logger.error('Error while transform string mail to object' % err)
-			mail=None
+			mail = None
 	try:
 		record = storage.get(view_name,account=account)
 	except Exception, err:
 		logger.error(err)
 		return {'total': 1, 'success': False, 'data': [str(err)] }
-		
 
-	toDate = str(date.fromtimestamp(int(stopTime)))
+	toDate = datetime.fromtimestamp(int(stopTime))
 	if startTime and startTime != -1:
-		fromDate = str(date.fromtimestamp(int(startTime)))
+		fromDate = datetime.fromtimestamp(int(startTime))
 		file_name = '%s_From_%s_To_%s.pdf' % (record.name,fromDate,toDate)
 	else:
 		file_name = '%s_%s.pdf' % (record.name,toDate)
@@ -91,11 +94,18 @@ def generate_report(startTime, stopTime,view_name,mail=None):
 	
 	try:
 		logger.debug('Run celery task')
+
+		exporting = {
+			"from": {"timestamp": startTime},
+			"to": {"timestamp": stopTime, 'enable': True},
+			"type": "fixed",
+			"timezone": {"type": "local", "value": timezone}
+		}
+
 		result = task_reporting.render_pdf.delay(
 										fileName=file_name,
 										viewName=view_name,
-										startTime=startTime,
-										stopTime=stopTime,
+										exporting=exporting,
 										account=account,
 										mail=mail
 										)
