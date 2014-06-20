@@ -27,82 +27,88 @@ logger = None
 root = caccount(user="root", group="root")
 storage = get_storage(account=root, namespace='object')
 
+INDEXES = {
+	'object': [
+		[('crecord_type', 1)]
+	],
+	'perfdata2': [
+		[('co', 1), ('re', 1), ('me', 1)],
+		[('re', 1), ('me', 1)],
+		[('co', 1), ('me', 1)],
+		[('me', 1)],
+		[('tg', 1)]
+	],
+	'perfdata2_daily': [
+		[('insert_date', 1)]
+	],
+	'events': [
+		[
+			('connector_name', 1),
+			('event_type', 1),
+			('component', 1),
+			('resource', 1),
+			('state_type', 1),
+			('state', 1)
+		],[
+			('source_type', 1),
+			('tags', 1)
+		],[
+			('event_type', 1),
+			('component', 1),
+			('resource', 1)
+		],[
+			('event_type', 1),
+			('resource', 1)
+		],[
+			('event_type', 1)
+		]
+	],
+	'events_log': [
+		[
+			('connector_name', 1),
+			('event_type', 1),
+			('component', 1),
+			('resource', 1),
+			('state_type', 1),
+			('state', 1)
+		],[
+			('source_type', 1),
+			('tags', 1)
+		],[
+			('event_type', 1),
+			('component', 1),
+			('resource', 1)
+		],[
+			('event_type', 1),
+			('resource', 1)
+		],[
+			('event_type', 1)
+		],[
+			('state_type', 1)
+		],[
+			('tags', 1)
+		],[
+			('referer', 1)
+		]
+	],
+	'entities': [
+		[('type', 1)],
+		[('type', 1), ('name', 1)],
+		[('type', 1), ('component', 1), ('name', 1)],
+		[('type', 1), ('component', 1), ('resource', 1), ('id', 1)],
+		[('type', 1), ('component', 1), ('resource', 1)],
+		[('type', 1), ('nodeid', 1)]
+	]
+}
+
 def init():
-    logger.info(" + Create index of 'perfdata2'")
-    storage.get_backend('perfdata2').ensure_index([
-        ('co', 1),
-        ('re', 1),
-        ('me', 1)
-    ])
-    storage.get_backend('perfdata2').ensure_index([
-        ('re', 1),
-        ('me', 1)
-    ])
-    storage.get_backend('perfdata2').ensure_index([
-        ('me', 1)
-    ])
-    storage.get_backend('perfdata2').ensure_index([
-        ('tg', 1)
-    ])
+	for collection in INDEXES:
+		logger.info(' + Create indexes for collection {0}'.format(collection))
+		col = storage.get_backend(collection)
+		col.drop_indexes()
 
-    logger.info(" + Create index of 'events'")
-    storage.get_backend('events').ensure_index([
-        ('connector_name', 1),
-        ('resource', 1),
-        ('component', 1),
-        ('state', 1),
-        ('state_type', 1),
-        ('event_type', 1)
-    ])
-    storage.get_backend('events').ensure_index([
-        ('tags', 1),
-        ('source_type', 1),
-    ])
-    storage.get_backend('events').ensure_index([
-        ('component', 1),
-        ('resource', 1),
-        ('event_type', 1)
-    ])
-    storage.get_backend('events').ensure_index([
-        ('resource', 1),
-        ('event_type', 1)
-    ])
-    storage.get_backend('events').ensure_index([
-        ('event_type', 1)
-    ])
-
-    logger.info(" + Create index of 'events_log'")
-    storage.get_backend('events_log').ensure_index([
-        ('connector_name', 1),
-        ('resource', 1),
-        ('component', 1),
-        ('state', 1),
-        ('event_type', 1)
-    ])
-    storage.get_backend('events_log').ensure_index([
-        ('component', 1),
-        ('resource', 1),
-        ('event_type', 1)
-    ])
-    storage.get_backend('events_log').ensure_index([
-        ('resource', 1),
-        ('event_type', 1)
-    ])
-    storage.get_backend('events_log').ensure_index([
-        ('event_type', 1)
-    ])
-    storage.get_backend('events_log').ensure_index([
-        ('state_type', 1)
-    ])
-    storage.get_backend('events_log').ensure_index([
-        ('tags', 1)
-    ])
-    storage.get_backend('events_log').ensure_index([
-        ('referer', 1)
-    ])
-    storage.get_backend('events_log').ensure_index([
-        ('timestamp', 1)
-    ])
+		for index in INDEXES[collection]:
+			col.ensure_index(index)
 
 def update():
-    init()
+	init()
