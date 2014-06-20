@@ -34,11 +34,18 @@ from crecord import crecord
 from cstorage import get_storage
 from caccount import caccount
 
+#Mocking storage for some tests
+class MockStorage(object):
+	def find(self, **kwargs):
+		return [{'crecord_name': 'name1'}, {'crecord_name': 'name2'}]
+
+
 class KnownValues(unittest.TestCase):
 	def setUp(self):
 		self.engine = alertcounter.engine(
 			logging_level=logging.WARNING,
 		)
+
 		# mocking the manager
 		self.engine.amqp = camqpmock.CamqpMock(self.engine)
 		self.engine.manager = managermock.ManagerMock(self.engine)
@@ -83,7 +90,6 @@ class KnownValues(unittest.TestCase):
 		#effective test
 		self.engine.load_macro()
 		self.assertTrue(self.engine.MACRO == macro_name)
-		self.reset_data()
 
 
 	def test_04_load_crits(self):
@@ -104,7 +110,6 @@ class KnownValues(unittest.TestCase):
 
 		key = self.engine.perfdata_key({})
 		self.assertTrue(key == 'missing component or metric key')
-		self.reset_data()
 
 
 	def test_06_increment_counter(self):
@@ -116,9 +121,8 @@ class KnownValues(unittest.TestCase):
 		del meta['re']
 		self.engine.increment_counter(meta, 2)
 		self.assertTrue(self.engine.manager.data.pop() == {'meta_data': 'meta_data', 'name': u'come', 'value': 2})
-		self.reset_data()
 
-	def test_07_update_global_counter(self):
+	def test_07_update_global_counter_and_count_alerts(self):
 		#generated metrics names are listed below.
 		truth_table = {
 			"__canopsis__cps_statechange": [1,1,1,1],
@@ -130,7 +134,6 @@ class KnownValues(unittest.TestCase):
 			"__canopsis__cps_statechange_3": [0,0,0,1],
 			"__canopsis__cps_statechange_nok": [0,1,1,1]
 		}
-		self.reset_data()
 
 
 		#data driven testing
@@ -168,7 +171,6 @@ class KnownValues(unittest.TestCase):
 			event = self.engine.amqp.events.pop()
 			self.assertTrue(event['resource'] == host_group)
 
-		self.reset_data()
 
 
 	def test_08_count_sla(self):
@@ -206,13 +208,10 @@ class KnownValues(unittest.TestCase):
 		self.engine.count_sla(event,slatype, slaname, 1)
 		self.assertEqual(len(self.engine.manager.data), 6)
 
-		self.reset_data()
-
 		event ['hostgroups'] = ['hostgroup_test']
 		self.engine.count_sla(event,slatype, slaname, 1)
-		self.assertEqual(len(self.engine.manager.data), 6)
+		self.assertEqual(len(self.engine.manager.data), 12)
 
-		self.reset_data()
 
 
 
@@ -246,26 +245,100 @@ class KnownValues(unittest.TestCase):
 			metric = self.engine.manager.data.pop()
 			self.assertTrue('mock_test_macro' in metric['name'])
 
-		self.reset_data()
 
-	def test_10_count_alert(self):
-		self.engine.count_alert({'component': 1, 'state': 1}, 1)
-		pass
+	def test_10_count_by_type(self):
+		# Simple metrics fetch
+		def fetch_metrics():
+			result = {}
+			for metric in self.engine.manager.data:
+				result[metric['name']] = metric['value']
+			self.engine.manager.data = []
+			return result
 
-	def reset_data(self):
-		#init engine as needed
+		#Test producing metrics when state != 0 and state_type == 1
+		self.engine.count_by_type({'state_type':0, 'source_type': 'source', 'component': '__test__', 'state': 1}, 1)
+		self.assertEqual(len(self.engine.manager.data), 0)
+		self.engine.count_by_type({'state_type':0, 'source_type': 'source', 'component': '__test__', 'state': 0}, 1)
+		self.assertEqual(len(self.engine.manager.data), 0)
+		self.engine.count_by_type({'state_type':1, 'source_type': 'source', 'component': '__test__', 'state': 1}, 1)
+		self.assertNotEqual(len(self.engine.manager.data), 0)
 
-		self.engine.manager.clean()
-		self.engine.amqp.clean()
+		#Gets metrics as dict
+		metrics = fetch_metrics()
+		self.assertEqual(metrics['__canopsis__cps_alerts_not_ack'], 1)
+		self.assertEqual(metrics['__canopsis__cps_alerts_ack'], 0)
+		self.assertEqual(metrics['__canopsis__cps_alerts_ack_by_host'], 0)
+
+		#Test metrics when source type is 'component'
+		self.engine.count_by_type({'state_type':0, 'source_type': 'component', 'component': '__test__', 'state': 1}, 1)
+		metrics = fetch_metrics()
+		self.assertEqual(metrics['__canopsis__cps_statechange_component'], 1)
+
+		self.engine.count_by_type({'state_type':0, 'source_type': 'component', 'component': '__test__', 'state': 0}, 1)
+		metrics = fetch_metrics()
+		self.assertEqual(metrics['__canopsis__cps_statechange_component'], 0)
+
+		#Test metrics when source type is 'resource'
+		def return_false(event):
+			return False
+		def return_true(event):
+			return True
+		alertcounter.cevent.is_component_problem = return_false
+
+		self.engine.count_by_type({'state_type':0, 'source_type': 'resource', 'component': '__test__', 'state': 1}, 1)
+		metrics = fetch_metrics()
+		self.assertEqual(metrics['__canopsis__cps_statechange_resource_by_component'], 0)
+		self.assertEqual(metrics['__canopsis__cps_statechange_resource'], 1)
+
+		alertcounter.cevent.is_component_problem = return_true
+		self.engine.count_by_type({'state_type':0, 'source_type': 'resource', 'component': '__test__', 'state': 1}, 1)
+		metrics = fetch_metrics()
+		self.assertEqual(metrics['__canopsis__cps_statechange_resource_by_component'], 1)
+
+		#Test host group metric generation
+		self.engine.count_by_type({'state_type':1, 'source_type': 'source', 'component': '__test__', 'state': 1}, 1)
+		metrics = fetch_metrics()
+		self.assertEqual(len(metrics.keys()), 3)
+		self.engine.count_by_type({'hostgroups': ['hg'], 'state_type':1, 'source_type': 'source', 'component': '__test__', 'state': 1}, 1)
+		metrics = fetch_metrics()
+		self.assertEqual(len(metrics.keys()), 6)
 
 
-	def show(self):
-		print 'DATA'
-		for d in self.engine.manager.data:
-			print d
-		print 'Events'
-		for e in self.engine.amqp.events:
-			print e
+	def test_11_resolve_selectors_name(self):
+		self.engine.storage = MockStorage()
+
+		#Starting method test
+		start = self.engine.last_resolv
+		result = self.engine.resolve_selectors_name()
+		#All crecord name fetched into one list because refresh time is ok
+		self.assertEqual(result[0], 'name1')
+		self.assertEqual(result[1], 'name2')
+		self.assertTrue(start < self.engine.last_resolv)
+
+		# Refresh time has not append, no selector should be fetched yet
+		self.engine.selectors_name = []
+		# one minute delay is tested
+		self.engine.last_resolv = time.time() - 59
+		result = self.engine.resolve_selectors_name()
+		self.assertEqual(result, [])
+
+	def test_11_count_by_tags(self):
+		self.engine.storage = MockStorage()
+		# Selector type, nothing should append
+		self.engine.count_by_tags({'event_type': 'selector'},0)
+		self.assertEqual(len(self.engine.manager.data), 0)
+
+		self.engine.count_by_tags({'tags':['tag1', 'tag2'], 'event_type': 'notselector'},0)
+		self.assertEqual(len(self.engine.manager.data), 0)
+
+		value = 0
+		self.engine.count_by_tags({'state': 0, 'tags':['name1'], 'event_type': 'notselector'}, value)
+		self.assertEqual(len(self.engine.manager.data), 8)
+		result = {}
+		for metric in self.engine.manager.data:
+			self.assertTrue(metric['name'].startswith('name1'))
+			self.assertEqual(metric['value'], value)
+		self.engine.manager.data = []
 
 if __name__ == "__main__":
 	unittest.main()
