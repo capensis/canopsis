@@ -139,18 +139,18 @@ class KnownValues(unittest.TestCase):
 			self.engine.update_global_counter({'state': state, 'resource': 'resource'})
 			event = self.engine.amqp.events.pop()
 
-			self.assertTrue(event['state'] == 0)
-			self.assertTrue(event['connector'] == 'cengine')
-			self.assertTrue(event['connector_name'] == self.engine.etype)
-			self.assertTrue(event['source_type'] == 'resource')
-			self.assertTrue(event['component'] == alertcounter.INTERNAL_COMPONENT)
-			self.assertTrue(event['resource'] == None)
+			self.assertEqual(event['state'], 0)
+			self.assertEqual(event['connector'], 'cengine')
+			self.assertEqual(event['connector_name'], self.engine.etype)
+			self.assertEqual(event['source_type'], 'resource')
+			self.assertEqual(event['component'], alertcounter.INTERNAL_COMPONENT)
+			self.assertEqual(event['resource'], None)
 			#Let test if they are all generated
 			while self.engine.manager.data:
 				metric = self.engine.manager.data.pop()
 				self.assertTrue(metric['name'] in truth_table)
 				#using state as postition in truth table
-				self.assertTrue(truth_table[metric['name']][state] == metric['value'])
+				self.assertEqual(truth_table[metric['name']][state], metric['value'])
 
 		# all statuses : ok, warning, error, unknown
 		for state in xrange(4):
@@ -160,7 +160,7 @@ class KnownValues(unittest.TestCase):
 		self.engine.update_global_counter({'state': state, 'resource': 'resource', 'hostgroups': [host_group]})
 
 		#8 basic metrics + 8 for hostgroup
-		self.assertTrue(len(self.engine.manager.data) == 16)
+		self.assertEqual(len(self.engine.manager.data), 16)
 		#reset data
 		self.engine.manager.data = []
 
@@ -189,7 +189,7 @@ class KnownValues(unittest.TestCase):
 				metric = self.engine.manager.data.pop()
 				self.assertTrue(metric['name'] in truth_table)
 				#using state as postition in truth table
-				self.assertTrue(truth_table[metric['name']][index] == metric['value'])
+				self.assertEqual(truth_table[metric['name']][index], metric['value'])
 
 		#Test general cases
 		self.storage.get_backend('entities').remove({'type': 'ack'})
@@ -204,13 +204,13 @@ class KnownValues(unittest.TestCase):
 
 		event ['hostgroups'] = ['hostgroup_test']
 		self.engine.count_sla(event,slatype, slaname, 1)
-		self.assertTrue(len(self.engine.manager.data) == 6)
+		self.assertEqual(len(self.engine.manager.data), 6)
 
 		self.reset_data()
 
 		event ['hostgroups'] = ['hostgroup_test']
 		self.engine.count_sla(event,slatype, slaname, 1)
-		self.assertTrue(len(self.engine.manager.data) == 6)
+		self.assertEqual(len(self.engine.manager.data), 6)
 
 		self.reset_data()
 
