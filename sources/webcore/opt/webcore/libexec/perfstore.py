@@ -20,6 +20,7 @@
 
 import sys, os, logging, json, time
 from datetime import datetime
+import re
 
 import bottle
 from bottle import route, get, post, put, delete, request, HTTPError, response
@@ -227,6 +228,7 @@ def perfstore_get_all_metrics(limit = 20, start = 0, search = None, filter = Non
 	logger.debug(" + show_internals:  %s" % show_internals)
 
 	mfilter = None
+	hint = None
 
 	if isinstance(filter, list):
 		if len(filter) > 0:
@@ -238,32 +240,95 @@ def perfstore_get_all_metrics(limit = 20, start = 0, search = None, filter = Non
 		mfilter = filter
 
 	if search:
-		# Todo: Tweak this ...
-		fields = ['co', 're', 'me']
-		mor = []
+		patterns = {
+			'co': [],
+			're': [],
+			'me': []
+		}
 		search = search.split(' ')
-		if len(search) == 1:
-			for field in fields:
-				mor.append({field: {'$regex': '.*%s.*' % search[0], '$options': 'i'}})
 
-			mfilter = {'$or': mor}
+		for element in search:
+			if element.startswith('co:'):
+				patterns['co'].append(element[3:])
+
+			elif element.startswith('re:'):
+				patterns['re'].append(element[3:])
+
+			elif element.startswith('me:'):
+				patterns['me'].append(element[3:])
+
+			else:
+				patterns['me'].append(element)
+
+		# Build mfilter
+		search_filter = {'$and': []}
+
+		filters = {
+			'co': {'$or': []},
+			're': {'$or': []},
+			'me': {'$or': []}
+		}
+
+		for key in filters:
+			for pattern in patterns[key]:
+				filters[key]['$or'].append({key: {
+					'$regex': pattern
+				}})
+
+			if len(filters[key]['$or']) == 1:
+				filters[key] = filters[key]['$or'][0]
+
+		have_co = len(patterns['co']) != 0
+		have_re = len(patterns['re']) != 0
+		have_me = len(patterns['me']) != 0
+
+		hint = []
+
+		if have_co:
+			search_filter['$and'].append(filters['co'])
+			hint.append(('co', 1))
+
+		if have_re:
+			search_filter['$and'].append(filters['re'])
+			hint.append(('re', 1))
+
+		if have_me:
+			search_filter['$and'].append(filters['me'])
+			hint.append(('me', 1))
+
+		if len(search_filter['$and']) == 1:
+			mfilter = search_filter['$and'][0]
+
 		else:
-			mfilter = {'$and': []}
-			for word in search:
-				mor = []
-				for field in fields:
-					mor.append({field: {'$regex': '.*%s.*' % word, '$options': 'i'}})
-				mfilter['$and'].append({'$or': mor})
+			mfilter = search_filter
 
-	use_hint = False
 	if not show_internals:
 		if mfilter:
-			mfilter = {'$and': [mfilter, {'me': {'$nin':internal_metrics  }}]}
-			use_hint = True
+			mfilter = {'$and': [
+				mfilter,
+				{'me': {
+					'$not': re.compile('^cps_.*')
+				}}
+			]}
+
 		else:
-			mfilter = {'me': {'$nin': internal_metrics  }}
+			mfilter = {'me': {
+				'$not': re.compile('^cps_.*')
+			}}
+
+		if hint:
+			for field,on in hint:
+				if field == 'me':
+					break
+
+			else:
+				hint.append(('me', 1))
+
+		else:
+			hint = [('me', 1)]
 
 	logger.debug(" + mfilter:  %s" % mfilter)
+	logger.debug(" + hint: %s" % hint)
 
 	if limit > 0:
 		extra_limit = 1
@@ -273,8 +338,8 @@ def perfstore_get_all_metrics(limit = 20, start = 0, search = None, filter = Non
 	mfilter = clean_mfilter(mfilter)
 	data  = manager.find(limit=limit + extra_limit, skip=start, mfilter=mfilter, data=False, sort=msort)
 
-	if use_hint:
-		data.hint([('co',1),('re',1),('me',1)])
+	if hint:
+		data.hint(hint)
 
 	if isinstance(data, dict):
 		data = [data]
@@ -283,7 +348,7 @@ def perfstore_get_all_metrics(limit = 20, start = 0, search = None, filter = Non
 	else:
 		data = list()
 
-	if use_hint:
+	if hint:
 		total = start + len(data)
 	else:
 		result = storage.get_backend('object').find_one({'crecord_name':'perfdata2_count_no_internal'})
