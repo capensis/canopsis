@@ -20,6 +20,7 @@
 
 import sys, os, logging, json, time
 from datetime import datetime
+import re
 
 import bottle
 from bottle import route, get, post, put, delete, request, HTTPError, response
@@ -28,6 +29,8 @@ from bottle import route, get, post, put, delete, request, HTTPError, response
 from libexec.auth import get_account
 
 # Modules
+from cstorage import get_storage
+
 from ctools import parse_perfdata, clean_mfilter
 from ctools import cleanTimestamp
 from ctools import internal_metrics
@@ -60,17 +63,54 @@ group_managing_access = ['group.CPS_perfdata_admin']
 #### POST@
 @post('/perfstore/values')
 @post('/perfstore/values/:start/:stop')
-def perfstore_nodes_get_values(start=None, stop=None):
+def perfstore_values_route(start = None, stop = None):
+	"""subset selection param allow filter metrics with exclusion periods and component,resource,hostgroup exclusion"""
+	return perfstore_nodes_get_values(start = start,
+					  stop = stop,
+					  metas = request.params.get('nodes', default=None),
+					  aggregate_method = request.params.get('aggregate_method', default=None),
+					  aggregate_interval = request.params.get('aggregate_interval', default=None),
+					  aggregate_max_points = request.params.get('aggregate_max_points', default=None),
+					  aggregate_round_time = request.params.get('aggregate_round_time', default=None),
+					  consolidation_method = request.params.get('consolidation_method', default=None),
+					  timezone = request.params.get('timezone', default=0),
+					  subset_selection = request.params.get('subset_selection', default={}))
+
+
+@get('/perfstore')
+@get('/perfstore/get_all_metrics')
+def perfstore_get_all_metrics():
+	return perfstore_get_all_metrics(limit = int(request.params.get('limit', default=20)),
+					 start = int(request.params.get('start', default=0)),
+					 search = request.params.get('search', default=None),
+					 filter = request.params.get('filter', default=None),
+					 sort = request.params.get('sort', default=None),
+					 show_internals = request.params.get('show_internals', default=False))
+
+
+def perfstore_nodes_get_values(start = None,
+			       stop = None,
+			       metas = None,
+			       aggregate_method = None,
+			       aggregate_interval = None,
+			       aggregate_max_points = None,
+			       aggregate_round_time = None,
+			       consolidation_method = None,
+			       timezone = 0,
+			       subset_selection = {}):
+
+	if subset_selection:
+		try:
+			subset_selection = json.loads(subset_selection)
+			logger.debug('subset selection found : ' + str(subset_selection))
+		except:
+			subset_selection = {}
+			logger.warning('Unable to load subset_selection filters from params')
+
+	if manager == None:
+		load()
 
 	interval = None
-	metas = request.params.get('nodes', default=None)
-
-	aggregate_method = request.params.get('aggregate_method', default=None)
-	aggregate_interval = request.params.get('aggregate_interval', default=None)
-	aggregate_max_points = request.params.get('aggregate_max_points', default=None)
-	aggregate_round_time = request.params.get('aggregate_round_time', default=None)
-	consolidation_method = request.params.get('consolidation_method', default=None)
-	timezone = request.params.get('timezone', default=0)
 
 	output = []
 
@@ -98,14 +138,15 @@ def perfstore_nodes_get_values(start=None, stop=None):
 		mstart = meta.get('from', start)
 		mstop = meta.get('to', stop)
 		if _id:
-			output += perfstore_get_values(	_id=meta['id'],
-							start=mstart,
-							stop=mstop,
-							aggregate_method=aggregate_method,
-							aggregate_interval=aggregate_interval,
-							aggregate_max_points=aggregate_max_points,
-							aggregate_round_time=aggregate_round_time,
-							timezone=time.timezone)
+			output += perfstore_get_values(_id=meta['id'],
+						       start=mstart,
+						       stop=mstop,
+						       aggregate_method=aggregate_method,
+						       aggregate_interval=aggregate_interval,
+						       aggregate_max_points=aggregate_max_points,
+						       aggregate_round_time=aggregate_round_time,
+						       timezone=time.timezone,
+						       subset_selection=subset_selection)
 
 	if aggregate_method and consolidation_method and len(output):
 		# select right function
@@ -147,18 +188,12 @@ def perfstore_nodes_get_values(start=None, stop=None):
 	output = {'total': len(output), 'success': True, 'data': output}
 	return output
 
-#### GET@
-@get('/perfstore')
-@get('/perfstore/get_all_metrics')
-def perstore_get_all_metrics():
-	logger.debug("perstore_get_all_metrics:")
 
-	limit = int(request.params.get('limit', default=20))
-	start = int(request.params.get('start', default=0))
-	search = request.params.get('search', default=None)
-	filter = request.params.get('filter', default=None)
-	sort = request.params.get('sort', default=None)
-	show_internals = request.params.get('show_internals', default=False)
+def perfstore_get_all_metrics(limit = 20, start = 0, search = None, filter = None, sort = None, show_internals = False):
+	logger.debug("perfstore_get_all_metrics:")
+
+	if manager == None:
+		load()
 
 	if filter:
 		try:
@@ -193,6 +228,7 @@ def perstore_get_all_metrics():
 	logger.debug(" + show_internals:  %s" % show_internals)
 
 	mfilter = None
+	hint = None
 
 	if isinstance(filter, list):
 		if len(filter) > 0:
@@ -204,32 +240,95 @@ def perstore_get_all_metrics():
 		mfilter = filter
 
 	if search:
-		# Todo: Tweak this ...
-		fields = ['co', 're', 'me']
-		mor = []
+		patterns = {
+			'co': [],
+			're': [],
+			'me': []
+			}
 		search = search.split(' ')
-		if len(search) == 1:
-			for field in fields:
-				mor.append({field: {'$regex': '.*%s.*' % search[0], '$options': 'i'}})
 
-			mfilter = {'$or': mor}
+		for element in search:
+			if element.startswith('co:'):
+				patterns['co'].append(element[3:])
+
+			elif element.startswith('re:'):
+				patterns['re'].append(element[3:])
+
+			elif element.startswith('me:'):
+				patterns['me'].append(element[3:])
+
+			else:
+				patterns['me'].append(element)
+
+		# Build mfilter
+		search_filter = {'$and': []}
+
+		filters = {
+			'co': {'$or': []},
+			're': {'$or': []},
+			'me': {'$or': []}
+			}
+
+		for key in filters:
+			for pattern in patterns[key]:
+				filters[key]['$or'].append({key: {
+							'$regex': pattern
+							}})
+
+			if len(filters[key]['$or']) == 1:
+				filters[key] = filters[key]['$or'][0]
+
+		have_co = len(patterns['co']) != 0
+		have_re = len(patterns['re']) != 0
+		have_me = len(patterns['me']) != 0
+
+		hint = []
+
+		if have_co:
+			search_filter['$and'].append(filters['co'])
+			hint.append(('co', 1))
+
+		if have_re:
+			search_filter['$and'].append(filters['re'])
+			hint.append(('re', 1))
+
+		if have_me:
+			search_filter['$and'].append(filters['me'])
+			hint.append(('me', 1))
+
+		if len(search_filter['$and']) == 1:
+			mfilter = search_filter['$and'][0]
+
 		else:
-			mfilter = {'$and': []}
-			for word in search:
-				mor = []
-				for field in fields:
-					mor.append({field: {'$regex': '.*%s.*' % word, '$options': 'i'}})
-				mfilter['$and'].append({'$or': mor})
+			mfilter = search_filter
 
-	use_hint = False
 	if not show_internals:
 		if mfilter:
-			mfilter = {'$and': [mfilter, {'me': {'$nin':internal_metrics  }}]}
-			use_hint = True
+			mfilter = {'$and': [
+					mfilter,
+					{'me': {
+							'$not': re.compile('^cps_.*')
+							}}
+					]}
+
 		else:
-			mfilter = {'me': {'$nin': internal_metrics  }}
+			mfilter = {'me': {
+					'$not': re.compile('^cps_.*')
+					}}
+
+		if hint:
+			for field,on in hint:
+				if field == 'me':
+					break
+
+			else:
+				hint.append(('me', 1))
+
+		else:
+			hint = [('me', 1)]
 
 	logger.debug(" + mfilter:  %s" % mfilter)
+	logger.debug(" + hint: %s" % hint)
 
 	if limit > 0:
 		extra_limit = 1
@@ -239,8 +338,8 @@ def perstore_get_all_metrics():
 	mfilter = clean_mfilter(mfilter)
 	data = manager.find(limit=limit + extra_limit, skip=start, mfilter=mfilter, data=False, sort=msort)
 
-	if use_hint:
-		data.hint([('co',1),('re',1),('me',1)])
+	if hint:
+		data.hint(hint)
 
 	if isinstance(data, dict):
 		data = [data]
@@ -249,7 +348,7 @@ def perstore_get_all_metrics():
 	else:
 		data = list()
 
-	if use_hint:
+	if hint:
 		total = start + len(data)
 	else:
 		result = storage.get_backend('object').find_one({'crecord_name':'perfdata2_count_no_internal'})
@@ -258,7 +357,7 @@ def perstore_get_all_metrics():
 		else:
 			total = len(data)
 
-	return {'success': True, 'data' : data, 'total' : total}
+ 	return {'success': True, 'data' : data, 'total' : total}
 
 
 ### manipulating meta
@@ -309,6 +408,7 @@ def perfstore_perftop(start=None, stop=None):
 	limit = int(request.params.get('limit', default=10))
 	sort = int(request.params.get('sort', default=1))
 	mfilter = request.params.get('mfilter', default={})
+	get_output = request.params.get('output', default=False)
 	time_window = int(request.params.get('time_window', default=86400))
 	threshold = request.params.get('threshold', default=None)
 	threshold_direction = int(request.params.get('threshold_direction', default=-1))
@@ -316,6 +416,9 @@ def perfstore_perftop(start=None, stop=None):
 	percent = request.params.get('percent', default=False)
 	threshold_on_pct = request.params.get('threshold_on_pct', default=False)
 	report = request.params.get('report', default=False)
+
+	export_csv = request.params.get('csv', default=False)
+	export_fields = request.params.get('fields', default="[]")
 
 	if percent == 'true':
 		percent = True
@@ -343,6 +446,14 @@ def perfstore_perftop(start=None, stop=None):
 			logger.error("Impossible to decode mfilter: %s: %s" % (mfilter, err))
 			mfilter = None
 
+	try:
+		export_fields = json.loads(export_fields)
+
+	except ValueError, err:
+		logger.error("Impossible to decode export_fields: %s: %s" % (export_fields, err))
+		export_fields = []
+
+
 	if threshold:
 		threshold = float(threshold)
 
@@ -363,6 +474,7 @@ def perfstore_perftop(start=None, stop=None):
 
 	logger.debug("PerfTop:")
 	logger.debug(" + mfilter:     %s" % mfilter)
+	logger.debug(" + get_output:  %s" % get_output)
 	logger.debug(" + limit:       %s" % limit)
 	logger.debug(" + threshold:   %s" % threshold)
 	logger.debug(" + threshold_direction:   %s" % threshold_direction)
@@ -374,11 +486,12 @@ def perfstore_perftop(start=None, stop=None):
 	logger.debug(" + time_window: %s" % time_window)
 	logger.debug(" + start:       %s (%s)" % (start, datetime.utcfromtimestamp(start)))
 	logger.debug(" + stop:        %s (%s)" % (stop, datetime.utcfromtimestamp(stop)))
+	logger.debug(" + export csv:  %s" % export_csv)
+	logger.debug(" + export fields: %s" % str(export_fields))
 
 	mfilter =  clean_mfilter(mfilter)
 
 	mtype = manager.store.find(mfilter=mfilter, limit=1, mfields=['t'])
-
 	def check_threshold(value):
 		if threshold:
 			if threshold_direction == -1 and value >= threshold:
@@ -414,7 +527,7 @@ def perfstore_perftop(start=None, stop=None):
 				if check_threshold(val):
 					data.append(metric)
 		else:
-			# Compute values
+
 			metric_limit = 0
 
 			if expand:
@@ -423,8 +536,8 @@ def perfstore_perftop(start=None, stop=None):
 			#clean mfilter
 			mfilter =  clean_mfilter(mfilter)
 
-			metrics =  manager.store.find(mfilter=mfilter, mfields=['_id', 'co', 're', 'me', 'lv', 'u', 'ma', 'lts', 't'], limit=metric_limit)
-
+			metrics =  manager.store.find(mfilter=mfilter, mfields=['_id', 'co', 're', 'me', 'lv', 'u', 'ma', 'lts', 't'], limit=limit)
+			metrics.sort('lv', sort)
 			if isinstance(metrics, dict):
 				metrics = [metrics]
 
@@ -482,6 +595,43 @@ def perfstore_perftop(start=None, stop=None):
 							if check_threshold(val):
 								data.append(metric)
 
+		# Calculate most recurrent output
+		if get_output:
+			logs = get_storage(namespace='events_log', account=get_account())
+
+			for item in data:
+				evfilter = {'$and': [
+						{
+							'component': item['co'],
+							'resource': item.get('re', {'$exists': False}),
+							'state': {'$ne': 0}
+							},{
+							'timestamp': {'$gt': start}
+							},{
+							'timestamp': {'$lt': stop}
+							}
+						]}
+
+				records = logs.find(evfilter)
+
+				outputs = {}
+
+				for record in records:
+					output = record.data['output']
+
+					if output not in outputs:
+						outputs[output] = 1
+
+					else:
+						outputs[output] += 1
+
+				last_max = 0
+
+				for output in outputs:
+					if outputs[output] > last_max:
+						item['output'] = output
+						last_max = outputs[output]
+
 		reverse = True
 		if sort == 1:
 			reverse = False
@@ -496,13 +646,47 @@ def perfstore_perftop(start=None, stop=None):
 	else:
 		logger.debug("No records found")
 
-	return {'success': True, 'data' : data, 'total' : len(data)}
+	if not export_csv:
+		return {'success': True, 'data' : data, 'total' : len(data)}
+
+	else:
+		response.headers['Content-Disposition'] = 'attachment; filename="perftop.csv"'
+		response.headers['Content-Type'] = 'text/csv'
+
+		exported = None
+
+		logger.debug(' + Data: %s' % str(data))
+
+		for entry in data:
+			row = []
+
+			for field in export_fields:
+				value = entry.get(field, '')
+
+				if isinstance(value, basestring):
+					value = value.replace('"', '""')
+					value = u'"{0}"'.format(value)
+
+				else:
+					value = str(value)
+
+				row.append(value)
+
+			if exported:
+				exported = u"{0}\n{1}".format(exported, u','.join(row))
+
+			else:
+				exported = u','.join(row)
+
+		logger.debug(' + Exported: %s' % exported)
+
+		return exported
 
 ########################################################################
 # Functions
 ########################################################################
 
-def perfstore_get_values(_id, start=None, stop=None, aggregate_method=None, aggregate_interval=None, aggregate_max_points=None, aggregate_round_time=True, timezone=0):
+def perfstore_get_values(_id, start=None, stop=None, aggregate_method=None, aggregate_interval=None, aggregate_max_points=None, aggregate_round_time=True, timezone=0, subset_selection={}):
 
 	if start and not stop:
 		stop = start
@@ -540,29 +724,33 @@ def perfstore_get_values(_id, start=None, stop=None, aggregate_method=None, aggr
 	fill = False
 
 	if aggregate_interval:
-		aggregate_max_points = int( round((stop - start) / aggregate_interval + 0.5) )
+		aggregate_max_points = int(round((stop - start) / aggregate_interval + 0.5) )
 		fill = True
 
 	try:
 		points = []
-
 		if start == stop:
 			# Get only one point
 			logger.debug("   + Get one point at %s: %s" % (stop, datetime.utcfromtimestamp(start)))
-			(meta, point) = manager.get_point(	_id=_id,
-								ts=start,
-								return_meta=True)
+			(meta, point) = manager.get_point(_id=_id,
+							  ts=start,
+							  return_meta=True,
+							  subset_selection=subset_selection)
 			if point:
 				points = [ point ]
+				# Computes exclusion on metric point(s)
+				points = exclude_points(points, subset_selection)
 
 			logger.debug('Point: %s' % points)
 
 		else:
-
-			(meta, points) = manager.get_points(	_id=_id,
-								tstart=start,
-								tstop=stop,
-								return_meta=True)
+			(meta, points) = manager.get_points(_id=_id,
+							    tstart=start,
+							    tstop=stop,
+							    return_meta=True,
+							    subset_selection=subset_selection)
+			# Computes exclusion on metric point(s)
+			points = exclude_points(points, subset_selection)
 
 			# For UI display
 			if len(points) == 0 and meta['type'] == 'COUNTER':
@@ -573,15 +761,15 @@ def perfstore_get_values(_id, start=None, stop=None, aggregate_method=None, aggr
 				points.insert(0, [points[0][0], 0])
 
 			if len(points) and aggregate_method:
-				points =  pyperfstore2.utils.aggregate(	points=points,
-									max_points=aggregate_max_points,
-									interval=aggregate_interval,
-									atype=aggregate_method,
-									start=start,
-									stop=stop,
-									fill=fill,
-									roundtime = aggregate_round_time,
-									timezone=timezone)
+				points =  pyperfstore2.utils.aggregate(points=points,
+								       max_points=aggregate_max_points,
+								       interval=aggregate_interval,
+								       atype=aggregate_method,
+								       start=start,
+								       stop=stop,
+								       fill=fill,
+								       roundtime = aggregate_round_time,
+								       timezone=timezone)
 
 	except Exception, err:
 		logger.error("Error when getting points: %s" % err)
@@ -590,3 +778,35 @@ def perfstore_get_values(_id, start=None, stop=None, aggregate_method=None, aggr
 		output.append({'node': _id, 'metric': meta['me'], 'values': points, 'bunit': meta['unit'], 'min': meta['min'], 'max': meta['max'], 'thld_warn': meta['thd_warn'], 'thld_crit': meta['thd_crit'], 'type': meta['type']})
 
 	return output
+
+def exclude_points(points, subset_selection={}):
+	"""unit test
+	assert(exclude_points([[0,1],[0.5,2],[1,1],[2,3],[4,5],[3,1],[5,2]],{'intervals':[{'from':1,'to':3}]})\
+	== [[0, 1], [0.5, 2], [1, None], [2, None], [4, 5], [3, None], [5, 2]], True)
+	"""
+
+	# Compute exclusion periods and set a point to None value (for UI purposes) if point is in any exclusion period.
+	exclusion_points = []
+	if subset_selection and 'exclusions' in subset_selection:
+		logger.debug('Interval exclusions detected, will apply it to output data')
+		# Iterate over database point list for current metric.
+		for value in points:
+			is_excluded = False
+			# Takes care of exclusion intervals given in parameters.
+			for interval in subset_selection['exclusions']:
+				if value[0] >= interval['from'] and value[0] <= interval['to']:
+					is_excluded = True
+					break
+			if is_excluded:
+				# Add a point that UI won t dispay.
+				exclusion_points.append([value[0], None])
+			else:
+				# Nothing to do, just keep the original point
+				exclusion_points.append(value)
+		# returns the new computed point list for given exclusion interval
+		return exclusion_points
+	else:
+		return points
+
+
+
