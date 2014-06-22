@@ -70,7 +70,11 @@ running() {
 }
 
 wait_socket(){
-    if [ $(ls /tmp/mongodb-*.sock 2> /dev/null | wc -l) -ne 0 ]; then
+    PORT=$(cat $CONF | grep "port =" | cut -d " " -f 3)
+    if [ "$PORT" == "" ]; then
+	PORT=27017
+    fi
+    if [ $(ls /tmp/mongodb-$PORT.sock 2> /dev/null | wc -l) -ne 0 ]; then
 	return 0
     fi
     TIMEOUT=300
@@ -78,7 +82,7 @@ wait_socket(){
  	
     echo "   + Wait MongoDB socket (may be long the firstime) ..."
     i=0
-    while [ $(ls /tmp/mongodb-*.sock 2> /dev/null | wc -l) -eq 0 ]; do
+    while [ $(ls /tmp/mongodb-$PORT.sock 2> /dev/null | wc -l) -eq 0 ]; do
         if [ $i -gt $TIMEOUT ]; then
 	    echo -n "   + Timeout"
             exit 1
