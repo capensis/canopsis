@@ -39,27 +39,34 @@ function pkg_options () {
 		fi
 	fi
 }
-
 function extract_archive () {
-	if [ ! -e $1 ]; then
-		echo "Error: Impossible to find '$1' ..."
-		exit 1
-	fi
+        if [ ! -e $1 ]; then
+                echo "Error: Impossible to find '$1' ..."
+                exit 1
+        fi
 
-	EXTCMD="tar xf"
+        EXTCMD=""
 
-	if [ `echo $1 | grep 'tar.bz2$' | wc -l` -eq 1 ]; then EXTCMD="tar xfj"; fi
-	if [ `echo $1 | grep 'tar.gz$' | wc -l` -eq 1 ]; then EXTCMD="tar xfz"; fi
-	if [ `echo $1 | grep 'tgz$' | wc -l` -eq 1 ]; then EXTCMD="tar xfz"; fi
+        if [ `echo $1 | grep 'tar.bz2$' | wc -l` -eq 1 ]; then EXTCMD="tar xfj";
+        elif [ `echo $1 | grep 'tar.gz$' | wc -l` -eq 1 ]; then EXTCMD="tar xfz";
+        elif [ `echo $1 | grep 'tgz$' | wc -l` -eq 1 ]; then EXTCMD="tar xfz";
+        elif [ `echo $1 | grep 'tar.xz$' | wc -l` -eq 1 ]; then EXTCMD="xz -d"; fi
 
-	if [ "$EXTCMD" != "" ]; then
-		echo " + Extract '$1' ('$EXTCMD') ..."
-		$EXTCMD $1
-		check_code $? "Extract archive failure"
-	else
-		echo "Error: Impossible to extract '$1', no command ..."
-		exit 1
-	fi
+        if [ "$EXTCMD" != "" ]; then
+            if [ "$EXTCMD" != "xz -d" ]; then
+                echo " + Extract '$1' ('$EXTCMD') ..."
+                $EXTCMD $1
+                check_code $? "Extract archive failure"
+            else
+                echo " + Extract '$1' ('$EXTCMD') ..."
+                $EXTCMD $1
+                tar xf $(echo "$1" | sed 's/.xz//')
+                check_code $? "Extract archive failure"
+            fi
+        else
+            echo "Error: Impossible to extract '$1', no command found ..."
+            exit 1
+        fi
 }
 
 function install_init(){
