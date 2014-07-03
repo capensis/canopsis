@@ -2,7 +2,7 @@
 
 ### Check user
 if [ `id -u` -ne 0 ]; then
-	echo "You must be root ..."
+	echo "You must run this command as root ..."
 	exit 1
 fi
 
@@ -15,6 +15,21 @@ else
 	echo "Impossible to find common's lib ..."
 	exit 1
 fi
+
+### Check is user uses symlinks
+ls $PREFIX/.slinked > /dev/null 2>&1 && {
+    echo "Found .slinked file, you need to remove the symlinks for the installation"
+    echo -n "Remove symlinks ?[Y/n]: "
+    read INPUT
+    if [ "$INPUT" == "n" ]; then
+	echo "symlinks kept, please remove them and re-run this command"
+    else
+	echo "Removing symlinks ..."
+	CPS="$PREFIX"
+	source $SRC_PATH/../tools/slink_utils
+	remove_slinks
+    fi
+}
 
 PY_BIN=$PREFIX"/bin/python"
 INC_DIRS="/usr/include"
@@ -40,33 +55,33 @@ function pkg_options () {
 	fi
 }
 function extract_archive () {
-        if [ ! -e $1 ]; then
-                echo "Error: Impossible to find '$1' ..."
-                exit 1
-        fi
+	if [ ! -e $1 ]; then
+		echo "Error: Impossible to find '$1' ..."
+		exit 1
+	fi
 
-        EXTCMD=""
+	EXTCMD=""
 
-        if [ `echo $1 | grep 'tar.bz2$' | wc -l` -eq 1 ]; then EXTCMD="tar xfj";
-        elif [ `echo $1 | grep 'tar.gz$' | wc -l` -eq 1 ]; then EXTCMD="tar xfz";
-        elif [ `echo $1 | grep 'tgz$' | wc -l` -eq 1 ]; then EXTCMD="tar xfz";
-        elif [ `echo $1 | grep 'tar.xz$' | wc -l` -eq 1 ]; then EXTCMD="xz -d"; fi
+	if [ `echo $1 | grep 'tar.bz2$' | wc -l` -eq 1 ]; then EXTCMD="tar xfj";
+	elif [ `echo $1 | grep 'tar.gz$' | wc -l` -eq 1 ]; then EXTCMD="tar xfz";
+	elif [ `echo $1 | grep 'tgz$' | wc -l` -eq 1 ]; then EXTCMD="tar xfz";
+	elif [ `echo $1 | grep 'tar.xz$' | wc -l` -eq 1 ]; then EXTCMD="xz -d"; fi
 
-        if [ "$EXTCMD" != "" ]; then
-            if [ "$EXTCMD" != "xz -d" ]; then
-                echo " + Extract '$1' ('$EXTCMD') ..."
-                $EXTCMD $1
-                check_code $? "Extract archive failure"
-            else
-                echo " + Extract '$1' ('$EXTCMD') ..."
-                $EXTCMD $1
-                tar xf $(echo "$1" | sed 's/.xz//')
-                check_code $? "Extract archive failure"
-            fi
-        else
-            echo "Error: Impossible to extract '$1', no command found ..."
-            exit 1
-        fi
+	if [ "$EXTCMD" != "" ]; then
+	    if [ "$EXTCMD" != "xz -d" ]; then
+		echo " + Extract '$1' ('$EXTCMD') ..."
+		$EXTCMD $1
+		check_code $? "Extract archive failure"
+	    else
+		echo " + Extract '$1' ('$EXTCMD') ..."
+		$EXTCMD $1
+		tar xf $(echo "$1" | sed 's/.xz//')
+		check_code $? "Extract archive failure"
+	    fi
+	else
+	    echo "Error: Impossible to extract '$1', no command found ..."
+	    exit 1
+	fi
 }
 
 function install_init(){
@@ -256,32 +271,32 @@ function install_basic_source(){
 }
 
 function extra_deps(){
-    echo "Install OS dependencies for $DIST $DIST_VERS ..."
-    local DEPS_FILE="$SRC_PATH/extra/dependencies/"$DIST"_"$DIST_VERS
-    if [ -e $DEPS_FILE ]; then
-        bash $DEPS_FILE
-    else
-        echo " + Impossible to find dependencies file ($DEPS_FILE)..."
-    fi
-    check_code $? "Install extra dependencies failure"
+	echo "Install OS dependencies for $DIST $DIST_VERS ..."
+	local DEPS_FILE="$SRC_PATH/extra/dependencies/"$DIST"_"$DIST_VERS
+	if [ -e $DEPS_FILE ]; then
+	   bash $DEPS_FILE
+	else
+	   echo " + Impossible to find dependencies file ($DEPS_FILE)..."
+	fi
+	check_code $? "Install extra dependencies failure"
 }
 
 function run_clean(){
-    echo "Clean $PREFIX ..."
-    echo " + kill all canopsis process ..."
-    if [ -e $PREFIX/opt/canotools/hypcontrol ]; then
-        su - $HUSER -c ". .bash_profile; hypcontrol stop"
-        check_code $? "Run hypcontrol stop failure"
-    fi
-    pkill -9 -u $HUSER
-    sleep 1
+	echo "Clean $PREFIX ..."
+	echo " + kill all canopsis process ..."
+	if [ -e $PREFIX/opt/canotools/hypcontrol ]; then
+	   su - $HUSER -c ". .bash_profile; hypcontrol stop"
+	   check_code $? "Run hypcontrol stop failure"
+	fi
+	pkill -9 -u $HUSER
+	sleep 1
 
-    . $SRC_PATH/packages/canohome/control
-    pre_remove
-    post_remove
-    purge
+	. $SRC_PATH/packages/canohome/control
+	pre_remove
+	post_remove
+	purge
 
-    rm -f $SRC_PATH/packages/files.lst &> /dev/null
+	rm -f $SRC_PATH/packages/files.lst &> /dev/null
 }
 
 function export_env(){
@@ -294,21 +309,21 @@ function export_env(){
 }
 
 function pkgondemand(){
-    PNAME=$1
-    echo "Make package $PNAME ..."
-    if [ -e $SRC_PATH/packages/$PNAME/files.lst ]; then
-        make_package_archive "$PNAME"
-    else
-        echo " + Impossible to find file.lst ..."
-        exit 1
-    fi
-    exit 0
+	PNAME=$1
+	echo "Make package $PNAME ..."
+	if [ -e $SRC_PATH/packages/$PNAME/files.lst ]; then
+	   make_package_archive "$PNAME"
+	else
+	   echo " + Impossible to find file.lst ..."
+	   exit 1
+	fi
+	exit 0
 }
 
 function easy_install_pylib(){
-        echo "Easy install Python Library: $1 ..."
-        $PREFIX/bin/easy_install -Z --prefix=$PREFIX -H None -f $SRC_PATH/externals/python-libs $1 1>> $LOG 2>> $LOG
-        check_code $? "Easy install failed ..."
+	   echo "Easy install Python Library: $1 ..."
+	   $PREFIX/bin/easy_install -Z --prefix=$PREFIX -H None -f $SRC_PATH/externals/python-libs $1 1>> $LOG 2>> $LOG
+	   check_code $? "Easy install failed ..."
 }
 
 function show_help(){
@@ -384,8 +399,8 @@ git submodule init && git submodule update
 check_code $? "Impossible to init externals submodules"
 cd $SRC_PATH/..
 
-export_env
 detect_os
+export_env
 
 if [ $OPT_BUILD -eq 1 ]; then
 
@@ -469,6 +484,7 @@ if [ $OPT_BUILD -eq 1 ]; then
 			echo "# $NAME $VERSION"
 			echo "################################"
 
+			## Build and install
 			FORCE_UPDATE=0
 
 			if [ $(echo $ITEM | grep "11_mongodb" | wc -l) == 1 ]; then
@@ -477,7 +493,6 @@ if [ $OPT_BUILD -eq 1 ]; then
 
 			## Build and install
 			if [ $FORCE_UPDATE -eq 1 ] || [ ! -e $FCHECK ]; then
-
 				if [ $OPT_NOBUILD -ne 1 ]; then
 					echo " + Build ..."
 					build
@@ -503,7 +518,7 @@ if [ $OPT_BUILD -eq 1 ]; then
 					check_code $? "Make package failure"
 				fi
 			else
-				echo " + Already install"
+				echo " + Already installed"
 			fi
 		else
 			echo "Impossible to build $NAME ..."
@@ -543,7 +558,7 @@ if [ $OPT_BUILD -eq 1 ]; then
 	fi
 fi
 
-if [ $OPT_MPKG -eq 1 ] || [ $OPT_MINSTALLER -eq 1 ]; then
+if [ $OPT_MPKG -eq 1 -o $OPT_MINSTALLER -eq 1 ]; then
 	cd $SRC_PATH
 	./build-installer.sh
 	check_code $? "Impossible to build installer"
