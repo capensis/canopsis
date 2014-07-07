@@ -284,10 +284,10 @@ def add_view(views, storage, account):
 				try:
 					if view['leaf'] == True:
 						logger.debug('record is a leaf, add the new view')
-						record = crecord({'leaf':True,'_id':view['_id'],'items':view['items']},type='view',name=view['crecord_name'],account=account)
+						record = crecord({'leaf':True,'_id':view['_id'],'items':view['items']},type='view',name=view['crecord_name'], storage=storage, account=account)
 					else:
 						logger.debug('record is a directory, add it')
-						record = crecord({'_id':view['_id']},type='view_directory',name=view['crecord_name'],account=account)
+						record = crecord({'_id':view['_id']},type='view_directory',name=view['crecord_name'], storage=storage, account=account)
 				except Exception, err:
 					logger.info('Error while building view/directory crecord : %s' % err)
 					output[view_name] = {'success':False,'output':"Error while building crecord: %s" % err}
