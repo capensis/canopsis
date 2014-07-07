@@ -14,6 +14,14 @@ function build(){
 	fi
 	cd  $BASE
 
+	echo "   + Check for patches ..."
+	PATCH_FILE="$SRC_PATH/extra/patches/$DIST"_"$DIST_VERS/$BASE.diff"
+
+	[ -r $PATCH_FILE ] && {
+	    echo "   + Patch file found, applying patches"
+	    patch -Np2 < $PATCH_FILE
+	}
+
 	echo "   + Clean ..."
 	make clean 1>> $LOG 2>> $LOG
 	#check_code $?
@@ -33,7 +41,7 @@ function install(){
 
 	make install 1>> $LOG 2>> $LOG
 	check_code $? 'Impossible to install ...'
-	
+
 	# Clean
 	rm $PREFIX/etc/collectd.conf
 }
