@@ -18,7 +18,7 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 from crecord import crecord
-
+import md5
 namespace = 'files'
 
 class cfile(crecord):
@@ -38,6 +38,8 @@ class cfile(crecord):
 		self.data['file_name'] = file_name
 		self.name = file_name
 		self.data['content_type'] = content_type 
+		if not self._id:
+			self._id = md5.md5(file_name).hexdigest()
 	
 	def get_binary_id(self):
 		bid = self.data.get('binary_id', None)

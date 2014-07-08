@@ -61,13 +61,13 @@ def render_pdf(
 	orientation='Portrait',
 	pagesize='A4'):
 
-	logger.info('start render')
+	logger.info('start render ------------------------')
 
-	logger.debug("fileName: %s " % fileName)
-	logger.debug("viewName: %s " % viewName)
-	logger.debug("exporting: %s " % exporting)
-	logger.debug("account: %s " % account)
-	logger.debug("mail: %s " % mail)
+	logger.info("fileName: %s " % fileName)
+	logger.info("viewName: %s " % viewName)
+	logger.info("exporting: %s " % exporting)
+	logger.info("account: %s " % account)
+	logger.info("mail: %s " % mail)
 
 	if exporting is None:
 		exporting = {"enable": False}
@@ -268,6 +268,7 @@ def render_pdf(
 	wkhtml_wrapper.run_report()
 
 	logger.info('Put it in grid fs: %s' % file_path)
+	doc_id = None
 	try:
 		doc_id = put_in_grid_fs(file_path, fileName, account,owner)
 	except Exception as e:
@@ -286,7 +287,9 @@ def render_pdf(
 			meta = reportStorage.get(doc_id)
 			meta.__class__ = cfile
 		except Exception, err:
-			logger.error('Error while fetching cfile : %s' % err)
+			import traceback
+			logger.debug(traceback.format_exc())
+			logger.error('Error while fetching cfile : {}'.format(err))
 
 		try:
 			mail['account'] = account

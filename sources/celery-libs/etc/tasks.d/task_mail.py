@@ -10,6 +10,8 @@ import string
 import smtplib
 import socket
 import sys
+import ConfigParser
+import os
 
 from email import Encoders
 from email.MIMEBase import MIMEBase
@@ -21,7 +23,22 @@ logger = logging.getLogger('Mail Task')
 
 @task
 @decorators.log_task
-def send(account=None, recipients=None, subject=None, body=None, attachments=None, smtp_host="localhost", smtp_port=25, html=False):
+def send(account=None, recipients=None, subject=None, body=None, attachments=None, smtp_host=None, smtp_port=None, html=False):
+
+	if smtp_port == None and smtp_host == None:
+
+		logger.info('Will read mail configuration from ~/etc/mail.conf')
+		config = ConfigParser.RawConfigParser()
+		config.read(os.path.expanduser('~/etc/mail.conf'))
+
+		smtp_host = 'localhost'
+		smtp_port = 25
+		try:
+			smtp_host = config.get('master', 'host')
+			smtp_port = int(config.getint('master', 'port'))
+		except Exception as e:
+			logger.error('Unable to read configuration for mail from file ~/etc/mail.conf')
+
 	"""
 		account		: caccount or nothing for anon
 		recipients	: str("glehee@capensis.fr"), caccount
