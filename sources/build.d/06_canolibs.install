@@ -1,9 +1,34 @@
 NAME="canolibs"
 
+LOG="$LOG_PATH/$NAME.log"
+rm -f $LOG &> /dev/null
+
+PROJECTS[0]='common'
+PROJECTS[1]='configuration'
+PROJECTS[2]='timeserie'
+PROJECTS[3]='storage'
+PROJECTS[4]='context'
+PROJECTS[5]='perfdata'
+PROJECTS[6]='mongo'
+PROJECTS[7]='canolibs'
+
 function build(){
 	true
 }
 
 function install(){
-	install_basic_source $NAME
+	#install_basic_source $NAME
+
+    # install all projects
+    for project in "${PROJECTS[@]}";
+    do
+        cd $SRC_PATH/$NAME/$project;
+        python setup.py install >> $LOG 2>&1 || break
+    done
+
+    # copy content of $SRC_PATH/$NAME/etc in ~/etc/
+    # cp -rf $SRC_PATH/$NAME/etc/* $PREFIX/etc/
+
+    # TODO when fabric will be available
+    # fab -H localhost -u canopsis -p canopsis setup 1>> $LOG 2>> $LOG
 }
