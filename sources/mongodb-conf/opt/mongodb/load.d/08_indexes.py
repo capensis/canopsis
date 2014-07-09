@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 #--------------------------------
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
@@ -18,104 +19,97 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from caccount import caccount
-from cstorage import get_storage
-
-from pyperfstore3.store import TimedStore, PeriodicStore
-from pyperfstore3.manager import Manager
+from canopsis.old.account import Account
+from canopsis.old.storage import get_storage
 
 logger = None
 
 ##set root account
-root = caccount(user="root", group="root")
+root = Account(user="root", group="root")
 storage = get_storage(account=root, namespace='object')
 
 INDEXES = {
-	'object': [
-		[('crecord_type', 1)]
-	],
-	'perfdata2': [
-		[('co', 1), ('re', 1), ('me', 1)],
-		[('re', 1), ('me', 1)],
-		[('me', 1)],
-		[('tg', 1)]
-	],
-	'perfdata2_daily': [
-		[('insert_date', 1)]
-	],
-	'events': [
-		[
-			('connector_name', 1),
-			('event_type', 1),
-			('component', 1),
-			('resource', 1),
-			('state_type', 1),
-			('state', 1)
-		], [
-			('source_type', 1),
-			('tags', 1)
-		], [
-			('event_type', 1),
-			('component', 1),
-			('resource', 1)
-		], [
-			('event_type', 1),
-			('resource', 1)
-		], [
-			('event_type', 1)
-		]
-	],
-	'events_log': [
-		[
-			('connector_name', 1),
-			('event_type', 1),
-			('component', 1),
-			('resource', 1),
-			('state_type', 1),
-			('state', 1)
-		], [
-			('source_type', 1),
-			('tags', 1)
-		], [
-			('event_type', 1),
-			('component', 1),
-			('resource', 1)
-		], [
-			('event_type', 1),
-			('resource', 1)
-		], [
-			('event_type', 1)
-		], [
-			('state_type', 1)
-		], [
-			('tags', 1)
-		], [
-			('referer', 1)
-		]
-	],
-	'entities': [
-		[('type', 1), ('name', 1)],
-		[('type', 1), ('component', 1), ('name', 1)],
-		[('type', 1), ('component', 1), ('resource', 1), ('id', 1)],  # downtime
-		[('type', 1), ('component', 1), ('resource', 1), ('name', 1)],
-		[('type', 1), ('nodeid', 1)]  # contextual data like metric
-	],
-	PeriodicStore(data_name=Manager.DEFAULT_DATA_NAME).get_collection_name():
-		PeriodicStore._get_indexes(),
-	TimedStore(data_name=Manager.DEFAULT_DATA_NAME).get_collection_name():
-		TimedStore._get_indexes()
+    'object': [
+        [('crecord_type', 1)]
+    ],
+    'perfdata2': [
+        [('co', 1), ('re', 1), ('me', 1)],
+        [('re', 1), ('me', 1)],
+        [('me', 1)],
+        [('tg', 1)]
+    ],
+    'perfdata2_daily': [
+        [('insert_date', 1)]
+    ],
+    'events': [
+        [
+            ('connector_name', 1),
+            ('event_type', 1),
+            ('component', 1),
+            ('resource', 1),
+            ('state_type', 1),
+            ('state', 1)
+        ], [
+            ('source_type', 1),
+            ('tags', 1)
+        ], [
+            ('event_type', 1),
+            ('component', 1),
+            ('resource', 1)
+        ], [
+            ('event_type', 1),
+            ('resource', 1)
+        ], [
+            ('event_type', 1)
+        ]
+    ],
+    'events_log': [
+        [
+            ('connector_name', 1),
+            ('event_type', 1),
+            ('component', 1),
+            ('resource', 1),
+            ('state_type', 1),
+            ('state', 1)
+        ], [
+            ('source_type', 1),
+            ('tags', 1)
+        ], [
+            ('event_type', 1),
+            ('component', 1),
+            ('resource', 1)
+        ], [
+            ('event_type', 1),
+            ('resource', 1)
+        ], [
+            ('event_type', 1)
+        ], [
+            ('state_type', 1)
+        ], [
+            ('tags', 1)
+        ], [
+            ('referer', 1)
+        ]
+    ],
+    'entities': [
+        [('type', 1), ('name', 1)],
+        [('type', 1), ('component', 1), ('name', 1)],
+        [('type', 1), ('component', 1), ('resource', 1), ('id', 1)],  # downtime
+        [('type', 1), ('component', 1), ('resource', 1), ('name', 1)],
+        [('type', 1), ('nodeid', 1)]  # contextual data like metric
+    ]
 }
 
 
 def init():
-	for collection in INDEXES:
-		logger.info(' + Create indexes for collection {0}'.format(collection))
-		col = storage.get_backend(collection)
-		col.drop_indexes()
+    for collection in INDEXES:
+        logger.info(' + Create indexes for collection {0}'.format(collection))
+        col = storage.get_backend(collection)
+        col.drop_indexes()
 
-		for index in INDEXES[collection]:
-			col.ensure_index(index)
+        for index in INDEXES[collection]:
+            col.ensure_index(index)
 
 
 def update():
-	init()
+    init()

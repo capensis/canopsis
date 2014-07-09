@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 #--------------------------------
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
@@ -27,46 +28,46 @@ manager = pyperfstore2.manager(logging_level=logging.DEBUG)
 
 
 def init():
-	logger.info(" + Drop 'pyperfstore2' collections")
-	manager.store.drop()
-	add_rotate_task()
+    logger.info(" + Drop 'pyperfstore2' collections")
+    manager.store.drop()
+    add_rotate_task()
 
 
 def update():
-	add_rotate_task()
+    add_rotate_task()
 
-	# tweak: rename all 'stat' metrics
-	metrics = manager.find(mfilter={"co": "stat", "me": {"$regex": "^cps_.*"}})
+    # tweak: rename all 'stat' metrics
+    metrics = manager.find(mfilter={"co": "stat", "me": {"$regex": "^cps_.*"}})
 
-	for metric in metrics:
-		logger.info(
-			" + Move '%s.%s.%s' to '%s.%s.%s'" % (
-				metric["co"], metric["re"], metric["me"], metric["re"], "selector",
-				metric["me"]))
+    for metric in metrics:
+        logger.info(
+            " + Move '%s.%s.%s' to '%s.%s.%s'" % (
+                metric["co"], metric["re"], metric["me"], metric["re"], "selector",
+                metric["me"]))
 
-		old_id = metric["_id"]
-		del metric["_id"]
+        old_id = metric["_id"]
+        del metric["_id"]
 
-		metric["co"] = metric["re"]
-		metric["re"] = "selector"
-		name = "%s%s%s" % (metric["co"], metric["re"], metric["me"])
-		_id = manager.gen_id(name)
+        metric["co"] = metric["re"]
+        metric["re"] = "selector"
+        name = "%s%s%s" % (metric["co"], metric["re"], metric["me"])
+        _id = manager.gen_id(name)
 
-		manager.store.create(_id, metric)
-		manager.store.remove(_id=old_id)
+        manager.store.create(_id, metric)
+        manager.store.remove(_id=old_id)
 
 
 def add_rotate_task():
-	#### TODO: Remove this !!
+    #### TODO: Remove this !!
 
-	from caccount import caccount
-	from cstorage import get_storage
+    from canopsis.old.account import Account
+    from canopsis.old.storage import get_storage
 
-	account = caccount(user="root", group="root")
-	storage = get_storage(account=account, namespace='object')
+    account = Account(user="root", group="root")
+    storage = get_storage(account=account, namespace='object')
 
-	_id = 'schedule.pyperfstore_rotate'
-	try:
-		storage.remove(_id)
-	except:
-		pass
+    _id = 'schedule.pyperfstore_rotate'
+    try:
+        storage.remove(_id)
+    except:
+        pass

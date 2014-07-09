@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 #--------------------------------
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
@@ -18,19 +19,19 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from caccount import caccount
-from cstorage import get_storage
+from canopsis.old.account import Account
+from canopsis.old.storage import get_storage
 
 logger = None
 
 ##set root account
-root = caccount(user="root", group="root")
+root = Account(user="root", group="root")
 storage = get_storage(account=root, namespace='object')
 
 
 def init():
-	pass
+    pass
 
 
 def update():
-	pass
+    pass

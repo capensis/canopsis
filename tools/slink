@@ -19,7 +19,7 @@ rm -Rf $CPS/opt/webcore
 rm -Rf $CPS/var/www/canopsis
 rm -Rf $CPS/var/www/webcore-libs
 rm -Rf $CPS/opt/ccli
-rm -Rf $CPS/lib/canolibs
+#rm -Rf $CPS/lib/canolibs
 rm -Rf $CPS/opt/snmp2amqp
 rm -Rf $CPS/opt/ics2amqp
 rm -Rf $CPS/var/snmp
@@ -36,15 +36,15 @@ rm -Rf $CPS/etc/tasks.d/task_node.py
 rm -Rf $CPS/etc/tasks.d/task_pyperfstore.py
 rm -Rf $CPS/lib/wkhtmltopdf/*
 
-rm -Rf $CPS/lib/python2.7/site-packages/ccommon-0.1-py2.7.egg/*
-rm -Rf $CPS/lib/python2.7/site-packages/cconfiguration-0.1-py2.7.egg/*
-rm -Rf $CPS/lib/python2.7/site-packages/ctimeserie-0.1-py2.7.egg/*
-rm -Rf $CPS/lib/python2.7/site-packages/cstorage-0.1-py2.7.egg/*
-rm -Rf $CPS/lib/python2.7/site-packages/ccontext-0.1-py2.7.egg/*
-rm -Rf $CPS/lib/python2.7/site-packages/cperfdata-0.1-py2.7.egg/*
-rm -Rf $CPS/lib/python2.7/site-packages/ctopology-0.1-py2.7.egg/*
-rm -Rf $CPS/lib/python2.7/site-packages/cmongo-0.1-py2.7.egg/*
-
+rm -Rf $CPS/lib/python2.7/site-packages/canopsis.common-0.1-py2.7.egg/*
+rm -Rf $CPS/lib/python2.7/site-packages/canopsis.configuration-0.1-py2.7.egg/*
+rm -Rf $CPS/lib/python2.7/site-packages/canopsis.timeserie-0.1-py2.7.egg/*
+rm -Rf $CPS/lib/python2.7/site-packages/canopsis.storage-0.1-py2.7.egg/*
+rm -Rf $CPS/lib/python2.7/site-packages/canopsis.context-0.1-py2.7.egg/*
+rm -Rf $CPS/lib/python2.7/site-packages/canopsis.perfdata-0.1-py2.7.egg/*
+rm -Rf $CPS/lib/python2.7/site-packages/canopsis.topology-0.1-py2.7.egg/*
+rm -Rf $CPS/lib/python2.7/site-packages/canopsis.mongo-0.1-py2.7.egg/*
+rm -Rf $CPS/lib/python2.7/site-packages/canopsis.old-0.1-py2.7.egg/*
 
 if [ $LINK -eq 1 ]; then
 	ln -s $SRC/sources/wkhtmltopdf-libs/lib/wkhtmltopdf/* $CPS/lib/wkhtmltopdf/
@@ -57,7 +57,7 @@ if [ $LINK -eq 1 ]; then
 	ln -s $SRC/sources/ccli/opt/ccli $CPS/opt/
 	ln -s $SRC/sources/webcore/opt/webcore $CPS/opt/
 	ln -s $SRC/sources/webcore/var/www/canopsis $CPS/var/www/
-	ln -s $SRC/sources/canolibs/lib/canolibs $CPS/lib/
+	#ln -s $SRC/sources/canolibs/lib/canolibs $CPS/lib/
 	ln -s $SRC/sources/snmp2amqp/opt/snmp2amqp $CPS/opt/
 	ln -s $SRC/sources/ics2amqp/opt/ics2amqp $CPS/opt/
 	ln -s $SRC/sources/snmp2amqp/var/snmp $CPS/var/
@@ -66,14 +66,14 @@ if [ $LINK -eq 1 ]; then
 	ln -s $SRC/sources/canotools/opt/canotools $CPS/opt/
 	ln -s $SRC/sources/mongodb-conf/opt/mongodb $CPS/opt/
 
-	ln -s $SRC/sources/canopsis/ccommon/ccommon $CPS/lib/python2.7/site-packages/ccommon-0.1-py2.7.egg/
-	ln -s $SRC/sources/canopsis/cconfiguration/cconfiguration $CPS/lib/python2.7/site-packages/cconfiguration-0.1-py2.7.egg/
-	ln -s $SRC/sources/canopsis/ctimeserie/ctimeserie $CPS/lib/python2.7/site-packages/ctimeserie-0.1-py2.7.egg/
-	ln -s $SRC/sources/canopsis/cstorage/cstorage $CPS/lib/python2.7/site-packages/cstorage-0.1-py2.7.egg/
-	ln -s $SRC/sources/canopsis/ccontext/ccontext $CPS/lib/python2.7/site-packages/ccontext-0.1-py2.7.egg/
-	ln -s $SRC/sources/canopsis/ctopology/ctopology $CPS/lib/python2.7/site-packages/ctopology-0.1-py2.7.egg/
-	ln -s $SRC/sources/canopsis/cperfdata/cperfdata $CPS/lib/python2.7/site-packages/cperfdata-0.1-py2.7.egg/
-	ln -s $SRC/sources/canopsis/cmongo/cmongo $CPS/lib/python2.7/site-packages/cmongo-0.1-py2.7.egg/
+	# links to canolibs
+	ln -s $SRC/sources/canolibs/common/ $CPS/lib/python2.7/site-packages/canopsis.common-0.1-py2.7.egg/
+	ln -s $SRC/sources/canolibs/configuration/ $CPS/lib/python2.7/site-packages/canopsis.configuration-0.1-py2.7.egg/
+	ln -s $SRC/sources/canolibs/timeserie/ $CPS/lib/python2.7/site-packages/canopsis.timeserie-0.1-py2.7.egg/
+	ln -s $SRC/sources/canolibs/storage/ $CPS/lib/python2.7/site-packages/canopsis.storage-0.1-py2.7.egg/
+	ln -s $SRC/sources/canolibs/context/ $CPS/lib/python2.7/site-packages/canopsis.context-0.1-py2.7.egg/
+	ln -s $SRC/sources/canolibs/topology/ $CPS/lib/python2.7/site-packages/canopsis.topology-0.1-py2.7.egg/
+	ln -s $SRC/sources/canolibs/perfdata/ $CPS/lib/python2.7/site-packages/canopsis.perfdata-0.1-py2.7.egg/
+	ln -s $SRC/sources/canolibs/mongo/ $CPS/lib/python2.7/site-packages/canopsis.mongo-0.1-py2.7.egg/
+	ln -s $SRC/sources/canolibs/old/ $CPS/lib/python2.7/site-packages/canopsis.old-0.1-py2.7.egg/
 fi
-
-

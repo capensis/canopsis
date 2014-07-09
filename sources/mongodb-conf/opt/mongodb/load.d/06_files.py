@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 #--------------------------------
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
@@ -18,53 +19,53 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from caccount import caccount
-from cstorage import cstorage
+from canopsis.old.account import Account
+from canopsis.old.storage import Storage
 
 ##set root account
-root = caccount(user="root", group="root")
+root = Account(user="root", group="root")
 
 logger = None
 
 
 def init():
-	storage = cstorage(account=root)
+    storage = Storage(account=root)
 
-	namespaces = ['files', 'binaries.files', 'binaries.chunks']
+    namespaces = ['files', 'binaries.files', 'binaries.chunks']
 
-	for namespace in namespaces:
-		logger.info(" + Drop '%s' collection" % namespace)
-		storage.drop_namespace(namespace)
+    for namespace in namespaces:
+        logger.info(" + Drop '%s' collection" % namespace)
+        storage.drop_namespace(namespace)
 
 
 def update():
-	#storage = cstorage(account=root)
+    #storage = Storage(account=root)
 
-	#logger.info(" + Update: 'daily -> 201205'")
-	#collections = storage.db.collection_names()
-	#if 'reports' in collections:
-	#	logger.info("   + Move records from 'reports' to 'files' ...")
-	#	records = storage.find({}, account=root, namespace='reports')
-	#	for record in records:
-	#		logger.info("     - %s (%s)" % (record._id, record.data['file_name']))
-	#		storage.put(record, account=root, namespace='files')
-	#
-	#	storage.drop_namespace('reports')
-	update_for_new_rights()
+    #logger.info(" + Update: 'daily -> 201205'")
+    #collections = storage.db.collection_names()
+    #if 'reports' in collections:
+    #   logger.info("   + Move records from 'reports' to 'files' ...")
+    #   records = storage.find({}, account=root, namespace='reports')
+    #   for record in records:
+    #       logger.info("     - %s (%s)" % (record._id, record.data['file_name']))
+    #       storage.put(record, account=root, namespace='files')
+    #
+    #   storage.drop_namespace('reports')
+    update_for_new_rights()
 
-	pass
+    pass
 
 
 def update_for_new_rights():
-	#update briefcase elements
-	storage = cstorage(namespace='files', account=root)
+    #update briefcase elements
+    storage = Storage(namespace='files', account=root)
 
-	dump = storage.find({})
+    dump = storage.find({})
 
-	for record in dump:
-		if record.owner.find('account.') == -1:
-			record.owner = 'account.%s' % record.owner
-		if record.group.find('group.') == -1:
-			record.group = 'group.%s' % record.group
+    for record in dump:
+        if record.owner.find('account.') == -1:
+            record.owner = 'account.%s' % record.owner
+        if record.group.find('group.') == -1:
+            record.group = 'group.%s' % record.group
 
-	storage.put(dump)
+    storage.put(dump)

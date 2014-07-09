@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 #--------------------------------
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
@@ -18,23 +19,23 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from caccount import caccount
-from cstorage import cstorage
+from canopsis.old.account import Account
+from canopsis.old.storage import Storage
 
 ##set root account
-root = caccount(user="root", group="root")
-storage = cstorage(account=root)
+root = Account(user="root", group="root")
+storage = Storage(account=root)
 
 logger = None
 
 
 def init():
-	namespaces = ['cache', 'events', 'events_log', 'object']
+    namespaces = ['cache', 'events', 'events_log', 'object']
 
-	for namespace in namespaces:
-		logger.info(" + Drop '%s' collection" % namespace)
-		storage.drop_namespace(namespace)
+    for namespace in namespaces:
+        logger.info(" + Drop '%s' collection" % namespace)
+        storage.drop_namespace(namespace)
 
 
 def update():
-	storage.drop_namespace('cache')
+    storage.drop_namespace('cache')
