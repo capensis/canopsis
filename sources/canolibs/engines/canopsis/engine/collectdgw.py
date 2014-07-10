@@ -22,6 +22,7 @@
 from canopsis.engine import Engine
 from canopsis.old.tools import Str2Number
 from canopsis.old.event import get_routingkey, forger
+
 from time import time
 
 from sys import path
