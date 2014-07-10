@@ -26,5 +26,4 @@ install_requires = ['canopsis.old']
 setup(
     description='Canopsis connectors',
     install_requires=install_requires,
-    keywords='connectors',
-    scripts=['scripts/gelf2amqp', 'scripts/ics2amqp', 'scripts/snmp2amqp'])
+    keywords='connectors')
