@@ -11,6 +11,9 @@ PROJECTS[4]='context'
 PROJECTS[5]='perfdata'
 PROJECTS[6]='mongo'
 PROJECTS[7]='canolibs'
+PROJECTS[8]='engines'
+PROJECTS[9]='connectors'
+PROJECTS[10]='tools'
 
 function build(){
 	true
