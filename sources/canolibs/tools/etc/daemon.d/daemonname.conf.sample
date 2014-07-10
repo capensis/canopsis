@@ -1,0 +1,4 @@
+### Sample
+START=1
+APP_BIN=~/opt/webcore/webserver.py
+NB_PROC=3

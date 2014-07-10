@@ -1,0 +1,47 @@
+#!/usr/bin/env bash
+
+REPORT_NAME="canodebug.$(date +"%F.%H-%M-%S")"
+REPORT_PATH="$HOME/tmp/$REPORT_NAME"
+
+function doit()
+{
+     echo -n "-- $1 ..."
+     eval $2
+
+     if [ "$?" != "0" ]
+     then
+          echo " [fail]"
+          rm -rf $REPORT_PATH
+          exit 1
+     fi
+
+     echo " [ok]"
+}
+
+doit "Creating report folder : $REPORT_PATH" "mkdir -p $REPORT_PATH && cd $REPORT_PATH"
+
+doit "Checking supervisord"                  "supervisorctl status > supervisord"
+
+doit "Fetching RabbitMQ connections"         "rabbitmqadmin list connections > rabbitmq.connections"
+doit "Fetching RabbitMQ channels"            "rabbitmqadmin list channels > rabbitmq.channels"
+doit "Fetching RabbitMQ nodes"               "rabbitmqadmin list nodes > rabbitmq.nodes"
+doit "Fetching RabbitMQ users"               "rabbitmqadmin list users > rabbitmq.users"
+doit "Fetching RabbitMQ exchanges"           "rabbitmqadmin list exchanges > rabbitmq.exchanges"
+doit "Fetching RabbitMQ virtual hosts"       "rabbitmqadmin list vhosts > rabbitmq.vhosts"
+doit "Fetching RabbitMQ queues"              "rabbitmqadmin list queues > rabbitmq.queues"
+doit "Fetching RabbitMQ bindings"            "rabbitmqadmin list bindings > rabbitmq.bindings"
+doit "Fetching RabbitMQ permissions"         "rabbitmqadmin list permissions > rabbitmq.permissions"
+doit "Fetching RabbitMQ overview"            "rabbitmqadmin show overview > rabbitmq.overview"
+doit "Fetching RabbitMQ definitions"         "rabbitmqadmin export rabbitmq.definitions > /dev/null"
+
+doit "Fetching logs"                         "cp -R $HOME/var/log $REPORT_PATH/logs"
+
+doit "Fetching processes informations"       "cano_ps > processes"
+
+doit "Archiving report"                      "cd ~/tmp && tar cf $REPORT_NAME.tar $REPORT_NAME"
+doit "Compressing report"                    "xz $REPORT_NAME.tar"
+doit "Removing temporary folder"             "rm -rf $REPORT_PATH"
+
+echo
+echo "Your report is located at $REPORT_PATH.tar.xz"
+du -h $REPORT_PATH.tar.xz
