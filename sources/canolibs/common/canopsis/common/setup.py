@@ -23,7 +23,8 @@ from pkgutil import extend_path
 
 from setuptools import setup as _setup, find_packages
 
-from os.path import join, dirname, expanduser, abspath, basename
+from os import walk
+from os.path import join, dirname, expanduser, abspath, basename, exists
 
 from sys import path, argv
 
@@ -40,7 +41,21 @@ URL = 'http://www.canopsis.org'
 KEYWORDS = ' Canopsis Hypervision Hypervisor Monitoring'
 
 
-def setup(description, keywords, **kwargs):
+def setup(description, keywords, add_etc=True, **kwargs):
+    """
+    Setup dedicated to canolibs projects.
+
+    :param description: project description
+    :type description: str
+
+    :param keywords: project keywords
+    :type keywords: str
+
+    :param add_etc: add automatically etc files (default True)
+    :type add_etc: bool
+
+    :param kwargs: enrich setuptools.setup method
+    """
 
     # get setup path which corresponds to first python argument
     filename = argv[0]
@@ -69,13 +84,37 @@ def setup(description, keywords, **kwargs):
 
     kwargs.setdefault('keywords', kwargs.get('keywords', '') + KEYWORDS)
 
+    # add etc content if exist
+    if add_etc:
+        etc_path = join(_path, 'etc')
+        if exists(etc_path):
+            user_etc_path = '~/etc/'
+            data_files = kwargs.get('data_files', [])
+            for root, dirs, files in walk(etc_path):
+                files_to_copy = [join(root, _file) for _file in files]
+                target = join(user_etc_path, root)
+                data_files.append(target, files_to_copy)
+            kwargs['data_files'] = data_files
+
+    # add scripts if exist
+    if 'scripts' not in kwargs:
+        scripts_path = join(_path, 'scripts')
+        if exists(scripts_path):
+            scripts = []
+            for root, dirs, files in walk(scripts_path):
+                for _file in files:
+                    scripts.append(join(root, _file))
+            kwargs['scripts'] = scripts
+
     if 'packages' not in kwargs:
         packages = find_packages(where=_path, exclude=['test'])
         kwargs['packages'] = packages
 
     if 'long_description' not in kwargs:
-        with open(join(_path, 'README')) as f:
-            kwargs['long_description'] = f.read()
+        readme_path = join(_path, 'README')
+        if exists(readme_path):
+            with open(join(_path, 'README')) as f:
+                kwargs['long_description'] = f.read()
 
     if 'test_suite' not in kwargs:
         kwargs['test_suite'] = 'test'
