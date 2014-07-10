@@ -419,7 +419,7 @@ class Configurable(object):
     DEFAULT_MANAGERS = 'cconfiguration.manager.json.ConfigurationManager,\
 cconfiguration.manager.ini.ConfigurationManager'
 
-    CONF_FILE = '~/etc/conf.conf'
+    CONF_FILE = '~/etc/global.conf'
 
     CONF = 'CONFIGURATION'
     LOG = 'LOG'
