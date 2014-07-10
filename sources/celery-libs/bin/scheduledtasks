@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 # --------------------------------
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
@@ -19,192 +20,192 @@
 # ---------------------------------
 import sys, os, getopt, json
 
-from cstorage import cstorage
-from caccount import caccount
-from crecord import crecord
+from canopsis.old.storage import Storage
+from canopsis.old.account import Account
+from canopsis.old.record import Record
 
 def usage():
-	print(" Usage: scheduledtasks [-l|-a|-r] [OPTIONS]")
-	print
-	print(" Modes:")
-	print("  -l, --list")
-	print("		list scheduled tasks")
-	print("  -a, --add=[FILE]")
-	print("		add scheduled task from json file")
-	print("  -r, --remove=[ID,ID...]")
-	print("		remove scheduled task")
-	print
-	print(" Options:")
-	print("  -u, --user=[USER]")
-	print("		user (Default:root)")
-	print("  -g, --group=[GROUP]")
-	print("		group (Default:root)")
-	print("  -n, --namespace=[NAME]")
-	print("		mongo namespace for scheduled tasks (Default:object)")
-	print("  --limit=[INT]")
-	print("		set number of schedules return list mode (Default:3)")
-	print("  -h, --help")
-	print("		show help")
+    print(" Usage: scheduledtasks [-l|-a|-r] [OPTIONS]")
+    print
+    print(" Modes:")
+    print("  -l, --list")
+    print("     list scheduled tasks")
+    print("  -a, --add=[FILE]")
+    print("     add scheduled task from json file")
+    print("  -r, --remove=[ID,ID...]")
+    print("     remove scheduled task")
+    print
+    print(" Options:")
+    print("  -u, --user=[USER]")
+    print("     user (Default:root)")
+    print("  -g, --group=[GROUP]")
+    print("     group (Default:root)")
+    print("  -n, --namespace=[NAME]")
+    print("     mongo namespace for scheduled tasks (Default:object)")
+    print("  --limit=[INT]")
+    print("     set number of schedules return list mode (Default:3)")
+    print("  -h, --help")
+    print("     show help")
 
 def list_mode(account, storage, limit=3): 
-	records = storage.find({"crecord_type": "schedule"}, limit=limit) 
-	print(' :: Account')
-	print('    + User : ' + account.user)
-	print('    + Group: ' + account.group)
+    records = storage.find({"crecord_type": "schedule"}, limit=limit) 
+    print(' :: Account')
+    print('    + User : ' + account.user)
+    print('    + Group: ' + account.group)
 
-	if len(records) == 0:
-		print(' :: No tasks')
-		sys.exit()
-	else:
-		print(' :: Tasks')
+    if len(records) == 0:
+        print(' :: No tasks')
+        sys.exit()
+    else:
+        print(' :: Tasks')
 
-	for record in records:
-		print("    + Id: %s" % record._id)
-		print("      + Name: %s" % record.data['name'])
-		print("      + Task: %s" % record.data['kwargs']['task'])
-		print("      + Method: %s" % record.data['kwargs']['method'])
-		if record.data.has_key('cron'):
-			print("      + Cron: %s" % record.data['cron'])
-		if record.data.has_key('inteval'):
-			print("      + Interval: %s" % record.data['interval'])
-		if record.data.has_key('date'):
-			print("      + Date: %s" % record.data['date'])
-		if record.data.has_key('args'):
-			print("      + Args: %s" % record.data['args'])
-		if record.data.has_key('kwargs'):
-			print("      + Kwargs: %s" % record.data['kwargs'])
-	sys.exit()
+    for record in records:
+        print("    + Id: %s" % record._id)
+        print("      + Name: %s" % record.data['name'])
+        print("      + Task: %s" % record.data['kwargs']['task'])
+        print("      + Method: %s" % record.data['kwargs']['method'])
+        if record.data.has_key('cron'):
+            print("      + Cron: %s" % record.data['cron'])
+        if record.data.has_key('inteval'):
+            print("      + Interval: %s" % record.data['interval'])
+        if record.data.has_key('date'):
+            print("      + Date: %s" % record.data['date'])
+        if record.data.has_key('args'):
+            print("      + Args: %s" % record.data['args'])
+        if record.data.has_key('kwargs'):
+            print("      + Kwargs: %s" % record.data['kwargs'])
+    sys.exit()
 
 def main(argv):
-	try:
-		opts, args = getopt.getopt(	sys.argv[1:], 
-									"n:r:la:u:g:h",
-									["namespace=", "add=", "remove=", "user=", "group=", "limit=", "help"])
-	except getopt.GetoptError, err:
-		print(err)
-		usage()
-		sys.exit(2)
+    try:
+        opts, args = getopt.getopt( sys.argv[1:], 
+                                    "n:r:la:u:g:h",
+                                    ["namespace=", "add=", "remove=", "user=", "group=", "limit=", "help"])
+    except getopt.GetoptError, err:
+        print(err)
+        usage()
+        sys.exit(2)
 
-	if len(opts) < 1:
-		usage()
-		sys.exit()
+    if len(opts) < 1:
+        usage()
+        sys.exit()
 
-	user 		= 'root'
-	group 		= 'root'
-	mode 		= 'list'
-	limit		= 3
-	namespace	= 'task'
-	file_path 	= False
+    user        = 'root'
+    group       = 'root'
+    mode        = 'list'
+    limit       = 3
+    namespace   = 'task'
+    file_path   = False
 
-	for opt, arg in opts:
-		if opt in ('-h', '--help'):
-			usage()
-			sys.exit()
-		if opt in ('--add', '-a'):
-			mode = 'add'
-			file_name, file_extension = os.path.splitext(arg)
-			file_path = arg
-		if opt in ('--remove', '-r'):
-			mode = 'remove'
-			ids = arg
-		if opt in ('--user', '-u'):
-			user = arg
-		if opt in ('--group', '-g'):
-			group = arg
-		if opt == '--limit':
-			limit = int(arg)
-		if opt in ('--namespace', '-n'):
-			namespace = arg
-	
-	if mode == 'list':
-		account = caccount(user=user, group=group)
-		storage = cstorage(account, namespace=namespace)	
-		list_mode(account, storage, limit)
+    for opt, arg in opts:
+        if opt in ('-h', '--help'):
+            usage()
+            sys.exit()
+        if opt in ('--add', '-a'):
+            mode = 'add'
+            file_name, file_extension = os.path.splitext(arg)
+            file_path = arg
+        if opt in ('--remove', '-r'):
+            mode = 'remove'
+            ids = arg
+        if opt in ('--user', '-u'):
+            user = arg
+        if opt in ('--group', '-g'):
+            group = arg
+        if opt == '--limit':
+            limit = int(arg)
+        if opt in ('--namespace', '-n'):
+            namespace = arg
+    
+    if mode == 'list':
+        account = Account(user=user, group=group)
+        storage = Storage(account, namespace=namespace) 
+        list_mode(account, storage, limit)
 
-	if mode == 'add':
-		if not file_path:
-			print('Error: Missing --file argument')
-			usage()
-			sys.exit()
-		if file_extension != '.json':
-			print('Error: Invalid file format (Must be .json)')
-			usage()
-			sys.exit()
-		if not os.path.exists(file_path):
-			print('Error: File not found (%s)' % file_path)
-			usage()
-			sys.exit()
-	
-		account = caccount(user=user, group=group)
+    if mode == 'add':
+        if not file_path:
+            print('Error: Missing --file argument')
+            usage()
+            sys.exit()
+        if file_extension != '.json':
+            print('Error: Invalid file format (Must be .json)')
+            usage()
+            sys.exit()
+        if not os.path.exists(file_path):
+            print('Error: File not found (%s)' % file_path)
+            usage()
+            sys.exit()
+    
+        account = Account(user=user, group=group)
 
-		print(' :: File')
-		print('    + %s' % file_path)
-		print(' :: Account')
-		print('    + User : ' + user)
-		print('    + Group: ' + group)
-	
-		try:
-			tasks = json.loads(open(file_path, 'r').read())
-		except ValueError:
-			print('Error: Invalid json file')
-			usage()
-			sys.exit()
+        print(' :: File')
+        print('    + %s' % file_path)
+        print(' :: Account')
+        print('    + User : ' + user)
+        print('    + Group: ' + group)
+    
+        try:
+            tasks = json.loads(open(file_path, 'r').read())
+        except ValueError:
+            print('Error: Invalid json file')
+            usage()
+            sys.exit()
 
-		if isinstance(tasks, dict):
-			tasks = [tasks]
+        if isinstance(tasks, dict):
+            tasks = [tasks]
 
-		storage = cstorage(account, namespace=namespace)
+        storage = Storage(account, namespace=namespace)
 
-		for task in tasks:
-			cron = task.has_key('cron')
-			date = task.has_key('date')
-			interval = task.has_key('interval')
+        for task in tasks:
+            cron = task.has_key('cron')
+            date = task.has_key('date')
+            interval = task.has_key('interval')
 
-			if cron and date and interval:
-				print('Error: Invalid json file (cron, date and interval in same task)')
-				usage()
-				sys.exit()		
-			if not cron and not date and not interval:
-				print('Error: Invalid json file (must have a cron, date or a interval at least)')
-				usage()
-				sys.exit()
+            if cron and date and interval:
+                print('Error: Invalid json file (cron, date and interval in same task)')
+                usage()
+                sys.exit()      
+            if not cron and not date and not interval:
+                print('Error: Invalid json file (must have a cron, date or a interval at least)')
+                usage()
+                sys.exit()
 
-			print(' :: Task Info')
-			print('    + Name    : ' + task['name'])
-			print('    + Task    : ' + task['kwargs']['task'])
-			print('    + Method  : ' + task['kwargs']['method'])
-			if cron:
-				print("    + Cron: %s" % task['cron'])
-			if date:
-				print("    + Date: %s" % task['date'])
-			if interval:
-				print("    + Interval: %s" % task['interval'])
-			if task.has_key('args'):
-				print("    + Args: %s" % task['args'])	
-			if task.has_key('kwargs'):
-				print("    + Kwargs: %s" % task['kwargs'])	
-		
-			record 		= crecord()
-			record.type = 'schedule'
-			record.data = task
-			storage.put(record)
+            print(' :: Task Info')
+            print('    + Name    : ' + task['name'])
+            print('    + Task    : ' + task['kwargs']['task'])
+            print('    + Method  : ' + task['kwargs']['method'])
+            if cron:
+                print("    + Cron: %s" % task['cron'])
+            if date:
+                print("    + Date: %s" % task['date'])
+            if interval:
+                print("    + Interval: %s" % task['interval'])
+            if task.has_key('args'):
+                print("    + Args: %s" % task['args'])  
+            if task.has_key('kwargs'):
+                print("    + Kwargs: %s" % task['kwargs'])  
+        
+            record      = Record()
+            record.type = 'schedule'
+            record.data = task
+            storage.put(record)
 
-	if mode == 'remove':
-		account = caccount(user=user, group=group)
-		storage = cstorage(account, namespace=namespace)
-		if ',' in ids:
-			ids = ids.split(',')
-		else:
-			ids = [ids]
+    if mode == 'remove':
+        account = Account(user=user, group=group)
+        storage = Storage(account, namespace=namespace)
+        if ',' in ids:
+            ids = ids.split(',')
+        else:
+            ids = [ids]
 
-		print(' :: Account')
-		print('    + User : ' + account.user)
-		print('    + Group: ' + account.group)
-		print(' :: Tasks removed')
+        print(' :: Account')
+        print('    + User : ' + account.user)
+        print('    + Group: ' + account.group)
+        print(' :: Tasks removed')
 
-		for id in ids:
-			print('    + %s' % id)
-			storage.remove(id)
+        for id in ids:
+            print('    + %s' % id)
+            storage.remove(id)
 
 if __name__ == "__main__":
     main(sys.argv[1:])
