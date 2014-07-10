@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 # --------------------------------
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
@@ -17,35 +18,32 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
-import sys, os, logging, json
 
-import bottle
-from bottle import route, get, put, delete, request, HTTPError, post, response
+import sys
+from os import listdir
+from os.path import expanduser
+from logging import getLogger
 
-#import protection function
-from libexec.auth import get_account
+from bottle import get
 
-#group_managing_access = ['']
-#########################################################################
+logger = getLogger("ui_topology")
 
-logger = logging.getLogger("ui_topology")
-
-import sys, os
-operators_path=os.path.expanduser('~/opt/amqp2engines/engines/topology')
+operators_path = expanduser('~/opt/amqp2engines/engines/topology')
 sys.path.append(operators_path)
+
 
 @get('/topology/getOperators')
 def get_operators():
-	operators = []
+    operators = []
 
-	for opfile in os.listdir(operators_path):
-		try:
-			operator = opfile.split('.')
-			if operator[1] == 'py':
-				module = __import__(operator[0])
-				operators.append(module.options)
-				del sys.modules[operator[0]]
-		except Exception, err:
-			logger.warning("Impossible to parse '%s' (%s)" % (opfile, err))
-        
-	return { 'total':len(operators), 'success':True ,'data': operators }
+    for opfile in listdir(operators_path):
+        try:
+            operator = opfile.split('.')
+            if operator[1] == 'py':
+                module = __import__(operator[0])
+                operators.append(module.options)
+                del sys.modules[operator[0]]
+        except Exception as err:
+            logger.warning("Impossible to parse '%s' (%s)" % (opfile, err))
+
+    return {'total': len(operators), 'success': True, 'data': operators}

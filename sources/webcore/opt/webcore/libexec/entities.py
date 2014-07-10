@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 # --------------------------------
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
@@ -22,12 +23,10 @@ import logging
 
 from bottle import get, post, request, HTTPError
 
-from caccount import caccount
-from cstorage import get_storage
+from canopsis.old.storage import get_storage
 
 from libexec.auth import get_account
 
-from bson import json_util
 import json
 
 
@@ -37,75 +36,75 @@ logger = logging.getLogger('Entities')
 
 def get_entities_from_db(mfilter):
 
-	account = get_account()
-	storage = get_storage(namespace=TABLE_NAME, account=account)
-	backend = storage.get_backend()
+    account = get_account()
+    storage = get_storage(namespace=TABLE_NAME, account=account)
+    backend = storage.get_backend()
 
-	entities = backend.find(mfilter)
+    entities = backend.find(mfilter)
 
-	response = {
-		'total': entities.count(),
-		'data': [],
-		'success': True
-	}
+    response = {
+        'total': entities.count(),
+        'data': [],
+        'success': True
+    }
 
-	for entity in entities:
-		tmp = entity
-		tmp['_id'] = str(tmp['_id'])
+    for entity in entities:
+        tmp = entity
+        tmp['_id'] = str(tmp['_id'])
 
-		response['data'].append(tmp)
+        response['data'].append(tmp)
 
-	return response
+    return response
 
 SERVICE_NAME = TABLE_NAME
 
 
 @get('/{0}/'.format(SERVICE_NAME))
 def get_all_entities():
-	return get_entities_from_db({})
+    return get_entities_from_db({})
 
 
 @get('/{0}/:etype'.format(SERVICE_NAME))
 def get_all_typed_entities(etype):
-	return get_entities_from_db({
-		'type': etype
-	})
+    return get_entities_from_db({
+        'type': etype
+    })
 
 
 @get('/{0}/:etype/:ename'.format(SERVICE_NAME))
 def get_specific_entity(etype, ename):
-	identifier = 'name'
+    identifier = 'name'
 
-	# Specific cases :
-	if etype == 'downtime':
-		identifier = 'id'
+    # Specific cases :
+    if etype == 'downtime':
+        identifier = 'id'
 
-	elif etype == 'ack':
-		identifier = 'timestamp'
+    elif etype == 'ack':
+        identifier = 'timestamp'
 
-	query = {
-		'type': etype,
-		identifier: ename
-	}
+    query = {
+        'type': etype,
+        identifier: ename
+    }
 
-	return get_entities_from_db(query)
+    return get_entities_from_db(query)
 
 
 @post('/{0}/'.format(SERVICE_NAME))
 def get_entities_with_custom_filter():
-	try:
-		mfilter = request.body.readline()
-		mfilter = json.loads(mfilter)['filter']
+    try:
+        mfilter = request.body.readline()
+        mfilter = json.loads(mfilter)['filter']
 
-	except ValueError as err:
-		if 'filter' not in request.params:
-			return HTTPError(500, json.dumps({
-				'total': 0,
-				'data': [],
-				'success': False,
-				'error': str(err)
-			}))
+    except ValueError as err:
+        if 'filter' not in request.params:
+            return HTTPError(500, json.dumps({
+                'total': 0,
+                'data': [],
+                'success': False,
+                'error': str(err)
+            }))
 
-		mfilter = request.params['filter']
+        mfilter = request.params['filter']
 
-	return get_entities_from_db(mfilter)
+    return get_entities_from_db(mfilter)

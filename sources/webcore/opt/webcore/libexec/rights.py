@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 # --------------------------------
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
@@ -18,63 +19,58 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-import sys, os, logging, json
+from logging import getLogger, DEBUG
+from json import loads
 
-import bottle
-from bottle import route, get, put, delete, request, HTTPError, post
+from bottle import put, request, HTTPError
 
 ## Canopsis
-from caccount import caccount
-from cstorage import cstorage
-from cstorage import get_storage
-from crecord import crecord
+from canopsis.old.storage import get_storage
+from canopsis.old.record import Record
 
 #import protection function
 from libexec.auth import get_account
 
-logger = logging.getLogger("rights")
+logger = getLogger("rights")
 
-#########################################################################
 
 @put('/rights/:namespace/:crecord_id')
-def change_rights(namespace,crecord_id=None):
-	account = get_account()
-	storage = get_storage(namespace=namespace, account=account, logging_level=logging.DEBUG)
-	
-	#get put data
-	aaa_owner = request.params.get('aaa_owner', default=None)
-	aaa_group = request.params.get('aaa_group', default=None)
-	aaa_access_owner = request.params.get('aaa_access_owner', default=None)
-	aaa_access_group = request.params.get('aaa_access_group', default=None)
-	aaa_access_other = request.params.get('aaa_access_other', default=None)
-	
-	
-	if(crecord_id != None):
-		record = storage.get(crecord_id, account=account)
-		
-	if isinstance(record, crecord):
-		logger.debug('record found, changing rights/owner')
-		#change owner and group
-		if aaa_owner is not None:
-			record.chown(aaa_owner)
-		if aaa_group is not None:
-			record.chgrp(aaa_group)
-		
-		#change rights
-		if aaa_access_owner is not None:
-			record.access_owner = json.loads(aaa_access_owner)
-		if aaa_access_group is not None:
-			record.access_group = json.loads(aaa_access_group)
-		if aaa_access_other is not None:
-			record.access_other = json.loads(aaa_access_other)
-			
-		#logger.debug(json.dumps(record.dump(json=True), sort_keys=True, indent=4))
-		try:
-			storage.put(record,account=account)
-		except:
-			logger.error('Access denied')
-			return HTTPError(403, "Access denied")
-	
-	else:
-		logger.warning('The record doesn\'t exist')
-	
+def change_rights(namespace, crecord_id=None):
+    account = get_account()
+    storage = get_storage(
+        namespace=namespace, account=account, logging_level=DEBUG)
+
+    #get put data
+    aaa_owner = request.params.get('aaa_owner', default=None)
+    aaa_group = request.params.get('aaa_group', default=None)
+    aaa_access_owner = request.params.get('aaa_access_owner', default=None)
+    aaa_access_group = request.params.get('aaa_access_group', default=None)
+    aaa_access_other = request.params.get('aaa_access_other', default=None)
+
+    if crecord_id is not None:
+        record = storage.get(crecord_id, account=account)
+
+    if isinstance(record, Record):
+        logger.debug('record found, changing rights/owner')
+        #change owner and group
+        if aaa_owner is not None:
+            record.chown(aaa_owner)
+        if aaa_group is not None:
+            record.chgrp(aaa_group)
+
+        #change rights
+        if aaa_access_owner is not None:
+            record.access_owner = loads(aaa_access_owner)
+        if aaa_access_group is not None:
+            record.access_group = loads(aaa_access_group)
+        if aaa_access_other is not None:
+            record.access_other = loads(aaa_access_other)
+
+        try:
+            storage.put(record, account=account)
+        except:
+            logger.error('Access denied')
+            return HTTPError(403, "Access denied")
+
+    else:
+        logger.warning('The record doesn\'t exist')

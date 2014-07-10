@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 # --------------------------------
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
@@ -18,101 +19,108 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-import sys, os, logging, json
-import re
+from os import listdir
+from os.path import expanduser, exists
 
-import polib
+from logging import getLogger
+from json import dumps
+from re import compile as re_compile, MULTILINE
 
-import bottle
-from bottle import route, get, put, delete, request, HTTPError, response
+from polib import pofile
 
-logger = logging.getLogger("ui_locales")
+from bottle import route, response
+
+logger = getLogger("ui_locales")
 
 #########################################################################
-base_path = os.path.expanduser("~/var/www/canopsis/")
+base_path = expanduser("~/var/www/canopsis/")
 
 locales = ['en', 'fr']
 locales_str = {}
 
-def parse_po(path):
-	po_trads = {}
-	if os.path.exists(path):
-		po = polib.pofile(path)
-		for entry in po:
-			po_trads[entry.msgid] = entry.msgstr
 
-		return json.dumps(po_trads)
-	else:
-		return '{}'
+def parse_po(path):
+    po_trads = {}
+    if exists(path):
+        po = pofile(path)
+        for entry in po:
+            po_trads[entry.msgid] = entry.msgstr
+
+        return dumps(po_trads)
+    else:
+        return '{}'
+
 
 def parse_js(path):
-	if os.path.exists(path):
-		with open(path, 'r') as f:
-			data = f.read().decode('utf-8') + "\n"
-		f.closed
-		return data
-	else:
-		return ''
+    if exists(path):
+        with open(path, 'r') as f:
+            data = f.read().decode('utf-8') + "\n"
+        f.closed
+        return data
+    else:
+        return ''
 
 for lang in locales:
-	locales_str[lang] = ""
+    locales_str[lang] = ""
 
 for lang in locales:
 
-	## Parse ExtJS Language
-	ext_path = "%s/resources/lib/extjs/locale/ext-lang-%s.js" % (base_path, lang)
-	if os.path.exists(ext_path):
-		with open(ext_path, 'r') as f:
-			locales_str[lang] = f.read().decode('utf-8')
-		f.closed
+    ## Parse ExtJS Language
+    ext_path = "%s/resources/lib/extjs/locale/ext-lang-%s.js" % (
+        base_path, lang)
+    if exists(ext_path):
+        with open(ext_path, 'r') as f:
+            locales_str[lang] = f.read().decode('utf-8')
+        f.closed
 
-	## Parse Canopsis Languages
-	po_trads = {}
-	po_path = '%s/resources/locales/lang-%s.po' % (base_path, lang)
-	js_path = '%s/resources/locales/lang-%s.js' % (base_path, lang)
+    ## Parse Canopsis Languages
+    po_trads = {}
+    po_path = '%s/resources/locales/lang-%s.po' % (base_path, lang)
+    js_path = '%s/resources/locales/lang-%s.js' % (base_path, lang)
 
-	if os.path.exists(po_path):
-		locales_str[lang] += "i18n=%s\n" % parse_po(po_path)
-	elif os.path.exists(js_path):
-		locales_str[lang] += parse_js(js_path)
+    if exists(po_path):
+        locales_str[lang] += "i18n=%s\n" % parse_po(po_path)
+    elif exists(js_path):
+        locales_str[lang] += parse_js(js_path)
 
-	## Parse Widgets Language
-	widgets = os.listdir(base_path + "widgets/")
-	widgets_locales = []
-	for widget in widgets:
-		po_path = "%s/widgets/%s/locales/lang-%s.po" % (base_path, widget, lang)
-		js_path = "%s/widgets/%s/locales/lang-%s.js" % (base_path, widget, lang)
+    ## Parse Widgets Language
+    widgets = listdir(base_path + "widgets/")
+    widgets_locales = []
+    for widget in widgets:
+        po_path = "%s/widgets/%s/locales/lang-%s.po" % (
+            base_path, widget, lang)
+        js_path = "%s/widgets/%s/locales/lang-%s.js" % (
+            base_path, widget, lang)
 
-		if os.path.exists(po_path):
-			locales_str[lang] += "i18n_%s=%s;\n" % (widget, parse_po(po_path))
-			locales_str[lang] += "i18n = Ext.Object.merge(i18n, i18n_%s);\n\n" % widget
-		elif os.path.exists(js_path):
-			locales_str[lang] += parse_js(js_path)
+        if exists(po_path):
+            locales_str[lang] += "i18n_%s=%s;\n" % (widget, parse_po(po_path))
+            locales_str[lang] += "i18n = Ext.Object.merge(i18n, i18n_%s);\n\n" % widget
+        elif exists(js_path):
+            locales_str[lang] += parse_js(js_path)
 
-	#Clean comments/Licence
-	pattern = re.compile("^#.*", re.MULTILINE)
-	locales_str[lang] = pattern.sub("", locales_str[lang])
+    #Clean comments/Licence
+    pattern = re_compile("^#.*", MULTILINE)
+    locales_str[lang] = pattern.sub("", locales_str[lang])
 
-	#locales_str[lang] = re.sub("//.*", "", locales_str[lang])
-	#locales_str[lang] = re.sub("/\*.*", "", locales_str[lang])
-	#locales_str[lang] = re.sub("\*/.*", "", locales_str[lang])
-	#locales_str[lang] = re.sub(" \* .*$", "", locales_str[lang])
+    #locales_str[lang] = re.sub("//.*", "", locales_str[lang])
+    #locales_str[lang] = re.sub("/\*.*", "", locales_str[lang])
+    #locales_str[lang] = re.sub("\*/.*", "", locales_str[lang])
+    #locales_str[lang] = re.sub(" \* .*$", "", locales_str[lang])
 
-	data = ""
-	for line in locales_str[lang].split('\n'):
-		if line != "":
-			data += line + '\n'
+    data = ""
+    for line in locales_str[lang].split('\n'):
+        if line != "":
+            data += line + '\n'
 
-	locales_str[lang] = data
-
+    locales_str[lang] = data
 
 
 @route('/:lang/static/canopsis/locales.js', skip=['checkAuthPlugin'])
 @route('/static/canopsis/locales.js', skip=['checkAuthPlugin'])
 def route_locales(lang='en'):
-	response.content_type = 'text/javascript'
-	if lang in locales:
-		return "ENV['locale']='%s';\n\n" % lang + locales_str[lang]
-	else:
-		logger.error("Unknown language '%s'" % lang)
-		return "//Unknown language '%s'" % lang
+    response.content_type = 'text/javascript'
+    if lang in locales:
+        return "ENV['locale']='%s';\n\n" % lang + locales_str[lang]
+    else:
+        logger.error("Unknown language '%s'" % lang)
+        return "//Unknown language '%s'" % lang

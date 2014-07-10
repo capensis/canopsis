@@ -1,5 +1,23 @@
 #!/usr/bin/env python2.7
 # -*- coding: utf-8 -*-
+#--------------------------------
+# Copyright (c) 2011 "Capensis" [http://www.capensis.com]
+#
+# This file is part of Canopsis.
+#
+# Canopsis is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# Canopsis is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Affero General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public License
+# along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
+# ---------------------------------
 
 import subprocess
 import fnmatch
@@ -9,175 +27,178 @@ import os
 
 
 class Minimizer(object):
-	"""
-		Minimize JavaScript files.
-	"""
+    """
+        Minimize JavaScript files.
+    """
 
-	def __init__(self, *args, **kwargs):
-		super(Minimizer, self).__init__(*args, **kwargs)
+    def __init__(self, *args, **kwargs):
+        super(Minimizer, self).__init__(*args, **kwargs)
 
-		self.rootdir = os.path.expanduser('~')
-		self.canodir = os.path.join(self.rootdir, 'var', 'www', 'canopsis')
+        self.rootdir = os.path.expanduser('~')
+        self.canodir = os.path.join(self.rootdir, 'var', 'www', 'canopsis')
 
-		self.canopsisjs      = os.path.join(self.canodir, 'canopsis.js')
-		self.canopsisminjs   = os.path.join(self.canodir, 'canopsis.min.js')
-		self.canopsisminjsgz = os.path.join(self.canodir, 'canopsis.min.js.gz')
+        self.canopsisjs = os.path.join(self.canodir, 'canopsis.js')
+        self.canopsisminjs = os.path.join(self.canodir, 'canopsis.min.js')
+        self.canopsisminjsgz = os.path.join(self.canodir, 'canopsis.min.js.gz')
 
-		self.nodejspath = os.path.join(self.rootdir, 'bin', 'node')
-		self.uglifypath = os.path.join(self.rootdir, 'bin', 'uglifyjs')
+        self.nodejspath = os.path.join(self.rootdir, 'bin', 'node')
+        self.uglifypath = os.path.join(self.rootdir, 'bin', 'uglifyjs')
 
-		self.exclude = [
-			os.path.join(self.canodir, 'resources'),
-			os.path.join(self.canodir, 'themes'),
+        self.exclude = [
+            os.path.join(self.canodir, 'resources'),
+            os.path.join(self.canodir, 'themes'),
 
-			os.path.join(self.canodir, 'canopsis.js'),
-			os.path.join(self.canodir, 'canopsis.min.js'),
+            os.path.join(self.canodir, 'canopsis.js'),
+            os.path.join(self.canodir, 'canopsis.min.js'),
 
-			os.path.join(self.canodir, 'app', 'lib', 'locale.js'),
-			os.path.join(self.canodir, 'app', 'lib', 'global.js'),
-			os.path.join(self.canodir, 'app', 'lib', 'global_options.js')
-		]
+            os.path.join(self.canodir, 'app', 'lib', 'locale.js'),
+            os.path.join(self.canodir, 'app', 'lib', 'global.js'),
+            os.path.join(self.canodir, 'app', 'lib', 'global_options.js')
+        ]
 
-		self.files = []
-		self.added = []
+        self.files = []
+        self.added = []
 
-	def jsFinder(self, path, dirname, filenames):
-		if dirname in self.exclude:
-			return
+    def jsFinder(self, path, dirname, filenames):
+        if dirname in self.exclude:
+            return
 
-		for filename in fnmatch.filter(filenames, '*.js'):
-			fullpath = os.path.join(dirname, filename)
+        for filename in fnmatch.filter(filenames, '*.js'):
+            fullpath = os.path.join(dirname, filename)
 
-			if fullpath not in self.exclude and not fnmatch.fnmatch(filename, '*lang*.js'):
-				self.files.append(fullpath)
+            if fullpath not in self.exclude \
+                    and not fnmatch.fnmatch(filename, '*lang*.js'):
+                self.files.append(fullpath)
 
-	def get_deps(self, filename):
-		files = []
+    def get_deps(self, filename):
+        files = []
 
-		with open(filename, 'r') as f:
-			first_line = f.readline()
+        with open(filename, 'r') as f:
+            first_line = f.readline()
 
-			# First line may contains dependencies in CSV formatted list
-			if first_line.startswith('//need:'):
-				requirements = first_line[7:]
-				parsed = csv.reader([requirements]).next()
+            # First line may contains dependencies in CSV formatted list
+            if first_line.startswith('//need:'):
+                requirements = first_line[7:]
+                parsed = csv.reader([requirements]).next()
 
-				# Add all required files if not excluded or already added
-				for required in parsed:
-					fullpath = os.path.join(self.canodir, required)
+                # Add all required files if not excluded or already added
+                for required in parsed:
+                    fullpath = os.path.join(self.canodir, required)
 
-					if fullpath not in self.exclude and fullpath not in files and fullpath not in self.added:
-						files += self.get_deps(fullpath)
+                    if fullpath not in self.exclude \
+                            and fullpath not in files \
+                            and fullpath not in self.added:
+                        files += self.get_deps(fullpath)
 
-			# Now dependencies are in the list, just add this file now
-			files.append(filename)
+            # Now dependencies are in the list, just add this file now
+            files.append(filename)
 
-		# Be sure every file is unique
-		found = []
+        # Be sure every file is unique
+        found = []
 
-		for f in files:
-			if f not in found:
-				found.append(f)
+        for f in files:
+            if f not in found:
+                found.append(f)
 
-		return found
+        return found
 
-	def minify(self):
-		# Find all JS files
-		os.path.walk(self.canodir, self.jsFinder, None)
+    def minify(self):
+        # Find all JS files
+        os.path.walk(self.canodir, self.jsFinder, None)
 
-		# Order files : lib, model, store, view, widgets, controller, general
-		
-		orderers = [
-			{
-				'path': os.path.join(self.canodir, 'app', 'lib'),
-				'files': []
-			},
-			{
-				'path': os.path.join(self.canodir, 'app', 'model'),
-				'files': []
-			},
-			{
-				'path': os.path.join(self.canodir, 'app', 'store'),
-				'files': []
-			},
-			{
-				'path': os.path.join(self.canodir, 'app', 'view'),
-				'files': []
-			},
-			{
-				'path': os.path.join(self.canodir, 'widgets'),
-				'files': []
-			},
-			{
-				'path': os.path.join(self.canodir, 'app', 'controller'),
-				'files': []
-			},
-			{
-				'path': self.canodir,
-				'files': []
-			},
-		]
+        # Order files : lib, model, store, view, widgets, controller, general
 
-		for filename in self.files:
-			for orderer in orderers:
-				if filename.startswith(orderer['path']):
-					orderer['files'].append(filename)
-					break
+        orderers = [
+            {
+                'path': os.path.join(self.canodir, 'app', 'lib'),
+                'files': []
+            },
+            {
+                'path': os.path.join(self.canodir, 'app', 'model'),
+                'files': []
+            },
+            {
+                'path': os.path.join(self.canodir, 'app', 'store'),
+                'files': []
+            },
+            {
+                'path': os.path.join(self.canodir, 'app', 'view'),
+                'files': []
+            },
+            {
+                'path': os.path.join(self.canodir, 'widgets'),
+                'files': []
+            },
+            {
+                'path': os.path.join(self.canodir, 'app', 'controller'),
+                'files': []
+            },
+            {
+                'path': self.canodir,
+                'files': []
+            },
+        ]
 
-		self.files = []
+        for filename in self.files:
+            for orderer in orderers:
+                if filename.startswith(orderer['path']):
+                    orderer['files'].append(filename)
+                    break
 
-		for orderer in orderers:
-			self.files += orderer['files']
+        self.files = []
 
-		# Handle dependencies
+        for orderer in orderers:
+            self.files += orderer['files']
 
-		for filename in self.files:
-			if filename in self.exclude or filename in self.added:
-				continue
+        # Handle dependencies
 
-			# Open file and read the first line
-			self.added += self.get_deps(filename)
+        for filename in self.files:
+            if filename in self.exclude or filename in self.added:
+                continue
 
-		# Concatenate all files
-		print 'Open {0} for writing'.format(self.canopsisjs)
+            # Open file and read the first line
+            self.added += self.get_deps(filename)
 
-		with open(self.canopsisjs, 'w') as canopsisjs:
-			for filename in self.added:
-				canopsisjs.write('\n/* file:{0} */\n'.format(filename))
+        # Concatenate all files
+        print 'Open {0} for writing'.format(self.canopsisjs)
 
-				print '- ', filename
+        with open(self.canopsisjs, 'w') as canopsisjs:
+            for filename in self.added:
+                canopsisjs.write('\n/* file:{0} */\n'.format(filename))
 
-				with open(filename, 'r') as f:
-					line = f.readline()
+                print '- ', filename
 
-					while line:
-						canopsisjs.write(line)
+                with open(filename, 'r') as f:
+                    line = f.readline()
 
-						line = f.readline()
+                    while line:
+                        canopsisjs.write(line)
 
-		print '{0} written'.format(self.canopsisjs)
+                        line = f.readline()
 
-		# Minify canopsis.js
-		print 'Open {0} for writting'.format(self.canopsisminjs)
+        print '{0} written'.format(self.canopsisjs)
 
-		with open(self.canopsisminjs, 'w') as canopsisminjs:
-			subprocess.call(
-				[self.nodejspath, self.uglifypath, self.canopsisjs],
-				stdout=canopsisminjs
-			)
+        # Minify canopsis.js
+        print 'Open {0} for writting'.format(self.canopsisminjs)
 
-		print '{0} written'.format(self.canopsisminjs)
+        with open(self.canopsisminjs, 'w') as canopsisminjs:
+            subprocess.call(
+                [self.nodejspath, self.uglifypath, self.canopsisjs],
+                stdout=canopsisminjs
+            )
 
-		# Compress in GZ format
-		print 'Open {0} for writting'.format(self.canopsisminjsgz)
+        print '{0} written'.format(self.canopsisminjs)
 
-		with open(self.canopsisminjs, 'rb') as canopsisminjs:
-			with gzip.open(self.canopsisminjsgz, 'wb') as canopsisminjsgz:
-				canopsisminjsgz.writelines(canopsisminjs)
+        # Compress in GZ format
+        print 'Open {0} for writting'.format(self.canopsisminjsgz)
 
-		print '{0} written'.format(self.canopsisminjsgz)
+        with open(self.canopsisminjs, 'rb') as canopsisminjs:
+            with gzip.open(self.canopsisminjsgz, 'wb') as canopsisminjsgz:
+                canopsisminjsgz.writelines(canopsisminjs)
+
+        print '{0} written'.format(self.canopsisminjsgz)
 
 
 if __name__ == "__main__":
-	minimizer = Minimizer()
-	minimizer.minify()
+    minimizer = Minimizer()
+    minimizer.minify()
