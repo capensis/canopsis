@@ -19,12 +19,11 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-#import logging
 from canopsis.old.record import Record
 from canopsis.old.storage import Storage
 from canopsis.old.account import Account
 
-import time
+from time import time
 
 
 class Cache(object):
@@ -98,7 +97,7 @@ class Cache(object):
             record = self.storage.get(
                 'cache.' + _id, namespace=self.namespace, account=account)
 
-            if record.write_time < (time.time() - freshness) and freshness != 0:
+            if record.write_time < (time() - freshness) and freshness != 0:
                 self.remove(_id)
                 return None
             else:

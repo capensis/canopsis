@@ -19,24 +19,23 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-import logging
-import time
+from logging import ERROR, getLogger
+from time import time
 
 from canopsis.old.storage import get_storage
 from canopsis.old.account import Account
 from canopsis.old.record import Record
-
-from ctools import legend
-from ctools import uniq
+from canopsis.old.tools import legend, uniq
 
 legend_type = ['soft', 'hard']
 
 
 class Archiver(object):
     def __init__(
-        self, namespace, storage=None, autolog=False, logging_level=logging.ERROR):
+        self, namespace, storage=None, autolog=False, logging_level=ERROR
+    ):
 
-        self.logger = logging.getLogger('Archiver')
+        self.logger = getLogger('Archiver')
         self.logger.setLevel(logging_level)
 
         self.namespace = namespace
@@ -50,7 +49,8 @@ class Archiver(object):
 
         if not storage:
             self.logger.debug(" + Get storage")
-            self.storage = get_storage(namespace=namespace, logging_level=logging_level)
+            self.storage = get_storage(
+                namespace=namespace, logging_level=logging_level)
         else:
             self.storage = storage
 
@@ -68,15 +68,16 @@ class Archiver(object):
         self.logger.debug("   - State:\t\t'%s'" % legend[state])
         self.logger.debug("   - State type:\t'%s'" % legend_type[state_type])
 
-        now = int(time.time())
+        now = int(time())
 
         event['timestamp'] = event.get('timestamp', now)
 
         try:
             # Get old record
             #record = self.storage.get(_id, account=self.account)
-            change_fields = {'state': 1, 'state_type': 1, 'last_state_change': 1,
-            'perf_data_array': 1, 'output': 1, 'timestamp': 1}
+            change_fields = {
+                'state': 1, 'state_type': 1, 'last_state_change': 1,
+                'perf_data_array': 1, 'output': 1, 'timestamp': 1}
             devent = self.collection.find_one(_id, fields=change_fields)
 
             if not devent:
@@ -90,7 +91,8 @@ class Archiver(object):
                 'last_state_change', event['timestamp'])
 
             self.logger.debug("   - State:\t\t'%s'" % legend[old_state])
-            self.logger.debug("   - State type:\t'%s'" % legend_type[old_state_type])
+            self.logger.debug(
+                "   - State type:\t'%s'" % legend_type[old_state_type])
 
             if state != old_state:
                 event['previous_state'] = old_state
@@ -124,10 +126,12 @@ class Archiver(object):
         else:
             change = {}
             for key in change_fields:
-                if key in event and key in devent and devent[key] != event[key]:
+                if key in event and key in devent \
+                        and devent[key] != event[key]:
                     change[key] = event[key]
             if change:
-                self.storage.get_backend('events').update({'_id': _id}, {'$set': change})
+                self.storage.get_backend('events').update(
+                    {'_id': _id}, {'$set': change})
 
         mid = None
         if changed and self.autolog:
@@ -142,8 +146,10 @@ class Archiver(object):
         if new_event['perf_data_array'] != []:
             perf_data_array = old_event['perf_data_array']
 
-            new_metrics = [perf['metric'] for perf in new_event['perf_data_array']]
-            old_metrics = [perf['metric'] for perf in old_event['perf_data_array']]
+            new_metrics = [perf['metric'] for perf
+                in new_event['perf_data_array']]
+            old_metrics = [perf['metric'] for perf
+                in old_event['perf_data_array']]
 
             if new_metrics == old_metrics:
                 new_event['perf_data_metrics'] = new_metrics
@@ -154,10 +160,12 @@ class Archiver(object):
             for new_metric in new_metrics:
                 if new_metric in old_metrics:
                     perf_data_array[old_metrics.index(new_metric)] = \
-                        new_event['perf_data_array'][new_metrics.index(new_metric)]
+                        new_event['perf_data_array'][new_metrics.index(
+                            new_metric)]
                 else:
                     perf_data_array.append(
-                        new_event['perf_data_array'][new_metrics.index(new_metric)])
+                        new_event['perf_data_array'][new_metrics.index(
+                            new_metric)])
 
             new_event['perf_data_array'] = perf_data_array
 
@@ -169,22 +177,26 @@ class Archiver(object):
         record.chmod("o+r")
         record._id = _id
 
-        self.storage.put(record, namespace=self.namespace, account=self.account)
+        self.storage.put(
+            record, namespace=self.namespace, account=self.account)
 
     def log_event(self, _id, event):
-        self.logger.debug("Log event '%s' in %s ..." % (_id, self.namespace_log))
+        self.logger.debug(
+            "Log event '%s' in %s ..." % (_id, self.namespace_log))
         record = Record(event)
         record.type = "event"
         record.chmod("o+r")
         record.data['event_id'] = _id
-        record._id = _id + '.' + str(time.time())
+        record._id = _id + '.' + str(time())
 
-        self.storage.put(record, namespace=self.namespace_log, account=self.account)
+        self.storage.put(
+            record, namespace=self.namespace_log, account=self.account)
         return record._id
 
     def get_logs(self, _id, start=None, stop=None):
         return self.storage.find(
-            {'event_id': _id}, namespace=self.namespace_log, account=self.account)
+            {'event_id': _id}, namespace=self.namespace_log,
+            account=self.account)
 
     def remove_all(self):
         self.logger.debug("Remove all logs and state archives")

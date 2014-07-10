@@ -18,35 +18,36 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
-import sys
-import kombu
-from kombu import Connection, Exchange, Queue
-import kombu.pools
+
+from sys import stdout
+
+from kombu import Connection, Exchange, Queue, pools, __version__
 
 try:
-    from amqplib.client_0_8.exceptions import AMQPConnectionException as ConnectionError
+    from amqplib.client_0_8.exceptions import AMQPConnectionException \
+        as ConnectionError
 except ImportError as IE:
     from amqp.exceptions import ConnectionError
 
-import socket
+from socket import error, timeout
 
-import time
-import logging
-import threading
-import os
-import traceback
+from time import sleep
+from logging import INFO, getLogger
+from threading import Thread
+from os.path import expanduser
+from traceback import print_exc
 
 
-class Amqp(threading.Thread):
+class Amqp(Thread):
     def __init__(
         self, host="localhost", port=5672, userid="guest", password="guest",
         virtual_host="canopsis", exchange_name="canopsis", logging_name="Amqp",
-        logging_level=logging.INFO, read_config_file=True, auto_connect=True,
+        logging_level=INFO, read_config_file=True, auto_connect=True,
         on_ready=None
     ):
-        threading.Thread.__init__(self)
+        super(Amqp, self).__init__()
 
-        self.logger = logging.getLogger(logging_name)
+        self.logger = getLogger(logging_name)
 
         self.host = host
         self.port = port
@@ -84,7 +85,7 @@ class Amqp(threading.Thread):
 
         self.connection_errors = (
             ConnectionError,
-            socket.error,
+            error,
             IOError,
             OSError)
 
@@ -120,9 +121,9 @@ class Amqp(threading.Thread):
                         if not self.paused:
                             self.conn.drain_events(timeout=0.5)
                         else:
-                            time.sleep(0.5)
+                            sleep(0.5)
 
-                    except socket.timeout:
+                    except timeout:
                         pass
 
                     except self.connection_errors as err:
@@ -130,8 +131,9 @@ class Amqp(threading.Thread):
                         break
 
                     except Exception as err:
-                        self.logger.error("Unknown error: %s (%s)" % (err, type(err)))
-                        traceback.print_exc(file=sys.stdout)
+                        self.logger.error(
+                            "Unknown error: %s (%s)" % (err, type(err)))
+                        print_exc(file=stdout)
                         break
 
                 self.disconnect()
@@ -150,7 +152,8 @@ class Amqp(threading.Thread):
 
     def connect(self):
         if not self.connected:
-            self.logger.info("Connect to AMQP Broker (%s:%s)" % (self.host, self.port))
+            self.logger.info(
+                "Connect to AMQP Broker (%s:%s)" % (self.host, self.port))
 
             self.conn = Connection(self.amqp_uri)
 
@@ -158,7 +161,7 @@ class Amqp(threading.Thread):
                 self.logger.debug(" + Connect")
                 self.conn.connect()
                 self.logger.info("Connected to AMQP Broker.")
-                self.producers = kombu.pools.Producers(limit=10)
+                self.producers = pools.Producers(limit=10)
                 self.connected = True
             except Exception as err:
                 self.conn.release()
@@ -169,7 +172,8 @@ class Amqp(threading.Thread):
                 try:
                     self.chan = self.conn.channel()
 
-                    self.logger.debug("Channel openned. Ready to send messages")
+                    self.logger.debug(
+                        "Channel openned. Ready to send messages")
 
                     try:
                         ## declare exchange
@@ -178,7 +182,8 @@ class Amqp(threading.Thread):
                             self.logger.debug(" + %s" % exchange_name)
                             self.exchanges[exchange_name](self.chan).declare()
                     except Exception as err:
-                        self.logger.error("Impossible to declare exchange (%s)" % err)
+                        self.logger.error(
+                            "Impossible to declare exchange (%s)" % err)
 
                 except Exception as err:
                     self.logger.error(err)
@@ -191,9 +196,11 @@ class Amqp(threading.Thread):
                 return self.exchanges[name]
             except:
                 if name == "amq.direct":
-                    self.exchanges[name] = Exchange(name, "direct", durable=True)
+                    self.exchanges[name] = Exchange(
+                        name, "direct", durable=True)
                 else:
-                    self.exchanges[name] = Exchange(name, "topic", durable=True, auto_delete=False)
+                    self.exchanges[name] = Exchange(
+                        name, "topic", durable=True, auto_delete=False)
                 return self.exchanges[name]
         else:
             return None
@@ -218,34 +225,40 @@ class Amqp(threading.Thread):
 
                     exchange = self.get_exchange(qsettings['exchange_name'])
 
-                    if (qsettings['exchange_name'] == "amq.direct" and not routing_key):
+                    if qsettings['exchange_name'] == "amq.direct" \
+                            and not routing_key:
                         routing_key = queue_name
 
                     #self.logger.debug("   + exchange: '%s', routing_key: '%s', exclusive: %s, auto_delete: %s, no_ack: %s" % (qsettings['exchange_name'], routing_key, qsettings['exclusive'], qsettings['auto_delete'], qsettings['no_ack']))
-                    self.logger.debug("   + exchange: '%s', exclusive: %s, auto_delete: %s, no_ack: %s" % (qsettings['exchange_name'], qsettings['exclusive'], qsettings['auto_delete'], qsettings['no_ack']))
-                    qsettings['queue'] = Queue(queue_name,
-                                            exchange=exchange,
-                                            routing_key=routing_key,
-                                            exclusive=qsettings['exclusive'],
-                                            auto_delete=qsettings['auto_delete'],
-                                            no_ack=qsettings['no_ack'],
-                                            channel=self.conn.channel())
+                    self.logger.debug(
+                        "   + exchange: '%s', exclusive: %s, auto_delete: %s, no_ack: %s" % (qsettings['exchange_name'], qsettings['exclusive'], qsettings['auto_delete'], qsettings['no_ack']))
+                    qsettings['queue'] = Queue(
+                        queue_name,
+                        exchange=exchange,
+                        routing_key=routing_key,
+                        exclusive=qsettings['exclusive'],
+                        auto_delete=qsettings['auto_delete'],
+                        no_ack=qsettings['no_ack'],
+                        channel=self.conn.channel())
 
                     qsettings['queue'].declare()
 
                     if len(routing_keys):
                         self.logger.debug(" + Bind on all routing keys")
                         for routing_key in routing_keys:
-                            self.logger.debug(" + routing_key: '%s'" % routing_key)
+                            self.logger.debug(
+                                " + routing_key: '%s'" % routing_key)
                             try:
                                 qsettings['queue'].bind_to(
                                     exchange=exchange, routing_key=routing_key)
                             except:
-                                self.logger.error("You need upgrade your Kombu version (%s)" % kombu.__version__)
+                                self.logger.error(
+                                    "You need upgrade your Kombu version (%s)" % __version__)
 
                 if not qsettings['consumer']:
                     self.logger.debug("   + Create Consumer")
-                    qsettings['consumer'] = self.conn.Consumer(qsettings['queue'], callbacks=[ qsettings['callback'] ])
+                    qsettings['consumer'] = self.conn.Consumer(
+                        qsettings['queue'], callbacks=[qsettings['callback']])
 
                 self.logger.debug("   + Consume queue")
                 qsettings['consumer'].consume()
@@ -292,13 +305,16 @@ class Amqp(threading.Thread):
             if not exchange_name:
                 exchange_name = self.exchange_name
 
-            self.logger.debug("Send message to %s in %s" % (routing_key, exchange_name))
+            self.logger.debug(
+                "Send message to %s in %s" % (routing_key, exchange_name))
             with self.producers[self.conn].acquire(block=True) as producer:
                 try:
                     _msg = msg.copy()
                     Amqp._clean_msg_for_serialization(_msg)
                     producer.publish(
-                        _msg, serializer=serializer, compression=compression, routing_key=routing_key, exchange=self.get_exchange(exchange_name))
+                        _msg, serializer=serializer, compression=compression,
+                        routing_key=routing_key,
+                        exchange=self.get_exchange(exchange_name))
                     self.logger.debug(" + Sended")
                 except Exception as err:
                     self.logger.error(" + Impossible to send (%s)" % err)
@@ -338,15 +354,19 @@ class Amqp(threading.Thread):
             self.exchanges = {}
 
             try:
-                kombu.pools.reset()
+                pools.reset()
             except Exception as err:
-                self.logger.error("Impossible to reset kombu pools: %s (%s)" % (err, type(err)))
+                self.logger.error(
+                    "Impossible to reset kombu pools: %s (%s)" % (
+                        err, type(err)))
 
             try:
                 self.conn.release()
                 del self.conn
             except Exception as err:
-                self.logger.error("Impossible to release connection: %s (%s)" % (err, type(err)))
+                self.logger.error(
+                    "Impossible to release connection: %s (%s)" % (
+                        err, type(err)))
 
             self.connected = False
 
@@ -354,7 +374,7 @@ class Amqp(threading.Thread):
         i = 0
         while self.RUN and not self.connected and i < (timeout * 2):
             try:
-                time.sleep(0.5)
+                sleep(0.5)
             except:
                 pass
             i += 1
@@ -362,7 +382,7 @@ class Amqp(threading.Thread):
     def read_config(self, name):
 
         filename = '~/etc/' + name + '.conf'
-        filename = os.path.expanduser(filename)
+        filename = expanduser(filename)
 
         import ConfigParser
         self.config = ConfigParser.RawConfigParser()
@@ -380,7 +400,9 @@ class Amqp(threading.Thread):
             self.exchange_name = self.config.get(section, "exchange_name")
 
         except Exception as err:
-            self.logger.error("Impossible to load configurations (%s), use default ..." % err)
+            self.logger.error(
+                "Impossible to load configurations (%s), use default ..." %
+                err)
 
     def __del__(self):
         self.stop()

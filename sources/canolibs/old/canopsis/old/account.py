@@ -20,8 +20,7 @@
 # ---------------------------------
 
 from time import time
-import hashlib
-# import logging
+from hashlib import sha1, md5, sha224
 
 from random import getrandbits
 
@@ -69,10 +68,10 @@ class Account(Record):
         return "\"%s %s\" <%s>" % (self.firstname, self.lastname, self.mail)
 
     def passwd(self, passwd):
-        self.shadowpasswd = hashlib.sha1(str(passwd)).hexdigest()
+        self.shadowpasswd = sha1(str(passwd)).hexdigest()
 
     def check_passwd(self, passwd):
-        return self.check_shadowpasswd(hashlib.sha1(str(passwd)).hexdigest())
+        return self.check_shadowpasswd(sha1(str(passwd)).hexdigest())
 
     def check_shadowpasswd(self, shadowpasswd):
         shadowpasswd = str(shadowpasswd).upper()
@@ -82,7 +81,7 @@ class Account(Record):
         return False
 
     def make_shadow(self, passwd):
-        return hashlib.sha1(str(passwd)).hexdigest()
+        return sha1(str(passwd)).hexdigest()
 
     def check_tmp_cryptedKey(self, authkey):
         authkey = str(authkey).upper()
@@ -95,7 +94,7 @@ class Account(Record):
         if not shadow:
             shadow = self.shadowpasswd
 
-        return hashlib.sha1(
+        return sha1(
             str(shadow).upper() + str(int(time() / 10) * 10)).hexdigest()
 
     def get_authkey(self):
@@ -108,12 +107,12 @@ class Account(Record):
             return False
 
     def get_mail_md5(self):
-        m = hashlib.md5()
+        m = md5()
         m.update(self.mail)
         return m.hexdigest()
 
     def generate_new_authkey(self):
-        return hashlib.sha224(str(getrandbits(512))).hexdigest()
+        return sha224(str(getrandbits(512))).hexdigest()
 
     def dump(self):
         self.name = self.user
@@ -179,13 +178,13 @@ class Account(Record):
 
         # Add to groups
         for group in group_list:
-                if unicode(group._id) not in self.groups:
-                    self.groups.append(unicode(group._id))
+                if group._id not in self.groups:
+                    self.groups.append(group._id)
                     if self.storage:
                         self.save()
 
-                if unicode(self._id) not in group.account_ids:
-                    group.account_ids.append(unicode(self._id))
+                if self._id not in group.account_ids:
+                    group.account_ids.append(self._id)
                     if group.storage:
                         group.save()
 
@@ -201,7 +200,7 @@ class Account(Record):
         for group in groups:
             if isinstance(group, Record):
                 group_list.append(group)
-            elif isinstance(group, str) and isinstance(group, unicode):
+            elif isinstance(group, str):
                 if storage:
                     try:
                         record = storage.get(group)
@@ -210,17 +209,15 @@ class Account(Record):
                         raise Exception('Group not found: %s', err)
         # Remove groups
         for group in group_list:
-                if unicode(group._id) in self.groups:
+                if group._id in self.groups:
                     self.groups.remove(group._id)
                     if self.storage:
                         self.save()
 
-                if unicode(self._id) in group.account_ids:
+                if self._id in group.account_ids:
                     group.account_ids.remove(self._id)
                     if group.storage:
                         group.save()
-
-#################
 
 
 def caccount_getall(storage):

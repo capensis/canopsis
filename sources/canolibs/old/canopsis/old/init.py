@@ -19,10 +19,24 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-import logging
-import signal
-import time
-import os
+# in order to ease python 3 handling, here are libraries to import
+# import print function instead of simple print
+from __future__ import print_function
+# force all str to be unicode
+from __future__ import unicode_literals
+# allow absolute imports
+from __future__ import absolute_import
+# allow division (e.g., 1/2 == 0.5; 1//2 == 0)
+from __future__ import division
+
+from logging import basicConfig, getLogger
+
+from signal import signal, SIGINT, SIGTERM
+
+from time import sleep
+
+from os import getenv
+from os.path import expanduser
 
 
 class Init(object):
@@ -43,8 +57,8 @@ class Init(object):
 
         def run(self, callback=None):
             self.callback = callback
-            signal.signal(signal.SIGINT, self.signal_handler)
-            signal.signal(signal.SIGTERM, self.signal_handler)
+            signal(SIGINT, self.signal_handler)
+            signal(SIGTERM, self.signal_handler)
 
         def stop(self):
             self.RUN = False
@@ -55,7 +69,7 @@ class Init(object):
         def wait(self):
             while self.RUN:
                 try:
-                    time.sleep(1)
+                    sleep(1)
                 except:
                     break
             self.stop()
@@ -66,20 +80,21 @@ class Init(object):
         else:
             self.level = logging_level
 
-        logging.basicConfig(format='%(asctime)s %(levelname)s %(name)s [%(module)s %(lineno)s] %(message)s')
-        self.logger = logging.getLogger(name)
+        basicConfig(
+            format='%(asctime)s %(levelname)s %(name)s [%(module)s %(lineno)s] %(message)s')
+        self.logger = getLogger(name)
         self.logger.setLevel(self.level)
 
         return self.logger
 
     def get_confpath(self, conftype):
         """
-            Get path to config file.
+        Get path to config file.
 
-            :param conftype: Type of configuration (webserver, websocket, amqp, storage, ...)
-            :type conftype: basestring
+        :param conftype: Type of configuration (webserver, websocket, amqp, storage, ...)
+        :type conftype: basestring
 
-            :returns: Absolute path to config file
+        :returns: Absolute path to config file
         """
 
         envvar = 'CPS_CONFPATH_{0}'.format(conftype.upper())
@@ -105,4 +120,4 @@ class Init(object):
         else:
             default = None
 
-        return os.path.expanduser(os.getenv(envvar, default))
+        return expanduser(getenv(envvar, default))

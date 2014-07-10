@@ -24,8 +24,8 @@ from canopsis.old.record import Record
 from canopsis.old.account import Account
 from canopsis.old.timer import Timer
 
-import logging
-import random
+from logging import INFO
+from random import randint
 
 
 def go(account, nb):
@@ -65,16 +65,20 @@ def go(account, nb):
     remove_nb = len(records)
     remove_speed = int(remove_nb / timer.elapsed)
 
-    print(" + Insert Speed:", insert_speed, "records/s (%s records)" % insert_nb)
-    print(" + Read Speed:", read_speed, "records/s (%s records)" % read_nb)
-    print(" + Update Speed:", update_speed, "records/s (%s records)" % update_nb)
-    print(" + Remove Speed:", remove_speed, "records/s (%s records)" % remove_nb)
+    print(
+        " + Insert Speed:", insert_speed, "records/s (%s records)" % insert_nb)
+    print(
+        " + Read Speed:", read_speed, "records/s (%s records)" % read_nb)
+    print(
+        " + Update Speed:", update_speed, "records/s (%s records)" % update_nb)
+    print(
+        " + Remove Speed:", remove_speed, "records/s (%s records)" % remove_nb)
 
-namespace = "bench-" + str(random.randint(0, 1000))
+namespace = "bench-" + str(randint(0, 1000))
 account = Account()
 storage = Storage(
-    account=account, namespace=namespace, logging_level=logging.INFO)
-timer = Timer(logging_level=logging.INFO)
+    account=account, namespace=namespace, logging_level=INFO)
+timer = Timer(logging_level=INFO)
 
 print("Bench with 'anonymous' account ...")
 account = Account()

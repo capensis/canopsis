@@ -21,9 +21,10 @@
 
 from bson import objectid
 
-import re
-re_owner = re.compile("^account\..*")
-re_group = re.compile("^group\..*")
+from re import compile as re_compile
+
+re_owner = re_compile("^account\..*")
+re_group = re_compile("^group\..*")
 
 
 class Record(object):
@@ -214,16 +215,18 @@ class Record(object):
 
     def check_write(self, account):
         if account:
-            if account.user == 'root' or account.group == 'group.CPS_root' or 'group.CPS_root' in account.groups:
+            if account.user == 'root' or account.group == 'group.CPS_root' \
+                    or 'group.CPS_root' in account.groups:
                 return True
 
-            elif ((account._id == self.owner) and ('w' in self.access_owner)):
+            elif account._id == self.owner and 'w' in self.access_owner:
                 return True
-            elif ((account.group == self.group) and ('w' in self.access_group)):
+            elif account.group == self.group and 'w' in self.access_group:
                 return True
-            elif ((self.group in account.groups) and ('w' in self.access_group)):
+            elif self.group in account.groups and 'w' in self.access_group:
                 return True
-            elif self.admin_group in account.groups or self.admin_group == account.group:
+            elif self.admin_group in account.groups \
+                    or self.admin_group == account.group:
                 return True
         return False
 
@@ -291,7 +294,8 @@ class Record(object):
                 self.save()
 
         if not _id or not self._id:
-            raise ValueError("You must save all records before this operation ...")
+            raise ValueError(
+                "You must save all records before this operation ...")
 
         if str(_id) not in self.children:
             self.children.append(str(_id))
@@ -310,7 +314,8 @@ class Record(object):
                 self.save()
 
         if not _id or not self._id:
-            raise ValueError("You must save all records before this operation ...")
+            raise ValueError(
+                "You must save all records before this operation ...")
 
         if str(_id) in self.children:
             self.children.remove(str(_id))

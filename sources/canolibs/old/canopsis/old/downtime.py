@@ -19,8 +19,8 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-import time
-import datetime
+from time import time
+from datetime import datetime
 
 from canopsis.old.storage import get_storage
 from canopsis.old.account import Account
@@ -44,15 +44,15 @@ class Downtime(Record):
 
     def reload(self, delta_beat=0):
         """ Loads current downtimes being active
-                delta_beat takes care of engines beat interval. for accurate measure,
-                it should be equal to 0
+                delta_beat takes care of engines beat interval.
+                for accurate measure, it should be equal to 0
         """
         self.logger.debug(
-            'Reloading downtimes @ %s' % (str(datetime.datetime.now())))
-        now = time.time()
+            'Reloading downtimes @ %s' % (str(datetime.now())))
+        now = time()
         query = {
             'start': {'$lte': now + delta_beat},
-            'end'   : {'$gte': now - delta_beat}
+            'end': {'$gte': now - delta_beat}
         }
 
         downtimes = self.backend.find(query)
@@ -62,14 +62,15 @@ class Downtime(Record):
         return self.downtimes
 
     def get_downtime_end_date(self, component, resource):
-        now = time.time()
+        now = time()
 
         downtimes_end = [now]
 
         for downtime in self.downtimes:
             if downtime['component'] == component \
-                and downtime['resource'] == resource and downtime['start'] < now \
-                and downtime['end'] > now:
+                    and downtime['resource'] == resource \
+                    and downtime['start'] < now \
+                    and downtime['end'] > now:
                 downtimes_end.append(downtime['end'])
 
         return max(downtimes_end)
@@ -79,11 +80,12 @@ class Downtime(Record):
         # downtime list.
         #If any, it s downtime and engines should operate consequently
 
-        now = time.time()
+        now = time()
         for downtime in self.downtimes:
             if downtime['component'] == component \
-                and downtime['resource'] == resource and downtime['start'] < now \
-                and downtime['end'] > now:
+                    and downtime['resource'] == resource \
+                    and downtime['start'] < now \
+                    and downtime['end'] > now:
                 return True
         return False
 
@@ -107,8 +109,8 @@ class Downtime(Record):
         new_field = []
         for downtime in self.downtimes:
             new_filter = [
-                {'$ne'  : {component: downtime['component']}},
-                {'$ne'  : {resource: downtime['resource']}}
+                {'$ne': {component: downtime['component']}},
+                {'$ne': {resource: downtime['resource']}}
             ]
             if mini:
                 new_field += new_filter

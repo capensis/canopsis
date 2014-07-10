@@ -24,9 +24,9 @@ from canopsis.old.record import Record
 from canopsis.old.downtime import Downtime
 from canopsis.old.event import get_routingkey, forger
 
-import time
-import json
-import logging
+from time import time
+from json import dumps, loads
+from logging import getLogger
 
 
 class Selector(Record):
@@ -69,7 +69,7 @@ class Selector(Record):
         self.sel_metric_name = self.sel_metric_prefix + "state_%s"
 
         self._ids = None
-        self.logger = logging.getLogger('Selector')
+        self.logger = getLogger('Selector')
         self.cdowntime = Downtime(self.logger)
         if logging_level:
             self.logger.setLevel(logging_level)
@@ -93,7 +93,7 @@ class Selector(Record):
     def dump(self):
         self.data['include_ids'] = self.include_ids
         self.data['exclude_ids'] = self.exclude_ids
-        self.data['mfilter'] = json.dumps(self.mfilter)
+        self.data['mfilter'] = dumps(self.mfilter)
         self.data['namespace'] = self.namespace
         self.data['rk'] = self.rk
         self.data['output_tpl'] = self.output_tpl
@@ -106,7 +106,7 @@ class Selector(Record):
     def load(self, dump):
         Record.load(self, dump)
         try:
-            self.mfilter = json.loads(self.data['mfilter'])
+            self.mfilter = loads(self.data['mfilter'])
         except:
             pass
 
@@ -126,7 +126,7 @@ class Selector(Record):
 
     def setMfilter(self, filter):
         try:
-            json.dumps(self.mfilter)
+            dumps(self.mfilter)
             self.mfilter = filter
             self.changed = True
         except:
@@ -167,7 +167,8 @@ class Selector(Record):
         #Adds downtime elements to ignore in query
         downtime = self.cdowntime.get_filter()
         if downtime:
-            self.logger.debug(' + Selector downtime exclusion %s' % (str(downtime)))
+            self.logger.debug(
+                ' + Selector downtime exclusion %s' % downtime)
 
         ## Tweaks
         if not mfilter and not ifilter and not efilter:
@@ -212,8 +213,8 @@ class Selector(Record):
 
     def resolv(self):
 
-        """ resolv computes every database event that matches with current selector
-        filter and set current selector _ids to events id list
+        """ resolv computes every database event that matches with current
+        selector filter and set current selector _ids to events id list
 
         Returns:
             list. The selector events id list
@@ -229,7 +230,8 @@ class Selector(Record):
                 return []
             self.logger.debug(" + namespace: %s" % self.namespace)
 
-            records = self.storage.find(mfilter=mfilter, namespace=self.namespace)
+            records = self.storage.find(
+                mfilter=mfilter, namespace=self.namespace)
             for record in records:
                 if not record._id in ids:
                     ids.append(record._id)

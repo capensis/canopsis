@@ -19,10 +19,10 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-import pybars
+from pybars import Compiler, _compiler
 
 
-class Template(pybars.Compiler):
+class Template(Compiler):
     def __init__(self, source, *args, **kwargs):
         super(Template, self).__init__(*args, **kwargs)
 
@@ -41,7 +41,7 @@ class Template(pybars.Compiler):
         if not isinstance(name, str):
             raise TypeError("Helpers name must be a unicode string")
 
-        pybars._compiler._pybars_['helpers'][name] = handler
+        _compiler._pybars_['helpers'][name] = handler
 
     def __call__(self, context):
         compiled = self.compile(self.source)

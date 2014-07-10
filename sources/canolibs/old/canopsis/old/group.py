@@ -19,9 +19,6 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from __future__ import unicode_literals
-
-#import logging
 from canopsis.old.record import Record
 from canopsis.old.account import Account
 

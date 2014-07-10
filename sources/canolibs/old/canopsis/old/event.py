@@ -19,20 +19,20 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-import socket
+from socket import setdefaulttimeout, getfqdn, gethostname, gethostbyaddr
 from time import time
-import logging
-import re
+from logging import getLogger
+from re import compile as re_compile
 
 from canopsis.old.storage import get_storage
 from canopsis.old.account import Account
 
-logger = logging.getLogger('event')
+logger = getLogger('event')
 
 # Change default timeout from 1 to 3 , conflict with gunicorn
-socket.setdefaulttimeout(3)
+setdefaulttimeout(3)
 
-regexp_ip = re.compile(
+regexp_ip = re_compile(
     "([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})")
 
 dns_cache = {}
@@ -67,9 +67,9 @@ def forger(
         timestamp = int(time())
 
     if not component:
-        component = socket.getfqdn()
+        component = getfqdn()
         if not component:
-            component = socket.gethostname()
+            component = gethostname()
 
     if not state:
         state = 0
@@ -94,10 +94,12 @@ def forger(
                 # reverse lookup
                 if not dns:
                     try:
-                        logger.info("DNS reverse lookup for '%s' ..." % address)
-                        dns = socket.gethostbyaddr(address)
+                        logger.info(
+                            "DNS reverse lookup for '%s' ..." % address)
+                        dns = gethostbyaddr(address)
                         logger.info(" + Succes: '%s'" % dns[0])
-                        dns_cache[address.replace('.', '-')] = (int(time()), dns)
+                        dns_cache[address.replace('.', '-')] = \
+                            (int(time()), dns)
                     except:
                         logger.info(" + Failed")
 

@@ -19,14 +19,14 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from canopsis.old.engine import cengine
+from canopsis.old.engine import Engine
 
-import cevent
-import time
-import json
+from canopsis.old.event import get_routingkey
+from time import time
+from json import loads
 
 
-class TaskHandler(cengine):
+class TaskHandler(Engine):
     def __init__(self, *args, **kwargs):
         super(TaskHandler, self).__init__(*args, **kwargs)
         self.amqp_queue = self.name
@@ -34,14 +34,14 @@ class TaskHandler(cengine):
     def work(self, msg, *args, **kwargs):
         self.logger.info('Received job: {0}'.format(msg))
 
-        start = int(time.time())
+        start = int(time())
 
         job = None
         output = None
         state = 3
 
         try:
-            job = json.loads(msg)
+            job = loads(msg)
 
         except ValueError as err:
             self.logger.error('Impossible to decode message: {0}'.format(err))
@@ -49,7 +49,7 @@ class TaskHandler(cengine):
 
         state, output = self.handle_task(job)
 
-        end = int(time.time())
+        end = int(time())
 
         event = {
             'timestamp': end,
@@ -66,7 +66,7 @@ class TaskHandler(cengine):
         }
 
         self.amqp.publish(
-            event, cevent.get_routingkey(event),
+            event, get_routingkey(event),
             self.amqp.exchange_name_events)
 
     def handle_task(self, job):
@@ -77,4 +77,4 @@ class TaskHandler(cengine):
             :returns: (<state>, <output>)
         """
 
-        raise NotImplementedError
+        raise NotImplementedError()

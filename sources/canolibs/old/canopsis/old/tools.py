@@ -19,15 +19,18 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-import re
-import logging
-import socket
-import time
-import math
+from re import compile as re_compile, search
+
+from os import listdir
+from os.path import expanduser
+
+from logging import getLogger
+
+from math import pow
 
 legend = ['ok', 'warning', 'critical', 'unknown']
 
-logger = logging.getLogger('ctools')
+logger = getLogger('ctools')
 
 
 def metric_is_internal(metric_name):
@@ -56,7 +59,7 @@ def calcul_pct(data, total=None):
 
     return data_pct
 
-RE_PERF_DATA = re.compile(
+RE_PERF_DATA = re_compile(
     "('?([0-9A-Za-z/\\\:\.%%\-{}\?\[\]_ ]*)'?=(\-?[0-9.,]*)(([A-Za-z%%/]*))(;@?(\-?[0-9.,]*):?)?(;@?(\-?[0-9.,]*):?)?(;@?(\-?[0-9.,]*):?)?(;@?(\-?[0-9.,]*):?)?(;? ?))")
 
 
@@ -99,52 +102,57 @@ def parse_perfdata(perf_data_raw):
                         for key in perf_data.keys():
                             if perf_data[key]:
                                 try:
-                                    perf_data_clean[key] = float(perf_data[key])
+                                    perf_data_clean[key] = float(
+                                        perf_data[key])
                                 except:
                                     if key == 'metric' or key == 'unit':
                                         perf_data_clean[key] = perf_data[key]
                                     else:
-                                        logger.debug("Invalid value, '%s' = '%s'" % (key, perf_data[key]))
+                                        logger.debug(
+                                            "Invalid value, '%s' = '%s'" % (
+                                                key, perf_data[key]))
 
-                        if 'value' in perf_data_clean and 'metric' in perf_data_clean:
+                        if 'value' in perf_data_clean \
+                                and 'metric' in perf_data_clean:
                             perf_data_array.append(perf_data_clean)
 
                         if not perf_data_clean.get('unit', None):
                             # split: g[in_bps]= ...
                             metric_ori = perf_data_clean['metric']
-                            if metric_ori[len(metric_ori)-1] == ']':
-                                metric_ori = metric_ori[:len(metric_ori)-1]
+                            if metric_ori[len(metric_ori) - 1] == ']':
+                                metric_ori = metric_ori[:len(metric_ori) - 1]
                                 metric = metric_ori.split('[', 1)
                                 if len(metric) == 2:
-                                     perf_data_clean['metric'] = metric[0]
-                                     perf_data_clean['unit'] = metric[1]
+                                    perf_data_clean['metric'] = metric[0]
+                                    perf_data_clean['unit'] = metric[1]
 
                         logger.debug(" + %s" % perf_data_clean)
 
-                    except Exception, err:
+                    except Exception as err:
 
                         logger.error("perf_data: Raw: %s" % perf_data_raw)
-                        logger.error("perf_data: Impossible to clean '%s': %s" % (perf_data, err))
+                        logger.error(
+                            "perf_data: Impossible to clean '%s': %s" % (
+                                perf_data, err))
 
                     perf_data = {}
-                    i=0
+                    i = 0
 
-            except Exception, err:
-                logger.error("perf_data: Invalid metric %s: %s (%s)" % (i, info, err))
+            except Exception as err:
+                logger.error(
+                    "perf_data: Invalid metric %s: %s (%s)" % (i, info, err))
 
         return perf_data_array
 
 
 def dynmodloads(path=".", subdef=False, pattern=".*"):
-    import os, sys
-
     loaded = {}
-    path = os.path.expanduser(path)
+    path = expanduser(path)
     logger.debug("Append path '%s' ..." % path)
-    sys.path.append(path)
+    path.append(path)
 
     try:
-        for mfile in os.listdir(path):
+        for mfile in listdir(path):
             try:
                 ext = mfile.split(".")[1]
                 name = mfile.split(".")[0]
@@ -159,19 +167,25 @@ def dynmodloads(path=".", subdef=False, pattern=".*"):
                         if subdef:
                             alldefs = dir(module)
                             for mydef in alldefs:
-                                if mydef not in ["__builtins__", "__doc__", "__file__", "__name__", "__package__"]:
-                                    if re.search(pattern, mydef):
-                                        logger.debug(" + From %s import %s ..." % (name, mydef))
-                                        #exec "from %s import %s" % (name, mydef)
-                                        exec "loaded[mydef] = module.%s" % mydef
-
+                                if mydef not in [
+                                        "__builtins__",
+                                        "__doc__",
+                                        "__file__",
+                                        "__name__",
+                                        "__package__"]:
+                                    if search(pattern, mydef):
+                                        logger.debug(
+                                            " + From %s import %s ..." % (
+                                                name, mydef))
+                                        exec("loaded[mydef] = module.%s" %
+                                            mydef)
 
                         logger.debug(" + Success")
-                    except Exception, err:
+                    except Exception as err:
                         logger.error("\t%s" % err)
             except:
                 pass
-    except Exception, err:
+    except Exception as err:
         logger.error(err)
 
     return loaded
@@ -211,7 +225,7 @@ def clean_mfilter(mfilter, isnot=False):
         #logger.error("filter is : %s" % mfilter)
         #logger.error("key is : %s" % key)
 
-        if isinstance(mfilter, str) or isinstance(mfilter, unicode):
+        if isinstance(mfilter, str):
             values = mfilter
         else:
             values = mfilter[key]
@@ -223,7 +237,7 @@ def clean_mfilter(mfilter, isnot=False):
             mfilter[key] = clean_mfilter(values, isnot)
         else:
             if isnot and isinstance(values, str) and key == '$regex':
-                return re.compile(values)
+                return re_compile(values)
 
     return mfilter
 
@@ -236,7 +250,7 @@ def cleanTimestamp(timestamp):
 
 
 def roundSignifiantDigit(value, sig):
-    mult = math.pow(10, sig)
+    mult = pow(10, sig)
     value = round(value * mult)
     value = value / mult
     return value

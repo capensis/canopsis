@@ -18,6 +18,7 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
+
 from canopsis.old.record import Record
 
 namespace = 'files'

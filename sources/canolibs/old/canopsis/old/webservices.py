@@ -19,46 +19,50 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-import urllib2
-import cookielib
-import json
-import logging
+from urllib2 \
+    import HTTPCookieProcessor, build_opener, install_opener, urlopen, Request
 
-logging.basicConfig(level=logging.DEBUG,
-                    format='%(asctime)s %(name)s %(levelname)s %(message)s',
-                    )
+from cookielib import CookieJar
+
+from json import loads, dumps
+
+from logging import basicConfig, getLogger, DEBUG
+
+basicConfig(
+    level=DEBUG,
+    format='%(asctime)s %(name)s %(levelname)s %(message)s')
 
 
 class Webservices(object):
     def __init__(
-        self, host="127.0.0.1", port=8082, logging_level=logging.DEBUG
+        self, host="127.0.0.1", port=8082, logging_level=DEBUG
     ):
 
-        self.logger = logging.getLogger('cwebservice')
+        self.logger = getLogger('cwebservice')
         self.logger.setLevel(logging_level)
 
         self.logger.debug('Init urlib object ...')
         self.base_url = 'http://' + host + ':' + str(port)
 
-        self.jar = cookielib.CookieJar()
+        self.jar = CookieJar()
         self.jar.clear_session_cookies()
 
-        self.handler = urllib2.HTTPCookieProcessor(self.jar)
-        self.opener = urllib2.build_opener(self.handler)
+        self.handler = HTTPCookieProcessor(self.jar)
+        self.opener = build_opener(self.handler)
 
-        urllib2.install_opener(self.opener)
+        install_opener(self.opener)
 
         self.is_login = False
 
     def get(self, uri, parsing=True):
         url = self.base_url + uri
         self.logger.debug(' + GET ' + url)
-        data = urllib2.urlopen(url).read()
+        data = urlopen(url).read()
 
         if parsing:
             self.logger.debug('   + Try to parse json Data ...')
             try:
-                data_json = json.loads(str(data))
+                data_json = loads(str(data))
                 data = data_json['data']
                 state = data_json['success']
             except:
@@ -101,31 +105,32 @@ class Webservices(object):
                 'leaf': leaf
             }
 
-            req = urllib2.Request(url, json.dumps(data))
+            req = Request(url, dumps(data))
             response = self.opener.open(req)
             return response.read()
         else:
-            self.logger.debug("Missing parameters (must specified view name/parent)" % login)
+            self.logger.debug(
+                "Missing parameters (must specified view name/parent)" % login)
             return None
 
     def rename_view(self, view_id, new_name):
         url = '%s/ui/view' % self.base_url
-        data = json.dumps({
+        data = dumps({
                 'crecord_name': new_name,
                 '_id': view_id
                 })
-        req = urllib2.Request(url, data)
+        req = Request(url, data)
         req.get_method = lambda: 'PUT'
         response = self.opener.open(req)
         return response.read()
 
     def change_view_parent(self, view_id, parent_id):
         url = '%s/ui/view' % self.base_url
-        data = json.dumps({
+        data = dumps({
                 '_id': view_id,
                 'parentId': parent_id
                 })
-        req = urllib2.Request(url, data)
+        req = Request(url, data)
         req.get_method = lambda: 'PUT'
         response = self.opener.open(req)
         return response.read()
@@ -140,7 +145,7 @@ class Webservices(object):
         for _id in ids:
             data.append({'_id': _id})
 
-        req = urllib2.Request(url, json.dumps(data))
+        req = Request(url, dumps(data))
         req.get_method = lambda: 'DELETE'
         response = self.opener.open(req)
         return response.read()

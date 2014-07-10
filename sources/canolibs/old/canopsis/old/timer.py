@@ -20,17 +20,17 @@
 # ---------------------------------
 
 from time import time, sleep
-import logging
+from logging import DEBUG, INFO, getLogger, basicConfig
 
-logging.basicConfig(level=logging.DEBUG,
-                    format='%(asctime)s %(name)s %(levelname)s %(message)s',
-                    )
+basicConfig(
+    level=DEBUG,
+    format='%(asctime)s %(name)s %(levelname)s %(message)s')
 
 
 class Timer(object):
-    def __init__(self, logging_level=logging.INFO):
+    def __init__(self, logging_level=INFO):
         self.started = False
-        self.logger = logging.getLogger('timer')
+        self.logger = getLogger('timer')
         self.logger.setLevel(logging_level)
         self.RUN = True
 
@@ -70,11 +70,14 @@ class Timer(object):
             if pause < 0:
                 pause = 0
 
-            self.logger.debug("i: %s, Start: %s, Derive: %s, Pause: %s" % (i, start, derive, pause))
+            self.logger.debug(
+                "i: %s, Start: %s, Derive: %s, Pause: %s" % (
+                    i, start, derive, pause))
             try:
                 step = int(pause / 0.5)
                 rest = pause - (step * 0.5)
-                self.logger.debug(" + Sleep: %s seconds (%s * 0.5)" % ((step * 0.5), step))
+                self.logger.debug(
+                    " + Sleep: %s seconds (%s * 0.5)" % ((step * 0.5), step))
                 if step > 0:
                     for x in range(step - 1):
                         if self.RUN:
@@ -84,7 +87,7 @@ class Timer(object):
                             break
                 if self.RUN:
                     self.logger.debug(" + Sleep %s seconds" % rest)
-                    pause = ((start + (i*interval)) - time())
+                    pause = ((start + (i * interval)) - time())
                     sleep(pause)
             except:
                 self.logger.debug(" + Exception !")
