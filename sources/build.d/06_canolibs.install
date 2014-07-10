@@ -11,10 +11,11 @@ PROJECTS[4]='context'
 PROJECTS[5]='perfdata'
 PROJECTS[6]='mongo'
 PROJECTS[7]='old'
-PROJECTS[8]='engines'
-PROJECTS[9]='connectors'
-PROJECTS[10]='tools'
-PROJECTS[11]='ccli'
+PROJECTS[8]='pyperfstore2'
+PROJECTS[9]='engines'
+PROJECTS[10]='connectors'
+PROJECTS[11]='tools'
+PROJECTS[12]='ccli'
 
 function build(){
 	true

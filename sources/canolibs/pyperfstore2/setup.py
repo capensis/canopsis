@@ -25,5 +25,6 @@ setup(
 	url = "http://www.canopsis.org",
 	packages=['pyperfstore2'],
 	scripts=['scripts/pyperfstore2'],
+	data_files=[('~/etc/tasks.d', ['etc/tasks.d/task_pyperfstore.py'])],
 	long_description=read('README'),
 )

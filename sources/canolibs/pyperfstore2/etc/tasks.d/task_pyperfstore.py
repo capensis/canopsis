@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-#--------------------------------
-# Copyright (c) 2014 "Capensis" [http://www.capensis.com]
+# --------------------------------
+# Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
 #
@@ -19,35 +19,18 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from fabric.api import run
-from os.path import dirname, expanduser
+from celery.task import task
+from celerylibs import decorators
 
-projects = (
-    'common',
-    'configuration',
-    'timeserie',
-    'storage',
-    'context',
-    'perfdata',
-    'topology',
-    'mongo',
-    'old',
-    'pyperfstore2',
-    'engines',
-    'connectors',
-    'tools',
-    'ccli')
+from logging import getLogger
+
+from pyperfstore2 import manager
+
+logger = getLogger('Pyperfstore Task')
 
 
-def setup(cmd="install", projects=projects):
-    """
-    Run setup cmd on all projects.
-    """
-    # find __file__ directory
-    path = dirname(expanduser(__file__))
-
-    cmd_path = "python {0}/{{0}}/setup.py {1}".format(path, cmd)
-
-    for project in projects:
-        # run setup command
-        run(cmd_path.format(project))
+@task
+@decorators.log_task
+def rotate(account=None, owner=None):
+    my_manager = manager()
+    my_manager.rotateAll()
