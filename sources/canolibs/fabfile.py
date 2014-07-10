@@ -34,7 +34,8 @@ projects = (
     'old',
     'engines',
     'connectors',
-    'tools')
+    'tools',
+    'ccli')
 
 
 def setup(cmd="install", projects=projects):
