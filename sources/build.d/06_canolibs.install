@@ -14,6 +14,7 @@ PROJECTS[7]='old'
 PROJECTS[8]='engines'
 PROJECTS[9]='connectors'
 PROJECTS[10]='tools'
+PROJECTS[11]='ccli'
 
 function build(){
 	true

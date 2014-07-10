@@ -1,9 +1,0 @@
-NAME="ccli"
-
-function build(){
-	true
-}
-
-function install(){
-	install_basic_source $NAME
-}
