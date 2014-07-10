@@ -31,7 +31,10 @@ projects = (
     'perfdata',
     'topology',
     'mongo',
-    'canolibs')
+    'old',
+    'engines',
+    'connectors',
+    'tools')
 
 
 def setup(cmd="install", projects=projects):
