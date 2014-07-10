@@ -19,8 +19,6 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from pkgutil import extend_path
-
 from setuptools import setup as _setup, find_packages
 
 from os import walk
@@ -30,7 +28,8 @@ from sys import path, argv
 
 from canopsis.common.utils import resolve_element
 
-import canopsis
+#import canopsis
+#from pkgutil import extend_path
 
 # TODO: set values in a dedicated configuration file
 AUTHOR = 'Capensis'
@@ -67,7 +66,7 @@ def setup(description, keywords, add_etc=True, **kwargs):
     path.append(_path)
 
     # extend canopsis path with new sub modules and packages
-    canopsis.__path__ = extend_path(canopsis.__path__, canopsis.__name__)
+    # canopsis.__path__ = extend_path(canopsis.__path__, canopsis.__name__)
 
     # get package
     package = resolve_element("canopsis.{0}".format(name))
@@ -93,7 +92,7 @@ def setup(description, keywords, add_etc=True, **kwargs):
             for root, dirs, files in walk(etc_path):
                 files_to_copy = [join(root, _file) for _file in files]
                 target = join(user_etc_path, root)
-                data_files.append(target, files_to_copy)
+                data_files.append((target, files_to_copy))
             kwargs['data_files'] = data_files
 
     # add scripts if exist
