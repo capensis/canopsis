@@ -106,17 +106,23 @@ def setup(description, keywords, add_etc=True, **kwargs):
                     scripts.append(join(root, _file))
             kwargs['scripts'] = scripts
 
+    # add packages
     if 'packages' not in kwargs:
         packages = find_packages(where=_path, exclude=['test'])
         kwargs['packages'] = packages
 
+    # add description
     if 'long_description' not in kwargs:
         readme_path = join(_path, 'README')
         if exists(readme_path):
             with open(join(_path, 'README')) as f:
                 kwargs['long_description'] = f.read()
 
-    if 'test_suite' not in kwargs:
-        kwargs['test_suite'] = 'test'
+    # add test
+    if 'test_suite' not in kwargs and exists(join(_path, 'test')):
+        for test_folder in ['test', 'tests']:
+            if exists(join(_path, test_folder)):
+                kwargs['test_suite'] = test_folder
+                break
 
     _setup(**kwargs)
