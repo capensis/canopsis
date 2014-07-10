@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 # --------------------------------
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
@@ -18,26 +19,30 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-import subprocess, sys, signal, time
+import subprocess
+import sys
+import signal
+import time
+
 
 def signal_handler(signum, frame):
-	global RUN
-	print "Receive signal %s ..." % signum
-	print "Stop RabbitMQ Server ..."
-	subprocess.Popen(["rabbitmqctl", "stop"])
+    global RUN
+    print("Receive signal %s ..." % signum)
+    print("Stop RabbitMQ Server ...")
+    subprocess.Popen(["rabbitmqctl", "stop"])
 
 signal.signal(signal.SIGTERM, signal_handler)
 signal.signal(signal.SIGINT, signal_handler)
 
-print "Start RabbitMQ Server ..."
+print("Start RabbitMQ Server ...")
 process = subprocess.Popen(["rabbitmq-server"])
 
-exitcode=0
+exitcode = 0
 while True:
-	state = process.poll()
-	if state != None:
-		exitcode = state
-		break
-	time.sleep(1)
+    state = process.poll()
+    if state is not None:
+        exitcode = state
+        break
+    time.sleep(1)
 
 sys.exit(exitcode)
