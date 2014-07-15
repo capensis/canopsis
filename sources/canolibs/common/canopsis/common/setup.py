@@ -21,7 +21,7 @@
 
 from setuptools import setup as _setup, find_packages
 
-from os import walk
+from os import walk, getenv
 from os.path import join, dirname, expanduser, abspath, basename, exists
 
 from sys import path, argv
@@ -86,12 +86,14 @@ def setup(description, keywords, add_etc=True, **kwargs):
     # add etc content if exist
     if add_etc:
         etc_path = join(_path, 'etc')
+
         if exists(etc_path):
             user_etc_path = '~/etc/'
             data_files = kwargs.get('data_files', [])
+            target = getenv('CPS_PREFIX', '/opt/canopsis/etc/')
+
             for root, dirs, files in walk(etc_path):
                 files_to_copy = [join(root, _file) for _file in files]
-                target = join(user_etc_path, root)
                 data_files.append((target, files_to_copy))
             kwargs['data_files'] = data_files
 
@@ -123,5 +125,6 @@ def setup(description, keywords, add_etc=True, **kwargs):
             if exists(join(_path, test_folder)):
                 kwargs['test_suite'] = test_folder
                 break
+
 
     _setup(**kwargs)
