@@ -381,6 +381,12 @@ class Storage(DataBase):
 
         self.data_type = data_type
 
+    def bool_compare_and_swap(self):
+        raise NotImplementedError()
+
+    def val_compare_and_swap(self):
+        raise NotImplementedError()
+
     def get_elements(
         self, ids=None, limit=0, skip=0, sort=None, *args, **kwargs
     ):
