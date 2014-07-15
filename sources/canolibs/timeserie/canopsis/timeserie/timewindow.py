@@ -23,8 +23,17 @@
 __all__ = ('Period', 'Interval', 'TimeWindow', 'get_offset_timewindow')
 
 from time import time
+
 from dateutil.relativedelta import relativedelta as rd
+from dateutil.tz import tzoffset
+
 import calendar
+
+from collections import Iterable
+
+from operator import itemgetter
+
+from datetime import datetime as dt
 
 
 class Period(object):
@@ -228,9 +237,6 @@ class Period(object):
         result = Period(**params)
 
         return result
-
-from collections import Iterable
-from operator import itemgetter
 
 
 class Interval(object):
@@ -462,9 +468,6 @@ class Interval(object):
         result = tuple(result)
 
         return result
-
-from datetime import datetime as dt
-from dateutil.tz import tzoffset
 
 
 class TimeWindow(object):
