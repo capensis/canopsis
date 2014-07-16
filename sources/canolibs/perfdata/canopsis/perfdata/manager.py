@@ -28,7 +28,7 @@ from collections import Iterable
 
 from time import time
 
-DEFAULT_PERIOD = Period(**{Period.HOUR: 24})
+DEFAULT_PERIOD = Period(**{Period.DAY: 1})  # save data each
 DEFAULT_AGGREGATION = 'MEAN'
 
 
@@ -96,13 +96,16 @@ class PerfData(Manager):
         return result
 
     def get_point(
-        self, metric_id, with_meta=True, period=None, timestamp=time(),
+        self, metric_id, with_meta=True, period=None, timestamp=None,
         *args, **kwargs
     ):
         """
         Get the closest point before input timestamp. Add meta informations \
         if with_meta.
         """
+
+        if timestamp is None:
+            timestamp = time()
 
         period = self.get_period(data_id=metric_id, period=period)
 
@@ -214,7 +217,7 @@ class PerfData(Manager):
             result = DEFAULT_PERIOD
 
             entity = self.context.get(
-                element_id=metric_id, element_type=PerfData.DATA_TYPE)
+                element_id=metric_id, element_type=self.data_type)
 
             result = DEFAULT_PERIOD if entity is None else entity.get(
                 'period', DEFAULT_PERIOD)
