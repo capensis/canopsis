@@ -16,31 +16,45 @@ else
 	exit 1
 fi
 
-### Check is user uses symlinks
-ls $PREFIX/.slinked > /dev/null 2>&1 && {
-    echo "Found .slinked file, you need to remove the symlinks for the installation"
-    echo -n "Remove symlinks ?[Y/n]: "
-    read INPUT
-    if [ "$INPUT" == "n" ]; then
-	echo "symlinks kept, please remove them and re-run this command"
-    else
-	echo "Removing symlinks ..."
-	CPS="$PREFIX"
-	source $SRC_PATH/../tools/slink_utils
-	remove_slinks
-    fi
-}
+# Check slink
+if [ -e $PREFIX/.slinked ]
+then
+	echo "There is a slink environment installed."
+
+	read -p "Remove slink environment ? [Y/n]: "
+
+	if [ "$INPUT" == "n" ]
+	then
+		echo "Slink environment kept."
+		exit 0
+	else
+		echo "Removing slink environment..."
+
+		CPS=$PREFIX
+
+		source $SRC_PATH/../tools/slink_utils
+		remove_slinks
+	fi
+fi
 
 PY_BIN=$PREFIX"/bin/python"
 INC_DIRS="/usr/include"
 LOG_PATH="$SRC_PATH/log/"
 INST_CONF="$SRC_PATH/build.d/"
 
+MESSAGES="$SRC_PATH/build_messages.txt"
+echo "" > $MESSAGES
+
 mkdir -p $LOG_PATH
 
 ######################################
 #  functions
 ######################################
+function add_message() {
+	echo $@
+	echo $@ >> $MESSAGES
+}
+
 function pkg_options () {
 	if [ $NO_ARCH == true ]; then
 		P_ARCH="noarch"
@@ -480,9 +494,13 @@ if [ $OPT_BUILD -eq 1 ]; then
 
 			. /$INST_CONF/$ITEM
 
-			echo "################################"
-			echo "# $NAME $VERSION"
-			echo "################################"
+			echo "################################################################"
+			echo "#"
+			add_message "# Package: $NAME v$VERSION-r$RELEASE ($DIST-$DIST_VERS $ARCH)"
+			add_message "# Date: `date`"
+			echo "#"
+			echo "################################################################"
+			add_message ""
 
 			## Build and install
 			FORCE_UPDATE=0
@@ -524,6 +542,8 @@ if [ $OPT_BUILD -eq 1 ]; then
 			echo "Impossible to build $NAME ..."
 			exit 1
 		fi
+
+		add_message ""
 	done
 
 	echo "################################"
@@ -563,3 +583,12 @@ if [ $OPT_MPKG -eq 1 -o $OPT_MINSTALLER -eq 1 ]; then
 	./build-installer.sh
 	check_code $? "Impossible to build installer"
 fi
+
+echo
+echo "################################"
+echo "#           MESSAGES           #"
+echo "################################"
+echo
+
+cat $MESSAGES
+rm $MESSAGES
