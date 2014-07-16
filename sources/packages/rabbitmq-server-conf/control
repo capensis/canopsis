@@ -98,9 +98,14 @@ function post_install(){
 		echo " + Declare permissions for $cpsuser user ..."
 		su - $HUSER -c "$PREFIX/bin/rabbitmqctl set_permissions -p canopsis $cpsuser \".*\" \".*\" \".*\""
 		check_code $?
-	fi
 
-	add_message "Do not forget to edit $PREFIX/etc/amqp.conf with defined user/password"
+		echo " + Update $PREFIX/etc/amqp.conf ..."
+		su - $HUSER -c "$PREFIX/bin/initool set $PREFIX/etc/amqp.conf master userid $cpsuser"
+		check_code $?
+
+		su - $HUSER -c "$PREFIX/bin/initool set $PREFIX/etc/amqp.conf master password $cpspass"
+		check_code $?
+	fi
 
 	launch_cmd 1 service rabbitmq-server stop
 
