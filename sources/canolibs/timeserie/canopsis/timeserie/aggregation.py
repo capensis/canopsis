@@ -19,13 +19,7 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-__all__ = (
-    'get_aggregation_value',
-    'add_aggregation',
-    'get_aggregations',
-    'AggregationError')
-
-_AGGREGATIONS = dict()
+_AGGREGATIONS = {}
 
 
 class AggregationError(Exception):
