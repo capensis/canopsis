@@ -214,6 +214,21 @@ class Storage(DataBase, Storage):
 
         self._update(_id={'_id': _id}, document={'$set': element}, multi=False)
 
+    def bool_compare_and_swap(self, _id):
+
+        return self.val_compare_and_swap(
+            _id=_id, oldvalue=False, newvalue=True)
+
+    def val_compare_and_swap(self, _id, oldvalue, newval):
+
+        result = self._run_command(
+            'find_and_modify',
+            query={'_id': _id, 'value': oldvalue},
+            update={'value': newval},
+            upsert=True)
+
+        return result is not None
+
     def _element_id(self, element):
 
         return element['_id']

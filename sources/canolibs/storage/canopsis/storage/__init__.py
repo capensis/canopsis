@@ -381,10 +381,26 @@ class Storage(DataBase):
 
         self.data_type = data_type
 
-    def bool_compare_and_swap(self):
+    def bool_compare_and_swap(self, _id):
+        """
+        Performs an atomic compare_and_swap operation on database related to \
+        input _id.
+
+        :remarks: this method is not atomic
+
+        :returns: True if the swamp succeed
+        """
         raise NotImplementedError()
 
-    def val_compare_and_swap(self):
+    def val_compare_and_swap(self, _id, oldvalue, newvalue):
+        """
+        Performs an atomic val_compare_and_swap operation on database related \
+        to input _id, oldvalue and newvalue.
+
+        :remarks: this method is not atomic
+
+        :returns: True if the comparison succeed
+        """
         raise NotImplementedError()
 
     def get_elements(
