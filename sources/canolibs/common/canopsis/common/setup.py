@@ -73,7 +73,6 @@ def setup(description, keywords, add_etc=True, **kwargs):
 
     # set default parameters if not setted
     kwargs.setdefault('name', package.__name__)
-    kwargs.setdefault('version', package.__version__)
     kwargs.setdefault('author', AUTHOR)
     kwargs.setdefault('author_email', AUTHOR_EMAIL)
     kwargs.setdefault('license', LICENSE)
@@ -83,12 +82,16 @@ def setup(description, keywords, add_etc=True, **kwargs):
 
     kwargs.setdefault('keywords', kwargs.get('keywords', '') + KEYWORDS)
 
+    # set version
+    version = getattr(package, '__version__', None)
+    if version is not None:
+        kwargs.setdefault('version', version)
+
     # add etc content if exist
     if add_etc:
         etc_path = join(_path, 'etc')
 
         if exists(etc_path):
-            user_etc_path = '~/etc/'
             data_files = kwargs.get('data_files', [])
             target = getenv('CPS_PREFIX', '/opt/canopsis/etc/')
 
@@ -125,6 +128,5 @@ def setup(description, keywords, add_etc=True, **kwargs):
             if exists(join(_path, test_folder)):
                 kwargs['test_suite'] = test_folder
                 break
-
 
     _setup(**kwargs)
