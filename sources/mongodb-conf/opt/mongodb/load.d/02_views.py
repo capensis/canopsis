@@ -20,7 +20,7 @@
 # ---------------------------------
 
 from canopsis.old.account import Account
-from canopisis.old.storage import get_storage
+from canopsis.old.storage import get_storage
 from canopsis.old.record import Record
 
 import os
