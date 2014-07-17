@@ -19,6 +19,8 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
+__version__ = '0.1.0'
+
 from socket import gethostname
 
 from imp import load_source
@@ -28,7 +30,7 @@ from sys import path, argv, exit
 from os import listdir
 from os.path import expanduser, splitext, join
 
-from canopsis.cli.cmd import Cmd
+from canopsis.cli.ccmd import Cmd
 
 modules_path = expanduser('~/opt/ccli/libexec')
 path.append(modules_path)
