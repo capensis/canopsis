@@ -28,6 +28,8 @@ from logging import getLogger
 
 from math import pow
 
+from sys import path
+
 legend = ['ok', 'warning', 'critical', 'unknown']
 
 logger = getLogger('ctools')
@@ -145,14 +147,14 @@ def parse_perfdata(perf_data_raw):
         return perf_data_array
 
 
-def dynmodloads(path=".", subdef=False, pattern=".*"):
+def dynmodloads(_path=".", subdef=False, pattern=".*"):
     loaded = {}
-    path = expanduser(path)
-    logger.debug("Append path '%s' ..." % path)
-    path.append(path)
+    _path = expanduser(_path)
+    logger.debug("Append path '%s' ..." % _path)
+    path.append(_path)
 
     try:
-        for mfile in listdir(path):
+        for mfile in listdir(_path):
             try:
                 ext = mfile.split(".")[1]
                 name = mfile.split(".")[0]

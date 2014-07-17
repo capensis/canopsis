@@ -25,6 +25,8 @@ Python utility library.
 
 from importlib import import_module
 
+from inspect import ismodule
+
 
 def resolve_element(path):
     """
@@ -74,8 +76,7 @@ def resolve_element(path):
                         result = import_module(module_name)
                         index += 1
 
-                except ImportError as ie:
-                    raise ie
+                except ImportError:
                     # path sub-module content
                     try:
 

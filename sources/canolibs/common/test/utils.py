@@ -36,40 +36,58 @@ class UtilsTest(TestCase):
     def test_resolve_element(self):
 
         # resolve builtin function
-        _open = resolve_element('__builtin__.open')
+        _open = resolve_element('%s.open' % open.__module__)
 
         self.assertTrue(_open is open)
-
-        # resolve class
-        utilsTest = resolve_element('test.utils.UtilsTest')
-
-        self.assertTrue(utilsTest is UtilsTest)
-
-        # do not resolve method
-        setUp = resolve_element('test.utils.UtilsTest.setUp')
-
-        self.assertFalse(setUp is UtilsTest.setUp)
 
         # resolve function
         test = resolve_element('test.utils._test')
 
         self.assertTrue(_test is test)
 
-        # resolve resolve element
+        # resolve resolve_element
         _resolve_element = resolve_element(
             'canopsis.common.utils.resolve_element')
 
         self.assertTrue(_resolve_element is resolve_element)
 
+        # resolve package
+
+        canopsis = resolve_element('canopsis')
+
+        self.assertEqual(canopsis.__name__, 'canopsis')
+
+        # resolve sub_module
+
+        canopsis_common = resolve_element('canopsis.common')
+
+        self.assertEqual(canopsis_common.__name__, 'canopsis.common')
+
     def test_path(self):
 
+        # resolve built-in function
         open_path = path(open)
 
         self.assertEqual(open_path, '__builtin__.open')
 
-        self.assertEqual(path(UtilsTest), 'test.utils.UtilsTest')
+        # resolve path
+        self.assertEqual(path(path), 'canopsis.common.utils.path')
 
-        self.assertEqual(resolve_element(path(open)), open)
+        # resolve package
+        import canopsis
+        self.assertEqual(path(canopsis), 'canopsis')
+
+        # resolve sub-module
+        import canopsis.common as canopsis_common
+        self.assertEqual(path(canopsis_common), 'canopsis.common')
+
+    def test_reciproc(self):
+
+        _path = 'b3j0f.common.utils.path'
+
+        self.assertEqual(path(resolve_element(_path)), _path)
+
+        self.assertEqual(resolve_element(path(resolve_element)), path)
 
 if __name__ == '__main__':
     main()
