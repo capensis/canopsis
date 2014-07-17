@@ -108,7 +108,6 @@ def setup(description, keywords, add_etc=True, **kwargs):
             for root, dirs, files in walk(scripts_path):
                 for _file in files:
                     scripts.append(join(root, _file))
-            print 'scripts %s' % scripts
             kwargs['scripts'] = scripts
 
     # add packages
