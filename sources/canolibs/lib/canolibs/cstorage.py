@@ -43,22 +43,37 @@ CONFIG.read(os.path.expanduser('~/etc/cstorage.conf'))
 
 
 class cstorage(object):
-	def __init__(self, account, namespace='object', logging_level=logging.ERROR, mongo_host="127.0.0.1", mongo_port=27017, mongo_db='canopsis', mongo_autoconnect=True, groups=[], mongo_safe=True):
+	def __init__(self, account, namespace='object', logging_level=logging.ERROR, mongo_host="127.0.0.1", mongo_port=27017, mongo_db='canopsis', mongo_userid=None, mongo_password=None, mongo_autoconnect=True, groups=[], mongo_safe=True):
 
 		try:
 			self.mongo_host = CONFIG.get("master", "host")
-		except:
+
+		except ConfigParser.Error:
 			self.mongo_host = mongo_host
 
 		try:
 			self.mongo_port = CONFIG.getint("master", "port")
-		except:
+
+		except ConfigParser.Error:
 			self.mongo_port = mongo_port
 
 		try:
 			self.mongo_db = CONFIG.get("master", "db")
-		except:
+
+		except ConfigParser.Error:
 			self.mongo_db = mongo_db
+
+		try:
+			self.mongo_userid = CONFIG.get('master', 'userid')
+
+		except ConfigParser.Error:
+			self.mongo_userid = mongo_userid
+
+		try:
+			self.mongo_password = CONFIG.get('master', 'password')
+
+		except ConfigParser.Error:
+			self.mongo_password = mongo_password
 
 		self.mongo_safe = mongo_safe
 
@@ -122,7 +137,23 @@ class cstorage(object):
 		if self.connected:
 			return True
 
-		self.conn=Connection(self.mongo_host, self.mongo_port, safe=True)
+		if self.mongo_userid and self.mongo_password:
+			uri = 'mongodb://{0}:{1}@{2}:{3}/{4}'.format(
+				self.mongo_userid,
+				self.mongo_password,
+				self.mongo_host,
+				self.mongo_port,
+				self.mongo_db
+			)
+
+		else:
+			uri = 'mongodb://{0}:{1}/{2}'.format(
+				self.mongo_host,
+				self.mongo_port,
+				self.mongo_db
+			)
+
+		self.conn=Connection(uri, safe=True)
 		self.db=self.conn[self.mongo_db]
 
 		try:

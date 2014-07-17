@@ -41,10 +41,9 @@ function post_install(){
 	fi
 	sleep 1
 
-	CODE=0
-	VHOST_EXISTS=`su - $HUSER -c "rabbitmqctl list_vhosts | grep canopsis | wc -l"`
-	# Is this a first install or an update
-	if [ $VHOST_EXISTS -ne 1 ]
+	ADMIN_EXISTS=`su - $HUSER -c "rabbitmqctl list_users" | grep "^admin" | wc -l`
+
+	if [ $ADMIN_EXISTS -ne 1 ]
 	then
 		while true
 		do
@@ -62,7 +61,38 @@ function post_install(){
 			fi
 		done
 
-		read -p "RabbitMQ common user: " cpsuser
+		echo " + Declare Admin user ..."
+		su - $HUSER -c "$PREFIX/bin/rabbitmqctl add_user admin $adminpass"
+		check_code $?
+
+		su - $HUSER -c "$PREFIX/bin/rabbitmqctl set_user_tags admin administrator"
+		check_code $?
+	fi
+
+	VHOST_EXISTS=`su - $HUSER -c "rabbitmqctl list_vhosts | grep canopsis | wc -l"`
+	# Is this a first install or an update
+	if [ $VHOST_EXISTS -ne 1 ]
+	then
+		echo " + Declare vhost ..."
+		su - $HUSER -c "$PREFIX/bin/rabbitmqctl add_vhost canopsis"
+		check_code $?
+	fi
+
+	COMMONUSER_EXISTS=`su - $HUSER -c "rabbitmqctl list_users" | grep "\[canopsis\]" | wc -l`
+
+	if [ $COMMONUSER_EXISTS -ne 1 ]
+	then
+		while true
+		do
+			read -p "RabbitMQ common user: " cpsuser
+
+			user_exists=`su - $HUSER -c "rabbitmqctl list_users" | grep "^$cpsuser" | wc -l`
+
+			if [ $user_exists -ne 1 ]
+			then
+				break
+			fi
+		done
 
 		while true
 		do
@@ -79,20 +109,13 @@ function post_install(){
 				echo "Passwords doesn't match"
 			fi
 		done
-		
-		echo " + Declare Admin user ..."
-		su - $HUSER -c "$PREFIX/bin/rabbitmqctl add_user admin $adminpass"
-		check_code $?
 
-		su - $HUSER -c "$PREFIX/bin/rabbitmqctl set_user_tags admin administrator"
-		check_code $?
 		
 		echo " + Declare $cpsuser user ..."
 		su - $HUSER -c "$PREFIX/bin/rabbitmqctl add_user $cpsuser $cpspass"
 		check_code $?
 
-		echo " + Declare vhost ..."
-		su - $HUSER -c "$PREFIX/bin/rabbitmqctl add_vhost canopsis"
+		su - $HUSER -c "$PREFIX/bin/rabbitmqctl set_user_tags $cpsuser canopsis"
 		check_code $?
 
 		echo " + Declare permissions for $cpsuser user ..."
@@ -108,8 +131,6 @@ function post_install(){
 	fi
 
 	launch_cmd 1 service rabbitmq-server stop
-
-	check_code $CODE "Error in rabbitMQ configurations ..."
 	
 	rm -f $PREFIX/var/log/rabbitmq/*
 }
