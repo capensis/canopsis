@@ -19,17 +19,4 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from canopsis.cli.cmd import Cmd
-
-
-class Cli(Cmd):
-    def __init__(self, prompt):
-        super(Cli, self).__init__(prompt + 'sla')
-
-
-def start_cli(prompt):
-    try:
-        mycli = Cli(prompt)
-        mycli.cmdloop()
-    except Exception as err:
-        print("Impossible to start module: %s" % err)
+__version__ = '0.1.0'

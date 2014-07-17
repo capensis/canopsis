@@ -20,11 +20,17 @@
 # ---------------------------------
 
 from sys import exit, argv
+
 from urllib2 import build_opener, HTTPCookieProcessor, Request
+
 from cookielib import CookieJar
+
 from argparse import ArgumentParser
+
 from logging import basicConfig, getLogger
+
 from time import time
+
 from datetime import date
 
 try:

@@ -19,24 +19,12 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from canopsis.cli.cmd import Cmd, Browser
-from canopsis.old.account import Account
-
-from os import system
+from canopsis.cli.ccmd import Cmd
 
 
 class Cli(Cmd):
     def __init__(self, prompt):
-        super(Cli, self).__init__("%sstorage" % prompt)
-        self.myprompt = "%sstorage" % prompt
-
-    def do_cd(self, namespace):
-        Browser(
-            "%s/%s" % (self.myprompt, namespace),
-            Account(user="root", group="root"), namespace).cmdloop()
-
-    def do_mongo(self, line):
-        system('mongo canopsis')
+        super(Cli, self).__init__(prompt + 'sla')
 
 
 def start_cli(prompt):

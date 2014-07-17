@@ -18,3 +18,30 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
+
+from canopsis.cli.ccmd import Cmd, Browser
+from canopsis.old.account import Account
+
+from os import system
+
+
+class Cli(Cmd):
+    def __init__(self, prompt):
+        super(Cli, self).__init__("%sstorage" % prompt)
+        self.myprompt = "%sstorage" % prompt
+
+    def do_cd(self, namespace):
+        Browser(
+            "%s/%s" % (self.myprompt, namespace),
+            Account(user="root", group="root"), namespace).cmdloop()
+
+    def do_mongo(self, line):
+        system('mongo canopsis')
+
+
+def start_cli(prompt):
+    try:
+        mycli = Cli(prompt)
+        mycli.cmdloop()
+    except Exception as err:
+        print("Impossible to start module: %s" % err)

@@ -20,14 +20,16 @@
 # ---------------------------------
 
 from time import time, sleep
+
 from logging import basicConfig, INFO, getLogger
+
 from sys import stdout
 
 from canopsis.old.rabbitmq import Amqp
 from canopsis.old.event import forger, get_routingkey
-
 from canopsis.old.storage import get_storage
 from canopsis.old.account import Account
+
 from traceback import print_exc
 
 from pyperfstore2 import manager

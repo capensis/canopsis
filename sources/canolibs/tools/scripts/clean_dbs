@@ -20,7 +20,9 @@
 # ---------------------------------
 
 from logging import getLogger, DEBUG, INFO, basicConfig
+
 from time import time
+from datetime import datetime
 
 from canopsis.old.storage import get_storage
 from canopsis.old.account import Account
@@ -28,8 +30,6 @@ from canopsis.old.account import Account
 from pyperfstore2 import manager
 
 from docopt import docopt
-
-from datetime import datetime
 
 from sys import exit
 

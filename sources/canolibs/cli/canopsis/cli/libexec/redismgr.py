@@ -19,7 +19,7 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from canopsis.cli.cmd import Cmd
+from canopsis.cli.ccmd import Cmd
 
 from pprint import PrettyPrinter
 

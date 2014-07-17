@@ -28,7 +28,7 @@ from sys import path, argv, exit
 from os import listdir
 from os.path import expanduser, splitext, join
 
-from canopsis.ccli.cmd import Cmd
+from canopsis.cli.cmd import Cmd
 
 modules_path = expanduser('~/opt/ccli/libexec')
 path.append(modules_path)

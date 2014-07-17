@@ -20,7 +20,9 @@
 # ---------------------------------
 
 from unittest import TestCase, main
+
 from time import time, sleep
+
 from logging import DEBUG, basicConfig
 
 from canopsis.old.rabbitmq import Amqp

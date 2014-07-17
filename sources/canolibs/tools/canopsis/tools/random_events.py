@@ -20,11 +20,16 @@
 # ---------------------------------
 
 from sys import argv
+
 from canopsis.old.event import forger
+
 from time import time
+
 from datetime import datetime
+
 from kombu import Connection
 from kombu.pools import producers
+
 from random import randint, random
 
 from functools import reduce
