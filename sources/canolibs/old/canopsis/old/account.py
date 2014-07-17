@@ -54,14 +54,14 @@ class Account(Record):
 
         self.external = False
 
-        if isinstance(record, record):
+        if isinstance(record, Record):
             Record.__init__(
-                self, _id=self._id, record=record, type=self.type,
+                self, _id=self._id, record=record, _type=self.type,
                 *args, **kargs)
         else:
             Record.__init__(
                 self, _id=self._id, owner="account.%s" % self.user,
-                group=self.group, type=self.type, *args, **kargs)
+                group=self.group, _type=self.type, *args, **kargs)
 
     def get_full_mail(self):
         return "\"%s %s\" <%s>" % (self.firstname, self.lastname, self.mail)

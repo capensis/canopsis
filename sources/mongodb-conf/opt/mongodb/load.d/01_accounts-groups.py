@@ -78,7 +78,7 @@ def base_init():
             storage.put(record)
         except:
             logger.info(" + Create group '%s'" % name)
-            record = Record({'_id': 'group.%s' % name}, type='group', name=name,
+            record = Record({'_id': 'group.%s' % name}, _type='group', name=name,
                 group='group.CPS_account_admin')
             record.admin_group = 'group.CPS_account_admin'
             record.data['description'] = groups[name]
@@ -114,7 +114,7 @@ def base_init():
         logger.info(" + Create root directory")
         rootdir = Record(
             {'_id': 'directory.root', 'id': 'directory.root', 'expanded': 'true'},
-            type='view_directory', name="root directory")
+            _type='view_directory', name="root directory")
         rootdir.chmod('o+r')
         storage.put(rootdir)
 
@@ -130,7 +130,7 @@ def base_init():
             logger.info(" + Create '%s' directory" % user)
             userdir = Record(
                 {'_id': 'directory.root.%s' % user, 'id': 'directory.root.%s' % user,
-                'expanded': 'true'}, type='view_directory', name=user)
+                'expanded': 'true'}, _type='view_directory', name=user)
             userdir.chown('account.%s' % user)
             userdir.chgrp('group.%s' % user)
             userdir.admin_group = 'group.CPS_view_admin'

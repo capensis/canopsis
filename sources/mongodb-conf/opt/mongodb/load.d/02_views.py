@@ -84,7 +84,7 @@ def create_view(
 
     logger.info(" + Create view '%s'" % name)
     record = Record(
-        {'_id': 'view.%s' % _id, 'internal': internal}, type='view', name=name,
+        {'_id': 'view.%s' % _id, 'internal': internal}, _type='view', name=name,
         group='group.CPS_view_admin')
 
     if isinstance(data, list):

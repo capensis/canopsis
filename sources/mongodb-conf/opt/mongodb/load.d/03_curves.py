@@ -73,7 +73,7 @@ def init():
             storage.get(_id)
         except:
             logger.info(" + Create curve '%s'" % curve['metric'])
-            record = Record(data=curve, _id=_id, name=curve['metric'], type='curve')
+            record = Record(data=curve, _id=_id, name=curve['metric'], _type='curve')
             record.chmod('g+w')
             record.chmod('o+r')
             record.chgrp('group.CPS_curve_admin')
