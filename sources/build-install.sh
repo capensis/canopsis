@@ -440,7 +440,6 @@ if [ $OPT_BUILD -eq 1 ]; then
 
 	VARLIB_PATH="$PREFIX/var/lib/pkgmgr/packages"
 	mkdir -p $VARLIB_PATH
-	touch $PREFIX/var/lib/pkgmgr/local_db
 
 	######################################
 	#  Build all packages
@@ -531,6 +530,8 @@ if [ $OPT_BUILD -eq 1 ]; then
 				echo " + Post-install ..."
 				post_install
 
+				echo "v${VERSION}-r${RELEASE}_${DIST}-${DIST_VERS}_${ARCH}" >> $VARLIB_PATH/$NAME
+
 				if [ $OPT_MPKG -eq 1 ]; then
 					make_package $NAME
 					check_code $? "Make package failure"
@@ -592,3 +593,5 @@ echo
 
 cat $MESSAGES
 rm $MESSAGES
+
+echo " -- You can now run Canopsis: hypcontrol start"
