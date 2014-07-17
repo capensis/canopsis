@@ -25,7 +25,7 @@ from canopsis.engine import Engine
 from canopsis.old.tools import parse_perfdata, Str2Number, internal_metrics
 from canopsis.old.storage import get_storage
 from canopsis.old.account import Account
-from canopsis.old.amqp import Amqp
+from canopsis.old.rabbitmq import Amqp
 
 
 INTERNAL_QUEUE = "beat_perfstore2"

@@ -69,7 +69,7 @@ def setup(description, keywords, add_etc=True, **kwargs):
     # canopsis.__path__ = extend_path(canopsis.__path__, canopsis.__name__)
 
     # get package
-    package = resolve_element("canopsis.{0}".format(name))
+    package = resolve_element("canopsis.%s" % name)
 
     # set default parameters if not setted
     kwargs.setdefault('name', package.__name__)
@@ -108,6 +108,7 @@ def setup(description, keywords, add_etc=True, **kwargs):
             for root, dirs, files in walk(scripts_path):
                 for _file in files:
                     scripts.append(join(root, _file))
+            print 'scripts %s' % scripts
             kwargs['scripts'] = scripts
 
     # add packages

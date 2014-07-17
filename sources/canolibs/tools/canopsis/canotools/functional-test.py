@@ -23,7 +23,7 @@ from unittest import TestCase, main
 from time import time, sleep
 from logging import DEBUG, basicConfig
 
-from canopsis.old.amqp import Amqp
+from canopsis.old.rabbitmq import Amqp
 from canopsis.old.storage import Storage
 from canopsis.old.account import Account
 from canopsis.old.webservices import Webservices

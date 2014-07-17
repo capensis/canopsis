@@ -23,7 +23,7 @@ from time import time, sleep
 from logging import basicConfig, INFO, getLogger
 from sys import stdout
 
-from canopsis.old.amqp import Amqp
+from canopsis.old.rabbitmq import Amqp
 from canopsis.old.event import forger, get_routingkey
 
 from canopsis.old.storage import get_storage

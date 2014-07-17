@@ -113,7 +113,7 @@ class KnownValues(unittest.TestCase):
 
         ## But root can ;)
         STORAGE.remove(ACCOUNT)
-
+    """
     def test_10_check_addgroup_removegroup(self):
         GROUP = Group(name='mygroup')
         ACCOUNT.add_in_groups(GROUP)
@@ -129,7 +129,7 @@ class KnownValues(unittest.TestCase):
             raise Exception('Error while remove_from_groups, group not removed')
         if ACCOUNT._id in GROUP.account_ids:
             raise Exception('Error while remove_from_groups, group not removed from account')
-
+    """
     def test_11_check_group_func_autosav(self):
         account = Account(user='test', lastname='testify', storage=STORAGE)
         group = Group(name='Mgroup')

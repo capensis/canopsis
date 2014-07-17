@@ -20,7 +20,7 @@
 # ---------------------------------
 
 from canopsis.cli.cmd import Cmd
-from canopsis.old.amqp import Amqp
+from canopsis.old.rabbitmq import Amqp
 
 from subprocess import PIPE, Popen
 

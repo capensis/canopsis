@@ -28,20 +28,7 @@ from signal import signal, SIGINT, SIGTERM
 from pwd import getpwnam
 from canopsis.old.init import Init
 
-path.append(os.path.expanduser('~/lib/canolibs'))
-
-DAEMON_NAME = 'snmp2amqp'
-
-init = Init()
-logger = init.getLogger(DAEMON_NAME)
-
-RUN = False
-
-myamqp = None
-transportDispatcher = None
-mibs = {}
-
-from canopsis.old.amqp import Amqp
+from canopsis.old.rabbitmq import Amqp
 from canopsis.old.event import forger, get_routingkey
 
 from pysnmp.carrier.asynsock.dispatch import AsynsockDispatcher
@@ -55,17 +42,22 @@ from mibtools import mib, severity_to_state
 from snmp2amqp_conf import blacklist_enterprise, interface, port, \
     blacklist_trap_oid, mibs
 
+path.append(os.path.expanduser('~/lib/canolibs'))
+
+DAEMON_NAME = 'snmp2amqp'
+
+init = Init()
+logger = init.getLogger(DAEMON_NAME)
+
+RUN = False
+
+myamqp = None
+transportDispatcher = None
+mibs = {}
+
 path.append(os.path.expanduser('~/etc/'))
 
-
-########################################################
-#
-#   Functions
-#
-########################################################
-
 RUN = True
-#### Connect signals
 
 
 def signal_handler(signum, frame):
@@ -146,19 +138,16 @@ def parse_trap(mib, trap_oid, agent, varBinds):
         myamqp.publish(event, key, myamqp.exchange_name_events)
 
 
-########################################################
-#
-#   Callback
-#
-########################################################
-
 def cbFun(transportDispatcher, transportDomain, transportAddress, wholeMsg):
+    """
+    Callback
+    """
     while wholeMsg:
         msgVer = int(api.decodeMessageVersion(wholeMsg))
         if msgVer in api.protoModules:
             pMod = api.protoModules[msgVer]
         else:
-            print 'Unsupported SNMP version %s' % msgVer
+            print('Unsupported SNMP version %s' % msgVer)
             return
 
         reqMsg, wholeMsg = decoder.decode(wholeMsg, asn1Spec=pMod.Message())
@@ -251,6 +240,3 @@ def main():
     logger.debug("Stop AMQP ...")
     myamqp.stop()
     myamqp.join()
-
-if __name__ == "__main__":
-    main()

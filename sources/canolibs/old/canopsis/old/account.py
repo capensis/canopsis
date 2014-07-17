@@ -25,7 +25,6 @@ from hashlib import sha1, md5, sha224
 from random import getrandbits
 
 from canopsis.old.record import Record
-from canopsis.old.group import Group
 
 
 class Account(Record):
@@ -156,6 +155,7 @@ class Account(Record):
         print(" + Group:\t", self.group)
         print(" + Groups:\t", self.groups, "\n")
 
+    """
     def add_in_groups(self, groups, storage=None):
         if not storage:
             storage = self.storage
@@ -218,6 +218,7 @@ class Account(Record):
                     group.account_ids.remove(self._id)
                     if group.storage:
                         group.save()
+    """
 
 
 def caccount_getall(storage):

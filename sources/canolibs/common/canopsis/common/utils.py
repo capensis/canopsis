@@ -23,6 +23,8 @@
 Python utility library.
 """
 
+from importlib import import_module
+
 
 def resolve_element(path):
     """
@@ -33,44 +35,60 @@ def resolve_element(path):
     :param path: full path to a python element.
         Examples:
             - __builtin__.open
-            - ccommon.utils.resolve_element
+            - canopsis.common.utils.resolve_element
     :type path: str
 
     :return: python object which is accessible thourgh input path.
     :rtype: object
     """
 
-    components = path.split('.')
-
-    # if mod does not exist
     result = None
 
-    module_name = components[0]
+    if path:
 
-    # try to import the first component name
-    try:
-        result = __import__(module_name)
-    except ImportError:
-        pass
+        components = path.split('.')
+        index = 0
+        components_len = len(components)
 
-    # try to import all sub-modules/packages
-    if result is not None:
+        module_name = components[0]
 
-        try:  # check if name is defined from an external module
-            # find the right module
-
-            for index in range(1, len(components)):
-                module_name = '{0}.{1}'.format(module_name, components[index])
-                result = __import__(module_name)
-
+        # try to import the first component name
+        try:
+            result = import_module(module_name)
         except ImportError:
             pass
 
-    # if result exist
-    if result is not None:
-        # path its content
-        for comp in components[1:]:
-            result = getattr(result, comp)
+        if result is not None:
+
+            if components_len > 1:
+
+                index = 1
+
+                # try to import all sub-modules/packages
+                try:  # check if name is defined from an external module
+                    # find the right module
+
+                    while index < components_len:
+                        module_name = '%s.%s' % (
+                            module_name, components[index])
+                        result = import_module(module_name)
+                        index += 1
+
+                except ImportError as ie:
+                    raise ie
+                    # path sub-module content
+                    try:
+
+                        while index < components_len:
+                            result = getattr(result, components[index])
+                            index += 1
+
+                    except AttributeError:
+                        raise Exception(
+                            'Wrong path %s at %s' % (path, components[:index]))
+
+        else:  # get relative object from current module
+            raise Exception('Does not handle relative path')
 
     return result
 
@@ -85,6 +103,11 @@ def path(element):
     :type element: object
     """
 
-    result = '{0}.{1}'.format(element.__module__, element.__name__)
+    if not hasattr(element, '__name__'):
+        raise AttributeError(
+            'element %s must have the attribute __name__' % element)
+
+    result = element.__name__ if ismodule(element) else \
+        '%s.%s' % (element.__module__, element.__name__)
 
     return result

@@ -25,7 +25,7 @@ from os import makedirs
 from os.path import expanduser, dirname, exists
 
 from canopsis.old.init import Init
-from canopsis.old.amqp import Amqp
+from canopsis.old.rabbitmq import Amqp
 from canopsis.old.event import forger, get_routingkey
 
 from urllib import urlopen
@@ -232,6 +232,3 @@ def main():
     logger.debug("Stop AMQP ...")
     myamqp.stop()
     myamqp.join()
-
-if __name__ == "__main__":
-    main()

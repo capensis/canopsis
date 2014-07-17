@@ -26,5 +26,4 @@ install_requires = ['canopsis.old', 'canopsis.timeserie', 'canopsis.perfdata']
 setup(
     description='Engines library',
     install_requires=install_requires,
-    keywords='engines',
-    scripts='scripts/engine-launcher')
+    keywords='engines')

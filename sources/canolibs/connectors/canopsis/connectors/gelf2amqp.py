@@ -27,7 +27,7 @@ from socket import socket, AF_INET, SOCK_DGRAM, IPPROTO_UDP, timeout
 
 from pyparsing import Word, alphas, Suppress, nums, Optional, Regex
 
-from canopsis.old.amqp import Amqp
+from canopsis.old.rabbitmq import Amqp
 from canopsis.old.init import Init
 from canopsis.old.event import forger, get_routingkey
 
@@ -214,6 +214,3 @@ def main():
     logger.debug("Stop AMQP ...")
     myamqp.stop()
     myamqp.join()
-
-if __name__ == "__main__":
-    main()

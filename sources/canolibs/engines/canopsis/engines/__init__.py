@@ -22,7 +22,7 @@
 __version__ = '0.1.0'
 
 from canopsis.old.init import Init
-from canopsis.old.amqp import Amqp
+from canopsis.old.rabbitmq import Amqp
 from canopsis.old.storage import get_storage
 from canopsis.old.account import Account
 from canopsis.old.event import forger, get_routingkey
