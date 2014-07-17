@@ -25,14 +25,14 @@ from datetime import datetime
 
 from pyperfstore2.store import store
 import pyperfstore2.utils as utils
-from cstorage import get_storage
-from caccount import caccount
+from canopsis.old.storage import get_storage
+from canopsis.old.account import Account
 
 class manager(object):
 	def __init__(self, retention=0, dca_min_length=250, logging_level=logging.INFO, cache=True, **kwargs):
 		self.logger = logging.getLogger('manager')
 		self.logger.setLevel(logging_level)
-		self.storage = get_storage(account=caccount(user="root", group="root"))
+		self.storage = get_storage(account=Account(user="root", group="root"))
 		# Store
 		self.store = store(logging_level=self.logger.level, **kwargs)
 
