@@ -10,20 +10,20 @@ import string
 
 import threading
 
-from cinit import cinit
+from canopsis.old.init import Init
 
 # Logger
-init 	= cinit()
-logger 	= init.getLogger('apsd')
+init    = Init()
+logger  = init.getLogger('apsd')
 handler = init.getHandler(logger)
 
 # Init
 sched = Scheduler()
 c = {
-	"daemonic": "False",
-	"apscheduler.jobstore.cmongodbjobstore.class": "apschedulerlibs.cmongodbjobstore:CMongoDBJobStore",
-	"apscheduler.jobstore.cmongodbjobstore.database": "canopsis",
-	"apscheduler.jobstore.cmongodbjobstore.collection": "object"
+    "daemonic": "False",
+    "apscheduler.jobstore.cmongodbjobstore.class": "apschedulerlibs.cmongodbjobstore:CMongoDBJobStore",
+    "apscheduler.jobstore.cmongodbjobstore.database": "canopsis",
+    "apscheduler.jobstore.cmongodbjobstore.collection": "object"
 }
 
 # Mongojobstore refresh interval in seconds
@@ -37,32 +37,32 @@ sched.start()
 handler.run()
 
 def main_loop():
-	last_refresh = int(time.time())
+    last_refresh = int(time.time())
 
-	while handler.RUN:
-		if int(time.time()) >= (last_refresh + refresh_interval):
-			logger.debug('Refresh Mongodb jobstore')
-			last_refresh = int(time.time())
-			for js in sched._jobstores:
-				if isinstance(sched._jobstores[js], CMongoDBJobStore):
-					sched._jobstores[js].check_and_refresh()
-					sched._wakeup.set()
+    while handler.RUN:
+        if int(time.time()) >= (last_refresh + refresh_interval):
+            logger.debug('Refresh Mongodb jobstore')
+            last_refresh = int(time.time())
+            for js in sched._jobstores:
+                if isinstance(sched._jobstores[js], CMongoDBJobStore):
+                    sched._jobstores[js].check_and_refresh()
+                    sched._wakeup.set()
 
-		time.sleep(1)
+        time.sleep(1)
 
 # Main
 if __name__ == '__main__':
-	sched.print_jobs()
-	try:
-		logger.info('Start mainloop')
-		main_loop()
-	except KeyboardInterrupt:
-		logger.info('Exiting by user request')
-	
-	logger.info('Stop handler')
-	handler.stop()
-	logger.info(' + Done')
+    sched.print_jobs()
+    try:
+        logger.info('Start mainloop')
+        main_loop()
+    except KeyboardInterrupt:
+        logger.info('Exiting by user request')
 
-	logger.info('Stop Scheduler')
-	sched.shutdown()
-	logger.info(' + Done')
+    logger.info('Stop handler')
+    handler.stop()
+    logger.info(' + Done')
+
+    logger.info('Stop Scheduler')
+    sched.shutdown()
+    logger.info(' + Done')
