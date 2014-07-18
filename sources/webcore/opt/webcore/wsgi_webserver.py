@@ -65,13 +65,30 @@ debug		= False
 #mongo config
 mongo_host = mongo_config.get("master", "host")
 mongo_port = mongo_config.getint("master", "port")
+mongo_userid = mongo_config.get("master", "userid")
+mongo_password = mongo_config.get("master", "password")
 mongo_db = mongo_config.get("master", "db")
 
 session_cookie_expires	= 300
 session_secret			= 'canopsis'
 session_lock_dir		= os.path.expanduser('~/tmp/webcore_cache')
-session_mongo_url		= 'mongodb://%s:%s/%s.beaker' % (mongo_host,mongo_port,mongo_db)
 root_directory			= os.path.expanduser("~/var/www/")
+
+if mongo_userid and mongo_password:
+	session_mongo_url = 'mongodb://{0}:{1}@{2}:{3}/{4}.beaker'.format(
+		mongo_userid,
+		mongo_password,
+		mongo_host,
+		mongo_port,
+		mongo_db
+	)
+
+else:
+	session_mongo_url = 'mongodb://{0}:{1}/{2}.beaker'.format(
+		mongo_host,
+		mongo_port,
+		mongo_db
+	)
 
 try:
 	## get config
@@ -165,13 +182,13 @@ bottle.install(auth_plugin)
 
 ## Session system with beaker
 session_opts = {
-    'session.type': 'mongodb',
-    'session.cookie_expires': session_cookie_expires,
-    'session.url' : session_mongo_url,
-    'session.auto': True,
+	'session.type': 'mongodb',
+	'session.cookie_expires': session_cookie_expires,
+	'session.url' : session_mongo_url,
+	'session.auto': True,
 #   'session.timeout': 300,
-    'session.secret': session_secret,
-    'session.lock_dir' : session_lock_dir,
+	'session.secret': session_secret,
+	'session.lock_dir' : session_lock_dir,
 }
 
 ## Basic Handler
