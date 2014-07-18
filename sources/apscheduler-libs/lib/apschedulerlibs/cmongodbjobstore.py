@@ -37,89 +37,89 @@ TRIGGER = 'trigger'
 
 class CMongoDBJobStore(MongoDBJobStore):
 
-	def __init__(self, database='canopsis', collection='objects',connection=None, pickle_protocol=pickle.HIGHEST_PROTOCOL,**connect_args):
-		MongoDBJobStore.__init__(self,database=database, collection=collection,connection=connection, pickle_protocol=pickle_protocol)
+    def __init__(self, database='canopsis', collection='objects',connection=None, pickle_protocol=pickle.HIGHEST_PROTOCOL,**connect_args):
+        MongoDBJobStore.__init__(self,database=database, collection=collection,connection=connection, pickle_protocol=pickle_protocol)
 
-	def load_jobs(self):
-		#continue standart execution
-		jobs = []
-		for job_dict in self.collection.find({'crecord_type': 'schedule'}):
-			try:
-				job = Job.__new__(Job)
+    def load_jobs(self):
+        #continue standart execution
+        jobs = []
+        for job_dict in self.collection.find({'crecord_type': 'schedule'}):
+            try:
+                job = Job.__new__(Job)
 
-				if job_dict['aaa_owner'] != 'account.root':
-					if job_dict['kwargs']['task'] != 'task_reporting':
-						raise ValueError("User %s isn\'t allow to run task %s" % (job_dict['aaa_owner'],job_dict['kwargs']['task']))
+                if job_dict['aaa_owner'] != 'account.root':
+                    if job_dict['kwargs']['task'] != 'task_reporting':
+                        raise ValueError("User %s isn\'t allow to run task %s" % (job_dict['aaa_owner'],job_dict['kwargs']['task']))
 
-				#keep memory of id
-				job_dict_id = job_dict['_id']
+                #keep memory of id
+                job_dict_id = job_dict['_id']
 
-				job_dict['id'] = job_dict.pop('_id')
+                job_dict['id'] = job_dict.pop('_id')
 
-				if job_dict.has_key('runs'):
-					job_dict['runs'] = job_dict['runs']
-				else:
-					job_dict['runs'] = 0
+                if job_dict.has_key('runs'):
+                    job_dict['runs'] = job_dict['runs']
+                else:
+                    job_dict['runs'] = 0
 
-				job_dict['coalesce'] = False
+                job_dict['coalesce'] = False
 
-				#try to get interval
-				interval = job_dict.get('interval')
-				if interval is not None:
-					job_dict[TRIGGER] = IntervalTrigger(timedelta(**interval))
-				else: #try to get simple
-					date = job_dict.get('date')
-					if date is not None:
-						job_dict[TRIGGER] = SimpleTrigger( datetime(*date))
-					else: #try to get crontab
-						cron = job_dict.get('cron')
-						if cron is not None:
-							job_dict[TRIGGER] = CronTrigger(**cron)
+                #try to get interval
+                interval = job_dict.get('interval')
+                if interval is not None:
+                    job_dict[TRIGGER] = IntervalTrigger(timedelta(**interval))
+                else: #try to get simple
+                    date = job_dict.get('date')
+                    if date is not None:
+                        job_dict[TRIGGER] = SimpleTrigger( datetime(*date))
+                    else: #try to get crontab
+                        cron = job_dict.get('cron')
+                        if cron is not None:
+                            job_dict[TRIGGER] = CronTrigger(**cron)
 
-				if TRIGGER not in job_dict:
-					raise ValueError("No interval, nor date, nor cron is given in task %s".format(job_dict['crecord_name']))
+                if TRIGGER not in job_dict:
+                    raise ValueError("No interval, nor date, nor cron is given in task %s".format(job_dict['crecord_name']))
 
-				job_dict['next_run_time'] = job_dict['trigger'].get_next_fire_time(datetime.now())
-				job_dict['args'] = job_dict['args']
-				job_dict['kwargs'] = job_dict['kwargs']
-				job_dict['max_runs'] = None
-				job_dict['max_instances'] = 3
-				job_dict['name'] = job_dict['crecord_name']
-				job_dict['misfire_grace_time'] = 1
+                job_dict['next_run_time'] = job_dict['trigger'].get_next_fire_time(datetime.now())
+                job_dict['args'] = job_dict['args']
+                job_dict['kwargs'] = job_dict['kwargs']
+                job_dict['max_runs'] = None
+                job_dict['max_instances'] = 3
+                job_dict['name'] = job_dict['crecord_name']
+                job_dict['misfire_grace_time'] = 1
 
-				job_dict['func_ref'] = 'apschedulerlibs.aps_to_celery:launch_celery_task'
+                job_dict['func_ref'] = 'apschedulerlibs.aps_to_celery:launch_celery_task'
 
-				job.__setstate__(job_dict)
-				jobs.append(job)
+                job.__setstate__(job_dict)
+                jobs.append(job)
 
-				#change flag to true
-				self.collection.update({'_id':job_dict_id},{"$set":{'loaded':True, 'next_run_time': job_dict['next_run_time']}},True)
+                #change flag to true
+                self.collection.update({'_id':job_dict_id},{"$set":{'loaded':True, 'next_run_time': job_dict['next_run_time']}},True)
 
-			except Exception:
-				job_name = job_dict.get('name', '(unknown)')
-				logger.exception('Unable to restore job "%s"', job_name)
+            except Exception:
+                job_name = job_dict.get('name', '(unknown)')
+                logger.exception('Unable to restore job "%s"', job_name)
 
-		logger.info(' + %s jobs loaded' % len(jobs))
-		self.jobs = jobs
+        logger.info(' + %s jobs loaded' % len(jobs))
+        self.jobs = jobs
 
-	def close(self):
-		for job in self.jobs:
-			logger.info(' + Unload %s' % job.id)
-			self.collection.update({'_id':job.id},{"$set":{'loaded':False}},True)
-		MongoDBJobStore.close(self)
+    def close(self):
+        for job in self.jobs:
+            logger.info(' + Unload %s' % job.id)
+            self.collection.update({'_id':job.id},{"$set":{'loaded':False}},True)
+        MongoDBJobStore.close(self)
 
-	def check_and_refresh(self):
-		count = None
-		try:
-			count = self.collection.find({"loaded": False, 'crecord_type': 'schedule'}).count()
-			count += abs(self.collection.find({'crecord_type': 'schedule'}).count() - len(self.jobs))
-		except Exception, err:
-			logger.error('Task count failed : %s' % err)
+    def check_and_refresh(self):
+        count = None
+        try:
+            count = self.collection.find({"loaded": False, 'crecord_type': 'schedule'}).count()
+            count += abs(self.collection.find({'crecord_type': 'schedule'}).count() - len(self.jobs))
+        except Exception, err:
+            logger.error('Task count failed : %s' % err)
 
-		if count:
-			try:
-				logger.info('Configuration has changed, reload jobs ...')
-				self.load_jobs()
-			except Exception, err:
-				logger.error('Reload jobs failed : %s' % err)
+        if count:
+            try:
+                logger.info('Configuration has changed, reload jobs ...')
+                self.load_jobs()
+            except Exception, err:
+                logger.error('Reload jobs failed : %s' % err)
 
