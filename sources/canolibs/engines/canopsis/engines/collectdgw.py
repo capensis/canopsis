@@ -29,9 +29,7 @@ from sys import path
 
 from os.path import expanduser
 
-from collectd import types
-
-path.append(expanduser('~/opt/amqp2engines/engines/collectdgw/'))
+from canopsis.engines.collectd_utils import types
 
 
 class engine(Engine):

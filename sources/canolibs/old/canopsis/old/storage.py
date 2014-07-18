@@ -39,7 +39,7 @@ from canopsis.old.record import Record
 from operator import itemgetter
 
 CONFIG = ConfigParser.RawConfigParser()
-CONFIG.read(os.path.expanduser('~/etc/Storage.conf'))
+CONFIG.read(os.path.expanduser('~/etc/cstorage.conf'))
 
 
 class Storage(object):
