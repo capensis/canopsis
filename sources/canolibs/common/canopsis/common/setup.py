@@ -97,7 +97,8 @@ def setup(description, keywords, add_etc=True, **kwargs):
 
             for root, dirs, files in walk(etc_path):
                 files_to_copy = [join(root, _file) for _file in files]
-                data_files.append((target, files_to_copy))
+                final_target = join(target, root[len(etc_path) + 1:])
+                data_files.append((final_target, files_to_copy))
             kwargs['data_files'] = data_files
 
     # add scripts if exist
