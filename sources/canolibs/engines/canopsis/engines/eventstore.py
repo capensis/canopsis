@@ -19,7 +19,7 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from canopsis.engine import Engine
+from canopsis.engines import Engine
 from canopsis.old.archiver import Archiver
 from canopsis.old.downtime import Downtime
 from canopsis.old.storage import CONFIG

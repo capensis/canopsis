@@ -19,7 +19,7 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from canopsis.engine import Engine
+from canopsis.engines import Engine
 from canopsis.old.tools import Str2Number
 from canopsis.old.event import get_routingkey, forger
 

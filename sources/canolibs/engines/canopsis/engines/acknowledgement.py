@@ -19,7 +19,7 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from canopsis.engine import Engine
+from canopsis.engines import Engine
 from canopsis.old.event import get_routingkey, forger, is_host_acknowledged
 from canopsis.old.account import Account
 from canopsis.old.storage import get_storage

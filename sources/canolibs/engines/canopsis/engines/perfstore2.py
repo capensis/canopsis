@@ -21,7 +21,7 @@
 
 from pyperfstore2 import manager
 
-from canopsis.engine import Engine
+from canopsis.engines import Engine
 from canopsis.old.tools import parse_perfdata, Str2Number, internal_metrics
 from canopsis.old.storage import get_storage
 from canopsis.old.account import Account

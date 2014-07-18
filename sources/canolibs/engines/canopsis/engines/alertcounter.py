@@ -23,7 +23,7 @@ from time import time
 
 from copy import deepcopy
 
-from canopsis.engine import Engine
+from canopsis.engines import Engine
 from canopsis.old.event import \
     is_component_problem, forger, is_host_acknowledged, get_routingkey
 from canopsis.old.storage import get_storage

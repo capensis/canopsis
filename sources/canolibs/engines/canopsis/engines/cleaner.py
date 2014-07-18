@@ -19,7 +19,7 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from canopsis.engine import Engine
+from canopsis.engines import Engine
 
 from bson import BSON
 from json import loads

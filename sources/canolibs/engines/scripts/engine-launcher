@@ -99,10 +99,8 @@ class EngineLauncher(object):
         Load python module for the engine.
         """
 
-        path.insert(0, expanduser('~/opt/amqp2engines/engines/'))
-
         try:
-            self.module = import_module(self.etype)
+            self.module = import_module('canopsis.engines.{0}'.format(self.etype))
 
         except ImportError as err:
             self.logger.error(
