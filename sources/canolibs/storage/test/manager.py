@@ -27,11 +27,11 @@ from canopsis.storage.manager import Manager
 class ManagerTest(TestCase):
 
     def setUp(self):
-        self.timed_storage = 'cstorage.timed.TimedStorage'
-        self.periodic_storage = 'cstorage.periodic.PeriodicStorage'
-        self.storage = 'cstorage.Storage'
-        self.timed_typed_storage = 'cstorage.timedtyped.TimedTypedStorage'
-        self.typed_storage = 'cstorage.typed.TypedStorage'
+        self.timed_storage = 'canopsis.storage.timed.TimedStorage'
+        self.periodic_storage = 'canopsis.storage.periodic.PeriodicStorage'
+        self.storage = 'canopsis.storage.Storage'
+        self.timed_typed_storage = 'canopsis.storage.timedtyped.TimedTypedStorage'
+        self.typed_storage = 'canopsis.storage.typed.TypedStorage'
 
         self.storage_names = [
             'timed_storage',

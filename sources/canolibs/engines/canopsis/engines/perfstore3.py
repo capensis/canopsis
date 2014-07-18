@@ -23,7 +23,7 @@ from canopsis.engines import Engine
 from canopsis.old.tools import \
     parse_perfdata, metric_is_internal, internal_metrics
 from canopsis.old.storage import get_storage
-from canopsis.perfdata.manager import Manager
+from canopsis.perfdata.manager import PerfData
 
 from copy import deepcopy
 
@@ -41,7 +41,7 @@ class engine(Engine):
         storage = get_storage(logging_level=self.logger.level)
         self.entities = storage.get_backend('entities')
 
-        self.manager = Manager(logging_level=self.logger.level)
+        self.manager = PerfData(logging_level=self.logger.level)
 
     def work(self, event, *args, **kargs):
 
@@ -141,7 +141,7 @@ class engine(Engine):
                             value = perf_data.pop('value', None)
 
                             self.manager.put(
-                                data_id=nodeid,
+                                metric_id=nodeid,
                                 points_or_point=(timestamp, value),
                                 meta=perf_data)
 
