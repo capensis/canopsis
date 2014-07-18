@@ -16,9 +16,23 @@ function pre_install(){
 }
 
 function post_install(){
-	echo "Post-install $NAME $VERSION-$RELEASE ..."
+	echo "-- Update python-logging.conf"
 	sed -i s:@PREFIX@:$PREFIX:g $PREFIX/etc/python-logging.conf
 	check_code $? 
+
+	echo "-- Create logdir for engines"
+	mkdir -p $PREFIX/var/log/engines
+	check_code $?
+
+	echo "-- Update canopsis service"
+	sed -i s:@PREFIX@:$PREFIX:g $PREFIX/etc/init.d/canopsis
+	check_code $?
+	sed -i s:@USER@:$HUSER:g $PREFIX/etc/init.d/canopsis
+	check_code $?
+
+	echo "-- snmp2amqp needs the following in your sudoers file (/etc/sudoers):"
+	echo "    Defaults:$HUSER env_keep += \"HOME LD_LIBRARY_PATH PYTHONPATH\"" 
+	echo "    $HUSER ALL=NOPASSWD: $PREFIX/bin/python $PREFIX/opt/$NAME/$NAME.py" 
 }
 
 function pre_remove(){
@@ -38,7 +52,12 @@ function pre_update(){
 }
 
 function post_update(){
-	echo "Post-update $NAME $VERSION-$RELEASE ..."
+	echo "-- Update python-logging.conf"
+	sed -i s:@PREFIX@:$PREFIX:g $PREFIX/etc/python-logging.conf
+	check_code $? 
+
+	echo "-- Create logdir for engines"
+	mkdir -p $PREFIX/var/log/engines
 	check_code $?
 }
 
