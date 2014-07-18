@@ -458,7 +458,6 @@ class manager(object):
 			self.store.update(_id=_id, mpush={'c': (fts, lts, bin_id)})
 			self.store.daily_collection.remove({'_id': _id})
 
-
 		except Exception as err:
 			self.logger.warning('Impossible to rotate %s: %s' % (_id, err))
 

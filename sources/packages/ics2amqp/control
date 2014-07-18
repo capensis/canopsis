@@ -1,10 +1,14 @@
 #!/bin/bash
 
-NAME="mongodb"
-VERSION=2.6.1
-RELEASE=4
+NAME="ics2amqp"
+VERSION=0.1
+RELEASE=0
 DESCRIPTION=""
 REQUIRES="canohome python canolibs"
+
+NO_ARCH=true
+NO_DIST=true
+NO_DISTVERS=true
 
 function pre_install(){
 	echo "Pre-install $NAME $VERSION-$RELEASE ..."
@@ -13,24 +17,22 @@ function pre_install(){
 
 function post_install(){
 	echo "Post-install $NAME $VERSION-$RELEASE ..."
-	mkdir -p $PREFIX/var/log/mongodb
-	mkdir -p $PREFIX/var/lib/mongodb
-	chown $HUSER -R $PREFIX/var/log/mongodb
-	chown $HUSER -R $PREFIX/var/lib/mongodb
+	check_code $? 
 }
 
 function pre_remove(){
 	echo "Pre-remove $NAME $VERSION-$RELEASE ..."
-	su - $HUSER -c "service mongodb stop"
+	check_code $?
 }
 
 function post_remove(){
 	echo "Post-remove $NAME $VERSION-$RELEASE ..."
+	check_code $?
 }
 
 function pre_update(){
 	echo "Pre-update $NAME $VERSION-$RELEASE ..."
-	su - $HUSER -c "service mongodb stop"
+	check_code $?
 }
 
 function post_update(){
@@ -40,6 +42,6 @@ function post_update(){
 
 function purge(){
 	echo "Purge $NAME $VERSION-$RELEASE ..."
-	rm -Rf $PREFIX/var/lib/mongodb
-	rm -Rf $PREFIX/var/log/mongodb
+	check_code $?
 }
+
