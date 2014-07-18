@@ -27,7 +27,7 @@ class Group(Record):
     def __init__(
         self, record=None, account_ids=[], description=None, *args, **kargs
     ):
-        Record.__init__(self, *args, **kargs)
+        super(Group, self).__init__(*args, **kargs)
         self.type = 'group'
         self._id = '%s.%s' % (self.type, str(self.name))
         self.account_ids = account_ids
@@ -37,8 +37,8 @@ class Group(Record):
         self.admin_group = 'group.CPS_account_admin'
 
         if isinstance(record, Record):
-            Record.__init__(
-                self, _id=self._id, record=record, type=self.type,
+            super(Group, self).__init__(
+                _id=self._id, record=record, _type=self.type,
                 *args, **kargs)
 
     def dump(self, json=False):

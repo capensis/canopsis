@@ -34,6 +34,28 @@ legend = ['ok', 'warning', 'critical', 'unknown']
 
 logger = getLogger('ctools')
 
+internal_metrics = [
+    'cps_state',
+    'cps_statechange',
+    'cps_statechange_nok',
+    'cps_statechange_0',
+    'cps_statechange_1',
+    'cps_statechange_2',
+    'cps_statechange_3',
+    'cps_statechange_hard',
+    'cps_statechange_soft',
+    'cps_statechange_component',
+    'cps_statechange_service',
+    'cps_statechange_service_from_component',
+    'cps_evt_per_sec',
+    'cps_sec_per_evt',
+    'cps_queue_size',
+    'cps_sel_state_0',
+    'cps_sel_state_1',
+    'cps_sel_state_2',
+    'cps_sel_state_3'
+]
+
 
 def metric_is_internal(metric_name):
     return metric_name.startswith('cps_')

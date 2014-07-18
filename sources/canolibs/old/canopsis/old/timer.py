@@ -29,6 +29,8 @@ basicConfig(
 
 class Timer(object):
     def __init__(self, logging_level=INFO):
+        super(Timer, self).__init__()
+
         self.started = False
         self.logger = getLogger('timer')
         self.logger.setLevel(logging_level)

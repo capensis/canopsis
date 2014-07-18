@@ -56,7 +56,7 @@ class Engine(object):
             camqp_custom=None,
             *args, **kwargs):
 
-        super(Engine, self).__init__(*args, **kwargs)
+        super(Engine, self).__init__()
 
         self.logging_level = logging_level
 
@@ -373,7 +373,7 @@ class Engine(object):
 
     class Lock(object):
         def __init__(self, engine, name, *args, **kwargs):
-            super(Engine.Lock, self).__init__(*args, **kwargs)
+            super(Engine.Lock, self).__init__()
 
             self.name = name
             self.lock_id = '{0}.{1}'.format(engine.etype, name)

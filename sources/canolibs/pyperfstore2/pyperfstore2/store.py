@@ -37,6 +37,8 @@ class store(object):
 			mongo_safe=False,
 			logging_level=logging.INFO):
 
+		super(store, self).__init__()
+
 		self.logger = logging.getLogger('store')
 		self.logger.setLevel(logging.DEBUG)#logging_level)
 

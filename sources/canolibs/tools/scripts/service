@@ -41,7 +41,7 @@ class Service(object):
             :type name: basestring
         """
 
-        super(Service, self).__init__(*args, **kwargs)
+        super(Service, self).__init__()
 
         self.name = name
 

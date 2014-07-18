@@ -46,7 +46,7 @@ class ConfigurationManagerTest(ConfigurationManagerTest):
 
     def _get_manager_path(self):
 
-        return 'cconfiguration.manager.ini.ConfigurationManager'
+        return 'canopsis.configuration.manager.ini.ConfigurationManager'
 
     def _get_manager(self):
 

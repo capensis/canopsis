@@ -23,8 +23,8 @@
 Module dedicated to manage configuration edition with a dedicated UI.
 """
 
-from ccommon.utils import resolve_element
-from cconfiguration import Configurable, Configuration, Category, Parameter
+from canopsis.common.utils import resolve_element
+from canopsis.configuration import Configurable, Configuration, Category, Parameter
 
 
 class ConfigurationEditor(Configurable):

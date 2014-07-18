@@ -37,6 +37,7 @@ class Webservices(object):
     def __init__(
         self, host="127.0.0.1", port=8082, logging_level=DEBUG
     ):
+        super(Webservices, self).__init__()
 
         self.logger = getLogger('cwebservice')
         self.logger.setLevel(logging_level)

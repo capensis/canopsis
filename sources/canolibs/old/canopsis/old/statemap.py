@@ -29,7 +29,7 @@ class Statemap(Record):
         if isinstance(statemap, list):
             self.statemap = statemap
 
-        Record.__init__(self, type=self.type, *args, **kwargs)
+        super(Statemap, self).__init__(_type=self.type, *args, **kwargs)
 
     def dump(self):
         self.data['statemap'] = self.statemap

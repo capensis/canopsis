@@ -83,12 +83,12 @@ class Selector(Record):
 
         if record:
             self.logger.debug("Init from record.")
-            Record.__init__(self, record=record, storage=storage)
+            super(Selector, self).__init__(record=record, storage=storage)
         else:
             self.logger.debug("Init new record.")
-            Record.__init__(
-                self, name=name, _id=self._id, account=storage.account,
-                type=self.type, storage=storage)
+            super(Selector, self).__init__(
+                name=name, _id=self._id, account=storage.account,
+                _type=self.type, storage=storage)
 
     def dump(self):
         self.data['include_ids'] = self.include_ids

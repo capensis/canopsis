@@ -55,7 +55,7 @@ class Engine(object):
             camqp_custom=None,
             *args, **kwargs):
 
-        super(Engine, self).__init__(*args, **kwargs)
+        super(Engine, self).__init__()
 
         self.logging_level = logging_level
 

@@ -33,6 +33,9 @@ class Record(object):
         raw_record=None, record=None, storage=None, account=None,
         admin_group=None, _type='raw'
     ):
+
+        super(Record, self).__init__()
+
         self.write_time = None
 
         self.owner = None

@@ -32,6 +32,8 @@ class Account(Record):
         self, record=None, user=None, group=None, lastname=None,
         firstname=None, mail=None, groups=[], authkey=None, *args, **kargs
     ):
+        super(Account, self).__init__()
+
         self.user = user or "anonymous"
         self.groups = groups
         self.group = group or "group.anonymous"

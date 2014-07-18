@@ -26,7 +26,7 @@ namespace = 'files'
 
 class File(Record):
     def __init__(self, storage=None, *args, **kargs):
-        Record.__init__(self, storage=storage, *args, **kargs)
+        super(File, self).__init__(storage=storage, *args, **kargs)
         self.type = 'bin'
         self.binary = None
 

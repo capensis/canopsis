@@ -45,6 +45,8 @@ CONFIG.read(os.path.expanduser('~/etc/cstorage.conf'))
 class Storage(object):
     def __init__(self, account, namespace='object', logging_level=logging.ERROR, mongo_host="127.0.0.1", mongo_port=27017, mongo_db='canopsis', mongo_autoconnect=True, groups=[], mongo_safe=True):
 
+        super(Storage, self).__init__()
+
         try:
             self.mongo_host = CONFIG.get("master", "host")
         except:

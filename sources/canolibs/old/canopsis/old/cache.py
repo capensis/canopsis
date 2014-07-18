@@ -28,6 +28,8 @@ from time import time
 
 class Cache(object):
     def __init__(self, storage, namespace=None):
+        super(Cache, self).__init__()
+
         self.storage = storage
 
         if not namespace:

@@ -44,7 +44,7 @@ def add_configurable(configurable):
     Add input configurable to list of watchers.
 
     :param configurable: configurable to add
-    :type configurable: cconfiguration.Configurable
+    :type configurable: canopsis.configuration.Configurable
     """
 
     for conf_file in configurable.conf_files:
@@ -62,7 +62,7 @@ def remove_configurable(configurable):
     Remove configurable to list of watchers.
 
     :param configurable: configurable to remove
-    :type configurable: cconfiguration.Configurable
+    :type configurable: canopsis.configuration.Configurable
     """
 
     for conf_file in configurable.conf_files:

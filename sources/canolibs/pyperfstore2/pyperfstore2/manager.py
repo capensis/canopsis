@@ -30,6 +30,8 @@ from canopsis.old.account import Account
 
 class manager(object):
 	def __init__(self, retention=0, dca_min_length=250, logging_level=logging.INFO, cache=True, **kwargs):
+		super(manager, self).__init__()
+
 		self.logger = logging.getLogger('manager')
 		self.logger.setLevel(logging_level)
 		self.storage = get_storage(account=Account(user="root", group="root"))

@@ -52,7 +52,7 @@ class Configuration(object):
         :type categories: list of Category.
         """
 
-        super(Configuration, self).__init__(**kwargs)
+        super(Configuration, self).__init__()
 
         # set categories
         self.categories = OrderedDict()
@@ -244,7 +244,8 @@ class Category(object):
         :param params: Parameters
         :type params: list of Parameter
         """
-        super(Category, self).__init__(**kwargs)
+        super(Category, self).__init__()
+
         self.name = name
         # set param by names.
         self.params = {
@@ -359,7 +360,8 @@ class Parameter(object):
         :type parser: callable
         """
 
-        super(Parameter, self).__init__(*args, **kwargs)
+        super(Parameter, self).__init__()
+
         self.name = name
         self._value = value
         self.parser = parser
@@ -416,8 +418,8 @@ class Configurable(object):
     Manages class conf synchronisation with conf files.
     """
 
-    DEFAULT_MANAGERS = 'cconfiguration.manager.json.ConfigurationManager,\
-cconfiguration.manager.ini.ConfigurationManager'
+    DEFAULT_MANAGERS = 'canopsis.configuration.manager.json.ConfigurationManager,\
+canopsis.configuration.manager.ini.ConfigurationManager'
 
     CONF_FILE = '~/etc/global.conf'
 
@@ -465,7 +467,7 @@ cconfiguration.manager.ini.ConfigurationManager'
         :type log_lvl: str
         """
 
-        super(Configurable, self).__init__(*args, **kwargs)
+        super(Configurable, self).__init__()
 
         self.auto_conf = auto_conf
         self.once = once
@@ -677,7 +679,7 @@ cconfiguration.manager.ini.ConfigurationManager'
         Change of conf_files in adding it in watching list.
         """
 
-        from cconfiguration.watcher import add_configurable,\
+        from canopsis.configuration.watcher import add_configurable,\
             remove_configurable
 
         # remove previous watching
@@ -986,7 +988,7 @@ cconfiguration.manager.ini.ConfigurationManager'
 
         result = None
 
-        from cconfiguration.manager import ConfigurationManager
+        from canopsis.configuration.manager import ConfigurationManager
 
         for manager in managers.split(','):
             manager = ConfigurationManager.get_manager(manager)

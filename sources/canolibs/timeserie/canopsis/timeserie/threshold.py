@@ -33,6 +33,8 @@ class Threshold(object):
 
     def __init__(self, value=10, unit=POURCENT):
 
+        super(Threshold, self).__init__()
+
         self.value = value
         self.unit = unit
 

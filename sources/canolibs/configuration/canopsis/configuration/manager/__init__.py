@@ -97,7 +97,7 @@ class ConfigurationManager(object):
 
         :param conf: conf to fill with conf_file values and
             conf param names.
-        :type conf: cconfiguration.Configuration
+        :type conf: canopsis.configuration.Configuration
 
         :param logger: logger to use in order to trace information/error
         :type logger: logging.Logger
@@ -220,7 +220,7 @@ class ConfigurationManager(object):
         :type conf_file: str
 
         :param conf: conf to write in conf_file.
-        :type conf: cconfiguration.Configuration
+        :type conf: canopsis.configuration.Configuration
 
         :param logger: used to log info/errors
         :type logger: logging.Logger

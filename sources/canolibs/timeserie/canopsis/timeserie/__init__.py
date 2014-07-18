@@ -68,8 +68,11 @@ class TimeSerie(Configurable):
         max_points=VMAX_POINTS,
         period=VPERIOD,
         round_time=VROUND_TIME,
-        fill=VFILL
+        fill=VFILL,
+        *args, **kwargs
     ):
+
+        super(TimeSerie, self).__init__(*args, **kwargs)
 
         self.period = period
         self.max_points = max_points

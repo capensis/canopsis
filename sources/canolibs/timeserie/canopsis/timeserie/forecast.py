@@ -765,6 +765,8 @@ class Forecast(object):
             parameters=NotLinearMidVariable,
             threshold=Threshold()):
 
+        super(Forecast, self).__init__()
+
         self.timeserie = timeserie
         self.max_points = max_points
         self.date = date

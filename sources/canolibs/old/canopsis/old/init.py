@@ -43,6 +43,8 @@ class Init(object):
 
     class getHandler(object):
         def __init__(self, logger):
+            super(Init.getHandler, self).__init__()
+
             self.logger = logger
             self.RUN = True
 

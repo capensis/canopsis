@@ -133,7 +133,7 @@ class ConfigurationManagerTest(TestCase):
 
     def get_configuration_file(self):
 
-        return '/tmp/cconfiguration.conf'
+        return '/tmp/canopsis.configuration.conf'
 
     def test_configuration(self):
 

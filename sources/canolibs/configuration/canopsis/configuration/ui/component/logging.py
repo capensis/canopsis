@@ -23,7 +23,7 @@
 Module dedicated to provide logging parser layouts
 """
 
-from cconfiguration.ui.component import MultiTextComponent, TextComponent
+from canopsis.configuration.ui.component import MultiTextComponent, TextComponent
 
 
 class LoggingLvlLayout(MultiTextComponent):

@@ -34,6 +34,7 @@ class Archiver(object):
     def __init__(
         self, namespace, storage=None, autolog=False, logging_level=ERROR
     ):
+        super(Archiver, self).__init__()
 
         self.logger = getLogger('Archiver')
         self.logger.setLevel(logging_level)
