@@ -98,8 +98,3 @@ class Application(object):
         except KeyboardInterrupt:
             print('Received KeyboardInterrupt, exiting...')
             exit(0)
-
-
-if __name__ == '__main__':
-    app = Application()
-    app()

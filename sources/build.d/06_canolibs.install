@@ -16,6 +16,7 @@ PROJECTS[9]='engines'
 PROJECTS[10]='connectors'
 PROJECTS[11]='tools'
 PROJECTS[12]='cli'
+PROJECTS[13]='topology'
 
 function build(){
 	true
