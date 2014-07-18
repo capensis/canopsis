@@ -19,36 +19,8 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from fabric.api import run
-from os.path import dirname, expanduser
+from canopsis.cli import Application
 
-projects = (
-    'common',
-    'configuration',
-    'timeserie',
-    'storage',
-    'context',
-    'perfdata',
-    'topology',
-    'mongo',
-    'old',
-    'pyperfstore2',
-    'engines',
-    'connectors',
-    'tools',
-    'cli',
-    'topology')
-
-
-def setup(cmd="install", projects=projects):
-    """
-    Run setup cmd on all projects.
-    """
-    # find __file__ directory
-    path = dirname(expanduser(__file__))
-
-    cmd_path = "python {0}/{{0}}/setup.py {1}".format(path, cmd)
-
-    for project in projects:
-        # run setup command
-        run(cmd_path.format(project))
+if __name__ == '__main__':
+    app = Application()
+    app()
