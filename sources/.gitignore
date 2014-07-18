@@ -18,3 +18,7 @@ webcore/var/www/canopsis/canopsis.min.js
 webcore/var/www/canopsis/canopsis.min.js.gz
 webcore/var/www/canopsis/commit.js
 *~
+*.egg
+*.egg-info
+build
+dist
