@@ -40,11 +40,6 @@ class UtilsTest(TestCase):
 
         self.assertTrue(_open is open)
 
-        # resolve function
-        test = resolve_element('test.utils._test')
-
-        self.assertTrue(_test is test)
-
         # resolve resolve_element
         _resolve_element = resolve_element(
             'canopsis.common.utils.resolve_element')
@@ -83,11 +78,13 @@ class UtilsTest(TestCase):
 
     def test_reciproc(self):
 
-        _path = 'b3j0f.common.utils.path'
+        _path = 'canopsis.common.utils.path'
 
+        # Test if you can get the path _path using path() on the resolved element
         self.assertEqual(path(resolve_element(_path)), _path)
 
-        self.assertEqual(resolve_element(path(resolve_element)), path)
+        # Test if you can retrieve the function by resolving the path got using path()
+        self.assertEqual(resolve_element(path(path)), path)
 
 if __name__ == '__main__':
     main()
