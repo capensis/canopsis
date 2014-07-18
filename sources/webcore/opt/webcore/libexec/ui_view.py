@@ -349,7 +349,6 @@ def add_view(views, storage, account):
 
     return output
 
-
 def update_view(views, storage, account):
     if not isinstance(views, list):
         views = [views]

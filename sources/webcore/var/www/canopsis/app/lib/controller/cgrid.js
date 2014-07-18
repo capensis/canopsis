@@ -503,7 +503,7 @@ Ext.define('canopsis.lib.controller.cgrid', {
 	_saveForm: function(form, store) {
 		log.debug('Clicked saveForm', this.logAuthor);
 
-		var fstore = undefined;
+		var fstore = store;
 
 		if(store === undefined) {
 			if(form.store) {
@@ -516,7 +516,7 @@ Ext.define('canopsis.lib.controller.cgrid', {
 
 		if(form.form.isValid()) {
 			var data = form.getValues();
-			var record = undefined;
+			var record;
 
 			if(form.editing) {
 				record = form._record;

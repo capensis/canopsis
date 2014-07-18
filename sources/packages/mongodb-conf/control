@@ -25,27 +25,77 @@ function post_install(){
 	#launch_cmd 1 service mongodb start
 	launch_cmd 1 mongod -f $PREFIX/etc/mongodb.conf --nojournal --noprealloc --fork
 
-        echo -n "Safe wait ..."
-        STATE=1
-        TRY=0
-        while [ $STATE -ne 0 ]; do
-            if [ $TRY -eq 10 ]; then
-                break
-            fi
-            sleep 1
-            echo "show dbs" | mongo &> /dev/null
-            STATE=$?
-            TRY=$((TRY + 1))
-            echo -n "."
-        done
-        echo
-        check_code $STATE "Failed to join MongoDB"
+	echo -n "Safe wait ..."
+	STATE=1
+	TRY=0
+
+	while [ $STATE -ne 0 ]
+	do
+		if [ $TRY -eq 10 ]
+		then
+			break
+		fi
+
+		sleep 1
+
+		echo "show dbs" | mongo &> /dev/null
+		STATE=$?
+		TRY=$((TRY + 1))
+
+		echo -n "."
+	done
+
+	echo
+	check_code $STATE "Failed to join MongoDB"
 
 	#check if db already exist
 	if [ -f  $PREFIX/var/lib/mongodb/canopsis.ns ]
 	then
 		launch_cmd 1 python $PREFIX/opt/mongodb/filldb.py update
 	else
+		while true
+		do
+			read -s -p "MongoDB password for admin: " adminpass
+			echo ""
+
+			read -s -p "Confirm password: " confirm
+			echo ""
+
+			if [ "$adminpass" == "$confirm" ]
+			then
+				break
+			else
+				echo "Passwords doesn't match"
+			fi
+		done
+
+		read -p "MongoDB common user: " cpsuser
+
+		while true
+		do
+			read -s -p "MongoDB password for $cpsuser: " cpspass
+			echo ""
+
+			read -s -p "Confirm password: " confirm
+			echo ""
+
+			if [ "$cpspass" == "$confirm" ]
+			then
+				break
+			else
+				echo "Passwords doesn't match"
+			fi
+		done
+
+		echo " + Create admin user ..."
+		su - $HUSER -c "$PREFIX/bin/mongo admin --eval \"db.createUser({user: 'admin', pwd: '$adminpass', roles: ['readWriteAnyDatabase', 'userAdminAnyDatabase', 'dbAdminAnyDatabase']})\""
+
+		echo " + Create $cpsuser user ..."
+		su - $HUSER -c "$PREFIX/bin/mongo -u admin -p $adminpass --authenticationDatabase admin canopsis --eval \"db.createUser({user: '$cpsuser', pwd: '$cpspass', roles: ['dbOwner']})\""
+
+		su - $HUSER -c "$PREFIX/bin/initool set $PREFIX/etc/cstorage.conf master userid $cpsuser"
+		su - $HUSER -c "$PREFIX/bin/initool set $PREFIX/etc/cstorage.conf master password $cpspass"
+
 		launch_cmd 1 python $PREFIX/opt/mongodb/filldb.py init
 	fi
 	
@@ -57,7 +107,7 @@ function post_install(){
 	
 function pre_remove(){
 	echo "Pre-remove $NAME $VERSION-$RELEASE ..."
-	service mongodb stop
+	su - $HUSER -c "service mongodb stop"
 }
 
 function post_remove(){
@@ -70,7 +120,7 @@ function pre_update(){
 
 function post_update(){
 	echo "Post-update $NAME $VERSION-$RELEASE ..."
-	service mongodb start
+	su - $HUSER -c "service mongodb start"
 	sleep 2
 
 	launch_cmd 1 python $PREFIX/opt/mongodb/filldb.py update

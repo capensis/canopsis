@@ -1,56 +1,295 @@
 #!/bin/bash
 
-function start(){
-	service rabbitmq-server start
-	service mongodb start
-	service redis-server start
-	service amqp2engines start
-	service celeryd start
-	service apsd start
-	service websocket start
-	service webserver start
-	service collectd start
+function do_start_backend(){
+	echo -n "Starting backend: "
 	
-	if [ -e "$HOME/etc/supervisord.d/gelf2amqp.conf" ]; then
-		service gelf2amqp start
-	fi
-	
-}
+	service rabbitmq-server start > /dev/null 2>&1 &
+	rabbitmq=$!
 
-function stop(){
-	service collectd stop
-	service websocket stop
-	service webserver stop
-	service apsd stop
-	service celeryd stop
-	service amqp2engines stop
-	service redis-server stop
-	service mongodb stop
-	service rabbitmq-server stop
-	
-	if [ -e "$HOME/etc/supervisord.d/gelf2amqp.conf" ]; then
-		service gelf2amqp stop
+	service mongodb start > /dev/null 2>&1 &
+	mongodb=$!
+
+	service redis-server start > /dev/null 2>&1 &
+	redis=$!
+
+	echo -n "rabbitmq-server..."
+	wait $rabbitmq
+	echo -e -n "\b\b\b"
+
+	if [ $? -ne 0 ]
+	then
+		echo " KO"
+		exit 1
+	else
+		echo -n ", "
 	fi
 
-	supervisorctl shutdown
+	echo -n "mongodb..."
+	wait $mongodb
+	echo -e -n "\b\b\b"
+
+	if [ $? -ne 0 ]
+	then
+		echo " KO"
+		exit 1
+	else
+		echo -n ", "
+	fi
+
+	echo -n "redis-server..."
+	wait $redis
+	echo -e -n "\b\b\b"
+
+	if [ $? -ne 0 ]
+	then
+		echo " KO"
+		exit 1
+	else
+		echo "   "
+	fi
 }
 
-# See how we were called.
+function do_start_middleware(){
+	echo -n "Starting middleware: "
+
+	service collectd start > /dev/null 2>&1 &
+	collectd=$!
+
+	(service apsd start && service celeryd start) > /dev/null 2>&1 &
+	celeryd=$!
+
+	service amqp2engines start > /dev/null 2>&1 &
+	engines=$!
+
+	echo -n "collectd..."
+	wait $collectd
+	echo -e -n "\b\b\b"
+
+	if [ $? -ne 0 ]
+	then
+		echo " KO"
+		exit 1
+	else
+		echo -n ", "
+	fi
+
+	echo -n "celeryd..."
+	wait $celeryd
+	echo -e -n "\b\b\b"
+
+	if [ $? -ne 0 ]
+	then
+		echo " KO"
+		exit 1
+	else
+		echo -n ", "
+	fi
+
+	echo -n "engines..."
+	wait $engines
+	echo -e -n "\b\b\b"
+
+	if [ $? -ne 0 ]
+	then
+		echo " KO"
+		exit 1
+	else
+		echo "   "
+	fi
+}
+
+function do_start_frontend(){
+	echo -n "Starting frontend: "
+
+	service webserver start > /dev/null 2>&1 &
+	webserver=$!
+
+	service websocket start > /dev/null 2>&1 &
+	websocket=$!
+
+	echo -n "webserver..."
+	wait $webserver
+	echo -e -n "\b\b\b"
+
+	if [ $? -ne 0 ]
+	then
+		echo " KO"
+		exit 1
+	else
+		echo -n ", "
+	fi
+
+	echo -n "websocket..."
+	wait $websocket
+	echo -e -n "\b\b\b"
+
+	if [ $? -ne 0 ]
+	then
+		echo " KO"
+		exit 1
+	else
+		echo "   "
+	fi
+}
+
+function do_start(){
+	do_start_backend || exit 1
+	do_start_middleware || exit 1
+	do_start_frontend || exit 1
+}
+
+function do_stop_backend(){
+	echo -n "Stopping backend: "
+	
+	service rabbitmq-server stop > /dev/null 2>&1 &
+	rabbitmq=$!
+
+	service mongodb stop > /dev/null 2>&1 &
+	mongodb=$!
+
+	service redis-server stop > /dev/null 2>&1 &
+	redis=$!
+
+	echo -n "rabbitmq-server..."
+	wait $rabbitmq
+	echo -e -n "\b\b\b"
+
+	if [ $? -ne 0 ]
+	then
+		echo " KO"
+		exit 1
+	else
+		echo -n ", "
+	fi
+
+	echo -n "mongodb..."
+	wait $mongodb
+	echo -e -n "\b\b\b"
+
+	if [ $? -ne 0 ]
+	then
+		echo " KO"
+		exit 1
+	else
+		echo -n ", "
+	fi
+
+	echo -n "redis-server..."
+	wait $redis
+	echo -e -n "\b\b\b"
+
+	if [ $? -ne 0 ]
+	then
+		echo " KO"
+		exit 1
+	else
+		echo "   "
+	fi
+}
+
+function do_stop_middleware(){
+	echo -n "Stopping middleware: "
+
+	service collectd stop > /dev/null 2>&1 &
+	collectd=$!
+
+	(service apsd stop && service celeryd stop) > /dev/null 2>&1 &
+	celeryd=$!
+
+	service amqp2engines stop > /dev/null 2>&1 &
+	engines=$!
+
+	echo -n "collectd..."
+	wait $collectd
+	echo -e -n "\b\b\b"
+
+	if [ $? -ne 0 ]
+	then
+		echo " KO"
+		exit 1
+	else
+		echo -n ", "
+	fi
+
+	echo -n "celeryd..."
+	wait $celeryd
+	echo -e -n "\b\b\b"
+
+	if [ $? -ne 0 ]
+	then
+		echo " KO"
+		exit 1
+	else
+		echo -n ", "
+	fi
+
+	echo -n "engines..."
+	wait $engines
+	echo -e -n "\b\b\b"
+
+	if [ $? -ne 0 ]
+	then
+		echo " KO"
+		exit 1
+	else
+		echo "   "
+	fi
+}
+
+function do_stop_frontend(){
+	echo -n "Stopping frontend: "
+
+	service webserver stop > /dev/null 2>&1 &
+	webserver=$!
+
+	service websocket stop > /dev/null 2>&1 &
+	websocket=$!
+
+	echo -n "webserver..."
+	wait $webserver
+	echo -e -n "\b\b\b"
+
+	if [ $? -ne 0 ]
+	then
+		echo " KO"
+		exit 1
+	else
+		echo -n ", "
+	fi
+
+	echo -n "websocket..."
+	wait $websocket
+	echo -e -n "\b\b\b"
+
+	if [ $? -ne 0 ]
+	then
+		echo " KO"
+		exit 1
+	else
+		echo "   "
+	fi
+}
+
+function do_stop(){
+	do_stop_frontend || exit 1
+	do_stop_middleware || exit 1
+	do_stop_backend || exit 1
+
+	supervisorctl shutdown || exit 1
+}
+
+function do_restart(){
+	do_stop || exit 1
+	do_start || exit 1
+}
+
 case "$1" in
-  start)
-        start
-        ;;
-  stop)
-        stop
-        ;;
-  restart|reload)
-        stop
-        sleep 1
-        start
-        ;;
-  *)
-        echo $"Usage: $0 {start|stop|restart}"
-        exit 1
-esac
+	start) do_start ;;
+	stop) do_stop ;;
+	restart) do_restart ;;
 
-exit $?
+	*)
+		echo "Usage: hypcontrol start|stop|restart"
+		exit 1
+		;;
+esac

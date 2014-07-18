@@ -107,6 +107,30 @@ function rdr_tstodate(val, custom_format) {
 
 }
 
+function rdr_tstodate(val, custom_format) {
+
+	var format = is12Clock() ? 'Y-m-d h:i:s a' : 'Y-m-d H:i:s';
+	var returnDate = '';
+
+	if (custom_format !== undefined && typeof(custom_format) == 'string') {
+		format = custom_format;
+	}
+
+	if(val) {
+		var dval = new Date(parseInt(val) * 1000);
+
+		if(is12Clock()) {
+			returnDate = Ext.Date.format(dval, format);
+		}
+		else {
+			returnDate = Ext.Date.format(dval, format);
+		}
+	}
+
+	return translateDate(returnDate);
+
+}
+
 function rdr_utcToLocal(val) {
 	if(val !== undefined && val !== '') {
 		//format date

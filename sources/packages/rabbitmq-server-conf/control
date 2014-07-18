@@ -41,34 +41,96 @@ function post_install(){
 	fi
 	sleep 1
 
-	CODE=0
+	ADMIN_EXISTS=`su - $HUSER -c "rabbitmqctl list_users" | grep "^admin" | wc -l`
+
+	if [ $ADMIN_EXISTS -ne 1 ]
+	then
+		while true
+		do
+			read -s -p "RabbitMQ password for admin: " adminpass
+			echo ""
+
+			read -s -p "Confirm password: " confirm
+			echo ""
+
+			if [ "$adminpass" == "$confirm" ]
+			then
+				break
+			else
+				echo "Passwords doesn't match"
+			fi
+		done
+
+		echo " + Declare Admin user ..."
+		su - $HUSER -c "$PREFIX/bin/rabbitmqctl add_user admin $adminpass"
+		check_code $?
+
+		su - $HUSER -c "$PREFIX/bin/rabbitmqctl set_user_tags admin administrator"
+		check_code $?
+	fi
+
 	VHOST_EXISTS=`su - $HUSER -c "rabbitmqctl list_vhosts | grep canopsis | wc -l"`
 	# Is this a first install or an update
 	if [ $VHOST_EXISTS -ne 1 ]
 	then
-		
-		echo " + Declare Admin user ..."
-		su - $HUSER -c "$PREFIX/bin/rabbitmqctl add_user admin admin"
-		RCODE=$?
-		if [ $RCODE -ne 0 ]; then CODE=$RCODE; fi
-		su - $HUSER -c "$PREFIX/bin/rabbitmqctl set_user_tags admin administrator"
-		RCODE=$?
-		if [ $RCODE -ne 0 ]; then CODE=$RCODE; fi
-		
 		echo " + Declare vhost ..."
 		su - $HUSER -c "$PREFIX/bin/rabbitmqctl add_vhost canopsis"
-		RCODE=$?
-		if [ $RCODE -ne 0 ]; then CODE=$RCODE; fi
+		check_code $?
+	fi
 
-		echo " + Declare permissions for guest user ..."
-		su - $HUSER -c "$PREFIX/bin/rabbitmqctl set_permissions -p canopsis guest \".*\" \".*\" \".*\""
-		RCODE=$?
-		if [ $RCODE -ne 0 ]; then CODE=$RCODE; fi
+	COMMONUSER_EXISTS=`su - $HUSER -c "rabbitmqctl list_users" | grep "\[canopsis\]" | wc -l`
+
+	if [ $COMMONUSER_EXISTS -ne 1 ]
+	then
+		while true
+		do
+			read -p "RabbitMQ common user: " cpsuser
+
+			user_exists=`su - $HUSER -c "rabbitmqctl list_users" | grep "^$cpsuser" | wc -l`
+
+			if [ $user_exists -ne 1 ]
+			then
+				break
+			fi
+		done
+
+		while true
+		do
+			read -s -p "RabbitMQ password for $cpsuser: " cpspass
+			echo ""
+
+			read -s -p "Confirm password: " confirm
+			echo ""
+
+			if [ "$cpspass" == "$confirm" ]
+			then
+				break
+			else
+				echo "Passwords doesn't match"
+			fi
+		done
+
+		
+		echo " + Declare $cpsuser user ..."
+		su - $HUSER -c "$PREFIX/bin/rabbitmqctl add_user $cpsuser $cpspass"
+		check_code $?
+
+		su - $HUSER -c "$PREFIX/bin/rabbitmqctl set_user_tags $cpsuser canopsis"
+		check_code $?
+
+		echo " + Declare permissions for $cpsuser user ..."
+		su - $HUSER -c "$PREFIX/bin/rabbitmqctl set_permissions -p canopsis $cpsuser \".*\" \".*\" \".*\""
+		check_code $?
+
+		echo " + Update $PREFIX/etc/amqp.conf ..."
+		su - $HUSER -c "$PREFIX/bin/initool set $PREFIX/etc/amqp.conf master userid $cpsuser"
+		check_code $?
+
+		su - $HUSER -c "$PREFIX/bin/initool set $PREFIX/etc/amqp.conf master password $cpspass"
+		check_code $?
 	fi
 
 	launch_cmd 1 service rabbitmq-server stop
-
-	check_code $CODE "Error in rabbitMQ configurations ..."
 	
 	rm -f $PREFIX/var/log/rabbitmq/*
 }
