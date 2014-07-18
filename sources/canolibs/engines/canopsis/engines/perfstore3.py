@@ -46,7 +46,7 @@ class engine(Engine):
     def work(self, event, *args, **kargs):
 
         ## Get perfdata
-        perf_data = event.get('perf_data', None)
+        perf_data = event.get('perf_data')
         perf_data_array = event.get('perf_data_array', [])
 
         if perf_data_array is None:
@@ -67,7 +67,7 @@ class engine(Engine):
         self.logger.debug(' + perf_data_array: {0}'.format(perf_data_array))
 
         ### Add status informations
-        event_type = event.get('event_type', None)
+        event_type = event.get('event_type')
 
         if event_type is not None \
                 and event_type in ['check', 'selector', 'sla']:
@@ -107,21 +107,21 @@ class engine(Engine):
         event = deepcopy(event)
 
         ## Metrology
-        timestamp = event.get('timestamp', None)
+        timestamp = event.get('timestamp')
 
         if timestamp is not None:
 
-            component = event.get('component', None)
+            component = event.get('component')
 
             if component is not None:
 
-                resource = event.get('resource', None)
+                resource = event.get('resource')
 
-                perf_data_array = perfstore3_get_perfdata_to_process(event)
+                perf_data_array = event.get('perf_data_array', [])
 
                 for perf_data in perf_data_array:
 
-                    metric = perf_data.get('metric', None)
+                    metric = perf_data.get('metric')
 
                     if metric is not None:
 
