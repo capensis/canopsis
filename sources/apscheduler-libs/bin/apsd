@@ -17,13 +17,36 @@ init    = Init()
 logger  = init.getLogger('apsd')
 handler = init.getHandler(logger)
 
+mongo_host = CONFIG.get('master', 'host')
+mongo_port = CONFIG.getint('master', 'port')
+mongo_userid = CONFIG.get('master', 'userid')
+mongo_password = CONFIG.get('master', 'password')
+mongo_database = CONFIG.get('master', 'db')
+
+if mongo_userid and mongo_password:
+    mongo_uri = 'mongodb://{0}:{1}@{2}:{3}/{4}'.format(
+        mongo_userid,
+        mongo_password,
+        mongo_host,
+        mongo_port,
+        mongo_database
+    )
+
+else:
+    mongo_uri = 'mongodb://{0}:{1}/{2}'.format(
+        mongo_host,
+        mongo_port,
+        mongo_database
+    )
+
 # Init
 sched = Scheduler()
 c = {
     "daemonic": "False",
     "apscheduler.jobstore.cmongodbjobstore.class": "apschedulerlibs.cmongodbjobstore:CMongoDBJobStore",
-    "apscheduler.jobstore.cmongodbjobstore.database": "canopsis",
-    "apscheduler.jobstore.cmongodbjobstore.collection": "object"
+    "apscheduler.jobstore.cmongodbjobstore.database": mongo_database,
+    "apscheduler.jobstore.cmongodbjobstore.collection": "object",
+    "apscheduler.jobstore.cmongodbjobstore.host": mongo_uri
 }
 
 # Mongojobstore refresh interval in seconds
