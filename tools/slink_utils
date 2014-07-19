@@ -25,6 +25,7 @@ function create_slinks() {
     ln -s $SRC/sources/canolibs/timeserie $CPS/lib/python2.7/site-packages/canopsis.timeserie-0.1-py2.7.egg/
     ln -s $SRC/sources/canolibs/tools $CPS/lib/python2.7/site-packages/canopsis.tools-0.1-py2.7.egg/
     ln -s $SRC/sources/canolibs/topology $CPS/lib/python2.7/site-packages/canopsis.topology-0.1-py2.7.egg/
+
     touch $CPS/.slinked
 }
 

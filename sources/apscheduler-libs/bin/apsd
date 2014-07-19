@@ -10,6 +10,7 @@ import string
 
 import threading
 
+from canopsis.old.storage import CONFIG
 from canopsis.old.init import Init
 
 # Logger
