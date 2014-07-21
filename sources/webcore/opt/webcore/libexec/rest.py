@@ -28,7 +28,7 @@ from bottle import get, put, delete, request, HTTPError, post, response
 from canopsis.old.storage import get_storage
 from canopsis.old.record import Record
 import base64
-from ctools import clean_mfilter
+from canopsis.old.tools import clean_mfilter
 
 #import protection function
 from libexec.auth import get_account, check_group_rights
