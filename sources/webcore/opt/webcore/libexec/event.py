@@ -24,7 +24,7 @@ import logging, json
 from bottle import request, HTTPError, post
 
 ## Canopsis
-from canopsis.old.amqp import Amqp
+from canopsis.old.rabbitmq import Amqp
 import cevent
 
 #import protection function

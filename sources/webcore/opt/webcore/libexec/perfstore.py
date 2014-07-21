@@ -35,10 +35,10 @@ from canopsis.old.storage import get_storage
 
 from canopsis.old.tools import clean_mfilter
 
-from pyperfstore3.manager import Manager
-from pyperfstore3.timewindow import TimeWindow, Period
-from pyperfstore3.timeserie import TimeSerie
-from pyperfstore3.store import PeriodicStore
+from canopsis.engines.pyperfstore3.manager import Manager
+from canopsis.engines.pyperfstore3.timewindow import TimeWindow, Period
+from canopsis.engines.pyperfstore3.timeserie import TimeSerie
+from canopsis.engines.pyperfstore3.store import PeriodicStore
 
 from canopsis.old.account import Account
 
@@ -362,7 +362,7 @@ def update_meta(_id=None):
             logger.warning('Error while updating meta_id: {0}'.format(err))
             return HTTPError(500, "Error while updating meta_id: {0}".format(err))
 
-from pyperfstore3.store import Store
+from canopsis.engines.pyperfstore3.store import Store
 
 
 #### POST@
