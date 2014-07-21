@@ -59,11 +59,11 @@ class PerfData(Manager):
         self.perfdata_storage = perfdata_storage
         self.meta_storage = meta_storage
 
-        self.context = Context() if context is None else context
+        #self.context = Context() if context is None else context
 
     def count(self, metric_id, period=None, timewindow=None):
 
-        period = self.get_period(data_id=metric_id, period=period)
+        period = self.get_period(metric_id=metric_id, period=period)
 
         result = self.perfdata_storage.count(
             data_id=metric_id, period=period, timewindow=timewindow)
@@ -80,7 +80,7 @@ class PerfData(Manager):
         If with_meta, result is a couple of (points, list of meta by timestamp)
         """
 
-        period = self.get_period(data_id=metric_id, period=period)
+        period = self.get_period(metric_id=metric_id, period=period)
 
         result = self.periodic_store.get(
             data_id=metric_id, period=period, timewindow=timewindow,
@@ -107,7 +107,7 @@ class PerfData(Manager):
         if timestamp is None:
             timestamp = time()
 
-        period = self.get_period(data_id=metric_id, period=period)
+        period = self.get_period(metric_id=metric_id, period=period)
 
         timewindow = get_offset_timewindow(timestamp)
 
@@ -155,7 +155,7 @@ class PerfData(Manager):
             if not isinstance(points_or_point[0], Iterable):
                 points_or_point = (points_or_point,)
 
-        period = self.get_period(data_id=metric_id, period=period)
+        period = self.get_period(metric_id=metric_id, period=period)
 
         self.perfdata_storage.put(
             data_id=metric_id, period=period, points=points_or_point)
@@ -216,8 +216,9 @@ class PerfData(Manager):
 
             result = DEFAULT_PERIOD
 
-            entity = self.context.get(
-                element_id=metric_id, element_type=self.data_type)
+            entity = None
+            #entity = self.context.get(
+            #    element_id=metric_id, element_type=self.data_type)
 
             result = DEFAULT_PERIOD if entity is None else entity.get(
                 'period', DEFAULT_PERIOD)
