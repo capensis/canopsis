@@ -45,7 +45,7 @@ CONFIG.read(os.path.expanduser('~/etc/cstorage.conf'))
 
 
 class Storage(object):
-    def __init__(self, account, namespace='object', logging_level=logging.ERROR, mongo_uri='localhost:27017', mongo_host="127.0.0.1", mongo_port=27017, mongo_userid=None, mongo_password=None, mongo_db='canopsis', mongo_autoconnect=True, groups=[], mongo_safe=True):
+    def __init__(self, account, namespace='object', logging_level=logging.ERROR, mongo_uri='mongodb://localhost:27017', mongo_host="127.0.0.1", mongo_port=27017, mongo_userid=None, mongo_password=None, mongo_db='canopsis', mongo_autoconnect=True, groups=[], mongo_safe=True):
 
         super(Storage, self).__init__()
 
@@ -142,31 +142,7 @@ class Storage(object):
             return True
 
         if self.mongo_uri:
-            uri = ''
-            db_uris = self.mongo_uri.split(',')
-
-            for db_uri in db_uris:
-
-                parsed_url = urlparse(db_uri)
-
-                host = self.mongo_host if parsed_url.hostname is None \
-                    else parsed_url.hostname
-                port = self.mongo_port if parsed_url.port is None \
-                    else parsed_url.port
-                user = self.mongo_userid if parsed_url.username is None \
-                    else parsed_url.username
-                pwd = self.mongo_password if parsed_url.password is None \
-                    else parsed_url.password
-
-                _uri = '%s:%s' % (host, port)
-
-                if user is not None:
-                    _uri = '%s@%s' % (
-                        user if pwd is None else '%s:%s' % (user, pwd), _uri)
-
-                uri += "%s,%s" % (uri, _uri)
-
-            uri = uri[1: 0]
+            uri = self.mongo_uri
 
         else:
             uri = '%s:%s' % (self.mongo_host, self.mongo_port)
@@ -178,7 +154,7 @@ class Storage(object):
                         self.mongo_userid, self.mongo_password), uri)
 
         self.conn = Connection(uri, safe=True)
-        self.db=self.conn[self.mongo_db]
+        self.db = self.conn[self.mongo_db]
 
         try:
             self.gridfs_namespace = CONFIG.get("master", "gridfs_namespace")
