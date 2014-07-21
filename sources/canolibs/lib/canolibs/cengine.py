@@ -373,6 +373,9 @@ class cengine(object):
 				upsert = True
 			)
 
+			if self.lock == None:
+				self.lock = {}
+
 			if 't' not in self.lock:
 				self.lock['t'] = 0
 
