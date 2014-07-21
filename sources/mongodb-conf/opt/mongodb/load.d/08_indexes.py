@@ -102,13 +102,25 @@ INDEXES = {
 }
 
 def init():
-	for collection in INDEXES:
-		logger.info(' + Create indexes for collection {0}'.format(collection))
-		col = storage.get_backend(collection)
-		col.drop_indexes()
+	answered = False
+	user_input = 'N'
+	while not answered:
+		user_input = raw_input('Update indexes ? Y/N : ')
+		if user_input in ['Y', 'N']:
+			answered = True
 
-		for index in INDEXES[collection]:
-			col.ensure_index(index)
+	if user_input == 'Y':
+		print 'Starting indexes update...'
+
+		for collection in INDEXES:
+			logger.info(' + Create indexes for collection {0}'.format(collection))
+			col = storage.get_backend(collection)
+			col.drop_indexes()
+
+			for index in INDEXES[collection]:
+				col.ensure_index(index)
+	else:
+		print 'Skipping indexes update'
 
 def update():
 	init()
