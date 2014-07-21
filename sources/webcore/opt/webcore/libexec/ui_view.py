@@ -310,13 +310,13 @@ def add_view(views, storage, account):
                             {
                                 'leaf': True, '_id': view['_id'],
                                 'items': view['items']},
-                            type='view', name=view['crecord_name'],
+                            _type='view', name=view['crecord_name'],
                             account=account)
                     else:
                         logger.debug('record is a directory, add it')
                         record = Record(
                             {'_id': view['_id']},
-                            type='view_directory', name=view['crecord_name'],
+                            _type='view_directory', name=view['crecord_name'],
                             account=account)
                 except Exception as err:
                     logger.info(
