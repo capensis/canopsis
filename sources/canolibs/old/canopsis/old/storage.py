@@ -38,14 +38,21 @@ from canopsis.old.record import Record
 
 from operator import itemgetter
 
+from urlparse import urlparse
+
 CONFIG = ConfigParser.RawConfigParser()
 CONFIG.read(os.path.expanduser('~/etc/cstorage.conf'))
 
 
 class Storage(object):
-    def __init__(self, account, namespace='object', logging_level=logging.ERROR, mongo_host="127.0.0.1", mongo_port=27017, mongo_userid=None, mongo_password=None, mongo_db='canopsis', mongo_autoconnect=True, groups=[], mongo_safe=True):
+    def __init__(self, account, namespace='object', logging_level=logging.ERROR, mongo_uri='localhost:27017', mongo_host="127.0.0.1", mongo_port=27017, mongo_userid=None, mongo_password=None, mongo_db='canopsis', mongo_autoconnect=True, groups=[], mongo_safe=True):
 
         super(Storage, self).__init__()
+
+        try:
+            self._mongo_uri = CONFIG.get('master', 'db_uri')
+        except ConfigParser.Error:
+            self.mongo_uri = mongo_uri
 
         try:
             self.mongo_host = CONFIG.get("master", "host")
@@ -134,23 +141,40 @@ class Storage(object):
         if self.connected:
             return True
 
-        if self.mongo_userid and self.mongo_password:
-            uri = 'mongodb://{0}:{1}@{2}:{3}/{4}'.format(
-                self.mongo_userid,
-                self.mongo_password,
-                self.mongo_host,
-                self.mongo_port,
-                self.mongo_db
-            )
+        if self.mongo_uri:
+            uri = ''
+            db_uris = self.mongo_uri.split(',')
+
+            for db_uri in db_uris:
+                parsed_url = urlparse(db_uri)
+                if parsed_url.username is None and self.mongo_userid:
+                    parsed_url.username = self.mongo_userid
+                if parsed_url.password is None and self.mongo_password:
+                    parsed_url.password = self.mongo_password
+                if parsed_url.port is None and self.mongo_port:
+                    parsed_url.port = self.mongo_port
+                if parsed_url.hostname is None and self.mongo_host:
+                    parsed_url.hostname = self.mongo_host
+
+                uri += "%s,%s" % (uri, parsed_url.get_url())
+
+            uri = uri[1: 0]
 
         else:
-            uri = 'mongodb://{0}:{1}/{2}'.format(
-                self.mongo_host,
-                self.mongo_port,
-                self.mongo_db
-            )
+            parsed_url = urlparse('')
 
-        self.conn=Connection(uri, safe=True)
+            if self.mongo_host:
+                parsed_url.hostname = self.mongo_host
+            if self.mongo_port:
+                parsed_url.port = self.mongo_port
+            if self.mongo_userid:
+                parsed_url.username = self.mongo_userid
+            if self.mongo_password:
+                parsed_url.password = self.mongo_password
+
+            uri = parsed_url.get_url()
+
+        self.conn = Connection(uri, safe=True)
         self.db=self.conn[self.mongo_db]
 
         try:
