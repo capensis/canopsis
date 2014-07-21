@@ -42,6 +42,7 @@ class engine(Engine):
         self.entities = storage.get_backend('entities')
 
         self.manager = PerfData(logging_level=self.logger.level)
+        self.manager.apply_configuration()
 
     def work(self, event, *args, **kargs):
 
@@ -158,7 +159,7 @@ class engine(Engine):
                 'type': 'metric',
                 'name': {'$nin': internal_metrics}
             })
-        count = len(metrics_cursor)
+        count = metrics_cursor.count()
 
         self.object.save(
             {
