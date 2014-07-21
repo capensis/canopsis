@@ -3,7 +3,7 @@ import os, time
 os.environ['TZ'] = 'UTC'
 time.tzset()
 
-from canopsis.old.storage import CONFIG
+from cstorage import CONFIG
 
 from apscheduler.scheduler import Scheduler
 from apschedulerlibs.cmongodbjobstore import CMongoDBJobStore
