@@ -146,33 +146,36 @@ class Storage(object):
             db_uris = self.mongo_uri.split(',')
 
             for db_uri in db_uris:
-                parsed_url = urlparse(db_uri)
-                if parsed_url.username is None and self.mongo_userid:
-                    parsed_url.username = self.mongo_userid
-                if parsed_url.password is None and self.mongo_password:
-                    parsed_url.password = self.mongo_password
-                if parsed_url.port is None and self.mongo_port:
-                    parsed_url.port = self.mongo_port
-                if parsed_url.hostname is None and self.mongo_host:
-                    parsed_url.hostname = self.mongo_host
 
-                uri += "%s,%s" % (uri, parsed_url.get_url())
+                parsed_url = urlparse(db_uri)
+
+                host = self.mongo_host if parsed_url.hostname is None \
+                    else parsed_url.hostname
+                port = self.mongo_port if parsed_url.port is None \
+                    else parsed_url.port
+                user = self.mongo_userid if parsed_url.username is None \
+                    else parsed_url.username
+                pwd = self.mongo_password if parsed_url.password is None \
+                    else parsed_url.password
+
+                _uri = '%s:%s' % (host, port)
+
+                if user is not None:
+                    _uri = '%s@%s' % (
+                        user if pwd is None else '%s:%s' % (user, pwd), _uri)
+
+                uri += "%s,%s" % (uri, _uri)
 
             uri = uri[1: 0]
 
         else:
-            parsed_url = urlparse('')
+            uri = '%s:%s' % (self.mongo_host, self.mongo_port)
 
-            if self.mongo_host:
-                parsed_url.hostname = self.mongo_host
-            if self.mongo_port:
-                parsed_url.port = self.mongo_port
-            if self.mongo_userid:
-                parsed_url.username = self.mongo_userid
-            if self.mongo_password:
-                parsed_url.password = self.mongo_password
-
-            uri = parsed_url.get_url()
+            if self.mongo_userid is not None:
+                uri = '%s@%s' % (
+                    self.mongo_userid if self.mongo_password is None
+                    else '%s:%s' % (
+                        self.mongo_userid, self.mongo_password), uri)
 
         self.conn = Connection(uri, safe=True)
         self.db=self.conn[self.mongo_db]
