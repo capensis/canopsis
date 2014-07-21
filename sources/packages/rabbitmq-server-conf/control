@@ -69,7 +69,7 @@ function post_install(){
 		check_code $?
 
 		echo " + Declare permissions for Admin user ..."
-		su - $HUSER -c "$PREFIX/bin/rabbitmqctl set_permissions -p canopsis $cpsuser \".*\" \".*\" \".*\""
+		su - $HUSER -c "$PREFIX/bin/rabbitmqctl set_permissions -p canopsis admin \".*\" \".*\" \".*\""
 		check_code $?
 	fi
 
