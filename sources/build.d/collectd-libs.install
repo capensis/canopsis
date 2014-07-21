@@ -14,4 +14,16 @@ function install(){
 	install_basic_source $NAME
 
 	install_conf "collectd.conf"
+
+	amqp_host=$(su - $HUSER -c "$PREFIX/bin/initool get $PREFIX/etc/amqp.conf master host")
+	amqp_port=$(su - $HUSER -c "$PREFIX/bin/initool get $PREFIX/etc/amqp.conf master port")
+	amqp_user=$(su - $HUSER -c "$PREFIX/bin/initool get $PREFIX/etc/amqp.conf master userid")
+	amqp_pass=$(su - $HUSER -c "$PREFIX/bin/initool get $PREFIX/etc/amqp.conf master password")
+	amqp_vhost=$(su - $HUSER -c "$PREFIX/bin/initool get $PREFIX/etc/amqp.conf master virtual_host")
+
+	sed "s#@AMQP_HOST@#${amqp_host}#g" -i $PREFIX/etc/collectd.conf
+	sed "s#@AMQP_PORT@#${amqp_port}#g" -i $PREFIX/etc/collectd.conf
+	sed "s#@AMQP_USER@#${amqp_user}#g" -i $PREFIX/etc/collectd.conf
+	sed "s#@AMQP_PASSWORD@#${amqp_pass}#g" -i $PREFIX/etc/collectd.conf
+	sed "s#@AMQP_VHOST@#${amqp_vhost}#g" -i $PREFIX/etc/collectd.conf
 }
