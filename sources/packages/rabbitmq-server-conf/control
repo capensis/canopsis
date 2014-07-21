@@ -67,6 +67,10 @@ function post_install(){
 
 		su - $HUSER -c "$PREFIX/bin/rabbitmqctl set_user_tags admin administrator"
 		check_code $?
+
+		echo " + Declare permissions for Admin user ..."
+		su - $HUSER -c "$PREFIX/bin/rabbitmqctl set_permissions -p canopsis $cpsuser \".*\" \".*\" \".*\""
+		check_code $?
 	fi
 
 	VHOST_EXISTS=`su - $HUSER -c "rabbitmqctl list_vhosts | grep canopsis | wc -l"`
