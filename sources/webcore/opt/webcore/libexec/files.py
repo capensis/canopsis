@@ -27,7 +27,7 @@ from bottle import get, delete, put, request, HTTPError, post, response
 # Canopsis
 from canopsis.old.storage import get_storage
 
-from canopsis.old.file import cfile, get_cfile, namespace
+from canopsis.old.file import File, get_cfile, namespace
 
 # Import protection function
 from libexec.auth import get_account
@@ -140,7 +140,7 @@ def add_file():
             content_type = allowed_mimetypes[data.filename.split('.')[-1]]
             account = get_account()
             storage = get_storage(account=account, namespace=namespace)
-            cfile_record = cfile(storage=storage)
+            cfile_record = File(storage=storage)
             cfile_record.put_data(data.file.read(), file_name=data.filename, content_type=content_type)
             try:
                 file_id = storage.put(cfile_record)
@@ -279,6 +279,6 @@ def list_files():
     data = []
 
     for record in records:
-        data.append(cfile(record=record).dump(json=True))
+        data.append(File(record=record).dump(json=True))
 
     return {'total': total, 'success': True, 'data': data}

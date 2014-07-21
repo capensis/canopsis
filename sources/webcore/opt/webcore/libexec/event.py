@@ -24,7 +24,7 @@ import logging, json
 from bottle import request, HTTPError, post
 
 ## Canopsis
-from canopsis.old.amqp import camqp
+from canopsis.old.amqp import Amqp
 import cevent
 
 #import protection function
@@ -41,7 +41,7 @@ group_managing_access = 'group.CPS_event_admin'
 ## load functions
 def load():
     global amqp
-    amqp = camqp(logging_name="Event-amqp")
+    amqp = Amqp(logging_name="Event-amqp")
     amqp.start()
 
 def unload():
