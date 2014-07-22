@@ -381,7 +381,7 @@ class Storage(DataBase):
 
         self.data_type = data_type
 
-    def bool_compare_and_swap(self, _id):
+    def bool_compare_and_swap(self, _id, oldvalue, newvalue):
         """
         Performs an atomic compare_and_swap operation on database related to \
         input _id.

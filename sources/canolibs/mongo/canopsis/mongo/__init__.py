@@ -26,7 +26,7 @@ from canopsis.storage import Storage, DataBase
 # import to remove if mongo
 from pymongo import MongoClient, ASCENDING
 
-from pymongo.errors import TimeoutError, OperationFailure, ConnectionFailure
+from pymongo.errors import TimeoutError, OperationFailure, ConnectionFailure, DuplicateKeyError
 
 
 class DataBase(DataBase):
@@ -214,20 +214,23 @@ class Storage(DataBase, Storage):
 
         self._update(_id={'_id': _id}, document={'$set': element}, multi=False)
 
-    def bool_compare_and_swap(self, _id):
+    def bool_compare_and_swap(self, _id, oldvalue, newvalue):
 
-        return self.val_compare_and_swap(
-            _id=_id, oldvalue=False, newvalue=True)
+        return self.val_compare_and_swap(_id, oldvalue, newvalue) == newvalue
 
-    def val_compare_and_swap(self, _id, oldvalue, newval):
+    def val_compare_and_swap(self, _id, oldvalue, newvalue):
 
-        result = self._run_command(
-            'find_and_modify',
-            query={'_id': _id, 'value': oldvalue},
-            update={'value': newval},
-            upsert=True)
+        try:
+            result = self._run_command(
+                'find_and_modify',
+                query={'_id': _id, 'value': oldvalue},
+                update={'$set': {'value': newvalue}},
+                upsert=True)
 
-        return result is not None
+        except DuplicateKeyError:
+            result = None
+
+        return oldvalue if not result else newvalue
 
     def _element_id(self, element):
 
