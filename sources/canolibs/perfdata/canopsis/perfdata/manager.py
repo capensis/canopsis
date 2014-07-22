@@ -43,6 +43,7 @@ class PerfData(Manager):
 
     CONTEXT = 'context'
     PERFDATA_STORAGE = 'perfdata_storage'
+    META_STORAGE = 'meta_storage'
 
     DATA_TYPE = 'metric'
 
@@ -53,13 +54,29 @@ class PerfData(Manager):
         *args, **kwargs
     ):
 
-        super(PerfData, self).__init__(*args, **kwargs)
+        super(PerfData, self).__init__(
+            data_type=data_type, *args, **kwargs)
 
-        self.data_type = data_type
         self.perfdata_storage = perfdata_storage
         self.meta_storage = meta_storage
 
         #self.context = Context() if context is None else context
+
+    @property
+    def perfdata_storage(self):
+        return self._perfdata_storage
+
+    @perfdata_storage.setter
+    def perfdata_storage(self, value):
+        self._perfdata_storage = self._get_property_storage(value)
+
+    @property
+    def meta_storage(self):
+        return self._meta_storage
+
+    @meta_storage.setter
+    def meta_storage(self, value):
+        self._meta_storage = self._get_property_storage(value)
 
     def count(self, metric_id, period=None, timewindow=None):
 
@@ -82,7 +99,7 @@ class PerfData(Manager):
 
         period = self.get_period(metric_id=metric_id, period=period)
 
-        result = self.periodic_store.get(
+        result = self.perfdata_storage.get(
             data_id=metric_id, period=period, timewindow=timewindow,
             limit=limit, skip=skip)
 

@@ -107,4 +107,4 @@ class TimedTypedStorage(Storage):
         Get collection prefix.
         """
 
-        return "timed"
+        return "timedtyped"

@@ -21,11 +21,14 @@
 
 from canopsis.configuration import Configurable, Parameter, Configuration
 from canopsis.common.utils import resolve_element
+from canopsis.storage import Storage
 
 
 class Manager(Configurable):
 
     CONF_FILE = '~/etc/manager.conf'
+
+    DATA_TYPE = 'data_type'
 
     TIMED_STORAGE = 'timed_storage'
     PERIODIC_STORAGE = 'periodic_storage'
@@ -41,7 +44,9 @@ class Manager(Configurable):
     _STORAGE_BY_DATA_TYPE_BY_TYPE = dict()
 
     def __init__(
-        self, shared=True,
+        self,
+        data_type,
+        shared=True,
         storage=None, timed_storage=None, periodic_storage=None,
         typed_storage=None, timed_typed_storage=None,
         *args, **kwargs
@@ -51,11 +56,21 @@ class Manager(Configurable):
 
         self.shared = shared
 
+        self.data_type = data_type
+
         self.periodic_storage = periodic_storage
         self.timed_storage = timed_storage
         self.storage = storage
         self.typed_storage = typed_storage
         self.timed_typed_storage = timed_typed_storage
+
+    @property
+    def data_type(self):
+        return self._data_type
+
+    @data_type.setter
+    def data_type(self, value):
+        self._data_type = value
 
     @property
     def shared(self):
@@ -65,13 +80,24 @@ class Manager(Configurable):
     def shared(self, value):
         self._shared = value
 
+    def _get_property_storage(self, value, *args, **kwargs):
+        """
+        Get property storage where value is given in calling property.setter
+        """
+        result = value
+
+        if value is not None and not isinstance(value, Storage):
+            result = self.get_storage(storage_type=value)
+
+        return result
+
     @property
     def periodic_storage(self):
         return self._periodic_storage
 
     @periodic_storage.setter
     def periodic_storage(self, value):
-        self._periodic_storage = value
+        self._periodic_storage = self._get_property_storage(value)
 
     @property
     def timed_storage(self):
@@ -79,7 +105,7 @@ class Manager(Configurable):
 
     @timed_storage.setter
     def timed_storage(self, value):
-        self._timed_storage = value
+        self._timed_storage = self._get_property_storage(value)
 
     @property
     def storage(self):
@@ -87,7 +113,7 @@ class Manager(Configurable):
 
     @storage.setter
     def storage(self, value):
-        self._storage = value
+        self._storage = self._get_property_storage(value)
 
     @property
     def typed_storage(self):
@@ -95,7 +121,7 @@ class Manager(Configurable):
 
     @typed_storage.setter
     def typed_storage(self, value):
-        self._typed_storage = value
+        self._typed_storage = self._get_property_storage(value)
 
     @property
     def timed_typed_storage(self):
@@ -103,10 +129,10 @@ class Manager(Configurable):
 
     @timed_typed_storage.setter
     def timed_typed_storage(self, value):
-        self._timed_typed_storage = value
+        self._timed_typed_storage = self._get_property_storage(value)
 
     def get_storage(
-        self, data_type, storage_type=None, shared=None, *args, **kwargs
+        self, data_type=None, storage_type=None, shared=None, *args, **kwargs
     ):
         """
         Load a storage related to input data type and storage type.
@@ -129,6 +155,9 @@ class Manager(Configurable):
         """
 
         result = None
+
+        if data_type is None:
+            data_type = self.data_type
 
         if storage_type is None:
             storage_type = self.storage
@@ -243,6 +272,10 @@ class Manager(Configurable):
         super(Manager, self)._configure(
             unified_conf=unified_conf, *args, **kwargs)
 
+        # set data_type
+        self._update_property(
+            unified_conf=unified_conf, param_name=Manager.DATA_TYPE)
+
         # set shared
         self._update_property(
             unified_conf=unified_conf, param_name=Manager.SHARED)
@@ -253,4 +286,5 @@ class Manager(Configurable):
         for parameter in values:
             if parameter.name.endswith(Manager.STORAGE_SUFFIX):
                 self._update_property(
-                    unified_conf=unified_conf, param_name=parameter.name)
+                    unified_conf=unified_conf, param_name=parameter.name,
+                    public_property=True)

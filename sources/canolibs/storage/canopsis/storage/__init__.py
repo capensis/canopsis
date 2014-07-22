@@ -337,11 +337,11 @@ class DataBase(Configurable):
         reconnect = False
 
         db_properties = (parameter.name for parameter
-            in self.configuration[DataBase.CATEGORY])
+            in self.conf[DataBase.CATEGORY])
 
         for db_property in db_properties:
             reconnect = reconnect or self._update_property(
-                unified_conf=unified_conf, parameter_name=db_property,
+                unified_conf=unified_conf, param_name=db_property,
                 public_property=False)
 
         if reconnect and self.auto_connect:
@@ -357,12 +357,12 @@ class DataBase(Configurable):
 
     def _conf(self, *args, **kwargs):
 
-        result = super(DataBase, self)._configuration(*args, **kwargs)
+        result = super(DataBase, self)._conf(*args, **kwargs)
 
         result.add_unified_category(
             name=DataBase.CATEGORY,
             new_content=(
-                Parameter(DataBase.HOST, self.localhost),
+                Parameter(DataBase.HOST, self.host),
                 Parameter(DataBase.PORT, self.port, int),
                 Parameter(DataBase.DB, self.db),
                 Parameter(DataBase.AUTO_CONNECT, self.auto_connect, bool),
@@ -370,7 +370,7 @@ class DataBase(Configurable):
                 Parameter(DataBase.WTIMEOUT, self.wtimeout, int),
                 Parameter(DataBase.SSL, self.ssl, bool),
                 Parameter(DataBase.SSL_KEY, self.ssl_key),
-                Parameter(DataBase.SSL_CERT, self.cert),
+                Parameter(DataBase.SSL_CERT, self.ssl_cert),
                 Parameter(DataBase.USER, self.user),
                 Parameter(DataBase.PWD, self.pwd)))
 
@@ -561,7 +561,7 @@ Storage types must be of the same type.'.format(self, target))
         :rtype: str
         """
 
-        raise NotImplementedError()
+        return 'storage'
 
     @staticmethod
     def _update_sort(sort):
