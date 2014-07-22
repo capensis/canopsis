@@ -23,8 +23,26 @@ __version__ = "0.1"
 
 __all__ = ('DataBase', 'Storage')
 
-from canopsis.configuration import Configurable, Parameter
+from canopsis.configuration import Configurable, Parameter, MetaConfigurable
 from canopsis.common.utils import resolve_element
+
+
+class MetaDataBase(MetaConfigurable):
+    """
+    Meta class for DataBase classes.
+    """
+
+    def __call__(cls, *args, **kwargs):
+        """
+        call super class __call__ method and check if auto_connect is True.
+        In this case, call result.auto_connect
+        """
+        result = super(MetaDataBase, cls).__call__(*args, **kwargs)
+
+        if result.auto_connect:
+            result.connect()
+
+        return result
 
 
 class DataBase(Configurable):
@@ -46,6 +64,8 @@ class DataBase(Configurable):
 
     It provides a DataBaseError for internal errors
     """
+
+    __metaclass__ = MetaDataBase
 
     class DataBaseError(Exception):
         """

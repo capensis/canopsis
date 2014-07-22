@@ -413,13 +413,35 @@ class Parameter(object):
         self._value = None
 
 
+class MetaConfigurable(type):
+    """
+    Meta class for Configurable.
+    """
+
+    def __call__(cls, *args, **kwargs):
+        """
+        Get a new instance of input cls class, and if instance.auto_conf or
+        instance.once, then call instance.apply_configuration().
+        """
+
+        result = type.__call__(cls, *args, **kwargs)
+
+        if result.auto_conf or result.once:
+            result.apply_configuration()
+
+        return result
+
+
 class Configurable(object):
     """
     Manages class conf synchronisation with conf files.
     """
 
-    DEFAULT_MANAGERS = 'canopsis.configuration.manager.json.ConfigurationManager,\
-canopsis.configuration.manager.ini.ConfigurationManager'
+    __metaclass__ = MetaConfigurable
+
+    DEFAULT_MANAGERS = '%s,%s' % (
+        'canopsis.configuration.manager.json.ConfigurationManager',
+        'canopsis.configuration.manager.ini.ConfigurationManager')
 
     CONF_FILE = '~/etc/global.conf'
 
