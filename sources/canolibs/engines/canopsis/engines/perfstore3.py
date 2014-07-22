@@ -40,6 +40,7 @@ class engine(Engine):
 
         storage = get_storage(logging_level=self.logger.level)
         self.entities = storage.get_backend('entities')
+        self.object = storage.get_backend('object')
 
         self.manager = PerfData(logging_level=self.logger.level)
         self.manager.apply_configuration()

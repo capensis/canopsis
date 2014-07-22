@@ -250,7 +250,8 @@ class PerfData(Manager):
             name=PerfData.CATEGORY,
             new_content=(
                 Parameter(PerfData.CONTEXT),
-                Parameter(PerfData.PERFDATA_STORAGE)))
+                Parameter(PerfData.PERFDATA_STORAGE),
+                Parameter(PerfData.META_STORAGE)))
 
         return result
 
