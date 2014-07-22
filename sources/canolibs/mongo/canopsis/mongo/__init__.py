@@ -23,10 +23,10 @@ __version__ = '0.1'
 
 from canopsis.storage import Storage, DataBase
 
-# import to remove if mongo
 from pymongo import MongoClient, ASCENDING
 
-from pymongo.errors import TimeoutError, OperationFailure, ConnectionFailure, DuplicateKeyError
+from pymongo.errors import TimeoutError, OperationFailure, ConnectionFailure,\
+    DuplicateKeyError
 
 
 class DataBase(DataBase):
@@ -42,23 +42,32 @@ class DataBase(DataBase):
 
         if not self.connected():
 
-            self.logger.debug('Trying to connect to {0}:{1}'.format(
-                self.host, self.port))
+            self.logger.debug('Trying to connect to %s' % (
+                '%s:%s' % (self.host, self.port) if not self.uri
+                else self.uri))
 
-            try:
+            if self.uri:
+                args = {
+                    'host': self.uri,
+                    'j': self.journaling,
+                    'w': 1 if self.safe else 0
+                }
+            else:
                 args = {
                     'host': self.host,
                     'port': self.port,
                     'j': self.journaling,
                     'w': 1 if self.safe else 0
                 }
-                if self.ssl:
-                    args.update({
-                        'ssl': self.ssl,
-                        'ssl_keyfile': self.ssl_key,
-                        'ssl_certfile': self.ssl_cert
-                    })
 
+            if self.ssl:
+                args.update({
+                    'ssl': self.ssl,
+                    'ssl_keyfile': self.ssl_key,
+                    'ssl_certfile': self.ssl_cert
+                })
+
+            try:
                 self._conn = MongoClient(**args)
 
             except ConnectionFailure as e:

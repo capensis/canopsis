@@ -24,7 +24,7 @@ from canopsis.old.account import Account
 from canopsis.old.storage import get_storage
 from canopsis.old.event import forger, get_routingkey
 from canopsis.old.tools import roundSignifiantDigit
-from canopsis.perfdata.manager import Manager
+from canopsis.perfdata.manager import PerfData
 from canopsis.timeserie import TimeSerie
 from canopsis.timeserie.timewindow import TimeWindow, Period
 
@@ -50,7 +50,7 @@ class engine(Engine):
     def pre_run(self):
         self.storage = get_storage(namespace='object',
             account=Account(user="root", group="root"))
-        self.manager = Manager(logging_level=self.logging_level)
+        self.manager = PerfData(logging_level=self.logging_level)
 
     def consume_dispatcher(self, event, *args, **kargs):
         self.logger.debug("Consolidate metrics:")
