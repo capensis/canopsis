@@ -75,6 +75,8 @@ class DataBase(Configurable):
         pass
 
     CATEGORY = 'DATABASE'
+
+    URI = 'uri'
     HOST = 'host'
     PORT = 'port'
     DB = 'db'
@@ -92,12 +94,14 @@ class DataBase(Configurable):
 
     def __init__(
         self,
+        uri=None,
         host='localhost', port=0, db='canopsis', auto_connect=True,
         journaling=False, safe=False, wtimeout=100,
         ssl=False, ssl_key=None, ssl_cert=None, user=None, pwd=None,
         *args, **kwargs
     ):
         """
+        :param uri: db uri
         :param host: db host name
         :param port: db port
         :param db: db name
@@ -112,6 +116,7 @@ class DataBase(Configurable):
         :param user: user
         :param pwd: password
 
+        :type uri: str
         :type host: str
         :type port: int
         :type db: str
@@ -130,6 +135,7 @@ class DataBase(Configurable):
         super(DataBase, self).__init__(*args, **kwargs)
 
         # initialize instance properties with default values
+        self._uri = uri
         self._host = host
         self._port = port
         self._db = db
@@ -142,6 +148,15 @@ class DataBase(Configurable):
         self._ssl_cert = ssl_cert
         self._user = user
         self._pwd = pwd
+
+    @property
+    def uri(self):
+        return self._uri
+
+    @uri.setter
+    def uri(self, value):
+        self._uri = value
+        self.reconnect()
 
     @property
     def host(self):
@@ -362,6 +377,7 @@ class DataBase(Configurable):
         result.add_unified_category(
             name=DataBase.CATEGORY,
             new_content=(
+                Parameter(DataBase.URI, self.uri),
                 Parameter(DataBase.HOST, self.host),
                 Parameter(DataBase.PORT, self.port, int),
                 Parameter(DataBase.DB, self.db),

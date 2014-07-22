@@ -29,7 +29,7 @@ from canopsis.old.event import \
 from canopsis.old.storage import get_storage
 from canopsis.old.account import Account
 
-from canopsis.perfdata.manager import Manager
+from canopsis.perfdata.manager import PerfData
 
 INTERNAL_COMPONENT = '__canopsis__'
 MACRO = 'CAN_PRIORITY'
@@ -50,7 +50,7 @@ class engine(Engine):
         self.entities = self.storage.get_backend('entities')
         self.objects_backend = self.storage.get_backend('object')
         perfdata3 = self.storage.get_backend('perfdata3')
-        self.manager = Manager(perfdata3, self.logger)
+        self.manager = PerfData(perfdata3, self.logger)
         self.comments = {}
         self.selectors_name = []
         self.last_resolv = 0
@@ -108,7 +108,7 @@ class engine(Engine):
         self.logger.debug(u"Increment {0}: {1}".format(key, value))
         self.logger.debug(str(meta))
 
-        metric_id = Manager.get_metric_id(
+        metric_id = PerfData.get_metric_id(
             meta['co'], meta.get('re'), meta['me'])
 
         self.manager.put_data(
