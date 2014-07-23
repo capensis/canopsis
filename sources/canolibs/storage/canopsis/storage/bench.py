@@ -96,7 +96,7 @@ class Benchmark(Manager):
                 Parameter(Benchmark.COUNT, self.count, int),
                 Parameter(Benchmark.SIZE, self.size, int),
                 Parameter(Benchmark.TIME, self.time, int),
-                Parameter(Benchmark.SCENARIOS, self.scenarios, str)))
+                Parameter(Benchmark.SCENARIOS, self.scenarios)))
 
         return result
 

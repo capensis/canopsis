@@ -47,28 +47,27 @@ class DataBase(DataBase):
                 else self.uri))
 
             if self.uri:
-                args = {
-                    'host': self.uri,
-                    'j': self.journaling,
-                    'w': 1 if self.safe else 0
+                connection_args = {
+                    'host': self.uri
                 }
             else:
-                args = {
+                connection_args = {
                     'host': self.host,
-                    'port': self.port,
-                    'j': self.journaling,
-                    'w': 1 if self.safe else 0
+                    'port': self.port
                 }
 
+            connection_args['j'] = self.journaling
+            connection_args['w'] = 1 if self.safe else 0
+
             if self.ssl:
-                args.update({
+                connection_args.update({
                     'ssl': self.ssl,
                     'ssl_keyfile': self.ssl_key,
                     'ssl_certfile': self.ssl_cert
                 })
 
             try:
-                self._conn = MongoClient(**args)
+                self._conn = MongoClient(**connection_args)
 
             except ConnectionFailure as e:
                 self.logger.error(
@@ -324,8 +323,7 @@ class Storage(DataBase, Storage):
         result = None
 
         try:
-            backend_command = getattr(
-                self._backend, command)
+            backend_command = getattr(self._backend, command)
             result = backend_command(w=1 if self.safe else 0,
                 wtimeout=self.wtimeout, **kwargs)
 

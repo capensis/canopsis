@@ -273,7 +273,7 @@ class Manager(Configurable):
                 Parameter(Manager.TYPED_STORAGE, self.typed_storage),
                 Parameter(
                     Manager.TIMED_TYPED_STORAGE, self.timed_typed_storage),
-                Parameter(Manager.SHARED, parser=bool)))
+                Parameter(Manager.SHARED, parser=Parameter.bool)))
 
         return result
 

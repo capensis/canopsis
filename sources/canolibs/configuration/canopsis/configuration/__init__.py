@@ -347,6 +347,10 @@ class Parameter(object):
     Provide a value (None by default) and a parser (str by default).
     """
 
+    @staticmethod
+    def bool(value):
+        return value == 'True' or value == 'true' or value == '1'
+
     def __init__(self, name, value=None, parser=str, *args, **kwargs):
         """
         :param name: unique by category
@@ -580,9 +584,9 @@ class Configurable(object):
         result = Configuration(
             Category(Configurable.CONF,
                 Parameter(
-                    Configurable.AUTO_CONF, self.auto_conf, parser=bool),
+                    Configurable.AUTO_CONF, self.auto_conf, Parameter.bool),
                 Parameter(Configurable.MANAGERS, self.managers),
-                Parameter(Configurable.ONCE, self.once, parser=bool)),
+                Parameter(Configurable.ONCE, self.once, Parameter.bool)),
             Category(Configurable.LOG,
                 Parameter(Configurable.LOG_NAME, self.log_name),
                 Parameter(Configurable.LOG_LVL, self.log_lvl),
