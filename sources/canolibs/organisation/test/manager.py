@@ -19,37 +19,15 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from fabric.api import run
-from os.path import dirname, expanduser
+from unittest import TestCase, main
 
-projects = (
-    'common',
-    'configuration',
-    'timeserie',
-    'storage',
-    'context',
-    'perfdata',
-    'topology',
-    'mongo',
-    'old',
-    'pyperfstore2',
-    'engines',
-    'connectors',
-    'tools',
-    'cli',
-    'topology',
-    'organisation')
+from canopsis.organisation.manager import Organisation
 
 
-def setup(cmd="install", projects=projects):
-    """
-    Run setup cmd on all projects.
-    """
-    # find __file__ directory
-    path = dirname(expanduser(__file__))
+class OrganisationTest(TestCase):
 
-    cmd_path = "python {0}/{{0}}/setup.py {1}".format(path, cmd)
+    def setUp(self):
+        self.organisation = Organisation()
 
-    for project in projects:
-        # run setup command
-        run(cmd_path.format(project))
+if __name__ == '__main__':
+    main()

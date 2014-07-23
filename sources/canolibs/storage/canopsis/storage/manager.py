@@ -46,7 +46,7 @@ class Manager(Configurable):
     def __init__(
         self,
         data_type,
-        shared=True,
+        shared=True, auto_connect=True,
         storage=None, timed_storage=None, periodic_storage=None,
         typed_storage=None, timed_typed_storage=None,
         *args, **kwargs
@@ -57,6 +57,8 @@ class Manager(Configurable):
         self.shared = shared
 
         self.data_type = data_type
+
+        self.auto_connect = auto_connect
 
         self.periodic_storage = periodic_storage
         self.timed_storage = timed_storage
@@ -132,7 +134,9 @@ class Manager(Configurable):
         self._timed_typed_storage = self._get_property_storage(value)
 
     def get_storage(
-        self, data_type=None, storage_type=None, shared=None, *args, **kwargs
+        self,
+        data_type=None, storage_type=None, shared=None, auto_connect=None,
+        *args, **kwargs
     ):
         """
         Load a storage related to input data type and storage type.
@@ -165,6 +169,9 @@ class Manager(Configurable):
         if shared is None:
             shared = self.shared
 
+        if auto_connect is None:
+            auto_connect = self.auto_connect
+
         if isinstance(storage_type, str):
             storage_type = resolve_element(storage_type)
 
@@ -180,12 +187,15 @@ class Manager(Configurable):
 
             if data_type not in storage_by_data_type:
                 storage_by_data_type[data_type] = storage_type(
-                    data_type=data_type, *args, **kwargs)
+                    data_type=data_type, auto_connect=auto_connect,
+                    *args, **kwargs)
 
             result = storage_by_data_type[data_type]
 
         else:
-            result = storage_type(data_type=data_type, *args, **kwargs)
+            result = storage_type(
+                data_type=data_type, auto_connect=auto_connect,
+                *args, **kwargs)
 
         return result
 
@@ -195,7 +205,7 @@ class Manager(Configurable):
     ):
 
         if timed_type is None:
-            timed_type = self.timed_storage
+            timed_type = type(self.timed_storage)
 
         result = self.get_storage(
             data_type=data_type, storage_type=timed_type, shared=shared,
@@ -209,7 +219,7 @@ class Manager(Configurable):
     ):
 
         if periodic_type is None:
-            periodic_type = self.periodic_storage
+            periodic_type = type(self.periodic_storage)
 
         result = self.get_storage(data_type=data_type, shared=shared,
             storage_type=periodic_type, *args, **kwargs)
@@ -222,7 +232,7 @@ class Manager(Configurable):
     ):
 
         if typed_type is None:
-            typed_type = self.typed_storage
+            typed_type = type(self.typed_storage)
 
         result = self.get_storage(data_type=data_type, shared=shared,
             storage_type=typed_type, *args, **kwargs)
@@ -235,7 +245,7 @@ class Manager(Configurable):
     ):
 
         if timed_typed_type is None:
-            timed_typed_type = self.timed_typed_storage
+            timed_typed_type = type(self.timed_typed_storage)
 
         result = self.get_storage(data_type=data_type, shared=shared,
             storage_type=timed_typed_type, *args, **kwargs)

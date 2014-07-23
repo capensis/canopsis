@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# --------------------------------
+#--------------------------------
 # Copyright (c) 2014 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
@@ -19,86 +19,102 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
+from canopsis.configuration import Parameter
 from canopsis.storage.manager import Manager
 
 
 class Organisation(Manager):
     """
-    Manage access to a context (connector, component, resource) elements
-    and context data (metric, downtime, etc.)
-
-    For example, in following entities:
-        - component: data_id is component_id and data_type is component
-        - connector: data_id
+    Dedicated to manage accounts in Canopsis
     """
 
     CONF_FILE = '~/etc/organisation.conf'
 
+    CATEGORY = 'ORGANISATION'
+
+    ACCOUNT_STORAGE = 'account_storage'
+    GROUP_STORAGE = 'group_storage'
+    PROFILE_STORAGE = 'profile_storage'
+    RIGHTS_STORAGE = 'rights_storage'
+    DATA_STORAGE = 'data_storage'
+
     DATA_TYPE = 'organisation'
 
-    def get_users(self):
-
-        raise NotImplementedError()
-
-    def get(
+    def __init__(
         self,
-        element_type,
-        connector=None, connector_type=None, component=None, resource=None,
-        other=None,
-        element_ids=None, timewindow=None,
+        data_type=DATA_TYPE,
+        account_storage=None, group_storage=None, profile_storage=None,
+        rights_storage=None, data_storage=None,
         *args, **kwargs
     ):
-        """
-        Get all elements which have a element_id among input element_ids, or
-        type equals to element_type or inside timewindow if specified
-        """
 
-        if element_ids is None:
-            element_id = Organisation.get_element_id(
-                connector, connector_type, component, resource, other)
-            element_ids = [element_id]
+        super(Organisation, self).__init__(
+            data_type=data_type, *args, **kwargs)
 
-        return self._ctx.get(
-            data_ids=element_ids, data_type=element_type,
-            timewindow=timewindow, *args, **kwargs)
+        self.account_storage = account_storage
+        self.group_storage = group_storage
+        self.profile_storage = profile_storage
+        self.rights_storage = rights_storage
+        self.data_storage = data_storage
 
-    def get_by_name(
-        self,
-        element_type, name=None, *args, **kwargs
-    ):
+    @property
+    def account_storage(self):
+        return self._account_storage
 
-        return self.get(element_id=name, element_type=element_type)
+    @account_storage.setter
+    def account_storage(self, value):
+        self._account_storage = self._get_property_storage(value)
 
-    def put(
-        self, element_id, element_type, element, timestamp=None,
-        *args, **kwargs
-    ):
-        """
-        Put an element designated by the element_id, element_type and element.
-        If timestamp is None, time.now is used.
-        """
+    @property
+    def group_storage(self):
+        return self._group_storage
 
-        return self._ctx.put(
-            data_id=element_id, data_type=element_type, data=element,
-            timestamp=timestamp, *args, **kwargs)
+    @group_storage.setter
+    def group_storage(self, value):
+        self._group_storage = self._get_property_storage(value)
 
-    def remove(
-        self, element_ids=None, element_type=None, timewindow=None,
-        *args, **kwargs
-    ):
-        """
-        Remove a set of elements identified by element_ids, an element type or
-        a timewindow
-        """
+    @property
+    def profile_storage(self):
+        return self._profile_storage
 
-        return self._ctx.remove(
-            data_ids=element_ids, data_type=element_type,
-            timewindow=timewindow, *args, **kwargs)
+    @profile_storage.setter
+    def profile_storage(self, value):
+        self._profile_storage = self._get_property_storage(value)
 
-    def _get_conf_files(self, conf_files, *args, **kwargs):
+    @property
+    def rights_storage(self):
+        return self._rights_storage
 
-        result = super(Organisation, self)._get_conf_files(
-            conf_files=conf_files, *args, **kwargs)
+    @rights_storage.setter
+    def rights_storage(self, value):
+        self._rights_storage = self._get_property_storage(value)
+
+    @property
+    def data_storage(self):
+        return self._data_storage
+
+    @data_storage.setter
+    def data_storage(self, value):
+        self._data_storage = self._get_property_storage(value)
+
+    def _conf(self, *args, **kwargs):
+
+        result = super(Organisation, self)._conf(*args, **kwargs)
+
+        result.add_unified_category(
+            name=Organisation.CATEGORY,
+            new_content=(
+                Parameter(Organisation.ACCOUNT_STORAGE),
+                Parameter(Organisation.GROUP_STORAGE),
+                Parameter(Organisation.PROFILE_STORAGE),
+                Parameter(Organisation.RIGHTS_STORAGE),
+                Parameter(Organisation.DATA_STORAGE)))
+
+        return result
+
+    def _get_conf_files(self, *args, **kwargs):
+
+        result = super(Organisation, self)._get_conf_files(*args, **kwargs)
 
         result.append(Organisation.CONF_FILE)
 

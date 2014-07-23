@@ -41,11 +41,13 @@ class ManagerTest(TestCase):
             'timed_typed_storage']
 
         self.manager = Manager(
+            data_type=None,
             timed_storage=self.timed_storage,
             periodic_storage=self.periodic_storage,
             storage=self.storage,
             typed_storage=self.typed_storage,
-            timed_typed_storage=self.timed_typed_storage)
+            timed_typed_storage=self.timed_typed_storage,
+            auto_connect=False)
         self.data_types = ['data_type_0', 'data_type_1']
 
     def test_get_storage(self):
@@ -76,8 +78,7 @@ class ManagerTest(TestCase):
                 storage_method = getattr(
                     self.manager, 'get_{0}'.format(storage_name))
 
-                sstorage = storage_method(
-                    data_type=data_type)
+                sstorage = storage_method(data_type=data_type)
 
                 self.assertTrue(sstorage is storage)
 
