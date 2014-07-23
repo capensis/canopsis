@@ -45,12 +45,12 @@ CONFIG.read(os.path.expanduser('~/etc/cstorage.conf'))
 
 
 class Storage(object):
-    def __init__(self, account, namespace='object', logging_level=logging.ERROR, mongo_uri='mongodb://localhost:27017', mongo_host="127.0.0.1", mongo_port=27017, mongo_userid=None, mongo_password=None, mongo_db='canopsis', mongo_autoconnect=True, groups=[], mongo_safe=True):
+    def __init__(self, account, namespace='object', logging_level=logging.ERROR, mongo_uri=None, mongo_host="127.0.0.1", mongo_port=27017, mongo_userid=None, mongo_password=None, mongo_db='canopsis', mongo_autoconnect=True, groups=[], mongo_safe=True):
 
         super(Storage, self).__init__()
 
         try:
-            self._mongo_uri = CONFIG.get('master', 'db_uri')
+            self.mongo_uri = CONFIG.get('master', 'db_uri')
         except ConfigParser.Error:
             self.mongo_uri = mongo_uri
 
@@ -148,10 +148,15 @@ class Storage(object):
             uri = '%s:%s' % (self.mongo_host, self.mongo_port)
 
             if self.mongo_userid is not None:
-                uri = '%s@%s' % (
-                    self.mongo_userid if self.mongo_password is None
-                    else '%s:%s' % (
-                        self.mongo_userid, self.mongo_password), uri)
+                if self.mongo_password is None:
+                    uri = '%s@%s' % (self.mongo_userid, uri)
+
+                else:
+                    uri = '%s:%s@%s' % (self.mongo_userid, self.mongo_password, uri)
+
+                uri = '%s/%s' % (uri, self.mongo_db)
+
+            uri = 'mongodb://%s' % uri
 
         self.conn = Connection(uri, safe=True)
         self.db = self.conn[self.mongo_db]
