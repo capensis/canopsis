@@ -69,9 +69,9 @@ class engine(Engine):
 
         event['rk'] = rk
 
-        event["component"] = event.get("component").encode("utf-8")
         if "resource" in event:
-            event["resource"] = event.get("resource", "").encode("utf-8")
+            if not isinstance(event['resource'], str):
+                event['resource'] = ''
 
         # Clean tags field
         event['tags'] = event.get('tags', [])
