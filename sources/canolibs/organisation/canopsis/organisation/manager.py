@@ -24,8 +24,6 @@ from md5 import new as md5
 from canopsis.configuration import Parameter
 from canopsis.storage.manager import Manager
 
-from collections import Iterable
-
 
 class Organisation(Manager):
     """
@@ -127,14 +125,26 @@ class Organisation(Manager):
 
         return result
 
+    def find_accounts(self, request, limit=0, skip=0, sort=None):
+        """
+            Find accounts which correspond to the input request
+
+            :type request: dict
+        """
+
+        result = self.account_storage.find_elements(
+            request=request, limit=limit, skip=skip, sort=sort)
+
+        return result
+
     def get_account(self, login, pwd):
         """
             Get an account from a login and a password
         """
 
-        crypted_pwd = md5(login_pwd[1])
+        crypted_pwd = md5(pwd)
         request = {
-            Organisation.LOGIN: login_pwd[0],
+            Organisation.LOGIN: pwd,
             Organisation.PWD: crypted_pwd
         }
         result = self.account_storage.find(request, limit=1)
@@ -156,6 +166,94 @@ class Organisation(Manager):
         """
 
         self.account_storage.remove(data_id=account_id)
+
+    def get_groups(self, group_ids):
+        """
+        """
+
+        result = self.group_storage.get(group_ids)
+
+        return result
+
+    def find_groups(self, request, limit=0, skip=0, sort=None):
+
+        result = self.group_storage.find(request, limit, skip, sort)
+
+        return result
+
+    def update_group(self, group_id, value):
+
+        self.group_storage.update(group_id, value)
+
+    def remove_groups(self, group_ids):
+
+        self.group_storage.remove(group_ids)
+
+    def get_profiles(self, profile_ids):
+        """
+        """
+
+        result = self.profile_storage.get(profile_ids)
+
+        return result
+
+    def find_profiles(self, request, limit=0, skip=0, sort=None):
+
+        result = self.profile_storage.find(request, limit, skip, sort)
+
+        return result
+
+    def update_profile(self, profile_id, value):
+
+        self.profile_storage.update(profile_id, value)
+
+    def remove_profiles(self, profile_ids):
+
+        self.profile_storage.remove(profile_ids)
+
+    def get_rights(self, right_ids):
+        """
+        """
+
+        result = self.right_storage.get(right_ids)
+
+        return result
+
+    def find_rights(self, request, limit=0, skip=0, sort=None):
+
+        result = self.right_storage.find(request, limit, skip, sort)
+
+        return result
+
+    def update_right(self, right_id, value):
+
+        self.right_storage.update(right_id, value)
+
+    def remove_rights(self, right_ids):
+
+        self.right_storage.remove(right_ids)
+
+    def get_data(self, data_ids):
+        """
+        """
+
+        result = self.data_storage.get(data_ids)
+
+        return result
+
+    def find_data(self, request, limit=0, skip=0, sort=None):
+
+        result = self.data_storage.find(request, limit, skip, sort)
+
+        return result
+
+    def update_data(self, data_id, value):
+
+        self.data_storage.update(data_id, value)
+
+    def remove_data(self, data_ids):
+
+        self.data_storage.remove(data_ids)
 
     def _conf(self, *args, **kwargs):
 
