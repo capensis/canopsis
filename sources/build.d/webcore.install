@@ -15,5 +15,7 @@ function install(){
 		echo "Impossible to download locales"
 	fi
 
-	echo "global.commit='$(git log | head -1 | cut -d ' ' -f2)'" > $PREFIX/var/www/canopsis/commit.js
+	COMMIT=$(echo "global.commit='$(git log | head -1 | cut -d ' ' -f2)'")
+        echo $COMMIT > $PREFIX/var/www/canopsis/commit.js
+        echo $COMMIT > $SRC_PATH/webcore/var/www/canopsis/commit.js
 }

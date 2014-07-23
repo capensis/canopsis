@@ -39,21 +39,21 @@ function remove_slinks() {
     rm -Rf $CPS/etc/schema.d
     rm -Rf $CPS/etc/tasks.d/task_reporting.py
     # canolibs
-    rm -Rf $CPS/lib/python2.7/site-packages/cli-0.1-py2.7.egg/*
-    rm -Rf $CPS/lib/python2.7/site-packages/common-0.1-py2.7.egg/*
-    rm -Rf $CPS/lib/python2.7/site-packages/configuration-0.1-py2.7.egg/*
-    rm -Rf $CPS/lib/python2.7/site-packages/connectors-0.1-py2.7.egg/*
+    rm -Rf $CPS/lib/python2.7/site-packages/canopsis.cli-0.1-py2.7.egg/cli
+    rm -Rf $CPS/lib/python2.7/site-packages/canopsis.common-0.1-py2.7.egg/common
+    rm -Rf $CPS/lib/python2.7/site-packages/canopsis.configuration-0.1-py2.7.egg/configuration
+    rm -Rf $CPS/lib/python2.7/site-packages/canopsis.connectors-0.1-py2.7.egg/connectors
     rm -Rf $CPS/var/snmp
-    rm -Rf $CPS/lib/python2.7/site-packages/context-0.1-py2.7.egg/*
-    rm -Rf $CPS/lib/python2.7/site-packages/engines-0.1-py2.7.egg/*
-    rm -Rf $CPS/lib/python2.7/site-packages/mongo-0.1-py2.7.egg/*
-    rm -Rf $CPS/lib/python2.7/site-packages/old-0.1-py2.7.egg/*
-    rm -Rf $CPS/lib/python2.7/site-packages/organisation-0.1-py2.7.egg/*
-    rm -Rf $CPS/lib/python2.7/site-packages/perfdata-0.1-py2.7.egg/*
-    rm -Rf $CPS/lib/python2.7/site-packages/pyperfstore2-0.1-py2.7.egg/*
-    rm -Rf $CPS/lib/python2.7/site-packages/storage-0.1-py2.7.egg/*
-    rm -Rf $CPS/lib/python2.7/site-packages/timeserie-0.1-py2.7.egg/*
-    rm -Rf $CPS/lib/python2.7/site-packages/tools-0.1-py2.7.egg/*
-    rm -Rf $CPS/lib/python2.7/site-packages/topology-0.1-py2.7.egg/*
+    rm -Rf $CPS/lib/python2.7/site-packages/canopsis.context-0.1-py2.7.egg/context
+    rm -Rf $CPS/lib/python2.7/site-packages/canopsis.engines-0.1-py2.7.egg/engines
+    rm -Rf $CPS/lib/python2.7/site-packages/canopsis.mongo-0.1-py2.7.egg/mongo
+    rm -Rf $CPS/lib/python2.7/site-packages/canopsis.old-0.1-py2.7.egg/old
+    rm -Rf $CPS/lib/python2.7/site-packages/canopsis.organisation-0.1-py2.7.egg/organisation
+    rm -Rf $CPS/lib/python2.7/site-packages/canopsis.perfdata-0.1-py2.7.egg/perfdata
+    rm -Rf $CPS/lib/python2.7/site-packages/pyperfstore2-0.1-py2.7.egg/pyperfstore2
+    rm -Rf $CPS/lib/python2.7/site-packages/canopsis.storage-0.1-py2.7.egg/storage
+    rm -Rf $CPS/lib/python2.7/site-packages/canopsis.timeserie-0.1-py2.7.egg/timeserie
+    rm -Rf $CPS/lib/python2.7/site-packages/canopsis.tools-0.1-py2.7.egg/tools
+    rm -Rf $CPS/lib/python2.7/site-packages/canopsis.topology-0.1-py2.7.egg/topology
     rm $CPS/.slinked 2>/dev/null
 }

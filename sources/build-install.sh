@@ -8,7 +8,7 @@ fi
 
 
 ### Configurations
-SRC_PATH=`pwd`
+export SRC_PATH=`pwd`
 if [ -e $SRC_PATH/canohome/lib/common.sh ]; then
 	. $SRC_PATH/canohome/lib/common.sh
 else
