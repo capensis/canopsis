@@ -1,0 +1,41 @@
+<table class="table table-bordered table-condensed table-striped table-hover">
+	<thead>
+		<tr>
+			{{#each column in columns}}
+				{{#if column.action}}
+					<th {{bind-attr style=column.style class=column.class}}>
+						<a {{action "do" column.actionAll item}}>
+							{{column.title}}
+						</a>
+					</th>
+				{{else}}
+					<th>{{column.title}}</th>
+				{{/if}}
+			{{/each}}
+		</tr>
+	</thead>
+
+	<tbody>
+		{{#each item in items}}
+			<tr>
+				{{#each column in columns}}
+					{{#if column.action}}
+						<td {{bind-attr style=column.style class=column.class}}>
+							<a {{action "do" column.action item}}>
+								{{column.title}}
+							</a>
+						</td>
+					{{else}}
+						<td>{{getfield item column.name}}</td>
+					{{/if}}
+				{{/each}}
+			</tr>
+		{{/each}}
+	</tbody>
+</table>
+
+{{#group}}
+	<button type="button" class="btn btn-small btn-default" {{action prevPage}}>{{glyphicon 'chevron-left'}}</button>
+	Page {{input type="number" value=currentPage}} / {{totalPages}}
+	<button type="button" class="btn btn-small btn-default" {{action nextPage}}>{{glyphicon 'chevron-right'}}</button>
+{{/group}}

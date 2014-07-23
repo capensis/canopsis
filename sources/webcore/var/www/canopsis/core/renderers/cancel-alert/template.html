@@ -1,0 +1,9 @@
+{{#if crecord.cancel}}
+	<span class="badge">Canceled</span>
+{{else}}
+	{{#unless controller.findOptions.useLogCollection}}
+		{{#if crecord.state}}
+			<button type="button" class="btn btn-default" {{action 'sendEvent' crecord 'Cancel' }} >Cancel</button>
+		{{/if}}
+	{{/unless}}
+{{/if}}

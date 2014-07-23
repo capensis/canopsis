@@ -1,0 +1,11 @@
+{
+	"type": "object",
+	"properties": {
+		"crecord_type": {"enum": ["filter_rule"], "required": true},
+		"mfilter":{"format": "json"},
+		"crecord_name":{"type": "string", "required":true},
+		"priority":{"type": "integer", "maximum": 99, "minimum": 0, "required":true},
+		"action":{"enum": ["pass", "drop"], "required": true},
+		"enable":{"type": "boolean", "required":true}
+	}
+}

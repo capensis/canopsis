@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html class="bg-black">
+	<head>
+		<title>Canopsis | Login</title>
+
+		<meta charset="utf-8" />
+		<meta content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no' name='viewport' />
+
+		<link href="/static/login/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+		<link href="/static/login/css/font-awesome.min.css" rel="stylesheet" type="text/css" />
+		<link href="/static/login/css/AdminLTE.css" rel="stylesheet" type="text/css" />
+
+		<style type="text/css">
+			#overlay {
+				position: fixed;
+				height: 100%;
+				width: 100%;
+			}
+
+			#login-box {
+				position: relative;
+			}
+		</style>
+
+		<script type="application/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.2/jquery.min.js"></script>
+		<script src="/static/webcore-libs/dev/jquery.backgroundvideo.min.js"></script>
+		<script type="application/javascript" src="/static/login/js/bootstrap.min.js"></script>
+
+		<script type="application/javascript">
+			$(document).ready(function() {
+				var videobackground = new $.backgroundVideo($('body'), {
+					"align": "centerXY",
+					"width": 1280,
+					"height": 720,
+					"path": "/static/canopsis/media/video/",
+					"filename": "cloud",
+					"types": ["mp4","webm"]
+				});
+			});
+		</script>
+	</head>
+
+	<body>
+		<div id="overlay">
+			<div class="form-box" id="login-box">
+				<div class="header">
+					<img src="/static/login/img/canopsis.png" alt="Canopsis" />
+				</div>
+
+				<form action="/auth" method="post">
+					<div class="body bg-gray">
+						<div class="input-group">
+							<span class="input-group-addon"><i class="fa fa-user"></i></span>
+							<input name="username" type="text" class="form-control" placeholder="Login" />
+						</div>
+
+						<br />
+
+						<div class="input-group">
+							<span class="input-group-addon"><i class="fa fa-envelope"></i></span>
+							<input name="password" type="password" class="form-control" placeholder="Password" />
+						</div>
+
+						<br />
+
+						<div class="footer">
+							<button type="submit" class="btn bg-olive btn-block">Sign in</button>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+	</body>
+</html>

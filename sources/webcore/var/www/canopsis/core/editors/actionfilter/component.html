@@ -1,0 +1,48 @@
+<form role="form" class="well">
+
+	<center>
+		<h3>{{tr title}}</h3>
+	</center>
+
+	<div class="form-group">
+		{{view Ember.Select
+			content=availableactions
+			value=selectedAction
+			class="form-control"
+		}}
+	</div>
+
+	<div class="form-group">
+		{{#if isOverride}}
+		<label>{{tr 'Field to override'}}</label>
+			{{input class="form-control" value=field}}
+			<label>{{tr 'Value to set'}}</label>
+			{{input class="form-control" value=value}}
+	    {{/if}}
+
+		{{#if isRemove}}
+			{{input class="form-control" value=key}}
+			<label>{{tr 'Key to remove'}}</label>
+		{{/if}}
+
+		{{#if isRoute}}
+			{{input class="form-control" value=send}}
+			<label>{{tr 'Target engine'}}</label>
+		{{/if}}
+	</div>
+
+	<div class="form-group">
+		<button class="btn btn-default form-control" {{action addAction}}>{{glyphicon 'plus'}}{{tr 'Add action'}}</button>
+	</div>
+
+	<hr/>
+
+	<ul class="list-group">
+	{{#each action in content}}
+		<li class="list-group-item list-group-item-success">
+			<button class="btn btn-default" {{action deleteAction action}}>{{glyphicon 'minus'}}{{tr 'Remove'}}</button>&nbsp;{{json2html action}}
+		</li>
+	{{/each}}
+	</ul>
+
+</form>

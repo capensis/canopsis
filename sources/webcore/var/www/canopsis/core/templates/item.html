@@ -1,0 +1,7 @@
+<li {{bind-attr data-row="row" }} {{bind-attr data-col="col"}} {{bind-attr data-sizex="rowspan" }} {{bind-attr data-sizey="colspan" }} >
+ 	<h1>{{id}}</h1>
+ 	<br />
+ 	{{#if widget}}
+ 		{{renderWidget this widget}}
+ 	{{/if}}
+</li>

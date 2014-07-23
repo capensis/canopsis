@@ -1,0 +1,73 @@
+{
+	"type": "object",
+	"categories": [{
+		"title": "general",
+		"keys":["timestamp", "component", "resource", "state", "output", "criticity"]
+	}],
+	"showEditButton": true,
+	"properties": {
+		"event_type": {
+			"type": "string",
+			"required": true
+		},
+		"source_type": {
+			"type": "string",
+			"required": true
+		},
+		"crecord_type": {
+			"enum": ["account"],
+			"required": true,
+			"defaultValue": "account",
+			"icon": "flag"
+		},
+		"ack": {
+			"type": "object",
+			"role": "ack"
+		},
+		"timestamp": {
+			"type": "number",
+			"role": "timestamp"
+		},
+		"component": {
+			"type": "string",
+			"required": true
+		},
+		"resource": {
+			"type": "string",
+			"required": true,
+			"readOnly": true
+		},
+		"connector": {
+			"type": "string",
+			"required": true
+		},
+		"connector_name": {
+			"type": "string",
+			"required": true
+		},
+		"output": {
+			"type": "string",
+			"required": true
+		},
+		"state": {
+			"type": "number",
+			"required": true,
+			"role": "state",
+			"readOnly": true
+		},
+		"criticity": {
+			"type": "string",
+			"role": "criticity"
+		},
+		"perimeter": {
+			"type": "string"
+		},
+		"domain": {
+			"type": "string"
+		},
+		"status": {
+			"type": "string",
+			"default": "Ok"
+		}
+	}
+}

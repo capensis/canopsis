@@ -1,0 +1,55 @@
+<table class="table well">
+	<thead>
+		<th colspan="5">
+			<b>{{tr 'Impact'}}</b>
+		</th>
+	</thead>
+	<tr>
+		<td rowspan="4" style="vertical-align:middle;"><b>{{tr 'Emergency'}}</b></td>
+		<td></td>
+		<td>
+			{{tr 'Strong'}}
+		</td>
+		<td>
+			{{tr 'Medium'}}
+		</td>
+		<td>
+			{{tr 'Weak'}}
+		</td>
+	<tr>
+		<td>{{tr 'Strong'}}</td>
+		<td>
+			<button {{bind-attr class=":btn :btn-danger is00:active"}} {{action setCriticity 0}}>{{tr 'Critical'}}</button>
+		</td>
+		<td>
+			<button {{bind-attr class=":btn :btn-warning is01:active"}} {{action setCriticity 1}}>{{tr 'Major'}}</button>
+		</td>
+		<td>
+			<button {{bind-attr class=":btn :btn-warning is02:active"}} {{action setCriticity 2}}>{{tr 'Major'}}</button>
+		</td>
+	</tr>
+	<tr>
+		<td>{{tr 'Medium'}}</td>
+		<td>
+			<button {{bind-attr class=":btn :btn-warning is10:active"}} {{action setCriticity 10}}>{{tr 'Major'}}</button>
+		</td>
+		<td>
+			<button {{bind-attr class=":btn :btn-warning is11:active"}} {{action setCriticity 11}}>{{tr 'Major'}}</button>
+		</td>
+		<td>
+			<button {{bind-attr class=":btn :btn-info is12:active"}} {{action setCriticity 12}}>{{tr 'Minor'}}</button>
+		</td>
+	</tr>
+	<tr>
+		<td>{{tr 'Weak'}}</td>
+		<td>
+			<button {{bind-attr class=":btn :btn-warning is20:active"}} {{action setCriticity 20}}>{{tr 'Major'}}</button>
+		</td>
+		<td>
+			<button {{bind-attr class=":btn :btn-info is21:active"}} {{action setCriticity 21}}>{{tr 'Minor'}}</button>
+		</td>
+		<td>
+			<button {{bind-attr class=":btn :btn-info is22:active"}} {{action setCriticity 22}}>{{tr 'Minor'}}</button>
+		</td>
+	</tr>
+</table>

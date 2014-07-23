@@ -1,0 +1,14 @@
+{
+	"type": "object",
+	"properties": {
+		"crecord_type": {
+			"enum": ["defaultrule"],
+			"required": true
+		},
+		"action": {
+			"type": "string",
+			"default": "pass",
+			"required": true
+		}
+	}
+}

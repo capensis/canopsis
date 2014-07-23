@@ -1,0 +1,91 @@
+<style type="text/css">
+	.cfilter-active {
+		background-color: #CCCCCC;
+	}
+	.cfilter .filterclause .form-control{
+		display: inline;
+		width: auto;
+	}
+
+	.cfilter .filterclause .label{
+		height: 22px;
+	}
+	.cfilter .filterclause .form-control{
+		padding:0;
+		height: 20px;
+	}
+	.cfilter .filterclause .form-control.finalized{
+		display: inline-block;
+		background: #ccc;
+	}
+
+	.ui-sortable-helper {
+		background: white;
+		border: 1px solid #ccc;
+	}
+</style>
+<fieldset>
+	<ul class="nav nav-tabs" role="tablist">
+		<li class="active">
+			<a {{bind-attr href=cfilterEditTabId}} role="tab" data-toggle="tab">
+				{{glyphicon "edit"}}
+			</a>
+		</li>
+		<li>
+			<a {{bind-attr href=cfilterRawTabId}} role="tab" data-toggle="tab">
+				{{glyphicon "cog"}}
+			</a>
+		</li>
+		<li>
+			<a {{bind-attr href=cfilterViewTabId}} role="tab" data-toggle="tab">
+				{{glyphicon "eye-open"}}
+			</a>
+		</li>
+	</ul>
+
+	<div class="tab-content">
+		<div class="tab-pane active" {{bind-attr id=cfilterEditId}}>
+			<div {{bind-attr id=cfilterId}} class="container-fluid">
+				{{#each clause in clauses}}
+					<div class="row-fluid" {{bind-attr class=clause.current:cfilter-active:cfilter-inactive}} {{action activate clause}}>
+						{{#each andClausePart in clause.and}}
+							{{#if andClausePart.isFirst}}
+								<div style="margin:3px">
+									<span class="label label-danger">
+										Or
+									</span><br/>
+									<span style="margin-right:54px"></span>
+							{{else}}
+								<div style="padding-left:10px; margin:3px">
+									<span class="label label-info" style="margin-right:13px">
+										And
+									</span>
+							{{/if}}
+							{{component-filterclause
+									content=andClausePart
+									clauses=clauses
+									clause=clause
+									currentClauseIndex=currentClauseIndex
+									parent=this
+									onlyAllowRegisteredIndexes=../../onlyAllowRegisteredIndexes
+									operators=../../operators
+								}}
+							</div>
+						{{/each}}
+					</div>
+				{{/each}}
+				{{#unless orButtonHidden}}
+					<a {{action "addOrClause"}} class="btn btn-danger btn-xs">Or</a>
+				{{/unless}}
+			</div>
+		</div>
+
+		<div class="tab-pane" {{bind-attr id=cfilterRawId}}>
+			{{textarea value=cfilter_serialized cols="40" rows="10"}}
+		</div>
+
+		<div class="tab-pane" {{bind-attr id=cfilterViewId}}>
+			VIEW
+		</div>
+	</div>
+</fieldset>

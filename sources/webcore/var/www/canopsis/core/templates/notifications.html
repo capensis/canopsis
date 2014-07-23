@@ -1,0 +1,22 @@
+<!-- Notifications: style can be found in dropdown.less -->
+<li class="dropdown notifications-menu">
+	<a href="#" class="dropdown-toggle" data-toggle="dropdown">
+		<i class="fa fa-warning"></i>
+		<span class="label label-warning">{{count}}</span>
+	</a>
+	<ul class="dropdown-menu">
+		<li class="header">You have {{count}} notifications</li>
+		<li>
+			<ul class="menu">
+				{{#each}}
+				<li>
+					<a href="#">
+						<i class="fa" {{bind-attr class="level falevel"}}></i> {{message}}
+					</a>
+				</li>
+				{{/each}}
+			</ul>
+		</li>
+		<li class="footer"><a href="#">View all</a></li>
+	</ul>
+</li>

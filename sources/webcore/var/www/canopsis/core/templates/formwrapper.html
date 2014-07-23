@@ -1,0 +1,21 @@
+<div id="formwrapper" class="modal fade">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h4 class="modal-title">
+				{{controller.form.title}}
+			</div>
+			<div class="modal-body">
+				{{#if controller.form}}
+					{{view Canopsis.Application.FormView templateName=controller.formName controller=controller.form}}
+				{{/if}}
+			</div>
+			<div class="modal-footer">
+				{{#each buttonpartial in controller.form.partials.buttons}}
+					{{partial buttonpartial}}
+				{{/each}}
+			</div>
+		</div>
+	</div>
+</div>

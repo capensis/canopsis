@@ -1,0 +1,55 @@
+{
+	"adapter":"Cevent",
+	"serializer":"Cevent",
+	"type": "object",
+	"categories": [{
+		"title": "general",
+		"keys":["output"]
+	}],
+	"properties": {
+		"connector": {
+			"type": "string",
+			"required": true
+		},
+		"component": {
+			"type": "string",
+			"required": true
+		},
+		"connector_name": {
+			"type": "string",
+			"required": false
+		},
+		"event_type": {
+			"enum": ["check"],
+			"required": true
+		},
+		"source_type": {
+			"type": "string",
+			"required": false
+		},
+		"state": {
+			"type": "number",
+			"required": true
+		},
+		"state_type": {
+			"type": "number",
+			"required": true
+		},
+		"cancel": {
+			"type": "number",
+			"required": true
+		},
+		"ref_rk": {
+			"type": "string",
+			"required": true
+		},
+		"author": {
+			"type": "string",
+			"required": true
+		},
+		"output": {
+			"type": "string",
+			"required": true
+		}
+	}
+}

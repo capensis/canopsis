@@ -1,0 +1,51 @@
+#!/usr/bin/env python2.7
+# -*- coding: utf-8 -*-
+
+# --------------------------------
+# Copyright (c) 2014 "Capensis" [http://www.capensis.com]
+#
+# This file is part of Canopsis.
+#
+# Canopsis is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# Canopsis is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Affero General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public License
+# along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
+# ---------------------------------
+
+import sys
+import os
+import json
+
+basepath = os.path.expanduser('~canopsis/var/www/canopsis')
+
+def get_file_list(path):
+	filelist = os.listdir(path)
+	information = []
+
+	for filename in filelist:
+		filepath = '{0}/{1}'.format(path, filename)
+
+		if os.path.isdir(filepath):
+			information.append({
+				'name': filename,
+				'files': get_file_list(filepath),
+				'type': 'dir'
+			})
+		else:
+			information.append({'name': filename})
+
+	return information
+
+
+if __name__=="__main__":
+	with open(basepath + '/core/files/files.json', 'w') as f:
+		f.write(json.dumps(get_file_list(basepath), indent=4))
+

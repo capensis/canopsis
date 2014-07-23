@@ -1,0 +1,12 @@
+{{#unless controller.findOptions.useLogCollection}}
+	{{#if this.state}}
+		<button type="button" class="btn btn-default" {{action 'sendEvent' this 'cancel' }} {{bind-attr title=tr.cancel_this_alert}} >
+			{{glyphicon "ban-circle"}}
+		</button>
+	{{/if}}
+	{{#if this.cancel}}
+		<button type="button" class="btn btn-default" {{action 'sendEvent' this 'unCancel' }} >
+			{{glyphicon "share-alt"}}
+		</button>
+	{{/if}}
+{{/unless}}

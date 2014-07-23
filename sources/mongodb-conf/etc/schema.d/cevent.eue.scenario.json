@@ -1,0 +1,29 @@
+{
+	"type": "object",
+	"properties": {
+		"type_message": {
+			"enum": ["scenario"],
+			"required": true
+		},
+		"child": {
+			"type": "string",
+			"required": true
+		},
+		"cntxt_env": {
+			"type": "string",
+			"required": true
+		},
+		"cntxt_os": {
+			"type": "string",
+			"required": true
+		},
+		"cntxt_browser": {
+			"type": "string",
+			"required": true
+		},
+		"cntxt_localization": {
+			"type": "string",
+			"required": true
+		}
+	}
+}

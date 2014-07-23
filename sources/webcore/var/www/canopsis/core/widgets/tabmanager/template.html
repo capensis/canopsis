@@ -1,0 +1,29 @@
+{{#if Canopsis.editMode}}
+	<button type="button" class="btn btn-info btn-sm" {{action 'insertWidget' controller}} >{{glyphicon "plus-sign"}} Insert widget</button>
+{{/if}}
+<section class="nav-tabs-custom">
+	<ul class="nav nav-tabs ">
+		{{#each item in controller.items.content}}
+				<li {{bind-attr class="item.tabSelected:active"}}>
+					<a href="#" data-toggle="tab" {{action 'selectTab' item.widget}}>
+						<span>
+							{{item.widget.title}}
+						</span>
+
+						{{#if Canopsis.editMode}}
+							<span class="badge" {{action 'editWidget' item.widget}}>
+								{{glyphicon "edit"}}
+							</span>
+							<span class="badge" {{action 'removeWidget' item.widget}}>
+								{{glyphicon "trash"}}
+							</span>
+						{{/if}}
+					</a>
+				</li>
+		{{/each}}
+	</ul>
+
+	{{#with controller.selectedItem}}
+		{{widgethelper widget=controller.selectedItem}}
+	{{/with}}
+</section>

@@ -1,0 +1,27 @@
+<div class="box-header">
+	<div class="pull-right">
+		{{#if Canopsis.editMode}}
+			<button type="button" class="btn btn-small btn-info btn-sm pull-right" {{action 'removeWidget' widget}}>
+				{{glyphicon "remove"}}
+			</button>
+			<button type="button" class="btn btn-small btn-info btn-sm pull-right" {{action 'editWidget' widget}}>
+				{{glyphicon "edit"}}
+			</button>
+		{{/if}}
+	</div>
+	<div class="pull-right">
+		{{set 'minified' true}}
+		{{#each button in controller.partials.titlebarsbuttons}}
+			{{partial button}}
+		{{/each}}
+		{{unset 'minified'}}
+	</div>
+	<h3 class="box-title">
+		{{widget.title}}
+		{{#if Canopsis.editMode}}
+			{{#unless widget.title}}
+				&lt; Untitled {{widget.xtype}} widget &gt;
+			{{/unless}}
+		{{/if}}
+	</h3>
+</div>

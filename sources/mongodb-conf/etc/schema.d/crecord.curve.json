@@ -1,0 +1,45 @@
+{
+	"type": "object",
+	"categories": [{
+		"title": "general",
+		"keys":[
+			"line_color",
+			"area_color",
+			"line_style",
+			"area_opacity",
+			"zindex",
+			"invert",
+			"metric",
+			"label"
+		]
+	}],
+	"properties": {
+		"line_color":{
+			"type": "string",
+			"role": "color"
+		},
+		"area_color":{
+			"type": "string",
+			"role": "color"
+		},
+		"line_style":{
+			"type": "string"
+		},
+		"area_opacity":{
+			"type": "number",
+			"role": "percent"
+		},
+		"zindex":{
+			"type": "number"
+		},
+		"invert":{
+			"type": "boolean"
+		},
+		"metric":{
+			"type": "string"
+		},
+		"label":{
+			"type": "string"
+		}
+	}
+}

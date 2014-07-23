@@ -1,0 +1,105 @@
+[{
+	"type": "resource",
+	"name": "build",
+	"icon": "cog",
+	"description": "Build",
+	"children": []
+},{
+	"type": "resource",
+	"name": "accounts",
+	"icon": "user",
+	"description": "accounts"
+},{
+	"type": "resource",
+	"name": "profiles",
+	"icon": "lock",
+	"description": "Manage user profiles"
+},{
+	"type": "resource",
+	"name": "groups",
+	"icon": "book",
+	"description": "groups"
+},{
+	"type": "resource",
+	"name": "curves",
+	"icon": "picture",
+	"description": "curves"
+},{
+	"type": "resource",
+	"name": "perfdatas",
+	"icon": "stats",
+	"description": "perfdatas"
+},{
+	"type": "resource",
+	"name": "selectors",
+	"icon": "link",
+	"description": "selectors"
+},{
+	"type": "resource",
+	"name": "consolidations",
+	"icon": "compressed",
+	"description": "consolidations"
+},{
+	"type": "resource",
+	"name": "topologies",
+	"icon": "tree-conifer",
+	"description": "topologies"
+},{
+	"type": "resource",
+	"name": "eventfilter",
+	"icon": "filter",
+	"description": "eventfilter"
+},{
+	"type": "resource",
+	"name": "event",
+	"icon": "globe",
+	"description": "event"
+},{
+	"type": "resource",
+	"name": "item",
+	"description": "item",
+	"path":"/item/:item_id"
+},{
+	"type": "resource",
+	"name": "container",
+	"description": "container",
+	"path":"/container/:container_id"
+	},
+{
+	"type": "resource",
+	"name": "run",
+	"icon": "play",
+	"description": "show mmenu",
+	"children": [{
+		"type": "resource",
+		"name": "userviews",
+		"icon": "filter",
+		"description": "userviews"
+			},{
+		"type": "resource",
+		"name": "weather",
+		"icon": "filter",
+		"description": "weather"
+			},{
+		"type": "resource",
+		"name": "services",
+		"icon": "filter",
+		"description": "services"
+	}]
+},{
+	"type": "resource",
+	"name": "report",
+	"description": "users"
+},{
+		"type": "resource",
+		"name": "userview",
+		"icon": "filter",
+		"description": "userview",
+		"path": "/userview/:userview_id"
+},{
+		"type": "resource",
+		"name": "weather",
+		"icon": "filter",
+		"description": "weather",
+		"path": "/userview/userview.weather"
+}]

@@ -1,0 +1,115 @@
+{{#if controller.loaded}}
+	<div class="btn-toolbar canopsis-toolbar" role="toolbar">
+		<div class="pull-left">
+			{{#if controller.toolbar}}
+				{{tr 'For the selection'}} :
+				{{#each toolitem in controller.toolbar}}
+					{{partial toolitem}}
+				{{/each}}
+			{{/if}}
+		</div>
+		<div class="pull-right btn-group" data-toggle="btn-toggle">
+			{{#each filter in controller.filters}}
+				<button class="btn btn-default"{{action setFilter filter.filter}}>{{filter.title}}</button>
+			{{/each}}
+		</div>
+		<div style="clear:both"></div>
+		<br/>
+		<div class="pull-right dataTables_filter">
+			{{tr 'Search'}} :
+			{{input type="text" placeholder="Search" action="searchItems" class="form-control inlineInput"}}
+		</div>
+		<div class="pull-left dataTables_filter">
+			{{view Ember.Select
+				content=controller.itemsPerPagePropositions
+				value=controller.userDefinedItemsPerPage
+				class="inlineInput"
+			}}
+			{{tr 'records per page'}}
+		</div>
+	</div>
+	<div class="table-responsive">
+		<table {{bind-attr id="controller.id"}} class="table table-striped table-bordered table-hover dataTable">
+			<thead>
+				<tr>
+					<th>Check</th>
+					<th>Edit</th>
+					{{#each attr in controller.shown_columns}}
+						{{#if Canopsis.editMode}}
+							<th>
+								<button class="btn btn-xs btn-default"{{action moveColumn attr 'left'}}>{{glyphicon "chevron-left"}}</button>
+								{{#if attr.options.label}}
+									{{attr.options.label}}
+								{{else}}
+									{{attr.field}}
+								{{/if}}
+								<button {{bind-attr class=":btn :btn-xs attr.options.show:btn-primary:btn-default"}} {{action switchColumnDisplay attr}}>
+										{{#if attr.options.show}}
+											{{glyphicon "eye-open"}}
+										{{else}}
+											{{glyphicon "eye-close"}}
+										{{/if}}
+								</button>
+								<button class="btn btn-xs btn-default"{{action moveColumn attr 'right'}}>{{glyphicon "chevron-right"}}</button>
+							</th>
+						{{else}}
+							{{#group}}
+								{{#if attr.options.show}}
+									<th {{bind-attr class="attr.headerClassName"}} {{action sort attr}}>
+										{{#if attr.options.label}}
+											{{attr.options.label}}
+										{{else}}
+											{{attr.field}}
+										{{/if}}
+									</th>
+								{{/if}}
+							{{/group}}
+						{{/if}}
+
+					{{/each}}
+					{{#if controller.item_actions}}
+						<th>Actions</th>
+					{{/if}}
+				</tr>
+			</thead>
+			{{#if controller.config.cloaking}}
+				{{cloaked-collection
+					cloakView="listline"
+					content=controller.widgetData
+					tagName='tbody'
+					itemController=Ember.Controller
+					parentController=this}}
+			{{else}}
+				<tbody>
+					{{#each controller.widgetData}}
+						{{render "listline" this
+							parentController=controller}}
+					{{/each}}
+				</tbody>
+			{{/if}}
+		</table>
+	</div>
+	<div class="btn-toolbar canopsis-toolbar" role="toolbar">
+		<div class="pull-left">
+			Showing {{controller.paginationFirstItemIndex}} to {{controller.paginationLastItemIndex}} of {{controller.itemsTotal}} entries
+		</div>
+		<div style="clear:both"></div>
+		<div class="pull-left">
+			{{#if controller.toolbar}}
+				{{tr 'For the selection'}} :
+				{{#each toolitem in controller.toolbar}}
+					{{partial toolitem}}
+				{{/each}}
+			{{/if}}
+		</div>
+		<div class="pull-right">
+			{{#group}}
+				<button type="button" class="btn btn-small btn-default" {{action prevPage}}>{{glyphicon 'chevron-left'}}</button>
+					Page {{controller.currentPage}} / {{controller.totalPages}}
+				<button type="button" class="btn btn-small btn-default" {{action nextPage}}>{{glyphicon 'chevron-right'}}</button>
+			{{/group}}
+		</div>
+	</div>
+{{else}}
+	Loading ...
+{{/if}}

@@ -1,0 +1,48 @@
+<form role="form" class="well">
+	<center>
+		<h3>{{tr title}}</h3>
+	</center>
+
+	<table class="table">
+		<tr>
+			<td><center>{{tr 'Selectors'}}</center></td>
+			<td><center>{{tr 'Topologies'}}</center></td>
+		</tr>
+		<tr>
+			<td>{{input class="form-control" type="checkbox" checked=selectors}}</td>
+			<td>{{input class="form-control" type="checkbox" checked=topologies}}</td>
+		</tr>
+	</table>
+	<div class="form-group">
+		<label>{{tr 'Component'}}</label>
+		{{input type="text" value=component class="form-control" placeholder="Search a component"}}
+	</div>
+	<div class="form-group">
+		<label>{{tr 'Resource'}}</label>
+		{{input type="text" value=resource class="form-control" placeholder="Search a resource"}}
+	</div>
+
+	<label>{{tr 'Event search'}}</label>
+	{{#unless events.length}}
+		<div class="well">No item selected</div>
+	{{/unless}}
+	<ul class="list-group">
+	{{#each event in events}}
+		<li class="list-group-item list-group-item-info">
+			<button class="btn btn-default" {{action add event}}>{{glyphicon 'plus'}}{{tr 'Add'}}</button>&nbsp;{{event.component}} {{event.resource}}
+		</li>
+	{{/each}}
+	</ul>
+
+	<label>{{tr 'Selected Events'}}</label>
+	{{#unless selectedEvents.length}}
+		<div class="well">No event selected</div>
+	{{/unless}}
+	<ul class="list-group">
+	{{#each event in selectedEvents}}
+		<li class="list-group-item list-group-item-success">
+			<button class="btn btn-default" {{action delete event}}>{{glyphicon 'minus'}}{{tr 'Remove'}}</button>&nbsp;{{event.component}} {{event.resource}}
+		</li>
+	{{/each}}
+	</ul>
+</form>

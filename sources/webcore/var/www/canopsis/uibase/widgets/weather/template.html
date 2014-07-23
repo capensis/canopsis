@@ -1,0 +1,31 @@
+<div {{bind-attr class=":small-box controller.background"}}>
+	<div class="inner">
+		<h2>
+			{{controller.title}}
+		</h2>
+		<p>
+			&nbsp;
+		</p>
+	</div>
+	<div class="icon">
+		<i {{bind-attr class=":ion controller.icon"}}></i>
+	</div>
+
+	<!-- child -->
+	<div class="row unmarged">
+		{{#each controller.sub_weather}}
+			<div class="col-lg-3 col-xs-6">
+				<div {{bind-attr class=":small-box custom_class"}}>
+					<div class="inner text-center">
+						<h4>
+							{{title}}
+						</h4>
+						<p>
+							<a href="#" class="small-box-footer full"></a>
+						</p>
+					</div>
+				</div>
+			</div>
+		{{/each}}
+	</div>
+</div>

@@ -1,0 +1,6 @@
+[{
+	"name": "core",
+	"version": "v2",
+	"routes": "routes.json",
+	"files": "files.json"
+}]

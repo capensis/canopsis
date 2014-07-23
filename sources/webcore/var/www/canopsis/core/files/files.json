@@ -1,0 +1,35 @@
+[{
+
+	"type": "dir",
+	"name": "controller",
+	"files": [
+		{"name": "application"},
+		{"name": "crecord"},
+		{"name": "crecordform"},
+		{"name": "formwrapper"},
+		{"name": "editor"},
+		{"name": "login"},
+		{"name": "notifications"},
+		{"name": "userview"},
+		{"name": "widget"}
+	]
+},{
+	"type": "dir",
+	"name": "lib",
+	"files": []
+},{
+
+	"type": "dir",
+	"name": "view",
+	"files": [
+		{"name": "application"},
+		{"name": "crecordform"},
+		{"name": "formwrapper"},
+		{"name": "crecords"},
+		{"name": "editor"},
+		{"name": "event"},
+		{"name": "widget"},
+		{"name": "collectionviewcheckbox"},
+        	{"name": "validationtextfield"}
+	]
+}]

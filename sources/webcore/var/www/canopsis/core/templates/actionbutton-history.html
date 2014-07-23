@@ -1,0 +1,6 @@
+<button type="button" {{bind-attr class=":btn :btn-default findOptions.useLogCollection:active"}} {{action 'history'}} >
+	{{glyphicon "time"}}
+	{{#unless minified}}
+		History
+	{{/unless}}
+</button>

@@ -1,0 +1,11 @@
+{{#group}}
+	{{timestamp value attr}}
+	{{#if attr.options.canDisplayAgo}}
+		<br>
+			<small class="text-muted">
+				{{glyphicon "time"}}
+				{{timeSince value}}
+			</small>
+		</br>
+	{{/if}}
+{{/group}}

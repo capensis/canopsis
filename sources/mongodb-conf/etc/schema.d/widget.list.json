@@ -1,0 +1,68 @@
+{
+	"type": "object",
+	"categories": [{
+		"title": "general",
+		"keys":["title", "listed_crecord_type", "itemsPerPage", "hidden_columns","item_actions","toolbar", "mixins" ,"filters"]
+	},{
+		"title": "Rendering",
+		"keys":["cloaking"]
+	}],
+	"properties": {
+		"listed_crecord_type": {
+			"type": "string",
+			"enum": ["group", "account", "event", "selector", "filter"],
+			"default": "group",
+			"role": "simplelist"
+		},
+		"item_actions": {
+			"type": "array",
+			"items": {
+				"type": "string"
+			},
+			"role" : "templateSelector",
+			"templateClass":"action"
+		},
+		"hidden_columns": {
+			"type": "array",
+			"items": {
+				"type": "string"
+			},
+			"role":"tags",
+			"mixinName":"modelDict"
+		},
+		"toolbar": {
+			"type": "array",
+			"items": {
+				"type": "string"
+			},
+			"role" : "templateSelector",
+			"templateClass":"toolbar"
+		},
+		"mixins": {
+			"type": "array",
+			"items": {
+				"type": "string"
+			},
+			"role":"tags",
+			"mixinName":"mixinArray",
+			"mixinClass":"test"
+		},
+		"xtype": {
+			"type": "string"
+		},
+		"itemsPerPage": {
+			"type": "integer"
+		},
+		"cloaking": {
+			"type": "boolean"
+		},
+		"filters": {
+			"type": "array",
+			"items": {
+				"type": "object",
+				"objectDict": { "title": "untitled filter", "cfilter": ""},
+				"role": "cfilterwithproperties"
+			}
+		}
+	}
+}

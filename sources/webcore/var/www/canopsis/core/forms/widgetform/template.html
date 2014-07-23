@@ -1,0 +1,6 @@
+{{#if Canopsis.conf.DEBUG}}
+	<div>parent form: {{controller.formParent}}</div>
+{{/if}}
+{{#each widget in Canopsis.formwrapperController.form.availableWidgets}}
+	<button type="button" class="btn btn-default" {{action 'selectWidget' widget}} >{{glyphicon "plus-sign"}} {{widget.name}}</button>
+{{/each}}

@@ -1,0 +1,8 @@
+{{#if Canopsis.editMode}}
+	<button type="button" class="btn btn-info btn-sm" {{action 'insertWidget' controller}} >{{glyphicon "plus-sign"}} Insert widget</button>
+{{/if}}
+{{#each item in controller.items}}
+	<div>
+		{{widgetslot item=item}}
+	</div>
+{{/each}}

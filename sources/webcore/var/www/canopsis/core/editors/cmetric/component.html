@@ -1,0 +1,22 @@
+<fieldset>
+	<div style="float: right;">
+		Search: {{input action="search"}}
+
+		<a data-toggle="popover"
+		   data-html="true"
+		   data-placement="top"
+		   {{bind-attr id=helpModal.id data-content=helpModal.content title=helpModal.title}}>
+			<i class="fa fa-info-circle"></i>
+		</a>
+	</div>
+
+	<b>Available:</b>
+
+	{{component-table model="metric" modelfilter=metricSearch columns=select_cols targetObject=this}}
+
+	<hr/>
+
+	<b>Selected:</b>
+
+	{{component-table data=selectedMetrics columns=unselect_cols targetObject=this}}
+</fieldset>

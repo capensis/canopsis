@@ -1,0 +1,17 @@
+{
+	"type": "object",
+	"properties": {
+		"crecord_type": {
+			"enum": ["job"],
+			"required": true
+		},
+		"task": {"type": "string", "required": true},
+		"last_execution": {"type": "integer", "required": true},
+		"rrule": {"type": "string", "required": true},
+		"start": {"type": "integer", "required": true},
+		"params": {
+			"type": "object",
+			"required": true
+		}
+	}
+}

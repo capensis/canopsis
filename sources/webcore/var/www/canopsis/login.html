@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html class="bg-black" data-ember-extension="1">
+  <head>
+    <title>Canopsis | Connexion</title>
+
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/>
+    <meta charset="UTF-8"/>
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport" />
+
+    <link href="/static/webcore-libs/bootstrap/current/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+    <link href="/static/webcore-libs/css/font-awesome.min.css" rel="stylesheet" type="text/css" />
+    <link href="/static/webcore-libs/css/AdminLTE.css" rel="stylesheet" type="text/css" />
+
+  </head>
+
+  <body data-ember-extension="1">
+
+    <div id="overlay" style="position:fixed;height:100%;width:100%;"></div>
+    <div class="form-box" id="login-box" style="position:relative;">
+      <div class="header">
+        <img src="/static/canopsis/media/canopsis.png" alt="canopsis"/>
+      </div>
+      <form action="#" method="post" id='login_form'>
+        <div class="body bg-gray">
+          <div class="input-group">
+            <span class="input-group-addon"><i class="fa fa-user"></i></span>
+            <input id="form_login_input" type="text" class="form-control" placeholder="Identifiant"/>
+          </div>
+          <br>
+
+
+          <div class="input-group">
+            <span class="input-group-addon"><i class="fa fa-envelope"></i></span>
+            <input id="form_password_input" type="password" class="form-control" placeholder="Mot de passe"/>
+          </div>
+
+          <div class="form-group">
+            <input type="checkbox" name="remember_me"/> Se souvenir de moi
+          </div>
+        <div id="message_box" class="alert alert-warning"></div>
+        </div>
+
+        <div class="footer">
+          <button type="submit" class="btn bg-olive btn-block">Connexion</button>
+          <p>
+            <a href="login.html#lostpass">Mot de passe perdu ?</a>
+          </p>
+        </div>
+      </form>
+
+
+    </div>
+
+    <script src="/static/webcore-libs/dev/jquery-1.10.2.js"></script>
+    <script src="/static/webcore-libs/jQuery.encoding.digests.sha1.js"></script>
+    <script src="core/lib/login.js"></script>
+    <script src="/static/webcore-libs/dev/jquery.backgroundvideo.min.js"></script>
+    <script>
+      $(document).ready(function() {
+        $('#message_box').hide();
+      });
+      $("#login_form").submit(function(event) {
+        event.preventDefault();
+        var login = $('#form_login_input').val();
+        var password = $('#form_password_input').val();
+        console.log('will login as ', login)
+        login_handler.login(login, password);
+        setTimeout(function () {
+          if (login_handler.get('login_message')) {
+            $('#message_box').html(login_handler.get('login_message')).fadeIn(500);
+          }
+        },1000);
+      });
+
+
+      $(document).ready(function() {
+        var videobackground = new $.backgroundVideo($('body'), {
+          "align": "centerXY",
+          "width": 1280,
+          "height": 720,
+          "path": "/static/canopsis/media/video/",
+          "filename": "cloud",
+          "types": ["mp4","webm"]
+        });
+      });
+    </script>
+    <script src="/static/webcore-libs/dev/bootstrap.js" type="text/javascript"></script>
+
+  </body>
+</html>

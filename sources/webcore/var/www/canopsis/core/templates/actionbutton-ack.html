@@ -1,0 +1,17 @@
+{{#if minified}}
+	{{#unless this.ack.pending}}
+		{{#unless controller.findOptions.useLogCollection}}
+			{{#if this.state}}
+				<a href="#" class="tooltiptable hint--rounded hint--top" data-hint="Ack this alert">
+					<button type="button" class="btn btn-default" {{action 'sendEvent' 'ack' this}} >{{glyphicon "ok"}}</button>
+				</a>
+			{{/if}}
+		{{/unless}}
+	{{/unless}}
+{{else}}
+	{{#unless controller.findOptions.useLogCollection}}
+		<a href="#" class="tooltiptable hint--rounded hint--top" "Acknowlege selected events">
+			<button type="button" class="btn btn-default" {{action 'sendEvent' 'ack'}} >{{glyphicon "ok"}} Acknowlege</button>
+		</a>
+	{{/unless}}
+{{/if}}

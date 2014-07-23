@@ -1,0 +1,24 @@
+<ul class="breadcrumb">
+	{{#each view.items}}
+		<li class="dropdown">
+			{{#if icon}}
+				{{glyphicon icon}}
+			{{/if}}
+			{{name}}
+			<b class="caret"></b>
+			<ul class="dropdown-menu">
+				{{#each children}}
+					<li>
+						{{#link-to name}}
+							{{#if icon}}
+								{{glyphicon icon}}
+							{{/if}}
+
+							{{name}}
+						{{/link-to}}
+					</li>
+				{{/each}}
+			</ul>
+		</li>
+	{{/each}}
+</ul>

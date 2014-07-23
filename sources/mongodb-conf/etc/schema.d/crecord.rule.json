@@ -1,0 +1,21 @@
+{
+	"type": "object",
+	"properties": {
+		"crecord_type": {
+			"enum": ["rule"],
+			"required": true
+		},
+		"priority": {
+			"type": "integer",
+			"default": 99
+		},
+		"mfilter": {
+			"type": "string",
+			"required": true
+		},
+		"action": {
+			"type": "string",
+			"default": "pass"
+		}
+	}
+}

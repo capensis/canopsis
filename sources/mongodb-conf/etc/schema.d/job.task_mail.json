@@ -1,0 +1,24 @@
+{
+	"type": "object",
+	"properties": {
+		"user": {"type": "string", "required": true},
+		"group": {"type": "string", "required": true},
+		"recipients": {
+			"type": "array",
+			"items": {
+				"type": "string"
+			},
+			"required": true
+		},
+		"subject": {"type": "string", "required": true},
+		"body": {"type": "string", "required": true},
+		"attachments": {
+			"type": "array",
+			"items": {"type": "string"},
+			"required": true
+		},
+		"smtp_host": {"type": "string", "required": true, "default": "localhost"},
+		"smtp_port": {"type": "integer", "required": true, "default": 25},
+		"html": {"type": "boolean", "required": true, "default": false}
+	}
+}

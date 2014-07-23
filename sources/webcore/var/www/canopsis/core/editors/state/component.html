@@ -1,0 +1,6 @@
+<form>
+	<button {{bind-attr class=":btn :btn-success isOk:active"}} {{action setState 0}}>{{tr 'Ok'}}</button>
+	<button {{bind-attr class=":btn :btn-warning isWarning:active"}} {{action setState 1}}>{{tr 'Warning'}}</button>
+	<button {{bind-attr class=":btn :btn-danger isError:active"}} {{action setState 2}}>{{tr 'Error'}}</button>
+	<button {{bind-attr class=":btn :btn-primary isUnknown:active"}} {{action setState 3}}>{{tr 'Unknown'}}</button>
+</form>
