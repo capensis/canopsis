@@ -355,9 +355,12 @@ class DataBase(Configurable):
             in self.conf[DataBase.CATEGORY])
 
         for db_property in db_properties:
-            reconnect = reconnect or self._update_property(
-                unified_conf=unified_conf, param_name=db_property,
+            updated_property = self._update_property(
+                unified_conf=unified_conf,
+                param_name=db_property,
                 public_property=False)
+            if updated_property:
+                reconnect = True
 
         if reconnect and self.auto_connect:
             self.reconnect()
@@ -381,10 +384,11 @@ class DataBase(Configurable):
                 Parameter(DataBase.HOST, self.host),
                 Parameter(DataBase.PORT, self.port, int),
                 Parameter(DataBase.DB, self.db),
-                Parameter(DataBase.AUTO_CONNECT, self.auto_connect, bool),
-                Parameter(DataBase.SAFE, self.safe, bool),
+                Parameter(
+                    DataBase.AUTO_CONNECT, self.auto_connect, Parameter.bool),
+                Parameter(DataBase.SAFE, self.safe, Parameter.bool),
                 Parameter(DataBase.WTIMEOUT, self.wtimeout, int),
-                Parameter(DataBase.SSL, self.ssl, bool),
+                Parameter(DataBase.SSL, self.ssl, Parameter.bool),
                 Parameter(DataBase.SSL_KEY, self.ssl_key),
                 Parameter(DataBase.SSL_CERT, self.ssl_cert),
                 Parameter(DataBase.USER, self.user),

@@ -275,9 +275,11 @@ class TimeSerie(Configurable):
                 Parameter(TimeSerie.AGGREGATION),
                 Parameter(
                     TimeSerie.PERIOD, value=Period(), parser=Period.from_str),
-                Parameter(TimeSerie.FILL, value=False, parser=bool),
-                Parameter(TimeSerie.ROUND_TIME, value=True, parser=bool),
-                Parameter(TimeSerie.MAX_POINTS, value=500, parser=int)))
+                Parameter(TimeSerie.FILL, value=False, parser=Parameter.bool),
+                Parameter(
+                    TimeSerie.ROUND_TIME, value=True, parser=Parameter.bool),
+                Parameter(
+                    TimeSerie.MAX_POINTS, value=500, parser=int)))
 
         return result
 
