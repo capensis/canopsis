@@ -19,8 +19,12 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
+from md5 import new as md5
+
 from canopsis.configuration import Parameter
 from canopsis.storage.manager import Manager
+
+from collections import Iterable
 
 
 class Organisation(Manager):
@@ -39,6 +43,23 @@ class Organisation(Manager):
     DATA_STORAGE = 'data_storage'
 
     DATA_TYPE = 'organisation'
+
+    LOGIN = 'login'
+    PWD = 'pwd'
+
+    ACCOUNT_ID = 'account_id'
+    GROUP_ID = 'group_id'
+    PROFILE_ID = 'profile_id'
+    RIGHT_ID = 'right_id'
+    DATA_ID = 'data_id'
+
+    ID = 'id'
+
+    class Error(Exception):
+        """
+        Exception dedicated to Organisation methods errors
+        """
+        pass
 
     def __init__(
         self,
@@ -96,6 +117,45 @@ class Organisation(Manager):
     @data_storage.setter
     def data_storage(self, value):
         self._data_storage = self._get_property_storage(value)
+
+    def get_accounts(self, account_ids=None):
+        """
+            Get an accounts
+        """
+
+        result = self.account_storage.get(data_id=account_ids)
+
+        return result
+
+    def get_account(self, login, pwd):
+        """
+            Get an account from a login and a password
+        """
+
+        crypted_pwd = md5(login_pwd[1])
+        request = {
+            Organisation.LOGIN: login_pwd[0],
+            Organisation.PWD: crypted_pwd
+        }
+        result = self.account_storage.find(request, limit=1)
+
+        return result
+
+    def update_account(self, account):
+        """
+            Update an account
+        """
+
+        self.account_storage.update(
+            data_id=account[Organisation.ID],
+            value=account)
+
+    def remove_account(self, account_id):
+        """
+            Remove the account which is identified by the input account_id
+        """
+
+        self.account_storage.remove(data_id=account_id)
 
     def _conf(self, *args, **kwargs):
 

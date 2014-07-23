@@ -37,7 +37,7 @@ do
 
 		cd $SRC_PATH/$pkg
 
-		if [ "$pkg" == "pyperfstore2" ] || [ "$pkg" == "canopsis"]
+		if [ "$pkg" == "canolibs" ]
 		then
 			python setup.py install
 		else

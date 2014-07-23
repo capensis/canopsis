@@ -468,6 +468,32 @@ class Storage(DataBase):
 
         raise NotImplementedError()
 
+    def find_elements(
+        self, request, limit=0, skip=0, sort=None, *args, **kwargs
+    ):
+        """
+        Find elements corresponding to input request and in taking care of
+        limit, skip and sort find parameters.
+
+        :param request: set of couple of (field name, field value)
+        :type request: dict(str, object)
+
+        :param limit: max number of elements to get
+        :type limit: int
+
+        :param skip: first element index among searched list
+        :type skip: int
+
+        :param sort: contains a list of couples of field (name, ASC/DESC)
+            or field name which denots an implicitelly ASC order
+        :type sort: list of {(str, {ASC, DESC}}), or str}
+
+        :return: input request elements
+        :rtype: list of objects
+        """
+
+        raise NotImplementedError()
+
     def remove_elements(self, ids, *args, **kwargs):
         """
         Remove elements identified by the unique input ids
