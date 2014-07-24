@@ -55,7 +55,7 @@ Ext.define('canopsis.controller.Reporting', {
 			}
 		}
 
-		global.notify.notify(_('Please Wait'), _('Your document is rendering, a popup will ask you where to save in few seconds'));
+		global.notify.notify(_('Please Wait'), _('Your document is rendering, It will be ready in about 1 minute in the briefcase or via email. Please wait...'));
 
 		Ext.Ajax.request({
 			url: url,
@@ -78,13 +78,13 @@ Ext.define('canopsis.controller.Reporting', {
 					);
 				}
 				else {
-					global.notify.notify('Failed', 'The report generation have failed', 'error');
-					log.error('Report generation have failed', this.logAuthor);
+					global.notify.notify('Still working', 'The report generation is currently working, please wait a while...', 'success');
+					log.info('The report generation is currently working, please wait a while...', this.logAuthor);
 				}
 			},
 			failure: function() {
-				global.notify.notify(_('Failed'), _('The report generation have failed'), 'error');
-				log.error('Report generation have failed', this.logAuthor);
+				global.notify.notify('Still working', 'The report generation is currently working, please wait a while...', 'success');
+				log.info('The report generation is currently working, please wait a while...', this.logAuthor);
 			}
 		});
 	},

@@ -91,6 +91,7 @@ class Wrapper(object):
 		opts = ' '.join(self.settings['opts'])
 
 		cmd = "wkhtmltopdf -O %s -s %s %s %s %s --window-status %s\
+				--javascript-delay 30000\
 				-T 21mm --header-line --header-spacing 5\
 				'http://127.0.0.1:8082/%s/static/canopsis/index.html?exportMode=true&view_id=%s&from=%s&to=%s&subset_selection=%s&authkey=%s'\
 				'%s/%s' 2>&1 | grep -v\
