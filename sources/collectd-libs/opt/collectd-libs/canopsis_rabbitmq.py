@@ -81,34 +81,34 @@ def read_callback(data=None):
 
 	#f = opener.open(url+"/exchanges")
 	exchanges = api("GET", "/api/exchanges", "", 'localhost', '15672', amqp_userid, amqp_password)
-	
+
 	try:
 		exchanges = json.loads(exchanges)
 		for exchange in exchanges:
 			name = exchange['name']
 			if name in canopsis_exchanges:
 				name = name.split('.')[1]
-				
+
 				try:
-					message_stats_out = exchange['message_stats_out']				
+					message_stats_out = exchange['message_stats_out']
 					put_value('%s_msg_out' % name, message_stats_out['publish'], type='derive')
-					
+
 				except Exception, err:
 					#log("Impossible to put OUT values of %s (%s)" % (name, err))
 					pass
-					
+
 				try:
 					message_stats_in  = exchange['message_stats_in']
 					put_value('%s_msg_in' % name, message_stats_in['publish'], type='derive')
-					
+
 				except Exception, err:
 					#log("Impossible to put IN values of %s (%s)" % (name, err))
 					pass
-				
+
 	except Exception, err:
 		log("Impossible to read json data (%s)" % err)
 		pass
-		
+
 
 
 def api(method, path, body, hostname, port, username, password):
@@ -125,8 +125,10 @@ def api(method, path, body, hostname, port, username, password):
             headers["Content-Type"] = "application/json"
         try:
             conn.request(method, path, body, headers)
-        except socket.error, e:
-            die("Could not connect: {0}".format(e))
+        except socket.error as e:
+           log("Could not connect: {0}".format(e))
+           return
+
         resp = conn.getresponse()
         if resp.status == 400:
             die(json.loads(resp.read())['reason'])
