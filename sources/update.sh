@@ -63,4 +63,4 @@ do
 done
 
 echo "==> Minimizing JavaScript..."
-su - $HUSER -c "webcore_minimizer"
+#su - $HUSER -c "webcore_minimizer"

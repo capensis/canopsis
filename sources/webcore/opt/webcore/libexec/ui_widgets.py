@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 # --------------------------------
-# Copyright (c) 2011 "Capensis" [http://www.capensis.com]
+# Copyright (c) 2014 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
 #
@@ -25,6 +25,9 @@ import json
 import re
 
 from bottle import get, request, response
+
+## Canopsis
+from libexec.auth import auth_backends
 
 logger = logging.getLogger("ui-widgets")
 
@@ -113,7 +116,7 @@ def get_all_widgets():
 
 
 #### Widgets CSS
-@get('/ui/widgets.css', skip=['checkAuthPlugin'])
+@get('/ui/widgets.css', skip=auth_backends)
 def get_widgets_css():
     widgets = get_internal_widgets()
     widgets += get_external_widgets()
@@ -153,7 +156,7 @@ def get_widgets_css():
 
 
 #### external widgets libs
-@get('/ui/thirdpartylibs.js', skip=['checkAuthPlugin'])
+@get('/ui/thirdpartylibs.js', skip=auth_backends)
 def get_external_widgets_libs():
     widgets = get_internal_widgets()
     widgets += get_external_widgets()

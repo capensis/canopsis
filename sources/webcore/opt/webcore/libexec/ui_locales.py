@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 # --------------------------------
-# Copyright (c) 2011 "Capensis" [http://www.capensis.com]
+# Copyright (c) 2014 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
 #
@@ -31,6 +31,7 @@ from polib import pofile
 from bottle import route, response
 
 logger = getLogger("ui_locales")
+from libexec.auth import auth_backends
 
 #########################################################################
 base_path = expanduser("~/var/www/canopsis/")
@@ -115,8 +116,8 @@ for lang in locales:
     locales_str[lang] = data
 
 
-@route('/:lang/static/canopsis/locales.js', skip=['checkAuthPlugin'])
-@route('/static/canopsis/locales.js', skip=['checkAuthPlugin'])
+@route('/:lang/static/canopsis/locales.js', skip=auth_backends)
+@route('/static/canopsis/locales.js', skip=auth_backends)
 def route_locales(lang='en'):
     response.content_type = 'text/javascript'
     if lang in locales:

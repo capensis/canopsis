@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 # --------------------------------
-# Copyright (c) 2011 "Capensis" [http://www.capensis.com]
+# Copyright (c) 2014 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
 #
@@ -22,9 +22,10 @@
 import logging
 import json
 
-from bottle import get, put, delete, request, HTTPError, post, response
-
+from bottle import get, put, delete, request, HTTPError, post, \
+    response, FormsDict
 ## Canopsis
+from canopsis.old.account import Account
 from canopsis.old.storage import get_storage
 from canopsis.old.record import Record
 import base64
@@ -34,18 +35,20 @@ from canopsis.old.tools import clean_mfilter
 from libexec.auth import get_account, check_group_rights
 
 logger = logging.getLogger("rest")
+logger.setLevel('DEBUG')
+db = get_storage(account=Account(user='root', group='root'))
 
 ctype_to_group_access = {
-    'schedule': 'group.CPS_schedule_admin',
-    'curve': 'group.CPS_curve_admin',
-    'account': 'group.CPS_account_admin',
-    'group': 'group.CPS_account_admin',
-    'selector': 'group.CPS_selector_admin',
-    'derogation': 'group.CPS_derogation_admin',
-    'consolidation': 'group.CPS_consolidation_admin'
+                            'schedule' : 'group.CPS_schedule_admin',
+                            'curve' : 'group.CPS_curve_admin',
+                            'account' : 'group.CPS_account_admin',
+                            'group' : 'group.CPS_account_admin',
+                            'selector' : 'group.CPS_selector_admin',
+                            'derogation' : 'group.CPS_derogation_admin',
+                            'consolidation' : 'group.CPS_consolidation_admin'
                         }
 
-
+#########################################################################
 #### GET Media
 @get('/rest/media/:namespace/:_id')
 def rest_get_media(namespace, _id):
@@ -55,10 +58,7 @@ def rest_get_media(namespace, _id):
     logger.debug("Get media '%s' from '%s':" % (_id, namespace))
 
     try:
-        raw = storage.get(
-            _id, account=account, namespace=namespace,
-            mfields=["media_bin", "media_name", "media_type"],
-            ignore_bin=False)
+        raw = storage.get(_id, account=account, namespace=namespace, mfields=["media_bin", "media_name", "media_type"], ignore_bin=False)
 
         media_type = raw.get('media_type', None)
         media_name = raw.get('media_name', None)
@@ -76,36 +76,104 @@ def rest_get_media(namespace, _id):
     logger.debug(" + media_name: %s" % media_name)
     logger.debug(" + media_bin:  %s" % len(media_bin))
 
-    response.headers['Content-Disposition'] = \
-        'attachment; filename="%s"' % media_name
+    response.headers['Content-Disposition'] = 'attachment; filename="%s"' % media_name
     response.headers['Content-Type'] = media_type
 
     return base64.b64decode(media_bin)
 
 
+@get('/rest/events_trees/:rk')
+@get('/rest/events_trees')
+def rest_trees_get(rk=None):
+    """
+        REST API Handler to get events trees.
+    """
+
+    account = get_account()
+    storage = get_storage(logging_level=logging.INFO, namespace='events_trees', account=account)
+
+
+    if not rk:
+        logger.debug('Getting whole collection.')
+
+        records = storage.find()
+
+        return {
+            'total': len(records),
+            'success': True,
+            'data': [r.dump() for r in records]
+        }
+
+    else:
+        logger.debug("Getting tree matching rk '{0}'".format(rk))
+
+        # Get Routing Key components
+        rkcomps = rk.split('.')
+
+        # Fetch root tree
+        record = storage.find_one(mfilter={'rk': rkcomps[0]})
+
+        if not record:
+            logger.error('No matching root node for rk {0}'.format(rk))
+            return HTTPError(404, "There is no events tree matching the routing key")
+
+        # Now go to the matching node
+        tree = record.dump(json=True)
+
+        if rk == tree['rk']:
+            return {
+                'total': 1,
+                'success': True,
+                'data': tree
+            }
+
+        current_node = tree
+        current_rk = rkcomps[0]
+
+        for rkcomp in rkcomps[1:]:
+            current_rk = '{0}.{1}'.format(current_rk, rkcomp)
+
+            # Find the node in the children list
+            for child in current_node['child_nodes']:
+                if child['rk'] == current_rk:
+                    current_node = child
+                    break
+
+            # If not found, raise an error
+            else:
+                logger.error('No matching node for rk {0}'.format(rk))
+                return HTTPError(404, "There is no events tree matching the routing key")
+
+        # Return the sub-tree
+        return {
+            'total': 1,
+            'success': True,
+            'data': current_node
+        }
+
 #### GET
 def rest_get(namespace, ctype=None, _id=None, params=None):
     #get the session (security)
     account = get_account()
+    logger.info('params')
+    logger.info(dict(params))
+    limit       = int(params.get('limit', default=20))
+    start       = int(params.get('start', default=0))
+    groups      = params.get('groups', default=None)
+    search      = params.get('search', default=None)
+    filter      = params.get('filter', default=None)
+    sort        = params.get('sort', default=None)
+    query       = params.get('query', default=None)
+    onlyWritable    = params.get('onlyWritable', default=False)
+    noInternal  = params.get('noInternal', default=False)
+    ids         = params.get('ids', default=[])
 
-    limit = int(params.get('limit', default=20))
-    page = int(params.get('page', default=0))
-    start = int(params.get('start', default=0))
-    groups = params.get('groups', default=None)
-    search = params.get('search', default=None)
-    filter = params.get('filter', default=None)
-    sort = params.get('sort', default=None)
-    query = params.get('query', default=None)
-    onlyWritable = params.get('onlyWritable', default=False)
-    noInternal = params.get('noInternal', default=False)
-    ids = params.get('ids', default=[])
-
-    get_id = request.params.get('_id', default=None)
+    get_id          = request.params.get('_id', default=None)
 
     fields = request.params.get('fields', default=None)
 
     if not _id and get_id:
-        _id = get_id
+        _id  = get_id
 
     if not isinstance(ids, list):
         try:
@@ -139,7 +207,6 @@ def rest_get(namespace, ctype=None, _id=None, params=None):
     logger.debug(" + _id: "+str(_id))
     logger.debug(" + ids: "+str(ids))
     logger.debug(" + Limit: "+str(limit))
-    logger.debug(" + Page: "+str(page))
     logger.debug(" + Start: "+str(start))
     logger.debug(" + Groups: "+str(groups))
     logger.debug(" + onlyWritable: "+str(onlyWritable))
@@ -170,12 +237,9 @@ def rest_get(namespace, ctype=None, _id=None, params=None):
 
     if query:
         if mfilter:
-            mfilter['crecord_name'] = {
-                '$regex' : '.*%s.*' % query, '$options': 'i'}
+            mfilter['crecord_name'] = { '$regex' : '.*'+str(query)+'.*', '$options': 'i' }
         else:
-            mfilter = {
-                'crecord_name': {'$regex': '.*%s.*' % query, '$options': 'i'}}
-
+            mfilter = {'crecord_name': { '$regex' : '.*'+str(query)+'.*', '$options': 'i' }}
 
     if _id:
         ids = _id.split(',')
@@ -199,16 +263,14 @@ def rest_get(namespace, ctype=None, _id=None, params=None):
 
     else:
         if search:
-            mfilter['_id'] = {'$regex': '.*' + search + '.*', '$options': 'i'}
+            mfilter['_id'] = { '$regex' : '.*'+search+'.*', '$options': 'i' }
 
-        logger.debug(" + mfilter: %s" % mfilter)
+        logger.debug(" + mfilter: "+str(mfilter))
 
         #clean mfilter
         mfilter = clean_mfilter(mfilter)
 
-        records, total = storage.find(
-            mfilter, sort=msort, limit=limit, offset=start, account=account,
-            with_total=True)
+        records, total = storage.find(mfilter, sort=msort, limit=limit, offset=start, account=account, with_total=True, namespace=namespace)
 
     output = []
 
@@ -240,11 +302,60 @@ def rest_get(namespace, ctype=None, _id=None, params=None):
                     for field in fields_to_delete:
                         del data[field]
 
+
                 output.append(data)
 
-    result = {'total': total, 'success': True, 'data': output}
+    post_threatement_get(namespace, ctype, output)
 
-    return result
+    output={'total': total, 'success': True, 'data': output}
+
+    return output
+
+
+def post_threatement_get(namespace, ctype, output):
+
+    logger.debug('Post threatment on {} : {}'.format(namespace, output))
+    if namespace == 'events':
+        rks = [element['rk']  for element in output]
+        # This filter matches ack that are pending
+        # A pending Ack is an ack that is not solved yet an witch time has not been reseted to -1
+        # Theses rules are defined in Acknowlegement engine
+        ack_filter = json.dumps({
+            'rk': {
+                '$in': rks,
+            },
+            'solved': False,
+            'ackts': {'$gt': -1}
+        })
+
+        logger.debug({'ackfilter': ack_filter})
+        bottleParams = FormsDict({ 'filter': ack_filter})
+        logger.debug({'bottleParams': bottleParams})
+        ack_output = rest_get('ack', None, None, bottleParams)
+        logger.debug(' + Ack query : {}'.format(ack_output))
+
+        ack_dict = {}
+
+        #building a dictionnary to get quick access to information
+        for ack in ack_output['data']:
+            ack_dict[ack['rk']] = ack
+
+        #formatting ack for event purposes
+        for event in output:
+            #if an event matches an ack
+            if event['rk'] in ack_dict:
+                logger.info(' + Rk in ack dict : {}'.format(event['rk']))
+                #keep track of ack status for ui purposes
+                ack = {'pending' : False}
+                #setting other interesting ack values
+                for key in ['comment', 'author', 'rk', 'timestamp', 'ackts']:
+                    if key in ack_dict[event['rk']]:
+                        ack[key] = ack_dict[event['rk']][key]
+
+                if ack_dict[event['rk']]['solved'] == False:
+                    ack['pending'] = True
+                #event ack assignation
+                event['ack'] = ack
 
 
 @get('/rest/:namespace/:ctype/:_id')
@@ -255,6 +366,8 @@ def rest_get_route(namespace, ctype=None, _id=None):
 
 
 #### POST
+@put('/rest/:namespace/:ctype/:_id')
+@put('/rest/:namespace/:ctype')
 @post('/rest/:namespace/:ctype/:_id')
 @post('/rest/:namespace/:ctype')
 def rest_post(namespace, ctype, _id=None):
@@ -280,8 +393,8 @@ def rest_post(namespace, ctype, _id=None):
         try:
             items = json.loads(items)
         except Exception as err:
-            logger.error("PUT: Impossible to parse data (%s)" % err)
-            return HTTPError(404, "Impossible to parse data")
+            logger.error("PUT: Impossible to parse data ({})".format(err))
+            return HTTPError(500, "Impossible to parse data")
 
     if not isinstance(items, list):
         items = [items]
@@ -359,71 +472,8 @@ def rest_post(namespace, ctype, _id=None):
             storage.put(record, namespace=namespace, account=account)
 
         except Exception as err:
-            logger.error('Impossible to put (%s)' % err)
+            logger.error('Impossible to put ({})'.format(err))
             return HTTPError(403, "Access denied")
-
-
-#### PUT
-@put('/rest/:namespace/:ctype/:_id')
-@put('/rest/:namespace/:ctype')
-def rest_put(namespace, ctype, _id=None):
-    #get the session (security)
-    account = get_account()
-    storage = get_storage(namespace=namespace, logging_level=logger.level)
-
-    #check rights on specific ctype (check ctype_to_group_access variable below)
-    if ctype in ctype_to_group_access:
-        if not check_group_rights(account, ctype_to_group_access[ctype]):
-            return HTTPError(403, 'Insufficient rights')
-
-    logger.debug("PUT:")
-
-    data = request.body.readline()
-    if not data:
-        return HTTPError(400, "No data received")
-
-    logger.debug(" + data: %s" % data)
-    logger.debug(" + data-type: %s" % type(data))
-
-    if isinstance(data, str):
-        try:
-            data = json.loads(data)
-        except Exception as err:
-            logger.error("PUT: Impossible to parse data (%s)" % err)
-            return HTTPError(404, "Impossible to parse data")
-
-    if not _id:
-        try:
-            _id = str(data['_id'])
-        except:
-            pass
-
-        try:
-            _id = str(data['id'])
-        except:
-            pass
-
-    ## Clean data
-    try:
-        del data['_id']
-    except:
-        pass
-
-    try:
-        del data['id']
-    except:
-        pass
-
-    logger.debug(" + _id: " + str(_id))
-    logger.debug(" + ctype: " + str(ctype))
-    logger.debug(" + Data: " + str(data))
-
-    try:
-        storage.update(_id, data, namespace=namespace, account=account)
-
-    except Exception as err:
-        logger.error('Impossible to put (%s)' % err)
-        return HTTPError(403, "Access denied")
 
 
 #### DELETE
@@ -474,4 +524,4 @@ def rest_delete(namespace, ctype, _id=None):
     try:
         storage.remove(_id, account=account)
     except:
-        return HTTPError(404, _id + " Not Found")
+        return HTTPError(404, _id+" Not Found")
