@@ -58,10 +58,11 @@ Ext.define('widgets.perftop.perftop' , {
 				model: 'canopsis.model.Perfdata',
 
 				autoLoad: false,
-
+				async: false,
 				proxy: {
 					type: 'rest',
 					url: '/perfstore/perftop',
+					async: false,
 					extraParams: {
 						'limit': this.limit,
 						'sort': this.sort,
@@ -71,7 +72,7 @@ Ext.define('widgets.perftop.perftop' , {
 						'expand': this.expand,
 						'percent': this.show_percent,
 						'threshold_on_pct': this.threshold_on_pct,
-						'report': this.reportMode || this.exportMode
+						'report': false
 					},
 					reader: {
 						type: 'json',
@@ -283,7 +284,7 @@ Ext.define('widgets.perftop.perftop' , {
 
 	doRefresh: function(from, to) {
 		this.store.proxy.extraParams['time_window'] = to - from;
-		this.store.proxy.extraParams['report'] = this.reportMode || this.exportMode;
+		this.store.proxy.extraParams['report'] = false;
 		var url  = this.store.proxy['url'];
 
 		if(this.store.proxy.extraParams['report']) {

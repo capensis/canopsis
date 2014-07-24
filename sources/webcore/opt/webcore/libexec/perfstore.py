@@ -536,8 +536,13 @@ def perfstore_perftop(start=None, stop=None):
 			#clean mfilter
 			mfilter =  clean_mfilter(mfilter)
 
-			metrics =  manager.store.find(mfilter=mfilter, mfields=['_id', 'co', 're', 'me', 'lv', 'u', 'ma', 'lts', 't'], limit=limit)
-			metrics.sort('lv', sort)
+			metrics =  manager.store.find(
+				mfilter=mfilter,
+				mfields=['_id', 'co', 're', 'me', 'lv', 'u', 'ma', 'lts', 't'],
+				limit=limit,
+				sort=[('lv', sort)]
+			)
+
 			if isinstance(metrics, dict):
 				metrics = [metrics]
 
