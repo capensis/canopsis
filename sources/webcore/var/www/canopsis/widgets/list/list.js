@@ -150,7 +150,7 @@ Ext.define('widgets.list.list' , {
 		
 		var event_ack = {};
 
-		this.grid.store.load();
+		//this.grid.store.load();
 		this.grid.store.filter(function(rec, id) {
 			var ans;
 
