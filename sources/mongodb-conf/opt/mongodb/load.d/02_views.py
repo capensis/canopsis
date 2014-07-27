@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #--------------------------------
-# Copyright (c) 2011 "Capensis" [http://www.capensis.com]
+# Copyright (c) 2014 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
 #
@@ -39,11 +39,7 @@ storage = get_storage(account=root, namespace='object')
 def init():
 
     for path, folders, files in os.walk(views_path):
-        print("Loading views:", views_path)
-
         for filename in files:
-            print("Loading view: ", filename)
-
             filepath = os.path.join(path, filename)
 
             with open(filepath) as f:
@@ -51,24 +47,21 @@ def init():
 
                 try:
                     _id = data.pop('id')
-                    name = data.pop('name')
-                    items = data.pop('items')
-
                 except KeyError as err:
-                    print >> sys.stderr, "Can't parse view, missing key:", err
+                    print >>sys.stderr, "Can't parse view, missing key:", err
                     sys.exit(1)
 
-                create_view(_id, name, items, **data)
+                create_view(_id, filename, data)
 
 
 def update():
     init()
-    update_view_for_new_metric_format()
+    #update_view_for_new_metric_format()
 
 
-def create_view(
-    _id, name, data, position=None, mod='o+r', autorm=True, internal=False):
+def create_view(_id, name, data, mod='o+r', autorm=True, internal=False):
     #Delete old view
+
     try:
         record = storage.get('view.%s' % _id)
         if autorm:
@@ -78,32 +71,20 @@ def create_view(
     except:
         pass
 
-    if not position:
-        # fullscreen
-        position = {'width': 1, 'top': 0, 'left': 0, 'height': 1}
-
     logger.info(" + Create view '%s'" % name)
-    record = Record(
-        {'_id': 'view.%s' % _id, 'internal': internal}, _type='view', name=name,
-        group='group.CPS_view_admin')
-
-    if isinstance(data, list):
-        record.data['items'] = data
-    elif isinstance(data, dict):
-        record.data['items'] = [{'position': position, 'data': data}]
-    else:
-        raise("Invalide data ...")
-
+    record = Record(data, type='view', name=name, group='group.CPS_view_admin')
     record.chmod(mod)
     storage.put(record)
     return record
 
 
 def update_view_for_new_metric_format():
-    records = storage.find(
-        {'crecord_type': 'view'}, namespace='object', account=root)
+    records = storage.find({'crecord_type': 'view'}, namespace='object', account=root)
     for view in records:
-        for item in view.data['items']:
+        container = view.data['container']
+
+        for item in container['items']:
+            widget = item['widget']
             nodesObject = {}
 
             # check with flotchart migration from highchart

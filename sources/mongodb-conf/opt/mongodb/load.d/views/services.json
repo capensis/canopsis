@@ -1,22 +1,21 @@
 {
-  "id": "view.accounts",
-  "_id": "view.accounts",
+  "id": "view.services",
+  "_id": "view.services",
   "crecord_type": "view",
   "crecord_write_time": 1400853201,
   "enable": true,
   "containerwidget": {
-    "xtype": "hbox",
+    "xtype": "vbox",
     "title": "container title vbox",
     "_id": "test_view_vertical_container",
     "items": [
       {
-        "title": "wrapper",
+        "title": "Services",
         "xtype": "widgetwrapper",
         "widget": {
-          "xtype": "list",
-          "listed_crecord_type": "account",
-          "title": "Accounts",
-          "toolbar": [
+          "xtype": "text",
+          "title": "text cell",
+          "filters": [
             "actionbutton-create",
             "actionbutton-removeselection"
           ]

@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 #--------------------------------
 # Copyright (c) 2014 "Capensis" [http://www.capensis.com]
 #
@@ -19,39 +18,39 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from canopsis.old.account import Account
-from canopsis.old.storage import Storage
+from caccount import caccount
+from cstorage import get_storage
+from crecord import crecord
+
+import hashlib
 
 ##set root account
-root = Account(user="root", group="root")
+root = caccount(user="root", group="root")
 
 logger = None
 
-
 def init():
-    storage = Storage(account=root)
+	storage = get_storage(account=root, namespace='object')
 
-    namespaces = ['files', 'binaries.files', 'binaries.chunks']
+	state_spec = {
+		"crecord_type": "state-spec",
+		"restore_event": True,
+		"bagot": {
+                        # if event appears >= 10 times in 1hr
+			"time": 3600,
+			"freq": 10
+			},
+                # if event appears again in < 5min
+		"stealthy_time": 360
+		}
 
-    for namespace in namespaces:
-        logger.info(" + Drop '%s' collection" % namespace)
-        storage.drop_namespace(namespace)
-
+	logger.info(" + Creating event state specification")
+	record = crecord(data=state_spec, name="event state specifications", type='state-spec')
+	record.chmod('g+w')
+	record.chmod('o+r')
+	record.chgrp('group.CPS_root')
+	storage.put(record)
 
 def update():
-    update_for_new_rights()
+	init();
 
-
-def update_for_new_rights():
-    #update briefcase elements
-    storage = Storage(namespace='files', account=root)
-
-    dump = storage.find({})
-
-    for record in dump:
-        if record.owner.find('account.') == -1:
-            record.owner = 'account.%s' % record.owner
-        if record.group.find('group.') == -1:
-            record.group = 'group.%s' % record.group
-
-    storage.put(dump)

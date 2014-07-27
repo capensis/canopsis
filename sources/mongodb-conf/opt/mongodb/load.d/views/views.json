@@ -1,8 +1,0 @@
-{
-     "id": "view_manager",
-     "name": "Views",
-     "items": {
-          "xtype": "ViewTreePanel"
-     },
-     "internal": true
-}

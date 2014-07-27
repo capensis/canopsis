@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #--------------------------------
-# Copyright (c) 2011 "Capensis" [http://www.capensis.com]
+# Copyright (c) 2014 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
 #
@@ -255,7 +255,7 @@ def update_for_new_rights():
             new_groups_array = []
             for group in record.data['groups']:
                 if group == 'group.canopsis' or group == 'canopsis' or \
-                    group == 'CPS_canopsis' or group == 'group.CPS_canopsis':
+                        group == 'CPS_canopsis' or group == 'group.CPS_canopsis':
                     group = 'Canopsis'
                 if group == 'group.root' or group == 'root':
                     group = 'CPS_root'

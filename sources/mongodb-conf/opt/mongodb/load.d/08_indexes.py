@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #--------------------------------
-# Copyright (c) 2011 "Capensis" [http://www.capensis.com]
+# Copyright (c) 2014 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
 #
@@ -28,13 +28,16 @@ logger = None
 root = Account(user="root", group="root")
 storage = get_storage(account=root, namespace='object')
 
-INDEXES = {
+"""This file is copied to canopsis libs folder, so there should no have direct canopsis import here"""
+
+INDEXES  = {
     'object': [
         [('crecord_type', 1)]
     ],
     'perfdata2': [
         [('co', 1), ('re', 1), ('me', 1)],
         [('re', 1), ('me', 1)],
+        [('co', 1), ('me', 1)],
         [('me', 1)],
         [('tg', 1)]
     ],
@@ -71,32 +74,22 @@ INDEXES = {
             ('resource', 1),
             ('state_type', 1),
             ('state', 1)
-        ], [
-            ('source_type', 1),
-            ('tags', 1)
-        ], [
-            ('event_type', 1),
-            ('component', 1),
-            ('resource', 1)
-        ], [
-            ('event_type', 1),
-            ('resource', 1)
-        ], [
-            ('event_type', 1)
-        ], [
-            ('state_type', 1)
-        ], [
-            ('tags', 1)
-        ], [
-            ('referer', 1)
-        ]
+        ], [('source_type', 1), ('tags', 1)],
+        [('event_type', 1), ('component', 1), ('resource', 1)],
+        [('event_type', 1), ('resource', 1)],
+        [('event_type', 1)],
+        [('state_type', 1)],
+        [('tags', 1)],
+        [('referer', 1)]
     ],
     'entities': [
+        [('type', 1)],
         [('type', 1), ('name', 1)],
         [('type', 1), ('component', 1), ('name', 1)],
-        [('type', 1), ('component', 1), ('resource', 1), ('id', 1)],  # downtime
+        [('type', 1), ('component', 1), ('id', 1)],
+        [('type', 1), ('component', 1), ('resource', 1), ('id', 1)],
         [('type', 1), ('component', 1), ('resource', 1), ('name', 1)],
-        [('type', 1), ('nodeid', 1)]  # contextual data like metric
+        [('type', 1), ('nodeid', 1)]
     ]
 }
 

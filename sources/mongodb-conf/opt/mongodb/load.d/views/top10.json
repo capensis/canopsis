@@ -1,8 +1,0 @@
-{
-     "id": "top10",
-     "name": "Top 10",
-     "items": {
-          "xtype": "top10"
-     },
-     "internal": true
-}

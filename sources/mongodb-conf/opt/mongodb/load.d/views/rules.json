@@ -1,8 +1,0 @@
-{
-     "id": "rules_manager",
-     "name": "Filter Rules",
-     "items": {
-          "xtype": "RuleGrid"
-     },
-     "internal": true
-}

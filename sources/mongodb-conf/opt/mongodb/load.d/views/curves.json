@@ -1,8 +1,0 @@
-{
-     "id": "curves",
-     "name": "Curves",
-     "items": {
-          "xtype": "CurvesGrid"
-     },
-     "internal": true
-}

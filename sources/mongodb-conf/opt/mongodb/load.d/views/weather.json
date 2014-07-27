@@ -1,21 +1,22 @@
 {
-  "id": "view.accounts",
-  "_id": "view.accounts",
+  "id": "view.weather",
+  "_id": "view.weather",
   "crecord_type": "view",
   "crecord_write_time": 1400853201,
   "enable": true,
   "containerwidget": {
-    "xtype": "hbox",
-    "title": "container title vbox",
-    "_id": "test_view_vertical_container",
+    "xtype": "vbox",
+    "title": "container title hbox",
+    "_id": "test_view_horizontal_container",
     "items": [
       {
         "title": "wrapper",
         "xtype": "widgetwrapper",
         "widget": {
-          "xtype": "list",
+          "xtype": "weather",
+          "title": "Weather widget 1",
+          "event_selection" : [],
           "listed_crecord_type": "account",
-          "title": "Accounts",
           "toolbar": [
             "actionbutton-create",
             "actionbutton-removeselection"

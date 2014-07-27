@@ -1,0 +1,63 @@
+{
+  "id": "view.event",
+  "_id": "view.event",
+  "crecord_type": "view",
+  "crecord_write_time": 1400853201,
+  "enable": true,
+  "containerwidget": {
+    "xtype": "vbox",
+    "title": "container title vbox",
+    "items": [
+      {
+        "title": "wrapper",
+        "xtype": "widgetwrapper",
+        "widget": {
+          "widgetId" : "fake-guid-fd5a-1ede-8ac2-6a1d66ad0023",
+          "xtype": "list",
+          "listed_crecord_type": "event",
+          "title": "Bac à évenements",
+          "item_actions": [
+            "actionbutton-ack"
+          ],
+          "toolbar": [
+            "actionbutton-history"
+          ],
+          "hidden_columns": [
+            "children",
+            "aaa_admin_group",
+            "aaa_access_other",
+            "aaa_access_unauth",
+            "crecord_creation_time",
+            "aaa_owner",
+            "aaa_group",
+            "aaa_access_owner",
+            "aaa_access_group",
+            "parent",
+            "enable",
+            "crecord_name"
+          ],
+          "item_actions": ["actionbutton-show", "actionbutton-ack"]
+        }
+      }
+    ]
+  },
+  "parent": [],
+  "aaa_access_owner": [
+    "r",
+    "w"
+  ],
+  "aaa_group": "group.CPS_view_admin",
+  "crecord_creation_time": 1400853201,
+  "aaa_access_unauth": [],
+  "aaa_owner": "account.root",
+  "internal": false,
+  "aaa_access_other": [
+    "r"
+  ],
+  "aaa_access_group": [
+    "r"
+  ],
+  "aaa_admin_group": "group.CPS_view_admin",
+  "children": [],
+  "crecord_name": "Accounts view"
+}
