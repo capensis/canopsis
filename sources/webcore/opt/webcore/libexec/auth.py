@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 # --------------------------------
-# Copyright (c) 2011 "Capensis" [http://www.capensis.com]
+# Copyright (c) 2014 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
 #
@@ -19,10 +19,9 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-import sys, os, logging, json
-import bottle, logging, hashlib, json
-from bottle import get, request, HTTPError
-
+import bottle
+import logging
+from bottle import get, request, response, post, HTTPError, redirect
 
 ## Canopsis
 from canopsis.old.account import Account
@@ -36,126 +35,31 @@ session_accounts = {
     'anonymous': Account()
 }
 
-#########################################################################
-class checkAuthPlugin(object):
-    name='checkAuthPlugin'
+# List of plugins to skip
+# CAS will handle the logout method
+auth_backends = ['AuthKeyBackend', 'LDAPBackend', 'CASBackend', 'EnsureAuthenticated']
+auth_backends_logout = ['AuthKeyBackend', 'LDAPBackend', 'EnsureAuthenticated']
 
-    def __init__(self,authorized_grp=[], unauthorized_grp=[]):
-        self.authorized_grp = authorized_grp
-        self.unauthorized_grp = unauthorized_grp
-        self.keyword = None
 
-    def setup(self, app):
-        for other in app.plugins:
-            if not isinstance(other, checkAuthPlugin): continue
-            if other.keyword == self.keyword:
-                raise PluginError("Found another auth plugin with "\
-                "conflicting settings (non-unique keyword).")
+class EnsureAuthenticated(object):
+    name = 'EnsureAuthenticated'
 
     def apply(self, callback, context):
-        authorized_grp = []
-        unauthorized_grp = []
+        def decorated(*args, **kwargs):
+            s = request.environ.get('beaker.session')
 
-        if 'config' in context:
-            conf = context['config'].get('checkAuthPlugin',{})
-        if 'authorized_grp' in conf:
-            authorized_grp = conf.get('authorized_grp', [])
-        if 'unauthorized_grp' in conf:
-            unauthorized_grp = conf.get('unauthorized_grp', [])
+            if not s.get('auth_on', False):
+                return HTTPError(401, 'Not authorized')
 
-        if not isinstance(authorized_grp, list):
-            authorized_grp = [authorized_grp]
+            return callback(*args, **kwargs)
 
-        if not isinstance(unauthorized_grp, list):
-            unauthorized_grp = [unauthorized_grp]
-
-        def do_auth(*args, **kawrgs):
-            logger.debug("Auth query")
-            access = False
-
-            try:
-                path = bottle.request.path
-            except:
-                path = None
-
-            url = bottle.request.url
-
-            account = get_account()
-
-            authkey = request.params.get('authkey', None)
-            if authkey:
-                logger.debug("Check authkey: '%s'" % authkey)
-
-                account = check_authkey(authkey)
-
-                if account:
-                    create_session(account)
-                    access = True
-                else:
-                    logger.debug(" + Failed")
-
-            if not account or account.user == 'anonymous':
-                return HTTPError(403, "Forbidden")
-
-            logger.debug(" + _id: %s" % account._id)
-
-            if check_root(account):
-                access = True
-            else:
-                if not authorized_grp and not unauthorized_grp:
-                    access = True
-                else:
-                    logger.debug("Check authorized_grp: %s" % authorized_grp)
-                    if authorized_grp:
-                        for group in authorized_grp:
-                            if check_group_rights(account, group):
-                                access = True
-                                break
-
-                    logger.debug("Check unauthorized_grp and overwrite access: %s" % unauthorized_grp)
-                    if unauthorized_grp:
-                        for group in unauthorized_grp:
-                            if check_group_rights(account, group):
-                                access = False
-                                break
+        return decorated
 
 
-            #logger.debug("Check path: '%s'" % path)
-            #if path == "/canopsis/auth.html":
-            #   access = True
-
-            logger.debug(" + Access: %s" % access)
-
-            if access:
-                logger.debug(" + Auth ok")
-                return callback(*args, **kawrgs)
-            else:
-                logger.error(" + Invalid auth")
-                return HTTPError(403, 'Insufficient rights')
-
-        return do_auth
-#########################################################################
-
-# Test checkAuthPlugin
-@get('/account/checkAuthPlugin1', checkAuthPlugin={'authorized_grp': 'group.Canopsis'})
-def account_checkAuthPlugin():
-    logger.info("Access granted by checkAuthPlugin")
-    return {'total': 0, 'success': True, 'data': []}
-
-@get('/account/checkAuthPlugin2', checkAuthPlugin={'unauthorized_grp': 'group.Canopsis'})
-def account_checkAuthPlugin():
-    logger.info("Access granted by checkAuthPlugin")
-    return {'total': 0, 'success': True, 'data': []}
-
-@get('/auth/:login/:password',skip=['checkAuthPlugin'])
-@get('/auth/:login',skip=['checkAuthPlugin'])
-@get('/auth',skip=['checkAuthPlugin'])
-def auth(login=None, password=None):
-    if not login:
-        login = request.params.get('login', default=None)
-
-    if not password:
-        password = request.params.get('password', default=None)
+@post('/auth', skip=auth_backends)
+def auth():
+    login = request.params.get('username', default=None)
+    password = request.params.get('password', default=None)
 
     if not login or not password:
         return HTTPError(400, "Invalid arguments")
@@ -183,42 +87,31 @@ def auth(login=None, password=None):
     except Exception as err:
         logger.error(err)
 
-    ## External
-    # Try to provisionning account
-    if not account and mode == 'plain':
-        try:
-            account = external_prov(login, password)
-        except Exception as err:
-            logger.error(err)
-
     ## Check
-    if not account:
-        return HTTPError(403, "Forbidden")
+    if not account or account.external:
+        if mode == 'plain':
+            response.status = 307
+            response.set_header('Location', '/auth/external')
 
-    logger.debug(" + Check password ...")
+            return 'username={0}&password={1}'.format(login, password)
+
+        else:
+            return HTTPError(403, 'Plain authentication required')
 
     if not account.is_enable():
         return HTTPError(403, "This account is not enabled")
 
-    if account.external and  mode != 'plain':
-        return HTTPError(403, "Send your password in plain text")
+    logger.debug(" + Check with local db")
+    access = False
 
-    access = None
+    if mode == 'plain':
+        access = account.check_passwd(password)
 
-    if account.external and mode == 'plain':
-        access = external_auth(login, password)
+    elif mode == 'shadow':
+        access = account.check_shadowpasswd(password)
 
-    if access == None:
-        logger.debug(" + Check with local db")
-
-        if mode == 'plain':
-            access = account.check_passwd(password)
-
-        elif mode == 'shadow':
-            access = account.check_shadowpasswd(password)
-
-        elif mode == 'crypted':
-            access = account.check_tmp_cryptedKey(password)
+    elif mode == 'crypted':
+        access = account.check_tmp_cryptedKey(password)
 
     if not access:
         logger.debug(" + Invalid password ...")
@@ -226,11 +119,23 @@ def auth(login=None, password=None):
 
     create_session(account)
 
-    output = [ account.dump() ]
-    output = {'total': len(output), 'success': True, 'data': output}
-    return output
+    redirect('/')
 
-@get('/autoLogin/:key',skip=['checkAuthPlugin'])
+
+@post('/auth/external')
+def doauth():
+    # When we arrive here, the Bottle plugins in charge of authentication have
+    # initialized the session, we just need to redirect to the index.
+    bottle.redirect('/static/canopsis/index.html')
+
+
+@get('/logged_in')
+def logged_in():
+    # Route used when came back from CAS or any other external backend
+    bottle.redirect('/static/canopsis/index.html')
+
+
+@get('/autoLogin/:key', skip=auth_backends)
 def autoLogin(key=None):
     if not key:
         return HTTPError(400, "No key provided")
@@ -246,11 +151,12 @@ def autoLogin(key=None):
 
     create_session(account)
 
-    return {'total':1,'data':[ account.dump() ], 'success':True}
+    return {'total': 1, 'data': [account.dump()], 'success': True}
+
 
 #Access for disconnect and clean session
-@get('/logout',     skip=['checkAuthPlugin'])
-@get('/disconnect', skip=['checkAuthPlugin'])
+@get('/logout', skip=auth_backends_logout)
+@get('/disconnect', skip=auth_backends_logout)
 def disconnect():
     s = bottle.request.environ.get('beaker.session')
     user = s.get('account_user', None)
@@ -260,14 +166,18 @@ def disconnect():
 
     logger.debug("Disconnect '%s'" % user)
     delete_session()
-    return {'total': 0, 'success': True, 'data': []}
+
+    bottle.redirect('/')
+    # return {'total': 0, 'success': True, 'data': []}
+
 
 #find the account in memory, or try to find it from database, if not in db log anon
 def get_account(_id=None):
     logger.debug("Get Account:")
 
+    s = bottle.request.environ.get('beaker.session')
+
     if not _id:
-        s = bottle.request.environ.get('beaker.session')
         _id = s.get('account_id', None)
 
     logger.debug(" + _id: %s" % _id)
@@ -287,15 +197,15 @@ def get_account(_id=None):
     logger.debug("Load account from DB")
 
     try:
-        user = s.get('account_user', None)
         storage = get_storage(namespace='object')
-        account = Account(storage.get(_id, account=Account(user=user)))
+        account = Account(storage.get(_id, account=Account(user='root')))
     except Exception as err:
         logger.debug("  + Failed: %s" % err)
         return session_accounts['anonymous']
 
     session_accounts[_id] = account
     return account
+
 
 #cache is cool, but when you change rights, cache still have old rights, so reload
 def reload_account(_id):
@@ -319,6 +229,7 @@ def reload_account(_id):
 
     logger.debug(' + Session and cache are reloaded')
     return True
+
 
 def check_authkey(key, account=None):
     storage = get_storage(namespace='object')
@@ -344,14 +255,16 @@ def check_authkey(key, account=None):
 
     return key_account
 
+
 def check_root(account):
-    if account._id == 'account.root' or  account.group == 'group.CPS_root':
+    if account._id == 'account.root' or account.group == 'group.CPS_root':
         return True
 
     if 'group.CPS_root' in account.groups:
         return True
 
     return False
+
 
 def check_group_rights(account, group_id):
     if check_root(account):
@@ -363,8 +276,9 @@ def check_group_rights(account, group_id):
     if group_id in account.groups:
         return True
 
-    logger.debug("'%s' is not in '%s'" % (account.user,group_id))
+    logger.debug("'%s' is not in '%s'" % (account.user, group_id))
     return False
+
 
 def create_session(account):
     session_accounts[account._id] = account
@@ -379,6 +293,7 @@ def create_session(account):
 
     return s
 
+
 def delete_session(_id=None):
     account = get_account()
 
@@ -388,7 +303,7 @@ def delete_session(_id=None):
     if isinstance(_id, list):
         ids = _id
     else:
-        ids = [ _id ]
+        ids = [_id]
 
     logger.debug("Delete session '%s'" % ids)
 
@@ -401,15 +316,3 @@ def delete_session(_id=None):
     if account._id in ids:
         s = bottle.request.environ.get('beaker.session')
         s.delete()
-
-def external_prov(login, password):
-    import auth_ldap
-
-    logger.debug(" + Check External provisionning")
-    return auth_ldap.prov(login, password)
-
-def external_auth(login=None, password=None):
-    import auth_ldap
-
-    logger.debug(" + Check External Auth")
-    return auth_ldap.auth(login, password)

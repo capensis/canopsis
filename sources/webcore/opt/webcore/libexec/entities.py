@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 # --------------------------------
-# Copyright (c) 2011 "Capensis" [http://www.capensis.com]
+# Copyright (c) 2014 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
 #
@@ -34,13 +34,13 @@ TABLE_NAME = 'entities'
 logger = logging.getLogger('Entities')
 
 
-def get_entities_from_db(mfilter):
+def get_entities_from_db(mfilter, skip=0, limit=0):
 
     account = get_account()
     storage = get_storage(namespace=TABLE_NAME, account=account)
     backend = storage.get_backend()
 
-    entities = backend.find(mfilter)
+    entities = backend.find(mfilter, skip=skip, limit=limit)
 
     response = {
         'total': entities.count(),
@@ -105,6 +105,11 @@ def get_entities_with_custom_filter():
                 'error': str(err)
             }))
 
-        mfilter = request.params['filter']
+        mfilter = json.loads(request.params['filter'])
 
-    return get_entities_from_db(mfilter)
+    start = int(request.params.get('start', 0))
+    limit = int(request.params.get('limit', 0))
+
+    logger.debug('Start: {0}, Limit: {1}, Filter: {2}'.format(start, limit, mfilter))
+
+    return get_entities_from_db(mfilter, skip=start, limit=limit)

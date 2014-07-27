@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 # --------------------------------
-# Copyright (c) 2011 "Capensis" [http://www.capensis.com]
+# Copyright (c) 2014 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
 #
@@ -19,16 +19,12 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-import sys
-import os
 import logging
 import json
-import gevent
 from datetime import datetime
 from dateutil.rrule import *
 from time import mktime as mktime
 
-import bottle
 from bottle import route, get, delete, put, request
 from bottle import HTTPError, post, static_file, response
 
@@ -39,15 +35,16 @@ from libexec.rest import *
 namespace = "events"
 #########################################################################
 
+
 @get('/cal/:source/:interval_start/:interval_end')
 def cal_get(source, interval_start, interval_end):
     params = request.params
 
     filter = {
         "$and": [
-            {"event_type" : "calendar"},
-            {"component" : source},
-            {"rrule" : {"$exists": False}},
+            {"event_type": "calendar"},
+            {"component": source},
+            {"rrule": {"$exists": False}},
             {"$or": [
                 {"$and": [
                             {"start": {"$gt": int(interval_start)}},
@@ -67,9 +64,9 @@ def cal_get(source, interval_start, interval_end):
 
     filter = {
         "$and": [
-            {"event_type" : "calendar"},
-            {"component" : source},
-            {"rrule" : {"$exists": True}}
+            {"event_type": "calendar"},
+            {"component": source},
+            {"rrule": {"$exists": True}}
         ]
     }
 
@@ -102,6 +99,6 @@ def cal_get(source, interval_start, interval_end):
                 newEvent["end"] = int(occurenceEnd)
                 events["data"].append(newEvent)
         except Exception as e:
-            print "Error parsing rrule for an event : %s" % e
+            print("Error parsing rrule for an event : %s" % e)
 
     return events

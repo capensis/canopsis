@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 # --------------------------------
-# Copyright (c) 2011 "Capensis" [http://www.capensis.com]
+# Copyright (c) 2014 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
 #
@@ -29,7 +29,6 @@ from bottle import request, HTTPError, response, redirect, get, put, delete, \
 from canopsis.old.account import Account
 from canopsis.old.storage import get_storage
 from canopsis.old.record import Record
-
 from canopsis.old.group import Group
 
 #import protection function
@@ -83,6 +82,7 @@ def account_get_me():
 
     return output
 
+
 #### Get Avatar
 @get('/account/getAvatar/:_id')
 @get('/account/getAvatar')
@@ -105,6 +105,7 @@ def account_get_avatar(_id=None):
     logger.debug(' + avatar_id: %s' % avatar_id)
 
     redirect("/files/%s" % avatar_id)
+
 
 #### POST setConfig
 @post('/account/setConfig/:_id')
@@ -129,6 +130,7 @@ def account_setConfig(_id):
 
     return output
 
+
 @get('/account/getAuthKey/:dest_account')
 def account_getAuthKey(dest_account):
     if not dest_account:
@@ -147,7 +149,6 @@ def account_getAuthKey(dest_account):
     except Exception as err:
         logger.debug('Error while fetching account : %s' % err)
         return {'total':0,'success':False,'data':{'output':str(err)}}
-
 
 
 @get('/account/getNewAuthKey/:dest_account', checkAuthPlugin={'authorized_grp':'group.CPS_authkey'})
@@ -284,6 +285,7 @@ def account_post():
     else:
         logger.warning('WARNING : no user specified ...')
 
+
 @put('/account/',checkAuthPlugin={'authorized_grp':group_managing_access})
 @put('/account/:_id',checkAuthPlugin={'authorized_grp':group_managing_access})
 def account_update(_id=None):
@@ -354,6 +356,7 @@ def account_update(_id=None):
         storage.put(record, account=account)
         reload_account(record._id)
 
+
 #### DELETE
 @delete('/account/',checkAuthPlugin={'authorized_grp':group_managing_access})
 @delete('/account/:_id',checkAuthPlugin={'authorized_grp':group_managing_access})
@@ -418,6 +421,7 @@ def account_delete(_id=None):
 
     logger.debug('account removed')
 
+
 ### GROUP
 @post('/account/addToGroup/:group_id/:account_id',checkAuthPlugin={'authorized_grp':group_managing_access})
 def add_account_to_group(group_id=None,account_id=None):
@@ -456,6 +460,7 @@ def add_account_to_group(group_id=None,account_id=None):
         return HTTPError(500, 'Put group/account in db goes wrong')
 
     return {'total' :1, 'success' : True, 'data':[]}
+
 
 @post('/account/removeFromGroup/:group_id/:account_id',checkAuthPlugin={'authorized_grp':group_managing_access})
 def remove_account_from_group(group_id=None,account_id=None):
