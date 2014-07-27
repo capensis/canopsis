@@ -1,5 +1,5 @@
 
-PREFIX="/opt/canopsis"
+PREFIX="/opt/canopsis/"
 HUSER="canopsis"
 HGROUP="canopsis"
 ARCH=`uname -m`
@@ -15,44 +15,11 @@ function check_code() {
 
 function detect_os(){
 	echo "Linux Distribution:"
-	VERSION=`cat /proc/version`
-	check_code $?
-	DEBIAN=`echo "$VERSION" | grep -i debian | wc -l`
-	UBUNTU=`echo "$VERSION" | grep -i ubuntu | wc -l`
-	REDHAT=`echo "$VERSION" | grep -i redhat | wc -l`
-	CENTOS=`echo "$VERSION" | grep -i centos | wc -l`
-	FC=`echo "$VERSION" | grep -i "\.fc..\." | wc -l`
-	ARCHL=`if [ -e /etc/arch-release ]; then echo 1; fi`
-	DIST_VERS=""
-	
-	if [ $DEBIAN -ne 0 ]; then
-		DIST="debian"
-		DIST_VERS=`cat /etc/debian_version | cut -d '.' -f1`
-		echo " + $DIST $DIST_VERS"
-	elif [ $UBUNTU -ne 0 ]; then
-		DIST="ubuntu"
-		DIST_VERS=`lsb_release -r | cut -f2`
-		echo " + $DIST $DIST_VERS"
-	elif [ $REDHAT -ne 0 ]; then
-		DIST="redhat"
-		DIST_VERS=`lsb_release -r | cut -f2 | cut -d '.' -f1`
-		echo " + $DIST $DIST_VERS"
-	elif [ $CENTOS -ne 0 ]; then
-		DIST="centos"
-		DIST_VERS=`lsb_release -r | cut -f2 | cut -d '.' -f1`
-		echo " + $DIST $DIST_VERS"
-	elif [ $FC -ne 0 ]; then
-		DIST="fedora"
-		DIST_VERS=`lsb_release -r | cut -f2 | cut -d '.' -f1`
-		echo " + $DIST $DIST_VERS"
-	elif [ $ARCHL -ne 0 ]; then
-		DIST="archlinux"
-		DIST_VERS=`pacman -Q glibc | cut -d ' ' -f2 | cut -d '-' -f1`
-		echo " + $DIST $DIST_VERS"
-	else
-		echo " + Impossible to find distribution ..."
-		exit 1
-	fi
+	DIST=`python -c "import platform; print platform.dist()[0].lower()"`
+	DIST_VERS=`python -c "import platform; print platform.dist()[1]"`
+	echo "Dist found"
+	echo $DIST
+	echo $DIST_VERS
 }
 
 function launch_cmd() {
