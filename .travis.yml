@@ -9,8 +9,8 @@ install:
   - "cd sources"
   - "git submodule init"
   - "git submodule update"
-  - "sudo ./build-install.sh -D ubuntu -V 12.04"
+  - "sudo ./build-install.sh"
   - "sudo su - canopsis -c \"hypcontrol start\""
 # command to run tests
-script: 
+script:
  - "sudo su - canopsis -c \"./opt/canotools/functional-test.py\""
