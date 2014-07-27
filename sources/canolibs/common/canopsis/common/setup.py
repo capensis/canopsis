@@ -39,6 +39,8 @@ ZIP_SAFE = False
 URL = 'http://www.canopsis.org'
 KEYWORDS = ' Canopsis Hypervision Hypervisor Monitoring'
 
+TEST_FOLDERS = ['tests', 'test']
+
 
 def setup(description, keywords, add_etc=True, **kwargs):
     """
@@ -113,7 +115,7 @@ def setup(description, keywords, add_etc=True, **kwargs):
 
     # add packages
     if 'packages' not in kwargs:
-        packages = find_packages(where=_path, exclude=['test'])
+        packages = find_packages(where=_path, exclude=TEST_FOLDERS)
         kwargs['packages'] = packages
 
     # add description
@@ -124,9 +126,11 @@ def setup(description, keywords, add_etc=True, **kwargs):
                 kwargs['long_description'] = f.read()
 
     # add test
-    if 'test_suite' not in kwargs and exists(join(_path, 'test')):
-        for test_folder in ['test', 'tests']:
-            if exists(join(_path, test_folder)):
+    if 'test_suite' not in kwargs:
+        test_folders = \
+            [folder for folder in TEST_FOLDERS if exists(join(_path, folder))]
+        if test_folders:
+            for test_folder in test_folders:
                 kwargs['test_suite'] = test_folder
                 break
 

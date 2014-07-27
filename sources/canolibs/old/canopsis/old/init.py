@@ -21,13 +21,13 @@
 
 # in order to ease python 3 handling, here are libraries to import
 # import print function instead of simple print
-#from __future__ import print_function
+from __future__ import print_function
 # force all str to be unicode
-#from __future__ import unicode_literals
+from __future__ import unicode_literals
 # allow absolute imports
-#from __future__ import absolute_import
+from __future__ import absolute_import
 # allow division (e.g., 1/2 == 0.5; 1//2 == 0)
-#from __future__ import division
+from __future__ import division
 
 from logging import basicConfig, getLogger
 

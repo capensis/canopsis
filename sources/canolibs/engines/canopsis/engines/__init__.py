@@ -45,6 +45,8 @@ DISPATCHER_READY_TIME = 5
 class Engine(object):
     etype = 'Engine'
 
+    amqpcls = Amqp
+
     def __init__(self,
             next_amqp_queues=[],
             next_balanced=False,
@@ -176,7 +178,7 @@ class Engine(object):
 
         self.logger.info("Start Engine with pid %s" % (getpid()))
 
-        self.amqp = self.Amqp(
+        self.amqp = self.amqpcls(
             logging_level=self.logging_level,
             logging_name="%s-amqp" % self.name, on_ready=ready)
 

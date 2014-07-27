@@ -943,8 +943,8 @@ class Configurable(object):
             self.conf[Configurable.LOG]]
 
         for log_property in log_properties:
-            new_logger = new_logger | self._update_property(
-                unified_conf, log_property)
+            new_logger = self._update_property(
+                unified_conf, log_property) or new_logger
 
         # if needed, renew the logger
         if new_logger:
