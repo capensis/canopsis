@@ -19,18 +19,8 @@ function pre_install(){
 function post_install(){
 	echo "Post-install $NAME $VERSION-$RELEASE ..."
 
-	if [ ! -e $PREFIX/var/www/global_options.js ]; then
-		cp $PREFIX/var/www/canopsis/app/lib/global_options.js $PREFIX/var/www/global_options.js
-		check_code $?
-	fi
-	
 	mkdir -p $PREFIX/var/www/widgets
 
-	echo " + Fix permissions"
-	chown -R $HUSER:$HGROUP $PREFIX/var/www
-	check_code $?
-
-	su - $HUSER -c $PREFIX/bin/webcore_minimizer
 	check_code $? 
 }
 
@@ -62,15 +52,10 @@ function pre_update(){
 function post_update(){
 	echo "Post-update $NAME $VERSION-$RELEASE ..."
 
-	if [ ! -e $PREFIX/var/www/global_options.js ]; then
-		cp $PREFIX/var/www/canopsis/app/lib/global_options.js $PREFIX/var/www/global_options.js
-		check_code $?
+	if [ ! -e $PREFIX/bin/uglifyjs ]; then
+		ln -s $PREFIX/lib/node_modules/uglify-js/bin/uglifyjs $PREFIX/bin/uglifyjs
 	fi
 
-        if [ ! -e $PREFIX/bin/uglifyjs ]; then
-                ln -s $PREFIX/lib/node_modules/uglify-js/bin/uglifyjs $PREFIX/bin/uglifyjs
-        fi
-	
 	mkdir -p $PREFIX/var/www/widgets
 	
 	$PREFIX/bin/webcore_minimizer

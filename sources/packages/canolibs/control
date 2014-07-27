@@ -23,13 +23,15 @@ function pre_install(){
 	then
 		cp $PREFIX/etc/cstorage.conf{,.bak}
 		cp $PREFIX/etc/database.conf{,.bak}
+
 	fi
 }
 
 function post_install(){
 	echo "-- Update python-logging.conf"
 	sed -i s:@PREFIX@:$PREFIX:g $PREFIX/etc/python-logging.conf
-	check_code $? 
+
+	check_code $?
 
 	echo "-- Create logdir for engines"
 	mkdir -p $PREFIX/var/log/engines
@@ -101,7 +103,7 @@ function pre_update(){
 function post_update(){
 	echo "-- Update python-logging.conf"
 	sed -i s:@PREFIX@:$PREFIX:g $PREFIX/etc/python-logging.conf
-	check_code $? 
+	check_code $?
 
 	echo "-- Create logdir for engines"
 	mkdir -p $PREFIX/var/log/engines

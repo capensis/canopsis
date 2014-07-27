@@ -4,7 +4,7 @@ NAME="cmaster"
 VERSION=0.2
 RELEASE=0
 DESCRIPTION=""
-REQUIRES="canohome amqp2engines canolibs canotools ccli erlang mongodb-conf python python-libs rabbitmq-server rabbitmq-server-conf webcore webcore-libs celery celery-libs collectd-libs apscheduler-libs"
+REQUIRES="canohome amqp2engines canolibs canotools ccli erlang mongodb-conf python python-libs rabbitmq-server rabbitmq-server-conf webcore webcore-libs collectd-libs"
 
 NO_ARCH=true
 NO_DIST=true
