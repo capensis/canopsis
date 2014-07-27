@@ -1,6 +1,6 @@
 #!/bin/bash
 #--------------------------------
-# Copyright (c) 2011 "Capensis" [http://www.capensis.com]
+# Copyright (c) 2014 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
 #
@@ -122,6 +122,9 @@ fncase(){
 			sleep 1
 			wait_socket
 			if running; then
+				echo " + Importing schema into database ..."
+				schema2db
+
 				echo " + Done"	
 			else
 				echo " + Impossible to start"
