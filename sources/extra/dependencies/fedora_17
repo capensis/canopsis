@@ -1,3 +1,3 @@
 yum clean all
 yum update
-yum install -y redhat-lsb make gcc gcc-c++ zlib-devel libevent-devel libevent ncurses-devel libcurl-devel wget libtool openssl-devel bzip2-devel
+yum install -y redhat-lsb make gcc gcc-c++ zlib-devel libevent-devel libevent ncurses-devel libcurl-devel wget libtool openssl-devel bzip2-devel xz-utils
