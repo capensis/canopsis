@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 #--------------------------------
 # Copyright (c) 2014 "Capensis" [http://www.capensis.com]
 #
@@ -28,7 +27,6 @@ from canopsis.old.record import Record
 from canopsis.old.tools import legend, uniq
 
 legend_type = ['soft', 'hard']
-
 
 class Archiver(object):
     def __init__(self, namespace, storage=None,
@@ -82,26 +80,70 @@ class Archiver(object):
 
     def check_bagot(self, event, devent):
         ts_curr = event['timestamp']
-        ts_prev = devent['timestamp']
-        ts_last_furtif = event['last_furtif']
+        ts_last_furtif = event.get('last_furtif', event['timestamp'])
         ts_last_bagot = (ts_curr - ts_last_furtif)
+
+        event['furtif_freq'] = event.get('furtif_freq', 0) + 1
         freq = event['furtif_freq']
 
-        log = 'Status is set to {} for event %s' % event['rk']
-
         event['last_furtif'] = event['timestamp']
-        event['furtif_freq'] += 1
-        event['status'] = 2
 
         # flowchart 8
         if (ts_last_furtif
             and ts_last_bagot <= self.bagot_time
-            and freq >= self.furtif_freq):
-            self.logger.debug(log.format('Bagot'))
+            and freq >= self.bagot_freq):
+            self.logger.debug(self.logger.debug('Setting event to status Bagot'))
             event['status'] = 3
         else:
-            self.logger.debug(log.format('Furtif'))
+            self.logger.debug(self.logger.debug('Setting event to status Furtif'))
+            event['status'] = 2
 
+
+
+    def check_statuses(self, event, devent):
+
+        # Check if event is still canceled
+        # flowchart 1 2 3
+        # status legend:
+        # 0 == Ok
+        # 1 == On going
+        # 2 == Stealthy
+        # 3 == Bagot
+        # 4 == Canceled
+
+        ts_curr = event['timestamp']
+        ts_prev = devent['timestamp']
+        event['furtif_freq'] = devent.get('furtif_freq', 0)
+
+        if (devent.get('status', 1) != 4
+            or (devent['state'] != event['state']
+                and (self.restore_event
+                     or state == 0
+                     or devent['state'] == 0))):
+            # flowchart 4
+            if (event['state'] == 0):
+                # flowchart 5 6
+                if (devent['state'] == 0
+                    or not self.is_furtif(ts_curr, ts_prev)):
+                    self.logger.debug('Setting event to status Off')
+                    event['status'] = 0
+                    event['furtif_freq'] = 0
+                else:
+                    self.check_bagot(event, devent)
+
+            else:
+                # flowchart 7
+                if self.is_furtif(ts_curr, ts_prev):
+                    self.check_bagot(event, devent)
+                else:
+                    self.logger.debug('Setting event to status On going')
+                    event['status'] = 1
+                    event['furtif_freq'] = 0
+
+        else:
+            self.logger.debug('Setting event to status Cancelled')
+            event['status'] = 4
+            event['furtif_freq'] = 0
 
 
     def is_furtif(self, ts_curr, ts_prev):
@@ -123,7 +165,7 @@ class Archiver(object):
         self.logger.debug("   - State:\t\t'%s'" % legend[state])
         self.logger.debug("   - State type:\t'%s'" % legend_type[state_type])
 
-        now = int(time())
+        now = int(time.time())
 
         event['timestamp'] = event.get('timestamp', now)
 
@@ -138,7 +180,9 @@ class Archiver(object):
                 'perf_data_array': 1,
                 'timestamp': 1,
                 'cancel': 1,
-                'status': 1
+                'status': 1,
+                'furtif_freq': 1,
+                'last_furtif': 1
             }
 
             devent = self.collection.find_one(_id, fields=change_fields)
@@ -150,11 +194,6 @@ class Archiver(object):
             log = 'Status is set to {} for event %s' % event['rk']
             old_state = devent['state']
             old_state_type = devent['state_type']
-            prev_status = devent.get('status', 1)
-            ts_curr = event['timestamp']
-            ts_prev = devent['timestamp']
-            event['last_furtif'] = devent.get('last_furtif', 0)
-            event['furtif_freq'] = devent.get('furtif_freq', 0)
             event['last_state_change'] = devent.get('last_state_change', event['timestamp'])
 
             self.logger.debug("   - State:\t\t'%s'" % legend[old_state])
@@ -170,43 +209,7 @@ class Archiver(object):
             else:
                 self.logger.debug(" + No change.")
 
-            # Check if event is still canceled
-            # flowchart 1 2 3
-            # status legend:
-            # 0 == Ok
-            # 1 == On going
-            # 2 == Stealthy
-            # 3 == Bagot
-            # 4 == Canceled
-            if (prev_status != 4
-                or (old_state != state
-                    and (self.restore_event
-                         or state == 0
-                         or old_state == 0))):
-                # flowchart 4
-                if state == 0:
-                    # flowchart 5
-                    if old_state == 0 or not self.is_furtif(ts_curr, ts_prev):
-                        self.logger.debug(log.format('Ok'))
-                        event['status'] = 0
-                        event['furtif_freq'] = 0
-                    else:
-                        self.check_bagot(event, devent)
-
-                else:
-                    # flowchart 7
-                    if (not self.is_furtif(ts_curr, ts_prev)):
-                        self.logger.debug(log.format('On going'))
-                        event['status'] = 1
-                        event['furtif_freq'] = 0
-                    else:
-                        self.check_bagot(event, devent)
-
-            else:
-                self.logger.debug(log.format('Canceled'))
-                event['status'] = 4
-                event['furtif_freq'] = 0
-
+            self.check_statuses(event, devent)
 
             try:
                 event = self.merge_perf_data(devent, event)
@@ -341,7 +344,7 @@ class Archiver(object):
         record.type = "event"
         record.chmod("o+r")
         record.data['event_id'] = _id
-        record._id = _id + '.' + str(time())
+        record._id = _id + '.' + str(time.time())
 
         self.storage.put(record, namespace=self.namespace_log, account=self.account)
         return record._id
