@@ -7,15 +7,5 @@ function build(){
 function install(){
 	install_basic_source $NAME
 
-	chown $HUSER $PREFIX/var/www/canopsis/resources/locales
-	su - $HUSER -c "export http_proxy=$http_proxy && export https_proxy=$https_proxy && webcore_update_locales"
-
-	if [ $? -ne 0 ]
-	then
-		echo "Impossible to download locales"
-	fi
-
-	COMMIT=$(echo "global.commit='$(git log | head -1 | cut -d ' ' -f2)'")
-        echo $COMMIT > $PREFIX/var/www/canopsis/commit.js
-        echo $COMMIT > $SRC_PATH/webcore/var/www/canopsis/commit.js
+	echo "define(function() { return '$(git log | head -1 | cut -d ' ' -f2)'; });" > $PREFIX/var/www/canopsis/commit.js
 }
