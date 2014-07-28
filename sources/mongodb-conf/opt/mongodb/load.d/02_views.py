@@ -72,7 +72,7 @@ def create_view(_id, name, data, mod='o+r', autorm=True, internal=False):
         pass
 
     logger.info(" + Create view '%s'" % name)
-    record = Record(data, type='view', name=name, group='group.CPS_view_admin')
+    record = Record(data, _type='view', name=name, group='group.CPS_view_admin')
     record.chmod(mod)
     storage.put(record)
     return record
