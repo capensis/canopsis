@@ -25,14 +25,13 @@
 from re import I, search
 from operator import lt, le, gt, ge, ne, eq
 
-
 def field_check(mfilter, event, key):
     cond = {'$lt': lt,
-        '$lte': le,
-        '$gt': gt,
-        '$gte': ge,
-        '$ne': ne,
-        '$eq': eq}
+            '$lte': le,
+            '$gt': gt,
+            '$gte': ge,
+            '$ne': ne,
+            '$eq': eq}
 
     for op in mfilter[key]:
         if op == '$exists':
@@ -50,9 +49,7 @@ def field_check(mfilter, event, key):
                 return False
 
         elif op == '$regex' or (op == '$options' and "$regex" in mfilter[key]):
-            if not regex_match(
-                event[key], mfilter[key]["$regex"], mfilter[key].get(
-                    "$options", None)):
+            if not regex_match(event[key], mfilter[key]["$regex"], mfilter[key].get("$options", None)):
                 return False
 
         elif op == '$in':
@@ -88,30 +85,44 @@ def field_check(mfilter, event, key):
 
     return True
 
-
 def check(mfilter, event):
+
     # Check connector_name
     if 'connector_name' in mfilter and 'connector_name' in event:
         if mfilter['connector_name'] != event['connector_name']:
             return False
 
+
     # For each key of filter
     for key in mfilter:
         if key == '$and':
             # Check match for each elements in the list
-
-            for element in mfilter[key]:
-                # If one does not match, then return False
-                if not check(element, event):
-                    return False
+            if isinstance(mfilter[key], list):
+                result = True
+                for sub_filter in mfilter[key]:
+                    result = result and check(sub_filter, event)
+                return result
+            else:
+                for element in mfilter[key]:
+                    # If one does not match, then return False
+                    if not check(element, event):
+                        return False
 
         elif key == '$or':
             # Check match for each elements in the list
-
-            for element in mfilter[key]:
-                # If one match, then return True
-                if check(element, event):
-                    return True
+            if isinstance(mfilter[key], list):
+                result = True
+                #testing len of filter
+                if len(mfilter[key]):
+                    result = check(mfilter[key][0], event)
+                    for sub_filter in mfilter[key][1:]:
+                        result = result or check(sub_filter, event)
+                return result
+            else:
+                for element in mfilter[key]:
+                    # If one match, then return True
+                    if check(element, event):
+                        return True
 
             # Here nothing matched, then return False
             return False
@@ -125,22 +136,39 @@ def check(mfilter, event):
                     return False
 
         # For each other case, just test the equality
-        elif key in event:
+        elif key in event and event[key]:
             if isinstance(mfilter[key], dict):
-                if '$in' in mfilter[key]:
-                    if not len([x for x in event[key] if any(
-                            y in x for y in mfilter[key]['$in'])]):
+                if (isinstance(event[key], dict) or isinstance(event[key], list) and
+                    '$in' in mfilter[key]):
+                    if isinstance(event[key], list) and isinstance(event[key][0], dict):
+                        #For each elem of event[key], check if it's in mfilter[key]['$in']
+                        if not len([x for x in event[key] if any(y in x['name'] for y in mfilter[key]['$in'])]):
+                            return False
+                    else:
+                        if not len([x for x in event[key] if any(y in x for y in mfilter[key]['$in'])]):
+                            return False
+
+                elif (isinstance(event[key], dict) or isinstance(event[key], list) and
+                      '$nin' in mfilter[key]):
+                    if isinstance(event[key], list) and isinstance(event[key][0], dict):
+                        #For each elem of event[key], check if it's in mfilter[key]['$nin']
+                        if len([x for x in event[key] if any(y in x['name'] for y in mfilter[key]['$in'])]):
+                            return False
+                        else:
+                            if len([x for x in event[key] if any(y in x for y in mfilter[key]['$in'])]):
+                                return False
+
+                elif '$in' in mfilter[key]:
+                    if event[key] not in mfilter[key]['$in']:
                         return False
 
                 elif '$nin' in mfilter[key]:
-                    if len([x for x in event[key] if any(
-                            y in x for y in mfilter[key]['$in'])]):
+                    if event[key] in mfilter[key]['$nin']:
                         return False
 
                 else:
                     if field_check(mfilter, event, key):
                         continue
-
                     elif event[key] != mfilter[key]:
                         return False
 
@@ -154,14 +182,12 @@ def check(mfilter, event):
     # If we arrive here, everything matched
     return True
 
-
 def regex_computeoptions(options):
-    if isinstance(options, str):
+    if isinstance(options, basestring):
         if "i" in options:
             return I
 
     return 0
-
 
 def regex_match(phrase, pattern, options=None):
     options = regex_computeoptions(options)
