@@ -32,6 +32,7 @@ class engine(Engine):
     def __init__(self, *args, **kargs):
         super(engine, self).__init__(*args, **kargs)
         self.nb_beat = 0
+        self.selectors = []
 
     def pre_run(self):
         self.storage = get_storage(namespace='object', account=Account(user="root", group="root"))

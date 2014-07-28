@@ -45,6 +45,7 @@ class engine(Engine):
         self.beat()
 
     def beat(self):
+        self.archiver.beat()
         self.cdowntime.reload(self.beat_interval)
 
     def store_check(self, event):

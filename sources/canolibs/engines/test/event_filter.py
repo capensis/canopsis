@@ -21,13 +21,7 @@
 
 from unittest import TestCase, main
 
-from sys import path
-
-from os.path import expanduser
-
 from logging import DEBUG
-
-path.append(expanduser('~/opt/amqp2engines/engines/'))
 
 from canopsis.engine import DROP
 from canopsis.engine.event_filter import engine
