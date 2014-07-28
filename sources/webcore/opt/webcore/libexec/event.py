@@ -25,7 +25,7 @@ import time
 from bottle import put, request, HTTPError, post
 
 ## Canopsis
-from canopsis.old.rabbit import Amqp
+from canopsis.old.rabbitmq import Amqp
 import canopsis.old.event as cevent
 import requests
 
