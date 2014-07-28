@@ -300,19 +300,19 @@ class dictproperty(object):
 
         def __getitem__(self, key):
             if self._fget is None:
-                raise TypeError as "Impossible to get key: {0}".format(key)
+                raise TypeError("Impossible to get key: {0}".format(key))
 
             return self._fget(self._obj, key)
 
         def __setitem__(self, key, value):
             if self._fset is None:
-                raise TypeError as "Impossible to set key: {0} = {1}".format(key, value)
+                raise TypeError("Impossible to set key: {0} = {1}".format(key, value))
 
             self._fset(self._obj, key, value)
 
         def __delitem__(self, key):
             if self._fdel is None:
-                raise TypeError as "Impossible to delete key: {0}".format(key)
+                raise TypeError("Impossible to delete key: {0}".format(key))
 
             self._fdel(self._obj, key)
 
