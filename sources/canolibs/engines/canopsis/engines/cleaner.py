@@ -90,4 +90,7 @@ class engine(Engine):
         event["state_type"] = event.get("state_type", 1)
         event["event_type"] = event.get("event_type", "check")
 
+        default_status = 0 if not event["state"] else 1
+        event["status"] = event.get("status", default_status)
+
         return event
