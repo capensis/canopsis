@@ -23,7 +23,6 @@ import logging
 import json
 import time
 from datetime import datetime
-import re
 
 from bottle import route, get, post, put, delete, request, HTTPError, response
 
@@ -35,10 +34,10 @@ from canopsis.old.storage import get_storage
 
 from canopsis.old.tools import clean_mfilter
 
-from canopsis.engines.pyperfstore3.manager import Manager
-from canopsis.engines.pyperfstore3.timewindow import TimeWindow, Period
-from canopsis.engines.pyperfstore3.timeserie import TimeSerie
-from canopsis.engines.pyperfstore3.store import PeriodicStore
+from canopsis.perfdata.manager import PerfData
+from canopsis.timeserie import TimeSerie
+from canopsis.timeserie.timewindow import TimeWindow, Period
+from canopsis.storage.periodic import PeriodicStorage
 
 from canopsis.old.account import Account
 
@@ -56,7 +55,7 @@ def load():
     global logger
     global manager
 
-    manager = Manager(logging_level=logger.level)
+    manager = PerfData(log_lvl=logger.level)
 
 def unload():
     global manager
@@ -533,13 +532,13 @@ def perfstore_perftop(start=None, stop=None):
                     logger.debug(" + Metric '%s' (%s) is not a COUNTER" % (metric['name'], metric['_id']))
 
                     if (percent or threshold_on_pct) and 'max' in metric and 'last_value' in metric:
-                            metric['pct'] = round(((metric[Manager.LAST_VALUE] * 100)/ metric['max']) * 100) / 100
+                            metric['pct'] = round(((metric[PerfData.LAST_VALUE] * 100)/ metric['max']) * 100) / 100
 
                     if threshold_on_pct:
                         val = metric['pct']
 
                     else:
-                        val = metric[Manager.LAST_VALUE]
+                        val = metric[PerfData.LAST_VALUE]
 
                     if check_threshold(val):
                         data.append(metric)
@@ -686,8 +685,8 @@ def perfstore_get_values(meta, timewindow, timeserie, subset_selection={}):
 
     result = list()
 
-    period = meta.get(PeriodicStore.PERIOD)
-    aggregation = meta.get(PeriodicStore.AGGREGATION)
+    period = meta.get(PeriodicStorage.PERIOD)
+    aggregation = meta.get(PeriodicStorage.AGGREGATION)
 
     points = []
 
