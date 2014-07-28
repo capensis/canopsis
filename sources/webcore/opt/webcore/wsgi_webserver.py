@@ -22,9 +22,11 @@
 import ConfigParser
 import logging
 import time
-import imp
 import sys
 import os
+
+import importlib
+import imp
 
 from bottle import route, static_file, redirect, request, \
     debug as bottle_debug, default_app, install
@@ -197,11 +199,10 @@ if config.has_option('auth', 'providers'):
     for provider in providers:
         logger.info('Loading authentication provider: {0}'.format(provider))
 
-        modpath = os.path.expanduser('~/lib/canolibs/cauth/{0}.py'.format(provider))
-        modname = 'cauth.{0}'.format(provider)
+        modname = 'canopsis.auth.{0}'.format(provider)
 
         try:
-            mod = imp.load_source(modname, modpath)
+            mod = importlib.import_module(modname)
 
         except ImportError as err:
             logger.error('Impossible to load authentication backend {0}: {1}'.format(modname, err))
