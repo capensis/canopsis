@@ -59,9 +59,9 @@ class Archiver(object):
 
     def beat(self):
         #Default useless values avoid crashes
-        self.bagot_freq = 1
-        self.bagot_time = 1
-        self.furtif_time = 1
+        self.bagot_freq = 10
+        self.bagot_time = 3600
+        self.furtif_time = 300
         self.restore_event = True
 
         self.state_config = self.storage.find({'Record_type':'state-spec'})
@@ -178,18 +178,15 @@ class Archiver(object):
             # 2 == Stealthy
             # 3 == Bagot
             # 4 == Canceled
-            if ((prev_status == 4
-                 and old_state != state
-                 and (self.restore_event
-                      or state == 0
-                      or old_state == 0))
-                or prev_status != 4):
-
+            if (prev_status != 4
+                or (old_state != state
+                    and (self.restore_event
+                         or state == 0
+                         or old_state == 0))):
                 # flowchart 4
-                if (state == 0):
-                    # flowchart 5 6
-                    if (old_state == 0
-                        or not self.is_furtif(ts_curr, ts_prev)):
+                if state == 0:
+                    # flowchart 5
+                    if old_state == 0 or not self.is_furtif(ts_curr, ts_prev):
                         self.logger.debug(log.format('Ok'))
                         event['status'] = 0
                         event['furtif_freq'] = 0
