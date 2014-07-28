@@ -10,9 +10,6 @@ externals/*/
 packages/files.lst
 bootstrap/*.tgz
 webcore/var/www/canopsis/resources/lib
-webcore/var/www/canopsis/canopsis.js
-webcore/var/www/canopsis/canopsis.min.js
-webcore/var/www/canopsis/canopsis.min.js.gz
 webcore/var/www/canopsis/commit.js
 build
 dist
