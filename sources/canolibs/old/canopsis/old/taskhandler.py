@@ -27,6 +27,8 @@ from json import loads
 
 
 class TaskHandler(Engine):
+    etype = 'Task'
+
     def __init__(self, *args, **kwargs):
         super(TaskHandler, self).__init__(*args, **kwargs)
         self.amqp_queue = self.name
