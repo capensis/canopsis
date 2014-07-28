@@ -1,0 +1,21 @@
+{
+	"type": "object",
+	"categories": [{
+		"title": "general",
+		"keys":["title", "label", "actionCssClass", "actionType", "actionArguments"]
+	}],
+	"properties": {
+		"label" : {
+			"type": "string"
+		},
+		"actionCssClass" : {
+			"type": "string"
+		},
+		"actionType" : {
+			"type": "string"
+		},
+		"actionArguments" : {
+			"type": "string"
+		}
+	}
+}
