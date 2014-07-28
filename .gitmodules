@@ -2,3 +2,8 @@
 	path = sources/externals
 	url = https://github.com/capensis/canopsis-externals
 	ignore = dirty
+
+[submodule "sources/webcore"]
+	path = sources/webcore
+	url = https://github.com/capensis/canopsis-webcore
+	ignore = dirty
