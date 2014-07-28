@@ -18,6 +18,7 @@ PROJECTS[11]='tools'
 PROJECTS[12]='cli'
 PROJECTS[13]='topology'
 PROJECTS[14]='organisation'
+PROJECTS[15]='auth'
 
 function build(){
 	true
