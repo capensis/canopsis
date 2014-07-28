@@ -1,0 +1,19 @@
+{
+	"type": "object",
+	"categories": [{
+		"title": "general",
+		"keys":[
+			"title",
+			"cfilter_allow_only_optimized_filters"
+		]
+	}],
+	"properties": {
+		"title": {
+			"type": "string"
+		},
+		"cfilter_allow_only_optimized_filters": {
+			"type": "boolean",
+			"defaultValue": true
+		}
+	}
+}
