@@ -36,8 +36,6 @@ Editors
 - `Autocomplete for arrays <http://www.thesoftwaresimpleton.com/blog/2013/11/21/component-block/>`_
 - `Select and multiselect <http://addepar.github.io/#/ember-widgets/select>`_
 
-
-
 For a graph editor, it could be convenient to use the cytoscape lib
 
 - `Cytoscape <http://cytoscape.github.io/cytoscape.js>`_
@@ -46,6 +44,10 @@ For a graph editor, it could be convenient to use the cytoscape lib
 
 Caution, it apparently does not render correctly on IE 8...
 
+Widgets
+=======
+
+- `timetree ember component <http://crowdstrike.github.io/ember-timetree/>`_
 
 Renderers
 =========
