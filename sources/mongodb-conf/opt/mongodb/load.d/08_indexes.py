@@ -63,6 +63,10 @@ INDEXES = {
 			('resource', 1)
 		],[
 			('event_type', 1)
+		],[
+			('state', 1)
+		],[
+			('state', -1)
 		]
 	],
 	'events_log': [
