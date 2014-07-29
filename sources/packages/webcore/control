@@ -51,14 +51,6 @@ function pre_update(){
 
 function post_update(){
 	echo "Post-update $NAME $VERSION-$RELEASE ..."
-
-	if [ ! -e $PREFIX/bin/uglifyjs ]; then
-		ln -s $PREFIX/lib/node_modules/uglify-js/bin/uglifyjs $PREFIX/bin/uglifyjs
-	fi
-
-	mkdir -p $PREFIX/var/www/widgets
-	
-	$PREFIX/bin/webcore_minimizer
 	check_code $?
 }
 

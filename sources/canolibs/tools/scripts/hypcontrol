@@ -55,26 +55,11 @@ function do_start_middleware(){
 	service collectd start > /dev/null 2>&1 &
 	collectd=$!
 
-	(service apsd start && service celeryd start) > /dev/null 2>&1 &
-	celeryd=$!
-
 	service amqp2engines start > /dev/null 2>&1 &
 	engines=$!
 
 	echo -n "collectd..."
 	wait $collectd
-	echo -e -n "\b\b\b"
-
-	if [ $? -ne 0 ]
-	then
-		echo " KO"
-		exit 1
-	else
-		echo -n ", "
-	fi
-
-	echo -n "celeryd..."
-	wait $celeryd
 	echo -e -n "\b\b\b"
 
 	if [ $? -ne 0 ]
@@ -104,23 +89,8 @@ function do_start_frontend(){
 	service webserver start > /dev/null 2>&1 &
 	webserver=$!
 
-	service websocket start > /dev/null 2>&1 &
-	websocket=$!
-
 	echo -n "webserver..."
 	wait $webserver
-	echo -e -n "\b\b\b"
-
-	if [ $? -ne 0 ]
-	then
-		echo " KO"
-		exit 1
-	else
-		echo -n ", "
-	fi
-
-	echo -n "websocket..."
-	wait $websocket
 	echo -e -n "\b\b\b"
 
 	if [ $? -ne 0 ]
