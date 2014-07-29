@@ -42,7 +42,7 @@ class engine(Engine):
         self.entities = storage.get_backend('entities')
         self.object = storage.get_backend('object')
 
-        self.manager = PerfData(logging_level=self.logger.level)
+        self.manager = PerfData(log_lvl=self.logger.level)
         self.manager.apply_configuration()
 
     def work(self, event, *args, **kargs):

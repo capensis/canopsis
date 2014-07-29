@@ -34,9 +34,12 @@ class MongoDataBase(DataBase):
     Manage access to a mongodb.
     """
 
-    def __init__(self, host=MongoClient.HOST, port=MongoClient.PORT, *args, **kwargs):
+    def __init__(
+        self, host=MongoClient.HOST, port=MongoClient.PORT, *args, **kwargs
+    ):
 
-        super(MongoDataBase, self).__init__(port=port, host=host, *args, **kwargs)
+        super(MongoDataBase, self).__init__(
+            port=port, host=host, *args, **kwargs)
 
     def connect(self, *args, **kwargs):
 
@@ -172,7 +175,8 @@ class Storage(MongoDataBase, Storage):
         if result:
             indexes = self._get_indexes()
 
-            self._backend = self._database[self.get_table()]
+            table = self.get_table()
+            self._backend = self._database[table]
 
             for index in indexes:
                 self._backend.ensure_index(index)
@@ -184,15 +188,13 @@ class Storage(MongoDataBase, Storage):
         Drop self table.
         """
 
-        table = self.get_table()
-
-        super(Storage, self).drop(table=table, *args, **kwargs)
+        super(Storage, self).drop(table=self.get_table(), *args, **kwargs)
 
     def get_elements(
         self, ids=None, limit=0, skip=0, sort=None, *args, **kwargs
     ):
 
-        query = dict()
+        query = {}
 
         if ids is not None:
             query['_id'] = {'$in': ids}
