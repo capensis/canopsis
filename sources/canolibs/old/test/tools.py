@@ -21,12 +21,13 @@
 
 import unittest
 
-from ctools import calcul_pct
-from ctools import parse_perfdata
+from canopsis.old.tools import calcul_pct
+from canopsis.old.tools import parse_perfdata
 
 import time
 
 import logging
+
 logging.basicConfig(level=logging.DEBUG)
 
 
@@ -60,7 +61,6 @@ class KnownValues(unittest.TestCase):
         if perf_data != result:
             print(perf_data)
             raise Exception('[2] Error in perfdata parsing ...')
-
 
         result = [{'min': 0.0, 'max': 100.0, 'metric': 'ok', 'value': 100.0, 'warn': 98.0, 'crit': 95.0, 'unit': '%'}, {'min': 0.0, 'max': 100.0, 'metric': 'warn', 'value': 0.0, 'warn': 0.0, 'crit': 0.0, 'unit': '%'}, {'min': 0.0, 'max': 100.0, 'metric': 'crit', 'value': 0.0, 'warn': 0.0, 'crit': 0.0, 'unit': '%'}]
         perf_data = "'ok'=100.0%;98;95;0;100 'warn'=0%;0;0;0;100 'crit'=0%;0;0;0;100"

@@ -31,44 +31,47 @@ logger = None
 cservices_path = os.path.expanduser('~/opt/mongodb/load.d/cservices')
 
 ##set root account
-root = caccount(user="root", group="root")
+root = Account(user="root", group="root")
 storage = get_storage(account=root, namespace='object')
+
 
 def init():
 
-	for path, folders, files in os.walk(cservices_path):
-		for filename in files:
-			filepath = os.path.join(path, filename)
+    for path, folders, files in os.walk(cservices_path):
+        for filename in files:
+            filepath = os.path.join(path, filename)
 
-			with open(filepath) as f:
-				data = json.loads(f.read())
+            with open(filepath) as f:
+                data = json.loads(f.read())
 
-				try:
-					_id = data.pop('id')
-				except KeyError, err:
-					print >>sys.stderr, "Can't parse cservice, missing key:", err
-					sys.exit(1)
+                try:
+                    _id = data.pop('id')
+                except KeyError as err:
+                    print >>sys.stderr, "Can't parse cservice, missing key:", err
+                    sys.exit(1)
 
-				create_cservice(_id, filename, data)
+                create_cservice(_id, filename, data)
+
 
 def update():
 
-	init()
+    init()
+
 
 def create_cservice(_id, name, data, mod='o+r', autorm=True, internal=False):
-	#Delete old cservice
+    #Delete old cservice
 
-	try:
-		record = storage.get('cservice.%s' % _id)
-		if autorm:
-			storage.remove(record)
-		else:
-			return record
-	except:
-		pass
+    try:
+        record = storage.get('cservice.%s' % _id)
+        if autorm:
+            storage.remove(record)
+        else:
+            return record
+    except:
+        pass
 
-	logger.info(" + Create cservice '%s'" % name)
-	record = crecord(data, type='cservice', name=name, group='group.CPS_cservice_admin')
-	record.chmod(mod)
-	storage.put(record)
-	return record
+    logger.info(" + Create cservice '%s'" % name)
+    record = Record(data, _type='cservice', name=name, group='group.CPS_cservice_admin')
+    record.chmod(mod)
+    storage.put(record)
+    return record

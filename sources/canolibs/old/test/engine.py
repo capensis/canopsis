@@ -20,11 +20,11 @@
 # ---------------------------------
 
 import unittest
-import logging
+from logging import basicConfig, DEBUG
 
-logging.basicConfig(level=logging.DEBUG,
-                    format='%(asctime)s %(name)s %(levelname)s %(message)s',
-                    )
+basicConfig(
+    level=DEBUG,
+    format='%(asctime)s %(name)s %(levelname)s %(message)s')
 
 
 class KnownValues(unittest.TestCase):

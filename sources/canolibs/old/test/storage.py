@@ -19,27 +19,27 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-import unittest
+from unittest import TestCase, main
 
 from canopsis.storage import Storage
 from canopsis.record import Record
 from canopsis.account import Account
 from canopsis.group import Group
 
-import logging
-import time
-import json
+from logging import DEBUG, basicConfig
+
+from json import dumps
 
 STORAGE = None
 MYRECORD = None
 ID = None
 
-logging.basicConfig(level=logging.DEBUG,
-                    format='%(asctime)s %(name)s %(levelname)s %(message)s',
-                    )
+basicConfig(
+    level=DEBUG,
+    format='%(asctime)s %(name)s %(levelname)s %(message)s')
 
 
-class KnownValues(unittest.TestCase):
+class KnownValues(TestCase):
     def setUp(self):
         self.anonymous_account = Account()
         self.root_account = Account(user="root", group="root")
@@ -54,7 +54,7 @@ class KnownValues(unittest.TestCase):
 
     def test_01_Init(self):
         global STORAGE
-        STORAGE = Storage(self.user_account, namespace='unittest', logging_level=logging.DEBUG)
+        STORAGE = Storage(self.user_account, namespace='unittest', logging_level=DEBUG)
 
         records = STORAGE.find(account=self.root_account)
         STORAGE.remove(records, account=self.root_account)
@@ -214,7 +214,8 @@ class KnownValues(unittest.TestCase):
         STORAGE.put(record, account=self.user_account)
 
         ## try to remove with anonymous account
-        self.assertRaises(ValueError, STORAGE.remove, record, self.anonymous_account)
+        self.assertRaises(
+            ValueError, STORAGE.remove, record, self.anonymous_account)
 
         ## Change rights
         record.chgrp('group.anonymous')
@@ -266,7 +267,7 @@ class KnownValues(unittest.TestCase):
 
         STORAGE.print_record_tree(record1)
 
-        json.dumps(record1.dump(json=True))
+        dumps(record1.dump(json=True))
 
     def test_20_GetRecursivelyAllChilds(self):
         parent_record = STORAGE.find_one({'data': 1})
@@ -284,7 +285,7 @@ class KnownValues(unittest.TestCase):
         storage = STORAGE
         group = Group(name='administrator')
         record = Record(_id='test_record',admin_group='group.administrator')
-        account = Account(user='tk',group='user')
+        account = Account(user='tk', group='user')
 
         storage.put(record, account=root_account)
         group.add_accounts(account)
@@ -300,4 +301,4 @@ class KnownValues(unittest.TestCase):
         pass
 
 if __name__ == "__main__":
-    unittest.main(verbosity=2)
+    main(verbosity=2)

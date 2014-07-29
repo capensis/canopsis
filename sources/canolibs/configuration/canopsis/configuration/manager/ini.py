@@ -25,7 +25,7 @@ from ConfigParser import RawConfigParser, DuplicateSectionError,\
     MissingSectionHeaderError
 
 
-class ConfigurationManager(ConfigurationManager):
+class INIConfigurationManager(ConfigurationManager):
     """
     Manage ini configuration.
     """
@@ -53,7 +53,7 @@ class ConfigurationManager(ConfigurationManager):
 
         if conf_file is not None:
 
-            files = list()
+            files = []
 
             try:
                 files = result.read(conf_file)

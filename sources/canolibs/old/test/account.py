@@ -23,7 +23,6 @@ import unittest
 
 from canopsis.account import Account, caccount_get
 from canopsis.group import Group
-
 from canopsis.storage import Storage
 
 STORAGE = None

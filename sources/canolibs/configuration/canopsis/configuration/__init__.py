@@ -27,9 +27,8 @@ from logging import Formatter, getLogger, FileHandler, Filter
 
 from stat import ST_SIZE
 
-from os.path import expanduser, exists, sep, abspath
-
 from os import stat
+from os.path import expanduser, exists, sep, abspath
 
 from collections import OrderedDict, Iterable
 
@@ -46,7 +45,7 @@ class Configuration(object):
     ERRORS = 'ERRORS'
     VALUES = 'VALUES'
 
-    def __init__(self, *categories, **kwargs):
+    def __init__(self, *categories):
         """
         :param categories: categories to configure.
         :type categories: list of Category.
@@ -59,7 +58,7 @@ class Configuration(object):
         for category in categories:
             self.categories[category.name] = category
 
-    def __iter__(self, *args, **kwargs):
+    def __iter__(self):
 
         return iter(self.categories.values())
 
@@ -67,11 +66,11 @@ class Configuration(object):
 
         del self.categories[category_name]
 
-    def __getitem__(self, category_name, *args, **kwargs):
+    def __getitem__(self, category_name):
 
         return self.categories[category_name]
 
-    def __contains__(self, category_name, *args, **kwargs):
+    def __contains__(self, category_name):
 
         return category_name in self.categories
 
@@ -105,15 +104,15 @@ class Configuration(object):
 
         return 'Configuration({0})'.format(self.categories)
 
-    def get(self, category_name, default=None, *args, **kwargs):
+    def get(self, category_name, default=None):
 
         return self.categories.get(category_name, default)
 
-    def setdefault(self, category_name, category, *args, **kwargs):
+    def setdefault(self, category_name, category):
 
         return self.categories.setdefault(category_name, category)
 
-    def put(self, category, *args, **kwargs):
+    def put(self, category):
         """
         Put a category and return the previous one if exist
         """
@@ -122,7 +121,7 @@ class Configuration(object):
         self.categories[category.name] = category
         return result
 
-    def unify(self, copy=False, *args, **kwargs):
+    def unify(self, copy=False):
         """
         Get a conf which contains only two categories:
         - VALUES where params are all self params where values are not
@@ -163,7 +162,7 @@ class Configuration(object):
 
         return result
 
-    def get_unified_category(self, name, copy=False, *args, **kwargs):
+    def get_unified_category(self, name, copy=False):
         """
         Add a category with input name which takes all params provided
         by other categories
@@ -183,9 +182,7 @@ class Configuration(object):
 
         return result
 
-    def add_unified_category(
-        self, name, copy=False, new_content=None, *args, **kwargs
-    ):
+    def add_unified_category(self, name, copy=False, new_content=None):
         """
         Add a unified category to self and add new_content if not None
         """
@@ -196,7 +193,7 @@ class Configuration(object):
 
         self += category
 
-    def clean(self, *args, **kwargs):
+    def clean(self):
         """
         Clean this params in setting value to None.
         """
@@ -205,7 +202,7 @@ class Configuration(object):
 
             category.clean()
 
-    def copy(self, *args, **kwargs):
+    def copy(self):
         """
         Copy this Configuration
         """
@@ -217,7 +214,7 @@ class Configuration(object):
 
         return result
 
-    def update(self, conf, *args, **kwargs):
+    def update(self, conf):
         """
         Update this content with input conf
         """
@@ -236,7 +233,7 @@ class Category(object):
     Parameter category which contains a dictionary of params.
     """
 
-    def __init__(self, name, *params, **kwargs):
+    def __init__(self, name, *params):
         """
         :param name: unique in a conf.
         :type name: str
@@ -251,19 +248,19 @@ class Category(object):
         self.params = {
             param.name: param for param in params}
 
-    def __iter__(self, *args, **kwargs):
+    def __iter__(self):
 
         return iter(self.params.values())
 
-    def __delitem__(self, param_name, *args, **kwargs):
+    def __delitem__(self, param_name):
 
         del self.params[param_name]
 
-    def __getitem__(self, param_name, *args, **kwargs):
+    def __getitem__(self, param_name):
 
         return self.params[param_name]
 
-    def __contains__(self, param_name, *args, **kwargs):
+    def __contains__(self, param_name):
 
         return param_name in self.params
 
@@ -302,15 +299,15 @@ Must be a Category, a Parameter or a list of {Parameter, Category}'.format(
 
         return self
 
-    def setdefault(self, param_name, param, *args, **kwargs):
+    def setdefault(self, param_name, param):
 
         return self.params.setdefault(param_name, param)
 
-    def get(self, param_name, default=None, *args, **kwargs):
+    def get(self, param_name, default=None):
 
         return self.params.get(param_name, default)
 
-    def put(self, param, *args, **kwargs):
+    def put(self, param):
         """
         Put a param and return the previous one if exist
         """
@@ -319,7 +316,7 @@ Must be a Category, a Parameter or a list of {Parameter, Category}'.format(
         self.params[param.name] = param
         return result
 
-    def clean(self, *args, **kwargs):
+    def clean(self):
         """
         Clean this params in setting value to None.
         """
@@ -328,7 +325,7 @@ Must be a Category, a Parameter or a list of {Parameter, Category}'.format(
 
             param.clean()
 
-    def copy(self, name=None, *args, **kwargs):
+    def copy(self, name=None):
 
         if name is None:
             name = self.name
@@ -351,7 +348,7 @@ class Parameter(object):
     def bool(value):
         return value == 'True' or value == 'true' or value == '1'
 
-    def __init__(self, name, value=None, parser=str, *args, **kwargs):
+    def __init__(self, name, value=None, parser=str):
         """
         :param name: unique by category
         :type name: str
@@ -400,7 +397,7 @@ class Parameter(object):
         else:
             self._value = value
 
-    def copy(self, name=None, *args, **kwargs):
+    def copy(self, name=None):
 
         if name is None:
             name = self.name
@@ -409,7 +406,7 @@ class Parameter(object):
 
         return result
 
-    def clean(self, *args, **kwargs):
+    def clean(self):
         """
         Clean this param in removing values
         """
@@ -425,12 +422,12 @@ class MetaConfigurable(type):
     def __call__(cls, *args, **kwargs):
         """
         Get a new instance of input cls class, and if instance.auto_conf or
-        instance.once, then call instance.apply_configuration().
+        instance.reconf_once, then call instance.apply_configuration().
         """
 
         result = type.__call__(cls, *args, **kwargs)
 
-        if result.auto_conf or result.once:
+        if result.auto_conf or result.reconf_once:
             result.apply_configuration()
 
         return result
@@ -444,8 +441,8 @@ class Configurable(object):
     __metaclass__ = MetaConfigurable
 
     DEFAULT_MANAGERS = '%s,%s' % (
-        'canopsis.configuration.manager.json.ConfigurationManager',
-        'canopsis.configuration.manager.ini.ConfigurationManager')
+        'canopsis.configuration.manager.json.JSONConfigurationManager',
+        'canopsis.configuration.manager.ini.INIConfigurationManager')
 
     CONF_FILE = '~/etc/global.conf'
 
@@ -453,7 +450,7 @@ class Configurable(object):
     LOG = 'LOG'
 
     AUTO_CONF = 'auto_conf'
-    ONCE = 'once'
+    RECONF_ONCE = 'reconf_once'
     MANAGERS = 'conf_managers'
     LOG_NAME = 'log_name'
     LOG_LVL = 'log_lvl'
@@ -473,11 +470,10 @@ class Configurable(object):
     def __init__(
         self,
         conf_files=None, managers=DEFAULT_MANAGERS,
-        auto_conf=True, once=False,
+        auto_conf=True, reconf_once=False,
         log_lvl='INFO', log_name=None, log_info_format=INFO_FORMAT,
         log_debug_format=DEBUG_FORMAT, log_warning_format=WARNING_FORMAT,
-        log_error_format=ERROR_FORMAT, log_critical_format=CRITICAL_FORMAT,
-        *args, **kwargs
+        log_error_format=ERROR_FORMAT, log_critical_format=CRITICAL_FORMAT
     ):
         """
         :param conf_files: conf_files to parse
@@ -486,8 +482,9 @@ class Configurable(object):
         :param auto_conf: true force auto conf as soon as param change
         :type auto_conf: bool
 
-        :param once: true force auto conf once as soon as param change
-        :type once: bool
+        :param reconf_once: true force auto conf reconf_once as soon as param
+            change
+        :type reconf_once: bool
 
         :param log_lvl: logging level
         :type log_lvl: str
@@ -496,7 +493,7 @@ class Configurable(object):
         super(Configurable, self).__init__()
 
         self.auto_conf = auto_conf
-        self.once = once
+        self.reconf_once = reconf_once
 
         # set conf files
         self._init_conf_files(conf_files)
@@ -575,7 +572,7 @@ class Configurable(object):
         """
         return self._conf()
 
-    def _conf(self, *args, **kwargs):
+    def _conf(self):
         """
         Protected method to override in order to specify which conf
         return with parsers and default values
@@ -586,7 +583,9 @@ class Configurable(object):
                 Parameter(
                     Configurable.AUTO_CONF, self.auto_conf, Parameter.bool),
                 Parameter(Configurable.MANAGERS, self.managers),
-                Parameter(Configurable.ONCE, self.once, Parameter.bool)),
+                Parameter(
+                    Configurable.RECONF_ONCE, self.reconf_once,
+                    Parameter.bool)),
             Category(Configurable.LOG,
                 Parameter(Configurable.LOG_NAME, self.log_name),
                 Parameter(Configurable.LOG_LVL, self.log_lvl),
@@ -606,55 +605,67 @@ class Configurable(object):
 
     @property
     def log_debug_format(self):
+
         return self._log_debug_format
 
     @log_debug_format.setter
     def log_debug_format(self, value):
+
         self._log_debug_format = value
         self._logger = self.newLogger()
 
     @property
     def log_info_format(self):
+
         return self._log_info_format
 
     @log_info_format.setter
     def log_info_format(self, value):
+
         self._log_info_format = value
         self._logger = self.newLogger()
 
     @property
     def log_warning_format(self):
+
         return self._log_warning_format
 
     @log_warning_format.setter
     def log_warning_format(self, value):
+
         self._log_warning_format = value
         self._logger = self.newLogger()
 
     @property
     def log_error_format(self):
+
         return self._log_error_format
 
     @log_error_format.setter
     def log_error_format(self, value):
+
         self._log_error_format = value
         self._logger = self.newLogger()
 
     @property
     def log_critical_format(self):
+
         return self._log_critical_format
 
     @log_critical_format.setter
     def log_critical_format(self, value):
+
         self._log_critical_format = value
         self._logger = self.newLogger()
 
     @property
     def log_name(self):
+
         return self._log_name
 
     @log_name.setter
     def log_name(self, value):
+
         self._log_name = value
         self._logger = self.newLogger()
 
@@ -666,6 +677,7 @@ class Configurable(object):
         :return: self logger lvl
         :rtype: str
         """
+
         return self._log_lvl
 
     @log_lvl.setter
@@ -676,11 +688,13 @@ class Configurable(object):
         :param value: new log_lvl to set up.
         :type value: str
         """
+
         self._log_lvl = value
         self._logger.setLevel(self._log_lvl)
 
     @property
     def logger(self):
+
         return self._logger
 
     @property
@@ -693,7 +707,7 @@ class Configurable(object):
         """
 
         if not hasattr(self, '_conf_files'):
-            self._conf_files = list()
+            self._conf_files = []
 
         result = self._conf_files
 
@@ -715,8 +729,7 @@ class Configurable(object):
         add_configurable(self)
 
     def apply_configuration(
-        self, conf=None, conf_files=None,
-        managers=None, *args, **kwargs
+        self, conf=None, conf_files=None, managers=None, logger=None
     ):
         """
         Apply conf on a destination in 5 phases:
@@ -736,19 +749,21 @@ class Configurable(object):
         :type conf_files: list of str
         """
 
+        if logger is None:
+            logger = self.logger
+
         if conf is None:
             conf = self.conf
 
         conf = self.get_configuration(
-            conf=conf, conf_files=conf_files,
-            managers=managers, *args, **kwargs)
+            conf=conf, conf_files=conf_files, logger=logger,
+            managers=managers)
 
-        self.configure(conf=conf, *args, **kwargs)
+        self.configure(conf=conf)
 
     def get_configuration(
         self,
-        conf=None, conf_files=None, logger=None,
-        managers=None, fill=False, *args, **kwargs
+        conf=None, conf_files=None, managers=None, fill=False, logger=None
     ):
         """
         Get a dictionary of params by name from conf,
@@ -776,7 +791,7 @@ class Configurable(object):
 
         # start to initialize input params
         if logger is None:
-            logger = self._logger
+            logger = self.logger
 
         if conf is None:
             conf = self.conf
@@ -805,27 +820,24 @@ class Configurable(object):
                 continue
 
             conf_manager = self._get_manager(
-                conf_file=conf_file,
-                logger=logger, managers=managers)
+                conf_file=conf_file, logger=logger, managers=managers)
 
             # if a config_resource is not None
             if conf_manager is not None:
 
                 conf = conf_manager.get_configuration(
-                    conf=conf, fill=fill,
-                    conf_file=conf_file, logger=logger)
+                    conf=conf, fill=fill, logger=logger,
+                    conf_file=conf_file)
 
             else:
                 # if no conf_manager, display a warning log message
-                logger.warning('No manager found among {0} for {1}'.format(
-                    conf_file))
+                self.logger.warning(
+                    'No manager found among {0} for {1}'.format(
+                        conf_file))
 
         return conf
 
-    def set_configuration(
-        self, conf_file, conf, manager=None,
-        logger=None, *args, **kwargs
-    ):
+    def set_configuration(self, conf_file, conf, manager=None, logger=None):
         """
         Set params on input conf_file.
 
@@ -839,7 +851,7 @@ class Configurable(object):
         result = None
 
         if logger is None:
-            logger = self._logger
+            logger = self.logger
 
         # first get content of input conf_file
         prev_manager = self._get_manager(
@@ -849,8 +861,7 @@ class Configurable(object):
 
         if prev_manager is not None:
             prev_conf = prev_manager.get_configuration(
-                conf_file=conf_file,
-                logger=logger)
+                conf_file=conf_file)
 
         # try to find a good manager if manager is None
         if manager is None:
@@ -878,18 +889,17 @@ class Configurable(object):
         if manager is not None:
             manager.set_configuration(
                 conf_file=conf_file,
-                conf=conf,
-                logger=logger)
+                conf=conf)
 
         else:
-            logger.error(
+            self.logger.error(
                 'No ConfigurationManager found for \
                 conf file {0}'.format(
                     conf_file))
 
         return result
 
-    def configure(self, conf, *args, **kwargs):
+    def configure(self, conf, logger=None):
         """
         Update self properties with input params only if:
         - self.configure is True
@@ -903,26 +913,29 @@ class Configurable(object):
         :type conf: Configuration
         """
 
+        if logger is None:
+            logger = self.logger
+
         unified_conf = conf.unify()
 
         values = unified_conf[Configuration.VALUES]
 
         # set configure
-        once_parameter = values.get(Configurable.ONCE)
+        once_parameter = values.get(Configurable.RECONF_ONCE)
         if once_parameter is not None:
-            self.once = once_parameter.value
+            self.reconf_once = once_parameter.value
 
         # set auto_conf
         auto_conf_parameter = values.get(Configurable.AUTO_CONF)
         if auto_conf_parameter is not None:
             self.auto_conf = auto_conf_parameter.value
 
-        if self.once or self.auto_conf:
-            self._configure(unified_conf=unified_conf, *args, **kwargs)
-            # when conf succeed, deactive once
-            self.once = False
+        if self.reconf_once or self.auto_conf:
+            self._configure(unified_conf=unified_conf, logger=logger)
+            # when conf succeed, deactive reconf_once
+            self.reconf_once = False
 
-    def _configure(self, unified_conf, *args, **kwargs):
+    def _configure(self, unified_conf, logger):
         """
         Configure this class with input conf only if auto_conf or
         configure is true.
@@ -955,8 +968,7 @@ class Configurable(object):
             unified_conf, Configurable.MANAGERS, public_property=True)
 
     def _update_property(
-        self, unified_conf, param_name, public_property=False,
-        *args, **kwargs
+        self, unified_conf, param_name, public_property=False
     ):
         """
         True if a property update is required and do it.
@@ -989,21 +1001,19 @@ class Configurable(object):
 
         return result
 
-    def _init_conf_files(self, conf_files, *args, **kwargs):
+    def _init_conf_files(self, conf_files):
 
-        self.conf_files = self._get_conf_files(*args, **kwargs) \
+        self.conf_files = self._get_conf_files() \
             if conf_files is None else conf_files
 
-    def _get_conf_files(self, *args, **kwargs):
+    def _get_conf_files(self):
 
         result = [Configurable.CONF_FILE]
 
         return result
 
     @staticmethod
-    def _get_manager(
-        conf_file, logger, managers
-    ):
+    def _get_manager(conf_file, managers, logger):
         """
         Get the first manager able to handle input conf_file.
         None if no manager is able to handle input conf_file.

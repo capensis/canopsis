@@ -2,7 +2,7 @@
 	"type": "object",
 	"categories": [{
 		"title": "general",
-		"keys":["title", "listed_crecord_type", "itemsPerPage", "hidden_columns","item_actions","toolbar", "mixins" ,"filters"]
+		"keys":["title", "listed_crecord_type", "itemsPerPage", "hidden_columns","item_actions","toolbar", "mixins" , "default_filter","filters"]
 	},{
 		"title": "Rendering",
 		"keys":["cloaking"]
@@ -10,7 +10,7 @@
 	"properties": {
 		"listed_crecord_type": {
 			"type": "string",
-			"enum": ["group", "account", "event", "selector", "filter"],
+			"enum": ["group", "account", "event", "selector", "filter", "userview"],
 			"default": "group",
 			"role": "simplelist"
 		},
@@ -63,6 +63,10 @@
 				"objectDict": { "title": "untitled filter", "cfilter": ""},
 				"role": "cfilterwithproperties"
 			}
+		},
+		"default_filter": {
+			"type": "string",
+			"role": "cfilter"
 		}
 	}
 }

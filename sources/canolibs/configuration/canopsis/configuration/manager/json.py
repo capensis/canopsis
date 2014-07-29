@@ -27,7 +27,7 @@ except ImportError:
     from simplejson import loads, dump
 
 
-class ConfigurationManager(ConfigurationManager):
+class JSONConfigurationManager(ConfigurationManager):
     """
     Manage json configuration.
     """
@@ -51,7 +51,7 @@ class ConfigurationManager(ConfigurationManager):
     def _get_conf_resource(
         self, logger, conf_file=None, *args, **kwargs
     ):
-        result = dict()
+        result = {}
 
         if conf_file is not None:
             result = None
@@ -82,7 +82,7 @@ class ConfigurationManager(ConfigurationManager):
     def _set_category(
         self, conf_resource, category, logger, *args, **kwargs
     ):
-        conf_resource.setdefault(category.name, dict())
+        conf_resource.setdefault(category.name, {})
 
     def _set_parameter(
         self, conf_resource, category, param, logger,

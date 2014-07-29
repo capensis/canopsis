@@ -30,11 +30,11 @@ logger = None
 
 
 def init():
-    namespaces = ['cache', 'events', 'events_log', 'object']
+    collections = ['cache', 'events', 'events_log', 'object', 'userpreferences']
 
-    for namespace in namespaces:
-        logger.info(" + Drop '%s' collection" % namespace)
-        storage.drop_namespace(namespace)
+    for collection in collections:
+        logger.info(" + Drop '%s' collection" % collection)
+        storage.drop_namespace(collection)
 
 
 def update():

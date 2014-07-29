@@ -67,9 +67,9 @@ class ConfigurationManager(object):
     """
     Private set of shared manager types.
     """
-    _MANAGERS = dict()
+    _MANAGERS = {}
 
-    def handle(self, conf_file, logger, *args, **kwargs):
+    def handle(self, conf_file, logger):
         """
         True iif input conf_file can be handled by self.
 
@@ -84,10 +84,7 @@ class ConfigurationManager(object):
 
         return result
 
-    def get_configuration(
-        self, conf_file, logger, conf=None, fill=False,
-        *args, **kwargs
-    ):
+    def get_configuration(self, conf_file, logger, conf=None, fill=False):
         """
         Parse a configuration_files with input conf and returns
         parameters and errors by param name.
@@ -209,10 +206,7 @@ class ConfigurationManager(object):
 
         return result
 
-    def set_configuration(
-        self, conf_file, conf, logger,
-        *args, **kwargs
-    ):
+    def set_configuration(self, conf_file, conf, logger):
         """
         Set input conf in input conf_file.
 
@@ -300,45 +294,35 @@ class ConfigurationManager(object):
 
         return result
 
-    def _get_categories(self, conf_resource, logger, *args, **kwargs):
+    def _get_categories(self, conf_resource, logger):
         """
         Get a list of category names in conf_resource
         """
 
         raise NotImplementedError()
 
-    def _get_parameters(
-        self, conf_resource, category, logger, *args, **kwargs
-    ):
+    def _get_parameters(self, conf_resource, category, logger):
         """
         Get a list of param names in conf_resource related to category
         """
 
         raise NotImplementedError()
 
-    def _has_category(
-        self, conf_resource, category, logger, *args, **kwargs
-    ):
+    def _has_category(self, conf_resource, category, logger):
         """
         True iif input conf_resource contains input category.
         """
 
         raise NotImplementedError()
 
-    def _has_parameter(
-        self,
-        conf_resource, category, param, logger,
-        *args, **kwargs
-    ):
+    def _has_parameter(self, conf_resource, category, param, logger):
         """
         True iif input conf_resource has input parameter_name in input category
         """
 
         raise NotImplementedError()
 
-    def _get_conf_resource(
-        self, logger, conf_file=None, *args, **kwargs
-    ):
+    def _get_conf_resource(self, logger, conf_file=None):
         """
         Get config resource.
 
@@ -355,37 +339,28 @@ class ConfigurationManager(object):
 
         raise NotImplementedError()
 
-    def _get_value(
-        self, conf_resource, category, param, *args, **kwargs
-    ):
+    def _get_value(self, conf_resource, category, param):
         """
         Get a param related to input conf_resource, category and param
         """
 
         raise NotImplementedError()
 
-    def _set_category(
-        self, conf_resource, category, logger, *args, **kwargs
-    ):
+    def _set_category(self, conf_resource, category, logger):
         """
         Set category on conf_resource.
         """
 
         raise NotImplementedError()
 
-    def _set_parameter(
-        self, conf_resource, category, param, logger,
-        *args, **kwargs
-    ):
+    def _set_parameter(self, conf_resource, category, param, logger):
         """
         Set param on conf_resource.
         """
 
         raise NotImplementedError()
 
-    def _update_conf_file(
-        self, conf_resource, conf_file, *args, **kwargs
-    ):
+    def _update_conf_file(self, conf_resource, conf_file):
         """
         Write conf_resource into conf_file.
         """
