@@ -59,7 +59,7 @@ class Archiver(object):
         #Default useless values avoid crashes
         self.bagot_freq = 10
         self.bagot_time = 3600
-        self.furtif_time = 300
+        self.stealthy_time = 300
         self.restore_event = True
 
         self.state_config = self.storage.find({'Record_type':'state-spec'})
@@ -72,7 +72,7 @@ class Archiver(object):
                 if 'time' in self.state_config['bagot']:
                     self.bagot_time = self.state_config['bagot']['time']
             if 'stealthy_time' in self.state_config:
-                self.furtif_time = self.state_config['stealthy_time']
+                self.stealthy_time = self.state_config['stealthy_time']
             if 'restore_event' in self.state_config:
                 self.restore_event = self.state_config['restore_event']
 
@@ -80,22 +80,22 @@ class Archiver(object):
 
     def check_bagot(self, event, devent):
         ts_curr = event['timestamp']
-        ts_last_furtif = event.get('last_furtif', event['timestamp'])
-        ts_last_bagot = (ts_curr - ts_last_furtif)
+        ts_last_stealthy = event.get('last_stealthy', event['timestamp'])
+        ts_last_bagot = (ts_curr - ts_last_stealthy)
 
-        event['furtif_freq'] = event.get('furtif_freq', 0) + 1
-        freq = event['furtif_freq']
+        event['bagot_freq'] = event.get('bagot_freq', 0) + 1
+        freq = event['bagot_freq']
 
-        event['last_furtif'] = event['timestamp']
+        event['last_stealthy'] = event['timestamp']
 
         # flowchart 8
-        if (ts_last_furtif
+        if (ts_last_stealthy
             and ts_last_bagot <= self.bagot_time
             and freq >= self.bagot_freq):
             self.logger.debug(self.logger.debug('Setting event to status Bagot'))
             event['status'] = 3
         else:
-            self.logger.debug(self.logger.debug('Setting event to status Furtif'))
+            self.logger.debug(self.logger.debug('Setting event to status Stealthy'))
             event['status'] = 2
 
 
@@ -113,7 +113,7 @@ class Archiver(object):
 
         ts_curr = event['timestamp']
         ts_prev = devent['timestamp']
-        event['furtif_freq'] = devent.get('furtif_freq', 0)
+        event['bagot_freq'] = devent.get('bagot_freq', 0)
 
         if (devent.get('status', 1) != 4
             or (devent['state'] != event['state']
@@ -124,32 +124,33 @@ class Archiver(object):
             if (event['state'] == 0):
                 # flowchart 5 6
                 if (devent['state'] == 0
-                    or not self.is_furtif(ts_curr, ts_prev)):
+                    or not self.is_stealthy(ts_curr, ts_prev)):
                     self.logger.debug('Setting event to status Off')
                     event['status'] = 0
-                    event['furtif_freq'] = 0
+                    event['bagot_freq'] = 0
                 else:
                     self.check_bagot(event, devent)
 
             else:
                 # flowchart 7
-                if self.is_furtif(ts_curr, ts_prev):
+                if self.is_stealthy(ts_curr, ts_prev):
                     self.check_bagot(event, devent)
                 else:
                     self.logger.debug('Setting event to status On going')
                     event['status'] = 1
-                    event['furtif_freq'] = 0
+                    event['bagot_freq'] = 0
 
         else:
             self.logger.debug('Setting event to status Cancelled')
             event['status'] = 4
-            event['furtif_freq'] = 0
+            event['bagot_freq'] = 0
 
 
-    def is_furtif(self, ts_curr, ts_prev):
+
+    def is_stealthy(self, ts_curr, ts_prev):
         ts_diff = ts_curr - ts_prev
 
-        return (True if ts_diff <= self.furtif_time else False)
+        return (True if ts_diff <= self.stealthy_time else False)
 
 
 
@@ -181,8 +182,8 @@ class Archiver(object):
                 'timestamp': 1,
                 'cancel': 1,
                 'status': 1,
-                'furtif_freq': 1,
-                'last_furtif': 1
+                'bagot_freq': 1,
+                'last_stealthy': 1
             }
 
             devent = self.collection.find_one(_id, fields=change_fields)
