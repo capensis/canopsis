@@ -728,6 +728,22 @@ class Configurable(object):
         # add new watching
         add_configurable(self)
 
+    @property
+    def auto_conf(self):
+        return self._auto_conf
+
+    @auto_conf.setter
+    def auto_conf(self, value):
+        self._auto_conf = value
+
+    @property
+    def reconf_once(self):
+        return self._reconf_once
+
+    @reconf_once.setter
+    def reconf_once(self, value):
+        self._reconf_once = value
+
     def apply_configuration(
         self, conf=None, conf_files=None, managers=None, logger=None
     ):
@@ -921,9 +937,9 @@ class Configurable(object):
         values = unified_conf[Configuration.VALUES]
 
         # set configure
-        once_parameter = values.get(Configurable.RECONF_ONCE)
-        if once_parameter is not None:
-            self.reconf_once = once_parameter.value
+        reconf_once = values.get(Configurable.RECONF_ONCE)
+        if reconf_once is not None:
+            self.reconf_once = reconf_once.value
 
         # set auto_conf
         auto_conf_parameter = values.get(Configurable.AUTO_CONF)
@@ -965,18 +981,21 @@ class Configurable(object):
 
         # set managers
         self._update_property(
-            unified_conf, Configurable.MANAGERS, public_property=True)
+            unified_conf, Configurable.MANAGERS, public=True)
 
     def _update_property(
-        self, unified_conf, param_name, public_property=False
+        self, unified_conf, param_name, public=False
     ):
         """
         True if a property update is required and do it.
 
         Check if a param exist in paramters where name is param_name.
-        Then update self property depending on input public_property:
+        Then update self property depending on input public:
         - True => name is param_name
         - False => name is '_{param_name}'
+
+        The idea of the public argument permits to avoid to run an auto_conf in
+        changing a private attribute in using its setter method.
 
         :param unified_conf: unified conf
         :type params: Configuration
@@ -984,7 +1003,7 @@ class Configurable(object):
         :param param_name: param name to find in params
         :type param_name: str
 
-        :param public_property: If False (default), update directly private
+        :param public: If False (default), update directly private
             property, else update public property in using the property.setter
         :type property_name: bool
         """
@@ -995,7 +1014,7 @@ class Configurable(object):
             param_name)
         if param is not None:
             property_name = '{0}{1}'.format(
-                '' if public_property else '_', param_name)
+                '' if public else '_', param_name)
             setattr(self, property_name, param.value)
             result = True
 
