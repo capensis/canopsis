@@ -31,7 +31,7 @@ logger = None
 cservices_path = os.path.expanduser('~/opt/mongodb/load.d/cservices')
 
 ##set root account
-root = caccount(user="root", group="root")
+root = Account(user="root", group="root")
 storage = get_storage(account=root, namespace='object')
 
 def init():
@@ -68,7 +68,7 @@ def create_cservice(_id, name, data, mod='o+r', autorm=True, internal=False):
 		pass
 
 	logger.info(" + Create cservice '%s'" % name)
-	record = crecord(data, type='cservice', name=name, group='group.CPS_cservice_admin')
+	record = Record(data, _type='cservice', name=name, group='group.CPS_cservice_admin')
 	record.chmod(mod)
 	storage.put(record)
 	return record
