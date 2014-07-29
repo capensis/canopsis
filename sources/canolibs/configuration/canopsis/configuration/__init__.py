@@ -482,7 +482,8 @@ class Configurable(object):
         :param auto_conf: true force auto conf as soon as param change
         :type auto_conf: bool
 
-        :param reconf_once: true force auto conf reconf_once as soon as param change
+        :param reconf_once: true force auto conf reconf_once as soon as param
+            change
         :type reconf_once: bool
 
         :param log_lvl: logging level
@@ -582,7 +583,9 @@ class Configurable(object):
                 Parameter(
                     Configurable.AUTO_CONF, self.auto_conf, Parameter.bool),
                 Parameter(Configurable.MANAGERS, self.managers),
-                Parameter(Configurable.RECONF_ONCE, self.reconf_once, Parameter.bool)),
+                Parameter(
+                    Configurable.RECONF_ONCE, self.reconf_once,
+                    Parameter.bool)),
             Category(Configurable.LOG,
                 Parameter(Configurable.LOG_NAME, self.log_name),
                 Parameter(Configurable.LOG_LVL, self.log_lvl),
@@ -725,7 +728,9 @@ class Configurable(object):
         # add new watching
         add_configurable(self)
 
-    def apply_configuration(self, conf=None, conf_files=None, managers=None):
+    def apply_configuration(
+        self, conf=None, conf_files=None, managers=None, logger=None
+    ):
         """
         Apply conf on a destination in 5 phases:
 
@@ -744,17 +749,21 @@ class Configurable(object):
         :type conf_files: list of str
         """
 
+        if logger is None:
+            logger = self.logger
+
         if conf is None:
             conf = self.conf
 
         conf = self.get_configuration(
-            conf=conf, conf_files=conf_files,
+            conf=conf, conf_files=conf_files, logger=logger,
             managers=managers)
 
         self.configure(conf=conf)
 
     def get_configuration(
-        self, conf=None, conf_files=None, managers=None, fill=False
+        self,
+        conf=None, conf_files=None, managers=None, fill=False, logger=None
     ):
         """
         Get a dictionary of params by name from conf,
@@ -781,6 +790,9 @@ class Configurable(object):
         """
 
         # start to initialize input params
+        if logger is None:
+            logger = self.logger
+
         if conf is None:
             conf = self.conf
 
@@ -808,13 +820,13 @@ class Configurable(object):
                 continue
 
             conf_manager = self._get_manager(
-                conf_file=conf_file, managers=managers)
+                conf_file=conf_file, logger=logger, managers=managers)
 
             # if a config_resource is not None
             if conf_manager is not None:
 
                 conf = conf_manager.get_configuration(
-                    conf=conf, fill=fill,
+                    conf=conf, fill=fill, logger=logger,
                     conf_file=conf_file)
 
             else:
@@ -825,7 +837,7 @@ class Configurable(object):
 
         return conf
 
-    def set_configuration(self, conf_file, conf, manager=None):
+    def set_configuration(self, conf_file, conf, manager=None, logger=None):
         """
         Set params on input conf_file.
 
@@ -838,9 +850,13 @@ class Configurable(object):
 
         result = None
 
+        if logger is None:
+            logger = self.logger
+
         # first get content of input conf_file
         prev_manager = self._get_manager(
             conf_file=conf_file,
+            logger=logger,
             managers=self.managers)
 
         if prev_manager is not None:
@@ -851,6 +867,7 @@ class Configurable(object):
         if manager is None:
             manager = self._get_manager(
                 conf_file=conf_file,
+                logger=logger,
                 managers=self.managers)
 
         elif isclass(manager):
@@ -859,6 +876,7 @@ class Configurable(object):
         else:
             manager = self._get_manager(
                 conf_file=None,
+                logger=logger,
                 managers=manager)
 
         # if prev manager is not the new manager
@@ -881,7 +899,7 @@ class Configurable(object):
 
         return result
 
-    def configure(self, conf):
+    def configure(self, conf, logger=None):
         """
         Update self properties with input params only if:
         - self.configure is True
@@ -894,6 +912,9 @@ class Configurable(object):
         :param conf: object from where get paramters
         :type conf: Configuration
         """
+
+        if logger is None:
+            logger = self.logger
 
         unified_conf = conf.unify()
 
@@ -910,11 +931,11 @@ class Configurable(object):
             self.auto_conf = auto_conf_parameter.value
 
         if self.reconf_once or self.auto_conf:
-            self._configure(unified_conf=unified_conf)
+            self._configure(unified_conf=unified_conf, logger=logger)
             # when conf succeed, deactive reconf_once
             self.reconf_once = False
 
-    def _configure(self, unified_conf):
+    def _configure(self, unified_conf, logger):
         """
         Configure this class with input conf only if auto_conf or
         configure is true.
@@ -992,7 +1013,7 @@ class Configurable(object):
         return result
 
     @staticmethod
-    def _get_manager(conf_file, logger, managers):
+    def _get_manager(conf_file, managers, logger):
         """
         Get the first manager able to handle input conf_file.
         None if no manager is able to handle input conf_file.
