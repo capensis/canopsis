@@ -178,7 +178,7 @@ class Period(object):
         result = datetime - delta
 
         if normalize:  # set to minimal value for all units before minimal unit
-            parameters = dict()
+            parameters = {}
             if Period.MICROSECOND not in self:
                 parameters[Period.MICROSECOND] = 0
                 if Period.SECOND not in self:
@@ -224,7 +224,7 @@ class Period(object):
     @staticmethod
     def from_str(serialized):
 
-        params = dict()
+        params = {}
 
         for s in serialized.split(','):
             args = s.split('=')
@@ -505,7 +505,7 @@ class TimeWindow(object):
             start = stop - TimeWindow.DEFAULT_DURATION
 
         if intervals is None:
-            intervals = list()
+            intervals = []
 
         # if no interval is proposed
         intervals.append((start, stop))

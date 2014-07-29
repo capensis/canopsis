@@ -20,8 +20,11 @@
 # ---------------------------------
 
 import unittest
+
 import logging
+
 import time
+
 from canopsis.timer import Timer
 
 mytimer = None

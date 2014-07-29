@@ -124,7 +124,8 @@ class ConfigurationManagerTest(TestCase):
         self.conf = Configuration(
             Category('A',
                 Parameter('a', value=0, parser=int),  # a is 0
-                Parameter('b', value=True, parser=bool)),  # b is overriden
+                Parameter('b', value=True, parser=Parameter.bool)),
+                # b is overriden
             Category('B',
                 Parameter('b', value=1, parser=int),  # b is 1
                 Parameter('c', value='er', parser=int)))  # error

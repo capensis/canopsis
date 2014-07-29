@@ -22,7 +22,6 @@
 import unittest
 
 from canopsis.cache import Cache
-
 from canopsis.account import Account
 from canopsis.storage import Storage
 

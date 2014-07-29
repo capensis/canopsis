@@ -60,10 +60,10 @@ collections_indexes = {
 
 def init():
 
-    from caccount import caccount
-    from cstorage import get_storage
+    from canopsis.old.account import Account
+    from canopsis.old.storage import get_storage
 
-    storage = get_storage(account=caccount(user="root", group="root"), namespace='object')
+    storage = get_storage(account=Account(user="root", group="root"), namespace='object')
 
     for collection in collections_indexes:
         storage.get_backend(collection).drop_indexes()

@@ -19,12 +19,12 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-import unittest
+from unittest import main, TestCase
 
 from canopsis.statemap import Statemap
 
 
-class KnownValues(unittest.TestCase):
+class KnownValues(TestCase):
     def setUp(self):
         pass
 
@@ -41,4 +41,4 @@ class KnownValues(unittest.TestCase):
         self.assertEqual(2, statemap.get_mapped_state(7))
 
 if __name__ == "__main__":
-    unittest.main(verbosity=2)
+    main(verbosity=2)

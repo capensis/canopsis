@@ -35,22 +35,22 @@ except ImportError:
 
     from manager import ConfigurationManagerTest
 
-from canopsis.configuration.manager.json import ConfigurationManager
+from canopsis.configuration.manager.json import JSONConfigurationManager
 
 
 class ConfigurationManagerTest(ConfigurationManagerTest):
 
     def _get_configuration_manager(self):
 
-        return ConfigurationManager()
+        return JSONConfigurationManager()
 
     def _get_manager_path(self):
 
-        return 'canopsis.configuration.manager.json.ConfigurationManager'
+        return 'canopsis.configuration.manager.json.JSONConfigurationManager'
 
     def _get_manager(self):
 
-        return ConfigurationManager
+        return JSONConfigurationManager
 
 if __name__ == '__main__':
     main()

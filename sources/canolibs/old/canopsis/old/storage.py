@@ -27,9 +27,9 @@ import ConfigParser
 
 import gridfs
 
-from pymongo import Connection
 from bson import objectid
 
+from pymongo import Connection
 from pymongo import ASCENDING
 from pymongo import DESCENDING
 

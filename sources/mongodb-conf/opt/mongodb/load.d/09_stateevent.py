@@ -18,39 +18,37 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from caccount import caccount
-from cstorage import get_storage
-from crecord import crecord
-
-import hashlib
+from canopsis.old.account import Account
+from canopsis.old.storage import get_storage
+from canopsis.old.record import Record
 
 ##set root account
-root = caccount(user="root", group="root")
+root = Account(user="root", group="root")
 
 logger = None
 
+
 def init():
-	storage = get_storage(account=root, namespace='object')
+    storage = get_storage(account=root, namespace='object')
 
-	state_spec = {
-		"crecord_type": "state-spec",
-		"restore_event": True,
-		"bagot": {
+    state_spec = {
+        "crecord_type": "state-spec",
+        "restore_event": True,
+        "bagot": {
                         # if event appears >= 10 times in 1hr
-			"time": 3600,
-			"freq": 10
-			},
+            "time": 3600,
+            "freq": 10},
                 # if event appears again in < 5min
-		"stealthy_time": 360
-		}
+        "stealthy_time": 360}
 
-	logger.info(" + Creating event state specification")
-	record = crecord(data=state_spec, name="event state specifications", type='state-spec')
-	record.chmod('g+w')
-	record.chmod('o+r')
-	record.chgrp('group.CPS_root')
-	storage.put(record)
+    logger.info(" + Creating event state specification")
+    record = Record(
+        data=state_spec, name="event state specifications", _type='state-spec')
+    record.chmod('g+w')
+    record.chmod('o+r')
+    record.chgrp('group.CPS_root')
+    storage.put(record)
+
 
 def update():
-	init();
-
+    init()
