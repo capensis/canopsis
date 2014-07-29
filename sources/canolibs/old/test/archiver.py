@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 #--------------------------------
 # Copyright (c) 2014 "Capensis" [http://www.capensis.com]
 #
@@ -20,64 +19,161 @@
 # ---------------------------------
 
 import unittest
-import logging
-import time
+from logging import DEBUG as loggingDEBUG, basicConfig as loggingBasicConfig
 
-from canopsis.archiver import Archiver
+from canopsis.old.archiver import Archiver
 
 ARCHIVER = None
 
-logging.basicConfig(level=logging.DEBUG,
-                    format='%(asctime)s %(name)s %(levelname)s %(message)s',
-                    )
+loggingBasicConfig(
+    level=loggingDEBUG,
+    format='%(asctime)s %(name)s %(levelname)s %(message)s',
+    )
 
+#Statuses
+OFF = 0
+ONGOING = 1
+STEALTHY = 2
+BAGOT = 3
+CANCELED = 4
 
 class KnownValues(unittest.TestCase):
     def setUp(self):
-        pass
+        self.Archiver = Archiver(namespace='unittest',  autolog=True, logging_level=loggingDEBUG)
+        self.Archiver.bagot_freq = 10
+        self.Archiver.bagot_time = 3600
+        self.Archiver.furtif_time = 300
+        self.Archiver.restore_event = True
 
-    def test_01_Init(self):
-        global ARCHIVER
-        ARCHIVER = Archiver(namespace='unittest', autolog=True, logging_level=logging.DEBUG)
-        ARCHIVER.remove_all()
+    def test_01_cancel(self):
+        event = {'cancel': True, 'output': 'output', 'author': 'eric', 'state': 1}
+        devent = {'output': 'test', 'status': STEALTHY, 'state' : 0}
 
-    def test_02_Check(self):
-        event = {'state': 0, 'state_type': 1}
-        event_id = 'unit.test'
+        self.Archiver.process_cancel(devent, event)
+        #self.assertTrue('cancel' not in event)
 
-        print "1. Insert new event ..."
-        if not ARCHIVER.check_event(event_id, event):
-            raise Exception('[1] Invalid check ...')
 
-        time.sleep(0.2)
-        print "2. re-Insert event ..."
-        if ARCHIVER.check_event(event_id, event):
-            raise Exception('[2] Invalid check ...')
+        event = {'cancel': True, 'output': 'output', 'author': 'eric', 'state': 0}
+        devent = {'output': 'test', 'status': STEALTHY, 'state': 0}
 
-        ## Ok -> critical
-        event = {'state': 2, 'state_type': 0}
+        self.Archiver.process_cancel(devent, event)
 
-        time.sleep(0.2)
-        print "3. Change state ..."
-        if not ARCHIVER.check_event(event_id, event):
-            raise Exception('[3] Invalid check ...')
+        #Cancellation
+        self.assertTrue(event['cancel']['cancel'])
+        self.assertEqual(event['cancel']['comment'], 'output')
+        self.assertEqual(event['cancel']['previous_status'], STEALTHY)
+        self.assertEqual(event['cancel']['author'], 'eric')
 
-        ## critical -> Ok
-        event = {'state': 0, 'state_type': 1}
+    def test_02_uncancel(self):
+        #No previous cancellation done
+        event = {'cancel': False, 'output': 'output', 'author': 'eric', 'state': 0}
+        devent = {'output': 'test', 'status': STEALTHY, 'state': 0}
 
-        time.sleep(0.2)
-        print "4. Change state ..."
-        if not ARCHIVER.check_event(event_id, event):
-            raise Exception('[4] Invalid check ...')
+        self.Archiver.process_cancel(devent, event)
+        self.assertTrue('cancel' not in event)
 
-    def test_03_Log(self):
-        records = ARCHIVER.get_logs('unit.test')
-        if len(records) != 3:
-            raise Exception('Invalid logs count  (%s)...' % len(records))
+        #Previous cancellation existed
+        event = {'cancel': False, 'output': 'output', 'author': 'eric', 'state': 0}
+        devent = {
+            'output': 'test',
+            'status': STEALTHY,
+            'cancel': {
+                'cancel': True,
+                'previous_status': ONGOING,
+                'previous_state': 1
+            },
+            'state': 0}
 
-    def test_99_DropNamespace(self):
-        ARCHIVER.remove_all()
-        pass
+        self.Archiver.process_cancel(devent, event)
+        #Cancellation
+        self.assertEqual(event['cancel']['comment'], 'output')
+        self.assertEqual(event['cancel']['previous_status'], STEALTHY)
+        self.assertEqual(event['cancel']['author'], 'eric')
+
+        #Previous status set to Ok by default
+        event = {'cancel': False, 'output': 'output', 'author': 'eric', 'state': 0}
+        devent = {
+            'output': 'test',
+            'status': ONGOING,
+            'cancel': {
+                'cancel': True,
+                'previous_status': 1,
+                'previous_state': 1
+            },
+            'state': 0}
+
+
+        self.Archiver.process_cancel(devent, event)
+        self.assertEqual(event['cancel']['previous_status'], 1)
+
+    def test_03_check_bagot(self):
+
+        event = {'rk':'testrk' , 'timestamp' : 1}
+        devent = {'timestamp' : 1}
+        self.Archiver.check_bagot(event, devent)
+
+        self.assertEqual(event['furtif_freq'], 1)
+        self.assertEqual(event['last_furtif'], 1)
+        self.assertEqual(event['status'], STEALTHY)
+
+        for x in xrange(1,10):
+            event['timestamp'] += 1
+            self.Archiver.check_bagot(event, devent)
+            self.assertEqual(event['furtif_freq'], x+1)
+            self.assertEqual(event['last_furtif'], x+1)
+            self.assertEqual(event['timestamp'], x+1)
+            if x == 9:
+                self.assertEqual(event['status'], BAGOT)
+            else:
+                self.assertEqual(event['status'], STEALTHY)
+
+
+    def test_04_check_statuses(self):
+        event = {'rk': 'testrk',
+                 'timestamp': 1,
+                 'state': 0}
+
+        devent = {'rk': 'testrk',
+                  'timestamp': 1,
+                  'state': 0}
+
+        # Check that event stays off even if it appears
+        # more than the bagot freq in the stealthy/bagot interval
+        for x in xrange(1, 20):
+            self.Archiver.check_statuses(event, devent)
+            event = devent
+
+        self.assertEqual(event['status'], OFF)
+
+        # Check that the event becomes Stealthy and then Bagot
+        for x in xrange(1, 20):
+            if (x % 2):
+                devent['state'] = 1
+            self.Archiver.check_statuses(event, devent)
+            event = devent
+            if x >= 10:
+                self.assertEqual(event['status'], BAGOT)
+            elif x > 3:
+                self.assertEqual(event['status'], STEALTHY)
+
+        # Check that the event is On Going if out of the Bagot time interval
+        event = {'rk': 'testrk',
+                 'timestamp': 4000,
+                 'state': 2}
+        self.Archiver.check_statuses(event, devent)
+        self.assertEqual(event['status'], ONGOING)
+        devent = event
+
+        # Check that the event is now Off if out of the Stealthy time interval
+        event = {'rk': 'testrk',
+                 'timestamp': 4500,
+                 'state': 0}
+        self.Archiver.check_statuses(event, devent)
+        self.assertEqual(event['status'], OFF)
+
+
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)
+
+
