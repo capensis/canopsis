@@ -32,7 +32,7 @@ function install(){
     do
         cd $SRC_PATH/$NAME/$project;
         export CPS_PREFIX="$PREFIX/etc/"
-        python setup.py install >> $LOG 2>&1 || break
+        python setup.py install >> $LOG 2>&1 || exit 1
     done
 
     # TODO when fabric will be available
