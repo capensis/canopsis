@@ -29,32 +29,32 @@ from pymongo.errors import TimeoutError, OperationFailure, ConnectionFailure,\
     DuplicateKeyError
 
 
-class DataBase(DataBase):
+class MongoDataBase(DataBase):
     """
     Manage access to a mongodb.
     """
 
-    def __init__(self, port=MongoClient.PORT, *args, **kwargs):
+    def __init__(
+        self, host=MongoClient.HOST, port=MongoClient.PORT, *args, **kwargs
+    ):
 
-        super(DataBase, self).__init__(port=port, *args, **kwargs)
+        super(MongoDataBase, self).__init__(
+            port=port, host=host, *args, **kwargs)
 
     def connect(self, *args, **kwargs):
 
         if not self.connected():
 
-            self.logger.debug('Trying to connect to %s' % (
-                '%s:%s' % (self.host, self.port) if not self.uri
-                else self.uri))
+            connection_args = {}
 
-            if self.uri:
-                connection_args = {
-                    'host': self.uri
-                }
-            else:
-                connection_args = {
-                    'host': self.host,
-                    'port': self.port
-                }
+            # if self host is given
+            if self.host:
+                connection_args['host'] = self.host
+
+            if self.port:
+                connection_args['port'] = self.port
+
+            self.logger.debug('Trying to connect to %s' % (connection_args))
 
             connection_args['j'] = self.journaling
             connection_args['w'] = 1 if self.safe else 0
@@ -161,7 +161,7 @@ class DataBase(DataBase):
         return result
 
 
-class Storage(DataBase, Storage):
+class Storage(MongoDataBase, Storage):
 
     def __init__(self, data_type, *args, **kwargs):
 
@@ -175,7 +175,8 @@ class Storage(DataBase, Storage):
         if result:
             indexes = self._get_indexes()
 
-            self._backend = self._database[self.get_table()]
+            table = self.get_table()
+            self._backend = self._database[table]
 
             for index in indexes:
                 self._backend.ensure_index(index)
@@ -187,15 +188,13 @@ class Storage(DataBase, Storage):
         Drop self table.
         """
 
-        table = self.get_table()
-
-        super(Storage, self).drop(table=table, *args, **kwargs)
+        super(Storage, self).drop(table=self.get_table(), *args, **kwargs)
 
     def get_elements(
         self, ids=None, limit=0, skip=0, sort=None, *args, **kwargs
     ):
 
-        query = dict()
+        query = {}
 
         if ids is not None:
             query['_id'] = {'$in': ids}

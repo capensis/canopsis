@@ -35,22 +35,22 @@ except ImportError:
 
     from manager import ConfigurationManagerTest
 
-from canopsis.configuration.manager.ini import ConfigurationManager
+from canopsis.configuration.manager.ini import INIConfigurationManager
 
 
-class ConfigurationManagerTest(ConfigurationManagerTest):
+class INIConfigurationManagerTest(ConfigurationManagerTest):
 
     def _get_configuration_manager(self):
 
-        return ConfigurationManager()
+        return INIConfigurationManager()
 
     def _get_manager_path(self):
 
-        return 'canopsis.configuration.manager.ini.ConfigurationManager'
+        return 'canopsis.configuration.manager.ini.INIConfigurationManager'
 
     def _get_manager(self):
 
-        return ConfigurationManager
+        return INIConfigurationManager
 
 if __name__ == '__main__':
     main()

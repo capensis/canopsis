@@ -21,13 +21,13 @@
 
 from unittest import TestCase, main
 
-from canopsis.mongo import DataBase, Storage
+from canopsis.mongo import MongoDataBase, Storage
 
 
 class DataBaseTest(TestCase):
 
     def setUp(self):
-        self.database = DataBase(safe=True)
+        self.database = MongoDataBase(safe=True)
 
     def test_connect(self):
         self.database.connect()

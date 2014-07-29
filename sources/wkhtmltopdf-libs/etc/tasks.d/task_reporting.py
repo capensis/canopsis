@@ -20,20 +20,17 @@
 # ---------------------------------
 
 from celery.task import task
-from celery.task.sets import subtask
 
 from canopsis.old.account import Account
 from canopsis.old.record import Record
 from canopsis.old.storage import Storage
 from canopsis.old.file import File
-from canopsis.old.tools import cleanTimestamp
 from canopsis.old.init import Init
 
-from datetime import date
-
 from celerylibs import decorators
-from random import randint
-import os, sys, json
+
+import os
+import json
 import time
 
 import hashlib
@@ -47,9 +44,10 @@ import calendar
 
 from dateutil.relativedelta import relativedelta
 
-init    = Init()
-logger  = init.getLogger('Reporting Task')
+init = Init()
+logger = init.getLogger('Reporting Task')
 logger.setLevel('DEBUG')
+
 
 @task
 @decorators.log_task
@@ -64,7 +62,8 @@ def render_pdf(
     owner=None,
     subset_selection=None,
     orientation='Portrait',
-    pagesize='A4'):
+    pagesize='A4'
+):
 
     logger.info('start render')
 
@@ -196,11 +195,11 @@ def render_pdf(
         raise ValueError("task_render_pdf: you must at least provide a viewName")
 
     #check if the account is just a name or a real Account
-    if isinstance(account ,str) or isinstance(account ,unicode):
-        root_account = Account(user='root',group='root',mail='root@localhost.local')
+    if isinstance(account, str):
+        root_account = Account(user='root', group='root', mail='root@localhost.local')
         root_storage = Storage(account=root_account, namespace='object')
 
-        bd_account = root_storage.find_one(mfilter={'_id':'account.%s' % str(account)})
+        bd_account = root_storage.find_one(mfilter={'_id': 'account.%s' % str(account)})
 
         if isinstance(bd_account, Record):
             account = Account(bd_account)
@@ -212,7 +211,7 @@ def render_pdf(
     #get view options
     storage = Storage(account=account, namespace='object')
     try:
-        view_record = storage.get(viewName,account=account)
+        view_record = storage.get(viewName, account=account)
     except:
         raise Exception("Impossible to find view '%s' with account '%s'" % (viewName, account._id))
 
@@ -233,7 +232,7 @@ def render_pdf(
             fromDate = get_datetime_with_timezone(int(startTime))
             fileName = '%s_From_%s_To_%s' % (view_record.name, fromDate, toDate)
         else:
-            fileName = '%s_%s' % (view_record.name,toDate)
+            fileName = '%s_%s' % (view_record.name, toDate)
 
         fileName += '_Tz_%s_%s' % (timezone.get('type', 'server'), (timezone.get('value', 0) if timezone.get('value', 0) >= 0 \
             else 'minus_%s' % -timezone['value']))
@@ -256,15 +255,16 @@ def render_pdf(
     file_path = '%s/%s' % (json.loads(file_path)['report_dir'],ascii_fileName)
 
     #create wrapper object
-    wkhtml_wrapper = Wrapper(   ascii_fileName,
-                            viewName,
-                            startTime,
-                            stopTime,
-                            subset_selection,
-                            account,
-                            wrapper_conf_file,
-                            orientation=orientation,
-                            pagesize=pagesize)
+    wkhtml_wrapper = Wrapper(
+        ascii_fileName,
+        viewName,
+        startTime,
+        stopTime,
+        subset_selection,
+        account,
+        wrapper_conf_file,
+        orientation=orientation,
+        pagesize=pagesize)
 
     wkhtml_wrapper.logger = logger
 
@@ -274,7 +274,7 @@ def render_pdf(
 
     logger.info('Put it in grid fs: %s' % file_path)
     try:
-        doc_id = put_in_grid_fs(file_path, fileName, account,owner)
+        doc_id = put_in_grid_fs(file_path, fileName, account, owner)
     except Exception as e:
         import inspect
         inspect.trace()
@@ -290,7 +290,7 @@ def render_pdf(
             reportStorage = Storage(account=account, namespace='files')
             meta = reportStorage.get(doc_id)
             meta.__class__ = File
-        except Exception, err:
+        except Exception as err:
             logger.error('Error while fetching File : %s' % err)
 
         try:
@@ -301,17 +301,18 @@ def render_pdf(
             result = result.result
 
             #if subtask fail, raise exception
-            if(result['success'] == False):
+            if(result['success'] is False):
                 raise Exception('Subtask mail have failed : %s' % result['celery_output'][0])
 
-        except Exception, err:
+        except Exception as err:
             logger.error(err)
             raise Exception('Impossible to send mail')
 
     return doc_id
 
+
 @task
-def put_in_grid_fs(file_path, file_name, account,owner=None):
+def put_in_grid_fs(file_path, file_name, account, owner=None):
     storage = Storage(account, namespace='files')
     report = File(storage=storage)
     report.put_file(file_path, file_name, content_type='application/pdf')

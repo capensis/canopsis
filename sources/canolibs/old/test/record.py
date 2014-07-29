@@ -19,14 +19,16 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-import unittest
-import json
+from unittest import TestCase, main
+
+from json import dumps
+
 from canopsis.record import Record
 from canopsis.account import Account
 from canopsis.group import Group
 
 
-class KnownValues(unittest.TestCase):
+class KnownValues(TestCase):
     def setUp(self):
         self.anonymous_account = Account()
         self.root_account = Account(user="root", group="root")
@@ -149,7 +151,7 @@ class KnownValues(unittest.TestCase):
         record1.children.append(record4)
 
         json_output = record1.recursive_dump(json=True)
-        json.dumps(json_output)
+        dumps(json_output)
 
     def test_09_check_admin_rights(self):
         account = Account(user='jean')
@@ -166,4 +168,4 @@ class KnownValues(unittest.TestCase):
 
 
 if __name__ == "__main__":
-    unittest.main(verbosity=2)
+    main(verbosity=2)

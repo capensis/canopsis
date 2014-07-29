@@ -25,7 +25,7 @@ import time
 import json
 import logging
 
-from camqp import camqp
+from canopsis.old.rabbit import Amqp
 
 logging.basicConfig(level=logging.DEBUG,
                     format='%(asctime)s %(name)s %(levelname)s %(message)s',
@@ -42,7 +42,7 @@ class KnownValues(unittest.TestCase):
 
     def test_1_Init(self):
         global myamqp
-        myamqp = camqp()
+        myamqp = Amqp()
 
     def test_2_CreateQueue_and_Bind(self):
         global myamqp
