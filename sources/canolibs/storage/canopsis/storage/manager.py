@@ -297,4 +297,4 @@ class Manager(Configurable):
             if parameter.name.endswith(Manager.STORAGE_SUFFIX):
                 self._update_property(
                     unified_conf=unified_conf, param_name=parameter.name,
-                    public_property=True)
+                    public=True)
