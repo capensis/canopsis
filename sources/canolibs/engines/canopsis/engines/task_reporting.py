@@ -161,7 +161,11 @@ class engine(TaskHandler):
 
         return (0, 'View {0} rendered by {1}'.format(view.name, account.user))
 
-    def report(self, filename, viewname, start, stop, subset_selection, account, owner, orientation, pagesize):
+    def report(
+        self,
+        filename, viewname, start, stop, subset_selection, account, owner,
+        orientation, pagesize
+    ):
         wrapper_cfgpath = os.path.expanduser('~/etc/wkhtmltopdf_wrapper.json')
         fpath = None
 

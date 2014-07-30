@@ -202,9 +202,8 @@ class engine(Engine):
                     meta_data_auto = {
                         'type': 'COUNTER',
                         'co': INTERNAL_COMPONENT,
-                        'me': "cps_sla_autosolve_{0}".format(slaname) ,
-                    }
-                    if hostgroup != None:
+                        'me': "cps_sla_autosolve_{0}".format(slaname)}
+                    if hostgroup is not None:
                         meta_data_auto['re'] = hostgroup
                     self.increment_counter(meta_data_auto, 1)
 
@@ -219,7 +218,7 @@ class engine(Engine):
                 self.increment_counter(meta_data, sla_states[sla_state])
 
         for hostgroup in event.get('hostgroups', []):
-            increment_SLA( event, slatype, slaname, delay, value, hostgroup)
+            increment_SLA(event, slatype, slaname, delay, value, hostgroup)
 
         increment_SLA(event, slatype, slaname, delay, value)
 

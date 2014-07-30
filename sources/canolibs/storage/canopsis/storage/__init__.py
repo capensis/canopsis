@@ -344,7 +344,7 @@ class DataBase(Configurable):
             updated_property = self._update_property(
                 unified_conf=unified_conf,
                 param_name=db_property,
-                public_property=False)
+                public=False)
             if updated_property:
                 reconnect = True
 

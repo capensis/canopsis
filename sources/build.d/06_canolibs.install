@@ -11,14 +11,13 @@ PROJECTS[4]='context'
 PROJECTS[5]='perfdata'
 PROJECTS[6]='mongo'
 PROJECTS[7]='old'
-PROJECTS[8]='pyperfstore2'
-PROJECTS[9]='engines'
-PROJECTS[10]='connectors'
-PROJECTS[11]='tools'
-PROJECTS[12]='cli'
-PROJECTS[13]='topology'
-PROJECTS[14]='organisation'
-PROJECTS[15]='auth'
+PROJECTS[8]='engines'
+PROJECTS[9]='connectors'
+PROJECTS[10]='tools'
+PROJECTS[11]='cli'
+PROJECTS[12]='topology'
+PROJECTS[13]='organisation'
+PROJECTS[14]='auth'
 
 function build(){
 	true
@@ -30,9 +29,10 @@ function install(){
     # install all projects
     for project in "${PROJECTS[@]}";
     do
+        echo "-- Install project: $project"
         cd $SRC_PATH/$NAME/$project;
         export CPS_PREFIX="$PREFIX/etc/"
-        python setup.py install >> $LOG 2>&1 || break
+        python setup.py install >> $LOG 2>&1 || exit 1
     done
 
     # TODO when fabric will be available
