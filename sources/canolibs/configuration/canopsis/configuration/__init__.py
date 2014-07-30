@@ -719,14 +719,14 @@ class Configurable(object):
         Change of conf_files in adding it in watching list.
         """
 
-        from canopsis.configuration.watcher import add_configurable,\
-            remove_configurable
+        #from canopsis.configuration.watcher import add_configurable,\
+        #    remove_configurable
 
         # remove previous watching
-        remove_configurable(self)
+        #remove_configurable(self)
         self._conf_files = tuple(value)
         # add new watching
-        add_configurable(self)
+        #add_configurable(self)
 
     @property
     def auto_conf(self):
