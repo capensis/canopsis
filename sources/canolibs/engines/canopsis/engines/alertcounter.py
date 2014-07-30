@@ -50,7 +50,7 @@ class engine(Engine):
         self.entities = self.storage.get_backend('entities')
         self.objects_backend = self.storage.get_backend('object')
         perfdata3 = self.storage.get_backend('perfdata3')
-        self.manager = PerfData(perfdata3, self.logger)
+        self.manager = PerfData()
         self.comments = {}
         self.selectors_name = []
         self.last_resolv = 0
