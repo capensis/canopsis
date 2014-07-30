@@ -166,7 +166,7 @@ class Archiver(object):
         self.logger.debug("   - State:\t\t'%s'" % legend[state])
         self.logger.debug("   - State type:\t'%s'" % legend_type[state_type])
 
-        now = int(time.time())
+        now = int(time())
 
         event['timestamp'] = event.get('timestamp', now)
 
@@ -321,7 +321,7 @@ class Archiver(object):
         record.type = "event"
         record.chmod("o+r")
         record.data['event_id'] = _id
-        record._id = _id + '.' + str(time.time())
+        record._id = _id + '.' + str(time())
 
         self.storage.put(record, namespace=self.namespace_log, account=self.account)
         return record._id
