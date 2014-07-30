@@ -166,7 +166,7 @@ class Archiver(object):
         self.logger.debug("   - State:\t\t'%s'" % legend[state])
         self.logger.debug("   - State type:\t'%s'" % legend_type[state_type])
 
-        now = int(time.time())
+        now = int(time())
 
         event['timestamp'] = event.get('timestamp', now)
 
@@ -228,8 +228,11 @@ class Archiver(object):
 
         # Clean raw perfdata, as they should be already splitted from event
         # and should not live in event collection.
+        perf_data_array = []
         if 'perf_data_array' in event:
+            perf_data_array = event['perf_data_array']
             del event['perf_data_array']
+
         if 'perf_data' in event:
             del event['perf_data']
 
@@ -255,6 +258,10 @@ class Archiver(object):
         mid = None
         if changed and self.autolog:
             mid = self.log_event(_id, event)
+
+        #Put back perfdata after database upsert
+        if perf_data_array:
+            event['perf_data_array'] = perf_data_array
 
         return mid
 
@@ -321,7 +328,7 @@ class Archiver(object):
         record.type = "event"
         record.chmod("o+r")
         record.data['event_id'] = _id
-        record._id = _id + '.' + str(time.time())
+        record._id = _id + '.' + str(time())
 
         self.storage.put(record, namespace=self.namespace_log, account=self.account)
         return record._id
