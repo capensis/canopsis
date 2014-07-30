@@ -45,7 +45,7 @@ function post_install(){
 	chown -R $HUSER:$HGROUP $PREFIX/etc
 	check_code $?
 
-	echo "-- Save old credentials for RabbitMQ and MongoDB"
+	echo "-- Set old credentials for RabbitMQ and MongoDB"
 
 	if [ -e $VARLIB_PATH/rabbitmq-server-conf ]
 	then
