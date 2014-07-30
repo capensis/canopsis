@@ -1,5 +1,5 @@
-```
-
+
+.. code-block:: javascript
 
 User = {
     'rights': ...,               // Map of type Rights
@@ -9,16 +9,22 @@ User = {
         'mail': ...,
         'phone_number': ...,
         ...
-        }
+        },
     'name': ...,                 // String of user's name
     '_id': ...                   // uniq id
 }
+
+
+.. code-block:: javascript
 
 Group = {
     'name': ...,                 // String of group's name
     'members': ...,              // List of strings (members names)
     'rights': ...                // Map of type Rights
 }
+
+
+.. code-block:: javascript
 
 Rghts = {
     object_id...: {             // Right on the object with the identifier id
@@ -27,4 +33,3 @@ Rghts = {
         'context': ...          // Time period
         }
 }
-```
