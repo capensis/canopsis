@@ -147,7 +147,6 @@ class engine(Engine):
     # Wrap modification action functions
     def a_modify(self, event, derogation, action, _name):
         name = derogation.get('name', None)
-        description = derogation.get('description', None)
         _id = derogation.get('_id', None)
 
         # If _id is ObjectId(), transform it to str()
