@@ -232,40 +232,6 @@ def uniq(alist):
     return [set.setdefault(e, e) for e in alist if e not in set]
 
 
-def clean_mfilter(mfilter, isnot=False):
-    """
-    Convert { '$not': {'$regex': "..." }} to {'$not': re.compile("...")}
-    """
-    if not mfilter or isinstance(mfilter, int):
-        return mfilter
-
-    if type(mfilter) is dict and None in mfilter:
-        del mfilter[None]
-
-    for key in mfilter:
-        if key == '$not':
-                isnot = True
-
-        #logger.error("filter is : %s" % mfilter)
-        #logger.error("key is : %s" % key)
-
-        if isinstance(mfilter, str):
-            values = mfilter
-        else:
-            values = mfilter[key]
-
-        if isinstance(values, list):
-            for value in values:
-                clean_mfilter(value, isnot)
-        elif isinstance(values, dict):
-            mfilter[key] = clean_mfilter(values, isnot)
-        else:
-            if isnot and isinstance(values, str) and key == '$regex':
-                return re_compile(values)
-
-    return mfilter
-
-
 def cleanTimestamp(timestamp):
     if len(str(timestamp)) > 12:
         return int(timestamp) / 1000

@@ -39,6 +39,7 @@ do
 
 		if [ "$pkg" == "webcore" ]
 		then
+			export CPS_PREFIX="$PREFIX/etc/"
 			python setup.py install --no-conf
 		elif [ "$pkg" == "canolibs" ]
 		then
@@ -58,10 +59,10 @@ do
 			PROJECTS[13]='organisation'
 			PROJECTS[14]='auth'
 
-			for project in "${PROJECTS[@]}";
+			for project in "${PROJECTS[@]}"
 			do
 				echo "-- Install project: $project"
-				cd $SRC_PATH/canolibs/$project;
+				cd $SRC_PATH/canolibs/$project
 				export CPS_PREFIX="$PREFIX/etc/"
 				python setup.py install --no-conf || exit 1
 			done
