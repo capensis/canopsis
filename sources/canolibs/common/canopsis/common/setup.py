@@ -41,6 +41,8 @@ KEYWORDS = ' Canopsis Hypervision Hypervisor Monitoring'
 
 TEST_FOLDERS = ['tests', 'test']
 
+from sys import argv
+
 
 def setup(description, keywords, add_etc=True, **kwargs):
     """
@@ -89,19 +91,23 @@ def setup(description, keywords, add_etc=True, **kwargs):
     if version is not None:
         kwargs.setdefault('version', version)
 
-    # add etc content if exist
-    if add_etc:
-        etc_path = join(_path, 'etc')
+    if '--no-conf' not in argv:
+        # add etc content if exist and if --no-conf
+        if add_etc:
+            etc_path = join(_path, 'etc')
 
-        if exists(etc_path):
-            data_files = kwargs.get('data_files', [])
-            target = getenv('CPS_PREFIX', '/opt/canopsis/etc/')
+            if exists(etc_path):
+                data_files = kwargs.get('data_files', [])
+                target = getenv('CPS_PREFIX', '/opt/canopsis/etc/')
 
-            for root, dirs, files in walk(etc_path):
-                files_to_copy = [join(root, _file) for _file in files]
-                final_target = join(target, root[len(etc_path) + 1:])
-                data_files.append((final_target, files_to_copy))
-            kwargs['data_files'] = data_files
+                for root, dirs, files in walk(etc_path):
+                    files_to_copy = [join(root, _file) for _file in files]
+                    final_target = join(target, root[len(etc_path) + 1:])
+                    data_files.append((final_target, files_to_copy))
+                kwargs['data_files'] = data_files
+
+    else:
+        argv.remove('--no-conf')
 
     # add scripts if exist
     if 'scripts' not in kwargs:

@@ -20,15 +20,8 @@
 # ---------------------------------
 
 import logging
-import sys
-import os
 
-path = os.path.expanduser('~/opt/webcore/')
-
-if path not in sys.path:
-    sys.path.append(path)
-
-from libexec.auth import create_session, check_root, check_group_rights
+from canopsis.webcore.services.auth import create_session, check_root, check_group_rights
 
 
 class BaseBackend(object):

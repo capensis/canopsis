@@ -25,10 +25,6 @@ from canopsis.old.event import get_routingkey, forger
 
 from time import time
 
-from sys import path
-
-from os.path import expanduser
-
 from canopsis.engines.collectd_utils import types
 
 

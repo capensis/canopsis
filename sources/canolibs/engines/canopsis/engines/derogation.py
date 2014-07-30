@@ -81,11 +81,11 @@ class engine(Engine):
             return False
 
         if conditions:
-            check = check(conditions, event)
+            _check = check(conditions, event)
 
-            self.logger.debug(" + 'conditions' check is %s" % check)
+            self.logger.debug(" + 'conditions' check is %s" % _check)
 
-            return check
+            return _check
 
         else:
             return True
@@ -231,11 +231,8 @@ class engine(Engine):
                 'conditions': {'$exists': True}},
                 namespace="object")
 
-    def consume_dispatcher(self,  event, *args, **kargs):
+    def consume_dispatcher(self, event, *args, **kargs):
         self.logger.debug("Consolidate metrics:")
-
-        now = time()
-        beat_elapsed = 0
 
         record = self.get_ready_record(event)
         if record:

@@ -5,7 +5,11 @@ function build(){
 }
 
 function install(){
-	install_basic_source $NAME
+	cd $SRC_PATH/$NAME
+
+	tar c var | tar xv -C $PREFIX/
+
+	python setup.py install >> $LOG 2>&1
 
 	echo "define(function() { return '$(git log | head -1 | cut -d ' ' -f2)'; });" > $PREFIX/var/www/canopsis/commit.js
 }

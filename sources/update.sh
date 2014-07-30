@@ -37,9 +37,35 @@ do
 
 		cd $SRC_PATH/$pkg
 
-		if [ "$pkg" == "canolibs" ]
+		if [ "$pkg" == "webcore" ]
 		then
-			python setup.py install
+			python setup.py install --no-conf
+		elif [ "$pkg" == "canolibs" ]
+		then
+			PROJECTS[0]='common'
+			PROJECTS[1]='configuration'
+			PROJECTS[2]='timeserie'
+			PROJECTS[3]='storage'
+			PROJECTS[4]='context'
+			PROJECTS[5]='perfdata'
+			PROJECTS[6]='mongo'
+			PROJECTS[7]='old'
+			PROJECTS[8]='engines'
+			PROJECTS[9]='connectors'
+			PROJECTS[10]='tools'
+			PROJECTS[11]='cli'
+			PROJECTS[12]='topology'
+			PROJECTS[13]='organisation'
+			PROJECTS[14]='auth'
+
+			for project in "${PROJECTS[@]}";
+			do
+				echo "-- Install project: $project"
+				cd $SRC_PATH/canolibs/$project;
+				export CPS_PREFIX="$PREFIX/etc/"
+				python setup.py install --no-conf || exit 1
+			done
+
 		else
 			echo "-- Packaging (without /etc)..."
 			tar cf $SRC_PATH/$pkg.tar . --exclude=etc || exit 1
