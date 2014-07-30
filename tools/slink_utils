@@ -27,7 +27,7 @@ function create_slinks() {
     ln -s $SRC/sources/canolibs/tools/canopsis $CPS/lib/python2.7/site-packages/canopsis.tools-0.1-py2.7.egg/
     ln -s $SRC/sources/canolibs/topology/canopsis $CPS/lib/python2.7/site-packages/canopsis.topology-0.1-py2.7.egg/
     ln -s $SRC/sources/canolibs/auth/canopsis $CPS/lib/python2.7/site-packages/canopsis.auth-0.1-py2.7.egg/
-
+    ln -s $SRC/sources/webcore/canopsis/webcore/services $CPS/lib/python2.7/site-packages/canopsis.webcore-0.8-py2.7.egg/canopsis/webcore/services
     touch $CPS/.slinked
 }
 
@@ -58,5 +58,6 @@ function remove_slinks() {
     rm -Rf $CPS/lib/python2.7/site-packages/canopsis.tools-0.1-py2.7.egg/canopsis
     rm -Rf $CPS/lib/python2.7/site-packages/canopsis.topology-0.1-py2.7.egg/canopsis
     rm -Rf $CPS/lib/python2.7/site-packages/canopsis.auth-0.1-py2.7.egg/canopsis
+    rm -Rf $CPS/lib/python2.7/site-packages/canopsis.webcore-0.8-py2.7.egg/canopsis/webcore/services
     rm $CPS/.slinked 2>/dev/null
 }
