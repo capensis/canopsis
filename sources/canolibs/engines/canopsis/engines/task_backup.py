@@ -18,11 +18,15 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from ctaskhandler import TaskHandler
+from canopsis.old.taskhandler import TaskHandler
 
-import subprocess
 import shutil
+
 import os
+
+import ubik.core as ubik_api
+
+from subprocess import Popen
 
 
 class engine(TaskHandler):
@@ -79,7 +83,8 @@ class engine(TaskHandler):
         self.logger.debug('MKDIR: {0}'.format(self.mongo_dir))
         os.makedirs(self.mongo_dir)
 
-        cmd = 'mongodump --host {0} --out {1}/'.format(hostname, self.mongo_dir)
+        cmd = 'mongodump --host {0} --out {1}/'.format(
+            hostname, self.mongo_dir)
         self.logger.debug('EXEC: {0}'.format(cmd))
         dumpout = Popen(cmd, shell=True)
         dumpout.wait()
@@ -97,7 +102,8 @@ class engine(TaskHandler):
         shutil.rmtree(self.mongo_dir)
 
         if not os.path.exists(self.mongo_path):
-            raise IOError('Archive file "{0}" not found'.format(self.mongo_path))
+            raise IOError(
+                'Archive file "{0}" not found'.format(self.mongo_path))
 
     def backup_config(self):
         if os.path.exists(self.config_dir):
