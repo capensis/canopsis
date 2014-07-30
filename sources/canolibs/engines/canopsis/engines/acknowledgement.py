@@ -87,7 +87,7 @@ class engine(Engine):
                     #set referer rk to last update date
                     self.objects_backend.update(
                         {'_id': comment['_id']},
-                        {"$addToSet": {'referer_event_rks' : {'rk': rk}}},
+                        {"$addToSet": {'referer_event_rks': {'rk': rk}}},
                         upsert=True)
                     self.logger.info('Added a referer rk to the comment ' + comment['comment'])
 

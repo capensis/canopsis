@@ -42,7 +42,7 @@ class engine(Engine):
         self.nb_beat = 0
         self.crecords_types = ['selector', 'topology', 'derogation', 'consolidation']
         self.beat_interval_trigger = {
-            'downtime': {'delay': 60, 'elapsed_since_last_beat' : 0},
+            'downtime': {'delay': 60, 'elapsed_since_last_beat': 0},
             'perfstore2_rotate': {'delay': 60, 'elapsed_since_last_beat': 0}
         }
 
