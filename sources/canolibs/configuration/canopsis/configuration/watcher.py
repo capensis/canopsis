@@ -35,8 +35,8 @@ from canopsis.configuration import \
 """
 Dictionary of (mtime, configurables) by configuration file.
 """
-_CONFIGURABLES_BY_CONF_FILES = dict()
-_MTIME_BY_CONF_FILES = dict()
+_CONFIGURABLES_BY_CONF_FILES = {}
+_MTIME_BY_CONF_FILES = {}
 
 
 def add_configurable(configurable):
@@ -120,6 +120,7 @@ class Watcher(Configurable):
         super(Watcher, self).__init__(*args, **kwargs)
 
         self._sleeping_time = sleeping_time
+        self._timer = None
 
     @property
     def sleeping_time(self):
@@ -187,7 +188,8 @@ class Watcher(Configurable):
         self._timer.start()
 
     def stop(self):
-        self._timer.cancel()
+        if self._timer is not None:
+            self._timer.cancel()
 
 
 _WATCHER = Watcher()
