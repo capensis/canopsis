@@ -104,7 +104,7 @@ class engine(Engine):
         #Event are triggered only at engine's delay duration
         for trigger_engine in self.beat_interval_trigger:
             if self.beat_interval_trigger[trigger_engine]['delay'] > self.beat_interval_trigger[trigger_engine]['elapsed_since_last_beat']:
-                self.logger.warning('triggering dispatch for ' + trigger_engine)
+                self.logger.info('triggering dispatch for ' + trigger_engine)
                 self.publish_record({'event': 'engine process trigger'}, trigger_engine)
                 #update deplay
                 self.beat_interval_trigger[trigger_engine]['elapsed_since_last_beat'] = 0
