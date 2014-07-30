@@ -228,8 +228,11 @@ class Archiver(object):
 
         # Clean raw perfdata, as they should be already splitted from event
         # and should not live in event collection.
+        perf_data_array = []
         if 'perf_data_array' in event:
+            perf_data_array = event['perf_data_array']
             del event['perf_data_array']
+
         if 'perf_data' in event:
             del event['perf_data']
 
@@ -255,6 +258,10 @@ class Archiver(object):
         mid = None
         if changed and self.autolog:
             mid = self.log_event(_id, event)
+
+        #Put back perfdata after database upsert
+        if perf_data_array:
+            event['perf_data_array'] = perf_data_array
 
         return mid
 
