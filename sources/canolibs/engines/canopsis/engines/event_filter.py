@@ -25,6 +25,7 @@ from canopsis.old.account import Account
 from canopsis.old.storage import get_storage
 from canopsis.old.event import forger, get_routingkey
 from canopsis.old.mfilter import check
+from canopsis.old.statemap import Statemap
 
 from ast import literal_eval
 from time import time
@@ -62,7 +63,7 @@ class engine(Engine):
         for condition in conditions:
             if (condition['type'] == 'time_interval'
                 and condition['startTs']
-                and condition['stopTs']):
+                    and condition['stopTs']):
                 always = condition.get('always', False)
 
                 if always:
@@ -75,8 +76,6 @@ class engine(Engine):
                     result = True
 
         return result
-
-
 
     # Override/adds 'field' of event with 'value'
     def a_override(self, event, action):
@@ -92,8 +91,6 @@ class engine(Engine):
         else:
             self.logger.error("Action malformed (needs 'field' and 'value'): %s" % action)
             return False
-
-
 
     # Remove field 'key', if element is specified,
     # remove 'element' in 'key' instead
@@ -128,8 +125,6 @@ class engine(Engine):
             self.logger.error("Action malformed (needs 'key' and/or 'element'): %s" % action)
             return False
 
-
-
     # Change state of event according to a statemap
     def a_requalificate(self, event, action):
         statemap_id = action.get('statemap', None)
@@ -140,7 +135,7 @@ class engine(Engine):
 
             if not record:
                 self.logger.error("Statemap '%s' not found" % statemap_id)
-                statemap = cstatemap(record=record)
+                statemap = Statemap(record=record)
                 event['real_state'] = event['state']
                 event['state'] = statemap.get_mapped_state(event['real_state'])
                 return True
@@ -149,8 +144,6 @@ class engine(Engine):
                 self.logger.error("Action malformed (needs 'statemap'): %s" % action)
                 return False
 
-
-
     # Wrap modification action functions
     def a_modify(self, event, derogation, action, _name):
         name = derogation.get('name', None)
@@ -158,7 +151,7 @@ class engine(Engine):
         _id = derogation.get('_id', None)
 
         # If _id is ObjectId(), transform it to str()
-        if not isinstance(_id, basestring):
+        if not isinstance(_id, str):
             _id = str(_id)
 
         derogated = False
@@ -177,23 +170,17 @@ class engine(Engine):
         if derogated:
             self.logger.debug("Event changed by rule '%s'" % name)
 
-
-
     # simple drop
     def a_drop(self, event, derogation, action, name):
         self.logger.debug("Event dropped by rule '%s'" % name)
         self.drop_event_count += 1
         return DROP
 
-
-
     # simple pass
     def a_pass(self, event, derogation, action, name):
         self.logger.debug("Event passed by rule '%s'" % name)
         self.pass_event_count += 1
         return event
-
-
 
     # Change next_amqp_queues of engine
     # (will be reseted in Engine after this current call)
@@ -206,11 +193,9 @@ class engine(Engine):
 
         return None
 
-
-
     def work(self, event, *xargs, **kwargs):
 
-        rk = cevent.get_routingkey(event)
+        rk = get_routingkey(event)
         default_action = self.configuration.get('default_action', 'pass')
 
         # list of actions supported
@@ -258,11 +243,9 @@ class engine(Engine):
         self.pass_event_count += 1
 
         self.logger.debug('Event before sent to next engine')
-        event['rk'] = event['_id'] = cevent.get_routingkey(event)
+        event['rk'] = event['_id'] = get_routingkey(event)
 
         return event
-
-
 
     def beat(self, *args, **kargs):
         """ Configuration reload for realtime ui changes handling """
@@ -277,30 +260,28 @@ class engine(Engine):
 
             for record in records:
                 record_dump = record.dump()
-                record_dump["mfilter"] = ast.literal_eval(record_dump["mfilter"])
+                record_dump["mfilter"] = literal_eval(record_dump["mfilter"])
                 self.logger.debug('Loading record_dump:')
                 self.logger.debug(record_dump)
                 self.configuration['rules'].append(record_dump)
             self.logger.info('Loaded {} rules'.format(len(self.configuration['rules'])))
             self.send_stat_event()
 
-        except Exception, e:
+        except Exception as e:
             self.logger.warning(str(e))
-
-
 
     def send_stat_event(self):
         """ Send AMQP Event for drop and pass metrics """
 
-        event = cevent.forger(
-            connector = "Engine",
-            connector_name = "engine",
-            event_type = "check",
-            source_type = "resource",
-            resource = self.amqp_queue + '_data',
-            state = 0,
-            state_type = 1,
-            output = ("%s event dropped since %s"
+        event = forger(
+            connector="Engine",
+            connector_name="engine",
+            event_type="check",
+            source_type="resource",
+            resource=self.amqp_queue + '_data',
+            state=0,
+            state_type=1,
+            output=("%s event dropped since %s"
                   % (self.drop_event_count, self.beat_interval)),
             perf_data_array = [
                 {'metric': 'pass_event',
@@ -308,24 +289,22 @@ class engine(Engine):
                  'type': 'GAUGE'},
                 {'metric': 'drop_event',
                  'value': self.drop_event_count,
-                 'type': 'GAUGE' }])
+                 'type': 'GAUGE'}])
 
         self.logger.debug(("%s event dropped since %s"
                    % (self.drop_event_count, self.beat_interval)))
         self.logger.debug(("%s event passed since %s"
                    % (self.pass_event_count, self.beat_interval)))
 
-        rk = cevent.get_routingkey(event)
+        rk = get_routingkey(event)
         self.amqp.publish(event, rk, self.amqp.exchange_name_events)
         self.drop_event_count = 0
         self.pass_event_count = 0
 
-
-
     def find_default_action(self):
         """ Find the default action stored and returns it, else assume it default action is pass """
 
-        records = self.storage.find({'crecord_type':'defaultrule'})
+        records = self.storage.find({'crecord_type': 'defaultrule'})
         if records:
             return records[0].dump()["action"]
 

@@ -47,7 +47,7 @@ class engine(Engine):
     def beat(self):
         self.cdowntime.reload(delta_beat=self.beat_interval)
 
-    def consume_dispatcher(self,  event, *args, **kargs):
+    def consume_dispatcher(self, event, *args, **kargs):
         """ Event is useless as downtime just does clean, this dispatch only prevent ha multi execution at the same time """
 
         self.logger.debug('consume_dispatcher method called. Removing expired downtime entries')
