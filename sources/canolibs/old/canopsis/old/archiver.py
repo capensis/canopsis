@@ -183,7 +183,8 @@ class Archiver(object):
                 'cancel': 1,
                 'status': 1,
                 'bagot_freq': 1,
-                'last_stealthy': 1
+                'last_stealthy': 1,
+                'ack': 1
             }
 
             devent = self.collection.find_one(_id, fields=change_fields)
@@ -212,10 +213,6 @@ class Archiver(object):
 
             self.check_statuses(event, devent)
 
-            try:
-                event = self.merge_perf_data(devent, event)
-            except Exception, err:
-                self.logger.warning("merge_perf_data: %s" % err)
 
         except:
             # No old record
@@ -228,6 +225,13 @@ class Archiver(object):
             if 'last_state_change' in event and (state == 0 or (state > 0 and old_state == 0)):
                 event['previous_state_change_ts'] = event['last_state_change']
             event['last_state_change'] = event.get('timestamp', now)
+
+        # Clean raw perfdata, as they should be already splitted from event
+        # and should not live in event collection.
+        if 'perf_data_array' in event:
+            del event['perf_data_array']
+        if 'perf_data' in event:
+            del event['perf_data']
 
 
         if new_event:
@@ -253,34 +257,6 @@ class Archiver(object):
             mid = self.log_event(_id, event)
 
         return mid
-
-    def merge_perf_data(self, old_event, new_event):
-        old_event['perf_data_array'] = old_event.get('perf_data_array', [])
-        new_event['perf_data_array'] = new_event.get('perf_data_array', [])
-
-        if new_event['perf_data_array'] != []:
-            perf_data_array = old_event['perf_data_array']
-
-            new_metrics = [ perf['metric'] for perf in new_event['perf_data_array'] ]
-            old_metrics = [ perf['metric'] for perf in old_event['perf_data_array'] ]
-
-            if new_metrics == old_metrics:
-                new_event['perf_data_metrics'] = new_metrics
-                return new_event
-
-            new_event['perf_data_metrics'] = uniq(new_metrics + old_metrics)
-
-            for new_metric in new_metrics:
-                if new_metric in old_metrics:
-                    perf_data_array[old_metrics.index(new_metric)] = new_event['perf_data_array'][new_metrics.index(new_metric)]
-                else:
-                    perf_data_array.append(new_event['perf_data_array'][new_metrics.index(new_metric)])
-
-            new_event['perf_data_array'] = perf_data_array
-
-
-
-        return new_event
 
     #Cancel and uncancel process are processed here
     def process_cancel(self, devent, event):
