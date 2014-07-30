@@ -50,7 +50,7 @@ class engine(Engine):
     def pre_run(self):
         self.storage = get_storage(namespace='object',
             account=Account(user="root", group="root"))
-        self.manager = PerfData(logging_level=self.logging_level)
+        self.manager = PerfData()
 
     def consume_dispatcher(self, event, *args, **kargs):
         self.logger.debug("Consolidate metrics:")
