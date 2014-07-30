@@ -245,6 +245,9 @@ def roundSignifiantDigit(value, sig):
     value = value / mult
     return value
 
+def clean_mfilter(mfilter):
+    # can be used to perform operations on mfilters
+    pass
 
 class dictproperty(object):
     """
