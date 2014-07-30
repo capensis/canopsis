@@ -228,10 +228,16 @@ class Archiver(object):
 
         # Clean raw perfdata, as they should be already splitted from event
         # and should not live in event collection.
-        perf_data_array = []
+        perf_data_array = None
         if 'perf_data_array' in event:
             perf_data_array = event['perf_data_array']
             del event['perf_data_array']
+
+        processing = None
+        if 'processing' in event:
+            processing = event['processing']
+            del event['processing']
+
 
         if 'perf_data' in event:
             del event['perf_data']
@@ -262,6 +268,9 @@ class Archiver(object):
         #Put back perfdata after database upsert
         if perf_data_array:
             event['perf_data_array'] = perf_data_array
+
+        if processing:
+            event['processing'] = processing
 
         return mid
 
