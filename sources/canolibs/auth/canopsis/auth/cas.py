@@ -26,16 +26,8 @@ import requests
 from canopsis.old.storage import get_storage
 from canopsis.old.account import Account
 
-import sys
-import os
-
-path = os.path.expanduser('~/opt/webcore/')
-
-if path not in sys.path:
-    sys.path.append(path)
-
-from libexec.auth import get_account, delete_session
-from libexec.account import create_account
+from canopsis.webcore.services.auth import get_account, delete_session
+from canopsis.webcore.services.account import create_account
 from canopsis.auth.base import BaseBackend
 
 

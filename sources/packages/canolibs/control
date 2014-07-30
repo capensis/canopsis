@@ -37,12 +37,6 @@ function post_install(){
 	mkdir -p $PREFIX/var/log/engines
 	check_code $?
 
-	echo "-- Update canopsis service"
-	sed -i s:@PREFIX@:$PREFIX:g $PREFIX/etc/init.d/canopsis
-	check_code $?
-	sed -i s:@USER@:$HUSER:g $PREFIX/etc/init.d/canopsis
-	check_code $?
-
 	add_message "snmp2amqp needs the following in your sudoers file (/etc/sudoers):"
 	add_message "    Defaults:$HUSER env_keep += \"HOME LD_LIBRARY_PATH PYTHONPATH\"" 
 	add_message "    $HUSER ALL=NOPASSWD: $PREFIX/bin/python $PREFIX/opt/$NAME/$NAME.py" 

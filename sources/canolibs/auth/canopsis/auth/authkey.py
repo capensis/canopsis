@@ -21,15 +21,7 @@
 
 from bottle import request, HTTPError
 
-import sys
-import os
-
-path = os.path.expanduser('~/opt/webcore/')
-
-if path not in sys.path:
-    sys.path.append(path)
-
-from libexec.auth import get_account, check_authkey
+from canopsis.webcore.services.auth import get_account, check_authkey
 from canopsis.auth.base import BaseBackend
 
 
