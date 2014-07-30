@@ -78,10 +78,11 @@ class MongoDataBase(DataBase):
                 self._database = self._conn[self.db]
 
                 if (self.user, self.pwd) != (None, None):
-                    authenticate = self._db.authenticate(self.user, self.pwd)
 
+                    authenticate = self._database.authenticate(
+                        self.user, self.pwd)
                     if authenticate:
-                        self.logger.debug("Connected on {0}:{1}".format(
+                        self.logger.info("Connected on {0}:{1}".format(
                             self.host, self.port))
                         self._connected = True
 

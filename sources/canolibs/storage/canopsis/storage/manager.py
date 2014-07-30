@@ -82,7 +82,7 @@ class Manager(Configurable):
     def shared(self, value):
         self._shared = value
 
-    def _get_property_storage(self, value, *args, **kwargs):
+    def _get_property_storage(self, value):
         """
         Get property storage where value is given in calling property.setter
         """
@@ -183,7 +183,7 @@ class Manager(Configurable):
             # search among isntances registred on storage_type
             storage_by_data_type = \
                 Manager._STORAGE_BY_DATA_TYPE_BY_TYPE.setdefault(
-                    storage_type, dict())
+                    storage_type, {})
 
             if data_type not in storage_by_data_type:
                 storage_by_data_type[data_type] = storage_type(

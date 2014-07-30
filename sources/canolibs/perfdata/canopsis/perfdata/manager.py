@@ -41,7 +41,6 @@ class PerfData(Manager):
 
     CATEGORY = 'PERFDATA'
 
-    CONTEXT = 'context'
     PERFDATA_STORAGE = 'perfdata_storage'
     META_STORAGE = 'meta_storage'
 
@@ -49,7 +48,6 @@ class PerfData(Manager):
 
     def __init__(
         self,
-        context=None,
         data_type=DATA_TYPE, perfdata_storage=None, meta_storage=None,
         *args, **kwargs
     ):
@@ -249,7 +247,6 @@ class PerfData(Manager):
         result.add_unified_category(
             name=PerfData.CATEGORY,
             new_content=(
-                Parameter(PerfData.CONTEXT),
                 Parameter(PerfData.PERFDATA_STORAGE),
                 Parameter(PerfData.META_STORAGE)))
 
