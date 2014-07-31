@@ -37,7 +37,7 @@ class engine(Engine):
         super(engine, self).__init__(*args, **kwargs)
 
         account = Account(user='root', group='root')
-        self.storage = get_storage('jobs', account=account).get_backend()
+        self.storage = get_storage('jobs', account=account)
 
     def pre_run(self):
         self.beat()
@@ -53,6 +53,8 @@ class engine(Engine):
         })
 
         for job in jobs:
+            job = job.dump()
+
             self.logger.info('Job: {0}'.format(job))
 
             if job['last_execution'] < 0:

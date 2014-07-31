@@ -18,7 +18,7 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from canopsis.old.taskhandler import TaskHandler
+from canopsis.engines import TaskHandler
 import pyperfstore2
 
 

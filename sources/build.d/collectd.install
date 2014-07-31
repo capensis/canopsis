@@ -1,7 +1,5 @@
 NAME="collectd"
 
-FCHECK="$PREFIX/bin/collectd"
-
 BASE="$NAME-$VERSION"
 LOG="$LOG_PATH/$NAME.log"
 rm -f $LOG &> /dev/null

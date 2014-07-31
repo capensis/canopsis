@@ -19,7 +19,7 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from canopsis.old.taskhandler import TaskHandler
+from canopsis.engines import TaskHandler
 from canopsis.old.account import Account
 from canopsis.old.storage import Storage
 from canopsis.old.file import File
