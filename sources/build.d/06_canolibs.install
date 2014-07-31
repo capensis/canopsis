@@ -24,13 +24,11 @@ function build(){
 }
 
 function install(){
-    #install_basic_source $NAME
-
     # install all projects
-    for project in "${PROJECTS[@]}";
+    for project in "${PROJECTS[@]}"
     do
         echo "-- Install project: $project"
-        cd $SRC_PATH/python/$project;
+        cd $SRC_PATH/python/$project
         export CPS_PREFIX="$PREFIX/etc/"
         python setup.py install >> $LOG 2>&1 || exit 1
     done
@@ -40,5 +38,12 @@ function install(){
 }
 
 function update(){
-    install
+    # install all projects
+    for project in "${PROJECTS[@]}"
+    do
+        echo "-- Update project: $project"
+        cd $SRC_PATH/python/$project
+        export CPS_PREFIX="$PREFIX/etc/"
+        python setup.py install --no-conf >> $LOG 2>&1 || exit 1
+    done
 }
