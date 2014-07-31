@@ -32,7 +32,6 @@ projects = (
     'topology',
     'mongo',
     'old',
-    'pyperfstore2',
     'engines',
     'connectors',
     'tools',

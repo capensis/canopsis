@@ -21,7 +21,6 @@ function create_slinks() {
     ln -s $SRC/sources/canolibs/old/canopsis $CPS/lib/python2.7/site-packages/canopsis.old-0.1-py2.7.egg/
     ln -s $SRC/sources/canolibs/organisation/canopsis $CPS/lib/python2.7/site-packages/canopsis.organisation-0.1-py2.7.egg/
     ln -s $SRC/sources/canolibs/perfdata/canopsis $CPS/lib/python2.7/site-packages/canopsis.perfdata-0.1-py2.7.egg/
-    ln -s $SRC/sources/canolibs/pyperfstore2/canopsis $CPS/lib/python2.7/site-packages/pyperfstore2-0.1-py2.7.egg/
     ln -s $SRC/sources/canolibs/storage/canopsis $CPS/lib/python2.7/site-packages/canopsis.storage-0.1-py2.7.egg/
     ln -s $SRC/sources/canolibs/timeserie/canopsis $CPS/lib/python2.7/site-packages/canopsis.timeserie-0.1-py2.7.egg/
     ln -s $SRC/sources/canolibs/tools/canopsis $CPS/lib/python2.7/site-packages/canopsis.tools-0.1-py2.7.egg/
@@ -52,7 +51,6 @@ function remove_slinks() {
     rm -Rf $CPS/lib/python2.7/site-packages/canopsis.old-0.1-py2.7.egg/canopsis
     rm -Rf $CPS/lib/python2.7/site-packages/canopsis.organisation-0.1-py2.7.egg/canopsis
     rm -Rf $CPS/lib/python2.7/site-packages/canopsis.perfdata-0.1-py2.7.egg/canopsis
-    rm -Rf $CPS/lib/python2.7/site-packages/pyperfstore2-0.1-py2.7.egg/canopsis
     rm -Rf $CPS/lib/python2.7/site-packages/canopsis.storage-0.1-py2.7.egg/canopsis
     rm -Rf $CPS/lib/python2.7/site-packages/canopsis.timeserie-0.1-py2.7.egg/canopsis
     rm -Rf $CPS/lib/python2.7/site-packages/canopsis.tools-0.1-py2.7.egg/canopsis
