@@ -80,22 +80,21 @@ class Archiver(object):
 
     def check_bagot(self, event, devent):
         ts_curr = event['timestamp']
-        ts_last_stealthy = event.get('last_stealthy', event['timestamp'])
-        ts_last_bagot = (ts_curr - ts_last_stealthy)
+        ts_first_bagot = event.get('ts_first_bagot', 0)
+        ts_diff_bagot = (ts_curr - ts_first_bagot)
 
-        event['bagot_freq'] = event.get('bagot_freq', 0) + 1
         freq = event['bagot_freq']
+        log = 'Status is set to {} for event %s' % event['rk']
 
-        event['last_stealthy'] = event['timestamp']
-
-        # flowchart 8
-        if (ts_last_stealthy
-            and ts_last_bagot <= self.bagot_time
+        # flowchart 6 7
+        if (ts_diff_bagot <= self.bagot_time
             and freq >= self.bagot_freq):
-            self.logger.debug(self.logger.debug('Setting event to status Bagot'))
+            self.logger.info(log.format('Bagot'))
             event['status'] = 3
+            event['bagot_freq'] += 1
+        # flowchart 8 9
         else:
-            self.logger.debug(self.logger.debug('Setting event to status Stealthy'))
+            self.logger.info(log.format('Stealthy'))
             event['status'] = 2
 
 
@@ -103,7 +102,6 @@ class Archiver(object):
     def check_statuses(self, event, devent):
 
         # Check if event is still canceled
-        # flowchart 1 2 3
         # status legend:
         # 0 == Ok
         # 1 == On going
@@ -111,10 +109,12 @@ class Archiver(object):
         # 3 == Bagot
         # 4 == Canceled
 
+        log = 'Status is set to {} for event %s' % event['rk']
         ts_curr = event['timestamp']
         ts_prev = devent['timestamp']
         event['bagot_freq'] = devent.get('bagot_freq', 0)
-
+        event['ts_first_stealthy'] = devent.get('ts_first_stealthy', 0)
+        # flowchart 1 2 3
         if (devent.get('status', 1) != 4
             or (devent['state'] != event['state']
                 and (self.restore_event
@@ -122,34 +122,62 @@ class Archiver(object):
                      or devent['state'] == 0))):
             # flowchart 4
             if (event['state'] == 0):
-                # flowchart 5 6
+                # flowchart 5 6 8
                 if (devent['state'] == 0
-                    or not self.is_stealthy(ts_curr, ts_prev)):
-                    self.logger.debug('Setting event to status Off')
+                    or (not self.is_bagot(event)
+                        and not self.is_stealthy(
+                            ts_curr - event['ts_first_stealthy']))):
+                    self.logger.info(log.format('Off'))
                     event['status'] = 0
-                    event['bagot_freq'] = 0
+                    event['ts_first_stealthy'] = 0
                 else:
                     self.check_bagot(event, devent)
 
             else:
-                # flowchart 7
-                if self.is_stealthy(ts_curr, ts_prev):
-                    self.check_bagot(event, devent)
-                else:
-                    self.logger.debug('Setting event to status On going')
+                # flowchart 7 9
+                if (not self.is_bagot(event)
+                    and not self.is_stealthy(
+                        ts_curr - event['ts_first_stealthy'])):
+                    self.logger.info(log.format('On going'))
                     event['status'] = 1
-                    event['bagot_freq'] = 0
+                    event['ts_first_stealthy'] = 0
+                else:
+                    self.check_bagot(event, devent)
+
 
         else:
-            self.logger.debug('Setting event to status Cancelled')
+            self.logger.info(log.format('Cancelled'))
             event['status'] = 4
-            event['bagot_freq'] = 0
+            event['ts_first_stealthy'] = 0
+
+        old_status = devent.get('status', event['status'])
+
+        if old_status == 0 and event['status'] == 1:
+            event['ts_first_stealthy'] = event['timestamp']
+
+        if old_status != event['status']:
+            if old_status == 3:
+                event['bagot_freq'] = 0
+            elif event['status'] != 3:
+                event['bagot_freq'] += 1
+
+        if event['bagot_freq'] == 1:
+            event['ts_first_bagot'] = event['timestamp']
+
+    def is_bagot(self, event):
+        ts_curr = event['timestamp']
+        ts_first_bagot = event.get('ts_first_bagot', 0)
+        ts_diff_bagot = (ts_curr - ts_first_bagot)
+
+        freq = event.get('bagot_freq', -1)
+
+        # flowchart 6 7
+        if ts_diff_bagot <= self.bagot_time and freq >= self.bagot_freq:
+            return True
+        return False
 
 
-
-    def is_stealthy(self, ts_curr, ts_prev):
-        ts_diff = ts_curr - ts_prev
-
+    def is_stealthy(self, ts_diff):
         return (True if ts_diff <= self.stealthy_time else False)
 
 
@@ -183,7 +211,8 @@ class Archiver(object):
                 'cancel': 1,
                 'status': 1,
                 'bagot_freq': 1,
-                'last_stealthy': 1
+                'ts_first_bagot': 1,
+                'ts_first_stealthy': 1
             }
 
             devent = self.collection.find_one(_id, fields=change_fields)
@@ -192,10 +221,10 @@ class Archiver(object):
                 new_event = True
 
             self.logger.debug(" + Check with old record:")
-            log = 'Status is set to {} for event %s' % event['rk']
             old_state = devent['state']
             old_state_type = devent['state_type']
-            event['last_state_change'] = devent.get('last_state_change', event['timestamp'])
+            event['last_state_change'] = devent.get('last_state_change',
+                                                    event['timestamp'])
 
             self.logger.debug("   - State:\t\t'%s'" % legend[old_state])
             self.logger.debug("   - State type:\t'%s'" % legend_type[old_state_type])
@@ -225,7 +254,8 @@ class Archiver(object):
 
         if changed:
             # Tests if change is from alert to non alert
-            if 'last_state_change' in event and (state == 0 or (state > 0 and old_state == 0)):
+            if ('last_state_change' in event
+                and (state == 0 or (state > 0 and old_state == 0))):
                 event['previous_state_change_ts'] = event['last_state_change']
             event['last_state_change'] = event.get('timestamp', now)
 
@@ -246,7 +276,8 @@ class Archiver(object):
                 elif key in event and key not in devent:
                     change[key] = event[key]
             if change:
-                self.storage.get_backend('events').update({'_id': _id}, {'$set': change})
+                self.storage.get_backend('events').update({'_id': _id},
+                                                          {'$set': change})
 
         mid = None
         if changed and self.autolog:
@@ -261,8 +292,10 @@ class Archiver(object):
         if new_event['perf_data_array'] != []:
             perf_data_array = old_event['perf_data_array']
 
-            new_metrics = [ perf['metric'] for perf in new_event['perf_data_array'] ]
-            old_metrics = [ perf['metric'] for perf in old_event['perf_data_array'] ]
+            new_metrics = [ perf['metric'] for perf in
+                            new_event['perf_data_array'] ]
+            old_metrics = [ perf['metric'] for perf in
+                            old_event['perf_data_array'] ]
 
             if new_metrics == old_metrics:
                 new_event['perf_data_metrics'] = new_metrics
@@ -299,7 +332,8 @@ class Archiver(object):
                 'previous_status': previous_status,
                 'previous_state': previous_state
             }
-            # Preparing event for cancel, avoid using space and use previous output
+            # Preparing event for cancel,
+            # avoid using space and use previous output
             if 'author' in event:
                 del event['author']
 
@@ -308,7 +342,8 @@ class Archiver(object):
             #Is it a cancel ?
             if event['cancel'] == True:
                 self.logger.info("set cancel to the event")
-                # If cancel is not in ok state, then it is not an alert cancellation
+                # If cancel is not in ok state,
+                # then it is not an alert cancellation
                 event['cancel'] = cancel
                 event['status'] = 4
                 event['state'] = 0
@@ -316,7 +351,9 @@ class Archiver(object):
             # Undo cancel ?
             elif event['cancel'] == False:
                 #If event has been previously cancelled
-                if 'cancel' in devent and 'cancel' in devent['cancel'] and devent['cancel']['cancel']:
+                if ('cancel' in devent
+                    and 'cancel' in devent['cancel']
+                    and devent['cancel']['cancel']):
 
                     event['cancel'] = cancel
                     #Restore previous status
@@ -347,11 +384,15 @@ class Archiver(object):
         record.data['event_id'] = _id
         record._id = _id + '.' + str(time.time())
 
-        self.storage.put(record, namespace=self.namespace_log, account=self.account)
+        self.storage.put(record,
+                         namespace=self.namespace_log,
+                         account=self.account)
         return record._id
 
     def get_logs(self, _id, start=None, stop=None):
-        return self.storage.find({'event_id': _id}, namespace=self.namespace_log, account=self.account)
+        return self.storage.find({'event_id': _id},
+                                 namespace=self.namespace_log,
+                                 account=self.account)
 
     def remove_all(self):
         self.logger.debug("Remove all logs and state archives")
