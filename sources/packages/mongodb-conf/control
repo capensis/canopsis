@@ -121,6 +121,15 @@ function post_update(){
 	su - $HUSER -c "service mongodb start"
 	check_code $?
 
+	echo "-- Copy JSON schemas"
+	mkdir -p $PREFIX/etc/schema.d
+	cp -Rf $SRC_PATH/mongodb-conf/etc/schema.d/* $PREFIX/etc/schema.d
+	check_code $?
+
+	echo "-- Fix permissions"
+	chown -R $HUSER:$HGROUP $PREFIX/etc/schema.d
+	check_code $?
+
 	launch_cmd 1 python $PREFIX/opt/mongodb/filldb.py update
 	check_code $?
 }
