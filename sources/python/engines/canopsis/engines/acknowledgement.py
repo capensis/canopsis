@@ -36,6 +36,7 @@ class engine(Engine):
         account = Account(user="root", group="root")
 
         self.storage = get_storage(namespace='ack', account=account)
+        self.events_collection = self.storage.get_backend('events')
         self.stbackend = self.storage.get_backend('ack')
         self.objects_backend = self.storage.get_backend('object')
         self.acknowledge_on = acknowledge_on
@@ -91,20 +92,33 @@ class engine(Engine):
                         upsert=True)
                     self.logger.info('Added a referer rk to the comment ' + comment['comment'])
 
+            ack_info = {
+                'timestamp': event['timestamp'],
+                'ackts': int(time()),
+                'rk': rk,
+                'author': event['author'],
+                'comment': event['output']
+            }
+
             # add rk to acknowledged rks
             response = self.stbackend.find_and_modify(
                 query={'rk': rk, 'solved': False},
-                update={'$set': {
-                    'timestamp': event['timestamp'],
-                    'ackts': int(time()),
-                    'rk': rk,
-                    'author': event['author'],
-                    'comment': event['output']
-                }},
+                update={'$set': ack_info},
                 upsert=True,
                 full_response=True,
                 new=True
             )
+
+            self.logger.debug('Updating event {} with informations author {} and comment {}'.format(
+                rk,
+                ack_info['author'],
+                ack_info['comment'])
+            )
+            self.events_collection.update(
+                {'rk': rk},
+                {'$set': {
+                    'ack': ack_info,
+            }})
 
             if not response['lastErrorObject']['updatedExisting']:
                 record = response['value']
@@ -112,6 +126,7 @@ class engine(Engine):
                 # Emit an event log
                 referer_event = self.storage.find_one(mfilter={'rk': rk}, namespace='events')
                 if referer_event:
+
                     referer_event = referer_event.dump()
 
                     logevent = forger(

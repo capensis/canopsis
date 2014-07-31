@@ -18,7 +18,7 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from canopsis.old.taskhandler import TaskHandler
+from canopsis.engines import TaskHandler
 
 import shutil
 
@@ -135,4 +135,4 @@ class engine(TaskHandler):
         shutil.rmtree(self.config_dir)
 
         if not os.path.exists(self.config_path):
-            raise IOError('Archive file "{0}" not found'.format(self.config_path))
+            raise IOError('Archive "{0}" not found'.format(self.config_path))

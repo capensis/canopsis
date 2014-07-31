@@ -60,7 +60,9 @@ def forger(
     tags=[],
     ticket=None,
     ref_rk=None,
-    component_problem=False
+    component_problem=False,
+    author=None,
+    cancel=None,
 ):
 
     if not timestamp:
@@ -132,6 +134,12 @@ def forger(
         'output': output,
         'long_output': long_output,
     }
+
+    if author:
+        dump["author"] = author
+
+    if cancel:
+        dump["cancel"] = cancel
 
     if perf_data:
         dump["perf_data"] = perf_data

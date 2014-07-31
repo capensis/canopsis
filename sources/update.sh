@@ -41,7 +41,7 @@ do
 		then
 			export CPS_PREFIX="$PREFIX/etc/"
 			python setup.py install --no-conf
-		elif [ "$pkg" == "canolibs" ]
+		elif [ "$pkg" == "python" ]
 		then
 			PROJECTS[0]='common'
 			PROJECTS[1]='configuration'
@@ -62,7 +62,7 @@ do
 			for project in "${PROJECTS[@]}"
 			do
 				echo "-- Install project: $project"
-				cd $SRC_PATH/canolibs/$project
+				cd $SRC_PATH/$pkg/$project
 				export CPS_PREFIX="$PREFIX/etc/"
 				python setup.py install --no-conf || exit 1
 			done

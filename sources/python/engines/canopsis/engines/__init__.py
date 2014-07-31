@@ -34,6 +34,7 @@ from itertools import cycle
 from logging import INFO, FileHandler, Formatter
 
 from time import time, sleep
+from json import loads
 
 from os import getpid
 from os.path import expanduser
@@ -47,16 +48,18 @@ class Engine(object):
 
     amqpcls = Amqp
 
-    def __init__(self,
-            next_amqp_queues=[],
-            next_balanced=False,
-            name="worker1",
-            beat_interval=60,
-            logging_level=INFO,
-            exchange_name='amq.direct',
-            routing_keys=[],
-            camqp_custom=None,
-            *args, **kwargs):
+    def __init__(
+        self,
+        next_amqp_queues=[],
+        next_balanced=False,
+        name="worker1",
+        beat_interval=60,
+        logging_level=INFO,
+        exchange_name='amq.direct',
+        routing_keys=[],
+        camqp_custom=None,
+        *args, **kwargs
+    ):
 
         super(Engine, self).__init__()
 
@@ -149,7 +152,7 @@ class Engine(object):
 
         except Exception as e:
             self.logger.critical(
-                'unable to retrieve crecord object of %s for record type %s : %s' % (str(self.dispatcher_crecords), event['crecord_type'], e) )
+                'unable to retrieve crecord object of %s for record type %s : %s' % (str(self.dispatcher_crecords), event['crecord_type'], e))
 
         return record_object
 
@@ -432,3 +435,59 @@ class Engine(object):
                     'l': False,
                     't': time()
                 })
+
+
+class TaskHandler(Engine):
+    etype = 'Task'
+
+    def __init__(self, *args, **kwargs):
+        super(TaskHandler, self).__init__(*args, **kwargs)
+        self.amqp_queue = self.name
+
+    def work(self, msg, *args, **kwargs):
+        self.logger.info('Received job: {0}'.format(msg))
+
+        start = int(time())
+
+        job = None
+        output = None
+        state = 3
+
+        try:
+            job = loads(msg)
+
+        except ValueError as err:
+            self.logger.error('Impossible to decode message: {0}'.format(err))
+            return
+
+        state, output = self.handle_task(job)
+
+        end = int(time())
+
+        event = {
+            'timestamp': end,
+            'connector': 'taskhandler',
+            'connector_name': self.name,
+            'event_type': 'check',
+            'source_type': 'resource',
+            'component': 'job',
+            'resource': job['id'],
+            'state': state,
+            'state_type': 1,
+            'output': output,
+            'execution_time': end - start
+        }
+
+        self.amqp.publish(
+            event, get_routingkey(event),
+            self.amqp.exchange_name_events)
+
+    def handle_task(self, job):
+        """
+            :param job: Job's informations
+            :type job: dict
+
+            :returns: (<state>, <output>)
+        """
+
+        raise NotImplementedError()

@@ -1,7 +1,5 @@
 NAME="rabbitmq-server"
 
-FCHECK="$PREFIX/bin/rabbitmq-env"
-
 BASE="rabbitmq-server-$VERSION"
 LOG="$LOG_PATH/$BASE.log"
 rm -f $LOG &> /dev/null
