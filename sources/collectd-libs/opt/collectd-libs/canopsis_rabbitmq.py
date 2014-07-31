@@ -24,7 +24,10 @@ import ConfigParser
 import json
 import urllib2
 import os
-import httplib, base64, urlparse, socket
+import httplib
+import base64
+import urlparse
+import socket
 
 plugin_name = "canopsis_rabbitmq"
 

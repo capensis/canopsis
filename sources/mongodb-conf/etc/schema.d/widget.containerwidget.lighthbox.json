@@ -2,10 +2,12 @@
 	"type": "object",
 	"categories": [{
 		"title": "general",
-		"keys":["title", "widgetslotTemplate"]
+		"keys":["title", "itemTagName", "itemCssClass", "widgetslotTemplate"]
 	}],
 	"properties": {
 		"title": {"type": "string"},
+		"itemCssClass": {"type": "string"},
+		"itemTagName": {"type": "string"},
 		"widgetslotTemplate" : {
 			"type": "string",
 			"enum": ["widgetslot-default", "widgetslot-grey"],

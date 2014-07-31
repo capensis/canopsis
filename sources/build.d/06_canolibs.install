@@ -24,17 +24,26 @@ function build(){
 }
 
 function install(){
-    #install_basic_source $NAME
-
     # install all projects
-    for project in "${PROJECTS[@]}";
+    for project in "${PROJECTS[@]}"
     do
         echo "-- Install project: $project"
-        cd $SRC_PATH/$NAME/$project;
+        cd $SRC_PATH/python/$project
         export CPS_PREFIX="$PREFIX/etc/"
         python setup.py install >> $LOG 2>&1 || exit 1
     done
 
     # TODO when fabric will be available
     # fab -H localhost -u canopsis -p canopsis setup 1>> $LOG 2>> $LOG
+}
+
+function update(){
+    # install all projects
+    for project in "${PROJECTS[@]}"
+    do
+        echo "-- Update project: $project"
+        cd $SRC_PATH/python/$project
+        export CPS_PREFIX="$PREFIX/etc/"
+        python setup.py install --no-conf >> $LOG 2>&1 || exit 1
+    done
 }

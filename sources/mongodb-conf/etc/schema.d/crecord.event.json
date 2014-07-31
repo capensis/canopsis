@@ -62,7 +62,7 @@
 		},
 		"status": {
 			"type": "string",
-			"default": "Ok"
+			"role": "status"
 		}
 	}
 }

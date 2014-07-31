@@ -267,21 +267,59 @@ function make_package(){
 function install_basic_source(){
 	cd $SRC_PATH
 	NAME=$1
-	#echo "Install $NAME ..."
-	#echo " + Install ..."
-
-	#CTRLFILE="$SRC_PATH/packages/$NAME/control"
 
 	if [ -e "$NAME" ]; then
-		## Install file
-		cp -Rf $NAME/* $PREFIX/
+		cd $NAME
+
+		echo "-- Listing files..."
+		tar cf $NAME.tar .
 		check_code $?
-		cp -Rf $NAME/.[a-zA-Z0-9]* $PREFIX/ &> /dev/null || true
+
+		echo "-- Extracting files..."
+		tar xf $NAME.tar -C $PREFIX/
+		check_code $?
+
+		echo "-- Fix permissions"
+		for file in $(tar tf $NAME.tar)
+		do
+			chown $HUSER:$HGROUP $PREFIX/$file
+		done
+
+		echo "-- Cleaning"
+		rm $NAME.tar
 	else
 		echo "Error: Impossible to find '$NAME'"
 		exit 1
 	fi
+}
 
+function update_basic_source(){
+	cd $SRC_PATH
+	NAME=$1
+
+	if [ -e "$NAME" ]; then
+		cd $NAME
+
+		echo "-- Listing files..."
+		tar cf $NAME.tar . --exclude=etc
+		check_code $?
+
+		echo "-- Extracting files..."
+		tar xf $NAME.tar -C $PREFIX/
+		check_code $?
+
+		echo "-- Fix permissions"
+		for file in $(tar tf $NAME.tar)
+		do
+			chown $HUSER:$HGROUP $PREFIX/$file
+		done
+
+		echo "-- Cleaning"
+		rm $NAME.tar
+	else
+		echo "Error: Impossible to find '$NAME'"
+		exit 1
+	fi
 }
 
 function extra_deps(){
@@ -488,6 +526,7 @@ if [ $OPT_BUILD -eq 1 ]; then
 
 			pkg_options
 
+			function update(){ true; }
 			function install(){ true; }
 			function build(){ true; }
 
@@ -504,12 +543,12 @@ if [ $OPT_BUILD -eq 1 ]; then
 			## Build and install
 			FORCE_UPDATE=0
 
-			if [ $(echo $ITEM | grep "11_mongodb" | wc -l) == 1 ]; then
+			if [ $NAME == "mongodb" ]; then
 				FORCE_UPDATE=1
 			fi
 
 			## Build and install
-			if [ $FORCE_UPDATE -eq 1 ] || [ ! -e $FCHECK ]; then
+			if [ $FORCE_UPDATE -eq 1 ] || [ ! -e $VARLIB_PATH/$NAME ]; then
 				if [ $OPT_NOBUILD -ne 1 ]; then
 					echo " + Build ..."
 					build
@@ -537,7 +576,26 @@ if [ $OPT_BUILD -eq 1 ]; then
 					check_code $? "Make package failure"
 				fi
 			else
-				echo " + Already installed"
+				if [ $OPT_MPKG -eq 1 ]; then
+					files_listing "$SRC_PATH/packages/files.lst"
+				fi
+
+				echo " + Pre-update ..."
+				pre_update
+
+				echo " + Update ..."
+				update
+				check_code $? "Update failure"
+
+				echo " + Post-update ..."
+				post_update
+
+				echo "v${VERSION}-r${RELEASE}_${DIST}-${DIST_VERS}_${ARCH}" >> $VARLIB_PATH/$NAME
+
+				if [ $OPT_MPKG -eq 1 ]; then
+					make_package $NAME
+					check_code $? "Make package failure"
+				fi
 			fi
 		else
 			echo "Impossible to build $NAME ..."

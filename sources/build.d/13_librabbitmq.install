@@ -1,7 +1,5 @@
 NAME="librabbitmq"
 
-FCHECK="$PREFIX/lib/librabbitmq.so"
-
 LOG="$LOG_PATH/$NAME.log"
 rm -f $LOG &> /dev/null
 

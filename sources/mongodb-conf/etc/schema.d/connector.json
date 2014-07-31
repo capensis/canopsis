@@ -1,0 +1,23 @@
+{
+	"type": "object",
+	"properties": {
+		"crecord_type" : {"type": "string", "required": true },
+		"connecteur_name": { "type":"string" , "required": true },
+		"hostname": {"type": "string", "required": true },
+		"connectivité" :{ "type": "boolean" },
+		"state" :{ "type": "boolean" },
+		"other_process" :{
+			"type": "array",
+			"items": {
+				"type": "string"
+			}
+		},
+		"connector_type" :{
+			"type": "string",
+			"enum": ["nagios", "shinken"],
+			"default": "shinken",
+			"role": "source"
+		},
+		"poly": "true"
+	}
+}

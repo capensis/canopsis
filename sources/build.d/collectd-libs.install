@@ -27,3 +27,7 @@ function install(){
 	sed "s#@AMQP_PASSWORD@#${amqp_pass}#g" -i $PREFIX/etc/collectd.conf
 	sed "s#@AMQP_VHOST@#${amqp_vhost}#g" -i $PREFIX/etc/collectd.conf
 }
+
+function update(){
+	update_basic_source $NAME
+}

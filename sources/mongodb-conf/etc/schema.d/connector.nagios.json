@@ -1,0 +1,10 @@
+{
+	"type": "object",
+	"categories": [{
+		"title": "general",
+		"keys":[ "nagios_thing" , "connecteur_name" , "hostname" , "connectivité" , "state" ]
+	}],
+	"properties": {
+		"nagios_thing" : {"type": "string", "required": true }
+	}
+}

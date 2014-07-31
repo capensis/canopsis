@@ -1,7 +1,6 @@
 {
-	"adapter":"Userview",
-	"serializer":"Userview",
 	"type": "object",
+	
 	"categories": [{
 		"title": "general",
 		"keys":["crecord_name","description", "enable"]
