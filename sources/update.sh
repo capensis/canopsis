@@ -37,7 +37,10 @@ do
 
 		cd $SRC_PATH/$pkg
 
-		if [ "$pkg" == "webcore" ]
+		if [ "$pkg" == "python"]
+		then
+			echo "Nothing to do"
+		elif [ "$pkg" == "webcore" ]
 		then
 			export CPS_PREFIX="$PREFIX/etc/"
 			python setup.py install --no-conf
@@ -62,7 +65,7 @@ do
 			for project in "${PROJECTS[@]}"
 			do
 				echo "-- Install project: $project"
-				cd $SRC_PATH/canolibs/$project
+				cd $SRC_PATH/python/$project
 				export CPS_PREFIX="$PREFIX/etc/"
 				python setup.py install --no-conf || exit 1
 			done

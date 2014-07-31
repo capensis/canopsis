@@ -1,7 +1,5 @@
 NAME="wkhtmltopdf"
 
-FCHECK="$PREFIX/bin/wkhtmltopdf"
-
 BASE="wkhtmltopdf-$VERSION-static-$ARCH"
 LOG="$LOG_PATH/$BASE.log"
 rm -f $LOG &> /dev/null

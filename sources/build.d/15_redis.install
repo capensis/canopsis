@@ -1,7 +1,5 @@
 NAME="redis"
 
-FCHECK=$PREFIX/bin/redis-server
-
 BASE="redis-$VERSION"
 LOG="$LOG_PATH/$NAME.log"
 rm -f $LOG &> /dev/null
