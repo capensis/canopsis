@@ -109,11 +109,13 @@ class engine(Engine):
                 new=True
             )
 
-            self.logger.debug('Updating event {} with informations author {} and comment {}'.format(
+            self.logger.debug(u'Updating event {} with informations author {} and comment {}'.format(
                 rk,
                 ack_info['author'],
                 ack_info['comment'])
             )
+
+            ack_info['isAck'] = True
             self.events_collection.update(
                 {'rk': rk},
                 {'$set': {
