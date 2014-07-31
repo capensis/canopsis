@@ -3,6 +3,8 @@
 	"properties": {
 		"title": {"type": "string"},
 		"xtype": {"type": "string"},
-		"widgetId": {"type": "string"}
+		"widgetId": {"type": "string"},
+		"tagName": {"type": "string"},
+		"cssClass": {"type": "string"}
 	}
 }
