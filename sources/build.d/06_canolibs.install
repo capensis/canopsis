@@ -38,3 +38,7 @@ function install(){
     # TODO when fabric will be available
     # fab -H localhost -u canopsis -p canopsis setup 1>> $LOG 2>> $LOG
 }
+
+function update(){
+    install
+}

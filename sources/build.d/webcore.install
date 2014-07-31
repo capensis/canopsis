@@ -13,3 +13,7 @@ function install(){
 
 	echo "define(function() { return '$(git log | head -1 | cut -d ' ' -f2)'; });" > $PREFIX/var/www/canopsis/commit.js
 }
+
+function update(){
+    install
+}
