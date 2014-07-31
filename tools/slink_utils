@@ -10,22 +10,22 @@ function create_slinks() {
     ln -s $SRC/sources/mongodb-conf/opt/mongodb $CPS/opt/
     ln -s $SRC/sources/mongodb-conf/etc/schema.d $CPS/etc/
     # canolibs
-    ln -sF $SRC/sources/canolibs/cli/canopsis $CPS/lib/python2.7/site-packages/canopsis.cli-0.1-py2.7.egg/
-    ln -s $SRC/sources/canolibs/common/canopsis $CPS/lib/python2.7/site-packages/canopsis.common-0.1-py2.7.egg/
-    ln -s $SRC/sources/canolibs/configuration/canopsis $CPS/lib/python2.7/site-packages/canopsis.configuration-0.1-py2.7.egg/
-    ln -s $SRC/sources/canolibs/connectors/canopsis $CPS/lib/python2.7/site-packages/canopsis.connectors-0.1-py2.7.egg/
-    ln -s $SRC/sources/canolibs/connectors/var/snmp $CPS/var/
-    ln -s $SRC/sources/canolibs/context/canopsis $CPS/lib/python2.7/site-packages/canopsis.context-0.1-py2.7.egg/
-    ln -s $SRC/sources/canolibs/engines/canopsis $CPS/lib/python2.7/site-packages/canopsis.engines-0.1-py2.7.egg/
-    ln -s $SRC/sources/canolibs/mongo/canopsis $CPS/lib/python2.7/site-packages/canopsis.mongo-0.1-py2.7.egg/
-    ln -s $SRC/sources/canolibs/old/canopsis $CPS/lib/python2.7/site-packages/canopsis.old-0.1-py2.7.egg/
-    ln -s $SRC/sources/canolibs/organisation/canopsis $CPS/lib/python2.7/site-packages/canopsis.organisation-0.1-py2.7.egg/
-    ln -s $SRC/sources/canolibs/perfdata/canopsis $CPS/lib/python2.7/site-packages/canopsis.perfdata-0.1-py2.7.egg/
-    ln -s $SRC/sources/canolibs/storage/canopsis $CPS/lib/python2.7/site-packages/canopsis.storage-0.1-py2.7.egg/
-    ln -s $SRC/sources/canolibs/timeserie/canopsis $CPS/lib/python2.7/site-packages/canopsis.timeserie-0.1-py2.7.egg/
-    ln -s $SRC/sources/canolibs/tools/canopsis $CPS/lib/python2.7/site-packages/canopsis.tools-0.1-py2.7.egg/
-    ln -s $SRC/sources/canolibs/topology/canopsis $CPS/lib/python2.7/site-packages/canopsis.topology-0.1-py2.7.egg/
-    ln -s $SRC/sources/canolibs/auth/canopsis $CPS/lib/python2.7/site-packages/canopsis.auth-0.1-py2.7.egg/
+    ln -sF $SRC/sources/python/cli/canopsis $CPS/lib/python2.7/site-packages/canopsis.cli-0.1-py2.7.egg/
+    ln -s $SRC/sources/python/common/canopsis $CPS/lib/python2.7/site-packages/canopsis.common-0.1-py2.7.egg/
+    ln -s $SRC/sources/python/configuration/canopsis $CPS/lib/python2.7/site-packages/canopsis.configuration-0.1-py2.7.egg/
+    ln -s $SRC/sources/python/connectors/canopsis $CPS/lib/python2.7/site-packages/canopsis.connectors-0.1-py2.7.egg/
+    ln -s $SRC/sources/python/connectors/var/snmp $CPS/var/
+    ln -s $SRC/sources/python/context/canopsis $CPS/lib/python2.7/site-packages/canopsis.context-0.1-py2.7.egg/
+    ln -s $SRC/sources/python/engines/canopsis $CPS/lib/python2.7/site-packages/canopsis.engines-0.1-py2.7.egg/
+    ln -s $SRC/sources/python/mongo/canopsis $CPS/lib/python2.7/site-packages/canopsis.mongo-0.1-py2.7.egg/
+    ln -s $SRC/sources/python/old/canopsis $CPS/lib/python2.7/site-packages/canopsis.old-0.1-py2.7.egg/
+    ln -s $SRC/sources/python/organisation/canopsis $CPS/lib/python2.7/site-packages/canopsis.organisation-0.1-py2.7.egg/
+    ln -s $SRC/sources/python/perfdata/canopsis $CPS/lib/python2.7/site-packages/canopsis.perfdata-0.1-py2.7.egg/
+    ln -s $SRC/sources/python/storage/canopsis $CPS/lib/python2.7/site-packages/canopsis.storage-0.1-py2.7.egg/
+    ln -s $SRC/sources/python/timeserie/canopsis $CPS/lib/python2.7/site-packages/canopsis.timeserie-0.1-py2.7.egg/
+    ln -s $SRC/sources/python/tools/canopsis $CPS/lib/python2.7/site-packages/canopsis.tools-0.1-py2.7.egg/
+    ln -s $SRC/sources/python/topology/canopsis $CPS/lib/python2.7/site-packages/canopsis.topology-0.1-py2.7.egg/
+    ln -s $SRC/sources/python/auth/canopsis $CPS/lib/python2.7/site-packages/canopsis.auth-0.1-py2.7.egg/
     ln -s $SRC/sources/webcore/canopsis/webcore/services $CPS/lib/python2.7/site-packages/canopsis.webcore-0.8-py2.7.egg/canopsis/webcore/services
     touch $CPS/.slinked
 }
