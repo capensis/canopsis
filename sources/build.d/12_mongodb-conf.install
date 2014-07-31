@@ -11,12 +11,19 @@ function build(){
 function install(){
 	echo " + Post install configurations ..."
 
-	cp mongodb-conf/opt/mongodb/load.d/08_indexes.py $PREFIX/lib/canolibs/indexes.py
-
 	cd $SRC_PATH	
 	install_basic_source $NAME
 
 	sed "s#@PREFIX@#$PREFIX#g" -i $PREFIX/etc/collectd.d/*.conf
 
 	install_conf "mongodb.conf"
+}
+
+function update(){
+    echo " + Post install configurations ..."
+
+    cd $SRC_PATH    
+    update_basic_source $NAME
+
+    sed "s#@PREFIX@#$PREFIX#g" -i $PREFIX/etc/collectd.d/*.conf
 }

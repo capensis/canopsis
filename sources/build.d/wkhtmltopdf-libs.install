@@ -13,5 +13,5 @@ function install(){
 }
 
 function update(){
-    install
+    update_basic_source $NAME
 }

@@ -267,21 +267,59 @@ function make_package(){
 function install_basic_source(){
 	cd $SRC_PATH
 	NAME=$1
-	#echo "Install $NAME ..."
-	#echo " + Install ..."
-
-	#CTRLFILE="$SRC_PATH/packages/$NAME/control"
 
 	if [ -e "$NAME" ]; then
-		## Install file
-		cp -Rf $NAME/* $PREFIX/
+		cd $NAME
+
+		echo "-- Listing files..."
+		tar cf $NAME.tar .
 		check_code $?
-		cp -Rf $NAME/.[a-zA-Z0-9]* $PREFIX/ &> /dev/null || true
+
+		echo "-- Extracting files..."
+		tar xf $NAME.tar -C $PREFIX/
+		check_code $?
+
+		echo "-- Fix permissions"
+		for file in $(tar tf $NAME.tar)
+		do
+			chown $HUSER:$HGROUP $PREFIX/$file
+		done
+
+		echo "-- Cleaning"
+		rm $NAME.tar
 	else
 		echo "Error: Impossible to find '$NAME'"
 		exit 1
 	fi
+}
 
+function update_basic_source(){
+	cd $SRC_PATH
+	NAME=$1
+
+	if [ -e "$NAME" ]; then
+		cd $NAME
+
+		echo "-- Listing files..."
+		tar cf $NAME.tar . --exclude=etc
+		check_code $?
+
+		echo "-- Extracting files..."
+		tar xf $NAME.tar -C $PREFIX/
+		check_code $?
+
+		echo "-- Fix permissions"
+		for file in $(tar tf $NAME.tar)
+		do
+			chown $HUSER:$HGROUP $PREFIX/$file
+		done
+
+		echo "-- Cleaning"
+		rm $NAME.tar
+	else
+		echo "Error: Impossible to find '$NAME'"
+		exit 1
+	fi
 }
 
 function extra_deps(){
