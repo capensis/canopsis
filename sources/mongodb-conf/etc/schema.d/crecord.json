@@ -2,8 +2,8 @@
 	"type": "object",
 	"properties": {
 		"crecord_type": {"type": "string", "optiontest": "test", "required": true , "role": "crecord-type"},
-		"crecord_write_time": {"type": "integer", "required": true , "role": "timestamp" , "canDisplayAgo" : true, "format": "r"},
-		"crecord_creation_time": {"type": "integer", "required": true ,  "role": "timestamp" , "canDisplayAgo" : true, "format": "r"},
+		"crecord_write_time": {"type": "integer", "required": true , "role": "timestamp" , "hideDate": true, "canDisplayAgo" : true, "format": "r"},
+		"crecord_creation_time": {"type": "integer", "required": true ,  "role": "timestamp" , "hideDate": true, "canDisplayAgo" : true, "format": "r"},
 		"crecord_name": {"type": "string", "required": true},
 
 		"aaa_owner": {"type": "string", "required": true},
@@ -41,8 +41,9 @@
 			"required": true,
 			"role" : "rights"
 		},
-
-		"enable": {"type": "boolean", "required": true},
+		"enable": {
+			"type": "boolean", "required": true
+		},
 		"parent": {
 			"type": "array",
 			"items": {

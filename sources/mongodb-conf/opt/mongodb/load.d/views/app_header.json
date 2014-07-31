@@ -20,6 +20,8 @@
                                                         "actionArguments" : "view.event",
                                                         "actionCssClass" : "btn btn-default",
                                                         "label" : "events",
+                                                        "cssClass": "active",
+                                                        "tagName": "li",
                                                         "actionType" : "showView"
                                                 },
                                                 "xtype" : "widgetwrapper",
@@ -32,20 +34,24 @@
                                                         "actionArguments" : "view.userviews",
                                                         "actionCssClass" : "btn btn-default",
                                                         "label" : "userviews",
-                                                        "actionType" : "showView"
+                                                        "actionType" : "showView",
+                                                        "tagName": "li"
                                                 },
                                                 "xtype" : "widgetwrapper",
                                                 "title" : "wrapper"
                                         }
                                 ],
-                                "widgetslotTemplate" : "widgetslot-grey",
-                                "xtype" : "hbox",
+                                "xtype" : "lighthbox",
+                                "tagName":"ul",
+                                "cssClass":"nav nav-tabs",
                                 "title" : null
                         },
                         "xtype" : "widgetwrapper",
                         "title" : "wrapper"
                 }
         ],
+        "tagName":"section",
+        "cssClass":"content-header nav-tabs-custom",
         "widgetslotTemplate" : null,
         "xtype" : "lighthbox",
         "title" : "container title vbox"
