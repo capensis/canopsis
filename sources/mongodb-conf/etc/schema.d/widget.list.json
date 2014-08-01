@@ -1,8 +1,8 @@
 {
 	"type": "object",
 	"categories": [{
-		"title": "general",
-		"keys":["title", "listed_crecord_type", "itemsPerPage", "hidden_columns","item_actions","toolbar", "mixins" , "default_filter","filters"]
+		"title": "General",
+		"keys":["title", "listed_crecord_type", "itemsPerPage", "shown_columns","item_actions","toolbar", "mixins" , "default_filter","filters"]
 	},{
 		"title": "Rendering",
 		"keys":["cloaking"]
@@ -22,7 +22,7 @@
 			"role" : "templateSelector",
 			"templateClass":"action"
 		},
-		"hidden_columns": {
+		"displayed_columns": {
 			"type": "array",
 			"items": {
 				"type": "string"

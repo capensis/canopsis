@@ -1,7 +1,7 @@
 {
 	"type": "object",
 	"categories": [{
-		"title": "general",
+		"title": "General",
 		"keys":["title", "itemTagName", "itemCssClass", "widgetslotTemplate"]
 	}],
 	"properties": {

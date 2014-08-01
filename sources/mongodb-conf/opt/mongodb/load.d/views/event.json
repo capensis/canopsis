@@ -22,19 +22,17 @@
           "toolbar": [
             "actionbutton-history"
           ],
-          "hidden_columns": [
-            "children",
-            "aaa_admin_group",
-            "aaa_access_other",
-            "aaa_access_unauth",
-            "crecord_creation_time",
-            "aaa_owner",
-            "aaa_group",
-            "aaa_access_owner",
-            "aaa_access_group",
-            "parent",
-            "enable",
-            "crecord_name"
+          "displayed_columns": [
+            "domain",
+            "perimeter",
+            "connector_name",
+            "component",
+            "resource",
+            "output",
+            "status",
+            "criticity",
+            "ack",
+            "timestamp"
           ],
           "item_actions": ["actionbutton-show", "actionbutton-ack"]
         }

@@ -3,7 +3,7 @@
 	"serializer":"Cevent",
 	"type": "object",
 	"categories": [{
-		"title": "general",
+		"title": "General",
 		"keys":["output"]
 	}],
 	"properties": {

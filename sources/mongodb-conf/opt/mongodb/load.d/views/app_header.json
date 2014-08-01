@@ -39,6 +39,16 @@
                                                 },
                                                 "xtype" : "widgetwrapper",
                                                 "title" : "wrapper"
+                                        },
+                                        {
+                                                "widget" : {
+                                                        "xtype" : "uimaindropdown",
+                                                        "title" : "",
+                                                        "cssClass": "dropdown header",
+                                                        "tagName": "li"
+                                                },
+                                                "xtype" : "widgetwrapper",
+                                                "title" : "wrapper"
                                         }
                                 ],
                                 "xtype" : "lighthbox",

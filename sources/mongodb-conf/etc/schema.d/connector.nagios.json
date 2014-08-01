@@ -1,7 +1,7 @@
 {
 	"type": "object",
 	"categories": [{
-		"title": "general",
+		"title": "General",
 		"keys":[ "nagios_thing" , "connecteur_name" , "hostname" , "connectivité" , "state" ]
 	}],
 	"properties": {

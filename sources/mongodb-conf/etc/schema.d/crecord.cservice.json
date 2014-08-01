@@ -1,7 +1,7 @@
 {
 	"type": "object",
 	"categories": [{
-		"title": "general",
+		"title": "General",
 		"keys":[
 			"title",
 			"cfilter_allow_only_optimized_filters"
