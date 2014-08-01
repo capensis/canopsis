@@ -2,7 +2,13 @@
 	"type": "object",
 	"categories": [{
 		"title": "General",
-		"keys":["title", "listed_crecord_type", "itemsPerPage", "shown_columns","item_actions","toolbar", "mixins" , "default_filter","filters"]
+		"keys":["title", "listed_crecord_type", "itemsPerPage","item_actions","toolbar", "mixins" , "default_filter"]
+	},{
+		"title": "Displayed_columns",
+		"keys":["displayed_columns"]
+	},{
+		"title": "Filters",
+		"keys":["filters"]
 	},{
 		"title": "Rendering",
 		"keys":["cloaking"]
@@ -27,8 +33,7 @@
 			"items": {
 				"type": "string"
 			},
-			"role":"tags",
-			"mixinName":"modelDict"
+			"reorderable": true
 		},
 		"toolbar": {
 			"type": "array",
