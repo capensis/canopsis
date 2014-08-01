@@ -31,8 +31,7 @@ Group
 
 .. code-block:: javascript
 
-    Group = {
-        'name': ...,                 // String of group's name
+    'name': {                        // String of group's name
         'members': ...,              // Map of members ids (members[id]==true if the id is in the group)
         'rights': ...                // Map of type Rights
         }
@@ -40,13 +39,14 @@ Group
 Profile
 ---------
 
-.. code-bloc:: javascript
 
-    Profile = {
-        'name': ...,                 // String of profile's name
+.. code-block:: javascript
+
+    'name': {                        // String of profile's name
         'rights': ...,               // Map of type Rights
         'groups': ...                // Map of groups the profile belongs to
         }
+
 
 
 Profiles are used as a template to create new users, it sets the User's fields with the Profile's one and allows a better management of the users
@@ -54,10 +54,14 @@ Profiles are used as a template to create new users, it sets the User's fields w
 Example::
 
     An Administrator profile exists, it has all rights and belongs to the Group Management
-    Profile = {
-        'name': 'Administrator',
-        'rights': ...,
-        'groups': {'Management': true}
+    Profiles = {
+        'Administrator': {
+            'rights': ...,
+            'groups': {
+                'management': true,
+                'roor': true
+                }
+            }
         }
         
     If you now create a User and specifiy the profile Administrator during the creation,
@@ -65,7 +69,10 @@ Example::
     
     User = {
         'rights': ...,                   // Rights specified in the profile, here, everything
-        'groups': {'Management': true},
+        'groups': {
+            'management': true
+            'root': true
+            },
         'profile': 'Administrator',  
         '_id': ...                       // uniq id
         }  
