@@ -308,8 +308,9 @@ class Archiver(object):
     #Cancel and uncancel process are processed here
     def process_cancel(self, devent, event):
         #Event cancellation management
-
+        self.logger.warning(' + will process cancel')
         if 'cancel' in event:
+            self.logger.warning(' + cancel found')
 
             #Saving status, in case cancel is undone
             previous_status = devent.get('status', 1)
@@ -317,10 +318,10 @@ class Archiver(object):
             # Cancel value means cancel for True or undo cancel for False
             cancel = {
                 'author' : event.get('author','unknown'),
-                'cancel' : event['cancel'],
+                'isCancel' : True,
                 'comment' : event['output'],
                 'previous_status': previous_status,
-                'previous_state': previous_state
+                'ack': devent.get('ack', {})
             }
             # Preparing event for cancel,
             # avoid using space and use previous output
@@ -332,23 +333,22 @@ class Archiver(object):
             #Is it a cancel ?
             if event['cancel'] == True:
                 self.logger.info("set cancel to the event")
-                # If cancel is not in ok state,
-                # then it is not an alert cancellation
-                event['cancel'] = cancel
+                # If cancel is not in ok state, then it is not an alert cancellation
+                event['ack'] = cancel
                 event['status'] = 4
-                event['state'] = 0
 
             # Undo cancel ?
             elif event['cancel'] == False:
+                self.logger.warning(' + in da cancel')
                 #If event has been previously cancelled
-                if ('cancel' in devent
-                    and 'cancel' in devent['cancel']
-                    and devent['cancel']['cancel']):
 
-                    event['cancel'] = cancel
+                if 'ack' in devent and 'ack' in devent['ack']:
+                    self.logger.warning(' + reseting ack')
+
                     #Restore previous status
-                    event['status'] = devent['cancel']['previous_status']
-                    event['state'] = devent['cancel']['previous_state']
+                    event['status'] = devent['ack'].get('previous_status', 0)
+                    #Restore ack as previously
+                    event['ack'] = devent['ack']['ack']
 
 
 

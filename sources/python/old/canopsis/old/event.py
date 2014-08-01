@@ -135,10 +135,10 @@ def forger(
         'long_output': long_output,
     }
 
-    if author:
+    if author != None:
         dump["author"] = author
 
-    if cancel:
+    if cancel != None:
         dump["cancel"] = cancel
 
     if perf_data:
