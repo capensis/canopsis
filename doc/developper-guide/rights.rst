@@ -146,7 +146,7 @@ The ``right`` field is a 4-bit integer that goes from 1 to 15 and that describes
 
 .. code-block:: python
 
-    if Rights[object_idXYZ]['right'] & (READ | CREATE | UPDATE | DELETE) == Rights[object_idXYZ]['right']:
+    if Rights[object_idXYZ]['right'] & (READ | CREATE | UPDATE | DELETE) == (READ | CREATE | UPDATE | DELETE):
         #the user has all rights on the object identified with object_idXYZ
         
     if not Rights[object_idXYZ]['right'] & (CREATE | DELETE):
