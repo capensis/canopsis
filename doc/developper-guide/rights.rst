@@ -26,7 +26,9 @@ User
 When an action is triggered, the ``object_id`` of the target of the action is sent and we check if one of the user's groups has the rights needed to perform the action.
 If no groups among the user's has the right, we then check the user's own rights if he has any.
 
-Example::
+Example:
+
+.. code-block:: javascript
 
     User = {
         'role': 'manager',
@@ -38,6 +40,7 @@ Example::
         'name': 'Joan Harris',
         '_id': '1407160264.joan.harris.manager'
         }
+
 
 Role
 -------
@@ -52,7 +55,10 @@ Role
         }
         
         
-Example::
+Example:
+
+.. code-block:: javascript
+
     Roles = {
         'manager': {
             'profile': Profiles['Manager'],
@@ -73,7 +79,9 @@ Profile
 
 
 
-Example::
+Example:
+
+.. code-block:: javascript
 
     An Administrator profile exists, it has all rights and belongs to the Group Management as well as the root Group
     Profiles = {
@@ -96,7 +104,10 @@ Group
         'rights': ...                // Map of type Rights
         }
         
-Example::
+        
+Example:
+
+.. code-block:: javascript
 
     Groups = {
         'management': {
