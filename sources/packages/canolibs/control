@@ -13,18 +13,6 @@ NO_DISTVERS=true
 function pre_install(){
 	echo "Pre-install $NAME $VERSION-$RELEASE ..."
 	check_code $?
-
-	if [ -e $VARLIB_PATH/rabbitmq-server-conf ]
-	then
-		cp $PREFIX/etc/amqp.conf{,.bak}
-	fi
-
-	if [ -e $VARLIB_PATH/mongodb-conf ]
-	then
-		cp $PREFIX/etc/cstorage.conf{,.bak}
-		cp $PREFIX/etc/database.conf{,.bak}
-
-	fi
 }
 
 function post_install(){
@@ -40,6 +28,42 @@ function post_install(){
 	add_message "snmp2amqp needs the following in your sudoers file (/etc/sudoers):"
 	add_message "    Defaults:$HUSER env_keep += \"HOME LD_LIBRARY_PATH PYTHONPATH\"" 
 	add_message "    $HUSER ALL=NOPASSWD: $PREFIX/bin/python $PREFIX/opt/$NAME/$NAME.py" 
+
+	echo "-- Fix permissions"
+	chown -R $HUSER:$HGROUP $PREFIX/etc
+	check_code $?
+}
+
+function pre_remove(){
+	echo "Pre-remove $NAME $VERSION-$RELEASE ..."
+	check_code $?
+}
+
+function post_remove(){
+	echo "Post-remove $NAME $VERSION-$RELEASE ..."
+	check_code $?
+}
+
+function pre_update(){
+	echo "Pre-update $NAME $VERSION-$RELEASE ..."
+
+	if [ -e $VARLIB_PATH/rabbitmq-server-conf ]
+	then
+		cp $PREFIX/etc/amqp.conf{,.bak}
+	fi
+
+	if [ -e $VARLIB_PATH/mongodb-conf ]
+	then
+		cp $PREFIX/etc/cstorage.conf{,.bak}
+		cp $PREFIX/etc/database.conf{,.bak}
+
+	fi
+}
+
+function post_update(){
+	echo "-- Update python-logging.conf"
+	sed -i s:@PREFIX@:$PREFIX:g $PREFIX/etc/python-logging.conf
+	check_code $?
 
 	echo "-- Fix permissions"
 	chown -R $HUSER:$HGROUP $PREFIX/etc
@@ -76,30 +100,6 @@ function post_install(){
 
 		rm $PREFIX/etc/database.conf.bak
 	fi
-}
-
-function pre_remove(){
-	echo "Pre-remove $NAME $VERSION-$RELEASE ..."
-	check_code $?
-}
-
-function post_remove(){
-	echo "Post-remove $NAME $VERSION-$RELEASE ..."
-	check_code $?
-}
-
-function pre_update(){
-	echo "Pre-update $NAME $VERSION-$RELEASE ..."
-}
-
-function post_update(){
-	echo "-- Update python-logging.conf"
-	sed -i s:@PREFIX@:$PREFIX:g $PREFIX/etc/python-logging.conf
-	check_code $?
-
-	echo "-- Create logdir for engines"
-	mkdir -p $PREFIX/var/log/engines
-	check_code $?
 }
 
 function purge(){

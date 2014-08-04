@@ -1,9 +1,7 @@
 {
-	"adapter":"Userview",
-	"serializer":"Userview",
 	"type": "object",
 	"categories": [{
-		"title": "general",
+		"title": "General",
 		"keys":["crecord_name","description", "enable"]
 	},{
 		"title": "Permissions",

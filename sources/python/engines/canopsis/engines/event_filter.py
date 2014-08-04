@@ -25,7 +25,6 @@ from canopsis.old.account import Account
 from canopsis.old.storage import get_storage
 from canopsis.old.event import forger, get_routingkey
 from canopsis.old.mfilter import check
-from canopsis.old.statemap import Statemap
 
 from ast import literal_eval
 from time import time
@@ -125,24 +124,6 @@ class engine(Engine):
             self.logger.error("Action malformed (needs 'key' and/or 'element'): %s" % action)
             return False
 
-    # Change state of event according to a statemap
-    def a_requalificate(self, event, action):
-        statemap_id = action.get('statemap', None)
-        self.logger.debug("    + %s: Requalificate using statemap '%s'" % (event['rk'], statemap_id))
-
-        if statemap_id:
-            record = self.storage.find_one(mfilter={'crecord_type': 'statemap', '_id': statemap_id})
-
-            if not record:
-                self.logger.error("Statemap '%s' not found" % statemap_id)
-                statemap = Statemap(record=record)
-                event['real_state'] = event['state']
-                event['state'] = statemap.get_mapped_state(event['real_state'])
-                return True
-
-            else:
-                self.logger.error("Action malformed (needs 'statemap'): %s" % action)
-                return False
 
     # Wrap modification action functions
     def a_modify(self, event, derogation, action, _name):
@@ -156,8 +137,7 @@ class engine(Engine):
         derogated = False
         atype = action.get('type', None)
         actionMap = {'override': self.a_override,
-                 'requalificate': self.a_requalificate,
-                 'remove': self.a_remove}
+                     'remove': self.a_remove}
 
         if actionMap[atype]:
             derogated = actionMap[atype](event, action)
@@ -199,12 +179,10 @@ class engine(Engine):
 
         # list of actions supported
         actionMap = {'drop': self.a_drop,
-                 'pass': self.a_pass,
-                 'override': self.a_modify,
-                 # possibly deprecated
-                 #'requalificate': self.a_modify,
-                 'remove': self.a_modify,
-                 'route': self.a_route}
+                     'pass': self.a_pass,
+                     'override': self.a_modify,
+                     'remove': self.a_modify,
+                     'route': self.a_route}
 
         rules = self.configuration.get('rules', [])
 
@@ -214,12 +192,16 @@ class engine(Engine):
             actions = filterItem.get('actions')
             name = filterItem.get('name', 'no_name')
 
-            self.logger.debug('Event {} ,will apply rule {}'.format(event['rk'], filterItem))
+            self.logger.debug(
+                'Event: {}, will apply rule {}'.format(event['rk'], filterItem)
+                )
 
             # Try filter rules on current event
             if check(filterItem['mfilter'], event):
 
-                self.logger.debug('Event {} ,filter matches'.format(event['rk']))
+                self.logger.debug(
+                    'Event: {}, filter matches'.format(event['rk'])
+                    )
 
                 for action in actions:
                     if (action['type'] in actionMap):

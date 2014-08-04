@@ -11,3 +11,7 @@ function build(){
 function install(){
 	install_basic_source $NAME
 }
+
+function update(){
+    update_basic_source $NAME
+}

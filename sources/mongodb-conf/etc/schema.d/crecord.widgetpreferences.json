@@ -1,7 +1,7 @@
 {
 	"type": "object",
 	"categories": [{
-		"title": "general",
+		"title": "General",
 		"keys":["user", "widget_id", "widget_preferences"]
 	}],
 	"properties": {

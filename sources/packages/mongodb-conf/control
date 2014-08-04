@@ -48,64 +48,53 @@ function post_install(){
 	echo
 	check_code $STATE "Failed to join MongoDB"
 
-	if [ ! -f $PREFIX/var/lib/mongodb/have_users ]
-	then
-		while true
-		do
-			read -s -p "MongoDB password for admin: " adminpass
-			echo ""
+	while true
+	do
+		read -s -p "MongoDB password for admin: " adminpass
+		echo ""
 
-			read -s -p "Confirm password: " confirm
-			echo ""
+		read -s -p "Confirm password: " confirm
+		echo ""
 
-			if [ "$adminpass" == "$confirm" ]
-			then
-				break
-			else
-				echo "Passwords doesn't match"
-			fi
-		done
+		if [ "$adminpass" == "$confirm" ]
+		then
+			break
+		else
+			echo "Passwords doesn't match"
+		fi
+	done
 
-		read -p "MongoDB common user: " cpsuser
+	read -p "MongoDB common user: " cpsuser
 
-		while true
-		do
-			read -s -p "MongoDB password for $cpsuser: " cpspass
-			echo ""
+	while true
+	do
+		read -s -p "MongoDB password for $cpsuser: " cpspass
+		echo ""
 
-			read -s -p "Confirm password: " confirm
-			echo ""
+		read -s -p "Confirm password: " confirm
+		echo ""
 
-			if [ "$cpspass" == "$confirm" ]
-			then
-				break
-			else
-				echo "Passwords doesn't match"
-			fi
-		done
+		if [ "$cpspass" == "$confirm" ]
+		then
+			break
+		else
+			echo "Passwords doesn't match"
+		fi
+	done
 
-		echo " + Create admin user ..."
-		su - $HUSER -c "$PREFIX/bin/mongo admin --eval \"db.createUser({user: 'admin', pwd: '$adminpass', roles: ['readWriteAnyDatabase', 'userAdminAnyDatabase', 'dbAdminAnyDatabase']})\""
+	echo " + Create admin user ..."
+	su - $HUSER -c "$PREFIX/bin/mongo admin --eval \"db.createUser({user: 'admin', pwd: '$adminpass', roles: ['readWriteAnyDatabase', 'userAdminAnyDatabase', 'dbAdminAnyDatabase']})\""
 
-		echo " + Create $cpsuser user ..."
-		su - $HUSER -c "$PREFIX/bin/mongo -u admin -p $adminpass --authenticationDatabase admin canopsis --eval \"db.createUser({user: '$cpsuser', pwd: '$cpspass', roles: ['dbOwner']})\""
+	echo " + Create $cpsuser user ..."
+	su - $HUSER -c "$PREFIX/bin/mongo -u admin -p $adminpass --authenticationDatabase admin canopsis --eval \"db.createUser({user: '$cpsuser', pwd: '$cpspass', roles: ['dbOwner']})\""
 
-		su - $HUSER -c "$PREFIX/bin/initool set $PREFIX/etc/cstorage.conf master userid $cpsuser"
-		su - $HUSER -c "$PREFIX/bin/initool set $PREFIX/etc/cstorage.conf master password $cpspass"
+	su - $HUSER -c "$PREFIX/bin/initool set $PREFIX/etc/cstorage.conf master userid $cpsuser"
+	su - $HUSER -c "$PREFIX/bin/initool set $PREFIX/etc/cstorage.conf master password $cpspass"
 
-		su - $HUSER -c "$PREFIX/bin/initool set $PREFIX/etc/database.conf DATABASE user $cpsuser"
-		su - $HUSER -c "$PREFIX/bin/initool set $PREFIX/etc/database.conf DATABASE pwd $cpspass"
+	su - $HUSER -c "$PREFIX/bin/initool set $PREFIX/etc/database.conf DATABASE user $cpsuser"
+	su - $HUSER -c "$PREFIX/bin/initool set $PREFIX/etc/database.conf DATABASE pwd $cpspass"
 
-		touch $PREFIX/var/lib/mongodb/have_users
-	fi
-
-	#check if db already exist
-	if [ -f  $PREFIX/var/lib/mongodb/canopsis.ns ]
-	then
-		launch_cmd 1 python $PREFIX/opt/mongodb/filldb.py update
-	else
-		launch_cmd 1 python $PREFIX/opt/mongodb/filldb.py init
-	fi
+	launch_cmd 1 python $PREFIX/opt/mongodb/filldb.py init
 
 	#launch_cmd 1 service mongodb stop
 	launch_cmd 1 mongod -f etc/mongodb.conf --shutdown
@@ -128,8 +117,18 @@ function pre_update(){
 
 function post_update(){
 	echo "Post-update $NAME $VERSION-$RELEASE ..."
+
 	su - $HUSER -c "service mongodb start"
-	sleep 2
+	check_code $?
+
+	echo "-- Copy JSON schemas"
+	mkdir -p $PREFIX/etc/schema.d
+	cp -Rf $SRC_PATH/mongodb-conf/etc/schema.d/* $PREFIX/etc/schema.d
+	check_code $?
+
+	echo "-- Fix permissions"
+	chown -R $HUSER:$HGROUP $PREFIX/etc/schema.d
+	check_code $?
 
 	launch_cmd 1 python $PREFIX/opt/mongodb/filldb.py update
 	check_code $?

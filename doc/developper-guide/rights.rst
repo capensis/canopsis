@@ -11,9 +11,9 @@ User
 .. code-block:: javascript
 
     User = {
-        'rights': ...,               // Map of type Rights
-        'groups': ...,               // List of strings (groups names)
-        'profile': ...,              // String of profile name (Admin, Root, Manager, ...)
+        'rights': ...,               // Map of type Rights, every user-specific rights goes here
+        'groups': ...,               // Set of group names, every user-specific groups goes here
+        'role': ...,                 // Map of type Role that defines the User's profile, groups, and rights
         'contact': {                 // Map of contact informations
             'mail': ...,
             'phone_number': ...,
@@ -21,22 +21,112 @@ User
             }
         'name': ...,                 // String of user's name
         '_id': ...                   // uniq id
-    }
+        }   
 
 When an action is triggered, the ``object_id`` of the target of the action is sent and we check if one of the user's groups has the rights needed to perform the action.
 If no groups among the user's has the right, we then check the user's own rights if he has any.
+
+Example:
+
+.. code-block:: javascript
+
+    User = {
+        'role': 'manager',
+        'contact': {
+            'mail': 'jharris@scdp.com',
+            'phone_number': '+33678695041',
+            'adress': '1271 6th Avenue, Rockefeller Center, NYC, New York'
+            }
+        'name': 'Joan Harris',
+        '_id': '1407160264.joan.harris.manager'
+        }
+
+
+Role
+-------
+
+.. code-block:: javascript
+
+    'name': {
+        'rights': ...               // Map of type Rights, every role-specific rights goes here
+        'profile': ...              // Map of type Profile, profile of the role
+        FIELD: ...                  // You can add any number of fields that can be used with data-specific rules
+        ...
+        }
+        
+        
+Example:
+
+.. code-block:: javascript
+
+    Roles = {
+        'manager': {
+            'profile': Profiles['Manager'],
+            'list_of_directors': {'Ted Chaough', 'Peggy Olson', 'Don Draper'}
+            }
+        }
+
+    
+Profile
+---------
+
+
+.. code-block:: javascript
+
+    'name': {                        // String of profile's name
+        'groups': ...                // Set of groups the profile belongs to
+        }
+
+
+
+Example:
+
+.. code-block:: javascript
+
+    An Administrator profile exists, it has all rights and belongs to the Group Management as well as the root Group
+    Profiles = {
+        'Manager': {
+            'groups': {
+                'management'
+                }
+            }
+        }
+        
+    
 
 Group
 -------
 
 .. code-block:: javascript
 
-    Group = {
-        'name': ...,                 // String of group's name
-        'members': ...,              // List of strings (members names)
+    'name': {                        // String of group's name
+        'members': ...,              // Set of members ids
         'rights': ...                // Map of type Rights
-    }
+        }
+        
+        
+Example:
 
+.. code-block:: javascript
+
+    Groups = {
+        'management': {
+            'members': {'1407160264.joan.harris.manager'},
+            'rights': {
+                userconf_view_id: {
+                    'checksum': 1,
+                    'desc': ['Access user configuration']
+                    },
+                role_specific_id: {
+                    'checksum': 15,
+                    'field': 'list_of_directors',
+                    'desc': ['Access and change directors' configuration']
+                }
+            }
+        }
+    }
+    
+    
 Rights
 ----------
 
@@ -48,7 +138,7 @@ Rights
             'desc': ...,            // Short desc of the right
             'context': ...          // Time period
             }
-    }
+        }
 
 The keys of a map of type ``Rights`` are the ids of the objects accessible from the web application.
 The ``right`` field is a 4-bit integer that goes from 1 to 15 and that describes the available action on the object.
@@ -56,26 +146,27 @@ The ``right`` field is a 4-bit integer that goes from 1 to 15 and that describes
 
 .. code-block:: python
 
-    if Rights[object_idXYZ]['right'] & (READ | CREATE | UPDATE | DELETE):
+    if Rights[object_idXYZ]['right'] & (READ | CREATE | UPDATE | DELETE) == (READ | CREATE | UPDATE | DELETE):
         #the user has all rights on the object identified with object_idXYZ
         
-        
-User-specific rights
-=====================
+    if not Rights[object_idXYZ]['right'] & (CREATE | DELETE):
+        #the user has none of the rights on the object identified with object_idXYZ
+
+User-specific and role-specific rights
+.......................................
 
 By default, the users have their groups rights, if a user needs or wants specific rights, they are added to its own ``Rights`` field.
 
-Example :
+Example::
 
-Group_1 = Alice, Bob
-Group_2 = Alice, Mark, Tom
-Group_3 = Jerry, Tom
+    Group_1 = Alice, Bob
+    Group_2 = Alice, Mark, Tom
+    Group_3 = Jerry, Tom
 
-Alice creates a widget and sets the visibility to her groups; We add the right to the Group_1's and Group_2's rights
+    Alice creates a widget and sets the visibility to her groups; We add the right to the Group_1's and Group_2's rights
 
-Alice, Bob, Mark, and Tom will be able to access the widget. 
+    Alice, Bob, Mark, and Tom will be able to access the widget. 
 
+    Alice creates a Widget and sets the visibility to only her; We add the right to Alice's rights
 
-Alice creates a widhet and sets the visibility to only her; We add the right to Alice's rights
-
-Only Alice can access the Widget, 
+    Only Alice can access the Widget, 
