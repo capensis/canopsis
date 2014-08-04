@@ -19,7 +19,7 @@ function install(){
 	cd $SRC_PATH/externals/$BASE
 	check_code $?
 
-        for a in `ls bin/*`; do
+        for a in `ls bin`; do
             if [ ! -f $PREFIX/bin/$a ]; then
                 cp -R bin/$a $PREFIX/bin/
             fi
