@@ -20,10 +20,10 @@ function install(){
 	check_code $?
 
         for a in `ls bin/*`; do
-            if [ ! -f $PREFIX/bin/$aa ]; then
+            if [ ! -f $PREFIX/bin/$a ]; then
                 cp -R bin/$a $PREFIX/bin/
             fi
-        end
+        done
 	check_code $?
 
 	chown $HUSER:$HGROUP $PREFIX/bin/mongo*
