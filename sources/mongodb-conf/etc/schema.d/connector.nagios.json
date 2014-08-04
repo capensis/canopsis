@@ -1,10 +1,35 @@
 {
 	"type": "object",
 	"categories": [{
-		"title": "General",
-		"keys":[ "nagios_thing" , "connecteur_name" , "hostname" , "connectivité" , "state" ]
+		"title": "general",
+		"keys":[ "id_connector" , "connecteur_name" , "hostname", "options_filter" ]
+	},
+	{
+		"title": "options",
+		"keys":[ "_opt_password" , "_opt_host" , "_opt_port" ]
 	}],
 	"properties": {
-		"nagios_thing" : {"type": "string", "required": true }
+		"nagios_thing" : {"type": "string", "required": true },
+		"_opt_host" : {"type": "string", "required": true },
+		"_opt_port" : {"type": "string", "required": true },
+		"_opt_userid" : {"type": "string", "required": true },
+		"_opt_password" : {"type": "string", "required": true },
+		"_opt_virtual_host" : {"type": "string", "required": true },
+		"_opt_exchange_name" : {"type": "string", "required": true },
+		"_opt_name" : {"type": "string", "required": true },
+		"_opt_connector" : {"type": "string", "required": true },
+		"_opt_max_size" : {"type": "string", "required": true },
+		"_opt_cache_file" : {"type": "string", "required": true },
+		"_opt_cache_size" : {"type": "string", "required": true },
+		"_opt_autosync" : {"type": "string", "required": true },
+		"_opt_autoflush" : {"type": "string", "required": true },
+		"_opt_rate" : {"type": "string", "required": true },
+		"_opt_flush" : {"type": "string", "required": true },
+		"_opt_purge" : {"type": "string", "required": true },
+		"_opt_hostgroups" : {"type": "string", "required": true },
+		"_opt_servicegroups" : {"type": "string", "required": true },
+		"_opt_acknowledgement" : {"type": "string", "required": true },
+		"_opt_downtime" : {"type": "string", "required": true },
+		"_opt_custom_variables" : {"type": "string", "required": true }
 	}
 }

@@ -1,0 +1,10 @@
+{
+	"type": "object",
+	"categories": [{
+		"title": "general",
+		"keys":[ "collectd_thing" , "connecteur_name" , "hostname" ]
+	}],
+	"properties": {
+		"collectd_thing" : {"type": "string", "required": true }
+	}
+}

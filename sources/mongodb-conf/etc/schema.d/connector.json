@@ -1,16 +1,19 @@
 {
 	"type": "object",
 	"properties": {
+		"id_connector" : {"type": "string", "required": true },
 		"crecord_type" : {"type": "string", "required": true },
 		"connecteur_name": { "type":"string" , "required": true },
 		"hostname": {"type": "string", "required": true },
-		"connectivité" :{ "type": "boolean" },
-		"state" :{ "type": "boolean" },
-		"other_process" :{
+		"connection" :{ "type": "boolean" ,"role":"boolean" },
+		"state" :{ "type": "boolean"  ,"role":"stateConnector" , "canDisplayAgo" : true   },
+		"timeStampState" : 1406887383021,
+		"subprocess" :{
 			"type": "array",
 			"items": {
 				"type": "string"
-			}
+			},
+			"role":"subprocess"
 		},
 		"connector_type" :{
 			"type": "string",
@@ -18,6 +21,14 @@
 			"default": "shinken",
 			"role": "source"
 		},
-		"poly": "true"
+		"options_conf" :{
+			"type": "string",
+			"role": "conf"
+		},
+		"options_filter" :{
+			"type": "array",
+			"role":"tags",
+			"mixinName":"tags_optionFilter"
+		}
 	}
 }
