@@ -168,7 +168,7 @@ class ConfigurableTest(TestCase):
 
         self.assertFalse(self.configurable.auto_conf)
 
-        self.assertTrue(self.configurable.log_lvl is 'INFO')
+        self.assertEqual(self.configurable.log_lvl, 'INFO')
 
         conf = Configuration(
             Category('TEST',
@@ -176,15 +176,15 @@ class ConfigurableTest(TestCase):
 
         self.configurable.configure(conf=conf)
 
-        self.assertTrue(self.configurable.log_lvl is 'INFO')
+        self.assertEqual(self.configurable.log_lvl, 'INFO')
 
-        self.configurable.once = True
+        self.configurable.reconf_once = True
 
         self.configurable.configure(conf=conf)
 
-        self.assertTrue(self.configurable.log_lvl is 'DEBUG')
+        self.assertEqual(self.configurable.log_lvl, 'DEBUG')
 
-        self.assertFalse(self.configurable.once)
+        self.assertFalse(self.configurable.reconf_once)
 
         self.configurable.log_lvl = 'INFO'
 
@@ -192,7 +192,7 @@ class ConfigurableTest(TestCase):
 
         self.configurable.configure(conf=conf)
 
-        self.assertTrue(self.configurable.log_lvl is 'DEBUG')
+        self.assertEqual(self.configurable.log_lvl, 'DEBUG')
 
     def test_parser_inheritance(self):
 
