@@ -26,7 +26,8 @@
 		},
 		"timestamp": {
 			"type": "number",
-			"role": "timestamp"
+			"role": "timestamp",
+			"canDisplayAgo" : true
 		},
 		"component": {
 			"type": "string",
