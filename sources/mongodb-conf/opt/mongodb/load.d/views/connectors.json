@@ -18,7 +18,20 @@
           "title": "connectors",
           "toolbar": [
             "actionbutton-create",
-            "actionbutton-removeselection"
+            "actionbutton-removeselection",
+            "connectorbutton-start",
+            "connectorbutton-stop",
+            "connectorbutton-edit",
+            "connectorbutton-getstate"
+          ],
+          "item_actions" : [
+            "connectorbutton-start",
+            "connectorbutton-stop",
+            "connectorbutton-edit",
+            "connectorbutton-getconf",
+            "connectorbutton-setconf",
+            "connectorbutton-getstate",
+            "actionbutton-remove"
           ]
         }
       }
