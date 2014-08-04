@@ -1,8 +1,7 @@
 {
 	"type": "object",
-	
 	"categories": [{
-		"title": "general",
+		"title": "General",
 		"keys":["crecord_name","description", "enable"]
 	},{
 		"title": "Permissions",

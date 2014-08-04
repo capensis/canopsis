@@ -1,7 +1,7 @@
 {
 	"type": "object",
 	"categories": [{
-		"title": "general",
+		"title": "General",
 		"keys":["crecord_name","enable", "consolidation_method"]
 	},{
 		"title": "Filter",

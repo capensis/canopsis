@@ -19,7 +19,7 @@
                                                         "title" : "",
                                                         "actionArguments" : "view.event",
                                                         "actionCssClass" : "btn btn-default",
-                                                        "label" : "events",
+                                                        "label" : "Évènements",
                                                         "cssClass": "active",
                                                         "tagName": "li",
                                                         "actionType" : "showView"
@@ -31,10 +31,20 @@
                                                 "widget" : {
                                                         "xtype" : "uiactionbutton",
                                                         "title" : "",
-                                                        "actionArguments" : "view.userviews",
+                                                        "actionArguments" : "view.services",
                                                         "actionCssClass" : "btn btn-default",
-                                                        "label" : "userviews",
+                                                        "label" : "Services",
                                                         "actionType" : "showView",
+                                                        "tagName": "li"
+                                                },
+                                                "xtype" : "widgetwrapper",
+                                                "title" : "wrapper"
+                                        },
+                                        {
+                                                "widget" : {
+                                                        "xtype" : "uimaindropdown",
+                                                        "title" : "",
+                                                        "cssClass": "dropdown header",
                                                         "tagName": "li"
                                                 },
                                                 "xtype" : "widgetwrapper",
