@@ -469,6 +469,7 @@ class Configurable(object):
 
     def __init__(
         self,
+        to_configure=None,
         conf_files=None, managers=DEFAULT_MANAGERS,
         auto_conf=True, reconf_once=False,
         log_lvl='INFO', log_name=None, log_info_format=INFO_FORMAT,
@@ -476,6 +477,10 @@ class Configurable(object):
         log_error_format=ERROR_FORMAT, log_critical_format=CRITICAL_FORMAT
     ):
         """
+        :param to_configure: object to reconfigure. Such object may implements
+            the methods configure apply_configuration and configure
+        :type to_configure: class instance
+
         :param conf_files: conf_files to parse
         :type conf_files: Iterable or str
 
@@ -491,6 +496,8 @@ class Configurable(object):
         """
 
         super(Configurable, self).__init__()
+
+        self._to_configure = self if to_configure is None else to_configure
 
         self.auto_conf = auto_conf
         self.reconf_once = reconf_once
@@ -877,7 +884,7 @@ class Configurable(object):
 
         if prev_manager is not None:
             prev_conf = prev_manager.get_configuration(
-                conf_file=conf_file)
+                conf_file=conf_file, logger=logger)
 
         # try to find a good manager if manager is None
         if manager is None:
@@ -905,7 +912,8 @@ class Configurable(object):
         if manager is not None:
             manager.set_configuration(
                 conf_file=conf_file,
-                conf=conf)
+                conf=conf,
+                logger=logger)
 
         else:
             self.logger.error(
