@@ -19,7 +19,11 @@ function install(){
 	cd $SRC_PATH/externals/$BASE
 	check_code $?
 
-	cp -R bin/* $PREFIX/bin/
+        for a in `ls bin/*`; do
+            if [ ! -f $PREFIX/bin/$aa ]; then
+                cp -R bin/$a $PREFIX/bin/
+            fi
+        end
 	check_code $?
 
 	chown $HUSER:$HGROUP $PREFIX/bin/mongo*
