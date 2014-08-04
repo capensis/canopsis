@@ -27,12 +27,6 @@ from canopsis.storage.manager import Manager
 class ManagerTest(TestCase):
 
     def setUp(self):
-        self.timed_storage = 'canopsis.storage.timed.TimedStorage'
-        self.periodic_storage = 'canopsis.storage.periodic.PeriodicStorage'
-        self.storage = 'canopsis.storage.Storage'
-        self.timed_typed_storage = 'canopsis.storage.timedtyped.TimedTypedStorage'
-        self.typed_storage = 'canopsis.storage.typed.TypedStorage'
-
         self.storage_names = [
             'timed_storage',
             'periodic_storage',
@@ -42,17 +36,19 @@ class ManagerTest(TestCase):
 
         self.manager = Manager(
             data_type=None,
-            timed_storage=self.timed_storage,
-            periodic_storage=self.periodic_storage,
-            storage=self.storage,
-            typed_storage=self.typed_storage,
-            timed_typed_storage=self.timed_typed_storage,
             auto_connect=False)
         self.data_types = ['data_type_0', 'data_type_1']
+
+        # get storage types loaded by the manager
+        for attribute in dir(self.manager):
+            if attribute.endswith('storage'):
+                setattr(
+                    self, attribute, type(getattr(self.manager, attribute)))
 
     def test_get_storage(self):
 
         for data_type in self.data_types:
+
             for storage_name in self.storage_names:
 
                 storage_type = getattr(self, storage_name)

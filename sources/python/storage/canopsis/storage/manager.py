@@ -41,7 +41,7 @@ class Manager(Configurable):
 
     STORAGE_SUFFIX = 'storage'
 
-    _STORAGE_BY_DATA_TYPE_BY_TYPE = dict()
+    _STORAGE_BY_DATA_TYPE_BY_TYPE = {}
 
     def __init__(
         self,
@@ -54,11 +54,11 @@ class Manager(Configurable):
 
         super(Manager, self).__init__(*args, **kwargs)
 
+        self.auto_connect = auto_connect
+
         self.shared = shared
 
         self.data_type = data_type
-
-        self.auto_connect = auto_connect
 
         self.periodic_storage = periodic_storage
         self.timed_storage = timed_storage
@@ -164,7 +164,7 @@ class Manager(Configurable):
             data_type = self.data_type
 
         if storage_type is None:
-            storage_type = self.storage
+            storage_type = type(self.storage)
 
         if shared is None:
             shared = self.shared
@@ -180,6 +180,7 @@ class Manager(Configurable):
 
         # if shared, try to find an instance with same storage and data types
         if shared:
+
             # search among isntances registred on storage_type
             storage_by_data_type = \
                 Manager._STORAGE_BY_DATA_TYPE_BY_TYPE.setdefault(
