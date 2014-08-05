@@ -153,8 +153,8 @@ class Rights(Manager):
     # Add the composite named comp_name to the entity
     # If the composite does not exist and
     #   comp_rights is specified it will be created first
-    # entity can be a profile or a user
-    def add_composite(self, entity, comp_name, comp_rights={}):
+    # entity can be a profile or a role
+    def add_composite(self, entity, comp_name, comp_rights=None):
         """
         Add the composite comp_name to the entity
         """
