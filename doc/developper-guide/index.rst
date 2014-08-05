@@ -16,6 +16,7 @@ Contents:
    packaging
    Perfdata2
    rest-api
+   rights
    send_event
    Send-Event-With-Perl
    Send-Event-with-PHP
