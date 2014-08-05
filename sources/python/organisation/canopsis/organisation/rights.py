@@ -95,7 +95,7 @@ class Rights(object):
     # Add the composite named comp_name to the entity
     # If the composite does not exist and
     #   comp_rights is specified it will be created first
-    # entity can be a profile or a user
+    # entity can be a profile or a role
     def add_composite(self, entity, comp_name, comp_rights=None):
         """
         Add the composite comp_name to the entity
@@ -105,7 +105,7 @@ class Rights(object):
 
 
     # Remove the composite named comp_name from the entity
-    # entity can be a profile or a user
+    # entity can be a profile or a role
     def remove_composite(self, entity, comp_name);
         """
         Remove the composite comp_name from the entity
