@@ -18,12 +18,120 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
+from canopsis.storage.manager import Manager
 
-class User(object):
 
-    def __init__(self):
+class User(Manager):
+
+    def __init__(
+        self,
+        _id=None,
+        rights=None, role=None, profile=None,  # permission informations
+        contact=None, session=None,  # data information
+        groups=None
+    ):
+
+        self.user_storage = self.get_storage()
+        self.group_storage = self.get_typed_storage()
+
+        self.id = _id
+
+        self.rights = rights
+        self.role = role
+
+        if profile is not None:
+            self.put_profile(profile=profile)
+
+        self.contact = contact
+        self.session = session
+
+        self.load()
+
+    def load(self):
+
+        # update saved content of user
+        user = self.user_storage(data_id=self.id)
+        for key, value in user.iteritems():
+            getattr(self, key).update(value)
+
+        self.groups = self.group_storage.get(data_ids=self.groups)
+
+    def save(self):
+
+        self.user_storage.update(data_id=self.id)
+        self.group_storage.put(data_ids=(group['id'] for group in self.groups))
+
+    def add_group(self, group):
         pass
 
-    def check(self, element_id, context, checksum):
+    def remove_group(self, group):
+        pass
 
-        raise NotImplementedError()
+    def add_rights(self, rights):
+
+        self.rights.add(rights)
+
+    def remove_rights(self, rights):
+
+        self.remove(rights)
+
+    def put_profile(self, profile=None, concrete_relationships=None):
+        """
+        Set this profile in adding related relationships to related role.
+
+        :param profile:
+        :param concrete_relationships: relationships useful for the role
+        """
+
+        # update the input profile
+        if self.role is None or self.role['profile'] != profile:
+            self.role = dict()
+            self.role['profile'] = profile
+
+        # update role relationships with input concrete_relationships
+        self.role['relationships'].update(concrete_relationships)
+
+    def remove_profile(self, profile=None):
+
+        if self.role is not None:
+            self.role = None
+
+    def check(self, right):
+        """
+        Check if this user has granted access to the input right.
+        """
+
+        result = False
+
+        result = User.check_right(self.rights, right)
+
+        if not result:
+            role = self.user.role
+            if role is not None:
+
+                result = User.check_right(role.profile.rights, right)
+
+                if not result:
+                    for relationship in role.relationships:
+                        rights = role.profile.relationships[relationship]
+                        result = User.check_right(rights, right)
+                        if result:
+                            break
+
+        return result
+
+    @staticmethod
+    def check_right(self, rights, right):
+
+        """
+        Check if at least one input rights right matches with input tight.
+        """
+
+        for self_right in self.rights:
+            if self_right.element_id == right.element_id \
+                and (self_right.checksum & right.checksum) \
+                    == right.checksum:
+                result = True
+                break
+
+        return result
