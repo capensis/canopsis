@@ -58,7 +58,7 @@ class Rights(object):
     # checksum |= old_checksum
     # entity can be a role, a profile, or a composite
     def add(self, entity, right_id, checksum,
-            context={}, element_id="", desc=""):
+            context=None, element_id="", desc=""):
 
         raise NotImplementedError()
 
@@ -96,7 +96,7 @@ class Rights(object):
     # If the composite does not exist and
     #   comp_rights is specified it will be created first
     # entity can be a profile or a user
-    def add_composite(self, entity, comp_name, comp_rights={}):
+    def add_composite(self, entity, comp_name, comp_rights=None):
         """
         Add the composite comp_name to the entity
         """
