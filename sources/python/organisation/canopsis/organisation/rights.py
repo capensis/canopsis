@@ -31,79 +31,113 @@ class Rights(Manager):
 
     def __init__(self):
 
+        # ???
         self.right_storage = self.get_storage()
+
+        # Contains the list of the existing profile maps
         self.profile_storage = self.get_storage()
+
+        # Contains the list of the existing composites maps
+        self.composite_storage = self.get_storage()
+
+        # ???
         self.entity
+
 
     # Entity can be a right_composite, a profile or an user since
     # all 3 of them have a rights field
-    def check(self, entity, right_id):
+    def check(self, entity, right_id, checksum):
         """
         Check the from the rights of entity for a right of id right_id
         """
 
-        right = self.get(right_id=right_id)
+        if not entity:
+            return False
 
-        result = Rights._check_right(entity.rights, right)
+        found = entity['rights'].get(right_id, None)
 
-        return result
+        if found and found[right_id] & checksum >= checksum:
+            return True
 
-    # Check in the rights of the user (in the role), then the profile's ones,
+        return False
+
+        # right = self.get(right_id=right_id)
+
+        # result = Rights._check_right(entity.rights, right)
+
+        # return result
+
+    # Check in the rights of the user (in the role), then in the profile,
     # then in the rights_composite
     # Return the value as soon as it's found
-    # True if found else False
-    def check_user_rights(self, user, right_id):
+    # True if found and user has the right else False
+    def check_user_rights(self, user, right_id, checksum):
         """
         Check if user has the right of id right_id
         """
 
-        raise NotImplementedError()
+        role = user.get('role', None)
 
-        right = self.get(right_id=right_id)
+        profile = self.profiles_storage.get(role.get('profile', None), None)
 
-        result = False
+        composites = [self.composites_storage.get(x, None)
+                      for x in profile['composites']]
 
-        result = Rights._check_right(user.rights, right)
+        if ((role and self.check(role, right_id, checksum)) or
+            (profile and self.check(profile, right_id, checksum)) or
+            any(self.check(x, right_id, checksum) for x in composites)):
+            return True
 
-        if not result:
-            role = user.user.role
-            if role is not None:
+        return False
 
-                result = Rights.check_right(role.profile.rights, right)
 
-                if not result:
-                    for relationship in role.relationships:
-                        rights = role.profile.relationships[relationship]
-                        if Rights.check_right(rights, right):
-                            result = True
-                            break
+        # raise NotImplementedError()
 
-        return result
+        # right = self.get(right_id=right_id)
 
-    @staticmethod
-    def _check_right(rights, right):
-        """
-        Check if at least one input rights right matches with input tight.
-        """
+        # result = False
 
-        result = False
+        # result = Rights._check_right(user.rights, right)
 
-        for _right in rights:
-            if _right.element_id == right.element_id \
-                    and (_right.checksum & right.checksum) == right.checksum:
-                result = True
-                break
+        # if not result:
+        #     role = user.user.role
+        #     if role is not None:
 
-        return result
+        #         result = Rights.check_right(role.profile.rights, right)
 
-    def get(self, right_id):
-        """
-        Return the map of the right of id right_id
-        """
+        #         if not result:
+        #             for relationship in role.relationships:
+        #                 rights = role.profile.relationships[relationship]
+        #                 if Rights.check_right(rights, right):
+        #                     result = True
+        #                     break
 
-        result = self.right_storage.get(data_ids=right_id)
+        # return result
 
-        return result
+    # @staticmethod
+    # def _check_right(rights, right):
+    #     """
+    #     Check if at least one input rights right matches with input tight.
+    #     """
+
+    #     result = False
+
+    #     for _right in rights:
+    #         if _right.element_id == right.element_id \
+    #                 and (_right.checksum & right.checksum) == right.checksum:
+    #             result = True
+    #             break
+
+    #     return result
+
+    # def get(self, right_id):
+    #     """
+    #     Return the map of the right of id right_id
+    #     """
+
+    #     result = self.right_storage.get(data_ids=right_id)
+
+    #     return result
 
 
     # Add a right to the entity linked
