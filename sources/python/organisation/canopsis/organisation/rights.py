@@ -71,12 +71,10 @@ class Rights(Manager):
     # then in the rights_composite
     # Return the value as soon as it's found
     # True if found and user has the right else False
-    def check_user_rights(self, user, right_id, checksum):
+    def check_user_rights(self, role, right_id, checksum):
         """
         Check if user has the right of id right_id
         """
-
-        role = user.get('role', None)
 
         profile = self.profiles_storage.get(role.get('profile', None), None)
 
