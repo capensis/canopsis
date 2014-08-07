@@ -85,11 +85,11 @@ def resolve_element(path):
                             index += 1
 
                     except AttributeError:
-                        raise Exception(
+                        raise ImportError(
                             'Wrong path %s at %s' % (path, components[:index]))
 
         else:  # get relative object from current module
-            raise Exception('Does not handle relative path')
+            raise ImportError('Does not handle relative path')
 
     return result
 
