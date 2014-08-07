@@ -5,8 +5,8 @@ from kombu import Connection
 from kombu.pools import producers
 from random import random, randint
 
-user 		= "guest"
-password 	= "guest"
+user 		= "canopsis"
+password 	= "canopsis"
 vhost 		= "canopsis"
 exchange 	= "canopsis.events"
 port		= '5672'
@@ -23,7 +23,7 @@ except Exception ,e:
 def get_rk(event):
 	return "%s.%s.%s.%s.%s" % (event['connector'], event['connector_name'], event['event_type'], event['source_type'], event['component'])
 
-with Connection(port=port, hostname=host, userid=user, virtual_host=vhost) as conn:
+with Connection(port=port, hostname=host, userid=user, password=password, virtual_host=vhost) as conn:
 	with producers[conn].acquire(block=True) as producer:
 		event = {}
 		for part in scenario:

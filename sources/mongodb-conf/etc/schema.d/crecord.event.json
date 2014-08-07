@@ -40,7 +40,8 @@
 		},
 		"connector": {
 			"type": "string",
-			"required": true
+			"required": true,
+			"role": "source"
 		},
 		"connector_name": {
 			"type": "string",

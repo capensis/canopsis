@@ -16,7 +16,7 @@
           "xtype": "list",
           "listed_crecord_type": "account",
           "title": "Accounts",
-          "toolbar": [
+          "selection_toolbar": [
             "actionbutton-create",
             "actionbutton-removeselection"
           ]

@@ -16,7 +16,7 @@
           "xtype": "list",
           "listed_crecord_type": "profile",
           "title": "Profiles",
-          "toolbar": [
+          "selection_toolbar": [
             "actionbutton-create",
             "actionbutton-removeselection"
           ]

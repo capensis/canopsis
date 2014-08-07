@@ -1,21 +1,36 @@
 {
-  "id": "view.weather",
-  "_id": "view.weather",
+  "id": "view.event-history",
+  "_id": "view.event-history",
   "crecord_type": "view",
   "crecord_write_time": 1400853201,
   "enable": true,
   "containerwidget": {
     "xtype": "vbox",
-    "title": "container title hbox",
-    "_id": "test_view_horizontal_container",
+    "title": "container title vbox",
     "items": [
       {
         "title": "wrapper",
         "xtype": "widgetwrapper",
         "widget": {
-          "xtype": "weather",
-          "title": "Weather widget 1",
-          "event_selection" : []
+          "widgetId" : "fake-guid-fd5a-1ede-8ac2-6a1d66ad0023",
+          "xtype": "list",
+          "listed_crecord_type": "eventlog",
+          "title": "Historique",
+          "actions_toolbar": [
+            "actionbutton-eventnavigation"
+          ],
+          "displayed_columns": [
+            "domain",
+            "perimeter",
+            "connector",
+            "component",
+            "resource",
+            "output",
+            "status",
+            "criticity",
+            "ack",
+            "timestamp"
+          ]
         }
       }
     ]

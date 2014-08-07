@@ -16,7 +16,7 @@
           "xtype": "list",
           "listed_crecord_type": "group",
           "title": "Group",
-          "toolbar": [
+          "selection_toolbar": [
             "actionbutton-create",
             "actionbutton-removeselection"
           ]
