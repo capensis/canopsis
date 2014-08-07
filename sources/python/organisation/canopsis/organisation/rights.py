@@ -30,12 +30,17 @@ class Rights(Manager):
         pass
 
     def __init__(self):
-
-        # Contains the list of the existing profile maps
+        # Contains the map of the existing profile maps
         self.profile_storage = self.get_storage()
 
-        # Contains the list of the existing composites maps
+        # Contains the map of the existing composites maps
         self.composite_storage = self.get_storage()
+
+        # Contains the map of the existing roles maps
+        self.role_storage = self.get_storage()
+
+        # Default profile
+        self.default_profile = self.get_storage()
 
 
     # Entity can be a right_composite, a profile or an user since
@@ -45,12 +50,12 @@ class Rights(Manager):
         Check the from the rights of entity for a right of id right_id
         """
 
-        if not entity:
+        if not entity or not entity.get('rights', None):
             return False
 
         found = entity['rights'].get(right_id, None)
 
-        if found and found[right_id] & checksum >= checksum:
+        if found and found.get(right_id, 0) & checksum >= checksum:
             return True
 
         return False
@@ -67,12 +72,15 @@ class Rights(Manager):
 
         profile = self.profiles_storage.get(role.get('profile', None), None)
 
+        p_composites = profile.get('composites', None)
+
         composites = [self.composite_storage.get(x, None)
-                      for x in profile['composites']]
+                      for x in p_composites]
 
         if ((role and self.check(role, right_id, checksum)) or
             (profile and self.check(profile, right_id, checksum)) or
-            any(self.check(x, right_id, checksum) for x in composites)):
+            (p_composites and any(self.check(x, right_id, checksum)
+                                  for x in composites))):
             return True
 
         return False
@@ -84,6 +92,9 @@ class Rights(Manager):
     # entity can be a role, a profile, or a composite
     def add(self, entity, right_id, checksum,
             **kwargs):
+
+        if not entity.get('rights', None):
+            entity['rights'] = {}
 
         # If it does not exist, create it
         if not self.check(entity, right_id, 0):
@@ -134,7 +145,7 @@ class Rights(Manager):
             new_comp[right_id] = comp_rights[key].copy()
 
         self.composite_storage[comp_name] = new_comp
-        # Update storage
+        # Update storage here
 
 
     # Delete composite named comp_name
@@ -147,7 +158,11 @@ class Rights(Manager):
 
         if self.composite_storage.get(comp_name, None):
             del self.composite_storage[comp_name]
-            # Update storage
+            # Update storaged here
+            for p in self.profile_storage:
+                p['composites'].discard(comp_name)
+                if not len(p['composites']):
+                    self.delete_profile(p)
             return True
 
         return False
@@ -174,7 +189,7 @@ class Rights(Manager):
 
 
     # Remove the composite named comp_name from the entity
-    # entity can be a profile or a user
+    # entity can be a profile or a role
     # Return True if the composite was removed, False otherwise
     def remove_composite(self, entity, comp_name):
         """
@@ -197,8 +212,10 @@ class Rights(Manager):
         if self.profile_storage.get(p_name, None):
             return False
 
-        self.profile_storage[p_name] = {}
-        self.profile_storage[p_name]['composites'] = p_composites
+        new_profile = {}
+        new_profile['composites'] = p_composites
+        self.profile_storage[p_name] = new_profile
+        # Update storage here
         return True
 
 
@@ -211,6 +228,11 @@ class Rights(Manager):
 
         if self.profile_storage.get(p_name, None):
             del self.profile_storage.pop[p_name]
+            # Update storage here
+            for r in self.role_storage:
+                r['profile'].discard(comp_name)
+                if not len(r['profile']):
+                    self.add_profile(r, self.default_profile)
             return True
 
         return False
@@ -223,7 +245,15 @@ class Rights(Manager):
         Remove profile p_name from the role
         """
 
-        return role.pop(p_name, None)
+        if not role.pop(p_name, None):
+            return False
+
+        # replace self.default_profile by a set if you want
+        #    to enable multi-profiles
+        role['profile'] = self.default_profile
+
+        return True
+
 
     # Add the profile of name p_name to the role
     # If the profile does not exists and p_composites is pecified
@@ -241,16 +271,9 @@ class Rights(Manager):
                 return False
 
         # retrieve the profile
-        profile = self.profile_storage.get(data_ids=p_name)
+        if self.profile_storage.get(p_name, None):
+            # change role['profiles'] to a set of strings
+            #   if you want to allow several profiles on
+            #   the same role
+            role['profiles'] = p_name
 
-        # if profile exists
-        if profile is not None:
-            role['profile'] = p_name
-
-            # add a map of concrete relationships in the role related to
-            # profile relationships
-            for name, rights in profile['relationships']:
-                # last value contains concrete element_ids
-                role['relationships'] = name, rights, None
-        else:
-            raise Rights.Error('Profile %s does not exist' % profile)
