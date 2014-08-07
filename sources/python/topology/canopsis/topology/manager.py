@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 # --------------------------------
 # Copyright (c) 2014 "Capensis" [http://www.capensis.com]
@@ -27,7 +26,7 @@ class Topology(Manager):
     Manage access to topologies
     """
 
-    CONF_FILE = '~/etc/topology.conf'
+    CONF_FILE = 'topology/topology.conf'
 
     CATEGORY = 'TOPOLOGY'
 
