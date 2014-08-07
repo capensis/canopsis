@@ -18,10 +18,14 @@ Objective
 
 This document aims to specify Backend configuration functionalities which may be agnostic from configuration languages and specific to user requirements.
 
-Such (re-)configuration is done by a canopsis.configuration.Configurable object and its apply_configuration method parameterized by a canopsis.configuration.Configuration object.
-
 Functional description
 ======================
+
+Such (re-)configuration is done by a ``canopsis.configuration.configurable.Configurable`` object and its ``apply_configuration`` method parameterized by a ``canopsis.configuration.parameters.Configuration`` object.
+
+A configurable object uses managers which are able to parse/write configuration resources (files, db, etc.) identified by a name. When a configurable is instantiated, it can watch its configuration resources in order to reconfigurate itself automatically if configuration content has been modified.
+
+A configurable object has its own logger.
 
 Technical description
 =====================
@@ -55,6 +59,8 @@ Technical description
       If true, configurate this after initialization or when an automatic reconfiguration is required.
 
    .. data:: RECONF_ONCE = 'reconf_once'
+
+      Ensure than the next automatic reconfiguration task will be done unless ``auto_conf`` is True. After doing the reconfiguration, this property will be setted to false.
 
    .. data:: CONF_FILES = 'conf_files'
 
