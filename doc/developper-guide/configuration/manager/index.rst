@@ -24,7 +24,7 @@ Manage reading or updating configuration files thanks to classes which inherit f
 
 This class uses a meta-class in order to register every defined manager into a global manager list.
 
-All managers to register must have the class attribute "__register__" to True (False by default).
+All managers to register must have the class attribute ``__register__`` to True (False by default).
 
 .. class:: ConfigurationManager
 
