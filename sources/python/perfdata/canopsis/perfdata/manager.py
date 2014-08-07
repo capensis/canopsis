@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #--------------------------------
 # Copyright (c) 2014 "Capensis" [http://www.capensis.com]
@@ -37,7 +36,7 @@ class PerfData(Manager):
     Dedicated to access to perfdata (via periodic and timed stores).
     """
 
-    CONF_FILE = '~/etc/perfdata.conf'
+    CONF_FILE = 'perfdata/perfdata.conf'
 
     CATEGORY = 'PERFDATA'
 
