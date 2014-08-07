@@ -31,17 +31,11 @@ class Rights(Manager):
 
     def __init__(self):
 
-        # ???
-        self.right_storage = self.get_storage()
-
         # Contains the list of the existing profile maps
         self.profile_storage = self.get_storage()
 
         # Contains the list of the existing composites maps
         self.composite_storage = self.get_storage()
-
-        # ???
-        self.entity
 
 
     # Entity can be a right_composite, a profile or an user since
@@ -61,11 +55,6 @@ class Rights(Manager):
 
         return False
 
-        # right = self.get(right_id=right_id)
-
-        # result = Rights._check_right(entity.rights, right)
-
-        # return result
 
     # Check in the rights of the user (in the role), then in the profile,
     # then in the rights_composite
@@ -78,7 +67,7 @@ class Rights(Manager):
 
         profile = self.profiles_storage.get(role.get('profile', None), None)
 
-        composites = [self.composites_storage.get(x, None)
+        composites = [self.composite_storage.get(x, None)
                       for x in profile['composites']]
 
         if ((role and self.check(role, right_id, checksum)) or
@@ -89,149 +78,167 @@ class Rights(Manager):
         return False
 
 
-        # raise NotImplementedError()
-
-        # right = self.get(right_id=right_id)
-
-        # result = False
-
-        # result = Rights._check_right(user.rights, right)
-
-        # if not result:
-        #     role = user.user.role
-        #     if role is not None:
-
-        #         result = Rights.check_right(role.profile.rights, right)
-
-        #         if not result:
-        #             for relationship in role.relationships:
-        #                 rights = role.profile.relationships[relationship]
-        #                 if Rights.check_right(rights, right):
-        #                     result = True
-        #                     break
-
-        # return result
-
-    # @staticmethod
-    # def _check_right(rights, right):
-    #     """
-    #     Check if at least one input rights right matches with input tight.
-    #     """
-
-    #     result = False
-
-    #     for _right in rights:
-    #         if _right.element_id == right.element_id \
-    #                 and (_right.checksum & right.checksum) == right.checksum:
-    #             result = True
-    #             break
-
-    #     return result
-
-    # def get(self, right_id):
-    #     """
-    #     Return the map of the right of id right_id
-    #     """
-
-    #     result = self.right_storage.get(data_ids=right_id)
-
-    #     return result
-
-
     # Add a right to the entity linked
     # If the right already exists, the checksum will be summed accordingly
     # checksum |= old_checksum
     # entity can be a role, a profile, or a composite
     def add(self, entity, right_id, checksum,
-            context=None, element_id=None, desc=None):
+            **kwargs):
 
-        if element_id is None:
-            element_id = ""
+        # If it does not exist, create it
+        if not self.check(entity, right_id, 0):
+            entity['rights'].update({ right_id: { 'checksum': checksum } })
 
-        if desc is None:
-            desc = ""
+        else:
+            entity['rights'][right_id]['checksum'] |= checksum
 
-        if context is None:
-            context = {}
+        # Add the new desc and/or context
+        for key in kwargs:
+            if kwargs[key]:
+                entity['rights'][right_id][key] = context
 
-        raise NotImplementedError()
 
     # Delete the checksum right of the entity linked
     # new_checksum ^= checksum
     # entity can be a role, a profile, or a composite
+    # return 0 if the new right is deleted or not found
+    # else return the new checksum
     def delete(self, entity, right_id, checksum):
 
-        raise NotImplementedError()
+        if (entity['rights'] and
+            entity['rights'][right_id] and
+            entity['rights'][right_id]['checksum'] >= checksum):
+
+            entity['rights'][right_id]['checksum'] ^= checksum
+
+            if not entity['rights'][right_id]['checksum']:
+                del entity['rights'][right_id]
+                return 0
+
+            return entity['rights'][right_id]['checksum']
+
+        return 0
+
 
     # Create a new rights composite composed of the rights passed in comp_rights
-    # Which name will be name
+    # comp_rights should be a map of right maps
     def create_composite(self, comp_rights, comp_name):
         """
         Create a new rights composite
         and add it in the appropriate Mongo collection
         """
 
-        raise NotImplementedError()
+        new_comp = {}
+
+        for right_id in comp_rights:
+            new_comp[right_id] = comp_rights[key].copy()
+
+        self.composite_storage[comp_name] = new_comp
+        # Update storage
+
 
     # Delete composite named comp_name
+    # Return True if the composite was successfully deleted
     def delete_composite(self, comp_name):
         """
         Delete the composite comp_name
         and update the appropriate Mongo collection
         """
 
-        raise NotImplementedError()
+        if self.composite_storage.get(comp_name, None):
+            del self.composite_storage[comp_name]
+            # Update storage
+            return True
+
+        return False
+
 
     # Add the composite named comp_name to the entity
     # If the composite does not exist and
     #   comp_rights is specified it will be created first
     # entity can be a profile or a role
+    # Return True if the composite was added, False otherwise
     def add_composite(self, entity, comp_name, comp_rights=None):
         """
         Add the composite comp_name to the entity
         """
 
-        raise NotImplementedError()
+        if not self.composite.get(comp_name, None):
+            if comp_rights:
+                self.create_composite(comp_rights, comp_name)
+            else:
+                return False
+
+        entity['composites'].add(self.composite_storage.get(comp_name, None))
+        return True
+
 
     # Remove the composite named comp_name from the entity
     # entity can be a profile or a user
+    # Return True if the composite was removed, False otherwise
     def remove_composite(self, entity, comp_name):
         """
         Remove the composite comp_name from the entity
         """
 
-        entity['rights'].pop(comp_name, None)
+        return entity['rights'].pop(comp_name, None)
 
-        self.right_composite.remove(data_id=comp_name)
 
     # Create a new profile composed of the composites p_composites
     #   and which name will be p_name
     # If the profile already exists, composites from p_composites
     #   that are not already in the profile's composites will be added
+    # Return True if the profile was created, False otherwise
     def create_profile(self, p_name, p_composites, relationships):
         """
         Create profile p_name composed of p_composites
         """
 
-        self.profile_storage.put(
-            data_id=p_name,
-            value={
-                'composites': p_composites,
-                'relationships': relationships})
+        if self.profile_storage.get(p_name, None):
+            return False
+
+        self.profile_storage[p_name] = {}
+        self.profile_storage[p_name]['composites'] = p_composites
+        return True
+
 
     # Delete profile of name p_name
+    # Return True if the prodile was deleted, False otherwise
     def delete_profile(self, p_name):
         """
         Delete profile p_name
         """
 
-        self.profile_storage.remove(data_ids=p_name)
+        if self.profile_storage.get(p_name, None):
+            del self.profile_storage.pop[p_name]
+            return True
+
+        return False
+
+
+    # Remove the profile p_name from the role
+    # Return True if it was removed, False otherwise
+    def remove_profile(self, role, p_name):
+        """
+        Remove profile p_name from the role
+        """
+
+        return role.pop(p_name, None)
 
     # Add the profile of name p_name to the role
-    def add_profile(self, role, p_name):
+    # If the profile does not exists and p_composites is pecified
+    #    it will be created first
+    # Return True if the profile was added, False otherwise
+    def add_profile(self, role, p_name, p_composites=None):
         """
         Add profile p_name to role['profile']
         """
+
+        if not self.profile_storage.get(p_name, None):
+            if p_composites:
+                self.create_profile(p_name, p_composites)
+            else:
+                return False
 
         # retrieve the profile
         profile = self.profile_storage.get(data_ids=p_name)
