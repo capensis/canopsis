@@ -2,7 +2,7 @@
 	"type": "object",
 	"categories": [{
 		"title": "General",
-		"keys":["title", "listed_crecord_type", "itemsPerPage","toolbar", "mixins" , "default_filter"]
+		"keys":["title", "listed_crecord_type", "itemsPerPage", "selection_toolbar", "actions_toolbar", "mixins" , "default_filter"]
 	},{
 		"title": "Columns",
 		"keys":["displayed_columns", "item_actions"]
@@ -16,7 +16,7 @@
 	"properties": {
 		"listed_crecord_type": {
 			"type": "string",
-			"enum": ["group", "account", "event", "selector", "filter", "userview"],
+			"enum": ["group", "account", "event", "eventlog", "selector", "filter", "userview"],
 			"default": "group",
 			"role": "simplelist"
 		},
@@ -35,7 +35,15 @@
 			},
 			"reorderable": true
 		},
-		"toolbar": {
+		"selection_toolbar": {
+			"type": "array",
+			"items": {
+				"type": "string"
+			},
+			"role" : "templateSelector",
+			"templateClass":"toolbar"
+		},
+		"actions_toolbar": {
 			"type": "array",
 			"items": {
 				"type": "string"

@@ -3,14 +3,13 @@
 	"serializer":"Cevent",
 	"type": "object",
 	"categories": [{
-		"title": "general",
-		"keys":["author", "connector", "component", "resource"]
+		"title": "General",
+		"keys":["author", "connector_name", "component", "resource"]
 	}],
 	"properties": {
 		"connector": {
 			"type": "string",
-			"required": true,
-			"readOnly": true
+			"required": true
 		},
 		"component": {
 			"type": "string",
@@ -19,30 +18,29 @@
 		},
 		"resource": {
 			"type": "string",
-			"required": true,
+			"required": false,
 			"readOnly": true
 		},
 		"connector_name": {
 			"type": "string",
-			"required": false
+			"required": false,
+			"readOnly": true,
+			"role": "source"
 		},
 		"event_type": {
-			"enum": ["check"],
+			"enum": ["ack"],
 			"required": true
 		},
 		"source_type": {
 			"type": "string",
-			"required": false
+			"required": false,
+			"readOnly": true
 		},
 		"state": {
 			"type": "number",
 			"required": true
 		},
 		"state_type": {
-			"type": "number",
-			"required": true
-		},
-		"cancel": {
 			"type": "number",
 			"required": true
 		},
@@ -58,7 +56,13 @@
 		"output": {
 			"type": "string",
 			"required": true,
-			"readOnly": true
+			"label": " ",
+			"placeholder": "Remarque ..."
+		},
+		"ticket": {
+			"type": "string",
+			"required": false,
+			"placeholder": "Numéro de ticket"
 		}
 	}
 }
