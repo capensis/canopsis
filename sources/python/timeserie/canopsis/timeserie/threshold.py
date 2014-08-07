@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #--------------------------------
 # Copyright (c) 2014 "Capensis" [http://www.capensis.com]
@@ -25,11 +24,32 @@ class Threshold(object):
     Threshold.
     """
 
+    UNITS = {
+        'Yocto': 10 ** -24,
+        'Zepto': 10 ** -21,
+        'Atto': 10 ** -18,
+        'Femto': 10 ** -15,
+        'Pico': 10 ** -12,
+        'Nano': 10 ** -9,
+        'Micro': 10 ** -6,
+        'Milli': 10 ** -3,
+        'Centi': 10 ** -2,
+        'Deci': 10 ** -1,
+        None: 1,
+        'Deca': 10,
+        'Hecto': 10 ** 2,
+        'Kilo': 10 ** 3,
+        'Mega': 10 ** 6,
+        'Ton': 10 ** 6,
+        'Giga': 10 ** 9,
+        'Tera': 10 ** 12,
+        'Peta': 10 ** 15,
+        'Exa': 10 ** 18,
+        'Zelta': 10 ** 21,
+        'Yotta': 10 ** 24
+    }
+
     POURCENT = '%'
-    KILO = 'Kilo'
-    MEGA = 'Mega'
-    GIGA = 'Giga'
-    TERA = 'Tera'
 
     def __init__(self, value=10, unit=POURCENT):
 
@@ -46,14 +66,8 @@ class Threshold(object):
             delta = self.value * value / 100
         else:
             delta = self.value
-            if self.unit == Threshold.KILO:
-                delta *= 1000
-            elif self.unit == Threshold.MEGA:
-                delta *= 1000 * 1000
-            elif self.unit == Threshold.GIGA:
-                delta *= 1000 * 1000 * 1000
-            elif self.unit == Threshold.TERA:
-                delta *= 1000 * 1000 * 1000 * 1000
+            if self.unit in Threshold.UNITS:
+                delta *= Threshold.UNITS[self.unit]
 
         result = getattr(value, operation)(delta)
 
