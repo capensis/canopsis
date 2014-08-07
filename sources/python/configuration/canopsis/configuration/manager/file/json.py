@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #--------------------------------
 # Copyright (c) 2014 "Capensis" [http://www.capensis.com]
@@ -19,7 +18,7 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from canopsis.configuration.manager import ConfigurationManager
+from . import FileConfigurationManager
 
 try:
     from json import loads, dump
@@ -27,7 +26,7 @@ except ImportError:
     from simplejson import loads, dump
 
 
-class JSONConfigurationManager(ConfigurationManager):
+class JSONConfigurationManager(FileConfigurationManager):
     """
     Manage json configuration.
     """
@@ -56,8 +55,10 @@ class JSONConfigurationManager(ConfigurationManager):
         if conf_file is not None:
             result = None
 
+            path = FileConfigurationManager.get_path(conf_file)
+
             try:
-                with open(conf_file, 'r') as handle:
+                with open(path, 'r') as handle:
                     content = handle.read()
                     result = loads(content)
 
@@ -94,8 +95,10 @@ class JSONConfigurationManager(ConfigurationManager):
         self, conf_resource, conf_file, *args, **kwargs
     ):
 
+        path = FileConfigurationManager.get_path(conf_file)
+
         try:
-            with open(conf_file, 'w') as handle:
+            with open(path, 'w') as handle:
                 dump(conf_resource, handle)
 
         except Exception:

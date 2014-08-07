@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #--------------------------------
 # Copyright (c) 2014 "Capensis" [http://www.capensis.com]
@@ -19,15 +18,13 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from os.path import join
-
-from . import ConfigurationManager
+from canopsis.configuration.manager.file import FileConfigurationManager
 
 from ConfigParser import RawConfigParser, DuplicateSectionError,\
     MissingSectionHeaderError
 
 
-class INIConfigurationManager(ConfigurationManager):
+class INIConfigurationManager(FileConfigurationManager):
     """
     Manage ini configuration.
     """
@@ -57,10 +54,10 @@ class INIConfigurationManager(ConfigurationManager):
 
             files = []
 
-            path = join('~/etc/', 
+            path = FileConfigurationManager.get_path(conf_file)
 
             try:
-                files = result.read(conf_file)
+                files = result.read(path)
 
             except MissingSectionHeaderError:
                 pass
@@ -100,4 +97,6 @@ class INIConfigurationManager(ConfigurationManager):
     def _update_conf_file(
         self, conf_resource, conf_file, *args, **kwargs
     ):
-        conf_resource.write(open(join('~/etc/', conf_file), 'w'))
+
+        path = FileConfigurationManager.get_path(conf_file)
+        conf_resource.write(open(path, 'w'))

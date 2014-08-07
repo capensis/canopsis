@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #--------------------------------
 # Copyright (c) 2014 "Capensis" [http://www.capensis.com]
@@ -18,32 +19,6 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from stat import ST_SIZE
-
-from os import stat
-from os.path import exists, join
-
-from .. import ConfigurationManager
-
-
-class FileConfigurationManager(ConfigurationManager):
-    """
-    Configuration Manager dedicated to files.
-    """
-
-    CONF_DIR = '~/etc/'
-
-    def exists(self, conf_file, *args, **kwargs):
-
-        path = FileConfigurationManager.get_path(conf_file)
-
-        result = exists(path) and stat(path)[ST_SIZE]
-
-        return result
-
-    @staticmethod
-    def get_path(conf_file):
-
-        result = join(FileConfigurationManager.CONF_DIR, conf_file)
-
-        return result
+# attach this project to canopsis package
+from pkgutil import extend_path
+__path__ = extend_path(__path__, __name__)

@@ -18,32 +18,17 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from stat import ST_SIZE
+from unittest import TestCase, main
 
-from os import stat
-from os.path import exists, join
-
-from .. import ConfigurationManager
+from canopsis.middleware import Middleware
 
 
-class FileConfigurationManager(ConfigurationManager):
-    """
-    Configuration Manager dedicated to files.
-    """
+class TestMiddleware(Middleware):
+    pass
 
-    CONF_DIR = '~/etc/'
 
-    def exists(self, conf_file, *args, **kwargs):
+class MiddlewareTest(TestCase):
+    pass
 
-        path = FileConfigurationManager.get_path(conf_file)
-
-        result = exists(path) and stat(path)[ST_SIZE]
-
-        return result
-
-    @staticmethod
-    def get_path(conf_file):
-
-        result = join(FileConfigurationManager.CONF_DIR, conf_file)
-
-        return result
+if __name__ == '__main__':
+    main()
