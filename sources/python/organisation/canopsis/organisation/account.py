@@ -22,4 +22,10 @@ from canopsis.organisation.permission import PermissionEntity
 
 
 class Account(PermissionEntity):
-    pass
+
+    def __init__(self, contact=None, session=None, rights=None, roles=None):
+        pass
+
+    def check(self, element_id, context, checksum):
+
+        return False

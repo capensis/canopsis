@@ -22,4 +22,8 @@ from canopsis.organisation.permission import PermissionEntity
 
 
 class Profile(PermissionEntity):
-    pass
+
+    def __init__(self, **content):
+
+        for name, value in content.iteritems():
+            setattr(self, name, value)

@@ -21,5 +21,5 @@
 from canopsis.organisation.permission import PermissionEntity
 
 
-class Data(PermissionEntity):
+class Session(PermissionEntity):
     pass
