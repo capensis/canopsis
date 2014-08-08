@@ -2,10 +2,10 @@
 	"type": "object",
 	"categories": [{
 		"title": "General",
-		"keys":[
-			"title",
-			"cfilter_allow_only_optimized_filters"
-		]
+		"keys":["title", "cfilter_allow_only_optimized_filters", "debug_mode"]
+	},{
+		"title": "Events",
+		"keys":["list_info_button_pattern"]
 	}],
 	"properties": {
 		"title": {
@@ -14,6 +14,14 @@
 		"cfilter_allow_only_optimized_filters": {
 			"type": "boolean",
 			"defaultValue": true
+		},
+		"debug_mode": {
+			"type": "boolean",
+			"defaultValue": true
+		},
+		"list_info_button_pattern": {
+			"type": "string",
+			"defaultValue": "http://localhost:8082/#/userview/view.event"
 		}
 	}
 }
