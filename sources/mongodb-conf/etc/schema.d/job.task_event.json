@@ -1,6 +1,6 @@
 {
     "type": "object",
     "properties": {
-        "event": {"type": "cevent"},
+        "event": {"type": "cevent"}
     }
 }

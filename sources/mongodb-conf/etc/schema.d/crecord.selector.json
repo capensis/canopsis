@@ -27,8 +27,7 @@
 		},
 		"mfilter": {
 			"type": "string",
-			"required": true,
-			"role": "cfilterwithproperties"
+			"role": "cfilter"
 		},
 		"include_ids": {
 			"type": "array",
