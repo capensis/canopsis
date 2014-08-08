@@ -31,13 +31,13 @@ class Rights(Manager):
 
     def __init__(self):
         # Contains the map of the existing profile maps
-        self.profile_storage = self.get_storage()
+        self.profile_storage = self.get_storage(data_type="profiles")
 
         # Contains the map of the existing composites maps
-        self.composite_storage = self.get_storage()
+        self.composite_storage = self.get_storage(data_type="composites")
 
         # Contains the map of the existing roles maps
-        self.role_storage = self.get_storage()
+        self.role_storage = self.get_storage(data_type="roles")
 
         # Default profile
         self.default_profile = self.get_storage()
@@ -70,11 +70,11 @@ class Rights(Manager):
         Check if user has the right of id right_id
         """
 
-        profile = self.profiles_storage.get(role.get('profile', None), None)
+        profile = self.profiles_storage.get_elements(ids=role.get('profile', None))
 
         p_composites = profile.get('composites', None)
 
-        composites = [self.composite_storage.get(x, None)
+        composites = [self.composite_storage.get_elements(ids=x)
                       for x in p_composites]
 
         if ((role and self.check(role, right_id, checksum)) or
@@ -156,7 +156,7 @@ class Rights(Manager):
         and update the appropriate Mongo collection
         """
 
-        if self.composite_storage.get(comp_name, None):
+        if self.composite_storage.get_elements(ids=comp_name):
             del self.composite_storage[comp_name]
             # Update storaged here
             for p in self.profile_storage:
@@ -184,7 +184,7 @@ class Rights(Manager):
             else:
                 return False
 
-        entity['composites'].add(self.composite_storage.get(comp_name, None))
+        entity['composites'].add(self.composite_storage.get_elements(ids=comp_name))
         return True
 
 
@@ -209,7 +209,7 @@ class Rights(Manager):
         Create profile p_name composed of p_composites
         """
 
-        if self.profile_storage.get(p_name, None):
+        if self.profile_storage.get_elements(ids=p_name):
             return False
 
         new_profile = {}
@@ -226,7 +226,7 @@ class Rights(Manager):
         Delete profile p_name
         """
 
-        if self.profile_storage.get(p_name, None):
+        if self.profile_storage.get_elements(ids=p_name):
             del self.profile_storage.pop[p_name]
             # Update storage here
             for r in self.role_storage:
@@ -264,14 +264,14 @@ class Rights(Manager):
         Add profile p_name to role['profile']
         """
 
-        if not self.profile_storage.get(p_name, None):
+        if not self.profile_storage.get_elements(ids=p_name):
             if p_composites:
                 self.create_profile(p_name, p_composites)
             else:
                 return False
 
         # retrieve the profile
-        if self.profile_storage.get(p_name, None):
+        if self.profile_storage.get_elements(ids=p_name):
             # change role['profiles'] to a set of strings
             #   if you want to allow several profiles on
             #   the same role
