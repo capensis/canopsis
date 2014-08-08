@@ -144,8 +144,8 @@ class Rights(Manager):
         for right_id in comp_rights:
             new_comp[right_id] = comp_rights[key].copy()
 
-        self.composite_storage[comp_name] = new_comp
-        # Update storage here
+
+        self.composite_storage.put_element(comp_name, new_comp)
 
 
     # Delete composite named comp_name
@@ -157,8 +157,8 @@ class Rights(Manager):
         """
 
         if self.composite_storage.get_elements(ids=comp_name):
-            del self.composite_storage[comp_name]
-            # Update storaged here
+
+            self.composite_storage.remove_elements(comp_name)
             for p in self.profile_storage:
                 p['composites'].discard(comp_name)
                 if not len(p['composites']):
@@ -214,8 +214,7 @@ class Rights(Manager):
 
         new_profile = {}
         new_profile['composites'] = p_composites
-        self.profile_storage[p_name] = new_profile
-        # Update storage here
+        self.profile_storage.put_element(p_name, new_profile)
         return True
 
 
@@ -227,8 +226,7 @@ class Rights(Manager):
         """
 
         if self.profile_storage.get_elements(ids=p_name):
-            del self.profile_storage.pop[p_name]
-            # Update storage here
+            self.profile_storage.remove_element(p_name)
             for r in self.role_storage:
                 r['profile'].discard(comp_name)
                 if not len(r['profile']):
