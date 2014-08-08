@@ -2,10 +2,10 @@
 	"type": "object",
 	"categories": [{
 		"title": "general",
-		"keys":[ "id_connector" , "connecteur_name" , "hostname", "options_filter" ]
+		"keys":[ "id_connector"  , "connecteur_name" , "hostname", "options_filter" ]
 	},
 	{
-		"title": "options",
+		"title": "AMQP_options",
 		"keys":[
 		"_opt_host" ,
 		"_opt_port" ,
@@ -13,45 +13,55 @@
 		"_opt_password",
 		"_opt_virtual_host",
 		"_opt_exchange_name" ,
-		"_opt_name" ,
-		"_opt_connector" ,
-		"_opt_max_size",
-		"_opt_cache_file",
-		"_opt_cache_size",
-		"_opt_autosync",
-		"_opt_autoflush",
-		"_opt_rate",
-		"_opt_flush",
-		"_opt_purge",
+		"_opt_max_size"
+		]
+	},
+	{
+		"title": "BROKER_options",
+		"keys":[
 		"_opt_hostgroups",
 		"_opt_servicegroups",
 		"_opt_acknowledgement",
 		"_opt_downtime",
 		"_opt_custom_variables"
 		]
+	},
+	{
+		"title": "CONNECTOR_options",
+		"keys":[
+		"_opt_name" ,
+		"_opt_connector" ,
+		"_opt_cache_file",
+		"_opt_cache_size",
+		"_opt_autosync",
+		"_opt_autoflush",
+		"_opt_rate",
+		"_opt_flush",
+		"_opt_purge"
+		]
 	}],
 	"properties": {
 		"nagios_thing" : {"type": "string", "required": true },
-		"_opt_host" : {"type": "string" , "required": true},
-		"_opt_port" : {"type": "number" },
-		"_opt_userid" : {"type": "string"},
-		"_opt_password" : {"type": "string" },
-		"_opt_virtual_host" : {"type": "string" },
-		"_opt_exchange_name" : {"type": "string" },
-		"_opt_name" : {"type": "string" },
-		"_opt_connector" : {"type": "string"},
-		"_opt_max_size" : {"type": "number" , "input_type" : "range"},
-		"_opt_cache_file" : {"type": "string" },
-		"_opt_cache_size" : {"type": "string" ,  "input_type" : "range"},
-		"_opt_autosync" : {"type": "string" },
-		"_opt_autoflush" : {"type": "string" },
-		"_opt_rate" : {"type": "string" },
-		"_opt_flush" : {"type": "string" },
-		"_opt_purge" : {"type": "string" },
-		"_opt_hostgroups" : {"type": "string"},
-		"_opt_servicegroups" : {"type": "string"},
-		"_opt_acknowledgement" : {"type": "string"},
-		"_opt_downtime" : {"type": "string"},
-		"_opt_custom_variables" : {"type": "string"}
+		"_opt_host" : {"type": "string" , "required": true , "default" : "127.0.0.1"},
+		"_opt_port" : {"type": "number" , "default": 999 },
+		"_opt_userid" : {"type": "string" , "default" : "guest"},
+		"_opt_password" : {"type": "string" , "default": "guest" },
+		"_opt_virtual_host" : {"type": "string" , "default":"canopsis" },
+		"_opt_exchange_name" : {"type": "string", "default":"canopsis.events" },
+		"_opt_name" : {"type": "string", "default":"Central" },
+		"_opt_connector" : {"type": "string", "default": "nagios"},
+		"_opt_max_size" : {"type": "number" , "default": 8192},
+		"_opt_cache_file" : {"type": "string" , "default": "/usr/local/nagios/var/canopsis.cache" },
+		"_opt_cache_size" : {"type": "number" ,"default":1000 },
+		"_opt_autosync" : {"type": "number" , "default":  60},
+		"_opt_autoflush" : {"type": "string", "default": 60},
+		"_opt_rate" : {"type": "number" , "default":  5},
+		"_opt_flush" : {"type": "number" , "default": -1},
+		"_opt_purge" : {"type": "boolean" , "default": false },
+		"_opt_hostgroups" : {"type": "boolean", "default": false},
+		"_opt_servicegroups" : {"type": "boolean", "default":false },
+		"_opt_acknowledgement" : {"type": "boolean", "default": false},
+		"_opt_downtime" : {"type": "boolean", "default": false},
+		"_opt_custom_variables" : {"type": "boolean", "default": false }
 	}
 }
