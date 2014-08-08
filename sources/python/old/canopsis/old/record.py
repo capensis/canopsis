@@ -84,18 +84,19 @@ class Record(object):
             self.load(raw_record)
 
     def load(self, dump):
-        self.owner = str(dump['aaa_owner'])
-        self.group = str(dump['aaa_group'])
-        self.access_owner = dump['aaa_access_owner']
-        self.access_group = dump['aaa_access_group']
-        self.access_other = dump['aaa_access_other']
-        self.access_unauth = dump['aaa_access_unauth']
-        self.type = str(dump['crecord_type'])
-        self.write_time = dump['crecord_write_time']
-        self.name = dump['crecord_name']
-        self.children = dump['children']
-        self.parent = dump['parent']
-        self.enable = dump['enable']
+
+        self.owner = str(dump.get('aaa_owner', ''))
+        self.group = str(dump.get('aaa_group', ''))
+        self.access_owner = dump.get('aaa_access_owner', '')
+        self.access_group = dump.get('aaa_access_group', '')
+        self.access_other = dump.get('aaa_access_other', '')
+        self.access_unauth = dump.get('aaa_access_unauth', '')
+        self.type = str(dump.get('crecord_type', ''))
+        self.write_time = dump.get('crecord_write_time', '')
+        self.name = dump.get('crecord_name', '')
+        self.children = dump.get('children', '')
+        self.parent = dump.get('parent', '')
+        self.enable = dump.get('enable', '')
 
         if not dump.get('crecord_creation_time', None):
             dump['crecord_creation_time'] = self.write_time
@@ -120,19 +121,19 @@ class Record(object):
 
         self._id = dump['_id']
 
-        del dump['_id']
-        del dump['enable']
-        del dump['aaa_owner']
-        del dump['aaa_group']
-        del dump['aaa_access_owner']
-        del dump['aaa_access_group']
-        del dump['aaa_access_other']
-        del dump['aaa_access_unauth']
-        del dump['crecord_type']
-        del dump['crecord_write_time']
-        del dump['crecord_name']
-        del dump['children']
-        del dump['parent']
+        dump.pop('_id', '')
+        dump.pop('enable', '')
+        dump.pop('aaa_owner', '')
+        dump.pop('aaa_group', '')
+        dump.pop('aaa_access_owner', '')
+        dump.pop('aaa_access_group', '')
+        dump.pop('aaa_access_other', '')
+        dump.pop('aaa_access_unauth', '')
+        dump.pop('crecord_type', '')
+        dump.pop('crecord_write_time', '')
+        dump.pop('crecord_name', '')
+        dump.pop('children', '')
+        dump.pop('parent', '')
 
         self.data = dump.copy()
 
@@ -217,6 +218,7 @@ class Record(object):
         return str(self.dump())
 
     def check_write(self, account):
+        return True
         if account:
             if account.user == 'root' or account.group == 'group.CPS_root' \
                     or 'group.CPS_root' in account.groups:

@@ -17,15 +17,23 @@
           "listed_crecord_type": "event",
           "title": "Bac à évenements",
           "item_actions": [
-            "actionbutton-ack"
+            "actionbutton-ack",
+            "actionbutton-cancel",
+            "actionbutton-incident",
+            "actionbutton-ticketnumber",
+            "actionbutton-manualrecovery"
           ],
-          "toolbar": [
+          "selection_toolbar": [
+            "actionbutton-ack",
+            "actionbutton-removeselection"
+          ],
+          "actions_toolbar": [
             "actionbutton-history"
           ],
           "displayed_columns": [
             "domain",
             "perimeter",
-            "connector_name",
+            "connector",
             "component",
             "resource",
             "output",
@@ -33,8 +41,7 @@
             "criticity",
             "ack",
             "timestamp"
-          ],
-          "item_actions": ["actionbutton-show", "actionbutton-ack"]
+          ]
         }
       }
     ]

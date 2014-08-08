@@ -31,7 +31,7 @@ Example:
 .. code-block:: javascript
 
     User = {
-        'role': 'manager',
+        'role': Roles['manager'],
         'contact': {
             'mail': 'jharris@scdp.com',
             'phone_number': '+33678695041',
@@ -45,11 +45,13 @@ Example:
 Role
 -------
 
+A Role is specific to a small number of users
+
 .. code-block:: javascript
 
     'name': {
         'rights': ...               // Map of type Rights, every role-specific rights goes here
-        'profile': ...              // Map of type Profile, profile of the role
+        'profile': ...              // ID of the profile
         FIELD: ...                  // You can add any number of fields that can be used with data-specific rules
         ...
         }
@@ -61,7 +63,7 @@ Example:
 
     Roles = {
         'manager': {
-            'profile': Profiles['Manager'],
+            'profile': 'Manager',
             'list_of_directors': {'Ted Chaough', 'Peggy Olson', 'Don Draper'}
             }
         }
@@ -70,6 +72,7 @@ Example:
 Profile
 ---------
 
+A profile is generic and global to all users
 
 .. code-block:: javascript
 
@@ -96,6 +99,8 @@ Example:
 
 Group
 -------
+
+A group is generic and global to all users
 
 .. code-block:: javascript
 
