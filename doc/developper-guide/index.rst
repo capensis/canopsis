@@ -15,8 +15,10 @@ Contents:
    event-spec
    filter-spec
    groups
+   kombu/index
    metric-spec
    middleware/index
+   mom/index
    packaging
    Perfdata2
    rest-api

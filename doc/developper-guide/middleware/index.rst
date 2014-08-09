@@ -26,7 +26,7 @@ The API is generic in respecting data exchange paradigm common properties, and a
 
 Its configuration can be done with fine grains or done in a common way to middleware concerns thanks to an uri.
 
-In a data oriented approach, it is useful to taking care about the data behavior which is changing related to quality of services (QoS). For example http://www.omg.org/spec/dds4ccm/1.1/PDF/ describes a data in a pubsub middleware which can become an event or a status information depending on QoS values.
+In a data oriented approach, it is useful to take care about the data behavior which is changing related to quality of services (QoS). For example http://www.omg.org/spec/dds4ccm/1.1/PDF/ describes a data in a pubsub middleware which can become an event or a status information depending on QoS values.
 
 Therefore, a middleware configuration depends on a ``data type``.
 
@@ -41,6 +41,7 @@ Perspectives
 ------------
 
 This library is further declined into paradigms such as :
+
 - MOM
 - Storage
 
@@ -51,9 +52,24 @@ Package contents
 
     Current package version : 0.1
 
-.. PROTOCOL_SEPARATOR = '-'
+.. data:: PROTOCOL_SEPARATOR = '-'
 
     Char separation between protocol name and a data_type in a Middleware URI.
+
+.. data:: PROTOCOL_INDEX = 0
+
+   protocol name index in an uri scheme
+
+.. data:: DATA_TYPE_INDEX = 1
+
+   data_type name index in an uri scheme
+
+.. function:: parse_scheme(uri)
+
+   Get a tuple of protocol and data_type names from input uri
+
+   :return: (protocol, data_type) from uri scheme
+   :rtype: tuple
 
 .. class:: MetaMiddleware(canopsis.configuration.configurable.MetaConfigurable)
 
@@ -160,13 +176,33 @@ Package contents
 
       configuration password. Handled if not uri
 
+   .. attribute:: conn
+
+      Connection object
+
    .. method:: connect()
 
-      Connect this middleware.
+      Connect this middleware and return connected status.
+
+      :return: True iif this is connected
+
+   .. method:: _connect()
+
+      get a new connection object.
+
+   .. method:: _init_env(conn)
+
+      Initialize the environment. Called if a new connection is successful.
+
+      :param conn: newly created connection.
 
    .. method:: disconnect()
 
       Disconnect this middleware.
+
+   .. method:: _disconnect()
+
+      Method to implement in order to disconnect this middleware.
 
    .. method:: reconnect()
 
@@ -175,6 +211,9 @@ Package contents
    .. method:: connected()
 
       True iif the middleware is connected
+
+      :return: True iif self is connected
+      :rtype: bool
 
    .. classmethod:: register_middleware(cls, protocol=None, data_type=None)
 
