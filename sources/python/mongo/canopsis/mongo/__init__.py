@@ -161,6 +161,14 @@ class MongoDataBase(DataBase):
         return result
 
 
+def len_cursor(cursor):
+    """
+    Mongo cursor len function
+    """
+
+    return cursor.count(True)
+
+
 class Storage(MongoDataBase, Storage):
 
     def __init__(self, data_type, *args, **kwargs):
@@ -195,7 +203,6 @@ class Storage(MongoDataBase, Storage):
     ):
 
         query = {}
-        count_opt = False
 
         if ids is not None:
             query['_id'] = {'$in': ids}
@@ -204,18 +211,26 @@ class Storage(MongoDataBase, Storage):
 
         if limit:
             cursor.limit(limit)
-            count_opt = True
         if skip:
             cursor.skip(skip)
-            count_opt = True
         if sort is not None:
             Storage._update_sort(sort)
             cursor.sort(sort)
 
         # Return the element if only one element was requested
         # Otherwise, return a list of the requested elements
-        cursor = None if not cursors.count(count_opt) else cursor
-        result = cursor if len(ids) == 1 else list(cursor)
+        if len(ids) > 1:
+            result = cursor
+            # add __len__ method to the cursor in order to manage it such as
+            # an iterable
+            cursor.__len__ = len_cursor
+
+        else:
+            # result is the only one value or None if no value exist
+            try:
+                result = cursor.next()
+            except StopIteration:
+                result = None
 
         return result
 
@@ -311,6 +326,14 @@ class Storage(MongoDataBase, Storage):
     def _remove(self, document):
 
         result = self._run_command(command='remove', spec_or_id=document)
+
+        return result
+
+    def _count(self, document=None):
+
+        cursor = self._find(document=document)
+
+        result = cursor.count(False)
 
         return result
 
