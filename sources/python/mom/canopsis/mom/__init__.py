@@ -67,6 +67,9 @@ def receiver_and_callback(receiver):
 
 
 class MOM(Middleware):
+    """
+    Dedicated to MOM middleware
+    """
 
     CONF_RESOURCE = 'mom/mom.conf'
 
