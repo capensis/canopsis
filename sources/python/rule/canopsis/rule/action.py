@@ -37,11 +37,47 @@ class ActionError(Exception):
     pass
 
 
-def do_action(action, event, cached_action=True):
+def get_action(action_path, cached=True):
+    """
+    Get a callable related to absolute input action path.
+
+    :param action_path: absolute action path to get
+    :type action_path: str
+
+    :param cached: use runtime cache to get the action_path if previously
+        loaded.
+    :type cached: bool
+
+    :return: callable action which takes in parameter a context, an event, or
+        None if action does not exist in runtime
+    :rtype: callable
+
+    :raise: ActionError if:
+        - action is unknown from runtime.
+    """
+
+    result = None
+
+    if cached and action_path in _GLOBAL_ACTIONS:
+        result = _GLOBAL_ACTIONS[action_path]
+
+    else:
+        try:
+            result = resolve_element(action_path)
+        except ImportError:
+            raise ActionError('action %s is unknown in runtime' % action_path)
+        if result is not None and cached:
+            _GLOBAL_ACTIONS[action_path] = result
+
+    return result
+
+
+def do_action(action, ctx, event, cached_action=True):
     """
     Do an action function related to input name.
 
     An action should take in parameters:
+    - a ctx.
     - an event.
     - a kwargs such as action parameters.
 
@@ -72,18 +108,11 @@ def do_action(action, event, cached_action=True):
     # get action name
     name = action[ACTION_NAME_FIELD]
 
-    # use action cache in order to find the right action
-    if not cached_action or name not in _GLOBAL_ACTIONS:
-        try:
-            action = resolve_element(name)
-        except ImportError:
-            raise ActionError('action %s is unknown in runtime' % action)
-        else:
-            _GLOBAL_ACTIONS[name] = action
+    action_fn = get_action(name, cached_action)
 
     try:
         # call related action with input event and action such as a kwargs
-        result = _GLOBAL_ACTIONS[name](event, **action)
+        result = action_fn(ctx, event, **action)
     except Exception as e:
         raise ActionError(e)
 

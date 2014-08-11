@@ -32,7 +32,7 @@ class RuleError(Exception):
     pass
 
 
-def apply_rule(rule, event, cached_action=True):
+def apply_rule(rule, ctx, event, cached_action=True):
     """
     Apply input rule on input event in checking if the rule condition matches
     with the event and if True, execute rule actions.
@@ -40,8 +40,12 @@ def apply_rule(rule, event, cached_action=True):
     :param rule: rule to apply on input event. contains both condition and \
         actions.
     :type rule: dict
+
+    :param ctx: rule ctx (engine, etc.)
+
     :param event: event to check and to process.
     :type event: dict
+
     :param cached_action: indicates to actions to use cache instead of \
         importing them dynamically.
     :type cached_action: bool
@@ -59,7 +63,9 @@ def apply_rule(rule, event, cached_action=True):
         actions = rule[ACTIONS_FIELD] if ACTIONS_FIELD in rule else []
 
         for action in actions:
-            action_result = do_action(action, event, cached_action)
+            action_result = do_action(
+                action=action, ctx=ctx, event=event,
+                cached_action=cached_action)
 
             result.append(action_result)
 

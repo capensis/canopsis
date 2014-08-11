@@ -43,7 +43,7 @@ class RuleTest(TestCase):
 
     def test_empty(self):
         rule = {}
-        result = apply_rule(rule=rule, event={})
+        result = apply_rule(rule=rule, ctx=None, event={})
 
         self.assertEqual(len(result), 0)
 
@@ -54,7 +54,7 @@ class RuleTest(TestCase):
             ACTIONS_FIELD: [{'name': 'test.test_action'}]
         }
 
-        result = apply_rule(rule=rule, event={'name': 'event'})
+        result = apply_rule(rule=rule, ctx=None, event={'name': 'event'})
         self.assertEqual(len(result), 1)
         self.assertEqual(result[0]['count'], 1)
         self.assertNotEqual(result, self.rule[ACTIONS_FIELD])
@@ -68,11 +68,11 @@ class RuleTest(TestCase):
 
         event = {'name': 'not_event'}
 
-        result = apply_rule(rule=rule, event=event)
+        result = apply_rule(rule=rule, ctx=None, event=event)
         self.assertEqual(len(result), 0)
 
         rule[CONDITION_FIELD] = {'name': 'event'}
-        result = apply_rule(rule=rule, event=event)
+        result = apply_rule(rule=rule, ctx=None, event=event)
 
         self.assertEqual(len(result), 0)
 

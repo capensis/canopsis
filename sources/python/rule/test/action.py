@@ -50,7 +50,8 @@ class ActionTest(TestCase):
 
         self.assertEqual(len(_GLOBAL_ACTIONS), 0)
 
-        do_action(action=self.action, event=None, cached_action=False)
+        do_action(
+            action=self.action, event=None, ctx=None, cached_action=False)
 
         self.assertEqual(len(_GLOBAL_ACTIONS), 0)
 
@@ -58,7 +59,8 @@ class ActionTest(TestCase):
 
         self.assertEqual(len(_GLOBAL_ACTIONS), 0)
 
-        do_action(action=self.action, event=None, cached_action=False)
+        do_action(
+            action=self.action, ctx=None, event=None, cached_action=False)
 
         self.assertEqual(len(_GLOBAL_ACTIONS), 1)
 
@@ -69,7 +71,7 @@ class ActionTest(TestCase):
         error = False
 
         try:
-            do_action(action=action, event=None)
+            do_action(action=action, ctx=None, event=None)
         except ActionError:
             error = True
 
@@ -82,7 +84,7 @@ class ActionTest(TestCase):
         error = False
 
         try:
-            do_action(action=action, event=None)
+            do_action(action=action, event=None, ctx=None)
         except ActionError:
             error = True
 
@@ -95,7 +97,7 @@ class ActionTest(TestCase):
         error = False
 
         try:
-            do_action(action=action, event=None)
+            do_action(action=action, event=None, ctx=None)
         except TestException:
             error = True
 
