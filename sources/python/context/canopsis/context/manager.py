@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 # --------------------------------
 # Copyright (c) 2014 "Capensis" [http://www.capensis.com]
@@ -34,7 +33,7 @@ class Context(Manager):
         - connector: data_id
     """
 
-    CONF_FILE = '~/etc/context.conf'
+    CONF_RESOURCE = 'context/context.conf'
 
     DATA_TYPE = 'context'
 
@@ -144,7 +143,7 @@ class Context(Manager):
 
         result = super(Context, self)._get_conf_files(*args, **kwargs)
 
-        result.append(Context.CONF_FILE)
+        result.append(Context.CONF_RESOURCE)
 
         return result
 
