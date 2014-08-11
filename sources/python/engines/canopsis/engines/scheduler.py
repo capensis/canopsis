@@ -75,7 +75,7 @@ class engine(Engine):
     def do_job(self, job):
         self.logger.info('Execute job: {0}'.format(job))
 
-        job['params']['id'] = job['_id']
+        job['params']['jobid'] = job['_id']
 
         self.amqp.publish(
             job['params'],

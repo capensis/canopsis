@@ -10,7 +10,7 @@
 		"rrule": {"type": "string", "required": true},
 		"start": {"type": "integer", "required": true},
 		"params": {
-			"type": "object",
+			"type": "job",
 			"required": true
 		}
 	}

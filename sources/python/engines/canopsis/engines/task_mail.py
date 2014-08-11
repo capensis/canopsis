@@ -19,9 +19,11 @@
 # ---------------------------------
 
 from canopsis.engines import TaskHandler
+from canopsis.old.template import Template
 from canopsis.old.account import Account
 from canopsis.old.storage import Storage
 from canopsis.old.file import File
+
 
 from email import Encoders
 from email.MIMEBase import MIMEBase
@@ -40,16 +42,21 @@ class engine(TaskHandler):
     def handle_task(self, job):
         user = job.get('user', 'root')
         group = job.get('group', 'root')
+        mail = job.get('sender', None)
 
-        account = Account(user=user, group=group)
+        account = Account(user=user, group=group, mail=mail)
 
         recipients = job.get('recipients', None)
         subject = job.get('subject', None)
-        body = job.get('body', None)
         attachments = job.get('attachments', None)
         smtp_host = job.get('smtp_host', 'localhost')
         smtp_port = job.get('smtp_port', 25)
         html = job.get('html', False)
+
+        template = Template(job.get('template', ''))
+        template_data = job.get('template_data', {})
+
+        body = template(template_data)
 
         # Execute the task
         return self.sendmail(
@@ -113,7 +120,7 @@ class engine(TaskHandler):
         dests = []
 
         for dest in recipients:
-            if isinstance(dest, str):
+            if isinstance(dest, basestring):
                 if re.match(
                     "^[a-zA-Z0-9._%-]+@[a-zA-Z0-9._%-]+.([a-zA-Z]{2,6})?$",
                     dest
@@ -190,5 +197,7 @@ class engine(TaskHandler):
         except Exception as err:
             return (
                 2,
-                "Imposible to send mail: {0}".format(err)
+                "Impossible to send mail: {0}".format(err)
             )
+
+        return (0, "Mail sent successfully")
