@@ -20,9 +20,11 @@
 # ---------------------------------
 
 from canopsis.engines import TaskHandler
+from canopsis.old.template import Template
 from canopsis.old.account import Account
 from canopsis.old.storage import Storage
 from canopsis.old.file import File
+
 
 from email import Encoders
 from email.MIMEBase import MIMEBase
@@ -46,11 +48,15 @@ class engine(TaskHandler):
 
         recipients = job.get('recipients', None)
         subject = job.get('subject', None)
-        body = job.get('body', None)
         attachments = job.get('attachments', None)
         smtp_host = job.get('smtp_host', 'localhost')
         smtp_port = job.get('smtp_port', 25)
         html = job.get('html', False)
+
+        template = Template(job.get('template', ''))
+        template_data = job.get('template_data', {})
+
+        body = template(template_data)
 
         # Execute the task
         return self.sendmail(

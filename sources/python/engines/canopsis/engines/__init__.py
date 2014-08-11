@@ -27,6 +27,8 @@ from canopsis.old.storage import get_storage
 from canopsis.old.account import Account
 from canopsis.old.event import forger, get_routingkey
 
+from canopsis.tools import schema as cschema
+
 from traceback import format_exc, print_exc
 
 from itertools import cycle
@@ -457,10 +459,21 @@ class TaskHandler(Engine):
             job = loads(msg)
 
         except ValueError as err:
-            self.logger.error('Impossible to decode message: {0}'.format(err))
-            return
+            output = 'Impossible to decode message: {0}'.format(err)
+            state = 2
 
-        state, output = self.handle_task(job)
+        else:
+            if not cschema.validate(job, 'job.{0}'.format(self.etype)):
+                output = 'Invalid job'
+                state = 2
+
+            else:
+                try:
+                    state, output = self.handle_task(job)
+
+                except NotImplementedError:
+                    state = 1
+                    output = 'Not implemented'
 
         end = int(time())
 
@@ -471,7 +484,7 @@ class TaskHandler(Engine):
             'event_type': 'check',
             'source_type': 'resource',
             'component': 'job',
-            'resource': job['id'],
+            'resource': job['jobid'],
             'state': state,
             'state_type': 1,
             'output': output,

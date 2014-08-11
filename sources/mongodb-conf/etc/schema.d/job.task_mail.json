@@ -11,7 +11,8 @@
 			"required": true
 		},
 		"subject": {"type": "string", "required": true},
-		"body": {"type": "string", "required": true},
+		"template": {"type": "string", "required": true},
+		"template_data": {"type": "object", "required": true},
 		"attachments": {
 			"type": "array",
 			"items": {"type": "string"},
