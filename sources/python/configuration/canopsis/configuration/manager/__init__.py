@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #--------------------------------
 # Copyright (c) 2014 "Capensis" [http://www.capensis.com]
@@ -20,11 +19,6 @@
 # ---------------------------------
 
 from canopsis.common.utils import resolve_element, path
-
-from stat import ST_SIZE
-
-from os import stat
-from os.path import exists
 
 from canopsis.configuration import Configuration, Parameter, Category
 
@@ -84,6 +78,13 @@ class ConfigurationManager(object):
 
         return result
 
+    def exists(self, conf_file):
+        """
+        True if conf_file exist related to this manager behaviour.
+        """
+
+        raise NotImplementedError()
+
     def get_configuration(self, conf_file, logger, conf=None, fill=False):
         """
         Parse a configuration_files with input conf and returns
@@ -108,7 +109,7 @@ class ConfigurationManager(object):
         result = None
 
         # ensure conf_file exists and is not empty.
-        if exists(conf_file) and stat(conf_file)[ST_SIZE]:
+        if self.exists(conf_file):
 
             try:
                 # first, read conf file
@@ -118,8 +119,8 @@ class ConfigurationManager(object):
             except Exception as e:
                 # if an error occured, log it
                 logger.error(
-                    'Impossible to parse conf_file {0}: {1}'.format(
-                        conf_file, e))
+                    'Impossible to parse conf_file %s with %s: %s' % (
+                        conf_file, type(self), e))
 
             else:  # else process conf file
 
@@ -213,7 +214,7 @@ class ConfigurationManager(object):
         :param conf_file:
         :type conf_file: str
 
-        :param conf: conf to write in conf_file.
+        :param conf: conf to write to conf_file.
         :type conf: canopsis.configuration.Configuration
 
         :param logger: used to log info/errors
@@ -260,8 +261,7 @@ class ConfigurationManager(object):
 
         # write conf_resource in conf file
         self._update_conf_file(
-            conf_resource=conf_resource,
-            conf_file=conf_file)
+            conf_resource=conf_resource, conf_file=conf_file)
 
         return result
 

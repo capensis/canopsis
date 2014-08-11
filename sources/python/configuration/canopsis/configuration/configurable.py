@@ -58,16 +58,17 @@ class Configurable(object):
     __metaclass__ = MetaConfigurable
 
     DEFAULT_MANAGERS = '%s,%s' % (
-        'canopsis.configuration.manager.json.JSONConfigurationManager',
-        'canopsis.configuration.manager.ini.INIConfigurationManager')
+        'canopsis.configuration.manager.file.json.JSONConfigurationManager',
+        'canopsis.configuration.manager.file.ini.INIConfigurationManager')
 
-    CONF_FILE = '~/etc/global.conf'
+    CONF_RESOURCE = 'configuration/configurable.conf'
 
     CONF = 'CONFIGURATION'
     LOG = 'LOG'
 
     AUTO_CONF = 'auto_conf'
     RECONF_ONCE = 'reconf_once'
+    CONF_FILES = 'conf_files'
     MANAGERS = 'conf_managers'
     LOG_NAME = 'log_name'
     LOG_LVL = 'log_lvl'
@@ -576,7 +577,7 @@ class Configurable(object):
             # when conf succeed, deactive reconf_once
             self.reconf_once = False
 
-    def _configure(self, unified_conf, logger):
+    def _configure(self, unified_conf, logger=None):
         """
         Configure this class with input conf only if auto_conf or
         configure is true.
@@ -652,7 +653,7 @@ class Configurable(object):
 
     def _get_conf_files(self):
 
-        result = [Configurable.CONF_FILE]
+        result = [Configurable.CONF_RESOURCE]
 
         return result
 

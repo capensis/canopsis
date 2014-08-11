@@ -330,10 +330,6 @@ class Parameter(object):
     Provide a value (None by default) and a parser (str by default).
     """
 
-    @staticmethod
-    def bool(value):
-        return value == 'True' or value == 'true' or value == '1'
-
     def __init__(self, name, value=None, parser=str):
         """
         :param name: unique by category
@@ -398,3 +394,18 @@ class Parameter(object):
         """
 
         self._value = None
+
+    @staticmethod
+    def array(item_type=str):
+        """
+        Get an array from an input value where items are separated by ','
+        """
+
+        def split(value):
+            return [item_type(v) for v in value.split(',')]
+
+        return split
+
+    @staticmethod
+    def bool(value):
+        return value == 'True' or value == 'true' or value == '1'

@@ -106,7 +106,7 @@ class Watcher(Configurable):
     Watches all sleeping_time
     """
 
-    CONF_FILE = '~/etc/watcher.conf'
+    CONF_FILE = 'configuration/watcher.conf'
 
     CATEGORY = 'WATCHER'
     SLEEPING_TIME = 'sleeping_time'

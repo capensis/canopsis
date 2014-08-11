@@ -23,6 +23,7 @@ Contents:
    Perfdata2
    rest-api
    rights
+   rpc/index
    rule
    send_event
    Send-Event-With-Perl

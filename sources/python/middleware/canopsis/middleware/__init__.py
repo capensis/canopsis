@@ -26,7 +26,33 @@ from canopsis.configuration import Configurable, Parameter
 from canopsis.configuration.configurable import MetaConfigurable
 
 # char separator between a protocol and the associated data_type
-PROTOCOL_SEPARATOR = '-'
+PROTOCOL_DATA_TYPE_SEPARATOR = '-'
+PROTOCOL_INDEX = 0  # protocol name index in an uri scheme
+DATA_TYPE_INDEX = 1  # data_type name index in an uri scheme
+
+
+def parse_scheme(uri):
+    """
+    Get a tuple of protocol and data_type names from input uri
+
+    :return: (protocol, data_type) from uri scheme
+    :rtype: tuple
+    """
+
+    result = None, None
+
+    parsed_url = urlparse(uri)
+    scheme = parsed_url.scheme
+
+    if scheme and PROTOCOL_DATA_TYPE_SEPARATOR in parsed_url.scheme:
+        splitted_scheme = scheme.split(PROTOCOL_DATA_TYPE_SEPARATOR)
+        result = (splitted_scheme[PROTOCOL_INDEX],
+            splitted_scheme[DATA_TYPE_INDEX])
+
+    else:
+        result = scheme, None
+
+    return result
 
 
 class MetaMiddleware(MetaConfigurable):
@@ -147,6 +173,8 @@ class Middleware(Configurable):
 
         super(Middleware, self).__init__(*args, **kwargs)
 
+        self._conn = None
+
         # initialize instance properties with default values
         self._uri = uri
         self._protocol = protocol
@@ -167,7 +195,18 @@ class Middleware(Configurable):
         self._pwd = pwd
 
     @property
+    def conn(self):
+        return self._conn
+
+    @property
     def uri(self):
+
+        result = self._get_uri()
+
+        return result
+
+    def _get_uri(self):
+
         result = self._uri
 
         # if self._uri is not resolved, generate it related to other parameters
@@ -190,8 +229,25 @@ class Middleware(Configurable):
 
     @uri.setter
     def uri(self, value):
-        self._uri = value
+
+        self._set_uri(value)
+
         self.reconnect()
+
+    def _set_uri(self, value):
+
+        self._uri = value
+        # update other properties if value is not None
+        if not value:
+
+            self.protocol, self.data_type = parse_scheme(value)
+
+            parsed_url = urlparse(value)
+
+            self._host = parsed_url.hostname
+            self._port = parsed_url.port
+            self._user = parsed_url.username
+            self._password = parsed_url.password
 
     @property
     def protocol(self):
@@ -336,32 +392,85 @@ class Middleware(Configurable):
         self._pwd = value
         self.reconnect()
 
-    def connect(self, *args, **kwargs):
+    def connect(self):
         """
         Connect this database.
 
         .. seealso:: disconnect(self), connected(self), reconnect(self)
+
+        :return: True if connection has succeed
+        """
+
+        if not self.connected():
+
+            self.logger.info('Trying to connect to %s' % self.uri)
+
+            self._conn = self._connect()
+
+            # initialize the environment if connection is connected
+            if self.connected():
+                self.logger.info('Initialize the environment')
+                self._init_env(self._conn)
+
+            else:
+                self.logger.error("Connection failure to %s" % self.uri)
+
+        else:
+            self.logger.debug('Already connected to %s' % self.uri)
+
+        return self.connected()
+
+    def _connect(self):
+        """
+        Protected connection which has to be implemented by specialization
+        classes.
+
+        :return: new connection object, or None if it does not exist
         """
 
         raise NotImplementedError()
 
-    def disconnect(self, *args, **kwargs):
+    def _init_env(self, conn):
+        """
+        Initialize the environement related to a newly connection.
+
+        :param conn: newly created connection.
+        """
+
+        pass
+
+    def disconnect(self):
         """
         Disconnect this database.
 
         .. seealso:: connect(self), connected(self), reconnect(self)
         """
 
+        if self.connected():
+
+            self.logger.info("Disconnect %s from %s" % (self, self.uri))
+
+            self._disconnect()
+
+            self.logger.info("Disconnected from %s" % (self.uri))
+
+        self.logger.info("%s is already disconnected" % self)
+
+    def _disconnect(self):
+        """
+        Method to implement in order to disconnect this middleware.
+        """
+
         raise NotImplementedError()
 
-    def connected(self, *args, **kwargs):
+    def connected(self):
         """
         :returns: True if this is connected.
         """
 
         return False
 
-    def reconnect(self, *args, **kwargs):
+    def reconnect(self):
         """
         Try to reconnect and returns connection result
 
@@ -482,18 +591,12 @@ class Middleware(Configurable):
 
         protocol = parsed_uri.scheme
 
-        if not protocol:
+        protocol, data_type = parsed_uri(uri)
+
+        if protocol not in Middleware.__MIDDLEWARES__ \
+                or data_type not in Middleware.__MIDDLEWARES__[protocol]:
             raise Middleware.Error('Not protocol given in %s' % uri)
 
-        else:
-            if PROTOCOL_SEPARATOR in protocol:
-                splitted_protocol = protocol.split(PROTOCOL_SEPARATOR)
-
-                protocol = splitted_protocol[0]
-                data_type = splitted_protocol[1]
-
-                result = Middleware.__MIDDLEWARES__[protocol][data_type]
-            else:
-                result = Middleware.__MIDDLEWARES__[protocol][None]
+        result = Middleware.__MIDDLEWARES__[protocol][data_type]
 
         return result

@@ -17,9 +17,9 @@ Indices and tables
 Objective
 =========
 
-This package manage rules such as couples of (condition, actions).
+This package manage event rules such as couples of (condition, actions).
 
-A condition is a filter such as mongo filter (http://docs.mongodb.org/manual/reference/operator/) which is applied on an input event. If condition is checking, then related actions are performed. An action is a dictionary which contains at least a name (corresponding to a python function) and additional action parameters (event fields to updatein the case of an event updating actionfor example).
+A condition is a filter such as mongo filter (http://docs.mongodb.org/manual/reference/operator/) which is applied on an input event. If condition has been checked, then related actions are performed in the order of definition. An action is a dictionary which contains at least a name (corresponding to a python callable element) and additional action parameters (event fields to update in the case of an event updating action for example).
 
 Package contents
 ================

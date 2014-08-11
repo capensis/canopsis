@@ -1,5 +1,6 @@
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# --------------------------------
+#--------------------------------
 # Copyright (c) 2014 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
@@ -18,15 +19,17 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-[CONFIGURATION]
-auto_conf=True
-conf_managers=canopsis.configuration.manager.file.json.ConfigurationManager,canopsis.configuration.manager.file.ini.ConfigurationManager
-reconf_once=False
+from unittest import TestCase, main
 
-[LOG]
-log_lvl=INFO
-log_debug_format=[%(asctime)s] [%(levelname)s] [%(name)s] [%(process)d] [%(thread)d] [%(pathname)s] [%(lineno)d] %(message)s
-log_info_format=[%(asctime)s] [%(levelname)s] [%(name)s] %(message)s
-log_warning_format=[%(asctime)s] [%(levelname)s] [%(name)s] %(message)s
-log_error_format=[%(asctime)s] [%(levelname)s] [%(name)s] %(message)s
-log_critical_format=[%(asctime)s] [%(levelname)s] [%(name)s] %(message)s
+from canopsis.rpc import RPC
+
+
+class TestRPC(RPC):
+    pass
+
+
+class RPCTest(TestCase):
+    pass
+
+if __name__ == '__main__':
+    main()
