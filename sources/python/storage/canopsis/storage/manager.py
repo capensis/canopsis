@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #--------------------------------
 # Copyright (c) 2014 "Capensis" [http://www.capensis.com]
@@ -25,21 +24,25 @@ from canopsis.storage import Storage
 
 
 class Manager(Configurable):
+    """
+    Manages storages by name.
+    """
 
-    CONF_FILE = '~/etc/manager.conf'
-
-    DATA_TYPE = 'data_type'
+    CONF_RESOURCE = 'manager/manager.conf'
 
     TIMED_STORAGE = 'timed_storage'
     PERIODIC_STORAGE = 'periodic_storage'
     STORAGE = 'storage'
     TYPED_STORAGE = 'typed_storage'
     TIMED_TYPED_STORAGE = 'timed_typed_storage'
-    SHARED = 'shared'
+
+    AUTO_CONNECT = 'auto_connect'  # auto_connect storages
+
+    SHARED = 'shared'  # share storage by name in the same processus
 
     CATEGORY = 'MANAGER'
 
-    STORAGE_SUFFIX = 'storage'
+    STORAGE_SUFFIX = '_storage'
 
     _STORAGE_BY_DATA_TYPE_BY_TYPE = {}
 
@@ -257,7 +260,7 @@ class Manager(Configurable):
 
         result = super(Manager, self)._get_conf_files(*args, **kwargs)
 
-        result.append(Manager.CONF_FILE)
+        result.append(Manager.CONF_RESOURCE)
 
         return result
 
@@ -274,7 +277,10 @@ class Manager(Configurable):
                 Parameter(Manager.TYPED_STORAGE, self.typed_storage),
                 Parameter(
                     Manager.TIMED_TYPED_STORAGE, self.timed_typed_storage),
-                Parameter(Manager.SHARED, parser=Parameter.bool)))
+                Parameter(Manager.SHARED, self.shared, parser=Parameter.bool),
+                Parameter(
+                    Manager.AUTO_CONNECT,
+                    self.auto_connect, parser=Parameter.bool)))
 
         return result
 
@@ -290,6 +296,10 @@ class Manager(Configurable):
         # set shared
         self._update_property(
             unified_conf=unified_conf, param_name=Manager.SHARED)
+
+        # set auto_connect
+        self._update_property(
+            unified_conf=unified_conf, param_name=Manager.AUTO_CONNECT)
 
         values = unified_conf[Configuration.VALUES]
 

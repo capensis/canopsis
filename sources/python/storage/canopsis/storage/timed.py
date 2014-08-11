@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #--------------------------------
 # Copyright (c) 2014 "Capensis" [http://www.capensis.com]
@@ -25,21 +24,24 @@ from canopsis.storage import Storage
 class TimedStorage(Storage):
     """
     Store dedicated to manage timed data.
+    It saves one value at one timestamp.
+    Two consecutives timestamp values can not be same values.
     """
+
+    __storage_type__ = 'timed'
 
     class Index:
 
         TIMESTAMP = 0
         VALUE = 1
-        DOCUMENT_ID = 2
+        DATA_ID = 2
 
     DATA_ID = 'data_id'
     VALUE = 'value'
     TIMESTAMP = 'timestamp'
 
     def get(
-        self, data_ids, timewindow=None, limit=0, skip=0, sort=None,
-        *args, **kwargs
+        self, data_ids, timewindow=None, limit=0, skip=0, sort=None
     ):
         """
         Get a dictionary of sorted list of triplet of dictionaries such as :
@@ -57,30 +59,23 @@ class TimedStorage(Storage):
 
         raise NotImplementedError()
 
-    def count(self, data_id, *args, **kwargs):
+    def count(self, data_id):
         """
         Get number of timed documents for input data_id.
         """
 
         raise NotImplementedError()
 
-    def put(self, data_id, value, timestamp, *args, **kwargs):
+    def put(self, data_id, value, timestamp):
         """
         Put a dictionary of value by name in collection.
         """
 
         raise NotImplementedError()
 
-    def remove(self, data_ids, timewindow=None, *args, **kwargs):
+    def remove(self, data_ids, timewindow=None):
         """
         Remove timed_data existing on input timewindow.
         """
 
         raise NotImplementedError()
-
-    def _get_storage_type(self, *args, **kwargs):
-        """
-        Get collection prefix.
-        """
-
-        return "timed"

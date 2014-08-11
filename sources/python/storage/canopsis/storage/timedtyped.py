@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #--------------------------------
 # Copyright (c) 2014 "Capensis" [http://www.capensis.com]
@@ -24,8 +23,11 @@ from canopsis.storage import Storage
 
 class TimedTypedStorage(Storage):
     """
-    Store dedicated to manage timed typed data.
+    Store dedicated to manage timed typed data identified by the triplet
+    (type, timestamp, id).
     """
+
+    __storage_type__ = 'timedtyped'
 
     class Index:
 
@@ -34,15 +36,13 @@ class TimedTypedStorage(Storage):
         TYPE = 2
         DOCUMENT_ID = 3
 
-    DATA_ID = 'data_id'
     VALUE = 'value'
     TIMESTAMP = 'timestamp'
     TYPE = 'type'
 
     def get(
         self, data_ids, data_type=None, timewindow=None,
-        limit=0, skip=0, sort=None,
-        *args, **kwargs
+        limit=0, skip=0, sort=None
     ):
         """
         Get a dictionary of sorted list of triplet of dictionaries such as :
@@ -79,32 +79,23 @@ class TimedTypedStorage(Storage):
 
         raise NotImplementedError()
 
-    def count(self, data_id=None, data_type=None, *args, **kwargs):
+    def count(self, data_id=None, data_type=None):
         """
         Get number of timed documents for input data_id.
         """
 
         raise NotImplementedError()
 
-    def put(self, data_id, data_type, value, timestamp, *args, **kwargs):
+    def put(self, data_id, data_type, value, timestamp):
         """
         Put a dictionary of value by name in collection.
         """
 
         raise NotImplementedError()
 
-    def remove(
-        self, data_ids=None, data_type=None, timewindow=None, *args, **kwargs
-    ):
+    def remove(self, data_ids=None, data_type=None, timewindow=None):
         """
         Remove timed_data existing on input timewindow.
         """
 
         raise NotImplementedError()
-
-    def _get_storage_type(self, *args, **kwargs):
-        """
-        Get collection prefix.
-        """
-
-        return "timedtyped"

@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #--------------------------------
 # Copyright (c) 2014 "Capensis" [http://www.capensis.com]
@@ -24,8 +23,10 @@ from canopsis.storage import Storage
 
 class TypedStorage(Storage):
     """
-    Storage dedicated to manage typed data.
+    Storage dedicated to manage typed data identified by the couple (type, id).
     """
+
+    __storage_type__ = 'typed'
 
     VALUE = 'value'
     TYPE = 'type'
@@ -34,8 +35,7 @@ class TypedStorage(Storage):
         pass
 
     def get(
-        self, _ids=None, data_type=None, limit=0, skip=0, sort=None,
-        *args, **kwargs
+        self, _ids=None, data_type=None, limit=0, skip=0, sort=None
     ):
         """
         Get a list of data identified among data_ids or a type
@@ -63,7 +63,7 @@ class TypedStorage(Storage):
 
         raise NotImplementedError()
 
-    def put(self, _id, data, data_type=None, *args, **kwargs):
+    def put(self, _id, data, data_type=None):
         """
         Put a data related to an id
 
@@ -79,7 +79,7 @@ class TypedStorage(Storage):
 
         raise NotImplementedError()
 
-    def remove(self, _ids=None, data_type=None, *args, **kwargs):
+    def remove(self, _ids=None, data_type=None):
         """
         Remove data from ids or type
 
@@ -91,7 +91,3 @@ class TypedStorage(Storage):
         """
 
         raise NotImplementedError()
-
-    def _get_storage_type(self, *args, **kwargs):
-
-        return 'typed'

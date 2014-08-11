@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #--------------------------------
 # Copyright (c) 2014 "Capensis" [http://www.capensis.com]
@@ -23,11 +22,11 @@ __version__ = "0.1"
 
 __all__ = ('DataBase', 'Storage')
 
-from canopsis.configuration import Configurable, Parameter
-from canopsis.common.utils import resolve_element
+from canopsis.configuration import Parameter
+from canopsis.middleware import Middleware
 
 
-class DataBase(Configurable):
+class DataBase(Middleware):
     """
     Abstract class which aims to manage access to a data base.
 
@@ -36,111 +35,29 @@ class DataBase(Configurable):
 
     :param host: db host name
     :type host: basestring
-    :param port: db port
-    :type port: int
-    :param db: db name
-    :type db: basestring
-    :param auto_connect: auto connect to database when initialised.
-    :type auto_connect: bool
-    :param backend: default backend to use.
-
-    It provides a DataBaseError for internal errors
     """
-
-    class DataBaseError(Exception):
-        """
-        Errors raised by the DataBase class.
-        """
-
-        pass
 
     CATEGORY = 'DATABASE'
 
-    HOST = 'host'
-    PORT = 'port'
     DB = 'db'
-    AUTO_CONNECT = 'auto_connect'
     JOURNALING = 'journaling'
-    SAFE = 'safe'
-    WTIMEOUT = 'wtimeout'
-    SSL = 'ssl'
-    SSL_KEY = 'ssl_key'
-    SSL_CERT = 'ssl_cert'
-    USER = 'user'
-    PWD = 'pwd'
 
-    CONF_FILE = '~/etc/database.conf'
+    CONF_RESOURCE = 'database/database.conf'
 
-    def __init__(
-        self,
-        host='localhost', port=0, db='canopsis', auto_connect=True,
-        journaling=False, safe=False, wtimeout=100,
-        ssl=False, ssl_key=None, ssl_cert=None, user=None, pwd=None,
-        *args, **kwargs
-    ):
+    def __init__(self, db='canopsis', journaling=False, *args, **kwargs):
         """
-        :param host: db host name
-        :param port: db port
         :param db: db name
-        :param auto_connect: auto connect to database when initialised.
-        :param backend: default backend to use.
         :param journaling: journaling mode enabling.
-        :param safe: ensure writing data.
-        :param wtimeout: writing time out in milliseconds.
-        :param ssl: ssl mode
-        :param ssl_key: ssl keys file.
-        :param ssl_cert: ssl certification file.
-        :param user: user
-        :param pwd: password
 
-        :type host: str
-        :type port: int
         :type db: str
-        :type auto_connect: bool
-        :type backend: str
         :type journaling: bool
-        :type safe: bool
-        :param wtimeout: int
-        :type ssl: bool
-        :type ssl_key: str
-        :type ssl_cert: str
-        :type user: str
-        :type pwd: str
         """
 
         super(DataBase, self).__init__(*args, **kwargs)
 
         # initialize instance properties with default values
-        self._host = host
-        self._port = port
         self._db = db
-        self._auto_connect = auto_connect
         self._journaling = journaling
-        self._safe = safe
-        self._wtimeout = wtimeout
-        self._ssl = ssl
-        self._ssl_key = ssl_key
-        self._ssl_cert = ssl_cert
-        self._user = user
-        self._pwd = pwd
-
-    @property
-    def host(self):
-        return self._host
-
-    @host.setter
-    def host(self, value):
-        self._host = value
-        self.reconnect()
-
-    @property
-    def port(self):
-        return self._port
-
-    @port.setter
-    def port(self, value):
-        self._port = value
-        self.reconnect()
 
     @property
     def db(self):
@@ -152,15 +69,6 @@ class DataBase(Configurable):
         self.reconnect()
 
     @property
-    def auto_connect(self):
-        return self._auto_connect
-
-    @auto_connect.setter
-    def auto_connect(self, value):
-        self._auto_connect = value
-        self.reconnect()
-
-    @property
     def journaling(self):
         return self._journaling
 
@@ -168,94 +76,6 @@ class DataBase(Configurable):
     def journaling(self, value):
         self._journaling = value
         self.reconnect()
-
-    @property
-    def safe(self):
-        return self._safe
-
-    @safe.setter
-    def safe(self, value):
-        self._safe = value
-        self.reconnect()
-
-    @property
-    def wtimeout(self):
-        return self._wtimeout
-
-    @wtimeout.setter
-    def wtimeout(self, value):
-        self._wtimeout = value
-        self.reconnect()
-
-    @property
-    def ssl(self):
-        return self._ssl
-
-    @ssl.setter
-    def ssl(self, value):
-        self._ssl = value
-        self.reconnect()
-
-    @property
-    def ssl_key(self):
-        return self._ssl_key
-
-    @ssl_key.setter
-    def ssl_key(self, value):
-        self._ssl_key = value
-        self.reconnect()
-
-    @property
-    def ssl_cert(self):
-        return self._ssl_cert
-
-    @ssl_cert.setter
-    def ssl_cert(self, value):
-        self._ssl_cert = value
-        self.reconnect()
-
-    @property
-    def user(self):
-        return self._user
-
-    @user.setter
-    def user(self, value):
-        self._user = value
-        self.reconnect()
-
-    @property
-    def pwd(self):
-        return self._pwd
-
-    @pwd.setter
-    def pwd(self, value):
-        self._pwd = value
-        self.reconnect()
-
-    def connect(self, *args, **kwargs):
-        """
-        Connect this database.
-
-        .. seealso:: disconnect(self), connected(self), reconnect(self)
-        """
-
-        raise NotImplementedError()
-
-    def disconnect(self, *args, **kwargs):
-        """
-        Disconnect this database.
-
-        .. seealso:: connect(self), connected(self), reconnect(self)
-        """
-
-        raise NotImplementedError()
-
-    def connected(self, *args, **kwargs):
-        """
-        :returns: True if this is connected.
-        """
-
-        return False
 
     def drop(self, table=None, *args, **kwargs):
         """
@@ -288,28 +108,6 @@ class DataBase(Configurable):
 
         raise NotImplementedError()
 
-    def reconnect(self, *args, **kwargs):
-        """
-        Try to reconnect and returns connection result
-
-        :return: True if connected
-        :rtype: bool
-        """
-
-        result = False
-
-        try:
-            self.disconnect()
-        except Exception:
-            pass
-        else:
-            try:
-                result = self.connect()
-            except Exception:
-                pass
-
-        return result
-
     def _configure(self, unified_conf, *args, **kwargs):
 
         super(DataBase, self)._configure(
@@ -335,7 +133,7 @@ class DataBase(Configurable):
 
         result = super(DataBase, self)._get_conf_files(*args, **kwargs)
 
-        result.append(DataBase.CONF_FILE)
+        result.append(DataBase.CONF_RESOURCE)
 
         return result
 
@@ -346,18 +144,9 @@ class DataBase(Configurable):
         result.add_unified_category(
             name=DataBase.CATEGORY,
             new_content=(
-                Parameter(DataBase.HOST, self.host),
-                Parameter(DataBase.PORT, self.port, int),
                 Parameter(DataBase.DB, self.db),
                 Parameter(
-                    DataBase.AUTO_CONNECT, self.auto_connect, Parameter.bool),
-                Parameter(DataBase.SAFE, self.safe, Parameter.bool),
-                Parameter(DataBase.WTIMEOUT, self.wtimeout, int),
-                Parameter(DataBase.SSL, self.ssl, Parameter.bool),
-                Parameter(DataBase.SSL_KEY, self.ssl_key),
-                Parameter(DataBase.SSL_CERT, self.ssl_cert),
-                Parameter(DataBase.USER, self.user),
-                Parameter(DataBase.PWD, self.pwd)))
+                    DataBase.JOURNALING, self.journaling, Parameter.bool)))
 
         return result
 
@@ -369,7 +158,9 @@ class Storage(DataBase):
     For example, perfdata and context are two data types.
     """
 
-    DATA_TYPE = 'data_type'
+    __storage_type__ = 'storage'  # storage type name
+
+    DATA_ID = 'id'
 
     ASC = 1  # ASC order
     DESC = -1  # DESC order
@@ -408,13 +199,11 @@ class Storage(DataBase):
         """
         raise NotImplementedError()
 
-    def get_elements(
-        self, ids=None, limit=0, skip=0, sort=None, *args, **kwargs
-    ):
+    def get_elements(self, ids=None, limit=0, skip=0, sort=None):
         """
         Get a list of elements where id are input ids
 
-        :param ids: element ids to get if not None
+        :param ids: element ids or an element id to get if not None
         :type ids: list of str
 
         :param limit: max number of elements to get
@@ -427,15 +216,14 @@ class Storage(DataBase):
             or field name which denots an implicitelly ASC order
         :type sort: list of {(str, {ASC, DESC}}), or str}
 
-        :return: input id elements.
-        :rtype: list of dict
+        :return: input id elements, or one element if ids is an element
+            (None if this element does not exist)
+        :rtype: iterable of dict or dict or NoneType
         """
 
         raise NotImplementedError()
 
-    def find_elements(
-        self, request, limit=0, skip=0, sort=None, *args, **kwargs
-    ):
+    def find_elements(self, request, limit=0, skip=0, sort=None):
         """
         Find elements corresponding to input request and in taking care of
         limit, skip and sort find parameters.
@@ -459,7 +247,7 @@ class Storage(DataBase):
 
         raise NotImplementedError()
 
-    def remove_elements(self, ids, *args, **kwargs):
+    def remove_elements(self, ids):
         """
         Remove elements identified by the unique input ids
 
@@ -469,7 +257,7 @@ class Storage(DataBase):
 
         raise NotImplementedError()
 
-    def put_element(self, _id, element, *args, **kwargs):
+    def put_element(self, _id, element):
         """
         Put an element identified by input id
 
@@ -485,7 +273,55 @@ class Storage(DataBase):
 
         raise NotImplementedError()
 
-    def get_table(self, *args, **kwargs):
+    def count_elements(self, request):
+        """
+        Count elements corresponding to the input request
+
+        :param id: request which contain set of couples (key, value)
+        :type id: dict
+
+        :return: Number of elements corresponding to the input request
+        :rtype: int
+        """
+
+        raise NotImplementedError()
+
+    def _find(self, *args, **kwargs):
+        """
+        Find operation dedicated to technology implementation.
+        """
+
+        raise NotImplementedError()
+
+    def _update(self, *args, **kwargs):
+        """
+        Update operation dedicated to technology implementation.
+        """
+
+        raise NotImplementedError()
+
+    def _remove(self, *args, **kwargs):
+        """
+        Remove operation dedicated to technology implementation.
+        """
+
+        raise NotImplementedError()
+
+    def _insert(self, *args, **kwargs):
+        """
+        Insert operation dedicated to technology implementation.
+        """
+
+        raise NotImplementedError()
+
+    def _count(self, *args, **kwargs):
+        """
+        Count operation dedicated to technology implementation.
+        """
+
+        raise NotImplementedError()
+
+    def get_table(self):
         """
         Table name related to elf type and data_type.
 
@@ -498,7 +334,7 @@ class Storage(DataBase):
 
         return result
 
-    def copy(self, target, *args, **kwargs):
+    def copy(self, target):
         """
         Copy self content into target storage.
         target type must implement the same class in cstorage packege as self.
@@ -535,7 +371,7 @@ Storage types must be of the same type.'.format(self, target))
 
         return result
 
-    def _copy(self, target, *args, **kwargs):
+    def _copy(self, target):
         """
         Called by Storage.copy(self, target) in order to ensure than target
         type is the same as self
@@ -560,19 +396,10 @@ Storage types must be of the same type.'.format(self, target))
         """
 
         result = '{0}_{1}'.format(
-            self._get_storage_type().upper(), self.data_type.upper())
+            type(self).__storage_type__.upper(),
+            self.data_type.upper())
 
         return result
-
-    def _get_storage_type(self, *args, **kwargs):
-        """
-        Get storage type (last_value and timed are two storage types)
-
-        :return: storage type name
-        :rtype: str
-        """
-
-        return 'storage'
 
     @staticmethod
     def _update_sort(sort):
@@ -585,13 +412,3 @@ Storage types must be of the same type.'.format(self, target))
 
         sort[:] = [item if isinstance(item, tuple) else (item, Storage.ASC)
             for item in sort]
-
-    @staticmethod
-    def get_storage(storage_type, data_type, *args, **kwargs):
-
-        if isinstance(storage_type, str):
-            storage_type = resolve_element(storage_type)
-
-        result = storage_type(data_type=data_type, *args, **kwargs)
-
-        return result
