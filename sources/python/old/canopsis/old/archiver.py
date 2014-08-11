@@ -28,7 +28,9 @@ from canopsis.old.tools import legend, uniq
 
 legend_type = ['soft', 'hard']
 
+
 class Archiver(object):
+
     def __init__(self, namespace, storage=None,
                  autolog=False, logging_level=ERROR):
 
@@ -53,8 +55,6 @@ class Archiver(object):
 
         self.collection = self.storage.get_backend(namespace)
 
-
-
     def beat(self):
         #Default useless values avoid crashes
         self.bagot_freq = 10
@@ -62,7 +62,7 @@ class Archiver(object):
         self.stealthy_time = 300
         self.restore_event = True
 
-        self.state_config = self.storage.find({'Record_type':'state-spec'})
+        self.state_config = self.storage.find({'Record_type': 'state-spec'})
         if len(self.state_config) == 1:
             self.state_config = self.state_config[0]
 
@@ -75,8 +75,6 @@ class Archiver(object):
                 self.stealthy_time = self.state_config['stealthy_time']
             if 'restore_event' in self.state_config:
                 self.restore_event = self.state_config['restore_event']
-
-
 
     def check_bagot(self, event, devent):
         ts_curr = event['timestamp']
@@ -96,8 +94,6 @@ class Archiver(object):
         else:
             self.logger.info(log.format('Stealthy'))
             event['status'] = 2
-
-
 
     def check_statuses(self, event, devent):
 
@@ -144,7 +140,6 @@ class Archiver(object):
                 else:
                     self.check_bagot(event, devent)
 
-
         else:
             self.logger.info(log.format('Cancelled'))
             event['status'] = 4
@@ -176,11 +171,8 @@ class Archiver(object):
             return True
         return False
 
-
     def is_stealthy(self, ts_diff):
         return (True if ts_diff <= self.stealthy_time else False)
-
-
 
     def check_event(self, _id, event):
         changed = False
@@ -268,10 +260,8 @@ class Archiver(object):
             processing = event['processing']
             del event['processing']
 
-
         if 'perf_data' in event:
             del event['perf_data']
-
 
         if new_event:
             self.store_new_event(_id, event)
@@ -350,13 +340,9 @@ class Archiver(object):
                     #Restore ack as previously
                     event['ack'] = devent['ack']['ack']
 
-
-
             #Avoid saving useless boolean values to db
             if 'cancel' in event and isinstance(event['cancel'], bool):
                 del event['cancel']
-
-
 
     def store_new_event(self, _id, event):
         record = Record(event)
@@ -389,5 +375,3 @@ class Archiver(object):
 
         self.storage.drop_namespace(self.namespace)
         self.storage.drop_namespace(self.namespace_log)
-
-
