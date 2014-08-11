@@ -16,7 +16,7 @@
           "xtype": "multicrecordlist",
           "listed_crecord_type": "connector",
           "title": "connectors",
-          "selection_toolbar": [
+          "toolbar": [
             "actionbutton-create",
             "actionbutton-removeselection",
             "connectorbutton-start",
