@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 # --------------------------------
 # Copyright (c) 2014 "Capensis" [http://www.capensis.com]
@@ -37,6 +36,21 @@ from time import sleep
 
 from os import getenv
 from os.path import expanduser
+
+from sys import version as PYVER
+
+if PYVER >= '3':
+    __builtins__['basestring'] = str
+
+def isunicode(s):
+
+    if PYVER < '3':
+        return isinstance(s, unicode)
+
+    else:
+        return True
+
+__builtins__['isunicode'] = isunicode
 
 
 class Init(object):

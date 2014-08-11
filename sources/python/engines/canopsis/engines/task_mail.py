@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #--------------------------------
 # Copyright (c) 2014 "Capensis" [http://www.capensis.com]
@@ -43,8 +42,9 @@ class engine(TaskHandler):
     def handle_task(self, job):
         user = job.get('user', 'root')
         group = job.get('group', 'root')
+        mail = job.get('sender', None)
 
-        account = Account(user=user, group=group)
+        account = Account(user=user, group=group, mail=mail)
 
         recipients = job.get('recipients', None)
         subject = job.get('subject', None)
@@ -120,7 +120,7 @@ class engine(TaskHandler):
         dests = []
 
         for dest in recipients:
-            if isinstance(dest, str):
+            if isinstance(dest, basestring):
                 if re.match(
                     "^[a-zA-Z0-9._%-]+@[a-zA-Z0-9._%-]+.([a-zA-Z]{2,6})?$",
                     dest
@@ -197,5 +197,7 @@ class engine(TaskHandler):
         except Exception as err:
             return (
                 2,
-                "Imposible to send mail: {0}".format(err)
+                "Impossible to send mail: {0}".format(err)
             )
+
+        return (0, "Mail sent successfully")

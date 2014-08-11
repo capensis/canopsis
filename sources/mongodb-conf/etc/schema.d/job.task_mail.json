@@ -3,6 +3,7 @@
 	"properties": {
 		"user": {"type": "string", "required": true},
 		"group": {"type": "string", "required": true},
+		"sender": {"type": "string", "required": true},
 		"recipients": {
 			"type": "array",
 			"items": {

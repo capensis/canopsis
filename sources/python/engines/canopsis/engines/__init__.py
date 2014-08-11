@@ -456,7 +456,11 @@ class TaskHandler(Engine):
         state = 3
 
         try:
-            job = loads(msg)
+            if not isinstance(msg, dict):
+                job = loads(msg)
+
+            else:
+                job = msg
 
         except ValueError as err:
             output = 'Impossible to decode message: {0}'.format(err)
@@ -474,6 +478,10 @@ class TaskHandler(Engine):
                 except NotImplementedError:
                     state = 1
                     output = 'Not implemented'
+
+                #except Exception as err:
+                #    state = 2
+                #    output = 'Unhandled exception: {0}'.format(err)
 
         end = int(time())
 
