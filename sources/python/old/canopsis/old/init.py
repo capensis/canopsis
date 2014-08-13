@@ -43,6 +43,14 @@ if PYVER >= '3':
     __builtins__['basestring'] = str
 
 def isunicode(s):
+    """
+    Check if string is unicode.
+
+    :param s: string to check
+    :type s: basestring
+
+    :return: True if unicode or Python3, False otherwise
+    """
 
     if PYVER < '3':
         return isinstance(s, unicode)
@@ -50,7 +58,25 @@ def isunicode(s):
     else:
         return True
 
-__builtins__['isunicode'] = isunicode
+
+def force_unicode(s):
+    """
+    Convert string to unicode.
+
+    :param s: string to convert
+    :type s: basestring
+
+    :return: unicode (or the same string if Python3)
+    """
+
+    if not isinstance(s, basestring):
+        raise TypeError('Expecting a string as argument')
+
+    if PYVER < '3':
+        return s.encode()
+
+    else:
+        return s
 
 
 class Init(object):

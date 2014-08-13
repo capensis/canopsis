@@ -467,7 +467,7 @@ class TaskHandler(Engine):
             state = 2
 
         else:
-            if not cschema.validate(job, 'job.{0}'.format(self.etype)):
+            if not cschema.validate(job, 'task.{0}'.format(self.etype)):
                 output = 'Invalid job'
                 state = 2
 

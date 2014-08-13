@@ -1,16 +1,24 @@
 {
 	"type": "object",
+	"categories": [{
+		"title": "Schedule",
+		"keys": ["start", "rrule"]
+	},{
+		"title": "Job",
+		"keys": ["task", "params"]
+	}],
 	"properties": {
 		"crecord_type": {
 			"enum": ["job"],
 			"required": true
 		},
 		"task": {"type": "string", "required": true},
-		"last_execution": {"type": "integer", "required": true},
+		"last_execution": {"type": "integer", "required": true, "role": "timestamp"},
 		"rrule": {"type": "string", "required": true},
-		"start": {"type": "integer", "required": true},
+		"start": {"type": "integer", "required": true, "role": "timestamp"},
 		"params": {
-			"type": "job",
+			"type": "object",
+			"polymorphic": true,
 			"required": true
 		}
 	}
