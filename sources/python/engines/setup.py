@@ -21,7 +21,7 @@
 
 from canopsis.common.setup import setup
 
-install_requires = ['canopsis.old', 'canopsis.timeserie', 'canopsis.perfdata']
+install_requires = ['canopsis.old', 'canopsis.timeserie', 'canopsis.perfdata', 'canopsis.tools']
 
 setup(
     description='Engines library',

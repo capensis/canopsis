@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #--------------------------------
 # Copyright (c) 2014 "Capensis" [http://www.capensis.com]
@@ -76,11 +75,11 @@ class engine(Engine):
     def do_job(self, job):
         self.logger.info('Execute job: {0}'.format(job))
 
-        job['params']['id'] = job['_id']
+        job['params']['jobid'] = job['_id']
 
         self.amqp.publish(
             job['params'],
-            'task_{0}'.format(job['type']),
+            'task_{0}'.format(job['task']),
             'amq.direct'
         )
 
