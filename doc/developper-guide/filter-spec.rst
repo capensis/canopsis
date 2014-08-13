@@ -1,10 +1,6 @@
 Engine Filter specification
 ===================
 
-The set of rules is retrieved using the name specified when the engine filter is launched.
-
-See `amqp2engines <https://github.com/capensis/canopsis/blob/sphinx-documentation/doc/administrator-guide/amqp2engines.rst>`_ documentation
-
 
 Rule specification
 ===================
