@@ -58,6 +58,9 @@ class engine(TaskHandler):
 
         body = template(template_data)
 
+        template = Template(subject)
+        subject = template(template_data)
+
         # Execute the task
         return self.sendmail(
             account, recipients, subject, body, attachments, smtp_host,

@@ -79,7 +79,7 @@ class engine(Engine):
 
         self.amqp.publish(
             job['params'],
-            'task_{0}'.format(job['type']),
+            'task_{0}'.format(job['task']),
             'amq.direct'
         )
 
