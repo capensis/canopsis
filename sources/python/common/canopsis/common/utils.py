@@ -27,6 +27,10 @@ from importlib import import_module
 
 from inspect import ismodule
 
+from collections import Iterable
+
+from sys import version as PYVER
+
 
 def resolve_element(path):
     """
@@ -110,5 +114,57 @@ def path(element):
 
     result = element.__name__ if ismodule(element) else \
         '%s.%s' % (element.__module__, element.__name__)
+
+    return result
+
+
+def isiterable(element, is_str=False):
+    """
+    Check whatever or not if input element is an iterable.
+
+    :param is_str: check if element is also a str
+    :type is_str: bool
+    """
+    result = isinstance(element, Iterable) \
+        and (is_str or not isinstance(element, str))
+
+    return result
+
+
+def isunicode(s):
+    """
+    Check if string is unicode.
+
+    :param s: string to check
+    :type s: basestring
+
+    :return: True if unicode or Python3, False otherwise
+    """
+
+    if PYVER < '3':
+        return isinstance(s, unicode)
+
+    else:
+        return True
+
+
+def force_unicode(s):
+    """
+    Convert string to unicode.
+
+    :param s: string to convert
+    :type s: basestring
+
+    :return: unicode (or the same string if Python3)
+    """
+
+    result = s
+
+    if PYVER < '3':
+        if isinstance(s, basestring):
+            if not isinstance(s, unicode):
+                result = s.encode()
+        else:
+            raise TypeError('Expecting a string as argument')
 
     return result
