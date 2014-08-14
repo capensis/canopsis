@@ -2,7 +2,7 @@
 	"type": "object",
 	"categories": [{
 		"title": "general",
-		"keys":[ "collectd_thing" , "connecteur_name" , "hostname" ]
+		"keys":[ "collectd_thing" , "connector_name" , "hostname" ]
 	}],
 	"properties": {
 		"collectd_thing" : {"type": "string", "required": true }

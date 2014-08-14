@@ -1,18 +1,22 @@
 {
 	"type": "object",
 	"properties": {
-		"id_connector" : {"type": "string", "required": true },
-		"crecord_type" : {"type": "string", "required": true },
-		"connecteur_name": { "type":"string" , "required": true },
+		"_id" : { "type":"string"},
+		"type" : { "type":"string"  , "setOnCreate":"connector" },
 		"hostname": {"type": "string", "required": true },
 		"connection" :{ "type": "boolean" ,"role":"boolean" },
 		"state" :{ "type": "boolean"  ,"role":"stateConnector" , "canDisplayAgo" : true   },
-		"timeStampState" : 1406887383021,
+		"connection_Type" : {"type":"string" , "required" : "true"},
+		"timeStampState" : {"type": "number" },
+		"connection_type": {
+			"type": "string",
+			"enum": ["SSH", "WebService"],
+			"default": "SSH",
+			"role": "simplelist",
+			"required" : true
+		},
 		"subprocess" :{
-			"type": "array",
-			"items": {
-				"type": "string"
-			},
+			"type": "object",
 			"role":"subprocess"
 		},
 		"connector_type" :{

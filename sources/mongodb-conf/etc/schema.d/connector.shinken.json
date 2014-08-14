@@ -2,7 +2,7 @@
 	"type": "object",
 	"categories": [{
 		"title": "general",
-		"keys":[ "shinken_thing" , "connecteur_name" , "hostname" ]
+		"keys":[ "shinken_thing" , "connector_name" , "hostname" ]
 	}],
 	"properties": {
 		"shinken_thing" : {"type": "string", "required": true }

@@ -7,24 +7,16 @@
   "containerwidget": {
     "xtype": "vbox",
     "title": "container title vbox",
-    "_id": "test_view_vertical_container",
     "items": [
       {
         "title": "wrapper",
         "xtype": "widgetwrapper",
         "widget": {
+          "widgetId" : "fake-guid-fd5a-1ede-8ac2-6a1d66ad0023",
           "xtype": "multicrecordlist",
           "listed_crecord_type": "connector",
           "title": "connectors",
-          "toolbar": [
-            "actionbutton-create",
-            "actionbutton-removeselection",
-            "connectorbutton-start",
-            "connectorbutton-stop",
-            "connectorbutton-edit",
-            "connectorbutton-getstate"
-          ],
-          "item_actions" : [
+            "item_actions": [
             "connectorbutton-start",
             "connectorbutton-stop",
             "connectorbutton-edit",
@@ -32,6 +24,25 @@
             "connectorbutton-setconf",
             "connectorbutton-getstate",
             "actionbutton-remove"
+          ],
+          "selection_toolbar": [
+            "actionbutton-create",
+            "actionbutton-removeselection",
+            "connectorbutton-start",
+            "connectorbutton-stop",
+            "connectorbutton-edit",
+            "connectorbutton-getstate"
+          ],
+          "actions_toolbar": [
+            "actionbutton-history"
+          ],
+          "displayed_columns": [
+            "hostname",
+            "connector_type",
+            "state",
+            "connection",
+            "subprocess",
+            "options_conf"
           ]
         }
       }
