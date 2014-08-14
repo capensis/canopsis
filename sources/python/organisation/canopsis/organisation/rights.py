@@ -32,10 +32,9 @@ class Rights(Manager):
 
     CONF_RESOURCE = '~/etc/organisation/rights.conf'
 
-    PROFILES_STORAGE = 'profiles_storage'
-    COMPOSITE_STORAGE = 'composite_storage'
-    ROLE_STORAGE = 'role_storage'
-    DEFAULT_STORAGE = 'default_storage'
+    STORAGE_TYPE = {'profiles',
+                    'composite',
+                    'role'}
 
     CATEGORY = 'RIGHTS'
 
@@ -49,69 +48,18 @@ class Rights(Manager):
 
         super(Rights, self).__init__(data_type=data_type, *args, **kwargs)
 
-        self.profiles_storage = profiles_storage
-        self.composite_storage = composite_storage
-        self.role_storage = role_storage
-        self.default_profile_storage = default_profile_storage
-        self.storages = {
-            'profile': self.profiles_storage,
-            'composite': self.composite_storage,
-            'role': self.role_storage
-            }
+        self.storages = {}
 
-    @property
-    def profile_storage(self):
-        return self._profile_storage
+        for s_type in self.STORAGE_TYPE:
+            self.storages[s_type] = self.get_storage(
+                data_type=s_type,
+                storage_type='canopsis.mongo.Storage')
 
-    @profile_storage.setter
-    def profile_storage(self, value):
-        self._profile_storage = self._get_property_storage(value)
+        self.profile_storage = self.storages['profiles']
+        self.composite_storage = self.storages['composite']
+        self.role_storage = self.storages['role']
 
-    @property
-    def composite_storage(self):
-        return self._composite_storage
-
-    @composite_storage.setter
-    def composite_storage(self, value):
-        self._composite_storage = self._get_property_storage(value)
-
-    @property
-    def role_storage(self):
-        return self._role_storage
-
-    @role_storage.setter
-    def role_storage(self, value):
-        self._role_storage = self._get_property_storage(value)
-
-    @property
-    def default_storage(self):
-        return self._default_storage
-
-    @default_storage.setter
-    def default_storage(self, value):
-        self._default_storage = self._get_property_storage(value)
-
-    def _conf(self, *args, **kwargs):
-
-        result = super(Rights, self)._conf(*args, **kwargs)
-
-        result.add_unified_category(
-            name=Rights.CATEGORY,
-            new_content=(
-                Parameter(Rights.PROFILES_STORAGE),
-                Parameter(Rights.COMPOSITE_STORAGE),
-                Parameter(Rights.ROLE_STORAGE),
-                Parameter(Rights.DEFAULT_STORAGE)))
-
-        return result
-
-    def _get_conf_files(self, *args, **kwargs):
-
-        result = super(Rights, self)._get_conf_files(*args, **kwargs)
-
-        result.append(Rights.CONF_RESOURCE)
-
-        return result
+        self.default_profile = 'vizualisation'
 
     # Entity can be a right_composite, a profile or a role since
     # all 3 of them have a rights field

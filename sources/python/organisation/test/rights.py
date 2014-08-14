@@ -59,18 +59,18 @@ class RightsTest(TestCase):
             }
 
         # basic creation
-        self.Rights.create_composite(rights, 'composite_test1')
-        self.Rights.create_composite(rights_scnd, 'composite_test2')
+        self.rights.create_composite('composite_test1', rights)
+        self.rights.create_composite('composite_test2', rights_scnd)
 
         # basic profile creation
-        self.Rights.create_profile('profile_test1', {'composite_test1'})
-        self.Rights.create_profile('profile_test2', {'composite_test2'})
+        self.rights.create_profile('profile_test1', {'composite_test1'})
+        self.rights.create_profile('profile_test2', {'composite_test2'})
 
         # "add" composite_test2 to profile_test1
-        self.Rights.create_profile('profile_test1', {'composite_test2'})
+        self.rights.create_profile('profile_test1', {'composite_test2'})
 
-        self.Rights.create_role('role_test1', 'profile_test1')
-        self.Rights.create_role('role_test12', 'profile_test2')
+        self.rights.create_role('role_test1', 'profile_test1')
+        self.rights.create_role('role_test12', 'profile_test2')
 
         sample_user = {
             'contact': {
@@ -82,17 +82,17 @@ class RightsTest(TestCase):
             '_id': '1407160264.joan.harris.manager'
             }
 
-        self.Rights.add_profile(sample_user['role'], 'profile_test1')
+        self.rights.add_profile(sample_user['role'], 'profile_test1')
 
         self.assertEqual(
-            self.Rights.check_user_rights(sample_user['role'], '1237', 1), True)
+            self.rights.check_user_rights(sample_user['role'], '1237', 1), True)
         self.assertEqual(
-            self.Rights.check_user_rights(sample_user['role'], '1237', 12), False)
+            self.rights.check_user_rights(sample_user['role'], '1237', 12), False)
 
-        self.Rights.add(sample_user['role'], 'role', '1237', 15)
+        self.rights.add(sample_user['role'], 'role', '1237', 15)
 
         self.assertEqual(
-            self.Rights.check_user_rights(sample_user['role'], '1237', 12), True)
+            self.rights.check_user_rights(sample_user['role'], '1237', 12), True)
 
 if __name__ == '__main__':
     main()
