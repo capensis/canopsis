@@ -22,6 +22,8 @@ __version__ = "0.1"
 
 __all__ = ('DataBase', 'Storage')
 
+from collections import Iterable
+
 from canopsis.configuration import Parameter
 from canopsis.middleware import Middleware
 
@@ -223,6 +225,38 @@ class Storage(DataBase):
 
         raise NotImplementedError()
 
+    def __getitem__(self, ids):
+        """
+        Python shortcut to the get_elements(ids) method.
+        """
+
+        result = self.get_elements(ids=ids)
+
+        if not isinstance(ids, str) and isinstance(ids, Iterable):
+            if len(ids) != len(result):
+                raise KeyError(ids)
+
+        elif result is None:
+            raise KeyError(ids)
+
+        return result
+
+    def __contains__(self, ids):
+        """
+        Python shortcut to the get_elements(ids) method.
+        """
+
+        result = True
+
+        # self does not contain ids only if a KeyError is raised
+        try:
+            self[ids]
+
+        except KeyError:
+            result = False
+
+        return result
+
     def find_elements(self, request, limit=0, skip=0, sort=None):
         """
         Find elements corresponding to input request and in taking care of
@@ -257,6 +291,20 @@ class Storage(DataBase):
 
         raise NotImplementedError()
 
+    def __delitem__(self, ids):
+        """
+        Python shortcut to the remove_elements method.
+        """
+
+        return self.remove_elements(ids=ids)
+
+    def __isub__(self, ids):
+        """
+        Python shortcut to the remove_elements method.
+        """
+
+        self.remove_elements(ids=ids)
+
     def put_element(self, _id, element):
         """
         Put an element identified by input id
@@ -273,7 +321,21 @@ class Storage(DataBase):
 
         raise NotImplementedError()
 
-    def count_elements(self, request):
+    def __setitem__(self, _id, element):
+        """
+        Python shortcut for the put_element method.
+        """
+
+        self.put_element(_id=_id, element=element)
+
+    def __iadd__(self, element):
+        """
+        Python shortcut for the put_element method.
+        """
+
+        self.put_element(element=element)
+
+    def count_elements(self, request=None):
         """
         Count elements corresponding to the input request
 
@@ -285,6 +347,13 @@ class Storage(DataBase):
         """
 
         raise NotImplementedError()
+
+    def __len__(self):
+        """
+        Python shortcut to the count_elements method.
+        """
+
+        return self.count_elements()
 
     def _find(self, *args, **kwargs):
         """
@@ -347,16 +416,22 @@ class Storage(DataBase):
 
         result = 0
 
-        from cstorage.periodic import PeriodicStorage
-        from cstorage.timed import TimedStorage
-        from cstorage.timedtyped import TimedTypedStorage
-        from cstorage.typed import TypedStorage
+        from canopsis.storage import Storage
+        from canopsis.storage.periodic import PeriodicStorage
+        from canopsis.storage.timed import TimedStorage
+        from canopsis.storage.timedtyped import TimedTypedStorage
+        from canopsis.storage.typed import TypedStorage
 
         storage_types = [
-            PeriodicStorage, TimedStorage, TimedTypedStorage, TypedStorage]
+            Storage,
+            PeriodicStorage,
+            TimedStorage,
+            TimedTypedStorage,
+            TypedStorage]
 
         if not isinstance(self, storage_types):
             pass
+
         else:
             for storage_type in storage_types:
                 if isinstance(self, storage_types):

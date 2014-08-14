@@ -21,32 +21,80 @@
 from canopsis.storage import Storage
 
 
-class TypedStorage(Storage):
+class ScopedStorage(Storage):
     """
-    Storage dedicated to manage typed data identified by the couple (type, id).
+    Storage dedicated to manage scoped data identified by a data id in a scope
+    of ordered fields.
+
+    For example, a metric is identified by a unique name in the scope
+    (type=metric, connector, component, resource) or
+    (type=metric, connector, component).
     """
 
-    __storage_type__ = 'typed'
+    __storage_type__ = 'scoped'
+
+    SCOPE_SEPARATOR = '/'  #: char separator between scope values
 
     VALUE = 'value'
-    TYPE = 'type'
+    SCOPE = 'scope'
+    ID = 'id'
 
-    class TypedStorageError(Exception):
-        pass
-
-    def get(
-        self, _ids=None, data_type=None, limit=0, skip=0, sort=None
-    ):
+    def __init__(self, scope, *args, **kwargs):
         """
-        Get a list of data identified among data_ids or a type
+        :param scope: iterable of ordered lists of scope names
+        :type scope: Iterable
+        """
 
-        :param data_ids: data ids to get
-        :type data_id: list of str
+        super(ScopedStorage, self).__init__(*args, **kwargs)
 
-        :param data_type: data_id type to get if not None
-        :type data_type: str
+        self.scope = scope
 
-        :param limit: max number of data to get
+    @property
+    def scope(self):
+        return self._scope
+
+    @scope.setter
+    def scope(self, value):
+        self._set_scope(scope=value)
+
+    def _set_scope(self, scope):
+        """
+        Self scope setter.
+        """
+        self._scope = scope
+
+    def get(self, scope, data_id):
+        """
+        Get a data related to a dictionnary of scope value by name and a
+        data_id in the input scope.
+
+        :param scope: dictionnary of scope valut by scope name.
+        :type scope: dict
+
+        :param data_id: data id in the input scope.
+        :type data_id: str
+
+        :return: a data
+        :rtype: dict
+        """
+
+        raise NotImplementedError()
+
+    def find(self, scope, filter, limit=0, skip=0, sort=None):
+        """
+        Get a list of data identified among a dictionary of scoped values by
+        name and a data_id.
+
+        :param scope: scope
+        :type scope: storage filter
+
+        :param filter: additional filter condition to input scope
+        :type filter: storage filter
+
+        :param data_id: if not None, data id in the input scope.
+        :type data_id: storage filter
+
+        :param limit: max number of data to get. Useless if data_id is given.
         :type limit: int
 
         :param skip: starting index of research if multi data to get
@@ -63,7 +111,7 @@ class TypedStorage(Storage):
 
         raise NotImplementedError()
 
-    def put(self, _id, data, data_type=None):
+    def put(self, scope, data_id, data):
         """
         Put a data related to an id
 
@@ -91,3 +139,32 @@ class TypedStorage(Storage):
         """
 
         raise NotImplementedError()
+
+    def get_absolute_path(self, scope, data_id):
+        """
+        Get data absolute path among scope for input data_id in input scope.
+
+        :param scope: dictionary of scope value by name
+        :type scope: dict
+
+        :param data_id: data id in input scope
+        :type data_id: str
+        """
+
+        result = None
+
+        appropriated_scope = self.get_appropariate_scope(scope)
+
+        if appropriated_scope is not None:
+            result = ScopedStorage.SCOPE_SEPARATOR
+            for scope_name in appropriated_scope:
+                if scope_name in scope:
+                    result = '%s%s%s' % (
+                        result, ScopedStorage.SCOPE_SEPARATOR,
+                        scope[scope_name])
+
+        if result is not None:
+            result = '%s%s%s' % (
+                result, ScopedStorage.SCOPE_SEPARATOR, data_id)
+
+        return result

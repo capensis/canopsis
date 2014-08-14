@@ -18,56 +18,42 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from canopsis.mongo import Storage
-from canopsis.storage.typed import TypedStorage
+from canopsis.mongo import MongoStorage
+from canopsis.storage.scoped import ScopedStorage
 
 
-class TypedStorage(Storage, TypedStorage):
-
-    class Key:
-
-        VALUE = 'v'
-        TYPE = 't'
-
-    TYPE_INDEX = [(Key.TYPE, Storage.ASC)]
+class MongoScopedStorage(MongoStorage, ScopedStorage):
 
     def _get_indexes(self, *args, **kwargs):
 
-        result = super(TypedStorage, self)._get_indexes(*args, **kwargs)
+        result = super(ScopedStorage, self)._get_indexes(*args, **kwargs)
 
-        result.append(TypedStorage.TYPE_INDEX)
+        scope = self.scope
+
+        # add all sub_scopes concatened with id
+        for scope_count in range(1, len(scope) + 1):
+            sub_scope = scope[:scope_count]
+            index = [(scope_name, 'text') for scope_name in sub_scope]
+            index.append((ScopedStorage.ID, 'text'))
+            result.append(index)
 
         return result
 
-    def get(
-        self, ids=None, data_type=None, limit=0, skip=0, sort=None,
-        *args, **kwargs
-    ):
+    def get(self, scope, data_id, *args, **kwargs):
 
-        query = dict()
+        query = {}
 
-        if ids is not None:
-            query['_id'] = {'$in': ids}
+        query.update(scope)
 
-        if data_type is not None:
-            query[TypedStorage.Key.TYPE] = data_type
+        query[ScopedStorage.ID]
 
         cursor = self._find(document=query)
 
-        if ids is not None:
-            cursor.hint([('_id', Storage.ASC)])
+        index = self._get_index(query)
 
-        elif data_type is not None:
-            cursor.hint(TypedStorage.TYPE_INDEX)
+        cursor.hint(index)
 
-        if limit:
-            cursor.limit(limit)
-        if skip:
-            cursor.start(skip)
-        if sort:
-            Storage._update_sort(sort)
-            cursor.sort(sort)
-
+        self._get_generic_result
         result = list(cursor)
 
         return result
@@ -82,7 +68,7 @@ class TypedStorage(Storage, TypedStorage):
             '$set': data
         }
 
-        query[TypedStorage.Key.TYPE] = data_type
+        query[ScopedStorage.Key.TYPE] = data_type
 
         self._update(_id=query, document=_set, multi=False)
 
@@ -94,6 +80,6 @@ class TypedStorage(Storage, TypedStorage):
             query['_id'] = {'$in': ids}
 
         if data_type is not None:
-            query[TypedStorage.Key.TYPE] = data_type
+            query[ScopedStorage.Key.TYPE] = data_type
 
         self._remove(document=query)

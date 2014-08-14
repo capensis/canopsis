@@ -18,14 +18,14 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from canopsis.mongo import Storage
+from canopsis.mongo import MongoStorage
 from canopsis.storage.timedtyped import TimedTypedStorage
 from canopsis.timeserie.timewindow import get_offset_timewindow
 
 
-class TimedTypedStorage(Storage, TimedTypedStorage):
+class TimedTypedStorage(MongoStorage, TimedTypedStorage):
     """
-    Storage dedicated to manage timed typed data.
+    MongoStorage dedicated to manage timed typed data.
     """
 
     class Key:
@@ -37,19 +37,19 @@ class TimedTypedStorage(Storage, TimedTypedStorage):
 
     TYPE_BY_TIMESTAMP_BY_ID = \
         [
-            (Key.DATA_ID, Storage.ASC),
-            (Key.TIMESTAMP, Storage.DESC),
-            (Key.TYPE, Storage.ASC)]
+            (Key.DATA_ID, MongoStorage.ASC),
+            (Key.TIMESTAMP, MongoStorage.DESC),
+            (Key.TYPE, MongoStorage.ASC)]
     TIMESTAMP_BY_TYPE_BY_ID = \
         [
-            (Key.DATA_ID, Storage.ASC),
-            (Key.TYPE, Storage.ASC),
-            (Key.TIMESTAMP, Storage.DESC)
+            (Key.DATA_ID, MongoStorage.ASC),
+            (Key.TYPE, MongoStorage.ASC),
+            (Key.TIMESTAMP, MongoStorage.DESC)
         ]
     TIMESTAMP_BY_TYPE = \
         [
-            (Key.TYPE, Storage.ASC),
-            (Key.TIMESTAMP, Storage.DESC)
+            (Key.TYPE, MongoStorage.ASC),
+            (Key.TIMESTAMP, MongoStorage.DESC)
         ]
 
     def get(
@@ -85,7 +85,7 @@ class TimedTypedStorage(Storage, TimedTypedStorage):
         if skip:
             cursor.skip(skip)
         if sort is not None:
-            Storage._update_sort(sort)
+            MongoStorage._update_sort(sort)
             cursor.sort(sort)
 
         # apply a specific index

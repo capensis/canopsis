@@ -21,7 +21,7 @@
 
 from unittest import TestCase, main
 
-from canopsis.mongo import MongoDataBase, Storage
+from canopsis.mongo import MongoDataBase, MongoStorage
 
 
 class DataBaseTest(TestCase):
@@ -38,7 +38,7 @@ class DataBaseTest(TestCase):
         self.assertTrue(self.database.connected())
 
 
-class TestStorage(Storage):
+class TestStorage(MongoStorage):
 
     def _get_storage_type(self, *args, **kwargs):
         return 'test'

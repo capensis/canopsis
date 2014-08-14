@@ -18,12 +18,12 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from canopsis.mongo import Storage
+from canopsis.mongo import MongoStorage
 from canopsis.storage.timed import TimedStorage
 from canopsis.timeserie.timewindow import get_offset_timewindow
 
 
-class TimedStorage(Storage, TimedStorage):
+class TimedStorage(MongoStorage, TimedStorage):
 
     class Key:
 
@@ -32,7 +32,7 @@ class TimedStorage(Storage, TimedStorage):
         TIMESTAMP = 't'
 
     TIMESTAMP_BY_ID = \
-        [(Key.DATA_ID, Storage.ASC), (Key.TIMESTAMP, Storage.DESC)]
+        [(Key.DATA_ID, MongoStorage.ASC), (Key.TIMESTAMP, MongoStorage.DESC)]
 
     def get(
         self, data_ids, timewindow=None, limit=0, skip=0, sort=None,
@@ -62,7 +62,7 @@ class TimedStorage(Storage, TimedStorage):
         if skip:
             cursor.skip(skip)
         if sort is not None:
-            Storage._update_sort(sort)
+            MongoStorage._update_sort(sort)
             cursor.sort(sort)
 
         # apply a specific index

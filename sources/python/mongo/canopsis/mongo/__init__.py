@@ -21,6 +21,7 @@
 __version__ = '0.1'
 
 from canopsis.storage import Storage, DataBase
+from canopsis.common.utils import isiterable
 
 from pymongo import MongoClient, ASCENDING
 
@@ -169,24 +170,28 @@ def len_cursor(cursor):
     return cursor.count(True)
 
 
-class Storage(MongoDataBase, Storage):
+class MongoStorage(MongoDataBase, Storage):
+
+    ID = '_id'  #: ID mongo
 
     def __init__(self, data_type, *args, **kwargs):
 
         super(Storage, self).__init__(
             data_type=data_type, *args, **kwargs)
 
+        self.indexes = []
+
     def connect(self, *args, **kwargs):
 
         result = super(Storage, self).connect(*args, **kwargs)
 
         if result:
-            indexes = self._get_indexes()
+            self.indexes = self._get_indexes()
 
             table = self.get_table()
             self._backend = self._database[table]
 
-            for index in indexes:
+            for index in self.indexes:
                 self._backend.ensure_index(index)
 
         return result
@@ -205,7 +210,10 @@ class Storage(MongoDataBase, Storage):
         query = {}
 
         if ids is not None:
-            query['_id'] = {'$in': ids}
+            if isiterable(ids):
+                query[MongoStorage.ID] = {'$in': ids}
+            else:
+                query[MongoStorage.ID] = ids
 
         cursor = self._find(query)
 
@@ -217,30 +225,68 @@ class Storage(MongoDataBase, Storage):
             Storage._update_sort(sort)
             cursor.sort(sort)
 
+        result = self._get_generic_result(cursor, ids)
+
+        return result
+
+    def _get_index(self, _filter):
+        """
+        Get the right index related to input filter.
+        """
+
+        result = None
+
+        max_correspondance = 0
+
+        for index in self.indexes:
+            correspondance = 0
+
+            for index_value in index:
+                if index_value[0] in _filter:
+                    correspondance += 1
+                else:
+                    break
+
+            if correspondance > max_correspondance:
+                result = index
+                max_correspondance = correspondance
+
+        return result
+
+    def _get_generic_result(self, cursor, ids=None):
+        """
+        Get generic result depending on input cursor and ids.
+        If ids is not iterable, then result if the first cursor result.
+        Iterable of cursor otherwise.
+        """
+
+        result = None
         # Return the element if only one element was requested
         # Otherwise, return a list of the requested elements
-        if len(ids) > 1:
+        if ids is not None and isiterable(ids):
             result = cursor
-            # add __len__ method to the cursor in order to manage it such as
-            # an iterable
-            cursor.__len__ = len_cursor
+            # add len_cursor to result
+            result.__len__ = len_cursor
 
         else:
             # result is the only one value or None if no value exist
             try:
                 result = cursor.next()
             except StopIteration:
+                # None if no result
                 result = None
 
-        return result
+        return cursor
 
     def remove_elements(self, ids, *args, **kwargs):
 
-        self._remove({'_id': {'$in': ids}})
+        self._remove({MongoStorage.ID: {'$in': ids}})
 
     def put_element(self, _id, element, *args, **kwargs):
 
-        self._update(_id={'_id': _id}, document={'$set': element}, multi=False)
+        self._update(
+            _id={MongoStorage.ID: _id}, document={'$set': element},
+            multi=False)
 
     def bool_compare_and_swap(self, _id, oldvalue, newvalue):
 
@@ -251,7 +297,7 @@ class Storage(MongoDataBase, Storage):
         try:
             result = self._run_command(
                 'find_and_modify',
-                query={'_id': _id, 'value': oldvalue},
+                query={MongoStorage.ID: _id, 'value': oldvalue},
                 update={'$set': {'value': newvalue}},
                 upsert=True)
 
@@ -262,7 +308,7 @@ class Storage(MongoDataBase, Storage):
 
     def _element_id(self, element):
 
-        return element['_id']
+        return element[MongoStorage.ID]
 
     def _get_indexes(self):
         """
@@ -270,7 +316,7 @@ class Storage(MongoDataBase, Storage):
         """
 
         result = [
-            [('_id', ASCENDING)]
+            [(MongoStorage.ID, ASCENDING)]
         ]
 
         return result
