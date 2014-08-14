@@ -215,7 +215,7 @@ class Storage(MongoDataBase, Storage):
 
         # Return the element if only one element was requested
         # Otherwise, return a list of the requested elements
-        cursor = None if not cursors.count(count_opt) else cursor
+        cursor = None if not cursor.count(count_opt) else cursor
         result = cursor if len(ids) == 1 else list(cursor)
 
         return result
