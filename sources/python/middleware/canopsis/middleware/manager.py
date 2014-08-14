@@ -21,7 +21,7 @@
 from urlparse import urlparse
 
 from canopsis.configuration import Configurable, Parameter, Configuration
-from . import Middleware
+from . import Middleware, DEFAULT_DATA_SCOPE
 
 
 class Manager(Configurable):
@@ -33,6 +33,8 @@ class Manager(Configurable):
 
     Middleware instances can be shared through a sharing_scope in the same
     processus. By default, this sharing_scope is the same for all Managers.
+
+    It manages a shared
     """
 
     CONF_RESOURCE = 'middleware/manager.conf'
@@ -40,6 +42,7 @@ class Manager(Configurable):
     SHARED = 'shared'
     SHARING_SCOPE = 'sharing_scope'
     AUTO_CONNECT = 'auto_connect'
+    DATA_SCOPE = 'data_scope'
 
     CATEGORY = 'MANAGER'
 
@@ -57,6 +60,7 @@ class Manager(Configurable):
 
     def __init__(
         self, shared=True, sharing_scope=None, auto_connect=True,
+        data_scope=None,
         *args, **kwargs
     ):
 
@@ -65,6 +69,7 @@ class Manager(Configurable):
         self.auto_connect = auto_connect
         self.shared = shared
         self.sharing_scope = sharing_scope
+        self.data_scope = data_scope
 
     @property
     def shared(self):
@@ -89,6 +94,14 @@ class Manager(Configurable):
     @auto_connect.setter
     def auto_connect(self, value):
         self._auto_connect = value
+
+    @property
+    def data_scope(self):
+        return self._data_scope
+
+    @data_scope.setter
+    def data_scope(self, value):
+        self._data_scope = value
 
     def get_middleware(
         self,
@@ -121,6 +134,18 @@ class Manager(Configurable):
 
         result = None
 
+        if shared is None:
+            shared = self.shared
+
+        # data_scope must be not None
+        if data_scope is None:
+            data_scope = self.data_scope
+            if data_scope is None:
+                data_scope = DEFAULT_DATA_SCOPE
+
+        if sharing_scope is None:
+            sharing_scope = self.sharing_scope
+
         if auto_connect is None:
             auto_connect = self.auto_connect
 
@@ -137,14 +162,24 @@ class Manager(Configurable):
 
             manager = managers.setdefault(sharing_scope, {})
 
-            cls = manager.setdefault(
-                data_scope, Middleware.resolve_middleware(uri))
+            if data_scope in manager:
+                result = manager[data_scope]
+
+            else:
+                cls = Middleware.resolve_middleware(uri)
+
+                result = cls(
+                    uri=uri, data_scope=data_scope, auto_connect=auto_connect,
+                    *args, **kwargs)
+
+                manager[data_scope] = result
 
         else:
-
             cls = Middleware.resolve_middleware(uri)
 
-        result = cls(uri=uri, data_scope=data_scope, auto_connect=auto_connect)
+            result = cls(
+                uri=uri, data_scope=data_scope, auto_connect=auto_connect,
+                *args, **kwargs)
 
         return result
 
@@ -165,7 +200,8 @@ class Manager(Configurable):
             new_content=(
                 Parameter(Manager.SHARED, self.shared, parser=Parameter.bool),
                 Parameter(Manager.SHARING_SCOPE, self.sharing_scope),
-                Parameter(Manager.AUTO_CONNECT, self.auto_connect)))
+                Parameter(Manager.AUTO_CONNECT, self.auto_connect),
+                Parameter(Manager.DATA_SCOPE, self.data_scope)))
 
         return result
 
@@ -181,6 +217,8 @@ class Manager(Configurable):
             unified_conf=unified_conf, param_name=Manager.SHARING_SCOPE)
         self._update_property(
             unified_conf=unified_conf, param_name=Manager.AUTO_CONNECT)
+        self._update_property(
+            unified_conf=unified_conf, param_name=Manager.DATA_SCOPE)
 
         values = unified_conf[Configuration.VALUES]
 

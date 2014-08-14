@@ -21,7 +21,24 @@
 
 from unittest import TestCase, main
 
+from canopsis.middleware import Middleware, PROTOCOL_DATA_TYPE_SEPARATOR
 from canopsis.middleware.manager import Manager
+
+
+class TestUnregisteredMiddleware(Middleware):
+
+    __protocol__ = 'notprotocoltest'
+
+
+class TestRegisteredMiddleware(Middleware):
+
+    __register__ = True
+    __protocol__ = 'protocoltest'
+
+
+class TestRegisteredWithDataTypeMiddleware(TestRegisteredMiddleware):
+
+    __datatype__ = 'datatypetest'
 
 
 class TestManager(Manager):
@@ -32,55 +49,43 @@ class ManagerTest(TestCase):
 
     def setUp(self):
 
-        self.manager = Manager(
-            auto_connect=False)
-        self.data_types = ['data_type_0', 'data_type_1']
+        self.manager = TestManager()
 
-    def test_get_storage(self):
+    def test_get_middleware(self):
 
-        for data_type in self.data_types:
+        uri = '%s://' % (TestUnregisteredMiddleware.__protocol__)
 
-            for storage_name in self.storage_names:
+        self.assertRaises(Middleware.Error, self.manager.get_middleware, uri)
 
-                storage_type = getattr(self, storage_name)
+        uri = '%s://' % (TestRegisteredMiddleware.__protocol__)
 
-                storage = self.manager.get_storage(
-                    data_type=data_type,
-                    storage_type=storage_type)
+        middleware = self.manager.get_middleware(uri)
 
-                shared_storage = self.manager.get_storage(
-                    data_type=data_type,
-                    storage_type=storage_type,
-                    shared=True)
+        self.assertTrue(type(middleware) is TestRegisteredMiddleware)
 
-                self.assertTrue(storage is shared_storage)
+        middleware2 = self.manager.get_middleware(uri)
 
-                not_shared_storage = self.manager.get_storage(
-                    data_type=data_type,
-                    storage_type=storage_type,
-                    shared=False)
+        self.assertTrue(middleware is middleware2)
 
-                self.assertFalse(storage is not_shared_storage)
+        middleware3 = self.manager.get_middleware(uri, shared=False)
 
-                storage_method = getattr(
-                    self.manager, 'get_{0}'.format(storage_name))
+        self.assertFalse(middleware is middleware3)
 
-                sstorage = storage_method(data_type=data_type)
+        self.manager.shared = False
 
-                self.assertTrue(sstorage is storage)
+        middleware4 = self.manager.get_middleware(uri)
 
-                shared_sstorage = storage_method(
-                    data_type=data_type,
-                    shared=True)
+        self.assertFalse(middleware is middleware4)
 
-                self.assertTrue(sstorage is shared_sstorage)
+        uri = '%s%s%s://' % (
+            TestRegisteredWithDataTypeMiddleware.__protocol__,
+            PROTOCOL_DATA_TYPE_SEPARATOR,
+            TestRegisteredWithDataTypeMiddleware.__datatype__)
 
-                not_shared_storage = storage_method(
-                    data_type=data_type,
-                    shared=False)
+        middleware_wd = self.manager.get_middleware(uri)
 
-                self.assertFalse(sstorage is not_shared_storage)
-
+        self.assertTrue(
+            type(middleware_wd) is TestRegisteredWithDataTypeMiddleware)
 
 if __name__ == '__main__':
     main()

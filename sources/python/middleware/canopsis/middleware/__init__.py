@@ -25,10 +25,10 @@ from urlparse import urlparse
 from canopsis.configuration import Configurable, Parameter
 from canopsis.configuration.configurable import MetaConfigurable
 
-# char separator between a protocol and the associated data_type
-PROTOCOL_DATA_TYPE_SEPARATOR = '-'
-PROTOCOL_INDEX = 0  # protocol name index in an uri scheme
-DATA_TYPE_INDEX = 1  # data_type name index in an uri scheme
+PROTOCOL_DATA_TYPE_SEPARATOR = '-'  #: char separator in uri to proto/data_type
+PROTOCOL_INDEX = 0  #: protocol name index in an uri scheme
+DATA_TYPE_INDEX = 1  #: data_type name index in an uri scheme
+DEFAULT_DATA_SCOPE = 'canopsis'  #: default data_scope
 
 
 def parse_scheme(uri):
@@ -108,8 +108,8 @@ class Middleware(Configurable):
     AUTO_CONNECT = 'auto_connect'
     SAFE = 'safe'
     CONN_TIMEOUT = 'conn_timeout'
-    INPUT_TIMEOUT = 'in_timeout'
-    OUTPUT_TIMEOUT = 'out_timeout'
+    IN_TIMEOUT = 'in_timeout'
+    OUT_TIMEOUT = 'out_timeout'
     SSL = 'ssl'
     SSL_KEY = 'ssl_key'
     SSL_CERT = 'ssl_cert'
@@ -127,7 +127,7 @@ class Middleware(Configurable):
 
     def __init__(
         self,
-        uri=None, data_type=None, data_scope='canopsis',
+        uri=None, data_type=None, data_scope=DEFAULT_DATA_SCOPE,
         protocol=None, host='localhost', port=0, path='canopsis',
         auto_connect=True, safe=False,
         conn_timeout=20000, in_timeout=100, out_timeout=2000,
@@ -328,7 +328,7 @@ class Middleware(Configurable):
 
     @property
     def conn_timeout(self):
-        return self._wtimeout
+        return self._conn_timeout
 
     @conn_timeout.setter
     def conn_timeout(self, value):
@@ -516,8 +516,9 @@ class Middleware(Configurable):
             if updated_property:
                 reconnect = True
 
-        if reconnect and self.auto_connect:
-            self.reconnect()
+        if self.auto_connect:
+            if reconnect or not self.connected():
+                self.reconnect()
 
     def _get_conf_files(self, *args, **kwargs):
 
@@ -540,7 +541,6 @@ class Middleware(Configurable):
                 Parameter(Middleware.DATA_SCOPE, self.data_scope),
                 Parameter(Middleware.HOST, self.host),
                 Parameter(Middleware.PORT, self.port, int),
-                Parameter(Middleware.VIRTUAL_HOST, self.path),
                 Parameter(
                     Middleware.AUTO_CONNECT,
                     self.auto_connect, Parameter.bool),
