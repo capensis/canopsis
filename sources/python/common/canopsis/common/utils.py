@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #--------------------------------
 # Copyright (c) 2014 "Capensis" [http://www.capensis.com]
@@ -118,7 +117,7 @@ def path(element):
     return result
 
 
-def isiterable(element, is_str=False):
+def isiterable(element, is_str=True):
     """
     Check whatever or not if input element is an iterable.
 
@@ -163,7 +162,7 @@ def force_unicode(s):
     if PYVER < '3':
         if isinstance(s, basestring):
             if not isinstance(s, unicode):
-                result = s.encode()
+                result = s.decode()
         else:
             raise TypeError('Expecting a string as argument')
 
