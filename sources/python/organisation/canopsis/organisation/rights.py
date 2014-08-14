@@ -18,6 +18,7 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
+from canopsis.configuration import Parameter
 from canopsis.storage.manager import Manager
 
 
@@ -29,26 +30,36 @@ class Rights(Manager):
         """
         pass
 
-    def __init__(self):
+    CONF_RESOURCE = '~/etc/organisation/rights.conf'
 
-        self.storages = {
-            'profile': self.get_storage(data_type="profiles"),
-            'composite': self.get_storage(data_type="composites"),
-            'role': self.get_storage(data_type="roles")
-            }
+    STORAGE_TYPE = {'profiles',
+                    'composite',
+                    'role'}
 
-        # Contains the map of the existing profile maps
-        self.profile_storage = self.storage['profiles']
+    CATEGORY = 'RIGHTS'
 
-        # Contains the map of the existing composites maps
-        self.composite_storage = self.storage['composite']
+    DATA_TYPE = 'rights'
 
-        # Contains the map of the existing roles maps
-        self.role_storage = self.storage['role']
+    def __init__(
+        self, data_type=DATA_TYPE, profiles_storage=None,
+        composite_storage=None, role_storage=None,
+        default_profile_storage=None, *args, **kwargs
+    ):
 
-        # Default profile //@Jon; where to get it ?
-        self.default_profile = self.get_storage()
+        super(Rights, self).__init__(data_type=data_type, *args, **kwargs)
 
+        self.storages = {}
+
+        for s_type in self.STORAGE_TYPE:
+            self.storages[s_type] = self.get_storage(
+                data_type=s_type,
+                storage_type='canopsis.mongo.Storage')
+
+        self.profile_storage = self.storages['profiles']
+        self.composite_storage = self.storages['composite']
+        self.role_storage = self.storages['role']
+
+        self.default_profile = 'vizualisation'
 
     # Entity can be a right_composite, a profile or a role since
     # all 3 of them have a rights field
@@ -158,7 +169,7 @@ class Rights(Manager):
 
     # Create a new rights composite composed of the rights passed in comp_rights
     # comp_rights should be a map of right maps
-    def create_composite(self, comp_rights, comp_name):
+    def create_composite(self, comp_name, comp_rights):
         """
         Create a new rights composite
         and add it in the appropriate Mongo collection
@@ -167,7 +178,7 @@ class Rights(Manager):
         new_comp = {}
 
         for right_id in comp_rights:
-            new_comp[right_id] = comp_rights[key].copy()
+            new_comp[right_id] = comp_rights[right_id].copy()
 
 
         self.composite_storage.put_element(comp_name, new_comp)

@@ -267,7 +267,7 @@ class MongoStorage(MongoDataBase, Storage):
         result = None
         # Return the element if only one element was requested
         # Otherwise, return a list of the requested elements
-        if ids is not None and isiterable(ids):
+        if ids is not None and isiterable(ids, is_str=False):
             result = cursor
             # add len_cursor to result
             result.__len__ = len_cursor
