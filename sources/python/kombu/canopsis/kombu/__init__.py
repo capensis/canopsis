@@ -30,6 +30,9 @@ from canopsis.mom import MOM
 
 class Kombu(MOM):
 
+    __register__ = True  #: register this class to middleware classes
+    __protocol__ = 'kombu'  #: register this class to the protocol kombu
+
     CONF_RESOURCE = 'kombu/kombu.conf'
 
     class Error(Exception):
