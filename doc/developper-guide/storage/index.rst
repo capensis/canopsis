@@ -124,6 +124,14 @@ Technical description
          (None if this element does not exist)
       :rtype: iterable of dict or dict or NoneType
 
+   .. method:: __getitem__(ids)
+
+      Python shortcut to the get_elements(ids) method.
+
+   .. method:: __contains__(ids)
+
+      Python shortcut to the get_elements(ids) method.
+
    .. method:: find_elements(request, limit=0, skip=0, sort=None):
 
       Find elements corresponding to input request and in taking care of
@@ -152,6 +160,14 @@ Technical description
       :param ids: ids of elements to delete
       :type ids: list of str
 
+   .. method:: __delitem__(ids)
+
+      Python shortcut to the remove_elements method.
+
+   .. method:: __isub__(ids)
+
+      Python shortcut to the remove_elements method.
+
    .. method:: put_element(_id, element)
 
       Put an element identified by input id
@@ -165,6 +181,14 @@ Technical description
       :return: True if updated
       :rtype: bool
 
+   .. method:: __setitem__(_id, element)
+
+      Python shortcut for the put_element method.
+
+   .. method:: __iadd__(element)
+
+      Python shortcut for the put_element method.
+
    .. method:: count_elements(request)
 
       Count elements corresponding to the input request
@@ -174,6 +198,10 @@ Technical description
 
       :return: Number of elements corresponding to the input request
       :rtype: int
+
+   .. method:: __len__()
+
+      Python shortcut to the count_elements method.
 
    .. method _find(*args, **kwargs)
 

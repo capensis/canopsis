@@ -19,7 +19,7 @@
 # ---------------------------------
 
 from canopsis.configuration import Parameter, Configuration
-from canopsis.storage.manager import Manager
+from .manager import Manager
 
 
 class Synchronizer(Manager):

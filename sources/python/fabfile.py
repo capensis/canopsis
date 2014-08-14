@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #--------------------------------
 # Copyright (c) 2014 "Capensis" [http://www.capensis.com]
@@ -26,11 +25,14 @@ projects = (
     'common',
     'configuration',
     'timeserie',
+    'middleware',
+    'rpc',
+    'mom',
     'storage',
+    'mongo',
     'context',
     'perfdata',
     'topology',
-    'mongo',
     'old',
     'engines',
     'connectors',

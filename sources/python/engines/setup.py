@@ -22,7 +22,11 @@
 from canopsis.common.setup import setup
 
 install_requires = [
-    'canopsis.old', 'canopsis.timeserie', 'canopsis.perfdata', 'canopsis.rule', 'canopsis.tools']
+    'canopsis.old',
+    'canopsis.timeserie',
+    'canopsis.perfdata',
+    'canopsis.rule',
+    'canopsis.tools']
 
 setup(
     description='Engines library',
