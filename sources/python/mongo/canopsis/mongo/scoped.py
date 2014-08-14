@@ -24,6 +24,8 @@ from canopsis.storage.scoped import ScopedStorage
 
 class MongoScopedStorage(MongoStorage, ScopedStorage):
 
+    __datatype__ = 'scoped'  #: register this class to scoped data types
+
     def _get_indexes(self, *args, **kwargs):
 
         result = super(ScopedStorage, self)._get_indexes(*args, **kwargs)

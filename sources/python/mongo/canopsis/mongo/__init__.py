@@ -34,6 +34,8 @@ class MongoDataBase(DataBase):
     Manage access to a mongodb.
     """
 
+    __protocol__ = 'mongo'  #: register this class to protocol 'mongo'
+
     def __init__(
         self, host=MongoClient.HOST, port=MongoClient.PORT, *args, **kwargs
     ):
@@ -171,6 +173,8 @@ def len_cursor(cursor):
 
 
 class MongoStorage(MongoDataBase, Storage):
+
+    __register__ = True  #: register this class to middleware
 
     ID = '_id'  #: ID mongo
 

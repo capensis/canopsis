@@ -23,10 +23,12 @@ from canopsis.storage.timedtyped import TimedTypedStorage
 from canopsis.timeserie.timewindow import get_offset_timewindow
 
 
-class TimedTypedStorage(MongoStorage, TimedTypedStorage):
+class MongoTimedTypedStorage(MongoStorage, TimedTypedStorage):
     """
     MongoStorage dedicated to manage timed typed data.
     """
+
+    __datatype__ = 'timedtyped'  #: register this class to timed data types
 
     class Key:
 
