@@ -25,7 +25,7 @@ from urlparse import urlparse
 from canopsis.configuration import Configurable, Parameter
 from canopsis.configuration.configurable import MetaConfigurable
 
-PROTOCOL_DATA_TYPE_SEPARATOR = '-'  #: char separator in uri to proto/data_type
+SCHEME_SEPARATOR = '-'  #: char separator in uri to proto/data_type/data_scope
 PROTOCOL_INDEX = 0  #: protocol name index in an uri scheme
 DATA_TYPE_INDEX = 1  #: data_type name index in an uri scheme
 DEFAULT_DATA_SCOPE = 'canopsis'  #: default data_scope
@@ -33,24 +33,28 @@ DEFAULT_DATA_SCOPE = 'canopsis'  #: default data_scope
 
 def parse_scheme(uri):
     """
-    Get a tuple of protocol and data_type names from input uri
+    Get a tuple of protocol, data_type names from input uri
 
-    :return: (protocol, data_type) from uri scheme
+    :return: (protocol, data_type, data_scope) from uri scheme
     :rtype: tuple
     """
 
     result = None, None
 
+    protocol = None
+    data_type = None
+
     parsed_url = urlparse(uri)
-    scheme = parsed_url.scheme
+    protocol = parsed_url.scheme
 
-    if scheme and PROTOCOL_DATA_TYPE_SEPARATOR in parsed_url.scheme:
-        splitted_scheme = scheme.split(PROTOCOL_DATA_TYPE_SEPARATOR)
-        result = (splitted_scheme[PROTOCOL_INDEX],
-            splitted_scheme[DATA_TYPE_INDEX])
+    if protocol and SCHEME_SEPARATOR in parsed_url.scheme:
+        splitted_scheme = protocol.split(SCHEME_SEPARATOR)
+        if len(splitted_scheme) >= 1:
+            protocol = splitted_scheme[PROTOCOL_INDEX]
+        if len(splitted_scheme) >= 2:
+            data_type = splitted_scheme[DATA_TYPE_INDEX]
 
-    else:
-        result = scheme, None
+    result = protocol, data_type
 
     return result
 

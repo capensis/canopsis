@@ -21,7 +21,7 @@
 from unittest import TestCase, main
 
 from canopsis.middleware import \
-    Middleware, parse_scheme, PROTOCOL_DATA_TYPE_SEPARATOR
+    Middleware, parse_scheme, SCHEME_SEPARATOR
 
 
 class TestUnregisteredMiddleware(Middleware):
@@ -51,14 +51,14 @@ class MiddlewareTest(TestCase):
         self.assertEqual(protocol, 'http')
         self.assertEqual(data_type, None)
 
-        uri = '%s%s%s://' % ('http', PROTOCOL_DATA_TYPE_SEPARATOR, '')
+        uri = '%s%s%s://' % ('http', SCHEME_SEPARATOR, '')
 
         protocol, data_type = parse_scheme(uri)
 
         self.assertEqual(protocol, 'http')
         self.assertEqual(data_type, '')
 
-        uri = '%s%s%s://' % ('http', PROTOCOL_DATA_TYPE_SEPARATOR, 'ae')
+        uri = '%s%s%s://' % ('http', SCHEME_SEPARATOR, 'ae')
 
         protocol, data_type = parse_scheme(uri)
 
@@ -76,7 +76,7 @@ class MiddlewareTest(TestCase):
 
         uri = '%s%s%s://' % (
             TestRegisteredWithDataTypeMiddleware.__protocol__,
-            PROTOCOL_DATA_TYPE_SEPARATOR,
+            SCHEME_SEPARATOR,
             TestRegisteredWithDataTypeMiddleware.__datatype__)
 
         middleware_class = Middleware.resolve_middleware(uri)

@@ -21,7 +21,7 @@
 
 from unittest import TestCase, main
 
-from canopsis.middleware import Middleware, PROTOCOL_DATA_TYPE_SEPARATOR
+from canopsis.middleware import Middleware, SCHEME_SEPARATOR
 from canopsis.middleware.manager import Manager
 
 
@@ -79,7 +79,7 @@ class ManagerTest(TestCase):
 
         uri = '%s%s%s://' % (
             TestRegisteredWithDataTypeMiddleware.__protocol__,
-            PROTOCOL_DATA_TYPE_SEPARATOR,
+            SCHEME_SEPARATOR,
             TestRegisteredWithDataTypeMiddleware.__datatype__)
 
         middleware_wd = self.manager.get_middleware(uri)
