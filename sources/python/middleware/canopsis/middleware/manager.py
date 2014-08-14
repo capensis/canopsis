@@ -21,7 +21,7 @@
 from urlparse import urlparse
 
 from canopsis.configuration import Configurable, Parameter, Configuration
-from .middleware import Middleware
+from . import Middleware
 
 
 class Manager(Configurable):
@@ -31,13 +31,14 @@ class Manager(Configurable):
     Attributes are related to middlewares where the data_scope corresponds to
     attribute names.
 
-    Middleware instances can be shared globally in the same processus.
+    Middleware instances can be shared through a sharing_scope in the same
+    processus. By default, this sharing_scope is the same for all Managers.
     """
 
-    CONF_FILE = 'middleware/manager.conf'
+    CONF_RESOURCE = 'middleware/manager.conf'
 
     SHARED = 'shared'
-    SCOPE_SHARING = 'scope_sharing'
+    SHARING_SCOPE = 'sharing_scope'
     AUTO_CONNECT = 'auto_connect'
 
     CATEGORY = 'MANAGER'
@@ -55,7 +56,7 @@ class Manager(Configurable):
         pass
 
     def __init__(
-        self, shared=True, scope_sharing=False, auto_connect=True,
+        self, shared=True, sharing_scope=None, auto_connect=True,
         *args, **kwargs
     ):
 
@@ -63,7 +64,7 @@ class Manager(Configurable):
 
         self.auto_connect = auto_connect
         self.shared = shared
-        self.scope_sharing = scope_sharing
+        self.sharing_scope = sharing_scope
 
     @property
     def shared(self):
@@ -74,11 +75,11 @@ class Manager(Configurable):
         self._shared = value
 
     @property
-    def scope_sharing(self):
+    def sharing_scope(self):
         return self._scope_sharing
 
-    @scope_sharing.setter
-    def scope_sharing(self, value):
+    @sharing_scope.setter
+    def sharing_scope(self, value):
         self._scope_sharing = value
 
     @property
@@ -92,7 +93,7 @@ class Manager(Configurable):
     def get_middleware(
         self,
         uri, data_scope=None, auto_connect=None,
-        shared=None, scope_sharing=None,
+        shared=None, sharing_scope=None,
         *args, **kwargs
     ):
         """
@@ -111,8 +112,8 @@ class Manager(Configurable):
             among managers of the same class. If None, use self.shared.
         :type shared: bool
 
-        :param scope_sharing: scope sharing
-        :type scope_sharing: bool
+        :param sharing_scope: scope sharing
+        :type sharing_scope: bool
 
         :return: middleware instance corresponding to input uri and data_scope.
         :rtype: Middleware
@@ -134,7 +135,7 @@ class Manager(Configurable):
             managers = Manager.__MIDDLEWARES_BY_MANAGERS__.setdefault(
                 protocol, {})
 
-            manager = managers.setdefault(scope_sharing, {})
+            manager = managers.setdefault(sharing_scope, {})
 
             cls = manager.setdefault(
                 data_scope, Middleware.resolve_middleware(uri))
@@ -151,7 +152,7 @@ class Manager(Configurable):
 
         result = super(Manager, self)._get_conf_files(*args, **kwargs)
 
-        result.append(Manager.CONF_FILE)
+        result.append(Manager.CONF_RESOURCE)
 
         return result
 
@@ -163,7 +164,7 @@ class Manager(Configurable):
             name=Manager.CATEGORY,
             new_content=(
                 Parameter(Manager.SHARED, self.shared, parser=Parameter.bool),
-                Parameter(Manager.SCOPE_SHARING, self.scope_sharing),
+                Parameter(Manager.SHARING_SCOPE, self.sharing_scope),
                 Parameter(Manager.AUTO_CONNECT, self.auto_connect)))
 
         return result
@@ -177,7 +178,7 @@ class Manager(Configurable):
         self._update_property(
             unified_conf=unified_conf, param_name=Manager.SHARED)
         self._update_property(
-            unified_conf=unified_conf, param_name=Manager.SCOPE_SHARING)
+            unified_conf=unified_conf, param_name=Manager.SHARING_SCOPE)
         self._update_property(
             unified_conf=unified_conf, param_name=Manager.AUTO_CONNECT)
 

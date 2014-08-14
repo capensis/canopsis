@@ -31,23 +31,10 @@ class TestManager(Manager):
 class ManagerTest(TestCase):
 
     def setUp(self):
-        self.storage_names = [
-            'timed_storage',
-            'periodic_storage',
-            'storage',
-            'typed_storage',
-            'timed_typed_storage']
 
         self.manager = Manager(
-            data_type=None,
             auto_connect=False)
         self.data_types = ['data_type_0', 'data_type_1']
-
-        # get storage types loaded by the manager
-        for attribute in dir(self.manager):
-            if attribute.endswith('storage'):
-                setattr(
-                    self, attribute, type(getattr(self.manager, attribute)))
 
     def test_get_storage(self):
 

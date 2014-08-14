@@ -20,15 +20,68 @@
 
 from unittest import TestCase, main
 
-from canopsis.middleware import Middleware
+from canopsis.middleware import \
+    Middleware, parse_scheme, PROTOCOL_DATA_TYPE_SEPARATOR
 
 
-class TestMiddleware(Middleware):
-    pass
+class TestUnregisteredMiddleware(Middleware):
+
+    __protocol__ = 'notprotocoltest'
+
+
+class TestRegisteredMiddleware(Middleware):
+
+    __register__ = True
+    __protocol__ = 'protocoltest'
+
+
+class TestRegisteredWithDataTypeMiddleware(TestRegisteredMiddleware):
+
+    __datatype__ = 'datatypetest'
 
 
 class MiddlewareTest(TestCase):
-    pass
+
+    def test_parse_scheme(self):
+
+        uri = 'http://plop'
+
+        protocol, data_type = parse_scheme(uri)
+
+        self.assertEqual(protocol, 'http')
+        self.assertEqual(data_type, None)
+
+        uri = '%s%s%s://' % ('http', PROTOCOL_DATA_TYPE_SEPARATOR, '')
+
+        protocol, data_type = parse_scheme(uri)
+
+        self.assertEqual(protocol, 'http')
+        self.assertEqual(data_type, '')
+
+        uri = '%s%s%s://' % ('http', PROTOCOL_DATA_TYPE_SEPARATOR, 'ae')
+
+        protocol, data_type = parse_scheme(uri)
+
+        self.assertEqual(protocol, 'http')
+        self.assertEqual(data_type, 'ae')
+
+    def test_resolve_middleware(self):
+
+        uri = '%s://' % TestUnregisteredMiddleware.__protocol__
+        self.assertRaises(Middleware.Error, Middleware.resolve_middleware, uri)
+
+        uri = '%s://' % TestRegisteredMiddleware.__protocol__
+        middleware_class = Middleware.resolve_middleware(uri)
+        self.assertEqual(middleware_class, TestRegisteredMiddleware)
+
+        uri = '%s%s%s://' % (
+            TestRegisteredWithDataTypeMiddleware.__protocol__,
+            PROTOCOL_DATA_TYPE_SEPARATOR,
+            TestRegisteredWithDataTypeMiddleware.__datatype__)
+
+        middleware_class = Middleware.resolve_middleware(uri)
+        self.assertEqual(
+            middleware_class, TestRegisteredWithDataTypeMiddleware)
 
 if __name__ == '__main__':
     main()

@@ -74,18 +74,24 @@ class Middleware(Configurable):
     """
     Abstract class which aims to manage middleware.
 
-    A middleware is something which connects itself to a foreign resource
+    A middleware is a resource which connects itself to a foreign resource
         such as a database, a mom broker, etc.
     Optionnaly, it is related to a data_type:
-    - pubsub dedicated to events, status, etc. ?
-    - database dedicated to relational data, no-sql data, timed data, etc. ?
+
+    - pubsub dedicated to events, status, etc.
+    - database dedicated to relational data, no-sql data, timed data, etc.
+    And a data scope ('canopsis' by default) which permits to define a domain.
+
+    - perfdata for managing perfdata.
+    - entities for managing entities.
+    - etc.
     """
 
     __metaclass__ = MetaMiddleware
 
-    __register__ = False  # if True, automatically register this class
-    __protocol__ = 'canopsis'  # protocol registration name if __register__
-    __datatype__ = None  # data_type registration name if __register__
+    __register__ = False  #: if True, automatically register this class
+    __protocol__ = 'canopsis'  #: protocol registration name if __register__
+    __datatype__ = None  #: data_type registration name if __register__
 
     # private class attribute which manages middlewares classes per data_type
     __MIDDLEWARES__ = {}
@@ -567,7 +573,42 @@ class Middleware(Configurable):
         data_types[data_type] = cls
 
     @staticmethod
-    def resolve_middleware(uri, *args, **kwargs):
+    def resolve_middleware(uri):
+        """
+        Get a reference to a middleware class corresponding to input uri.
+
+        :param uri: the uri may contains a protocol of type 'protocol' or
+            'protocol-data_type'.
+        :type uri: str
+
+        :return: Middleware type
+        :rtype: type
+
+        :raise: Middleware.Error if the uri is not reliable to a registered
+            middleware.
+        """
+
+        result = None
+
+        parsed_uri = urlparse(uri)
+
+        protocol = parsed_uri.scheme
+
+        protocol, data_type = parse_scheme(uri)
+
+        if protocol not in Middleware.__MIDDLEWARES__:
+            raise Middleware.Error(
+                'No middleware registered at protocol %s' % protocol) \
+
+        if data_type not in Middleware.__MIDDLEWARES__[protocol]:
+            raise Middleware.Error('No protocol given in %s' % uri)
+
+        result = Middleware.__MIDDLEWARES__[protocol][data_type]
+
+        return result
+
+    @staticmethod
+    def get_middleware(uri, *args, **kwargs):
         """
         Instantiate the right middleware related to input uri.
 
@@ -587,16 +628,9 @@ class Middleware(Configurable):
 
         result = None
 
-        parsed_uri = urlparse(uri)
+        middleware_class = Middleware.resolve_middleware(uri)
 
-        protocol = parsed_uri.scheme
-
-        protocol, data_type = parsed_uri(uri)
-
-        if protocol not in Middleware.__MIDDLEWARES__ \
-                or data_type not in Middleware.__MIDDLEWARES__[protocol]:
-            raise Middleware.Error('Not protocol given in %s' % uri)
-
-        result = Middleware.__MIDDLEWARES__[protocol][data_type]
+        if middleware_class is not None:
+            result = middleware_class(*args, **kwargs)
 
         return result
