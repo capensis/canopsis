@@ -2,7 +2,7 @@
 	"type": "object",
 	"categories": [{
 		"title": "general",
-		"keys":[ "id_connector"  , "connecteur_name" , "hostname", "options_filter" ]
+		"keys":[  "hostname" , "connection_type", "options_filter" ]
 	},
 	{
 		"title": "AMQP_options",
