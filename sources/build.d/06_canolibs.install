@@ -47,7 +47,6 @@ function update(){
         echo "-- Update project: $project"
         cd $SRC_PATH/python/$project
         export CPS_PREFIX="$PREFIX/etc/"
-        python setup.py clean --all >> $LOG 2>&1 || exit 1
         python setup.py install --no-conf >> $LOG 2>&1 || exit 1
     done
 }
