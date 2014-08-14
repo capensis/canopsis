@@ -198,8 +198,12 @@ class Storage(MongoDataBase, Storage):
         query = {}
         count_opt = False
 
-        if ids is not None:
+        from collections import Iterable
+
+        if isinstance(ids, Iterable) and not isinstance(ids, str):
             query['_id'] = {'$in': ids}
+        else:
+            query['_id'] = ids
 
         cursor = self._find(query)
 
