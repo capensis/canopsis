@@ -18,6 +18,7 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
+from canopsis.configuration import Parameter
 from canopsis.storage.manager import Manager
 
 
@@ -29,33 +30,52 @@ class Rights(Manager):
         """
         pass
 
-    def __init__(self):
-        # Contains the map of the existing profile maps
-        self.profile_storage = self.get_storage()
+    CONF_RESOURCE = '~/etc/organisation/rights.conf'
 
-        # Contains the map of the existing composites maps
-        self.composite_storage = self.get_storage()
+    STORAGE_TYPE = {'profiles',
+                    'composite',
+                    'role'}
 
-        # Contains the map of the existing roles maps
-        self.role_storage = self.get_storage()
+    CATEGORY = 'RIGHTS'
 
-        # Default profile
-        self.default_profile = self.get_storage()
+    DATA_TYPE = 'rights'
 
+    def __init__(
+        self, data_type=DATA_TYPE, profiles_storage=None,
+        composite_storage=None, role_storage=None,
+        default_profile_storage=None, *args, **kwargs
+    ):
 
-    # Entity can be a right_composite, a profile or an user since
+        super(Rights, self).__init__(data_type=data_type, *args, **kwargs)
+
+        self.storages = {}
+
+        for s_type in self.STORAGE_TYPE:
+            self.storages[s_type] = self.get_storage(
+                data_type=s_type,
+                storage_type='canopsis.mongo.Storage')
+
+        self.profile_storage = self.storages['profiles']
+        self.composite_storage = self.storages['composite']
+        self.role_storage = self.storages['role']
+
+        self.default_profile = 'vizualisation'
+
+    # Entity can be a right_composite, a profile or a role since
     # all 3 of them have a rights field
     def check(self, entity, right_id, checksum):
         """
         Check the from the rights of entity for a right of id right_id
         """
 
+        # check the fields
         if not entity or not entity.get('rights', None):
             return False
 
         found = entity['rights'].get(right_id, None)
 
-        if found and found.get(right_id, 0) & checksum >= checksum:
+        if (found and found.get(right_id, None) and
+            found[right_id].get('checksum', 0) & checksum >= checksum):
             return True
 
         return False
@@ -70,15 +90,18 @@ class Rights(Manager):
         Check if user has the right of id right_id
         """
 
-        profile = self.profiles_storage.get(role.get('profile', None), None)
+        profile = self.profiles_storage.get_elements(ids=[role.get('profile', None)])
 
         p_composites = profile.get('composites', None)
 
-        composites = [self.composite_storage.get(x, None)
+        composites = [self.composite_storage.get_elements(ids=[x])
                       for x in p_composites]
 
+        # check in the role's comsposite
         if ((role and self.check(role, right_id, checksum)) or
+            # check in the profile's composite
             (profile and self.check(profile, right_id, checksum)) or
+            # check in the profile's groups composites
             (p_composites and any(self.check(x, right_id, checksum)
                                   for x in composites))):
             return True
@@ -90,8 +113,16 @@ class Rights(Manager):
     # If the right already exists, the checksum will be summed accordingly
     # checksum |= old_checksum
     # entity can be a role, a profile, or a composite
-    def add(self, entity, right_id, checksum,
+    def add(self, e_name, e_type, right_id, checksum,
             **kwargs):
+
+        entity = None
+
+        if e_type in self.storages:
+            entity = self.storages[e_type].get_elements(ids=[e_name])
+
+        if not entity:
+            return False
 
         if not entity.get('rights', None):
             entity['rights'] = {}
@@ -108,6 +139,9 @@ class Rights(Manager):
             if kwargs[key]:
                 entity['rights'][right_id][key] = context
 
+        self.storages[e_type].put_element(entity)
+        return True
+
 
     # Delete the checksum right of the entity linked
     # new_checksum ^= checksum
@@ -120,8 +154,10 @@ class Rights(Manager):
             entity['rights'][right_id] and
             entity['rights'][right_id]['checksum'] >= checksum):
 
+            # remove the permissions passed in checksum
             entity['rights'][right_id]['checksum'] ^= checksum
 
+            # If all the permissions were removed from the right, delete it
             if not entity['rights'][right_id]['checksum']:
                 del entity['rights'][right_id]
                 return 0
@@ -133,7 +169,7 @@ class Rights(Manager):
 
     # Create a new rights composite composed of the rights passed in comp_rights
     # comp_rights should be a map of right maps
-    def create_composite(self, comp_rights, comp_name):
+    def create_composite(self, comp_name, comp_rights):
         """
         Create a new rights composite
         and add it in the appropriate Mongo collection
@@ -142,10 +178,10 @@ class Rights(Manager):
         new_comp = {}
 
         for right_id in comp_rights:
-            new_comp[right_id] = comp_rights[key].copy()
+            new_comp[right_id] = comp_rights[right_id].copy()
 
-        self.composite_storage[comp_name] = new_comp
-        # Update storage here
+
+        self.composite_storage.put_element(comp_name, new_comp)
 
 
     # Delete composite named comp_name
@@ -156,11 +192,13 @@ class Rights(Manager):
         and update the appropriate Mongo collection
         """
 
-        if self.composite_storage.get(comp_name, None):
-            del self.composite_storage[comp_name]
-            # Update storaged here
+        if self.composite_storage.get_elements(ids=[comp_name]):
+
+            self.composite_storage.remove_elements(comp_name)
+            # remove the composite from every profiles
             for p in self.profile_storage:
                 p['composites'].discard(comp_name)
+                # if the profile only had that composite, remove the profile
                 if not len(p['composites']):
                     self.delete_profile(p)
             return True
@@ -184,7 +222,8 @@ class Rights(Manager):
             else:
                 return False
 
-        entity['composites'].add(self.composite_storage.get(comp_name, None))
+        entity['composites'].add(
+            self.composite_storage.get_elements(ids=[comp_name]))
         return True
 
 
@@ -204,18 +243,17 @@ class Rights(Manager):
     # If the profile already exists, composites from p_composites
     #   that are not already in the profile's composites will be added
     # Return True if the profile was created, False otherwise
-    def create_profile(self, p_name, p_composites, relationships):
+    def create_profile(self, p_name, p_composites):
         """
         Create profile p_name composed of p_composites
         """
 
-        if self.profile_storage.get(p_name, None):
+        if self.profile_storage.get_elements(ids=[p_name]):
             return False
 
         new_profile = {}
         new_profile['composites'] = p_composites
-        self.profile_storage[p_name] = new_profile
-        # Update storage here
+        self.profile_storage.put_element(p_name, new_profile)
         return True
 
 
@@ -226,11 +264,12 @@ class Rights(Manager):
         Delete profile p_name
         """
 
-        if self.profile_storage.get(p_name, None):
-            del self.profile_storage.pop[p_name]
-            # Update storage here
+        if self.profile_storage.get_elements(ids=[p_name]):
+            self.profile_storage.remove_element(p_name)
+            # remove the profile from every roles
             for r in self.role_storage:
                 r['profile'].discard(comp_name)
+                # if the role only had that profile, remove it
                 if not len(r['profile']):
                     self.add_profile(r, self.default_profile)
             return True
@@ -256,7 +295,7 @@ class Rights(Manager):
 
 
     # Add the profile of name p_name to the role
-    # If the profile does not exists and p_composites is pecified
+    # If the profile does not exists and p_composites is specified
     #    it will be created first
     # Return True if the profile was added, False otherwise
     def add_profile(self, role, p_name, p_composites=None):
@@ -264,16 +303,58 @@ class Rights(Manager):
         Add profile p_name to role['profile']
         """
 
-        if not self.profile_storage.get(p_name, None):
+        if not self.profile_storage.get_elements(ids=[p_name]):
             if p_composites:
                 self.create_profile(p_name, p_composites)
             else:
                 return False
 
         # retrieve the profile
-        if self.profile_storage.get(p_name, None):
+        if self.profile_storage.get_elements(ids=[p_name]):
             # change role['profiles'] to a set of strings
             #   if you want to allow several profiles on
             #   the same role
             role['profiles'] = p_name
 
+
+    # Create a new role composed of the profile r_profile
+    #   and which name will be r_name
+    # Any extra field can be specified in the kwargs
+    # If the role already exists, the profile will be changed for r_profile
+    # Return True if the role was created, False otherwise
+    def create_role(self, r_name, r_profile):
+        """
+        Create role p_name composed of p_composites
+        """
+
+        if self.role_storage.get_elements(ids=[r_name]):
+            return False
+
+        new_role = {}
+        new_role['profiles'] = p_composites
+        self.role_storage.put_element(p_name, new_role)
+        return True
+
+
+    def delete_role(self, r_name):
+        if self.role_storage.get_elements(ids=[r_name]):
+            self.role_storage.remove_element(r_name)
+            return True
+
+        return False
+
+    def __getitem__(self, storage_name):
+        return self.storages[storage_name]
+
+    # def create_entity(self, entity_name, entity_type, **kwargs):
+    #     """
+    #     Create a new entity of type entity_type
+    #     The fields specified in the kwargs will be added to the entity
+    #     """
+    #     new_entity = {}
+    #     for key in kwargs:
+    #         if kwargs[key]:
+    #             new_entity[key] = kwargs[key].copy()
+
+    #     if entity_type in self.storages:
+    #         self.storages[entity_type].put_element(entity_name, new_entity)

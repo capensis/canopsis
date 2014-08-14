@@ -1,10 +1,6 @@
 Engine Filter specification
 ===================
 
-The set of rules is retrieved using the name specified when the engine filter is launched.
-
-See `amqp2engines <https://github.com/capensis/canopsis/blob/sphinx-documentation/doc/administrator-guide/amqp2engines.rst>`_ documentation
-
 
 Rule specification
 ===================
@@ -79,4 +75,8 @@ Time Structure
 		'stopTs':		//Timestamp of stop time
 		},...]
 		
-See `event_filter-Myunittest <https://github.com/capensis/canopsis/blob/develop/sources/amqp2engines/opt/amqp2engines/unittest/event_filter-Myunittest.py>`_ for examples
+See `event_filter-Myunittest <https://github.com/capensis/canopsis/blob/NRPUIV2/sources/python/engines/test/event_filter.py>`_ for examples
+
+Below is a simplified example on how the rules work
+
+.. image:: schema-event_filter_rule.png

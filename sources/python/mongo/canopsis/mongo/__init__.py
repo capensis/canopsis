@@ -196,21 +196,31 @@ class Storage(MongoDataBase, Storage):
     ):
 
         query = {}
+        count_opt = False
 
-        if ids is not None:
+        from collections import Iterable
+
+        if isinstance(ids, Iterable) and not isinstance(ids, str):
             query['_id'] = {'$in': ids}
+        else:
+            query['_id'] = ids
 
         cursor = self._find(query)
 
         if limit:
             cursor.limit(limit)
+            count_opt = True
         if skip:
             cursor.skip(skip)
+            count_opt = True
         if sort is not None:
             Storage._update_sort(sort)
             cursor.sort(sort)
 
-        result = list(cursor)
+        # Return the element if only one element was requested
+        # Otherwise, return a list of the requested elements
+        cursor = None if not cursor.count(count_opt) else cursor
+        result = cursor if len(ids) == 1 else list(cursor)
 
         return result
 

@@ -19,6 +19,7 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
+from canopsis.old.init import force_unicode
 from pybars import Compiler, _compiler
 
 
@@ -38,8 +39,7 @@ class Template(Compiler):
         self.register_helper(u'compact', self._helper_compact)
 
     def register_helper(self, name, handler):
-        if not isinstance(name, str):
-            raise TypeError("Helpers name must be a unicode string")
+        name = force_unicode(name)
 
         _compiler._pybars_['helpers'][name] = handler
 
