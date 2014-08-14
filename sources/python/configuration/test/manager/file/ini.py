@@ -21,36 +21,24 @@
 
 from unittest import main
 
-try:
-    from test.manager import ConfigurationManagerTest
+from test.manager.file import ConfigurationManagerTest
 
-except ImportError:
-    # add path for ensuring import
-    #path_to_add = '{0}{1}..{1}..{1}'.format(dirname(realpath(__file__)), sep)
-    from os.path import realpath, dirname, sep
-    from sys import path
-
-    path_to_add = '{0}{1}..{1}'.format(dirname(realpath(__file__)), sep)
-    path.append(path_to_add)
-
-    from manager import ConfigurationManagerTest
-
-from canopsis.configuration.manager.json import JSONConfigurationManager
+from canopsis.configuration.manager.ini import INIConfigurationManager
 
 
-class ConfigurationManagerTest(ConfigurationManagerTest):
+class INIConfigurationManagerTest(ConfigurationManagerTest):
 
     def _get_configuration_manager(self):
 
-        return JSONConfigurationManager()
+        return INIConfigurationManager()
 
     def _get_manager_path(self):
 
-        return 'canopsis.configuration.manager.json.JSONConfigurationManager'
+        return 'canopsis.configuration.manager.ini.INIConfigurationManager'
 
     def _get_manager(self):
 
-        return JSONConfigurationManager
+        return INIConfigurationManager
 
 if __name__ == '__main__':
     main()

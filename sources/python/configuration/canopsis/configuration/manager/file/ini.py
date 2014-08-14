@@ -21,13 +21,13 @@
 
 from os.path import join
 
-from . import ConfigurationManager
+from . import FileConfigurationManager
 
 from ConfigParser import RawConfigParser, DuplicateSectionError,\
     MissingSectionHeaderError
 
 
-class INIConfigurationManager(ConfigurationManager):
+class INIConfigurationManager(FileConfigurationManager):
     """
     Manage ini configuration.
     """
@@ -57,10 +57,10 @@ class INIConfigurationManager(ConfigurationManager):
 
             files = []
 
-            path = join('~/etc/', 
+            path = FileConfigurationManager.get_path(conf_file)
 
             try:
-                files = result.read(conf_file)
+                files = result.read(path)
 
             except MissingSectionHeaderError:
                 pass
