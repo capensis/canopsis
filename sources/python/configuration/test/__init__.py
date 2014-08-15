@@ -22,7 +22,7 @@
 from unittest import TestCase, main
 
 from canopsis.configuration import \
-    Configurable, Configuration, Category, Parameter
+    Configurable, Configuration, Category, Parameter, conf_resources
 
 from os import remove
 
@@ -214,6 +214,21 @@ class ConfigurableTest(TestCase):
         self.assertEqual(
             len(configurable.conf) + 1,
             len(_configurable.conf))
+
+    def test_conf_resource(self):
+
+        my_conf_resources = ['my_conf_resource', 'my_conf_resource2']
+
+        @conf_resources(*my_conf_resources)
+        class TestConfigurable(Configurable):
+            pass
+
+        testconfigurable = TestConfigurable()
+        configurable = Configurable()
+
+        self.assertEqual(
+            list(configurable.conf_files) + my_conf_resources,
+            list(testconfigurable.conf_files))
 
 if __name__ == '__main__':
     main()

@@ -50,9 +50,16 @@ class MetaConfigurable(type):
         return result
 
 
+class ConfigurableError(Exception):
+    """
+    Handle Configurable errors
+    """
+    pass
+
+
 class Configurable(object):
     """
-    Manages class conf synchronisation with conf files.
+    Manages class conf synchronisation with conf resources.
     """
 
     __metaclass__ = MetaConfigurable
@@ -687,3 +694,38 @@ class Configurable(object):
                 managers, conf_file))
 
         return result
+
+
+def conf_resources(*conf_resources):
+    """
+    Configurable decorator which adds conf_resource paths to a Configurable.
+
+    :param paths: conf resource pathes to add to a Configurable
+    :type paths: list of str
+
+    Example:
+    >>>@conf_resources('myexample/example.conf')
+    >>>class MyConfigurable(Configurable):
+    >>>    pass
+    >>>MyConfigurable().conf_files == (Configurable().conf_files + ['myexample/example.conf'])
+    """
+
+    def _get_conf_files(self):
+        # get super result and append conf_resources
+        result = super(type(self), self)._get_conf_files()
+        result += conf_resources
+
+        return result
+
+    def add_conf_resources(cls):
+        # add _get_conf_files method to configurable classes
+        if issubclass(cls, Configurable):
+            cls._get_conf_files = _get_conf_files
+
+        else:
+            raise Configurable.Error(
+                "class %s is not a Configurable class" % cls)
+
+        return cls
+
+    return add_conf_resources
