@@ -33,17 +33,17 @@ class FileConfigurationManager(ConfigurationManager):
 
     CONF_DIR = '~/etc/'
 
-    def exists(self, conf_file, *args, **kwargs):
+    def exists(self, conf_path, *args, **kwargs):
 
-        path = FileConfigurationManager.get_path(conf_file)
+        path = FileConfigurationManager.get_path(conf_path)
 
         result = exists(path) and stat(path)[ST_SIZE]
 
         return result
 
     @staticmethod
-    def get_path(conf_file):
+    def get_path(conf_path):
 
-        result = join(FileConfigurationManager.CONF_DIR, conf_file)
+        result = join(FileConfigurationManager.CONF_DIR, conf_path)
 
         return result

@@ -20,12 +20,12 @@
 
 __version__ = "0.1"
 
-from .configurable import Configurable, conf_resources
+from .configurable import Configurable, conf_paths
 from .parameters import Configuration, Category, Parameter
 
 __all__ = [
     'Configurable',
-    'conf_resources',
+    'conf_paths',
     'Configuration',
     'Category',
     'Parameter']

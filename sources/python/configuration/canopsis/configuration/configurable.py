@@ -75,8 +75,9 @@ class Configurable(object):
 
     AUTO_CONF = 'auto_conf'
     RECONF_ONCE = 'reconf_once'
-    CONF_FILES = 'conf_files'
+    CONF_PATHS = 'conf_paths'
     MANAGERS = 'conf_managers'
+
     LOG_NAME = 'log_name'
     LOG_LVL = 'log_lvl'
     LOG_DEBUG_FORMAT = 'log_debug_format'
@@ -95,7 +96,7 @@ class Configurable(object):
     def __init__(
         self,
         to_configure=None,
-        conf_files=None, managers=DEFAULT_MANAGERS,
+        conf_paths=None, managers=DEFAULT_MANAGERS,
         auto_conf=True, reconf_once=False,
         log_lvl='INFO', log_name=None, log_info_format=INFO_FORMAT,
         log_debug_format=DEBUG_FORMAT, log_warning_format=WARNING_FORMAT,
@@ -106,8 +107,8 @@ class Configurable(object):
             the methods configure apply_configuration and configure
         :type to_configure: class instance
 
-        :param conf_files: conf_files to parse
-        :type conf_files: Iterable or str
+        :param conf_paths: conf_paths to parse
+        :type conf_paths: Iterable or str
 
         :param auto_conf: true force auto conf as soon as param change
         :type auto_conf: bool
@@ -128,7 +129,7 @@ class Configurable(object):
         self.reconf_once = reconf_once
 
         # set conf files
-        self._init_conf_files(conf_files)
+        self._init_conf_files(conf_paths)
 
         # set managers
         self.managers = managers
@@ -217,7 +218,10 @@ class Configurable(object):
                 Parameter(Configurable.MANAGERS, self.managers),
                 Parameter(
                     Configurable.RECONF_ONCE, self.reconf_once,
-                    Parameter.bool)),
+                    Parameter.bool),
+                Parameter(
+                    Configurable.CONF_PATHS, self.conf_paths,
+                    Parameter.array)),
             Category(Configurable.LOG,
                 Parameter(Configurable.LOG_NAME, self.log_name),
                 Parameter(Configurable.LOG_LVL, self.log_lvl),
@@ -330,7 +334,7 @@ class Configurable(object):
         return self._logger
 
     @property
-    def conf_files(self):
+    def conf_paths(self):
         """
         Get all type conf files and user files.
 
@@ -338,17 +342,17 @@ class Configurable(object):
         :rtype: tuple
         """
 
-        if not hasattr(self, '_conf_files'):
-            self._conf_files = []
+        if not hasattr(self, '_conf_paths'):
+            self._conf_paths = []
 
-        result = self._conf_files
+        result = self._conf_paths
 
         return result
 
-    @conf_files.setter
-    def conf_files(self, value):
+    @conf_paths.setter
+    def conf_paths(self, value):
         """
-        Change of conf_files in adding it in watching list.
+        Change of conf_paths in adding it in watching list.
         """
 
         #from canopsis.configuration.watcher import add_configurable,\
@@ -356,7 +360,7 @@ class Configurable(object):
 
         # remove previous watching
         #remove_configurable(self)
-        self._conf_files = tuple(value)
+        self._conf_paths = tuple(value)
         # add new watching
         #add_configurable(self)
 
@@ -377,24 +381,24 @@ class Configurable(object):
         self._reconf_once = value
 
     def apply_configuration(
-        self, conf=None, conf_files=None, managers=None, logger=None
+        self, conf=None, conf_paths=None, managers=None, logger=None
     ):
         """
         Apply conf on a destination in 5 phases:
 
-        1. identify the right manager to use with conf_files to parse.
-        2. for all conf_files, get conf which match
+        1. identify the right manager to use with conf_paths to parse.
+        2. for all conf_paths, get conf which match
             with input conf.
-        3. apply parsing rules on conf_file params.
+        3. apply parsing rules on conf_path params.
         4. put values and parsing errors in two different dictionaries.
         5. returns both dictionaries of param values and errors.
 
         :param conf: conf from where get conf
         :type conf: Configuration
 
-        :param conf_files: conf files to parse. If
-            conf_files is a str, it is automatically putted into a list
-        :type conf_files: list of str
+        :param conf_paths: conf files to parse. If
+            conf_paths is a str, it is automatically putted into a list
+        :type conf_paths: list of str
         """
 
         if logger is None:
@@ -404,26 +408,26 @@ class Configurable(object):
             conf = self.conf
 
         conf = self.get_configuration(
-            conf=conf, conf_files=conf_files, logger=logger,
+            conf=conf, conf_paths=conf_paths, logger=logger,
             managers=managers)
 
         self.configure(conf=conf)
 
     def get_configuration(
         self,
-        conf=None, conf_files=None, managers=None, fill=False, logger=None
+        conf=None, conf_paths=None, managers=None, fill=False, logger=None
     ):
         """
         Get a dictionary of params by name from conf,
-        conf_files and conf_managers
+        conf_paths and conf_managers
 
         :param conf: conf to update. If None, use \
             self.conf
         :type conf: Configuration
 
-        :param conf_files: list of conf files. If None, use \
-            self.conf_files
-        :type conf_files: list of str
+        :param conf_paths: list of conf files. If None, use \
+            self.conf_paths
+        :type conf_paths: list of str
 
         :param logger: logger to use for logging info/error messages.
             If None, use self.logger
@@ -433,7 +437,7 @@ class Configurable(object):
         :type managers: list of ConfigurationManager
 
         :param fill: if True (False by default) load in conf all \
-            conf_files content
+            conf_paths content
         :type fill: bool
         """
 
@@ -447,50 +451,50 @@ class Configurable(object):
         # remove values from conf
         conf.clean()
 
-        if conf_files is None:
-            conf_files = self._conf_files
+        if conf_paths is None:
+            conf_paths = self._conf_paths
 
-        if isinstance(conf_files, str):
-            conf_files = [conf_files]
+        if isinstance(conf_paths, str):
+            conf_paths = [conf_paths]
 
         # clean conf file list
-        conf_files = [
-            abspath(expanduser(conf_file)) for conf_file
-            in conf_files]
+        conf_paths = [
+            abspath(expanduser(conf_path)) for conf_path
+            in conf_paths]
 
         if managers is None:
             managers = self.managers
 
-        # iterate on all conf_files
-        for conf_file in conf_files:
+        # iterate on all conf_paths
+        for conf_path in conf_paths:
 
-            if not exists(conf_file) or stat(conf_file)[ST_SIZE] == 0:
+            if not exists(conf_path) or stat(conf_path)[ST_SIZE] == 0:
                 continue
 
             conf_manager = self._get_manager(
-                conf_file=conf_file, logger=logger, managers=managers)
+                conf_path=conf_path, logger=logger, managers=managers)
 
             # if a config_resource is not None
             if conf_manager is not None:
 
                 conf = conf_manager.get_configuration(
                     conf=conf, fill=fill, logger=logger,
-                    conf_file=conf_file)
+                    conf_path=conf_path)
 
             else:
                 # if no conf_manager, display a warning log message
                 self.logger.warning(
                     'No manager found among {0} for {1}'.format(
-                        conf_file))
+                        conf_path))
 
         return conf
 
-    def set_configuration(self, conf_file, conf, manager=None, logger=None):
+    def set_configuration(self, conf_path, conf, manager=None, logger=None):
         """
-        Set params on input conf_file.
+        Set params on input conf_path.
 
         Args:
-            - conf_files (str): conf_file to udate with
+            - conf_paths (str): conf_path to udate with
                 params
             - parameter_by_categories (dict(str: dict(str: object)):
             - logger (logging.Logger): logger to use to set params.
@@ -501,20 +505,20 @@ class Configurable(object):
         if logger is None:
             logger = self.logger
 
-        # first get content of input conf_file
+        # first get content of input conf_path
         prev_manager = self._get_manager(
-            conf_file=conf_file,
+            conf_path=conf_path,
             logger=logger,
             managers=self.managers)
 
         if prev_manager is not None:
             prev_conf = prev_manager.get_configuration(
-                conf_file=conf_file, logger=logger)
+                conf_path=conf_path, logger=logger)
 
         # try to find a good manager if manager is None
         if manager is None:
             manager = self._get_manager(
-                conf_file=conf_file,
+                conf_path=conf_path,
                 logger=logger,
                 managers=self.managers)
 
@@ -523,7 +527,7 @@ class Configurable(object):
 
         else:
             manager = self._get_manager(
-                conf_file=None,
+                conf_path=None,
                 logger=logger,
                 managers=manager)
 
@@ -536,7 +540,7 @@ class Configurable(object):
 
         if manager is not None:
             manager.set_configuration(
-                conf_file=conf_file,
+                conf_path=conf_path,
                 conf=conf,
                 logger=logger)
 
@@ -544,7 +548,7 @@ class Configurable(object):
             self.logger.error(
                 'No ConfigurationManager found for \
                 conf file {0}'.format(
-                    conf_file))
+                    conf_path))
 
         return result
 
@@ -653,10 +657,10 @@ class Configurable(object):
 
         return result
 
-    def _init_conf_files(self, conf_files):
+    def _init_conf_files(self, conf_paths):
 
-        self.conf_files = self._get_conf_files() \
-            if conf_files is None else conf_files
+        self.conf_paths = self._get_conf_files() \
+            if conf_paths is None else conf_paths
 
     def _get_conf_files(self):
 
@@ -665,12 +669,12 @@ class Configurable(object):
         return result
 
     @staticmethod
-    def _get_manager(conf_file, managers, logger):
+    def _get_manager(conf_path, managers, logger):
         """
-        Get the first manager able to handle input conf_file.
-        None if no manager is able to handle input conf_file.
+        Get the first manager able to handle input conf_path.
+        None if no manager is able to handle input conf_path.
 
-        :return: first ConfigurationManager able to handle conf_file.
+        :return: first ConfigurationManager able to handle conf_path.
         :rtype: ConfigurationManager
         """
 
@@ -682,8 +686,8 @@ class Configurable(object):
             manager = ConfigurationManager.get_manager(manager)
             manager = manager()
 
-            handle = conf_file is None \
-                or manager.handle(conf_file=conf_file, logger=logger)
+            handle = conf_path is None \
+                or manager.handle(conf_path=conf_path, logger=logger)
 
             if handle:
                 result = manager
@@ -691,33 +695,33 @@ class Configurable(object):
 
         logger.warning(
             'No manager found among {0} for processing file {1}'.format(
-                managers, conf_file))
+                managers, conf_path))
 
         return result
 
 
-def conf_resources(*conf_resources):
+def conf_paths(*conf_paths):
     """
-    Configurable decorator which adds conf_resource paths to a Configurable.
+    Configurable decorator which adds conf_path paths to a Configurable.
 
     :param paths: conf resource pathes to add to a Configurable
     :type paths: list of str
 
     Example:
-    >>>@conf_resources('myexample/example.conf')
+    >>>@conf_paths('myexample/example.conf')
     >>>class MyConfigurable(Configurable):
     >>>    pass
-    >>>MyConfigurable().conf_files == (Configurable().conf_files + ['myexample/example.conf'])
+    >>>MyConfigurable().conf_paths == (Configurable().conf_paths + ['myexample/example.conf'])
     """
 
     def _get_conf_files(self):
-        # get super result and append conf_resources
+        # get super result and append conf_paths
         result = super(type(self), self)._get_conf_files()
-        result += conf_resources
+        result += conf_paths
 
         return result
 
-    def add_conf_resources(cls):
+    def add_conf_paths(cls):
         # add _get_conf_files method to configurable classes
         if issubclass(cls, Configurable):
             cls._get_conf_files = _get_conf_files
@@ -728,4 +732,4 @@ def conf_resources(*conf_resources):
 
         return cls
 
-    return add_conf_resources
+    return add_conf_paths

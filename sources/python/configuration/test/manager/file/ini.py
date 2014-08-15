@@ -34,7 +34,7 @@ class INIConfigurationManagerTest(ConfigurationManagerTest):
 
     def _get_manager_path(self):
 
-        return 'canopsis.configuration.manager.ini.INIConfigurationManager'
+        return 'canopsis.configuration.manager.file.ini.INIConfigurationManager'
 
     def _get_manager(self):
 

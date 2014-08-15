@@ -49,15 +49,15 @@ class INIConfigurationManager(FileConfigurationManager):
         return conf_resource.has_option(category.name, param.name)
 
     def _get_conf_resource(
-        self, logger, conf_file=None, *args, **kwargs
+        self, logger, conf_path=None, *args, **kwargs
     ):
         result = RawConfigParser()
 
-        if conf_file is not None:
+        if conf_path is not None:
 
             files = []
 
-            path = FileConfigurationManager.get_path(conf_file)
+            path = FileConfigurationManager.get_path(conf_path)
 
             try:
                 files = result.read(path)
@@ -97,7 +97,7 @@ class INIConfigurationManager(FileConfigurationManager):
     ):
         conf_resource.set(category.name, param.name, param.value)
 
-    def _update_conf_file(
-        self, conf_resource, conf_file, *args, **kwargs
+    def _update_conf_resource(
+        self, conf_resource, conf_path, *args, **kwargs
     ):
-        conf_resource.write(open(join('~/etc/', conf_file), 'w'))
+        conf_resource.write(open(join('~/etc/', conf_path), 'w'))

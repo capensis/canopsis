@@ -34,7 +34,7 @@ class ConfigurationManagerTest(ConfigurationManagerTest):
 
     def _get_manager_path(self):
 
-        return 'canopsis.configuration.manager.json.JSONConfigurationManager'
+        return 'canopsis.configuration.manager.file.json.JSONConfigurationManager'
 
     def _get_manager(self):
 

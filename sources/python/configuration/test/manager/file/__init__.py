@@ -61,14 +61,14 @@ class TestConfigurationManager(FileConfigurationManager):
         return conf_resource[category.name].keys()
 
     def _get_conf_resource(
-        self, logger, conf_file=None, *args, **kwargs
+        self, logger, conf_path=None, *args, **kwargs
     ):
 
         result = dict()
 
-        if conf_file is not None:
+        if conf_path is not None:
 
-            with open(conf_file, 'r') as handle:
+            with open(conf_path, 'r') as handle:
 
                 try:
                     result = loads(handle.read())
@@ -97,11 +97,11 @@ class TestConfigurationManager(FileConfigurationManager):
     ):
         conf_resource[category.name][param.name] = param.value
 
-    def _update_conf_file(
-        self, conf_resource, conf_file, *args, **kwargs
+    def _update_conf_resource(
+        self, conf_resource, conf_path, *args, **kwargs
     ):
 
-        with open(conf_file, 'w') as handle:
+        with open(conf_path, 'w') as handle:
 
             try:
                 dump(conf_resource, handle)
@@ -131,7 +131,7 @@ class ConfigurationManagerTest(TestCase):
                 Parameter('b', value=1, parser=int),  # b is 1
                 Parameter('c', value='er', parser=int)))  # error
 
-        self.conf_file = self.get_configuration_file()
+        self.conf_path = self.get_configuration_file()
 
     def get_configuration_file(self):
 
@@ -139,14 +139,14 @@ class ConfigurationManagerTest(TestCase):
 
     def _remove(self):
         try:
-            remove(self.conf_file)
+            remove(self.conf_path)
         except OSError:
             pass
 
     def _open(self):
 
         try:
-            open(self.conf_file, 'w').close()
+            open(self.conf_path, 'w').close()
         except OSError:
             pass
 
@@ -156,7 +156,7 @@ class ConfigurationManagerTest(TestCase):
         self._remove()
 
         conf = self.manager.get_configuration(
-            conf_file=self.conf_file,
+            conf_path=self.conf_path,
             logger=self.logger)
 
         self.assertEqual(conf, None)
@@ -165,19 +165,19 @@ class ConfigurationManagerTest(TestCase):
         self._open()
 
         conf = self.manager.get_configuration(
-            conf_file=self.conf_file,
+            conf_path=self.conf_path,
             logger=self.logger)
 
         self.assertTrue(conf is None)
 
         # get full conf
         self.manager.set_configuration(
-            conf_file=self.conf_file,
+            conf_path=self.conf_path,
             conf=self.conf,
             logger=self.logger)
 
         conf = self.manager.get_configuration(
-            conf_file=self.conf_file,
+            conf_path=self.conf_path,
             conf=self.conf,
             logger=self.logger,
             fill=True)
@@ -200,7 +200,7 @@ class ConfigurationManagerTest(TestCase):
         conf = Configuration(self.conf['B'])
 
         conf = self.manager.get_configuration(
-            conf_file=self.conf_file,
+            conf_path=self.conf_path,
             conf=conf,
             logger=self.logger)
 

@@ -22,7 +22,7 @@
 from unittest import TestCase, main
 
 from canopsis.configuration import \
-    Configurable, Configuration, Category, Parameter, conf_resources
+    Configurable, Configuration, Category, Parameter, conf_paths
 
 from os import remove
 
@@ -33,7 +33,7 @@ class ConfigurableTest(TestCase):
 
     def setUp(self):
 
-        self.conf_files = (
+        self.conf_paths = (
             NamedTemporaryFile().name,
             NamedTemporaryFile().name
         )
@@ -52,18 +52,18 @@ class ConfigurableTest(TestCase):
     def test_configuration_files(self):
 
         configurable = Configurable()
-        configurable.conf_files = self.conf_files
+        configurable.conf_paths = self.conf_paths
 
         self.assertEqual(
-            configurable.conf_files,
-            self.conf_files)
+            configurable.conf_paths,
+            self.conf_paths)
 
         configurable = Configurable(
-            conf_files=self.conf_files)
+            conf_paths=self.conf_paths)
 
         self.assertEqual(
-            configurable.conf_files,
-            self.conf_files)
+            configurable.conf_paths,
+            self.conf_paths)
 
     def test_auto_conf(self):
 
@@ -99,11 +99,11 @@ class ConfigurableTest(TestCase):
         self.assertEqual(len(conf), len(self.conf))
 
         # test to get from files which do not exist
-        configurable.conf_files = self.conf_files
+        configurable.conf_paths = self.conf_paths
 
-        for conf_file in self.conf_files:
+        for conf_path in self.conf_paths:
             try:
-                remove(conf_file)
+                remove(conf_path)
             except OSError:
                 pass
 
@@ -112,8 +112,8 @@ class ConfigurableTest(TestCase):
         self.assertEqual(len(conf), len(self.conf))
 
         # get parameters from empty files
-        for conf_file in self.conf_files:
-            open(conf_file, 'w').close()
+        for conf_path in self.conf_paths:
+            open(conf_path, 'w').close()
 
         conf = configurable.get_configuration()
 
@@ -127,17 +127,17 @@ class ConfigurableTest(TestCase):
 
         # fill files
         configurable = Configurable(
-            conf_files=self.conf_files)
+            conf_paths=self.conf_paths)
 
         # add first category in conf file[0]
         configurable.set_configuration(
-            conf_file=self.conf_files[0],
+            conf_path=self.conf_paths[0],
             conf=Configuration(self.conf['A']),
             manager=configurable._managers.split(',')[0])
 
         # add second category in conf file[1]
         configurable.set_configuration(
-            conf_file=self.conf_files[1],
+            conf_path=self.conf_paths[1],
             conf=Configuration(self.conf['B']),
             manager=configurable._managers.split(',')[1])
 
@@ -219,7 +219,7 @@ class ConfigurableTest(TestCase):
 
         my_conf_resources = ['my_conf_resource', 'my_conf_resource2']
 
-        @conf_resources(*my_conf_resources)
+        @conf_paths(*my_conf_resources)
         class TestConfigurable(Configurable):
             pass
 
@@ -227,8 +227,8 @@ class ConfigurableTest(TestCase):
         configurable = Configurable()
 
         self.assertEqual(
-            list(configurable.conf_files) + my_conf_resources,
-            list(testconfigurable.conf_files))
+            list(configurable.conf_paths) + my_conf_resources,
+            list(testconfigurable.conf_paths))
 
 if __name__ == '__main__':
     main()

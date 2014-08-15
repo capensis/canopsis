@@ -48,14 +48,14 @@ class JSONConfigurationManager(FileConfigurationManager):
         return param.name in conf_resource[category.name]
 
     def _get_conf_resource(
-        self, logger, conf_file=None, *args, **kwargs
+        self, logger, conf_path=None, *args, **kwargs
     ):
         result = {}
 
-        if conf_file is not None:
+        if conf_path is not None:
             result = None
 
-            path = FileConfigurationManager.get_path(conf_file)
+            path = FileConfigurationManager.get_path(conf_path)
 
             try:
                 with open(path, 'r') as handle:
@@ -91,11 +91,11 @@ class JSONConfigurationManager(FileConfigurationManager):
     ):
         conf_resource[category.name][param.name] = param.value
 
-    def _update_conf_file(
-        self, conf_resource, conf_file, *args, **kwargs
+    def _update_conf_resource(
+        self, conf_resource, conf_path, *args, **kwargs
     ):
 
-        path = FileConfigurationManager.get_path(conf_file)
+        path = FileConfigurationManager.get_path(conf_path)
 
         try:
             with open(path, 'w') as handle:
