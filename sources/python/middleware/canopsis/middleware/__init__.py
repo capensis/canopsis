@@ -27,7 +27,8 @@ from canopsis.configuration.configurable import MetaConfigurable
 
 SCHEME_SEPARATOR = '-'  #: char separator in uri to proto/data_type/data_scope
 PROTOCOL_INDEX = 0  #: protocol name index in an uri scheme
-DATA_TYPE_INDEX = 1  #: data_type name index in an uri scheme
+DATA_TYPE_INDEX = 1  #: data type name index in an uri scheme
+DATA_SCOPE_INDEX = 2  #: data scope name index in an uri scheme
 DEFAULT_DATA_SCOPE = 'canopsis'  #: default data_scope
 
 
@@ -43,18 +44,21 @@ def parse_scheme(uri):
 
     protocol = None
     data_type = None
+    data_scope = DEFAULT_DATA_SCOPE
 
     parsed_url = urlparse(uri)
     protocol = parsed_url.scheme
 
     if protocol and SCHEME_SEPARATOR in parsed_url.scheme:
         splitted_scheme = protocol.split(SCHEME_SEPARATOR)
-        if len(splitted_scheme) >= 1:
+        if len(splitted_scheme) > PROTOCOL_INDEX:
             protocol = splitted_scheme[PROTOCOL_INDEX]
-        if len(splitted_scheme) >= 2:
+        if len(splitted_scheme) > DATA_TYPE_INDEX:
             data_type = splitted_scheme[DATA_TYPE_INDEX]
+        if len(splitted_scheme) > DATA_SCOPE_INDEX:
+            data_scope = splitted_scheme[DATA_SCOPE_INDEX]
 
-    result = protocol, data_type
+    result = protocol, data_type, data_scope
 
     return result
 
@@ -524,9 +528,9 @@ class Middleware(Configurable):
             if reconnect or not self.connected():
                 self.reconnect()
 
-    def _get_conf_files(self, *args, **kwargs):
+    def _get_conf_paths(self, *args, **kwargs):
 
-        result = super(Middleware, self)._get_conf_files(*args, **kwargs)
+        result = super(Middleware, self)._get_conf_paths(*args, **kwargs)
 
         result.append(Middleware.CONF_RESOURCE)
 
@@ -633,6 +637,11 @@ class Middleware(Configurable):
         result = None
 
         middleware_class = Middleware.resolve_middleware(uri)
+
+        _, _, data_scope = parse_scheme(uri)
+
+        if data_scope:
+            kwargs["data_scope"] = data_scope
 
         if middleware_class is not None:
             result = middleware_class(*args, **kwargs)

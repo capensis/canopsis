@@ -20,7 +20,8 @@
 
 from urlparse import urlparse
 
-from canopsis.configuration import Configurable, Parameter, Configuration
+from canopsis.configuration import \
+    Configurable, Parameter, Configuration, ConfigurableManager
 from . import Middleware, DEFAULT_DATA_SCOPE
 
 
@@ -185,7 +186,8 @@ class Manager(Configurable):
 
     def _get_conf_files(self, *args, **kwargs):
 
-        result = super(Manager, self)._get_conf_files(*args, **kwargs)
+        result = super(Manager, self)._get_conf_files(
+            *args, **kwargs)
 
         result.append(Manager.CONF_RESOURCE)
 
@@ -232,3 +234,28 @@ class Manager(Configurable):
                 self._update_property(
                     unified_conf=unified_conf, param_name=parameter.name,
                     public=True)
+
+    def _get_property_middleware(self, value, _type=Middleware):
+        """
+        Get property middleware where value is given in calling property.setter
+        """
+
+        result = None
+
+        if value is not None:
+            result = self.get_middleware(
+                uri, data_scope=None, auto_connect=None,
+                shared=None, sharing_scope=None,
+                *args, **kwargs)
+
+        # check if result is an instance of inpyt type
+        if not isinstance(middleware, _type):
+            raise Manager.Error("Middleware %s must be of type %s" % _type)
+
+        if value is not None and not isinstance(value, Storage):
+            result = self.get_middleware(storage_type=value)
+
+        return result
+
+
+def middleware_property(name, type=None):

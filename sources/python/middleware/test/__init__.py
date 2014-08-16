@@ -46,21 +46,21 @@ class MiddlewareTest(TestCase):
 
         uri = 'http://plop'
 
-        protocol, data_type = parse_scheme(uri)
+        protocol, data_type, data_scope = parse_scheme(uri)
 
         self.assertEqual(protocol, 'http')
         self.assertEqual(data_type, None)
 
         uri = '%s%s%s://' % ('http', SCHEME_SEPARATOR, '')
 
-        protocol, data_type = parse_scheme(uri)
+        protocol, data_type, data_scope = parse_scheme(uri)
 
         self.assertEqual(protocol, 'http')
         self.assertEqual(data_type, '')
 
         uri = '%s%s%s://' % ('http', SCHEME_SEPARATOR, 'ae')
 
-        protocol, data_type = parse_scheme(uri)
+        protocol, data_type, data_scope = parse_scheme(uri)
 
         self.assertEqual(protocol, 'http')
         self.assertEqual(data_type, 'ae')

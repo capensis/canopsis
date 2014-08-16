@@ -20,6 +20,8 @@
 
 from collections import OrderedDict, Iterable
 
+from canopsis.common.utils import resolve_element
+
 
 class Configuration(object):
     """
@@ -409,3 +411,7 @@ class Parameter(object):
     @staticmethod
     def bool(value):
         return value == 'True' or value == 'true' or value == '1'
+
+    @staticmethod
+    def path(value):
+        return resolve_element(value)

@@ -27,13 +27,13 @@ from canopsis.middleware.manager import Manager
 
 class TestUnregisteredMiddleware(Middleware):
 
-    __protocol__ = 'notprotocoltest'
+    __protocol__ = 'noprototest'
 
 
 class TestRegisteredMiddleware(Middleware):
 
     __register__ = True
-    __protocol__ = 'protocoltest'
+    __protocol__ = 'prototest'
 
 
 class TestRegisteredWithDataTypeMiddleware(TestRegisteredMiddleware):
@@ -42,7 +42,30 @@ class TestRegisteredWithDataTypeMiddleware(TestRegisteredMiddleware):
 
 
 class TestManager(Manager):
-    pass
+
+    @property
+    def test_middleware(self):
+        return self._test_middleware
+
+    @test_middleware.setter
+    def test_middleware(self, value):
+        self._test_middleware = value
+
+    @property
+    def test2_middleware(self):
+        return self._test2_middleware
+
+    @test2_middleware.setter
+    def test2_middleware(self, value):
+        self._test2_middleware = value
+
+    @property
+    def test3_middleware(self):
+        return self._test3_middleware
+
+    @test3_middleware.setter
+    def test3_middleware(self, value):
+        self._test3_middleware = value
 
 
 class ManagerTest(TestCase):

@@ -176,7 +176,8 @@ class ConfigurationManager(object):
                                     conf_resource=conf_resource,
                                     category=category,
                                     param=param,
-                                        logger=logger):
+                                    logger=logger
+                                ):
 
                                     # construct generic log message for each
                                     # name

@@ -68,7 +68,7 @@ class Configurable(object):
         'canopsis.configuration.manager.file.json.JSONConfigurationManager',
         'canopsis.configuration.manager.file.ini.INIConfigurationManager')
 
-    CONF_RESOURCE = 'configuration/configurable.conf'
+    CONF_PATH = 'configuration/configurable.conf'
 
     CONF = 'CONFIGURATION'
     LOG = 'LOG'
@@ -129,7 +129,7 @@ class Configurable(object):
         self.reconf_once = reconf_once
 
         # set conf files
-        self._init_conf_files(conf_paths)
+        self._init_conf_paths(conf_paths)
 
         # set managers
         self.managers = managers
@@ -381,7 +381,8 @@ class Configurable(object):
         self._reconf_once = value
 
     def apply_configuration(
-        self, conf=None, conf_paths=None, managers=None, logger=None
+        self, conf=None, conf_paths=None, managers=None, logger=None,
+        fill=True
     ):
         """
         Apply conf on a destination in 5 phases:
@@ -399,23 +400,21 @@ class Configurable(object):
         :param conf_paths: conf files to parse. If
             conf_paths is a str, it is automatically putted into a list
         :type conf_paths: list of str
+
+        :param fill: if True (False by default) load in conf all \
+            conf_paths content
+        :type fill: bool
         """
-
-        if logger is None:
-            logger = self.logger
-
-        if conf is None:
-            conf = self.conf
 
         conf = self.get_configuration(
             conf=conf, conf_paths=conf_paths, logger=logger,
-            managers=managers)
+            managers=managers, fill=fill)
 
         self.configure(conf=conf)
 
     def get_configuration(
         self,
-        conf=None, conf_paths=None, managers=None, fill=False, logger=None
+        conf=None, conf_paths=None, managers=None, fill=True, logger=None
     ):
         """
         Get a dictionary of params by name from conf,
@@ -657,14 +656,14 @@ class Configurable(object):
 
         return result
 
-    def _init_conf_files(self, conf_paths):
+    def _init_conf_paths(self, conf_paths):
 
-        self.conf_paths = self._get_conf_files() \
+        self.conf_paths = self._get_conf_paths() \
             if conf_paths is None else conf_paths
 
-    def _get_conf_files(self):
+    def _get_conf_paths(self):
 
-        result = [Configurable.CONF_RESOURCE]
+        result = [Configurable.CONF_PATH]
 
         return result
 
@@ -698,38 +697,3 @@ class Configurable(object):
                 managers, conf_path))
 
         return result
-
-
-def conf_paths(*conf_paths):
-    """
-    Configurable decorator which adds conf_path paths to a Configurable.
-
-    :param paths: conf resource pathes to add to a Configurable
-    :type paths: list of str
-
-    Example:
-    >>>@conf_paths('myexample/example.conf')
-    >>>class MyConfigurable(Configurable):
-    >>>    pass
-    >>>MyConfigurable().conf_paths == (Configurable().conf_paths + ['myexample/example.conf'])
-    """
-
-    def _get_conf_files(self):
-        # get super result and append conf_paths
-        result = super(type(self), self)._get_conf_files()
-        result += conf_paths
-
-        return result
-
-    def add_conf_paths(cls):
-        # add _get_conf_files method to configurable classes
-        if issubclass(cls, Configurable):
-            cls._get_conf_files = _get_conf_files
-
-        else:
-            raise Configurable.Error(
-                "class %s is not a Configurable class" % cls)
-
-        return cls
-
-    return add_conf_paths

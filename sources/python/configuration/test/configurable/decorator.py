@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #--------------------------------
 # Copyright (c) 2014 "Capensis" [http://www.capensis.com]
@@ -18,17 +19,31 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-__version__ = "0.1"
+from unittest import main, TestCase
 
-from .configurable import Configurable
-from .configurable.manager import Manager
-from .parameters import Configuration, Category, Parameter
-from .decorator import conf_paths
+from canopsis.configuration.decorator import conf_paths
+from canopsis.configuration.configurable import Configurable
 
-__all__ = [
-    'Configurable',
-    'Manager',
-    'Configuration',
-    'Category',
-    'Parameter',
-    'conf_paths']
+
+class DecoratorTest(TestCase):
+    """
+    Configuration Manager unittest class.
+    """
+
+    def test_conf_paths(self):
+
+        test_conf_paths = ["test1", "test2"]
+
+        @conf_paths(*test_conf_paths)
+        class TestConfigurable(Configurable):
+            pass
+
+        testConfigurable = TestConfigurable()
+
+        configurable_conf_paths = testConfigurable.conf_paths
+
+        for i in range(1, len(test_conf_paths)):
+            self.assertEqual(test_conf_paths[-i], configurable_conf_paths[-i])
+
+if __name__ == '__main__':
+    main()
