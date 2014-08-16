@@ -43,7 +43,7 @@ Package contents
 .. toctree::
 
    parameters
-   configurable
+   configurable/index
    watcher
    manager/index
    ui/index

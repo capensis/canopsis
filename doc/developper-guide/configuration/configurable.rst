@@ -24,7 +24,6 @@ Package contents
 .. toctree::
 
    manager
-   decorator
 
 Functional description
 ======================
