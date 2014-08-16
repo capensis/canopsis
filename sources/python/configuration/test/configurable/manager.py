@@ -57,25 +57,27 @@ class ManagerTest(TestCase):
         configurable_name = 'test'
         full_configurable_name = '%s%s' % (
             configurable_name, Manager.CONFIGURABLE_SUFFIX)
-
+        configurable_type_name = '%s%s' % (
+            configurable_name, Manager.CONFIGURABLE_TYPE_SUFFIX)
         # ensure configurable doesn't exis
         self.assertFalse(configurable_name in manager)
-        self.assertFalse(full_configurable_name in manager)
 
         self.assertEqual(len(manager.configurables), 0)
         self.assertEqual(len(manager.configurable_types), 0)
 
+        manager[configurable_name] = Configurable()
+
+        self.assertTrue(manager[configurable_name].auto_conf)
+
         with open(conf_path, 'w+') as conf_file:
             conf_file.write("[MANAGER]")
             # set configurable
-            conf_file.write("\n%s%s=" % (
-                configurable_name, Manager.CONFIGURABLE_SUFFIX))
+            conf_file.write("\n%s=" % (full_configurable_name))
             conf_file.write("canopsis.configuration.Configurable")
             # set configurable type
-            conf_file.write("\n%s%s=" % (
-                configurable_name, Manager.CONFIGURABLE_TYPE_SUFFIX))
+            conf_file.write("\n%s=" % (configurable_type_name))
             conf_file.write("canopsis.configuration.Configurable")
-
+            # set sub-configurable auto_conf to false
             configurable_category = Manager.get_configurable_category(
                 configurable_name)
             conf_file.write("\n[%s]" % configurable_category)
@@ -89,49 +91,46 @@ class ManagerTest(TestCase):
         self.assertEqual(len(manager.configurable_types), 1)
 
         # check if configurable and short attribute exist
-        self.assertFalse(manager["test_configurable"].auto_conf)
-        self.assertFalse(manager["test"].auto_conf)
-        self.assertTrue(isinstance(manager["test"], Configurable))
-        self.assertTrue(manager["test"] is manager["test_configurable"])
+        self.assertFalse(manager[configurable_name].auto_conf)
+        self.assertTrue(isinstance(manager[configurable_name], Configurable))
 
         # check if configurable type exist
-        self.assertEqual(manager["test_configurable_type"], Configurable)
+        self.assertEqual(
+            manager.configurable_types[configurable_name], Configurable)
 
         # change type with str or Configurable class
-        manager["test_configurable_type"] = \
+        manager.configurable_types[configurable_name] = \
             "canopsis.configuration.Configurable"
-        self.assertEqual(manager["test_configurable_type"], Configurable)
-        manager["test_configurable_type"] = Configurable
-        self.assertEqual(manager["test_configurable_type"], Configurable)
+        self.assertEqual(
+            manager.configurable_types[configurable_name], Configurable)
+        manager.configurable_types[configurable_name] = Configurable
+        self.assertEqual(
+            manager.configurable_types[configurable_name], Configurable)
 
         # change type in order to do not remove old value
         manager.test_configurable_type = Configurable
-        self.assertTrue(isinstance(manager["test"], Configurable))
+        self.assertTrue(isinstance(manager[configurable_name], Configurable))
         manager.test = 'canopsis.configuration.Configurable'
-        self.assertTrue(isinstance(manager["test"], Configurable))
+        self.assertTrue(isinstance(manager[configurable_name], Configurable))
         manager.test = Configurable
-        self.assertTrue(isinstance(manager["test"], Configurable))
+        self.assertTrue(isinstance(manager[configurable_name], Configurable))
         manager.test = Configurable()
-        self.assertTrue(isinstance(manager["test"], Configurable))
+        self.assertTrue(isinstance(manager[configurable_name], Configurable))
 
         self.assertEqual(len(manager.configurables), 1)
         self.assertEqual(len(manager.configurable_types), 1)
 
         # change type value in order to remove old value
-        manager["test_configurable_type"] = TestConfigurable
+        manager.configurable_types[configurable_name] = TestConfigurable
         self.assertFalse(configurable_name in manager)
-        self.assertFalse(full_configurable_name in manager)
-        self.assertEqual(manager["test_configurable_type"], TestConfigurable)
+        self.assertEqual(
+            manager.configurable_types[configurable_name], TestConfigurable)
 
         self.assertEqual(len(manager.configurables), 0)
         self.assertEqual(len(manager.configurable_types), 1)
 
-        raisedError = False
-        try:
-            manager[full_configurable_name] = Configurable()
-        except Manager.Error:
-            raisedError = True
-        self.assertTrue(raisedError)
+        manager[configurable_name] = Configurable()
+        self.assertFalse(configurable_name in manager)
 
         self.assertEqual(len(manager.configurables), 0)
         self.assertEqual(len(manager.configurable_types), 1)

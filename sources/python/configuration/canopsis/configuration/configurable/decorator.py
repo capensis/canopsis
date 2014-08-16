@@ -18,7 +18,7 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from canopsis.configuration import Configurable
+from . import Configurable
 
 
 def conf_paths(*conf_paths):
@@ -29,11 +29,8 @@ def conf_paths(*conf_paths):
     :type paths: list of str
 
     Example:
-    >>>@conf_paths('myexample/example.conf')
-    >>>class MyConfigurable(Configurable):
-    >>>    pass
-    >>>assert MyConfigurable().conf_paths == \
-        (Configurable().conf_paths + ['myexample/example.conf'])
+    >>> conf_paths('test0', 'test1')(Configurable)().conf_paths[:-2]
+    ['test0', 'test1']
     """
 
     def _get_conf_paths(self):

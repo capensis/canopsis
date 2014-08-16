@@ -18,34 +18,168 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from canopsis.configuration import Configurable
+from . import Configurable
 from canopsis.configuration.parameters import Configuration, Category
 from canopsis.common.utils import resolve_element
 
 from inspect import isclass
 
 
+class Configurables(dict):
+    """
+    With a ConfigurableTypes, it is in charge of a Manager sub-configurables.
+    When a configurable is trying to be setted, the type is checked related
+    to its Manager ConfigurableTypes.
+    """
+
+    def __init__(self, manager, values=None, *args, **kwargs):
+        """
+        :param manager: related manager
+        :type manager: Manager
+
+        :param values: default values if not None (default)
+        :type values: dict
+        """
+        super(Configurables, self).__init__(*args, **kwargs)
+
+        self.manager = manager
+
+        if values is not None:
+            for name, value in values:
+                self[name] = value
+
+    def __setitem__(self, name, value):
+        """
+        Set a new configurable value
+
+        :param name: new configurable name
+        :type name: str
+
+        :param value: new configurable value
+        :type value: str (path) or class or instance
+
+        :param args: args for configurable instanciation if value is a path or
+            a class
+        :param kwargs: kwargs for configurable instanciation if value is a path
+            or a class
+        """
+
+        # get configurable type. Configurable by default
+        configurable_type = self.manager._configurable_types.get(
+            name, Configurable)
+
+        configurable = value
+
+        # if value is a path
+        if isinstance(configurable, str):
+            # get related python object
+            configurable = resolve_element(configurable)
+
+        # if configurable is a class
+        if isclass(configurable) and issubclass(
+                configurable, configurable_type):
+                # instantiate a new configurable with input args and kwargs
+                configurable = configurable()
+
+        # do nothing if configurable is not an instance of configurable_type
+        if not isinstance(configurable, configurable_type):
+            self.manager.logger.error(
+                "Impossible to set configurable %s:%s. Not an instance of %s" %
+                (name, configurable, configurable_type))
+
+        else:
+            # update self.configurables
+            super(Configurables, self).__setitem__(name, configurable)
+
+
+class ConfigurableTypes(dict):
+    """
+    With a Configurables, it is in charge of a set of configurable type.
+    When a new type is setted but the old configurable value does not inherits
+    from it, then the old value is removed automatically.
+    """
+
+    def __init__(self, manager, values=None, *args, **kwargs):
+        """
+        :param manager: related manager
+        :type manager: Manager
+
+        :param values: default values if not None (default)
+        :type values: dict
+        """
+
+        super(ConfigurableTypes, self).__init__(*args, **kwargs)
+
+        self.manager = manager
+
+        if values is not None:
+
+            for name, value in values.iteritems():
+                self[name] = value
+
+    def __setitem__(self, name, value):
+        """
+        Set a new configurable type.
+
+        :param name: new configurable name.
+        :type name: str
+
+        :param value: new type value.
+        :type value: str (path) or class
+        """
+
+        configurable_type = value
+
+        # if configurable_type is a path
+        if isinstance(configurable_type, str):
+            # get related python object
+            configurable_type = resolve_element(configurable_type)
+
+        # check if configurable_type is a subclass of Configurable
+        if not issubclass(configurable_type, Configurable):
+            self.manager.logger.error(
+                "Impossible to set configurable type %s: %s. Wrong type" % (
+                    name, configurable_type))
+
+        else:
+            # check if an old value exiss
+            if name in self.manager._configurables \
+                    and not isinstance(
+                        self.manager._configurables[name], configurable_type):
+                # if the old value is not an instance of newly type
+                self.manager.logger.warning(
+                    "Old configurable %s removed. Not an instance of %s" % (
+                        name, configurable_type))
+                # delete if
+                del self.manager._configurables[name]
+
+            # set the new type
+            super(ConfigurableTypes, self).__setitem__(name, configurable_type)
+
+
 class Manager(Configurable):
     """
-    Manage a set of configurables which are accessibles
-    from self.configurables.
+    Manage a set of configurables which are accessibles from self.configurables
 
     Each configurable can be defined in conf parameters where names are like
     {name}_configurable={configurable_path, configurable_class, configurable}
 
     And a configurable configuration are in categories {NAME}_CONF.
+
+    Then all sub-configurables are accessibles from item accessors with name as
+    item key.
     """
 
     class Error(Exception):
-        """handle manager errors"""
+        """handle Manager errors"""
         pass
 
-    CONF_PATH = 'configuration/manager.conf'
+    CONF_PATH = 'configuration/manager.conf'  #: default conf path
 
-    CATEGORY = 'MANAGER'
+    CATEGORY = 'MANAGER'  #: default Manager category name
 
-    CONFIGURABLE_SUFFIX = '_configurable'
-    CONFIGURABLE_TYPE_SUFFIX = '_configurable_type'
+    CONFIGURABLE_SUFFIX = '_value'  #: configurable configuration suffix
+    CONFIGURABLE_TYPE_SUFFIX = '_type'  #: type config suffix
 
     def __init__(
         self, configurables=None, configurable_types=None, *args, **kwargs
@@ -60,9 +194,8 @@ class Manager(Configurable):
 
         super(Manager, self).__init__(*args, **kwargs)
 
-        self.configurables = {} if configurables is None else configurables
-        self.configurable_types = {} if configurable_types is None \
-            else configurable_types
+        self._configurables = Configurables(self, configurables)
+        self._configurable_types = ConfigurableTypes(self, configurable_types)
 
     def _get_category(self):
         """
@@ -109,7 +242,7 @@ class Manager(Configurable):
         conf_path = self.conf_paths[-1]
 
         # apply configuration to all self configurables
-        for name, configurable in self.configurables.iteritems():
+        for name, configurable in self._configurables.iteritems():
             # add self last conf paths to configurable conf paths
             configurable_conf_paths = list(configurable.conf_paths)
             configurable_conf_paths.append(conf_path)
@@ -132,217 +265,96 @@ class Manager(Configurable):
 
         values = unified_conf[Configuration.VALUES]
 
+        # for all parameters
         for parameter in values:
+            # if name matches with a configurable name
             if parameter.name.endswith(Manager.CONFIGURABLE_SUFFIX):
-                self[parameter.name] = parameter.value
+                name = parameter.name[:-len(Manager.CONFIGURABLE_SUFFIX)]
+                # try update it
+                self._configurables[name] = parameter.value
 
+            # if name matches with a configurable type name
             elif parameter.name.endswith(Manager.CONFIGURABLE_TYPE_SUFFIX):
-                self[parameter.name] = parameter.value
+                name = parameter.name[:-len(Manager.CONFIGURABLE_TYPE_SUFFIX)]
+                # try to update it
+                self._configurable_types[name] = parameter.value
 
     @property
     def configurables(self):
         """
-        Dictionary of configurable by attribute name
+        Configurable which manages sub-configurables
         """
         return self._configurables
-
-    @configurables.setter
-    def configurables(self, value):
-        self._configurables = value
 
     @property
     def configurable_types(self):
         """
-        Dictionary of configurable types by attribute name
+        ConfigurableTypes which manages restriction of sub-configurable types
         """
         return self._configurable_types
 
-    @configurable_types.setter
-    def configurable_types(self, value):
-        self._configurable_types = value
-
     def __contains__(self, name):
         """
-        Check whatever or not if a configurable name is in self configurables
+        Redirection to self.configurables.__contains__
         """
 
-        if name.endswith(Manager.CONFIGURABLE_SUFFIX):
-            name = name[:-len(Manager.CONFIGURABLE_SUFFIX)]
+        if name.endswith(Manager.CONFIGURABLE_TYPE_SUFFIX):
+            return name in self._configurable_types
 
-        return name in self.configurables
+        return name in self._configurables
 
     def __getitem__(self, name):
         """
-        Redirect to configurables if name in configurables.
-
-        Example: let a configurable named foo.
-        configurableManager = Manager()
-        configurableManager.foo_configurable = Configurable()
-        assert self.foo == self.foo_configurable
+        Redirection to self.configurables.__getitem__
         """
 
-        result = None
+        if name.endswith(Manager.CONFIGURABLE_TYPE_SUFFIX):
+            return self._configurables_types[name]
 
-        # if name matches with a configurable name
-        if name in self.configurables:
-            # allow to matches self.foo_configurable with self.foo
-            result = self.configurables[name]
-
-        # if name matches a configurable, returns it
-        elif name.endswith(Manager.CONFIGURABLE_SUFFIX):
-            configurable_name = name[:-len(
-                Manager.CONFIGURABLE_SUFFIX)]
-
-            if configurable_name in self._configurables:
-                result = self.configurables[configurable_name]
-
-            else:
-                raise Manager.Error(
-                    "Configurable %s does not exist" % name)
-
-        # if name matches a configurable type, returns it
-        elif name.endswith(Manager.CONFIGURABLE_TYPE_SUFFIX):
-            configurable_type_name = name[:-len(
-                Manager.CONFIGURABLE_TYPE_SUFFIX)]
-
-            if configurable_type_name in self._configurable_types:
-                result = self._configurable_types[configurable_type_name]
-
-            else:
-                raise Manager.Error(
-                    "Configurable class %s does not exist" % name)
-
-        if result is None:
-            raise AttributeError(
-                "'%s' manager has no configurable '%s'" % (self, name))
-
-        return result
+        return self._configurables[name]
 
     def __setitem__(self, name, value):
         """
-        Check if value isinstance of registered configurable type if name in
-        configurables.
-
-        Example: let a configurable named foo.
-        cm = Manager()
-        cm.foo_configurable = Configurable()
-        raisedError = False
-        try:
-            cm.foo = 1
-        except Manager:
-            raisedError = True
-        assert raisedError
+        Redirection to self.configurables.__setitem__
         """
 
-        # if name matches to a Configurable name, modify it
-        if name in self.configurables:
-            name = '%s%s' % (name, Manager.CONFIGURABLE_SUFFIX)
+        if name.endswith(Manager.CONFIGURABLE_TYPE_SUFFIX):
+            self._configurables_types[name] = value
 
-        # if name corresponds to a Configurable
-        if name.endswith(Manager.CONFIGURABLE_SUFFIX):
-
-            name = name[:-len(Manager.CONFIGURABLE_SUFFIX)]
-
-            configurable_type = self.configurable_types.get(
-                name, Configurable)
-            configurable = value
-
-            # in case of value is str
-            if isinstance(configurable, str):
-                configurable = resolve_element(value)
-
-            # in case of value is configurable type
-            if isclass(configurable) \
-                    and issubclass(configurable, configurable_type):
-                configurable = configurable()
-
-            # in case of value is an instance of configurable_type
-            if isinstance(configurable, configurable_type):
-                self._configurables[name] = configurable
-            # else, raise an Error
-            else:
-                raise Manager.Error(
-                        "Configurable %s:%s must be of type %s" % (
-                            name, configurable, configurable_type))
-
-        # if name corresponds to a configurable type
-        elif name.endswith(Manager.CONFIGURABLE_TYPE_SUFFIX):
-
-            name = name[:-len(Manager.CONFIGURABLE_TYPE_SUFFIX)]
-
-            configurable_type = value
-
-            if isinstance(value, str):
-                configurable_type = resolve_element(value)
-
-            if not issubclass(configurable_type, Configurable):
-                raise Manager.Error(
-                    "Configurable type %s %s must inherits from Configurable" %
-                    (name, value))
-
-            self._configurable_types[name] = configurable_type
-
-            # check if old configurable inherits from new type
-            if name in self._configurables:
-                # if it does not, delete it from self.configurables
-                configurable = self._configurables[name]
-                if not isinstance(configurable, configurable_type):
-                    self.logger.info(
-                        "remove old incompatible configurable %s %s with %s" %
-                            (name, configurable, configurable_type))
-                    del self.configurables[name]
+        else:
+            self._configurables[name] = value
 
     def __delitem__(self, name):
         """
-        Redirect to configurables if name in configurables.
-
-        Example:
-        cm = Manager()
-        cm.foo_configurable = Configurable()
-        del cm.foo
-        raisedError = False
-        try:
-            del cm.foo_configurable
-        except Manager.Error:
-            raisedError = True
-        assert raisedError
+        Redirection to self.configurables.__delitem__
         """
 
-        if name in self._configurables:
-            name = '%s%s' % (name, Manager.CONFIGURABLE_SUFFIX)
+        if name.endswith(Manager.CONFIGURABLE_TYPE_SUFFIX):
+            del self._configurables_types[name]
 
-        # if name matches a configurable name, modify it
-        if name.endswith(Manager.CONFIGURABLE_SUFFIX):
-            try:
-                del self._configurables[name]
-            except KeyError:
-                raise Manager.Error(
-                    "Configurable %s does not exist" % name)
-
-        # if name matches a configurable type name, delete related type
-        elif name.endswith(Manager.CONFIGURABLE_TYPE_SUFFIX):
-            name = name[:-len(Manager.CONFIGURABLE_TYPE_SUFFIX)]
-            if name in self._configurable_types:
-                try:
-                    del self._configurable_types[name]
-                except KeyError:
-                    raise Manager.Error(
-                        "Configurable type %s does not exist" % name)
+        else:
+            del self._configurables[name]
 
     @staticmethod
     def get_configurable_category(name):
-
+        """
+        Get generated sub-configurable category name
+        """
         return "%s_CONF" % name.upper()
 
     @staticmethod
-    def get_configurable(self, configurable, *args, **kwargs):
+    def get_configurable(configurable, *args, **kwargs):
         """
-        Get a configurable instance from a configurable class/path and
-        args, kwargs
+        Get a configurable instance from a configurable class/path/instance and
+        args, kwargs, None otherwise.
 
-        :param configurable: configurable path or class
-        :type configurable: str or Configurable
+        :param configurable: configurable path, class or instance
+        :type configurable: str, class or Configurable
+
+        :return: configurable instance or None if input configurable can not be
+        solved such as a configurable.
         """
+
         result = configurable
 
         if isinstance(configurable, str):
@@ -350,5 +362,8 @@ class Manager(Configurable):
 
         if issubclass(result, Configurable):
             result = result(*args, **kwargs)
+
+        if not isinstance(result, Configurable):
+            result = None
 
         return result

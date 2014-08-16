@@ -20,7 +20,8 @@
 
 from canopsis.common.utils import resolve_element, path
 
-from canopsis.configuration import Configuration, Parameter, Category
+from canopsis.configuration.parameters import \
+    Configuration, Parameter, Category
 
 
 class MetaConfigurationManager(type):
