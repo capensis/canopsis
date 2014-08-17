@@ -20,10 +20,7 @@
 
 from logging import Formatter, getLogger, FileHandler, Filter
 
-from stat import ST_SIZE
-
-from os import stat
-from os.path import expanduser, exists, sep, abspath
+from os.path import expanduser, sep
 
 from inspect import isclass
 

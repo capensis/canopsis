@@ -178,16 +178,19 @@ class MongoStorage(MongoDataBase, Storage):
 
     ID = '_id'  #: ID mongo
 
-    def __init__(self, data_type, *args, **kwargs):
+    @property
+    def indexes(self):
+        if not hasattr(self, '_indexes'):
+            self._indexes = []
+        return self._indexes
 
-        super(Storage, self).__init__(
-            data_type=data_type, *args, **kwargs)
-
-        self.indexes = []
+    @indexes.setter
+    def indexes(self, value):
+        self._indexes = value
 
     def connect(self, *args, **kwargs):
 
-        result = super(Storage, self).connect(*args, **kwargs)
+        result = super(MongoStorage, self).connect(*args, **kwargs)
 
         if result:
             self.indexes = self._get_indexes()
@@ -205,7 +208,7 @@ class MongoStorage(MongoDataBase, Storage):
         Drop self table.
         """
 
-        super(Storage, self).drop(table=self.get_table(), *args, **kwargs)
+        super(MongoStorage, self).drop(table=self.get_table(), *args, **kwargs)
 
     def get_elements(
         self, ids=None, limit=0, skip=0, sort=None, *args, **kwargs
@@ -226,7 +229,7 @@ class MongoStorage(MongoDataBase, Storage):
         if skip:
             cursor.skip(skip)
         if sort is not None:
-            Storage._update_sort(sort)
+            MongoStorage._update_sort(sort)
             cursor.sort(sort)
 
         result = self._get_generic_result(cursor, ids)
@@ -267,20 +270,14 @@ class MongoStorage(MongoDataBase, Storage):
         result = None
         # Return the element if only one element was requested
         # Otherwise, return a list of the requested elements
-        if ids is not None and isiterable(ids, is_str=False):
-            result = cursor
-            # add len_cursor to result
-            result.__len__ = len_cursor
+        if ids is None or isiterable(ids, is_str=False):
+            result = list(cursor)
 
         else:
             # result is the only one value or None if no value exist
-            try:
-                result = cursor.next()
-            except StopIteration:
-                # None if no result
-                result = None
+            result = result[0] if result else None
 
-        return cursor
+        return result
 
     def remove_elements(self, ids, *args, **kwargs):
 
@@ -401,19 +398,20 @@ class MongoStorage(MongoDataBase, Storage):
         result = None
 
         try:
-            backend_command = getattr(self._backend, command)
-            result = backend_command(w=1 if self.safe else 0,
-                wtimeout=self.wtimeout, **kwargs)
+            backend = self._get_backend(backend=self.get_table())
+            backend_command = getattr(backend, command)
+            w = 1 if self.safe else 0
+            result = backend_command(w=w, wtimeout=self.out_timeout, **kwargs)
 
             self._manage_query_error(result)
 
         except TimeoutError:
             self.logger.warning(
                 'Try to run command {0}({1}) on {2} attempts left'
-                .format(command, kwargs, self._backend))
+                .format(command, kwargs, backend))
 
         except OperationFailure as of:
             self.logger.error('{0} during running command {1}({2}) of in {3}'
-                .format(of, command, kwargs, self._backend))
+                .format(of, command, kwargs, backend))
 
         return result

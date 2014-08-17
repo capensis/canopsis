@@ -20,7 +20,7 @@
 
 from canopsis.configuration import \
     Parameter, Configuration, Manager as ConfigurableManager
-from . import Middleware, parse_scheme, DEFAULT_DATA_SCOPE
+from . import Middleware, parse_scheme
 
 
 class Manager(ConfigurableManager):
@@ -50,12 +50,6 @@ class Manager(ConfigurableManager):
     Global dict of {sharing_scope: {protocol: {data_type: {data_scope:
         middleware}}}}
     """
-
-    class Error(Exception):
-        """
-        Handle Manager errors.
-        """
-        pass
 
     def __init__(
         self, shared=True, sharing_scope=None, auto_connect=True,

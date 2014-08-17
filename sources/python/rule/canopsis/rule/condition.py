@@ -19,7 +19,7 @@
 # ---------------------------------
 
 # rule condition field
-CONDITION_FIELDS = 'condition'
+CONDITION_FIELD = 'condition'
 
 # MongoDB Operators:
 # http://docs.mongodb.org/manual/reference/operator/

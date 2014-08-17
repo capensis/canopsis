@@ -29,8 +29,7 @@ class PeriodicStoreTest(TestCase):
 
     def setUp(self):
         # create a store on test_store collections
-        self.store = PeriodicStorage(data_type="test_store", safe=True)
-        self.store.connect()
+        self.store = PeriodicStorage(data_scope="test_store", safe=True)
 
     def test_connect(self):
         self.assertTrue(self.store.connected())

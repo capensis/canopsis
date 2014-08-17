@@ -31,8 +31,7 @@ class TypedStorageTest(TestCase):
 
     def setUp(self):
         # create a storage on test_store collections
-        self.storage = TypedStorage(data_type="test", safe=True)
-        self.storage.connect()
+        self.storage = TypedStorage(data_scope="test", safe=True)
 
     def test_connect(self):
         self.assertTrue(self.storage.connected())
