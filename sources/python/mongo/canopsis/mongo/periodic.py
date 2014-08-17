@@ -102,7 +102,7 @@ class MongoPeriodicStorage(MongoStorage, PeriodicStorage):
 
         cursor.hint(MongoPeriodicStorage.Index.QUERY)
 
-        result = list()
+        result = []
 
         if limit != 0:
             cursor = cursor[:limit]
@@ -127,7 +127,7 @@ class MongoPeriodicStorage(MongoStorage, PeriodicStorage):
 
         # initialize a dictionary of perfdata value by value field
         # and id_timestamp
-        document_properties_by_id_timestamp = dict()
+        document_properties_by_id_timestamp = {}
         # previous variable contains a dict of entries to put in
         # the related document
 
@@ -138,7 +138,7 @@ class MongoPeriodicStorage(MongoStorage, PeriodicStorage):
             id_timestamp = int(period.round_timestamp(
                 timestamp, normalize=True))
             document_properties = document_properties_by_id_timestamp.\
-                setdefault(id_timestamp, dict())
+                setdefault(id_timestamp, {})
 
             if '_id' not in document_properties:
                 document_properties['_id'] = \

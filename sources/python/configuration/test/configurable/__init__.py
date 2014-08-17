@@ -114,7 +114,8 @@ class ConfigurableTest(TestCase):
 
         # get parameters from empty files
         for conf_path in self.conf_paths:
-            open(conf_path, 'w').close()
+            with open(conf_path, 'w') as _file:
+                _file.write('\n')
 
         conf = configurable.get_configuration()
 

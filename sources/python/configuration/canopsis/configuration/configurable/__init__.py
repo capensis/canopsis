@@ -456,19 +456,11 @@ class Configurable(object):
         if isinstance(conf_paths, str):
             conf_paths = [conf_paths]
 
-        # clean conf file list
-        conf_paths = [
-            abspath(expanduser(conf_path)) for conf_path
-            in conf_paths]
-
         if managers is None:
             managers = self.managers
 
         # iterate on all conf_paths
         for conf_path in conf_paths:
-
-            if not exists(conf_path) or stat(conf_path)[ST_SIZE] == 0:
-                continue
 
             conf_manager = self._get_manager(
                 conf_path=conf_path, logger=logger, managers=managers)
@@ -484,7 +476,7 @@ class Configurable(object):
                 # if no conf_manager, display a warning log message
                 self.logger.warning(
                     'No manager found among {0} for {1}'.format(
-                        conf_path))
+                        conf_path, self))
 
         return conf
 

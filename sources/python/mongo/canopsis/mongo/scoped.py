@@ -28,7 +28,7 @@ class MongoScopedStorage(MongoStorage, ScopedStorage):
 
     def _get_indexes(self, *args, **kwargs):
 
-        result = super(ScopedStorage, self)._get_indexes(*args, **kwargs)
+        result = super(MongoScopedStorage, self)._get_indexes(*args, **kwargs)
 
         scope = self.scope
 
@@ -76,7 +76,7 @@ class MongoScopedStorage(MongoStorage, ScopedStorage):
 
     def remove(self, ids=None, data_type=None, *args, **kwargs):
 
-        query = dict()
+        query = {}
 
         if ids is not None:
             query['_id'] = {'$in': ids}

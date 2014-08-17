@@ -44,7 +44,7 @@ class DataBase(Middleware):
     DB = 'db'
     JOURNALING = 'journaling'
 
-    CONF_RESOURCE = 'database/database.conf'
+    CONF_RESOURCE = 'storage/database.conf'
 
     def __init__(self, db='canopsis', journaling=False, *args, **kwargs):
         """
@@ -131,9 +131,9 @@ class DataBase(Middleware):
         if reconnect and self.auto_connect:
             self.reconnect()
 
-    def _get_conf_files(self, *args, **kwargs):
+    def _get_conf_paths(self, *args, **kwargs):
 
-        result = super(DataBase, self)._get_conf_files(*args, **kwargs)
+        result = super(DataBase, self)._get_conf_paths(*args, **kwargs)
 
         result.append(DataBase.CONF_RESOURCE)
 
