@@ -31,9 +31,8 @@ function install(){
     for project in "${PROJECTS[@]}"
     do
         echo "-- Install project: $project"
-        cd $SRC_PATH/python/$project
         export CPS_PREFIX="$PREFIX/etc/"
-        python setup.py install >> $LOG 2>&1 || exit 1
+        python $SRC_PATH/python/$project/setup.py install >> $LOG 2>&1 || exit 1
     done
 
     # TODO when fabric will be available
@@ -45,8 +44,7 @@ function update(){
     for project in "${PROJECTS[@]}"
     do
         echo "-- Update project: $project"
-        cd $SRC_PATH/python/$project
         export CPS_PREFIX="$PREFIX/etc/"
-        python setup.py install --no-conf >> $LOG 2>&1 || exit 1
+        python $SRC_PATH/python/$project/setup.py install --no-conf >> $LOG 2>&1 || exit 1
     done
 }
