@@ -191,9 +191,12 @@ class Middleware(Configurable):
 
         # initialize instance properties with default values
         self._uri = uri
-        self._protocol = protocol
-        self._data_type = data_type
-        self._data_scope = data_scope
+        self._protocol = type(self).__protocol__ if protocol is None \
+            else protocol
+        self._data_type = type(self).__datatype__ if data_type is None \
+            else data_type
+        self._data_scope = type(self).__datascope__ if data_scope is None \
+            else data_scope
         self._host = host
         self._port = port
         self._path = path
@@ -237,7 +240,12 @@ class Middleware(Configurable):
                 result = '%s/%s' % (result, self.path)
 
             if self.protocol:
-                result = '%s://%s' % (self.protocol, result)
+                data_type = self.data_type if self.data_type else ''
+                data_scope = self.data_scope if self.data_scope else ''
+                scheme = '{0}{1}{2}{1}{3}'.format(
+                    self.protocol, SCHEME_SEPARATOR, data_type, data_scope)
+
+                result = '%s://%s' % (scheme, result)
 
         return result
 
@@ -581,7 +589,43 @@ class Middleware(Configurable):
         data_types[data_type] = cls
 
     @staticmethod
-    def resolve_middleware(uri):
+    def resolve_middleware(protocol, data_type=None):
+        """
+        Get a reference to a middleware class registered by a protocol and a
+        data_scope.
+
+        :param protocol: protocol name
+        :type protocol: str
+
+        :param data_type: data type name
+        :type data_type: str
+
+        :return: Middleware type
+        :rtype: type
+
+        :raise: Middleware.Error if no middleware is registered related to
+        input protocol and data_type.
+        """
+
+        # try to get protocol
+        if protocol not in Middleware.__MIDDLEWARES__:
+            raise Middleware.Error(
+                "No protocol %s found in registered middleware classes." %
+                protocol)
+
+        # try to get data_type
+        data_types = Middleware.__MIDDLEWARES__[protocol]
+        if data_type not in data_types:
+            raise Middleware.Error(
+                "No data type %s found in middleware protocol %s" %
+                (data_type, protocol))
+
+        result = data_types[data_type]
+
+        return result
+
+    @staticmethod
+    def resolve_middleware_by_uri(uri):
         """
         Get a reference to a middleware class corresponding to input uri.
 
@@ -598,25 +642,47 @@ class Middleware(Configurable):
 
         result = None
 
-        parsed_uri = urlparse(uri)
+        protocol, data_type, _ = parse_scheme(uri)
 
-        protocol = parsed_uri.scheme
-
-        protocol, data_type = parse_scheme(uri)
-
-        if protocol not in Middleware.__MIDDLEWARES__:
-            raise Middleware.Error(
-                'No middleware registered at protocol %s' % protocol) \
-
-        if data_type not in Middleware.__MIDDLEWARES__[protocol]:
-            raise Middleware.Error('No protocol given in %s' % uri)
-
-        result = Middleware.__MIDDLEWARES__[protocol][data_type]
+        result = Middleware.resolve_middleware(
+            protocol=protocol, data_type=data_type)
 
         return result
 
     @staticmethod
-    def get_middleware(uri, *args, **kwargs):
+    def get_middleware(protocol, data_type=None, *args, **kwargs):
+        """
+        Instantiate the right middleware related to input protocol, data_type
+        and specific parameters (in args and kwargs).
+
+        :param protocol: protocol name
+        :type protocol: str
+
+        :param data_type: data type name
+        :type data_type: str
+
+        :param args: list of args given to the middleware to instantiate.
+        :param kwargs: kwargs given to the middleware to instantiate.
+
+        :return: Middleware
+        :rtype: Middleware
+
+        :raise: Middleware.Error if no middleware is registered related to
+        input protocol and data_type.
+        """
+
+        result = None
+
+        middleware_class = Middleware.resolve_middleware(
+            protocol=protocol, data_type=data_type)
+
+        if middleware_class is not None:
+            result = middleware_class(*args, **kwargs)
+
+        return result
+
+    @staticmethod
+    def get_middleware_by_uri(uri, *args, **kwargs):
         """
         Instantiate the right middleware related to input uri.
 
@@ -636,12 +702,12 @@ class Middleware(Configurable):
 
         result = None
 
-        middleware_class = Middleware.resolve_middleware(uri)
-
-        _, _, data_scope = parse_scheme(uri)
+        protocol, _, data_scope = parse_scheme(uri)
 
         if data_scope:
             kwargs["data_scope"] = data_scope
+
+        middleware_class = Middleware.resolve_middleware_by_uri(uri)
 
         if middleware_class is not None:
             result = middleware_class(*args, **kwargs)

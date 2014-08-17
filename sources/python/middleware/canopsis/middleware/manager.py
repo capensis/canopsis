@@ -18,40 +18,38 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from urlparse import urlparse
-
 from canopsis.configuration import \
-    Configurable, Parameter, Configuration, ConfigurableManager
-from . import Middleware, DEFAULT_DATA_SCOPE
+    Parameter, Configuration, Manager as ConfigurableManager
+from . import Middleware, parse_scheme, DEFAULT_DATA_SCOPE
 
 
-class Manager(Configurable):
+class Manager(ConfigurableManager):
     """
-    Manages middlewares.
+    Manages middlewares like a Manager manages sub-configurables.
 
     Attributes are related to middlewares where the data_scope corresponds to
     attribute names.
 
     Middleware instances can be shared through a sharing_scope in the same
     processus. By default, this sharing_scope is the same for all Managers.
-
-    It manages a shared
     """
 
-    CONF_RESOURCE = 'middleware/manager.conf'
+    CONF_RESOURCE = 'middleware/manager.conf'  #: conf path
 
-    SHARED = 'shared'
-    SHARING_SCOPE = 'sharing_scope'
-    AUTO_CONNECT = 'auto_connect'
-    DATA_SCOPE = 'data_scope'
+    SHARED = 'shared'  #: conf shared name
+    SHARING_SCOPE = 'sharing_scope'  #: conf sharing scope name
+    AUTO_CONNECT = 'auto_connect'  #: conf auto connect name
+    DATA_SCOPE = 'data_scope'  #: configuration data scope name
 
-    CATEGORY = 'MANAGER'
+    CATEGORY = 'MANAGER'  #: middleware manager
 
-    # middleware attribute suffix
-    MIDDLEWARE_SUFFIX = '_middleware'
+    MIDDLEWARE_SUFFIX = '_uri'  #: middleware attribute suffix
 
-    # shared dictionary of {protocol, {Manager class, data_scope}}
-    __MIDDLEWARES_BY_MANAGERS__ = {}
+    __MIDDLEWARES__ = {}
+    """
+    Global dict of {sharing_scope: {protocol: {data_type: {data_scope:
+        middleware}}}}
+    """
 
     class Error(Exception):
         """
@@ -64,6 +62,19 @@ class Manager(Configurable):
         data_scope=None,
         *args, **kwargs
     ):
+        """
+        :param shared: sub-middleware shared usage (default:True)
+        :type shared: bool
+
+        :param sharing_scope: sub-middleware sharing scope usage (default:None)
+        :type sharing_scope: object
+
+        :param auto_connect: sub-middleware auto connect (default:True)
+        :type auto_connect: bool
+
+        :param data_scope: sub-middleware data_scope property (default:None)
+        :type data_scope: str
+        """
 
         super(Manager, self).__init__(*args, **kwargs)
 
@@ -82,11 +93,11 @@ class Manager(Configurable):
 
     @property
     def sharing_scope(self):
-        return self._scope_sharing
+        return self._sharing_scope
 
     @sharing_scope.setter
     def sharing_scope(self, value):
-        self._scope_sharing = value
+        self._sharing_scope = value
 
     @property
     def auto_connect(self):
@@ -106,18 +117,25 @@ class Manager(Configurable):
 
     def get_middleware(
         self,
-        uri, data_scope=None, auto_connect=None,
+        protocol, data_type=None, data_scope=None,
+        auto_connect=None,
         shared=None, sharing_scope=None,
         *args, **kwargs
     ):
         """
         Load a middleware related to input uri.
 
-        If shared, the result instance is shared among same middleware type
-        and self class type.
+        If shared, the result instance is shared among sharing_scope, protocol,
+        data_type and data_scope.
 
-        :param uri: middleware ui
-        :type uri: str
+        :param protocol: protocol to use
+        :type protocol: str
+
+        :param data_type: data type to use
+        :type data_type: str
+
+        :param data_scope: data scope to use
+        :type data_scope: str
 
         :param auto_connect: middleware auto_connect parameter
         :type auto_connect: bool
@@ -133,54 +151,89 @@ class Manager(Configurable):
         :rtype: Middleware
         """
 
-        result = None
-
-        if shared is None:
-            shared = self.shared
-
-        # data_scope must be not None
         if data_scope is None:
-            data_scope = self.data_scope
-            if data_scope is None:
-                data_scope = DEFAULT_DATA_SCOPE
-
-        if sharing_scope is None:
-            sharing_scope = self.sharing_scope
+            data_scope = self._data_scope
 
         if auto_connect is None:
-            auto_connect = self.auto_connect
+            auto_connect = self._auto_connect
+
+        if shared is None:
+            shared = self._shared
+
+        if sharing_scope is None:
+            sharing_scope = self._sharing_scope
 
         if shared:
-            parsed_uri = urlparse(uri)
 
-            protocol = parsed_uri.scheme
+            protocols = Manager.__MIDDLEWARES__.setdefault(
+                sharing_scope, {})
 
-            if not protocol:
-                raise Manager.Error('uri %s must have a protocol' % uri)
+            data_types = protocols.setdefault(protocol, {})
 
-            managers = Manager.__MIDDLEWARES_BY_MANAGERS__.setdefault(
-                protocol, {})
+            data_scopes = data_types.setdefault(data_type, {})
 
-            manager = managers.setdefault(sharing_scope, {})
+            try:
+                result = data_scopes.setdefault(data_scope,
+                    Middleware.get_middleware(
+                        protocol=protocol, data_type=data_type,
+                        data_scope=data_scope, auto_connect=auto_connect,
+                        *args, **kwargs))
 
-            if data_scope in manager:
-                result = manager[data_scope]
-
-            else:
-                cls = Middleware.resolve_middleware(uri)
-
-                result = cls(
-                    uri=uri, data_scope=data_scope, auto_connect=auto_connect,
-                    *args, **kwargs)
-
-                manager[data_scope] = result
+            except Exception as e:
+                # clean memory in case of error
+                if not data_scopes:
+                    del data_types[data_type]
+                if not data_types:
+                    del protocols[protocol]
+                if not protocols:
+                    del Manager.__MIDDLEWARES__[sharing_scope]
+                # and raise back e
+                raise e
 
         else:
-            cls = Middleware.resolve_middleware(uri)
-
-            result = cls(
-                uri=uri, data_scope=data_scope, auto_connect=auto_connect,
+            # get a new middleware instance
+            result = Middleware.get_middleware(
+                protocol=protocol, data_type=data_type, data_scope=data_scope,
+                auto_connect=auto_connect,
                 *args, **kwargs)
+
+        return result
+
+    def get_middleware_by_uri(
+        self,
+        uri,
+        auto_connect=None, shared=None, sharing_scope=None, *args, **kwargs
+    ):
+
+        """
+        Load a middleware related to input uri.
+
+        If shared, the result instance is shared among same middleware type
+        and self class type.
+
+        :param uri: middleware uri
+        :type uri: str
+
+        :param auto_connect: middleware auto_connect parameter
+        :type auto_connect: bool
+
+        :param shared: if True, the result is a shared middleware instance
+            among managers of the same class. If None, use self.shared.
+        :type shared: bool
+
+        :param sharing_scope: scope sharing
+        :type sharing_scope: bool
+
+        :return: middleware instance corresponding to the input uri.
+        :rtype: Middleware
+        """
+
+        protocol, data_type, data_scope = parse_scheme(uri)
+
+        result = self.get_middleware(
+            protocol=protocol, data_type=data_type, data_scope=data_scope,
+            auto_connect=auto_connect, shared=shared,
+            sharing_scope=sharing_scope, uri=uri, *args, **kwargs)
 
         return result
 
@@ -227,35 +280,7 @@ class Manager(Configurable):
         # set all middlewares which ends with Manager.MIDDLEWARE_SUFFIX
         for parameter in values:
             if parameter.name.endswith(Manager.MIDDLEWARE_SUFFIX):
-                data_scope = parameter.name[:Manager.MIDDLEWARE_SUFFIX]
-                middleware = Middleware.resolve_middleware(
-                    uri=parameter.value, data_scope=data_scope)
-                parameter._value = middleware
-                self._update_property(
-                    unified_conf=unified_conf, param_name=parameter.name,
-                    public=True)
-
-    def _get_property_middleware(self, value, _type=Middleware):
-        """
-        Get property middleware where value is given in calling property.setter
-        """
-
-        result = None
-
-        if value is not None:
-            result = self.get_middleware(
-                uri, data_scope=None, auto_connect=None,
-                shared=None, sharing_scope=None,
-                *args, **kwargs)
-
-        # check if result is an instance of inpyt type
-        if not isinstance(middleware, _type):
-            raise Manager.Error("Middleware %s must be of type %s" % _type)
-
-        if value is not None and not isinstance(value, Storage):
-            result = self.get_middleware(storage_type=value)
-
-        return result
-
-
-def middleware_property(name, type=None):
+                name = parameter.name[:-len(Manager.MIDDLEWARE_SUFFIX)]
+                # set a middleware in list of configurables
+                self[name] = Middleware.get_middleware_by_uri(
+                    uri=parameter.value)

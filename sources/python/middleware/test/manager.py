@@ -24,6 +24,10 @@ from unittest import TestCase, main
 from canopsis.middleware import Middleware, SCHEME_SEPARATOR
 from canopsis.middleware.manager import Manager
 
+from tempfile import NamedTemporaryFile
+
+from os import remove
+
 
 class TestUnregisteredMiddleware(Middleware):
 
@@ -41,62 +45,69 @@ class TestRegisteredWithDataTypeMiddleware(TestRegisteredMiddleware):
     __datatype__ = 'datatypetest'
 
 
-class TestManager(Manager):
-
-    @property
-    def test_middleware(self):
-        return self._test_middleware
-
-    @test_middleware.setter
-    def test_middleware(self, value):
-        self._test_middleware = value
-
-    @property
-    def test2_middleware(self):
-        return self._test2_middleware
-
-    @test2_middleware.setter
-    def test2_middleware(self, value):
-        self._test2_middleware = value
-
-    @property
-    def test3_middleware(self):
-        return self._test3_middleware
-
-    @test3_middleware.setter
-    def test3_middleware(self, value):
-        self._test3_middleware = value
-
-
 class ManagerTest(TestCase):
 
     def setUp(self):
 
+        self.file_name = NamedTemporaryFile().name
+        self.category = 'TEST'
+
+        class TestManager(Manager):
+            def _get_conf_paths(_self, *args, **kwargs):
+                result = super(TestManager, _self)._get_conf_paths(
+                    *args, **kwargs)
+                result.append(self.file_name)
+                return result
+
+            def _conf(_self, *args, **kwargs):
+                result = super(TestManager, _self)._conf(*args, **kwargs)
+                result.add_unified_category(self.category)
+                return result
+
         self.manager = TestManager()
+
+    def test_configure(self):
+
+        rwdtm = TestRegisteredWithDataTypeMiddleware()
+
+        middleware = 'test'
+
+        with open(self.file_name, 'w') as _file:
+            _file.write('[%s]' % self.category)
+            _file.write('\n%s_uri=%s' % (middleware, rwdtm.uri))
+
+        self.manager.apply_configuration()
+
+        self.assertEqual(self.manager[middleware].protocol, rwdtm.protocol)
+        self.assertEqual(self.manager[middleware].data_type, rwdtm.data_type)
+        self.assertEqual(self.manager[middleware].data_scope, rwdtm.data_scope)
+
+        remove(self.file_name)
 
     def test_get_middleware(self):
 
         uri = '%s://' % (TestUnregisteredMiddleware.__protocol__)
 
-        self.assertRaises(Middleware.Error, self.manager.get_middleware, uri)
+        self.assertRaises(
+            Middleware.Error, self.manager.get_middleware_by_uri, uri)
 
         uri = '%s://' % (TestRegisteredMiddleware.__protocol__)
 
-        middleware = self.manager.get_middleware(uri)
+        middleware = self.manager.get_middleware_by_uri(uri)
 
         self.assertTrue(type(middleware) is TestRegisteredMiddleware)
 
-        middleware2 = self.manager.get_middleware(uri)
+        middleware2 = self.manager.get_middleware_by_uri(uri)
 
         self.assertTrue(middleware is middleware2)
 
-        middleware3 = self.manager.get_middleware(uri, shared=False)
+        middleware3 = self.manager.get_middleware_by_uri(uri, shared=False)
 
         self.assertFalse(middleware is middleware3)
 
         self.manager.shared = False
 
-        middleware4 = self.manager.get_middleware(uri)
+        middleware4 = self.manager.get_middleware_by_uri(uri)
 
         self.assertFalse(middleware is middleware4)
 
@@ -105,7 +116,7 @@ class ManagerTest(TestCase):
             SCHEME_SEPARATOR,
             TestRegisteredWithDataTypeMiddleware.__datatype__)
 
-        middleware_wd = self.manager.get_middleware(uri)
+        middleware_wd = self.manager.get_middleware_by_uri(uri)
 
         self.assertTrue(
             type(middleware_wd) is TestRegisteredWithDataTypeMiddleware)

@@ -16,8 +16,12 @@ function create_canolibs_slink() {
     cd $SRC/sources/python
     for project_path in $SRC/sources/python/*;
     do
-        project_name=$(basename $project_path);
-        create_python_slink $project_name;
+        if [ -d "$project_path" ]; then
+            if [ -e "$project_path/canopsis" ]; then
+                project_name=$(basename $project_path);
+                create_python_slink $project_name;
+            fi
+        fi
     done
     cd -
 }
