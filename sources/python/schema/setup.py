@@ -1,5 +1,6 @@
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# --------------------------------
+#--------------------------------
 # Copyright (c) 2014 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
@@ -18,8 +19,11 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-[RIGHTS]
-profiles_storage_value=canopsis.mongo.MongoStorage
-composite_storage_value=canopsis.mongo.MongoStorage
-role_storage_value=canopsis.mongo.MongoStorage
-default_profile_storage_value=canopsis.mongo.MongoStorage
+from canopsis.common.setup import setup
+
+install_requires = ['canopsis.common']
+
+setup(
+    description='Canopsis schemas',
+    install_requires=install_requires,
+    keywords='schema')

@@ -1,0 +1,10 @@
+{
+	"type": "object",
+	"categories": [{
+		"title": "general",
+		"keys":[ "schneider_thing" , "connector_name" , "hostname" ]
+	}],
+	"properties": {
+		"schneider_thing" : {"type": "string", "required": true }
+	}
+}

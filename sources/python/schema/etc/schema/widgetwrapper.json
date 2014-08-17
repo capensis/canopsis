@@ -1,0 +1,16 @@
+{
+	"type": "object",
+	"properties": {
+		"widget": {
+			"relationship": "belongsTo",
+			"model": "widget",
+			"polymorphic":true
+		},
+		"title": {
+			"type": "string"
+		},
+		"xtype": {
+			"type": "string"
+		}
+	}
+}

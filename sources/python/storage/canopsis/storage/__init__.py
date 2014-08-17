@@ -155,7 +155,7 @@ class DataBase(Middleware):
 
 class Storage(DataBase):
     """
-    Manage different kind of storages by data_type.
+    Manage different kind of storages by data_scope.
 
     For example, perfdata and context are two data types.
     """
@@ -172,12 +172,6 @@ class Storage(DataBase):
         Handle Storage errors
         """
         pass
-
-    def __init__(self, data_type, *args, **kwargs):
-
-        super(Storage, self).__init__(*args, **kwargs)
-
-        self.data_type = data_type
 
     def bool_compare_and_swap(self, _id, oldvalue, newvalue):
         """
@@ -392,14 +386,14 @@ class Storage(DataBase):
 
     def get_table(self):
         """
-        Table name related to elf type and data_type.
+        Table name related to self type and data_scope.
 
         :return: table name
         :rtype: str
         """
 
         result = "{0}_{1}".format(
-            self._get_storage_type(), self.data_type).upper()
+            self.data_type, self.data_scope).upper()
 
         return result
 
@@ -472,7 +466,7 @@ Storage types must be of the same type.'.format(self, target))
 
         result = '{0}_{1}'.format(
             type(self).__storage_type__.upper(),
-            self.data_type.upper())
+            self.data_scope.upper())
 
         return result
 

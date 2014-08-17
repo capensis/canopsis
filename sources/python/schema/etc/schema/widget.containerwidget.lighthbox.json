@@ -1,0 +1,17 @@
+{
+	"type": "object",
+	"categories": [{
+		"title": "General",
+		"keys":["title", "itemTagName", "itemCssClass", "widgetslotTemplate"]
+	}],
+	"properties": {
+		"title": {"type": "string"},
+		"itemCssClass": {"type": "string"},
+		"itemTagName": {"type": "string"},
+		"widgetslotTemplate" : {
+			"type": "string",
+			"enum": ["widgetslot-default", "widgetslot-grey"],
+			"role": "simplelist"
+		}
+	}
+}

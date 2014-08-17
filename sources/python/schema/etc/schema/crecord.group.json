@@ -1,0 +1,24 @@
+{
+	"type": "object",
+	"categories": [{
+		"title": "General",
+		"keys":["internal","description"]
+	},{
+		"title": "Permissions",
+		"keys": []
+	}],
+	"properties": {
+		"crecord_type": {
+			"enum": ["group"],
+			"required": true,
+			"label": "type"
+		},
+		"internal": {
+			"type": "boolean",
+			"default": false
+		},
+		"description": {
+			"type": "string"
+		}
+	}
+}

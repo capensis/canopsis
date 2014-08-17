@@ -1,0 +1,13 @@
+{
+	"type": "object",
+	"properties": {
+		"type_message": {
+			"enum": ["feature"],
+			"required": true
+		},
+		"description": {
+			"type": "string",
+			"required": true
+		}
+	}
+}

@@ -1,0 +1,19 @@
+{
+	"type": "array",
+	"items": {
+		"type": "object",
+		"properties": {
+			"metric": {"type": "string", "required": true},
+			"value": {"type": "number", "required": true},
+			"unit": {"type": "string"},
+			"min": {"type": "number"},
+			"max": {"type": "number"},
+			"warn": {"type": "number"},
+			"crit": {"type": "number"},
+			"type": {
+				"enum": ["GAUGE", "DERIVE", "COUNTER", "ABSOLUTE"],
+				"default": "GAUGE"
+			}
+		}
+	}
+}

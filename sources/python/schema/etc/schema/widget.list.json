@@ -1,0 +1,85 @@
+{
+	"type": "object",
+	"categories": [{
+		"title": "General",
+		"keys":["title", "listed_crecord_type", "itemsPerPage", "selection_toolbar", "actions_toolbar", "mixins" , "default_filter"]
+	},{
+		"title": "Columns",
+		"keys":["displayed_columns", "item_actions"]
+	},{
+		"title": "Filters",
+		"keys":["filters"]
+	},{
+		"title": "Rendering",
+		"keys":["cloaking"]
+	}],
+	"properties": {
+		"listed_crecord_type": {
+			"type": "string",
+			"enum": ["group", "account", "event", "eventlog", "selector", "filter", "userview"],
+			"default": "group",
+			"role": "simplelist"
+		},
+		"item_actions": {
+			"type": "array",
+			"items": {
+				"type": "string"
+			},
+			"role" : "templateSelector",
+			"templateClass":"action"
+		},
+		"displayed_columns": {
+			"type": "array",
+			"items": {
+				"type": "string"
+			},
+			"reorderable": true
+		},
+		"selection_toolbar": {
+			"type": "array",
+			"items": {
+				"type": "string"
+			},
+			"role" : "templateSelector",
+			"templateClass":"toolbar"
+		},
+		"actions_toolbar": {
+			"type": "array",
+			"items": {
+				"type": "string"
+			},
+			"role" : "templateSelector",
+			"templateClass":"toolbar"
+		},
+		"mixins": {
+			"type": "array",
+			"items": {
+				"type": "string"
+			},
+			"role":"tags",
+			"mixinName":"mixinArray",
+			"mixinClass":"test"
+		},
+		"xtype": {
+			"type": "string"
+		},
+		"itemsPerPage": {
+			"type": "integer"
+		},
+		"cloaking": {
+			"type": "boolean"
+		},
+		"filters": {
+			"type": "array",
+			"items": {
+				"type": "object",
+				"objectDict": { "title": "untitled filter", "cfilter": ""},
+				"role": "cfilterwithproperties"
+			}
+		},
+		"default_filter": {
+			"type": "string",
+			"role": "cfilter"
+		}
+	}
+}

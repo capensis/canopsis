@@ -1,0 +1,26 @@
+{
+	"type": "object",
+	"properties": {
+		"type": {
+			"enum": ["metric"],
+			"required": true
+		},
+
+		"component": {
+			"type": "string",
+			"required": true
+		},
+		"resource": {
+			"type": "string"
+		},
+
+		"name": {
+			"type": "string",
+			"required": true
+		},
+		"nodeid": {
+			"type": "string",
+			"required": true
+		}
+	}
+}

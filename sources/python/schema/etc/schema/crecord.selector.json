@@ -1,0 +1,119 @@
+{
+	"type": "object",
+	"categories": [{
+		"title": "General",
+		"keys":["display_name", "description", "dosla", "dostate"]
+	},{
+		"title": "Events_filter",
+		"keys":["mfilter"]
+	},{
+		"title": "Include_ids",
+		"keys":["include_ids"]
+	},{
+		"title": "Exclude_ids",
+		"keys":["exclude_ids"]
+	}],
+	"properties": {
+		"crecord_type": {
+			"enum": ["selector"],
+			"required": true
+		},
+		"description": {
+			"type": "string"
+		},
+		"downtimes_as_ok": {
+			"type": "boolean",
+			"default": false
+		},
+		"mfilter": {
+			"type": "string",
+			"role": "cfilter"
+		},
+		"include_ids": {
+			"type": "array",
+			"items": {
+				"type": "string"
+			},
+			"required": true,
+			"role": "eventselector"
+		},
+		"exclude_ids": {
+			"type": "array",
+			"items": {
+				"type": "string"
+			},
+			"required": true,
+			"role": "eventselector"
+		},
+		"display_name": {
+			"type": "string",
+			"default": ""
+		},
+		"loaded": {
+			"type": "boolean",
+			"default": false
+		},
+		"dostate": {
+			"type": "boolean",
+			"required": true,
+			"default": false
+		},
+		"dosla": {
+			"type": "boolean",
+			"required": true,
+			"default": false
+		},
+		"state": {
+			"type": "integer",
+			"required": true
+		},
+		"state_algorithm": {
+			"type": "integer",
+			"required": true
+		},
+		"sla_rk": {
+			"type": "string",
+			"required": true
+		},
+		"sla_state": {
+			"type": "integer",
+			"required": true
+		},
+		"sla_timewindow": {
+			"type": "integer",
+			"required": true
+		},
+		"sla_timewindow_value": {
+			"type": "number",
+			"required": true
+		},
+		"sla_timewindow_unit": {
+			"type": "integer",
+			"required": true
+		},
+		"sla_timewindow_doUnknown": {
+			"type": "boolean",
+			"default": true
+		},
+		"thd_warn_sla_timewindow": {
+			"type": "number",
+			"required": true
+		},
+		"thd_crit_sla_timewindow": {
+			"type": "number",
+			"required": true
+		},
+		"sla_output_tpl": {
+			"type": "string",
+			"required": true
+		},
+		"output_tpl": {
+			"type": "string",
+			"required": true
+		},
+		"last_dispatcher_update": {
+			"type": "integer",
+			"required": true
+		}
+	}
+}

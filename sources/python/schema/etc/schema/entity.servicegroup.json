@@ -1,0 +1,13 @@
+{
+	"type": "object",
+	"properties": {
+		"type": {
+			"enum": ["servicegroup"],
+			"required": true
+		},
+		"name": {
+			"type": "string",
+			"required": true
+		}
+	}
+}

@@ -1,0 +1,38 @@
+{
+	"type": "object",
+	"properties": {
+		"_id" : { "type":"string"},
+		"type" : { "type":"string"  , "setOnCreate":"connector" },
+		"hostname": {"type": "string", "required": true },
+		"connection" :{ "type": "boolean" ,"role":"boolean" },
+		"state" :{ "type": "boolean"  ,"role":"stateConnector" , "canDisplayAgo" : true   },
+		"connection_Type" : {"type":"string" , "required" : "true"},
+		"timeStampState" : {"type": "number" },
+		"connection_type": {
+			"type": "string",
+			"enum": ["SSH", "WebService"],
+			"default": "SSH",
+			"role": "simplelist",
+			"required" : true
+		},
+		"subprocess" :{
+			"type": "object",
+			"role":"subprocess"
+		},
+		"connector_type" :{
+			"type": "string",
+			"enum": ["nagios", "shinken"],
+			"default": "shinken",
+			"role": "source"
+		},
+		"options_conf" :{
+			"type": "string",
+			"role": "conf"
+		},
+		"options_filter" :{
+			"type": "array",
+			"role":"tags",
+			"mixinName":"tags_optionFilter"
+		}
+	}
+}
