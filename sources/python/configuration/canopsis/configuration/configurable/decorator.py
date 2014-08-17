@@ -19,6 +19,7 @@
 # ---------------------------------
 
 from . import Configurable
+from ..parameters import Category
 
 
 def conf_paths(*conf_paths):
@@ -33,7 +34,7 @@ def conf_paths(*conf_paths):
     ['test0', 'test1']
     """
 
-    def _get_conf_paths(self):
+    def _get_conf_paths(self, *args, **kwargs):
         # get super result and append conf_paths
         result = super(type(self), self)._get_conf_paths()
         result += conf_paths
@@ -52,3 +53,46 @@ def conf_paths(*conf_paths):
         return cls
 
     return add_conf_paths
+
+
+def add_category(name, unified=True, content=None):
+    """
+    Add a category to a configurable configuration.
+
+    :param name: category name
+    :type name: str
+
+    :param unified: if True (by default), the new category is unified from
+    previous conf
+    :type unified: bool
+
+    :param content: category or list of parameters to add to the new category
+    :type content: Category or list(Parameter)
+    """
+
+    def _conf(self, *args, **kwargs):
+
+        result = super(type(self), self)._conf(*args, **kwargs)
+
+        if unified:
+            result.add_unified_category(name=name)
+        else:
+            result += Category(name=name)
+
+        if content is not None:
+            result[name] += content
+
+        return result
+
+    def add_conf(cls):
+
+        if issubclass(cls, Configurable):
+            cls._conf = _conf
+
+        else:
+            raise Configurable.Error(
+                "class %s is not a Configurable class" % cls)
+
+        return cls
+
+    return add_conf

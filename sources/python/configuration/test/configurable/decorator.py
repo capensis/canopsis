@@ -21,8 +21,10 @@
 
 from unittest import main, TestCase
 
+from canopsis.configuration.parameters import Parameter, Category
 from canopsis.configuration.configurable import Configurable
-from canopsis.configuration.configurable.decorator import conf_paths
+from canopsis.configuration.configurable.decorator \
+    import conf_paths, add_category
 
 
 class DecoratorTest(TestCase):
@@ -44,6 +46,54 @@ class DecoratorTest(TestCase):
 
         for i in range(1, len(test_conf_paths)):
             self.assertEqual(test_conf_paths[-i], configurable_conf_paths[-i])
+
+    def test_add_category(self):
+
+        CATEGORY = 'TEST'
+
+        @add_category(name=CATEGORY, unified=False)
+        class TestConfigurable(Configurable):
+            pass
+
+        tc = TestConfigurable()
+
+        self.assertTrue(CATEGORY in tc.conf)
+        self.assertTrue(len(tc.conf) > 0)
+        self.assertEqual(len(tc.conf[CATEGORY]), 0)
+
+        @add_category(name=CATEGORY)
+        class TestConfigurable(Configurable):
+            pass
+
+        tc = TestConfigurable()
+
+        self.assertTrue(CATEGORY in tc.conf)
+        self.assertTrue(len(tc.conf) > 0)
+        self.assertTrue(len(tc.conf[CATEGORY]) > 0)
+
+        parameters = [Parameter('a'), Parameter('b')]
+
+        @add_category(name=CATEGORY, unified=False, content=parameters)
+        class TestConfigurable(Configurable):
+            pass
+
+        tc = TestConfigurable()
+
+        self.assertTrue(CATEGORY in tc.conf)
+        self.assertTrue(len(tc.conf) > 0)
+        self.assertEqual(len(tc.conf[CATEGORY]), len(parameters))
+
+        category = Category(CATEGORY, parameters)
+
+        @add_category(name=CATEGORY, unified=False, content=category)
+        class TestConfigurable(Configurable):
+            pass
+
+        tc = TestConfigurable()
+
+        self.assertTrue(CATEGORY in tc.conf)
+        self.assertTrue(len(tc.conf) > 0)
+        self.assertEqual(len(tc.conf[CATEGORY]), len(category))
 
 if __name__ == '__main__':
     main()
