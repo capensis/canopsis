@@ -32,7 +32,8 @@ function install(){
     do
         echo "-- Install project: $project"
         export CPS_PREFIX="$PREFIX/etc/"
-        python $SRC_PATH/python/$project/setup.py install >> $LOG 2>&1 || exit 1
+        cd $SRC_PATH/python/$project
+        python setup.py install >> $LOG 2>&1 || exit 1
     done
 
     # TODO when fabric will be available
@@ -45,6 +46,7 @@ function update(){
     do
         echo "-- Update project: $project"
         export CPS_PREFIX="$PREFIX/etc/"
-        python $SRC_PATH/python/$project/setup.py install --no-conf >> $LOG 2>&1 || exit 1
+        cd $SRC_PATH/python/$project
+        python setup.py install --no-conf >> $LOG 2>&1 || exit 1
     done
 }

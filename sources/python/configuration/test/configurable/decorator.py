@@ -21,8 +21,8 @@
 
 from unittest import main, TestCase
 
-from canopsis.configuration.decorator import conf_paths
 from canopsis.configuration.configurable import Configurable
+from canopsis.configuration.configurable.decorator import conf_paths
 
 
 class DecoratorTest(TestCase):
