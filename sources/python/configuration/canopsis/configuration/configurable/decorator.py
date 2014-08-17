@@ -75,12 +75,12 @@ def add_category(name, unified=True, content=None):
         result = super(type(self), self)._conf(*args, **kwargs)
 
         if unified:
-            result.add_unified_category(name=name)
+            result.add_unified_category(name=name, new_content=content)
         else:
-            result += Category(name=name)
-
-        if content is not None:
-            result[name] += content
+            category = Category(name=name)
+            if content is not None:
+                category += content
+            result += category
 
         return result
 

@@ -51,16 +51,6 @@ class DecoratorTest(TestCase):
 
         CATEGORY = 'TEST'
 
-        @add_category(name=CATEGORY, unified=False)
-        class TestConfigurable(Configurable):
-            pass
-
-        tc = TestConfigurable()
-
-        self.assertTrue(CATEGORY in tc.conf)
-        self.assertTrue(len(tc.conf) > 0)
-        self.assertEqual(len(tc.conf[CATEGORY]), 0)
-
         @add_category(name=CATEGORY)
         class TestConfigurable(Configurable):
             pass
@@ -71,7 +61,30 @@ class DecoratorTest(TestCase):
         self.assertTrue(len(tc.conf) > 0)
         self.assertTrue(len(tc.conf[CATEGORY]) > 0)
 
+        category_len = len(tc.conf[CATEGORY])
+
         parameters = [Parameter('a'), Parameter('b')]
+
+        @add_category(name=CATEGORY, content=parameters)
+        class TestConfigurable(Configurable):
+            pass
+
+        tc = TestConfigurable()
+
+        self.assertTrue(CATEGORY in tc.conf)
+        self.assertTrue(len(tc.conf) > 0)
+        self.assertEqual(
+            len(tc.conf[CATEGORY]), category_len + len(parameters))
+
+        @add_category(name=CATEGORY, unified=False)
+        class TestConfigurable(Configurable):
+            pass
+
+        tc = TestConfigurable()
+
+        self.assertTrue(CATEGORY in tc.conf)
+        self.assertTrue(len(tc.conf) > 0)
+        self.assertEqual(len(tc.conf[CATEGORY]), 0)
 
         @add_category(name=CATEGORY, unified=False, content=parameters)
         class TestConfigurable(Configurable):
@@ -83,7 +96,7 @@ class DecoratorTest(TestCase):
         self.assertTrue(len(tc.conf) > 0)
         self.assertEqual(len(tc.conf[CATEGORY]), len(parameters))
 
-        category = Category(CATEGORY, parameters)
+        category = Category(CATEGORY, *parameters)
 
         @add_category(name=CATEGORY, unified=False, content=category)
         class TestConfigurable(Configurable):
