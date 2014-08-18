@@ -43,75 +43,72 @@ class MongoDataBase(DataBase):
         super(MongoDataBase, self).__init__(
             port=port, host=host, *args, **kwargs)
 
-    def connect(self, *args, **kwargs):
+    def _connect(self, *args, **kwargs):
 
-        if not self.connected():
+        result = None
 
-            connection_args = {}
+        connection_args = {}
 
-            # if self host is given
-            if self.host:
-                connection_args['host'] = self.host
+        # if self host is given
+        if self.host:
+            connection_args['host'] = self.host
 
-            if self.port:
-                connection_args['port'] = self.port
+        if self.port:
+            connection_args['port'] = self.port
 
-            self.logger.debug('Trying to connect to %s' % (connection_args))
+        self.logger.debug('Trying to connect to %s' % (connection_args))
 
-            connection_args['j'] = self.journaling
-            connection_args['w'] = 1 if self.safe else 0
+        connection_args['j'] = self.journaling
+        connection_args['w'] = 1 if self.safe else 0
 
-            if self.ssl:
-                connection_args.update({
-                    'ssl': self.ssl,
-                    'ssl_keyfile': self.ssl_key,
-                    'ssl_certfile': self.ssl_cert
-                })
+        if self.ssl:
+            connection_args.update({
+                'ssl': self.ssl,
+                'ssl_keyfile': self.ssl_key,
+                'ssl_certfile': self.ssl_cert
+            })
 
-            try:
-                self._conn = MongoClient(**connection_args)
+        try:
+            result = MongoClient(**connection_args)
 
-            except ConnectionFailure as e:
-                self.logger.error(
-                    'Raised {2} during connection attempting to {0}:{1}.'.
-                    format(self.host, self.port, e))
+        except ConnectionFailure as e:
+            self.logger.error(
+                'Raised {2} during connection attempting to {0}:{1}.'.
+                format(self.host, self.port, e))
 
-            else:
-                self._database = self._conn[self.db]
+        else:
+            self._database = result[self.db]
 
-                if (self.user, self.pwd) != (None, None):
+            if (self.user, self.pwd) != (None, None):
 
-                    authenticate = self._database.authenticate(
-                        self.user, self.pwd)
-                    if authenticate:
-                        self.logger.info("Connected on {0}:{1}".format(
-                            self.host, self.port))
-                        self._connected = True
-
-                    else:
-                        self.logger.error(
-                            'Impossible to authenticate {0} on {1}:{2}'.format(
-                                self.host, self.port))
-                        self.disconnect()
-
-                else:
-                    self._connected = True
-                    self.logger.debug("Connected on {0}:{1}".format(
+                authenticate = self._database.authenticate(
+                    self.user, self.pwd)
+                if authenticate:
+                    self.logger.info("Connected on {0}:{1}".format(
                         self.host, self.port))
 
-        return self.connected()
+                else:
+                    self.logger.error(
+                        'Impossible to authenticate {0} on {1}:{2}'.format(
+                            self.host, self.port))
+                    self.disconnect()
+                    result = None
 
-    def disconnect(self, *args, **kwargs):
+            else:
+                self.logger.debug("Connected on {0}:{1}".format(
+                    self.host, self.port))
 
-        if getattr(self, '_conn', None)is not None:
+        return result
+
+    def _disconnect(self, *args, **kwargs):
+
+        if self._conn is not None:
             self._conn.close()
             self._conn = None
 
-        self._connected = False
-
     def connected(self, *args, **kwargs):
 
-        result = getattr(self, '_conn', None) is not None
+        result = self._conn is not None and self._conn.alive()
 
         return result
 
@@ -188,9 +185,9 @@ class MongoStorage(MongoDataBase, Storage):
     def indexes(self, value):
         self._indexes = value
 
-    def connect(self, *args, **kwargs):
+    def _connect(self, *args, **kwargs):
 
-        result = super(MongoStorage, self).connect(*args, **kwargs)
+        result = super(MongoStorage, self)._connect(*args, **kwargs)
 
         if result:
             self.indexes = self._get_indexes()
@@ -236,6 +233,34 @@ class MongoStorage(MongoDataBase, Storage):
 
         return result
 
+    def remove_elements(self, ids, *args, **kwargs):
+
+        self._remove({MongoStorage.ID: {'$in': ids}})
+
+    def put_element(self, _id, element, *args, **kwargs):
+
+        self._update(
+            _id={MongoStorage.ID: _id}, document={'$set': element},
+            multi=False)
+
+    def bool_compare_and_swap(self, _id, oldvalue, newvalue):
+
+        return self.val_compare_and_swap(_id, oldvalue, newvalue) == newvalue
+
+    def val_compare_and_swap(self, _id, oldvalue, newvalue):
+
+        try:
+            result = self._run_command(
+                'find_and_modify',
+                query={MongoStorage.ID: _id, 'value': oldvalue},
+                update={'$set': {'value': newvalue}},
+                upsert=True)
+
+        except DuplicateKeyError:
+            result = None
+
+        return oldvalue if not result else newvalue
+
     def _get_index(self, _filter):
         """
         Get the right index related to input filter.
@@ -278,34 +303,6 @@ class MongoStorage(MongoDataBase, Storage):
             result = result[0] if result else None
 
         return result
-
-    def remove_elements(self, ids, *args, **kwargs):
-
-        self._remove({MongoStorage.ID: {'$in': ids}})
-
-    def put_element(self, _id, element, *args, **kwargs):
-
-        self._update(
-            _id={MongoStorage.ID: _id}, document={'$set': element},
-            multi=False)
-
-    def bool_compare_and_swap(self, _id, oldvalue, newvalue):
-
-        return self.val_compare_and_swap(_id, oldvalue, newvalue) == newvalue
-
-    def val_compare_and_swap(self, _id, oldvalue, newvalue):
-
-        try:
-            result = self._run_command(
-                'find_and_modify',
-                query={MongoStorage.ID: _id, 'value': oldvalue},
-                update={'$set': {'value': newvalue}},
-                upsert=True)
-
-        except DuplicateKeyError:
-            result = None
-
-        return oldvalue if not result else newvalue
 
     def _element_id(self, element):
 

@@ -63,6 +63,55 @@ def parse_scheme(uri):
     return result
 
 
+def get_uri(
+    protocol, data_type=None, data_scope=None, host=None, port=None, user=None,
+    pwd=None, path=None, parameters=None
+):
+    """
+    Get a scheme related to input protocol, data_type and data_scope.
+
+    :return: {protocol[-{data_type}[-{data_scope}]]}://[{user}[:{pwd}]]@{host}?localhost[:port][/{path}][?{parameters}]
+    :rtype: str
+    """
+
+    result = ''
+
+    if not protocol:
+        raise Middleware.Error('protocol must be set')
+
+    result = protocol
+
+    if data_type:
+        result = '{0}{1}{2}{1}'.format(result, SCHEME_SEPARATOR, data_type)
+
+    if data_scope:
+        result = '%s%s%s' % (result, SCHEME_SEPARATOR, data_scope)
+
+    result += '://'
+
+    if user:
+        result += user
+        if pwd:
+            result += ':%s' % pwd
+
+        result += '@'
+
+    if not host:
+        host = 'localhost'
+    result += host
+
+    if port:
+        result += ':%s' % port
+
+    if path:
+        result += '/%s' % path
+
+    if parameters:
+        result += '?%s' % parameters
+
+    return result
+
+
 class MetaMiddleware(MetaConfigurable):
     """
     Middleware meta class which register all middleware in a global
@@ -474,9 +523,12 @@ class Middleware(Configurable):
 
             self._disconnect()
 
+            self._conn = None
+
             self.logger.info("Disconnected from %s" % (self.uri))
 
-        self.logger.info("%s is already disconnected" % self)
+        else:
+            self.logger.info("%s is already disconnected" % self)
 
     def _disconnect(self):
         """
@@ -505,12 +557,16 @@ class Middleware(Configurable):
         try:
             self.disconnect()
         except Exception:
-            pass
+            self.warning(
+                'Disconnection problem while attempting to reconnect %s' %
+                self)
         else:
             try:
                 result = self.connect()
             except Exception:
-                pass
+                self.warning(
+                    'Connection problem while attempting to reconnect %s' %
+                    self)
 
         return result
 
