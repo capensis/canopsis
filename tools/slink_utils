@@ -1,4 +1,5 @@
 #!/bin/bash
+
 function create_python_slink() {
     # create slink for specific python project
     # first argument is the project, second if given is the version (default 0.1)
@@ -37,9 +38,9 @@ function create_slinks() {
     ln -s $SRC/sources/mongodb-conf/etc/schema.d $CPS/etc/
     # canolibs
     create_canolibs_slink
-    #create_python_slink cli 0.1
-    #create_python_slink common 0.1
-    #create_python_slink configuration 0.1
+    # create_python_slink cli 0.1
+    # create_python_slink common 0.1
+    # create_python_slink configuration 0.1
     # create_python_slink connectors 0.1
     # create_python_slink context 0.1
     # create_python_slink engines 0.1
@@ -57,7 +58,7 @@ function create_slinks() {
     # create_python_slink rpc 0.1
 
     ln -s $SRC/sources/python/connectors/var/snmp $CPS/var/
-    ln -s $SRC/sources/webcore/canopsis/webcore/services $CPS/lib/python2.7/site-packages/canopsis.webcore-0.8-py2.7.egg/canopsis/webcore/services
+    ln -s $SRC/sources/webcore/canopsis/webcore/services $CPS/lib/python2.7/site-packages/canopsis.webcore-0.8-py2.7.egg/
     touch $CPS/.slinked
 }
 
@@ -70,8 +71,10 @@ function remove_slinks() {
     rm -Rf $CPS/lib/wkhtmltopdf/*
     rm -Rf $CPS/etc/schema.d
     rm -Rf $CPS/etc/tasks.d/task_reporting.py
+
     # canolibs
     rm -Rf $CPS/lib/python2.7/site-packages/canopsis.*-py2.7.egg/canopsis
+
     rm -Rf $CPS/var/snmp
     rm -Rf $CPS/lib/python2.7/site-packages/canopsis.webcore-0.8-py2.7.egg/canopsis/webcore/services
     rm $CPS/.slinked 2>/dev/null
