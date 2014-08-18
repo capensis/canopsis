@@ -177,6 +177,7 @@ class Archiver(object):
     def check_event(self, _id, event):
         changed = False
         new_event = False
+        devent = {}
 
         self.logger.debug(" + Event:")
 
@@ -212,6 +213,8 @@ class Archiver(object):
 
             if not devent:
                 new_event = True
+                # may have side effects on acks/cancels
+                devent = {}
 
             self.logger.debug(" + Check with old record:")
             old_state = devent['state']
