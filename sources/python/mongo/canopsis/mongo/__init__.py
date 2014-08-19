@@ -213,8 +213,10 @@ class MongoStorage(MongoDataBase, Storage):
 
         query = {}
 
+        count_opt = False
+
         if ids is not None:
-            if isiterable(ids):
+            if isiterable(ids, is_str=False):
                 query[MongoStorage.ID] = {'$in': ids}
             else:
                 query[MongoStorage.ID] = ids
@@ -223,13 +225,20 @@ class MongoStorage(MongoDataBase, Storage):
 
         if limit:
             cursor.limit(limit)
+            count_opt = True
         if skip:
             cursor.skip(skip)
+            count_opt = True
         if sort is not None:
             MongoStorage._update_sort(sort)
             cursor.sort(sort)
 
-        result = self._get_generic_result(cursor, ids)
+        print ids, " found: ", cursor.count()
+        # Return the element if only one element was requested
+        # Otherwise, return a list of the requested elements
+        cursor = None if not cursor.count(count_opt) else cursor
+
+        result = cursor if len(ids) == 1 else list(cursor)
 
         return result
 
@@ -282,25 +291,6 @@ class MongoStorage(MongoDataBase, Storage):
             if correspondance > max_correspondance:
                 result = index
                 max_correspondance = correspondance
-
-        return result
-
-    def _get_generic_result(self, cursor, ids=None):
-        """
-        Get generic result depending on input cursor and ids.
-        If ids is not iterable, then result if the first cursor result.
-        Iterable of cursor otherwise.
-        """
-
-        result = None
-        # Return the element if only one element was requested
-        # Otherwise, return a list of the requested elements
-        if ids is None or isiterable(ids, is_str=False):
-            result = list(cursor)
-
-        else:
-            # result is the only one value or None if no value exist
-            result = result[0] if result else None
 
         return result
 
