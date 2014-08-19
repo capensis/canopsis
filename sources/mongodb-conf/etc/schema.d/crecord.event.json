@@ -69,6 +69,10 @@
 		"status": {
 			"type": "number",
 			"role": "status"
+		},
+		"cancel": {
+			"type": "object",
+			"role": "object"
 		}
 	}
 }
