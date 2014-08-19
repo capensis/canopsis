@@ -233,12 +233,14 @@ class MongoStorage(MongoDataBase, Storage):
             MongoStorage._update_sort(sort)
             cursor.sort(sort)
 
-        print ids, " found: ", cursor.count()
         # Return the element if only one element was requested
         # Otherwise, return a list of the requested elements
         cursor = None if not cursor.count(count_opt) else cursor
 
-        result = cursor if len(ids) == 1 else list(cursor)
+        result = cursor
+
+        if cursor:
+            result = cursor[0] if len(ids) == 1 else list(cursor)
 
         return result
 
