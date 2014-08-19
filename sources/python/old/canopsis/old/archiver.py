@@ -269,8 +269,6 @@ class Archiver(object):
         if new_event:
             self.store_new_event(_id, event)
         else:
-            #Cancel management
-            self.process_cancel(devent, event)
             change = {}
             # resets ack status for this alert if already set to true
             if devent.get('ack', False):
@@ -297,55 +295,6 @@ class Archiver(object):
             event['processing'] = processing
 
         return mid
-
-    #Cancel and uncancel process are processed here
-    def process_cancel(self, devent, event):
-        #Event cancellation management
-        self.logger.warning(' + will process cancel')
-        if 'cancel' in event:
-            self.logger.warning(' + cancel found')
-
-            #Saving status, in case cancel is undone
-            previous_status = devent.get('status', 1)
-            previous_state = devent['state']
-            # Cancel value means cancel for True or undo cancel for False
-            cancel = {
-                'author' : event.get('author','unknown'),
-                'isCancel' : True,
-                'comment' : event['output'],
-                'previous_status': previous_status,
-                'ack': devent.get('ack', {})
-            }
-            # Preparing event for cancel,
-            # avoid using space and use previous output
-            if 'author' in event:
-                del event['author']
-
-            event['output'] = devent.get('output', '')
-
-            #Is it a cancel ?
-            if event['cancel'] == True:
-                self.logger.info("set cancel to the event")
-                # If cancel is not in ok state, then it is not an alert cancellation
-                event['ack'] = cancel
-                event['status'] = 4
-
-            # Undo cancel ?
-            elif event['cancel'] == False:
-                self.logger.warning(' + in da cancel')
-                #If event has been previously cancelled
-
-                if 'ack' in devent and 'ack' in devent['ack']:
-                    self.logger.warning(' + reseting ack')
-
-                    #Restore previous status
-                    event['status'] = devent['ack'].get('previous_status', 0)
-                    #Restore ack as previously
-                    event['ack'] = devent['ack']['ack']
-
-            #Avoid saving useless boolean values to db
-            if 'cancel' in event and isinstance(event['cancel'], bool):
-                del event['cancel']
 
     def store_new_event(self, _id, event):
         record = Record(event)
