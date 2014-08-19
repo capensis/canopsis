@@ -23,7 +23,6 @@ from canopsis.middleware.manager import Manager
 
 CATEGORY = 'RIGHTS'
 
-
 @conf_paths('organisation/rights.conf')
 @add_category(CATEGORY)
 class Rights(Manager):
@@ -49,6 +48,11 @@ class Rights(Manager):
         self.role_storage = self['role_storage']
         self.default_profile = 'vizualisation'
 
+
+        self.get_profile = self.get_from_storage('profiles_storage')
+        self.get_composite = self.get_from_storage('composite_storage')
+        self.get_role = self.get_from_storage('role_storage')
+
     # Entity can be a right_composite, a profile or a role since
     # all 3 of them have a rights field
     def check(self, entity, right_id, checksum):
@@ -60,10 +64,9 @@ class Rights(Manager):
         if not entity or not entity.get('rights', None):
             return False
 
-        found = entity['rights'].get(right_id, None)
 
-        if (found and found.get(right_id, None)
-                and found[right_id].get('checksum', 0) & checksum >= checksum):
+        found = entity['rights'].get(right_id, None)
+        if (found and found.get('checksum', 0) & checksum >= checksum):
             return True
 
         return False
@@ -77,9 +80,8 @@ class Rights(Manager):
         Check if user has the right of id right_id
         """
 
-        profile = self.profiles_storage.get_elements(
-            ids=[role.get('profile', None)])
-
+        role = self.profile_storage.get_elements(ids=[role])
+        profile = self.profile_storage.get_elements(ids=[role['profile']])
         p_composites = profile.get('composites', None)
 
         composites = [self.composite_storage.get_elements(ids=[x])
@@ -126,7 +128,7 @@ class Rights(Manager):
             if kwargs[key]:
                 entity['rights'][right_id][key] = context
 
-        self[e_type].put_element(entity)
+        self[e_type].put_element(e_name, entity)
         return True
 
     # Delete the checksum right of the entity linked
@@ -280,36 +282,42 @@ class Rights(Manager):
         Add profile p_name to role['profile']
         """
 
-        if not self.profile_storage.get_elements(ids=[p_name]):
+        profile = self.profile_storage.get_elements(ids=[p_name])
+        if not profile:
             if p_composites:
                 self.create_profile(p_name, p_composites)
             else:
-                return False
+                return None
 
         # retrieve the profile
-        if self.profile_storage.get_elements(ids=[p_name]):
+        if profile:
             # change role['profiles'] to a set of strings
             #   if you want to allow several profiles on
             #   the same role
-            role['profiles'] = p_name
+            # Get role from storage
+            s_role = self.role_storage.get_elements(ids=[role])
+            s_role['profile'] = p_name
+            self.role_storage.put_element(role, s_role)
+
+            return p_name
 
     # Create a new role composed of the profile r_profile
     #   and which name will be r_name
     # Any extra field can be specified in the kwargs
     # If the role already exists, the profile will be changed for r_profile
-    # Return True if the role was created, False otherwise
+    # Return the newly created role's name or False it the creation failed
     def create_role(self, r_name, r_profile):
         """
         Create role p_name composed of p_composites
         """
 
         if self.role_storage.get_elements(ids=[r_name]):
-            return False
+            return r_name
 
         new_role = {}
-        new_role['profiles'] = r_profile
+        new_role['profile'] = r_profile
         self.role_storage.put_element(r_name, new_role)
-        return True
+        return r_name
 
     def delete_role(self, r_name):
         if self.role_storage.get_elements(ids=[r_name]):
@@ -317,6 +325,13 @@ class Rights(Manager):
             return True
 
         return False
+
+    def get_from_storage(self, s_name):
+        def get_from_storage_(elem, default=None):
+            if not elem in self[s_name]:
+                return default
+            return self[s_name][elem]
+        return get_from_storage_
 
     # def create_entity(self, entity_name, entity_type, **kwargs):
     #     """
