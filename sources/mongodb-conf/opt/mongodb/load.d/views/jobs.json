@@ -13,8 +13,7 @@
         "xtype": "widgetwrapper",
         "widget": {
           "widgetId" : "fake-guid-fd5a-1ede-8ac2-6a1d66ad0023",
-          "xtype": "list",
-          "listed_crecord_type": "job",
+          "xtype": "jobmanager",
           "title": "Scheduled Jobs",
           "item_actions": [
             "actionbutton-edit",

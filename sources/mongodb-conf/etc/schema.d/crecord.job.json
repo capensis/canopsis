@@ -3,9 +3,6 @@
 	"categories": [{
 		"title": "Schedule",
 		"keys": ["start", "rrule"]
-	},{
-		"title": "Job",
-		"keys": ["task", "params"]
 	}],
 	"properties": {
 		"crecord_type": {
@@ -18,7 +15,6 @@
 		"start": {"type": "integer", "required": true, "role": "timestamp"},
 		"params": {
 			"type": "object",
-			"polymorphic": true,
 			"required": true
 		}
 	}
