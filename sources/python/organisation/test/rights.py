@@ -58,11 +58,11 @@ class RightsTest(TestCase):
         self.rights.create_composite('composite_test2', rights_scnd)
 
         # basic profile creation
-        self.rights.create_profile('profile_test1', ('composite_test1',))
-        self.rights.create_profile('profile_test2', ('composite_test2',))
+        self.rights.create_profile('profile_test1', ('composite_test1'))
+        self.rights.create_profile('profile_test2', ('composite_test2'))
 
         # "add" composite_test2 to profile_test1
-        self.rights.create_profile('profile_test1', ('composite_test2',))
+        self.rights.create_profile('profile_test1', ('composite_test2'))
 
         self.rights.create_role('role_test1', 'profile_test1')
         self.rights.create_role('role_test12', 'profile_test2')
@@ -73,9 +73,11 @@ class RightsTest(TestCase):
                 'phone_number': '+33678695041',
                 'adress': '1271 6th Avenue, Rockefeller Cent., NYC, New York'},
             'name': 'Joan Harris',
+            'role': '',
             '_id': '1407160264.joan.harris.manager'}
 
-        self.rights.add_profile(sample_user['role'], 'profile_test1')
+        sample_user['role'] = self.rights.add_profile(sample_user['role'],
+                                                      'profile_test1')
 
         self.assertEqual(
             self.rights.check_user_rights(

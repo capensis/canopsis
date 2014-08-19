@@ -83,6 +83,13 @@ Package contents
    :return: (protocol, data_type, data_scope) from uri scheme
    :rtype: tuple
 
+.. function:: get_uri(protocol, data_type=None, data_scope=None, host=None, port=None, user=None, pwd=None, path=None, parameters=None)
+
+   Get a scheme related to input protocol, data_type and data_scope.
+
+   :return: {protocol[-{data_type}[-{data_scope}]]}://[{user}[:{pwd}]]@{host}?localhost[:port][/{path}][?{parameters}]
+   :rtype: str
+
 .. class:: MetaMiddleware(canopsis.configuration.configurable.MetaConfigurable)
 
    Middleware meta class which register all middleware in a global set of middlewares, depending on their ``protocol`` name and ``data_type``.

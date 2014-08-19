@@ -46,6 +46,9 @@ class DataBase(Middleware):
 
     CONF_RESOURCE = 'storage/database.conf'
 
+    class DataBaseError(Exception):
+        pass
+
     def __init__(self, db='canopsis', journaling=False, *args, **kwargs):
         """
         :param db: db name

@@ -69,13 +69,13 @@ class MongoTimedStorage(MongoStorage, TimedStorage):
             cursor.sort(sort)
 
         # apply a specific index
-        cursor.hint(TimedStorage.TIMESTAMP_BY_ID)
+        cursor.hint(MongoTimedStorage.TIMESTAMP_BY_ID)
 
         # iterate on all documents
         for document in cursor:
-            timestamp = document[TimedStorage.Key.TIMESTAMP]
-            value = document[TimedStorage.Key.VALUE]
-            data_id = document[TimedStorage.Key.DATA_ID]
+            timestamp = document[MongoTimedStorage.Key.TIMESTAMP]
+            value = document[MongoTimedStorage.Key.VALUE]
+            data_id = document[MongoTimedStorage.Key.DATA_ID]
 
             # a value to get is composed of a timestamp, values and document id
             value_to_append = (timestamp, value, document['_id'])
