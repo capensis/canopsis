@@ -22,6 +22,7 @@ __version__ = "0.1"
 
 from urlparse import urlparse
 
+from canopsis.common.utils import force_iterable
 from canopsis.configuration import Configurable, Parameter
 from canopsis.configuration.configurable import MetaConfigurable
 
@@ -29,6 +30,7 @@ SCHEME_SEPARATOR = '-'  #: char separator in uri to proto/data_type/data_scope
 PROTOCOL_INDEX = 0  #: protocol name index in an uri scheme
 DATA_TYPE_INDEX = 1  #: data type name index in an uri scheme
 DATA_SCOPE_INDEX = 2  #: data scope name index in an uri scheme
+DEFAULT_DATA_TYPE = 'default'  #: default data type
 DEFAULT_DATA_SCOPE = 'canopsis'  #: default data_scope
 
 
@@ -70,7 +72,8 @@ def get_uri(
     """
     Get a scheme related to input protocol, data_type and data_scope.
 
-    :return: {protocol[-{data_type}[-{data_scope}]]}://[{user}[:{pwd}]]@{host}?localhost[:port][/{path}][?{parameters}]
+    :return: {protocol[-{data_type}[-{data_scope}]]}://[{user}[:{pwd}]]@{host}?
+    localhost[:port][/{path}][?{parameters}]
     :rtype: str
     """
 
@@ -142,13 +145,20 @@ class Middleware(Configurable):
     - perfdata for managing perfdata.
     - entities for managing entities.
     - etc.
+
+    When a class is registered, it register itself with all protocols defined
+    in bases classes.
+
+    That means the last registered middleware will be registered to all
+    protocol specified in its base class hierarchy.
     """
 
     __metaclass__ = MetaMiddleware
 
     __register__ = False  #: if True, automatically register this class
     __protocol__ = 'canopsis'  #: protocol registration name if __register__
-    __datatype__ = None  #: data_type registration name if __register__
+    __datatype__ = DEFAULT_DATA_TYPE
+    """ data_type registration name if __register__. Default None"""
 
     # private class attribute which manages middlewares classes per data_type
     __MIDDLEWARES__ = {}
@@ -184,7 +194,7 @@ class Middleware(Configurable):
 
     def __init__(
         self,
-        uri=None, data_type=None, data_scope=DEFAULT_DATA_SCOPE,
+        uri=None, data_type=None, data_scope=None,
         protocol=None, host='localhost', port=0, path='canopsis',
         auto_connect=True, safe=False,
         conn_timeout=20000, in_timeout=100, out_timeout=2000,
@@ -244,7 +254,7 @@ class Middleware(Configurable):
             else protocol
         self._data_type = type(self).__datatype__ if data_type is None \
             else data_type
-        self._data_scope = type(self).__datascope__ if data_scope is None \
+        self._data_scope = DEFAULT_DATA_SCOPE if data_scope is None \
             else data_scope
         self._host = host
         self._port = port
@@ -272,7 +282,9 @@ class Middleware(Configurable):
         return result
 
     def _get_uri(self):
-
+        """
+        Get uri in constructing it from individual uri parameters
+        """
         result = self._uri
 
         # if self._uri is not resolved, generate it related to other parameters
@@ -302,11 +314,12 @@ class Middleware(Configurable):
     def uri(self, value):
 
         self._set_uri(value)
-
         self.reconnect()
 
     def _set_uri(self, value):
-
+        """
+        Set uri in getting values from uri parameters if value is None or empty
+        """
         self._uri = value
         # update other properties if value is not None
         if not value:
@@ -557,14 +570,14 @@ class Middleware(Configurable):
         try:
             self.disconnect()
         except Exception:
-            self.warning(
+            self.logger.warning(
                 'Disconnection problem while attempting to reconnect %s' %
                 self)
         else:
             try:
                 result = self.connect()
             except Exception:
-                self.warning(
+                self.logger.warning(
                     'Connection problem while attempting to reconnect %s' %
                     self)
 
@@ -585,6 +598,7 @@ class Middleware(Configurable):
                 unified_conf=unified_conf,
                 param_name=path_property,
                 public=False)
+
             if updated_property:
                 reconnect = True
 
@@ -632,17 +646,53 @@ class Middleware(Configurable):
     def register_middleware(cls, protocol=None, data_type=None):
         """
         Register a middleware class with input protocol name and data_type.
+
+        :param protocol: one or many protocols to add to protocols of input cls
+        :type protocol: str or Iterable(protocol)
+
+        :param data_type: one or many data_types to add to data_types of input
+            cls.
+        :type data_type: str or Iterable(data_type)
         """
 
-        if protocol is None:
-            protocol = cls.__protocol__
+        protocols = cls.get_protocols()
+        data_types = force_iterable(cls.__datatype__, iterable=set)
 
-        if data_type is None:
-            data_type = cls.__datatype__
+        if protocol is not None:
+            protocol = force_iterable(protocol, iterable=set)
+            protocols |= protocol
 
-        data_types = Middleware.__MIDDLEWARES__.setdefault(protocol, {})
+        if data_type is not None:
+            data_type = force_iterable(data_type, iterable=set)
+            data_types |= data_type
 
-        data_types[data_type] = cls
+        for protocol in protocols:
+            _data_types = Middleware.__MIDDLEWARES__.setdefault(protocol, {})
+
+            for dt in data_types:
+                _data_types[dt] = cls
+
+    @classmethod
+    def get_protocols(cls):
+        """
+        Get all protocols declared in the class hierarchy of cls
+
+        :return: set of protocols registered in the class tree
+         of input cls
+        :rtype: set([str])
+        """
+
+        protocols = force_iterable(cls.__protocol__, iterable=set)
+
+        for base_cls in cls.__bases__:
+            if issubclass(base_cls, Middleware):
+                base_protocols = base_cls.get_protocols()
+
+                protocols |= base_protocols
+
+        result = protocols
+
+        return result
 
     @staticmethod
     def resolve_middleware(protocol, data_type=None):
@@ -662,6 +712,9 @@ class Middleware(Configurable):
         :raise: Middleware.Error if no middleware is registered related to
         input protocol and data_type.
         """
+
+        if data_type is None:
+            data_type = DEFAULT_DATA_TYPE
 
         # try to get protocol
         if protocol not in Middleware.__MIDDLEWARES__:
@@ -728,6 +781,9 @@ class Middleware(Configurable):
         """
 
         result = None
+
+        if data_type is None:
+            data_type = DEFAULT_DATA_TYPE
 
         middleware_class = Middleware.resolve_middleware(
             protocol=protocol, data_type=data_type)

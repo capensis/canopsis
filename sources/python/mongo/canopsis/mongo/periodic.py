@@ -36,8 +36,6 @@ class MongoPeriodicStorage(MongoStorage, PeriodicStorage):
     MongoStorage dedicated to manage periodic data.
     """
 
-    __datatype__ = 'periodic'  #: register this class to periodic data types
-
     class Index:
 
         DATA_ID = 'i'

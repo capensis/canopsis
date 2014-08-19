@@ -22,7 +22,7 @@
 from unittest import TestCase, main
 
 from canopsis.common.utils import \
-    resolve_element, path, isiterable, isunicode, force_unicode
+    resolve_element, path, isiterable, isunicode, force_unicode, force_iterable
 
 from sys import version as PYVER
 
@@ -111,6 +111,13 @@ class UtilsTest(TestCase):
             self.assertTrue(isinstance(force_unicode(str()), unicode))
             self.assertTrue(isinstance(force_unicode(unicode()), unicode))
             self.assertRaises(TypeError, force_unicode)
+
+    def test_force_iterable(self):
+
+        self.assertEqual(force_iterable(2), [2])
+        self.assertEqual(force_iterable("2"), ["2"])
+        self.assertEqual(force_iterable([2]), [2])
+        self.assertEqual(force_iterable([2], iterable=set), {2})
 
 if __name__ == '__main__':
     main()

@@ -167,3 +167,26 @@ def force_unicode(s):
             raise TypeError('Expecting a string as argument')
 
     return result
+
+
+def force_iterable(value, iterable=list):
+    """
+    Convert a value into an iterable if it is not.
+
+    :param value: value to convert
+    :type value: object
+
+    :param iterable: iterable type to apply (default: list)
+    :type iterable: type
+    """
+
+    result = value
+
+    if not isiterable(value, is_str=False):
+        result = [value]
+        result = iterable(result)
+
+    else:
+        result = iterable(value)
+
+    return result

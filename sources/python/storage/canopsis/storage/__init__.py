@@ -44,7 +44,10 @@ class DataBase(Middleware):
     DB = 'db'
     JOURNALING = 'journaling'
 
-    CONF_RESOURCE = 'storage/database.conf'
+    CONF_RESOURCE = 'storage/storage.conf'
+
+    class DataBaseError(Exception):
+        pass
 
     def __init__(self, db='canopsis', journaling=False, *args, **kwargs):
         """
@@ -160,9 +163,12 @@ class Storage(DataBase):
     For example, perfdata and context are two data types.
     """
 
-    __storage_type__ = 'storage'  # storage type name
+    __protocol__ = 'storage'
+    """register itself and all subclasses to storage protocol"""
+    __datatype__ = 'basic', None
+    """register itself to basic and default data type"""
 
-    DATA_ID = 'id'
+    DATA_ID = 'id'  #: db data id
 
     ASC = 1  # ASC order
     DESC = -1  # DESC order

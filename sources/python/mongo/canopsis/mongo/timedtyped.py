@@ -28,8 +28,6 @@ class MongoTimedTypedStorage(MongoStorage, TimedTypedStorage):
     MongoStorage dedicated to manage timed typed data.
     """
 
-    __datatype__ = 'timedtyped'  #: register this class to timed data types
-
     class Key:
 
         DATA_ID = 'd'
