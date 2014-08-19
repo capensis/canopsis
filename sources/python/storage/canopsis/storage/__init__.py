@@ -49,6 +49,9 @@ class DataBase(Middleware):
     class DataBaseError(Exception):
         pass
 
+    class DataBaseError(Exception):
+        pass
+
     def __init__(self, db='canopsis', journaling=False, *args, **kwargs):
         """
         :param db: db name

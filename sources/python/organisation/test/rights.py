@@ -34,57 +34,63 @@ class RightsTest(TestCase):
     def test(self):
         # Test creation of composites
         rights = {
-            '1234': {'checksum': 15},
-            '1235': {'checksum': 8},
-            '1236': {'checksum': 12},
-            '1237': {'checksum': 1},
-            '1238': {'checksum': 15},
-            '1239': {'checksum': 15},
-            '1240': {'checksum': 8},
-            '1241': {'checksum': 8}}
-
+            'rights': {
+                '1234': {'checksum': 15},
+                '1235': {'checksum': 8},
+                '1236': {'checksum': 12},
+                '1237': {'checksum': 1},
+                '1238': {'checksum': 15},
+                '1239': {'checksum': 15},
+                '1240': {'checksum': 8},
+                '1241': {'checksum': 8}}
+            }
         rights_scnd = {
-            '2344': {'checksum': 15},
-            '2345': {'checksum': 8},
-            '2346': {'checksum': 12},
-            '2347': {'checksum': 1},
-            '2348': {'checksum': 15},
-            '2349': {'checksum': 15},
-            '4210': {'checksum': 8},
-            '4211': {'checksum': 8}}
-
-        # basic creation
-        self.rights.create_composite('composite_test1', rights)
-        self.rights.create_composite('composite_test2', rights_scnd)
-
-        # basic profile creation
-        self.rights.create_profile('profile_test1', ('composite_test1',))
-        self.rights.create_profile('profile_test2', ('composite_test2',))
-
-        # "add" composite_test2 to profile_test1
-        self.rights.create_profile('profile_test1', ('composite_test2',))
-
-        self.rights.create_role('role_test1', 'profile_test1')
-        self.rights.create_role('role_test12', 'profile_test2')
-
+            'rights': {
+                '2344': {'checksum': 15},
+                '2345': {'checksum': 8},
+                '2346': {'checksum': 12},
+                '2347': {'checksum': 1},
+                '2348': {'checksum': 15},
+                '2349': {'checksum': 15},
+                '4210': {'checksum': 8},
+                '4211': {'checksum': 8}}
+            }
         sample_user = {
             'contact': {
                 'mail': 'jharris@scdp.com',
                 'phone_number': '+33678695041',
                 'adress': '1271 6th Avenue, Rockefeller Cent., NYC, New York'},
             'name': 'Joan Harris',
+            'role': '',
             '_id': '1407160264.joan.harris.manager'}
 
-        self.rights.add_profile(sample_user['role'], 'profile_test1')
+        # basic creation
+        self.rights.create_composite('composite_test1', rights)
+        self.rights.create_composite('composite_test2', rights_scnd)
+
+        # basic profile creation
+        self.rights.create_profile('profile_test1', ('composite_test1'))
+        self.rights.create_profile('profile_test2', ('composite_test2'))
+
+        # "add" composite_test2 to profile_test1
+        self.rights.create_profile('profile_test1', ('composite_test2'))
+
+        sample_user['role'] = self.rights.create_role('role_test1bis',
+                                                      'profile_test1')
+
+        self.rights.create_role('role_test2',
+                                'profile_test2')
+
+        self.rights.add_profile(sample_user['role'],
+                                'profile_test1')
 
         self.assertEqual(
             self.rights.check_user_rights(
                 sample_user['role'], '1237', 1), True)
+
         self.assertEqual(
             self.rights.check_user_rights(
                 sample_user['role'], '1237', 12), False)
-
-        self.rights.add(sample_user['role'], 'role', '1237', 15)
 
         self.assertEqual(
             self.rights.check_user_rights(

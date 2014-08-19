@@ -1,5 +1,12 @@
 {
 	"type": "object",
+	"categories": [{
+		"title": "General",
+		"keys": ["subject", "template", "attachments", "html"]
+	},{
+		"title": "SMTP",
+		"keys": ["smtp_host", "smtp_port"]
+	}],
 	"properties": {
 		"user": {"type": "string", "required": true},
 		"group": {"type": "string", "required": true},
