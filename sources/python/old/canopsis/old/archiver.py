@@ -99,7 +99,7 @@ class Archiver(object):
 
         # Check if event is still canceled
         # status legend:
-        # 0 == Ok
+        # 0 == Off
         # 1 == On going
         # 2 == Stealthy
         # 3 == Bagot
@@ -123,7 +123,7 @@ class Archiver(object):
                     or (not self.is_bagot(event)
                         and not self.is_stealthy(
                             ts_curr - event['ts_first_stealthy']))):
-                    self.logger.info(log.format('Off'))
+                    self.logger.debug(log.format('Off'))
                     event['status'] = 0
                     event['ts_first_stealthy'] = 0
                 else:
@@ -285,6 +285,9 @@ class Archiver(object):
 
         mid = None
         if changed and self.autolog:
+            #store ack information to log collection
+            if 'ack' in devent:
+                event['ack'] = devent['ack']
             mid = self.log_event(_id, event)
 
         #Put back perfdata after database upsert
