@@ -21,7 +21,7 @@
 from canopsis.engines import Engine
 from canopsis.old.storage import get_storage
 from canopsis.old.account import Account
-
+from time import time
 
 class engine(Engine):
 
@@ -42,7 +42,7 @@ class engine(Engine):
             namespace='events', account=Account(user="root", group="root"))
 
     def beat(self):
-        self.logger.debug('entered in selector BEAT')
+        self.logger.debug('entered in cancel BEAT')
 
     def work(self, event, *args, **kargs):
 
@@ -53,26 +53,26 @@ class engine(Engine):
 
                 update = {}
 
-                #Saving status, in case cancel is undone
-                previous_status = devent.get('status', 1)
-                previous_state = devent['state']
-                # Cancel value means cancel for True or undo cancel for False
-                cancel = {
-                    'author' : event.get('author','unknown'),
-                    'isCancel' : True,
-                    'comment' : event['output'],
-                    'previous_status': previous_status,
-                    'ack': devent.get('ack', {})
-                }
 
                 # Preparing event for cancel,
                 update['output'] = devent.get('output', '')
 
                 #Is it a cancel ?
                 if event['event_type'] == 'cancel':
-                    self.logger.info("set cancel to the event")
+                    ack_info = devent.get('ack', {})
+                    #Saving status, in case cancel is undone
                     # If cancel is not in ok state, then it is not an alert cancellation
-                    update['ack'] = cancel
+                    update['ack'] = {
+                        'timestamp': time(),
+                        'author' : event.get('author','unknown'),
+                        'isCancel' : True,
+                        'comment' : ack_info['comment'],
+                        'previous_status': devent.get('status', 1),
+                        'ack': ack_info
+
+                    }
+                    self.logger.info("set cancel to the event")
+                    #Set alert to cancelled status
                     update['status'] = 4
 
                 # Undo cancel ?
@@ -89,4 +89,4 @@ class engine(Engine):
 
                 #update database with cancel informations
                 if update:
-                    self.storage.update({'rk': event['ref_rk']}, {'$set': update})
+                    self.storage.get_backend().update({'rk': event['ref_rk']}, {'$set': update})
