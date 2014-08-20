@@ -80,7 +80,7 @@ def force_unicode(s):
         raise TypeError('Expecting a string as argument')
 
     if PYVER < '3':
-        return s.encode()
+        return s.decode()
 
     else:
         return s

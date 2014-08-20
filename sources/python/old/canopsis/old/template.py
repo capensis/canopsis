@@ -27,7 +27,7 @@ class Template(Compiler):
     def __init__(self, source, *args, **kwargs):
         super(Template, self).__init__(*args, **kwargs)
 
-        self.source = source
+        self.source = force_unicode(source)
         self.vars = {}
 
         self.register_helper(u'foreach', self._helper_foreach)
