@@ -170,14 +170,17 @@ This mode aims to focus on a topology nodes which corresponds to an event proces
 A topology engine in this mode gets only events of type check. When such event arrives, it tries to get all nodes related to such event. If nodes are found, the engine runs all node rules. Some rule require to get child nodes, in this case, the engine get all child nodes. For every nodes which have been modified after the rule execution, it sends an event of type ``topology-propagation`` in order to ensure than only one engine will do this operation in a distributed calculus.
 
 Advantages
-----------
+##########
 
 - Very close-real-time solution.
 - Limit number of rule execution to required ones.
 - Allows distributed calculus.
 
 Weaknesses
-----------
+##########
+
+TODO:
+    ... to determinate
 
 -------------------
 Root cause analysis

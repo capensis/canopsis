@@ -23,20 +23,20 @@ from unittest import TestCase, main
 
 from functools import reduce
 
-from canopsis.storage.scoped import ScopedStorage
-from canopsis.mongo.scoped import MongoScopedStorage
+from canopsis.storage.composite import CompositeStorage
+from canopsis.mongo.composite import MongoCompositeStorage
 
 
 class MongoScopedStorageTest(TestCase):
     """
-    MongoScopedStorage UT on data_scope = "test_store"
+    MongoCompositeStorage UT on data_scope = "test"
     """
 
     def setUp(self):
         # create a storage on test_store collections
-        self.scope = ['a', 'b', 'c']
-        self.storage = MongoScopedStorage(
-            data_scope="test", scope=self.scope, safe=True)
+        self.path = ['a', 'b', 'c']
+        self.storage = MongoCompositeStorage(
+            data_scope="test", path=self.path, safe=True)
 
     def test_connect(self):
         self.assertTrue(self.storage.connected())
@@ -55,42 +55,57 @@ class MongoScopedStorageTest(TestCase):
 
         indexes = self.storage.indexes
         # check number of indexes
-        self.assertEqual(len(indexes), len(self.scope) + 1)
+        self.assertEqual(len(indexes), len(self.path) + 1)
 
-        # add scope data with name which are scope last value
-        for n, _ in enumerate(self.scope):
-            # get prefixed scope
-            _scope = {scope: scope for scope in self.scope[:n + 1]}
+        # add path data with name which are path last value
+        for n, _ in enumerate(self.path):
+            # get prefixed path
+            _path = {path: path for path in self.path[:n + 1]}
 
             # data name is just n
             name = str(n)
 
             # compare absolute path
             absolute_path = self.storage.get_absolute_path(
-                scope=_scope, _id=name)
+                path=_path, _id=name)
             _absolute_path = reduce(
-                lambda x, y: '%s%s%s' % (x, ScopedStorage.SCOPE_SEPARATOR, y),
-                _scope)
+                lambda x, y: '%s%s%s' % (
+                    x, CompositeStorage.PATH_SEPARATOR, y),
+                _path)
             _absolute_path = '%s%s%s' % (
-                _absolute_path, ScopedStorage.SCOPE_SEPARATOR, name)
+                _absolute_path, CompositeStorage.PATH_SEPARATOR, name)
             _absolute_path = '%s%s' % (
-                ScopedStorage.SCOPE_SEPARATOR, _absolute_path)
+                CompositeStorage.PATH_SEPARATOR, _absolute_path)
             self.assertEqual(absolute_path, _absolute_path)
 
             # put new entry
-            self.storage.put(_scope, name, {'value': n})
+            self.storage.put(path=_path, _id=name, data={'value': n})
 
-        # get all data related to scope[n-1]
-        for n, _ in enumerate(self.scope):
-            _scope = {scope: scope for scope in self.scope[:n + 1]}
-            elements = self.storage.get(scope=_scope)
-            self.assertEqual(len(elements), len(self.scope) - n)
+        # get all data related to path[n-1]
+        for n, _ in enumerate(self.path):
+            _path = {path: path for path in self.path[:n + 1]}
+            elements = self.storage.get(path=_path)
+            self.assertEqual(len(elements), len(self.path) - n)
 
-        for n in range(len(self.scope), 0, -1):
-            _scope = {scope: scope for scope in self.scope[:n]}
-            self.storage.remove(scope=_scope)
-            elements = self.storage.get(scope={self.scope[0]: self.scope[0]})
+        for n in range(len(self.path), 0, -1):
+            _path = {path: path for path in self.path[:n]}
+            self.storage.remove(path=_path)
+            elements = self.storage.get(path={self.path[0]: self.path[0]})
             self.assertEqual(len(elements), n - 1)
+
+    def test_shared(self):
+
+        self.storage.drop()
+
+        path = {_path: _path for _path in self.path}
+
+        for n, value in enumerate(self.path):
+            _path = {path: path for path in self.path[:n + 1]}
+
+            self.storage.put(path=path, _id=_path, data={'value': n})
+
+        self.storage.get()[0]
+
 
 if __name__ == '__main__':
     main()
