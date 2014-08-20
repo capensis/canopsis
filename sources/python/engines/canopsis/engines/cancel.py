@@ -52,7 +52,7 @@ class engine(Engine):
             if devent != None:
 
                 update = {}
-
+                update_query = {}
 
                 # Preparing event for cancel,
                 update['output'] = devent.get('output', '')
@@ -62,16 +62,17 @@ class engine(Engine):
                     ack_info = devent.get('ack', {})
                     #Saving status, in case cancel is undone
                     # If cancel is not in ok state, then it is not an alert cancellation
-                    update['ack'] = {
+                    update['cancel'] = {
                         'timestamp': time(),
                         'author' : event.get('author','unknown'),
-                        'isCancel' : True,
                         'comment' : ack_info['comment'],
                         'previous_status': devent.get('status', 1),
-                        'ack': ack_info
-
                     }
                     self.logger.info("set cancel to the event")
+
+                    update['ack'] = ack_info
+                    update['ack']['isAck'] = False
+                    update['ack']['isCancel'] = True
                     #Set alert to cancelled status
                     update['status'] = 4
 
@@ -79,14 +80,20 @@ class engine(Engine):
                 elif event['event_type'] == 'uncancel':
 
                     #If event has been previously cancelled
-                    if 'ack' in devent and 'ack' in devent['ack']:
+                    if 'ack' in devent:
                         self.logger.warning(' + reseting ack')
 
+                        update['ack'] = devent.get('ack', {})
+                        update['ack']['isAck'] = True
+                        update['ack']['isCancel'] = False
+
                         #Restore previous status
-                        update['status'] = devent['ack'].get('previous_status', 0)
-                        #Restore ack as previously
-                        update['ack'] = devent['ack']['ack']
+                        if 'cancel' in devent:
+                            update['status'] = devent['cancel'].get('previous_status', 0)
+                            update_query['$unset'] = {'cancel': ''}
+
+                update_query['$set'] = update
 
                 #update database with cancel informations
                 if update:
-                    self.storage.get_backend().update({'rk': event['ref_rk']}, {'$set': update})
+                    self.storage.get_backend().update({'rk': event['ref_rk']}, update_query)

@@ -26,7 +26,7 @@ class PeriodicStorage(Storage):
     Storage dedicated to manage periodic data.
     """
 
-    __storage_type__ = 'periodic'
+    __datatype__ = 'periodic'
 
     TIMESTAMP = 'timestamp'
     VALUES = 'values'

@@ -55,7 +55,7 @@ function pre_update(){
 	if [ -e $VARLIB_PATH/mongodb-conf ]
 	then
 		cp $PREFIX/etc/cstorage.conf{,.bak}
-		cp $PREFIX/etc/storage/database.conf{,.bak}
+		cp $PREFIX/etc/storage/storage.conf{,.bak}
 
 	fi
 }
@@ -92,13 +92,13 @@ function post_update(){
 
 		rm $PREFIX/etc/cstorage.conf.bak
 
-		mongo_user=`su - $HUSER -c "$PREFIX/bin/initool get $PREFIX/etc/storage/database.conf.bak DATABASE user"`
-		mongo_pass=`su - $HUSER -c "$PREFIX/bin/initool get $PREFIX/etc/storage/database.conf.bak DATABASE pwd"`
+		mongo_user=`su - $HUSER -c "$PREFIX/bin/initool get $PREFIX/etc/storage/storage.conf.bak DATABASE user"`
+		mongo_pass=`su - $HUSER -c "$PREFIX/bin/initool get $PREFIX/etc/storage/storage.conf.bak DATABASE pwd"`
 
-		su - $HUSER -c "$PREFIX/bin/initool set $PREFIX/etc/storage/database.conf DATABASE user $mongo_user"
-		su - $HUSER -c "$PREFIX/bin/initool set $PREFIX/etc/storage/database.conf DATABASE pwd $mongo_pass"
+		su - $HUSER -c "$PREFIX/bin/initool set $PREFIX/etc/storage/storage.conf DATABASE user $mongo_user"
+		su - $HUSER -c "$PREFIX/bin/initool set $PREFIX/etc/storage/storage.conf DATABASE pwd $mongo_pass"
 
-		rm $PREFIX/etc/storage/database.conf.bak
+		rm $PREFIX/etc/storage/storage.conf.bak
 	fi
 }
 

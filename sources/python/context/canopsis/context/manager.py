@@ -18,11 +18,14 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from canopsis.storage.manager import Manager
+from canopsis.configuration import conf_paths
+from canopsis.middleware.manager import Manager
 from md5 import new as md5
-from canopsis.configuration import Parameter
+
+CONF_RESOURCE = 'context/context.conf'
 
 
+@conf_paths(CONF_RESOURCE)
 class Context(Manager):
     """
     Manage access to a context (connector, component, resource) elements
@@ -33,67 +36,56 @@ class Context(Manager):
         - connector: data_id
     """
 
-    CONF_RESOURCE = 'context/context.conf'
-
-    DATA_TYPE = 'context'
+    DATA_SCOPE = 'context'
 
     CATEGORY = 'CONTEXT'
 
     CTX_STORAGE = 'ctx_storage'
     CONTEXT = 'context'
 
-    def __init__(self, ctx_storage=None, *args, **kwargs):
+    DEFAULT_CONTEXT = [
+        'type', 'connector', 'connector_name', 'component', 'resource']
+
+    def __init__(self, scope=DEFAULT_CONTEXT, ctx_storage=None, *args, **kwargs):
 
         super(Context, self).__init__(self, *args, **kwargs)
 
-        self.ctx_storage = ctx_storage
+        self.scope = scope
+        self['ctx_storage'] = ctx_storage
 
     @property
-    def ctx_storage(self):
-        return self._ctx_storage
+    def scope(self):
+        return self.scope
 
-    @ctx_storage.setter
-    def ctx_storage(self, value):
-        self._ctx_storage = value
-        if value is not None:
-            self._ctx = self.get_timed_typed_storage(
-                data_type=Context.DATA_TYPE)
+    @scope.setter
+    def scope(self, value):
+        self.scope = value
 
-    def get(
-        self,
-        element_type,
-        connector=None, connector_type=None, component=None, resource=None,
-        other=None,
-        timewindow=None,
-        *args, **kwargs
-    ):
+    def get(self, _type, name, context=None, *args, **kwargs):
         """
         Get one element related to:
             - an element_type,
             - a path (connector, ..., other),
             - a timewindow
 
-        :return: array of couple(timestamp, element) in the ASC order
-        :rtype: list(tuple(float, dict))
+        :return: one element or None
+        :rtype: dict
         """
 
-        element_id = Context.get_element_id(
-            connector, connector_type, component, resource, other)
+        scope = {
+            'type': _type,
+        }
 
-        return self._ctx.get(
-            data_ids=[element_id], data_type=element_type,
-            timewindow=timewindow, *args, **kwargs)
+        if context is not None:
+            scope.update(context)
 
-    def find(
-        self,
-        element_type,
-        connector=None, connector_type=None, component=None, resource=None,
-        other=None,
-        element_ids=None, timewindow=None,
-        *args, **kwargs
-    ):
+        result = self['ctx_storage'].get(scope=scope, ids=name)
+
+        return result
+
+    def find(self, _type, context, _filter, *args, **kwargs):
         """
-        Find all elements which have a element_id among input element_ids, or
+        Find all elements which have an element_id among input element_ids, or
         type equals to element_type or inside timewindow if specified
         """
 
@@ -103,8 +95,8 @@ class Context(Manager):
             element_ids = [element_id]
 
         return self._ctx.get(
-            data_ids=element_ids, data_type=element_type,
-            timewindow=timewindow, *args, **kwargs)
+            data_ids=element_ids, data_type=_type,
+            *args, **kwargs)
 
     def get_by_name(
         self,
@@ -114,7 +106,7 @@ class Context(Manager):
         return self.get(element_id=name, element_type=element_type)
 
     def put(
-        self, element_id, element_type, element, timestamp=None,
+        self, element_id, element_type, element,
         *args, **kwargs
     ):
         """
@@ -139,32 +131,12 @@ class Context(Manager):
             data_ids=element_ids, data_type=element_type,
             timewindow=timewindow, *args, **kwargs)
 
-    def _get_conf_files(self, *args, **kwargs):
-
-        result = super(Context, self)._get_conf_files(*args, **kwargs)
-
-        result.append(Context.CONF_RESOURCE)
-
-        return result
-
     def _configure(self, unified_conf, *args, **kwargs):
 
         super(Context, self)._configure(
             unified_conf=unified_conf, *args, **kwargs)
 
-        self._update_property(
-            unified_conf=unified_conf, param_name=Context.CTX_STORAGE,
-            public=True)
-
-    def _conf(self, *args, **kwargs):
-
-        result = super(Context, self)._conf(*args, **kwargs)
-
-        result.add_unified_category(
-            name=Context.CATEGORY,
-            new_content=Parameter(Context.CTX_STORAGE, self.ctx_storage))
-
-        return result
+        self['ctx_storage'].scope = self.scope
 
     @staticmethod
     def get_element_id(*context_elements):

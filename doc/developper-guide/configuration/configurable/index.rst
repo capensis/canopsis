@@ -126,7 +126,7 @@ Technical description
 
       Default logging debug format
 
-   .. method:: apply_configuration(conf=None, conf_files=None, managers=None, logger=None)
+   .. method:: apply_configuration(conf=None, conf_files=None, managers=None, logger=None, fill=True, override=True)
 
       Apply conf on a destination in 5 phases:
 
@@ -142,7 +142,13 @@ Technical description
       :param conf_files: conf files to parse. If conf_files is a str, it is automatically putted into a list
       :type conf_files: list of str
 
-   .. method:: get_configuration(conf=None, conf_files=None, logger=None, managers=None, fill=False)
+      :param fill: if True (False by default) load in conf all conf_paths content
+      :type fill: bool
+
+      :param override: if True (by default), override self configuration.
+      :type override: bool
+
+   .. method:: get_configuration(conf=None, conf_files=None, logger=None, managers=None, fill=False, override=True)
 
       Get a dictionary of params by name from conf, conf_files and conf_managers
 
@@ -160,6 +166,9 @@ Technical description
 
       :param fill: if True (False by default) load in conf all conf_files content.
       :type fill: bool
+
+      :param override: if True (by default), override self configuration
+      :type override: bool
 
    .. method:: set_configuration(conf_file, conf, manager=None, logger=None)
 

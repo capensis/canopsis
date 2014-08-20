@@ -42,7 +42,8 @@ class MetaConfigurable(type):
         result = type.__call__(cls, *args, **kwargs)
 
         if result.auto_conf or result.reconf_once:
-            result.apply_configuration()
+            # do configuration in avoiding to override constructor parameters
+            result.apply_configuration(override=False)
 
         return result
 
@@ -379,7 +380,7 @@ class Configurable(object):
 
     def apply_configuration(
         self, conf=None, conf_paths=None, managers=None, logger=None,
-        fill=True
+        fill=True, override=True
     ):
         """
         Apply conf on a destination in 5 phases:
@@ -401,17 +402,21 @@ class Configurable(object):
         :param fill: if True (False by default) load in conf all \
             conf_paths content
         :type fill: bool
+
+        :param override: if True (by default), override self configuration
+        :type override: bool
         """
 
         conf = self.get_configuration(
             conf=conf, conf_paths=conf_paths, logger=logger,
-            managers=managers, fill=fill)
+            managers=managers, fill=fill, override=override)
 
         self.configure(conf=conf)
 
     def get_configuration(
         self,
-        conf=None, conf_paths=None, managers=None, fill=True, logger=None
+        conf=None, conf_paths=None, managers=None, fill=True, logger=None,
+        override=True
     ):
         """
         Get a dictionary of params by name from conf,
@@ -435,6 +440,9 @@ class Configurable(object):
         :param fill: if True (False by default) load in conf all \
             conf_paths content
         :type fill: bool
+
+        :param override: if True (by default), override self configuration
+        :type override: bool
         """
 
         # start to initialize input params
@@ -443,9 +451,6 @@ class Configurable(object):
 
         if conf is None:
             conf = self.conf
-
-        # remove values from conf
-        conf.clean()
 
         if conf_paths is None:
             conf_paths = self._conf_paths
@@ -467,7 +472,7 @@ class Configurable(object):
 
                 conf = conf_manager.get_configuration(
                     conf=conf, fill=fill, logger=logger,
-                    conf_path=conf_path)
+                    conf_path=conf_path, override=override)
 
             else:
                 # if no conf_manager, display a warning log message
