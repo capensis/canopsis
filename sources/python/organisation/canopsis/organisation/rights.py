@@ -110,7 +110,7 @@ class Rights(Manager):
         entity = None
 
         if e_type in self:
-            entity = self[e_type].get_elements(ids=[e_name])
+            entity = self[e_type].get_elements(ids=e_name)
 
         if not entity:
             return False
@@ -179,7 +179,7 @@ class Rights(Manager):
         and update the appropriate Mongo collection
         """
 
-        if self.composite_storage.get_elements(ids=[comp_name]):
+        if self.composite_storage.get_elements(ids=comp_name):
 
             self.composite_storage.remove_elements(comp_name)
             # remove the composite from every profiles
@@ -209,7 +209,7 @@ class Rights(Manager):
                 return False
 
         entity['composites'].add(
-            self.composite_storage.get_elements(ids=[comp_name]))
+            self.composite_storage.get_elements(ids=comp_name))
         return True
 
     # Remove the composite named comp_name from the entity
@@ -232,7 +232,7 @@ class Rights(Manager):
         Create profile p_name composed of p_composites
         """
 
-        if self.profile_storage.get_elements(ids=[p_name]):
+        if self.profile_storage.get_elements(ids=p_name):
             return False
 
         new_profile = {}
@@ -247,7 +247,7 @@ class Rights(Manager):
         Delete profile p_name
         """
 
-        if self.profile_storage.get_elements(ids=[p_name]):
+        if self.profile_storage.get_elements(ids=p_name):
             self.profile_storage.remove_element(p_name)
             # remove the profile from every roles
             for r in self.role_storage:
@@ -284,7 +284,7 @@ class Rights(Manager):
         Add profile p_name to role['profile']
         """
 
-        profile = self.profile_storage.get_elements(ids=[p_name])
+        profile = self.profile_storage.get_elements(ids=p_name)
         if not profile:
             if p_composites:
                 self.create_profile(p_name, p_composites)
@@ -313,7 +313,7 @@ class Rights(Manager):
         Create role p_name composed of p_composites
         """
 
-        if self.role_storage.get_elements(ids=[r_name]):
+        if self.role_storage.get_elements(ids=r_name):
             return r_name
 
         new_role = {}
@@ -322,7 +322,7 @@ class Rights(Manager):
         return r_name
 
     def delete_role(self, r_name):
-        if self.role_storage.get_elements(ids=[r_name]):
+        if self.role_storage.get_elements(ids=r_name):
             self.role_storage.remove_element(r_name)
             return True
 

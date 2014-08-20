@@ -49,9 +49,6 @@ class DataBase(Middleware):
     class DataBaseError(Exception):
         pass
 
-    class DataBaseError(Exception):
-        pass
-
     def __init__(self, db='canopsis', journaling=False, *args, **kwargs):
         """
         :param db: db name
@@ -235,12 +232,8 @@ class Storage(DataBase):
 
         result = self.get_elements(ids=ids)
 
-        if not isinstance(ids, str) and isinstance(ids, Iterable):
-            if len(ids) != len(result):
-                raise KeyError(ids)
-
-        elif result is None:
-            raise KeyError(ids)
+        if result is None or ids and not result:
+            raise KeyError('%s not in self' % ids)
 
         return result
 
