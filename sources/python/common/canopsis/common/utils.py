@@ -125,7 +125,7 @@ def isiterable(element, is_str=True):
     :type is_str: bool
     """
     result = isinstance(element, Iterable) \
-        and (is_str or not isinstance(element, str))
+        and (is_str or not isinstance(element, basestring))
 
     return result
 
