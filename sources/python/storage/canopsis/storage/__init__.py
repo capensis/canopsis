@@ -22,6 +22,9 @@ __version__ = "0.1"
 
 __all__ = ('DataBase', 'Storage')
 
+from functools import reduce
+
+from canopsis.common.utils import isiterable
 from canopsis.configuration import Parameter
 from canopsis.middleware import Middleware
 
@@ -163,8 +166,6 @@ class Storage(DataBase):
 
     __protocol__ = 'storage'
     """register itself and all subclasses to storage protocol"""
-    __datatype__ = 'basic', None
-    """register itself to basic and default data type"""
 
     DATA_ID = 'id'  #: db data id
 
@@ -392,8 +393,12 @@ class Storage(DataBase):
         :rtype: str
         """
 
-        result = "{0}_{1}".format(
-            self.data_type, self.data_scope).upper()
+        prefix = self.data_type
+
+        if isiterable(prefix, is_str=False):
+            prefix = reduce(lambda x, y: '%s_%s' % (x, y), prefix)
+
+        result = "{0}_{1}".format(prefix, self.data_scope).upper()
 
         return result
 
@@ -464,9 +469,12 @@ Storage types must be of the same type.'.format(self, target))
         Get configuration category for self storage
         """
 
-        result = '{0}_{1}'.format(
-            type(self).__storage_type__.upper(),
-            self.data_scope.upper())
+        prefix = self.data_type
+
+        if isiterable(prefix):
+            prefix = reduce(lambda x, y: '%s_%s' % (x, y), prefix)
+
+        result = '{0}_{1}'.format(prefix, self.data_scope).upper()
 
         return result
 
