@@ -23,7 +23,7 @@ __version__ = '0.1'
 from canopsis.storage import Storage, DataBase
 from canopsis.common.utils import isiterable
 
-from pymongo import MongoClient, ASCENDING
+from pymongo import MongoClient
 
 from pymongo.errors import TimeoutError, OperationFailure, ConnectionFailure,\
     DuplicateKeyError
@@ -33,8 +33,6 @@ class MongoDataBase(DataBase):
     """
     Manage access to a mongodb.
     """
-
-    __protocol__ = 'mongo'  #: register this class to protocol 'mongo'
 
     def __init__(
         self, host=MongoClient.HOST, port=MongoClient.PORT, *args, **kwargs
@@ -70,7 +68,6 @@ class MongoDataBase(DataBase):
 
         try:
             result = MongoClient(**connection_args)
-
         except ConnectionFailure as e:
             self.logger.error(
                 'Raised {2} during connection attempting to {0}:{1}.'.
@@ -83,6 +80,7 @@ class MongoDataBase(DataBase):
 
                 authenticate = self._database.authenticate(
                     self.user, self.pwd)
+
                 if authenticate:
                     self.logger.info("Connected on {0}:{1}".format(
                         self.host, self.port))
@@ -161,17 +159,10 @@ class MongoDataBase(DataBase):
         return result
 
 
-def len_cursor(cursor):
-    """
-    Mongo cursor len function
-    """
-
-    return cursor.count(True)
-
-
 class MongoStorage(MongoDataBase, Storage):
 
     __register__ = True  #: register this class to middleware
+    __protocol__ = 'mongodb'  #: register this class to the protocol mongodb
 
     ID = '_id'  #: ID mongo
 
@@ -184,14 +175,14 @@ class MongoStorage(MongoDataBase, Storage):
     @indexes.setter
     def indexes(self, value):
         self._indexes = value
+        self.reconnect()
 
     def _connect(self, *args, **kwargs):
 
         result = super(MongoStorage, self)._connect(*args, **kwargs)
 
         if result:
-            self.indexes = self._get_indexes()
-
+            self._indexes = self._get_indexes()
             table = self.get_table()
             self._backend = self._database[table]
 
@@ -208,39 +199,64 @@ class MongoStorage(MongoDataBase, Storage):
         super(MongoStorage, self).drop(table=self.get_table(), *args, **kwargs)
 
     def get_elements(
-        self, ids=None, limit=0, skip=0, sort=None, *args, **kwargs
+        self, ids=None, query=None, limit=0, skip=0, sort=None, *args, **kwargs
     ):
 
-        query = {}
+        _query = {} if query is None else query.copy()
 
-        count_opt = False
+        one_element = False
 
         if ids is not None:
             if isiterable(ids, is_str=False):
-                query[MongoStorage.ID] = {'$in': ids}
+                _query[MongoStorage.ID] = {'$in': ids}
+
             else:
-                query[MongoStorage.ID] = ids
+                one_element = True
+                _query[MongoStorage.ID] = ids
 
-        cursor = self._find(query)
+        cursor = self._find(_query)
 
+        # set limit, skip and sort properties
         if limit:
             cursor.limit(limit)
-            count_opt = True
         if skip:
             cursor.skip(skip)
-            count_opt = True
         if sort is not None:
             MongoStorage._update_sort(sort)
             cursor.sort(sort)
 
-        # Return the element if only one element was requested
-        # Otherwise, return a list of the requested elements
-        cursor = None if not cursor.count(count_opt) else cursor
+        # set hint property
+        if _query:
+            index = None
+            query_len = len(_query)
+            # find the right index
+            max_correspondance = 0
+            # iterate on all indexes
+            for self_index in self.indexes:
+                # find the higher correspondance score
+                correspondance = 0
+                for index_value in self_index:
+                    if index_value[0] in _query:
+                        correspondance += 1
+                    else:
+                        break
+                # increment an old score if a new one is better
+                if correspondance > max_correspondance:
+                    index = self_index
+                    max_correspondance = correspondance
 
-        result = cursor
+                # ends if correspondance equals len(query)
+                if correspondance == query_len:
+                    break
 
-        if cursor:
-            result = cursor[0] if len(ids) == 1 else list(cursor)
+            # set index only if index has been found
+            if index is not None:
+                cursor.hint(index)
+
+        # TODO: enrich a cursor with methods to use it such as a tuple
+        result = list(cursor)
+
+        result = result[0] if result and one_element else None
 
         return result
 
@@ -272,30 +288,6 @@ class MongoStorage(MongoDataBase, Storage):
 
         return oldvalue if not result else newvalue
 
-    def _get_index(self, _filter):
-        """
-        Get the right index related to input filter.
-        """
-
-        result = None
-
-        max_correspondance = 0
-
-        for index in self.indexes:
-            correspondance = 0
-
-            for index_value in index:
-                if index_value[0] in _filter:
-                    correspondance += 1
-                else:
-                    break
-
-            if correspondance > max_correspondance:
-                result = index
-                max_correspondance = correspondance
-
-        return result
-
     def _element_id(self, element):
 
         return element[MongoStorage.ID]
@@ -306,7 +298,7 @@ class MongoStorage(MongoDataBase, Storage):
         """
 
         result = [
-            [(MongoStorage.ID, ASCENDING)]
+            [(MongoStorage.ID, 1)]
         ]
 
         return result
@@ -338,36 +330,38 @@ class MongoStorage(MongoDataBase, Storage):
 
         return result
 
-    def _insert(self, document):
+    def _insert(self, document, **kwargs):
 
-        result = self._run_command(command='insert', doc_or_docs=document)
+        result = self._run_command(
+            command='insert', doc_or_docs=document, **kwargs)
 
         return result
 
-    def _update(self, _id, document, multi=True):
+    def _update(self, _id, document, multi=True, **kwargs):
 
         result = self._run_command(
             command='update', spec=_id, document=document,
-            upsert=True, multi=multi)
+            upsert=True, multi=multi, **kwargs)
 
         return result
 
-    def _find(self, document=None, projection=None):
+    def _find(self, document=None, projection=None, **kwargs):
 
         result = self._run_command(command='find', spec=document,
-            projection=projection)
+            projection=projection, **kwargs)
 
         return result
 
-    def _remove(self, document):
+    def _remove(self, document, **kwargs):
 
-        result = self._run_command(command='remove', spec_or_id=document)
+        result = self._run_command(
+            command='remove', spec_or_id=document, **kwargs)
 
         return result
 
-    def _count(self, document=None):
+    def _count(self, document=None, **kwargs):
 
-        cursor = self._find(document=document)
+        cursor = self._find(document=document, **kwargs)
 
         result = cursor.count(False)
 

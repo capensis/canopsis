@@ -22,8 +22,6 @@ __version__ = "0.1"
 
 __all__ = ('DataBase', 'Storage')
 
-from collections import Iterable
-
 from canopsis.configuration import Parameter
 from canopsis.middleware import Middleware
 
@@ -44,7 +42,7 @@ class DataBase(Middleware):
     DB = 'db'
     JOURNALING = 'journaling'
 
-    CONF_RESOURCE = 'storage/database.conf'
+    CONF_RESOURCE = 'storage/storage.conf'
 
     class DataBaseError(Exception):
         pass
@@ -163,9 +161,12 @@ class Storage(DataBase):
     For example, perfdata and context are two data types.
     """
 
-    __storage_type__ = 'storage'  # storage type name
+    __protocol__ = 'storage'
+    """register itself and all subclasses to storage protocol"""
+    __datatype__ = 'basic', None
+    """register itself to basic and default data type"""
 
-    DATA_ID = 'id'
+    DATA_ID = 'id'  #: db data id
 
     ASC = 1  # ASC order
     DESC = -1  # DESC order
@@ -229,12 +230,8 @@ class Storage(DataBase):
 
         result = self.get_elements(ids=ids)
 
-        if not isinstance(ids, str) and isinstance(ids, Iterable):
-            if len(ids) != len(result):
-                raise KeyError(ids)
-
-        elif result is None:
-            raise KeyError(ids)
+        if result is None or ids and not result:
+            raise KeyError('%s not in self' % ids)
 
         return result
 

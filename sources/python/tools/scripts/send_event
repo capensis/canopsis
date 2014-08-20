@@ -58,7 +58,7 @@ def usage():
 def main(argv):
     try:
         opts, args = getopt.getopt(
-            argv[1:],
+            argv,
             "s:a:f:j:h",
             ["server=", "authkey=", "file=", "json=", "help"])
     except getopt.GetoptError as err:
@@ -169,7 +169,7 @@ def main(argv):
         clean_event[k] = str(v).encode('utf-8')
 
     request = urllib2.Request(
-        'http://%s/event/' % server, urllib.urlencode(clean_event))
+        'http://%s/event' % server, urllib.urlencode(clean_event))
     r = opener.open(request)
     print('Webserver replied :')
     print(r.read())

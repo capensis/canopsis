@@ -31,15 +31,15 @@ class ScopedStorage(Storage):
     (type=metric, connector, component).
     """
 
-    __storage_type__ = 'scoped'
+    __datatype__ = 'scoped'  #: registered such as a scoped storage
 
     SCOPE_SEPARATOR = '/'  #: char separator between scope values
 
-    VALUE = 'value'
+    VALUE = 'value'  #: data value
     SCOPE = 'scope'
-    ID = 'id'
+    ID = 'id'  #: data id
 
-    def __init__(self, scope, *args, **kwargs):
+    def __init__(self, scope=None, *args, **kwargs):
         """
         :param scope: iterable of ordered lists of scope names
         :type scope: Iterable
@@ -47,52 +47,34 @@ class ScopedStorage(Storage):
 
         super(ScopedStorage, self).__init__(*args, **kwargs)
 
-        self.scope = scope
+        self._scope = scope
 
     @property
     def scope(self):
+        """
+        tuple of ordered field names.
+        """
         return self._scope
 
     @scope.setter
     def scope(self, value):
-        self._set_scope(scope=value)
+        self._scope = value
+        self.reconnect()
 
-    def _set_scope(self, scope):
+    def get(
+        self, scope, ids=None, _filter=None, limit=0, skip=0, sort=None
+    ):
         """
-        Self scope setter.
-        """
-        self._scope = scope
+        Get data related to input ids, input scope and input filter.
 
-    def get(self, scope, data_id):
-        """
-        Get a data related to a dictionnary of scope value by name and a
-        data_id in the input scope.
-
-        :param scope: dictionnary of scope valut by scope name.
+        :param scope: dictionnary of scope valut by scope name
         :type scope: dict
 
-        :param data_id: data id in the input scope.
-        :type data_id: str
-
-        :return: a data
-        :rtype: dict
-        """
-
-        raise NotImplementedError()
-
-    def find(self, scope, filter, limit=0, skip=0, sort=None):
-        """
-        Get a list of data identified among a dictionary of scoped values by
-        name and a data_id.
-
-        :param scope: scope
-        :type scope: storage filter
+        :param ids: data ids in the input scope.
+        :type ids: str or iterable of str
 
         :param filter: additional filter condition to input scope
         :type filter: storage filter
-
-        :param data_id: if not None, data id in the input scope.
-        :type data_id: storage filter
 
         :param limit: max number of data to get. Useless if data_id is given.
         :type limit: int
@@ -104,22 +86,49 @@ class ScopedStorage(Storage):
             Storage fields
         :type sort: dict
 
-        :return: a list of couples of field (name, value) or None respectivelly
-            if such data exist or not
-        :rtype: list of dict of field (name, value)
+        :return: a data or a list of data respectively to ids such as a str or
+            an iterable of str
+        :rtype: dict or list of dict
         """
 
         raise NotImplementedError()
 
-    def put(self, scope, data_id, data):
+    def find(self, scope, _filter, limit=0, skip=0, sort=None):
+        """
+        Get a list of data identified among a dictionary of scoped values by
+        name.
+
+        :param scope: scope
+        :type scope: storage filter
+
+        :param _filter: additional filter condition to input scope
+        :type _filter: storage filter
+
+        :param limit: max number of data to get. Useless if data_id is given.
+        :type limit: int
+
+        :param skip: starting index of research if multi data to get
+        :type skip: int
+
+        :param sort: couples of field (name, value) to sort with ASC/DESC
+            Storage fields
+        :type sort: dict
+
+        :return: a list of data.
+        :rtype: list of dict
+        """
+
+        raise NotImplementedError()
+
+    def put(self, scope, _id, data):
         """
         Put a data related to an id
 
+        :param scope: scope
+        :type scope: storage filter
+
         :param _id: data id
         :type _id: str
-
-        :param data_type: data type to update
-        :type data_type: str
 
         :param data: data to update
         :type data: dict
@@ -127,20 +136,20 @@ class ScopedStorage(Storage):
 
         raise NotImplementedError()
 
-    def remove(self, _ids=None, data_type=None):
+    def remove(self, scope, ids=None):
         """
         Remove data from ids or type
 
-        :param _ids: list of data id
-        :type _ids: list
+        :param scope: scope to remove
+        :type scope: storage filter
 
-        :param data_type: data type to remove if not None
-        :type data_type: str
+        :param _ids: data id or list of data id
+        :type _ids: list or str
         """
 
         raise NotImplementedError()
 
-    def get_absolute_path(self, scope, data_id):
+    def get_absolute_path(self, scope, _id):
         """
         Get data absolute path among scope for input data_id in input scope.
 
@@ -165,6 +174,6 @@ class ScopedStorage(Storage):
 
         if result is not None:
             result = '%s%s%s' % (
-                result, ScopedStorage.SCOPE_SEPARATOR, data_id)
+                result, ScopedStorage.SCOPE_SEPARATOR, _id)
 
         return result

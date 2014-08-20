@@ -6,6 +6,9 @@
 	},{
 		"title": "Events",
 		"keys":["list_info_button_pattern"]
+	},{
+		"title": "Login",
+		"keys": ["login_footer"]
 	}],
 	"properties": {
 		"title": {
@@ -22,6 +25,10 @@
 		"list_info_button_pattern": {
 			"type": "string",
 			"defaultValue": "http://localhost:8082/#/userview/view.event"
+		},
+		"login_footer": {
+			"type": "string",
+			"defaultValue": ""
 		}
 	}
 }

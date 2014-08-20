@@ -25,8 +25,6 @@ from canopsis.timeserie.timewindow import get_offset_timewindow
 
 class MongoTimedStorage(MongoStorage, TimedStorage):
 
-    __datatype__ = 'timed'  #: register this class to timed data types
-
     class Key:
 
         DATA_ID = 'd'

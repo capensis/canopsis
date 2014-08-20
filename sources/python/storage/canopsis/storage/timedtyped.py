@@ -27,7 +27,7 @@ class TimedTypedStorage(Storage):
     (type, timestamp, id).
     """
 
-    __storage_type__ = 'timedtyped'
+    __datatype__ = 'timedtyped'
 
     class Index:
 

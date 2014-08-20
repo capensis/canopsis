@@ -18,13 +18,12 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
+from canopsis.common.utils import isiterable
 from canopsis.mongo import MongoStorage
 from canopsis.storage.scoped import ScopedStorage
 
 
 class MongoScopedStorage(MongoStorage, ScopedStorage):
-
-    __datatype__ = 'scoped'  #: register this class to scoped data types
 
     def _get_indexes(self, *args, **kwargs):
 
@@ -32,56 +31,61 @@ class MongoScopedStorage(MongoStorage, ScopedStorage):
 
         scope = self.scope
 
-        # add all sub_scopes concatened with id
-        for scope_count in range(1, len(scope) + 1):
-            sub_scope = scope[:scope_count]
-            index = [(scope_name, 'text') for scope_name in sub_scope]
-            index.append((ScopedStorage.ID, 'text'))
-            result.append(index)
+        if scope is not None:
+            # add all sub_scopes concatened with id
+            for scope_count in range(1, len(scope)):
+                sub_scope = scope[:scope_count]
+                index = [(scope_name, 'text') for scope_name in sub_scope]
+                index.append((ScopedStorage.ID, 'text'))
+                result.append(index)
 
         return result
 
-    def get(self, scope, data_id, *args, **kwargs):
+    def get(
+        self, scope, ids=None, _filter=None, limit=0, skip=0, sort=None,
+        *args, **kwargs
+    ):
 
-        query = {}
+        query = scope.copy()
+        if _filter is not None:
+            query.update(_filter)
 
-        query.update(scope)
-
-        query[ScopedStorage.ID]
-
-        cursor = self._find(document=query)
-
-        index = self._get_index(query)
-
-        cursor.hint(index)
-
-        self._get_generic_result
-        result = list(cursor)
+        result = self.get_elements(
+            ids=ids, query=query, limit=limit, skip=skip, sort=sort)
 
         return result
 
-    def put(self, _id, data, data_type, *args, **kwargs):
+    def find(self, scope, _filter, limit=0, skip=0, sort=None):
 
-        query = {
-            '_id': _id
-        }
+        return self.get(
+            scope=scope, _filter=_filter, limit=limit, skip=skip, sort=sort)
+
+    def put(self, scope, _id, data, *args, **kwargs):
+
+        # get unique id
+        _id = self.get_absolute_path(scope=scope, _id=_id)
+
+        # get query such as a sum of scope and _id
+        query = scope.copy()
+        query[MongoStorage.ID] = _id
 
         _set = {
-            '$set': data
+            '$set': {ScopedStorage.VALUE: data}
         }
-
-        query[ScopedStorage.Key.TYPE] = data_type
 
         self._update(_id=query, document=_set, multi=False)
 
-    def remove(self, ids=None, data_type=None, *args, **kwargs):
+    def remove(self, scope, ids=None, *args, **kwargs):
 
-        query = {}
+        query = scope.copy()
+
+        parameters = {}
 
         if ids is not None:
-            query['_id'] = {'$in': ids}
+            if isiterable(ids, is_str=False):
+                query[ScopedStorage.ID] = {'$in': ids}
+            else:
+                parameters = {'justOne': 1}
+                query[ScopedStorage.ID] = ids
 
-        if data_type is not None:
-            query[ScopedStorage.Key.TYPE] = data_type
-
-        self._remove(document=query)
+        self._remove(document=query, **parameters)

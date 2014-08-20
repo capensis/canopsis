@@ -94,15 +94,33 @@ Package contents
 
    Middleware meta class which register all middleware in a global set of middlewares, depending on their ``protocol`` name and ``data_type``.
 
-   Middleware which want to be automatically registered may have set to True the class ``__register__`` attribute.
+   Middleware which want to be automatically registered may have set to True the class attribute ``__register__``.
    Other class attributes permit to register ``protocol`` and ``data_type`` :
 
-   - ``__protocol__`` : protocol name to register. ``canopsis`` by default.
-   - ``__datatype__`` : data_type name to register. None by default (in case of data_type ommited in uri definition).
+   - ``__protocol__`` : protocol(s) name to register. ``canopsis`` by default.
+   - ``__datatype__`` : data_type(s) name to register. None by default (in case of data_type ommited in uri definition).
 
 .. class:: Middleware(canopsis.configuration.Configurable)
 
-   Multi middleware paradigm class.
+   Abstract class which aims to manage middleware.
+
+    A middleware is a resource which connects itself to a foreign resource
+        such as a database, a mom broker, etc.
+    Optionnaly, it is related to a data_type:
+
+    - pubsub dedicated to events, status, etc.
+    - database dedicated to relational data, no-sql data, timed data, etc.
+    And a data scope ('canopsis' by default) which permits to define a domain.
+
+    - perfdata for managing perfdata.
+    - entities for managing entities.
+    - etc.
+
+    When a class is registered, it register itself with all protocols defined
+    in bases classes.
+
+    That means the last registered middleware will be registered to all
+    protocol specified in its base class hierarchy.
 
    .. data:: __metaclass__ = MetaMiddleware
 
@@ -236,6 +254,19 @@ Package contents
    .. classmethod:: register_middleware(cls, protocol=None, data_type=None)
 
       Register the middleware class ``cls`` with input ``protocol`` and ``data_type``.
+
+      :param protocol: one or many protocols to add to protocols of input cls
+      :type protocol: str or Iterable(protocol)
+
+      :param data_type: one or many data_types to add to data_types of input cls
+      :type data_type: str or Iterable(data_type)
+
+   .. classmethod:: get_protocols(cls)
+
+      Get all protocols declared in the class hierarchy of cls
+
+      :return: set of protocols registered in the class tree of input cls
+      :rtype: set([str])
 
    .. staticmethod:: resolve_middleware(protocol, data_type=None)
 

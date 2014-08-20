@@ -223,11 +223,16 @@ class Manager(Configurable):
         return result
 
     def apply_configuration(
-        self, conf=None, conf_paths=None, managers=None, logger=None
+        self,
+        conf=None, conf_paths=None, managers=None, logger=None, override=True,
+        fill=True,
+        *args, **kwargs
     ):
 
         super(Manager, self).apply_configuration(
-            conf=conf, conf_paths=conf_paths, managers=managers, logger=logger)
+            conf=conf, conf_paths=conf_paths, managers=managers, logger=logger,
+            fill=fill, override=override,
+            *args, **kwargs)
 
         if conf_paths is None:
             conf_paths = self.conf_paths
@@ -239,8 +244,7 @@ class Manager(Configurable):
             managers = self.managers
 
         # get self conf path
-        conf_path = self.conf_paths[-1]
-
+        conf_path = conf_paths[-1]
         # apply configuration to all self configurables
         for name, configurable in self._configurables.iteritems():
             # add self last conf paths to configurable conf paths
@@ -256,7 +260,7 @@ class Manager(Configurable):
             configurable.apply_configuration(
                 conf=configurable_configuration,
                 conf_paths=configurable_conf_paths,
-                managers=managers, logger=logger)
+                managers=managers, logger=logger, fill=fill, override=override)
 
     def _configure(self, unified_conf, *args, **kwargs):
 

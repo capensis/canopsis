@@ -86,7 +86,9 @@ class ConfigurationManager(object):
 
         raise NotImplementedError()
 
-    def get_configuration(self, conf_path, logger, conf=None, fill=False):
+    def get_configuration(
+        self, conf_path, logger, conf=None, fill=False, override=True
+    ):
         """
         Parse a configuration_files with input conf and returns
         parameters and errors by param name.
@@ -103,6 +105,9 @@ class ConfigurationManager(object):
 
         :param fill: result is all conf_path content
         :type fill: bool
+
+        :param override: if True (by default), override self configuration
+        :type override: bool
         """
 
         conf_resource = None
@@ -142,13 +147,12 @@ class ConfigurationManager(object):
                         category = result.setdefault(
                             category, Category(category))
 
-                        for param in self._get_parameters(
+                        for name in self._get_parameters(
                                 conf_resource=conf_resource,
                                 category=category,
                                 logger=logger):
 
-                            param = category.setdefault(
-                                param, Parameter(param))
+                            param = category.setdefault(name, Parameter(name))
 
                             value = self._get_value(
                                 conf_resource=conf_resource,
@@ -156,7 +160,9 @@ class ConfigurationManager(object):
                                 param=param,
                                 logger=logger)
 
-                            param.value = value
+                            if value not in (None, ''):
+                                if override or param.value in (None, ''):
+                                    param.value = value
 
                 else:
 
@@ -193,7 +199,9 @@ class ConfigurationManager(object):
                                         param=param,
                                         logger=logger)
 
-                                    param.value = value
+                                    if override \
+                                            or param.value not in (None, ''):
+                                        param.value = value
 
                                     # if an exception occured
                                     if isinstance(param.value, Exception):

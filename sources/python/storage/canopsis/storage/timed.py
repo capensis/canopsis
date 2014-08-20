@@ -28,7 +28,7 @@ class TimedStorage(Storage):
     Two consecutives timestamp values can not be same values.
     """
 
-    __storage_type__ = 'timed'
+    __datatype__ = 'timed'
 
     class Index:
 

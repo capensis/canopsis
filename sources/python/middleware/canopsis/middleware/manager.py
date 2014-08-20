@@ -270,7 +270,6 @@ class Manager(ConfigurableManager):
             unified_conf=unified_conf, param_name=Manager.DATA_SCOPE)
 
         values = unified_conf[Configuration.VALUES]
-
         # set all middlewares which ends with Manager.MIDDLEWARE_SUFFIX
         for parameter in values:
             if parameter.name.endswith(Manager.MIDDLEWARE_SUFFIX):
