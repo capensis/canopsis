@@ -256,8 +256,7 @@ class MongoStorage(MongoDataBase, Storage):
         # TODO: enrich a cursor with methods to use it such as a tuple
         result = list(cursor)
 
-        if one_element:
-            result = result[0] if result else None
+        result = result[0] if result and one_element else None
 
         return result
 
