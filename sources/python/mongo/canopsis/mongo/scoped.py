@@ -20,6 +20,7 @@
 
 from canopsis.common.utils import isiterable
 from canopsis.mongo import MongoStorage
+from canopsis.storage import Storage
 from canopsis.storage.scoped import ScopedStorage
 
 
@@ -29,15 +30,12 @@ class MongoScopedStorage(MongoStorage, ScopedStorage):
 
         result = super(MongoScopedStorage, self)._get_indexes(*args, **kwargs)
 
-        scope = self.scope
-
-        if scope is not None:
-            # add all sub_scopes concatened with id
-            for scope_count in range(1, len(scope)):
-                sub_scope = scope[:scope_count]
-                index = [(scope_name, 'text') for scope_name in sub_scope]
-                index.append((ScopedStorage.ID, 'text'))
-                result.append(index)
+        # add all sub_scopes concatened with id
+        for n, _ in enumerate(self.scope):
+            sub_scope = self.scope[:n + 1]
+            index = [(scope_name, Storage.ASC) for scope_name in sub_scope]
+            index.append((ScopedStorage.ID, Storage.ASC))
+            result.append(index)
 
         return result
 
@@ -70,7 +68,7 @@ class MongoScopedStorage(MongoStorage, ScopedStorage):
         query[MongoStorage.ID] = _id
 
         _set = {
-            '$set': {ScopedStorage.VALUE: data}
+            '$set': data
         }
 
         self._update(_id=query, document=_set, multi=False)

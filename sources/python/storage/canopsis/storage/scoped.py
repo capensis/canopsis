@@ -162,15 +162,11 @@ class ScopedStorage(Storage):
 
         result = None
 
-        appropriated_scope = self.get_appropariate_scope(scope)
-
-        if appropriated_scope is not None:
-            result = ScopedStorage.SCOPE_SEPARATOR
-            for scope_name in appropriated_scope:
-                if scope_name in scope:
-                    result = '%s%s%s' % (
-                        result, ScopedStorage.SCOPE_SEPARATOR,
-                        scope[scope_name])
+        result = ''
+        for scope_name in scope:
+            result = '%s%s%s' % (
+                result, ScopedStorage.SCOPE_SEPARATOR,
+                scope[scope_name])
 
         if result is not None:
             result = '%s%s%s' % (

@@ -187,7 +187,10 @@ class MongoStorage(MongoDataBase, Storage):
             self._backend = self._database[table]
 
             for index in self.indexes:
-                self._backend.ensure_index(index)
+                try:
+                    self._backend.ensure_index(index)
+                except Exception as e:
+                    self.logger.error(e)
 
         return result
 
@@ -256,7 +259,11 @@ class MongoStorage(MongoDataBase, Storage):
         # TODO: enrich a cursor with methods to use it such as a tuple
         result = list(cursor)
 
-        result = result[0] if result and one_element else None
+        if one_element:
+            if result:
+                result = result[0]
+            else:
+                result = None
 
         return result
 
