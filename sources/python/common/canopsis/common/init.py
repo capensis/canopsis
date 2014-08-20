@@ -42,10 +42,7 @@ from sys import version as PYVER
 from inspect import getmodule
 
 # hack in order to convert a str to a unicode
-if PYVER < '3':
-    setattr(getmodule(str), 'str', unicode)
-
-else:
+if PYVER >= '3':
     setattr(getmodule(str), 'basestring', str)
 
 
