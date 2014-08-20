@@ -21,7 +21,7 @@
 
 from logging import getLogger
 from unittest import main, TestCase
-from canopsis.organisation.rights2 import Rights
+from canopsis.organisation.rights import Rights
 
 
 class RightsTest(TestCase):

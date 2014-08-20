@@ -80,11 +80,13 @@ class Rights(Manager):
         Check if user has the right of id right_id
         """
 
-        role = self.profile_storage.get_elements(ids=[role])
-        profile = self.profile_storage.get_elements(ids=[role['profile']])
+
+        role = self.profile_storage.get_elements(ids=role)
+
+        profile = self.profile_storage.get_elements(ids=role['profile'])
         p_composites = profile.get('composites', None)
 
-        composites = [self.composite_storage.get_elements(ids=[x])
+        composites = [self.composite_storage.get_elements(ids=x)
                       for x in p_composites]
 
         # check in the role's comsposite
@@ -295,7 +297,7 @@ class Rights(Manager):
             #   if you want to allow several profiles on
             #   the same role
             # Get role from storage
-            s_role = self.role_storage.get_elements(ids=[role])
+            s_role = self.role_storage.get_elements(ids=role)
             s_role['profile'] = p_name
             self.role_storage.put_element(role, s_role)
 
