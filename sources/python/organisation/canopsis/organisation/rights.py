@@ -80,9 +80,7 @@ class Rights(Manager):
         Check if user has the right of id right_id
         """
 
-
         role = self.profile_storage.get_elements(ids=role)
-
         profile = self.profile_storage.get_elements(ids=role['profile'])
         p_composites = profile.get('composites', None)
 
