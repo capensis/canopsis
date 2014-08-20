@@ -8,3 +8,4 @@ Contents:
 
    specifications/models
    specifications/scenario-steps
+   specifications/workflows
