@@ -22,8 +22,6 @@ __version__ = "0.1"
 
 __all__ = ('DataBase', 'Storage')
 
-from collections import Iterable
-
 from canopsis.configuration import Parameter
 from canopsis.middleware import Middleware
 
