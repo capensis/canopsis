@@ -68,7 +68,6 @@ class MongoDataBase(DataBase):
 
         try:
             result = MongoClient(**connection_args)
-
         except ConnectionFailure as e:
             self.logger.error(
                 'Raised {2} during connection attempting to {0}:{1}.'.
@@ -160,14 +159,6 @@ class MongoDataBase(DataBase):
         return result
 
 
-def len_cursor(cursor):
-    """
-    Mongo cursor len function
-    """
-
-    return cursor.count(True)
-
-
 class MongoStorage(MongoDataBase, Storage):
 
     __register__ = True  #: register this class to middleware
@@ -218,6 +209,7 @@ class MongoStorage(MongoDataBase, Storage):
         if ids is not None:
             if isiterable(ids, is_str=False):
                 _query[MongoStorage.ID] = {'$in': ids}
+
             else:
                 one_element = True
                 _query[MongoStorage.ID] = ids
@@ -307,7 +299,7 @@ class MongoStorage(MongoDataBase, Storage):
         """
 
         result = [
-            [(MongoStorage.ID, 'text')]
+            [(MongoStorage.ID, 1)]
         ]
 
         return result

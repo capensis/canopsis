@@ -30,7 +30,6 @@ class DataBaseTest(TestCase):
         self.database = MongoDataBase(data_scope="test_store")
 
     def test_connect(self):
-        print self.database.user, self.database.pwd
         self.database.connect()
         self.assertTrue(self.database.connected())
         self.database.disconnect()
