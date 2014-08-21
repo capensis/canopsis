@@ -21,30 +21,34 @@
 from canopsis.common.utils import isiterable
 from canopsis.mongo import MongoStorage
 from canopsis.storage import Storage
-from canopsis.storage.scoped import ScopedStorage
+from canopsis.storage.composite import CompositeStorage
 
 
-class MongoScopedStorage(MongoStorage, ScopedStorage):
+class MongoCompositeStorage(MongoStorage, CompositeStorage):
 
     def _get_indexes(self, *args, **kwargs):
 
-        result = super(MongoScopedStorage, self)._get_indexes(*args, **kwargs)
+        result = super(MongoCompositeStorage, self)._get_indexes(
+            *args, **kwargs)
 
-        # add all sub_scopes concatened with id
-        for n, _ in enumerate(self.scope):
-            sub_scope = self.scope[:n + 1]
-            index = [(scope_name, Storage.ASC) for scope_name in sub_scope]
-            index.append((ScopedStorage.ID, Storage.ASC))
+        # add all sub_paths concatened with id
+        for n, _ in enumerate(self.path):
+            sub_path = self.path[:n + 1]
+            index = [(path_name, Storage.ASC) for path_name in sub_path]
+            index.append((CompositeStorage.ID, Storage.ASC))
             result.append(index)
+
+        # add an index to the shared property
+        result.append([(CompositeStorage.SHARED, 1)])
 
         return result
 
     def get(
-        self, scope, ids=None, _filter=None, limit=0, skip=0, sort=None,
+        self, path, ids=None, _filter=None, limit=0, skip=0, sort=None,
         *args, **kwargs
     ):
 
-        query = scope.copy()
+        query = path.copy()
         if _filter is not None:
             query.update(_filter)
 
@@ -53,18 +57,20 @@ class MongoScopedStorage(MongoStorage, ScopedStorage):
 
         return result
 
-    def find(self, scope, _filter, limit=0, skip=0, sort=None):
+    def find(self, path, _filter, limit=0, skip=0, sort=None):
 
-        return self.get(
-            scope=scope, _filter=_filter, limit=limit, skip=skip, sort=sort)
+        result = self.get(
+            path=path, _filter=_filter, limit=limit, skip=skip, sort=sort)
 
-    def put(self, scope, _id, data, *args, **kwargs):
+        return result
+
+    def put(self, path, _id, data, *args, **kwargs):
 
         # get unique id
-        _id = self.get_absolute_path(scope=scope, _id=_id)
+        _id = self.get_absolute_path(path=path, _id=_id)
 
-        # get query such as a sum of scope and _id
-        query = scope.copy()
+        # get query such as a sum of path and _id
+        query = path.copy()
         query[MongoStorage.ID] = _id
 
         _set = {
@@ -73,17 +79,17 @@ class MongoScopedStorage(MongoStorage, ScopedStorage):
 
         self._update(_id=query, document=_set, multi=False)
 
-    def remove(self, scope, ids=None, *args, **kwargs):
+    def remove(self, path, ids=None, *args, **kwargs):
 
-        query = scope.copy()
+        query = path.copy()
 
         parameters = {}
 
         if ids is not None:
             if isiterable(ids, is_str=False):
-                query[ScopedStorage.ID] = {'$in': ids}
+                query[CompositeStorage.ID] = {'$in': ids}
             else:
                 parameters = {'justOne': 1}
-                query[ScopedStorage.ID] = ids
+                query[CompositeStorage.ID] = ids
 
         self._remove(document=query, **parameters)

@@ -200,7 +200,7 @@ class Storage(DataBase):
         """
         raise NotImplementedError()
 
-    def get_elements(self, ids=None, limit=0, skip=0, sort=None):
+    def get_elements(self, ids=None, query=None, limit=0, skip=0, sort=None):
         """
         Get a list of elements where id are input ids
 
