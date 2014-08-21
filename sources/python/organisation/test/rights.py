@@ -22,7 +22,7 @@
 from logging import getLogger
 from unittest import main, TestCase
 from canopsis.organisation.rights import Rights
-
+import pprint
 
 class RightsTest(TestCase):
 
@@ -30,6 +30,7 @@ class RightsTest(TestCase):
         self.logger = getLogger()
         self.rights = Rights()
         self.data_types = ['profiles', 'composites', 'roles']
+        self.printer = pprint.PrettyPrinter(indent=4)
 
     def test(self):
         # Test creation of composites
@@ -64,6 +65,22 @@ class RightsTest(TestCase):
             'role': '',
             '_id': '1407160264.joan.harris.manager'}
 
+        # delete everything before starting
+
+        self.printer.pprint(self.rights['composite_storage'].get_elements())
+
+        self.rights.delete_composite('composite_test1')
+        self.rights.delete_composite('composite_test2')
+        self.rights.delete_profile('profile_test1')
+        self.rights.delete_profile('profile_test2')
+        self.rights.delete_role('role_test1bis')
+        self.rights.delete_role('role_test1')
+        self.rights.delete_role('role_test2')
+
+        self.printer.pprint(self.rights['composite_storage'].get_elements())
+
+
+
         # basic creation
         self.rights.create_composite('composite_test1', rights)
         self.rights.create_composite('composite_test2', rights_scnd)
@@ -74,7 +91,7 @@ class RightsTest(TestCase):
 
         # "add" composite_test2 to profile_test1
         self.rights.create_profile('profile_test1', ('composite_test2'))
-
+        print self.rights.add_composite('profile_test1', 'profiles_storage', 'composite_test2')
         sample_user['role'] = self.rights.create_role('role_test1bis',
                                                       'profile_test1')
 

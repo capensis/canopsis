@@ -60,8 +60,10 @@ class Rights(Manager):
         Check the from the rights of entity for a right of id right_id
         """
 
+        print entity
         # check the fields
         if not entity or not entity.get('rights', None):
+            print "False; No rights field"
             return False
 
 
@@ -69,6 +71,7 @@ class Rights(Manager):
         if (found and found.get('checksum', 0) & checksum >= checksum):
             return True
 
+        print "False; No permission"
         return False
 
     # Check in the rights of the user (in the role), then in the profile,
@@ -82,10 +85,10 @@ class Rights(Manager):
 
         role = self.profile_storage.get_elements(ids=role)
         profile = self.profile_storage.get_elements(ids=role['profile'])
-        p_composites = profile.get('composites', None)
+        p_composites = self.composite_storage.get_elements(
+            ids=profile.get('composites', None))
 
-        composites = [self.composite_storage.get_elements(ids=x)
-                      for x in p_composites]
+        composites = [x for x in p_composites]
 
         # check in the role's comsposite
         if ((role and self.check(role, right_id, checksum)) or
@@ -162,7 +165,7 @@ class Rights(Manager):
         and add it in the appropriate Mongo collection
         """
 
-        new_comp = {}
+        new_comp = {'type': 'composite'}
 
         for right_id in comp_rights:
             new_comp[right_id] = comp_rights[right_id].copy()
@@ -179,13 +182,16 @@ class Rights(Manager):
 
         if self.composite_storage.get_elements(ids=comp_name):
 
+            print "Delete:", comp_name
             self.composite_storage.remove_elements(comp_name)
             # remove the composite from every profiles
-            for p in self.profile_storage:
-                p['composites'].discard(comp_name)
-                # if the profile only had that composite, remove the profile
-                if not len(p['composites']):
-                    self.delete_profile(p)
+
+            for p in self.profile_storage.get_elements(query={'type':'profile'}):
+                if 'composites' in p:
+                    p['composites'].discard(comp_name)
+                    # if the profile only had that composite, remove the profile
+                    if not len(p['composites']):
+                        self.delete_profile(p)
             return True
 
         return False
@@ -195,20 +201,26 @@ class Rights(Manager):
     #   comp_rights is specified it will be created first
     # entity can be a profile or a role
     # Return True if the composite was added, False otherwise
-    def add_composite(self, entity, comp_name, comp_rights=None):
+    def add_composite(self, e_name, e_type, comp_name, comp_rights=None):
         """
         Add the composite comp_name to the entity
         """
 
-        if not self.composite.get(comp_name, None):
+        if not self.composite_storage.get_elements(ids=comp_name):
             if comp_rights:
                 self.create_composite(comp_rights, comp_name)
             else:
                 return False
 
+        entity = self[e_type].get_elements(ids=e_name)
+        print '(Should be a list) Composite:', entity['composites']
+        if not 'composites' in entity:
+            entity['composites'] = {}
         entity['composites'].add(
             self.composite_storage.get_elements(ids=comp_name))
-        return True
+        self[e_type].put_element(e_name, entity)
+
+        return entity
 
     # Remove the composite named comp_name from the entity
     # entity can be a profile or a role
@@ -233,8 +245,9 @@ class Rights(Manager):
         if self.profile_storage.get_elements(ids=p_name):
             return False
 
-        new_profile = {}
-        new_profile['composites'] = p_composites
+        new_profile = {'type':'profile'}
+        new_profile['composites'] = []
+        new_profile['composites'].append(p_composites)
         self.profile_storage.put_element(p_name, new_profile)
         return True
 
@@ -246,13 +259,15 @@ class Rights(Manager):
         """
 
         if self.profile_storage.get_elements(ids=p_name):
-            self.profile_storage.remove_element(p_name)
+            print "Delete:", p_name
+            self.profile_storage.remove_elements(p_name)
             # remove the profile from every roles
-            for r in self.role_storage:
-                r['profile'].discard(comp_name)
-                # if the role only had that profile, remove it
-                if not len(r['profile']):
-                    self.add_profile(r, self.default_profile)
+            for r in self.role_storage.get_elements(query={'type':'role'}):
+                if 'profile' in r:
+                    r['profile'].discard(comp_name)
+                    # if the role only had that profile, remove it
+                    if not len(r['profile']):
+                        self.add_profile(r, self.default_profile)
             return True
 
         return False
@@ -314,14 +329,15 @@ class Rights(Manager):
         if self.role_storage.get_elements(ids=r_name):
             return r_name
 
-        new_role = {}
+        new_role = {'type': 'role'}
         new_role['profile'] = r_profile
         self.role_storage.put_element(r_name, new_role)
         return r_name
 
     def delete_role(self, r_name):
         if self.role_storage.get_elements(ids=r_name):
-            self.role_storage.remove_element(r_name)
+            print "Delete:", r_name
+            self.role_storage.remove_elements(r_name)
             return True
 
         return False
