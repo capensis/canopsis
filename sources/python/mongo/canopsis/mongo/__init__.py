@@ -267,9 +267,21 @@ class MongoStorage(MongoDataBase, Storage):
 
         return result
 
+    def find_elements(
+        self, query, limit=0, skip=0, sort=None, *args, **kwargs
+    ):
+
+        return self.get_elements(
+            query=query, limit=limit, skip=skip, sort=sort)
+
     def remove_elements(self, ids, *args, **kwargs):
 
-        self._remove({MongoStorage.ID: {'$in': ids}})
+        if isiterable(ids, is_str=False):
+            query = {MongoStorage.ID: {'$in': ids}}
+        else:
+            query = ids
+
+        self._remove(query)
 
     def put_element(self, _id, element, *args, **kwargs):
 
@@ -401,6 +413,7 @@ class MongoStorage(MongoDataBase, Storage):
                 .format(command, kwargs, backend))
 
         except OperationFailure as of:
+            print 'fail'
             self.logger.error('{0} during running command {1}({2}) of in {3}'
                 .format(of, command, kwargs, backend))
 
