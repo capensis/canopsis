@@ -55,7 +55,7 @@ class MongoScopedStorageTest(TestCase):
 
         indexes = self.storage.indexes
         # check number of indexes
-        self.assertEqual(len(indexes), len(self.path) + 1)
+        self.assertEqual(len(indexes), len(self.path) + 2)
 
         # add path data with name which are path last value
         for n, _ in enumerate(self.path):
@@ -103,6 +103,10 @@ class MongoScopedStorageTest(TestCase):
             _path = {path: path for path in self.path[:n + 1]}
 
             self.storage.put(path=path, _id=_path, data={'value': n})
+
+        #TODO: test shared
+
+        raise NotImplementedError()
 
 
 if __name__ == '__main__':

@@ -22,6 +22,7 @@ __version__ = "0.1"
 
 from urlparse import urlparse
 
+from canopsis.middleware.loader import Loader
 from canopsis.common.utils import force_iterable
 from canopsis.configuration import Configurable, Parameter
 from canopsis.configuration.configurable import MetaConfigurable
@@ -162,6 +163,9 @@ class Middleware(Configurable):
 
     # private class attribute which manages middlewares classes per data_type
     __MIDDLEWARES__ = {}
+
+    # dynamic loader which is initialized during 1st call to resolve_middleware
+    __LOADER__ = None
 
     CATEGORY = 'MIDDLEWARE'
 
@@ -712,6 +716,10 @@ class Middleware(Configurable):
         :raise: Middleware.Error if no middleware is registered related to
         input protocol and data_type.
         """
+
+        # call dynamic middleware library loader
+        if Middleware.__LOADER__ is None:
+            Middleware.__LOADER__ = Loader()
 
         if data_type is None:
             data_type = DEFAULT_DATA_TYPE

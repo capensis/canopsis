@@ -18,75 +18,67 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from canopsis.configuration import Parameter
-from canopsis.timeserie.timewindow import Period, get_offset_timewindow
-from canopsis.storage.manager import Manager
-from canopsis.context.manager import Context
-
-from collections import Iterable
+from re import compile as re_compile
 
 from time import time
 
-DEFAULT_PERIOD = Period(**{Period.DAY: 1})  # save data each
-DEFAULT_AGGREGATION = 'MEAN'
+from canopsis.common.utils import force_iterable
+from canopsis.configuration import add_category, conf_paths
+from canopsis.timeserie.timewindow import Period, get_offset_timewindow
+from canopsis.middleware.manager import Manager
+from canopsis.context.manager import Context
+
+DEFAULT_PERIOD = Period(**{Period.WEEK: 1})  # save data each week
+
+CONF_PATH = 'perfdata/perfdata.conf'
+CATEGORY = 'PERFDATA'
 
 
+@conf_paths(CONF_PATH)
+@add_category(CATEGORY)
 class PerfData(Manager):
     """
     Dedicated to access to perfdata (via periodic and timed stores).
     """
 
-    CONF_FILE = 'perfdata/perfdata.conf'
-
-    CATEGORY = 'PERFDATA'
-
     PERFDATA_STORAGE = 'perfdata_storage'
     META_STORAGE = 'meta_storage'
 
-    DATA_TYPE = 'metric'
+    DATA_SCOPE = 'metric'
 
     def __init__(
         self,
-        data_type=DATA_TYPE, perfdata_storage=None, meta_storage=None,
+        data_scope=DATA_SCOPE, perfdata_storage=None, meta_storage=None,
         *args, **kwargs
     ):
 
         super(PerfData, self).__init__(
-            data_type=data_type, *args, **kwargs)
+            data_scope=data_scope, *args, **kwargs)
 
-        self.perfdata_storage = perfdata_storage
-        self.meta_storage = meta_storage
+        self.context = Context()
 
-        #self.context = Context() if context is None else context
+        if perfdata_storage is not None:
+            self[PerfData.PERFDATA_STORAGE] = perfdata_storage
+        if meta_storage is not None:
+            self[PerfData.META_STORAGE] = meta_storage
 
-    @property
-    def perfdata_storage(self):
-        return self._perfdata_storage
+    def count(self, metric_id, timewindow=None, period=None):
+        """
+        Get number of perfdata identified by metric_id in input timewindow
 
-    @perfdata_storage.setter
-    def perfdata_storage(self, value):
-        self._perfdata_storage = self._get_property_storage(value)
+        :param timewindow: if None, get all perfdata values
+        """
 
-    @property
-    def meta_storage(self):
-        return self._meta_storage
+        period = self.get_period(metric_id, period=period)
 
-    @meta_storage.setter
-    def meta_storage(self, value):
-        self._meta_storage = self._get_property_storage(value)
-
-    def count(self, metric_id, period=None, timewindow=None):
-
-        period = self.get_period(metric_id=metric_id, period=period)
-
-        result = self.perfdata_storage.count(
-            data_id=metric_id, period=period, timewindow=timewindow)
+        result = self[PerfData.PERFDATA_STORAGE].count(
+            data_id=metric_id, timewindow=timewindow, period=period)
 
         return result
 
     def get(
-        self, metric_id, with_meta=True, period=None, timewindow=None,
-        limit=0, skip=0, *args, **kwargs
+        self, metric_id, period=None, with_meta=True, timewindow=None,
+        limit=0, skip=0
     ):
         """
         Get a set of data related to input data_id on the timewindow \
@@ -94,15 +86,15 @@ class PerfData(Manager):
         If with_meta, result is a couple of (points, list of meta by timestamp)
         """
 
-        period = self.get_period(metric_id=metric_id, period=period)
+        period = self.get_period(metric_id, period=period)
 
-        result = self.perfdata_storage.get(
-            data_id=metric_id, period=period, timewindow=timewindow,
+        result = self[PerfData.PERFDATA_STORAGE].get(
+            data_id=metric_id, timewindow=timewindow, period=period,
             limit=limit, skip=skip)
 
         if with_meta is not None:
 
-            meta = self.meta_storage.get(
+            meta = self[PerfData.META_STORAGE].get(
                 data_id=metric_id, timewindow=timewindow)
 
             result = result, meta
@@ -110,8 +102,7 @@ class PerfData(Manager):
         return result
 
     def get_point(
-        self, metric_id, with_meta=True, period=None, timestamp=None,
-        *args, **kwargs
+        self, metric_id, period=None, with_meta=True, timestamp=None
     ):
         """
         Get the closest point before input timestamp. Add meta informations \
@@ -121,26 +112,24 @@ class PerfData(Manager):
         if timestamp is None:
             timestamp = time()
 
-        period = self.get_period(metric_id=metric_id, period=period)
-
         timewindow = get_offset_timewindow(timestamp)
 
-        result = self.perfdata_storage.get(
-            data_id=metric_id, period=period, timewindow=timewindow,
+        period = self.get_period(metric_id, period=period)
+
+        result = self[PerfData.PERFDATA_STORAGE].get(
+            data_id=metric_id, timewindow=timewindow, period=period,
             limit=1)
 
         if with_meta is not None:
 
-            meta = self.meta_storage.get(
+            meta = self[PerfData.PERFDATA_STORAGE].get(
                 data_id=metric_id, timewindow=timewindow)
 
             result = result, meta
 
         return result
 
-    def get_meta(
-        self, metric_id, timewindow=None, limit=0, sort=None, *args, **kwargs
-    ):
+    def get_meta(self, metric_id, timewindow=None, limit=0, sort=None):
         """
         Get the meta data related to input data_id and timewindow.
         """
@@ -148,15 +137,12 @@ class PerfData(Manager):
         if timewindow is None:
             timewindow = get_offset_timewindow()
 
-        result = self.meta_storage.get(
+        result = self[PerfData.META_STORAGE].get(
             data_id=metric_id, timewindow=timewindow, limit=limit, sort=sort)
 
         return result
 
-    def put(
-        self, metric_id, points_or_point, meta=None, period=None,
-        *args, **kwargs
-    ):
+    def put(self, metric_id, points, meta=None, period=None):
         """
         Put a (list of) couple (timestamp, value), a meta into rated_documents
         related to input period.
@@ -164,27 +150,22 @@ class PerfData(Manager):
         periodic_documents
         """
 
-        # if points_or_point is a point, transform it into a tuple of couple
-        if len(points_or_point) > 0:
-            if not isinstance(points_or_point[0], Iterable):
-                points_or_point = (points_or_point,)
+        # if points is a point, transform it into a tuple of couple
+        points = force_iterable(points, iterable=tuple)
 
         period = self.get_period(metric_id=metric_id, period=period)
 
-        self.perfdata_storage.put(
-            data_id=metric_id, period=period, points=points_or_point)
+        self[PerfData.PERFDATA_STORAGE].put(
+            data_id=metric_id, period=period, points=points)
 
         if meta is not None:
 
-            min_timestamp = min([point[0] for point in points_or_point])
+            min_timestamp = min(point[0] for point in points)
 
-            self.meta_storage.put(
+            self[PerfData.META_STORAGE].put(
                 data_id=metric_id, value=meta, timestamp=min_timestamp)
 
-    def remove(
-        self, metric_id, with_meta=False, period=None, timewindow=None,
-        *args, **kwargs
-    ):
+    def remove(self, metric_id, period=None, with_meta=False, timewindow=None):
         """
         Remove values and meta of one metric.
         meta_names is a list of meta_data to remove. An empty list ensure that
@@ -192,32 +173,32 @@ class PerfData(Manager):
         if meta_names is None, then all meta_names are removed.
         """
 
-        aggregation, period = self.get_period(
-            metric_id=metric_id, period=period)
+        period = self.get_period(metric_id, period=period)
 
-        self.perfdata_storage.remove(
-            data_id=metric_id, period=period, timewindow=timewindow)
+        self[PerfData.PERFDATA_STORAGE].remove(
+            data_id=metric_id, timewindow=timewindow, period=period)
 
         if with_meta:
-            self.perfdata_storage.remove(
+            self[PerfData.PERFDATA_STORAGE].remove(
                 data_id=metric_id, timewindow=timewindow)
 
-    def update_meta(self, metric_id, meta, timestamp=None, *args, **kwargs):
+    def update_meta(self, metric_id, meta, timestamp=None,):
         """
         Update meta information.
         """
 
-        self.perfdata_storage.put(
+        self[PerfData.PERFDATA_STORAGE].put(
             data_id=metric_id, value=meta, timestamp=timestamp)
 
-    def remove_meta(self, metric_id, timewindow=None, *args, **kwargs):
+    def remove_meta(self, metric_id, timewindow=None):
         """
         Remove meta information.
         """
 
-        self.perfdata_storage.remove(data_id=metric_id, timewindow=timewindow)
+        self[PerfData.PERFDATA_STORAGE].remove(
+            data_id=metric_id, timewindow=timewindow)
 
-    def get_period(self, metric_id, aggregation=None, period=None):
+    def get_period(self, metric_id, period=None):
         """
         Get default period related to input metric_id.
         DEFAULT_PERIOD if related entity does not exist or does not contain
@@ -230,31 +211,97 @@ class PerfData(Manager):
 
             result = DEFAULT_PERIOD
 
-            entity = None
-            #entity = self.context.get(
-            #    element_id=metric_id, element_type=self.data_type)
+            entity = self.context.get_entities(ids=metric_id)
 
-            result = DEFAULT_PERIOD if entity is None else entity.get(
-                'period', DEFAULT_PERIOD)
+            if entity is not None and 'period' in entity:
+                result = Period(**entity['period'])
 
         return result
 
-    def _conf(self, *args, **kwargs):
+    RE_PERF_DATA = re_compile(
+        "('?([0-9A-Za-z/\\\:\.%%\-{}\?\[\]_ ]*)'?=(\-?[0-9.,]*)(([A-Za-z%%/]*))(;@?(\-?[0-9.,]*):?)?(;@?(\-?[0-9.,]*):?)?(;@?(\-?[0-9.,]*):?)?(;@?(\-?[0-9.,]*):?)?(;? ?))")
 
-        result = super(PerfData, self)._conf(*args, **kwargs)
+    def parse_perfdata(self, perf_data_raw):
+        # 'label'=value[UOM];[warn];[crit];[min];[max]
+        #   load1=0.440     ;5.000 ;10.000;0    ;
 
-        result.add_unified_category(
-            name=PerfData.CATEGORY,
-            new_content=(
-                Parameter(PerfData.PERFDATA_STORAGE),
-                Parameter(PerfData.META_STORAGE)))
+        self.logger.debug("Parse: %s" % perf_data_raw)
 
-        return result
+        perfs = PerfData.RE_PERF_DATA.split(perf_data_raw)
 
-    def _get_conf_files(self, *args, **kwargs):
+        perf_data_array = []
+        perf_data = {}
+        i = 0
+        for info in perfs:
+            if info == '':
+                info = None
 
-        result = super(PerfData, self)._get_conf_files(*args, **kwargs)
+            #self.logger.debug(" + %s '%s'" % (i, info))
+            try:
+                if info and i == 2:
+                    perf_data['metric'] = info
+                elif info and i == 3:
+                    perf_data['value'] = info.replace(',', '.')
+                elif info and i == 4:
+                    perf_data['unit'] = info
+                elif info and i == 7:
+                    perf_data['warn'] = info.replace(',', '.')
+                elif info and i == 9:
+                    perf_data['crit'] = info.replace(',', '.')
+                elif info and i == 11:
+                    perf_data['min'] = info.replace(',', '.')
+                elif info and i == 13:
+                    perf_data['max'] = info.replace(',', '.')
 
-        result.append(PerfData.CONF_FILE)
+                i += 1
+                if i is 15:
+                    try:
+                        perf_data_clean = {}
+                        for key in perf_data.keys():
+                            if perf_data[key]:
+                                try:
+                                    perf_data_clean[key] = float(
+                                        perf_data[key])
+                                except:
+                                    if key == 'metric' or key == 'unit':
+                                        perf_data_clean[key] = perf_data[key]
+                                    else:
+                                        self.logger.debug(
+                                            "Invalid value, '%s' = '%s'" % (
+                                                key, perf_data[key]))
 
-        return result
+                        if 'value' in perf_data_clean \
+                                and 'metric' in perf_data_clean:
+                            perf_data_array.append(perf_data_clean)
+
+                        if not perf_data_clean.get('unit', None):
+                            # split: g[in_bps]= ...
+                            metric_ori = perf_data_clean['metric']
+                            if metric_ori[len(metric_ori) - 1] == ']':
+                                metric_ori = metric_ori[:len(metric_ori) - 1]
+                                metric = metric_ori.split('[', 1)
+                                if len(metric) == 2:
+                                    perf_data_clean['metric'] = metric[0]
+                                    perf_data_clean['unit'] = metric[1]
+
+                        self.logger.debug(" + %s" % perf_data_clean)
+
+                    except Exception as err:
+
+                        self.logger.error("perf_data: Raw: %s" % perf_data_raw)
+                        self.logger.error(
+                            "perf_data: Impossible to clean '%s': %s" % (
+                                perf_data, err))
+
+                    perf_data = {}
+                    i = 0
+
+            except Exception as err:
+                self.logger.error(
+                    "perf_data: Invalid metric %s: %s (%s)" % (i, info, err))
+
+        return perf_data_array
+
+    def is_internal(self, metric):
+
+        return metric['metric'].startswith('cps_')

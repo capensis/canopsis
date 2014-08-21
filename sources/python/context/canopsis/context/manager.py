@@ -96,6 +96,15 @@ class Context(Manager):
 
         return result
 
+    def get_entities(self, ids):
+        """
+        Get entities by id
+
+        :param ids: one id or a set of ids
+        """
+
+        return self[Context.CTX_STORAGE].get_elements(ids=ids)
+
     def get(self, _type, name, context=None, extended=False):
         """
         Get one entity related to:
@@ -185,7 +194,7 @@ class Context(Manager):
         if context is None:
             context = self.context
 
-        path = self.get_context(entity=entity, context=context)
+        path = self.get_entity_context(entity=entity, context=context)
 
         name = entity['name']
 
