@@ -39,7 +39,7 @@
             "resource",
             "output",
             "status",
-            "criticity",
+            "state",
             "ack",
             "timestamp"
           ]
