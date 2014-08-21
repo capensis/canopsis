@@ -190,3 +190,13 @@ def force_iterable(value, iterable=list):
         result = iterable(value)
 
     return result
+
+
+def get_first(iterable, default=None):
+    """
+    Try to get input iterable first item or default if iterable is empty.
+    """
+
+    result = iterable[0] if iterable else default
+
+    return result

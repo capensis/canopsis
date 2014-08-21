@@ -20,7 +20,7 @@
 
 from canopsis.configuration import conf_paths, add_category
 from canopsis.middleware.manager import Manager
-from md5 import new as md5
+
 
 CONF_RESOURCE = 'context/context.conf'
 CATEGORY = 'CONTEXT'
@@ -71,13 +71,16 @@ class Context(Manager):
 
     @property
     def context(self):
+        """
+        List of context element name.
+        """
         return self._context
 
     @context.setter
     def context(self, value):
         self._context = value
 
-    def get_context(self, entity, context=None):
+    def get_entity_context(self, entity, context=None):
         """
         Get the right context related to input entity
         """
@@ -93,12 +96,14 @@ class Context(Manager):
 
         return result
 
-    def get(self, _type, name, context=None):
+    def get(self, _type, name, context=None, extended=False):
         """
         Get one entity related to:
             - an entity type.
             - a context (connector, ..., other).
             - a name.
+
+        :param extended: get extended entities if they are shared.
 
         :return: one element or None
         :rtype: dict
@@ -113,25 +118,29 @@ class Context(Manager):
 
         result = self[Context.CTX_STORAGE].get(path=path, ids=name)
 
+        if extended:
+            result = self[Context.CTX_STORAGE].get_shared_data(data=result)
+
         return result
 
     def find(
-        self, _type, context=None, _filter=None, limit=0, skip=0, sort=None
+        self, context=None, _filter=None, extended=False,
+        limit=0, skip=0, sort=None
     ):
         """
         Find all entities which of input _type and context with an additional
         filter.
+
+        :param extended: get extended entities if they are shared
         """
 
-        path = {
-            Context.TYPE: _type
-        }
-
-        if context is not None:
-            path.update(context)
+        path = {} if context is None else context
 
         result = self[Context.CTX_STORAGE].get(
             path=path, _filter=_filter, limit=limit, skip=skip, sort=sort)
+
+        if extended:
+            result = self[Context.CTX_STORAGE].get_shared_data(data=result)
 
         return result
 
@@ -168,14 +177,6 @@ class Context(Manager):
 
         self[Context.CTX_STORAGE].remove(path=path, ids=ids)
 
-    def _configure(self, unified_conf, *args, **kwargs):
-
-        super(Context, self)._configure(
-            unified_conf=unified_conf, *args, **kwargs)
-
-        if Context.CTX_STORAGE in self:
-            self[Context.CTX_STORAGE].path = self.context
-
     def get_entity_id(self, entity, context=None):
         """
         Get unique entity id related to its context and name.
@@ -200,3 +201,11 @@ class Context(Manager):
 
         # get unique and shared id
         pass
+
+    def _configure(self, unified_conf, *args, **kwargs):
+
+        super(Context, self)._configure(
+            unified_conf=unified_conf, *args, **kwargs)
+
+        if Context.CTX_STORAGE in self:
+            self[Context.CTX_STORAGE].path = self.context

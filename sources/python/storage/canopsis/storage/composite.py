@@ -20,6 +20,7 @@
 
 from uuid import uuid4 as uuid
 
+from canopsis.common.utils import force_iterable, isiterable, get_first
 from canopsis.storage import Storage
 
 
@@ -72,42 +73,84 @@ class CompositeStorage(Storage):
         """
         Get all shared data related to input data. If input data is not shared,
         returns a list containing only data.
+
+        :param data: one or more data
+
+        :return: depending on input data and fusion::
+
+            - one data: one list of shared data
+            - list of data: list of list of shared data
         """
 
-        result = [data]
+        result = []
 
-        if CompositeStorage.SHARED in data:
+        _data = force_iterable(data, iterable=set)
 
-            shared = data[CompositeStorage.SHARED]
-            request = {CompositeStorage.SHARED: shared}
-            result = self.find_elements(request=request)
+        for d in _data:
+            if CompositeStorage.SHARED in d:
+                shared = d[CompositeStorage.SHARED]
+                request = {CompositeStorage.SHARED: shared}
+                shared_data = self.get_elements(request=request)
+                result.append(shared_data)
+
+        # return first or data if data is not an iterable
+        if not isiterable(data, is_str=False):
+            result = get_first(result, data)
 
         return result
 
-    def set_shared_data(self, data, shared=None):
+    def set_shared_data(self, data, shared=None, share_extended=False):
         """
         Set input data as a shared data with input shared id
 
         If input data is already shared, update all shared data with input
         shared id
 
-        :param shared: unique id
+        :param data: one or more data
+
+        :param shared: unique shared id. If None, the id is generated.
+
+        :param share_extended: if True (False by default), set shared value to
+            all shared data with input data
+
+        :return: shared value
         """
         if shared is None:
             shared = uuid()
 
-        shared_data = [data]
+        # get an iterable version of input data
+        data_to_share = force_iterable(data, iterable=set)
 
-        # if data is alraedy shared, update all shared data with input shared
-        if CompositeStorage.SHARED in data \
-                and data[CompositeStorage.SHARED] != shared:
-            shared_data += self.get_shared_data(data)
+        if share_extended:
+            # get all previous shared data
+            for dts in data_to_share.copy():
+                if CompositeStorage.SHARED in dts \
+                        and dts[CompositeStorage.SHARED] != shared:
+                    shared_data = self.get_shared_data(dts)
+                    for shared_d in shared_data:
+                        data.add(shared_d)
 
         # for all shared data, update the shared property and put them
-        for _shared_data in shared_data:
-            _shared_data[CompositeStorage.SHARED] = shared
-            _id = self.get_absolute_path(_shared_data)
-            self.put(_id=_id, element=_shared_data)
+        for dts in data_to_share:
+            dts[CompositeStorage.SHARED] = shared
+            _id = self.get_absolute_path(dts)
+            self.put_element(_id=_id, element=dts)
+
+        return shared
+
+    def unshare_data(self, data):
+        """
+        Remove share property from input data
+
+        :param data: one or more data to unshare
+        """
+        data = force_iterable(data)
+
+        for d in data:
+            if CompositeStorage.SHARED in d:
+                d[CompositeStorage.SHARED] = 0
+            _id = self.get_absolute_path(d)
+            self.put(_id=_id, element=d)
 
     def get(
         self, path, ids=None, _filter=None, limit=0, skip=0, sort=None

@@ -104,8 +104,6 @@ class MongoScopedStorageTest(TestCase):
 
             self.storage.put(path=path, _id=_path, data={'value': n})
 
-        self.storage.get()[0]
-
 
 if __name__ == '__main__':
     main()
