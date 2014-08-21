@@ -57,7 +57,7 @@
 			"role": "state"
 		},
 		"criticity": {
-			"type": "string",
+			"type": "number",
 			"role": "criticity"
 		},
 		"perimeter": {

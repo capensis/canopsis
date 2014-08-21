@@ -104,7 +104,7 @@ class Archiver(object):
         # 2 == Stealthy
         # 3 == Bagot
         # 4 == Canceled
-
+        self.logger.info(event)
         log = 'Status is set to {} for event %s' % event['rk']
         ts_curr = event['timestamp']
         ts_prev = devent['timestamp']
@@ -270,9 +270,21 @@ class Archiver(object):
             self.store_new_event(_id, event)
         else:
             change = {}
-            # resets ack status for this alert if already set to true
-            if devent.get('ack', False):
-                change['ack'] = False
+
+            # keep ack information if status does not reset event
+            if 'ack' in devent:
+                if event['status'] not in [0, 1]:
+                    change['ack'] = devent['ack']
+                else:
+                    change['ack'] = {}
+
+            # keep cancel information if status does not reset event
+            if 'cancel' in devent:
+                if event['status'] not in [0, 1]:
+                    change['cancel'] = devent['cancel']
+                else:
+                    change['cancel'] = {}
+
 
             for key in change_fields:
                 if key in event and key in devent and devent[key] != event[key]:

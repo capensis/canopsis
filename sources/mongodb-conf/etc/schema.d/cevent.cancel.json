@@ -4,7 +4,7 @@
 	"type": "object",
 	"categories": [{
 		"title": "General",
-		"keys":["output"]
+		"keys":["author", "connector_name", "component", "resource", "output"]
 	}],
 	"properties": {
 		"connector": {
@@ -13,11 +13,19 @@
 		},
 		"component": {
 			"type": "string",
-			"required": true
+			"required": true,
+			"readOnly": true
 		},
 		"connector_name": {
 			"type": "string",
-			"required": false
+			"required": false,
+			"readOnly": true,
+			"role": "source"
+		},
+		"resource": {
+			"type": "string",
+			"required": false,
+			"readOnly": true
 		},
 		"event_type": {
 			"enum": ["check"],
@@ -25,7 +33,8 @@
 		},
 		"source_type": {
 			"type": "string",
-			"required": false
+			"required": false,
+			"readOnly": true
 		},
 		"state": {
 			"type": "number",
@@ -45,11 +54,14 @@
 		},
 		"author": {
 			"type": "string",
-			"required": true
+			"required": true,
+			"readOnly": true
 		},
 		"output": {
 			"type": "string",
-			"required": true
+			"required": true,
+			"label": " ",
+			"placeholder": "Remarque ..."
 		}
 	}
 }
