@@ -235,7 +235,7 @@ class engine(Engine):
 
         self.logger.debug('Reload configuration rules')
         try:
-            records = self.storage.find({'crecord_type': self.etype},
+            records = self.storage.find({'crecord_type': 'filter'},
                             sort='priority')
 
             for record in records:

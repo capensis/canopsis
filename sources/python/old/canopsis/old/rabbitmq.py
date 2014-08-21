@@ -315,7 +315,7 @@ class Amqp(Thread):
                         _msg, serializer=serializer, compression=compression,
                         routing_key=routing_key,
                         exchange=self.get_exchange(exchange_name))
-                    self.logger.debug(" + Sended")
+                    self.logger.debug(" + Sent")
                 except Exception as err:
                     self.logger.error(" + Impossible to send (%s)" % err)
         else:
