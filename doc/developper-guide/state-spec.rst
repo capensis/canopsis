@@ -5,11 +5,11 @@ State specifications
 Possible state
 ----------------
 
-* Off
-* On going
-* Stealthy
-* Bagot
-* cancel
+* 0 - Off
+* 1 - On going
+* 2 - Stealthy
+* 3 - Bagot
+* 4 - cancel
 
 
 *Off*
