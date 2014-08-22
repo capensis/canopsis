@@ -194,22 +194,12 @@ class Archiver(object):
         try:
             # Get old record
             #record = self.storage.get(_id, account=self.account)
-            change_fields = {
-                'state': 1,
-                'state_type': 1,
-                'last_state_change': 1,
-                'output': 1,
-                'perf_data_array': 1,
-                'timestamp': 1,
-                'cancel': 1,
-                'status': 1,
-                'bagot_freq': 1,
-                'ts_first_bagot': 1,
-                'ts_first_stealthy': 1,
-                'ack': 1
+            exclusion_fields = {
+                'perf_data_array',
+                'processing'
             }
 
-            devent = self.collection.find_one(_id, fields=change_fields)
+            devent = self.collection.find_one(_id)
 
             if not devent:
                 new_event = True
@@ -251,21 +241,6 @@ class Archiver(object):
                 event['previous_state_change_ts'] = event['last_state_change']
             event['last_state_change'] = event.get('timestamp', now)
 
-        # Clean raw perfdata, as they should be already splitted from event
-        # and should not live in event collection.
-        perf_data_array = None
-        if 'perf_data_array' in event:
-            perf_data_array = event['perf_data_array']
-            del event['perf_data_array']
-
-        processing = None
-        if 'processing' in event:
-            processing = event['processing']
-            del event['processing']
-
-        if 'perf_data' in event:
-            del event['perf_data']
-
         if new_event:
             self.store_new_event(_id, event)
         else:
@@ -286,7 +261,7 @@ class Archiver(object):
                     change['cancel'] = {}
 
 
-            for key in change_fields:
+            for key in event and not in exclusion_fields:
                 if key in event and key in devent and devent[key] != event[key]:
                     change[key] = event[key]
                 elif key in event and key not in devent:
@@ -302,12 +277,6 @@ class Archiver(object):
                 event['ack'] = devent['ack']
             mid = self.log_event(_id, event)
 
-        #Put back perfdata after database upsert
-        if perf_data_array:
-            event['perf_data_array'] = perf_data_array
-
-        if processing:
-            event['processing'] = processing
 
         return mid
 
