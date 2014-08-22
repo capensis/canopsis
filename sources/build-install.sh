@@ -606,6 +606,12 @@ if [ $OPT_BUILD -eq 1 ]; then
 	done
 
 	echo "################################"
+	echo "# Updating locales"
+	echo "################################"
+	cp -r $SRC_PATH/locale $PREFIX
+	echo " + Ok"
+
+	echo "################################"
 	echo "# Fix permissions"
 	echo "################################"
 	mkdir -p $PREFIX/.python-eggs
@@ -636,6 +642,7 @@ if [ $OPT_BUILD -eq 1 ]; then
 		echo " + Ok"
 	fi
 fi
+
 
 if [ $OPT_MPKG -eq 1 -o $OPT_MINSTALLER -eq 1 ]; then
 	cd $SRC_PATH
