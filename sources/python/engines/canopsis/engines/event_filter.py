@@ -148,6 +148,9 @@ class engine(Engine):
         if derogated:
             self.logger.debug("Event changed by rule '%s'" % name)
 
+        return None
+
+
     # simple drop
     def a_drop(self, event, derogation, action, name):
         self.logger.debug("Event dropped by rule '%s'" % name)
