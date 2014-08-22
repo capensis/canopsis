@@ -80,15 +80,15 @@ Best state
 - default state: {bound entity state, ok} if no child node exist.
 - in state: minimal(child node states).
 
-And - All
-~~~~~~~~~
+All
+~~~
 
 - at least: -1 (all nodes)
 - at most: -1 (all nodes)
 - default state: {bound entity state, ok}.
 
-Or - Any - At least one
-~~~~~~~~~~~~~~~~~~~~~~~
+Any
+~~~
 
 - at least: 1
 - at most: 1
@@ -222,7 +222,7 @@ Topology
 
 .. function:: get(ids=None, add_nodes=False)
 
-    .. data:: route = 'GET:/rest/topology[/ids[/add_nodes[/limit[/skip]]]]'
+    .. data:: REST route = 'GET:/topology[/ids[/add_nodes[/limit[/skip]]]]'
 
     :param ids: None, one id or a list of ids
     :type ids: NoneType, list(str) or str
@@ -238,7 +238,7 @@ Topology
 
 .. function:: find(regex, add_nodes=False)
 
-    .. data:: route = 'GET:/rest/topology-regex[/regex[/add_nodes]]'
+    .. data:: REST route = 'GET:/topology-regex[/regex[/add_nodes]]'
 
     :param regex: regex expression which could match with topology ids.
     :type regex: str
@@ -250,7 +250,7 @@ Topology
 
 .. function:: put(topology)
 
-    .. data:: route = 'PUT:/rest/topology[/topology]'
+    .. data:: REST route = 'PUT:/topology[/topology]'
 
     put input topology in DB. If topology already exist, update existing information with input information, or add them if they does not exist.
 
@@ -259,7 +259,7 @@ Topology
 
 .. function:: remove(ids)
 
-    .. data:: route = 'DELETE:/rest/topology[/topology]'
+    .. data:: REST route = 'DELETE:/topology[/ids]'
 
     remove one or more topologies depending on ids:
 

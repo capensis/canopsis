@@ -75,8 +75,6 @@ class engine(Engine):
         resource = event.get('resource', None)
         hostgroups = event.get('hostgroups', [])
         servicegroups = event.get('servicegroups', [])
-        source_type = event['source_type']
-        event_type = event['event_type']
 
         # add connector
         entity = {
@@ -98,6 +96,7 @@ class engine(Engine):
         status_entity['hostgroups'] = hostgroups
 
         is_status_entity = False
+        source_type = event['source_type']
 
         # create an entity status which is a component or a resource
         if source_type == 'component':
@@ -142,6 +141,8 @@ class engine(Engine):
             authored_data['resource'] = resource
             authored_data['author'] = event['author']
             authored_data['comment'] = event['comment']
+
+        event_type = event['event_type']
 
         if event_type == 'ack':
             authored_data['timestamp'] = event['timestamp']
