@@ -96,6 +96,51 @@ After defining the basic event structure, add the following fields :
         'output':               // Acknowledgment comment
     }
 
+Event Cancel Structure
+----------------------
+
+After defining the basic event structure, add the following fields :
+
+.. code-block:: javascript
+
+    {
+        'event_type': 'cancel',
+
+        'ref_rk':               // Routing Key of event
+        'author':               // author
+        'output':               // comment
+    }
+
+Event Undo Cancel Structure
+----------------------
+
+After defining the basic event structure, add the following fields :
+
+.. code-block:: javascript
+
+    {
+        'event_type': 'uncancel',
+
+        'ref_rk':               // Routing Key of event
+        'author':               // author
+        'output':               // comment
+    }
+
+Event Ackremove Structure
+----------------------
+
+After defining the basic event structure, add the following fields :
+
+.. code-block:: javascript
+
+    {
+        'event_type': 'ackremove',
+
+        'ref_rk':               // Routing Key of event
+        'author':               // author
+        'output':               // comment
+    }
+
 Event Downtime Structure
 ------------------------
 
@@ -323,4 +368,12 @@ List of event types
 | ack           | Used to acknowledge an alert                                              |
 +---------------+---------------------------------------------------------------------------+
 | downtime      | Used to schedule a downtime                                               |
++---------------+---------------------------------------------------------------------------+
+| cancel        | Used to cancel an event and put it's status in cancel state.              |
+|               | removes also referer event's ack if any.                                  |
++---------------+---------------------------------------------------------------------------+
+| uncancel      | Used to uncancel an event. previous status is restored and ack too if any.|
++---------------+---------------------------------------------------------------------------+
+| ackremove     | Used to remove an ack from an event.                                      |
+|               | (ack field removed and ack collection updated)                            |
 +---------------+---------------------------------------------------------------------------+
