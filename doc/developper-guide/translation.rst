@@ -54,4 +54,26 @@ Then this file will be reachable from the webserver that will be able to parse t
 Documentation translation
 -------------------------
 
-#TODO
+In order to translate documentation into another language the shinx project must be setup as described in the Sphinx documentation `Sphinx internationalization <http://sphinx-doc.org/intl.html>`_.
+What is left to you is to produce or update ``.po`` files in the language documentation will be translated. This can be done by issuing the following command :
+
+.. code-block:: bash
+
+	make gettext
+
+Then update the locale dir :
+
+.. code-block:: bash
+
+	sphinx-intl update -p _build/locale -l fr
+
+Then translation can be done by updating po files into the locale folder. Translation must be done as following. For each original paragraph, a **msgid** is a reference to the string to translate and you have to fill the **msgstr** accordingly depending on  the language you wish translate the documentation.
+
+When the `msgstr` are translated, you have to generate the documentation in the language you chose by typing the following commands in the canopsis's documentation folder:
+
+.. code-block:: bash
+
+	sphinx-intl build
+	make -e SPHINXOPTS="-D language='fr'" html
+
+That's all.
