@@ -21,39 +21,52 @@
 from canopsis.engines import Engine
 
 from canopsis.context.manager import Context
+"""
+TODO: sla
+from canopsis.middleware import Middleware
+"""
 
 
 class engine(Engine):
-    etype = 'entities2'
+    etype = 'context'
 
     def __init__(self, *args, **kwargs):
         super(engine, self).__init__(*args, **kwargs)
 
+        # get a context
         self.context = Context()
+        """
+        TODO: sla
+        # get a storage for sla macro
+        #self.storage = Middleware.get_middleware(
+        #    protocol='storage', data_scope='global')
 
-        self.sla = None
+        #self.sla = None
+        """
         self.beat()
 
-    def update(self, doc, hint):
-        if not self.backend.find(doc).hint(hint).limit(-1).count():
-            self.backend.save(doc)
-
     def beat(self):
-        cursor = self.storage.get_backend('object').find({
+        """
+        TODO: sla
+        sla = self.storage.find_elements(request={
             'crecord_type': 'sla',
             'objclass': 'macro'
-        }).hint([('crecord_type', 1)]).limit(-1)
+        })
 
-        if cursor.count():
-            self.sla = cursor[0]
+        if sla:
+            self.sla = sla[0]
+        """
 
     def work(self, event, *args, **kwargs):
         mCrit = 'PROC_CRITICAL'
         mWarn = 'PROC_WARNING'
 
+        """
+        TODO: sla
         if self.sla:
             mCrit = self.sla.data['mCrit']
             mWarn = self.sla.data['mWarn']
+        """
 
         # Get event informations
         connector = event['connector']
@@ -62,8 +75,6 @@ class engine(Engine):
         resource = event.get('resource', None)
         hostgroups = event.get('hostgroups', [])
         servicegroups = event.get('servicegroups', [])
-        source_type = event['source_type']
-        event_type = event['event_type']
 
         # add connector
         entity = {
@@ -85,6 +96,7 @@ class engine(Engine):
         status_entity['hostgroups'] = hostgroups
 
         is_status_entity = False
+        source_type = event['source_type']
 
         # create an entity status which is a component or a resource
         if source_type == 'component':
@@ -130,8 +142,11 @@ class engine(Engine):
             authored_data['author'] = event['author']
             authored_data['comment'] = event['comment']
 
+        event_type = event['event_type']
+
         if event_type == 'ack':
             authored_data['timestamp'] = event['timestamp']
+            authored_data['name'] = event['timestamp']
 
         elif event_type == 'downtime':
             authored_data['id'] = event['downtime_id']
@@ -140,8 +155,7 @@ class engine(Engine):
             authored_data['duration'] = event['duration']
             authored_data['fixed'] = event['fixed']
             authored_data['entry'] = event['entry']
-
-        authored_data['name'] = event_type
+            authored_data['name'] = event['id']
 
         self.context.put(_type=event_type, entity=authored_data)
 

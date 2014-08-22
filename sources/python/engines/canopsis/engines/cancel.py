@@ -37,7 +37,6 @@ class engine(Engine):
 
 
     def pre_run(self):
-        #load selectors
         self.storage = get_storage(
             namespace='events', account=Account(user="root", group="root"))
 
@@ -65,7 +64,7 @@ class engine(Engine):
                     update['cancel'] = {
                         'timestamp': time(),
                         'author' : event.get('author','unknown'),
-                        'comment' : ack_info['comment'],
+                        'comment' : event['output'],
                         'previous_status': devent.get('status', 1),
                     }
                     self.logger.info("set cancel to the event")
@@ -91,6 +90,10 @@ class engine(Engine):
                         if 'cancel' in devent:
                             update['status'] = devent['cancel'].get('previous_status', 0)
                             update_query['$unset'] = {'cancel': ''}
+                            event['output'] = 'Undo remove for alert {} {}'.format(
+                                devent.get('component',''),
+                                devent.get('resource', '')
+                            )
 
                 update_query['$set'] = update
 

@@ -33,3 +33,4 @@ Contents:
    storage/index
    topology
    uiv2
+   translation
