@@ -74,10 +74,12 @@ class i18n(object):
             )
             po.append(entry)
 
-
-        po.save(expanduser('~/locale/todo.po'))
-
+        output = expanduser('~/locale/todo.po')
+        po.save(output)
+        print 'Database translation definitions updated into {} file.'.format(output)
 
 if __name__ == '__main__':
     if 'extract' in sys.argv:
         i18n().extract()
+    else:
+        print 'Available option is "extract"'

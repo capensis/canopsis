@@ -1,13 +1,21 @@
 Translation
 ===========
 
+UI translation
+--------------
+
 This documentation is about how to translate UI into different languages with transifex system.
 
-* first it is necessary to install transifex client : ``apt-get install transifex-client`` for debian users.
+* first it is necessary to install transifex client (here is for Debian users :
 
-* Then you have to run ``tx init`` command.
+.. code-block:: bash
 
-.. role:: latex(code)
+	apt-get install transifex-client
+
+* Then you have to run ``tx init`` command. This will lead to the following trace :
+
+.. code-block:: bash
+
 	Creating .tx folder...
 	Transifex instance [https://www.transifex.com]:
 	Creating skeleton...
@@ -19,16 +27,31 @@ This documentation is about how to translate UI into different languages with tr
 	Updating /home/utopman/.transifexrc file...
 	Done.
 
-* You now have your transifex configured update your  .po file with the new translation you wish update e.g. add
+* You now have your transifex configured update your .po file that will be sent to the transifex server. Po file definitions can be extracted from database by issuing the following command once logged as canopsis user.
 
-|	msgid "Test"
-|	msgstr "Test"
+.. code-block:: bash
 
-at the end of your .po translation file.
+	i18n extract
 
+This command will fetch new untranslated definitions from database to a ``.po`` file. This .po file has to be uploaded to Transifex in order to allow project translators to start translate files.
 
-it is time to push the lang file with ``tx push -s path_to_your_canopsis/sources/webcore/var/www/canopsis/resources/locales/lang-en.po``
+Issue the following commant to upload the ``todo.po`` file
+
+.. code-block:: bash
+
+	tx push -s path_to_your_canopsis/locale/todo.po
 
 Then the new translation should be available in transifex web UI for translation. You have to connect and translate new strings.
 
-To complete the translation task, the new translated po file in each language and put them on the static server file where the build install will be able to download static po files on the following server ``http://repo.canopsis.org/locales/``.
+To complete the translation task, once all fieds translated via Transifex, go download the ``.po`` file from language you translated it and put it in the following location (let assume you translate canopsis ui to french)
+
+.. code-block:: bash
+
+	path_to_your_canopsis/locale/fr/ui_lang.po
+
+Then this file will be reachable from the webserver that will be able to parse the file enabling tranlations into the whole UI.
+
+Documentation translation
+-------------------------
+
+#TODO
