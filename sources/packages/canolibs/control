@@ -16,20 +16,16 @@ function pre_install(){
 }
 
 function post_install(){
-	echo "-- Update python-logging.conf"
+	echo "   + Update python-logging.conf"
 	sed -i s:@PREFIX@:$PREFIX:g $PREFIX/etc/python-logging.conf
 
 	check_code $?
 
-	echo "-- Create logdir for engines"
+	echo "   + Create logdir for engines"
 	mkdir -p $PREFIX/var/log/engines
 	check_code $?
 
-	add_message "snmp2amqp needs the following in your sudoers file (/etc/sudoers):"
-	add_message "    Defaults:$HUSER env_keep += \"HOME LD_LIBRARY_PATH PYTHONPATH\"" 
-	add_message "    $HUSER ALL=NOPASSWD: $PREFIX/bin/python $PREFIX/opt/$NAME/$NAME.py" 
-
-	echo "-- Fix permissions"
+	echo "   + Fix permissions"
 	chown -R $HUSER:$HGROUP $PREFIX/etc
 	check_code $?
 }
@@ -61,15 +57,15 @@ function pre_update(){
 }
 
 function post_update(){
-	echo "-- Update python-logging.conf"
+	echo "   + Update python-logging.conf"
 	sed -i s:@PREFIX@:$PREFIX:g $PREFIX/etc/python-logging.conf
 	check_code $?
 
-	echo "-- Fix permissions"
+	echo "   + Fix permissions"
 	chown -R $HUSER:$HGROUP $PREFIX/etc
 	check_code $?
 
-	echo "-- Set old credentials for RabbitMQ and MongoDB"
+	echo "   + Set old credentials for RabbitMQ and MongoDB"
 
 	if [ -e $VARLIB_PATH/rabbitmq-server-conf ]
 	then

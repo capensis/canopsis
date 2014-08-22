@@ -10,6 +10,31 @@ NO_ARCH=true
 NO_DIST=true
 NO_DISTVERS=true
 
+function safe_prompt() {
+	if [ "$3" == "show" ]
+	then
+		OPTS="-p"
+	else
+		OPTS="-s -p"
+	fi
+
+	empty=true
+
+	while $empty
+	do
+		empty=false
+
+		eval "read $OPTS \"$1\" $2; echo; [[ \"x\$$2\" == \"x\" ]]"
+
+		if [ $? -eq 0 ]
+		then
+			empty=true
+
+			echo "You can't let that field empty!"
+		fi
+	done
+}
+
 function pre_install(){
     echo "Pre-install $NAME $VERSION-$RELEASE ..."
 	check_code $?
@@ -50,11 +75,8 @@ function post_install(){
 
 	while true
 	do
-		read -s -p "MongoDB password for admin: " adminpass
-		echo ""
-
-		read -s -p "Confirm password: " confirm
-		echo ""
+		safe_prompt "MongoDB password for admin: " adminpass
+		safe_prompt "Confirm password: " confirm
 
 		if [ "$adminpass" == "$confirm" ]
 		then
@@ -64,15 +86,12 @@ function post_install(){
 		fi
 	done
 
-	read -p "MongoDB common user: " cpsuser
+	safe_prompt "MongoDB common user: " cpsuser "show"
 
 	while true
 	do
-		read -s -p "MongoDB password for $cpsuser: " cpspass
-		echo ""
-
-		read -s -p "Confirm password: " confirm
-		echo ""
+		safe_prompt "MongoDB password for $cpsuser: " cpspass
+		safe_prompt "Confirm password: " confirm
 
 		if [ "$cpspass" == "$confirm" ]
 		then
@@ -84,6 +103,7 @@ function post_install(){
 
 	echo " + Create admin user ..."
 	su - $HUSER -c "$PREFIX/bin/mongo admin --eval \"db.createUser({user: 'admin', pwd: '$adminpass', roles: ['readWriteAnyDatabase', 'userAdminAnyDatabase', 'dbAdminAnyDatabase']})\""
+	check_code $? "Impossible to create"
 
 	echo " + Create $cpsuser user ..."
 	su - $HUSER -c "$PREFIX/bin/mongo -u admin -p $adminpass --authenticationDatabase admin canopsis --eval \"db.createUser({user: '$cpsuser', pwd: '$cpspass', roles: ['dbOwner']})\""
@@ -121,12 +141,12 @@ function post_update(){
 	su - $HUSER -c "service mongodb start"
 	check_code $?
 
-	echo "-- Copy JSON schemas"
+	echo "   + Copy JSON schemas"
 	mkdir -p $PREFIX/etc/schema.d
 	cp -Rf $SRC_PATH/mongodb-conf/etc/schema.d/* $PREFIX/etc/schema.d
 	check_code $?
 
-	echo "-- Fix permissions"
+	echo "   + Fix permissions"
 	chown -R $HUSER:$HGROUP $PREFIX/etc/schema.d
 	check_code $?
 

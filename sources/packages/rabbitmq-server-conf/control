@@ -10,6 +10,31 @@ NO_ARCH=true
 NO_DIST=true
 NO_DISTVERS=true
 
+function safe_prompt() {
+	if [ "$3" == "show" ]
+	then
+		OPTS="-p"
+	else
+		OPTS="-s -p"
+	fi
+
+	empty=true
+
+	while $empty
+	do
+		empty=false
+
+		eval "read $OPTS \"$1\" $2; echo; [[ \"x\$$2\" == \"x\" ]]"
+
+		if [ $? -eq 0 ]
+		then
+			empty=true
+
+			echo "You can't let that field empty!"
+		fi
+	done
+}
+
 function pre_install(){
 	echo "Pre-install $NAME $VERSION-$RELEASE ..."
 	check_code $? 
@@ -47,11 +72,8 @@ function post_install(){
 	then
 		while true
 		do
-			read -s -p "RabbitMQ password for admin: " adminpass
-			echo ""
-
-			read -s -p "Confirm password: " confirm
-			echo ""
+			safe_prompt "RabbitMQ password for admin: " adminpass
+			safe_prompt "Confirm password: " confirm
 
 			if [ "$adminpass" == "$confirm" ]
 			then
@@ -70,6 +92,7 @@ function post_install(){
 	fi
 
 	VHOST_EXISTS=`su - $HUSER -c "rabbitmqctl list_vhosts | grep canopsis | wc -l"`
+
 	# Is this a first install or an update
 	if [ $VHOST_EXISTS -ne 1 ]
 	then
@@ -88,7 +111,7 @@ function post_install(){
 	then
 		while true
 		do
-			read -p "RabbitMQ common user: " cpsuser
+			safe_prompt "RabbitMQ common user: " cpsuser "show"
 
 			user_exists=`su - $HUSER -c "rabbitmqctl list_users" | grep "^$cpsuser" | wc -l`
 
@@ -100,11 +123,8 @@ function post_install(){
 
 		while true
 		do
-			read -s -p "RabbitMQ password for $cpsuser: " cpspass
-			echo ""
-
-			read -s -p "Confirm password: " confirm
-			echo ""
+			safe_prompt "RabbitMQ password for $cpsuser: " cpspass
+			safe_prompt "Confirm password: " confirm
 
 			if [ "$cpspass" == "$confirm" ]
 			then
