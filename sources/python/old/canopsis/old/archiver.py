@@ -261,11 +261,12 @@ class Archiver(object):
                     change['cancel'] = {}
 
 
-            for key in event and not in exclusion_fields:
-                if key in event and key in devent and devent[key] != event[key]:
-                    change[key] = event[key]
-                elif key in event and key not in devent:
-                    change[key] = event[key]
+            for key in event:
+                if key not in exclusion_fields:
+                    if key in event and key in devent and devent[key] != event[key]:
+                        change[key] = event[key]
+                    elif key in event and key not in devent:
+                        change[key] = event[key]
             if change:
                 self.storage.get_backend('events').update({'_id': _id},
                                                           {'$set': change})
