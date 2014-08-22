@@ -30,164 +30,180 @@ import json
 
 
 class ModelRecursionError(Exception):
-	def __init__(self, schema, *args, **kwargs):
-		super(ModelRecursionError, self).__init__(*args, **kwargs)
+    def __init__(self, schema, *args, **kwargs):
+        super(ModelRecursionError, self).__init__(*args, **kwargs)
 
-		self.schema = schema
+        self.schema = schema
 
-	def __str__(self):
-		return 'Model {0} contains a recursion'.format(self.schema)
+    def __str__(self):
+        return 'Model {0} contains a recursion'.format(self.schema)
 
-	def __unicode__(self):
-		return u'Model {0} contains a recursion'.format(self.schema)
+    def __unicode__(self):
+        return u'Model {0} contains a recursion'.format(self.schema)
 
 
 class Schema2MongoDB(object):
-	stdtypes = [
-		'object',
-		'array',
-		'string',
-		'integer',
-		'number',
-		'boolean',
-		'null',
-		'any'
-	]
+    stdtypes = [
+        'object',
+        'array',
+        'string',
+        'integer',
+        'number',
+        'boolean',
+        'null',
+        'any'
+    ]
 
-	def __init__(self, *args, **kwargs):
-		super(Schema2MongoDB, self).__init__(*args, **kwargs)
+    def __init__(self, *args, **kwargs):
+        super(Schema2MongoDB, self).__init__(*args, **kwargs)
 
-		self.handler = Init()
-		self.logger = self.handler.getLogger('schema2db')
-		self.files_in_error = []
+        self.handler = Init()
+        self.logger = self.handler.getLogger('schema2db')
+        self.files_in_error = []
 
-	def load(self):
-		# Load schemas
+    def load(self):
+        # Load schemas
 
-		schema_dir = os.path.expanduser('~/etc/schema.d')
-		self.schemas = {}
+        schema_dir = os.path.expanduser('~/etc/schema.d')
+        self.schemas = {}
 
-		for filepath in os.listdir(schema_dir):
-			abspath = os.path.join(schema_dir, filepath)
-			schema_id = os.path.splitext(filepath)[0]
+        for filepath in os.listdir(schema_dir):
+            abspath = os.path.join(schema_dir, filepath)
+            schema_id = os.path.splitext(filepath)[0]
 
-			with open(abspath) as f:
-				self.logger.info('Loading: {0}'.format(abspath))
-				try:
-					self.schemas[schema_id] = json.load(f)
-				except Exception as e:
-					self.logger.error('Unable to load schema {} : {}'.format(filepath, e))
-					self.files_in_error.append({'file': filepath, 'cause': e})
+            with open(abspath) as f:
+                self.logger.info('Loading: {0}'.format(abspath))
 
-	def build_one(self, schema_id):
-		self.logger.info('Building: {0}'.format(schema_id))
+                try:
+                    self.schemas[schema_id] = json.load(f)
 
-		self.hierarchy = [schema_id]
+                except Exception as e:
+                    self.logger.error(
+                        'Unable to load schema {} : {}'.format(
+                            filepath,
+                            e
+                        )
+                    )
 
-		def _build(pkey, subschema):
-			updated = False
+                    self.files_in_error.append({'file': filepath, 'cause': e})
 
-			if 'type' in subschema:
-				if isinstance(subschema['type'], list):
-					for stype in subschema['type']:
-						if stype not in self.stdtypes:
-							if stype in self.hierarchy:
-								raise ModelRecursionError(schema_id)
+    def build_one(self, schema_id):
+        self.logger.info('Building: {0}'.format(schema_id))
 
-							else:
-								model = self.schemas.get(stype)
-								idx = subschema['type'].index(stype)
-								subschema['type'][idx] = model
+        self.hierarchy = [schema_id]
 
-				else:
-					if subschema['type'] not in self.stdtypes:
-						if subschema['type'] in self.hierarchy:
-							raise ModelRecursionError(schema_id)
+        def _build(pkey, subschema):
+            updated = False
 
-						else:
-							""" #world is not yet ready for this
-							model = self.schemas.get(subschema['type'])
-							subschema.update(model)
-							updated = True
-							"""
-							pass
+            if 'type' in subschema:
+                if isinstance(subschema['type'], list):
+                    for stype in subschema['type']:
+                        if stype not in self.stdtypes:
+                            if stype in self.hierarchy:
+                                raise ModelRecursionError(schema_id)
 
-			for key in subschema:
-				if key != 'type' and isinstance(subschema[key], dict):
-					subupdated = False
+                            else:
+                                model = self.schemas.get(stype)
+                                idx = subschema['type'].index(stype)
+                                subschema['type'][idx] = model
 
-					if 'type' in subschema:
-						if pkey not in [None, 'properties']:
-							if isinstance(subschema['type'], list):
-								length = - len(subschema['type'])
-								self.hierarchy += subschema['type']
+                else:
+                    if subschema['type'] not in self.stdtypes:
+                        if subschema['type'] in self.hierarchy:
+                            raise ModelRecursionError(schema_id)
 
-								subupdated = _build(key, subschema[key])
+                        else:
+                            model = self.schemas.get(subschema['type'])
+                            subschema.update(model)
+                            updated = True
 
-								del self.hierarchy[length:]
+            for key in subschema:
+                if key != 'type' and isinstance(subschema[key], dict):
+                    subupdated = False
 
-							else:
-								self.hierarchy.append(subschema['type'])
-								subupdated = _build(key, subschema[key])
-								del self.hierarchy[-1]
+                    if 'type' in subschema:
+                        if pkey not in [None, 'properties']:
+                            if isinstance(subschema['type'], list):
+                                length = - len(subschema['type'])
+                                self.hierarchy += subschema['type']
 
-					else:
-						subupdated = _build(key, subschema[key])
+                                subupdated = _build(key, subschema[key])
 
-					if subupdated:
-						updated = True
+                                del self.hierarchy[length:]
 
-			return updated
+                            else:
+                                self.hierarchy.append(subschema['type'])
+                                subupdated = _build(key, subschema[key])
+                                del self.hierarchy[-1]
 
-		return _build(None, self.schemas[schema_id])
+                    else:
+                        subupdated = _build(key, subschema[key])
 
-	def build(self):
-		keep_going = True
+                    if subupdated:
+                        updated = True
 
-		# Iterate until no update is done on any model
-		while keep_going:
-			keep_going = False
+            return updated
 
-			for schema_id in self.schemas:
-				if self.build_one(schema_id):
-					keep_going = True
+        return _build(None, self.schemas[schema_id])
 
-	def save(self):
-		storage = get_storage('schemas', account=Account(user='root', group='root')).get_backend()
+    def build(self):
+        keep_going = True
 
-		for schema_id in self.schemas:
-			self.logger.info('Saving: {0}'.format(schema_id))
+        # Iterate until no update is done on any model
+        while keep_going:
+            keep_going = False
 
-			crecord_name = schema_id.split(".")[-1]
+            for schema_id in self.schemas:
+                if self.build_one(schema_id):
+                    keep_going = True
 
-			schema = Record({
-				'_id': schema_id,
-				'schema': self.schemas[schema_id]
-			}, name=crecord_name).dump()
+    def save(self):
+        storage = get_storage(
+            'schemas',
+            account=Account(user='root', group='root')
+        ).get_backend()
 
-			storage.update({'_id': schema_id}, schema, upsert=True)
+        for schema_id in self.schemas:
+            self.logger.info('Saving: {0}'.format(schema_id))
 
-		del storage
+            crecord_name = schema_id.split(".")[-1]
 
-	def show(self):
-		if self.files_in_error:
-			self.logger.error('-' * 40)
-			self.logger.error(' + Files that could not be loaded')
-		for fileitem in self.files_in_error:
-			self.logger.error('{} file not loaded because : {}'.format(fileitem['file'], fileitem['cause']))
+            schema = Record({
+                '_id': schema_id,
+                'schema': self.schemas[schema_id]
+            }, name=crecord_name)
 
-	def __call__(self):
-		self.load()
-		self.build()
-		self.save()
-		self.show()
+            schema.chmod('o+r')
+
+            storage.update({'_id': schema_id}, schema.dump(), upsert=True)
+
+        del storage
+
+    def show(self):
+        if self.files_in_error:
+            self.logger.error('-' * 40)
+            self.logger.error(' + Files that could not be loaded')
+
+        for fileitem in self.files_in_error:
+            self.logger.error(
+                '{} file not loaded because : {}'.format(
+                    fileitem['file'],
+                    fileitem['cause']
+                )
+            )
+
+    def __call__(self):
+        self.load()
+        self.build()
+        self.save()
+        self.show()
 
 
 if __name__ == '__main__':
-	try:
-		app = Schema2MongoDB()
-		app()
+    try:
+        app = Schema2MongoDB()
+        app()
 
-	except ModelRecursionError as err:
-		print >>sys.stderr, "Error in model:", err
-		sys.exit(1)
+    except ModelRecursionError as err:
+        print >>sys.stderr, "Error in model:", err
+        sys.exit(1)
