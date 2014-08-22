@@ -1,0 +1,60 @@
+{
+    "type": "object",
+    "categories": [{
+        "title": "LDAP Server",
+        "keys": ["uri", "base_dn", "user_dn", "domain", "user_filter"]
+    },{
+        "title": "Fields Mapping",
+        "keys": ["firstname", "lastname", "mail"]
+    }],
+    "properties": {
+        "crecord_type": {
+            "enum": ["ldapconfig"],
+            "required": true
+        },
+
+        "uri": {
+            "type": "string",
+            "required": true,
+            "defaultValue": "ldap://"
+        },
+
+        "base_dn": {
+            "type": "string",
+            "required": true
+        },
+
+        "user_dn": {
+            "type": "string",
+            "required": true
+        },
+
+        "domain": {
+            "type": "string",
+            "required": true
+        },
+
+        "user_filter": {
+            "type": "string",
+            "required": true
+        },
+
+        "firstname": {
+            "type": "string",
+            "required": true,
+            "defaultValue": "first_name"
+        },
+
+        "lastname": {
+            "type": "string",
+            "required": true,
+            "defaultValue": "last_name"
+        },
+
+        "mail": {
+            "type": "string",
+            "required": true,
+            "defaultValue": "email"
+        }
+    }
+}

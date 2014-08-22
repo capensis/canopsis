@@ -1,0 +1,19 @@
+{
+	"type": "object",
+	"categories": [{
+		"title": "General",
+		"keys":["event_selection", "title"]
+	}],
+	"properties": {
+		"title":  {
+			"type": "string"
+		},
+		"event_selection":  {
+			"type": "array",
+			"items": {
+				"type": "string"
+			},
+			"role" : "eventselector"
+		}
+	}
+}

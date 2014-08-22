@@ -1,0 +1,16 @@
+{
+	"type": "object",
+	"properties": {
+		"event_type": {
+			"enum": ["eue"],
+			"required": true
+		},
+		"media_bin": { "type": "string" },
+		"media_type": { "type": "string" },
+		"media_name": { "type": "string" },
+		"type_message": {
+			"type": "string",
+			"required": true
+		}
+	}
+}

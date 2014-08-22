@@ -1,0 +1,37 @@
+{
+	"type": "object",
+	"categories": [{
+		"title": "General",
+		"keys":["crecord_name","description", "enable"]
+	},{
+		"title": "Permissions",
+		"keys": []
+	}],
+	"properties": {
+		"crecord_name": {
+			"type": "string",
+			"required": true
+		},
+		"crecord_type": {
+			"enum": ["view"],
+			"required": true,
+			"label": "type"
+		},
+		"internal": {
+			"type": "boolean",
+			"default": false
+		},
+		"description": {
+			"type": "string"
+		},
+		"containerwidget": {
+			"relationship": "belongsTo",
+			"model": "widget.containerwidget",
+			"polymorphic":true
+		},
+		"enable": {
+			"type": "boolean",
+			"default": true
+		}
+	}
+}

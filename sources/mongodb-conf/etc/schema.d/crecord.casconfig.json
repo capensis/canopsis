@@ -1,0 +1,24 @@
+{
+    "type": "object",
+    "categories": [{
+        "title": "General",
+        "keys": ["server", "service"]
+    }],
+    "properties": {
+        "crecord_type": {
+            "enum": ["casconfig"],
+            "required": true
+        },
+
+        "server": {
+            "type": "string",
+            "required": true
+        },
+
+        "service": {
+            "type": "string",
+            "required": true,
+            "defaultValue": "http://localhost:8082/"
+        }
+    }
+}

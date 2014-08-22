@@ -19,24 +19,9 @@ repToIndex = []
 RepertoireToSearchOn = []
 
 RepertoireToSearchOn.append("../sources/webcore/opt/webcore/libexec")
-RepertoireToSearchOn.append("../sources/amqp2engines/opt/amqp2engines/engines")
-RepertoireToSearchOn.append("../sources/canolibs/lib/canolibs")
-RepertoireToSearchOn.append("../sources/canolibs/lib/canolibs/unittest")
-RepertoireToSearchOn.append("../sources/pyperfstore2/pyperfstore2")
-RepertoireToSearchOn.append("../sources/celery-libs/lib/celerylibs")
 RepertoireToSearchOn.append("../sources/collectd-libs/opt/collectd-libs")
-RepertoireToSearchOn.append("../sources/apscheduler-libs/lib/apschedulerlibs")
-RepertoireToSearchOn.append("../sources/snmp2amqp/opt/snmp2amqp")
-RepertoireToSearchOn.append("../sources/gelf2amqp/opt/gelf2amqp")
-#RepertoireToSearchOn.append("../sources/ccli/opt/ccli")
-RepertoireToSearchOn.append("../sources/ccli/opt/ccli/libexec")
-RepertoireToSearchOn.append("../sources/ics2amqp/opt/ics2amqp")
 RepertoireToSearchOn.append("../sources/wkhtmltopdf-libs/lib/wkhtmltopdf")
-RepertoireToSearchOn.append(
-    "../sources/amqp2engines/opt/amqp2engines/unittest")
-RepertoireToSearchOn.append("../sources/amqp2engines/opt/amqp2engines")
-RepertoireToSearchOn.append("../sources/pyperfstore2/test")
-RepertoireToSearchOn.append("../sources/canotools/opt/canotools")
+RepertoireToSearchOn.append("../sources/python/")
 
 #Crash sphinx in a weird way
 #RepertoireToSearchOn.append("../sources/pyperfstore2")

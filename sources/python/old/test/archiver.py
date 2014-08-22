@@ -20,6 +20,7 @@
 
 import unittest
 from logging import DEBUG as loggingDEBUG, basicConfig as loggingBasicConfig
+from logging import INFO
 
 from canopsis.old.archiver import Archiver
 
@@ -51,89 +52,7 @@ class KnownValues(unittest.TestCase):
         self.Archiver.stealthy_time = 300
         self.Archiver.restore_event = True
 
-    def test_01_cancel(self):
-        event = {'cancel': True,
-                 'output': 'output',
-                 'author': 'eric',
-                 'state': 1}
-        devent = {'output': 'test',
-                  'status': STEALTHY,
-                  'state' : 0}
-
-        self.Archiver.process_cancel(devent, event)
-        #self.assertTrue('cancel' not in event)
-
-
-        event = {'cancel': True,
-                 'output': 'output',
-                 'author': 'eric',
-                 'state': 0}
-        devent = {'output': 'test',
-                  'status': STEALTHY,
-                  'state': 0}
-
-        self.Archiver.process_cancel(devent, event)
-
-        #Cancellation
-        self.assertTrue(event['cancel']['cancel'])
-        self.assertEqual(event['cancel']['comment'], 'output')
-        self.assertEqual(event['cancel']['previous_status'], STEALTHY)
-        self.assertEqual(event['cancel']['author'], 'eric')
-
-    def test_02_uncancel(self):
-        #No previous cancellation done
-        event = {'cancel': False,
-                 'output': 'output',
-                 'author': 'eric',
-                 'state': 0}
-        devent = {'output': 'test',
-                  'status': STEALTHY,
-                  'state': 0}
-
-        self.Archiver.process_cancel(devent, event)
-        self.assertTrue('cancel' not in event)
-
-        #Previous cancellation existed
-        event = {'cancel': False,
-                 'output': 'output',
-                 'author': 'eric',
-                 'state': 0}
-        devent = {
-            'output': 'test',
-            'status': STEALTHY,
-            'cancel': {
-                'cancel': True,
-                'previous_status': ONGOING,
-                'previous_state': 1
-            },
-            'state': 0}
-
-        self.Archiver.process_cancel(devent, event)
-        #Cancellation
-        self.assertEqual(event['cancel']['comment'], 'output')
-        self.assertEqual(event['cancel']['previous_status'], STEALTHY)
-        self.assertEqual(event['cancel']['author'], 'eric')
-
-        #Previous status set to Ok by default
-        event = {'cancel': False,
-                 'output': 'output',
-                 'author': 'eric',
-                 'state': 0}
-        devent = {
-            'output': 'test',
-            'status': ONGOING,
-            'cancel': {
-                'cancel': True,
-                'previous_status': 1,
-                'previous_state': 1
-            },
-            'state': 0}
-
-
-        self.Archiver.process_cancel(devent, event)
-        self.assertEqual(event['cancel']['previous_status'], 1)
-
-    def test_03_check_statuses(self):
+    def test_01_check_statuses(self):
 
         devent = {'rk': 'test_03_check_statuses',
                   'status': 0,

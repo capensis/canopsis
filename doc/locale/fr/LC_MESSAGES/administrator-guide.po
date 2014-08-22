@@ -1,0 +1,2181 @@
+# 
+msgid ""
+msgstr ""
+"Project-Id-Version: canopsis Ficus\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2014-08-20 15:00+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: ../../administrator-guide/Authentication-with-ldap.rst:2
+msgid "Authentication with ldap"
+msgstr ""
+
+#: ../../administrator-guide/Authentication-with-ldap.rst:5
+msgid "Allow plain authentication"
+msgstr ""
+
+#: ../../administrator-guide/Authentication-with-ldap.rst:7
+msgid ""
+"**Warning:** For use external authentication password must be transmitted in"
+" plain format to the API. You must configure HTTPS for more security."
+msgstr ""
+
+#: ../../administrator-guide/Authentication-with-ldap.rst:11
+msgid "Edit ``var/www/global_options.js`` and add this in ``global_options``:"
+msgstr ""
+
+#: ../../administrator-guide/Authentication-with-ldap.rst:18
+msgid "Configure LDAP binding"
+msgstr ""
+
+#: ../../administrator-guide/Authentication-with-ldap.rst:20
+msgid ""
+"For configure LDAP binding, connect with ``root`` access on webUI and goto "
+"``Build > Accounts > Ldap``."
+msgstr ""
+
+#: ../../administrator-guide/Authentication-with-ldap.rst:24
+msgid "Ex: Standard LDAP (OpenLDAP ...)"
+msgstr ""
+
+#: ../../administrator-guide/Authentication-with-ldap.rst:38
+msgid "Ex: Active Directory"
+msgstr ""
+
+#: ../../administrator-guide/Backup.rst:4
+msgid "Backup"
+msgstr ""
+
+#: ../../administrator-guide/Backup.rst:6
+msgid "TODO: Update this page, Now backup is in ``gz`` format ... /!\\\\**"
+msgstr ""
+
+#: ../../administrator-guide/Backup.rst:9
+msgid "Cold Backup"
+msgstr ""
+
+#: ../../administrator-guide/Backup.rst:16
+msgid "(as *root* user)"
+msgstr ""
+
+#: ../../administrator-guide/Backup.rst:24
+msgid "Hot backup"
+msgstr ""
+
+#: ../../administrator-guide/Backup.rst:26
+msgid "Canopsis has two default backup tasks :"
+msgstr ""
+
+#: ../../administrator-guide/Backup.rst:28
+msgid "Config"
+msgstr ""
+
+#: ../../administrator-guide/Backup.rst:29
+msgid "Mongo"
+msgstr ""
+
+#: ../../administrator-guide/Backup.rst:31
+msgid "Default backups directory is ``~/var/backups``."
+msgstr ""
+
+#: ../../administrator-guide/Backup.rst:33
+msgid ""
+"There is no backup history : any new backup will erase the previous one."
+msgstr ""
+
+#: ../../administrator-guide/Backup.rst:36
+#: ../../administrator-guide/Backup.rst:84
+msgid "Database: Mongodb"
+msgstr ""
+
+#: ../../administrator-guide/Backup.rst:38
+msgid "Make a zip archive of ``mongodump``."
+msgstr ""
+
+#: ../../administrator-guide/Backup.rst:40
+#: ../../administrator-guide/Backup.rst:51
+msgid "To launch task:"
+msgstr ""
+
+#: ../../administrator-guide/Backup.rst:47
+msgid "Configuration files"
+msgstr ""
+
+#: ../../administrator-guide/Backup.rst:49
+msgid "Make a zip archive of ``~/etc/``."
+msgstr ""
+
+#: ../../administrator-guide/Backup.rst:58
+msgid "Restore backup"
+msgstr ""
+
+#: ../../administrator-guide/Backup.rst:60
+msgid "Canopsis can be easily restored with two commands."
+msgstr ""
+
+#: ../../administrator-guide/Backup.rst:62
+msgid "***You must restore configuration before the database.***"
+msgstr ""
+
+#: ../../administrator-guide/Backup.rst:65
+msgid "Configuration"
+msgstr ""
+
+#: ../../administrator-guide/Backup.rst:67
+msgid ""
+"In order to restore your configuration files, use the ``configrestore``\\ "
+"tool."
+msgstr ""
+
+#: ../../administrator-guide/Backup.rst:70
+msgid "Stop Canopsis first :"
+msgstr ""
+
+#: ../../administrator-guide/Backup.rst:76
+msgid "Restore configurations :"
+msgstr ""
+
+#: ../../administrator-guide/Backup.rst:86
+msgid "Run Canopsis first."
+msgstr ""
+
+#: ../../administrator-guide/Backup.rst:92
+msgid ""
+"You have to unzip archive and give it to mongorestore with ``--drop`` "
+"option. Drop option will purge mongo before restore it. Without it, you will"
+" have duplicate entries."
+msgstr ""
+
+#: ../../administrator-guide/Backup.rst:112
+msgid "``Mongorestore`` will display information about restored data."
+msgstr ""
+
+#: ../../administrator-guide/Backup.rst:114
+msgid "And restart every services."
+msgstr ""
+
+#: ../../administrator-guide/Debugging.rst:2
+msgid "Debugging"
+msgstr ""
+
+#: ../../administrator-guide/Debugging.rst:5
+msgid "Exporting report"
+msgstr ""
+
+#: ../../administrator-guide/Debugging.rst:8
+#: ../../administrator-guide/Derogation.rst:7
+#: ../../administrator-guide/Event-Requalification.rst:7
+msgid "Purpose"
+msgstr ""
+
+#: ../../administrator-guide/Debugging.rst:10
+msgid ""
+"In order to simplify the debugging of **Canopsis**, a reporting tool has "
+"been developed to collect useful informations about the running instance, "
+"allowing us to diagnose more easily the problem."
+msgstr ""
+
+#: ../../administrator-guide/Debugging.rst:15
+#: ../../administrator-guide/Event-Requalification.rst:48
+msgid "Howto"
+msgstr ""
+
+#: ../../administrator-guide/Debugging.rst:17
+msgid ""
+"The ``export_dbginfo`` tool, included inside the Canopsis environment and "
+"provided by package *canotools*, generate a tarball containing the following"
+" data :"
+msgstr ""
+
+#: ../../administrator-guide/Debugging.rst:21
+msgid "services state (via supervisord) ;"
+msgstr ""
+
+#: ../../administrator-guide/Debugging.rst:22
+msgid "RabbitMQ informations about :"
+msgstr ""
+
+#: ../../administrator-guide/Debugging.rst:24
+msgid "connections ;"
+msgstr ""
+
+#: ../../administrator-guide/Debugging.rst:25
+msgid "channels ;"
+msgstr ""
+
+#: ../../administrator-guide/Debugging.rst:26
+msgid "nodes ;"
+msgstr ""
+
+#: ../../administrator-guide/Debugging.rst:27
+msgid "users ;"
+msgstr ""
+
+#: ../../administrator-guide/Debugging.rst:28
+msgid "exchanges ;"
+msgstr ""
+
+#: ../../administrator-guide/Debugging.rst:29
+msgid "virtual hosts ;"
+msgstr ""
+
+#: ../../administrator-guide/Debugging.rst:30
+msgid "queues ;"
+msgstr ""
+
+#: ../../administrator-guide/Debugging.rst:31
+msgid "bindings ;"
+msgstr ""
+
+#: ../../administrator-guide/Debugging.rst:32
+msgid "permissions."
+msgstr ""
+
+#: ../../administrator-guide/Debugging.rst:34
+msgid "RabbitMQ overview and definitions ;"
+msgstr ""
+
+#: ../../administrator-guide/Debugging.rst:35
+msgid "all logs located in ``~/var/log`` ;"
+msgstr ""
+
+#: ../../administrator-guide/Debugging.rst:36
+msgid "processes (CPU/RAM used per process owned by the user ``canopsis``)."
+msgstr ""
+
+#: ../../administrator-guide/Debugging.rst:38
+msgid ""
+"The generated tarball has the following name : ``~/tmp/canodebug.`date "
+"+\"%F.%H-%M-%S\"`.tar.xz``"
+msgstr ""
+
+#: ../../administrator-guide/Derogation.rst:4
+msgid "Derogation"
+msgstr ""
+
+#: ../../administrator-guide/Derogation.rst:9
+msgid "A derogation is used to perform some actions on incoming events :"
+msgstr ""
+
+#: ../../administrator-guide/Derogation.rst:11
+msgid "overriding a field's value ;"
+msgstr ""
+
+#: ../../administrator-guide/Derogation.rst:12
+msgid "requalificate the event's state."
+msgstr ""
+
+#: ../../administrator-guide/Derogation.rst:15
+msgid "Howto to create a derogation"
+msgstr ""
+
+#: ../../administrator-guide/Derogation.rst:18
+msgid "Access to the derogation manager view"
+msgstr ""
+
+#: ../../administrator-guide/Derogation.rst:20
+msgid "Go to the Derogation Manager, available in the menu \"Run\" ..."
+msgstr ""
+
+#: ../../administrator-guide/Derogation.rst:22
+#: ../../administrator-guide/Event-Requalification.rst:55
+#: ../../administrator-guide/consolidation.rst:16
+#: ../../administrator-guide/engines.rst:35
+#: ../../administrator-guide/event-filter.rst:34
+msgid "|image1|"
+msgstr ""
+
+#: ../../administrator-guide/Derogation.rst:24
+msgid "... to access to the derogation manager view."
+msgstr ""
+
+#: ../../administrator-guide/Derogation.rst:26
+#: ../../administrator-guide/Event-Requalification.rst:59
+#: ../../administrator-guide/consolidation.rst:95
+#: ../../administrator-guide/event-filter.rst:42
+msgid "|image2|"
+msgstr ""
+
+#: ../../administrator-guide/Derogation.rst:28
+msgid "Then, click on the add button, you'll see the following form to fill."
+msgstr ""
+
+#: ../../administrator-guide/Derogation.rst:31
+msgid "Derogation definition form"
+msgstr ""
+
+#: ../../administrator-guide/Derogation.rst:34
+msgid "1. General"
+msgstr ""
+
+#: ../../administrator-guide/Derogation.rst:36
+msgid ""
+"Type the name of your derogation, and a short description. Then you will "
+"have to define the time interval where your derogation is active. Once this "
+"interval over, the derogation will not be applied anymore."
+msgstr ""
+
+#: ../../administrator-guide/Derogation.rst:40
+#: ../../administrator-guide/Event-Requalification.rst:63
+#: ../../administrator-guide/consolidation.rst:100
+#: ../../administrator-guide/event-filter.rst:56
+msgid "|image3|"
+msgstr ""
+
+#: ../../administrator-guide/Derogation.rst:43
+msgid "2. Override"
+msgstr ""
+
+#: ../../administrator-guide/Derogation.rst:45
+msgid ""
+"This tab allows you to specify default values for some fields of the "
+"derogated event. Click the add button to override a new field :"
+msgstr ""
+
+#: ../../administrator-guide/Derogation.rst:48
+msgid "choose the field to override with the first column ;"
+msgstr ""
+
+#: ../../administrator-guide/Derogation.rst:49
+msgid "specify the value to set in the second column ;"
+msgstr ""
+
+#: ../../administrator-guide/Derogation.rst:50
+msgid "the third column is just a button to delete the overriding."
+msgstr ""
+
+#: ../../administrator-guide/Derogation.rst:52
+#: ../../administrator-guide/consolidation.rst:109
+msgid "|image4|"
+msgstr ""
+
+#: ../../administrator-guide/Derogation.rst:55
+msgid "3. Requalificate"
+msgstr ""
+
+#: ../../administrator-guide/Derogation.rst:57
+msgid ""
+"This tab allows you to select the *Statemap* to use for the event "
+"requalification. Just select the *Statemap* you want, or deselect with "
+"``Ctrl + Left Click`` to disable the event requalification."
+msgstr ""
+
+#: ../../administrator-guide/Derogation.rst:61
+#: ../../administrator-guide/consolidation.rst:114
+msgid "|image5|"
+msgstr ""
+
+#: ../../administrator-guide/Derogation.rst:64
+msgid "4. Filter"
+msgstr ""
+
+#: ../../administrator-guide/Derogation.rst:66
+msgid ""
+"This tab allows you to configure the event filter, only events which match "
+"the filter will be derogated. |image6|"
+msgstr ""
+
+#: ../../administrator-guide/Event-Requalification.rst:4
+msgid "Event Requalification"
+msgstr ""
+
+#: ../../administrator-guide/Event-Requalification.rst:9
+msgid ""
+"Some supervisors use differents status code for their check results. If we "
+"want to connect one of those supervisor to **Canopsis**, we need to convert "
+"its status codes to the standard used in *Canopsis* :"
+msgstr ""
+
+#: ../../administrator-guide/Event-Requalification.rst:13
+msgid "0 for OK"
+msgstr ""
+
+#: ../../administrator-guide/Event-Requalification.rst:14
+msgid "1 for WARNING"
+msgstr ""
+
+#: ../../administrator-guide/Event-Requalification.rst:15
+msgid "2 for CRITICAL"
+msgstr ""
+
+#: ../../administrator-guide/Event-Requalification.rst:16
+msgid "3 for UNKNOWN"
+msgstr ""
+
+#: ../../administrator-guide/Event-Requalification.rst:18
+msgid ""
+"*Canopsis* use a **state map** to resolve the standardized status code from "
+"any original status code. A *state map* contains a list of codes associated "
+"to a *Canopsis* status, for example :"
+msgstr ""
+
+#: ../../administrator-guide/Event-Requalification.rst:23
+msgid "CODE"
+msgstr ""
+
+#: ../../administrator-guide/Event-Requalification.rst:23
+msgid "STATUT"
+msgstr ""
+
+#: ../../administrator-guide/Event-Requalification.rst:25
+msgid "0"
+msgstr ""
+
+#: ../../administrator-guide/Event-Requalification.rst:25
+msgid "OK"
+msgstr ""
+
+#: ../../administrator-guide/Event-Requalification.rst:27
+msgid "1"
+msgstr ""
+
+#: ../../administrator-guide/Event-Requalification.rst:27
+#: ../../administrator-guide/Event-Requalification.rst:29
+msgid "WARNING"
+msgstr ""
+
+#: ../../administrator-guide/Event-Requalification.rst:29
+msgid "2"
+msgstr ""
+
+#: ../../administrator-guide/Event-Requalification.rst:31
+msgid "3"
+msgstr ""
+
+#: ../../administrator-guide/Event-Requalification.rst:31
+#: ../../administrator-guide/Event-Requalification.rst:33
+#: ../../administrator-guide/Event-Requalification.rst:35
+msgid "CRITICAL"
+msgstr ""
+
+#: ../../administrator-guide/Event-Requalification.rst:33
+msgid "4"
+msgstr ""
+
+#: ../../administrator-guide/Event-Requalification.rst:35
+msgid "5"
+msgstr ""
+
+#: ../../administrator-guide/Event-Requalification.rst:37
+msgid "6"
+msgstr ""
+
+#: ../../administrator-guide/Event-Requalification.rst:37
+msgid "UNKNOWN"
+msgstr ""
+
+#: ../../administrator-guide/Event-Requalification.rst:41
+msgid ""
+"When you create a derogation with a state map, every new event, matching the"
+" derogation's filter, will have a new field ``real_state`` set to the "
+"original state of the event, and the field ``state`` will be updated "
+"accordingly to the *state map* defined (if the code is not in the *state "
+"map*, then UNKNOWN is used)."
+msgstr ""
+
+#: ../../administrator-guide/Event-Requalification.rst:51
+msgid "Create a state map"
+msgstr ""
+
+#: ../../administrator-guide/Event-Requalification.rst:53
+msgid "Go to the Statemap Manager available in the menu \"Run\" ..."
+msgstr ""
+
+#: ../../administrator-guide/Event-Requalification.rst:57
+msgid "... in otder to open the state map manager view ..."
+msgstr ""
+
+#: ../../administrator-guide/Event-Requalification.rst:61
+msgid "... and click on the add button, you'll see the following form :"
+msgstr ""
+
+#: ../../administrator-guide/Event-Requalification.rst:65
+msgid "Click on the Add button to add a new state association :"
+msgstr ""
+
+#: ../../administrator-guide/Event-Requalification.rst:67
+msgid "in the first column, set the state code to associate ;"
+msgstr ""
+
+#: ../../administrator-guide/Event-Requalification.rst:68
+msgid "in the second column, set the corresponding *Canopsis* state ;"
+msgstr ""
+
+#: ../../administrator-guide/Event-Requalification.rst:69
+msgid "the third column is used to remove the association."
+msgstr ""
+
+#: ../../administrator-guide/Event-Requalification.rst:71
+msgid "If you set two associations like this :"
+msgstr ""
+
+#: ../../administrator-guide/Event-Requalification.rst:73
+msgid "0 associated with OK"
+msgstr ""
+
+#: ../../administrator-guide/Event-Requalification.rst:74
+msgid "2 associated with CRITICAL"
+msgstr ""
+
+#: ../../administrator-guide/Event-Requalification.rst:76
+msgid "Then, the state code 1 will be associated with UNKNOWN."
+msgstr ""
+
+#: ../../administrator-guide/Event-Requalification.rst:79
+msgid "Integration with derogation"
+msgstr ""
+
+#: ../../administrator-guide/Event-Requalification.rst:81
+msgid "See |derogation| ."
+msgstr ""
+
+#: ../../administrator-guide/Event-Requalification.rst:83
+msgid ""
+"In the tab \"Requalificate\", you will see the list of all your *state "
+"maps*, just select the one you want."
+msgstr ""
+
+#: ../../administrator-guide/Graph-widgets-options.rst:2
+msgid "Graph widgets options"
+msgstr ""
+
+#: ../../administrator-guide/Graph-widgets-options.rst:5
+msgid "Customizing metrics"
+msgstr ""
+
+#: ../../administrator-guide/Graph-widgets-options.rst:7
+msgid ""
+"It is possible to define custom display behaviors for each selected metric. "
+"To access those settings, go to the \"customize metrics\" tab on the widget "
+"options."
+msgstr ""
+
+#: ../../administrator-guide/Graph-widgets-options.rst:11
+msgid ""
+"Metrics customization options are quite different for Bar graphs and Line "
+"Graphs."
+msgstr ""
+
+#: ../../administrator-guide/Graph-widgets-options.rst:15
+msgid "Line graph metric options"
+msgstr ""
+
+#: ../../administrator-guide/Graph-widgets-options.rst:19
+msgid "OPTION"
+msgstr ""
+
+#: ../../administrator-guide/Graph-widgets-options.rst:19
+msgid "DESCRIPTION"
+msgstr ""
+
+#: ../../administrator-guide/Graph-widgets-options.rst:21
+msgid "Curve type"
+msgstr ""
+
+#: ../../administrator-guide/Graph-widgets-options.rst:21
+msgid "[Default, Line, Area]"
+msgstr ""
+
+#: ../../administrator-guide/Graph-widgets-options.rst:23
+msgid "Custom label"
+msgstr ""
+
+#: ../../administrator-guide/Graph-widgets-options.rst:23
+msgid "The label to be displayed on the graph for the current metric"
+msgstr ""
+
+#: ../../administrator-guide/Graph-widgets-options.rst:25
+msgid "Curve color"
+msgstr ""
+
+#: ../../administrator-guide/Graph-widgets-options.rst:25
+msgid "The color of the line"
+msgstr ""
+
+#: ../../administrator-guide/Graph-widgets-options.rst:27
+msgid "Area color"
+msgstr ""
+
+#: ../../administrator-guide/Graph-widgets-options.rst:27
+msgid "The color of the colored area below the curve"
+msgstr ""
+
+#: ../../administrator-guide/Graph-widgets-options.rst:29
+msgid "Trend"
+msgstr ""
+
+#: ../../administrator-guide/Graph-widgets-options.rst:29
+msgid ""
+"Defines whether a trend line should be displayed on the graph for this curve"
+msgstr ""
+
+#: ../../administrator-guide/Graph-widgets-options.rst:31
+msgid "Unit"
+msgstr ""
+
+#: ../../administrator-guide/Graph-widgets-options.rst:31
+msgid "Specifies an unit for the current metric"
+msgstr ""
+
+#: ../../administrator-guide/Graph-widgets-options.rst:33
+msgid "Y axis"
+msgstr ""
+
+#: ../../administrator-guide/Graph-widgets-options.rst:33
+msgid ""
+"Custom warning threshold of the metric. When this value is set, it overrides"
+" the default warning threshold, and it displays a horizontal line on the "
+"graph to help visually see if the curve is above or below the threshold. "
+"Note that the \"Warn/crit threshold lines\" option should be enable in the "
+"\"options\" advanced tab for lines to be visible on the graph."
+msgstr ""
+
+#: ../../administrator-guide/Graph-widgets-options.rst:40
+msgid "Custom warning threshold"
+msgstr ""
+
+#: ../../administrator-guide/Graph-widgets-options.rst:40
+msgid ""
+"Overrides the critical threshold of the metric, and displays a horizontal "
+"line on the graph (like the custom warning threshold option). Note that the "
+"\"Warn/crit threshold lines\" option should be enable in the \"options\" "
+"advanced tab for lines to be visible on the graph."
+msgstr ""
+
+#: ../../administrator-guide/Graph-widgets-options.rst:49
+msgid "Bar graph metric options"
+msgstr ""
+
+#: ../../administrator-guide/Partition-table.rst:2
+msgid "Partition table"
+msgstr ""
+
+#: ../../administrator-guide/Partition-table.rst:4
+msgid "``/boot`` 500MB Ext3"
+msgstr ""
+
+#: ../../administrator-guide/Partition-table.rst:5
+msgid "``SWAP`` 4GB"
+msgstr ""
+
+#: ../../administrator-guide/Partition-table.rst:6
+msgid "LVM **vg0**"
+msgstr ""
+
+#: ../../administrator-guide/Partition-table.rst:8
+msgid "**lv\\_root**: ``/`` 20GB Ext3"
+msgstr ""
+
+#: ../../administrator-guide/Partition-table.rst:9
+msgid "**lv\\_log**: ``/var/log`` 5GB Ext3"
+msgstr ""
+
+#: ../../administrator-guide/Partition-table.rst:10
+msgid "**lv\\_app**: ``/opt/`` Max Ext3"
+msgstr ""
+
+#: ../../administrator-guide/Report-header-Logo.rst:2
+msgid "Report header Logo"
+msgstr ""
+
+#: ../../administrator-guide/Report-header-Logo.rst:5
+msgid "Create your custom files"
+msgstr ""
+
+#: ../../administrator-guide/Report-header-Logo.rst:7
+msgid ""
+"In order to customize canopsis you must create your own files in "
+"/opt/canopsis/var/wkhtmltopdf/. The easiest way is to make a copy of "
+"header.html and footer.html then rename them, for exemple "
+"myCompanyHeader.html , myCompanyFooter.html ."
+msgstr ""
+
+#: ../../administrator-guide/Report-header-Logo.rst:17
+msgid ""
+"Now put your logo (if you want one) in the same folder, your logo must be "
+"around 50px tall to fit in the header."
+msgstr ""
+
+#: ../../administrator-guide/Report-header-Logo.rst:25
+msgid "Edit header"
+msgstr ""
+
+#: ../../administrator-guide/Report-header-Logo.rst:27
+msgid ""
+"In header and footer page you can put all the html you want. It's rendered "
+"by wkhtmltopdf as a part of the webpage. In the marker change the src name "
+"for the one of your file, and delete the 'style' attribut :"
+msgstr ""
+
+#: ../../administrator-guide/Report-header-Logo.rst:31
+#: ../../administrator-guide/Report-header-Logo.rst:53
+msgid "Before:"
+msgstr ""
+
+#: ../../administrator-guide/Report-header-Logo.rst:37
+#: ../../administrator-guide/Report-header-Logo.rst:59
+msgid "After:"
+msgstr ""
+
+#: ../../administrator-guide/Report-header-Logo.rst:44
+msgid "Edit wkhtmltopdf\\_wrapper.json"
+msgstr ""
+
+#: ../../administrator-guide/Report-header-Logo.rst:46
+msgid ""
+"In this file you need to change to line, first the header line, just replace"
+" the file name."
+msgstr ""
+
+#: ../../administrator-guide/Report-header-Logo.rst:65
+msgid "Same process for the footer file"
+msgstr ""
+
+#: ../../administrator-guide/Report-header-Logo.rst:67
+msgid "Before :"
+msgstr ""
+
+#: ../../administrator-guide/Report-header-Logo.rst:73
+msgid "After :"
+msgstr ""
+
+#: ../../administrator-guide/Reverse-proxy-with-Apache2.rst:2
+msgid "Reverse proxy with Apache2"
+msgstr ""
+
+#: ../../administrator-guide/Reverse-proxy-with-Apache2.rst:4
+msgid ""
+"For use another port for webserver, you can use Apache with ``mod_proxy``"
+msgstr ""
+
+#: ../../administrator-guide/Reverse-proxy-with-Apache2.rst:8
+#: ../../administrator-guide/canopsis-on-boot.rst:13
+msgid "RHEL and CentOS"
+msgstr ""
+
+#: ../../administrator-guide/Reverse-proxy-with-Apache2.rst:10
+msgid "Install Apache2"
+msgstr ""
+
+#: ../../administrator-guide/Reverse-proxy-with-Apache2.rst:16
+#: ../../administrator-guide/Reverse-proxy-with-nginx.rst:15
+msgid "Configure VHost (replace ``<DNS_NAME>``)"
+msgstr ""
+
+#: ../../administrator-guide/Reverse-proxy-with-Apache2.rst:30
+msgid "Restart Apache and add service on boot"
+msgstr ""
+
+#: ../../administrator-guide/Reverse-proxy-with-nginx.rst:2
+msgid "Reverse proxy with nginx"
+msgstr ""
+
+#: ../../administrator-guide/Reverse-proxy-with-nginx.rst:4
+msgid ""
+"For use another port for webserver, you can use Nginx as a reverse proxy"
+msgstr ""
+
+#: ../../administrator-guide/Reverse-proxy-with-nginx.rst:7
+msgid "Debian/Ubuntu"
+msgstr ""
+
+#: ../../administrator-guide/Reverse-proxy-with-nginx.rst:9
+msgid "Install Nginx"
+msgstr ""
+
+#: ../../administrator-guide/Reverse-proxy-with-nginx.rst:43
+msgid "Then enable the newly created vhost:"
+msgstr ""
+
+#: ../../administrator-guide/Reverse-proxy-with-nginx.rst:49
+msgid "Finally, reload Nginx"
+msgstr ""
+
+#: ../../administrator-guide/Reverse-proxy-with-nginx.rst:55
+msgid "Now you can access canopsis using the ``<DNS_NAME>`` on port 80"
+msgstr ""
+
+#: ../../administrator-guide/Shinken.rst:2
+msgid "Shinken"
+msgstr ""
+
+#: ../../administrator-guide/Shinken.rst:4
+msgid ""
+"The canopsis broker module is natively present in shinken distribution. You "
+"nead at least dev version."
+msgstr ""
+
+#: ../../administrator-guide/Shinken.rst:7
+msgid ""
+"You only need to enable the broker module and at least configure the "
+"canopsis host address"
+msgstr ""
+
+#: ../../administrator-guide/Shinken.rst:10
+msgid ""
+"Edit the ``etc/shinken-specific.cfg`` and add ``Canopsis`` to the list of "
+"enabled modules"
+msgstr ""
+
+#: ../../administrator-guide/Shinken.rst:21
+msgid ""
+"In the same file, search for the ``Canopsis`` module and at least set the "
+"host directive to canopsis host address"
+msgstr ""
+
+#: ../../administrator-guide/Shinken.rst:40
+msgid ""
+"The broker module allow dynamic connection loss and reconnect with canopsis "
+"amqp message bus without loss of events. You should consider to set "
+"``maxqueuelength`` (the maximum number of events that should be kept in case"
+" of connection loss)."
+msgstr ""
+
+#: ../../administrator-guide/Shinken.rst:45
+msgid "Run:"
+msgstr ""
+
+#: ../../administrator-guide/Shinken.rst:47
+msgid "``easy_install kombu``"
+msgstr ""
+
+#: ../../administrator-guide/Shinken.rst:49
+msgid ""
+"When you want to plug Shinken on Canopsis there is a Mongodb port conflict. "
+"So you have to change a little your Shinken configuration and the "
+"mongodb.conf"
+msgstr ""
+
+#: ../../administrator-guide/Shinken.rst:53
+msgid "``/etc/mongodb.conf``"
+msgstr ""
+
+#: ../../administrator-guide/Shinken.rst:59
+msgid "And restart it: ``/etc/init.d/mongodb restart``"
+msgstr ""
+
+#: ../../administrator-guide/Shinken.rst:61
+msgid "``shinken-specific.cfg``"
+msgstr ""
+
+#: ../../administrator-guide/Shinken.rst:83
+msgid "And ``/etc/init.d/shinken restart``"
+msgstr ""
+
+#: ../../administrator-guide/admin-howto.rst:2
+msgid "Admin Howto"
+msgstr ""
+
+#: ../../administrator-guide/admin-howto.rst:5
+msgid "How to find BDD Size ?"
+msgstr ""
+
+#: ../../administrator-guide/admin-howto.rst:7
+msgid "Open shell with ``Canopsis`` user and type:"
+msgstr ""
+
+#: ../../administrator-guide/admin-howto.rst:13
+msgid "you can also type:"
+msgstr ""
+
+#: ../../administrator-guide/admin-howto.rst:21
+msgid "How to force ``perfdata`` rotation ?"
+msgstr ""
+
+#: ../../administrator-guide/admin-howto.rst:29
+msgid "How to access to rabbitMQ UI ?"
+msgstr ""
+
+#: ../../administrator-guide/admin-howto.rst:31
+msgid "you could access to RabbitMQ UI with this url :"
+msgstr ""
+
+#: ../../administrator-guide/admin-howto.rst:40
+msgid "With that, you could see messages in AMQP queues."
+msgstr ""
+
+#: ../../administrator-guide/admin-howto.rst:44
+msgid "How to list queues from rabbitMQ ?"
+msgstr ""
+
+#: ../../administrator-guide/admin-howto.rst:51
+msgid "How to force db repair on MongoDB ?"
+msgstr ""
+
+#: ../../administrator-guide/canopsis-on-boot.rst:2
+msgid "Canopsis on boot"
+msgstr ""
+
+#: ../../administrator-guide/canopsis-on-boot.rst:4
+msgid ""
+"For start Canopsis on boot you can use ``/opt/canopsis/etc/init.d/canopsis``"
+" as init script."
+msgstr ""
+
+#: ../../administrator-guide/canopsis-on-boot.rst:6
+msgid "Create symlink"
+msgstr ""
+
+#: ../../administrator-guide/canopsis-on-boot.rst:15
+#: ../../administrator-guide/canopsis-on-boot.rst:30
+msgid "Add script to startup process"
+msgstr ""
+
+#: ../../administrator-guide/canopsis-on-boot.rst:21
+msgid "Check configuration"
+msgstr ""
+
+#: ../../administrator-guide/canopsis-on-boot.rst:28
+msgid "Debian and Ubuntu"
+msgstr ""
+
+#: ../../administrator-guide/canopsis-on-boot.rst:37
+msgid "Control daemons"
+msgstr ""
+
+#: ../../administrator-guide/canopsis-on-boot.rst:39
+msgid ""
+"Now you can use init script for ``start``, ``stop``, ``restart`` and "
+"``status``"
+msgstr ""
+
+#: ../../administrator-guide/common-problems.rst:2
+msgid "Common problems"
+msgstr ""
+
+#: ../../administrator-guide/common-problems.rst:5
+msgid "No datas retreived"
+msgstr ""
+
+#: ../../administrator-guide/common-problems.rst:7
+msgid ""
+"Look at rabbitmq's logs in ``var/log/rabbitmq/rabbit@<hostname>.log`` for "
+"any connection problems."
+msgstr ""
+
+#: ../../administrator-guide/common-problems.rst:9
+msgid "Did you changed machine's name after Canopsis installation?"
+msgstr ""
+
+#: ../../administrator-guide/common-problems.rst:11
+msgid "If yes, then modify ``etc/rabbitmq/rabbitmq-env.conf`` this way:"
+msgstr ""
+
+#: ../../administrator-guide/common-problems.rst:17
+msgid ""
+"The hostname is used by RabbitMQ to store datas (mnesia database, logs…), if"
+" you change it, be sure to modify this variable."
+msgstr ""
+
+#: ../../administrator-guide/common-problems.rst:19
+msgid "Now you can restart canopsis:"
+msgstr ""
+
+#: ../../administrator-guide/consolidation.rst:4
+#: ../../administrator-guide/consolidation.rst:63
+msgid "Consolidation"
+msgstr ""
+
+#: ../../administrator-guide/consolidation.rst:10
+msgid ""
+"A `consolidation <#consolidation2>`__ permits to generate a new metric in "
+"`aggregating <#aggregation>`__ a set of metrics and in crushing aggregated "
+"values in one final metric."
+msgstr ""
+
+#: ../../administrator-guide/consolidation.rst:14
+msgid "An example of consolidation is drawn in the following figure."
+msgstr ""
+
+#: ../../administrator-guide/consolidation.rst:18
+msgid ""
+"Four graphs are represented vertically, separated by an horizontal dotted "
+"line: \"metric 1\",  \"aggregation 1\",  \"aggregation 2\" and "
+"\"consolidation\"."
+msgstr ""
+
+#: ../../administrator-guide/consolidation.rst:21
+msgid ""
+"All graphs provide values where the abscissa axis is in time, and ordinate "
+"in the same arbitrary unit."
+msgstr ""
+
+#: ../../administrator-guide/consolidation.rst:24
+msgid ""
+"The two intervals [t0; t1[ and [t1; t2[ are defined with the same duration "
+"and the last interval [t2; now] is less longer than previous ones."
+msgstr ""
+
+#: ../../administrator-guide/consolidation.rst:28
+msgid ""
+"Finally, there are `aggregation operations <#operation>`__ between the "
+"\"metric 1\" and \"aggregation 1\" graphs and `consolidation operations "
+"<#%20aggregation%20and%20consolidation>`__ between the both aggregations "
+"graphs and the consolidation graph."
+msgstr ""
+
+#: ../../administrator-guide/consolidation.rst:33
+msgid ""
+"Let's see how `aggregation <#aggregation>`__ and `consolidation "
+"<#consolidation2>`__ works."
+msgstr ""
+
+#: ../../administrator-guide/consolidation.rst:36
+msgid "Aggregation"
+msgstr ""
+
+#: ../../administrator-guide/consolidation.rst:39
+#: ../../administrator-guide/consolidation.rst:66
+#: ../../administrator-guide/engines.rst:19
+#: ../../administrator-guide/engines.rst:134
+#: ../../administrator-guide/engines.rst:156
+#: ../../administrator-guide/engines.rst:171
+msgid "Description"
+msgstr ""
+
+#: ../../administrator-guide/consolidation.rst:41
+msgid ""
+"An aggregation is a function which takes in parameter one metric, one "
+"aggregation `operation <#operation>`__ and one aggregation interval."
+msgstr ""
+
+#: ../../administrator-guide/consolidation.rst:44
+msgid ""
+"The aggregation process starts to group metric values which are in the same "
+"aggregation interval (in the previous figure, the interval [t0; t1[ is "
+"composed of five values)."
+msgstr ""
+
+#: ../../administrator-guide/consolidation.rst:48
+msgid ""
+"Then the aggregation `operation <#operation>`__ is applied on each "
+"aggregation interval and it generates a new metric where values are "
+"positioned at the beginning of their aggregation interval (the result of "
+"values between t0 and t1 is at t0)."
+msgstr ""
+
+#: ../../administrator-guide/consolidation.rst:54
+#: ../../administrator-guide/consolidation.rst:78
+msgid "Example"
+msgstr ""
+
+#: ../../administrator-guide/consolidation.rst:56
+msgid ""
+"Let a metric related to a service |sla| , you can get the average sla per "
+"day in selecting the aggregation operation mean and an aggregation interval "
+"of one day."
+msgstr ""
+
+#: ../../administrator-guide/consolidation.rst:68
+msgid ""
+"A consolidation generates one metric per consolidation operation from at "
+"least one aggregation. While consolidation metric component and resource "
+"names are customizable, the metric name is the consolidation operation name."
+msgstr ""
+
+#: ../../administrator-guide/consolidation.rst:73
+msgid ""
+"The consolidation operation is applied for every aggregation values at the "
+"same position on the abscissa axis. It implies all aggregation must have the"
+" same aggregation interval."
+msgstr ""
+
+#: ../../administrator-guide/consolidation.rst:80
+msgid ""
+"Let five aggregations A1, A2, A3, A4 and A5 which are respectively mean per "
+"day of |sla| of all services of one server \"S\". You can get the general "
+"mean per day of S |sla| in applying the consolidation operation mean on all "
+"aggregations."
+msgstr ""
+
+#: ../../administrator-guide/consolidation.rst:87
+msgid "Engine configuration"
+msgstr ""
+
+#: ../../administrator-guide/consolidation.rst:89
+msgid ""
+"The engine consolidation is dedicated to calculate consolidations from "
+"Canopsis input events."
+msgstr ""
+
+#: ../../administrator-guide/consolidation.rst:92
+msgid ""
+"In order the parameterize such consolidations, let's go to the view "
+"consolidation from the consolidation menu."
+msgstr ""
+
+#: ../../administrator-guide/consolidation.rst:97
+msgid ""
+"The view consolidation allows you to edit/add/delete/search/import/export "
+"consolidations."
+msgstr ""
+
+#: ../../administrator-guide/consolidation.rst:102
+msgid ""
+"In editing mode (after double clicking on an existing consolidation or in "
+"pushing the button \"add\"), a wizard with different tabs allows you to "
+"configure the consolidation."
+msgstr ""
+
+#: ../../administrator-guide/consolidation.rst:106
+msgid ""
+"The tab \"options\" permits to set consolidation, component and resource "
+"names of the metrics to generate."
+msgstr ""
+
+#: ../../administrator-guide/consolidation.rst:111
+msgid ""
+"The tab \"consolidation\" defines the aggregation interval and the "
+"aggregation/consolidation operations."
+msgstr ""
+
+#: ../../administrator-guide/consolidation.rst:116
+msgid ""
+"Finally, the tab \"filter\" permits to select metrics to aggregate and to "
+"consolidate."
+msgstr ""
+
+#: ../../administrator-guide/consolidation.rst:119
+msgid "|image6|"
+msgstr ""
+
+#: ../../administrator-guide/consolidation.rst:121
+msgid ""
+"When you have set up your consolidation, the engine will calculate the "
+"consolidation and reveals you number of metrics which have been aggregated "
+"and the consolidation time processing."
+msgstr ""
+
+#: ../../administrator-guide/consolidation.rst:128
+msgid "Aggregation/Consolidation Operations"
+msgstr ""
+
+#: ../../administrator-guide/consolidation.rst:130
+msgid ""
+"Here are the list of available operations for aggregations and "
+"consolidations"
+msgstr ""
+
+#: ../../administrator-guide/consolidation.rst:135
+msgid "Aggregation only"
+msgstr ""
+
+#: ../../administrator-guide/consolidation.rst:138
+msgid "First"
+msgstr ""
+
+#: ../../administrator-guide/consolidation.rst:140
+msgid "Select the first value."
+msgstr ""
+
+#: ../../administrator-guide/consolidation.rst:143
+msgid "Last"
+msgstr ""
+
+#: ../../administrator-guide/consolidation.rst:145
+msgid "Select the last value."
+msgstr ""
+
+#: ../../administrator-guide/consolidation.rst:148
+msgid "Aggregation and consolidation"
+msgstr ""
+
+#: ../../administrator-guide/consolidation.rst:151
+msgid "Min"
+msgstr ""
+
+#: ../../administrator-guide/consolidation.rst:153
+msgid "Select the minimal value."
+msgstr ""
+
+#: ../../administrator-guide/consolidation.rst:156
+msgid "Max"
+msgstr ""
+
+#: ../../administrator-guide/consolidation.rst:158
+msgid "Select the maximal value."
+msgstr ""
+
+#: ../../administrator-guide/consolidation.rst:161
+msgid "Mean"
+msgstr ""
+
+#: ../../administrator-guide/consolidation.rst:163
+msgid "Select the mean value (sum(values) / count(values))."
+msgstr ""
+
+#: ../../administrator-guide/consolidation.rst:166
+msgid "Delta"
+msgstr ""
+
+#: ../../administrator-guide/consolidation.rst:168
+msgid "Select the delta value (max(values) - min(values))"
+msgstr ""
+
+#: ../../administrator-guide/consolidation.rst:171
+msgid "Sum"
+msgstr ""
+
+#: ../../administrator-guide/consolidation.rst:173
+msgid "Select the sum value."
+msgstr ""
+
+#: ../../administrator-guide/dispatcher-howto.rst:2
+msgid "Dispatcher Howto"
+msgstr ""
+
+#: ../../administrator-guide/dispatcher-howto.rst:5
+#: ../../administrator-guide/selector.rst:7
+msgid "Overview"
+msgstr ""
+
+#: ../../administrator-guide/dispatcher-howto.rst:7
+msgid ""
+"The canopsis dispatcher (or Y) allows to broadcast rabbitmq input event to "
+"many targets. It is a combination of rabbitmq used as an event buffer with a"
+" python script that fetch events from input queue and then post them to "
+"every valid target. A valid target is defined in a configuration file and "
+"broadcast works when target connection is established. A failover system "
+"make failure recover possible."
+msgstr ""
+
+#: ../../administrator-guide/dispatcher-howto.rst:10
+msgid "How to install ?"
+msgstr ""
+
+#: ../../administrator-guide/dispatcher-howto.rst:12
+msgid ""
+"Get dispatcher zip or tar file and extract archive or github checkout from "
+"canopsis_hac repository."
+msgstr ""
+
+#: ../../administrator-guide/dispatcher-howto.rst:14
+msgid ""
+"Install command will start dispatch process, you may setup now configuration"
+" file to complete install in one step (see below). Run command ``sudo "
+"./install.sh`` within dispatcher directory. This will create a dispatcher "
+"user and install the dispatcher system to ``/opt/dispatcher``."
+msgstr ""
+
+#: ../../administrator-guide/dispatcher-howto.rst:16
+msgid ""
+"3. Edit /opt/dispatcher/etc/targets.json . This is a json file that "
+"describes where event will be routed once dispatcher daemon is started. This"
+" file contains a 'target' key witch is a list of canopsis's rabbitmq "
+"connection information. You must specify at least the dns name of target "
+"host. optional fields are : ``port, user and vhost``."
+msgstr ""
+
+#: ../../administrator-guide/dispatcher-howto.rst:42
+msgid ""
+"In configuration file, another field allow you to customize dispatcher "
+"behavior. In **'param'** field, it is possible to set "
+"**'max_failover_duration'** value in order to tell dispatcher max time that "
+"dispatcher waits when a target is not reachable before trying again to "
+"resume event dispatch."
+msgstr ""
+
+#: ../../administrator-guide/dispatcher-howto.rst:46
+msgid "How to manage ?"
+msgstr ""
+
+#: ../../administrator-guide/dispatcher-howto.rst:48
+msgid ""
+"Once dispatcher setup, log as dispatcher user with ``sudo su - dispatcher`` "
+"command. It is possible to stop both rabbitmq and dispatcher thanks to the "
+"command:"
+msgstr ""
+
+#: ../../administrator-guide/dispatcher-howto.rst:49
+msgid "``./configure start|stop``"
+msgstr ""
+
+#: ../../administrator-guide/dispatcher-howto.rst:51
+msgid ""
+"Is is also possible to only manage dispatcher activity letting rabbitmq act "
+"as an event buffer while dispatcher is out of service. This is useful when "
+"configuration file changes. Updating the ``targets.json`` configuration file"
+" should be done with following steps:"
+msgstr ""
+
+#: ../../administrator-guide/dispatcher-howto.rst:52
+msgid "``./service stop``"
+msgstr ""
+
+#: ../../administrator-guide/dispatcher-howto.rst:54
+msgid ""
+"Then it is possible to edit the configuration file and restart the "
+"dispatcher as below."
+msgstr ""
+
+#: ../../administrator-guide/dispatcher-howto.rst:55
+msgid "``./service start``"
+msgstr ""
+
+#: ../../administrator-guide/dispatcher-howto.rst:57
+msgid "Ensure the service started by having a look at the log file:"
+msgstr ""
+
+#: ../../administrator-guide/dispatcher-howto.rst:58
+msgid ""
+"``tail -F var/log/dispatcher.log`` Soon should appear lines saying **amqp "
+"Ready** and that events are sent to each target."
+msgstr ""
+
+#: ../../administrator-guide/dispatcher-howto.rst:61
+msgid ""
+"If last message is :  **Error while parsing configuration file for "
+"dispatcher targets**, then you may have a typo error in your json "
+"configuration file or malformed configuration information."
+msgstr ""
+
+#: ../../administrator-guide/dispatcher-howto.rst:65
+msgid "Behaviors"
+msgstr ""
+
+#: ../../administrator-guide/dispatcher-howto.rst:67
+msgid ""
+"Log file is located in ``/opt/dispatcher/var/log/dispatcher.log`` and shows "
+"sent event count every 1000 event by target."
+msgstr ""
+
+#: ../../administrator-guide/dispatcher-howto.rst:69
+msgid ""
+"When dispatcher is ready, it starts fetching events from it's local rabbitmq"
+" instance. Events are routed to python threads, one by target. events are "
+"then stacked in memory until they can be sent."
+msgstr ""
+
+#: ../../administrator-guide/dispatcher-howto.rst:71
+msgid ""
+"Sometimes when canopsis rabbitmq instance on target host restarts for "
+"maintenance, the dispatcher loose connection to remote and starts waiting "
+"more and more time until the max_failover_duration seconds defined in the "
+"parameter file. When this limit is reached, the dispatcher tries to connect "
+"again to send in memory waiting events."
+msgstr ""
+
+#: ../../administrator-guide/dispatcher-howto.rst:73
+msgid ""
+"If max_failover_duration is reached, in mempry events are dumped into a "
+"temporary file into ``/tmp`` with ``target-name_timestamp.json`` name. Every"
+" minutes, the dispatcher search for such files and if connection is restored"
+" for target, events are loaded from dump files and then sent, dump files are"
+" removed when they are restored."
+msgstr ""
+
+#: ../../administrator-guide/engines.rst:6
+msgid "Engines"
+msgstr ""
+
+#: ../../administrator-guide/engines.rst:16
+msgid "Canopsis process system events thanks to a set of engines."
+msgstr ""
+
+#: ../../administrator-guide/engines.rst:21
+msgid "There are two types of engines, asynchronous and synchronous."
+msgstr ""
+
+#: ../../administrator-guide/engines.rst:23
+msgid ""
+"A synchronous engine belongs to a chain of engines which consume events from"
+" |queues|."
+msgstr ""
+
+#: ../../administrator-guide/engines.rst:26
+msgid ""
+"An asynchronous engine is independent from an execution chain of engines and"
+" process only events stored in a database."
+msgstr ""
+
+#: ../../administrator-guide/engines.rst:30
+msgid "Architecture"
+msgstr ""
+
+#: ../../administrator-guide/engines.rst:32
+msgid ""
+"Here is an architecture view of engines (designed with `CACOO "
+"<https://cacoo.com/>`__)."
+msgstr ""
+
+#: ../../administrator-guide/engines.rst:37
+msgid ""
+"In this view, two chain of engines and flow of |event| , |perf_data| and "
+"Canopsis configuration data are represented."
+msgstr ""
+
+#: ../../administrator-guide/engines.rst:42
+msgid ""
+"The event chain is the entry point for all poller/Canopsis events. Its goal "
+"is to consume events and transform them into perfdata."
+msgstr ""
+
+#: ../../administrator-guide/engines.rst:45
+msgid ""
+"The alert chain manages all Canopsis alerts at the end of event processing "
+"from the event chain."
+msgstr ""
+
+#: ../../administrator-guide/engines.rst:48
+msgid ""
+"Let's see roles for all engines (hyperlinks denote engines which are "
+"configurable by the user)."
+msgstr ""
+
+#: ../../administrator-guide/engines.rst:52
+msgid "Synchronous engines"
+msgstr ""
+
+#: ../../administrator-guide/engines.rst:55
+msgid "Cleaner"
+msgstr ""
+
+#: ../../administrator-guide/engines.rst:57
+msgid "The Cleaner aims to clean events sent to Canopsis."
+msgstr ""
+
+#: ../../administrator-guide/engines.rst:60
+msgid "|event-filter|"
+msgstr ""
+
+#: ../../administrator-guide/engines.rst:62
+msgid "The filter aims to check if an event has to be destroyed or processed."
+msgstr ""
+
+#: ../../administrator-guide/engines.rst:65
+msgid "|derogation|"
+msgstr ""
+
+#: ../../administrator-guide/engines.rst:67
+msgid ""
+"The derogation aims to transform event fields from a poller to Canopsis "
+"fields."
+msgstr ""
+
+#: ../../administrator-guide/engines.rst:71
+msgid "Tag"
+msgstr ""
+
+#: ../../administrator-guide/engines.rst:73
+msgid "The tag aims to fill the tag fields of events."
+msgstr ""
+
+#: ../../administrator-guide/engines.rst:76
+msgid "Perfstore2"
+msgstr ""
+
+#: ../../administrator-guide/engines.rst:78
+msgid "The perfstore2 aims to save perfdata in the random access database."
+msgstr ""
+
+#: ../../administrator-guide/engines.rst:81
+msgid "Event store"
+msgstr ""
+
+#: ../../administrator-guide/engines.rst:83
+msgid ""
+"The event store saves consumed events in the persistent database or send an "
+"alert corresponding to an inconsistent event."
+msgstr ""
+
+#: ../../administrator-guide/engines.rst:87
+msgid "Alerts"
+msgstr ""
+
+#: ../../administrator-guide/engines.rst:89
+msgid "The alerts cleaner aims to clean alerts."
+msgstr ""
+
+#: ../../administrator-guide/engines.rst:92
+msgid "Alert counter"
+msgstr ""
+
+#: ../../administrator-guide/engines.rst:94
+msgid "The alert counter count number of alerts by alert type."
+msgstr ""
+
+#: ../../administrator-guide/engines.rst:97
+msgid "|Topology|"
+msgstr ""
+
+#: ../../administrator-guide/engines.rst:99
+msgid "The topology check rules with input alerts."
+msgstr ""
+
+#: ../../administrator-guide/engines.rst:102
+msgid "|selector|"
+msgstr ""
+
+#: ../../administrator-guide/engines.rst:104
+msgid "The selector calculates a worst state about input alerts."
+msgstr ""
+
+#: ../../administrator-guide/engines.rst:107
+msgid "Asynchronous engines"
+msgstr ""
+
+#: ../../administrator-guide/engines.rst:110
+msgid "CollectDGW"
+msgstr ""
+
+#: ../../administrator-guide/engines.rst:113
+msgid "|sla|"
+msgstr ""
+
+#: ../../administrator-guide/engines.rst:115
+msgid "Calculate SLA of system services."
+msgstr ""
+
+#: ../../administrator-guide/engines.rst:118
+msgid "|consolidation|"
+msgstr ""
+
+#: ../../administrator-guide/engines.rst:120
+msgid "Do consolidation/aggregation on perfdata."
+msgstr ""
+
+#: ../../administrator-guide/engines.rst:123
+msgid "Perfstore2\\_rotate"
+msgstr ""
+
+#: ../../administrator-guide/engines.rst:125
+msgid ""
+"Switch perfdata from the random access database to the persistent database."
+msgstr ""
+
+#: ../../administrator-guide/engines.rst:128
+msgid ""
+"Engines are presented below as they appear in the default configuration. On "
+"some architectures it can be relevant to tweak their configuration and "
+"duplicate some engines."
+msgstr ""
+
+#: ../../administrator-guide/engines.rst:131
+msgid "Events queue"
+msgstr ""
+
+#: ../../administrator-guide/engines.rst:134
+#: ../../administrator-guide/engines.rst:156
+#: ../../administrator-guide/engines.rst:171
+msgid "Engine name"
+msgstr ""
+
+#: ../../administrator-guide/engines.rst:134
+#: ../../administrator-guide/engines.rst:156
+#: ../../administrator-guide/engines.rst:171
+msgid "Work"
+msgstr ""
+
+#: ../../administrator-guide/engines.rst:134
+#: ../../administrator-guide/engines.rst:156
+#: ../../administrator-guide/engines.rst:171
+msgid "Beat"
+msgstr ""
+
+#: ../../administrator-guide/engines.rst:136
+#: ../../administrator-guide/engines.rst:158
+msgid "cleaner"
+msgstr ""
+
+#: ../../administrator-guide/engines.rst:136
+msgid ""
+"Clean events to ensure they won't cause errors Same engine as the one in "
+"Alerts queue"
+msgstr ""
+
+#: ../../administrator-guide/engines.rst:136
+#: ../../administrator-guide/engines.rst:139
+#: ../../administrator-guide/engines.rst:139
+#: ../../administrator-guide/engines.rst:141
+#: ../../administrator-guide/engines.rst:141
+#: ../../administrator-guide/engines.rst:143
+#: ../../administrator-guide/engines.rst:143
+#: ../../administrator-guide/engines.rst:145
+#: ../../administrator-guide/engines.rst:147
+#: ../../administrator-guide/engines.rst:158
+#: ../../administrator-guide/engines.rst:160
+#: ../../administrator-guide/engines.rst:162
+#: ../../administrator-guide/engines.rst:162
+#: ../../administrator-guide/engines.rst:164
+#: ../../administrator-guide/engines.rst:164
+#: ../../administrator-guide/engines.rst:175
+#: ../../administrator-guide/engines.rst:177
+#: ../../administrator-guide/engines.rst:179
+msgid "YES"
+msgstr ""
+
+#: ../../administrator-guide/engines.rst:136
+#: ../../administrator-guide/engines.rst:145
+#: ../../administrator-guide/engines.rst:147
+#: ../../administrator-guide/engines.rst:158
+#: ../../administrator-guide/engines.rst:160
+#: ../../administrator-guide/engines.rst:173
+#: ../../administrator-guide/engines.rst:173
+#: ../../administrator-guide/engines.rst:175
+#: ../../administrator-guide/engines.rst:177
+#: ../../administrator-guide/engines.rst:179
+msgid "NO"
+msgstr ""
+
+#: ../../administrator-guide/engines.rst:139
+msgid "event_filter"
+msgstr ""
+
+#: ../../administrator-guide/engines.rst:139
+msgid "Event firewall"
+msgstr ""
+
+#: ../../administrator-guide/engines.rst:141
+msgid "derogation"
+msgstr ""
+
+#: ../../administrator-guide/engines.rst:143
+msgid "tag"
+msgstr ""
+
+#: ../../administrator-guide/engines.rst:143
+msgid "Add tags to events"
+msgstr ""
+
+#: ../../administrator-guide/engines.rst:145
+msgid "perfstore2"
+msgstr ""
+
+#: ../../administrator-guide/engines.rst:145
+msgid "Store events' metrics in redis"
+msgstr ""
+
+#: ../../administrator-guide/engines.rst:147
+msgid "eventstore"
+msgstr ""
+
+#: ../../administrator-guide/engines.rst:147
+msgid "Store events in mongo"
+msgstr ""
+
+#: ../../administrator-guide/engines.rst:152
+msgid "Alerts queue"
+msgstr ""
+
+#: ../../administrator-guide/engines.rst:158
+msgid "Clean events to ensure they won't cause errors"
+msgstr ""
+
+#: ../../administrator-guide/engines.rst:160
+msgid "alertcounter"
+msgstr ""
+
+#: ../../administrator-guide/engines.rst:162
+msgid "topology"
+msgstr ""
+
+#: ../../administrator-guide/engines.rst:164
+msgid "selector"
+msgstr ""
+
+#: ../../administrator-guide/engines.rst:168
+msgid "Others"
+msgstr ""
+
+#: ../../administrator-guide/engines.rst:173
+msgid "collectdgw"
+msgstr ""
+
+#: ../../administrator-guide/engines.rst:175
+msgid "sla"
+msgstr ""
+
+#: ../../administrator-guide/engines.rst:177
+msgid "consolidation"
+msgstr ""
+
+#: ../../administrator-guide/engines.rst:179
+msgid "perfstore2_rotate"
+msgstr ""
+
+#: ../../administrator-guide/engines.rst:179
+msgid "Move metrics and perfdatas from redis to mongo"
+msgstr ""
+
+#: ../../administrator-guide/event-filter.rst:6
+msgid "Event filter"
+msgstr ""
+
+#: ../../administrator-guide/event-filter.rst:8
+msgid ""
+"The engine filter permits to users to choose which events have to be "
+"|processed| by |canopsis|."
+msgstr ""
+
+#: ../../administrator-guide/event-filter.rst:13
+msgid "Filter description"
+msgstr ""
+
+#: ../../administrator-guide/event-filter.rst:15
+msgid ""
+"The engine applies filters which are composed of a priority, an action and a"
+" rule."
+msgstr ""
+
+#: ../../administrator-guide/event-filter.rst:18
+msgid "The priority designates the filter application priority order."
+msgstr ""
+
+#: ../../administrator-guide/event-filter.rst:19
+msgid ""
+"The action is DROP or PASS designates respectively if an event which matches"
+" with the rule will be deleted or |processed| by |canopsis|."
+msgstr ""
+
+#: ../../administrator-guide/event-filter.rst:23
+msgid "The rule parses event field values."
+msgstr ""
+
+#: ../../administrator-guide/event-filter.rst:26
+msgid "Filter definition"
+msgstr ""
+
+#: ../../administrator-guide/event-filter.rst:29
+msgid "Menu"
+msgstr ""
+
+#: ../../administrator-guide/event-filter.rst:31
+msgid ""
+"Definition of such filters is possible through the view filter accessible "
+"from the filter rules menu."
+msgstr ""
+
+#: ../../administrator-guide/event-filter.rst:37
+msgid "View"
+msgstr ""
+
+#: ../../administrator-guide/event-filter.rst:39
+msgid ""
+"The view filter permits to add/edit/duplicate/delete and define a default "
+"action for events which match with none filters."
+msgstr ""
+
+#: ../../administrator-guide/event-filter.rst:45
+msgid "Wizard"
+msgstr ""
+
+#: ../../administrator-guide/event-filter.rst:47
+msgid ""
+"In filter editing mode (by pushing the add button or in double clicking on a"
+" filter) a wizard with two tabs permits to define a filter properties."
+msgstr ""
+
+#: ../../administrator-guide/event-filter.rst:52
+msgid "Options"
+msgstr ""
+
+#: ../../administrator-guide/event-filter.rst:54
+msgid "The tab \"options\" defines name, priority and action of a filter."
+msgstr ""
+
+#: ../../administrator-guide/event-filter.rst:59
+msgid "Rules"
+msgstr ""
+
+#: ../../administrator-guide/event-filter.rst:61
+msgid "The tab \"rule\" defines how an event is chosen by the filter in edition."
+msgstr ""
+
+#: ../../administrator-guide/index.rst:2
+msgid "Administrator guide"
+msgstr ""
+
+#: ../../administrator-guide/index.rst:4
+msgid "Contents:"
+msgstr ""
+
+#: ../../administrator-guide/install-from-packages.rst:2
+msgid "Install from packages"
+msgstr ""
+
+#: ../../administrator-guide/install-from-packages.rst:5
+#: ../../administrator-guide/install-from-sources.rst:5
+msgid "Requirements"
+msgstr ""
+
+#: ../../administrator-guide/install-from-packages.rst:7
+msgid "**Debian 6, Ubuntu 12.04 LTS and CentOS 6 64 bits only.**"
+msgstr ""
+
+#: ../../administrator-guide/install-from-packages.rst:10
+msgid "Debian Like"
+msgstr ""
+
+#: ../../administrator-guide/install-from-packages.rst:18
+msgid "Debian 6 and Ubuntu 10.04 Only, upgrade Pip"
+msgstr ""
+
+#: ../../administrator-guide/install-from-packages.rst:28
+msgid "Redhat / CentOS"
+msgstr ""
+
+#: ../../administrator-guide/install-from-packages.rst:29
+#: ../../administrator-guide/install-from-sources.rst:20
+msgid "Disable some services"
+msgstr ""
+
+#: ../../administrator-guide/install-from-packages.rst:43
+#: ../../administrator-guide/install-from-sources.rst:33
+msgid "Install some packages"
+msgstr ""
+
+#: ../../administrator-guide/install-from-packages.rst:50
+#: ../../administrator-guide/install-from-sources.rst:39
+msgid "Install xorg-x11-server-Xvfb"
+msgstr ""
+
+#: ../../administrator-guide/install-from-packages.rst:56
+msgid ""
+"If package ``xorg-x11-server-Xvfb 1.10.4-6`` is not found, you may try:"
+msgstr ""
+
+#: ../../administrator-guide/install-from-packages.rst:64
+msgid "Environment"
+msgstr ""
+
+#: ../../administrator-guide/install-from-packages.rst:73
+msgid "Installer"
+msgstr ""
+
+#: ../../administrator-guide/install-from-packages.rst:76
+msgid "Login with Canopsis"
+msgstr ""
+
+#: ../../administrator-guide/install-from-packages.rst:87
+msgid "Stable"
+msgstr ""
+
+#: ../../administrator-guide/install-from-packages.rst:89
+#: ../../administrator-guide/install-from-packages.rst:109
+msgid "Download and install the installer (as ``canopsis`` user):"
+msgstr ""
+
+#: ../../administrator-guide/install-from-packages.rst:98
+#: ../../administrator-guide/install-from-packages.rst:118
+msgid ""
+"If you have a Proxy, you must edit `ubik.conf` before installation. After "
+"installation `ubik.conf` is copied into `~/etc/ubik.conf`."
+msgstr ""
+
+#: ../../administrator-guide/install-from-packages.rst:107
+msgid "Daily"
+msgstr ""
+
+#: ../../administrator-guide/install-from-packages.rst:127
+msgid "Install Main packages"
+msgstr ""
+
+#: ../../administrator-guide/install-from-packages.rst:129
+msgid "Install package ``cmaster`` (as ``canopsis`` user):"
+msgstr ""
+
+#: ../../administrator-guide/install-from-packages.rst:141
+#: ../../administrator-guide/install-from-sources.rst:81
+#: ../../administrator-guide/upgrade-from-packages.rst:58
+msgid "Start Canopsis"
+msgstr ""
+
+#: ../../administrator-guide/install-from-packages.rst:147
+msgid ""
+"Now you can login on WebUI: `http://Your_IP:8082` (Login: `root`, Password: "
+"`root`)"
+msgstr ""
+
+#: ../../administrator-guide/install-from-packages.rst:149
+msgid "Enjoy ;)"
+msgstr ""
+
+#: ../../administrator-guide/install-from-sources.rst:2
+msgid "Install from sources"
+msgstr ""
+
+#: ../../administrator-guide/install-from-sources.rst:7
+msgid "Install requirements with ``root`` user."
+msgstr ""
+
+#: ../../administrator-guide/install-from-sources.rst:10
+msgid "Debian Like:"
+msgstr ""
+
+#: ../../administrator-guide/install-from-sources.rst:18
+msgid "Redhat Like:"
+msgstr ""
+
+#: ../../administrator-guide/install-from-sources.rst:45
+msgid "If package ``xorg-x11-server-Xvfb 1.10.4-6`` not found, you can try:"
+msgstr ""
+
+#: ../../administrator-guide/install-from-sources.rst:53
+msgid "Download sources"
+msgstr ""
+
+#: ../../administrator-guide/install-from-sources.rst:55
+msgid "Clone git repository:"
+msgstr ""
+
+#: ../../administrator-guide/install-from-sources.rst:64
+msgid "You can switch to development branch:"
+msgstr ""
+
+#: ../../administrator-guide/install-from-sources.rst:71
+msgid "Build and install"
+msgstr ""
+
+#: ../../administrator-guide/install-from-sources.rst:78
+msgid "If build failed, you can see logs in ``log/`` directory."
+msgstr ""
+
+#: ../../administrator-guide/install-from-sources.rst:83
+msgid "Log in ``canopsis`` and start it:"
+msgstr ""
+
+#: ../../administrator-guide/install-from-sources.rst:91
+msgid "Check installation"
+msgstr ""
+
+#: ../../administrator-guide/install-from-sources.rst:93
+msgid "You can verify installation: (in ``canopsis`` environment)"
+msgstr ""
+
+#: ../../administrator-guide/install-from-sources.rst:100
+msgid "Trouble shooting"
+msgstr ""
+
+#: ../../administrator-guide/install-from-sources.rst:102
+msgid ""
+"During some occasions, you could encounter some funny error messages such as"
+" :"
+msgstr ""
+
+#: ../../administrator-guide/install-from-sources.rst:104
+msgid "Supervisord still running"
+msgstr ""
+
+#: ../../administrator-guide/install-from-sources.rst:110
+msgid ""
+"This error occurs when ``supervisord`` failed to start during the "
+"installation. Simply start it in a ``canopsis`` environement."
+msgstr ""
+
+#: ../../administrator-guide/install-from-sources.rst:112
+msgid "Erlang refuses to work and crashes"
+msgstr ""
+
+#: ../../administrator-guide/install-from-sources.rst:122
+msgid ""
+"This error occurs when rabbit-ms configuration is not properly set next to a"
+" system crash or equivalent. It is possible to fix this issue by removing "
+"the erlang cookie in canopsis root folder ``rm "
+"/opt/canopsis/.erlang.cookie``. this may have no side effect when canopsis "
+"is in single instance mode (no HA)"
+msgstr ""
+
+#: ../../administrator-guide/run_report.rst:2
+msgid "Run\\_report"
+msgstr ""
+
+#: ../../administrator-guide/run_report.rst:4
+msgid ""
+"With ``run_report`` command you can generate report (via webservice) to "
+"Canopsis."
+msgstr ""
+
+#: ../../administrator-guide/run_report.rst:8
+msgid "Authentication key"
+msgstr ""
+
+#: ../../administrator-guide/run_report.rst:10
+msgid ""
+"Firstly, you must add one user in ``CPS_report_admin`` group and "
+"``CPS_view_admin`` in secondary group."
+msgstr ""
+
+#: ../../administrator-guide/run_report.rst:13
+msgid ""
+"Secondly, get user's ``Authentication key`` in web UI (``Build -> Accounts "
+"-> right-click -> Authentication key``)"
+msgstr ""
+
+#: ../../administrator-guide/run_report.rst:17
+msgid "How to find my view id ?"
+msgstr ""
+
+#: ../../administrator-guide/run_report.rst:19
+msgid "You can use command:"
+msgstr ""
+
+#: ../../administrator-guide/run_report.rst:21
+msgid ""
+"\\`run\\_report -l aa5b19862b6e19329999e89a21aa4aa864ab8339cc0b4eb57506bfa2"
+msgstr ""
+
+#: ../../administrator-guide/run_report.rst:25
+msgid "View ID Name"
+msgstr ""
+
+#: ../../administrator-guide/run_report.rst:27
+msgid "view.\\ *default*.dashboard Dashboard"
+msgstr ""
+
+#: ../../administrator-guide/run_report.rst:29
+msgid "view.root.1355336764158-7 test"
+msgstr ""
+
+#: ../../administrator-guide/run_report.rst:31
+msgid "view.root.1355391394043-3 VW\\_Canopsis\\`"
+msgstr ""
+
+#: ../../administrator-guide/run_report.rst:34
+msgid "Usage"
+msgstr ""
+
+#: ../../administrator-guide/run_report.rst:36
+msgid ""
+"``usage: run_report [-h] [-o OUTPUT_FILE] [-f FILENAME] [-s SERVER] [--no-"
+"file]                   [-l] [-d]                   authkey [time_interval] "
+"[view_id]``"
+msgstr ""
+
+#: ../../administrator-guide/run_report.rst:39
+msgid "Examples"
+msgstr ""
+
+#: ../../administrator-guide/run_report.rst:41
+msgid "Now you can use command:"
+msgstr ""
+
+#: ../../administrator-guide/run_report.rst:43
+msgid ""
+"run\\_report **aa5b19862b6e19329999e89a21aa4aa864ab8339cc0b4eb57506bfa2** "
+"**1d** **view.root.1355336764158-7**"
+msgstr ""
+
+#: ../../administrator-guide/run_report.rst:46
+msgid "view.root.1355336764158-7\\_\\_2012-12-12\\_2012-12-13.pdf saved"
+msgstr ""
+
+#: ../../administrator-guide/run_report.rst:48
+msgid ""
+"**aa5b19862b6e19329999e89a21aa4aa864ab8339cc0b4eb57506bfa2** : Key "
+"Authentification of Report User"
+msgstr ""
+
+#: ../../administrator-guide/run_report.rst:51
+msgid "**1d** : Periodicity"
+msgstr ""
+
+#: ../../administrator-guide/run_report.rst:53
+msgid "**view.root.1355336764158-7** : View ID"
+msgstr ""
+
+#: ../../administrator-guide/selector.rst:4
+msgid "Selector"
+msgstr ""
+
+#: ../../administrator-guide/selector.rst:9
+msgid ""
+"Selector engine aims to perform aggregation operation on many events, "
+"providing this way a simple aggregated information."
+msgstr ""
+
+#: ../../administrator-guide/selector.rst:13
+msgid "Goals"
+msgstr ""
+
+#: ../../administrator-guide/selector.rst:15
+msgid ""
+"Allow user to define it's own aggregation information. For now, selector "
+"allows to compute the worst state on an event set."
+msgstr ""
+
+#: ../../administrator-guide/selector.rst:21
+msgid "Synchronous consume dispatch method"
+msgstr ""
+
+#: ../../administrator-guide/selector.rst:23
+msgid ""
+"This method listen to the rabbitmq bus and each time an event becomes "
+"available, a crecord is retrieved from this event. The crecord provide "
+"infomation about witch event implied in the information aggregation. "
+"information are:"
+msgstr ""
+
+#: ../../administrator-guide/selector.rst:28
+msgid "a list of event id to **include**"
+msgstr ""
+
+#: ../../administrator-guide/selector.rst:29
+msgid "a list of event id to **exclude**"
+msgstr ""
+
+#: ../../administrator-guide/selector.rst:30
+msgid ""
+"a cfilter describing a mongo style database query which allows **custom** "
+"event selection"
+msgstr ""
+
+#: ../../administrator-guide/selector.rst:33
+msgid ""
+"These information make selector compute a set of distinct status values for "
+"these event. From these distinct values, the worst state appears in a "
+"natural way and then, a new event is produced with the selector information "
+"and some other information relative to the selector description made through"
+" the UI."
+msgstr ""
+
+#: ../../administrator-guide/uninstall.rst:2
+msgid "Uninstall"
+msgstr ""
+
+#: ../../administrator-guide/uninstall.rst:4
+msgid "(execute as ``root``)"
+msgstr ""
+
+#: ../../administrator-guide/upgrade-from-packages.rst:4
+msgid "Upgrade from packages"
+msgstr ""
+
+#: ../../administrator-guide/upgrade-from-packages.rst:7
+msgid "Introduction"
+msgstr ""
+
+#: ../../administrator-guide/upgrade-from-packages.rst:9
+msgid ""
+"Before upgrade, it's recommended to make a snapshot or backup your Canopsis "
+"with this: |howToBackUp|"
+msgstr ""
+
+#: ../../administrator-guide/upgrade-from-packages.rst:12
+msgid "Upgrade Ubik"
+msgstr ""
+
+#: ../../administrator-guide/upgrade-from-packages.rst:14
+msgid "As ``root``:"
+msgstr ""
+
+#: ../../administrator-guide/upgrade-from-packages.rst:24
+#: ../../administrator-guide/upgrade-from-packages.rst:50
+msgid "Upgrade Canopsis"
+msgstr ""
+
+#: ../../administrator-guide/upgrade-from-packages.rst:26
+msgid "Log in as Canopsis:"
+msgstr ""
+
+#: ../../administrator-guide/upgrade-from-packages.rst:33
+msgid "Stop Canopsis"
+msgstr ""
+
+#: ../../administrator-guide/upgrade-from-packages.rst:41
+msgid "Upgrade Python and Python-libs"
+msgstr ""

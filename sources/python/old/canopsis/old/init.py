@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 # --------------------------------
 # Copyright (c) 2014 "Capensis" [http://www.capensis.com]
@@ -29,6 +28,13 @@ from __future__ import absolute_import
 # allow division (e.g., 1/2 == 0.5; 1//2 == 0)
 from __future__ import division
 
+from sys import version_info
+
+# hack in order to convert a str to a unicode
+if version_info[0] == '2':
+    from inspect import getmodule
+    setattr(getmodule(str), 'str', unicode)
+
 from logging import basicConfig, getLogger
 
 from signal import signal, SIGINT, SIGTERM
@@ -37,6 +43,47 @@ from time import sleep
 
 from os import getenv
 from os.path import expanduser
+
+from sys import version as PYVER
+
+if PYVER >= '3':
+    __builtins__['basestring'] = str
+
+def isunicode(s):
+    """
+    Check if string is unicode.
+
+    :param s: string to check
+    :type s: basestring
+
+    :return: True if unicode or Python3, False otherwise
+    """
+
+    if PYVER < '3':
+        return isinstance(s, unicode)
+
+    else:
+        return True
+
+
+def force_unicode(s):
+    """
+    Convert string to unicode.
+
+    :param s: string to convert
+    :type s: basestring
+
+    :return: unicode (or the same string if Python3)
+    """
+
+    if not isinstance(s, basestring):
+        raise TypeError('Expecting a string as argument')
+
+    if PYVER < '3':
+        return s.decode()
+
+    else:
+        return s
 
 
 class Init(object):

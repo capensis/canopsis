@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #--------------------------------
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
@@ -72,6 +71,17 @@ class engine(Engine):
     def work(self, event, *args, **kargs):
         logevent = None
 
+        ackremove = False
+        if event['event_type'] == 'ackremove':
+            #remove ack from event
+            rk = event['ref_rk']
+            self.events_collection.update(
+                {'rk': rk},
+                {'$unset': {
+                    'ack': "",
+            }})
+            ackremove = True
+
         # If event is of type acknowledgement, then acknowledge corresponding event
         if event['event_type'] == 'ack':
             self.logger.debug('Ack event found, will proceed ack.')
@@ -116,6 +126,8 @@ class engine(Engine):
             )
 
             ack_info['isAck'] = True
+            #useless information for event ack data
+            del ack_info['ackts']
             self.events_collection.update(
                 {'rk': rk},
                 {'$set': {
@@ -257,7 +269,7 @@ class engine(Engine):
                     logevent['solved_at'] = solvedts
 
         # If the event is in problem state, update the solved state of acknowledgement
-        elif event['state'] != 0 and event.get('state_type', 1) == 1:
+        elif ackremove or (event['state'] != 0 and event.get('state_type', 1) == 1):
             self.logger.debug('Alert on event, preparing ACK statement.')
 
             self.stbackend.find_and_modify(

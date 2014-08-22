@@ -54,11 +54,8 @@
 		"state": {
 			"type": "number",
 			"required": true,
-			"role": "state"
-		},
-		"criticity": {
-			"type": "string",
-			"role": "criticity"
+			"role": "criticity",
+			"label":"criticity"
 		},
 		"perimeter": {
 			"type": "string"
@@ -67,8 +64,12 @@
 			"type": "string"
 		},
 		"status": {
-			"type": "string",
+			"type": "number",
 			"role": "status"
+		},
+		"cancel": {
+			"type": "object",
+			"role": "object"
 		}
 	}
 }

@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 # --------------------------------
 # Copyright (c) 2014 "Capensis" [http://www.capensis.com]
@@ -19,16 +18,152 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from canopsis.storage.manager import Manager
+from canopsis.common.utils import force_iterable
+from canopsis.configuration import conf_paths, add_category
+from canopsis.middleware.manager import Manager
+from canopsis.storage.composite import CompositeStorage
+from canopsis.storage.filter import Filter
+
+CONF_PATH = 'topology/topology.conf'
+CATEGORY = 'TOPOLOGY'
 
 
+@add_category(CATEGORY)
+@conf_paths(CONF_PATH)
 class Topology(Manager):
     """
     Manage access to topologies
     """
 
-    CONF_FILE = '~/etc/topology.conf'
+    STORAGE = 'topology_storage'
+    DATA_SCOPE = STORAGE
 
-    CATEGORY = 'TOPOLOGY'
+    ENTITY_ID = 'entity'
+    NEXT = 'next'
+    NODES = 'nodes'
+    TYPE = 'type'
 
-    DATA_TYPE = 'topology'
+    def __init__(self, data_scope=DATA_SCOPE, *args, **kwargs):
+
+        super(Topology, self).__init__(
+            data_scope=data_scope, *args, **kwargs)
+
+    @staticmethod
+    def _get_topology_scope():
+        """
+        Get topology scope
+        """
+        return {Topology.TYPE: Topology.DATA_SCOPE}
+
+    @staticmethod
+    def _get_topology_node_scope(topology_id=None):
+        """
+        Get topology node scope related to a topology_id
+        """
+
+        result = {'type': 'topology_node'}
+        if topology_id is not None:
+            result[Topology.STORAGE] = topology_id
+        return result
+
+    def _add_nodes(self, topologies):
+        """
+        Add nodes into input topologies.
+        """
+
+        if topologies:
+            topologies = force_iterable(topologies)
+            for topology in topologies:
+                nodes = self.get_nodes(ids=topology[CompositeStorage.ID])
+                topology['nodes'] = nodes
+
+    def get_topologies(self, ids=None, add_nodes=False):
+        """
+        Get one or more topologies.
+
+        :return: depending on ids:
+
+            - an id: one topology or None if corresponding topology does not exist.
+            - list of id: list of topologies or empty list if ids do not correspond to existing topologies.
+            - None: all existing topologies.
+        """
+        path = self._get_topology_scope()
+        result = self[Topology.STORAGE].get(path=path, ids=ids)
+        if add_nodes:
+            self._add_nodes(result)
+        return result
+
+    def find(self, regex=None, add_nodes=False):
+        """
+        Find topologies where id match with inpur regex_id
+        """
+
+        path = self._get_topology_scope()
+        _filter = Filter()
+        _filter.add_regex(
+            name=CompositeStorage.ID, value=regex, case_sensitive=True)
+        result = self[Topology.STORAGE].find(path=path, _filter=_filter)
+        if add_nodes:
+            self._add_nodes(result)
+        return result
+
+    def delete(self, ids=None):
+        """
+        Delete one or more topologies depending on input ids:
+
+            - an id: try to delete topology where id correspond to id
+            - list of ids: try to delete topologies where id are in input ids
+            - None: delete all topologies
+        """
+
+        path = self._get_topology_scope()
+        self[Topology.STORAGE].remove(path=path, ids=ids)
+
+    def push(self, _id, topology):
+        """
+        Push one topology.
+        """
+
+        path = self._get_topology_scope()
+        self[Topology.STORAGE].put(path=path, _id=_id, data=topology)
+
+    def push_node(self, _id, node):
+        """
+        Push a node.
+        """
+
+        path = self._get_topology_node_scope(node['id'])
+        self[Topology.STORAGE].put(path=path, _id=_id, data=node)
+
+    def get_nodes(self, ids=None):
+        """
+        Get nodes
+        """
+
+        path = self._get_topology_node_scope()
+        result = self[Topology.STORAGE].get(path=path, ids=ids)
+
+        return result
+
+    def find_nodes_by_entity_id(self, entity_id):
+        """
+        Find all nodes related to input entity_id
+        """
+        path = self._get_topology_node_scope()
+        _filter = Filter()
+        _filter[Topology.ENTITY_ID] = entity_id
+        result = self[Topology.STORAGE].find(path=path, _filter=_filter)
+
+        return result
+
+    def find_nodes_by_next(self, next=None):
+        """
+        Find source nodes from input next node. If next is None, get all root
+        nodes
+        """
+        path = self._get_topology_node_scope()
+        _filter = Filter()
+        _filter[Topology.NEXT] = next
+        result = self[Topology.STORAGE].find(path=path, _filter=_filter)
+
+        return result

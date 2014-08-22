@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #--------------------------------
 # Copyright (c) 2014 "Capensis" [http://www.capensis.com]
@@ -26,6 +25,8 @@ from canopsis.old.rabbitmq import Amqp
 from canopsis.old.storage import get_storage
 from canopsis.old.account import Account
 from canopsis.old.event import forger, get_routingkey
+
+from canopsis.tools import schema as cschema
 
 from traceback import format_exc, print_exc
 
@@ -454,13 +455,32 @@ class TaskHandler(Engine):
         state = 3
 
         try:
-            job = loads(msg)
+            if not isinstance(msg, dict):
+                job = loads(msg)
+
+            else:
+                job = msg
 
         except ValueError as err:
-            self.logger.error('Impossible to decode message: {0}'.format(err))
-            return
+            output = 'Impossible to decode message: {0}'.format(err)
+            state = 2
 
-        state, output = self.handle_task(job)
+        else:
+            if not cschema.validate(job, 'task.{0}'.format(self.etype)):
+                output = 'Invalid job'
+                state = 2
+
+            else:
+                try:
+                    state, output = self.handle_task(job)
+
+                except NotImplementedError:
+                    state = 1
+                    output = 'Not implemented'
+
+                #except Exception as err:
+                #    state = 2
+                #    output = 'Unhandled exception: {0}'.format(err)
 
         end = int(time())
 
@@ -471,7 +491,7 @@ class TaskHandler(Engine):
             'event_type': 'check',
             'source_type': 'resource',
             'component': 'job',
-            'resource': job['id'],
+            'resource': job['jobid'],
             'state': state,
             'state_type': 1,
             'output': output,

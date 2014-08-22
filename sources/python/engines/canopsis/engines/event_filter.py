@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #--------------------------------
 # Copyright (c) 2014 "Capensis" [http://www.capensis.com]
@@ -149,6 +148,9 @@ class engine(Engine):
         if derogated:
             self.logger.debug("Event changed by rule '%s'" % name)
 
+        return None
+
+
     # simple drop
     def a_drop(self, event, derogation, action, name):
         self.logger.debug("Event dropped by rule '%s'" % name)
@@ -236,7 +238,7 @@ class engine(Engine):
 
         self.logger.debug('Reload configuration rules')
         try:
-            records = self.storage.find({'crecord_type': self.etype},
+            records = self.storage.find({'crecord_type': 'filter'},
                             sort='priority')
 
             for record in records:

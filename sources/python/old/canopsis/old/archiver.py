@@ -28,7 +28,9 @@ from canopsis.old.tools import legend, uniq
 
 legend_type = ['soft', 'hard']
 
+
 class Archiver(object):
+
     def __init__(self, namespace, storage=None,
                  autolog=False, logging_level=ERROR):
 
@@ -53,8 +55,6 @@ class Archiver(object):
 
         self.collection = self.storage.get_backend(namespace)
 
-
-
     def beat(self):
         #Default useless values avoid crashes
         self.bagot_freq = 10
@@ -62,7 +62,7 @@ class Archiver(object):
         self.stealthy_time = 300
         self.restore_event = True
 
-        self.state_config = self.storage.find({'Record_type':'state-spec'})
+        self.state_config = self.storage.find({'Record_type': 'state-spec'})
         if len(self.state_config) == 1:
             self.state_config = self.state_config[0]
 
@@ -75,8 +75,6 @@ class Archiver(object):
                 self.stealthy_time = self.state_config['stealthy_time']
             if 'restore_event' in self.state_config:
                 self.restore_event = self.state_config['restore_event']
-
-
 
     def check_bagot(self, event, devent):
         ts_curr = event['timestamp']
@@ -97,18 +95,16 @@ class Archiver(object):
             self.logger.info(log.format('Stealthy'))
             event['status'] = 2
 
-
-
     def check_statuses(self, event, devent):
 
         # Check if event is still canceled
         # status legend:
-        # 0 == Ok
+        # 0 == Off
         # 1 == On going
         # 2 == Stealthy
         # 3 == Bagot
         # 4 == Canceled
-
+        self.logger.info(event)
         log = 'Status is set to {} for event %s' % event['rk']
         ts_curr = event['timestamp']
         ts_prev = devent['timestamp']
@@ -127,7 +123,7 @@ class Archiver(object):
                     or (not self.is_bagot(event)
                         and not self.is_stealthy(
                             ts_curr - event['ts_first_stealthy']))):
-                    self.logger.info(log.format('Off'))
+                    self.logger.debug(log.format('Off'))
                     event['status'] = 0
                     event['ts_first_stealthy'] = 0
                 else:
@@ -143,7 +139,6 @@ class Archiver(object):
                     event['ts_first_stealthy'] = 0
                 else:
                     self.check_bagot(event, devent)
-
 
         else:
             self.logger.info(log.format('Cancelled'))
@@ -176,15 +171,13 @@ class Archiver(object):
             return True
         return False
 
-
     def is_stealthy(self, ts_diff):
         return (True if ts_diff <= self.stealthy_time else False)
-
-
 
     def check_event(self, _id, event):
         changed = False
         new_event = False
+        devent = {}
 
         self.logger.debug(" + Event:")
 
@@ -201,25 +194,17 @@ class Archiver(object):
         try:
             # Get old record
             #record = self.storage.get(_id, account=self.account)
-            change_fields = {
-                'state': 1,
-                'state_type': 1,
-                'last_state_change': 1,
-                'output': 1,
-                'perf_data_array': 1,
-                'timestamp': 1,
-                'cancel': 1,
-                'status': 1,
-                'bagot_freq': 1,
-                'ts_first_bagot': 1,
-                'ts_first_stealthy': 1,
-                'ack': 1
+            exclusion_fields = {
+                'perf_data_array',
+                'processing'
             }
 
-            devent = self.collection.find_one(_id, fields=change_fields)
+            devent = self.collection.find_one(_id)
 
             if not devent:
                 new_event = True
+                # may have side effects on acks/cancels
+                devent = {}
 
             self.logger.debug(" + Check with old record:")
             old_state = devent['state']
@@ -256,107 +241,45 @@ class Archiver(object):
                 event['previous_state_change_ts'] = event['last_state_change']
             event['last_state_change'] = event.get('timestamp', now)
 
-        # Clean raw perfdata, as they should be already splitted from event
-        # and should not live in event collection.
-        perf_data_array = None
-        if 'perf_data_array' in event:
-            perf_data_array = event['perf_data_array']
-            del event['perf_data_array']
-
-        processing = None
-        if 'processing' in event:
-            processing = event['processing']
-            del event['processing']
-
-
-        if 'perf_data' in event:
-            del event['perf_data']
-
-
         if new_event:
             self.store_new_event(_id, event)
         else:
-            #Cancel management
-            self.process_cancel(devent, event)
             change = {}
-            # resets ack status for this alert if already set to true
-            if devent.get('ack', False):
-                change['ack'] = False
 
-            for key in change_fields:
-                if key in event and key in devent and devent[key] != event[key]:
-                    change[key] = event[key]
-                elif key in event and key not in devent:
-                    change[key] = event[key]
+            # keep ack information if status does not reset event
+            if 'ack' in devent:
+                if event['status'] not in [0, 1]:
+                    change['ack'] = devent['ack']
+                else:
+                    change['ack'] = {}
+
+            # keep cancel information if status does not reset event
+            if 'cancel' in devent:
+                if event['status'] not in [0, 1]:
+                    change['cancel'] = devent['cancel']
+                else:
+                    change['cancel'] = {}
+
+
+            for key in event:
+                if key not in exclusion_fields:
+                    if key in event and key in devent and devent[key] != event[key]:
+                        change[key] = event[key]
+                    elif key in event and key not in devent:
+                        change[key] = event[key]
             if change:
                 self.storage.get_backend('events').update({'_id': _id},
                                                           {'$set': change})
 
         mid = None
         if changed and self.autolog:
+            #store ack information to log collection
+            if 'ack' in devent:
+                event['ack'] = devent['ack']
             mid = self.log_event(_id, event)
 
-        #Put back perfdata after database upsert
-        if perf_data_array:
-            event['perf_data_array'] = perf_data_array
-
-        if processing:
-            event['processing'] = processing
 
         return mid
-
-    #Cancel and uncancel process are processed here
-    def process_cancel(self, devent, event):
-        #Event cancellation management
-        self.logger.warning(' + will process cancel')
-        if 'cancel' in event:
-            self.logger.warning(' + cancel found')
-
-            #Saving status, in case cancel is undone
-            previous_status = devent.get('status', 1)
-            previous_state = devent['state']
-            # Cancel value means cancel for True or undo cancel for False
-            cancel = {
-                'author' : event.get('author','unknown'),
-                'isCancel' : True,
-                'comment' : event['output'],
-                'previous_status': previous_status,
-                'ack': devent.get('ack', {})
-            }
-            # Preparing event for cancel,
-            # avoid using space and use previous output
-            if 'author' in event:
-                del event['author']
-
-            event['output'] = devent.get('output', '')
-
-            #Is it a cancel ?
-            if event['cancel'] == True:
-                self.logger.info("set cancel to the event")
-                # If cancel is not in ok state, then it is not an alert cancellation
-                event['ack'] = cancel
-                event['status'] = 4
-
-            # Undo cancel ?
-            elif event['cancel'] == False:
-                self.logger.warning(' + in da cancel')
-                #If event has been previously cancelled
-
-                if 'ack' in devent and 'ack' in devent['ack']:
-                    self.logger.warning(' + reseting ack')
-
-                    #Restore previous status
-                    event['status'] = devent['ack'].get('previous_status', 0)
-                    #Restore ack as previously
-                    event['ack'] = devent['ack']['ack']
-
-
-
-            #Avoid saving useless boolean values to db
-            if 'cancel' in event and isinstance(event['cancel'], bool):
-                del event['cancel']
-
-
 
     def store_new_event(self, _id, event):
         record = Record(event)
@@ -389,5 +312,3 @@ class Archiver(object):
 
         self.storage.drop_namespace(self.namespace)
         self.storage.drop_namespace(self.namespace_log)
-
-

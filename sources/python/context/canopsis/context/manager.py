@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 # --------------------------------
 # Copyright (c) 2014 "Capensis" [http://www.capensis.com]
@@ -19,171 +18,203 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from canopsis.storage.manager import Manager
-from md5 import new as md5
-from canopsis.configuration import Parameter
+from canopsis.configuration import conf_paths, add_category
+from canopsis.middleware.manager import Manager
 
 
+CONF_RESOURCE = 'context/context.conf'
+CATEGORY = 'CONTEXT'
+
+
+@add_category(CATEGORY)
+@conf_paths(CONF_RESOURCE)
 class Context(Manager):
     """
     Manage access to a context (connector, component, resource) elements
     and context data (metric, downtime, etc.)
 
+    It uses a composite storage in order to modelise composite data.
+
+    For example, let a resource ``R`` in the component ``C`` and connector
+    ``K`` is identified through the context [``K``, ``C``], the name ``R`` and
+    the type ``resource``.
+
+    In addition to those composable data, it is possible to extend two entities
+    which have the same name and type but different context.
+
     For example, in following entities:
-        - component: data_id is component_id and data_type is component
+        - component: name is component_id and type is component
         - connector: data_id
     """
 
-    CONF_FILE = '~/etc/context.conf'
-
-    DATA_TYPE = 'context'
-
-    CATEGORY = 'CONTEXT'
+    DATA_SCOPE = 'context'
 
     CTX_STORAGE = 'ctx_storage'
     CONTEXT = 'context'
 
-    def __init__(self, ctx_storage=None, *args, **kwargs):
+    TYPE = 'type'  #: entity type field name
+    NAME = 'name'  #: entity name field name
+    EXTENDED = 'extended'  #: extended field name
+
+    DEFAULT_CONTEXT = [
+        'type', 'connector', 'connector_name', 'component', 'resource']
+
+    def __init__(
+        self, context=DEFAULT_CONTEXT, ctx_storage=None, *args, **kwargs
+    ):
 
         super(Context, self).__init__(self, *args, **kwargs)
 
-        self.ctx_storage = ctx_storage
+        self._context = context
+        if ctx_storage is not None:
+            self[Context.CTX_STORAGE] = ctx_storage
 
     @property
-    def ctx_storage(self):
-        return self._ctx_storage
-
-    @ctx_storage.setter
-    def ctx_storage(self, value):
-        self._ctx_storage = value
-        if value is not None:
-            self._ctx = self.get_timed_typed_storage(
-                data_type=Context.DATA_TYPE)
-
-    def get(
-        self,
-        element_type,
-        connector=None, connector_type=None, component=None, resource=None,
-        other=None,
-        timewindow=None,
-        *args, **kwargs
-    ):
+    def context(self):
         """
-        Get one element related to:
-            - an element_type,
-            - a path (connector, ..., other),
-            - a timewindow
+        List of context element name.
+        """
+        return self._context
 
-        :return: array of couple(timestamp, element) in the ASC order
-        :rtype: list(tuple(float, dict))
+    @context.setter
+    def context(self, value):
+        self._context = value
+
+    def get_entity_context(self, entity, context=None):
+        """
+        Get the right context related to input entity
         """
 
-        element_id = Context.get_element_id(
-            connector, connector_type, component, resource, other)
+        result = {}
 
-        return self._ctx.get(
-            data_ids=[element_id], data_type=element_type,
-            timewindow=timewindow, *args, **kwargs)
+        if context is None:
+            context = self.context
+
+        for value in context:
+            if value in entity:
+                result[value] = entity[value]
+
+        return result
+
+    def get_entities(self, ids):
+        """
+        Get entities by id
+
+        :param ids: one id or a set of ids
+        """
+
+        return self[Context.CTX_STORAGE].get_elements(ids=ids)
+
+    def get(self, _type, name, context=None, extended=False):
+        """
+        Get one entity related to:
+            - an entity type.
+            - a context (connector, ..., other).
+            - a name.
+
+        :param extended: get extended entities if they are shared.
+
+        :return: one element or None
+        :rtype: dict
+        """
+
+        path = {
+            Context.TYPE: _type,
+        }
+
+        if context is not None:
+            path.update(context)
+
+        result = self[Context.CTX_STORAGE].get(path=path, ids=name)
+
+        if extended:
+            result = self[Context.CTX_STORAGE].get_shared_data(data=result)
+
+        return result
 
     def find(
-        self,
-        element_type,
-        connector=None, connector_type=None, component=None, resource=None,
-        other=None,
-        element_ids=None, timewindow=None,
-        *args, **kwargs
+        self, context=None, _filter=None, extended=False,
+        limit=0, skip=0, sort=None
     ):
         """
-        Find all elements which have a element_id among input element_ids, or
-        type equals to element_type or inside timewindow if specified
+        Find all entities which of input _type and context with an additional
+        filter.
+
+        :param extended: get extended entities if they are shared
         """
 
-        if element_ids is None:
-            element_id = Context.get_element_id(
-                connector, connector_type, component, resource, other)
-            element_ids = [element_id]
+        path = {} if context is None else context
 
-        return self._ctx.get(
-            data_ids=element_ids, data_type=element_type,
-            timewindow=timewindow, *args, **kwargs)
+        result = self[Context.CTX_STORAGE].get(
+            path=path, _filter=_filter, limit=limit, skip=skip, sort=sort)
 
-    def get_by_name(
-        self,
-        element_type, name=None, *args, **kwargs
-    ):
+        if extended:
+            result = self[Context.CTX_STORAGE].get_shared_data(data=result)
 
-        return self.get(element_id=name, element_type=element_type)
+        return result
 
-    def put(
-        self, element_id, element_type, element, timestamp=None,
-        *args, **kwargs
-    ):
+    def put(self, _type, entity, context=None):
         """
         Put an element designated by the element_id, element_type and element.
         If timestamp is None, time.now is used.
         """
 
-        return self._ctx.put(
-            data_id=element_id, data_type=element_type, data=element,
-            timestamp=timestamp, *args, **kwargs)
+        path = {
+            Context.TYPE: _type
+        }
 
-    def remove(
-        self, element_ids=None, element_type=None, timewindow=None,
-        *args, **kwargs
-    ):
+        if context is not None:
+            path.update(context)
+
+        name = entity[Context.NAME]
+
+        self[Context.CTX_STORAGE].put(path=path, _id=name, data=entity)
+
+    def remove(self, ids=None, _type=None, context=None):
         """
         Remove a set of elements identified by element_ids, an element type or
         a timewindow
         """
 
-        return self._ctx.remove(
-            data_ids=element_ids, data_type=element_type,
-            timewindow=timewindow, *args, **kwargs)
+        path = {}
 
-    def _get_conf_files(self, *args, **kwargs):
+        if _type is not None:
+            path[Context.TYPE] = _type
 
-        result = super(Context, self)._get_conf_files(*args, **kwargs)
+        if context is not None:
+            path.update(context)
 
-        result.append(Context.CONF_FILE)
+        self[Context.CTX_STORAGE].remove(path=path, ids=ids)
+
+    def get_entity_id(self, entity, context=None):
+        """
+        Get unique entity id related to its context and name.
+        """
+
+        if context is None:
+            context = self.context
+
+        path = self.get_entity_context(entity=entity, context=context)
+
+        name = entity['name']
+
+        result = self[Context.CTX_STORAGE].get_absolute_path(
+            path=path, _id=name)
 
         return result
+
+    def unify_entities(self, entities):
+        """
+        Unify input entities as the same entity
+        """
+
+        # get unique and shared id
+        pass
 
     def _configure(self, unified_conf, *args, **kwargs):
 
         super(Context, self)._configure(
             unified_conf=unified_conf, *args, **kwargs)
 
-        self._update_property(
-            unified_conf=unified_conf, param_name=Context.CTX_STORAGE,
-            public=True)
-
-    def _conf(self, *args, **kwargs):
-
-        result = super(Context, self)._conf(*args, **kwargs)
-
-        result.add_unified_category(
-            name=Context.CATEGORY,
-            new_content=Parameter(Context.CTX_STORAGE, self.ctx_storage))
-
-        return result
-
-    @staticmethod
-    def get_element_id(*context_elements):
-        """
-        Get element id from information context
-        """
-
-        md5_result = md5()
-
-        # remove None values from context_elements
-        context_elements = [ce for ce in context_elements if ce is not None]
-
-        for context_element in context_elements:
-            if context_element is None:
-                break
-            md5_result.update(context_element.encode('ascii', 'ignore'))
-
-        # resolve md5
-        result = md5_result.hexdigest()
-
-        return result
+        if Context.CTX_STORAGE in self:
+            self[Context.CTX_STORAGE].path = self.context

@@ -21,40 +21,39 @@
 
 from unittest import TestCase, main
 
-from canopsis.mongo.timed import TimedStorage
+from canopsis.mongo.timed import MongoTimedStorage
 from canopsis.timeserie.timewindow import TimeWindow
 
 
 class TimedStorageTest(TestCase):
     """
-    TimedStorage UT on data_type = "test_store"
+    MongoTimedStorage UT on data_type = "test_store"
     """
 
     def setUp(self):
-        # create a store on test_store collections
-        self.store = TimedStorage(data_type="test_store", safe=True)
-        self.store.connect()
+        # create a storage on test_store collections
+        self.storage = MongoTimedStorage(data_scope="test_store", safe=True)
 
     def test_connect(self):
-        self.assertTrue(self.store.connected())
+        self.assertTrue(self.storage.connected())
 
-        self.store.disconnect()
+        self.storage.disconnect()
 
-        self.assertFalse(self.store.connected())
+        self.assertFalse(self.storage.connected())
 
-        self.store.connect()
+        self.storage.connect()
 
-        self.assertTrue(self.store.connected())
+        self.assertTrue(self.storage.connected())
 
     def test_CRUD(self):
 
         data_id = 'test_store_id'
 
         # start in droping data
-        self.store.drop()
+        self.storage.drop()
 
         # ensure count is 0
-        count = self.store.count(data_id=data_id)
+        count = self.storage.count(data_id=data_id)
         self.assertEquals(count, 0)
 
         # let's play with different data_names
@@ -75,31 +74,31 @@ class TimedStorageTest(TestCase):
 
         for timestamp in timestamps:
             # add a document at starting time window
-            self.store.put(data_id=data_id, value=meta, timestamp=timestamp)
+            self.storage.put(data_id=data_id, value=meta, timestamp=timestamp)
 
         # check for count equals 5
-        count = self.store.count(data_id=data_id)
+        count = self.storage.count(data_id=data_id)
         self.assertEquals(count, 2)
 
         # check for_data before now
-        data = self.store.get(data_ids=[data_id])
+        data = self.storage.get(data_ids=[data_id])
         self.assertEquals(len(data[data_id]), 2)
 
         # check for data inside timewindow and just before
-        data = self.store.get(data_ids=[data_id], timewindow=timewindow)
+        data = self.storage.get(data_ids=[data_id], timewindow=timewindow)
         self.assertEquals(len(data), 1)
 
         # remove data inside timewindow
-        self.store.remove(data_ids=[data_id], timewindow=timewindow)
+        self.storage.remove(data_ids=[data_id], timewindow=timewindow)
         # check for data outside timewindow
-        count = self.store.count(data_id=data_id)
+        count = self.storage.count(data_id=data_id)
         self.assertEquals(
             count, len(before_timewindow) + len(after_timewindow))
 
         # remove all data
-        self.store.remove(data_ids=[data_id])
+        self.storage.remove(data_ids=[data_id])
         # check for count equals 0
-        count = self.store.count(data_id=data_id)
+        count = self.storage.count(data_id=data_id)
         self.assertEquals(count, 0)
 
 if __name__ == '__main__':

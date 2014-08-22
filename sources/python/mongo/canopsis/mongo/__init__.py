@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #--------------------------------
 # Copyright (c) 2014 "Capensis" [http://www.capensis.com]
@@ -22,8 +21,9 @@
 __version__ = '0.1'
 
 from canopsis.storage import Storage, DataBase
+from canopsis.common.utils import isiterable
 
-from pymongo import MongoClient, ASCENDING
+from pymongo import MongoClient
 
 from pymongo.errors import TimeoutError, OperationFailure, ConnectionFailure,\
     DuplicateKeyError
@@ -41,75 +41,72 @@ class MongoDataBase(DataBase):
         super(MongoDataBase, self).__init__(
             port=port, host=host, *args, **kwargs)
 
-    def connect(self, *args, **kwargs):
+    def _connect(self, *args, **kwargs):
 
-        if not self.connected():
+        result = None
 
-            connection_args = {}
+        connection_args = {}
 
-            # if self host is given
-            if self.host:
-                connection_args['host'] = self.host
+        # if self host is given
+        if self.host:
+            connection_args['host'] = self.host
 
-            if self.port:
-                connection_args['port'] = self.port
+        if self.port:
+            connection_args['port'] = self.port
 
-            self.logger.debug('Trying to connect to %s' % (connection_args))
+        self.logger.debug('Trying to connect to %s' % (connection_args))
 
-            connection_args['j'] = self.journaling
-            connection_args['w'] = 1 if self.safe else 0
+        connection_args['j'] = self.journaling
+        connection_args['w'] = 1 if self.safe else 0
 
-            if self.ssl:
-                connection_args.update({
-                    'ssl': self.ssl,
-                    'ssl_keyfile': self.ssl_key,
-                    'ssl_certfile': self.ssl_cert
-                })
+        if self.ssl:
+            connection_args.update({
+                'ssl': self.ssl,
+                'ssl_keyfile': self.ssl_key,
+                'ssl_certfile': self.ssl_cert
+            })
 
-            try:
-                self._conn = MongoClient(**connection_args)
+        try:
+            result = MongoClient(**connection_args)
+        except ConnectionFailure as e:
+            self.logger.error(
+                'Raised {2} during connection attempting to {0}:{1}.'.
+                format(self.host, self.port, e))
 
-            except ConnectionFailure as e:
-                self.logger.error(
-                    'Raised {2} during connection attempting to {0}:{1}.'.
-                    format(self.host, self.port, e))
+        else:
+            self._database = result[self.db]
 
-            else:
-                self._database = self._conn[self.db]
+            if (self.user, self.pwd) != (None, None):
 
-                if (self.user, self.pwd) != (None, None):
+                authenticate = self._database.authenticate(
+                    self.user, self.pwd)
 
-                    authenticate = self._database.authenticate(
-                        self.user, self.pwd)
-                    if authenticate:
-                        self.logger.info("Connected on {0}:{1}".format(
-                            self.host, self.port))
-                        self._connected = True
-
-                    else:
-                        self.logger.error(
-                            'Impossible to authenticate {0} on {1}:{2}'.format(
-                                self.host, self.port))
-                        self.disconnect()
-
-                else:
-                    self._connected = True
-                    self.logger.debug("Connected on {0}:{1}".format(
+                if authenticate:
+                    self.logger.info("Connected on {0}:{1}".format(
                         self.host, self.port))
 
-        return self.connected()
+                else:
+                    self.logger.error(
+                        'Impossible to authenticate {0} on {1}:{2}'.format(
+                            self.host, self.port))
+                    self.disconnect()
+                    result = None
 
-    def disconnect(self, *args, **kwargs):
+            else:
+                self.logger.debug("Connected on {0}:{1}".format(
+                    self.host, self.port))
 
-        if getattr(self, '_conn', None)is not None:
+        return result
+
+    def _disconnect(self, *args, **kwargs):
+
+        if self._conn is not None:
             self._conn.close()
             self._conn = None
 
-        self._connected = False
-
     def connected(self, *args, **kwargs):
 
-        result = getattr(self, '_conn', None) is not None
+        result = self._conn is not None and self._conn.alive()
 
         return result
 
@@ -162,25 +159,38 @@ class MongoDataBase(DataBase):
         return result
 
 
-class Storage(MongoDataBase, Storage):
+class MongoStorage(MongoDataBase, Storage):
 
-    def __init__(self, data_type, *args, **kwargs):
+    __register__ = True  #: register this class to middleware
+    __protocol__ = 'mongodb'  #: register this class to the protocol mongodb
 
-        super(Storage, self).__init__(
-            data_type=data_type, *args, **kwargs)
+    ID = '_id'  #: ID mongo
 
-    def connect(self, *args, **kwargs):
+    @property
+    def indexes(self):
+        if not hasattr(self, '_indexes'):
+            self._indexes = []
+        return self._indexes
 
-        result = super(Storage, self).connect(*args, **kwargs)
+    @indexes.setter
+    def indexes(self, value):
+        self._indexes = value
+        self.reconnect()
+
+    def _connect(self, *args, **kwargs):
+
+        result = super(MongoStorage, self)._connect(*args, **kwargs)
 
         if result:
-            indexes = self._get_indexes()
-
+            self._indexes = self._get_indexes()
             table = self.get_table()
             self._backend = self._database[table]
 
-            for index in indexes:
-                self._backend.ensure_index(index)
+            for index in self.indexes:
+                try:
+                    self._backend.ensure_index(index)
+                except Exception as e:
+                    self.logger.error(e)
 
         return result
 
@@ -189,44 +199,95 @@ class Storage(MongoDataBase, Storage):
         Drop self table.
         """
 
-        super(Storage, self).drop(table=self.get_table(), *args, **kwargs)
+        super(MongoStorage, self).drop(table=self.get_table(), *args, **kwargs)
 
     def get_elements(
-        self, ids=None, limit=0, skip=0, sort=None, *args, **kwargs
+        self, ids=None, query=None, limit=0, skip=0, sort=None, *args, **kwargs
     ):
 
-        query = {}
-        count_opt = False
+        _query = {} if query is None else query.copy()
+
+        one_element = False
 
         if ids is not None:
-            query['_id'] = {'$in': ids}
+            if isiterable(ids, is_str=False):
+                _query[MongoStorage.ID] = {'$in': ids}
 
-        cursor = self._find(query)
+            else:
+                one_element = True
+                _query[MongoStorage.ID] = ids
 
+        cursor = self._find(_query)
+
+        # set limit, skip and sort properties
         if limit:
             cursor.limit(limit)
-            count_opt = True
         if skip:
             cursor.skip(skip)
-            count_opt = True
         if sort is not None:
-            Storage._update_sort(sort)
+            MongoStorage._update_sort(sort)
             cursor.sort(sort)
 
-        # Return the element if only one element was requested
-        # Otherwise, return a list of the requested elements
-        cursor = None if not cursors.count(count_opt) else cursor
-        result = cursor if len(ids) == 1 else list(cursor)
+        # set hint property
+        if _query:
+            index = None
+            query_len = len(_query)
+            # find the right index
+            max_correspondance = 0
+            # iterate on all indexes
+            for self_index in self.indexes:
+                # find the higher correspondance score
+                correspondance = 0
+                for index_value in self_index:
+                    if index_value[0] in _query:
+                        correspondance += 1
+                    else:
+                        break
+                # increment an old score if a new one is better
+                if correspondance > max_correspondance:
+                    index = self_index
+                    max_correspondance = correspondance
+
+                # ends if correspondance equals len(query)
+                if correspondance == query_len:
+                    break
+
+            # set index only if index has been found
+            if index is not None:
+                cursor.hint(index)
+
+        # TODO: enrich a cursor with methods to use it such as a tuple
+        result = list(cursor)
+
+        if one_element:
+            if result:
+                result = result[0]
+            else:
+                result = None
 
         return result
 
+    def find_elements(
+        self, query, limit=0, skip=0, sort=None, *args, **kwargs
+    ):
+
+        return self.get_elements(
+            query=query, limit=limit, skip=skip, sort=sort)
+
     def remove_elements(self, ids, *args, **kwargs):
 
-        self._remove({'_id': {'$in': ids}})
+        if isiterable(ids, is_str=False):
+            query = {MongoStorage.ID: {'$in': ids}}
+        else:
+            query = ids
+
+        self._remove(query)
 
     def put_element(self, _id, element, *args, **kwargs):
 
-        self._update(_id={'_id': _id}, document={'$set': element}, multi=False)
+        self._update(
+            _id={MongoStorage.ID: _id}, document={'$set': element},
+            multi=False)
 
     def bool_compare_and_swap(self, _id, oldvalue, newvalue):
 
@@ -237,7 +298,7 @@ class Storage(MongoDataBase, Storage):
         try:
             result = self._run_command(
                 'find_and_modify',
-                query={'_id': _id, 'value': oldvalue},
+                query={MongoStorage.ID: _id, 'value': oldvalue},
                 update={'$set': {'value': newvalue}},
                 upsert=True)
 
@@ -248,7 +309,7 @@ class Storage(MongoDataBase, Storage):
 
     def _element_id(self, element):
 
-        return element['_id']
+        return element[MongoStorage.ID]
 
     def _get_indexes(self):
         """
@@ -256,7 +317,7 @@ class Storage(MongoDataBase, Storage):
         """
 
         result = [
-            [('_id', ASCENDING)]
+            [(MongoStorage.ID, 1)]
         ]
 
         return result
@@ -288,30 +349,40 @@ class Storage(MongoDataBase, Storage):
 
         return result
 
-    def _insert(self, document):
+    def _insert(self, document, **kwargs):
 
-        result = self._run_command(command='insert', doc_or_docs=document)
+        result = self._run_command(
+            command='insert', doc_or_docs=document, **kwargs)
 
         return result
 
-    def _update(self, _id, document, multi=True):
+    def _update(self, _id, document, multi=True, **kwargs):
 
         result = self._run_command(
             command='update', spec=_id, document=document,
-            upsert=True, multi=multi)
+            upsert=True, multi=multi, **kwargs)
 
         return result
 
-    def _find(self, document=None, projection=None):
+    def _find(self, document=None, projection=None, **kwargs):
 
         result = self._run_command(command='find', spec=document,
-            projection=projection)
+            projection=projection, **kwargs)
 
         return result
 
-    def _remove(self, document):
+    def _remove(self, document, **kwargs):
 
-        result = self._run_command(command='remove', spec_or_id=document)
+        result = self._run_command(
+            command='remove', spec_or_id=document, **kwargs)
+
+        return result
+
+    def _count(self, document=None, **kwargs):
+
+        cursor = self._find(document=document, **kwargs)
+
+        result = cursor.count(False)
 
         return result
 
@@ -329,19 +400,21 @@ class Storage(MongoDataBase, Storage):
         result = None
 
         try:
-            backend_command = getattr(self._backend, command)
-            result = backend_command(w=1 if self.safe else 0,
-                wtimeout=self.wtimeout, **kwargs)
+            backend = self._get_backend(backend=self.get_table())
+            backend_command = getattr(backend, command)
+            w = 1 if self.safe else 0
+            result = backend_command(w=w, wtimeout=self.out_timeout, **kwargs)
 
             self._manage_query_error(result)
 
         except TimeoutError:
             self.logger.warning(
                 'Try to run command {0}({1}) on {2} attempts left'
-                .format(command, kwargs, self._backend))
+                .format(command, kwargs, backend))
 
         except OperationFailure as of:
+            print 'fail'
             self.logger.error('{0} during running command {1}({2}) of in {3}'
-                .format(of, command, kwargs, self._backend))
+                .format(of, command, kwargs, backend))
 
         return result

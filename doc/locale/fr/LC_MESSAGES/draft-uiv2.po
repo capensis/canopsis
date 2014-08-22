@@ -1,0 +1,530 @@
+# 
+msgid ""
+msgstr ""
+"Project-Id-Version: canopsis Ficus\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2014-08-20 15:00+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: ../../draft-uiv2/index.rst:2
+msgid "UI v2 Draft"
+msgstr ""
+
+#: ../../draft-uiv2/index.rst:4
+msgid "Contents:"
+msgstr ""
+
+#: ../../draft-uiv2/specifications/models.rst:2
+msgid "Models"
+msgstr ""
+
+#: ../../draft-uiv2/specifications/models.rst:5
+msgid "Class diagrams"
+msgstr ""
+
+#: ../../draft-uiv2/specifications/models.rst:8
+msgid "Views"
+msgstr ""
+
+#: ../../draft-uiv2/specifications/scenario-steps.rst:2
+msgid "Scenario steps specifications"
+msgstr ""
+
+#: ../../draft-uiv2/specifications/scenario-steps.rst:5
+msgid "Definition"
+msgstr ""
+
+#: ../../draft-uiv2/specifications/scenario-steps.rst:7
+msgid ""
+"Scenario steps represents interaction points that the user or an automated "
+"machine might want to trigger to access features all across the UI."
+msgstr ""
+
+#: ../../draft-uiv2/specifications/scenario-steps.rst:9
+msgid "These steps might be represented as routes or as actions."
+msgstr ""
+
+#: ../../draft-uiv2/specifications/scenario-steps.rst:12
+msgid "Routes"
+msgstr ""
+
+#: ../../draft-uiv2/specifications/scenario-steps.rst:14
+msgid ""
+"When a route is accessed, the current page change and the url is set to the "
+"corresponding path. These are for scenario steps that are designed to have a"
+" state which is fully stored via an url, and that are most important than "
+"other scenario steps."
+msgstr ""
+
+#: ../../draft-uiv2/specifications/scenario-steps.rst:16
+msgid "A route change involve a change of the view presented to the user."
+msgstr ""
+
+#: ../../draft-uiv2/specifications/scenario-steps.rst:19
+msgid "Actions"
+msgstr ""
+
+#: ../../draft-uiv2/specifications/scenario-steps.rst:21
+msgid ""
+"Actions are scenario steps in a particular view. They do not involve a view "
+"change. It's mostly for representating a change inside of the view. They "
+"trigger an action method on the current view controller."
+msgstr ""
+
+#: ../../draft-uiv2/specifications/scenario-steps.rst:25
+msgid "Main steps"
+msgstr ""
+
+#: ../../draft-uiv2/specifications/scenario-steps.rst:28
+#: ../../draft-uiv2/specifications/scenario-steps.rst:99
+#: ../../draft-uiv2/specifications/scenario-steps.rst:116
+msgid "Step Type"
+msgstr ""
+
+#: ../../draft-uiv2/specifications/scenario-steps.rst:28
+#: ../../draft-uiv2/specifications/scenario-steps.rst:99
+#: ../../draft-uiv2/specifications/scenario-steps.rst:116
+msgid "URL"
+msgstr ""
+
+#: ../../draft-uiv2/specifications/scenario-steps.rst:28
+#: ../../draft-uiv2/specifications/scenario-steps.rst:99
+#: ../../draft-uiv2/specifications/scenario-steps.rst:116
+msgid "Model"
+msgstr ""
+
+#: ../../draft-uiv2/specifications/scenario-steps.rst:28
+#: ../../draft-uiv2/specifications/scenario-steps.rst:99
+#: ../../draft-uiv2/specifications/scenario-steps.rst:116
+msgid "Comments"
+msgstr ""
+
+#: ../../draft-uiv2/specifications/scenario-steps.rst:30
+msgid "**Login steps**"
+msgstr ""
+
+#: ../../draft-uiv2/specifications/scenario-steps.rst:32
+#: ../../draft-uiv2/specifications/scenario-steps.rst:34
+msgid "Route"
+msgstr ""
+
+#: ../../draft-uiv2/specifications/scenario-steps.rst:32
+#: ../../draft-uiv2/specifications/scenario-steps.rst:101
+#: ../../draft-uiv2/specifications/scenario-steps.rst:118
+msgid "/"
+msgstr ""
+
+#: ../../draft-uiv2/specifications/scenario-steps.rst:32
+msgid "welcome screen"
+msgstr ""
+
+#: ../../draft-uiv2/specifications/scenario-steps.rst:34
+msgid "Login"
+msgstr ""
+
+#: ../../draft-uiv2/specifications/scenario-steps.rst:36
+#: ../../draft-uiv2/specifications/scenario-steps.rst:40
+#: ../../draft-uiv2/specifications/scenario-steps.rst:42
+#: ../../draft-uiv2/specifications/scenario-steps.rst:44
+#: ../../draft-uiv2/specifications/scenario-steps.rst:46
+#: ../../draft-uiv2/specifications/scenario-steps.rst:48
+#: ../../draft-uiv2/specifications/scenario-steps.rst:50
+#: ../../draft-uiv2/specifications/scenario-steps.rst:52
+#: ../../draft-uiv2/specifications/scenario-steps.rst:54
+#: ../../draft-uiv2/specifications/scenario-steps.rst:56
+#: ../../draft-uiv2/specifications/scenario-steps.rst:58
+#: ../../draft-uiv2/specifications/scenario-steps.rst:62
+#: ../../draft-uiv2/specifications/scenario-steps.rst:64
+#: ../../draft-uiv2/specifications/scenario-steps.rst:66
+#: ../../draft-uiv2/specifications/scenario-steps.rst:68
+#: ../../draft-uiv2/specifications/scenario-steps.rst:70
+#: ../../draft-uiv2/specifications/scenario-steps.rst:76
+#: ../../draft-uiv2/specifications/scenario-steps.rst:78
+#: ../../draft-uiv2/specifications/scenario-steps.rst:82
+#: ../../draft-uiv2/specifications/scenario-steps.rst:84
+#: ../../draft-uiv2/specifications/scenario-steps.rst:86
+#: ../../draft-uiv2/specifications/scenario-steps.rst:88
+#: ../../draft-uiv2/specifications/scenario-steps.rst:101
+#: ../../draft-uiv2/specifications/scenario-steps.rst:103
+#: ../../draft-uiv2/specifications/scenario-steps.rst:118
+#: ../../draft-uiv2/specifications/scenario-steps.rst:122
+msgid "AuthenticatedRoute"
+msgstr ""
+
+#: ../../draft-uiv2/specifications/scenario-steps.rst:36
+msgid "Logout"
+msgstr ""
+
+#: ../../draft-uiv2/specifications/scenario-steps.rst:38
+msgid "**Build menu steps**"
+msgstr ""
+
+#: ../../draft-uiv2/specifications/scenario-steps.rst:40
+msgid "build/Accounts"
+msgstr ""
+
+#: ../../draft-uiv2/specifications/scenario-steps.rst:40
+#: ../../draft-uiv2/specifications/scenario-steps.rst:42
+#: ../../draft-uiv2/specifications/scenario-steps.rst:44
+#: ../../draft-uiv2/specifications/scenario-steps.rst:46
+#: ../../draft-uiv2/specifications/scenario-steps.rst:48
+#: ../../draft-uiv2/specifications/scenario-steps.rst:50
+#: ../../draft-uiv2/specifications/scenario-steps.rst:52
+#: ../../draft-uiv2/specifications/scenario-steps.rst:54
+#: ../../draft-uiv2/specifications/scenario-steps.rst:56
+#: ../../draft-uiv2/specifications/scenario-steps.rst:58
+#: ../../draft-uiv2/specifications/scenario-steps.rst:64
+#: ../../draft-uiv2/specifications/scenario-steps.rst:66
+#: ../../draft-uiv2/specifications/scenario-steps.rst:68
+#: ../../draft-uiv2/specifications/scenario-steps.rst:70
+#: ../../draft-uiv2/specifications/scenario-steps.rst:78
+#: ../../draft-uiv2/specifications/scenario-steps.rst:82
+#: ../../draft-uiv2/specifications/scenario-steps.rst:84
+#: ../../draft-uiv2/specifications/scenario-steps.rst:96
+msgid "crecords-route"
+msgstr ""
+
+#: ../../draft-uiv2/specifications/scenario-steps.rst:42
+msgid "build/Groups"
+msgstr ""
+
+#: ../../draft-uiv2/specifications/scenario-steps.rst:44
+msgid "build/Curves"
+msgstr ""
+
+#: ../../draft-uiv2/specifications/scenario-steps.rst:46
+msgid "build/Selectors"
+msgstr ""
+
+#: ../../draft-uiv2/specifications/scenario-steps.rst:48
+msgid "build/Filter-rules"
+msgstr ""
+
+#: ../../draft-uiv2/specifications/scenario-steps.rst:50
+msgid "build/Topologies"
+msgstr ""
+
+#: ../../draft-uiv2/specifications/scenario-steps.rst:52
+msgid "build/Consolidations"
+msgstr ""
+
+#: ../../draft-uiv2/specifications/scenario-steps.rst:54
+msgid "build/Perfdatas"
+msgstr ""
+
+#: ../../draft-uiv2/specifications/scenario-steps.rst:56
+msgid "build/SLA"
+msgstr ""
+
+#: ../../draft-uiv2/specifications/scenario-steps.rst:58
+msgid "build/ack-comments"
+msgstr ""
+
+#: ../../draft-uiv2/specifications/scenario-steps.rst:60
+msgid "**Run menu steps**"
+msgstr ""
+
+#: ../../draft-uiv2/specifications/scenario-steps.rst:62
+msgid "run/userviews"
+msgstr ""
+
+#: ../../draft-uiv2/specifications/scenario-steps.rst:62
+msgid "userviews-route"
+msgstr ""
+
+#: ../../draft-uiv2/specifications/scenario-steps.rst:64
+msgid "run/components"
+msgstr ""
+
+#: ../../draft-uiv2/specifications/scenario-steps.rst:66
+msgid "run/resources"
+msgstr ""
+
+#: ../../draft-uiv2/specifications/scenario-steps.rst:68
+msgid "run/derogations"
+msgstr ""
+
+#: ../../draft-uiv2/specifications/scenario-steps.rst:68
+#: ../../draft-uiv2/specifications/scenario-steps.rst:70
+msgid "Shouldn't this be in build?"
+msgstr ""
+
+#: ../../draft-uiv2/specifications/scenario-steps.rst:70
+msgid "run/statemaps"
+msgstr ""
+
+#: ../../draft-uiv2/specifications/scenario-steps.rst:72
+msgid "**Report menu steps**"
+msgstr ""
+
+#: ../../draft-uiv2/specifications/scenario-steps.rst:74
+#: ../../draft-uiv2/specifications/scenario-steps.rst:80
+#: ../../draft-uiv2/specifications/scenario-steps.rst:105
+#: ../../draft-uiv2/specifications/scenario-steps.rst:107
+#: ../../draft-uiv2/specifications/scenario-steps.rst:109
+#: ../../draft-uiv2/specifications/scenario-steps.rst:128
+#: ../../draft-uiv2/specifications/scenario-steps.rst:130
+#: ../../draft-uiv2/specifications/scenario-steps.rst:134
+#: ../../draft-uiv2/specifications/scenario-steps.rst:136
+#: ../../draft-uiv2/specifications/scenario-steps.rst:140
+msgid "MMenuAction"
+msgstr ""
+
+#: ../../draft-uiv2/specifications/scenario-steps.rst:74
+msgid "report/export-active-view"
+msgstr ""
+
+#: ../../draft-uiv2/specifications/scenario-steps.rst:76
+msgid "report/schedule-active-view-export"
+msgstr ""
+
+#: ../../draft-uiv2/specifications/scenario-steps.rst:76
+msgid "Shortcut to report/schedules/add"
+msgstr ""
+
+#: ../../draft-uiv2/specifications/scenario-steps.rst:78
+msgid "report/schedules"
+msgstr ""
+
+#: ../../draft-uiv2/specifications/scenario-steps.rst:80
+msgid "report/toggle-live-reporting"
+msgstr ""
+
+#: ../../draft-uiv2/specifications/scenario-steps.rst:82
+msgid "report/event-navigation"
+msgstr ""
+
+#: ../../draft-uiv2/specifications/scenario-steps.rst:82
+msgid "No new, update, delete subroute"
+msgstr ""
+
+#: ../../draft-uiv2/specifications/scenario-steps.rst:84
+msgid "report/briefcase"
+msgstr ""
+
+#: ../../draft-uiv2/specifications/scenario-steps.rst:86
+msgid "options/profile"
+msgstr ""
+
+#: ../../draft-uiv2/specifications/scenario-steps.rst:88
+msgid "options/start-view-rotation"
+msgstr ""
+
+#: ../../draft-uiv2/specifications/scenario-steps.rst:88
+msgid "the profile menu on UI v1"
+msgstr ""
+
+#: ../../draft-uiv2/specifications/scenario-steps.rst:93
+msgid "Routes Models"
+msgstr ""
+
+#: ../../draft-uiv2/specifications/scenario-steps.rst:101
+#: ../../draft-uiv2/specifications/scenario-steps.rst:118
+msgid "List all crecords"
+msgstr ""
+
+#: ../../draft-uiv2/specifications/scenario-steps.rst:103
+msgid "/search/:filter"
+msgstr ""
+
+#: ../../draft-uiv2/specifications/scenario-steps.rst:103
+msgid "Search all crecords"
+msgstr ""
+
+#: ../../draft-uiv2/specifications/scenario-steps.rst:105
+#: ../../draft-uiv2/specifications/scenario-steps.rst:120
+msgid "/new"
+msgstr ""
+
+#: ../../draft-uiv2/specifications/scenario-steps.rst:105
+msgid "Create new crecord"
+msgstr ""
+
+#: ../../draft-uiv2/specifications/scenario-steps.rst:107
+msgid "/:item-id/update"
+msgstr ""
+
+#: ../../draft-uiv2/specifications/scenario-steps.rst:107
+msgid "update one crecord"
+msgstr ""
+
+#: ../../draft-uiv2/specifications/scenario-steps.rst:109
+#: ../../draft-uiv2/specifications/scenario-steps.rst:126
+msgid "/:item-id/delete"
+msgstr ""
+
+#: ../../draft-uiv2/specifications/scenario-steps.rst:109
+#: ../../draft-uiv2/specifications/scenario-steps.rst:124
+msgid "delete one crecord"
+msgstr ""
+
+#: ../../draft-uiv2/specifications/scenario-steps.rst:113
+msgid "userview-route"
+msgstr ""
+
+#: ../../draft-uiv2/specifications/scenario-steps.rst:120
+msgid "Action?"
+msgstr ""
+
+#: ../../draft-uiv2/specifications/scenario-steps.rst:120
+msgid "Create new userview"
+msgstr ""
+
+#: ../../draft-uiv2/specifications/scenario-steps.rst:122
+msgid "/:item-id"
+msgstr ""
+
+#: ../../draft-uiv2/specifications/scenario-steps.rst:122
+msgid "display one userview"
+msgstr ""
+
+#: ../../draft-uiv2/specifications/scenario-steps.rst:124
+#: ../../draft-uiv2/specifications/scenario-steps.rst:126
+#: ../../draft-uiv2/specifications/scenario-steps.rst:132
+#: ../../draft-uiv2/specifications/scenario-steps.rst:138
+msgid "ImmediateAction"
+msgstr ""
+
+#: ../../draft-uiv2/specifications/scenario-steps.rst:124
+msgid "/:item-id/refresh"
+msgstr ""
+
+#: ../../draft-uiv2/specifications/scenario-steps.rst:128
+msgid "/:item-id/edit"
+msgstr ""
+
+#: ../../draft-uiv2/specifications/scenario-steps.rst:128
+msgid "Not only a MMenuAction, as it also acts on the opened view to toggle"
+msgstr ""
+
+#: ../../draft-uiv2/specifications/scenario-steps.rst:130
+msgid "/:item-id/edit/options"
+msgstr ""
+
+#: ../../draft-uiv2/specifications/scenario-steps.rst:130
+msgid "options of the current view"
+msgstr ""
+
+#: ../../draft-uiv2/specifications/scenario-steps.rst:132
+msgid "/:item-id/edit/add-widget"
+msgstr ""
+
+#: ../../draft-uiv2/specifications/scenario-steps.rst:132
+msgid "When the user drops a widget from the mmenu to the view"
+msgstr ""
+
+#: ../../draft-uiv2/specifications/scenario-steps.rst:134
+msgid "/:item-id/edit/widget/:widget-id/duplicate"
+msgstr ""
+
+#: ../../draft-uiv2/specifications/scenario-steps.rst:136
+msgid "/:item-id/edit/widget/:widget-id"
+msgstr ""
+
+#: ../../draft-uiv2/specifications/scenario-steps.rst:138
+msgid "/:item-id/edit/widget/:widget-id/delete"
+msgstr ""
+
+#: ../../draft-uiv2/specifications/scenario-steps.rst:140
+msgid "/:item-id/edit/widget/:widget-id/save-as-template"
+msgstr ""
+
+#: ../../draft-uiv2/specifications/scenario-steps.rst:140
+msgid "Store widget configuration in a store for later use"
+msgstr ""
+
+#: ../../draft-uiv2/specifications/workflows.rst:2
+msgid "Workflow"
+msgstr ""
+
+#: ../../draft-uiv2/specifications/workflows.rst:5
+msgid "Ticketing and incident"
+msgstr "Ticketing et incident"
+
+#: ../../draft-uiv2/specifications/workflows.rst:10
+msgid "Acknowledgement and cancellations"
+msgstr "Acquittement et annulations"
+
+#: ../../draft-uiv2/specifications/workflows.rst:14
+msgid ""
+"All actions **from UI** are triggered by action buttons witch sends the "
+"appropriate event to canopsis. **Sent events** are treaten by engines and "
+"enables acknowledgement and cancellation management."
+msgstr "Toutes les actions **provenant de l'interface utilisateur** sont "
+"déclenchées par des boutons d'action qui envoient l'évènement approprié à "
+"canopsis. **Les évènements envoyés** sont traités par les moteurs et "
+"permettent de gérer les acquittements et les annulations."
+
+#: ../../draft-uiv2/specifications/workflows.rst:15
+msgid ""
+"When an event changes to an alert, it is possible **to acknowlege** it. The "
+"acknowledgement engine is in charge to set the right acknowledgement "
+"information to the referenced event in the **ack field** such as `who`, "
+"`why` and `when` the acknowledgement was produced."
+msgstr "Quand un évènement se transforme en alerte, il est possible **de l'acquitter**. "
+"Le moteur d'acquittement est chargé d'enregistrer les informations d'acquittement dans "
+"l'évènement de référence. Ces informations sont stockées dans le **champ ack** et "
+"sauvegarde les informations telles que `qui` `quand` et `pourquoi` l'acquittement est produit."
+
+#: ../../draft-uiv2/specifications/workflows.rst:16
+msgid ""
+"Once acknowledged, the acknowledgement can be **removed** from the alert. "
+"This will put the event in the same **previous state** as before it was "
+"acknowledged."
+msgstr "Une fois acquitté, l'acquittement peut être **supprimé** de l'alerte. "
+"Cela à pour effet de mettre l'évènement dans **l'état précédent** dans lequel "
+"il était avant acquittement."
+
+#: ../../draft-uiv2/specifications/workflows.rst:17
+msgid ""
+"An acknowledged event can also be **canceled**. This action is managed by "
+"the cancel engine. The cancel action will store information about the `who`,"
+" `why` and `when` in the **cancel field** of the event. A canceled alert put"
+" the event in `cancel` status."
+msgstr "Un évènement acquitté peut également être **annulé**. Cette action est gérée "
+"par le moteur d'annulation. L'action d'annuler permet de stocker les informations de "
+"`qui`, `quand` et `pourquoi` dans le **champs cancel** de l'évènement. Un évènement "
+"annulé mets l'évènnement de référence en status `cancel`."
+
+#: ../../draft-uiv2/specifications/workflows.rst:18
+msgid ""
+"The `canceled` event can be `uncanceled`. This action leads to the previous "
+"acknowleged **status restoration** and `cancel` field deleted in the "
+"reference event."
+msgstr "Un évènement `annulé` peut être `déannulé`. Cette action conduit à la "
+"**restauration du status  précédent** et à la suppression du champs `cancel` dans "
+"l'évènement de référence."
+
+#: ../../draft-uiv2/specifications/workflows.rst:19
+msgid ""
+"All information about acknowledgement and cancelation are **kept** in logged"
+" event and **remains readable** from the history board."
+msgstr "Toutes les informations concernant les acquittements et les annulations "
+"**sont conservées** dans les évènements une fois que ceux-ci sont archivés. "
+"Il est donc **possible de les consulter** depuis le tableau de bord en mode `historique`."
+
+#: ../../draft-uiv2/specifications/workflows.rst:20
+msgid ""
+"If an event in `off` status comes to canopsis, the acknowledgement is "
+"**reseted** as it is considered as a solved alert. However, if the event was"
+" not in `on going` status at this moment, information about "
+"`acknowledgement` or `cancel` is kept into the event as the alert is "
+"**remains logicaly unsolved**."
+msgstr "Si un évènement en status `OFF` est émis dans canopsis, l'acquittement est "
+"**remis à zéro** étant donné la résolution d'alerte. Cependant, si l'évènement était "
+"dans un status différent de `En cours` à ce moment, alors les informations concernant "
+"`l'acquittement` ou `l'annulation` sont conservés dans l'évènement car l'alerte n'est "
+"**logiquement pas résolue**."
+
+#: ../../draft-uiv2/specifications/workflows.rst:23
+msgid "Events statuses information"
+msgstr "Information à propos des status d'évènements."
+
+#: ../../draft-uiv2/specifications/workflows.rst:25
+msgid "see : `statuses information </developper-guide/state-spec.html>`_"
+msgstr "voir : `information sur les status </developper-guide/state-spec.html>`_"

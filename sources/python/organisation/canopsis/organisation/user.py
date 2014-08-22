@@ -26,8 +26,8 @@ class User(Manager):
     def __init__(
         self,
         _id=None,
-        rights=None, role=None, profile=None,  # permission informations
-        contact=None, session=None,  # data information
+        rights=None, role=None, profile=None,
+        contact=None, session=None,
         groups=None
     ):
 
@@ -85,7 +85,7 @@ class User(Manager):
 
         # update the input profile
         if self.role is None or self.role['profile'] != profile:
-            self.role = dict()
+            self.role = {}
             self.role['profile'] = profile
 
         # update role relationships with input concrete_relationships

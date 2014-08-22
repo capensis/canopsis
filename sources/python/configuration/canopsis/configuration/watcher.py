@@ -29,8 +29,8 @@ from stat import ST_MTIME
 from os import stat
 from os.path import exists, expanduser
 
-from canopsis.configuration import \
-    Configuration, Parameter, Category, Configurable
+from .parameters import Configuration, Parameter, Category
+from .configurable import Configurable
 
 """
 Dictionary of (mtime, configurables) by configuration file.
@@ -106,7 +106,7 @@ class Watcher(Configurable):
     Watches all sleeping_time
     """
 
-    CONF_FILE = '~/etc/watcher.conf'
+    CONF_FILE = 'configuration/watcher.conf'
 
     CATEGORY = 'WATCHER'
     SLEEPING_TIME = 'sleeping_time'

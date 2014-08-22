@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #--------------------------------
 # Copyright (c) 2014 "Capensis" [http://www.capensis.com]
@@ -19,12 +18,12 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from canopsis.mongo import Storage
+from canopsis.mongo import MongoStorage
 from canopsis.storage.timed import TimedStorage
 from canopsis.timeserie.timewindow import get_offset_timewindow
 
 
-class TimedStorage(Storage, TimedStorage):
+class MongoTimedStorage(MongoStorage, TimedStorage):
 
     class Key:
 
@@ -33,25 +32,26 @@ class TimedStorage(Storage, TimedStorage):
         TIMESTAMP = 't'
 
     TIMESTAMP_BY_ID = \
-        [(Key.DATA_ID, Storage.ASC), (Key.TIMESTAMP, Storage.DESC)]
+        [(Key.DATA_ID, MongoStorage.ASC), (Key.TIMESTAMP, MongoStorage.DESC)]
 
     def get(
         self, data_ids, timewindow=None, limit=0, skip=0, sort=None,
         *args, **kwargs
     ):
 
-        result = dict()
+        result = {}
 
         # set a where clause for the search
         where = {
-                    TimedStorage.Key.DATA_ID: {'$in': data_ids}
+                    MongoTimedStorage.Key.DATA_ID: {'$in': data_ids}
                 }
 
         # if timewindow is not None, get latest timestamp before
         # timewindow.stop()
         if timewindow is not None:
             timestamp = timewindow.stop()
-            where[TimedStorage.Key.TIMESTAMP] = {'$lte': timewindow.stop()}
+            where[MongoTimedStorage.Key.TIMESTAMP] = {
+                '$lte': timewindow.stop()}
 
         # do the query
         cursor = self._find(document=where)
@@ -63,17 +63,17 @@ class TimedStorage(Storage, TimedStorage):
         if skip:
             cursor.skip(skip)
         if sort is not None:
-            Storage._update_sort(sort)
+            MongoStorage._update_sort(sort)
             cursor.sort(sort)
 
         # apply a specific index
-        cursor.hint(TimedStorage.TIMESTAMP_BY_ID)
+        cursor.hint(MongoTimedStorage.TIMESTAMP_BY_ID)
 
         # iterate on all documents
         for document in cursor:
-            timestamp = document[TimedStorage.Key.TIMESTAMP]
-            value = document[TimedStorage.Key.VALUE]
-            data_id = document[TimedStorage.Key.DATA_ID]
+            timestamp = document[MongoTimedStorage.Key.TIMESTAMP]
+            value = document[MongoTimedStorage.Key.VALUE]
+            data_id = document[MongoTimedStorage.Key.DATA_ID]
 
             # a value to get is composed of a timestamp, values and document id
             value_to_append = (timestamp, value, document['_id'])
@@ -93,11 +93,11 @@ class TimedStorage(Storage, TimedStorage):
     def count(self, data_id, *args, **kwargs):
 
         query = {
-            TimedStorage.Key.DATA_ID: data_id
+            MongoTimedStorage.Key.DATA_ID: data_id
         }
 
         cursor = self._find(document=query)
-        cursor.hint(TimedStorage.TIMESTAMP_BY_ID)
+        cursor.hint(MongoTimedStorage.TIMESTAMP_BY_ID)
         result = cursor.count()
 
         return result
@@ -112,33 +112,33 @@ class TimedStorage(Storage, TimedStorage):
         data_value = None
 
         if data:
-            data_value = data[data_id][0][TimedStorage.Index.VALUE]
+            data_value = data[data_id][0][MongoTimedStorage.Index.VALUE]
 
         if value != data_value:  # new entry to insert
 
             values_to_insert = {
-                    TimedStorage.Key.DATA_ID: data_id,
-                    TimedStorage.Key.TIMESTAMP: timestamp,
-                    TimedStorage.Key.VALUE: value
+                    MongoTimedStorage.Key.DATA_ID: data_id,
+                    MongoTimedStorage.Key.TIMESTAMP: timestamp,
+                    MongoTimedStorage.Key.VALUE: value
             }
             self._insert(document=values_to_insert)
 
     def remove(self, data_ids, timewindow=None, *args, **kwargs):
 
         where = {
-            TimedStorage.Key.DATA_ID: {'$in': data_ids}
+            MongoTimedStorage.Key.DATA_ID: {'$in': data_ids}
         }
 
         if timewindow is not None:
-            where[TimedStorage.Key.TIMESTAMP] = \
+            where[MongoTimedStorage.Key.TIMESTAMP] = \
                 {'$gte': timewindow.start(), '$lte': timewindow.stop()}
 
         self._remove(document=where)
 
     def _get_indexes(self):
 
-        result = super(TimedStorage, self)._get_indexes()
+        result = super(MongoTimedStorage, self)._get_indexes()
 
-        result.append(TimedStorage.TIMESTAMP_BY_ID)
+        result.append(MongoTimedStorage.TIMESTAMP_BY_ID)
 
         return result

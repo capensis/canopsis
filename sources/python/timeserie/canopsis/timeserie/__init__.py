@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #--------------------------------
 # Copyright (c) 2014 "Capensis" [http://www.capensis.com]
@@ -60,7 +59,7 @@ class TimeSerie(Configurable):
     VFILL = False
     VROUND_TIME = True
 
-    CONF_FILE = '~/etc/timeserie.conf'
+    CONF_FILE = 'timeserie/timeserie.conf'
 
     def __init__(
         self,

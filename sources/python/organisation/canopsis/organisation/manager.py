@@ -26,31 +26,31 @@ from canopsis.storage.manager import Manager
 
 class Organisation(Manager):
     """
-    Dedicated to manage accounts in Canopsis
+    Dedicated to manage users in Canopsis
     """
 
-    CONF_FILE = '~/etc/organisation.conf'
+    CONF_FILE = 'organisation/organisation.conf'
 
     CATEGORY = 'ORGANISATION'
 
-    ACCOUNT_STORAGE = 'account_storage'
-    GROUP_STORAGE = 'group_storage'
+    USER_STORAGE = 'user_storage'
+    RIGHT_STORAGE = 'right_storage'
     PROFILE_STORAGE = 'profile_storage'
-    RIGHTS_STORAGE = 'rights_storage'
-    DATA_STORAGE = 'data_storage'
 
     DATA_TYPE = 'organisation'
 
     LOGIN = 'login'
     PWD = 'pwd'
 
-    ACCOUNT_ID = 'account_id'
-    GROUP_ID = 'group_id'
-    PROFILE_ID = 'profile_id'
+    USER_ID = 'user_id'
     RIGHT_ID = 'right_id'
-    DATA_ID = 'data_id'
+    PROFILE_ID = 'profile_id'
 
     ID = 'id'
+
+    CHECKSUM = 'checksum'
+
+    CONTEXT = 'context'
 
     class Error(Exception):
         """
@@ -61,84 +61,73 @@ class Organisation(Manager):
     def __init__(
         self,
         data_type=DATA_TYPE,
-        account_storage=None, group_storage=None, profile_storage=None,
-        rights_storage=None, data_storage=None,
+        user_storage=None, right_storage=None, profile_storage=None,
+        group_storage=None,
         *args, **kwargs
     ):
 
         super(Organisation, self).__init__(
             data_type=data_type, *args, **kwargs)
 
-        self.account_storage = account_storage
-        self.group_storage = group_storage
-        self.profile_storage = profile_storage
-        self.rights_storage = rights_storage
-        self.data_storage = data_storage
+        self.user_storage = self.get_storage()
+        self.right_storage = self.get_storage()
+        self.profile_storage = self.get_storage()
+        self.group_storage = self.get_typed_storage()
 
     @property
-    def account_storage(self):
-        return self._account_storage
+    def user_storage(self):
 
-    @account_storage.setter
-    def account_storage(self, value):
-        self._account_storage = self._get_property_storage(value)
+        return self._user_storage
+
+    @user_storage.setter
+    def user_storage(self, value):
+
+        self._user_storage = self._get_property_storage(value)
 
     @property
-    def group_storage(self):
+    def right_storage(self):
+
         return self._group_storage
 
-    @group_storage.setter
-    def group_storage(self, value):
+    @right_storage.setter
+    def right_storage(self, value):
+
         self._group_storage = self._get_property_storage(value)
 
     @property
     def profile_storage(self):
+
         return self._profile_storage
 
     @profile_storage.setter
     def profile_storage(self, value):
+
         self._profile_storage = self._get_property_storage(value)
 
-    @property
-    def rights_storage(self):
-        return self._rights_storage
-
-    @rights_storage.setter
-    def rights_storage(self, value):
-        self._rights_storage = self._get_property_storage(value)
-
-    @property
-    def data_storage(self):
-        return self._data_storage
-
-    @data_storage.setter
-    def data_storage(self, value):
-        self._data_storage = self._get_property_storage(value)
-
-    def get_accounts(self, account_ids=None):
+    def get_users(self, user_ids=None):
         """
-            Get an accounts
+        Get an users
         """
 
-        result = self.account_storage.get(data_id=account_ids)
+        result = self.user_storage.get(data_id=user_ids)
 
         return result
 
-    def find_accounts(self, request, limit=0, skip=0, sort=None):
+    def find_users(self, request, limit=0, skip=0, sort=None):
         """
-            Find accounts which correspond to the input request
+        Find users which correspond to the input request
 
-            :type request: dict
+        :type request: dict
         """
 
-        result = self.account_storage.find_elements(
+        result = self.user_storage.find_elements(
             request=request, limit=limit, skip=skip, sort=sort)
 
         return result
 
-    def get_account(self, login, pwd):
+    def get_user(self, login, pwd):
         """
-            Get an account from a login and a password
+        Get an user from a login and a password.
         """
 
         crypted_pwd = md5(pwd)
@@ -146,35 +135,33 @@ class Organisation(Manager):
             Organisation.LOGIN: pwd,
             Organisation.PWD: crypted_pwd
         }
-        result = self.account_storage.find(request, limit=1)
+        result = self.user_storage.find(request, limit=1)
 
         return result
 
-    def update_account(self, account):
+    def update_user(self, user):
         """
-            Update an account
-        """
-
-        self.account_storage.update(
-            data_id=account[Organisation.ID],
-            value=account)
-
-    def remove_account(self, account_id):
-        """
-            Remove the account which is identified by the input account_id
+        Update an user.
         """
 
-        self.account_storage.remove(data_id=account_id)
+        self.user_storage.update(data_id=user[Organisation.ID], value=user)
+
+    def remove_users(self, user_ids):
+        """
+        Remove users identified by the input user_ids
+        """
+
+        self.user_storage.remove(data_ids=user_ids)
 
     def get_groups(self, group_ids):
         """
         """
 
-        result = self.group_storage.get(group_ids)
+        result = self.group_storage.get(data_ids=group_ids)
 
         return result
 
-    def find_groups(self, request, limit=0, skip=0, sort=None):
+    def find_groups(self, request, _type=None, limit=0, skip=0, sort=None):
 
         result = self.group_storage.find(request, limit, skip, sort)
 
@@ -184,15 +171,15 @@ class Organisation(Manager):
 
         self.group_storage.update(group_id, value)
 
-    def remove_groups(self, group_ids):
+    def remove_groups(self, group_ids=None, _type=None):
 
-        self.group_storage.remove(group_ids)
+        self.group_storage.remove(data_ids=group_ids, _type=_type)
 
     def get_profiles(self, profile_ids):
         """
         """
 
-        result = self.profile_storage.get(profile_ids)
+        result = self.profile_storage.get(data_ids=profile_ids)
 
         return result
 
@@ -204,17 +191,17 @@ class Organisation(Manager):
 
     def update_profile(self, profile_id, value):
 
-        self.profile_storage.update(profile_id, value)
+        self.profile_storage.update(data_id=profile_id, value=value)
 
     def remove_profiles(self, profile_ids):
 
-        self.profile_storage.remove(profile_ids)
+        self.profile_storage.remove(data_ids=profile_ids)
 
     def get_rights(self, right_ids):
         """
         """
 
-        result = self.right_storage.get(right_ids)
+        result = self.right_storage.get(data_ids=right_ids)
 
         return result
 
@@ -226,33 +213,18 @@ class Organisation(Manager):
 
     def update_right(self, right_id, value):
 
-        self.right_storage.update(right_id, value)
+        self.right_storage.update(data_id=right_id, value=value)
 
     def remove_rights(self, right_ids):
 
-        self.right_storage.remove(right_ids)
+        self.right_storage.remove(data_ids=right_ids)
 
-    def get_data(self, data_ids):
+    def check_rights(self, user, permission):
         """
+        Check whatever or not if user rights checked input permission
         """
 
-        result = self.data_storage.get(data_ids)
-
-        return result
-
-    def find_data(self, request, limit=0, skip=0, sort=None):
-
-        result = self.data_storage.find(request, limit, skip, sort)
-
-        return result
-
-    def update_data(self, data_id, value):
-
-        self.data_storage.update(data_id, value)
-
-    def remove_data(self, data_ids):
-
-        self.data_storage.remove(data_ids)
+        pass
 
     def _conf(self, *args, **kwargs):
 
@@ -261,11 +233,9 @@ class Organisation(Manager):
         result.add_unified_category(
             name=Organisation.CATEGORY,
             new_content=(
-                Parameter(Organisation.ACCOUNT_STORAGE),
-                Parameter(Organisation.GROUP_STORAGE),
-                Parameter(Organisation.PROFILE_STORAGE),
-                Parameter(Organisation.RIGHTS_STORAGE),
-                Parameter(Organisation.DATA_STORAGE)))
+                Parameter(Organisation.USER_STORAGE),
+                Parameter(Organisation.RIGHT_STORAGE),
+                Parameter(Organisation.PROFILE_STORAGE)))
 
         return result
 

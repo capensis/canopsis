@@ -21,31 +21,30 @@
 
 from unittest import TestCase, main
 
-from canopsis.mongo.periodic import PeriodicStorage
+from canopsis.mongo.periodic import MongoPeriodicStorage
 from canopsis.timeserie.timewindow import Period, TimeWindow
 
 
 class PeriodicStoreTest(TestCase):
 
     def setUp(self):
-        # create a store on test_store collections
-        self.store = PeriodicStorage(data_type="test_store", safe=True)
-        self.store.connect()
+        # create a storage on test_store collections
+        self.storage = MongoPeriodicStorage(data_scope="test_store", safe=True)
 
     def test_connect(self):
-        self.assertTrue(self.store.connected())
+        self.assertTrue(self.storage.connected())
 
-        self.store.disconnect()
+        self.storage.disconnect()
 
-        self.assertFalse(self.store.connected())
+        self.assertFalse(self.storage.connected())
 
-        self.store.connect()
+        self.storage.connect()
 
-        self.assertTrue(self.store.connected())
+        self.assertTrue(self.storage.connected())
 
     def test_CRUD(self):
         # start in droping data
-        self.store.drop()
+        self.storage.drop()
 
         # let's play with different data_names
         data_ids = ['m0', 'm1']
@@ -72,7 +71,7 @@ class PeriodicStoreTest(TestCase):
             for period in periods:
                 inserted_points[data_id][period] = points
                 # add documents
-                self.store.put(data_id=data_id, period=period, points=points)
+                self.storage.put(data_id=data_id, period=period, points=points)
 
         points_count_in_timewindow = len(
             [point for point in points if point[0] in timewindow])
@@ -83,19 +82,19 @@ class PeriodicStoreTest(TestCase):
 
             for period in periods:
 
-                count = self.store.count(data_id=data_id, period=period)
+                count = self.storage.count(data_id=data_id, period=period)
                 self.assertEquals(count, len(points))
 
-                count = self.store.count(
+                count = self.storage.count(
                     data_id=data_id,
                     period=period, timewindow=timewindow)
                 self.assertEquals(count, points_count_in_timewindow)
 
-                data = self.store.get(data_id=data_id, period=period)
+                data = self.storage.get(data_id=data_id, period=period)
                 self.assertEquals(len(data), len(points))
                 self.assertEquals(data, sorted_points)
 
-                data = self.store.get(
+                data = self.storage.get(
                     data_id=data_id,
                     period=period, timewindow=timewindow)
                 self.assertEquals(len(data), points_count_in_timewindow)
@@ -103,22 +102,22 @@ class PeriodicStoreTest(TestCase):
                     [point for point in sorted_points
                     if point[0] in timewindow])
 
-                self.store.remove(
+                self.storage.remove(
                     data_id=data_id,
                     period=period, timewindow=timewindow)
 
                 # check for count equals 1
-                count = self.store.count(
+                count = self.storage.count(
                     data_id=data_id,
                     period=period, timewindow=timewindow)
                 self.assertEquals(count, 0)
-                count = self.store.count(data_id=data_id, period=period)
+                count = self.storage.count(data_id=data_id, period=period)
                 self.assertEquals(
                     count, len(points) - points_count_in_timewindow)
 
-                self.store.remove(data_id=data_id, period=period)
+                self.storage.remove(data_id=data_id, period=period)
                 # check for count equals 0
-                count = self.store.count(data_id=data_id, period=period)
+                count = self.storage.count(data_id=data_id, period=period)
                 self.assertEquals(count, 0)
 
 if __name__ == '__main__':

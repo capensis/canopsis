@@ -1,0 +1,25 @@
+{
+	"type": "object",
+	"properties": {
+		"event_type": {
+			"enum": ["calendar"],
+			"required": true
+		},
+		"start": {
+			"type": "integer",
+			"required": true
+		},
+		"end": {
+			"type": "integer",
+			"required": true
+		},
+		"all_day": {
+			"type": "boolean",
+			"required": true
+		},
+		"output": {
+			"type": "string",
+			"required": true
+		}
+	}
+}

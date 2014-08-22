@@ -21,4 +21,15 @@
 __version__ = "0.1"
 
 from .configurable import Configurable
+from .configurable.manager import Manager
+from .configurable.decorator import conf_paths, add_category
 from .parameters import Configuration, Category, Parameter
+
+__all__ = [
+    'Configurable',
+    'Manager',
+    'conf_paths',
+    'add_category',
+    'Configuration',
+    'Category',
+    'Parameter']

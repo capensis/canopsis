@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #--------------------------------
 # Copyright (c) 2014 "Capensis" [http://www.capensis.com]
@@ -21,12 +20,8 @@
 
 from canopsis.common.utils import resolve_element, path
 
-from stat import ST_SIZE
-
-from os import stat
-from os.path import exists
-
-from canopsis.configuration import Configuration, Parameter, Category
+from canopsis.configuration.parameters import \
+    Configuration, Parameter, Category
 
 
 class MetaConfigurationManager(type):
@@ -69,57 +64,69 @@ class ConfigurationManager(object):
     """
     _MANAGERS = {}
 
-    def handle(self, conf_file, logger):
+    def handle(self, conf_path, logger):
         """
-        True iif input conf_file can be handled by self.
+        True iif input conf_path can be handled by self.
 
-        :return: True iif input conf_file can be handled by self.
+        :return: True iif input conf_path can be handled by self.
         :rtype: bool
         """
 
         conf_resource = self._get_conf_resource(
-            conf_file=conf_file, logger=logger)
+            conf_path=conf_path, logger=logger)
 
         result = conf_resource is not None
 
         return result
 
-    def get_configuration(self, conf_file, logger, conf=None, fill=False):
+    def exists(self, conf_path):
+        """
+        True if conf_path exist related to this manager behaviour.
+        """
+
+        raise NotImplementedError()
+
+    def get_configuration(
+        self, conf_path, logger, conf=None, fill=False, override=True
+    ):
         """
         Parse a configuration_files with input conf and returns
         parameters and errors by param name.
 
-        :param conf_file: conf file to parse and from get parameters
-        :type conf_file: str
+        :param conf_path: conf file to parse and from get parameters
+        :type conf_path: str
 
-        :param conf: conf to fill with conf_file values and
+        :param conf: conf to fill with conf_path values and
             conf param names.
         :type conf: canopsis.configuration.Configuration
 
         :param logger: logger to use in order to trace information/error
         :type logger: logging.Logger
 
-        :param fill: result is all conf_file content
+        :param fill: result is all conf_path content
         :type fill: bool
+
+        :param override: if True (by default), override self configuration
+        :type override: bool
         """
 
         conf_resource = None
 
         result = None
 
-        # ensure conf_file exists and is not empty.
-        if exists(conf_file) and stat(conf_file)[ST_SIZE]:
+        # ensure conf_path exists and is not empty.
+        if self.exists(conf_path):
 
             try:
                 # first, read conf file
                 conf_resource = self._get_conf_resource(
-                    conf_file=conf_file, logger=logger)
+                    conf_path=conf_path, logger=logger)
 
             except Exception as e:
                 # if an error occured, log it
                 logger.error(
-                    'Impossible to parse conf_file {0}: {1}'.format(
-                        conf_file, e))
+                    'Impossible to parse conf_path %s with %s: %s' % (
+                        conf_path, type(self), e))
 
             else:  # else process conf file
 
@@ -130,7 +137,7 @@ class ConfigurationManager(object):
                     else conf
 
                 # get generic logging message
-                log_message = '{0}/{{0}}/{{1}}'.format(conf_file)
+                log_message = '{0}/{{0}}/{{1}}'.format(conf_path)
 
                 if fill:
 
@@ -140,13 +147,12 @@ class ConfigurationManager(object):
                         category = result.setdefault(
                             category, Category(category))
 
-                        for param in self._get_parameters(
+                        for name in self._get_parameters(
                                 conf_resource=conf_resource,
                                 category=category,
                                 logger=logger):
 
-                            param = category.setdefault(
-                                param, Parameter(param))
+                            param = category.setdefault(name, Parameter(name))
 
                             value = self._get_value(
                                 conf_resource=conf_resource,
@@ -154,7 +160,9 @@ class ConfigurationManager(object):
                                 param=param,
                                 logger=logger)
 
-                            param.value = value
+                            if value not in (None, ''):
+                                if override or param.value in (None, ''):
+                                    param.value = value
 
                 else:
 
@@ -175,7 +183,8 @@ class ConfigurationManager(object):
                                     conf_resource=conf_resource,
                                     category=category,
                                     param=param,
-                                        logger=logger):
+                                    logger=logger
+                                ):
 
                                     # construct generic log message for each
                                     # name
@@ -190,7 +199,9 @@ class ConfigurationManager(object):
                                         param=param,
                                         logger=logger)
 
-                                    param.value = value
+                                    if override \
+                                            or param.value not in (None, ''):
+                                        param.value = value
 
                                     # if an exception occured
                                     if isinstance(param.value, Exception):
@@ -206,14 +217,14 @@ class ConfigurationManager(object):
 
         return result
 
-    def set_configuration(self, conf_file, conf, logger):
+    def set_configuration(self, conf_path, conf, logger):
         """
-        Set input conf in input conf_file.
+        Set input conf in input conf_path.
 
-        :param conf_file:
-        :type conf_file: str
+        :param conf_path:
+        :type conf_path: str
 
-        :param conf: conf to write in conf_file.
+        :param conf: conf to write to conf_path.
         :type conf: canopsis.configuration.Configuration
 
         :param logger: used to log info/errors
@@ -225,17 +236,17 @@ class ConfigurationManager(object):
 
         try:  # get conf_resource
             conf_resource = self._get_conf_resource(
-                conf_file=conf_file,
+                conf_path=conf_path,
                 logger=logger)
 
         except Exception as e:
             # if an error occured, stop processing
             logger.error(
-                'Impossible to parse conf_file {0}: {1}'.format(
-                    conf_file, e))
+                'Impossible to parse conf_path {0}: {1}'.format(
+                    conf_path, e))
             result = e
 
-        # if conf_file can not be loaded, get default config resource
+        # if conf_path can not be loaded, get default config conf_resource
         if conf_resource is None:
 
             conf_resource = self._get_conf_resource(logger=logger)
@@ -259,9 +270,8 @@ class ConfigurationManager(object):
                     logger=logger)
 
         # write conf_resource in conf file
-        self._update_conf_file(
-            conf_resource=conf_resource,
-            conf_file=conf_file)
+        self._update_conf_resource(
+            conf_resource=conf_resource, conf_path=conf_path)
 
         return result
 
@@ -322,19 +332,19 @@ class ConfigurationManager(object):
 
         raise NotImplementedError()
 
-    def _get_conf_resource(self, logger, conf_file=None):
+    def _get_conf_resource(self, logger, conf_path=None):
         """
-        Get config resource.
+        Get config conf_resource.
 
-        :param conf_file: if not None, the config resource is \
-            conf_file content.
-        :type conf_file: str
+        :param conf_path: if not None, the config conf_resource is \
+            conf_path content.
+        :type conf_path: str
 
         :param logger: logger used to log processing information
         :type logger: logging.Logger
 
-        :return: empty config resource if conf_file is None, else \
-            conf_file content.
+        :return: empty config conf_resource if conf_path is None, else \
+            conf_path content.
         """
 
         raise NotImplementedError()
@@ -360,9 +370,9 @@ class ConfigurationManager(object):
 
         raise NotImplementedError()
 
-    def _update_conf_file(self, conf_resource, conf_file):
+    def _update_conf_resource(self, conf_resource, conf_path):
         """
-        Write conf_resource into conf_file.
+        Write conf_resource into conf_path.
         """
 
         raise NotImplementedError()

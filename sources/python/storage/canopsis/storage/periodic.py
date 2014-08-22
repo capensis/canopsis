@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #--------------------------------
 # Copyright (c) 2014 "Capensis" [http://www.capensis.com]
@@ -27,18 +26,14 @@ class PeriodicStorage(Storage):
     Storage dedicated to manage periodic data.
     """
 
-    DATA_ID = 'data_id'
+    __datatype__ = 'periodic'
+
     TIMESTAMP = 'timestamp'
     VALUES = 'values'
     PERIOD = 'period'
     LAST_UPDATE = 'last_update'
 
-    class PeriodicStoreError(Exception):
-        pass
-
-    def count(
-        self, data_id, period, timewindow=None, *args, **kwargs
-    ):
+    def count(self, data_id, period, timewindow=None):
         """
         Get number of periodic documents for input data_id.
         """
@@ -56,10 +51,7 @@ class PeriodicStorage(Storage):
         raise NotImplementedError()
 
     def get(
-        self,
-        data_id, period, timewindow=None,
-        limit=0, skip=0, sort=None,
-        *args, **kwargs
+        self, data_id, period, timewindow=None, limit=0, skip=0, sort=None
     ):
         """
         Get a list of points.
@@ -67,7 +59,7 @@ class PeriodicStorage(Storage):
 
         raise NotImplementedError()
 
-    def put(self, data_id, period, points, *args, **kwargs):
+    def put(self, data_id, period, points):
         """
         Put periodic points in periodic collection with specific period values.
 
@@ -76,10 +68,7 @@ class PeriodicStorage(Storage):
 
         raise NotImplementedError()
 
-    def remove(
-        self, data_id, period=None, timewindow=None,
-        *args, **kwargs
-    ):
+    def remove(self, data_id, period=None, timewindow=None):
         """
         Remove periodic data related to data_id, timewindow and period.
         If timewindow is None, remove all periodic_data with input period.
@@ -87,7 +76,3 @@ class PeriodicStorage(Storage):
         """
 
         raise NotImplementedError()
-
-    def _get_storage_type(self):
-
-        return 'periodic'

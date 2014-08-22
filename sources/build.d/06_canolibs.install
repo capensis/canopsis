@@ -6,18 +6,24 @@ rm -f $LOG &> /dev/null
 PROJECTS[0]='common'
 PROJECTS[1]='configuration'
 PROJECTS[2]='timeserie'
-PROJECTS[3]='storage'
-PROJECTS[4]='context'
-PROJECTS[5]='perfdata'
-PROJECTS[6]='mongo'
-PROJECTS[7]='old'
-PROJECTS[8]='engines'
-PROJECTS[9]='connectors'
-PROJECTS[10]='tools'
-PROJECTS[11]='cli'
-PROJECTS[12]='topology'
-PROJECTS[13]='organisation'
-PROJECTS[14]='auth'
+PROJECTS[3]='rule'
+PROJECTS[4]='middleware'
+PROJECTS[5]='schema'
+PROJECTS[6]='rpc'
+PROJECTS[7]='mom'
+PROJECTS[8]='storage'
+PROJECTS[9]='mongo'
+PROJECTS[10]='kombu'
+PROJECTS[11]='context'
+PROJECTS[12]='perfdata'
+PROJECTS[13]='old'
+PROJECTS[14]='tools'
+PROJECTS[15]='engines'
+PROJECTS[16]='connectors'
+PROJECTS[17]='cli'
+PROJECTS[18]='topology'
+PROJECTS[19]='organisation'
+PROJECTS[20]='auth'
 
 function build(){
 	true
@@ -28,8 +34,8 @@ function install(){
     for project in "${PROJECTS[@]}"
     do
         echo "-- Install project: $project"
-        cd $SRC_PATH/python/$project
         export CPS_PREFIX="$PREFIX/etc/"
+        cd $SRC_PATH/python/$project
         python setup.py install >> $LOG 2>&1 || exit 1
     done
 
@@ -42,8 +48,8 @@ function update(){
     for project in "${PROJECTS[@]}"
     do
         echo "-- Update project: $project"
-        cd $SRC_PATH/python/$project
         export CPS_PREFIX="$PREFIX/etc/"
+        cd $SRC_PATH/python/$project
         python setup.py install --no-conf >> $LOG 2>&1 || exit 1
     done
 }

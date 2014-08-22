@@ -19,40 +19,46 @@
 # ---------------------------------
 
 
-class PermissionEntity(object):
+class RightEntity(object):
     """
-    Permission entity
+    Right entity
     """
 
-    def __init__(self, _id, name, *permissions):
+    def __init__(self, _id, name, *rights):
 
-        super(PermissionEntity, self).__init__()
+        super(RightEntity, self).__init__()
 
         self.name = name
         self.id = _id
-        self.permissions = permissions
+        self.rights = rights
 
 
-class Permission(object):
+class Right(object):
     """
     In charge of managing permission with an input permission value
     """
 
+    NONE = 0
     READ = 1
-    UPDATE = 2
-    DELETE = 3
-    CREATE = 4
+    UPDATE = READ << 1
+    DELETE = UPDATE << 1
+    CREATE = DELETE << 1
 
-    def __init__(self, _id, name, value, *args, **kwargs):
+    ALL = READ | UPDATE | DELETE | CREATE
 
-        super(Permission, self).__init__()
+    def __init__(
+        self, _id, name=None, checksum=NONE, element_id=None, context=None
+    ):
+
+        super(Right, self).__init__()
 
         self.id = _id
         self.name = name
-        self.value = value
+        self.checksum = checksum
+        self.element_id = element_id
+        self.context = context
 
-    @staticmethod
-    def check(value, permission):
+    def get_checksum(self, element_id, context):
         """
         Check if input value grants access to input permission
 
@@ -60,4 +66,13 @@ class Permission(object):
         :rtype: bool
         """
 
-        return value is not None and value >= permission
+        raise NotImplementedError()
+
+
+class RightComposite(Right, RightEntity):
+
+    def __init__(self, rights=None, **kwargs):
+
+        super(RightComposite, self).__init__(**kwargs)
+
+        self.rights = rights

@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #--------------------------------
 # Copyright (c) 2014 "Capensis" [http://www.capensis.com]
@@ -26,6 +25,10 @@ Python utility library.
 from importlib import import_module
 
 from inspect import ismodule
+
+from collections import Iterable
+
+from sys import version as PYVER
 
 
 def resolve_element(path):
@@ -110,5 +113,90 @@ def path(element):
 
     result = element.__name__ if ismodule(element) else \
         '%s.%s' % (element.__module__, element.__name__)
+
+    return result
+
+
+def isiterable(element, is_str=True):
+    """
+    Check whatever or not if input element is an iterable.
+
+    :param is_str: check if element is also a str
+    :type is_str: bool
+    """
+    result = isinstance(element, Iterable) \
+        and (is_str or not isinstance(element, basestring))
+
+    return result
+
+
+def isunicode(s):
+    """
+    Check if string is unicode.
+
+    :param s: string to check
+    :type s: basestring
+
+    :return: True if unicode or Python3, False otherwise
+    """
+
+    if PYVER < '3':
+        return isinstance(s, unicode)
+
+    else:
+        return True
+
+
+def force_unicode(s):
+    """
+    Convert string to unicode.
+
+    :param s: string to convert
+    :type s: basestring
+
+    :return: unicode (or the same string if Python3)
+    """
+
+    result = s
+
+    if PYVER < '3':
+        if isinstance(s, basestring):
+            if not isinstance(s, unicode):
+                result = s.decode()
+        else:
+            raise TypeError('Expecting a string as argument')
+
+    return result
+
+
+def force_iterable(value, iterable=list):
+    """
+    Convert a value into an iterable if it is not.
+
+    :param value: value to convert
+    :type value: object
+
+    :param iterable: iterable type to apply (default: list)
+    :type iterable: type
+    """
+
+    result = value
+
+    if not isiterable(value, is_str=False):
+        result = [value]
+        result = iterable(result)
+
+    else:
+        result = iterable(value)
+
+    return result
+
+
+def get_first(iterable, default=None):
+    """
+    Try to get input iterable first item or default if iterable is empty.
+    """
+
+    result = iterable[0] if iterable else default
 
     return result

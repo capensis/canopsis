@@ -111,8 +111,8 @@ function post_install(){
 	su - $HUSER -c "$PREFIX/bin/initool set $PREFIX/etc/cstorage.conf master userid $cpsuser"
 	su - $HUSER -c "$PREFIX/bin/initool set $PREFIX/etc/cstorage.conf master password $cpspass"
 
-	su - $HUSER -c "$PREFIX/bin/initool set $PREFIX/etc/database.conf DATABASE user $cpsuser"
-	su - $HUSER -c "$PREFIX/bin/initool set $PREFIX/etc/database.conf DATABASE pwd $cpspass"
+	su - $HUSER -c "$PREFIX/bin/initool set $PREFIX/etc/storage/storage.conf DATABASE user $cpsuser"
+	su - $HUSER -c "$PREFIX/bin/initool set $PREFIX/etc/storage/storage.conf DATABASE pwd $cpspass"
 
 	launch_cmd 1 python $PREFIX/opt/mongodb/filldb.py init
 

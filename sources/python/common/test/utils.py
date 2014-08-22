@@ -21,7 +21,10 @@
 
 from unittest import TestCase, main
 
-from canopsis.common.utils import resolve_element, path
+from canopsis.common.utils import \
+    resolve_element, path, isiterable, isunicode, force_unicode, force_iterable
+
+from sys import version as PYVER
 
 
 def _test():
@@ -85,6 +88,36 @@ class UtilsTest(TestCase):
 
         # Test if you can retrieve the function by resolving the path got using path()
         self.assertEqual(resolve_element(path(path)), path)
+
+    def test_isiterable(self):
+
+        self.assertFalse(isiterable(2))
+
+        self.assertTrue(isiterable([]))
+
+        self.assertTrue(isiterable(""))
+
+        self.assertFalse(isiterable('', is_str=False))
+
+    def test_isunicode(self):
+
+        if PYVER < '3':
+            self.assertFalse(isunicode(str()))
+            self.assertTrue(isunicode(unicode()))
+
+    def test_forceunicode(self):
+
+        if PYVER < '3':
+            self.assertTrue(isinstance(force_unicode(str()), unicode))
+            self.assertTrue(isinstance(force_unicode(unicode()), unicode))
+            self.assertRaises(TypeError, force_unicode)
+
+    def test_force_iterable(self):
+
+        self.assertEqual(force_iterable(2), [2])
+        self.assertEqual(force_iterable("2"), ["2"])
+        self.assertEqual(force_iterable([2]), [2])
+        self.assertEqual(force_iterable([2], iterable=set), {2})
 
 if __name__ == '__main__':
     main()

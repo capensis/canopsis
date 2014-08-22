@@ -58,7 +58,7 @@ def usage():
 def main(argv):
     try:
         opts, args = getopt.getopt(
-            argv[1:],
+            argv,
             "s:a:f:j:h",
             ["server=", "authkey=", "file=", "json=", "help"])
     except getopt.GetoptError as err:
@@ -152,12 +152,6 @@ def main(argv):
             'Error: No json media found, you must provide file/stream/command')
         exit()
 
-    if event.get('perf_data_array', None):
-        event['perf_data_array'] = json.dumps(event['perf_data_array'])
-
-    if event.get('tags', None):
-        event['tags'] = json.dumps(event['tags'])
-
     event['connector'] = 'Cli'
 
     if not event.get('connector_name', None):
@@ -168,8 +162,9 @@ def main(argv):
     for k, v in event.iteritems():
         clean_event[k] = str(v).encode('utf-8')
 
+    request_params = {'event': json.dumps(clean_event)}
     request = urllib2.Request(
-        'http://%s/event/' % server, urllib.urlencode(clean_event))
+        'http://%s/event' % server, urllib.urlencode(request_params))
     r = opener.open(request)
     print('Webserver replied :')
     print(r.read())
