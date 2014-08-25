@@ -147,8 +147,7 @@ conf = {'rules': [
                       'element': 'linux mint'},
                      {'type': 'override',
                       'field': 'hostgroups',
-                      'value': 'debian jessie'},
-                     {'type': 'pass'}],
+                      'value': 'debian jessie'}],
          'name': 'rm-hostgroup-add-hostgroup-pass'}
         ],
     'priority': 2,

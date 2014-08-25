@@ -84,19 +84,22 @@ class Rights(Manager):
         """
 
         role = self.profile_storage.get_elements(ids=role)
-        profile = self.profile_storage.get_elements(ids=role['profile'])
-        p_composites = self.composite_storage.get_elements(
-            ids=profile.get('composites', None))
+        profiles = self.profile_storage.get_elements(ids=role['profile'])
 
-        composites = [x for x in p_composites]
+        # Do not edit the following for a double for loop
+        # list comprehensions are much faster
+        composites = [self['composite_storage'][x]
+                      for y in profiles
+                      for x in y['composites']]
 
         # check in the role's comsposite
         if ((role and self.check(role, right_id, checksum)) or
             # check in the profile's composite
-            (profile and self.check(profile, right_id, checksum)) or
+            (len(profiles) and any(self.check(x, right_id, checksum)
+                                   for x in profiles)) or
             # check in the profile's groups composites
-            (p_composites and any(self.check(x, right_id, checksum)
-                                  for x in composites))):
+            (len(composites) and any(self.check(x, right_id, checksum)
+                                     for x in composites))):
             return True
 
         return False
@@ -182,13 +185,12 @@ class Rights(Manager):
 
         if self.composite_storage.get_elements(ids=comp_name):
 
-            print "Delete:", comp_name
             self.composite_storage.remove_elements(comp_name)
             # remove the composite from every profiles
 
             for p in self.profile_storage.get_elements(query={'type':'profile'}):
-                if 'composites' in p:
-                    p['composites'].discard(comp_name)
+                if 'composites' in p and comp_name in p['composites']:
+                    p['composites'].remove(comp_name)
                     # if the profile only had that composite, remove the profile
                     if not len(p['composites']):
                         self.delete_profile(p)
@@ -213,11 +215,9 @@ class Rights(Manager):
                 return False
 
         entity = self[e_type].get_elements(ids=e_name)
-        print '(Should be a list) Composite:', entity['composites']
         if not 'composites' in entity:
-            entity['composites'] = {}
-        entity['composites'].add(
-            self.composite_storage.get_elements(ids=comp_name))
+            entity['composites'] = []
+        entity['composites'].append(comp_name)
         self[e_type].put_element(e_name, entity)
 
         return entity
@@ -259,12 +259,11 @@ class Rights(Manager):
         """
 
         if self.profile_storage.get_elements(ids=p_name):
-            print "Delete:", p_name
             self.profile_storage.remove_elements(p_name)
             # remove the profile from every roles
             for r in self.role_storage.get_elements(query={'type':'role'}):
-                if 'profile' in r:
-                    r['profile'].discard(comp_name)
+                if 'profile' in r and p_name in r['profile']:
+                    r['profile'].remove(p_name)
                     # if the role only had that profile, remove it
                     if not len(r['profile']):
                         self.add_profile(r, self.default_profile)
@@ -311,7 +310,9 @@ class Rights(Manager):
             #   the same role
             # Get role from storage
             s_role = self.role_storage.get_elements(ids=role)
-            s_role['profile'] = p_name
+            if not 'profile' in s_role or not len(s_role['profile']):
+                s_role['profile'] = []
+            s_role['profile'].append(p_name)
             self.role_storage.put_element(role, s_role)
 
             return p_name
@@ -330,13 +331,16 @@ class Rights(Manager):
             return r_name
 
         new_role = {'type': 'role'}
-        new_role['profile'] = r_profile
+        new_role['profile'] = []
+        if isinstance(r_profile, list):
+            new_role['profile'] = r_profile
+        else:
+            new_role['profile'].append(r_profile)
         self.role_storage.put_element(r_name, new_role)
         return r_name
 
     def delete_role(self, r_name):
         if self.role_storage.get_elements(ids=r_name):
-            print "Delete:", r_name
             self.role_storage.remove_elements(r_name)
             return True
 
