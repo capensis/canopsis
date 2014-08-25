@@ -47,7 +47,8 @@
 		},
 		"display_name": {
 			"type": "string",
-			"default": ""
+			"default": "",
+			"required": true
 		},
 		"loaded": {
 			"type": "boolean",
@@ -56,7 +57,7 @@
 		"dostate": {
 			"type": "boolean",
 			"required": true,
-			"default": false
+			"defaultValue": true
 		},
 		"dosla": {
 			"type": "boolean",
