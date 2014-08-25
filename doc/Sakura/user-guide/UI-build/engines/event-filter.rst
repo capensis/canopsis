@@ -1,66 +1,50 @@
-﻿.. include:: /Sakura/includes/links.rst
+Engine Filter
+==============
 
-.. _Sakura_event-filter:
+Engines filter can be placed anywhere in the processing chain and there can be several engines filters working in parallel, or one after the other, to speed up the processing of the events.
 
-Event filter
-============
+Every instance of filter engines loads a set of rules, defined by its name, to apply to events it handles.
+This set of rules is defined by the user in the web app.
 
-The engine filter permits to users to choose which events have to be
-|Sakura_processed| by
-|Sakura_canopsis|.
+The user can create a filter and declare one, or several, action(s) to apply to any event matching the said filter.
 
-Filter description
-------------------
+Actions
+----------
 
-The engine applies filters which are composed of a priority, an action
-and a rule.
+The following actions are available to the user :
 
--  The priority designates the filter application priority order.
--  The action is DROP or PASS designates respectively if an event which
-   matches with the rule will be deleted or
-   |Sakura_processed| by
-   |Sakura_canopsis|.
--  The rule parses event field values.
+* `pass`
+* `drop`
+* `override`
+* `route`
+* `remove`
 
-Filter definition
------------------
+Features
+-------------
 
-Menu
-~~~~
+The following features are available in the filter engine :
 
-Definition of such filters is possible through the view filter
-accessible from the filter rules menu.
+:Handles whitelist / blacklist *(pass and drop actions)*:
 
-|image1|
+  According a set of rules, events are either 'pass' to the next engine (whitelist) or 'drop' out of the processing chain (blacklist).
 
-View
-~~~~
+:Addition, modification and deletion of fields *(override and remove actions)*:
 
-The view filter permits to add/edit/duplicate/delete and define a
-default action for events which match with none filters.
+  Events can have fields added at runtime (périmètre, domaine, ...), changed (status, criticité, ...), or deleted (whole fields, single tag, perfdata, ...).
 
-|image2|
+:Route event to other engines *(route action)*:
 
-Wizard
-~~~~~~
+  Events can be sent to a different engine from the one defined by default in the Canopsis configuration files.
+  This action allows the user to have complete control of the processing chain and to avoid sending events in engines that do not interact with them.
 
-In filter editing mode (by pushing the add button or in double clicking
-on a filter) a wizard with two tabs permits to define a filter
-properties.
 
-Options
-_______
+Each rule can contain several actions and thus allows the user to, at the same time, add a field, change a field, and change the destination of an event.
+All of this according to a filter defined by the user.
 
-The tab "options" defines name, priority and action of a filter.
+The rules are stocked in the db and can be later changed or removed.
 
-|image3|
 
-Rules
-_____
 
-The tab "rule" defines how an event is chosen by the filter in edition.
+Bellow is a simple schema of a basic processing chain.
 
-.. |image1| image:: /Sakura/images/filter/filter_menu.png
-.. |image2| image:: /Sakura/images/filter//filter_view.png
-.. |image3| image:: /Sakura/images/filter/filter_options.png
-.. |image4| image:: /Sakura/images/filter/filter_rule.png
+.. image:: schema-event_filter.png
