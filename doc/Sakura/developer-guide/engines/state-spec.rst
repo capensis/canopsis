@@ -46,7 +46,7 @@ Additionally, the user can specify if it should change state if its criticity ch
 Flowchart
 -----------
 
-.. image:: /Sakura/images/state-spec/state_flowchart.png
+.. image:: state_flowchart.png
 
 Additional informations
 ^^^^^^^^^^^^^^^^^^^^^^^^^
