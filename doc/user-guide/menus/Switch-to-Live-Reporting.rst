@@ -1,2 +1,0 @@
-Switch to Live Reporting
-========================
