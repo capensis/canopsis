@@ -60,10 +60,8 @@ class Rights(Manager):
         Check the from the rights of entity for a right of id right_id
         """
 
-        print entity
         # check the fields
         if not entity or not entity.get('rights', None):
-            print "False; No rights field"
             return False
 
 
@@ -71,7 +69,6 @@ class Rights(Manager):
         if (found and found.get('checksum', 0) & checksum >= checksum):
             return True
 
-        print "False; No permission"
         return False
 
     # Check in the rights of the user (in the role), then in the profile,
@@ -217,8 +214,9 @@ class Rights(Manager):
         entity = self[e_type].get_elements(ids=e_name)
         if not 'composites' in entity:
             entity['composites'] = []
-        entity['composites'].append(comp_name)
-        self[e_type].put_element(e_name, entity)
+        if not comp_name in entity['composites']:
+            entity['composites'].append(comp_name)
+            self[e_type].put_element(e_name, entity)
 
         return entity
 
@@ -305,15 +303,13 @@ class Rights(Manager):
 
         # retrieve the profile
         if profile:
-            # change role['profiles'] to a set of strings
-            #   if you want to allow several profiles on
-            #   the same role
-            # Get role from storage
             s_role = self.role_storage.get_elements(ids=role)
             if not 'profile' in s_role or not len(s_role['profile']):
                 s_role['profile'] = []
-            s_role['profile'].append(p_name)
-            self.role_storage.put_element(role, s_role)
+
+            if not p_name in s_role['profile']:
+                s_role['profile'].append(p_name)
+                self.role_storage.put_element(role, s_role)
 
             return p_name
 

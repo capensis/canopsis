@@ -65,42 +65,40 @@ class RightsTest(TestCase):
             'role': '',
             '_id': '1407160264.joan.harris.manager'}
 
-        # delete everything before starting
-
+        # delete everything before startin
         self.printer.pprint(self.rights['composite_storage'].get_elements())
 
         self.rights.delete_composite('composite_test1')
         self.rights.delete_composite('composite_test2')
-        self.rights.delete_profile('profile_test1')
-        self.rights.delete_profile('profile_test2')
-        self.rights.delete_role('role_test1bis')
-        self.rights.delete_role('role_test1')
-        self.rights.delete_role('role_test2')
+
+        self.printer.pprint({})
 
         self.printer.pprint(self.rights['composite_storage'].get_elements())
-
-
 
         # basic creation
         self.rights.create_composite('composite_test1', rights)
         self.rights.create_composite('composite_test2', rights_scnd)
 
         # basic profile creation
-        self.rights.create_profile('profile_test1', ('composite_test1'))
-        self.rights.create_profile('profile_test2', ('composite_test2'))
+        self.rights.create_profile('profile_test1', 'composite_test1')
+        self.rights.create_profile('profile_test2', 'composite_test2')
 
         # "add" composite_test2 to profile_test1
-        self.rights.create_profile('profile_test1', ('composite_test2'))
-        print self.rights.add_composite('profile_test1', 'profiles_storage', 'composite_test2')
+        print self.rights.add_composite('profile_test1',
+                                        'profiles_storage',
+                                        'composite_test2')
+
+        # create new role and assign it to the user
         sample_user['role'] = self.rights.create_role('role_test1bis',
                                                       'profile_test1')
 
+
+        # create second sample role
         self.rights.create_role('role_test2',
                                 'profile_test2')
 
-        self.rights.add_profile(sample_user['role'],
-                                'profile_test1')
 
+        # Basic check
         self.assertEqual(
             self.rights.check_user_rights(
                 sample_user['role'], '1237', 1), True)
@@ -109,9 +107,14 @@ class RightsTest(TestCase):
             self.rights.check_user_rights(
                 sample_user['role'], '1237', 12), False)
 
+        # Add permissions to the rights
+        self.rights.add('composite_test1', 'profiles_storage', '1237', 12)
+
+        # Check shall return True now
         self.assertEqual(
             self.rights.check_user_rights(
                 sample_user['role'], '1237', 12), True)
+
 
 if __name__ == '__main__':
     main()
