@@ -50,17 +50,17 @@ Action Structure
 	// Specific to override action
 	'field':            // Field to override
 	'value':	    // Value to override with
-	
+
 	// Specific to remove action
 	// Field 'key' must be a dict or list if element is specified
 	'key':		    // Field to remove
 	'element':          // Element from field 'key' to remove - optional
 	'met':		    // Should be specified if a metric is to be removed
-	
+
 	// Specific to route action
 	// Field 'route' must be a string
 	'route':	    // Engine to send event to
-	
+
     },...]
 
 Time Structure
@@ -74,9 +74,9 @@ Time Structure
 		'startTs':		//Timestamp of start time
 		'stopTs':		//Timestamp of stop time
 		},...]
-		
+
 See `event_filter-Myunittest <https://github.com/capensis/canopsis/blob/NRPUIV2/sources/python/engines/test/event_filter.py>`_ for examples
 
 Below is a simplified example on how the rules work
 
-.. image:: /Sakura/images/engine/schema_event_filter_rule.png
+.. image:: schema_event_filter_rule.png
