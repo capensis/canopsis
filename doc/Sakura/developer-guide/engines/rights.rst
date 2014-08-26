@@ -12,8 +12,8 @@ User
 
     User = {
         'rights': ...,               // Map of type Rights, every user-specific rights goes here
-        'groups': ...,               // Set of group names, every user-specific groups goes here
-        'role': ...,                 // Map of type Role that defines the User's profile, groups, and rights
+        'groups': ...,               // List of group names, every user-specific groups goes here
+        'role': ...,                 // List of role names that defines the User's profile, groups, and rights
         'contact': {                 // Map of contact informations
             'mail': ...,
             'phone_number': ...,
@@ -31,7 +31,7 @@ Example:
 .. code-block:: javascript
 
     User = {
-        'role': Roles['manager'],
+        'role': 'manager',
         'contact': {
             'mail': 'jharris@scdp.com',
             'phone_number': '+33678695041',
@@ -51,7 +51,7 @@ A Role is specific to a small number of users
 
     'name': {
         'rights': ...               // Map of type Rights, every role-specific rights goes here
-        'profile': ...              // ID of the profile
+        'profile': ...              // ID of the profile (string)
         FIELD: ...                  // You can add any number of fields that can be used with data-specific rules
         ...
         }
@@ -64,7 +64,8 @@ Example:
     Roles = {
         'manager': {
             'profile': 'Manager',
-            'list_of_directors': {'Ted Chaough', 'Peggy Olson', 'Don Draper'}
+            'rights': {},
+            'list_of_directors': ['Ted Chaough', 'Peggy Olson', 'Don Draper']
             }
         }
 
@@ -75,9 +76,9 @@ Profile
 A profile is generic and global to all users
 
 .. code-block:: javascript
-
-    'name': {                        // String of profile's name
-        'groups': ...                // Set of groups the profile belongs to
+ 
+    'name': {                            // String of profile's name
+        'composites': ...                // List of the groups the profile belongs to
         }
 
 
@@ -89,23 +90,20 @@ Example:
     An Administrator profile exists, it has all rights and belongs to the Group Management as well as the root Group
     Profiles = {
         'Manager': {
-            'groups': {
-                'management'
-                }
-            }
+            'composites': ['managements', 'supervizion']
         }
         
     
 
-Group
+Composite
 -------
 
-A group is generic and global to all users
+A composite is generic and global to all users
 
 .. code-block:: javascript
 
     'name': {                        // String of group's name
-        'members': ...,              // Set of members ids
+        'members': ...,              // List of members ids
         'rights': ...                // Map of type Rights
         }
         
@@ -116,7 +114,7 @@ Example:
 
     Groups = {
         'management': {
-            'members': {'1407160264.joan.harris.manager'},
+            'members': ['1407160264.joan.harris.manager'],
             'rights': {
                 userconf_view_id: {
                     'checksum': 1,
