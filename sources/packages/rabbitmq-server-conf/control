@@ -4,36 +4,11 @@ NAME="rabbitmq-server-conf"
 VERSION=0.4
 RELEASE=0
 DESCRIPTION=""
-REQUIRES="canohome canotools supervisord-conf rabbitmq-server"
+REQUIRES="canohome canolibs supervisord-conf rabbitmq-server"
 
 NO_ARCH=true
 NO_DIST=true
 NO_DISTVERS=true
-
-function safe_prompt() {
-	if [ "$3" == "show" ]
-	then
-		OPTS="-p"
-	else
-		OPTS="-s -p"
-	fi
-
-	empty=true
-
-	while $empty
-	do
-		empty=false
-
-		eval "read $OPTS \"$1\" $2; echo; [[ \"x\$$2\" == \"x\" ]]"
-
-		if [ $? -eq 0 ]
-		then
-			empty=true
-
-			echo "You can't let that field empty!"
-		fi
-	done
-}
 
 function pre_install(){
 	echo "Pre-install $NAME $VERSION-$RELEASE ..."
@@ -54,7 +29,7 @@ function post_install(){
 	        break
 	    fi
 	    sleep 1
-	    STATE=`su - $HUSER -c "service rabbitmq-server status | grep RUNNING | wc -l"`
+	    STATE=`launch_cmd 0 service rabbitmq-server status | grep RUNNING | wc -l`
 	    TRY=$((TRY + 1))
 	    echo -n "."
 	done
@@ -66,7 +41,7 @@ function post_install(){
 	fi
 	sleep 1
 
-	ADMIN_EXISTS=`su - $HUSER -c "rabbitmqctl list_users" | grep "^admin" | wc -l`
+	ADMIN_EXISTS=`launch_cmd 0 rabbitmqctl list_users | grep "^admin" | wc -l`
 
 	if [ $ADMIN_EXISTS -ne 1 ]
 	then
@@ -84,28 +59,23 @@ function post_install(){
 		done
 
 		echo " + Declare Admin user ..."
-		su - $HUSER -c "$PREFIX/bin/rabbitmqctl add_user admin $adminpass"
-		check_code $?
-
-		su - $HUSER -c "$PREFIX/bin/rabbitmqctl set_user_tags admin administrator"
-		check_code $?
+		launch_cmd 1 $PREFIX/bin/rabbitmqctl add_user admin $adminpass
+		launch_cmd 1 $PREFIX/bin/rabbitmqctl set_user_tags admin administrator
 	fi
 
-	VHOST_EXISTS=`su - $HUSER -c "rabbitmqctl list_vhosts | grep canopsis | wc -l"`
+	VHOST_EXISTS=`launch_cmd 0 rabbitmqctl list_vhosts | grep canopsis | wc -l`
 
 	# Is this a first install or an update
 	if [ $VHOST_EXISTS -ne 1 ]
 	then
 		echo " + Declare vhost ..."
-		su - $HUSER -c "$PREFIX/bin/rabbitmqctl add_vhost canopsis"
-		check_code $?
+		launch_cmd 1 $PREFIX/bin/rabbitmqctl add_vhost canopsis
 		
 		echo " + Declare permissions for Admin user ..."
-		su - $HUSER -c "$PREFIX/bin/rabbitmqctl set_permissions -p canopsis admin \".*\" \".*\" \".*\""
-		check_code $?
+		launch_cmd 1 $PREFIX/bin/rabbitmqctl set_permissions -p canopsis admin "\".*\"" "\".*\"" "\".*\""
 	fi
 
-	COMMONUSER_EXISTS=`su - $HUSER -c "rabbitmqctl list_users" | grep "\[canopsis\]" | wc -l`
+	COMMONUSER_EXISTS=`launch_cmd 0 rabbitmqctl list_users | grep "\[canopsis\]" | wc -l`
 
 	if [ $COMMONUSER_EXISTS -ne 1 ]
 	then
@@ -113,7 +83,7 @@ function post_install(){
 		do
 			safe_prompt "RabbitMQ common user: " cpsuser "show"
 
-			user_exists=`su - $HUSER -c "rabbitmqctl list_users" | grep "^$cpsuser" | wc -l`
+			user_exists=`launch_cmd 0 rabbitmqctl list_users | grep "^$cpsuser" | wc -l`
 
 			if [ $user_exists -ne 1 ]
 			then
@@ -136,22 +106,15 @@ function post_install(){
 
 		
 		echo " + Declare $cpsuser user ..."
-		su - $HUSER -c "$PREFIX/bin/rabbitmqctl add_user $cpsuser $cpspass"
-		check_code $?
-
-		su - $HUSER -c "$PREFIX/bin/rabbitmqctl set_user_tags $cpsuser canopsis"
-		check_code $?
+		launch_cmd 1 $PREFIX/bin/rabbitmqctl add_user $cpsuser $cpspass
+		launch_cmd 1 $PREFIX/bin/rabbitmqctl set_user_tags $cpsuser canopsis
 
 		echo " + Declare permissions for $cpsuser user ..."
-		su - $HUSER -c "$PREFIX/bin/rabbitmqctl set_permissions -p canopsis $cpsuser \".*\" \".*\" \".*\""
-		check_code $?
+		launch_cmd 1 $PREFIX/bin/rabbitmqctl set_permissions -p canopsis $cpsuser "\".*\"" "\".*\"" "\".*\""
 
 		echo " + Update $PREFIX/etc/amqp.conf ..."
-		su - $HUSER -c "$PREFIX/bin/initool set $PREFIX/etc/amqp.conf master userid $cpsuser"
-		check_code $?
-
-		su - $HUSER -c "$PREFIX/bin/initool set $PREFIX/etc/amqp.conf master password $cpspass"
-		check_code $?
+		launch_cmd 1 $PREFIX/bin/initool set $PREFIX/etc/amqp.conf master userid $cpsuser
+		launch_cmd 1 $PREFIX/bin/initool set $PREFIX/etc/amqp.conf master password $cpspass
 	fi
 
 	launch_cmd 1 service rabbitmq-server stop
@@ -161,7 +124,7 @@ function post_install(){
 
 function pre_remove(){
 	echo "Pre-remove $NAME $VERSION-$RELEASE ..."
-	service rabbitmq-server stop 
+	launch_cmd 0 service rabbitmq-server stop 
 }
 
 function post_remove(){

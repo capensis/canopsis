@@ -4,36 +4,11 @@ NAME="mongodb-conf"
 VERSION=0.7
 RELEASE=0
 DESCRIPTION=""
-REQUIRES="canohome python canolibs canotools mongodb"
+REQUIRES="canohome python canolibs mongodb"
 
 NO_ARCH=true
 NO_DIST=true
 NO_DISTVERS=true
-
-function safe_prompt() {
-	if [ "$3" == "show" ]
-	then
-		OPTS="-p"
-	else
-		OPTS="-s -p"
-	fi
-
-	empty=true
-
-	while $empty
-	do
-		empty=false
-
-		eval "read $OPTS \"$1\" $2; echo; [[ \"x\$$2\" == \"x\" ]]"
-
-		if [ $? -eq 0 ]
-		then
-			empty=true
-
-			echo "You can't let that field empty!"
-		fi
-	done
-}
 
 function pre_install(){
     echo "Pre-install $NAME $VERSION-$RELEASE ..."
@@ -47,31 +22,23 @@ function post_install(){
 
 	rm /tmp/mongodb-*.sock &> /dev/null || true
 
-	#launch_cmd 1 service mongodb start
-	launch_cmd 1 mongod -f $PREFIX/etc/mongodb.conf --nojournal --noprealloc --fork
+	launch_cmd 1 service mongodb start
 
-	echo -n "Safe wait ..."
-	STATE=1
-	TRY=0
+	echo -n "Safe wait (may be long the first time) "
 
-	while [ $STATE -ne 0 ]
+	mongo_ready=false
+	while ! $mongo_ready
 	do
-		if [ $TRY -eq 10 ]
+		echo "show dbs" | launch_cmd 0 mongo >/dev/null 2>&1
+
+		if [ $? -eq 0 ]
 		then
-			break
+			echo " ready"
+			mongo_ready=true
+		else
+			echo -n "."
 		fi
-
-		sleep 1
-
-		echo "show dbs" | mongo &> /dev/null
-		STATE=$?
-		TRY=$((TRY + 1))
-
-		echo -n "."
 	done
-
-	echo
-	check_code $STATE "Failed to join MongoDB"
 
 	while true
 	do
@@ -101,30 +68,28 @@ function post_install(){
 		fi
 	done
 
-	echo " + Create admin user ..."
-	su - $HUSER -c "$PREFIX/bin/mongo admin --eval \"db.createUser({user: 'admin', pwd: '$adminpass', roles: ['readWriteAnyDatabase', 'userAdminAnyDatabase', 'dbAdminAnyDatabase']})\""
-	check_code $? "Impossible to create"
+	echo "  + Create admin user ..."
+	launch_cmd 1 $PREFIX/bin/mongo admin --eval "\"db.createUser({user: 'admin', pwd: '$adminpass', roles: ['readWriteAnyDatabase', 'userAdminAnyDatabase', 'dbAdminAnyDatabase']})\""
 
-	echo " + Create $cpsuser user ..."
-	su - $HUSER -c "$PREFIX/bin/mongo -u admin -p $adminpass --authenticationDatabase admin canopsis --eval \"db.createUser({user: '$cpsuser', pwd: '$cpspass', roles: ['dbOwner']})\""
+	echo "  + Create $cpsuser user ..."
+	launch_cmd 1 $PREFIX/bin/mongo -u admin -p $adminpass --authenticationDatabase admin canopsis --eval "\"db.createUser({user: '$cpsuser', pwd: '$cpspass', roles: ['dbOwner']})\""
 
-	su - $HUSER -c "$PREFIX/bin/initool set $PREFIX/etc/cstorage.conf master userid $cpsuser"
-	su - $HUSER -c "$PREFIX/bin/initool set $PREFIX/etc/cstorage.conf master password $cpspass"
+	launch_cmd 0 $PREFIX/bin/initool set $PREFIX/etc/cstorage.conf master userid $cpsuser
+	launch_cmd 0 $PREFIX/bin/initool set $PREFIX/etc/cstorage.conf master password $cpspass
 
-	su - $HUSER -c "$PREFIX/bin/initool set $PREFIX/etc/storage/storage.conf DATABASE user $cpsuser"
-	su - $HUSER -c "$PREFIX/bin/initool set $PREFIX/etc/storage/storage.conf DATABASE pwd $cpspass"
+	launch_cmd 0 $PREFIX/bin/initool set $PREFIX/etc/storage/storage.conf DATABASE user $cpsuser
+	launch_cmd 0 $PREFIX/bin/initool set $PREFIX/etc/storage/storage.conf DATABASE pwd $cpspass
 
+	echo "  + Initialize database"
+	launch_cmd 1 schema2db
 	launch_cmd 1 python $PREFIX/opt/mongodb/filldb.py init
 
-	#launch_cmd 1 service mongodb stop
-	launch_cmd 1 mongod -f etc/mongodb.conf --shutdown
-
-	check_code $? "Impossible to init mongoDB ..."
+	launch_cmd 1 service mongodb stop
 }
 
 function pre_remove(){
 	echo "Pre-remove $NAME $VERSION-$RELEASE ..."
-	su - $HUSER -c "service mongodb stop"
+	launch_cmd 0 service mongodb stop
 }
 
 function post_remove(){
@@ -138,13 +103,11 @@ function pre_update(){
 function post_update(){
 	echo "Post-update $NAME $VERSION-$RELEASE ..."
 
-	su - $HUSER -c "service mongodb start"
-	check_code $?
+	launch_cmd 1 service mongodb start
 
-	echo "   + Copy JSON schemas"
-	mkdir -p $PREFIX/etc/schema.d
-	cp -Rf $SRC_PATH/mongodb-conf/etc/schema.d/* $PREFIX/etc/schema.d
-	check_code $?
+	echo "   + Update JSON schemas"
+
+	launch_cmd 1 schema2db
 
 	echo "   + Fix permissions"
 	chown -R $HUSER:$HGROUP $PREFIX/etc/schema.d

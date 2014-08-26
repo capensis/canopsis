@@ -186,6 +186,55 @@ function install_bin() {
     fi
 }
 
+function update_conffiles() {
+    CONFDIR=$1
+
+    if [ -e $CONFDIR ]
+    then
+        echo "-- Update config files"
+
+        find $CONFDIR -type f | while read conffile
+        do
+            DEST=$PREFIX/etc/${conffile#$CONFDIR/}
+            DESTDIR=$(dirname $DEST)
+            copy=0
+
+            if [ -e $DEST ]
+            then
+                A=$(md5sum $conffile | cut -d' ' -f1)
+                B=$(md5sum $DEST | cut -d' ' -f1)
+
+                if [ "$A" != "$B" ]
+                then
+                    echo "Config file: $DEST"
+                    read -p "(K)eep old, (R)eplace: " choice
+
+                    if [ "$choice" == "R" ] || [ "$choice" == "r" ]
+                    then
+                        copy=1
+                    fi
+                fi
+            else
+                copy=1
+            fi
+
+            if [ $copy -eq 1 ]
+            then
+                mkdir _p $DESTDIR
+                check_code $? "Impossible to mkdir: $DESTDIR"
+
+                cp -vf $conffile $DEST
+                check_code $? "Impossible to copy $conffile to $DEST"
+
+                chown $HUSER:$HGROUP $DEST
+                check_code $? "Impossible to chown $DEST"
+            else
+                echo "Ignoring file: $conffile"
+            fi
+        done
+    fi
+}
+
 function install_basic_source() {
     cd $SRC_PATH
     NAME=$1
@@ -199,7 +248,7 @@ function install_basic_source() {
         check_code $?
 
         echo "-- Extracting files..."
-        tar xf ../$NAME.tar -C $PREFIX/
+        tar mxf ../$NAME.tar -C $PREFIX/
         check_code $?
 
         echo "-- Fix permissions"
@@ -229,7 +278,7 @@ function update_basic_source() {
         check_code $?
 
         echo "-- Extracting files..."
-        tar xf ../$NAME.tar -C $PREFIX/
+        tar mxf ../$NAME.tar -C $PREFIX/
         check_code $?
 
         echo "-- Fix permissions"
@@ -237,6 +286,11 @@ function update_basic_source() {
         do
             chown $HUSER:$HGROUP "$PREFIX/$file"
         done
+
+        if [ -e ./etc ]
+        then
+            update_conffiles ./etc
+        fi
 
         echo "-- Cleaning"
         rm ../$NAME.tar
@@ -299,15 +353,15 @@ function easy_install_pylib() {
 function show_help() {
     echo "Usage : ./build-install.sh [OPTION]"
     echo
-    echo "     Install build deps, build and install Canopsis"
+    echo "     Build and install Canopsis dependencies and packages"
     echo
     echo "Options:"
-    echo "    -c        ->  Uninstall"
+    echo "    -c        ->  Uninstall Canopsis"
     echo "    -n        ->  Don't build sources if possible"
-    echo "    -u        ->  Run unittest and the end"
+    echo "    -u        ->  Run unittest at the end"
     echo "    -p        ->  Make packages"
     echo "    -d        ->  Don't check dependencies"
-    echo "    -i        ->  Just build installer"
+    echo "    -i        ->  Just build installer (for packages installation)"
     echo "    -h, help  ->  Print this help"
     exit 1
 }
@@ -426,8 +480,9 @@ then
         NO_DIST=false
         NO_DISTVERS=false
 
-        function pre_install(){ true; }
-        function post_install(){ true; }
+        function update(){ true; }
+        function install(){ true; }
+        function build(){ true; }
 
         . /$INST_CONF/$ITEM
 
@@ -471,12 +526,6 @@ then
             . packages/$NAME/control
 
             pkg_options
-
-            function update(){ true; }
-            function install(){ true; }
-            function build(){ true; }
-
-            . /$INST_CONF/$ITEM
 
             echo "################################################################"
             echo "#"
@@ -540,13 +589,39 @@ then
 
             touch $VARLIB_PATH/$NAME.files
 
-            find $PREFIX -newermt "$dtstart" | while read file
+            cd $PREFIX
+            find . -newerBt "$dtstart" | while read file
             do
+                file=${file#./}
                 grep "$file" $VARLIB_PATH/$NAME.files >/dev/null 2>&1
 
                 if [ $? -eq 1 ]
                 then
-                    echo "$file" >> $VARLIB_PATH/$NAME.files
+                    blacklisted=false
+                    cat $SRC_PATH/packages/$NAME/blacklist | while read pattern
+                    do
+                        matches=$(ls -A $PREFIX/$pattern 2>/dev/null || true)
+
+
+                        for match in $matches
+                        do
+                            if [ "$match" == "/$file" ]
+                            then
+                                blacklisted=true
+                                break
+                            fi
+                        done
+
+                        if $blacklisted
+                        then
+                            break
+                        fi
+                    done
+
+                    if ! $blacklisted
+                    then
+                        echo "$file" >> $VARLIB_PATH/$NAME.files
+                    fi
                 fi
             done
 
@@ -567,11 +642,10 @@ then
                 cp -v $SRC_PATH/packages/$NAME/control $SRC_PATH/packages/$NAME/blacklist $PPATH/$NAME 2> $LOG 1> $LOG
                 check_code $? "control/blacklist generation failed"
 
-                cd $PPATH/$NAME
-                tar cvf ../$NAME.tar .  2> $LOG 1> $LOG
+                cd $PPATH
+                tar cvf $NAME.tar $NAME 2> $LOG 1> $LOG
                 check_code $? "packaging failed"
 
-                cd $SRC_PATH
                 rm -rf $PPATH/$NAME >/dev/null 2>&1
 
                 MD5=$(md5sum $PPATH/$NAME.tar | cut -d' ' -f1)
@@ -579,6 +653,8 @@ then
                 echo "-- Update packages list ..."
                 echo "$NAME|$VERSION|$RELEASE|$P_DIST|$P_DISTVERS|$P_ARCH|$MD5|$REQUIRES|$DESCRIPTION" >> $SRC_PATH/pkg.tmp
             fi
+
+            cd $SRC_PATH
         else
             echo "Impossible to build $NAME ..."
             exit 1
@@ -625,13 +701,29 @@ then
             echo "  \"vers\": \"$P_DISTVERS\"," >> Packages.json
             echo "  \"arch\": \"$P_ARCH\"," >> Packages.json
             echo "  \"md5\": \"$MD5\"," >> Packages.json
-            echo "  \"requires\": [\"${REQUIRES// /\",\"}\"]," >> Packages.json
+
+            if [ "x$REQUIRES" != "x" ]
+            then
+                echo "  \"requires\": [\"${REQUIRES// /\",\"}\"]," >> Packages.json
+            else
+                echo "  \"requires\": []," >> Packages.json
+            fi
+
             echo "  \"description\": \"$DESCRIPTION\"" >> Packages.json
         done
 
         echo " }" >> Packages.json
         echo "]" >> Packages.json
+
+        rm $SRC_PATH/pkg.tmp
     fi
+
+    echo "################################"
+    echo "# Update Python Libs"
+    echo "################################"
+
+    launch_cmd 1 update_pylibs
+    echo " + Ok"
 
     echo "################################"
     echo "# Fix permissions"

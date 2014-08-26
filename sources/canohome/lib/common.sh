@@ -69,3 +69,28 @@ function detect_numa() {
 		echo 0
 	fi
 }
+
+function safe_prompt() {
+    if [ "$3" == "show" ]
+    then
+        OPTS="-p"
+    else
+        OPTS="-s -p"
+    fi
+
+    empty=true
+
+    while $empty
+    do
+        empty=false
+
+        eval "read $OPTS \"$1\" $2; echo; [[ \"x\$$2\" == \"x\" ]]"
+
+        if [ $? -eq 0 ]
+        then
+            empty=true
+
+            echo "You can't let that field empty!"
+        fi
+    done
+}

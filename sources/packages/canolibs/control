@@ -42,18 +42,6 @@ function post_remove(){
 
 function pre_update(){
 	echo "Pre-update $NAME $VERSION-$RELEASE ..."
-
-	if [ -e $VARLIB_PATH/rabbitmq-server-conf ]
-	then
-		cp $PREFIX/etc/amqp.conf{,.bak}
-	fi
-
-	if [ -e $VARLIB_PATH/mongodb-conf ]
-	then
-		cp $PREFIX/etc/cstorage.conf{,.bak}
-		cp $PREFIX/etc/storage/storage.conf{,.bak}
-
-	fi
 }
 
 function post_update(){
@@ -64,38 +52,6 @@ function post_update(){
 	echo "   + Fix permissions"
 	chown -R $HUSER:$HGROUP $PREFIX/etc
 	check_code $?
-
-	echo "   + Set old credentials for RabbitMQ and MongoDB"
-
-	if [ -e $VARLIB_PATH/rabbitmq-server-conf ]
-	then
-		rabbit_user=`su - $HUSER -c "$PREFIX/bin/initool get $PREFIX/etc/amqp.conf.bak master userid"`
-		rabbit_pass=`su - $HUSER -c "$PREFIX/bin/initool get $PREFIX/etc/amqp.conf.bak master password"`
-
-		su - $HUSER -c "$PREFIX/bin/initool set $PREFIX/etc/amqp.conf master userid $rabbit_user"
-		su - $HUSER -c "$PREFIX/bin/initool set $PREFIX/etc/amqp.conf master password $rabbit_pass"
-
-		rm $PREFIX/etc/amqp.conf.bak
-	fi
-
-	if [ -e $VARLIB_PATH/mongodb-conf ]
-	then
-		mongo_user=`su - $HUSER -c "$PREFIX/bin/initool get $PREFIX/etc/cstorage.conf.bak master userid"`
-		mongo_pass=`su - $HUSER -c "$PREFIX/bin/initool get $PREFIX/etc/cstorage.conf.bak master password"`
-
-		su - $HUSER -c "$PREFIX/bin/initool set $PREFIX/etc/cstorage.conf master userid $mongo_user"
-		su - $HUSER -c "$PREFIX/bin/initool set $PREFIX/etc/cstorage.conf master password $mongo_pass"
-
-		rm $PREFIX/etc/cstorage.conf.bak
-
-		mongo_user=`su - $HUSER -c "$PREFIX/bin/initool get $PREFIX/etc/storage/storage.conf.bak DATABASE user"`
-		mongo_pass=`su - $HUSER -c "$PREFIX/bin/initool get $PREFIX/etc/storage/storage.conf.bak DATABASE pwd"`
-
-		su - $HUSER -c "$PREFIX/bin/initool set $PREFIX/etc/storage/storage.conf DATABASE user $mongo_user"
-		su - $HUSER -c "$PREFIX/bin/initool set $PREFIX/etc/storage/storage.conf DATABASE pwd $mongo_pass"
-
-		rm $PREFIX/etc/storage/storage.conf.bak
-	fi
 }
 
 function purge(){

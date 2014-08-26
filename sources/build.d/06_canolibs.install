@@ -51,5 +51,7 @@ function update(){
         export CPS_PREFIX="$PREFIX/etc/"
         cd $SRC_PATH/python/$project
         python setup.py install --no-conf >> $LOG 2>&1 || exit 1
+
+        update_conffiles ./etc
     done
 }
