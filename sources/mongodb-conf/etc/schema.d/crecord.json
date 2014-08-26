@@ -42,7 +42,9 @@
 			"role" : "rights"
 		},
 		"enable": {
-			"type": "boolean", "required": true
+			"type": "boolean",
+			"required": true,
+			"defaultValue": true
 		},
 		"parent": {
 			"type": "array",
