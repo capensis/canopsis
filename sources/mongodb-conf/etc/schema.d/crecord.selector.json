@@ -2,7 +2,7 @@
 	"type": "object",
 	"categories": [{
 		"title": "General",
-		"keys":["display_name", "description", "dosla", "dostate"]
+		"keys":["display_name", "description", "enable", "dosla", "dostate"]
 	},{
 		"title": "Events_filter",
 		"keys":["mfilter"]

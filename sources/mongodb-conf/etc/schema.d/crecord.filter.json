@@ -34,22 +34,16 @@
 		},
 		"actions": {
 			"type": "array",
+			"required": true,
 			"items": {
 				"type": "object"
-				},
-			"required": true,
+			},
 			"role": "actionfilter"
 		},
 		"priority": {
 			"type": "integer",
 			"required": true,
 			"default": 1
-		},
-		"time_conditions": {
-			"type": "array",
-			"items": {
-				"type": "string"
-			}
 		}
 	}
 }
