@@ -220,7 +220,7 @@ function update_conffiles() {
 
             if [ $copy -eq 1 ]
             then
-                mkdir _p $DESTDIR
+                mkdir -p $DESTDIR
                 check_code $? "Impossible to mkdir: $DESTDIR"
 
                 cp -vf $conffile $DEST
@@ -590,7 +590,7 @@ then
             touch $VARLIB_PATH/$NAME.files
 
             cd $PREFIX
-            find . -newerBt "$dtstart" | while read file
+            find . -newermt "$dtstart" | while read file
             do
                 file=${file#./}
                 grep "$file" $VARLIB_PATH/$NAME.files >/dev/null 2>&1
@@ -600,12 +600,9 @@ then
                     blacklisted=false
                     cat $SRC_PATH/packages/$NAME/blacklist | while read pattern
                     do
-                        matches=$(ls -A $PREFIX/$pattern 2>/dev/null || true)
-
-
-                        for match in $matches
+                        find . -wholename ".$pattern" | while read match
                         do
-                            if [ "$match" == "/$file" ]
+                            if [ "$match" == "./$file" ]
                             then
                                 blacklisted=true
                                 break

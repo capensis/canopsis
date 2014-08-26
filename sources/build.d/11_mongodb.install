@@ -21,12 +21,14 @@ function install(){
 	check_code $?
 
     for a in `ls bin`; do
-        if [ ! -f $PREFIX/bin/$a ]; then
+        if [ ! -f $PREFIX/bin/$a ]
+        then
             cp -R bin/$a $PREFIX/bin/
+            check_code $? "Failed to copy $a"
+
+            chown $HUSER:$HGROUP $PREFIX/bin/$a
+            check_code $? "Failed to fix permissions on $a"
         fi
     done
-	check_code $?
-
-	chown $HUSER:$HGROUP $PREFIX/bin/mongo*
 	check_code $?
 }

@@ -20,7 +20,7 @@ function update(){
     tar c var | tar xv -C $PREFIX/
 
     python setup.py install --no-conf >> $LOG 2>&1
-    update_conffile ./etc
+    update_conffiles ./etc
 
     echo "define(function() { return '$(git log | head -1 | cut -d ' ' -f2)'; });" > $PREFIX/var/www/canopsis/commit.js
 }
