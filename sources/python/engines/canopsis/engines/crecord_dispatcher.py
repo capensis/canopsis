@@ -96,7 +96,6 @@ class engine(Engine):
         self.amqp.publish(event, rk, exchange_name='media')
 
     def beat(self):
-        self.logger.debug('cdispatcher beat 1')
 
         #These events will run only once the list below consumer's dispatch method.
         #This ensure those engine methods are run once in ha mode

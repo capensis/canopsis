@@ -19,12 +19,14 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
+from canopsis.old.init import Init
+
 from unittest import TestCase, main
 
 from logging import DEBUG
 
-from canopsis.engine import DROP
-from canopsis.engine.event_filter import engine
+from canopsis.engines import DROP
+from canopsis.engines.event_filter import engine
 
 conf = {'rules': [
         {'description': 'unit test rule',
@@ -136,6 +138,17 @@ conf = {'rules': [
          'actions': [{'type': 'route',
                   'route': 'new_route_defined'}],
          'name': 're-route'},
+
+        {'description': 'rm & add hostgroup',
+         '_id': 'unittestidrule',
+         'mfilter': {"hostgroups": {"$in": ["linux mint"]}},
+         'actions': [{'type': 'remove',
+                      'key': 'hostgroups',
+                      'element': 'linux mint'},
+                     {'type': 'override',
+                      'field': 'hostgroups',
+                      'value': 'debian jessie'}],
+         'name': 'rm-hostgroup-add-hostgroup-pass'}
         ],
     'priority': 2,
     'default_action': 'drop',
@@ -167,8 +180,8 @@ class KnownValues(TestCase):
 
         event['connector'] = 'changeme'
         event = self.engine.work(event)
-
-        self.assertEqual("it_works", event['connector'])
+        if 'hostgroups' not in event:
+            self.assertEqual("it_works", event['connector'])
 
     def test_normal_behavior(self):
 
@@ -355,6 +368,26 @@ class KnownValues(TestCase):
         # No configuration, default configuration is loaded
         self.engine.configuration = {}
         self.assertEqual(self.engine.work(event), event)
+
+
+    def test_remove_hg(self):
+
+        event = {
+            'connector': '',
+            'connector_name': '',
+            'event_type': '',
+            'source_type': '',
+            'component': '',
+            'tags': [],
+            'hostgroups': ['windows_95', 'linux mint'],
+            'rk': ''
+        }
+
+        event = self.engine.work(event)
+        self.assertEqual('linux mint' not in event['hostgroups'], True)
+        self.assertEqual('debian jessie' in event['hostgroups'], True)
+        self.assertEqual('windows_95' in event['hostgroups'], True)
+
 
 if __name__ == "__main__":
     main()

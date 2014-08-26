@@ -81,7 +81,10 @@ class engine(Engine):
         avalue = action.get('value', None)
 
         if afield and avalue:
-            event[afield] = avalue
+            if afield in event and isinstance(event[afield], list):
+                event[afield].append(avalue)
+            else:
+                event[afield] = avalue
             self.logger.debug(("    + %s: Override: '%s' -> '%s'"
                            % (event['rk'], afield, avalue)))
             return True
@@ -159,6 +162,8 @@ class engine(Engine):
 
     # simple pass
     def a_pass(self, event, derogation, action, name):
+        self.logger.debug("Event:")
+        self.logger.debug(event)
         self.logger.debug("Event passed by rule '%s'" % name)
         self.pass_event_count += 1
         return event
@@ -197,7 +202,7 @@ class engine(Engine):
             self.logger.debug(
                 'Event: {}, will apply rule {}'.format(event['rk'], filterItem)
                 )
-
+            self.logger.debug('filter is {}'.format(filterItem['mfilter']))
             # Try filter rules on current event
             if check(filterItem['mfilter'], event):
 
@@ -207,6 +212,8 @@ class engine(Engine):
 
                 for action in actions:
                     if (action['type'] in actionMap):
+                        if action['type'] != 'DROP':
+                            actions.append({'type': 'pass'})
                         ret = actionMap[action['type']](event, filterItem,
                                         action, name)
                         # If pass then ret == event; end loop

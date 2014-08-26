@@ -29,7 +29,15 @@
             "actionbutton-removeselection",
             "connectorbutton-edit"
           ],
-          "displayed_columns": [],
+          "displayed_columns": [
+            "name",
+            "description",
+            "priority",
+            "actions",
+            "mfilter",
+            "enable",
+            "crecord_write_time"
+          ],
           "actions_toolbar": [
             "actionbutton-create",
             "actionbutton-removeselection",

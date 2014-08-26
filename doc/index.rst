@@ -6,19 +6,15 @@
 Welcome to Canopsis's documentation!
 ====================================
 
-Contents:
-
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 3
+   :titlesonly:
 
-   user-guide/index
-   administrator-guide/index
-   developper-guide/index
+   overview
+   Ficus/index
+   Sakura/index
    connectors/index
-   draft-uiv2/index
    changelogs
-   glossary
-.. #EXTRA_SECTIONS#
 
 Indices and tables
 ==================
@@ -26,4 +22,3 @@ Indices and tables
 * :ref:`genindex`
 * :ref:`modindex`
 * :ref:`search`
-

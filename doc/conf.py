@@ -14,8 +14,8 @@
 
 import sys
 import os
-sys.path.insert(0,".")
-import auto
+#sys.path.insert(0,".")
+#import auto
 
 #auto.AutoDoc2()
 # If extensions (or modules to document with autodoc) are in another directory,
@@ -32,7 +32,7 @@ import auto
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = [
-    'sphinx.ext.autodoc',
+#    'sphinx.ext.autodoc',
     'sphinx.ext.intersphinx',
     'sphinx.ext.viewcode',
 ]
@@ -74,7 +74,11 @@ release = 'Ficus'
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
-exclude_patterns = ['_build']
+exclude_patterns = ['_build',
+                    'Ficus/includes',
+                    'Sakura/includes',
+                    'moduleslibexec',]
+#]
 
 # The reST default role (used for this markup: `text`) to use for all
 # documents.
@@ -105,8 +109,7 @@ pygments_style = 'sphinx'
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
-html_theme = 'sphinx_rtd_theme'
-html_theme_path = ["_themes", ]
+html_theme = 'default'
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
@@ -136,6 +139,9 @@ html_theme_path = ["_themes", ]
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = ['_static']
+
+html_theme = 'sphinx_rtd_theme'
+html_theme_path = ["_themes", ]
 
 # Add any extra paths that contain custom files (such as robots.txt or
 # .htaccess) here, relative to this directory. These files are copied
@@ -338,7 +344,3 @@ epub_exclude_files = ['search.html']
 
 # Example configuration for intersphinx: refer to the Python standard library.
 intersphinx_mapping = {'http://docs.python.org/': None}
-
-
-#i18n
-locale_dirs = ['locale/']

@@ -1,0 +1,25 @@
+{
+	"type": "object",
+	"categories": [{
+		"title": "General",
+		"keys":["tabs", "actionCssClass", "actionType", "actionArguments"]
+	}],
+	"properties": {
+		"tabs" : {
+			"type": "array",
+			"items": {
+				"type": "object",
+				"role": "stringpair"
+			}
+		},
+		"actionCssClass" : {
+			"type": "string"
+		},
+		"actionType" : {
+			"type": "string"
+		},
+		"actionArguments" : {
+			"type": "string"
+		}
+	}
+}
