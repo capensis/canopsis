@@ -408,7 +408,7 @@ class Storage(object):
             if sort is None:
                 raw_records = backend.find(mfilter, fields=mfields, safe=self.mongo_safe, start=offset, limit=limit)
             else:
-                raw_records = backend.find(mfilter, fields=mfields, safe=self.mongo_safe)
+                raw_records = backend.find(mfilter, fields=mfields, safe=self.mongo_safe, start=offset, limit=limit, sort=sort)
 
             total = raw_records.count()
 
@@ -417,20 +417,6 @@ class Storage(object):
                 return total
 
             raw_records = list(raw_records)
-
-            if sort is not None:
-                for s in sort:
-                    key = s[0]
-                    desc = s[1] == -1
-                    raw_records = sorted(raw_records, key=itemgetter(key), reverse=desc)
-
-                # and get a sub list of raw_records
-                if limit != 0 and offset != 0:
-                    raw_records = raw_records[offset: offset + limit]
-                elif limit != 0:
-                    raw_records = raw_records[:limit]
-                elif offset != 0:
-                    raw_records = raw_records[offset:]
 
         records=[]
 
