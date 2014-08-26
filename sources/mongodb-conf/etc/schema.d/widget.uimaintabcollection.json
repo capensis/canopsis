@@ -2,14 +2,14 @@
 	"type": "object",
 	"categories": [{
 		"title": "General",
-		"keys":["title", "label", "actionCssClass", "actionType", "actionArguments"]
+		"keys":["tabs", "actionCssClass", "actionType", "actionArguments"]
 	}],
 	"properties": {
 		"tabs" : {
 			"type": "array",
 			"items": {
 				"type": "object",
-				"role": "labelledAction"
+				"role": "stringpair"
 			}
 		},
 		"actionCssClass" : {
