@@ -22,8 +22,6 @@
 from canopsis.old.account import Account
 from canopsis.old.storage import get_storage
 
-logger = None
-
 ##set root account
 root = Account(user="root", group="root")
 storage = get_storage(account=root, namespace='object')
@@ -145,10 +143,10 @@ def init():
             answered = True
 
     if user_input == 'Y':
-        print 'Starting indexes update...'
+        print ('Starting indexes update...')
 
         for collection in INDEXES:
-            logger.info(' + Create indexes for collection {0}'.format(collection))
+            print (' + Create indexes for collection {0}'.format(collection))
             col = storage.get_backend(collection)
             col.drop_indexes()
 
