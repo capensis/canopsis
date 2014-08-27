@@ -33,15 +33,14 @@
             "display_name",
             "description",
             "dostate",
-            "state",
             "exclude_ids",
             "include_ids",
             "mfilter",
             "dosla",
-            "sla_state",
             "downtimes_as_ok",
-            "loaded",
-            "sla_timewindow"
+            "sla_timewindow",
+            "thd_warn_sla_timewindow",
+            "thd_crit_sla_timewindow"
           ],
           "actions_toolbar": [
             "actionbutton-create",

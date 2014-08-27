@@ -4,7 +4,7 @@
 		"title": "General",
 		"keys":["display_name", "description", "enable", "dostate", "output_tpl", "sla_timewindow_doUnknown"]
 	},{
-		"title": "Events_filter",
+		"title": "Event filter",
 		"keys":["mfilter"]
 	},{
 		"title": "Include events",
