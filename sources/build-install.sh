@@ -587,35 +587,32 @@ then
 
             echo "-- Listing files ..."
 
+            rm -f $VARLIB_PATH/$NAME.files.tmp
+            rm -f $VARLIB_PATH/$NAME.blacklist
             touch $VARLIB_PATH/$NAME.files
 
             cd $PREFIX
-            find . -newermt "$dtstart" | while read file
+
+            # Find new ones
+            find . -newermt "$dtstart"  >> $VARLIB_PATH/$NAME.files.tmp
+
+            # Find files matching blacklist patterns
+            cat $SRC_PATH/packages/$NAME/blacklist | while read pattern
+            do
+                find . -wholename ".$pattern" >> $VARLIB_PATH/$NAME.blacklist
+            done
+
+            # Generate final listing
+            cat $VARLIB_PATH/$NAME.files.tmp | while read file
             do
                 file=${file#./}
                 grep "$file" $VARLIB_PATH/$NAME.files >/dev/null 2>&1
 
                 if [ $? -eq 1 ]
                 then
-                    blacklisted=false
-                    cat $SRC_PATH/packages/$NAME/blacklist | while read pattern
-                    do
-                        find . -wholename ".$pattern" | while read match
-                        do
-                            if [ "$match" == "./$file" ]
-                            then
-                                blacklisted=true
-                                break
-                            fi
-                        done
+                    grep "./$file" $VARLIB_PATH/$NAME.blacklist >/dev/null 2>&1
 
-                        if $blacklisted
-                        then
-                            break
-                        fi
-                    done
-
-                    if ! $blacklisted
+                    if [ $? -eq 1 ]
                     then
                         echo "$file" >> $VARLIB_PATH/$NAME.files
                     fi
