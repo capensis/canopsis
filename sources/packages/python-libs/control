@@ -13,9 +13,7 @@ function pre_install(){
 
 function post_install(){
 	echo "Post-install $NAME $VERSION-$RELEASE ..."
-
-    su - $HUSER -c "update_pylibs &> /dev/null"
-    check_code $? "Error when update pylibs listing ..."
+    check_code $?
 }
 
 function pre_remove(){
@@ -35,9 +33,7 @@ function pre_update(){
 
 function post_update(){
 	echo "Post-update $NAME $VERSION-$RELEASE ..."
-
-    su - $HUSER -c "update_pylibs &> /dev/null"
-    check_code $? "Error when update pylibs listing ..."
+    check_code $?
 }
 
 function purge(){
