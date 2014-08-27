@@ -5,6 +5,11 @@
 		"xtype": {"type": "string"},
 		"widgetId": {"type": "string"},
 		"tagName": {"type": "string"},
-		"cssClass": {"type": "string"}
+		"cssClass": {"type": "string"},
+		"refreshInterval": {
+			"type": "integer",
+			"defaultValue": 60,
+			"label": "Widget refresh interval (in seconds)"
+		}
 	}
 }

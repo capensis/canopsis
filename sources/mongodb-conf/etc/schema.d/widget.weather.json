@@ -2,7 +2,7 @@
 	"type": "object",
 	"categories": [{
 		"title": "General",
-		"keys":["title", "event_selection", "destination_view", "filter_pattern"]
+		"keys":["title", "refreshInterval", "event_selection", "destination_view", "filter_pattern"]
 	}],
 	"properties": {
 		"title":  {
@@ -22,6 +22,10 @@
 		"filter_pattern": {
 			"type": "string",
 			"defaultValue": "{ \"rk\" : \"{{rk}}\" }"
+		},
+		"refreshableWidget":  {
+			"type": "boolean",
+			"defaultValue": true
 		}
 	}
 }
