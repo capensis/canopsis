@@ -1,2 +1,0 @@
-Derogation Manager
-==================

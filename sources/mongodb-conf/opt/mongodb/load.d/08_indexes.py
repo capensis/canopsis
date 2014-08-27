@@ -22,8 +22,6 @@
 from canopsis.old.account import Account
 from canopsis.old.storage import get_storage
 
-logger = None
-
 ##set root account
 root = Account(user="root", group="root")
 storage = get_storage(account=root, namespace='object')
@@ -62,9 +60,29 @@ INDEXES  = {
         ], [
             ('event_type', 1),
             ('resource', 1)
-        ], [
-            ('event_type', 1)
-        ]
+        ], [('event_type', 1)],
+        [('event_type', -1)],
+        [('domain', 1)],
+        [('domain', -1)],
+        [('permimeter', 1)],
+        [('perimeter', -1)],
+        [('connector', 1)],
+        [('connector', -1)],
+        [('component', 1)],
+        [('component', -1)],
+        [('resource', 1)],
+        [('resource', -1)],
+        [('output', 1)],
+        [('output', -1)],
+        [('status', 1)],
+        [('status', -1)],
+        [('criticity', 1)],
+        [('criticity', -1)],
+        [('ack', 1)],
+        [('ack', -1)],
+        [('timestamp', 1)],
+        [('timestamp', -1)]
+
     ],
     'events_log': [
         [
@@ -80,7 +98,29 @@ INDEXES  = {
         [('event_type', 1)],
         [('state_type', 1)],
         [('tags', 1)],
-        [('referer', 1)]
+        [('referer', 1)],
+        [('event_type', 1)],
+        [('event_type', -1)],
+        [('domain', 1)],
+        [('domain', -1)],
+        [('permimeter', 1)],
+        [('perimeter', -1)],
+        [('connector', 1)],
+        [('connector', -1)],
+        [('component', 1)],
+        [('component', -1)],
+        [('resource', 1)],
+        [('resource', -1)],
+        [('output', 1)],
+        [('output', -1)],
+        [('status', 1)],
+        [('status', -1)],
+        [('criticity', 1)],
+        [('criticity', -1)],
+        [('ack', 1)],
+        [('ack', -1)],
+        [('timestamp', 1)],
+        [('timestamp', -1)]
     ],
     'entities': [
         [('type', 1)],
@@ -95,13 +135,23 @@ INDEXES  = {
 
 
 def init():
-    for collection in INDEXES:
-        logger.info(' + Create indexes for collection {0}'.format(collection))
-        col = storage.get_backend(collection)
-        col.drop_indexes()
+    answered = False
+    user_input = 'N'
+    while not answered:
+        user_input = raw_input('Add/Update indexes (update may take time)? Y/N (default=N): ')
+        if user_input in ['Y', 'N', '']:
+            answered = True
 
-        for index in INDEXES[collection]:
-            col.ensure_index(index)
+    if user_input == 'Y':
+        print ('Starting indexes update...')
+
+        for collection in INDEXES:
+            print (' + Create indexes for collection {0}'.format(collection))
+            col = storage.get_backend(collection)
+            col.drop_indexes()
+
+            for index in INDEXES[collection]:
+                col.ensure_index(index)
 
 
 def update():

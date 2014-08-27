@@ -1,0 +1,32 @@
+{
+	"type": "object",
+	"categories": [{
+		"title": "General",
+		"keys":["description"]
+	},{
+		"title": "Permissions",
+		"keys": ["rights"]
+	}],
+	"properties": {
+		"crecord_type": {
+			"enum": ["profile"],
+			"required": true,
+			"label": "type"
+		},
+		"rights": {
+			"type": "object",
+			"role": "rights",
+			"required": false
+		},
+		"groups": {
+			"type": "array",
+			"items": {
+				"type": "string"
+			},
+			"required": false
+		},
+		"description": {
+			"type": "string"
+		}
+	}
+}

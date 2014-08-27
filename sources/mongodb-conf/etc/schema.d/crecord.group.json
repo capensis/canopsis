@@ -2,10 +2,10 @@
 	"type": "object",
 	"categories": [{
 		"title": "General",
-		"keys":["internal","description"]
+		"keys":["description"]
 	},{
 		"title": "Permissions",
-		"keys": []
+		"keys": ["rights"]
 	}],
 	"properties": {
 		"crecord_type": {
@@ -13,9 +13,10 @@
 			"required": true,
 			"label": "type"
 		},
-		"internal": {
-			"type": "boolean",
-			"default": false
+		"rights": {
+			"type": "object",
+			"role": "rights",
+			"required": false
 		},
 		"description": {
 			"type": "string"

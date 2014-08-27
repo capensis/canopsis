@@ -29,7 +29,19 @@
             "actionbutton-removeselection",
             "connectorbutton-edit"
           ],
-          "displayed_columns": [],
+          "displayed_columns": [
+            "display_name",
+            "description",
+            "dostate",
+            "exclude_ids",
+            "include_ids",
+            "mfilter",
+            "dosla",
+            "downtimes_as_ok",
+            "sla_timewindow",
+            "thd_warn_sla_timewindow",
+            "thd_crit_sla_timewindow"
+          ],
           "actions_toolbar": [
             "actionbutton-create",
             "actionbutton-removeselection",

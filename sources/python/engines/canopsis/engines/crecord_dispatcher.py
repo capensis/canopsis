@@ -81,9 +81,12 @@ class engine(Engine):
 
                 for crecord_json in crecords_json:
                     # let say selector is loaded
-                    self.storage.update(crecord_json._id, {'loaded': True, 'last_dispatch_update': now})
-                    crecord = Selector(storage=self.storage, record=crecord_json, logging_level=self.logging_level)
-                    crecords.append(crecord)
+                    try:
+                        self.storage.update(crecord_json._id, {'loaded': True, 'last_dispatch_update': now})
+                        crecord = Selector(storage=self.storage, record=crecord_json, logging_level=self.logging_level)
+                        crecords.append(crecord)
+                    except Exception as e:
+                        self.logger.error('Unable to manage crecord with id {}: {}'.format(crecord_json._id, e))
         return crecords
 
     def publish_record(self, event, crecord_type):
@@ -96,7 +99,6 @@ class engine(Engine):
         self.amqp.publish(event, rk, exchange_name='media')
 
     def beat(self):
-        self.logger.debug('cdispatcher beat 1')
 
         #These events will run only once the list below consumer's dispatch method.
         #This ensure those engine methods are run once in ha mode

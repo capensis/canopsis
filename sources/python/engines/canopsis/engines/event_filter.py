@@ -212,6 +212,8 @@ class engine(Engine):
 
                 for action in actions:
                     if (action['type'] in actionMap):
+                        if action['type'] != 'DROP':
+                            actions.append({'type': 'pass'})
                         ret = actionMap[action['type']](event, filterItem,
                                         action, name)
                         # If pass then ret == event; end loop

@@ -158,7 +158,9 @@ class Record(object):
         dump['crecord_type'] = self.type
         dump['crecord_write_time'] = self.write_time
         dump['crecord_name'] = self.name
-        dump['enable'] = self.enable
+
+        if 'enable' not in self.data:
+            dump['enable'] = self.enable
 
         dump['parent'] = self.parent
         dump['children'] = self.children

@@ -1,2 +1,0 @@
-Edit Active view
-================
