@@ -81,9 +81,12 @@ class engine(Engine):
 
                 for crecord_json in crecords_json:
                     # let say selector is loaded
-                    self.storage.update(crecord_json._id, {'loaded': True, 'last_dispatch_update': now})
-                    crecord = Selector(storage=self.storage, record=crecord_json, logging_level=self.logging_level)
-                    crecords.append(crecord)
+                    try:
+                        self.storage.update(crecord_json._id, {'loaded': True, 'last_dispatch_update': now})
+                        crecord = Selector(storage=self.storage, record=crecord_json, logging_level=self.logging_level)
+                        crecords.append(crecord)
+                    except Exception as e:
+                        self.logger.error('Unable to manage crecord with id {}: {}'.format(crecord_json._id, e))
         return crecords
 
     def publish_record(self, event, crecord_type):
