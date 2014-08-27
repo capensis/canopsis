@@ -9,13 +9,20 @@
 	}],
 	"properties": {
 		"crecord_type": {
-			"enum": ["group"],
+			"enum": ["profile"],
 			"required": true,
 			"label": "type"
 		},
 		"rights": {
 			"type": "object",
 			"role": "rights",
+			"required": false
+		},
+		"groups": {
+			"type": "array",
+			"items": {
+				"type": "string"
+			},
 			"required": false
 		},
 		"description": {

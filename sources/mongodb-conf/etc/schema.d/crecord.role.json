@@ -5,21 +5,31 @@
 		"keys":["description"]
 	},{
 		"title": "Permissions",
-		"keys": ["rights"]
+		"keys": ["profile", "groups", "rights"]
 	}],
 	"properties": {
 		"crecord_type": {
-			"enum": ["group"],
+			"enum": ["role"],
 			"required": true,
 			"label": "type"
+		},
+		"description": {
+			"type": "string"
+		},
+		"groups": {
+			"type": "array",
+			"items": {
+				"type": "string"
+			},
+			"required": false
+		},
+		"profile": {
+			"type": "string"
 		},
 		"rights": {
 			"type": "object",
 			"role": "rights",
 			"required": false
-		},
-		"description": {
-			"type": "string"
 		}
 	}
 }
