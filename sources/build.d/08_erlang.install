@@ -1,10 +1,10 @@
 NAME="erlang"
 
-BASE="otp_src_$VERSION"
 LOG="$LOG_PATH/$NAME.log"
 rm -f $LOG &> /dev/null
 
 function build(){
+	BASE="otp_src_$VERSION"
 	cd $SRC_PATH/externals
 
 	if [ ! -e $BASE ]; then
@@ -29,6 +29,7 @@ function build(){
 }
 
 function install(){
+	BASE="otp_src_$VERSION"
 	cd $SRC_PATH/externals/$BASE
 
 	if [ ! -e 'build' ]; then
