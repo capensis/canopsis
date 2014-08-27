@@ -5,7 +5,7 @@
   "crecord_write_time": 1400853201,
   "enable": true,
   "containerwidget": {
-    "xtype": "hbox",
+    "xtype": "vbox",
     "title": "container title vbox",
     "_id": "test_view_vertical_container",
     "items": [
@@ -19,7 +19,16 @@
           "selection_toolbar": [
             "actionbutton-create",
             "actionbutton-removeselection"
+          ],
+          "displayed_columns": [
+            "crecord_type",
+            "_id",
+            "user",
+            "roles",
+            "groups",
+            "rights"
           ]
+
         }
       }
     ]
