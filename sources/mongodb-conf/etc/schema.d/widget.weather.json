@@ -2,11 +2,15 @@
 	"type": "object",
 	"categories": [{
 		"title": "General",
-		"keys":["event_selection", "title"]
+		"keys":["title", "event_selection", "destination_view", "filter_pattern"]
 	}],
 	"properties": {
 		"title":  {
 			"type": "string"
+		},
+		"destination_view":  {
+			"type": "string",
+			"defaultValue": "view.event"
 		},
 		"event_selection":  {
 			"type": "array",
@@ -14,6 +18,10 @@
 				"type": "string"
 			},
 			"role" : "eventselector"
+		},
+		"filter_pattern": {
+			"type": "string",
+			"defaultValue": "{ \"rk\" : \"{{rk}}\" }"
 		}
 	}
 }

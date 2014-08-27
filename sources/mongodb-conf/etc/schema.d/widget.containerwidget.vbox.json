@@ -5,9 +5,6 @@
 		"keys":["title", "widgetslotTemplate"]
 	}],
 	"properties": {
-		"title": {
-			"type": "string"
-			},
 		"widgetslotTemplate" : {
 			"type": "string",
 			"enum": ["widgetslot-default", "widgetslot-grey"],
