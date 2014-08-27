@@ -2,16 +2,19 @@
 	"type": "object",
 	"categories": [{
 		"title": "General",
-		"keys":["display_name", "description", "enable", "dosla", "dostate"]
+		"keys":["display_name", "description", "enable", "dostate", "output_tpl", "sla_timewindow_doUnknown"]
 	},{
-		"title": "Events_filter",
+		"title": "Event filter",
 		"keys":["mfilter"]
 	},{
-		"title": "Include_ids",
+		"title": "Include events",
 		"keys":["include_ids"]
 	},{
-		"title": "Exclude_ids",
+		"title": "Exclude events",
 		"keys":["exclude_ids"]
+	},{
+		"title": "Sla",
+		"keys":["dosla", "sla_timewindow", "thd_warn_sla_timewindow", "thd_crit_sla_timewindow", "sla_output_tpl"]
 	}],
 	"properties": {
 		"crecord_type": {
@@ -23,7 +26,11 @@
 		},
 		"downtimes_as_ok": {
 			"type": "boolean",
-			"default": false
+			"defaultValue": true
+		},
+		"enable": {
+			"type": "boolean",
+			"defaultValue": true
 		},
 		"mfilter": {
 			"type": "string",
@@ -34,7 +41,6 @@
 			"items": {
 				"type": "string"
 			},
-			"required": true,
 			"role": "eventselector"
 		},
 		"exclude_ids": {
@@ -42,17 +48,15 @@
 			"items": {
 				"type": "string"
 			},
-			"required": true,
 			"role": "eventselector"
 		},
 		"display_name": {
 			"type": "string",
-			"default": "",
 			"required": true
 		},
 		"loaded": {
 			"type": "boolean",
-			"default": false
+			"defaultValue": false
 		},
 		"dostate": {
 			"type": "boolean",
@@ -62,55 +66,48 @@
 		"dosla": {
 			"type": "boolean",
 			"required": true,
-			"default": false
+			"defaultValue": false
 		},
 		"state": {
-			"type": "integer",
-			"required": true
+			"type": "integer"
 		},
 		"state_algorithm": {
-			"type": "integer",
-			"required": true
+			"type": "integer"
 		},
 		"sla_rk": {
-			"type": "string",
-			"required": true
+			"type": "string"
 		},
 		"sla_state": {
 			"type": "integer",
-			"required": true
+			"defaultValue": false
 		},
 		"sla_timewindow": {
-			"type": "integer",
-			"required": true
+			"type": "integer"
 		},
 		"sla_timewindow_value": {
-			"type": "number",
-			"required": true
+			"type": "number"
 		},
 		"sla_timewindow_unit": {
-			"type": "integer",
-			"required": true
+			"type": "integer"
 		},
 		"sla_timewindow_doUnknown": {
 			"type": "boolean",
-			"default": true
+			"defaultValue": true,
+			"label": "Consider unknown time"
 		},
 		"thd_warn_sla_timewindow": {
-			"type": "number",
-			"required": true
+			"type": "number"
 		},
 		"thd_crit_sla_timewindow": {
-			"type": "number",
-			"required": true
+			"type": "number"
 		},
 		"sla_output_tpl": {
 			"type": "string",
-			"required": true
+			"defaultValue" :"{cps_pct_by_state_0}% Ok, {cps_pct_by_state_1}% Warning, {cps_pct_by_state_2}% Critical, {cps_pct_by_state_3}% Unknown"
 		},
 		"output_tpl": {
 			"type": "string",
-			"required": true
+			"defaultValue": "{cps_sel_state_0} Ok, {cps_sel_state_1} Warning, {cps_sel_state_2} Critical"
 		},
 		"last_dispatcher_update": {
 			"type": "integer",

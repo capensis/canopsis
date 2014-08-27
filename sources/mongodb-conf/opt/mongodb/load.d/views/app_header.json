@@ -14,7 +14,7 @@
                         "widget" : {
                                 "xtype" : "uimaintabcollection",
                                 "title" : "",
-                                "tabs" : [{"label": "Evenements", "value": "view.events"}, {"label": "Services", "value": "view.services"}]
+                                "tabs" : [{"label": "Evenements", "value": "view.event"}, {"label": "Services", "value": "view.services"}]
                         },
                         "xtype" : "widgetwrapper",
                         "title" : "wrapper"

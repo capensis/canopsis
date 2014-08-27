@@ -2,7 +2,7 @@
 	"type": "object",
 	"categories": [{
 		"title": "General",
-		"keys":["tabs", "actionCssClass", "actionType", "actionArguments"]
+		"keys":["tabs"]
 	}],
 	"properties": {
 		"tabs" : {
@@ -10,16 +10,8 @@
 			"items": {
 				"type": "object",
 				"role": "stringpair"
-			}
-		},
-		"actionCssClass" : {
-			"type": "string"
-		},
-		"actionType" : {
-			"type": "string"
-		},
-		"actionArguments" : {
-			"type": "string"
+			},
+			"reorderable": true
 		}
 	}
 }

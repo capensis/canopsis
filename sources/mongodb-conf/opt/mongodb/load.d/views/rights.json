@@ -1,11 +1,11 @@
 {
-  "id": "view.profiles",
-  "_id": "view.profiles",
+  "id": "view.rights",
+  "_id": "view.rights",
   "crecord_type": "view",
   "crecord_write_time": 1400853201,
   "enable": true,
   "containerwidget": {
-    "xtype": "hbox",
+    "xtype": "vbox",
     "title": "container title vbox",
     "_id": "test_view_vertical_container",
     "items": [
@@ -14,11 +14,16 @@
         "xtype": "widgetwrapper",
         "widget": {
           "xtype": "list",
-          "listed_crecord_type": "profile",
-          "title": "Profiles",
+          "listed_crecord_type": "right",
+          "title": "Rights",
           "selection_toolbar": [
             "actionbutton-create",
             "actionbutton-removeselection"
+          ],
+          "displayed_columns": [
+            "crecord_type",
+            "_id",
+            "description"
           ]
         }
       }
