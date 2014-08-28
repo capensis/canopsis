@@ -29,32 +29,52 @@ class RightsTest(TestCase):
     def setUp(self):
         self.logger = getLogger()
         self.rights = Rights()
-        self.data_types = ['profiles', 'composites', 'roles']
+        self.data_types = ['profile', 'composite', 'role']
         self.printer = pprint.PrettyPrinter(indent=4)
+        referenced_rights = {
+            '1234': {'desc': 'test rule'},
+            '1235': {'desc': 'test rule'},
+            '1236': {'desc': 'test rule'},
+            '1237': {'desc': 'test rule'},
+            '1238': {'desc': 'test rule'},
+            '1239': {'desc': 'test rule'},
+            '1240': {'desc': 'test rule'},
+            '1241': {'desc': 'test rule'},
+            '2344': {'desc': 'test rule'},
+            '2345': {'desc': 'test rule'},
+            '2346': {'desc': 'test rule'},
+            '2347': {'desc': 'test rule'},
+            '2348': {'desc': 'test rule'},
+            '2349': {'desc': 'test rule'},
+            '4210': {'desc': 'test rule'},
+            '4211': {'desc': 'test rule'}
+            }
+        for x in referenced_rights:
+            self.rights.add(x, referenced_rights[x]['desc'])
+
 
     def test(self):
         # Test creation of composites
+
         rights = {
-            'rights': {
-                '1234': {'checksum': 15},
-                '1235': {'checksum': 8},
-                '1236': {'checksum': 12},
-                '1237': {'checksum': 1},
-                '1238': {'checksum': 15},
-                '1239': {'checksum': 15},
-                '1240': {'checksum': 8},
-                '1241': {'checksum': 8}}
+            '1234': {'checksum': 15},
+            '1235': {'checksum': 8},
+            '1236': {'checksum': 12},
+            '1237': {'checksum': 1},
+            '1238': {'checksum': 15},
+            '1239': {'checksum': 15},
+            '1240': {'checksum': 8},
+            '1241': {'checksum': 8}
             }
         rights_scnd = {
-            'rights': {
-                '2344': {'checksum': 15},
-                '2345': {'checksum': 8},
-                '2346': {'checksum': 12},
-                '2347': {'checksum': 1},
-                '2348': {'checksum': 15},
-                '2349': {'checksum': 15},
-                '4210': {'checksum': 8},
-                '4211': {'checksum': 8}}
+            '2344': {'checksum': 15},
+            '2345': {'checksum': 8},
+            '2346': {'checksum': 12},
+            '2347': {'checksum': 1},
+            '2348': {'checksum': 15},
+            '2349': {'checksum': 15},
+            '4210': {'checksum': 8},
+            '4211': {'checksum': 8}
             }
         sample_user = {
             'contact': {
@@ -68,10 +88,13 @@ class RightsTest(TestCase):
         # delete everything before startin
         self.printer.pprint(self.rights['composite_storage'].get_elements())
 
-        self.rights.delete_composite('composite_test1')
-        self.rights.delete_composite('composite_test2')
-
-        self.printer.pprint({})
+        self.rights.delete_entity('composite_test1', 'composite')
+        self.rights.delete_entity('composite_test2', 'composite')
+        self.rights.delete_entity('profile_test1', 'profile')
+        self.rights.delete_entity('profile_test2', 'profile')
+        self.rights.delete_role('role_test1bis')
+        self.rights.delete_role('role_test2')
+        self.rights.delete_role('role_test1')
 
         self.printer.pprint(self.rights['composite_storage'].get_elements())
 
@@ -80,13 +103,8 @@ class RightsTest(TestCase):
         self.rights.create_composite('composite_test2', rights_scnd)
 
         # basic profile creation
-        self.rights.create_profile('profile_test1', 'composite_test1')
-        self.rights.create_profile('profile_test2', 'composite_test2')
-
-        # "add" composite_test2 to profile_test1
-        print self.rights.add_composite('profile_test1',
-                                        'profiles_storage',
-                                        'composite_test2')
+        self.rights.create_profile('profile_test1', ['composite_test1'])
+        self.rights.create_profile('profile_test2', ['composite_test2'])
 
         # create new role and assign it to the user
         sample_user['role'] = self.rights.create_role('role_test1bis',
@@ -96,6 +114,7 @@ class RightsTest(TestCase):
         # create second sample role
         self.rights.create_role('role_test2',
                                 'profile_test2')
+
 
 
         # Basic check
@@ -108,12 +127,28 @@ class RightsTest(TestCase):
                 sample_user['role'], '1237', 12), False)
 
         # Add permissions to the rights
-        self.rights.add('composite_test1', 'profiles_storage', '1237', 12)
+        self.rights.add_right('composite_test1', 'composite', '1237', 12)
 
         # Check shall return True now
         self.assertEqual(
             self.rights.check_user_rights(
                 sample_user['role'], '1237', 12), True)
+
+        self.rights.delete_right('composite_test1', 'composite', '1237', 8)
+
+        self.assertEqual(
+            self.rights.check_user_rights(
+                sample_user['role'], '1237', 12), False)
+
+        self.rights.add_right('composite_test1', 'composite', '1237', 12)
+
+        self.rights.remove_composite('profile_test1', 'profile', 'composite_test1')
+
+        self.assertEqual(
+            self.rights.check_user_rights(
+                sample_user['role'], '1237', 12), False)
+
+
 
 
 if __name__ == '__main__':
