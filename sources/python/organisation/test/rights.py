@@ -31,31 +31,32 @@ class RightsTest(TestCase):
         self.rights = Rights()
         self.data_types = ['profile', 'composite', 'role']
         self.printer = pprint.PrettyPrinter(indent=4)
+
+        # This should be in a filldb script
         referenced_rights = {
-            '1234': {'desc': 'test rule'},
-            '1235': {'desc': 'test rule'},
-            '1236': {'desc': 'test rule'},
-            '1237': {'desc': 'test rule'},
-            '1238': {'desc': 'test rule'},
-            '1239': {'desc': 'test rule'},
-            '1240': {'desc': 'test rule'},
-            '1241': {'desc': 'test rule'},
-            '2344': {'desc': 'test rule'},
-            '2345': {'desc': 'test rule'},
-            '2346': {'desc': 'test rule'},
-            '2347': {'desc': 'test rule'},
-            '2348': {'desc': 'test rule'},
-            '2349': {'desc': 'test rule'},
-            '4210': {'desc': 'test rule'},
-            '4211': {'desc': 'test rule'}
+            '1234',
+            '1235',
+            '1236',
+            '1237',
+            '1238',
+            '1239',
+            '1240',
+            '1241',
+            '2344',
+            '2345',
+            '2346',
+            '2347',
+            '2348',
+            '2349',
+            '4210',
+            '4211'
             }
         for x in referenced_rights:
-            self.rights.add(x, referenced_rights[x]['desc'])
+            self.rights.add(x, 'desc test rule')
 
 
     def test(self):
         # Test creation of composites
-
         rights = {
             '1234': {'checksum': 15},
             '1235': {'checksum': 8},
@@ -76,6 +77,7 @@ class RightsTest(TestCase):
             '4210': {'checksum': 8},
             '4211': {'checksum': 8}
             }
+
         sample_user = {
             'contact': {
                 'mail': 'jharris@scdp.com',
@@ -85,9 +87,7 @@ class RightsTest(TestCase):
             'role': '',
             '_id': '1407160264.joan.harris.manager'}
 
-        # delete everything before startin
-        self.printer.pprint(self.rights['composite_storage'].get_elements())
-
+        # delete everything before starting
         self.rights.delete_composite('composite_test1')
         self.rights.delete_composite('composite_test2')
 
@@ -98,9 +98,8 @@ class RightsTest(TestCase):
         self.rights.delete_role('role_test2')
         self.rights.delete_role('role_test1')
 
-        self.printer.pprint(self.rights['composite_storage'].get_elements())
 
-        # basic creation
+        # basic composite creation
         self.rights.create_composite('composite_test1', rights)
         self.rights.create_composite('composite_test2', rights_scnd)
 
@@ -112,20 +111,16 @@ class RightsTest(TestCase):
         sample_user['role'] = self.rights.create_role('role_test1bis',
                                                       'profile_test1')
 
-
         # create second sample role
-        self.rights.create_role('role_test2',
-                                'profile_test2')
-
-
+        self.rights.create_role('role_test2', 'profile_test2')
 
         # Basic check
         self.assertEqual(
-            self.rights.check_user_rights(
+            self.rights.check_rights(
                 sample_user['role'], '1237', 1), True)
 
         self.assertEqual(
-            self.rights.check_user_rights(
+            self.rights.check_rights(
                 sample_user['role'], '1237', 12), False)
 
         # Add permissions to the rights
@@ -133,39 +128,41 @@ class RightsTest(TestCase):
 
         # Check shall return True now
         self.assertEqual(
-            self.rights.check_user_rights(
+            self.rights.check_rights(
                 sample_user['role'], '1237', 12), True)
 
+        # Test right deletion
         self.rights.delete_right('composite_test1', 'composite', '1237', 8)
 
         self.assertEqual(
-            self.rights.check_user_rights(
+            self.rights.check_rights(
                 sample_user['role'], '1237', 12), False)
 
         self.rights.add_right('composite_test1', 'composite', '1237', 12)
 
+        # Test remove_entity
         self.rights.remove_composite('profile_test1', 'profile', 'composite_test1')
 
         self.assertEqual(
-            self.rights.check_user_rights(
+            self.rights.check_rights(
                 sample_user['role'], '1237', 12), False)
 
         self.rights.add_composite('profile_test1', 'profile', 'composite_test1')
 
         self.assertEqual(
-            self.rights.check_user_rights(
+            self.rights.check_rights(
                 sample_user['role'], '1237', 12), True)
 
         self.rights.remove_profile('role_test1bis', 'profile_test1')
 
         self.assertEqual(
-            self.rights.check_user_rights(
+            self.rights.check_rights(
                 sample_user['role'], '1237', 12), False)
 
         self.rights.add_profile('role_test1bis', 'profile_test1')
 
         self.assertEqual(
-            self.rights.check_user_rights(
+            self.rights.check_rights(
                 sample_user['role'], '1237', 12), True)
 
 

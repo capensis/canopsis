@@ -65,7 +65,7 @@ class Rights(Manager):
 
     # Entity can be a right_composite, a profile or a role since
     # all 3 of them have a rights field
-    # Called by check_user_rights
+    # Called by check_rights
     def check(self, entity, right_id, checksum):
         """
         Check the from the rights of entity for a right of id right_id
@@ -87,7 +87,7 @@ class Rights(Manager):
     # then in the rights_composite
     # Return the value as soon as it's found
     # True if found and user has the right else False
-    def check_user_rights(self, role, right_id, checksum):
+    def check_rights(self, role, right_id, checksum):
         """
         Check if user has the right of id right_id
         """
