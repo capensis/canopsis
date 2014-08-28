@@ -88,10 +88,12 @@ class RightsTest(TestCase):
         # delete everything before startin
         self.printer.pprint(self.rights['composite_storage'].get_elements())
 
-        self.rights.delete_entity('composite_test1', 'composite')
-        self.rights.delete_entity('composite_test2', 'composite')
-        self.rights.delete_entity('profile_test1', 'profile')
-        self.rights.delete_entity('profile_test2', 'profile')
+        self.rights.delete_composite('composite_test1')
+        self.rights.delete_composite('composite_test2')
+
+        self.rights.delete_profile('profile_test1')
+        self.rights.delete_profile('profile_test2')
+
         self.rights.delete_role('role_test1bis')
         self.rights.delete_role('role_test2')
         self.rights.delete_role('role_test1')
@@ -148,6 +150,23 @@ class RightsTest(TestCase):
             self.rights.check_user_rights(
                 sample_user['role'], '1237', 12), False)
 
+        self.rights.add_composite('profile_test1', 'profile', 'composite_test1')
+
+        self.assertEqual(
+            self.rights.check_user_rights(
+                sample_user['role'], '1237', 12), True)
+
+        self.rights.remove_profile('role_test1bis', 'profile_test1')
+
+        self.assertEqual(
+            self.rights.check_user_rights(
+                sample_user['role'], '1237', 12), False)
+
+        self.rights.add_profile('role_test1bis', 'profile_test1')
+
+        self.assertEqual(
+            self.rights.check_user_rights(
+                sample_user['role'], '1237', 12), True)
 
 
 
