@@ -21,7 +21,7 @@ function post_install(){
 
 function pre_remove(){
 	echo "Pre-remove $NAME $VERSION-$RELEASE ..."
-	su - $HUSER -c "service mongodb stop"
+	launch_cmd 0 service mongodb stop
 }
 
 function post_remove(){
@@ -30,7 +30,7 @@ function post_remove(){
 
 function pre_update(){
 	echo "Pre-update $NAME $VERSION-$RELEASE ..."
-	su - $HUSER -c "service mongodb stop"
+	launch_cmd 0 service mongodb stop
 }
 
 function post_update(){

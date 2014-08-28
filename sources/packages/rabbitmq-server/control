@@ -16,13 +16,12 @@ function post_install(){
 	mkdir -p $PREFIX/var/lib/rabbitmq
 	mkdir -p $PREFIX/var/log/rabbitmq
 
-    su - $HUSER -c "update_pylibs &> /dev/null"
-    check_code $? "Error when update pylibs listing ..."
+    launch_cmd 1 update_pylibs
 }
 
 function pre_remove(){
 	echo "Pre-remove $NAME $VERSION-$RELEASE ..."
-	service rabbitmq-server stop 
+	launch_cmd 0 service rabbitmq-server stop 
 }
 
 function post_remove(){
