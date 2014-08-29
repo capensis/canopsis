@@ -1,7 +1,124 @@
 Rights
 _______
 
+Rights are defined within the composites (groups) upon their creations or added unitarily in a specific profile, role, or user.
 
+The id of a right must be the id of the action it is acting upon.
+
+Each profile must belongs to at least one composite (group), each role must be paired with an existing profile and each user shall have a role.
+
+
+SetUp
+=====
+
+A list of actions must be referenced in the Rights' storages in order for it to find the actions ID and let users create new rights.
+
+To reference a new action, simply use :
+
+.. code-block:: python
+
+    from canopsis.organisation.rights import Rights
+    
+    self.Rights = Rights()
+    
+    //               ACTION_ID       DESCRIPTION
+    self.Rights.add('1234.ack', 'Acknowledge events')
+    
+*See the unit tests for more throgouh examples.*
+
+How to
+=======
+
+Users
+------
+
+
+Composites
+-----------
+
+Creation
+
+.. code-block:: python
+    
+    def create_composite(comp_name, comp_rights)
+    """
+    @comp_name id of the composite to create
+    @comp_rights map of rights to init the composite with
+    """
+    
+    # Example
+    rights = {
+        '1234.ack': {
+                'desc': 'create and manage ACKs',
+                'checksum': 15
+                },
+        'management.5412': {
+                'desc': 'manage list of directors',
+                'checksum': '12',
+                'context': 'field',
+                'field': 'list_of_directors'
+                }
+        }
+        
+    self.Rights.create_composite('manager', rights)
+    
+
+Deletion
+
+.. code-block:: python
+
+    def delete_composite(c_name)
+    """
+    @c_name id of the composite to delete
+    """
+    
+    # Example
+    self.Rights.delete_composite('manager')
+    
+Add a composite to an existing entity (Profile or Role)
+
+.. code-block:: python
+    
+    def add_composite(e_name, e_type, comp_name, comp_rights=None)
+    """
+    @e_name name of the entity to be modified
+    @e_type type of the entity
+    @comp_name id of the composite to add to the entity
+    @comp_rights to be specified if the composite has to be created beforehand
+    """
+    
+    # Example
+    self.Rights.add_composite('Manager', 'profile', 'manager')
+    # or
+    self.Rights.add_composite('DirectorsManager', 'role', 'manager')
+    
+    # This also works, it is merely a wrapper of add_composite to make it more user-friendly
+    self.Rights.add_comp_to_profile('Manager', 'manager')
+    # or
+    self.Rights.add_comp_to_role('DirectorsManager', 'manager')
+
+Remove a composite from an existing entity (Profile or Role)
+
+.. code-block:: python
+
+    def remove_composite(e_name, e_type, comp_name)
+    """
+    @e_name name of the entity to be modified
+    @e_type type of the eneityt
+    @comp_name id of the composite to remove from the entity
+    """
+    
+    # Example
+    self.Rights.remove_composite('Manager', profile', 'manager')
+    # or
+    self.Rights.remove_composite('DirectorsManager', 'role', 'manager')
+    
+    # This also works, it is merely a wrapper of remove_Composite to make it more user-friendly
+    self.Rights.rm_comp_profile('Manager', 'manager')
+    # or
+    self.Rights.rm_comp_role('DirectorsManager', 'manager')
+    
+    
 Data Structures
 ================
 
@@ -72,7 +189,7 @@ Example:
 
     Roles = {
         'manager': {
-            'profile': 'Manager',
+            'profile': 'DirectorsManager',
             'list_of_directors': ['Ted Chaough', 'Peggy Olson', 'Don Draper']
             }
         }
