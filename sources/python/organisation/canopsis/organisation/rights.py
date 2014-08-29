@@ -317,6 +317,14 @@ class Rights(Manager):
 
         return True
 
+    # add_composite wrapper
+    def add_comp_to_profile(self, e_name, comp_name, comp_rights=None):
+        self.add_composite(e_name, 'profile', comp_name, comp_rights)
+
+
+    # add_composite wrapper
+    def add_comp_to_role(self, e_name, comp_name, comp_rights=None):
+        self.add_composite(e_name, 'role', comp_name, comp_rights)
 
     # Add the profile of name p_name to the role
     # If the profile does not exists and p_composites is specified
@@ -362,7 +370,6 @@ class Rights(Manager):
 
         return False
 
-
     # remove_entity wrapper
     def remove_composite(self, e_name, e_type, comp_name):
         """
@@ -370,6 +377,16 @@ class Rights(Manager):
         """
 
         return self.remove_entity(e_name, e_type, comp_name, 'composite')
+
+
+    # remove_composite wrapper
+    def rm_comp_role(self, r_name, c_name):
+        self.remove_composite(r_name, 'role', c_name)
+
+
+    # remove_composite wrapper
+    def rm_comp_profile(self, p_name, c_name):
+        self.remove_composite(p_name, 'profile', c_name)
 
 
     # remove_entity wrapper
