@@ -50,6 +50,10 @@
 				"type": "string"
 			},
 			"required": false
+		},
+		"external": {
+			"type": "boolean",
+			"required": true
 		}
 
 	}

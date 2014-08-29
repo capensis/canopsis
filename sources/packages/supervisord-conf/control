@@ -36,6 +36,9 @@ function pre_update(){
 
 function post_update(){
 	echo "Post-update $NAME $VERSION-$RELEASE ..."
+
+	sed -i s:@PREFIX@:$PREFIX:g $PREFIX/etc/supervisord.conf
+	check_code $?
 }
 
 function purge(){

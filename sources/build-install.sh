@@ -207,7 +207,7 @@ function update_conffiles() {
                 if [ "$A" != "$B" ]
                 then
                     echo "Config file: $DEST"
-                    read -p "(K)eep old, (R)eplace: " choice
+                    read -p "(K)eep old, (R)eplace: " choice <&2
 
                     if [ "$choice" == "R" ] || [ "$choice" == "r" ]
                     then
