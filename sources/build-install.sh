@@ -24,7 +24,7 @@ if [ -e $PREFIX/.slinked ]
 then
     echo "There is a slink environment installed."
 
-    read -p "Remove slink environment ? [y/N]: "
+    read -p "Remove slink environment ? [N/y]: " INPUT
 
     if [ "$INPUT" == "y" ]
     then
@@ -502,7 +502,7 @@ then
                 mkdir -p packages/$NAME
 
                 function echocontrol(){
-                    echo "$@" >> packages/$NAME/control 
+                    echo "$@" >> packages/$NAME/control
                 }
 
                 echocontrol "#!/bin/bash"
