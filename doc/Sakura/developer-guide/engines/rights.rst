@@ -29,8 +29,61 @@ To reference a new action, simply use :
 How to
 =======
 
-Users
+Rights
 ------
+
+Check if an entity has the flags for a specific right
+The entity must have a ``rights`` field with a Rights map within
+
+.. code-block:: python
+
+    def check(entity, right_id, checksum)
+    """
+    @entity entity to be checked
+    @right_id right to be checked
+    @checksum minimum flags needed
+    """
+
+    # Example
+    self.Rights.check(self.Rights.get_composite('manager',
+                                                '1234.ack',
+                                                8)
+
+Check if an user has the flags for a specific right
+Each of the user's entities (Role, Profile, and Composites) will be checked
+For now, you must specify the user's role
+
+.. code-block:: python
+
+    def check_rights(role, right_id, checksum)
+    """
+    @role user's role to be checked
+    @right_id right to be checked
+    @checksum minimum flags needed
+    """
+
+    # Example
+    self.Rights.check_rights(self.Rights.get_role('DirectorsManager',
+                                                  'management.5412',
+                                                  8)
+
+
+Delete the checksum of a Right from an entity
+
+.. code-block:: pythom
+
+    def delete_right(entity, e_type, right_id, checksum)
+    """
+    @entity entity to delete the right from
+    @e_type type of the entity
+    @right_id right to be modified
+    @checksum flags to remove
+    """
+
+    # Example
+    self.Rights.delete_right('manager', 'composite', '1234.ack', 4)
+
+
 
 
 Composites
