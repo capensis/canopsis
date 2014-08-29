@@ -11,8 +11,7 @@ User
 .. code-block:: javascript
 
     User = {
-        'rights': ...,               // Map of type Rights, every user-specific rights goes here
-        'groups': ...,               // List of group names, every user-specific groups goes here
+
         'role': ...,                 // List of role names that defines the User's profile, groups, and rights
         'contact': {                 // Map of contact informations
             'mail': ...,
@@ -21,6 +20,10 @@ User
             }
         'name': ...,                 // String of user's name
         '_id': ...                   // uniq id
+        
+        // Empty by default
+        'rights': ...,               // Map of type Rights, every user-specific rights goes here
+        'groups': ...,               // List of group names, every user-specific groups goes here
         }   
 
 When an action is triggered, the ``object_id`` of the target of the action is sent and we check if one of the user's groups has the rights needed to perform the action.
@@ -31,6 +34,7 @@ Example:
 .. code-block:: javascript
 
     User = {
+    
         'role': 'manager',
         'contact': {
             'mail': 'jharris@scdp.com',
@@ -39,6 +43,7 @@ Example:
             }
         'name': 'Joan Harris',
         '_id': '1407160264.joan.harris.manager'
+        
         }
 
 
@@ -50,10 +55,14 @@ A Role is specific to a small number of users
 .. code-block:: javascript
 
     'name': {
-        'rights': ...               // Map of type Rights, every role-specific rights goes here
+
         'profile': ...              // ID of the profile (string)
+        
+        // Empty by default
+        'rights': ...               // Map of type Rights, every role-specific rights goes here
         FIELD: ...                  // You can add any number of fields that can be used with data-specific rules
         ...
+        
         }
         
         
@@ -64,7 +73,6 @@ Example:
     Roles = {
         'manager': {
             'profile': 'Manager',
-            'rights': {},
             'list_of_directors': ['Ted Chaough', 'Peggy Olson', 'Don Draper']
             }
         }
@@ -78,7 +86,12 @@ A profile is generic and global to all users
 .. code-block:: javascript
  
     'name': {                            // String of profile's name
+    
         'composites': ...                // List of the groups the profile belongs to
+        
+        // Empty by default
+        'rights': ...               // Map of type Rights, every profile-specific rights goes here
+        
         }
 
 
@@ -95,7 +108,7 @@ Example:
         
     
 
-Composite
+Composite (aka Groups)
 -------
 
 A composite is generic and global to all users
@@ -103,8 +116,10 @@ A composite is generic and global to all users
 .. code-block:: javascript
 
     'name': {                        // String of group's name
+    
         'members': ...,              // List of members ids
         'rights': ...                // Map of type Rights
+        
         }
         
         
@@ -123,7 +138,7 @@ Example:
                 role_specific_id: {
                     'checksum': 15,
                     'field': 'list_of_directors',
-                    'desc': ['Access and change directors' configuration']
+                    'desc': ['Access and change directors configuration']
                 }
             }
         }
@@ -137,9 +152,12 @@ Rights
 
     Rghts = {
         object_id...: {             // Right on the object with the identifier id
-            'right': ...,           // 1 == Read, 2 == Update, 4 == Create, 8 == Delete
-            'desc': ...,            // Short desc of the right
+        
+            'checksum': ...,        // 1 == Read, 2 == Update, 4 == Create, 8 == Delete
+            
+            // Additional Field
             'context': ...          // Time period
+            
             }
         }
 
