@@ -39,7 +39,6 @@ class Rights(Manager):
 
         super(Rights, self).__init__(data_scope=data_scope, *args, **kwargs)
 
-        self.default_profile = 'vizualisation'
 
     def _configure(self, unified_conf, *args, **kwargs):
 
@@ -66,7 +65,7 @@ class Rights(Manager):
 
     # Entity can be a right_composite, a profile or a role since
     # all 3 of them have a rights field
-    # Called by check_user_rights
+    # Called by check_rights
     def check(self, entity, right_id, checksum):
         """
         Check the from the rights of entity for a right of id right_id
@@ -88,7 +87,7 @@ class Rights(Manager):
     # then in the rights_composite
     # Return the value as soon as it's found
     # True if found and user has the right else False
-    def check_user_rights(self, role, right_id, checksum):
+    def check_rights(self, role, right_id, checksum):
         """
         Check if user has the right of id right_id
         """
@@ -216,7 +215,6 @@ class Rights(Manager):
         return True
 
 
-
     # Create a new profile composed of the composites p_composites
     #   and which name will be p_name
     # If the profile already exists, composites from p_composites
@@ -272,6 +270,7 @@ class Rights(Manager):
 
         return False
 
+
     # to be removed when user module is created
     def delete_role(self, r_name):
         if self.role_storage.get_elements(ids=r_name):
@@ -279,6 +278,16 @@ class Rights(Manager):
             return True
 
         return False
+
+
+    # delete_entity wrapper
+    def delete_profile(self, p_name):
+        self.delete_entity(p_name, 'profile')
+
+
+    # delete_entity wrapper
+    def delete_composite(self, c_name):
+        self.delete_entity(c_name, 'composite')
 
 
     # Add the composite named comp_name to the entity
@@ -308,37 +317,6 @@ class Rights(Manager):
 
         return True
 
-    def remove_entity(self, from_name, from_type, e_name, e_type):
-        entity = self[from_type + '_storage'].get_elements(
-            query={'type': from_type}, ids=from_name)
-
-        if e_type in entity and e_name in entity[e_type]:
-            entity[e_type].remove(e_name)
-            self[from_type + '_storage'].put_element(from_name, entity)
-            return True
-
-        return False
-
-    # Remove the composite named comp_name from the entity
-    # entity can be a profile or a role
-    # Return True if the composite was removed, False otherwise
-    def remove_composite(self, e_name, e_type, comp_name):
-        """
-        Remove the composite comp_name from the entity
-        """
-
-        return self.remove_entity(e_name, e_type, comp_name, 'composite')
-
-
-    # Remove the profile p_name from the role
-    # Return True if it was removed, False otherwise
-    def remove_profile(self, role, p_name):
-        """
-        Remove profile p_name from the role
-        """
-
-        return self.remove_entity(role, 'role', p_name, 'profile')
-
 
     # Add the profile of name p_name to the role
     # If the profile does not exists and p_composites is specified
@@ -367,6 +345,41 @@ class Rights(Manager):
                 self.role_storage.put_element(role, s_role)
 
             return p_name
+
+
+    # Remove the entity e_name from from_name
+    # from_name can be a profile or a role
+    # e_name can be a profile or a composite
+    # Return True if e_name was removed, False otherwise
+    def remove_entity(self, from_name, from_type, e_name, e_type):
+        entity = self[from_type + '_storage'].get_elements(
+            query={'type': from_type}, ids=from_name)
+
+        if e_type in entity and e_name in entity[e_type]:
+            entity[e_type].remove(e_name)
+            self[from_type + '_storage'].put_element(from_name, entity)
+            return True
+
+        return False
+
+
+    # remove_entity wrapper
+    def remove_composite(self, e_name, e_type, comp_name):
+        """
+        Remove the composite comp_name from the entity
+        """
+
+        return self.remove_entity(e_name, e_type, comp_name, 'composite')
+
+
+    # remove_entity wrapper
+    def remove_profile(self, role, p_name):
+        """
+        Remove profile p_name from the role
+        """
+
+        return self.remove_entity(role, 'role', p_name, 'profile')
+
 
     # Create a new role composed of the profile r_profile
     #   and which name will be r_name
