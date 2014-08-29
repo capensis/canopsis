@@ -24,7 +24,7 @@ function create_canolibs_slink() {
             fi
         fi
     done
-    cd -
+    cd - > /dev/null
 }
 
 function create_slinks() {
