@@ -46,7 +46,7 @@ Creation
     @comp_rights map of rights to init the composite with
     """
     
-    // Example
+    # Example
     rights = {
         '1234.ack': {
                 'desc': 'create and manage ACKs',
@@ -72,7 +72,7 @@ Deletion
     @c_name id of the composite to delete
     """
     
-    // Example
+    # Example
     self.Rights.delete_composite('manager')
     
 Add a composite to an existing entity (Profile or Role)
@@ -87,14 +87,14 @@ Add a composite to an existing entity (Profile or Role)
     @comp_rights to be specified if the composite has to be created beforehand
     """
     
-    // Example
+    # Example
     self.Rights.add_composite('Manager', 'profile', 'manager')
-    // or
+    # or
     self.Rights.add_composite('DirectorsManager', 'role', 'manager')
     
-    // This also works, it is merely a wrapper of add_composite to make it more user-friendly
+    # This also works, it is merely a wrapper of add_composite to make it more user-friendly
     self.Rights.add_comp_to_profile('Manager', 'manager')
-    // or
+    # or
     self.Rights.add_comp_to_role('DirectorsManager', 'manager')
 
 Remove a composite from an existing entity (Profile or Role)
@@ -108,14 +108,14 @@ Remove a composite from an existing entity (Profile or Role)
     @comp_name id of the composite to remove from the entity
     """
     
-    // Example
+    # Example
     self.Rights.remove_composite('Manager', profile', 'manager')
-    // or
+    # or
     self.Rights.remove_composite('DirectorsManager', 'role', 'manager')
     
-    // This also works, it is merely a wrapper of remove_Composite to make it more user-friendly
+    # This also works, it is merely a wrapper of remove_Composite to make it more user-friendly
     self.Rights.rm_comp_profile('Manager', 'manager')
-    // or
+    # or
     self.Rights.rm_comp_role('DirectorsManager', 'manager')
     
     
