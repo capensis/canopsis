@@ -49,7 +49,7 @@ def route_name(operation_name, *parameters):
     return result
 
 
-def route(op, *parameters, mandatory=True):
+def route(op, mandatory=True, *parameters):
     """
     Decorator which apply input op on a function with parameters
 
