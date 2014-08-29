@@ -1,7 +1,124 @@
 Rights
 _______
 
+Rights are defined within the composites (groups) upon their creations or added unitarily in a specific profile, role, or user.
 
+The id of a right must be the id of the action it is acting upon.
+
+Each profile must belongs to at least one composite (group), each role must be paired with an existing profile and each user shall have a role.
+
+
+SetUp
+=====
+
+A list of actions must be referenced in the Rights' storages in order for it to find the actions ID and let users create new rights.
+
+To reference a new action, simply use :
+
+.. code-block:: python
+
+    from canopsis.organisation.rights import Rights
+    
+    self.Rights = Rights()
+    
+    //               ACTION_ID       DESCRIPTION
+    self.Rights.add('1234.ack', 'Acknowledge events')
+    
+*See the unit tests for more throgouh examples.*
+
+How to
+=======
+
+Users
+------
+
+
+Composites
+-----------
+
+Creation
+
+.. code-block:: python
+    
+    def create_composite(comp_name, comp_rights)
+    """
+    @comp_name id of the composite to create
+    @comp_rights map of rights to init the composite with
+    """
+    
+    # Example
+    rights = {
+        '1234.ack': {
+                'desc': 'create and manage ACKs',
+                'checksum': 15
+                },
+        'management.5412': {
+                'desc': 'manage list of directors',
+                'checksum': '12',
+                'context': 'field',
+                'field': 'list_of_directors'
+                }
+        }
+        
+    self.Rights.create_composite('manager', rights)
+    
+
+Deletion
+
+.. code-block:: python
+
+    def delete_composite(c_name)
+    """
+    @c_name id of the composite to delete
+    """
+    
+    # Example
+    self.Rights.delete_composite('manager')
+    
+Add a composite to an existing entity (Profile or Role)
+
+.. code-block:: python
+    
+    def add_composite(e_name, e_type, comp_name, comp_rights=None)
+    """
+    @e_name name of the entity to be modified
+    @e_type type of the entity
+    @comp_name id of the composite to add to the entity
+    @comp_rights to be specified if the composite has to be created beforehand
+    """
+    
+    # Example
+    self.Rights.add_composite('Manager', 'profile', 'manager')
+    # or
+    self.Rights.add_composite('DirectorsManager', 'role', 'manager')
+    
+    # This also works, it is merely a wrapper of add_composite to make it more user-friendly
+    self.Rights.add_comp_to_profile('Manager', 'manager')
+    # or
+    self.Rights.add_comp_to_role('DirectorsManager', 'manager')
+
+Remove a composite from an existing entity (Profile or Role)
+
+.. code-block:: python
+
+    def remove_composite(e_name, e_type, comp_name)
+    """
+    @e_name name of the entity to be modified
+    @e_type type of the eneityt
+    @comp_name id of the composite to remove from the entity
+    """
+    
+    # Example
+    self.Rights.remove_composite('Manager', profile', 'manager')
+    # or
+    self.Rights.remove_composite('DirectorsManager', 'role', 'manager')
+    
+    # This also works, it is merely a wrapper of remove_Composite to make it more user-friendly
+    self.Rights.rm_comp_profile('Manager', 'manager')
+    # or
+    self.Rights.rm_comp_role('DirectorsManager', 'manager')
+    
+    
 Data Structures
 ================
 
@@ -11,8 +128,7 @@ User
 .. code-block:: javascript
 
     User = {
-        'rights': ...,               // Map of type Rights, every user-specific rights goes here
-        'groups': ...,               // List of group names, every user-specific groups goes here
+
         'role': ...,                 // List of role names that defines the User's profile, groups, and rights
         'contact': {                 // Map of contact informations
             'mail': ...,
@@ -21,6 +137,10 @@ User
             }
         'name': ...,                 // String of user's name
         '_id': ...                   // uniq id
+        
+        // Empty by default
+        'rights': ...,               // Map of type Rights, every user-specific rights goes here
+        'groups': ...,               // List of group names, every user-specific groups goes here
         }   
 
 When an action is triggered, the ``object_id`` of the target of the action is sent and we check if one of the user's groups has the rights needed to perform the action.
@@ -31,6 +151,7 @@ Example:
 .. code-block:: javascript
 
     User = {
+    
         'role': 'manager',
         'contact': {
             'mail': 'jharris@scdp.com',
@@ -39,6 +160,7 @@ Example:
             }
         'name': 'Joan Harris',
         '_id': '1407160264.joan.harris.manager'
+        
         }
 
 
@@ -50,10 +172,14 @@ A Role is specific to a small number of users
 .. code-block:: javascript
 
     'name': {
-        'rights': ...               // Map of type Rights, every role-specific rights goes here
+
         'profile': ...              // ID of the profile (string)
+        
+        // Empty by default
+        'rights': ...               // Map of type Rights, every role-specific rights goes here
         FIELD: ...                  // You can add any number of fields that can be used with data-specific rules
         ...
+        
         }
         
         
@@ -63,8 +189,7 @@ Example:
 
     Roles = {
         'manager': {
-            'profile': 'Manager',
-            'rights': {},
+            'profile': 'DirectorsManager',
             'list_of_directors': ['Ted Chaough', 'Peggy Olson', 'Don Draper']
             }
         }
@@ -78,7 +203,12 @@ A profile is generic and global to all users
 .. code-block:: javascript
  
     'name': {                            // String of profile's name
+    
         'composites': ...                // List of the groups the profile belongs to
+        
+        // Empty by default
+        'rights': ...               // Map of type Rights, every profile-specific rights goes here
+        
         }
 
 
@@ -95,7 +225,7 @@ Example:
         
     
 
-Composite
+Composite (aka Groups)
 -------
 
 A composite is generic and global to all users
@@ -103,8 +233,10 @@ A composite is generic and global to all users
 .. code-block:: javascript
 
     'name': {                        // String of group's name
+    
         'members': ...,              // List of members ids
         'rights': ...                // Map of type Rights
+        
         }
         
         
@@ -123,7 +255,7 @@ Example:
                 role_specific_id: {
                     'checksum': 15,
                     'field': 'list_of_directors',
-                    'desc': ['Access and change directors' configuration']
+                    'desc': ['Access and change directors configuration']
                 }
             }
         }
@@ -137,9 +269,12 @@ Rights
 
     Rghts = {
         object_id...: {             // Right on the object with the identifier id
-            'right': ...,           // 1 == Read, 2 == Update, 4 == Create, 8 == Delete
-            'desc': ...,            // Short desc of the right
+        
+            'checksum': ...,        // 1 == Read, 2 == Update, 4 == Create, 8 == Delete
+            
+            // Additional Field
             'context': ...          // Time period
+            
             }
         }
 
