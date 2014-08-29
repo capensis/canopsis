@@ -2,7 +2,7 @@
 	"type": "object",
 	"categories": [{
 		"title": "General",
-		"keys":["title", "listed_crecord_type", "itemsPerPage", "selection_toolbar", "actions_toolbar", "mixins" , "default_filter"]
+		"keys":["title", "refreshInterval", "listed_crecord_type", "itemsPerPage", "selection_toolbar", "actions_toolbar", "mixins" , "default_filter"]
 	},{
 		"title": "Columns",
 		"keys":["displayed_columns", "item_actions"]
@@ -20,6 +20,10 @@
 			"default": "group",
 			"role": "simplelist"
 		},
+		"refreshableWidget":  {
+			"type": "boolean",
+			"defaultValue": true
+		},
 		"item_actions": {
 			"type": "array",
 			"items": {
@@ -29,6 +33,7 @@
 			"templateClass":"action"
 		},
 		"displayed_columns": {
+			"isUserPreference": true,
 			"type": "array",
 			"items": {
 				"type": "string"
