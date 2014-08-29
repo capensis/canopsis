@@ -70,7 +70,7 @@ For now, you must specify the user's role
 
 Delete the checksum of a Right from an entity
 
-.. code-block:: pythom
+.. code-block:: python
 
     def delete_right(entity, e_type, right_id, checksum)
     """
