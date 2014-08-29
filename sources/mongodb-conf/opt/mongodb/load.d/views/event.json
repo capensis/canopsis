@@ -24,8 +24,7 @@
             "actionbutton-cancel",
             "actionbutton-incident",
             "actionbutton-ticketnumber",
-            "actionbutton-info",
-            "actionbutton-manualrecovery"
+            "actionbutton-info"
           ],
           "selection_toolbar": [
             "actionbutton-ack",
