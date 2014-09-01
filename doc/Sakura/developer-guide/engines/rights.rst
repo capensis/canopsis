@@ -32,6 +32,20 @@ How to
 Rights
 ------
 
+Add an action to the referenced actions list
+
+.. code-block:: python
+
+    def add(self, a_id, a_desc)
+    """
+    @a_id id of the action
+    @a_desc description of the action
+    """
+    
+    //Example
+    self.Rights.add('1234.ack', 'Acknowledge events')
+    
+    
 Check if an entity has the flags for a specific right
 The entity must have a ``rights`` field with a Rights map within
 
