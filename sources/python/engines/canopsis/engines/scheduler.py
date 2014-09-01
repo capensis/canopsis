@@ -21,6 +21,7 @@
 from canopsis.engines import Engine
 from canopsis.old.storage import get_storage
 from canopsis.old.account import Account
+from canopsis import schema
 
 from dateutil.rrule import rrulestr
 
@@ -37,6 +38,10 @@ class engine(Engine):
 
         account = Account(user='root', group='root')
         self.storage = get_storage('jobs', account=account)
+
+    def work(self, job, *args, **kwargs):
+        if schema.validate(job, 'crecord.job'):
+            self.do_job(job)
 
     def pre_run(self):
         self.beat()
@@ -76,6 +81,7 @@ class engine(Engine):
         self.logger.info('Execute job: {0}'.format(job))
 
         job['params']['jobid'] = job['_id']
+        job['params']['jobctx'] = job.get('context', {})
 
         self.amqp.publish(
             job['params'],
@@ -83,10 +89,13 @@ class engine(Engine):
             'amq.direct'
         )
 
+        now = int(time())
+
         self.storage.update({
-            '_id': job['_id']
+            '_id': job['_id'],
+            'last_execution': {'$lte': now}
         }, {
             '$set': {
-                'last_execution': int(time())
+                'last_execution': now
             }
         })

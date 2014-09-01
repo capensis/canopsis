@@ -1,6 +1,7 @@
 {
 	"type": "object",
 	"properties": {
-        "jobid": {"type": "string", "required": true}
+        "jobid": {"type": "string", "required": true},
+        "jobctx": {"type": "any", "required": true}
     }
 }
