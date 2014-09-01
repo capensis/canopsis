@@ -4,8 +4,14 @@
 		"title": "General",
 		"keys":["description"]
 	},{
-		"title": "Permissions",
-		"keys": ["profile", "groups", "rights"]
+		"title": "profile",
+		"keys": ["profile"]
+	},{
+		"title": "groups",
+		"keys": ["groups"]
+	},{
+		"title": "rights",
+		"keys": ["rights"]
 	}],
 	"properties": {
 		"crecord_type": {
