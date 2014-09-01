@@ -4,8 +4,11 @@
 		"title": "General",
 		"keys":["firstname","lastname", "user", "mail"]
 	},{
-		"title": "Permissions",
-		"keys": ["roles" , "groups", "rights"]
+		"title": "Role",
+		"keys": ["role"]
+	},{
+		"title": "Rights",
+		"keys": ["rights"]
 	}],
 	"properties": {
 		"crecord_type": {
@@ -30,25 +33,18 @@
 			"required": true,
 			"role": "mail"
 		},
-		"groups": {
+		"role": {
 			"type": "array",
-			"items": {
-				"type": "string"
-			},
-			"required": false
-		},
-		"roles": {
-			"type": "array",
-			"items": {
-				"type": "string"
-			},
+			"role": "classifiedcrecordselector",
+			"listed_model": "role",
+			"multiselect": true,
 			"required": false
 		},
 		"rights": {
 			"type": "array",
-			"items": {
-				"type": "string"
-			},
+			"role": "classifiedcrecordselector",
+			"listed_model": "right",
+			"multiselect": true,
 			"required": false
 		},
 		"external": {
