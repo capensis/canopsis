@@ -7,14 +7,14 @@
         "title": "Time Window",
         "keys": ["time_window", "time_window_offset"]
     },{
-        "title": "History Navigation",
+        "title": "History",
         "keys": ["timenav", "timenav_window"]
     },{
-        "title": "Choose metrics",
-        "keys": ["metrics"]
+        "title": "Graph Style",
+        "keys": ["stacked", "points", "lines", "areas", "bars", "point_shape", "line_width", "bar_width"]
     },{
         "title": "Series",
-        "keys": ["stacked", "points", "lines", "areas", "bars", "line_width", "bar_width"]
+        "keys": ["metrics", "series"]
     }],
     "properties": {
         "title":  {
@@ -73,6 +73,11 @@
             "defaultValue": false,
             "label": "Show bars"
         },
+        "point_shape": {
+            "enum": ["circle", "triangle", "square"],
+            "defaultValue": "circle",
+            "label": "Point's shape"
+        }
         "line_width": {
             "type": "number",
             "defaultValue": 1,
@@ -100,6 +105,51 @@
             },
             "role": "cmetric",
             "label": "Data source for series"
+        },
+        "series": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "name": {"type": "string"},
+                    "formula": {"type": "string", "role": "math"},
+                    "lines": {
+                        "type": "boolean",
+                        "defaultValue": true,
+                        "label": "Show lines"
+                    },
+                    "areas": {
+                        "type": "boolean",
+                        "defaultValue": false,
+                        "label": "Fill area under lines"
+                    },
+                    "points": {
+                        "type": "boolean",
+                        "defaultValue": true,
+                        "label": "Show points"
+                    },
+                    "bars": {
+                        "type": "boolean",
+                        "defaultValue": false,
+                        "label": "Show bars"
+                    },
+                    "point_shape": {
+                        "enum": ["circle", "triangle", "square"],
+                        "defaultValue": "circle",
+                        "label": "Point's shape"
+                    }
+                    "line_width": {
+                        "type": "number",
+                        "defaultValue": 1,
+                        "label": "Lines width"
+                    },
+                    "bar_width": {
+                        "type": "number",
+                        "defaultValue": 10,
+                        "label": "Bars width"
+                    }
+                }
+            }
         }
     }
 }

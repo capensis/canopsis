@@ -21,7 +21,7 @@ To reference a new action, simply use :
 
     self.Rights = Rights()
 
-    //               ACTION_ID       DESCRIPTION
+    #                ACTION_ID       DESCRIPTION
     self.Rights.add('1234.ack', 'Acknowledge events')
 
 *See the unit tests for more throgouh examples.*
@@ -47,7 +47,7 @@ Add an action to the referenced actions list
         ``None`` otherwise
     """
 
-    //Example
+    # Example
     self.Rights.add('1234.ack', 'Acknowledge events')
 
 

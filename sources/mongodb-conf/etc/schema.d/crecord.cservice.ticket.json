@@ -1,0 +1,11 @@
+{
+    "type": "object",
+    "categories": [{
+        "title": "General",
+        "keys": ["title", "job"]
+    }],
+    "properties": {
+        "title": {"type": "string"},
+        "job": {"type": "crecord.job", "required": "true"}
+    }
+}
