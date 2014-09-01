@@ -16,6 +16,10 @@
 		"params": {
 			"type": "object",
 			"required": true
+		},
+		"context": {
+			"type": "any",
+			"required": false
 		}
 	}
 }

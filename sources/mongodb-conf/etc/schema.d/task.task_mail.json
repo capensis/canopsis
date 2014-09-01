@@ -2,7 +2,7 @@
 	"type": "object",
 	"categories": [{
 		"title": "General",
-		"keys": ["subject", "template", "recipients", "attachments", "html"]
+		"keys": ["subject", "body", "recipients", "attachments", "html"]
 	},{
 		"title": "SMTP",
 		"keys": ["smtp_host", "smtp_port"]
@@ -22,8 +22,7 @@
 			"required": true
 		},
 		"subject": {"type": "string", "required": true},
-		"template": {"type": "string", "required": true},
-		"template_data": {"type": "object", "required": false, "defaultValue": {}},
+		"body": {"type": "string", "required": true},
 		"attachments": {
 			"type": "array",
 			"items": {"type": "string"},
