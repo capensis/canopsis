@@ -86,6 +86,7 @@ class Rights(Manager):
             ``True`` if the entity has enough permissions on the right
             ``False`` otherwise
         """
+
         if not entity or not entity.get('rights', None):
             return False
 

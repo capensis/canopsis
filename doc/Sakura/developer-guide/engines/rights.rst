@@ -38,14 +38,19 @@ Add an action to the referenced actions list
 
     def add(self, a_id, a_desc)
     """
-    @a_id id of the action
-    @a_desc description of the action
+    Args:
+        a_id: id of the action to reference
+        a_desc: description of the action to reference
+    Returns:
+        A document describing the effect of the put_elements
+        if the action was created
+        ``None`` otherwise
     """
-    
+
     //Example
     self.Rights.add('1234.ack', 'Acknowledge events')
-    
-    
+
+
 Check if an entity has the flags for a specific right
 The entity must have a ``rights`` field with a Rights map within
 
@@ -53,9 +58,13 @@ The entity must have a ``rights`` field with a Rights map within
 
     def check(entity, right_id, checksum)
     """
-    @entity entity to be checked
-    @right_id right to be checked
-    @checksum minimum flags needed
+    Args:
+        entity: entity to be checked
+        right_id: right to be checked
+        checksum: minimum flags needed
+    Returns:
+        ``True`` if the entity has enough permissions on the right
+        ``False`` otherwise
     """
 
     # Example
@@ -71,9 +80,13 @@ For now, you must specify the user's role
 
     def check_rights(role, right_id, checksum)
     """
-    @role user's role to be checked
-    @right_id right to be checked
-    @checksum minimum flags needed
+    Args:
+        role: user's role to be checked
+        right_id: right to be checked
+        checksum: minimum flags needed
+    Returns:
+        ``True`` if the user's role has enough permissions
+        ``False`` otherwise
     """
 
     # Example
@@ -88,11 +101,15 @@ Delete the checksum of a Right from an entity
 
     def delete_right(entity, e_type, right_id, checksum)
     """
-    @entity entity to delete the right from
-    @e_type type of the entity
-    @right_id right to be modified
-    @checksum flags to remove
-    """
+    Args:
+        entity: entity to delete the right from
+        e_type: type of the entity
+        right_id: right to be modified
+        checksum: flags to remove
+     Returns:
+        The checksum of the right if it was modified
+        ``0`` otherwise
+     """
 
     # Example
     self.Rights.delete_right('manager', 'composite', '1234.ack', 4)
@@ -109,8 +126,12 @@ Creation
 
     def create_composite(comp_name, comp_rights)
     """
-    @comp_name id of the composite to create
-    @comp_rights map of rights to init the composite with
+    Args:
+        comp_name: id of the composite to create
+        comp_rights: map of rights to init the composite with
+    Returns:
+        The name of the composite if it was created
+        ``None`` otherwise
     """
 
     # Example
@@ -136,7 +157,11 @@ Deletion
 
     def delete_composite(c_name)
     """
-    @c_name id of the composite to delete
+    Args:
+        c_name: id of the composite to be deleted
+    Returns:
+        ``True`` if the composite was deleted
+        ``False`` otherwise
     """
 
     # Example
@@ -148,10 +173,14 @@ Add a composite to an existing entity (Profile or Role)
 
     def add_composite(e_name, e_type, comp_name, comp_rights=None)
     """
-    @e_name name of the entity to be modified
-    @e_type type of the entity
-    @comp_name id of the composite to add to the entity
-    @comp_rights to be specified if the composite has to be created beforehand
+    Args:
+        e_name: name of the entity to be modified
+        e_type: type of the entity
+        comp_name: id of the composite to add to the entity
+        comp_rights: specified if the composite has to be created beforehand
+    Returns:
+        ``True`` if the composite was added to the entity
+        ``False`` otherwise
     """
 
     # Example
@@ -170,9 +199,13 @@ Remove a composite from an existing entity (Profile or Role)
 
     def remove_composite(e_name, e_type, comp_name)
     """
-    @e_name name of the entity to be modified
-    @e_type type of the eneityt
-    @comp_name id of the composite to remove from the entity
+    Args:
+        e_name: name of the entity to be modified
+        e_type: type of the entity
+        comp_name: id of the composite to remove from the entity
+    Returns:
+        ``True`` if the composite was removed from the entity
+        ``False`` otherwise
     """
 
     # Example
@@ -194,8 +227,12 @@ Create a Profile
 
     def create_profile(p_name, p_compites)
     """
-    @p_name id of the profile to be created
-    @p_compsites list of composites to init the Profile with
+    Args:
+        p_name: id of the profile to be created
+        p_compsites: list of composites to init the Profile with
+    Returns:
+        The name of the profile if it was created
+        ``None`` otherwise
     """
 
     # Example
@@ -208,7 +245,11 @@ Delete a Profile
 
     def delete_profile(p_name)
     """
-    @p_name id of the profile to be deleted
+    Args:
+        p_name: id of the profile to be deleted
+    Returns:
+        ``True`` if the profile was deleted
+        ``False`` otherwise
     """
 
     # Example
@@ -220,9 +261,13 @@ Add a Profile to an existing Role
 
     def add_profile(role, p_name, p_composites=None)
     """
-    @role id of the role to add the Profile to
-    @p_name name of the Profile to be added
-    @p_composites to be specified if the profile has to be created beforehand
+    Args:
+        role: id of the role to add the Profile to
+        p_name: name of the Profile to be added
+        p_composites: specified if the profile has to be created beforehand
+    Returns:
+        ``True`` if the profile was created
+        ``False`` otherwise
     """
 
     # Example
@@ -234,8 +279,12 @@ Remove a Profile from an existing Role
 
     def remove_profile(role, p_name)
     """
-    @role id of the role to remove the Profile from
-    @p_name name of the Profile to be removed
+    Args:
+        role: id of the role to remove the Profile from
+        p_name: name of the Profile to be removed
+    Returns:
+        ``True`` if the profile was removed from the entity
+        ``False`` otehrwise
     """
 
     # Example
@@ -251,8 +300,11 @@ Create a Role
 
     def create_role(r_name, r_profile)
     """
-    @r_name id of the Role to be created
-    @r_profile id of the Profile to init the Role with
+    Args:
+        r_name: id of the Role to be created
+        r_profile: id of the Profile to init the Role with
+    Returns:
+        ``Name`` of the role if it was created
     """
 
     # Example
@@ -265,7 +317,11 @@ Delete a Role
 
     def delete_role(r_name)
     """
-    @r_name id of the Role to be deleted
+    Args:
+        r_name: id of the role to be deleted
+    Returns:
+        ``True`` if the role was deleted
+        ``False`` otherwise
     """
 
     # Example
