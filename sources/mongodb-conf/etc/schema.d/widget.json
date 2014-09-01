@@ -9,7 +9,8 @@
 		"refreshInterval": {
 			"type": "integer",
 			"defaultValue": 60,
-			"label": "Widget refresh interval (in seconds)"
+			"label": "Widget refresh interval",
+			"role": "duration"
 		}
 	}
 }
