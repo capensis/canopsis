@@ -104,7 +104,7 @@ class Archiver(object):
         # 2 == Stealthy
         # 3 == Bagot
         # 4 == Canceled
-        self.logger.info(event)
+
         log = 'Status is set to {} for event %s' % event['rk']
         ts_curr = event['timestamp']
         ts_prev = devent['timestamp']

@@ -58,24 +58,24 @@ class RightsTest(TestCase):
     def test(self):
         # Test creation of composites
         rights = {
-            '1234': {'checksum': 15},
-            '1235': {'checksum': 8},
-            '1236': {'checksum': 12},
-            '1237': {'checksum': 1},
-            '1238': {'checksum': 15},
-            '1239': {'checksum': 15},
-            '1240': {'checksum': 8},
-            '1241': {'checksum': 8}
+            '1234': {'desc': 'test right in comp', 'checksum': 15},
+            '1235': {'desc': 'test right in comp', 'checksum': 8},
+            '1236': {'desc': 'test right in comp', 'checksum': 12},
+            '1237': {'desc': 'test right in comp', 'checksum': 1},
+            '1238': {'desc': 'test right in comp', 'checksum': 15},
+            '1239': {'desc': 'test right in comp', 'checksum': 15},
+            '1240': {'desc': 'test right in comp', 'checksum': 8},
+            '1241': {'desc': 'test right in comp', 'checksum': 8}
             }
         rights_scnd = {
-            '2344': {'checksum': 15},
-            '2345': {'checksum': 8},
-            '2346': {'checksum': 12},
-            '2347': {'checksum': 1},
-            '2348': {'checksum': 15},
-            '2349': {'checksum': 15},
-            '4210': {'checksum': 8},
-            '4211': {'checksum': 8}
+            '2344': {'desc': 'test right in comp', 'checksum': 15},
+            '2345': {'desc': 'test right in comp', 'checksum': 8},
+            '2346': {'desc': 'test right in comp', 'checksum': 12},
+            '2347': {'desc': 'test right in comp', 'checksum': 1},
+            '2348': {'desc': 'test right in comp', 'checksum': 15},
+            '2349': {'desc': 'test right in comp', 'checksum': 15},
+            '4210': {'desc': 'test right in comp', 'checksum': 8},
+            '4211': {'desc': 'test right in comp', 'checksum': 8}
             }
 
         sample_user = {
