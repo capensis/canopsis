@@ -18,18 +18,22 @@
 		},
 		"groups": {
 			"type": "array",
-			"items": {
-				"type": "string"
-			},
+			"role": "classifiedcrecordselector",
+			"listed_model": "group",
+			"multiselect": false,
 			"required": false
 		},
 		"profile": {
-			"type": "string"
+			"type": "string",
+			"role": "classifiedcrecordselector",
+			"listed_model": "profile",
+			"multiselect": false
 		},
 		"rights": {
-			"type": "object",
-			"role": "rights",
-			"required": false
+			"type": "array",
+			"role": "classifiedcrecordselector",
+			"listed_model": "right",
+			"multiselect": true
 		}
 	}
 }
