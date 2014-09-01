@@ -59,22 +59,35 @@ class Rights(Manager):
 
     # Add an action to the referenced action
     def add(self, a_id, a_desc):
+        """
+        Args:
+            a_id: id of the action to reference
+            a_desc: description of the action to reference
+        Returns:
+            A document describing the effect of the put_elements
+            if the action was created
+            ``None`` otherwise
+        """
+
         action = {'type': 'action',
                  'desc': a_desc}
-        self['action_storage'].put_element(a_id, action)
+        return self['action_storage'].put_element(a_id, action)
 
-    # Entity can be a right_composite, a profile or a role since
-    # all 3 of them have a rights field
-    # Called by check_rights
+
+    # Check if an entity has the flags for a specific rigjt
+    # The entity must have a rights field with a rights maps within
     def check(self, entity, right_id, checksum):
         """
-        Check the from the rights of entity for a right of id right_id
+        Args:
+            entity: entity to be checked
+            right_id: right to be checked
+            checksum: minimum flags needed
+        Returns:
+            ``True`` if the entity has enough permissions on the right
+            ``False`` otherwise
         """
-
-        # check the fields
         if not entity or not entity.get('rights', None):
             return False
-
 
         found = entity['rights'].get(right_id, None)
         if (found and found.get('checksum', 0) & checksum >= checksum):
@@ -83,16 +96,21 @@ class Rights(Manager):
         return False
 
 
-    # Check in the rights of the user (in the role), then in the profile,
-    # then in the rights_composite
-    # Return the value as soon as it's found
-    # True if found and user has the right else False
+    # Check if an user has the flags for a specific right
+    # Each of the user's entities (Role, Profile, and Composites)
+    # will be checked For now, you must specify the user's role
     def check_rights(self, role, right_id, checksum):
         """
-        Check if user has the right of id right_id
+        Args:
+            role: user's role to be checked
+            right_id: right to be checked
+            checksum: minimum flags needed
+        Returns:
+            ``True`` if the user's role has enough permissions
+            ``False`` otherwise
         """
 
-        role = self.profile_storage.get_elements(ids=role)
+        role = self.role_storage.get_elements(ids=role)
         profiles = self.profile_storage.get_elements(ids=role['profile'])
 
         # Do not edit the following for a double for loop
@@ -119,13 +137,23 @@ class Rights(Manager):
     # entity can be a role, a profile, or a composite
     def add_right(self, e_name, e_type, right_id, checksum,
             **kwargs):
+        """
+        Args:
+            e_name: name of the entity to add the right to
+            e_type: type of the entity
+            right_id: right to be modified
+            checksum: flags to add
+        Returns:
+            The checksum of the right if the flags were added
+            ``0`` otherwise
+        """
 
         # Action not referenced, can't create a right
         if not self['action_storage'].get_elements(
             ids=right_id, query={'type':'action'}):
             print (
                 'Can not add right {0} to entity {1}: action is not referenced'.format(right_id, e_name))
-            return False
+            return 0
 
         entity = None
 
@@ -135,7 +163,7 @@ class Rights(Manager):
             entity = self[e_type].get_elements(ids=e_name)
 
         if not entity:
-            return False
+            return 0
 
         if not entity.get('rights', None):
             entity['rights'] = {}
@@ -155,14 +183,23 @@ class Rights(Manager):
                 entity['rights'][right_id][key] = context
 
         self[e_type].put_element(e_name, entity)
-        return True
+        return entity['rights'][right_id]['checksum']
+
 
     # Delete the checksum right of the entity linked
     # new_checksum ^= checksum
     # entity can be a role, a profile, or a composite
-    # return 0 if the new right is deleted or not found
-    # else return the new checksum
     def delete_right(self, entity, e_type, right_id, checksum):
+        """
+        Args:
+            entity: entity to delete the right from
+            e_type: type of the entity
+            right_id: right to be modified
+            checksum: flags to remove
+         Returns:
+            The checksum of the right if it was modified
+            ``0`` otherwise
+         """
 
         entity = self[e_type + '_storage'].get_elements(ids=entity)
 
@@ -189,15 +226,19 @@ class Rights(Manager):
     # comp_rights should be a map of rights referenced in the action catalog
     def create_composite(self, comp_name, comp_rights):
         """
-        Create a new rights composite
-        and add it in the appropriate Mongo collection
+        Args:
+            comp_name: id of the composite to create
+            comp_rights: map of rights to init the composite with
+        Returns:
+            The name of the composite if it was created
+            ``None`` otherwise
         """
 
         # Do nothing if it already exists
         if self['composite_storage'].get_elements(
             ids=comp_name, query={'type': 'composite'}
             ):
-            return False
+            return None
 
         new_comp = {'type': 'composite',
                     'rights': {}
@@ -212,24 +253,28 @@ class Rights(Manager):
                            right_id,
                            comp_rights[right_id]['checksum'])
 
-        return True
+        return comp_name
 
 
     # Create a new profile composed of the composites p_composites
     #   and which name will be p_name
     # If the profile already exists, composites from p_composites
     #   that are not already in the profile's composites will be added
-    # Return True if the profile was created, False otherwise
     def create_profile(self, p_name, p_composites):
         """
-        Create profile p_name composed of p_composites
+        Args:
+            p_name: id of the profile to be created
+            p_compsites: list of composites to init the Profile with
+        Returns:
+            The name of the profile if it was created
+            ``None`` otherwise
         """
 
         # Do nothing if it already exists
         if self['profile_storage'].get_elements(
             ids=p_name, query={'type': 'profile'}
             ):
-            return False
+            return None
 
         new_profile = {'type':'profile',
                        'composites': []
@@ -240,17 +285,20 @@ class Rights(Manager):
         for comp in p_composites:
             self.add_composite(p_name, 'profile', comp)
 
-        return True
+        return p_name
 
 
     # Delete entity of id e_name
-    # Return True if the entity was deleted, False otherwise
-    # f_type is the storage to remove it from
     # t_type is the storage to check for relations
     # entity can be a profile, or composite
     def delete_entity(self, e_name, e_type):
         """
-        Delete entity
+        Args:
+            e_name: id of the entity to be deleted
+            e_type: type of the entity
+        Returns:
+            ``True`` if the entity was deleted
+            ``False`` otherwise
         """
 
         from_storage = e_type + '_storage'
@@ -273,6 +321,14 @@ class Rights(Manager):
 
     # to be removed when user module is created
     def delete_role(self, r_name):
+        """
+        Args:
+            r_name: id of the role to be deleted
+        Returns:
+            ``True`` if the role was deleted
+            ``False`` otherwise
+        """
+
         if self.role_storage.get_elements(ids=r_name):
             self.role_storage.remove_elements(r_name)
             return True
@@ -282,22 +338,44 @@ class Rights(Manager):
 
     # delete_entity wrapper
     def delete_profile(self, p_name):
-        self.delete_entity(p_name, 'profile')
+        """
+        Args:
+            p_name: id of the profile to be deleted
+        Returns:
+            ``True`` if the profile was deleted
+            ``False`` otherwise
+        """
+
+        return self.delete_entity(p_name, 'profile')
 
 
     # delete_entity wrapper
     def delete_composite(self, c_name):
-        self.delete_entity(c_name, 'composite')
+        """
+        Args:
+            c_name: id of the composite to be deleted
+        Returns:
+            ``True`` if the composite was deleted
+            ``False`` otherwise
+        """
+
+        return self.delete_entity(c_name, 'composite')
 
 
     # Add the composite named comp_name to the entity
     # If the composite does not exist and
     #   comp_rights is specified it will be created first
     # entity can be a profile or a role
-    # Return True if the composite was added, False otherwise
     def add_composite(self, e_name, e_type, comp_name, comp_rights=None):
         """
-        Add the composite comp_name to the entity
+        Args:
+            e_name: name of the entity to be modified
+            e_type: type of the entity
+            comp_name: id of the composite to add to the entity
+            comp_rights: specified if the composite has to be created beforehand
+        Returns:
+            ``True`` if the composite was added to the entity
+            ``False`` otherwise
         """
 
         e_type += '_storage'
@@ -317,6 +395,7 @@ class Rights(Manager):
 
         return True
 
+
     # add_composite wrapper
     def add_comp_to_profile(self, e_name, comp_name, comp_rights=None):
         self.add_composite(e_name, 'profile', comp_name, comp_rights)
@@ -329,10 +408,15 @@ class Rights(Manager):
     # Add the profile of name p_name to the role
     # If the profile does not exists and p_composites is specified
     #    it will be created first
-    # Return True if the profile was added, False otherwise
     def add_profile(self, role, p_name, p_composites=None):
         """
-        Add profile p_name to role['profile']
+        Args:
+            role: id of the role to add the Profile to
+            p_name: name of the Profile to be added
+            p_composites: specified if the profile has to be created beforehand
+        Returns:
+            ``True`` if the profile was created
+            ``False`` otherwise
         """
 
         profile = self.profile_storage.get_elements(ids=p_name)
@@ -340,7 +424,7 @@ class Rights(Manager):
             if p_composites:
                 self.create_profile(p_name, p_composites)
             else:
-                return None
+                return False
 
         # retrieve the profile
         if profile:
@@ -352,13 +436,12 @@ class Rights(Manager):
                 s_role['profile'].append(p_name)
                 self.role_storage.put_element(role, s_role)
 
-            return p_name
+            return True
 
 
     # Remove the entity e_name from from_name
     # from_name can be a profile or a role
     # e_name can be a profile or a composite
-    # Return True if e_name was removed, False otherwise
     def remove_entity(self, from_name, from_type, e_name, e_type):
         entity = self[from_type + '_storage'].get_elements(
             query={'type': from_type}, ids=from_name)
@@ -373,7 +456,13 @@ class Rights(Manager):
     # remove_entity wrapper
     def remove_composite(self, e_name, e_type, comp_name):
         """
-        Remove the composite comp_name from the entity
+        Args:
+            e_name: name of the entity to be modified
+            e_type: type of the entity
+            comp_name: id of the composite to remove from the entity
+        Returns:
+            ``True`` if the composite was removed from the entity
+            ``False`` otherwise
         """
 
         return self.remove_entity(e_name, e_type, comp_name, 'composite')
@@ -381,18 +470,41 @@ class Rights(Manager):
 
     # remove_composite wrapper
     def rm_comp_role(self, r_name, c_name):
-        self.remove_composite(r_name, 'role', c_name)
+        """
+        Args:
+            r_name: role to removed the composite from
+            c_name: composite to remove
+        Return:
+            ``True`` if the composite was removed from the role
+            ``False`` otherwise
+        """
+
+        return self.remove_composite(r_name, 'role', c_name)
 
 
     # remove_composite wrapper
     def rm_comp_profile(self, p_name, c_name):
-        self.remove_composite(p_name, 'profile', c_name)
+        """
+        Args:
+            p_name: profile to removed the composite from
+            c_name: composite to remove
+        Return:
+            ``True`` if the composite was removed from the profile
+            ``False`` otherwise
+        """
+
+        return self.remove_composite(p_name, 'profile', c_name)
 
 
     # remove_entity wrapper
     def remove_profile(self, role, p_name):
         """
-        Remove profile p_name from the role
+        Args:
+            role: id of the role to remove the Profile from
+            p_name: name of the Profile to be removed
+        Returns:
+            ``True`` if the profile was removed from the entity
+            ``False`` otehrwise
         """
 
         return self.remove_entity(role, 'role', p_name, 'profile')
@@ -402,10 +514,13 @@ class Rights(Manager):
     #   and which name will be r_name
     # Any extra field can be specified in the kwargs
     # If the role already exists, the profile will be changed for r_profile
-    # Return the newly created role's name or False it the creation failed
     def create_role(self, r_name, r_profile):
         """
-        Create role p_name composed of p_composites
+        Args:
+            r_name: id of the Role to be created
+            r_profile: id of the Profile to init the Role with
+        Returns:
+            ``Name`` of the role if it was created
         """
 
         if self.role_storage.get_elements(ids=r_name):
@@ -419,6 +534,7 @@ class Rights(Manager):
             new_role['profile'].append(r_profile)
         self.role_storage.put_element(r_name, new_role)
         return r_name
+
 
     # Generic getter
     def get_from_storage(self, s_name):
