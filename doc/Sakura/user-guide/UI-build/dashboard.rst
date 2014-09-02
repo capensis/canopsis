@@ -1,4 +1,4 @@
-﻿.. include:: /Sakura/includes/links.rst
+﻿.. include:: ../../includes/links.rst
 
 .. _Sakura_dashboard:
 
@@ -17,8 +17,8 @@ Dashboard. Below I explain how to add a new
 default dashboard, while :ref:`Figure 2 <figure1>` in contrast shows a customised one).
 
 
-.. |link| replace:: `figure 1 </Sakura/images/dashboard/default_dashboard.png>`__
-.. |link2| replace:: `figure 2 </Sakura/images/dashboard/dashboard.png>`__
+.. |link| replace:: `figure 1 <../../images/dashboard/default_dashboard.png>`__
+.. |link2| replace:: `figure 2 <../../images/dashboard/dashboard.png>`__
 
 .. _figure1:
 
@@ -38,8 +38,8 @@ select an empty area over the dashboard then release the button. (see
 :ref:`Figure 4 <figure3>` )
 
 
-.. |link3| replace:: `figure 3 </Sakura/images/dashboard/build_menu.png>`__
-.. |link4| replace:: `figure 4 </Sakura/images/dashboard/add_widget.png>`__
+.. |link3| replace:: `figure 3 <../../images/dashboard/build_menu.png>`__
+.. |link4| replace:: `figure 4 <../../images/dashboard/add_widget.png>`__
 
 .. _figure3:
 
@@ -55,8 +55,8 @@ A new |Sakura_widget| dialog should popup, enter the necessary information click
 
 
 
-.. |link5| replace:: `figure 5 </Sakura/images/dashboard/add_widget1.png>`__
-.. |link6| replace:: `figure 6 </Sakura/images/dashboard/add_widget2.png>`__
+.. |link5| replace:: `figure 5 <../../images/dashboard/add_widget1.png>`__
+.. |link6| replace:: `figure 6 <../../images/dashboard/add_widget2.png>`__
 
 .. _figure5:
 
@@ -78,8 +78,8 @@ dedicated wiki pages for detailed info over the different types of
 
 
 
-.. |link7| replace:: `figure 7 </Sakura/images/dashboard/add_widget3.png>`__
-.. |link8| replace:: `figure 8 </Sakura/images/dashboard/add_widget4.png>`__
+.. |link7| replace:: `figure 7 <../../images/dashboard/add_widget3.png>`__
+.. |link8| replace:: `figure 8 <../../images/dashboard/add_widget4.png>`__
 
 .. _figure7:
 
@@ -89,27 +89,27 @@ dedicated wiki pages for detailed info over the different types of
 | |link7|        | |link8|           |
 +----------------+-------------------+
 
-.. |default_dashboard| image:: /Sakura/images/dashboard/default_dashboard.png  
+.. |default_dashboard| image:: ../../images/dashboard/default_dashboard.png  
                 :height: 65 px
                 :width: 325 px
-.. |dashboard| image:: /Sakura/images/dashboard/dashboard.png  
+.. |dashboard| image:: ../../images/dashboard/dashboard.png  
                 :height: 65 px
                 :width: 325 px
-.. |build_menu| image:: /Sakura/images/dashboard/build_menu.png
+.. |build_menu| image:: ../../images/dashboard/build_menu.png
                 :height: 65 px
                 :width: 325 px
-.. |add_widget| image:: /Sakura/images/dashboard/add_widget.png
+.. |add_widget| image:: ../../images/dashboard/add_widget.png
                 :height: 65 px
                 :width: 325 px
-.. |add_widget1| image:: /Sakura/images/dashboard/add_widget1.png
+.. |add_widget1| image:: ../../images/dashboard/add_widget1.png
                 :height: 65 px
                 :width: 325 px
-.. |add_widget2| image:: /Sakura/images/dashboard/add_widget2.png
+.. |add_widget2| image:: ../../images/dashboard/add_widget2.png
                 :height: 65 px
                 :width: 325 px
-.. |add_widget3| image:: /Sakura/images/dashboard/add_widget3.png
+.. |add_widget3| image:: ../../images/dashboard/add_widget3.png
                 :height: 65 px
                 :width: 325 px
-.. |add_widget4| image:: /Sakura/images/dashboard/add_widget4.png
+.. |add_widget4| image:: ../../images/dashboard/add_widget4.png
                 :height: 65 px
                 :width: 325 px

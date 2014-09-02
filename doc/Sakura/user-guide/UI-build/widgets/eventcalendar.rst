@@ -13,8 +13,8 @@ This widget allows to display events in different types of calendars :
 * Basic week view
 * Basic day view
 
-.. image:: /Sakura/images/widgets/calendar_widget1.png
-.. image:: /Sakura/images/widgets/calendar_widget2.png
+.. image:: ../../../images/widgets/calendar_widget1.png
+.. image:: ../../../images/widgets/calendar_widget2.png
 
 There is two ways to display events on a calendar :
 
