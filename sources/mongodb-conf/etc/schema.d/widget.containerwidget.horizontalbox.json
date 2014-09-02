@@ -5,6 +5,7 @@
 		"keys":["title", "widgetslotTemplate"]
 	}],
 	"properties": {
+		"title": {"type": "string"},
 		"xtype": {"type": "string"},
 		"widgetslotTemplate" : {
 			"type": "string",
