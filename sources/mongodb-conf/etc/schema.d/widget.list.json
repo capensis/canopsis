@@ -1,7 +1,7 @@
 {
 	"type": "object",
 	"metadata": {
-		"icon": "th-list"
+		"icon": "list-alt"
 	},
 	"categories": [{
 		"title": "General",
