@@ -6,6 +6,9 @@
 	"categories": [{
 		"title": "General",
 		"keys":["title", "refreshInterval", "event_selection", "destination_view", "filter_pattern"]
+	},{
+		"title": "Rendering",
+		"keys":["refreshableWidget"]
 	}],
 	"properties": {
 		"title":  {
