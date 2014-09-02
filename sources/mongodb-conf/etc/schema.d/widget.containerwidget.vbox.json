@@ -1,5 +1,8 @@
 {
 	"type": "object",
+	"metadata": {
+		"classes": ["system", "container", "deprecated"]
+	},
 	"categories": [{
 		"title": "General",
 		"keys":["title", "widgetslotTemplate"]
