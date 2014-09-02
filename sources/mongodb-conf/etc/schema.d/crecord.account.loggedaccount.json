@@ -1,0 +1,18 @@
+{
+	"type": "object",
+	"categories": [{
+		"title": "General",
+		"keys":["firstname","lastname", "user", "mail"]
+	},{
+		"title": "Role",
+		"keys": ["role"]
+	},{
+		"title": "Rights",
+		"keys": ["rights"]
+	}],
+	"properties": {
+		"rights": {
+			"type": "object"
+		}
+	}
+}
