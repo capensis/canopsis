@@ -198,8 +198,7 @@ class Rights(Manager):
 
     # Delete the checksum right of the entity linked
     # new_checksum ^= checksum
-    # entity can be a role, a profile, or a composite
-    def delete_right(self, entity, e_type, right_id, checksum):
+    def remove_right(self, entity, e_type, right_id, checksum):
         """
         Args:
             entity: entity to delete the right from
@@ -308,7 +307,10 @@ class Rights(Manager):
         """
 
         from_storage = e_type + '_storage'
-        t_type = 'profile' if e_type == 'composite' else 'role'
+        t_types = {'profile': 'role',
+                   'composite': 'profile',
+                   'role': 'user'}
+        t_type = t_types[e_type]
         to_storage = t_type + '_storage'
 
         if self[from_storage].get_elements(ids=e_name):
@@ -335,11 +337,8 @@ class Rights(Manager):
             ``False`` otherwise
         """
 
-        if self.get_role(r_name):
-            self.role_storage.remove_elements(r_name)
-            return True
+        return self.delete_entity(r_name, 'role')
 
-        return False
 
 
     # delete_entity wrapper
@@ -393,23 +392,27 @@ class Rights(Manager):
                 return False
 
         entity = self[e_type].get_elements(ids=e_name)
-        if not 'composite' in entity:
-            entity['composite'] = []
-        if not comp_name in entity['composite']:
-            entity['composite'].append(comp_name)
+        if not 'composite' in entity or not comp_name in entity['composite']:
+            entity.setdefault('composite', []).append(comp_name)
             self[e_type].put_element(e_name, entity)
 
         return True
 
 
     # add_composite wrapper
-    def add_comp_to_profile(self, e_name, comp_name, comp_rights=None):
+    def add_comp_profile(self, e_name, comp_name, comp_rights=None):
         self.add_composite(e_name, 'profile', comp_name, comp_rights)
 
 
     # add_composite wrapper
-    def add_comp_to_role(self, e_name, comp_name, comp_rights=None):
+    def add_comp_role(self, e_name, comp_name, comp_rights=None):
         self.add_composite(e_name, 'role', comp_name, comp_rights)
+
+
+    # add_composite wrapper
+    def add_comp_user(self, e_name, comp_name, comp_rights=None):
+        self.add_composite(e_name, 'user', comp_name, comp_rights)
+
 
     # Add the profile of name p_name to the role
     # If the profile does not exists and p_composites is specified
@@ -435,12 +438,42 @@ class Rights(Manager):
         # retrieve the profile
         if profile:
             s_role = self.get_role(role)
-            if not 'profile' in s_role or not len(s_role['profile']):
-                s_role['profile'] = []
 
-            if not p_name in s_role['profile']:
-                s_role['profile'].append(p_name)
+            if not 'profile' in s_role or not p_name in s_role['profile']:
+                s_role.setdefault('profile', []).append(p_name)
                 self.role_storage.put_element(role, s_role)
+
+            return True
+
+
+    # Add the profile of name p_name to the role
+    # If the profile does not exists and p_composites is specified
+    #    it will be created first
+    def add_role(self, u_name, r_name, r_profile=None):
+        """
+        Args:
+            u_name: id of the user to add the role to
+            r_name: name of the role to be added
+            r_composites: specified if the role has to be created beforehand
+        Returns:
+            ``True`` if the profile was created
+            ``False`` otherwise
+        """
+
+        role = self.get_role(r_name)
+        if not role:
+            if r_profile:
+                self.create_role(r_name, r_profile)
+            else:
+                return False
+
+        # retrieve the profile
+        if role:
+            s_user = self.get_user(u_name)
+
+            if not 'role' in s_user or not r_name in s_user['role']:
+                s_user.setdefault('role', []).append(r_name)
+                self.user_storage.put_element(u_name, s_user)
 
             return True
 
@@ -475,7 +508,7 @@ class Rights(Manager):
 
 
     # remove_composite wrapper
-    def rm_comp_role(self, r_name, c_name):
+    def remove_comp_role(self, r_name, c_name):
         """
         Args:
             r_name: role to removed the composite from
@@ -489,7 +522,7 @@ class Rights(Manager):
 
 
     # remove_composite wrapper
-    def rm_comp_profile(self, p_name, c_name):
+    def remove_comp_profile(self, p_name, c_name):
         """
         Args:
             p_name: profile to removed the composite from
@@ -501,19 +534,46 @@ class Rights(Manager):
 
         return self.remove_composite(p_name, 'profile', c_name)
 
-
-    # remove_entity wrapper
-    def remove_profile(self, role, p_name):
+    # remove_composite wrapper
+    def remove_comp_user(self, u_name, c_name):
         """
         Args:
-            role: id of the role to remove the Profile from
+            u_name: user to removed the composite from
+            c_name: composite to remove
+        Return:
+            ``True`` if the composite was removed from the profile
+            ``False`` otherwise
+        """
+
+        return self.remove_composite(u_name, 'user', c_name)
+
+
+    # remove_entity wrapper
+    def remove_profile(self, r_name, p_name):
+        """
+        Args:
+            r_name: id of the role to remove the Profile from
             p_name: name of the Profile to be removed
         Returns:
             ``True`` if the profile was removed from the entity
             ``False`` otehrwise
         """
 
-        return self.remove_entity(role, 'role', p_name, 'profile')
+        return self.remove_entity(r_name, 'role', p_name, 'profile')
+
+
+    # remove_entity wrapper
+    def remove_role(self, u_name, r_name):
+        """
+        Args:
+            u_name: id of the user to remove the role from
+            r_name: name of the role to be removed
+        Returns:
+            ``True`` if the role was removed from the entity
+            ``False`` otehrwise
+        """
+
+        return self.remove_entity(u_name, 'user', r_name, 'role')
 
 
     # Create a new role composed of the profile r_profile
@@ -533,12 +593,105 @@ class Rights(Manager):
             return r_name
 
         new_role = {'type': 'role'}
-        new_role['profile'] = []
         if isinstance(r_profile, list):
             new_role['profile'] = r_profile
         else:
-            new_role['profile'].append(r_profile)
+            new_role.setdefault('profile', []).append(r_profile)
         self.role_storage.put_element(r_name, new_role)
         return r_name
 
+
+    def create_user(self, u_id, u_role, contact=None):
+        """
+        Args:
+            u_nick: nick of the user to create, usually first
+                    letter of first name and last name (i.e.:
+                    jdoe for John Doe)
+            u_role: role to init the user with
+            contact: map containing full name, email, adress,
+                     and/or phone number of the user
+        Returns:
+            Map of the newly created user
+        """
+
+        user = self.get_user(u_id)
+
+        if user:
+            return user
+
+        if not self.get_role(u_role):
+            return None
+
+        user = {'type': 'user',
+                'role': u_role}
+
+        if contact:
+            user['contact'] = contact
+
+        self.user_storage.put_element(u_id, user)
+        return user
+
+
+    def set_user_fields(self, u_id, fields):
+        """
+        Args:
+            u_id: id of the user which fields to change
+            fields: map of fields to change and their new values
+        Returns:
+            Map of the modified user
+        """
+
+        user = self.get_user(u_id)
+
+        supported_fields={'name', 'email', 'address', 'phone'}
+
+        for key in fields:
+            if key in supported_fields:
+                user.setdefault('contact', {})[key] = fields[key]
+
+        self.user_storage.put_element(u_id, user)
+        return user
+
+
+    def set_user_name(self, u_id, u_name):
+        """
+        Args:
+            u_id: id of the user which name to change
+            u_name: new name
+        Returns:
+            Map of the modified user
+        """
+        return self.set_user_field(u_id, {'name': u_name})
+
+    def set_user_email(self, u_id, u_email):
+        """
+        Args:
+            u_id: id of the user which email to change
+            u_email: new email
+        Returns:
+            Map of the modified user
+        """
+        return self.set_user_field(u_id, {'email': u_email})
+
+
+    def set_user_address(self, u_id, u_address):
+        """
+        Args:
+            u_id: id of the user which address to change
+            u_address: new address
+        Returns:
+            Map of the modified user
+        """
+        return self.set_user_field(u_id, {'address': u_address})
+
+
+    def set_user_phone(self, u_id, u_phone):
+        """
+        Args:
+            u_id: id of the user which phone to change
+            u_phone: new phone
+        Returns:
+            Map of the modified user
+        """
+        return self.set_user_field(u_id, {'phone': u_phone})
 

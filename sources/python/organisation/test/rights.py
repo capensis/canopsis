@@ -132,7 +132,7 @@ class RightsTest(TestCase):
                 sample_user['role'], '1237', 12), True)
 
         # Test right deletion
-        self.rights.delete_right('composite_test1', 'composite', '1237', 8)
+        self.rights.remove_right('composite_test1', 'composite', '1237', 8)
 
         self.assertEqual(
             self.rights.check_rights(
@@ -141,13 +141,13 @@ class RightsTest(TestCase):
         self.rights.add_right('composite_test1', 'composite', '1237', 12)
 
         # Test remove_entity
-        self.rights.remove_composite('profile_test1', 'profile', 'composite_test1')
+        self.rights.remove_comp_profile('profile_test1', 'composite_test1')
 
         self.assertEqual(
             self.rights.check_rights(
                 sample_user['role'], '1237', 12), False)
 
-        self.rights.add_composite('profile_test1', 'profile', 'composite_test1')
+        self.rights.add_comp_profile('profile_test1', 'composite_test1')
 
         self.assertEqual(
             self.rights.check_rights(
