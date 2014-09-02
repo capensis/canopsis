@@ -11,8 +11,6 @@ Welcome to Canopsis's documentation!
    :titlesonly:
 
    overview
-   Ficus/index
-   Sakura/index
    connectors/index
    changelogs
 
