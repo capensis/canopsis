@@ -40,6 +40,15 @@ class Rights(Manager):
         super(Rights, self).__init__(data_scope=data_scope, *args, **kwargs)
 
 
+    # Generic getter
+    def get_from_storage(self, s_type):
+        def get_from_storage_(elem):
+            return self[s_type + '_storage'].get_elements(
+                ids=elem, query={'type':s_type}
+                )
+        return get_from_storage_
+
+
     def _configure(self, unified_conf, *args, **kwargs):
 
         super(Rights, self)._configure(
@@ -49,12 +58,13 @@ class Rights(Manager):
         self.composite_storage = self['composite_storage']
         self.role_storage = self['role_storage']
         self.action_storage = self['action_storage']
-        self.default_profile = 'vizualisation'
+        self.user_storage = self['user_storage']
 
-        self.get_profile = self.get_from_storage('profile_storage')
-        self.get_action = self.get_from_storage('action_storage')
-        self.get_composite = self.get_from_storage('composite_storage')
-        self.get_role = self.get_from_storage('role_storage')
+        self.get_profile = self.get_from_storage('profile')
+        self.get_action = self.get_from_storage('action')
+        self.get_composite = self.get_from_storage('composite')
+        self.get_role = self.get_from_storage('role')
+        self.get_user = self.get_from_storage('user')
 
 
     # Add an action to the referenced action
@@ -70,7 +80,7 @@ class Rights(Manager):
         """
 
         action = {'type': 'action',
-                 'desc': a_desc}
+                  'desc': a_desc}
         return self['action_storage'].put_element(a_id, action)
 
 
@@ -111,8 +121,8 @@ class Rights(Manager):
             ``False`` otherwise
         """
 
-        role = self.role_storage.get_elements(ids=role)
-        profiles = self.profile_storage.get_elements(ids=role['profile'])
+        role = self.get_role(role)
+        profiles = self.get_profile(role['profile'])
 
         # Do not edit the following for a double for loop
         # list comprehensions are much faster
@@ -150,8 +160,7 @@ class Rights(Manager):
         """
 
         # Action not referenced, can't create a right
-        if not self['action_storage'].get_elements(
-            ids=right_id, query={'type':'action'}):
+        if not self.get_action(right_id):
             print (
                 'Can not add right {0} to entity {1}: action is not referenced'.format(right_id, e_name))
             return 0
@@ -236,9 +245,7 @@ class Rights(Manager):
         """
 
         # Do nothing if it already exists
-        if self['composite_storage'].get_elements(
-            ids=comp_name, query={'type': 'composite'}
-            ):
+        if self.get_composite(comp_name):
             return None
 
         new_comp = {'type': 'composite',
@@ -272,9 +279,7 @@ class Rights(Manager):
         """
 
         # Do nothing if it already exists
-        if self['profile_storage'].get_elements(
-            ids=p_name, query={'type': 'profile'}
-            ):
+        if self.get_profile(p_name):
             return None
 
         new_profile = {'type':'profile',
@@ -330,7 +335,7 @@ class Rights(Manager):
             ``False`` otherwise
         """
 
-        if self.role_storage.get_elements(ids=r_name):
+        if self.get_role(r_name):
             self.role_storage.remove_elements(r_name)
             return True
 
@@ -381,7 +386,7 @@ class Rights(Manager):
 
         e_type += '_storage'
 
-        if not self.composite_storage.get_elements(ids=comp_name):
+        if not self.get_composite(comp_name):
             if comp_rights:
                 self.create_composite(comp_rights, comp_name)
             else:
@@ -420,7 +425,7 @@ class Rights(Manager):
             ``False`` otherwise
         """
 
-        profile = self.profile_storage.get_elements(ids=p_name)
+        profile = self.get_profile(p_name)
         if not profile:
             if p_composites:
                 self.create_profile(p_name, p_composites)
@@ -429,7 +434,7 @@ class Rights(Manager):
 
         # retrieve the profile
         if profile:
-            s_role = self.role_storage.get_elements(ids=role)
+            s_role = self.get_role(role)
             if not 'profile' in s_role or not len(s_role['profile']):
                 s_role['profile'] = []
 
@@ -524,7 +529,7 @@ class Rights(Manager):
             ``Name`` of the role if it was created
         """
 
-        if self.role_storage.get_elements(ids=r_name):
+        if self.get_role(r_name):
             return r_name
 
         new_role = {'type': 'role'}
@@ -536,12 +541,4 @@ class Rights(Manager):
         self.role_storage.put_element(r_name, new_role)
         return r_name
 
-
-    # Generic getter
-    def get_from_storage(self, s_name):
-        def get_from_storage_(elem, default=None):
-            if not elem in self[s_name]:
-                return default
-            return self[s_name][elem]
-        return get_from_storage_
 
