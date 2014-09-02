@@ -26,7 +26,7 @@ then
 
     read -p "Remove slink environment ? [N/y]: " INPUT
 
-    if [ "$INPUT" == "y" ]
+    if [ "$(echo $INPUT | tr '[:upper:]' '[:lower:]')" == "y" ]
     then
         echo "-- Removing slink environment..."
 

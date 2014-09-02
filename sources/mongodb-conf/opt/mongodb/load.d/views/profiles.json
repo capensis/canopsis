@@ -1,37 +1,24 @@
 {
-  "id": "view.event-history",
-  "_id": "view.event-history",
+  "id": "view.profiles",
+  "_id": "view.profiles",
   "crecord_type": "view",
   "crecord_write_time": 1400853201,
   "enable": true,
   "containerwidget": {
-    "xtype": "verticalbox",
+    "xtype": "horizontalbox",
     "title": "container title vbox",
+    "_id": "test_view_vertical_container",
     "items": [
       {
         "title": "wrapper",
         "xtype": "widgetwrapper",
         "widget": {
-          "widgetId" : "fake-guid-fd5a-1ede-8ac2-6a1d66ad0023",
-          "refreshInterval": 40,
-          "refreshableWidget" : false,
           "xtype": "list",
-          "listed_crecord_type": "eventlog",
-          "title": "Historique",
-          "actions_toolbar": [
-            "actionbutton-eventnavigation"
-          ],
-          "displayed_columns": [
-            "domain",
-            "perimeter",
-            "connector",
-            "component",
-            "resource",
-            "output",
-            "status",
-            "criticity",
-            "ack",
-            "timestamp"
+          "listed_crecord_type": "profile",
+          "title": "Profiles",
+          "selection_toolbar": [
+            "actionbutton-create",
+            "actionbutton-removeselection"
           ]
         }
       }

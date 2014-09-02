@@ -118,7 +118,7 @@ Delete the checksum of a Right from an entity
 
 
 Composites
------------
+----------
 
 Creation
 
@@ -219,7 +219,7 @@ Remove a composite from an existing entity (Profile or Role)
     self.Rights.rm_comp_role('DirectorsManager', 'manager')
 
 Profiles
----------
+--------
 
 Create a Profile
 
@@ -292,7 +292,7 @@ Remove a Profile from an existing Role
 
 
 Role
--------
+----
 
 Create a Role
 
@@ -330,10 +330,10 @@ Delete a Role
 
 
 Data Structures
-================
+===============
 
 User
------
+----
 
 .. code-block:: javascript
 
@@ -375,7 +375,7 @@ Example:
 
 
 Role
--------
+----
 
 A Role is specific to a small number of users
 
@@ -406,7 +406,7 @@ Example:
 
 
 Profile
----------
+-------
 
 A profile is generic and global to all users
 
@@ -436,7 +436,7 @@ Example:
 
 
 Composite (aka Groups)
--------
+----------------------
 
 A composite is generic and global to all users
 
@@ -473,7 +473,7 @@ Example:
 
 
 Rights
-----------
+------
 
 .. code-block:: javascript
 

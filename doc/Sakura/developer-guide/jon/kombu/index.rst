@@ -121,7 +121,7 @@ Package contents
 
    .. method:: _receive(receiver, callback, in_timeout)
 
-      Method to override in order to implement message reception in receive_ method.
+      Method to override in order to implement message reception in receive\_ method.
 
       :param receiver: receiver name to use
       :type name: str
@@ -152,7 +152,7 @@ Package contents
 
    .. method:: _send(sender, msg, rk, serializer, compression, content_type, content_encoding, in_timeout)
 
-      Method to override in order to implement message sending in send method_.
+      Method to override in order to implement message sending in send method\_.
 
       :param sender: sender to use
       :type sender: object initialized by this middleware

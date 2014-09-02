@@ -1,4 +1,4 @@
-﻿.. include:: /Sakura/includes/links.rst
+﻿.. include:: ../../../includes/links.rst
 
 Engines
 =======
@@ -178,4 +178,4 @@ Others
 +-------------------+------------------------------------------------+------+------+
 
 
-.. |image1| image:: /Sakura/images/engine/engines_map.png
+.. |image1| image:: ../../../images/engine/engines_map.png
