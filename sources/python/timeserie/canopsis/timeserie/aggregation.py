@@ -55,9 +55,8 @@ def add_aggregation(name, function, push=False):
     """
     Set an aggregation function to this AGGREGATIONS module variable.
 
-    - push :
-        if False, raise an AggregationError if an aggregation has already been
-    added with the same name.
+    - push : if False, raise an AggregationError if an aggregation has already
+      been added with the same name.
     - push : change of aggregation if name already exists.
 
     Added aggregations are available through module properties.
