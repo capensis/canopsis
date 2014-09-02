@@ -43,8 +43,7 @@ Technical description
    :param name: category name
    :type name: str
 
-   :param unified: if True (by default), the new category is unified from
-   previous conf
+   :param unified: if True (by default), the new category is unified from previous conf
    :type unified: bool
 
    :param content: category or list of parameters to add to the new category

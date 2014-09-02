@@ -14,7 +14,7 @@
 		"keys":["filters"]
 	},{
 		"title": "Rendering",
-		"keys":["cloaking"]
+		"keys":["refreshableWidget", "cloaking"]
 	}],
 	"properties": {
 		"listed_crecord_type": {
