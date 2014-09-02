@@ -1,5 +1,8 @@
 {
 	"type": "object",
+	"metadata": {
+		"icon": "cog"
+	},
 	"categories": [{
 		"title": "General",
 		"keys":["title", "label", "actionCssClass", "actionType", "actionArguments"]
