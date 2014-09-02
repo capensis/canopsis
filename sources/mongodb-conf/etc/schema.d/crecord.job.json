@@ -16,7 +16,7 @@
 		"params": {
 			"model": "task",
 			"relationship": "belongsTo",
-			"polimorphic": true,
+			"polymorphic": true,
 			"required": true
 		},
 		"context": {
