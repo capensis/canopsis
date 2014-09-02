@@ -5,7 +5,7 @@
   "crecord_write_time": 1400853201,
   "enable": true,
   "containerwidget": {
-    "xtype": "vbox",
+    "xtype": "verticalbox",
     "title": "container title vbox",
     "_id": "test_view_vertical_container",
     "items": [
