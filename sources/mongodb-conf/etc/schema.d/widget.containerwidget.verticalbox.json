@@ -1,5 +1,9 @@
 {
 	"type": "object",
+	"metadata": {
+		"icon": "align-justify",
+		"classes": ["system", "container"]
+	},
 	"categories": [{
 		"title": "General",
 		"keys":["title", "widgetslotTemplate"]

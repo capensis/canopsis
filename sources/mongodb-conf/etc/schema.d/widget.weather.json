@@ -1,5 +1,8 @@
 {
 	"type": "object",
+	"metadata": {
+		"icon": "cloud"
+	},
 	"categories": [{
 		"title": "General",
 		"keys":["title", "refreshInterval", "event_selection", "destination_view", "filter_pattern"]

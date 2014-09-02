@@ -47,4 +47,4 @@ The rules are stocked in the db and can be later changed or removed.
 
 Bellow is a simple schema of a basic processing chain.
 
-.. image:: schema-event_filter.png
+.. image:: ../../../images/engine/schema-event_filter.png

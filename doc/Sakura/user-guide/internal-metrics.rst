@@ -1,4 +1,4 @@
-.. include:: /Sakura/includes/links.rst
+.. include:: ../includes/links.rst
 
 .. _Sakura_metrics:
 
@@ -99,5 +99,5 @@ Here are examples of Research:
    "engine" and "filter". In other word, it's a solution to get all
    metrics from the filter engine .
 
-.. |image1| image:: /Sakura/images/metrics/perfdata_menu.png
-.. |image2| image:: /Sakura/images/metrics/perfdata_view.png
+.. |image1| image:: ../images/metrics/perfdata_menu.png
+.. |image2| image:: ../images/metrics/perfdata_view.png

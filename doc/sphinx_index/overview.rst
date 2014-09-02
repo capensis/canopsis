@@ -7,7 +7,7 @@ Project overview
 
 |ImageLink|_
 
-.. |ImageLink| image:: /_static/images/overview/logo_canopsis.png
+.. |ImageLink| image:: _static/images/overview/logo_canopsis.png
 .. _ImageLink: http://canopsis.org
 
 What is Canopsis ?
@@ -55,7 +55,7 @@ How to use ?
 
 A |Sakura_Dashboard| containing |Sakura_Views| and |Sakura_Widgets| is provided in order to monitor and to |Sakura_administer| resources.
 
-.. image:: /_static/images/dashboard/dashboard.png
+.. image:: _static/images/dashboard/dashboard.png
 
 Links
 ------

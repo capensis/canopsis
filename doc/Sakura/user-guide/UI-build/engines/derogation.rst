@@ -66,12 +66,12 @@ requalification. Just select the *Statemap* you want, or deselect with
 This tab allows you to configure the event filter, only events which
 match the filter will be derogated. |image6|
 
-.. |image1| image:: /Sakura/images/derogation/select_derogation_manager.png
+.. |image1| image:: ../../../images/derogation/select_derogation_manager.png
 	     :height: 100 px
 	     :width: 1000 px
 
-.. |image2| image:: /Sakura/images/derogation/derogation_manager.png
-.. |image3| image:: /Sakura/images/derogation/add_derog_general.png
-.. |image4| image:: /Sakura/images/derogation/add_derog_override.png
-.. |image5| image:: /Sakura/images/derogation/add_derog_requal.png
-.. |image6| image:: /Sakura/images/derogation/add_derog_filter.png
+.. |image2| image:: ../../../images/derogation/derogation_manager.png
+.. |image3| image:: ../../../images/derogation/add_derog_general.png
+.. |image4| image:: ../../../images/derogation/add_derog_override.png
+.. |image5| image:: ../../../images/derogation/add_derog_requal.png
+.. |image6| image:: ../../../images/derogation/add_derog_filter.png

@@ -54,4 +54,4 @@ Matrice des flux
 	"Application","Connecteur Logstash","TCP","5140",
 	"Application","Connecteur Logstash","Trap SNMP (UDP)","162",
 
-.. |run_manager| image:: /_static/images/connectors/InterconnecionFlux.png
+.. |run_manager| image:: ../../_static/images/connectors/InterconnecionFlux.png
