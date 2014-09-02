@@ -234,7 +234,7 @@ function update_conffiles() {
                             ask=1
                         elif [ "$choice" == "E" ] || [ "$choice" == "e" ]
                         then
-                            realtty="/dev/`ps | grep $$ | tr -s '[:blank:]' | cut -d " " -f 2`"
+                            realtty="/dev/`ps | grep $$ | awk -F ' ' '{print $2}'`"
 
                             if [ "x$EDITOR" == "x" ]
                             then
