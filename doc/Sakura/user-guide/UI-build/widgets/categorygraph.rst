@@ -7,6 +7,6 @@ Bar graph
 
 Bar graphs can be used to display various datas. One of the possible use shown here is to display the delta of disk operations for a specified time frame. This will give us a bar graph representing the history of the disk operations in terms of space freed or being taken at a given time.
 
-.. image:: /Sakura/images/widgets/bargraph_widget.png
-.. image:: /Sakura/images/widgets/bargraph_wizard1.png
-.. image:: /Sakura/images/widgets/bargraph_wizard2.png
+.. image:: ../../../images/widgets/bargraph_widget.png
+.. image:: ../../../images/widgets/bargraph_wizard1.png
+.. image:: ../../../images/widgets/bargraph_wizard2.png

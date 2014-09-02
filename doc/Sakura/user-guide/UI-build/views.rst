@@ -1,4 +1,4 @@
-.. include:: /Sakura/includes/links.rst
+.. include:: ../../includes/links.rst
 
 .. _Sakura_views:
 
@@ -17,8 +17,8 @@ created. From the Canopsis menu bar click on Run > Views manager. Figure
 1 and 2 below shows how to open the Views manager.
 
 
-.. |link| replace:: `figure 1 </Sakura/images/views/run_manager.png>`__
-.. |link2| replace:: `figure 2 </Sakura/images/views/view_manager.png>`__
+.. |link| replace:: `figure 1 <../../images/views/run_manager.png>`__
+.. |link2| replace:: `figure 2 <../../images/views/view_manager.png>`__
 
 
 +-----------------+------------------+
@@ -31,7 +31,7 @@ Once in Views manager click on the "Add view" button in the toolbar, a
 dialog window should popup, fill in a name for the new view (see Fig 3).
 
 
-.. |link3| replace:: `figure 3 </Sakura/images/views/view_name.png>`__
+.. |link3| replace:: `figure 3 <../../images/views/view_name.png>`__
 
 
 
@@ -46,8 +46,8 @@ below in Figure 4. To add a new |Sakura_widgets| , with the mouse
 click and select an empty area over the dashboard then release the
 button. (see Fig 5).
 
-.. |link4| replace:: `figure 4 </Sakura/images/views/edit_new_view.png>`__
-.. |link5| replace:: `figure 5 </Sakura/images/views/select_widget_area.png>`__
+.. |link4| replace:: `figure 4 <../../images/views/edit_new_view.png>`__
+.. |link5| replace:: `figure 5 <../../images/views/select_widget_area.png>`__
 
 +------------------+-----------------------+
 | |edit_new_view|  | |select_widget_area|  |
@@ -66,12 +66,12 @@ properties or information details in the advanced configuration (see Fig
 (see Fig 11).
 
 
-.. |link6| replace:: `figure 6 </Sakura/images/views/widget_wizard1.png>`__
-.. |link7| replace:: `figure 7 </Sakura/images/views/widget_wizard2.png>`__
-.. |link8| replace:: `figure 8 </Sakura/images/views/widget_wizard3.png>`__
-.. |link9| replace:: `figure 9 </Sakura/images/views/widget_wizard4.png>`__
-.. |link10| replace:: `figure 10 </Sakura/images/views/widget_wizard5.png>`__
-.. |link11| replace:: `figure 11 </Sakura/images/views/widget_wizard6.png>`__
+.. |link6| replace:: `figure 6 <../../images/views/widget_wizard1.png>`__
+.. |link7| replace:: `figure 7 <../../images/views/widget_wizard2.png>`__
+.. |link8| replace:: `figure 8 <../../images/views/widget_wizard3.png>`__
+.. |link9| replace:: `figure 9 <../../images/views/widget_wizard4.png>`__
+.. |link10| replace:: `figure 10 <../../images/views/widget_wizard5.png>`__
+.. |link11| replace:: `figure 11 <../../images/views/widget_wizard6.png>`__
 
 +-------------------+-------------------+-------------------+
 | |widget_wizard1|  | |widget_wizard2|  | |widget_wizard3|  |
@@ -89,9 +89,9 @@ secondary mouse button, or click the floppy disk icon on the floating
 toolbox (see Fig 13) in order to save the changes to the View so far
 (see Fig 14).
 
-.. |link12| replace:: `figure 12 </Sakura/images/views/new_widget.png>`__
-.. |link13| replace:: `figure 13 </Sakura/images/views/new_widget2.png>`__
-.. |link14| replace:: `figure 14 </Sakura/images/views/new_widget3.png>`__
+.. |link12| replace:: `figure 12 <../../images/views/new_widget.png>`__
+.. |link13| replace:: `figure 13 <../../images/views/new_widget2.png>`__
+.. |link14| replace:: `figure 14 <../../images/views/new_widget3.png>`__
 
 +---------------+----------------+----------------+
 | |new_widget|  | |new_widget2|  | |new_widget3|  |
@@ -117,45 +117,45 @@ Keyboard shortcuts
     it in moving the cursor at the top of the dashboard.
 
    
-.. |run_manager| image:: /Sakura/images/views/run_manager.png
+.. |run_manager| image:: ../../images/views/run_manager.png
 	     :height: 65 px
 	     :width: 325 px
-.. |view_manager| image:: /Sakura/images/views/view_manager.png
+.. |view_manager| image:: ../../images/views/view_manager.png
 	     :height: 65 px
 	     :width: 325 px
-.. |view_name| image:: /Sakura/images/views/view_name.png
+.. |view_name| image:: ../../images/views/view_name.png
 	     :height: 65px
 	     :width: 650 px
-.. |edit_new_view| image:: /Sakura/images/views/edit_new_view.png
+.. |edit_new_view| image:: ../../images/views/edit_new_view.png
 	     :height: 65 px
 	     :width: 325 px
-.. |select_widget_area| image:: /Sakura/images/views/select_widget_area.png
+.. |select_widget_area| image:: ../../images/views/select_widget_area.png
 	     :height: 65 px
 	     :width: 325 px
-.. |widget_wizard1| image:: /Sakura/images/views/widget_wizard1.png
+.. |widget_wizard1| image:: ../../images/views/widget_wizard1.png
 	     :height: 65 px
 	     :width: 270 px
-.. |widget_wizard2| image:: /Sakura/images/views/widget_wizard2.png
+.. |widget_wizard2| image:: ../../images/views/widget_wizard2.png
 	     :height: 65 px
 	     :width: 270 px
-.. |widget_wizard3| image:: /Sakura/images/views/widget_wizard3.png
+.. |widget_wizard3| image:: ../../images/views/widget_wizard3.png
 	     :height: 65 px
 	     :width: 270 px
-.. |widget_wizard4| image:: /Sakura/images/views/widget_wizard4.png
+.. |widget_wizard4| image:: ../../images/views/widget_wizard4.png
 	     :height: 65 px
 	     :width: 270 px
-.. |widget_wizard5| image:: /Sakura/images/views/widget_wizard5.png
+.. |widget_wizard5| image:: ../../images/views/widget_wizard5.png
 	     :height: 65 px
 	     :width: 270 px
-.. |widget_wizard6| image:: /Sakura/images/views/widget_wizard6.png
+.. |widget_wizard6| image:: ../../images/views/widget_wizard6.png
 	     :height: 65 px
 	     :width: 270 px
-.. |new_widget| image:: /Sakura/images/views/new_widget.png
+.. |new_widget| image:: ../../images/views/new_widget.png
 	     :height: 65 px
 	     :width: 270 px
-.. |new_widget2| image:: /Sakura/images/views/new_widget2.png
+.. |new_widget2| image:: ../../images/views/new_widget2.png
 	     :height: 65 px
 	     :width: 270 px
-.. |new_widget3| image:: /Sakura/images/views/new_widget3.png
+.. |new_widget3| image:: ../../images/views/new_widget3.png
 	     :height: 65 px
 	     :width: 270 px

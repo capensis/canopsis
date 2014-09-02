@@ -23,4 +23,4 @@ Matrice des flux
 
 	"","Application","Webserver Canopsis","HTTP(s)","Prévoir une ouverture de flux par poller nagios"
 
-.. |run_manager| image:: /_static/images/connectors/InterconnexionCLI.png
+.. |run_manager| image:: ../../_static/images/connectors/InterconnexionCLI.png

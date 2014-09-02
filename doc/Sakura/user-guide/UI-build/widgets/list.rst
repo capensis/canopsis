@@ -6,4 +6,4 @@ Allow to display a list according to a set of defined mongo filters.
 Filters use a field name (from event specification) a condition and a value.
 For example a filer like the following: `state is equal 2` would show a list of all events where a given component or resource state is critical.
 
-.. image:: /Sakura/images/widgets/list_widget.png
+.. image:: ../../../images/widgets/list_widget.png
