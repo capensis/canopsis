@@ -1,5 +1,8 @@
 {
 	"type": "object",
+	"metadata": {
+		"icon": "th-list"
+	},
 	"categories": [{
 		"title": "General",
 		"keys":["title", "refreshInterval", "listed_crecord_type", "itemsPerPage", "selection_toolbar", "actions_toolbar", "mixins" , "default_filter"]
