@@ -16,6 +16,7 @@
           "xtype": "list",
           "default_filter" : "{\n    \"$or\": [\n        {\n            \"event_type\": \"check\"\n        }\n    ]\n}",
           "refreshInterval": 40,
+          "refreshableWidget" : true,
           "itemsPerPage" : 5,
           "listed_crecord_type": "event",
           "title": "Bac à évenements",
