@@ -6,6 +6,11 @@
     }],
     "properties": {
         "title": {"type": "string"},
-        "job": {"type": "crecord.job", "required": "true"}
+        "job": {
+            "model": "crecord.job",
+            "relationship": "belongsTo",
+            "polymorphic": true,
+            "required": "true"
+        }
     }
 }
