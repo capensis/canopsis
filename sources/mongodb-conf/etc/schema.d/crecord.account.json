@@ -14,9 +14,8 @@
 		"crecord_type": {
 			"enum": ["account"],
 			"required": true,
-			"defaultValue": "account",
-			"icon": "user",
-			"label": "type"
+			"default": "account",
+			"icon": "user"
 		},
 		"firstname": {
 			"type": "string"
@@ -35,15 +34,17 @@
 		},
 		"role": {
 			"type": "array",
+			"items": { "type": "object" },
 			"role": "classifiedcrecordselector",
-			"listed_model": "role",
+			"model": "role",
 			"multiselect": true,
 			"required": false
 		},
 		"rights": {
 			"type": "array",
+			"items": { "type": "object" },
 			"role": "classifiedcrecordselector",
-			"listed_model": "right",
+			"model": "right",
 			"multiselect": true,
 			"required": false
 		},

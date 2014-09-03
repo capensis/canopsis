@@ -27,10 +27,10 @@
 			"type": "array",
 			"items": {"type": "string"},
 			"required": true,
-			"defaultValue": []
+			"default": []
 		},
-		"smtp_host": {"type": "string", "required": true, "defaultValue": "localhost"},
-		"smtp_port": {"type": "integer", "required": true, "defaultValue": 25},
-		"html": {"type": "boolean", "required": true, "defaultValue": false}
+		"smtp_host": {"type": "string", "required": true, "default": "localhost"},
+		"smtp_port": {"type": "integer", "required": true, "default": 25},
+		"html": {"type": "boolean", "required": true, "default": false}
 	}
 }
