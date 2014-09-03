@@ -267,6 +267,23 @@ class Archiver(object):
                         change[key] = event[key]
                     elif key in event and key not in devent:
                         change[key] = event[key]
+
+
+            #Manage keep state key that allow from UI to keep the choosen state into until next ok state
+            event_reset = False
+
+            #When a event is ok again, dismiss keep_state statement
+            if devent.get('keep_state') and event['state'] == 0:
+                change['keep_state'] = False
+                event_reset = True
+
+            #assume we don t just received a keep state and if keep state was sent previously
+            #then override state of new event
+            if 'keep_state' not in event:
+                if not event_reset and devent.get('keep_state'):
+                    change['state'] = devent['state']
+
+
             if change:
                 self.storage.get_backend('events').update({'_id': _id},
                                                           {'$set': change})
