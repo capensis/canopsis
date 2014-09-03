@@ -73,21 +73,21 @@ class engine(Engine):
                     rk, selector_event = selector.event()
                     self.logger.info('%s properly computed' % (event_id))
 
+                    # Publish Sla information when available
+                    if selector.sla_rk:
+                        selector_event['sla_rk'] = selector.sla_rk
+
+                    # Ok then i have to update selector statement
+                    self.storage.update(
+                        event_id, {'state': selector_event['state']})
+                    self.amqp.publish(
+                        selector_event, rk, self.amqp.exchange_name_events)
+                    self.logger.debug("%s published event" % (selector.display_name))
+
                 except Exception as e:
                     self.logger.error('Unable to select all event matching this selector in order to publish worst state one form them. Exception : ' + str(e))
                     event = None
 
-                # Publish Sla information when available
-                publishSla = selector.data.get('sla_rk', None)
-                if publishSla:
-                    selector_event['sla_rk'] = publishSla
-
-                # Ok then i have to update selector statement
-                self.storage.update(
-                    event_id, {'state': selector_event['state']})
-                self.amqp.publish(
-                    selector_event, rk, self.amqp.exchange_name_events)
-                self.logger.debug("%s published event" % (selector.name))
 
             else:
                 self.logger.debug('Nothing to do with this selector')

@@ -31,9 +31,13 @@ from logging import getLogger
 
 class Selector(Record):
     def __init__(
-        self, storage, _id=None, name=None, namespace='events', use_cache=True,
-        record=None, cache_time=60, logging_level=None
-    ):
+        self, storage,
+        _id=None,
+        name=None,
+        namespace='events',
+        record=None,
+        logging_level=None
+        ):
         self.type = 'selector'
         self.storage = storage
 
@@ -44,21 +48,12 @@ class Selector(Record):
         self.namespace = namespace
 
         self.dostate = True
-        self.state_algorithm = 0
-        self.downtimes_as_ok = False
 
         self.mfilter = {}
         self.include_ids = []
         self.exclude_ids = []
         self.changed = False
         self.rk = None
-
-        self.use_cache = use_cache
-        self.cache_time = cache_time
-        self.cache = None
-
-        self.last_resolv = None
-        self.last_nb_records = 0
 
         self.last_event = None
 
@@ -68,77 +63,37 @@ class Selector(Record):
         self.sel_metric_prefix = "cps_sel_"
         self.sel_metric_name = self.sel_metric_prefix + "state_%s"
 
-        self._ids = None
         self.logger = getLogger('Selector')
         self.cdowntime = Downtime(self.logger)
         if logging_level:
             self.logger.setLevel(logging_level)
 
-        ## Init
-        if not record:
-            try:
-                record = storage.get(self._id)
-            except:
-                record = None
 
-        if record:
-            self.logger.debug("Init from record.")
-            super(Selector, self).__init__(record=record, storage=storage)
-        else:
-            self.logger.debug("Init new record.")
-            super(Selector, self).__init__(
-                name=name, _id=self._id, account=storage.account,
-                _type=self.type, storage=storage)
-
-    def dump(self):
-        self.data['include_ids'] = self.include_ids
-        self.data['exclude_ids'] = self.exclude_ids
-        self.data['mfilter'] = dumps(self.mfilter)
-        self.data['namespace'] = self.namespace
-        self.data['rk'] = self.rk
-        self.data['output_tpl'] = self.output_tpl
-        self.data['dostate'] = self.dostate
-        self.data['state_algorithm'] = self.state_algorithm
-        self.data['downtimes_as_ok'] = self.downtimes_as_ok
-
-        return Record.dump(self)
+        self.load(record.dump())
 
     def load(self, dump):
-        Record.load(self, dump)
+
+        self.logger.debug('Loading selector from record')
+
         try:
-            self.mfilter = loads(self.data['mfilter'])
+            self.mfilter = loads(dump.get('mfilter', '{}'))
         except:
+            self.logger.warning('invalid mfilter for selector {}'.format(dump.get('display_name', 'noname')))
             pass
 
-        self.namespace = self.data.get('namespace', self.namespace)
-        self.rk = self.data.get('rk', self.rk)
-        self.include_ids = self.data.get('include_ids', self.include_ids)
-        self.exclude_ids = self.data.get('exclude_ids', self.exclude_ids)
-        self.dostate = self.data.get('dostate', self.dostate)
-        self.state_algorithm = self.data.get(
-            'state_algorithm ', self.state_algorithm)
-        self.downtimes_as_ok = self.data.get(
-            'downtimes_as_ok ', self.downtimes_as_ok)
-        output_tpl = self.data.get('output_tpl', None)
 
-        if output_tpl and output_tpl != "":
-            self.output_tpl = output_tpl
+        self._id = dump.get('_id')
+        self.namespace = dump.get('namespace', self.namespace)
+        self.dostate = dump.get('dostate')
+        self.display_name = dump.get('display_name', 'noname')
+        self.rk = dump.get('rk', self.rk)
+        self.include_ids = dump.get('include_ids', self.include_ids)
+        self.exclude_ids = dump.get('exclude_ids', self.exclude_ids)
+        self.dostate = dump.get('dostate', self.dostate)
+        self.output_tpl = dump.get('output_tpl', None)
+        self.sla_rk = dump.get('sla_rk', None)
 
-    def setMfilter(self, filter):
-        try:
-            dumps(self.mfilter)
-            self.mfilter = filter
-            self.changed = True
-        except:
-            raise Exception('Invalid mfilter')
 
-    def setExclude_ids(self, ids):
-        self.exclude_ids = ids
-        self.changed = True
-
-    def setInclude_ids(self, ids):
-        self.include_ids = ids
-        self.changed = True
 
     ## Build MongoDB query to find every id matching event
     def makeMfilter(self):
@@ -211,55 +166,6 @@ class Selector(Record):
 
         return {"$and": and_clause}
 
-    def resolv(self):
-
-        """ resolv computes every database event that matches with current
-        selector filter and set current selector _ids to events id list
-
-        Returns:
-            list. The selector events id list
-        """
-
-        def do_resolv(self):
-            self.logger.debug("do_resolv:")
-            ids = []
-            mfilter = self.makeMfilter()
-            self.logger.error(" + filter: %s" % mfilter)
-            if not mfilter:
-                self.logger.debug("  + Invalid mfilter")
-                return []
-            self.logger.debug(" + namespace: %s" % self.namespace)
-
-            records = self.storage.find(
-                mfilter=mfilter, namespace=self.namespace)
-            for record in records:
-                if not record._id in ids:
-                    ids.append(record._id)
-
-            self.last_resolv = time.time()
-            self.last_nb_records = len(ids)
-
-            self.storage.update(self._id, {'ids': ids})
-
-            self.changed = False
-
-            return ids
-
-        if self.changed or self._ids is None:
-            self.logger.debug("Selector has change, get new ids")
-            self._ids = do_resolv(self)
-
-        elif self.use_cache and self.last_resolv:
-            if (time.time() - self.last_resolv) < self.cache_time:
-                self.logger.debug(" + Use cache")
-                return self._ids
-
-        self._ids = do_resolv(self)
-        return self._ids
-
-    def getRecords(self):
-        ids = self.resolv()
-        return self.storage.get(ids, namespace=self.namespace)
 
     def getState(self):
         self.logger.debug("getStates:")
@@ -360,10 +266,9 @@ class Selector(Record):
             for key in output_data:
                 output = output.replace("{%s}" % key, str(output_data[key]))
 
-        display_name = self.data.get("display_name", None)
 
         # Debug
-        self.logger.debug(" + Display Name: %s" % display_name)
+        self.logger.debug(" + Display Name: %s" % self.display_name)
         self.logger.debug(" + output: %s" % output)
         self.logger.debug(" + long_output: %s" % long_output)
         self.logger.debug(" + perf_data_array: %s" % perf_data_array)
@@ -375,14 +280,14 @@ class Selector(Record):
             event_type="selector",
             source_type="component",
             component='selector',
-            resource=display_name,
+            resource=self.display_name,
             state=state,
             state_type=state_type,
             output=output,
             long_output=long_output,
             perf_data=None,
             perf_data_array=perf_data_array,
-            display_name=display_name
+            display_name=self.display_name
         )
 
         # Extra field

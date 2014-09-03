@@ -109,19 +109,22 @@ class Rights(Manager):
 
     # Check if an user has the flags for a specific right
     # Each of the user's entities (Role, Profile, and Composites)
-    # will be checked For now, you must specify the user's role
-    def check_rights(self, role, right_id, checksum):
+    # will be checked
+    def check_rights(self, u_name, right_id, checksum):
         """
         Args:
-            role: user's role to be checked
+            u_name: user to be checked
             right_id: right to be checked
             checksum: minimum flags needed
         Returns:
-            ``True`` if the user's role has enough permissions
+            ``True`` if the user has enough permissions
             ``False`` otherwise
         """
 
-        role = self.get_role(role)
+        user = self.get_user(u_name)
+        role = None
+        if user:
+            role = self.get_role(user.setdefault('role', None))
         profiles = self.get_profile(role['profile'])
 
         # Do not edit the following for a double for loop
@@ -130,8 +133,14 @@ class Rights(Manager):
                       for y in profiles
                       for x in y['composite']]
 
+        if 'composite' in role:
+            composites += [self['composite_storage'][x] for x in role['composite']]
+        if 'composite' in user:
+            composites += [self['composite_storage'][x] for x in user['composite']]
+
         # check in the role's comsposite
-        if ((role and self.check(role, right_id, checksum)) or
+        if ((user and self.check(user, right_id, checksum)) or
+            (role and self.check(role, right_id, checksum)) or
             # check in the profile's composite
             (len(profiles) and any(self.check(x, right_id, checksum)
                                    for x in profiles)) or
@@ -161,8 +170,6 @@ class Rights(Manager):
 
         # Action not referenced, can't create a right
         if not self.get_action(right_id):
-            print (
-                'Can not add right {0} to entity {1}: action is not referenced'.format(right_id, e_name))
             return 0
 
         entity = None
@@ -307,10 +314,7 @@ class Rights(Manager):
         """
 
         from_storage = e_type + '_storage'
-        t_types = {'profile': 'role',
-                   'composite': 'profile',
-                   'role': 'user'}
-        t_type = t_types[e_type]
+        t_type = 'profile' if e_type == 'composite' else 'role'
         to_storage = t_type + '_storage'
 
         if self[from_storage].get_elements(ids=e_name):
@@ -337,7 +341,28 @@ class Rights(Manager):
             ``False`` otherwise
         """
 
-        return self.delete_entity(r_name, 'role')
+        if self.get_role(r_name):
+            self['role_storage'].remove_elements(r_name)
+
+            for user in self['user_storage'].get_elements(query={'type':'user'}):
+                if 'role' in entity and r_name == entity['role']:
+                    entity.pop('role', None)
+                    self['user_storage'].put_element(entity['_id'], entity)
+
+            return True
+
+        return False
+
+    def delete_user(self, u_name):
+        """
+        Args:
+            u_name: id of the name to be deleted
+        Returns:
+            ``True`` if the role was deleted
+            ``False`` otherwise
+        """
+
+        return self['user_storage'].remove_elements(u_name)
 
 
 
@@ -401,17 +426,47 @@ class Rights(Manager):
 
     # add_composite wrapper
     def add_comp_profile(self, e_name, comp_name, comp_rights=None):
-        self.add_composite(e_name, 'profile', comp_name, comp_rights)
+        """
+        Args:
+            e_name: profile id to add the composite to
+            comp_name: composite to be added
+            comp_rights: specified if the composite has to be created beforehand
+        Returns:
+            ``True`` if the composite was added to the profile
+            ``False`` otherwise
+        """
+
+        return self.add_composite(e_name, 'profile', comp_name, comp_rights)
 
 
     # add_composite wrapper
     def add_comp_role(self, e_name, comp_name, comp_rights=None):
-        self.add_composite(e_name, 'role', comp_name, comp_rights)
+        """
+        Args:
+            e_name: role id to add the composite to
+            comp_name: composite to be added
+            comp_rights: specified if the composite has to be created beforehand
+        Returns:
+            ``True`` if the composite was added to the role
+            ``False`` otherwise
+        """
+
+        return self.add_composite(e_name, 'role', comp_name, comp_rights)
 
 
     # add_composite wrapper
     def add_comp_user(self, e_name, comp_name, comp_rights=None):
-        self.add_composite(e_name, 'user', comp_name, comp_rights)
+        """
+        Args:
+            e_name: user id to add the composite to
+            comp_name: composite to be added
+            comp_rights: specified if the composite has to be created beforehand
+        Returns:
+            ``True`` if the composite was added to the user
+            ``False`` otherwise
+        """
+
+        return self.add_composite(e_name, 'user', comp_name, comp_rights)
 
 
     # Add the profile of name p_name to the role
@@ -470,10 +525,8 @@ class Rights(Manager):
         # retrieve the profile
         if role:
             s_user = self.get_user(u_name)
-
-            if not 'role' in s_user or not r_name in s_user['role']:
-                s_user.setdefault('role', []).append(r_name)
-                self.user_storage.put_element(u_name, s_user)
+            s_user['role'] = r_name
+            self.user_storage.put_element(u_name, s_user)
 
             return True
 
