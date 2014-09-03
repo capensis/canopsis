@@ -27,7 +27,7 @@
 			"required": false
 		},
 		"event_type": {
-			"enum": ["check"],
+			"enum": ["uncancel"],
 			"required": true
 		},
 		"source_type": {

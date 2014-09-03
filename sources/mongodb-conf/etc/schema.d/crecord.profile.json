@@ -10,8 +10,7 @@
 	"properties": {
 		"crecord_type": {
 			"enum": ["profile"],
-			"required": true,
-			"label": "type"
+			"required": true
 		},
 		"rights": {
 			"type": "object",

@@ -56,13 +56,13 @@
 		"output": {
 			"type": "string",
 			"required": true,
-			"label": " ",
-			"placeholder": "Remarque ..."
+			"title": " ",
+			"description": "Remarque ..."
 		},
 		"ticket": {
 			"type": "string",
 			"required": false,
-			"placeholder": "Numéro de ticket"
+			"description": "Numéro de ticket"
 		}
 	}
 }

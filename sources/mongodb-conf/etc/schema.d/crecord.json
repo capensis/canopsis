@@ -44,7 +44,7 @@
 		"enable": {
 			"type": "boolean",
 			"required": true,
-			"defaultValue": true
+			"default": true
 		},
 		"parent": {
 			"type": "array",
