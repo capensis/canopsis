@@ -2,6 +2,6 @@
 	"type": "object",
 	"properties": {
         "jobid": {"type": "string", "required": true, "defaultValue": null},
-        "jobctx": {"type": "any", "required": true, "defaultValue": null}
+        "jobctx": {"type": "object", "required": true, "defaultValue": null}
     }
 }
