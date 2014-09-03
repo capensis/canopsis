@@ -1,6 +1,7 @@
 {
 	"type": "object",
 	"properties": {
+        "xtype": {"type": "string"},
         "jobid": {"type": "string", "required": true, "defaultValue": null},
         "jobctx": {"type": "object", "required": true, "defaultValue": null}
     }

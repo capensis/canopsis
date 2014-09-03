@@ -16,19 +16,19 @@
 		},
 		"cfilter_allow_only_optimized_filters": {
 			"type": "boolean",
-			"defaultValue": true
+			"default": true
 		},
 		"debug_mode": {
 			"type": "boolean",
-			"defaultValue": true
+			"default": true
 		},
 		"list_info_button_pattern": {
 			"type": "string",
-			"defaultValue": "http://localhost:8082/#/userview/view.event"
+			"default": "http://localhost:8082/#/userview/view.event"
 		},
 		"login_footer": {
 			"type": "string",
-			"defaultValue": ""
+			"default": ""
 		}
 	}
 }

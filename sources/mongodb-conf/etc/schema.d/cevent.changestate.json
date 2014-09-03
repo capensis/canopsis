@@ -3,40 +3,43 @@
 	"serializer":"Cevent",
 	"type": "object",
 	"categories": [{
-		"title": "general",
-		"keys":["author", "connector", "component", "resource"]
+		"title": "General",
+		"keys":["author", "state", "output"]
 	}],
 	"properties": {
 		"connector": {
 			"type": "string",
-			"required": true,
-			"readOnly": true
+			"required": true
 		},
 		"component": {
 			"type": "string",
 			"required": true,
 			"readOnly": true
 		},
-		"resource": {
-			"type": "string",
-			"required": true,
-			"readOnly": true
-		},
 		"connector_name": {
 			"type": "string",
-			"required": false
+			"required": false,
+			"readOnly": true,
+			"role": "source"
+		},
+		"resource": {
+			"type": "string",
+			"required": false,
+			"readOnly": true
 		},
 		"event_type": {
-			"enum": ["uncancel"],
+			"enum": ["check"],
 			"required": true
 		},
 		"source_type": {
 			"type": "string",
-			"required": false
+			"required": false,
+			"readOnly": true
 		},
 		"state": {
 			"type": "number",
-			"required": true
+			"required": true,
+			"role" : "state"
 		},
 		"state_type": {
 			"type": "number",
@@ -58,7 +61,8 @@
 		"output": {
 			"type": "string",
 			"required": true,
-			"readOnly": true
+			"label": " ",
+			"placeholder": "Remarque ..."
 		}
 	}
 }

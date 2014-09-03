@@ -17,28 +17,31 @@
 		"crecord_type": {
 			"enum": ["role"],
 			"required": true,
-			"label": "type"
+			"title": "type"
 		},
 		"description": {
 			"type": "string"
 		},
 		"groups": {
 			"type": "array",
+			"items": { "type": "object" },
 			"role": "classifiedcrecordselector",
-			"listed_model": "group",
+			"model": "group",
 			"multiselect": false,
 			"required": false
 		},
 		"profile": {
 			"type": "string",
+			"items": { "type": "object" },
 			"role": "classifiedcrecordselector",
-			"listed_model": "profile",
+			"model": "profile",
 			"multiselect": false
 		},
 		"rights": {
 			"type": "array",
+			"items": { "type": "object" },
 			"role": "classifiedcrecordselector",
-			"listed_model": "right",
+			"model": "right",
 			"multiselect": true
 		}
 	}

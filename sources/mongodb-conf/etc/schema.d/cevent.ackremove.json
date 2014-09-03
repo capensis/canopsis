@@ -28,7 +28,7 @@
 			"role": "source"
 		},
 		"event_type": {
-			"enum": ["ack"],
+			"enum": ["ackremove"],
 			"required": true
 		},
 		"source_type": {
@@ -56,7 +56,7 @@
 		"output": {
 			"type": "string",
 			"required": true,
-			"label": ""
+			"title": ""
 		}
 	}
 }
