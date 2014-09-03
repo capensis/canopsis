@@ -27,8 +27,7 @@
           "listed_crecord_type": "filter",
           "selection_toolbar": [
             "actionbutton-create",
-            "actionbutton-removeselection",
-            "connectorbutton-edit"
+            "actionbutton-removeselection"
           ],
           "displayed_columns": [
             "name",
@@ -41,8 +40,7 @@
           ],
           "actions_toolbar": [
             "actionbutton-create",
-            "actionbutton-removeselection",
-            "connectorbutton-edit"
+            "actionbutton-removeselection"
           ],
           "xtype": "list"
         },
