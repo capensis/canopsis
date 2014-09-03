@@ -22,7 +22,7 @@
 from logging import getLogger
 from unittest import main, TestCase
 from canopsis.organisation.rights import Rights
-import pprint
+from pprint import pprint
 
 class RightsTest(TestCase):
 
@@ -30,7 +30,6 @@ class RightsTest(TestCase):
         self.logger = getLogger()
         self.rights = Rights()
         self.data_types = ['profile', 'composite', 'role']
-        self.printer = pprint.PrettyPrinter(indent=4)
 
         # This should be in a filldb script
         referenced_rights = {
@@ -54,8 +53,19 @@ class RightsTest(TestCase):
         for x in referenced_rights:
             self.rights.add(x, 'desc test rule')
 
+        # delete everything before starting
+        self.rights.delete_composite('composite_test1')
+        self.rights.delete_composite('composite_test2')
 
-    def test(self):
+        self.rights.delete_user('jharris')
+
+        self.rights.delete_profile('profile_test1')
+        self.rights.delete_profile('profile_test2')
+
+        self.rights.delete_role('role_test1bis')
+
+
+    def tests(self):
         # Test creation of composites
         rights = {
             '1234': {'desc': 'test right in comp', 'checksum': 15},
@@ -78,93 +88,131 @@ class RightsTest(TestCase):
             '4211': {'desc': 'test right in comp', 'checksum': 8}
             }
 
-        sample_user = {
-            'contact': {
-                'mail': 'jharris@scdp.com',
-                'phone_number': '+33678695041',
-                'adress': '1271 6th Avenue, Rockefeller Cent., NYC, New York'},
-            'name': 'Joan Harris',
-            'role': '',
-            '_id': '1407160264.joan.harris.manager'}
-
-        # delete everything before starting
-        self.rights.delete_composite('composite_test1')
-        self.rights.delete_composite('composite_test2')
-
-        self.rights.delete_profile('profile_test1')
-        self.rights.delete_profile('profile_test2')
-
-        self.rights.delete_role('role_test1bis')
-        self.rights.delete_role('role_test2')
-        self.rights.delete_role('role_test1')
-
-
         # basic composite creation
         self.rights.create_composite('composite_test1', rights)
+        self.assertEqual(
+            self.rights['composite_storage'].get_elements(
+                query={'type':'composite'})[0]['_id'],
+            'composite_test1'
+            )
+
         self.rights.create_composite('composite_test2', rights_scnd)
+        self.assertEqual(
+            self.rights['composite_storage'].get_elements(
+                query={'type':'composite'})[1]['_id'],
+            'composite_test2'
+            )
 
         # basic profile creation
         self.rights.create_profile('profile_test1', ['composite_test1'])
+        self.assertEqual(
+            self.rights['profile_storage'].get_elements(
+                query={'type':'profile'})[0]['_id'],
+            'profile_test1'
+            )
+
         self.rights.create_profile('profile_test2', ['composite_test2'])
+        self.assertEqual(
+            self.rights['profile_storage'].get_elements(
+                query={'type':'profile'})[1]['_id'],
+            'profile_test2'
+            )
 
         # create new role and assign it to the user
-        sample_user['role'] = self.rights.create_role('role_test1bis',
-                                                      'profile_test1')
+        self.rights.create_role('role_test1bis', 'profile_test1')
+        self.assertEqual(
+            self.rights['role_storage'].get_elements(
+                query={'type':'role'})[0]['_id'],
+            'role_test1bis'
+            )
 
-        # create second sample role
-        self.rights.create_role('role_test2', 'profile_test2')
+        self.rights.create_user('jharris', 'role_test1bis')
+        self.assertEqual(
+            self.rights['user_storage'].get_elements(
+                query={'type':'user'})[0]['_id'],
+            'jharris'
+            )
 
         # Basic check
         self.assertEqual(
             self.rights.check_rights(
-                sample_user['role'], '1237', 1), True)
+                'jharris', '1237', 1), True)
 
         self.assertEqual(
             self.rights.check_rights(
-                sample_user['role'], '1237', 12), False)
+                'jharris', '1237', 12), False)
 
         # Add permissions to the rights
         self.rights.add_right('composite_test1', 'composite', '1237', 12)
-
-        # Check shall return True now
         self.assertEqual(
             self.rights.check_rights(
-                sample_user['role'], '1237', 12), True)
+                'jharris', '1237', 12), True)
 
         # Test right deletion
         self.rights.remove_right('composite_test1', 'composite', '1237', 8)
-
         self.assertEqual(
             self.rights.check_rights(
-                sample_user['role'], '1237', 12), False)
+                'jharris', '1237', 12), False)
 
+        # Add it back
         self.rights.add_right('composite_test1', 'composite', '1237', 12)
 
         # Test remove_entity
         self.rights.remove_comp_profile('profile_test1', 'composite_test1')
-
         self.assertEqual(
             self.rights.check_rights(
-                sample_user['role'], '1237', 12), False)
+                'jharris', '1237', 12), False)
 
+        # Add it back
         self.rights.add_comp_profile('profile_test1', 'composite_test1')
-
         self.assertEqual(
             self.rights.check_rights(
-                sample_user['role'], '1237', 12), True)
+                'jharris', '1237', 12), True)
 
+        # Test removing the profile
         self.rights.remove_profile('role_test1bis', 'profile_test1')
-
         self.assertEqual(
             self.rights.check_rights(
-                sample_user['role'], '1237', 12), False)
+                'jharris', '1237', 12), False)
 
+        # Add it back
         self.rights.add_profile('role_test1bis', 'profile_test1')
-
         self.assertEqual(
             self.rights.check_rights(
-                sample_user['role'], '1237', 12), True)
+                'jharris', '1237', 12), True)
 
+        # Remove the profile to add it to the role
+        self.rights.remove_profile('role_test1bis', 'profile_test1')
+        self.assertEqual(
+            self.rights.check_rights(
+                'jharris', '1237', 12), False)
+
+        # Add the composite to the role
+        self.rights.add_comp_role('role_test1bis', 'composite_test1')
+        self.assertEqual(
+            self.rights.check_rights(
+                'jharris', '1237', 12), True)
+
+        # Remove it
+        self.rights.remove_comp_role('role_test1bis', 'composite_test1')
+        self.assertEqual(
+            self.rights.check_rights(
+                'jharris', '1237', 12), False)
+
+        # Add the specific right to the user
+        self.rights.add_right('jharris', 'user', '1237', 12)
+        self.assertEqual(
+            self.rights.check_rights(
+                'jharris', '1237', 12), True)
+
+        # Change the checksum
+        self.rights.remove_right('jharris', 'user', '1237', 4)
+        self.assertEqual(
+            self.rights.check_rights(
+                'jharris', '1237', 12), False)
+        self.assertEqual(
+            self.rights.check_rights(
+                'jharris', '1237', 8), True)
 
 
 if __name__ == '__main__':
