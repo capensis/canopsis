@@ -4,11 +4,13 @@
 	"type": "object",
 	"categories": [{
 		"title": "General",
-		"keys":["author", "connector_name", "component", "resource", "ticket", "output"]
+		"keys":["author", "connector", "component", "resource", "separator", "ticket", "output"]
 	}],
 	"properties": {
 		"connector": {
 			"type": "string",
+			"role": "source",
+			"readOnly": true,
 			"required": true
 		},
 		"component": {
@@ -23,9 +25,7 @@
 		},
 		"connector_name": {
 			"type": "string",
-			"required": false,
-			"readOnly": true,
-			"role": "source"
+			"required": false
 		},
 		"event_type": {
 			"enum": ["ack"],
@@ -55,6 +55,7 @@
 		},
 		"output": {
 			"type": "string",
+			"role": "textarea",
 			"required": true,
 			"label": " ",
 			"placeholder": "Remarque ..."
@@ -62,6 +63,7 @@
 		"ticket": {
 			"type": "string",
 			"required": false,
+			"label": "Numéro de ticket",
 			"placeholder": "Numéro de ticket"
 		}
 	}
