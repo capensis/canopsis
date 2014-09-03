@@ -50,6 +50,9 @@ function pre_update(){
 function post_update(){
 	echo "Post-update $NAME $VERSION-$RELEASE ..."
 	check_code $?
+
+	sed -i s:@PREFIX@:$PREFIX:g $PREFIX/etc/ubik.conf
+	check_code $?
 }
 
 function purge(){

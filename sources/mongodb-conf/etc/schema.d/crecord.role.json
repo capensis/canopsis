@@ -4,8 +4,14 @@
 		"title": "General",
 		"keys":["description"]
 	},{
-		"title": "Permissions",
-		"keys": ["profile", "groups", "rights"]
+		"title": "profile",
+		"keys": ["profile"]
+	},{
+		"title": "groups",
+		"keys": ["groups"]
+	},{
+		"title": "rights",
+		"keys": ["rights"]
 	}],
 	"properties": {
 		"crecord_type": {
@@ -18,18 +24,22 @@
 		},
 		"groups": {
 			"type": "array",
-			"items": {
-				"type": "string"
-			},
+			"role": "classifiedcrecordselector",
+			"listed_model": "group",
+			"multiselect": false,
 			"required": false
 		},
 		"profile": {
-			"type": "string"
+			"type": "string",
+			"role": "classifiedcrecordselector",
+			"listed_model": "profile",
+			"multiselect": false
 		},
 		"rights": {
-			"type": "object",
-			"role": "rights",
-			"required": false
+			"type": "array",
+			"role": "classifiedcrecordselector",
+			"listed_model": "right",
+			"multiselect": true
 		}
 	}
 }

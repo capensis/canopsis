@@ -5,7 +5,7 @@
   "crecord_write_time": 1400853201,
   "enable": true,
   "containerwidget": {
-    "xtype": "vbox",
+    "xtype": "verticalbox",
     "title": "container title vbox",
     "items": [
       {
@@ -14,6 +14,7 @@
         "widget": {
           "widgetId" : "fake-guid-fd5a-1ede-8ac2-6a1d66ad0023",
           "refreshInterval": 40,
+          "refreshableWidget" : false,
           "xtype": "list",
           "listed_crecord_type": "eventlog",
           "title": "Historique",

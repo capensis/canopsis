@@ -5,7 +5,7 @@
   "crecord_write_time": 1400853201,
   "enable": true,
   "containerwidget": {
-    "xtype": "vbox",
+    "xtype": "verticalbox",
     "title": "container title vbox",
     "items": [
       {
@@ -40,7 +40,7 @@
     "r",
     "w"
   ],
-  "aaa_group": "group.CPS_view_admin",
+  "aaa_group": "group.CPS_view",
   "crecord_creation_time": 1400853201,
   "aaa_access_unauth": [],
   "aaa_owner": "account.root",

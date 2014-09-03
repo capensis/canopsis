@@ -1,5 +1,5 @@
 
-PREFIX="/opt/canopsis/"
+PREFIX="/opt/canopsis"
 HUSER="canopsis"
 HGROUP="canopsis"
 ARCH=`uname -m`

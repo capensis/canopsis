@@ -14,8 +14,14 @@
 		"rrule": {"type": "string", "required": true},
 		"start": {"type": "integer", "required": true, "role": "timestamp"},
 		"params": {
-			"type": "object",
+			"model": "task",
+			"relationship": "belongsTo",
+			"polymorphic": true,
 			"required": true
+		},
+		"context": {
+			"type": "object",
+			"required": false
 		}
 	}
 }

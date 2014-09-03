@@ -1,10 +1,15 @@
 {
 	"type": "object",
+	"metadata": {
+		"icon": "align-justify",
+		"classes": ["system", "container"]
+	},
 	"categories": [{
 		"title": "General",
 		"keys":["title", "widgetslotTemplate"]
 	}],
 	"properties": {
+		"xtype": {"type": "string"},
 		"title": {"type": "string"},
 		"widgetslotTemplate" : {
 			"type": "string",

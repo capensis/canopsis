@@ -1,5 +1,8 @@
 {
 	"type": "object",
+	"metadata": {
+		"icon": "list-alt"
+	},
 	"categories": [{
 		"title": "General",
 		"keys":["title", "refreshInterval", "listed_crecord_type", "itemsPerPage", "selection_toolbar", "actions_toolbar", "mixins" , "default_filter"]
@@ -11,7 +14,7 @@
 		"keys":["filters"]
 	},{
 		"title": "Rendering",
-		"keys":["cloaking"]
+		"keys":["refreshableWidget", "cloaking"]
 	}],
 	"properties": {
 		"listed_crecord_type": {

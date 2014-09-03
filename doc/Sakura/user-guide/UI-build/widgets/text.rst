@@ -5,8 +5,8 @@ Text cell
 This widget primary purpose is to display an arbitrary string of text.
 It can also display html code and event variables.
 
-.. image:: /Sakura/images/widgets/text_widget1.png
-.. image:: /Sakura/images/widgets/text_widget2.png
+.. image:: ../../../images/widgets/text_widget1.png
+.. image:: ../../../images/widgets/text_widget2.png
 
 Displaying Variables
 --------------------

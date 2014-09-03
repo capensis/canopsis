@@ -26,7 +26,7 @@ then
 
     read -p "Remove slink environment ? [N/y]: " INPUT
 
-    if [ "$INPUT" == "y" ]
+    if [ "$(echo $INPUT | tr '[:upper:]' '[:lower:]')" == "y" ]
     then
         echo "-- Removing slink environment..."
 
@@ -201,19 +201,52 @@ function update_conffiles() {
 
             if [ -e $DEST ]
             then
-                A=$(md5sum $conffile | cut -d' ' -f1)
+                # Replace variables in config file for better checking
+                TMPCONF=$SRC_PATH/config.tmp
+                rm -f $TMPCONF
+                cp $conffile $TMPCONF
+
+                sed "s#@PREFIX@#$PREFIX#g" -i $TMPCONF
+                sed "s#@HUSER@#$HUSER#g" -i $TMPCONF
+                sed "s#@HGROUP@#$HGROUP#g" -i $TMPCONF
+
+                # Check the two files
+                A=$(md5sum $TMPCONF | cut -d' ' -f1)
                 B=$(md5sum $DEST | cut -d' ' -f1)
 
                 if [ "$A" != "$B" ]
                 then
-                    echo "Config file: $DEST"
-                    read -p "(K)eep old, (R)eplace: " choice
+                    ask=1
 
-                    if [ "$choice" == "R" ] || [ "$choice" == "r" ]
-                    then
-                        copy=1
-                    fi
+                    while [ $ask -eq 1 ]
+                    do
+                        ask=0
+
+                        echo "Config file: $DEST"
+                        read -p "(K)eep old, (R)eplace, (V)iew diff, (E)dit (default: K): " choice <&2
+
+                        if [ "$choice" == "R" ] || [ "$choice" == "r" ]
+                        then
+                            copy=1
+                        elif [ "$choice" == "V" ] || [ "$choice" == "v" ]
+                        then
+                            diff $TMPCONF $DEST | more
+                            ask=1
+                        elif [ "$choice" == "E" ] || [ "$choice" == "e" ]
+                        then
+                            realtty="/dev/`ps | grep $$ | awk -F ' ' '{print $2}'`"
+
+                            if [ "x$EDITOR" == "x" ]
+                            then
+                                EDITOR="vi"
+                            fi
+
+                            $EDITOR $DEST < $realtty > $realtty || true
+                        fi
+                    done
                 fi
+
+                rm $TMPCONF
             else
                 copy=1
             fi

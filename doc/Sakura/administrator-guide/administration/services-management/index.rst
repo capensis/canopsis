@@ -5,4 +5,3 @@ Services management
    :maxdepth: 2
 
    admin-howto
-   doc

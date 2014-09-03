@@ -58,24 +58,24 @@ class RightsTest(TestCase):
     def test(self):
         # Test creation of composites
         rights = {
-            '1234': {'checksum': 15},
-            '1235': {'checksum': 8},
-            '1236': {'checksum': 12},
-            '1237': {'checksum': 1},
-            '1238': {'checksum': 15},
-            '1239': {'checksum': 15},
-            '1240': {'checksum': 8},
-            '1241': {'checksum': 8}
+            '1234': {'desc': 'test right in comp', 'checksum': 15},
+            '1235': {'desc': 'test right in comp', 'checksum': 8},
+            '1236': {'desc': 'test right in comp', 'checksum': 12},
+            '1237': {'desc': 'test right in comp', 'checksum': 1},
+            '1238': {'desc': 'test right in comp', 'checksum': 15},
+            '1239': {'desc': 'test right in comp', 'checksum': 15},
+            '1240': {'desc': 'test right in comp', 'checksum': 8},
+            '1241': {'desc': 'test right in comp', 'checksum': 8}
             }
         rights_scnd = {
-            '2344': {'checksum': 15},
-            '2345': {'checksum': 8},
-            '2346': {'checksum': 12},
-            '2347': {'checksum': 1},
-            '2348': {'checksum': 15},
-            '2349': {'checksum': 15},
-            '4210': {'checksum': 8},
-            '4211': {'checksum': 8}
+            '2344': {'desc': 'test right in comp', 'checksum': 15},
+            '2345': {'desc': 'test right in comp', 'checksum': 8},
+            '2346': {'desc': 'test right in comp', 'checksum': 12},
+            '2347': {'desc': 'test right in comp', 'checksum': 1},
+            '2348': {'desc': 'test right in comp', 'checksum': 15},
+            '2349': {'desc': 'test right in comp', 'checksum': 15},
+            '4210': {'desc': 'test right in comp', 'checksum': 8},
+            '4211': {'desc': 'test right in comp', 'checksum': 8}
             }
 
         sample_user = {
@@ -132,7 +132,7 @@ class RightsTest(TestCase):
                 sample_user['role'], '1237', 12), True)
 
         # Test right deletion
-        self.rights.delete_right('composite_test1', 'composite', '1237', 8)
+        self.rights.remove_right('composite_test1', 'composite', '1237', 8)
 
         self.assertEqual(
             self.rights.check_rights(
@@ -141,13 +141,13 @@ class RightsTest(TestCase):
         self.rights.add_right('composite_test1', 'composite', '1237', 12)
 
         # Test remove_entity
-        self.rights.remove_composite('profile_test1', 'profile', 'composite_test1')
+        self.rights.remove_comp_profile('profile_test1', 'composite_test1')
 
         self.assertEqual(
             self.rights.check_rights(
                 sample_user['role'], '1237', 12), False)
 
-        self.rights.add_composite('profile_test1', 'profile', 'composite_test1')
+        self.rights.add_comp_profile('profile_test1', 'composite_test1')
 
         self.assertEqual(
             self.rights.check_rights(

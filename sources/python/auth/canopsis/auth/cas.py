@@ -30,6 +30,14 @@ from canopsis.webcore.services.auth import get_account, delete_session
 from canopsis.webcore.services.account import create_account
 from canopsis.auth.base import BaseBackend
 
+from sys import version as PYVER
+
+if PYVER < '3':
+    from urllib import quote_plus
+
+else:
+    from urllib.parse import quote_plus
+
 
 class CASBackend(BaseBackend):
     name = 'CASBackend'
@@ -88,11 +96,11 @@ class CASBackend(BaseBackend):
 
             validate_url = '{0}/serviceValidate?ticket={1}&service={2}'.format(
                 cas_server,
-                ticket,
-                service_url
+                quote_plus(ticket),
+                quote_plus(service_url)
             )
 
-            res = requests.get(validate_url)
+            res = requests.get(validate_url, verify=False)
 
             if res.status_code != 200:
                 self.logger.error('Impossible to validate ticket')
@@ -108,6 +116,7 @@ class CASBackend(BaseBackend):
                     user = e.text
 
             if not user:
+                self.logger.error('Impossible to find user in response: {0}'.format(res.content))
                 return False
 
             # Get user
@@ -139,7 +148,10 @@ class CASBackend(BaseBackend):
         else:
             self.logger.info('Redirecting user to CAS server: {0} --> {1}'.format(cas_server, service_url))
 
-            url = '{0}/login?service={1}/logged_in'.format(cas_server, service_url)
+            url = '{0}/login?service={1}'.format(
+                cas_server,
+                quote_plus(service_url)
+            )
 
             username = request.params.pop('username', default=None)
             password = request.params.pop('password', default=None)
@@ -159,7 +171,7 @@ class CASBackend(BaseBackend):
             self.logger.info('Redirecting user to CAS server: {0} --> {1}'.format(cas_server, service_url))
             delete_session()
 
-            url = '{0}/logout?url={1}'.format(cas_server, service_url)
+            url = '{0}/logout?url={1}'.format(cas_server, quote_plus(service_url))
             redirect(url)
 
 
