@@ -521,7 +521,8 @@ Example:
             'adress': '1271 6th Avenue, Rockefeller Center, NYC, New York'
             }
         'name': 'Joan Harris',
-        '_id': '1407160264.joan.harris.manager'
+        '_id': 'jharris.1234',
+        'type': 'user'
 
         }
 
@@ -534,7 +535,8 @@ A Role is specific to a small number of users
 .. code-block:: javascript
 
     'name': {
-
+        
+        'type': 'role',
         'profile': ...              // ID of the profile (string)
 
         // Empty by default
@@ -550,6 +552,7 @@ Example:
 .. code-block:: javascript
 
     Roles = {
+        'type': 'role',
         'manager': {
             'profile': 'DirectorsManager',
             'list_of_directors': ['Ted Chaough', 'Peggy Olson', 'Don Draper']
@@ -565,7 +568,8 @@ A profile is generic and global to all users
 .. code-block:: javascript
 
     'name': {                            // String of profile's name
-
+        
+        'type': 'profile',
         'composites': ...                // List of the groups the profile belongs to
 
         // Empty by default
@@ -581,6 +585,7 @@ Example:
 
     An Administrator profile exists, it has all rights and belongs to the Group Management as well as the root Group
     Profiles = {
+        'type': 'profile',
         'Manager': {
             'composites': ['managements', 'supervizion']
         }
@@ -596,6 +601,7 @@ A composite is generic and global to all users
 
     'name': {                        // String of group's name
 
+        'type': 'composite',
         'members': ...,              // List of members ids
         'rights': ...                // Map of type Rights
 
@@ -607,6 +613,7 @@ Example:
 .. code-block:: javascript
 
     Groups = {
+        'type': 'composite',    
         'management': {
             'members': ['1407160264.joan.harris.manager'],
             'rights': {
@@ -630,8 +637,10 @@ Rights
 .. code-block:: javascript
 
     Rghts = {
+    
         object_id...: {             // Right on the object with the identifier id
 
+            'type': 'right',
             'checksum': ...,        // 1 == Read, 2 == Update, 4 == Create, 8 == Delete
 
             // Additional Field
