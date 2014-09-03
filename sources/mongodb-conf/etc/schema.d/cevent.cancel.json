@@ -28,7 +28,7 @@
 			"readOnly": true
 		},
 		"event_type": {
-			"enum": ["check"],
+			"enum": ["cancel"],
 			"required": true
 		},
 		"source_type": {
@@ -60,8 +60,8 @@
 		"output": {
 			"type": "string",
 			"required": true,
-			"label": " ",
-			"placeholder": "Remarque ..."
+			"ticket": " ",
+			"description": "Remarque ..."
 		}
 	}
 }

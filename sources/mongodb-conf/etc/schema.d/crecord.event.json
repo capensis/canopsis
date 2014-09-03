@@ -17,7 +17,7 @@
 		"crecord_type": {
 			"enum": ["account"],
 			"required": true,
-			"defaultValue": "account",
+			"default": "account",
 			"icon": "flag"
 		},
 		"ack": {
@@ -55,7 +55,7 @@
 			"type": "number",
 			"required": true,
 			"role": "criticity",
-			"label":"criticity"
+			"title":"criticity"
 		},
 		"perimeter": {
 			"type": "string"

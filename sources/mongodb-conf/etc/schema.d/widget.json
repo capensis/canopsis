@@ -8,8 +8,8 @@
 		"cssClass": {"type": "string"},
 		"refreshInterval": {
 			"type": "integer",
-			"defaultValue": 60,
-			"label": "Widget refresh interval",
+			"default": 60,
+			"title": "Widget refresh interval",
 			"role": "duration"
 		}
 	}

@@ -16,7 +16,7 @@
 		},
 		"destination_view":  {
 			"type": "string",
-			"defaultValue": "view.event"
+			"default": "view.event"
 		},
 		"event_selection":  {
 			"type": "array",
@@ -27,11 +27,11 @@
 		},
 		"filter_pattern": {
 			"type": "string",
-			"defaultValue": "{ \"rk\" : \"{{rk}}\" }"
+			"default": "{ \"rk\" : \"{{rk}}\" }"
 		},
 		"refreshableWidget":  {
 			"type": "boolean",
-			"defaultValue": true
+			"default": true
 		}
 	}
 }

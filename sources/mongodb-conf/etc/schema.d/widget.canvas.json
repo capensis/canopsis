@@ -4,6 +4,10 @@
 		"title": {"type": "string"},
 		"xtype": {"type": "string"},
 		"items": {
+            "type": "array",
+            "items": {
+                "type": "object"
+            },
 			"relationship": "hasMany",
 			"model": "widgetwrapper"
 		}

@@ -25,7 +25,7 @@
 		},
 		"refreshableWidget":  {
 			"type": "boolean",
-			"defaultValue": true
+			"default": true
 		},
 		"item_actions": {
 			"type": "array",
