@@ -18,7 +18,7 @@
         "service": {
             "type": "string",
             "required": true,
-            "defaultValue": "http://localhost:8082/"
+            "default": "http://localhost:8082/"
         }
     }
 }

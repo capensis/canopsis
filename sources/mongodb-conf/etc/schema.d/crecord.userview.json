@@ -15,7 +15,7 @@
 		"crecord_type": {
 			"enum": ["view"],
 			"required": true,
-			"label": "type"
+			"title": "type"
 		},
 		"internal": {
 			"type": "boolean",
@@ -25,6 +25,7 @@
 			"type": "string"
 		},
 		"containerwidget": {
+			"type": "object",
 			"relationship": "belongsTo",
 			"model": "widget.containerwidget",
 			"polymorphic":true

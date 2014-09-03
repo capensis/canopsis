@@ -26,11 +26,11 @@
 		},
 		"downtimes_as_ok": {
 			"type": "boolean",
-			"defaultValue": true
+			"default": true
 		},
 		"enable": {
 			"type": "boolean",
-			"defaultValue": true
+			"default": true
 		},
 		"mfilter": {
 			"type": "string",
@@ -56,17 +56,17 @@
 		},
 		"loaded": {
 			"type": "boolean",
-			"defaultValue": false
+			"default": false
 		},
 		"dostate": {
 			"type": "boolean",
 			"required": true,
-			"defaultValue": true
+			"default": true
 		},
 		"dosla": {
 			"type": "boolean",
 			"required": true,
-			"defaultValue": false
+			"default": false
 		},
 		"state": {
 			"type": "integer"
@@ -79,7 +79,7 @@
 		},
 		"sla_state": {
 			"type": "integer",
-			"defaultValue": false
+			"default": false
 		},
 		"sla_timewindow": {
 			"type": "integer"
@@ -92,8 +92,8 @@
 		},
 		"sla_timewindow_doUnknown": {
 			"type": "boolean",
-			"defaultValue": true,
-			"label": "Consider unknown time"
+			"default": true,
+			"title": "Consider unknown time"
 		},
 		"thd_warn_sla_timewindow": {
 			"type": "number"
@@ -103,11 +103,11 @@
 		},
 		"sla_output_tpl": {
 			"type": "string",
-			"defaultValue" :"{cps_pct_by_state_0}% Ok, {cps_pct_by_state_1}% Warning, {cps_pct_by_state_2}% Critical, {cps_pct_by_state_3}% Unknown"
+			"default" :"{cps_pct_by_state_0}% Ok, {cps_pct_by_state_1}% Warning, {cps_pct_by_state_2}% Critical, {cps_pct_by_state_3}% Unknown"
 		},
 		"output_tpl": {
 			"type": "string",
-			"defaultValue": "{cps_sel_state_0} Ok, {cps_sel_state_1} Warning, {cps_sel_state_2} Critical"
+			"default": "{cps_sel_state_0} Ok, {cps_sel_state_1} Warning, {cps_sel_state_2} Critical"
 		},
 		"last_dispatcher_update": {
 			"type": "integer",
