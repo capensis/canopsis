@@ -214,6 +214,45 @@ class RightsTest(TestCase):
             self.rights.check_rights(
                 'jharris', '1237', 8), True)
 
+        # Add a right on the same action to different fields
+        # and check that it is summed correctly
+        self.rights.remove_right('jharris', 'user', '1237', 8)
+        self.rights.remove_right('composite_test1', 'user', '1237', 12)
+        self.rights.add_right('jharris', 'user', '1237', 2)
+        self.rights.add_right('role_test1bis', 'user', '1237', 4)
+        self.rights.add_right('composite_test2', 'user', '1237', 8)
+        self.rights.add_comp_user('jharris', 'composite_test2')
+        self.rights.add_comp_role('role_test1bis', 'composite_test1')
+        self.rights.add_profile('role_test1bis', 'profile_test1')
+        self.rights.add_comp_profile('role_test1bis', 'composite_test1')
+        self.assertEqual(
+            self.rights.get_user_rights('jharris')['1237']['checksum'],
+            15)
+
+        # Test getters
+        self.assertEqual(
+            self.rights.get_user_role('jharris'),
+            'role_test1bis')
+
+        self.assertEqual(
+            self.rights.get_user_profiles('jharris'),
+            ['profile_test1'])
+
+        self.assertEqual(
+            self.rights.get_user_composites('jharris'),
+            ['composite_test2'])
+
+        self.assertEqual(
+            self.rights.get_role_composites('role_test1bis'),
+            ['composite_test1'])
+
+        self.assertEqual(
+            self.rights.get_role_profile('role_test1bis'),
+            ['profile_test1'])
+
+        self.assertEqual(
+            self.rights.get_profile_composites('profile_test1'),
+            ['composite_test1'])
 
 if __name__ == '__main__':
     main()
