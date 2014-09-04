@@ -22,7 +22,7 @@ from canopsis.engines import Engine
 from canopsis.old.storage import get_storage
 from canopsis.old.account import Account
 from canopsis.old.selector import Selector
-
+import time
 
 class engine(Engine):
     """
@@ -65,35 +65,55 @@ class engine(Engine):
                 storage=self.storage, record=selector,
                 logging_level=self.logging_level)
 
-            self.logger.debug('%s found, start processing..' % (event_id))
+            name = selector.display_name
+
+            self.logger.debug('Selector {} found, start processing..'.format(name))
+
             # do I publish a selector event ? Yes if selector have to and it is time or we got to update status
             if selector.dostate:
                 try:
-                    #TODO improve this full mongo db request
-                    rk, selector_event = selector.event()
-                    self.logger.info('%s properly computed' % (event_id))
-
-                    # Publish Sla information when available
-                    if selector.sla_rk:
-                        selector_event['sla_rk'] = selector.sla_rk
-
-                    # Ok then i have to update selector statement
-                    self.storage.update(
-                        event_id, {'state': selector_event['state']})
-                    self.amqp.publish(
-                        selector_event, rk, self.amqp.exchange_name_events)
-                    self.logger.debug("%s published event" % (selector.display_name))
-
+                    self.publish_event(selector)
                 except Exception as e:
-                    self.logger.error('Unable to select all event matching this selector in order to publish worst state one form them. Exception : ' + str(e))
-                    event = None
-
-
+                    self.logger.error('Unable to publish selector {} : {} '.format(name, e))
             else:
-                self.logger.debug('Nothing to do with this selector')
+                self.logger.debug('Nothing to do with selector {}'.format(name))
 
             #Update crecords informations
             self.crecord_task_complete(event_id)
 
         self.nb_beat += 1
         #set record free for dispatcher engine
+
+    def publish_event(self, selector):
+
+        rk, selector_event, publish_ack = selector.event()
+        self.logger.info('Ready to publish selector {} event'.format(selector.display_name))
+
+        if publish_ack:
+            #define a clean ack information to the event
+            now = int(time.time())
+            selector_event['ack'] = {
+                'timestamp': now,
+                'rk': rk,
+                'author': 'canopsis',
+                'comment': 'All matched event are acknowleged',
+                'isAck': True
+            }
+        else:
+            #define or reset ack key for selector generated event
+            selector_event['ack'] = {}
+
+
+        # Publish Sla information when available
+        if selector.sla_rk:
+            selector_event['sla_rk'] = selector.sla_rk
+
+
+        self.amqp.publish(
+            selector_event,
+            rk,
+            self.amqp.exchange_name_events
+        )
+
+        self.logger.debug("published event selector {}".format(selector.display_name))
+
