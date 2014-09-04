@@ -72,7 +72,8 @@
 			"type": "string"
 		},
 		"itemsPerPage": {
-			"type": "integer"
+			"type": "integer",
+			"default": 5
 		},
 		"cloaking": {
 			"type": "boolean"
