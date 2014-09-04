@@ -72,6 +72,12 @@ class CASBackend(BaseBackend):
             server = config.get('server')
             service = config.get('service')
 
+            if service[-1] == '/':
+                service += 'logged_in'
+
+            else:
+                service += '/logged_in'
+
             if not s.get('auth_on', False):
                 res = self.do_auth(s, server, service)
 
@@ -147,12 +153,6 @@ class CASBackend(BaseBackend):
 
         else:
             self.logger.info('Redirecting user to CAS server: {0} --> {1}'.format(cas_server, service_url))
-
-            if service_url[-1] == '/':
-                service_url += 'logged_in'
-
-            else:
-                service_url += '/logged_in'
 
             url = '{0}/login?service={1}'.format(
                 cas_server,
