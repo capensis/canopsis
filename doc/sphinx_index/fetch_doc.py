@@ -29,9 +29,20 @@ def cmd(*args):
 
 def mvrm(source, destination):
   """Recursively mv files from source to destination and rm source"""
-  for path in glob.glob(source + "/*"):
+  for path in glob.glob(source + '/*'):
     shutil.move(path, destination)
-  os.rmdir(source)
+  shutil.rmtree(source)
+
+def mvrmbuild(source):
+  """Similar to mvrm to extract the built doc to the correct location"""
+  for element in glob.glob(source + '/*'):
+    if element != source + '/_build':
+      if os.path.isdir(element):
+        shutil.rmtree(element)
+      else:
+        os.remove(element)
+  mvrm(source + '/_build', source)
+
 
 if os.path.exists('doc'):
   print 'A folder named \'doc\' already exists : aborting procedure'
@@ -45,6 +56,7 @@ else:
 print 'Downloading sphinx index from branch ' + SPHINX_INDEX['branch'] + ' (' + SPHINX_INDEX['repo'] + ') in \'doc\''
 print cmd('svn', 'export', 'https://github.com/capensis/' + SPHINX_INDEX['repo']  + '/branches/' + SPHINX_INDEX['branch'] + '/doc/' + SPHINX_INDEX['folder'])
 mvrm(SPHINX_INDEX['folder'], '.')
+os.remove('fetch_doc.py')
 
 # VERSIONS
 # We open index and a new_index. index content will be written in new_index, so as we can write title lines
@@ -58,10 +70,11 @@ with open('index.html', 'r+') as root_index, open('new_index.html', 'w') as new_
         print cmd('svn', 'export', 'https://github.com/capensis/' + version['repo'] + '/branches/' + version['branch']  + '/doc/' + version['folder'])
         print cmd('sphinx-build', '-b', 'html', version['folder'], version['folder'] + '/_build')
         new_index.write(HTML_INDEX_TITLE.format(version['folder'], version['folder'].capitalize()))
+        mvrmbuild(version['folder']) # Just keep the html files in _build
+
       if CONNECTORS:
         new_index.write(HTML_INDEX_TITLE.format('connectors', 'Connectors'))
 os.rename('new_index.html', 'index.html')
-
 
 ## CONNECTORS
 if not CONNECTORS:
@@ -80,6 +93,7 @@ else:
         mvrm('doc/img', '_static/images')
       shutil.rmtree('doc') # cleaning
   print cmd('sphinx-build', '-b', 'html', '.', '_build')
+  mvrmbuild('.')
 
 print 'Process completed'
-print 'Documentation is available in \'doc/_build\''
+print 'Documentation is available in \'doc\''
