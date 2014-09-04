@@ -49,6 +49,7 @@ class Selector(Record):
 
         self.dostate = True
 
+        self.data = {}
         self.mfilter = {}
         self.include_ids = []
         self.exclude_ids = []
@@ -75,11 +76,16 @@ class Selector(Record):
 
         self.logger.debug('Loading selector from record')
 
-        try:
-            self.mfilter = loads(dump.get('mfilter', '{}'))
-        except:
-            self.logger.warning('invalid mfilter for selector {}'.format(dump.get('display_name', 'noname')))
-            pass
+        mfilter = dump.get('mfilter', '{}')
+
+        if type(mfilter) == dict:
+            self.mfilter = mfilter
+        else:
+            try:
+                self.mfilter = loads(mfilter)
+            except Exception as e:
+                self.logger.warning('invalid mfilter for selector {} : {} '.format(
+                    dump.get('display_name', 'noname'), e))
 
 
         self._id = dump.get('_id')
@@ -89,11 +95,10 @@ class Selector(Record):
         self.rk = dump.get('rk', self.rk)
         self.include_ids = dump.get('include_ids', self.include_ids)
         self.exclude_ids = dump.get('exclude_ids', self.exclude_ids)
-        self.dostate = dump.get('dostate', self.dostate)
         self.output_tpl = dump.get('output_tpl', None)
         self.sla_rk = dump.get('sla_rk', None)
 
-
+        self.data = dump
 
     ## Build MongoDB query to find every id matching event
     def makeMfilter(self):
@@ -186,14 +191,19 @@ class Selector(Record):
                         '_id': True,
                         'state': True,
                         'state_type': True,
-                        'previous_state': True}},
+                        'previous_state': True,
+                    }
+                },
                 {'$group': {
                         '_id': {
                             'state': '$state',
                             'state_type': "$state_type",
-                            'previous_state': "$previous_state"
+                            'previous_state': "$previous_state",
                         },
-                        'count': {'$sum': 1}}}])
+                        'count': {'$sum': 1}
+                    }
+                }
+            ])
 
         self.logger.debug(" + result: %s" % result)
 
@@ -262,7 +272,7 @@ class Selector(Record):
         # Fill Output template
         self.logger.debug(" + output TPL: %s" % self.output_tpl)
         output = self.output_tpl
-        if output_data:
+        if output and output_data:
             for key in output_data:
                 output = output.replace("{%s}" % key, str(output_data[key]))
 
