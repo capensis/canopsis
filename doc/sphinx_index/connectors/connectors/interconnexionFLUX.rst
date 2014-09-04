@@ -68,4 +68,4 @@ Matrice des flux
 	"Connecteur","Webserver Canopsis","HTTP(s)","80,443"
 	"Connecteur","Bus Canopsis","AMQP","5672",
 
-.. |run_manager| image:: ../../_static/images/connectors/InterconnecionFlux.png
+.. |run_manager| image:: ../_static/images/connectors/InterconnecionFlux.png
