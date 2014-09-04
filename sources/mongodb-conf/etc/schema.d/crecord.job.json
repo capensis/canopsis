@@ -11,8 +11,8 @@
 		},
 		"task": {"type": "string", "required": true},
 		"last_execution": {"type": "integer", "required": false, "role": "timestamp"},
-		"rrule": {"type": "string", "required": true},
-		"start": {"type": "integer", "required": true, "role": "timestamp"},
+		"rrule": {"type": "string", "required": false},
+		"start": {"type": "integer", "required": false, "role": "timestamp"},
 		"params": {
 			"type": "object",
 			"model": "task",

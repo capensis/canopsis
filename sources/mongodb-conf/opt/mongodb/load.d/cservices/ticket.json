@@ -1,0 +1,8 @@
+{
+    "id": "cservice.ticket",
+    "_id": "cservice.ticket",
+    "title": "Ticket Declaration",
+    "job": {
+        "crecord_type": "job"
+    }
+}
