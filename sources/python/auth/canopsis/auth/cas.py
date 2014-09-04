@@ -72,6 +72,12 @@ class CASBackend(BaseBackend):
             server = config.get('server')
             service = config.get('service')
 
+            if service[-1] == '/':
+                service += 'logged_in'
+
+            else:
+                service += '/logged_in'
+
             if not s.get('auth_on', False):
                 res = self.do_auth(s, server, service)
 
