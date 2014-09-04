@@ -42,4 +42,4 @@ Matrice des flux
 	"Connecteur EDC","Application","Listener de BDD","Fonction de la BDD",
 	"Connecteur EDC","Bus Canopsis","AMQP","5672",
 
-.. |run_manager| image:: ../../_static/images/connectors/InterconnecionBDD.png
+.. |run_manager| image:: ../_static/images/connectors/InterconnecionBDD.png
