@@ -10,7 +10,6 @@
             "type": "object",
             "model": "crecord.job",
             "relationship": "belongsTo",
-            "polymorphic": true,
             "required": true
         }
     }
