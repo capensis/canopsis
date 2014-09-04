@@ -61,8 +61,8 @@
 		"output": {
 			"type": "string",
 			"required": true,
-			"label": " ",
-			"placeholder": "Remarque ..."
+			"title": " ",
+			"description": "Remarque ..."
 		}
 	}
 }
