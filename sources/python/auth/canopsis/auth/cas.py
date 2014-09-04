@@ -177,7 +177,11 @@ class CASBackend(BaseBackend):
             self.logger.info('Redirecting user to CAS server: {0} --> {1}'.format(cas_server, service_url))
             delete_session()
 
-            url = '{0}/logout?url={1}'.format(cas_server, quote_plus(service_url))
+            url = '{0}/logout?service={1}&url={1}'.format(
+                cas_server,
+                quote_plus(service_url)
+            )
+
             redirect(url)
 
 
