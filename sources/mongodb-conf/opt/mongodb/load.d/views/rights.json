@@ -15,6 +15,7 @@
         "widget": {
           "xtype": "list",
           "listed_crecord_type": "right",
+          "itemsPerPage": 5,
           "title": "Rights",
           "selection_toolbar": [
             "actionbutton-create",

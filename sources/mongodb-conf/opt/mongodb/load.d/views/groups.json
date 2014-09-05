@@ -15,6 +15,7 @@
           "widgetId" : "fake-guid-fd5a-1ede-8ac2-6a1d66ad0025",
           "xtype": "list",
           "listed_crecord_type": "group",
+          "itemsPerPage": 5,
           "title": "Groups",
           "item_actions": [
             "actionbutton-edit",

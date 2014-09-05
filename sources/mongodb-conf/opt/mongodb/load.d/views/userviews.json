@@ -12,6 +12,7 @@
         "title": "wrapper",
         "xtype": "widgetwrapper",
         "widget": {
+          "itemsPerPage": 5,
           "xtype": "list",
           "listed_crecord_type": "userview",
           "title": "Userviews",
