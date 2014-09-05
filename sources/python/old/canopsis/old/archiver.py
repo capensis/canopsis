@@ -147,7 +147,8 @@ class Archiver(object):
 
         old_status = devent.get('status', event['status'])
 
-        if old_status == 0 and event['status'] == 1:
+        if ((not old_status and event['status'] > 0) or
+            old_status > 0 and not event['status']):
             event['ts_first_stealthy'] = event['timestamp']
 
         if old_status != event['status']:
@@ -158,6 +159,7 @@ class Archiver(object):
 
         if event['bagot_freq'] == 1:
             event['ts_first_bagot'] = event['timestamp']
+
 
     def is_bagot(self, event):
         ts_curr = event['timestamp']
@@ -184,13 +186,12 @@ class Archiver(object):
         state = event['state']
         state_type = event['state_type']
 
-        self.logger.debug("   - State:\t\t'%s'" % legend[state])
+        self.logger.debug("   - State:\t'%s'" % legend[state])
         self.logger.debug("   - State type:\t'%s'" % legend_type[state_type])
 
         now = int(time())
 
         event['timestamp'] = event.get('timestamp', now)
-
         try:
             # Get old record
             #record = self.storage.get(_id, account=self.account)
@@ -231,6 +232,7 @@ class Archiver(object):
         except:
             # No old record
             self.logger.debug(" + New event")
+            event['ts_first_stealthy'] = event.get('timestamp', now)
             changed = True
             old_state = state
 
