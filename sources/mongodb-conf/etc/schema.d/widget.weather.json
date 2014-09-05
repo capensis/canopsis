@@ -27,7 +27,7 @@
 		},
 		"filter_pattern": {
 			"type": "string",
-			"default": "{{#if isSelector}}{{selector_filter}}{{else}}{ \"rk\" : \"{{rk}}\" }{{/if}}"
+			"default": "{{#if isSelector}}{{{selector_filter}}}{{else}}{ \"rk\" : \"{{rk}}\" }{{/if}}"
 		},
 		"refreshableWidget":  {
 			"type": "boolean",
