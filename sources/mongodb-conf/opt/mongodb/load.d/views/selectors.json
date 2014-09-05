@@ -35,11 +35,7 @@
             "exclude_ids",
             "include_ids",
             "mfilter",
-            "dosla",
-            "downtimes_as_ok",
-            "sla_timewindow",
-            "thd_warn_sla_timewindow",
-            "thd_crit_sla_timewindow"
+            "downtimes_as_ok"
           ],
           "actions_toolbar": [
             "actionbutton-create",
