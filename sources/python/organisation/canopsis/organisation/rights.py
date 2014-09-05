@@ -134,9 +134,11 @@ class Rights(Manager):
                       for x in y['composite']]
 
         if 'composite' in role:
-            composites += [self['composite_storage'][x] for x in role['composite']]
+            composites += [self['composite_storage'][x]
+                           for x in role['composite']]
         if 'composite' in user:
-            composites += [self['composite_storage'][x] for x in user['composite']]
+            composites += [self['composite_storage'][x]
+                           for x in user['composite']]
 
         # check in the role's comsposite
         if ((user and self.check(user, right_id, checksum)) or
@@ -654,7 +656,9 @@ class Rights(Manager):
         return r_name
 
 
-    def create_user(self, u_id, u_role, contact=None):
+    def create_user(self, u_id, u_role,
+                    contact=None, rights=None,
+                    composites=None):
         """
         Args:
             u_nick: nick of the user to create, usually first
@@ -663,6 +667,8 @@ class Rights(Manager):
             u_role: role to init the user with
             contact: map containing full name, email, adress,
                      and/or phone number of the user
+            rights: map containing specific rights
+            composites: list of specific composites
         Returns:
             Map of the newly created user
         """
@@ -678,8 +684,14 @@ class Rights(Manager):
         user = {'type': 'user',
                 'role': u_role}
 
-        if contact:
+        if contact and isinstance(contact, dict):
             user['contact'] = contact
+
+        if rights and isinstance(rights, dict):
+            user['rights'] = rights
+
+        if composites and isinstance(composites, list):
+            user['composites'] = composites
 
         self.user_storage.put_element(u_id, user)
         return user
@@ -748,3 +760,94 @@ class Rights(Manager):
         """
         return self.set_user_field(u_id, {'phone': u_phone})
 
+
+    def get_user_rights(self, u_id):
+        """
+        Args:
+            u_uid: id of the user to get the rights from
+        Returns:
+            dict of user's rights
+        """
+
+        user = self.get_user(u_id)
+
+        if not user:
+            return {}
+
+        role = self.get_role(user.setdefault('role', None))
+        profiles = self.get_profile(role['profile'])
+        n_composites = [x for y in profiles for x in y['composite']]
+
+        if 'composite' in role:
+            n_composites += role['composite']
+        if 'composite' in user:
+            n_composites += user['composite']
+
+        specific_rights = [self['composite_storage'][x]['rights']
+                           for x in set(n_composites)]
+
+        specific_rights.append(user.setdefault('rights', {}))
+        specific_rights.append(role.setdefault('rights', {}))
+        (specific_rights.append(x.setdefault('rights', {}))
+         for x in profiles)
+
+        rights = {}
+        for e_rights in specific_rights:
+            for r_id in e_rights:
+                if r_id in rights:
+                    rights[r_id]['checksum'] |= e_rights[r_id]['checksum']
+                else:
+                    rights[r_id] = e_rights[r_id]
+
+        return rights
+
+    def get_entity_field(self, e_id, e_type, field):
+        """
+        Args:
+            e_id: entity to get the field from
+            e_type: type of the entity
+            field: field to get
+        Returns:
+            value of the field if the field exists if the entity e_id
+            ``None`` otherwise
+        """
+
+        if not field or not e_id or not e_type:
+            return None
+
+        entity = self[e_type + '_storage'].get_elements(ids=e_id,
+                                                        query={'type':e_type})
+
+        return entity.setdefault(field, None)
+
+
+    # User getters
+    def get_user_role(self, u_id):
+        return self.get_entity_field(u_id, 'user', 'role')
+
+    def get_user_profiles(self, u_id):
+        return self.get_role_profile(self.get_user_role(u_id))
+
+    def get_user_composites(self, u_id):
+        return self.get_entity_field(u_id, 'user', 'composite')
+
+    # Role getters
+    def get_role_rights(self, r_id):
+        return self.get_entity_field(r_id, 'role', 'rights')
+
+    def get_role_profile(self, r_id):
+        return self.get_entity_field(r_id, 'role', 'profile')
+
+    def get_role_composites(self, r_id):
+        return self.get_entity_field(r_id, 'role', 'composite')
+
+    # Profile getters
+    def get_profile_rights(self, p_id):
+        return self.get_entity_field(p_id, 'profile', 'rights')
+
+    def get_profile_composites(self, p_id):
+        return self.get_entity_field(p_id, 'profile', 'composite')
+
+    # Composite getters
+    def get_composite_rights(self, c_id):
+        return self.get_entity_field(c_id, 'composite', 'rights')
