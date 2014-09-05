@@ -18,10 +18,10 @@
           "title": "Scheduled Jobs",
           "item_actions": [
             "actionbutton-edit",
-            "actionbutton-remove"
+            "actionbutton-removeselection"
           ],
           "selection_toolbar": [
-            "actionbutton-remove"
+            "actionbutton-removeselection"
           ],
           "actions_toolbar": [
             "actionbutton-create"

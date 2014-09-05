@@ -147,7 +147,8 @@ class Archiver(object):
 
         old_status = devent.get('status', event['status'])
 
-        if old_status == 0 and event['status'] == 1:
+        if ((not old_status and event['status'] > 0) or
+            old_status > 0 and not event['status']):
             event['ts_first_stealthy'] = event['timestamp']
 
         if old_status != event['status']:
@@ -158,6 +159,7 @@ class Archiver(object):
 
         if event['bagot_freq'] == 1:
             event['ts_first_bagot'] = event['timestamp']
+
 
     def is_bagot(self, event):
         ts_curr = event['timestamp']
@@ -184,13 +186,12 @@ class Archiver(object):
         state = event['state']
         state_type = event['state_type']
 
-        self.logger.debug("   - State:\t\t'%s'" % legend[state])
+        self.logger.debug("   - State:\t'%s'" % legend[state])
         self.logger.debug("   - State type:\t'%s'" % legend_type[state_type])
 
         now = int(time())
 
         event['timestamp'] = event.get('timestamp', now)
-
         try:
             # Get old record
             #record = self.storage.get(_id, account=self.account)
@@ -231,6 +232,7 @@ class Archiver(object):
         except:
             # No old record
             self.logger.debug(" + New event")
+            event['ts_first_stealthy'] = event.get('timestamp', now)
             changed = True
             old_state = state
 
@@ -248,10 +250,15 @@ class Archiver(object):
 
             # keep ack information if status does not reset event
             if 'ack' in devent:
-                if event['status'] not in [0, 1]:
+                if event['status'] == 0 and event.get('keep_state'):
+                    #reset ack when manual criticity change
+                    change['ack'] = {}
+                elif event['status'] not in [0, 1] or event.get('keep_state'):
                     change['ack'] = devent['ack']
                 else:
+                    #drop ack
                     change['ack'] = {}
+
 
             # keep cancel information if status does not reset event
             if 'cancel' in devent:
@@ -283,6 +290,9 @@ class Archiver(object):
                 if not event_reset and devent.get('keep_state'):
                     change['state'] = devent['state']
 
+            #Keep previous output
+            if 'keep_state' in event:
+                change['output'] = devent.get('output', '')
 
             if change:
                 self.storage.get_backend('events').update({'_id': _id},

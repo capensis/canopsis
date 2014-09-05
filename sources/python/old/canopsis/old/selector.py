@@ -78,8 +78,11 @@ class Selector(Record):
 
         mfilter = dump.get('mfilter', '{}')
 
+
         if type(mfilter) == dict:
             self.mfilter = mfilter
+        elif mfilter == None:
+            self.mfilter = {}
         else:
             try:
                 self.mfilter = loads(mfilter)

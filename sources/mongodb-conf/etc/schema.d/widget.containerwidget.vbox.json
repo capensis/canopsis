@@ -1,7 +1,7 @@
 {
 	"type": "object",
 	"metadata": {
-		"classes": ["system", "container", "deprecated"]
+		"classes": ["deprecated"]
 	},
 	"categories": [{
 		"title": "General",
