@@ -63,7 +63,7 @@ class INIConfigurationManager(FileConfigurationManager):
                 files = result.read(path)
 
             except MissingSectionHeaderError:
-                pass
+                logger.warning('Missing section header')
 
             if not files:
                 result = None
