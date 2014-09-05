@@ -87,7 +87,7 @@ class engine(Engine):
     def publish_event(self, selector):
 
         rk, selector_event, publish_ack = selector.event()
-        self.logger.info('Ready to publish selector {} event'.format(selector.display_name))
+        self.logger.info('Ready to publish selector {} event with state {}'.format(selector.display_name, selector_event['state']))
 
         if publish_ack:
             #define a clean ack information to the event
