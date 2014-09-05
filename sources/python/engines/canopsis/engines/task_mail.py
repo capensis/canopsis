@@ -37,7 +37,7 @@ import re
 
 
 class engine(TaskHandler):
-    etype = 'task_mail'
+    etype = 'taskmail'
 
     def handle_task(self, job):
         user = job.get('user', 'root')
