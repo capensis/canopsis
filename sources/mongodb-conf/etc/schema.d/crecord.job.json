@@ -5,6 +5,10 @@
 		"keys": ["start", "rrule"]
 	}],
 	"properties": {
+		"xtype": {
+			"enum": ["job"],
+			"required": false
+		},
 		"crecord_type": {
 			"enum": ["job"],
 			"required": true
