@@ -288,6 +288,10 @@ class Archiver(object):
                 if not event_reset and devent.get('keep_state'):
                     change['state'] = devent['state']
 
+            #Keep previous output
+            if 'keep_state' in event:
+                change['output'] = devent.get('output', '')
+
             if change:
                 self.storage.get_backend('events').update({'_id': _id},
                                                           {'$set': change})
