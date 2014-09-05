@@ -250,10 +250,15 @@ class Archiver(object):
 
             # keep ack information if status does not reset event
             if 'ack' in devent:
-                if event['status'] not in [0, 1]:
+                if event['status'] == 0 and event.get('keep_state'):
+                    #reset ack when manual criticity change
+                    change['ack'] = {}
+                elif event['status'] not in [0, 1] or event.get('keep_state'):
                     change['ack'] = devent['ack']
                 else:
+                    #drop ack
                     change['ack'] = {}
+
 
             # keep cancel information if status does not reset event
             if 'cancel' in devent:
@@ -284,7 +289,6 @@ class Archiver(object):
             if 'keep_state' not in event:
                 if not event_reset and devent.get('keep_state'):
                     change['state'] = devent['state']
-
 
             if change:
                 self.storage.get_backend('events').update({'_id': _id},

@@ -2,7 +2,7 @@
 	"type": "object",
 	"categories": [{
 		"title": "General",
-		"keys":["name", "description", "priority"]
+		"keys":["name", "description", "enable", "priority"]
 	},{
 		"title": "Filter",
 		"keys":["mfilter"]

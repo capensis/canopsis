@@ -78,8 +78,11 @@ class Selector(Record):
 
         mfilter = dump.get('mfilter', '{}')
 
+
         if type(mfilter) == dict:
             self.mfilter = mfilter
+        elif mfilter == None:
+            self.mfilter = {}
         else:
             try:
                 self.mfilter = loads(mfilter)
@@ -188,26 +191,23 @@ class Selector(Record):
         result = self.storage.get_backend(namespace=self.namespace).aggregate([
                 {'$match': mfilter},
                 {'$project': {
-                        '_id': True,
-                        'state': True,
-                        'state_type': True,
-                        'previous_state': True,
-                    }
-                },
+                    '_id': True,
+                    'state': True,
+                    'state_type': True,
+                    'previous_state': True,
+                }},
                 {'$group': {
                         '_id': {
                             'state': '$state',
                             'state_type': "$state_type",
                             'previous_state': "$previous_state",
                         },
-                        'count': {'$sum': 1}
-                    }
-                }
-            ])
+                        'count': {'$sum': 1}}}])
 
         self.logger.debug(" + result: %s" % result)
 
         states = {}
+        total = 0
         for state in result['result']:
             key = state['_id']['state']
 
@@ -215,17 +215,46 @@ class Selector(Record):
                 key = state['_id'].get('previous_state', key)
 
             states[key] = states.get(key, 0) + state['count']
+            total += state['count']
 
-        self.logger.debug(" + namespace: %s" % self.namespace)
-        self.logger.debug(" + states: %s" % states)
+        self.logger.debug(" + namespace: {}".format(self.namespace))
+        self.logger.debug(" + states: {}".format(states))
+        self.logger.debug(" + total: {}".format(total))
+
 
         state, state_type = 0, 1
         # Compute worst state
-        for s in [0, 1, 2]:
+        for s in [0, 1, 2, 3]:
             if s in states:
                 state = s
 
-        return (states, state, state_type)
+
+        result = self.storage.get_backend(namespace=self.namespace).aggregate([
+                {'$match': mfilter},
+                {
+                    "$group": {
+                        "_id": { "isAck": "$ack.isAck" },
+                        "count": {
+                            "$sum": {
+                                "$cond": [ "$ack.isAck", 1, 0 ]
+                            }
+                        }
+                    }
+                },
+                {
+                    "$project": {
+                        "_id": 0,
+                        "ack": "$_id",
+                        "count": 1
+                    }
+                }
+        ])
+
+        ack_count = result['result'][0]['count']
+
+        self.logger.debug(" + result for ack : %s" % result)
+
+        return (states, state, state_type, ack_count)
 
     def event(self):
 
@@ -233,13 +262,16 @@ class Selector(Record):
         self.logger.debug("To Event:")
 
         # Get state
-        (states, state, state_type) = self.getState()
+        (states, state, state_type, ack_count) = self.getState()
 
         # Build output
         total = 0
         for s in states:
             states[s] = int(states[s])
             total += states[s]
+
+        send_ack = total == ack_count
+
 
         self.logger.debug(" + state: %s" % state)
         self.logger.debug(" + state_type: %s" % state_type)
@@ -315,4 +347,4 @@ class Selector(Record):
         # Cache event
         self.last_event = event
 
-        return (rk, event)
+        return (rk, event, send_ack)
