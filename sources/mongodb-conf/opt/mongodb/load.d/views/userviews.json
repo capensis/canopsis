@@ -17,7 +17,7 @@
           "listed_crecord_type": "userview",
           "title": "Userviews",
           "item_actions": ["actionbutton-show", "actionbutton-removeselection"],
-          "sorted_columns": ["crecord_type", "internal", "enable", "description", "crecord_write_time", "crecord_name"],
+          "displayed_columns": ["crecord_type", "internal", "enable", "description", "crecord_write_time", "crecord_name"],
           "selection_toolbar": [
             "actionbutton-removeselection"
           ]
