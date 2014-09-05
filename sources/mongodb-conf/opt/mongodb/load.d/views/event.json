@@ -25,11 +25,12 @@
             "actionbutton-cancel",
             "actionbutton-incident",
             "actionbutton-ticketnumber",
-            "actionbutton-info"
+            "actionbutton-info",
+            "actionbutton-changestate"
           ],
           "selection_toolbar": [
             "actionbutton-ack",
-            "actionbutton-removeselection"
+            "actionbutton-cancel"
           ],
           "actions_toolbar": [
             "actionbutton-history"
