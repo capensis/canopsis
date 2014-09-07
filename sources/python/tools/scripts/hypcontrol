@@ -1,247 +1,119 @@
 #!/bin/bash
 
+. $HOME/etc/hypcontrol.conf
+
+if [ $? -ne 0 ]
+then
+    echo "Error: Can't find configuration: $HOME/etc/hypcontrol.conf"
+    exit 1
+fi
+
+function reverse(){
+    declare -a array=("${!1}")
+
+    for item in ${array[@]}
+    do
+        echo $item
+    done | tac
+}
+
+function do_cmd(){
+    cmd=$1
+    declare -a processes=("${!2}")
+
+    declare -A waitfor
+
+    for service in ${processes[@]}
+    do
+        service $service $cmd > /dev/null 2>&1 &
+        waitfor[$service]=$!
+    done
+
+    for service in ${processes[@]}
+    do
+        echo -n "$service..."
+        wait ${waitfor[$service]}
+        ret=$?
+
+        echo -e -n "\b\b\b"
+
+        if [ $ret -ne 0 ]
+        then
+            echo " KO"
+            exit 1
+        else
+            echo -n ", "
+        fi
+    done
+
+    echo -e "\b\b   "
+}
+
 function do_start_backend(){
-	echo -n "Starting backend: "
-	
-	service rabbitmq-server start > /dev/null 2>&1 &
-	rabbitmq=$!
-
-	service mongodb start > /dev/null 2>&1 &
-	mongodb=$!
-
-	service redis-server start > /dev/null 2>&1 &
-	redis=$!
-
-	echo -n "rabbitmq-server..."
-	wait $rabbitmq
-	ret=$?
-	echo -e -n "\b\b\b"
-
-	if [ $ret -ne 0 ]
-	then
-		echo " KO"
-		exit 1
-	else
-		echo -n ", "
-	fi
-
-	echo -n "mongodb..."
-	wait $mongodb
-	ret=$?
-	echo -e -n "\b\b\b"
-
-	if [ $ret -ne 0 ]
-	then
-		echo " KO"
-		exit 1
-	else
-		echo -n ", "
-	fi
-
-	echo -n "redis-server..."
-	wait $redis
-	ret=$?
-	echo -e -n "\b\b\b"
-
-	if [ $ret -ne 0 ]
-	then
-		echo " KO"
-		exit 1
-	else
-		echo "   "
-	fi
+    echo -n "Starting backend: "
+    
+    do_cmd start BACKEND[@]
 }
 
 function do_start_middleware(){
-	echo -n "Starting middleware: "
+    echo -n "Starting middleware: "
 
-	service collectd start > /dev/null 2>&1 &
-	collectd=$!
-
-	service amqp2engines start > /dev/null 2>&1 &
-	engines=$!
-
-	echo -n "collectd..."
-	wait $collectd
-	ret=$?
-	echo -e -n "\b\b\b"
-
-	if [ $ret -ne 0 ]
-	then
-		echo " KO"
-		exit 1
-	else
-		echo -n ", "
-	fi
-
-	echo -n "engines..."
-	wait $engines
-	ret=$?
-	echo -e -n "\b\b\b"
-
-	if [ $ret -ne 0 ]
-	then
-		echo " KO"
-		exit 1
-	else
-		echo "   "
-	fi
+    do_cmd start MIDDLEWARE[@]
 }
 
 function do_start_frontend(){
-	echo -n "Starting frontend: "
+    echo -n "Starting frontend: "
 
-	service webserver start > /dev/null 2>&1 &
-	webserver=$!
-
-	echo -n "webserver..."
-	wait $webserver
-	ret=$?
-	echo -e -n "\b\b\b"
-
-	if [ $ret -ne 0 ]
-	then
-		echo " KO"
-		exit 1
-	else
-		echo "   "
-	fi
+    do_cmd start FRONTEND[@]
 }
 
 function do_start(){
-	do_start_backend || exit 1
-	do_start_middleware || exit 1
-	do_start_frontend || exit 1
+    do_start_backend || exit 1
+    do_start_middleware || exit 1
+    do_start_frontend || exit 1
 }
 
 function do_stop_backend(){
-	echo -n "Stopping backend: "
-	
-	service rabbitmq-server stop > /dev/null 2>&1 &
-	rabbitmq=$!
-
-	service mongodb stop > /dev/null 2>&1 &
-	mongodb=$!
-
-	service redis-server stop > /dev/null 2>&1 &
-	redis=$!
-
-	echo -n "rabbitmq-server..."
-	wait $rabbitmq
-	ret=$?
-	echo -e -n "\b\b\b"
-
-	if [ $ret -ne 0 ]
-	then
-		echo " KO"
-		exit 1
-	else
-		echo -n ", "
-	fi
-
-	echo -n "mongodb..."
-	wait $mongodb
-	ret=$?
-	echo -e -n "\b\b\b"
-
-	if [ $ret -ne 0 ]
-	then
-		echo " KO"
-		exit 1
-	else
-		echo -n ", "
-	fi
-
-	echo -n "redis-server..."
-	wait $redis
-	ret=$?
-	echo -e -n "\b\b\b"
-
-	if [ $ret -ne 0 ]
-	then
-		echo " KO"
-		exit 1
-	else
-		echo "   "
-	fi
+    echo -n "Stopping backend: "
+    
+    reversed=("`reverse BACKEND[@]`")
+    do_cmd stop reversed[@]
 }
 
 function do_stop_middleware(){
-	echo -n "Stopping middleware: "
+    echo -n "Stopping middleware: "
 
-	service collectd stop > /dev/null 2>&1 &
-	collectd=$!
-
-	service amqp2engines stop > /dev/null 2>&1 &
-	engines=$!
-
-	echo -n "collectd..."
-	wait $collectd
-	ret=$?
-	echo -e -n "\b\b\b"
-
-	if [ $ret -ne 0 ]
-	then
-		echo " KO"
-		exit 1
-	else
-		echo -n ", "
-	fi
-
-	echo -n "engines..."
-	wait $engines
-	ret=$?
-	echo -e -n "\b\b\b"
-
-	if [ $ret -ne 0 ]
-	then
-		echo " KO"
-		exit 1
-	else
-		echo "   "
-	fi
+    reversed=("`reverse MIDDLEWARE[@]`")
+    do_cmd stop reversed[@]
 }
 
 function do_stop_frontend(){
-	echo -n "Stopping frontend: "
+    echo -n "Stopping frontend: "
 
-	service webserver stop > /dev/null 2>&1 &
-	webserver=$!
-
-	echo -n "webserver..."
-	wait $webserver
-	ret=$?
-	echo -e -n "\b\b\b"
-
-	if [ $ret -ne 0 ]
-	then
-		echo " KO"
-		exit 1
-	else
-		echo "   "
-	fi
+    reversed=("`reverse FRONTEND[@]`")
+    do_cmd stop reversed[@]
 }
 
 function do_stop(){
-	do_stop_frontend || exit 1
-	do_stop_middleware || exit 1
-	do_stop_backend || exit 1
+    do_stop_frontend || exit 1
+    do_stop_middleware || exit 1
+    do_stop_backend || exit 1
 
-	supervisorctl shutdown || exit 1
+    supervisorctl shutdown || exit 1
 }
 
 function do_restart(){
-	do_stop || exit 1
-	do_start || exit 1
+    do_stop || exit 1
+    do_start || exit 1
 }
 
 case "$1" in
-	start) do_start ;;
-	stop) do_stop ;;
-	restart) do_restart ;;
+    start) do_start ;;
+    stop) do_stop ;;
+    restart) do_restart ;;
 
-	*)
-		echo "Usage: hypcontrol start|stop|restart"
-		exit 1
-		;;
+    *)
+        echo "Usage: hypcontrol start|stop|restart"
+        exit 1
+        ;;
 esac
