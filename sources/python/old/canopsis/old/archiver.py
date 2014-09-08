@@ -125,7 +125,6 @@ class Archiver(object):
         ts_prev = devent['timestamp']
         event['bagot_freq'] = devent.get('bagot_freq', 0)
         event['ts_first_stealthy'] = devent.get('ts_first_stealthy', 0)
-        self.logger.info(event)
         # flowchart 1 2 3
         if (devent.get('status', 1) != 4
             or (devent['state'] != event['state']
@@ -175,8 +174,6 @@ class Archiver(object):
 
         if event['bagot_freq'] == 1:
             event['ts_first_bagot'] = event['timestamp']
-        self.logger.info(event)
-        self.logger.info(devent)
 
     def check_event(self, _id, event):
         changed = False
