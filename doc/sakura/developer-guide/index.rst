@@ -15,11 +15,3 @@ Others
 ------
 
 .. include:: index-others.rst.inc
-
-Jon
----
-
-.. toctree::
-   :maxdepth: 2
-
-   jon/index 
