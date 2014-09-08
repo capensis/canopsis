@@ -1,8 +1,11 @@
 {
 	"type": "object",
+	"metadata": {
+		"icon": "list-alt"
+	},
 	"categories": [{
 		"title": "General",
-		"keys":["title", "listed_crecord_type", "itemsPerPage", "selection_toolbar", "actions_toolbar", "mixins" , "default_filter"]
+		"keys":["title", "refreshInterval", "listed_crecord_type", "itemsPerPage", "selection_toolbar", "actions_toolbar", "mixins" , "default_filter"]
 	},{
 		"title": "Columns",
 		"keys":["displayed_columns", "item_actions"]
@@ -11,7 +14,7 @@
 		"keys":["filters"]
 	},{
 		"title": "Rendering",
-		"keys":["cloaking"]
+		"keys":["refreshableWidget", "cloaking"]
 	}],
 	"properties": {
 		"listed_crecord_type": {
@@ -19,6 +22,10 @@
 			"enum": ["group", "account", "event", "eventlog", "selector", "filter", "userview"],
 			"default": "group",
 			"role": "simplelist"
+		},
+		"refreshableWidget":  {
+			"type": "boolean",
+			"default": true
 		},
 		"item_actions": {
 			"type": "array",
@@ -29,6 +36,7 @@
 			"templateClass":"action"
 		},
 		"displayed_columns": {
+			"isUserPreference": true,
 			"type": "array",
 			"items": {
 				"type": "string"
@@ -64,7 +72,8 @@
 			"type": "string"
 		},
 		"itemsPerPage": {
-			"type": "integer"
+			"type": "integer",
+			"default": 5
 		},
 		"cloaking": {
 			"type": "boolean"

@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #--------------------------------
 # Copyright (c) 2014 "Capensis" [http://www.capensis.com]
@@ -18,12 +19,10 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-__version__ = "0.1"
-
 import validictory
 
-from canopsis.configuration import conf_paths, add_category
-from canopsis.middleware.manager import Manager
+from canopsis.old.storage import get_storage
+from canopsis.old.account import Account
 
 
 class NoSchemaError(Exception):
@@ -38,53 +37,45 @@ class NoSchemaError(Exception):
     def __unicode__(self):
         return u'Schema {0} not found in database'.format(self.schema_id)
 
+
 cache = {}
-
-CATEGORY = 'SCHEMA'
-
-
-@add_category(CATEGORY)
-@conf_paths('schema/schema.conf')
-class Schema(Manager):
-
-    def get(self, schema_id):
-
-        if schema_id not in cache:
-            doc = self.schemas.get_elements(ids=schema_id)
-
-            if not doc:
-                raise NoSchemaError(schema_id)
-
-            cache[schema_id] = doc['schema']
-
-        return cache[schema_id]
 
 
 def get(schema_id):
     """
-    Get schema from its ID.
-    Will look in database if the schema isn't loaded in cache.
+        Get schema from its ID.
+        Will look in database if the schema isn't loaded in cache.
 
-    :param schema_id: Schema identifier (value of _id field in Mongo document).
-    :type schema_id: str
+        :param schema_id: Schema identifier (value of _id field in Mongo document).
+        :type schema_id: str
 
-    :returns: schema field of Mongo document.
+        :returns: schema field of Mongo document.
     """
 
-    return Schema().get(schema_id)
+    if schema_id not in cache:
+        db = get_storage('schemas', account=Account(user='root', group='root')).get_backend()
+        doc = db.find_one(schema_id)
+        del db
+
+        if not doc:
+            raise NoSchemaError(schema_id)
+
+        cache[schema_id] = doc['schema']
+
+    return cache[schema_id]
 
 
 def validate(dictionary, schema_id):
     """
-    Validate a dictionary using a schema.
+        Validate a dictionary using a schema.
 
-    :param dictionary: Dictionary to validate.
-    :type dictionary: dict
+        :param dictionary: Dictionary to validate.
+        :type dictionary: dict
 
-    :param schema_id: Schema identifier (value of _id field in Mongo document).
-    :type schema_id: str
+        :param schema_id: Schema identifier (value of _id field in Mongo document).
+        :type schema_id: str
 
-    :returns: True if the validation succeed, False otherwise.
+        :returns: True if the validation succeed, False otherwise.
     """
 
     schema = get(schema_id)

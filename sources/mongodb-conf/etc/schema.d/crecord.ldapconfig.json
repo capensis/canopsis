@@ -16,7 +16,7 @@
         "uri": {
             "type": "string",
             "required": true,
-            "defaultValue": "ldap://"
+            "default": "ldap://"
         },
 
         "base_dn": {
@@ -42,19 +42,19 @@
         "firstname": {
             "type": "string",
             "required": true,
-            "defaultValue": "first_name"
+            "default": "first_name"
         },
 
         "lastname": {
             "type": "string",
             "required": true,
-            "defaultValue": "last_name"
+            "default": "last_name"
         },
 
         "mail": {
             "type": "string",
             "required": true,
-            "defaultValue": "email"
+            "default": "email"
         }
     }
 }

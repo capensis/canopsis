@@ -24,8 +24,7 @@ function post_install(){
 
 function pre_remove(){
 	echo "Pre-remove $NAME $VERSION-$RELEASE ..."
-	service webserver stop || true
-	check_code $?
+	launch_cmd 1 service webserver stop || true
 }
 
 function post_remove(){

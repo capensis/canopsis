@@ -8,7 +8,7 @@
 		"crecord_type": {
 			"enum": ["account"],
 			"required": true,
-			"defaultValue": "account"
+			"default": "account"
 		},
 		"firstname": {
 			"type": "string",

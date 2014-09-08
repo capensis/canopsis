@@ -10,59 +10,16 @@
         "parent" : [ ],
        "containerwidget" : {
         "items" : [
-                {
+                    {
                         "widget" : {
-                                "items" : [
-                                        {
-                                                "widget" : {
-                                                        "xtype" : "uiactionbutton",
-                                                        "title" : "",
-                                                        "actionArguments" : "view.event",
-                                                        "actionCssClass" : "btn btn-default",
-                                                        "label" : "Évènements",
-                                                        "cssClass": "active",
-                                                        "tagName": "li",
-                                                        "actionType" : "showView"
-                                                },
-                                                "xtype" : "widgetwrapper",
-                                                "title" : "wrapper"
-                                        },
-                                        {
-                                                "widget" : {
-                                                        "xtype" : "uiactionbutton",
-                                                        "title" : "",
-                                                        "actionArguments" : "view.services",
-                                                        "actionCssClass" : "btn btn-default",
-                                                        "label" : "Services",
-                                                        "actionType" : "showView",
-                                                        "tagName": "li"
-                                                },
-                                                "xtype" : "widgetwrapper",
-                                                "title" : "wrapper"
-                                        },
-                                        {
-                                                "widget" : {
-                                                        "xtype" : "uimaindropdown",
-                                                        "title" : "",
-                                                        "cssClass": "dropdown header",
-                                                        "tagName": "li"
-                                                },
-                                                "xtype" : "widgetwrapper",
-                                                "title" : "wrapper"
-                                        }
-                                ],
-                                "xtype" : "lighthbox",
-                                "tagName":"ul",
-                                "cssClass":"nav nav-tabs",
-                                "title" : null
+                                "xtype" : "uimaintabcollection",
+                                "title" : "",
+                                "tabs" : [{"label": "Evenements", "value": "view.event"}, {"label": "Services", "value": "view.services"}]
                         },
                         "xtype" : "widgetwrapper",
                         "title" : "wrapper"
                 }
         ],
-        "tagName":"section",
-        "cssClass":"content-header nav-tabs-custom",
-        "widgetslotTemplate" : null,
         "xtype" : "lighthbox",
         "title" : "container title vbox"
         },

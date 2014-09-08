@@ -1,6 +1,5 @@
 NAME="rabbitmq-server"
 
-BASE="rabbitmq-server-$VERSION"
 LOG="$LOG_PATH/$BASE.log"
 rm -f $LOG &> /dev/null
 
@@ -9,6 +8,7 @@ function build(){
 }
 
 function install(){
+	BASE="rabbitmq-server-$VERSION"
 	cd $SRC_PATH/externals
 
 	if [ ! -e $BASE ]; then

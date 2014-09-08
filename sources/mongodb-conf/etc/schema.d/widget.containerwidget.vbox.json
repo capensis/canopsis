@@ -1,13 +1,14 @@
 {
 	"type": "object",
+	"metadata": {
+		"classes": ["deprecated"]
+	},
 	"categories": [{
 		"title": "General",
 		"keys":["title", "widgetslotTemplate"]
 	}],
 	"properties": {
-		"title": {
-			"type": "string"
-			},
+		"xtype": {"type": "string"},
 		"widgetslotTemplate" : {
 			"type": "string",
 			"enum": ["widgetslot-default", "widgetslot-grey"],

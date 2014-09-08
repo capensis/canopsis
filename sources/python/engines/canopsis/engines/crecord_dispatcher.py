@@ -81,9 +81,12 @@ class engine(Engine):
 
                 for crecord_json in crecords_json:
                     # let say selector is loaded
-                    self.storage.update(crecord_json._id, {'loaded': True, 'last_dispatch_update': now})
-                    crecord = Selector(storage=self.storage, record=crecord_json, logging_level=self.logging_level)
-                    crecords.append(crecord)
+                    try:
+                        self.storage.update(crecord_json._id, {'loaded': True, 'last_dispatch_update': now})
+                        crecord = Selector(storage=self.storage, record=crecord_json, logging_level=self.logging_level)
+                        crecords.append(crecord)
+                    except Exception as e:
+                        self.logger.error('Unable to manage crecord with id {}: {}'.format(crecord_json._id, e))
         return crecords
 
     def publish_record(self, event, crecord_type):
@@ -102,7 +105,7 @@ class engine(Engine):
         #Event are triggered only at engine's delay duration
         for trigger_engine in self.beat_interval_trigger:
             if self.beat_interval_trigger[trigger_engine]['delay'] > self.beat_interval_trigger[trigger_engine]['elapsed_since_last_beat']:
-                self.logger.info('triggering dispatch for ' + trigger_engine)
+                self.logger.debug('triggering dispatch for ' + trigger_engine)
                 self.publish_record({'event': 'engine process trigger'}, trigger_engine)
                 #update deplay
                 self.beat_interval_trigger[trigger_engine]['elapsed_since_last_beat'] = 0

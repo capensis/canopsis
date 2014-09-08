@@ -146,24 +146,34 @@ class Record(object):
 
         return storage.put(self)
 
+    def get(self, key):
+        if hasattr(self, key):
+            return getattr(self,key)
+        else:
+            return None
+
     def dump(self, json=False):
         dump = self.data.copy()
-        dump['_id'] = self._id
-        dump['aaa_owner'] = self.owner
-        dump['aaa_group'] = self.group
-        dump['aaa_access_owner'] = self.access_owner
-        dump['aaa_access_group'] = self.access_group
-        dump['aaa_access_other'] = self.access_other
-        dump['aaa_access_unauth'] = self.access_unauth
-        dump['crecord_type'] = self.type
-        dump['crecord_write_time'] = self.write_time
-        dump['crecord_name'] = self.name
-        dump['enable'] = self.enable
 
-        dump['parent'] = self.parent
-        dump['children'] = self.children
 
-        dump['aaa_admin_group'] = self.admin_group
+        dump['_id'] = self.get('_id')
+        dump['aaa_owner'] = self.get('owner')
+        dump['aaa_group'] = self.get('group')
+        dump['aaa_access_owner'] = self.get('access_owner')
+        dump['aaa_access_group'] = self.get('access_group')
+        dump['aaa_access_other'] = self.get('access_other')
+        dump['aaa_access_unauth'] = self.get('access_unauth')
+        dump['crecord_type'] = self.get('type')
+        dump['crecord_write_time'] = self.get('write_time')
+        dump['crecord_name'] = self.get('name')
+
+        if 'enable' not in self.data:
+            dump['enable'] = self.enable
+
+        dump['parent'] = self.get('parent')
+        dump['children'] = self.get('children')
+
+        dump['aaa_admin_group'] = self.get('admin_group')
 
         if json:
             # Clean objectid

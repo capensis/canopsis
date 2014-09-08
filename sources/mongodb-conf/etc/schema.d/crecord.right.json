@@ -1,0 +1,16 @@
+{
+	"type": "object",
+	"categories": [{
+		"title": "General",
+		"keys":["description"]
+	}],
+	"properties": {
+		"crecord_type": {
+			"enum": ["right"],
+			"required": true
+		},
+		"description": {
+			"type": "string"
+		}
+	}
+}

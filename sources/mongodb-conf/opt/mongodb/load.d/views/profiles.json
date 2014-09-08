@@ -5,7 +5,7 @@
   "crecord_write_time": 1400853201,
   "enable": true,
   "containerwidget": {
-    "xtype": "hbox",
+    "xtype": "horizontalbox",
     "title": "container title vbox",
     "_id": "test_view_vertical_container",
     "items": [
@@ -15,6 +15,7 @@
         "widget": {
           "xtype": "list",
           "listed_crecord_type": "profile",
+          "itemsPerPage": 5,
           "title": "Profiles",
           "selection_toolbar": [
             "actionbutton-create",

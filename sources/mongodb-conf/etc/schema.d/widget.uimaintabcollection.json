@@ -1,0 +1,20 @@
+{
+	"type": "object",
+	"metadata": {
+		"icon": "cog"
+	},
+	"categories": [{
+		"title": "General",
+		"keys":["tabs"]
+	}],
+	"properties": {
+		"tabs" : {
+			"type": "array",
+			"items": {
+				"type": "object",
+				"role": "stringpair"
+			},
+			"reorderable": true
+		}
+	}
+}

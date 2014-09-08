@@ -35,7 +35,7 @@ detect_os
 echo
 
 echo " + Make directories and init environement ..."
-mkdir -p etc lib var/log &>> $LOG
+mkdir -p bin etc lib var/log &>> $LOG
 check_code $? "Impossible to make directories (check log: $LOG)"
 
 cp $BPATH/common.sh lib/ &>> $LOG

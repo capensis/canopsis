@@ -1,10 +1,10 @@
 NAME="redis"
 
-BASE="redis-$VERSION"
 LOG="$LOG_PATH/$NAME.log"
 rm -f $LOG &> /dev/null
 
 function build(){
+	BASE="redis-$VERSION"
 	cd $SRC_PATH/externals
 	
 	if [ ! -e $BASE ]; then
@@ -21,6 +21,7 @@ function build(){
 }
 
 function install(){
+	BASE="redis-$VERSION"
 	cd $SRC_PATH/externals/$BASE
 	
 	cp src/redis-benchmark $PREFIX/bin/	

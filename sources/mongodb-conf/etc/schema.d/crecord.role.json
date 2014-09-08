@@ -1,0 +1,48 @@
+{
+	"type": "object",
+	"categories": [{
+		"title": "General",
+		"keys":["description"]
+	},{
+		"title": "profile",
+		"keys": ["profile"]
+	},{
+		"title": "groups",
+		"keys": ["groups"]
+	},{
+		"title": "rights",
+		"keys": ["rights"]
+	}],
+	"properties": {
+		"crecord_type": {
+			"enum": ["role"],
+			"required": true,
+			"title": "type"
+		},
+		"description": {
+			"type": "string"
+		},
+		"groups": {
+			"type": "array",
+			"items": { "type": "object" },
+			"role": "classifiedcrecordselector",
+			"model": "group",
+			"multiselect": false,
+			"required": false
+		},
+		"profile": {
+			"type": "string",
+			"items": { "type": "object" },
+			"role": "classifiedcrecordselector",
+			"model": "profile",
+			"multiselect": false
+		},
+		"rights": {
+			"type": "array",
+			"items": { "type": "object" },
+			"role": "classifiedcrecordselector",
+			"model": "right",
+			"multiselect": true
+		}
+	}
+}

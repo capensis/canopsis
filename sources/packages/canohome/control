@@ -18,7 +18,7 @@ function pre_install(){
 
 	echo " + Gen UUID"
 	if [ -e $PREFIX/etc/uuid ]; then
-		echo "   + Allready exist."
+		echo "   + Already exist."
 	else
 		echo "UUID=`uuidgen`" > $PREFIX/etc/uuid
 		check_code $?

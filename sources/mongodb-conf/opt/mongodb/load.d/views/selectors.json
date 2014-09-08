@@ -26,14 +26,20 @@
           "listed_crecord_type": "selector",
           "selection_toolbar": [
             "actionbutton-create",
-            "actionbutton-removeselection",
-            "connectorbutton-edit"
+            "actionbutton-removeselection"
           ],
-          "displayed_columns": [],
+          "displayed_columns": [
+            "display_name",
+            "description",
+            "dostate",
+            "exclude_ids",
+            "include_ids",
+            "mfilter",
+            "downtimes_as_ok"
+          ],
           "actions_toolbar": [
             "actionbutton-create",
-            "actionbutton-removeselection",
-            "connectorbutton-edit"
+            "actionbutton-removeselection"
           ],
           "xtype": "list"
         },
@@ -42,7 +48,7 @@
       }
     ],
     "widgetslotTemplate": null,
-    "xtype": "vbox",
+    "xtype": "verticalbox",
     "title": "container title vbox"
   },
   "aaa_access_owner": [

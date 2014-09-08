@@ -5,21 +5,38 @@
   "crecord_write_time": 1400853201,
   "enable": true,
   "containerwidget": {
-    "xtype": "hbox",
+    "xtype": "verticalbox",
     "title": "container title vbox",
-    "_id": "test_view_vertical_container",
     "items": [
       {
         "title": "wrapper",
         "xtype": "widgetwrapper",
         "widget": {
+          "widgetId" : "fake-guid-fd5a-1ede-8ac2-6a1d66ad0024",
           "xtype": "list",
           "listed_crecord_type": "account",
+          "itemsPerPage": 5,
           "title": "Accounts",
+          "item_actions": [
+            "actionbutton-edit",
+            "actionbutton-removeselection"
+          ],
           "selection_toolbar": [
             "actionbutton-create",
             "actionbutton-removeselection"
+          ],
+          "actions_toolbar": [
+            "actionbutton-create"
+          ],
+          "displayed_columns": [
+            "external",
+            "user",
+            "firstname",
+            "lastname",
+            "mail",
+            "groups"
           ]
+
         }
       }
     ]
@@ -29,7 +46,7 @@
     "r",
     "w"
   ],
-  "aaa_group": "group.CPS_view_admin",
+  "aaa_group": "group.CPS_view",
   "crecord_creation_time": 1400853201,
   "aaa_access_unauth": [],
   "aaa_owner": "account.root",
@@ -42,5 +59,5 @@
   ],
   "aaa_admin_group": "group.CPS_view_admin",
   "children": [],
-  "crecord_name": "Accounts view"
+  "crecord_name": "Accounts"
 }

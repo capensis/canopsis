@@ -1,0 +1,52 @@
+{
+  "id": "view.rights",
+  "_id": "view.rights",
+  "crecord_type": "view",
+  "crecord_write_time": 1400853201,
+  "enable": true,
+  "containerwidget": {
+    "xtype": "verticalbox",
+    "title": "container title vbox",
+    "_id": "test_view_vertical_container",
+    "items": [
+      {
+        "title": "wrapper",
+        "xtype": "widgetwrapper",
+        "widget": {
+          "xtype": "list",
+          "listed_crecord_type": "right",
+          "itemsPerPage": 5,
+          "title": "Rights",
+          "selection_toolbar": [
+            "actionbutton-create",
+            "actionbutton-removeselection"
+          ],
+          "displayed_columns": [
+            "crecord_type",
+            "_id",
+            "description"
+          ]
+        }
+      }
+    ]
+  },
+  "parent": [],
+  "aaa_access_owner": [
+    "r",
+    "w"
+  ],
+  "aaa_group": "group.CPS_view_admin",
+  "crecord_creation_time": 1400853201,
+  "aaa_access_unauth": [],
+  "aaa_owner": "account.root",
+  "internal": false,
+  "aaa_access_other": [
+    "r"
+  ],
+  "aaa_access_group": [
+    "r"
+  ],
+  "aaa_admin_group": "group.CPS_view_admin",
+  "children": [],
+  "crecord_name": "Accounts view"
+}

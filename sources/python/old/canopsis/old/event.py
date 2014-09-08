@@ -61,7 +61,8 @@ def forger(
     ticket=None,
     ref_rk=None,
     component_problem=False,
-    author=None
+    author=None,
+    keep_state=None
 ):
 
     if not timestamp:
@@ -136,6 +137,9 @@ def forger(
 
     if author != None:
         dump["author"] = author
+
+    if keep_state:
+        dump["keep_state"] = keep_state
 
     if perf_data:
         dump["perf_data"] = perf_data

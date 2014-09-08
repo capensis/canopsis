@@ -2,6 +2,7 @@
 	"type": "object",
 	"properties": {
 		"widget": {
+			"type": "object",
 			"relationship": "belongsTo",
 			"model": "widget",
 			"polymorphic":true

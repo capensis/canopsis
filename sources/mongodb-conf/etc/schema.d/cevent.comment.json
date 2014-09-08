@@ -1,0 +1,17 @@
+{
+    "type": "object",
+    "properties": {
+        "event_type": {
+            "enum": ["comment"],
+            "required": true
+        },
+        "author": {
+            "type": "string",
+            "required": true
+        },
+        "referer": {
+            "type": "string",
+            "required": true
+        }
+    }
+}

@@ -686,8 +686,9 @@ class Configurable(object):
                 result = manager
                 break
 
-        logger.warning(
-            'No manager found among {0} for processing file {1}'.format(
-                managers, conf_path))
+        else:
+            logger.warning(
+                'No manager found among {0} for processing file {1}'.format(
+                    managers, conf_path))
 
         return result

@@ -2,16 +2,19 @@
 	"type": "object",
 	"categories": [{
 		"title": "General",
-		"keys":["firstname","lastname", "user", "mail"]
+		"keys":["firstname","lastname", "user", "mail", "authkey"]
 	},{
-		"title": "Permissions",
-		"keys": ["groups" , "aaa_access_owner"]
+		"title": "Role",
+		"keys": ["role"]
+	},{
+		"title": "Rights",
+		"keys": ["rights"]
 	}],
 	"properties": {
 		"crecord_type": {
 			"enum": ["account"],
 			"required": true,
-			"defaultValue": "account",
+			"default": "account",
 			"icon": "user"
 		},
 		"firstname": {
@@ -29,12 +32,31 @@
 			"required": true,
 			"role": "mail"
 		},
-		"groups": {
+		"authkey": {
+			"type": "string",
+			"required": true,
+			"readOnly": true
+		},
+		"role": {
 			"type": "array",
-			"items": {
-				"type": "string"
-			},
+			"items": { "type": "object" },
+			"role": "classifiedcrecordselector",
+			"model": "role",
+			"multiselect": true,
 			"required": false
+		},
+		"rights": {
+			"type": "array",
+			"items": { "type": "object" },
+			"role": "classifiedcrecordselector",
+			"model": "right",
+			"multiselect": true,
+			"required": false
+		},
+		"external": {
+			"type": "boolean",
+			"required": true
 		}
+
 	}
 }

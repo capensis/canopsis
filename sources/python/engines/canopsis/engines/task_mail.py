@@ -37,7 +37,7 @@ import re
 
 
 class engine(TaskHandler):
-    etype = 'task_mail'
+    etype = 'taskmail'
 
     def handle_task(self, job):
         user = job.get('user', 'root')
@@ -53,8 +53,8 @@ class engine(TaskHandler):
         smtp_port = job.get('smtp_port', 25)
         html = job.get('html', False)
 
-        template = Template(job.get('template', ''))
-        template_data = job.get('template_data', {})
+        template = Template(job.get('body', ''))
+        template_data = job.get('jobctx', {})
 
         body = template(template_data)
 

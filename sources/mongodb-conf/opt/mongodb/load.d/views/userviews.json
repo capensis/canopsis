@@ -5,20 +5,20 @@
   "crecord_write_time": 1400853201,
   "enable": true,
   "containerwidget": {
-    "xtype": "vbox",
+    "xtype": "verticalbox",
     "title": "container title vbox",
     "items": [
       {
         "title": "wrapper",
         "xtype": "widgetwrapper",
         "widget": {
+          "itemsPerPage": 5,
           "xtype": "list",
           "listed_crecord_type": "userview",
           "title": "Userviews",
-          "item_actions": ["actionbutton-show", "actionbutton-remove"],
-          "sorted_columns": ["crecord_type", "internal", "enable", "description", "crecord_write_time", "crecord_name"],
+          "item_actions": ["actionbutton-show", "actionbutton-removeselection"],
+          "displayed_columns": ["crecord_type", "internal", "enable", "description", "crecord_write_time", "crecord_name"],
           "selection_toolbar": [
-            "actionbutton-create",
             "actionbutton-removeselection"
           ]
         }
