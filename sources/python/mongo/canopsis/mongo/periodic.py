@@ -285,7 +285,7 @@ class MongoPeriodicStorage(MongoStorage, PeriodicStorage):
         # add period in id
         unit_with_value = period.get_max_unit()
         if unit_with_value is None:
-            raise MongoPeriodicStorage.PeriodicStoreError(
+            raise MongoPeriodicStorage.Error(
                 "period {0} must contain at least one valid unit among {1}".
                 format(period, Period.UNITS))
 
