@@ -121,6 +121,7 @@ function post_update(){
 			echo " ready"
 			mongo_ready=true
 		else
+			echo -n "."
 			sleep 1
 		fi
 	done

@@ -1,0 +1,13 @@
+{
+    "type": "object",
+    "properties": {
+        "event_type": {
+            "enum": ["user"],
+            "required": true
+        },
+        "author": {
+            "type": "string",
+            "required": true
+        }
+    }
+}

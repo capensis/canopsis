@@ -169,7 +169,7 @@ class engine(Engine):
             self.update(doc, [('type', 1), ('component', 1), ('resource', 1)])
 
         # Create metrics entities
-        for perfdata in event['perf_data_array']:
+        for perfdata in event.get('perf_data_array', []):
             nodeid = new()
 
             nodeid.update(component.encode('ascii', 'ignore'))
