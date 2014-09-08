@@ -157,9 +157,8 @@ class Archiver(object):
             if (event['state'] == 0):
                 # flowchart 5 6 8
                 if (devent['state'] == 0
-                    or (not self.is_bagot(event)
-                        and not self.is_stealthy(
-                            ts_curr - event['ts_first_stealthy']))):
+                    and not self.is_bagot(event)
+                    and not self.is_stealthy(event)):
                     self.set_status(event, 0)
                 else:
                     self.check_bagot(event, devent)
