@@ -101,8 +101,6 @@ class Archiver(object):
         ts_diff_bagot = (ts_curr - ts_first_bagot)
 
         freq = event.get('bagot_freq', -1)
-        self.logger.debug('FREEEEEEEEEEEEEEEEEEEEEEEEEEEEQS {0} {1}'.format(
-                str(freq), str(ts_first_bagot)))
         # flowchart 6 7
         if ts_diff_bagot <= self.bagot_time and freq >= self.bagot_freq:
             return True
@@ -127,6 +125,7 @@ class Archiver(object):
         ts_prev = devent['timestamp']
         event['bagot_freq'] = devent.get('bagot_freq', 0)
         event['ts_first_stealthy'] = devent.get('ts_first_stealthy', 0)
+        self.logger.info(event)
         # flowchart 1 2 3
         if (devent.get('status', 1) != 4
             or (devent['state'] != event['state']
@@ -140,7 +139,7 @@ class Archiver(object):
                     or (not self.is_bagot(event)
                         and not self.is_stealthy(
                             ts_curr - event['ts_first_stealthy']))):
-                    self.logger.debug(log.format('Off'))
+                    self.logger.info(log.format('Off'))
                     event['status'] = 0
                     event['ts_first_stealthy'] = 0
                 else:
@@ -162,10 +161,10 @@ class Archiver(object):
             event['status'] = 4
             event['ts_first_stealthy'] = 0
 
-        old_status = devent.get('status', event['status'])
+        old_status = devent.get('status', 0)
 
-        if ((not old_status and event['status'] > 0) or
-            old_status > 0 and not event['status']):
+        if ((not old_status and event['status']) or
+            old_status and not event['status']):
             event['ts_first_stealthy'] = event['timestamp']
 
         if old_status != event['status']:
@@ -176,7 +175,8 @@ class Archiver(object):
 
         if event['bagot_freq'] == 1:
             event['ts_first_bagot'] = event['timestamp']
-
+        self.logger.info(event)
+        self.logger.info(devent)
 
     def check_event(self, _id, event):
         changed = False
@@ -234,8 +234,7 @@ class Archiver(object):
         except:
             # No old record
             self.logger.debug(" + New event")
-            event['ts_first_stealthy'] = event.get('timestamp', now)
-            event['ts_first_bagot'] = event.get('timestamp', now)
+            event['ts_first_stealthy'] = event.get('timestamp', now) * (not not event['state'])
             changed = True
             old_state = state
 
