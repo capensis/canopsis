@@ -62,7 +62,7 @@ class Archiver(object):
         self.stealthy_time = 300
         self.restore_event = True
 
-        self.state_config = self.storage.find({'Record_type': 'state-spec'})
+        self.state_config = self.storage.find({'crecord_type': 'state-spec'})
         if len(self.state_config) == 1:
             self.state_config = self.state_config[0]
 
@@ -85,8 +85,7 @@ class Archiver(object):
         log = 'Status is set to {} for event %s' % event['rk']
 
         # flowchart 6 7
-        if (ts_diff_bagot <= self.bagot_time
-            and freq >= self.bagot_freq):
+        if self.is_bagot(event):
             self.logger.info(log.format('Bagot'))
             event['status'] = 3
             event['bagot_freq'] += 1
@@ -94,6 +93,24 @@ class Archiver(object):
         else:
             self.logger.info(log.format('Stealthy'))
             event['status'] = 2
+
+
+    def is_bagot(self, event):
+        ts_curr = event['timestamp']
+        ts_first_bagot = event.get('ts_first_bagot', 0)
+        ts_diff_bagot = (ts_curr - ts_first_bagot)
+
+        freq = event.get('bagot_freq', -1)
+        self.logger.debug('FREEEEEEEEEEEEEEEEEEEEEEEEEEEEQS {0} {1}'.format(
+                str(freq), str(ts_first_bagot)))
+        # flowchart 6 7
+        if ts_diff_bagot <= self.bagot_time and freq >= self.bagot_freq:
+            return True
+        return False
+
+    def is_stealthy(self, ts_diff):
+        return (True if ts_diff <= self.stealthy_time else False)
+
 
     def check_statuses(self, event, devent):
 
@@ -154,27 +171,12 @@ class Archiver(object):
         if old_status != event['status']:
             if old_status == 3:
                 event['bagot_freq'] = 0
-            elif event['status'] != 3:
+            else:
                 event['bagot_freq'] += 1
 
         if event['bagot_freq'] == 1:
             event['ts_first_bagot'] = event['timestamp']
 
-
-    def is_bagot(self, event):
-        ts_curr = event['timestamp']
-        ts_first_bagot = event.get('ts_first_bagot', 0)
-        ts_diff_bagot = (ts_curr - ts_first_bagot)
-
-        freq = event.get('bagot_freq', -1)
-
-        # flowchart 6 7
-        if ts_diff_bagot <= self.bagot_time and freq >= self.bagot_freq:
-            return True
-        return False
-
-    def is_stealthy(self, ts_diff):
-        return (True if ts_diff <= self.stealthy_time else False)
 
     def check_event(self, _id, event):
         changed = False
@@ -233,6 +235,7 @@ class Archiver(object):
             # No old record
             self.logger.debug(" + New event")
             event['ts_first_stealthy'] = event.get('timestamp', now)
+            event['ts_first_bagot'] = event.get('timestamp', now)
             changed = True
             old_state = state
 
