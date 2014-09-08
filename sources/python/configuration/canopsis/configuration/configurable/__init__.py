@@ -42,8 +42,8 @@ class MetaConfigurable(type):
         result = type.__call__(cls, *args, **kwargs)
 
         if result.auto_conf or result.reconf_once:
-            # do configuration in avoiding to override constructor parameters
-            result.apply_configuration(override=False)
+            # apply configuration
+            result.apply_configuration()
 
         return result
 
