@@ -7,8 +7,4 @@
    engines/index
    common/index
    configuration/index
-   kombu/index
    middleware/index
-   mom/index
-   rpc/index
-   storage/index

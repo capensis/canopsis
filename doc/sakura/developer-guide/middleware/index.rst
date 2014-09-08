@@ -41,16 +41,28 @@ A canopsis scheme is as follow ``protocol[-data_type[-data_scope]]`` where the `
 
 By convention, an URI scheme has forbidden characters such as '_', '$', etc. And in respect of this library, the character '-' is also forbidden to compose protocol, data_type and data_scope values because it is used by the library such as the separator char.
 
-Perspectives
-------------
+Paradigms
+---------
 
 This library is further declined into paradigms such as :
 
-- MOM
-- Storage
+.. toctree::
+   :maxdepth: 2
+   :titlesonly:
+
+   mom/index
+   rpc/index
+   storage/index
 
 Package contents
 ================
+
+.. toctree::
+   :maxdepth: 2
+   :titlesonly:
+
+   manager
+   sync
 
 .. data:: __version__
 
