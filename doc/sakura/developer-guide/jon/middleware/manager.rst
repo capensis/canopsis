@@ -26,7 +26,7 @@ A Manager has the same logic than the configurable manager, but is dedicated to 
 
 The configuration of sub-middleware uses the parameter name of shape '{name}_uri'.
 
-For example, the folowing ini file content::
+For example, the following ini file content::
 
    [MANAGER]
    test_uri=prototest://

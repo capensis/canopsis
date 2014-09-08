@@ -146,16 +146,16 @@ class Manager(ConfigurableManager):
         """
 
         if data_scope is None:
-            data_scope = self._data_scope
+            data_scope = self.data_scope
 
         if auto_connect is None:
-            auto_connect = self._auto_connect
+            auto_connect = self.auto_connect
 
         if shared is None:
-            shared = self._shared
+            shared = self.shared
 
         if sharing_scope is None:
-            sharing_scope = self._sharing_scope
+            sharing_scope = self.sharing_scope
 
         if shared:
 
