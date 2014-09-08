@@ -35,11 +35,11 @@ def init():
         "crecord_type": "state-spec",
         "restore_event": True,
         "bagot": {
-                        # if event appears >= 10 times in 1hr
+            # if event appears >= 10 times in 1hr
             "time": 3600,
             "freq": 10},
-                # if event appears again in < 5min
-        "stealthy_time": 360}
+        # if event appears again in < 5min
+        "stealthy_time": 300}
 
     logger.info(" + Creating event state specification")
     record = Record(

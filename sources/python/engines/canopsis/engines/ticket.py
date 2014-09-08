@@ -66,7 +66,7 @@ class engine(Engine):
 
                 self.amqp.publish(job, 'Engine_scheduler', 'amq.direct')
 
-            elif event['event_type'] == 'ack':
+            elif event['event_type'] == 'ack' and 'ticket' in event:
                 self.logger.info('Associate ticket')
 
                 events = self.store.get_backend('events')
