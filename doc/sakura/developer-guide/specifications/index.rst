@@ -6,4 +6,5 @@ Specifications
    :titlesonly:
 
    coding-style
+   init
    packaging

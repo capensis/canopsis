@@ -18,6 +18,7 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
+from canopsis.common.utils import isiterable
 from canopsis.mongo import MongoStorage
 from canopsis.storage.timed import TimedStorage
 from canopsis.timeserie.timewindow import get_offset_timewindow
@@ -42,9 +43,15 @@ class MongoTimedStorage(MongoStorage, TimedStorage):
         result = {}
 
         # set a where clause for the search
-        where = {
-                    MongoTimedStorage.Key.DATA_ID: {'$in': data_ids}
-                }
+        where = {}
+
+        one_element = False
+
+        if isiterable(data_ids, is_str=False):
+            where[MongoTimedStorage.Key.DATA_ID] = {'$in': data_ids}
+        else:
+            where[MongoTimedStorage.Key.DATA_ID] = data_ids
+            one_element = True
 
         # if timewindow is not None, get latest timestamp before
         # timewindow.stop()
@@ -88,6 +95,10 @@ class MongoTimedStorage(MongoStorage, TimedStorage):
                 # stop when a document is just before the start timewindow
                 break
 
+        # if one element has been requested, returns it
+        if one_element and result:
+            result = result[data_ids]
+
         return result
 
     def count(self, data_id, *args, **kwargs):
@@ -125,9 +136,12 @@ class MongoTimedStorage(MongoStorage, TimedStorage):
 
     def remove(self, data_ids, timewindow=None, *args, **kwargs):
 
-        where = {
-            MongoTimedStorage.Key.DATA_ID: {'$in': data_ids}
-        }
+        where = {}
+
+        if isiterable(data_ids, is_str=False):
+            where[MongoTimedStorage.Key.DATA_ID] = {'$in': data_ids}
+        else:
+            where[MongoTimedStorage.Key.DATA_ID] = data_ids
 
         if timewindow is not None:
             where[MongoTimedStorage.Key.TIMESTAMP] = \

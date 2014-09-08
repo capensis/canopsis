@@ -24,7 +24,8 @@ from urlparse import urlparse
 
 from canopsis.middleware.loader import Loader
 from canopsis.common.utils import force_iterable
-from canopsis.configuration import Configurable, Parameter
+from canopsis.configuration import (
+    Configurable, Parameter, Configuration, Category)
 from canopsis.configuration.configurable import MetaConfigurable
 
 SCHEME_SEPARATOR = '-'  #: char separator in uri to proto/data_type/data_scope
@@ -767,7 +768,10 @@ class Middleware(Configurable):
         return result
 
     @staticmethod
-    def get_middleware(protocol, data_type=None, *args, **kwargs):
+    def get_middleware(
+        protocol, data_type=None, data_scope=None, auto_connect=True,
+        *args, **kwargs
+    ):
         """
         Instantiate the right middleware related to input protocol, data_type
         and specific parameters (in args and kwargs).
@@ -797,7 +801,14 @@ class Middleware(Configurable):
             protocol=protocol, data_type=data_type)
 
         if middleware_class is not None:
-            result = middleware_class(*args, **kwargs)
+            # instantiate a new middleware
+            result = middleware_class(auto_connect=False, *args, **kwargs)
+            conf = Configuration(Category("get_middleware",
+                Parameter(Middleware.PROTOCOL, protocol),
+                Parameter(Middleware.DATA_TYPE, data_type),
+                Parameter(Middleware.DATA_SCOPE, data_scope)))
+            result.auto_connect = auto_connect
+            result.configure(conf=conf)
 
         return result
 
@@ -807,7 +818,7 @@ class Middleware(Configurable):
         Instantiate the right middleware related to input uri.
 
         :param uri: the uri may contains a protocol of type 'protocol' or
-            'protocol-data_type'.
+            'protocol-data_type' or 'protocol-data_type-data_scope.
         :type uri: str
 
         :param args: list of args given to the middleware to instantiate.
@@ -822,14 +833,25 @@ class Middleware(Configurable):
 
         result = None
 
-        protocol, _, data_scope = parse_scheme(uri)
+        protocol, data_type, data_scope = parse_scheme(uri)
 
         if data_scope:
             kwargs["data_scope"] = data_scope
 
         middleware_class = Middleware.resolve_middleware_by_uri(uri)
 
+        # if a new middleware class has been founded
         if middleware_class is not None:
-            result = middleware_class(*args, **kwargs)
+            # instantiate it without connecting it automatically
+            result = middleware_class(auto_connect=False, *args, **kwargs)
+            # create a configuration with protocol, data_type and data_scope
+            conf = Configuration(Category("get_middlewaqre_by_uri",
+                Parameter(Middleware.PROTOCOL, protocol),
+                Parameter(Middleware.DATA_TYPE, data_type),
+                Parameter(Middleware.DATA_SCOPE, data_scope)))
+            # set auto_connect to true
+            result._auto_connect = True
+            # and configure the result
+            result.configure(conf=conf)
 
         return result

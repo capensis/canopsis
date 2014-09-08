@@ -27,7 +27,7 @@ from canopsis.mongo import MongoDataBase, MongoStorage
 class DataBaseTest(TestCase):
 
     def setUp(self):
-        self.database = MongoDataBase(data_scope="test_store", safe=True)
+        self.database = MongoDataBase(data_scope="test_store")
 
     def test_connect(self):
         self.database.connect()
@@ -47,7 +47,7 @@ class TestStorage(MongoStorage):
 class StorageTest(TestCase):
 
     def setUp(self):
-        self.storage = TestStorage(data_type='plop', safe=True)
+        self.storage = TestStorage(data_type='plop')
 
     def test_connect(self):
         self.assertTrue(self.storage.connected())

@@ -8,3 +8,4 @@
    components/index
    plugins/index
    REST/index
+   frontend/index
