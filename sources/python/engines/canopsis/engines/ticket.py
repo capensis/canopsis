@@ -46,7 +46,13 @@ class engine(Engine):
 
     def work(self, event, *args, **kwargs):
         if 'job' in self.config:
-            if event['event_type'] in ['declare-ticket', 'assoc-ticket']:
+
+            if 'rrule' in self.config['job']:
+                del self.config['job']['rrule']
+
+            if event['event_type'] == 'declareticket':
+                self.logger.debug('Declare Ticket')
+
                 try:
                     refevt = self.store.get(event['ref_rk'], namespace='events')
                     refevt = refevt.dump()
@@ -59,5 +65,19 @@ class engine(Engine):
                 job['context'] = refevt
 
                 self.amqp.publish(job, 'Engine_scheduler', 'amq.direct')
+
+            elif event['event_type'] == 'ack':
+                self.logger.info('Associate ticket')
+
+                events = self.store.get_backend('events')
+
+                self.logger.info('Update events with rk {0}'.format(event['ref_rk']))
+                events.update({
+                    'rk': event['ref_rk']
+                }, {
+                    '$set': {
+                        'ticket': event['ticket']
+                    }
+                })
 
         return event

@@ -1,0 +1,650 @@
+# Translators:
+# Translators:
+# eric regnier <eregnier@capensis.fr>, 2014
+# Mourcia Mikael <mmourcia@yahoo.fr>, 2014
+msgid ""
+msgstr ""
+"Project-Id-Version: Canopsis\n"
+"Report-Msgid-Bugs-To: teamcanopsis@capensis.fr\n"
+"POT-Creation-Date: 2014-08-22 10:00+0100\n"
+"PO-Revision-Date: 2014-09-05 22:08+0000\n"
+"Last-Translator: eric regnier <eregnier@capensis.fr>\n"
+"Language-Team: French (http://www.transifex.com/projects/p/canopsis/language/fr/)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: fr\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+msgid "View all tasks"
+msgstr "Voir toutes les tâches"
+
+msgid "Loading"
+msgstr "Chargement en cours"
+
+msgid "Paths and ports"
+msgstr "Chemins et ports"
+
+msgid "You have"
+msgstr "Vous avez"
+
+msgid "Acknowledge"
+msgstr "Acquitter"
+
+msgid "actions"
+msgstr "actions"
+
+msgid "cactions"
+msgstr "actions"
+
+msgid "filters"
+msgstr "filtres"
+
+msgid "selection_toolbar"
+msgstr "barre d'outil de sélection"
+
+msgid "yes"
+msgstr "oui"
+
+msgid "aaa_admin_group"
+msgstr "aaa_admin_group"
+
+msgid "children"
+msgstr "enfants"
+
+msgid "Minor"
+msgstr "Mineure"
+
+msgid " "
+msgstr " "
+
+msgid "display_name"
+msgstr "Nom"
+
+msgid "title"
+msgstr "titre"
+
+msgid "Showing"
+msgstr " "
+
+msgid "Title"
+msgstr "Titre"
+
+msgid "List option \"itemsPerPage\" should not be set up to 0"
+msgstr "L'option de liste 'nombre d'entrées par page\" ne devrait pas être défini à 0"
+
+msgid "to"
+msgstr "à"
+
+msgid "crecord_type"
+msgstr "Type d'enregistrement"
+
+msgid "mail"
+msgstr "email"
+
+msgid "sla_rk"
+msgstr "Routing key de la SLA"
+
+msgid "Day"
+msgstr "Jour"
+
+msgid "item_actions"
+msgstr "actions sur l'objet"
+
+msgid "timestamp"
+msgstr "Date"
+
+msgid "mixins"
+msgstr "plugins"
+
+msgid "sla_timewindow_value"
+msgstr "valeur de la fenêtre de temps pour la SLA"
+
+msgid "debug_mode"
+msgstr "Mode Debug"
+
+msgid "Stealthy"
+msgstr "Furtif"
+
+msgid "entries"
+msgstr "entrées"
+
+msgid "Cancelled"
+msgstr "Annulé"
+
+msgid "No event matches for operation on "
+msgstr "Aucun évènement ne correspond pour l'opération"
+
+msgid "Date sentence prefix"
+msgstr "Préfix de phrase de date"
+
+msgid "resource"
+msgstr "Ressource"
+
+msgid "name"
+msgstr "nom"
+
+msgid "Widget refresh interval"
+msgstr "Intervalle de raffraichissement"
+
+msgid "event_selection"
+msgstr "sélection d'évènement"
+
+msgid "Add"
+msgstr "Ajouter"
+
+msgid "server"
+msgstr "serveur"
+
+msgid "Report an incident"
+msgstr "Déclarer un incident"
+
+msgid "aaa_owner"
+msgstr "Propriétaire"
+
+msgid "Scheduled Jobs"
+msgstr "Tâches planifiées"
+
+msgid "displayed_columns"
+msgstr "Colonnes affichées"
+
+msgid "time_conditions"
+msgstr "condition de temps"
+
+msgid "Previous"
+msgstr "Précédent"
+
+msgid "profile"
+msgstr "profil"
+
+msgid "domain"
+msgstr "Domaine"
+
+msgid "Create"
+msgstr "Créer"
+
+msgid "For the selection"
+msgstr "Pour la sélection"
+
+msgid "Field to override"
+msgstr "Champ à écraser"
+
+msgid "Next"
+msgstr "Suivant"
+
+msgid "Key to remove"
+msgstr "Clé à supprimer"
+
+msgid "Event Filter"
+msgstr "Filtrage d'événement"
+
+msgid "rrule"
+msgstr "règle"
+
+msgid "sla_timewindow"
+msgstr "fenêtre de temps SLA"
+
+msgid "aaa_access_group"
+msgstr ""
+
+msgid "thd_crit_sla_timewindow"
+msgstr ""
+
+msgid "records per page"
+msgstr "enregistrements par page"
+
+msgid "Event navigation"
+msgstr "Temps réél"
+
+msgid "Change criticity"
+msgstr "Changer la criticité"
+
+msgid "Hour"
+msgstr "Heure"
+
+msgid "Rights"
+msgstr "Droits"
+
+msgid "itemsPerPage"
+msgstr "Eléments par page"
+
+msgid "downtimes_as_ok"
+msgstr "Considérer les downtimes comme OK"
+
+msgid "Divers"
+msgstr "Divers"
+
+msgid "aaa_access_unauth"
+msgstr ""
+
+msgid "state"
+msgstr "Etat"
+
+msgid "filter_pattern"
+msgstr "Motif de filtre"
+
+msgid "Today"
+msgstr "Aujourd'hui"
+
+msgid "Add a view"
+msgstr "Ajouter une vue"
+
+msgid "Minute"
+msgstr "Minute"
+
+msgid "Info"
+msgstr "Info"
+
+msgid "parent"
+msgstr "parent"
+
+msgid "Settings"
+msgstr "Paramètres"
+
+msgid "component"
+msgstr "Composant"
+
+msgid "Profiles"
+msgstr "Profils"
+
+msgid "Untitled"
+msgstr "Sans titre"
+
+msgid "Acknowledge and report an incident"
+msgstr "Acquitter et déclarer un incident"
+
+msgid "Remove"
+msgstr "Supprimer"
+
+msgid "groups"
+msgstr "groupes"
+
+msgid "output"
+msgstr "Message"
+
+msgid "Edit widget"
+msgstr "Editer le widget"
+
+msgid "custom filter"
+msgstr "Filtre personnalisé"
+
+msgid "On going"
+msgstr "En cours"
+
+msgid "crecord_name"
+msgstr "nom de l'enregistrement"
+
+msgid "Delete"
+msgstr "Supprimer"
+
+msgid "Comment"
+msgstr "Commentaires"
+
+msgid "dosla"
+msgstr "Calculer les SLA"
+
+msgid "created"
+msgstr "créé"
+
+msgid "sla_timewindow_doUnknown"
+msgstr ""
+
+msgid "of"
+msgstr "des"
+
+msgid "Resource"
+msgstr "Resource"
+
+msgid "days"
+msgstr "jours"
+
+msgid "User Interface"
+msgstr "Interface utilisateur"
+
+msgid "Custom filter created"
+msgstr "Filtre personnalisé créé"
+
+msgid "user_filter"
+msgstr "filtre utilisateur"
+
+msgid "list_info_button_pattern"
+msgstr "modèle de bouton de liste d'information "
+
+msgid "tasks"
+msgstr "tâches"
+
+msgid "refreshableWidget"
+msgstr "Raffraichissable"
+
+msgid "Engines"
+msgstr "Moteurs"
+
+msgid "base_dn"
+msgstr "Base DN"
+
+msgid "dostate"
+msgstr "Calculer l'état"
+
+msgid "Visit"
+msgstr "Visiter"
+
+msgid "Value to set"
+msgstr "Nouvelle valeur"
+
+msgid "thd_warn_sla_timewindow"
+msgstr "seuil de warning pour la fenêtre de temps SLA"
+
+msgid "aaa_group"
+msgstr ""
+
+msgid "Critical"
+msgstr "Critique"
+
+msgid "Manage views"
+msgstr "Gérer les vues"
+
+msgid "cancel"
+msgstr "annuler"
+
+msgid "loaded"
+msgstr "chargé"
+
+msgid "Are you sure ?"
+msgstr "Etes vous sur ?"
+
+msgid "Events"
+msgstr "Evénements"
+
+msgid "connector"
+msgstr "Connecteur"
+
+msgid "Authentification systems"
+msgstr "Systèmes d'authentification"
+
+msgid "service"
+msgstr "service"
+
+msgid "Are you sure to delete filter"
+msgstr "Etes vous sur de vouloir supprimer le filtre ?"
+
+msgid "priority"
+msgstr "priorité"
+
+msgid "start"
+msgstr "début"
+
+msgid "sla_timewindow_unit"
+msgstr "unité pour le fenêtre de temps SLA"
+
+msgid "Topologies"
+msgstr "Topologies"
+
+msgid "Date"
+msgstr "Date"
+
+msgid "exclude_ids"
+msgstr "Exclure des ID"
+
+msgid "type"
+msgstr "type"
+
+msgid "crecord_creation_time"
+msgstr "Date de création"
+
+msgid "Permissions"
+msgstr "Permissions"
+
+msgid "last_dispatcher_update"
+msgstr "date de la dernière répartition de tâche "
+
+msgid "enable"
+msgstr "activer"
+
+msgid "login_footer"
+msgstr "Pied de page (Login)"
+
+msgid "View all"
+msgstr "Voir tout"
+
+msgid "All"
+msgstr "Tout"
+
+msgid "Leave edition mode"
+msgstr "Quitter le mode Edition"
+
+msgid "Filter"
+msgstr "Filtre"
+
+msgid "criticity"
+msgstr "Criticité"
+
+msgid "external"
+msgstr "externe"
+
+msgid "Action"
+msgstr "Action"
+
+msgid "Edit current view"
+msgstr "Editer la vue"
+
+msgid "History"
+msgstr "Historique"
+
+msgid "roles"
+msgstr "rôles"
+
+msgid "rights"
+msgstr "droits"
+
+msgid "Save changes"
+msgstr "Enregistrer les changements"
+
+msgid "Unable to send event"
+msgstr "Impossible d'envoyer l'événement"
+
+msgid "internal"
+msgstr "interne"
+
+msgid "Custom filter removed"
+msgstr "Filtre personnalisé effacé"
+
+msgid "Edit CAS configuration"
+msgstr "Editer la configuration CAS"
+
+msgid "output_tpl"
+msgstr "Modèle de message de sortie"
+
+msgid "Edit settings"
+msgstr "Editer les paramètres"
+
+msgid "aaa_access_other"
+msgstr ""
+
+msgid "Cancel"
+msgstr "Annuler"
+
+msgid "Close"
+msgstr "Fermer"
+
+msgid "last_execution"
+msgstr "dernière exécution"
+
+msgid "Add action"
+msgstr "Ajouter une action"
+
+msgid "event_type"
+msgstr "Type d'événement"
+
+msgid "user_dn"
+msgstr "User DN"
+
+msgid "Remote handling"
+msgstr "Prise en charge à distance"
+
+msgid "aaa_access_owner"
+msgstr ""
+
+msgid "crecord_write_time"
+msgstr "date d'écriture de l'enregistrement"
+
+msgid "Edit LDAP configuration"
+msgstr "Editer la configuration LDAP"
+
+msgid "actions_toolbar"
+msgstr "barre d'outil d'action"
+
+msgid "Create a custom filter for current list"
+msgstr "Créer un filtre personnalisé pour la liste"
+
+msgid "Profile"
+msgstr "Profil"
+
+msgid "Remove selection"
+msgstr "Effacer la sélection"
+
+msgid "Selected Events"
+msgstr "Evénements sélectionnés"
+
+msgid "author"
+msgstr "Auteur"
+
+msgid "Component"
+msgstr "Composant"
+
+msgid "ack"
+msgstr "ACK"
+
+msgid "Export current view"
+msgstr "Exporter la vue courante"
+
+msgid "Event search"
+msgstr "Recherche d'événements"
+
+msgid "mfilter"
+msgstr "filtre"
+
+msgid "connector_name"
+msgstr "Nom du connecteur"
+
+msgid "role"
+msgstr "rôle"
+
+msgid "No matching records found"
+msgstr "Aucun enregistrement trouvé"
+
+msgid "state_algorithm"
+msgstr "Algo de calcul d'état"
+
+msgid "lastname"
+msgstr "nom"
+
+msgid "Ticket"
+msgstr "Ticket"
+
+msgid "event sent"
+msgstr "événement envoyé"
+
+msgid "sla_output_tpl"
+msgstr "Modèle de message de sortie SLA"
+
+msgid "perimeter"
+msgstr "Périmètre"
+
+msgid "About"
+msgstr "A propos"
+
+msgid "Off"
+msgstr "Inactif"
+
+msgid "description"
+msgstr "description"
+
+msgid "firstname"
+msgstr "prénom"
+
+msgid "default_filter"
+msgstr "Filtre par défaut"
+
+msgid "Error while loading data"
+msgstr "Erreur de chargement de données"
+
+msgid "source_type"
+msgstr "Type de source"
+
+msgid "cfilter_allow_only_optimized_filters"
+msgstr "Autoriser uniquement les filtres optimisés"
+
+msgid "user"
+msgstr "utilisateur"
+
+msgid "listed_crecord_type"
+msgstr "type d'enregistrement listé"
+
+msgid "Page"
+msgstr "Page"
+
+msgid "Users"
+msgstr "Utilisateurs"
+
+msgid "Edit filter for current list"
+msgstr "Editer le filtre de la liste"
+
+msgid "destination_view"
+msgstr "Vue de destination"
+
+msgid "Major"
+msgstr "Majeure"
+
+msgid "task"
+msgstr "tâche"
+
+msgid "Search"
+msgstr "Rechercher"
+
+msgid "notifications"
+msgstr "Notifications"
+
+msgid "Enter a ticket number"
+msgstr "Entrer un numéro de ticket"
+
+msgid "include_ids"
+msgstr "Inclure des ID"
+
+msgid "uri"
+msgstr "LDAP URI"
+
+msgid "Actions"
+msgstr "Actions"
+
+msgid "Insert widget"
+msgstr "Insérer un Widget"
+
+msgid "Undo remove"
+msgstr "Annuler"
+
+msgid "Second"
+msgstr "Seconde"
+
+msgid "Toggle navigation"
+msgstr "Basculer"
+
+msgid "status"
+msgstr "Statut"
+
+msgid "Selectors"
+msgstr "Sélecteurs"
+
+msgid "Year"
+msgstr "Année"
+
+msgid "cloaking"
+msgstr "Rendu à la volée (expérimental)"
+
+msgid "Edit your widget preferences"
+msgstr "Editer les préférences du widget"
+
+msgid "sla_state"
+msgstr "Etat SLA"
+
+msgid "Dashboard"
+msgstr "Tableau de bord"

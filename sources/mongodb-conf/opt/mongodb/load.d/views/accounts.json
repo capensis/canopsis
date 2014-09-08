@@ -19,7 +19,7 @@
           "title": "Accounts",
           "item_actions": [
             "actionbutton-edit",
-            "actionbutton-remove"
+            "actionbutton-removeselection"
           ],
           "selection_toolbar": [
             "actionbutton-create",

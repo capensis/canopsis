@@ -43,6 +43,9 @@ class engine(Engine):
         if schema.validate(job, 'crecord.job'):
             self.do_job(job)
 
+        else:
+            self.logger.error('Invalid job: {0}'.format(job))
+
     def pre_run(self):
         self.beat()
 
@@ -85,13 +88,13 @@ class engine(Engine):
 
         self.amqp.publish(
             job['params'],
-            'task_{0}'.format(job['task']),
+            'task_{0}'.format(job['task'][4:]),
             'amq.direct'
         )
 
         now = int(time())
 
-        self.storage.update({
+        self.storage.get_backend().update({
             '_id': job['_id'],
             'last_execution': {'$lte': now}
         }, {

@@ -20,16 +20,34 @@
           "itemsPerPage" : 5,
           "listed_crecord_type": "event",
           "title": "Bac à évenements",
+          "filters" : [
+            {
+              "filter" : "{\n  \"ack.isAck\": true\n}",
+              "cfilter" : "",
+              "title" : "Ack"
+            },
+            {
+              "filter" : "{\n  \"state\" : {\"$ne\": 0}\n}",
+              "cfilter" : "",
+              "title" : "Alert"
+            },
+            {
+              "filter" : "{\n  \"state\": {\"$ne\": 0},\n  \"ack.isAck\": {\"$ne\": true}\n}",
+              "cfilter" : "",
+              "title" : "Alert not ack"
+            }
+          ],
           "item_actions": [
             "actionbutton-ack",
             "actionbutton-cancel",
             "actionbutton-incident",
             "actionbutton-ticketnumber",
-            "actionbutton-info"
+            "actionbutton-info",
+            "actionbutton-changestate"
           ],
           "selection_toolbar": [
             "actionbutton-ack",
-            "actionbutton-removeselection"
+            "actionbutton-cancel"
           ],
           "actions_toolbar": [
             "actionbutton-history"

@@ -3,6 +3,7 @@
     "_id": "cservice.ticket",
     "title": "Ticket Declaration",
     "job": {
-        "xtype": "job"
+        "xtype": "job",
+        "crecord_type": "job"
     }
 }
