@@ -50,7 +50,7 @@ class MongoScopedStorageTest(TestCase):
 
         self.assertTrue(self.storage.connected())
 
-    def _test_CRUD(self):
+    def test_CRUD(self):
 
         self.storage.drop()
 
@@ -78,7 +78,6 @@ class MongoScopedStorageTest(TestCase):
             _absolute_path = '%s%s' % (
                 CompositeStorage.PATH_SEPARATOR, _absolute_path)
             self.assertEqual(absolute_path, _absolute_path)
-
             # put new entry
             self.storage.put(path=_path, data_id=name, data={'value': n})
 

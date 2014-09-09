@@ -18,7 +18,7 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from canopsis.common.utils import isiterable, force_iterable
+from canopsis.common.utils import isiterable
 from canopsis.mongo import MongoStorage
 from canopsis.storage import Storage
 from canopsis.storage.composite import CompositeStorage
@@ -116,13 +116,17 @@ class MongoCompositeStorage(MongoStorage, CompositeStorage):
         # get unique id
         _id = self.get_absolute_path(path=path, data_id=data_id)
 
+        data_to_put = data.copy()
+        data_to_put.update(path)
+        data_to_put[MongoStorage.DATA_ID] = data_id
+
         if share_id is not None:
-            data[CompositeStorage.SHARED] = share_id
+            data_to_put[CompositeStorage.SHARED] = share_id
 
         query = {MongoStorage.ID: _id}
 
         _set = {
-            '$set': data
+            '$set': data_to_put
         }
 
         self._update(_id=query, document=_set, multi=False)

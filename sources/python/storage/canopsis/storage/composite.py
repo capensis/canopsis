@@ -157,7 +157,8 @@ class CompositeStorage(Storage):
 
     def get(
         self,
-        path, data_ids=None, _filter=None, shared=False, limit=0, skip=0, sort=None
+        path, data_ids=None, _filter=None, shared=False,
+        limit=0, skip=0, sort=None
     ):
         """
         Get data related to input data_ids, input path and input filter.
@@ -252,7 +253,8 @@ class CompositeStorage(Storage):
         :param data_ids: data id or list of data id
         :type data_ids: list or str
 
-        :param shared: remove shared data if data ids are related to shared data.
+        :param shared: remove shared data if data ids are related to shared
+            data.
         :type shared: bool
         """
 

@@ -27,7 +27,6 @@ class ContextTest(TestCase):
 
     def setUp(self):
         self.context = Context()
-        self.context.apply_configuration()
 
     def test_ctx_storage(self):
 

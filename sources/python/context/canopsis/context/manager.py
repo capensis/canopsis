@@ -208,8 +208,7 @@ class Context(Manager):
         Unify input entities as the same entity
         """
 
-        # get unique and shared id
-        pass
+        self[Context.CTX_STORAGE].share_data(data=entities)
 
     def _configure(self, unified_conf, *args, **kwargs):
 
