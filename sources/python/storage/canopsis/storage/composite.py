@@ -44,8 +44,7 @@ class CompositeStorage(Storage):
 
     SHARED = 'shared'  #: shared field name
     VALUE = 'value'  #: data value
-    PATH = 'path'
-    ID = 'id'  #: data id
+    PATH = 'path'  #: path value
 
     def __init__(self, path=None, *args, **kwargs):
         """
@@ -66,77 +65,81 @@ class CompositeStorage(Storage):
 
     @path.setter
     def path(self, value):
+
         self._path = value
         self.reconnect()
 
-    def get_shared_data(self, data):
+    def all_indexes(self, *args, **kwargs):
+
+        result = super(CompositeStorage, self).all_indexes(*args, **kwargs)
+
+        # add index to shared property
+        result.append([(CompositeStorage.SHARED, Storage.ASC)])
+
+        return result
+
+    def get_shared_data(self, shared_ids):
         """
-        Get all shared data related to input data. If input data is not shared,
-        returns a list containing only data.
+        Get all shared data related to input shared ids.
 
         :param data: one or more data
 
-        :return: depending on input data and fusion::
+        :return: depending on input shared_ids::
 
-            - one data: one list of shared data
-            - list of data: list of list of shared data
+            - one shared id: one list of shared data
+            - list of shared ids: list of list of shared data
         """
 
         result = []
 
-        _data = force_iterable(data, iterable=set)
+        sids = force_iterable(shared_ids, iterable=set)
 
-        for d in _data:
-            if CompositeStorage.SHARED in d:
-                shared = d[CompositeStorage.SHARED]
-                request = {CompositeStorage.SHARED: shared}
-                shared_data = self.get_elements(request=request)
-                result.append(shared_data)
+        for shared_id in sids:
+            query = {CompositeStorage.SHARED: shared_id}
+            shared_data = self.get_elements(query=query)
+            result.append(shared_data)
 
         # return first or data if data is not an iterable
-        if not isiterable(data, is_str=False):
-            result = get_first(result, data)
+        if not isiterable(shared_ids, is_str=False):
+            result = get_first(result)
 
         return result
 
-    def set_shared_data(self, data, shared=None, share_extended=False):
+    def share_data(
+        self, data, shared_id=None, share_extended=False
+    ):
         """
         Set input data as a shared data with input shared id
 
-        If input data is already shared, update all shared data with input
-        shared id
+        :param data: one data
 
-        :param data: one or more data
-
-        :param shared: unique shared id. If None, the id is generated.
+        :param shared_id: unique shared id. If None, the id is generated.
 
         :param share_extended: if True (False by default), set shared value to
             all shared data with input data
 
-        :return: shared value
+        :return: shared_id value (generated if None)
         """
-        if shared is None:
-            shared = uuid()
+
+        result = uuid() if shared_id is None else shared_id
 
         # get an iterable version of input data
-        data_to_share = force_iterable(data, iterable=set)
+        data_to_share = force_iterable(data)
 
-        if share_extended:
-            # get all previous shared data
-            for dts in data_to_share.copy():
-                if CompositeStorage.SHARED in dts \
-                        and dts[CompositeStorage.SHARED] != shared:
-                    shared_data = self.get_shared_data(dts)
-                    for shared_d in shared_data:
-                        data.add(shared_d)
-
-        # for all shared data, update the shared property and put them
         for dts in data_to_share:
-            dts[CompositeStorage.SHARED] = shared
-            _id = self.get_absolute_path(dts)
-            self.put_element(_id=_id, element=dts)
+            # update extended data if necessary
+            if share_extended:
+                path, data_id = self.get_path_with_id(dts)
+                dts = self.get(path=path, data_ids=data_id, shared=True)
+            else:
+                dts = [dts]
 
-        return shared
+            for dt in dts:
+                path, data_id = self.get_path_with_id(dt)
+                dt[CompositeStorage.SHARED] = result
+                self.put(path=path, data_id=data_id, data=dt)
+
+        return result
 
     def unshare_data(self, data):
         """
@@ -148,24 +151,29 @@ class CompositeStorage(Storage):
 
         for d in data:
             if CompositeStorage.SHARED in d:
-                d[CompositeStorage.SHARED] = 0
-            _id = self.get_absolute_path(d)
-            self.put(_id=_id, element=d)
+                d[CompositeStorage.SHARED] = uuid()
+                path, data_id = self.get_path_with_id(d)
+                self.put(path=path, data_id=data_id, data=d)
 
     def get(
-        self, path, ids=None, _filter=None, limit=0, skip=0, sort=None
+        self,
+        path, data_ids=None, _filter=None, shared=False, limit=0, skip=0, sort=None
     ):
         """
-        Get data related to input ids, input path and input filter.
+        Get data related to input data_ids, input path and input filter.
 
         :param path: dictionnary of path valut by path name
         :type path: dict
 
-        :param ids: data ids in the input path.
-        :type ids: str or iterable of str
+        :param data_ids: data ids in the input path.
+        :type data_ids: str or iterable of str
 
-        :param filter: additional filter condition to input path
-        :type filter: storage filter
+        :param _filter: additional filter condition to input path
+        :type _filter: storage filter
+
+        :param shared: if True, convert result to list of list of data where
+            list of data are list of shared data.
+        :type shared: bool
 
         :param limit: max number of data to get. Useless if data_id is given.
         :type limit: int
@@ -184,7 +192,7 @@ class CompositeStorage(Storage):
 
         raise NotImplementedError()
 
-    def find(self, path, _filter, limit=0, skip=0, sort=None):
+    def find(self, path, _filter, shared=False, limit=0, skip=0, sort=None):
         """
         Get a list of data identified among a dictionary of composite values by
         name.
@@ -194,6 +202,10 @@ class CompositeStorage(Storage):
 
         :param _filter: additional filter condition to input path
         :type _filter: storage filter
+
+        :param shared: if True, convert result to list of list of data where
+            list of data are list of shared data.
+        :type shared: bool
 
         :param limit: max number of data to get. Useless if data_id is given.
         :type limit: int
@@ -211,56 +223,80 @@ class CompositeStorage(Storage):
 
         raise NotImplementedError()
 
-    def put(self, path, _id, data):
+    def put(self, path, data_id, data, shared_id=None):
         """
         Put a data related to an id
 
         :param path: path
         :type path: storage filter
 
-        :param _id: data id
-        :type _id: str
+        :param data_id: data id
+        :type data_id: str
 
         :param data: data to update
         :type data: dict
+
+        :param shared_id: shared_id id not None
+        :type shared_id: str
         """
 
         raise NotImplementedError()
 
-    def remove(self, path, ids=None):
+    def remove(self, path, data_ids=None, shared=False):
         """
         Remove data from ids or type
 
         :param path: path to remove
         :type path: storage filter
 
-        :param _ids: data id or list of data id
-        :type _ids: list or str
+        :param data_ids: data id or list of data id
+        :type data_ids: list or str
+
+        :param shared: remove shared data if data ids are related to shared data.
+        :type shared: bool
         """
 
         raise NotImplementedError()
 
-    def get_absolute_path(self, path, _id):
+    def get_path_with_id(self, data):
         """
-        Get data absolute path among path for input data_id in input path.
+        Get input data path and id
 
-        :param path: dictionary of path value by name
-        :type path: dict
+        :type data: dict
 
-        :param data_id: data id in input path
+        :return: data path, data id
+        :rtype: tuple
+        """
+        path = {field: data[field] for field in data if field in self.path}
+
+        result = path, data[Storage.DATA_ID]
+
+        return result
+
+    def get_absolute_path(self, path, data_id):
+        """
+        Get input data absolute path.
+
+        :param path: path to remove
+        :type path: storage filter
+
+        :param data_id: data id
         :type data_id: str
         """
 
-        result = None
-
         result = ''
-        for path_name in path:
+
+        for n, field in enumerate(self.path):
+            if field in path:
+                result = '%s%s%s' % (
+                    result, CompositeStorage.PATH_SEPARATOR,
+                        path[field])
+            else:
+                break
+
+        if result:
             result = '%s%s%s' % (
                 result, CompositeStorage.PATH_SEPARATOR,
-                path[path_name])
-
-        if result is not None:
-            result = '%s%s%s' % (
-                result, CompositeStorage.PATH_SEPARATOR, _id)
+                data_id)
 
         return result

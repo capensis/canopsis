@@ -18,7 +18,7 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from canopsis.common.utils import isiterable
+from canopsis.common.utils import isiterable, force_iterable
 from canopsis.mongo import MongoStorage
 from canopsis.storage import Storage
 from canopsis.storage.composite import CompositeStorage
@@ -26,52 +26,100 @@ from canopsis.storage.composite import CompositeStorage
 
 class MongoCompositeStorage(MongoStorage, CompositeStorage):
 
-    def _get_indexes(self, *args, **kwargs):
+    def all_indexes(self, *args, **kwargs):
 
-        result = super(MongoCompositeStorage, self)._get_indexes(
+        result = super(MongoCompositeStorage, self).all_indexes(
             *args, **kwargs)
 
         # add all sub_paths concatened with id
         for n, _ in enumerate(self.path):
+
             sub_path = self.path[:n + 1]
             index = [(path_name, Storage.ASC) for path_name in sub_path]
-            index.append((CompositeStorage.ID, Storage.ASC))
-            result.append(index)
+            index.append((Storage.DATA_ID, Storage.ASC))
 
-        # add an index to the shared property
-        result.append([(CompositeStorage.SHARED, 1)])
+            result.append(index)
 
         return result
 
     def get(
-        self, path, ids=None, _filter=None, limit=0, skip=0, sort=None,
+        self,
+        path, data_ids=None, _filter=None, shared=False,
+        limit=0, skip=0, sort=None,
         *args, **kwargs
     ):
 
+        result = []
+
+        ids = None
+
+        # create a get query which is a copy of input path plus _filter
         query = path.copy()
         if _filter is not None:
             query.update(_filter)
 
+        # if data_ids is given
+        if data_ids is not None:
+
+            # add absolute pathes into ids
+            if isiterable(data_ids, is_str=False):
+                ids = []
+                for data_id in data_ids:
+                    _id = self.get_absolute_path(path=path, data_id=data_id)
+                    ids.append(_id)
+            else:
+                ids = self.get_absolute_path(path=path, data_id=data_ids)
+
+        # get elements
         result = self.get_elements(
             ids=ids, query=query, limit=limit, skip=skip, sort=sort)
 
+        if result is not None and shared:
+
+            # if result is one value
+            if isinstance(result, dict):
+                # if result is shared
+                if CompositeStorage.SHARED in result:
+                    shared_id = result[CompositeStorage.SHARED]
+                    # result equals shared data
+                    result = self.get_shared_data(shared_ids=shared_id)
+                else:
+                    # else, result is a list of itself
+                    result = [result]
+
+            else:
+                # if result is a list of data, use data_to_extend
+                data_to_extend = result[:]
+                # and initialize result such as an empty list
+                result = []
+                # for all data in result
+                for data in data_to_extend:
+                    # if data is shared, get shared data
+                    if CompositeStorage.SHARED in data:
+                        shared_id = data[CompositeStorage.SHARED]
+                        data = self.get_shared_data(shared_id=shared_id)
+                    # append data in result
+                    result.append(data)
+
         return result
 
-    def find(self, path, _filter, limit=0, skip=0, sort=None):
+    def find(self, path, _filter, shared=False, limit=0, skip=0, sort=None):
 
         result = self.get(
-            path=path, _filter=_filter, limit=limit, skip=skip, sort=sort)
+            path=path, _filter=_filter, shared=shared,
+            limit=limit, skip=skip, sort=sort)
 
         return result
 
-    def put(self, path, _id, data, *args, **kwargs):
+    def put(self, path, data_id, data, share_id=None, *args, **kwargs):
 
         # get unique id
-        _id = self.get_absolute_path(path=path, _id=_id)
+        _id = self.get_absolute_path(path=path, data_id=data_id)
 
-        # get query such as a sum of path and _id
-        query = path.copy()
-        query[MongoStorage.ID] = _id
+        if share_id is not None:
+            data[CompositeStorage.SHARED] = share_id
+
+        query = {MongoStorage.ID: _id}
 
         _set = {
             '$set': data
@@ -79,17 +127,29 @@ class MongoCompositeStorage(MongoStorage, CompositeStorage):
 
         self._update(_id=query, document=_set, multi=False)
 
-    def remove(self, path, ids=None, *args, **kwargs):
+    def remove(self, path, data_ids=None, shared=False, *args, **kwargs):
 
         query = path.copy()
 
         parameters = {}
 
-        if ids is not None:
-            if isiterable(ids, is_str=False):
-                query[CompositeStorage.ID] = {'$in': ids}
+        if data_ids is not None:
+            if isiterable(data_ids, is_str=False):
+                query[CompositeStorage.ID] = {'$in': data_ids}
             else:
                 parameters = {'justOne': 1}
-                query[CompositeStorage.ID] = ids
+                query[CompositeStorage.ID] = data_ids
 
         self._remove(document=query, **parameters)
+
+        # remove extended data
+        if shared:
+            _ids = []
+            data_to_remove = self.get(
+                path=path, data_ids=data_ids, shared=True)
+            for dtr in data_to_remove:
+                path, data_id = self.get_path_with_id(dtr)
+                extended = self.get(path=path, data_id=data_id, shared=True)
+                _ids.append([data[MongoStorage.ID] for data in extended])
+            document = {MongoStorage.ID: {'$in': _ids}}
+            self._remove(document=document)

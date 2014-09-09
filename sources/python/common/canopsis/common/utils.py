@@ -182,7 +182,7 @@ def force_iterable(value, iterable=list):
 
     result = value
 
-    if not isiterable(value, is_str=False):
+    if not isiterable(value, is_str=False) or isinstance(value, dict):
         result = [value]
         result = iterable(result)
 

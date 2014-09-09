@@ -57,7 +57,7 @@ class StorageTest(TestCase):
         self.assertTrue(self.storage.connected())
 
     def test_indexes(self):
-        indexes = self.storage._get_indexes()
+        indexes = self.storage.all_indexes()
 
         collection_index = self.storage._backend.index_information()
 

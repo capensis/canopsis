@@ -149,9 +149,9 @@ class MongoTimedStorage(MongoStorage, TimedStorage):
 
         self._remove(document=where)
 
-    def _get_indexes(self):
+    def all_indexes(self, *args, **kwargs):
 
-        result = super(MongoTimedStorage, self)._get_indexes()
+        result = super(MongoTimedStorage, self).all_indexes(*args, **kwargs)
 
         result.append(MongoTimedStorage.TIMESTAMP_BY_ID)
 
