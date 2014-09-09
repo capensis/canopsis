@@ -62,20 +62,24 @@ class Archiver(object):
         self.bagot_time = 3600
         self.stealthy_time = 300
         self.restore_event = True
+        self.stealthy_show = 300
 
         self.state_config = self.storage.find({'crecord_type': 'state-spec'})
         if len(self.state_config) == 1:
             self.state_config = self.state_config[0]
 
             if 'bagot' in self.state_config:
-                if 'freq' in self.state_config['bagot']:
-                    self.bagot_freq = self.state_config['bagot']['freq']
-                if 'time' in self.state_config['bagot']:
-                    self.bagot_time = self.state_config['bagot']['time']
-            if 'stealthy_time' in self.state_config:
-                self.stealthy_time = self.state_config['stealthy_time']
-            if 'restore_event' in self.state_config:
-                self.restore_event = self.state_config['restore_event']
+                self.bagot_freq = self.state_config['bagot'].setdefault('freq',
+                                                                        10)
+                self.bagot_time = self.state_config['bagot'].setdefault('time',
+                                                                        3600)
+
+            self.stealthy_time = self.state_config.setdefault('stealthy_time',
+                                                              300)
+            self.stealthy_show = self.state_config.setdefault('stealthy_show',
+                                                              300)
+            self.restore_event = self.state_config.setdefault('restore_event',
+                                                              True)
 
 
     def check_bagot(self, event, devent):

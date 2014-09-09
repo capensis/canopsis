@@ -39,7 +39,8 @@ def init():
             "time": 3600,
             "freq": 10},
         # if event appears again in < 5min
-        "stealthy_time": 300}
+        "stealthy_time": 300,
+        "stealthy_show": 300}
 
     logger.info(" + Creating event state specification")
     record = Record(
