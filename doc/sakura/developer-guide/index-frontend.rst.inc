@@ -2,7 +2,7 @@
    :maxdepth: 2
    :titlesonly:
 
-   uiv2.rst
+   uiv2/index
    widgets/index
    editors/index
    components/index
