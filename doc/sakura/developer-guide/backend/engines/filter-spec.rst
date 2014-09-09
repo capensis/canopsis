@@ -79,4 +79,4 @@ See `event_filter-Myunittest <https://github.com/capensis/canopsis/blob/NRPUIV2/
 
 Below is a simplified example on how the rules work
 
-.. image:: ../../_static/images/dev_engines/schema_event_filter_rule.png
+.. image:: ../../../_static/images/dev_engines/schema_event_filter_rule.png
