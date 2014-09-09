@@ -83,13 +83,10 @@ class Archiver(object):
 
         # flowchart 6 7
         if self.is_bagot(event):
-            self.logger.info(log.format('Bagot'))
-            event['status'] = 3
-            event['bagot_freq'] += 1
+            self.set_status(event, 3)
         # flowchart 8 9
         else:
-            self.logger.info(log.format('Stealthy'))
-            event['status'] = 2
+            self.set_status(event, 2)
 
 
     def is_bagot(self, event):
@@ -121,7 +118,7 @@ class Archiver(object):
             2: {'freq': 0,
                 'name': 'Stealthy'
                 },
-            3: {'freq': event.get('bagot_freq', 0) + 1,
+            3: {'freq': event['bagot_freq'] + 1,
                 'name': 'Bagot'
                 },
             4: {'freq': 0,
@@ -130,6 +127,7 @@ class Archiver(object):
             }
         self.logger.info(log.format(values[status]['name']))
         event['status'] = status
+        event['bagot_freq'] = values[status]['freq']
         if status != 2 and status != 3:
             event['ts_first_stealthy'] = 0
 
@@ -147,6 +145,7 @@ class Archiver(object):
         ts_prev = devent['timestamp']
         event['bagot_freq'] = devent.get('bagot_freq', 0)
         event['ts_first_stealthy'] = devent.get('ts_first_stealthy', 0)
+        event['ts_first_bagot'] = devent.get('ts_first_bagot', 0)
         # flowchart 1 2 3
         if (devent.get('status', 1) != 4
             or (devent['state'] != event['state']
@@ -178,13 +177,13 @@ class Archiver(object):
         else:
             self.set_status(event, 4)
 
-        old_status = devent.get('status', 0)
+        old_status = devent['status']
 
         if ((not old_status and event['status']) or
             old_status and not event['status']):
             event['ts_first_stealthy'] = event['timestamp']
 
-        if old_status != event['status']:
+        if devent['state'] != event['state']:
             if old_status == 3:
                 event['bagot_freq'] = 0
             else:
@@ -192,6 +191,7 @@ class Archiver(object):
 
         if event['bagot_freq'] == 1:
             event['ts_first_bagot'] = event['timestamp']
+
 
     def check_event(self, _id, event):
         changed = False
@@ -245,11 +245,11 @@ class Archiver(object):
 
             self.check_statuses(event, devent)
 
-
         except:
             # No old record
             self.logger.debug(" + New event")
-            event['ts_first_stealthy'] = event.get('timestamp', now) * (not not event['state'])
+            event['ts_first_stealthy'] = (event.get('timestamp', now)
+                                          * (not not event['state']))
             changed = True
             old_state = state
 
