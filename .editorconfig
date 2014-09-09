@@ -14,7 +14,8 @@ indent_size = 4
 
 # Tab indentation (no size specified)
 [*.js]
-indent_style = tab
+indent_style = space
+indent_size = 4
 
 [*.rst]
 indent_style = space
@@ -24,3 +25,7 @@ indent_size = 3
 [{package.json,.travis.yml}]
 indent_style = space
 indent_size = 2
+
+[*.c]
+indent_style = space
+indent_size = 4

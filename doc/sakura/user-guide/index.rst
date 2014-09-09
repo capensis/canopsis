@@ -11,3 +11,4 @@ User guide
    UI-report/index
    event-spec
    internal-metrics
+   workflows
