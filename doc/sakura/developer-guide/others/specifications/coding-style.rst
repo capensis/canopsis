@@ -20,3 +20,5 @@ We advise to use these tools, with these configurations :
      - https://gist.github.com/gwenaelp/ad33d6b9b9555da0195e#file-jshintrc
    * - Pylint
      - add pylint doc here
+   * - Editorconfig
+     - add editorconfig doc here
