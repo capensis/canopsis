@@ -46,7 +46,7 @@ Additionally, the user can specify if it should change state if its criticity ch
 Flowchart
 -----------
 
-.. image:: ../../_static/images/dev_engines/state_flowchart.png
+.. image:: ../../../_static/images/dev_engines/state_flowchart.png
 
 Additional informations
 ^^^^^^^^^^^^^^^^^^^^^^^^^

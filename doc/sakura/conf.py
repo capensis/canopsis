@@ -71,9 +71,6 @@ release = 'Sakura'
 # directories to ignore when looking for source files.
 exclude_patterns = ['_build',
                     'includes',
-                    'developer-guide/index-frontend',
-                    'developer-guide/index-backend',
-                    'developer-guide/index-others',
                    ]
 
 # The reST default role (used for this markup: `text`) to use for all

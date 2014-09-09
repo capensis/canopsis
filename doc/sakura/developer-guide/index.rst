@@ -4,14 +4,14 @@ Developer guide
 Backend
 -------
 
-.. include:: index-backend.rst.inc
+.. include:: ../includes/index-dev-guide/index-backend.rst
 
 Frontend
 --------
 
-.. include:: index-frontend.rst.inc
+.. include:: ../includes/index-dev-guide/index-frontend.rst
 
 Others
 ------
 
-.. include:: index-others.rst.inc
+.. include:: ../includes/index-dev-guide/index-others.rst
