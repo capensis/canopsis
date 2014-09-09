@@ -36,6 +36,19 @@ Manager
 
 A manager is the interface between business code and storages. It specialized and optimized of set of storages for business components which needs to use several types of storages.
 
+Paradigms
+---------
+
+This library is further declined into paradigms such as :
+
+.. toctree::
+   :maxdepth: 2
+   :titlesonly:
+
+   composite
+   periodic
+   timed
+
 Technical description
 =====================
 
