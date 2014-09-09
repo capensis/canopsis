@@ -71,10 +71,10 @@ class engine(Engine):
 
             # do I publish a selector event ? Yes if selector have to and it is time or we got to update status
             if selector.dostate:
-                try:
+                #try:
                     self.publish_event(selector)
-                except Exception as e:
-                    self.logger.error('Unable to publish selector {} : {} '.format(name, e))
+                #except Exception as e:
+                #    self.logger.error('Unable to publish selector {} : {} '.format(name, e))
             else:
                 self.logger.debug('Nothing to do with selector {}'.format(name))
 

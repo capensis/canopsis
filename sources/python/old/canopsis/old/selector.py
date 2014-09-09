@@ -56,13 +56,15 @@ class Selector(Record):
         self.changed = False
         self.rk = None
 
-        self.last_event = None
+        self.template_replace = {
+            0: '[OFF]',
+            1: '[MINOR]',
+            2: '[MAJOR]',
+            3: '[CRITICAL]',
+        }
 
-        self.output_tpl = "{cps_sel_state_0} Ok, {cps_sel_state_1} \
-        Warning, {cps_sel_state_2} Critical"
 
-        self.sel_metric_prefix = "cps_sel_"
-        self.sel_metric_name = self.sel_metric_prefix + "state_%s"
+
 
         self.logger = getLogger('Selector')
         self.cdowntime = Downtime(self.logger)
@@ -98,8 +100,11 @@ class Selector(Record):
         self.rk = dump.get('rk', self.rk)
         self.include_ids = dump.get('include_ids', self.include_ids)
         self.exclude_ids = dump.get('exclude_ids', self.exclude_ids)
-        self.output_tpl = dump.get('output_tpl', None)
-        self.sla_rk = dump.get('sla_rk', None)
+
+
+        default_template = "Off: [OFF], Minor: [MINOR], Major: [MAJOR], Critical: [CRITICAL]"
+        self.sla_rk = dump.get('sla_rk', default_template)
+        self.output_tpl = dump.get('output_tpl',default_template)
 
         self.data = dump
 
@@ -211,18 +216,13 @@ class Selector(Record):
         for state in result['result']:
             key = state['_id']['state']
 
-            if state['_id'].get('state_type', 1) == 0:
-                key = state['_id'].get('previous_state', key)
-
             states[key] = states.get(key, 0) + state['count']
             total += state['count']
 
-        self.logger.debug(" + namespace: {}".format(self.namespace))
         self.logger.debug(" + states: {}".format(states))
         self.logger.debug(" + total: {}".format(total))
 
 
-        state, state_type = 0, 1
         # Compute worst state
         for s in [0, 1, 2, 3]:
             if s in states:
@@ -252,17 +252,14 @@ class Selector(Record):
 
         ack_count = result['result'][0]['count']
 
-        self.logger.debug(" + result for ack : %s" % result)
+        self.logger.debug(" + result for ack : {}".format(result))
 
-        return (states, state, state_type, ack_count)
+        return (states, state, ack_count)
 
     def event(self):
 
-        ### Transform Selector to Canopsis Event
-        self.logger.debug("To Event:")
-
-        # Get state
-        (states, state, state_type, ack_count) = self.getState()
+        # Get state information form aggregation
+        (states, state, ack_count) = self.getState()
 
         # Build output
         total = 0
@@ -273,17 +270,16 @@ class Selector(Record):
         send_ack = total == ack_count
 
 
-        self.logger.debug(" + state: %s" % state)
-        self.logger.debug(" + state_type: %s" % state_type)
+        self.logger.debug(" + state: {}".format(state))
 
         perf_data_array = []
-        long_output = ""
-        output = ""
 
-        self.logger.debug(" + total: %s" % total)
+        self.logger.debug(" + total: {}".format(total))
 
-        # Create perfdata array
+        # Create perfdata array and generate output data
+        output = self.output_tpl.replace('[TOTAL]', str(total))
         output_data = {}
+
         for i in [0, 1, 2, 3]:
             value = 0
             try:
@@ -291,28 +287,28 @@ class Selector(Record):
             except:
                 pass
 
-            metric = self.sel_metric_name % i
+            metric = "cps_sel_state_{}".format(i)
+            output = output.replace(self.template_replace[i], str(value))
             output_data[metric] = value
-            perf_data_array.append(
-                {"metric": metric, "value": value, "max": total})
-            self.logger.info('metric %s : %s' % (metric, value))
-        perf_data_array.append(
-            {"metric": self.sel_metric_prefix + "total", "value": total})
+            perf_data_array.append({
+                "metric": metric,
+                "value": value,
+                "max": total
+            })
+            self.logger.info('metric {} : {}'.format(metric, value))
+
+
+
+        perf_data_array.append({
+            "metric": "cps_sel_total",
+            "value": total
+        })
 
         output_data['total'] = total
-
-        # Fill Output template
-        self.logger.debug(" + output TPL: %s" % self.output_tpl)
-        output = self.output_tpl
-        if output and output_data:
-            for key in output_data:
-                output = output.replace("{%s}" % key, str(output_data[key]))
-
 
         # Debug
         self.logger.debug(" + Display Name: %s" % self.display_name)
         self.logger.debug(" + output: %s" % output)
-        self.logger.debug(" + long_output: %s" % long_output)
         self.logger.debug(" + perf_data_array: %s" % perf_data_array)
 
         # Build Event
@@ -324,27 +320,13 @@ class Selector(Record):
             component='selector',
             resource=self.display_name,
             state=state,
-            state_type=state_type,
             output=output,
-            long_output=long_output,
             perf_data=None,
             perf_data_array=perf_data_array,
             display_name=self.display_name
         )
 
-        # Extra field
-        event["selector_id"] = str(self._id)
-
         # Build RK
         rk = get_routingkey(event)
-
-        # Save RK
-        if not self.rk:
-            self.logger.debug("Set RK to '%s'" % rk)
-            self.storage.update(self._id, {'rk': rk})
-            self.rk = rk
-
-        # Cache event
-        self.last_event = event
 
         return (rk, event, send_ack)

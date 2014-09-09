@@ -103,11 +103,11 @@
 		},
 		"sla_output_tpl": {
 			"type": "string",
-			"default" :"{cps_pct_by_state_0}% Ok, {cps_pct_by_state_1}% Warning, {cps_pct_by_state_2}% Critical, {cps_pct_by_state_3}% Unknown"
+			"default" :"Off: [OFF], Minor: [MINOR], Major: [MAJOR], Critical: [CRITICAL], Total: [TOTAL]"
 		},
 		"output_tpl": {
 			"type": "string",
-			"default": "{cps_sel_state_0} Ok, {cps_sel_state_1} Warning, {cps_sel_state_2} Critical"
+			"default": "Off: [OFF], Minor: [MINOR], Major: [MAJOR], Critical: [CRITICAL], Total: [TOTAL]"
 		},
 		"last_dispatcher_update": {
 			"type": "integer",
