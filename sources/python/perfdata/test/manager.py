@@ -22,8 +22,7 @@
 from unittest import TestCase, main
 
 from canopsis.perfdata.manager import PerfData
-from canopsis.timeserie.timewindow import \
-    TimeWindow, get_offset_timewindow, Period
+from canopsis.timeserie.timewindow import TimeWindow, get_offset_timewindow
 
 
 class PerfDataTest(TestCase):
@@ -52,18 +51,14 @@ class PerfDataTest(TestCase):
 
         meta = {'plop': None}
 
-        period = Period()
-
         self.perfdata.put(
             metric_id=metric_id,
-            points_or_point=points,
-            meta=meta,
-            period=period)
+            points=points,
+            meta=meta)
 
         data, _meta = self.perfdata.get(
             metric_id=metric_id,
             timewindow=timewindow,
-            period=period,
             with_meta=True)
 
         self.assertEqual(meta, _meta[0][1])
@@ -75,13 +70,11 @@ class PerfDataTest(TestCase):
 
         self.perfdata.remove(
             metric_id=metric_id,
-            timewindow=_timewindow,
-            period=period)
+            timewindow=_timewindow)
 
         data, _meta = self.perfdata.get(
             metric_id=metric_id,
             timewindow=timewindow,
-            period=period,
             with_meta=True)
 
         self.assertEqual(meta, _meta[0][1])
@@ -92,7 +85,6 @@ class PerfDataTest(TestCase):
         data, _meta = self.perfdata.get(
             metric_id=metric_id,
             timewindow=timewindow,
-            period=period,
             with_meta=True)
 
         self.assertEqual(meta, _meta[0][1])
@@ -100,7 +92,6 @@ class PerfDataTest(TestCase):
         # get all data
         data, _meta = self.perfdata.get(
             metric_id=metric_id,
-            period=period,
             with_meta=True)
 
         self.assertEqual(meta, _meta[0][1])
@@ -114,7 +105,6 @@ class PerfDataTest(TestCase):
 
         data, _meta = self.perfdata.get(
             metric_id=metric_id,
-            period=period,
             with_meta=True)
 
         self.assertEqual(len(_meta), 0)

@@ -52,8 +52,21 @@ Perspectives
 ------------
 
 This library is further declined into paradigms such as :
-- PTP: point to point
-- PubSub: publish subscribe
+
+.. toctree::
+   :maxdepth: 2
+   :titlesonly:
+
+   pt2pt
+   pubsub
+
+And implementations :
+
+.. toctree::
+   :maxdepth: 2
+   :titlesonly:
+
+   kombu/index
 
 Package contents
 ================
