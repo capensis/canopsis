@@ -8,4 +8,5 @@
    frontend/components/index
    frontend/plugins/index
    frontend/REST/index
-   frontend/frontend/index
+   frontend/serializers-and-adapters
+   frontend/ressources
