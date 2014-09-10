@@ -2,7 +2,10 @@
 	"type": "object",
 	"categories": [{
 		"title": "General",
-		"keys":["firstname","lastname", "user", "mail", "authkey", "ui_language"]
+		"keys":["firstname","lastname", "user", "mail"]
+	},{
+		"title": "UI settings",
+		"keys":["authkey", "ui_language"]
 	},{
 		"title": "Role",
 		"keys": ["role"]
