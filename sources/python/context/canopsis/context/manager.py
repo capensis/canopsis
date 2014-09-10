@@ -20,10 +20,11 @@
 
 from canopsis.configuration import conf_paths, add_category
 from canopsis.middleware.manager import Manager
+from canopsis.storage import Storage
 
 
-CONF_RESOURCE = 'context/context.conf'
-CATEGORY = 'CONTEXT'
+CONF_RESOURCE = 'context/context.conf'  #: last context conf resource
+CATEGORY = 'CONTEXT'  #: context category
 
 
 @add_category(CATEGORY)
@@ -47,17 +48,17 @@ class Context(Manager):
         - connector: data_id
     """
 
-    DATA_SCOPE = 'context'
+    DATA_SCOPE = 'context'  #: default data scope
 
-    CTX_STORAGE = 'ctx_storage'
+    CTX_STORAGE = 'ctx_storage'  #: ctx storage name
     CONTEXT = 'context'
 
     TYPE = 'type'  #: entity type field name
-    NAME = 'name'  #: entity name field name
+    NAME = Storage.DATA_ID  #: entity name field name
     EXTENDED = 'extended'  #: extended field name
 
     DEFAULT_CONTEXT = [
-        'type', 'connector', 'connector_name', 'component', 'resource']
+        TYPE, 'connector', 'connector_name', 'component', 'resource']
 
     def __init__(
         self, context=DEFAULT_CONTEXT, ctx_storage=None, *args, **kwargs
@@ -80,22 +81,6 @@ class Context(Manager):
     def context(self, value):
         self._context = value
 
-    def get_entity_context(self, entity, context=None):
-        """
-        Get the right context related to input entity
-        """
-
-        result = {}
-
-        if context is None:
-            context = self.context
-
-        for value in context:
-            if value in entity:
-                result[value] = entity[value]
-
-        return result
-
     def get_entities(self, ids):
         """
         Get entities by id
@@ -107,33 +92,35 @@ class Context(Manager):
 
     def get(self, _type, name, context=None, extended=False):
         """
-        Get one entity related to:
-            - an entity type.
-            - a context (connector, ..., other).
-            - a name.
+        Get one entity
 
-        :param extended: get extended entities if they are shared.
+        :param _type: entity type (connector, component, etc.)
+        :type _type: str
 
-        :return: one element or None
-        :rtype: dict
+        :param name: entity name
+        :type name: str
+
+        :param context: entity context such as couples of name, value.
+        :type context: dict
+
+        :param extended: get extended entities if entity is shared.
+
+        :return: one element, list of elements if entity is shared or None
+        :rtype: dict, list or None
         """
 
-        path = {
-            Context.TYPE: _type,
-        }
+        path = {Context.TYPE: _type}
 
         if context is not None:
             path.update(context)
 
-        result = self[Context.CTX_STORAGE].get(path=path, ids=name)
-
-        if extended:
-            result = self[Context.CTX_STORAGE].get_shared_data(data=result)
+        result = self[Context.CTX_STORAGE].get(
+            path=path, data_ids=name, shared=extended)
 
         return result
 
     def find(
-        self, context=None, _filter=None, extended=False,
+        self, _type=None, context=None, _filter=None, extended=False,
         limit=0, skip=0, sort=None
     ):
         """
@@ -143,34 +130,36 @@ class Context(Manager):
         :param extended: get extended entities if they are shared
         """
 
-        path = {} if context is None else context
+        path = {}
+
+        if _type is not None:
+            path[Context.TYPE] = _type
+        if context is not None:
+            path.update(context)
 
         result = self[Context.CTX_STORAGE].get(
-            path=path, _filter=_filter, limit=limit, skip=skip, sort=sort)
-
-        if extended:
-            result = self[Context.CTX_STORAGE].get_shared_data(data=result)
+            path=path, _filter=_filter, shared=extended,
+            limit=limit, skip=skip, sort=sort)
 
         return result
 
-    def put(self, _type, entity, context=None):
+    def put(self, _type, entity, context=None, extended_id=None):
         """
         Put an element designated by the element_id, element_type and element.
         If timestamp is None, time.now is used.
         """
 
-        path = {
-            Context.TYPE: _type
-        }
+        path = {Context.TYPE: _type}
 
         if context is not None:
             path.update(context)
 
         name = entity[Context.NAME]
 
-        self[Context.CTX_STORAGE].put(path=path, _id=name, data=entity)
+        self[Context.CTX_STORAGE].put(
+            path=path, data_id=name, data=entity, shared_id=extended_id)
 
-    def remove(self, ids=None, _type=None, context=None):
+    def remove(self, ids=None, _type=None, context=None, extended=False):
         """
         Remove a set of elements identified by element_ids, an element type or
         a timewindow
@@ -184,32 +173,39 @@ class Context(Manager):
         if context is not None:
             path.update(context)
 
-        self[Context.CTX_STORAGE].remove(path=path, ids=ids)
+        if path:
+            self[Context.CTX_STORAGE].remove(path=path, shared=extended)
 
-    def get_entity_id(self, entity, context=None):
+        if ids is not None:
+            self[Context.CTX_STORAGE].remove_elements(ids=ids)
+
+    def get_entity_context_and_name(self, entity):
+        """
+        Get the right context related to input entity
+        """
+
+        result = self[Context.CTX_STORAGE].get_path_with_id(entity)
+
+        return result
+
+    def get_entity_id(self, entity):
         """
         Get unique entity id related to its context and name.
         """
 
-        if context is None:
-            context = self.context
-
-        path = self.get_entity_context(entity=entity, context=context)
-
-        name = entity['name']
+        path, data_id = self.get_entity_context_and_name(entity=entity)
 
         result = self[Context.CTX_STORAGE].get_absolute_path(
-            path=path, _id=name)
+            path=path, data_id=data_id)
 
         return result
 
-    def unify_entities(self, entities):
+    def unify_entities(self, entities, extended=False):
         """
         Unify input entities as the same entity
         """
 
-        # get unique and shared id
-        pass
+        self[Context.CTX_STORAGE].share_data(data=entities, shared=extended)
 
     def _configure(self, unified_conf, *args, **kwargs):
 

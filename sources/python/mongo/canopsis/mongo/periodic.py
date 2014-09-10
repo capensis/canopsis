@@ -147,10 +147,9 @@ class MongoPeriodicStorage(MongoStorage, PeriodicStorage):
                     timestamp
 
             else:
-                if document_properties[MongoPeriodicStorage.Index.LAST_UPDATE] < \
-                        timestamp:
-                    document_properties[MongoPeriodicStorage.Index.LAST_UPDATE] = \
-                        timestamp
+                last_update = MongoPeriodicStorage.Index.LAST_UPDATE
+                if document_properties[last_update] < timestamp:
+                    document_properties[last_update] = timestamp
 
             field_name = "{0}.{1}".format(
                 MongoPeriodicStorage.Index.VALUES, timestamp - id_timestamp)
@@ -214,9 +213,9 @@ class MongoPeriodicStorage(MongoStorage, PeriodicStorage):
         else:
             self._remove(document=query)
 
-    def _get_indexes(self):
+    def all_indexes(self, *args, **kwargs):
 
-        result = super(MongoPeriodicStorage, self)._get_indexes()
+        result = super(MongoPeriodicStorage, self).all_indexes(*args, **kwargs)
 
         result.append(MongoPeriodicStorage.Index.QUERY)
 

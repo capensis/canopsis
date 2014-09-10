@@ -27,11 +27,49 @@ class ContextTest(TestCase):
 
     def setUp(self):
         self.context = Context()
-        self.context.apply_configuration()
+        self.context[Context.CTX_STORAGE].data_scope = 'test'
 
     def test_ctx_storage(self):
 
-        pass
+        self.context[Context.CTX_STORAGE].drop()
+
+        context = self.context.context
+
+        count_per_entity_type = 2
+
+        # let's iterate on context items in order to create entities
+        for n in range(1, len(context)):
+            sub_context = context[:n]
+            entity_context = {c: c for c in sub_context[1:]}
+            entity = {}
+            for i in range(count_per_entity_type):
+                entity[Context.NAME] = i
+                self.context.put(
+                    _type=context[n], context=entity_context, entity=entity)
+
+        entities = self.context.find()
+
+        self.assertEqual(
+            len(entities), count_per_entity_type * (len(context) - 1))
+
+        for n in range(1, len(context)):
+            sub_context = context[:n]
+            entity_context = {c: c for c in sub_context[1:]}
+            entities = self.context.find(
+                _type=context[n], context=entity_context)
+            self.assertEqual(len(entities), 2)
+
+            _id = self.context.get_entity_id(entities[0])
+            self.context.remove(ids=_id)
+            entities = self.context.find(
+                _type=context[n], context=entity_context)
+            self.assertEqual(len(entities), 1)
+
+            self.context.remove(_type=context[n], context=entity_context)
+            entities = self.context.find(
+                _type=context[n], context=entity_context)
+            self.assertEqual(len(entities), 0)
+
 
 if __name__ == '__main__':
     main()

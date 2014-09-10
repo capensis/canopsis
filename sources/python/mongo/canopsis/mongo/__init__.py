@@ -166,27 +166,15 @@ class MongoStorage(MongoDataBase, Storage):
 
     ID = '_id'  #: ID mongo
 
-    @property
-    def indexes(self):
-        if not hasattr(self, '_indexes'):
-            self._indexes = []
-        return self._indexes
-
-    @indexes.setter
-    def indexes(self, value):
-        self._indexes = value
-        self.reconnect()
-
     def _connect(self, *args, **kwargs):
 
         result = super(MongoStorage, self)._connect(*args, **kwargs)
 
         if result:
-            self._indexes = self._get_indexes()
             table = self.get_table()
             self._backend = self._database[table]
 
-            for index in self.indexes:
+            for index in self.all_indexes():
                 try:
                     self._backend.ensure_index(index)
                 except Exception as e:
@@ -235,7 +223,7 @@ class MongoStorage(MongoDataBase, Storage):
             # find the right index
             max_correspondance = 0
             # iterate on all indexes
-            for self_index in self.indexes:
+            for self_index in self.all_indexes():
                 # find the higher correspondance score
                 correspondance = 0
                 for index_value in self_index:
@@ -311,14 +299,11 @@ class MongoStorage(MongoDataBase, Storage):
 
         return element[MongoStorage.ID]
 
-    def _get_indexes(self):
-        """
-        Get collection indexes. Must be overriden.
-        """
+    def all_indexes(self, *args, **kwargs):
 
-        result = [
-            [(MongoStorage.ID, 1)]
-        ]
+        result = super(MongoStorage, self).all_indexes(*args, **kwargs)
+
+        result.append([(MongoStorage.ID, 1)])
 
         return result
 
@@ -413,7 +398,6 @@ class MongoStorage(MongoDataBase, Storage):
                 .format(command, kwargs, backend))
 
         except OperationFailure as of:
-            print 'fail'
             self.logger.error('{0} during running command {1}({2}) of in {3}'
                 .format(of, command, kwargs, backend))
 
