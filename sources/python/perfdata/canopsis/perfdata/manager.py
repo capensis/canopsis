@@ -182,7 +182,7 @@ class PerfData(Manager):
             self[PerfData.META_STORAGE].remove(
                 data_ids=metric_id, timewindow=timewindow)
 
-    def update_meta(self, metric_id, meta, timestamp=None,):
+    def put_meta(self, metric_id, meta, timestamp=None):
         """
         Update meta information.
         """

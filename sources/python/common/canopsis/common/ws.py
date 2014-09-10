@@ -18,7 +18,9 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from canopsis.common.utils import isiterable
+from inspect import getargspec
+
+from canopsis.common.utils import force_iterable
 
 
 def response(data):
@@ -26,10 +28,11 @@ def response(data):
     Construct a REST response from input data.
     """
 
+    result_data = force_iterable(data)
+
     result = {
-        'total': len(data) if isiterable(data, is_str=False) else
-            0 if data is None else 1,
-        'data': data,
+        'total': 0 if data is None else len(result_data),
+        'data': result_data,
         'success': True
     }
 
@@ -49,7 +52,7 @@ def route_name(operation_name, *parameters):
     return result
 
 
-def route(op, mandatory=True, *parameters):
+def route(op, name=None):
     """
     Decorator which apply input op on a function with parameters
 
@@ -66,19 +69,22 @@ def route(op, mandatory=True, *parameters):
 
     def apply_route_on_function(function):
 
-        function_name = function.__name__
+        function_name = function.__name__ if name is None else name
 
-        if mandatory:
-            route = route_name(function_name, *parameters)
+        argspec = getargspec(function)
+
+        args, default = argspec.args, argspec.default
+        len_args = len(args)
+
+        # add routes with optional parameters
+        for n in range(len(default)):
+            route = route_name(function_name, *args[:len_args - n])
             function = op(route)(function)
 
-        else:
-            route = route_name(function_name)
+        # add route with mandatory parameters
+        if len(args) != len(args.default):
+            route = route_name(function_name, *args[:len_args - len(default)])
             function = op(route)(function)
-            for i in range(1, len(parameters)):
-                _parameters = parameters[:i]
-                route = route_name(function_name, *_parameters)
-                function = op(route)(function)
 
         return function
 

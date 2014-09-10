@@ -200,12 +200,12 @@ class Context(Manager):
 
         return result
 
-    def unify_entities(self, entities):
+    def unify_entities(self, entities, extended=False):
         """
         Unify input entities as the same entity
         """
 
-        self[Context.CTX_STORAGE].share_data(data=entities)
+        self[Context.CTX_STORAGE].share_data(data=entities, shared=extended)
 
     def _configure(self, unified_conf, *args, **kwargs):
 
