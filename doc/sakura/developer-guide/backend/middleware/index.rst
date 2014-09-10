@@ -57,13 +57,6 @@ This library is further declined into paradigms such as :
 Package contents
 ================
 
-.. toctree::
-   :maxdepth: 2
-   :titlesonly:
-
-   manager
-   sync
-
 .. data:: __version__
 
     Current package version : 0.1

@@ -18,71 +18,65 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from bottle import get, delete, put
+from bottle import get, delete, put, post
 
 from canopsis.common.ws import response, route
-from canopsis.topology.manager import TopologyManager
+from canopsis.context.manager import Context
 
-manager = TopologyManager()
+manager = Context()
 
 
 @route(get)
-def topology(ids=None, add_nodes=True):
+def context(_type, name=None, context=None, extended=None):
 
-    if not ids:
-        ids = None
+    entities = manager.get(
+        _type=_type, name=name, context=context, extended=extended)
 
-    topology = manager.get(ids=ids, add_nodes=add_nodes)
-
-    result = response(topology)
+    result = response(entities)
 
     return result
 
 
 @route(get)
-def topology_find(regex=None, add_nodes=False):
+def context_find(
+    _type=None, context=None, _filter=None, extended=False,
+    limit=0, skip=0, sort=None
+):
 
-    topologies = manager.find(regex=regex, add_nodes=add_nodes)
+    entities = manager.find(
+        _type=_type, context=context, _filter=_filter, extended=extended,
+        limit=limit, skip=skip, sort=sort)
 
-    result = response(topologies)
+    result = response(entities)
 
     return result
 
 
 @route(put)
-def topology(topology=None):
+def context(_type, entity, context=None, extended_id=None):
 
-    manager.put(topology=topology)
+    manager.put(
+        _type=_type, entity=entity, context=context, extended_id=extended_id)
 
-    result = response(topology)
+    result = response(entity)
 
     return result
 
 
 @route(delete)
-def delete(ids=None):
+def delete(ids=None, _type=None, context=None, extended=False):
 
-    manager.remove(ids=ids)
+    manager.remove(ids=ids, _type=_type, context=context, extended=extended)
 
-    result = response(ids)
-
-    return result
-
-
-@route(get)
-def topology_nodes(ids=None):
-
-    nodes = manager.get_nodes(ids=ids)
-
-    result = response(nodes)
+    result = response(None)
 
     return result
 
 
-@route(get)
-def topology_nodes_by_entities_id(entity_id):
+@route(post)
+def unify(entities, extended=False):
 
-    nodes = manager.find_nodes_by_entity_id(entity_id=entity_id)
+    nodes = manager.unify_entities(entities=entities, extended=extended)
 
     result = response(nodes)
 

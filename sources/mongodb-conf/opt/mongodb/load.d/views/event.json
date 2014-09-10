@@ -22,17 +22,17 @@
           "title": "Bac à évenements",
           "filters" : [
             {
-              "filter" : "{\n  \"ack.isAck\": true\n}",
+              "filter" : "{\"$or\":[{\"$and\":[{\"ack.isAck\":{\"$eq\":true}},{\"event_type\":{\"$eq\":\"check\"}}]}]}",
               "cfilter" : "",
               "title" : "Ack"
             },
             {
-              "filter" : "{\n  \"state\" : {\"$ne\": 0}\n}",
+              "filter" : "{\"$or\":[{\"$and\":[{\"state\":{\"$ne\":0}},{\"event_type\":{\"$eq\":\"check\"}}]}]}",
               "cfilter" : "",
               "title" : "Alert"
             },
             {
-              "filter" : "{\n  \"state\": {\"$ne\": 0},\n  \"ack.isAck\": {\"$ne\": true}\n}",
+              "filter" : "{\"$or\":[{\"$and\":[{\"ack.isAck\":{\"$ne\":true}},{\"state\":{\"$ne\":0}},{\"event_type\":{\"$eq\":\"check\"}}]}]}",
               "cfilter" : "",
               "title" : "Alert not ack"
             }

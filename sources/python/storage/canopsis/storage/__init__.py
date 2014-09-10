@@ -169,14 +169,44 @@ class Storage(DataBase):
 
     DATA_ID = 'id'  #: db data id
 
-    ASC = 1  # ASC order
-    DESC = -1  # DESC order
+    ASC = 1  #: ASC order
+    DESC = -1  #: DESC order
 
     class StorageError(Exception):
         """
         Handle Storage errors
         """
         pass
+
+    def __init__(self, indexes=None, *args, **kwargs):
+
+        super(Storage, self).__init__(*args, **kwargs)
+
+        self._indexes = [] if indexes is None else indexes
+
+    @property
+    def indexes(self):
+
+        return self._indexes
+
+    def all_indexes(self):
+        """
+        :return: all self indexes.
+        """
+
+        return self._indexes[:]
+
+    @indexes.setter
+    def indexes(self, value):
+        """
+        Indexes setter
+
+        :param value: set of indexes [(name, ASC/DESC)*]
+        :type value: set
+        """
+
+        self._indexes = value
+        self.reconnect()
 
     def bool_compare_and_swap(self, _id, oldvalue, newvalue):
         """
