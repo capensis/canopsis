@@ -33,7 +33,7 @@ json_path = os.path.expanduser('~/opt/mongodb/load.d')
 
 """
 Upserts json documents files within json_<collection> folder of the load.d folder
-Json files are upserted if they contains a '_id' field
+Json files are upserted if they contains a 'loader_id' field
 If json files contains 'no_update_document' field set to true, upsert is avoided
 """
 
@@ -49,18 +49,43 @@ def init():
                     try:
                         with open(absolute_json_path) as f:
                             json_data = json.loads(f.read())
-                            if '_id' not in json_data:
-                                print ('_id key not exists in json {} file, cannot process database upsert'.format(json_filename))
-                            else:
-                                if 'no_update_document' in json_data and json_data['no_update_document']:
-                                    print ('Document is marked as no updatable, nothing is done for {}'.format(json_filename))
-                                else:
-                                    storage.get_backend(collection).update({'_id': json_data['_id']}, json_data, upsert=True)
-                                    print ('{} information upserted'.format(json_filename))
 
+                            if type(json_data) == list:
+                                for json_document in json_data:
+                                    load_document(json_document, collection, json_filename)
+                            elif type(json_data) == dict:
+                                load_document(json_data, collection, json_filename)
                     except Exception as e:
                         print ('Unable to load json file {} : {}'.format(absolute_json_path, e))
 
 
+def load_document(json_data, collection, json_filename):
+
+    if '_id' in json_data :
+
+        print ('Malformated insert document. A json loaded document must not contain _id key')
+
+    else:
+
+        if 'loader_id' not in json_data:
+
+            print (' + Loader_id key not exists in json {} file,\n' \
+            ' It must be a uniq document id for your custom json documents.\n' \
+            ' Cannot process database upsert'.format(json_filename))
+
+        else:
+
+            if 'no_update_document' in json_data and json_data['no_update_document']:
+
+                print ('Document is marked as no updatable, nothing is done for {}'.format(json_filename))
+
+            else:
+
+                storage.get_backend(collection).update({'loader_id': json_data['loader_id']}, json_data, upsert=True)
+                print ('{} information upserted'.format(json_filename))
+
+
+
 def update():
     init()
+init()

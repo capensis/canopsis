@@ -38,6 +38,8 @@ ZIP_SAFE = False
 URL = 'http://www.canopsis.org'
 KEYWORDS = ' Canopsis Hypervision Hypervisor Monitoring'
 
+DEFAULT_VERSION = '0.1'
+
 TEST_FOLDERS = ['tests', 'test']
 
 
@@ -84,7 +86,7 @@ def setup(description, keywords, add_etc=True, **kwargs):
     kwargs.setdefault('keywords', kwargs.get('keywords', '') + KEYWORDS)
 
     # set version
-    version = getattr(package, '__version__', None)
+    version = getattr(package, '__version__', DEFAULT_VERSION)
     if version is not None:
         kwargs.setdefault('version', version)
 
