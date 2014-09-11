@@ -54,17 +54,21 @@ def route_name(operation_name, *parameters):
 
 def route(op, name=None):
     """
-    Decorator which apply input op on a function with parameters
+    Decorator which add ws routes to a callable object.
 
-    :param mandatory: specify if parameters are optional or mandatory
+    :param str name: specify ws name if different than function name
 
     Example::
 
-        @apply_rest(get, 'type', 'name', mandatory=False)
-        def entities(type=None, name=None):
+        @route(get)
+        def entities(a, b, c=None, d=None):
             ...
-        # fill type and name parameters in get_entities function and provide
-        # the three urls:'/entities', '/entities/type' et '/entities/type/name'
+        fill a, b, c, d parameters in entities function and provide
+        the three urls:
+
+            - '/entities/a/b'
+            - '/entities/a/b/c'
+            - '/entities/a/b/c/d'
     """
 
     def apply_route_on_function(function):
