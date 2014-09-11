@@ -20,6 +20,7 @@
           "itemsPerPage" : 5,
           "listed_crecord_type": "event",
           "title": "Bac à évenements",
+          "maximized_column_index": 5,
           "filters" : [
             {
               "filter" : "{\"$or\":[{\"$and\":[{\"ack.isAck\":{\"$eq\":true}},{\"event_type\":{\"$eq\":\"check\"}}]}]}",
