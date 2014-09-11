@@ -359,6 +359,8 @@ class Configurable(object):
     def conf_paths(self, value):
         """
         Change of conf_paths in adding it in watching list.
+
+        .. TODO:: add watchers here
         """
 
         #from canopsis.configuration.watcher import add_configurable,\
