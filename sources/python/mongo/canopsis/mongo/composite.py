@@ -51,7 +51,7 @@ class MongoCompositeStorage(MongoStorage, CompositeStorage):
 
         result = []
 
-        ids = None
+        ids = []
 
         # create a get query which is a copy of input path plus _filter
         query = path.copy()
@@ -63,7 +63,6 @@ class MongoCompositeStorage(MongoStorage, CompositeStorage):
 
             # add absolute pathes into ids
             if isiterable(data_ids, is_str=False):
-                ids = []
                 for data_id in data_ids:
                     _id = self.get_absolute_path(path=path, data_id=data_id)
                     ids.append(_id)

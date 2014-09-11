@@ -36,7 +36,7 @@ function install(){
         export CPS_PREFIX="$PREFIX/etc/"
         cd $SRC_PATH/python/$project
         python setup.py install >> $LOG 2>&1 || exit 1
-        chown canopsis:canopsis -rf build canopsis.$project.egg-info dist
+        chown canopsis:canopsis -Rf build canopsis.$project.egg-info dist
     done
 
     # TODO when fabric will be available
@@ -51,7 +51,7 @@ function update(){
         export CPS_PREFIX="$PREFIX/etc/"
         cd $SRC_PATH/python/$project
         python setup.py install --no-conf >> $LOG 2>&1 || exit 1
-        rm -rf build canopsis.$project.egg-info dist
+        chown canopsis:canopsis -Rf build canopsis.$project.egg-info dist
         update_conffiles ./etc
     done
 }

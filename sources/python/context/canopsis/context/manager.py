@@ -90,15 +90,15 @@ class Context(Manager):
 
         return self[Context.CTX_STORAGE].get_elements(ids=ids)
 
-    def get(self, _type, name, context=None, extended=False):
+    def get(self, _type, names, context=None, extended=False):
         """
         Get one entity
 
         :param _type: entity type (connector, component, etc.)
         :type _type: str
 
-        :param name: entity name
-        :type name: str
+        :param names: entity names
+        :type names: str
 
         :param context: entity context such as couples of name, value.
         :type context: dict
@@ -115,7 +115,7 @@ class Context(Manager):
             path.update(context)
 
         result = self[Context.CTX_STORAGE].get(
-            path=path, data_ids=name, shared=extended)
+            path=path, data_ids=names, shared=extended)
 
         return result
 

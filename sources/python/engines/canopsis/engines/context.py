@@ -144,8 +144,10 @@ class engine(Engine):
         authored_data = entity.copy()
         if resource is not None:
             context['resource'] = resource
-            authored_data['author'] = event['author']
-            authored_data['comment'] = event['comment']
+            if 'author' in event:
+                authored_data['author'] = event['author']
+            if 'comment' in event:
+                authored_data['comment'] = event['comment']
 
         event_type = event['event_type']
 
