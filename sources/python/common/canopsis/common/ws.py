@@ -87,7 +87,7 @@ def route(op, name=None):
             function = op(route)(function)
 
         # add route with mandatory parameters
-        if len_args > len_defaults:
+        if len_args >= len_defaults:
             route = route_name(function_name, *args[:len_args - len_defaults])
             function = op(route)(function)
 
