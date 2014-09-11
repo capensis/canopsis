@@ -14,7 +14,7 @@
 		"keys":["filters"]
 	},{
 		"title": "Rendering",
-		"keys":["refreshableWidget", "cloaking"]
+		"keys":["refreshableWidget", "maximized_column_index", "cloaking"]
 	}],
 	"properties": {
 		"listed_crecord_type": {
@@ -89,6 +89,12 @@
 		"default_filter": {
 			"type": "string",
 			"role": "cfilter"
+		},
+		"maximized_column_index": {
+			"type": "integer",
+			"title": "Maximized column index",
+			"role": "columnindexchooser",
+			"description": "The most important column of the table. This column will be stretch to the max for the table to occupy the whole allocated space."
 		}
 	}
 }
