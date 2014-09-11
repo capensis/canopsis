@@ -38,8 +38,8 @@ class engine(Engine):
     def work(self, event, *args, **kwargs):
 
         # get nodes related to event if exist
-        if 'name' not in event:
-            event['name'] = event[event['source_type']]
+        if 'id' not in event:
+            event['id'] = event[event['source_type']]
 
         entity_id = self.context.get_entity_id(event)
         nodes = self.topology.find_nodes_by_entity_id(entity_id=entity_id)
