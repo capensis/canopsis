@@ -9,6 +9,7 @@ User guide
    UI-build/index
    UI-run/index
    UI-report/index
+   UIv2/index
    event-spec
    internal-metrics
    workflows
