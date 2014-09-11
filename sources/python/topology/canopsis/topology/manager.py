@@ -62,6 +62,7 @@ from canopsis.configuration import conf_paths, add_category
 from canopsis.middleware.manager import Manager
 from canopsis.storage.composite import CompositeStorage
 from canopsis.storage.filter import Filter
+from canopsis.context.manager import Context
 
 CONF_PATH = 'topology/topology.conf'
 CATEGORY = 'TOPOLOGY'
@@ -76,32 +77,19 @@ class Topology(Manager):
 
     STORAGE = 'topology_storage'
 
-    ENTITY_ID = 'entity'
+    ENTITY_ID = 'entity_id'
     NEXT = 'next'
     NODES = 'nodes'
     TYPE = 'type'
+
+    TOPOLOGY_TYPE = 'topology'
+    TOPOLOGY_NODE_TYPE = 'topology-node'
 
     def __init__(self, *args, **kwargs):
 
         super(Topology, self).__init__(*args, **kwargs)
 
-    @staticmethod
-    def _get_topology_scope():
-        """
-        Get topology scope
-        """
-        return {Topology.TYPE: Topology.DATA_SCOPE}
-
-    @staticmethod
-    def _get_topology_node_scope(topology_id=None):
-        """
-        Get topology node scope related to a topology_id
-        """
-
-        result = {'type': 'topology_node'}
-        if topology_id is not None:
-            result[Topology.STORAGE] = topology_id
-        return result
+        self.context = Context()
 
     def _add_nodes(self, topologies):
         """
@@ -112,7 +100,7 @@ class Topology(Manager):
             topologies = force_iterable(topologies)
             for topology in topologies:
                 nodes = self.get_nodes(ids=topology[CompositeStorage.ID])
-                topology['nodes'] = nodes
+                topology[Topology.NODES] = nodes
 
     def get_topologies(self, ids=None, add_nodes=False):
         """
@@ -126,8 +114,8 @@ class Topology(Manager):
                 correspond to existing topologies.
             - None: all existing topologies.
         """
-        path = self._get_topology_scope()
-        result = self[Topology.STORAGE].get(path=path, ids=ids)
+
+        result = self.context.get(_type=Topology.TOPOLOGY_TYPE, names=ids)
         if add_nodes:
             self._add_nodes(result)
         return result
@@ -137,11 +125,10 @@ class Topology(Manager):
         Find topologies where id match with inpur regex_id
         """
 
-        path = self._get_topology_scope()
         _filter = Filter()
         _filter.add_regex(
             name=CompositeStorage.ID, value=regex, case_sensitive=True)
-        result = self[Topology.STORAGE].find(path=path, _filter=_filter)
+        result = self.context.find(_type=Topology.TOPOLOGY_TYPE, _filter=_filter)
         if add_nodes:
             self._add_nodes(result)
         return result
@@ -155,32 +142,36 @@ class Topology(Manager):
             - None: delete all topologies
         """
 
-        path = self._get_topology_scope()
-        self[Topology.STORAGE].remove(path=path, ids=ids)
+        ids = force_iterable(ids)
+        ids_to_remove = []
+        for _id in ids:
+            if isinstance(_id, str) and not _id.startswith('/'):
+                _id = '/%s/%s' % (Topology.TOPOLOGY_TYPE, _id)
+            ids_to_remove.append(_id)
+        self.context.remove(ids=ids_to_remove)
 
-    def push(self, _id, topology):
+    def push(self, topology):
         """
         Push one topology.
         """
 
-        path = self._get_topology_scope()
-        self[Topology.STORAGE].put(path=path, _id=_id, data=topology)
+        self.context.put(
+            _type=Topology.TOPOLOGY_TYPE, entity=topology)
 
-    def push_node(self, _id, node):
+    def push_node(self, node):
         """
         Push a node.
         """
 
-        path = self._get_topology_node_scope(node['id'])
-        self[Topology.STORAGE].put(path=path, _id=_id, data=node)
+        self.context.put(
+            _type=Topology.TOPOLOGY_NODE_TYPE, entity=node)
 
     def get_nodes(self, ids=None):
         """
         Get nodes
         """
 
-        path = self._get_topology_node_scope()
-        result = self[Topology.STORAGE].get(path=path, ids=ids)
+        result = self.context.get(_type=Topology.TOPOLOGY_NODE_TYPE, names=ids)
 
         return result
 
@@ -188,10 +179,14 @@ class Topology(Manager):
         """
         Find all nodes related to input entity_id
         """
-        path = self._get_topology_node_scope()
+
         _filter = Filter()
         _filter[Topology.ENTITY_ID] = entity_id
-        result = self[Topology.STORAGE].find(path=path, _filter=_filter)
+
+        result = self.context.find(
+            _type=Topology.TOPOLOGY_NODE_TYPE,
+            _filter=_filter
+        )
 
         return result
 
@@ -200,9 +195,13 @@ class Topology(Manager):
         Find source nodes from input next node. If next is None, get all root
         nodes
         """
-        path = self._get_topology_node_scope()
+
         _filter = Filter()
         _filter[Topology.NEXT] = next
-        result = self[Topology.STORAGE].find(path=path, _filter=_filter)
+
+        result = self.context.find(
+            _type=Topology.TOPOLOGY_NODE_TYPE,
+            _filter=_filter
+        )
 
         return result
