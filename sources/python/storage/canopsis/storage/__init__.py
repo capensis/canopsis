@@ -169,6 +169,10 @@ class Storage(DataBase):
 
     DATA_ID = 'id'  #: db data id
 
+    INDEXES = 'indexes'
+
+    CATEGORY = 'STORAGE'
+
     ASC = 1  #: ASC order
     DESC = -1  #: DESC order
 
@@ -201,9 +205,20 @@ class Storage(DataBase):
         """
         Indexes setter
 
-        :param value: set of indexes [(name, ASC/DESC)*]
-        :type value: set
+        :param value: indexes such as::
+            - one name
+            - one tuple of kind (name, ASC/DESC)
+            - a list of tuple or name [((name, ASC/DESC) | name)* ]
+        :type value: str, tuple ot list
         """
+
+        # if value is a name, transform it into a list
+        if isinstance(value, (str, tuple)):
+            value = [value]
+        # if value is iterable
+        elif not isinstance(value, list):
+            raise Storage.StorageError(
+                "wrong indexes value %s. str, tuple or list accepted" % value)
 
         self._indexes = value
         self.reconnect()
@@ -507,6 +522,25 @@ Storage types must be of the same type.'.format(self, target))
         result = '{0}_{1}'.format(prefix, self.data_scope).upper()
 
         return result
+
+    def _conf(self, *args, **kwargs):
+
+        result = super(Storage, self)._conf(*args, **kwargs)
+
+        result.add_unified_category(
+            name=Storage.CATEGORY,
+            new_content=(
+                Parameter(Storage.INDEXES, self.indexes, eval)))
+
+        return result
+
+    def _configure(self, unified_conf, *args, **kwargs):
+
+        super(Storage, self)._configure(
+            unified_conf=unified_conf, *args, **kwargs)
+
+        self._update_property(
+            unified_conf=unified_conf, param_name=Storage.INDEXES)
 
     @staticmethod
     def _update_sort(sort):
