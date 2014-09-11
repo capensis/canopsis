@@ -2,7 +2,10 @@
 	"type": "object",
 	"categories": [{
 		"title": "General",
-		"keys":["firstname","lastname", "user", "mail", "authkey"]
+		"keys":["firstname","lastname", "user", "mail"]
+	},{
+		"title": "UI settings",
+		"keys":["authkey", "ui_language"]
 	},{
 		"title": "Role",
 		"keys": ["role"]
@@ -22,6 +25,11 @@
 		},
 		"lastname": {
 			"type": "string"
+		},
+		"ui_language": {
+			"type": "string",
+			"enum": ["fr", "en"],
+			"role": "simplelist"
 		},
 		"user": {
 			"type": "string",

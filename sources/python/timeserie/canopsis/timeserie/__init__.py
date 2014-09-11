@@ -29,11 +29,14 @@ logger = logging.getLogger('TimeSerie')
 
 from canopsis.timeserie.timewindow import Period, TimeWindow
 from canopsis.timeserie.aggregation import get_aggregations
-from canopsis.configuration import Configurable, Parameter
+from canopsis.configuration import Configurable, Parameter, conf_paths
 
 from time import mktime
 
+CONF_PATH = 'timeserie/timeserie.conf'
 
+
+@conf_paths(CONF_PATH)
 class TimeSerie(Configurable):
     """
     Time serie management. Contain a period and operation of aggregation,
@@ -59,7 +62,7 @@ class TimeSerie(Configurable):
     VFILL = False
     VROUND_TIME = True
 
-    CONF_FILE = 'timeserie/timeserie.conf'
+    CATEGORY = 'TIMESERIE'
 
     def __init__(
         self,
@@ -178,7 +181,7 @@ class TimeSerie(Configurable):
         then the result is [(T0, fn(V0, V1)), (T2, fn(V2, V3), ...]
         """
 
-        result = list()
+        result = []
 
         # start to exclude points not in timewindow
         # in taking care about round time
@@ -271,23 +274,14 @@ class TimeSerie(Configurable):
         result.add_unified_category(
             name=TimeSerie.CATEGORY,
             new_content=(
-                Parameter(TimeSerie.AGGREGATION),
+                Parameter(TimeSerie.AGGREGATION, value=self.aggregation),
                 Parameter(
-                    TimeSerie.PERIOD, value=Period(), parser=Period.from_str),
-                Parameter(TimeSerie.FILL, value=False, parser=Parameter.bool),
+                    TimeSerie.PERIOD, value=self.period, parser=Period.from_str),
+                Parameter(TimeSerie.FILL, value=self.fill, parser=Parameter.bool),
                 Parameter(
-                    TimeSerie.ROUND_TIME, value=True, parser=Parameter.bool),
+                    TimeSerie.ROUND_TIME, value=self.round_time, parser=Parameter.bool),
                 Parameter(
-                    TimeSerie.MAX_POINTS, value=500, parser=int)))
-
-        return result
-
-    def _get_conf_files(self, conf_files, *args, **kwargs):
-
-        result = super(TimeSerie, self)._get_conf_files(
-            conf_files, *args, **kwargs)
-
-        result.append(TimeSerie.CONF_FILE)
+                    TimeSerie.MAX_POINTS, value=self.max_points, parser=int)))
 
         return result
 

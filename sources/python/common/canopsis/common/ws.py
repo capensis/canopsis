@@ -73,17 +73,18 @@ def route(op, name=None):
 
         argspec = getargspec(function)
 
-        args, default = argspec.args, argspec.default
+        args, defaults = argspec.args, argspec.defaults
         len_args = len(args)
+        len_defaults = 0 if defaults is None else len(defaults)
 
         # add routes with optional parameters
-        for n in range(len(default)):
+        for n in range(len_defaults):
             route = route_name(function_name, *args[:len_args - n])
             function = op(route)(function)
 
         # add route with mandatory parameters
-        if len(args) != len(args.default):
-            route = route_name(function_name, *args[:len_args - len(default)])
+        if len_args > len_defaults:
+            route = route_name(function_name, *args[:len_args - len_defaults])
             function = op(route)(function)
 
         return function

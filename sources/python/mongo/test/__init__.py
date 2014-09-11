@@ -22,6 +22,9 @@
 from unittest import TestCase, main
 
 from canopsis.mongo import MongoDataBase, MongoStorage
+from canopsis.configuration import add_category, conf_paths
+
+from tempfile import NamedTemporaryFile
 
 
 class DataBaseTest(TestCase):
@@ -66,6 +69,20 @@ class StorageTest(TestCase):
             for i in index:
                 key += (i[0] + '_')
             self.assertTrue(key in collection_index)
+
+        conf_path = NamedTemporaryFile().name
+
+        indexes = ['a', 'b']
+
+        with open(conf_path, 'w') as _file:
+            _file.write('[%s]' % MongoStorage.CATEGORY)
+            _file.write('\nindexes=%s' % (indexes))
+
+        self.storage.apply_configuration(conf_paths=conf_path)
+
+        _indexes = self.storage.indexes
+
+        self.assertEqual(indexes, _indexes)
 
     def test_CRUD(self):
         document = {'a': 'b'}
