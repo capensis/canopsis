@@ -17,9 +17,10 @@
 		"recipients": {
 			"type": "array",
 			"items": {
-				"type": "string"
+				"type": "string",
+				"required": true
 			},
-			"required": true
+			"minItems": 1
 		},
 		"subject": {"type": "string", "required": true},
 		"body": {"type": "string", "required": true},
