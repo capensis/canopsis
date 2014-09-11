@@ -18,13 +18,16 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
+"""
+Event library.
+"""
 __version__ = "0.1"
 
 from .condition import check, CONDITION_FIELD
 from .action import do_action, ACTIONS_FIELD
 
 
-class RuleError(Exception):
+class EventError(Exception):
     """
     Handle rule errors.
     """
