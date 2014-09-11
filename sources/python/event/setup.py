@@ -24,6 +24,6 @@ from canopsis.common.setup import setup
 install_requires = ['canopsis.common']
 
 setup(
-    description='Canopsis rules',
+    description='Canopsis event',
     install_requires=install_requires,
-    keywords='rules')
+    keywords='event')
