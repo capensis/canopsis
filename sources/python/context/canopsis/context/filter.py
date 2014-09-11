@@ -18,9 +18,6 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-# rule condition field
-CONDITION_FIELD = 'condition'
-
 # MongoDB Operators:
 # http://docs.mongodb.org/manual/reference/operator/
 
@@ -94,7 +91,7 @@ def field_check(condition, event, key):
     return True
 
 
-def check(condition, event):
+def check(event, ctx, condition, **params):
     """
     Check if input event matches input condition.
     """

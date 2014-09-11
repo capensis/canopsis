@@ -28,8 +28,8 @@ A rule is a list of actions or a couple of (condition, actions).
 
 from canopsis.common.path import resolve_element
 
-from .condition import check, CONDITION_FIELD
-from .action import do_action, ACTIONS_FIELD
+CONDITION_FIELD = 'condition'
+ACTIONS_FIELD = 'actions'
 
 TASK_PATH = 'path'
 
@@ -171,8 +171,12 @@ def process_event(event, rule, cached=True):
             action_task, parameters = get_processing_task(
                 rule=action, cached=cached)
             # and run action
-            action_result = action_task(event=event, ctx=ctx, **parameters)
-            # in adding the result in function result
-            result.append(action_result)
+            try:
+                action_result = action_task(event=event, ctx=ctx, **parameters)
+            except Exception as e:
+                result.append(EventProcessingError(e))
+            else:
+                # in adding the result in function result
+                result.append(action_result)
 
     return result
