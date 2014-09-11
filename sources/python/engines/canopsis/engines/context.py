@@ -68,6 +68,8 @@ class engine(Engine):
             mWarn = self.sla.data['mWarn']
         """
 
+        context = {}
+
         # Get event informations
         connector = event['connector']
         connector_name = event['connector_name']
@@ -78,20 +80,21 @@ class engine(Engine):
 
         # add connector
         entity = {
-            'name': connector
+            Context.NAME: connector
         }
         self.context.put(
             _type='connector', entity=entity)
 
         # add connector_name
-        entity['name'] = connector
-        entity['connector'] = connector
+        entity[Context.NAME] = connector
+
+        context['connector'] = connector
         self.context.put(
-            _type='connector_name', entity=entity)
+            _type='connector_name', entity=entity, context=context)
 
         # add status entity which is a component or a resource
-        entity['name'] = 'component'
-        entity['connector_name'] = connector_name
+        entity[Context.NAME] = 'component'
+        context['connector_name'] = connector_name
         status_entity = entity.copy()
         status_entity['hostgroups'] = hostgroups
 
@@ -104,10 +107,11 @@ class engine(Engine):
 
         elif source_type == 'resource':
             # add component
-            self.context.put(_type='component', entity=status_entity)
+            self.context.put(
+                _type='component', entity=status_entity, context=context)
             is_status_entity = True
-            status_entity['component'] = component
-            status_entity['name'] = resource
+            context['component'] = component
+            status_entity[Context.NAME] = resource
             status_entity['servicegroups'] = servicegroups
 
         else:
@@ -119,26 +123,27 @@ class engine(Engine):
             status_entity['mWarn'] = event.get(mWarn, None)
             status_entity['state'] = event['state']
             status_entity['state_type'] = event['state_type']
-            self.context.put(_type=source_type, entity=status_entity)
+            self.context.put(
+                _type=source_type, entity=status_entity, context=context)
 
         # add hostgroups
         for hostgroup in hostgroups:
             hostgroup_data = {
-                'name': hostgroup
+                Context.NAME: hostgroup
             }
             self.put(_type='hostgroup', entity=hostgroup_data)
 
         # add servicegroups
         for servicegroup in servicegroups:
             servicegroup_data = {
-                'name': servicegroup
+                Context.NAME: servicegroup
             }
             self.put(_type='servicegroup', entity=servicegroup_data)
 
         # add authored entity data (downtime, ack, metric, etc.)
         authored_data = entity.copy()
         if resource is not None:
-            authored_data['resource'] = resource
+            context['resource'] = resource
             authored_data['author'] = event['author']
             authored_data['comment'] = event['comment']
 
@@ -146,24 +151,26 @@ class engine(Engine):
 
         if event_type == 'ack':
             authored_data['timestamp'] = event['timestamp']
-            authored_data['name'] = event['timestamp']
+            authored_data[Context.NAME] = event['timestamp']
 
         elif event_type == 'downtime':
-            authored_data['id'] = event['downtime_id']
+            authored_data['downtime_id'] = event['downtime_id']
             authored_data['start'] = event['start']
             authored_data['end'] = event['end']
             authored_data['duration'] = event['duration']
             authored_data['fixed'] = event['fixed']
             authored_data['entry'] = event['entry']
-            authored_data['name'] = event['id']
+            authored_data[Context.NAME] = event['id']
 
-        self.context.put(_type=event_type, entity=authored_data)
+        self.context.put(
+            _type=event_type, entity=authored_data, context=context)
 
         # add perf data
         for perfdata in event['perf_data_array']:
             perfdata_entity = entity.copy()
-            perfdata_entity['name'] = perfdata['metric']
+            perfdata_entity[Context.NAME] = perfdata['metric']
             perfdata_entity['internal'] = perfdata['metric'].startswith('cps')
-            self.context.put(_type='metric', entity=perfdata_entity)
+            self.context.put(
+                _type='metric', entity=perfdata_entity, context=context)
 
         return event

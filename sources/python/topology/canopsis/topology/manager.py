@@ -18,6 +18,45 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
+"""
+Description
+===========
+
+Functional
+----------
+
+A topology enrichs a model of entities in adding dependency among them and in
+executing rules which can modify the model, send events, etc.
+
+A topology permits to run automatized and distributed operations over a context
+
+An example of application is root cause analysis where a topology may react
+when an entity change of state and can propagate over topology nodes the change
+of state in some propagation conditions such as operations like ``worst state``
+
+As a topology and topology nodes are entities, it is possible to bind a node to
+a topology, therefore, a topology is bound to a root node.
+
+A rule is a couple of (condition, actions). A condition takes in parameter the
+execution context of an event, the engine and the node which embeds the rule.
+
+Technical
+---------
+
+A topology is an entity which contains following fields::
+
+    - id: unique id among topologies.
+    - nodes: list of topology node ids.
+    - root: root node id.
+
+A topology node contains following fields::
+
+    - id: unique topology node id.
+    - entity_id: bound entity id. May be self id if no entity is bound.
+    - next: list of topology-node ids which depends on this.
+    - rule: rule to apply.
+"""
+
 from canopsis.common.utils import force_iterable
 from canopsis.configuration import conf_paths, add_category
 from canopsis.middleware.manager import Manager
@@ -36,17 +75,15 @@ class Topology(Manager):
     """
 
     STORAGE = 'topology_storage'
-    DATA_SCOPE = STORAGE
 
     ENTITY_ID = 'entity'
     NEXT = 'next'
     NODES = 'nodes'
     TYPE = 'type'
 
-    def __init__(self, data_scope=DATA_SCOPE, *args, **kwargs):
+    def __init__(self, *args, **kwargs):
 
-        super(Topology, self).__init__(
-            data_scope=data_scope, *args, **kwargs)
+        super(Topology, self).__init__(*args, **kwargs)
 
     @staticmethod
     def _get_topology_scope():
@@ -83,8 +120,10 @@ class Topology(Manager):
 
         :return: depending on ids:
 
-            - an id: one topology or None if corresponding topology does not exist.
-            - list of id: list of topologies or empty list if ids do not correspond to existing topologies.
+            - an id: one topology or None if corresponding topology does not
+                exist.
+            - list of id: list of topologies or empty list if ids do not
+                correspond to existing topologies.
             - None: all existing topologies.
         """
         path = self._get_topology_scope()
