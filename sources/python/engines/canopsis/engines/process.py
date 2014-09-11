@@ -19,11 +19,9 @@
 # ---------------------------------
 
 """
-Event processing library.
+Event processing module.
 
-Provides tools to process an event related to a rule.
-
-A rule is a list of actions or a couple of (condition, actions).
+Provides tools to process an event in a dynamic environment.
 """
 
 from canopsis.common.path import resolve_element
@@ -44,11 +42,15 @@ class EventProcessingError(Exception):
 __GLOBAL_EVENT_PROCESSING = {}
 
 
-def event_processing(event, ctx, **params):
+def event_processing(event, ctx=None, **params):
     """
     Event processing signature to respect in order to process an event
 
     A condition may returns a boolean value.
+
+    :param dict event: event to process
+    :param dict ctx: event processing context
+    :param dict params: event processing additional parameters
     """
 
     pass
@@ -87,7 +89,7 @@ def get_event_task(path, cached=True):
     return result
 
 
-def get_processing_task(rule, task_name=None, cached=True):
+def get_task_with_params(rule, task_name=None, cached=True):
     """
     Get callable task processing with params.
 
@@ -122,7 +124,7 @@ def get_processing_task(rule, task_name=None, cached=True):
     return result
 
 
-def process_event(event, rule, cached=True):
+def process_rule(event, rule, ctx=None, cached=True):
     """
     Apply input rule on input event in checking if the rule condition matches
     with the event and if True, execute rule actions.
@@ -145,10 +147,11 @@ def process_event(event, rule, cached=True):
     result = []
 
     # create a context which will be shared among condition and actions
-    ctx = {}
+    if ctx is None:
+        ctx = {}
 
     # get condition
-    condition_task, parameters = get_processing_task(
+    condition_task, parameters = get_task_with_params(
         rule=rule, task_name=CONDITION_FIELD, cached=cached)
 
     # do actions if True
@@ -168,7 +171,7 @@ def process_event(event, rule, cached=True):
         # for all action
         for action in actions:
             # get action task with parameters
-            action_task, parameters = get_processing_task(
+            action_task, parameters = get_task_with_params(
                 rule=action, cached=cached)
             # and run action
             try:
