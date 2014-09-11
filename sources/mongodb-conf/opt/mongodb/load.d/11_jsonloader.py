@@ -88,4 +88,3 @@ def load_document(json_data, collection, json_filename):
 
 def update():
     init()
-init()
