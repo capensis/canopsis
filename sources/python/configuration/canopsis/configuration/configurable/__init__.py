@@ -93,6 +93,7 @@ class Configurable(object):
 
     def __init__(
         self,
+        unified_category=None,
         to_configure=None,
         conf_paths=None, managers=DEFAULT_MANAGERS,
         auto_conf=True, reconf_once=False,
@@ -101,6 +102,8 @@ class Configurable(object):
         log_error_format=ERROR_FORMAT, log_critical_format=CRITICAL_FORMAT
     ):
         """
+        :param str unified_category: if not None, used such as a unified category
+
         :param to_configure: object to reconfigure. Such object may implements
             the methods configure apply_configuration and configure
         :type to_configure: class instance
@@ -108,18 +111,17 @@ class Configurable(object):
         :param conf_paths: conf_paths to parse
         :type conf_paths: Iterable or str
 
-        :param auto_conf: true force auto conf as soon as param change
-        :type auto_conf: bool
+        :param bool auto_conf: true force auto conf as soon as param change
 
-        :param reconf_once: true force auto conf reconf_once as soon as param
+        :param bool reconf_once: true force auto conf reconf_once as soon as param
             change
-        :type reconf_once: bool
 
-        :param log_lvl: logging level
-        :type log_lvl: str
+        :param str log_lvl: logging level
         """
 
         super(Configurable, self).__init__()
+
+        self.unified_category = unified_category
 
         self._to_configure = self if to_configure is None else to_configure
 
@@ -201,7 +203,13 @@ class Configurable(object):
         """
         Get conf with parsers and self property values
         """
-        return self._conf()
+        result = self._conf()
+
+        # add a last unified category if asked by self
+        if self.unified_category is not None:
+            result.add_unified_category(self.unified_category)
+
+        return result
 
     def _conf(self):
         """
