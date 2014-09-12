@@ -19,6 +19,11 @@ else
     exit 1
 fi
 
+if [ -e $SRC_PATH/build-config.sh ]
+then
+    . $SRC_PATH/build-config.sh
+fi
+
 # Check slink
 if [ -e $PREFIX/.slinked ]
 then
@@ -216,34 +221,42 @@ function update_conffiles() {
 
                 if [ "$A" != "$B" ]
                 then
-                    ask=1
+                    if [ "$UPDATE_ETC_ACTION" == "keep" ]
+                    then
+                        copy=0
+                    elif [ "$UPDATE_ETC_ACTION" == "replace" ]
+                    then
+                        copy=1
+                    else
+                        ask=1
 
-                    while [ $ask -eq 1 ]
-                    do
-                        ask=0
+                        while [ $ask -eq 1 ]
+                        do
+                            ask=0
 
-                        echo "Config file: $DEST"
-                        read -p "(K)eep old, (R)eplace, (V)iew diff, (E)dit (default: K): " choice <&2
+                            echo "Config file: $DEST"
+                            read -p "(K)eep old, (R)eplace, (V)iew diff, (E)dit (default: K): " choice <&2
 
-                        if [ "$choice" == "R" ] || [ "$choice" == "r" ]
-                        then
-                            copy=1
-                        elif [ "$choice" == "V" ] || [ "$choice" == "v" ]
-                        then
-                            diff $TMPCONF $DEST | more
-                            ask=1
-                        elif [ "$choice" == "E" ] || [ "$choice" == "e" ]
-                        then
-                            realtty="/dev/`ps | grep $$ | awk -F ' ' '{print $2}'`"
-
-                            if [ "x$EDITOR" == "x" ]
+                            if [ "$choice" == "R" ] || [ "$choice" == "r" ]
                             then
-                                EDITOR="vi"
-                            fi
+                                copy=1
+                            elif [ "$choice" == "V" ] || [ "$choice" == "v" ]
+                            then
+                                diff $TMPCONF $DEST | more
+                                ask=1
+                            elif [ "$choice" == "E" ] || [ "$choice" == "e" ]
+                            then
+                                realtty="/dev/`ps | grep $$ | awk -F ' ' '{print $2}'`"
 
-                            $EDITOR $DEST < $realtty > $realtty || true
-                        fi
-                    done
+                                if [ "x$EDITOR" == "x" ]
+                                then
+                                    EDITOR="vi"
+                                fi
+
+                                $EDITOR $DEST < $realtty > $realtty || true
+                            fi
+                        done
+                    fi
                 fi
 
                 rm $TMPCONF

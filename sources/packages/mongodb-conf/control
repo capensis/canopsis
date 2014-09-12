@@ -41,33 +41,49 @@ function post_install(){
 		fi
 	done
 
-	while true
-	do
-		safe_prompt "MongoDB password for admin: " adminpass
-		safe_prompt "Confirm password: " confirm
+	# Define user
+	if [ "x$MONGODB_ADMIN_PASSWD" == "x" ]
+	then
+		while true
+		do
+			safe_prompt "MongoDB password for admin: " adminpass
+			safe_prompt "Confirm password: " confirm
 
-		if [ "$adminpass" == "$confirm" ]
-		then
-			break
-		else
-			echo "Passwords doesn't match"
-		fi
-	done
+			if [ "$adminpass" == "$confirm" ]
+			then
+				break
+			else
+				echo "Passwords doesn't match"
+			fi
+		done
+	else
+		adminpass=$MONGODB_ADMIN_PASSWD
+	fi
 
-	safe_prompt "MongoDB common user: " cpsuser "show"
+	if [ "x$MONGODB_USER" == "x" ]
+	then
+		safe_prompt "MongoDB common user: " cpsuser "show"
+	else
+		cpsuser=$MONGODB_USER
+	fi
 
-	while true
-	do
-		safe_prompt "MongoDB password for $cpsuser: " cpspass
-		safe_prompt "Confirm password: " confirm
+	if [ "x$MONGODB_USER_PASSWD" == "x" ]
+	then
+		while true
+		do
+			safe_prompt "MongoDB password for $cpsuser: " cpspass
+			safe_prompt "Confirm password: " confirm
 
-		if [ "$cpspass" == "$confirm" ]
-		then
-			break
-		else
-			echo "Passwords doesn't match"
-		fi
-	done
+			if [ "$cpspass" == "$confirm" ]
+			then
+				break
+			else
+				echo "Passwords doesn't match"
+			fi
+		done
+	else
+		cpspass=$MONGODB_USER_PASSWD
+	fi
 
 	echo "  + Create admin user ..."
 	launch_cmd 1 $PREFIX/bin/mongo admin --eval "\"db.createUser({user: 'admin', pwd: '$adminpass', roles: ['readWriteAnyDatabase', 'userAdminAnyDatabase', 'dbAdminAnyDatabase']})\""

@@ -135,24 +135,24 @@ INDEXES  = {
 
 
 def init():
+    print ('Starting indexes update...')
+
+    for collection in INDEXES:
+        print (' + Create indexes for collection {0}'.format(collection))
+        col = storage.get_backend(collection)
+        col.drop_indexes()
+
+        for index in INDEXES[collection]:
+            col.ensure_index(index)
+
+
+def update():
     answered = False
     user_input = 'N'
     while not answered:
         user_input = raw_input('Add/Update indexes (update may take time)? Y/N (default=N): ')
-        if user_input in ['Y', 'N', '']:
+        if user_input in ['Y', 'y', 'N', 'n', '']:
             answered = True
 
-    if user_input == 'Y':
-        print ('Starting indexes update...')
-
-        for collection in INDEXES:
-            print (' + Create indexes for collection {0}'.format(collection))
-            col = storage.get_backend(collection)
-            col.drop_indexes()
-
-            for index in INDEXES[collection]:
-                col.ensure_index(index)
-
-
-def update():
-    init()
+    if user_input == 'Y' or user_input == 'y':
+        init()
