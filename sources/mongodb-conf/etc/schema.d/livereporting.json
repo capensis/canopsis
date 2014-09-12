@@ -1,0 +1,14 @@
+{
+	"type": "object",
+	"categories": [{
+		"title": "General",
+		"keys":["dateinterval"]
+	}],
+	"properties": {
+		"dateinterval": {
+			"type": "integer",
+			"role": "dateinterval",
+			"required": true
+		}
+	}
+}
