@@ -46,6 +46,7 @@ function post_install(){
 	if [ $ADMIN_EXISTS -ne 1 ]
 	then
 		if [ "x$RABBITMQ_ADMIN_PASSWD" == "x" ]
+		then
 			while true
 			do
 				safe_prompt "RabbitMQ password for admin: " adminpass
