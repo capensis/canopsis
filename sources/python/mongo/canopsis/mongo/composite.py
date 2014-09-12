@@ -51,7 +51,7 @@ class MongoCompositeStorage(MongoStorage, CompositeStorage):
 
         result = []
 
-        ids = []
+        ids = None
 
         # create a get query which is a copy of input path plus _filter
         query = path.copy()

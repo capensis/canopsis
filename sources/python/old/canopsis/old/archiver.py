@@ -113,25 +113,27 @@ class Archiver(object):
     def set_status(self, event, status):
         log = 'Status is set to {} for event %s' % event['rk']
         values = {
-            0: {'freq': 0,
+            0: {'freq': event['bagot_freq'],
                 'name': 'Off'
                 },
-            1: {'freq': 0,
+            1: {'freq': event['bagot_freq'],
                 'name': 'On going'
                 },
-            2: {'freq': 0,
+            2: {'freq': event['bagot_freq'],
                 'name': 'Stealthy'
                 },
             3: {'freq': event['bagot_freq'] + 1,
                 'name': 'Bagot'
                 },
-            4: {'freq': 0,
+            4: {'freq': event['bagot_freq'],
                 'name': 'Cancelled'
                 }
             }
-        self.logger.info(log.format(values[status]['name']))
+
+        self.logger.debug(log.format(values[status]['name']))
         event['status'] = status
         event['bagot_freq'] = values[status]['freq']
+
         if status != 2 and status != 3:
             event['ts_first_stealthy'] = 0
 
@@ -150,6 +152,9 @@ class Archiver(object):
         event['bagot_freq'] = devent.get('bagot_freq', 0)
         event['ts_first_stealthy'] = devent.get('ts_first_stealthy', 0)
         event['ts_first_bagot'] = devent.get('ts_first_bagot', 0)
+        if event['ts_first_bagot'] - event['timestamp'] > self.bagot_time:
+            event['ts_first_bagot'] = 0
+            event['bagot_freq'] = 0
         # flowchart 1 2 3
         if (devent.get('status', 1) != 4
             or (devent['state'] != event['state']
@@ -181,20 +186,14 @@ class Archiver(object):
         else:
             self.set_status(event, 4)
 
-        old_status = devent['status']
-
-        if ((not old_status and event['status']) or
-            old_status and not event['status']):
+        if ((not devent['state'] and event['state']) or
+            devent['state'] and not event['state']):
             event['ts_first_stealthy'] = event['timestamp']
+            event['bagot_freq'] += 1
 
-        if devent['state'] != event['state']:
-            if old_status == 3:
-                event['bagot_freq'] = 0
-            else:
-                event['bagot_freq'] += 1
+            if not event['ts_first_bagot']:
+                event['ts_first_bagot'] = event['timestamp']
 
-        if event['bagot_freq'] == 1:
-            event['ts_first_bagot'] = event['timestamp']
 
 
     def check_event(self, _id, event):
