@@ -60,7 +60,7 @@ function post_install(){
 				fi
 			done
 		else
-			adminpass=$RABBITMQ_ADMIN_PASS
+			adminpass=$RABBITMQ_ADMIN_PASSWD
 		fi
 
 		echo " + Declare Admin user ..."
