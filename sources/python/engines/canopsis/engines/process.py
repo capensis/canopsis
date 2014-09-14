@@ -53,7 +53,7 @@ def event_processing(event, ctx=None, **params):
     :param dict params: event processing additional parameters
     """
 
-    pass
+    raise NotImplementedError()
 
 
 def get_event_task(path, cached=True):
