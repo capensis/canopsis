@@ -153,7 +153,7 @@ class engine(Engine):
 
         if event_type == 'ack':
             authored_data['timestamp'] = event['timestamp']
-            authored_data[Context.NAME] = event['timestamp']
+            authored_data[Context.NAME] = str(event['timestamp'])
 
         elif event_type == 'downtime':
             authored_data['downtime_id'] = event['downtime_id']
