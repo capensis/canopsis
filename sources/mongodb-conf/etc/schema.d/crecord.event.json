@@ -49,7 +49,10 @@
 		},
 		"output": {
 			"type": "string",
-			"required": true
+			"role": "richtext",
+			"required": true,
+			"description": "output of the event",
+			"title": "Output"
 		},
 		"state": {
 			"type": "number",

@@ -108,9 +108,15 @@ function do_restart(){
 }
 
 function do_status(){
-    do_cmd status BACKEND[@]
-    do_cmd status MIDDLEWARE[@]
-    do_cmd status FRONTEND[@]
+    processes=()
+    processes+=(${BACKEND[@]})
+    processes+=(${MIDDLEWARE[@]})
+    processes+=(${FRONTEND[@]})
+
+    for process in ${processes[@]}
+    do
+        service $process status
+    done
 }
 
 case "$1" in

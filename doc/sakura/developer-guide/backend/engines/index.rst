@@ -10,3 +10,4 @@ Engines
    rights
    rule
    state-spec
+   scheduler

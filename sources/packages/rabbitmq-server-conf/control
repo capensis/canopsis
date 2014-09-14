@@ -45,18 +45,23 @@ function post_install(){
 
 	if [ $ADMIN_EXISTS -ne 1 ]
 	then
-		while true
-		do
-			safe_prompt "RabbitMQ password for admin: " adminpass
-			safe_prompt "Confirm password: " confirm
+		if [ "x$RABBITMQ_ADMIN_PASSWD" == "x" ]
+		then
+			while true
+			do
+				safe_prompt "RabbitMQ password for admin: " adminpass
+				safe_prompt "Confirm password: " confirm
 
-			if [ "$adminpass" == "$confirm" ]
-			then
-				break
-			else
-				echo "Passwords doesn't match"
-			fi
-		done
+				if [ "$adminpass" == "$confirm" ]
+				then
+					break
+				else
+					echo "Passwords doesn't match"
+				fi
+			done
+		else
+			adminpass=$RABBITMQ_ADMIN_PASSWD
+		fi
 
 		echo " + Declare Admin user ..."
 		launch_cmd 1 $PREFIX/bin/rabbitmqctl add_user admin $adminpass
@@ -79,31 +84,40 @@ function post_install(){
 
 	if [ $COMMONUSER_EXISTS -ne 1 ]
 	then
-		while true
-		do
-			safe_prompt "RabbitMQ common user: " cpsuser "show"
+		if [ "x$RABBITMQ_USER" == "x" ]
+		then
+			while true
+			do
+				safe_prompt "RabbitMQ common user: " cpsuser "show"
 
-			user_exists=`launch_cmd 0 rabbitmqctl list_users | grep "^$cpsuser" | wc -l`
+				user_exists=`launch_cmd 0 rabbitmqctl list_users | grep "^$cpsuser" | wc -l`
 
-			if [ $user_exists -ne 1 ]
-			then
-				break
-			fi
-		done
+				if [ $user_exists -ne 1 ]
+				then
+					break
+				fi
+			done
+		else
+			cpsuser=$RABBITMQ_USER
+		fi
 
-		while true
-		do
-			safe_prompt "RabbitMQ password for $cpsuser: " cpspass
-			safe_prompt "Confirm password: " confirm
+		if [ "x$RABBITMQ_USER_PASSWD" == "x" ]
+		then
+			while true
+			do
+				safe_prompt "RabbitMQ password for $cpsuser: " cpspass
+				safe_prompt "Confirm password: " confirm
 
-			if [ "$cpspass" == "$confirm" ]
-			then
-				break
-			else
-				echo "Passwords doesn't match"
-			fi
-		done
-
+				if [ "$cpspass" == "$confirm" ]
+				then
+					break
+				else
+					echo "Passwords doesn't match"
+				fi
+			done
+		else
+			cpspass=$RABBITMQ_USER_PASSWD
+		fi
 		
 		echo " + Declare $cpsuser user ..."
 		launch_cmd 1 $PREFIX/bin/rabbitmqctl add_user $cpsuser $cpspass
