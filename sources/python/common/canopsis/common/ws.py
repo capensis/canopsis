@@ -22,6 +22,12 @@ from inspect import getargspec
 
 from canopsis.common.utils import force_iterable
 
+from json import loads
+
+from bottle import request
+
+from functools import wraps
+
 
 def response(data):
     """
@@ -52,45 +58,104 @@ def route_name(operation_name, *parameters):
     return result
 
 
-def route(op, name=None):
+class route(object):
     """
     Decorator which add ws routes to a callable object.
 
-    :param str name: specify ws name if different than function name
-
     Example::
 
-        @route(get)
+        @route(get, body_params='c')
         def entities(a, b, c=None, d=None):
             ...
-        fill a, b, c, d parameters in entities function and provide
+
+        Fill ``a``, ``b``, ``d`` parameters in entities function and provide
         the three urls:
 
-            - '/entities/a/b'
-            - '/entities/a/b/c'
-            - '/entities/a/b/c/d'
+            - '/entities/a/:b'
+            - '/entities/a/:b'
+            - '/entities/a/:b/:d'
+
+        And manage ``c`` such as a request body parameter.
     """
 
-    def apply_route_on_function(function):
+    def __init__(self, op, name=None, body_params=None):
+        """
+        :param op: ws operation for routing a function
+        :param str name: ws name
+        :param body_params: body parameter names (won't be generated in routes)
+        :type body_params: str or list of str
+        """
 
-        function_name = function.__name__ if name is None else name
+        super(route, self).__init__()
 
+        self.op = op
+        self.name = name
+        self.body_params = force_iterable(body_params)
+
+    def __call__(self, function):
+
+        # generate an interceptor
+        @wraps(function)
+        def interceptor(*args, **kwargs):
+
+            # add body parameters in kwargs
+            for body_param in self.body_params:
+                # TODO: remove reference from bottle
+                param = request.params.get(body_param)
+                # if param exists, add it into kwargs in deserializing it
+                if param is not None:
+                    kwargs[body_param] = loads(param)
+
+            result = function(*args, **kwargs)
+
+            return result
+
+        # add routes
         argspec = getargspec(function)
-
         args, defaults = argspec.args, argspec.defaults
-        len_args = len(args)
+        result = self.apply_route_on_function(interceptor, args, defaults)
+
+        return result
+
+    def apply_route_on_function(self, function, args=None, defaults=None):
+        """
+        Automatically apply routes parameterized by input function and return
+        the intercepted function.
+
+        :param callable function: function from where generate ws redirection
+        :param list args: list of function arg names
+        :param list defaults: list of function arg default values
+        """
+
+        # get the right function name
+        function_name = function.__name__ if self.name is None else self.name
+
+        if args is None:
+            argspec = getargspec(function)
+            args, defaults = argspec.args, argspec.defaults
+
+        # get defaults len for dynamic programming concerns
         len_defaults = 0 if defaults is None else len(defaults)
 
-        # add routes with optional parameters
-        for n in range(len_defaults):
-            route = route_name(function_name, *args[:len_args - n])
-            function = op(route)(function)
+        # list of optional header parameters
+        optional_header_params = []
 
-        # add route with mandatory parameters
-        if len_args >= len_defaults:
-            route = route_name(function_name, *args[:len_args - len_defaults])
-            function = op(route)(function)
+        # identify optional parameters without body parameters
+        for i in range(len_defaults):
+            if args[- (i + 1)] not in self.body_params:
+                optional_header_params.append(args[- (i + 1)])
+
+        optional_header_params.reverse()
+
+        # get required header parameters without body parameters
+        required_header_params = args[:len(args) - len_defaults]
+        required_header_params = [param for param in required_header_params
+            if param not in self.body_params]
+
+        # add routes with optional parameters
+        for i in range(len(optional_header_params) + 1):
+            header_params = required_header_params + optional_header_params[:i]
+            route = route_name(function_name, *header_params)
+            function = self.op(route)(function)
 
         return function
-
-    return apply_route_on_function
