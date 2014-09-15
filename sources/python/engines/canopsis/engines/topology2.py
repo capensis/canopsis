@@ -37,50 +37,6 @@ class engine(Engine):
 
     def work(self, event, *args, **kwargs):
 
-        # get nodes related to event if exist
-        if 'id' not in event:
-            event['id'] = event[event['source_type']]
-
-        entity_id = self.context.get_entity_id(event)
-        nodes = self.topology.find_nodes_by_entity_id(entity_id=entity_id)
-
-        # for all node, apply rule if exist
-        for node in nodes:
-            rule = node.get('rule')
-
-            # if a rule exist, apply it and update node
-            if rule is not None:
-                # apply it
-                apply_rule = getattr(self, rule)
-                node['entity'] = event
-                node = apply_rule(self, node, **rule)
-
-            # if state has changed
-            if node['state'] != event['state']:
-                # update the node
-                self.topology.push_node(_id=node['name'], node=node)
-
-                # and publish the change of state to all next nodes
-                next = nodes.get('next')
-                if next is not None:
-                    for n in next:
-                        n_id = self.context.get_entity_id(n)
-                        topology_propagation = {
-                            'connector': 'engine',
-                            'connector_name': self.etype,
-                            'event_type': "topology-propagation",
-                            "source_type": "topology-node",
-                            'entity_id': n_id,
-                            'topology-node': n['name'],
-                            "name": n['name'],
-                            "node": node,
-                            'timestamp': time(),
-                            'state': node['state']
-                        }
-                self.amqp.publish(
-                    msg=topology_propagation, routing_key='',
-                    exchange_name=self.amqp.exchange_name_events)
-
         return event
 
     def operation(
