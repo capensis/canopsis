@@ -32,7 +32,8 @@
             "status",
             "criticity",
             "ack",
-            "timestamp"
+            "timestamp",
+            "author"
           ]
         }
       }

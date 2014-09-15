@@ -794,7 +794,7 @@ then
 
         LOG=$PREFIX/var/log/unittest.log
 
-        launch_cmd 0 $PREFIX/opt/canotools/unittest.sh 2> $LOG 1> $LOG
+        launch_cmd 0 $PREFIX/bin/unittest.sh 2> $LOG 1> $LOG
         EXCODE=$?
 
         cp $LOG $SRC_PATH/log

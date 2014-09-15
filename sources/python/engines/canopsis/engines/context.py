@@ -131,25 +131,29 @@ class engine(Engine):
             hostgroup_data = {
                 Context.NAME: hostgroup
             }
-            self.put(_type='hostgroup', entity=hostgroup_data)
+            self.context.put(_type='hostgroup', entity=hostgroup_data)
 
         # add servicegroups
         for servicegroup in servicegroups:
             servicegroup_data = {
                 Context.NAME: servicegroup
             }
-            self.put(_type='servicegroup', entity=servicegroup_data)
+            self.context.put(_type='servicegroup', entity=servicegroup_data)
+
+        context['component'] = component
+        if resource:
+            context['resource'] = resource
 
         # add authored entity data (downtime, ack, metric, etc.)
         authored_data = entity.copy()
-        if resource is not None:
-            context['resource'] = resource
-            if 'author' in event:
-                authored_data['author'] = event['author']
-            if 'comment' in event:
-                authored_data['comment'] = event['comment']
-
         event_type = event['event_type']
+
+        if 'author' in event:
+            authored_data['author'] = event['author']
+            authored_data['comment'] = event.get('output', None)
+
+            if authored_data['comment'] is None:
+                del authored_data['comment']
 
         if event_type == 'ack':
             authored_data['timestamp'] = event['timestamp']

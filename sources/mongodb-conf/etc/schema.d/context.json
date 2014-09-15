@@ -1,0 +1,13 @@
+{
+    "type": "object",
+    "properties": {
+        "type": {
+            "type": "string",
+            "required": true
+        },
+        "data_id": {
+            "type": "string",
+            "required": true
+        }
+    }
+}
