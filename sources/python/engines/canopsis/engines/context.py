@@ -131,14 +131,14 @@ class engine(Engine):
             hostgroup_data = {
                 Context.NAME: hostgroup
             }
-            self.put(_type='hostgroup', entity=hostgroup_data)
+            self.context.put(_type='hostgroup', entity=hostgroup_data)
 
         # add servicegroups
         for servicegroup in servicegroups:
             servicegroup_data = {
                 Context.NAME: servicegroup
             }
-            self.put(_type='servicegroup', entity=servicegroup_data)
+            self.context.put(_type='servicegroup', entity=servicegroup_data)
 
         # add authored entity data (downtime, ack, metric, etc.)
         authored_data = entity.copy()
@@ -153,7 +153,7 @@ class engine(Engine):
 
         if event_type == 'ack':
             authored_data['timestamp'] = event['timestamp']
-            authored_data[Context.NAME] = event['timestamp']
+            authored_data[Context.NAME] = str(event['timestamp'])
 
         elif event_type == 'downtime':
             authored_data['downtime_id'] = event['downtime_id']

@@ -20,6 +20,7 @@
 
 from canopsis.engines import Engine
 from canopsis.perfdata.manager import PerfData
+from canopsis.context.manager import Context
 
 from copy import deepcopy
 
@@ -108,7 +109,7 @@ class engine(Engine):
 
                 event_with_metric = deepcopy(event)
                 event_with_metric['type'] = 'metric'
-                event_with_metric['id'] = perf_data['metric']
+                event_with_metric[Context.NAME] = perf_data['metric']
 
                 metric_id = self.perfdata.context.get_entity_id(
                     event_with_metric)
