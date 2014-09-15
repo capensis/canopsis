@@ -144,10 +144,13 @@ class PerfDataParser(object):
                     if metric[-1] == ']':
                         metric = metric[:-1]
 
-                    metric, unit = metric.split('[', 1)
+                    parts = metric.split('[', 1)
 
-                    perf_data['metric'] = metric
-                    perf_data['unit'] = unit
+                    if len(parts) > 1:
+                        metric, unit = parts
+
+                        perf_data['metric'] = metric
+                        perf_data['unit'] = unit
 
                 # Make sure perfdata entry is valid
                 if 'value' in perf_data and 'metric' in perf_data:
