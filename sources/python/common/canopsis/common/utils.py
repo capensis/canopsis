@@ -30,26 +30,46 @@ from collections import Iterable
 
 from sys import version as PYVER
 
+__RESOLVED_ELEMENTS = {}  #: dictionary of resolved elements by name
 
-def resolve_element(path):
+
+def free_cache(path=None):
+    """
+    Remove an element from cache memory
+
+    :param str path: path to element to remove from cache. If None, remove all
+        elements from cache.
+    """
+
+    if path is None:
+        __RESOLVED_ELEMENTS = {}
+    else:
+        __RESOLVED_ELEMENTS[path].pop(path, '')
+
+
+def resolve_element(path, cached=True):
     """
     Get element reference from input full path element.
 
     :limitations: does not resolve class method.
 
-    :param path: full path to a python element.
+    :param str path: full path to a python element.
         Examples:
             - __builtin__.open
             - canopsis.common.utils.resolve_element
-    :type path: str
+
+    :para bool cached: if True (by default), use __RESOLVED_ELEMENTS cache
+        memory to quickly load elements
 
     :return: python object which is accessible thourgh input path.
     :rtype: object
     """
 
-    result = None
+    element_in_cache = cached and path in __RESOLVED_ELEMENTS
 
-    if path:
+    result = __RESOLVED_ELEMENTS[path] if element_in_cache else None
+
+    if result is None and path:
 
         components = path.split('.')
         index = 0
@@ -90,6 +110,9 @@ def resolve_element(path):
                     except AttributeError:
                         raise ImportError(
                             'Wrong path %s at %s' % (path, components[:index]))
+
+            if result is not None and cached:
+                __RESOLVED_ELEMENTS[path] = result
 
         else:  # get relative object from current module
             raise ImportError('Does not handle relative path')
