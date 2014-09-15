@@ -14,7 +14,7 @@
 		"keys":["filters"]
 	},{
 		"title": "Rendering",
-		"keys":["refreshableWidget", "maximized_column_index", "cloaking"]
+		"keys":["refreshableWidget", "maximized_column_index", "cloaking", "contentTruncatedLength"]
 	}],
 	"properties": {
 		"listed_crecord_type": {
@@ -73,7 +73,15 @@
 		},
 		"itemsPerPage": {
 			"type": "integer",
+			"required": true,
 			"default": 5
+		},
+		"contentTruncatedLength": {
+			"type": "integer",
+			"required": true,
+			"title": "Content truncated length",
+			"description": "The max length displayed in rich text columns",
+			"default": 150
 		},
 		"cloaking": {
 			"type": "boolean"
