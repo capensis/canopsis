@@ -21,14 +21,9 @@
 
 from unittest import TestCase, main
 
-from canopsis.rpc import RPC
 
+class TestEvent(TestCase):
 
-class TestRPC(RPC):
-    pass
-
-
-class RPCTest(TestCase):
     pass
 
 if __name__ == '__main__':
