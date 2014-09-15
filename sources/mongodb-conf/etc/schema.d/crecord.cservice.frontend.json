@@ -2,7 +2,7 @@
 	"type": "object",
 	"categories": [{
 		"title": "General",
-		"keys":["title", "cfilter_allow_only_optimized_filters", "debug_mode"]
+		"keys":["title", "cfilter_allow_only_optimized_filters", "debug_mode", "default_view"]
 	},{
 		"title": "Events",
 		"keys":["list_info_button_pattern"]
@@ -29,6 +29,13 @@
 		"login_footer": {
 			"type": "string",
 			"default": ""
+		},
+		"default_view": {
+			"type": "string",
+			"title": "Default view",
+			"description": "The view to display when users log in",
+			"default": "view.dashboard",
+			"role": "viewId"
 		}
 	}
 }
