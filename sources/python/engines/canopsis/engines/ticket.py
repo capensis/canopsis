@@ -23,7 +23,7 @@ from canopsis.old.account import Account
 from canopsis.old.storage import get_storage
 
 from copy import deepcopy
-
+from time import time
 
 class engine(Engine):
     etype = "ticket"
@@ -65,6 +65,20 @@ class engine(Engine):
                 job['context'] = refevt
 
                 self.amqp.publish(job, 'Engine_scheduler', 'amq.direct')
+
+                self.logger.info('Setting ticked received for {}'.format(event['ref_rk']))
+
+                self.store.get_backend('events').update({
+                    'rk': event['ref_rk']
+                }, {
+                    '$set': {
+                        'ticket_declared': {
+                            'timestamp': int(time()),
+                            'author': event['author']
+                        }
+                    }
+                })
+
 
             elif event['event_type'] == 'ack' and 'ticket' in event:
                 self.logger.info('Associate ticket')

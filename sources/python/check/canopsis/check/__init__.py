@@ -18,45 +18,42 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from fabric.api import run
-from os.path import dirname, expanduser
-
-projects = (
-    'common',
-    'configuration',
-    'timeserie',
-    'event',
-    'check',
-    'middleware',
-    'rpc',
-    'mom',
-    'storage',
-    'schema',
-    'mongo',
-    'kombu',
-    'context',
-    'perfdata',
-    'topology',
-    'old',
-    'rule',
-    'engines',
-    'connectors',
-    'tools',
-    'cli',
-    'topology',
-    'organisation',
-    'auth')
+__version__ = "0.1"
 
 
-def setup(cmd="install", projects=projects):
+from canopsis.event import Event
+
+
+class Check(Event):
     """
-    Run setup cmd on all projects.
+    Manage checking event with state and status information
     """
-    # find __file__ directory
-    path = dirname(expanduser(__file__))
 
-    cmd_path = "python {0}/{{0}}/setup.py {1}".format(path, cmd)
+    STATE = 'state'
+    STATUS = 'status'
 
-    for project in projects:
-        # run setup command
-        run(cmd_path.format(project))
+    def __init__(self, source, state, status, meta):
+
+        super(Event, self).__init__(
+            source=source,
+            data={
+                Check.STATE: state,
+                Check.STATUS: status
+            },
+            meta=meta)
+
+    @property
+    def state(self):
+        return self.data[Check.STATE]
+
+    @state.setter
+    def state(self, value):
+        self.data[Check.STATE] = value
+
+    @property
+    def status(self):
+        return self.data[Check.STATUS]
+
+    @status.setter
+    def status(self, value):
+        self.data[Check.STATUS] = value
