@@ -24,6 +24,11 @@
 			"type": "object",
 			"role": "ack"
 		},
+		"ticket_declared": {
+			"type": "object",
+			"role": "ticket",
+			"title":"ticket"
+		},
 		"timestamp": {
 			"type": "number",
 			"role": "timestamp",

@@ -60,9 +60,8 @@ A topology node contains following fields::
 from canopsis.common.utils import force_iterable
 from canopsis.configuration import conf_paths, add_category
 from canopsis.middleware.manager import Manager
-from canopsis.storage.composite import CompositeStorage
+from canopsis.storage import Storage
 from canopsis.storage.filter import Filter
-from canopsis.context.manager import Context
 
 CONF_PATH = 'topology/topology.conf'
 CATEGORY = 'TOPOLOGY'
@@ -72,24 +71,20 @@ CATEGORY = 'TOPOLOGY'
 @conf_paths(CONF_PATH)
 class Topology(Manager):
     """
-    Manage access to topologies
+    Manage topological data
     """
 
-    STORAGE = 'topology_storage'
+    STORAGE = 'topology_storage'  #: topology storage name
 
-    ENTITY_ID = 'entity_id'
-    NEXT = 'next'
-    NODES = 'nodes'
-    TYPE = 'type'
+    ENTITY_ID = 'entity_id'  #: topology node entity id field name
+    NEXT = 'next'  #: topology node next field name
+    NODES = 'nodes'  #: topology nodes field name
+    TYPE = 'type'  #: topology/topology node type field name
 
-    TOPOLOGY_TYPE = 'topology'
-    TOPOLOGY_NODE_TYPE = 'topology-node'
+    TOPOLOGY_TYPE = 'topology'  #: topology type name
+    TOPOLOGY_NODE_TYPE = 'topology-node'  #: topology node type name
 
-    def __init__(self, *args, **kwargs):
-
-        super(Topology, self).__init__(*args, **kwargs)
-
-        self.context = Context()
+    ID = Storage.DATA_ID  #: topology and topology node id field name
 
     def _add_nodes(self, topologies):
         """
@@ -99,7 +94,7 @@ class Topology(Manager):
         if topologies:
             topologies = force_iterable(topologies)
             for topology in topologies:
-                nodes = self.get_nodes(ids=topology[CompositeStorage.ID])
+                nodes = self.get_nodes(ids=topology[Topology.ID])
                 topology[Topology.NODES] = nodes
 
     def get_topologies(self, ids=None, add_nodes=False):
@@ -115,9 +110,13 @@ class Topology(Manager):
             - None: all existing topologies.
         """
 
-        result = self.context.get(_type=Topology.TOPOLOGY_TYPE, names=ids)
+        # the the right path
+        path = {Topology.TYPE: Topology.TOPOLOGY_TYPE}
+
+        result = self[Topology.STORAGE].get(path=path, data_ids=ids)
         if add_nodes:
             self._add_nodes(result)
+
         return result
 
     def find(self, regex=None, add_nodes=False):
@@ -125,12 +124,18 @@ class Topology(Manager):
         Find topologies where id match with inpur regex_id
         """
 
+        # get the right filter
         _filter = Filter()
         _filter.add_regex(
-            name=CompositeStorage.ID, value=regex, case_sensitive=True)
-        result = self.context.find(_type=Topology.TOPOLOGY_TYPE, _filter=_filter)
+            name=Storage.DATA_ID, value=regex, case_sensitive=True)
+
+        # get the right path
+        path = {Topology.TYPE: Topology.TOPOLOGY_TYPE}
+
+        result = self[Topology.STORAGE].find(path=path, _filter=_filter)
         if add_nodes:
             self._add_nodes(result)
+
         return result
 
     def delete(self, ids=None):
@@ -142,40 +147,44 @@ class Topology(Manager):
             - None: delete all topologies
         """
 
-        ids = force_iterable(ids)
-        ids_to_remove = []
-        for _id in ids:
-            if isinstance(_id, str) and not _id.startswith('/'):
-                _id = '/%s/%s' % (Topology.TOPOLOGY_TYPE, _id)
-            ids_to_remove.append(_id)
-        self.context.remove(ids=ids_to_remove)
+        self[Topology.STORAGE].remove_elements(ids=ids)
 
     def push(self, topology):
         """
         Push one topology.
         """
 
-        self.context.put(
-            _type=Topology.TOPOLOGY_TYPE, entity=topology)
+        path = {Topology.TYPE: Topology.TOPOLOGY_TYPE}
+        _id = topology[Topology.ID]
+        self[Topology.STORAGE].put(path=path, data_id=_id, data=topology)
 
     def push_node(self, node):
         """
         Push a node.
         """
 
-        self.context.put(
-            _type=Topology.TOPOLOGY_NODE_TYPE, entity=node)
+        path = {Topology.TYPE: Topology.TOPOLOGY_NODE_TYPE}
+        _id = node[Topology.ID]
+        self[Topology.STORAGE].put(path=path, data_id=_id, data=node)
 
     def get_nodes(self, ids=None):
         """
-        Get nodes
+        Get topology nodes
+
+        :param ids: topology node id or list of ids
+        :type ids: str or list(str)
+
+        :return: depending on type of ids::
+            - str: node or None
+            - list: list of nodes
         """
 
-        result = self.context.get(_type=Topology.TOPOLOGY_NODE_TYPE, names=ids)
+        path = {Topology.TYPE: Topology.TOPOLOGY_NODE_TYPE}
+        result = self[Topology.STORAGE].get(path=path, data_ids=ids)
 
         return result
 
-    def find_nodes_by_entity_id(self, entity_id):
+    def find_bound_nodes(self, entity_id):
         """
         Find all nodes related to input entity_id
         """
@@ -183,25 +192,60 @@ class Topology(Manager):
         _filter = Filter()
         _filter[Topology.ENTITY_ID] = entity_id
 
-        result = self.context.find(
-            _type=Topology.TOPOLOGY_NODE_TYPE,
-            _filter=_filter
-        )
+        path = {Topology.TOPOLOGY_TYPE: Topology.TOPOLOGY_NODE_TYPE}
+
+        result = self[Topology.STORAGE].find(path=path, _filter=_filter)
 
         return result
 
-    def find_nodes_by_next(self, next=None):
+    def get_next_nodes(self, node):
         """
-        Find source nodes from input next node. If next is None, get all root
-        nodes
+        Get next nodes from input source node.
         """
 
+        next_ids = node[Topology.NEXT]
+
+        path = {Topology.TYPE: Topology.TOPOLOGY_NODE_TYPE}
+
+        result = self[Topology.STORAGE].get(path=path, data_ids=next_ids)
+
+        return result
+
+    def find_previous_nodes(self, node=None):
+        """
+        Get previous nodes from input next node. If node is None, get all root
+        nodes.
+        """
+
+        # get the right path
+        path = {Topology.TYPE: Topology.TOPOLOGY_NODE_TYPE}
+
+        # get the right filter
         _filter = Filter()
-        _filter[Topology.NEXT] = next
+        if node is None:
+            # get root nodes which don't have next field or next field is empty
+            _filter[Topology.NEXT] = {
+                '$or': [
+                    {'$empty'},
+                    {'$not': {'$exists'}}
+                ]
+            }
 
-        result = self.context.find(
-            _type=Topology.TOPOLOGY_NODE_TYPE,
-            _filter=_filter
-        )
+        else:
+            node_id = node[Topology.ID]
+            _filter[Topology.NEXT] = node_id
+
+        result = self[Topology.STORAGE].get(path=path, _filter=_filter)
+
+        return result
+
+    def get_id(self, element):
+        """
+        Get input element id
+
+        :param node: topology or topology node
+        """
+
+        result = element[Topology.ID]
 
         return result

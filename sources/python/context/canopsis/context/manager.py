@@ -90,6 +90,21 @@ class Context(Manager):
 
         return self[Context.CTX_STORAGE].get_elements(ids=ids)
 
+    def get_entity(self, event):
+        """
+        Get event entity.
+        """
+
+        _type = event['source_type']
+
+        name = event[Storage.DATA_ID]
+
+        context = event
+
+        result = self.get(_type=_type, names=name, context=context)
+
+        return result
+
     def get(self, _type, names, context=None, extended=False):
         """
         Get one entity

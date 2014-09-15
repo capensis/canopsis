@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #--------------------------------
 # Copyright (c) 2014 "Capensis" [http://www.capensis.com]
@@ -18,45 +19,12 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from fabric.api import run
-from os.path import dirname, expanduser
-
-projects = (
-    'common',
-    'configuration',
-    'timeserie',
-    'event',
-    'check',
-    'middleware',
-    'rpc',
-    'mom',
-    'storage',
-    'schema',
-    'mongo',
-    'kombu',
-    'context',
-    'perfdata',
-    'topology',
-    'old',
-    'rule',
-    'engines',
-    'connectors',
-    'tools',
-    'cli',
-    'topology',
-    'organisation',
-    'auth')
+from unittest import TestCase, main
 
 
-def setup(cmd="install", projects=projects):
-    """
-    Run setup cmd on all projects.
-    """
-    # find __file__ directory
-    path = dirname(expanduser(__file__))
+class TestEvent(TestCase):
 
-    cmd_path = "python {0}/{{0}}/setup.py {1}".format(path, cmd)
+    pass
 
-    for project in projects:
-        # run setup command
-        run(cmd_path.format(project))
+if __name__ == '__main__':
+    main()
