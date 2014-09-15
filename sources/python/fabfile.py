@@ -25,6 +25,8 @@ projects = (
     'common',
     'configuration',
     'timeserie',
+    'event',
+    'check',
     'middleware',
     'rpc',
     'mom',
