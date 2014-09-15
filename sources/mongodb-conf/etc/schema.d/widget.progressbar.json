@@ -1,0 +1,37 @@
+{
+    "type": "object",
+    "metadata": {
+        "icon": "cloud"
+    },
+    "categories": [{
+        "title": "General",
+        "keys":["title", "refreshInterval", "event_selection", "destination_view", "filter_pattern"]
+    },{
+        "title": "Rendering",
+        "keys":["refreshableWidget"]
+    }],
+    "properties": {
+        "title":  {
+            "type": "string"
+        },
+        "destination_view":  {
+            "type": "string",
+            "default": "view.event"
+        },
+        "event_selection":  {
+            "type": "array",
+            "items": {
+                "type": "string"
+            },
+            "role" : "eventselector"
+        },
+        "filter_pattern": {
+            "type": "string",
+            "default": "{{#if isSelector}}{{{selector_filter}}}{{else}}{ \"rk\" : \"{{rk}}\" }{{/if}}"
+        },
+        "refreshableWidget":  {
+            "type": "boolean",
+            "default": true
+        }
+    }
+}
