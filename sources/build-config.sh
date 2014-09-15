@@ -3,7 +3,7 @@
 #
 # If defined, the user won't be asked what to do on config file update
 
-UPDATE_ETC_ACTION="keep"
+UPDATE_ETC_ACTION="ask"
 
 # - Variable MONGODB_ADMIN_PASSWD
 # If defined, the user won't be asked to type a password for the MongoDB admin user

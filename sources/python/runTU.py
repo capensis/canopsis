@@ -19,31 +19,42 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from os.path import isdir
+from os.path import isdir, join
 from sys import executable
 from subprocess import Popen, PIPE
 from argparse import ArgumentParser
 from glob import glob
 
+
 def test(project):
     """Run a test"""
-    print(  '**********************************\n' + \
-            'running tests for ' + project + '\n' \
-            '**********************************\n'
-            )
-    p = Popen([executable, project + '/setup.py', 'test'], stdout=PIPE)
+    print('**********************************')
+    print('running tests for {0}'.format(project))
+    print('**********************************')
+
+    p = Popen([executable, join(project, 'setup.py'), 'test'], stdout=PIPE)
     return p.communicate()[0]
 
-parser = ArgumentParser(description='Run tests on canolibs')
-parser.add_argument('projects', metavar='projects', type=str,
-                    nargs='*', help='projects to run tests on')
-args = parser.parse_args()
 
-if not args.projects: # we run tests for all projects if none is supplied
-    for element in glob('*'):
-        if isdir(element):
-            test(element)
-            raw_input('Press a key to continue...')
-else:
-    for project in args.projects:
-        test(project)
+if __name__ == '__main__':
+    parser = ArgumentParser(description='Run tests on canolibs')
+    parser.add_argument(
+        'projects',
+        metavar='projects',
+        type=str,
+        nargs='*',
+        help='projects to run tests on'
+    )
+
+    args = parser.parse_args()
+
+
+    if not args.projects: # we run tests for all projects if none is supplied
+        for element in glob('*'):
+            if isdir(element):
+                test(element)
+                raw_input('Press a key to continue...')
+
+    else:
+        for project in args.projects:
+            test(project)
