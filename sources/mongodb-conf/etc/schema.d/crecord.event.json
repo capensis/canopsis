@@ -73,6 +73,9 @@
 		"cancel": {
 			"type": "object",
 			"role": "object"
+		},
+		"author": {
+			"type": "string"
 		}
 	}
 }
