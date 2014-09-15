@@ -22,6 +22,7 @@ from re import compile as re_compile
 
 from time import time
 
+from canopsis.tools.nagios import PerfDataParser
 from canopsis.common.utils import force_iterable
 from canopsis.configuration import add_category, conf_paths
 from canopsis.timeserie.timewindow import Period, get_offset_timewindow
@@ -218,87 +219,16 @@ class PerfData(Manager):
 
         return result
 
-    RE_PERF_DATA = re_compile(
-        "('?([0-9A-Za-z/\\\:\.%%\-{}\?\[\]_ ]*)'?=(\-?[0-9.,]*)(([A-Za-z%%/]*))(;@?(\-?[0-9.,]*):?)?(;@?(\-?[0-9.,]*):?)?(;@?(\-?[0-9.,]*):?)?(;@?(\-?[0-9.,]*):?)?(;? ?))")
-
     def parse_perfdata(self, perf_data_raw):
-        # 'label'=value[UOM];[warn];[crit];[min];[max]
-        #   load1=0.440     ;5.000 ;10.000;0    ;
+        self.logger.debug("Parse: {0}".format(perf_data_raw))
 
-        self.logger.debug("Parse: %s" % perf_data_raw)
+        try:
+            parser = PerfDataParser(perf_data_raw)
+            perf_data_array = parser.perf_data_array
 
-        perfs = PerfData.RE_PERF_DATA.split(perf_data_raw)
-
-        perf_data_array = []
-        perf_data = {}
-        i = 0
-        for info in perfs:
-            if info == '':
-                info = None
-
-            #self.logger.debug(" + %s '%s'" % (i, info))
-            try:
-                if info and i == 2:
-                    perf_data['metric'] = info
-                elif info and i == 3:
-                    perf_data['value'] = info.replace(',', '.')
-                elif info and i == 4:
-                    perf_data['unit'] = info
-                elif info and i == 7:
-                    perf_data['warn'] = info.replace(',', '.')
-                elif info and i == 9:
-                    perf_data['crit'] = info.replace(',', '.')
-                elif info and i == 11:
-                    perf_data['min'] = info.replace(',', '.')
-                elif info and i == 13:
-                    perf_data['max'] = info.replace(',', '.')
-
-                i += 1
-                if i is 15:
-                    try:
-                        perf_data_clean = {}
-                        for key in perf_data.keys():
-                            if perf_data[key]:
-                                try:
-                                    perf_data_clean[key] = float(
-                                        perf_data[key])
-                                except:
-                                    if key == 'metric' or key == 'unit':
-                                        perf_data_clean[key] = perf_data[key]
-                                    else:
-                                        self.logger.debug(
-                                            "Invalid value, '%s' = '%s'" % (
-                                                key, perf_data[key]))
-
-                        if 'value' in perf_data_clean \
-                                and 'metric' in perf_data_clean:
-                            perf_data_array.append(perf_data_clean)
-
-                        if not perf_data_clean.get('unit', None):
-                            # split: g[in_bps]= ...
-                            metric_ori = perf_data_clean['metric']
-                            if metric_ori[len(metric_ori) - 1] == ']':
-                                metric_ori = metric_ori[:len(metric_ori) - 1]
-                                metric = metric_ori.split('[', 1)
-                                if len(metric) == 2:
-                                    perf_data_clean['metric'] = metric[0]
-                                    perf_data_clean['unit'] = metric[1]
-
-                        self.logger.debug(" + %s" % perf_data_clean)
-
-                    except Exception as err:
-
-                        self.logger.error("perf_data: Raw: %s" % perf_data_raw)
-                        self.logger.error(
-                            "perf_data: Impossible to clean '%s': %s" % (
-                                perf_data, err))
-
-                    perf_data = {}
-                    i = 0
-
-            except Exception as err:
-                self.logger.error(
-                    "perf_data: Invalid metric %s: %s (%s)" % (i, info, err))
+        except Exception as err:
+            self.logger.error('Impossible to parse perfdata: {0}'.format(err))
+            perf_data_array = []
 
         return perf_data_array
 
