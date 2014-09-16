@@ -92,18 +92,7 @@ class KnownValues(TestCase):
             }
         ]
 
-        pflen1 = len(expected)
-        pflen2 = len(parser.perf_data_array)
-
-        self.assertEqual(pflen1, pflen2)
-
-        for i in range(pflen1):
-            expected_perfdata = expected[i]
-            perfdata = parser.perf_data_array[i]
-
-            for key in perfdata:
-                self.assertTrue(key in expected_perfdata)
-                self.assertEqual(expected_perfdata[key], perfdata[key])
+        self.assertEqual(expected, parser.perf_data_array)
 
 
 if __name__ == "__main__":
