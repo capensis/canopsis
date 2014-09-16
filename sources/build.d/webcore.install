@@ -7,7 +7,7 @@ function build(){
 function install(){
 	cd $SRC_PATH/$NAME
 
-	tar c var | tar xv -C $PREFIX/
+	tar c var | tar xhv -C $PREFIX/
 
 	python setup.py install >> $LOG 2>&1
 
@@ -17,7 +17,7 @@ function install(){
 function update(){
     cd $SRC_PATH/$NAME
 
-    tar c var | tar xv -C $PREFIX/
+    tar c var | tar xhv -C $PREFIX/
 
     python setup.py install --no-conf >> $LOG 2>&1
     update_conffiles ./etc

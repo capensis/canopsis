@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # --------------------------------
 # Copyright (c) 2014 "Capensis" [http://www.capensis.com]
 #
@@ -20,23 +21,23 @@
 from re import compile as re_compile
 
 
-class CheckNagiosParser(object):
+class CheckParser(object):
     """
-    This class is used to parse the output of a Nagis check plugin.
+    This class is used to parse the output of a Monitoring check plugin.
 
     It's an RAII class, the result is available via its instance properties.
     """
 
     def __init__(self, errcode, output, *args, **kwargs):
         """
-        :param errcode: Exit code of Nagios check.
+        :param errcode: Exit code of monitoring check.
         :type errcode: int
 
-        :param output: Full output of Nagios check.
+        :param output: Full output of monitoring check.
         :type output: str
         """
 
-        super(CheckNagiosParser, self).__init__(*args, **kwargs)
+        super(CheckParser, self).__init__(*args, **kwargs)
 
         self._status = errcode
         self._text = ''
@@ -75,6 +76,10 @@ class CheckNagiosParser(object):
             else:
                 self._perfdata = parts[-1].strip()
 
+        self._long_output = self._long_output.strip('\n')
+        self._text = self._text.strip('\n')
+        self._perfdata = self._perfdata.strip('\n')
+
     @property
     def status(self):
         return self._status
@@ -94,7 +99,7 @@ class CheckNagiosParser(object):
 
 class PerfDataParser(object):
     """
-    Parse Nagios performance data string.
+    Parse Monitoring performance data string.
 
     It's a RAII class, the result is available via its instance properties.
     """

@@ -26,6 +26,7 @@ PROJECTS[19]='auth'
 PROJECTS[20]='rule'
 PROJECTS[21]='event'
 PROJECTS[22]='check'
+PROJECTS[23]='monitoring'
 
 function build(){
 	true
