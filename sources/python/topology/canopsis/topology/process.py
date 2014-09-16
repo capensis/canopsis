@@ -18,13 +18,40 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
+"""
+Module in charge of defining main topological rules.
+
+When an event occured, the related entity is retrieved and all bound
+topological nodes are retrieved as well in order to execute theirs rules.
+
+First, a topology processing is triggered when an event occured.
+
+From this event, bound topology nodes are got in order to apply node rules.
+
+A typical topological rule condition is an ``canopsis.rule.condition.all``
+composed of the ``canopsis.topology.process.new_state`` condition.
+If this condition is checked, then other specific conditions can be applied
+such as::
+    - ``canopsis.topology.process.condition``
+    - ``canopsis.topology.process.all``
+    - ``canopsis.topology.process.any``
+
+A topology rule use the condition ``new_state``
+"""
+
 from canopsis.topology.manager import Topology
 from canopsis.context.manager import Context
-
-from time import time
+from canopsis.event import Event
+from canopsis.rule import process_rule
 
 context = Context()
 topology = Topology()
+
+SOURCE = 'source'
+SOURCES = 'sources'
+NODE = 'node'
+STATE = 'state'
+RULE = 'rule'
 
 
 def event_processing(event, ctx=None, **params):
@@ -33,201 +60,21 @@ def event_processing(event, ctx=None, **params):
 
     One topology nodes are founded, executing related rules.
     """
-    if ctx is None:
-        ctx = {}
 
-    entity = context.get_entity(event=event)
+    # TODO: remove when Check event will be used
+    if event['event_type'] == Event.CHECK:
 
-    # do something only if state is different than previous one
-    if entity['state'] != event['state']:
-
+        # get nodes
+        entity = context.get_entity(event)
         entity_id = context.get_entity_id(entity)
+        nodes = topology.find_bound_nodes(entity_id=entity_id)
 
-        nodes = topology.get_nodes(entity_id=entity_id)
-
+        # iterate on bound nodes
         for node in nodes:
 
-            next_nodes = topology.get_next_nodes(node)
+            rule = node[RULE]
+            ctx = {NODE: node}
 
-            for next_node in next_nodes:
-
-                ctx['source_node'] = node
-                ctx['node'] = next_node
-                rule = next_node['rule']
-
-                process_rule(event=event, rule=rule, ctx=ctx)
+            process_rule(event=event, rule=rule, ctx=ctx)
 
     return event
-
-
-class engine(Engine):
-    etype = 'topology2'
-
-    def __init__(self, *args, **kargs):
-        super(engine, self).__init__(*args, **kargs)
-
-        # load topology manager
-        self.topology = Topology()
-        self.context = Context()
-
-    def work(self, event, *args, **kwargs):
-
-        # get nodes related to event if exist
-        if 'id' not in event:
-            event['id'] = event[event['source_type']]
-
-        entity_id = self.context.get_entity_id(event)
-        nodes = self.topology.find_nodes_by_entity_id(entity_id=entity_id)
-
-        # for all node, apply rule if exist
-        for node in nodes:
-            rule = node.get('rule')
-
-            # if a rule exist, apply it and update node
-            if rule is not None:
-                # apply it
-                apply_rule = getattr(self, rule)
-                node['entity'] = event
-                node = apply_rule(self, node, **rule)
-
-            # if state has changed
-            if node['state'] != event['state']:
-                # update the node
-                self.topology.push_node(_id=node['name'], node=node)
-
-                # and publish the change of state to all next nodes
-                next = nodes.get('next')
-                if next is not None:
-                    for n in next:
-                        n_id = self.context.get_entity_id(n)
-                        topology_propagation = {
-                            'connector': 'engine',
-                            'connector_name': self.etype,
-                            'event_type': "topology-propagation",
-                            "source_type": "topology-node",
-                            'entity_id': n_id,
-                            'topology-node': n['name'],
-                            "name": n['name'],
-                            "node": node,
-                            'timestamp': time(),
-                            'state': node['state']
-                        }
-                self.amqp.publish(
-                    msg=topology_propagation, routing_key='',
-                    exchange_name=self.amqp.exchange_name_events)
-
-        return event
-
-
-def operation(
-    event, ctx, at_least, at_most, check_state, in_state, default_state=0,
-    **kwargs
-):
-    """
-    Do a generic state operation
-    """
-
-    node = ctx['node']
-
-    result = node
-
-    state = node['state']
-
-    # do something only if check_state is different than state
-    if state != check_state:
-        entity_id = context.get_entity_id(node)
-        source_nodes = topology.find_nodes_by_next(next=entity_id)
-        len_source_nodes = len(source_nodes)
-        for source_node in source_nodes:
-            at_most = len_source_nodes - at_most
-            if check_state == source_node['state']:
-                at_least -= 1
-                at_most -= 1
-            if at_least <= 0 or at_most <= 0:
-                result['state'] = in_state
-                break
-
-        if result['state'] != in_state:
-            result['state'] = default_state
-
-    return result
-
-
-def all(event, ctx, check_state, in_state, default_state):
-    """
-    Check if all source nodes match with input check_state
-    """
-
-    node = ctx['node']
-
-    node_id = context.get_entity_id(node)
-    source_nodes = topology.find_nodes_by_next(next=node_id)
-    len_source_nodes = len(source_nodes)
-
-    return operation(
-        node, at_least=len_source_nodes, at_most=len_source_nodes,
-        check_state=check_state, default_state=default_state,
-        in_state=in_state)
-
-
-def any(event, ctx, check_state, in_state, default_state):
-    """
-    Check if all source nodes match with input check_state
-    """
-
-    node = ctx['node']
-
-    node_id = context.get_entity_id(node)
-    source_nodes = topology.find_nodes_by_next(next=node_id)
-    len_source_nodes = len(source_nodes)
-
-    return operation(
-        node, at_least=1, at_most=len_source_nodes,
-        check_state=check_state, default_state=default_state,
-        in_state=in_state)
-
-
-def worst_state(event, ctx):
-    """
-    Check the worst state among source nodes.
-    """
-
-    node = ctx['node']
-
-    result = node
-
-    entity = node['entity']
-    entity_id = context.get_entity_id(node)
-
-    if entity['state'] >= node['state']:
-        result['state'] = entity['state']
-
-    else:
-        source_nodes = topology.find_nodes_by_next(next=entity_id)
-        result['state'] = max(
-            source_node['state'] for source_node in source_nodes)
-
-    return result
-
-
-def best_state(event, ctx):
-    """
-    Get the best state among source nodes.
-    """
-
-    node = ctx['node']
-
-    result = node
-
-    entity = node['entity']
-    entity_id = context.get_entity_id(node)
-
-    if entity['state'] <= node['state']:
-        result['state'] = entity['state']
-
-    else:
-        source_nodes = topology.find_nodes_by_next(next=entity_id)
-        result['state'] = min(
-            source_node['state'] for source_node in source_nodes)
-
-    return result

@@ -59,8 +59,8 @@ A topology node contains following fields::
 
 from canopsis.common.utils import force_iterable
 from canopsis.configuration import conf_paths, add_category
-from canopsis.middleware.manager import Manager
 from canopsis.storage import Storage
+from canopsis.middleware.manager import Manager
 from canopsis.storage.filter import Filter
 
 CONF_PATH = 'topology/topology.conf'
@@ -74,7 +74,7 @@ class Topology(Manager):
     Manage topological data
     """
 
-    STORAGE = 'topology_storage'  #: topology storage name
+    STORAGE = 'storage'  #: topology storage name
 
     ENTITY_ID = 'entity_id'  #: topology node entity id field name
     NEXT = 'next'  #: topology node next field name
@@ -211,7 +211,7 @@ class Topology(Manager):
 
         return result
 
-    def find_previous_nodes(self, node=None):
+    def find_source_nodes(self, node=None):
         """
         Get previous nodes from input next node. If node is None, get all root
         nodes.
