@@ -143,11 +143,11 @@ def process_rule(event, rule, ctx=None, cached=True, raiseError=False):
     :param bool raiseError: If True (False by default), raise the first error
         encountered while executing actions.
 
-    :return: ordered list of rule action results if rule condition is checked.
+    :return: a tuple of (condition result, action ordered result)
     :rtype: list
     """
 
-    result = []
+    result = False, []
 
     # create a context which will be shared among condition and actions
     if ctx is None:
@@ -175,6 +175,8 @@ def process_rule(event, rule, ctx=None, cached=True, raiseError=False):
 
                 if raiseError:
                     raise ConditionError(e)
+
+    action_results = []
 
     # if actions have to be performed
     if do_actions:
@@ -209,9 +211,11 @@ def process_rule(event, rule, ctx=None, cached=True, raiseError=False):
                 if raiseError:
                     raise error
                 else:
-                    result.append(error)
+                    action_results.append(error)
             else:
-                # in adding the result in function result
-                result.append(action_result)
+                # in adding the action result in action_results
+                action_results.append(action_result)
+
+    result = do_actions, action_results
 
     return result
