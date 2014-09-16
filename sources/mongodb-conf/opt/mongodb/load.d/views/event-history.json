@@ -24,7 +24,7 @@
           ],
           "filters" : [
             {
-              "filter" : "{\"$or\":[{\"component\":{\"$nin\":[\"__canopsis__\"]}}]}",
+              "filter" : "{\"$or\":[{\"$and\":[{\"component\":{\"$ne\":\"__canopsis__\"}},{\"connector_name\":{\"$ne\":\"engine\"}}]}]}",
               "cfilter" : "",
               "title" : "No internal"
             }
@@ -39,7 +39,6 @@
             "status",
             "criticity",
             "ack",
-            "ticket_declared",
             "timestamp",
             "author",
             "event_type"
