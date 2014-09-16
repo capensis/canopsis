@@ -63,7 +63,6 @@
             "status",
             "state",
             "ack",
-            "ticket_declared",
             "timestamp"
           ]
         }
