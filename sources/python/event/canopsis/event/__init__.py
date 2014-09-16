@@ -28,10 +28,11 @@ class Event(object):
     An event contains information and require a type and source_type.
     """
 
-    TYPE = 'type'
-    SOURCE = 'source'
-    DATA = 'data'
-    META = 'meta'
+    TYPE = 'event_type'  #: event type field name
+    SOURCE_TYPE = 'source_type'  #: source type field name
+    SOURCE = 'source'  #: source field name
+    DATA = 'data'  #: data field name
+    META = 'meta'  #: meta field name
 
     __slots__ = (TYPE, SOURCE, DATA, META)
 
@@ -61,5 +62,15 @@ class Event(object):
             source=source,
             data=data,
             meta=meta)
+
+        return result
+
+    @classmethod
+    def get_type(cls):
+        """
+        Get unique event type name
+        """
+
+        result = cls.__name__.lower()
 
         return result

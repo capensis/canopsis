@@ -21,8 +21,8 @@
 """
 Module in charge of defining main topological rule actions.
 
-A topological node has at least the ``propagate`` rule actions and a first one
-which is in charge of changing of state::
+A topological node has at least one of three rule action in charge of changing
+of state::
 
     - ``change_state``: change of state related to an input or event state.
     - ``best_state``: change of state related to the best source node state.
@@ -33,36 +33,10 @@ For logical reasons, the propagate action runned such as the last action.
 
 from canopsis.common.utils import resolve_element
 from canopsis.topology.manager import Topology
-from canopsis.rule import process_rule
+from canopsis.check import Check
+from canopsis.topology.process import SOURCES, NODE
 
 topology = Topology()
-
-SOURCE = 'source'
-SOURCES = 'sources'
-NODE = 'node'
-STATE = 'state'
-RULE = 'rule'
-
-
-def propagate(event, ctx, **kwargs):
-    """
-    Propagate the topology state calculus to next nodes
-    """
-
-    node = ctx[NODE]
-
-    next_nodes = topology.get_next_nodes(node)
-
-    for next_node in next_nodes:
-
-        next_ctx = {
-            SOURCE: node,
-            NODE: next_node
-        }
-
-        # run task with event_to_propagate and ctx
-        rule = next_node[RULE]
-        process_rule(event=event, rule=rule, ctx=next_ctx)
 
 
 def change_state(event, ctx, state=None, **kwargs):
@@ -72,11 +46,11 @@ def change_state(event, ctx, state=None, **kwargs):
 
     # if state is None, use event state
     if state is None:
-        state = event[STATE]
+        state = event[Check.STATE]
 
     # update node state from ctx
     node = ctx[NODE]
-    node[STATE] = state
+    node[Check.STATE] = state
     topology.push_node(node)
 
 
@@ -115,8 +89,8 @@ def change_state_from_source_nodes(event, ctx, f, **kwargs):
         sources = topology.find_source_nodes(node=node)
 
     # calculate the state
-    state = f(source_node[STATE] for source_node in sources)
+    state = f(source_node[Check.STATE] for source_node in sources)
 
     # update the node state
-    node[STATE] = state
+    node[Check.STATE] = state
     topology.push_node(node=node)

@@ -41,8 +41,10 @@ A topology rule use the condition ``new_state``
 
 from canopsis.topology.manager import Topology
 from canopsis.context.manager import Context
+from canopsis.rule import process_rule, RULE
 from canopsis.event import Event
-from canopsis.rule import process_rule
+from canopsis.check import Check
+
 
 context = Context()
 topology = Topology()
@@ -50,8 +52,7 @@ topology = Topology()
 SOURCE = 'source'
 SOURCES = 'sources'
 NODE = 'node'
-STATE = 'state'
-RULE = 'rule'
+PUBLISHER = 'publisher'
 
 
 def event_processing(event, ctx=None, **params):
@@ -61,20 +62,57 @@ def event_processing(event, ctx=None, **params):
     One topology nodes are founded, executing related rules.
     """
 
+    event_type = event[Event.TYPE]
+
+    nodes = []
+
     # TODO: remove when Check event will be used
-    if event['event_type'] == Event.CHECK:
+    # apply processing only in case of check event
+    if event_type == Check.get_type():
 
-        # get nodes
-        entity = context.get_entity(event)
-        entity_id = context.get_entity_id(entity)
-        nodes = topology.find_bound_nodes(entity_id=entity_id)
+        source_type = event[Event.SOURCE_TYPE]
 
-        # iterate on bound nodes
+        # in case of topology node
+        if source_type == Topology.TOPOLOGY_NODE_TYPE:
+             # get nodes from the event topology node id
+            nodes = topology.get_nodes(event[Topology.ID])
+
+        else:  # in case of entity event
+            # get nodes from entity
+            entity = context.get_entity(event)
+            entity_id = context.get_entity_id(entity)
+            nodes = topology.find_bound_nodes(entity_id=entity_id)
+
+        # iterate on nodes
         for node in nodes:
 
-            rule = node[RULE]
+            # add node in the ctx
             ctx = {NODE: node}
 
+            # save old state in order to check for its modification
+            old_state = node[Check.STATE]
+
+            # process rule
+            rule = node[RULE]
             process_rule(event=event, rule=rule, ctx=ctx)
+
+            # propagate the change of state in case of new state
+            if old_state != node[Check.STATE]:
+
+                # get next nodes
+                next_nodes = topology.get_next_nodes(node)
+
+                # send the event_to_propagate to all next_nodes
+                for next_node in next_nodes:
+
+                    # create the event to propagate with source and node ids
+                    event_to_propagate = {
+                        Event.TYPE: Check.get_type(),
+                        Event.SOURCE_TYPE: Topology.TOPOLOGY_NODE_TYPE,
+                        Topology.ID: next_node[Topology.ID],
+                        SOURCE: node[Topology.ID]
+                    }
+
+                    ctx[PUBLISHER].publish(event_to_propagate)
 
     return event
