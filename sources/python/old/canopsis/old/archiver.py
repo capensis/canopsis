@@ -288,6 +288,11 @@ class Archiver(object):
                     change['cancel'] = {}
 
 
+            # keep incident information if status does not reset event
+            if 'ticket_declared' in devent and event['status'] == 0:
+                change['ticket_declared'] = {}
+
+
             for key in event:
                 if key not in exclusion_fields:
                     if key in event and key in devent and devent[key] != event[key]:
