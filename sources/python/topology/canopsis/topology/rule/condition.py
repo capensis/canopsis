@@ -39,17 +39,12 @@ Related rule actions are defined in .condition module.
 """
 
 from canopsis.topology.manager import Topology
-
+from canopsis.topology.process import SOURCES, NODE
+from canopsis.check import Check
 
 from sys import maxint
 
 topology = Topology()
-
-SOURCE = 'source'
-SOURCES = 'sources'
-NODE = 'node'
-STATE = 'state'
-RULE = 'rule'
 
 
 def new_state(event, ctx, state=None, **kwargs):
@@ -62,10 +57,10 @@ def new_state(event, ctx, state=None, **kwargs):
 
     # if state is None, use event state
     if state is None:
-        state = event[STATE]
+        state = event[Check.STATE]
 
     # True if node state is different than state
-    result = node[STATE] != state
+    result = node[Check.STATE] != state
 
     return result
 
@@ -90,7 +85,7 @@ def condition(event, ctx, at_least=1, check_state=None, **kwargs):
 
     for source_node in source_nodes:
 
-        state = source_node[STATE]
+        state = source_node[Check.STATE]
 
         if state == check_state:
             at_least -= 1
@@ -98,6 +93,10 @@ def condition(event, ctx, at_least=1, check_state=None, **kwargs):
             if at_least <= 0:
                 result = True
                 break
+
+    # if result, save source_nodes in ctx in order to save read data from db
+    if result:
+        ctx[SOURCES] = source_nodes
 
     return result
 

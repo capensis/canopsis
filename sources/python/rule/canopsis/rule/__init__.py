@@ -30,6 +30,8 @@ Provides tools to process event rules.
 A rule is a couple of (condition, action) where condition can be None.
 """
 
+RULE = 'rule'
+
 CONDITION_FIELD = 'condition'  #: condition field name in rule conf
 ACTION_FIELD = 'action'  #: actions field name in rule conf
 
