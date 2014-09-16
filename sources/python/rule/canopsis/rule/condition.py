@@ -18,6 +18,10 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
+"""
+Rule condition functions
+"""
+
 from canopsis.rule import get_task_with_params
 
 

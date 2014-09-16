@@ -18,6 +18,10 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
+"""
+Rule action functions
+"""
+
 from canopsis.common.utils import force_iterable
 from canopsis.rule import get_task_with_params, ActionError
 
