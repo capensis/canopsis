@@ -1,8 +1,5 @@
 NAME="nodejs"
 
-LOG="$LOG_PATH/$NAME.log"
-rm -f $LOG &> /dev/null
-
 FCHECK="$PREFIX/bin/node"
 
 function build(){
@@ -15,16 +12,20 @@ function build(){
 
 	cd $BASE
 
-	echo "   + Clean ..."
-	make clean 1>> $LOG 2>> $LOG
+	if [ -e Makefile ]
+	then
+		echo "   + Clean ..."
+		launch_log $NAME "make clean"
+		check_code $?
+	fi
 
 	echo "   + Configure ..."
-	./configure --prefix=$PREFIX 1>> $LOG 2>> $LOG
+	launch_log $NAME "./configure --prefix=$PREFIX"
 	check_code $?
 
 	echo "   + Build ..."
 	rm -Rf build/ &> /dev/null
-	make 1>> $LOG 2>> $LOG
+	launch_log $NAME "make"
 	check_code $?
 }
 
@@ -32,6 +33,6 @@ function install(){
 	BASE="node-v$VERSION"
 	cd $SRC_PATH/externals/$BASE
 
-	make install 1>> $LOG 2>> $LOG
+	launch_log $NAME "make install"
 	check_code $? 'Impossible to install ...'
 }
