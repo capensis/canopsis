@@ -26,7 +26,6 @@
 		},
 		"ticket_declared": {
 			"type": "object",
-			"role": "ticket",
 			"title":"ticket"
 		},
 		"timestamp": {
