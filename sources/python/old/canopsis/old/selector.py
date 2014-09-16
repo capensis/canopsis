@@ -212,6 +212,7 @@ class Selector(Record):
         self.logger.debug(" + result: %s" % result)
 
         states = {}
+        state = -1
         total = 0
         for state in result['result']:
             key = state['_id']['state']
@@ -250,8 +251,10 @@ class Selector(Record):
                 }
         ])
 
-        ack_count = result['result'][0]['count']
-
+        if len(result['result']) and 'count' in result['result']:
+            ack_count = result['result'][0]['count']
+        else:
+            ack_count = -1
         self.logger.debug(" + result for ack : {}".format(result))
 
         return (states, state, ack_count)
@@ -260,6 +263,11 @@ class Selector(Record):
 
         # Get state information form aggregation
         (states, state, ack_count) = self.getState()
+
+        information = None
+        if state == -1 and ack_count == -1:
+            state = 0
+            information = 'No event matched by selector {}'.format(self.display_name)
 
         # Build output
         total = 0
@@ -282,10 +290,9 @@ class Selector(Record):
 
         for i in [0, 1, 2, 3]:
             value = 0
-            try:
+
+            if i in states:
                 value = states[i]
-            except:
-                pass
 
             metric = "cps_sel_state_{}".format(i)
             output = output.replace(self.template_replace[i], str(value))
@@ -297,7 +304,7 @@ class Selector(Record):
             })
             self.logger.info('metric {} : {}'.format(metric, value))
 
-
+        output = information
 
         perf_data_array.append({
             "metric": "cps_sel_total",

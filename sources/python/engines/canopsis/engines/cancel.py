@@ -74,6 +74,7 @@ class engine(Engine):
                     update['ack']['isCancel'] = True
                     #Set alert to cancelled status
                     update['status'] = 4
+                    event['status'] = 4
 
                 # Undo cancel ?
                 elif event['event_type'] == 'uncancel':

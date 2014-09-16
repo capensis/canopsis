@@ -20,21 +20,18 @@
 
 __version__ = "0.1"
 
-from collections import Iterable
-
 from canopsis.common.utils import resolve_element
-from canopsis.common.utils import force_iterable
 
 """
 Event processing rule module.
 
 Provides tools to process event rules.
 
-A rule is a couple of (condition, action+) where condition can be None.
+A rule is a couple of (condition, action) where condition can be None.
 """
 
 CONDITION_FIELD = 'condition'  #: condition field name in rule conf
-ACTIONS_FIELD = 'actions'  #: actions field name in rule conf
+ACTION_FIELD = 'action'  #: actions field name in rule conf
 
 TASK_PARAMS = 'params'  #: task params field name in task conf
 
@@ -79,24 +76,21 @@ def get_task_with_params(task_conf, task_name=None, cached=True):
     :return: tuple of (callable task, task parameters)
     """
 
-    task, params = None, None
+    task, params = None, {}
 
-    # if task_name is not None, find it in task_conf
+    # if task_name is not None, try to find it in task_conf
     if task_name is not None:
 
         # in ensuring than task_conf is a dict
-        if isinstance(task_conf, dict) and task_name in task_conf:
-            task_conf = task_conf[task_name]
-
-        else:  # else raise a Rule error because task_name does not exist
-            raise RuleError(
-                'Task %s is not in task_conf %s' % (task_name, task_conf))
+        if isinstance(task_conf, dict):
+            # if task_name exists in task_conf, get it
+            if task_name in task_conf:
+                task_conf = task_conf[task_name]
 
     # get dedicated callable task without params
     if isinstance(task_conf, str):
         try:
             task = resolve_element(path=task_conf, cached=cached)
-
         except ImportError as ie:
             # Embed importerror in RuleError
             raise RuleError(ie)
@@ -141,77 +135,88 @@ def process_rule(event, rule, ctx=None, cached=True, raiseError=False):
     :type cached: bool
 
     :param bool raiseError: If True (False by default), raise the first error
-        encountered while executing actions.
+        encountered while executing conditions (ConditionError) or actions
+        (ActionError).
 
-    :return: ordered list of rule action results if rule condition is checked.
+    :return: a tuple of (condition, action) results.
     :rtype: list
     """
-
-    result = []
 
     # create a context which will be shared among condition and actions
     if ctx is None:
         ctx = {}
 
     # do actions if a condition may exist (not if rule is an iterable)
-    do_actions = not isinstance(rule, dict)
+    do_actions = not isinstance(rule, dict) or CONDITION_FIELD not in rule
 
     # if a condition may be founded
-    if isinstance(rule, dict):
+    if not do_actions:
 
-        # get condition
-        try:
-            condition_task, params = get_task_with_params(
-                task_conf=rule, task_name=CONDITION_FIELD, cached=cached)
-        except RuleError:
-            # if condition does not exist, do_actions is True
-            do_actions = True
-        else:
-            if params is None:
-                params = {}
-            try:
-                do_actions = condition_task(event=event, ctx=ctx, **params)
-            except Exception as e:
+        do_actions = run_task(
+            event=event,
+            ctx=ctx,
+            task_conf=rule,
+            task_name=CONDITION_FIELD,
+            cached=cached,
+            exception_type=ConditionError,
+            raiseError=raiseError)
 
-                if raiseError:
-                    raise ConditionError(e)
+    action_result = None
 
     # if actions have to be performed
-    if do_actions:
+    if do_actions is True:
 
-        action_confs = rule
+        action_result = run_task(
+            event=event,
+            ctx=ctx,
+            task_conf=rule,
+            task_name=ACTION_FIELD,
+            cached=cached,
+            exception_type=ActionError,
+            raiseError=raiseError)
 
-        # if rule is a dictionary
-        if isinstance(action_confs, dict):
-            # get action_confs
-            action_confs = rule[ACTIONS_FIELD] if ACTIONS_FIELD in rule else ()
+    result = do_actions, action_result
 
-        if isinstance(action_confs, str):
-            action_confs = [action_confs]
+    return result
 
-        # for all action
-        for action_conf in action_confs:
-            # get action_conf task with params
 
-            action_task, params = get_task_with_params(
-                task_conf=action_conf, cached=cached)
+def run_task(
+    event, ctx, task_conf, task_name, raiseError, exception_type, cached
+):
+    """
+    Run a single task related to an event, a ctx, a task_conf, and a task_name.
 
-            # if params is None, params is an empty dict
-            if params is None:
-                params = {}
+    If an error occures, input exception_type is raised.
 
-            # and run action
-            try:
-                action_result = action_task(event=event, ctx=ctx, **params)
-            except Exception as e:
-                error = ActionError(e)
+    :param dict event: event to process.
+    :param dict ctx: task execution context.
+    :param task_conf: task configuration.
+    :type task_conf: str or dict.
+    :param str task_name task name to execute.
+    :param bool raiseError: if True, raise any task error, else result if the
+        raised error.
+    :param type exception_type: exception type to raise if an error occured
+    :param bool cached: use cache memory to save task references from input
+        task name.
+    """
 
-                if raiseError:
-                    raise error
-                else:
-                    result.append(error)
-            else:
-                # in adding the result in function result
-                result.append(action_result)
+    result = None
+
+    try:
+        task, params = get_task_with_params(
+            task_conf=task_conf, task_name=task_name, cached=cached)
+    except RuleError as e:
+        # if action does not exist, do nothing
+        pass
+    else:
+        # initialize params if None
+        try:
+            result = task(
+                event=event, ctx=ctx, raiseError=raiseError, **params)
+        except Exception as e:
+            error = exception_type(e)
+            if raiseError:
+                raise error
+            result = error
 
     return result

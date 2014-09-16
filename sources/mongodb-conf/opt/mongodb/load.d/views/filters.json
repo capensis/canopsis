@@ -12,7 +12,7 @@
     "items": [
       {
         "widget": {
-          "widgetId" : "fake-guid-fd5a-1ede-8ac2-6a1d66ad0020",
+          "id" : "item_13019673-ebdf-6271-e595-6be7338aeb62",
           "item_actions": [
             "actionbutton-edit",
             "actionbutton-show",

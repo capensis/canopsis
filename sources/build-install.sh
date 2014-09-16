@@ -294,7 +294,7 @@ function install_basic_source() {
         check_code $?
 
         echo "-- Extracting files..."
-        tar mxf ../$NAME.tar -C $PREFIX/
+        tar mxhf ../$NAME.tar -C $PREFIX/
         check_code $?
 
         echo "-- Fix permissions"
@@ -324,7 +324,7 @@ function update_basic_source() {
         check_code $?
 
         echo "-- Extracting files..."
-        tar mxf ../$NAME.tar -C $PREFIX/
+        tar mxhf ../$NAME.tar -C $PREFIX/
         check_code $?
 
         echo "-- Fix permissions"
