@@ -56,6 +56,55 @@ class KnownValues(TestCase):
     def test_perfdata(self):
         parser = PerfDataParser(TEST_PERFDATA)
 
+        expected = [
+            {
+                'crit': 5958.0,
+                'max': 5968.0,
+                'metric': '/',
+                'min': 0.0,
+                'unit': 'MB',
+                'value': 2643.0,
+                'warn': 5948.0
+            },{
+                'crit': 93.0,
+                'max': 98.0,
+                'metric': '/boot',
+                'min': 0.0,
+                'unit': 'MB',
+                'value': 68.0,
+                'warn': 88.0
+            },{
+                'crit': 253409.0,
+                'max': 253414.0,
+                'metric': '/home',
+                'min': 0.0,
+                'unit': 'MB',
+                'value': 69357.0,
+                'warn': 253404.0
+            },{
+                'crit': 975.0,
+                'max': 980.0,
+                'metric': '/var/log',
+                'min': 0.0,
+                'unit': 'MB',
+                'value': 818.0,
+                'warn': 970.0
+            }
+        ]
+
+        pflen1 = len(expected)
+        pflen2 = len(parser.perf_data_array)
+
+        self.assertEqual(pflen1, pflen2)
+
+        for i in range(pflen1):
+            expected_perfdata = expected[i]
+            perfdata = parser.perf_data_array[i]
+
+            for key in perfdata:
+                self.assertTrue(key in expected_perfdata)
+                self.assertEqual(expected_perfdata[key], perfdata[key])
+
 
 if __name__ == "__main__":
     main()
