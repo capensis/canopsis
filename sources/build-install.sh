@@ -372,7 +372,15 @@ function extra_deps() {
     then
         bash $DEPS_FILE
     else
-        echo " + Impossible to find dependencies file ($DEPS_FILE)..."
+        VERS=$(echo $DIST_VERS | cut -d. -f1)
+        DEPS_FILE="$SRC_PATH/extra/dependencies/"$DIST"_"$VERS
+
+        if [ -e $DEPS_FILE ]
+        then
+            bash $DEPS_FILE
+        else
+            echo " + Impossible to find dependencies file ($DEPS_FILE)..."
+        fi
     fi
 
     check_code $? "Install extra dependencies failure"
