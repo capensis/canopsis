@@ -22,6 +22,13 @@
           "actions_toolbar": [
             "actionbutton-eventnavigation"
           ],
+          "filters" : [
+            {
+              "filter" : "{\"$or\":[{\"component\":{\"$nin\":[\"__canopsis__\"]}}]}",
+              "cfilter" : "",
+              "title" : "No internal"
+            }
+          ],
           "displayed_columns": [
             "domain",
             "perimeter",
@@ -34,7 +41,8 @@
             "ack",
             "ticket_declared",
             "timestamp",
-            "author"
+            "author",
+            "event_type"
           ]
         }
       }
