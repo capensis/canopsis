@@ -204,8 +204,9 @@ class TestProcessRule(TestCase):
 
         action = self.test_action
 
-        result = process_rule(event=self.event, rule=action, ctx=self.ctx)
+        condition, result = process_rule(event=self.event, rule=action, ctx=self.ctx)
 
+        self.assertTrue(condition)
         self.assertEqual(len(result), 1)
         self.assertEqual(result[0], 1)
 
@@ -213,8 +214,9 @@ class TestProcessRule(TestCase):
 
         action = [self.test_action]
 
-        result = process_rule(event=self.event, rule=action, ctx=self.ctx)
+        condition, result = process_rule(event=self.event, rule=action, ctx=self.ctx)
 
+        self.assertTrue(condition)
         self.assertEqual(len(result), 1)
         self.assertEqual(result[0], 1)
 
@@ -222,8 +224,9 @@ class TestProcessRule(TestCase):
 
         rule = {ACTIONS_FIELD: self.test_action}
 
-        result = process_rule(event=self.event, rule=rule, ctx=self.ctx)
+        condition, result = process_rule(event=self.event, rule=rule, ctx=self.ctx)
 
+        self.assertTrue(condition)
         self.assertEqual(len(result), 1)
         self.assertEqual(result[0], 1)
 
@@ -232,8 +235,9 @@ class TestProcessRule(TestCase):
         actions = (self.test_action,)
         rule = {ACTIONS_FIELD: actions}
 
-        result = process_rule(event=self.event, rule=rule, ctx=self.ctx)
+        condition, result = process_rule(event=self.event, rule=rule, ctx=self.ctx)
 
+        self.assertTrue(condition)
         self.assertEqual(len(result), 1)
         self.assertEqual(result[0], 1)
 
@@ -250,9 +254,9 @@ class TestProcessRule(TestCase):
 
         rule = {CONDITION_FIELD: self.test_condition_false}
 
-        result = process_rule(event=self.event, rule=rule)
+        condition, result = process_rule(event=self.event, rule=rule)
 
-        self.assertFalse(result)
+        self.assertFalse(condition)
 
     def test_condition_true(self):
 
@@ -261,9 +265,10 @@ class TestProcessRule(TestCase):
             ACTIONS_FIELD: self.test_action
         }
 
-        result = process_rule(
+        condition, result = process_rule(
             event=self.event, rule=rule, raiseError=True, ctx=self.ctx)
 
+        self.assertTrue(condition)
         self.assertTrue(result)
         self.assertEqual(result[0], 1)
 
@@ -285,8 +290,10 @@ class TestProcessRule(TestCase):
             ACTIONS_FIELD: self.test_exception
         }
 
-        result = process_rule(event=self.event, rule=rule, ctx=self.ctx)
+        condition, result = process_rule(
+            event=self.event, rule=rule, ctx=self.ctx)
 
+        self.assertTrue(condition)
         self.assertTrue(result)
         self.assertTrue(type(result[0]) is ActionError)
 
@@ -294,8 +301,10 @@ class TestProcessRule(TestCase):
 
         rule = {ACTIONS_FIELD: self.test_wrong_params}
 
-        result = process_rule(event=self.event, rule=rule, ctx=self.ctx)
+        condition, result = process_rule(
+            event=self.event, rule=rule, ctx=self.ctx)
 
+        self.assertTrue(condition)
         self.assertTrue(result)
         self.assertTrue(type(result[0]) is ActionError)
 
