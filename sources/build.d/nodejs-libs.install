@@ -8,14 +8,13 @@ function npm_install(){
 	if [ -d $PREFIX/lib/node_modules/$1 ]; then
 		echo "     + Already install."
 	else
-		su - $HUSER -c "export NODE_PATH=$PREFIX/lib/node_modules && cd $PREFIX/lib/ && npm install $PREFIX/tmp/nodejs-libs/$1-$2.tgz" 1>> $LOG 2>> $LOG
-		check_code $?
+		launch_cmd 1 "export NODE_PATH=$PREFIX/lib/node_modules && cd $PREFIX/lib/ && npm install $PREFIX/tmp/nodejs-libs/$1-$2.tgz"
 	fi
 }
 
 function install(){
 	# Install Package Offline
-	su - $HUSER -c "export NODE_PATH=$PREFIX/lib/node_modules && npm config set proxy http://127.0.0.1:9999"
+	launch_cmd 0 "export NODE_PATH=$PREFIX/lib/node_modules && npm config set proxy http://127.0.0.1:9999"
 	
 	cd $SRC_PATH/externals
 
@@ -25,7 +24,7 @@ function install(){
 	chown -R $HUSER $PREFIX/lib/node_modules
 
 	cp -R $SRC_PATH/externals/nodejs-libs $PREFIX/tmp/
-        check_code $?
+	check_code $?
 
 	# Socket IO
 	npm_install options 0.0.3
@@ -75,6 +74,6 @@ function install(){
 	cd
 
 	rm -R $PREFIX/tmp/nodejs-libs
-        check_code $?
+	check_code $?
 
 }
