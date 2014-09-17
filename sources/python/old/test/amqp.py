@@ -25,7 +25,7 @@ import time
 import json
 import logging
 
-from canopsis.old.rabbit import Amqp
+from canopsis.old.rabbitmq import Amqp
 
 logging.basicConfig(level=logging.DEBUG,
                     format='%(asctime)s %(name)s %(levelname)s %(message)s',

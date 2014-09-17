@@ -21,7 +21,7 @@
 
 from unittest import main, TestCase
 
-from canopsis.statemap import Statemap
+from canopsis.old.statemap import Statemap
 
 
 class KnownValues(TestCase):

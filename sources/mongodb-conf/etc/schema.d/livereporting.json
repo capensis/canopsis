@@ -6,7 +6,7 @@
 	}],
 	"properties": {
 		"dateinterval": {
-			"type": "integer",
+			"type": "object",
 			"role": "dateinterval",
 			"required": true
 		}

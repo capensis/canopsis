@@ -21,7 +21,7 @@
 import unittest
 import json
 
-from canopsis.webservices import Webservices
+from canopsis.old.webservices import Webservices
 
 WS = None
 

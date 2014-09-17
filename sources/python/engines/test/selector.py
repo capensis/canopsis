@@ -27,7 +27,7 @@ from os.path import expanduser
 
 from canopsis.old.storage import get_storage
 from canopsis.old.account import Account
-from canopsis.engine.selector import engine
+from canopsis.engines.selector import engine
 
 path.append(expanduser('~/opt/amqp2engines/engines/'))
 
