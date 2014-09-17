@@ -40,6 +40,22 @@ function install(){
         launch_log $NAME 'python setup.py install'
         check_code $? "Impossible to install $project"
 
+        if [ -e test ]
+        then
+            UNITTESTDIR=$PREFIX/var/lib/canopsis/unittest/$project
+            mkdir -p $UNITTESTDIR
+
+            if [ ! -e $UNITTESTDIR/test ]
+            then
+                ln -s $UNITTESTDIR $UNITTESTDIR/test
+            fi
+
+            cd test
+            tar -c . | tar xh -C $UNITTESTDIR
+            check_code $? "Impossible to copy unittest"
+            cd ..
+        fi
+
         chown $HUSER:$HGROUP -Rf build canopsis.$project.egg-info dist
     done
 
@@ -59,6 +75,22 @@ function update(){
         
         launch_log $NAME "python setup.py install --no-conf"
         check_code $? "Impossible to update $project"
+
+        if [ -e test ]
+        then
+            UNITTESTDIR=$PREFIX/var/lib/canopsis/unittest/$project
+            mkdir -p $UNITTESTDIR
+
+            if [ ! -e $UNITTESTDIR/test ]
+            then
+                ln -s $UNITTESTDIR $UNITTESTDIR/test
+            fi
+
+            cd test
+            tar -c . | tar xh -C $UNITTESTDIR
+            check_code $? "Impossible to copy unittest"
+            cd ..
+        fi
 
         chown $HUSER:$HGROUP -Rf build canopsis.$project.egg-info dist
         update_conffiles ./etc

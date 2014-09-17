@@ -25,7 +25,7 @@ import logging
 
 import time
 
-from canopsis.timer import Timer
+from canopsis.old.timer import Timer
 
 mytimer = None
 

@@ -21,9 +21,9 @@
 
 import unittest
 
-from canopsis.group import Group
-from canopsis.account import Account
-from canopsis.storage import Storage
+from canopsis.old.group import Group
+from canopsis.old.account import Account
+from canopsis.old.storage import Storage
 
 STORAGE = None
 ACCOUNT = None

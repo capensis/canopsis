@@ -21,9 +21,9 @@
 
 import unittest
 
-from canopsis.cache import Cache
-from canopsis.account import Account
-from canopsis.storage import Storage
+from canopsis.old.cache import Cache
+from canopsis.old.account import Account
+from canopsis.old.storage import Storage
 
 import time
 

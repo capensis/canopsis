@@ -28,12 +28,12 @@ logging.basicConfig(level=logging.DEBUG,
                     format='%(asctime)s %(name)s %(levelname)s %(message)s',
                     )
 
-from canopsis.account import Account
-from canopsis.storage import get_storage
-from canopsis.downtime import Downtime
+from canopsis.old.account import Account
+from canopsis.old.storage import get_storage
+from canopsis.old.downtime import Downtime
 
 root_account = Account(user="root", group="root")
-storage = get_storage(account=root_account , namespace='unittest', logging_level=logging.DEBUG)
+storage = get_storage(account=root_account, namespace='unittest', logging_level=logging.DEBUG)
 
 
 class KnownValues(unittest.TestCase):

@@ -23,7 +23,7 @@ from unittest import main
 
 from test.manager.file import ConfigurationManagerTest
 
-from canopsis.configuration.manager.ini import INIConfigurationManager
+from canopsis.configuration.manager.file.ini import INIConfigurationManager
 
 
 class INIConfigurationManagerTest(ConfigurationManagerTest):
