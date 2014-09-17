@@ -24,10 +24,11 @@ from canopsis import schema as cschema
 from os.path import join, expanduser, exists
 from subprocess import Popen, PIPE
 import json
+import sys
 
 
 class CheckRunner(object):
-    commanddir = join(expanduser('~'), 'etc', 'monitoring', 'commands')
+    commanddir = join(sys.prefix, 'etc', 'monitoring', 'commands')
 
     class CheckError(Exception):
         pass
