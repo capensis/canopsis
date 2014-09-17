@@ -122,16 +122,22 @@ class CompositeStorage(Storage):
         :return: shared_id value (generated if None)
         """
 
-        result = uuid() if shared_id is None else shared_id
+        result = str(uuid()) if shared_id is None else shared_id
 
         # get an iterable version of input data
+        #print 'plop', data
         data_to_share = force_iterable(data)
 
         for dts in data_to_share:
             # update extended data if necessary
             if share_extended:
                 path, data_id = self.get_path_with_id(dts)
-                dts = self.get(path=path, data_ids=data_id, shared=True)
+                extended_data = self.get(
+                    path=path, data_ids=data_id, shared=True)
+                # decompose extended data into a list
+                dts = []
+                for ed in extended_data:
+                    dts += ed
             else:
                 dts = [dts]
 
@@ -152,7 +158,7 @@ class CompositeStorage(Storage):
 
         for d in data:
             if CompositeStorage.SHARED in d:
-                d[CompositeStorage.SHARED] = uuid()
+                d[CompositeStorage.SHARED] = str(uuid())
                 path, data_id = self.get_path_with_id(d)
                 self.put(path=path, data_id=data_id, data=d)
 
