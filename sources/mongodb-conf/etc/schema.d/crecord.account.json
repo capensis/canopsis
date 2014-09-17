@@ -1,18 +1,5 @@
 {
 	"type": "object",
-	"categories": [{
-		"title": "General",
-		"keys":["firstname","lastname", "user", "mail"]
-	},{
-		"title": "UI settings",
-		"keys":["authkey", "ui_language"]
-	},{
-		"title": "Role",
-		"keys": ["role"]
-	},{
-		"title": "Rights",
-		"keys": ["rights"]
-	}],
 	"properties": {
 		"crecord_type": {
 			"enum": ["account"],
@@ -20,25 +7,10 @@
 			"default": "account",
 			"icon": "user"
 		},
-		"firstname": {
-			"type": "string"
-		},
-		"lastname": {
-			"type": "string"
-		},
 		"ui_language": {
 			"type": "string",
 			"enum": ["fr", "en"],
 			"role": "simplelist"
-		},
-		"user": {
-			"type": "string",
-			"required": true
-		},
-		"mail": {
-			"type": "string",
-			"required": true,
-			"role": "mail"
 		},
 		"authkey": {
 			"type": "string",
@@ -46,20 +18,23 @@
 			"readOnly": true
 		},
 		"role": {
-			"type": "array",
-			"items": { "type": "object" },
+			"type": "string",
 			"role": "classifiedcrecordselector",
-			"model": "role",
-			"multiselect": true,
-			"required": false
+			"multiselect": false,
+			"crecordtype": "role",
+			"valuekey" : "id",
+		},
+		"contact": {
+			"type": "object",
+			"relationship": "belongsTo",
+			"model": "user"
 		},
 		"rights": {
 			"type": "array",
 			"items": { "type": "object" },
 			"role": "classifiedcrecordselector",
-			"model": "right",
-			"multiselect": true,
-			"required": false
+			"crecordtype": "right",
+			"multiselect": true
 		},
 		"external": {
 			"type": "boolean",
