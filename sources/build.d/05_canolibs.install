@@ -1,8 +1,5 @@
 NAME="canolibs"
 
-LOG="$LOG_PATH/$NAME.log"
-rm -f $LOG &> /dev/null
-
 PROJECTS[0]='common'
 PROJECTS[1]='configuration'
 PROJECTS[2]='timeserie'
@@ -39,12 +36,17 @@ function install(){
         echo "-- Install project: $project"
         export CPS_PREFIX="$PREFIX/etc/"
         cd $SRC_PATH/python/$project
-        python setup.py install >> $LOG 2>&1 || exit 1
-        chown canopsis:canopsis -Rf build canopsis.$project.egg-info dist
+
+        launch_log $NAME 'python setup.py install'
+        check_code $? "Impossible to install $project"
+
+        chown $HUSER:$HGROUP -Rf build canopsis.$project.egg-info dist
     done
 
+    install_init "canopsis"
+
     # TODO when fabric will be available
-    # fab -H localhost -u canopsis -p canopsis setup 1>> $LOG 2>> $LOG
+    # launch_log $NAME fab -H localhost -u $HUSER -p canopsis setup
 }
 
 function update(){
@@ -54,8 +56,13 @@ function update(){
         echo "-- Update project: $project"
         export CPS_PREFIX="$PREFIX/etc/"
         cd $SRC_PATH/python/$project
-        python setup.py install --no-conf >> $LOG 2>&1 || exit 1
-        chown canopsis:canopsis -Rf build canopsis.$project.egg-info dist
+        
+        launch_log $NAME "python setup.py install --no-conf"
+        check_code $? "Impossible to update $project"
+
+        chown $HUSER:$HGROUP -Rf build canopsis.$project.egg-info dist
         update_conffiles ./etc
     done
+
+    install_init "canopsis"
 }

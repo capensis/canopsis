@@ -24,6 +24,7 @@ from os import walk, getenv
 from os.path import join, dirname, expanduser, abspath, basename, exists
 
 from sys import path, argv
+from sys import prefix as sys_prefix
 
 from canopsis.common.utils import resolve_element
 
@@ -97,7 +98,7 @@ def setup(description, keywords, add_etc=True, **kwargs):
 
             if exists(etc_path):
                 data_files = kwargs.get('data_files', [])
-                target = getenv('CPS_PREFIX', '/opt/canopsis/etc/')
+                target = getenv('CPS_PREFIX', join(sys_prefix, 'etc'))
 
                 for root, dirs, files in walk(etc_path):
                     files_to_copy = [join(root, _file) for _file in files]

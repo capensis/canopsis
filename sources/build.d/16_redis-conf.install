@@ -1,8 +1,5 @@
 NAME="redis-conf"
 
-LOG="$LOG_PATH/$NAME.log"
-rm -f $LOG &> /dev/null
-
 function build(){
 	true
 }

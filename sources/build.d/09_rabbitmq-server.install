@@ -1,8 +1,5 @@
 NAME="rabbitmq-server"
 
-LOG="$LOG_PATH/$BASE.log"
-rm -f $LOG &> /dev/null
-
 function build(){
 	true
 }

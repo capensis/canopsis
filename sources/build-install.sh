@@ -56,12 +56,29 @@ MESSAGES="$SRC_PATH/build_messages.txt"
 echo "" > $MESSAGES
 
 mkdir -p $LOG_PATH
+rm -rf $LOG_PATH/*.log >/dev/null 2>&1
+
+LOGSTDOUT=0
 
 # Functions
 
 function add_message() {
     echo $@
     echo $@ >> $MESSAGES
+}
+
+function launch_log() {
+    NAME=$1
+    CMD=$2
+
+    LOG=$LOG_PATH/$NAME.log
+
+    if [ $LOGSTDOUT -eq 1 ]
+    then
+        eval $CMD
+    else
+        eval $CMD >>$LOG 2>&1
+    fi
 }
 
 function pkg_options() {
@@ -355,7 +372,15 @@ function extra_deps() {
     then
         bash $DEPS_FILE
     else
-        echo " + Impossible to find dependencies file ($DEPS_FILE)..."
+        VERS=$(echo $DIST_VERS | cut -d. -f1)
+        DEPS_FILE="$SRC_PATH/extra/dependencies/"$DIST"_"$VERS
+
+        if [ -e $DEPS_FILE ]
+        then
+            bash $DEPS_FILE
+        else
+            echo " + Impossible to find dependencies file ($DEPS_FILE)..."
+        fi
     fi
 
     check_code $? "Install extra dependencies failure"
@@ -429,8 +454,9 @@ OPT_WUT=0
 OPT_MPKG=0
 OPT_DCD=0
 OPT_MINSTALLER=0
+OPT_LOGFILE=1
 
-while getopts "cnupdhi" opt
+while getopts "cnupdhil" opt
 do
     case $opt in
         c) OPT_CLEAN=1 ;;
@@ -438,6 +464,7 @@ do
         u) OPT_WUT=1 ;;
         p) OPT_MPKG=1 ;;
         i) OPT_MINSTALLER=1; OPT_BUILD=0;;
+        l) OPT_LOGFILE=0;;
         d) OPT_DCD=1;;
         h) show_help ;;
         \?)
@@ -455,6 +482,11 @@ then
     then
         exit 0
     fi
+fi
+
+if [ $OPT_LOGFILE -eq 0 ]
+then
+    LOGSTDOUT=1
 fi
 
 # Init submodules
@@ -673,17 +705,17 @@ then
 
                 mkdir -pv $PPATH/$NAME 2> $LOG 1> $LOG
 
-                tar cvfj $PPATH/$NAME/files.bz2 -T $VARLIB_PATH/$NAME.files 2> $LOG 1> $LOG
+                launch_log $NAME tar cvfj $PPATH/$NAME/files.bz2 -T $VARLIB_PATH/$NAME.files
                 check_code $? "files.bz2 generation failed"
 
-                cp -v $VARLIB_PATH/$NAME.files $PPATH/$NAME/files.lst 2> $LOG 1> $LOG
+                launch_log $NAME cp -v $VARLIB_PATH/$NAME.files $PPATH/$NAME/files.lst
                 check_code $? "files.lst generation failed"
 
-                cp -v $SRC_PATH/packages/$NAME/control $SRC_PATH/packages/$NAME/blacklist $PPATH/$NAME 2> $LOG 1> $LOG
+                launch_log $NAME cp -v $SRC_PATH/packages/$NAME/control $SRC_PATH/packages/$NAME/blacklist $PPATH/$NAME
                 check_code $? "control/blacklist generation failed"
 
                 cd $PPATH
-                tar cvf $NAME.tar $NAME 2> $LOG 1> $LOG
+                launch_log $NAME tar cvf $NAME.tar $NAME
                 check_code $? "packaging failed"
 
                 rm -rf $PPATH/$NAME >/dev/null 2>&1
