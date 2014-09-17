@@ -49,7 +49,7 @@
       }
     ],
     "widgetslotTemplate": null,
-    "xtype": "vbox",
+    "xtype": "verticalbox",
     "title": "container title vbox"
   },
   "aaa_access_owner": [
