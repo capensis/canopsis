@@ -2,14 +2,14 @@
     "type": "object",
     "categories": [{
         "title": "General",
-        "keys": ["server", "service"]
+        "keys": ["title", "server", "service"]
     }],
     "properties": {
-        "crecord_type": {
-            "enum": ["casconfig"],
-            "required": true
+        "title": {
+            "type": "string",
+            "required": true,
+            "description": "Login with CAS"
         },
-
         "server": {
             "type": "string",
             "required": true
