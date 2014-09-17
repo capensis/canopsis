@@ -65,14 +65,14 @@ def new_state(event, ctx, state=None, **kwargs):
     return result
 
 
-def condition(event, ctx, at_least=1, check_state=None, **kwargs):
+def condition(event, ctx, at_least=1, state=None, **kwargs):
     """
     Generic condition applied on sources of ctx node
 
     :param dict event: event which has fired this condition
     :param dict ctx: rule context which must contain rule node
     :param int at_least:
-    :param int check_state: state to check among sources nodes
+    :param int state: state to check among sources nodes
     """
 
     node = ctx[NODE]
@@ -85,9 +85,9 @@ def condition(event, ctx, at_least=1, check_state=None, **kwargs):
 
     for source_node in source_nodes:
 
-        state = source_node[Check.STATE]
+        source_node_state = source_node[Check.STATE]
 
-        if state == check_state:
+        if source_node_state == state:
             at_least -= 1
 
             if at_least <= 0:
@@ -101,7 +101,7 @@ def condition(event, ctx, at_least=1, check_state=None, **kwargs):
     return result
 
 
-def all(event, ctx, check_state, **kwargs):
+def all(event, ctx, state, **kwargs):
     """
     Check if all source nodes match with input check_state
     """
@@ -109,14 +109,14 @@ def all(event, ctx, check_state, **kwargs):
     result = condition(
         event=event,
         ctx=ctx,
-        check_state=check_state,
+        state=state,
         at_least=maxint,
         **kwargs)
 
     return result
 
 
-def any(event, ctx, check_state, **kwargs):
+def any(event, ctx, state, **kwargs):
     """
     Check if all source nodes match with input check_state
     """
@@ -125,7 +125,7 @@ def any(event, ctx, check_state, **kwargs):
         event=event,
         ctx=ctx,
         at_least=1,
-        check_state=check_state,
+        state=state,
         **kwargs)
 
     return result
