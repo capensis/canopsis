@@ -48,7 +48,7 @@ class CASBackend(BaseBackend):
 
     def get_config(self):
         try:
-            record = self.storage.get('cas.config')
+            record = self.storage.get('cservice.casconfig')
             return record.dump()
 
         except KeyError:

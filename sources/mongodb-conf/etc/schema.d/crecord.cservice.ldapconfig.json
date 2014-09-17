@@ -8,11 +8,6 @@
         "keys": ["firstname", "lastname", "mail"]
     }],
     "properties": {
-        "crecord_type": {
-            "enum": ["ldapconfig"],
-            "required": true
-        },
-
         "uri": {
             "type": "string",
             "required": true,

@@ -38,7 +38,7 @@ class LDAPBackend(BaseBackend):
 
     def get_config(self):
         try:
-            record = self.storage.get('ldap.config')
+            record = self.storage.get('cservice.ldapconfig')
             return record.dump()
 
         except KeyError:
