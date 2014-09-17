@@ -1,9 +1,5 @@
 NAME="mongodb"
 
-LOG="$LOG_PATH/$BASE.log"
-rm -f $LOG &> /dev/null
-
-
 function build(){
 	launch_cmd 0 service mongodb stop
 

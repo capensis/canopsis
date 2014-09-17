@@ -1,21 +1,16 @@
 #!/bin/bash
 
-SRC_PATH=`pwd`
-if [ -e ~/lib/common.sh ]; then
+if [ -e ~/lib/common.sh ]
+then
     . ~/lib/common.sh
 else
-    echo "Impossible to find common's lib ..."
+    echo "Impossible to find common's lib"
     exit 1
 fi
 
-export HOME=$PREFIX
-#export GUNICORN_WORKER=1
+hypcontrol restart
 
-hypcontrol stop
-hypcontrol start
-sleep 1
-
-    
+echo -n "Wait for RabbitMQ server "
 STATE=0
 TRY=0
 while [ $STATE -eq 0 ]
@@ -34,20 +29,28 @@ echo
 
 if [ $STATE -eq 0 ]
 then
-    check_code 1 "Failed to test rabbit service ..."
+    check_code 1 "Failed to test RabbitMQ service ..."
 fi
-sleep 1
 
-cd $HOME
+mkdir -p $HOME/var/log/unittest
 
-mkdir -p var/log/unittest
+UNITTESTDIR="$HOME/var/lib/canopsis/unittest"
 
-UNITTESTS=`find ./ | grep Myunittest.py`
+UNITTESTS=`find $UNITTESTDIR -name "*.py" | grep -v "__init__.py"`
 UNITTESTS="$UNITTESTS $HOME/bin/functional-test.py"
 
-for UNITTEST in $UNITTESTS; do
-    echo -n "- Proceed to $UNITTEST... " 
-    python $UNITTEST > var/log/unittest/$(basename ${UNITTEST%-Myunittest.py}).log 2>&1
+for UNITTEST in $UNITTESTS
+do
+    TESTNAME=${UNITTEST#$UNITTESTDIR}
+
+    LOGDIR=$HOME/var/log/unittest/$(dirname $TESTNAME})
+    LOGFILE=$HOME/var/log/unittest/${TESTNAME%.py}.log
+    mkdir -p $LOGDIR
+
+    PYPATH=$UNITTESTDIR/$(echo $TESTNAME | cut -d/ -f2)
+
+    echo -n "- Proceed to $TESTNAME... " 
+    PYTHONPATH="$PYPATH:$PYTHONPATH" python $UNITTEST > $LOGFILE 2>&1
     EXCODE=$?
 
     if [ $EXCODE -eq 0 ]

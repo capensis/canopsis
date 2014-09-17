@@ -51,8 +51,6 @@ class MongoCompositeStorage(MongoStorage, CompositeStorage):
 
         result = []
 
-        ids = None
-
         # create a get query which is a copy of input path plus _filter
         query = path.copy()
         if _filter is not None:
@@ -63,18 +61,15 @@ class MongoCompositeStorage(MongoStorage, CompositeStorage):
 
             # add absolute pathes into ids
             if isiterable(data_ids, is_str=False):
-                for data_id in data_ids:
-                    _id = self.get_absolute_path(path=path, data_id=data_id)
-                    ids.append(_id)
+                query[Storage.DATA_ID] = {"$in": data_ids}
             else:
-                ids = self.get_absolute_path(path=path, data_id=data_ids)
+                query[Storage.DATA_ID] = data_ids
 
         # get elements
-        result = self.get_elements(
-            ids=ids, query=query, limit=limit, skip=skip, sort=sort)
+        result = self.find_elements(
+            query=query, limit=limit, skip=skip, sort=sort)
 
         if result is not None and shared:
-
             # if result is one value
             if isinstance(result, dict):
                 # if result is shared
@@ -96,7 +91,7 @@ class MongoCompositeStorage(MongoStorage, CompositeStorage):
                     # if data is shared, get shared data
                     if CompositeStorage.SHARED in data:
                         shared_id = data[CompositeStorage.SHARED]
-                        data = self.get_shared_data(shared_id=shared_id)
+                        data = self.get_shared_data(shared_ids=shared_id)
                     # append data in result
                     result.append(data)
 

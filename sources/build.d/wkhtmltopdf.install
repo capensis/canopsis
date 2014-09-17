@@ -1,9 +1,5 @@
 NAME="wkhtmltopdf"
 
-LOG="$LOG_PATH/$BASE.log"
-rm -f $LOG &> /dev/null
-
-
 function build(){
 	true
 }
@@ -11,7 +7,7 @@ function build(){
 function install(){
     BASE="wkhtmltopdf-$VERSION-static-$ARCH"
 	cd $PREFIX/bin
-	tar xfj $SRC_PATH/externals/$BASE.tar.bz2
+	tar xfhj $SRC_PATH/externals/$BASE.tar.bz2
 	ln -s wkhtmltopdf-* wkhtmltopdf
 	check_code $? 
 }

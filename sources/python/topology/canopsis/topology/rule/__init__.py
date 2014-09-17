@@ -1,7 +1,6 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #--------------------------------
-# Copyright (c) 2014 "Capensis" [http://www.capensis.com]
+# Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
 #
@@ -18,16 +17,3 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
-
-from unittest import TestCase, main
-
-from canopsis.organisation.manager import Organisation
-
-
-class OrganisationTest(TestCase):
-
-    def setUp(self):
-        self.organisation = Organisation()
-
-if __name__ == '__main__':
-    main()

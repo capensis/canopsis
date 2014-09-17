@@ -192,8 +192,9 @@ class Watcher(Configurable):
             self._timer.cancel()
 
 
-_WATCHER = Watcher()
-_WATCHER.apply_configuration()
+# To execute once the watcher will be ready
+#_WATCHER = Watcher()
+#_WATCHER.apply_configuration()
 
 
 def start_watch():

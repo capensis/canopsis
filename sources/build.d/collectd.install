@@ -1,8 +1,5 @@
 NAME="collectd"
 
-LOG="$LOG_PATH/$NAME.log"
-rm -f $LOG &> /dev/null
-
 function build(){
 	BASE="$NAME-$VERSION"
 	cd $SRC_PATH/externals
@@ -20,17 +17,20 @@ function build(){
 	    patch -Np2 < $PATCH_FILE
 	}
 
-	echo "   + Clean ..."
-	make clean 1>> $LOG 2>> $LOG
-	#check_code $?
+	if [ -e Makefile ]
+	then
+		echo "   + Clean ..."
+		launch_log $NAME "make clean"
+		check_code $?
+	fi
 
 	echo "   + Configure ..."
-	./configure --prefix=$PREFIX --sbindir=$PREFIX/bin --enable-python --enable-amqp --with-python=$PREFIX/bin/python --with-librabbitmq=$PREFIX 1>> $LOG 2>> $LOG
+	launch_log $NAME "./configure --prefix=$PREFIX --sbindir=$PREFIX/bin --enable-python --enable-amqp --with-python=$PREFIX/bin/python --with-librabbitmq=$PREFIX"
 	check_code $?
 
 	echo "   + Build ..."
 	rm -Rf build/ &> /dev/null
-	make 1>> $LOG 2>> $LOG
+	launch_log $NAME "make"
 	check_code $?
 }
 
@@ -38,7 +38,7 @@ function install(){
 	BASE="$NAME-$VERSION"
 	cd $SRC_PATH/externals/$BASE
 
-	make install 1>> $LOG 2>> $LOG
+	launch_log $NAME "make install"
 	check_code $? 'Impossible to install ...'
 
 	# Clean

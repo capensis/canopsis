@@ -44,6 +44,11 @@
 			"type": "integer",
 			"required": true,
 			"default": 1
+		},
+		"run_once": {
+			"type": "boolean",
+			"default": false,
+			"title": "is loaded"
 		}
 	}
 }

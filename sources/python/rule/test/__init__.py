@@ -22,34 +22,34 @@
 from unittest import TestCase, main
 
 from canopsis.rule import (
-    CONDITION_FIELD, ACTIONS_FIELD, TASK_PATH, TASK_PARAMS, RuleError,
+    CONDITION_FIELD, ACTION_FIELD, TASK_PATH, TASK_PARAMS, RuleError,
     ConditionError, ActionError, get_task_with_params, process_rule)
 from canopsis.common.utils import path
 
 
-def test_condition_true(event, ctx):
+def test_condition_true(event, ctx, **kwargs):
     return True
 
 
-def test_condition_false(event, ctx):
+def test_condition_false(event, ctx, **kwargs):
     return False
 
 
 MESSAGE = 'message'
 
 
-def test_exception(event, ctx):
+def test_exception(event, ctx, **kwargs):
     raise Exception()
 
 COUNT = 'count'
 
 
-def test_condition_count(event, ctx):
+def test_condition_count(event, ctx, **kwargs):
     ctx[COUNT] = 0
     return True
 
 
-def test_action(event, ctx):
+def test_action(event, ctx, **kwargs):
     ctx[COUNT] += 1
     return ctx[COUNT]
 
@@ -106,7 +106,7 @@ class GetTaskWithParamsTest(TestCase):
 
         task, params = get_task_with_params(task_conf=task_conf)
 
-        self.assertEqual((task, params), (get_task_with_params, None))
+        self.assertEqual((task, params), (get_task_with_params, {}))
 
     def test_task_from_dict(self):
 
@@ -114,7 +114,7 @@ class GetTaskWithParamsTest(TestCase):
 
         task, params = get_task_with_params(task_conf=task_conf)
 
-        self.assertEqual((task, params), (get_task_with_params, None))
+        self.assertEqual((task, params), (get_task_with_params, {}))
 
     def test_task_from_dict_with_task_name(self):
 
@@ -125,7 +125,7 @@ class GetTaskWithParamsTest(TestCase):
         task, params = get_task_with_params(
             task_conf=task_conf, task_name=task_name)
 
-        self.assertEqual((task, params), (get_task_with_params, None))
+        self.assertEqual((task, params), (get_task_with_params, {}))
 
     def test_task_from_dict_with_task_name_and_dict(self):
 
@@ -136,7 +136,7 @@ class GetTaskWithParamsTest(TestCase):
         task, params = get_task_with_params(
             task_conf=task_conf, task_name=task_name)
 
-        self.assertEqual((task, params), (get_task_with_params, None))
+        self.assertEqual((task, params), (get_task_with_params, {}))
 
     def test_task_from_dict_with_params(self):
 
@@ -204,38 +204,52 @@ class TestProcessRule(TestCase):
 
         action = self.test_action
 
-        result = process_rule(event=self.event, rule=action, ctx=self.ctx)
+        condition, result = process_rule(
+            event=self.event, rule=action, ctx=self.ctx)
 
-        self.assertEqual(len(result), 1)
-        self.assertEqual(result[0], 1)
+        self.assertTrue(condition)
+        self.assertEqual(result, 1)
 
     def test_actions(self):
 
-        action = [self.test_action]
+        action = {
+            TASK_PATH: 'canopsis.rule.action.actions',
+            TASK_PARAMS: {
+                'actions': self.test_action
+            }
+        }
 
-        result = process_rule(event=self.event, rule=action, ctx=self.ctx)
+        condition, result = process_rule(
+            event=self.event, rule=action, ctx=self.ctx)
 
-        self.assertEqual(len(result), 1)
-        self.assertEqual(result[0], 1)
+        self.assertTrue(condition)
+        self.assertEqual(result, [1])
 
     def test_no_condition_action(self):
 
-        rule = {ACTIONS_FIELD: self.test_action}
+        rule = {ACTION_FIELD: self.test_action}
 
-        result = process_rule(event=self.event, rule=rule, ctx=self.ctx)
+        condition, result = process_rule(
+            event=self.event, rule=rule, ctx=self.ctx)
 
-        self.assertEqual(len(result), 1)
-        self.assertEqual(result[0], 1)
+        self.assertTrue(condition)
+        self.assertEqual(result, 1)
 
     def test_no_condition_actions(self):
 
-        actions = (self.test_action,)
-        rule = {ACTIONS_FIELD: actions}
+        action = {
+            TASK_PATH: 'canopsis.rule.action.actions',
+            TASK_PARAMS: {
+                'actions': self.test_action
+            }
+        }
+        rule = {ACTION_FIELD: action}
 
-        result = process_rule(event=self.event, rule=rule, ctx=self.ctx)
+        condition, result = process_rule(
+            event=self.event, rule=rule, ctx=self.ctx)
 
-        self.assertEqual(len(result), 1)
-        self.assertEqual(result[0], 1)
+        self.assertTrue(condition)
+        self.assertEqual(result, [1])
 
     def test_condition_error(self):
 
@@ -250,27 +264,27 @@ class TestProcessRule(TestCase):
 
         rule = {CONDITION_FIELD: self.test_condition_false}
 
-        result = process_rule(event=self.event, rule=rule)
+        condition, result = process_rule(event=self.event, rule=rule)
 
-        self.assertFalse(result)
+        self.assertFalse(condition)
 
     def test_condition_true(self):
 
         rule = {
             CONDITION_FIELD: self.test_condition_true,
-            ACTIONS_FIELD: self.test_action
+            ACTION_FIELD: self.test_action
         }
 
-        result = process_rule(
+        condition, result = process_rule(
             event=self.event, rule=rule, raiseError=True, ctx=self.ctx)
 
-        self.assertTrue(result)
-        self.assertEqual(result[0], 1)
+        self.assertTrue(condition)
+        self.assertEqual(result, 1)
 
     def test_action_error(self):
 
         rule = {
-            ACTIONS_FIELD: self.test_exception
+            ACTION_FIELD: self.test_exception
         }
 
         self.assertRaises(
@@ -282,22 +296,24 @@ class TestProcessRule(TestCase):
     def test_action_error_noraiseError(self):
 
         rule = {
-            ACTIONS_FIELD: self.test_exception
+            ACTION_FIELD: self.test_exception
         }
 
-        result = process_rule(event=self.event, rule=rule, ctx=self.ctx)
+        condition, result = process_rule(
+            event=self.event, rule=rule, ctx=self.ctx)
 
-        self.assertTrue(result)
-        self.assertTrue(type(result[0]) is ActionError)
+        self.assertTrue(condition)
+        self.assertTrue(type(result) is ActionError)
 
     def test_wrong_parameters(self):
 
-        rule = {ACTIONS_FIELD: self.test_wrong_params}
+        rule = {ACTION_FIELD: self.test_wrong_params}
 
-        result = process_rule(event=self.event, rule=rule, ctx=self.ctx)
+        condition, result = process_rule(
+            event=self.event, rule=rule, ctx=self.ctx)
 
-        self.assertTrue(result)
-        self.assertTrue(type(result[0]) is ActionError)
+        self.assertTrue(condition)
+        self.assertTrue(type(result) is ActionError)
 
 if __name__ == '__main__':
     main()

@@ -21,10 +21,10 @@
 
 from unittest import TestCase, main
 
-from canopsis.storage import Storage
-from canopsis.record import Record
-from canopsis.account import Account
-from canopsis.group import Group
+from canopsis.old.storage import Storage
+from canopsis.old.record import Record
+from canopsis.old.account import Account
+from canopsis.old.group import Group
 
 from logging import DEBUG, basicConfig
 

@@ -83,7 +83,6 @@ class Archiver(object):
 
 
     def check_bagot(self, event, devent):
-        log = 'Status is set to {} for event %s' % event['rk']
 
         # flowchart 6 7
         if self.is_bagot(event):
@@ -111,7 +110,7 @@ class Archiver(object):
 
 
     def set_status(self, event, status):
-        log = 'Status is set to {} for event %s' % event['rk']
+        log = 'Status is set to {} for event {}'.format(event['rk'])
         values = {
             0: {'freq': event['bagot_freq'],
                 'name': 'Off'
@@ -286,6 +285,11 @@ class Archiver(object):
                     change['cancel'] = devent['cancel']
                 else:
                     change['cancel'] = {}
+
+
+            # keep incident information if status does not reset event
+            if 'ticket_declared' in devent and event['status'] == 0:
+                change['ticket_declared'] = {}
 
 
             for key in event:

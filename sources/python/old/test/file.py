@@ -23,11 +23,12 @@ import unittest
 
 from logging import basicConfig, DEBUG
 
-from canopsis.file import File, get_cfile
-from canopsis.account import Account
-from canopsis.storage import get_storage
+from canopsis.old.file import File, get_cfile
+from canopsis.old.account import Account
+from canopsis.old.storage import get_storage
 
 from gridfs.errors import NoFile
+import os
 
 basicConfig(format='%(asctime)s %(name)s %(levelname)s %(message)s')
 
@@ -37,8 +38,10 @@ root_account = Account(user="root", group="root")
 storage = get_storage(
     account=root_account, namespace='unittest', logging_level=DEBUG)
 
-sample_file_path = '/opt/canopsis/var/www/canopsis/themes/canopsis/resources/images/logo_small.png'
-sample_binary = open(sample_file_path, 'rb').read()
+sample_file_path = '~/var/www/canopsis/themes/canopsis/resources/images/logo_small.png'
+
+with open(os.path.expanduser(sample_file_path), 'rb') as f:
+    sample_binary = f.read()
 
 sample_binary2 = bin(1234567890123456789)
 

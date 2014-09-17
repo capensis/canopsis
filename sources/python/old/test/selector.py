@@ -22,7 +22,7 @@
 import unittest
 import time
 
-from canopsis.selector import Selector
+from canopsis.old.selector import Selector
 #from Selector import cselector_get, cselector_getall
 import logging
 
@@ -30,9 +30,9 @@ logging.basicConfig(level=logging.DEBUG,
                     format='%(asctime)s %(name)s %(levelname)s %(message)s',
                     )
 
-from canopsis.record import Record
-from canopsis.account import Account
-from canopsis.storage import get_storage
+from canopsis.old.record import Record
+from canopsis.old.account import Account
+from canopsis.old.storage import get_storage
 
 root_account = Account(user="root", group="root")
 storage = get_storage(

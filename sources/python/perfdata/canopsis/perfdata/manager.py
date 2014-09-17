@@ -22,7 +22,7 @@ from re import compile as re_compile
 
 from time import time
 
-from canopsis.tools.nagios import PerfDataParser
+from canopsis.monitoring.parser import PerfDataParser
 from canopsis.common.utils import force_iterable
 from canopsis.configuration import add_category, conf_paths
 from canopsis.timeserie.timewindow import Period, get_offset_timewindow

@@ -245,11 +245,12 @@ class engine(Engine):
 
         self.logger.debug('Reload configuration rules')
         try:
-            records = self.storage.find({'crecord_type': 'filter'},
+            records = self.storage.find({'crecord_type': 'filter', 'enable': True},
                             sort='priority')
 
             for record in records:
                 record_dump = record.dump()
+                self.set_loaded(record_dump)
                 record_dump["mfilter"] = literal_eval(record_dump["mfilter"])
                 self.logger.debug('Loading record_dump:')
                 self.logger.debug(record_dump)
@@ -259,6 +260,13 @@ class engine(Engine):
 
         except Exception as e:
             self.logger.warning(str(e))
+
+
+    def set_loaded(self, record):
+        if 'run_once' in record and not record['run_once']:
+            self.storage.update(record['_id'], {'run_once': True})
+            self.logger.info('record {} has been run once'.format(record['_id']))
+
 
     def send_stat_event(self):
         """ Send AMQP Event for drop and pass metrics """

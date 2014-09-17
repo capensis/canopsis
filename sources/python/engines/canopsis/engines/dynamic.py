@@ -35,11 +35,11 @@ class DynamicEngine(Engine, Configurable):
     Engine which is able to load dynamically its event processing through
     configuration properties.
 
-    :var str task: event processing task path.
-    :var dict params: event processing task parameters.
+    :var str event_processing: event processing event_processing path.
+    :var dict params: event processing event_processing parameters.
     """
 
-    TASK = 'task'  #: task field name
+    EVENT_PROCESSING = 'event_processing'  #: event_processing field name
     PARAMS = 'params'  #: params field name
 
     NEXT_AMQP_QUEUES = 'next_amqp_queues'
@@ -52,7 +52,7 @@ class DynamicEngine(Engine, Configurable):
 
     def __init__(
         self,
-        task=None,
+        event_processing=None,
         params=None,
         *args,
         **kwargs
@@ -60,24 +60,24 @@ class DynamicEngine(Engine, Configurable):
 
         super(DynamicEngine, self).__init__(*args, **kwargs)
 
-        self.task = task
+        self.event_processing = event_processing
         self.params = params
 
     @property
-    def task(self):
+    def event_processing(self):
         """
-        Event processing task executed in the work
+        Event processing event_processing executed in the work
         """
 
-        return self._task
+        return self._event_processing
 
-    @task.setter
-    def task(self, value):
+    @event_processing.setter
+    def event_processing(self, value):
         """
-        Change of task.
+        Change of event_processing.
 
-        :param value: new task to use. If None or wrong value, event_processing
-         is used
+        :param value: new event_processing to use. If None or wrong value,
+            event_processing is used
         :type value: NoneType, str or function
         """
 
@@ -92,13 +92,13 @@ class DynamicEngine(Engine, Configurable):
                 self.logger.error('Impossible to load %s' % value)
                 value = event_processing
 
-        # set _task and work
-        self._task = self.work = value
+        # set _event_processing and work
+        self._event_processing = self.work = value
 
     @property
     def params(self):
         """
-        Event processing task parameters dictionary
+        Event processing event_processing parameters dictionary
         """
 
         result = {} if self._params is None else self._params
@@ -124,7 +124,7 @@ class DynamicEngine(Engine, Configurable):
         result = super(DynamicEngine, self)._conf(*args, **kwargs)
 
         result.add_unified_category(CATEGORY,
-            Parameter(DynamicEngine.TASK, self.task),
+            Parameter(DynamicEngine.EVENT_PROCESSING, self.event_processing),
             Parameter(DynamicEngine.PARAMS, self.params, eval),
             Parameter(DynamicEngine.NEXT_AMQP_QUEUES, self.next_amqp_queues),
             Parameter(DynamicEngine.NEXT_BALANCED, self.next_balanced),
@@ -142,7 +142,7 @@ class DynamicEngine(Engine, Configurable):
             unified_conf=unified_conf, *args, **kwargs)
 
         params = [
-            DynamicEngine.TASK,
+            DynamicEngine.EVENT_PROCESSING,
             DynamicEngine.PARAMS,
             DynamicEngine.NEXT_BALANCED,
             DynamicEngine.NEXT_AMQP_QUEUES,

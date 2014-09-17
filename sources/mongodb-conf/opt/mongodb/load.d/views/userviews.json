@@ -12,6 +12,7 @@
         "title": "wrapper",
         "xtype": "widgetwrapper",
         "widget": {
+          "id" : "item_13019673-ebdf-6271-e595-6be7338aeb63",
           "itemsPerPage": 5,
           "xtype": "list",
           "listed_crecord_type": "userview",
