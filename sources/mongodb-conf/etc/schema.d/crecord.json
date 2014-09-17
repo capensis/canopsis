@@ -1,14 +1,45 @@
 {
 	"type": "object",
 	"properties": {
-		"crecord_type": {"type": "string", "optiontest": "test", "required": true , "role": "crecord-type"},
-		"crecord_write_time": {"type": "integer", "required": true , "role": "timestamp" , "hideDate": true, "canDisplayAgo" : true, "format": "r"},
-		"crecord_creation_time": {"type": "integer", "required": true ,  "role": "timestamp" , "hideDate": true, "canDisplayAgo" : true, "format": "r"},
-		"crecord_name": {"type": "string", "required": true},
+		"crecord_type": {
+			"type": "string",
+			"optiontest": "test",
+			"required": true ,
+			"role": "crecord-type"
+		},
+		"crecord_write_time": {
+			"type": "integer",
+			"required": true ,
+			"role": "timestamp" ,
+			"hideDate": true,
+			"canDisplayAgo" : true,
+			"format": "r",
+			"title": "creation date"
+		},
+		"crecord_creation_time": {
+			"type": "integer",
+			"required": true ,
+			"role": "timestamp" ,
+			"hideDate": true,
+			"canDisplayAgo" : true,
+			"format": "r"
+		},
+		"crecord_name": {
+			"type": "string",
+			"required": true
+		},
 
-		"aaa_owner": {"type": "string", "required": true},
-		"aaa_group": {"type": "string"},
-		"aaa_admin_group": {"type": "string", "required": true},
+		"aaa_owner": {
+			"type": "string",
+			"required": true
+		},
+		"aaa_group": {
+			"type": "string"
+		},
+		"aaa_admin_group": {
+			"type": "string",
+			"required": true
+		},
 		"aaa_access_owner": {
 			"type": "array",
 			"items": {
