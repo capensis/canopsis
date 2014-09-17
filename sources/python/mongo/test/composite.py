@@ -28,7 +28,7 @@ from canopsis.storage.composite import CompositeStorage
 from canopsis.mongo.composite import MongoCompositeStorage
 
 
-class MongoScopedStorageTest(TestCase):
+class MongoCompositeStorageTest(TestCase):
     """
     MongoCompositeStorage UT on data_scope = "test"
     """

@@ -36,7 +36,8 @@
             "actions",
             "mfilter",
             "enable",
-            "crecord_write_time"
+            "crecord_write_time",
+            "run_once"
           ],
           "actions_toolbar": [
             "actionbutton-create",

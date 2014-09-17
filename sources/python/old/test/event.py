@@ -21,7 +21,7 @@
 
 import unittest
 
-from canopsis.event import get_routingkey, forger
+from canopsis.old.event import get_routingkey, forger
 
 
 class KnownValues(unittest.TestCase):

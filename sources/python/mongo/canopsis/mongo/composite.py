@@ -70,7 +70,6 @@ class MongoCompositeStorage(MongoStorage, CompositeStorage):
             query=query, limit=limit, skip=skip, sort=sort)
 
         if result is not None and shared:
-
             # if result is one value
             if isinstance(result, dict):
                 # if result is shared
@@ -92,7 +91,7 @@ class MongoCompositeStorage(MongoStorage, CompositeStorage):
                     # if data is shared, get shared data
                     if CompositeStorage.SHARED in data:
                         shared_id = data[CompositeStorage.SHARED]
-                        data = self.get_shared_data(shared_id=shared_id)
+                        data = self.get_shared_data(shared_ids=shared_id)
                     # append data in result
                     result.append(data)
 

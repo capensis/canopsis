@@ -23,9 +23,9 @@ from unittest import TestCase, main
 
 from json import dumps
 
-from canopsis.record import Record
-from canopsis.account import Account
-from canopsis.group import Group
+from canopsis.old.record import Record
+from canopsis.old.account import Account
+from canopsis.old.group import Group
 
 
 class KnownValues(TestCase):
