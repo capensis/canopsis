@@ -34,6 +34,7 @@ RULE = 'rule'
 
 CONDITION_FIELD = 'condition'  #: condition field name in rule conf
 ACTION_FIELD = 'action'  #: actions field name in rule conf
+ELSE_FIELD = 'else'  #: else actions field name in rule conf
 
 TASK_PARAMS = 'params'  #: task params field name in task conf
 
@@ -173,6 +174,17 @@ def process_rule(event, rule, ctx=None, cached=True, raiseError=False):
             ctx=ctx,
             task_conf=rule,
             task_name=ACTION_FIELD,
+            cached=cached,
+            exception_type=ActionError,
+            raiseError=raiseError)
+
+    else:  # go to the else field
+
+        action_result = run_task(
+            event=event,
+            ctx=ctx,
+            task_conf=rule,
+            task_name=ELSE_FIELD,
             cached=cached,
             exception_type=ActionError,
             raiseError=raiseError)
