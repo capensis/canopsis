@@ -850,6 +850,17 @@ fi
 
 echo
 echo "################################"
+echo "# Installing locales"
+echo "################################"
+echo
+
+cp -R $SRC_PATH/locale $PREFIX
+
+echo " + Ok"
+
+
+echo
+echo "################################"
 echo "#           MESSAGES           #"
 echo "################################"
 echo
