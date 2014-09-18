@@ -34,11 +34,6 @@
 			"crecordtype": "role",
 			"valuekey" : "id"
 		},
-		"contact": {
-			"type": "object",
-			"relationship": "belongsTo",
-			"model": "user"
-		},
 		"rights": {
 			"type": "array",
 			"items": { "type": "object" },
@@ -56,11 +51,6 @@
 		},
 		"lastname": {
 			"type": "string",
-			"readOnly": true
-		},
-		"user": {
-			"type": "string",
-			"required": true,
 			"readOnly": true
 		},
 		"mail": {
