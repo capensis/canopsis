@@ -21,7 +21,8 @@
 from stat import ST_SIZE
 
 from os import stat
-from os.path import exists, join, expanduser
+from os.path import exists, join
+import sys
 
 from .. import ConfigurationManager
 
@@ -31,7 +32,7 @@ class FileConfigurationManager(ConfigurationManager):
     Configuration Manager dedicated to files.
     """
 
-    CONF_DIR = expanduser('~/etc/')
+    CONF_DIR = join(sys.prefix, 'etc')
 
     def exists(self, conf_path, *args, **kwargs):
 
