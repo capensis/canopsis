@@ -53,6 +53,11 @@
 			"type": "string",
 			"readOnly": true
 		},
+		"user": {
+			"type": "string",
+			"required": true,
+			"readOnly": true
+		},
 		"mail": {
 			"type": "string",
 			"required": true,
