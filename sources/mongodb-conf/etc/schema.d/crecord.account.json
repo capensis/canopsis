@@ -22,7 +22,7 @@
 			"role": "classifiedcrecordselector",
 			"multiselect": false,
 			"crecordtype": "role",
-			"valuekey" : "id",
+			"valuekey" : "id"
 		},
 		"contact": {
 			"type": "object",
