@@ -2,9 +2,12 @@
 	"type": "object",
 	"categories": [{
 		"title": "General",
-		"keys":["description"]
+		"keys":["crecord_name", "description"]
 	},{
-		"title": "Permissions",
+		"title": "Groups",
+		"keys": ["groups"]
+	},{
+		"title": "Rights",
 		"keys": ["rights"]
 	}],
 	"properties": {
