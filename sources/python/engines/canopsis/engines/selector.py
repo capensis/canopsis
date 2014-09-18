@@ -24,6 +24,7 @@ from canopsis.old.account import Account
 from canopsis.old.selector import Selector
 import time
 
+
 class engine(Engine):
     """
         This engine's goal is to compute an aggregated information from an event selection.

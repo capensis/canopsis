@@ -64,7 +64,7 @@ class Schema2MongoDB(object):
     def load(self):
         # Load schemas
 
-        schema_dir = os.path.expanduser('~/etc/schema.d')
+        schema_dir = os.path.join(sys.prefix, 'etc', 'schema.d')
         self.schemas = {}
 
         for filepath in os.listdir(schema_dir):

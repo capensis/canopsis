@@ -20,7 +20,8 @@
 
 from logging import Formatter, getLogger, FileHandler, Filter
 
-from os.path import expanduser, sep
+from os.path import join, sep
+from sys import prefix as sys_prefix
 
 from inspect import isclass
 
@@ -188,7 +189,7 @@ class Configurable(object):
             setattr(logger, lvl, handler)
 
         filename = self.log_name.replace('.', sep)
-        path = expanduser('~/var/log/{0}.log'.format(filename))
+        path = join(sys_prefix, 'var', 'log', '{0}.log'.format(filename))
 
         setHandler(result, 'DEBUG', path, self.log_debug_format)
         setHandler(result, 'INFO', path, self.log_info_format)

@@ -25,6 +25,7 @@ from canopsis.old.storage import get_storage
 from copy import deepcopy
 from time import time
 
+
 class engine(Engine):
     etype = "ticket"
 

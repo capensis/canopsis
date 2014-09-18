@@ -23,6 +23,7 @@ from canopsis.old.storage import get_storage
 from canopsis.old.account import Account
 from time import time
 
+
 class engine(Engine):
 
     etype = 'cancel'

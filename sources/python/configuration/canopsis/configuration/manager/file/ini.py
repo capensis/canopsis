@@ -20,6 +20,7 @@
 # ---------------------------------
 
 from os.path import join
+from sys import prefix as sys_prefix
 
 from . import FileConfigurationManager
 
@@ -100,4 +101,5 @@ class INIConfigurationManager(FileConfigurationManager):
     def _update_conf_resource(
         self, conf_resource, conf_path, *args, **kwargs
     ):
-        conf_resource.write(open(join('~/etc/', conf_path), 'w'))
+        with open(join(sys_prefix, 'etc', conf_path), 'w') as f:
+            conf_resource.write(f)
