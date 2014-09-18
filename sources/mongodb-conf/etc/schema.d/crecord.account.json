@@ -34,6 +34,11 @@
 			"crecordtype": "role",
 			"valuekey" : "id"
 		},
+		"contact": {
+			"type": "object",
+			"relationship": "belongsTo",
+			"model": "user"
+		},
 		"rights": {
 			"type": "array",
 			"items": { "type": "object" },

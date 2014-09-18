@@ -22,7 +22,8 @@
 from pyparsing import Word, alphas, Suppress, nums, Optional, Regex
 
 from os import makedirs
-from os.path import expanduser, dirname, exists
+from os.path import join, dirname, exists
+from sys import prefix as sys_prefix
 
 from canopsis.old.init import Init
 from canopsis.old.rabbitmq import Amqp
@@ -45,8 +46,8 @@ from datetime import datetime
 from calendar import timegm
 
 DAEMON_NAME = 'ics2amqp'
-config_file = expanduser('~/etc/ics2amqp.conf')
-timestamps_file = expanduser('~/var/lib/ics2amqp/ics2amqp.timestamps')
+config_file = join(sys_prefix, 'etc', 'ics2amqp.conf')
+timestamps_file = join(sys_prefix, 'var', 'lib', 'ics2amqp', 'ics2amqp.timestamps')
 
 
 init = Init()

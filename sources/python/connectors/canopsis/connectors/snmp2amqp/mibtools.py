@@ -20,10 +20,11 @@
 # ---------------------------------
 
 from sys import path
-from os.path import expanduser
+from sys import prefix as sys_prefix
+from os.path import expanduser, join
 from logging import getLogger
 
-mib_path = "~/var/snmp/"
+mib_path = join(sys_prefix, 'var', 'snmp')
 
 severity_to_state = {
     'INFORMATIONAL': 0,

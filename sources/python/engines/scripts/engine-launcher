@@ -24,9 +24,10 @@ from canopsis.old.init import Init
 from ConfigParser import ConfigParser, ParsingError
 from importlib import import_module
 from logging import INFO, getLevelName
-from sys import path, stderr, exit, argv
+from sys import stderr, exit, argv
+from sys import prefix as sys_prefix
 from csv import reader
-from os.path import expanduser
+from os.path import join
 
 
 class EngineLauncher(object):
@@ -113,7 +114,7 @@ class EngineLauncher(object):
         Load config file, and parse it.
         """
 
-        confpath = expanduser('~/etc/amqp2engines.conf')
+        confpath = join(sys_prefix, 'etc', 'amqp2engines.conf')
 
         try:
             config = ConfigParser()

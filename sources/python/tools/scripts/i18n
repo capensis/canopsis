@@ -26,14 +26,14 @@ import sys
 from canopsis.old.storage import get_storage
 from canopsis.old.account import Account
 
-from os.path import expanduser, isfile
+from os.path import join, isfile
+
 
 class i18n(object):
 
     def __init__(self):
         self.misc = get_storage(namespace='misc', account=Account(user="root", group="root")).get_backend()
         self.query = {'crecord_type': 'i18n', '_id': 'translations'}
-
 
     def extract(self):
 
@@ -55,7 +55,7 @@ class i18n(object):
         existing_terms = {}
 
         #Update lang file with existing po file
-        base_lang_path = expanduser('~/locale/en/lang.po')
+        base_lang_path = join(sys.prefix, 'locale', 'en', 'lang.po')
         if isfile(base_lang_path):
             po_base = polib.pofile(base_lang_path)
             for entry in po:
@@ -78,9 +78,10 @@ class i18n(object):
                 )
                 po.append(entry)
 
-        output = expanduser('~/locale/todo.po')
+        output = join(sys.prefix, 'locale', 'todo.po')
         po.save(output)
         print 'Database translation definitions updated into {} file.'.format(output)
+
 
 if __name__ == '__main__':
     if 'extract' in sys.argv:
