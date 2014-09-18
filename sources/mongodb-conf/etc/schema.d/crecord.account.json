@@ -1,5 +1,15 @@
 {
 	"type": "object",
+	"categories": [{
+		"title": "General",
+		"keys":["crecord_name"]
+	},{
+		"title": "Role",
+		"keys": ["role"]
+	},{
+		"title": "Rights",
+		"keys": ["rights"]
+	}],
 	"properties": {
 		"crecord_type": {
 			"enum": ["account"],
