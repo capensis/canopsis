@@ -20,6 +20,7 @@
 # ---------------------------------
 
 from sys import stdout
+from sys import prefix as sys_prefix
 
 from kombu import Connection, Exchange, Queue, pools, __version__
 
@@ -34,7 +35,7 @@ from socket import error, timeout
 from time import sleep
 from logging import INFO, getLogger
 from threading import Thread
-from os.path import expanduser
+from os.path import join
 from traceback import print_exc
 
 
@@ -188,7 +189,7 @@ class Amqp(Thread):
                 except Exception as err:
                     self.logger.error(err)
         else:
-            self.logger.debug("Allready connected")
+            self.logger.debug("Already connected")
 
     def get_exchange(self, name):
         if name:
@@ -381,8 +382,7 @@ class Amqp(Thread):
 
     def read_config(self, name):
 
-        filename = '~/etc/' + name + '.conf'
-        filename = expanduser(filename)
+        filename = join(sys_prefix, 'etc', '{0}.conf'.format(name))
 
         import ConfigParser
         self.config = ConfigParser.RawConfigParser()

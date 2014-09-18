@@ -31,7 +31,8 @@ from logging import INFO, FileHandler, Formatter
 from time import time, sleep
 
 from os import getpid
-from os.path import expanduser
+from os.path import join
+from sys import prefix as sys_prefix
 
 
 DROP = -1
@@ -78,7 +79,7 @@ class Engine(object):
 
 		self.logger = init.getLogger(name, logging_level=logging_level)
 
-		logHandler = FileHandler(filename=expanduser("~/var/log/engines/%s.log" % name))
+		logHandler = FileHandler(filename=join(sys_prefix, 'var', 'log', 'engines', '%s.log' % name))
 		logHandler.setFormatter(Formatter("%(asctime)s %(levelname)s %(name)s %(message)s"))
 
 		# Log in file

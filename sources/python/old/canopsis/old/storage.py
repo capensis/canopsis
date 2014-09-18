@@ -41,7 +41,7 @@ from operator import itemgetter
 from urlparse import urlparse
 
 CONFIG = ConfigParser.RawConfigParser()
-CONFIG.read(os.path.expanduser('~/etc/cstorage.conf'))
+CONFIG.read(os.path.join(sys.prefix, 'etc', 'cstorage.conf'))
 
 
 class Storage(object):
