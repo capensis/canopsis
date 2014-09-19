@@ -47,7 +47,7 @@ def free_cache(path=None):
         __RESOLVED_ELEMENTS[path].pop(path, '')
 
 
-def resolve_element(path, cached=True):
+def lookup(path, cached=True):
     """
     Get element reference from input full path element.
 
@@ -56,7 +56,7 @@ def resolve_element(path, cached=True):
     :param str path: full path to a python element.
         Examples:
             - __builtin__.open
-            - canopsis.common.utils.resolve_element
+            - canopsis.common.utils.lookup
 
     :para bool cached: if True (by default), use __RESOLVED_ELEMENTS cache
         memory to quickly load elements
@@ -124,7 +124,7 @@ def path(element):
     """
     Get full path of a given element.
 
-    Do the inverse of resolve_element
+    Do the inverse of lookup
 
     :param element: must be directly defined into a module or a package
     :type element: object
@@ -170,7 +170,7 @@ def isunicode(s):
         return True
 
 
-def force_unicode(s):
+def ensure_unicode(s):
     """
     Convert string to unicode.
 
@@ -192,7 +192,7 @@ def force_unicode(s):
     return result
 
 
-def force_iterable(value, iterable=list):
+def ensure_iterable(value, iterable=list):
     """
     Convert a value into an iterable if it is not.
 

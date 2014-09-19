@@ -23,7 +23,7 @@ __version__ = "0.1"
 from urlparse import urlparse
 
 from canopsis.middleware.loader import Loader
-from canopsis.common.utils import force_iterable
+from canopsis.common.utils import ensure_iterable
 from canopsis.configuration import (
     Configurable, Parameter, Configuration, Category)
 from canopsis.configuration.configurable import MetaConfigurable
@@ -661,14 +661,14 @@ class Middleware(Configurable):
         """
 
         protocols = cls.get_protocols()
-        data_types = force_iterable(cls.__datatype__, iterable=set)
+        data_types = ensure_iterable(cls.__datatype__, iterable=set)
 
         if protocol is not None:
-            protocol = force_iterable(protocol, iterable=set)
+            protocol = ensure_iterable(protocol, iterable=set)
             protocols |= protocol
 
         if data_type is not None:
-            data_type = force_iterable(data_type, iterable=set)
+            data_type = ensure_iterable(data_type, iterable=set)
             data_types |= data_type
 
         for protocol in protocols:
@@ -687,7 +687,7 @@ class Middleware(Configurable):
         :rtype: set([str])
         """
 
-        protocols = force_iterable(cls.__protocol__, iterable=set)
+        protocols = ensure_iterable(cls.__protocol__, iterable=set)
 
         for base_cls in cls.__bases__:
             if issubclass(base_cls, Middleware):

@@ -19,7 +19,7 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from canopsis.old.init import force_unicode
+from canopsis.old.init import ensure_unicode
 from pybars import Compiler, _compiler
 
 
@@ -27,7 +27,7 @@ class Template(Compiler):
     def __init__(self, source, *args, **kwargs):
         super(Template, self).__init__(*args, **kwargs)
 
-        self.source = force_unicode(source)
+        self.source = ensure_unicode(source)
         self.vars = {}
 
         self.register_helper(u'foreach', self._helper_foreach)
@@ -39,7 +39,7 @@ class Template(Compiler):
         self.register_helper(u'compact', self._helper_compact)
 
     def register_helper(self, name, handler):
-        name = force_unicode(name)
+        name = ensure_unicode(name)
 
         _compiler._pybars_['helpers'][name] = handler
 

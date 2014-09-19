@@ -22,7 +22,7 @@
 from unittest import TestCase, main
 
 from canopsis.common.utils import \
-    resolve_element, path, isiterable, isunicode, force_unicode, force_iterable
+    lookup, path, isiterable, isunicode, ensure_unicode, ensure_iterable
 
 from sys import version as PYVER
 
@@ -36,28 +36,28 @@ class UtilsTest(TestCase):
     def setUp(self):
         pass
 
-    def test_resolve_element(self):
+    def test_lookup(self):
 
         # resolve builtin function
-        _open = resolve_element('%s.open' % open.__module__)
+        _open = lookup('%s.open' % open.__module__)
 
         self.assertTrue(_open is open)
 
-        # resolve resolve_element
-        _resolve_element = resolve_element(
-            'canopsis.common.utils.resolve_element')
+        # resolve lookup
+        _lookup = lookup(
+            'canopsis.common.utils.lookup')
 
-        self.assertTrue(_resolve_element is resolve_element)
+        self.assertTrue(_lookup is lookup)
 
         # resolve package
 
-        canopsis = resolve_element('canopsis')
+        canopsis = lookup('canopsis')
 
         self.assertEqual(canopsis.__name__, 'canopsis')
 
         # resolve sub_module
 
-        canopsis_common = resolve_element('canopsis.common')
+        canopsis_common = lookup('canopsis.common')
 
         self.assertEqual(canopsis_common.__name__, 'canopsis.common')
 
@@ -84,10 +84,10 @@ class UtilsTest(TestCase):
         _path = 'canopsis.common.utils.path'
 
         # Test if you can get the path _path using path() on the resolved element
-        self.assertEqual(path(resolve_element(_path)), _path)
+        self.assertEqual(path(lookup(_path)), _path)
 
         # Test if you can retrieve the function by resolving the path got using path()
-        self.assertEqual(resolve_element(path(path)), path)
+        self.assertEqual(lookup(path(path)), path)
 
     def test_isiterable(self):
 
@@ -108,16 +108,16 @@ class UtilsTest(TestCase):
     def test_forceunicode(self):
 
         if PYVER < '3':
-            self.assertTrue(isinstance(force_unicode(str()), unicode))
-            self.assertTrue(isinstance(force_unicode(unicode()), unicode))
-            self.assertRaises(TypeError, force_unicode)
+            self.assertTrue(isinstance(ensure_unicode(str()), unicode))
+            self.assertTrue(isinstance(ensure_unicode(unicode()), unicode))
+            self.assertRaises(TypeError, ensure_unicode)
 
-    def test_force_iterable(self):
+    def test_ensure_iterable(self):
 
-        self.assertEqual(force_iterable(2), [2])
-        self.assertEqual(force_iterable("2"), ["2"])
-        self.assertEqual(force_iterable([2]), [2])
-        self.assertEqual(force_iterable([2], iterable=set), {2})
+        self.assertEqual(ensure_iterable(2), [2])
+        self.assertEqual(ensure_iterable("2"), ["2"])
+        self.assertEqual(ensure_iterable([2]), [2])
+        self.assertEqual(ensure_iterable([2], iterable=set), {2})
 
 if __name__ == '__main__':
     main()

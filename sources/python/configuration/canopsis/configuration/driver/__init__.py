@@ -18,7 +18,7 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from canopsis.common.utils import resolve_element, path
+from canopsis.common.utils import lookup, path
 
 from canopsis.configuration.parameters import \
     Configuration, Parameter, Category
@@ -299,7 +299,7 @@ class ConfigurationManager(object):
         # if not already added
         if result is None:
             # resolve it and add it in global definition
-            result = resolve_element(path)
+            result = lookup(path)
             ConfigurationManager._MANAGERS[path] = result
 
         return result

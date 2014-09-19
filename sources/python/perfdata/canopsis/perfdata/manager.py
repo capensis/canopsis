@@ -18,12 +18,10 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from re import compile as re_compile
-
 from time import time
 
 from canopsis.monitoring.parser import PerfDataParser
-from canopsis.common.utils import force_iterable
+from canopsis.common.utils import ensure_iterable
 from canopsis.configuration import add_category, conf_paths
 from canopsis.timeserie.timewindow import Period, get_offset_timewindow
 from canopsis.middleware.manager import Manager
@@ -152,7 +150,7 @@ class PerfData(Manager):
         """
 
         # if points is a point, transform it into a tuple of couple
-        points = force_iterable(points, iterable=tuple)
+        points = ensure_iterable(points, iterable=tuple)
 
         period = self.get_period(metric_id=metric_id, period=period)
 

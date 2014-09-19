@@ -22,7 +22,7 @@ from uuid import uuid4 as uuid
 
 from canopsis.storage.file import FileStorage, FileStream
 from canopsis.mongo.storage import MongoStorage
-from canopsis.common.utils import force_iterable
+from canopsis.common.utils import ensure_iterable
 
 from gridfs import GridFs
 
@@ -69,7 +69,7 @@ class MongoFileStorage(MongoStorage, FileStorage):
 
     def get(self, names, version=-1):
 
-        names = force_iterable(names)
+        names = ensure_iterable(names)
         result = []
         for name in names:
             gridout = self.gridfs.get_version(filename=name, version=version)
@@ -134,6 +134,6 @@ class MongoFileStorage(MongoStorage, FileStorage):
 
     def delete(self, names):
 
-        names = force_iterable(names)
+        names = ensure_iterable(names)
         for name in names:
             self.gridfs.delete(file_id=name)

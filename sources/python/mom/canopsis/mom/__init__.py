@@ -23,7 +23,7 @@ __version__ = "0.1"
 
 from canopsis.middleware import Middleware
 from canopsis.configuration import Category, Parameter
-from canopsis.common.utils import resolve_element
+from canopsis.common.utils import lookup
 
 from urlparse import urlparse
 from functools import reduce
@@ -59,7 +59,7 @@ def receiver_and_callback(receiver):
     if SR_SEPARATOR in receiver:
         splitted_name = receiver.split(SR_SEPARATOR)
 
-        callback = resolve_element(splitted_name[1])
+        callback = lookup(splitted_name[1])
 
         result = splitted_name[0], callback
 

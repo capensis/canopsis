@@ -27,7 +27,7 @@ CONF_RESOURCE = 'context/context.conf'  #: last context conf resource
 CATEGORY = 'CONTEXT'  #: context category
 
 
-@add_category(CATEGORY)
+
 @conf_paths(CONF_RESOURCE)
 class Context(Manager):
     """

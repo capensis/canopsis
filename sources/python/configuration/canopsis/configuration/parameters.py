@@ -20,7 +20,7 @@
 
 from collections import OrderedDict, Iterable
 
-from canopsis.common.utils import resolve_element
+from canopsis.common.utils import lookup
 
 
 class Configuration(object):
@@ -414,4 +414,4 @@ class Parameter(object):
 
     @staticmethod
     def path(value):
-        return resolve_element(value)
+        return lookup(value)
