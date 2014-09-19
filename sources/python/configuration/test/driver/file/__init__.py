@@ -24,15 +24,14 @@ from logging import getLogger
 from unittest import main, TestCase
 
 from canopsis.configuration import Configuration, Category, Parameter
-from canopsis.configuration.manager import ConfigurationManager
-from canopsis.configuration.manager.file import FileConfigurationManager
+from canopsis.configuration.driver.file import FileConfigurationDriver
 
 from pickle import loads, dump
 
 from os import remove
 
 
-class TestConfigurationManager(FileConfigurationManager):
+class TestConfigurationDriver(FileConfigurationDriver):
     """
     Configuration Manager for test.
     """
@@ -110,7 +109,7 @@ class TestConfigurationManager(FileConfigurationManager):
                 pass
 
 
-class ConfigurationManagerTest(TestCase):
+class ConfigurationDriverTest(TestCase):
     """
     Configuration Manager unittest class.
     """
@@ -218,15 +217,15 @@ class ConfigurationManagerTest(TestCase):
         """
         Only one method to override by sub tests
         """
-        return TestConfigurationManager()
+        return TestConfigurationDriver()
 
     def _get_manager_path(self):
 
-        return 'test.manager.file.TestConfigurationManager'
+        return 'test.manager.file.TestConfigurationDriver'
 
     def _get_manager(self):
 
-        return TestConfigurationManager
+        return TestConfigurationDriver
 
 if __name__ == '__main__':
     main()

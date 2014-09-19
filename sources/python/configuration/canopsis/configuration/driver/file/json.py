@@ -18,7 +18,7 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from . import FileConfigurationManager
+from . import FileConfigurationDriver
 
 try:
     from json import loads, dump
@@ -26,7 +26,7 @@ except ImportError:
     from simplejson import loads, dump
 
 
-class JSONConfigurationManager(FileConfigurationManager):
+class JSONConfigurationDriver(FileConfigurationDriver):
     """
     Manage json configuration.
     """
@@ -55,7 +55,7 @@ class JSONConfigurationManager(FileConfigurationManager):
         if conf_path is not None:
             result = None
 
-            path = FileConfigurationManager.get_path(conf_path)
+            path = FileConfigurationDriver.get_path(conf_path)
 
             try:
                 with open(path, 'r') as handle:
@@ -95,7 +95,7 @@ class JSONConfigurationManager(FileConfigurationManager):
         self, conf_resource, conf_path, *args, **kwargs
     ):
 
-        path = FileConfigurationManager.get_path(conf_path)
+        path = FileConfigurationDriver.get_path(conf_path)
 
         try:
             with open(path, 'w') as handle:

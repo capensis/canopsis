@@ -23,7 +23,7 @@ from unittest import TestCase, main
 
 from canopsis.configuration.configurable import Configurable
 from canopsis.configuration.configurable.manager import Manager
-from canopsis.configuration.manager.file import FileConfigurationManager
+from canopsis.configuration.driver.file import FileConfigurationDriver
 
 from tempfile import NamedTemporaryFile
 
@@ -52,7 +52,7 @@ class ManagerTest(TestCase):
 
         manager = TestManager()
 
-        conf_path = FileConfigurationManager.get_path(manager.conf_paths[-1])
+        conf_path = FileConfigurationDriver.get_path(manager.conf_paths[-1])
 
         configurable_name = 'test'
         full_configurable_name = '%s%s' % (

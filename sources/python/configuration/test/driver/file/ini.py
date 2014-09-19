@@ -21,24 +21,24 @@
 
 from unittest import main
 
-from test.manager.file import ConfigurationManagerTest
+from test.driver.file import ConfigurationDriverTest
 
-from canopsis.configuration.manager.file.json import JSONConfigurationManager
+from canopsis.configuration.driver.file.ini import INIConfigurationDriver
 
 
-class ConfigurationManagerTest(ConfigurationManagerTest):
+class INIConfigurationDriverTest(ConfigurationDriverTest):
 
     def _get_configuration_manager(self):
 
-        return JSONConfigurationManager()
+        return INIConfigurationDriver()
 
     def _get_manager_path(self):
 
-        return 'canopsis.configuration.manager.file.json.JSONConfigurationManager'
+        return 'canopsis.configuration.driver.file.ini.INIConfigurationDriver'
 
     def _get_manager(self):
 
-        return JSONConfigurationManager
+        return INIConfigurationDriver
 
 if __name__ == '__main__':
     main()

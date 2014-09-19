@@ -23,10 +23,10 @@ from stat import ST_SIZE
 from os import stat
 from os.path import exists, join, expanduser
 
-from .. import ConfigurationManager
+from canopsis.configuration.drive import ConfigurationDriver
 
 
-class FileConfigurationManager(ConfigurationManager):
+class FileConfigurationDriver(ConfigurationDriver):
     """
     Configuration Manager dedicated to files.
     """
@@ -35,7 +35,7 @@ class FileConfigurationManager(ConfigurationManager):
 
     def exists(self, conf_path, *args, **kwargs):
 
-        path = FileConfigurationManager.get_path(conf_path)
+        path = FileConfigurationDriver.get_path(conf_path)
 
         result = exists(path) and stat(path)[ST_SIZE]
 
@@ -44,6 +44,6 @@ class FileConfigurationManager(ConfigurationManager):
     @staticmethod
     def get_path(conf_path):
 
-        result = join(FileConfigurationManager.CONF_DIR, conf_path)
+        result = join(FileConfigurationDriver.CONF_DIR, conf_path)
 
         return result

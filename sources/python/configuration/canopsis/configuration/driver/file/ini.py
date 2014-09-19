@@ -21,13 +21,13 @@
 
 from os.path import join
 
-from . import FileConfigurationManager
+from . import FileConfigurationDriver
 
 from ConfigParser import RawConfigParser, DuplicateSectionError,\
     MissingSectionHeaderError
 
 
-class INIConfigurationManager(FileConfigurationManager):
+class INIConfigurationDriver(FileConfigurationDriver):
     """
     Manage ini configuration.
     """
@@ -57,7 +57,7 @@ class INIConfigurationManager(FileConfigurationManager):
 
             files = []
 
-            path = FileConfigurationManager.get_path(conf_path)
+            path = FileConfigurationDriver.get_path(conf_path)
 
             try:
                 files = result.read(path)
