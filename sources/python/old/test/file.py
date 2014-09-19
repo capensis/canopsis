@@ -21,24 +21,24 @@
 
 import unittest
 
-from logging import basicConfig, DEBUG
-
 from canopsis.old.file import File, get_cfile
 from canopsis.old.account import Account
 from canopsis.old.storage import get_storage
 
 from gridfs.errors import NoFile
+import sys
 import os
-
-basicConfig(format='%(asctime)s %(name)s %(levelname)s %(message)s')
 
 anonymous_account = Account()
 root_account = Account(user="root", group="root")
 
 storage = get_storage(
-    account=root_account, namespace='unittest', logging_level=DEBUG)
+    account=root_account, namespace='unittest')
 
-sample_file_path = '~/var/www/canopsis/themes/canopsis/resources/images/logo_small.png'
+sample_file_path = os.path.join(
+    sys.prefix,
+    'var', 'www', 'login', 'img', 'canopsis.png'
+)
 
 with open(os.path.expanduser(sample_file_path), 'rb') as f:
     sample_binary = f.read()
@@ -46,6 +46,8 @@ with open(os.path.expanduser(sample_file_path), 'rb') as f:
 sample_binary2 = bin(1234567890123456789)
 
 myfile = None
+meta_id = None
+bin_id = None
 
 
 class KnownValues(unittest.TestCase):
@@ -54,38 +56,33 @@ class KnownValues(unittest.TestCase):
         global myfile
         myfile = File(storage=storage)
 
-        if myfile.data != {}:
-            raise Exception('Data corruption ...')
+        self.assertEqual(myfile.data, {})
 
     def test_02_put_data(self):
         myfile.put_data(sample_binary2)
 
-        if myfile.binary != sample_binary2:
-            raise Exception('Data corruption ...')
+        self.assertEqual(myfile.binary, sample_binary2)
 
     def test_03_save_data(self):
         global meta_id, bin_id
+
         meta_id = myfile.save()
         bin_id = myfile.get_binary_id()
 
-        print("Meta Id: %s, Binary Id: %s" % (meta_id, bin_id))
-
-        if not bin_id or not meta_id:
-            raise Exception('Impossible to save File')
+        self.assertTrue(bin_id and meta_id)
 
     def test_04_put_file(self):
         myfile.put_file(sample_file_path)
 
-        if myfile.binary != sample_binary:
-            raise Exception('Data corruption ...')
+        self.assertEqual(myfile.binary, sample_binary)
 
     def test_05_save_file(self):
         global meta_id, bin_id
         meta_id = myfile.save()
 
         bin_id = myfile.get_binary_id()
-        if not bin_id or not meta_id:
-            raise Exception('Impossible to save File')
+
+        self.assertTrue(bin_id and meta_id)
 
     def test_06_Rights(self):
 
@@ -96,32 +93,32 @@ class KnownValues(unittest.TestCase):
             storage.remove(myfile, account=anonymous_account)
 
     def test_07_GetMeta(self):
-        meta = storage.get(meta_id)
-        if not meta:
-            raise Exception('Impossible to get meta data')
+        global meta_id
 
-        print("Meta: %s" % meta)
+        meta = storage.get(meta_id)
+        self.assertTrue(meta)
 
     def test_08_GetBinary(self):
-        binary = storage.get_binary(bin_id)
-        if not binary:
-            raise Exception('Impossible to get binary data')
+        global bin_id
 
-        if binary != sample_binary:
-            raise Exception('Data corruption ...')
+        binary = storage.get_binary(bin_id)
+
+        self.assertEqual(binary, sample_binary)
 
     def test_09_RemoveFile(self):
         myfile.remove()
 
     def test_10_CheckFileRemove(self):
+        global meta_id, bin_id
+
         with self.assertRaises(NoFile):
-            binary = storage.get_binary(bin_id)
+            storage.get_binary(bin_id)
 
         with self.assertRaises(KeyError):
             get_cfile(meta_id, storage)
 
-        if myfile.check():
-            raise Exception('File is not deleted ...')
+        self.assertFalse(myfile.check())
+
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)

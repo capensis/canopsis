@@ -31,7 +31,25 @@ logging.basicConfig(level=logging.DEBUG,
                     format='%(asctime)s %(name)s %(levelname)s %(message)s',
                     )
 
-msgbody = {"type": "check", "source_name": "Central", "source_type": "host", "timestamp": "1307518560", "host_name": "localhost16", "check_type": "0", "current_attempt": "1", "max_attempts": "10", "state_type": "1", "state": "0", "execution_time": "4.035", "latency": "0.218", "command_name": "check-host-alive", "output": "PING OK -  Paquets perdus = 0%, RTA = 0.04 ms", "long_output": "", "perf_data": "rta=0.037000ms;3000.000000;5000.000000;0.000000 pl=0%;80;100;0"}
+msgbody = {
+    "type": "check",
+    "source_name": "Central",
+    "source_type": "host",
+    "timestamp": "1307518560",
+    "host_name": "localhost16",
+    "check_type": "0",
+    "current_attempt": "1",
+    "max_attempts": "10",
+    "state_type": "1",
+    "state": "0",
+    "execution_time": "4.035",
+    "latency": "0.218",
+    "command_name": "check-host-alive",
+    "output": "PING OK -  Paquets perdus = 0%, RTA = 0.04 ms",
+    "long_output": "",
+    "perf_data": "rta=0.037000ms;3000.000000;5000.000000;0.000000 pl=0%;80;100;0"
+}
+
 myamqp = None
 rcvmsgbody = None
 
