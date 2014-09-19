@@ -24,10 +24,11 @@ from canopsis import schema as cschema
 from os.path import join, expanduser, exists
 from subprocess import Popen, PIPE
 import json
+import sys
 
 
 class CheckRunner(object):
-    commanddir = join(expanduser('~'), 'etc', 'monitoring', 'commands')
+    commanddir = join(sys.prefix, 'etc', 'monitoring', 'commands')
 
     class CheckError(Exception):
         pass
@@ -48,7 +49,7 @@ class CheckRunner(object):
         :return: schema, configuration
         """
 
-        conffile = join(self.commanddir, command)
+        conffile = join(self.commanddir, '{0}.json'.format(command))
         schema_id = 'monitoringplugin.{0}'.format(command)
 
         if not exists(conffile):
@@ -113,6 +114,11 @@ class CheckRunner(object):
                         if value:
                             cmdargs.append(cmdopt)
 
+                    elif field['type'] == 'array':
+                        for item in value:
+                            cmdargs.append(cmdopt)
+                            cmdargs.append(str(item))
+
                     else:
                         cmdargs.append(cmdopt)
                         cmdargs.append(str(value))
@@ -149,10 +155,8 @@ class CheckRunner(object):
         cmd, cmdargs = self.build_command(schema, conf)
         args = [cmd] + cmdargs
 
-        p = Popen(args, stdout=PIPE, shell=True)
+        p = Popen(' '.join(args), stdout=PIPE, shell=True)
         output = p.communicate()[0]
         errcode = p.returncode
 
-        evt = self.gen_event(errcode, output)
-
-        print('Event: {0}'.format(evt))
+        return self.gen_event(errcode, output)

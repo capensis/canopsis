@@ -2,7 +2,7 @@
 	"type": "object",
 	"categories": [{
 		"title": "General",
-		"keys":["firstname","lastname", "user", "mail"]
+		"keys":["firstname","lastname", "user", "mail", "authkey"]
 	},{
 		"title": "Role",
 		"keys": ["role"]

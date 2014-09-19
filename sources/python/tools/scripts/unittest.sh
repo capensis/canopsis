@@ -39,6 +39,8 @@ UNITTESTDIR="$HOME/var/lib/canopsis/unittest"
 UNITTESTS=`find $UNITTESTDIR -name "*.py" | grep -v "__init__.py"`
 UNITTESTS="$UNITTESTS $HOME/bin/functional-test.py"
 
+FAIL=0
+
 for UNITTEST in $UNITTESTS
 do
     TESTNAME=${UNITTEST#$UNITTESTDIR}
@@ -58,7 +60,13 @@ do
         echo "OK"
     else
         echo "FAIL"
+        FAIL=1
     fi
 done 
 
 hypcontrol stop
+
+if [ $FAIL -eq 1 ]
+then
+    exit 1
+fi

@@ -19,7 +19,7 @@
 	"properties": {
 		"listed_crecord_type": {
 			"type": "string",
-			"enum": ["group", "account", "event", "eventlog", "selector", "filter", "userview", "topology"],
+			"enum": ["group", "role", "profile", "account", "event", "eventlog", "selector", "filter", "userview", "eue", "topolofy"],
 			"default": "group",
 			"role": "simplelist"
 		},

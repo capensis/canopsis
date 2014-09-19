@@ -2,7 +2,7 @@
 	"type": "object",
 	"categories": [{
 		"title": "General",
-		"keys":["title", "cfilter_allow_only_optimized_filters", "debug_mode", "default_view"]
+		"keys":["title", "cfilter_allow_only_optimized_filters", "debug_mode", "defaultview"]
 	},{
 		"title": "Events",
 		"keys":["list_info_button_pattern"]
@@ -30,12 +30,15 @@
 			"type": "string",
 			"default": ""
 		},
-		"default_view": {
-			"type": "string",
+		"defaultview": {
 			"title": "Default view",
 			"description": "The view to display when users log in",
-			"default": "view.dashboard",
-			"role": "viewId"
+
+			"type": "string",
+			"role": "classifiedcrecordselector",
+			"crecordtype": "view",
+			"valuekey" : "id",
+			"multiselect": false
 		}
 	}
 }

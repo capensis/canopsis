@@ -38,7 +38,8 @@ from time import time, sleep
 from json import loads
 
 from os import getpid
-from os.path import expanduser
+from os.path import expanduser, join
+from sys import prefix as sys_prefix
 
 DROP = -1
 DISPATCHER_READY_TIME = 5
@@ -93,7 +94,7 @@ class Engine(object):
         self.logger = init.getLogger(name, logging_level=self.logging_level)
 
         logHandler = FileHandler(
-            filename=expanduser("~/var/log/engines/%s.log" % name))
+            filename=join(sys_prefix, 'var', 'log', 'engines', '%s.log' % name))
         logHandler.setFormatter(
             Formatter(
                 "%(asctime)s %(levelname)s %(name)s %(message)s"))
