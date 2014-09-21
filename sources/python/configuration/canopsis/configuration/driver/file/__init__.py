@@ -24,7 +24,7 @@ from os import stat
 from os.path import exists, join
 import sys
 
-from canopsis.configuration.drive import ConfigurationDriver
+from canopsis.configuration.driver import ConfigurationDriver
 
 
 class FileConfigurationDriver(ConfigurationDriver):

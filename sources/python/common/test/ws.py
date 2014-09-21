@@ -120,7 +120,7 @@ class RouteTest(TestCase):
 
     def test_body_param(self):
 
-        @route(op=self.op, body_params='a')
+        @route(op=self.op, payload='a')
         def a(a):
             pass
 
@@ -128,39 +128,39 @@ class RouteTest(TestCase):
 
     def test_body_default_param(self):
 
-        @route(op=self.op, body_params='a')
+        @route(op=self.op, payload='a')
         def a(a=None):
             pass
 
         self.assertRoutes(['/a'])
 
-    def test_body_params(self):
+    def test_payload(self):
 
-        @route(op=self.op, body_params=['a', 'b'])
+        @route(op=self.op, payload=['a', 'b'])
         def a(a, b=None):
             pass
 
         self.assertRoutes(['/a'])
 
-    def test_required_body_params(self):
+    def test_required_payload(self):
 
-        @route(op=self.op, body_params=['a', 'c'])
+        @route(op=self.op, payload=['a', 'c'])
         def a(a, b, c=None):
             pass
 
         self.assertRoutes(['/a/:b'])
 
-    def test_optional_body_params(self):
+    def test_optional_payload(self):
 
-        @route(op=self.op, body_params=['a', 'c'])
+        @route(op=self.op, payload=['a', 'c'])
         def a(a, b=None, c=None):
             pass
 
         self.assertRoutes(['/a', '/a/:b'])
 
-    def test_required_optional_body_params(self):
+    def test_required_optional_payload(self):
 
-        @route(op=self.op, body_params=['b', 'd'])
+        @route(op=self.op, payload=['b', 'd'])
         def a(a, b=None, c=None, d=None):
             pass
 
