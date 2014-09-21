@@ -24,7 +24,9 @@ Module dedicated to manage configuration edition with a dedicated UI.
 """
 
 from canopsis.common.utils import lookup
-from canopsis.configuration import Configurable, Configuration, Category, Parameter
+from canopsis.configuration.configurable import Configurable
+from canopsis.configuration.parameters import (
+    Configuration, Category, Parameter)
 
 
 class ConfigurationEditor(Configurable):

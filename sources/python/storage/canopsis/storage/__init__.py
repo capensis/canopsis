@@ -25,7 +25,7 @@ __all__ = ('DataBase', 'Storage')
 from functools import reduce
 
 from canopsis.common.utils import isiterable
-from canopsis.configuration import Parameter
+from canopsis.configuration.parameters import Parameter
 from canopsis.middleware import Middleware
 
 

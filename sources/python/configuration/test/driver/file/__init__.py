@@ -23,7 +23,8 @@ from logging import getLogger
 
 from unittest import main, TestCase
 
-from canopsis.configuration import Configuration, Category, Parameter
+from canopsis.configuration.parameters import (
+    Configuration, Category, Parameter)
 from canopsis.configuration.driver.file import FileConfigurationDriver
 
 from pickle import loads, dump

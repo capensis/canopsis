@@ -20,7 +20,7 @@
 
 from uuid import uuid4 as uuid
 
-from canopsis.configuration import Parameter
+from canopsis.configuration.parameters import Parameter
 from canopsis.common.utils import ensure_iterable, isiterable, get_first
 from canopsis.storage import Storage
 

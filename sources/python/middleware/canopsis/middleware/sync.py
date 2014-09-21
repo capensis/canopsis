@@ -18,7 +18,7 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from canopsis.configuration import Parameter, Configuration
+from canopsis.configuration.parameters import Parameter, Configuration
 from .manager import Manager
 
 

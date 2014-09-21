@@ -20,9 +20,10 @@
 
 from canopsis.common.util import lookup
 from canopsis.engines import Engine
-from canopsis.configuration import (
-        Configurable, add_category, conf_paths, Parameter
-        )
+from canopsis.configuration.configurable import Configurable
+from canopsis.configuration.configurable.decorator import (
+    add_category, conf_paths)
+from canopsis.configuration.parameters import Parameter
 
 CONF_PATH = 'engines/engines.conf'  #: dynamic engine configuration path
 CATEGORY = 'ENGINE'  #: dynamic engine configuration category

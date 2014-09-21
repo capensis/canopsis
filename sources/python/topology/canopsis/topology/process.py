@@ -53,6 +53,7 @@ SOURCE = 'source'
 SOURCES = 'sources'
 NODE = 'node'
 PUBLISHER = 'publisher'
+WEIGHT = 'weight'
 
 
 def event_processing(event, ctx=None, **params):

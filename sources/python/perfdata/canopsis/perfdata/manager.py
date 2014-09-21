@@ -22,7 +22,8 @@ from time import time
 
 from canopsis.monitoring.parser import PerfDataParser
 from canopsis.common.utils import ensure_iterable
-from canopsis.configuration import add_category, conf_paths
+from canopsis.configuration.configurable.decorator import (
+    add_category, conf_paths)
 from canopsis.timeserie.timewindow import Period, get_offset_timewindow
 from canopsis.middleware.manager import Manager
 from canopsis.context.manager import Context

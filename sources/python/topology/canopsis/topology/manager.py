@@ -58,7 +58,8 @@ A topology node contains following fields::
 """
 
 from canopsis.common.utils import ensure_iterable
-from canopsis.configuration import conf_paths, add_category
+from canopsis.configuration.configurable.decorator import (
+    conf_paths, add_category)
 from canopsis.storage import Storage
 from canopsis.middleware.manager import Manager
 from canopsis.storage.filter import Filter

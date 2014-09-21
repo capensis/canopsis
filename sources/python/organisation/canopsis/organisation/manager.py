@@ -20,7 +20,7 @@
 
 from md5 import new as md5
 
-from canopsis.configuration import Parameter
+from canopsis.configuration.parameters import Parameter
 from canopsis.storage.manager import Manager
 
 

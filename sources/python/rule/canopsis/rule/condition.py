@@ -24,6 +24,44 @@ Rule condition functions
 
 from canopsis.rule import get_task_with_params
 
+from time import time
+from datetime import datetime
+
+from dateutil.rrule import rrule as rrule_class, relativedelta
+
+
+def during(event, ctx, rrule, duration=None, timestamp=None, **kwargs):
+
+    result = False
+
+    # if rrule is a string expression
+    if isinstance(rrule, str):
+        rrule_object = rrule_class.rrulestr(rrule)
+    else:
+        rrule_object = rrule_class(**rrule)
+
+    # if timestamp is None, use now
+    if timestamp is None:
+        timestamp = time()
+
+    # get now object
+    now = datetime.fromtimestamp(timestamp)
+
+    # get delta object
+    duration_delta = now if duration is None else relativedelta(**duration)
+
+    # get last date
+    last_date = rrule_object.before(now, inc=True)
+
+    # if a previous date exists
+    if last_date is not None:
+        next_date = last_date + duration_delta
+
+        # check if now is between last_date and next_date
+        result = last_date <= now <= next_date
+
+    return result
+
 
 def any(event, ctx, conditions, **kwargs):
     """
