@@ -20,7 +20,7 @@
 
 __version__ = "0.1"
 
-from canopsis.common.utils import resolve_element
+from canopsis.common.utils import lookup
 
 """
 Event processing rule module.
@@ -93,7 +93,7 @@ def get_task_with_params(task_conf, task_name=None, cached=True):
     # get dedicated callable task without params
     if isinstance(task_conf, str):
         try:
-            task = resolve_element(path=task_conf, cached=cached)
+            task = lookup(path=task_conf, cached=cached)
         except ImportError as ie:
             # Embed importerror in RuleError
             raise RuleError(ie)
@@ -102,7 +102,7 @@ def get_task_with_params(task_conf, task_name=None, cached=True):
     elif TASK_PATH in task_conf:
         task_path = task_conf[TASK_PATH]
         try:
-            task = resolve_element(path=task_path, cached=cached)
+            task = lookup(path=task_path, cached=cached)
 
         except ImportError as ie:
             # embed import error in Rule Error

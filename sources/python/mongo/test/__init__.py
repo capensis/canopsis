@@ -22,7 +22,6 @@
 from unittest import TestCase, main
 
 from canopsis.mongo import MongoDataBase, MongoStorage
-from canopsis.configuration import add_category, conf_paths
 
 from tempfile import NamedTemporaryFile
 

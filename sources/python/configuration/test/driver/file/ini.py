@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #--------------------------------
 # Copyright (c) 2014 "Capensis" [http://www.capensis.com]
@@ -18,33 +19,26 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from stat import ST_SIZE
+from unittest import main
 
-from os import stat
-from os.path import exists, join
-import sys
+from test.driver.file import ConfigurationDriverTest
 
-from .. import ConfigurationManager
+from canopsis.configuration.driver.file.ini import INIConfigurationDriver
 
 
-class FileConfigurationManager(ConfigurationManager):
-    """
-    Configuration Manager dedicated to files.
-    """
+class INIConfigurationDriverTest(ConfigurationDriverTest):
 
-    CONF_DIR = join(sys.prefix, 'etc')
+    def _get_configuration_manager(self):
 
-    def exists(self, conf_path, *args, **kwargs):
+        return INIConfigurationDriver()
 
-        path = FileConfigurationManager.get_path(conf_path)
+    def _get_manager_path(self):
 
-        result = exists(path) and stat(path)[ST_SIZE]
+        return 'canopsis.configuration.driver.file.ini.INIConfigurationDriver'
 
-        return result
+    def _get_manager(self):
 
-    @staticmethod
-    def get_path(conf_path):
+        return INIConfigurationDriver
 
-        result = join(FileConfigurationManager.CONF_DIR, conf_path)
-
-        return result
+if __name__ == '__main__':
+    main()

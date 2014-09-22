@@ -1,0 +1,19 @@
+{
+  "type": "object",
+  "metadata": {
+      "icon": "list-alt"
+  },
+  "categories": [{
+      "title": "General",
+      "keys":["title"]
+  }],
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "refreshableWidget":  {
+      "type": "boolean",
+      "default": true
+    }
+  }
+}

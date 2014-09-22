@@ -39,7 +39,7 @@ Related rule actions are defined in .condition module.
 """
 
 from canopsis.topology.manager import Topology
-from canopsis.topology.process import SOURCES, NODE
+from canopsis.topology.process import SOURCES, NODE, WEIGHT
 from canopsis.check import Check
 
 from sys import maxint
@@ -65,13 +65,13 @@ def new_state(event, ctx, state=None, **kwargs):
     return result
 
 
-def condition(event, ctx, at_least=1, state=None, **kwargs):
+def condition(event, ctx, min_weight=1, state=None, rrule=None, **kwargs):
     """
     Generic condition applied on sources of ctx node
 
     :param dict event: event which has fired this condition
     :param dict ctx: rule context which must contain rule node
-    :param int at_least:
+    :param int min_weight:
     :param int state: state to check among sources nodes
     """
 
@@ -79,7 +79,10 @@ def condition(event, ctx, at_least=1, state=None, **kwargs):
 
     source_nodes = topology.find_source_nodes(node=node)
 
-    at_least = min(at_least, len(source_nodes))
+    # start to remove downtime entities
+
+    weights = (source_node[WEIGHT] for source_node in source_nodes)
+    min_weight = min(min_weight, weights)
 
     result = False
 
@@ -88,9 +91,9 @@ def condition(event, ctx, at_least=1, state=None, **kwargs):
         source_node_state = source_node[Check.STATE]
 
         if source_node_state == state:
-            at_least -= 1
+            min_weight -= source_node[WEIGHT]
 
-            if at_least <= 0:
+            if min_weight <= 0:
                 result = True
                 break
 
@@ -110,22 +113,7 @@ def all(event, ctx, state, **kwargs):
         event=event,
         ctx=ctx,
         state=state,
-        at_least=maxint,
-        **kwargs)
-
-    return result
-
-
-def any(event, ctx, state, **kwargs):
-    """
-    Check if all source nodes match with input check_state
-    """
-
-    result = condition(
-        event=event,
-        ctx=ctx,
-        at_least=1,
-        state=state,
+        min_weight=maxint,
         **kwargs)
 
     return result

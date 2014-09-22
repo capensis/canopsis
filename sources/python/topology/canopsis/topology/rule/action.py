@@ -31,7 +31,7 @@ of state::
 For logical reasons, the propagate action runned such as the last action.
 """
 
-from canopsis.common.utils import resolve_element
+from canopsis.common.utils import lookup
 from canopsis.topology.manager import Topology
 from canopsis.check import Check
 from canopsis.topology.process import SOURCES, NODE
@@ -77,7 +77,7 @@ def change_state_from_source_nodes(event, ctx, f, **kwargs):
 
     # get function f
     if isinstance(f, str):
-        f = resolve_element(f)
+        f = lookup(f)
 
     # retrieve the node from where find source nodes
     node = ctx[NODE]

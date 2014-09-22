@@ -66,7 +66,7 @@ def isunicode(s):
         return True
 
 
-def force_unicode(s):
+def ensure_unicode(s):
     """
     Convert string to unicode.
 

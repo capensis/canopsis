@@ -20,7 +20,7 @@
 
 from inspect import getargspec
 
-from canopsis.common.utils import force_iterable
+from canopsis.common.utils import ensure_iterable
 
 from json import loads
 
@@ -34,7 +34,7 @@ def response(data):
     Construct a REST response from input data.
     """
 
-    result_data = force_iterable(data)
+    result_data = ensure_iterable(data)
 
     result = {
         'total': 0 if data is None else len(result_data),
@@ -64,7 +64,7 @@ class route(object):
 
     Example::
 
-        @route(get, body_params='c')
+        @route(get, payload='c')
         def entities(a, b, c=None, d=None):
             ...
 
@@ -78,19 +78,22 @@ class route(object):
         And manage ``c`` such as a request body parameter.
     """
 
-    def __init__(self, op, name=None, body_params=None):
+    def __init__(self, op, name=None, payload=None, response=response):
         """
         :param op: ws operation for routing a function
         :param str name: ws name
-        :param body_params: body parameter names (won't be generated in routes)
-        :type body_params: str or list of str
+        :param payload: body parameter names (won't be generated in routes)
+        :type payload: str or list of str
+        :param function response: response to apply on decorated function
+            result
         """
 
         super(route, self).__init__()
 
         self.op = op
         self.name = name
-        self.body_params = force_iterable(body_params)
+        self.payload = ensure_iterable(payload)
+        self.response = response
 
     def __call__(self, function):
 
@@ -99,14 +102,16 @@ class route(object):
         def interceptor(*args, **kwargs):
 
             # add body parameters in kwargs
-            for body_param in self.body_params:
+            for body_param in self.payload:
                 # TODO: remove reference from bottle
                 param = request.params.get(body_param)
                 # if param exists, add it into kwargs in deserializing it
                 if param is not None:
                     kwargs[body_param] = loads(param)
 
-            result = function(*args, **kwargs)
+            result_function = function(*args, **kwargs)
+
+            result = self.response(result_function)
 
             return result
 
@@ -142,7 +147,7 @@ class route(object):
 
         # identify optional parameters without body parameters
         for i in range(len_defaults):
-            if args[- (i + 1)] not in self.body_params:
+            if args[- (i + 1)] not in self.payload:
                 optional_header_params.append(args[- (i + 1)])
 
         optional_header_params.reverse()
@@ -150,7 +155,7 @@ class route(object):
         # get required header parameters without body parameters
         required_header_params = args[:len(args) - len_defaults]
         required_header_params = [param for param in required_header_params
-            if param not in self.body_params]
+            if param not in self.payload]
 
         # add routes with optional parameters
         for i in range(len(optional_header_params) + 1):

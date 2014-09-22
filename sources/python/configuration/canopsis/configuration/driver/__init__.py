@@ -18,29 +18,29 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from canopsis.common.utils import resolve_element, path
+from canopsis.common.utils import lookup, path
 
 from canopsis.configuration.parameters import \
     Configuration, Parameter, Category
 
 
-class MetaConfigurationManager(type):
+class MetaConfigurationDriver(type):
     """
-    ConfigurationManager meta class which register all manager in a global
+    ConfigurationDriver meta class which register all manager in a global
     set of managers.
     """
 
     def __init__(self, name, bases, attrs):
 
-        super(MetaConfigurationManager, self).__init__(name, bases, attrs)
+        super(MetaConfigurationDriver, self).__init__(name, bases, attrs)
 
         # if the class claims to be registered
         if self.__register__:
             # add it among managers
-            ConfigurationManager._MANAGERS[path(self)] = self
+            ConfigurationDriver._MANAGERS[path(self)] = self
 
 
-class ConfigurationManager(object):
+class ConfigurationDriver(object):
     """
     Base class for managing conf.
     """
@@ -49,7 +49,7 @@ class ConfigurationManager(object):
     Apply meta class for registering automatically it among global managers
     if __register__ is True
     """
-    __metaclass__ = MetaConfigurationManager
+    __metaclass__ = MetaConfigurationDriver
 
     """
     Static param which allows this class to be automatically registered
@@ -281,7 +281,7 @@ class ConfigurationManager(object):
         Get global defined managers.
         """
 
-        return set(ConfigurationManager._MANAGERS.values())
+        return set(ConfigurationDriver._MANAGERS.values())
 
     @staticmethod
     def get_manager(path):
@@ -294,13 +294,13 @@ class ConfigurationManager(object):
         """
 
         # try to get if from global definition
-        result = ConfigurationManager._MANAGERS.get(path)
+        result = ConfigurationDriver._MANAGERS.get(path)
 
         # if not already added
         if result is None:
             # resolve it and add it in global definition
-            result = resolve_element(path)
-            ConfigurationManager._MANAGERS[path] = result
+            result = lookup(path)
+            ConfigurationDriver._MANAGERS[path] = result
 
         return result
 

@@ -29,7 +29,9 @@ logger = logging.getLogger('TimeSerie')
 
 from canopsis.timeserie.timewindow import Period, TimeWindow
 from canopsis.timeserie.aggregation import get_aggregations
-from canopsis.configuration import Configurable, Parameter, conf_paths
+from canopsis.configuration.configurable import Configurable
+from canopsis.configuration.configurable.decorator import conf_paths
+from canopsis.configuration.parameters import Parameter
 
 from time import mktime
 
@@ -276,10 +278,13 @@ class TimeSerie(Configurable):
             new_content=(
                 Parameter(TimeSerie.AGGREGATION, value=self.aggregation),
                 Parameter(
-                    TimeSerie.PERIOD, value=self.period, parser=Period.from_str),
-                Parameter(TimeSerie.FILL, value=self.fill, parser=Parameter.bool),
+                    TimeSerie.PERIOD, value=self.period,
+                    parser=Period.from_str),
                 Parameter(
-                    TimeSerie.ROUND_TIME, value=self.round_time, parser=Parameter.bool),
+                    TimeSerie.FILL, value=self.fill, parser=Parameter.bool),
+                Parameter(
+                    TimeSerie.ROUND_TIME, value=self.round_time,
+                    parser=Parameter.bool),
                 Parameter(
                     TimeSerie.MAX_POINTS, value=self.max_points, parser=int)))
 

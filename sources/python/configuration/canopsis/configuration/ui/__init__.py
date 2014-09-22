@@ -23,8 +23,10 @@
 Module dedicated to manage configuration edition with a dedicated UI.
 """
 
-from canopsis.common.utils import resolve_element
-from canopsis.configuration import Configurable, Configuration, Category, Parameter
+from canopsis.common.utils import lookup
+from canopsis.configuration.configurable import Configurable
+from canopsis.configuration.parameters import (
+    Configuration, Category, Parameter)
 
 
 class ConfigurationEditor(Configurable):
@@ -59,7 +61,7 @@ class ConfigurationEditor(Configurable):
         for name, parameter in parameters.iteritems():
             if name.startswith(Configurable.COMPONENT_PREFIX):
                 parser = name[:len(Configurable.COMPONENT_PREFIX)]
-                component = resolve_element(parameter)
+                component = lookup(parameter)
                 self.components_by_parsers[parser] = component
 
     def display(self, *args, **kwargs):

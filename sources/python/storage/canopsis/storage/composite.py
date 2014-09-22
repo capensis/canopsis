@@ -20,8 +20,8 @@
 
 from uuid import uuid4 as uuid
 
-from canopsis.configuration import Parameter
-from canopsis.common.utils import force_iterable, isiterable, get_first
+from canopsis.configuration.parameters import Parameter
+from canopsis.common.utils import ensure_iterable, isiterable, get_first
 from canopsis.storage import Storage
 
 
@@ -93,7 +93,7 @@ class CompositeStorage(Storage):
 
         result = []
 
-        sids = force_iterable(shared_ids, iterable=set)
+        sids = ensure_iterable(shared_ids, iterable=set)
 
         for shared_id in sids:
             query = {CompositeStorage.SHARED: shared_id}
@@ -126,7 +126,7 @@ class CompositeStorage(Storage):
 
         # get an iterable version of input data
         #print 'plop', data
-        data_to_share = force_iterable(data)
+        data_to_share = ensure_iterable(data)
 
         for dts in data_to_share:
             # update extended data if necessary
@@ -154,7 +154,7 @@ class CompositeStorage(Storage):
 
         :param data: one or more data to unshare
         """
-        data = force_iterable(data)
+        data = ensure_iterable(data)
 
         for d in data:
             if CompositeStorage.SHARED in d:

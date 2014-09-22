@@ -25,7 +25,7 @@ __all__ = ('DataBase', 'Storage')
 from functools import reduce
 
 from canopsis.common.utils import isiterable
-from canopsis.configuration import Parameter
+from canopsis.configuration.parameters import Parameter
 from canopsis.middleware import Middleware
 
 
@@ -443,7 +443,7 @@ class Storage(DataBase):
         if isiterable(prefix, is_str=False):
             prefix = reduce(lambda x, y: '%s_%s' % (x, y), prefix)
 
-        result = "{0}_{1}".format(prefix, self.data_scope).upper()
+        result = "{0}_{1}".format(prefix, self.data_scope).lower()
 
         return result
 
@@ -519,7 +519,7 @@ Storage types must be of the same type.'.format(self, target))
         if isiterable(prefix):
             prefix = reduce(lambda x, y: '%s_%s' % (x, y), prefix)
 
-        result = '{0}_{1}'.format(prefix, self.data_scope).upper()
+        result = '{0}_{1}'.format(prefix, self.data_scope).lower()
 
         return result
 

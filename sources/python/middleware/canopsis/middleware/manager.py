@@ -18,8 +18,9 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from canopsis.configuration import \
-    Parameter, Configuration, Manager as ConfigurableManager
+from canopsis.configuration.parameters import Parameter, Configuration
+from canopsis.configuration.configurable.manager import \
+    Manager as ConfigurableManager
 from . import Middleware, parse_scheme
 
 

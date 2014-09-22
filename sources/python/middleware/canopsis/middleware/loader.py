@@ -19,9 +19,11 @@
 # ---------------------------------
 
 from importlib import import_module
-from canopsis.configuration import add_category, conf_paths
 
-from canopsis.configuration import Configurable, Parameter
+from canopsis.configuration.parameters import Parameter
+from canopsis.configuration.configurable import Configurable
+from canopsis.configuration.configurable.decorator import (
+    add_category, conf_paths)
 
 LOADER_CONF_PATH = 'middleware/loader.conf'
 LOADER_CATEGORY = 'LOADER'

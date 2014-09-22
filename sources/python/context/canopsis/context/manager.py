@@ -18,7 +18,8 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from canopsis.configuration import conf_paths, add_category
+from canopsis.configuration.configurable.decorator import (
+    conf_paths, add_category)
 from canopsis.middleware.manager import Manager
 from canopsis.storage import Storage
 
@@ -27,7 +28,7 @@ CONF_RESOURCE = 'context/context.conf'  #: last context conf resource
 CATEGORY = 'CONTEXT'  #: context category
 
 
-@add_category(CATEGORY)
+
 @conf_paths(CONF_RESOURCE)
 class Context(Manager):
     """

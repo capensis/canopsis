@@ -20,7 +20,7 @@
 
 from . import Configurable
 from canopsis.configuration.parameters import Configuration, Category
-from canopsis.common.utils import resolve_element
+from canopsis.common.utils import lookup
 
 from inspect import isclass
 
@@ -73,7 +73,7 @@ class Configurables(dict):
         # if value is a path
         if isinstance(configurable, str):
             # get related python object
-            configurable = resolve_element(configurable)
+            configurable = lookup(configurable)
 
         # if configurable is a class
         if isclass(configurable) and issubclass(
@@ -133,7 +133,7 @@ class ConfigurableTypes(dict):
         # if configurable_type is a path
         if isinstance(configurable_type, str):
             # get related python object
-            configurable_type = resolve_element(configurable_type)
+            configurable_type = lookup(configurable_type)
 
         # check if configurable_type is a subclass of Configurable
         if not issubclass(configurable_type, Configurable):
@@ -362,7 +362,7 @@ class Manager(Configurable):
         result = configurable
 
         if isinstance(configurable, str):
-            result = resolve_element(configurable)
+            result = lookup(configurable)
 
         if issubclass(result, Configurable):
             result = result(*args, **kwargs)

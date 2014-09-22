@@ -18,12 +18,14 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from logging import DEBUG, ERROR, getLogger
+from logging import ERROR
 
-from canopsis.configuration import conf_paths, add_category
+from canopsis.configuration.configurable.decorator import (
+    conf_paths, add_category)
 from canopsis.middleware.manager import Manager
 
 CATEGORY = 'RIGHTS'
+
 
 @conf_paths('organisation/rights.conf')
 @add_category(CATEGORY)
@@ -39,15 +41,12 @@ class Rights(Manager):
 
         super(Rights, self).__init__(data_scope=data_scope, *args, **kwargs)
 
-
     # Generic getter
     def get_from_storage(self, s_type):
         def get_from_storage_(elem):
             return self[s_type + '_storage'].get_elements(
-                ids=elem, query={'type':s_type}
-                )
+                ids=elem, query={'type': s_type})
         return get_from_storage_
-
 
     def _configure(self, unified_conf, *args, **kwargs):
 
@@ -66,7 +65,6 @@ class Rights(Manager):
         self.get_role = self.get_from_storage('role')
         self.get_user = self.get_from_storage('user')
 
-
     # Add an action to the referenced action
     def add(self, a_id, a_desc):
         """
@@ -82,7 +80,6 @@ class Rights(Manager):
         action = {'type': 'action',
                   'desc': a_desc}
         return self['action_storage'].put_element(a_id, action)
-
 
     # Check if an entity has the flags for a specific rigjt
     # The entity must have a rights field with a rights maps within
@@ -105,7 +102,6 @@ class Rights(Manager):
             return True
 
         return False
-
 
     # Check if an user has the flags for a specific right
     # Each of the user's entities (Role, Profile, and Composites)
@@ -204,7 +200,6 @@ class Rights(Manager):
         self[e_type].put_element(e_name, entity)
         return entity['rights'][right_id]['checksum']
 
-
     # Delete the checksum right of the entity linked
     # new_checksum ^= checksum
     def remove_right(self, entity, e_type, right_id, checksum):
@@ -223,7 +218,7 @@ class Rights(Manager):
 
         if (entity['rights']
             and entity['rights'][right_id]
-            and entity['rights'][right_id]['checksum'] >= checksum):
+                and entity['rights'][right_id]['checksum'] >= checksum):
 
             # remove the permissions passed in checksum
             entity['rights'][right_id]['checksum'] ^= checksum
@@ -238,7 +233,6 @@ class Rights(Manager):
             return entity['rights'][right_id]['checksum']
 
         return 0
-
 
     # Create a new rights composite composed of the rights passed in comp_rights
     # comp_rights should be a map of rights referenced in the action catalog
@@ -271,7 +265,6 @@ class Rights(Manager):
 
         return comp_name
 
-
     # Create a new profile composed of the composites p_composites
     #   and which name will be p_name
     # If the profile already exists, composites from p_composites
@@ -290,7 +283,7 @@ class Rights(Manager):
         if self.get_profile(p_name):
             return None
 
-        new_profile = {'type':'profile',
+        new_profile = {'type': 'profile',
                        'composites': []
                        }
 
@@ -300,7 +293,6 @@ class Rights(Manager):
             self.add_composite(p_name, 'profile', comp)
 
         return p_name
-
 
     # Delete entity of id e_name
     # t_type is the storage to check for relations
@@ -323,7 +315,8 @@ class Rights(Manager):
             self[from_storage].remove_elements(e_name)
 
             # remove the entity from every other entities that use it
-            for entity in self[to_storage].get_elements(query={'type':t_type}):
+            for entity in self[to_storage].get_elements(
+                    query={'type': t_type}):
                 if e_type in entity and e_name in entity[e_type]:
                     entity[e_type].remove(e_name)
                     self[to_storage].put_element(entity['_id'], entity)
@@ -331,7 +324,6 @@ class Rights(Manager):
             return True
 
         return False
-
 
     # to be removed when user module is created
     def delete_role(self, r_name):
@@ -366,8 +358,6 @@ class Rights(Manager):
 
         return self['user_storage'].remove_elements(u_name)
 
-
-
     # delete_entity wrapper
     def delete_profile(self, p_name):
         """
@@ -380,7 +370,6 @@ class Rights(Manager):
 
         return self.delete_entity(p_name, 'profile')
 
-
     # delete_entity wrapper
     def delete_composite(self, c_name):
         """
@@ -392,7 +381,6 @@ class Rights(Manager):
         """
 
         return self.delete_entity(c_name, 'composite')
-
 
     # Add the composite named comp_name to the entity
     # If the composite does not exist and
@@ -425,7 +413,6 @@ class Rights(Manager):
 
         return True
 
-
     # add_composite wrapper
     def add_comp_profile(self, e_name, comp_name, comp_rights=None):
         """
@@ -439,7 +426,6 @@ class Rights(Manager):
         """
 
         return self.add_composite(e_name, 'profile', comp_name, comp_rights)
-
 
     # add_composite wrapper
     def add_comp_role(self, e_name, comp_name, comp_rights=None):
@@ -455,7 +441,6 @@ class Rights(Manager):
 
         return self.add_composite(e_name, 'role', comp_name, comp_rights)
 
-
     # add_composite wrapper
     def add_comp_user(self, e_name, comp_name, comp_rights=None):
         """
@@ -469,7 +454,6 @@ class Rights(Manager):
         """
 
         return self.add_composite(e_name, 'user', comp_name, comp_rights)
-
 
     # Add the profile of name p_name to the role
     # If the profile does not exists and p_composites is specified
@@ -502,7 +486,6 @@ class Rights(Manager):
 
             return True
 
-
     # Add the profile of name p_name to the role
     # If the profile does not exists and p_composites is specified
     #    it will be created first
@@ -532,7 +515,6 @@ class Rights(Manager):
 
             return True
 
-
     # Remove the entity e_name from from_name
     # from_name can be a profile or a role
     # e_name can be a profile or a composite
@@ -561,7 +543,6 @@ class Rights(Manager):
 
         return self.remove_entity(e_name, e_type, comp_name, 'composite')
 
-
     # remove_composite wrapper
     def remove_comp_role(self, r_name, c_name):
         """
@@ -574,7 +555,6 @@ class Rights(Manager):
         """
 
         return self.remove_composite(r_name, 'role', c_name)
-
 
     # remove_composite wrapper
     def remove_comp_profile(self, p_name, c_name):
@@ -602,7 +582,6 @@ class Rights(Manager):
 
         return self.remove_composite(u_name, 'user', c_name)
 
-
     # remove_entity wrapper
     def remove_profile(self, r_name, p_name):
         """
@@ -616,7 +595,6 @@ class Rights(Manager):
 
         return self.remove_entity(r_name, 'role', p_name, 'profile')
 
-
     # remove_entity wrapper
     def remove_role(self, u_name, r_name):
         """
@@ -629,7 +607,6 @@ class Rights(Manager):
         """
 
         return self.remove_entity(u_name, 'user', r_name, 'role')
-
 
     # Create a new role composed of the profile r_profile
     #   and which name will be r_name
@@ -654,7 +631,6 @@ class Rights(Manager):
             new_role.setdefault('profile', []).append(r_profile)
         self.role_storage.put_element(r_name, new_role)
         return r_name
-
 
     def create_user(self, u_id, u_role,
                     contact=None, rights=None,
@@ -696,7 +672,6 @@ class Rights(Manager):
         self.user_storage.put_element(u_id, user)
         return user
 
-
     def set_user_fields(self, u_id, fields):
         """
         Args:
@@ -708,7 +683,7 @@ class Rights(Manager):
 
         user = self.get_user(u_id)
 
-        supported_fields={'name', 'email', 'address', 'phone'}
+        supported_fields = {'name', 'email', 'address', 'phone'}
 
         for key in fields:
             if key in supported_fields:
@@ -716,7 +691,6 @@ class Rights(Manager):
 
         self.user_storage.put_element(u_id, user)
         return user
-
 
     def set_user_name(self, u_id, u_name):
         """
@@ -738,7 +712,6 @@ class Rights(Manager):
         """
         return self.set_user_field(u_id, {'email': u_email})
 
-
     def set_user_address(self, u_id, u_address):
         """
         Args:
@@ -749,7 +722,6 @@ class Rights(Manager):
         """
         return self.set_user_field(u_id, {'address': u_address})
 
-
     def set_user_phone(self, u_id, u_phone):
         """
         Args:
@@ -759,7 +731,6 @@ class Rights(Manager):
             Map of the modified user
         """
         return self.set_user_field(u_id, {'phone': u_phone})
-
 
     def get_user_rights(self, u_id):
         """
@@ -816,10 +787,9 @@ class Rights(Manager):
             return None
 
         entity = self[e_type + '_storage'].get_elements(ids=e_id,
-                                                        query={'type':e_type})
+                                                        query={'type': e_type})
 
         return entity.setdefault(field, None)
-
 
     # User getters
     def get_user_role(self, u_id):

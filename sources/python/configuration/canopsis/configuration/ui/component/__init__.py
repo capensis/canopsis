@@ -23,7 +23,7 @@
 Module dedicated to define visual components
 """
 
-from canopsis.configuration import Configurable
+from canopsis.configuration.configurable import Configurable
 
 
 class Component(Configurable):

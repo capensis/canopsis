@@ -57,8 +57,9 @@ A topology node contains following fields::
     - rule: rule to apply.
 """
 
-from canopsis.common.utils import force_iterable
-from canopsis.configuration import conf_paths, add_category
+from canopsis.common.utils import ensure_iterable
+from canopsis.configuration.configurable.decorator import (
+    conf_paths, add_category)
 from canopsis.storage import Storage
 from canopsis.middleware.manager import Manager
 from canopsis.storage.filter import Filter
@@ -92,7 +93,7 @@ class Topology(Manager):
         """
 
         if topologies:
-            topologies = force_iterable(topologies)
+            topologies = ensure_iterable(topologies)
             for topology in topologies:
                 nodes = self.get_nodes(ids=topology[Topology.ID])
                 topology[Topology.NODES] = nodes

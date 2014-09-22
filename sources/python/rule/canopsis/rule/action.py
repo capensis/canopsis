@@ -22,7 +22,7 @@
 Rule action functions
 """
 
-from canopsis.common.utils import force_iterable
+from canopsis.common.utils import ensure_iterable
 from canopsis.rule import get_task_with_params, ActionError
 
 
@@ -35,7 +35,7 @@ def actions(event, ctx, actions=None, raiseError=False, **kwargs):
 
     if actions is not None:
 
-        action_confs = force_iterable(actions)
+        action_confs = ensure_iterable(actions)
         for action_conf in action_confs:
             action_task, params = get_task_with_params(action_conf)
             try:

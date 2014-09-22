@@ -26,7 +26,7 @@ from os.path import join, dirname, expanduser, abspath, basename, exists
 from sys import path, argv
 from sys import prefix as sys_prefix
 
-from canopsis.common.utils import resolve_element
+from canopsis.common.utils import lookup
 
 #import canopsis
 #from pkgutil import extend_path
@@ -73,7 +73,7 @@ def setup(description, keywords, add_etc=True, **kwargs):
     # canopsis.__path__ = extend_path(canopsis.__path__, canopsis.__name__)
 
     # get package
-    package = resolve_element("canopsis.%s" % name)
+    package = lookup("canopsis.%s" % name)
 
     # set default parameters if not setted
     kwargs.setdefault('name', package.__name__)

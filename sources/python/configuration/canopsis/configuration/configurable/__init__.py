@@ -64,8 +64,8 @@ class Configurable(object):
     __metaclass__ = MetaConfigurable
 
     DEFAULT_MANAGERS = '%s,%s' % (
-        'canopsis.configuration.manager.file.json.JSONConfigurationManager',
-        'canopsis.configuration.manager.file.ini.INIConfigurationManager')
+        'canopsis.configuration.driver.file.json.JSONConfigurationDriver',
+        'canopsis.configuration.driver.file.ini.INIConfigurationDriver')
 
     CONF_PATH = 'configuration/configurable.conf'
 
@@ -446,7 +446,7 @@ class Configurable(object):
         :type logger: logging.Logger
 
         :param managers: conf managers to use. If None, use self.managers
-        :type managers: list of ConfigurationManager
+        :type managers: list of ConfigurationDriver
 
         :param fill: if True (False by default) load in conf all \
             conf_paths content
@@ -550,7 +550,7 @@ class Configurable(object):
 
         else:
             self.logger.error(
-                'No ConfigurationManager found for \
+                'No ConfigurationDriver found for \
                 conf file {0}'.format(
                     conf_path))
 
@@ -678,16 +678,16 @@ class Configurable(object):
         Get the first manager able to handle input conf_path.
         None if no manager is able to handle input conf_path.
 
-        :return: first ConfigurationManager able to handle conf_path.
-        :rtype: ConfigurationManager
+        :return: first ConfigurationDriver able to handle conf_path.
+        :rtype: ConfigurationDriver
         """
 
         result = None
 
-        from canopsis.configuration.manager import ConfigurationManager
+        from canopsis.configuration.driver import ConfigurationDriver
 
         for manager in managers.split(','):
-            manager = ConfigurationManager.get_manager(manager)
+            manager = ConfigurationDriver.get_manager(manager)
             manager = manager()
 
             handle = conf_path is None \

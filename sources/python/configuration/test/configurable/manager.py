@@ -23,7 +23,7 @@ from unittest import TestCase, main
 
 from canopsis.configuration.configurable import Configurable
 from canopsis.configuration.configurable.manager import Manager
-from canopsis.configuration.manager.file import FileConfigurationManager
+from canopsis.configuration.driver.file import FileConfigurationDriver
 
 from tempfile import NamedTemporaryFile
 
@@ -52,7 +52,7 @@ class ManagerTest(TestCase):
 
         manager = TestManager()
 
-        conf_path = FileConfigurationManager.get_path(manager.conf_paths[-1])
+        conf_path = FileConfigurationDriver.get_path(manager.conf_paths[-1])
 
         configurable_name = 'test'
         full_configurable_name = '%s%s' % (
@@ -69,14 +69,16 @@ class ManagerTest(TestCase):
 
         self.assertTrue(manager[configurable_name].auto_conf)
 
+        configurable_path = "canopsis.configuration.configurable.Configurable"
+
         with open(conf_path, 'w+') as conf_file:
             conf_file.write("[MANAGER]")
             # set configurable
             conf_file.write("\n%s=" % (full_configurable_name))
-            conf_file.write("canopsis.configuration.Configurable")
+            conf_file.write(configurable_path)
             # set configurable type
             conf_file.write("\n%s=" % (configurable_type_name))
-            conf_file.write("canopsis.configuration.Configurable")
+            conf_file.write(configurable_path)
             # set sub-configurable auto_conf to false
             configurable_category = Manager.get_configurable_category(
                 configurable_name)
@@ -99,8 +101,7 @@ class ManagerTest(TestCase):
             manager.configurable_types[configurable_name], Configurable)
 
         # change type with str or Configurable class
-        manager.configurable_types[configurable_name] = \
-            "canopsis.configuration.Configurable"
+        manager.configurable_types[configurable_name] = configurable_path
         self.assertEqual(
             manager.configurable_types[configurable_name], Configurable)
         manager.configurable_types[configurable_name] = Configurable
@@ -110,7 +111,7 @@ class ManagerTest(TestCase):
         # change type in order to do not remove old value
         manager.test_configurable_type = Configurable
         self.assertTrue(isinstance(manager[configurable_name], Configurable))
-        manager.test = 'canopsis.configuration.Configurable'
+        manager.test = configurable_path
         self.assertTrue(isinstance(manager[configurable_name], Configurable))
         manager.test = Configurable
         self.assertTrue(isinstance(manager[configurable_name], Configurable))

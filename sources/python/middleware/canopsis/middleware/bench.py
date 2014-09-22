@@ -18,8 +18,8 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from canopsis.configuration import Parameter, Configuration
-from canopsis.common.utils import resolve_element
+from canopsis.configuration.parameters import Parameter, Configuration
+from canopsis.common.utils import lookup
 from .manager import Manager
 
 
@@ -70,7 +70,7 @@ class Benchmark(Manager):
             scenarios = self.scenarios.split(',')
 
         # convert strings to callable objects if required
-        _scenarios = [resolve_element(scenario) if isinstance(scenario, str)
+        _scenarios = [lookup(scenario) if isinstance(scenario, str)
         else scenario for scenario in scenarios]
 
         for index, scenario in enumerate(_scenarios):
