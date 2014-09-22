@@ -249,7 +249,7 @@ A mock-up is available to this url:
 https://cacoo.com/diagrams/BzcENww2MapkAhqx
 
 Visualisation
--------------
+#############
 
 This widget is composed of two parts.
 

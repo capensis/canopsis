@@ -9,4 +9,4 @@
    frontend/plugins/index
    frontend/REST/index
    frontend/serializers-and-adapters
-   frontend/ressources
+   frontend/resources

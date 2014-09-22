@@ -21,9 +21,9 @@ Package contents
 .. function:: resolve_element(path)
 
     Get a reference to an element known by runtime by the input given path.
-    The opposite function is :ref:`get_path`
+    The opposite function is get_path
 
 .. function:: get_path(element)
 
     Get an absolute runtime path of the input element.
-    Opposite to function :ref:`resolve_element`
+    Opposite to function resolve_element
