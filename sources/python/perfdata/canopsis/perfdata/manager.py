@@ -78,7 +78,7 @@ class PerfData(Manager):
 
     def get(
         self, metric_id, period=None, with_meta=True, timewindow=None,
-        limit=0, skip=0
+        limit=0, skip=0, timeserie=None
     ):
         """
         Get a set of data related to input data_id on the timewindow \
@@ -90,7 +90,7 @@ class PerfData(Manager):
 
         result = self[PerfData.PERFDATA_STORAGE].get(
             data_id=metric_id, timewindow=timewindow, period=period,
-            limit=limit, skip=skip)
+            limit=limit, skip=skip, timeserie=None)
 
         if with_meta is not None:
 

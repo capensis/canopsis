@@ -137,7 +137,7 @@ function extract_archive() {
         fi
     else
         echo "Error: Impossible to extract '$1', no command found ..."
-    exit 1
+        exit 1
     fi
 }
 
