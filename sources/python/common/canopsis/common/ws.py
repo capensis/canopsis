@@ -117,7 +117,11 @@ class route(object):
                 param = request.params.get(body_param)
                 # if param exists, add it into kwargs in deserializing it
                 if param is not None:
-                    kwargs[body_param] = loads(param)
+                    try:
+                        kwargs[body_param] = loads(param)
+                    except ValueError:  # error while deserializing
+                        # get the str value and cross fingers ...
+                        kwargs[body_param] = param
 
             result_function = function(*args, **kwargs)
 
