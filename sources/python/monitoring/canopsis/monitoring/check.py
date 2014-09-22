@@ -23,7 +23,6 @@ from canopsis import schema as cschema
 
 from os.path import join, expanduser, exists
 from subprocess import Popen, PIPE
-import socket
 import json
 import sys
 
@@ -39,16 +38,6 @@ class CheckRunner(object):
 
         self.context = context
         self.command = command
-
-        self.hostname = socket.getfqdn()
-
-    @property
-    def hostname(self):
-        return self._hostname
-
-    @hostname.setter
-    def hostname(self, value):
-        self._hostname = value
 
     def load_config(self, command):
         """
@@ -86,8 +75,6 @@ class CheckRunner(object):
                 raise self.CheckError(
                     'Cannot validate command {0}: {1}'.format(command, err)
                 )
-
-        self.hostname = conf['hostname']
 
         return schema, conf
 
@@ -147,7 +134,7 @@ class CheckRunner(object):
             'connector_name': self.context['connector_name'],
             'event_type': 'check',
             'source_type': self.context['source_type'],
-            'component': self.hostname,
+            'component': self.context['component'],
 
             'state': check.status,
             'state_type': 1,
@@ -164,27 +151,12 @@ class CheckRunner(object):
         return event
 
     def __call__(self):
-        try:
-            schema, conf = self.load_config(self.command)
-            cmd, cmdargs = self.build_command(schema, conf)
-            args = [cmd] + cmdargs
+        schema, conf = self.load_config(self.command)
+        cmd, cmdargs = self.build_command(schema, conf)
+        args = [cmd] + cmdargs
 
-            p = Popen(' '.join(args), stdout=PIPE, shell=True)
-            output = p.communicate()[0]
-            errcode = p.returncode
+        p = Popen(' '.join(args), stdout=PIPE, shell=True)
+        output = p.communicate()[0]
+        errcode = p.returncode
 
-            return self.gen_event(errcode, output)
-
-        except self.CheckError as err:
-            return {
-                'connector': self.context['connector'],
-                'connector_name': self.context['connector_name'],
-                'event_type': 'log',
-                'source_type': 'component',
-                'component': self.hostname,
-
-                'state': 2,
-                'state_type': 1,
-
-                'output': 'Error occured during check: {0}'.format(err)
-            }
+        return self.gen_event(errcode, output)

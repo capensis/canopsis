@@ -27,7 +27,7 @@ Canopsis UI is made of many dependencies that together render the User Interface
  - `renderers <#>`_
  - `schemas <#>`_
  - `templates <#>`_
- - `widgets <#>`_
+.. - `widgets <#>`_
 
 3. Canopsis dependencies Loaders
 --------------------------------
