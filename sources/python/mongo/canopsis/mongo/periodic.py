@@ -48,8 +48,11 @@ class MongoPeriodicStorage(MongoStorage, PeriodicStorage):
 
     def count(self, data_id, period, timewindow=None, *args, **kwargs):
 
-        data = self.get(data_id=data_id,
-            timewindow=timewindow, period=period)
+        data = self.get(
+            data_id=data_id,
+            timewindow=timewindow,
+            period=period
+        )
 
         result = len(data)
 
@@ -85,8 +88,11 @@ class MongoPeriodicStorage(MongoStorage, PeriodicStorage):
         *args, **kwargs
     ):
 
-        query = self._get_documents_query(data_id=data_id,
-            timewindow=timewindow, period=period)
+        query = self._get_documents_query(
+            data_id=data_id,
+            timewindow=timewindow,
+            period=period
+        )
 
         projection = {
             MongoPeriodicStorage.Index.TIMESTAMP: 1,
