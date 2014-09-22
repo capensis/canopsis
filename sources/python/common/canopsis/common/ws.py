@@ -43,8 +43,8 @@ def response(data):
         total = data[1]
 
     else:
-        result_data = ensure_iterable(data)
-        total = len(data)
+        result_data = None if data is None else ensure_iterable(data)
+        total = 0 if result_data is None else len(result_data)
 
     result = {
         'total': total,
