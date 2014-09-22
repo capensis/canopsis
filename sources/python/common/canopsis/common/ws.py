@@ -123,9 +123,18 @@ class route(object):
                         # get the str value and cross fingers ...
                         kwargs[body_param] = param
 
-            result_function = function(*args, **kwargs)
-
-            result = self.response(result_function)
+            try:
+                result_function = function(*args, **kwargs)
+            except Exception as e:
+                # if an error occured, get a failure message
+                result = {
+                    'total': 0,
+                    'success': False,
+                    'data': None,
+                    'msg': e.message}
+            else:
+                # else use self.response
+                result = self.response(result_function)
 
             return result
 
