@@ -245,7 +245,10 @@ class Storage(DataBase):
         """
         raise NotImplementedError()
 
-    def get_elements(self, ids=None, query=None, limit=0, skip=0, sort=None):
+    def get_elements(
+        self,
+        ids=None, query=None, limit=0, skip=0, sort=None, with_count=False
+    ):
         """
         Get a list of elements where id are input ids
 
@@ -261,6 +264,9 @@ class Storage(DataBase):
         :param sort: contains a list of couples of field (name, ASC/DESC)
             or field name which denots an implicitelly ASC order
         :type sort: list of {(str, {ASC, DESC}}), or str}
+
+        :param bool with_count: If True (False by default), add count to the
+            result
 
         :return: input id elements, or one element if ids is an element
             (None if this element does not exist)
@@ -297,7 +303,9 @@ class Storage(DataBase):
 
         return result
 
-    def find_elements(self, request, limit=0, skip=0, sort=None):
+    def find_elements(
+        self, request, limit=0, skip=0, sort=None, with_count=False
+    ):
         """
         Find elements corresponding to input request and in taking care of
         limit, skip and sort find parameters.
@@ -314,6 +322,9 @@ class Storage(DataBase):
         :param sort: contains a list of couples of field (name, ASC/DESC)
             or field name which denots an implicitelly ASC order
         :type sort: list of {(str, {ASC, DESC}}), or str}
+
+        :param bool with_count: If True (False by default), add count to the
+            result
 
         :return: input request elements
         :rtype: list of objects

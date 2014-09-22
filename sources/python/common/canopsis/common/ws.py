@@ -32,12 +32,22 @@ from functools import wraps
 def response(data):
     """
     Construct a REST response from input data.
+
+    :param data: data to convert into a REST response.
+    :param kwargs: service function parameters.
     """
 
-    result_data = ensure_iterable(data)
+    # calculate result_data and total related to data type
+    if isinstance(data, tuple):
+        result_data = ensure_iterable(data[0])
+        total = data[1]
+
+    else:
+        result_data = ensure_iterable(data)
+        total = len(data)
 
     result = {
-        'total': 0 if data is None else len(result_data),
+        'total': total,
         'data': result_data,
         'success': True
     }

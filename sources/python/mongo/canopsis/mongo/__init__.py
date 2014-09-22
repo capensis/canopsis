@@ -190,7 +190,9 @@ class MongoStorage(MongoDataBase, Storage):
         super(MongoStorage, self).drop(table=self.get_table(), *args, **kwargs)
 
     def get_elements(
-        self, ids=None, query=None, limit=0, skip=0, sort=None, *args, **kwargs
+        self,
+        ids=None, query=None, limit=0, skip=0, sort=None, with_count=False,
+        *args, **kwargs
     ):
 
         _query = {} if query is None else query.copy()
@@ -215,6 +217,9 @@ class MongoStorage(MongoDataBase, Storage):
         if sort is not None:
             MongoStorage._update_sort(sort)
             cursor.sort(sort)
+
+        # calculate count
+        count = cursor.count() if with_count else 0
 
         # set hint property
         if _query:
@@ -253,14 +258,23 @@ class MongoStorage(MongoDataBase, Storage):
             else:
                 result = None
 
+        # if with_count, add count to the result
+        if with_count:
+            result = result, count
+
         return result
 
     def find_elements(
-        self, query, limit=0, skip=0, sort=None, *args, **kwargs
+        self, query, limit=0, skip=0, sort=None, with_count=False,
+        *args, **kwargs
     ):
 
         return self.get_elements(
-            query=query, limit=limit, skip=skip, sort=sort)
+            query=query,
+            limit=limit,
+            skip=skip,
+            sort=sort,
+            with_count=with_count)
 
     def remove_elements(self, ids, *args, **kwargs):
 

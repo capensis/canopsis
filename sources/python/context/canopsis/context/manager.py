@@ -19,14 +19,12 @@
 # ---------------------------------
 
 from canopsis.configuration.configurable.decorator import (
-    conf_paths, add_category)
+    conf_paths)
 from canopsis.middleware.manager import Manager
 from canopsis.storage import Storage
 
-
 CONF_RESOURCE = 'context/context.conf'  #: last context conf resource
 CATEGORY = 'CONTEXT'  #: context category
-
 
 
 @conf_paths(CONF_RESOURCE)
@@ -137,7 +135,7 @@ class Context(Manager):
 
     def find(
         self, _type=None, context=None, _filter=None, extended=False,
-        limit=0, skip=0, sort=None
+        limit=0, skip=0, sort=None, with_count=False
     ):
         """
         Find all entities which of input _type and context with an additional
@@ -155,7 +153,7 @@ class Context(Manager):
 
         result = self[Context.CTX_STORAGE].get(
             path=path, _filter=_filter, shared=extended,
-            limit=limit, skip=skip, sort=sort)
+            limit=limit, skip=skip, sort=sort, with_count=with_count)
 
         return result
 
