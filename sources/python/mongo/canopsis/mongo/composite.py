@@ -45,7 +45,7 @@ class MongoCompositeStorage(MongoStorage, CompositeStorage):
     def get(
         self,
         path, data_ids=None, _filter=None, shared=False,
-        limit=0, skip=0, sort=None,
+        limit=0, skip=0, sort=None, with_count=False,
         *args, **kwargs
     ):
 
@@ -67,7 +67,15 @@ class MongoCompositeStorage(MongoStorage, CompositeStorage):
 
         # get elements
         result = self.find_elements(
-            query=query, limit=limit, skip=skip, sort=sort)
+            query=query,
+            limit=limit,
+            skip=skip,
+            sort=sort,
+            with_count=with_count)
+
+        if with_count:
+            count = result[1]
+            result = result[0]
 
         if result is not None and shared:
             # if result is one value
@@ -95,13 +103,20 @@ class MongoCompositeStorage(MongoStorage, CompositeStorage):
                     # append data in result
                     result.append(data)
 
+        if with_count:
+            result = result, count
+
         return result
 
-    def find(self, path, _filter, shared=False, limit=0, skip=0, sort=None):
+    def find(
+        self,
+        path,
+        _filter, shared=False, limit=0, skip=0, sort=None, with_count=False
+    ):
 
         result = self.get(
             path=path, _filter=_filter, shared=shared,
-            limit=limit, skip=skip, sort=sort)
+            limit=limit, skip=skip, sort=sort, with_count=with_count)
 
         return result
 

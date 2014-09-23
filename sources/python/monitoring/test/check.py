@@ -23,6 +23,7 @@ from unittest import TestCase, main
 
 from canopsis.monitoring.check import CheckRunner
 from copy import deepcopy
+import socket
 
 
 CONTEXT = {
@@ -59,6 +60,7 @@ SCHEMA = {
 class KnownValues(TestCase):
     def setUp(self):
         self.runner = CheckRunner(CONTEXT, 'test')
+        self.runner.hostname = 'monitoring'
 
     def _validate(
         self,

@@ -83,7 +83,7 @@ class MongoTimedStorage(MongoStorage, TimedStorage):
             data_id = document[MongoTimedStorage.Key.DATA_ID]
 
             # a value to get is composed of a timestamp, values and document id
-            value_to_append = (timestamp, value, document['_id'])
+            value_to_append = (timestamp, value, str(document['_id']))
 
             if data_id not in result:
                 result[data_id] = [value_to_append]

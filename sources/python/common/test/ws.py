@@ -211,5 +211,13 @@ class ResponseTest(TestCase):
         self.assertEqual(result['total'], 1)
         self.assertTrue(result['success'])
 
+    def test_count(self):
+
+        total = 10
+        result = response((0, total))
+
+        self.assertEqual(result['total'], total)
+        self.assertTrue(result['success'])
+
 if __name__ == '__main__':
     main()

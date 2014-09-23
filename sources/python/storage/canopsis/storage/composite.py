@@ -165,13 +165,12 @@ class CompositeStorage(Storage):
     def get(
         self,
         path, data_ids=None, _filter=None, shared=False,
-        limit=0, skip=0, sort=None
+        limit=0, skip=0, sort=None, with_count=False
     ):
         """
         Get data related to input data_ids, input path and input filter.
 
-        :param path: dictionnary of path valut by path name
-        :type path: dict
+        :param dict path: dictionnary of path valut by path name
 
         :param data_ids: data ids in the input path.
         :type data_ids: str or iterable of str
@@ -179,19 +178,18 @@ class CompositeStorage(Storage):
         :param _filter: additional filter condition to input path
         :type _filter: storage filter
 
-        :param shared: if True, convert result to list of list of data where
-            list of data are list of shared data.
-        :type shared: bool
+        :param bool shared: if True, convert result to list of list of data
+            where list of data are list of shared data.
 
-        :param limit: max number of data to get. Useless if data_id is given.
-        :type limit: int
+        :param int limit: max number of data to get. Useless if data_id exists.
 
-        :param skip: starting index of research if multi data to get
-        :type skip: int
+        :param int skip: starting index of research if multi data to get
 
-        :param sort: couples of field (name, value) to sort with ASC/DESC
+        :param dict sort: couples of field (name, value) to sort with ASC/DESC
             Storage fields
-        :type sort: dict
+
+        :param bool with_count: If True (False by default), add count to the
+            result
 
         :return: a data or a list of data respectively to ids such as a str or
             an iterable of str
@@ -200,7 +198,10 @@ class CompositeStorage(Storage):
 
         raise NotImplementedError()
 
-    def find(self, path, _filter, shared=False, limit=0, skip=0, sort=None):
+    def find(
+        self, path, _filter, shared=False, limit=0, skip=0, sort=None,
+        with_count=False
+    ):
         """
         Get a list of data identified among a dictionary of composite values by
         name.
@@ -211,19 +212,18 @@ class CompositeStorage(Storage):
         :param _filter: additional filter condition to input path
         :type _filter: storage filter
 
-        :param shared: if True, convert result to list of list of data where
-            list of data are list of shared data.
-        :type shared: bool
+        :param bool shared: if True, convert result to list of list of data
+            where list of data are list of shared data.
 
-        :param limit: max number of data to get. Useless if data_id is given.
-        :type limit: int
+        :param int limit: max number of data to get. Useless if data_id exists.
 
-        :param skip: starting index of research if multi data to get
-        :type skip: int
+        :param int skip: starting index of research if multi data to get
 
-        :param sort: couples of field (name, value) to sort with ASC/DESC
+        :param dict sort: couples of field (name, value) to sort with ASC/DESC
             Storage fields
-        :type sort: dict
+
+        :param bool with_count: If True (False by default), add count to the
+            result
 
         :return: a list of data.
         :rtype: list of dict

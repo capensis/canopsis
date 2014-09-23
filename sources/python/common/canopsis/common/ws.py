@@ -32,12 +32,22 @@ from functools import wraps
 def response(data):
     """
     Construct a REST response from input data.
+
+    :param data: data to convert into a REST response.
+    :param kwargs: service function parameters.
     """
 
-    result_data = ensure_iterable(data)
+    # calculate result_data and total related to data type
+    if isinstance(data, tuple):
+        result_data = ensure_iterable(data[0])
+        total = data[1]
+
+    else:
+        result_data = None if data is None else ensure_iterable(data)
+        total = 0 if result_data is None else len(result_data)
 
     result = {
-        'total': 0 if data is None else len(result_data),
+        'total': total,
         'data': result_data,
         'success': True
     }
@@ -107,11 +117,24 @@ class route(object):
                 param = request.params.get(body_param)
                 # if param exists, add it into kwargs in deserializing it
                 if param is not None:
-                    kwargs[body_param] = loads(param)
+                    try:
+                        kwargs[body_param] = loads(param)
+                    except ValueError:  # error while deserializing
+                        # get the str value and cross fingers ...
+                        kwargs[body_param] = param
 
-            result_function = function(*args, **kwargs)
-
-            result = self.response(result_function)
+            try:
+                result_function = function(*args, **kwargs)
+            except Exception as e:
+                # if an error occured, get a failure message
+                result = {
+                    'total': 0,
+                    'success': False,
+                    'data': None,
+                    'msg': e.message}
+            else:
+                # else use self.response
+                result = self.response(result_function)
 
             return result
 
