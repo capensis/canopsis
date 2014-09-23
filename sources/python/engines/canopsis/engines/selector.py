@@ -67,6 +67,8 @@ class engine(Engine):
                 logging_level=self.logging_level)
 
             name = selector.display_name
+            
+            selector_event.data["selector_id"] = selector._id
 
             self.logger.debug('Selector {} found, start processing..'.format(name))
 
@@ -88,6 +90,8 @@ class engine(Engine):
     def publish_event(self, selector):
 
         rk, selector_event, publish_ack = selector.event()
+        selector_event['selector_id'] = selector._id
+
         self.logger.info('Ready to publish selector {} event with state {}'.format(selector.display_name, selector_event['state']))
 
         if publish_ack:
