@@ -33,12 +33,10 @@
 		"defaultview": {
 			"title": "Default view",
 			"description": "The view to display when users log in",
-
+			"valueKey": "id",
 			"type": "string",
-			"role": "classifiedcrecordselector",
-			"crecordtype": "view",
-			"valuekey" : "id",
-			"multiselect": false
+			"role": "stringclassifiedcrecordselector",
+			"crecordtype": "view"
 		}
 	}
 }

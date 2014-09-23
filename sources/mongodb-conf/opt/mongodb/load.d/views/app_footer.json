@@ -16,7 +16,7 @@
                                         "html" : "<p>footer</p>",
                                         "events" : null,
                                         "filters" : [ ],
-                                        "title" : "app header."
+                                        "title" : "app footer."
                                 },
                                 "xtype" : "widgetwrapper",
                                 "title" : "wrapper"
