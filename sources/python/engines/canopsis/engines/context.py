@@ -86,7 +86,7 @@ class engine(Engine):
             _type='connector', entity=entity)
 
         # add connector_name
-        entity[Context.NAME] = connector
+        entity[Context.NAME] = connector_name
 
         context['connector'] = connector
         self.context.put(
