@@ -90,9 +90,9 @@ class PerfData(Manager):
 
         result = self[PerfData.PERFDATA_STORAGE].get(
             data_id=metric_id, timewindow=timewindow, period=period,
-            limit=limit, skip=skip, timeserie=None)
+            limit=limit, skip=skip, timeserie=timeserie)
 
-        if with_meta is not None:
+        if with_meta:
 
             meta = self[PerfData.META_STORAGE].get(
                 data_ids=metric_id, timewindow=timewindow)

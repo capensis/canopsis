@@ -1,0 +1,64 @@
+{
+    "categories": [{
+        "title": "General",
+        "keys": ["name", "metrics", "formula"]
+    },{
+        "title": "Metadata",
+        "keys": ["min", "max", "warn", "crit"]
+    },{
+        "title": "Advanced Computation",
+        "keys": ["aggregate_method", "aggregate_interval", "consolidation_method", "consolidation_interval"]
+    }],
+    "type": "object",
+    "properties": {
+        "crecord_type": {
+            "enum": ["serie"],
+            "required": true
+        },
+        "name": {
+            "type": "string",
+            "required": true
+        },
+        "metrics": {
+            "type": "array",
+            "items": {
+                "type": "string"
+            },
+            "role": "cmetric",
+            "title": "Data source for series"
+        },
+        "formula": {
+            "type": "string",
+            "role": "math",
+            "required": true
+        },
+        "min": {"type": "number"},
+        "max": {"type": "number"},
+        "warn": {"type": "number"},
+        "crit": {"type": "number"},
+        "aggregate_method": {
+            "title": "Aggregation Method",
+            "role": "simplelist",
+            "enum": ["none", "first", "last", "average", "min", "max", "sum"],
+            "default": "none"
+        },
+        "aggregate_interval": {
+            "title": "Interval of aggregation",
+            "type": "integer",
+            "role": "duration",
+            "default": 0
+        },
+        "consolidation_method": {
+            "title": "Consolidation method",
+            "role": "simplelist",
+            "enum": ["none", "average", "min", "max", "sum", "diff"],
+            "default": "none"
+        },
+        "consolidation_interval": {
+            "title": "Interval of consolidation",
+            "type": "integer",
+            "role": "duration",
+            "default": 120
+        }
+    }
+}

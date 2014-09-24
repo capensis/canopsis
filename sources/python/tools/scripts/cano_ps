@@ -21,12 +21,43 @@
 
 from psutil import process_iter
 
-processes = [proc for proc in process_iter() if proc.username == "canopsis"]
+import json
+import sys
+import os
 
-for proc in processes:
-    print("[%s] CPU: %.2f%%, MEM: %.2f%%, Command: %s" % (
-        proc.name,
-        proc.get_cpu_percent(),
-        proc.get_memory_percent(),
-        ' '.join(proc.cmdline)
-    ))
+
+class CanopsisProcessInfo(object):
+    def __init__(self, *args, **kwargs):
+        super(CanopsisProcessInfo, self).__init__(*args, **kwargs)
+
+        envpath = os.path.join(sys.prefix, 'etc', 'canopsis-env.json')
+
+        try:
+            with open(envpath) as f:
+                self.conf = json.load(f)
+
+        except Exception:
+            self.conf = {
+                'canopsis': {
+                    'user': 'canopsis',
+                    'group': 'canopsis',
+                    'prefix': '/opt/canopsis'
+                }
+            }
+
+    def __call__(self):
+        usr = self.conf['canopsis']['user']
+        procs = [proc for proc in process_iter() if proc.username == usr]
+
+        for proc in procs:
+            print("[%s] CPU: %.2f%%, MEM: %.2f%%, Command: %s" % (
+                proc.name,
+                proc.get_cpu_percent(),
+                proc.get_memory_percent(),
+                ' '.join(proc.cmdline)
+            ))
+
+
+if __name__ == '__main__':
+    cps = CanopsisProcessInfo()
+    cps()

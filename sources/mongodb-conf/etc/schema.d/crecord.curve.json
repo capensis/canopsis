@@ -1,45 +1,92 @@
 {
-	"type": "object",
-	"categories": [{
-		"title": "General",
-		"keys":[
-			"line_color",
-			"area_color",
-			"line_style",
-			"area_opacity",
-			"zindex",
-			"invert",
-			"metric",
-			"label"
-		]
-	}],
-	"properties": {
-		"line_color":{
-			"type": "string",
-			"role": "color"
-		},
-		"area_color":{
-			"type": "string",
-			"role": "color"
-		},
-		"line_style":{
-			"type": "string"
-		},
-		"area_opacity":{
-			"type": "number",
-			"role": "percent"
-		},
-		"zindex":{
-			"type": "number"
-		},
-		"invert":{
-			"type": "boolean"
-		},
-		"metric":{
-			"type": "string"
-		},
-		"label":{
-			"type": "string"
-		}
-	}
+    "categories": [{
+        "title": "General",
+        "keys": ["name"]
+    },{
+        "title": "Curve Style",
+        "keys": ["stacked", "lines", "areas", "points", "bars"]
+    },{
+        "title": "Customize Curve",
+        "keys": ["line_width", "bar_width", "line_style", "point_shape", "line_color", "bar_color", "area_color", "area_opacity"]
+    }],
+    "type": "object",
+    "properties": {
+        "crecord_type": {
+            "enum": ["curve"],
+            "required": true
+        },
+        "name": {
+            "type": "string",
+            "required": true
+        },
+        "stacked": {
+            "type": "boolean",
+            "default": false,
+            "title": "Stacked graph"
+        },
+        "lines": {
+            "type": "boolean",
+            "default": true,
+            "title": "Show line"
+        },
+        "areas": {
+            "type": "boolean",
+            "default": false,
+            "title": "Fill area under line"
+        },
+        "points": {
+            "type": "boolean",
+            "default": true,
+            "title": "Show points"
+        },
+        "bars": {
+            "type": "boolean",
+            "default": false,
+            "title": "Show bars"
+        },
+        "line_width": {
+            "type": "integer",
+            "default": 1,
+            "title": "Line width"
+        },
+        "bar_width": {
+            "type": "integer",
+            "default": 10,
+            "title": "Bar width"
+        },
+        "line_style": {
+            "enum": ["line", "dash", "dot", "dashdot", "dashdotdot"],
+            "default": "line",
+            "title": "Lines style",
+            "role": "simplelist"
+        },
+        "point_shape": {
+            "enum": ["circle", "triangle", "square"],
+            "default": "circle",
+            "title": "Point's shape",
+            "role": "simplelist"
+        },
+        "line_color": {
+            "type": "string",
+            "title": "Line color",
+            "role": "color"
+        },
+        "bar_color": {
+            "type": "string",
+            "title": "Bar color",
+            "role": "color"
+        },
+        "area_color": {
+            "type": "string",
+            "title": "Area color",
+            "role": "color"
+        },
+        "area_opacity": {
+            "type": "number",
+            "title": "Area opacity",
+            "minimum": 0,
+            "maximum": 1,
+            "default": 0.75
+        }
+    }
 }
