@@ -11,10 +11,10 @@
         "keys": ["timenav", "timenav_window"]
     },{
         "title": "Graph Style",
-        "keys": ["stacked", "points", "lines", "areas", "bars", "point_shape", "line_width", "bar_width"]
+        "keys": ["stacked", "points", "lines", "areas", "bars", "line_width", "bar_width", "line_style", "point_shape", "line_color", "bar_color", "area_color", "area_opacity"]
     },{
         "title": "Series",
-        "keys": ["metrics", "series"]
+        "keys": ["series"]
     }],
     "properties": {
         "title":  {
@@ -27,13 +27,13 @@
         },
         "time_window": {
             "type": "number",
-            "role": "interval",
+            "role": "duration",
             "default": 86400,
             "title": "Time Window to show on graph"
         },
         "time_window_offset": {
             "type": "number",
-            "role": "interval",
+            "role": "duration",
             "default": 0,
             "title": "Time window offset from now"
         },
@@ -44,7 +44,7 @@
         },
         "timenav_window": {
             "type": "number",
-            "role": "interval",
+            "role": "duration",
             "default": 172800,
             "title": "History time window"
         },
@@ -73,11 +73,6 @@
             "default": false,
             "title": "Show bars"
         },
-        "point_shape": {
-            "enum": ["circle", "triangle", "square"],
-            "default": "circle",
-            "title": "Point's shape"
-        },
         "line_width": {
             "type": "integer",
             "default": 1,
@@ -87,6 +82,40 @@
             "type": "integer",
             "default": 10,
             "title": "Bars width"
+        },
+        "line_style": {
+            "enum": ["line", "dash", "dot", "dashdot", "dashdotdot"],
+            "default": "line",
+            "title": "Lines style",
+            "role": "simplelist"
+        },
+        "point_shape": {
+            "enum": ["circle", "triangle", "square"],
+            "default": "circle",
+            "title": "Point's shape",
+            "role": "simplelist"
+        },
+        "line_color": {
+            "type": "string",
+            "title": "Line color",
+            "role": "color"
+        },
+        "bar_color": {
+            "type": "string",
+            "title": "Bar color",
+            "role": "color"
+        },
+        "area_color": {
+            "type": "string",
+            "title": "Area color",
+            "role": "color"
+        },
+        "area_opacity": {
+            "type": "number",
+            "title": "Area opacity",
+            "minimum": 0,
+            "maximum": 1,
+            "default": 0.75
         },
         "legend": {
             "type": "boolean",
@@ -98,55 +127,22 @@
             "default": true,
             "title": "Show tooltips"
         },
-        "metrics": {
-            "type": "array",
-            "items": {
-                "type": "string"
-            },
-            "role": "cmetric",
-            "title": "Data source for series"
-        },
         "series": {
             "type": "array",
+            "role": "array",
             "items": {
                 "type": "object",
+                "role": "serieitem",
                 "properties": {
-                    "name": {"type": "string"},
-                    "formula": {"type": "string", "role": "math"},
-                    "lines": {
-                        "type": "boolean",
-                        "default": true,
-                        "title": "Show lines"
+                    "serie": {
+                        "type": "object",
+                        "model": "serie",
+                        "required": true
                     },
-                    "areas": {
-                        "type": "boolean",
-                        "default": false,
-                        "title": "Fill area under lines"
-                    },
-                    "points": {
-                        "type": "boolean",
-                        "default": true,
-                        "title": "Show points"
-                    },
-                    "bars": {
-                        "type": "boolean",
-                        "default": false,
-                        "title": "Show bars"
-                    },
-                    "point_shape": {
-                        "enum": ["circle", "triangle", "square"],
-                        "default": "circle",
-                        "title": "Point's shape"
-                    },
-                    "line_width": {
-                        "type": "integer",
-                        "default": 1,
-                        "title": "Lines width"
-                    },
-                    "bar_width": {
-                        "type": "integer",
-                        "default": 10,
-                        "title": "Bars width"
+                    "style": {
+                        "type": "object",
+                        "model": "curve",
+                        "required": true
                     }
                 }
             }

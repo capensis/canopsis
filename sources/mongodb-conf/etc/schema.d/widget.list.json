@@ -19,7 +19,31 @@
 	"properties": {
 		"listed_crecord_type": {
 			"type": "string",
-			"enum": ["group", "role", "profile", "account", "event", "eventlog", "selector", "filter", "userview", "eue", "topolofy"],
+			"enum": [
+				"topology",
+				"filter",
+				"widgetpreferences",
+				"userview",
+				"profile",
+				"job",
+				"account",
+				"rule",
+				"selector",
+				"event",
+				"curve",
+				"account",
+				"slacrit",
+				"serie",
+				"filter_rule",
+				"defaultrule",
+				"consolidation",
+				"account",
+				"role",
+				"right",
+				"derogation",
+				"group",
+				"event"
+			],
 			"default": "group",
 			"role": "simplelist"
 		},
