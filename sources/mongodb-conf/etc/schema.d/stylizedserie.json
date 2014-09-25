@@ -1,0 +1,25 @@
+{
+    "categories": [{
+        "title": "General",
+        "keys": ["serie", "style"]
+    }],
+    "type": "object",
+    "properties": {
+        "xtype": {
+            "type": "string",
+            "required": true
+        },
+        "serie": {
+            "type": "object",
+            "model": "crecord.serie",
+            "relationship": "belongsTo",
+            "required": true
+        },
+        "style": {
+            "type": "object",
+            "model": "crecord.curve",
+            "relationship": "belongsTo",
+            "required": true
+        }
+    }
+}

@@ -61,16 +61,7 @@
             "items": {
                 "type": "object",
                 "role": "serieitem",
-                "properties": {
-                    "serie": {
-                        "type": "object",
-                        "required": true
-                    },
-                    "style": {
-                        "type": "object",
-                        "required": true
-                    }
-                }
+                "model": "stylizedserie"
             }
         }
     }
