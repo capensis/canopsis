@@ -223,3 +223,84 @@ def get_first(iterable, default=None):
     result = iterable[0] if iterable else default
 
     return result
+
+
+def prototype(typed_args=None, typed_kwargs=None, typed_return=None):
+    """
+    Decorate a function to check its parameters type.
+
+    :param typed_args: Types for *args
+    :type typed_args: tuple
+
+    :param typed_kwargs: Types for **kwargs
+    :type typed_kwargs: dict
+
+    :param typed_return: Types for return
+    :type typed_return: tuple of type, or type
+
+    :raises: TypeError
+    """
+
+    if typed_args is None:
+        typed_args = ()
+
+    if typed_kwargs is None:
+        typed_kwargs = {}
+
+    if typed_return is None:
+        typed_return = type(None)
+
+    if isinstance(typed_return, list):
+        typed_return = tuple(typed_return)
+
+    def decorator(func):
+        def wrapper(*args, **kwargs):
+            i = 0
+            l = len(args)
+
+            for i in range(l):
+                types = typed_args[i]
+
+                if isinstance(types, list):
+                    types = tuple(types)
+
+                if not isinstance(args[i], types):
+                    raise TypeError(
+                        'Invalid type for arg#{}, got {} instead of {}'.format(
+                            type(args[i]),
+                            types[i]
+                        )
+                    )
+
+            for key in typed_kwargs:
+                types = typed_kwargs[key]
+
+                if isinstance(types, list):
+                    types = tuple(types)
+
+                arg = kwargs.get(key, None)
+
+                if not isinstance(arg, types):
+                    raise TypeError(
+                        'Invalid type for {}, got {} instead of {}'.format(
+                            key,
+                            type(arg),
+                            types
+                        )
+                    )
+
+            ret = func(*args, **kwargs)
+
+            if not isinstance(ret, typed_return):
+                raise TypeError(
+                    'Invalid type for return, got {0} instead of {}'.format(
+                        type(ret),
+                        typed_return
+                    )
+                )
+
+            return ret
+
+        return wrapper
+
+    return decorator
