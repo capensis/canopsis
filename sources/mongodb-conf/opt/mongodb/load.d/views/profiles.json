@@ -21,6 +21,11 @@
           "selection_toolbar": [
             "actionbutton-create",
             "actionbutton-removeselection"
+          ],
+          "mixins": [
+            "Sortablearray",
+            "Arraysearch",
+            "Pagination"
           ]
         }
       }

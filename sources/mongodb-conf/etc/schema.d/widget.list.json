@@ -5,7 +5,7 @@
 	},
 	"categories": [{
 		"title": "General",
-		"keys":["title", "refreshInterval", "listed_crecord_type", "itemsPerPage", "selection_toolbar", "actions_toolbar", "mixins" , "default_filter"]
+		"keys":["title", "refreshInterval", "listed_crecord_type", "itemsPerPage", "selection_toolbar", "actions_toolbar", "default_filter"]
 	},{
 		"title": "Columns",
 		"keys":["displayed_columns", "item_actions"]
@@ -15,6 +15,9 @@
 	},{
 		"title": "Rendering",
 		"keys":["refreshableWidget", "maximized_column_index", "cloaking", "contentTruncatedLength"]
+	},{
+		"title": "Mixins",
+		"keys":["mixins"]
 	}],
 	"properties": {
 		"listed_crecord_type": {
@@ -88,9 +91,7 @@
 			"items": {
 				"type": "string"
 			},
-			"role":"tags",
-			"mixinName":"mixinArray",
-			"mixinClass":"test"
+			"reorderable": true
 		},
 		"xtype": {
 			"type": "string"

@@ -22,6 +22,11 @@
             "actionbutton-create",
             "actionbutton-removeselection"
           ],
+          "mixins": [
+            "Sortablearray",
+            "Arraysearch",
+            "Pagination"
+          ],
           "displayed_columns": [
             "crecord_type",
             "_id",

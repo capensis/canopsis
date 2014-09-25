@@ -38,6 +38,14 @@
               "title" : "Alert not ack"
             }
           ],
+          "mixins": [
+            "Customfilter",
+            "Sortablearray",
+            "Arraysearch",
+            "Pagination",
+            "History",
+            "Ack",
+            "Sendevent"],
           "item_actions": [
             "actionbutton-ack",
             "actionbutton-cancel",
