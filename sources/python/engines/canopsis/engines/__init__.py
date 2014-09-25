@@ -250,16 +250,17 @@ class Engine(object):
         error = False
 
         try:
+            if 'processing' not in event:
+                event['processing'] = {}
+
+            event['processing'][self.etype] = start
+
             wevent = self.work(event, msg, *args, **kargs)
 
             if wevent != DROP:
                 if isinstance(wevent, dict):
                     event = wevent
 
-                if 'processing' not in event:
-                    event['processing'] = {}
-
-                event['processing'][self.etype] = start
                 self.next_queue(event)
 
         except Exception as err:
