@@ -29,6 +29,15 @@
               "title" : "No internal"
             }
           ],
+          "mixins": [
+            "Customfiltermanager",
+            "Sortablearray",
+            "Arraysearch",
+            "Pagination",
+            "History",
+            "Ack",
+            "Sendevent"
+          ],
           "displayed_columns": [
             "domain",
             "perimeter",
