@@ -163,6 +163,8 @@ class Schema2MongoDB(object):
             account=Account(user='root', group='root')
         ).get_backend()
 
+        storage.remove()
+
         for schema_id in self.schemas:
             self.logger.info('Saving: {0}'.format(schema_id))
 

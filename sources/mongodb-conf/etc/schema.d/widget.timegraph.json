@@ -10,9 +10,6 @@
         "title": "History",
         "keys": ["timenav", "timenav_window"]
     },{
-        "title": "Graph Style",
-        "keys": ["stacked", "points", "lines", "areas", "bars", "line_width", "bar_width", "line_style", "point_shape", "line_color", "bar_color", "area_color", "area_opacity"]
-    },{
         "title": "Series",
         "keys": ["series"]
     }],
@@ -48,75 +45,6 @@
             "default": 172800,
             "title": "History time window"
         },
-        "stacked": {
-            "type": "boolean",
-            "default": false,
-            "title": "Stacked graph"
-        },
-        "lines": {
-            "type": "boolean",
-            "default": true,
-            "title": "Show lines"
-        },
-        "areas": {
-            "type": "boolean",
-            "default": false,
-            "title": "Fill area under lines"
-        },
-        "points": {
-            "type": "boolean",
-            "default": true,
-            "title": "Show points"
-        },
-        "bars": {
-            "type": "boolean",
-            "default": false,
-            "title": "Show bars"
-        },
-        "line_width": {
-            "type": "integer",
-            "default": 1,
-            "title": "Lines width"
-        },
-        "bar_width": {
-            "type": "integer",
-            "default": 10,
-            "title": "Bars width"
-        },
-        "line_style": {
-            "enum": ["line", "dash", "dot", "dashdot", "dashdotdot"],
-            "default": "line",
-            "title": "Lines style",
-            "role": "simplelist"
-        },
-        "point_shape": {
-            "enum": ["circle", "triangle", "square"],
-            "default": "circle",
-            "title": "Point's shape",
-            "role": "simplelist"
-        },
-        "line_color": {
-            "type": "string",
-            "title": "Line color",
-            "role": "color"
-        },
-        "bar_color": {
-            "type": "string",
-            "title": "Bar color",
-            "role": "color"
-        },
-        "area_color": {
-            "type": "string",
-            "title": "Area color",
-            "role": "color"
-        },
-        "area_opacity": {
-            "type": "number",
-            "title": "Area opacity",
-            "minimum": 0,
-            "maximum": 1,
-            "default": 0.75
-        },
         "legend": {
             "type": "boolean",
             "default": true,
@@ -136,12 +64,10 @@
                 "properties": {
                     "serie": {
                         "type": "object",
-                        "model": "serie",
                         "required": true
                     },
                     "style": {
                         "type": "object",
-                        "model": "curve",
                         "required": true
                     }
                 }
