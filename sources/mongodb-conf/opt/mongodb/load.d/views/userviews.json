@@ -21,6 +21,11 @@
           "displayed_columns": ["crecord_type", "internal", "enable", "description", "crecord_write_time", "crecord_name"],
           "selection_toolbar": [
             "actionbutton-removeselection"
+          ],
+          "mixins": [
+            "Sortablearray",
+            "Arraysearch",
+            "Pagination"
           ]
         }
       }

@@ -26,6 +26,11 @@
           "actions_toolbar": [
             "actionbutton-create"
           ],
+          "mixins": [
+            "Sortablearray",
+            "Arraysearch",
+            "Pagination"
+          ],
           "displayed_columns": [
             "task",
             "start",

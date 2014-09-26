@@ -67,19 +67,19 @@ class engine(Engine):
                 logging_level=self.logging_level)
 
             name = selector.display_name
-            
-            selector_event.data["selector_id"] = selector._id
 
-            self.logger.debug('Selector {} found, start processing..'.format(name))
+            self.logger.debug('Selector {} found, start processing..'.format(
+                name
+            ))
 
-            # do I publish a selector event ? Yes if selector have to and it is time or we got to update status
+            # do I publish a selector event ? Yes if selector have to
+            # and it is time or we got to update status
             if selector.dostate:
-                #try:
-                    self.publish_event(selector)
-                #except Exception as e:
-                #    self.logger.error('Unable to publish selector {} : {} '.format(name, e))
+                self.publish_event(selector)
             else:
-                self.logger.debug('Nothing to do with selector {}'.format(name))
+                self.logger.debug('Nothing to do with selector {}'.format(
+                    name
+                ))
 
             #Update crecords informations
             self.crecord_task_complete(event_id)
@@ -92,7 +92,12 @@ class engine(Engine):
         rk, selector_event, publish_ack = selector.event()
         selector_event['selector_id'] = selector._id
 
-        self.logger.info('Ready to publish selector {} event with state {}'.format(selector.display_name, selector_event['state']))
+        self.logger.info(
+            'Ready to publish selector {} event with state {}'.format(
+                selector.display_name,
+                selector_event['state']
+            )
+        )
 
         if publish_ack:
             #define a clean ack information to the event
@@ -104,15 +109,15 @@ class engine(Engine):
                 'comment': 'All matched event are acknowleged',
                 'isAck': True
             }
+            self.logger.debug(' + Selector event is ack because all matched event are ack')
         else:
             #define or reset ack key for selector generated event
             selector_event['ack'] = {}
-
+            self.logger.debug(' + Selector event is NOT ack')
 
         # Publish Sla information when available
         if selector.sla_rk:
             selector_event['sla_rk'] = selector.sla_rk
-
 
         self.amqp.publish(
             selector_event,
@@ -120,5 +125,6 @@ class engine(Engine):
             self.amqp.exchange_name_events
         )
 
-        self.logger.debug("published event selector {}".format(selector.display_name))
-
+        self.logger.debug("published event selector {}".format(
+            selector.display_name
+        ))
