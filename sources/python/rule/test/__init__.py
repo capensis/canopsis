@@ -25,7 +25,7 @@ from canopsis.rule import (
     CONDITION_FIELD, ACTION_FIELD, TASK_PATH, TASK_PARAMS, RuleError,
     ConditionError, ActionError, get_task_with_params, process_rule,
     get_task, register_tasks, unregister_tasks, __TASK_PATHS as TASK_PATHS,
-    register_task)
+    register_task, RULES, SWITCH, rules, switch)
 
 from canopsis.common.utils import path
 
@@ -150,7 +150,7 @@ class TaskRegistrationDecoratorTest(TestCase):
 
         name = 'toto'
 
-        @register_task(name=name)
+        @register_task(name)
         def register():
             pass
         self.assertIn(name, TASK_PATHS)
@@ -425,6 +425,42 @@ class TestProcessRule(TestCase):
 
         self.assertTrue(condition)
         self.assertTrue(type(result) is ActionError)
+
+    def test_rules(self):
+
+        self.count = 10
+
+        rules_task = path(rules)
+
+        # construct rules
+        rule = {
+            TASK_PATH: rules_task,
+            TASK_PARAMS: {
+                'rules': [self.test_action for i in range(self.count)]
+            }
+        }
+
+        process_rule(event=self.event, rule=rule, ctx=self.ctx)
+
+        self.assertEqual(self.ctx[COUNT], self.count)
+
+    def test_switch(self):
+
+        self.count = 10
+
+        switch_task = path(switch)
+
+        # construct rules
+        rule = {
+            TASK_PATH: switch_task,
+            TASK_PARAMS: {
+                'rules': [self.test_action for i in range(self.count)]
+            }
+        }
+
+        process_rule(event=self.event, rule=rule, ctx=self.ctx)
+
+        self.assertEqual(self.ctx[COUNT], 1)
 
 if __name__ == '__main__':
     main()
