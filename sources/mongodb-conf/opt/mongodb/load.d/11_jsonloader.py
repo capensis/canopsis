@@ -61,28 +61,22 @@ def init():
 
 def load_document(json_data, collection, json_filename):
 
-    if '_id' in json_data :
+    if 'loader_id' not in json_data:
 
-        print ('Malformated insert document. A json loaded document must not contain _id key')
+        print (' + Loader_id key not exists in json {} file,\n' \
+        ' It must be a uniq document id for your custom json documents.\n' \
+        ' Cannot process database upsert'.format(json_filename))
 
     else:
 
-        if 'loader_id' not in json_data:
+        if 'no_update_document' in json_data and json_data['no_update_document']:
 
-            print (' + Loader_id key not exists in json {} file,\n' \
-            ' It must be a uniq document id for your custom json documents.\n' \
-            ' Cannot process database upsert'.format(json_filename))
+            print ('Document is marked as no updatable, nothing is done for {}'.format(json_filename))
 
         else:
 
-            if 'no_update_document' in json_data and json_data['no_update_document']:
-
-                print ('Document is marked as no updatable, nothing is done for {}'.format(json_filename))
-
-            else:
-
-                storage.get_backend(collection).update({'loader_id': json_data['loader_id']}, json_data, upsert=True)
-                print ('{} information upserted'.format(json_filename))
+            storage.get_backend(collection).update({'loader_id': json_data['loader_id']}, json_data, upsert=True)
+            print ('{} information upserted'.format(json_filename))
 
 
 
