@@ -22,6 +22,10 @@
           "actions_toolbar": [
             "actionbutton-eventnavigation"
           ],
+          "default_column_sort" : {
+            "direction" : "DESC",
+            "property" : "timestamp"
+          },
           "filters" : [
             {
               "filter" : "{\"$or\":[{\"$and\":[{\"component\":{\"$ne\":\"__canopsis__\"}},{\"connector_name\":{\"$ne\":\"engine\"}}]}]}",
