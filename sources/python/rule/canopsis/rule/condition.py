@@ -22,7 +22,7 @@
 Rule condition functions
 """
 
-from canopsis.rule import get_task_with_params
+from canopsis.rule import get_task_with_params, register_task
 
 from time import time
 from datetime import datetime
@@ -30,7 +30,19 @@ from datetime import datetime
 from dateutil.rrule import rrule as rrule_class, relativedelta
 
 
+@register_task
 def during(event, ctx, rrule, duration=None, timestamp=None, **kwargs):
+    """
+    Check if input timestamp is in rrule+duration period
+
+    :param dict event: event to process
+    :param dict ctx: rule context
+    :param rrule: rrule to check
+    :type rrule: str or dict
+    :param dict duration: time duration from rrule step. Ex:{'minutes': 60}
+    :param float timestamp: timestamp to check between rrule+duration. If None,
+        use now
+    """
 
     result = False
 
@@ -63,6 +75,7 @@ def during(event, ctx, rrule, duration=None, timestamp=None, **kwargs):
     return result
 
 
+@register_task
 def any(event, ctx, conditions, **kwargs):
     """
     True if at least one input condition is True
@@ -81,6 +94,7 @@ def any(event, ctx, conditions, **kwargs):
     return result
 
 
+@register_task
 def all(event, ctx, conditions, **kwargs):
     """
     True iif all input conditions is True
