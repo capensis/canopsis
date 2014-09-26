@@ -22,6 +22,8 @@ __version__ = "0.1"
 
 from canopsis.common.utils import lookup
 
+from inspect import isroutine
+
 """
 Event processing rule module.
 
@@ -34,7 +36,6 @@ RULE = 'rule'
 
 CONDITION_FIELD = 'condition'  #: condition field name in rule conf
 ACTION_FIELD = 'action'  #: actions field name in rule conf
-ELSE_FIELD = 'else'  #: else actions field name in rule conf
 
 TASK_PARAMS = 'params'  #: task params field name in task conf
 
@@ -65,6 +66,92 @@ class ActionError(RuleError):
     pass
 
 
+__TASK_PATHS = {}
+
+
+def get_task(path, cached=True):
+    """
+    Get task related to a path which could be:
+
+    - a registered task.
+    - a python function.
+
+    :param str path: task path to get.
+    :param bool cached: use cache (True by default).
+
+    :raises ImportError: if task is not found in runtime.
+    """
+
+    result = None
+
+    if path not in __TASK_PATHS:
+        result = lookup(path=path, cached=cached)
+    else:
+        result = __TASK_PATHS[path]
+
+    return result
+
+
+def register_tasks(force=False, **tasks):
+    """
+    Register a set of input task by name.
+
+    :param bool force: force registration (default False).
+    :param dict tasks: set of couple(name, function)
+
+    :raises RuleError: if not force and task already exist
+    """
+
+    for path, task in tasks.iteritems():
+        if not force and path in __TASK_PATHS:
+            raise RuleError('Rule %s already registered' % path)
+        else:
+            __TASK_PATHS[path] = task
+
+
+def register_task(name=None, force=False):
+    """
+    Decorator which registers function in registered tasks with function name
+    """
+
+    if isroutine(name):
+        # if no parameter has been given
+        result = name
+        name = name.__name__
+        register_tasks(force=force, **{name: result})
+
+    else:  # if name is a str or None
+        def register_task(function, name=name):
+            """
+            Register input function as a task
+            """
+
+            if name is None:
+                name = function.__name__
+
+            register_tasks(force=force, **{name: function})
+
+            return function
+
+        result = register_task
+
+    return result
+
+
+def unregister_tasks(*paths):
+    """
+    Unregister input paths. If paths is empty, clear all registered tasks.
+
+    :param tuple paths: tuple of task paths
+    """
+
+    if paths:
+        for path in paths:
+            __TASK_PATHS.pop(path, None)
+    else:
+        __TASK_PATHS.clear()
+
+
 def get_task_with_params(task_conf, task_name=None, cached=True):
     """
     Get callable task processing with params.
@@ -93,7 +180,7 @@ def get_task_with_params(task_conf, task_name=None, cached=True):
     # get dedicated callable task without params
     if isinstance(task_conf, str):
         try:
-            task = lookup(path=task_conf, cached=cached)
+            task = get_task(path=task_conf, cached=cached)
         except ImportError as ie:
             # Embed importerror in RuleError
             raise RuleError(ie)
@@ -102,7 +189,7 @@ def get_task_with_params(task_conf, task_name=None, cached=True):
     elif TASK_PATH in task_conf:
         task_path = task_conf[TASK_PATH]
         try:
-            task = lookup(path=task_path, cached=cached)
+            task = get_task(path=task_path, cached=cached)
 
         except ImportError as ie:
             # embed import error in Rule Error
@@ -142,7 +229,7 @@ def process_rule(event, rule, ctx=None, cached=True, raiseError=False):
         (ActionError).
 
     :return: a tuple of (condition, action) results.
-    :rtype: list
+    :rtype: tuple
     """
 
     # create a context which will be shared among condition and actions
@@ -174,17 +261,6 @@ def process_rule(event, rule, ctx=None, cached=True, raiseError=False):
             ctx=ctx,
             task_conf=rule,
             task_name=ACTION_FIELD,
-            cached=cached,
-            exception_type=ActionError,
-            raiseError=raiseError)
-
-    else:  # go to the else field
-
-        action_result = run_task(
-            event=event,
-            ctx=ctx,
-            task_conf=rule,
-            task_name=ELSE_FIELD,
             cached=cached,
             exception_type=ActionError,
             raiseError=raiseError)
@@ -232,5 +308,32 @@ def run_task(
             if raiseError:
                 raise error
             result = error
+
+    return result
+
+
+@register_task
+def switch(event, ctx, rules, cached=True, raiseError=False, **kwargs):
+    """
+    Execute first rule among input
+    """
+
+    result = None, None
+
+    for rule in rules:
+
+        # try to execute all rules while condition is False
+        condition, action = process_rule(
+            event=event,
+            ctx=ctx,
+            rule=rule,
+            cached=cached,
+            raiseError=raiseError,
+            **kwargs)
+
+        # stop when condition is True
+        if condition is True:
+            result = condition, action
+            break
 
     return result
