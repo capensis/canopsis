@@ -51,6 +51,36 @@
         },
         "xtype": "widgetwrapper",
         "title": "wrapper"
+      },
+      {
+        "widget" : {
+          "tagName" : null,
+          "id" : "item_13019673-ebdf-6271-e595-6be7338aeb50",
+          "refreshableWidget" : false,
+          "item_actions" : [ ],
+          "title" : "Computed selectors",
+          "maximized_column_index" : null,
+          "itemsPerPage" : 10,
+          "mixins" : [ ],
+          "cssClass" : null,
+          "default_filter" : "{\"event_type\":\"selector\"}",
+          "cloaking" : false,
+          "filters" : [ ],
+          "selection_toolbar" : [ ],
+          "displayed_columns" : [
+            "component",
+            "resource",
+            "ack",
+            "state"
+          ],
+          "listed_crecord_type" : "event",
+          "actions_toolbar" : [ ],
+          "refreshInterval" : 30,
+          "contentTruncatedLength" : null,
+          "xtype" : "list"
+        },
+        "xtype" : "widgetwrapper",
+        "title" : "wrapper"
       }
     ],
     "widgetslotTemplate": null,

@@ -251,7 +251,7 @@ class Selector(Record):
                 }
         ])
 
-        if len(result['result']) and 'count' in result['result']:
+        if len(result['result']) and 'count' in result['result'][0]:
             ack_count = result['result'][0]['count']
         else:
             ack_count = -1
