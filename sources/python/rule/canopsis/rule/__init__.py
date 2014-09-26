@@ -29,9 +29,52 @@ Event processing rule module.
 
 Provides tools to process event rules.
 
-A rule is a couple of (condition, action) where condition can be None.
+A rule is a couple of (condition, action) tasks where condition can be None.
 
+A rule respects those types::
 
+   - task: task to execute.
+   - dict:
+      + condition (optional): condition task to check.
+      + action: action task to run if condition does not exist or is True.
+
+A task uses a python function. Therefore it is possible to use an absolute
+path or to register a function in rule tasks with the function/decorator
+``register_task``. The related function must takes in parameter the ``event``
+to process, a dict ``ctx`` which exists on a rule life and a ``**kwargs`` which
+contains parameters filled related to task parameters and the rule api.
+
+A task respects those types::
+   - str: task path to execute.
+   - dict:
+      + task_path: task path to execute.
+      + params: dict of task parameters.
+
+For example, let ``my.my_condition`` and ``my.my_action`` respectively
+custom condition and action.
+
+A typical rule configuration is as follow:
+{
+    "condition": "my.my_condition",
+    "action": "my.my_action"
+}
+
+Or this one if you have the parameter ``foo`` equals to 2 to use in the action:
+{
+    "condition": "my.my_condition",
+    "action": {
+        "task_path": "my.my_action",
+        "params": {
+            "foo": 2
+        }
+    }
+}
+
+Or even this one without condition and where the action is registered with the
+name ``my_action``.
+{
+    "action": "my_action"
+}
 """
 
 RULE = 'rule'
@@ -45,6 +88,13 @@ TASK_PATH = 'task_path'  #: task path field name in task conf
 
 RULES = 'rules'  #: rules rule name
 SWITCH = 'switch'  #: switch rule name
+
+
+def task(event, ctx, **kwargs):
+    """
+    Default task signature.
+    """
+    pass
 
 
 class RuleError(Exception):
