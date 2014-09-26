@@ -45,6 +45,7 @@
             "Pagination",
             "History",
             "Ack",
+            "Infobutton",
             "Sendevent"],
           "item_actions": [
             "actionbutton-ack",
