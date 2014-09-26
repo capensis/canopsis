@@ -56,7 +56,7 @@
         "widget" : {
           "tagName" : null,
           "id" : "item_13019673-ebdf-6271-e595-6be7338aeb50",
-          "refreshableWidget" : false,
+          "refreshableWidget" : true,
           "item_actions" : [ ],
           "title" : "Computed selectors",
           "maximized_column_index" : null,
