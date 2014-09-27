@@ -76,38 +76,44 @@ def during(event, ctx, rrule, duration=None, timestamp=None, **kwargs):
 
 
 @register_task
-def any(event, ctx, conditions, **kwargs):
+def any(event, ctx, conditions=None, **kwargs):
     """
     True if at least one input condition is True
     """
 
     result = False
 
-    for condition in conditions:
-        condition_task, params = get_task_with_params(condition)
+    if conditions is not None:
 
-        result = condition_task(event=event, ctx=ctx, **params)
+        for condition in conditions:
+            condition_task, params = get_task_with_params(condition)
 
-        if result:
-            break
+            result = condition_task(event=event, ctx=ctx, **params)
+
+            if result:
+                break
 
     return result
 
 
 @register_task
-def all(event, ctx, conditions, **kwargs):
+def all(event, ctx, conditions=None, **kwargs):
     """
     True iif all input conditions is True
     """
 
-    result = True
+    result = False
 
-    for condition in conditions:
-        condition_task, params = get_task_with_params(condition)
+    if conditions is not None:
 
-        result = condition_task(event=event, ctx=ctx, **params)
+        result = True
 
-        if not result:
-            break
+        for condition in conditions:
+            condition_task, params = get_task_with_params(condition)
+
+            result = condition_task(event=event, ctx=ctx, **params)
+
+            if not result:
+                break
 
     return result

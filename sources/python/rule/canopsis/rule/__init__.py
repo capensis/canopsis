@@ -29,7 +29,52 @@ Event processing rule module.
 
 Provides tools to process event rules.
 
-A rule is a couple of (condition, action) where condition can be None.
+A rule is a couple of (condition, action) tasks where condition can be None.
+
+A rule respects those types::
+
+   - task: task to execute.
+   - dict:
+      + condition (optional): condition task to check.
+      + action: action task to run if condition does not exist or is True.
+
+A task uses a python function. Therefore it is possible to use an absolute
+path or to register a function in rule tasks with the function/decorator
+``register_task``. The related function must takes in parameter the ``event``
+to process, a dict ``ctx`` which exists on a rule life and a ``**kwargs`` which
+contains parameters filled related to task parameters and the rule api.
+
+A task respects those types::
+   - str: task path to execute.
+   - dict:
+      + task_path: task path to execute.
+      + params: dict of task parameters.
+
+For example, let ``my.my_condition`` and ``my.my_action`` respectively
+custom condition and action.
+
+A typical rule configuration is as follow:
+{
+    "condition": "my.my_condition",
+    "action": "my.my_action"
+}
+
+Or this one if you have the parameter ``foo`` equals to 2 to use in the action:
+{
+    "condition": "my.my_condition",
+    "action": {
+        "task_path": "my.my_action",
+        "params": {
+            "foo": 2
+        }
+    }
+}
+
+Or even this one without condition and where the action is registered with the
+name ``my_action``.
+{
+    "action": "my_action"
+}
 """
 
 RULE = 'rule'
@@ -40,6 +85,16 @@ ACTION_FIELD = 'action'  #: actions field name in rule conf
 TASK_PARAMS = 'params'  #: task params field name in task conf
 
 TASK_PATH = 'task_path'  #: task path field name in task conf
+
+RULES = 'rules'  #: rules rule name
+SWITCH = 'switch'  #: switch rule name
+
+
+def task(event, ctx, **kwargs):
+    """
+    Default task signature.
+    """
+    pass
 
 
 class RuleError(Exception):
@@ -109,19 +164,19 @@ def register_tasks(force=False, **tasks):
             __TASK_PATHS[path] = task
 
 
-def register_task(name=None, force=False):
+def register_task(name_or_function=None, force=False):
     """
     Decorator which registers function in registered tasks with function name
     """
 
-    if isroutine(name):
+    if isroutine(name_or_function):
         # if no parameter has been given
-        result = name
-        name = name.__name__
+        result = name_or_function
+        name = name_or_function.__name__
         register_tasks(force=force, **{name: result})
 
     else:  # if name is a str or None
-        def register_task(function, name=name):
+        def register_task(function, name=name_or_function):
             """
             Register input function as a task
             """
@@ -313,12 +368,44 @@ def run_task(
 
 
 @register_task
+def rules(event, ctx, rules, cached=True, raiseError=False, **kwargs):
+    """
+    Rule which run all input rules.
+
+    :param rules: rules to process
+    :return: condition, action where condition is a logical and on all
+        conditions, and action is a list of all action results.
+    """
+
+    condition = False
+    action = []
+
+    for rule in rules:
+
+        #  execute all rules while condition is False
+        result_condition, result_action = process_rule(
+            event=event,
+            ctx=ctx,
+            rule=rule,
+            cached=cached,
+            raiseError=raiseError,
+            **kwargs)
+
+        condition |= result_condition
+        action.append(result_action)
+
+    result = condition, action
+
+    return result
+
+
+@register_task
 def switch(event, ctx, rules, cached=True, raiseError=False, **kwargs):
     """
     Execute first rule among input
     """
 
-    result = None, None
+    result = False, None
 
     for rule in rules:
 

@@ -41,12 +41,14 @@ Related rule actions are defined in .condition module.
 from canopsis.topology.manager import Topology
 from canopsis.topology.process import SOURCES, NODE, WEIGHT
 from canopsis.check import Check
+from canopsis.rule import register_task
 
 from sys import maxint
 
 topology = Topology()
 
 
+@register_task(name='topology.new_state')
 def new_state(event, ctx, state=None, **kwargs):
     """
     Condition triggered when state is different than in node ctx state.
@@ -65,6 +67,7 @@ def new_state(event, ctx, state=None, **kwargs):
     return result
 
 
+@register_task(name='topology.condition')
 def condition(event, ctx, min_weight=1, state=None, rrule=None, **kwargs):
     """
     Generic condition applied on sources of ctx node
@@ -104,6 +107,7 @@ def condition(event, ctx, min_weight=1, state=None, rrule=None, **kwargs):
     return result
 
 
+@register_task(name='topology.all')
 def all(event, ctx, state, **kwargs):
     """
     Check if all source nodes match with input check_state
