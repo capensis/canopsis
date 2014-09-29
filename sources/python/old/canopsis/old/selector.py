@@ -309,8 +309,6 @@ class Selector(Record):
             })
             self.logger.info('metric {} : {}'.format(metric, value))
 
-        output = information
-
         perf_data_array.append({
             "metric": "cps_sel_total",
             "value": total

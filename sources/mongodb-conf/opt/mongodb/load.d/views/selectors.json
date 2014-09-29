@@ -71,6 +71,7 @@
             "component",
             "resource",
             "ack",
+            "output",
             "state"
           ],
           "listed_crecord_type" : "event",
