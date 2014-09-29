@@ -19,11 +19,6 @@
             "type": "string",
             "required": true
         },
-        "stacked": {
-            "type": "boolean",
-            "default": false,
-            "title": "Stacked graph"
-        },
         "lines": {
             "type": "boolean",
             "default": true,
