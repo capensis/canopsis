@@ -46,7 +46,8 @@ def init():
             'line_style': 'line',
             'point_shape': 'circle',
             'area_opacity': 1
-        },{
+        },
+        {
             'crecord_name': 'simpleline',
             'lines': True,
             'areas': False,
@@ -57,7 +58,8 @@ def init():
             'line_style': 'line',
             'point_shape': 'circle',
             'area_opacity': 1
-        },{
+        },
+        {
             'crecord_name': 'simplebar',
             'lines': False,
             'areas': False,
@@ -68,7 +70,8 @@ def init():
             'line_style': 'line',
             'point_shape': 'circle',
             'area_opacity': 1
-        },{
+        },
+        {
             'crecord_name': 'simplearea',
             'lines': True,
             'areas': True,
