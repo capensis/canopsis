@@ -280,8 +280,10 @@ class Selector(Record):
             if s > 0:
                 total_error += states[s]
 
-        send_ack = ack_count >= total_error
-
+        if ack_count >= total_error and ack_count != 0:
+            send_ack = True
+        else:
+            send_ack = False
 
         self.logger.debug(" + state: {}".format(state))
 

@@ -72,7 +72,9 @@
             "resource",
             "ack",
             "output",
-            "state"
+            "state",
+            "status",
+            "timestamp"
           ],
           "listed_crecord_type" : "event",
           "actions_toolbar" : [ ],
