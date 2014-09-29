@@ -1,0 +1,123 @@
+{
+    "_id" : "view.series",
+    "id" : "view.series",
+    "crecord_write_time" : 1411984616,
+    "enable" : true,
+    "aaa_access_group" : [ ],
+    "description" : "Configure series",
+    "parent" : [ ],
+    "containerwidget" : {
+        "widgetId" : null,
+        "xtype" : "verticalbox",
+        "title" : null,
+        "items" : [
+            {
+                "widget" : {
+                    "tagName" : null,
+                    "widgetId" : null,
+                    "default_column_sort" : {
+                        "direction" : "ASC"
+                    },
+                    "item_actions" : [
+                        "actionbutton-removeselection",
+                        "actionbutton-edit"
+                    ],
+                    "title" : "Series",
+                    "maximized_column_index" : 0,
+                    "mixins" : [
+                        "Crud"
+                    ],
+                    "itemsPerPage" : 10,
+                    "cssClass" : null,
+                    "default_filter" : null,
+                    "cloaking" : false,
+                    "filters" : [ ],
+                    "selection_toolbar" : [
+                        "actionbutton-removeselection"
+                    ],
+                    "displayed_columns" : [
+                        "crecord_name",
+                        "formula",
+                        "min",
+                        "max",
+                        "warn",
+                        "crit",
+                        "aggregate_method",
+                        "aggregate_interval",
+                        "consolidation_method",
+                        "consolidation_interval"
+                    ],
+                    "refreshableWidget" : false,
+                    "actions_toolbar" : [ ],
+                    "refreshInterval" : 0,
+                    "listed_crecord_type" : "serie",
+                    "contentTruncatedLength" : 0,
+                    "xtype" : "list"
+                },
+                "xtype" : "widgetwrapper",
+                "title" : "wrapper"
+            },
+            {
+                "widget" : {
+                    "tagName" : null,
+                    "widgetId" : null,
+                    "default_column_sort" : {
+                        
+                    },
+                    "item_actions" : [
+                        "actionbutton-removeselection",
+                        "actionbutton-edit"
+                    ],
+                    "title" : "Curves",
+                    "maximized_column_index" : 0,
+                    "mixins" : [ ],
+                    "itemsPerPage" : 10,
+                    "cssClass" : null,
+                    "default_filter" : null,
+                    "cloaking" : false,
+                    "filters" : [ ],
+                    "selection_toolbar" : [
+                        "actionbutton-removeselection"
+                    ],
+                    "displayed_columns" : [
+                        "crecord_name",
+                        "stacked",
+                        "lines",
+                        "areas",
+                        "points",
+                        "bars",
+                        "line_width",
+                        "bar_width",
+                        "point_shape",
+                        "area_opacity"
+                    ],
+                    "refreshableWidget" : false,
+                    "actions_toolbar" : [
+                        "actionbutton-create"
+                    ],
+                    "refreshInterval" : 0,
+                    "listed_crecord_type" : "curve",
+                    "contentTruncatedLength" : 0,
+                    "xtype" : "list"
+                },
+                "xtype" : "widgetwrapper",
+                "title" : "wrapper"
+            }
+        ],
+        "widgetslotTemplate" : null,
+        "tagName" : null,
+        "refreshInterval" : 0,
+        "cssClass" : null
+    },
+    "aaa_access_owner" : [ ],
+    "aaa_group" : "None",
+    "internal" : false,
+    "aaa_admin_group" : "None",
+    "children" : [ ],
+    "crecord_name" : "view.series",
+    "aaa_access_unauth" : [ ],
+    "aaa_owner" : "account.root",
+    "crecord_type" : "view",
+    "aaa_access_other" : [ ],
+    "crecord_creation_time" : 1411378757
+}
