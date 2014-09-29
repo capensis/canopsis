@@ -27,7 +27,8 @@ from canopsis.rule import get_task_with_params, register_task
 from time import time
 from datetime import datetime
 
-from dateutil.rrule import rrule as rrule_class, relativedelta
+from dateutil.relativedelta import relativedelta
+from dateutil.rrule import rrule as rrule_class
 
 
 @register_task
@@ -39,6 +40,7 @@ def during(event, ctx, rrule, duration=None, timestamp=None, **kwargs):
     :param dict ctx: rule context
     :param rrule: rrule to check
     :type rrule: str or dict
+        (freq, dtstart, interval, count, wkst, until, bymonth, byminute, etc.)
     :param dict duration: time duration from rrule step. Ex:{'minutes': 60}
     :param float timestamp: timestamp to check between rrule+duration. If None,
         use now
