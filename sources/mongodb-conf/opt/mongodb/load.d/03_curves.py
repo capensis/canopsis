@@ -35,19 +35,59 @@ def init():
     storage = get_storage(account=root, namespace='object')
 
     curves = [
-        {'crecord_name': 'simplepoints', 'lines': False, 'areas': False, 'points': True, 'bars': False, 'line_width': 1, 'bar_width': 10, 'line_style': 'line', 'point_shape': 'circle', 'area_opacity': 1},
-        {'crecord_name': 'simpleline', 'lines': True, 'areas': False, 'points': False, 'bars': False, 'line_width': 1, 'bar_width': 10, 'line_style': 'line', 'point_shape': 'circle', 'area_opacity': 1},
-        {'crecord_name': 'simplebar', 'lines': False, 'areas': False, 'points': False, 'bars': True, 'line_width': 1, 'bar_width': 10, 'line_style': 'line', 'point_shape': 'circle', 'area_opacity': 1},
-        {'crecord_name': 'simplearea', 'lines': True, 'areas': True, 'points': False, 'bars': False, 'line_width': 1, 'bar_width': 10, 'line_style': 'line', 'point_shape': 'circle', 'area_opacity': 1},
-    ]
+        {
+            'crecord_name': 'simplepoints',
+            'lines': False,
+            'areas': False,
+            'points': True,
+            'bars': False,
+            'line_width': 1,
+            'bar_width': 10,
+            'line_style': 'line',
+            'point_shape': 'circle',
+            'area_opacity': 1
+        },{
+            'crecord_name': 'simpleline',
+            'lines': True,
+            'areas': False,
+            'points': False,
+            'bars': False,
+            'line_width': 1,
+            'bar_width': 10,
+            'line_style': 'line',
+            'point_shape': 'circle',
+            'area_opacity': 1
+        },{
+            'crecord_name': 'simplebar',
+            'lines': False,
+            'areas': False,
+            'points': False,
+            'bars': True,
+            'line_width': 1,
+            'bar_width': 10,
+            'line_style': 'line',
+            'point_shape': 'circle',
+            'area_opacity': 1
+        },{
+            'crecord_name': 'simplearea',
+            'lines': True,
+            'areas': True,
+            'points': False,
+            'bars': False,
+            'line_width': 1,
+            'bar_width': 10,
+            'line_style': 'line',
+            'point_shape': 'circle',
+            'area_opacity': 1
+        },   for curve in curves:
+        _id = 'curve.{0}'.format(curve['crecord_name'])
 
-    for curve in curves:
-        _id = hashlib.sha1(curve['metric']).hexdigest().upper()
         try:
             storage.get(_id)
-        except:
-            logger.info(" + Create curve '%s'" % curve['metric'])
-            record = Record(data=curve, _id=_id, name=curve['metric'], _type='curve')
+
+        except KeyError:
+            logger.info(" + Create curve '%s'" % curve['crecord_name'])
+            record = Record(data=curve, _id=_id, _type='curve')
             record.chmod('g+w')
             record.chmod('o+r')
             record.chgrp('group.CPS_curve_admin')
