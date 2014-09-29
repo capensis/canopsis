@@ -280,7 +280,7 @@ class Selector(Record):
             if s > 0:
                 total_error += states[s]
 
-        if ack_count >= total_error and ack_count != 0:
+        if ack_count >= total_error and ack_count > 0:
             send_ack = True
         else:
             send_ack = False
