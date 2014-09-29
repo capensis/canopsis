@@ -23,7 +23,10 @@ from unittest import TestCase, main
 
 from canopsis.rule import (
     CONDITION_FIELD, ACTION_FIELD, TASK_PATH, TASK_PARAMS, RuleError,
-    ConditionError, ActionError, get_task_with_params, process_rule)
+    ConditionError, ActionError, get_task_with_params, process_rule,
+    get_task, register_tasks, unregister_tasks, __TASK_PATHS as TASK_PATHS,
+    register_task, RULES, SWITCH, rules, switch)
+
 from canopsis.common.utils import path
 
 
@@ -56,6 +59,114 @@ def test_action(event, ctx, **kwargs):
 
 def test_wrong_params():
     pass
+
+
+class TaskUnregisterTest(TestCase):
+
+    def setUp(self):
+        # clear dico and add only self names
+        TASK_PATHS.clear()
+        self.names = 'a', 'b'
+        for name in self.names:
+            register_tasks(**{name: None})
+
+    def test_unregister(self):
+        for name in self.names:
+            unregister_tasks(name)
+            self.assertNotIn(name, TASK_PATHS)
+
+    def test_unregister_all(self):
+        unregister_tasks(*self.names)
+        self.assertFalse(TASK_PATHS)
+
+    def test_unregister_clear(self):
+        unregister_tasks()
+        self.assertFalse(TASK_PATHS)
+
+
+class TaskRegistrationTest(TestCase):
+
+    def setUp(self):
+        # clean task paths
+        TASK_PATHS.clear()
+        self.tasks = {'a': None, 'b': None}
+        register_tasks(**self.tasks)
+
+    def test_register(self):
+        """
+        Check for registered task in registered tasks
+        """
+        for task in self.tasks:
+            self.assertIn(task, TASK_PATHS)
+
+    def test_register_raise(self):
+
+        self.assertRaises(RuleError, register_tasks, **self.tasks)
+
+    def test_register_force(self):
+
+        register_tasks(force=True, **self.tasks)
+
+
+class GetTaskTest(TestCase):
+
+    def setUp(self):
+        # clean all task paths
+        TASK_PATHS.clear()
+
+    def test_get_unregisteredtask(self):
+
+        getTaskTest = path(GetTaskTest)
+        task = get_task(getTaskTest)
+        self.assertIs(task, GetTaskTest)
+
+    def test_get_registeredtask(self):
+        task_path = 'a'
+        register_tasks(**{task_path: GetTaskTest})
+        task = get_task(path=task_path)
+        self.assertIs(task, GetTaskTest)
+
+
+class TaskRegistrationDecoratorTest(TestCase):
+
+    def setUp(self):
+        TASK_PATHS.clear()
+
+    def test_register_without_parameters(self):
+
+        @register_task
+        def register():
+            pass
+        self.assertIn('register', TASK_PATHS)
+
+    def test_register(self):
+
+        @register_task()
+        def register():
+            pass
+        self.assertIn('register', TASK_PATHS)
+
+    def test_registername(self):
+
+        name = 'toto'
+
+        @register_task(name)
+        def register():
+            pass
+        self.assertIn(name, TASK_PATHS)
+
+    def test_raise(self):
+        name = 'toto'
+        register_tasks(**{name: None})
+
+        error = False
+        try:
+            @register_task
+            def toto():
+                pass
+        except Exception:
+            error = True
+        self.assertTrue(error)
 
 
 class GetTaskWithParamsTest(TestCase):
@@ -314,6 +425,42 @@ class TestProcessRule(TestCase):
 
         self.assertTrue(condition)
         self.assertTrue(type(result) is ActionError)
+
+    def test_rules(self):
+
+        self.count = 10
+
+        rules_task = path(rules)
+
+        # construct rules
+        rule = {
+            TASK_PATH: rules_task,
+            TASK_PARAMS: {
+                'rules': [self.test_action for i in range(self.count)]
+            }
+        }
+
+        process_rule(event=self.event, rule=rule, ctx=self.ctx)
+
+        self.assertEqual(self.ctx[COUNT], self.count)
+
+    def test_switch(self):
+
+        self.count = 10
+
+        switch_task = path(switch)
+
+        # construct rules
+        rule = {
+            TASK_PATH: switch_task,
+            TASK_PARAMS: {
+                'rules': [self.test_action for i in range(self.count)]
+            }
+        }
+
+        process_rule(event=self.event, rule=rule, ctx=self.ctx)
+
+        self.assertEqual(self.ctx[COUNT], 1)
 
 if __name__ == '__main__':
     main()

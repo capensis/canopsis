@@ -10,15 +10,20 @@
             "required": true
         },
         "serie": {
-            "type": "object",
+            "type": "string",
+            "role": "modelselect",
             "model": "crecord.serie",
-            "relationship": "belongsTo",
             "required": true
         },
-        "style": {
-            "type": "object",
+        "curve": {
+            "type": "string",
+            "role": "modelselect",
             "model": "crecord.curve",
-            "relationship": "belongsTo",
+            "required": true
+        },
+        "color": {
+            "type": "string",
+            "role": "color",
             "required": true
         }
     }

@@ -23,9 +23,10 @@ Rule action functions
 """
 
 from canopsis.common.utils import ensure_iterable
-from canopsis.rule import get_task_with_params, ActionError
+from canopsis.rule import get_task_with_params, ActionError, register_task
 
 
+@register_task
 def actions(event, ctx, actions=None, raiseError=False, **kwargs):
     """
     Action which process several input actions and returns a list of results

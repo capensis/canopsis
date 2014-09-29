@@ -95,13 +95,12 @@ Rule
    + none
    + string value among:
 
-      * canopsis.topology.rule.condition.new_state
-      * canopsis.topology.rule.condition.condition
-      * canopsis.topology.rule.condition.all
-      * canopsis.topology.rule.condition.any
-      * canopsis.rule.condition.or
-      * canopsis.rule.condition.and
-      * canopsis.rule.condition.during
+      * topology.new_state
+      * topology.condition
+      * topology.all_nodes
+      * any
+      * all
+      * during
 
    + dictionary:
 

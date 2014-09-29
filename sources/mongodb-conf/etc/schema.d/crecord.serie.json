@@ -1,7 +1,7 @@
 {
     "categories": [{
         "title": "General",
-        "keys": ["name", "metrics", "formula"]
+        "keys": ["crecord_name", "metrics", "formula"]
     },{
         "title": "Metadata",
         "keys": ["min", "max", "warn", "crit"]
@@ -15,7 +15,7 @@
             "enum": ["serie"],
             "required": true
         },
-        "name": {
+        "crecord_name": {
             "type": "string",
             "required": true
         },

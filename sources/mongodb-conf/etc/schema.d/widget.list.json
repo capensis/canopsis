@@ -5,7 +5,7 @@
 	},
 	"categories": [{
 		"title": "General",
-		"keys":["title", "refreshInterval", "listed_crecord_type", "itemsPerPage", "selection_toolbar", "actions_toolbar", "default_filter"]
+		"keys":["title", "refreshInterval", "listed_crecord_type", "itemsPerPage","default_column_sort", "selection_toolbar", "actions_toolbar", "default_filter"]
 	},{
 		"title": "Columns",
 		"keys":["displayed_columns", "item_actions"]
@@ -61,6 +61,10 @@
 			},
 			"role" : "templateSelector",
 			"templateClass":"action"
+		},
+		"default_column_sort": {
+			"type": "object",
+			"role": "sortable"
 		},
 		"displayed_columns": {
 			"isUserPreference": true,

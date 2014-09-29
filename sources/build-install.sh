@@ -19,9 +19,9 @@ else
     exit 1
 fi
 
-if [ -e $SRC_PATH/build-config.sh ]
+if [ -e $SRC_PATH/build-control/config.sh ]
 then
-    . $SRC_PATH/build-config.sh
+    . $SRC_PATH/build-control/config.sh
 fi
 
 # Check slink
@@ -217,82 +217,93 @@ function update_conffiles() {
 
         find $CONFDIR -type f | while read conffile
         do
-            DEST=$PREFIX/etc/${conffile#$CONFDIR/}
-            DESTDIR=$(dirname $DEST)
-            copy=0
-
-            if [ -e $DEST ]
+            BPATH="$SRC_PATH/build-control/etc_blacklist"
+            if [ -e $BPATH ]
             then
-                # Replace variables in config file for better checking
-                TMPCONF=$SRC_PATH/config.tmp
-                rm -f $TMPCONF
-                cp $conffile $TMPCONF
-
-                sed "s#@PREFIX@#$PREFIX#g" -i $TMPCONF
-                sed "s#@HUSER@#$HUSER#g" -i $TMPCONF
-                sed "s#@HGROUP@#$HGROUP#g" -i $TMPCONF
-
-                # Check the two files
-                A=$(md5sum $TMPCONF | cut -d' ' -f1)
-                B=$(md5sum $DEST | cut -d' ' -f1)
-
-                if [ "$A" != "$B" ]
-                then
-                    if [ "$UPDATE_ETC_ACTION" == "keep" ]
-                    then
-                        copy=0
-                    elif [ "$UPDATE_ETC_ACTION" == "replace" ]
-                    then
-                        copy=1
-                    else
-                        ask=1
-
-                        while [ $ask -eq 1 ]
-                        do
-                            ask=0
-
-                            echo "Config file: $DEST"
-                            read -p "(K)eep old, (R)eplace, (V)iew diff, (E)dit (default: K): " choice <&2
-
-                            if [ "$choice" == "R" ] || [ "$choice" == "r" ]
-                            then
-                                copy=1
-                            elif [ "$choice" == "V" ] || [ "$choice" == "v" ]
-                            then
-                                diff $TMPCONF $DEST | more
-                                ask=1
-                            elif [ "$choice" == "E" ] || [ "$choice" == "e" ]
-                            then
-                                realtty="/dev/`ps | grep $$ | awk -F ' ' '{print $2}'`"
-
-                                if [ "x$EDITOR" == "x" ]
-                                then
-                                    EDITOR="vi"
-                                fi
-
-                                $EDITOR $DEST < $realtty > $realtty || true
-                            fi
-                        done
-                    fi
-                fi
-
-                rm $TMPCONF
+                blacklisted=$(cat $BPATH | grep "${conffile#$CONFDIR/}" | wc -l)
             else
-                copy=1
+                blacklisted=0
             fi
 
-            if [ $copy -eq 1 ]
+            if [ $blacklisted -eq 0 ]
             then
-                mkdir -p $DESTDIR
-                check_code $? "Impossible to mkdir: $DESTDIR"
+                DEST=$PREFIX/etc/${conffile#$CONFDIR/}
+                DESTDIR=$(dirname $DEST)
+                copy=0
 
-                cp -vf $conffile $DEST
-                check_code $? "Impossible to copy $conffile to $DEST"
+                if [ -e $DEST ]
+                then
+                    # Replace variables in config file for better checking
+                    TMPCONF=$SRC_PATH/config.tmp
+                    rm -f $TMPCONF
+                    cp $conffile $TMPCONF
 
-                chown $HUSER:$HGROUP $DEST
-                check_code $? "Impossible to chown $DEST"
-            else
-                echo "Ignoring file: $conffile"
+                    sed "s#@PREFIX@#$PREFIX#g" -i $TMPCONF
+                    sed "s#@HUSER@#$HUSER#g" -i $TMPCONF
+                    sed "s#@HGROUP@#$HGROUP#g" -i $TMPCONF
+
+                    # Check the two files
+                    A=$(md5sum $TMPCONF | cut -d' ' -f1)
+                    B=$(md5sum $DEST | cut -d' ' -f1)
+
+                    if [ "$A" != "$B" ]
+                    then
+                        if [ "$UPDATE_ETC_ACTION" == "keep" ]
+                        then
+                            copy=0
+                        elif [ "$UPDATE_ETC_ACTION" == "replace" ]
+                        then
+                            copy=1
+                        else
+                            ask=1
+
+                            while [ $ask -eq 1 ]
+                            do
+                                ask=0
+
+                                echo "Config file: $DEST"
+                                read -p "(K)eep old, (R)eplace, (V)iew diff, (E)dit (default: K): " choice <&2
+
+                                if [ "$choice" == "R" ] || [ "$choice" == "r" ]
+                                then
+                                    copy=1
+                                elif [ "$choice" == "V" ] || [ "$choice" == "v" ]
+                                then
+                                    diff $TMPCONF $DEST | more
+                                    ask=1
+                                elif [ "$choice" == "E" ] || [ "$choice" == "e" ]
+                                then
+                                    realtty="/dev/`ps | grep $$ | awk -F ' ' '{print $2}'`"
+
+                                    if [ "x$EDITOR" == "x" ]
+                                    then
+                                        EDITOR="vi"
+                                    fi
+
+                                    $EDITOR $DEST < $realtty > $realtty || true
+                                fi
+                            done
+                        fi
+                    fi
+
+                    rm $TMPCONF
+                else
+                    copy=1
+                fi
+
+                if [ $copy -eq 1 ]
+                then
+                    mkdir -p $DESTDIR
+                    check_code $? "Impossible to mkdir: $DESTDIR"
+
+                    cp -vf $conffile $DEST
+                    check_code $? "Impossible to copy $conffile to $DEST"
+
+                    chown $HUSER:$HGROUP $DEST
+                    check_code $? "Impossible to chown $DEST"
+                else
+                    echo "Ignoring file: $conffile"
+                fi
             fi
         done
     fi
@@ -844,7 +855,7 @@ fi
 if [ $OPT_MPKG -eq 1 -o $OPT_MINSTALLER -eq 1 ]
 then
     cd $SRC_PATH
-    ./build-installer.sh
+    ./build-control/build-installer.sh
     check_code $? "Impossible to build installer"
 fi
 
