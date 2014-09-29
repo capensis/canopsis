@@ -59,7 +59,7 @@
 			"items": {
 				"type": "string"
 			},
-			"role" : "templateSelector",
+			"role" : "templateselector",
 			"templateClass":"action"
 		},
 		"default_column_sort": {
@@ -79,7 +79,7 @@
 			"items": {
 				"type": "string"
 			},
-			"role" : "templateSelector",
+			"role" : "templateselector",
 			"templateClass":"toolbar"
 		},
 		"actions_toolbar": {
@@ -87,7 +87,7 @@
 			"items": {
 				"type": "string"
 			},
-			"role" : "templateSelector",
+			"role" : "templateselector",
 			"templateClass":"toolbar"
 		},
 		"mixins": {
