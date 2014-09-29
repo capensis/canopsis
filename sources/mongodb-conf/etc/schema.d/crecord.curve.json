@@ -1,13 +1,13 @@
 {
     "categories": [{
         "title": "General",
-        "keys": ["name"]
+        "keys": ["crecord_name"]
     },{
         "title": "Curve Style",
         "keys": ["stacked", "lines", "areas", "points", "bars"]
     },{
         "title": "Customize Curve",
-        "keys": ["line_width", "bar_width", "line_style", "point_shape", "line_color", "bar_color", "area_color", "area_opacity"]
+        "keys": ["line_width", "bar_width", "line_style", "point_shape", "area_opacity"]
     }],
     "type": "object",
     "properties": {
@@ -15,7 +15,7 @@
             "enum": ["curve"],
             "required": true
         },
-        "name": {
+        "crecord_name": {
             "type": "string",
             "required": true
         },
@@ -65,21 +65,6 @@
             "default": "circle",
             "title": "Point's shape",
             "role": "simplelist"
-        },
-        "line_color": {
-            "type": "string",
-            "title": "Line color",
-            "role": "color"
-        },
-        "bar_color": {
-            "type": "string",
-            "title": "Bar color",
-            "role": "color"
-        },
-        "area_color": {
-            "type": "string",
-            "title": "Area color",
-            "role": "color"
         },
         "area_opacity": {
             "type": "number",
