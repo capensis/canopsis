@@ -79,7 +79,10 @@ def init():
             'line_style': 'line',
             'point_shape': 'circle',
             'area_opacity': 1
-        },   for curve in curves:
+        }
+    ]
+
+    for curve in curves:
         _id = 'curve.{0}'.format(curve['crecord_name'])
 
         try:
