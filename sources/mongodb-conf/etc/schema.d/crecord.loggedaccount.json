@@ -2,7 +2,7 @@
 	"type": "object",
 	"categories": [{
 		"title": "General",
-		"keys":["firstname","lastname", "user", "mail", "authkey"]
+		"keys":["firstname","lastname", "user", "mail", "authkey", "ui_language"]
 	}],
 	"properties": {
 		"ui_language": {
@@ -11,6 +11,11 @@
 			"role": "simplelist"
 		},
 		"authkey": {
+			"type": "string",
+			"required": true,
+			"readOnly": true
+		},
+		"_id": {
 			"type": "string",
 			"required": true,
 			"readOnly": true
@@ -30,7 +35,6 @@
 		},
 		"mail": {
 			"type": "string",
-			"required": true,
 			"role": "mail"
 		}
 	}
