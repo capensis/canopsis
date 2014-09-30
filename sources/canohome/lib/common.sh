@@ -17,7 +17,6 @@ function check_code() {
 function detect_os() {
 	echo "Linux Distribution:"
 	DIST=`python -c "import platform; print platform.dist()[0].lower().split(' ')[0]"`
-	if [ "$DIST" == "red" ]; then DIST="redhat"; fi
 	DIST_VERS=`python -c "import platform; print platform.dist()[1].split('.')[0]"`
 	echo "Dist found"
 	echo $DIST

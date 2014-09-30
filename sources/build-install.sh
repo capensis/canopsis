@@ -438,6 +438,7 @@ function show_help() {
     echo "     Build and install Canopsis dependencies and packages"
     echo
     echo "Options:"
+    echo "    -g        ->  Update git submodules before build"
     echo "    -c        ->  Uninstall Canopsis"
     echo "    -n        ->  Don't build sources if possible"
     echo "    -u        ->  Run unittest at the end"
@@ -466,6 +467,7 @@ OPT_MPKG=0
 OPT_DCD=0
 OPT_MINSTALLER=0
 OPT_LOGFILE=1
+OPT_GITUPDATE=0
 
 while getopts "cnupdhil" opt
 do
@@ -477,6 +479,7 @@ do
         i) OPT_MINSTALLER=1; OPT_BUILD=0;;
         l) OPT_LOGFILE=0;;
         d) OPT_DCD=1;;
+        g) OPT_GITUPDATE=1;;
         h) show_help ;;
         \?)
             echo "Invalid option: -$OPTARG" >&2
@@ -502,20 +505,24 @@ fi
 
 # Init submodules
 
-## Try to init submodule, if fail, try to use externals
-echo "-- Init submodules ..."
+if [ $OPT_GITUPDATE -eq 1 ]
+then
+    # Try to init submodule, if fail, try to use externals
+    echo "-- Init submodules ..."
 
-cd $SRC_PATH/..
-CODE=0
-git submodule init && git submodule update
-check_code $? "Impossible to init main submodules"
+    cd $SRC_PATH/..
 
-cd $SRC_PATH/externals/
-check_code $? "Impossible to move to externals"
+    git submodule init && git submodule update
+    check_code $? "Impossible to init main submodules"
 
-git submodule init && git submodule update
-check_code $? "Impossible to init externals submodules"
-cd $SRC_PATH/..
+    cd $SRC_PATH/externals/
+    check_code $? "Impossible to move to externals"
+
+    git submodule init && git submodule update
+    check_code $? "Impossible to init externals submodules"
+
+    cd $SRC_PATH/..
+fi
 
 detect_os
 export_env
