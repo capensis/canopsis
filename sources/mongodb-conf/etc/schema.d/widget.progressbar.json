@@ -5,7 +5,7 @@
     },
     "categories": [{
         "title": "General",
-        "keys":["title", "refreshInterval", "event_selection", "destination_view", "filter_pattern"]
+        "keys":["title", "refreshInterval", "event_selection", "destination_view", "filter_pattern" , "inline"]
     },{
         "title": "Rendering",
         "keys":["refreshableWidget"]
@@ -24,6 +24,10 @@
                 "type": "string"
             },
             "role" : "eventselector"
+        },
+        "inline":  {
+            "type": "boolean",
+            "default": "true"
         },
         "filter_pattern": {
             "type": "string",
