@@ -24,6 +24,8 @@ from bson import BSON
 from json import loads
 from time import time
 
+from canopsis.common.utils import ensure_unicode
+
 
 class engine(Engine):
     etype = "cleaner"
@@ -66,14 +68,13 @@ class engine(Engine):
                 self.logger.debug(body)
                 raise Exception("Impossible to parse event '%s'" % rk)
 
-        event['rk'] = rk
+        event['rk'] = ensure_unicode(rk)
 
         if "resource" in event:
             if not isinstance(event['resource'], basestring):
                 event['resource'] = ''
             else:
-                if isinstance(event['resource'], unicode):
-                    event['resource'] = event['resource'].encode("utf-8")
+                event['resource'] = ensure_unicode(event['resource'])
 
         # Clean tags field
         event['tags'] = event.get('tags', [])

@@ -109,7 +109,7 @@ class engine(Engine):
                 'comment': 'All matched event are acknowleged',
                 'isAck': True
             }
-            self.logger.debug(' + Selector event is ack because all matched event are ack')
+            self.logger.debug(' + Selector event is ack because all matched NOK event are ack')
         else:
             #define or reset ack key for selector generated event
             selector_event['ack'] = {}
