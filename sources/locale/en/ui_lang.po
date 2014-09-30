@@ -1,18 +1,15 @@
 # 
-# Translators:
 msgid ""
 msgstr ""
-"Project-Id-Version: Canopsis\n"
+"Project-Id-Version: 1.0\n"
 "Report-Msgid-Bugs-To: teamcanopsis@capensis.fr\n"
 "POT-Creation-Date: 2014-08-22 10:00+0100\n"
-"PO-Revision-Date: 2014-09-04 14:45+0000\n"
-"Last-Translator: eric regnier <eregnier@capensis.fr>\n"
-"Language-Team: English (http://www.transifex.com/projects/p/canopsis/language/en/)\n"
+"PO-Revision-Date: 2014-09-30 10:41+0100\n"
+"Last-Translator: teamcanopsis <teamcanopsis@capensis.fr>\n"
+"Language-Team: English <teamcanopsis@capensis.fr>\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: en\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 msgid "View all tasks"
 msgstr "View all tasks"
@@ -646,3 +643,124 @@ msgstr "sla_state"
 
 msgid "Dashboard"
 msgstr "Dashboard"
+
+msgid "Index"
+msgstr "Index"
+
+msgid "Add filter"
+msgstr "Add filter"
+
+msgid "Last"
+msgstr "Last"
+
+msgid "Add entry for current list"
+msgstr "Add entry for current list"
+
+msgid "requests errors"
+msgstr "requests errors"
+
+msgid "requests pending"
+msgstr "requests pending"
+
+msgid "custom"
+msgstr "custom"
+
+msgid "Edit current entry"
+msgstr "Edit current entry"
+
+msgid "Edit JS runtime configuration"
+msgstr "Edit JS runtime configuration"
+
+msgid "JS runtime settings"
+msgstr "JS runtime settings"
+
+msgid "client logging verbosity"
+msgstr "client logging verbosity"
+
+msgid "Save preset"
+msgstr "Save preset"
+
+msgid "pending"
+msgstr "pending"
+
+msgid "First"
+msgstr "First"
+
+msgid "Ack"
+msgstr "Ack"
+
+msgid "Cancel ack"
+msgstr "Cancel ack"
+
+msgid "Output"
+msgstr "Output"
+
+msgid "January"
+msgstr "January"
+
+msgid "February"
+msgstr "February"
+
+msgid "March"
+msgstr "March"
+
+msgid "April"
+msgstr "April"
+
+msgid "May"
+msgstr "May"
+
+msgid "June"
+msgstr "June"
+
+msgid "July"
+msgstr "July"
+
+msgid "August"
+msgstr "August"
+
+msgid "September"
+msgstr "September"
+
+msgid "October"
+msgstr "October"
+
+msgid "November"
+msgstr "November"
+
+msgid "December"
+msgstr "December"
+
+msgid "Jan"
+msgstr "Jan"
+
+msgid "Feb"
+msgstr "Feb"
+
+msgid "Mar"
+msgstr "Mar"
+
+msgid "Apr"
+msgstr "Apr"
+
+msgid "Aug"
+msgstr "Aug"
+
+msgid "Sep"
+msgstr "Sep"
+
+msgid "Oct"
+msgstr "Oct"
+
+msgid "Nov"
+msgstr "Nov"
+
+msgid "Dec"
+msgstr "Dec"
+
+msgid "Redirection to the targeted address"
+msgstr "Redirection to the targeted address"
+
+msgid "Information"
+msgstr "Information"
+
