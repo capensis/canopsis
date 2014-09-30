@@ -172,7 +172,7 @@ class engine(Engine):
             _type=event_type, entity=authored_data, context=context)
 
         # add perf data
-        for perfdata in event['perf_data_array']:
+        for perfdata in event.get('perf_data_array', []):
             perfdata_entity = entity.copy()
             perfdata_entity[Context.NAME] = perfdata['metric']
             perfdata_entity['internal'] = perfdata['metric'].startswith('cps')

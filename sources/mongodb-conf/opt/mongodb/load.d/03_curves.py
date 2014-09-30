@@ -23,7 +23,6 @@ from canopsis.old.account import Account
 from canopsis.old.storage import get_storage
 from canopsis.old.record import Record
 
-import hashlib
 
 ##set root account
 root = Account(user="root", group="root")
@@ -93,7 +92,13 @@ def init():
 
         except KeyError:
             logger.info(" + Create curve '%s'" % curve['crecord_name'])
-            record = Record(data=curve, _id=_id, _type='curve')
+            record = Record(
+                data=curve,
+                _id=_id,
+                name=curve['crecord_name'],
+                _type='curve'
+            )
+
             record.chmod('g+w')
             record.chmod('o+r')
             record.chgrp('group.CPS_curve_admin')

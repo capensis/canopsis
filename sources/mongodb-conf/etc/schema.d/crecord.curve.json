@@ -17,7 +17,8 @@
         },
         "crecord_name": {
             "type": "string",
-            "required": true
+            "required": true,
+            "title": "Name"
         },
         "lines": {
             "type": "boolean",
