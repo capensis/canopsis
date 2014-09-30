@@ -25,7 +25,8 @@
           "mixins": [
             "Sortablearray",
             "Arraysearch",
-            "Pagination"
+            "Pagination",
+            "Crud"
           ]
         }
       }

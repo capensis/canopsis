@@ -32,7 +32,8 @@
           "mixins": [
             "Sortablearray",
             "Arraysearch",
-            "Pagination"
+            "Pagination",
+            "Crud"
           ],
           "displayed_columns": [
             "name",
@@ -45,7 +46,6 @@
             "run_once"
           ],
           "actions_toolbar": [
-            "actionbutton-create",
             "actionbutton-removeselection"
           ],
           "xtype": "list"

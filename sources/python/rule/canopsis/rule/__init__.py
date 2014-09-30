@@ -53,7 +53,7 @@ A task respects those types::
 For example, let ``my.my_condition`` and ``my.my_action`` respectively
 custom condition and action.
 
-A typical rule configuration is as follow:
+A typical parameterized rule configuration is as follow:
 {
     "condition": "my.my_condition",
     "action": "my.my_action"
