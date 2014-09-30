@@ -32,7 +32,8 @@
           "mixins": [
             "Sortablearray",
             "Arraysearch",
-            "Pagination"
+            "Pagination",
+            "Crud"
           ],
           "displayed_columns": [
             "display_name",
@@ -44,7 +45,6 @@
             "downtimes_as_ok"
           ],
           "actions_toolbar": [
-            "actionbutton-create",
             "actionbutton-removeselection"
           ],
           "xtype": "list"
@@ -71,7 +71,10 @@
             "component",
             "resource",
             "ack",
-            "state"
+            "output",
+            "state",
+            "status",
+            "timestamp"
           ],
           "listed_crecord_type" : "event",
           "actions_toolbar" : [ ],

@@ -251,8 +251,10 @@ class Selector(Record):
                 }
         ])
 
-        if len(result['result']) and 'count' in result['result'][0]:
-            ack_count = result['result'][0]['count']
+        if len(result['result']):
+            ack_count = 0
+            for ack_result in result['result']:
+                ack_count += ack_result['count']
         else:
             ack_count = -1
         self.logger.debug(" + result for ack : {}".format(result))
@@ -271,12 +273,17 @@ class Selector(Record):
 
         # Build output
         total = 0
+        total_error = 0
         for s in states:
             states[s] = int(states[s])
             total += states[s]
+            if s > 0:
+                total_error += states[s]
 
-        send_ack = total == ack_count
-
+        if ack_count >= total_error and ack_count > 0:
+            send_ack = True
+        else:
+            send_ack = False
 
         self.logger.debug(" + state: {}".format(state))
 
@@ -303,8 +310,6 @@ class Selector(Record):
                 "max": total
             })
             self.logger.info('metric {} : {}'.format(metric, value))
-
-        output = information
 
         perf_data_array.append({
             "metric": "cps_sel_total",
