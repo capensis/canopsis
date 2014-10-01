@@ -24,6 +24,7 @@
         "color": {
             "type": "string",
             "role": "color",
+            "default": "#B7CA79",
             "required": true
         }
     }

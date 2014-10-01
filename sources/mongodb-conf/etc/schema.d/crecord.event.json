@@ -32,6 +32,9 @@
 			"type": "string",
 			"title":"ticket"
 		},
+		"ticket_date": {
+			"type": "number"
+		},
 		"timestamp": {
 			"type": "number",
 			"role": "timestamp",
