@@ -5,10 +5,13 @@
 	},
 	"categories": [{
 		"title": "General",
-		"keys":["title", "refreshInterval", "event_selection", "destination_view", "filter_pattern"]
+		"keys":["title", "refreshInterval", "event_selection"]
 	},{
 		"title": "Rendering",
 		"keys":["refreshableWidget", "show_output"]
+	},{
+		"title": "Click event",
+		"keys":["filter_pattern", "destination_view"]
 	}],
 	"properties": {
 		"title":  {
@@ -16,7 +19,12 @@
 		},
 		"destination_view":  {
 			"type": "string",
-			"default": "view.event"
+			"default": "view.event",
+			"valueKey": "id",
+			"type": "string",
+			"role": "stringclassifiedcrecordselector",
+			"crecordtype": "view"
+
 		},
 		"event_selection":  {
 			"type": "array",
