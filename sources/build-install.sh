@@ -469,7 +469,7 @@ OPT_MINSTALLER=0
 OPT_LOGFILE=1
 OPT_GITUPDATE=0
 
-while getopts "cnupdhil" opt
+while getopts "cnupdhilg" opt
 do
     case $opt in
         c) OPT_CLEAN=1 ;;

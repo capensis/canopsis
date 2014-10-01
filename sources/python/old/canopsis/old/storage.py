@@ -79,6 +79,13 @@ class Storage(object):
         except ConfigParser.Error:
             self.mongo_password = mongo_password
 
+        try:
+            self.fetch_limit = int(CONFIG.get("master", "fetch_limit"))
+        except Exception, e:
+            self.logger.error('Unable to find fetch limit param, will use default = 10000')
+            self.fetch_limit = 10000
+
+
         self.mongo_safe = mongo_safe
 
         self.account = account
@@ -344,21 +351,6 @@ class Storage(object):
             return return_ids[0]
         else:
             return return_ids
-    '''
-    #warning : not tested
-    def recursive_put(self, record,depth=0, account=None, namespace=None):
-        depth += 1
-
-        children_ids = []
-
-        for child in record.children:
-            self.recursive_put(child,depth,account=account,namespace=namespace)
-            children_ids.append(child._id)
-
-        record.children = children_ids
-        self.put(record,account=None, namespace=None)
-    '''
-
 
     def find_one(self, *args, **kargs):
         return self.find(one=True, *args, **kargs)
@@ -405,18 +397,39 @@ class Storage(object):
             else:
                 raw_records = []
         else:
+
+            if limit == 0:
+                limit = self.fetch_limit
+
+            if limit > 1:
+                #change limit artificially to fetch one more result if possible
+                limit += 1
+
             if sort is None:
                 raw_records = backend.find(mfilter, fields=mfields, safe=self.mongo_safe, skip=offset, limit=limit)
             else:
                 raw_records = backend.find(mfilter, fields=mfields, safe=self.mongo_safe, skip=offset, limit=limit, sort=sort)
 
-            total = raw_records.count()
+
+            raw_records = list(raw_records)
+
+            """
+                Because mongo counts computation time is not acceptable, total is equal
+                to the element fetched count (can be limit or less before it is artificially changed) OR
+                total is offset + limit events and possibly + 1 if limit is reached
+                (when +1 , this means some other records are availables)
+            """
+
+            total = len(raw_records) + offset
+
+            if limit > 1:
+                raw_records = raw_records[:limit -1]
 
             # process limit, offset and sort independently of pymongo because sort does not use index
             if count:
                 return total
 
-            raw_records = list(raw_records)
+
 
         records=[]
 
