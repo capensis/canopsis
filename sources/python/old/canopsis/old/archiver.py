@@ -287,9 +287,15 @@ class Archiver(object):
                     change['cancel'] = {}
 
 
-            # keep incident information if status does not reset event
+            # Remove ticket information in case state is back to normal (both ack and ticket declaration case)
             if 'ticket_declared' in devent and event['status'] == 0:
                 change['ticket_declared'] = {}
+
+            # Remove ticket information in case state is back to normal (ticket number declaration only case)
+            if 'ticket' in devent and event['status'] == 0:
+                del devent['ticket']
+                if 'ticket_date' in devent:
+                    del devent['ticket_date']
 
 
             for key in event:
