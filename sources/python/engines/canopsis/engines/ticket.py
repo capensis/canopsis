@@ -81,8 +81,9 @@ class engine(Engine):
                 })
 
 
-            elif event['event_type'] == 'ack' and 'ticket' in event:
-                self.logger.info('Associate ticket')
+            elif event['event_type'] in ['ack', 'assocticket'] and 'ticket' in event:
+
+                self.logger.info('Associate ticket for event type {}'.format(event['event_type']))
 
                 events = self.store.get_backend('events')
 
