@@ -1,5 +1,6 @@
 {
     "_id" : "view.series",
+    "id" : "view.series",
     "crecord_write_time" : 1412152177,
     "enable" : true,
     "aaa_access_group" : [
