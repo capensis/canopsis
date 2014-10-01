@@ -1,9 +1,11 @@
 {
     "_id" : "view.series",
     "id" : "view.series",
-    "crecord_write_time" : 1411984616,
+    "crecord_write_time" : 1412152177,
     "enable" : true,
-    "aaa_access_group" : [ ],
+    "aaa_access_group" : [
+        "r"
+    ],
     "description" : "Configure series",
     "parent" : [ ],
     "containerwidget" : {
@@ -25,7 +27,9 @@
                     "title" : "Series",
                     "maximized_column_index" : 0,
                     "mixins" : [
-                        "Crud"
+                        "Crud",
+                        "Pagination",
+                        "Search"
                     ],
                     "itemsPerPage" : 10,
                     "cssClass" : null,
@@ -62,7 +66,7 @@
                     "tagName" : null,
                     "widgetId" : null,
                     "default_column_sort" : {
-                        
+                        "direction" : "ASC"
                     },
                     "item_actions" : [
                         "actionbutton-removeselection",
@@ -70,7 +74,11 @@
                     ],
                     "title" : "Curves",
                     "maximized_column_index" : 0,
-                    "mixins" : [ ],
+                    "mixins" : [
+                        "Pagination",
+                        "Crud",
+                        "Search"
+                    ],
                     "itemsPerPage" : 10,
                     "cssClass" : null,
                     "default_filter" : null,
@@ -92,9 +100,7 @@
                         "area_opacity"
                     ],
                     "refreshableWidget" : false,
-                    "actions_toolbar" : [
-                        "actionbutton-create"
-                    ],
+                    "actions_toolbar" : [ ],
                     "refreshInterval" : 0,
                     "listed_crecord_type" : "curve",
                     "contentTruncatedLength" : 0,
@@ -109,15 +115,20 @@
         "refreshInterval" : 0,
         "cssClass" : null
     },
-    "aaa_access_owner" : [ ],
-    "aaa_group" : "None",
+    "aaa_access_owner" : [
+        "r",
+        "w"
+    ],
+    "aaa_group" : "group.CPS_view",
     "internal" : false,
-    "aaa_admin_group" : "None",
+    "aaa_admin_group" : "group.CPS_view_admin",
     "children" : [ ],
-    "crecord_name" : "view.series",
+    "crecord_name" : "series.json",
     "aaa_access_unauth" : [ ],
     "aaa_owner" : "account.root",
     "crecord_type" : "view",
-    "aaa_access_other" : [ ],
+    "aaa_access_other" : [
+        "r"
+    ],
     "crecord_creation_time" : 1411378757
 }

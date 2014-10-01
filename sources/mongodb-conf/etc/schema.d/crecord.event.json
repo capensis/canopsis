@@ -28,6 +28,10 @@
 			"type": "object",
 			"title":"ticket"
 		},
+		"ticket": {
+			"type": "string",
+			"title":"ticket"
+		},
 		"timestamp": {
 			"type": "number",
 			"role": "timestamp",
