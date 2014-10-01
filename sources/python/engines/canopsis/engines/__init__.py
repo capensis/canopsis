@@ -32,13 +32,13 @@ from traceback import format_exc, print_exc
 
 from itertools import cycle
 
-from logging import INFO, FileHandler, Formatter
+from logging import INFO, DEBUG, FileHandler, Formatter
 
 from time import time, sleep
 from json import loads
 
 from os import getpid
-from os.path import expanduser, join
+from os.path import join
 from sys import prefix as sys_prefix
 
 DROP = -1
@@ -66,6 +66,7 @@ class Engine(object):
         super(Engine, self).__init__()
 
         self.logging_level = logging_level
+        self.debug = logging_level == DEBUG
 
         self.RUN = True
 
@@ -94,7 +95,9 @@ class Engine(object):
         self.logger = init.getLogger(name, logging_level=self.logging_level)
 
         logHandler = FileHandler(
-            filename=join(sys_prefix, 'var', 'log', 'engines', '%s.log' % name))
+            filename=join(sys_prefix, 'var', 'log', 'engines', '%s.log' % name)
+        )
+
         logHandler.setFormatter(
             Formatter(
                 "%(asctime)s %(levelname)s %(name)s %(message)s"))
@@ -135,28 +138,33 @@ class Engine(object):
 
     def get_ready_record(self, event):
         """
-        crecord dispatcher sent an event with type and crecord id.
-        So I load a crecord object instance (dynamically) from these
-        informations
+        crecord dispatcher send an event with type and crecord id.
+        So I load a crecord object instance (dynamically) from these infos
         """
 
-        if '_id' not in event  \
-                or 'crecord_type' not in event \
-                or event['crecord_type'] not in self.dispatcher_crecords:
-            self.logger.warning('record type not found for received event')
-            return None
+        ctype = event.get('crecord_type', None)
 
-        record_object = None
+        if '_id' in event and ctype and ctype in self.dispatcher_crecords:
+            self.logger.warning('Record type %s not found' % ctype)
 
-        try:
-            record_object = self.storage.get(
-                event['_id'], account=Account(user="root", group="root"))
+            record_object = None
 
-        except Exception as e:
-            self.logger.critical(
-                'unable to retrieve crecord object of %s for record type %s : %s' % (str(self.dispatcher_crecords), event['crecord_type'], e))
+            try:
+                record_object = self.storage.get(
+                    event['_id'],
+                    account=Account(user="root", group="root")
+                )
 
-        return record_object
+            except Exception as e:
+                self.logger.critical(
+                    'Record <%s> not found in %s : %s' % (
+                        ctype,
+                        str(self.dispatcher_crecords),
+                        e
+                    )
+                )
+
+            return record_object
 
     def new_amqp_queue(
         self, amqp_queue, routing_keys, on_amqp_event, exchange_name
@@ -189,19 +197,28 @@ class Engine(object):
 
         if self.create_queue:
             self.new_amqp_queue(
-                self.amqp_queue, self.routing_keys, self.on_amqp_event,
-                self.exchange_name)
-            # This is an async engine and it needs engine dispatcher bindinds to be feed properly
+                self.amqp_queue,
+                self.routing_keys,
+                self.on_amqp_event,
+                self.exchange_name
+            )
+
+            # This is an async engine and it needs engine dispatcher bindinds
+            # to be feed properly
 
         if self.etype in self.dispatcher_crecords:
-            rk = 'dispatcher.' + self.etype
+            rk = 'dispatcher.{0}'.format(self.etype)
             self.logger.debug(
-                'Creating dispatcher queue for engine ' + self.etype)
+                'Creating dispatcher queue for engine {0}'.format(self.etype)
+            )
 
             self.amqp.get_exchange('media')
             self.new_amqp_queue(
-                'Dispatcher_' + self.etype, rk, self.consume_dispatcher,
-                'media')
+                'Dispatcher_{0}'.format(self.etype),
+                rk,
+                self.consume_dispatcher,
+                'media'
+            )
 
         self.amqp.start()
 
@@ -250,10 +267,11 @@ class Engine(object):
         error = False
 
         try:
-            if 'processing' not in event:
-                event['processing'] = {}
+            if self.debug:
+                if 'processing' not in event:
+                    event['processing'] = {}
 
-            event['processing'][self.etype] = start
+                event['processing'][self.etype] = start
 
             wevent = self.work(event, msg, *args, **kargs)
 
