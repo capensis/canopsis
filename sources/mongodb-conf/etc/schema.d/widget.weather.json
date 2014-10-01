@@ -8,7 +8,7 @@
 		"keys":["title", "refreshInterval", "event_selection", "destination_view", "filter_pattern"]
 	},{
 		"title": "Rendering",
-		"keys":["refreshableWidget"]
+		"keys":["refreshableWidget", "show_output"]
 	}],
 	"properties": {
 		"title":  {
@@ -30,6 +30,10 @@
 			"default": "{{#if isSelector}}{{{selector_filter}}}{{else}}{ \"rk\" : \"{{rk}}\" }{{/if}}"
 		},
 		"refreshableWidget":  {
+			"type": "boolean",
+			"default": true
+		},
+		"show_output": {
 			"type": "boolean",
 			"default": true
 		}

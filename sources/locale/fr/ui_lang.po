@@ -1,4 +1,4 @@
-# Translators:
+# 
 # Translators:
 # eric regnier <eregnier@capensis.fr>, 2014
 # Mourcia Mikael <mmourcia@yahoo.fr>, 2014
@@ -7,8 +7,8 @@ msgstr ""
 "Project-Id-Version: Canopsis\n"
 "Report-Msgid-Bugs-To: teamcanopsis@capensis.fr\n"
 "POT-Creation-Date: 2014-08-22 10:00+0100\n"
-"PO-Revision-Date: 2014-09-05 22:08+0000\n"
-"Last-Translator: eric regnier <eregnier@capensis.fr>\n"
+"PO-Revision-Date: 2014-09-30 10:12+0000\n"
+"Last-Translator: Mourcia Mikael <mmourcia@yahoo.fr>\n"
 "Language-Team: French (http://www.transifex.com/projects/p/canopsis/language/fr/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -648,3 +648,123 @@ msgstr "Etat SLA"
 
 msgid "Dashboard"
 msgstr "Tableau de bord"
+
+msgid "Index"
+msgstr "Index"
+
+msgid "Add filter"
+msgstr "Ajouter un filtre"
+
+msgid "Last"
+msgstr "Dernier"
+
+msgid "Add entry for current list"
+msgstr "Ajouter une entrée"
+
+msgid "requests errors"
+msgstr "Requêtes en rreur"
+
+msgid "requests pending"
+msgstr "requêtes en attente"
+
+msgid "custom"
+msgstr "personnalisé"
+
+msgid "Edit current entry"
+msgstr "Editer l'entrée"
+
+msgid "Edit JS runtime configuration"
+msgstr "Editer la configuration JS Runtime"
+
+msgid "JS runtime settings"
+msgstr "Paramètres JS Runtime"
+
+msgid "client logging verbosity"
+msgstr "Niveau de verbosité coté client"
+
+msgid "Save preset"
+msgstr "Enregistrer la présélection"
+
+msgid "pending"
+msgstr "En attente"
+
+msgid "First"
+msgstr "Premier"
+
+msgid "Ack"
+msgstr "Ack"
+
+msgid "Cancel ack"
+msgstr "Annuler Ack"
+
+msgid "Output"
+msgstr "Message"
+
+msgid "January"
+msgstr "Janvier"
+
+msgid "February"
+msgstr "Février"
+
+msgid "March"
+msgstr "Mars"
+
+msgid "April"
+msgstr "Avril"
+
+msgid "May"
+msgstr "Mai"
+
+msgid "June"
+msgstr "Juin"
+
+msgid "July"
+msgstr "Juillet"
+
+msgid "August"
+msgstr "Août"
+
+msgid "September"
+msgstr "Septembre"
+
+msgid "October"
+msgstr "Octobre"
+
+msgid "November"
+msgstr "Novembre"
+
+msgid "December"
+msgstr "Décembre"
+
+msgid "Jan"
+msgstr "Jan"
+
+msgid "Feb"
+msgstr "Fev"
+
+msgid "Mar"
+msgstr "Mar"
+
+msgid "Apr"
+msgstr "Avr"
+
+msgid "Aug"
+msgstr "Aoû"
+
+msgid "Sep"
+msgstr "Sep"
+
+msgid "Oct"
+msgstr "Oct"
+
+msgid "Nov"
+msgstr "Nov"
+
+msgid "Dec"
+msgstr "Dec"
+
+msgid "Redirection to the targeted address"
+msgstr "Redirection vers la cible"
+
+msgid "Information"
+msgstr "Information"
