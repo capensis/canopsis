@@ -78,7 +78,10 @@ class engine(Engine):
             self.events_collection.update(
                 {'rk': rk},
                 {'$unset': {
-                    'ack': "",
+                    'ack': '',
+                    'ticket_declared': '',
+                    'ticket': '',
+                    'ticket_date': ''
             }})
             ackremove = True
 
