@@ -306,8 +306,9 @@ class Amqp(Thread):
             if not exchange_name:
                 exchange_name = self.exchange_name
 
+            rk = msg.get('rk', '')
             self.logger.debug(
-                "Send message to %s in %s" % (routing_key, exchange_name))
+                "{} -> {} in {}".format(rk, routing_key, exchange_name))
             with self.producers[self.conn].acquire(block=True) as producer:
                 try:
                     _msg = msg.copy()
