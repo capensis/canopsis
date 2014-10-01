@@ -1,5 +1,4 @@
-#!/usr/bin/env python
-## -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 #--------------------------------
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
@@ -45,46 +44,68 @@ CONFIG.read(os.path.join(sys.prefix, 'etc', 'cstorage.conf'))
 
 
 class Storage(object):
-    def __init__(self, account, namespace='object', logging_level=logging.ERROR, mongo_uri=None, mongo_host="127.0.0.1", mongo_port=27017, mongo_userid=None, mongo_password=None, mongo_db='canopsis', mongo_autoconnect=True, groups=[], mongo_safe=True):
+    def __init__(
+        self,
+        account, namespace='object',
+        logging_level=logging.ERROR,
+        mongo_uri=None,
+        mongo_host="127.0.0.1",
+        mongo_port=27017,
+        mongo_userid=None,
+        mongo_password=None,
+        mongo_db='canopsis',
+        mongo_autoconnect=True,
+        groups=[],
+        mongo_safe=True,
+        *args, **kwargs
+    ):
 
-        super(Storage, self).__init__()
+        super(Storage, self).__init__(*args, **kwargs)
+
+        self.logger = logging.getLogger('Storage')
+        self.logger.setLevel(logging_level)
 
         try:
             self.mongo_uri = CONFIG.get('master', 'db_uri')
+
         except ConfigParser.Error:
             self.mongo_uri = mongo_uri
 
         try:
             self.mongo_host = CONFIG.get("master", "host")
+
         except ConfigParser.Error:
             self.mongo_host = mongo_host
 
         try:
             self.mongo_port = CONFIG.getint("master", "port")
+
         except ConfigParser.Error:
             self.mongo_port = mongo_port
 
         try:
             self.mongo_db = CONFIG.get("master", "db")
+
         except ConfigParser.Error:
             self.mongo_db = mongo_db
 
         try:
             self.mongo_userid = CONFIG.get("master", "userid")
+
         except ConfigParser.Error:
             self.mongo_userid = mongo_userid
 
         try:
             self.mongo_password = CONFIG.get("master", "password")
+
         except ConfigParser.Error:
             self.mongo_password = mongo_password
 
         try:
             self.fetch_limit = int(CONFIG.get("master", "fetch_limit"))
-        except Exception, e:
-            self.logger.error('Unable to find fetch limit param, will use default = 10000')
-            self.fetch_limit = 10000
 
+        except ConfigParser.Error:
+            self.fetch_limit = 10000
 
         self.mongo_safe = mongo_safe
 
@@ -93,9 +114,6 @@ class Storage(object):
 
         self.namespace = namespace
         self.backend = None
-
-        self.logger = logging.getLogger('Storage')
-        self.logger.setLevel(logging_level)
 
         self.gridfs_namespace = "binaries"
 
@@ -111,7 +129,8 @@ class Storage(object):
         try:
             int(_id, 16)
             return objectid.ObjectId(_id)
-        except:
+
+        except Exception:
             return _id
 
     def make_mongofilter(self, account):
@@ -819,14 +838,6 @@ class Storage(object):
 
     def __del__(self):
         self.logger.debug("Object deleted. (namespace: %s)" % self.namespace)
-
-#####
-#       docs = doc_or_docs
-#        return_one = False
-#        if isinstance(docs, dict):
-#            return_one = True
-#            docs = [docs]
-##################
 
 ## Cache storage
 STORAGES = {}
