@@ -47,7 +47,8 @@
 		"resource": {
 			"type": "string",
 			"required": true,
-			"readOnly": true
+			"readOnly": true,
+			"role":"recordContentWindow"
 		},
 		"connector": {
 			"type": "string",

@@ -8,7 +8,7 @@
 		"keys":["title", "refreshInterval", "listed_crecord_type", "itemsPerPage","default_column_sort", "selection_toolbar", "actions_toolbar", "default_filter"]
 	},{
 		"title": "Columns",
-		"keys":["displayed_columns", "item_actions"]
+		"keys":["displayed_columns", "item_actions", "record_template"]
 	},{
 		"title": "Filters",
 		"keys":["filters"]
@@ -65,6 +65,10 @@
 		"default_column_sort": {
 			"type": "object",
 			"role": "sortable"
+		},
+		"record_template": {
+			"type": "string",
+			"role":"richtext"
 		},
 		"displayed_columns": {
 			"isUserPreference": true,
