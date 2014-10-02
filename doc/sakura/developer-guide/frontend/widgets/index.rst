@@ -5,4 +5,6 @@ Widgets
    :maxdepth: 2
    :titlesonly:
 
-   create-your-own-widgets
+   creating-a-simple-widget
+   managing-plug-ins-in-mixins
+   advanced-concepts
