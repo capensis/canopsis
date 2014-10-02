@@ -1,6 +1,5 @@
-Widgets
-=======
-
+API
+***
 
 1. Widget
 ---------
@@ -32,3 +31,4 @@ We found as attributes :
 * col : position of left superior corner on Y axis
 * rowspan: height of item by report of layout
 * colspan: width of item by report of layout
+

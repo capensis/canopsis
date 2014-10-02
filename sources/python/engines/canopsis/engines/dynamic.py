@@ -43,13 +43,13 @@ class DynamicEngine(Engine, Configurable):
     EVENT_PROCESSING = 'event_processing'  #: event_processing field name
     PARAMS = 'params'  #: params field name
 
-    NEXT_AMQP_QUEUES = 'next_amqp_queues'
-    NEXT_BALANCED = 'next_balanced'
-    NAME = 'name'
-    BEAT_INTERVAL = 'beat_interval'
-    EXCHANGE_NAME = 'exchange_name'
-    ROUTING_KEYS = 'routing_keys'
-    CAMQP_CUSTOM = 'camqp_custom'
+    NEXT_AMQP_QUEUES = 'next_amqp_queues'  #: next amqp queues
+    NEXT_BALANCED = 'next_balanced'  #: next balanced
+    NAME = 'name'  #: self name
+    BEAT_INTERVAL = 'beat_interval'  #: beat interval
+    EXCHANGE_NAME = 'exchange_name'  #: exchange name
+    ROUTING_KEYS = 'routing_keys'  #: routing keys
+    CAMQP_CUSTOM = 'camqp_custom'  #: camqp custom
 
     def __init__(
         self,
@@ -125,38 +125,17 @@ class DynamicEngine(Engine, Configurable):
         result = super(DynamicEngine, self)._conf(*args, **kwargs)
 
         result.add_unified_category(CATEGORY,
-            Parameter(DynamicEngine.EVENT_PROCESSING, self.event_processing),
-            Parameter(DynamicEngine.PARAMS, self.params, eval),
-            Parameter(DynamicEngine.NEXT_AMQP_QUEUES, self.next_amqp_queues),
-            Parameter(DynamicEngine.NEXT_BALANCED, self.next_balanced),
-            Parameter(DynamicEngine.NAME, self.name),
-            Parameter(DynamicEngine.BEAT_INTERVAL, self.beat_interval),
-            Parameter(DynamicEngine.EXCHANGE_NAME, self.exchange_name),
-            Parameter(DynamicEngine.ROUTING_KEYS, self.routing_keys),
-            Parameter(DynamicEngine.CAMQP_CUSTOM, self.camqp_custom))
+            Parameter(DynamicEngine.EVENT_PROCESSING),
+            Parameter(DynamicEngine.PARAMS, parser=eval),
+            Parameter(DynamicEngine.NEXT_AMQP_QUEUES),
+            Parameter(DynamicEngine.NEXT_BALANCED),
+            Parameter(DynamicEngine.NAME),
+            Parameter(DynamicEngine.BEAT_INTERVAL),
+            Parameter(DynamicEngine.EXCHANGE_NAME),
+            Parameter(DynamicEngine.ROUTING_KEYS),
+            Parameter(DynamicEngine.CAMQP_CUSTOM))
 
         return result
-
-    def _configure(self, unified_conf, *args, **kwargs):
-
-        super(DynamicEngine, self)._configure(
-            unified_conf=unified_conf, *args, **kwargs)
-
-        params = [
-            DynamicEngine.EVENT_PROCESSING,
-            DynamicEngine.PARAMS,
-            DynamicEngine.NEXT_BALANCED,
-            DynamicEngine.NEXT_AMQP_QUEUES,
-            DynamicEngine.NAME,
-            DynamicEngine.BEAT_INTERVAL,
-            DynamicEngine.EXCHANGE_NAME,
-            DynamicEngine.ROUTING_KEYS,
-            DynamicEngine.CAMQP_CUSTOM]
-
-        for param in params:
-            self._update_property(
-                unified_conf=unified_conf,
-                param_name=param)
 
 
 def load_dynamic_engine(conf_path, category, *args, **kwargs):

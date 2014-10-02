@@ -29,7 +29,8 @@ from tempfile import NamedTemporaryFile
 class DataBaseTest(TestCase):
 
     def setUp(self):
-        self.database = MongoDataBase(data_scope="test_store")
+        self.database = MongoDataBase(
+            data_scope="test_store", auto_connect=False)
 
     def test_connect(self):
         self.database.connect()
