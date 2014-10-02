@@ -28,6 +28,7 @@ from inspect import isclass
 from canopsis.configuration.parameters \
     import Configuration, Category, Parameter
 
+from canopsis.configuration.driver import ConfigurationDriver
 
 class MetaConfigurable(type):
     """
@@ -182,10 +183,12 @@ class Configurable(object):
             handler.setLevel(lvl)
             formatter = Formatter(format)
             handler.setFormatter(formatter)
+
             # if an old handler exist, remove it from logger
             if hasattr(logger, lvl):
                 old_handler = getattr(logger, lvl)
                 logger.removeHandler(old_handler)
+
             logger.addHandler(handler)
             setattr(logger, lvl, handler)
 
@@ -225,7 +228,8 @@ class Configurable(object):
                 Parameter(Configurable.AUTO_CONF, Parameter.bool),
                 Parameter(Configurable.DRIVERS),
                 Parameter(Configurable.RECONF_ONCE, Parameter.bool),
-                Parameter(Configurable.CONF_PATHS, Parameter.array)),
+                Parameter(Configurable.CONF_PATHS, Parameter.array)
+            ),
             Category(
                 Configurable.LOG,
                 Parameter(Configurable.LOG_NAME, critical=True),
@@ -414,7 +418,8 @@ class Configurable(object):
 
         conf = self.get_configuration(
             conf=conf, conf_paths=conf_paths, logger=logger,
-            drivers=drivers, override=override)
+            drivers=drivers, override=override
+        )
 
         self.configure(conf=conf, to_configure=to_configure)
 
@@ -463,20 +468,24 @@ class Configurable(object):
         for conf_path in conf_paths:
 
             conf_driver = self._get_driver(
-                conf_path=conf_path, logger=logger, drivers=drivers)
+                conf_path=conf_path, logger=logger, drivers=drivers
+            )
 
             # if a config_resource is not None
             if conf_driver is not None:
 
                 conf = conf_driver.get_configuration(
                     conf=conf, logger=logger,
-                    conf_path=conf_path, override=override)
+                    conf_path=conf_path, override=override
+                )
 
             else:
                 # if no conf_driver, display a warning log message
                 self.logger.warning(
                     'No driver found among {0} for {1}'.format(
-                        conf_path, self))
+                        conf_path, self
+                    )
+                )
 
         return conf
 
@@ -498,18 +507,21 @@ class Configurable(object):
         prev_driver = self._get_driver(
             conf_path=conf_path,
             logger=logger,
-            drivers=self.drivers)
+            drivers=self.drivers
+        )
 
         if prev_driver is not None:
             prev_conf = prev_driver.get_configuration(
-                conf_path=conf_path, logger=logger)
+                conf_path=conf_path, logger=logger
+            )
 
         # try to find a good driver if driver is None
         if driver is None:
             driver = self._get_driver(
                 conf_path=conf_path,
                 logger=logger,
-                drivers=self.drivers)
+                drivers=self.drivers
+            )
 
         elif isclass(driver):
             driver = driver()
@@ -531,13 +543,15 @@ class Configurable(object):
             driver.set_configuration(
                 conf_path=conf_path,
                 conf=conf,
-                logger=logger)
+                logger=logger
+            )
 
         else:
             self.logger.error(
-                'No ConfigurationDriver found for \
-                conf file {0}'.format(
-                    conf_path))
+                'No ConfigurationDriver found for conf file {0}'.format(
+                    conf_path
+                )
+            )
 
         return result
 
@@ -564,11 +578,13 @@ class Configurable(object):
 
         # set configure
         reconf_once = values.get(Configurable.RECONF_ONCE)
+
         if reconf_once is not None:
             self.reconf_once = reconf_once.value
 
         # set auto_conf
         auto_conf_parameter = values.get(Configurable.AUTO_CONF)
+
         if auto_conf_parameter is not None:
             self.auto_conf = auto_conf_parameter.value
 
@@ -600,26 +616,33 @@ class Configurable(object):
 
         for parameter in values:
             name = parameter.name
+
             # if parameter is local, to_configure must a related attribute name
             if hasattr(to_configure, name):
                 param_value = parameter.value
+
                 # in case of a critical parameter
                 if parameter.critical:
                     # check if current value is not the same as new value
                     value = getattr(to_configure, name)
+
                     if value != parameter.value:
                         # add it to list of criticals
                         criticals.append(parameter)
                         # set private name
                         private_name = '_%s' % name
+
                         # if private name exists
                         if hasattr(to_configure, private_name):
                             # change of value of private name
                             setattr(to_configure, private_name, param_value)
+
                         else:  # update public value
                             setattr(to_configure, name, param_value)
+
                 else:  # change public value
                     setattr(to_configure, name, param_value)
+
             else:  # else log the error
                 message = 'Parameter %s is not bound to an attribute in %s'
                 self.logger.warning(message % (name, to_configure))
@@ -683,8 +706,6 @@ class Configurable(object):
         """
 
         result = None
-
-        from canopsis.configuration.driver import ConfigurationDriver
 
         for driver in drivers.split(','):
             driver = ConfigurationDriver.get_driver(driver)

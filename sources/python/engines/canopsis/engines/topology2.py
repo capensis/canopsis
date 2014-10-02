@@ -54,11 +54,14 @@ class engine(Engine):
             entity_id = self.context.get_entity_id(node)
             source_nodes = self.topology.find_nodes_by_next(next=entity_id)
             len_source_nodes = len(source_nodes)
+
             for source_node in source_nodes:
                 at_most = len_source_nodes - at_most
+
                 if check_state == source_node['state']:
                     at_least -= 1
                     at_most -= 1
+
                 if at_least <= 0 or at_most <= 0:
                     result['state'] = in_state
                     break
@@ -77,7 +80,8 @@ class engine(Engine):
         return self.operation(
             node, at_least=len_source_nodes, at_most=len_source_nodes,
             check_state=check_state, default_state=default_state,
-            in_state=in_state)
+            in_state=in_state
+        )
 
     def any(self, node, check_state, in_state, default_state):
 
@@ -88,7 +92,8 @@ class engine(Engine):
         return self.operation(
             node, at_least=1, at_most=len_source_nodes,
             check_state=check_state, default_state=default_state,
-            in_state=in_state)
+            in_state=in_state
+        )
 
     def worst_state(self, node):
 
@@ -103,7 +108,9 @@ class engine(Engine):
         else:
             source_nodes = self.topology.find_nodes_by_next(next=entity_id)
             result['state'] = max(
-                source_node['state'] for source_node in source_nodes)
+                source_node['state']
+                for source_node in source_nodes
+            )
 
         return result
 
@@ -120,6 +127,8 @@ class engine(Engine):
         else:
             source_nodes = self.topology.find_nodes_by_next(next=entity_id)
             result['state'] = min(
-                source_node['state'] for source_node in source_nodes)
+                source_node['state']
+                for source_node in source_nodes
+            )
 
         return result
