@@ -1,5 +1,5 @@
 Creating a simple widget
-========================
+************************
 
 Introduction
 ------------

@@ -1,5 +1,5 @@
 Architecture
-============
+************
 
 
 1. Presentation
@@ -46,14 +46,14 @@ Another more complex example is the editor component loaders that loads both jav
 
 .. code-block:: javascript
 
-	{ name: 'rights', js: 'v' },
+   { name: 'rights', js: 'v' },
 
 the name information in this object describes the component folder to load and the js attribute define what should be loaded. Available parameters to load js are:
 
-	- none: does not load extra file
-	- **c** : loads ``app/editors/<editor_name>/controller.js``
-	- **v** : loads ``app/editors/<editor_name>/view.js``
-	- **w** : loads ``app/editors/<editor_name>/component.html`` and ``app/editors/<editor_name>/component.js``
+   - none: does not load extra file
+   - **c** : loads ``app/editors/<editor_name>/controller.js``
+   - **v** : loads ``app/editors/<editor_name>/view.js``
+   - **w** : loads ``app/editors/<editor_name>/component.html`` and ``app/editors/<editor_name>/component.js``
 
 These options can be mixed together to use for exemple in `cw` case a controller in the web component.
 
@@ -63,7 +63,7 @@ The third example is the factory loader which will load a factory js file:
 
 .. code-block:: javascript
 
-	{ name:'editor', url: 'app/lib/factories/editor' }
+   { name:'editor', url: 'app/lib/factories/editor' }
 
 Here is how to load an editor.
 

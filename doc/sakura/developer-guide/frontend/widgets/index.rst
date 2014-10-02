@@ -5,6 +5,8 @@ Widgets
    :maxdepth: 2
    :titlesonly:
 
+   api
    creating-a-simple-widget
    managing-plug-ins-in-mixins
    advanced-concepts
+
