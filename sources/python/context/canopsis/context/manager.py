@@ -19,16 +19,17 @@
 # ---------------------------------
 
 from canopsis.configuration.configurable.decorator import (
-    conf_paths)
-from canopsis.middleware.manager import Manager
+    conf_paths, add_category)
+from canopsis.middleware.registry import MiddlewareRegistry
 from canopsis.storage import Storage
 
 CONF_RESOURCE = 'context/context.conf'  #: last context conf resource
 CATEGORY = 'CONTEXT'  #: context category
 
 
+@add_category(CATEGORY)
 @conf_paths(CONF_RESOURCE)
-class Context(Manager):
+class Context(MiddlewareRegistry):
     """
     Manage access to a context (connector, component, resource) elements
     and context data (metric, downtime, etc.)
@@ -44,7 +45,7 @@ class Context(Manager):
 
     For example, in following entities:
         - component: name is component_id and type is component
-        - connector: data_id
+        - connector: name is connector and type is connector
     """
 
     DATA_SCOPE = 'context'  #: default data scope

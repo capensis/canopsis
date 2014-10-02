@@ -27,22 +27,23 @@ from inspect import isclass
 
 class Configurables(dict):
     """
-    With a ConfigurableTypes, it is in charge of a Manager sub-configurables.
+    With a ConfigurableTypes, it is in charge of a ConfigurableRegistry
+    sub-configurables.
     When a configurable is trying to be setted, the type is checked related
-    to its Manager ConfigurableTypes.
+    to its ConfigurableRegistry ConfigurableTypes.
     """
 
-    def __init__(self, manager, values=None, *args, **kwargs):
+    def __init__(self, registry, values=None, *args, **kwargs):
         """
-        :param manager: related manager
-        :type manager: Manager
+        :param registry: related registry
+        :type registry: ConfigurableRegistry
 
         :param values: default values if not None (default)
         :type values: dict
         """
         super(Configurables, self).__init__(*args, **kwargs)
 
-        self.manager = manager
+        self.registry = registry
 
         if values is not None:
             for name, value in values:
@@ -65,7 +66,7 @@ class Configurables(dict):
         """
 
         # get configurable type. Configurable by default
-        configurable_type = self.manager._configurable_types.get(
+        configurable_type = self.registry._configurable_types.get(
             name, Configurable)
 
         configurable = value
@@ -83,7 +84,7 @@ class Configurables(dict):
 
         # do nothing if configurable is not an instance of configurable_type
         if not isinstance(configurable, configurable_type):
-            self.manager.logger.error(
+            self.registry.logger.error(
                 "Impossible to set configurable %s:%s. Not an instance of %s" %
                 (name, configurable, configurable_type))
 
@@ -99,10 +100,10 @@ class ConfigurableTypes(dict):
     from it, then the old value is removed automatically.
     """
 
-    def __init__(self, manager, values=None, *args, **kwargs):
+    def __init__(self, registry, values=None, *args, **kwargs):
         """
-        :param manager: related manager
-        :type manager: Manager
+        :param registry: related registry
+        :type registry: ConfigurableRegistry
 
         :param values: default values if not None (default)
         :type values: dict
@@ -110,7 +111,7 @@ class ConfigurableTypes(dict):
 
         super(ConfigurableTypes, self).__init__(*args, **kwargs)
 
-        self.manager = manager
+        self.registry = registry
 
         if values is not None:
 
@@ -137,27 +138,27 @@ class ConfigurableTypes(dict):
 
         # check if configurable_type is a subclass of Configurable
         if not issubclass(configurable_type, Configurable):
-            self.manager.logger.error(
+            self.registry.logger.error(
                 "Impossible to set configurable type %s: %s. Wrong type" % (
                     name, configurable_type))
 
         else:
             # check if an old value exiss
-            if name in self.manager._configurables \
+            if name in self.registry._configurables \
                     and not isinstance(
-                        self.manager._configurables[name], configurable_type):
+                        self.registry._configurables[name], configurable_type):
                 # if the old value is not an instance of newly type
-                self.manager.logger.warning(
+                self.registry.logger.warning(
                     "Old configurable %s removed. Not an instance of %s" % (
                         name, configurable_type))
                 # delete if
-                del self.manager._configurables[name]
+                del self.registry._configurables[name]
 
             # set the new type
             super(ConfigurableTypes, self).__setitem__(name, configurable_type)
 
 
-class Manager(Configurable):
+class ConfigurableRegistry(Configurable):
     """
     Manage a set of configurables which are accessibles from self.configurables
 
@@ -171,12 +172,12 @@ class Manager(Configurable):
     """
 
     class Error(Exception):
-        """handle Manager errors"""
+        """handle ConfigurableRegistry errors"""
         pass
 
-    CONF_PATH = 'configuration/manager.conf'  #: default conf path
+    CONF_PATH = 'configuration/registry.conf'  #: default conf path
 
-    CATEGORY = 'MANAGER'  #: default Manager category name
+    CATEGORY = 'MANAGER'  #: default ConfigurableRegistry category name
 
     CONFIGURABLE_SUFFIX = '_value'  #: configurable configuration suffix
     CONFIGURABLE_TYPE_SUFFIX = '_type'  #: type config suffix
@@ -192,7 +193,7 @@ class Manager(Configurable):
         :type configurable_types: dict
         """
 
-        super(Manager, self).__init__(*args, **kwargs)
+        super(ConfigurableRegistry, self).__init__(*args, **kwargs)
 
         self._configurables = Configurables(self, configurables)
         self._configurable_types = ConfigurableTypes(self, configurable_types)
@@ -202,36 +203,36 @@ class Manager(Configurable):
         Get category.
         """
 
-        result = Category(Manager.CATEGORY)
+        result = Category(ConfigurableRegistry.CATEGORY)
 
         return result
 
     def _conf(self, *args, **kwargs):
 
-        result = super(Manager, self)._conf(*args, **kwargs)
+        result = super(ConfigurableRegistry, self)._conf(*args, **kwargs)
 
-        result.add_unified_category(name=Manager.CATEGORY)
+        result.add_unified_category(name=ConfigurableRegistry.CATEGORY)
 
         return result
 
     def _get_conf_paths(self, *args, **kwargs):
 
-        result = super(Manager, self)._get_conf_paths(*args, **kwargs)
+        result = super(ConfigurableRegistry, self)._get_conf_paths(
+            *args, **kwargs)
 
-        result.append(Manager.CONF_PATH)
+        result.append(ConfigurableRegistry.CONF_PATH)
 
         return result
 
     def apply_configuration(
         self,
-        conf=None, conf_paths=None, managers=None, logger=None, override=True,
-        fill=True,
+        conf=None, conf_paths=None, drivers=None, logger=None, override=True,
         *args, **kwargs
     ):
 
-        super(Manager, self).apply_configuration(
-            conf=conf, conf_paths=conf_paths, managers=managers, logger=logger,
-            fill=fill, override=override,
+        super(ConfigurableRegistry, self).apply_configuration(
+            conf=conf, conf_paths=conf_paths, drivers=drivers, logger=logger,
+            override=override,
             *args, **kwargs)
 
         if conf_paths is None:
@@ -240,8 +241,8 @@ class Manager(Configurable):
         if conf is None:
             conf = self.conf
 
-        if managers is None:
-            managers = self.managers
+        if drivers is None:
+            drivers = self.drivers
 
         # get self conf path
         conf_path = conf_paths[-1]
@@ -253,33 +254,38 @@ class Manager(Configurable):
             # get a copy of configurable configuration
             configurable_configuration = configurable.conf.copy()
             # add a unified category where name is {NAME}_CONF
-            category_name = Manager.get_configurable_category(name)
+            category_name = ConfigurableRegistry.get_configurable_category(
+                name)
             configurable_configuration.add_unified_category(
                 name=category_name, copy=True)
             # apply configurable configuration
             configurable.apply_configuration(
                 conf=configurable_configuration,
                 conf_paths=configurable_conf_paths,
-                managers=managers, logger=logger, fill=fill, override=override)
+                drivers=drivers, logger=logger, override=override)
 
     def _configure(self, unified_conf, *args, **kwargs):
 
-        super(Manager, self)._configure(
+        super(ConfigurableRegistry, self)._configure(
             unified_conf=unified_conf, *args, **kwargs)
 
-        values = unified_conf[Configuration.VALUES]
+        foreigns = unified_conf[Configuration.FOREIGNS]
 
-        # for all parameters
-        for parameter in values:
+        # for all parameters among foreign parameters
+        for parameter in foreigns:
             # if name matches with a configurable name
-            if parameter.name.endswith(Manager.CONFIGURABLE_SUFFIX):
-                name = parameter.name[:-len(Manager.CONFIGURABLE_SUFFIX)]
+            if parameter.name.endswith(
+                    ConfigurableRegistry.CONFIGURABLE_SUFFIX):
+                name = parameter.name[
+                    :-len(ConfigurableRegistry.CONFIGURABLE_SUFFIX)]
                 # try update it
                 self._configurables[name] = parameter.value
 
             # if name matches with a configurable type name
-            elif parameter.name.endswith(Manager.CONFIGURABLE_TYPE_SUFFIX):
-                name = parameter.name[:-len(Manager.CONFIGURABLE_TYPE_SUFFIX)]
+            elif parameter.name.endswith(
+                    ConfigurableRegistry.CONFIGURABLE_TYPE_SUFFIX):
+                name = parameter.name[
+                    :-len(ConfigurableRegistry.CONFIGURABLE_TYPE_SUFFIX)]
                 # try to update it
                 self._configurable_types[name] = parameter.value
 
@@ -288,6 +294,7 @@ class Manager(Configurable):
         """
         Configurable which manages sub-configurables
         """
+
         return self._configurables
 
     @property
@@ -295,6 +302,7 @@ class Manager(Configurable):
         """
         ConfigurableTypes which manages restriction of sub-configurable types
         """
+
         return self._configurable_types
 
     def __contains__(self, name):
@@ -302,7 +310,7 @@ class Manager(Configurable):
         Redirection to self.configurables.__contains__
         """
 
-        if name.endswith(Manager.CONFIGURABLE_TYPE_SUFFIX):
+        if name.endswith(ConfigurableRegistry.CONFIGURABLE_TYPE_SUFFIX):
             return name in self._configurable_types
 
         return name in self._configurables
@@ -312,7 +320,7 @@ class Manager(Configurable):
         Redirection to self.configurables.__getitem__
         """
 
-        if name.endswith(Manager.CONFIGURABLE_TYPE_SUFFIX):
+        if name.endswith(ConfigurableRegistry.CONFIGURABLE_TYPE_SUFFIX):
             return self._configurables_types[name]
 
         return self._configurables[name]
@@ -322,7 +330,7 @@ class Manager(Configurable):
         Redirection to self.configurables.__setitem__
         """
 
-        if name.endswith(Manager.CONFIGURABLE_TYPE_SUFFIX):
+        if name.endswith(ConfigurableRegistry.CONFIGURABLE_TYPE_SUFFIX):
             self._configurables_types[name] = value
 
         else:
@@ -333,7 +341,7 @@ class Manager(Configurable):
         Redirection to self.configurables.__delitem__
         """
 
-        if name.endswith(Manager.CONFIGURABLE_TYPE_SUFFIX):
+        if name.endswith(ConfigurableRegistry.CONFIGURABLE_TYPE_SUFFIX):
             del self._configurables_types[name]
 
         else:
@@ -344,6 +352,7 @@ class Manager(Configurable):
         """
         Get generated sub-configurable category name
         """
+
         return "%s_CONF" % name.upper()
 
     @staticmethod

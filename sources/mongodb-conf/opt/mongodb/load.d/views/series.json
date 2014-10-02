@@ -29,7 +29,7 @@
                     "mixins" : [
                         "Crud",
                         "Pagination",
-                        "Search"
+                        "Arraysearch"
                     ],
                     "itemsPerPage" : 10,
                     "cssClass" : null,
@@ -47,9 +47,7 @@
                         "warn",
                         "crit",
                         "aggregate_method",
-                        "aggregate_interval",
-                        "consolidation_method",
-                        "consolidation_interval"
+                        "aggregate_interval"
                     ],
                     "refreshableWidget" : false,
                     "actions_toolbar" : [ ],
@@ -77,7 +75,7 @@
                     "mixins" : [
                         "Pagination",
                         "Crud",
-                        "Search"
+                        "Arraysearch"
                     ],
                     "itemsPerPage" : 10,
                     "cssClass" : null,

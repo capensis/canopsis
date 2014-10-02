@@ -7,7 +7,7 @@
         "keys": ["min", "max", "warn", "crit"]
     },{
         "title": "Advanced Computation",
-        "keys": ["aggregate_method", "aggregate_interval", "consolidation_method", "consolidation_interval"]
+        "keys": ["aggregate_method", "aggregate_interval"]
     }],
     "type": "object",
     "properties": {
@@ -48,18 +48,6 @@
             "type": "integer",
             "role": "duration",
             "default": 0
-        },
-        "consolidation_method": {
-            "title": "Consolidation method",
-            "role": "simplelist",
-            "enum": ["none", "average", "min", "max", "sum", "diff"],
-            "default": "none"
-        },
-        "consolidation_interval": {
-            "title": "Interval of consolidation",
-            "type": "integer",
-            "role": "duration",
-            "default": 120
         }
     }
 }

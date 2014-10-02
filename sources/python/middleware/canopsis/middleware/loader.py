@@ -25,15 +25,17 @@ from canopsis.configuration.configurable import Configurable
 from canopsis.configuration.configurable.decorator import (
     add_category, conf_paths)
 
-LOADER_CONF_PATH = 'middleware/loader.conf'
-LOADER_CATEGORY = 'LOADER'
+LOADER_CONF_PATH = 'middleware/loader.conf'  #: loader library conf path
+LOADER_CATEGORY = 'LOADER'  #: loader category
+LOADER_LIBRARIES = 'libraries'  #: libraries parameter name
 
 
-@add_category(LOADER_CATEGORY)
+@add_category(LOADER_CATEGORY, content=Parameter(LOADER_LIBRARIES))
 @conf_paths(LOADER_CONF_PATH)
 class Loader(Configurable):
-
-    LIBRARIES = 'libraries'
+    """
+    Middleware library loader
+    """
 
     def __init__(self, libraries=None, *args, **kwargs):
 
@@ -49,25 +51,7 @@ class Loader(Configurable):
     def libraries(self, value):
         self._libraries = value
         if value is not None:
-            for library in value.split(','):
+            if isinstance(value, str):
+                value = value.split(',')
+            for library in value:
                 import_module(library)
-
-    def _configure(self, unified_conf, *args, **kwargs):
-
-        super(Loader, self)._configure(
-            unified_conf=unified_conf, *args, **kwargs)
-
-        self._update_property(
-            unified_conf=unified_conf, param_name=Loader.LIBRARIES,
-            public=True)
-
-    def _conf(self, *args, **kwargs):
-
-        result = super(Loader, self)._conf(*args, **kwargs)
-
-        result.add_unified_category(
-            name=Loader.CATEGORY,
-            new_content=(
-                Parameter(Loader.LIBRARIES, self.libraries)))
-
-        return result

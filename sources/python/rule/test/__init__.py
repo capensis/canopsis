@@ -436,7 +436,7 @@ class TestProcessRule(TestCase):
         rule = {
             TASK_PATH: rules_task,
             TASK_PARAMS: {
-                'rules': [self.test_action for i in range(self.count)]
+                RULES: [self.test_action for i in range(self.count)]
             }
         }
 
@@ -454,7 +454,7 @@ class TestProcessRule(TestCase):
         rule = {
             TASK_PATH: switch_task,
             TASK_PARAMS: {
-                'rules': [self.test_action for i in range(self.count)]
+                RULES: [self.test_action for i in range(self.count)]
             }
         }
 

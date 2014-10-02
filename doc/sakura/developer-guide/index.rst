@@ -1,17 +1,10 @@
 Developer guide
 ***************
 
-Backend
--------
+.. toctree::
+   :maxdepth: 2
+   :titlesonly:
 
-.. include:: ../includes/index-dev-guide/index-backend.rst
-
-Frontend
---------
-
-.. include:: ../includes/index-dev-guide/index-frontend.rst
-
-Others
-------
-
-.. include:: ../includes/index-dev-guide/index-others.rst
+   backend/index
+   frontend/index
+   others/index

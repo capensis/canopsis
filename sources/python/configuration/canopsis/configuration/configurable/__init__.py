@@ -63,7 +63,7 @@ class Configurable(object):
 
     __metaclass__ = MetaConfigurable
 
-    DEFAULT_MANAGERS = '%s,%s' % (
+    DEFAULT_DRIVERS = '%s,%s' % (
         'canopsis.configuration.driver.file.json.JSONConfigurationDriver',
         'canopsis.configuration.driver.file.ini.INIConfigurationDriver')
 
@@ -75,7 +75,7 @@ class Configurable(object):
     AUTO_CONF = 'auto_conf'
     RECONF_ONCE = 'reconf_once'
     CONF_PATHS = 'conf_paths'
-    MANAGERS = 'conf_managers'
+    DRIVERS = 'conf_drivers'
 
     LOG_NAME = 'log_name'
     LOG_LVL = 'log_lvl'
@@ -96,14 +96,15 @@ class Configurable(object):
         self,
         unified_category=None,
         to_configure=None,
-        conf_paths=None, managers=DEFAULT_MANAGERS,
+        conf_paths=None, drivers=DEFAULT_DRIVERS,
         auto_conf=True, reconf_once=False,
         log_lvl='INFO', log_name=None, log_info_format=INFO_FORMAT,
         log_debug_format=DEBUG_FORMAT, log_warning_format=WARNING_FORMAT,
         log_error_format=ERROR_FORMAT, log_critical_format=CRITICAL_FORMAT
     ):
         """
-        :param str unified_category: if not None, used such as a unified category
+        :param str unified_category: if not None, used such as a unified
+            category
 
         :param to_configure: object to reconfigure. Such object may implements
             the methods configure apply_configuration and configure
@@ -114,8 +115,8 @@ class Configurable(object):
 
         :param bool auto_conf: true force auto conf as soon as param change
 
-        :param bool reconf_once: true force auto conf reconf_once as soon as param
-            change
+        :param bool reconf_once: true force auto conf reconf_once as soon as
+            param change
 
         :param str log_lvl: logging level
         """
@@ -132,8 +133,8 @@ class Configurable(object):
         # set conf files
         self._init_conf_paths(conf_paths)
 
-        # set managers
-        self.managers = managers
+        # set drivers
+        self.drivers = drivers
 
         # set logging properties
         self._log_lvl = log_lvl
@@ -148,12 +149,12 @@ class Configurable(object):
         self._logger = self.newLogger()
 
     @property
-    def managers(self):
-        return self._managers
+    def drivers(self):
+        return self._drivers
 
-    @managers.setter
-    def managers(self, value):
-        self._managers = value
+    @drivers.setter
+    def drivers(self, value):
+        self._drivers = value
 
     def newLogger(self):
         """
@@ -219,30 +220,23 @@ class Configurable(object):
         """
 
         result = Configuration(
-            Category(Configurable.CONF,
-                Parameter(
-                    Configurable.AUTO_CONF, self.auto_conf, Parameter.bool),
-                Parameter(Configurable.MANAGERS, self.managers),
-                Parameter(
-                    Configurable.RECONF_ONCE, self.reconf_once,
-                    Parameter.bool),
-                Parameter(
-                    Configurable.CONF_PATHS, self.conf_paths,
-                    Parameter.array)),
-            Category(Configurable.LOG,
-                Parameter(Configurable.LOG_NAME, self.log_name),
-                Parameter(Configurable.LOG_LVL, self.log_lvl),
-                Parameter(
-                    Configurable.LOG_DEBUG_FORMAT, self.log_debug_format),
-                Parameter(Configurable.LOG_INFO_FORMAT, self.log_info_format),
-                Parameter(
-                    Configurable.LOG_WARNING_FORMAT, self.log_warning_format),
-                Parameter(
-                    Configurable.LOG_ERROR_FORMAT, self.log_warning_format),
-                Parameter(
-                    Configurable.LOG_CRITICAL_FORMAT,
-                    self.log_critical_format)
-            ))
+            Category(
+                Configurable.CONF,
+                Parameter(Configurable.AUTO_CONF, Parameter.bool),
+                Parameter(Configurable.DRIVERS),
+                Parameter(Configurable.RECONF_ONCE, Parameter.bool),
+                Parameter(Configurable.CONF_PATHS, Parameter.array)),
+            Category(
+                Configurable.LOG,
+                Parameter(Configurable.LOG_NAME, critical=True),
+                Parameter(Configurable.LOG_LVL, critical=True),
+                Parameter(Configurable.LOG_DEBUG_FORMAT, critical=True),
+                Parameter(Configurable.LOG_INFO_FORMAT, critical=True),
+                Parameter(Configurable.LOG_WARNING_FORMAT, critical=True),
+                Parameter(Configurable.LOG_ERROR_FORMAT, critical=True),
+                Parameter(Configurable.LOG_CRITICAL_FORMAT, critical=True)
+            )
+        )
 
         return result
 
@@ -328,8 +322,7 @@ class Configurable(object):
         """
         Change of logging level.
 
-        :param value: new log_lvl to set up.
-        :type value: str
+        :param str value: new log_lvl to set up.
         """
 
         self._log_lvl = value
@@ -339,6 +332,11 @@ class Configurable(object):
     def logger(self):
 
         return self._logger
+
+    @logger.setter
+    def logger(self, value):
+
+        self._logger = value
 
     @property
     def conf_paths(self):
@@ -390,70 +388,59 @@ class Configurable(object):
         self._reconf_once = value
 
     def apply_configuration(
-        self, conf=None, conf_paths=None, managers=None, logger=None,
-        fill=True, override=True
+        self, conf=None, conf_paths=None, drivers=None, logger=None,
+        override=True, to_configure=None
     ):
         """
         Apply conf on a destination in 5 phases:
 
-        1. identify the right manager to use with conf_paths to parse.
+        1. identify the right driver to use with conf_paths to parse.
         2. for all conf_paths, get conf which match
             with input conf.
         3. apply parsing rules on conf_path params.
         4. put values and parsing errors in two different dictionaries.
         5. returns both dictionaries of param values and errors.
 
-        :param conf: conf from where get conf
-        :type conf: Configuration
+        :param Configuration conf: conf from where get conf
 
         :param conf_paths: conf files to parse. If
             conf_paths is a str, it is automatically putted into a list
         :type conf_paths: list of str
 
-        :param fill: if True (False by default) load in conf all \
-            conf_paths content
-        :type fill: bool
+        :param bool override: if True (by default), override self configuration
 
-        :param override: if True (by default), override self configuration
-        :type override: bool
+        :param to_configure: object to configure. self by default.
         """
 
         conf = self.get_configuration(
             conf=conf, conf_paths=conf_paths, logger=logger,
-            managers=managers, fill=fill, override=override)
+            drivers=drivers, override=override)
 
-        self.configure(conf=conf)
+        self.configure(conf=conf, to_configure=to_configure)
 
     def get_configuration(
         self,
-        conf=None, conf_paths=None, managers=None, fill=True, logger=None,
+        conf=None, conf_paths=None, drivers=None, logger=None,
         override=True
     ):
         """
         Get a dictionary of params by name from conf,
-        conf_paths and conf_managers
+        conf_paths and conf_drivers
 
-        :param conf: conf to update. If None, use \
-            self.conf
-        :type conf: Configuration
+        :param Configuration conf: conf to update. If None, use self.conf
 
-        :param conf_paths: list of conf files. If None, use \
-            self.conf_paths
+        :param conf_paths: list of conf files. If None, use self.conf_paths
         :type conf_paths: list of str
 
-        :param logger: logger to use for logging info/error messages.
+        :param Logger logger: logger to use for logging info/error messages.
             If None, use self.logger
-        :type logger: logging.Logger
 
-        :param managers: conf managers to use. If None, use self.managers
-        :type managers: list of ConfigurationDriver
+        :param drivers: conf drivers to use. If None, use self.drivers
+        :type drivers: list of ConfigurationDriver
 
-        :param fill: if True (False by default) load in conf all \
-            conf_paths content
-        :type fill: bool
+        :param bool override: if True (by default), override self configuration
 
-        :param override: if True (by default), override self configuration
-        :type override: bool
+        :param to_configure: object to configure. self by default.
         """
 
         # start to initialize input params
@@ -469,39 +456,37 @@ class Configurable(object):
         if isinstance(conf_paths, str):
             conf_paths = [conf_paths]
 
-        if managers is None:
-            managers = self.managers
+        if drivers is None:
+            drivers = self.drivers
 
         # iterate on all conf_paths
         for conf_path in conf_paths:
 
-            conf_manager = self._get_manager(
-                conf_path=conf_path, logger=logger, managers=managers)
+            conf_driver = self._get_driver(
+                conf_path=conf_path, logger=logger, drivers=drivers)
 
             # if a config_resource is not None
-            if conf_manager is not None:
+            if conf_driver is not None:
 
-                conf = conf_manager.get_configuration(
-                    conf=conf, fill=fill, logger=logger,
+                conf = conf_driver.get_configuration(
+                    conf=conf, logger=logger,
                     conf_path=conf_path, override=override)
 
             else:
-                # if no conf_manager, display a warning log message
+                # if no conf_driver, display a warning log message
                 self.logger.warning(
-                    'No manager found among {0} for {1}'.format(
+                    'No driver found among {0} for {1}'.format(
                         conf_path, self))
 
         return conf
 
-    def set_configuration(self, conf_path, conf, manager=None, logger=None):
+    def set_configuration(self, conf_path, conf, driver=None, logger=None):
         """
         Set params on input conf_path.
 
-        Args:
-            - conf_paths (str): conf_path to udate with
-                params
-            - parameter_by_categories (dict(str: dict(str: object)):
-            - logger (logging.Logger): logger to use to set params.
+        :param str conf_paths: conf_path to udate with params
+        :param dict parameter_by_categories: (dict(str: dict(str: object))
+        :param Logger logger: logger to use to set params.
         """
 
         result = None
@@ -510,40 +495,40 @@ class Configurable(object):
             logger = self.logger
 
         # first get content of input conf_path
-        prev_manager = self._get_manager(
+        prev_driver = self._get_driver(
             conf_path=conf_path,
             logger=logger,
-            managers=self.managers)
+            drivers=self.drivers)
 
-        if prev_manager is not None:
-            prev_conf = prev_manager.get_configuration(
+        if prev_driver is not None:
+            prev_conf = prev_driver.get_configuration(
                 conf_path=conf_path, logger=logger)
 
-        # try to find a good manager if manager is None
-        if manager is None:
-            manager = self._get_manager(
+        # try to find a good driver if driver is None
+        if driver is None:
+            driver = self._get_driver(
                 conf_path=conf_path,
                 logger=logger,
-                managers=self.managers)
+                drivers=self.drivers)
 
-        elif isclass(manager):
-            manager = manager()
+        elif isclass(driver):
+            driver = driver()
 
         else:
-            manager = self._get_manager(
+            driver = self._get_driver(
                 conf_path=None,
                 logger=logger,
-                managers=manager)
+                drivers=driver)
 
-        # if prev manager is not the new manager
+        # if prev driver is not the new driver
         if prev_conf is not None \
-                and type(manager) is not type(prev_manager):
+                and type(driver) is not type(prev_driver):
             # update prev_conf with input conf
             prev_conf.update(conf)
             conf = prev_conf
 
-        if manager is not None:
-            manager.set_configuration(
+        if driver is not None:
+            driver.set_configuration(
                 conf_path=conf_path,
                 conf=conf,
                 logger=logger)
@@ -556,7 +541,7 @@ class Configurable(object):
 
         return result
 
-    def configure(self, conf, logger=None):
+    def configure(self, conf, logger=None, to_configure=None):
         """
         Update self properties with input params only if:
         - self.configure is True
@@ -566,8 +551,8 @@ class Configurable(object):
 
         This method may not be overriden. see _configure instead
 
-        :param conf: object from where get paramters
-        :type conf: Configuration
+        :param Configuration conf: object from where get paramters
+        :param to_configure: object to configure. self if equals None.
         """
 
         if logger is None:
@@ -592,72 +577,87 @@ class Configurable(object):
             # when conf succeed, deactive reconf_once
             self.reconf_once = False
 
-    def _configure(self, unified_conf, logger=None):
+    def _configure(self, unified_conf, logger=None, to_configure=None):
         """
         Configure this class with input conf only if auto_conf or
         configure is true.
 
         This method should be overriden for specific conf
 
-        :param unified_conf: Configuration with two categories
+        :param Configuration unified_conf: Configuration with two categories
             VALUES and ERRORS
-        :type params: Configuration
 
-        :param configure: if True, force full self conf
-        :type configure: bool
+        :param bool configure: if True, force full self conf
+        :param to_configure: object to configure. self if equals None.
         """
 
-        new_logger = False
+        if to_configure is None:
+            to_configure = self
 
-        log_properties = [param.name for param in
-            self.conf[Configurable.LOG]]
+        values = unified_conf[Configuration.VALUES]
 
-        for log_property in log_properties:
-            new_logger = self._update_property(
-                unified_conf, log_property) or new_logger
+        criticals = []  # list of critical parameters
 
-        # if needed, renew the logger
-        if new_logger:
+        for parameter in values:
+            name = parameter.name
+            # if parameter is local, to_configure must a related attribute name
+            if hasattr(to_configure, name):
+                param_value = parameter.value
+                # in case of a critical parameter
+                if parameter.critical:
+                    # check if current value is not the same as new value
+                    value = getattr(to_configure, name)
+                    if value != parameter.value:
+                        # add it to list of criticals
+                        criticals.append(parameter)
+                        # set private name
+                        private_name = '_%s' % name
+                        # if private name exists
+                        if hasattr(to_configure, private_name):
+                            # change of value of private name
+                            setattr(to_configure, private_name, param_value)
+                        else:  # update public value
+                            setattr(to_configure, name, param_value)
+                else:  # change public value
+                    setattr(to_configure, name, param_value)
+            else:  # else log the error
+                message = 'Parameter %s is not bound to an attribute in %s'
+                self.logger.warning(message % (name, to_configure))
+
+        # if criticals
+        if criticals:
+            self.restart(to_configure=to_configure, criticals=criticals)
+
+    def restart(self, criticals, to_configure=None):
+        """
+        Restart a configurable object with critical parameters.
+
+        :param to_configure: object to configure with critical parameters
+        :param tuple criticals: list of critical parameters
+        """
+
+        if to_configure is None:
+            to_configure = self
+
+        if self._is_critical_category(Configurable.LOG, criticals):
             self._logger = self.newLogger()
+            to_configure.logger = self.logger
 
-        # set managers
-        self._update_property(
-            unified_conf, Configurable.MANAGERS, public=True)
-
-    def _update_property(
-        self, unified_conf, param_name, public=False
-    ):
+    def _is_critical_category(self, category, criticals):
         """
-        True if a property update is required and do it.
-
-        Check if a param exist in paramters where name is param_name.
-        Then update self property depending on input public:
-        - True => name is param_name
-        - False => name is '_{param_name}'
-
-        The idea of the public argument permits to avoid to run an auto_conf in
-        changing a private attribute in using its setter method.
-
-        :param unified_conf: unified conf
-        :type params: Configuration
-
-        :param param_name: param name to find in params
-        :type param_name: str
-
-        :param public: If False (default), update directly private
-            property, else update public property in using the property.setter
-        :type property_name: bool
+        Check if input category parameters are among criticals
         """
 
         result = False
 
-        param = unified_conf[Configuration.VALUES].get(
-            param_name)
-        if param is not None:
-            property_name = '{0}{1}'.format(
-                '' if public else '_', param_name)
-            setattr(self, property_name, param.value)
-            result = True
+        properties = (param.name for param in self.conf[category])
+
+        # if property is among criticals
+        for prop in properties:
+            for critical in criticals:
+                if critical.name == prop:
+                    result = True
+                    break
 
         return result
 
@@ -673,10 +673,10 @@ class Configurable(object):
         return result
 
     @staticmethod
-    def _get_manager(conf_path, managers, logger):
+    def _get_driver(conf_path, drivers, logger):
         """
-        Get the first manager able to handle input conf_path.
-        None if no manager is able to handle input conf_path.
+        Get the first driver able to handle input conf_path.
+        None if no driver is able to handle input conf_path.
 
         :return: first ConfigurationDriver able to handle conf_path.
         :rtype: ConfigurationDriver
@@ -686,20 +686,20 @@ class Configurable(object):
 
         from canopsis.configuration.driver import ConfigurationDriver
 
-        for manager in managers.split(','):
-            manager = ConfigurationDriver.get_manager(manager)
-            manager = manager()
+        for driver in drivers.split(','):
+            driver = ConfigurationDriver.get_driver(driver)
+            driver = driver()
 
             handle = conf_path is None \
-                or manager.handle(conf_path=conf_path, logger=logger)
+                or driver.handle(conf_path=conf_path, logger=logger)
 
             if handle:
-                result = manager
+                result = driver
                 break
 
         else:
             logger.warning(
-                'No manager found among {0} for processing file {1}'.format(
-                    managers, conf_path))
+                'No driver found among {0} for processing file {1}'.format(
+                    drivers, conf_path))
 
         return result

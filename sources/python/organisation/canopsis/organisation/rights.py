@@ -22,14 +22,14 @@ from logging import ERROR
 
 from canopsis.configuration.configurable.decorator import (
     conf_paths, add_category)
-from canopsis.middleware.manager import Manager
+from canopsis.middleware.registry import MiddlewareRegistry
 
 CATEGORY = 'RIGHTS'
 
 
 @conf_paths('organisation/rights.conf')
 @add_category(CATEGORY)
-class Rights(Manager):
+class Rights(MiddlewareRegistry):
 
     DATA_SCOPE = 'rights'
 
