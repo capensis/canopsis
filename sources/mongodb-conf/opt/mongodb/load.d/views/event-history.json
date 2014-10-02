@@ -34,13 +34,11 @@
             }
           ],
           "mixins": [
-            "Customfiltermanager",
+            "Customfilter",
             "Sortablearray",
             "Arraysearch",
             "Pagination",
-            "History",
-            "Ack",
-            "Sendevent"
+            "History"
           ],
           "displayed_columns": [
             "domain",
