@@ -221,33 +221,10 @@ class MongoStorage(MongoDataBase, Storage):
         # calculate count
         count = cursor.count() if with_count else 0
 
-        # set hint property
-        if _query:
-            index = None
-            query_len = len(_query)
-            # find the right index
-            max_correspondance = 0
-            # iterate on all indexes
-            for self_index in self.all_indexes():
-                # find the higher correspondance score
-                correspondance = 0
-                for index_value in self_index:
-                    if index_value[0] in _query:
-                        correspondance += 1
-                    else:
-                        break
-                # increment an old score if a new one is better
-                if correspondance > max_correspondance:
-                    index = self_index
-                    max_correspondance = correspondance
+        hint = self._get_hint(query=_query, cursor=cursor)
 
-                # ends if correspondance equals len(query)
-                if correspondance == query_len:
-                    break
-
-            # set index only if index has been found
-            if index is not None:
-                cursor.hint(index)
+        if hint is not None:
+            cursor.hint(hint)
 
         # TODO: enrich a cursor with methods to use it such as a tuple
         result = list(cursor)
@@ -261,6 +238,50 @@ class MongoStorage(MongoDataBase, Storage):
         # if with_count, add count to the result
         if with_count:
             result = result, count
+
+        return result
+
+    def _get_hint(self, query, cursor):
+        """
+        Get the best hint on input cursor for input query and returns it.
+        """
+
+        result = None
+
+        # search for the best hint
+        if result is not None and query:
+            index = None
+            # maximize the best hint related to query size
+            query_len = len(query)
+            # find the right index
+            max_correspondance = 0
+            # iterate on all indexes
+            for self_index in self.all_indexes():
+                # find the higher correspondance score
+                correspondance = 0
+                for index_value in self_index:
+                    if index_value[0] in query:
+                        correspondance += 1
+                    else:
+                        break
+                # increment an old score if a new one is better
+                if correspondance > max_correspondance:
+                    index = self_index
+                    max_correspondance = correspondance
+
+                # ends if correspondance equals len(query)
+                if correspondance == query_len:
+                    break
+
+            # if index has been founded
+            if index is not None:
+                # construct the right hint
+                result = ''
+                for item in index:
+                    if isinstance(item, str):
+                        result = '%s_%s_1' % (result, item)
+                    elif isinstance(item, tuple):
+                        result = '%s_%s_%s' % (result, item[0], item[1])
 
         return result
 

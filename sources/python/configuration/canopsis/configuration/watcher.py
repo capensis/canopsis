@@ -136,15 +136,6 @@ class Watcher(Configurable):
         self.stop()
         self.start()
 
-    def _configure(self, unified_conf, *args, **kwargs):
-
-        super(Watcher, self)._configure(
-            unified_conf=unified_conf, *args, **kwargs)
-
-        self._update_property(
-            unified_conf=unified_conf, param_name=Watcher.SLEEPING_TIME,
-            public=True)
-
     def _get_conf_files(self, *args, **kwargs):
 
         result = super(Watcher, self)._get_conf_files(*args, **kwargs)
@@ -160,7 +151,7 @@ class Watcher(Configurable):
         result.add_unified_category(
             name=Watcher.CATEGORY,
             new_content=(
-                Parameter(Watcher.SLEEPING_TIME, self.sleeping_time, int)))
+                Parameter(Watcher.SLEEPING_TIME, parser=int)))
 
         return result
 

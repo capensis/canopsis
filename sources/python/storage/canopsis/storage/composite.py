@@ -321,16 +321,6 @@ class CompositeStorage(Storage):
 
         # add path property to the last category
         if category is not None:
-            category += Parameter(CompositeStorage.PATH, self.path, eval)
+            category += Parameter(CompositeStorage.PATH, parser=eval)
 
         return result
-
-    def _configure(self, unified_conf, *args, **kwargs):
-
-        super(CompositeStorage, self)._configure(
-            unified_conf=unified_conf, *args, **kwargs)
-
-        # update the path property
-        self._update_property(
-                unified_conf=unified_conf,
-                param_name=CompositeStorage.PATH)
