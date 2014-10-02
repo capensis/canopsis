@@ -192,19 +192,10 @@ class MOM(Middleware):
         result = super(MOM, self)._conf(*args, **kwargs)
 
         result += Category(
-            Parameter(MOM.SENDERS, self.senders),
-            Parameter(MOM.RECEIVERS, self.receivers))
+            Parameter(MOM.SENDERS),
+            Parameter(MOM.RECEIVERS))
 
         return result
-
-    def _configure(self, unified_conf, *args, **kwargs):
-
-        super(MOM, self)._configure(unified_conf)
-
-        self._update_property(
-            unified_conf=unified_conf, param_name=MOM.SENDERS)
-        self._update_property(
-            unified_conf=unified_conf, param_name=MOM.RECEIVERS)
 
     def _init_env(self, conn, *args, **kwargs):
 

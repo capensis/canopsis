@@ -22,7 +22,7 @@
 from unittest import TestCase, main
 
 from canopsis.middleware import Middleware, SCHEME_SEPARATOR
-from canopsis.middleware.manager import Manager
+from canopsis.middleware.registry import MiddlewareRegistry
 
 from tempfile import NamedTemporaryFile
 
@@ -45,26 +45,26 @@ class TestRegisteredWithDataTypeMiddleware(TestRegisteredMiddleware):
     __datatype__ = 'datatypetest'
 
 
-class ManagerTest(TestCase):
+class MiddlewareRegistryTest(TestCase):
 
     def setUp(self):
 
         self.file_name = NamedTemporaryFile().name
         self.category = 'TEST'
 
-        class TestManager(Manager):
+        class TestRegistry(MiddlewareRegistry):
             def _get_conf_paths(_self, *args, **kwargs):
-                result = super(TestManager, _self)._get_conf_paths(
+                result = super(TestRegistry, _self)._get_conf_paths(
                     *args, **kwargs)
                 result.append(self.file_name)
                 return result
 
             def _conf(_self, *args, **kwargs):
-                result = super(TestManager, _self)._conf(*args, **kwargs)
+                result = super(TestRegistry, _self)._conf(*args, **kwargs)
                 result.add_unified_category(self.category)
                 return result
 
-        self.manager = TestManager()
+        self.registry = TestRegistry()
 
     def test_configure(self):
 
@@ -76,11 +76,12 @@ class ManagerTest(TestCase):
             _file.write('[%s]' % self.category)
             _file.write('\n%s_uri=%s' % (middleware, rwdtm.uri))
 
-        self.manager.apply_configuration()
+        self.registry.apply_configuration()
 
-        self.assertEqual(self.manager[middleware].protocol, rwdtm.protocol)
-        self.assertEqual(self.manager[middleware].data_type, rwdtm.data_type)
-        self.assertEqual(self.manager[middleware].data_scope, rwdtm.data_scope)
+        sub_middleware = self.registry[middleware]
+        self.assertEqual(sub_middleware.protocol, rwdtm.protocol)
+        self.assertEqual(sub_middleware.data_type, rwdtm.data_type)
+        self.assertEqual(sub_middleware.data_scope, rwdtm.data_scope)
 
         remove(self.file_name)
 
@@ -89,26 +90,21 @@ class ManagerTest(TestCase):
         uri = '%s://' % (TestUnregisteredMiddleware.__protocol__)
 
         self.assertRaises(
-            Middleware.Error, self.manager.get_middleware_by_uri, uri)
+            Middleware.Error, self.registry.get_middleware_by_uri, uri)
 
         uri = '%s://' % (TestRegisteredMiddleware.__protocol__)
 
-        middleware = self.manager.get_middleware_by_uri(uri)
-
+        middleware = self.registry.get_middleware_by_uri(uri)
         self.assertTrue(type(middleware) is TestRegisteredMiddleware)
 
-        middleware2 = self.manager.get_middleware_by_uri(uri)
-
+        middleware2 = self.registry.get_middleware_by_uri(uri)
         self.assertTrue(middleware is middleware2)
 
-        middleware3 = self.manager.get_middleware_by_uri(uri, shared=False)
-
+        middleware3 = self.registry.get_middleware_by_uri(uri, shared=False)
         self.assertFalse(middleware is middleware3)
 
-        self.manager.shared = False
-
-        middleware4 = self.manager.get_middleware_by_uri(uri)
-
+        self.registry.shared = False
+        middleware4 = self.registry.get_middleware_by_uri(uri)
         self.assertFalse(middleware is middleware4)
 
         uri = '%s%s%s://' % (
@@ -116,8 +112,7 @@ class ManagerTest(TestCase):
             SCHEME_SEPARATOR,
             TestRegisteredWithDataTypeMiddleware.__datatype__)
 
-        middleware_wd = self.manager.get_middleware_by_uri(uri)
-
+        middleware_wd = self.registry.get_middleware_by_uri(uri)
         self.assertTrue(
             type(middleware_wd) is TestRegisteredWithDataTypeMiddleware)
 

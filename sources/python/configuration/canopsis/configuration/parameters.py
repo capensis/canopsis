@@ -30,8 +30,10 @@ class Configuration(object):
     The order of categories permit to ensure param overriding.
     """
 
-    ERRORS = 'ERRORS'
-    VALUES = 'VALUES'
+    ERRORS = 'ERRORS'  #: category name which contains errors
+    VALUES = 'VALUES'  #: category name which contains local parameter values
+    #: category name which contains not local parameters
+    FOREIGNS = 'FOREIGN'
 
     def __init__(self, *categories):
         """
@@ -129,6 +131,7 @@ class Configuration(object):
 
         values = Category(Configuration.VALUES)
         errors = Category(Configuration.ERRORS)
+        foreigns = Category(Configuration.FOREIGNS)
 
         for category in self:
 
@@ -136,9 +139,11 @@ class Configuration(object):
 
                 if param.value is not None:
 
-                    to_update, to_delete = (errors, values) if \
+                    final_values = values if param.local else foreigns
+
+                    to_update, to_delete = (errors, final_values) if \
                         isinstance(param.value, Exception) \
-                        else (values, errors)
+                        else (final_values, errors)
 
                     to_update.put(param.copy() if copy else param)
 
@@ -146,6 +151,7 @@ class Configuration(object):
                         del to_delete[param.name]
 
         result += values
+        result += foreigns
         result += errors
 
         return result
@@ -174,6 +180,7 @@ class Configuration(object):
         """
         Add a unified category to self and add new_content if not None
         """
+
         category = self.get_unified_category(name=name, copy=copy)
 
         if new_content is not None:
@@ -190,15 +197,17 @@ class Configuration(object):
 
             category.clean()
 
-    def copy(self):
+    def copy(self, cleaned=False):
         """
         Copy this Configuration
+
+        :param bool cleaned: copy this element without parameter values.
         """
 
         result = Configuration()
 
         for category in self:
-            result.put(category.copy())
+            result.put(category.copy(cleaned=cleaned))
 
         return result
 
@@ -229,6 +238,7 @@ class Category(object):
         :param params: Parameters
         :type params: list of Parameter
         """
+
         super(Category, self).__init__()
 
         self.name = name
@@ -313,7 +323,12 @@ Must be a Category, a Parameter or a list of {Parameter, Category}'.format(
 
             param.clean()
 
-    def copy(self, name=None):
+    def copy(self, name=None, cleaned=False):
+        """
+        Copy this Category
+
+        :param bool cleaned: copy this element without parameter values.
+        """
 
         if name is None:
             name = self.name
@@ -321,7 +336,8 @@ Must be a Category, a Parameter or a list of {Parameter, Category}'.format(
         result = Category(name)
 
         for param in self:
-            result.put(param.copy())
+            _param = param.copy(cleaned=cleaned)
+            result.put(_param)
 
         return result
 
@@ -332,17 +348,18 @@ class Parameter(object):
     Provide a value (None by default) and a parser (str by default).
     """
 
-    def __init__(self, name, value=None, parser=str):
+    def __init__(
+        self, name, parser=None, value=None, critical=False, local=True
+    ):
         """
-        :param name: unique by category
-        :type name: str
-
+        :param str name: unique by category.
         :param value: param value. None if not given.
-        :type value: object
-
-        :param parser: param test deserializer which takes in param
+        :param callable parser: param test deserializer which takes in param
             a str.
-        :type parser: callable
+        :param bool critical: True if this parameter is critical. A critical
+            parameter can require to restart a component for example.
+        :param bool local: distinguish local parameters from those found in
+            configuration resources.
         """
 
         super(Parameter, self).__init__()
@@ -350,6 +367,8 @@ class Parameter(object):
         self.name = name
         self._value = value
         self.parser = parser
+        self.critical = critical
+        self.local = local
 
     def __eq__(self, other):
 
@@ -370,8 +389,8 @@ class Parameter(object):
 
     @value.setter
     def value(self, value):
-        if isinstance(value, str):
-            # parse value if str
+        if isinstance(value, str) and self.parser is not None:
+            # parse value if str and if parser exists
             try:
                 self._value = self.parser(value)
 
@@ -381,12 +400,19 @@ class Parameter(object):
         else:
             self._value = value
 
-    def copy(self, name=None):
+    def copy(self, name=None, cleaned=False):
 
         if name is None:
             name = self.name
 
-        result = Parameter(name, value=self.value, parser=self.parser)
+        kwargs = {
+            "name": name,
+            "parser": self.parser
+        }
+        if not cleaned:
+            kwargs["value"] = self.value
+
+        result = Parameter(**kwargs)
 
         return result
 
