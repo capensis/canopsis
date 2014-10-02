@@ -22,8 +22,6 @@ from canopsis.engines import Engine
 from canopsis.topology.manager import Topology
 from canopsis.context.manager import Context
 
-from time import time
-
 
 class engine(Engine):
     etype = 'topology2'
