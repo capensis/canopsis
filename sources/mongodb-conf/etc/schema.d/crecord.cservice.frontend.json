@@ -9,6 +9,9 @@
 	},{
 		"title": "Login",
 		"keys": ["login_footer"]
+	},{
+		"title": "Editors",
+		"keys": ["editors"]
 	}],
 	"properties": {
 		"title": {
@@ -41,6 +44,12 @@
 			"type": "string",
 			"role": "stringclassifiedcrecordselector",
 			"crecordtype": "view"
+		},
+		"editors": {
+			"title": "Editors",
+			"description": "Editor overrides for schema types",
+			"type": "object",
+			"role": "simpledict"
 		}
 	}
 }
