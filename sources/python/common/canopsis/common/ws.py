@@ -20,13 +20,46 @@
 
 from inspect import getargspec
 
-from canopsis.common.utils import ensure_iterable
+from canopsis.common.utils import ensure_iterable, is_iterable
 
 from json import loads
 
 from bottle import request
 
 from functools import wraps
+
+
+def adapt_canopsis_data_to_ember(data):
+    """
+    Transform canopsis data to ember data (in changing ``id`` to ``cid``).
+
+    :param data: data to transform
+    """
+    if is_iterable(data, is_str=False):
+        for item in data:
+            adapt_canopsis_data_to_ember(item)
+    elif isinstance(data, dict):
+        if 'id' in data:
+            data['cid'] = data['id']
+            del data['id']
+        if 'eid' in data:
+            data['id'] = data['eid']
+        for item in data.values():
+            adapt_canopsis_data_to_ember(item)
+
+
+def adapt_ember_data_to_canopsis(data):
+    if is_iterable(data, is_str=False):
+        for item in data:
+            adapt_ember_data_to_canopsis(item)
+    elif isinstance(data, dict):
+        if 'id' in data:
+            data['eid'] = data['id']
+        if 'cid' in data:
+            data['id'] = data['cid']
+            del data['cid']
+        for item in data.values():
+            adapt_ember_data_to_canopsis(item)
 
 
 def response(data):
@@ -45,6 +78,9 @@ def response(data):
     else:
         result_data = None if data is None else ensure_iterable(data)
         total = 0 if result_data is None else len(result_data)
+
+    # apply transformation for client
+    adapt_canopsis_data_to_ember(result_data)
 
     result = {
         'total': total,
@@ -122,6 +158,10 @@ class route(object):
                     except ValueError:  # error while deserializing
                         # get the str value and cross fingers ...
                         kwargs[body_param] = param
+
+            # adapt ember data to canopsis data
+            adapt_ember_data_to_canopsis(args)
+            adapt_ember_data_to_canopsis(kwargs)
 
             try:
                 result_function = function(*args, **kwargs)

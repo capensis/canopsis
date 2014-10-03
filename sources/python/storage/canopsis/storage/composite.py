@@ -276,6 +276,7 @@ class CompositeStorage(Storage):
         :return: data path, data id
         :rtype: tuple
         """
+
         path = {field: data[field] for field in data if field in self.path}
 
         result = path, data[Storage.DATA_ID]

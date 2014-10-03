@@ -159,7 +159,26 @@ class Topology(MiddlewareRegistry):
             - None: delete all topologies
         """
 
-        self[Topology.STORAGE].remove_elements(ids=ids)
+        path = {
+            Topology.TYPE: Topology.TOPOLOGY_TYPE
+        }
+
+        self[Topology.STORAGE].remove(path=path, data_ids=ids)
+
+    def delete_nodes(self, ids=None):
+        """
+        Delete one or more topology nodes depending on input ids:
+
+            - an id: delete the topology node where id corresponds to input id
+            - list of ids: delete topology nodes where ids equal input ids
+            - None: delete all topology nodes
+        """
+
+        path = {
+            Topology.TYPE: Topology.TOPOLOGY_NODE_TYPE
+        }
+
+        self[Topology.STORAGE].remove(path=path, data_ids=ids)
 
     def push(self, topology):
         """
@@ -229,7 +248,7 @@ class Topology(MiddlewareRegistry):
         _filter[Topology.ENTITY_ID] = entity_id
 
         path = {
-            Topology.TOPOLOGY_TYPE: Topology.TOPOLOGY_NODE_TYPE
+            Topology.TYPE: Topology.TOPOLOGY_NODE_TYPE
         }
 
         result = self[Topology.STORAGE].find(path=path, _filter=_filter)

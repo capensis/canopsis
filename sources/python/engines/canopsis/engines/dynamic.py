@@ -176,4 +176,4 @@ def event_processing(event, ctx=None, **params):
     :param dict params: event processing additional parameters
     """
 
-    raise NotImplementedError()
+    return event

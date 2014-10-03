@@ -32,7 +32,7 @@ class TopologyTest(TestCase):
 
         # set of default topologies
         self.count = 10
-        self.topologies = ({Topology.ID: i} for i in range(self.count))
+        self.topologies = ({Topology.ID: str(i)} for i in range(self.count))
         # delete all topologies
         self.topology.delete()
         # check if all topologies are gone
@@ -40,7 +40,6 @@ class TopologyTest(TestCase):
         self.assertFalse(topologies)
 
     def test_CRUD(self):
-
         # start to push topologies
         for topology in self.topologies:
             self.topology.push(topology=topology)
@@ -51,14 +50,20 @@ class TopologyTest(TestCase):
 
         # delete the first topology
         self.topology.delete(ids='0')
+        topologies = self.topology.get_topologies()
         self.assertEqual(len(topologies), self.count - 1)
 
         # delete third more
-        self.topology.delete(ids=('-1', '2', '3'))
-        self.assertEqual(len(topologies), self.count - 4)
+        self.topology.delete(
+            ids=('-1', '2', '3'))
+        topologies = self.topology.get_topologies()
+        self.assertEqual(len(topologies), self.count - 3)
+
+    def test_get_topologies(self):
+        topologies = self.topology.get_topologies()
+        self.assertFalse(topologies)
 
     def test_find(self):
-
         for topology in self.topologies:
             self.topology.push(topology=topology)
 
@@ -67,13 +72,58 @@ class TopologyTest(TestCase):
 
         self.assertEqual(len(topologies), 1)
 
-    def test_topologies(self):
-        topologies = self.topology.get_topologies()
-        self.assertFalse(topologies)
-
     def tearDown(self):
         # remove topologies from database
         self.topology.delete()
+
+
+class TopologyNodeTest(TestCase):
+
+    def setUp(self):
+        self.topology = Topology()
+        self.topology.delete_nodes()
+        self.count = 10
+        self.nodes = (
+            {
+                Topology.ID: str(i),
+                Topology.ENTITY_ID: str(i % 2),
+                Topology.NEXT: str(i % 3)
+            }
+            for i in range(self.count)
+        )
+        for node in self.nodes:
+            self.topology.push_node(node)
+
+    def test_CRUD(self):
+        nodes = self.topology.get_nodes()
+        self.assertEqual(len(nodes), self.count)
+
+        self.topology.delete_nodes(ids='0')
+        nodes = self.topology.get_nodes()
+        self.assertEqual(len(nodes), self.count - 1)
+
+        self.topology.delete_nodes(ids=('-1', '1', '2'))
+        nodes = self.topology.get_nodes()
+        self.assertEqual(len(nodes), self.count - 3)
+
+    def test_bounds(self):
+        nodes = self.topology.find_bound_nodes(entity_id='1')
+        self.assertEqual(len(nodes), self.count / 2)
+
+    def test_nexts(self):
+        for node in self.nodes:
+            next_node = self.topology.get_next_nodes(node=node)
+            self.assertEqual(
+                int(node[Topology.ID]), int(next_node[Topology.ID] % 3))
+
+    def test_sources(self):
+        for node in self.nodes:
+            source_node = self.topology.find_source_nodes(node=node)
+            self.assertEqual(
+                int(node[Topology.ID]), int(source_node[Topology.ID]) + 1 % 3)
+
+    def tearDown(self):
+        self.topology.delete_nodes()
 
 
 if __name__ == '__main__':
