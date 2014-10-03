@@ -61,7 +61,7 @@ from canopsis.common.utils import ensure_iterable
 from canopsis.configuration.configurable.decorator import (
     conf_paths, add_category)
 from canopsis.storage import Storage
-from canopsis.middleware.manager import Manager
+from canopsis.middleware.registry import MiddlewareRegistry
 from canopsis.storage.filter import Filter
 
 CONF_PATH = 'topology/topology.conf'
@@ -70,12 +70,12 @@ CATEGORY = 'TOPOLOGY'
 
 @add_category(CATEGORY)
 @conf_paths(CONF_PATH)
-class Topology(Manager):
+class Topology(MiddlewareRegistry):
     """
     Manage topological data
     """
 
-    STORAGE = 'storage'  #: topology storage name
+    STORAGE = 'topology_storage'  #: topology storage name
 
     ENTITY_ID = 'entity_id'  #: topology node entity id field name
     NEXT = 'next'  #: topology node next field name
@@ -157,6 +157,21 @@ class Topology(Manager):
 
         path = {Topology.TYPE: Topology.TOPOLOGY_TYPE}
         _id = topology[Topology.ID]
+
+        # if topology contains nodes
+        if Topology.NODES in topology:
+            # get nodes
+            nodes = topology[Topology.NODES]
+            # in case of nodes are dictionaries
+            if nodes and isinstance(nodes[0], dict):
+                # add nodes
+                for node in nodes:
+                    self.push_node(node=node)
+                # and transform the content of topology nodes into node ids
+                nodes = [node[Topology.ID] for node in nodes]
+                topology[Topology.NODES] = nodes
+
+        # finally, put the topology in storage
         self[Topology.STORAGE].put(path=path, data_id=_id, data=topology)
 
     def push_node(self, node):

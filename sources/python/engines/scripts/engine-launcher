@@ -136,7 +136,8 @@ class EngineLauncher(object):
             'next_balanced': parser.bool,
             'beat_interval': parser.int,
             'exchange_name': parser.str,
-            'routing_keys': parser.list
+            'routing_keys': parser.list,
+            'event_processing': parser.str
         }
 
         engine_conf = {}

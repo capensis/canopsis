@@ -41,7 +41,7 @@ A topology rule use the condition ``new_state``
 
 from canopsis.topology.manager import Topology
 from canopsis.context.manager import Context
-from canopsis.rule import process_rule, RULE
+from canopsis.rule import process_rule, RULE, register_task
 from canopsis.event import Event
 from canopsis.check import Check
 
@@ -56,6 +56,7 @@ PUBLISHER = 'publisher'
 WEIGHT = 'weight'
 
 
+@register_task(name='topology.event_processing')
 def event_processing(event, ctx=None, **params):
     """
     Process input event in getting topology nodes bound to input event entity.
