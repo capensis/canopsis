@@ -21,6 +21,7 @@
 
 from canopsis.old.init import ensure_unicode
 from pybars import Compiler, _compiler
+from datetime import datetime
 
 
 class Template(Compiler):
@@ -37,6 +38,8 @@ class Template(Compiler):
         self.register_helper(u'get', self._helper_get)
         self.register_helper(u'increment', self._helper_increment)
         self.register_helper(u'compact', self._helper_compact)
+        self.register_helper(u'formattedDate', self._helper_formatdate)
+        self.register_helper(u'strip-newlines', self._help_strip_nl)
 
     def register_helper(self, name, handler):
         name = ensure_unicode(name)
@@ -102,3 +105,12 @@ class Template(Compiler):
             result = u'{0}{1}'.format(result, item)
 
         return result.replace('\n', ' ').replace('\r', '')
+
+    def _helper_formatdate(self, this, dtformat, ts):
+        return datetime.fromtimestamp(ts).strftime(dtformat)
+
+    def _help_strip_nl(self, this, text):
+        if not text:
+            text = ''
+
+        return text.replace('\r', '').replace('\n', '')
