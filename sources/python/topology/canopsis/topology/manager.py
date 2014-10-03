@@ -58,10 +58,13 @@ A topology node contains following fields::
 """
 
 from canopsis.common.utils import ensure_iterable
+
 from canopsis.configuration.configurable.decorator import (
-    conf_paths, add_category)
+    conf_paths, add_category
+)
+
 from canopsis.storage import Storage
-from canopsis.middleware.manager import Manager
+from canopsis.middleware.registry import MiddlewareRegistry
 from canopsis.storage.filter import Filter
 
 CONF_PATH = 'topology/topology.conf'
@@ -70,12 +73,12 @@ CATEGORY = 'TOPOLOGY'
 
 @add_category(CATEGORY)
 @conf_paths(CONF_PATH)
-class Topology(Manager):
+class Topology(MiddlewareRegistry):
     """
     Manage topological data
     """
 
-    STORAGE = 'storage'  #: topology storage name
+    STORAGE = 'topology_storage'  #: topology storage name
 
     ENTITY_ID = 'entity_id'  #: topology node entity id field name
     NEXT = 'next'  #: topology node next field name
@@ -94,6 +97,7 @@ class Topology(Manager):
 
         if topologies:
             topologies = ensure_iterable(topologies)
+
             for topology in topologies:
                 nodes = self.get_nodes(ids=topology[Topology.ID])
                 topology[Topology.NODES] = nodes
@@ -112,9 +116,12 @@ class Topology(Manager):
         """
 
         # the the right path
-        path = {Topology.TYPE: Topology.TOPOLOGY_TYPE}
+        path = {
+            Topology.TYPE: Topology.TOPOLOGY_TYPE
+        }
 
         result = self[Topology.STORAGE].get(path=path, data_ids=ids)
+
         if add_nodes:
             self._add_nodes(result)
 
@@ -128,12 +135,16 @@ class Topology(Manager):
         # get the right filter
         _filter = Filter()
         _filter.add_regex(
-            name=Storage.DATA_ID, value=regex, case_sensitive=True)
+            name=Storage.DATA_ID, value=regex, case_sensitive=True
+        )
 
         # get the right path
-        path = {Topology.TYPE: Topology.TOPOLOGY_TYPE}
+        path = {
+            Topology.TYPE: Topology.TOPOLOGY_TYPE
+        }
 
         result = self[Topology.STORAGE].find(path=path, _filter=_filter)
+
         if add_nodes:
             self._add_nodes(result)
 
@@ -155,8 +166,26 @@ class Topology(Manager):
         Push one topology.
         """
 
-        path = {Topology.TYPE: Topology.TOPOLOGY_TYPE}
+        path = {
+            Topology.TYPE: Topology.TOPOLOGY_TYPE
+        }
+
         _id = topology[Topology.ID]
+
+        # if topology contains nodes
+        if Topology.NODES in topology:
+            # get nodes
+            nodes = topology[Topology.NODES]
+            # in case of nodes are dictionaries
+            if nodes and isinstance(nodes[0], dict):
+                # add nodes
+                for node in nodes:
+                    self.push_node(node=node)
+                # and transform the content of topology nodes into node ids
+                nodes = [node[Topology.ID] for node in nodes]
+                topology[Topology.NODES] = nodes
+
+        # finally, put the topology in storage
         self[Topology.STORAGE].put(path=path, data_id=_id, data=topology)
 
     def push_node(self, node):
@@ -164,7 +193,10 @@ class Topology(Manager):
         Push a node.
         """
 
-        path = {Topology.TYPE: Topology.TOPOLOGY_NODE_TYPE}
+        path = {
+            Topology.TYPE: Topology.TOPOLOGY_NODE_TYPE
+        }
+
         _id = node[Topology.ID]
         self[Topology.STORAGE].put(path=path, data_id=_id, data=node)
 
@@ -180,7 +212,10 @@ class Topology(Manager):
             - list: list of nodes
         """
 
-        path = {Topology.TYPE: Topology.TOPOLOGY_NODE_TYPE}
+        path = {
+            Topology.TYPE: Topology.TOPOLOGY_NODE_TYPE
+        }
+
         result = self[Topology.STORAGE].get(path=path, data_ids=ids)
 
         return result
@@ -193,7 +228,9 @@ class Topology(Manager):
         _filter = Filter()
         _filter[Topology.ENTITY_ID] = entity_id
 
-        path = {Topology.TOPOLOGY_TYPE: Topology.TOPOLOGY_NODE_TYPE}
+        path = {
+            Topology.TOPOLOGY_TYPE: Topology.TOPOLOGY_NODE_TYPE
+        }
 
         result = self[Topology.STORAGE].find(path=path, _filter=_filter)
 
@@ -206,7 +243,9 @@ class Topology(Manager):
 
         next_ids = node[Topology.NEXT]
 
-        path = {Topology.TYPE: Topology.TOPOLOGY_NODE_TYPE}
+        path = {
+            Topology.TYPE: Topology.TOPOLOGY_NODE_TYPE
+        }
 
         result = self[Topology.STORAGE].get(path=path, data_ids=next_ids)
 
@@ -219,10 +258,13 @@ class Topology(Manager):
         """
 
         # get the right path
-        path = {Topology.TYPE: Topology.TOPOLOGY_NODE_TYPE}
+        path = {
+            Topology.TYPE: Topology.TOPOLOGY_NODE_TYPE
+        }
 
         # get the right filter
         _filter = Filter()
+
         if node is None:
             # get root nodes which don't have next field or next field is empty
             _filter[Topology.NEXT] = {

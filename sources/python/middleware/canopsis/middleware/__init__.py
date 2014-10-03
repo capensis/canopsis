@@ -29,6 +29,7 @@ from canopsis.configuration.parameters import (
     Parameter, Configuration, Category)
 from canopsis.configuration.configurable import MetaConfigurable
 
+
 SCHEME_SEPARATOR = '-'  #: char separator in uri to proto/data_type/data_scope
 PROTOCOL_INDEX = 0  #: protocol name index in an uri scheme
 DATA_TYPE_INDEX = 1  #: data type name index in an uri scheme
@@ -56,10 +57,13 @@ def parse_scheme(uri):
 
     if protocol and SCHEME_SEPARATOR in parsed_url.scheme:
         splitted_scheme = protocol.split(SCHEME_SEPARATOR)
+
         if len(splitted_scheme) > PROTOCOL_INDEX:
             protocol = splitted_scheme[PROTOCOL_INDEX]
+
         if len(splitted_scheme) > DATA_TYPE_INDEX:
             data_type = splitted_scheme[DATA_TYPE_INDEX]
+
         if len(splitted_scheme) > DATA_SCOPE_INDEX:
             data_scope = splitted_scheme[DATA_SCOPE_INDEX]
 
@@ -97,6 +101,7 @@ def get_uri(
 
     if user:
         result += user
+
         if pwd:
             result += ':%s' % pwd
 
@@ -295,11 +300,12 @@ class Middleware(Configurable):
 
         # if self._uri is not resolved, generate it related to other parameters
         if not self._uri:
-
             result = self.host
+
             if self.user:
                 if self.pwd:
                     result = '%s:%s@%s' % (self.user, self.pwd, result)
+
                 else:
                     result = '%s@%s' % (self.user, result)
 
@@ -310,7 +316,8 @@ class Middleware(Configurable):
                 data_type = self.data_type if self.data_type else ''
                 data_scope = self.data_scope if self.data_scope else ''
                 scheme = '{0}{1}{2}{1}{3}'.format(
-                    self.protocol, SCHEME_SEPARATOR, data_type, data_scope)
+                    self.protocol, SCHEME_SEPARATOR, data_type, data_scope
+                )
 
                 result = '%s://%s' % (scheme, result)
 
@@ -326,9 +333,9 @@ class Middleware(Configurable):
         Set uri in getting values from uri parameters if value is None or empty
         """
         self._uri = value
+
         # update other properties if value is not None
         if not value:
-
             self.protocol, self.data_type = parse_scheme(value)
 
             parsed_url = urlparse(value)
@@ -559,27 +566,37 @@ class Middleware(Configurable):
 
         try:
             self.disconnect()
-        except Exception:
+
+        except Exception as err:
             self.logger.warning(
-                'Disconnection problem while attempting to reconnect %s' %
-                self)
+                'Disconnection problem while attempting to reconnect %s: %s' %
+                (self, err)
+            )
+
         else:
             try:
                 result = self.connect()
-            except Exception:
+
+            except Exception as err:
                 self.logger.warning(
-                    'Connection problem while attempting to reconnect %s' %
-                    self)
+                    'Connection problem while attempting to reconnect %s: %s' %
+                    (self, err)
+                )
 
         return result
 
     def restart(self, criticals, to_configure=None, *args, **kwargs):
 
         super(Middleware, self).restart(
-            to_configure=to_configure, criticals=criticals, *args, **kwargs)
+            to_configure=to_configure, criticals=criticals, *args, **kwargs
+        )
 
-        if self._is_critical_category(
-                category=Middleware.CATEGORY, criticals=criticals):
+        is_critical = self._is_critical_category(
+            category=Middleware.CATEGORY,
+            criticals=criticals
+        )
+
+        if is_critical:
             if self.auto_connect:
                 self.reconnect()
 
@@ -605,7 +622,8 @@ class Middleware(Configurable):
                 Parameter(Middleware.HOST, critical=True),
                 Parameter(Middleware.PORT, int, critical=True),
                 Parameter(
-                    Middleware.AUTO_CONNECT, Parameter.bool, critical=True),
+                    Middleware.AUTO_CONNECT, Parameter.bool, critical=True
+                ),
                 Parameter(Middleware.SAFE, Parameter.bool, critical=True),
                 Parameter(Middleware.CONN_TIMEOUT, int, critical=True),
                 Parameter(Middleware.IN_TIMEOUT, int, critical=True),
@@ -614,7 +632,9 @@ class Middleware(Configurable):
                 Parameter(Middleware.SSL_KEY, critical=True),
                 Parameter(Middleware.SSL_CERT, critical=True),
                 Parameter(Middleware.USER, critical=True),
-                Parameter(Middleware.PWD, critical=True)))
+                Parameter(Middleware.PWD, critical=True)
+            )
+        )
 
         return result
 
@@ -700,14 +720,17 @@ class Middleware(Configurable):
         if protocol not in Middleware.__MIDDLEWARES__:
             raise Middleware.Error(
                 "No protocol %s found in registered middleware classes." %
-                protocol)
+                protocol
+            )
 
         # try to get data_type
         data_types = Middleware.__MIDDLEWARES__[protocol]
+
         if data_type not in data_types:
             raise Middleware.Error(
                 "No data type %s found in middleware protocol %s" %
-                (data_type, protocol))
+                (data_type, protocol)
+            )
 
         result = data_types[data_type]
 
@@ -734,7 +757,8 @@ class Middleware(Configurable):
         protocol, data_type, _ = parse_scheme(uri)
 
         result = Middleware.resolve_middleware(
-            protocol=protocol, data_type=data_type)
+            protocol=protocol, data_type=data_type
+        )
 
         return result
 
@@ -769,15 +793,21 @@ class Middleware(Configurable):
             data_type = DEFAULT_DATA_TYPE
 
         middleware_class = Middleware.resolve_middleware(
-            protocol=protocol, data_type=data_type)
+            protocol=protocol, data_type=data_type
+        )
 
         if middleware_class is not None:
             # instantiate a new middleware
             result = middleware_class(auto_connect=False, *args, **kwargs)
-            conf = Configuration(Category("get_middleware",
-                Parameter(Middleware.PROTOCOL, value=protocol),
-                Parameter(Middleware.DATA_TYPE, value=data_type),
-                Parameter(Middleware.DATA_SCOPE, value=data_scope)))
+            conf = Configuration(
+                Category(
+                    "get_middleware",
+                    Parameter(Middleware.PROTOCOL, value=protocol),
+                    Parameter(Middleware.DATA_TYPE, value=data_type),
+                    Parameter(Middleware.DATA_SCOPE, value=data_scope)
+                )
+            )
+
             result.auto_connect = auto_connect
             result.configure(conf=conf)
 
@@ -815,11 +845,17 @@ class Middleware(Configurable):
         if middleware_class is not None:
             # instantiate it without connecting it automatically
             result = middleware_class(auto_connect=False, *args, **kwargs)
+
             # create a configuration with protocol, data_type and data_scope
-            conf = Configuration(Category("get_middlewaqre_by_uri",
-                Parameter(Middleware.PROTOCOL, value=protocol),
-                Parameter(Middleware.DATA_TYPE, value=data_type),
-                Parameter(Middleware.DATA_SCOPE, value=data_scope)))
+            conf = Configuration(
+                Category(
+                    "get_middlewaqre_by_uri",
+                    Parameter(Middleware.PROTOCOL, value=protocol),
+                    Parameter(Middleware.DATA_TYPE, value=data_type),
+                    Parameter(Middleware.DATA_SCOPE, value=data_scope)
+                )
+            )
+
             # set auto_connect to true
             result._auto_connect = True
             # and configure the result
