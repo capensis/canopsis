@@ -21,6 +21,7 @@
           "listed_crecord_type": "event",
           "title": "Bac à évenements",
           "maximized_column_index": 5,
+          "display_record_field": "resource",
           "default_column_sort" : {
             "direction" : "DESC",
             "property" : "timestamp"
