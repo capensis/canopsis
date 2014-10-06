@@ -261,11 +261,13 @@ class MiddlewareRegistry(ConfigurableRegistry):
 
         foreigns = unified_conf[Configuration.FOREIGNS]
 
+        if foreigns:
+            len_midl_suffix = len(MiddlewareRegistry.MIDDLEWARE_SUFFIX)
+
         # set all middlewares which ends with MIDDLEWARE_SUFFIX
         for parameter in foreigns:
             if parameter.name.endswith(MiddlewareRegistry.MIDDLEWARE_SUFFIX):
-                name = parameter.name[
-                    :-len(MiddlewareRegistry.MIDDLEWARE_SUFFIX)]
+                name = parameter.name[:-len_midl_suffix]
                 # set a middleware in list of configurables
                 self[name] = Middleware.get_middleware_by_uri(
                     uri=parameter.value)

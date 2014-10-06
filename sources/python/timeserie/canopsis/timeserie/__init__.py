@@ -60,7 +60,7 @@ class TimeSerie(Configurable):
 
     VMAX_POINTS = 500
     VDEFAULT_AGGREGATION = 'MEAN'
-    VPERIOD = Period(unit=Period.DAY, value=1)
+    VPERIOD = Period(day=1)
     VFILL = False
     VROUND_TIME = True
 

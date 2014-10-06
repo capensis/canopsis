@@ -56,6 +56,8 @@ class MongoCompositeStorage(MongoStorage, CompositeStorage):
         if _filter is not None:
             query.update(_filter)
 
+        one_result = False
+
         # if data_ids is given
         if data_ids is not None:
 
@@ -64,6 +66,7 @@ class MongoCompositeStorage(MongoStorage, CompositeStorage):
                 query[Storage.DATA_ID] = {"$in": data_ids}
             else:
                 query[Storage.DATA_ID] = data_ids
+                one_result = True
 
         # get elements
         result = self.find_elements(
@@ -84,10 +87,10 @@ class MongoCompositeStorage(MongoStorage, CompositeStorage):
                 if CompositeStorage.SHARED in result:
                     shared_id = result[CompositeStorage.SHARED]
                     # result equals shared data
-                    result = self.get_shared_data(shared_ids=shared_id)
+                    result = [self.get_shared_data(shared_ids=shared_id)]
                 else:
                     # else, result is a list of itself
-                    result = [result]
+                    result = [[result]]
 
             else:
                 # if result is a list of data, use data_to_extend
@@ -100,8 +103,13 @@ class MongoCompositeStorage(MongoStorage, CompositeStorage):
                     if CompositeStorage.SHARED in data:
                         shared_id = data[CompositeStorage.SHARED]
                         data = self.get_shared_data(shared_ids=shared_id)
+                    else:
+                        data = [data]
                     # append data in result
                     result.append(data)
+
+        if result is not None and one_result and result:
+            result = result[0]
 
         if with_count:
             result = result, count
@@ -127,7 +135,7 @@ class MongoCompositeStorage(MongoStorage, CompositeStorage):
 
         data_to_put = data.copy()
         data_to_put.update(path)
-        data_to_put[MongoStorage.DATA_ID] = data_id
+        data_to_put[Storage.DATA_ID] = data_id
 
         if share_id is not None:
             data_to_put[CompositeStorage.SHARED] = share_id
@@ -148,10 +156,10 @@ class MongoCompositeStorage(MongoStorage, CompositeStorage):
 
         if data_ids is not None:
             if isiterable(data_ids, is_str=False):
-                query[CompositeStorage.ID] = {'$in': data_ids}
+                query[Storage.DATA_ID] = {'$in': data_ids}
             else:
                 parameters = {'justOne': 1}
-                query[CompositeStorage.ID] = data_ids
+                query[Storage.DATA_ID] = data_ids
 
         self._remove(document=query, **parameters)
 

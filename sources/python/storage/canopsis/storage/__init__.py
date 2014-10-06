@@ -157,7 +157,7 @@ class Storage(DataBase):
     __protocol__ = 'storage'
     """register itself and all subclasses to storage protocol"""
 
-    DATA_ID = 'data_id'  #: db data id
+    DATA_ID = 'id'  #: db data id
 
     INDEXES = 'indexes'
 

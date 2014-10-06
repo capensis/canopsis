@@ -97,9 +97,18 @@ class Context(MiddlewareRegistry):
 
         _type = event['source_type']
 
-        name = event[Storage.DATA_ID]
+        if Storage.DATA_ID in event:
+            name = event[Storage.DATA_ID]
+        else:
+            name = event[_type]
 
-        context = event
+        # get the right context
+        context = {Context.TYPE: _type}
+        for ctx in self.context:
+            if ctx in event:
+                context[ctx] = event[ctx]
+        # remove field which is the name
+        del context[_type]
 
         result = self.get(_type=_type, names=name, context=context)
 
