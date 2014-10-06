@@ -163,15 +163,15 @@ class KnownValues(TestCase):
         self.assertFalse(match, msg='Filter: %s' % filter1)
 
     def test_08_regex(self):
-        filter1 = {'connector': {'$regex': 'c.ngInE'}}
+        filter1 = {'connector': {'$regex': '.ngInE'}}
         match = check(filter1, event)
         self.assertFalse(match, msg='Filter: %s' % filter1)
 
-        filter1 = {'connector': {'$regex': 'c.ngInE', '$options': 'i'}}
+        filter1 = {'connector': {'$regex': '.ngInE', '$options': 'i'}}
         match = check(filter1, event)
         self.assertTrue(match, msg='Filter: %s' % filter1)
 
-        filter1 = {'connector': {'$regex': 'c..ngine', '$options': 'i'}}
+        filter1 = {'connector': {'$regex': '..ngine', '$options': 'i'}}
         match = check(filter1, event)
         self.assertFalse(match, msg='Filter: %s' % filter1)
 

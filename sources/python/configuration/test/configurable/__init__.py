@@ -135,16 +135,15 @@ class ConfigurableTest(TestCase):
         configurable.set_configuration(
             conf_path=self.conf_paths[0],
             conf=Configuration(self.conf['A']),
-            manager=configurable._managers.split(',')[0])
+            driver=configurable._drivers.split(',')[0])
 
         # add second category in conf file[1]
         configurable.set_configuration(
             conf_path=self.conf_paths[1],
             conf=Configuration(self.conf['B']),
-            manager=configurable._managers.split(',')[1])
+            driver=configurable._drivers.split(',')[1])
 
-        conf = configurable.get_configuration(
-            fill=True, conf=self.conf)
+        conf = configurable.get_configuration(conf=self.conf)
 
         unified_configuration = conf.unify()
         parameters = unified_configuration[Configuration.VALUES]
@@ -167,9 +166,7 @@ class ConfigurableTest(TestCase):
                 Parameter('auto_conf', value=False)))
 
         self.configurable.configure(conf=conf)
-
         self.assertFalse(self.configurable.auto_conf)
-
         self.assertEqual(self.configurable.log_lvl, 'INFO')
 
         conf = Configuration(
@@ -177,23 +174,16 @@ class ConfigurableTest(TestCase):
                 Parameter('log_lvl', value='DEBUG')))
 
         self.configurable.configure(conf=conf)
-
         self.assertEqual(self.configurable.log_lvl, 'INFO')
 
         self.configurable.reconf_once = True
-
         self.configurable.configure(conf=conf)
-
         self.assertEqual(self.configurable.log_lvl, 'DEBUG')
-
         self.assertFalse(self.configurable.reconf_once)
 
         self.configurable.log_lvl = 'INFO'
-
         self.configurable.auto_conf = True
-
         self.configurable.configure(conf=conf)
-
         self.assertEqual(self.configurable.log_lvl, 'DEBUG')
 
     def test_parser_inheritance(self):

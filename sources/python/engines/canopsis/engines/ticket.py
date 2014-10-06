@@ -73,10 +73,8 @@ class engine(Engine):
                     'rk': event['ref_rk']
                 }, {
                     '$set': {
-                        'ticket_declared': {
-                            'timestamp': int(time()),
-                            'author': event['author']
-                        }
+                        'ticket_declared_author': event['author'],
+                        'ticket_declared_date': int(time()),
                     }
                 })
 

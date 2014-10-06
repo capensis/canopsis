@@ -110,7 +110,7 @@ class Archiver(object):
 
 
     def set_status(self, event, status):
-        log = 'Status is set to {} for event {}'.format(event['rk'])
+        log = 'Status is set to {} for event %s' % event['rk']
         values = {
             0: {'freq': event['bagot_freq'],
                 'name': 'Off'
@@ -288,8 +288,9 @@ class Archiver(object):
 
 
             # Remove ticket information in case state is back to normal (both ack and ticket declaration case)
-            if 'ticket_declared' in devent and event['status'] == 0:
-                change['ticket_declared'] = {}
+            if 'ticket_declared_author' in devent and event['status'] == 0:
+                change['ticket_declared_author'] = None
+                change['ticket_declared_date'] = None
 
             # Remove ticket information in case state is back to normal (ticket number declaration only case)
             if 'ticket' in devent and event['status'] == 0:

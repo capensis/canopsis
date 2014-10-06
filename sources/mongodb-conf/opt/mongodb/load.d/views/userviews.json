@@ -26,7 +26,8 @@
             "Sortablearray",
             "Arraysearch",
             "Pagination",
-            "Crud"
+            "Crud",
+            "Showviewbutton"
           ]
         }
       }

@@ -29,6 +29,7 @@ from canopsis.configuration.parameters import (
     Parameter, Configuration, Category)
 from canopsis.configuration.configurable import MetaConfigurable
 
+
 SCHEME_SEPARATOR = '-'  #: char separator in uri to proto/data_type/data_scope
 PROTOCOL_INDEX = 0  #: protocol name index in an uri scheme
 DATA_TYPE_INDEX = 1  #: data type name index in an uri scheme
@@ -56,10 +57,13 @@ def parse_scheme(uri):
 
     if protocol and SCHEME_SEPARATOR in parsed_url.scheme:
         splitted_scheme = protocol.split(SCHEME_SEPARATOR)
+
         if len(splitted_scheme) > PROTOCOL_INDEX:
             protocol = splitted_scheme[PROTOCOL_INDEX]
+
         if len(splitted_scheme) > DATA_TYPE_INDEX:
             data_type = splitted_scheme[DATA_TYPE_INDEX]
+
         if len(splitted_scheme) > DATA_SCOPE_INDEX:
             data_scope = splitted_scheme[DATA_SCOPE_INDEX]
 
@@ -97,6 +101,7 @@ def get_uri(
 
     if user:
         result += user
+
         if pwd:
             result += ':%s' % pwd
 
@@ -295,11 +300,12 @@ class Middleware(Configurable):
 
         # if self._uri is not resolved, generate it related to other parameters
         if not self._uri:
-
             result = self.host
+
             if self.user:
                 if self.pwd:
                     result = '%s:%s@%s' % (self.user, self.pwd, result)
+
                 else:
                     result = '%s@%s' % (self.user, result)
 
@@ -310,7 +316,8 @@ class Middleware(Configurable):
                 data_type = self.data_type if self.data_type else ''
                 data_scope = self.data_scope if self.data_scope else ''
                 scheme = '{0}{1}{2}{1}{3}'.format(
-                    self.protocol, SCHEME_SEPARATOR, data_type, data_scope)
+                    self.protocol, SCHEME_SEPARATOR, data_type, data_scope
+                )
 
                 result = '%s://%s' % (scheme, result)
 
@@ -320,16 +327,15 @@ class Middleware(Configurable):
     def uri(self, value):
 
         self._set_uri(value)
-        self.reconnect()
 
     def _set_uri(self, value):
         """
         Set uri in getting values from uri parameters if value is None or empty
         """
         self._uri = value
+
         # update other properties if value is not None
         if not value:
-
             self.protocol, self.data_type = parse_scheme(value)
 
             parsed_url = urlparse(value)
@@ -346,7 +352,6 @@ class Middleware(Configurable):
     @protocol.setter
     def protocol(self, value):
         self._protocol = value
-        self.reconnect()
 
     @property
     def data_type(self):
@@ -363,7 +368,6 @@ class Middleware(Configurable):
     @data_scope.setter
     def data_scope(self, value):
         self._data_scope = value
-        self.reconnect()
 
     @property
     def host(self):
@@ -372,7 +376,6 @@ class Middleware(Configurable):
     @host.setter
     def host(self, value):
         self._host = value
-        self.reconnect()
 
     @property
     def port(self):
@@ -381,7 +384,6 @@ class Middleware(Configurable):
     @port.setter
     def port(self, value):
         self._port = value
-        self.reconnect()
 
     @property
     def path(self):
@@ -390,7 +392,6 @@ class Middleware(Configurable):
     @path.setter
     def path(self, value):
         self._path = value
-        self.reconnect()
 
     @property
     def auto_connect(self):
@@ -399,7 +400,6 @@ class Middleware(Configurable):
     @auto_connect.setter
     def auto_connect(self, value):
         self._auto_connect = value
-        self.reconnect()
 
     @property
     def safe(self):
@@ -408,7 +408,6 @@ class Middleware(Configurable):
     @safe.setter
     def safe(self, value):
         self._safe = value
-        self.reconnect()
 
     @property
     def conn_timeout(self):
@@ -417,7 +416,6 @@ class Middleware(Configurable):
     @conn_timeout.setter
     def conn_timeout(self, value):
         self._conn_timeout = value
-        self.reconnect()
 
     @property
     def in_timeout(self):
@@ -426,7 +424,6 @@ class Middleware(Configurable):
     @in_timeout.setter
     def in_timeout(self, value):
         self._in_timeout = value
-        self.reconnect()
 
     @property
     def out_timeout(self):
@@ -435,7 +432,6 @@ class Middleware(Configurable):
     @out_timeout.setter
     def out_timeout(self, value):
         self._out_timeout = value
-        self.reconnect()
 
     @property
     def ssl(self):
@@ -444,7 +440,6 @@ class Middleware(Configurable):
     @ssl.setter
     def ssl(self, value):
         self._ssl = value
-        self.reconnect()
 
     @property
     def ssl_key(self):
@@ -453,7 +448,6 @@ class Middleware(Configurable):
     @ssl_key.setter
     def ssl_key(self, value):
         self._ssl_key = value
-        self.reconnect()
 
     @property
     def ssl_cert(self):
@@ -462,7 +456,6 @@ class Middleware(Configurable):
     @ssl_cert.setter
     def ssl_cert(self, value):
         self._ssl_cert = value
-        self.reconnect()
 
     @property
     def user(self):
@@ -471,7 +464,6 @@ class Middleware(Configurable):
     @user.setter
     def user(self, value):
         self._user = value
-        self.reconnect()
 
     @property
     def pwd(self):
@@ -480,7 +472,6 @@ class Middleware(Configurable):
     @pwd.setter
     def pwd(self, value):
         self._pwd = value
-        self.reconnect()
 
     def connect(self):
         """
@@ -575,41 +566,38 @@ class Middleware(Configurable):
 
         try:
             self.disconnect()
-        except Exception:
+
+        except Exception as err:
             self.logger.warning(
-                'Disconnection problem while attempting to reconnect %s' %
-                self)
+                'Disconnection problem while attempting to reconnect %s: %s' %
+                (self, err)
+            )
+
         else:
             try:
                 result = self.connect()
-            except Exception:
+
+            except Exception as err:
                 self.logger.warning(
-                    'Connection problem while attempting to reconnect %s' %
-                    self)
+                    'Connection problem while attempting to reconnect %s: %s' %
+                    (self, err)
+                )
 
         return result
 
-    def _configure(self, unified_conf, *args, **kwargs):
+    def restart(self, criticals, to_configure=None, *args, **kwargs):
 
-        super(Middleware, self)._configure(
-            unified_conf=unified_conf, *args, **kwargs)
+        super(Middleware, self).restart(
+            to_configure=to_configure, criticals=criticals, *args, **kwargs
+        )
 
-        reconnect = False
+        is_critical = self._is_critical_category(
+            category=Middleware.CATEGORY,
+            criticals=criticals
+        )
 
-        path_properties = (parameter.name for parameter
-            in self.conf[Middleware.CATEGORY])
-
-        for path_property in path_properties:
-            updated_property = self._update_property(
-                unified_conf=unified_conf,
-                param_name=path_property,
-                public=False)
-
-            if updated_property:
-                reconnect = True
-
-        if self.auto_connect:
-            if reconnect or not self.connected():
+        if is_critical:
+            if self.auto_connect:
                 self.reconnect()
 
     def _get_conf_paths(self, *args, **kwargs):
@@ -627,24 +615,26 @@ class Middleware(Configurable):
         result.add_unified_category(
             name=Middleware.CATEGORY,
             new_content=(
-                Parameter(Middleware.URI, self.uri),
-                Parameter(Middleware.PROTOCOL, self.protocol),
-                Parameter(Middleware.DATA_TYPE, self.data_type),
-                Parameter(Middleware.DATA_SCOPE, self.data_scope),
-                Parameter(Middleware.HOST, self.host),
-                Parameter(Middleware.PORT, self.port, int),
+                Parameter(Middleware.URI, critical=True),
+                Parameter(Middleware.PROTOCOL, critical=True),
+                Parameter(Middleware.DATA_TYPE, critical=True),
+                Parameter(Middleware.DATA_SCOPE, critical=True),
+                Parameter(Middleware.HOST, critical=True),
+                Parameter(Middleware.PORT, int, critical=True),
                 Parameter(
-                    Middleware.AUTO_CONNECT,
-                    self.auto_connect, Parameter.bool),
-                Parameter(Middleware.SAFE, self.safe, Parameter.bool),
-                Parameter(Middleware.CONN_TIMEOUT, self.conn_timeout, int),
-                Parameter(Middleware.IN_TIMEOUT, self.in_timeout, int),
-                Parameter(Middleware.OUT_TIMEOUT, self.out_timeout, int),
-                Parameter(Middleware.SSL, self.ssl, Parameter.bool),
-                Parameter(Middleware.SSL_KEY, self.ssl_key),
-                Parameter(Middleware.SSL_CERT, self.ssl_cert),
-                Parameter(Middleware.USER, self.user),
-                Parameter(Middleware.PWD, self.pwd)))
+                    Middleware.AUTO_CONNECT, Parameter.bool, critical=True
+                ),
+                Parameter(Middleware.SAFE, Parameter.bool, critical=True),
+                Parameter(Middleware.CONN_TIMEOUT, int, critical=True),
+                Parameter(Middleware.IN_TIMEOUT, int, critical=True),
+                Parameter(Middleware.OUT_TIMEOUT, int, critical=True),
+                Parameter(Middleware.SSL, Parameter.bool, critical=True),
+                Parameter(Middleware.SSL_KEY, critical=True),
+                Parameter(Middleware.SSL_CERT, critical=True),
+                Parameter(Middleware.USER, critical=True),
+                Parameter(Middleware.PWD, critical=True)
+            )
+        )
 
         return result
 
@@ -730,14 +720,17 @@ class Middleware(Configurable):
         if protocol not in Middleware.__MIDDLEWARES__:
             raise Middleware.Error(
                 "No protocol %s found in registered middleware classes." %
-                protocol)
+                protocol
+            )
 
         # try to get data_type
         data_types = Middleware.__MIDDLEWARES__[protocol]
+
         if data_type not in data_types:
             raise Middleware.Error(
                 "No data type %s found in middleware protocol %s" %
-                (data_type, protocol))
+                (data_type, protocol)
+            )
 
         result = data_types[data_type]
 
@@ -764,7 +757,8 @@ class Middleware(Configurable):
         protocol, data_type, _ = parse_scheme(uri)
 
         result = Middleware.resolve_middleware(
-            protocol=protocol, data_type=data_type)
+            protocol=protocol, data_type=data_type
+        )
 
         return result
 
@@ -799,15 +793,21 @@ class Middleware(Configurable):
             data_type = DEFAULT_DATA_TYPE
 
         middleware_class = Middleware.resolve_middleware(
-            protocol=protocol, data_type=data_type)
+            protocol=protocol, data_type=data_type
+        )
 
         if middleware_class is not None:
             # instantiate a new middleware
             result = middleware_class(auto_connect=False, *args, **kwargs)
-            conf = Configuration(Category("get_middleware",
-                Parameter(Middleware.PROTOCOL, protocol),
-                Parameter(Middleware.DATA_TYPE, data_type),
-                Parameter(Middleware.DATA_SCOPE, data_scope)))
+            conf = Configuration(
+                Category(
+                    "get_middleware",
+                    Parameter(Middleware.PROTOCOL, value=protocol),
+                    Parameter(Middleware.DATA_TYPE, value=data_type),
+                    Parameter(Middleware.DATA_SCOPE, value=data_scope)
+                )
+            )
+
             result.auto_connect = auto_connect
             result.configure(conf=conf)
 
@@ -845,11 +845,17 @@ class Middleware(Configurable):
         if middleware_class is not None:
             # instantiate it without connecting it automatically
             result = middleware_class(auto_connect=False, *args, **kwargs)
+
             # create a configuration with protocol, data_type and data_scope
-            conf = Configuration(Category("get_middlewaqre_by_uri",
-                Parameter(Middleware.PROTOCOL, protocol),
-                Parameter(Middleware.DATA_TYPE, data_type),
-                Parameter(Middleware.DATA_SCOPE, data_scope)))
+            conf = Configuration(
+                Category(
+                    "get_middlewaqre_by_uri",
+                    Parameter(Middleware.PROTOCOL, value=protocol),
+                    Parameter(Middleware.DATA_TYPE, value=data_type),
+                    Parameter(Middleware.DATA_SCOPE, value=data_scope)
+                )
+            )
+
             # set auto_connect to true
             result._auto_connect = True
             # and configure the result

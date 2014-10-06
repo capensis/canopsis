@@ -1,7 +1,7 @@
 {
     "categories": [{
         "title": "General",
-        "keys": ["serie", "style"]
+        "keys": ["serie", "curve", "color", "xaxis", "yaxis"]
     }],
     "type": "object",
     "properties": {
@@ -26,6 +26,20 @@
             "role": "color",
             "default": "#B7CA79",
             "required": true
+        },
+        "xaxis": {
+            "title": "X Axis index",
+            "type": "integer",
+            "role": "integer",
+            "default": 1,
+            "minimum": 1
+        },
+        "yaxis": {
+            "title": "Y Axis index",
+            "type": "integer",
+            "role": "integer",
+            "default": 1,
+            "minimum": 1
         }
     }
 }

@@ -25,7 +25,7 @@ from canopsis.common.utils import ensure_iterable
 from canopsis.configuration.configurable.decorator import (
     add_category, conf_paths)
 from canopsis.timeserie.timewindow import Period, get_offset_timewindow
-from canopsis.middleware.manager import Manager
+from canopsis.middleware.registry import MiddlewareRegistry
 from canopsis.context.manager import Context
 
 DEFAULT_PERIOD = Period(**{Period.WEEK: 1})  # save data each week
@@ -36,7 +36,7 @@ CATEGORY = 'PERFDATA'
 
 @conf_paths(CONF_PATH)
 @add_category(CATEGORY)
-class PerfData(Manager):
+class PerfData(MiddlewareRegistry):
     """
     Dedicated to access to perfdata (via periodic and timed stores).
     """

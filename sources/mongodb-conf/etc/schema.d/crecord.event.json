@@ -24,13 +24,19 @@
 			"type": "object",
 			"role": "ack"
 		},
-		"ticket_declared": {
-			"type": "object",
-			"title":"ticket"
+		"ticket_declared_author": {
+			"type": "string"
+		},
+		"ticket_declared_date": {
+			"type": "number"
 		},
 		"ticket": {
 			"type": "string",
 			"title":"ticket"
+		},
+		"last_state_change": {
+			"type": "integer",
+			"role": "timestamp"
 		},
 		"ticket_date": {
 			"type": "number"

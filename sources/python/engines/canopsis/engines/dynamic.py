@@ -18,20 +18,18 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from canopsis.common.util import lookup
+from canopsis.common.utils import lookup
 from canopsis.engines import Engine
 from canopsis.configuration.configurable import Configurable
-from canopsis.configuration.configurable.decorator import (
-    add_category, conf_paths)
+from canopsis.configuration.configurable.decorator import conf_paths
 from canopsis.configuration.parameters import Parameter
 
 CONF_PATH = 'engines/engines.conf'  #: dynamic engine configuration path
 CATEGORY = 'ENGINE'  #: dynamic engine configuration category
 
 
-@add_category(CATEGORY)
 @conf_paths(CONF_PATH)
-class DynamicEngine(Engine, Configurable):
+class engine(Engine, Configurable):
     """
     Engine which is able to load dynamically its event processing through
     configuration properties.
@@ -41,15 +39,15 @@ class DynamicEngine(Engine, Configurable):
     """
 
     EVENT_PROCESSING = 'event_processing'  #: event_processing field name
-    PARAMS = 'params'  #: params field name
+    PARAMS = 'params'  #: event processing params field name
 
-    NEXT_AMQP_QUEUES = 'next_amqp_queues'
-    NEXT_BALANCED = 'next_balanced'
-    NAME = 'name'
-    BEAT_INTERVAL = 'beat_interval'
-    EXCHANGE_NAME = 'exchange_name'
-    ROUTING_KEYS = 'routing_keys'
-    CAMQP_CUSTOM = 'camqp_custom'
+    NEXT_AMQP_QUEUES = 'next_amqp_queues'  #: next amqp queues
+    NEXT_BALANCED = 'next_balanced'  #: next balanced
+    NAME = 'name'  #: self name
+    BEAT_INTERVAL = 'beat_interval'  #: beat interval
+    EXCHANGE_NAME = 'exchange_name'  #: exchange name
+    ROUTING_KEYS = 'routing_keys'  #: routing keys
+    CAMQP_CUSTOM = 'camqp_custom'  #: camqp custom
 
     def __init__(
         self,
@@ -59,7 +57,7 @@ class DynamicEngine(Engine, Configurable):
         **kwargs
     ):
 
-        super(DynamicEngine, self).__init__(*args, **kwargs)
+        super(engine, self).__init__(*args, **kwargs)
 
         self.event_processing = event_processing
         self.params = params
@@ -122,70 +120,49 @@ class DynamicEngine(Engine, Configurable):
 
     def _conf(self, *args, **kwargs):
 
-        result = super(DynamicEngine, self)._conf(*args, **kwargs)
+        result = super(engine, self)._conf(*args, **kwargs)
 
-        result.add_unified_category(CATEGORY,
-            Parameter(DynamicEngine.EVENT_PROCESSING, self.event_processing),
-            Parameter(DynamicEngine.PARAMS, self.params, eval),
-            Parameter(DynamicEngine.NEXT_AMQP_QUEUES, self.next_amqp_queues),
-            Parameter(DynamicEngine.NEXT_BALANCED, self.next_balanced),
-            Parameter(DynamicEngine.NAME, self.name),
-            Parameter(DynamicEngine.BEAT_INTERVAL, self.beat_interval),
-            Parameter(DynamicEngine.EXCHANGE_NAME, self.exchange_name),
-            Parameter(DynamicEngine.ROUTING_KEYS, self.routing_keys),
-            Parameter(DynamicEngine.CAMQP_CUSTOM, self.camqp_custom))
+        result.add_unified_category(
+            name=CATEGORY,
+            new_content=(
+                Parameter(engine.EVENT_PROCESSING),
+                Parameter(engine.PARAMS, parser=eval),
+                Parameter(engine.NEXT_AMQP_QUEUES),
+                Parameter(engine.NEXT_BALANCED),
+                Parameter(engine.NAME),
+                Parameter(engine.BEAT_INTERVAL),
+                Parameter(engine.EXCHANGE_NAME),
+                Parameter(engine.ROUTING_KEYS),
+                Parameter(engine.CAMQP_CUSTOM)))
 
         return result
 
-    def _configure(self, unified_conf, *args, **kwargs):
 
-        super(DynamicEngine, self)._configure(
-            unified_conf=unified_conf, *args, **kwargs)
-
-        params = [
-            DynamicEngine.EVENT_PROCESSING,
-            DynamicEngine.PARAMS,
-            DynamicEngine.NEXT_BALANCED,
-            DynamicEngine.NEXT_AMQP_QUEUES,
-            DynamicEngine.NAME,
-            DynamicEngine.BEAT_INTERVAL,
-            DynamicEngine.EXCHANGE_NAME,
-            DynamicEngine.ROUTING_KEYS,
-            DynamicEngine.CAMQP_CUSTOM]
-
-        for param in params:
-            self._update_property(
-                unified_conf=unified_conf,
-                param_name=param)
-
-
-def load_dynamic_engine(conf_path, category, *args, **kwargs):
+def load_dynamic_engine(name, *args, **kwargs):
     """
     Load a new engine in adding a specific conf_path.
 
-    :param str conf_path: final conf_path to set at the end of new dynamic
-        engine conf paths
-
-    :param tuple args: used in new engine initialization such as *args
-    :param dict kwargs: used in new engine initialization such as **kwargs
+    :param str name: dynamic engine name.
+    :param tuple args: used in new engine initialization such as *args.
+    :param dict kwargs: used in new engine initialization such as **kwargs.
     """
 
+    conf_path = 'engines/%s.conf' % name
+
     # instantiate a new engine with a unified category which corresponds to
-    # input category
-    engine = DynamicEngine(
-        unified_category=category,
-        *args, **kwargs)
+    # input name
+    result = engine(unified_category=name, *args, **kwargs)
 
     # set conf_paths in adding input conf_path
-    conf_paths = engine.conf_paths
+    conf_paths = result.conf_paths
     conf_paths.append(conf_path)
-    engine.conf_paths = conf_paths
+    result.conf_paths = conf_paths
 
-    # finally, reconfigure the engine
-    engine.apply_configuration()
+    # finally, reconfigure the result
+    result.apply_configuration()
 
     # and returns it
-    return engine
+    return result
 
 
 def event_processing(event, ctx=None, **params):
@@ -199,4 +176,4 @@ def event_processing(event, ctx=None, **params):
     :param dict params: event processing additional parameters
     """
 
-    raise NotImplementedError()
+    return event

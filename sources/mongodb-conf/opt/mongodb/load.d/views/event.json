@@ -21,10 +21,12 @@
           "listed_crecord_type": "event",
           "title": "Bac à évenements",
           "maximized_column_index": 5,
+          "display_record_field": "resource",
           "default_column_sort" : {
             "direction" : "DESC",
             "property" : "timestamp"
           },
+          "record_template" : "<div>Connecteur : {{connector}}</div><div>Composant : {{component}} / Adresse IP : {{address}}</div><div>Hostgroups : {{hostgroups}}</div><div>Ressource : {{resource}}</div><div>Message :&nbsp;<span style=\"line-height: 1.428571429;\">{{output}}</span></div>",
           "filters" : [
             {
               "filter" : "{\"$or\":[{\"$and\":[{\"ack.isAck\":{\"$eq\":true}},{\"event_type\":{\"$eq\":\"check\"}}]}]}",

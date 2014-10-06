@@ -164,19 +164,19 @@ def register_tasks(force=False, **tasks):
             __TASK_PATHS[path] = task
 
 
-def register_task(name_or_function=None, force=False):
+def register_task(name=None, force=False):
     """
     Decorator which registers function in registered tasks with function name
     """
 
-    if isroutine(name_or_function):
+    if isroutine(name):
         # if no parameter has been given
-        result = name_or_function
-        name = name_or_function.__name__
+        result = name
+        name = name.__name__
         register_tasks(force=force, **{name: result})
 
     else:  # if name is a str or None
-        def register_task(function, name=name_or_function):
+        def register_task(function, name=name):
             """
             Register input function as a task
             """

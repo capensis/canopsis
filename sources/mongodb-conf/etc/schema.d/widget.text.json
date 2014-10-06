@@ -5,7 +5,15 @@
 	},
 	"categories": [{
 		"title": "General",
-		"keys":["title", "html", "filters","events"]
+		"keys":["title", "html", "filters","events", "use_code"]
+	},
+	{
+		"title": "Events",
+		"keys":["use_events"]
+	},
+	{
+		"title": "Metrics",
+		"keys":["use_metrics"]
 	}],
 	"properties": {
 		"title": {
@@ -24,6 +32,26 @@
 			"items": {
 				"type": "string"
 			}
-		}
+		},
+		"use_code": {
+			"type": "boolean",
+			"default": false
+		},
+		"use_events": {
+			"type": "array",
+			"items": {
+				"type": "string"
+			},
+			"role": "eventselector",
+            "title": "Events data source"
+		},
+        "use_metrics": {
+            "type": "array",
+            "items": {
+                "type": "string"
+            },
+            "role": "cmetric",
+            "title": "Metrics data source"
+        }
 	}
 }

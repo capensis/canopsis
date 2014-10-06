@@ -25,7 +25,7 @@ from canopsis.rule import (
     CONDITION_FIELD, ACTION_FIELD, TASK_PATH, TASK_PARAMS, RuleError,
     ConditionError, ActionError, get_task_with_params, process_rule,
     get_task, register_tasks, unregister_tasks, __TASK_PATHS as TASK_PATHS,
-    register_task, RULES, SWITCH, rules, switch)
+    register_task, RULES, rules, switch)
 
 from canopsis.common.utils import path
 
@@ -436,7 +436,7 @@ class TestProcessRule(TestCase):
         rule = {
             TASK_PATH: rules_task,
             TASK_PARAMS: {
-                'rules': [self.test_action for i in range(self.count)]
+                RULES: [self.test_action for i in range(self.count)]
             }
         }
 
@@ -454,7 +454,7 @@ class TestProcessRule(TestCase):
         rule = {
             TASK_PATH: switch_task,
             TASK_PARAMS: {
-                'rules': [self.test_action for i in range(self.count)]
+                RULES: [self.test_action for i in range(self.count)]
             }
         }
 

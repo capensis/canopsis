@@ -26,8 +26,8 @@ from canopsis.configuration.parameters import \
 
 class MetaConfigurationDriver(type):
     """
-    ConfigurationDriver meta class which register all manager in a global
-    set of managers.
+    ConfigurationDriver meta class which register all driver in a global
+    set of drivers.
     """
 
     def __init__(self, name, bases, attrs):
@@ -36,7 +36,7 @@ class MetaConfigurationDriver(type):
 
         # if the class claims to be registered
         if self.__register__:
-            # add it among managers
+            # add it among drivers
             ConfigurationDriver._MANAGERS[path(self)] = self
 
 
@@ -46,21 +46,21 @@ class ConfigurationDriver(object):
     """
 
     """
-    Apply meta class for registering automatically it among global managers
+    Apply meta class for registering automatically it among global drivers
     if __register__ is True
     """
     __metaclass__ = MetaConfigurationDriver
 
     """
     Static param which allows this class to be automatically registered
-    among managers.
+    among drivers.
     """
     __register__ = False
 
     CONF_FILE = 'CONF_FILE'
 
     """
-    Private set of shared manager types.
+    Private set of shared driver types.
     """
     _MANAGERS = {}
 
@@ -81,33 +81,23 @@ class ConfigurationDriver(object):
 
     def exists(self, conf_path):
         """
-        True if conf_path exist related to this manager behaviour.
+        True if conf_path exist related to this driver behaviour.
         """
 
         raise NotImplementedError()
 
     def get_configuration(
-        self, conf_path, logger, conf=None, fill=False, override=True
+        self, conf_path, logger, conf=None, override=True
     ):
         """
         Parse a configuration_files with input conf and returns
         parameters and errors by param name.
 
-        :param conf_path: conf file to parse and from get parameters
-        :type conf_path: str
-
-        :param conf: conf to fill with conf_path values and
+        :param str conf_path: conf file to parse and from get parameters
+        :param Configuration conf: conf to fill with conf_path values and
             conf param names.
-        :type conf: canopsis.configuration.Configuration
-
-        :param logger: logger to use in order to trace information/error
-        :type logger: logging.Logger
-
-        :param fill: result is all conf_path content
-        :type fill: bool
-
-        :param override: if True (by default), override self configuration
-        :type override: bool
+        :param Logger logger: logger to use in order to trace information/error
+        :param bool override: if True (by default), override self configuration
         """
 
         conf_resource = None
@@ -133,16 +123,13 @@ class ConfigurationDriver(object):
                 if conf_resource is None:
                     return result
 
-                result = Configuration() if conf is None \
-                    else conf
+                result = Configuration() if conf is None else conf
 
-                # get generic logging message
-                log_message = '{0}/{{0}}/{{1}}'.format(conf_path)
+                for category in self._get_categories(
+                        conf_resource=conf_resource, logger=logger):
 
-                if fill:
-
-                    for category in self._get_categories(
-                            conf_resource=conf_resource, logger=logger):
+                    # do something only for referenced categories
+                    if category in result:
 
                         category = result.setdefault(
                             category, Category(category))
@@ -152,7 +139,14 @@ class ConfigurationDriver(object):
                                 category=category,
                                 logger=logger):
 
-                            param = category.setdefault(name, Parameter(name))
+                            # if param name exists in conf
+                            if name in category:
+                                # copy parameter
+                                param = category[name].copy()
+                            else:  # else create not local parameter
+                                param = Parameter(name, local=False)
+
+                            param = category.setdefault(name, param)
 
                             value = self._get_value(
                                 conf_resource=conf_resource,
@@ -164,71 +158,17 @@ class ConfigurationDriver(object):
                                 if override or param.value in (None, ''):
                                     param.value = value
 
-                else:
-
-                    # for each parsing rule in the ascending order
-                    for category in result:
-
-                        if self._has_category(
-                            conf_resource=conf_resource,
-                            category=category,
-                                logger=logger):
-
-                            for param in category:
-
-                                name = param.name
-
-                                # if parameter_name exists
-                                if self._has_parameter(
-                                    conf_resource=conf_resource,
-                                    category=category,
-                                    param=param,
-                                    logger=logger
-                                ):
-
-                                    # construct generic log message for each
-                                    # name
-                                    option_log_message = '{0} = {{0}}'.format(
-                                        log_message.format(
-                                            category.name, name))
-
-                                    # get sub_category_value
-                                    value = self._get_value(
-                                        conf_resource=conf_resource,
-                                        category=category,
-                                        param=param,
-                                        logger=logger)
-
-                                    if override \
-                                            or param.value not in (None, ''):
-                                        param.value = value
-
-                                    # if an exception occured
-                                    if isinstance(param.value, Exception):
-                                        # set error among errors result
-                                        error_message = \
-                                            option_log_message.format(
-                                                param.value)
-                                        logger.error(error_message)
-
-                                    info_message = option_log_message.format(
-                                        param.value)
-                                    logger.info(info_message)
-
         return result
 
     def set_configuration(self, conf_path, conf, logger):
         """
         Set input conf in input conf_path.
 
-        :param conf_path:
-        :type conf_path: str
+        :param str conf_path:
 
-        :param conf: conf to write to conf_path.
-        :type conf: canopsis.configuration.Configuration
+        :param Configuration conf: conf to write to conf_path.
 
-        :param logger: used to log info/errors
-        :type logger: logging.Logger
+        :param Logger logger: used to log info/errors
         """
 
         result = None
@@ -276,21 +216,20 @@ class ConfigurationDriver(object):
         return result
 
     @staticmethod
-    def get_managers():
+    def get_drivers():
         """
-        Get global defined managers.
+        Get global defined drivers.
         """
 
         return set(ConfigurationDriver._MANAGERS.values())
 
     @staticmethod
-    def get_manager(path):
+    def get_driver(path):
         """
-        Add a conf manager by its path definition.
+        Add a conf driver by its path definition.
 
-        :param path: manager path to add. Must be a full path from a known
+        :param str path: driver path to add. Must be a full path from a known
             package/module
-        :type path: str
         """
 
         # try to get if from global definition
@@ -336,12 +275,9 @@ class ConfigurationDriver(object):
         """
         Get config conf_resource.
 
-        :param conf_path: if not None, the config conf_resource is \
+        :param str conf_path: if not None, the config conf_resource is \
             conf_path content.
-        :type conf_path: str
-
-        :param logger: logger used to log processing information
-        :type logger: logging.Logger
+        :param Logger logger: logger used to log processing information
 
         :return: empty config conf_resource if conf_path is None, else \
             conf_path content.

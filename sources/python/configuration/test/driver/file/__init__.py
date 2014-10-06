@@ -179,8 +179,7 @@ class ConfigurationDriverTest(TestCase):
         conf = self.manager.get_configuration(
             conf_path=self.conf_path,
             conf=self.conf,
-            logger=self.logger,
-            fill=True)
+            logger=self.logger)
 
         self.assertFalse(conf is None)
         self.assertEqual(len(conf), 2)

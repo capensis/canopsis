@@ -32,16 +32,6 @@ INDEXES  = {
     'object': [
         [('crecord_type', 1)]
     ],
-    'perfdata2': [
-        [('co', 1), ('re', 1), ('me', 1)],
-        [('re', 1), ('me', 1)],
-        [('co', 1), ('me', 1)],
-        [('me', 1)],
-        [('tg', 1)]
-    ],
-    'perfdata2_daily': [
-        [('insert_date', 1)]
-    ],
     'events': [
         [
             ('connector_name', 1),
@@ -64,7 +54,7 @@ INDEXES  = {
         [('event_type', -1)],
         [('domain', 1)],
         [('domain', -1)],
-        [('permimeter', 1)],
+        [('perimeter', 1)],
         [('perimeter', -1)],
         [('connector', 1)],
         [('connector', -1)],
@@ -72,16 +62,12 @@ INDEXES  = {
         [('component', -1)],
         [('resource', 1)],
         [('resource', -1)],
-        [('output', 1)],
-        [('output', -1)],
         [('status', 1)],
         [('status', -1)],
         [('criticity', 1)],
         [('criticity', -1)],
         [('ack', 1)],
-        [('ack', -1)],
-        [('timestamp', 1)],
-        [('timestamp', -1)]
+        [('ack', -1)]
 
     ],
     'events_log': [
@@ -103,7 +89,7 @@ INDEXES  = {
         [('event_type', -1)],
         [('domain', 1)],
         [('domain', -1)],
-        [('permimeter', 1)],
+        [('perimeter', 1)],
         [('perimeter', -1)],
         [('connector', 1)],
         [('connector', -1)],
@@ -111,16 +97,12 @@ INDEXES  = {
         [('component', -1)],
         [('resource', 1)],
         [('resource', -1)],
-        [('output', 1)],
-        [('output', -1)],
         [('status', 1)],
         [('status', -1)],
         [('criticity', 1)],
         [('criticity', -1)],
         [('ack', 1)],
         [('ack', -1)],
-        [('timestamp', 1)],
-        [('timestamp', -1)]
     ],
     'entities': [
         [('type', 1)],

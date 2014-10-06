@@ -114,27 +114,6 @@ class DataBase(Middleware):
 
         raise NotImplementedError()
 
-    def _configure(self, unified_conf, *args, **kwargs):
-
-        super(DataBase, self)._configure(
-            unified_conf=unified_conf, *args, **kwargs)
-
-        reconnect = False
-
-        db_properties = (parameter.name for parameter
-            in self.conf[DataBase.CATEGORY])
-
-        for db_property in db_properties:
-            updated_property = self._update_property(
-                unified_conf=unified_conf,
-                param_name=db_property,
-                public=False)
-            if updated_property:
-                reconnect = True
-
-        if reconnect and self.auto_connect:
-            self.reconnect()
-
     def _get_conf_paths(self, *args, **kwargs):
 
         result = super(DataBase, self)._get_conf_paths(*args, **kwargs)
@@ -150,11 +129,22 @@ class DataBase(Middleware):
         result.add_unified_category(
             name=DataBase.CATEGORY,
             new_content=(
-                Parameter(DataBase.DB, self.db),
+                Parameter(DataBase.DB, critical=True),
                 Parameter(
-                    DataBase.JOURNALING, self.journaling, Parameter.bool)))
+                    DataBase.JOURNALING, parser=Parameter.bool, critical=True)
+            )
+        )
 
         return result
+
+    def restart(self, criticals, to_configure=None, *args, **kwargs):
+
+        super(DataBase, self).restart(
+            to_configure=to_configure, criticals=criticals, *args, **kwargs)
+
+        if self._is_critical_category(DataBase.CATEGORY, criticals):
+            if self.auto_connect:
+                self.reconnect()
 
 
 class Storage(DataBase):
@@ -167,7 +157,7 @@ class Storage(DataBase):
     __protocol__ = 'storage'
     """register itself and all subclasses to storage protocol"""
 
-    DATA_ID = 'data_id'  #: db data id
+    DATA_ID = 'id'  #: db data id
 
     INDEXES = 'indexes'
 
@@ -540,18 +530,9 @@ Storage types must be of the same type.'.format(self, target))
 
         result.add_unified_category(
             name=Storage.CATEGORY,
-            new_content=(
-                Parameter(Storage.INDEXES, self.indexes, eval)))
+            new_content=(Parameter(Storage.INDEXES, parser=eval)))
 
         return result
-
-    def _configure(self, unified_conf, *args, **kwargs):
-
-        super(Storage, self)._configure(
-            unified_conf=unified_conf, *args, **kwargs)
-
-        self._update_property(
-            unified_conf=unified_conf, param_name=Storage.INDEXES)
 
     @staticmethod
     def _update_sort(sort):
