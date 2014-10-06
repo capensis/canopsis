@@ -18,6 +18,8 @@
           "itemsPerPage": 5,
           "xtype": "list",
           "listed_crecord_type": "eventlog",
+          "display_record_field": "resource",
+          "record_template" : "<div>Connecteur : {{connector}}</div><div>Composant : {{component}} / Adresse IP : {{address}}</div><div>Hostgroups : {{hostgroups}}</div><div>Ressource : {{resource}}</div><div>Message :&nbsp;<span style=\"line-height: 1.428571429;\">{{output}}</span></div>",
           "title": "Historique",
           "actions_toolbar": [
             "actionbutton-eventnavigation"

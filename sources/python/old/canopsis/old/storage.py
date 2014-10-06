@@ -107,6 +107,11 @@ class Storage(object):
         except ConfigParser.Error:
             self.fetch_limit = 10000
 
+        try:
+            self.no_count_limit = int(CONFIG.get("master", "no_count_limit"))
+        except ConfigParser.Error:
+            self.no_count_limit = 200000
+
         self.mongo_safe = mongo_safe
 
         self.account = account
@@ -417,12 +422,16 @@ class Storage(object):
                 raw_records = []
         else:
 
-            if limit == 0:
-                limit = self.fetch_limit
+            count_limit_reached = backend.count() > self.no_count_limit
 
-            if limit > 1:
-                #change limit artificially to fetch one more result if possible
-                limit += 1
+            if count_limit_reached:
+
+                if limit == 0:
+                    limit = self.fetch_limit
+
+                if limit > 1:
+                    #change limit artificially to fetch one more result if possible
+                    limit += 1
 
             if sort is None:
                 raw_records = backend.find(mfilter, fields=mfields, safe=self.mongo_safe, skip=offset, limit=limit)
@@ -430,7 +439,6 @@ class Storage(object):
                 raw_records = backend.find(mfilter, fields=mfields, safe=self.mongo_safe, skip=offset, limit=limit, sort=sort)
 
 
-            raw_records = list(raw_records)
 
             """
                 Because mongo counts computation time is not acceptable, total is equal
@@ -439,10 +447,19 @@ class Storage(object):
                 (when +1 , this means some other records are availables)
             """
 
-            total = len(raw_records) + offset
+            if count_limit_reached:
+                #When count limit reached, then count is done as described upper
+                raw_records = list(raw_records)
 
-            if limit > 1:
-                raw_records = raw_records[:limit -1]
+                total = len(raw_records) + offset
+
+                if limit > 1:
+                    raw_records = raw_records[:limit -1]
+
+            else:
+                #Otherwise, count is done on the collection with given filter.
+                total = raw_records.count()
+                raw_records = list(raw_records)
 
             # process limit, offset and sort independently of pymongo because sort does not use index
             if count:
