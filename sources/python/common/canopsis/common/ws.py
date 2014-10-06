@@ -20,7 +20,7 @@
 
 from inspect import getargspec
 
-from canopsis.common.utils import ensure_iterable, is_iterable
+from canopsis.common.utils import ensure_iterable, isiterable
 
 from json import loads
 
@@ -35,7 +35,7 @@ def adapt_canopsis_data_to_ember(data):
 
     :param data: data to transform
     """
-    if is_iterable(data, is_str=False):
+    if isiterable(data, is_str=False):
         for item in data:
             adapt_canopsis_data_to_ember(item)
     elif isinstance(data, dict):
@@ -49,7 +49,7 @@ def adapt_canopsis_data_to_ember(data):
 
 
 def adapt_ember_data_to_canopsis(data):
-    if is_iterable(data, is_str=False):
+    if isiterable(data, is_str=False):
         for item in data:
             adapt_ember_data_to_canopsis(item)
     elif isinstance(data, dict):
