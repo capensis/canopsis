@@ -288,8 +288,9 @@ class Archiver(object):
 
 
             # Remove ticket information in case state is back to normal (both ack and ticket declaration case)
-            if 'ticket_declared' in devent and event['status'] == 0:
-                change['ticket_declared'] = {}
+            if 'ticket_declared_author' in devent and event['status'] == 0:
+                change['ticket_declared_author'] = None
+                change['ticket_declared_date'] = None
 
             # Remove ticket information in case state is back to normal (ticket number declaration only case)
             if 'ticket' in devent and event['status'] == 0:
