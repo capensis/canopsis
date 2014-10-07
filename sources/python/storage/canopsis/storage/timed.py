@@ -49,7 +49,7 @@ class TimedStorage(Storage):
         dict(
             tuple(
                 timestamp,
-                dict(data_type, data_value), document id))
+                dict(data_type, data_value), data id))
 
         If timewindow is None, result is all timed document.
 

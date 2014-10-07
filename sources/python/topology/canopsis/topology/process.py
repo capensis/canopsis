@@ -82,8 +82,9 @@ def event_processing(event, ctx=None, **params):
         else:  # in case of entity event
             # get nodes from entity
             entity = context.get_entity(event)
-            entity_id = context.get_entity_id(entity)
-            nodes = topology.find_bound_nodes(entity_id=entity_id)
+            if entity is not None:
+                entity_id = context.get_entity_id(entity)
+                nodes = topology.find_bound_nodes(entity_id=entity_id)
 
         # iterate on nodes
         for node in nodes:

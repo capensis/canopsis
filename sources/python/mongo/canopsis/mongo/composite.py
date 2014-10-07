@@ -108,8 +108,11 @@ class MongoCompositeStorage(MongoStorage, CompositeStorage):
                     # append data in result
                     result.append(data)
 
-        if result is not None and one_result and result:
-            result = result[0]
+        if result is not None and one_result:
+            if result:
+                result = result[0]
+            else:
+                result = None
 
         if with_count:
             result = result, count
