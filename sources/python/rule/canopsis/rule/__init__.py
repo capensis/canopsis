@@ -233,7 +233,7 @@ def get_task_with_params(task_conf, task_name=None, cached=True):
                 task_conf = task_conf[task_name]
 
     # get dedicated callable task without params
-    if isinstance(task_conf, str):
+    if isinstance(task_conf, basestring):
         try:
             task = get_task(path=task_conf, cached=cached)
         except ImportError as ie:
