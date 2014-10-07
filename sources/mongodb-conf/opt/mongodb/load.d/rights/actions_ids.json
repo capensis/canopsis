@@ -1,0 +1,68 @@
+{
+    "showview_service": {
+            "desc": "action description blah bla"
+            },
+    "list_search": {
+            "desc": "action description blah bla"
+            },
+    "list_filters": {
+            "desc": "action description blah bla"
+            },
+    "aclconfig": {
+            "desc": "action description blah bla"
+            },
+    "authsystems": {
+            "desc": "action description blah bla"
+            },
+    "enginesconfig": {
+            "desc": "action description blah bla"
+            },
+    "pluginsconfig": {
+            "desc": "action description blah bla"
+            },
+    "uisettings": {
+            "desc": "action description blah bla"
+            },
+    "actionbutton_ack": {
+            "desc": "action description blah bla"
+            },
+    "actionbutton_cancel": {
+            "desc": "action description blah bla"
+            },
+    "actionbutton_changestate": {
+            "desc": "action description blah bla"
+            },
+    "actionbutton_eventnavigation": {
+            "desc": "action description blah bla"
+            },
+    "actionbutton_history": {
+            "desc": "action description blah bla"
+            },
+    "actionbutton_incident": {
+            "desc": "action description blah bla"
+            },
+    "actionbutton_info": {
+            "desc": "action description blah bla"
+            },
+    "actionbutton_ticketnumber": {
+            "desc": "action description blah bla"
+            },
+    "showview_view_event": {
+            "desc": "action description blah bla"
+            },
+    "showview_view_selectors": {
+            "desc": "action description blah bla"
+            },
+    "showview_view_jobs": {
+            "desc": "action description blah bla"
+            },
+    "showview_view_filters": {
+            "desc": "action description blah bla"
+            },
+    "showview_view_services": {
+            "desc": "action description blah bla"
+            },
+    "showview_view_series": {
+            "desc": "action description"
+            }
+}
