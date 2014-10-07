@@ -92,14 +92,14 @@ class RightsTest(TestCase):
         self.rights.create_composite('composite_test1', rights)
         self.assertEqual(
             self.rights['composite_storage'].get_elements(
-                query={'type':'composite'})[0]['_id'],
+                query={'crecord_type':'composite'})[0]['_id'],
             'composite_test1'
             )
 
         self.rights.create_composite('composite_test2', rights_scnd)
         self.assertEqual(
             self.rights['composite_storage'].get_elements(
-                query={'type':'composite'})[1]['_id'],
+                query={'crecord_type':'composite'})[1]['_id'],
             'composite_test2'
             )
 
@@ -107,14 +107,14 @@ class RightsTest(TestCase):
         self.rights.create_profile('profile_test1', ['composite_test1'])
         self.assertEqual(
             self.rights['profile_storage'].get_elements(
-                query={'type':'profile'})[0]['_id'],
+                query={'crecord_type':'profile'})[0]['_id'],
             'profile_test1'
             )
 
         self.rights.create_profile('profile_test2', ['composite_test2'])
         self.assertEqual(
             self.rights['profile_storage'].get_elements(
-                query={'type':'profile'})[1]['_id'],
+                query={'crecord_type':'profile'})[1]['_id'],
             'profile_test2'
             )
 
@@ -122,14 +122,14 @@ class RightsTest(TestCase):
         self.rights.create_role('role_test1bis', 'profile_test1')
         self.assertEqual(
             self.rights['role_storage'].get_elements(
-                query={'type':'role'})[0]['_id'],
+                query={'crecord_type':'role'})[0]['_id'],
             'role_test1bis'
             )
 
         self.rights.create_user('jharris', 'role_test1bis')
         self.assertEqual(
             self.rights['user_storage'].get_elements(
-                query={'type':'user'})[0]['_id'],
+                query={'crecord_type':'user'})[0]['_id'],
             'jharris'
             )
 
