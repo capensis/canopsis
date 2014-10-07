@@ -23,28 +23,6 @@
 		"listed_crecord_type": {
 			"type": "string",
 			"enum": [
-				"topology",
-				"filter",
-				"widgetpreferences",
-				"userview",
-				"profile",
-				"job",
-				"account",
-				"rule",
-				"selector",
-				"event",
-				"curve",
-				"account",
-				"slacrit",
-				"serie",
-				"filter_rule",
-				"defaultrule",
-				"consolidation",
-				"account",
-				"role",
-				"right",
-				"derogation",
-				"group",
 				"event"
 			],
 			"default": "group",
@@ -72,7 +50,16 @@
 			"items": {
 				"type": "string"
 			},
-			"reorderable": true
+			"reorderable": true,
+			"default":[
+			"component",
+			"resource",
+			"output",
+			"state",
+			"status",
+			"ack",
+			"timestamp"
+			]
 		},
 		"selection_toolbar": {
 			"type": "array",
@@ -125,7 +112,8 @@
 		},
 		"default_filter": {
 			"type": "string",
-			"role": "cfilter"
+			"role": "cfilter",
+			"default": "{\"$and\":[{\"$or\":[{\"type_message\":\"scenario\"}]}]}"
 		},
 		"maximized_column_index": {
 			"type": "integer",
