@@ -27,6 +27,7 @@ from canopsis.configuration.configurable.decorator import (
 from canopsis.timeserie.timewindow import Period, get_offset_timewindow
 from canopsis.middleware.registry import MiddlewareRegistry
 from canopsis.context.manager import Context
+from canopsis.storage.timed import TimedStorage
 
 DEFAULT_PERIOD = Period(**{Period.WEEK: 1})  # save data each week
 
@@ -45,6 +46,10 @@ class PerfData(MiddlewareRegistry):
     META_STORAGE = 'meta_storage'
 
     DATA_SCOPE = 'metric'
+
+    META_TIMESTAMP = TimedStorage.TIMESTAMP
+    META_VALUE = TimedStorage.VALUE
+    META_ID = TimedStorage.DATA_ID
 
     def __init__(
         self,
