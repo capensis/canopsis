@@ -256,6 +256,9 @@ class Rights(MiddlewareRegistry):
 
         self.composite_storage.put_element(comp_name, new_comp)
 
+        if not comp_rights:
+            return comp_name
+
         # Use add_right to check if the action is referenced
         for right_id in comp_rights:
             self.add_right(comp_name,
@@ -288,6 +291,9 @@ class Rights(MiddlewareRegistry):
                        }
 
         self.profile_storage.put_element(p_name, new_profile)
+
+        if not p_composites:
+            return p_name
 
         for comp in p_composites:
             self.add_composite(p_name, 'profile', comp)
@@ -629,7 +635,9 @@ class Rights(MiddlewareRegistry):
             new_role['profile'] = r_profile
         else:
             new_role.setdefault('profile', []).append(r_profile)
+
         self.role_storage.put_element(r_name, new_role)
+
         return r_name
 
     def create_user(self, u_id, u_role,
