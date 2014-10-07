@@ -55,6 +55,14 @@
             "timestamp",
             "author",
             "event_type"
+          ],
+          "searchable_columns": [
+            "connector_name",
+            "connector",
+            "component",
+            "resource",
+            "domain",
+            "perimeter"
           ]
         }
       }
