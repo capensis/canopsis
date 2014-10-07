@@ -31,6 +31,9 @@ of state::
 For logical reasons, the propagate action runned such as the last action.
 """
 
+from time import sleep
+
+from canopsis.rule import register_task
 from canopsis.common.utils import lookup
 from canopsis.topology.manager import Topology
 from canopsis.check import Check
@@ -39,6 +42,7 @@ from canopsis.topology.process import SOURCES, NODE
 topology = Topology()
 
 
+@register_task(name='topology.change_state')
 def change_state(event, ctx, state=None, **kwargs):
     """
     Change of state for node ctx.
@@ -54,6 +58,7 @@ def change_state(event, ctx, state=None, **kwargs):
     topology.push_node(node)
 
 
+@register_task(name='topology.worst_state')
 def worst_state(event, ctx, **kwargs):
     """
     Check the worst state among source nodes.
@@ -62,6 +67,7 @@ def worst_state(event, ctx, **kwargs):
     change_state_from_source_nodes(event=event, ctx=ctx, f=max)
 
 
+@register_task(name='topology.best_state')
 def best_state(event, ctx, **kwargs):
     """
     Get the best state among source nodes.
@@ -70,6 +76,7 @@ def best_state(event, ctx, **kwargs):
     change_state_from_source_nodes(event=event, ctx=ctx, f=min)
 
 
+@register_task(name='topology.change_state_from_source_nodes')
 def change_state_from_source_nodes(event, ctx, f, **kwargs):
     """
     Change ctx node state which equals to f result on source nodes.

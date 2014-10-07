@@ -260,13 +260,16 @@ class Topology(MiddlewareRegistry):
         Get next nodes from input source node.
         """
 
-        next_ids = node[Topology.NEXT]
+        result = []
 
-        path = {
-            Topology.TYPE: Topology.TOPOLOGY_NODE_TYPE
-        }
+        if Topology.NEXT in node:
+            next_ids = node[Topology.NEXT]
 
-        result = self[Topology.STORAGE].get(path=path, data_ids=next_ids)
+            path = {
+                Topology.TYPE: Topology.TOPOLOGY_NODE_TYPE
+            }
+
+            result = self[Topology.STORAGE].get(path=path, data_ids=next_ids)
 
         return result
 

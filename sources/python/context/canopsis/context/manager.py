@@ -123,7 +123,7 @@ class Context(MiddlewareRegistry):
 
         else:
             result = context.copy()
-            result[Storage.NAME] = name
+            result[Context.NAME] = name
 
         # if entity does not exists, create it if specified
         if result is None and create_if_not_exists:

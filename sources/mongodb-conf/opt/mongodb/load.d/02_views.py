@@ -43,7 +43,11 @@ def init():
             filepath = os.path.join(path, filename)
 
             with open(filepath) as f:
-                data = json.loads(f.read())
+                try:
+                    data = json.loads(f.read())
+                except Exception, e:
+                    print ('\n + Error while loading JSON file {} : {}, aborting...\n'.format(filepath, e))
+                    sys.exit(1)
 
                 try:
                     _id = data.pop('id')
