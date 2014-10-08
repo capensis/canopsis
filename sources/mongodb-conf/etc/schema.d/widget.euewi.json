@@ -85,7 +85,7 @@
 			"items": {
 				"type": "string"
 			},
-			"default": ["Pagination"],
+			"default": ["Pagination","Customfilter","Arraysearch"],
 			"reorderable": true
 		},
 		"xtype": {
