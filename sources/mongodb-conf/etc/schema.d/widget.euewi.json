@@ -8,7 +8,7 @@
 		"keys":["title", "refreshInterval", "listed_crecord_type", "itemsPerPage","default_column_sort", "selection_toolbar", "actions_toolbar", "default_filter"]
 	},{
 		"title": "Columns",
-		"keys":["displayed_columns", "item_actions"]
+		"keys":["displayed_columns", "item_actions","record_template","display_record_field"]
 	},{
 		"title": "Filters",
 		"keys":["filters"]
@@ -43,7 +43,15 @@
 		"default_column_sort": {
 			"type": "object",
 			"role": "sortable",
-			"default_value": "timestamp"
+			"default_value": "timestamp",
+			"default": "timestamp"
+		},
+		"record_template": {
+			"type": "string",
+			"role":"richtext"
+		},
+		"display_record_field": {
+			"type": "string"
 		},
 		"displayed_columns": {
 			"isUserPreference": true,
@@ -84,7 +92,7 @@
 			"items": {
 				"type": "string"
 			},
-			"default": ["pagination"],
+			"default": ["Pagination","Customfilter","Arraysearch","Sortablearray","History","ack","Infobutton","Sendevent"],
 			"reorderable": true
 		},
 		"xtype": {
@@ -126,7 +134,7 @@
 		},
 		"step_template": {
 			"type": "string",
-			"default": "<tr>{{#each steps}}<tr><td>{{resource}}</td><td>{{output}}</td><td>{{state}}</td><td>{{timestamp timestamp}}</td>{{/each}}</tr>"
+			"default": "<tr>{{#each steps}}<tr><td>{{resource}}</td><td>{{output}}</td><td>{{criticity state}}</td><td>{{status}}</td><td>{{timestamp timestamp}}</td>{{/each}}</tr>"
 		}
 	}
 }
