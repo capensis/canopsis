@@ -53,7 +53,7 @@ class TimeSerie(Configurable):
     __slots__ = ('period', 'max_points', 'round_time', 'aggregation', 'fill')
 
     MAX_POINTS = 'max_points'
-    DEFAULT_AGGREGATION = 'aggregation'
+    AGGREGATION = 'aggregation'
     FILL = 'fill'
     PERIOD = 'period'
     ROUND_TIME = 'round_time'
