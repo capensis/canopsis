@@ -61,7 +61,7 @@ class PerfDataTest(TestCase):
             timewindow=timewindow,
             with_meta=True)
 
-        self.assertEqual(meta, _meta[0][1])
+        self.assertEqual(meta, _meta[0][PerfData.META_VALUE])
 
         self.assertEqual([tv0, tv1, tv2], data)
 
@@ -77,7 +77,7 @@ class PerfDataTest(TestCase):
             timewindow=timewindow,
             with_meta=True)
 
-        self.assertEqual(meta, _meta[0][1])
+        self.assertEqual(meta, _meta[0][PerfData.META_VALUE])
 
         self.assertEqual(data, [tv0, tv1])
 
@@ -87,14 +87,14 @@ class PerfDataTest(TestCase):
             timewindow=timewindow,
             with_meta=True)
 
-        self.assertEqual(meta, _meta[0][1])
+        self.assertEqual(meta, _meta[0][PerfData.META_VALUE])
 
         # get all data
         data, _meta = self.perfdata.get(
             metric_id=metric_id,
             with_meta=True)
 
-        self.assertEqual(meta, _meta[0][1])
+        self.assertEqual(meta, _meta[0][PerfData.META_VALUE])
 
         self.assertEqual(len(data), 3)
 

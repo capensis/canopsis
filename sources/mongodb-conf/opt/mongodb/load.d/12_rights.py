@@ -1,5 +1,6 @@
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# --------------------------------
+#--------------------------------
 # Copyright (c) 2014 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
@@ -18,21 +19,25 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-[MIDDLEWARE]
-uri=
-protocol=
-data_type=
-data_scope=
-host=localhost
-port=
-path=
-auto_connect=true
-safe=true
-conn_timeout=20000
-in_timetout=20000
-out_timetout=100
-ssl=false
-ssl_key=
-ssl_cert=
-user=
-pwd=
+from canopsis.old.account import Account
+from canopsis.organisation.rights import Rights
+
+from os.path import join
+import json
+import sys
+
+root = Account(user="root", group="root")
+right_module = Rights()
+actions_path = join(sys.prefix, 'opt/mongodb/load.d/rights/actions_ids.json')
+
+def init():
+    json_data = open(actions_path)
+    data = json.load(json_data)
+
+    for action_id in data:
+        right_module.add(action_id,
+                         data[action_id].get('desc', "Empty desc"))
+
+def update():
+    init()
+

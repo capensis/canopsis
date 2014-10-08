@@ -45,7 +45,7 @@ class Rights(MiddlewareRegistry):
     def get_from_storage(self, s_type):
         def get_from_storage_(elem):
             return self[s_type + '_storage'].get_elements(
-                ids=elem, query={'type': s_type})
+                ids=elem, query={'crecord_type': s_type})
         return get_from_storage_
 
     def _configure(self, unified_conf, *args, **kwargs):
@@ -77,7 +77,7 @@ class Rights(MiddlewareRegistry):
             ``None`` otherwise
         """
 
-        action = {'type': 'action',
+        action = {'crecord_type': 'action',
                   'desc': a_desc}
         return self['action_storage'].put_element(a_id, action)
 
@@ -185,7 +185,7 @@ class Rights(MiddlewareRegistry):
 
         # If it does not exist, create it
         if not self.check(entity, right_id, 0):
-            entity['rights'].update({right_id: {'type': 'right',
+            entity['rights'].update({right_id: {'crecord_type': 'right',
                                                 'checksum': checksum
                                                 }
                                      })
@@ -250,11 +250,14 @@ class Rights(MiddlewareRegistry):
         if self.get_composite(comp_name):
             return None
 
-        new_comp = {'type': 'composite',
+        new_comp = {'crecord_type': 'composite',
                     'rights': {}
                     }
 
         self.composite_storage.put_element(comp_name, new_comp)
+
+        if not comp_rights:
+            return comp_name
 
         # Use add_right to check if the action is referenced
         for right_id in comp_rights:
@@ -283,11 +286,14 @@ class Rights(MiddlewareRegistry):
         if self.get_profile(p_name):
             return None
 
-        new_profile = {'type': 'profile',
+        new_profile = {'crecord_type': 'profile',
                        'composites': []
                        }
 
         self.profile_storage.put_element(p_name, new_profile)
+
+        if not p_composites:
+            return p_name
 
         for comp in p_composites:
             self.add_composite(p_name, 'profile', comp)
@@ -316,7 +322,7 @@ class Rights(MiddlewareRegistry):
 
             # remove the entity from every other entities that use it
             for entity in self[to_storage].get_elements(
-                    query={'type': t_type}):
+                    query={'crecord_type': t_type}):
                 if e_type in entity and e_name in entity[e_type]:
                     entity[e_type].remove(e_name)
                     self[to_storage].put_element(entity['_id'], entity)
@@ -338,7 +344,7 @@ class Rights(MiddlewareRegistry):
         if self.get_role(r_name):
             self['role_storage'].remove_elements(r_name)
 
-            for user in self['user_storage'].get_elements(query={'type':'user'}):
+            for user in self['user_storage'].get_elements(query={'crecord_type':'user'}):
                 if 'role' in entity and r_name == entity['role']:
                     entity.pop('role', None)
                     self['user_storage'].put_element(entity['_id'], entity)
@@ -520,7 +526,7 @@ class Rights(MiddlewareRegistry):
     # e_name can be a profile or a composite
     def remove_entity(self, from_name, from_type, e_name, e_type):
         entity = self[from_type + '_storage'].get_elements(
-            query={'type': from_type}, ids=from_name)
+            query={'crecord_type': from_type}, ids=from_name)
 
         if e_type in entity and e_name in entity[e_type]:
             entity[e_type].remove(e_name)
@@ -624,12 +630,14 @@ class Rights(MiddlewareRegistry):
         if self.get_role(r_name):
             return r_name
 
-        new_role = {'type': 'role'}
+        new_role = {'crecord_type': 'role'}
         if isinstance(r_profile, list):
             new_role['profile'] = r_profile
         else:
             new_role.setdefault('profile', []).append(r_profile)
+
         self.role_storage.put_element(r_name, new_role)
+
         return r_name
 
     def create_user(self, u_id, u_role,
@@ -657,7 +665,7 @@ class Rights(MiddlewareRegistry):
         if not self.get_role(u_role):
             return None
 
-        user = {'type': 'user',
+        user = {'crecord_type': 'user',
                 'role': u_role}
 
         if contact and isinstance(contact, dict):
@@ -787,7 +795,7 @@ class Rights(MiddlewareRegistry):
             return None
 
         entity = self[e_type + '_storage'].get_elements(ids=e_id,
-                                                        query={'type': e_type})
+                                                        query={'crecord_type': e_type})
 
         return entity.setdefault(field, None)
 

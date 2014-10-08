@@ -23,31 +23,9 @@
 		"listed_crecord_type": {
 			"type": "string",
 			"enum": [
-				"topology",
-				"filter",
-				"widgetpreferences",
-				"userview",
-				"profile",
-				"job",
-				"account",
-				"rule",
-				"selector",
-				"event",
-				"curve",
-				"account",
-				"slacrit",
-				"serie",
-				"filter_rule",
-				"defaultrule",
-				"consolidation",
-				"account",
-				"role",
-				"right",
-				"derogation",
-				"group",
 				"event"
 			],
-			"default": "group",
+			"default": "event",
 			"role": "simplelist"
 		},
 		"refreshableWidget":  {
@@ -64,7 +42,8 @@
 		},
 		"default_column_sort": {
 			"type": "object",
-			"role": "sortable"
+			"role": "sortable",
+			"default_value": "timestamp"
 		},
 		"displayed_columns": {
 			"isUserPreference": true,
@@ -72,7 +51,17 @@
 			"items": {
 				"type": "string"
 			},
-			"reorderable": true
+			"reorderable": true,
+			"default":[
+			"connector",
+			"component",
+			"resource",
+			"output",
+			"state",
+			"status",
+			"ack",
+			"timestamp"
+			]
 		},
 		"selection_toolbar": {
 			"type": "array",
@@ -95,6 +84,7 @@
 			"items": {
 				"type": "string"
 			},
+			"default": ["pagination"],
 			"reorderable": true
 		},
 		"xtype": {
@@ -125,7 +115,8 @@
 		},
 		"default_filter": {
 			"type": "string",
-			"role": "cfilter"
+			"role": "cfilter",
+			"default": "{\"$and\":[{\"$or\":[{\"type_message\":\"scenario\"}]}]}"
 		},
 		"maximized_column_index": {
 			"type": "integer",
@@ -135,7 +126,7 @@
 		},
 		"step_template": {
 			"type": "string",
-			"role": "richtext"
+			"default": "<tr>{{#each steps}}<tr><td>{{resource}}</td><td>{{output}}</td><td>{{state}}</td><td>{{timestamp timestamp}}</td>{{/each}}</tr>"
 		}
 	}
 }
