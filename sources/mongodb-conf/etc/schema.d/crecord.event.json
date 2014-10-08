@@ -8,7 +8,8 @@
 	"properties": {
 		"event_type": {
 			"type": "string",
-			"required": true
+			"required": true,
+			"role": "translator"
 		},
 		"source_type": {
 			"type": "string",
