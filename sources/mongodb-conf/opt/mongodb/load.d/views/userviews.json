@@ -28,6 +28,9 @@
             "Pagination",
             "Crud",
             "Showviewbutton"
+          ],
+          "searchable_columns": [
+            "crecord_name"
           ]
         }
       }
