@@ -77,9 +77,14 @@ class Rights(MiddlewareRegistry):
             ``None`` otherwise
         """
 
-        action = {'crecord_type': 'action',
-                  'desc': a_desc}
-        return self['action_storage'].put_element(a_id, action)
+        result = self['action_storage'].put_element(
+            a_id, { 'crecord_type': 'action', 'desc': a_desc }
+            )
+
+        if not result:
+            self.logger.error('Error while referencing action {0}'.format(a_id))
+
+        return result
 
     # Check if an entity has the flags for a specific rigjt
     # The entity must have a rights field with a rights maps within
@@ -95,6 +100,7 @@ class Rights(MiddlewareRegistry):
         """
 
         if not entity or not entity.get('rights', None):
+            self.logger.error('Entity empty or has no rights field')
             return False
 
         found = entity['rights'].get(right_id, None)
@@ -168,6 +174,9 @@ class Rights(MiddlewareRegistry):
 
         # Action not referenced, can't create a right
         if not self.get_action(right_id):
+            self.logger.error(
+                'Can not create right, the action {0} is not referenced'.format(right_id)
+                )
             return 0
 
         entity = None
@@ -178,6 +187,9 @@ class Rights(MiddlewareRegistry):
             entity = self[e_type].get_elements(ids=e_name)
 
         if not entity:
+            self.logger.error(
+                'Can not create right, entity {0} is empty or does not exist'.format(e_name)
+                )
             return 0
 
         if not entity.get('rights', None):
@@ -219,7 +231,7 @@ class Rights(MiddlewareRegistry):
 
         if (entity['rights']
             and entity['rights'][right_id]
-                and entity['rights'][right_id]['checksum'] >= checksum):
+            and entity['rights'][right_id]['checksum'] >= checksum):
 
             # remove the permissions passed in checksum
             entity['rights'][right_id]['checksum'] ^= checksum
@@ -249,6 +261,9 @@ class Rights(MiddlewareRegistry):
 
         # Do nothing if it already exists
         if self.get_group(comp_name):
+            self.logger.error(
+                'Can not create group, group {0} already exists'.format(comp_name)
+                )
             return None
 
         new_comp = {'crecord_type': 'group',
@@ -285,6 +300,9 @@ class Rights(MiddlewareRegistry):
 
         # Do nothing if it already exists
         if self.get_profile(p_name):
+            self.logger.error(
+                'Can not create group, group {0} already exists'.format(comp_name)
+                )
             return None
 
         new_profile = {'crecord_type': 'profile',
@@ -330,6 +348,9 @@ class Rights(MiddlewareRegistry):
 
             return True
 
+        self.logger.error(
+            'Can not delete entity, entity {0} does not exist'.format(e_name)
+            )
         return False
 
     # to be removed when user module is created
@@ -352,6 +373,9 @@ class Rights(MiddlewareRegistry):
 
             return True
 
+        self.logger.error(
+            'Can not delete role, role {0} does not exist'.format(r_name)
+            )
         return False
 
     def delete_user(self, u_name):
@@ -402,16 +426,12 @@ class Rights(MiddlewareRegistry):
             comp_rights: specified if the group has to be created beforehand
         Returns:
             ``True`` if the group was added to the entity
-            ``False`` otherwise
         """
 
         e_type += '_storage'
 
         if not self.get_group(comp_name):
-            if comp_rights:
-                self.create_group(comp_rights, comp_name)
-            else:
-                return False
+            self.create_group(comp_rights, comp_name)
 
         entity = self[e_type].get_elements(ids=e_name)
         if not 'group' in entity or not comp_name in entity['group']:
@@ -478,10 +498,7 @@ class Rights(MiddlewareRegistry):
 
         profile = self.get_profile(p_name)
         if not profile:
-            if p_groups:
-                self.create_profile(p_name, p_groups)
-            else:
-                return False
+            self.create_profile(p_name, p_groups)
 
         # retrieve the profile
         if profile:
@@ -509,10 +526,7 @@ class Rights(MiddlewareRegistry):
 
         role = self.get_role(r_name)
         if not role:
-            if r_profile:
-                self.create_role(r_name, r_profile)
-            else:
-                return False
+            self.create_role(r_name, r_profile)
 
         # retrieve the profile
         if role:
@@ -662,9 +676,6 @@ class Rights(MiddlewareRegistry):
 
         if user:
             return user
-
-        if not self.get_role(u_role):
-            return None
 
         user = {'crecord_type': 'user',
                 'role': u_role}
