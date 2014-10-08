@@ -9,6 +9,12 @@
 	},{
 		"title": "Login",
 		"keys": ["login_footer"]
+	},{
+		"title": "Editors",
+		"keys": ["editors"]
+	},{
+		"title": "Key bindings",
+		"keys": ["keybindings"]
 	}],
 	"properties": {
 		"title": {
@@ -41,6 +47,21 @@
 			"type": "string",
 			"role": "stringclassifiedcrecordselector",
 			"crecordtype": "view"
+		},
+		"editors": {
+			"title": "Editors",
+			"description": "Editor overrides for schema types",
+			"type": "object",
+			"role": "simpledict"
+		},
+		"keybindings": {
+			"title": "Key bindings",
+			"description": "Web application key bindings",
+			"type": "array",
+			"items": {
+				"type": "object",
+				"role": "stringpair"
+			}
 		}
 	}
 }

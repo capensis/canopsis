@@ -20,13 +20,45 @@
 
 from inspect import getargspec
 
-from canopsis.common.utils import ensure_iterable
+from canopsis.common.utils import ensure_iterable, isiterable
 
 from json import loads
-
 from bottle import request
-
 from functools import wraps
+import traceback
+
+
+def adapt_canopsis_data_to_ember(data):
+    """
+    Transform canopsis data to ember data (in changing ``id`` to ``cid``).
+
+    :param data: data to transform
+    """
+    if isiterable(data, is_str=False):
+        for item in data:
+            adapt_canopsis_data_to_ember(item)
+    elif isinstance(data, dict):
+        if 'id' in data:
+            data['cid'] = data['id']
+            del data['id']
+        if 'eid' in data:
+            data['id'] = data['eid']
+        for item in data.values():
+            adapt_canopsis_data_to_ember(item)
+
+
+def adapt_ember_data_to_canopsis(data):
+    if isiterable(data, is_str=False):
+        for item in data:
+            adapt_ember_data_to_canopsis(item)
+    elif isinstance(data, dict):
+        if 'id' in data:
+            data['eid'] = data['id']
+        if 'cid' in data:
+            data['id'] = data['cid']
+            del data['cid']
+        for item in data.values():
+            adapt_ember_data_to_canopsis(item)
 
 
 def response(data):
@@ -45,6 +77,9 @@ def response(data):
     else:
         result_data = None if data is None else ensure_iterable(data)
         total = 0 if result_data is None else len(result_data)
+
+    # apply transformation for client
+    adapt_canopsis_data_to_ember(result_data)
 
     result = {
         'total': total,
@@ -119,19 +154,30 @@ class route(object):
                 if param is not None:
                     try:
                         kwargs[body_param] = loads(param)
+
                     except ValueError:  # error while deserializing
                         # get the str value and cross fingers ...
                         kwargs[body_param] = param
 
+            # adapt ember data to canopsis data
+            adapt_ember_data_to_canopsis(args)
+            adapt_ember_data_to_canopsis(kwargs)
+
             try:
                 result_function = function(*args, **kwargs)
+
             except Exception as e:
                 # if an error occured, get a failure message
                 result = {
                     'total': 0,
                     'success': False,
-                    'data': None,
-                    'msg': e.message}
+                    'data': {
+                        'traceback': traceback.format_exc(),
+                        'type': str(type(e)),
+                        'msg': str(e)
+                    }
+                }
+
             else:
                 # else use self.response
                 result = self.response(result_function)
@@ -177,8 +223,11 @@ class route(object):
 
         # get required header parameters without body parameters
         required_header_params = args[:len(args) - len_defaults]
-        required_header_params = [param for param in required_header_params
-            if param not in self.payload]
+        required_header_params = [
+            param
+            for param in required_header_params
+            if param not in self.payload
+        ]
 
         # add routes with optional parameters
         for i in range(len(optional_header_params) + 1):

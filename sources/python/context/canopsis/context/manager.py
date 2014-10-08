@@ -90,18 +90,45 @@ class Context(MiddlewareRegistry):
 
         return self[Context.CTX_STORAGE].get_elements(ids=ids)
 
-    def get_entity(self, event):
+    def get_entity(self, event, from_base=False, create_if_not_exists=False):
         """
         Get event entity.
+
+        :param bool from_base: If True (False by default), check return entity
+            from base, otherwise, return entity information from the event.
+        :param bool create_if_not_exists: Create the event entity if it does
+            not exists (False by default)
         """
+
+        result = {}
 
         _type = event['source_type']
 
-        name = event[Storage.DATA_ID]
+        if Storage.DATA_ID in event:
+            name = event[Storage.DATA_ID]
+        else:
+            name = event[_type]
 
-        context = event
+        # get the right context
+        context = {Context.TYPE: _type}
+        for ctx in self.context:
+            if ctx in event:
+                context[ctx] = event[ctx]
+        # remove field which is the name
+        if _type in context:
+            del context[_type]
 
-        result = self.get(_type=_type, names=name, context=context)
+        if from_base:
+            result = self.get(_type=_type, names=name, context=context)
+
+        else:
+            result = context.copy()
+            result[Context.NAME] = name
+
+        # if entity does not exists, create it if specified
+        if result is None and create_if_not_exists:
+            result = {Context.NAME: name}
+            self.put(_type=_type, entity=result, context=context)
 
         return result
 

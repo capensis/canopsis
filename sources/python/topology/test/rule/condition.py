@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 # --------------------------------
 # Copyright (c) 2014 "Capensis" [http://www.capensis.com]
@@ -17,22 +18,3 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
-
-[MIDDLEWARE]
-uri=
-protocol=
-data_type=
-data_scope=
-host=localhost
-port=
-path=
-auto_connect=true
-safe=true
-conn_timeout=20000
-in_timetout=20000
-out_timetout=100
-ssl=false
-ssl_key=
-ssl_cert=
-user=
-pwd=

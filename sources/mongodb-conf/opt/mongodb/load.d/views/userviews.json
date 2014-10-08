@@ -26,7 +26,11 @@
             "Sortablearray",
             "Arraysearch",
             "Pagination",
-            "Crud"
+            "Crud",
+            "Showviewbutton"
+          ],
+          "searchable_columns": [
+            "crecord_name"
           ]
         }
       }

@@ -125,7 +125,6 @@ class CompositeStorage(Storage):
         result = str(uuid()) if shared_id is None else shared_id
 
         # get an iterable version of input data
-        #print 'plop', data
         data_to_share = ensure_iterable(data)
 
         for dts in data_to_share:
@@ -137,7 +136,7 @@ class CompositeStorage(Storage):
                 # decompose extended data into a list
                 dts = []
                 for ed in extended_data:
-                    dts += ed
+                    dts.append(ed)
             else:
                 dts = [dts]
 
@@ -276,6 +275,7 @@ class CompositeStorage(Storage):
         :return: data path, data id
         :rtype: tuple
         """
+
         path = {field: data[field] for field in data if field in self.path}
 
         result = path, data[Storage.DATA_ID]

@@ -271,23 +271,28 @@ class ConfigurableRegistry(Configurable):
 
         foreigns = unified_conf[Configuration.FOREIGNS]
 
-        # for all parameters among foreign parameters
-        for parameter in foreigns:
-            # if name matches with a configurable name
-            if parameter.name.endswith(
-                    ConfigurableRegistry.CONFIGURABLE_SUFFIX):
-                name = parameter.name[
-                    :-len(ConfigurableRegistry.CONFIGURABLE_SUFFIX)]
-                # try update it
-                self._configurables[name] = parameter.value
+        if foreigns:
+            # get len of suffixes in order to extract sub configurable names
+            lenconfsuffix = len(ConfigurableRegistry.CONFIGURABLE_SUFFIX)
+            lenconftsuffix = len(ConfigurableRegistry.CONFIGURABLE_TYPE_SUFFIX)
 
-            # if name matches with a configurable type name
-            elif parameter.name.endswith(
-                    ConfigurableRegistry.CONFIGURABLE_TYPE_SUFFIX):
-                name = parameter.name[
-                    :-len(ConfigurableRegistry.CONFIGURABLE_TYPE_SUFFIX)]
-                # try to update it
-                self._configurable_types[name] = parameter.value
+            # for all parameters among foreign parameters
+            for parameter in foreigns:
+                # if name matches with a configurable name
+                if parameter.name.endswith(
+                        ConfigurableRegistry.CONFIGURABLE_SUFFIX
+                ):
+                    name = parameter.name[:-lenconfsuffix]
+                    # try update it
+                    self._configurables[name] = parameter.value
+
+                # if name matches with a configurable type name
+                elif parameter.name.endswith(
+                        ConfigurableRegistry.CONFIGURABLE_TYPE_SUFFIX
+                ):
+                    name = parameter.name[:-lenconftsuffix]
+                    # try to update it
+                    self._configurable_types[name] = parameter.value
 
     @property
     def configurables(self):

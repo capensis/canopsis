@@ -41,7 +41,7 @@ A topology rule use the condition ``new_state``
 
 from canopsis.topology.manager import Topology
 from canopsis.context.manager import Context
-from canopsis.rule import process_rule, RULE
+from canopsis.rule import process_rule, RULE, register_task
 from canopsis.event import Event
 from canopsis.check import Check
 
@@ -56,6 +56,7 @@ PUBLISHER = 'publisher'
 WEIGHT = 'weight'
 
 
+@register_task(name='topology.event_processing')
 def event_processing(event, ctx=None, **params):
     """
     Process input event in getting topology nodes bound to input event entity.
@@ -67,6 +68,9 @@ def event_processing(event, ctx=None, **params):
 
     nodes = []
 
+    if ctx is None:
+        ctx = {}
+
     # TODO: remove when Check event will be used
     # apply processing only in case of check event
     if event_type == Check.get_type():
@@ -76,44 +80,48 @@ def event_processing(event, ctx=None, **params):
         # in case of topology node
         if source_type == Topology.TOPOLOGY_NODE_TYPE:
              # get nodes from the event topology node id
-            nodes = topology.get_nodes(event[Topology.ID])
+            nodes = [topology.get_nodes(event[Topology.ID])]
 
         else:  # in case of entity event
             # get nodes from entity
             entity = context.get_entity(event)
-            entity_id = context.get_entity_id(entity)
-            nodes = topology.find_bound_nodes(entity_id=entity_id)
+            if entity is not None:
+                entity_id = context.get_entity_id(entity)
+                nodes = topology.find_bound_nodes(entity_id=entity_id)
 
         # iterate on nodes
         for node in nodes:
 
             # add node in the ctx
-            ctx = {NODE: node}
+            ctx[NODE] = node
 
             # save old state in order to check for its modification
-            old_state = node[Check.STATE]
+            if Check.STATE in node:
+                old_state = node[Check.STATE]
+            else:
+                old_state = event[Check.STATE]
 
             # process rule
-            rule = node[RULE]
-            process_rule(event=event, rule=rule, ctx=ctx)
+            if RULE in node:
+                rule = node[RULE]
+                process_rule(event=event, rule=rule, ctx=ctx)
+                # propagate the change of state in case of new state
+                if old_state != node[Check.STATE]:
 
-            # propagate the change of state in case of new state
-            if old_state != node[Check.STATE]:
+                    # get next nodes
+                    next_nodes = topology.get_next_nodes(node)
 
-                # get next nodes
-                next_nodes = topology.get_next_nodes(node)
+                    # send the event_to_propagate to all next_nodes
+                    for next_node in next_nodes:
 
-                # send the event_to_propagate to all next_nodes
-                for next_node in next_nodes:
+                        # create event to propagate with source and node ids
+                        event_to_propagate = {
+                            Event.TYPE: Check.get_type(),
+                            Event.SOURCE_TYPE: Topology.TOPOLOGY_NODE_TYPE,
+                            Topology.ID: next_node[Topology.ID],
+                            SOURCE: node[Topology.ID]
+                        }
 
-                    # create the event to propagate with source and node ids
-                    event_to_propagate = {
-                        Event.TYPE: Check.get_type(),
-                        Event.SOURCE_TYPE: Topology.TOPOLOGY_NODE_TYPE,
-                        Topology.ID: next_node[Topology.ID],
-                        SOURCE: node[Topology.ID]
-                    }
-
-                    ctx[PUBLISHER].publish(event_to_propagate)
+                        ctx[PUBLISHER].publish(event_to_propagate)
 
     return event

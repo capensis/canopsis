@@ -79,7 +79,8 @@ class engine(Engine):
                 {'rk': rk},
                 {'$unset': {
                     'ack': '',
-                    'ticket_declared': '',
+                    'ticket_declared_author': '',
+                    'ticket_declared_date': '',
                     'ticket': '',
                     'ticket_date': ''
             }})
