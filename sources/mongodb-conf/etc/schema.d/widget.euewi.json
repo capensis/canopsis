@@ -8,7 +8,7 @@
 		"keys":["title", "refreshInterval", "listed_crecord_type", "itemsPerPage","default_column_sort", "selection_toolbar", "actions_toolbar", "default_filter"]
 	},{
 		"title": "Columns",
-		"keys":["displayed_columns", "item_actions"]
+		"keys":["displayed_columns", "item_actions","record_template","display_record_field"]
 	},{
 		"title": "Filters",
 		"keys":["filters"]
@@ -45,6 +45,13 @@
 			"role": "sortable",
 			"default_value": "timestamp",
 			"default": "timestamp"
+		},
+		"record_template": {
+			"type": "string",
+			"role":"richtext"
+		},
+		"display_record_field": {
+			"type": "string"
 		},
 		"displayed_columns": {
 			"isUserPreference": true,
@@ -85,7 +92,7 @@
 			"items": {
 				"type": "string"
 			},
-			"default": ["Pagination","Customfilter","Arraysearch"],
+			"default": ["Pagination","Customfilter","Arraysearch","Sortablearray","History","ack","Infobutton","Sendevent"],
 			"reorderable": true
 		},
 		"xtype": {
