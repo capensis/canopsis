@@ -107,7 +107,7 @@
 			"items": {
 				"type": "string"
 			},
-			"default": ["Pagination","Customfilter","Arraysearch","Sortablearray","History","ack","Infobutton","Sendevent"],
+			"default": ["Pagination","Customfilter","Arraysearch","Sortablearray","History","Ack","Infobutton","Sendevent"],
 			"reorderable": true
 		},
 		"xtype": {
