@@ -8,7 +8,7 @@
 		"keys":["title", "refreshInterval", "listed_crecord_type", "itemsPerPage","default_column_sort", "selection_toolbar", "actions_toolbar", "default_filter"]
 	},{
 		"title": "Columns",
-		"keys":["displayed_columns", "item_actions"]
+		"keys":["displayed_columns", "item_actions","record_template","display_record_field"]
 	},{
 		"title": "Filters",
 		"keys":["filters"]
@@ -38,12 +38,28 @@
 				"type": "string"
 			},
 			"role" : "templateselector",
-			"templateClass":"action"
+			"templateClass":"action",
+			"default": [
+				"actionbutton-ack",
+	            "actionbutton-cancel",
+	            "actionbutton-incident",
+	            "actionbutton-ticketnumber",
+	            "actionbutton-info",
+	            "actionbutton-changestate"
+            ]
 		},
 		"default_column_sort": {
 			"type": "object",
 			"role": "sortable",
-			"default_value": "timestamp"
+			"default_value": "timestamp",
+			"default": "timestamp"
+		},
+		"record_template": {
+			"type": "string",
+			"role":"richtext"
+		},
+		"display_record_field": {
+			"type": "string"
 		},
 		"displayed_columns": {
 			"isUserPreference": true,
@@ -69,7 +85,11 @@
 				"type": "string"
 			},
 			"role" : "templateselector",
-			"templateClass":"toolbar"
+			"templateClass":"toolbar",
+			"default": [
+				"actionbutton-ack",
+            	"actionbutton-cancel"
+            ]
 		},
 		"actions_toolbar": {
 			"type": "array",
@@ -77,14 +97,17 @@
 				"type": "string"
 			},
 			"role" : "templateselector",
-			"templateClass":"toolbar"
+			"templateClass":"toolbar",
+			"default":[
+				"actionbutton-history"
+			]
 		},
 		"mixins": {
 			"type": "array",
 			"items": {
 				"type": "string"
 			},
-			"default": ["pagination"],
+			"default": ["Pagination","Customfilter","Arraysearch","Sortablearray","History","ack","Infobutton","Sendevent"],
 			"reorderable": true
 		},
 		"xtype": {
@@ -111,7 +134,24 @@
 				"type": "object",
 				"objectDict": { "title": "untitled filter", "cfilter": ""},
 				"role": "cfilterwithproperties"
-			}
+			},
+			"default": [
+            {
+              "filter" : "{\"$or\":[{\"$and\":[{\"ack.isAck\":{\"$eq\":true}},{\"event_type\":{\"$eq\":\"check\"}}]}]}",
+              "cfilter" : "",
+              "title" : "Ack"
+            },
+            {
+              "filter" : "{\"$or\":[{\"$and\":[{\"state\":{\"$ne\":0}},{\"event_type\":{\"$eq\":\"check\"}}]}]}",
+              "cfilter" : "",
+              "title" : "Alert"
+            },
+            {
+              "filter" : "{\"$or\":[{\"$and\":[{\"ack.isAck\":{\"$ne\":true}},{\"state\":{\"$ne\":0}},{\"event_type\":{\"$eq\":\"check\"}}]}]}",
+              "cfilter" : "",
+              "title" : "Alert not ack"
+            }
+          ]
 		},
 		"default_filter": {
 			"type": "string",
@@ -126,7 +166,7 @@
 		},
 		"step_template": {
 			"type": "string",
-			"default": "<tr>{{#each steps}}<tr><td>{{resource}}</td><td>{{output}}</td><td>{{state}}</td><td>{{timestamp timestamp}}</td>{{/each}}</tr>"
+			"default": "<tr>{{#each steps}}<tr><td>{{resource}}</td><td>{{output}}</td><td>{{criticity state}}</td><td>{{status}}</td><td>{{timestamp timestamp}}</td>{{/each}}</tr>"
 		}
 	}
 }
