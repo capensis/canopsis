@@ -276,17 +276,11 @@ class TimeSerie(Configurable):
         result.add_unified_category(
             name=TimeSerie.CATEGORY,
             new_content=(
-                Parameter(TimeSerie.AGGREGATION, value=self.aggregation),
-                Parameter(
-                    TimeSerie.PERIOD, value=self.period,
-                    parser=Period.from_str),
-                Parameter(
-                    TimeSerie.FILL, value=self.fill, parser=Parameter.bool),
-                Parameter(
-                    TimeSerie.ROUND_TIME, value=self.round_time,
-                    parser=Parameter.bool),
-                Parameter(
-                    TimeSerie.MAX_POINTS, value=self.max_points, parser=int)))
+                Parameter(TimeSerie.AGGREGATION),
+                Parameter(TimeSerie.PERIOD, parser=Period.from_str),
+                Parameter(TimeSerie.FILL, parser=Parameter.bool),
+                Parameter(TimeSerie.ROUND_TIME, parser=Parameter.bool),
+                Parameter(TimeSerie.MAX_POINTS, parser=int)))
 
         return result
 

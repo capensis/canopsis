@@ -25,7 +25,6 @@
 			"type": "string"
 		},
 		"containerwidget": {
-			"type": "object",
 			"relationship": "belongsTo",
 			"model": "widget.containerwidget",
 			"polymorphic":true

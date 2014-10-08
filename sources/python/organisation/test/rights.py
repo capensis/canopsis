@@ -29,7 +29,7 @@ class RightsTest(TestCase):
     def setUp(self):
         self.logger = getLogger()
         self.rights = Rights()
-        self.data_types = ['profile', 'composite', 'role']
+        self.data_types = ['profile', 'group', 'role']
 
         # This should be in a filldb script
         referenced_rights = {
@@ -54,8 +54,8 @@ class RightsTest(TestCase):
             self.rights.add(x, 'desc test rule')
 
         # delete everything before starting
-        self.rights.delete_composite('composite_test1')
-        self.rights.delete_composite('composite_test2')
+        self.rights.delete_group('group_test1')
+        self.rights.delete_group('group_test2')
 
         self.rights.delete_user('jharris')
 
@@ -66,7 +66,7 @@ class RightsTest(TestCase):
 
 
     def tests(self):
-        # Test creation of composites
+        # Test creation of groups
         rights = {
             '1234': {'desc': 'test right in comp', 'checksum': 15},
             '1235': {'desc': 'test right in comp', 'checksum': 8},
@@ -88,30 +88,30 @@ class RightsTest(TestCase):
             '4211': {'desc': 'test right in comp', 'checksum': 8}
             }
 
-        # basic composite creation
-        self.rights.create_composite('composite_test1', rights)
+        # basic group creation
+        self.rights.create_group('group_test1', rights)
         self.assertEqual(
-            self.rights['composite_storage'].get_elements(
-                query={'crecord_type':'composite'})[0]['_id'],
-            'composite_test1'
+            self.rights['group_storage'].get_elements(
+                query={'crecord_type':'group'})[0]['_id'],
+            'group_test1'
             )
 
-        self.rights.create_composite('composite_test2', rights_scnd)
+        self.rights.create_group('group_test2', rights_scnd)
         self.assertEqual(
-            self.rights['composite_storage'].get_elements(
-                query={'crecord_type':'composite'})[1]['_id'],
-            'composite_test2'
+            self.rights['group_storage'].get_elements(
+                query={'crecord_type':'group'})[1]['_id'],
+            'group_test2'
             )
 
         # basic profile creation
-        self.rights.create_profile('profile_test1', ['composite_test1'])
+        self.rights.create_profile('profile_test1', ['group_test1'])
         self.assertEqual(
             self.rights['profile_storage'].get_elements(
                 query={'crecord_type':'profile'})[0]['_id'],
             'profile_test1'
             )
 
-        self.rights.create_profile('profile_test2', ['composite_test2'])
+        self.rights.create_profile('profile_test2', ['group_test2'])
         self.assertEqual(
             self.rights['profile_storage'].get_elements(
                 query={'crecord_type':'profile'})[1]['_id'],
@@ -143,28 +143,28 @@ class RightsTest(TestCase):
                 'jharris', '1237', 12), False)
 
         # Add permissions to the rights
-        self.rights.add_right('composite_test1', 'composite', '1237', 12)
+        self.rights.add_right('group_test1', 'group', '1237', 12)
         self.assertEqual(
             self.rights.check_rights(
                 'jharris', '1237', 12), True)
 
         # Test right deletion
-        self.rights.remove_right('composite_test1', 'composite', '1237', 8)
+        self.rights.remove_right('group_test1', 'group', '1237', 8)
         self.assertEqual(
             self.rights.check_rights(
                 'jharris', '1237', 12), False)
 
         # Add it back
-        self.rights.add_right('composite_test1', 'composite', '1237', 12)
+        self.rights.add_right('group_test1', 'group', '1237', 12)
 
         # Test remove_entity
-        self.rights.remove_comp_profile('profile_test1', 'composite_test1')
+        self.rights.remove_comp_profile('profile_test1', 'group_test1')
         self.assertEqual(
             self.rights.check_rights(
                 'jharris', '1237', 12), False)
 
         # Add it back
-        self.rights.add_comp_profile('profile_test1', 'composite_test1')
+        self.rights.add_comp_profile('profile_test1', 'group_test1')
         self.assertEqual(
             self.rights.check_rights(
                 'jharris', '1237', 12), True)
@@ -187,14 +187,14 @@ class RightsTest(TestCase):
             self.rights.check_rights(
                 'jharris', '1237', 12), False)
 
-        # Add the composite to the role
-        self.rights.add_comp_role('role_test1bis', 'composite_test1')
+        # Add the group to the role
+        self.rights.add_comp_role('role_test1bis', 'group_test1')
         self.assertEqual(
             self.rights.check_rights(
                 'jharris', '1237', 12), True)
 
         # Remove it
-        self.rights.remove_comp_role('role_test1bis', 'composite_test1')
+        self.rights.remove_comp_role('role_test1bis', 'group_test1')
         self.assertEqual(
             self.rights.check_rights(
                 'jharris', '1237', 12), False)
@@ -217,14 +217,14 @@ class RightsTest(TestCase):
         # Add a right on the same action to different fields
         # and check that it is summed correctly
         self.rights.remove_right('jharris', 'user', '1237', 8)
-        self.rights.remove_right('composite_test1', 'user', '1237', 12)
+        self.rights.remove_right('group_test1', 'user', '1237', 12)
         self.rights.add_right('jharris', 'user', '1237', 2)
         self.rights.add_right('role_test1bis', 'user', '1237', 4)
-        self.rights.add_right('composite_test2', 'user', '1237', 8)
-        self.rights.add_comp_user('jharris', 'composite_test2')
-        self.rights.add_comp_role('role_test1bis', 'composite_test1')
+        self.rights.add_right('group_test2', 'user', '1237', 8)
+        self.rights.add_comp_user('jharris', 'group_test2')
+        self.rights.add_comp_role('role_test1bis', 'group_test1')
         self.rights.add_profile('role_test1bis', 'profile_test1')
-        self.rights.add_comp_profile('role_test1bis', 'composite_test1')
+        self.rights.add_comp_profile('role_test1bis', 'group_test1')
         self.assertEqual(
             self.rights.get_user_rights('jharris')['1237']['checksum'],
             15)
@@ -239,20 +239,20 @@ class RightsTest(TestCase):
             ['profile_test1'])
 
         self.assertEqual(
-            self.rights.get_user_composites('jharris'),
-            ['composite_test2'])
+            self.rights.get_user_groups('jharris'),
+            ['group_test2'])
 
         self.assertEqual(
-            self.rights.get_role_composites('role_test1bis'),
-            ['composite_test1'])
+            self.rights.get_role_groups('role_test1bis'),
+            ['group_test1'])
 
         self.assertEqual(
             self.rights.get_role_profile('role_test1bis'),
             ['profile_test1'])
 
         self.assertEqual(
-            self.rights.get_profile_composites('profile_test1'),
-            ['composite_test1'])
+            self.rights.get_profile_groups('profile_test1'),
+            ['group_test1'])
 
 if __name__ == '__main__':
     main()
