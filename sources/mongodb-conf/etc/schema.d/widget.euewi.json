@@ -43,7 +43,8 @@
 		"default_column_sort": {
 			"type": "object",
 			"role": "sortable",
-			"default_value": "timestamp"
+			"default_value": "timestamp",
+			"default": "timestamp"
 		},
 		"displayed_columns": {
 			"isUserPreference": true,
@@ -84,7 +85,7 @@
 			"items": {
 				"type": "string"
 			},
-			"default": ["pagination"],
+			"default": ["Pagination"],
 			"reorderable": true
 		},
 		"xtype": {
@@ -126,7 +127,7 @@
 		},
 		"step_template": {
 			"type": "string",
-			"default": "<tr>{{#each steps}}<tr><td>{{resource}}</td><td>{{output}}</td><td>{{state}}</td><td>{{timestamp timestamp}}</td>{{/each}}</tr>"
+			"default": "<tr>{{#each steps}}<tr><td>{{resource}}</td><td>{{output}}</td><td>{{criticity state}}</td><td>{{status}}</td><td>{{timestamp timestamp}}</td>{{/each}}</tr>"
 		}
 	}
 }
