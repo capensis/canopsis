@@ -23,10 +23,9 @@ from inspect import getargspec
 from canopsis.common.utils import ensure_iterable, isiterable
 
 from json import loads
-
 from bottle import request
-
 from functools import wraps
+import traceback
 
 
 def adapt_canopsis_data_to_ember(data):
@@ -155,6 +154,7 @@ class route(object):
                 if param is not None:
                     try:
                         kwargs[body_param] = loads(param)
+
                     except ValueError:  # error while deserializing
                         # get the str value and cross fingers ...
                         kwargs[body_param] = param
@@ -165,13 +165,19 @@ class route(object):
 
             try:
                 result_function = function(*args, **kwargs)
+
             except Exception as e:
                 # if an error occured, get a failure message
                 result = {
                     'total': 0,
                     'success': False,
-                    'data': None,
-                    'msg': e.message}
+                    'data': {
+                        'traceback': traceback.format_exc(),
+                        'type': str(type(e)),
+                        'msg': str(e)
+                    }
+                }
+
             else:
                 # else use self.response
                 result = self.response(result_function)
@@ -217,8 +223,11 @@ class route(object):
 
         # get required header parameters without body parameters
         required_header_params = args[:len(args) - len_defaults]
-        required_header_params = [param for param in required_header_params
-            if param not in self.payload]
+        required_header_params = [
+            param
+            for param in required_header_params
+            if param not in self.payload
+        ]
 
         # add routes with optional parameters
         for i in range(len(optional_header_params) + 1):
