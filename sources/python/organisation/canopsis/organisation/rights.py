@@ -77,16 +77,9 @@ class Rights(MiddlewareRegistry):
             ``None`` otherwise
         """
 
-        result = self['action_storage'].put_element(
+        return self['action_storage'].put_element(
             a_id, { 'crecord_type': 'action', 'desc': a_desc }
             )
-
-        if not result:
-            self.logger.error(
-                'Action {0} already exist or could not be added'.format(a_id)
-                )
-
-        return result
 
     # Check if an entity has the flags for a specific rigjt
     # The entity must have a rights field with a rights maps within
@@ -212,7 +205,8 @@ class Rights(MiddlewareRegistry):
                 entity['rights'][right_id][key] = context
 
         self[e_type].put_element(e_name, entity)
-        return entity['rights'][right_id]['checksum']
+        result = entity['rights'][right_id]['checksum']
+        return result if result else True
 
 
     # Delete the checksum right of the entity linked
@@ -242,10 +236,11 @@ class Rights(MiddlewareRegistry):
             if not entity['rights'][right_id]['checksum']:
                 del entity['rights'][right_id]
                 self[e_type + "_storage"].put_element(entity['_id'], entity)
-                return 0
+                return True
 
             self[e_type + "_storage"].put_element(entity['_id'], entity)
-            return entity['rights'][right_id]['checksum']
+            result = entity['rights'][right_id]['checksum']
+            return result if result else True
 
         return 0
 
