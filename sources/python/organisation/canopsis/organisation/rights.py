@@ -54,14 +54,14 @@ class Rights(MiddlewareRegistry):
             unified_conf=unified_conf, *args, **kwargs)
 
         self.profile_storage = self['profile_storage']
-        self.composite_storage = self['composite_storage']
+        self.group_storage = self['group_storage']
         self.role_storage = self['role_storage']
         self.action_storage = self['action_storage']
         self.user_storage = self['user_storage']
 
         self.get_profile = self.get_from_storage('profile')
         self.get_action = self.get_from_storage('action')
-        self.get_composite = self.get_from_storage('composite')
+        self.get_group = self.get_from_storage('group')
         self.get_role = self.get_from_storage('role')
         self.get_user = self.get_from_storage('user')
 
@@ -77,9 +77,14 @@ class Rights(MiddlewareRegistry):
             ``None`` otherwise
         """
 
-        action = {'crecord_type': 'action',
-                  'desc': a_desc}
-        return self['action_storage'].put_element(a_id, action)
+        result = self['action_storage'].put_element(
+            a_id, { 'crecord_type': 'action', 'desc': a_desc }
+            )
+
+        if not result:
+            self.logger.error('Error while referencing action {0}'.format(a_id))
+
+        return result
 
     # Check if an entity has the flags for a specific rigjt
     # The entity must have a rights field with a rights maps within
@@ -95,6 +100,7 @@ class Rights(MiddlewareRegistry):
         """
 
         if not entity or not entity.get('rights', None):
+            self.logger.error('Entity empty or has no rights field')
             return False
 
         found = entity['rights'].get(right_id, None)
@@ -104,7 +110,7 @@ class Rights(MiddlewareRegistry):
         return False
 
     # Check if an user has the flags for a specific right
-    # Each of the user's entities (Role, Profile, and Composites)
+    # Each of the user's entities (Role, Profile, and Groups)
     # will be checked
     def check_rights(self, u_name, right_id, checksum):
         """
@@ -125,26 +131,26 @@ class Rights(MiddlewareRegistry):
 
         # Do not edit the following for a double for loop
         # list comprehensions are much faster
-        composites = [self['composite_storage'][x]
+        groups = [self['group_storage'][x]
                       for y in profiles
-                      for x in y['composite']]
+                      for x in y['group']]
 
-        if 'composite' in role:
-            composites += [self['composite_storage'][x]
-                           for x in role['composite']]
-        if 'composite' in user:
-            composites += [self['composite_storage'][x]
-                           for x in user['composite']]
+        if 'group' in role:
+            groups += [self['group_storage'][x]
+                           for x in role['group']]
+        if 'group' in user:
+            groups += [self['group_storage'][x]
+                           for x in user['group']]
 
         # check in the role's comsposite
         if ((user and self.check(user, right_id, checksum)) or
             (role and self.check(role, right_id, checksum)) or
-            # check in the profile's composite
+            # check in the profile's group
             (len(profiles) and any(self.check(x, right_id, checksum)
                                    for x in profiles)) or
-            # check in the profile's groups composites
-            (len(composites) and any(self.check(x, right_id, checksum)
-                                     for x in composites))):
+            # check in the profile's groups groups
+            (len(groups) and any(self.check(x, right_id, checksum)
+                                     for x in groups))):
             return True
 
         return False
@@ -152,7 +158,7 @@ class Rights(MiddlewareRegistry):
     # Add a right to the entity linked
     # If the right already exists, the checksum will be summed accordingly
     # checksum |= old_checksum
-    # entity can be a role, a profile, or a composite
+    # entity can be a role, a profile, or a group
     def add_right(self, e_name, e_type, right_id, checksum,
             **kwargs):
         """
@@ -168,6 +174,9 @@ class Rights(MiddlewareRegistry):
 
         # Action not referenced, can't create a right
         if not self.get_action(right_id):
+            self.logger.error(
+                'Can not create right, the action {0} is not referenced'.format(right_id)
+                )
             return 0
 
         entity = None
@@ -178,6 +187,9 @@ class Rights(MiddlewareRegistry):
             entity = self[e_type].get_elements(ids=e_name)
 
         if not entity:
+            self.logger.error(
+                'Can not create right, entity {0} is empty or does not exist'.format(e_name)
+                )
             return 0
 
         if not entity.get('rights', None):
@@ -200,6 +212,7 @@ class Rights(MiddlewareRegistry):
         self[e_type].put_element(e_name, entity)
         return entity['rights'][right_id]['checksum']
 
+
     # Delete the checksum right of the entity linked
     # new_checksum ^= checksum
     def remove_right(self, entity, e_type, right_id, checksum):
@@ -218,7 +231,7 @@ class Rights(MiddlewareRegistry):
 
         if (entity['rights']
             and entity['rights'][right_id]
-                and entity['rights'][right_id]['checksum'] >= checksum):
+            and entity['rights'][right_id]['checksum'] >= checksum):
 
             # remove the permissions passed in checksum
             entity['rights'][right_id]['checksum'] ^= checksum
@@ -234,27 +247,30 @@ class Rights(MiddlewareRegistry):
 
         return 0
 
-    # Create a new rights composite composed of the rights passed in comp_rights
+    # Create a new rights group composed of the rights passed in comp_rights
     # comp_rights should be a map of rights referenced in the action catalog
-    def create_composite(self, comp_name, comp_rights):
+    def create_group(self, comp_name, comp_rights):
         """
         Args:
-            comp_name: id of the composite to create
-            comp_rights: map of rights to init the composite with
+            comp_name: id of the group to create
+            comp_rights: map of rights to init the group with
         Returns:
-            The name of the composite if it was created
+            The name of the group if it was created
             ``None`` otherwise
         """
 
         # Do nothing if it already exists
-        if self.get_composite(comp_name):
+        if self.get_group(comp_name):
+            self.logger.error(
+                'Can not create group, group {0} already exists'.format(comp_name)
+                )
             return None
 
-        new_comp = {'crecord_type': 'composite',
+        new_comp = {'crecord_type': 'group',
                     'rights': {}
                     }
 
-        self.composite_storage.put_element(comp_name, new_comp)
+        self.group_storage.put_element(comp_name, new_comp)
 
         if not comp_rights:
             return comp_name
@@ -262,21 +278,21 @@ class Rights(MiddlewareRegistry):
         # Use add_right to check if the action is referenced
         for right_id in comp_rights:
             self.add_right(comp_name,
-                           'composite',
+                           'group',
                            right_id,
                            comp_rights[right_id]['checksum'])
 
         return comp_name
 
-    # Create a new profile composed of the composites p_composites
+    # Create a new profile composed of the groups p_groups
     #   and which name will be p_name
-    # If the profile already exists, composites from p_composites
-    #   that are not already in the profile's composites will be added
-    def create_profile(self, p_name, p_composites):
+    # If the profile already exists, groups from p_groups
+    #   that are not already in the profile's groups will be added
+    def create_profile(self, p_name, p_groups):
         """
         Args:
             p_name: id of the profile to be created
-            p_compsites: list of composites to init the Profile with
+            p_compsites: list of groups to init the Profile with
         Returns:
             The name of the profile if it was created
             ``None`` otherwise
@@ -284,25 +300,28 @@ class Rights(MiddlewareRegistry):
 
         # Do nothing if it already exists
         if self.get_profile(p_name):
+            self.logger.error(
+                'Can not create group, group {0} already exists'.format(comp_name)
+                )
             return None
 
         new_profile = {'crecord_type': 'profile',
-                       'composites': []
+                       'groups': []
                        }
 
         self.profile_storage.put_element(p_name, new_profile)
 
-        if not p_composites:
+        if not p_groups:
             return p_name
 
-        for comp in p_composites:
-            self.add_composite(p_name, 'profile', comp)
+        for comp in p_groups:
+            self.add_group(p_name, 'profile', comp)
 
         return p_name
 
     # Delete entity of id e_name
     # t_type is the storage to check for relations
-    # entity can be a profile, or composite
+    # entity can be a profile, or group
     def delete_entity(self, e_name, e_type):
         """
         Args:
@@ -314,7 +333,7 @@ class Rights(MiddlewareRegistry):
         """
 
         from_storage = e_type + '_storage'
-        t_type = 'profile' if e_type == 'composite' else 'role'
+        t_type = 'profile' if e_type == 'group' else 'role'
         to_storage = t_type + '_storage'
 
         if self[from_storage].get_elements(ids=e_name):
@@ -329,6 +348,9 @@ class Rights(MiddlewareRegistry):
 
             return True
 
+        self.logger.error(
+            'Can not delete entity, entity {0} does not exist'.format(e_name)
+            )
         return False
 
     # to be removed when user module is created
@@ -351,6 +373,9 @@ class Rights(MiddlewareRegistry):
 
             return True
 
+        self.logger.error(
+            'Can not delete role, role {0} does not exist'.format(r_name)
+            )
         return False
 
     def delete_user(self, u_name):
@@ -377,99 +402,95 @@ class Rights(MiddlewareRegistry):
         return self.delete_entity(p_name, 'profile')
 
     # delete_entity wrapper
-    def delete_composite(self, c_name):
+    def delete_group(self, c_name):
         """
         Args:
-            c_name: id of the composite to be deleted
+            c_name: id of the group to be deleted
         Returns:
-            ``True`` if the composite was deleted
+            ``True`` if the group was deleted
             ``False`` otherwise
         """
 
-        return self.delete_entity(c_name, 'composite')
+        return self.delete_entity(c_name, 'group')
 
-    # Add the composite named comp_name to the entity
-    # If the composite does not exist and
+    # Add the group named comp_name to the entity
+    # If the group does not exist and
     #   comp_rights is specified it will be created first
     # entity can be a profile or a role
-    def add_composite(self, e_name, e_type, comp_name, comp_rights=None):
+    def add_group(self, e_name, e_type, comp_name, comp_rights=None):
         """
         Args:
             e_name: name of the entity to be modified
             e_type: type of the entity
-            comp_name: id of the composite to add to the entity
-            comp_rights: specified if the composite has to be created beforehand
+            comp_name: id of the group to add to the entity
+            comp_rights: specified if the group has to be created beforehand
         Returns:
-            ``True`` if the composite was added to the entity
-            ``False`` otherwise
+            ``True`` if the group was added to the entity
         """
 
         e_type += '_storage'
 
-        if not self.get_composite(comp_name):
-            if comp_rights:
-                self.create_composite(comp_rights, comp_name)
-            else:
-                return False
+        if not self.get_group(comp_name):
+            self.create_group(comp_rights, comp_name)
 
         entity = self[e_type].get_elements(ids=e_name)
-        if not 'composite' in entity or not comp_name in entity['composite']:
-            entity.setdefault('composite', []).append(comp_name)
+        if not 'group' in entity or not comp_name in entity['group']:
+            entity.setdefault('group', []).append(comp_name)
             self[e_type].put_element(e_name, entity)
 
         return True
 
-    # add_composite wrapper
+    # add_group wrapper
     def add_comp_profile(self, e_name, comp_name, comp_rights=None):
         """
         Args:
-            e_name: profile id to add the composite to
-            comp_name: composite to be added
-            comp_rights: specified if the composite has to be created beforehand
+            e_name: profile id to add the group to
+            comp_name: group to be added
+            comp_rights: specified if the group has to be created beforehand
         Returns:
-            ``True`` if the composite was added to the profile
+            ``True`` if the group was added to the profile
             ``False`` otherwise
         """
 
-        return self.add_composite(e_name, 'profile', comp_name, comp_rights)
+        return self.add_group(e_name, 'profile', comp_name, comp_rights)
 
-    # add_composite wrapper
+    # add_group wrapper
     def add_comp_role(self, e_name, comp_name, comp_rights=None):
         """
         Args:
-            e_name: role id to add the composite to
-            comp_name: composite to be added
-            comp_rights: specified if the composite has to be created beforehand
+            e_name: role id to add the group to
+            comp_name: group to be added
+            comp_rights: specified if the group has to be created beforehand
         Returns:
-            ``True`` if the composite was added to the role
+            ``True`` if the group was added to the role
             ``False`` otherwise
         """
 
-        return self.add_composite(e_name, 'role', comp_name, comp_rights)
+        return self.add_group(e_name, 'role', comp_name, comp_rights)
 
-    # add_composite wrapper
+    # add_group wrapper
     def add_comp_user(self, e_name, comp_name, comp_rights=None):
         """
         Args:
-            e_name: user id to add the composite to
-            comp_name: composite to be added
-            comp_rights: specified if the composite has to be created beforehand
+            e_name: user id to add the group to
+            comp_name: group to be added
+            comp_rights: specified if the group has to be created beforehand
         Returns:
-            ``True`` if the composite was added to the user
+            ``True`` if the group was added to the user
             ``False`` otherwise
         """
 
-        return self.add_composite(e_name, 'user', comp_name, comp_rights)
+        return self.add_group(e_name, 'user', comp_name, comp_rights)
 
     # Add the profile of name p_name to the role
-    # If the profile does not exists and p_composites is specified
+    # If the profile does not exists and p_groups is specified
     #    it will be created first
-    def add_profile(self, role, p_name, p_composites=None):
+    def add_profile(self, role, p_name, p_groups=None):
         """
         Args:
             role: id of the role to add the Profile to
             p_name: name of the Profile to be added
-            p_composites: specified if the profile has to be created beforehand
+            p_groups: specified if the profile has to be created beforehand
         Returns:
             ``True`` if the profile was created
             ``False`` otherwise
@@ -477,10 +498,7 @@ class Rights(MiddlewareRegistry):
 
         profile = self.get_profile(p_name)
         if not profile:
-            if p_composites:
-                self.create_profile(p_name, p_composites)
-            else:
-                return False
+            self.create_profile(p_name, p_groups)
 
         # retrieve the profile
         if profile:
@@ -493,14 +511,14 @@ class Rights(MiddlewareRegistry):
             return True
 
     # Add the profile of name p_name to the role
-    # If the profile does not exists and p_composites is specified
+    # If the profile does not exists and p_groups is specified
     #    it will be created first
     def add_role(self, u_name, r_name, r_profile=None):
         """
         Args:
             u_name: id of the user to add the role to
             r_name: name of the role to be added
-            r_composites: specified if the role has to be created beforehand
+            r_groups: specified if the role has to be created beforehand
         Returns:
             ``True`` if the profile was created
             ``False`` otherwise
@@ -508,10 +526,7 @@ class Rights(MiddlewareRegistry):
 
         role = self.get_role(r_name)
         if not role:
-            if r_profile:
-                self.create_role(r_name, r_profile)
-            else:
-                return False
+            self.create_role(r_name, r_profile)
 
         # retrieve the profile
         if role:
@@ -523,7 +538,7 @@ class Rights(MiddlewareRegistry):
 
     # Remove the entity e_name from from_name
     # from_name can be a profile or a role
-    # e_name can be a profile or a composite
+    # e_name can be a profile or a group
     def remove_entity(self, from_name, from_type, e_name, e_type):
         entity = self[from_type + '_storage'].get_elements(
             query={'crecord_type': from_type}, ids=from_name)
@@ -536,57 +551,57 @@ class Rights(MiddlewareRegistry):
         return False
 
     # remove_entity wrapper
-    def remove_composite(self, e_name, e_type, comp_name):
+    def remove_group(self, e_name, e_type, comp_name):
         """
         Args:
             e_name: name of the entity to be modified
             e_type: type of the entity
-            comp_name: id of the composite to remove from the entity
+            comp_name: id of the group to remove from the entity
         Returns:
-            ``True`` if the composite was removed from the entity
+            ``True`` if the group was removed from the entity
             ``False`` otherwise
         """
 
-        return self.remove_entity(e_name, e_type, comp_name, 'composite')
+        return self.remove_entity(e_name, e_type, comp_name, 'group')
 
-    # remove_composite wrapper
+    # remove_group wrapper
     def remove_comp_role(self, r_name, c_name):
         """
         Args:
-            r_name: role to removed the composite from
-            c_name: composite to remove
+            r_name: role to removed the group from
+            c_name: group to remove
         Return:
-            ``True`` if the composite was removed from the role
+            ``True`` if the group was removed from the role
             ``False`` otherwise
         """
 
-        return self.remove_composite(r_name, 'role', c_name)
+        return self.remove_group(r_name, 'role', c_name)
 
-    # remove_composite wrapper
+    # remove_group wrapper
     def remove_comp_profile(self, p_name, c_name):
         """
         Args:
-            p_name: profile to removed the composite from
-            c_name: composite to remove
+            p_name: profile to removed the group from
+            c_name: group to remove
         Return:
-            ``True`` if the composite was removed from the profile
+            ``True`` if the group was removed from the profile
             ``False`` otherwise
         """
 
-        return self.remove_composite(p_name, 'profile', c_name)
+        return self.remove_group(p_name, 'profile', c_name)
 
-    # remove_composite wrapper
+    # remove_group wrapper
     def remove_comp_user(self, u_name, c_name):
         """
         Args:
-            u_name: user to removed the composite from
-            c_name: composite to remove
+            u_name: user to removed the group from
+            c_name: group to remove
         Return:
-            ``True`` if the composite was removed from the profile
+            ``True`` if the group was removed from the profile
             ``False`` otherwise
         """
 
-        return self.remove_composite(u_name, 'user', c_name)
+        return self.remove_group(u_name, 'user', c_name)
 
     # remove_entity wrapper
     def remove_profile(self, r_name, p_name):
@@ -642,7 +657,7 @@ class Rights(MiddlewareRegistry):
 
     def create_user(self, u_id, u_role,
                     contact=None, rights=None,
-                    composites=None):
+                    groups=None):
         """
         Args:
             u_nick: nick of the user to create, usually first
@@ -652,7 +667,7 @@ class Rights(MiddlewareRegistry):
             contact: map containing full name, email, adress,
                      and/or phone number of the user
             rights: map containing specific rights
-            composites: list of specific composites
+            groups: list of specific groups
         Returns:
             Map of the newly created user
         """
@@ -661,9 +676,6 @@ class Rights(MiddlewareRegistry):
 
         if user:
             return user
-
-        if not self.get_role(u_role):
-            return None
 
         user = {'crecord_type': 'user',
                 'role': u_role}
@@ -674,8 +686,8 @@ class Rights(MiddlewareRegistry):
         if rights and isinstance(rights, dict):
             user['rights'] = rights
 
-        if composites and isinstance(composites, list):
-            user['composites'] = composites
+        if groups and isinstance(groups, list):
+            user['groups'] = groups
 
         self.user_storage.put_element(u_id, user)
         return user
@@ -755,15 +767,15 @@ class Rights(MiddlewareRegistry):
 
         role = self.get_role(user.setdefault('role', None))
         profiles = self.get_profile(role['profile'])
-        n_composites = [x for y in profiles for x in y['composite']]
+        n_groups = [x for y in profiles for x in y['group']]
 
-        if 'composite' in role:
-            n_composites += role['composite']
-        if 'composite' in user:
-            n_composites += user['composite']
+        if 'group' in role:
+            n_groups += role['group']
+        if 'group' in user:
+            n_groups += user['group']
 
-        specific_rights = [self['composite_storage'][x]['rights']
-                           for x in set(n_composites)]
+        specific_rights = [self['group_storage'][x]['rights']
+                           for x in set(n_groups)]
 
         specific_rights.append(user.setdefault('rights', {}))
         specific_rights.append(role.setdefault('rights', {}))
@@ -806,8 +818,8 @@ class Rights(MiddlewareRegistry):
     def get_user_profiles(self, u_id):
         return self.get_role_profile(self.get_user_role(u_id))
 
-    def get_user_composites(self, u_id):
-        return self.get_entity_field(u_id, 'user', 'composite')
+    def get_user_groups(self, u_id):
+        return self.get_entity_field(u_id, 'user', 'group')
 
     # Role getters
     def get_role_rights(self, r_id):
@@ -816,16 +828,16 @@ class Rights(MiddlewareRegistry):
     def get_role_profile(self, r_id):
         return self.get_entity_field(r_id, 'role', 'profile')
 
-    def get_role_composites(self, r_id):
-        return self.get_entity_field(r_id, 'role', 'composite')
+    def get_role_groups(self, r_id):
+        return self.get_entity_field(r_id, 'role', 'group')
 
     # Profile getters
     def get_profile_rights(self, p_id):
         return self.get_entity_field(p_id, 'profile', 'rights')
 
-    def get_profile_composites(self, p_id):
-        return self.get_entity_field(p_id, 'profile', 'composite')
+    def get_profile_groups(self, p_id):
+        return self.get_entity_field(p_id, 'profile', 'group')
 
-    # Composite getters
-    def get_composite_rights(self, c_id):
-        return self.get_entity_field(c_id, 'composite', 'rights')
+    # Group getters
+    def get_group_rights(self, c_id):
+        return self.get_entity_field(c_id, 'group', 'rights')

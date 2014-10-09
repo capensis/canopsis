@@ -4,7 +4,7 @@ NAME="collectd-libs"
 VERSION=0.3
 RELEASE=0
 DESCRIPTION=""
-REQUIRES="canohome collectd supervisord-conf"
+REQUIRES="canohome collectd"
 
 NO_ARCH=true
 NO_DIST=true
