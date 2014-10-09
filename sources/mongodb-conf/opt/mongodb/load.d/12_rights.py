@@ -39,5 +39,4 @@ def init():
                          data[action_id].get('desc', "Empty desc"))
 
 def update():
-    init()
-
+    pass
