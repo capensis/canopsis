@@ -308,7 +308,7 @@ class MongoStorage(MongoDataBase, Storage):
 
     def put_element(self, _id, element, *args, **kwargs):
 
-        self._update(
+        return self._update(
             _id={MongoStorage.ID: _id}, document={'$set': element},
             multi=False)
 
