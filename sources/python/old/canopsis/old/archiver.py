@@ -269,14 +269,10 @@ class Archiver(object):
 
             # keep ack information if status does not reset event
             if 'ack' in devent:
-                if event['status'] == 0 and event.get('keep_state'):
-                    #reset ack when manual criticity change
+                if event['status'] == 0:
                     change['ack'] = {}
-                elif event['status'] not in [0, 1] or event.get('keep_state'):
-                    change['ack'] = devent['ack']
                 else:
-                    #drop ack
-                    change['ack'] = {}
+                    change['ack'] = devent['ack']
 
 
             # keep cancel information if status does not reset event
@@ -298,7 +294,7 @@ class Archiver(object):
                 if 'ticket_date' in devent:
                     del devent['ticket_date']
 
-
+            #Generate diff change from old event to new event
             for key in event:
                 if key not in exclusion_fields:
                     if key in event and key in devent and devent[key] != event[key]:
