@@ -170,19 +170,19 @@ class RightsTest(TestCase):
                 'jharris', '1237', 12), True)
 
         # Test removing the profile
-        self.rights.remove_profile('role_test1bis', 'profile_test1')
+        self.rights.remove_profile('role_test1bis', None, 'profile_test1')
         self.assertEqual(
             self.rights.check_rights(
                 'jharris', '1237', 12), False)
 
         # Add it back
-        self.rights.add_profile('role_test1bis', 'profile_test1')
+        self.rights.add_profile('role_test1bis', None, 'profile_test1')
         self.assertEqual(
             self.rights.check_rights(
                 'jharris', '1237', 12), True)
 
         # Remove the profile to add it to the role
-        self.rights.remove_profile('role_test1bis', 'profile_test1')
+        self.rights.remove_profile('role_test1bis', None, 'profile_test1')
         self.assertEqual(
             self.rights.check_rights(
                 'jharris', '1237', 12), False)
@@ -223,7 +223,7 @@ class RightsTest(TestCase):
         self.rights.add_right('group_test2', 'user', '1237', 8)
         self.rights.add_comp_user('jharris', 'group_test2')
         self.rights.add_comp_role('role_test1bis', 'group_test1')
-        self.rights.add_profile('role_test1bis', 'profile_test1')
+        self.rights.add_profile('role_test1bis', None, 'profile_test1')
         self.rights.add_comp_profile('role_test1bis', 'group_test1')
         self.assertEqual(
             self.rights.get_user_rights('jharris')['1237']['checksum'],

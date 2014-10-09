@@ -482,7 +482,7 @@ class Rights(MiddlewareRegistry):
     # Add the profile of name p_name to the role
     # If the profile does not exists and p_groups is specified
     #    it will be created first
-    def add_profile(self, role, p_name, p_groups=None):
+    def add_profile(self, role, e_type, p_name, p_groups=None):
         """
         Args:
             role: id of the role to add the Profile to
@@ -601,7 +601,7 @@ class Rights(MiddlewareRegistry):
         return self.remove_group(u_name, 'user', c_name)
 
     # remove_entity wrapper
-    def remove_profile(self, r_name, p_name):
+    def remove_profile(self, r_name, e_type, p_name):
         """
         Args:
             r_name: id of the role to remove the Profile from
