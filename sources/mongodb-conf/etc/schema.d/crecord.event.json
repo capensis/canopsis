@@ -9,7 +9,7 @@
 		"event_type": {
 			"type": "string",
 			"required": true,
-			"role": "translator"
+			"role": "eventtype"
 		},
 		"source_type": {
 			"type": "string",
