@@ -166,7 +166,7 @@
 		},
 		"step_template": {
 			"type": "string",
-			"default": "<tr>{{#each steps}}<tr><td>{{resource}}</td><td>{{output}}</td><td>{{criticity state}}</td><td>{{status}}</td><td>{{timestamp timestamp}}</td>{{/each}}</tr>"
+			"default": "{{#each steps}}<tr class=\"subitems\"><td>{{resource}}</td><td>{{output}}</td><td>{{criticity state}}</td><td>{{partial \"renderer-status\":status}}</td><td>{{timestamp timestamp}}</td>{{/each}}"
 		}
 	}
 }
