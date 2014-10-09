@@ -425,7 +425,7 @@ class MongoStorage(MongoDataBase, Storage):
             w = 1 if self.safe else 0
             result = backend_command(w=w, wtimeout=self.out_timeout, **kwargs)
 
-            self._manage_query_error(result)
+            result = self._manage_query_error(result)
 
         except TimeoutError:
             self.logger.warning(
