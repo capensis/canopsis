@@ -188,7 +188,10 @@ class Storage(DataBase):
         :return: all self indexes.
         """
 
-        return self._indexes[:]
+        result = [[(Storage.DATA_ID, 1)]]
+        result.append(self._indexes[:])
+
+        return result
 
     @indexes.setter
     def indexes(self, value):

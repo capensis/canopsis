@@ -83,8 +83,6 @@ class ProcessingTest(TestCase):
         event = event_processing(event=self.check)
         self.assertEqual(event, self.check)
 
-        #sleep(1)
-
         _node = self.topology.get_nodes(ids=self.node[Topology.ID])
         self.assertNotEqual(self.node['state'], _node['state'])
         self.assertEqual(_node['state'], new_state)
@@ -98,7 +96,7 @@ class ProcessingTest(TestCase):
         class Publisher(object):
             def publish(self, event, **kwargs):
                 event_processing(event=event, **kwargs)
-
+        # create next nodes from self.nodes
         nexts = (
             {
                 Topology.ID: str(i),
@@ -106,20 +104,26 @@ class ProcessingTest(TestCase):
                 'state': 0
             } for i in range(3)
         )
+        # list of next ids
         next_ids = []
         for next in nexts:
+            # push next nodes
             self.topology.push_node(next)
             next_ids.append(next[Topology.ID])
+        # add next nodes into self.node
         self.node[Topology.NEXT] = next_ids
+        # save the node
         self.topology.push_node(self.node)
 
+        # propagate a new state
         new_state = 1
         self.check['state'] = new_state
         event_processing(event=self.check, ctx={PUBLISHER: Publisher()})
 
         for next in nexts:
-            _node = self.topology.get_node(next[Topology.ID])
+            _node = self.topology.get_nodes(next[Topology.ID])
             self.assertEqual(_node['state'], 1)
+            self.topology.delete_nodes(next[Topology.ID])
 
     def tearDown(self):
         self.topology.delete_nodes(self.node[Topology.ID])

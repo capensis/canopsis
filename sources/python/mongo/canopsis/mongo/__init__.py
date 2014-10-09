@@ -308,7 +308,7 @@ class MongoStorage(MongoDataBase, Storage):
 
     def put_element(self, _id, element, *args, **kwargs):
 
-        self._update(
+        return self._update(
             _id={MongoStorage.ID: _id}, document={'$set': element},
             multi=False)
 
@@ -425,7 +425,7 @@ class MongoStorage(MongoDataBase, Storage):
             w = 1 if self.safe else 0
             result = backend_command(w=w, wtimeout=self.out_timeout, **kwargs)
 
-            self._manage_query_error(result)
+            result = self._manage_query_error(result)
 
         except TimeoutError:
             self.logger.warning(
