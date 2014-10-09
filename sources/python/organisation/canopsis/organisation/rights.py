@@ -82,7 +82,9 @@ class Rights(MiddlewareRegistry):
             )
 
         if not result:
-            self.logger.error('Error while referencing action {0}'.format(a_id))
+            self.logger.error(
+                'Action {0} already exist or could not be added'.format(a_id)
+                )
 
         return result
 
