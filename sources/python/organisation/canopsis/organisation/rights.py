@@ -77,9 +77,16 @@ class Rights(MiddlewareRegistry):
             ``None`` otherwise
         """
 
-        return self['action_storage'].put_element(
+        result = self['action_storage'].put_element(
             a_id, { 'crecord_type': 'action', 'desc': a_desc }
             )
+
+        if not result:
+            self.logger.error(
+                'Action {0} already exist or could not be added'.format(a_id)
+                )
+
+        return result
 
     # Check if an entity has the flags for a specific rigjt
     # The entity must have a rights field with a rights maps within
