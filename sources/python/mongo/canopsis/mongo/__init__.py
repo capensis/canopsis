@@ -345,9 +345,11 @@ class MongoStorage(MongoDataBase, Storage):
     def _manage_query_error(self, result_query):
         """
         Manage mongo query error.
+
+        Returns result_query if no error encountered. Else None.
         """
 
-        result = None
+        result = result_query
 
         if isinstance(result_query, dict):
 
@@ -356,16 +358,14 @@ class MongoStorage(MongoDataBase, Storage):
             if error is not None:
                 self.logger.error(' error in writing document: {0}'.format(
                     error))
+                result = None
 
             error = result_query.get("writeError")
 
             if error is not None:
                 self.logger.error(' error in writing document: {0}'.format(
                     error))
-
-        else:
-
-            result = result_query
+                result = None
 
         return result
 
