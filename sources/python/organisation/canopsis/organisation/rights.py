@@ -764,9 +764,10 @@ class Rights(MiddlewareRegistry):
         if not user:
             return {}
 
-        role = self.get_role(user.setdefault('role', None))
-
+        role = user.setdefault('role', None)
         if role:
+            role = self.get_role(role)
+
             if 'profile' in role:
                 profiles = self.get_profile(role['profile'])
                 n_groups = [x for y in profiles for x in y['group']]
@@ -774,14 +775,13 @@ class Rights(MiddlewareRegistry):
             if 'group' in role:
                 n_groups += role['group']
 
-        if user and 'group' in user:
+        if 'group' in user:
             n_groups += user['group']
 
         specific_rights = [self['group_storage'][x]['rights']
                            for x in set(n_groups)]
 
-        if user:
-            specific_rights.append(user.setdefault('rights', {}))
+        specific_rights.append(user.setdefault('rights', {}))
         if role:
             specific_rights.append(role.setdefault('rights', {}))
         if profiles:
