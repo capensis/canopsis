@@ -20,6 +20,9 @@
 			"default": "account",
 			"icon": "user"
 		},
+		"_id": {
+			"type": "string"
+		},
 		"ui_language": {
 			"type": "string",
 			"enum": ["fr", "en"],
@@ -42,7 +45,8 @@
 		},
 		"user_rights": {
 			"type": "object",
-			"role": "rights"
+			"role": "rights",
+			"valuekey" : "_id"
 		},
 		"external": {
 			"type": "boolean",

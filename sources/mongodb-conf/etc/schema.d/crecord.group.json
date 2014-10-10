@@ -2,15 +2,14 @@
 	"type": "object",
 	"categories": [{
 		"title": "General",
-		"keys":["description"]
+		"keys":["group_name"]
 	},{
 		"title": "Permissions",
 		"keys": ["rights"]
 	}],
 	"properties": {
-		"crecord_type": {
-			"enum": ["group"],
-			"required": true
+		"group_name": {
+			"type": "string"
 		},
 		"rights": {
 			"type": "object",
