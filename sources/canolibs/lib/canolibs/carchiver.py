@@ -125,7 +125,7 @@ class carchiver(object):
 				self.storage.get_backend('events').update({'_id': _id}, {'$set': change})
 
 		mid = None
-		if changed and self.autolog:
+		if changed or self.autolog:
 			mid = self.log_event(_id, event)
 
 		return mid
