@@ -3,8 +3,15 @@
 	"categories": [{
 		"title": "General",
 		"keys":["firstname","lastname", "user", "mail", "authkey", "ui_language"]
+	},{
+		"title": "UserPreferences",
+		"keys":["userpreference"]
 	}],
 	"properties": {
+		"userpreference": {
+			"type": "object",
+			"role": "userpreference"
+		},
 		"ui_language": {
 			"type": "string",
 			"enum": ["fr", "en"],

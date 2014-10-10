@@ -4,7 +4,7 @@
     "email": "jdoes@canopsis.org",
     "address": ""
 },
-    "_id":"account.root",
+    "_id":"root",
     "role":"admin",
     "rights":
             { "showview_service":
