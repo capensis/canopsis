@@ -778,11 +778,11 @@ class Rights(MiddlewareRegistry):
         if role:
             role = self.get_role(role)
 
-            if 'profile' in role:
+            if role and 'profile' in role:
                 profiles = self.get_profile(role['profile'])
                 n_groups = [x for y in profiles for x in y['group']]
 
-            if 'group' in role:
+            if role and 'group' in role:
                 n_groups += role['group']
 
         if 'group' in user:
