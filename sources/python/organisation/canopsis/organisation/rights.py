@@ -81,6 +81,17 @@ class Rights(MiddlewareRegistry):
             a_id, { 'crecord_type': 'action', 'desc': a_desc }
             )
 
+    # Delete an action from the reference list
+    def delete(self, a_id):
+        """
+        Args:
+            a_id: id of the action to be deleted
+        Returns:
+            See MongoStorage
+        """
+
+        return self['action_storage'].remove_elements(a_id)
+
     # Check if an entity has the flags for a specific rigjt
     # The entity must have a rights field with a rights maps within
     def check(self, entity, right_id, checksum):
@@ -350,7 +361,6 @@ class Rights(MiddlewareRegistry):
             )
         return False
 
-    # to be removed when user module is created
     def delete_role(self, r_name):
         """
         Args:
