@@ -32,7 +32,7 @@ class engine(cengine):
 	def __init__(self, *args, **kargs):
 		super(engine, self).__init__(*args, **kargs)
 
-		self.archiver = carchiver(namespace='events',  autolog=True, logging_level=self.logging_level)
+		self.archiver = carchiver(namespace='events',  autolog=False, logging_level=self.logging_level)
 
 
 		self.event_types = csv.reader([CONFIG.get('events', 'types')]).next()
