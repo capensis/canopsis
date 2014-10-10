@@ -43,6 +43,7 @@
 				"account",
 				"role",
 				"right",
+				"user",
 				"derogation",
 				"group",
 				"eventlog"
