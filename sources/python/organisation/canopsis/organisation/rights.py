@@ -757,27 +757,36 @@ class Rights(MiddlewareRegistry):
             dict of user's rights
         """
 
+        profiles = []
+        n_groups = []
         user = self.get_user(u_id)
 
         if not user:
             return {}
 
         role = self.get_role(user.setdefault('role', None))
-        profiles = self.get_profile(role['profile'])
-        n_groups = [x for y in profiles for x in y['group']]
 
-        if 'group' in role:
-            n_groups += role['group']
-        if 'group' in user:
+        if role:
+            if 'profile' in role:
+                profiles = self.get_profile(role['profile'])
+                n_groups = [x for y in profiles for x in y['group']]
+
+            if 'group' in role:
+                n_groups += role['group']
+
+        if user and 'group' in user:
             n_groups += user['group']
 
         specific_rights = [self['group_storage'][x]['rights']
                            for x in set(n_groups)]
 
-        specific_rights.append(user.setdefault('rights', {}))
-        specific_rights.append(role.setdefault('rights', {}))
-        (specific_rights.append(x.setdefault('rights', {}))
-         for x in profiles)
+        if user:
+            specific_rights.append(user.setdefault('rights', {}))
+        if role:
+            specific_rights.append(role.setdefault('rights', {}))
+        if profiles:
+            (specific_rights.append(x.setdefault('rights', {}))
+             for x in profiles)
 
         rights = {}
         for e_rights in specific_rights:
