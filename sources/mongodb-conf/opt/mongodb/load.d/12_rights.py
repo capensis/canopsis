@@ -29,14 +29,24 @@ import sys
 root = Account(user="root", group="root")
 right_module = Rights()
 actions_path = join(sys.prefix, 'opt/mongodb/load.d/rights/actions_ids.json')
+user_path = join(sys.prefix, 'opt/mongodb/load.d/rights/default_users.json')
 
-def init():
-    json_data = open(actions_path)
-    data = json.load(json_data)
-
+def add_actions(data):
     for action_id in data:
         right_module.add(action_id,
                          data[action_id].get('desc', "Empty desc"))
+
+def add_users(data):
+    for user in data:
+        right_module.delete_user(user['_id'])
+        right_module.create_user(user['_id'], user.setdefault('role', None),
+                                 rights=user.setdefault('rights', None),
+                                 contact=user.setdefault('contact', None),
+                                 groups=user.setdefault('groups', None))
+
+def init():
+    add_actions(json.load(open(actions_path)))
+    add_users(json.load(open(user_path)))
 
 def update():
     pass
