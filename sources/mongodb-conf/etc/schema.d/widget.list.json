@@ -45,7 +45,7 @@
 				"right",
 				"derogation",
 				"group",
-				"event"
+				"eventlog"
 			],
 			"default": "group",
 			"role": "simplelist"
