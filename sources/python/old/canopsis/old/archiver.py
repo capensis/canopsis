@@ -326,7 +326,7 @@ class Archiver(object):
                                                           {'$set': change})
 
         mid = None
-        if changed and self.autolog:
+        if changed or self.autolog:
             #store ack information to log collection
             if 'ack' in devent:
                 event['ack'] = devent['ack']
