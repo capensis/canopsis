@@ -23,7 +23,7 @@
 			"minItems": 1
 		},
 		"subject": {"type": "string", "required": true},
-		"body": {"type": "string", "required": true},
+		"body": {"type": "string", "role": "textarea", "required": true},
 		"attachments": {
 			"type": "array",
 			"items": {"type": "string"},
