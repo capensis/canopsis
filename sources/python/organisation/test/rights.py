@@ -22,7 +22,7 @@
 from logging import getLogger
 from unittest import main, TestCase
 from canopsis.organisation.rights import Rights
-from pprint import pprint
+
 
 class RightsTest(TestCase):
 
@@ -49,7 +49,7 @@ class RightsTest(TestCase):
             '2349',
             '4210',
             '4211'
-            }
+        }
         for x in referenced_rights:
             self.rights.add(x, 'desc test rule')
 
@@ -64,7 +64,6 @@ class RightsTest(TestCase):
 
         self.rights.delete_role('role_test1bis')
 
-
     def tests(self):
         # Test creation of groups
         rights = {
@@ -76,7 +75,7 @@ class RightsTest(TestCase):
             '1239': {'desc': 'test right in comp', 'checksum': 15},
             '1240': {'desc': 'test right in comp', 'checksum': 8},
             '1241': {'desc': 'test right in comp', 'checksum': 8}
-            }
+        }
         rights_scnd = {
             '2344': {'desc': 'test right in comp', 'checksum': 15},
             '2345': {'desc': 'test right in comp', 'checksum': 8},
@@ -86,52 +85,52 @@ class RightsTest(TestCase):
             '2349': {'desc': 'test right in comp', 'checksum': 15},
             '4210': {'desc': 'test right in comp', 'checksum': 8},
             '4211': {'desc': 'test right in comp', 'checksum': 8}
-            }
+        }
 
         # basic group creation
         self.rights.create_group('group_test1', rights)
         self.assertEqual(
             self.rights['group_storage'].get_elements(
-                query={'crecord_type':'group'})[0]['_id'],
+                query={'crecord_type': 'group'})[0]['_id'],
             'group_test1'
-            )
+        )
 
         self.rights.create_group('group_test2', rights_scnd)
         self.assertEqual(
             self.rights['group_storage'].get_elements(
-                query={'crecord_type':'group'})[1]['_id'],
+                query={'crecord_type': 'group'})[1]['_id'],
             'group_test2'
-            )
+        )
 
         # basic profile creation
         self.rights.create_profile('profile_test1', ['group_test1'])
         self.assertEqual(
             self.rights['profile_storage'].get_elements(
-                query={'crecord_type':'profile'})[0]['_id'],
+                query={'crecord_type': 'profile'})[0]['_id'],
             'profile_test1'
-            )
+        )
 
         self.rights.create_profile('profile_test2', ['group_test2'])
         self.assertEqual(
             self.rights['profile_storage'].get_elements(
-                query={'crecord_type':'profile'})[1]['_id'],
+                query={'crecord_type': 'profile'})[1]['_id'],
             'profile_test2'
-            )
+        )
 
         # create new role and assign it to the user
         self.rights.create_role('role_test1bis', 'profile_test1')
         self.assertEqual(
             self.rights['role_storage'].get_elements(
-                query={'crecord_type':'role'})[0]['_id'],
+                query={'crecord_type': 'role'})[0]['_id'],
             'role_test1bis'
-            )
+        )
 
         self.rights.create_user('jharris', 'role_test1bis')
         self.assertEqual(
             self.rights['user_storage'].get_elements(
-                query={'crecord_type':'user'})[0]['_id'],
+                query={'crecord_type': 'user'})[0]['_id'],
             'jharris'
-            )
+        )
 
         # Basic check
         self.assertEqual(
