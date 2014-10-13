@@ -61,8 +61,9 @@ class engine(Engine):
         ### Add status informations
         event_type = event.get('event_type')
 
-        if event_type is not None \
-                and event_type in ['check', 'selector', 'sla']:
+        handled_event_types = ['check', 'selected', 'sla']
+
+        if event_type is not None and event_type in handled_event_types:
 
             self.logger.debug('Add status informations')
 
@@ -81,12 +82,16 @@ class engine(Engine):
 
         event['perf_data_array'] = perf_data_array
 
-        # remove perf_data_akeys where values are None
+        # remove perf_data_keys where values are None
         for index, perf_data in enumerate(event['perf_data_array']):
 
-            event['perf_data_array'][index] = \
-                dict(((key, value) for key, value in perf_data.iteritems()
-                    if value is not None))
+            perf_data_array_with_Nones = event['perf_data_array'][index]
+
+            event['perf_data_array'][index] = {
+                name: perf_data_array_with_Nones[name]
+                for name in perf_data_array_with_Nones
+                if perf_data_array_with_Nones[name] is not None
+            }
 
         self.logger.debug('perf_data_array: {0}'.format(perf_data_array))
 

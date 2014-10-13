@@ -89,7 +89,8 @@ class Period(object):
     def __iter__(self):
 
         result = iter(
-            [unit for unit in Period.UNITS if unit in self.unit_values])
+            [unit for unit in Period.UNITS if unit in self.unit_values]
+        )
 
         return result
 
@@ -98,9 +99,10 @@ class Period(object):
         Get a delta object in order to add/remove a period on a datetime.
         """
 
+        unit_values = self.unit_values
+
         parameters = {
-            name + 's': value
-            for name, value in self.unit_values.iteritems()
+            (name + 's'): unit_values[name] for name in unit_values
         }
 
         result = rd(**parameters)
@@ -155,9 +157,12 @@ class Period(object):
 
         result = None
 
-        parameters = dict()
+        parameters = {}
 
-        for unit, value in self.unit_values.iteritems():
+        unit_values = self.unit_values
+
+        for unit in unit_values:
+            value = unit_values[unit]
             if unit is Period.WEEK:
                 monthcalendar = calendar.monthcalendar(
                     datetime.year, datetime.month)

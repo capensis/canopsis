@@ -157,7 +157,8 @@ def register_tasks(force=False, **tasks):
     :raises RuleError: if not force and task already exist
     """
 
-    for path, task in tasks.iteritems():
+    for path in tasks:
+        task = tasks[path]
         if not force and path in __TASK_PATHS:
             raise RuleError('Rule %s already registered' % path)
         else:

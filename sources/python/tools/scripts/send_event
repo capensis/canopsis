@@ -159,7 +159,8 @@ def main(argv):
 
     #-----------------------------send event-----------------------------
     clean_event = {}
-    for k, v in event.iteritems():
+    for k in event:
+        v = event[k]
         clean_event[k] = str(v).encode('utf-8')
 
     request_params = {'event': json.dumps(clean_event)}
