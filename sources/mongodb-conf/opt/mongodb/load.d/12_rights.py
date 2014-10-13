@@ -49,4 +49,4 @@ def init():
     add_users(json.load(open(user_path)))
 
 def update():
-    pass
+    init()
