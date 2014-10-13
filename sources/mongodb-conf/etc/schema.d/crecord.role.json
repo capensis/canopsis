@@ -2,7 +2,7 @@
 	"type": "object",
 	"categories": [{
 		"title": "General",
-		"keys":["crecord_name", "description"]
+		"keys":["_id", "description"]
 	},{
 		"title": "profile",
 		"keys": ["profile"]
@@ -19,6 +19,9 @@
 			"required": true,
 			"title": "type"
 		},
+		"_id": {
+			"type": "string"
+		},
 		"description": {
 			"type": "string"
 		},
@@ -32,17 +35,17 @@
 		},
 		"profile": {
 			"type": "string",
-			"role": "classifiedcrecordselector",
+			"title": "Assigned profile",
+			"role": "stringclassifiedcrecordselector",
 			"multiselect": false,
 			"crecordtype": "profile",
-			"valuekey" : "id"
+			"valuekey" : "_id",
+			"namekey" : "_id"
 		},
 		"rights": {
-			"type": "array",
-			"items": { "type": "object" },
-			"role": "classifiedcrecordselector",
-			"crecordtype": "right",
-			"multiselect": true
+			"type": "object",
+			"role": "rights",
+			"valuekey" : "_id"
 		}
 	}
 }
