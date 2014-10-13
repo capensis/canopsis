@@ -1,0 +1,48 @@
+{
+    "type": "object",
+    "categories": [{
+        "title": "General",
+        "keys":["name", "description", "enable", "nodes", "edges"]
+    },{
+        "title": "Filter",
+        "keys":["mfilter"]
+    }],
+    "properties": {
+        "crecord_type": {
+            "enum": ["filter"],
+            "required": true
+        },
+        "name": {
+            "type": "string",
+            "required": true,
+            "default": "no name"
+        },
+        "description": {
+            "type": "string"
+        },
+        "crecord_name": {
+            "type": "string",
+            "required": true
+        },
+        "mfilter": {
+            "type": "string",
+            "required": true,
+            "role": "cfilter"
+        },
+        "nodes": {
+            "type": "integer",
+            "required": true,
+            "default": 50
+        },
+        "edges": {
+            "type": "integer",
+            "required": true,
+            "default": 50
+        },
+        "type": {
+            "enum": ["jsplumb", "d3", "cytoscape"],
+            "default": "d3",
+            "role": "simplelist"
+        }
+    }
+}
