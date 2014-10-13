@@ -14,7 +14,7 @@
         "widget": {
           "id" : "item_13019673-ebdf-6271-e595-6be7338aeb60",
           "xtype": "list",
-          "default_filter" : "{\n    \"$or\": [\n        {\n            \"event_type\": { \"$eq\" : \"check\"\n        }}\n    ]\n}",
+          "default_filter" : "{\"$or\":[{\"$and\":[{\"ack.isAck\":{\"$ne\":true}},{\"state\":{\"$ne\":0}},{\"event_type\":{\"$eq\":\"check\"}}]}]}",
           "refreshInterval": 40,
           "refreshableWidget" : true,
           "itemsPerPage" : 5,
@@ -29,6 +29,11 @@
           },
           "filters" : [
             {
+              "filter" : "{\"$or\":[{\"$and\":[{\"ack.isAck\":{\"$ne\":true}},{\"state\":{\"$ne\":0}},{\"event_type\":{\"$eq\":\"check\"}}]}]}",
+              "cfilter" : "",
+              "title" : "Alert not ack"
+            },
+            {
               "filter" : "{\"$or\":[{\"$and\":[{\"ack.isAck\":{\"$eq\":true}},{\"event_type\":{\"$eq\":\"check\"}}]}]}",
               "cfilter" : "",
               "title" : "Ack"
@@ -37,11 +42,6 @@
               "filter" : "{\"$or\":[{\"$and\":[{\"state\":{\"$ne\":0}},{\"event_type\":{\"$eq\":\"check\"}}]}]}",
               "cfilter" : "",
               "title" : "Alert"
-            },
-            {
-              "filter" : "{\"$or\":[{\"$and\":[{\"ack.isAck\":{\"$ne\":true}},{\"state\":{\"$ne\":0}},{\"event_type\":{\"$eq\":\"check\"}}]}]}",
-              "cfilter" : "",
-              "title" : "Alert not ack"
             }
           ],
           "mixins": [

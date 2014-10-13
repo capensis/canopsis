@@ -14,7 +14,7 @@
         "widget": {
           "widgetId" : "fake-guid-fd5a-1ede-8ac2-6a1d66ad0024",
           "xtype": "list",
-          "listed_crecord_type": "account",
+          "listed_crecord_type": "user",
           "itemsPerPage": 5,
           "title": "Accounts",
           "item_actions": [
@@ -31,17 +31,15 @@
           "mixins": [
             "Sortablearray",
             "Arraysearch",
-            "Pagination"
+            "Pagination",
+            "Crud"
           ],
           "displayed_columns": [
-            "external",
-            "user",
-            "firstname",
-            "lastname",
-            "mail",
-            "groups"
+            "_id",
+            "role",
+            "groups",
+            "rights"
           ]
-
         }
       }
     ]

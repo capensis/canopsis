@@ -15,7 +15,7 @@
         "widget": {
           "id" : "item_13019673-ebdf-6271-e595-6be7338aeb66",
           "xtype": "list",
-          "listed_crecord_type": "right",
+          "listed_crecord_type": "action",
           "itemsPerPage": 5,
           "title": "Rights",
           "selection_toolbar": [
@@ -25,12 +25,13 @@
           "mixins": [
             "Sortablearray",
             "Arraysearch",
-            "Pagination"
+            "Pagination",
+            "Crud"
           ],
           "displayed_columns": [
             "crecord_type",
             "_id",
-            "description"
+            "action_desc"
           ]
         }
       }

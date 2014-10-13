@@ -42,6 +42,9 @@
 		"ticket_date": {
 			"type": "number"
 		},
+		"keep_state": {
+			"type": "boolean"
+		},
 		"timestamp": {
 			"type": "number",
 			"role": "timestamp",
@@ -75,8 +78,7 @@
 		"state": {
 			"type": "number",
 			"required": true,
-			"role": "criticity",
-			"title":"criticity"
+			"role": "criticity"
 		},
 		"perimeter": {
 			"type": "string"
