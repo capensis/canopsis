@@ -58,7 +58,8 @@ class ConfigurationEditor(Configurable):
 
         self.fullscreen = parameters.get(ConfigurationEditor.FULLSCREEN)
 
-        for name, parameter in parameters.iteritems():
+        for name in parameters:
+            parameter = parameters[name]
             if name.startswith(Configurable.COMPONENT_PREFIX):
                 parser = name[:len(Configurable.COMPONENT_PREFIX)]
                 component = lookup(parameter)

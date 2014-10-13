@@ -115,7 +115,8 @@ class ConfigurableTypes(dict):
 
         if values is not None:
 
-            for name, value in values.iteritems():
+            for name in values:
+                value = values[name]
                 self[name] = value
 
     def __setitem__(self, name, value):
@@ -246,8 +247,12 @@ class ConfigurableRegistry(Configurable):
 
         # get self conf path
         conf_path = conf_paths[-1]
+
+        configurables = self._configurables
+
         # apply configuration to all self configurables
-        for name, configurable in self._configurables.iteritems():
+        for name in configurables:
+            configurable = configurables[name]
             # add self last conf paths to configurable conf paths
             configurable_conf_paths = list(configurable.conf_paths)
             configurable_conf_paths.append(conf_path)

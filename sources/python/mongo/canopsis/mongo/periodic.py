@@ -117,7 +117,8 @@ class MongoPeriodicStorage(MongoStorage, PeriodicStorage):
 
             values = document[MongoPeriodicStorage.Index.VALUES]
 
-            for t, value in values.iteritems():
+            for t in values:
+                value = values[t]
                 value_timestamp = timestamp + int(t)
 
                 if timewindow is None or value_timestamp in timewindow:
@@ -131,18 +132,16 @@ class MongoPeriodicStorage(MongoStorage, PeriodicStorage):
 
         # initialize a dictionary of perfdata value by value field
         # and id_timestamp
-        document_properties_by_id_timestamp = {}
+        doc_props_by_id_ts = {}
         # previous variable contains a dict of entries to put in
         # the related document
 
         # prepare data to insert/update in db
-        for timestamp, value in points:
+        for ts, value in points:
 
-            timestamp = int(timestamp)
-            id_timestamp = int(period.round_timestamp(
-                timestamp, normalize=True))
-            document_properties = document_properties_by_id_timestamp.\
-                setdefault(id_timestamp, {})
+            ts = int(ts)
+            id_timestamp = int(period.round_timestamp(ts, normalize=True))
+            document_properties = doc_props_by_id_ts.setdefault(id_timestamp, {})
 
             if '_id' not in document_properties:
                 document_properties['_id'] = \
@@ -150,20 +149,20 @@ class MongoPeriodicStorage(MongoStorage, PeriodicStorage):
                         data_id=data_id,
                         timestamp=id_timestamp, period=period)
                 document_properties[MongoPeriodicStorage.Index.LAST_UPDATE] = \
-                    timestamp
+                    ts
 
             else:
                 last_update = MongoPeriodicStorage.Index.LAST_UPDATE
-                if document_properties[last_update] < timestamp:
-                    document_properties[last_update] = timestamp
+                if document_properties[last_update] < ts:
+                    document_properties[last_update] = ts
 
             field_name = "{0}.{1}".format(
-                MongoPeriodicStorage.Index.VALUES, timestamp - id_timestamp)
+                MongoPeriodicStorage.Index.VALUES, ts - id_timestamp)
 
             document_properties[field_name] = value
 
-        for id_timestamp, document_properties in \
-                document_properties_by_id_timestamp.iteritems():
+        for id_timestamp in doc_props_by_id_ts:
+            document_properties = doc_props_by_id_ts[id_timestamp]
 
             # remove _id and last_update
             _id = document_properties.pop('_id')
@@ -201,8 +200,10 @@ class MongoPeriodicStorage(MongoStorage, PeriodicStorage):
             for document in documents:
                 timestamp = document.get(MongoPeriodicStorage.Index.TIMESTAMP)
                 values = document.get(MongoPeriodicStorage.Index.VALUES)
-                values_to_save = {t: v for t, v in values.iteritems()
-                    if (timestamp + int(t)) not in timewindow}
+                values_to_save = {
+                    t: values[t] for t in values
+                    if (timestamp + int(t)) not in timewindow
+                }
                 _id = document.get('_id')
 
                 if len(values_to_save) > 0:

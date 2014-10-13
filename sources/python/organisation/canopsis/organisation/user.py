@@ -51,7 +51,8 @@ class User(Manager):
 
         # update saved content of user
         user = self.user_storage(data_id=self.id)
-        for key, value in user.iteritems():
+        for key in user:
+            value = user[key]
             getattr(self, key).update(value)
 
         self.groups = self.group_storage.get(data_ids=self.groups)

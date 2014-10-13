@@ -25,5 +25,6 @@ class Profile(PermissionEntity):
 
     def __init__(self, **content):
 
-        for name, value in content.iteritems():
+        for name in content:
+            value = content[name]
             setattr(self, name, value)
