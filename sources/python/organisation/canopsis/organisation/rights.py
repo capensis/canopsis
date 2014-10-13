@@ -371,13 +371,12 @@ class Rights(MiddlewareRegistry):
         """
 
         if self.get_role(r_name):
-            self['role_storage'].remove_elements(r_name)
-
             for user in self['user_storage'].get_elements(query={'crecord_type':'user'}):
-                if 'role' in entity and r_name == entity['role']:
+                if user and 'role' in user and r_name == user['role']:
                     entity.pop('role', None)
-                    self['user_storage'].put_element(entity['_id'], entity)
+                    self['user_storage'].put_element(user['_id'], user)
 
+            self['role_storage'].remove_elements(r_name)
             return True
 
         self.logger.error(

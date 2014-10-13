@@ -42,6 +42,9 @@
 		"ticket_date": {
 			"type": "number"
 		},
+		"keep_state": {
+			"type": "boolean"
+		},
 		"timestamp": {
 			"type": "number",
 			"role": "timestamp",
