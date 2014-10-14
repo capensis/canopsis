@@ -335,17 +335,14 @@ class Rights(MiddlewareRegistry):
             return None
 
         new_profile = {'crecord_type': 'profile',
-                       'crecord_name': p_name,
-                       'groups': []
+                       'crecord_name': p_name
                        }
+        if isinstance(p_groups, list):
+            new_profile['group'] = p_groups
+        else:
+            new_profile.setdefault('group', []).append(p_groups)
 
         self.profile_storage.put_element(p_name, new_profile)
-
-        if not p_groups:
-            return p_name
-
-        for comp in p_groups:
-            self.add_group(p_name, 'profile', comp)
 
         return p_name
 
