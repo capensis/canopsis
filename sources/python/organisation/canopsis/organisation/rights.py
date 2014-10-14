@@ -836,7 +836,7 @@ class Rights(MiddlewareRegistry):
 
         return False
 
-    def update_field(e_id, e_type, new_elems, elem_type, entity):
+    def update_field(self, e_id, e_type, new_elems, elem_type, entity):
         if entity and elem_type in entity:
             to_remove = entity[elem_type]
             if new_elems:
@@ -850,26 +850,26 @@ class Rights(MiddlewareRegistry):
                     return False
         return True
 
-    def update_rights(e_id, e_type, e_rights, entity):
+    def update_rights(self, e_id, e_type, e_rights, entity):
         if entity and 'rights' in entity:
             to_remove = entity['rights']
             if e_rights:
                 to_remove = set(entity['rights']) - set(e_rights)
             for right in to_remove:
-                if not right_module.remove_right(
+                if not self.remove_right(
                     e_id, e_type, right, entity['rights'][right]['checksum']
                     ):
                     return False
             if e_rights:
                 for right in e_rights:
-                    if not right_module.add_right(
+                    if not self.add_right(
                         e_id, e_type, right, e_rights[right]['checksum']
                         ):
                         return False
             return True
 
-    def update_profile(e_id, e_type, profiles, entity):
+    def update_profile(self, e_id, e_type, profiles, entity):
         self.update_field(e_id, e_type, profiles, 'profile', entity)
 
-    def update_comp(e_id, e_type, groups, entity):
+    def update_comp(self, e_id, e_type, groups, entity):
         self.update_field(e_id, e_type, groups, 'group', entity)
