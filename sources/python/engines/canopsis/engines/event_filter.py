@@ -218,7 +218,10 @@ class engine(Engine):
                                         action, name)
                         # If pass then ret == event; end loop
                         if ret:
-                            return (DROP if ret == DROP else event)
+                            if ret != DROP:
+                                event['rk'] = event['_id'] = get_routingkey(event)
+                                return event
+                            return DROP
 
                     else:
                         self.logger.warning("Unknown action '%s'" % action)
@@ -232,7 +235,7 @@ class engine(Engine):
         self.logger.debug("Event '%s' passed by default action" % (rk))
         self.pass_event_count += 1
 
-        self.logger.debug('Event before sent to next engine')
+        self.logger.debug('Event before sent to next engine: %s' % event)
         event['rk'] = event['_id'] = get_routingkey(event)
 
         return event
