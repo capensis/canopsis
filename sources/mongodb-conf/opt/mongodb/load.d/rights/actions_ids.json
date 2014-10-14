@@ -1,68 +1,251 @@
 {
     "showview_service": {
-            "desc": "action description blah bla"
-            },
+        "desc": ""
+    },
     "list_search": {
-            "desc": "action description blah bla"
-            },
+        "desc": ""
+    },
     "list_filters": {
-            "desc": "action description blah bla"
-            },
-    "aclconfig": {
-            "desc": "action description blah bla"
-            },
-    "authsystems": {
-            "desc": "action description blah bla"
-            },
-    "enginesconfig": {
-            "desc": "action description blah bla"
-            },
-    "pluginsconfig": {
-            "desc": "action description blah bla"
-            },
-    "uisettings": {
-            "desc": "action description blah bla"
-            },
+        "desc": ""
+    },
+    "menu_aclconfig": {
+        "desc": ""
+    },
+    "menu_authsystems": {
+        "desc": ""
+    },
+    "menu_enginesconfig": {
+        "desc": ""
+    },
+    "menu_pluginsconfig": {
+        "desc": ""
+    },
+    "menu_uisettings": {
+        "desc": ""
+    },
     "actionbutton_ack": {
-            "desc": "action description blah bla"
-            },
+        "desc": ""
+    },
     "actionbutton_cancel": {
-            "desc": "action description blah bla"
-            },
+        "desc": ""
+    },
     "actionbutton_changestate": {
-            "desc": "action description blah bla"
-            },
+        "desc": ""
+    },
     "actionbutton_eventnavigation": {
-            "desc": "action description blah bla"
-            },
+        "desc": ""
+    },
     "actionbutton_history": {
-            "desc": "action description blah bla"
-            },
+        "desc": ""
+    },
     "actionbutton_incident": {
-            "desc": "action description blah bla"
-            },
+        "desc": ""
+    },
     "actionbutton_info": {
-            "desc": "action description blah bla"
-            },
+        "desc": ""
+    },
     "actionbutton_ticketnumber": {
-            "desc": "action description blah bla"
-            },
+        "desc": ""
+    },
     "showview_view_event": {
-            "desc": "action description blah bla"
-            },
+        "desc": ""
+    },
     "showview_view_selectors": {
-            "desc": "action description blah bla"
-            },
+        "desc": ""
+    },
     "showview_view_jobs": {
-            "desc": "action description blah bla"
-            },
+        "desc": ""
+    },
     "showview_view_filters": {
-            "desc": "action description blah bla"
-            },
+        "desc": ""
+    },
     "showview_view_services": {
-            "desc": "action description blah bla"
-            },
+        "desc": ""
+    },
     "showview_view_series": {
-            "desc": "action description"
-            }
+        "desc": ""
+    },
+    "showview_view_series": {
+        "desc": ""
+    },
+    "userview_create": {
+        "desc": ""
+    },
+    "userview_read": {
+        "desc": ""
+    },
+    "userview_update": {
+        "desc": ""
+    },
+    "userview_delete": {
+        "desc": ""
+    },
+    "selector_create": {
+        "desc": ""
+    },
+    "selector_read": {
+        "desc": ""
+    },
+    "selector_update": {
+        "desc": ""
+    },
+    "selector_delete": {
+        "desc": ""
+    },
+    "role_create": {
+        "desc": ""
+    },
+    "role_read": {
+        "desc": ""
+    },
+    "role_update": {
+        "desc": ""
+    },
+    "role_delete": {
+        "desc": ""
+    },
+    "action_create": {
+        "desc": ""
+    },
+    "action_read": {
+        "desc": ""
+    },
+    "action_update": {
+        "desc": ""
+    },
+    "action_delete": {
+        "desc": ""
+    },
+    "filter_create": {
+        "desc": ""
+    },
+    "filter_read": {
+        "desc": ""
+    },
+    "filter_update": {
+        "desc": ""
+    },
+    "filter_delete": {
+        "desc": ""
+    },
+    "curve_create": {
+        "desc": ""
+    },
+    "curve_read": {
+        "desc": ""
+    },
+    "curve_update": {
+        "desc": ""
+    },
+    "curve_delete": {
+        "desc": ""
+    },
+    "account_create": {
+        "desc": ""
+    },
+    "account_read": {
+        "desc": ""
+    },
+    "account_update": {
+        "desc": ""
+    },
+    "account_delete": {
+        "desc": ""
+    },
+    "user_create": {
+        "desc": ""
+    },
+    "user_read": {
+        "desc": ""
+    },
+    "user_update": {
+        "desc": ""
+    },
+    "user_delete": {
+        "desc": ""
+    },
+    "serie_create": {
+        "desc": ""
+    },
+    "serie_read": {
+        "desc": ""
+    },
+    "serie_update": {
+        "desc": ""
+    },
+    "serie_delete": {
+        "desc": ""
+    },
+    "topology_create": {
+        "desc": ""
+    },
+    "topology_read": {
+        "desc": ""
+    },
+    "topology_update": {
+        "desc": ""
+    },
+    "topology_delete": {
+        "desc": ""
+    },
+    "profile_create": {
+        "desc": ""
+    },
+    "profile_read": {
+        "desc": ""
+    },
+    "profile_update": {
+        "desc": ""
+    },
+    "profile_delete": {
+        "desc": ""
+    },
+    "derogation_create": {
+        "desc": ""
+    },
+    "derogation_read": {
+        "desc": ""
+    },
+    "derogation_update": {
+        "desc": ""
+    },
+    "derogation_delete": {
+        "desc": ""
+    },
+    "event_create": {
+        "desc": ""
+    },
+    "event_read": {
+        "desc": ""
+    },
+    "event_update": {
+        "desc": ""
+    },
+    "event_delete": {
+        "desc": ""
+    },
+    "eventlog_create": {
+        "desc": ""
+    },
+    "eventlog_read": {
+        "desc": ""
+    },
+    "eventlog_update": {
+        "desc": ""
+    },
+    "eventlog_delete": {
+        "desc": ""
+    },
+    "job_create": {
+        "desc": ""
+    },
+    "job_read": {
+        "desc": ""
+    },
+    "job_update": {
+        "desc": ""
+    },
+    "job_delete": {
+        "desc": ""
+    }
 }

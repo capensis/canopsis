@@ -30,6 +30,7 @@ root = Account(user="root", group="root")
 right_module = Rights()
 actions_path = join(sys.prefix, 'opt/mongodb/load.d/rights/actions_ids.json')
 user_path = join(sys.prefix, 'opt/mongodb/load.d/rights/default_users.json')
+role_path = join(sys.prefix, 'opt/mongodb/load.d/rights/default_roles.json')
 
 def add_actions(data):
     for action_id in data:
@@ -44,9 +45,14 @@ def add_users(data):
                                  contact=user.setdefault('contact', None),
                                  groups=user.setdefault('groups', None))
 
+def add_roles(data):
+    for role in data:
+        right_module.create_role(role['_id'], None)
+
 def init():
     add_actions(json.load(open(actions_path)))
     add_users(json.load(open(user_path)))
+    add_roles(json.load(open(role_path)))
 
 def update():
     init()
