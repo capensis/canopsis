@@ -9,5 +9,14 @@
     "keybindings" : [{
         "value" : "toggleEditMode",
         "label" : "ctrl+e"
+    },{
+        "value" : "toggleFullscreen",
+        "label" : "ctrl+y"
+    },{
+        "value" : "refresh",
+        "label" : "ctrl+r"
+    },{
+        "value" : "toggleDevTools",
+        "label" : "²"
     }]
 }

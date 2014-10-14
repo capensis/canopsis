@@ -1,6 +1,6 @@
 {
-    "id" : "view.app_header",
-    "_id" : "view.app_header",
+    "id" : "view.app_devtools",
+    "_id" : "view.app_devtools",
     "crecord_write_time" : 1406205401,
     "enable" : true,
     "aaa_access_group" : [
@@ -9,18 +9,8 @@
     "description" : null,
     "parent" : [ ],
    "containerwidget" : {
-    "items" : [
-                {
-                    "widget" : {
-                            "xtype" : "uimaintabcollection",
-                            "title" : "",
-                            "tabs" : [{"label": "Evenements", "value": "view.event"}, {"label": "Services", "value": "view.services"}]
-                    },
-                    "xtype" : "widgetwrapper",
-                    "title" : "wrapper"
-            }
-    ],
-    "xtype" : "lighthbox",
+    "items" : [],
+    "xtype" : "tabmanager",
     "title" : "container title vbox"
     },
 

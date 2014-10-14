@@ -2,16 +2,16 @@
 	"type": "object",
 	"categories": [{
 		"title": "General",
-		"keys":["crecord_name"]
+		"keys":["_id"]
 	},{
 		"title": "Role",
-		"keys": ["user_role"]
+		"keys": ["role"]
 	},{
 		"title": "Groups",
 		"keys": ["user_groups"]
 	},{
 		"title": "Rights",
-		"keys": ["user_rights"]
+		"keys": ["rights"]
 	}],
 	"properties": {
 		"crecord_type": {
@@ -21,7 +21,8 @@
 			"icon": "user"
 		},
 		"_id": {
-			"type": "string"
+			"type": "string",
+			"required": true
 		},
 		"ui_language": {
 			"type": "string",
@@ -36,6 +37,15 @@
 		"user_groups": {
 			"type": "object"
 		},
+		"role": {
+			"title": "Role",
+			"description": "A role that is assigned to the user",
+			"valueKey": "_id",
+			"nameKey": "_id",
+			"type": "string",
+			"role": "stringclassifiedcrecordselector",
+			"crecordtype": "role"
+		},
 		"user_role": {
 			"type": "string",
 			"role": "classifiedcrecordselector",
@@ -43,7 +53,7 @@
 			"crecordtype": "role",
 			"valuekey" : "id"
 		},
-		"user_rights": {
+		"rights": {
 			"type": "object",
 			"role": "rights",
 			"valuekey" : "_id"

@@ -2,19 +2,18 @@
 	"type": "object",
 	"categories": [{
 		"title": "General",
-		"keys":["group_name"]
+		"keys":["_id"]
 	},{
 		"title": "Permissions",
 		"keys": ["rights"]
 	}],
 	"properties": {
-		"group_name": {
+		"_id": {
 			"type": "string"
 		},
 		"rights": {
 			"type": "object",
-			"role": "rights",
-			"required": false
+			"role": "rights"
 		},
 		"description": {
 			"type": "string"

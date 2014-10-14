@@ -24,7 +24,8 @@
           "mixins": [
             "Sortablearray",
             "Arraysearch",
-            "Pagination"
+            "Pagination",
+            "Crud"
           ],
           "displayed_columns": [
             "crecord_type",
@@ -50,7 +51,8 @@
           "mixins": [
             "Sortablearray",
             "Arraysearch",
-            "Pagination"
+            "Pagination",
+            "Crud"
           ],
           "displayed_columns": [
             "crecord_type",
@@ -75,12 +77,13 @@
           "mixins": [
             "Sortablearray",
             "Arraysearch",
-            "Pagination"
+            "Pagination",
+            "Crud"
           ],
           "displayed_columns": [
             "crecord_type",
             "_id",
-            "description",
+            "crecord_name",
             "rights"
           ]
 
