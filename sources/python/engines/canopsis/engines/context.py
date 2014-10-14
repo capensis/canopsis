@@ -79,18 +79,16 @@ class engine(Engine):
         servicegroups = event.get('servicegroups', [])
 
         # add connector
-        entity = {
-            Context.NAME: connector
-        }
-        self.context.put(
-            _type='connector', entity=entity)
+        entity = {Context.NAME: connector}
+        self.context.put(_type='connector', entity=entity)
 
         # add connector_name
         entity[Context.NAME] = connector_name
 
         context['connector'] = connector
         self.context.put(
-            _type='connector_name', entity=entity, context=context)
+            _type='connector_name', entity=entity, context=context
+        )
 
         # add status entity which is a component or a resource
         entity[Context.NAME] = 'component'
@@ -108,7 +106,8 @@ class engine(Engine):
         elif source_type == 'resource':
             # add component
             self.context.put(
-                _type='component', entity=status_entity, context=context)
+                _type='component', entity=status_entity, context=context
+            )
             is_status_entity = True
             context['component'] = component
             status_entity[Context.NAME] = resource
@@ -124,13 +123,12 @@ class engine(Engine):
             status_entity['state'] = event['state']
             status_entity['state_type'] = event['state_type']
             self.context.put(
-                _type=source_type, entity=status_entity, context=context)
+                _type=source_type, entity=status_entity, context=context
+            )
 
         # add hostgroups
         for hostgroup in hostgroups:
-            hostgroup_data = {
-                Context.NAME: hostgroup
-            }
+            hostgroup_data = {Context.NAME: hostgroup}
             self.context.put(_type='hostgroup', entity=hostgroup_data)
 
         # add servicegroups
@@ -169,7 +167,8 @@ class engine(Engine):
             authored_data[Context.NAME] = event['id']
 
         self.context.put(
-            _type=event_type, entity=authored_data, context=context)
+            _type=event_type, entity=authored_data, context=context
+        )
 
         # add perf data
         for perfdata in event.get('perf_data_array', []):
@@ -177,6 +176,7 @@ class engine(Engine):
             perfdata_entity[Context.NAME] = perfdata['metric']
             perfdata_entity['internal'] = perfdata['metric'].startswith('cps')
             self.context.put(
-                _type='metric', entity=perfdata_entity, context=context)
+                _type='metric', entity=perfdata_entity, context=context
+            )
 
         return event
