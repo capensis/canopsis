@@ -65,7 +65,7 @@ class Rights(MiddlewareRegistry):
         self.get_role = self.get_from_storage('role')
         self.get_user = self.get_from_storage('user')
 
-        actions = {
+        self.actions = {
             'remove': {
                 'profile': self.remove_profile,
                 'group': self.remove_group,
