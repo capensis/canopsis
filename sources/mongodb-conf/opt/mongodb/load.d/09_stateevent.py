@@ -32,6 +32,7 @@ def init():
     storage = get_storage(account=root, namespace='object')
 
     state_spec = {
+        "_id": "state-spec",
         "crecord_type": "state-spec",
         "restore_event": True,
         "bagot": {

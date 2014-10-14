@@ -9,72 +9,7 @@
     "description" : null,
     "parent" : [ ],
    "containerwidget" : {
-    "items" : [
-            {
-                "widget" : {
-                        "xtype" : "webconsole",
-                        "title" : "Console"
-                },
-                "xtype" : "widgetwrapper",
-                "title" : "wrapper"
-            },{
-                "widget" : {
-                        "xtype" : "requestsmanager",
-                        "title" : "Requests"
-                },
-                "xtype" : "widgetwrapper",
-                "title" : "wrapper"
-            },{
-                "widget" : {
-                    "items" : [{
-                        "widget" : {
-                                    "xtype" : "text",
-                                    "title" : "Actions",
-                                    "html": "{{component-table data=controller.controllers.application.actionsRegistry.all columns=controller.controllers.application.actionsRegistry.tableColumns}}"
-                            },
-                            "xtype" : "widgetwrapper",
-                            "title" : "wrapper"
-                        },{
-                            "widget" : {
-                                    "xtype" : "text",
-                                    "title" : "Widgets",
-                                    "html": "{{component-table data=controller.controllers.application.widgetsRegistry.all columns=controller.controllers.application.widgetsRegistry.tableColumns}}"
-                            },
-                            "xtype" : "widgetwrapper",
-                            "title" : "wrapper"
-                        },{
-                            "widget" : {
-                                    "xtype" : "text",
-                                    "title" : "Inflections",
-                                    "html": "Inflections<br/>{{component-table data=controller.controllers.application.inflectionsRegistry.all columns=controller.controllers.application.inflectionsRegistry.tableColumns}}"
-                            },
-                            "xtype" : "widgetwrapper",
-                            "title" : "wrapper"
-                        },{
-                            "widget" : {
-                                    "xtype" : "text",
-                                    "title" : "Mixins",
-                                    "html": "{{component-table data=controller.controllers.application.mixinsRegistry.all columns=controller.controllers.application.mixinsRegistry.tableColumns}}"
-                            },
-                            "xtype" : "widgetwrapper",
-                            "title" : "wrapper"
-                    },{
-                            "widget" : {
-                                    "xtype" : "text",
-                                    "title" : "Forms",
-                                    "html": "{{component-table data=controller.controllers.application.formsRegistry.all columns=controller.controllers.application.formsRegistry.tableColumns}}"
-                            },
-                            "xtype" : "widgetwrapper",
-                            "title" : "wrapper"
-                    }],
-                    "xtype" : "tabmanager",
-                    "title" : "Symbols"
-                },
-                "xtype" : "widgetwrapper",
-                "title" : "wrapper"
-            }
-
-    ],
+    "items" : [],
     "xtype" : "tabmanager",
     "title" : "container title vbox"
     },
