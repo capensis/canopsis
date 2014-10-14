@@ -1,4 +1,10 @@
 {
+    "showview_view_permissions": {
+        "desc": ""
+    },
+    "showview_view_accounts": {
+        "desc": ""
+    },
     "showview_service": {
         "desc": ""
     },

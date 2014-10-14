@@ -31,6 +31,8 @@ right_module = Rights()
 actions_path = join(sys.prefix, 'opt/mongodb/load.d/rights/actions_ids.json')
 user_path = join(sys.prefix, 'opt/mongodb/load.d/rights/default_users.json')
 role_path = join(sys.prefix, 'opt/mongodb/load.d/rights/default_roles.json')
+group_path = join(sys.prefix, 'opt/mongodb/load.d/rights/default_groups.json')
+profile_path = join(sys.prefix, 'opt/mongodb/load.d/rights/default_profiles.json')
 
 def add_actions(data):
     for action_id in data:
@@ -79,8 +81,8 @@ def init():
     add_actions(json.load(open(actions_path)))
     add_users(json.load(open(user_path)))
     add_roles(json.load(open(role_path)))
-    add_groups(json.load(open(role_path)))
-    add_profiles(json.load(open(role_path)))
+    # add_groups(json.load(open(group_path)))
+    # add_profiles(json.load(open(profile_path)))
 
 def update():
     init()
