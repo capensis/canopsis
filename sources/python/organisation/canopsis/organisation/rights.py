@@ -857,13 +857,13 @@ class Rights(MiddlewareRegistry):
                     e_id, e_type, right, entity['rights'][right]['checksum']
                     ):
                     return False
-            if e_rights:
-                for right in e_rights:
-                    if not self.add_right(
-                        e_id, e_type, right, e_rights[right]['checksum']
-                        ):
-                        return False
-            return True
+        if e_rights:
+            for right in e_rights:
+                if not self.add_right(
+                    e_id, e_type, right, e_rights[right]['checksum']
+                    ):
+                    return False
+        return True
 
     def update_profile(self, e_id, e_type, profiles, entity):
         self.update_field(e_id, e_type, profiles, 'profile', entity)
