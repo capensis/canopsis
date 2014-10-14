@@ -46,8 +46,10 @@ def add_users(data):
                                  groups=user.setdefault('groups', None))
 
 def add_roles(data):
-    for role in data:
-        right_module.create_role(role['_id'], None)
+    for roleJson in data:
+        right_module.create_role(roleJson['_id'], None)
+        roleRecord = right_module.get_role(roleJson['_id'])
+        right_module.update_rights(roleJson['_id'], 'role', roleJson['rights'], roleRecord)
 
 def init():
     add_actions(json.load(open(actions_path)))

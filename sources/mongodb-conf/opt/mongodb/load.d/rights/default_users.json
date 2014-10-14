@@ -7,96 +7,7 @@
     },
     "_id": "root",
     "role": "admin",
-    "rights": {
-      "showview_service": {
-        "checksum": 15,
-        "desc": ""
-      },
-      "list_search": {
-        "checksum": 15,
-        "desc": ""
-      },
-      "list_filters": {
-        "checksum": 15,
-        "desc": ""
-      },
-      "menu_aclconfig": {
-        "checksum": 15,
-        "desc": ""
-      },
-      "menu_authsystems": {
-        "checksum": 15,
-        "desc": ""
-      },
-      "menu_enginesconfig": {
-        "checksum": 15,
-        "desc": ""
-      },
-      "menu_pluginsconfig": {
-        "checksum": 15,
-        "desc": ""
-      },
-      "menu_uisettings": {
-        "checksum": 15,
-        "desc": ""
-      },
-      "actionbutton_ack": {
-        "checksum": 15,
-        "desc": ""
-      },
-      "actionbutton_cancel": {
-        "checksum": 15,
-        "desc": ""
-      },
-      "actionbutton_changestate": {
-        "checksum": 15,
-        "desc": ""
-      },
-      "actionbutton_eventnavigation": {
-        "checksum": 15,
-        "desc": ""
-      },
-      "actionbutton_history": {
-        "checksum": 15,
-        "desc": ""
-      },
-      "actionbutton_incident": {
-        "checksum": 15,
-        "desc": ""
-      },
-      "actionbutton_info": {
-        "checksum": 15,
-        "desc": ""
-      },
-      "actionbutton_ticketnumber": {
-        "checksum": 15,
-        "desc": ""
-      },
-      "showview_view_event": {
-        "checksum": 15,
-        "desc": ""
-      },
-      "showview_view_selectors": {
-        "checksum": 15,
-        "desc": ""
-      },
-      "showview_view_jobs": {
-        "checksum": 15,
-        "desc": ""
-      },
-      "showview_view_filters": {
-        "checksum": 15,
-        "desc": ""
-      },
-      "showview_view_services": {
-        "checksum": 15,
-        "desc": ""
-      },
-      "showview_view_series": {
-        "checksum": 15,
-        "desc": ""
-      }
-    }
+    "rights": {}
   },{
     "contact": {
       "name": "John Doe",
@@ -104,97 +15,8 @@
       "address": ""
     },
     "_id": "AP234760",
-    "role": "admin",
-    "rights": {
-      "showview_service": {
-        "checksum": 15,
-        "desc": ""
-      },
-      "list_search": {
-        "checksum": 15,
-        "desc": ""
-      },
-      "list_filters": {
-        "checksum": 15,
-        "desc": ""
-      },
-      "menu_aclconfig": {
-        "checksum": 15,
-        "desc": ""
-      },
-      "menu_authsystems": {
-        "checksum": 15,
-        "desc": ""
-      },
-      "menu_enginesconfig": {
-        "checksum": 15,
-        "desc": ""
-      },
-      "menu_pluginsconfig": {
-        "checksum": 15,
-        "desc": ""
-      },
-      "menu_uisettings": {
-        "checksum": 15,
-        "desc": ""
-      },
-      "actionbutton_ack": {
-        "checksum": 15,
-        "desc": ""
-      },
-      "actionbutton_cancel": {
-        "checksum": 15,
-        "desc": ""
-      },
-      "actionbutton_changestate": {
-        "checksum": 15,
-        "desc": ""
-      },
-      "actionbutton_eventnavigation": {
-        "checksum": 15,
-        "desc": ""
-      },
-      "actionbutton_history": {
-        "checksum": 15,
-        "desc": ""
-      },
-      "actionbutton_incident": {
-        "checksum": 15,
-        "desc": ""
-      },
-      "actionbutton_info": {
-        "checksum": 15,
-        "desc": ""
-      },
-      "actionbutton_ticketnumber": {
-        "checksum": 15,
-        "desc": ""
-      },
-      "showview_view_event": {
-        "checksum": 15,
-        "desc": ""
-      },
-      "showview_view_selectors": {
-        "checksum": 15,
-        "desc": ""
-      },
-      "showview_view_jobs": {
-        "checksum": 15,
-        "desc": ""
-      },
-      "showview_view_filters": {
-        "checksum": 15,
-        "desc": ""
-      },
-      "showview_view_services": {
-        "checksum": 15,
-        "desc": ""
-      },
-      "showview_view_series": {
-        "checksum": 15,
-        "desc": ""
-      }
-    }
+    "role": "Manager",
+    "rights": {}
   },{
     "contact": {
       "name": "John Doe",
@@ -202,7 +24,7 @@
       "address": ""
     },
     "_id": "X2008332",
-    "role": "view_manager",
+    "role": "Support",
     "rights": {}
   },{
     "contact": {
@@ -211,76 +33,7 @@
       "address": ""
     },
     "_id": "MT704129",
-    "role": "admin",
-    "rights": {
-      "showview_service": {
-        "checksum": 15,
-        "desc": ""
-      },
-      "list_search": {
-        "checksum": 15,
-        "desc": ""
-      },
-      "list_filters": {
-        "checksum": 15,
-        "desc": ""
-      },
-      "actionbutton_ack": {
-        "checksum": 15,
-        "desc": ""
-      },
-      "actionbutton_cancel": {
-        "checksum": 15,
-        "desc": ""
-      },
-      "actionbutton_changestate": {
-        "checksum": 15,
-        "desc": ""
-      },
-      "actionbutton_eventnavigation": {
-        "checksum": 15,
-        "desc": ""
-      },
-      "actionbutton_history": {
-        "checksum": 15,
-        "desc": ""
-      },
-      "actionbutton_incident": {
-        "checksum": 15,
-        "desc": ""
-      },
-      "actionbutton_info": {
-        "checksum": 15,
-        "desc": ""
-      },
-      "actionbutton_ticketnumber": {
-        "checksum": 15,
-        "desc": ""
-      },
-      "showview_view_event": {
-        "checksum": 15,
-        "desc": ""
-      },
-      "showview_view_selectors": {
-        "checksum": 15,
-        "desc": ""
-      },
-      "showview_view_jobs": {
-        "checksum": 15,
-        "desc": ""
-      },
-      "showview_view_filters": {
-        "checksum": 15,
-        "desc": ""
-      },
-      "showview_view_services": {
-        "checksum": 15,
-        "desc": ""
-      },
-      "showview_view_series": {
-        "checksum": 15,
-        "desc": ""
-      }
-    }
+    "role": "Visualisation",
+    "rights": {}
   }
 ]

@@ -1,5 +1,209 @@
 [{
-	"_id": "admin"
+	"_id": "admin",
+	"rights": {
+		"showview_service": {
+			"checksum": 15,
+			"desc": ""
+		},
+		"list_search": {
+			"checksum": 15,
+			"desc": ""
+		},
+		"list_filters": {
+			"checksum": 15,
+			"desc": ""
+		},
+		"menu_aclconfig": {
+			"checksum": 15,
+			"desc": ""
+		},
+		"menu_authsystems": {
+			"checksum": 15,
+			"desc": ""
+		},
+		"menu_enginesconfig": {
+			"checksum": 15,
+			"desc": ""
+		},
+		"menu_pluginsconfig": {
+			"checksum": 15,
+			"desc": ""
+		},
+		"menu_uisettings": {
+			"checksum": 15,
+			"desc": ""
+		},
+		"actionbutton_ack": {
+			"checksum": 15,
+			"desc": ""
+		},
+		"actionbutton_cancel": {
+			"checksum": 15,
+			"desc": ""
+		},
+		"actionbutton_changestate": {
+			"checksum": 15,
+			"desc": ""
+		},
+		"actionbutton_eventnavigation": {
+			"checksum": 15,
+			"desc": ""
+		},
+		"actionbutton_history": {
+			"checksum": 15,
+			"desc": ""
+		},
+		"actionbutton_incident": {
+			"checksum": 15,
+			"desc": ""
+		},
+		"actionbutton_info": {
+			"checksum": 15,
+			"desc": ""
+		},
+		"actionbutton_ticketnumber": {
+			"checksum": 15,
+			"desc": ""
+		},
+		"showview_view_event": {
+			"checksum": 15,
+			"desc": ""
+		},
+		"showview_view_selectors": {
+			"checksum": 15,
+			"desc": ""
+		},
+		"showview_view_jobs": {
+			"checksum": 15,
+			"desc": ""
+		},
+		"showview_view_filters": {
+			"checksum": 15,
+			"desc": ""
+		},
+		"showview_view_services": {
+			"checksum": 15,
+			"desc": ""
+		},
+		"showview_view_series": {
+			"checksum": 15,
+			"desc": ""
+		}
+	}
 },{
-	"_id": "view_manager"
+	"_id": "Supervision",
+	"rights": {
+		"actionbutton_ack": {
+			"checksum": 15,
+			"desc": ""
+		},
+		"list_search": {
+			"checksum": 15,
+			"desc": ""
+		},
+		"list_filters": {
+			"checksum": 15,
+			"desc": ""
+		}
+	}
+},{
+	"_id": "Support",
+	"rights": {
+		"actionbutton_changestate": {
+			"checksum": 15,
+			"desc": ""
+		},
+		"actionbutton_cancel": {
+			"checksum": 15,
+			"desc": ""
+		},
+		"showview_view_services": {
+			"checksum": 15,
+			"desc": ""
+		},
+		"actionbutton_info": {
+			"checksum": 15,
+			"desc": ""
+		},
+		"showview_view_filters": {
+			"checksum": 15,
+			"desc": ""
+		},
+		"actionbutton_ack": {
+			"checksum": 15,
+			"desc": ""
+		},
+		"list_search": {
+			"checksum": 15,
+			"desc": ""
+		},
+		"list_filters": {
+			"checksum": 15,
+			"desc": ""
+		}
+	}
+},{
+	"_id": "Manager",
+	"rights": {
+		"actionbutton_history": {
+			"checksum": 15,
+			"desc": ""
+		},
+		"showview_view_accounts": {
+			"checksum": 15,
+			"desc": ""
+		},
+		"showview_view_permissions": {
+			"checksum": 15,
+			"desc": ""
+		},
+		"menu_aclconfig": {
+			"checksum": 15,
+			"desc": ""
+		},
+		"menu_authsystems": {
+			"checksum": 15,
+			"desc": ""
+		},
+		"actionbutton_uncancel": {
+			"checksum": 15,
+			"desc": ""
+		},
+		"actionbutton_changestate": {
+			"checksum": 15,
+			"desc": ""
+		},
+		"list_search": {
+			"checksum": 15,
+			"desc": ""
+		},
+		"showview_view_filters": {
+			"checksum": 15,
+			"desc": ""
+		},
+		"list_filters": {
+			"checksum": 15,
+			"desc": ""
+		},
+		"menu_aclconfig": {
+			"checksum": 15,
+			"desc": ""
+		},
+		"menu_authsystems": {
+			"checksum": 15,
+			"desc": ""
+		}
+	}
+},{
+	"_id": "Visualisation",
+	"rights": {
+		"showview_view_event": {
+			"checksum": 15,
+			"desc": ""
+		},
+		"showview_view_services": {
+			"checksum": 15,
+			"desc": ""
+		}
+	}
 }]

@@ -29,6 +29,9 @@
     "actionbutton_cancel": {
         "desc": ""
     },
+    "actionbutton_uncancel": {
+        "desc": ""
+    },
     "actionbutton_changestate": {
         "desc": ""
     },
