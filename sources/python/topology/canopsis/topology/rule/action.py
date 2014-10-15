@@ -83,7 +83,7 @@ def change_state_from_source_nodes(event, ctx, f, **kwargs):
     """
 
     # get function f
-    if isinstance(f, str):
+    if isinstance(f, basestring):
         f = lookup(f)
 
     # retrieve the node from where find source nodes

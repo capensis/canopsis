@@ -57,12 +57,12 @@ class Cache(object):
 
                 cid = _id
                 for arg in k:
-                    if isinstance(arg, int) or isinstance(arg, str):
+                    if isinstance(arg, int) or isinstance(arg, basestring):
                         cid += "." + str(arg)
 
                 for arg in args:
                     try:
-                        if isinstance(arg, int) or isinstance(arg, str):
+                        if isinstance(arg, int) or isinstance(arg, basestring):
                             cid += "." + str(a[arg])
                     except:
                         pass

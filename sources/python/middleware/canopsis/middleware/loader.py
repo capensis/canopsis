@@ -51,7 +51,7 @@ class Loader(Configurable):
     def libraries(self, value):
         self._libraries = value
         if value is not None:
-            if isinstance(value, str):
+            if isinstance(value, basestring):
                 value = value.split(',')
             for library in value:
                 import_module(library)

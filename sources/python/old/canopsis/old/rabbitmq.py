@@ -277,7 +277,7 @@ class Amqp(Thread):
         c_routing_keys = []
 
         if not isinstance(routing_keys, list):
-            if isinstance(routing_keys, str):
+            if isinstance(routing_keys, basestring):
                 c_routing_keys = [routing_keys]
         else:
             c_routing_keys = routing_keys

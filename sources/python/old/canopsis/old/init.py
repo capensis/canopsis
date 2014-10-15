@@ -28,13 +28,6 @@ from __future__ import absolute_import
 # allow division (e.g., 1/2 == 0.5; 1//2 == 0)
 from __future__ import division
 
-from sys import version_info
-
-# hack in order to convert a str to a unicode
-if version_info[0] == '2':
-    from inspect import getmodule
-    setattr(getmodule(str), 'str', unicode)
-
 from logging import basicConfig, getLogger
 
 from signal import signal, SIGINT, SIGTERM

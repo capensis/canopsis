@@ -81,7 +81,7 @@ class CASBackend(BaseBackend):
             if not s.get('auth_on', False):
                 res = self.do_auth(s, server, service)
 
-                if isinstance(res, str):
+                if isinstance(res, basestring):
                     return res
 
                 elif not res:

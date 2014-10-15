@@ -130,7 +130,7 @@ class TimeSerie(Configurable):
 
     @period.setter
     def period(self, value):
-        if isinstance(value, str):
+        if isinstance(value, basestring):
             value = Period.from_str(value)
         self._period = value
 

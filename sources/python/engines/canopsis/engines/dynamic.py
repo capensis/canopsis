@@ -84,7 +84,7 @@ class engine(Engine, Configurable):
         if value is None:
             value = event_processing
         # if str, load the related function
-        elif isinstance(value, str):
+        elif isinstance(value, basestring):
             try:
                 value = lookup(value)
             except ImportError:
@@ -113,7 +113,7 @@ class engine(Engine, Configurable):
         :type value: str or dict
         """
 
-        if isinstance(value, str):
+        if isinstance(value, basestring):
             value = eval(value)
 
         self._params = value

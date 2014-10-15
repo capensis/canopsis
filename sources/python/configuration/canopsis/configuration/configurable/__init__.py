@@ -458,7 +458,7 @@ class Configurable(object):
         if conf_paths is None:
             conf_paths = self._conf_paths
 
-        if isinstance(conf_paths, str):
+        if isinstance(conf_paths, basestring):
             conf_paths = [conf_paths]
 
         if drivers is None:

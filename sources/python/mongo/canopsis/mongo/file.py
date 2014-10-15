@@ -89,7 +89,7 @@ class MongoFileStorage(MongoStorage, FileStorage):
         request = {}
 
         if names is not None:
-            if isinstance(names, str):
+            if isinstance(names, basestring):
                 request[MongoFileStorage.FILENAME] = names
             else:
                 request[MongoFileStorage.FILENAME] = {'$in': names}

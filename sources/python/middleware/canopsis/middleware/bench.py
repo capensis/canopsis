@@ -70,7 +70,7 @@ class Benchmark(Manager):
             scenarios = self.scenarios.split(',')
 
         # convert strings to callable objects if required
-        _scenarios = [lookup(scenario) if isinstance(scenario, str)
+        _scenarios = [lookup(scenario) if isinstance(scenario, basestring)
         else scenario for scenario in scenarios]
 
         for index, scenario in enumerate(_scenarios):
