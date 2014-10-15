@@ -195,5 +195,18 @@ class RightsTest(TestCase):
             self.rights.get_user_rights('jharris')['1237']['checksum'],
             15)
 
+        # Change entity name
+        self.assertTrue('group_test2' in self.rights.get_user('jharris')['group'])
+        self.assertTrue(
+            'group_test2' == self.rights.get_group('group_test2')['crecord_name']
+            )
+        self.assertTrue(
+            self.rights.update_entity_name('group_test2', 'group', 'name_changed')
+            )
+        self.assertTrue('group_test2' in self.rights.get_user('jharris')['group'])
+        self.assertTrue(
+            'name_changed' == self.rights.get_group('group_test2')['crecord_name']
+            )
+
 if __name__ == '__main__':
     main()
