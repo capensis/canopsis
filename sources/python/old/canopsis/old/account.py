@@ -170,7 +170,7 @@ class Account(Record):
         for group in groups:
             if isinstance(group, group):
                 group_list.append(group)
-            elif isinstance(group, str):
+            elif isinstance(group, basestring):
                 if storage:
                     try:
                         record = storage.get(group)
@@ -202,7 +202,7 @@ class Account(Record):
         for group in groups:
             if isinstance(group, Record):
                 group_list.append(group)
-            elif isinstance(group, str):
+            elif isinstance(group, basestring):
                 if storage:
                     try:
                         record = storage.get(group)

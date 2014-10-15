@@ -341,7 +341,7 @@ class MOM(Middleware):
 
             senders = None
 
-            if isinstance(sender, str):
+            if isinstance(sender, basestring):
                 sender = self._senders_by_name.get(sender)
 
                 if sender is None:

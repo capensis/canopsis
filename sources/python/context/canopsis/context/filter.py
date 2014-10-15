@@ -203,7 +203,7 @@ def check(event, ctx, condition, **params):
 
 
 def regex_computeoptions(options):
-    if isinstance(options, str):
+    if isinstance(options, basestring):
         if "i" in options:
             return I
 

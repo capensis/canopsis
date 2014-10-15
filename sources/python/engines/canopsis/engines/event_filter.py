@@ -133,7 +133,7 @@ class engine(Engine):
         _id = derogation.get('_id', None)
 
         # If _id is ObjectId(), transform it to str()
-        if not isinstance(_id, str):
+        if not isinstance(_id, basestring):
             _id = str(_id)
 
         derogated = False

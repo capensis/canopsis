@@ -45,7 +45,7 @@ class Filter(dict):
 
     def __iand__(self, value):
 
-        if not isinstance(value, Iterable) or isinstance(value, str):
+        if not isinstance(value, Iterable) or isinstance(value, basestring):
             value = [value]
 
         value.append(self.copy())
@@ -66,7 +66,7 @@ class Filter(dict):
 
     def __ior__(self, value):
 
-        if not isinstance(value, Iterable) or isinstance(value, str):
+        if not isinstance(value, Iterable) or isinstance(value, basestring):
             value = [value]
 
         value.append(self.copy())

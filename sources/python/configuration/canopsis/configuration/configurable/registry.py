@@ -72,7 +72,7 @@ class Configurables(dict):
         configurable = value
 
         # if value is a path
-        if isinstance(configurable, str):
+        if isinstance(configurable, basestring):
             # get related python object
             configurable = lookup(configurable)
 
@@ -133,7 +133,7 @@ class ConfigurableTypes(dict):
         configurable_type = value
 
         # if configurable_type is a path
-        if isinstance(configurable_type, str):
+        if isinstance(configurable_type, basestring):
             # get related python object
             configurable_type = lookup(configurable_type)
 
@@ -380,7 +380,7 @@ class ConfigurableRegistry(Configurable):
 
         result = configurable
 
-        if isinstance(configurable, str):
+        if isinstance(configurable, basestring):
             result = lookup(configurable)
 
         if issubclass(result, Configurable):

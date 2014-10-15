@@ -100,7 +100,7 @@ class engine(Engine):
             return event
 
         # If _id is ObjectId(), transform it to str()
-        if not isinstance(_id, str):
+        if not isinstance(_id, basestring):
             _id = str(_id)
 
         if not isinstance(actions, list):

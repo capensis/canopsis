@@ -68,7 +68,7 @@ class Group(Record):
         for account in accounts:
             if isinstance(account, Record):
                 account_list.append(account)
-            elif isinstance(account, str):
+            elif isinstance(account, basestring):
                 if storage:
                     try:
                         record = storage.get(account)
@@ -100,7 +100,7 @@ class Group(Record):
         for account in accounts:
             if isinstance(account, Record):
                 account_list.append(account)
-            elif isinstance(account, str):
+            elif isinstance(account, basestring):
                 if storage:
                     try:
                         record = storage.get(account)

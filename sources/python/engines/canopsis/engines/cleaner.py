@@ -43,7 +43,7 @@ class engine(Engine):
         else:
             self.logger.debug(" + Decode JSON")
             try:
-                if isinstance(body, str):
+                if isinstance(body, basestring):
                     try:
                         event = loads(body)
                         self.logger.debug("   + Ok")
@@ -81,7 +81,7 @@ class engine(Engine):
 
         tags = event['tags']
 
-        if isinstance(tags, str) and tags != "":
+        if isinstance(tags, basestring) and tags != "":
             event['tags'] = [event['tags']]
 
         elif not isinstance(tags, list):

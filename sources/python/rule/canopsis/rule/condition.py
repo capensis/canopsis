@@ -49,7 +49,7 @@ def during(event, ctx, rrule, duration=None, timestamp=None, **kwargs):
     result = False
 
     # if rrule is a string expression
-    if isinstance(rrule, str):
+    if isinstance(rrule, basestring):
         rrule_object = rrule_class.rrulestr(rrule)
     else:
         rrule_object = rrule_class(**rrule)

@@ -389,7 +389,7 @@ class Parameter(object):
 
     @value.setter
     def value(self, value):
-        if isinstance(value, str) and self.parser is not None:
+        if isinstance(value, basestring) and self.parser is not None:
             # parse value if str and if parser exists
             try:
                 self._value = self.parser(value)

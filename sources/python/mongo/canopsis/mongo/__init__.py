@@ -278,7 +278,7 @@ class MongoStorage(MongoDataBase, Storage):
                 # construct the right hint
                 result = ''
                 for item in index:
-                    if isinstance(item, str):
+                    if isinstance(item, basestring):
                         result = '%s_%s_1' % (result, item)
                     elif isinstance(item, tuple):
                         result = '%s_%s_%s' % (result, item[0], item[1])
