@@ -126,7 +126,9 @@ class Rights(MiddlewareRegistry):
         """
 
         if not entity or not entity.get('rights', None):
-            self.logger.warning('Entity empty or has no rights field')
+            self.logger.info(
+                'Entity empty or has no rights field, can not check right %s' % right_id
+                )
             return False
 
         found = entity['rights'].get(right_id, None)
