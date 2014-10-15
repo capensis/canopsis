@@ -5,7 +5,7 @@
             "type": "string",
             "required": true
         },
-        "data_id": {
+        "cid": {
             "type": "string",
             "required": true
         }

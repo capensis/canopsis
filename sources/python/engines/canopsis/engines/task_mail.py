@@ -23,6 +23,7 @@ from canopsis.old.template import Template
 from canopsis.old.account import Account
 from canopsis.old.storage import Storage
 from canopsis.old.file import File
+from canopsis.old.init import ensure_unicode
 
 
 from email import Encoders
@@ -34,6 +35,14 @@ from email.Utils import formatdate
 import smtplib
 import socket
 import re
+
+from sys import version as PYVER
+
+if PYVER >= '3':
+    from html.parser import HTMLParser
+
+else:
+    from HTMLParser import HTMLParser
 
 
 class engine(TaskHandler):
@@ -47,19 +56,21 @@ class engine(TaskHandler):
         account = Account(user=user, group=group, mail=mail)
 
         recipients = job.get('recipients', None)
-        subject = job.get('subject', None)
+        subject = ensure_unicode(job.get('subject', ''))
+        body = ensure_unicode(job.get('body', ''))
         attachments = job.get('attachments', None)
         smtp_host = job.get('smtp_host', 'localhost')
         smtp_port = job.get('smtp_port', 25)
         html = job.get('html', False)
 
-        template = Template(job.get('body', ''))
         template_data = job.get('jobctx', {})
+        body = Template(body)(template_data)
+        subject = Template(subject)(template_data)
 
-        body = template(template_data)
-
-        template = Template(subject)
-        subject = template(template_data)
+        if not html:
+            h = HTMLParser()
+            body = h.unescape(body)
+            subject = h.unescape(subject)
 
         # Execute the task
         return self.sendmail(
