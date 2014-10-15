@@ -67,7 +67,9 @@ def base_init():
     # (0'login', 1'pass', 2'group', 3'lastname', 4'firstname', 5'groups' ,6'email')
     accounts = [
         ('root', 'root', 'CPS_root', 'Lastname', 'Firstname', [], ''),
-        ('canopsis', 'canopsis', 'Canopsis', 'Psis', 'Cano', ['group.CPS_view'], '')
+        ('AP234760', 'AP234760', 'CPS_root', 'Psis', 'Cano', ['group.CPS_view'], ''),
+        ('X2008332', 'X2008332', 'CPS_root', 'Psis', 'Cano', ['group.CPS_view'], ''),
+        ('MT704129', 'MT704129', 'CPS_root', 'Psis', 'Cano', ['group.CPS_view'], '')
     ]
 
     for name in groups:

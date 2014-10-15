@@ -25,9 +25,6 @@
             "actionbutton-create",
             "actionbutton-removeselection"
           ],
-          "actions_toolbar": [
-            "actionbutton-create"
-          ],
           "mixins": [
             "Sortablearray",
             "Arraysearch",

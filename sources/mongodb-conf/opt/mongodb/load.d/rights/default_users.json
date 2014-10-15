@@ -1,75 +1,39 @@
-[{
-    "contact" : {
-    "name" : "John Doe",
-    "email": "jdoes@canopsis.org",
-    "address": ""
-},
-    "_id":"root",
-    "role":"admin",
-    "rights":
-            { "showview_service":
-{            "checksum": 15,
-            "desc": "action description blah bla"            },
-    "list_search":
-{            "checksum": 15,
-            "desc": "action description blah bla"            },
-    "list_filters":
-{            "checksum": 15,
-            "desc": "action description blah bla"            },
-    "aclconfig":
-{            "checksum": 15,
-            "desc": "action description blah bla"            },
-    "authsystems":
-{            "checksum": 15,
-            "desc": "action description blah bla"            },
-    "enginesconfig":
-{            "checksum": 15,
-            "desc": "action description blah bla"            },
-    "pluginsconfig":
-{            "checksum": 15,
-            "desc": "action description blah bla"            },
-    "uisettings":
-{            "checksum": 15,
-            "desc": "action description blah bla"            },
-    "actionbutton_ack":
-{            "checksum": 15,
-            "desc": "action description blah bla"            },
-    "actionbutton_cancel":
-{            "checksum": 15,
-            "desc": "action description blah bla"            },
-    "actionbutton_changestate":
-{            "checksum": 15,
-            "desc": "action description blah bla"            },
-    "actionbutton_eventnavigation":
-{            "checksum": 15,
-            "desc": "action description blah bla"            },
-    "actionbutton_history":
-{            "checksum": 15,
-            "desc": "action description blah bla"            },
-    "actionbutton_incident":
-{            "checksum": 15,
-            "desc": "action description blah bla"            },
-    "actionbutton_info":
-{            "checksum": 15,
-            "desc": "action description blah bla"            },
-    "actionbutton_ticketnumber":
-{            "checksum": 15,
-            "desc": "action description blah bla"            },
-    "showview_view_event":
-{            "checksum": 15,
-            "desc": "action description blah bla"            },
-    "showview_view_selectors":
-{            "checksum": 15,
-            "desc": "action description blah bla"            },
-    "showview_view_jobs":
-{            "checksum": 15,
-            "desc": "action description blah bla"            },
-    "showview_view_filters":
-{            "checksum": 15,
-            "desc": "action description blah bla"            },
-    "showview_view_services":
-{            "checksum": 15,
-            "desc": "action description blah bla"            },
-    "showview_view_series":
-{            "checksum": 15,
-            "desc": "action description"            }}}]
+[
+  {
+    "contact": {
+      "name": "John Doe",
+      "email": "jdoes@canopsis.org",
+      "address": ""
+    },
+    "_id": "root",
+    "role": "admin",
+    "rights": {}
+  },{
+    "contact": {
+      "name": "John Doe",
+      "email": "jdoes@canopsis.org",
+      "address": ""
+    },
+    "_id": "AP234760",
+    "role": "Manager",
+    "rights": {}
+  },{
+    "contact": {
+      "name": "John Doe",
+      "email": "jdoes@canopsis.org",
+      "address": ""
+    },
+    "_id": "X2008332",
+    "role": "Support",
+    "rights": {}
+  },{
+    "contact": {
+      "name": "John Doe",
+      "email": "jdoes@canopsis.org",
+      "address": ""
+    },
+    "_id": "MT704129",
+    "role": "Visualisation",
+    "rights": {}
+  }
+]

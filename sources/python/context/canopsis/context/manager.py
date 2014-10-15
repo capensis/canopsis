@@ -90,7 +90,7 @@ class Context(MiddlewareRegistry):
 
         return self[Context.CTX_STORAGE].get_elements(ids=ids)
 
-    def get_entity(self, event, from_base=False, create_if_not_exists=False):
+    def get_entity(self, event, from_db=False, create_if_not_exists=False):
         """
         Get event entity.
 
@@ -104,8 +104,8 @@ class Context(MiddlewareRegistry):
 
         _type = event['source_type']
 
-        if Storage.DATA_ID in event:
-            name = event[Storage.DATA_ID]
+        if Context.NAME in event:
+            name = event[Context.NAME]
         else:
             name = event[_type]
 
@@ -118,7 +118,7 @@ class Context(MiddlewareRegistry):
         if _type in context:
             del context[_type]
 
-        if from_base:
+        if from_db:
             result = self.get(_type=_type, names=name, context=context)
 
         else:
@@ -198,8 +198,12 @@ class Context(MiddlewareRegistry):
 
         name = entity[Context.NAME]
 
-        self[Context.CTX_STORAGE].put(
-            path=path, data_id=name, data=entity, shared_id=extended_id)
+        entity = self.get(_type=_type, names=name, context=context)
+
+        if entity is None:
+
+            self[Context.CTX_STORAGE].put(
+                path=path, data_id=name, data=entity, shared_id=extended_id)
 
     def remove(self, ids=None, _type=None, context=None, extended=False):
         """

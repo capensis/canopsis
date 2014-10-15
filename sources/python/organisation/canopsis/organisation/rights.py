@@ -65,6 +65,24 @@ class Rights(MiddlewareRegistry):
         self.get_role = self.get_from_storage('role')
         self.get_user = self.get_from_storage('user')
 
+        self.actions = {
+            'remove': {
+                'profile': self.remove_profile,
+                'group': self.remove_group,
+                },
+            'add': {
+                'profile': self.add_profile,
+                'group': self.add_group,
+                },
+            'delete': {
+                'profile': self.delete_profile,
+                'group': self.delete_group,
+                'user': self.delete_user,
+                'role': self.delete_role,
+                'action': self.delete
+                }
+            }
+
     # Add an action to the referenced action
     def add(self, a_id, a_desc):
         """
@@ -78,7 +96,9 @@ class Rights(MiddlewareRegistry):
         """
 
         return self['action_storage'].put_element(
-            a_id, { 'crecord_type': 'action', 'desc': a_desc }
+            a_id, { 'crecord_name': a_id,
+                    'crecord_type': 'action',
+                    'desc': a_desc }
             )
 
     # Delete an action from the reference list
@@ -106,7 +126,9 @@ class Rights(MiddlewareRegistry):
         """
 
         if not entity or not entity.get('rights', None):
-            self.logger.error('Entity empty or has no rights field')
+            self.logger.info(
+                'Entity empty or has no rights field, can not check right %s' % right_id
+                )
             return False
 
         found = entity['rights'].get(right_id, None)
@@ -275,6 +297,7 @@ class Rights(MiddlewareRegistry):
             return None
 
         new_comp = {'crecord_type': 'group',
+                    'crecord_name': comp_name,
                     'rights': {}
                     }
 
@@ -314,16 +337,14 @@ class Rights(MiddlewareRegistry):
             return None
 
         new_profile = {'crecord_type': 'profile',
-                       'groups': []
+                       'crecord_name': p_name
                        }
+        if isinstance(p_groups, list):
+            new_profile['group'] = p_groups
+        else:
+            new_profile.setdefault('group', []).append(p_groups)
 
         self.profile_storage.put_element(p_name, new_profile)
-
-        if not p_groups:
-            return p_name
-
-        for comp in p_groups:
-            self.add_group(p_name, 'profile', comp)
 
         return p_name
 
@@ -371,7 +392,9 @@ class Rights(MiddlewareRegistry):
         """
 
         if self.get_role(r_name):
-            for user in self['user_storage'].get_elements(query={'crecord_type':'user'}):
+            for user in self['user_storage'].get_elements(
+                query={'crecord_type':'user'}
+                ):
                 if user and 'role' in user and r_name == user['role']:
                     entity.pop('role', None)
                     self['user_storage'].put_element(user['_id'], user)
@@ -651,7 +674,9 @@ class Rights(MiddlewareRegistry):
         if self.get_role(r_name):
             return r_name
 
-        new_role = {'crecord_type': 'role'}
+        new_role = {'crecord_type': 'role',
+                    'crecord_name': r_name,
+                    }
         if isinstance(r_profile, list):
             new_role['profile'] = r_profile
         else:
@@ -684,6 +709,7 @@ class Rights(MiddlewareRegistry):
             return user
 
         user = {'crecord_type': 'user',
+                'crecord_name': u_id,
                 'role': u_role}
 
         if contact and isinstance(contact, dict):
@@ -717,46 +743,6 @@ class Rights(MiddlewareRegistry):
 
         self.user_storage.put_element(u_id, user)
         return user
-
-    def set_user_name(self, u_id, u_name):
-        """
-        Args:
-            u_id: id of the user which name to change
-            u_name: new name
-        Returns:
-            Map of the modified user
-        """
-        return self.set_user_field(u_id, {'name': u_name})
-
-    def set_user_email(self, u_id, u_email):
-        """
-        Args:
-            u_id: id of the user which email to change
-            u_email: new email
-        Returns:
-            Map of the modified user
-        """
-        return self.set_user_field(u_id, {'email': u_email})
-
-    def set_user_address(self, u_id, u_address):
-        """
-        Args:
-            u_id: id of the user which address to change
-            u_address: new address
-        Returns:
-            Map of the modified user
-        """
-        return self.set_user_field(u_id, {'address': u_address})
-
-    def set_user_phone(self, u_id, u_phone):
-        """
-        Args:
-            u_id: id of the user which phone to change
-            u_phone: new phone
-        Returns:
-            Map of the modified user
-        """
-        return self.set_user_field(u_id, {'phone': u_phone})
 
     def get_user_rights(self, u_id):
         """
@@ -821,38 +807,112 @@ class Rights(MiddlewareRegistry):
         if not field or not e_id or not e_type:
             return None
 
-        entity = self[e_type + '_storage'].get_elements(ids=e_id,
-                                                        query={'crecord_type': e_type})
+        entity = self[e_type + '_storage'].get_elements(
+            ids=e_id, query={'crecord_type': e_type}
+            )
 
         return entity.setdefault(field, None)
 
-    # User getters
-    def get_user_role(self, u_id):
-        return self.get_entity_field(u_id, 'user', 'role')
+    # Update entity name
+    def update_entity_name(self, e_id, e_type, new_name):
+        """
+        Args:
+            e_id id of the entity to update
+            e_type type of the entity to update
+            new_name new name of the entity
+        Returns:
+            ``True`` if the name was updated
+            ``False`` otherwise
+        """
 
-    def get_user_profiles(self, u_id):
-        return self.get_role_profile(self.get_user_role(u_id))
+        entity = self[e_type + '_storage'].get_elements(
+            query={'crecord_type': e_type}, ids=e_id)
 
-    def get_user_groups(self, u_id):
-        return self.get_entity_field(u_id, 'user', 'group')
+        if entity:
+            entity['crecord_name'] = new_name
+            self[e_type + '_storage'].put_element(e_id, entity)
+            return True
 
-    # Role getters
-    def get_role_rights(self, r_id):
-        return self.get_entity_field(r_id, 'role', 'rights')
+        return False
 
-    def get_role_profile(self, r_id):
-        return self.get_entity_field(r_id, 'role', 'profile')
+    def update_field(self, e_id, e_type, new_elems, elem_type, entity):
+        """
+        Args:
+            e_id id of the entity to update
+            e_type type of the entity to update
+            new_elems elements to update
+            entity entity to be updated
+        Returns:
+            ``True`` if the entity was thoroughly updated
+            ``False`` otherwise
+        """
 
-    def get_role_groups(self, r_id):
-        return self.get_entity_field(r_id, 'role', 'group')
+        if entity and elem_type in entity:
+            to_remove = entity[elem_type]
+            if new_elems:
+                to_remove = set(entity[elem_type]) - set(new_elems)
+            for elem in to_remove:
+                if not self.actions['remove'][elem_type](e_id, e_type, elem):
+                    return False
+        if new_elems:
+            for elem in new_elems:
+                if not self.actions['add'][elem_type](e_id, e_type, elem):
+                    return False
+        return True
 
-    # Profile getters
-    def get_profile_rights(self, p_id):
-        return self.get_entity_field(p_id, 'profile', 'rights')
+    def update_rights(self, e_id, e_type, e_rights, entity):
+        """
+        Args:
+            e_id id of the entity to update
+            e_type type of the entity to update
+            e_rights rights to update
+            entity entity to be updated
+        Returns:
+            ``True`` if the entity was thoroughly updated
+            ``False`` otherwise
+        """
 
-    def get_profile_groups(self, p_id):
-        return self.get_entity_field(p_id, 'profile', 'group')
+        if entity and 'rights' in entity:
+            to_remove = entity['rights']
+            if e_rights:
+                to_remove = set(entity['rights']) - set(e_rights)
+            for right in to_remove:
+                if not self.remove_right(
+                    e_id, e_type, right, entity['rights'][right]['checksum']
+                    ):
+                    return False
+        if e_rights:
+            for right in e_rights:
+                if not self.add_right(
+                    e_id, e_type, right, e_rights[right]['checksum']
+                    ):
+                    return False
+        return True
 
-    # Group getters
-    def get_group_rights(self, c_id):
-        return self.get_entity_field(c_id, 'group', 'rights')
+    def update_profile(self, e_id, e_type, profiles, entity):
+        """
+        Args:
+            e_id id of the entity to update
+            e_type type of the entity to update
+            profiles profiles to update
+            entity entity to be updated
+        Returns:
+            ``True`` if the entity was thoroughly updated
+            ``False`` otherwise
+        """
+
+        return self.update_field(e_id, e_type, profiles, 'profile', entity)
+
+    def update_comp(self, e_id, e_type, groups, entity):
+        """
+        Args:
+            e_id id of the entity to update
+            e_type type of the entity to update
+            groups groups to update
+            entity entity to be updated
+        Returns:
+            ``True`` if the entity was thoroughly updated
+            ``False`` otherwise
+        """
+
+        return self.update_field(e_id, e_type, groups, 'group', entity)

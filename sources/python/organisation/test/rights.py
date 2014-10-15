@@ -89,48 +89,15 @@ class RightsTest(TestCase):
 
         # basic group creation
         self.rights.create_group('group_test1', rights)
-        self.assertEqual(
-            self.rights['group_storage'].get_elements(
-                query={'crecord_type': 'group'})[0]['_id'],
-            'group_test1'
-        )
-
         self.rights.create_group('group_test2', rights_scnd)
-        self.assertEqual(
-            self.rights['group_storage'].get_elements(
-                query={'crecord_type': 'group'})[1]['_id'],
-            'group_test2'
-        )
 
         # basic profile creation
         self.rights.create_profile('profile_test1', ['group_test1'])
-        self.assertEqual(
-            self.rights['profile_storage'].get_elements(
-                query={'crecord_type': 'profile'})[0]['_id'],
-            'profile_test1'
-        )
-
         self.rights.create_profile('profile_test2', ['group_test2'])
-        self.assertEqual(
-            self.rights['profile_storage'].get_elements(
-                query={'crecord_type': 'profile'})[1]['_id'],
-            'profile_test2'
-        )
 
         # create new role and assign it to the user
         self.rights.create_role('role_test1bis', 'profile_test1')
-        self.assertEqual(
-            self.rights['role_storage'].get_elements(
-                query={'crecord_type': 'role'})[0]['_id'],
-            'role_test1bis'
-        )
-
         self.rights.create_user('jharris', 'role_test1bis')
-        self.assertEqual(
-            self.rights['user_storage'].get_elements(
-                query={'crecord_type': 'user'})[0]['_id'],
-            'jharris'
-        )
 
         # Basic check
         self.assertEqual(
@@ -228,30 +195,18 @@ class RightsTest(TestCase):
             self.rights.get_user_rights('jharris')['1237']['checksum'],
             15)
 
-        # Test getters
-        self.assertEqual(
-            self.rights.get_user_role('jharris'),
-            'role_test1bis')
-
-        self.assertEqual(
-            self.rights.get_user_profiles('jharris'),
-            ['profile_test1'])
-
-        self.assertEqual(
-            self.rights.get_user_groups('jharris'),
-            ['group_test2'])
-
-        self.assertEqual(
-            self.rights.get_role_groups('role_test1bis'),
-            ['group_test1'])
-
-        self.assertEqual(
-            self.rights.get_role_profile('role_test1bis'),
-            ['profile_test1'])
-
-        self.assertEqual(
-            self.rights.get_profile_groups('profile_test1'),
-            ['group_test1'])
+        # Change entity name
+        self.assertTrue('group_test2' in self.rights.get_user('jharris')['group'])
+        self.assertTrue(
+            'group_test2' == self.rights.get_group('group_test2')['crecord_name']
+            )
+        self.assertTrue(
+            self.rights.update_entity_name('group_test2', 'group', 'name_changed')
+            )
+        self.assertTrue('group_test2' in self.rights.get_user('jharris')['group'])
+        self.assertTrue(
+            'name_changed' == self.rights.get_group('group_test2')['crecord_name']
+            )
 
 if __name__ == '__main__':
     main()
