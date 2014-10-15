@@ -836,6 +836,17 @@ class Rights(MiddlewareRegistry):
         return False
 
     def update_field(self, e_id, e_type, new_elems, elem_type, entity):
+        """
+        Args:
+            e_id id of the entity to update
+            e_type type of the entity to update
+            new_elems elements to update
+            entity entity to be updated
+        Returns:
+            ``True`` if the entity was thoroughly updated
+            ``False`` otherwise
+        """
+
         if entity and elem_type in entity:
             to_remove = entity[elem_type]
             if new_elems:
@@ -850,6 +861,17 @@ class Rights(MiddlewareRegistry):
         return True
 
     def update_rights(self, e_id, e_type, e_rights, entity):
+        """
+        Args:
+            e_id id of the entity to update
+            e_type type of the entity to update
+            e_rights rights to update
+            entity entity to be updated
+        Returns:
+            ``True`` if the entity was thoroughly updated
+            ``False`` otherwise
+        """
+
         if entity and 'rights' in entity:
             to_remove = entity['rights']
             if e_rights:
@@ -868,7 +890,29 @@ class Rights(MiddlewareRegistry):
         return True
 
     def update_profile(self, e_id, e_type, profiles, entity):
-        self.update_field(e_id, e_type, profiles, 'profile', entity)
+        """
+        Args:
+            e_id id of the entity to update
+            e_type type of the entity to update
+            profiles profiles to update
+            entity entity to be updated
+        Returns:
+            ``True`` if the entity was thoroughly updated
+            ``False`` otherwise
+        """
+
+        return self.update_field(e_id, e_type, profiles, 'profile', entity)
 
     def update_comp(self, e_id, e_type, groups, entity):
-        self.update_field(e_id, e_type, groups, 'group', entity)
+        """
+        Args:
+            e_id id of the entity to update
+            e_type type of the entity to update
+            groups groups to update
+            entity entity to be updated
+        Returns:
+            ``True`` if the entity was thoroughly updated
+            ``False`` otherwise
+        """
+
+        return self.update_field(e_id, e_type, groups, 'group', entity)
