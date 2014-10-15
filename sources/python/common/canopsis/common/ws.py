@@ -34,10 +34,8 @@ def adapt_canopsis_data_to_ember(data):
 
     :param data: data to transform
     """
-    if isiterable(data, is_str=False):
-        for item in data:
-            adapt_canopsis_data_to_ember(item)
-    elif isinstance(data, dict):
+
+    if isinstance(data, dict):
         if 'id' in data:
             data['cid'] = data['id']
             del data['id']
@@ -45,19 +43,23 @@ def adapt_canopsis_data_to_ember(data):
             data['id'] = data['eid']
         for item in data.values():
             adapt_canopsis_data_to_ember(item)
+    elif isiterable(data, is_str=False):
+        for item in data:
+            adapt_canopsis_data_to_ember(item)
 
 
 def adapt_ember_data_to_canopsis(data):
-    if isiterable(data, is_str=False):
-        for item in data:
-            adapt_ember_data_to_canopsis(item)
-    elif isinstance(data, dict):
+
+    if isinstance(data, dict):
         if 'id' in data:
             data['eid'] = data['id']
         if 'cid' in data:
             data['id'] = data['cid']
             del data['cid']
         for item in data.values():
+            adapt_ember_data_to_canopsis(item)
+    elif isiterable(data, is_str=False):
+        for item in data:
             adapt_ember_data_to_canopsis(item)
 
 
