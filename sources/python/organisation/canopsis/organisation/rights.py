@@ -829,7 +829,7 @@ class Rights(MiddlewareRegistry):
             query={'crecord_type': e_type}, ids=e_id)
 
         if entity:
-            entity.setdefault('crecord_name', new_name)
+            entity['crecord_name'] = new_name
             self[e_type + '_storage'].put_element(e_id, entity)
             return True
 
