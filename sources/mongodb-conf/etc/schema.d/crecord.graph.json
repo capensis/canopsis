@@ -2,7 +2,7 @@
     "type": "object",
     "categories": [{
         "title": "General",
-        "keys":["name", "description", "enable", "nodes", "edges"]
+        "keys":["name", "description", "enable", "nnodes", "nedges"]
     },{
         "title": "Filter",
         "keys":["mfilter"]
@@ -20,21 +20,17 @@
         "description": {
             "type": "string"
         },
-        "crecord_name": {
-            "type": "string",
-            "required": true
-        },
         "mfilter": {
             "type": "string",
             "required": true,
             "role": "cfilter"
         },
-        "nodes": {
+        "nnodes": {
             "type": "integer",
             "required": true,
             "default": 50
         },
-        "edges": {
+        "nedges": {
             "type": "integer",
             "required": true,
             "default": 50
