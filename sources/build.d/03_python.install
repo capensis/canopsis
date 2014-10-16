@@ -66,7 +66,7 @@ function build(){
 	echo " + Configure ..."
 	mkdir -p $PREFIX/lib
 
-	./configure --prefix=$PREFIX --enable-shared 1>> $LOG 2>> $LOG
+	./configure --prefix=$PREFIX --enable-bz2 --with-bz2 --enable-shared 1>> $LOG 2>> $LOG
 	check_code $?
 
 	echo " + Build ..."
