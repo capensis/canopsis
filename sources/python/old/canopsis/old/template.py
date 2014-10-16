@@ -19,6 +19,8 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
+# TODO: move this to canopsis.common.utils
+
 from canopsis.old.init import ensure_unicode
 from pybars import Compiler, _compiler
 from datetime import datetime

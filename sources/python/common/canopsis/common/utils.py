@@ -29,8 +29,33 @@ from inspect import ismodule
 from collections import Iterable
 
 from sys import version as PYVER
+from os.path import expanduser
 
 __RESOLVED_ELEMENTS = {}  #: dictionary of resolved elements by name
+
+
+def setdefaultattr(obj, attr, value):
+    """
+    Set attribute in object if not present.
+
+    :param obj: Object to set attribute to
+    :type obj: anything
+
+    :param attr: Attribute's name to set
+    :type attr: str
+
+    :param value: Value to set
+    :type value: anything
+
+    :returns: current value if attribute exists, or new value otherwise
+    """
+
+    if hasattr(obj, attr):
+        return getattr(obj, attr)
+
+    else:
+        setattr(obj, attr, value)
+        return value
 
 
 def free_cache(path=None):
@@ -65,6 +90,7 @@ def lookup(path, cached=True):
     :rtype: object
     """
 
+    path = expanduser(path)
     element_in_cache = cached and path in __RESOLVED_ELEMENTS
 
     result = __RESOLVED_ELEMENTS[path] if element_in_cache else None

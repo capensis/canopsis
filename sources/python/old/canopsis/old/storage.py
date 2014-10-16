@@ -167,11 +167,8 @@ class Storage(object):
 
         return (Read_mfilter, Write_mfilter)
 
-
-    def connect(self):
-        if self.connected:
-            return True
-
+    @property
+    def uri(self):
         if self.mongo_uri:
             uri = self.mongo_uri
 
@@ -189,7 +186,13 @@ class Storage(object):
 
             uri = 'mongodb://%s' % uri
 
-        self.conn = Connection(uri, safe=True)
+        return uri
+
+    def connect(self):
+        if self.connected:
+            return True
+
+        self.conn = Connection(self.uri, safe=True)
         self.db = self.conn[self.mongo_db]
 
         try:

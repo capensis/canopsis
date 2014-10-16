@@ -19,54 +19,38 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
+from canopsis.organisation.rights import Rights
 import logging
-
-from canopsis.webcore.services.auth import create_session, check_root, check_group_rights
 
 
 class BaseBackend(object):
     name = 'base'
 
-    def __init__(self, authorized_grp=None, unauthorized_grp=None, *args, **kwargs):
+    def __init__(self, ws, *args, **kwargs):
         super(BaseBackend, self).__init__(*args, **kwargs)
 
+        self.ws = ws
+        self.rights = Rights()
         self.logger = logging.getLogger('auth.backend.{0}'.format(self.name))
 
-        self.orig_authorized_grp = authorized_grp or []
-        self.orig_unauthorized_grp = unauthorized_grp or []
-
-        self.authorized_grp = self.orig_authorized_grp
-        self.unauthorized_grp = self.orig_unauthorized_grp
+        self._perms = []
 
     def setup_config(self, context):
-        conf = context['config'].get('checkAuthPlugin', {})
+        self.permissions = context['config'].get('permissions', self._perms)
 
-        self.authorized_grp = conf.get('authorized_grp', self.orig_authorized_grp)
-        self.unauthorized_grp = conf.get('unauthorized_grp', self.orig_unauthorized_grp)
+    def install_account(self, user):
+        self.logger.debug('Ensure user {0} has sufficient rights'.format(
+            user['_id']
+        ))
 
-    def install_account(self, account):
-        if not check_root(account):
-            allowed = (len(self.authorized_grp) == 0)
+        for p in self.permissions:
+            right_id, checksum = p
 
-            self.logger.debug('Ensure user {0} is in allowed groups'.format(account.user))
-            for group in self.authorized_grp:
-                if check_group_rights(account, group):
-                    allowed = True
-                    break
-
-            if allowed:
-                self.logger.debug('Ensure user {0} is not in forbidden groups'.format(account.user))
-
-                for group in self.unauthorized_grp:
-                    if check_group_rights(account, group):
-                        allowed = False
-                        break
-
-            if not allowed:
+            if not self.rights.check_rights(user['_id'], right_id, checksum):
                 return False
 
-        self.logger.debug('Creating session for account {0}'.format(account.user))
+        self.logger.debug('Creating session for user {0}'.format(user['_id']))
 
-        create_session(account)
+        self.ws.session.create(user)
 
         return True
