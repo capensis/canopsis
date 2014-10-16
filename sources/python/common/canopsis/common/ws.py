@@ -125,7 +125,9 @@ class route(object):
         And manage ``c`` such as a request body parameter.
     """
 
-    def __init__(self, op, name=None, payload=None, response=response):
+    def __init__(
+        self, op, name=None, payload=None, response=response, wsgi_params=None
+    ):
         """
         :param op: ws operation for routing a function
         :param str name: ws name
@@ -133,6 +135,8 @@ class route(object):
         :type payload: str or list of str
         :param function response: response to apply on decorated function
             result
+        :param dict wsgi_params: wsgi parameters which will be given to the
+            wsgi such as a keyword
         """
 
         super(route, self).__init__()
@@ -141,6 +145,7 @@ class route(object):
         self.name = name
         self.payload = ensure_iterable(payload)
         self.response = response
+        self.wsgi_params = wsgi_params
 
     def __call__(self, function):
 
@@ -231,10 +236,12 @@ class route(object):
             if param not in self.payload
         ]
 
+        wsgi_params = {} if self.wsgi_params is None else self.wsgi_params
+
         # add routes with optional parameters
         for i in range(len(optional_header_params) + 1):
             header_params = required_header_params + optional_header_params[:i]
             route = route_name(function_name, *header_params)
-            function = self.op(route)(function)
+            function = self.op(route, **wsgi_params)(function)
 
         return function
