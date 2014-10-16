@@ -30,6 +30,7 @@ from canopsis.configuration.parameters \
 
 from canopsis.configuration.driver import ConfigurationDriver
 
+
 class MetaConfigurable(type):
     """
     Meta class for Configurable.
@@ -64,7 +65,7 @@ class Configurable(object):
 
     __metaclass__ = MetaConfigurable
 
-    DEFAULT_DRIVERS = '%s,%s' % (
+    DEFAULT_DRIVERS = '{0},{1}'.format(
         'canopsis.configuration.driver.file.json.JSONConfigurationDriver',
         'canopsis.configuration.driver.file.ini.INIConfigurationDriver')
 
@@ -630,7 +631,7 @@ class Configurable(object):
                         # add it to list of criticals
                         criticals.append(parameter)
                         # set private name
-                        private_name = '_%s' % name
+                        private_name = '_{0}'.format(name)
 
                         # if private name exists
                         if hasattr(to_configure, private_name):
@@ -644,8 +645,8 @@ class Configurable(object):
                     setattr(to_configure, name, param_value)
 
             else:  # else log the error
-                message = 'Parameter %s is not bound to an attribute in %s'
-                self.logger.warning(message % (name, to_configure))
+                message = 'Parameter {0} is not bound to an attribute in {1}'
+                self.logger.warning(message.format(name, to_configure))
 
         # if criticals
         if criticals:
