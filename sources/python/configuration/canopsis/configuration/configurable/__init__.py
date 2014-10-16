@@ -611,11 +611,12 @@ class Configurable(object):
         if to_configure is None:
             to_configure = self
 
-        values = unified_conf[Configuration.VALUES]
+        values = [p for p in unified_conf[Configuration.VALUES]]
+        foreigns = [p for p in unified_conf[Configuration.FOREIGNS]]
 
         criticals = []  # list of critical parameters
 
-        for parameter in values:
+        for parameter in values + foreigns:
             name = parameter.name
 
             if not parameter.asitem:

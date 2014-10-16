@@ -134,16 +134,17 @@ class Configuration(object):
         foreigns = Category(Configuration.FOREIGNS)
 
         for category in self:
-
             for param in category:
-
                 if param.value is not None:
-
                     final_values = values if param.local else foreigns
 
-                    to_update, to_delete = (errors, final_values) if \
-                        isinstance(param.value, Exception) \
-                        else (final_values, errors)
+                    if isinstance(param.value, Exception):
+                        to_update = errors
+                        to_delete = final_values
+
+                    else:
+                        to_update = final_values
+                        to_delete = errors
 
                     to_update.put(param.copy() if copy else param)
 
@@ -171,8 +172,9 @@ class Configuration(object):
         result = Category(name)
 
         for category in self:
-            for param in category:
-                result.put(param.copy() if copy else param)
+            if not isinstance(category, ParamList):
+                for param in category:
+                    result.put(param.copy() if copy else param)
 
         return result
 
@@ -193,7 +195,7 @@ class Configuration(object):
         Add a list of parameters to self
         """
 
-        self.categories.setdefault(name, content)
+        self.categories[name] = content
 
     def clean(self):
         """

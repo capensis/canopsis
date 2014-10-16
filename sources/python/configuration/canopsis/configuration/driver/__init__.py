@@ -175,6 +175,7 @@ class ConfigurationDriver(object):
                         elif isinstance(category, ParamList):
                             paramlist = category
                             category = Category(category_name)
+                            result.categories[category_name] = category
 
                             parameters = self._get_parameters(
                                 conf_resource=conf_resource,

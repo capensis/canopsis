@@ -136,7 +136,7 @@ def add_config(config, unified=True):
             else:
                 result = _add_not_unified(result, name, content)
 
-            return result
+        return result
 
     def _conf(self, *args, **kwargs):
         result = super(type(self), self)._conf(*args, **kwargs)
