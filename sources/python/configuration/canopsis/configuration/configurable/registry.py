@@ -85,8 +85,7 @@ class Configurables(dict):
         # do nothing if configurable is not an instance of configurable_type
         if not isinstance(configurable, configurable_type):
             self.registry.logger.error(
-                "Impossible to set configurable %s:%s. Not an instance of %s" %
-                (name, configurable, configurable_type))
+                "Impossible to set configurable {0}:{1}. Not an instance of {2}".format(name, configurable, configurable_type))
 
         else:
             # update self.configurables
@@ -140,7 +139,7 @@ class ConfigurableTypes(dict):
         # check if configurable_type is a subclass of Configurable
         if not issubclass(configurable_type, Configurable):
             self.registry.logger.error(
-                "Impossible to set configurable type %s: %s. Wrong type" % (
+                "Impossible to set configurable type {0}: {1}. Wrong type".format(
                     name, configurable_type))
 
         else:
@@ -150,7 +149,7 @@ class ConfigurableTypes(dict):
                         self.registry._configurables[name], configurable_type):
                 # if the old value is not an instance of newly type
                 self.registry.logger.warning(
-                    "Old configurable %s removed. Not an instance of %s" % (
+                    "Old configurable {0} removed. Not an instance of {1}".format(
                         name, configurable_type))
                 # delete if
                 del self.registry._configurables[name]
@@ -363,7 +362,7 @@ class ConfigurableRegistry(Configurable):
         Get generated sub-configurable category name
         """
 
-        return "%s_CONF" % name.upper()
+        return "{0}_CONF".format(name.upper())
 
     @staticmethod
     def get_configurable(configurable, *args, **kwargs):

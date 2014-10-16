@@ -97,10 +97,10 @@ def route_name(operation_name, *parameters):
     Get the right route related to input operation_name
     """
 
-    result = '/%s' % operation_name.replace('_', '-')
+    result = '/{0}'.format(operation_name.replace('_', '-'))
 
     for parameter in parameters:
-        result = '%s/:%s' % (result, parameter)
+        result = '{0}/:{1}'.format(result, parameter)
 
     return result
 

@@ -95,7 +95,7 @@ class Engine(object):
         self.logger = init.getLogger(name, logging_level=self.logging_level)
 
         logHandler = FileHandler(
-            filename=join(sys_prefix, 'var', 'log', 'engines', '%s.log' % name)
+            filename=join(sys_prefix, 'var', 'log', 'engines', '{0}.log'.format(name))
         )
 
         logHandler.setFormatter(
@@ -134,7 +134,8 @@ class Engine(object):
         self.storage.update(
             crecord_id, {'loaded': False, 'next_ready_time': next_ready})
         self.logger.debug(
-            'next ready time for crecord %s : %s' % (crecord_id, next_ready))
+            'next ready time for crecord {0} : {1}'.format(
+                crecord_id, next_ready))
 
     def get_ready_record(self, event):
         """
@@ -145,7 +146,7 @@ class Engine(object):
         ctype = event.get('crecord_type', None)
 
         if '_id' in event and ctype and ctype in self.dispatcher_crecords:
-            self.logger.warning('Record type %s not found' % ctype)
+            self.logger.warning('Record type {0} not found'.format(ctype))
 
             record_object = None
 
@@ -157,7 +158,7 @@ class Engine(object):
 
             except Exception as e:
                 self.logger.critical(
-                    'Record <%s> not found in %s : %s' % (
+                    'Record <{0}> not found in {1} : {2}'.format(
                         ctype,
                         str(self.dispatcher_crecords),
                         e
@@ -189,11 +190,11 @@ class Engine(object):
         def ready():
             self.logger.info(" + Ready!")
 
-        self.logger.info("Start Engine with pid %s" % (getpid()))
+        self.logger.info("Start Engine with pid {0}".format(getpid()))
 
         self.amqp = self.amqpcls(
             logging_level=self.logging_level,
-            logging_name="%s-amqp" % self.name, on_ready=ready)
+            logging_name="{0}-amqp".format(self.name), on_ready=ready)
 
         if self.create_queue:
             self.new_amqp_queue(
@@ -237,7 +238,7 @@ class Engine(object):
                 sleep(1)
 
             except Exception as err:
-                self.logger.error("Error in break time: %s" % err)
+                self.logger.error("Error in break time: {0}".format(err))
                 self.RUN = False
 
             except KeyboardInterrupt:
@@ -257,7 +258,7 @@ class Engine(object):
         except Exception as err:
             if event['rk'] not in self.rk_on_error:
                 self.logger.error(err)
-                self.logger.error("Impossible to deal with: %s" % event)
+                self.logger.error("Impossible to deal with: {0}".format(event))
                 self.rk_on_error.append(event['rk'])
 
             self.next_queue(event)
@@ -283,7 +284,7 @@ class Engine(object):
 
         except Exception as err:
             error = True
-            self.logger.error("Worker raise exception: %s" % err)
+            self.logger.error("Worker raise exception: {0}".format(err))
             self.logger.error(format_exc())
 
         if error:
@@ -352,7 +353,7 @@ class Engine(object):
                         'crit': self.thd_crit_sec_per_evt}
                 ]
 
-                self.logger.debug(" + State: %s" % state)
+                self.logger.debug(" + State: {0}".format(state))
 
                 event = forger(
                     connector="Engine",
@@ -378,7 +379,7 @@ class Engine(object):
             self.beat()
 
         except Exception as err:
-            self.logger.error("Beat raise exception: %s" % err)
+            self.logger.error("Beat raise exception: {0}".format(err))
             self.logger.error(print_exc())
 
         finally:
