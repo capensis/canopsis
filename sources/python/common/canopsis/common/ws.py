@@ -230,6 +230,11 @@ class route(object):
 
         optional_header_params.reverse()
 
+        # remove payload parameters already defined in the route name
+        self.payload = [
+            param for param in self.payload
+            if ':{0}/'.format(param) not in function_name]
+
         # get required header parameters
         required_header_params = args[:len(args) - len_defaults]
         required_header_params = [
