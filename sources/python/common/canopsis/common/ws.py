@@ -224,19 +224,18 @@ class route(object):
         # identify optional parameters without body parameters
         for i in range(len_defaults):
             opt_param = args[- (i + 1)]
-            in_payload = opt_param in self.payload
-            in_name = ':{0}/'.format(opt_param) in function_name
-            if (not in_payload) and (not in_name):
+            # if opt_param is not defined somewhere else
+            if not self.already_defined(function_name, opt_param):
                 optional_header_params.append(opt_param)
 
         optional_header_params.reverse()
 
-        # get required header parameters without body parameters
+        # get required header parameters
         required_header_params = args[:len(args) - len_defaults]
         required_header_params = [
             param
             for param in required_header_params
-            if param not in self.payload
+            if not self.already_defined(function_name, param)
         ]
 
         wsgi_params = {} if self.wsgi_params is None else self.wsgi_params
@@ -248,3 +247,13 @@ class route(object):
             function = self.op(route, **wsgi_params)(function)
 
         return function
+
+    def already_defined(self, route_name, param):
+        """
+        Check if param is already defined somewhere else
+        """
+
+        in_payload = param in self.payload
+        in_route_name = ':{0}/'.format(param) in route_name
+
+        return in_payload or in_route_name
