@@ -34,6 +34,10 @@
 			"required": true,
 			"readOnly": true
 		},
+		"shadowpass": {
+			"type": "string",
+			"required": true
+		},
 		"user_groups": {
 			"type": "object"
 		},
@@ -79,7 +83,10 @@
 			"type": "string",
 			"required": true,
 			"role": "mail"
+		},
+		"enable": {
+			"type": "boolean",
+			"required": true
 		}
-
 	}
 }

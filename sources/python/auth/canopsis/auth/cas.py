@@ -36,11 +36,7 @@ else:
 
 class CASBackend(BaseBackend):
     name = 'CASBackend'
-
-    def __init__(self, *args, **kwargs):
-        super(CASBackend, self).__init__(*args, **kwargs)
-
-        self.session = self.ws.require('session')
+    handle_logout = True
 
     def get_config(self):
         try:
@@ -54,7 +50,7 @@ class CASBackend(BaseBackend):
         self.setup_config(context)
 
         def decorated(*args, **kwargs):
-            s = request.environ.get('beaker.session')
+            s = self.session.get()
 
             config = self.get_config()
 
@@ -131,10 +127,14 @@ class CASBackend(BaseBackend):
             if not record:
                 self.logger.info('Creating user {0} in database'.format(user))
 
+                # TODO: set missing fields
                 record = {
                     '_id': user,
+                    'crecord_type': 'user',
                     'firstname': user,
-                    'external': True
+                    'lastname': '',
+                    'external': True,
+                    'enable': True
                 }
 
                 self.rights.create_user(record)
@@ -151,7 +151,12 @@ class CASBackend(BaseBackend):
             return self.install_account(record)
 
         else:
-            self.logger.info('Redirecting user to CAS server: {0} --> {1}'.format(cas_server, service_url))
+            self.logger.info(
+                'Redirecting user to CAS server: {0} --> {1}'.format(
+                    cas_server,
+                    service_url
+                )
+            )
 
             url = '{0}/login?service={1}'.format(
                 cas_server,

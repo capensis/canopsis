@@ -19,14 +19,16 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from bottle import request, HTTPError
-
-from canopsis.webcore.services.auth import get_account, check_authkey
 from canopsis.auth.base import BaseBackend
+
+from bottle import request, HTTPError
 
 
 class AuthKeyBackend(BaseBackend):
     name = 'AuthKeyBackend'
+
+    def __init__(self, *args, **kwargs):
+        super(AuthKeyBackend, self).__init__(*args, **kwargs)
 
     def apply(self, callback, context):
         self.setup_config(context)
@@ -35,10 +37,12 @@ class AuthKeyBackend(BaseBackend):
             s = request.environ.get('beaker.session')
 
             if not s.get('auth_on', False):
-                account = self.do_auth()
+                user = self.do_auth()
 
-                if account and not self.install_account(account):
-                    self.logger.error('User {0} not allowed'.format(account.user))
+                if user and not self.install_account(user):
+                    self.logger.error('User {0} not allowed'.format(
+                        user['_id']
+                    ))
 
                     return HTTPError(403, 'Forbidden')
 
@@ -49,21 +53,25 @@ class AuthKeyBackend(BaseBackend):
     def do_auth(self):
         authkey = request.params.get('authkey', None)
 
-        self.logger.info('Trying to authenticate user with authkey: {0}'.format(authkey))
+        self.logger.info(
+            'Trying to authenticate user with authkey: {0}'.format(
+                authkey
+            )
+        )
 
         if authkey:
-            account = check_authkey(authkey)
+            user = self.auth.check(mode='authkey', password=authkey)
 
         else:
-            account = get_account()
+            user = self.session.get_user()
 
-        if not account or account.user == 'anonymous':
-            self.logger.error('Authentication failed for authkey: {0}'.format(authkey))
-            # Will try with the next backend
-            return None
+        if not user:
+            self.logger.error('Authentication failed for authkey: {0}'.format(
+                authkey
+            ))
 
-        return account
+        return user
 
 
-def get_backend():
-    return AuthKeyBackend()
+def get_backend(ws):
+    return AuthKeyBackend(ws)

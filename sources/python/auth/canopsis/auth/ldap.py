@@ -32,20 +32,13 @@ from canopsis.auth.base import BaseBackend
 class LDAPBackend(BaseBackend):
     name = 'LDAPBackend'
 
-    def setup(self, app):
-        account = Account(user='root', group='root')
-        self.storage = get_storage(namespace='object', account=account)
-
     def get_config(self):
         try:
-            record = self.storage.get('cservice.ldapconfig')
+            record = self.ws.db.get('cservice.ldapconfig')
             return record.dump()
 
         except KeyError:
             return None
-
-    def close(self):
-        self.storage.disconnect()
 
     def apply(self, callback, context):
         self.setup_config(context)
@@ -54,9 +47,9 @@ class LDAPBackend(BaseBackend):
             s = request.environ.get('beaker.session')
 
             if not s.get('auth_on', False):
-                account = self.do_auth()
+                user = self.do_auth()
 
-                if account and not self.install_account(account):
+                if user and not self.install_account(user):
                     return HTTPError(403, 'Forbidden')
 
             return callback(*args, **kwargs)
@@ -87,14 +80,18 @@ class LDAPBackend(BaseBackend):
         else:
             dn = '{0}@{1}'.format(user, config['domain'])
 
-        self.logger.debug('Connecting to LDAP server: {0}'.format(config['uri']))
+        self.logger.debug('Connecting to LDAP server: {0}'.format(
+            config['uri']
+        ))
 
         conn = ldap.initialize(config['uri'])
         conn.set_option(ldap.OPT_REFERRALS, 0)
         conn.set_option(ldap.OPT_NETWORK_TIMEOUT, ldap.OPT_NETWORK_TIMEOUT)
 
         try:
-            self.logger.info('Authenticate user {0} to LDAP server'.format(user))
+            self.logger.info('Authenticate user {0} to LDAP server'.format(
+                user
+            ))
 
             conn.simple_bind_s(dn, passwd)
 
@@ -105,16 +102,19 @@ class LDAPBackend(BaseBackend):
             return None
 
         try:
-            self.logger.debug('Ensure user\'s presence in database: {0}'.format(user))
+            self.logger.debug('Ensure user\'s presence in database: {}'.format(
+                user
+            ))
 
-            record = self.storage.get('account.{0}'.format(user))
-            account = Account(record)
+            record = self.rights.get_user(user)
 
         except KeyError:
-            account = None
+            record = None
 
-        if not account:
-            self.logger.info('Account {0} not found in database, create it'.format(user))
+        if not record:
+            self.logger.info(
+                'Account {0} not found in database, create it'.format(user)
+            )
 
             attrs = [
                 config['firstname'],
@@ -124,12 +124,16 @@ class LDAPBackend(BaseBackend):
 
             ufilter = config['user_filter'] % user
 
-            result = conn.search_s(config['base_dn'], ldap.SCOPE_SUBTREE, ufilter, attrs)
+            result = conn.search_s(
+                config['base_dn'],
+                ldap.SCOPE_SUBTREE,
+                ufilter,
+                attrs
+            )
 
+            # TODO: Replace this with crecord.user
             if result:
                 dn, data = result[0]
-
-                info = {}
 
                 for field in ['firstname', 'lastname', 'mail']:
                     val = data.get(config[field], None)

@@ -23,7 +23,7 @@ from inspect import getargspec
 from canopsis.common.utils import ensure_iterable, isiterable
 
 from json import loads
-from bottle import request
+from bottle import request, HTTPError
 from functools import wraps
 import traceback
 
@@ -186,8 +186,11 @@ class route(object):
                 }
 
             else:
-                # else use self.response
-                result = self.response(result_function)
+                if not isinstance(result_function, HTTPError):
+                    result = self.response(result_function)
+
+                else:
+                    result = result_function
 
             return result
 

@@ -24,6 +24,7 @@ import logging
 
 class BaseBackend(object):
     name = 'base'
+    handle_logout = False
 
     def __init__(self, ws, *args, **kwargs):
         super(BaseBackend, self).__init__(*args, **kwargs)
@@ -31,6 +32,8 @@ class BaseBackend(object):
         self.ws = ws
         self.session = ws.require('session')
         self.rights = ws.require('rights').get_manager()
+        self.auth = ws.require('auth')
+
         self.logger = logging.getLogger('auth.backend.{0}'.format(self.name))
 
         self._perms = []
