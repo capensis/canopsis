@@ -223,8 +223,11 @@ class route(object):
 
         # identify optional parameters without body parameters
         for i in range(len_defaults):
-            if args[- (i + 1)] not in self.payload:
-                optional_header_params.append(args[- (i + 1)])
+            opt_param = args[- (i + 1)]
+            in_payload = opt_param in self.payload
+            in_name = ':{0}/'.format(opt_param) in function_name
+            if (not in_payload) and (not in_name):
+                optional_header_params.append(opt_param)
 
         optional_header_params.reverse()
 
