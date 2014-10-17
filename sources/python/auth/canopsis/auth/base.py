@@ -19,7 +19,6 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from canopsis.organisation.rights import Rights
 import logging
 
 
@@ -30,7 +29,8 @@ class BaseBackend(object):
         super(BaseBackend, self).__init__(*args, **kwargs)
 
         self.ws = ws
-        self.rights = Rights()
+        self.session = ws.require('session')
+        self.rights = ws.require('rights').get_manager()
         self.logger = logging.getLogger('auth.backend.{0}'.format(self.name))
 
         self._perms = []
@@ -51,6 +51,6 @@ class BaseBackend(object):
 
         self.logger.debug('Creating session for user {0}'.format(user['_id']))
 
-        self.ws.session.create(user)
+        self.session.create(user)
 
         return True

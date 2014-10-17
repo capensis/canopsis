@@ -23,11 +23,6 @@ from bottle import request, response, HTTPError, redirect
 import xml.etree.ElementTree
 import requests
 
-from canopsis.old.storage import get_storage
-from canopsis.old.account import Account
-
-from canopsis.webcore.services.auth import get_account, delete_session
-from canopsis.webcore.services.account import create_account
 from canopsis.auth.base import BaseBackend
 
 from sys import version as PYVER
@@ -42,20 +37,18 @@ else:
 class CASBackend(BaseBackend):
     name = 'CASBackend'
 
-    def setup(self, app):
-        account = Account(user='root', group='root')
-        self.storage = get_storage(namespace='object', account=account)
+    def __init__(self, *args, **kwargs):
+        super(CASBackend, self).__init__(*args, **kwargs)
+
+        self.session = self.ws.require('session')
 
     def get_config(self):
         try:
-            record = self.storage.get('cservice.casconfig')
+            record = self.ws.db.get('cservice.casconfig')
             return record.dump()
 
         except KeyError:
             return None
-
-    def close(self):
-        self.storage.disconnect()
 
     def apply(self, callback, context):
         self.setup_config(context)
@@ -96,7 +89,9 @@ class CASBackend(BaseBackend):
 
     def do_auth(self, session, cas_server, service_url):
         if 'ticket' in request.params:
-            self.logger.info('Received ticket from CAS server, start validation')
+            self.logger.info(
+                'Received ticket from CAS server, start validation'
+            )
 
             ticket = request.params.get('ticket')
 
@@ -122,34 +117,38 @@ class CASBackend(BaseBackend):
                     user = e.text
 
             if not user:
-                self.logger.error('Impossible to find user in response: {0}'.format(res.content))
+                self.logger.error(
+                    'Impossible to find user in response: {0}'.format(
+                        res.content
+                    )
+                )
+
                 return False
 
             # Get user
-            account = get_account('account.{0}'.format(user))
+            record = self.session.get_user(user)
 
-            if not account or account.user == 'anonymous':
+            if not record:
                 self.logger.info('Creating user {0} in database'.format(user))
 
-                info = {
-                    'user': user,
-                    'passwd': None,
+                record = {
+                    '_id': user,
                     'firstname': user,
-                    'lastname': '',
-                    'mail': None,
-                    'external': True,
-                    'aaa_group': 'group.Canopsis',
-                    'groups': ['group.CPS_view']
+                    'external': True
                 }
 
-                account = create_account(info)
+                self.rights.create_user(record)
 
-            self.logger.info('Authentication validated by CAS server for user {0}'.format(user))
+            self.logger.info(
+                'Authentication validated by CAS server for user {0}'.format(
+                    user
+                )
+            )
 
             session['auth_cas'] = True
             session.save()
 
-            return self.install_account(account)
+            return self.install_account(record)
 
         else:
             self.logger.info('Redirecting user to CAS server: {0} --> {1}'.format(cas_server, service_url))
@@ -174,8 +173,13 @@ class CASBackend(BaseBackend):
 
     def undo_auth(self, session, cas_server, service_url):
         if session.get('auth_cas', False):
-            self.logger.info('Redirecting user to CAS server: {0} --> {1}'.format(cas_server, service_url))
-            delete_session()
+            self.logger.info(
+                'Redirecting user to CAS server: {0} --> {1}'.format(
+                    cas_server, service_url
+                )
+            )
+
+            self.session.delete()
 
             url = '{0}/logout?service={1}&url={1}'.format(
                 cas_server,
@@ -185,5 +189,5 @@ class CASBackend(BaseBackend):
             redirect(url)
 
 
-def get_backend():
-    return CASBackend()
+def get_backend(ws):
+    return CASBackend(ws)
