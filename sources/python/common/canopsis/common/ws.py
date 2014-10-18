@@ -126,11 +126,12 @@ class route(object):
     """
 
     def __init__(
-        self, op, name=None, payload=None, response=response, wsgi_params=None
+        self, op, name=None, raw_body=False, payload=None, response=response, wsgi_params=None
     ):
         """
         :param op: ws operation for routing a function
         :param str name: ws name
+        :param bool raw_body: if True, will set kwargs body to raw request body
         :param payload: body parameter names (won't be generated in routes)
         :type payload: str or list of str
         :param function response: response to apply on decorated function
@@ -143,6 +144,7 @@ class route(object):
 
         self.op = op
         self.name = name
+        self.raw_body = raw_body
         self.payload = ensure_iterable(payload)
         self.response = response
         self.wsgi_params = wsgi_params
@@ -153,18 +155,22 @@ class route(object):
         @wraps(function)
         def interceptor(*args, **kwargs):
 
-            # add body parameters in kwargs
-            for body_param in self.payload:
-                # TODO: remove reference from bottle
-                param = request.params.get(body_param)
-                # if param exists, add it into kwargs in deserializing it
-                if param is not None:
-                    try:
-                        kwargs[body_param] = loads(param)
+            if self.raw_body:
+                kwargs['body'] = request.body
 
-                    except ValueError:  # error while deserializing
-                        # get the str value and cross fingers ...
-                        kwargs[body_param] = param
+            else:
+                # add body parameters in kwargs
+                for body_param in self.payload:
+                    # TODO: remove reference from bottle
+                    param = request.params.get(body_param)
+                    # if param exists, add it into kwargs in deserializing it
+                    if param is not None:
+                        try:
+                            kwargs[body_param] = loads(param)
+
+                        except ValueError:  # error while deserializing
+                            # get the str value and cross fingers ...
+                            kwargs[body_param] = param
 
             # adapt ember data to canopsis data
             adapt_ember_data_to_canopsis(args)
