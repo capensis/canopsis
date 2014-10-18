@@ -73,7 +73,7 @@ def setup(description, keywords, add_etc=True, **kwargs):
     # canopsis.__path__ = extend_path(canopsis.__path__, canopsis.__name__)
 
     # get package
-    package = lookup("canopsis.%s" % name)
+    package = lookup("canopsis.{0}".format(name))
 
     # set default parameters if not setted
     kwargs.setdefault('name', package.__name__)

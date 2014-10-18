@@ -116,7 +116,7 @@ class ConfigurationDriver(object):
             except Exception as e:
                 # if an error occured, log it
                 logger.error(
-                    'Impossible to parse conf_path %s with %s: %s' % (
+                    'Impossible to parse conf_path {0} with {1}: {2}'.format(
                         conf_path,
                         type(self),
                         e

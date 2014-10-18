@@ -55,9 +55,9 @@ class ManagerTest(TestCase):
         conf_path = FileConfigurationDriver.get_path(driver.conf_paths[-1])
 
         configurable_name = 'test'
-        full_configurable_name = '%s%s' % (
+        full_configurable_name = '{0}{1}'.format(
             configurable_name, ConfigurableRegistry.CONFIGURABLE_SUFFIX)
-        configurable_type_name = '%s%s' % (
+        configurable_type_name = '{0}{1}'.format(
             configurable_name, ConfigurableRegistry.CONFIGURABLE_TYPE_SUFFIX)
         # ensure configurable doesn't exis
         self.assertFalse(configurable_name in driver)
@@ -74,16 +74,16 @@ class ManagerTest(TestCase):
         with open(conf_path, 'w+') as conf_file:
             conf_file.write("[MANAGER]")
             # set configurable
-            conf_file.write("\n%s=" % (full_configurable_name))
+            conf_file.write("\n{0}=".format(full_configurable_name))
             conf_file.write(configurable_path)
             # set configurable type
-            conf_file.write("\n%s=" % (configurable_type_name))
+            conf_file.write("\n{0}=".format(configurable_type_name))
             conf_file.write(configurable_path)
             # set sub-configurable auto_conf to false
             configurable_category = \
                 ConfigurableRegistry.get_configurable_category(
                     configurable_name)
-            conf_file.write("\n[%s]" % configurable_category)
+            conf_file.write("\n[{0}]".format(configurable_category))
             conf_file.write("\nauto_conf=false")
 
         driver.apply_configuration()

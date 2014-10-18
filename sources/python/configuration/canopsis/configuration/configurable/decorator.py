@@ -48,7 +48,7 @@ def conf_paths(*conf_paths):
 
         else:
             raise Configurable.Error(
-                "class %s is not a Configurable class" % cls)
+                "class {0} is not a Configurable class".format(cls))
 
         return cls
 
@@ -91,7 +91,7 @@ def add_category(name, unified=True, content=None):
 
         else:
             raise Configurable.Error(
-                "class %s is not a Configurable class" % cls)
+                "class {0} is not a Configurable class".format(cls))
 
         return cls
 

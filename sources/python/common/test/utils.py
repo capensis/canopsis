@@ -39,7 +39,7 @@ class UtilsTest(TestCase):
     def test_lookup(self):
 
         # resolve builtin function
-        _open = lookup('%s.open' % open.__module__)
+        _open = lookup('{0}.open'.format(open.__module__))
 
         self.assertTrue(_open is open)
 

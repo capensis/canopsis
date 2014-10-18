@@ -120,7 +120,7 @@ def lookup(path, cached=True):
                     # find the right module
 
                     while index < components_len:
-                        module_name = '%s.%s' % (
+                        module_name = '{0}.{1}'.format(
                             module_name, components[index])
                         result = import_module(module_name)
                         index += 1
@@ -135,7 +135,7 @@ def lookup(path, cached=True):
 
                     except AttributeError:
                         raise ImportError(
-                            'Wrong path %s at %s' % (path, components[:index]))
+                            'Wrong path {0} at {1}'.format(path, components[:index]))
 
             if result is not None and cached:
                 __RESOLVED_ELEMENTS[path] = result
@@ -158,10 +158,10 @@ def path(element):
 
     if not hasattr(element, '__name__'):
         raise AttributeError(
-            'element %s must have the attribute __name__' % element)
+            'element {0} must have the attribute __name__'.format(element))
 
     result = element.__name__ if ismodule(element) else \
-        '%s.%s' % (element.__module__, element.__name__)
+        '{0}.{1}'.format(element.__module__, element.__name__)
 
     return result
 
