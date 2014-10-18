@@ -50,7 +50,10 @@ class TestStorage(MongoStorage):
 class StorageTest(TestCase):
 
     def setUp(self):
-        self.storage = TestStorage(data_type='plop')
+        self.storage = TestStorage(data_type='test')
+
+    def tearDown(self):
+        self.storage.drop()
 
     def test_connect(self):
         self.assertTrue(self.storage.connected())
@@ -67,8 +70,8 @@ class StorageTest(TestCase):
         for index in indexes:
             key = ''
             for i in index:
-                key += (i[0] + '_')
-            self.assertTrue(key in collection_index)
+                key += '{0}_{1}'.format(i[0], i[1] if i[0] != '_id' else '')
+            self.assertIn(key, collection_index)
 
         conf_path = NamedTemporaryFile().name
 

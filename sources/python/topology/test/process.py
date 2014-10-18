@@ -30,7 +30,7 @@ from canopsis.context.manager import Context
 class ProcessingTest(TestCase):
 
     def setUp(self):
-        self.context = Context()
+        self.context = Context(data_scope='test')
         self.topology = Topology(data_scope='test')
         self.check = {
             'event_type': 'check',
