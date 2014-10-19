@@ -28,7 +28,7 @@ from canopsis.timeserie.timewindow import TimeWindow, get_offset_timewindow
 class PerfDataTest(TestCase):
 
     def setUp(self):
-        self.perfdata = PerfData()
+        self.perfdata = PerfData(data_scope='test')
 
     def test_put_get_data(self):
 

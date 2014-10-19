@@ -56,7 +56,7 @@ class MongoCompositeStorageTest(TestCase):
 
         indexes = self.storage.all_indexes()
         # check number of indexes
-        self.assertEqual(len(indexes), len(self.path) + 2)
+        self.assertEqual(len(indexes), len(self.path) + 3)
 
         # add path data with name which are path last value
         for n, _ in enumerate(self.path):
