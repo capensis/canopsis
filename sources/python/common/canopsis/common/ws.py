@@ -23,7 +23,7 @@ from inspect import getargspec
 from canopsis.common.utils import ensure_iterable, isiterable
 
 from json import loads
-from bottle import request, HTTPError
+from bottle import request, HTTPError, HTTPResponse
 from functools import wraps
 import traceback
 
@@ -63,12 +63,13 @@ def adapt_ember_data_to_canopsis(data):
             adapt_ember_data_to_canopsis(item)
 
 
-def response(data):
+def response(data, adapt=True):
     """
     Construct a REST response from input data.
 
     :param data: data to convert into a REST response.
     :param kwargs: service function parameters.
+    :param bool adapt: adapt Canopsis data to Ember (default: True)
     """
 
     # calculate result_data and total related to data type
@@ -80,8 +81,9 @@ def response(data):
         result_data = None if data is None else ensure_iterable(data)
         total = 0 if result_data is None else len(result_data)
 
-    # apply transformation for client
-    adapt_canopsis_data_to_ember(result_data)
+    if adapt:
+        # apply transformation for client
+        adapt_canopsis_data_to_ember(result_data)
 
     result = {
         'total': total,
@@ -126,7 +128,8 @@ class route(object):
     """
 
     def __init__(
-        self, op, name=None, raw_body=False, payload=None, response=response, wsgi_params=None
+        self, op, name=None, raw_body=False, payload=None, wsgi_params=None,
+        response=response, adapt=True
     ):
         """
         :param op: ws operation for routing a function
@@ -138,6 +141,7 @@ class route(object):
             result
         :param dict wsgi_params: wsgi parameters which will be given to the
             wsgi such as a keyword
+        :param bool adapt: Adapt Canopsis<->Ember data (default: True)
         """
 
         super(route, self).__init__()
@@ -148,6 +152,7 @@ class route(object):
         self.payload = ensure_iterable(payload)
         self.response = response
         self.wsgi_params = wsgi_params
+        self.adapt = adapt
 
     def __call__(self, function):
 
@@ -172,12 +177,16 @@ class route(object):
                             # get the str value and cross fingers ...
                             kwargs[body_param] = param
 
-            # adapt ember data to canopsis data
-            adapt_ember_data_to_canopsis(args)
-            adapt_ember_data_to_canopsis(kwargs)
+            if self.adapt:
+                # adapt ember data to canopsis data
+                adapt_ember_data_to_canopsis(args)
+                adapt_ember_data_to_canopsis(kwargs)
 
             try:
                 result_function = function(*args, **kwargs)
+
+            except HTTPResponse as r:
+                raise r
 
             except Exception as e:
                 # if an error occured, get a failure message
@@ -193,7 +202,7 @@ class route(object):
 
             else:
                 if not isinstance(result_function, HTTPError):
-                    result = self.response(result_function)
+                    result = self.response(result_function, adapt=self.adapt)
 
                 else:
                     result = result_function
