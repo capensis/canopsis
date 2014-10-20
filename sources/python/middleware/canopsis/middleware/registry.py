@@ -145,7 +145,8 @@ class MiddlewareRegistry(ConfigurableRegistry):
         :rtype: Middleware
         """
 
-        if data_scope is None:
+        # force data_scope to be self.data_scope if not None
+        if self.data_scope is not None:
             data_scope = self.data_scope
 
         if auto_connect is None:
@@ -269,5 +270,5 @@ class MiddlewareRegistry(ConfigurableRegistry):
             if parameter.name.endswith(MiddlewareRegistry.MIDDLEWARE_SUFFIX):
                 name = parameter.name[:-len_midl_suffix]
                 # set a middleware in list of configurables
-                self[name] = Middleware.get_middleware_by_uri(
+                self[name] = self.get_middleware_by_uri(
                     uri=parameter.value)

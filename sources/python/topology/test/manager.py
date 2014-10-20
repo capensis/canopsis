@@ -27,8 +27,7 @@ from canopsis.topology.manager import Topology
 class TopologyTest(TestCase):
 
     def setUp(self):
-        self.topology = Topology()
-        self.topology.data_scope = 'test'
+        self.topology = Topology(data_scope='test')
 
         # set of default topologies
         self.count = 10
@@ -80,7 +79,7 @@ class TopologyTest(TestCase):
 class TopologyNodeTest(TestCase):
 
     def setUp(self):
-        self.topology = Topology()
+        self.topology = Topology(data_scope='test')
         self.topology.delete_nodes()
         self.count = 10
         self.nodes = (
