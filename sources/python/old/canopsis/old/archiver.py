@@ -137,6 +137,17 @@ class Archiver(object):
             event['ts_first_stealthy'] = 0
 
 
+    def check_stealthy(self, devent, event_ts):
+
+        if devent['status'] == 2:
+            if (devent['ts_first_stealthy'] - event_ts) > self.stealthy_show:
+                return False
+            else:
+                return True
+        else:
+            return True
+
+
     def check_statuses(self, event, devent):
         # Check if event is still canceled
         # status legend:
@@ -160,28 +171,34 @@ class Archiver(object):
                 and (self.restore_event
                      or state == 0
                      or devent['state'] == 0))):
-            # flowchart 4
-            if (event['state'] == 0):
-                # flowchart 5 6 8
-                if (devent['state'] == 0
-                    and not self.is_bagot(event)
-                    and not self.is_stealthy(event)):
-                    self.set_status(event, 0)
-                else:
-                    self.check_bagot(event, devent)
-
-            else:
-                # flowchart 7 9
-                if (not self.is_bagot(event)
-                    and not self.is_stealthy(event)):
-                    self.set_status(event, 1)
-                elif self.is_bagot(event):
+            if check_stealthy(devent, event['timestamp']):
+                if self.is_bagot(event):
                     self.set_status(event, 3)
-                elif self.is_stealthy(event):
-                    if devent['status'] == 2 or devent['status'] == 0:
-                        self.set_status(event, 2)
+            else:
+                # flowchart 4
+                if (event['state'] == 0):
+                    # flowchart 5 6 8
+                    if (devent['state'] == 0
+                        and not self.is_bagot(event)
+                        and not self.is_stealthy(event)):
+                        self.set_status(event, 0)
+                    elif self.is_bagot(event):
+                        self.set_status(event, 3)
                     else:
+                        self.set_status(event, 2)
+
+                else:
+                    # flowchart 7 9
+                    if (not self.is_bagot(event)
+                        and not self.is_stealthy(event)):
                         self.set_status(event, 1)
+                    elif self.is_bagot(event):
+                        self.set_status(event, 3)
+                    elif self.is_stealthy(event):
+                        if devent['status'] == 2 or devent['status'] == 0:
+                            self.set_status(event, 2)
+                        else:
+                            self.set_status(event, 1)
         else:
             self.set_status(event, 4)
 
@@ -192,7 +209,6 @@ class Archiver(object):
 
             if not event['ts_first_bagot']:
                 event['ts_first_bagot'] = event['timestamp']
-
 
 
     def check_event(self, _id, event):
