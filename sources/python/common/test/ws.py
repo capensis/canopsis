@@ -166,6 +166,14 @@ class RouteTest(TestCase):
 
         self.assertRoutes(['/a/:a', '/a/:a/:c'])
 
+    def test_already_defined(self):
+
+        @route(op=self.op, name='a/:c/:b/test', payload=['b', 'd'])
+        def a(a, b=None, c=None, d=None):
+            pass
+
+        self.assertRoutes(['/a/:c/:b/test/:a'])
+
 
 class ResponseTest(TestCase):
 

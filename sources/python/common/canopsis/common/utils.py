@@ -109,7 +109,8 @@ def lookup(path, cached=True):
 
                     except AttributeError:
                         raise ImportError(
-                            'Wrong path {0} at {1}'.format(path, components[:index]))
+                            'Wrong path {0} at {1}'.format(
+                                path, components[:index]))
 
             if result is not None and cached:
                 __RESOLVED_ELEMENTS[path] = result

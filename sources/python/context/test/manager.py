@@ -26,8 +26,7 @@ from canopsis.context.manager import Context
 class ContextTest(TestCase):
 
     def setUp(self):
-        self.context = Context()
-        self.context[Context.CTX_STORAGE].data_scope = 'test'
+        self.context = Context(data_scope='test')
 
     def test_ctx_storage(self):
 

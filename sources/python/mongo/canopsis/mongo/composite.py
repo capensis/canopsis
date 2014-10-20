@@ -137,13 +137,13 @@ class MongoCompositeStorage(MongoStorage, CompositeStorage):
         _id = self.get_absolute_path(path=path, data_id=data_id)
 
         data_to_put = data.copy()
-        data_to_put.update(path)
-        data_to_put[Storage.DATA_ID] = data_id
 
         if share_id is not None:
             data_to_put[CompositeStorage.SHARED] = share_id
 
         query = {MongoStorage.ID: _id}
+        query.update(path)
+        query[Storage.DATA_ID] = data_id
 
         _set = {
             '$set': data_to_put
