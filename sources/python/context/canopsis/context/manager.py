@@ -198,9 +198,9 @@ class Context(MiddlewareRegistry):
 
         name = entity[Context.NAME]
 
-        entity = self.get(_type=_type, names=name, context=context)
+        entity_db = self.get(_type=_type, names=name, context=context)
 
-        if entity is None:
+        if entity_db is None:
 
             self[Context.CTX_STORAGE].put(
                 path=path, data_id=name, data=entity, shared_id=extended_id)
