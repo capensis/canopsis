@@ -332,6 +332,7 @@ class Archiver(object):
 
             #Keep previous output
             if 'keep_state' in event:
+                change['change_state_output'] = event['output']
                 change['output'] = devent.get('output', '')
 
             if change:
