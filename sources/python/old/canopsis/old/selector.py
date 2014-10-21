@@ -56,6 +56,7 @@ class Selector(Record):
         self.changed = False
         self.rk = None
 
+        # Ouput replace purpose
         self.template_replace = {
             0: '[OFF]',
             1: '[MINOR]',
@@ -63,7 +64,13 @@ class Selector(Record):
             3: '[CRITICAL]',
         }
 
-
+        # Compute produced event state purpose
+        self.states_labels = {
+            'off' : 0,
+            'minor': 1,
+            'major': 2,
+            'critical': 3
+        }
 
 
         self.logger = getLogger('Selector')
@@ -100,6 +107,7 @@ class Selector(Record):
         self.rk = dump.get('rk', self.rk)
         self.include_ids = dump.get('include_ids', self.include_ids)
         self.exclude_ids = dump.get('exclude_ids', self.exclude_ids)
+        self.state_when_all_ack = dump.get('state_when_all_ack', 'worststate')
 
 
         default_template = "Off: [OFF], Minor: [MINOR], Major: [MAJOR], Critical: [CRITICAL]"
@@ -187,13 +195,24 @@ class Selector(Record):
         mfilter = self.makeMfilter()
         if not mfilter:
             self.logger.debug("  + Invalid filter")
-            return ({}, 3, 1)
+            return ({}, 3, 1, 0)
 
-        # Check filter
-        import pprint
-        pp = pprint.PrettyPrinter(indent=2)
-        self.logger.debug(" + filter: %s" % pp.pformat(mfilter))
+        #Adds default check clause as selector have to be done on check event only
+        # This constraint have to be available for all aggregation queries
+        check_clause = {'event_type': 'check'}
 
+        if '$and' in mfilter:
+            mfilter['$and'].append(check_clause)
+        elif '$or' in mfilter:
+            mfilter = {'$and': [mfilter, check_clause]}
+        elif isinstance(mfilter, dict):
+            mfilter['event_type'] = 'check'
+
+
+
+
+        # Main aggregation query, gets information about how many events are in what state
+        # information are aggregated for output computation and does not takes care about acknowleged events
         self.logger.debug(" + selector statment agregation")
         result = self.storage.get_backend(namespace=self.namespace).aggregate([
                 {'$match': mfilter},
@@ -220,10 +239,8 @@ class Selector(Record):
             key = state['_id']['state']
 
             states[key] = states.get(key, 0) + state['count']
-            total += state['count']
 
         self.logger.debug(" + states: {}".format(states))
-        self.logger.debug(" + total: {}".format(total))
 
 
         # Compute worst state
@@ -231,8 +248,39 @@ class Selector(Record):
             if s in states:
                 state = s
 
+        #Aggreagation computing how many events are acknowleged with selector mfilter
+        result = self.storage.get_backend(namespace=self.namespace).aggregate([
+                {'$match': mfilter},
+                {
+                    "$group": {
+                        "_id": { "isAck": "$ack.isAck" },
+                        "count": {
+                            "$sum": {
+                                "$cond": [ "$ack.isAck", 1, 0 ]
+                            }
+                        }
+                    }
+                },
+                {
+                    "$project": {
+                        "_id": 0,
+                        "ack": "$_id",
+                        "count": 1
+                    }
+                }
+        ])
 
-        #find worst state for events not ack
+        # computes how many event selected in mfilter are ack
+        if len(result['result']):
+            ack_count = 0
+            for ack_result in result['result']:
+                ack_count += ack_result['count']
+        else:
+            ack_count = -1
+        self.logger.debug(" + result for ack : {}".format(result))
+
+
+        #find worst state for events not ack, mfilter is modified
         ack_clause = {'ack.isAck': {'$ne': True}}
         if '$and' in mfilter:
             mfilter['$and'].append(ack_clause)
@@ -244,6 +292,7 @@ class Selector(Record):
         self.logger.debug('mfilter for worst state')
         self.logger.debug(mfilter)
 
+        #Computes worst state for events that are not acknowleged
         result_ack_worst_state = self.storage.get_backend(namespace=self.namespace).aggregate([
             {'$match': mfilter},
             {'$project': {
@@ -273,37 +322,11 @@ class Selector(Record):
             if s in states_for_ack:
                 worst_state_for_ack = s
 
-
-
-        result = self.storage.get_backend(namespace=self.namespace).aggregate([
-                {'$match': mfilter},
-                {
-                    "$group": {
-                        "_id": { "isAck": "$ack.isAck" },
-                        "count": {
-                            "$sum": {
-                                "$cond": [ "$ack.isAck", 1, 0 ]
-                            }
-                        }
-                    }
-                },
-                {
-                    "$project": {
-                        "_id": 0,
-                        "ack": "$_id",
-                        "count": 1
-                    }
-                }
-        ])
-
-        if len(result['result']):
-            ack_count = 0
-            for ack_result in result['result']:
-                ack_count += ack_result['count']
-        else:
-            ack_count = -1
-        self.logger.debug(" + result for ack : {}".format(result))
-
+        #Bit dirty return value
+        # states are dict containing event count depending on state for mfilter
+        # state is the worst state for both ack and not ack events
+        # ack_count is the count of event that are ack for current mfilter
+        # worst_state_for_ack is the worst state for mfilter selected event that are ack
         return (states, state, ack_count, worst_state_for_ack)
 
 
@@ -321,16 +344,40 @@ class Selector(Record):
         # Build output
         total = 0
         total_error = 0
+        worst_state_with_ack = 0
         for s in states:
             states[s] = int(states[s])
             total += states[s]
             if s > 0:
                 total_error += states[s]
 
+
+        #Computed state when all events are not ack
+        computed_state = worst_state_for_ack
+
+        #Is selector produced event acknowleged
         if ack_count >= total_error and ack_count > 0:
             send_ack = True
+            #All matched event were acknowleged, then user chose what kind of state to use. it is either:
+
+            #The worst state computed from all events matched that are ack or not ack
+            if self.state_when_all_ack == 'worststate':
+                if state != -1:
+                    computed_state = state
+                else:
+                    computed_state = 0
+
+            #A defined state set by user
+
+            if self.state_when_all_ack in self.states_labels:
+                computed_state = self.states_labels[self.state_when_all_ack]
+
         else:
             send_ack = False
+
+        #Display purpose
+        if ack_count == -1:
+            ack_count = 0
 
         self.logger.debug(" + state: {}".format(state))
 
@@ -340,15 +387,27 @@ class Selector(Record):
 
         # Create perfdata array and generate output data
         output = self.output_tpl.replace('[TOTAL]', str(total))
+
+        #Producing metrics for ack
+        if ack_count:
+            perf_data_array.append({
+                "metric": 'cps_sel_ack',
+                "value": ack_count,
+                "max": total
+            })
+
+        output = output.replace('[ACK]', str(ack_count))
+
         output_data = {}
 
+        # Metrics and output computation
         for i in [0, 1, 2, 3]:
             value = 0
 
             if i in states:
                 value = states[i]
 
-            metric = "cps_sel_state_{}".format(i)
+            metric = 'cps_sel_state_{}'.format(i)
             output = output.replace(self.template_replace[i], str(value))
             output_data[metric] = value
             perf_data_array.append({
@@ -365,7 +424,6 @@ class Selector(Record):
 
         output_data['total'] = total
 
-        # Debug
         self.logger.debug(" + Display Name: %s" % self.display_name)
         self.logger.debug(" + output: %s" % output)
         self.logger.debug(" + perf_data_array: %s" % perf_data_array)
@@ -378,7 +436,7 @@ class Selector(Record):
             source_type="component",
             component='selector',
             resource=self.display_name,
-            state=worst_state_for_ack,
+            state=computed_state,
             output=output,
             perf_data=None,
             perf_data_array=perf_data_array,
