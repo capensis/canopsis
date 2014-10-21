@@ -27,44 +27,53 @@
 				"critical"
 			],
 			"default": "worststate",
-			"role": "simplelist"
+			"role": "simplelist",
+			"description": "Allow to set what state is applied to this selector produced selector event when all event are acknowleged. worst state compute all events worste state with no care about acknowlegement statement"
 		},
 		"crecord_type": {
 			"enum": ["selector"],
 			"required": true
 		},
 		"description": {
-			"type": "string"
+			"type": "string",
+			"description": "User information about this selector"
 		},
 		"downtimes_as_ok": {
 			"type": "boolean",
-			"default": true
+			"default": true,
+			"description": "Consider selected events in downtime as Off state"
 		},
 		"enable": {
 			"type": "boolean",
-			"default": true
+			"default": true,
+			"description": "Does canopsis have to compute this selector ?"
 		},
 		"mfilter": {
 			"type": "string",
-			"role": "cfilter"
+			"role": "cfilter",
+			"description": "Choose events to include in selector computation"
 		},
 		"include_ids": {
 			"type": "array",
 			"items": {
 				"type": "string"
 			},
-			"role": "eventselector"
+			"role": "eventselector",
+			"description": "Choose events to include in selector computation"
 		},
 		"exclude_ids": {
 			"type": "array",
 			"items": {
 				"type": "string"
 			},
-			"role": "eventselector"
+			"role": "eventselector",
+			"description": "Choose events to exclude in selector computation"
+
 		},
 		"display_name": {
 			"type": "string",
-			"required": true
+			"required": true,
+			"description": "Selector name that will be used as produced event resource"
 		},
 		"loaded": {
 			"type": "boolean",
@@ -73,12 +82,14 @@
 		"dostate": {
 			"type": "boolean",
 			"required": true,
-			"default": true
+			"default": true,
+			"description": "Enable state computation"
 		},
 		"dosla": {
 			"type": "boolean",
 			"required": true,
-			"default": false
+			"default": false,
+			"description": "Enable SLA computation for this selector"
 		},
 		"state": {
 			"type": "integer"
@@ -119,7 +130,8 @@
 		},
 		"output_tpl": {
 			"type": "string",
-			"default": "Off: [OFF], Minor: [MINOR], Major: [MAJOR], Critical: [CRITICAL], Ack count [ACK], Total: [TOTAL]"
+			"default": "Off: [OFF], Minor: [MINOR], Major: [MAJOR], Critical: [CRITICAL], Ack count [ACK], Total: [TOTAL]",
+			"description": "Allow edit how produced event will be rendered. elements between bracket will be replaced by their computed values"
 		},
 		"last_dispatcher_update": {
 			"type": "integer",
