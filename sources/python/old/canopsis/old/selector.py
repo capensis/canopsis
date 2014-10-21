@@ -190,7 +190,9 @@ class Selector(Record):
             return ({}, 3, 1)
 
         # Check filter
-        self.logger.debug(" + filter: %s" % mfilter)
+        import pprint
+        pp = pprint.PrettyPrinter(indent=2)
+        self.logger.debug(" + filter: %s" % pp.pformat(mfilter))
 
         self.logger.debug(" + selector statment agregation")
         result = self.storage.get_backend(namespace=self.namespace).aggregate([
@@ -230,6 +232,49 @@ class Selector(Record):
                 state = s
 
 
+        #find worst state for events not ack
+        ack_clause = {'ack.isAck': {'$ne': True}}
+        if '$and' in mfilter:
+            mfilter['$and'].append(ack_clause)
+        elif '$or' in mfilter:
+            mfilter = {'$and': [mfilter, ack_clause]}
+        elif isinstance(mfilter, dict):
+            mfilter['ack.isAck'] = {'$ne': True}
+
+        self.logger.debug('mfilter for worst state')
+        self.logger.debug(mfilter)
+
+        result_ack_worst_state = self.storage.get_backend(namespace=self.namespace).aggregate([
+            {'$match': mfilter},
+            {'$project': {
+                '_id': True,
+                'state': True,
+            }},
+            {'$group': {
+                    '_id': {
+                        'state': '$state',
+                    },
+                    'count': {'$sum': 1}
+        }}])
+
+
+        states_for_ack = {}
+        for state in result_ack_worst_state['result']:
+            key = state['_id']['state']
+
+            states_for_ack[key] = states_for_ack.get(key, 0) + state['count']
+
+        self.logger.debug(" + states for ack: {}".format(states_for_ack))
+
+
+        # Compute worst state
+        worst_state_for_ack = 0
+        for s in [0, 1, 2, 3]:
+            if s in states_for_ack:
+                worst_state_for_ack = s
+
+
+
         result = self.storage.get_backend(namespace=self.namespace).aggregate([
                 {'$match': mfilter},
                 {
@@ -259,12 +304,14 @@ class Selector(Record):
             ack_count = -1
         self.logger.debug(" + result for ack : {}".format(result))
 
-        return (states, state, ack_count)
+        return (states, state, ack_count, worst_state_for_ack)
+
+
 
     def event(self):
 
         # Get state information form aggregation
-        (states, state, ack_count) = self.getState()
+        states, state, ack_count, worst_state_for_ack = self.getState()
 
         information = None
         if state == -1 and ack_count == -1:
@@ -331,7 +378,7 @@ class Selector(Record):
             source_type="component",
             component='selector',
             resource=self.display_name,
-            state=state,
+            state=worst_state_for_ack,
             output=output,
             perf_data=None,
             perf_data_array=perf_data_array,
