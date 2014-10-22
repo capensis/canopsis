@@ -109,8 +109,8 @@ class Downtime(Record):
         new_field = []
         for downtime in self.downtimes:
             new_filter = [
-                {'$ne': {component: downtime['component']}},
-                {'$ne': {resource: downtime['resource']}}
+                {component: {'$ne': downtime['component']}},
+                {resource: {'$ne': downtime['resource']}}
             ]
             if mini:
                 new_field += new_filter
