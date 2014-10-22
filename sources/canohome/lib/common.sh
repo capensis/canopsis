@@ -94,3 +94,15 @@ function safe_prompt() {
         fi
     done
 }
+
+function file_append() {
+    FILE=$1
+    LINE=$2
+
+    grep "$LINE" "$FILE" >/dev/null 2>/dev/null
+
+    if [ $? -ne 0 ]
+    then
+        echo "$LINE" >> $FILE
+    fi
+}
