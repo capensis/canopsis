@@ -6,6 +6,9 @@
 	}],
 	"showEditButton": true,
 	"properties": {
+		"change_state_output": {
+			"type": "string"
+		},
 		"event_type": {
 			"type": "string",
 			"required": true,

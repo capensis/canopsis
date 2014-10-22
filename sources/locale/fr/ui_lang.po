@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: Canopsis\n"
 "Report-Msgid-Bugs-To: teamcanopsis@capensis.fr\n"
 "POT-Creation-Date: 2014-08-22 10:00+0100\n"
-"PO-Revision-Date: 2014-09-30 10:12+0000\n"
+"PO-Revision-Date: 2014-10-17 13:02+0000\n"
 "Last-Translator: Mourcia Mikael <mmourcia@yahoo.fr>\n"
 "Language-Team: French (http://www.transifex.com/projects/p/canopsis/language/fr/)\n"
 "MIME-Version: 1.0\n"
@@ -768,3 +768,99 @@ msgstr "Redirection vers la cible"
 
 msgid "Information"
 msgstr "Information"
+
+msgid "List"
+msgstr "Liste"
+
+msgid "Custom"
+msgstr "Personnalisé"
+
+msgid "Performance Data"
+msgstr "Données de performance"
+
+msgid "Streaming"
+msgstr ""
+
+msgid "equal"
+msgstr "égal"
+
+msgid "not equal"
+msgstr "différent"
+
+msgid "lower than"
+msgstr "inférieur à"
+
+msgid "greater than"
+msgstr "supérieur à"
+
+msgid "is in"
+msgstr "compris dans"
+
+msgid "not in"
+msgstr "non compris dans"
+
+msgid "regex"
+msgstr "regex"
+
+msgid " not regex"
+msgstr "sauf regex"
+
+msgid "By"
+msgstr "Par"
+
+msgid "days ago"
+msgstr ""
+
+msgid "Assign ticket number"
+msgstr "Assigner un ticket"
+
+msgid "Declare an incident"
+msgstr "Déclarer un incident"
+
+msgid "Inspect Form"
+msgstr "Inspecter le formulaire"
+
+msgid "authkey"
+msgstr "clé d'authentification"
+
+msgid "ui_language"
+msgstr ""
+
+msgid "userpreference"
+msgstr "Préférence utilisateur"
+
+msgid "Existing preference for widget"
+msgstr "Préférence pour le widget"
+
+msgid "in view"
+msgstr ""
+
+msgid "Remove this widget preference"
+msgstr "Supprimer cette préférence"
+
+msgid "Edit live reporting"
+msgstr "Edition Live Reporting"
+
+msgid "dateinterval"
+msgstr "Intervalle de date"
+
+msgid "Select date interval"
+msgstr "Sélectionner l'intervalle de date"
+
+msgid "safe_mode"
+msgstr "Mode sécurisé"
+
+msgid "Default view"
+msgstr "Vue par défaut"
+
+msgid "Editors"
+msgstr "Editeurs"
+
+msgid "Key bindings"
+msgstr "Raccourcis clavier"
+
+msgid "Label"
+msgstr "Label"
+
+msgid "Value"
+msgstr "Valeur"

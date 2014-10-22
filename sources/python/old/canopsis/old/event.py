@@ -62,6 +62,7 @@ def forger(
     ref_rk=None,
     component_problem=False,
     author=None,
+    perimeter=None,
     keep_state=None
 ):
 
@@ -137,6 +138,9 @@ def forger(
 
     if author != None:
         dump["author"] = author
+
+    if perimeter:
+        dump["perimeter"] = perimeter
 
     if keep_state:
         dump["keep_state"] = keep_state

@@ -709,6 +709,7 @@ class Rights(MiddlewareRegistry):
             return user
 
         user = {'crecord_type': 'user',
+                'enable': True,
                 'crecord_name': u_id,
                 'role': u_role}
 
@@ -916,3 +917,24 @@ class Rights(MiddlewareRegistry):
         """
 
         return self.update_field(e_id, e_type, groups, 'group', entity)
+
+    def update_fields(e_id, e_type, fields):
+        """
+        Args:
+            e_id id of the entity to update
+            e_type type of the entity to update
+            fields map of the fields to update
+        Returns:
+            A document describing the effect of the put_elements
+            if the entity was thoroughly updated
+            ``False`` otherwise
+        """
+
+        entity = self[e_type + '_storage'].get_elements(ids=e_id)
+
+        if entity and not isinstance(list, entity):
+            for key in fields:
+                entity[key] = fields[key]
+            return self[e_type + '_storage'].put_element(e_id, entity)
+        else:
+            return False
