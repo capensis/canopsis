@@ -43,7 +43,7 @@ if __name__ == '__main__':
         sys.exit(1)
 
     elif sys.argv[1] == 'get':
-        success, error = get_confopt(*sys.argv[2:4])
+        success, error = get_confopt(*sys.argv[2:5])
 
         if not success:
             print >>sys.stderr, error
@@ -54,7 +54,7 @@ if __name__ == '__main__':
             print >>sys.stderr, "Usage:", sys.argv[0], "get|set confpath section name (value)"
             sys.exit(1)
 
-        success, error = set_confopt(*sys.argv[2:5])
+        success, error = set_confopt(*sys.argv[2:6])
 
         if not success:
             print >>sys.stderr, error

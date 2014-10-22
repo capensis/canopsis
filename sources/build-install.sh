@@ -693,6 +693,7 @@ then
             find . -newermt "$dtstart"  >> $VARLIB_PATH/$NAME.files.tmp
 
             # Find files matching blacklist patterns
+            touch $VARLIB_PATH/$NAME.blacklist
             cat $SRC_PATH/packages/$NAME/blacklist | while read pattern
             do
                 find . -wholename ".$pattern" >> $VARLIB_PATH/$NAME.blacklist
