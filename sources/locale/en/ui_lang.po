@@ -1,15 +1,18 @@
 # 
+# Translators:
 msgid ""
 msgstr ""
-"Project-Id-Version: 1.0\n"
+"Project-Id-Version: Canopsis\n"
 "Report-Msgid-Bugs-To: teamcanopsis@capensis.fr\n"
 "POT-Creation-Date: 2014-08-22 10:00+0100\n"
-"PO-Revision-Date: 2014-09-30 10:41+0100\n"
-"Last-Translator: teamcanopsis <teamcanopsis@capensis.fr>\n"
-"Language-Team: English <teamcanopsis@capensis.fr>\n"
+"PO-Revision-Date: 2014-10-17 12:56+0000\n"
+"Last-Translator: Mourcia Mikael <mmourcia@yahoo.fr>\n"
+"Language-Team: English (http://www.transifex.com/projects/p/canopsis/language/en/)\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=utf-8\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Language: en\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 msgid "View all tasks"
 msgstr "View all tasks"
@@ -764,3 +767,98 @@ msgstr "Redirection to the targeted address"
 msgid "Information"
 msgstr "Information"
 
+msgid "List"
+msgstr "List"
+
+msgid "Custom"
+msgstr "Custom"
+
+msgid "Performance Data"
+msgstr "Performance Data"
+
+msgid "Streaming"
+msgstr "Streaming"
+
+msgid "equal"
+msgstr "equal"
+
+msgid "not equal"
+msgstr "not equal"
+
+msgid "lower than"
+msgstr "lower than"
+
+msgid "greater than"
+msgstr "greater than"
+
+msgid "is in"
+msgstr "is in"
+
+msgid "not in"
+msgstr "not in"
+
+msgid "regex"
+msgstr "regex"
+
+msgid " not regex"
+msgstr " not regex"
+
+msgid "By"
+msgstr "By"
+
+msgid "days ago"
+msgstr "days ago"
+
+msgid "Assign ticket number"
+msgstr "Assign ticket number"
+
+msgid "Declare an incident"
+msgstr "Declare an incident"
+
+msgid "Inspect Form"
+msgstr "Inspect Form"
+
+msgid "authkey"
+msgstr "authkey"
+
+msgid "ui_language"
+msgstr "ui_language"
+
+msgid "userpreference"
+msgstr "userpreference"
+
+msgid "Existing preference for widget"
+msgstr "Existing preference for widget"
+
+msgid "in view"
+msgstr "in view"
+
+msgid "Remove this widget preference"
+msgstr "Remove this widget preference"
+
+msgid "Edit live reporting"
+msgstr "Edit live reporting"
+
+msgid "dateinterval"
+msgstr "dateinterval"
+
+msgid "Select date interval"
+msgstr "Select date interval"
+
+msgid "safe_mode"
+msgstr "safe_mode"
+
+msgid "Default view"
+msgstr "Default view"
+
+msgid "Editors"
+msgstr "Editors"
+
+msgid "Key bindings"
+msgstr "Key bindings"
+
+msgid "Label"
+msgstr "Label"
+
+msgid "Value"
+msgstr "Value"

@@ -44,15 +44,9 @@ DEFAULT_VERSION = '0.1'
 TEST_FOLDERS = ['tests', 'test']
 
 
-def setup(description, keywords, add_etc=True, **kwargs):
+def setup(add_etc=True, **kwargs):
     """
     Setup dedicated to canolibs projects.
-
-    :param description: project description
-    :type description: str
-
-    :param keywords: project keywords
-    :type keywords: str
 
     :param add_etc: add automatically etc files (default True)
     :type add_etc: bool
