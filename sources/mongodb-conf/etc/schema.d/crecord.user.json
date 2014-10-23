@@ -2,7 +2,7 @@
 	"type": "object",
 	"categories": [{
 		"title": "General",
-		"keys":["_id"]
+		"keys":["_id", "firstname", "lastname", "mail", "authkey"]
 	},{
 		"title": "Role",
 		"keys": ["role"]
@@ -22,7 +22,8 @@
 		},
 		"_id": {
 			"type": "string",
-			"required": true
+			"required": true,
+			"readOnly": true
 		},
 		"ui_language": {
 			"type": "string",
@@ -67,12 +68,10 @@
 			"required": true
 		},
 		"firstname": {
-			"type": "string",
-			"readOnly": true
+			"type": "string"
 		},
 		"lastname": {
-			"type": "string",
-			"readOnly": true
+			"type": "string"
 		},
 		"user_contact": {
 			"type": "string",

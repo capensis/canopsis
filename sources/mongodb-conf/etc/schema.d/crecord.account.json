@@ -2,10 +2,13 @@
 	"type": "object",
 	"categories": [{
 		"title": "General",
-		"keys":["_id"]
+		"keys":["_id", "firstname", "lastname", "mail", "authkey"]
 	},{
 		"title": "Role",
 		"keys": ["role"]
+	},{
+		"title": "Groups",
+		"keys": ["user_groups"]
 	},{
 		"title": "Rights",
 		"keys": ["rights"]
@@ -19,7 +22,8 @@
 		},
 		"_id": {
 			"type": "string",
-			"required": true
+			"required": true,
+			"readOnly": true
 		},
 		"ui_language": {
 			"type": "string",
@@ -30,6 +34,10 @@
 			"type": "string",
 			"required": true,
 			"readOnly": true
+		},
+		"shadowpass": {
+			"type": "string",
+			"required": true
 		},
 		"user_groups": {
 			"type": "object"
@@ -43,21 +51,27 @@
 			"role": "stringclassifiedcrecordselector",
 			"crecordtype": "role"
 		},
+		"user_role": {
+			"type": "string",
+			"role": "classifiedcrecordselector",
+			"multiselect": false,
+			"crecordtype": "role",
+			"valuekey" : "id"
+		},
 		"rights": {
 			"type": "object",
-			"role": "rights"
+			"role": "rights",
+			"valuekey" : "_id"
 		},
 		"external": {
 			"type": "boolean",
 			"required": true
 		},
 		"firstname": {
-			"type": "string",
-			"readOnly": true
+			"type": "string"
 		},
 		"lastname": {
-			"type": "string",
-			"readOnly": true
+			"type": "string"
 		},
 		"user_contact": {
 			"type": "string",
@@ -68,7 +82,10 @@
 			"type": "string",
 			"required": true,
 			"role": "mail"
+		},
+		"enable": {
+			"type": "boolean",
+			"required": true
 		}
-
 	}
 }
