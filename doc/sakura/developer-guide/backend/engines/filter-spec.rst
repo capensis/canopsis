@@ -12,7 +12,7 @@ To add a new action, simply follow this prototype :
 
 .. code-block:: python
 
-	def a_ACTIONAME(self, event, derogation, action, name):
+	def a_ACTIONNAME(self, event, derogation, action, name):
 	    """                                                                                                                                                                                   
             Args:                                                                                                                                                                                 
                 event map of the event to be modified                                                                                                                                             
@@ -35,7 +35,7 @@ To add a new mofication action, simply follow this prototype :
 
 .. code-block:: python
 
-    def a_ACTIONANEM(self, event, action):
+    def a_ACTIONNAME(self, event, action):
         """                                                                                                                                                                                   
 	Args:
 	    event map of the event to be modified
