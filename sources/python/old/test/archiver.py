@@ -47,10 +47,7 @@ class KnownValues(unittest.TestCase):
         self.Archiver = Archiver(namespace='unittest',
                                  autolog=True,
                                  logging_level=loggingDEBUG)
-        self.Archiver.bagot_freq = 10
-        self.Archiver.bagot_time = 3600
-        self.Archiver.stealthy_time = 300
-        self.Archiver.restore_event = True
+        self.Archiver.beat()
 
     def test_01_check_statuses(self):
 
