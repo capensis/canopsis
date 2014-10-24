@@ -13,3 +13,4 @@ Frontend
    widgets/index
    resources
    serializers-and-adapters
+   managing-dependancies
