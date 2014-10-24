@@ -22,10 +22,11 @@ from inspect import getargspec
 
 from canopsis.common.utils import ensure_iterable, isiterable
 
-from json import loads
+from json import loads, dumps
 from bottle import request, HTTPError, HTTPResponse
 from functools import wraps
 import traceback
+import logging
 
 
 def adapt_canopsis_data_to_ember(data):
@@ -146,6 +147,9 @@ class route(object):
 
         super(route, self).__init__()
 
+        # logger is initialized by WebServer
+        self.logger = logging.getLogger('webserver')
+
         self.op = op
         self.name = name
         self.raw_body = raw_body
@@ -159,6 +163,12 @@ class route(object):
         # generate an interceptor
         @wraps(function)
         def interceptor(*args, **kwargs):
+            self.logger.debug('Request: {} - {} - {}, {} (params: {})'.format(
+                self.op.__name__.upper(),
+                self.url,
+                dumps(args), dumps(kwargs),
+                dumps(dict(request.params)))
+            )
 
             if self.raw_body:
                 kwargs['body'] = request.body
@@ -266,8 +276,8 @@ class route(object):
         # add routes with optional parameters
         for i in range(len(optional_header_params) + 1):
             header_params = required_header_params + optional_header_params[:i]
-            route = route_name(function_name, *header_params)
-            function = self.op(route, **wsgi_params)(function)
+            self.url = route_name(function_name, *header_params)
+            function = self.op(self.url, **wsgi_params)(function)
 
         return function
 
