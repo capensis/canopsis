@@ -860,12 +860,10 @@ class Storage(object):
 STORAGES = {}
 def get_storage(namespace='object', account=None, logging_level=logging.INFO):
     global STORAGES
-    try:
-        return STORAGES[namespace]
-
-    except KeyError:
+    if namespace not in STORAGES:
         if not account:
             account = Account()
 
         STORAGES[namespace] = Storage(account, namespace=namespace, logging_level=logging_level)
-        return STORAGES[namespace]
+
+    return STORAGES[namespace]
