@@ -42,6 +42,10 @@ class engine(Engine):
         self.name = kargs['name']
 
     def pre_run(self):
+        """
+        Init vars and call beat method
+        """
+
         self.drop_event_count = 0
         self.pass_event_count = 0
         self.beat()
@@ -75,8 +79,11 @@ class engine(Engine):
 
         return result
 
-    # Override/adds 'field' of event with 'value'
     def a_override(self, event, action):
+        """
+        Override a field from event or add a new one if it does not have one
+        """
+
         afield = action.get('field', None)
         avalue = action.get('value', None)
 
@@ -90,12 +97,17 @@ class engine(Engine):
             return True
 
         else:
-            self.logger.error("Action malformed (needs 'field' and 'value'): %s" % action)
+            self.logger.error(
+                "Action malformed (needs 'field' and 'value'): %s" % action
+                )
             return False
 
-    # Remove field 'key', if element is specified,
-    # remove 'element' in 'key' instead
     def a_remove(self, event, action):
+        """
+        Remove an event from a field in event or the whole field if no element
+        is specified
+        """
+
         akey = action.get('key', None)
         aelement = action.get('element', None)
         del_met = action.get('met', 0)
@@ -127,8 +139,17 @@ class engine(Engine):
             return False
 
 
-    # Wrap modification action functions
     def a_modify(self, event, derogation, action, _name):
+        """
+        Args:
+            event map of the event to be modified
+            derogation map of the filter that matched the event
+            action map of type action
+            _name of the rule
+        Returns:
+            ``None``
+        """
+
         name = derogation.get('name', None)
         _id = derogation.get('_id', None)
 
@@ -141,7 +162,7 @@ class engine(Engine):
         actionMap = {'override': self.a_override,
                      'remove': self.a_remove}
 
-        if actionMap[atype]:
+        if atype in actionMap:
             derogated = actionMap[atype](event, action)
 
         else:
@@ -153,24 +174,50 @@ class engine(Engine):
 
         return None
 
-
-    # simple drop
     def a_drop(self, event, derogation, action, name):
+        """
+        Drop the event
+        Args:
+            event map of the event to be modified
+            derogation map of the filter that matched the event
+            action map of type action
+            _name of the rule
+        Returns:
+            ``None``
+        """
+
         self.logger.debug("Event dropped by rule '%s'" % name)
         self.drop_event_count += 1
         return DROP
 
-    # simple pass
     def a_pass(self, event, derogation, action, name):
-        self.logger.debug("Event:")
-        self.logger.debug(event)
+        """
+        Pass the event to the next queue
+        Args:
+            event map of the event to be modified
+            derogation map of the filter that matched the event
+            action map of type action
+            _name of the rule
+        Returns:
+            ``None``
+        """
+
         self.logger.debug("Event passed by rule '%s'" % name)
         self.pass_event_count += 1
         return event
 
-    # Change next_amqp_queues of engine
-    # (will be reseted in Engine after this current call)
     def a_route(self, event, derogation, action, name):
+        """
+        Change the route to which an event will be sent
+        Args:
+            event map of the event to be modified
+            derogation map of the filter that matched the event
+            action map of type action
+            _name of the rule
+        Returns:
+            ``None``
+        """
+
         if "route" in action:
             self.next_amqp_queues = [action["route"]]
             self.logger.debug("Event re-routed by rule '%s'" % name)
