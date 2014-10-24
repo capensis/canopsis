@@ -2,6 +2,52 @@ Engine Filter specification
 ===========================
 
 
+Adding functionalities
+=======================
+
+Adding an action
+-----------------
+
+To add a new action, simply follow this prototype :
+
+.. code-block:: python
+
+	def a_ACTIONNAME(self, event, derogation, action, name):
+	    """                                                                                                                                                                                   
+            Args:                                                                                                                                                                                 
+                event map of the event to be modified                                                                                                                                             
+                derogation map of the filter that matched the event                                                                                                                               
+                action map of type action                                                                                                                                                         
+                name of the rule                                                                                                                                                                 
+            Returns:                                                                                                                                                                              
+                ``None``                                                                                                                                                                          
+            """
+
+Only the ``pass`` and ``drop`` actions return something meaningful.
+Returning something else than ``None`` will prevent any further actions and changes to be applied to the event.
+
+The action's name and function also needs to be added  to the ``actionMap`` in ``work()``
+
+Adding a modification action
+----------------------------
+
+To add a new mofication action, simply follow this prototype :
+
+.. code-block:: python
+
+    def a_ACTIONNAME(self, event, action):
+        """                                                                                                                                                                                   
+	Args:
+	    event map of the event to be modified
+	    action map of type action
+	Returns:
+	    ``True`` if the event was modified
+	    ``False`` otherwise
+        """
+       
+The action's name and function also needs to be added  to the ``actionMap`` in ``a_modify()``
+        
+
 Rule specification
 ===================
 
