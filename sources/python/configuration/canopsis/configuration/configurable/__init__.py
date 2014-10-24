@@ -141,7 +141,7 @@ class Configurable(object):
         # set logging properties
         self._log_lvl = log_lvl
         self._log_name = log_name if log_name is not None else \
-            type(self).__name__
+            type(self).__name__.lower()
         self._log_debug_format = log_debug_format
         self._log_info_format = log_info_format
         self._log_warning_format = log_warning_format

@@ -4,7 +4,7 @@
         "keys": ["crecord_name"]
     },{
         "title": "Curve Style",
-        "keys": ["stacked", "lines", "areas", "points", "bars"]
+        "keys": ["stacked", "lines", "areas", "points", "bars", "valueLabels"]
     },{
         "title": "Customize Curve",
         "keys": ["line_width", "bar_width", "line_style", "point_shape", "area_opacity"]
@@ -68,6 +68,10 @@
             "minimum": 0,
             "maximum": 1,
             "default": 0.75
+        },
+        "valueLabels": {
+            "type": "boolean",
+            "default": true
         }
     }
 }

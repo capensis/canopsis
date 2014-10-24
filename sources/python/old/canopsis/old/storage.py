@@ -695,25 +695,6 @@ class Storage(object):
                 self.logger.debug(err)
 
 
-    '''
-    def recursive_dump(self, record, depth=0,account=None, namespace=None):
-        depth += 1
-        childs = record.children
-        if len(childs) == 0:
-            return
-
-        jsonRecord = record.dump(json=True)
-        jsonRecord['children'] = []
-
-        for child in childs:
-            rec = self.get(child,account=account,namespace=namespace)
-            self.set_record_tree(rec, depth,account=account,namespace=namespace)
-            #record.children_record.append(rec)
-            jsonRecord['children'].append(rec.dump(json=True))
-
-        return jsonRecord
-    '''
-
     def get_record_childs(self, record,account=None, namespace=None):
         self.check_connected()
 
@@ -782,45 +763,7 @@ class Storage(object):
             mfilter['crecord_type'] = rtype
 
         return self.find(mfilter, account=account)
-    '''
-    def add_children(self, parent_record, child_record, autosave=True):
-        _id = child_record._id
 
-        if autosave:
-            if not _id:
-                child_record.save()
-            if not parent_record._id:
-                parent_record.save()
-
-        if not _id or not parent_record._id:
-            raise ValueError("You must save all records before this operation ...")
-
-        if str(_id) not in parent_record.children:
-            parent_record.children.append(str(_id))
-            child_record.parent.append(str(parent_record._id))
-            if autosave:
-                parent_record.save()
-                child_record.save()
-
-    def remove_children(self, parent_record, child_record, autosave=True):
-        _id = child_record._id
-
-        if autosave:
-            if not _id:
-                child_record.save()
-            if not parent_record._id:
-                parent_record.save()
-
-        if not _id or not parent_record._id:
-            raise ValueError("You must save all records before this operation ...")
-
-        if str(_id) in parent_record.children:
-            parent_record.children.remove(str(_id))
-            child_record.parent.remove(str(parent_record._id))
-            if autosave:
-                parent_record.save()
-                child_record.save()
-    '''
     def is_parent(self, parent_record, child_record):
         self.check_connected()
 
@@ -863,12 +806,10 @@ class Storage(object):
 STORAGES = {}
 def get_storage(namespace='object', account=None, logging_level=logging.INFO):
     global STORAGES
-    try:
-        return STORAGES[namespace]
-
-    except KeyError:
+    if namespace not in STORAGES:
         if not account:
             account = Account()
 
         STORAGES[namespace] = Storage(account, namespace=namespace, logging_level=logging_level)
-        return STORAGES[namespace]
+
+    return STORAGES[namespace]
