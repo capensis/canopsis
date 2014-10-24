@@ -22,3 +22,14 @@ Now you can restart canopsis:
 
     su - canopsis
     hypstart canopsis restart
+
+MongoDB won't start
+-------------------
+
+MongoDB needs the locales to be configured in order to run properly. If you meet this line :
+
+    [initandlisten] exception in initAndListen std::exception: locale::facet::_S_create_c_locale name not valid, terminating
+
+Then you must install locales, example with Debian :
+
+    # apt-get install locales
