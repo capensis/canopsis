@@ -325,7 +325,7 @@ class Storage(object):
                         del data['_id']
 
                     if not _id:
-                        backend.insert(data, safe=self.mongo_safe, w=1)
+                        _id = backend.insert(data, safe=self.mongo_safe, w=1)
                     else:
                         backend.update({'_id': _id}, data, safe=self.mongo_safe, upsert=True)
 
@@ -371,8 +371,6 @@ class Storage(object):
 
                 record._id = _id
                 return_ids.append(_id)
-
-
 
         if len(return_ids) == 1:
             return return_ids[0]
