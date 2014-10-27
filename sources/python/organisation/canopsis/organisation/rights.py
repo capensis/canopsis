@@ -79,7 +79,7 @@ class Rights(MiddlewareRegistry):
                 'group': self.delete_group,
                 'user': self.delete_user,
                 'role': self.delete_role,
-                'action': self.delete
+                'action': self.delete_action
                 }
             }
 
@@ -102,7 +102,7 @@ class Rights(MiddlewareRegistry):
             )
 
     # Delete an action from the reference list
-    def delete(self, a_id):
+    def delete_action(self, a_id):
         """
         Args:
             a_id: id of the action to be deleted
@@ -938,3 +938,16 @@ class Rights(MiddlewareRegistry):
             return self[e_type + '_storage'].put_element(e_id, entity)
         else:
             return False
+
+    def delete(self, e_type, e_id):
+        """
+        Args:
+            e_type type of the entity to delete
+            e_id id of the entity to delete
+        Returns:
+            ``True`` if the entity was deleted
+            ``False`` otherwise
+        """
+
+        return not not (None if not e_type in self.actions['delete']
+                        else self.actions['delete'][e_type](e_id))
