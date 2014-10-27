@@ -97,11 +97,11 @@ This code will just call the stateview helper with two parameters: the state val
 . Canopsis UI Model
 --------------------
 
-The Canopsis UI Model system is based upon json schemas that describes datatypes for each document type managed into canopsis. Those schemas are used in both front office an back office in order to keep redundancy in the project. see more `model </developer-guide/uiv2/model_layer.html>`_
+The Canopsis UI Model system is based upon json schemas that describes datatypes for each document type managed into canopsis. Those schemas are used in both front office an back office in order to keep redundancy in the project.
 
 . Widgets
 ----------
 
-Widgets are components used in Canopsis UI. They are made of a controller and a template and they can be parametrized in order to best fit users need. see more `widgets </developer-guide/uiv2/widgets.html>`_
+Widgets are components used in Canopsis UI. They are made of a controller and a template and they can be parametrized in order to best fit users need. see more `widgets <widgets/creating-a-simple-widget.html>`_
 
 
