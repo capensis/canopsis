@@ -67,24 +67,24 @@ class RightsTest(TestCase):
     def tests(self):
         # Test creation of groups
         rights = {
-            '1234': {'desc': 'test right in comp', 'checksum': 15},
-            '1235': {'desc': 'test right in comp', 'checksum': 8},
-            '1236': {'desc': 'test right in comp', 'checksum': 12},
-            '1237': {'desc': 'test right in comp', 'checksum': 1},
-            '1238': {'desc': 'test right in comp', 'checksum': 15},
-            '1239': {'desc': 'test right in comp', 'checksum': 15},
-            '1240': {'desc': 'test right in comp', 'checksum': 8},
-            '1241': {'desc': 'test right in comp', 'checksum': 8}
+            '1234': {'desc': 'test right in group', 'checksum': 15},
+            '1235': {'desc': 'test right in group', 'checksum': 8},
+            '1236': {'desc': 'test right in group', 'checksum': 12},
+            '1237': {'desc': 'test right in group', 'checksum': 1},
+            '1238': {'desc': 'test right in group', 'checksum': 15},
+            '1239': {'desc': 'test right in group', 'checksum': 15},
+            '1240': {'desc': 'test right in group', 'checksum': 8},
+            '1241': {'desc': 'test right in group', 'checksum': 8}
         }
         rights_scnd = {
-            '2344': {'desc': 'test right in comp', 'checksum': 15},
-            '2345': {'desc': 'test right in comp', 'checksum': 8},
-            '2346': {'desc': 'test right in comp', 'checksum': 12},
-            '2347': {'desc': 'test right in comp', 'checksum': 1},
-            '2348': {'desc': 'test right in comp', 'checksum': 15},
-            '2349': {'desc': 'test right in comp', 'checksum': 15},
-            '4210': {'desc': 'test right in comp', 'checksum': 8},
-            '4211': {'desc': 'test right in comp', 'checksum': 8}
+            '2344': {'desc': 'test right in group', 'checksum': 15},
+            '2345': {'desc': 'test right in group', 'checksum': 8},
+            '2346': {'desc': 'test right in group', 'checksum': 12},
+            '2347': {'desc': 'test right in group', 'checksum': 1},
+            '2348': {'desc': 'test right in group', 'checksum': 15},
+            '2349': {'desc': 'test right in group', 'checksum': 15},
+            '4210': {'desc': 'test right in group', 'checksum': 8},
+            '4211': {'desc': 'test right in group', 'checksum': 8}
         }
 
         # basic group creation
@@ -124,13 +124,13 @@ class RightsTest(TestCase):
         self.rights.add_right('group_test1', 'group', '1237', 12)
 
         # Test remove_entity
-        self.rights.remove_comp_profile('profile_test1', 'group_test1')
+        self.rights.remove_group_profile('profile_test1', 'group_test1')
         self.assertEqual(
             self.rights.check_rights(
                 'jharris', '1237', 12), False)
 
         # Add it back
-        self.rights.add_comp_profile('profile_test1', 'group_test1')
+        self.rights.add_group_profile('profile_test1', 'group_test1')
         self.assertEqual(
             self.rights.check_rights(
                 'jharris', '1237', 12), True)
@@ -154,13 +154,13 @@ class RightsTest(TestCase):
                 'jharris', '1237', 12), False)
 
         # Add the group to the role
-        self.rights.add_comp_role('role_test1bis', 'group_test1')
+        self.rights.add_group_role('role_test1bis', 'group_test1')
         self.assertEqual(
             self.rights.check_rights(
                 'jharris', '1237', 12), True)
 
         # Remove it
-        self.rights.remove_comp_role('role_test1bis', 'group_test1')
+        self.rights.remove_group_role('role_test1bis', 'group_test1')
         self.assertEqual(
             self.rights.check_rights(
                 'jharris', '1237', 12), False)
@@ -187,10 +187,10 @@ class RightsTest(TestCase):
         self.rights.add_right('jharris', 'user', '1237', 2)
         self.rights.add_right('role_test1bis', 'user', '1237', 4)
         self.rights.add_right('group_test2', 'user', '1237', 8)
-        self.rights.add_comp_user('jharris', 'group_test2')
-        self.rights.add_comp_role('role_test1bis', 'group_test1')
+        self.rights.add_group_user('jharris', 'group_test2')
+        self.rights.add_group_role('role_test1bis', 'group_test1')
         self.rights.add_profile('role_test1bis', None, 'profile_test1')
-        self.rights.add_comp_profile('role_test1bis', 'group_test1')
+        self.rights.add_group_profile('role_test1bis', 'group_test1')
         self.assertEqual(
             self.rights.get_user_rights('jharris')['1237']['checksum'],
             15)
