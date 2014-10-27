@@ -1,15 +1,53 @@
 Rights
 _______
 
+Table of contents
+-------------------
+
+1. What_
+
+   1. SetUp_
+
+2. How_
+
+   1. Rights
+
+   2. Composites
+
+   3. Profile
+
+   4. Role
+
+3. Library_
+
+   1. Data Structures_
+
+      1. User
+
+      2. Role
+
+      3. Profile
+
+      4. Composite
+
+      5. Rights
+
+
+.. _what:
+
+What
+-----
+
 Rights are defined within the composites (groups) upon their creations or added unitarily in a specific profile, role, or user.
 
 The id of a right must be the id of the action it is acting upon.
 
 Each profile must belongs to at least one composite (group), each role must be paired with an existing profile and each user shall have a role.
 
+.. _setup:
 
 SetUp
-=====
+......
 
 A list of actions must be referenced in the Rights' storages in order for it to find the actions ID and let users create new rights.
 
@@ -26,11 +64,13 @@ To reference a new action, simply use :
 
 *See the unit tests for more throgouh examples.*
 
-How to
-=======
+.. _how:
+
+How
+----
 
 Rights
-------
+.......
 
 Add an action to the referenced actions list
 
@@ -118,7 +158,7 @@ Delete the checksum of a Right from an entity
 
 
 Composites
-----------
+...........
 
 Creation
 
@@ -219,7 +259,7 @@ Remove a composite from an existing entity (Profile or Role)
     self.Rights.rm_comp_role('DirectorsManager', 'manager')
 
 Profiles
---------
+.........
 
 Create a Profile
 
@@ -292,7 +332,7 @@ Remove a Profile from an existing Role
 
 
 Role
-----
+.....
 
 Create a Role
 
@@ -329,11 +369,18 @@ Delete a Role
 
 
 
+.. _library:
+
+Library
+-------
+
+.. _structures:
+
 Data Structures
-===============
+................
 
 User
-----
+,,,,,
 
 .. code-block:: javascript
 
@@ -375,7 +422,7 @@ Example:
 
 
 Role
-----
+,,,,
 
 A Role is specific to a small number of users
 
@@ -406,7 +453,7 @@ Example:
 
 
 Profile
--------
+,,,,,,,,
 
 A profile is generic and global to all users
 
@@ -436,7 +483,7 @@ Example:
 
 
 Composite (aka Groups)
-----------------------
+,,,,,,,,,,,,,,,,,,,,,,
 
 A composite is generic and global to all users
 
@@ -473,7 +520,7 @@ Example:
 
 
 Rights
-------
+,,,,,,
 
 .. code-block:: javascript
 
@@ -500,21 +547,3 @@ The ``right`` field is a 4-bit integer that goes from 1 to 15 and that describes
     if not Rights[object_idXYZ]['right'] & (CREATE | DELETE):
         #the user has none of the rights on the object identified with object_idXYZ
 
-User-specific and role-specific rights
-.......................................
-
-By default, the users have their groups rights, if a user needs or wants specific rights, they are added to its own ``Rights`` field.
-
-Example::
-
-    Group_1 = Alice, Bob
-    Group_2 = Alice, Mark, Tom
-    Group_3 = Jerry, Tom
-
-    Alice creates a widget and sets the visibility to her groups; We add the right to the Group_1's and Group_2's rights
-
-    Alice, Bob, Mark, and Tom will be able to access the widget.
-
-    Alice creates a Widget and sets the visibility to only her; We add the right to Alice's rights
-
-    Only Alice can access the Widget,
