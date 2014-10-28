@@ -158,7 +158,7 @@ class Rights(MiddlewareRegistry):
         profiles = self.get_profile(role['profile'])
 
         # Do not edit the following for a double for loop
-        # list comprehensions are much faster
+        # list grouprehensions are much faster
         groups = [self['group_storage'][x]
                       for y in profiles
                       for x in y['group']]
@@ -277,45 +277,45 @@ class Rights(MiddlewareRegistry):
 
         return 0
 
-    # Create a new rights group composed of the rights passed in comp_rights
-    # comp_rights should be a map of rights referenced in the action catalog
-    def create_group(self, comp_name, comp_rights):
+    # Create a new rights group grouposed of the rights passed in group_rights
+    # group_rights should be a map of rights referenced in the action catalog
+    def create_group(self, group_name, group_rights):
         """
         Args:
-            comp_name: id of the group to create
-            comp_rights: map of rights to init the group with
+            group_name: id of the group to create
+            group_rights: map of rights to init the group with
         Returns:
             The name of the group if it was created
             ``None`` otherwise
         """
 
         # Do nothing if it already exists
-        if self.get_group(comp_name):
+        if self.get_group(group_name):
             self.logger.error(
-                'Can not create group, group {0} already exists'.format(comp_name)
+                'Can not create group, group {0} already exists'.format(group_name)
                 )
             return None
 
-        new_comp = {'crecord_type': 'group',
-                    'crecord_name': comp_name,
+        new_group = {'crecord_type': 'group',
+                    'crecord_name': group_name,
                     'rights': {}
                     }
 
-        self.group_storage.put_element(comp_name, new_comp)
+        self.group_storage.put_element(group_name, new_group)
 
-        if not comp_rights:
-            return comp_name
+        if not group_rights:
+            return group_name
 
         # Use add_right to check if the action is referenced
-        for right_id in comp_rights:
-            self.add_right(comp_name,
+        for right_id in group_rights:
+            self.add_right(group_name,
                            'group',
                            right_id,
-                           comp_rights[right_id]['checksum'])
+                           group_rights[right_id]['checksum'])
 
-        return comp_name
+        return group_name
 
-    # Create a new profile composed of the groups p_groups
+    # Create a new profile grouposed of the groups p_groups
     #   and which name will be p_name
     # If the profile already exists, groups from p_groups
     #   that are not already in the profile's groups will be added
@@ -323,7 +323,7 @@ class Rights(MiddlewareRegistry):
         """
         Args:
             p_name: id of the profile to be created
-            p_compsites: list of groups to init the Profile with
+            p_groupsites: list of groups to init the Profile with
         Returns:
             The name of the profile if it was created
             ``None`` otherwise
@@ -332,7 +332,7 @@ class Rights(MiddlewareRegistry):
         # Do nothing if it already exists
         if self.get_profile(p_name):
             self.logger.error(
-                'Can not create group, group {0} already exists'.format(comp_name)
+                'Can not create group, group {0} already exists'.format(group_name)
                 )
             return None
 
@@ -442,74 +442,74 @@ class Rights(MiddlewareRegistry):
 
         return self.delete_entity(c_name, 'group')
 
-    # Add the group named comp_name to the entity
+    # Add the group named group_name to the entity
     # If the group does not exist and
-    #   comp_rights is specified it will be created first
+    #   group_rights is specified it will be created first
     # entity can be a profile or a role
-    def add_group(self, e_name, e_type, comp_name, comp_rights=None):
+    def add_group(self, e_name, e_type, group_name, group_rights=None):
         """
         Args:
             e_name: name of the entity to be modified
             e_type: type of the entity
-            comp_name: id of the group to add to the entity
-            comp_rights: specified if the group has to be created beforehand
+            group_name: id of the group to add to the entity
+            group_rights: specified if the group has to be created beforehand
         Returns:
             ``True`` if the group was added to the entity
         """
 
         e_type += '_storage'
 
-        if not self.get_group(comp_name):
-            self.create_group(comp_rights, comp_name)
+        if not self.get_group(group_name):
+            self.create_group(group_rights, group_name)
 
         entity = self[e_type].get_elements(ids=e_name)
-        if not 'group' in entity or not comp_name in entity['group']:
-            entity.setdefault('group', []).append(comp_name)
+        if not 'group' in entity or not group_name in entity['group']:
+            entity.setdefault('group', []).append(group_name)
             self[e_type].put_element(e_name, entity)
 
         return True
 
     # add_group wrapper
-    def add_comp_profile(self, e_name, comp_name, comp_rights=None):
+    def add_group_profile(self, e_name, group_name, group_rights=None):
         """
         Args:
             e_name: profile id to add the group to
-            comp_name: group to be added
-            comp_rights: specified if the group has to be created beforehand
+            group_name: group to be added
+            group_rights: specified if the group has to be created beforehand
         Returns:
             ``True`` if the group was added to the profile
             ``False`` otherwise
         """
 
-        return self.add_group(e_name, 'profile', comp_name, comp_rights)
+        return self.add_group(e_name, 'profile', group_name, group_rights)
 
     # add_group wrapper
-    def add_comp_role(self, e_name, comp_name, comp_rights=None):
+    def add_group_role(self, e_name, group_name, group_rights=None):
         """
         Args:
             e_name: role id to add the group to
-            comp_name: group to be added
-            comp_rights: specified if the group has to be created beforehand
+            group_name: group to be added
+            group_rights: specified if the group has to be created beforehand
         Returns:
             ``True`` if the group was added to the role
             ``False`` otherwise
         """
 
-        return self.add_group(e_name, 'role', comp_name, comp_rights)
+        return self.add_group(e_name, 'role', group_name, group_rights)
 
     # add_group wrapper
-    def add_comp_user(self, e_name, comp_name, comp_rights=None):
+    def add_group_user(self, e_name, group_name, group_rights=None):
         """
         Args:
             e_name: user id to add the group to
-            comp_name: group to be added
-            comp_rights: specified if the group has to be created beforehand
+            group_name: group to be added
+            group_rights: specified if the group has to be created beforehand
         Returns:
             ``True`` if the group was added to the user
             ``False`` otherwise
         """
 
-        return self.add_group(e_name, 'user', comp_name, comp_rights)
+        return self.add_group(e_name, 'user', group_name, group_rights)
 
     # Add the profile of name p_name to the role
     # If the profile does not exists and p_groups is specified
@@ -580,21 +580,21 @@ class Rights(MiddlewareRegistry):
         return False
 
     # remove_entity wrapper
-    def remove_group(self, e_name, e_type, comp_name):
+    def remove_group(self, e_name, e_type, group_name):
         """
         Args:
             e_name: name of the entity to be modified
             e_type: type of the entity
-            comp_name: id of the group to remove from the entity
+            group_name: id of the group to remove from the entity
         Returns:
             ``True`` if the group was removed from the entity
             ``False`` otherwise
         """
 
-        return self.remove_entity(e_name, e_type, comp_name, 'group')
+        return self.remove_entity(e_name, e_type, group_name, 'group')
 
     # remove_group wrapper
-    def remove_comp_role(self, r_name, c_name):
+    def remove_group_role(self, r_name, c_name):
         """
         Args:
             r_name: role to removed the group from
@@ -607,7 +607,7 @@ class Rights(MiddlewareRegistry):
         return self.remove_group(r_name, 'role', c_name)
 
     # remove_group wrapper
-    def remove_comp_profile(self, p_name, c_name):
+    def remove_group_profile(self, p_name, c_name):
         """
         Args:
             p_name: profile to removed the group from
@@ -620,7 +620,7 @@ class Rights(MiddlewareRegistry):
         return self.remove_group(p_name, 'profile', c_name)
 
     # remove_group wrapper
-    def remove_comp_user(self, u_name, c_name):
+    def remove_group_user(self, u_name, c_name):
         """
         Args:
             u_name: user to removed the group from
@@ -658,7 +658,7 @@ class Rights(MiddlewareRegistry):
 
         return self.remove_entity(u_name, 'user', r_name, 'role')
 
-    # Create a new role composed of the profile r_profile
+    # Create a new role grouposed of the profile r_profile
     #   and which name will be r_name
     # Any extra field can be specified in the kwargs
     # If the role already exists, the profile will be changed for r_profile
@@ -849,7 +849,7 @@ class Rights(MiddlewareRegistry):
         """
 
         if entity and elem_type in entity:
-            to_remove = entity[elem_type]
+            to_remove = [] if new_elems == None else entity[elem_type]
             if new_elems:
                 to_remove = set(entity[elem_type]) - set(new_elems)
             for elem in to_remove:
@@ -874,7 +874,7 @@ class Rights(MiddlewareRegistry):
         """
 
         if entity and 'rights' in entity:
-            to_remove = entity['rights']
+            to_remove = [] if e_rights == None else entity['rights']
             if e_rights:
                 to_remove = set(entity['rights']) - set(e_rights)
             for right in to_remove:
@@ -904,7 +904,7 @@ class Rights(MiddlewareRegistry):
 
         return self.update_field(e_id, e_type, profiles, 'profile', entity)
 
-    def update_comp(self, e_id, e_type, groups, entity):
+    def update_group(self, e_id, e_type, groups, entity):
         """
         Args:
             e_id id of the entity to update

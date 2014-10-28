@@ -12,11 +12,13 @@ Table of contents
 
    1. Rights
 
-   2. Composites
+   2. Groups
 
    3. Profile
 
    4. Role
+
+   5. Update_
 
 3. Library_
 
@@ -28,7 +30,7 @@ Table of contents
 
       3. Profile
 
-      4. Composite
+      4. Group
 
       5. Rights
 
@@ -38,11 +40,11 @@ Table of contents
 What
 -----
 
-Rights are defined within the composites (groups) upon their creations or added unitarily in a specific profile, role, or user.
+Rights are defined within the groups (groups) upon their creations or added unitarily in a specific profile, role, or user.
 
 The id of a right must be the id of the action it is acting upon.
 
-Each profile must belongs to at least one composite (group), each role must be paired with an existing profile and each user shall have a role.
+Each profile must belongs to at least one group (group), each role must be paired with an existing profile and each user shall have a role.
 
 .. _setup:
 
@@ -57,17 +59,19 @@ To reference a new action, simply use :
 
     from canopsis.organisation.rights import Rights
 
-    self.Rights = Rights()
+    right_module = Rights()
 
     #                ACTION_ID       DESCRIPTION
-    self.Rights.add('1234.ack', 'Acknowledge events')
+    right_module.add('1234.ack', 'Acknowledge events')
 
-*See the unit tests for more throgouh examples.*
+*See the unit tests for more thorough examples.*
 
 .. _how:
 
 How
 ----
+
+Here will be documented the methods needed to develop a proper API to interact with the Rights module.
 
 Rights
 .......
@@ -88,7 +92,7 @@ Add an action to the referenced actions list
     """
 
     # Example
-    self.Rights.add('1234.ack', 'Acknowledge events')
+    right_module.add('1234.ack', 'Acknowledge events')
 
 
 Check if an entity has the flags for a specific right
@@ -108,12 +112,12 @@ The entity must have a ``rights`` field with a Rights map within
     """
 
     # Example
-    self.Rights.check(self.Rights.get_composite('manager',
+    right_module.check(right_module.get_group('manager',
                                                 '1234.ack',
                                                 8)
 
 Check if an user has the flags for a specific right
-Each of the user's entities (Role, Profile, and Composites) will be checked
+Each of the user's entities (Role, Profile, and Groups) will be checked
 For now, you must specify the user's role
 
 .. code-block:: python
@@ -130,47 +134,25 @@ For now, you must specify the user's role
     """
 
     # Example
-    self.Rights.check_rights(self.Rights.get_role('DirectorsManager',
+    right_module.check_rights(right_module.get_role('DirectorsManager',
                                                   'management.5412',
                                                   8)
 
 
-Delete the checksum of a Right from an entity
-
-.. code-block:: python
-
-    def delete_right(entity, e_type, right_id, checksum)
-    """
-    Args:
-        entity: entity to delete the right from
-        e_type: type of the entity
-        right_id: right to be modified
-        checksum: flags to remove
-     Returns:
-        The checksum of the right if it was modified
-        ``0`` otherwise
-     """
-
-    # Example
-    self.Rights.delete_right('manager', 'composite', '1234.ack', 4)
-
-
-
-
-Composites
-...........
+Groups
+.......
 
 Creation
 
 .. code-block:: python
 
-    def create_composite(comp_name, comp_rights)
+    def create_group(group_name, group_rights)
     """
     Args:
-        comp_name: id of the composite to create
-        comp_rights: map of rights to init the composite with
+        group_name: id of the group to create
+        group_rights: map of rights to init the group with
     Returns:
-        The name of the composite if it was created
+        The name of the group if it was created
         ``None`` otherwise
     """
 
@@ -188,75 +170,26 @@ Creation
                 }
         }
 
-    self.Rights.create_composite('manager', rights)
+    right_module.create_group('manager', rights)
 
 
 Deletion
 
 .. code-block:: python
 
-    def delete_composite(c_name)
+    def delete(e_type, e_id)
     """
     Args:
-        c_name: id of the composite to be deleted
+        e_type type of the entity to delete
+        e_id id of the entity to delete
     Returns:
-        ``True`` if the composite was deleted
+        ``True`` if the entity was deleted
         ``False`` otherwise
     """
 
     # Example
-    self.Rights.delete_composite('manager')
+    right_module.delete('group', 'manager')
 
-Add a composite to an existing entity (Profile or Role)
-
-.. code-block:: python
-
-    def add_composite(e_name, e_type, comp_name, comp_rights=None)
-    """
-    Args:
-        e_name: name of the entity to be modified
-        e_type: type of the entity
-        comp_name: id of the composite to add to the entity
-        comp_rights: specified if the composite has to be created beforehand
-    Returns:
-        ``True`` if the composite was added to the entity
-        ``False`` otherwise
-    """
-
-    # Example
-    self.Rights.add_composite('Manager', 'profile', 'manager')
-    # or
-    self.Rights.add_composite('DirectorsManager', 'role', 'manager')
-
-    # This also works, it is merely a wrapper of add_composite to make it more user-friendly
-    self.Rights.add_comp_to_profile('Manager', 'manager')
-    # or
-    self.Rights.add_comp_to_role('DirectorsManager', 'manager')
-
-Remove a composite from an existing entity (Profile or Role)
-
-.. code-block:: python
-
-    def remove_composite(e_name, e_type, comp_name)
-    """
-    Args:
-        e_name: name of the entity to be modified
-        e_type: type of the entity
-        comp_name: id of the composite to remove from the entity
-    Returns:
-        ``True`` if the composite was removed from the entity
-        ``False`` otherwise
-    """
-
-    # Example
-    self.Rights.remove_composite('Manager', profile', 'manager')
-    # or
-    self.Rights.remove_composite('DirectorsManager', 'role', 'manager')
-
-    # This also works, it is merely a wrapper of remove_Composite to make it more user-friendly
-    self.Rights.rm_comp_profile('Manager', 'manager')
-    # or
-    self.Rights.rm_comp_role('DirectorsManager', 'manager')
 
 Profiles
 .........
@@ -265,71 +198,36 @@ Create a Profile
 
 .. code-block:: python
 
-    def create_profile(p_name, p_compites)
+    def create_profile(p_name, p_groups)
     """
     Args:
         p_name: id of the profile to be created
-        p_compsites: list of composites to init the Profile with
+        p_groups: list of groups to init the Profile with
     Returns:
         The name of the profile if it was created
         ``None`` otherwise
     """
 
     # Example
-    self.Rights.create_profile('Manager', ['manager'])
+    right_module.create_profile('Manager', ['manager'])
 
 
-Delete a Profile
+Deletion
 
 .. code-block:: python
 
-    def delete_profile(p_name)
+    def delete(e_type, e_id)
     """
     Args:
-        p_name: id of the profile to be deleted
+        e_type type of the entity to delete
+        e_id id of the entity to delete
     Returns:
-        ``True`` if the profile was deleted
+        ``True`` if the entity was deleted
         ``False`` otherwise
     """
 
     # Example
-    self.Rights.delete_profile('Manager')
-
-Add a Profile to an existing Role
-
-.. code-block:: python
-
-    def add_profile(role, p_name, p_composites=None)
-    """
-    Args:
-        role: id of the role to add the Profile to
-        p_name: name of the Profile to be added
-        p_composites: specified if the profile has to be created beforehand
-    Returns:
-        ``True`` if the profile was created
-        ``False`` otherwise
-    """
-
-    # Example
-    self.Rights.add_profile('DirectorsManager', 'manager')
-
-Remove a Profile from an existing Role
-
-.. code-block:: python
-
-    def remove_profile(role, p_name)
-    """
-    Args:
-        role: id of the role to remove the Profile from
-        p_name: name of the Profile to be removed
-    Returns:
-        ``True`` if the profile was removed from the entity
-        ``False`` otehrwise
-    """
-
-    # Example
-    self.Rights.remove_profile('DirectorsManager', 'Manager')
-
+    right_module.delete('profile', 'Manager')
 
 Role
 .....
@@ -348,27 +246,134 @@ Create a Role
     """
 
     # Example
-    self.Rights.create_role('DirectorsManager', 'Manager')
+    right_module.create_role('DirectorsManager', 'Manager')
 
 
 Delete a Role
 
 .. code-block:: python
 
-    def delete_role(r_name)
+    def delete(e_type, e_id)
     """
     Args:
-        r_name: id of the role to be deleted
+        e_type type of the entity to delete
+        e_id id of the entity to delete
     Returns:
-        ``True`` if the role was deleted
+        ``True`` if the entity was deleted
         ``False`` otherwise
     """
 
     # Example
-    self.Rights.delete_role('DirectorsManager')
+    right_module.delete('DirectorsManager')
 
 
+.. _update:
 
+Update
+.......
+
+Groups
+,,,,,,,
+
+Update the groups of an entity
+Every groups present in the groups list and not in the entity will be added
+Every groups present in the entity and not in the groups list will be deleted
+
+If the groups list is None, nothing will be deleted
+
+.. code-block:: python
+
+    def update_comp(self, e_id, e_type, groups, entity):
+        """
+        Args:
+            e_id id of the entity to update
+            e_type type of the entity to update
+            groups groups to update
+            entity entity to be updated
+        Returns:
+            ``True`` if the entity was thoroughly updated
+            ``False`` otherwise
+        """
+
+    # Example, add groups to the 'Manager' profile
+    right_module.update_comp('Manager', 'profile',
+                             ['supervision', 'visualisation'],
+                             right_module.get_profile('Manager'))
+
+Rights
+,,,,,,
+
+Update the rights of an entity
+Every rights present in the rights list and not in the entity will be added
+Every rights present in the entity and not in the rights list will be deleted
+
+If the rights list is None, nothing will be deleted
+
+.. code-block:: python
+
+    def update_rights(self, e_id, e_type, rights, entity):
+        """
+        Args:
+            e_id id of the entity to update
+            e_type type of the entity to update
+            rights rights to update
+            entity entity to be updated
+        Returns:
+            ``True`` if the entity was thoroughly updated
+            ``False`` otherwise
+        """
+
+    # Example, add rights to the 'Manager' profile
+    right_module.update_rights('Manager', 'profile',
+                               {'eventview' : {'checksum': 15}},
+                               right_module.get_profile('Manager'))
+
+General
+,,,,,,,,
+
+Update several fields by overriding previous values
+
+.. code-block:: python
+
+    def update_fields(e_id, e_type, fields):
+        """
+        Args:
+            e_id id of the entity to update
+            e_type type of the entity to update
+            fields map of the fields to update
+        Returns:
+            A document describing the effect of the put_elements
+            if the entity was thoroughly updated
+            ``False`` otherwise
+        """
+
+    # Example, change name of user and its role
+    right_module.update_fields('Joan Harris', 'user',
+                               {'crecord_name': 'Peggy Olson',
+                                'role': 'CreativeDirector'})
+
+
+Update a single ``list`` or ``dictionary`` field by adding or deleting differences in values
+
+.. code-block:: python
+
+    def update_field(self, e_id, e_type, new_elems, elem_type, entity):
+        """
+        Args:
+            e_id id of the entity to update
+            e_type type of the entity to update
+            new_elems elements to update
+            entity entity to be updated
+        Returns:
+            ``True`` if the entity was thoroughly updated
+            ``False`` otherwise
+        """
+
+    # Example, add groups to the 'Manager' profile
+    right_module.update_comp('Manager', 'profile',
+                             ['supervision', 'visualisation'],
+                             'group',
+                             right_module.get_profile('Manager'))
 .. _library:
 
 Library
@@ -386,13 +391,15 @@ User
 
     User = {
 
-        'role': ...,                 // List of role names that defines the User's profile, groups, and rights
+        'crecord_type': 'user',
+        'crecord_name': ...,                 // String of user's name
+
+        'role': ...,                 // Role of the user that defines his profiles and groups
         'contact': {                 // Map of contact informations
             'mail': ...,
             'phone_number': ...,
             ...
             }
-        'name': ...,                 // String of user's name
         '_id': ...                   // uniq id
 
         // Empty by default
@@ -409,13 +416,14 @@ Example:
 
     User = {
 
+        'crecord_type': 'user',
+        'crecord_name': 'Joan Harris',
         'role': 'manager',
         'contact': {
             'mail': 'jharris@scdp.com',
             'phone_number': '+33678695041',
             'adress': '1271 6th Avenue, Rockefeller Center, NYC, New York'
             }
-        'name': 'Joan Harris',
         '_id': '1407160264.joan.harris.manager'
 
         }
@@ -429,6 +437,9 @@ A Role is specific to a small number of users
 .. code-block:: javascript
 
     'name': {
+
+        'crecord_type': 'role',
+        'crecord_name':             // Name of the role
 
         'profile': ...              // ID of the profile (string)
 
@@ -461,7 +472,10 @@ A profile is generic and global to all users
 
     'name': {                            // String of profile's name
 
-        'composites': ...                // List of the groups the profile belongs to
+        'crecord_type': 'profile',
+        'crecord_name':             // Name of the profile
+
+        'groups': ...                // List of the groups the profile belongs to
 
         // Empty by default
         'rights': ...               // Map of type Rights, every profile-specific rights goes here
@@ -477,19 +491,24 @@ Example:
     An Administrator profile exists, it has all rights and belongs to the Group Management as well as the root Group
     Profiles = {
         'Manager': {
-            'composites': ['managements', 'supervizion']
+            'groups': ['managements', 'supervizion'],
+            'crecord_type': 'profile',
+            'crecord_name': 'Manager'
         }
 
 
 
-Composite (aka Groups)
+Group (aka Groups)
 ,,,,,,,,,,,,,,,,,,,,,,
 
-A composite is generic and global to all users
+A group is generic and global to all users
 
 .. code-block:: javascript
 
     'name': {                        // String of group's name
+
+        'crecord_type': 'group',
+        'crecord_name':             // Name of the group
 
         'members': ...,              // List of members ids
         'rights': ...                // Map of type Rights
@@ -515,6 +534,8 @@ Example:
                     'desc': ['Access and change directors configuration']
                 }
             }
+            'crecord_type': 'group',
+            'crecord_name': 'management'
         }
     }
 
@@ -532,6 +553,8 @@ Rights
             // Additional Field
             'context': ...          // Time period
 
+            'crecord_type': 'right'
+
             }
         }
 
@@ -547,3 +570,123 @@ The ``right`` field is a 4-bit integer that goes from 1 to 15 and that describes
     if not Rights[object_idXYZ]['right'] & (CREATE | DELETE):
         #the user has none of the rights on the object identified with object_idXYZ
 
+
+Functions
+..........
+
+Rights
+,,,,,,,
+
+
+Delete the checksum of a Right from an entity
+
+.. code-block:: python
+
+    def delete_right(entity, e_type, right_id, checksum)
+    """
+    Args:
+        entity: entity to delete the right from
+        e_type: type of the entity
+        right_id: right to be modified
+        checksum: flags to remove
+     Returns:
+        The checksum of the right if it was modified
+        ``0`` otherwise
+     """
+
+    # Example
+    right_module.delete_right('manager', 'group', '1234.ack', 4)
+
+Groups
+,,,,,,,
+
+
+Add a group to an existing entity (Profile or Role)
+
+.. code-block:: python
+
+    def add_group(e_name, e_type, group_name, group_rights=None)
+    """
+    Args:
+        e_name: name of the entity to be modified
+        e_type: type of the entity
+        group_name: id of the group to add to the entity
+        group_rights: specified if the group has to be created beforehand
+    Returns:
+        ``True`` if the group was added to the entity
+        ``False`` otherwise
+    """
+
+    # Example
+    right_module.add_group('Manager', 'profile', 'manager')
+    # or
+    right_module.add_group('DirectorsManager', 'role', 'manager')
+
+    # This also works, it is merely a wrapper of add_group to make it more user-friendly
+    right_module.add_group_to_profile('Manager', 'manager')
+    # or
+    right_module.add_group_to_role('DirectorsManager', 'manager')
+
+Remove a group from an existing entity (Profile or Role)
+
+.. code-block:: python
+
+    def remove_group(e_name, e_type, group_name)
+    """
+    Args:
+        e_name: name of the entity to be modified
+        e_type: type of the entity
+        group_name: id of the group to remove from the entity
+    Returns:
+        ``True`` if the group was removed from the entity
+        ``False`` otherwise
+    """
+
+    # Example
+    right_module.remove_group('Manager', profile', 'manager')
+    # or
+    right_module.remove_group('DirectorsManager', 'role', 'manager')
+
+    # This also works, it is merely a wrapper of remove_Group to make it more user-friendly
+    right_module.rm_group_profile('Manager', 'manager')
+    # or
+    right_module.rm_group_role('DirectorsManager', 'manager')
+
+profiles
+,,,,,,,,,,
+
+
+Add a Profile to an existing Role
+
+.. code-block:: python
+
+    def add_profile(role, p_name, p_groups=None)
+    """
+    Args:
+        role: id of the role to add the Profile to
+        p_name: name of the Profile to be added
+        p_groups: specified if the profile has to be created beforehand
+    Returns:
+        ``True`` if the profile was created
+        ``False`` otherwise
+    """
+
+    # Example
+    right_module.add_profile('DirectorsManager', 'manager')
+
+Remove a Profile from an existing Role
+
+.. code-block:: python
+
+    def remove_profile(role, p_name)
+    """
+    Args:
+        role: id of the role to remove the Profile from
+        p_name: name of the Profile to be removed
+    Returns:
+        ``True`` if the profile was removed from the entity
+        ``False`` otehrwise
+    """
+
+    # Example
+    right_module.remove_profile('DirectorsManager', 'Manager')

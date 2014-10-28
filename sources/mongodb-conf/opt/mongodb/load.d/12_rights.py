@@ -60,7 +60,7 @@ def add_roles(data):
         right_module.update_rights(
             role['_id'], 'role', role.get('rights', {}), record
             )
-        right_module.update_comp(
+        right_module.update_group(
             role['_id'], 'role', role.get('groups', []), record
             )
 
@@ -71,7 +71,7 @@ def add_profiles(data):
         right_module.update_rights(
             profile['_id'], 'profile', profile.get('rights', {}), record
             )
-        right_module.update_comp(
+        right_module.update_group(
             profile['_id'], 'profile', profile.get('groups', []), record
             )
 
