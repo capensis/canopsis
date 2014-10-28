@@ -32,8 +32,8 @@ def init():
     storage = get_storage(account=root, namespace='object')
 
     state_spec = {
-        "_id": "status_management",
-        "crecord_type": "status_management",
+        "_id": "statusmanagement",
+        "crecord_type": "statusmanagement",
         "restore_event": True,
 
         # if event appears >= 10 times in 1hr
@@ -48,7 +48,7 @@ def init():
     record = Record(
         data=state_spec,
         name="event state specifications",
-        _type='status_management'
+        _type='statusmanagement'
         )
     record.chmod('g+w')
     record.chmod('o+r')
