@@ -68,16 +68,15 @@ class Archiver(object):
         self.restore_event = True
         self.stealthy_show = 300
 
-        self.state_config = self.storage.find({'crecord_type': 'state-spec'})
+        self.state_config = self.storage.find(
+            {'crecord_type': 'status_management'}
+            )
         if len(self.state_config) == 1:
             self.state_config = self.state_config[0]
-
-            if 'bagot' in self.state_config:
-                self.bagot_freq = self.state_config['bagot'].setdefault('freq',
-                                                                        10)
-                self.bagot_time = self.state_config['bagot'].setdefault('time',
-                                                                        3600)
-
+            self.bagot_freq = self.state_config.setdefault('bagot_freq',
+                                                           10)
+            self.bagot_time = self.state_config.setdefault('bagot_time',
+                                                           3600)
             self.stealthy_time = self.state_config.setdefault('stealthy_time',
                                                               300)
             self.stealthy_show = self.state_config.setdefault('stealthy_show',

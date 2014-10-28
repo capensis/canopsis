@@ -32,20 +32,24 @@ def init():
     storage = get_storage(account=root, namespace='object')
 
     state_spec = {
-        "_id": "state-spec",
-        "crecord_type": "state-spec",
+        "_id": "status_management",
+        "crecord_type": "status_management",
         "restore_event": True,
-        "bagot": {
-            # if event appears >= 10 times in 1hr
-            "time": 3600,
-            "freq": 10},
+
+        # if event appears >= 10 times in 1hr
+        "bagot_time": 3600,
+        "bagot_freq": 10,
+
         # if event appears again in < 5min
         "stealthy_time": 300,
         "stealthy_show": 300}
 
     logger.info(" + Creating event state specification")
     record = Record(
-        data=state_spec, name="event state specifications", _type='state-spec')
+        data=state_spec,
+        name="event state specifications",
+        _type='status_management'
+        )
     record.chmod('g+w')
     record.chmod('o+r')
     record.chgrp('group.CPS_root')
