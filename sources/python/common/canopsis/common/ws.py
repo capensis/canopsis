@@ -163,7 +163,7 @@ class route(object):
         # generate an interceptor
         @wraps(function)
         def interceptor(*args, **kwargs):
-            self.logger.debug('Request: {} - {} - {}, {} (params: {})'.format(
+            self.logger.info('Request: {} - {} - {}, {} (params: {})'.format(
                 self.op.__name__.upper(),
                 self.url,
                 dumps(args), dumps(kwargs),
