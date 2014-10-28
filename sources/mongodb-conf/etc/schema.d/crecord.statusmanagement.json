@@ -1,0 +1,36 @@
+{
+	"type": "object",
+	"categories": [{
+		"title": "Event statuses",
+		"keys":["stealthy_time", "stealthy_show", "bagot_freq", "bagot_time"]
+	}],
+	"properties": {
+		"stealthy_time": {
+			"type": "number",
+			"required": true,
+			"default": 60,
+			"role": "duration",
+			"description": "How long elapsed between two event state change to consider a stealthy status."
+		},
+		"stealthy_show": {
+			"type": "number",
+			"required": true,
+			"default": 60,
+			"role": "duration",
+			"description": "How long an event remains in furtivity status before it changes again to another status."
+		},
+		"bagot_freq": {
+			"type": "number",
+			"required": true,
+			"default": 5,
+			"description": "How many oscillation to be counted before event is put un bagot statement."
+		},
+		"bagot_time": {
+			"type": "number",
+			"required": true,
+			"default": 60,
+			"role": "duration",
+			"description": "Duration to consider when computing bagot oscillation."
+		}
+	}
+}
