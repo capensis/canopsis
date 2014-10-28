@@ -69,7 +69,7 @@ class Archiver(object):
         self.stealthy_show = 300
 
         self.state_config = self.storage.find(
-            {'crecord_type': 'status_management'}
+            {'crecord_type': 'statusmanagement'}
             )
         if len(self.state_config) == 1:
             self.state_config = self.state_config[0]
@@ -83,23 +83,6 @@ class Archiver(object):
                                                               300)
             self.restore_event = self.state_config.setdefault('restore_event',
                                                               True)
-
-
-    def check_bagot(self, event, devent):
-        """
-        Args:
-            event map of the current event
-            devent map of the previous event
-        Returns:
-            STATUS of the event
-        """
-
-        if self.is_bagot(event):
-            self.set_status(event, BAGOT)
-            return BAGOT
-        else:
-            self.set_status(event, STEALTHY)
-            return STEALTHY
 
 
     def is_bagot(self, event):
@@ -162,6 +145,7 @@ class Archiver(object):
             }
 
         self.logger.debug(log.format(values[status]['name']))
+
         event['status'] = status
         event['bagot_freq'] = values[status]['freq']
 
@@ -224,9 +208,10 @@ class Archiver(object):
                         self.set_status(event, OFF)
                     elif self.is_bagot(event):
                         self.set_status(event, BAGOT)
-                    else:
+                    elif self.is_stealthy(event):
                         self.set_status(event, STEALTHY)
-
+                    else:
+                        self.set_status(event, ONGOING)
                 else:
                     # If not bagot/stealthy, can only be ONGOING
                     if (not self.is_bagot(event)
