@@ -1,0 +1,47 @@
+{
+	"type": "object",
+	"categories": [{
+		"title": "Bagot settings",
+		"keys":["bagot_freq", "bagot_time"]
+	},{
+		"title": "Stealthy settings",
+		"keys":["stealthy_time", "stealthy_show"]
+	},{
+		"title": "Misc statuses",
+		"keys":["restore_event"]
+	}],
+	"properties": {
+		"stealthy_time": {
+			"type": "number",
+			"required": true,
+			"default": 60,
+			"role": "duration",
+			"description": "How long elapsed between two event state change to consider a stealthy status."
+		},
+		"stealthy_show": {
+			"type": "number",
+			"required": true,
+			"default": 60,
+			"role": "duration",
+			"description": "How long an event remains in furtivity status before it changes again to another status."
+		},
+		"bagot_freq": {
+			"type": "number",
+			"required": true,
+			"default": 5,
+			"description": "How many oscillation to be counted before event is put un bagot statement."
+		},
+		"bagot_time": {
+			"type": "number",
+			"required": true,
+			"default": 60,
+			"role": "duration",
+			"description": "Duration to consider when computing bagot oscillation."
+		},
+		"restore_event":{
+			"type": "boolean",
+			"required": true,
+			"description": "When true, consdider state change with different state level, otherwise consider a change at alert level."
+		}
+	}
+}

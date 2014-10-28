@@ -62,14 +62,14 @@ class Archiver(object):
 
     def beat(self):
         # Default values
+        self.restore_event = True
         self.bagot_freq = 10
         self.bagot_time = 3600
-        self.stealthy_time = 300
-        self.restore_event = True
-        self.stealthy_show = 300
+        self.stealthy_time = 360
+        self.stealthy_show = 360
 
         self.state_config = self.storage.find(
-            {'crecord_type': 'status_management'}
+            {'crecord_type': 'statusmanagement'}
             )
         if len(self.state_config) == 1:
             self.state_config = self.state_config[0]
@@ -78,28 +78,11 @@ class Archiver(object):
             self.bagot_time = self.state_config.setdefault('bagot_time',
                                                            3600)
             self.stealthy_time = self.state_config.setdefault('stealthy_time',
-                                                              300)
+                                                              360)
             self.stealthy_show = self.state_config.setdefault('stealthy_show',
-                                                              300)
+                                                              360)
             self.restore_event = self.state_config.setdefault('restore_event',
                                                               True)
-
-
-    def check_bagot(self, event, devent):
-        """
-        Args:
-            event map of the current event
-            devent map of the previous event
-        Returns:
-            STATUS of the event
-        """
-
-        if self.is_bagot(event):
-            self.set_status(event, BAGOT)
-            return BAGOT
-        else:
-            self.set_status(event, STEALTHY)
-            return STEALTHY
 
 
     def is_bagot(self, event):
@@ -162,6 +145,7 @@ class Archiver(object):
             }
 
         self.logger.debug(log.format(values[status]['name']))
+
         event['status'] = status
         event['bagot_freq'] = values[status]['freq']
 
@@ -218,15 +202,13 @@ class Archiver(object):
             else:
                 if (event['state'] == 0):
                     # If still non-alert, can only be OFF
-                    if (devent['state'] == 0
-                        and not self.is_bagot(event)
+                    if (not self.is_bagot(event)
                         and not self.is_stealthy(event, devent['status'])):
                         self.set_status(event, OFF)
                     elif self.is_bagot(event):
                         self.set_status(event, BAGOT)
-                    else:
+                    elif self.is_stealthy(event, devent['status']):
                         self.set_status(event, STEALTHY)
-
                 else:
                     # If not bagot/stealthy, can only be ONGOING
                     if (not self.is_bagot(event)
