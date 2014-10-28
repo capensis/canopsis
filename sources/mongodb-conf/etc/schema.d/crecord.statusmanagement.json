@@ -1,8 +1,14 @@
 {
 	"type": "object",
 	"categories": [{
-		"title": "Event statuses",
-		"keys":["stealthy_time", "stealthy_show", "bagot_freq", "bagot_time"]
+		"title": "Bagot settings",
+		"keys":["bagot_freq", "bagot_time"]
+	},{
+		"title": "Stealthy settings",
+		"keys":["stealthy_time", "stealthy_show"]
+	},{
+		"title": "Misc statuses",
+		"keys":["restore_event"]
 	}],
 	"properties": {
 		"stealthy_time": {
@@ -31,6 +37,11 @@
 			"default": 60,
 			"role": "duration",
 			"description": "Duration to consider when computing bagot oscillation."
+		},
+		"restore_event":{
+			"type": "boolean",
+			"required": true,
+			"description": "When true, consdider state change with different state level, otherwise consider a change at alert level."
 		}
 	}
 }
