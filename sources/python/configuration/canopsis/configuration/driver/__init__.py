@@ -21,7 +21,7 @@
 from canopsis.common.utils import lookup, path
 
 from canopsis.configuration.parameters import \
-    Configuration, Parameter, Category
+    Configuration, Parameter, Category, ParamList
 
 
 class MetaConfigurationDriver(type):
@@ -106,57 +106,103 @@ class ConfigurationDriver(object):
 
         # ensure conf_path exists and is not empty.
         if self.exists(conf_path):
-
             try:
                 # first, read conf file
                 conf_resource = self._get_conf_resource(
-                    conf_path=conf_path, logger=logger)
+                    conf_path=conf_path,
+                    logger=logger
+                )
 
             except Exception as e:
                 # if an error occured, log it
                 logger.error(
                     'Impossible to parse conf_path {0} with {1}: {2}'.format(
-                        conf_path, type(self), e))
+                        conf_path,
+                        type(self),
+                        e
+                    )
+                )
 
             else:  # else process conf file
-
                 if conf_resource is None:
                     return result
 
                 result = Configuration() if conf is None else conf
 
-                for category in self._get_categories(
-                        conf_resource=conf_resource, logger=logger):
+                categories = self._get_categories(
+                    conf_resource=conf_resource,
+                    logger=logger
+                )
 
+                for category_name in categories:
                     # do something only for referenced categories
-                    if category in result:
-
+                    if category_name in result:
                         category = result.setdefault(
-                            category, Category(category))
+                            category_name,
+                            Category(category_name)
+                        )
 
-                        for name in self._get_parameters(
+                        if isinstance(category, Category):
+                            parameters = self._get_parameters(
                                 conf_resource=conf_resource,
                                 category=category,
-                                logger=logger):
+                                logger=logger
+                            )
 
-                            # if param name exists in conf
-                            if name in category:
-                                # copy parameter
-                                param = category[name].copy()
-                            else:  # else create not local parameter
-                                param = Parameter(name, local=False)
+                            for name in parameters:
+                                # if param name exists in conf
+                                if name in category:
+                                    # copy parameter
+                                    param = category[name].copy()
 
-                            param = category.setdefault(name, param)
+                                # else create not local parameter
+                                else:
+                                    param = Parameter(name, local=False)
 
-                            value = self._get_value(
+                                param = category.setdefault(name, param)
+
+                                value = self._get_value(
+                                    conf_resource=conf_resource,
+                                    category=category,
+                                    param=param,
+                                    logger=logger
+                                )
+
+                                if value not in (None, ''):
+                                    if override or param.value in (None, ''):
+                                        param.value = value
+
+                        elif isinstance(category, ParamList):
+                            paramlist = category
+                            category = Category(category_name)
+                            result.categories[category_name] = category
+
+                            parameters = self._get_parameters(
                                 conf_resource=conf_resource,
                                 category=category,
-                                param=param,
-                                logger=logger)
+                                logger=logger
+                            )
 
-                            if value not in (None, ''):
-                                if override or param.value in (None, ''):
-                                    param.value = value
+                            for name in parameters:
+                                param = Parameter(
+                                    name,
+                                    local=False,
+                                    parser=paramlist.parser,
+                                    asitem=category
+                                )
+
+                                param = category.setdefault(name, param)
+
+                                value = self._get_value(
+                                    conf_resource=conf_resource,
+                                    category=category,
+                                    param=param,
+                                    logger=logger
+                                )
+
+                                if value not in (None, ''):
+                                    if override or param.value in (None, ''):
+                                        param.value = value
 
         return result
 

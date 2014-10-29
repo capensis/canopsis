@@ -22,10 +22,11 @@ from inspect import getargspec
 
 from canopsis.common.utils import ensure_iterable, isiterable
 
-from json import loads
-from bottle import request
+from json import loads, dumps
+from bottle import request, HTTPError, HTTPResponse
 from functools import wraps
 import traceback
+import logging
 
 
 def adapt_canopsis_data_to_ember(data):
@@ -63,12 +64,13 @@ def adapt_ember_data_to_canopsis(data):
             adapt_ember_data_to_canopsis(item)
 
 
-def response(data):
+def response(data, adapt=True):
     """
     Construct a REST response from input data.
 
     :param data: data to convert into a REST response.
     :param kwargs: service function parameters.
+    :param bool adapt: adapt Canopsis data to Ember (default: True)
     """
 
     # calculate result_data and total related to data type
@@ -80,8 +82,9 @@ def response(data):
         result_data = None if data is None else ensure_iterable(data)
         total = 0 if result_data is None else len(result_data)
 
-    # apply transformation for client
-    adapt_canopsis_data_to_ember(result_data)
+    if adapt:
+        # apply transformation for client
+        adapt_canopsis_data_to_ember(result_data)
 
     result = {
         'total': total,
@@ -126,52 +129,74 @@ class route(object):
     """
 
     def __init__(
-        self, op, name=None, payload=None, response=response, wsgi_params=None
+        self, op, name=None, raw_body=False, payload=None, wsgi_params=None,
+        response=response, adapt=True
     ):
         """
         :param op: ws operation for routing a function
         :param str name: ws name
+        :param bool raw_body: if True, will set kwargs body to raw request body
         :param payload: body parameter names (won't be generated in routes)
         :type payload: str or list of str
         :param function response: response to apply on decorated function
             result
         :param dict wsgi_params: wsgi parameters which will be given to the
             wsgi such as a keyword
+        :param bool adapt: Adapt Canopsis<->Ember data (default: True)
         """
 
         super(route, self).__init__()
 
+        # logger is initialized by WebServer
+        self.logger = logging.getLogger('webserver')
+
         self.op = op
         self.name = name
+        self.raw_body = raw_body
         self.payload = ensure_iterable(payload)
         self.response = response
         self.wsgi_params = wsgi_params
+        self.adapt = adapt
 
     def __call__(self, function):
 
         # generate an interceptor
         @wraps(function)
         def interceptor(*args, **kwargs):
+            self.logger.info('Request: {} - {} - {}, {} (params: {})'.format(
+                self.op.__name__.upper(),
+                self.url,
+                dumps(args), dumps(kwargs),
+                dumps(dict(request.params)))
+            )
 
-            # add body parameters in kwargs
-            for body_param in self.payload:
-                # TODO: remove reference from bottle
-                param = request.params.get(body_param)
-                # if param exists, add it into kwargs in deserializing it
-                if param is not None:
-                    try:
-                        kwargs[body_param] = loads(param)
+            if self.raw_body:
+                kwargs['body'] = request.body
 
-                    except ValueError:  # error while deserializing
-                        # get the str value and cross fingers ...
-                        kwargs[body_param] = param
+            else:
+                # add body parameters in kwargs
+                for body_param in self.payload:
+                    # TODO: remove reference from bottle
+                    param = request.params.get(body_param)
+                    # if param exists, add it into kwargs in deserializing it
+                    if param is not None:
+                        try:
+                            kwargs[body_param] = loads(param)
 
-            # adapt ember data to canopsis data
-            adapt_ember_data_to_canopsis(args)
-            adapt_ember_data_to_canopsis(kwargs)
+                        except ValueError:  # error while deserializing
+                            # get the str value and cross fingers ...
+                            kwargs[body_param] = param
+
+            if self.adapt:
+                # adapt ember data to canopsis data
+                adapt_ember_data_to_canopsis(args)
+                adapt_ember_data_to_canopsis(kwargs)
 
             try:
                 result_function = function(*args, **kwargs)
+
+            except HTTPResponse as r:
+                raise r
 
             except Exception as e:
                 # if an error occured, get a failure message
@@ -186,8 +211,11 @@ class route(object):
                 }
 
             else:
-                # else use self.response
-                result = self.response(result_function)
+                if not isinstance(result_function, HTTPError):
+                    result = self.response(result_function, adapt=self.adapt)
+
+                else:
+                    result = result_function
 
             return result
 
@@ -248,8 +276,8 @@ class route(object):
         # add routes with optional parameters
         for i in range(len(optional_header_params) + 1):
             header_params = required_header_params + optional_header_params[:i]
-            route = route_name(function_name, *header_params)
-            function = self.op(route, **wsgi_params)(function)
+            self.url = route_name(function_name, *header_params)
+            function = self.op(self.url, **wsgi_params)(function)
 
         return function
 

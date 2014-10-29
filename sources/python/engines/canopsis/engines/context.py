@@ -91,7 +91,7 @@ class engine(Engine):
         )
 
         # add status entity which is a component or a resource
-        entity[Context.NAME] = 'component'
+        entity[Context.NAME] = component
         context['connector_name'] = connector_name
         status_entity = entity.copy()
         status_entity['hostgroups'] = hostgroups

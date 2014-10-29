@@ -47,6 +47,12 @@ def add_users(data):
                                  contact=user.get('contact', None),
                                  groups=user.get('groups', None))
 
+        right_module.update_fields(user['_id'], 'user', {
+            'external': user['external'],
+            'enable': user['enable'],
+            'shadowpasswd': user['shadowpass']
+        })
+
 def add_roles(data):
     for role in data:
         right_module.create_role(role['_id'], role.get('profile', None))

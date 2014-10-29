@@ -611,42 +611,54 @@ class Configurable(object):
         if to_configure is None:
             to_configure = self
 
-        values = unified_conf[Configuration.VALUES]
+        values = [p for p in unified_conf[Configuration.VALUES]]
+        foreigns = [p for p in unified_conf[Configuration.FOREIGNS]]
 
         criticals = []  # list of critical parameters
 
-        for parameter in values:
+        for parameter in values + foreigns:
             name = parameter.name
 
-            # if parameter is local, to_configure must a related attribute name
-            if hasattr(to_configure, name):
+            if not parameter.asitem:
+                # if parameter is local, to_configure must a related attribute name
+                if hasattr(to_configure, name):
+                    param_value = parameter.value
+
+                    # in case of a critical parameter
+                    if parameter.critical:
+                        # check if current value is not the same as new value
+                        value = getattr(to_configure, name)
+
+                        if value != parameter.value:
+                            # add it to list of criticals
+                            criticals.append(parameter)
+                            # set private name
+                            privname = '_%s' % name
+
+                            # if private name exists
+                            if hasattr(to_configure, privname):
+                                # change of value of private name
+                                setattr(to_configure, privname, param_value)
+
+                            else:  # update public value
+                                setattr(to_configure, name, param_value)
+
+                    else:  # change public value
+                        setattr(to_configure, name, param_value)
+
+                else:  # else log the error
+                    message = 'Parameter %s is not bound to an attribute in %s'
+                    self.logger.warning(message % (name, to_configure))
+
+            else:
+                value = getattr(to_configure, parameter.asitem.name)
                 param_value = parameter.value
+                param_name = parameter.name
 
-                # in case of a critical parameter
-                if parameter.critical:
-                    # check if current value is not the same as new value
-                    value = getattr(to_configure, name)
+                if param_name not in value or param_value != value[param_name]:
+                    criticals.append(parameter)
 
-                    if value != parameter.value:
-                        # add it to list of criticals
-                        criticals.append(parameter)
-                        # set private name
-                        private_name = '_{0}'.format(name)
-
-                        # if private name exists
-                        if hasattr(to_configure, private_name):
-                            # change of value of private name
-                            setattr(to_configure, private_name, param_value)
-
-                        else:  # update public value
-                            setattr(to_configure, name, param_value)
-
-                else:  # change public value
-                    setattr(to_configure, name, param_value)
-
-            else:  # else log the error
-                message = 'Parameter {0} is not bound to an attribute in {1}'
-                self.logger.warning(message.format(name, to_configure))
+                value[parameter.name] = parameter.value
 
         # if criticals
         if criticals:

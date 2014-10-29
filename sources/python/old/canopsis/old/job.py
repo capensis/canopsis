@@ -19,7 +19,7 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from canopsis.old.tools import dictproperty
+from canopsis.common.utils import dictproperty
 from canopsis.old.record import Record
 
 
