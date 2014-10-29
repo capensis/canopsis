@@ -29,8 +29,33 @@ from inspect import ismodule
 from collections import Iterable
 
 from sys import version as PYVER
+from os.path import expanduser
 
 __RESOLVED_ELEMENTS = {}  #: dictionary of resolved elements by name
+
+
+def setdefaultattr(obj, attr, value):
+    """
+    Set attribute in object if not present.
+
+    :param obj: Object to set attribute to
+    :type obj: anything
+
+    :param attr: Attribute's name to set
+    :type attr: str
+
+    :param value: Value to set
+    :type value: anything
+
+    :returns: current value if attribute exists, or new value otherwise
+    """
+
+    if hasattr(obj, attr):
+        return getattr(obj, attr)
+
+    else:
+        setattr(obj, attr, value)
+        return value
 
 
 def free_cache(path=None):
@@ -65,6 +90,7 @@ def lookup(path, cached=True):
     :rtype: object
     """
 
+    path = expanduser(path)
     element_in_cache = cached and path in __RESOLVED_ELEMENTS
 
     result = __RESOLVED_ELEMENTS[path] if element_in_cache else None
@@ -305,3 +331,54 @@ def prototype(typed_args=None, typed_kwargs=None, typed_return=None):
         return wrapper
 
     return decorator
+
+
+class dictproperty(object):
+    """
+        Property decorator for dict-like attributes.
+    """
+
+    class _proxy(object):
+        """
+            Proxy interface to dict-like objects.
+        """
+
+        def __init__(self, obj, fget, fset, fdel, *args, **kwargs):
+            super(dictproperty._proxy, self).__init__(*args, **kwargs)
+
+            self._obj = obj
+            self._fget = fget
+            self._fset = fset
+            self._fdel = fdel
+
+        def __getitem__(self, key):
+            if self._fget is None:
+                raise TypeError("Impossible to get key: {0}".format(key))
+
+            return self._fget(self._obj, key)
+
+        def __setitem__(self, key, value):
+            if self._fset is None:
+                raise TypeError("Impossible to set key: {0} = {1}".format(key, value))
+
+            self._fset(self._obj, key, value)
+
+        def __delitem__(self, key):
+            if self._fdel is None:
+                raise TypeError("Impossible to delete key: {0}".format(key))
+
+            self._fdel(self._obj, key)
+
+    def __init__(self, fget=None, fset=None, fdel=None, doc=None, *args, **kwargs):
+        super(dictproperty, self).__init__(*args, **kwargs)
+
+        self._fget = fget
+        self._fset = fset
+        self._fdel = fdel
+        self.__doc__ = doc
+
+    def __get__(self, obj, objtype=None):
+        if obj is None:
+            return self
+
+        return self._proxy(obj, self._fget, self._fset, self._fdel)

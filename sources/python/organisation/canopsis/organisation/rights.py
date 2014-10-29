@@ -918,7 +918,7 @@ class Rights(MiddlewareRegistry):
 
         return self.update_field(e_id, e_type, groups, 'group', entity)
 
-    def update_fields(e_id, e_type, fields):
+    def update_fields(self, e_id, e_type, fields):
         """
         Args:
             e_id id of the entity to update
@@ -932,7 +932,7 @@ class Rights(MiddlewareRegistry):
 
         entity = self[e_type + '_storage'].get_elements(ids=e_id)
 
-        if entity and not isinstance(list, entity):
+        if entity and not isinstance(entity, list):
             for key in fields:
                 entity[key] = fields[key]
             return self[e_type + '_storage'].put_element(e_id, entity)

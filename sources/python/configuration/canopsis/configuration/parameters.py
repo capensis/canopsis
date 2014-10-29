@@ -134,16 +134,17 @@ class Configuration(object):
         foreigns = Category(Configuration.FOREIGNS)
 
         for category in self:
-
             for param in category:
-
                 if param.value is not None:
-
                     final_values = values if param.local else foreigns
 
-                    to_update, to_delete = (errors, final_values) if \
-                        isinstance(param.value, Exception) \
-                        else (final_values, errors)
+                    if isinstance(param.value, Exception):
+                        to_update = errors
+                        to_delete = final_values
+
+                    else:
+                        to_update = final_values
+                        to_delete = errors
 
                     to_update.put(param.copy() if copy else param)
 
@@ -171,8 +172,9 @@ class Configuration(object):
         result = Category(name)
 
         for category in self:
-            for param in category:
-                result.put(param.copy() if copy else param)
+            if not isinstance(category, ParamList):
+                for param in category:
+                    result.put(param.copy() if copy else param)
 
         return result
 
@@ -187,6 +189,13 @@ class Configuration(object):
             category += new_content
 
         self += category
+
+    def add_param_list(self, name, content):
+        """
+        Add a list of parameters to self
+        """
+
+        self.categories[name] = content
 
     def clean(self):
         """
@@ -244,7 +253,9 @@ class Category(object):
         self.name = name
         # set param by names.
         self.params = {
-            param.name: param for param in params}
+            param.name: param
+            for param in params
+        }
 
     def __iter__(self):
 
@@ -349,7 +360,8 @@ class Parameter(object):
     """
 
     def __init__(
-        self, name, parser=None, value=None, critical=False, local=True
+        self, name, parser=None, value=None, critical=False,
+        local=True, asitem=None
     ):
         """
         :param str name: unique by category.
@@ -360,6 +372,7 @@ class Parameter(object):
             parameter can require to restart a component for example.
         :param bool local: distinguish local parameters from those found in
             configuration resources.
+        :param Category asitem: distinguish parameters from those in a ParamList
         """
 
         super(Parameter, self).__init__()
@@ -369,6 +382,7 @@ class Parameter(object):
         self.parser = parser
         self.critical = critical
         self.local = local
+        self.asitem = asitem
 
     def __eq__(self, other):
 
@@ -441,3 +455,14 @@ class Parameter(object):
     @staticmethod
     def path(value):
         return lookup(value)
+
+
+class ParamList(object):
+    """
+    Identify the list of parameters in a category.
+    """
+
+    def __init__(self, parser=None, *args, **kwargs):
+        super(ParamList, self).__init__(*args, **kwargs)
+
+        self.parser = parser

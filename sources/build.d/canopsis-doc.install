@@ -1,15 +1,15 @@
 NAME="canopsis-doc"
 
 function build(){
-	true
+    true
 }
 
 function install(){
-        easy_install_pylib MarkupSafe
-        easy_install_pylib docutils
-        easy_install_pylib Pygments
-        easy_install_pylib jinja2
-        easy_install_pylib Sphinx
+    easy_install_pylib MarkupSafe
+    easy_install_pylib docutils
+    easy_install_pylib Pygments
+    easy_install_pylib jinja2
+    easy_install_pylib Sphinx
 }
 
 function update(){

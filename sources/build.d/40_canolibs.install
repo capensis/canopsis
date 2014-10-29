@@ -19,11 +19,10 @@ PROJECTS[15]='connectors'
 PROJECTS[16]='cli'
 PROJECTS[17]='topology'
 PROJECTS[18]='organisation'
-PROJECTS[19]='auth'
-PROJECTS[20]='rule'
-PROJECTS[21]='event'
-PROJECTS[22]='check'
-PROJECTS[23]='monitoring'
+PROJECTS[19]='rule'
+PROJECTS[20]='event'
+PROJECTS[21]='check'
+PROJECTS[22]='monitoring'
 
 function build(){
 	true
