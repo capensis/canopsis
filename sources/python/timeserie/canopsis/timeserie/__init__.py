@@ -23,10 +23,6 @@ __version__ = "0.1"
 # provide only TimeSerie
 __all__ = ('TimeSerie')
 
-import logging
-
-logger = logging.getLogger('TimeSerie')
-
 from canopsis.timeserie.timewindow import Period, TimeWindow
 from canopsis.timeserie.aggregation import get_aggregations
 from canopsis.configuration.configurable import Configurable

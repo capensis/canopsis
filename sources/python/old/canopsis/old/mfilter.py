@@ -138,7 +138,7 @@ def check(mfilter, event):
         # For each other case, just test the equality
         elif key in event and event[key]:
             if isinstance(mfilter[key], dict):
-                if (isinstance(event[key], dict) or isinstance(event[key], list) and
+                if ((isinstance(event[key], dict) or isinstance(event[key], list)) and
                     '$in' in mfilter[key]):
                     if isinstance(event[key], list) and isinstance(event[key][0], dict):
                         #For each elem of event[key], check if it's in mfilter[key]['$in']
