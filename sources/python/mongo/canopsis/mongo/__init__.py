@@ -82,7 +82,7 @@ class MongoDataBase(DataBase):
                     self.user, self.pwd)
 
                 if authenticate:
-                    self.logger.info("Connected on {0}:{1}".format(
+                    self.logger.debug("Connected on {0}:{1}".format(
                         self.host, self.port))
 
                 else:
