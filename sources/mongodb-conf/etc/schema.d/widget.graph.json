@@ -5,15 +5,31 @@
   },
   "categories": [{
       "title": "General",
-      "keys":["title"]
-  }],
+      "keys":["title", "datatype", "library"]
+    }, {
+      "title": "Options",
+      "keys":["refreshableWidget", "refreshInterval", "graphid"]
+    }],
   "properties": {
-    "name": {
-      "type": "string"
+    "datatype": {
+      "type": "string",
+      "enum": ["graph", "topology"],
+      "default": "topology",
+      "role": "simplelist"
     },
-    "refreshableWidget":  {
+    "graphid": {
+      "type": "string",
+      "default": "test"
+    },
+    "refreshableWidget": {
       "type": "boolean",
       "default": true
+    },
+    "library": {
+      "type": "string",
+      "enum": ["d3", "jsplumb", "cytoscape"],
+      "default": "d3",
+      "role": "simplelist"
     }
   }
 }

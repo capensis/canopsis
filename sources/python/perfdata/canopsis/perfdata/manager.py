@@ -45,20 +45,15 @@ class PerfData(MiddlewareRegistry):
     PERFDATA_STORAGE = 'perfdata_storage'
     META_STORAGE = 'meta_storage'
 
-    DATA_SCOPE = 'metric'
-
     META_TIMESTAMP = TimedStorage.TIMESTAMP
     META_VALUE = TimedStorage.VALUE
     META_ID = TimedStorage.DATA_ID
 
     def __init__(
-        self,
-        data_scope=DATA_SCOPE, perfdata_storage=None, meta_storage=None,
-        *args, **kwargs
+        self, perfdata_storage=None, meta_storage=None, *args, **kwargs
     ):
 
-        super(PerfData, self).__init__(
-            data_scope=data_scope, *args, **kwargs)
+        super(PerfData, self).__init__(*args, **kwargs)
 
         self.context = Context()
 
