@@ -84,6 +84,8 @@ class Topology(MiddlewareRegistry):
     NEXT = 'next'  #: topology node next field name
     NODES = 'nodes'  #: topology nodes field name
     TYPE = 'type'  #: topology/topology node type field name
+    ROOT = 'root'  #: topology root node
+    TOPOLOGY_ID = 'pid'  #: topology node topology id
 
     TOPOLOGY_TYPE = 'topology'  #: topology type name
     TOPOLOGY_NODE_TYPE = 'topology-node'  #: topology node type name
@@ -102,7 +104,7 @@ class Topology(MiddlewareRegistry):
                 nodes = self.get_nodes(ids=topology[Topology.ID])
                 topology[Topology.NODES] = nodes
 
-    def get_topologies(self, ids=None, add_nodes=False):
+    def get(self, ids=None, add_nodes=False):
         """
         Get one or more topologies.
 
@@ -115,7 +117,7 @@ class Topology(MiddlewareRegistry):
             - None: all existing topologies.
         """
 
-        # the the right path
+        # get the right path
         path = {
             Topology.TYPE: Topology.TOPOLOGY_TYPE
         }
@@ -216,13 +218,14 @@ class Topology(MiddlewareRegistry):
             Topology.TYPE: Topology.TOPOLOGY_NODE_TYPE
         }
 
-        _id = node[Topology.ID]
+        _id = node.pop(Topology.ID)
         self[Topology.STORAGE].put(path=path, data_id=_id, data=node)
 
-    def get_nodes(self, ids=None):
+    def get_nodes(self, topology_id=None, ids=None):
         """
         Get topology nodes
 
+        :param str topology_id: topology id
         :param ids: topology node id or list of ids
         :type ids: str or list(str)
 
@@ -235,7 +238,12 @@ class Topology(MiddlewareRegistry):
             Topology.TYPE: Topology.TOPOLOGY_NODE_TYPE
         }
 
-        result = self[Topology.STORAGE].get(path=path, data_ids=ids)
+        _filter = None if topology_id is None else {
+            Topology.TOPOLOGY_ID: topology_id
+        }
+
+        result = self[Topology.STORAGE].get(
+            path=path, data_ids=ids, _filter=_filter)
 
         return result
 
