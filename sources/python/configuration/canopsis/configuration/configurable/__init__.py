@@ -77,7 +77,7 @@ class Configurable(object):
     AUTO_CONF = 'auto_conf'
     RECONF_ONCE = 'reconf_once'
     CONF_PATHS = 'conf_paths'
-    DRIVERS = 'conf_drivers'
+    DRIVERS = 'drivers'
 
     LOG_NAME = 'log_name'
     LOG_LVL = 'log_lvl'
@@ -431,7 +431,7 @@ class Configurable(object):
     ):
         """
         Get a dictionary of params by name from conf,
-        conf_paths and conf_drivers
+        conf_paths and drivers
 
         :param Configuration conf: conf to update. If None, use self.conf
 
@@ -483,8 +483,8 @@ class Configurable(object):
             else:
                 # if no conf_driver, display a warning log message
                 self.logger.warning(
-                    'No driver found among {0} for {1}'.format(
-                        conf_path, self
+                    'No driver found among {0} for processing {1}'.format(
+                        drivers, conf_path
                     )
                 )
 
@@ -549,7 +549,7 @@ class Configurable(object):
 
         else:
             self.logger.error(
-                'No ConfigurationDriver found for conf file {0}'.format(
+                'No ConfigurationDriver found for conf resource {0}'.format(
                     conf_path
                 )
             )
@@ -594,6 +594,13 @@ class Configurable(object):
             # when conf succeed, deactive reconf_once
             self.reconf_once = False
 
+    def _is_local(self, to_configure, name):
+        """
+        True iif input name parameter can be handled by to_configure.
+        """
+
+        return hasattr(to_configure, name)
+
     def _configure(self, unified_conf, logger=None, to_configure=None):
         """
         Configure this class with input conf only if auto_conf or
@@ -621,34 +628,37 @@ class Configurable(object):
 
             if not parameter.asitem:
                 # if parameter is local, to_configure must a related attribute name
-                if hasattr(to_configure, name):
-                    param_value = parameter.value
+                if self._is_local(to_configure, name):
 
-                    # in case of a critical parameter
-                    if parameter.critical:
-                        # check if current value is not the same as new value
-                        value = getattr(to_configure, name)
+                    if hasattr(to_configure, name):
+                        param_value = parameter.value
 
-                        if value != parameter.value:
-                            # add it to list of criticals
-                            criticals.append(parameter)
-                            # set private name
-                            privname = '_%s' % name
+                        # in case of a critical parameter
+                        if parameter.critical:
+                            # check if current value is not the same as new value
+                            value = getattr(to_configure, name)
 
-                            # if private name exists
-                            if hasattr(to_configure, privname):
-                                # change of value of private name
-                                setattr(to_configure, privname, param_value)
+                            if value != parameter.value:
+                                # add it to list of criticals
+                                criticals.append(parameter)
+                                # set private name
+                                privname = '_%s' % name
 
-                            else:  # update public value
-                                setattr(to_configure, name, param_value)
+                                # if private name exists
+                                if hasattr(to_configure, privname):
+                                    # change of value of private name
+                                    setattr(
+                                        to_configure, privname, param_value)
 
-                    else:  # change public value
-                        setattr(to_configure, name, param_value)
+                                else:  # update public value
+                                    setattr(to_configure, name, param_value)
 
-                else:  # else log the error
-                    message = 'Parameter %s is not bound to an attribute in %s'
-                    self.logger.warning(message % (name, to_configure))
+                        else:  # change public value
+                            setattr(to_configure, name, param_value)
+
+                else:  # else log the warning
+                    message = 'Parameter {0} is not bound to an attribute in {1}'
+                    self.logger.warning(message.format(name, to_configure))
 
             else:
                 value = getattr(to_configure, parameter.asitem.name)
@@ -730,10 +740,5 @@ class Configurable(object):
             if handle:
                 result = driver
                 break
-
-        else:
-            logger.warning(
-                'No driver found among {0} for processing file {1}'.format(
-                    drivers, conf_path))
 
         return result

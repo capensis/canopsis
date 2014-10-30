@@ -272,3 +272,14 @@ class MiddlewareRegistry(ConfigurableRegistry):
                 # set a middleware in list of configurables
                 self[name] = self.get_middleware_by_uri(
                     uri=parameter.value)
+
+    def _is_local(self, to_configure, name, *args, **kwargs):
+
+        result = super(ConfigurableRegistry, self)._is_local(
+            to_configure, name, *args, **kwargs)
+
+        if not result:
+
+            result = name.endswith(MiddlewareRegistry.MIDDLEWARE_SUFFIX)
+
+        return result
