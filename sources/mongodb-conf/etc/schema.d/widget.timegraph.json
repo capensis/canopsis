@@ -8,7 +8,7 @@
         "keys": ["time_window", "time_window_offset"]
     },{
         "title": "History",
-        "keys": ["timenav", "timenav_window"]
+        "keys": ["timenav", "timenav_window", "timestep"]
     },{
         "title": "Series",
         "keys": ["series"]
@@ -48,6 +48,12 @@
             "role": "duration",
             "default": 172800,
             "title": "History time window"
+        },
+        "timestep": {
+            "type": "number",
+            "role": "duration",
+            "default": 60,
+            "title": "Single step duration"
         },
         "legend": {
             "type": "boolean",
