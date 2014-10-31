@@ -1,8 +1,8 @@
 [
   {
     "contact": {
-      "name": "John Doe",
-      "email": "jdoes@canopsis.org",
+      "name": "Administrator",
+      "email": "",
       "address": ""
     },
     "_id": "root",
@@ -11,41 +11,17 @@
     "shadowpass": "DC76E9F0C0006E8F919E0C515C66DBBA3982F785",
     "role": "admin",
     "rights": {}
-  },{
+  }, {
     "contact": {
-      "name": "John Doe",
+      "name": "Canopsis",
       "email": "jdoes@canopsis.org",
       "address": ""
     },
-    "_id": "AP234760",
+    "_id": "canopsis",
     "enable": true,
     "external": false,
-    "shadowpass": "5DFC7A00EB2C7ADE9FA0E36D3590EFA7F01ED113",
+    "shadowpass": "3f1889001882f411c2f476dd1f2fd0861fc6b49d",
     "role": "Manager",
-    "rights": {}
-  },{
-    "contact": {
-      "name": "John Doe",
-      "email": "jdoes@canopsis.org",
-      "address": ""
-    },
-    "_id": "X2008332",
-    "enable": true,
-    "external": false,
-    "shadowpass": "6451C8A2C4AAA2488B45955FD9025ABB11BB2F01",
-    "role": "Support",
-    "rights": {}
-  },{
-    "contact": {
-      "name": "John Doe",
-      "email": "jdoes@canopsis.org",
-      "address": ""
-    },
-    "_id": "MT704129",
-    "enable": true,
-    "external": false,
-    "shadowpass": "CF3AF7FBA9C09E6BF270E7737822E2BB2397C559",
-    "role": "Visualisation",
     "rights": {}
   }
 ]
