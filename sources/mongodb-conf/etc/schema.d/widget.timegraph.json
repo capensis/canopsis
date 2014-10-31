@@ -21,6 +21,10 @@
             "type": "boolean",
             "default": true
         },
+        "isRefreshable": {
+            "type": "boolean",
+            "default": true
+        },
         "human_readable": {
             "type": "boolean",
             "default": false,
