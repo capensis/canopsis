@@ -275,7 +275,7 @@ class MiddlewareRegistry(ConfigurableRegistry):
 
     def _is_local(self, to_configure, name, *args, **kwargs):
 
-        result = super(ConfigurableRegistry, self)._is_local(
+        result = super(MiddlewareRegistry, self)._is_local(
             to_configure, name, *args, **kwargs)
 
         if not result:
