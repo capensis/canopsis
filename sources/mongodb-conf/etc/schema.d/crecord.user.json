@@ -22,8 +22,7 @@
 		},
 		"_id": {
 			"type": "string",
-			"required": true,
-			"readOnly": true
+			"required": true
 		},
 		"ui_language": {
 			"type": "string",
