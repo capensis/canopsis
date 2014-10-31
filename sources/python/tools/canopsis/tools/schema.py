@@ -80,7 +80,7 @@ def validate(dictionary, schema_id):
     schema = get(schema_id)
 
     try:
-        validictory.validate(dictionary, schema)
+        validictory.validate(dictionary, schema, required_by_default=False)
         return True
 
     except validictory.ValidationError:

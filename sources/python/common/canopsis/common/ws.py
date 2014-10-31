@@ -276,10 +276,10 @@ class route(object):
         # add routes with optional parameters
         for i in range(len(optional_header_params) + 1):
             header_params = required_header_params + optional_header_params[:i]
-            self.url = route_name(function_name, *header_params).rstrip('/')
-            function = self.op(self.url, **wsgi_params)(function)
-
-            function = self.op('{0}/'.format(self.url), **wsgi_params)(function)
+            url = route_name(function_name, *header_params).rstrip('/')
+            function = self.op(url, **wsgi_params)(function)
+            function = self.op('{0}/'.format(url), **wsgi_params)(function)
+            self.url = url
 
         return function
 
