@@ -298,6 +298,20 @@ class ConfigurableRegistry(Configurable):
                     # try to update it
                     self._configurable_types[name] = parameter.value
 
+    def _is_local(self, to_configure, name, *args, **kwargs):
+
+        result = super(ConfigurableRegistry, self)._is_local(
+            to_configure, name, *args, **kwargs)
+
+        if not result:
+
+            result = (
+                name.endswith(ConfigurableRegistry.CONFIGURABLE_SUFFIX)
+                or name.endswith(ConfigurableRegistry.CONFIGURABLE_TYPE_SUFFIX)
+            )
+
+        return result
+
     @property
     def configurables(self):
         """

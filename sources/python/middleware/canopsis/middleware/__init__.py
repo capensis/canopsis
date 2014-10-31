@@ -484,13 +484,13 @@ class Middleware(Configurable):
 
         if not self.connected():
 
-            self.logger.info('Trying to connect to %s' % self.uri)
+            self.logger.debug('Trying to connect to %s' % self.uri)
 
             self._conn = self._connect()
 
             # initialize the environment if connection is connected
             if self.connected():
-                self.logger.info('Initialize the environment')
+                self.logger.debug('Initialize the environment')
                 self._init_env(self._conn)
 
             else:
@@ -529,16 +529,16 @@ class Middleware(Configurable):
 
         if self.connected():
 
-            self.logger.info("Disconnect %s from %s" % (self, self.uri))
+            self.logger.debug("Disconnect %s from %s" % (self, self.uri))
 
             self._disconnect()
 
             self._conn = None
 
-            self.logger.info("Disconnected from %s" % (self.uri))
+            self.logger.debug("Disconnected from %s" % (self.uri))
 
         else:
-            self.logger.info("%s is already disconnected" % self)
+            self.logger.debug("%s is already disconnected" % self)
 
     def _disconnect(self):
         """
