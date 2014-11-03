@@ -92,7 +92,6 @@ def check(mfilter, event):
         if mfilter['connector_name'] != event['connector_name']:
             return False
 
-
     # For each key of filter
     for key in mfilter:
         if key == '$and':
@@ -136,7 +135,7 @@ def check(mfilter, event):
                     return False
 
         # For each other case, just test the equality
-        elif key in event and event[key]:
+        elif key in event:
             if isinstance(mfilter[key], dict):
                 if ((isinstance(event[key], dict) or isinstance(event[key], list)) and
                     '$in' in mfilter[key]):
@@ -148,7 +147,7 @@ def check(mfilter, event):
                         if not len([x for x in event[key] if any(y in x for y in mfilter[key]['$in'])]):
                             return False
 
-                elif (isinstance(event[key], dict) or isinstance(event[key], list) and
+                elif ((isinstance(event[key], dict) or isinstance(event[key], list)) and
                       '$nin' in mfilter[key]):
                     if isinstance(event[key], list) and isinstance(event[key][0], dict):
                         #For each elem of event[key], check if it's in mfilter[key]['$nin']

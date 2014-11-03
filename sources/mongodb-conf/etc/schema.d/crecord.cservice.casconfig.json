@@ -2,7 +2,7 @@
     "type": "object",
     "categories": [{
         "title": "General",
-        "keys": ["title", "server", "service"]
+        "keys": ["title", "server", "service", "default_role"]
     }],
     "properties": {
         "title": {
@@ -12,13 +12,22 @@
         },
         "server": {
             "type": "string",
-            "required": true
+            "required": true,
+            "description": "CAS server URL"
         },
-
         "service": {
             "type": "string",
             "required": true,
-            "default": "http://localhost:8082/"
+            "default": "http://localhost:8082/",
+            "description": "Canopsis URL"
+        },
+        "default_role": {
+            "type": "string",
+            "role": "stringclassifiedcrecordselector",
+            "multiselect": false,
+            "crecordtype": "role",
+            "valuekey" : "id",
+            "description": "Default role for new users"
         }
     }
 }
