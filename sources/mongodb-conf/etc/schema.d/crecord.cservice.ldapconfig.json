@@ -1,6 +1,9 @@
 {
     "type": "object",
     "categories": [{
+        "title": "General",
+        "keys": ["default_role"]
+    },{
         "title": "LDAP Server",
         "keys": ["uri", "base_dn", "user_dn", "domain", "user_filter"]
     },{
@@ -8,12 +11,19 @@
         "keys": ["firstname", "lastname", "mail"]
     }],
     "properties": {
+        "default_role": {
+            "type": "string",
+            "role": "stringclassifiedcrecordselector",
+            "multiselect": false,
+            "crecordtype": "role",
+            "valuekey" : "id",
+            "description": "Default role for new users"
+        },
         "uri": {
             "type": "string",
             "required": true,
             "default": "ldap://"
         },
-
         "base_dn": {
             "type": "string",
             "required": true
