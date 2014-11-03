@@ -78,6 +78,10 @@ class KnownValues(TestCase):
         match = check(filter1, event)
         self.assertTrue(match, msg='Filter: %s' % filter1)
 
+        filter1 = {'$or': [{'state': {'$eq': 0}}]}
+        match = check(filter1, event)
+        self.assertTrue(match, msg='Filter: %s' % filter1)
+
         filter1 = {'connector': {'$eq': 'Enginessssss'}}
         match = check(filter1, event)
         self.assertFalse(match, msg='Filter: %s' % filter1)

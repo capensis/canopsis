@@ -139,23 +139,15 @@ class engine(Engine):
             return False
 
 
-    def a_modify(self, event, derogation, action, _name):
+    def a_modify(self, event, action, name):
         """
         Args:
             event map of the event to be modified
-            derogation map of the filter that matched the event
             action map of type action
             _name of the rule
         Returns:
             ``None``
         """
-
-        name = derogation.get('name', None)
-        _id = derogation.get('_id', None)
-
-        # If _id is ObjectId(), transform it to str()
-        if not isinstance(_id, basestring):
-            _id = str(_id)
 
         derogated = False
         atype = action.get('type', None)
@@ -174,7 +166,7 @@ class engine(Engine):
 
         return None
 
-    def a_drop(self, event, derogation, action, name):
+    def a_drop(self, event, action, name):
         """
         Drop the event
         Args:
@@ -190,7 +182,7 @@ class engine(Engine):
         self.drop_event_count += 1
         return DROP
 
-    def a_pass(self, event, derogation, action, name):
+    def a_pass(self, event, action, name):
         """
         Pass the event to the next queue
         Args:
@@ -206,7 +198,7 @@ class engine(Engine):
         self.pass_event_count += 1
         return event
 
-    def a_route(self, event, derogation, action, name):
+    def a_route(self, event, action, name):
         """
         Change the route to which an event will be sent
         Args:
@@ -226,19 +218,36 @@ class engine(Engine):
 
         return None
 
-    def work(self, event, *xargs, **kwargs):
-
-        rk = get_routingkey(event)
-        default_action = self.configuration.get('default_action', 'pass')
-
-        # list of actions supported
+    def apply_actions(self, event, actions):
+        pass_event = False
         actionMap = {'drop': self.a_drop,
                      'pass': self.a_pass,
                      'override': self.a_modify,
                      'remove': self.a_modify,
                      'route': self.a_route}
 
+        for name, action in actions:
+            if (action['type'] in actionMap):
+                ret = actionMap[action['type']](event, action, name)
+                if ret:
+                    pass_event = True
+            else:
+                self.logger.warning("Unknown action '%s'" % action)
+
+        return pass_event
+
+    def work(self, event, *xargs, **kwargs):
+
+        rk = get_routingkey(event)
+        default_action = self.configuration.get('default_action', 'pass')
+
+        # list of actions supported
+
         rules = self.configuration.get('rules', [])
+        to_apply = []
+
+        if event['connector_name'] != 'testevent':
+            return event
 
         # When list configuration then check black and
         # white lists depending on json configuration
@@ -247,7 +256,7 @@ class engine(Engine):
             name = filterItem.get('name', 'no_name')
 
             self.logger.debug(
-                'Event: {}, will apply rule {}'.format(event['rk'], filterItem)
+                'Event: {}, will apply rule {}'.format(event, filterItem)
                 )
             self.logger.debug('filter is {}'.format(filterItem['mfilter']))
             # Try filter rules on current event
@@ -258,20 +267,17 @@ class engine(Engine):
                     )
 
                 for action in actions:
-                    if (action['type'] in actionMap):
-                        if action['type'] != 'DROP':
-                            actions.append({'type': 'pass'})
-                        ret = actionMap[action['type']](event, filterItem,
-                                        action, name)
-                        # If pass then ret == event; end loop
-                        if ret:
-                            if ret != DROP:
-                                event['rk'] = event['_id'] = get_routingkey(event)
-                                return event
-                            return DROP
+                    if action['type'] == 'DROP':
+                        self.apply_actions(event, to_apply)
+                        self.logger.info('DROP THAT SHIT')
+                        return self.a_drop(event, None, None, name)
+                    to_apply.append((name, action))
 
-                    else:
-                        self.logger.warning("Unknown action '%s'" % action)
+        if len(to_apply):
+            if self.apply_actions(event, to_apply):
+                self.logger.debug('Event before sent to next engine: %s' % event)
+                event['rk'] = event['_id'] = get_routingkey(event)
+                return event
 
         # No rules matched
         if default_action == 'drop':
@@ -284,7 +290,6 @@ class engine(Engine):
 
         self.logger.debug('Event before sent to next engine: %s' % event)
         event['rk'] = event['_id'] = get_routingkey(event)
-
         return event
 
     def beat(self, *args, **kargs):
