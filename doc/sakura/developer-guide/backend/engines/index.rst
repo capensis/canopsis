@@ -6,7 +6,6 @@ Engines
    :titlesonly:
 
    filter-spec
-   groups
    rights
    rule
    state-spec
