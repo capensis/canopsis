@@ -289,8 +289,7 @@ class Archiver(object):
         except:
             # No old record
             self.logger.debug(" + New event")
-            event['ts_first_stealthy'] = (event.get('timestamp', now)
-                                          * (not not event['state']))
+            event['ts_fdirst_stealthy'] = 0
             changed = True
             old_state = state
 
