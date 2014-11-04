@@ -1,11 +1,20 @@
 Data Storage
-************
+============
 
 .. toctree::
    :maxdepth: 2
    :titlesonly:
 
-   metric-spec
+   composite
+   timed
+   periodic
+   file
+
+Data Manager
+============
+
+.. toctree::
+   :maxdepth: 2
+   :titlesonly:
+
    entities
-   perfdata2
-   topology   

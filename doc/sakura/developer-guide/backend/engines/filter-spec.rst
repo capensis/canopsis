@@ -58,15 +58,15 @@ Here is the basic rule structure :
 
 .. code-block:: javascript
 
-    {
-        'name':		    // string - Rule name
-        'crecord_name':     // string - cRecord name
-        'description':      // string - Short description of the rule
-	'mfilter':	    // dictionary - Filter to match
-        'actions':          // list - Actions to apply
-        'time_conditions':  // list - Optional - specific to downtime events
-        'priority':	    // integer - Priority of the rule
-    }
+   {
+       'name':             // string - Rule name
+       'crecord_name':     // string - cRecord name
+       'description':      // string - Short description of the rule
+       'mfilter':          // dictionary - Filter to match
+       'actions':          // list - Actions to apply
+       'time_conditions':  // list - Optional - specific to downtime events
+       'priority':         // integer - Priority of the rule
+   }
 
 mFilter Structure
 ---------------------
