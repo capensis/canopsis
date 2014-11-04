@@ -40,6 +40,11 @@ class engine(Engine):
                 account=Account(user='root')
             ).get_backend()
 
+        self.object = get_storage(
+            'object',
+            account=Account(user='root')
+        ).get_backend()
+
         #task ran daily
         self.beat_interval = 3600 * 24
 
@@ -55,20 +60,44 @@ class engine(Engine):
             Computes date beyond where date must be cleaned.
             Gets the retention duration from user GUI input.
         """
+        # Alias
+        datestr = datetime.utcfromtimestamp
 
-        retention_duration = 1 # TODO get it from record
+        # Get engine configuration
+        self.configuration = self.object.find_one(
+            {'crecord_type': 'datacleaner'}
+        )
 
+        if self.configuration == None:
+            self.logger.warning('No configuration found, cannot process data cleaning')
+            return None
+
+
+        self.logger.info('configuration reloaded')
+        self.logger.debug(self.configuration)
+
+        retention_duration = self.configuration['retention_duration']
+
+        # Compute retention duration compare date (compare with security date)
         compare_duration = int(time() - retention_duration)
 
-        security_duration_limit = int(time() - 3600 * 24 * 365) # one year
+
+        # Just set security retention duration depending on user sercure information
+        if self.configuration['use_secure_delay']:
+            security_duration_limit = int(time() - 3600 * 24 * 365) # one year
+            self.logger.info('Secure delay is set to true. datacleaner will use one year delay security')
+        else:
+            security_duration_limit = int(time()) # now
+            self.logger.info('Secure delay is set to false. datacleaner will use user delay')
 
         self.logger.debug(
             'retention ts {}, security ts {}'.format(
-                datetime.utcfromtimestamp(compare_duration),
-                datetime.utcfromtimestamp(security_duration_limit)
+                datestr(compare_duration),
+                datestr(security_duration_limit)
             )
         )
 
+        # When not secure, compare duration is at least gte security delay
         if compare_duration > security_duration_limit:
             self.logger.info(
                 'Retention date too short, ' +
@@ -77,7 +106,7 @@ class engine(Engine):
             compare_duration = security_duration_limit
 
         self.logger.debug('selected retention ts {}'.format(
-            datetime.utcfromtimestamp(compare_duration)
+            datestr(compare_duration)
         ))
 
         return compare_duration
@@ -87,6 +116,9 @@ class engine(Engine):
 
         # getting retention date limit
         retention_date_limit = self.get_retention_date()
+
+        if retention_date_limit == None:
+            return
 
         # formating query for deletion
         query = {

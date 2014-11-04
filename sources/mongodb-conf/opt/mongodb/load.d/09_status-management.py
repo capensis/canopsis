@@ -57,4 +57,4 @@ def init():
 
 
 def update():
-    init()
+    pass

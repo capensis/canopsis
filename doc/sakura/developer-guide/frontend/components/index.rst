@@ -5,3 +5,5 @@ Components
    :maxdepth: 2
    :titlesonly:
 
+   internal
+   external
