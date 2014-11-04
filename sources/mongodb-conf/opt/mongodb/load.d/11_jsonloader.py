@@ -21,6 +21,7 @@
 
 from canopsis.old.account import Account
 from canopsis.old.storage import get_storage
+from canopsis.old.record import Record
 
 import os
 import json
@@ -68,16 +69,22 @@ def load_document(json_data, collection, json_filename):
         ' Cannot process database upsert'.format(json_filename))
 
     else:
+        exists_document = storage.get_backend(collection).find({'loader_id': json_data['loader_id']}).count()
 
-        if 'no_update_document' in json_data and json_data['no_update_document']:
-
-            print ('Document is marked as no updatable, nothing is done for {}'.format(json_filename))
-
+        if not exists_document:
+            do_update(json_data, collection)
+            print ('Document not existing, process insert {}'.format(json_filename))
         else:
+            if 'loader_no_update' not in json_data or not json_data['loader_no_update']:
+                print ('Document exists, process update {}'.format(json_filename))
+                do_update(json_data, collection)
+            else:
+                print ('Document is marked as no updatable, nothing is done for {}'.format(json_filename))
 
-            storage.get_backend(collection).update({'loader_id': json_data['loader_id']}, json_data, upsert=True)
-            print ('{} information upserted'.format(json_filename))
 
+def do_update(json_data, collection):
+    record = Record(json_data).dump()
+    storage.get_backend(collection).update({'loader_id': json_data['loader_id']}, json_data, upsert=True)
 
 
 def update():
