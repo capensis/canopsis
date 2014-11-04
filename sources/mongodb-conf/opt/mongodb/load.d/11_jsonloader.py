@@ -83,8 +83,11 @@ def load_document(json_data, collection, json_filename):
 
 
 def do_update(json_data, collection):
-    record = Record(json_data).dump()
-    storage.get_backend(collection).update({'loader_id': json_data['loader_id']}, json_data, upsert=True)
+    record = Record({}).dump()
+    #cheating these useless records
+    for key in json_data:
+        record[key] = json_data[key]
+    storage.get_backend(collection).update({'loader_id': json_data['loader_id']}, record, upsert=True)
 
 
 def update():
