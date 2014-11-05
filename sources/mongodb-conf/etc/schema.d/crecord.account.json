@@ -2,7 +2,7 @@
 	"type": "object",
 	"categories": [{
 		"title": "General",
-		"keys":["_id", "firstname", "lastname", "mail", "authkey"]
+		"keys":["_id", "firstname", "lastname", "mail", "ui_language", "shadowpass", "authkey"]
 	},{
 		"title": "Role",
 		"keys": ["role"]
@@ -22,8 +22,7 @@
 		},
 		"_id": {
 			"type": "string",
-			"required": true,
-			"readOnly": true
+			"required": true
 		},
 		"ui_language": {
 			"type": "string",
@@ -37,7 +36,8 @@
 		},
 		"shadowpass": {
 			"type": "string",
-			"required": true
+			"required": true,
+			"role": "passwordsha1"
 		},
 		"user_groups": {
 			"type": "object"
