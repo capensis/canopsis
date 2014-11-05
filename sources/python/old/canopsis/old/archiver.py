@@ -83,14 +83,18 @@ class Archiver(object):
             self.restore_event = self.state_config.setdefault('restore_event',
                                                               True)
 
-        self.logger.debug("Checking stealthy events in collection {}".format(self.namespace))
+        self.logger.debug(
+            "Checking stealthy events in collection {}".format(self.namespace)
+            )
         for event in self.collection.find({'crecord_type': 'event', 'status': 2}):
             # Check the stealthy intervals
-            if not self.check_stealthy(
+            if event['status'] == 2 and not self.check_stealthy(
                 {'status': 2, 'ts_first_stealthy': event['ts_first_stealthy']},
                 time()
                 ):
-                self.logger.debug("Event {} no longer Stealthy".format(event['rk']))
+                self.logger.debug(
+                    "Event {} no longer Stealthy".format(event['rk'])
+                    )
                 if not event['state']:
                     self.set_status(event, OFF)
                     self.store_new_event(event['_id'], event)
@@ -141,19 +145,19 @@ class Archiver(object):
 
         log = 'Status is set to {} for event %s' % event['rk']
         values = {
-            0: {'freq': event['bagot_freq'],
+            0: {'freq': event.get('bagot_freq', 0),
                 'name': 'Off'
                 },
-            1: {'freq': event['bagot_freq'],
+            1: {'freq': event.get('bagot_freq', 0),
                 'name': 'On going'
                 },
-            2: {'freq': event['bagot_freq'],
+            2: {'freq': event.get('bagot_freq', 0),
                 'name': 'Stealthy'
                 },
-            3: {'freq': event['bagot_freq'] + 1,
+            3: {'freq': event.get('bagot_freq', 0) + 1,
                 'name': 'Bagot'
                 },
-            4: {'freq': event['bagot_freq'],
+            4: {'freq': event.get('bagot_freq', 0),
                 'name': 'Cancelled'
                 }
             }
