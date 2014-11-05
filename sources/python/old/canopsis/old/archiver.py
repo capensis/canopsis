@@ -59,7 +59,6 @@ class Archiver(object):
 
         self.collection = self.storage.get_backend(namespace)
 
-
     def beat(self):
         # Default values
         self.restore_event = True
@@ -83,6 +82,21 @@ class Archiver(object):
                                                               360)
             self.restore_event = self.state_config.setdefault('restore_event',
                                                               True)
+
+        self.logger.debug("Checking stealthy events in collection {}".format(self.namespace))
+        for event in self.collection.find({'crecord_type': 'event', 'status': 2}):
+            # Check the stealthy intervals
+            if not self.check_stealthy(
+                {'status': 2, 'ts_first_stealthy': event['ts_first_stealthy']},
+                time()
+                ):
+                self.logger.debug("Event {} no longer Stealthy".format(event['rk']))
+                if not event['state']:
+                    self.set_status(event, OFF)
+                    self.store_new_event(event['_id'], event)
+                else:
+                    self.set_status(event, ONGOING)
+                    self.store_new_event(event['_id'], event)
 
 
     def is_bagot(self, event):
@@ -180,6 +194,18 @@ class Archiver(object):
         event['bagot_freq'] = devent.get('bagot_freq', 0)
         event['ts_first_stealthy'] = devent.get('ts_first_stealthy', 0)
         event['ts_first_bagot'] = devent.get('ts_first_bagot', 0)
+        # Increment frequency if state changed and set first occurences
+        if ((not devent['state'] and event['state']) or
+            devent['state'] and not event['state']):
+            if event['state']:
+                event['ts_first_stealthy'] = event['timestamp']
+            else:
+                event['ts_first_stealthy'] = devent['timestamp']
+
+            event['bagot_freq'] += 1
+
+            if not event['ts_first_bagot']:
+                event['ts_first_bagot'] = event['timestamp']
 
         # Out of bagot interval, reset variables
         if event['ts_first_bagot'] - event['timestamp'] > self.bagot_time:
@@ -223,15 +249,6 @@ class Archiver(object):
                             self.set_status(event, STEALTHY)
         else:
             self.set_status(event, CANCELED)
-
-        # Increment frequency if state changed and set first occurences
-        if ((not devent['state'] and event['state']) or
-            devent['state'] and not event['state']):
-            event['ts_first_stealthy'] = event['timestamp']
-            event['bagot_freq'] += 1
-
-            if not event['ts_first_bagot']:
-                event['ts_first_bagot'] = event['timestamp']
 
 
     def check_event(self, _id, event):
@@ -289,8 +306,7 @@ class Archiver(object):
         except:
             # No old record
             self.logger.debug(" + New event")
-            event['ts_first_stealthy'] = (event.get('timestamp', now)
-                                          * (not not event['state']))
+            event['ts_first_stealthy'] = 0
             changed = True
             old_state = state
 
@@ -322,12 +338,14 @@ class Archiver(object):
                     change['cancel'] = {}
 
 
-            # Remove ticket information in case state is back to normal (both ack and ticket declaration case)
+            # Remove ticket information in case state is back to normal
+            # (both ack and ticket declaration case)
             if 'ticket_declared_author' in devent and event['status'] == 0:
                 change['ticket_declared_author'] = None
                 change['ticket_declared_date'] = None
 
-            # Remove ticket information in case state is back to normal (ticket number declaration only case)
+            # Remove ticket information in case state is back to normal
+            # (ticket number declaration only case)
             if 'ticket' in devent and event['status'] == 0:
                 del devent['ticket']
                 if 'ticket_date' in devent:
@@ -336,13 +354,16 @@ class Archiver(object):
             #Generate diff change from old event to new event
             for key in event:
                 if key not in exclusion_fields:
-                    if key in event and key in devent and devent[key] != event[key]:
+                    if (key in event and
+                        key in devent and
+                        devent[key] != event[key]):
                         change[key] = event[key]
                     elif key in event and key not in devent:
                         change[key] = event[key]
 
 
-            #Manage keep state key that allow from UI to keep the choosen state into until next ok state
+            # Manage keep state key that allow from UI to keep the choosen state
+            # into until next ok state
             event_reset = False
 
             #When a event is ok again, dismiss keep_state statement
@@ -350,13 +371,14 @@ class Archiver(object):
                 change['keep_state'] = False
                 event_reset = True
 
-            #assume we don t just received a keep state and if keep state was sent previously
-            #then override state of new event
+            # assume we do not just received a keep state and
+            # if keep state was sent previously
+            # then override state of new event
             if 'keep_state' not in event:
                 if not event_reset and devent.get('keep_state'):
                     change['state'] = devent['state']
 
-            #Keep previous output
+            # Keep previous output
             if 'keep_state' in event:
                 change['change_state_output'] = event['output']
                 change['output'] = devent.get('output', '')
@@ -367,7 +389,7 @@ class Archiver(object):
 
         mid = None
         if changed or self.autolog:
-            #store ack information to log collection
+            # store ack information to log collection
             if 'ack' in devent:
                 event['ack'] = devent['ack']
             mid = self.log_event(_id, event)

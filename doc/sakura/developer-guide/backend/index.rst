@@ -5,6 +5,7 @@ Canopsis Backend
    :maxdepth: 2
    :titlesonly:
 
+   webserver
    data-storage/index
    engines/index
    events/index
