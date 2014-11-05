@@ -52,22 +52,8 @@
             "History",
             "Ack",
             "Infobutton",
-            "Sendevent"],
-          "item_actions": [
-            "actionbutton-ack",
-            "actionbutton-cancel",
-            "actionbutton-incident",
-            "actionbutton-ticketnumber",
-            "actionbutton-info",
-            "actionbutton-changestate"
-          ],
-          "selection_toolbar": [
-            "actionbutton-ack",
-            "actionbutton-cancel"
-          ],
-          "actions_toolbar": [
-            "actionbutton-history"
-          ],
+            "Sendevent",
+            "Eventnavigation"],
           "displayed_columns": [
             "domain",
             "perimeter",
