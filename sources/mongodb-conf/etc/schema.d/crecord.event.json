@@ -50,7 +50,7 @@
 		},
 		"timestamp": {
 			"type": "number",
-			"role": "timestamp",
+			"role": "eventtimestamp",
 			"canDisplayAgo" : true
 		},
 		"component": {
