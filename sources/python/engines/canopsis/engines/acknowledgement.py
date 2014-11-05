@@ -77,12 +77,20 @@ class engine(Engine):
             rk = event['ref_rk']
             self.events_collection.update(
                 {'rk': rk},
-                {'$unset': {
-                    'ack': '',
-                    'ticket_declared_author': '',
-                    'ticket_declared_date': '',
-                    'ticket': '',
-                    'ticket_date': ''
+                {
+                    '$set': {
+                        'ack_remove': {
+                            'author' : event['author'],
+                            'comment' : event['output'],
+                            'timestamp' : time()
+                        }
+                    },
+                    '$unset': {
+                        'ack': '',
+                        'ticket_declared_author': '',
+                        'ticket_declared_date': '',
+                        'ticket': '',
+                        'ticket_date': ''
             }})
             ackremove = True
 
@@ -132,11 +140,18 @@ class engine(Engine):
             ack_info['isAck'] = True
             #useless information for event ack data
             del ack_info['ackts']
-            self.events_collection.update(
-                {'rk': rk},
-                {'$set': {
-                    'ack': ack_info,
-            }})
+            # clean eventual previous ack remove information
+            self.events_collection.update({
+                'rk': rk
+                },{
+                    '$set': {
+                        'ack': ack_info,
+                    },
+                    '$unset': {
+                        'ack_remove': '',
+                    }
+                }
+            )
 
             if not response['lastErrorObject']['updatedExisting']:
                 record = response['value']

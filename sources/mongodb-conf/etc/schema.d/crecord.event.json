@@ -28,6 +28,9 @@
 			"type": "object",
 			"role": "ack"
 		},
+		"ack_remove": {
+			"type": "object"
+		},
 		"ticket_declared_author": {
 			"type": "string"
 		},

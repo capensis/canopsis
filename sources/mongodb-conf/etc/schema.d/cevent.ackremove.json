@@ -4,12 +4,13 @@
 	"type": "object",
 	"categories": [{
 		"title": "General",
-		"keys":["author", "connector_name", "component", "resource", "ticket", "output"]
+		"keys":["author", "connector", "component", "resource", "separator", "output"]
 	}],
 	"properties": {
 		"connector": {
 			"type": "string",
-			"required": true
+			"required": true,
+			"readOnly": true
 		},
 		"component": {
 			"type": "string",
