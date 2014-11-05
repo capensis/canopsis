@@ -263,7 +263,8 @@ class Rights(MiddlewareRegistry):
             and entity['rights'][right_id]['checksum'] >= checksum):
 
             # remove the permissions passed in checksum
-            entity['rights'][right_id]['checksum'] ^= checksum
+            ochecksum = int(entity['rights'][right_id]['checksum'])
+            entity['rights'][right_id]['checksum'] = ochecksum ^ int(checksum)
 
             # If all the permissions were removed from the right, delete it
             if not entity['rights'][right_id]['checksum']:
