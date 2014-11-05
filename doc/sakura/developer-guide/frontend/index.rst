@@ -9,8 +9,9 @@ Frontend
    REST/index
    plugins/index
    components/index
-   editors/index
+   editors
    widgets/index
    resources
    serializers-and-adapters
    managing-dependencies
+   translation
