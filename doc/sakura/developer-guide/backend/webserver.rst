@@ -63,7 +63,7 @@ Authenticating the user against the web server is a 3 stages process :
      * exists ;
      * are not referencing an external account ;
      * are valid.
- 3. if the submitted credentials are not valid, or the account is external, redirect to ``/auth/external``
+ 3. if the submitted credentials are not existent, or the account is external, redirect to ``/auth/external``
 
 The route ``/auth/external`` is never executed. The authentication back-ends act
 before the route is called, and will try to log in the user using an alternative
