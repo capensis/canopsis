@@ -22,7 +22,7 @@
 Rule condition functions
 """
 
-from canopsis.rule import get_task_with_params, register_task
+from canopsis.task import get_task_with_params, register_task
 
 from time import time
 from datetime import datetime

@@ -41,7 +41,7 @@ A topology rule use the condition ``new_state``
 
 from canopsis.topology.manager import Topology
 from canopsis.context.manager import Context
-from canopsis.rule import process_rule, RULE, register_task
+from canopsis.task import process_rule, RULE, register_task
 from canopsis.event import Event
 from canopsis.check import Check
 

@@ -31,9 +31,7 @@ of state::
 For logical reasons, the propagate action runned such as the last action.
 """
 
-from time import sleep
-
-from canopsis.rule import register_task
+from canopsis.task import register_task
 from canopsis.common.utils import lookup
 from canopsis.topology.manager import Topology
 from canopsis.check import Check

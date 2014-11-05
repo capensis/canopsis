@@ -1,0 +1,35 @@
+{
+  "type": "object",
+  "metadata": {
+      "icon": "list-alt"
+  },
+  "categories": [{
+      "title": "General",
+      "keys":["title", "datatype", "library"]
+    }, {
+      "title": "Options",
+      "keys":["refreshableWidget", "refreshInterval", "graphid"]
+    }],
+  "properties": {
+    "datatype": {
+      "type": "string",
+      "enum": ["graph", "topology"],
+      "default": "topology",
+      "role": "simplelist"
+    },
+    "graphid": {
+      "type": "string",
+      "default": "test"
+    },
+    "refreshableWidget": {
+      "type": "boolean",
+      "default": true
+    },
+    "library": {
+      "type": "string",
+      "enum": ["d3", "jsplumb", "cytoscape"],
+      "default": "d3",
+      "role": "simplelist"
+    }
+  }
+}

@@ -327,12 +327,14 @@ class Storage(DataBase):
 
         raise NotImplementedError()
 
-    def remove_elements(self, ids):
+    def remove_elements(self, ids=None, _filter=None):
         """
         Remove elements identified by the unique input ids
 
-        :param ids: ids of elements to delete
+        :param ids: ids of elements to delete.
         :type ids: list of str
+        :param dict _filter: removing filter.
+        :param Filter _filter: additional filter to use if not None.
         """
 
         raise NotImplementedError()

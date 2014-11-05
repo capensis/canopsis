@@ -17,12 +17,13 @@ PROJECTS[13]='tools'
 PROJECTS[14]='engines'
 PROJECTS[15]='connectors'
 PROJECTS[16]='cli'
-PROJECTS[17]='topology'
 PROJECTS[18]='organisation'
-PROJECTS[19]='rule'
+PROJECTS[19]='task'
 PROJECTS[20]='event'
 PROJECTS[21]='check'
 PROJECTS[22]='monitoring'
+PROJECTS[23]='graph'
+PROJECTS[24]='topology'
 
 function build(){
 	true

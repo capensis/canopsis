@@ -21,9 +21,9 @@
 
 from canopsis.common.setup import setup
 
-install_requires = ['canopsis.common']
+install_requires = ['canopsis.common', 'canopsis.storage']
 
 setup(
-    description='Canopsis rule',
+    description='Canopsis task',
     install_requires=install_requires,
-    keywords='rule')
+    keywords='task')
