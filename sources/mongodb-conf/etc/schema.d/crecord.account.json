@@ -2,7 +2,7 @@
 	"type": "object",
 	"categories": [{
 		"title": "General",
-		"keys":["_id", "firstname", "lastname", "mail", "ui_language", "shadowpasswd", "authkey"]
+		"keys":["_id", "firstname", "lastname", "mail", "ui_language", "shadowpasswd", "authkey", "enable"]
 	},{
 		"title": "Role",
 		"keys": ["role"]
@@ -85,7 +85,8 @@
 		},
 		"enable": {
 			"type": "boolean",
-			"required": true
+			"required": true,
+			"default": true
 		}
 	}
 }
