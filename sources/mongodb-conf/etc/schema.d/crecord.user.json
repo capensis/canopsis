@@ -2,7 +2,7 @@
 	"type": "object",
 	"categories": [{
 		"title": "General",
-		"keys":["_id", "firstname", "lastname", "mail", "ui_language", "shadowpass", "authkey"]
+		"keys":["_id", "firstname", "lastname", "mail", "ui_language", "shadowpasswd", "authkey"]
 	},{
 		"title": "Role",
 		"keys": ["role"]
@@ -34,7 +34,7 @@
 			"required": true,
 			"readOnly": true
 		},
-		"shadowpass": {
+		"shadowpasswd": {
 			"type": "string",
 			"required": true,
 			"role": "passwordsha1"
