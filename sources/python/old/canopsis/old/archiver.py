@@ -65,7 +65,7 @@ class Archiver(object):
         self.bagot_freq = 10
         self.bagot_time = 3600
         self.stealthy_time = 360
-        self.stealthy_show = 4
+        self.stealthy_show = 360
 
         self.state_config = self.storage.find(
             {'crecord_type': 'statusmanagement'}
@@ -78,8 +78,8 @@ class Archiver(object):
                                                            3600)
             self.stealthy_time = self.state_config.setdefault('stealthy_time',
                                                               360)
-            # self.stealthy_show = self.state_config.setdefault('stealthy_show',
-            #                                                   360)
+            self.stealthy_show = self.state_config.setdefault('stealthy_show',
+                                                              360)
             self.restore_event = self.state_config.setdefault('restore_event',
                                                               True)
 
