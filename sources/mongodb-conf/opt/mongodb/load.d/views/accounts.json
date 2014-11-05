@@ -35,7 +35,9 @@
             "_id",
             "role",
             "groups",
-            "rights"
+            "rights",
+            "enable",
+            "external"
           ]
         }
       }
