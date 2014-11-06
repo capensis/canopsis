@@ -33,7 +33,8 @@ class engine(Engine):
         super(engine, self).__init__(*args, **kargs)
 
         self.archiver = Archiver(
-            namespace='events', autolog=False, logging_level=self.logging_level)
+            namespace='events', confnamespace='object',
+            autolog=False, logging_level=self.logging_level)
 
         self.event_types = reader([CONFIG.get('events', 'types')]).next()
         self.check_types = reader([CONFIG.get('events', 'checks')]).next()
