@@ -39,7 +39,7 @@ such as::
 A topology rule use the condition ``new_state``
 """
 
-from canopsis.topology.manager import Topology
+from canopsis.topology.manager import TopologyManager
 from canopsis.context.manager import Context
 from canopsis.task import process_rule, RULE, register_task
 from canopsis.event import Event
@@ -47,7 +47,7 @@ from canopsis.check import Check
 
 
 context = Context()
-topology = Topology()
+topology = TopologyManager()
 
 SOURCE = 'source'
 SOURCES = 'sources'
@@ -78,16 +78,16 @@ def event_processing(event, ctx=None, **params):
         source_type = event[Event.SOURCE_TYPE]
 
         # in case of topology node
-        if source_type == Topology.TOPOLOGY_NODE_TYPE:
+        if source_type == TopologyManager.GRAPH_TYPE:
              # get nodes from the event topology node id
-            nodes = [topology.get_nodes(event[Topology.ID])]
+            nodes = [topology.get_nodes(event[TopologyManager.ID])]
 
         else:  # in case of entity event
             # get nodes from entity
             entity = context.get_entity(event)
             if entity is not None:
                 entity_id = context.get_entity_id(entity)
-                nodes = topology.find_bound_nodes(entity_id=entity_id)
+                nodes = topology.get_nodes(entity_id=entity_id)
 
         # iterate on nodes
         for node in nodes:
@@ -117,9 +117,9 @@ def event_processing(event, ctx=None, **params):
                         # create event to propagate with source and node ids
                         event_to_propagate = {
                             Event.TYPE: Check.get_type(),
-                            Event.SOURCE_TYPE: Topology.TOPOLOGY_NODE_TYPE,
-                            Topology.ID: next_node[Topology.ID],
-                            SOURCE: node[Topology.ID]
+                            Event.SOURCE_TYPE: TopologyManager.TOPOLOGY_NODE_TYPE,
+                            TopologyManager.ID: next_node[TopologyManager.ID],
+                            SOURCE: node[TopologyManager.ID]
                         }
 
                         ctx[PUBLISHER].publish(event_to_propagate)

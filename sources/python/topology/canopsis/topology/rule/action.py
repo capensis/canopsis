@@ -53,7 +53,7 @@ def change_state(event, ctx, state=None, **kwargs):
     # update node state from ctx
     node = ctx[NODE]
     node[Check.STATE] = state
-    topology.push_node(node)
+    topology.push_nodes(node)
 
 
 @register_task(name='topology.worst_state')
@@ -98,4 +98,4 @@ def change_state_from_source_nodes(event, ctx, f, **kwargs):
 
     # update the node state
     node[Check.STATE] = state
-    topology.push_node(node=node)
+    topology.push_nodes(node=node)
