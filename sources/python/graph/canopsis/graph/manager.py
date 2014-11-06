@@ -64,7 +64,7 @@ from canopsis.configuration.configurable.decorator import (
 from canopsis.middleware.registry import MiddlewareRegistry
 from canopsis.context.manager import Context
 from canopsis.storage import Storage
-from canopsis.task.manager import Task
+from canopsis.task.manager import TaskManager
 
 CONF_PATH = 'graph/graph.conf'
 CATEGORY = 'GRAPH'
@@ -72,7 +72,7 @@ CATEGORY = 'GRAPH'
 
 @add_category(CATEGORY)
 @conf_paths(CONF_PATH)
-class Graph(MiddlewareRegistry):
+class GraphManager(MiddlewareRegistry):
     """
     Manage graph data.
     """
@@ -91,7 +91,7 @@ class Graph(MiddlewareRegistry):
     ENTITY_ID = 'entity_id'  #: graph node entity id field name
     TYPE = 'type'  #: graph node type field name
     DATA = 'data'  #: graph node data field name
-    TASK = Task.NAME  #: graph node task field name
+    TASK = TaskManager.NAME  #: graph node task field name
 
     # edge specific fields
     SOURCES = 'sources'  #: graph node next field name
@@ -105,7 +105,7 @@ class Graph(MiddlewareRegistry):
 
     def __init__(self, *args, **kwargs):
 
-        super(Graph, self).__init__(*args, **kwargs)
+        super(GraphManager, self).__init__(*args, **kwargs)
 
         self.context = Context()
 
@@ -115,18 +115,19 @@ class Graph(MiddlewareRegistry):
 
         :param str graph_id: get a graph and its nodes related to input
             graph_id
-        :param str _type: graph type to retrieve (default Graph.GRAPH_TYPE)
+        :param str _type: graph type to retrieve (default
+            GraphManager.GRAPH_TYPE)
         """
 
         # get the right path
         if _type is None:
-            _type = Graph.GRAPH_TYPE
+            _type = GraphManager.GRAPH_TYPE
 
         result = self.context.get(_type=_type, names=graph_id)
 
         if result is not None:
             nodes = self.get_nodes(graph_id=graph_id)
-            result[Graph.NODES] = nodes
+            result[GraphManager.NODES] = nodes
 
         return result
 
@@ -144,13 +145,14 @@ class Graph(MiddlewareRegistry):
 
         # if graph ids is None, remove all
         if graph_ids is None:
-            self[Graph.STORAGE].remove({})
+            self[GraphManager.STORAGE].remove({})
 
         else:
             for graph_id in graph_ids:
-                query = {Graph.GRAPH_ID: graph_id}
-                self[Graph.STORAGE].remove_elements(query=query)
-                self.context.remove(_type=Graph.GRAPH_TYPE, ids=graph_id)
+                query = {GraphManager.GRAPH_ID: graph_id}
+                self[GraphManager.STORAGE].remove_elements(query=query)
+                self.context.remove(
+                    _type=GraphManager.GRAPH_TYPE, ids=graph_id)
 
     def put_graph(self, graph):
         """
@@ -161,23 +163,27 @@ class Graph(MiddlewareRegistry):
         """
 
         # get graph id
-        if Graph.ID not in graph:
+        if GraphManager.ID not in graph:
             # set it in graph if it does not exist
-            graph[Graph.ID] = str(uuid())
-        graph_id = graph[Graph.ID]
+            graph[GraphManager.ID] = str(uuid())
+        graph_id = graph[GraphManager.ID]
 
         # create an entity sucha as a copy of input graph
         entity = graph.copy()
         # add type if not specified in the entity
-        _type = graph[Graph.TYPE] if Graph.TYPE in graph else Graph.GRAPH_TYPE
+        if GraphManager.TYPE in graph:
+            _type = graph[GraphManager.TYPE]
+        else:
+            _type = GraphManager.GRAPH_TYPE
+
         # put nodes if they exist
-        if Graph.NODES in graph:
+        if GraphManager.NODES in graph:
             # get nodes
-            nodes = graph[Graph.NODES]
+            nodes = graph[GraphManager.NODES]
             # put nodes in storage
             self.put_nodes(nodes=nodes, graph_id=graph_id)
             # delete nodes from entity
-            del entity[Graph.NODES]
+            del entity[GraphManager.NODES]
 
         # put graph in context
         self.context.put(_type=_type, entity=entity)
@@ -199,21 +205,21 @@ class Graph(MiddlewareRegistry):
 
         for node in nodes:
             # set node id
-            if Graph.ID not in node:
-                node[Graph.ID] = str(uuid())
+            if GraphManager.ID not in node:
+                node[GraphManager.ID] = str(uuid())
             # set graph_id
             if graph_id is not None:
-                node[Graph.GRAPH_ID] = graph_id
-            _id = node[Graph.ID]
+                node[GraphManager.GRAPH_ID] = graph_id
+            _id = node[GraphManager.ID]
             # put node in storage
-            self[Graph.STORAGE].put_element(_id=_id, element=node)
+            self[GraphManager.STORAGE].put_element(_id=_id, element=node)
 
         return nodes
 
     def get_nodes(
         self,
         graph_id=None,
-        node_ids=None, sources=None, targets=None,
+        ids=None, sources=None, targets=None,
         _type=None,
         entity_id=None,
     ):
@@ -221,9 +227,11 @@ class Graph(MiddlewareRegistry):
         Get graph nodes related to some context.
 
         :param str graph_id: graph id from where get nodes.
-        :param list sources: source node ids.
-        :param list targets: target node ids.
-        :param str _type: graph type (default Graph.GRAPH_NODE_TYPE)
+        :param ids: node ids.
+        :type ids: list or str.
+        :param list sources: source edge ids. If edges exist, add target nodes.
+        :param list targets: target edge ids. If edges exist, add source nodes.
+        :param str _type: graph type (default GraphManager.GRAPH_NODE_TYPE)
         :param str entity_id: related entity id.
         """
 
@@ -233,78 +241,91 @@ class Graph(MiddlewareRegistry):
 
         # add graph id in query
         if graph_id is not None:
-            query[Graph.GRAPH_ID] = graph_id
+            query[GraphManager.GRAPH_ID] = graph_id
 
-        # initialize node_ids
-        if node_ids is not None:
-            if isinstance(node_ids, str):
-                node_ids = [node_ids]
+        # initialize ids
+        if ids is not None:
+            if isinstance(ids, str):
+                ids = [ids]
         else:
-            node_ids = []
+            ids = []
 
-        # if sources are requested
+        # if target nodes are requested
         if sources is not None:
             # transform sources into a list
             if isinstance(sources, str):
                 sources = [sources]
             # get all edges which have sources
-            query[Graph.SOURCES] = {'$in': sources}
-            edges = self[Graph.STORAGE].find_elements(query=query)
-            # put edge targets in node_ids
-            node_ids = []
+            query[GraphManager.SOURCES] = {'$in': sources}
+            edges = self[GraphManager.STORAGE].find_elements(query=query)
+            # remove sources from query
+            del query[GraphManager.SOURCES]
+            # put edge targets in ids
+            ids = [] if edges else [None]  # cancel future search if not edges
             for edge in edges:
-                if Graph.DIRECTED in edge and edge[Graph.DIRECTED]:
-                    node_ids += edge[Graph.SOURCES]
-                    # remove one occurence of sources from edge[Graph.SOURCES]
+                # put other sources in case of undirected edge
+                if GraphManager.DIRECTED in edge \
+                        and not edge[GraphManager.DIRECTED]:
+                    ids += edge[GraphManager.SOURCES]
+                    # remove one occurence of sources from edge sources
                     for source in sources:
-                        node_ids.remove(source)
-                node_ids += edge[Graph.TARGETS]
+                        if source in ids:
+                            ids.remove(source)
+                # put targets
+                ids += edge[GraphManager.TARGETS]
             # add edges in the result
             result += edges
 
-        # if targets are requested
+        # if source nodes are requested
         if targets is not None:
             # transform targets into a list
             if isinstance(targets, str):
                 targets = [targets]
             # get all edges which have targets
-            query[Graph.TARGETS] = {'$in': targets}
-            edges = self[Graph.STORAGE].find_elements(query=query)
-            # put edge sources in node_ids
-            node_ids = []
+            query[GraphManager.TARGETS] = {'$in': targets}
+            edges = self[GraphManager.STORAGE].find_elements(query=query)
+            # remove sources from query
+            del query[GraphManager.TARGETS]
+            # put edge sources in ids
+            ids = [] if edges else [None]  # cancel future search if not edges
             targets = []
             for edge in edges:
-                if Graph.DIRECTED in edge and edge[Graph.DIRECTED]:
-                    node_ids += edge[Graph.TARGETS]
-                    # remove one occurence of targets from edge[Graph.TARGETS]
+                # put other targets in case of undirected edge
+                if GraphManager.DIRECTED in edge \
+                        and not edge[GraphManager.DIRECTED]:
+                    ids += edge[GraphManager.TARGETS]
+                    # remove one occurence of targets from edge targets
                     for target in targets:
-                        node_ids.remove(target)
-                node_ids += edge[Graph.SOURCES]
+                        if target in ids:
+                            ids.remove(target)
+                # put sources
+                ids += edge[GraphManager.SOURCES]
             # add edges in the result
             result += edges
 
         # set entity_id into the query
         if entity_id is not None:
-            query[Graph.ENTITY_ID] = entity_id
+            query[GraphManager.ENTITY_ID] = entity_id
 
         # set type if not None
         if _type is not None:
-            query[Graph.TYPE] = _type
+            query[GraphManager.TYPE] = _type
 
-        # get nodes related to node_ids
-        if node_ids:
-            query = {Graph.ID: {'$in': node_ids}}
-        nodes = self[Graph.STORAGE].find_elements(query=query)
+        # get nodes related to ids
+        if ids:
+            query = {GraphManager.ID: {'$in': ids}}
+
+        nodes = self[GraphManager.STORAGE].find_elements(query=query)
 
         # add nodes in result
         result += nodes
 
         # add entity in nodes
         for node in nodes:
-            if Graph.ENTITY_ID in node:
-                entity_id = node[Graph.ENTITY_ID]
+            if GraphManager.ENTITY_ID in node:
+                entity_id = node[GraphManager.ENTITY_ID]
                 entities = self.context.get_entities(ids=entity_id)
-                node[Graph.ENTITY] = entities
+                node[GraphManager.ENTITY] = entities
 
         return result
 
@@ -322,9 +343,21 @@ class Graph(MiddlewareRegistry):
         if ids is not None:
             if isinstance(ids, str):
                 ids = [ids]
-            _filter = {Graph.ID: ids}
+            _filter = {GraphManager.ID: {'$in': ids}}
 
-        self[Graph.STORAGE].remove_elements(_filter=_filter)
+        self[GraphManager.STORAGE].remove_elements(_filter=_filter)
+
+    def is_edge(self, node):
+        """
+        True if node is an edge.
+
+        :param dict node: node to compare to an edge.
+        """
+
+        # a node is an edge only if it has sources and targets
+        result = GraphManager.SOURCES in node and GraphManager.TARGETS in node
+
+        return result
 
     @classmethod
     def new_edge(
@@ -358,9 +391,9 @@ class Graph(MiddlewareRegistry):
             data=data,
             task=task)
         # set sources, targets and directed
-        result[Graph.SOURCES] = sources
-        result[Graph.TARGETS] = targets
-        result[Graph.DIRECTED] = directed
+        result[GraphManager.SOURCES] = sources
+        result[GraphManager.TARGETS] = targets
+        result[GraphManager.DIRECTED] = directed
 
         return result
 
@@ -381,22 +414,22 @@ class Graph(MiddlewareRegistry):
         """
 
         # create a new node with graph_id
-        result = {Graph.GRAPH_ID: graph_id}
+        result = {GraphManager.GRAPH_ID: graph_id}
 
         # set id
         if _id is None:
-            _id = str(uuid())
-        result[Graph.ID] = _id
+            _id = cls.new_id()
+        result[GraphManager.ID] = _id
         # set entity_id
-        result[Graph.ENTITY_ID] = entity_id
+        result[GraphManager.ENTITY_ID] = entity_id
         # set _type
         if _type is None:
             _type = cls.GRAPH_NODE_TYPE
-        result[Graph.TYPE] = _type
+        result[GraphManager.TYPE] = _type
         # set data
-        result[Graph.DATA] = data
+        result[GraphManager.DATA] = data
         # set task
-        result[Graph.TASK] = task
+        result[GraphManager.TASK] = task
 
         return result
 
@@ -412,13 +445,21 @@ class Graph(MiddlewareRegistry):
 
         result = {}
 
-        result[Graph.TYPE] = cls.GRAPH_TYPE if _type is None else _type
+        result[GraphManager.TYPE] = cls.GRAPH_TYPE if _type is None else _type
 
         if _id is None:
-            _id = str(uuid())
+            _id = cls.new_id()
 
-        result[Graph.ID] = _id
+        result[GraphManager.ID] = _id
 
-        result[Graph.NODES] = nodes
+        result[GraphManager.NODES] = nodes
 
         return result
+
+    @classmethod
+    def new_id(cls):
+        """
+        Generate a new id
+        """
+
+        return str(uuid())

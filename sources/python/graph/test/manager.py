@@ -21,7 +21,7 @@
 
 from unittest import TestCase, main
 
-from canopsis.graph.manager import Graph
+from canopsis.graph.manager import GraphManager
 
 
 class GraphTest(TestCase):
@@ -31,7 +31,7 @@ class GraphTest(TestCase):
         Create self.count=10 and self.graphs
         """
 
-        self.graph = Graph(data_scope='test')
+        self.graph = GraphManager()
 
         self.count = 10
 
@@ -43,10 +43,10 @@ class GraphTest(TestCase):
             graph_id = '__test__%s' % index
             # create count-index nodes per graph
             nodes = [
-                Graph.new_node(
+                GraphManager.new_node(
                     graph_id=graph_id,
                     _id='%s%s' % (graph_id, node_index),
-                    entity_id=None if (node_index % 2)
+                    entity_id='' if (node_index % 2)
                         else '%s%s' % (graph_id, ((index + 1) % self.count)),
                     _type=index,
                     data=None if (node_index % 2) else node_index
@@ -54,15 +54,16 @@ class GraphTest(TestCase):
             ]
             # create count-index edges where sources equal targets
             edges = [
-                Graph.new_edge(
+                GraphManager.new_edge(
                     graph_id=graph_id,
+                    _id='%s%s-' % (graph_id, edge_index),
                     sources=[
                         '%s%s' % (graph_id, ei)
                         for ei in range(index, edge_index)],
                     targets=[
                         '%s%s' % (graph_id, ei)
                         for ei in range(index, edge_index)],
-                    entity_id=None if (node_index % 2)
+                    entity_id='' if (edge_index % 2)
                         else '%s%s' % (graph_id, ((index + 1) % self.count)),
                     _type=index,
                     data=None if (edge_index % 2) else edge_index,
@@ -72,7 +73,7 @@ class GraphTest(TestCase):
             # add edges in nodes
             nodes += edges
             # create a graph
-            graph = Graph.new_graph(_id=graph_id, nodes=nodes)
+            graph = GraphManager.new_graph(_id=graph_id, nodes=nodes)
             # put graph in self.graphs
             self.graphs[index] = graph
 
@@ -81,7 +82,8 @@ class GraphTest(TestCase):
         Del self.graphs
         """
 
-        self.graph.del_graph(graph_ids=[g[Graph.ID] for g in self.graphs])
+        self.graph.del_graph(
+            graph_ids=[g[GraphManager.ID] for g in self.graphs])
 
     def test_get_graph_which_does_not_exist(self):
         """
@@ -90,7 +92,7 @@ class GraphTest(TestCase):
 
         # Test to get graph one by one
         for graph in self.graphs:
-            graph = self.graph.get_graph(graph_id=graph[Graph.ID])
+            graph = self.graph.get_graph(graph_id=graph[GraphManager.ID])
             self.assertIsNone(graph)
 
     def test_del_graph_which_does_not_exist(self):
@@ -100,23 +102,34 @@ class GraphTest(TestCase):
 
         # test elementary calls to del_graph
         for graph in self.graphs:
-            self.graph.del_graph(graph_ids=graph[Graph.ID])
+            self.graph.del_graph(graph_ids=graph[GraphManager.ID])
 
         # test to del all graphs in one call
-        self.graph.del_graph(graph_ids=[g[Graph.ID] for g in self.graphs])
+        self.graph.del_graph(
+            graph_ids=[g[GraphManager.ID] for g in self.graphs])
 
     def test_get_node_which_do_not_exists(self):
         """
         Test to get nodes which do not exists.
         """
 
-        nodes = self.graph.get_nodes(node_ids='')
+        nodes = self.graph.get_nodes(ids='')
 
         self.assertFalse(nodes)
 
-        nodes = self.graph.get_nodes(node_ids=[''])
+        nodes = self.graph.get_nodes(ids=[''])
 
         self.assertFalse(nodes)
+
+    def _compare_nodes(self, nodes, _nodes):
+
+        node_ids = [node[GraphManager.ID] for node in nodes]
+        _node_ids = [node[GraphManager.ID] for node in _nodes]
+
+        self.assertEqual(len(nodes), len(_nodes))
+
+        for node_id in node_ids:
+            self.assertIn(node_id, _node_ids)
 
     def test_CRUD(self):
         """
@@ -128,34 +141,33 @@ class GraphTest(TestCase):
             self.graph.put_graph(graph=graph)
 
         # check equality
-        for graph in self.graphs:
+        for index, graph in enumerate(self.graphs):
+
             # get graph id
-            graph_id = graph[Graph.ID]
+            graph_id = graph[GraphManager.ID]
             _graph = self.graph.get_graph(graph_id=graph_id)
             # assert equality between graph and DB graph
-            self.assertEqual(graph[Graph.ID], _graph[Graph.ID])
+            self.assertEqual(graph[GraphManager.ID], _graph[GraphManager.ID])
 
             # compare graph nodes
-            nodes = graph[Graph.NODES]
-            _nodes = _graph[Graph.NODES]
-            self.assertEqual(nodes, _nodes)
+            nodes = graph[GraphManager.NODES]
+            _nodes = _graph[GraphManager.NODES]
+            self._compare_nodes(nodes, _nodes)
 
             # get node ids
-            node_ids = [node[Graph.ID] for node in nodes]
-            _node_ids = [node[Graph.ID] for node in _nodes]
-            self.assertEqual(node_ids, _node_ids)
+            node_ids = [node[GraphManager.ID] for node in nodes]
 
             # ensure get_nodes equals nodes
             _nodes = self.graph.get_nodes(graph_id=graph_id)
-            self.assertEqual(nodes, _nodes)
+            self._compare_nodes(nodes, _nodes)
 
             # ensure get_nodes equals nodes
             _nodes = self.graph.get_nodes(ids=node_ids)
-            self.assertEqual(nodes, _nodes)
+            self._compare_nodes(nodes, _nodes)
 
             # delete all nodes
             for node in nodes:
-                self.graph.del_nodes(ids=node[Graph.ID])
+                self.graph.del_nodes(ids=node[GraphManager.ID])
 
             # ensure get_nodes is empty
             _nodes = self.graph.get_nodes(ids=node_ids)
@@ -166,56 +178,78 @@ class GraphTest(TestCase):
                 self.graph.put_nodes(node)
 
             _nodes = self.graph.get_nodes(ids=node_ids)
-            self.assertEqual(nodes, _nodes)
+            self._compare_nodes(nodes, _nodes)
 
             # delete all nodes at a time
             self.graph.del_nodes(ids=node_ids)
             # ensure get_nodes is empty
-            nodes = self.get_nodes(ids=node_ids)
-            self.assertFalse(nodes)
+            _nodes = self.graph.get_nodes(ids=node_ids)
+            self.assertFalse(_nodes)
 
             self.graph.put_nodes(nodes)
             # ensure get_nodes equals nodes
             _nodes = self.graph.get_nodes(ids=node_ids)
-            self.assertEqual(nodes, _nodes)
+            self._compare_nodes(nodes, _nodes)
 
             # assert type
             for i in range(self.count):
                 _nodes = self.graph.get_nodes(_type=i)
-                self.assertEqual(len(_nodes), self.count * 3)
+                self.assertEqual(len(_nodes), self.count * 2 - 2 * i)
 
             # assert entity_id
             for node in nodes:
-                entity_id = node[Graph.ENTITY_ID]
+                entity_id = node[GraphManager.ENTITY_ID]
                 _nodes = self.graph.get_nodes(entity_id=entity_id)
-                if entity_id is None:
-                    self.assertEqual(len(_nodes), self.count ** 2)
-                else:
-                    self.assertEqual(len(_nodes), self.count)
+                for _node in _nodes:
+                    self.assertEqual(_node[GraphManager.ENTITY_ID], entity_id)
+
+            node_ids_set = set(node_ids)  # for sources/targets
 
             # assert sources
-            for index, node in enumerate(nodes):
-                node_id = node[Graph.ID]
+            for node_index, node in enumerate(nodes):
+                node_id = node[GraphManager.ID]
                 _nodes = self.graph.get_nodes(sources=node_id)
-                if index % 2:
-                    self.assertEqual(len(_nodes), len(nodes) - 1)
-                else:
-                    self.assertEqual(len(_nodes), (len(nodes) - 1) * 2)
+                targets = []
+                for _node in _nodes:
+                    if self.graph.is_edge(_node):
+                        self.assertIn(node_id, _node[GraphManager.SOURCES])
+                        targets += _node[GraphManager.TARGETS]
+                    else:
+                        self.assertIn(_node[GraphManager.ID], targets)
 
             _nodes = self.graph.get_nodes(sources=node_ids)
-            self.assertEqual(len(_nodes), self.count ** 2)
+
+            targets = []
+            for _node in _nodes:
+                if self.graph.is_edge(_node):
+                    sources = set(_node[GraphManager.SOURCES])
+                    self.assertTrue(sources | node_ids_set)
+                    targets += _node[GraphManager.TARGETS]
+                else:
+                    self.assertIn(_node[GraphManager.ID], targets)
 
             # assert targets
-            for index, node in enumerate(nodes):
-                node_id = node[Graph.ID]
+            for node_index, node in enumerate(nodes):
+                node_id = node[GraphManager.ID]
                 _nodes = self.graph.get_nodes(targets=node_id)
-                if index % 2:
-                    self.assertEqual(len(_nodes), len(nodes) - 1)
-                else:
-                    self.assertEqual(len(_nodes), (len(nodes) - 1) * 2)
+                targets = []
+                for _node in _nodes:
+                    if self.graph.is_edge(_node):
+                        self.assertIn(node_id, _node[GraphManager.TARGETS])
+                        targets += _node[GraphManager.SOURCES]
+                    else:
+                        self.assertIn(_node[GraphManager.ID], targets)
 
             _nodes = self.graph.get_nodes(targets=node_ids)
-            self.assertEqual(len(_nodes), self.count ** 2)
+
+            sources = []
+            for _node in _nodes:
+                if self.graph.is_edge(_node):
+                    targets = set(_node[GraphManager.TARGETS])
+                    self.assertTrue(targets | node_ids_set)
+                    sources += _node[GraphManager.SOURCES]
+                else:
+                    self.assertIn(_node[GraphManager.ID], sources)
 
 
 if __name__ == '__main__':
