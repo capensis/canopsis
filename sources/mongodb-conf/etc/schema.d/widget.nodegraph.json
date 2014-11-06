@@ -5,7 +5,7 @@
   },
   "categories": [{
       "title": "General",
-      "keys":["title", "datatype", "library"]
+      "keys":["title", "datatype", "graph_id", "library"]
     }, {
       "title": "Options",
       "keys":["refreshableWidget", "refreshInterval", "graphid"]
@@ -17,7 +17,7 @@
       "default": "topology",
       "role": "simplelist"
     },
-    "graphid": {
+    "graph_id": {
       "type": "string",
       "default": "test"
     },

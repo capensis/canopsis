@@ -5,7 +5,7 @@
   },
   "categories": [{
       "title": "General",
-      "keys":["title", "topology"]
+      "keys":["title", "graph_id"]
     }, {
       "title": "Options",
       "keys":["refreshableWidget", "refreshInterval", "graphid"]
