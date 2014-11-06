@@ -297,12 +297,18 @@ class MongoStorage(MongoDataBase, Storage):
             sort=sort,
             with_count=with_count)
 
-    def remove_elements(self, ids, *args, **kwargs):
+    def remove_elements(self, ids=None, _filter=None, *args, **kwargs):
 
-        if isiterable(ids, is_str=False):
-            query = {MongoStorage.ID: {'$in': ids}}
-        else:
-            query = ids
+        query = {}
+
+        if ids is not None:
+            if isiterable(ids, is_str=False):
+                query[MongoStorage.ID] = {'$in': ids}
+            else:
+                query[MongoStorage.ID] = ids
+
+        if _filter is not None:
+            query.update(_filter)
 
         self._remove(query)
 

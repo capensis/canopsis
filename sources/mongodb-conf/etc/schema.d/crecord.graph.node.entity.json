@@ -1,8 +1,0 @@
-{
-    "type": "object",
-    "properties": {
-        "entity_id": {
-            "type": "string"
-        }
-    }
-}

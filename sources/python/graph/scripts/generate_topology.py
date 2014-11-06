@@ -39,6 +39,7 @@ def generate_context_topology(name='test'):
 
     # clean old topology
     topology.delete(ids=name)
+    topology[Topology.STORAGE].remove_elements()
 
     # create a root node
     root_node = {

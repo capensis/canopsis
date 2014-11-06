@@ -34,16 +34,17 @@ def conf_paths(*conf_paths):
     ['test0', 'test1']
     """
 
-    def _get_conf_paths(self, *args, **kwargs):
-        # get super result and append conf_paths
-        result = super(type(self), self)._get_conf_paths()
-        result += conf_paths
-
-        return result
-
     def add_conf_paths(cls):
         # add _get_conf_paths method to configurable classes
         if issubclass(cls, Configurable):
+
+            def _get_conf_paths(self, *args, **kwargs):
+                # get super result and append conf_paths
+                result = super(cls, self)._get_conf_paths()
+                result += conf_paths
+
+                return result
+
             cls._get_conf_paths = _get_conf_paths
 
         else:
@@ -70,23 +71,24 @@ def add_category(name, unified=True, content=None):
     :type content: Category or list(Parameter)
     """
 
-    def _conf(self, *args, **kwargs):
-
-        result = super(type(self), self)._conf(*args, **kwargs)
-
-        if unified:
-            result.add_unified_category(name=name, new_content=content)
-        else:
-            category = Category(name=name)
-            if content is not None:
-                category += content
-            result += category
-
-        return result
-
     def add_conf(cls):
 
         if issubclass(cls, Configurable):
+
+            def _conf(self, *args, **kwargs):
+
+                result = super(cls, self)._conf(*args, **kwargs)
+
+                if unified:
+                    result.add_unified_category(name=name, new_content=content)
+                else:
+                    category = Category(name=name)
+                    if content is not None:
+                        category += content
+                    result += category
+
+                return result
+
             cls._conf = _conf
 
         else:

@@ -23,7 +23,7 @@ Rule action functions
 """
 
 from canopsis.common.utils import ensure_iterable
-from canopsis.rule import get_task_with_params, ActionError, register_task
+from canopsis.task import get_task_with_params, ActionError, register_task
 
 
 @register_task

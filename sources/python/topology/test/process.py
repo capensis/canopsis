@@ -21,8 +21,8 @@
 
 from unittest import TestCase, main
 
-from canopsis.rule import RULE
-from canopsis.topology.manager import Topology
+from canopsis.task import RULE
+from canopsis.topology.manager import TopologyManager
 from canopsis.topology.process import event_processing, PUBLISHER
 from canopsis.context.manager import Context
 
@@ -31,7 +31,7 @@ class ProcessingTest(TestCase):
 
     def setUp(self):
         self.context = Context(data_scope='test')
-        self.topology = Topology(data_scope='test')
+        self.topology = TopologyManager(data_scope='test')
         self.check = {
             'event_type': 'check',
             'connector': '',
@@ -42,12 +42,12 @@ class ProcessingTest(TestCase):
         entity = self.context.get_entity(self.check)
         entity_id = self.context.get_entity_id(entity)
         self.node = {
-            Topology.ENTITY_ID: entity_id,
-            Topology.ID: 'test',
+            TopologyManager.ENTITY_ID: entity_id,
+            TopologyManager.ID: 'test',
             'state': 0,
             RULE: 'canopsis.topology.rule.action.change_state'
         }
-        self.topology.push_node(self.node)
+        self.topology.put_nodes(self.node)
 
     def test_no_bound(self):
         """
@@ -66,10 +66,10 @@ class ProcessingTest(TestCase):
         """
 
         event = event_processing(event=self.check)
-        _node = self.topology.get_nodes(ids=self.node[Topology.ID])
+        _node = self.topology.get_nodes(ids=self.node[TopologyManager.ID])[0]
         self.assertEqual(
-            self.node[Topology.ENTITY_ID], _node[Topology.ENTITY_ID])
-        self.assertEqual(self.node[Topology.ID], _node[Topology.ID])
+            self.node[TopologyManager.ENTITY_ID], _node[TopologyManager.ENTITY_ID])
+        self.assertEqual(self.node[TopologyManager.ID], _node[TopologyManager.ID])
         self.assertEqual(self.check, event)
 
     def test_one_state(self):
@@ -83,7 +83,7 @@ class ProcessingTest(TestCase):
         event = event_processing(event=self.check)
         self.assertEqual(event, self.check)
 
-        _node = self.topology.get_nodes(ids=self.node[Topology.ID])
+        _node = self.topology.get_nodes(ids=self.node[TopologyManager.ID])[0]
         self.assertNotEqual(self.node['state'], _node['state'])
         self.assertEqual(_node['state'], new_state)
 
@@ -99,7 +99,7 @@ class ProcessingTest(TestCase):
         # create next nodes from self.nodes
         nexts = (
             {
-                Topology.ID: str(i),
+                TopologyManager.ID: str(i),
                 RULE: self.node[RULE],
                 'state': 0
             } for i in range(3)
@@ -108,12 +108,12 @@ class ProcessingTest(TestCase):
         next_ids = []
         for next in nexts:
             # push next nodes
-            self.topology.push_node(next)
-            next_ids.append(next[Topology.ID])
+            self.topology.put_nodes(next)
+            next_ids.append(next[TopologyManager.ID])
         # add next nodes into self.node
-        self.node[Topology.NEXT] = next_ids
+        #self.node[TopologyManager.NEXT] = next_ids
         # save the node
-        self.topology.push_node(self.node)
+        self.topology.put_nodes(self.node)
 
         # propagate a new state
         new_state = 1
@@ -121,12 +121,12 @@ class ProcessingTest(TestCase):
         event_processing(event=self.check, ctx={PUBLISHER: Publisher()})
 
         for next in nexts:
-            _node = self.topology.get_nodes(next[Topology.ID])
+            _node = self.topology.get_nodes(next[TopologyManager.ID])
             self.assertEqual(_node['state'], 1)
-            self.topology.delete_nodes(next[Topology.ID])
+            self.topology.del_nodes(next[TopologyManager.ID])
 
     def tearDown(self):
-        self.topology.delete_nodes(self.node[Topology.ID])
+        self.topology.del_nodes(self.node[TopologyManager.ID])
 
 
 if __name__ == '__main__':

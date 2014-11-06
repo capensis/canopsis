@@ -41,7 +41,7 @@ Related rule actions are defined in .condition module.
 from canopsis.topology.manager import Topology
 from canopsis.topology.process import SOURCES, NODE, WEIGHT
 from canopsis.check import Check
-from canopsis.rule import register_task
+from canopsis.task import register_task
 
 from sys import maxint
 

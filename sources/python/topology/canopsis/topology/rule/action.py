@@ -31,9 +31,7 @@ of state::
 For logical reasons, the propagate action runned such as the last action.
 """
 
-from time import sleep
-
-from canopsis.rule import register_task
+from canopsis.task import register_task
 from canopsis.common.utils import lookup
 from canopsis.topology.manager import Topology
 from canopsis.check import Check
@@ -55,7 +53,7 @@ def change_state(event, ctx, state=None, **kwargs):
     # update node state from ctx
     node = ctx[NODE]
     node[Check.STATE] = state
-    topology.push_node(node)
+    topology.push_nodes(node)
 
 
 @register_task(name='topology.worst_state')
@@ -100,4 +98,4 @@ def change_state_from_source_nodes(event, ctx, f, **kwargs):
 
     # update the node state
     node[Check.STATE] = state
-    topology.push_node(node=node)
+    topology.push_nodes(node=node)

@@ -462,5 +462,6 @@ class TestProcessRule(TestCase):
 
         self.assertEqual(self.ctx[COUNT], 1)
 
+
 if __name__ == '__main__':
     main()

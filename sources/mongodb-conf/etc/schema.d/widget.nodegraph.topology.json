@@ -1,0 +1,19 @@
+{
+  "type": "object",
+  "metadata": {
+      "icon": "list-alt"
+  },
+  "categories": [{
+      "title": "General",
+      "keys":["title", "graph_id"]
+    }, {
+      "title": "Options",
+      "keys":["refreshableWidget", "refreshInterval", "graphid"]
+    }],
+  "properties": {
+    "library": {
+      "type": "string",
+      "role": "topologylist"
+    }
+  }
+}
