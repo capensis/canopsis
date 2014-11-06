@@ -28,7 +28,11 @@ from sys import path
 
 from shutil import copy
 
-from importlib import import_module, reload
+from importlib import import_module
+try:  # PYTHON3
+    from importlib import reload
+except ImportError:
+    pass  # PYTHON2
 
 from canopsis.common.utils import lookup
 from canopsis.middleware.registry import MiddlewareRegistry
