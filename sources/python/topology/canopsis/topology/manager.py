@@ -25,47 +25,44 @@ Description
 Functional
 ----------
 
-A topology enrichs a model of entities in adding dependency among them and in
-executing rules which can modify the model, send events, etc.
+A topology is a graph dedicated to enriches status model of entities with state
+dependency between entities.
 
-A topology permits to run automatized and distributed operations over a context
+Topological tasks consist to update status node information and propagate the
+change of state in sending check events.
+
+A topology has at least a root node which is bound to a topology entity.
+
+This root is the only node where the state is the same as the entity state.
 
 An example of application is root cause analysis where a topology may react
 when an entity change of state and can propagate over topology nodes the change
 of state in some propagation conditions such as operations like ``worst state``
 
-As a topology and topology nodes are entities, it is possible to bind a node to
-a topology, therefore, a topology is bound to a root node.
-
-A rule is a couple of (condition, actions). A condition takes in parameter the
-execution context of an event, the engine and the node which embeds the rule.
+Topology tasks are commonly rules of (condition, actions). A condition takes in
+parameter the execution context of an event, the engine and the node which
+embeds the rule.
 
 Technical
 ---------
 
-A topology is an entity which contains following fields::
+Three types of nodes exist in topology::
 
-    - id: unique id among topologies.
-    - nodes: list of topology node ids.
-    - root: root node id.
+- cluster: operation between node states.
+- node: node bound to an entity, like components, resources, and the root.
+- root: root node.
 
-A topology node contains following fields::
+A topology data contains several thinks among::
 
-    - id: unique topology node id.
-    - entity_id: bound entity id. May be self id if no entity is bound.
-    - next: list of topology-node ids which depends on this.
-    - rule: rule to apply.
+- weight: node weight in the graph.
+- state: node state which change at runtime depending on bound entity state and
+    event propagation.
 """
-
-from canopsis.common.utils import ensure_iterable
 
 from canopsis.configuration.configurable.decorator import (
     conf_paths, add_category
 )
-
-from canopsis.storage import Storage
-from canopsis.middleware.registry import MiddlewareRegistry
-from canopsis.storage.filter import Filter
+from canopsis.graph.manager import GraphManager
 
 CONF_PATH = 'topology/topology.conf'
 CATEGORY = 'TOPOLOGY'
@@ -73,252 +70,157 @@ CATEGORY = 'TOPOLOGY'
 
 @add_category(CATEGORY)
 @conf_paths(CONF_PATH)
-class Topology(MiddlewareRegistry):
+class TopologyManager(GraphManager):
     """
-    Manage topological data
+    Manage topological graph.
     """
 
-    STORAGE = 'topology_storage'  #: topology storage name
+    GRAPH_TYPE = 'topology'  #: topology graph type name
 
-    ENTITY_ID = 'entity_id'  #: topology node entity id field name
-    NEXT = 'next'  #: topology node next field name
-    NODES = 'nodes'  #: topology nodes field name
-    TYPE = 'type'  #: topology/topology node type field name
-    ROOT = 'root'  #: topology root node
-    TOPOLOGY_ID = 'pid'  #: topology node topology id
+    WEIGHT = 'weight'  #: weight node field name
+    STATE = 'state'  #: state node field name
 
-    TOPOLOGY_TYPE = 'topology'  #: topology type name
-    TOPOLOGY_NODE_TYPE = 'topology-node'  #: topology node type name
+    DEFAULT_WEIGHT = 1  #: default weight
+    DEFAULT_STATE = 0  #: default state
 
-    ID = Storage.DATA_ID  #: topology and topology node id field name
+    ROOT = 'root'  #: root node type name
+    CLUSTER = 'cluster'  #: cluster node type name
 
-    def _add_nodes(self, topologies):
+    def put_graph(self, graph, *args, **kwargs):
         """
-        Add nodes into input topologies.
-        """
+        Put graph in DB and ensuring a root is bound to graph.
 
-        if topologies:
-            topologies = ensure_iterable(topologies)
-
-            for topology in topologies:
-                nodes = self.get_nodes(ids=topology[Topology.ID])
-                topology[Topology.NODES] = nodes
-
-    def get(self, ids=None, add_nodes=False):
-        """
-        Get one or more topologies.
-
-        :return: depending on ids:
-
-            - an id: one topology or None if corresponding topology does not
-                exist.
-            - list of id: list of topologies or empty list if ids do not
-                correspond to existing topologies.
-            - None: all existing topologies.
+        :param dict graph: graph to put in DB.
+        :return: putted graph.
         """
 
-        # get the right path
-        path = {
-            Topology.TYPE: Topology.TOPOLOGY_TYPE
-        }
+        result = super(TopologyManager, self).put_graph(graph, *args, **kwargs)
 
-        result = self[Topology.STORAGE].get(path=path, data_ids=ids)
+        graph_id = result[GraphManager.ID]
 
-        if add_nodes:
-            self._add_nodes(result)
+        nodes = result[GraphManager.NODES]
+
+        # get is_root class method for cache reasons
+        is_root = TopologyManager.is_root
+        # find a root in nodes
+        for node in nodes:
+            # if a root is found
+            if is_root(node):
+                # compare root entity_id with graph_id
+                entity_id = node[GraphManager.ENTITY_ID]
+                if entity_id != graph_id:
+                    node[GraphManager.ENTITY_ID] = graph_id
+                    # in case of a difference, put the root with graph_id
+                    self.put_nodes(nodes=node)
+                break
+        else:  # if no root exist in topology
+            # create it
+            root = TopologyManager.new_node(
+                graph_id=graph_id,
+                entity_id=graph_id,
+                _type=TopologyManager.ROOT
+            )
+            # and put it in DB
+            self.put_nodes(nodes=root)
+            nodes.insert(0, root)
 
         return result
 
-    def find(self, regex=None, add_nodes=False):
+    @classmethod
+    def new_node(
+        cls,
+        data=None, weight=None, state=None, *args, **kwargs
+    ):
         """
-        Find topologies where id match with inpur regex_id
-        """
+        Apply GraphManager.new_node in adding weight and state in node data.
 
-        # get the right filter
-        _filter = Filter()
-        _filter.add_regex(
-            name=Storage.DATA_ID, value=regex, case_sensitive=True
-        )
-
-        # get the right path
-        path = {
-            Topology.TYPE: Topology.TOPOLOGY_TYPE
-        }
-
-        result = self[Topology.STORAGE].find(path=path, _filter=_filter)
-
-        if add_nodes:
-            self._add_nodes(result)
-
-        return result
-
-    def delete(self, ids=None):
-        """
-        Delete one or more topologies depending on input ids:
-
-            - an id: try to delete topology where id correspond to id
-            - list of ids: try to delete topologies where id are in input ids
-            - None: delete all topologies
+        :param dict data: node data.
+        :param float weight: node weight (default TopologyManager.WEIGHT = 1).
+        :param int state: node state (default TopologyManager.STATE = 0).
+        :param args: GraphManager.new_node varargs
+        :param kwargs: GraphManager.new_node kwargs
+        :return: GraphManager.new_node result with weight and state in node
+            data.
+        :rtype: dict
         """
 
-        path = {
-            Topology.TYPE: Topology.TOPOLOGY_TYPE
-        }
+        # initialize weight and state
+        if weight is None:
+            weight = TopologyManager.DEFAULT_WEIGHT
+        if state is None:
+            state = TopologyManager.DEFAULT_STATE
 
-        self[Topology.STORAGE].remove(path=path, data_ids=ids)
-
-    def delete_nodes(self, ids=None):
-        """
-        Delete one or more topology nodes depending on input ids:
-
-            - an id: delete the topology node where id corresponds to input id
-            - list of ids: delete topology nodes where ids equal input ids
-            - None: delete all topology nodes
-        """
-
-        path = {
-            Topology.TYPE: Topology.TOPOLOGY_NODE_TYPE
-        }
-
-        self[Topology.STORAGE].remove(path=path, data_ids=ids)
-
-    def push(self, topology):
-        """
-        Push one topology.
-        """
-
-        path = {
-            Topology.TYPE: Topology.TOPOLOGY_TYPE
-        }
-
-        _id = topology[Topology.ID]
-
-        # if topology contains nodes
-        if Topology.NODES in topology:
-            # get nodes
-            nodes = topology[Topology.NODES]
-            # in case of nodes are dictionaries
-            if nodes and isinstance(nodes[0], dict):
-                # add nodes
-                for node in nodes:
-                    self.push_node(node=node)
-                # and transform the content of topology nodes into node ids
-                nodes = [node[Topology.ID] for node in nodes]
-                topology[Topology.NODES] = nodes
-
-        # finally, put the topology in storage
-        self[Topology.STORAGE].put(path=path, data_id=_id, data=topology)
-
-    def push_node(self, node):
-        """
-        Push a node.
-        """
-
-        path = {
-            Topology.TYPE: Topology.TOPOLOGY_NODE_TYPE
-        }
-
-        _id = node.pop(Topology.ID)
-        self[Topology.STORAGE].put(path=path, data_id=_id, data=node)
-
-    def get_nodes(self, topology_id=None, ids=None):
-        """
-        Get topology nodes
-
-        :param str topology_id: topology id
-        :param ids: topology node id or list of ids
-        :type ids: str or list(str)
-
-        :return: depending on type of ids::
-            - str: node or None
-            - list: list of nodes
-        """
-
-        path = {
-            Topology.TYPE: Topology.TOPOLOGY_NODE_TYPE
-        }
-
-        _filter = None if topology_id is None else {
-            Topology.TOPOLOGY_ID: topology_id
-        }
-
-        result = self[Topology.STORAGE].get(
-            path=path, data_ids=ids, _filter=_filter)
-
-        return result
-
-    def find_bound_nodes(self, entity_id):
-        """
-        Find all nodes related to input entity_id
-        """
-
-        _filter = Filter()
-        _filter[Topology.ENTITY_ID] = entity_id
-
-        path = {
-            Topology.TYPE: Topology.TOPOLOGY_NODE_TYPE
-        }
-
-        result = self[Topology.STORAGE].find(path=path, _filter=_filter)
-
-        return result
-
-    def get_next_nodes(self, node):
-        """
-        Get next nodes from input source node.
-        """
-
-        result = []
-
-        if Topology.NEXT in node:
-            next_ids = node[Topology.NEXT]
-
-            path = {
-                Topology.TYPE: Topology.TOPOLOGY_NODE_TYPE
+        if data is None:
+            data = {
+                TopologyManager.WEIGHT: weight,
+                TopologyManager.STATE: state
             }
-
-            result = self[Topology.STORAGE].get(path=path, data_ids=next_ids)
-
-        return result
-
-    def find_source_nodes(self, node=None):
-        """
-        Get previous nodes from input next node. If node is None, get all root
-        nodes.
-        """
-
-        # get the right path
-        path = {
-            Topology.TYPE: Topology.TOPOLOGY_NODE_TYPE
-        }
-
-        # get the right filter
-        _filter = Filter()
-
-        if node is None:
-            # get root nodes which don't have next field or next field is empty
-            _filter[Topology.NEXT] = {
-                '$or': [
-                    {'$empty'},
-                    {'$not': {'$exists'}}
-                ]
-            }
-
         else:
-            node_id = node[Topology.ID]
-            _filter[Topology.NEXT] = node_id
+            data[TopologyManager.WEIGHT] = weight
+            data[TopologyManager.STATE] = state
 
-        result = self[Topology.STORAGE].get(path=path, _filter=_filter)
+        result = GraphManager.new_node(data=data, *args, **kwargs)
+
+        return result
+
+    @classmethod
+    def new_graph(cls, nodes=None, _type=None, *args, **kwargs):
+        """
+        Apply GraphManager.new_graph in ensuring a root exists in nodes.
+
+        :param str _type: graph type.
+        :param args: GraphManager.new_graph varargs
+        :param kwargs: GraphManager.new_graph kwargs
+        :return: GraphManager.new_graph result with a root in nodes.
+        :rtype: dict
+        """
+
+        root = None
+
+        if _type is None:
+            _type = cls.GRAPH_TYPE
+
+        if nodes is None:
+            nodes = []
+        else:
+            if isinstance(nodes, dict):
+                nodes = [nodes]
+            # try to find a root in nodes
+            for node in nodes:
+                if TopologyManager.is_root(node):
+                    root = node
+                    nodes.remove(root)
+                    break
+
+        if root is None:
+            root = TopologyManager.new_node(
+                graph_id='', _type=TopologyManager.ROOT)
+
+        # move the root at the beginning of nodes
+        nodes.insert(0, root)
+
+        result = GraphManager.new_graph(
+            nodes=nodes, _type=_type, *args, **kwargs)
 
         return result
 
-    def get_id(self, element):
+    @staticmethod
+    def is_root(node):
         """
-        Get input element id
+        Check if node is a root.
 
-        :param node: topology or topology node
+        :return: True if node is a root.
+        :rtype: bool
+        """
+        return node[GraphManager.TYPE] == TopologyManager.ROOT
+
+    @staticmethod
+    def is_cluster(node):
+        """
+        Check if node is a cluster.
+
+        :return: True if node is a cluster.
+        :rtype: bool
         """
 
-        result = element[Topology.ID]
-
-        return result
+        return node[GraphManager.TYPE] == TopologyManager.CLUSTER

@@ -109,50 +109,53 @@ class GraphManager(MiddlewareRegistry):
 
         self.context = Context()
 
-    def get_graph(self, graph_id, _type=None):
+    def get_graph(self, _id, _type=None):
         """
         Get one graph and optionally its nodes.
 
-        :param str graph_id: get a graph and its nodes related to input
-            graph_id
+        :param str _id: get a graph and its nodes related to input
+            _id
         :param str _type: graph type to retrieve (default
             GraphManager.GRAPH_TYPE)
         """
 
         # get the right path
         if _type is None:
-            _type = GraphManager.GRAPH_TYPE
+            _type = self.GRAPH_TYPE
 
-        result = self.context.get(_type=_type, names=graph_id)
+        result = self.context.get(_type=_type, names=_id)
 
         if result is not None:
-            nodes = self.get_nodes(graph_id=graph_id)
+            nodes = self.get_nodes(graph_id=_id)
             result[GraphManager.NODES] = nodes
 
         return result
 
-    def del_graph(self, graph_ids=None):
+    def del_graph(self, ids=None, _type=None):
         """
         Get graph elements related to input graph_id.
 
-        :param graph_ids: graph id from where get elements.
-        :type graph_ids: None, str or list
+        :param ids: graph id from where get elements.
+        :type ids: None, str or list
+        :param str _type: graph type to delete.
         """
 
+        if _type is None:
+            _type = self.GRAPH_TYPE
+
         # if graph ids is a str
-        if isinstance(graph_ids, str):
-            graph_ids = [graph_ids]
+        if isinstance(ids, str):
+            ids = [ids]
 
         # if graph ids is None, remove all
-        if graph_ids is None:
+        if ids is None:
             self[GraphManager.STORAGE].remove({})
 
         else:
-            for graph_id in graph_ids:
+            for graph_id in ids:
                 query = {GraphManager.GRAPH_ID: graph_id}
                 self[GraphManager.STORAGE].remove_elements(query=query)
-                self.context.remove(
-                    _type=GraphManager.GRAPH_TYPE, ids=graph_id)
+                self.context.remove(_type=_type, ids=graph_id)
 
     def put_graph(self, graph):
         """
@@ -174,7 +177,7 @@ class GraphManager(MiddlewareRegistry):
         if GraphManager.TYPE in graph:
             _type = graph[GraphManager.TYPE]
         else:
-            _type = GraphManager.GRAPH_TYPE
+            _type = self.GRAPH_TYPE
 
         # put nodes if they exist
         if GraphManager.NODES in graph:
@@ -207,10 +210,10 @@ class GraphManager(MiddlewareRegistry):
             # set node id
             if GraphManager.ID not in node:
                 node[GraphManager.ID] = str(uuid())
+            _id = node[GraphManager.ID]
             # set graph_id
             if graph_id is not None:
                 node[GraphManager.GRAPH_ID] = graph_id
-            _id = node[GraphManager.ID]
             # put node in storage
             self[GraphManager.STORAGE].put_element(_id=_id, element=node)
 
@@ -452,7 +455,7 @@ class GraphManager(MiddlewareRegistry):
 
         result[GraphManager.ID] = _id
 
-        result[GraphManager.NODES] = nodes
+        result[GraphManager.NODES] = nodes if nodes else []
 
         return result
 

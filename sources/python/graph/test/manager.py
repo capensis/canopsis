@@ -83,7 +83,7 @@ class GraphTest(TestCase):
         """
 
         self.graph.del_graph(
-            graph_ids=[g[GraphManager.ID] for g in self.graphs])
+            ids=[g[GraphManager.ID] for g in self.graphs])
 
     def test_get_graph_which_does_not_exist(self):
         """
@@ -92,7 +92,7 @@ class GraphTest(TestCase):
 
         # Test to get graph one by one
         for graph in self.graphs:
-            graph = self.graph.get_graph(graph_id=graph[GraphManager.ID])
+            graph = self.graph.get_graph(_id=graph[GraphManager.ID])
             self.assertIsNone(graph)
 
     def test_del_graph_which_does_not_exist(self):
@@ -102,11 +102,10 @@ class GraphTest(TestCase):
 
         # test elementary calls to del_graph
         for graph in self.graphs:
-            self.graph.del_graph(graph_ids=graph[GraphManager.ID])
+            self.graph.del_graph(ids=graph[GraphManager.ID])
 
         # test to del all graphs in one call
-        self.graph.del_graph(
-            graph_ids=[g[GraphManager.ID] for g in self.graphs])
+        self.graph.del_graph(ids=[g[GraphManager.ID] for g in self.graphs])
 
     def test_get_node_which_do_not_exists(self):
         """
@@ -145,7 +144,7 @@ class GraphTest(TestCase):
 
             # get graph id
             graph_id = graph[GraphManager.ID]
-            _graph = self.graph.get_graph(graph_id=graph_id)
+            _graph = self.graph.get_graph(_id=graph_id)
             # assert equality between graph and DB graph
             self.assertEqual(graph[GraphManager.ID], _graph[GraphManager.ID])
 
