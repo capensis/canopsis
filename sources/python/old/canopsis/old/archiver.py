@@ -35,7 +35,7 @@ CANCELED=4
 
 class Archiver(object):
 
-    def __init__(self, namespace, storage=None,
+    def __init__(self, namespace, confnamespace, storage=None,
                  autolog=False, logging_level=ERROR):
 
         self.logger = getLogger('Archiver')
@@ -57,6 +57,9 @@ class Archiver(object):
         else:
             self.storage = storage
 
+        self.conf_storage = get_storage(namespace=confnamespace,
+                                           logging_level=logging_level)
+        self.conf_collection = self.conf_storage.get_backend(confnamespace)
         self.collection = self.storage.get_backend(namespace)
 
     def beat(self):
@@ -67,23 +70,23 @@ class Archiver(object):
         self.stealthy_time = 360
         self.stealthy_show = 360
 
-        self.state_config = self.storage.find(
+        self.state_config = self.conf_collection.find(
             {'crecord_type': 'statusmanagement'}
             )
-        if len(self.state_config) == 1:
+        if self.state_config.count():
             self.state_config = self.state_config[0]
-            self.bagot_freq = self.state_config.setdefault('bagot_freq',
-                                                           10)
-            self.bagot_time = self.state_config.setdefault('bagot_time',
-                                                           3600)
-            self.stealthy_time = self.state_config.setdefault('stealthy_time',
-                                                              360)
-            self.stealthy_show = self.state_config.setdefault('stealthy_show',
-                                                              360)
-            self.restore_event = self.state_config.setdefault('restore_event',
-                                                              True)
+            self.bagot_freq = self.state_config.get('bagot_freq',
+                                                    10)
+            self.bagot_time = self.state_config.get('bagot_time',
+                                                    3600)
+            self.stealthy_time = self.state_config.get('stealthy_time',
+                                                       360)
+            self.stealthy_show = self.state_config.get('stealthy_show',
+                                                       360)
+            self.restore_event = self.state_config.get('restore_event',
+                                                       True)
 
-        self.logger.debug(
+        self.logger.info(
             "Checking stealthy events in collection {}".format(self.namespace)
             )
         for event in self.collection.find({'crecord_type': 'event', 'status': 2}):
