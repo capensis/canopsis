@@ -7,6 +7,7 @@ Engines
    engines
    consolidation
    derogation
+   datacleaner
    event-filter
    event-requalification
    selector

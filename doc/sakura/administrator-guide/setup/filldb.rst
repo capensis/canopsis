@@ -52,4 +52,4 @@ or in a document list:
    ]
 
 
-it is possible to prevent a document for beiing updated by the json loader by adding the ``loader_not_update`` key equals to **true** in the json document.
+it is possible to prevent a document for beiing updated by the json loader by adding the ``loader_no_update`` key equals to **true** in the json document.
