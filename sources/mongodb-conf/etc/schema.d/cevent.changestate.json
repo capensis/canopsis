@@ -46,8 +46,8 @@
 			"required": true
 		},
 		"cancel": {
-			"type": "number",
-			"required": true
+			"type": "object",
+			"required": false
 		},
 		"ref_rk": {
 			"type": "string",
