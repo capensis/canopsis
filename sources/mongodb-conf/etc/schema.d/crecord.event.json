@@ -43,7 +43,8 @@
 		},
 		"last_state_change": {
 			"type": "integer",
-			"role": "timestamp"
+			"role": "eventtimestamp",
+			"canDisplayAgo" : true
 		},
 		"ticket_date": {
 			"type": "number"
@@ -53,7 +54,7 @@
 		},
 		"timestamp": {
 			"type": "number",
-			"role": "eventtimestamp",
+			"role": "timestamp",
 			"canDisplayAgo" : true
 		},
 		"component": {
