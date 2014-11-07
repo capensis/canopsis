@@ -64,7 +64,7 @@
             "status",
             "state",
             "ack",
-            "timestamp"
+            "last_state_change"
           ],
           "searchable_columns": [
             "connector_name",
