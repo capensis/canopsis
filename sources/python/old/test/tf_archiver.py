@@ -301,7 +301,7 @@ class KnownValues(unittest.TestCase):
         self.logger.debug('+ 12 Bagot')
         self.remove_event(connector='12Bagot')
 
-        # KO -> OK (x10) : BAGOT
+        # KO -> OK (x3) : STEALTHY
         for i in xrange(3):
             self.publish_event(*event_ko(connector='12Bagot'))
             self.publish_event(*event_ok(connector='12Bagot'))
@@ -322,7 +322,7 @@ class KnownValues(unittest.TestCase):
         self.remove_event(connector='13Bagot')
 
         self.change_conf(sleep=1, bagot_freq=3)
-        # KO -> OK (x10) : BAGOT
+        # KO -> OK (x3) : BAGOT
         for i in xrange(3):
             self.publish_event(*event_ko(connector='13Bagot'))
             self.publish_event(*event_ok(connector='13Bagot'))
