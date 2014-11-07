@@ -28,7 +28,7 @@
 			"readOnly": true
 		},
 		"event_type": {
-			"enum": ["check"],
+			"enum": ["check", "eue"],
 			"required": true
 		},
 		"source_type": {
