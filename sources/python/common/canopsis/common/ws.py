@@ -28,6 +28,8 @@ from functools import wraps
 import traceback
 import logging
 
+from uuid import uuid4 as uuid
+
 
 def adapt_canopsis_data_to_ember(data):
     """
@@ -128,6 +130,9 @@ class route(object):
         And manage ``c`` such as a request body parameter.
     """
 
+    #: field to set intercepted function from the interceptor function
+    _INTERECPTED = str(uuid())
+
     def __init__(
         self, op, name=None, raw_body=False, payload=None, wsgi_params=None,
         response=response, adapt=True
@@ -160,14 +165,17 @@ class route(object):
 
     def __call__(self, function):
 
+        function = getattr(function, route._INTERECPTED, function)
+
         # generate an interceptor
         @wraps(function)
         def interceptor(*args, **kwargs):
-            self.logger.info('Request: {} - {} - {}, {} (params: {})'.format(
-                self.op.__name__.upper(),
-                self.url,
-                dumps(args), dumps(kwargs),
-                dumps(dict(request.params)))
+            self.logger.info(
+                'Request: {} - {} - {}, {} (params: {})'.format(
+                    self.op.__name__.upper(),
+                    self.url,
+                    dumps(args), dumps(kwargs),
+                    dumps(dict(request.params)))
             )
 
             if self.raw_body:
@@ -178,7 +186,7 @@ class route(object):
                 for body_param in self.payload:
                     # TODO: remove reference from bottle
                     param = request.params.get(body_param)
-                    # if param exists, add it into kwargs in deserializing it
+                    # if param exists add it in kwargs in deserializing it
                     if param is not None:
                         try:
                             kwargs[body_param] = loads(param)
@@ -212,12 +220,16 @@ class route(object):
 
             else:
                 if not isinstance(result_function, HTTPError):
-                    result = self.response(result_function, adapt=self.adapt)
+                    result = self.response(
+                        result_function, adapt=self.adapt)
 
                 else:
                     result = result_function
 
             return result
+
+            # set intercepted to interceptor
+            setattr(interceptor, route._INTERECPTED, function)
 
         # add routes
         argspec = getargspec(function)
