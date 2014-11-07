@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-#--------------------------------
+# --------------------------------
 # Copyright (c) 2014 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
@@ -25,6 +25,7 @@ from canopsis.old.storage import get_storage
 from datetime import datetime
 from time import time
 
+
 class engine(Engine):
     etype = "datacleaner"
 
@@ -45,14 +46,16 @@ class engine(Engine):
             account=Account(user='root')
         ).get_backend()
 
-        #task ran daily
+        # task ran daily
         self.beat_interval = 3600 * 24
 
-
-    def pre_run(self):
-
-        self.beat()
-
+    def get_configuration(self):
+        """ Retrieve engine configuration from database """
+        self.logger.info('Reloading configuration from database')
+        # Get engine configuration
+        return self.object.find_one(
+            {'crecord_type': 'datacleaner'}
+        )
 
     def get_retention_date(self):
 
@@ -63,32 +66,42 @@ class engine(Engine):
         # Alias
         datestr = datetime.utcfromtimestamp
 
-        # Get engine configuration
-        self.configuration = self.object.find_one(
-            {'crecord_type': 'datacleaner'}
-        )
+        # Easier to test this way
+        configuration = self.get_configuration()
 
-        if self.configuration == None:
-            self.logger.warning('No configuration found, cannot process data cleaning')
+        if configuration is None:
+            self.logger.warning(
+                'No configuration found, cannot process data cleaning'
+            )
             return None
 
-
         self.logger.info('configuration reloaded')
-        self.logger.debug(self.configuration)
+        self.logger.debug(configuration)
 
-        retention_duration = self.configuration['retention_duration']
+        retention_duration = configuration['retention_duration']
 
         # Compute retention duration compare date (compare with security date)
         compare_duration = int(time() - retention_duration)
 
+        # Just set security retention duration depending
+        # on user sercure information
+        if configuration['use_secure_delay']:
 
-        # Just set security retention duration depending on user sercure information
-        if self.configuration['use_secure_delay']:
-            security_duration_limit = int(time() - 3600 * 24 * 365) # one year
-            self.logger.info('Secure delay is set to true. datacleaner will use one year delay security')
+            security_duration_limit = int(time() - 3600 * 24 * 365)  # one year
+
+            self.logger.info(
+                'Secure delay is set to true.' +
+                ' datacleaner will use one year delay security'
+            )
+
         else:
-            security_duration_limit = int(time()) # now
-            self.logger.info('Secure delay is set to false. datacleaner will use user delay')
+
+            security_duration_limit = int(time())  # now
+
+            self.logger.info(
+                'Secure delay is set to false.' +
+                ' datacleaner will use user delay'
+            )
 
         self.logger.debug(
             'retention ts {}, security ts {}'.format(
@@ -111,13 +124,12 @@ class engine(Engine):
 
         return compare_duration
 
-
     def beat(self):
 
         # getting retention date limit
         retention_date_limit = self.get_retention_date()
 
-        if retention_date_limit == None:
+        if retention_date_limit is None:
             return
 
         # formating query for deletion
@@ -147,8 +159,6 @@ class engine(Engine):
             # effective collection clean
             count = clean_collection.remove(query)
 
-
             self.logger.info('Clean complete for collection {}'.format(
                 collection
             ))
-
