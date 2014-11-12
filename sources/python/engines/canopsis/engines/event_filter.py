@@ -273,6 +273,10 @@ class engine(Engine):
                         return self.a_drop(event, None, None, name)
                     to_apply.append((name, action))
 
+                if filterItem.get('break'):
+                    self.logger.debug('Filter {} stopped the processing of further fiters'.format(filter))
+                    break
+
         if len(to_apply):
             if self.apply_actions(event, to_apply):
                 self.logger.debug('Event before sent to next engine: %s' % event)
@@ -296,12 +300,13 @@ class engine(Engine):
         """ Configuration reload for realtime ui changes handling """
         self.derogations = []
         self.configuration = {'rules': [],
-                      'default_action': self.find_default_action()}
+                              'default_action': self.find_default_action()}
 
         self.logger.debug('Reload configuration rules')
         try:
-            records = self.storage.find({'crecord_type': 'filter', 'enable': True},
-                            sort='priority')
+            records = self.storage.find(
+                {'crecord_type': 'filter', 'enable': True}, sort='priority'
+                )
 
             for record in records:
                 record_dump = record.dump()
