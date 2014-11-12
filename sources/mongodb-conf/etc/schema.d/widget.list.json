@@ -142,6 +142,10 @@
 			"type": "string",
 			"role": "cfilter"
 		},
+		"additional_filter": {
+			"type": "string",
+			"role": "cfilter"
+		},
 		"maximized_column_index": {
 			"type": "integer",
 			"title": "Maximized column index",
