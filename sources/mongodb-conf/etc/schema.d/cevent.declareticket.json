@@ -28,7 +28,7 @@
 			"role": "source"
 		},
 		"event_type": {
-			"enum": ["declare-ticket"],
+			"enum": ["declareticket"],
 			"required": true
 		},
 		"source_type": {
@@ -55,7 +55,7 @@
 		},
 		"output": {
 			"type": "string",
-			"required": true,
+			"required": false,
 			"title": " ",
 			"description": "Remarque ..."
 		},

@@ -26,7 +26,6 @@ function install(){
 	easy_install_pylib pytz
 	easy_install_pylib kombu
 	easy_install_pylib polib
-	easy_install_pylib redis
 	easy_install_pylib python-ldap
 	easy_install_pylib validictory
 	easy_install_pylib psutil==1.0.1
