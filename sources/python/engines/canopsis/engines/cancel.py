@@ -29,13 +29,13 @@ class engine(Engine):
     etype = 'cancel'
 
     """
-        This engine's goal is to compute an event cancellation.
-        Event cancellation can be triggered from UI and will change event information within database.
+    This engine's goal is to compute an event cancellation.
+    Event cancellation can be triggered from UI and will change event
+    information within database.
     """
 
     def __init__(self, *args, **kargs):
         super(engine, self).__init__(*args, **kargs)
-
 
     def pre_run(self):
         self.storage = get_storage(
@@ -46,10 +46,12 @@ class engine(Engine):
 
     def work(self, event, *args, **kargs):
 
-        if event['event_type'] in ['cancel','uncancel']:
+        if event['event_type'] in ['cancel', 'uncancel']:
 
-            devent = self.storage.get_backend().find_one({'rk': event['ref_rk']})
-            if devent != None:
+            devent = self.storage.get_backend().find_one(
+                {'rk': event['ref_rk']}
+            )
+            if devent is not None:
 
                 update = {}
                 update_query = {}
@@ -61,11 +63,11 @@ class engine(Engine):
                 if event['event_type'] == 'cancel':
                     ack_info = devent.get('ack', {})
                     #Saving status, in case cancel is undone
-                    # If cancel is not in ok state, then it is not an alert cancellation
+                    # If cancel is not in ok, it's not an alert cancellation
                     update['cancel'] = {
                         'timestamp': time(),
-                        'author' : event.get('author','unknown'),
-                        'comment' : event['output'],
+                        'author': event.get('author', 'unknown'),
+                        'comment': event['output'],
                         'previous_status': devent.get('status', 1),
                     }
                     self.logger.info("set cancel to the event")
@@ -90,10 +92,14 @@ class engine(Engine):
 
                         #Restore previous status
                         if 'cancel' in devent:
-                            update['status'] = devent['cancel'].get('previous_status', 0)
+                            update['status'] = devent['cancel'].get(
+                                'previous_status',
+                                0
+                            )
                             update_query['$unset'] = {'cancel': ''}
-                            event['output'] = 'Undo remove for alert {} {}'.format(
-                                devent.get('component',''),
+                            output = 'Undo remove for alert {} {}'
+                            event['output'] = output.format(
+                                devent.get('component', ''),
                                 devent.get('resource', '')
                             )
 
@@ -101,4 +107,7 @@ class engine(Engine):
 
                 #update database with cancel informations
                 if update:
-                    self.storage.get_backend().update({'rk': event['ref_rk']}, update_query)
+                    self.storage.get_backend().update(
+                        {'rk': event['ref_rk']},
+                        update_query
+                    )
