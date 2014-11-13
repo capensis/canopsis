@@ -115,6 +115,7 @@ class KnownValues(unittest.TestCase):
             logging_level=logging_level,
             logging_name='Amqp'
             )
+        cls.remove_event(resource='test', crecord_type='event')
 
     def setUp(self):
         # Restore default conf

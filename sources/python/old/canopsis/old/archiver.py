@@ -25,6 +25,8 @@ from canopsis.old.storage import get_storage
 from canopsis.old.account import Account
 from canopsis.old.record import Record
 from canopsis.old.tools import legend, uniq
+from canopsis.old.rabbitmq import Amqp
+from canopsis.old.event import get_routingkey
 
 legend_type = ['soft', 'hard']
 OFF=0
@@ -62,7 +64,20 @@ class Archiver(object):
         self.conf_collection = self.conf_storage.get_backend(confnamespace)
         self.collection = self.storage.get_backend(namespace)
 
+        self.amqp = Amqp(
+            logging_level=logging_level,
+            logging_name='archiver-amqp'
+            )
+
     def beat(self):
+        def _publish_event(event):
+            self.logger.info("Sending event {}".format(event))
+            self.amqp.publish(
+                event,
+                event.get('rk', get_routingkey(event)),
+                'canopsis.events'
+                )
+
         # Default values
         self.restore_event = True
         self.bagot_freq = 10
@@ -86,7 +101,7 @@ class Archiver(object):
             self.restore_event = self.state_config.get('restore_event',
                                                        True)
 
-        self.logger.info(
+        self.logger.debug(
             "Checking stealthy events in collection {}".format(self.namespace)
             )
         for event in self.collection.find({'crecord_type': 'event', 'status': 2}):
@@ -95,15 +110,16 @@ class Archiver(object):
                 {'status': 2, 'ts_first_stealthy': event['ts_first_stealthy']},
                 time()
                 ):
-                self.logger.debug(
+                self.logger.info(
                     "Event {} no longer Stealthy".format(event['rk'])
                     )
                 if not event['state']:
                     self.set_status(event, OFF)
-                    self.store_new_event(event['_id'], event)
                 else:
                     self.set_status(event, ONGOING)
-                    self.store_new_event(event['_id'], event)
+                self.store_new_event(event['_id'], event)
+                event['pass_status'] = 1
+                _publish_event(event)
 
 
     def is_bagot(self, event):
@@ -196,6 +212,9 @@ class Archiver(object):
             devent map of the previous evet
         """
 
+        if event.get('pass_status', 0):
+            event['pass_status'] = 0
+            return
         ts_curr = event['timestamp']
         ts_prev = devent['timestamp']
         event['bagot_freq'] = devent.get('bagot_freq', 0)
