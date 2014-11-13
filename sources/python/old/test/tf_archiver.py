@@ -73,34 +73,35 @@ def event_ko(**kwargs):
 
 class KnownValues(unittest.TestCase):
 
-    def setUp(self):
-        self.logger = logging.getLogger('TF_Archiver')
-        self.logger.setLevel(logging_level)
+    @classmethod
+    def setUpClass(cls):
+        cls.logger = logging.getLogger('TF_Archiver')
+        cls.logger.setLevel(logging_level)
 
         stdout_handler = logging.StreamHandler(sys.stdout)
         stdout_handler.setLevel(logging_level)
         stdout_handler.setFormatter(logging.Formatter(
                 '%(asctime)s [%(name)s] [%(levelname)s] %(message)s'
             ))
-        self.logger.addHandler(stdout_handler)
+        cls.logger.addHandler(stdout_handler)
 
-        self.logger.debug(' + Init TF_Archiver on %s' % namespace)
-        self.account = Account(user='root', group='root')
+        cls.logger.debug(' + Init TF_Archiver on %s' % namespace)
+        cls.account = Account(user='root', group='root')
 
-        self.logger.debug(' + Get storage')
-        self.storage = get_storage(namespace=namespace,
+        cls.logger.debug(' + Get storage')
+        cls.storage = get_storage(namespace=namespace,
                                    logging_level=logging_level)
-        self.collection = self.storage.get_backend('events')
+        cls.collection = cls.storage.get_backend('events')
 
-        self.default_conf = self.collection.find(
+        cls.default_conf = cls.collection.find(
             {'crecord_type': 'statusmanagement'},
             namespace='object'
             )
 
-        if self.default_conf.count():
-            self.default_conf = self.default_conf[0]
+        if cls.default_conf.count():
+            cls.default_conf = cls.default_conf[0]
         else:
-            self.default_conf =  {
+            cls.default_conf =  {
                 '_id': 'statusmanagement',
                 'crecord_type': 'statusmanagement',
                 'restore_event': True,
@@ -110,10 +111,22 @@ class KnownValues(unittest.TestCase):
                 'stealthy_show': 300
             }
 
-        self.amqp = Amqp(
+        cls.amqp = Amqp(
             logging_level=logging_level,
             logging_name='Amqp'
             )
+
+    def setUp(self):
+        # Restore default conf
+        self.change_conf()
+        # Get current test name
+        test_func = self.id().split('.')[-1].split('_')
+        self.current_test = test_func[1] + ' ' + test_func[2].capitalize()
+        self.logger.debug('+ {0}'.format(self.current_test))
+
+    def tearDown(self):
+        # Remove events
+        self.remove_event(connector=self.current_test)
 
     def change_conf(self, sleep=1, **kwargs):
         conf = self.default_conf.copy()
@@ -154,182 +167,122 @@ class KnownValues(unittest.TestCase):
         return {'status': -1}
 
     def test_01_off_basic_ok(self):
-        self.logger.debug('+ 01 Off')
-        self.remove_event(connector='01Off')
-
         # OK : OFF
         self.publish_event(*event_ok(connector='01Off'))
         self.assertEqual(self.find_event('01Off')['status'], OFF)
 
     def test_02_off_basic_okokokokok(self):
-        self.logger.debug('+ 02 Off')
-        self.remove_event(connector='02Off')
-
         # OK -> OK -> OK -> OK -> OK : OFF
-        self.publish_event(*event_ok(connector='02Off'))
-        self.publish_event(*event_ok(connector='02Off'))
-        self.publish_event(*event_ok(connector='02Off'))
-        self.publish_event(*event_ok(connector='02Off'))
-        self.publish_event(*event_ok(connector='02Off'))
-        self.assertEqual(self.find_event('02Off')['status'], OFF)
+        self.publish_event(*event_ok(connector='02 Off'))
+        self.publish_event(*event_ok(connector='02 Off'))
+        self.publish_event(*event_ok(connector='02 Off'))
+        self.publish_event(*event_ok(connector='02 Off'))
+        self.publish_event(*event_ok(connector='02 Off'))
+        self.assertEqual(self.find_event('02 Off')['status'], OFF)
 
     def test_03_off_basic_kook_stealthytime(self):
-        self.logger.debug('+ 03 Off')
-        self.remove_event(connector='03Off')
-
         # Reduce time of stealthy time so the switch from KO to OK
         # does not trigger the Stealthy status
         self.change_conf(sleep=5, stealthy_time=1)
 
         # KO -> OK : OFF
-        self.publish_event(*event_ko(connector='03Off'), sleep=2)
-        self.publish_event(*event_ok(connector='03Off'))
-        self.assertEqual(self.find_event('03Off')['status'], OFF)
-
-        # Restore default conf
-        self.change_conf()
+        self.publish_event(*event_ko(connector='03 Off'), sleep=2)
+        self.publish_event(*event_ok(connector='03 Off'))
+        self.assertEqual(self.find_event('03 Off')['status'], OFF)
 
     def test_04_off_basic_okkook_stealthytime(self):
-        self.logger.debug('+ 04 Off')
-        self.remove_event(connector='04Off')
-
         # Reduce time of stealthy time so the switch from KO to OK
         # does not trigger the Stealthy status
         self.change_conf(sleep=5, stealthy_time=1)
 
         # KO -> OK : OFF
-        self.publish_event(*event_ok(connector='04Off'), sleep=2)
-        self.publish_event(*event_ko(connector='04Off'), sleep=2)
-        self.publish_event(*event_ok(connector='04Off'))
-        self.assertEqual(self.find_event('04Off')['status'], OFF)
-
-        # Restore default conf
-        self.change_conf()
+        self.publish_event(*event_ok(connector='04 Off'), sleep=2)
+        self.publish_event(*event_ko(connector='04 Off'), sleep=2)
+        self.publish_event(*event_ok(connector='04 Off'))
+        self.assertEqual(self.find_event('04 Off')['status'], OFF)
 
     def test_05_off_ko_ok_stealthyshow(self):
-        self.logger.debug('+ 05 Off')
-        self.remove_event(connector='05Off')
-
         # KO -> OK : STEALTHY [5s] OFF
-        self.publish_event(*event_ko(connector='05Off'))
-        self.publish_event(*event_ok(connector='05Off'))
-        self.assertEqual(self.find_event('05Off')['status'], STEALTHY)
+        self.publish_event(*event_ko(connector='05 Off'))
+        self.publish_event(*event_ok(connector='05 Off'))
+        self.assertEqual(self.find_event('05 Off')['status'], STEALTHY)
 
         # Reduce the time of stealthy show so the event goes from STEALTHY
         # to basic state avec 2 sec
         self.change_conf(sleep=5, stealthy_show=2)
-        self.assertEqual(self.find_event('05Off')['status'], OFF)
-
-        # Restore default conf
-        self.change_conf()
+        self.assertEqual(self.find_event('05 Off')['status'], OFF)
 
     def test_06_ongoing_basic_okko(self):
-        self.logger.debug('+ 06 OnGoing')
-        self.remove_event(connector='06OnGoing')
-
         # OK -> KO : ONGOING
-        self.publish_event(*event_ok(connector='06OnGoing'))
-        self.publish_event(*event_ko(connector='06OnGoing'))
-        self.assertEqual(self.find_event('06OnGoing')['status'], ONGOING)
+        self.publish_event(*event_ok(connector='06 OnGoing'))
+        self.publish_event(*event_ko(connector='06 OnGoing'))
+        self.assertEqual(self.find_event('06 OnGoing')['status'], ONGOING)
 
     def test_07_ongoing_okkokook_stealthytime(self):
-        self.logger.debug('+ 07 OnGoing')
-        self.remove_event(connector='07OnGoing')
-
         self.change_conf(sleep=5, stealthy_time=1)
 
         # OK -> KO : ONGOING
-        self.publish_event(*event_ok(connector='07OnGoing'), sleep=2)
-        self.publish_event(*event_ko(connector='07OnGoing'), sleep=2)
-        self.publish_event(*event_ok(connector='07OnGoing'), sleep=2)
-        self.publish_event(*event_ko(connector='07OnGoing'), sleep=2)
-        self.assertEqual(self.find_event('07OnGoing')['status'], ONGOING)
-
-        # Restore default conf
-        self.change_conf()
+        self.publish_event(*event_ok(connector='07 OnGoing'), sleep=2)
+        self.publish_event(*event_ko(connector='07 OnGoing'), sleep=2)
+        self.publish_event(*event_ok(connector='07 OnGoing'), sleep=2)
+        self.publish_event(*event_ko(connector='07 OnGoing'), sleep=2)
+        self.assertEqual(self.find_event('07 OnGoing')['status'], ONGOING)
 
     def test_08_ongoing_okkookko_stealthyshow(self):
-        self.logger.debug('+ 08 OnGoing')
-        self.remove_event(connector='08OnGoing')
-
         # OK -> KO : ONGOING
-        self.publish_event(*event_ok(connector='08OnGoing'))
-        self.publish_event(*event_ko(connector='08OnGoing'))
-        self.publish_event(*event_ok(connector='08OnGoing'))
-        self.publish_event(*event_ko(connector='08OnGoing'))
-        self.assertEqual(self.find_event('08OnGoing')['status'], STEALTHY)
+        self.publish_event(*event_ok(connector='08 OnGoing'))
+        self.publish_event(*event_ko(connector='08 OnGoing'))
+        self.publish_event(*event_ok(connector='08 OnGoing'))
+        self.publish_event(*event_ko(connector='08 OnGoing'))
+        self.assertEqual(self.find_event('08 OnGoing')['status'], STEALTHY)
 
         # Reduce the time of stealthy show so the event goes from STEALTHY
         # to basic state avec 2 sec
         self.change_conf(sleep=5, stealthy_show=2)
-        self.assertEqual(self.find_event('08OnGoing')['status'], ONGOING)
-
-        # Restore default conf
-        self.change_conf()
+        self.assertEqual(self.find_event('08 OnGoing')['status'], ONGOING)
 
     def test_09_stealthy_basic_kook(self):
-        self.logger.debug('+ 09 Stealthy')
-        self.remove_event(connector='09Stealthy')
-
         # KO -> OK : STEALTHY
-        self.publish_event(*event_ko(connector='09Stealthy'))
-        self.publish_event(*event_ok(connector='09Stealthy'))
-        self.assertEqual(self.find_event('09Stealthy')['status'], STEALTHY)
+        self.publish_event(*event_ko(connector='09 Stealthy'))
+        self.publish_event(*event_ok(connector='09 Stealthy'))
+        self.assertEqual(self.find_event('09 Stealthy')['status'], STEALTHY)
 
     def test_10_stealthy_basic_okkook(self):
-        self.logger.debug('+ 10 Stealthy')
-        self.remove_event(connector='10Stealthy')
-
         # OK -> KO -> OK : STEALTHY
-        self.publish_event(*event_ok(connector='10Stealthy'))
-        self.publish_event(*event_ko(connector='10Stealthy'))
-        self.publish_event(*event_ok(connector='10Stealthy'))
-        self.assertEqual(self.find_event('10Stealthy')['status'], STEALTHY)
+        self.publish_event(*event_ok(connector='10 Stealthy'))
+        self.publish_event(*event_ko(connector='10 Stealthy'))
+        self.publish_event(*event_ok(connector='10 Stealthy'))
+        self.assertEqual(self.find_event('10 Stealthy')['status'], STEALTHY)
 
     def test_11_stealthy_basic_kookokko(self):
-        self.logger.debug('+ 11 Stealthy')
-        self.remove_event(connector='11Stealthy')
-
         # OK -> KO -> OK : STEALTHY
-        self.publish_event(*event_ko(connector='11Stealthy'))
-        self.publish_event(*event_ok(connector='11Stealthy'))
-        self.publish_event(*event_ok(connector='11Stealthy'))
-        self.publish_event(*event_ko(connector='11Stealthy'))
-        self.assertEqual(self.find_event('11Stealthy')['status'], STEALTHY)
+        self.publish_event(*event_ko(connector='11 Stealthy'))
+        self.publish_event(*event_ok(connector='11 Stealthy'))
+        self.publish_event(*event_ok(connector='11 Stealthy'))
+        self.publish_event(*event_ko(connector='11 Stealthy'))
+        self.assertEqual(self.find_event('11 Stealthy')['status'], STEALTHY)
 
     def test_12_stealthy_notbagot(self):
-        self.logger.debug('+ 12 Bagot')
-        self.remove_event(connector='12Bagot')
-
         # KO -> OK (x3) : STEALTHY
         for i in xrange(3):
-            self.publish_event(*event_ko(connector='12Bagot'))
-            self.publish_event(*event_ok(connector='12Bagot'))
-        self.assertEqual(self.find_event('12Bagot')['status'], STEALTHY)
+            self.publish_event(*event_ko(connector='12 Bagot'))
+            self.publish_event(*event_ok(connector='12 Bagot'))
+        self.assertEqual(self.find_event('12 Bagot')['status'], STEALTHY)
 
     def test_13_bagot_basic(self):
-        self.logger.debug('+ 13 Bagot')
-        self.remove_event(connector='13Bagot')
-
         # KO -> OK (x10) : BAGOT
         for i in xrange(10):
-            self.publish_event(*event_ko(connector='13Bagot'))
-            self.publish_event(*event_ok(connector='13Bagot'))
-        self.assertEqual(self.find_event('13Bagot')['status'], BAGOT)
+            self.publish_event(*event_ko(connector='13 Bagot'))
+            self.publish_event(*event_ok(connector='13 Bagot'))
+        self.assertEqual(self.find_event('13 Bagot')['status'], BAGOT)
 
-    def test_13_bagot_basic(self):
-        self.logger.debug('+ 13 Bagot')
-        self.remove_event(connector='13Bagot')
-
+    def test_14_bagot_basic(self):
         self.change_conf(sleep=1, bagot_freq=3)
         # KO -> OK (x3) : BAGOT
         for i in xrange(3):
-            self.publish_event(*event_ko(connector='13Bagot'))
-            self.publish_event(*event_ok(connector='13Bagot'))
-        self.assertEqual(self.find_event('13Bagot')['status'], BAGOT)
-
-        # Restore conf
-        self.change_conf()
+            self.publish_event(*event_ko(connector='14 Bagot'))
+            self.publish_event(*event_ok(connector='14 Bagot'))
+        self.assertEqual(self.find_event('14 Bagot')['status'], BAGOT)
 
 if __name__ == '__main__':
     unittest.main(verbosity=2)
