@@ -131,7 +131,7 @@ class route(object):
     """
 
     #: field to set intercepted function from the interceptor function
-    _INTERECPTED = str(uuid())
+    _INTERCEPTED = str(uuid())
 
     def __init__(
         self, op, name=None, raw_body=False, payload=None, wsgi_params=None,
@@ -165,7 +165,7 @@ class route(object):
 
     def __call__(self, function):
 
-        function = getattr(function, route._INTERECPTED, function)
+        function = getattr(function, route._INTERCEPTED, function)
 
         # generate an interceptor
         @wraps(function)
@@ -228,8 +228,8 @@ class route(object):
 
             return result
 
-            # set intercepted to interceptor
-            setattr(interceptor, route._INTERECPTED, function)
+        # set intercepted to interceptor
+        setattr(interceptor, route._INTERCEPTED, function)
 
         # add routes
         argspec = getargspec(function)
