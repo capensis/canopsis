@@ -19,7 +19,7 @@
 		},
 		"resource": {
 			"type": "string",
-			"required": true,
+			"required": false,
 			"readOnly": true
 		},
 		"connector_name": {
