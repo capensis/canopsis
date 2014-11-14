@@ -59,7 +59,8 @@ def event(name, state, **kwargs):
         'resource'      : 'test',
         'state'         : state,
         'crecord_type'  : 'event',
-        'state_type'    : 1
+        'state_type'    : 1,
+        'pass_event'    : 1,
         }
     for key in kwargs:
         event[key] = kwargs[key]
@@ -115,7 +116,11 @@ class KnownValues(unittest.TestCase):
             logging_level=logging_level,
             logging_name='Amqp'
             )
-        cls.remove_event(resource='test', crecord_type='event')
+
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.remove_event(crecord_type='event', pass_event=1)
 
     def setUp(self):
         # Restore default conf
@@ -156,8 +161,9 @@ class KnownValues(unittest.TestCase):
             )
         time.sleep(1+sleep)
 
-    def remove_event(self, **kwargs):
-        self.collection.remove(kwargs)
+    @classmethod
+    def remove_event(cls, **kwargs):
+        cls.collection.remove()
         time.sleep(1)
 
     def find_event(self, connector):
@@ -169,8 +175,8 @@ class KnownValues(unittest.TestCase):
 
     def test_01_off_basic_ok(self):
         # OK : OFF
-        self.publish_event(*event_ok(connector='01Off'))
-        self.assertEqual(self.find_event('01Off')['status'], OFF)
+        self.publish_event(*event_ok(connector='01 Off'))
+        self.assertEqual(self.find_event('01 Off')['status'], OFF)
 
     def test_02_off_basic_okokokokok(self):
         # OK -> OK -> OK -> OK -> OK : OFF
