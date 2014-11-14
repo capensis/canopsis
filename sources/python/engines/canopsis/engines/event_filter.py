@@ -246,9 +246,6 @@ class engine(Engine):
         rules = self.configuration.get('rules', [])
         to_apply = []
 
-        if event['connector_name'] != 'testevent':
-            return event
-
         # When list configuration then check black and
         # white lists depending on json configuration
         for filterItem in rules:
@@ -269,12 +266,11 @@ class engine(Engine):
                 for action in actions:
                     if action['type'] == 'DROP':
                         self.apply_actions(event, to_apply)
-                        self.logger.info('DROP THAT SHIT')
                         return self.a_drop(event, None, None, name)
                     to_apply.append((name, action))
 
-                if filterItem.get('break'):
-                    self.logger.debug('Filter {} stopped the processing of further fiters'.format(filter))
+                if filterItem.get('break', 0):
+                    self.logger.debug('Filter {} stopped the processing of further fiters'.format(filterItem))
                     break
 
         if len(to_apply):
