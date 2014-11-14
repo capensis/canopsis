@@ -18,6 +18,14 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
+"""
+WS: web services module
+-----------------------
+
+This module provides tools in order to ease the use of web services in python
+code.
+"""
+
 from inspect import getargspec
 
 from canopsis.common.utils import ensure_iterable, isiterable
