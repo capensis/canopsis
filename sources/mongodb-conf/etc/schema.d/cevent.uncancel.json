@@ -57,7 +57,7 @@
 		},
 		"output": {
 			"type": "string",
-			"required": true,
+			"required": false,
 			"readOnly": true
 		}
 	}
