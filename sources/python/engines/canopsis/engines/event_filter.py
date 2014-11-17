@@ -139,7 +139,7 @@ class engine(Engine):
             return False
 
 
-    def a_modify(self, event, action, name):
+    def a_modify(self, event, action, _name):
         """
         Args:
             event map of the event to be modified
@@ -148,6 +148,7 @@ class engine(Engine):
         Returns:
             ``None``
         """
+
 
         derogated = False
         atype = action.get('type', None)
@@ -182,7 +183,7 @@ class engine(Engine):
         self.drop_event_count += 1
         return DROP
 
-    def a_pass(self, event, action, name):
+    def a_pass(self, event, derogation, action, name):
         """
         Pass the event to the next queue
         Args:
@@ -218,33 +219,19 @@ class engine(Engine):
 
         return None
 
-    def apply_actions(self, event, actions):
-        pass_event = False
-        actionMap = {'drop': self.a_drop,
-                     'pass': self.a_pass,
-                     'override': self.a_modify,
-                     'remove': self.a_modify,
-                     'route': self.a_route}
-
-        for name, action in actions:
-            if (action['type'] in actionMap):
-                ret = actionMap[action['type']](event, action, name)
-                if ret:
-                    pass_event = True
-            else:
-                self.logger.warning("Unknown action '%s'" % action)
-
-        return pass_event
-
     def work(self, event, *xargs, **kwargs):
 
         rk = get_routingkey(event)
         default_action = self.configuration.get('default_action', 'pass')
 
         # list of actions supported
+        actionMap = {'drop': self.a_drop,
+                     'pass': self.a_pass,
+                     'override': self.a_modify,
+                     'remove': self.a_modify,
+                     'route': self.a_route}
 
         rules = self.configuration.get('rules', [])
-        to_apply = []
 
         # When list configuration then check black and
         # white lists depending on json configuration
@@ -253,7 +240,7 @@ class engine(Engine):
             name = filterItem.get('name', 'no_name')
 
             self.logger.debug(
-                'Event: {}, will apply rule {}'.format(event, filterItem)
+                'Event: {}, will apply rule {}'.format(event['rk'], filterItem)
                 )
             self.logger.debug('filter is {}'.format(filterItem['mfilter']))
             # Try filter rules on current event
@@ -264,20 +251,20 @@ class engine(Engine):
                     )
 
                 for action in actions:
-                    if action['type'] == 'DROP':
-                        self.apply_actions(event, to_apply)
-                        return self.a_drop(event, None, None, name)
-                    to_apply.append((name, action))
+                    if (action['type'] in actionMap):
+                        if action['type'] != 'DROP':
+                            actions.append({'type': 'pass'})
+                        ret = actionMap[action['type']](event, filterItem,
+                                        action, name)
+                        # If pass then ret == event; end loop
+                        if ret:
+                            if ret != DROP:
+                                event['rk'] = event['_id'] = get_routingkey(event)
+                                return event
+                            return DROP
 
-                if filterItem.get('break', 0):
-                    self.logger.debug('Filter {} stopped the processing of further fiters'.format(filterItem))
-                    break
-
-        if len(to_apply):
-            if self.apply_actions(event, to_apply):
-                self.logger.debug('Event before sent to next engine: %s' % event)
-                event['rk'] = event['_id'] = get_routingkey(event)
-                return event
+                    else:
+                        self.logger.warning("Unknown action '%s'" % action)
 
         # No rules matched
         if default_action == 'drop':
@@ -290,19 +277,19 @@ class engine(Engine):
 
         self.logger.debug('Event before sent to next engine: %s' % event)
         event['rk'] = event['_id'] = get_routingkey(event)
+
         return event
 
     def beat(self, *args, **kargs):
         """ Configuration reload for realtime ui changes handling """
         self.derogations = []
         self.configuration = {'rules': [],
-                              'default_action': self.find_default_action()}
+                      'default_action': self.find_default_action()}
 
         self.logger.debug('Reload configuration rules')
         try:
-            records = self.storage.find(
-                {'crecord_type': 'filter', 'enable': True}, sort='priority'
-                )
+            records = self.storage.find({'crecord_type': 'filter', 'enable': True},
+                            sort='priority')
 
             for record in records:
                 record_dump = record.dump()
