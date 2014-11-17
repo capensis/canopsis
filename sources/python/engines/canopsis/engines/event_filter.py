@@ -149,7 +149,6 @@ class engine(Engine):
             ``None``
         """
 
-
         derogated = False
         atype = action.get('type', None)
         actionMap = {'override': self.a_override,
@@ -172,7 +171,6 @@ class engine(Engine):
         Drop the event
         Args:
             event map of the event to be modified
-            derogation map of the filter that matched the event
             action map of type action
             _name of the rule
         Returns:
@@ -183,12 +181,11 @@ class engine(Engine):
         self.drop_event_count += 1
         return DROP
 
-    def a_pass(self, event, derogation, action, name):
+    def a_pass(self, event, action, name):
         """
         Pass the event to the next queue
         Args:
             event map of the event to be modified
-            derogation map of the filter that matched the event
             action map of type action
             _name of the rule
         Returns:
@@ -204,7 +201,6 @@ class engine(Engine):
         Change the route to which an event will be sent
         Args:
             event map of the event to be modified
-            derogation map of the filter that matched the event
             action map of type action
             _name of the rule
         Returns:
@@ -254,8 +250,7 @@ class engine(Engine):
                     if (action['type'] in actionMap):
                         if action['type'] != 'DROP':
                             actions.append({'type': 'pass'})
-                        ret = actionMap[action['type']](event, filterItem,
-                                        action, name)
+                        ret = actionMap[action['type']](event, action, name)
                         # If pass then ret == event; end loop
                         if ret:
                             if ret != DROP:
