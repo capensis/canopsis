@@ -7,8 +7,8 @@ msgstr ""
 "Project-Id-Version: Canopsis\n"
 "Report-Msgid-Bugs-To: teamcanopsis@capensis.fr\n"
 "POT-Creation-Date: 2014-08-22 10:00+0100\n"
-"PO-Revision-Date: 2014-10-17 13:02+0000\n"
-"Last-Translator: Mourcia Mikael <mmourcia@yahoo.fr>\n"
+"PO-Revision-Date: 2014-11-18 16:36+0000\n"
+"Last-Translator: eric regnier <eregnier@capensis.fr>\n"
 "Language-Team: French (http://www.transifex.com/projects/p/canopsis/language/fr/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -287,7 +287,7 @@ msgid "created"
 msgstr "créé"
 
 msgid "sla_timewindow_doUnknown"
-msgstr ""
+msgstr "fenêtre de temps SLA à ne pas prendre en compte"
 
 msgid "of"
 msgstr "des"
@@ -779,7 +779,7 @@ msgid "Performance Data"
 msgstr "Données de performance"
 
 msgid "Streaming"
-msgstr ""
+msgstr "Flux d'information"
 
 msgid "equal"
 msgstr "égal"
@@ -809,7 +809,7 @@ msgid "By"
 msgstr "Par"
 
 msgid "days ago"
-msgstr ""
+msgstr "jours"
 
 msgid "Assign ticket number"
 msgstr "Assigner un ticket"
@@ -824,7 +824,7 @@ msgid "authkey"
 msgstr "clé d'authentification"
 
 msgid "ui_language"
-msgstr ""
+msgstr "langue de l'interface"
 
 msgid "userpreference"
 msgstr "Préférence utilisateur"
@@ -833,7 +833,7 @@ msgid "Existing preference for widget"
 msgstr "Préférence pour le widget"
 
 msgid "in view"
-msgstr ""
+msgstr "dans la vue"
 
 msgid "Remove this widget preference"
 msgstr "Supprimer cette préférence"
@@ -864,3 +864,394 @@ msgstr "Label"
 
 msgid "Value"
 msgstr "Valeur"
+
+msgid "Fetching frontend plugin-ins"
+msgstr "Récupération des plugins de l'interface"
+
+msgid "Fetching application starting point"
+msgstr "Initialisation du point d'entrée de l'application"
+
+msgid "Initializing user interface"
+msgstr "Initialisation de l'interface utilisateur"
+
+msgid "Add event type: "
+msgstr "Ajout du type d'évènement:"
+
+msgid "Impossible to load view."
+msgstr "Impossible de charger la vue."
+
+msgid "event sent: "
+msgstr "Evènement envoyé"
+
+msgid "Removed ack for event:"
+msgstr "Ack supprimé pour cet évènement"
+
+msgid "Ack removed"
+msgstr "Ack supprimé"
+
+msgid "Associated ticket number"
+msgstr "Numéro de ticket associé"
+
+msgid "testing"
+msgstr "En cours de test"
+
+msgid "Yearly"
+msgstr "Annuel"
+
+msgid "Monthly"
+msgstr "Mensuel"
+
+msgid "Weekly"
+msgstr "Hebdomadaire"
+
+msgid "Daily"
+msgstr "Quotidien"
+
+msgid "Hourly"
+msgstr "Par heure"
+
+msgid "Minutely"
+msgstr "Par minute"
+
+msgid "Secondly"
+msgstr "Par seconde"
+
+msgid "Events statuses"
+msgstr "Statut de l'évènement"
+
+msgid "Data cleaner"
+msgstr "Nettoyeur de données"
+
+msgid "Empty index page"
+msgstr "Page d'accueil vierge"
+
+msgid "Oops!"
+msgstr "Oops!"
+
+msgid "No default view configured!"
+msgstr "Aucune vue par défaut configurée!"
+
+msgid "Switch to view list"
+msgstr "Accéder à la liste des vues"
+
+msgid "root profil"
+msgstr "Profile root"
+
+msgid "Edition Live Reporting"
+msgstr "Mode rapport interactif"
+
+msgid "Muted tags"
+msgstr "Tags muets"
+
+msgid "Colors in console"
+msgstr "Couleurs dans la console"
+
+msgid "list of tags to mute in console"
+msgstr "Liste des tags muets dans la console"
+
+msgid "Whether to use colors or not in the JS console"
+msgstr "Utiliser ou non les couleurs dans la console  JS"
+
+msgid "Editer la configuration JS Runtime"
+msgstr "Editer la configuration JS Runtime"
+
+msgid "_id"
+msgstr "Identifiant"
+
+msgid "Role"
+msgstr "Role"
+
+msgid "shadowpasswd"
+msgstr "mot de passe"
+
+msgid "user_groups"
+msgstr "groupes d'utilisateurs"
+
+msgid "A role that is assigned to the user"
+msgstr "Rôle assigné à un utilisateur"
+
+msgid "Edit user"
+msgstr "Editer lest information utilisateur"
+
+msgid "Assigned profile"
+msgstr "Profile assigné"
+
+msgid "action_desc"
+msgstr "Action descendante"
+
+msgid "Add role"
+msgstr "Ajouter un rôle"
+
+msgid "Add user"
+msgstr "Ajouter un utilisateur"
+
+msgid "default_role"
+msgstr "Rôle par défaut"
+
+msgid "Default role for new users"
+msgstr "Rôle par défaut pour les nouveaux utilisateurs"
+
+msgid "Editer la configuration LDAP"
+msgstr "Editder la configuration LDAP"
+
+msgid "Login with CAS"
+msgstr "Se logger avec CAS"
+
+msgid "CAS server URL"
+msgstr "adresse du serveur CAS "
+
+msgid "Canopsis URL"
+msgstr "URL de canopsis"
+
+msgid "Editer la configuration CAS"
+msgstr "Editer la configuration CAS"
+
+msgid "state_when_all_ack"
+msgstr "Etat quand tout est acquitté"
+
+msgid "Consider unknown time"
+msgstr "Considérer comme temps inconnu"
+
+msgid "Selector name that will be used as produced event resource"
+msgstr "Nom du selector (sera utilisé en tant que ressource dans l'évènement produit)"
+
+msgid "User information about this selector"
+msgstr "Information utilisateur à propos de ce selecteur"
+
+msgid "Does canopsis have to compute this selector ?"
+msgstr "Canopsis doit il calculer ce selecteur ?"
+
+msgid "Enable state computation"
+msgstr "Activer le calcul de l'état"
+
+msgid ""
+"Allow edit how produced event will be rendered. elements between bracket "
+"will be replaced by their computed values"
+msgstr "Permet d'éditer le rendu de l'output de l'évènement produit. Les éléments entre crochets seront replacés par leur valeurs dynamiquement calculées."
+
+msgid ""
+"Allow to set what state is applied to this selector produced selector event "
+"when all event are acknowleged. worst state compute all events worste state "
+"with no care about acknowlegement statement"
+msgstr "Permet de définir quel état est appliqué à l'évènement produit par ce selecteur lorsque tous les évènements filtrés sont acquittés. Le pire état calcul la plus haute criticité sans prendre en compte les états des évènements acquittés."
+
+msgid "Choose events to include in selector computation"
+msgstr "Choisir des évènements à inclure dans la sélection du selecteur"
+
+msgid "Choose events to exclude in selector computation"
+msgstr "Choisir les évènements à exclure du calcul du selecteur"
+
+msgid "Enable SLA computation for this selector"
+msgstr "Activer le calcul de la SLA pour ce selecteur"
+
+msgid "Lock indexes"
+msgstr "Verrouiller les indexes"
+
+msgid "Add selector"
+msgstr "Ajouter selecteur"
+
+msgid "Add job"
+msgstr "Ajouter tâche"
+
+msgid "creation date"
+msgstr "date de création"
+
+msgid "is loaded"
+msgstr "élément chargé"
+
+msgid "Name"
+msgstr "Nom"
+
+msgid "formula"
+msgstr "Formule"
+
+msgid "min"
+msgstr "min"
+
+msgid "max"
+msgstr "max"
+
+msgid "warn"
+msgstr "attention"
+
+msgid "crit"
+msgstr "critique"
+
+msgid "Aggregation Method"
+msgstr "Méthode d'aggrégation"
+
+msgid "Interval of aggregation"
+msgstr "Interval d'aggrégation"
+
+msgid "Show line"
+msgstr "Afficher une ligne"
+
+msgid "Fill area under line"
+msgstr "Remplir l'espace sous la ligne"
+
+msgid "Show points"
+msgstr "Afficher les points"
+
+msgid "Show bars"
+msgstr "Afficher des barres"
+
+msgid "Line width"
+msgstr "Largeur des lignes"
+
+msgid "Bar width"
+msgstr "Largeur des barres"
+
+msgid "Point's shape"
+msgstr "Forme des points"
+
+msgid "Area opacity"
+msgstr "Transparence des surfaces"
+
+msgid "Data source for series"
+msgstr "Source de données pour les séries"
+
+msgid "Add serie"
+msgstr "Ajouter une série"
+
+msgid "valueLabels"
+msgstr "Label de valeur"
+
+msgid "Lines style"
+msgstr "Style des lignes"
+
+msgid "Add curve"
+msgstr "Ajouter une courbe"
+
+msgid "filter"
+msgstr "filtre"
+
+msgid "Warning"
+msgstr "Attention"
+
+msgid "Perimeter"
+msgstr "Périmètre"
+
+msgid "Domain"
+msgstr "Domaine"
+
+msgid "both"
+msgstr "chaque"
+
+msgid "not ack"
+msgstr "non acquitté"
+
+msgid "Event is either ack or not ack"
+msgstr "L'évènement est soit acquitté soit non acquitté"
+
+msgid "Event is ack"
+msgstr "L'évènement est acquitté"
+
+msgid "Event is not ack"
+msgstr "L'évènement n'est pas acquitté"
+
+msgid "Créer un filtre personnalisé pour la liste"
+msgstr "Créer un filtre personnalisé pour la liste"
+
+msgid "The view to display when users log in"
+msgstr "La vue à afficher quand l'utilisateur se connecte"
+
+msgid "Editor overrides for schema types"
+msgstr "Surcharges d'éditeur pour les types spécifiés dans les schémas"
+
+msgid "Web application key bindings"
+msgstr "Touches de raccourci pour l'application"
+
+msgid "Editer les paramètres"
+msgstr "Editer les paramètres"
+
+msgid "Select task type"
+msgstr "Sélectionner le type de tâche"
+
+msgid "Status management information not registered in database."
+msgstr "L'information de gestion des statuts n'est pas présent dans la base de données"
+
+msgid "Please contact your administrator."
+msgstr "Contactez votre administrateur"
+
+msgid "Event settings edition"
+msgstr "Edition des paramètres des états d'évènements"
+
+msgid "bagot_freq"
+msgstr "Fréquence de bagot"
+
+msgid "bagot_time"
+msgstr "durée de prise en compte du bagot"
+
+msgid "stealthy_time"
+msgstr "durée de prise en compte pour l'état furtif"
+
+msgid "stealthy_show"
+msgstr "Durée de l'état furtif avant changement de statut"
+
+msgid "restore_event"
+msgstr "Restaurer évènement"
+
+msgid ""
+"How many oscillation to be counted before event is put un bagot statement."
+msgstr "Combien d'oscillations doivent être comptées avant de passer l'évènement en bagot."
+
+msgid "Duration to consider when computing bagot oscillation."
+msgstr "Durée prise en compte pour la fréquence d'oscillation"
+
+msgid ""
+"How long elapsed between two event state change to consider a stealthy "
+"status."
+msgstr "Quelle durée entre deux changement d'états d'un évènements pour le considérer en tant que furtif"
+
+msgid ""
+"How long an event remains in furtivity status before it changes again to "
+"another status."
+msgstr "Combien de temps un évènement reste en état furtif avant de changer vers un autre statut"
+
+msgid ""
+"When true, consdider state change with different state level, otherwise "
+"consider a change at alert level."
+msgstr "Considère un changement d'état vers pour une alerte quand actif, ne considère qu'un changement vers une alerte autrement."
+
+msgid "Engine data cleaner information not registered in database."
+msgstr "Le moteur de nettoyage de données n'est pas enregistré dans la base de données."
+
+msgid "Data clean edition"
+msgstr "Edition du moteur de nettoyage de données"
+
+msgid "retention_duration"
+msgstr "Durée de rétention"
+
+msgid "use_secure_delay"
+msgstr "Utiliser le délai de sécurité"
+
+msgid ""
+"Delay until when keep information into database. Data cleaning is applied "
+"once a day."
+msgstr "Durée jusqu'a laquelle les informations sont conservées à partir de maintenant. Le nettoyage des données est appliqué une fois par jour."
+
+msgid ""
+"One year delay security to avoid too short delay data deletion. When false, "
+"security is disabled"
+msgstr "Délai de sécurité permettant d'éviter des suppression de données en dessous d'une année. Quand désactivé, il est possible d'outrepasser cette sécurité à vos propres risques."
+
+msgid "Syntax"
+msgstr "Syntaxe"
+
+msgid "look for a metric"
+msgstr "Rechercher une métrique"
+
+msgid " isn't needed for this one"
+msgstr "n'est pas requis pour celui-ci"
+
+msgid "combine all of them to improve your search"
+msgstr "tous les combiner permet d'améliorer la recherche"
+
+msgid "look for non-existant field"
+msgstr "rechercher un champs non existant"
+
+msgid "Available"
+msgstr "Disponible"
+
+msgid "Metric"
+msgstr "Métrique"

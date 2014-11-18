@@ -5,8 +5,8 @@ msgstr ""
 "Project-Id-Version: Canopsis\n"
 "Report-Msgid-Bugs-To: teamcanopsis@capensis.fr\n"
 "POT-Creation-Date: 2014-08-22 10:00+0100\n"
-"PO-Revision-Date: 2014-10-17 12:56+0000\n"
-"Last-Translator: Mourcia Mikael <mmourcia@yahoo.fr>\n"
+"PO-Revision-Date: 2014-11-18 15:30+0000\n"
+"Last-Translator: eric regnier <eregnier@capensis.fr>\n"
 "Language-Team: English (http://www.transifex.com/projects/p/canopsis/language/en/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -862,3 +862,394 @@ msgstr "Label"
 
 msgid "Value"
 msgstr "Value"
+
+msgid "Fetching frontend plugin-ins"
+msgstr "Fetching frontend plugin-ins"
+
+msgid "Fetching application starting point"
+msgstr "Fetching application starting point"
+
+msgid "Initializing user interface"
+msgstr "Initializing user interface"
+
+msgid "Add event type: "
+msgstr "Add event type: "
+
+msgid "Impossible to load view."
+msgstr "Impossible to load view."
+
+msgid "event sent: "
+msgstr "event sent: "
+
+msgid "Removed ack for event:"
+msgstr "Removed ack for event:"
+
+msgid "Ack removed"
+msgstr "Ack removed"
+
+msgid "Associated ticket number"
+msgstr "Associated ticket number"
+
+msgid "testing"
+msgstr "testing"
+
+msgid "Yearly"
+msgstr "Yearly"
+
+msgid "Monthly"
+msgstr "Monthly"
+
+msgid "Weekly"
+msgstr "Weekly"
+
+msgid "Daily"
+msgstr "Daily"
+
+msgid "Hourly"
+msgstr "Hourly"
+
+msgid "Minutely"
+msgstr "Minutely"
+
+msgid "Secondly"
+msgstr "Secondly"
+
+msgid "Events statuses"
+msgstr "Events statuses"
+
+msgid "Data cleaner"
+msgstr "Data cleaner"
+
+msgid "Empty index page"
+msgstr "Empty index page"
+
+msgid "Oops!"
+msgstr "Oops!"
+
+msgid "No default view configured!"
+msgstr "No default view configured!"
+
+msgid "Switch to view list"
+msgstr "Switch to view list"
+
+msgid "root profil"
+msgstr "root profil"
+
+msgid "Edition Live Reporting"
+msgstr "Edition Live Reporting"
+
+msgid "Muted tags"
+msgstr "Muted tags"
+
+msgid "Colors in console"
+msgstr "Colors in console"
+
+msgid "list of tags to mute in console"
+msgstr "list of tags to mute in console"
+
+msgid "Whether to use colors or not in the JS console"
+msgstr "Whether to use colors or not in the JS console"
+
+msgid "Editer la configuration JS Runtime"
+msgstr "Editer la configuration JS Runtime"
+
+msgid "_id"
+msgstr "_id"
+
+msgid "Role"
+msgstr "Role"
+
+msgid "shadowpasswd"
+msgstr "shadowpasswd"
+
+msgid "user_groups"
+msgstr "user_groups"
+
+msgid "A role that is assigned to the user"
+msgstr "A role that is assigned to the user"
+
+msgid "Edit user"
+msgstr "Edit user"
+
+msgid "Assigned profile"
+msgstr "Assigned profile"
+
+msgid "action_desc"
+msgstr "action_desc"
+
+msgid "Add role"
+msgstr "Add role"
+
+msgid "Add user"
+msgstr "Add user"
+
+msgid "default_role"
+msgstr "default_role"
+
+msgid "Default role for new users"
+msgstr "Default role for new users"
+
+msgid "Editer la configuration LDAP"
+msgstr "Editer la configuration LDAP"
+
+msgid "Login with CAS"
+msgstr "Login with CAS"
+
+msgid "CAS server URL"
+msgstr "CAS server URL"
+
+msgid "Canopsis URL"
+msgstr "Canopsis URL"
+
+msgid "Editer la configuration CAS"
+msgstr "Editer la configuration CAS"
+
+msgid "state_when_all_ack"
+msgstr "state_when_all_ack"
+
+msgid "Consider unknown time"
+msgstr "Consider unknown time"
+
+msgid "Selector name that will be used as produced event resource"
+msgstr "Selector name that will be used as produced event resource"
+
+msgid "User information about this selector"
+msgstr "User information about this selector"
+
+msgid "Does canopsis have to compute this selector ?"
+msgstr "Does canopsis have to compute this selector ?"
+
+msgid "Enable state computation"
+msgstr "Enable state computation"
+
+msgid ""
+"Allow edit how produced event will be rendered. elements between bracket "
+"will be replaced by their computed values"
+msgstr "Allow edit how produced event will be rendered. elements between bracket will be replaced by their computed values"
+
+msgid ""
+"Allow to set what state is applied to this selector produced selector event "
+"when all event are acknowleged. worst state compute all events worste state "
+"with no care about acknowlegement statement"
+msgstr "Allow to set what state is applied to this selector produced selector event when all event are acknowleged. worst state compute all events worste state with no care about acknowlegement statement"
+
+msgid "Choose events to include in selector computation"
+msgstr "Choose events to include in selector computation"
+
+msgid "Choose events to exclude in selector computation"
+msgstr "Choose events to exclude in selector computation"
+
+msgid "Enable SLA computation for this selector"
+msgstr "Enable SLA computation for this selector"
+
+msgid "Lock indexes"
+msgstr "Lock indexes"
+
+msgid "Add selector"
+msgstr "Add selector"
+
+msgid "Add job"
+msgstr "Add job"
+
+msgid "creation date"
+msgstr "creation date"
+
+msgid "is loaded"
+msgstr "is loaded"
+
+msgid "Name"
+msgstr "Name"
+
+msgid "formula"
+msgstr "formula"
+
+msgid "min"
+msgstr "min"
+
+msgid "max"
+msgstr "max"
+
+msgid "warn"
+msgstr "warn"
+
+msgid "crit"
+msgstr "crit"
+
+msgid "Aggregation Method"
+msgstr "Aggregation Method"
+
+msgid "Interval of aggregation"
+msgstr "Interval of aggregation"
+
+msgid "Show line"
+msgstr "Show line"
+
+msgid "Fill area under line"
+msgstr "Fill area under line"
+
+msgid "Show points"
+msgstr "Show points"
+
+msgid "Show bars"
+msgstr "Show bars"
+
+msgid "Line width"
+msgstr "Line width"
+
+msgid "Bar width"
+msgstr "Bar width"
+
+msgid "Point's shape"
+msgstr "Point's shape"
+
+msgid "Area opacity"
+msgstr "Area opacity"
+
+msgid "Data source for series"
+msgstr "Data source for series"
+
+msgid "Add serie"
+msgstr "Add serie"
+
+msgid "valueLabels"
+msgstr "valueLabels"
+
+msgid "Lines style"
+msgstr "Lines style"
+
+msgid "Add curve"
+msgstr "Add curve"
+
+msgid "filter"
+msgstr "filter"
+
+msgid "Warning"
+msgstr "Warning"
+
+msgid "Perimeter"
+msgstr "Perimeter"
+
+msgid "Domain"
+msgstr "Domain"
+
+msgid "both"
+msgstr "both"
+
+msgid "not ack"
+msgstr "not ack"
+
+msgid "Event is either ack or not ack"
+msgstr "Event is either ack or not ack"
+
+msgid "Event is ack"
+msgstr "Event is ack"
+
+msgid "Event is not ack"
+msgstr "Event is not ack"
+
+msgid "Créer un filtre personnalisé pour la liste"
+msgstr "Créer un filtre personnalisé pour la liste"
+
+msgid "The view to display when users log in"
+msgstr "The view to display when users log in"
+
+msgid "Editor overrides for schema types"
+msgstr "Editor overrides for schema types"
+
+msgid "Web application key bindings"
+msgstr "Web application key bindings"
+
+msgid "Editer les paramètres"
+msgstr "Editer les paramètres"
+
+msgid "Select task type"
+msgstr "Select task type"
+
+msgid "Status management information not registered in database."
+msgstr "Status management information not registered in database."
+
+msgid "Please contact your administrator."
+msgstr "Please contact your administrator."
+
+msgid "Event settings edition"
+msgstr "Event settings edition"
+
+msgid "bagot_freq"
+msgstr "bagot_freq"
+
+msgid "bagot_time"
+msgstr "bagot_time"
+
+msgid "stealthy_time"
+msgstr "stealthy_time"
+
+msgid "stealthy_show"
+msgstr "stealthy_show"
+
+msgid "restore_event"
+msgstr "restore_event"
+
+msgid ""
+"How many oscillation to be counted before event is put un bagot statement."
+msgstr "How many oscillation to be counted before event is put un bagot statement."
+
+msgid "Duration to consider when computing bagot oscillation."
+msgstr "Duration to consider when computing bagot oscillation."
+
+msgid ""
+"How long elapsed between two event state change to consider a stealthy "
+"status."
+msgstr "How long elapsed between two event state change to consider a stealthy status."
+
+msgid ""
+"How long an event remains in furtivity status before it changes again to "
+"another status."
+msgstr "How long an event remains in furtivity status before it changes again to another status."
+
+msgid ""
+"When true, consdider state change with different state level, otherwise "
+"consider a change at alert level."
+msgstr "When true, consdider state change with different state level, otherwise consider a change at alert level."
+
+msgid "Engine data cleaner information not registered in database."
+msgstr "Engine data cleaner information not registered in database."
+
+msgid "Data clean edition"
+msgstr "Data clean edition"
+
+msgid "retention_duration"
+msgstr "retention_duration"
+
+msgid "use_secure_delay"
+msgstr "use_secure_delay"
+
+msgid ""
+"Delay until when keep information into database. Data cleaning is applied "
+"once a day."
+msgstr "Delay until when keep information into database. Data cleaning is applied once a day."
+
+msgid ""
+"One year delay security to avoid too short delay data deletion. When false, "
+"security is disabled"
+msgstr "One year delay security to avoid too short delay data deletion. When false, security is disabled"
+
+msgid "Syntax"
+msgstr "Syntax"
+
+msgid "look for a metric"
+msgstr "look for a metric"
+
+msgid " isn't needed for this one"
+msgstr " isn't needed for this one"
+
+msgid "combine all of them to improve your search"
+msgstr "combine all of them to improve your search"
+
+msgid "look for non-existant field"
+msgstr "look for non-existant field"
+
+msgid "Available"
+msgstr "Available"
+
+msgid "Metric"
+msgstr "Metric"

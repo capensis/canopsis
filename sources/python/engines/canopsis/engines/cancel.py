@@ -59,10 +59,10 @@ class engine(Engine):
                 # Preparing event for cancel,
                 update['output'] = devent.get('output', '')
 
-                #Is it a cancel ?
+                # Is it a cancel ?
                 if event['event_type'] == 'cancel':
                     ack_info = devent.get('ack', {})
-                    #Saving status, in case cancel is undone
+                    # Saving status, in case cancel is undone
                     # If cancel is not in ok, it's not an alert cancellation
                     update['cancel'] = {
                         'timestamp': time(),
@@ -75,14 +75,14 @@ class engine(Engine):
                     update['ack'] = ack_info
                     update['ack']['isAck'] = False
                     update['ack']['isCancel'] = True
-                    #Set alert to cancelled status
+                    # Set alert to cancelled status
                     update['status'] = 4
                     event['status'] = 4
 
                 # Undo cancel ?
                 elif event['event_type'] == 'uncancel':
 
-                    #If event has been previously cancelled
+                    # If event has been previously cancelled
                     if 'ack' in devent:
                         self.logger.warning(' + reseting ack')
 
@@ -90,7 +90,7 @@ class engine(Engine):
                         update['ack']['isAck'] = True
                         update['ack']['isCancel'] = False
 
-                        #Restore previous status
+                        # Restore previous status
                         if 'cancel' in devent:
                             update['status'] = devent['cancel'].get(
                                 'previous_status',
@@ -105,7 +105,7 @@ class engine(Engine):
 
                 update_query['$set'] = update
 
-                #update database with cancel informations
+                # Update database with cancel informations
                 if update:
                     self.storage.get_backend().update(
                         {'rk': event['ref_rk']},
