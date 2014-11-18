@@ -72,6 +72,9 @@ class engine(Engine):
         logevent = None
 
         ackremove = False
+        state = event.get('state', 0)
+        state_type = event.get('state_type', 1)
+
         if event['event_type'] == 'ackremove':
             # remove ack from event
             # Ack remove information exists when ack is just removed
@@ -271,7 +274,7 @@ class engine(Engine):
         # If event is acknowledged, and went back to normal, remove the ack
         # This test concerns most of case
         # And could not perform query for each event
-        elif event['state'] == 0 and event.get('state_type', 1) == 1:
+        elif state == 0 and state_type == 1:
             solvedts = int(time())
 
             if event['rk'] in self.cache_acks:
@@ -331,8 +334,7 @@ class engine(Engine):
 
         # If the event is in problem state,
         # update the solved state of acknowledgement
-        elif ackremove
-        or (event['state'] != 0 and event.get('state_type', 1) == 1):
+        elif ackremove or (state != 0 and state_type == 1):
             self.logger.debug('Alert on event, preparing ACK statement.')
 
             self.stbackend.find_and_modify(
