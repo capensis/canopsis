@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: Canopsis\n"
 "Report-Msgid-Bugs-To: teamcanopsis@capensis.fr\n"
 "POT-Creation-Date: 2014-08-22 10:00+0100\n"
-"PO-Revision-Date: 2014-11-18 16:36+0000\n"
+"PO-Revision-Date: 2014-11-19 10:17+0000\n"
 "Last-Translator: eric regnier <eregnier@capensis.fr>\n"
 "Language-Team: French (http://www.transifex.com/projects/p/canopsis/language/fr/)\n"
 "MIME-Version: 1.0\n"
@@ -55,11 +55,8 @@ msgstr "enfants"
 msgid "Minor"
 msgstr "Mineure"
 
-msgid " "
-msgstr " "
-
 msgid "display_name"
-msgstr "Nom"
+msgstr "nom affiché"
 
 msgid "title"
 msgstr "titre"
@@ -77,19 +74,19 @@ msgid "to"
 msgstr "à"
 
 msgid "crecord_type"
-msgstr "Type d'enregistrement"
+msgstr "type d'enregistrement"
 
 msgid "mail"
 msgstr "email"
 
 msgid "sla_rk"
-msgstr "Routing key de la SLA"
+msgstr "routing key pour sla"
 
 msgid "Day"
 msgstr "Jour"
 
 msgid "item_actions"
-msgstr "actions sur l'objet"
+msgstr "action de l'objet"
 
 msgid "timestamp"
 msgstr "Date"
@@ -98,10 +95,10 @@ msgid "mixins"
 msgstr "plugins"
 
 msgid "sla_timewindow_value"
-msgstr "valeur de la fenêtre de temps pour la SLA"
+msgstr "fenêtre de temps pour sla"
 
 msgid "debug_mode"
-msgstr "Mode Debug"
+msgstr "mode de debug"
 
 msgid "Stealthy"
 msgstr "Furtif"
@@ -128,7 +125,7 @@ msgid "Widget refresh interval"
 msgstr "Intervalle de raffraichissement"
 
 msgid "event_selection"
-msgstr "sélection d'évènement"
+msgstr "selection d'évènement"
 
 msgid "Add"
 msgstr "Ajouter"
@@ -146,7 +143,7 @@ msgid "Scheduled Jobs"
 msgstr "Tâches planifiées"
 
 msgid "displayed_columns"
-msgstr "Colonnes affichées"
+msgstr "colonnes affichées"
 
 msgid "time_conditions"
 msgstr "condition de temps"
@@ -182,7 +179,7 @@ msgid "rrule"
 msgstr "règle"
 
 msgid "sla_timewindow"
-msgstr "fenêtre de temps SLA"
+msgstr "fenêtre de temps pour sla"
 
 msgid "aaa_access_group"
 msgstr ""
@@ -206,13 +203,10 @@ msgid "Rights"
 msgstr "Droits"
 
 msgid "itemsPerPage"
-msgstr "Eléments par page"
+msgstr "éléments par page"
 
 msgid "downtimes_as_ok"
-msgstr "Considérer les downtimes comme OK"
-
-msgid "Divers"
-msgstr "Divers"
+msgstr "définir downtimes en ok"
 
 msgid "aaa_access_unauth"
 msgstr ""
@@ -221,7 +215,7 @@ msgid "state"
 msgstr "Etat"
 
 msgid "filter_pattern"
-msgstr "Motif de filtre"
+msgstr "filtre"
 
 msgid "Today"
 msgstr "Aujourd'hui"
@@ -281,13 +275,13 @@ msgid "Comment"
 msgstr "Commentaires"
 
 msgid "dosla"
-msgstr "Calculer les SLA"
+msgstr "calculer sla"
 
 msgid "created"
 msgstr "créé"
 
 msgid "sla_timewindow_doUnknown"
-msgstr "fenêtre de temps SLA à ne pas prendre en compte"
+msgstr "fenêtre de temps sla définit en état inconnu"
 
 msgid "of"
 msgstr "des"
@@ -308,13 +302,13 @@ msgid "user_filter"
 msgstr "filtre utilisateur"
 
 msgid "list_info_button_pattern"
-msgstr "modèle de bouton de liste d'information "
+msgstr "modèle de bouton d'information de liste "
 
 msgid "tasks"
 msgstr "tâches"
 
 msgid "refreshableWidget"
-msgstr "Raffraichissable"
+msgstr "rafraîchir widget"
 
 msgid "Engines"
 msgstr "Moteurs"
@@ -323,7 +317,7 @@ msgid "base_dn"
 msgstr "Base DN"
 
 msgid "dostate"
-msgstr "Calculer l'état"
+msgstr "calculer état"
 
 msgid "Visit"
 msgstr "Visiter"
@@ -374,7 +368,7 @@ msgid "start"
 msgstr "début"
 
 msgid "sla_timewindow_unit"
-msgstr "unité pour le fenêtre de temps SLA"
+msgstr "unité sla de la valeur glissante"
 
 msgid "Topologies"
 msgstr "Topologies"
@@ -383,19 +377,19 @@ msgid "Date"
 msgstr "Date"
 
 msgid "exclude_ids"
-msgstr "Exclure des ID"
+msgstr "évènements à exclure"
 
 msgid "type"
 msgstr "type"
 
 msgid "crecord_creation_time"
-msgstr "Date de création"
+msgstr "date de création de l'enregistrement"
 
 msgid "Permissions"
 msgstr "Permissions"
 
 msgid "last_dispatcher_update"
-msgstr "date de la dernière répartition de tâche "
+msgstr "date de mise à jour du dispatcher"
 
 msgid "enable"
 msgstr "activer"
@@ -452,7 +446,7 @@ msgid "Edit CAS configuration"
 msgstr "Editer la configuration CAS"
 
 msgid "output_tpl"
-msgstr "Modèle de message de sortie"
+msgstr "template de l'output"
 
 msgid "Edit settings"
 msgstr "Editer les paramètres"
@@ -467,13 +461,13 @@ msgid "Close"
 msgstr "Fermer"
 
 msgid "last_execution"
-msgstr "dernière exécution"
+msgstr "date de la dernière exécution"
 
 msgid "Add action"
 msgstr "Ajouter une action"
 
 msgid "event_type"
-msgstr "Type d'événement"
+msgstr "type de l'évènement"
 
 msgid "user_dn"
 msgstr "User DN"
@@ -491,7 +485,7 @@ msgid "Edit LDAP configuration"
 msgstr "Editer la configuration LDAP"
 
 msgid "actions_toolbar"
-msgstr "barre d'outil d'action"
+msgstr "barre d'actions"
 
 msgid "Create a custom filter for current list"
 msgstr "Créer un filtre personnalisé pour la liste"
@@ -524,7 +518,7 @@ msgid "mfilter"
 msgstr "filtre"
 
 msgid "connector_name"
-msgstr "Nom du connecteur"
+msgstr "nom du connecteur"
 
 msgid "role"
 msgstr "rôle"
@@ -533,7 +527,7 @@ msgid "No matching records found"
 msgstr "Aucun enregistrement trouvé"
 
 msgid "state_algorithm"
-msgstr "Algo de calcul d'état"
+msgstr "algorithme de calcul d'état"
 
 msgid "lastname"
 msgstr "nom"
@@ -545,7 +539,7 @@ msgid "event sent"
 msgstr "événement envoyé"
 
 msgid "sla_output_tpl"
-msgstr "Modèle de message de sortie SLA"
+msgstr "template d'output des sla"
 
 msgid "perimeter"
 msgstr "Périmètre"
@@ -563,22 +557,22 @@ msgid "firstname"
 msgstr "prénom"
 
 msgid "default_filter"
-msgstr "Filtre par défaut"
+msgstr "filtre par defaut"
 
 msgid "Error while loading data"
 msgstr "Erreur de chargement de données"
 
 msgid "source_type"
-msgstr "Type de source"
+msgstr "type de source"
 
 msgid "cfilter_allow_only_optimized_filters"
-msgstr "Autoriser uniquement les filtres optimisés"
+msgstr "l'éditeur de filtre accepte seulement des filtres optimisés"
 
 msgid "user"
 msgstr "utilisateur"
 
 msgid "listed_crecord_type"
-msgstr "type d'enregistrement listé"
+msgstr "types d'enregistrements listés"
 
 msgid "Page"
 msgstr "Page"
@@ -608,7 +602,7 @@ msgid "Enter a ticket number"
 msgstr "Entrer un numéro de ticket"
 
 msgid "include_ids"
-msgstr "Inclure des ID"
+msgstr "évènements à inclure"
 
 msgid "uri"
 msgstr "LDAP URI"
@@ -644,7 +638,7 @@ msgid "Edit your widget preferences"
 msgstr "Editer les préférences du widget"
 
 msgid "sla_state"
-msgstr "Etat SLA"
+msgstr "état de la sla"
 
 msgid "Dashboard"
 msgstr "Tableau de bord"
@@ -824,10 +818,10 @@ msgid "authkey"
 msgstr "clé d'authentification"
 
 msgid "ui_language"
-msgstr "langue de l'interface"
+msgstr "langage de l'interface utilisateur"
 
 msgid "userpreference"
-msgstr "Préférence utilisateur"
+msgstr "préférence utilisateur"
 
 msgid "Existing preference for widget"
 msgstr "Préférence pour le widget"
@@ -848,7 +842,7 @@ msgid "Select date interval"
 msgstr "Sélectionner l'intervalle de date"
 
 msgid "safe_mode"
-msgstr "Mode sécurisé"
+msgstr "mode sécurisé"
 
 msgid "Default view"
 msgstr "Vue par défaut"
@@ -986,7 +980,7 @@ msgid "Add user"
 msgstr "Ajouter un utilisateur"
 
 msgid "default_role"
-msgstr "Rôle par défaut"
+msgstr "rôle par défaut"
 
 msgid "Default role for new users"
 msgstr "Rôle par défaut pour les nouveaux utilisateurs"
@@ -1007,7 +1001,7 @@ msgid "Editer la configuration CAS"
 msgstr "Editer la configuration CAS"
 
 msgid "state_when_all_ack"
-msgstr "Etat quand tout est acquitté"
+msgstr "état lorsque tout est acquitté"
 
 msgid "Consider unknown time"
 msgstr "Considérer comme temps inconnu"
@@ -1177,19 +1171,19 @@ msgid "Event settings edition"
 msgstr "Edition des paramètres des états d'évènements"
 
 msgid "bagot_freq"
-msgstr "Fréquence de bagot"
+msgstr "fréquence de bagot"
 
 msgid "bagot_time"
-msgstr "durée de prise en compte du bagot"
+msgstr "durée à considérer pour l'état bagot"
 
 msgid "stealthy_time"
-msgstr "durée de prise en compte pour l'état furtif"
+msgstr "durée à considérer pour l'état furtif"
 
 msgid "stealthy_show"
-msgstr "Durée de l'état furtif avant changement de statut"
+msgstr "durée de prise en compte de l'état furtif"
 
 msgid "restore_event"
-msgstr "Restaurer évènement"
+msgstr "évènement restauré"
 
 msgid ""
 "How many oscillation to be counted before event is put un bagot statement."
@@ -1220,10 +1214,10 @@ msgid "Data clean edition"
 msgstr "Edition du moteur de nettoyage de données"
 
 msgid "retention_duration"
-msgstr "Durée de rétention"
+msgstr "durée de rétention"
 
 msgid "use_secure_delay"
-msgstr "Utiliser le délai de sécurité"
+msgstr "utiliser un délai de sécurité"
 
 msgid ""
 "Delay until when keep information into database. Data cleaning is applied "
@@ -1255,3 +1249,48 @@ msgstr "Disponible"
 
 msgid "Metric"
 msgstr "Métrique"
+
+msgid "last_state_change"
+msgstr "dernier changement d'état"
+
+msgid "Filter remains incomplete"
+msgstr "Le filtre est incomplet"
+
+msgid "root profile"
+msgstr "profile root"
+
+msgid "updated"
+msgstr "mis à jour"
+
+msgid "General"
+msgstr "General"
+
+msgid "Login"
+msgstr "Authentification"
+
+msgid "Bagot settings"
+msgstr "Paramètres de bagot"
+
+msgid "Stealthy settings"
+msgstr "Paramètres de furtivité"
+
+msgid "Misc statuses"
+msgstr "Status divers"
+
+msgid "Event filter"
+msgstr "Filtre d'évènement"
+
+msgid "Include events"
+msgstr "Evènements à inclure"
+
+msgid "Exclude events"
+msgstr "Exclusion d'évènements"
+
+msgid "Sla"
+msgstr "Sla"
+
+msgid "LDAP Server"
+msgstr "Serveur ldap"
+
+msgid "Fields Mapping"
+msgstr "Champs liés"
