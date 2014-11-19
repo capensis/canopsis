@@ -32,7 +32,7 @@ from os.path import join, isfile
 class i18n(object):
 
     def __init__(self):
-        self.misc = get_storage(namespace='misc', account=Account(user="root", group="root")).get_backend()
+        self.misc = get_storage(namespace='object', account=Account(user="root", group="root")).get_backend()
         self.query = {'crecord_type': 'i18n', '_id': 'translations'}
 
     def extract(self):
