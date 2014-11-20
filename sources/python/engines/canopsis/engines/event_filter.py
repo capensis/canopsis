@@ -37,7 +37,7 @@ class engine(Engine):
 
         account = Account(user="root", group="root")
         self.storage = get_storage(logging_level=self.logging_level,
-                       account=account)
+                                   account=account)
         self.derogations = []
         self.name = kargs['name']
 
@@ -55,7 +55,7 @@ class engine(Engine):
 
         if not isinstance(conditions, list):
             self.logger.error(("Invalid time conditions field in '%s': %s"
-                       % (derogation['_id'], conditions)))
+                               % (derogation['_id'], conditions)))
             self.logger.debug(derogation)
             return False
 
@@ -65,7 +65,7 @@ class engine(Engine):
         for condition in conditions:
             if (condition['type'] == 'time_interval'
                 and condition['startTs']
-                    and condition['stopTs']):
+                and condition['stopTs']):
                 always = condition.get('always', False)
 
                 if always:
@@ -92,13 +92,13 @@ class engine(Engine):
                 event[afield].append(avalue)
             else:
                 event[afield] = avalue
-            self.logger.debug(("    + %s: Override: '%s' -> '%s'"
-                           % (event['rk'], afield, avalue)))
+            self.logger.debug(u"    + %s: Override: '%s' -> '%s'"
+                              % (event['rk'], afield, avalue))
             return True
 
         else:
             self.logger.error(
-                "Action malformed (needs 'field' and 'value'): %s" % action
+                u"Action malformed (needs 'field' and 'value'): %s" % action
                 )
             return False
 
@@ -124,18 +124,18 @@ class engine(Engine):
                 elif isinstance(event[akey], list):
                     del event[akey][event[akey].index(aelement)]
 
-                self.logger.debug("    + %s: Removed: '%s' from '%s'"
-                        % (event['rk'], aelement, akey))
+                self.logger.debug(u"    + %s: Removed: '%s' from '%s'"
+                                  % (event['rk'], aelement, akey))
 
             else:
                 del event[akey]
-                self.logger.debug("    + %s: Removed: '%s'"
-                        % (event['rk'], akey))
+                self.logger.debug(u"    + %s: Removed: '%s'"
+                                  % (event['rk'], akey))
 
             return True
 
         else:
-            self.logger.error("Action malformed (needs 'key' and/or 'element'): %s" % action)
+            self.logger.error(u"Action malformed (needs 'key' and/or 'element'): %s" % action)
             return False
 
 
@@ -158,11 +158,11 @@ class engine(Engine):
             derogated = actionMap[atype](event, action)
 
         else:
-            self.logger.warning("Unknown action '%s'" % atype)
+            self.logger.warning(u"Unknown action '%s'" % atype)
 
         # If the event was derogated, fill some informations
         if derogated:
-            self.logger.debug("Event changed by rule '%s'" % name)
+            self.logger.debug(u"Event changed by rule '%s'" % name)
 
         return None
 
@@ -177,7 +177,7 @@ class engine(Engine):
             ``None``
         """
 
-        self.logger.debug("Event dropped by rule '%s'" % name)
+        self.logger.debug(u"Event dropped by rule '%s'" % name)
         self.drop_event_count += 1
         return DROP
 
@@ -192,7 +192,7 @@ class engine(Engine):
             ``None``
         """
 
-        self.logger.debug("Event passed by rule '%s'" % name)
+        self.logger.debug(u"Event passed by rule '%s'" % name)
         self.pass_event_count += 1
         return event
 
@@ -209,9 +209,9 @@ class engine(Engine):
 
         if "route" in action:
             self.next_amqp_queues = [action["route"]]
-            self.logger.debug("Event re-routed by rule '%s'" % name)
+            self.logger.debug(u"Event re-routed by rule '%s'" % name)
         else:
-            self.logger.error("Action malformed (needs 'route'): %s" % action)
+            self.logger.error(u"Action malformed (needs 'route'): %s" % action)
 
         return None
 
@@ -225,11 +225,11 @@ class engine(Engine):
 
         for name, action in actions:
             if (action['type'] in actionMap):
-                ret = actionMap[action['type']](event, action, name)
+                ret = actionMap[action['type'].lower()](event, action, name)
                 if ret:
                     pass_event = True
             else:
-                self.logger.warning("Unknown action '%s'" % action)
+                self.logger.warning(u"Unknown action '%s'" % action)
 
         return pass_event
 
@@ -250,9 +250,9 @@ class engine(Engine):
             name = filterItem.get('name', 'no_name')
 
             self.logger.debug(
-                'Event: {}, will apply rule {}'.format(event, filterItem)
+                u'Event: {}, will apply rule {}'.format(event, filterItem)
                 )
-            self.logger.debug('filter is {}'.format(filterItem['mfilter']))
+            self.logger.debug(u'filter is {}'.format(filterItem['mfilter']))
             # Try filter rules on current event
             if check(filterItem['mfilter'], event):
 
@@ -261,18 +261,20 @@ class engine(Engine):
                     )
 
                 for action in actions:
-                    if action['type'] == 'DROP':
+                    if action['type'].lower() == 'drop':
                         self.apply_actions(event, to_apply)
                         return self.a_drop(event, None, name)
                     to_apply.append((name, action))
 
                 if filterItem.get('break', 0):
-                    self.logger.debug('Filter {} stopped the processing of further fiters'.format(filterItem))
+                    self.logger.debug(u'Filter {} stopped the processing of further fiters'.format(filterItem))
                     break
 
         if len(to_apply):
             if self.apply_actions(event, to_apply):
-                self.logger.debug('Event before sent to next engine: %s' % event)
+                self.logger.debug(
+                    u'Event before sent to next engine: %s' % event
+                    )
                 event['rk'] = event['_id'] = get_routingkey(event)
                 return event
 
@@ -285,7 +287,7 @@ class engine(Engine):
         self.logger.debug("Event '%s' passed by default action" % (rk))
         self.pass_event_count += 1
 
-        self.logger.debug('Event before sent to next engine: %s' % event)
+        self.logger.debug(u'Event before sent to next engine: %s' % event)
         event['rk'] = event['_id'] = get_routingkey(event)
         return event
 
