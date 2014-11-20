@@ -2,7 +2,7 @@
 	"type": "object",
 	"categories": [{
 		"title": "General",
-		"keys":["name", "description", "enable", "priority"]
+		"keys":["name", "description", "enable", "priority", "run_once"]
 	},{
 		"title": "Filter",
 		"keys":["mfilter"]
@@ -47,8 +47,10 @@
 		},
 		"run_once": {
 			"type": "boolean",
+			"title": "is loaded",
 			"default": false,
-			"title": "is loaded"
+			"role": "forcevalue",
+			"description": "Reinitialising record 'is loaded' value"
 		}
 	}
 }
