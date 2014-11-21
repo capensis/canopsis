@@ -1251,7 +1251,7 @@ msgid "Metric"
 msgstr "Métrique"
 
 msgid "last_state_change"
-msgstr "dernier changement d'état"
+msgstr "durée"
 
 msgid "Filter remains incomplete"
 msgstr "Le filtre est incomplet"
