@@ -193,7 +193,9 @@ class KnownValues(unittest.TestCase):
         self.assertEqual(self.find_event('02 Off')['status'], OFF)
 
     def test_03_off_basic_kook_stealthytime(self):
-        self.logger.info('Reduce time of stealthy time so the switch from KO to OK')
+        self.logger.info(
+            'Reduce time of stealthy time so the switch from KO to OK'
+        )
         self.logger.info('does not trigger the Stealthy status')
         self.change_conf(sleep=5, stealthy_time=1)
 
@@ -203,7 +205,9 @@ class KnownValues(unittest.TestCase):
         self.assertEqual(self.find_event('03 Off')['status'], OFF)
 
     def test_04_off_basic_okkook_stealthytime(self):
-        self.logger.info('Reduce time of stealthy time so the switch from KO to OK')
+        self.logger.info(
+            'Reduce time of stealthy time so the switch from KO to OK'
+        )
         self.logger.info('does not trigger the Stealthy status')
         self.change_conf(sleep=5, stealthy_time=1)
 
@@ -219,7 +223,9 @@ class KnownValues(unittest.TestCase):
         self.publish_event(*event_ok(connector='05 Off'))
         self.assertEqual(self.find_event('05 Off')['status'], STEALTHY)
 
-        self.logger.info('Reduce the time of stealthy show so the event goes from STEALTHY')
+        self.logger.info(
+            'Reduce the time of stealthy show so the event goes from STEALTHY'
+        )
         self.logger.info('to basic state avec 2 sec')
         self.change_conf(sleep=5, stealthy_show=2)
         self.assertEqual(self.find_event('05 Off')['status'], OFF)
@@ -248,7 +254,9 @@ class KnownValues(unittest.TestCase):
         self.publish_event(*event_ko(connector='08 OnGoing'))
         self.assertEqual(self.find_event('08 OnGoing')['status'], STEALTHY)
 
-        self.logger.info('Reduce the time of stealthy show so the event goes from STEALTHY')
+        self.logger.info(
+            'Reduce the time of stealthy show so the event goes from STEALTHY'
+        )
         self.logger.info('to basic state avec 2 sec')
         self.change_conf(sleep=5, stealthy_show=2)
         self.assertEqual(self.find_event('08 OnGoing')['status'], ONGOING)
