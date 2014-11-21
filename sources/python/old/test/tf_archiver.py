@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-#--------------------------------
+# --------------------------------
 # Copyright (c) 2014 'Capensis' [http://www.capensis.com]
 #
 # This file is part of Canopsis.
