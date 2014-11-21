@@ -33,44 +33,48 @@ from canopsis.old.record import Record
 import logging
 
 # Basic statuses
-OFF=0
-ONGOING=1
+OFF = 0
+ONGOING = 1
 
 # Special Alerts statuses
-STEALTHY=2
-BAGOT=3
+STEALTHY = 2
+BAGOT = 3
 
 # Cancel action from UI
-CANCEL=4
+CANCEL = 4
 
-namespace='events'
-logging_level= 'INFO' if not len(sys.argv) >= 2 else sys.argv[1].upper()
+namespace = 'events'
+logging_level = 'INFO' if not len(sys.argv) >= 2 else sys.argv[1].upper()
 
 # Remove logging_level arg so unittest does not process it
 sys.argv = [sys.argv[0]]
 
+
 def event(name, state, **kwargs):
     event = {
-        'connector'     : 'test',
+        'connector': 'test',
         'connector_name': 'test',
-        'event_type'    : 'check',
-        'source_type'   : 'resource',
-        'component'     : 'test',
-        'resource'      : 'test',
-        'state'         : state,
-        'crecord_type'  : 'event',
-        'state_type'    : 1,
-        'pass_event'    : 1,
+        'event_type': 'check',
+        'source_type': 'resource',
+        'component': 'test',
+        'resource': 'test',
+        'state': state,
+        'crecord_type': 'event',
+        'state_type': 1,
+        'pass_event': 1,
         }
     for key in kwargs:
         event[key] = kwargs[key]
     return (name, event)
 
+
 def event_ok(**kwargs):
     return event('Event OK', 0, **kwargs)
 
+
 def event_ko(**kwargs):
     return event('Event KO', 2, **kwargs)
+
 
 class KnownValues(unittest.TestCase):
 
@@ -82,16 +86,18 @@ class KnownValues(unittest.TestCase):
         stdout_handler = logging.StreamHandler(sys.stdout)
         stdout_handler.setLevel(logging_level)
         stdout_handler.setFormatter(logging.Formatter(
-                '%(asctime)s [%(name)s] [%(levelname)s] %(message)s'
-            ))
+            '%(asctime)s [%(name)s] [%(levelname)s] %(message)s'
+        ))
         cls.logger.addHandler(stdout_handler)
 
         cls.logger.debug(' + Init TF_Archiver on %s' % namespace)
         cls.account = Account(user='root', group='root')
 
         cls.logger.debug(' + Get storage')
-        cls.storage = get_storage(namespace=namespace,
-                                   logging_level=logging_level)
+        cls.storage = get_storage(
+            namespace=namespace,
+            logging_level=logging_level
+        )
         cls.collection = cls.storage.get_backend('events')
 
         cls.default_conf = cls.collection.find(
@@ -102,7 +108,7 @@ class KnownValues(unittest.TestCase):
         if cls.default_conf.count():
             cls.default_conf = cls.default_conf[0]
         else:
-            cls.default_conf =  {
+            cls.default_conf = {
                 '_id': 'statusmanagement',
                 'crecord_type': 'statusmanagement',
                 'restore_event': True,
@@ -116,7 +122,6 @@ class KnownValues(unittest.TestCase):
             logging_level=logging_level,
             logging_name='Amqp'
             )
-
 
     @classmethod
     def tearDownClass(cls):
@@ -168,7 +173,7 @@ class KnownValues(unittest.TestCase):
 
     def find_event(self, connector):
         cursor = self.collection.find(
-            {'crecord_type':'event', 'connector': connector})
+            {'crecord_type': 'event', 'connector': connector})
         if cursor.count():
             return cursor[0]
         return {'status': -1}
