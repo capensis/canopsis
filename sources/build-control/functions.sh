@@ -372,6 +372,30 @@ function update_basic_source() {
     fi
 }
 
+function install_dir() {
+    DIRNAME=$1
+    SRCDIR=$2
+
+    cd $SRCDIR
+
+    echo "-- Archiving files..."
+    tar cf $DIRNAME.tar $DIRNAME
+    check_code $?
+
+    echo "-- Extracting files..."
+    tar mxhf $DIRNAME.tar -C $PREFIX/
+    check_code $?
+
+    echo "-- Fix permissions"
+    tar tf $DIRNAME.tar | while read file
+    do
+        chown $HUSER:$HGROUP $PREFIX/$file
+    done
+
+    echo "-- Cleaning"
+    rm $DIRNAME.tar
+}
+
 function extra_deps() {
     if [ $CPSNODEPS -ne 1 ]
     then
