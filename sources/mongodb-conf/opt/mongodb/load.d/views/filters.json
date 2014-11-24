@@ -43,7 +43,8 @@
             "mfilter",
             "enable",
             "crecord_write_time",
-            "run_once"
+            "run_once",
+            "break"
           ],
           "actions_toolbar": [
             "actionbutton-removeselection"
