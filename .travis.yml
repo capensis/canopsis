@@ -6,7 +6,6 @@ install:
   - "cat /proc/version"
   - "sudo apt-get update"
   - "sudo apt-get install sudo git-core libcurl4-gnutls-dev libncurses5-dev"
-  - "cd sources"
   - "git submodule init"
   - "git submodule update"
   - "sudo ./build-install.sh -l"

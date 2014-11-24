@@ -1,66 +1,64 @@
 #!/bin/bash
 
-# Check user
-if [ `id -u` -ne 0 ]
-then
-    echo "You must run this command as root ..."
-    exit 1
-fi
-
-
-# Configurations
-export SRC_PATH=`pwd`
-
-if [ -e $SRC_PATH/canohome/lib/common.sh ]
-then
-    . $SRC_PATH/canohome/lib/common.sh
-else
-    echo "Impossible to find common's lib ..."
-    exit 1
-fi
-
-if [ -e $SRC_PATH/build-control/config.sh ]
-then
-    . $SRC_PATH/build-control/config.sh
-fi
-
-# Check slink
-if [ -e $PREFIX/.slinked ]
-then
-    echo "There is a slink environment installed."
-
-    read -p "Remove slink environment ? [N/y]: " INPUT
-
-    if [ "$(echo $INPUT | tr '[:upper:]' '[:lower:]')" == "y" ]
-    then
-        echo "-- Removing slink environment..."
-
-        CPS=$PREFIX
-
-        . $SRC_PATH/../tools/slink_utils
-        remove_slinks
-    else
-        echo "Slink environment kept."
-        exit 0
-    fi
-fi
-
-PY_BIN=$PREFIX"/bin/python"
+PY_BIN="$PREFIX/bin/python"
 INC_DIRS="/usr/include"
-LOG_PATH="$SRC_PATH/log/"
+LOG_PATH="$BASE_PATH/log/"
 INST_CONF="$SRC_PATH/build.d/"
 VARLIB_PATH="$PREFIX/var/lib/pkgmgr/packages"
-FAKEROOT="$SRC_PATH/fakeroot"
+MESSAGES="$BASE_PATH/build_messages.txt"
 
-MESSAGES="$SRC_PATH/build_messages.txt"
-echo "" > $MESSAGES
+CPSBUILD=1
+CPSCLEAN=0
+CPSNOREBUILD=0
+CPSTEST=0
+CPSPKG=0
+CPSNODEPS=0
+CPSINSTALLER=0
+CPSLOGFILE=1
+CPSUPDATE=0
 
-mkdir -p $LOG_PATH
-rm -rf $LOG_PATH/*.log >/dev/null 2>&1
+function init_build_install() {
+    export CPSBUILD
+    export CPSCLEAN
+    export CPSNOREBUILD
+    export CPSTEST
+    export CPSPKG
+    export CPSNODEPS
+    export CPSINSTALLER
+    export CPSLOGFILE
+    export CPSUPDATE
 
-LOGSTDOUT=0
+    echo "" > $MESSAGES
 
-# Functions
+    mkdir -p $VARLIB_PATH >/dev/null 2>&1
+    mkdir -p $LOG_PATH >/dev/null 2>&1
+
+    rm -rf $LOG_PATH/*.log >/dev/null 2>&1
+}
+
+function purge_old_binaries() {
+    if [ $CPSPKG -eq 1 ]
+    then
+        echo "-- Purge old binaries ..."
+        rm -rf $BASE_PATH/binaries/$ARCH >/dev/null 2>&1 || true
+        rm -rf $BASE_PATH/binaries/noarch >/dev/null 2>&1  || true
+        rm -f $BASE_PATH/pkg.tmp >/dev/null 2>&1 || true
+    fi
+}
+
+function prebuild() {
+    if [ -e "$BASE_PATH/pre-build.sh" ]
+    then
+        . $BASE_PATH/pre-build.sh
+    fi
+}
+
+function postbuild() {
+    if [ -e "$BASE_PATH/post-build.sh" ]
+    then
+        . $BASE_PATH/post-build.sh
+    fi
+}
 
 function add_message() {
     echo $@
@@ -73,7 +71,7 @@ function launch_log() {
 
     LOG=$LOG_PATH/$NAME.log
 
-    if [ $LOGSTDOUT -eq 1 ]
+    if [ $CPSLOGFILE -eq 0 ]
     then
         eval $CMD
     else
@@ -374,45 +372,75 @@ function update_basic_source() {
     fi
 }
 
+function install_dir() {
+    DIRNAME=$1
+    SRCDIR=$2
+
+    cd $SRCDIR
+
+    echo "-- Archiving files..."
+    tar cf $DIRNAME.tar $DIRNAME
+    check_code $?
+
+    echo "-- Extracting files..."
+    tar mxhf $DIRNAME.tar -C $PREFIX/
+    check_code $?
+
+    echo "-- Fix permissions"
+    tar tf $DIRNAME.tar | while read file
+    do
+        chown $HUSER:$HGROUP $PREFIX/$file
+    done
+
+    echo "-- Cleaning"
+    rm $DIRNAME.tar
+}
+
 function extra_deps() {
-    echo "Install OS dependencies for $DIST $DIST_VERS ..."
-
-    local DEPS_FILE="$SRC_PATH/extra/dependencies/"$DIST"_"$DIST_VERS
-
-    if [ -e $DEPS_FILE ]
+    if [ $CPSNODEPS -ne 1 ]
     then
-        bash $DEPS_FILE
-    else
-        VERS=$(echo $DIST_VERS | cut -d. -f1)
-        DEPS_FILE="$SRC_PATH/extra/dependencies/"$DIST"_"$VERS
+        echo "Install OS dependencies for $DIST $DIST_VERS ..."
+
+        local DEPS_FILE="$SRC_PATH/extra/dependencies/"$DIST"_"$DIST_VERS
 
         if [ -e $DEPS_FILE ]
         then
             bash $DEPS_FILE
         else
-            echo " + Impossible to find dependencies file ($DEPS_FILE)..."
-        fi
-    fi
+            VERS=$(echo $DIST_VERS | cut -d. -f1)
+            DEPS_FILE="$SRC_PATH/extra/dependencies/"$DIST"_"$VERS
 
-    check_code $? "Install extra dependencies failure"
+            if [ -e $DEPS_FILE ]
+            then
+                bash $DEPS_FILE
+            else
+                echo " + Impossible to find dependencies file ($DEPS_FILE)..."
+            fi
+        fi
+
+        check_code $? "Install extra dependencies failure"
+    fi
 }
 
 function run_clean() {
-    echo "Clean $PREFIX ..."
-    echo " + kill all canopsis process ..."
-
-    if [ -e $PREFIX/bin/hypcontrol ]
+    if [ $CPSCLEAN -eq 1 ]
     then
-        su - $HUSER -c ". .bash_profile; hypcontrol stop"
+        echo "Clean $PREFIX ..."
+        echo " + kill all canopsis process ..."
+
+        if [ -e $PREFIX/bin/hypcontrol ]
+        then
+            su - $HUSER -c "bash -l -c 'hypcontrol stop'"
+        fi
+
+        pkill -9 -u $HUSER
+        sleep 1
+
+        . $SRC_PATH/packages/canohome/control
+        pre_remove
+        post_remove
+        purge
     fi
-
-    pkill -9 -u $HUSER
-    sleep 1
-
-    . $SRC_PATH/packages/canohome/control
-    pre_remove
-    post_remove
-    purge
 }
 
 function export_env() {
@@ -432,339 +460,218 @@ function easy_install_pylib() {
     check_code $? "Easy install failed ..."
 }
 
-function show_help() {
-    echo "Usage : ./build-install.sh [OPTION]"
-    echo
-    echo "     Build and install Canopsis dependencies and packages"
-    echo
-    echo "Options:"
-    echo "    -g        ->  Update git submodules before build"
-    echo "    -c        ->  Uninstall Canopsis"
-    echo "    -n        ->  Don't build sources if possible"
-    echo "    -u        ->  Run unittest at the end"
-    echo "    -p        ->  Make packages"
-    echo "    -d        ->  Don't check dependencies"
-    echo "    -i        ->  Just build installer (for packages installation)"
-    echo "    -h, help  ->  Print this help"
-    exit 1
-}
+function build_pkg() {
+    PACKAGE=$1
 
-# Run
+    dtstart=`date +"%Y%m%d %H:%M:%S.%N"`
 
-ARG1=$1
-ARG2=$2
+    cd $SRC_PATH
 
-if [ "x$ARG1" == "xhelp" ]
-then
-    show_help
-fi
+    export MAKEFLAGS="-j$((`cat /proc/cpuinfo  | grep processor | wc -l` + 1))"
 
-OPT_BUILD=1
-OPT_CLEAN=0
-OPT_NOBUILD=0
-OPT_WUT=0
-OPT_MPKG=0
-OPT_DCD=0
-OPT_MINSTALLER=0
-OPT_LOGFILE=1
-OPT_GITUPDATE=0
+    NAME="x"
+    VERSION="0.1"
+    RELEASE="0"
+    FCHECK="/tmp/notexist"
+    P_ARCH=$ARCH
+    P_DIST=$DIST
+    P_DISTVERS=$DIST_VERS
 
-while getopts "cnupdhilg" opt
-do
-    case $opt in
-        c) OPT_CLEAN=1 ;;
-        n) OPT_NOBUILD=1 ;;
-        u) OPT_WUT=1 ;;
-        p) OPT_MPKG=1 ;;
-        i) OPT_MINSTALLER=1; OPT_BUILD=0;;
-        l) OPT_LOGFILE=0;;
-        d) OPT_DCD=1;;
-        g) OPT_GITUPDATE=1;;
-        h) show_help ;;
-        \?)
-            echo "Invalid option: -$OPTARG" >&2
-            show_help
-        ;;
-    esac
-done
+    NO_ARCH=false
+    NO_DIST=false
+    NO_DISTVERS=false
 
-if [ $OPT_CLEAN -eq 1 ]
-then
-    run_clean
+    function update(){ true; }
+    function install(){ true; }
+    function build(){ true; }
 
-    if [ "x$ARG1" == "x-c" ]
+    . /$INST_CONF/$PACKAGE
+
+    if [ "$NAME" != 'x' ]
     then
-        exit 0
-    fi
-fi
+        LOG=$LOG_PATH/$NAME.log
+        touch $LOG
 
-if [ $OPT_LOGFILE -eq 0 ]
-then
-    LOGSTDOUT=1
-fi
-
-# Init submodules
-
-if [ $OPT_GITUPDATE -eq 1 ]
-then
-    # Try to init submodule, if fail, try to use externals
-    echo "-- Init submodules ..."
-
-    cd $SRC_PATH/..
-
-    git submodule init && git submodule update
-    check_code $? "Impossible to init main submodules"
-
-    cd $SRC_PATH/externals/
-    check_code $? "Impossible to move to externals"
-
-    git submodule init && git submodule update
-    check_code $? "Impossible to init externals submodules"
-
-    cd $SRC_PATH/..
-fi
-
-detect_os
-export_env
-
-if [ $OPT_BUILD -eq 1 ]
-then
-    if [ $OPT_DCD -ne 1 ]
-    then
-        extra_deps
-    fi
-
-    if [ $OPT_MPKG -eq 1 ]
-    then
-        echo "-- Purge old binaries ..."
-        rm -rf $SRC_PATH/../binaries/$ARCH >/dev/null 2>&1 || true
-        rm -rf $SRC_PATH/../binaries/noarch >/dev/null 2>&1  || true
-        rm -f $SRC_PATH/pkg.tmp >/dev/null 2>&1 || true
-    fi
-
-    # Init package managment
-
-    mkdir -p $VARLIB_PATH
-
-    #  Build all packages
-
-    # Pre-build
-    if [ -e "$SRC_PATH/pre-build.sh" ]
-    then
-        . $SRC_PATH/pre-build.sh
-    fi
-
-    ITEMS=`ls -1 $INST_CONF | grep ".install$"`
-
-    for ITEM in $ITEMS
-    do
-        dtstart=`date +"%Y%m%d %H:%M:%S.%N"`
-
-        cd $SRC_PATH
-
-        export MAKEFLAGS="-j$((`cat /proc/cpuinfo  | grep processor | wc -l` + 1))"
-
-        NAME="x"
-        VERSION="0.1"
-        RELEASE="0"
-        FCHECK="/tmp/notexist"
-        P_ARCH=$ARCH
-        P_DIST=$DIST
-        P_DISTVERS=$DIST_VERS
-
-        NO_ARCH=false
-        NO_DIST=false
-        NO_DISTVERS=false
-
-        function update(){ true; }
-        function install(){ true; }
-        function build(){ true; }
-
-        . /$INST_CONF/$ITEM
-
-        if [ "$NAME" != 'x' ]
+        # Check package sources
+        if [ ! -e $SRC_PATH/packages/$NAME/blacklist ]
         then
-            LOG=$LOG_PATH/$NAME.log
-            touch $LOG
+            touch $SRC_PATH/packages/$NAME/blacklist
+        fi
 
-            # Check package sources
-            if [ ! -e $SRC_PATH/packages/$NAME/blacklist ]
+        if [ ! -e packages/$NAME/control ]
+        then
+            mkdir -p packages/$NAME
+
+            function echocontrol(){
+                echo "$@" >> packages/$NAME/control
+            }
+
+            echocontrol "#!/bin/bash"
+            echocontrol
+            echocontrol "NAME=\"$NAME\""
+            echocontrol "VERSION=\"$VERSION\""
+            echocontrol "RELEASE=\"$RELEASE\""
+            echocontrol "DESCRIPTION=\"$DESCRIPTION\""
+            echocontrol "REQUIRES=\"$REQUIRES\""
+            echocontrol
+            echocontrol "function pre_install() { true; }"
+            echocontrol "function post_install() { true; }"
+            echocontrol "function pre_remove() { true; }"
+            echocontrol "function post_remove() { true; }"
+            echocontrol "function pre_update() { true; }"
+            echocontrol "function post_update() { true; }"
+            echocontrol "function purge() { true; }"
+        fi
+
+        chmod +x packages/$NAME/control
+        . packages/$NAME/control
+
+        pkg_options
+
+        echo "################################################################"
+        echo "#"
+        add_message "# Package: $NAME v$VERSION-r$RELEASE ($DIST-$DIST_VERS $ARCH)"
+        add_message "# Date: `date`"
+        echo "#"
+        echo "################################################################"
+        add_message ""
+
+        ## Build and install
+        FORCE_UPDATE=0
+
+        if [ $NAME == "mongodb" ]
+        then
+            FORCE_UPDATE=1
+        fi
+
+        ## Build and install
+
+        #### Update package managment format
+        if [ -e $VARLIB_PATH/$NAME ]
+        then
+            mv $VARLIB_PATH/$NAME $VARLIB_PATH/$NAME.info
+        fi
+
+        if [ $FORCE_UPDATE -eq 1 ] || [ ! -e $VARLIB_PATH/$NAME.info ]
+        then
+            if [ $CPSNOREBUILD -ne 1 ]
             then
-                touch $SRC_PATH/packages/$NAME/blacklist
+                echo "-- Build ..."
+                build
+                check_code $? "Build failure"
             fi
 
-            if [ ! -e packages/$NAME/control ]
+            echo "-- Pre-install ..."
+            pre_install
+
+            echo "-- Install ..."
+            install
+            check_code $? "Install failure"
+
+            echo "-- Post-install ..."
+            post_install
+
+            echo "v${VERSION}-r${RELEASE}_${P_DIST}-${P_DISTVERS}_${P_ARCH}" > $VARLIB_PATH/$NAME.info
+        else
+            echo "-- Pre-update ..."
+            pre_update
+
+            echo "-- Update ..."
+            update
+            check_code $? "Update failure"
+
+            echo "-- Post-update ..."
+            post_update
+
+            echo "v${VERSION}-r${RELEASE}_${P_DIST}-${P_DISTVERS}_${P_ARCH}" > $VARLIB_PATH/$NAME.info
+        fi
+
+        echo "-- Listing files ..."
+
+        rm -f $VARLIB_PATH/$NAME.blacklist
+        touch $VARLIB_PATH/$NAME.files
+
+        cd $PREFIX
+
+        # Find new ones
+        find . -newermt "$dtstart" -type f >> $VARLIB_PATH/$NAME.files.tmp
+
+        # Find files matching blacklist patterns
+        touch $VARLIB_PATH/$NAME.blacklist
+        cat $SRC_PATH/packages/$NAME/blacklist | while read pattern
+        do
+            find . -wholename ".$pattern" >> $VARLIB_PATH/$NAME.blacklist
+        done
+
+        # Generate final listing
+        cat $VARLIB_PATH/$NAME.files.tmp | while read file
+        do
+            file=${file#./}
+            grep "$file" $VARLIB_PATH/$NAME.files >/dev/null 2>&1
+
+            if [ $? -eq 1 ]
             then
-                mkdir -p packages/$NAME
-
-                function echocontrol(){
-                    echo "$@" >> packages/$NAME/control
-                }
-
-                echocontrol "#!/bin/bash"
-                echocontrol
-                echocontrol "NAME=\"$NAME\""
-                echocontrol "VERSION=\"$VERSION\""
-                echocontrol "RELEASE=\"$RELEASE\""
-                echocontrol "DESCRIPTION=\"$DESCRIPTION\""
-                echocontrol "REQUIRES=\"$REQUIRES\""
-                echocontrol
-                echocontrol "function pre_install() { true; }"
-                echocontrol "function post_install() { true; }"
-                echocontrol "function pre_remove() { true; }"
-                echocontrol "function post_remove() { true; }"
-                echocontrol "function pre_update() { true; }"
-                echocontrol "function post_update() { true; }"
-                echocontrol "function purge() { true; }"
-            fi
-
-            chmod +x packages/$NAME/control
-            . packages/$NAME/control
-
-            pkg_options
-
-            echo "################################################################"
-            echo "#"
-            add_message "# Package: $NAME v$VERSION-r$RELEASE ($DIST-$DIST_VERS $ARCH)"
-            add_message "# Date: `date`"
-            echo "#"
-            echo "################################################################"
-            add_message ""
-
-            ## Build and install
-            FORCE_UPDATE=0
-
-            if [ $NAME == "mongodb" ]
-            then
-                FORCE_UPDATE=1
-            fi
-
-            ## Build and install
-
-            #### Update package managment format
-            if [ -e $VARLIB_PATH/$NAME ]
-            then
-                mv $VARLIB_PATH/$NAME $VARLIB_PATH/$NAME.info
-            fi
-
-            if [ $FORCE_UPDATE -eq 1 ] || [ ! -e $VARLIB_PATH/$NAME.info ]
-            then
-                if [ $OPT_NOBUILD -ne 1 ]
-                then
-                    echo "-- Build ..."
-                    build
-                    check_code $? "Build failure"
-                fi
-
-                echo "-- Pre-install ..."
-                pre_install
-
-                echo "-- Install ..."
-                install
-                check_code $? "Install failure"
-
-                echo "-- Post-install ..."
-                post_install
-
-                echo "v${VERSION}-r${RELEASE}_${P_DIST}-${P_DISTVERS}_${P_ARCH}" > $VARLIB_PATH/$NAME.info
-            else
-                echo "-- Pre-update ..."
-                pre_update
-
-                echo "-- Update ..."
-                update
-                check_code $? "Update failure"
-
-                echo "-- Post-update ..."
-                post_update
-
-                echo "v${VERSION}-r${RELEASE}_${P_DIST}-${P_DISTVERS}_${P_ARCH}" > $VARLIB_PATH/$NAME.info
-            fi
-
-            echo "-- Listing files ..."
-
-            rm -f $VARLIB_PATH/$NAME.files.tmp
-            rm -f $VARLIB_PATH/$NAME.blacklist
-            touch $VARLIB_PATH/$NAME.files
-
-            cd $PREFIX
-
-            # Find new ones
-            find . -newermt "$dtstart" -type f >> $VARLIB_PATH/$NAME.files.tmp
-
-            # Find files matching blacklist patterns
-            touch $VARLIB_PATH/$NAME.blacklist
-            cat $SRC_PATH/packages/$NAME/blacklist | while read pattern
-            do
-                find . -wholename ".$pattern" >> $VARLIB_PATH/$NAME.blacklist
-            done
-
-            # Generate final listing
-            cat $VARLIB_PATH/$NAME.files.tmp | while read file
-            do
-                file=${file#./}
-                grep "$file" $VARLIB_PATH/$NAME.files >/dev/null 2>&1
+                grep "./$file" $VARLIB_PATH/$NAME.blacklist >/dev/null 2>&1
 
                 if [ $? -eq 1 ]
                 then
-                    grep "./$file" $VARLIB_PATH/$NAME.blacklist >/dev/null 2>&1
-
-                    if [ $? -eq 1 ]
-                    then
-                        echo "$file" >> $VARLIB_PATH/$NAME.files
-                    fi
+                    echo "$file" >> $VARLIB_PATH/$NAME.files
                 fi
-            done
-
-            if [ $OPT_MPKG -eq 1 ]
-            then
-                echo "-- Make package ..."
-
-                PPATH=$SRC_PATH/../binaries/$P_ARCH/$P_DIST/$P_DISTVERS
-
-                mkdir -pv $PPATH/$NAME 2> $LOG 1> $LOG
-
-                launch_log $NAME tar cvfj $PPATH/$NAME/files.bz2 -T $VARLIB_PATH/$NAME.files
-                check_code $? "files.bz2 generation failed"
-
-                launch_log $NAME cp -v $VARLIB_PATH/$NAME.files $PPATH/$NAME/files.lst
-                check_code $? "files.lst generation failed"
-
-                launch_log $NAME cp -v $SRC_PATH/packages/$NAME/control $SRC_PATH/packages/$NAME/blacklist $PPATH/$NAME
-                check_code $? "control/blacklist generation failed"
-
-                cd $PPATH
-                launch_log $NAME tar cvf $NAME.tar $NAME
-                check_code $? "packaging failed"
-
-                rm -rf $PPATH/$NAME >/dev/null 2>&1
-
-                MD5=$(md5sum $PPATH/$NAME.tar | cut -d' ' -f1)
-
-                echo "-- Update packages list ..."
-                echo "$NAME|$VERSION|$RELEASE|$P_DIST|$P_DISTVERS|$P_ARCH|$MD5|$REQUIRES|$DESCRIPTION" >> $SRC_PATH/pkg.tmp
             fi
+        done
 
-            cd $SRC_PATH
-        else
-            echo "Impossible to build $NAME ..."
-            exit 1
+        rm $VARLIB_PATH/$NAME.files.tmp
+
+        if [ $CPSPKG -eq 1 ]
+        then
+            echo "-- Make package ..."
+
+            PPATH=$BASE_PATH/binaries/$P_ARCH/$P_DIST/$P_DISTVERS
+
+            mkdir -pv $PPATH/$NAME 2> $LOG 1> $LOG
+
+            launch_log $NAME tar cvfj $PPATH/$NAME/files.bz2 -T $VARLIB_PATH/$NAME.files
+            check_code $? "files.bz2 generation failed"
+
+            launch_log $NAME cp -v $VARLIB_PATH/$NAME.files $PPATH/$NAME/files.lst
+            check_code $? "files.lst generation failed"
+
+            launch_log $NAME cp -v $SRC_PATH/packages/$NAME/control $SRC_PATH/packages/$NAME/blacklist $PPATH/$NAME
+            check_code $? "control/blacklist generation failed"
+
+            cd $PPATH
+            launch_log $NAME tar cvf $NAME.tar $NAME
+            check_code $? "packaging failed"
+
+            rm -rf $PPATH/$NAME >/dev/null 2>&1
+
+            MD5=$(md5sum $PPATH/$NAME.tar | cut -d' ' -f1)
+
+            echo "-- Update packages list ..."
+            echo "$NAME|$VERSION|$RELEASE|$P_DIST|$P_DISTVERS|$P_ARCH|$MD5|$REQUIRES|$DESCRIPTION" >> $BASE_PATH/pkg.tmp
         fi
 
-        add_message ""
-    done
+        cd $SRC_PATH
+    else
+        echo "Impossible to build $NAME ..."
+        exit 1
+    fi
 
-    if [ $OPT_MPKG -eq 1 ]
+    add_message ""
+}
+
+function create_package_list() {
+    if [ $CPSPKG -eq 1 ]
     then
         echo "-- Create packages list ..."
 
-        cd $SRC_PATH/../binaries
+        cd $BASE_PATH/binaries
 
         echo "[" > Packages.json
 
         FIRST=true
 
-        cat $SRC_PATH/pkg.tmp | while read line
+        cat $BASE_PATH/pkg.tmp | while read line
         do
             NAME=$(echo "$line" | cut -d'|' -f1)
             VERSION=$(echo "$line" | cut -d'|' -f2)
@@ -806,33 +713,38 @@ then
         echo " }" >> Packages.json
         echo "]" >> Packages.json
 
-        rm $SRC_PATH/pkg.tmp
+        rm $BASE_PATH/pkg.tmp
     fi
+}
 
+
+function launch_update_pylibs() {
+    echo
     echo "################################"
     echo "# Update Python Libs"
     echo "################################"
+    echo
 
     launch_cmd 1 update_pylibs
     echo " + Ok"
+}
 
+function fix_permissions() {
+    echo
     echo "################################"
     echo "# Fix permissions"
     echo "################################"
+    echo
 
     mkdir -p $PREFIX/.python-eggs
     chown $HUSER:$HGROUP -R $PREFIX
     check_code $?
 
     echo " + Ok"
+}
 
-    # Post-build
-    if [ -e "$SRC_PATH/post-build.sh" ]
-    then
-        . $SRC_PATH/post-build.sh
-    fi
-
-    if [ $OPT_WUT -eq 1 ]
+function launch_unittests() {
+    if [ $CPSTEST -eq 1 ]
     then
         echo "################################"
         echo "# Launch Unit Tests"
@@ -858,33 +770,37 @@ then
         check_code $EXCODE "Unit tests failed ..."
         echo " + Ok"
     fi
-fi
-
-if [ $OPT_MPKG -eq 1 -o $OPT_MINSTALLER -eq 1 ]
-then
-    cd $SRC_PATH
-    ./build-control/build-installer.sh
-    check_code $? "Impossible to build installer"
-fi
-
-echo
-echo "################################"
-echo "# Installing locales"
-echo "################################"
-echo
-
-cp -R $SRC_PATH/locale $PREFIX
-
-echo " + Ok"
+}
 
 
-echo
-echo "################################"
-echo "#           MESSAGES           #"
-echo "################################"
-echo
+function build_installer() {
+    if [ $CPSPKG -eq 1 -o $CPSINSTALLER -eq 1 ]
+    then
+        cd $SRC_PATH
+        ./build-control/build-installer.sh
+        check_code $? "Impossible to build installer"
+    fi
+}
 
-cat $MESSAGES
-rm $MESSAGES
+function install_locales() {
+    echo
+    echo "################################"
+    echo "# Install locales"
+    echo "################################"
+    echo
 
-echo " -- You can now run Canopsis: hypcontrol start"
+    cp -R $SRC_PATH/locale $PREFIX
+
+    echo " + Ok"
+}
+
+function show_messages() {
+    echo
+    echo "################################"
+    echo "#           MESSAGES           #"
+    echo "################################"
+    echo
+
+    cat $MESSAGES
+    rm $MESSAGES
+}

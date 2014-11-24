@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-#--------------------------------
+# --------------------------------
 # Copyright (c) 2014 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
@@ -62,7 +62,7 @@ class engine(Engine):
             'ackts': {'$gt': -1}
         }, {'rk': 1})
 
-        # dictionary is faster than list for key test existance, value is useless
+        # dictionary is faster than list for key test existance
         self.cache_acks = {}
         for ack in query:
             self.cache_acks[ack['rk']] = 1
@@ -72,17 +72,22 @@ class engine(Engine):
         logevent = None
 
         ackremove = False
+        state = event.get('state', 0)
+        state_type = event.get('state_type', 1)
+
         if event['event_type'] == 'ackremove':
-            #remove ack from event
+            # remove ack from event
+            # Ack remove information exists when ack is just removed
+            # And deleted if event is ack again
             rk = event['ref_rk']
             self.events_collection.update(
                 {'rk': rk},
                 {
                     '$set': {
                         'ack_remove': {
-                            'author' : event['author'],
-                            'comment' : event['output'],
-                            'timestamp' : time()
+                            'author': event['author'],
+                            'comment': event['output'],
+                            'timestamp': time()
                         }
                     },
                     '$unset': {
@@ -91,28 +96,37 @@ class engine(Engine):
                         'ticket_declared_date': '',
                         'ticket': '',
                         'ticket_date': ''
-            }})
+                    }
+                }
+            )
             ackremove = True
 
-        # If event is of type acknowledgement, then acknowledge corresponding event
+        # If event is of type ack, then ack reference event
         if event['event_type'] == 'ack':
             self.logger.debug('Ack event found, will proceed ack.')
 
             rk = event.get('referer', event.get('ref_rk', None))
 
             if not rk:
-                self.logger.error("Cannot get acknowledged event, missing key referer or ref_rk")
+                self.logger.error(
+                    'Cannot get acknowledged event, missing referer or ref_rk'
+                )
                 return event
 
             for comment in self.comments:
                 if comment['comment'] in event['output']:
-                    #an ack comment is contained into a defined comment, then let save referer key to the comment
-                    #set referer rk to last update date
+                    # An ack comment is contained into a defined comment
+                    # Then let save referer key to the comment
+                    # Set referer rk to last update date
                     self.objects_backend.update(
                         {'_id': comment['_id']},
                         {"$addToSet": {'referer_event_rks': {'rk': rk}}},
                         upsert=True)
-                    self.logger.info('Added a referer rk to the comment ' + comment['comment'])
+                    self.logger.info(
+                        'Added a referer rk to the comment {}'.format(
+                            comment['comment']
+                        )
+                    )
 
             ack_info = {
                 'timestamp': event['timestamp'],
@@ -131,19 +145,23 @@ class engine(Engine):
                 new=True
             )
 
-            self.logger.debug(u'Updating event {} with informations author {} and comment {}'.format(
-                rk,
-                ack_info['author'],
-                ack_info['comment'])
+            self.logger.debug(
+                u'Updating event {} with author {} and comment {}'.format(
+                    rk,
+                    ack_info['author'],
+                    ack_info['comment']
+                )
             )
 
             ack_info['isAck'] = True
-            #useless information for event ack data
+            # Useless information for event ack data
             del ack_info['ackts']
+
             # clean eventual previous ack remove information
             self.events_collection.update({
                 'rk': rk
-                },{
+                },
+                {
                     '$set': {
                         'ack': ack_info,
                     },
@@ -157,7 +175,11 @@ class engine(Engine):
                 record = response['value']
 
                 # Emit an event log
-                referer_event = self.storage.find_one(mfilter={'rk': rk}, namespace='events')
+                referer_event = self.storage.find_one(
+                    mfilter={'rk': rk},
+                    namespace='events'
+                )
+
                 if referer_event:
 
                     referer_event = referer_event.dump()
@@ -199,12 +221,24 @@ class engine(Engine):
                 source_type="component",
                 component="__canopsis__",
                 perf_data_array=[
-                    {'metric': 'cps_alerts_ack', 'value': cvalues, 'type': 'COUNTER'},
-                    {'metric': 'cps_alerts_not_ack', 'value': -1, 'type': 'COUNTER'}
+                    {
+                        'metric': 'cps_alerts_ack',
+                        'value': cvalues,
+                        'type': 'COUNTER'
+                    },
+                    {
+                        'metric': 'cps_alerts_not_ack',
+                        'value': -1,
+                        'type': 'COUNTER'
+                    }
                 ]
             )
 
-            self.amqp.publish(alerts_event, get_routingkey(alerts_event), self.amqp.exchange_name_events)
+            self.amqp.publish(
+                alerts_event,
+                get_routingkey(alerts_event),
+                self.amqp.exchange_name_events
+            )
             self.logger.debug('Ack internal metric sent.')
 
             for hostgroup in event.get('hostgroups', []):
@@ -217,8 +251,16 @@ class engine(Engine):
                     resource=hostgroup,
 
                     perf_data_array=[
-                        {'metric': 'cps_alerts_ack', 'value': cvalues, 'type': 'COUNTER'},
-                        {'metric': 'cps_alerts_not_ack', 'value': -1, 'type': 'COUNTER'}
+                        {
+                            'metric': 'cps_alerts_ack',
+                            'value': cvalues,
+                            'type': 'COUNTER'
+                        },
+                        {
+                            'metric': 'cps_alerts_not_ack',
+                            'value': -1,
+                            'type': 'COUNTER'
+                        }
                     ]
                 )
 
@@ -230,14 +272,17 @@ class engine(Engine):
             self.reload_ack_cache()
 
         # If event is acknowledged, and went back to normal, remove the ack
-        # This test concerns most of case and could not perform query for each event
-        elif event['state'] == 0 and event.get('state_type', 1) == 1:
+        # This test concerns most of case
+        # And could not perform query for each event
+        elif state == 0 and state_type == 1:
             solvedts = int(time())
 
             if event['rk'] in self.cache_acks:
-                self.logger.debug('Ack exists for this event, and has to be recovered.')
+                self.logger.debug(
+                    'Ack exists for this event, and has to be recovered.'
+                )
 
-                # we have an ack to process for this event
+                # We have an ack to process for this event
                 query = {
                     'rk': event['rk'],
                     'solved': False,
@@ -287,8 +332,9 @@ class engine(Engine):
                     logevent['acknowledged_at'] = ack['ackts']
                     logevent['solved_at'] = solvedts
 
-        # If the event is in problem state, update the solved state of acknowledgement
-        elif ackremove or (event['state'] != 0 and event.get('state_type', 1) == 1):
+        # If the event is in problem state,
+        # update the solved state of acknowledgement
+        elif ackremove or (state != 0 and state_type == 1):
             self.logger.debug('Alert on event, preparing ACK statement.')
 
             self.stbackend.find_and_modify(

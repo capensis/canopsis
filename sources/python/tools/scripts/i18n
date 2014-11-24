@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-#--------------------------------
+# --------------------------------
 # Copyright (c) 2014 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
@@ -32,7 +32,12 @@ from os.path import join, isfile
 class i18n(object):
 
     def __init__(self):
-        self.misc = get_storage(namespace='misc', account=Account(user="root", group="root")).get_backend()
+        self.misc = get_storage(
+            namespace='object',
+            account=Account(
+                user="root",
+                group="root")
+            ).get_backend()
         self.query = {'crecord_type': 'i18n', '_id': 'translations'}
 
     def extract(self):
@@ -54,27 +59,29 @@ class i18n(object):
 
         existing_terms = {}
 
-        #Update lang file with existing po file
+        # Update lang file with existing po file
         base_lang_path = join(sys.prefix, 'locale', 'en', 'ui_lang.po')
         if isfile(base_lang_path):
             po_base = polib.pofile(base_lang_path)
             for entry in po_base:
-                print ('    -> {}'.format(entry.msgid))
+                print (u'    -> {}'.format(entry.msgid))
 
-                #dont add twice an entry
+                # Dont add twice an entry
                 existing_terms[entry.msgid] = entry.msgstr
                 entry = polib.POEntry(
                     msgid=entry.msgid,
                     msgstr=entry.msgstr
                 )
                 po.append(entry)
-            print ('Inegrated previous entries form lang file {}'.format(base_lang_path))
+            print (u'Inegrated previous entries form lang file {}'.format(
+                base_lang_path)
+            )
         else:
-            print ('File not found @ {}'.format(base_lang_path))
+            print (u'File not found @ {}'.format(base_lang_path))
             print ('Could not integrate previous tranlations')
 
-        #Getting new fields to translate from db
-        #Upserting
+        # Getting new fields to translate from db
+        # Upserting
         translations = self.misc.find_one(self.query)
         for term in translations['todo']:
             if term not in existing_terms:
@@ -86,7 +93,11 @@ class i18n(object):
 
         output = join(sys.prefix, 'tmp', 'todo.po')
         po.save(output)
-        print ('Database translation definitions updated into {} file.'.format(output))
+        print (
+            u'Database translation definitions updated into {} file.'.format(
+                output
+            )
+        )
 
 
 if __name__ == '__main__':

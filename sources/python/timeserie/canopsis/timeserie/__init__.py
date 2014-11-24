@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-#--------------------------------
+# --------------------------------
 # Copyright (c) 2014 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
@@ -169,7 +169,7 @@ class TimeSerie(Configurable):
 
         return result
 
-    def calculate(self, points, timewindow):
+    def calculate(self, points, timewindow, meta=None):
         """
         Do an operation on all points with input timewindow.
 
@@ -194,6 +194,11 @@ class TimeSerie(Configurable):
         # start to exclude points which are not in timewindow
         points = [point for point in points if point[0] in timewindow]
         points_len = len(points)
+
+        if not meta:
+            meta = {}
+
+        points = self.apply_transform(points, method=meta.get('type', None))
 
         fn = None
 
@@ -264,6 +269,71 @@ class TimeSerie(Configurable):
                     break
 
         return result
+
+    def apply_transform(self, points, method=None):
+        """
+        Apply DERIVE, ABSOLUTE, COUNTER, GAUGE transforms to points.
+
+        :param points: list of points
+        :param str method: method (it's the "type" metadata of perfdata)
+        :returns: list of points
+        """
+
+        def gauge(pts):
+            return pts
+
+        def absolute(pts):
+            points = []
+
+            for pt in pts:
+                ts, val = pt[0], pt[1]
+
+                if val < 0:
+                    val = -val
+
+                points.append([ts, val])
+
+            return points
+
+        def derive(pts):
+            points = []
+
+            for i in range(1, len(pts) + 1):
+                ts, val = pts[i][0], pts[i][1]
+                prevts, prevval = pts[i - 1][0], pts[i - 1][1]
+
+                interval = abs(ts - prevts)
+                if interval:
+                    val = round(float(value) / interval, 3)
+
+                points.append([ts, val])
+
+            return points
+
+        def counter(pts):
+            points = []
+
+            val = 0
+
+            for pt in pts:
+                ts, increment = pt[0], pt[1]
+                val += increment
+
+                points.append([ts, val])
+
+            return points
+
+        methods = {
+            'GAUGE': gauge,
+            'ABSOLUTE': absolute,
+            'DERIVE': derive,
+            'COUNTER': counter
+        }
+
+        if not method or method not in methods:
+            return points
+
+        return methods[method](points)
 
     def _conf(self, *args, **kwargs):
 
