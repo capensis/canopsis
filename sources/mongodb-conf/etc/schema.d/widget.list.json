@@ -14,7 +14,7 @@
 		"keys":["filters"]
 	},{
 		"title": "Rendering",
-		"keys":["refreshableWidget", "maximized_column_index", "cloaking", "contentTruncatedLength", "searchable_columns"]
+		"keys":["refreshableWidget", "maximized_column_index", "cloaking", "contentTruncatedLength", "searchable_columns", "stackableColumnsPriority"]
 	},{
 		"title": "Mixins",
 		"keys":["mixins"]
@@ -145,6 +145,13 @@
 		"additional_filter": {
 			"type": "string",
 			"role": "cfilter"
+		},
+		"columnsOrder": {
+			"type": "array"
+		},
+		"stackableColumnsPriority": {
+			"reorderable": true,
+			"type": "array"
 		},
 		"maximized_column_index": {
 			"type": "integer",
