@@ -32,6 +32,12 @@ from canopsis.old.record import Record
 
 import logging
 
+import ConfigParser
+CONFIG = ConfigParser.ConfigParser()
+
+# Default : 60s
+BEAT_INTERVAL = 60
+
 # Basic statuses
 OFF = 0
 ONGOING = 1
@@ -43,8 +49,8 @@ BAGOT = 3
 # Cancel action from UI
 CANCEL = 4
 
-namespace = 'events'
-logging_level = 'INFO' if not len(sys.argv) >= 2 else sys.argv[1].upper()
+NAMESPACE = 'events'
+LOGGING_LEVEL = 'INFO' if not len(sys.argv) >= 2 else sys.argv[1].upper()
 
 # Remove logging_level arg so unittest does not process it
 sys.argv = [sys.argv[0]]
@@ -80,22 +86,22 @@ class KnownValues(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.logger = logging.getLogger('TF_Archiver')
-        cls.logger.setLevel(logging_level)
+        cls.logger.setLevel(LOGGING_LEVEL)
 
         stdout_handler = logging.StreamHandler(sys.stdout)
-        stdout_handler.setLevel(logging_level)
+        stdout_handler.setLevel(LOGGING_LEVEL)
         stdout_handler.setFormatter(
             logging.Formatter(
                 '%(asctime)s [%(name)s] [%(levelname)s] %(message)s')
             )
         cls.logger.addHandler(stdout_handler)
 
-        cls.logger.debug(' + Init TF_Archiver on %s' % namespace)
+        cls.logger.debug(' + Init TF_Archiver on {}'.format(NAMESPACE))
         cls.account = Account(user='root', group='root')
 
         cls.logger.debug(' + Get storage')
-        cls.storage = get_storage(namespace=namespace,
-                                  logging_level=logging_level)
+        cls.storage = get_storage(namespace=NAMESPACE,
+                                  logging_level=LOGGING_LEVEL)
         cls.collection = cls.storage.get_backend('events')
 
         cls.default_conf = cls.collection.find(
@@ -116,12 +122,8 @@ class KnownValues(unittest.TestCase):
                 'stealthy_show': 300
                 }
 
-        cls.amqp = Amqp(logging_level=logging_level,
+        cls.amqp = Amqp(logging_level=LOGGING_LEVEL,
                         logging_name='Amqp')
-
-    @classmethod
-    def tearDownClass(cls):
-        cls.remove_event(crecord_type='event', pass_event=1)
 
     def setUp(self):
         # Restore default conf
@@ -130,6 +132,7 @@ class KnownValues(unittest.TestCase):
         test_func = self.id().split('.')[-1].split('_')
         self.current_test = test_func[1] + ' ' + test_func[2].capitalize()
         self.logger.debug('+ {0}'.format(self.current_test))
+        self.remove_event(connector=self.current_test)
 
     def tearDown(self):
         # Remove events
@@ -148,19 +151,18 @@ class KnownValues(unittest.TestCase):
         self.storage.put(record,
                          namespace='object',
                          account=self.account)
-        time.sleep(sleep)
+        time.sleep(BEAT_INTERVAL+sleep)
 
-    def publish_event(self, name, event, sleep=0):
+    def publish_event(self, name, event, sleep=2):
         rk = get_routingkey(event)
         self.logger.debug("Sending event {}".format(name))
         self.amqp.publish(event,
                           rk,
                           'canopsis.events')
-        time.sleep(1+sleep)
+        time.sleep(sleep)
 
-    @classmethod
-    def remove_event(cls, **kwargs):
-        cls.collection.remove()
+    def remove_event(self, **kwargs):
+        self.collection.remove(**kwargs)
         time.sleep(1)
 
     def find_event(self, connector):
@@ -188,10 +190,10 @@ class KnownValues(unittest.TestCase):
         self.logger.debug(
             'Reduce time of stealthy time so the switch from KO to OK')
         self.logger.debug('does not trigger the Stealthy status')
-        self.change_conf(sleep=60, stealthy_time=1)
+        self.change_conf(sleep=5, stealthy_time=1)
 
         self.logger.debug('KO -> OK : OFF')
-        self.publish_event(*event_ko(connector='03 Off'), sleep=2)
+        self.publish_event(*event_ko(connector='03 Off'))
         self.publish_event(*event_ok(connector='03 Off'))
         self.assertEqual(self.find_event('03 Off')['status'], OFF)
 
@@ -199,11 +201,11 @@ class KnownValues(unittest.TestCase):
         self.logger.debug(
             'Reduce time of stealthy time so the switch from KO to OK')
         self.logger.debug('does not trigger the Stealthy status')
-        self.change_conf(sleep=60, stealthy_time=1)
+        self.change_conf(sleep=5, stealthy_time=1)
 
         self.logger.debug('KO -> OK : OFF')
-        self.publish_event(*event_ok(connector='04 Off'), sleep=2)
-        self.publish_event(*event_ko(connector='04 Off'), sleep=2)
+        self.publish_event(*event_ok(connector='04 Off'))
+        self.publish_event(*event_ko(connector='04 Off'))
         self.publish_event(*event_ok(connector='04 Off'))
         self.assertEqual(self.find_event('04 Off')['status'], OFF)
 
@@ -216,7 +218,7 @@ class KnownValues(unittest.TestCase):
         self.logger.debug(
             'Reduce the time of stealthy show so the event goes from STEALTHY')
         self.logger.debug('to basic state avec 2 sec')
-        self.change_conf(sleep=60, stealthy_show=2)
+        self.change_conf(sleep=5, stealthy_show=2)
         self.assertEqual(self.find_event('05 Off')['status'], OFF)
 
     def test_06_ongoing_basic_okko(self):
@@ -226,13 +228,13 @@ class KnownValues(unittest.TestCase):
         self.assertEqual(self.find_event('06 OnGoing')['status'], ONGOING)
 
     def test_07_ongoing_okkokook_stealthytime(self):
-        self.change_conf(sleep=60, stealthy_time=1)
+        self.change_conf(sleep=5, stealthy_time=1)
 
         self.logger.debug('OK -> KO : ONGOING')
-        self.publish_event(*event_ok(connector='07 OnGoing'), sleep=2)
-        self.publish_event(*event_ko(connector='07 OnGoing'), sleep=2)
-        self.publish_event(*event_ok(connector='07 OnGoing'), sleep=2)
-        self.publish_event(*event_ko(connector='07 OnGoing'), sleep=2)
+        self.publish_event(*event_ok(connector='07 OnGoing'), sleep=4)
+        self.publish_event(*event_ko(connector='07 OnGoing'), sleep=4)
+        self.publish_event(*event_ok(connector='07 OnGoing'), sleep=4)
+        self.publish_event(*event_ko(connector='07 OnGoing'), sleep=4)
         self.assertEqual(self.find_event('07 OnGoing')['status'], ONGOING)
 
     def test_08_ongoing_okkookko_stealthyshow(self):
@@ -246,7 +248,7 @@ class KnownValues(unittest.TestCase):
         self.logger.debug(
             'Reduce the time of stealthy show so the event goes from STEALTHY')
         self.logger.debug('to basic state avec 2 sec')
-        self.change_conf(sleep=60, stealthy_show=2)
+        self.change_conf(sleep=5, stealthy_show=2)
         self.assertEqual(self.find_event('08 OnGoing')['status'], ONGOING)
 
     def test_09_stealthy_basic_kook(self):
@@ -285,14 +287,22 @@ class KnownValues(unittest.TestCase):
         self.assertEqual(self.find_event('13 Bagot')['status'], BAGOT)
 
     def test_14_bagot_basic(self):
-        self.change_conf(sleep=1, bagot_freq=3)
+        self.change_conf(sleep=5, bagot_freq=3)
         self.logger.debug('KO -> OK (x3) : BAGOT')
         for i in xrange(3):
             self.publish_event(*event_ko(connector='14 Bagot'))
             self.publish_event(*event_ok(connector='14 Bagot'))
         self.assertEqual(self.find_event('14 Bagot')['status'], BAGOT)
 
+
 if __name__ == '__main__':
+
+    CONFIG.read(join(sys.prefix, 'etc', 'amqp2engines.conf'))
+    try:
+        BEAT_INTERVAL = int(CONFIG.get('engine:eventstore', 'beat_interval'))
+    except:
+        BEAT_INTERVAL = 60
+
     unittest.main(verbosity=2)
 
     #functest=TestCase()

@@ -92,14 +92,15 @@ class engine(Engine):
                 event[afield].append(avalue)
             else:
                 event[afield] = avalue
-            self.logger.debug(u"    + %s: Override: '%s' -> '%s'"
-                              % (event['rk'], afield, avalue))
+            self.logger.debug(
+                u"    + {}: Override: '{}' -> '{}'".format(
+                    event['rk'], afield, avalue))
             return True
 
         else:
             self.logger.error(
-                u"Action malformed (needs 'field' and 'value'): %s" % action
-                )
+                u"Action malformed (needs 'field' and 'value'): {}".format(
+                    action))
             return False
 
     def a_remove(self, event, action):
@@ -127,24 +128,20 @@ class engine(Engine):
                 self.logger.debug(u"    + {}: Removed: '{}' from '{}'".format(
                     event['rk'],
                     aelement,
-                    akey
-                ))
+                    akey))
 
             else:
                 del event[akey]
                 self.logger.debug(u"    + {}: Removed: '{}'".format(
                     event['rk'],
-                    akey
-                ))
+                    akey))
 
             return True
 
         else:
             self.logger.error(
                 u"Action malformed (needs 'key' and/or 'element'): {}".format(
-                    action
-                )
-            )
+                    action))
             return False
 
     def a_modify(self, event, action, name):
@@ -166,11 +163,11 @@ class engine(Engine):
             derogated = actionMap[atype](event, action)
 
         else:
-            self.logger.warning(u"Unknown action '%s'" % atype)
+            self.logger.warning(u"Unknown action '{}'".format(atype))
 
         # If the event was derogated, fill some informations
         if derogated:
-            self.logger.debug(u"Event changed by rule '%s'" % name)
+            self.logger.debug(u"Event changed by rule '{}'".format(name))
 
         return None
 
@@ -185,7 +182,7 @@ class engine(Engine):
             ``None``
         """
 
-        self.logger.debug(u"Event dropped by rule '%s'" % name)
+        self.logger.debug(u"Event dropped by rule '{}'".format(name))
         self.drop_event_count += 1
         return DROP
 
@@ -200,7 +197,7 @@ class engine(Engine):
             ``None``
         """
 
-        self.logger.debug(u"Event passed by rule '%s'" % name)
+        self.logger.debug(u"Event passed by rule '{}'".format(name))
         self.pass_event_count += 1
         return event
 
@@ -217,9 +214,10 @@ class engine(Engine):
 
         if "route" in action:
             self.next_amqp_queues = [action["route"]]
-            self.logger.debug(u"Event re-routed by rule '%s'" % name)
+            self.logger.debug(u"Event re-routed by rule '{}'".format(name))
         else:
-            self.logger.error(u"Action malformed (needs 'route'): %s" % action)
+            self.logger.error(
+                u"Action malformed (needs 'route'): {}".format(action))
 
         return None
 
@@ -237,7 +235,7 @@ class engine(Engine):
                 if ret:
                     pass_event = True
             else:
-                self.logger.warning(u"Unknown action '%s'" % action)
+                self.logger.warning(u"Unknown action '{}'".format(action))
 
         return pass_event
 
@@ -265,7 +263,7 @@ class engine(Engine):
             if check(filterItem['mfilter'], event):
 
                 self.logger.debug(
-                    'Event: {}, filter matches'.format(event['rk'])
+                    u'Event: {}, filter matches'.format(event['rk'])
                     )
 
                 for action in actions:
@@ -276,7 +274,7 @@ class engine(Engine):
 
                 if filterItem.get('break', 0):
                     self.logger.debug(
-                        u' + {} filter breaked next filters processing'.format(
+                        u' + Filter {} broke the next filters processing'.format(
                             filterItem.get('name', 'filter')
                         )
                     )
@@ -349,15 +347,15 @@ class engine(Engine):
             self.beat_interval
         )
         event = forger(
-            connector="Engine",
-            connector_name="engine",
-            event_type="check",
-            source_type="resource",
-            resource=self.amqp_queue + '_data',
-            state=0,
-            state_type=1,
-            output=message_dropped,
-            perf_data_array=[
+            connector = "Engine",
+            connector_name = "engine",
+            event_type = "check",
+            source_type = "resource",
+            resource = self.amqp_queue + '_data',
+            state = 0,
+            state_type = 1,
+            output = message_dropped,
+            perf_data_array = [
                 {'metric': 'pass_event',
                  'value': self.pass_event_count,
                  'type': 'GAUGE'},
