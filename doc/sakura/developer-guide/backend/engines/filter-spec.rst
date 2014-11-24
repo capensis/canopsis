@@ -66,6 +66,7 @@ Here is the basic rule structure :
        'actions':          // list - Actions to apply
        'time_conditions':  // list - Optional - specific to downtime events
        'priority':         // integer - Priority of the rule
+       'break':	 	   // boolean - Allow or stop the processing of further filters
    }
 
 mFilter Structure
