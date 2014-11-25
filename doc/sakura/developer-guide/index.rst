@@ -7,4 +7,3 @@ Developer guide
 
    backend/index
    frontend/index
-   others/index
