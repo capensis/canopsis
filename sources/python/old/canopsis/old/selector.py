@@ -77,7 +77,7 @@ class Selector(Record):
         }
 
         self.logger = getLogger('Selector')
-        self.cdowntime = Downtime(self.logger)
+        self.cdowntime = Downtime()
         # Canopsis filter management for mongo
         self.cfilter = Filter()
 

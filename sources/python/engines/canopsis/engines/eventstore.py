@@ -41,7 +41,7 @@ class engine(Engine):
         self.log_types = reader([CONFIG.get('events', 'logs')]).next()
         self.comment_types = reader([CONFIG.get('events', 'comments')]).next()
 
-        self.cdowntime = Downtime(self.logger)
+        self.cdowntime = Downtime()
         self.beat()
 
     def beat(self):
