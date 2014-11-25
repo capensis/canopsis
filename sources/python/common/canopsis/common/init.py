@@ -44,6 +44,8 @@ from inspect import getmodule
 # hack in order to convert a str to a unicode
 if PYVER >= '3':
     setattr(getmodule(str), 'basestring', str)
+# add reference to basestring in this module
+basestring = basestring
 
 
 class Init(object):
