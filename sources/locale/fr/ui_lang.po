@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: Canopsis\n"
 "Report-Msgid-Bugs-To: teamcanopsis@capensis.fr\n"
 "POT-Creation-Date: 2014-08-22 10:00+0100\n"
-"PO-Revision-Date: 2014-11-19 10:17+0000\n"
+"PO-Revision-Date: 2014-11-24 10:36+0000\n"
 "Last-Translator: eric regnier <eregnier@capensis.fr>\n"
 "Language-Team: French (http://www.transifex.com/projects/p/canopsis/language/fr/)\n"
 "MIME-Version: 1.0\n"
@@ -1294,3 +1294,23 @@ msgstr "Serveur ldap"
 
 msgid "Fields Mapping"
 msgstr "Champs liés"
+
+msgid "breaking rule"
+msgstr "règle de terminaison"
+
+msgid ""
+"When this rule is met and processed, following rules are not applied "
+"depending on priority order"
+msgstr "Lorsque cette règles est appliquée, les règles suivantes suivant leur ordre de priorité, ne sont pas appliquées"
+
+msgid "Reinitialising record 'is loaded' value"
+msgstr "Réinitialise la valeur de chargement de l'enregistrement"
+
+msgid "Type a value"
+msgstr "Saisir une valeur"
+
+msgid "Last event publication"
+msgstr "Publication du dernier évènement"
+
+msgid "Acknowleged"
+msgstr "Acquitté"

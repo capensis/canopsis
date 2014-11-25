@@ -31,16 +31,18 @@ loggingBasicConfig(
     format='%(asctime)s %(name)s %(levelname)s %(message)s',
     )
 
-#Statuses
+# Statuses
 OFF = 0
 ONGOING = 1
 STEALTHY = 2
 BAGOT = 3
 CANCELED = 4
 
+
 def setFields(_map, **kwargs):
     for key in kwargs:
         _map[key] = kwargs[key]
+
 
 class KnownValues(unittest.TestCase):
     def setUp(self):
@@ -97,13 +99,11 @@ class KnownValues(unittest.TestCase):
                 self.assertEqual(event['status'], BAGOT)
             devent = event.copy()
 
-
         # Check that the event is On Going if out of the Bagot time interval
         setFields(event, state=1, timestamp=event['timestamp']+4000)
         self.Archiver.check_statuses(event, devent)
         self.assertEqual(event['status'], ONGOING)
         devent = event.copy()
-
 
 
 if __name__ == "__main__":
