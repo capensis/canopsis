@@ -32,9 +32,8 @@ class Downtime(Record):
         This class provide easy management for downtime by allowing
         component/resource test against any downtime at now time
     """
-    def __init__(self, logger, storage=None):
+    def __init__(self, storage=None):
 
-        self.logger = logger
         if not storage:
             storage = get_storage(
                 namespace='object', account=Account(user="root", group="root"))
@@ -47,8 +46,7 @@ class Downtime(Record):
                 delta_beat takes care of engines beat interval.
                 for accurate measure, it should be equal to 0
         """
-        self.logger.debug(
-            'Reloading downtimes @ %s' % (str(datetime.now())))
+
         now = time()
         query = {
             'start': {'$lte': now + delta_beat},
@@ -57,7 +55,6 @@ class Downtime(Record):
 
         downtimes = self.backend.find(query)
         self.downtimes = [downtime for downtime in downtimes]
-        self.logger.debug('Got %s downtimes loaded' % (len(self.downtimes)))
 
         return self.downtimes
 
@@ -76,9 +73,9 @@ class Downtime(Record):
         return max(downtimes_end)
 
     def is_downtime(self, component, resource):
-        #Tests whether or not given component/resource information exists in
+        # Tests whether or not given component/resource information exists in
         # downtime list.
-        #If any, it s downtime and engines should operate consequently
+        # If any, it s downtime and engines should operate consequently
 
         now = time()
         for downtime in self.downtimes:

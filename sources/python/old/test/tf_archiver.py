@@ -81,6 +81,7 @@ def event_ok(**kwargs):
 def event_ko(**kwargs):
     return event('Event KO', 2, **kwargs)
 
+
 class KnownValues(unittest.TestCase):
 
     @classmethod
