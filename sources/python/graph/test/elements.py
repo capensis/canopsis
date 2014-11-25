@@ -54,6 +54,7 @@ class GraphElementTest(TestCase):
         self.count = self.__COUNT__
         self.elts = [None] * self.count
         self.manager = GraphManager(data_scope='test')
+        self.manager.del_elts()
         for i in range(self.count):
             params = self.get_params()
             self.elts[i] = self.get_type()(**params)
@@ -66,6 +67,7 @@ class GraphElementTest(TestCase):
 
         for elt in self.elts:
             elt.delete(manager=self.manager)
+        self.manager.del_elts()
 
     def test_init(self):
         """
@@ -80,7 +82,7 @@ class GraphElementTest(TestCase):
 
         # change ids and types
         for index, elt in enumerate(self.elts):
-            elt.id, elt.type = 0, index
+            elt.id, elt.type = '0', index
 
         # test same ids
         self.assertEqual(len(set(elt.id for elt in self.elts)), 1)

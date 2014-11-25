@@ -22,6 +22,7 @@
 from unittest import TestCase, main
 
 from canopsis.graph.manager import GraphManager
+from canopsis.graph.elements import Graph, Vertice, Edge
 
 
 class GraphTest(TestCase):
@@ -31,7 +32,7 @@ class GraphTest(TestCase):
         Create self.count=10 and self.graphs
         """
 
-        self.manager = GraphManager()
+        self.manager = GraphManager(data_scope='test')
 
         self.count = 10
 
@@ -42,36 +43,36 @@ class GraphTest(TestCase):
         # create self.count vertices
         self.vertices = [None] * self.count
         for index in range(self.count):
-            self.vertices[index] = {
-                'id': 'vertice-{0}'.format(index),
-                'data': None if index % 2 else {'index': index},
-                'type': 'tvertice-{0}'.format(index),
-            }
-        self.vertice_ids = [vertice['id'] for vertice in self.vertices]
+            self.vertices[index] = Vertice(
+                _id='vertice-{0}'.format(index),
+                data=None if index % 2 else {'index': index},
+                _type='tvertice-{0}'.format(index),
+            )
+        self.vertice_ids = [vertice.id for vertice in self.vertices]
 
         # create self.count edges
         self.edges = [None] * self.count
         for index in range(self.count):
-            self.edges[index] = {
-                'id': 'edge-{0}'.format(index),
-                'data': None if index % 2 else {'index': index},
-                'type': 'tedge-{0}'.format(index),
-                'sources': self.vertice_ids[index:],
-                'targets': self.vertice_ids[:-index],
-                'directed': index % 2 == 0
-            }
-        self.edge_ids = [edge['id'] for edge in self.edges]
+            self.edges[index] = Edge(
+                _id='edge-{0}'.format(index),
+                data=None if index % 2 else {'index': index},
+                _type='tedge-{0}'.format(index),
+                sources=self.vertice_ids[index:],
+                targets=self.vertice_ids[:-index],
+                directed=index % 2 == 0
+            )
+        self.edge_ids = [edge.id for edge in self.edges]
 
         # create self.count graphs
         self.graphs = [None] * self.count
         for index in range(self.count):
-            self.graphs[index] = {
-                'id': 'graph-{0}'.format(index),
-                'data': None if index % 2 else {'index': index},
-                'type': 'tgraph-{0}'.format(index),
-                'elts': self.edge_ids[index:] + self.vertice_ids[index:]
-            }
-        self.graph_ids = [graph['id'] for graph in self.graphs]
+            self.graphs[index] = Graph(
+                _id='graph-{0}'.format(index),
+                data=None if index % 2 else {'index': index},
+                _type='tgraph-{0}'.format(index),
+                elts=self.edge_ids[index:] + self.vertice_ids[index:]
+            )
+        self.graph_ids = [graph.id for graph in self.graphs]
 
         # get all elt ids
         self.elt_ids = self.graph_ids + self.vertice_ids + self.edge_ids
@@ -79,26 +80,26 @@ class GraphTest(TestCase):
         # add edges and graphs in edges
         for index in range(self.count):
             edge = self.edges[index]
-            edge['sources'] += self.edge_ids[index:] + self.graph_ids[index:]
-            edge['targets'] += self.edge_ids[:-index] + self.graph_ids[:-index]
+            edge.sources += self.edge_ids[index:] + self.graph_ids[index:]
+            edge.targets += self.edge_ids[:-index] + self.graph_ids[:-index]
 
         # add graph_ids in graph
         for index in range(self.count):
-            self.graphs[index]['elts'] += self.graph_ids[index:]
+            self.graphs[index].elts += self.graph_ids[index:]
 
     def tearDown(self):
         """
         Del all elements
         """
 
-        for graph in self.graphs:
-            self.manager.del_elts(ids=self.elt_ids)
+        self.manager.del_elts()
 
     def test_CRUD(self):
         """
         Test to put graph and get them back
         """
 
+        self.manager.del_elts()
         # ensure no element exist in storage
         vertices = self.manager.get_elts(ids=self.vertice_ids)
         self.assertFalse(vertices)
@@ -120,7 +121,7 @@ class GraphTest(TestCase):
         self.assertEqual(len(vertices), self.count)
         edges = self.manager.get_elts(ids=self.edge_ids)
         self.assertEqual(len(edges), self.count)
-        graphs = self.maanger.get_elts(ids=self.graph_ids)
+        graphs = self.manager.get_elts(ids=self.graph_ids)
         self.assertEqual(len(graphs), self.count)
 
         # check for get all elts

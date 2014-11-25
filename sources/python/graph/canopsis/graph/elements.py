@@ -99,6 +99,7 @@ from uuid import uuid4 as uuid
 
 from canopsis.common.init import basestring
 from canopsis.storage import Storage
+from canopsis.common.utils import lookup, path
 
 CONF_PATH = 'graph/graph.conf'
 CATEGORY = 'GRAPH'
@@ -113,6 +114,7 @@ class GraphElement(object):
 
     ID = Storage.DATA_ID  #: graph element id
     TYPE = 'type'  #: graph element type name
+    _CLS = '_cls'  #: graph element class type
 
     __slots__ = (ID, TYPE)
 
@@ -121,6 +123,7 @@ class GraphElement(object):
         :param str _id: element id. generated if None.
         :param str _type: element type name. self lower type name if None.
         """
+
         self.type = type(self).__name__.lower() if _type is None else _type
         self.id = str(uuid()) if _id is None else _id
 
@@ -138,6 +141,7 @@ class GraphElement(object):
         """
         Return not self.__eq__ == other
         """
+
         return not self.__eq__(other)
 
     def __hash__(self, other):
@@ -157,12 +161,35 @@ class GraphElement(object):
         :raises: TypeError if kwargs can not be used in cls.new
         """
 
-        result = cls(**kwargs)
+        result = cls()
+        for name in kwargs:
+            if not name.startswith('_'):
+                value = kwargs[name]
+                setattr(result, name, value)
+        return result
+
+    @staticmethod
+    def new_element(**elt_properties):
+        """
+        Instantiate a new graph element related to elt properties.
+
+        :param dict elt_properties: serialized elt properties.
+        :return: new elt instance.
+        """
+
+        result = None
+
+        cls = elt_properties[GraphElement._CLS]
+
+        if cls is not None:
+            cls = lookup(cls)
+            result = cls.new(**elt_properties)
+
         return result
 
     def to_dict(self):
         """
-        Transform self to a dict.
+        Transform self to a dict in storing public attributes.
         """
 
         result = {}
@@ -171,26 +198,7 @@ class GraphElement(object):
             if slot[0] != '_':
                 result[slot] = getattr(self, slot)
 
-        return result
-
-    @classmethod
-    def isKwargs(cls, kwargs):
-        """
-        Check if input kwargs can be used such as a kwargs.
-
-        :param dict kwargs: kwargs to check.
-        :return: True iif input kwargs can be used such as cls.new method
-        :rtype: bool
-        """
-
-        result = True
-
-        # check if public attributes exist in kwargs
-        for slot in cls.__slots__:
-            if slot[0] != '_':
-                if slot not in kwargs:
-                    result = False
-                    break
+        result[GraphElement._CLS] = path(type(self))
 
         return result
 
@@ -211,6 +219,7 @@ class GraphElement(object):
         :param graph_ids: graph ids where save self.
         :type graph_ids: list or str
         """
+
         # save the dict format
         elt = self.to_dict()
         manager.put_elt(elt=elt, graph_ids=graph_ids)
@@ -222,8 +231,6 @@ class GraphElement(object):
         :param GraphManager manager: manager from where delete self.
         """
 
-        # delete references
-        self.del_ref(manager=manager)
         # delete self from manager
         manager.del_elts(ids=self.id)
 
@@ -252,6 +259,7 @@ class Vertice(GraphElement):
         super(Vertice, self).delete(manager=manager)
 
         self_id = self.id
+
         # remove verties which are linked to self
         edges = manager.get_edges(sources=self_id, targets=self_id)
         links = Edge.SOURCES, Edge.TARGETS
@@ -429,27 +437,6 @@ class Graph(Vertice):
         self._sources = {} if _sources is None else _sources
         self._targets = {} if _targets is None else _targets
 
-    def new_element(cls, **elt_properties):
-        """
-        Instantiate a new graph element related to delt properties.
-
-        :param dict delt:
-        """
-
-        result = None
-
-        if cls.GRAPH_TYPE.isKwargs(elt_properties):
-            result = cls.GRAPH_TYPE.new(**elt_properties)
-        elif cls.EDGE_TYPE.isKwargs(elt_properties):
-            result = cls.EDGE_TYPE.new(**elt_properties)
-        elif cls.VERTICE_TYPE.isKwargs(elt_properties):
-            result = cls.VERTICE_TYPE.new(elt_properties)
-        else:
-            raise ValueError(
-                'Not managed elt properties {0}'.format(elt_properties))
-
-        return result
-
     def resolve_refs(self, elts):
 
         if not self._updating:
@@ -470,11 +457,12 @@ class Graph(Vertice):
                             self._targets[target.id].append(gelt)
             self._updating = False
 
-    def update_gelts(self, manager, _added_elts=None):
+    def update_gelts(self, manager, depth=0, _added_elts=None):
         """
         Update self graph elts with self elt ids and input manager.
 
         :param manager: self manager to use.
+        :param int depth: graph depth (add "depth" levels of graphs).
         :param _added_elts: private parameter for storing new graph elts and
             avoid recursive calls.
         """
@@ -486,8 +474,6 @@ class Graph(Vertice):
         self._gelts = []
         # get elts
         elts = manager.get_elts(ids=self.elts)
-        # get type for quick execution
-        self_type = type(self)
         # for all elt ids
         for elt in elts:
             elt_id = elt[GraphElement.ID]
@@ -497,23 +483,11 @@ class Graph(Vertice):
                 new_elt = _added_elts[elt_id]
             else:  # else, instantiate it
                 new_elt = self.new_element(**elt)
-                if isinstance(new_elt, Graph):
-                    new_elt = self_type.new(**elt)
-                    sub_elts = []
-                    # sub elt ids to get at a time
-                    sub_elt_ids = []
-                    for sub_elt_id in new_elt.elts:
-                        if sub_elt_id in _added_elts:
-                            sub_elt = _added_elts[sub_elt_id]
-                            sub_elts.append(sub_elt)
-                        else:
-                            sub_elt_ids.append(sub_elt_id)
-                    if sub_elt_ids:
-                        sub_elts += manager.get_elts(ids=sub_elt_ids)
-                    # set sub_elts
-                    elt.update_gelts(
+                # fill graph if depth > 0
+                if isinstance(new_elt, Graph) and depth > 0:
+                    new_elt.update_gelts(
                         manager=manager,
-                        *sub_elts,
+                        depth=depth - 1,
                         _added_elts=_added_elts
                     )
                 _added_elts[elt_id] = new_elt
@@ -580,7 +554,7 @@ class Graph(Vertice):
         result = super(Graph, self).to_dict()
 
         # if self _elts not empty
-        if self._elts:
+        if self._delts:
             # resolve_refs result['elt'] with dictionary versions
             result[Graph.ELT_IDS] = [elt.to_dict() for elt in self._delts]
 

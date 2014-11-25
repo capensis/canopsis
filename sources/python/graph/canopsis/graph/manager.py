@@ -56,7 +56,7 @@ from canopsis.configuration.configurable.decorator import (
     conf_paths, add_category
 )
 from canopsis.middleware.registry import MiddlewareRegistry
-from canopsis.graph.elements import Graph, Edge, GraphElement
+from canopsis.graph.elements import Graph, Edge, GraphElement, Vertice
 
 CONF_PATH = 'graph/graph.conf'
 CATEGORY = 'GRAPH'
@@ -138,8 +138,9 @@ class GraphManager(MiddlewareRegistry):
         if isinstance(elt, GraphElement):
             elt = elt.to_dict()
         elt_id = elt[GraphElement.ID]
+
         # put elt value in storage
-        self[GraphManager.STORAGE].put_element(_id=elt_id, elt=elt)
+        self[GraphManager.STORAGE].put_element(_id=elt_id, element=elt)
         # update graph if graph_id is not None
         if graph_ids is not None:
             graphs = self.get_graphs(ids=graph_ids, add_elts=False)
@@ -446,7 +447,8 @@ class GraphManager(MiddlewareRegistry):
             graph_type = self.GRAPH_TYPE
             for vertice in vertices:
                 elt = graph_type.new_element(**vertice)
-                result.append(elt)
+                if isinstance(elt, Vertice):
+                    result.append(elt)
         else:
             result = None
 
@@ -498,7 +500,8 @@ class GraphManager(MiddlewareRegistry):
             graph_type = self.GRAPH_TYPE
             for edge in edges:
                 elt = graph_type.new_element(**edge)
-                result.append(elt)
+                if isinstance(elt, Edge):
+                    result.append(elt)
         else:
             result = None
 
