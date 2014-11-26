@@ -97,11 +97,6 @@ class engine(Engine):
                                 0
                             )
                             update_query['$unset'] = {'cancel': ''}
-                            output = 'Undo remove for alert {} {}'
-                            event['output'] = output.format(
-                                devent.get('component', ''),
-                                devent.get('resource', '')
-                            )
 
                 update_query['$set'] = update
 
