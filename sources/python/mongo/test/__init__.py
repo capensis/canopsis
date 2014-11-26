@@ -92,23 +92,23 @@ class StorageTest(TestCase):
 
         self.storage.drop()
 
-        request = list(self.storage._find(document))
-        self.assertEqual(len(request), 0)
+        request = self.storage._find(document)
+        self.assertEqual(request.count(), 0)
 
         self.storage._insert(document)
 
-        request = list(self.storage._find(document))
+        request = self.storage._find(document)
 
-        self.assertEqual(len(request), 1)
+        self.assertEqual(request.count(), 1)
         self.assertEqual(request[0], document)
 
         self.storage._remove(document)
 
-        request = list(self.storage._find(document))
-        self.assertEqual(len(request), 0)
+        request = self.storage._find(document)
+        self.assertEqual(request.count(), 0)
 
-        request = list(self.storage._find())
-        self.assertEqual(len(request), 0)
+        request = self.storage._find()
+        self.assertEqual(request.count(), 0)
 
         _id = 'test'
         document['_id'] = _id
