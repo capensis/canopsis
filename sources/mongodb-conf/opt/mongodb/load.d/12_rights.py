@@ -52,9 +52,9 @@ def add_users(data):
                                  groups=user.get('groups', None))
 
         right_module.update_fields(user['_id'], 'user', {
-            'external': user['external'],
-            'enable': user['enable'],
-            'shadowpasswd': user['shadowpass']
+            'external': user.get('external', False),
+            'enable': user.get('enable', True),
+            'shadowpasswd': user.get('shadowpass', None)
         })
 
 
