@@ -12,6 +12,9 @@
 	},{
 		"title": "Rights",
 		"keys": ["rights"]
+	},{
+		"title": "User preferences",
+		"keys": ["userpreferences"]
 	}],
 	"properties": {
 		"crecord_type": {
@@ -87,6 +90,10 @@
 			"type": "boolean",
 			"required": true,
 			"default": true
+		},
+		"userpreferences": {
+			"type": "object",
+			"role": "userpreference"
 		}
 	}
 }
