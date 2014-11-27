@@ -39,7 +39,7 @@ class engine(Engine):
         self.storage = get_storage(namespace='downtime', account=account)
         self.dt_backend = self.storage.get_backend('downtime')
         self.evt_backend = self.storage.get_backend('events')
-        self.cdowntime = Downtime(self.logger, storage=self.storage)
+        self.cdowntime = Downtime(storage=self.storage)
         self.cdowntime.reload(delta_beat=self.beat_interval)
         self.beat()
 
@@ -47,9 +47,15 @@ class engine(Engine):
         self.cdowntime.reload(delta_beat=self.beat_interval)
 
     def consume_dispatcher(self, event, *args, **kargs):
-        """ Event is useless as downtime just does clean, this dispatch only prevent ha multi execution at the same time """
+        """
+        Event is useless as downtime just does clean, this dispatch
+        only prevent ha multi execution at the same time
+        """
 
-        self.logger.debug('consume_dispatcher method called. Removing expired downtime entries')
+        self.logger.debug(
+            'consume_dispatcher method called.' +
+            'Removing expired downtime entries'
+        )
 
         # Remove downtime that are expired
         records = self.storage.find({
@@ -91,7 +97,8 @@ class engine(Engine):
 
     def work(self, event, *args, **kwargs):
 
-        # If the event is a downtime event, add entry to the downtime collection
+        # If the event is a downtime event,
+        # add entry to the downtime collection
         if event['event_type'] == 'downtime':
             self.logger.debug(
                 'Event downtime received: {0}'.format(event['rk']))
@@ -166,7 +173,12 @@ class engine(Engine):
         else:
 
             event['downtime'] = False
-            if self.cdowntime.is_downtime(event.get('component', ''), event.get('resource', '')):
+            if (self.cdowntime.is_downtime(
+                event.get('component', ''),
+                    event.get('resource', ''))):
                 event['downtime'] = True
-                self.logger.debug('Received event: {0}, and set downtime to {1}'.format(event['rk'], event['downtime']))
+                self.logger.debug(
+                    'Received event: {0}, and set downtime to {1}'.format(
+                        event['rk'],
+                        event['downtime']))
         return event

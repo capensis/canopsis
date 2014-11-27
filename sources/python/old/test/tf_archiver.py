@@ -81,6 +81,7 @@ def event_ok(**kwargs):
 def event_ko(**kwargs):
     return event('Event KO', 2, **kwargs)
 
+
 class KnownValues(unittest.TestCase):
 
     @classmethod
@@ -204,9 +205,9 @@ class KnownValues(unittest.TestCase):
         self.change_conf(sleep=5, stealthy_time=1)
 
         self.logger.debug('KO -> OK : OFF')
-        self.publish_event(*event_ok(connector='04 Off'))
-        self.publish_event(*event_ko(connector='04 Off'))
-        self.publish_event(*event_ok(connector='04 Off'))
+        self.publish_event(*event_ok(connector='04 Off'), sleep=5)
+        self.publish_event(*event_ko(connector='04 Off'), sleep=5)
+        self.publish_event(*event_ok(connector='04 Off'), sleep=5)
         self.assertEqual(self.find_event('04 Off')['status'], OFF)
 
     def test_05_off_ko_ok_stealthyshow(self):

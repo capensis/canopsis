@@ -41,6 +41,10 @@
 			"checksum": 15,
 			"desc": ""
 		},
+		"actionbutton_uncancel": {
+			"checksum": 15,
+			"desc": ""
+		},
 		"actionbutton_changestate": {
 			"checksum": 15,
 			"desc": ""

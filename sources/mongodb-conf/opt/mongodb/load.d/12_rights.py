@@ -32,12 +32,16 @@ actions_path = join(sys.prefix, 'opt/mongodb/load.d/rights/actions_ids.json')
 user_path = join(sys.prefix, 'opt/mongodb/load.d/rights/default_users.json')
 role_path = join(sys.prefix, 'opt/mongodb/load.d/rights/default_roles.json')
 group_path = join(sys.prefix, 'opt/mongodb/load.d/rights/default_groups.json')
-profile_path = join(sys.prefix, 'opt/mongodb/load.d/rights/default_profiles.json')
+profile_path = join(
+    sys.prefix,
+    'opt/mongodb/load.d/rights/default_profiles.json')
+
 
 def add_actions(data):
     for action_id in data:
         right_module.add(action_id,
                          data[action_id].get('desc', "Empty desc"))
+
 
 def add_users(data):
     for user in data:
@@ -48,10 +52,11 @@ def add_users(data):
                                  groups=user.get('groups', None))
 
         right_module.update_fields(user['_id'], 'user', {
-            'external': user['external'],
-            'enable': user['enable'],
-            'shadowpasswd': user['shadowpass']
+            'external': user.get('external', False),
+            'enable': user.get('enable', True),
+            'shadowpasswd': user.get('shadowpass', None)
         })
+
 
 def add_roles(data):
     for role in data:
@@ -64,6 +69,7 @@ def add_roles(data):
             role['_id'], 'role', role.get('groups', []), record
             )
 
+
 def add_profiles(data):
     for profile in data:
         right_module.create_profile(profile['_id'], None)
@@ -75,6 +81,7 @@ def add_profiles(data):
             profile['_id'], 'profile', profile.get('groups', []), record
             )
 
+
 def add_groups(data):
     for group in data:
         right_module.create_group(group['_id'], None)
@@ -83,12 +90,14 @@ def add_groups(data):
             group['_id'], 'group', group.get('rights', {}), record
             )
 
+
 def init():
     add_actions(json.load(open(actions_path)))
     add_users(json.load(open(user_path)))
     add_roles(json.load(open(role_path)))
     # add_groups(json.load(open(group_path)))
     # add_profiles(json.load(open(profile_path)))
+
 
 def update():
     init()
