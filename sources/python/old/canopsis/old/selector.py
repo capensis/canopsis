@@ -115,7 +115,7 @@ class Selector(Record):
         self.state_when_all_ack = dump.get('state_when_all_ack', 'worststate')
 
         default_template = 'Off: [OFF], Minor: [MINOR], Major: [MAJOR]' + \
-        ', Critical: [CRITICAL]'
+            ', Critical: [CRITICAL]'
         self.sla_rk = dump.get('sla_rk', default_template)
         self.output_tpl = dump.get('output_tpl', default_template)
 
@@ -147,9 +147,8 @@ class Selector(Record):
         # Build MongoDB filter
         mfilter = self.makeMfilter()
         if not mfilter:
-            self.logger.debug("  + Invalid filter")
-            return ({}, 3, 1, 0)
-
+            self.logger.debug(" + Invalid filter")
+            return ({}, 0, 0, 0)
         # Adds default check clause as selector have to be done
         # on check event only
         # This constraint have to be available for all aggregation queries
@@ -309,7 +308,7 @@ class Selector(Record):
         # Is selector produced event acknowleged
         if ack_count >= total_error and ack_count > 0:
             send_ack = True
-            # All matched event were acknowleged, 
+            # All matched event were acknowleged,
             # then user chose what kind of state to use. it is either:
 
             # The worst state computed from all events
