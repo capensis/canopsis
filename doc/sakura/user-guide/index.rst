@@ -12,4 +12,4 @@ User guide
    UIv2/index
    event-spec
    internal-metrics
-   workflows
+   event-workflows
