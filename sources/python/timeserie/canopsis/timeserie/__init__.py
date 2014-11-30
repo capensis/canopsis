@@ -193,12 +193,13 @@ class TimeSerie(Configurable):
 
         # start to exclude points which are not in timewindow
         points = [point for point in points if point[0] in timewindow]
-        points_len = len(points)
 
         if not meta:
             meta = {}
 
-        points = self.apply_transform(points, method=meta.get('type', None))
+        transform_method = meta.get('value', {}).get('type', None)
+        points = self.apply_transform(points, method=transform_method)
+        points_len = len(points)
 
         fn = None
 
@@ -298,13 +299,13 @@ class TimeSerie(Configurable):
         def derive(pts):
             points = []
 
-            for i in range(1, len(pts) + 1):
+            for i in range(1, len(pts)):
                 ts, val = pts[i][0], pts[i][1]
                 prevts, prevval = pts[i - 1][0], pts[i - 1][1]
 
                 interval = abs(ts - prevts)
                 if interval:
-                    val = round(float(value) / interval, 3)
+                    val = round(float(val) / interval, 3)
 
                 points.append([ts, val])
 
