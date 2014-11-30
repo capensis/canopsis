@@ -1,7 +1,7 @@
 {
     "categories": [{
         "title": "General",
-        "keys": ["curve", "color", "xaxis", "yaxis", "metric"]
+        "keys": ["metric", "unit", "curve", "color", "xaxis", "yaxis"]
     }],
     "type": "object",
     "properties": {
@@ -10,12 +10,12 @@
             "required": true
         },
         "metric": {
-            "valueKey": "id",
-            "nameKey": "id",
             "type": "string",
-            "role": "stringclassifiedcrecordselector",
-            "crecordtype": "ctxmetric",
             "required": true
+        },
+        "unit": {
+            "type": "string",
+            "required": false
         },
         "curve": {
             "type": "string",

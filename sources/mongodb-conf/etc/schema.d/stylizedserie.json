@@ -11,14 +11,10 @@
         },
         "serie": {
             "type": "string",
-            "role": "modelselect",
-            "model": "crecord.serie",
             "required": true
         },
         "curve": {
             "type": "string",
-            "role": "modelselect",
-            "model": "crecord.curve",
             "required": true
         },
         "color": {
