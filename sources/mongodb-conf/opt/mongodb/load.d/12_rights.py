@@ -25,6 +25,7 @@ from canopsis.organisation.rights import Rights
 from os.path import join
 import json
 import sys
+import uuid
 
 root = Account(user="root", group="root")
 right_module = Rights()
@@ -54,7 +55,8 @@ def add_users(data):
         right_module.update_fields(user['_id'], 'user', {
             'external': user.get('external', False),
             'enable': user.get('enable', True),
-            'shadowpasswd': user.get('shadowpass', None)
+            'shadowpasswd': user.get('shadowpass', None),
+            'authkey': str(uuid.uuid1())
         })
 
 
@@ -100,4 +102,4 @@ def init():
 
 
 def update():
-    init()
+    pass
