@@ -31,7 +31,7 @@ logger = None
 
 views_path = os.path.expanduser('~/opt/mongodb/load.d/views')
 
-##set root account
+# Set root account
 root = Account(user="root", group="root")
 storage = get_storage(account=root, namespace='object')
 
@@ -46,7 +46,9 @@ def init():
                 try:
                     data = json.loads(f.read())
                 except Exception, e:
-                    print ('\n + Error while loading JSON file {} : {}, aborting...\n'.format(filepath, e))
+                    print (
+                        '\n + Error while loading JSON file {} :' +
+                        ' {}, aborting...\n'.format(filepath, e))
                     sys.exit(1)
 
                 try:
@@ -59,12 +61,11 @@ def init():
 
 
 def update():
-    init()
-    #update_view_for_new_metric_format()
+    pass
 
 
 def create_view(_id, name, data, mod='o+r', autorm=True, internal=False):
-    #Delete old view
+    # Delete old view
 
     try:
         record = storage.get('view.%s' % _id)
@@ -83,7 +84,10 @@ def create_view(_id, name, data, mod='o+r', autorm=True, internal=False):
 
 
 def update_view_for_new_metric_format():
-    records = storage.find({'crecord_type': 'view'}, namespace='object', account=root)
+    records = storage.find(
+        {'crecord_type': 'view'},
+        namespace='object',
+        account=root)
     for view in records:
         container = view.data['container']
 
@@ -105,7 +109,7 @@ def update_view_for_new_metric_format():
 
                 item['data']['xtype'] = xtype
 
-            #check if old format
+            # check if old format
             if 'nodes' in item['data']:
                 itemNodes = item['data']['nodes']
 
@@ -116,7 +120,7 @@ def update_view_for_new_metric_format():
                         print('Ignore for weather widget')
                         break
 
-                    #update for text widget
+                    # update for text widget
                     if itemXtype == 'text' or itemXtype == 'topology_viewer':
                         print('Update widget text/topology_viewer format')
                         item['data']['inventory'] = item['data']['nodes']
@@ -129,21 +133,26 @@ def update_view_for_new_metric_format():
 
                             # write extra_fields in node root
                             if 'extra_field' in node:
-                                nodesObject[node['id']].update(node['extra_field'])
+                                nodesObject[node['id']].update(
+                                    node['extra_field']
+                                )
 
-                                #build ccustom in view
+                                # build ccustom in view
                                 del node['extra_field']
                         except Exception as error:
-                            print('An error occured for the following widget: %s' % error)
+                            print(
+                                'An error occured for the ' +
+                                'following widget: {}'.format(error))
                             print(item)
 
                     item['data']['nodes'] = nodesObject
                     print(item['data']['nodes'])
 
-                #check between commits
+                # check between commits
                 if 'ccustom' in item['data']:
                     if isinstance(item['data']['ccustom'], dict):
-                        for nodeId, customValue in item['data']['ccustom'].iteritems():
+                        ccustoms = item['data']['ccustom'].iteritems()
+                        for nodeId, customValue in ccustoms:
                             if nodeId in itemNodes:
                                 itemNodes[nodeId].update(customValue)
                         del item['data']['ccustom']
