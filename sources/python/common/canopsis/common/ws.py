@@ -143,7 +143,7 @@ class route(object):
 
     def __init__(
         self, op, name=None, raw_body=False, payload=None, wsgi_params=None,
-        response=response, adapt=True
+        response=response, adapt=True, nolog=False
     ):
         """
         :param op: ws operation for routing a function
@@ -156,6 +156,7 @@ class route(object):
         :param dict wsgi_params: wsgi parameters which will be given to the
             wsgi such as a keyword
         :param bool adapt: Adapt Canopsis<->Ember data (default: True)
+        :param bool nolog: Disable logging route access (default: False)
         """
 
         super(route, self).__init__()
@@ -170,6 +171,7 @@ class route(object):
         self.response = response
         self.wsgi_params = wsgi_params
         self.adapt = adapt
+        self.nolog = nolog
 
     def __call__(self, function):
 
@@ -178,13 +180,14 @@ class route(object):
         # generate an interceptor
         @wraps(function)
         def interceptor(*args, **kwargs):
-            self.logger.info(
-                'Request: {} - {} - {}, {} (params: {})'.format(
-                    self.op.__name__.upper(),
-                    self.url,
-                    dumps(args), dumps(kwargs),
-                    dumps(dict(request.params)))
-            )
+            if not self.nolog:
+                self.logger.info(
+                    'Request: {} - {} - {}, {} (params: {})'.format(
+                        self.op.__name__.upper(),
+                        self.url,
+                        dumps(args), dumps(kwargs),
+                        dumps(dict(request.params)))
+                )
 
             if self.raw_body:
                 kwargs['body'] = request.body

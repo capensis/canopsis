@@ -4,7 +4,7 @@
         "keys": ["crecord_name", "metrics", "formula"]
     },{
         "title": "Metadata",
-        "keys": ["min", "max", "warn", "crit"]
+        "keys": ["min", "max", "warn", "crit", "unit"]
     },{
         "title": "Advanced Computation",
         "keys": ["aggregate_method", "aggregate_interval"]
@@ -37,6 +37,7 @@
         "max": {"type": "number"},
         "warn": {"type": "number"},
         "crit": {"type": "number"},
+        "unit": {"type": "string"},
         "aggregate_method": {
             "title": "Aggregation Method",
             "role": "simplelist",
