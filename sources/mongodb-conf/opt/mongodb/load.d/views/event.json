@@ -50,9 +50,9 @@
             "Arraysearch",
             "Pagination",
             "History",
-            "Ack",
             "Infobutton",
             "Sendevent",
+            "Responsivelist",
             "Eventnavigation"],
           "displayed_columns": [
             "domain",
