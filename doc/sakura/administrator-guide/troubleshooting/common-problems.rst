@@ -33,3 +33,23 @@ MongoDB needs the locales to be configured in order to run properly. If you meet
 Then you must install locales, example with Debian :
 
     # apt-get install locales
+
+
+CentOS 7 python libs install
+----------------------------
+
+At build install a bug may appear
+
+.. code-block:: bash
+
+   /opt/canopsis/include/python2.7/modsupport.h:27:1: erreur: ‘PyArg_ParseTuple’ is an unrecognized format function type [-Werror=format=]
+   PyAPI_FUNC(int) PyArg_ParseTuple(PyObject *, const char *, ...) Py_FORMAT_PARSETUPLE(PyArg_ParseTuple, 2, 3);
+
+The way to solve it:
+
+.. code-block:: bash
+
+   sed -i "/define HAVE_ATTRIBUTE_FORMAT_PARSETUPLE/ s#1#0#g" /opt/canopsis/include/python2.7/pyconfig.h
+
+This fix could have unknown side effect that we have not met until now.
+

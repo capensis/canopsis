@@ -1,7 +1,7 @@
 {
     "categories": [{
         "title": "General",
-        "keys": ["serie", "curve", "color", "xaxis", "yaxis"]
+        "keys": ["metric", "unit", "curve", "color", "xaxis", "yaxis"]
     }],
     "type": "object",
     "properties": {
@@ -9,12 +9,18 @@
             "type": "string",
             "required": true
         },
-        "serie": {
+        "metric": {
             "type": "string",
             "required": true
         },
+        "unit": {
+            "type": "string",
+            "required": false
+        },
         "curve": {
             "type": "string",
+            "role": "modelselect",
+            "model": "crecord.curve",
             "required": true
         },
         "color": {
