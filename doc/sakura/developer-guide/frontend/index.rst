@@ -17,4 +17,5 @@ Frontend
    translation
    data-management
    routes-system
-   model-layer 
+   model-layer
+   user-preferences
