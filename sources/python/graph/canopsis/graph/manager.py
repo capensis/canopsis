@@ -74,16 +74,24 @@ class GraphManager(MiddlewareRegistry):
 
     GRAPH_TYPE = Graph  #: default graph type
 
-    def get_elts(self, ids=None, types=None, query=None):
+    def get_elts(
+        self,
+        ids=None, types=None, graph_ids=None, data=None, base_type=None,
+        query=None
+    ):
         """
         Get graph element(s) related to input ids, types and query.
 
         :param ids: list of ids or id of element to retrieve. If None, get all
             elements. If str, get one element.
         :type ids: list or str
-        :param types: graph element types to retrieve
+        :param types: graph element types to retrieve.
         :type types: list or str
+        :param graph_ids: graph ids from where find elts.
+        :type graph_ids: list or str
+        :param data: data query
         :param dict query: element search query.
+        :param str base_type: elt base type.
 
         :return: element(s) corresponding to input ids and query.
         :rtype: list or dict
@@ -92,9 +100,44 @@ class GraphManager(MiddlewareRegistry):
         # init query if None
         if query is None:
             query = {}
+        # put base type in query
+        if base_type is not None:
+            query[GraphElement.BASE_TYPE] = base_type
         # put types in query if not None
         if types is not None:
-            query[GraphElement.TYPE: types]
+            if not isinstance(types, basestring):
+                types = {'$in': types}
+            query[GraphElement.TYPE] = types
+        # put data if not None
+        if data is not None:
+            if isinstance(data, dict):
+                for name in data:
+                    data_name = 'data.{0}'.format(name)
+                    query[data_name] = data[name]
+            else:
+                query[Vertice.DATA] = data
+        # find ids among graphs
+        if graph_ids is not None:
+            result = []
+            graphs = self.get_elts(ids=graph_ids)
+            if graphs is not None:
+                # all graph elt ids
+                elt_ids = set()
+                # ensure graphs is a list of graphs
+                if isinstance(graphs, dict):
+                    graphs = [graphs]
+                for graph in graphs:
+                    if Graph.ELTS in graph:
+                        elts = set(graph[Graph.ELTS])
+                        elt_ids |= elts
+                # if ids is not given, use elt_ids
+                if ids is None:
+                    ids = list(elt_ids)
+                else:  # else use jonction of elt_ids and ids
+                    if isinstance(ids, basestring):
+                        ids = [ids]
+                    ids = list(elt_ids & set(ids))
+
         # get elements with ids and query
         result = self[GraphManager.STORAGE].get_elements(ids=ids, query=query)
 
@@ -143,7 +186,7 @@ class GraphManager(MiddlewareRegistry):
         self[GraphManager.STORAGE].put_element(_id=elt_id, element=elt)
         # update graph if graph_id is not None
         if graph_ids is not None:
-            graphs = self.get_graphs(ids=graph_ids, add_elts=False)
+            graphs = self.get_graphs(ids=graph_ids)
             if graphs is not None:
                 # ensure graphs is a list of graphs
                 if isinstance(graphs, Graph):
@@ -171,15 +214,17 @@ class GraphManager(MiddlewareRegistry):
         graphs = self.get_graphs(ids=graph_ids, elts=ids)
         if graphs is not None:
             # ensure graps is a list
-            if isinstance(graphs, basestring):
+            if isinstance(graphs, Graph):
                 graphs = [graphs]
-            if isinstance(ids, basestring):
+            if ids is None:
+                ids = []
+            elif isinstance(ids, basestring):
                 ids = [ids]
             for graph in graphs:
                 for _id in ids:
                     if _id in graph.elts:
                         # remove elf from graph.elts
-                        graph.remove_elt(_id)
+                        graph.remove_elts(_id)
                         # save the graph
                         graph.save(manager=self)
 
@@ -211,7 +256,8 @@ class GraphManager(MiddlewareRegistry):
                 edge.save(manager=self)
 
     def get_graphs(
-        self, ids=None, types=None, elts=None, query=None, add_elts=True
+        self, ids=None, types=None, elts=None, graph_ids=None, query=None,
+        add_elts=False
     ):
         """
         Get one or more graphs related to input ids, types and elts.
@@ -222,9 +268,11 @@ class GraphManager(MiddlewareRegistry):
         :type types: list or str
         :param elts: elts embedded by graphs to retrieve.
         :type elts: list or str
+        :param graph_ids: graph ids from where get graphs.
+        :type graph_ids: list or str
         :param dict query: additional graph search query. Could help to search
             specific data information.
-        :param bool add_elts: (True by default) add elts in the result.
+        :param bool add_elts: (False by default) add elts in the result.
 
         :return: graph(s) corresponding to input parameters.
         :rtype: list or Graph
@@ -234,15 +282,19 @@ class GraphManager(MiddlewareRegistry):
         # init query
         if query is None:
             query = {}
-        # put types in query
-        if types is not None:
-            query[GraphManager.TYPES] = types
         # put elts in query
-        if elts is None:
-            elts = {'$exists': True}
-        query[Graph.ELTS] = elts
+        if elts is not None:
+            if not isinstance(elts, basestring):
+                elts = {'$in': elts}
+            query[Graph.ELTS] = elts
         # get graphs with ids and query
-        graphs = self.get_elts(ids=ids, query=query)
+        graphs = self.get_elts(
+            ids=ids,
+            query=query,
+            types=types,
+            graph_ids=graph_ids,
+            base_type=Graph.BASE_TYPE
+        )
         # check if result may one graph or a list
         unique = False
         # if add_elts is asked
@@ -253,11 +305,12 @@ class GraphManager(MiddlewareRegistry):
                 unique = True
                 # put graphs in a list
                 graphs = [graphs]
-            graph_type = self.GRAPH_TYPE
+            # save new_element method for quick resolution
+            new_element = GraphElement.new_element
             # iterate on graphs
             for graph in graphs:
                 try:
-                    new_graph = graph_type.new(graph)
+                    new_graph = new_element(**graph)
                     # if add elts, find them and add them into the graph
                     if add_elts:
                         # fill the graph with
@@ -275,7 +328,7 @@ class GraphManager(MiddlewareRegistry):
 
     def get_vertices(
         self,
-        ids=None, graph_ids=None,
+        ids=None, graph_ids=None, types=None,
         sources=None, targets=None, source_types=None, target_types=None,
         edge_ids=None, edge_types=None, add_edges=False,
         src_edge_types=None, trgt_edge_types=None,
@@ -289,6 +342,8 @@ class GraphManager(MiddlewareRegistry):
         :type ids: list or str
         :param graph_ids: vertice graph ids.
         :type graph_ids: list or str
+        :param types: vertice type(s).
+        :type types: list or str
         :param sources: source edge id(s). If edges exist, add target
             vertices.
         :type sources: list or str
@@ -323,31 +378,18 @@ class GraphManager(MiddlewareRegistry):
         # elt ids to retrieve
         elt_ids = None
 
+        # boolean value for one value to retrieve.
+        one_value = False
+
         # if ids is not None, get related ids
         if ids is not None:
             elt_ids = set()
             if isinstance(ids, str):
+                one_value = True
                 elt_ids.add(ids)
             else:
                 for _id in ids:
                     elt_ids.add(_id)
-
-        # add graph ids in query
-        if graph_ids is not None:
-            elts = list(elt_ids) if elt_ids else None
-            graphs = self.get_graphs(elts=elts, ids=graph_ids)
-            if graphs is not None:
-                if isinstance(graphs, Graph):
-                    graphs = [graphs]
-                for graph in graphs:
-                    if elt_ids is None:
-                        elts_set = elt_ids = set(elts)
-                    else:
-                        elts_set = set(elts)
-                        if union:
-                            elt_ids |= elts_set
-                        else:
-                            elt_ids &= elts_set
 
         found_edges = []
 
@@ -435,7 +477,18 @@ class GraphManager(MiddlewareRegistry):
                 if add_edges:
                     found_edges += edges
 
-        vertices = self.get_elts(ids=elt_ids, query=query)
+        if elt_ids is not None:
+            elt_ids = list(elt_ids)
+            if one_value and len(elt_ids) == 1:
+                elt_ids = elt_ids[0]
+
+        vertices = self.get_elts(
+            ids=elt_ids,
+            query=query,
+            graph_ids=graph_ids,
+            types=types,
+            base_type=Vertice.BASE_TYPE
+        )
 
         # put right graph elements in result
         if vertices is not None:
@@ -463,10 +516,28 @@ class GraphManager(MiddlewareRegistry):
         return result
 
     def get_edges(
-        self, ids=None, types=None, sources=None, targets=None, query=None
+        self,
+        ids=None, types=None, sources=None, targets=None, graph_ids=None,
+        query=None
     ):
         """
         Get edges related to input ids, types and source/target ids.
+
+        :param ids: edge ids to find. If ids is a str, result is an Edge or
+            None.
+        :type ids: list or str
+        :param types: edge types to find.
+        :type types: list or str
+        :param sources: source edge attribute to find.
+        :type sources: list or str
+        :param targets: target edge attribute to find.
+        :type targets: list or str
+        :param graph_ids: graph ids from where find edges.
+        :type graph_ids: list or str
+        :param dict query: additional query.
+
+        :return: Edge(s) corresponding to input parameters.
+        :rtype: Edge or list of Edges.
         """
 
         # by default, result is a list
@@ -479,18 +550,22 @@ class GraphManager(MiddlewareRegistry):
             query = {}
 
         if sources is not None:
-            if isinstance(sources, basestring):
-                query[Edge.SOURCES] = sources
-            else:
-                query[Edge.SOURCES] = {'$in': sources}
+            if not isinstance(sources, basestring):
+                sources = {'$in': sources}
+            query[Edge.SOURCES] = sources
 
         if targets is not None:
-            if isinstance(targets, basestring):
-                query[Edge.TARGETS] = targets
-            else:
-                query[Edge.TARGETS] = {'$in': targets}
+            if not isinstance(targets, basestring):
+                targets = {'$in': targets}
+            query[Edge.TARGETS] = targets
 
-        edges = self.get_elts(ids=ids, types=types, query=query)
+        edges = self.get_elts(
+            ids=ids,
+            types=types,
+            query=query,
+            graph_ids=graph_ids,
+            base_type=Edge.BASE_TYPE
+        )
 
         if edges is not None:
             # ensure edges is a list

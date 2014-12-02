@@ -114,6 +114,7 @@ class GraphElement(object):
 
     ID = Storage.DATA_ID  #: graph element id
     TYPE = 'type'  #: graph element type name
+    BASE_TYPE = '_type'  #: base graph element type name
     _CLS = '_cls'  #: graph element class type
 
     __slots__ = (ID, TYPE)
@@ -144,7 +145,7 @@ class GraphElement(object):
 
         return not self.__eq__(other)
 
-    def __hash__(self, other):
+    def __hash__(self):
         """
         Return self.id hash
         """
@@ -193,16 +194,19 @@ class GraphElement(object):
         """
 
         result = {}
-
+        # set public attributes
         for slot in self.__slots__:
             if slot[0] != '_':
                 result[slot] = getattr(self, slot)
-
-        result[GraphElement._CLS] = path(type(self))
+        # set class type
+        self_type = type(self)
+        result[GraphElement._CLS] = path(self_type)
+        # set base type
+        result[GraphElement.BASE_TYPE] = self.BASE_TYPE
 
         return result
 
-    def resolve_refs(self, elts):
+    def resolve_refs(self, elts, manager):
         """
         Resolve self references with input elts.
 
@@ -244,6 +248,8 @@ class Vertice(GraphElement):
 
     DATA = 'data'  #: data attribute name
 
+    BASE_TYPE = 'vertice'  # base type name
+
     __slots__ = GraphElement.__slots__ + (DATA,)
 
     def __init__(self, data=None, *args, **kwargs):
@@ -283,6 +289,8 @@ class Edge(Vertice):
 
     Contains sources, targets and a directed information.
     """
+
+    BASE_TYPE = 'edge'  # base type name
 
     SOURCES = 'sources'  #: source vertice ids attribute name
     TARGETS = 'targets'  #: target vertice ids attribute name
@@ -324,10 +332,28 @@ class Edge(Vertice):
         self._gsources = {} if _gsources is None else _gsources
         self._gtargets = {} if _gtargets is None else _gtargets
 
-    def resolve_refs(self, elts):
+    def resolve_refs(self, elts, manager):
 
-        self._gsources = {_id: elts[_id] for _id in self.sources}
-        self._gtargets = {_id: elts[_id] for _id in self.targets}
+        # init self._gsources and self._gtargets
+        self._gsources = {}
+        self._gtargets = {}
+
+        for source in self.sources:
+            if source not in elts:
+                elt = manager.get_elts(ids=source)
+                new_elt = GraphElement.new_element(**elt)
+                elts[source] = new_elt
+            else:
+                new_elt = elts[source]
+            self._gsources[source] = new_elt
+        for target in self.targets:
+            if target not in elts:
+                elt = manager.get_elts(ids=target)
+                new_elt = GraphElement.new_element(**elt)
+                elts[target] = new_elt
+            else:
+                new_elt = elts[target]
+            self._gtargets[target] = new_elt
 
     def del_refs(self, ids=None, sources=None, targets=None):
         """
@@ -399,6 +425,8 @@ class Graph(Vertice):
     Contains graph elements.
     """
 
+    BASE_TYPE = 'graph'  # base type name
+
     ELTS = 'elts'  #: elt ids attribute name.
     _GELTS = '_gelts'  #: graph elts attribute name.
     _DELTS = '_delts'  #: dict elts attribute name.
@@ -437,24 +465,28 @@ class Graph(Vertice):
         self._sources = {} if _sources is None else _sources
         self._targets = {} if _targets is None else _targets
 
-    def resolve_refs(self, elts):
+    def resolve_refs(self, elts, manager):
 
         if not self._updating:
             self._updating = True
             for gelt in self._gelts:
-                gelt.resolve_refs(elts)
+                gelt.resolve_refs(elts, manager=manager)
                 # update self _sources and _targets
                 if isinstance(gelt, Edge):
-                    for source in gelt._gsources:
-                        if source.id not in self._sources:
-                            self._sources[source.id] = [gelt]
+                    _gsources = gelt._gsources
+                    for source in _gsources:
+                        gsource = _gsources[source]
+                        if gsource.id not in self._sources:
+                            self._sources[gsource.id] = [gelt]
                         else:
-                            self._sources[source.id].append(gelt)
-                    for target in gelt._gtargets:
-                        if target.id not in self._targets:
-                            self._targets[target.id] = [gelt]
+                            self._sources[gsource.id].append(gelt)
+                    _gtargets = gelt._gtargets
+                    for target in _gtargets:
+                        gtarget = _gtargets[target]
+                        if gtarget.id not in self._targets:
+                            self._targets[gtarget.id] = [gelt]
                         else:
-                            self._targets[target.id].append(gelt)
+                            self._targets[gtarget.id].append(gelt)
             self._updating = False
 
     def update_gelts(self, manager, depth=0, _added_elts=None):
@@ -482,7 +514,8 @@ class Graph(Vertice):
                 # get it
                 new_elt = _added_elts[elt_id]
             else:  # else, instantiate it
-                new_elt = self.new_element(**elt)
+                new_elt = GraphElement.new_element(**elt)
+                _added_elts[elt_id] = new_elt
                 # fill graph if depth > 0
                 if isinstance(new_elt, Graph) and depth > 0:
                     new_elt.update_gelts(
@@ -490,10 +523,8 @@ class Graph(Vertice):
                         depth=depth - 1,
                         _added_elts=_added_elts
                     )
-                _added_elts[elt_id] = new_elt
             self._gelts.append(new_elt)
-
-        self.resolve_refs(_added_elts)
+        self.resolve_refs(_added_elts, manager=manager)
 
     def add_elts(self, *elts):
         """

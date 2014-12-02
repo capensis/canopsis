@@ -53,7 +53,7 @@ class GraphElementTest(TestCase):
 
         self.count = self.__COUNT__
         self.elts = [None] * self.count
-        self.manager = GraphManager(data_scope='test')
+        self.manager = GraphManager(data_scope='test_graph')
         self.manager.del_elts()
         for i in range(self.count):
             params = self.get_params()
