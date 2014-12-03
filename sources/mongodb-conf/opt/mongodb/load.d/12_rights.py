@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-#--------------------------------
+# --------------------------------
 # Copyright (c) 2014 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
@@ -29,77 +29,110 @@ import uuid
 
 root = Account(user="root", group="root")
 right_module = Rights()
-actions_path = join(sys.prefix, 'opt/mongodb/load.d/rights/actions_ids.json')
-user_path = join(sys.prefix, 'opt/mongodb/load.d/rights/default_users.json')
-role_path = join(sys.prefix, 'opt/mongodb/load.d/rights/default_roles.json')
-group_path = join(sys.prefix, 'opt/mongodb/load.d/rights/default_groups.json')
-profile_path = join(
-    sys.prefix,
-    'opt/mongodb/load.d/rights/default_profiles.json')
 
 
-def add_actions(data):
+def load(path):
+    absolute_path = join(
+        sys.prefix,
+        path
+    )
+    try:
+        return json.load(open(absolute_path))
+    except Exception as e:
+        print('\n\t/!\ Malformed right management json file : {}\n'.format(
+            absolute_path
+        ))
+        sys.exit(1)
+
+actions = load('opt/mongodb/load.d/rights/actions_ids.json')
+users = load('opt/mongodb/load.d/rights/default_users.json')
+roles = load('opt/mongodb/load.d/rights/default_roles.json')
+groups = load('opt/mongodb/load.d/rights/default_groups.json')
+profiles = load('opt/mongodb/load.d/rights/default_profiles.json')
+
+
+def add_actions(data, clear):
     for action_id in data:
-        right_module.add(action_id,
-                         data[action_id].get('desc', "Empty desc"))
+        if right_module.get_action(action_id) is None or clear:
+
+            print('Action initialization : {}'.format(action_id))
+
+            right_module.add(action_id,
+                             data[action_id].get('desc', "Empty desc"))
 
 
-def add_users(data):
+def add_users(data, clear):
     for user in data:
-        right_module.delete_user(user['_id'])
-        right_module.create_user(user['_id'], user.get('role', None),
-                                 rights=user.get('rights', None),
-                                 contact=user.get('contact', None),
-                                 groups=user.get('groups', None))
+        if right_module.get_user(user['_id']) is None or clear:
 
-        right_module.update_fields(user['_id'], 'user', {
-            'external': user.get('external', False),
-            'enable': user.get('enable', True),
-            'shadowpasswd': user.get('shadowpass', None),
-            'authkey': str(uuid.uuid1())
-        })
+            print('User initialization : {}'.format(user['_id']))
+
+            right_module.create_user(user['_id'], user.get('role', None),
+                                     rights=user.get('rights', None),
+                                     contact=user.get('contact', None),
+                                     groups=user.get('groups', None))
+
+            right_module.update_fields(user['_id'], 'user', {
+                'external': user.get('external', False),
+                'enable': user.get('enable', True),
+                'shadowpasswd': user.get('shadowpass', None),
+                'authkey': str(uuid.uuid1())
+            })
 
 
-def add_roles(data):
+def add_roles(data, clear):
     for role in data:
-        right_module.create_role(role['_id'], role.get('profile', None))
-        record = right_module.get_role(role['_id'])
-        right_module.update_rights(
-            role['_id'], 'role', role.get('rights', {}), record
-            )
-        right_module.update_group(
-            role['_id'], 'role', role.get('groups', []), record
-            )
+
+        if right_module.get_role(role['_id']) is None or clear:
+
+            print('Role initialization : {}'.format(role['_id']))
+
+            right_module.create_role(role['_id'], role.get('profile', None))
+            record = right_module.get_role(role['_id'])
+            right_module.update_rights(
+                role['_id'], 'role', role.get('rights', {}), record
+                )
+            right_module.update_group(
+                role['_id'], 'role', role.get('groups', []), record
+                )
 
 
-def add_profiles(data):
+def add_profiles(data, clear):
     for profile in data:
-        right_module.create_profile(profile['_id'], None)
-        record = right_module.get_profile(profile['_id'])
-        right_module.update_rights(
-            profile['_id'], 'profile', profile.get('rights', {}), record
-            )
-        right_module.update_group(
-            profile['_id'], 'profile', profile.get('groups', []), record
-            )
+        if right_module.get_profile(profile['_id']) is None or clear:
+
+            print('Profile initialization : {}'.format(profile['_id']))
+
+            right_module.create_profile(profile['_id'], None)
+            record = right_module.get_profile(profile['_id'])
+            right_module.update_rights(
+                profile['_id'], 'profile', profile.get('rights', {}), record
+                )
+            right_module.update_group(
+                profile['_id'], 'profile', profile.get('groups', []), record
+                )
 
 
-def add_groups(data):
+def add_groups(data, clear):
     for group in data:
-        right_module.create_group(group['_id'], None)
-        record = right_module.get_group(group['_id'])
-        right_module.update_rights(
-            group['_id'], 'group', group.get('rights', {}), record
-            )
+        if right_module.get_group(group['_id']) is None or clear:
+
+            print('Group initialization : {}'.format(group['_id']))
+
+            right_module.create_group(group['_id'], None)
+            record = right_module.get_group(group['_id'])
+            right_module.update_rights(
+                group['_id'], 'group', group.get('rights', {}), record
+                )
 
 
-def init():
-    add_actions(json.load(open(actions_path)))
-    add_users(json.load(open(user_path)))
-    add_roles(json.load(open(role_path)))
-    # add_groups(json.load(open(group_path)))
-    # add_profiles(json.load(open(profile_path)))
+def init(clear=True):
+    add_actions(actions, clear)
+    add_users(users, clear)
+    add_roles(roles, clear)
+    # add_groups(groups, clear)
+    # add_profiles(profiles, clear)
 
 
 def update():
-    pass
+    init(clear=False)
