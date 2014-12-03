@@ -59,6 +59,8 @@ A graph element contains::
     - id: unique identifier among all graph elements.
     - type: type of graph element. A graph could be a topology or something
         else.
+    - _cls: python class path.
+    - _type: base type which permits to recognize the type of element.
 
 Graph vertice
 -------------
@@ -72,6 +74,7 @@ edges.
 A graph vertice contains::
 
     - data: vertice information.
+    - _type: equals vertice.
 
 Graph edge
 ----------
@@ -89,10 +92,12 @@ and can bind several source with several targets, directly or not.
     - directed: directed orientation. If False, source and target vertices are
         directly connected, otherwise, only sources are directly connected to
         targets.
+    - _type: equals edge.
 
 A graph inherits from vertice and contains::
 
     - elts: elements existing in this graph.
+    - _type: graph.
 """
 
 from uuid import uuid4 as uuid

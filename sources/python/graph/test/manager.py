@@ -206,9 +206,31 @@ class GraphTest(TestCase):
         edges = set(self.manager.get_edges(sources=self.elt_ids))
         self.assertEqual(edges, set(self.edges))
 
+        # check get edges by source
+        for edge in self.edges:
+            sources = set(edge.sources)
+            edges = set()
+            for _edge in self.edges:
+                _sources = set(_edge.sources)
+                if sources & _sources:
+                    edges.add(_edge)
+            _edges = set(self.manager.get_edges(sources=list(sources)))
+            self.assertEqual(_edges, edges)
+
         # check get edges by targets
         edges = set(self.manager.get_edges(targets=self.elt_ids))
         self.assertEqual(edges, set(self.edges))
+
+        # check get edges by target
+        for edge in self.edges:
+            targets = set(edge.targets)
+            edges = set()
+            for _edge in self.edges:
+                _targets = set(_edge.targets)
+                if targets & _targets:
+                    edges.add(_edge)
+            _edges = set(self.manager.get_edges(targets=list(targets)))
+            self.assertEqual(_edges, edges)
 
     def test_get_vertices(self):
         """
@@ -316,6 +338,84 @@ class GraphTest(TestCase):
             for graph in graphs:
                 self.assertNotIn(elt_id, graph.elts)
 
+    def test_get_neighbourhood(self):
+        """
+        Test get_neighbourhood method.
+        """
+
+        # test empty result
+        neighbourhood = self.manager.get_neighbourhood(ids='')
+        self.assertFalse(neighbourhood)
+
+        # test all vertices
+        neighbourhood = set(self.manager.get_neighbourhood())
+        self.assertEqual(len(neighbourhood), len(self.elts))
+
+        # let's play with few vertices, edges and graphs
+        v0, v1, v2 = Vertice(_type='0'), Vertice(_type='1'), Vertice(_type='2')
+        e0, e1, e2 = Edge(_type='0'), Edge(_type='1'), Edge(_type='2')
+        g0, g1, g2 = Graph(_type='0'), Graph(_type='1'), Graph(_type='2')
+
+        # connect v0 to v1
+        e0.directed = True
+        e0.sources = [v0.id, v1.id, v2.id]
+        e0.targets = [g0.id, g1.id, g2.id]
+
+        # save all elements
+        v0.save(self.manager), v1.save(self.manager), v2.save(self.manager)
+        e0.save(self.manager), e1.save(self.manager), e2.save(self.manager)
+        g0.save(self.manager), g1.save(self.manager), g2.save(self.manager)
+
+        # test ids
+        neighbourhood = set(self.manager.get_neighbourhood(ids=v0.id))
+        self.assertEqual(neighbourhood, {g0, g1, g2})
+
+        # test sources
+        neighbourhood = set(self.manager.get_neighbourhood(
+            ids=v0.id, sources=True))
+        self.assertEqual(neighbourhood, {g0, g1, g2, v0, v1, v2})
+
+        # test not targets
+        neighbourhood = set(self.manager.get_neighbourhood(
+            ids=v0.id, targets=False))
+        self.assertEqual(neighbourhood, set())
+
+        # test not directed
+        e0.directed = False
+        e0.save(self.manager)
+        neighbourhood = set(self.manager.get_neighbourhood(
+            ids=v0.id))
+        self.assertEqual(neighbourhood, {g0, g1, g2, v0, v1, v2})
+
+        # test data
+
+        # test source_data
+
+        # test target_data
+
+        # test types
+
+        # test source_types
+
+        # test target_types
+
+        # test edge_ids
+
+        # test edge_types
+
+        # test add_edges
+
+        # test source_edge_types
+
+        # test target_edge_types
+
+        # test query
+
+        # test edge_query
+
+        # test source_query
+
+        # test target_query
 
 if __name__ == '__main__':
     main()

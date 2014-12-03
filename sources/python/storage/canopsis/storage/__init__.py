@@ -264,7 +264,7 @@ class Storage(DataBase):
             result
 
         :return: input id elements, or one element if ids is an element
-            (None if this element does not exist)
+            (None if this element does not exist).
         :rtype: iterable of dict or dict or NoneType
         """
 

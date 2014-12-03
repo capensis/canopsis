@@ -256,7 +256,8 @@ class GraphManager(MiddlewareRegistry):
                 edge.save(manager=self)
 
     def get_graphs(
-        self, ids=None, types=None, elts=None, graph_ids=None, query=None,
+        self, ids=None, types=None, elts=None, graph_ids=None, data=None,
+        query=None,
         add_elts=False
     ):
         """
@@ -270,6 +271,7 @@ class GraphManager(MiddlewareRegistry):
         :type elts: list or str
         :param graph_ids: graph ids from where get graphs.
         :type graph_ids: list or str
+        :param data: data to find among graphs.
         :param dict query: additional graph search query. Could help to search
             specific data information.
         :param bool add_elts: (False by default) add elts in the result.
@@ -293,6 +295,7 @@ class GraphManager(MiddlewareRegistry):
             query=query,
             types=types,
             graph_ids=graph_ids,
+            data=data,
             base_type=Graph.BASE_TYPE
         )
         # check if result may one graph or a list
@@ -326,14 +329,246 @@ class GraphManager(MiddlewareRegistry):
 
         return result
 
+    def get_neighbourhood(
+        self,
+        ids=None, sources=False, targets=True,
+        graph_ids=None,
+        data=None, source_data=None, target_data=None,
+        types=None, source_types=None, target_types=None,
+        edge_ids=None, edge_types=None, add_edges=False,
+        source_edge_types=None, target_edge_types=None,
+        edge_data=None, source_edge_data=None, target_edge_data=None,
+        query=None, edge_query=None, source_query=None, target_query=None
+    ):
+        """
+        Get neighbour vertices identified by context parameters.
+
+        Sources and targets are handled in not directed edges.
+
+        :param ids: vertice ids from where get neighbours.
+        :type ids: list or str
+        :param bool sources: if True (False by default) add source vertices.
+        :param bool targets: if True (default) add target vertices.
+        :param graph_ids: vertice graph ids.
+        :type graph_ids: list or str
+        :param dict data: neighbourhood data to find.
+        :param dict source_data: source neighbourhood data to find.
+        :param dict target_data: target neighbourhood data to find.
+        :param types: vertice type(s).
+        :type types: list or str
+        :param types: neighbourhood types to retrieve.
+        :type types: list or str
+        :param source_types: neighbourhood source types to retrieve.
+        :type source_types: list or str
+        :param target_types: neighbourhood target types to retrieve.
+        :type target_types: list or str
+        :param edge_ids: edge from where find target/source vertices.
+        :type edge_ids: list or str
+        :param edge_types: edge types from where find target/source vertices.
+        :type edge_types: list or str
+        :param bool add_edges: if True (default), add pathed edges in the
+            result.
+        :param source_edge_types: edge types from where find source vertices.
+        :type source_edge_types: list or str
+        :param target_edge_types: edge types from where find target vertices.
+        :type target_edge_types: list or str
+        :param dict edge_data: edge data to find.
+        :param dict source_edge_data: source edge data to find.
+        :param dict target_edge_data: target edge data to find.
+        :param dict query: additional search query.
+        :param dict edge_query: additional edge query.
+        :param dict source_query: additional source query.
+        :param dict target_query: additional target query.
+        :return: list of neighbour vertices designed by ids, or dict of
+            {edge: list(vertices)} if add_edges.
+        :rtype: list or dict
+        """
+
+        result = {} if add_edges else []
+
+        # init types
+        if isinstance(types, basestring):
+            types = [types]
+
+        # init edges
+        edges = set()
+
+        # search among source edges even if not sources because
+        # edges can be not directed
+        # init source_types
+        if source_types is not None:
+            if isinstance(source_types, basestring):
+                source_types = [source_types]
+        if types is not None:
+            source_types += types
+        # init source query
+        if source_query is not None:
+            if query is not None:
+                source_query.update(query)
+        else:
+            source_query = query
+        # init source edge types
+        if source_edge_types is not None:
+            if isinstance(source_edge_types, basestring):
+                source_edge_types = [source_edge_types]
+            if edge_types is not None:
+                if isinstance(edge_types, basestring):
+                    source_edge_types.append(edge_types)
+                else:
+                    source_edge_types += edge_types
+        else:
+            source_edge_types = edge_types
+        # init source edge data
+        if source_edge_data is not None:
+            if edge_data is not None:
+                source_edge_data.update(edge_data)
+            else:
+                source_edge_data = edge_data
+        # get all target edges
+        source_edges = self.get_edges(
+            ids=edge_ids,
+            graph_ids=graph_ids,
+            types=source_edge_types,
+            targets=ids,
+            data=source_edge_data,
+            query=source_query
+        )
+        # fill edges
+        if source_edges is not None:
+            # if source_edges is an edge
+            if isinstance(source_edges, Edge):
+                # and sources or source_edges is not directed
+                if sources or not source_edges.directed:
+                    edges.add(source_edges)
+            elif sources:  # if sources
+                edges |= set(source_edges)
+            else:
+                for source_edge in source_edges:
+                    # add not directed edges
+                    if not source_edge.directed:
+                        edges.add(source_edge)
+
+        # search among target edges
+        # init target types
+        if target_types is not None:
+            if isinstance(target_types, basestring):
+                target_types = [target_types]
+        if types is not None:
+            target_types += types
+        # init target query
+        if target_query is not None:
+            if query is not None:
+                target_query.update(query)
+        else:
+            target_query = query
+        # init target edge types
+        if target_edge_types is not None:
+            if isinstance(target_edge_types, basestring):
+                target_edge_types = [target_edge_types]
+            if edge_types is not None:
+                if isinstance(edge_types, basestring):
+                    target_edge_types.append(edge_types)
+                else:
+                    target_edge_types += edge_types
+        else:
+            target_edge_types = edge_types
+        # init target edge data
+        if target_edge_data is not None:
+            if edge_data is not None:
+                target_edge_data.update(edge_data)
+            else:
+                target_edge_data = edge_data
+        # get all target edges
+        target_edges = self.get_edges(
+            ids=edge_ids,
+            graph_ids=graph_ids,
+            types=target_edge_types,
+            sources=ids,
+            data=target_edge_data,
+            query=target_query
+        )
+        # fill edges
+        if target_edges is not None:
+            # if target_edges is an edge
+            if isinstance(target_edges, Edge):
+                # and targets or target_edges is not directed
+                if targets or not target_edges.directed:
+                    edges.add(target_edges)
+            elif targets:  # if targets
+                edges |= set(target_edges)
+            else:
+                for target_edge in target_edges:
+                    # add not directed edges
+                    if not target_edge.directed:
+                        edges.add(target_edge)
+
+        # store edge sources and targets ids before get them at a time
+        if not add_edges:
+            edge_sources = []
+            edge_targets = []
+
+        # add sources and targets from all edges
+        for edge in edges:
+            if sources or not edge.directed:
+                if add_edges:
+                    elts = self.get_elts(
+                        ids=edge.sources,
+                        graph_ids=graph_ids,
+                        data=source_data,
+                        types=source_types,
+                        query=source_query
+                    )
+                    result[edge] = [
+                        GraphElement.new_element(**elt)
+                        for elt in elts
+                    ]
+                else:
+                    edge_sources += edge.sources
+            if targets or not edge.directed:
+                if add_edges:
+                    elts = self.get_elts(
+                        ids=edge.targets,
+                        graph_ids=graph_ids,
+                        data=target_data,
+                        types=target_types,
+                        query=target_query
+                    )
+                    result[edge] = [
+                        GraphElement.new_element(**elt)
+                        for elt in elts
+                    ]
+                else:
+                    edge_targets += edge.targets
+
+        # improve complexity if not add_edges
+        if not add_edges:
+            # get source graph elements
+            if edge_sources:
+                elts = self.get_elts(
+                    ids=edge_sources,
+                    graph_ids=graph_ids,
+                    data=source_data,
+                    types=source_types,
+                    query=source_query
+                )
+                result += [GraphElement.new_element(**elt) for elt in elts]
+
+            # get target graph elements
+            if edge_targets:
+                elts = self.get_elts(
+                    ids=edge_targets,
+                    graph_ids=graph_ids,
+                    data=target_data,
+                    types=target_types,
+                    query=target_query
+                )
+                result += [GraphElement.new_element(**elt) for elt in elts]
+
+        return result
+
     def get_vertices(
         self,
-        ids=None, graph_ids=None, types=None,
-        sources=None, targets=None, source_types=None, target_types=None,
-        edge_ids=None, edge_types=None, add_edges=False,
-        src_edge_types=None, trgt_edge_types=None,
-        union=True,
-        query=None
+        ids=None, graph_ids=None, types=None, data=None, query=None
     ):
         """
         Get graph vertices related to some context property.
@@ -344,180 +579,37 @@ class GraphManager(MiddlewareRegistry):
         :type graph_ids: list or str
         :param types: vertice type(s).
         :type types: list or str
-        :param sources: source edge id(s). If edges exist, add target
-            vertices.
-        :type sources: list or str
-        :param targets: target edge id(s). If edges exist, add source
-            vertices.
-        :type sources: list or str
-        :param edge_ids: edge from where find target/source vertices.
-        :type edge_ids: list or str
-        :param edge_types: edge types from where find target/source vertices.
-        :type edge_types: list or str
-        :param bool add_edges: if True (default), add pathed edges in the
-            result.
-        :param src_edge_types: edge types from where find source vertices.
-        :type src_edge_types: list or str
-        :param trgt_edge_types: edge types from where find target vertices.
-        :type trgt_edge_types: list or str
-        :param bool union: if True (default) do an union of all results,
-            otherwise, do an intersection.
+        :param data: data to find among vertices.
         :param dict query: additional search query.
 
-        :return: list of vertices if ids is a list, or sources/targets are
-            lists or else graph_ids is not None. One vertice if ids is a str
-            and other params are None.
+        :return: list of vertices if ids is a list. One vertice if ids is a
+            str.
         :rtype: list or dict
         """
 
-        result = []
+        result = None
 
-        # init unique result by default
-        unique = False
-
-        # elt ids to retrieve
-        elt_ids = None
-
-        # boolean value for one value to retrieve.
-        one_value = False
-
-        # if ids is not None, get related ids
-        if ids is not None:
-            elt_ids = set()
-            if isinstance(ids, str):
-                one_value = True
-                elt_ids.add(ids)
-            else:
-                for _id in ids:
-                    elt_ids.add(_id)
-
-        found_edges = []
-
-        # if source vertices are requested
-        if (sources, source_types) != (None, None):
-            # force edge_types and src_edge_types to be list if basestring
-            if isinstance(sources, basestring):
-                sources = [sources]
-            if isinstance(edge_types, basestring):
-                edge_types = [edge_types]
-            if isinstance(src_edge_types, basestring):
-                src_edge_types = [src_edge_types]
-            if src_edge_types is None:
-                src_edge_types = edge_types
-            elif edge_types is not None:
-                src_edge_types = list(set(edge_types + src_edge_types))
-            edges = self.get_edges(
-                ids=edge_ids, sources=sources, types=src_edge_types
-            )
-            # if edges exist
-            if edges is not None:
-                # firce edges to be a list
-                if isinstance(edges, Edge):
-                    edges = [edges]
-                # get target vertices and sources as well if edge is undirected
-                for edge in edges:
-                    target_ids = edge.targets
-                    if not edge.directed:
-                        target_ids += edge.sources
-                        # remove references to sources if they exist
-                        if sources:
-                            for source in sources:
-                                target_ids.remove(source)
-                    elts = self.get_elt(ids=target_ids, types=target_types)
-                    target_ids = [elt.id for elt in elts]
-                    if elt_ids is None:
-                        elt_ids = set(target_ids)
-                    elif union:
-                        elt_ids |= target_ids
-                    else:
-                        elt_ids &= target_ids
-                # if add_edges, add them to elt_ids
-                if add_edges:
-                    found_edges += edges
-
-        # if target vertices are requested
-        if (targets, target_types) != (None, None):
-            # force edge_types and trgt_edge_types to be list if basestring
-            if isinstance(targets, basestring):
-                targets = [targets]
-            if isinstance(edge_types, basestring):
-                edge_types = [edge_types]
-            if isinstance(trgt_edge_types, basestring):
-                trgt_edge_types = [trgt_edge_types]
-            if trgt_edge_types is None:
-                trgt_edge_types = edge_types
-            elif edge_types is not None:
-                trgt_edge_types = list(set(edge_types + trgt_edge_types))
-            edges = self.get_edges(
-                ids=edge_ids, targets=sources, types=trgt_edge_types
-            )
-            # if edges exist
-            if edges is not None:
-                # firce edges to be a list
-                if isinstance(edges, Edge):
-                    edges = [edges]
-                # get source vertices and targets as well if edge is undirected
-                for edge in edges:
-                    source_ids = edge.sources
-                    if not edge.directed:
-                        source_ids += edge.targets
-                        # remove references to targets if they exist
-                        if targets:
-                            for target in targets:
-                                source_ids.remove(target)
-                    elts = self.get_elt(ids=source_ids, types=source_types)
-                    source_ids = [elt.id for elt in elts]
-                    if elt_ids is None:
-                        elt_ids = set(source_ids)
-                    elif union:
-                        elt_ids |= source_ids
-                    else:
-                        elt_ids &= source_ids
-                # if add_edges, add them to elt_ids
-                if add_edges:
-                    found_edges += edges
-
-        if elt_ids is not None:
-            elt_ids = list(elt_ids)
-            if one_value and len(elt_ids) == 1:
-                elt_ids = elt_ids[0]
-
-        vertices = self.get_elts(
-            ids=elt_ids,
-            query=query,
+        elts = self.get_elts(
+            ids=ids,
             graph_ids=graph_ids,
             types=types,
-            base_type=Vertice.BASE_TYPE
+            data=data,
+            base_type=Vertice.BASE_TYPE,
+            query=query
         )
 
-        # put right graph elements in result
-        if vertices is not None:
-            # ensure vertices is a list
-            if isinstance(vertices, dict):
-                # unique is True if vertices is a dict and found_edges is empty
-                unique = not found_edges
-                vertices = [vertices]
-            graph_type = self.GRAPH_TYPE
-            for vertice in vertices:
-                elt = graph_type.new_element(**vertice)
-                if isinstance(elt, Vertice):
-                    result.append(elt)
-        else:
-            result = None
-
-        # add edges in result
-        if found_edges:
-            result += found_edges
-
-        # if unique, return first element or None if empty
-        if unique:
-            result = result[0] if result else None
+        if elts is not None:
+            if isinstance(elts, dict):
+                result = GraphElement.new_element(**elts)
+            else:
+                result = [GraphElement.new_element(**elt) for elt in elts]
 
         return result
 
     def get_edges(
         self,
         ids=None, types=None, sources=None, targets=None, graph_ids=None,
+        data=None,
         query=None
     ):
         """
@@ -564,6 +656,7 @@ class GraphManager(MiddlewareRegistry):
             types=types,
             query=query,
             graph_ids=graph_ids,
+            data=data,
             base_type=Edge.BASE_TYPE
         )
 
