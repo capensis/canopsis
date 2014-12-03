@@ -260,10 +260,11 @@ class Selector(Record):
             }}])
 
         states_for_ack = {}
-        for state in result_ack_worst_state['result']:
-            key = state['_id']['state']
+        for state_result in result_ack_worst_state['result']:
+            key = state_result['_id']['state']
 
-            states_for_ack[key] = states_for_ack.get(key, 0) + state['count']
+            states_for_ack[key] = \
+                states_for_ack.get(key, 0) + state_result['count']
 
         self.logger.debug(" + states for ack: {}".format(states_for_ack))
 
