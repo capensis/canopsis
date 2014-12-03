@@ -28,12 +28,16 @@ from canopsis.old.tools import legend, uniq
 from canopsis.old.rabbitmq import Amqp
 from canopsis.old.event import get_routingkey
 
+import pprint
+pp = pprint.PrettyPrinter(indent=2)
+
 legend_type = ['soft', 'hard']
-OFF=0
-ONGOING=1
-STEALTHY=2
-BAGOT=3
-CANCELED=4
+OFF = 0
+ONGOING = 1
+STEALTHY = 2
+BAGOT = 3
+CANCELED = 4
+
 
 class Archiver(object):
 
@@ -59,8 +63,9 @@ class Archiver(object):
         else:
             self.storage = storage
 
-        self.conf_storage = get_storage(namespace=confnamespace,
-                                           logging_level=logging_level)
+        self.conf_storage = get_storage(
+            namespace=confnamespace,
+            logging_level=logging_level)
         self.conf_collection = self.conf_storage.get_backend(confnamespace)
         self.collection = self.storage.get_backend(namespace)
 
@@ -85,42 +90,61 @@ class Archiver(object):
         self.stealthy_time = 360
         self.stealthy_show = 360
 
-        self.state_config = self.conf_collection.find(
+        state_config = self.conf_collection.find_one(
             {'crecord_type': 'statusmanagement'}
+        )
+
+        if state_config is not None:
+            self.bagot_freq = state_config.get('bagot_freq', self.bagot_freq)
+            self.bagot_time = state_config.get('bagot_time', self.bagot_time)
+            self.stealthy_time = state_config.get(
+                'stealthy_time',
+                self.stealthy_time
             )
-        if self.state_config.count():
-            self.state_config = self.state_config[0]
-            self.bagot_freq = self.state_config.get('bagot_freq',
-                                                    10)
-            self.bagot_time = self.state_config.get('bagot_time',
-                                                    3600)
-            self.stealthy_time = self.state_config.get('stealthy_time',
-                                                       360)
-            self.stealthy_show = self.state_config.get('stealthy_show',
-                                                       360)
-            self.restore_event = self.state_config.get('restore_event',
-                                                       True)
+            self.stealthy_show = state_config.get(
+                'stealthy_show',
+                self.stealthy_show
+            )
+            self.restore_event = state_config.get(
+                'restore_event',
+                self.restore_event
+            )
+
+        self.logger.debug(pp.pformat({
+            'restore_event': self.restore_event,
+            'bagot_freq': self.bagot_freq,
+            'bagot_time': self.bagot_time,
+            'stealthy_time': self.stealthy_time,
+            'stealthy_show': self.stealthy_show,
+            'state_config': state_config,
+        }))
 
         self.logger.debug(
             "Checking stealthy events in collection {}".format(self.namespace)
             )
-        for event in self.collection.find({'crecord_type': 'event', 'status': 2}):
+
+        event_cursor = self.collection.find({
+            'crecord_type': 'event',
+            'status': STEALTHY
+        })
+
+        for event in event_cursor:
+            # This is a stealthy event.
+            is_stealthy_show_delay_passed = \
+                time() - event['ts_first_stealthy'] >= self.stealthy_show
+
             # Check the stealthy intervals
-            if event['status'] == 2 and not self.check_stealthy(
-                {'status': 2, 'ts_first_stealthy': event['ts_first_stealthy']},
-                time()
-                ):
-                self.logger.info(
-                    "Event {} no longer Stealthy".format(event['rk'])
-                    )
-                if not event['state']:
-                    self.set_status(event, OFF)
-                else:
-                    self.set_status(event, ONGOING)
-                self.store_new_event(event['_id'], event)
+            if is_stealthy_show_delay_passed:
+
+                self.logger.info('Event {} no longer Stealthy'.format(
+                    event['rk']
+                ))
+
+                new_status = ONGOING if event['state'] else OFF
+                self.set_status(event, new_status)
+                # self.store_new_event(event['_id'], event)
                 event['pass_status'] = 1
                 _publish_event(event)
-
 
     def is_bagot(self, event):
         """
@@ -140,7 +164,6 @@ class Archiver(object):
             return True
         return False
 
-
     def is_stealthy(self, event, d_status):
         """
         Args:
@@ -154,7 +177,6 @@ class Archiver(object):
         ts_diff = event['timestamp'] - event['ts_first_stealthy']
         return ts_diff <= self.stealthy_time and d_status != 2
 
-
     def set_status(self, event, status):
         """
         Args:
@@ -162,21 +184,26 @@ class Archiver(object):
             status status of the current event
         """
 
-        log = 'Status is set to {} for event %s' % event['rk']
+        log = 'Status is set to {} for event {}'.format(status, event['rk'])
         values = {
-            0: {'freq': event.get('bagot_freq', 0),
+            OFF: {
+                'freq': event.get('bagot_freq', 0),
                 'name': 'Off'
                 },
-            1: {'freq': event.get('bagot_freq', 0),
+            ONGOING: {
+                'freq': event.get('bagot_freq', 0),
                 'name': 'On going'
                 },
-            2: {'freq': event.get('bagot_freq', 0),
+            STEALTHY: {
+                'freq': event.get('bagot_freq', 0),
                 'name': 'Stealthy'
                 },
-            3: {'freq': event.get('bagot_freq', 0) + 1,
+            BAGOT: {
+                'freq': event.get('bagot_freq', 0) + 1,
                 'name': 'Bagot'
                 },
-            4: {'freq': event.get('bagot_freq', 0),
+            CANCELED: {
+                'freq': event.get('bagot_freq', 0),
                 'name': 'Cancelled'
                 }
             }
@@ -186,24 +213,22 @@ class Archiver(object):
         event['status'] = status
         event['bagot_freq'] = values[status]['freq']
 
-        if status != 2 and status != 3:
+        if status not in [STEALTHY, BAGOT]:
             event['ts_first_stealthy'] = 0
-
 
     def check_stealthy(self, devent, ts):
         """
         Args:
-            devent map of the previous evet
+            devent map of the previous event
             ts timestamp of the current event
         Returns:
             ``True`` if the event should stay stealthy
             ``False`` otherwise
         """
 
-        if devent['status'] == 2:
+        if devent['status'] == STEALTHY:
             return not (ts - devent['ts_first_stealthy']) > self.stealthy_show
         return False
-
 
     def check_statuses(self, event, devent):
         """
@@ -215,47 +240,50 @@ class Archiver(object):
         if event.get('pass_status', 0):
             event['pass_status'] = 0
             return
-        ts_curr = event['timestamp']
-        ts_prev = devent['timestamp']
+
+        event_ts = event['timestamp']
+
         event['bagot_freq'] = devent.get('bagot_freq', 0)
         event['ts_first_stealthy'] = devent.get('ts_first_stealthy', 0)
         event['ts_first_bagot'] = devent.get('ts_first_bagot', 0)
+
         # Increment frequency if state changed and set first occurences
         if ((not devent['state'] and event['state']) or
-            devent['state'] and not event['state']):
+                devent['state'] and not event['state']):
+
             if event['state']:
-                event['ts_first_stealthy'] = event['timestamp']
+                event['ts_first_stealthy'] = event_ts
             else:
-                event['ts_first_stealthy'] = devent['timestamp']
+                event['ts_first_stealthy'] = event_ts
 
             event['bagot_freq'] += 1
 
             if not event['ts_first_bagot']:
-                event['ts_first_bagot'] = event['timestamp']
+                event['ts_first_bagot'] = event_ts
 
         # Out of bagot interval, reset variables
-        if event['ts_first_bagot'] - event['timestamp'] > self.bagot_time:
+        if event['ts_first_bagot'] - event_ts > self.bagot_time:
             event['ts_first_bagot'] = 0
             event['bagot_freq'] = 0
 
         # If not canceled, proceed to check the status
-        if (devent.get('status', 1) != 4
+        if (devent.get('status', ONGOING) != CANCELED
             or (devent['state'] != event['state']
                 and (self.restore_event
-                     or state == 0
-                     or devent['state'] == 0))):
+                     or state == OFF
+                     or devent['state'] == OFF))):
             # Check the stealthy intervals
-            if self.check_stealthy(devent, ts_curr):
+            if self.check_stealthy(devent, event_ts):
                 if self.is_bagot(event):
                     self.set_status(event, BAGOT)
                 else:
                     self.set_status(event, STEALTHY)
             # Else proceed normally
             else:
-                if (event['state'] == 0):
+                if (event['state'] == OFF):
                     # If still non-alert, can only be OFF
                     if (not self.is_bagot(event)
-                        and not self.is_stealthy(event, devent['status'])):
+                            and not self.is_stealthy(event, devent['status'])):
                         self.set_status(event, OFF)
                     elif self.is_bagot(event):
                         self.set_status(event, BAGOT)
@@ -264,18 +292,17 @@ class Archiver(object):
                 else:
                     # If not bagot/stealthy, can only be ONGOING
                     if (not self.is_bagot(event)
-                        and not self.is_stealthy(event, devent['status'])):
+                            and not self.is_stealthy(event, devent['status'])):
                         self.set_status(event, ONGOING)
                     elif self.is_bagot(event):
                         self.set_status(event, BAGOT)
                     elif self.is_stealthy(event, devent['status']):
-                        if devent['status'] == 0:
+                        if devent['status'] == OFF:
                             self.set_status(event, ONGOING)
                         else:
                             self.set_status(event, STEALTHY)
         else:
             self.set_status(event, CANCELED)
-
 
     def check_event(self, _id, event):
         changed = False
@@ -295,7 +322,6 @@ class Archiver(object):
         event['timestamp'] = event.get('timestamp', now)
         try:
             # Get old record
-            #record = self.storage.get(_id, account=self.account)
             exclusion_fields = {
                 'perf_data_array',
                 'processing'
@@ -314,9 +340,9 @@ class Archiver(object):
             event['last_state_change'] = devent.get('last_state_change',
                                                     event['timestamp'])
 
-            self.logger.debug("   - State:\t\t'%s'" % legend[old_state])
-            self.logger.debug("   - State type:\t'%s'" % legend_type[old_state_type])
-
+            self.logger.debug("   - State:\t\t'{}'".format(legend[old_state]))
+            self.logger.debug("   - State type:\t'{}'".format(
+                legend_type[old_state_type]))
 
             if state != old_state:
                 event['previous_state'] = old_state
@@ -331,7 +357,7 @@ class Archiver(object):
 
         except:
             # No old record
-            self.logger.debug(" + New event")
+            self.logger.debug(' + New event')
             event['ts_first_stealthy'] = 0
             changed = True
             old_state = state
@@ -339,7 +365,7 @@ class Archiver(object):
         if changed:
             # Tests if change is from alert to non alert
             if ('last_state_change' in event
-                and (state == 0 or (state > 0 and old_state == 0))):
+                    and (state == 0 or (state > 0 and old_state == 0))):
                 event['previous_state_change_ts'] = event['last_state_change']
             event['last_state_change'] = event.get('timestamp', now)
 
@@ -355,14 +381,12 @@ class Archiver(object):
                 else:
                     change['ack'] = devent['ack']
 
-
             # keep cancel information if status does not reset event
             if 'cancel' in devent:
                 if event['status'] not in [0, 1]:
                     change['cancel'] = devent['cancel']
                 else:
                     change['cancel'] = {}
-
 
             # Remove ticket information in case state is back to normal
             # (both ack and ticket declaration case)
@@ -377,22 +401,22 @@ class Archiver(object):
                 if 'ticket_date' in devent:
                     del devent['ticket_date']
 
-            #Generate diff change from old event to new event
+            # Generate diff change from old event to new event
             for key in event:
                 if key not in exclusion_fields:
                     if (key in event and
                         key in devent and
-                        devent[key] != event[key]):
+                            devent[key] != event[key]):
                         change[key] = event[key]
                     elif key in event and key not in devent:
                         change[key] = event[key]
 
-
-            # Manage keep state key that allow from UI to keep the choosen state
+            # Manage keep state key that allow
+            # from UI to keep the choosen state
             # into until next ok state
             event_reset = False
 
-            #When a event is ok again, dismiss keep_state statement
+            # When a event is ok again, dismiss keep_state statement
             if devent.get('keep_state') and event['state'] == 0:
                 change['keep_state'] = False
                 event_reset = True
@@ -420,7 +444,6 @@ class Archiver(object):
                 event['ack'] = devent['ack']
             mid = self.log_event(_id, event)
 
-
         return mid
 
     def store_new_event(self, _id, event):
@@ -429,10 +452,15 @@ class Archiver(object):
         record.chmod("o+r")
         record._id = _id
 
-        self.storage.put(record, namespace=self.namespace, account=self.account)
+        self.storage.put(
+            record,
+            namespace=self.namespace,
+            account=self.account
+        )
 
     def log_event(self, _id, event):
-        self.logger.debug("Log event '%s' in %s ..." % (_id, self.namespace_log))
+        self.logger.debug(
+            "Log event '%s' in %s ..." % (_id, self.namespace_log))
         record = Record(event)
         record.type = "event"
         record.chmod("o+r")
