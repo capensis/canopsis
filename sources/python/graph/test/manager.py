@@ -22,6 +22,7 @@
 from unittest import TestCase, main
 
 from canopsis.graph.manager import GraphManager
+from canopsis.graph.elements import Graph, Vertice, Edge, GraphElement
 
 
 class GraphTest(TestCase):
@@ -31,225 +32,390 @@ class GraphTest(TestCase):
         Create self.count=10 and self.graphs
         """
 
-        self.graph = GraphManager()
+        self.manager = GraphManager(data_scope='test_graph')
 
         self.count = 10
-
         self.graphs = [None] * 10
+        self.types = (i for i in range(self.count))
 
-        self.types = [i for i in range(self.count)]
+        # create self.count vertices
+        self.vertices = [None] * self.count
+        for index in range(self.count):
+            self.vertices[index] = Vertice(
+                _id='vertice-{0}'.format(index),
+                data=None if index % 2 else {'index': index},
+                _type='tvertice-{0}'.format(index),
+            )
+        self.vertice_ids = [vertice.id for vertice in self.vertices]
+        self.vertice_types = [vertice.type for vertice in self.vertices]
 
-        for index in range(len(self.graphs)):
-            graph_id = '__test__%s' % index
-            # create count-index nodes per graph
-            nodes = [
-                GraphManager.new_node(
-                    graph_id=graph_id,
-                    _id='%s%s' % (graph_id, node_index),
-                    entity_id='' if (node_index % 2)
-                        else '%s%s' % (graph_id, ((index + 1) % self.count)),
-                    _type=index,
-                    data=None if (node_index % 2) else node_index
-                ) for node_index in range(index, self.count)
-            ]
-            # create count-index edges where sources equal targets
-            edges = [
-                GraphManager.new_edge(
-                    graph_id=graph_id,
-                    _id='%s%s-' % (graph_id, edge_index),
-                    sources=[
-                        '%s%s' % (graph_id, ei)
-                        for ei in range(index, edge_index)],
-                    targets=[
-                        '%s%s' % (graph_id, ei)
-                        for ei in range(index, edge_index)],
-                    entity_id='' if (edge_index % 2)
-                        else '%s%s' % (graph_id, ((index + 1) % self.count)),
-                    _type=index,
-                    data=None if (edge_index % 2) else edge_index,
-                    directed=edge_index % 2
-                ) for edge_index in range(index, self.count)
-            ]
-            # add edges in nodes
-            nodes += edges
-            # create a graph
-            graph = GraphManager.new_graph(_id=graph_id, nodes=nodes)
-            # put graph in self.graphs
-            self.graphs[index] = graph
+        # create self.count edges
+        self.edges = [None] * self.count
+        for index in range(self.count):
+            self.edges[index] = Edge(
+                _id='edge-{0}'.format(index),
+                data=None if index % 2 else {'index': index},
+                _type='tedge-{0}'.format(index),
+                sources=self.vertice_ids[index:],
+                targets=self.vertice_ids[:-index],
+                directed=index % 2 == 0
+            )
+        self.edge_ids = [edge.id for edge in self.edges]
+        self.edge_types = [edge.type for edge in self.edges]
+
+        # create self.count graphs
+        self.graphs = [None] * self.count
+        for index in range(self.count):
+            self.graphs[index] = Graph(
+                _id='graph-{0}'.format(index),
+                data=None if index % 2 else {'index': index},
+                _type='tgraph-{0}'.format(index),
+                elts=self.edge_ids[index:] + self.vertice_ids[index:]
+            )
+        self.graph_ids = [graph.id for graph in self.graphs]
+        self.graph_types = [graph.type for graph in self.graphs]
+
+        # get all elt ids
+        self.elt_ids = self.graph_ids + self.vertice_ids + self.edge_ids
+        # get all elts
+        self.elts = self.vertices + self.edges + self.graphs
+
+        # add edges and graphs in edges
+        for index in range(self.count):
+            edge = self.edges[index]
+            edge.sources += self.edge_ids[index:] + self.graph_ids[index:]
+            edge.targets += self.edge_ids[index:] + self.graph_ids[index:]
+
+        # add graph_ids in graph
+        for index in range(self.count):
+            self.graphs[index].elts += self.graph_ids[index:]
+
+        # ensure DB is empty
+        elts = self.manager.get_elts()
+        self.assertFalse(elts)
+
+        # put vertices in DB
+        for vertice in self.vertices:
+            self.manager.put_elt(elt=vertice)
+
+        # put edges in DB
+        for edge in self.edges:
+            self.manager.put_elt(elt=edge)
+
+        # put graphs in DB
+        for graph in self.graphs:
+            self.manager.put_elt(elt=graph)
 
     def tearDown(self):
         """
-        Del self.graphs
+        Del all elements
         """
 
-        self.graph.del_graph(
-            ids=[g[GraphManager.ID] for g in self.graphs])
+        self.manager.del_elts()
 
-    def test_get_graph_which_does_not_exist(self):
-        """
-        Test to get not existing graphs
-        """
-
-        # Test to get graph one by one
-        for graph in self.graphs:
-            graph = self.graph.get_graph(_id=graph[GraphManager.ID])
-            self.assertIsNone(graph)
-
-    def test_del_graph_which_does_not_exist(self):
-        """
-        Test to delete not existing graphs
-        """
-
-        # test elementary calls to del_graph
-        for graph in self.graphs:
-            self.graph.del_graph(ids=graph[GraphManager.ID])
-
-        # test to del all graphs in one call
-        self.graph.del_graph(ids=[g[GraphManager.ID] for g in self.graphs])
-
-    def test_get_node_which_do_not_exists(self):
-        """
-        Test to get nodes which do not exists.
-        """
-
-        nodes = self.graph.get_nodes(ids='')
-
-        self.assertFalse(nodes)
-
-        nodes = self.graph.get_nodes(ids=[''])
-
-        self.assertFalse(nodes)
-
-    def _compare_nodes(self, nodes, _nodes):
-
-        node_ids = [node[GraphManager.ID] for node in nodes]
-        _node_ids = [node[GraphManager.ID] for node in _nodes]
-
-        self.assertEqual(len(nodes), len(_nodes))
-
-        for node_id in node_ids:
-            self.assertIn(node_id, _node_ids)
-
-    def test_CRUD(self):
+    def test_get_elts(self):
         """
         Test to put graph and get them back
         """
 
-        # starts to put graphs
+        self.manager.del_elts()
+        # ensure no element exist in storage
+        vertices = self.manager.get_elts(ids=self.vertice_ids)
+        self.assertFalse(vertices)
+        edges = self.manager.get_elts(ids=self.edge_ids)
+        self.assertFalse(edges)
+        graphs = self.manager.get_elts(ids=self.graph_ids)
+        self.assertFalse(graphs)
+
+        # put all elements
+        for vertice in self.vertices:
+            self.manager.put_elt(elt=vertice)
+        for edge in self.edges:
+            self.manager.put_elt(elt=edge)
         for graph in self.graphs:
-            self.graph.put_graph(graph=graph)
+            self.manager.put_elt(elt=graph)
 
-        # check equality
-        for index, graph in enumerate(self.graphs):
+        # ensure to get all elements
+        vertices = self.manager.get_elts(ids=self.vertice_ids)
+        self.assertEqual(len(vertices), self.count)
+        edges = self.manager.get_elts(ids=self.edge_ids)
+        self.assertEqual(len(edges), self.count)
+        graphs = self.manager.get_elts(ids=self.graph_ids)
+        self.assertEqual(len(graphs), self.count)
 
-            # get graph id
-            graph_id = graph[GraphManager.ID]
-            _graph = self.graph.get_graph(_id=graph_id)
-            # assert equality between graph and DB graph
-            self.assertEqual(graph[GraphManager.ID], _graph[GraphManager.ID])
+        # check for get all elts
+        elts = self.manager.get_elts()
+        self.assertEqual(len(elts), 3 * self.count)
 
-            # compare graph nodes
-            nodes = graph[GraphManager.NODES]
-            _nodes = _graph[GraphManager.NODES]
-            self._compare_nodes(nodes, _nodes)
+        # check to get elements by graph ids
+        elts = self.manager.get_elts(graph_ids=self.graph_ids)
+        self.assertEqual(len(elts), 3 * self.count)
 
-            # get node ids
-            node_ids = [node[GraphManager.ID] for node in nodes]
+        # check to get no elements by graph ids where ids does not exist
+        elts = self.manager.get_elts(ids='', graph_ids=self.graph_ids)
+        self.assertFalse(elts)
 
-            # ensure get_nodes equals nodes
-            _nodes = self.graph.get_nodes(graph_id=graph_id)
-            self._compare_nodes(nodes, _nodes)
+        # check to get elements by ids and graph ids
+        for graph in self.graphs:
+            elts = self.manager.get_elts(graph_ids=graph.id)
+            self.assertEqual(len(elts), len(graph.elts))
 
-            # ensure get_nodes equals nodes
-            _nodes = self.graph.get_nodes(ids=node_ids)
-            self._compare_nodes(nodes, _nodes)
+        # check to get one element from graph_ids
+        last_vertice_id = self.vertice_ids[-1]
+        elts = self.manager.get_elts(
+            ids=last_vertice_id, graph_ids=self.graph_ids)
+        self.assertEqual(len(elts), 1)
 
-            # delete all nodes
-            for node in nodes:
-                self.graph.del_nodes(ids=node[GraphManager.ID])
+        # check get data
+        for elt in self.elts:
+            _elt = self.manager.get_elts(ids=elt.id, data=elt.data)
+            self.assertIsNotNone(_elt)
+            self.assertEqual(_elt[GraphElement.ID], elt.id)
+            if elt.data is not None:
+                elts = self.manager.get_elts(data=elt.data)
+                self.assertEqual(len(elts), 3)
 
-            # ensure get_nodes is empty
-            _nodes = self.graph.get_nodes(ids=node_ids)
-            self.assertFalse(_nodes)
+    def test_get_edges(self):
+        """
+        Test GraphManager.get_edges.
+        """
 
-            # put nodes one by one
-            for node in nodes:
-                self.graph.put_nodes(node)
+        # check get all edges
+        edges = set(self.manager.get_edges())
+        self.assertEqual(edges, set(self.edges))
 
-            _nodes = self.graph.get_nodes(ids=node_ids)
-            self._compare_nodes(nodes, _nodes)
+        # check get all self edges
+        edges = set(self.manager.get_edges(ids=self.edge_ids))
+        self.assertEqual(edges, set(self.edges))
 
-            # delete all nodes at a time
-            self.graph.del_nodes(ids=node_ids)
-            # ensure get_nodes is empty
-            _nodes = self.graph.get_nodes(ids=node_ids)
-            self.assertFalse(_nodes)
+        # check get one edge
+        for edge_id in self.edge_ids:
+            edge = self.manager.get_edges(ids=edge_id)
+            self.assertIn(edge, set(self.edges))
 
-            self.graph.put_nodes(nodes)
-            # ensure get_nodes equals nodes
-            _nodes = self.graph.get_nodes(ids=node_ids)
-            self._compare_nodes(nodes, _nodes)
+        # check get edge types
+        edges = set(self.manager.get_edges(types=self.edge_types))
+        self.assertEqual(edges, set(self.edges))
 
-            # assert type
-            for i in range(self.count):
-                _nodes = self.graph.get_nodes(_type=i)
-                self.assertEqual(len(_nodes), self.count * 2 - 2 * i)
+        # check to get one edge type
+        for edge_type in self.edge_types:
+            edges = self.manager.get_edges(types=edge_type)
+            self.assertEqual(len(edges), 1)
 
-            # assert entity_id
-            for node in nodes:
-                entity_id = node[GraphManager.ENTITY_ID]
-                _nodes = self.graph.get_nodes(entity_id=entity_id)
-                for _node in _nodes:
-                    self.assertEqual(_node[GraphManager.ENTITY_ID], entity_id)
+        # check get edges by sources
+        edges = set(self.manager.get_edges(sources=self.elt_ids))
+        self.assertEqual(edges, set(self.edges))
 
-            node_ids_set = set(node_ids)  # for sources/targets
+        # check get edges by source
+        for edge in self.edges:
+            sources = set(edge.sources)
+            edges = set()
+            for _edge in self.edges:
+                _sources = set(_edge.sources)
+                if sources & _sources:
+                    edges.add(_edge)
+            _edges = set(self.manager.get_edges(sources=list(sources)))
+            self.assertEqual(_edges, edges)
 
-            # assert sources
-            for node_index, node in enumerate(nodes):
-                node_id = node[GraphManager.ID]
-                _nodes = self.graph.get_nodes(sources=node_id)
-                targets = []
-                for _node in _nodes:
-                    if self.graph.is_edge(_node):
-                        self.assertIn(node_id, _node[GraphManager.SOURCES])
-                        targets += _node[GraphManager.TARGETS]
-                    else:
-                        self.assertIn(_node[GraphManager.ID], targets)
+        # check get edges by targets
+        edges = set(self.manager.get_edges(targets=self.elt_ids))
+        self.assertEqual(edges, set(self.edges))
 
-            _nodes = self.graph.get_nodes(sources=node_ids)
+        # check get edges by target
+        for edge in self.edges:
+            targets = set(edge.targets)
+            edges = set()
+            for _edge in self.edges:
+                _targets = set(_edge.targets)
+                if targets & _targets:
+                    edges.add(_edge)
+            _edges = set(self.manager.get_edges(targets=list(targets)))
+            self.assertEqual(_edges, edges)
 
-            targets = []
-            for _node in _nodes:
-                if self.graph.is_edge(_node):
-                    sources = set(_node[GraphManager.SOURCES])
-                    self.assertTrue(sources | node_ids_set)
-                    targets += _node[GraphManager.TARGETS]
-                else:
-                    self.assertIn(_node[GraphManager.ID], targets)
+    def test_get_vertices(self):
+        """
+        Test GraphManager.get_vertices.
+        """
 
-            # assert targets
-            for node_index, node in enumerate(nodes):
-                node_id = node[GraphManager.ID]
-                _nodes = self.graph.get_nodes(targets=node_id)
-                targets = []
-                for _node in _nodes:
-                    if self.graph.is_edge(_node):
-                        self.assertIn(node_id, _node[GraphManager.TARGETS])
-                        targets += _node[GraphManager.SOURCES]
-                    else:
-                        self.assertIn(_node[GraphManager.ID], targets)
+        # check get all edges
+        vertices = set(self.manager.get_vertices())
+        self.assertEqual(vertices, set(self.vertices))
 
-            _nodes = self.graph.get_nodes(targets=node_ids)
+        # check get all self vertices
 
-            sources = []
-            for _node in _nodes:
-                if self.graph.is_edge(_node):
-                    targets = set(_node[GraphManager.TARGETS])
-                    self.assertTrue(targets | node_ids_set)
-                    sources += _node[GraphManager.SOURCES]
-                else:
-                    self.assertIn(_node[GraphManager.ID], sources)
+        vertices = set(self.manager.get_vertices(ids=self.vertice_ids))
+        self.assertEqual(vertices, set(self.vertices))
 
+        # check get one vertice
+        for vertice_id in self.vertice_ids:
+            vertice = self.manager.get_vertices(ids=vertice_id)
+            self.assertIn(vertice, set(self.vertices))
+
+        # check get vertice types
+        vertices = set(self.manager.get_vertices(types=self.vertice_types))
+        self.assertEqual(vertices, set(self.vertices))
+
+        # check to get one vertice type
+        for vertice_type in self.vertice_types:
+            vertices = self.manager.get_vertices(types=vertice_type)
+            self.assertEqual(len(vertices), 1)
+
+    def test_get_graphs(self):
+        """
+        Test GraphManager.get_graphs
+        """
+
+        # check get all graphs
+        graphs = set(self.manager.get_graphs())
+        self.assertEqual(graphs, set(self.graphs))
+
+        # check get all self graphs
+        graphs = set(self.manager.get_graphs(ids=self.graph_ids))
+        self.assertEqual(graphs, set(self.graphs))
+
+        # check get one graph
+        for graph_id in self.graph_ids:
+            graph = self.manager.get_graphs(ids=graph_id)
+            self.assertIn(graph, self.graphs)
+
+        # check gelts
+        for graph in self.graphs:
+            graph_elts = graph.elts
+            graph = self.manager.get_graphs(ids=graph.id, add_elts=True)
+            self.assertEqual(len(graph_elts), len(graph._gelts))
+
+        # check get graph types
+        graphs = set(self.manager.get_graphs(types=self.graph_types))
+        self.assertEqual(graphs, set(self.graphs))
+
+        # check to get one graph type
+        for graph_type in self.graph_types:
+            graphs = self.manager.get_graphs(types=graph_type)
+            self.assertEqual(len(graphs), 1)
+
+        # check get graphs by elts
+        graphs = set(self.manager.get_graphs(elts=self.elt_ids))
+        self.assertEqual(graphs, set(self.graphs))
+
+        # check get graphs by one vertice
+        for index, vertice_id in enumerate(self.vertice_ids):
+            graphs = self.manager.get_graphs(elts=vertice_id)
+            self.assertEqual(len(graphs), index + 1)
+
+        # check get graphs by one edge
+        for index, edge_id in enumerate(self.edge_ids):
+            graphs = self.manager.get_graphs(elts=edge_id)
+            self.assertEqual(len(graphs), index + 1)
+
+        # check get graphs by one graph
+        for index, graph_id in enumerate(self.graph_ids):
+            graphs = self.manager.get_graphs(elts=graph_id)
+            self.assertEqual(len(graphs), index + 1)
+
+        # check remove one elt
+        for index, graph_id in enumerate(self.graph_ids):
+            graph = self.manager.get_graphs(ids=graph_id)
+            graph_elts = graph.elts
+            if graph_elts:
+                first_elt = graph.elts[0]
+                self.manager.remove_elts(ids=first_elt, graph_ids=graph.id)
+                graph = self.manager.get_graphs(ids=graph_id)
+                self.assertEqual(len(graph.elts), len(graph_elts) - 1)
+                # check remove two elts
+                self.manager.remove_elts(ids=graph.elts[:2])
+                graph = self.manager.get_graphs(ids=graph_id)
+                self.assertEqual(len(graph.elts), len(graph_elts) - 3)
+
+        # check remove one elt from multiple graphs
+        for index in range(len(self.graph_ids)):
+            # get first "index" graph
+            graph_ids = self.graph_ids[:index]
+            graphs = self.manager.get_graphs(ids=graph_ids)
+            graph_elts = graph.elts
+            elt_id = self.vertice_ids[-1]
+            self.manager.remove_elts(ids=elt_id, graph_ids=graph_ids)
+            graphs = self.manager.get_graphs(ids=graph_ids)
+            for graph in graphs:
+                self.assertNotIn(elt_id, graph.elts)
+
+    def test_get_neighbourhood(self):
+        """
+        Test get_neighbourhood method.
+        """
+
+        # test empty result
+        neighbourhood = self.manager.get_neighbourhood(ids='')
+        self.assertFalse(neighbourhood)
+
+        # test all vertices
+        neighbourhood = set(self.manager.get_neighbourhood())
+        self.assertEqual(len(neighbourhood), len(self.elts))
+
+        # let's play with few vertices, edges and graphs
+        v0, v1, v2 = Vertice(_type='0'), Vertice(_type='1'), Vertice(_type='2')
+        e0, e1, e2 = Edge(_type='0'), Edge(_type='1'), Edge(_type='2')
+        g0, g1, g2 = Graph(_type='0'), Graph(_type='1'), Graph(_type='2')
+
+        # connect v0 to v1
+        e0.directed = True
+        e0.sources = [v0.id, v1.id, v2.id]
+        e0.targets = [g0.id, g1.id, g2.id]
+
+        # save all elements
+        v0.save(self.manager), v1.save(self.manager), v2.save(self.manager)
+        e0.save(self.manager), e1.save(self.manager), e2.save(self.manager)
+        g0.save(self.manager), g1.save(self.manager), g2.save(self.manager)
+
+        # test ids
+        neighbourhood = set(self.manager.get_neighbourhood(ids=v0.id))
+        self.assertEqual(neighbourhood, {g0, g1, g2})
+
+        # test sources
+        neighbourhood = set(self.manager.get_neighbourhood(
+            ids=v0.id, sources=True))
+        self.assertEqual(neighbourhood, {g0, g1, g2, v0, v1, v2})
+
+        # test not targets
+        neighbourhood = set(self.manager.get_neighbourhood(
+            ids=v0.id, targets=False))
+        self.assertEqual(neighbourhood, set())
+
+        # test not directed
+        e0.directed = False
+        e0.save(self.manager)
+        neighbourhood = set(self.manager.get_neighbourhood(
+            ids=v0.id))
+        self.assertEqual(neighbourhood, {g0, g1, g2, v0, v1, v2})
+
+        # test data
+
+        # test source_data
+
+        # test target_data
+
+        # test types
+
+        # test source_types
+
+        # test target_types
+
+        # test edge_ids
+
+        # test edge_types
+
+        # test add_edges
+
+        # test source_edge_types
+
+        # test target_edge_types
+
+        # test query
+
+        # test edge_query
+
+        # test source_query
+
+        # test target_query
 
 if __name__ == '__main__':
     main()
