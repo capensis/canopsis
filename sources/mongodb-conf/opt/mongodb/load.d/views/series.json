@@ -16,7 +16,8 @@
             {
                 "widget" : {
                     "tagName" : null,
-                    "widgetId" : null,
+                    "widgetId" : "fake-guid-fd5b-1ede-8ac2-6a1d66adb023",
+                    "id" : "fake-guid-fd5b-1ede-8ac2-6a1d66adb023",
                     "default_column_sort" : {
                         "direction" : "ASC"
                     },
@@ -62,7 +63,8 @@
             {
                 "widget" : {
                     "tagName" : null,
-                    "widgetId" : null,
+                    "id" : "fake-guid-fd5b-1ede-8ac2-6a1d66adb024",
+                    "widgetId" : "fake-guid-fd5b-1ede-8ac2-6a1d66adb024",
                     "default_column_sort" : {
                         "direction" : "ASC"
                     },
