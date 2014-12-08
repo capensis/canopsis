@@ -25,10 +25,16 @@ install_requires = [
     'canopsis.common',
     'canopsis.configuration',
     'canopsis.middleware',
-    'canopsis.old'
+    'canopsis.old',
+    'lxml',
 ]
 
 setup(
+    name='schemas',
     description='Canopsis schemas',
     install_requires=install_requires,
-    keywords='schema')
+    keywords='schema',
+    author='Capensis',
+    author_email='teamcanopsis@capensis.fr',
+    test_suite='test',
+    )

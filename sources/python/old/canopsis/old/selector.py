@@ -138,7 +138,7 @@ class Selector(Record):
                 cfilter = {'$and': [downtime, cfilter]}
 
         self.logger.debug('Generated cfilter is')
-        self.logger.debug(pp.pprint(cfilter))
+        self.logger.debug(pp.pformat(cfilter))
         return cfilter
 
     def getState(self):
@@ -241,7 +241,7 @@ class Selector(Record):
             mfilter['ack.isAck'] = {'$ne': True}
 
         self.logger.debug('mfilter for worst state')
-        self.logger.debug(pp.pprint(mfilter))
+        self.logger.debug(pp.pformat(mfilter))
 
         # Computes worst state for events that are not acknowleged
         result_ack_worst_state = self.storage.get_backend(

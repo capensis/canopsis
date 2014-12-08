@@ -20,6 +20,7 @@
 
 __version__ = '0.1'
 
+from canopsis.common.init import basestring
 from canopsis.storage import Storage, DataBase
 from canopsis.common.utils import isiterable
 
@@ -249,7 +250,7 @@ class MongoStorage(MongoDataBase, Storage):
         result = None
 
         # search for the best hint
-        if result is not None and query:
+        if cursor is not None and query:
             index = None
             # maximize the best hint related to query size
             query_len = len(query)
@@ -276,12 +277,12 @@ class MongoStorage(MongoDataBase, Storage):
             # if index has been founded
             if index is not None:
                 # construct the right hint
-                result = ''
+                result = []
                 for item in index:
                     if isinstance(item, basestring):
-                        result = '%s_%s_1' % (result, item)
+                        result.append((item, 1))
                     elif isinstance(item, tuple):
-                        result = '%s_%s_%s' % (result, item[0], item[1])
+                        result.append(item)
 
         return result
 

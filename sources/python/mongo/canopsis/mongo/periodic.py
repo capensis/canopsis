@@ -138,43 +138,45 @@ class MongoPeriodicStorage(MongoStorage, PeriodicStorage):
 
         # prepare data to insert/update in db
         for ts, value in points:
-
+            # round timestamp with seconds
             ts = int(ts)
             id_timestamp = int(period.round_timestamp(ts, normalize=True))
-            document_properties = doc_props_by_id_ts.setdefault(id_timestamp, {})
+            doc_props = doc_props_by_id_ts.setdefault(
+                id_timestamp, {}
+            )
 
-            if '_id' not in document_properties:
-                document_properties['_id'] = \
-                    MongoPeriodicStorage._get_document_id(
-                        data_id=data_id,
-                        timestamp=id_timestamp, period=period)
-                document_properties[MongoPeriodicStorage.Index.LAST_UPDATE] = \
-                    ts
+            if '_id' not in doc_props:
+                doc_props['_id'] = MongoPeriodicStorage._get_document_id(
+                    data_id=data_id,
+                    timestamp=id_timestamp, period=period
+                )
+                doc_props[MongoPeriodicStorage.Index.LAST_UPDATE] = ts
 
             else:
                 last_update = MongoPeriodicStorage.Index.LAST_UPDATE
-                if document_properties[last_update] < ts:
-                    document_properties[last_update] = ts
+                if doc_props[last_update] < ts:
+                    doc_props[last_update] = ts
 
             field_name = "{0}.{1}".format(
-                MongoPeriodicStorage.Index.VALUES, ts - id_timestamp)
+                MongoPeriodicStorage.Index.VALUES, ts - id_timestamp
+            )
 
-            document_properties[field_name] = value
+            doc_props[field_name] = value
 
         for id_timestamp in doc_props_by_id_ts:
-            document_properties = doc_props_by_id_ts[id_timestamp]
+            doc_props = doc_props_by_id_ts[id_timestamp]
 
-            # remove _id and last_update
-            _id = document_properties.pop('_id')
+            # get _id
+            _id = doc_props['_id']
 
             _set = {
                 MongoPeriodicStorage.Index.DATA_ID: data_id,
                 MongoPeriodicStorage.Index.PERIOD: period.unit_values,
                 MongoPeriodicStorage.Index.TIMESTAMP: id_timestamp
             }
-            _set.update(document_properties)
-
-            document_properties['_id'] = _id
+            _set.update(doc_props)
+            # remove _id from _set
+            del _set['_id']
 
             result = self._update(_id={'_id': _id}, document={'$set': _set})
 
