@@ -72,7 +72,7 @@ class Engine(object):
 
         self.name = name
 
-        #Set parametrized Amqp for testing purposes
+        # Set parametrized Amqp for testing purposes
         if camqp_custom is None:
             self.Amqp = Amqp
         else:
@@ -87,7 +87,7 @@ class Engine(object):
         self.next_amqp_queues = next_amqp_queues
         self.get_amqp_queue = cycle(self.next_amqp_queues)
 
-        ## Get from internal or external queue
+        # Get from internal or external queue
         self.next_balanced = next_balanced
 
         init = Init()
@@ -137,30 +137,30 @@ class Engine(object):
             'next ready time for crecord {0} : {1}'.format(
                 crecord_id, next_ready))
 
-    def get_ready_record(self, event):
+    def get_ready_record(self, record_event):
         """
-        crecord dispatcher send an event with type and crecord id.
+        crecord dispatcher sent a record event with type and crecord id.
         So I load a crecord object instance (dynamically) from these infos
         """
 
-        ctype = event.get('crecord_type', None)
+        ctype = record_event.get('crecord_type', None)
 
-        if '_id' in event and ctype and ctype in self.dispatcher_crecords:
-            self.logger.warning('Record type {0} not found'.format(ctype))
+        if ('_id' in record_event and ctype and
+                ctype in self.dispatcher_crecords):
 
             record_object = None
 
             try:
                 record_object = self.storage.get(
-                    event['_id'],
+                    record_event['_id'],
                     account=Account(user="root", group="root")
                 )
 
             except Exception as e:
                 self.logger.critical(
-                    'Record <{0}> not found in {1} : {2}'.format(
+                    '<{}> record ({}) not found : {}'.format(
                         ctype,
-                        str(self.dispatcher_crecords),
+                        record_event['_id'],
                         e
                     )
                 )
@@ -330,7 +330,7 @@ class Engine(object):
                 sec_per_evt = self.counter_worktime / self.counter_event
                 self.logger.debug(" + %0.5f seconds/event" % sec_per_evt)
 
-            ## Submit event
+            # Submit event
             if self.send_stats_event and self.counter_event != 0:
                 state = 0
 
@@ -498,10 +498,6 @@ class TaskHandler(Engine):
                 except NotImplementedError:
                     state = 1
                     output = 'Not implemented'
-
-                #except Exception as err:
-                #    state = 2
-                #    output = 'Unhandled exception: {0}'.format(err)
 
         end = int(time())
 
