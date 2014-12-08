@@ -20,6 +20,7 @@
 
 __version__ = '0.1'
 
+from canopsis.common.init import basestring
 from canopsis.storage import Storage, DataBase
 from canopsis.common.utils import isiterable
 
@@ -281,7 +282,7 @@ class MongoStorage(MongoDataBase, Storage):
                     if isinstance(item, basestring):
                         result.append((item, 1))
                     elif isinstance(item, tuple):
-                        result.append((item[0], item[1]))
+                        result.append(item)
 
         return result
 

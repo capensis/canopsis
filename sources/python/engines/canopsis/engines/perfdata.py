@@ -104,7 +104,7 @@ class engine(Engine):
         event = deepcopy(event)
 
         ## Metrology
-        timestamp = event.get('timestamp')
+        timestamp = event['timestamp'] if 'timestamp' in event else None
 
         if timestamp is not None:
 
@@ -114,7 +114,7 @@ class engine(Engine):
 
                 event_with_metric = deepcopy(event)
                 event_with_metric['type'] = 'metric'
-                event_with_metric[Context.NAME] = perf_data['metric']
+                event_with_metric[Context.NAME] = perf_data.pop('metric')
 
                 metric_id = self.perfdata.context.get_entity_id(
                     event_with_metric)
