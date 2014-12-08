@@ -19,7 +19,7 @@
 # ---------------------------------
 
 from canopsis.engines import Engine
-
+from canopsis.old.event import get_routingkey
 from canopsis.context.manager import Context
 """
 TODO: sla
@@ -44,6 +44,8 @@ class engine(Engine):
         #self.sla = None
         """
         self.beat()
+
+        self.cache = set()
 
     def beat(self):
         """
@@ -78,17 +80,23 @@ class engine(Engine):
         hostgroups = event.get('hostgroups', [])
         servicegroups = event.get('servicegroups', [])
 
+        rk = get_routingkey(event)
+
+        already_added = rk in self.cache
+
         # add connector
         entity = {Context.NAME: connector}
-        self.context.put(_type='connector', entity=entity)
+        if not already_added:
+            self.context.put(_type='connector', entity=entity)
 
         # add connector_name
         entity[Context.NAME] = connector_name
 
         context['connector'] = connector
-        self.context.put(
-            _type='connector_name', entity=entity, context=context
-        )
+        if not already_added:
+            self.context.put(
+                _type='connector_name', entity=entity, context=context
+            )
 
         # add status entity which is a component or a resource
         entity[Context.NAME] = component
@@ -105,9 +113,10 @@ class engine(Engine):
 
         elif source_type == 'resource':
             # add component
-            self.context.put(
-                _type='component', entity=status_entity, context=context
-            )
+            if not already_added:
+                self.context.put(
+                    _type='component', entity=status_entity, context=context
+                )
             is_status_entity = True
             context['component'] = component
             status_entity[Context.NAME] = resource
@@ -122,21 +131,24 @@ class engine(Engine):
             status_entity['mWarn'] = event.get(mWarn, None)
             status_entity['state'] = event['state']
             status_entity['state_type'] = event['state_type']
-            self.context.put(
-                _type=source_type, entity=status_entity, context=context
-            )
+            if not already_added:
+                self.context.put(
+                    _type=source_type, entity=status_entity, context=context
+                )
 
-        # add hostgroups
-        for hostgroup in hostgroups:
-            hostgroup_data = {Context.NAME: hostgroup}
-            self.context.put(_type='hostgroup', entity=hostgroup_data)
+        if not already_added:
+            # add hostgroups
+            for hostgroup in hostgroups:
+                hostgroup_data = {Context.NAME: hostgroup}
+                self.context.put(_type='hostgroup', entity=hostgroup_data)
 
-        # add servicegroups
-        for servicegroup in servicegroups:
-            servicegroup_data = {
-                Context.NAME: servicegroup
-            }
-            self.context.put(_type='servicegroup', entity=servicegroup_data)
+            # add servicegroups
+            for servicegroup in servicegroups:
+                servicegroup_data = {
+                    Context.NAME: servicegroup
+                }
+                self.context.put(
+                    _type='servicegroup', entity=servicegroup_data)
 
         context['component'] = component
         if resource:
@@ -173,10 +185,17 @@ class engine(Engine):
         # add perf data
         for perfdata in event.get('perf_data_array', []):
             perfdata_entity = entity.copy()
-            perfdata_entity[Context.NAME] = perfdata['metric']
+            name = perfdata['metric']
+            perfdata_entity[Context.NAME] = name
             perfdata_entity['internal'] = perfdata['metric'].startswith('cps')
-            self.context.put(
-                _type='metric', entity=perfdata_entity, context=context
-            )
+            perfdata_rk = '{0}.{1}'.format(rk, name)
+            if perfdata_rk not in self.cache:
+                self.context.put(
+                    _type='metric', entity=perfdata_entity, context=context
+                )
+                self.cache.add(perfdata_rk)
+
+        if not already_added:
+            self.cache.add(rk)
 
         return event
