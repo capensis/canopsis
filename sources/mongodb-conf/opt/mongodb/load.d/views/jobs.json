@@ -12,7 +12,7 @@
         "title": "wrapper",
         "xtype": "widgetwrapper",
         "widget": {
-          "widgetId" : "fake-guid-fd5a-1ede-8ac2-6a1d66ad0023",
+          "widgetId" : "fake-guid-fd5a-1ede-8ac2-6a1d66ab0029",
           "xtype": "jobmanager",
           "itemsPerPage": 5,
           "title": "Scheduled Jobs",

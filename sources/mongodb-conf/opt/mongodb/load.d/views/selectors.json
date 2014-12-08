@@ -18,6 +18,7 @@
             "actionbutton-removeselection"
           ],
           "id" : "item_13019673-ebdf-6271-e595-6be7338aeb61",
+          "widgetId" : "item_13019673-ebdf-6271-e595-6be7338aeb61",
           "title": "Selectors",
           "itemsPerPage": 5,
           "filters": [],
@@ -56,6 +57,7 @@
         "widget" : {
           "tagName" : null,
           "id" : "item_13019673-ebdf-6271-e595-6be7338aeb50",
+          "widgetId" : "item_13019673-ebdf-6271-e595-6be7338aeb50",
           "refreshableWidget" : true,
           "item_actions" : [ ],
           "title" : "Computed selectors",

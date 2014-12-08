@@ -13,6 +13,8 @@
         "title": "wrapper",
         "xtype": "widgetwrapper",
         "widget": {
+          "id" : "item_13019673-ebdf-6271-e595-6be7338aeb51",
+          "widgetId" : "item_13019673-ebdf-6271-e595-6be7338aeb51",
           "xtype": "list",
           "listed_crecord_type": "role",
           "itemsPerPage": 5,
@@ -41,6 +43,8 @@
         "xtype": "widgetwrapper",
         "widget": {
           "xtype": "list",
+          "id" : "item_13019673-ebdf-6271-e595-6be7338aeb52",
+          "widgetId" : "item_13019673-ebdf-6271-e595-6be7338aeb52",
           "listed_crecord_type": "profile",
           "itemsPerPage": 5,
           "title": "Profiles",
@@ -67,6 +71,8 @@
         "xtype": "widgetwrapper",
         "widget": {
           "xtype": "list",
+          "id" : "item_13019673-ebdf-6271-e595-6be7338aeb53",
+          "widgetId" : "item_13019673-ebdf-6271-e595-6be7338aeb53",
           "listed_crecord_type": "group",
           "itemsPerPage": 5,
           "title": "Groups",

@@ -1,0 +1,31 @@
+{
+    "type": "object",
+    "categories": [{
+        "title": "General",
+        "keys": ["crecord_name", "data", "type", "sources", "targets", "_cls", "_type"]
+    }],
+    "properties": {
+        "crecord_type": {
+            "enum": ["edge"],
+            "required": true
+        },
+        "_cls": {
+            "type": "string",
+            "default": "canopsis.graph.elements.Edge",
+            "required": true
+        },
+        "sources": {
+            "type": "array",
+            "required": true
+        },
+        "targets": {
+            "type": "array",
+            "required": true
+        },
+        "_type": {
+            "type": "string",
+            "defaule": "edge",
+            "required": true
+        }
+    }
+}
