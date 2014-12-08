@@ -23,6 +23,7 @@ __version__ = "0.1"
 # provide only TimeSerie
 __all__ = ('TimeSerie')
 
+from canopsis.common.init import basestring
 from canopsis.timeserie.timewindow import Period, TimeWindow
 from canopsis.timeserie.aggregation import get_aggregations
 from canopsis.configuration.configurable import Configurable
@@ -66,7 +67,7 @@ class TimeSerie(Configurable):
         self,
         aggregation=VDEFAULT_AGGREGATION,
         max_points=VMAX_POINTS,
-        period=VPERIOD,
+        period=None,
         round_time=VROUND_TIME,
         fill=VFILL,
         *args, **kwargs
@@ -144,10 +145,9 @@ class TimeSerie(Configurable):
         The upper bound is timewindow.stop_datetime()
         """
 
+        result = []
         # get the right period to apply on timewindow
         period = self._get_period(timewindow=timewindow)
-
-        result = []
 
         # set start and stop datetime
         start_datetime = timewindow.start_datetime()
@@ -155,7 +155,8 @@ class TimeSerie(Configurable):
 
         if self.round_time:  # normalize if round time is True
             start_datetime = period.round_datetime(
-                datetime=start_datetime, normalize=True)
+                datetime=start_datetime, normalize=True
+            )
 
         current_datetime = start_datetime
         delta = period.get_delta()
@@ -347,7 +348,9 @@ class TimeSerie(Configurable):
                 Parameter(TimeSerie.PERIOD, parser=Period.from_str),
                 Parameter(TimeSerie.FILL, parser=Parameter.bool),
                 Parameter(TimeSerie.ROUND_TIME, parser=Parameter.bool),
-                Parameter(TimeSerie.MAX_POINTS, parser=int)))
+                Parameter(TimeSerie.MAX_POINTS, parser=int)
+            )
+        )
 
         return result
 

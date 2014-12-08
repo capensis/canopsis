@@ -6,7 +6,7 @@ from random import random, randint
 from time import time
 
 
-class AggregationTest(TestCase):
+class TimeSerieTest(TestCase):
 
     def setUp(self):
         self.timeserie = TimeSerie()
@@ -48,6 +48,9 @@ class AggregationTest(TestCase):
         return result
 
     def test_scenario(self):
+        """
+        Calculate aggregations over 5 years
+        """
 
         timewindow = self._five_years_timewidow()
 
@@ -72,14 +75,9 @@ class AggregationTest(TestCase):
                 ):
                     continue
 
-                if unit is Period.WEEK:
-                    value = randint(2, 500)
-                    kwargs = {'max_points': value}
-                    period_length = total_seconds / value
-                else:
-                    value = randint(2, max_value_unit)
-                    kwargs = {'period': Period(**{unit: value})}
-                    period_length = unit_length * value
+                value = randint(2, max_value_unit)
+                kwargs = {'period': Period(**{unit: value})}
+                period_length = unit_length * value
 
                 timeserie = TimeSerie(
                     aggregation="MEAN", round_time=round_time, **kwargs
@@ -87,23 +85,29 @@ class AggregationTest(TestCase):
 
                 timesteps = timeserie.timesteps(timewindow)
 
-                self.assertEqual(timesteps[1] - timesteps[0], period_length)
+                timesteps_gap = timesteps[1] - timesteps[0]
+
+                self.assertEqual(timesteps_gap, period_length)
 
                 all_aggregated_points = list()
 
                 for i in range(5):
 
                     points = [
-                        (t, random()) for t in range(
+                        (t, random()) for t in
+                        range(
                             int(timewindow.start()),
-                            int(timewindow.stop()), 3600)]
+                            int(timewindow.stop()),
+                            3600
+                        )
+                    ]
 
                     aggregated_points = timeserie.calculate(points, timewindow)
 
                     all_aggregated_points.append(aggregated_points)
 
                     len_aggregated_points = len(aggregated_points)
-                    self.assertTrue((len(timesteps) - 1) in (
+                    self.assertIn(len(timesteps) - 1, (
                         len_aggregated_points, len_aggregated_points + 1))
 
                 unit_length *= max_value_unit
