@@ -316,7 +316,7 @@ class MongoStorage(MongoDataBase, Storage):
     def put_element(self, _id, element, *args, **kwargs):
 
         return self._update(
-            _id={MongoStorage.ID: _id}, document={'$set': element},
+            spec={MongoStorage.ID: _id}, document={'$set': element},
             multi=False)
 
     def bool_compare_and_swap(self, _id, oldvalue, newvalue):
@@ -383,11 +383,12 @@ class MongoStorage(MongoDataBase, Storage):
 
         return result
 
-    def _update(self, _id, document, multi=True, **kwargs):
+    def _update(self, spec, document, multi=True, upsert=True, **kwargs):
 
         result = self._run_command(
-            command='update', spec=_id, document=document,
-            upsert=True, multi=multi, **kwargs)
+            command='update', spec=spec, document=document,
+            upsert=upsert, multi=multi, **kwargs
+        )
 
         return result
 

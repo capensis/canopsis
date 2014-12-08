@@ -48,8 +48,10 @@ class PeriodicStoreTest(TestCase):
 
         # let's play with different data_names
         data_ids = ['m0', 'm1']
-        periods = [Period(**{Period.MINUTE: 60}),
-            Period(**{Period.HOUR: 24})]
+        periods = [
+            Period(**{Period.MINUTE: 60}),
+            Period(**{Period.HOUR: 24})
+        ]
 
         timewindow = TimeWindow()
 
