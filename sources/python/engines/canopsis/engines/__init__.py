@@ -160,7 +160,7 @@ class Engine(object):
                 self.logger.critical(
                     '<{}> record ({}) not found : {}'.format(
                         ctype,
-                        record_event['_id']
+                        record_event['_id'],
                         e
                     )
                 )
