@@ -40,7 +40,8 @@ class MongoDataBase(DataBase):
     ):
 
         super(MongoDataBase, self).__init__(
-            port=port, host=host, *args, **kwargs)
+            port=port, host=host, *args, **kwargs
+        )
 
     def _connect(self, *args, **kwargs):
 
@@ -73,7 +74,6 @@ class MongoDataBase(DataBase):
             self.logger.error(
                 'Raised {2} during connection attempting to {0}:{1}.'.
                 format(self.host, self.port, e))
-
         else:
             self._database = result[self.db]
 
@@ -167,6 +167,8 @@ class MongoStorage(MongoDataBase, Storage):
 
     ID = '_id'  #: ID mongo
 
+    INSERT_COUNT = 'insert_count'  #: insert count
+
     def _connect(self, *args, **kwargs):
 
         result = super(MongoStorage, self)._connect(*args, **kwargs)
@@ -174,6 +176,19 @@ class MongoStorage(MongoDataBase, Storage):
         if result:
             table = self.get_table()
             self._backend = self._database[table]
+            # enable sharding
+            if self.sharding:
+                # on db
+                self._database.command(enableSharding=self.db)
+                # and on collection
+                collection_full_name = '{0}.{1}'.format(self.db, table)
+                self._database.command(
+                    shardCollection=collection_full_name, key={'_id': 1}
+                )
+
+            # initialize self.to_insert
+            self.to_insert = []
+            self.insert_count = 30
 
             for index in self.all_indexes():
                 try:
@@ -182,6 +197,15 @@ class MongoStorage(MongoDataBase, Storage):
                     self.logger.error(e)
 
         return result
+
+    def __del__(self):
+        """
+        Insert last documents if there are such documents.
+        """
+
+        if self.to_insert:
+            self.insert_count = 1
+            self._insert(document=self.to_insert)
 
     def drop(self, *args, **kwargs):
         """
@@ -376,10 +400,26 @@ class MongoStorage(MongoDataBase, Storage):
 
         return result
 
-    def _insert(self, document, **kwargs):
+    def _insert(self, document=None, **kwargs):
+        result = None
+        # if insertion count is required
+        if self.insert_count >= 0:
+            # test if count is greater than expected
+            if len(self.to_insert) > self.insert_count:
+                if document is not None:
+                    self.to_insert.append(document)
+                result = self._run_command(
+                    command='insert', doc_or_docs=self.to_insert, **kwargs
+                )
+                self.to_insert = []
+            else:
+                # insert a new document in the bulk
+                self.to_insert.append(document)
 
-        result = self._run_command(
-            command='insert', doc_or_docs=document, **kwargs)
+        else:  # else, run directly the command
+            result = self._run_command(
+                command='insert', doc_or_docs=document, **kwargs
+            )
 
         return result
 
