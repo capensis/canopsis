@@ -24,6 +24,7 @@ __all__ = ('DataBase', 'Storage')
 
 from functools import reduce
 
+from canopsis.common.init import basestring
 from canopsis.common.utils import isiterable
 from canopsis.configuration.parameters import Parameter
 from canopsis.middleware import Middleware
@@ -45,18 +46,20 @@ class DataBase(Middleware):
     DB = 'db'
     JOURNALING = 'journaling'
 
+    SHARDING = 'sharding'
+
     CONF_RESOURCE = 'storage/storage.conf'
 
     class DataBaseError(Exception):
         pass
 
-    def __init__(self, db='canopsis', journaling=False, *args, **kwargs):
+    def __init__(
+        self, db='canopsis', journaling=False, sharding=False, *args, **kwargs
+    ):
         """
-        :param db: db name
-        :param journaling: journaling mode enabling.
-
-        :type db: str
-        :type journaling: bool
+        :param str db: db name
+        :param bool journaling: journaling mode enabling.
+        :param bool sharding: db sharding mode enabling.
         """
 
         super(DataBase, self).__init__(*args, **kwargs)
@@ -64,6 +67,7 @@ class DataBase(Middleware):
         # initialize instance properties with default values
         self._db = db
         self._journaling = journaling
+        self._sharding = sharding
 
     @property
     def db(self):
@@ -81,6 +85,15 @@ class DataBase(Middleware):
     @journaling.setter
     def journaling(self, value):
         self._journaling = value
+        self.reconnect()
+
+    @property
+    def sharding(self):
+        return self._sharding
+
+    @sharding.setter
+    def sharding(self, value):
+        self._sharding = value
         self.reconnect()
 
     def drop(self, table=None, *args, **kwargs):
@@ -131,7 +144,9 @@ class DataBase(Middleware):
             new_content=(
                 Parameter(DataBase.DB, critical=True),
                 Parameter(
-                    DataBase.JOURNALING, parser=Parameter.bool, critical=True)
+                    DataBase.JOURNALING, parser=Parameter.bool, critical=True),
+                Parameter(
+                    DataBase.SHARDING, critical=True, parser=Parameter.bool)
             )
         )
 
@@ -159,9 +174,9 @@ class Storage(DataBase):
 
     DATA_ID = 'id'  #: db data id
 
-    INDEXES = 'indexes'
+    INDEXES = 'indexes'  #: storage indexes
 
-    CATEGORY = 'STORAGE'
+    CATEGORY = 'STORAGE'  #: storage category
 
     ASC = 1  #: ASC order
     DESC = -1  #: DESC order
@@ -172,7 +187,7 @@ class Storage(DataBase):
         """
         pass
 
-    def __init__(self, indexes=None, *args, **kwargs):
+    def __init__(self, indexes=None, insert_count=0, *args, **kwargs):
 
         super(Storage, self).__init__(*args, **kwargs)
 
@@ -185,12 +200,13 @@ class Storage(DataBase):
 
     def all_indexes(self):
         """
-        :return: all self indexes.
+        :return: all self indexes (concatenation of id and additional indexes),
+            such as a list of list of tuple(s).
+        :rtype: list
         """
 
         result = [[(Storage.DATA_ID, 1)]]
-        _indexes = self._indexes
-        if _indexes:
+        if self._indexes:
             result.append(self._indexes[:])
 
         return result
@@ -203,20 +219,51 @@ class Storage(DataBase):
         :param value: indexes such as::
             - one name
             - one tuple of kind (name, ASC/DESC)
-            - a list of tuple or name [((name, ASC/DESC) | name)* ]
+            - a list of tuple or name [{(name, ASC/DESC), name}* ]
         :type value: str, tuple ot list
         """
 
+        indexes = []
+
         # if value is a name, transform it into a list
-        if isinstance(value, (str, tuple)):
-            value = [value]
-        # if value is iterable
-        elif not isinstance(value, list):
+        if isinstance(value, basestring):
+            indexes = [[(value, Storage.ASC)]]
+        elif isinstance(value, tuple):  # if value is a tuple
+            indexes = [[value]]
+        elif isinstance(value, list):  # if value is a list
+            for index in value:
+                index = self._ensure_index(index)
+                indexes.append(index)
+        else:  # error in other cases
             raise Storage.StorageError(
                 "wrong indexes value %s. str, tuple or list accepted" % value)
 
-        self._indexes = value
+        self._indexes = indexes
         self.reconnect()
+
+    def _ensure_index(self, index):
+        """
+        Get a right index structure related to input index.
+
+        :return: depending on index:
+            - str: [(index, Storage.ASC)]
+            - tuple: (index, order): [(index, order)]
+            - list: [{(index, order), (index)}+]: [(index, order)+]
+        """
+
+        result = []
+
+        if isinstance(index, basestring):  # one value
+            result = [(index, Storage.ASC)]
+        elif isinstance(index, tuple):  # one value with order
+            result = [index]
+        elif isinstance(index, list) and index:  # not empty list of indexes
+            for idx in index:  # convert
+                if isinstance(idx, basestring):
+                    idx = (idx, Storage.ASC)
+                result.append(idx)
+
+        return result
 
     def bool_compare_and_swap(self, _id, oldvalue, newvalue):
         """
@@ -537,7 +584,10 @@ Storage types must be of the same type.'.format(self, target))
 
         result.add_unified_category(
             name=Storage.CATEGORY,
-            new_content=(Parameter(Storage.INDEXES, parser=eval)))
+            new_content=(
+                Parameter(Storage.INDEXES, parser=eval)
+            )
+        )
 
         return result
 

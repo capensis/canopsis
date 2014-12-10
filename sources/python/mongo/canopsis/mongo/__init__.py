@@ -20,6 +20,7 @@
 
 __version__ = '0.1'
 
+from canopsis.common.init import basestring
 from canopsis.storage import Storage, DataBase
 from canopsis.common.utils import isiterable
 
@@ -39,7 +40,8 @@ class MongoDataBase(DataBase):
     ):
 
         super(MongoDataBase, self).__init__(
-            port=port, host=host, *args, **kwargs)
+            port=port, host=host, *args, **kwargs
+        )
 
     def _connect(self, *args, **kwargs):
 
@@ -72,7 +74,6 @@ class MongoDataBase(DataBase):
             self.logger.error(
                 'Raised {2} during connection attempting to {0}:{1}.'.
                 format(self.host, self.port, e))
-
         else:
             self._database = result[self.db]
 
@@ -173,6 +174,15 @@ class MongoStorage(MongoDataBase, Storage):
         if result:
             table = self.get_table()
             self._backend = self._database[table]
+            # enable sharding
+            if self.sharding:
+                # on db
+                self._database.command(enableSharding=self.db)
+                # and on collection
+                collection_full_name = '{0}.{1}'.format(self.db, table)
+                self._database.command(
+                    shardCollection=collection_full_name, key={'_id': 1}
+                )
 
             for index in self.all_indexes():
                 try:
@@ -281,7 +291,7 @@ class MongoStorage(MongoDataBase, Storage):
                     if isinstance(item, basestring):
                         result.append((item, 1))
                     elif isinstance(item, tuple):
-                        result.append((item[0], item[1]))
+                        result.append(item)
 
         return result
 
@@ -315,7 +325,7 @@ class MongoStorage(MongoDataBase, Storage):
     def put_element(self, _id, element, *args, **kwargs):
 
         return self._update(
-            _id={MongoStorage.ID: _id}, document={'$set': element},
+            spec={MongoStorage.ID: _id}, document={'$set': element},
             multi=False)
 
     def bool_compare_and_swap(self, _id, oldvalue, newvalue):
@@ -375,18 +385,20 @@ class MongoStorage(MongoDataBase, Storage):
 
         return result
 
-    def _insert(self, document, **kwargs):
+    def _insert(self, document=None, **kwargs):
 
         result = self._run_command(
-            command='insert', doc_or_docs=document, **kwargs)
+            command='insert', doc_or_docs=document, **kwargs
+        )
 
         return result
 
-    def _update(self, _id, document, multi=True, **kwargs):
+    def _update(self, spec, document, multi=True, upsert=True, **kwargs):
 
         result = self._run_command(
-            command='update', spec=_id, document=document,
-            upsert=True, multi=multi, **kwargs)
+            command='update', spec=spec, document=document,
+            upsert=upsert, multi=multi, **kwargs
+        )
 
         return result
 

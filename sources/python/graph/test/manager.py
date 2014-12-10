@@ -91,6 +91,7 @@ class GraphTest(TestCase):
             self.graphs[index].elts += self.graph_ids[index:]
 
         # ensure DB is empty
+        self.manager.del_elts()
         elts = self.manager.get_elts()
         self.assertFalse(elts)
 

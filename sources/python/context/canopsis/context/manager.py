@@ -58,7 +58,8 @@ class Context(MiddlewareRegistry):
     EXTENDED = 'extended'  #: extended field name
 
     DEFAULT_CONTEXT = [
-        TYPE, 'connector', 'connector_name', 'component', 'resource']
+        TYPE, 'connector', 'connector_name', 'component', 'resource'
+    ]
 
     def __init__(
         self, context=DEFAULT_CONTEXT, ctx_storage=None, *args, **kwargs
@@ -203,7 +204,8 @@ class Context(MiddlewareRegistry):
         if entity_db is None:
 
             self[Context.CTX_STORAGE].put(
-                path=path, data_id=name, data=entity, shared_id=extended_id)
+                path=path, data_id=name, data=entity, shared_id=extended_id
+            )
 
     def remove(self, ids=None, _type=None, context=None, extended=False):
         """

@@ -149,7 +149,7 @@ class MongoCompositeStorage(MongoStorage, CompositeStorage):
             '$set': data_to_put
         }
 
-        self._update(_id=query, document=_set, multi=False)
+        self._update(spec=query, document=_set, multi=False)
 
     def remove(self, path, data_ids=None, shared=False, *args, **kwargs):
 

@@ -141,7 +141,9 @@ class MongoPeriodicStorage(MongoStorage, PeriodicStorage):
 
             ts = int(ts)
             id_timestamp = int(period.round_timestamp(ts, normalize=True))
-            document_properties = doc_props_by_id_ts.setdefault(id_timestamp, {})
+            document_properties = doc_props_by_id_ts.setdefault(
+                id_timestamp, {}
+            )
 
             if '_id' not in document_properties:
                 document_properties['_id'] = \
@@ -176,7 +178,7 @@ class MongoPeriodicStorage(MongoStorage, PeriodicStorage):
 
             document_properties['_id'] = _id
 
-            result = self._update(_id={'_id': _id}, document={'$set': _set})
+            result = self._update(spec={'_id': _id}, document={'$set': _set})
 
             self._manage_query_error(result)
 
@@ -208,7 +210,7 @@ class MongoPeriodicStorage(MongoStorage, PeriodicStorage):
 
                 if len(values_to_save) > 0:
                     self._update(
-                        _id={'_id': _id},
+                        spec={'_id': _id},
                         document={
                             '$set': {
                                 MongoPeriodicStorage.Index.VALUES:

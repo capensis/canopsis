@@ -148,22 +148,31 @@ class PerfData(MiddlewareRegistry):
         related to input period.
         kwargs will be added to all document in order to extend
         periodic_documents
+
+        :param iterable points: points to put. One point (timestamp, value) or
+            points (timestamp, values)+.
         """
 
-        # if points is a point, transform it into a tuple of couple
-        points = ensure_iterable(points, iterable=tuple)
+        # do something only if there are points to put
+        if points:
+            first_point = points[0]
+            # if first_point is a timestamp, points is one point
+            if isinstance(first_point, (int, float, str)):
+                # transform points into a tuple
+                points = (points,)
 
-        period = self.get_period(metric_id=metric_id, period=period)
+            period = self.get_period(metric_id=metric_id, period=period)
 
-        self[PerfData.PERFDATA_STORAGE].put(
-            data_id=metric_id, period=period, points=points)
+            self[PerfData.PERFDATA_STORAGE].put(
+                data_id=metric_id, period=period, points=points)
 
-        if meta is not None:
+            if meta is not None:
 
-            min_timestamp = min(point[0] for point in points)
+                min_timestamp = min(point[0] for point in points)
 
-            self[PerfData.META_STORAGE].put(
-                data_id=metric_id, value=meta, timestamp=min_timestamp)
+                self[PerfData.META_STORAGE].put(
+                    data_id=metric_id, value=meta, timestamp=min_timestamp
+                )
 
     def remove(self, metric_id, period=None, with_meta=False, timewindow=None):
         """
@@ -210,11 +219,11 @@ class PerfData(MiddlewareRegistry):
         if result is None:
 
             result = DEFAULT_PERIOD
+            # TODO: to restore when the period will be specified by entity
+            #entity = self.context.get_entities(ids=metric_id)
 
-            entity = self.context.get_entities(ids=metric_id)
-
-            if entity is not None and 'period' in entity:
-                result = Period(**entity['period'])
+            #if entity is not None and 'period' in entity:
+                #result = Period(**entity['period'])
 
         return result
 

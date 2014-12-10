@@ -261,6 +261,7 @@ class Vertice(GraphElement):
         """
         :param data: self data.
         """
+
         super(Vertice, self).__init__(*args, **kwargs)
 
         self.data = data
