@@ -29,7 +29,7 @@ class TestSchema(TestCase):
         self.s = Schema()
 
     def test_get_schema(self):
-        self.assertRaises(NotImplementedError, self.s.get_schema, 'schema')
+        pass
 
     def test_get_data_type_schemas(self):
         self.assertRaises(
@@ -38,43 +38,16 @@ class TestSchema(TestCase):
             'data_type')
 
     def test_push_schema(self):
-        self.assertRaises(
-            NotImplementedError,
-            self.s.push_schema,
-            'data_type',
-            'schema',
-            'name',
-            'schema_type',
-        )
+        pass
 
     def test_validate_schema(self):
-        self.assertRaises(
-            NotImplementedError,
-            self.s.validate_schema,
-            'schema',
-        )
+        pass
 
     def test_validate_data(self):
-        self.assertRaises(
-            NotImplementedError,
-            self.s.validate_data,
-            'data',
-            'structural_schema',
-            metamorphic_schema='mm_schema',
-            validate_schemas=False
-        )
+        pass
 
     def test_transform(self):
-        self.assertRaises(
-            NotImplementedError,
-            self.s.transform,
-            'data',
-            'mm_schema',
-            from_structure='from_structure',
-            to_structure='to_structure',
-            validate_data=False,
-            validate_schemas=False
-        )
+        pass
 
 if __name__ == '__main__':
     main()
