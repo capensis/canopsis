@@ -219,11 +219,11 @@ class PerfData(MiddlewareRegistry):
         if result is None:
 
             result = DEFAULT_PERIOD
+            # TODO: to restore when the period will be specified by entity
+            #entity = self.context.get_entities(ids=metric_id)
 
-            entity = self.context.get_entities(ids=metric_id)
-
-            if entity is not None and 'period' in entity:
-                result = Period(**entity['period'])
+            #if entity is not None and 'period' in entity:
+                #result = Period(**entity['period'])
 
         return result
 

@@ -187,10 +187,14 @@ class TimeSerie(Configurable):
         if self.round_time:
             period = self._get_period(timewindow)
             round_starttimestamp = period.round_timestamp(
-                timestamp=timewindow.start(), normalize=True)
+                timestamp=timewindow.start(),
+                normalize=True
+            )
             timewindow = TimeWindow(
-                start=round_starttimestamp, stop=timewindow.stop(),
-                timezone=timewindow.timezone)
+                start=round_starttimestamp,
+                stop=timewindow.stop(),
+                timezone=timewindow.timezone
+            )
 
         # start to exclude points which are not in timewindow
         points = [point for point in points if point[0] in timewindow]
@@ -225,7 +229,6 @@ class TimeSerie(Configurable):
             # iterate on all timesteps in order to get points
             # between [previous_timestamp, timestamp[
             for index in range(1, len(timesteps)):
-
                 # initialize values_to_aggregate
                 values_to_aggregate = []
                 # set timestamp and previous_timestamp
@@ -378,11 +381,9 @@ class TimeSerie(Configurable):
             fn = get_aggregations()[self.aggregation]
 
         if len(values_to_aggregate) > 0:
-
             result = round(fn(values_to_aggregate), 2)
 
         else:
-
             result = 0 if self.fill else None
 
         return result

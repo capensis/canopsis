@@ -21,6 +21,7 @@
 
 from unittest import TestCase, main
 
+from canopsis.storage import Storage
 from canopsis.mongo import MongoDataBase, MongoStorage
 
 from tempfile import NamedTemporaryFile
@@ -75,7 +76,16 @@ class StorageTest(TestCase):
 
         conf_path = NamedTemporaryFile().name
 
-        indexes = ['a', 'b']
+        indexes = [
+            'a',
+            ('b', Storage.DESC),
+            ['c', ('d', Storage.ASC)]
+        ]
+        final_indexes = [
+            [('a', Storage.ASC)],
+            [('b', Storage.DESC)],
+            [('c', Storage.ASC), ('d', Storage.ASC)]
+        ]
 
         with open(conf_path, 'w') as _file:
             _file.write('[%s]' % MongoStorage.CATEGORY)
@@ -85,7 +95,7 @@ class StorageTest(TestCase):
 
         _indexes = self.storage.indexes
 
-        self.assertEqual(indexes, _indexes)
+        self.assertEqual(final_indexes, _indexes)
 
     def test_CRUD(self):
         document = {'a': 'b'}

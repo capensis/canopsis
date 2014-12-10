@@ -54,8 +54,6 @@ class TimeSerieTest(TestCase):
 
         timewindow = self._five_years_timewidow()
 
-        total_seconds = timewindow.total_seconds()
-
         # for all round_time values
         for round_time in (True, False):
 
@@ -76,20 +74,17 @@ class TimeSerieTest(TestCase):
                     continue
 
                 value = randint(2, max_value_unit)
-                kwargs = {'period': Period(**{unit: value})}
+                period = Period(**{unit: value})
+                kwargs = {'period': period}
                 period_length = unit_length * value
 
-                timeserie = TimeSerie(
-                    aggregation="MEAN", round_time=round_time, **kwargs
-                )
+                timeserie = TimeSerie(round_time=round_time, **kwargs)
 
                 timesteps = timeserie.timesteps(timewindow)
 
                 timesteps_gap = timesteps[1] - timesteps[0]
 
                 self.assertEqual(timesteps_gap, period_length)
-
-                all_aggregated_points = list()
 
                 for i in range(5):
 
@@ -98,15 +93,15 @@ class TimeSerieTest(TestCase):
                         range(
                             int(timewindow.start()),
                             int(timewindow.stop()),
-                            3600
+                            Period(**{unit: 1}).total_seconds()
                         )
                     ]
 
                     aggregated_points = timeserie.calculate(points, timewindow)
-
-                    all_aggregated_points.append(aggregated_points)
-
                     len_aggregated_points = len(aggregated_points)
+                    print (unit, len_aggregated_points, len(timesteps))
+                    if unit == "week":
+                        print aggregated_points
                     self.assertIn(len(timesteps) - 1, (
                         len_aggregated_points, len_aggregated_points + 1))
 
