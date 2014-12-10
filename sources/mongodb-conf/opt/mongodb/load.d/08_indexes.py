@@ -22,13 +22,16 @@
 from canopsis.old.account import Account
 from canopsis.old.storage import get_storage
 
-##set root account
+# Set root account
 root = Account(user="root", group="root")
 storage = get_storage(account=root, namespace='object')
 
-"""This file is copied to canopsis libs folder, so there should no have direct canopsis import here"""
+"""
+    This file is copied to canopsis libs folder,
+    so there should no have direct canopsis import here
+"""
 
-INDEXES  = {
+INDEXES = {
     'object': [
         [('crecord_type', 1)]
     ],
@@ -95,6 +98,9 @@ INDEXES  = {
         [('type', 1), ('component', 1), ('resource', 1), ('id', 1)],
         [('type', 1), ('component', 1), ('resource', 1), ('name', 1)],
         [('type', 1), ('nodeid', 1)]
+    ],
+    'downtime': [
+        [('start', 1), ('end', 1)]
     ]
 }
 
@@ -115,7 +121,8 @@ def update():
     answered = False
     user_input = 'N'
     while not answered:
-        user_input = raw_input('Add/Update indexes (update may take time)? Y/N (default=N): ')
+        user_input = raw_input(
+            'Add/Update indexes (update may take time)? Y/N (default=N): ')
         if user_input in ['Y', 'y', 'N', 'n', '']:
             answered = True
 
