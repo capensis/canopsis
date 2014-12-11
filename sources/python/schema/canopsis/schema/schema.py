@@ -18,15 +18,11 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from sys import prefix
-from os.path import join
 from StringIO import StringIO
 from lxml.etree import parse, tostring, XMLSchema, XSLT
 
 from canopsis.schema.utils import is_name_available, get_unique_key, get_xml, \
-    is_unique_key_existing
-
-SCHEMA_PATH = join(prefix, 'etc/schema.d/xml')
+    is_unique_key_existing, get_schema_path
 
 
 class Schema(object):
@@ -94,7 +90,7 @@ class Schema(object):
 
         # if no exception has been raised until here, we can write the
         # schema
-        with open(join(SCHEMA_PATH, name), 'w') as schema_file:
+        with open(get_schema_path(name), 'w') as schema_file:
             schema_file.write(schema)
 
         return True

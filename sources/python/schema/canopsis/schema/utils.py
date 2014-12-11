@@ -23,7 +23,9 @@ from os import listdir
 from os.path import isfile, join
 from lxml.etree import parse
 
-SCHEMA_PATH = join(prefix, 'etc/schema.d/xml')
+
+def get_schema_path(*args):
+    return join(prefix, 'etc/schema.d/xml', *args)
 
 
 def get_unique_key(schema):
@@ -53,9 +55,9 @@ def get_existing_unique_keys():
 
     # At the moment only one location is allowed for schemas : in
     # sys.prefix/etc/schema.d/xml
-    for schema_file in listdir(SCHEMA_PATH):
+    for schema_file in listdir(get_schema_path()):
         try:
-            schema = parse(join(SCHEMA_PATH, schema_file))
+            schema = parse(get_schema_path(schema_file))
         except:
             # If we don't manage to parse it, it may be a non-xml
             # file that we ignore
@@ -123,7 +125,7 @@ def get_xml_from_name(name):
     :rtype: _ElementTree (lxml)
     """
 
-    return parse(join(SCHEMA_PATH, name))
+    return parse(get_schema_path(name))
 
 
 def is_name_available(name):
@@ -135,7 +137,7 @@ def is_name_available(name):
     :rtype: bool
     """
 
-    return isfile(join(SCHEMA_PATH, name))
+    return isfile(get_schema_path(name))
 
 
 def is_unique_key_existing(unique_key):
