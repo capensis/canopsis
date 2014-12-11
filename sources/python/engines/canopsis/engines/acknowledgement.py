@@ -158,10 +158,10 @@ class engine(Engine):
             del ack_info['ackts']
 
             # clean eventual previous ack remove information
-            self.events_collection.update({
-                'rk': rk
-                },
+            self.events_collection.update(
                 {
+                    'rk': rk
+                }, {
                     '$set': {
                         'ack': ack_info,
                     },

@@ -95,12 +95,16 @@ class Engine(object):
         self.logger = init.getLogger(name, logging_level=self.logging_level)
 
         logHandler = FileHandler(
-            filename=join(sys_prefix, 'var', 'log', 'engines', '{0}.log'.format(name))
+            filename=join(
+                sys_prefix, 'var', 'log', 'engines', '{0}.log'.format(name)
+            )
         )
 
         logHandler.setFormatter(
             Formatter(
-                "%(asctime)s %(levelname)s %(name)s %(message)s"))
+                "%(asctime)s %(levelname)s %(name)s %(message)s"
+            )
+        )
 
         # Log in file
         self.logger.addHandler(logHandler)
@@ -127,15 +131,18 @@ class Engine(object):
 
         self.dispatcher_crecords = [
             'selector', 'topology', 'derogation', 'consolidation', 'sla',
-            'downtime', 'perfstore2_rotate']
+            'downtime', 'perfstore2_rotate'
+        ]
 
     def crecord_task_complete(self, crecord_id):
         next_ready = time() + DISPATCHER_READY_TIME
         self.storage.update(
-            crecord_id, {'loaded': False, 'next_ready_time': next_ready})
+            crecord_id, {'loaded': False, 'next_ready_time': next_ready}
+        )
         self.logger.debug(
             'next ready time for crecord {0} : {1}'.format(
-                crecord_id, next_ready))
+                crecord_id, next_ready)
+        )
 
     def get_ready_record(self, record_event):
         """
