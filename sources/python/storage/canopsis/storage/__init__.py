@@ -175,6 +175,8 @@ class Storage(DataBase):
     DATA_ID = 'id'  #: db data id
 
     INDEXES = 'indexes'  #: storage indexes
+    CACHE = 'cache'  #: query cache size to send to the server
+    CACHE_ORDERED = 'cache.ordered'  #: order query if cache is used
 
     CATEGORY = 'STORAGE'  #: storage category
 
@@ -187,11 +189,17 @@ class Storage(DataBase):
         """
         pass
 
-    def __init__(self, indexes=None, insert_count=0, *args, **kwargs):
+    def __init__(
+        self, indexes=None, insert_count=0, cache=0, cache_ordered=True,
+        *args, **kwargs
+    ):
 
         super(Storage, self).__init__(*args, **kwargs)
 
         self._indexes = [] if indexes is None else indexes
+
+        self._cache = cache
+        self._cache_ordered = cache_ordered
 
     @property
     def indexes(self):
@@ -240,6 +248,24 @@ class Storage(DataBase):
 
         self._indexes = indexes
         self.reconnect()
+
+    @property
+    def cache(self):
+        return self._cache
+
+    @cache.setter
+    def cache(self, value):
+        self._cache = value
+        self.connect()
+
+    @property
+    def cache_ordered(self):
+        return self._cache_ordered
+
+    @cache_ordered.setter
+    def cache_ordered(self, value):
+        self._cache_ordered = value
+        self.connect()
 
     def _ensure_index(self, index):
         """
@@ -585,7 +611,9 @@ Storage types must be of the same type.'.format(self, target))
         result.add_unified_category(
             name=Storage.CATEGORY,
             new_content=(
-                Parameter(Storage.INDEXES, parser=eval)
+                Parameter(Storage.INDEXES, parser=eval),
+                Parameter(Storage.CACHE, parser=int),
+                Parameter(Storage.CACHE_ORDERED, parser=Parameter.bool)
             )
         )
 

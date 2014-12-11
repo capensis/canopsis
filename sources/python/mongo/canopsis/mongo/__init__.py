@@ -25,9 +25,9 @@ from canopsis.storage import Storage, DataBase
 from canopsis.common.utils import isiterable
 
 from pymongo import MongoClient
-
 from pymongo.errors import TimeoutError, OperationFailure, ConnectionFailure,\
-    DuplicateKeyError
+    DuplicateKeyError, BulkWriteError
+from pymongo.bulk import BulkOperationBuilder
 
 
 class MongoDataBase(DataBase):
@@ -182,6 +182,13 @@ class MongoStorage(MongoDataBase, Storage):
                 collection_full_name = '{0}.{1}'.format(self.db, table)
                 self._database.command(
                     shardCollection=collection_full_name, key={'_id': 1}
+                )
+
+            # initialize cache count
+            if not hasattr(self, '_cache_count'):
+                self._cache_count = 0
+                self._bulk = BulkOperationBuilder(
+                    self._backend, ordered=self._cache_ordered
                 )
 
             for index in self.all_indexes():
@@ -385,40 +392,117 @@ class MongoStorage(MongoDataBase, Storage):
 
         return result
 
-    def _insert(self, document=None, **kwargs):
+    def _process_op(
+        self, cmd, bulk_op, op_kwargs, bulk_op_kwargs, cache=True, **kwargs
+    ):
+        """
+        Apply an operation related to cache status.
 
-        result = self._run_command(
-            command='insert', doc_or_docs=document, **kwargs
+        :param str cmd: default command name if cache is not used.
+        :param function bulk_op: bulk operation if cache is necessary.
+        :param dict op_kwargs: op kwargs args to apply.
+        :param dict bulk_op_kwargs: bulk op kwargs args to apply.
+        :param dict kwargs: op kwargs to add to bulk_op.
+        :param bool cache: if False (True by default), avoid to use cache.
+
+        :return: bulk result if executed, else None.
+        """
+
+        result = None
+
+        # if cache is required
+        if cache and self._cache > 0:
+            # process the bulk operation
+            bulk_op(**bulk_op_kwargs)
+            # if current count is less than cache count
+            if self._cache_count < self._cache:
+                # increment current count
+                self._cache_count += 1
+
+            else:
+                # in other case
+                self._cache_count = 0
+                try:
+                    result = self._bulk.execute()
+                except BulkWriteError:
+                    self.logger.warning(
+                        'Error on {} while executing bulk op with args {}'
+                        .format(cmd, bulk_op_kwargs))
+                else:
+                    result = self._manage_query_error(result)
+                    self._bulk = BulkOperationBuilder(
+                        self._backend, ordered=self._cache_ordered
+                    )
+
+        else:  # if cache is useless, simply call the operation
+            op_kwargs.update(kwargs)
+            result = self._run_command(command=cmd, **op_kwargs)
+
+        return result
+
+    def _insert(self, document=None, cache=True, **kwargs):
+
+        result = self._process_op(
+            cmd='insert',
+            bulk_op=self._bulk.insert,
+            bulk_op_kwargs={'document': document},
+            op_kwargs={'doc_or_docs': document},
+            cache=cache,
+            **kwargs
         )
 
         return result
 
-    def _update(self, spec, document, multi=True, upsert=True, **kwargs):
+    def _update(self, spec, document, cache=True, multi=True, upsert=True, **kwargs):
 
-        result = self._run_command(
-            command='update', spec=spec, document=document,
-            upsert=upsert, multi=multi, **kwargs
+        bulk_op = self._bulk.find(selector=spec).update if multi else \
+            self._bulk.find(selector=spec).update_one
+
+        result = self._process_op(
+            cmd='update',
+            bulk_op=bulk_op,
+            bulk_op_kwargs={'update': document},
+            op_kwargs={
+                'spec': spec, 'document': document,
+                'upsert': upsert, 'multi': multi
+            },
+            cache=cache,
+            **kwargs
         )
 
         return result
 
-    def _find(self, document=None, projection=None, **kwargs):
+    def _find(self, document=None, projection=None, cache=False, **kwargs):
 
-        result = self._run_command(command='find', spec=document,
-            projection=projection, **kwargs)
+        result = self._process_op(
+            cmd='find',
+            bulk_op=self._bulk.find,
+            bulk_op_kwargs={'selector': document},
+            op_kwargs={
+                'spec': document, 'projection': projection
+            },
+            cache=cache,
+            **kwargs
+        )
 
         return result
 
-    def _remove(self, document, **kwargs):
+    def _remove(self, document, cache=True, **kwargs):
 
-        result = self._run_command(
-            command='remove', spec_or_id=document, **kwargs)
+        result = self._process_op(
+            cmd='remove',
+            bulk_op=self._bulk.find(selector=document).remove,
+            bulk_op_kwargs={},
+            op_kwargs={'spec_or_id': document},
+            cache=cache,
+            **kwargs
+        )
 
         return result
 
     def _count(self, document=None, **kwargs):
 
-        cursor = self._find(document=document, **kwargs)
+        cursor = self._find(document=document, cache=False, **kwargs)
 
         result = cursor.count(False)
 
