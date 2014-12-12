@@ -52,7 +52,7 @@ class TestStorage(MongoStorage):
 class StorageTest(TestCase):
 
     def setUp(self):
-        self.storage = TestStorage(data_type='test', cache_size=0)
+        self.storage = TestStorage(data_type='test')
 
     def tearDown(self):
         self.storage.drop()
@@ -143,6 +143,67 @@ class StorageTest(TestCase):
         request = self.storage.get_elements(ids=[_id])
 
         self.assertEqual(len(request), 0)
+
+    def test_cache(self):
+
+        cache_size = 25
+        count = cache_size + 1  # play with 2 * cache_size + 1
+
+        # activate cache
+        self.storage.cache_size = cache_size
+        data = list({'_id': str(i)} for i in range(count))
+
+        # check insert
+        for i, d in enumerate(data):
+            self.storage._insert(d, cache=True)
+            count = self.storage._count(document=d)
+            # documents are inserted when cache_size insertions are done
+            self.assertEqual(count, 0 if i != cache_size - 1 else 1)
+        for d in data[:-1]:
+            count = self.storage._count(document=d)
+            self.assertEqual(count, 1)
+        count = self.storage._count(document=data[-1])
+        self.assertEqual(count, 0)
+        self.storage.execute_cache()
+        count = self.storage._count(document=data[-1])
+        self.assertEqual(count, 1)
+        self.assertEqual(self.storage._cache_count, 0)
+
+        # check update
+        for i, d in enumerate(data):
+            self.storage._update(
+                spec=d, document={'$set': {'a': 1}}, cache=True
+            )
+            elt = self.storage._find(document=d)[0]
+            # documents are updated when cache_size updates are done
+            if i != cache_size - 1:
+                self.assertNotIn('a', elt)
+            else:
+                self.assertIn('a', elt)
+        for d in data[:-1]:
+            elt = self.storage._find(document=d)[0]
+            self.assertIn('a', elt)
+        elt = self.storage._find(document=data[-1])[0]
+        self.assertNotIn('a', elt)
+        self.storage.execute_cache()
+        elt = self.storage._find(document=data[-1])[0]
+        self.assertIn('a', elt)
+
+        # check remove
+        for i, d in enumerate(data):
+            self.storage._remove(document=d, cache=True)
+            count = self.storage._count(document=d)
+            # documents are removed when cache_size removes are done
+            self.assertEqual(count, 1 if i != cache_size - 1 else 0)
+        for d in data[:-1]:
+            count = self.storage._count(document=d)
+            self.assertEqual(count, 0)
+        count = self.storage._count(document=data[-1])
+        self.assertEqual(count, 1)
+        self.storage.execute_cache()
+        count = self.storage._count(document=data[-1])
+        self.assertEqual(count, 0)
+
 
 if __name__ == '__main__':
     main()

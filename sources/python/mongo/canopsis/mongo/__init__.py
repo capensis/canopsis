@@ -25,8 +25,9 @@ from canopsis.storage import Storage, DataBase
 from canopsis.common.utils import isiterable
 
 from pymongo import MongoClient
-from pymongo.errors import TimeoutError, OperationFailure, ConnectionFailure,\
-    DuplicateKeyError, BulkWriteError
+from pymongo.errors import (
+    TimeoutError, OperationFailure, ConnectionFailure, DuplicateKeyError
+)
 from pymongo.bulk import BulkOperationBuilder
 
 
@@ -311,7 +312,7 @@ class MongoStorage(MongoDataBase, Storage):
         return result
 
     def find_elements(
-        self, query, limit=0, skip=0, sort=None, with_count=False, cache=True,
+        self, query, limit=0, skip=0, sort=None, with_count=False,
         *args, **kwargs
     ):
 
@@ -323,7 +324,7 @@ class MongoStorage(MongoDataBase, Storage):
             with_count=with_count)
 
     def remove_elements(
-        self, ids=None, _filter=None, cache=True, *args, **kwargs
+        self, ids=None, _filter=None, cache=False, *args, **kwargs
     ):
 
         query = {}
@@ -337,13 +338,13 @@ class MongoStorage(MongoDataBase, Storage):
         if _filter is not None:
             query.update(_filter)
 
-        self._remove(query)
+        self._remove(query, cache=cache)
 
-    def put_element(self, _id, element, cache=True, *args, **kwargs):
+    def put_element(self, _id, element, cache=False, *args, **kwargs):
 
         return self._update(
             spec={MongoStorage.ID: _id}, document={'$set': element},
-            multi=False)
+            multi=False, cache=cache)
 
     def bool_compare_and_swap(self, _id, oldvalue, newvalue):
 
@@ -375,6 +376,87 @@ class MongoStorage(MongoDataBase, Storage):
 
         return result
 
+    def _insert(self, document=None, cache=False, **kwargs):
+
+        cache_op = None if self._cache is None else self._cache.insert
+
+        result = self._process_query(
+            query_op=self._run_command,
+            cache_op=cache_op,
+            cache_kwargs={'document': document},
+            query_kwargs={'command': 'insert', 'doc_or_docs': document},
+            cache=cache,
+            **kwargs
+        )
+
+        return result
+
+    def _update(
+        self, spec, document, cache=False, multi=True, upsert=True, **kwargs
+    ):
+
+        if self._cache is None:
+            cache_op = None
+        elif multi:
+            cache_op = self._cache.find(selector=spec).update
+        else:
+            cache_op = self._cache.find(selector=spec).update_one
+
+        result = self._process_query(
+            cache_op=cache_op,
+            query_op=self._run_command,
+            cache_kwargs={'update': document},
+            query_kwargs={
+                'command': 'update',
+                'spec': spec, 'document': document,
+                'upsert': upsert, 'multi': multi
+            },
+            cache=cache,
+            **kwargs
+        )
+
+        return result
+
+    def _find(self, document=None, projection=None, **kwargs):
+
+        result = self._run_command(
+            command='find', spec=document, projection=projection, **kwargs
+        )
+
+        return result
+
+    def _remove(self, document, cache=False, **kwargs):
+
+        cache_op = None if self._cache is None \
+            else self._cache.find(selector=document).remove
+
+        result = self._process_query(
+            query_op=self._run_command,
+            cache_op=cache_op,
+            cache_kwargs={},
+            query_kwargs={'command': 'remove', 'spec_or_id': document},
+            cache=cache,
+            **kwargs
+        )
+
+        return result
+
+    def _count(self, document=None, **kwargs):
+
+        cursor = self._find(document=document, **kwargs)
+
+        result = cursor.count(False)
+
+        return result
+
+    def _process_query(self, *args, **kwargs):
+
+        result = super(MongoStorage, self)._process_query(*args, **kwargs)
+
+        result = self._manage_query_error(result)
+
+        return result
+
     def _manage_query_error(self, result_query):
         """
         Manage mongo query error.
@@ -402,89 +484,6 @@ class MongoStorage(MongoDataBase, Storage):
 
         return result
 
-    def _insert(self, document=None, cache=True, **kwargs):
-
-        cache_op = None if self._cache is None else self._cache.insert
-
-        result = self._process_query(
-            query_op=self._run_command,
-            cache_op=cache_op,
-            cache_kwargs={'document': document},
-            query_kwargs={'command': 'insert', 'doc_or_docs': document},
-            cache=cache,
-            **kwargs
-        )
-
-        return result
-
-    def _update(
-        self, spec, document, cache=True, multi=True, upsert=True, **kwargs
-    ):
-
-        if self._cache is None:
-            cache_op = None
-        elif multi:
-            cache_op = self._cache.find(selector=spec).update
-        else:
-            cache_op = self._cache.find(selector=spec).update_one
-
-        result = self._process_query(
-            cache_op=cache_op,
-            query_op=self._run_command,
-            cache_kwargs={'update': document},
-            query_kwargs={
-                'command': 'update',
-                'spec': spec, 'document': document,
-                'upsert': upsert, 'multi': multi
-            },
-            cache=cache,
-            **kwargs
-        )
-
-        return result
-
-    def _find(self, document=None, projection=None, cache=False, **kwargs):
-
-        cache_op = None if self._cache is None else self._cache.find
-
-        result = self._process_query(
-            query_op=self._run_command,
-            cache_op=cache_op,
-            cache_kwargs={'selector': document},
-            query_kwargs={
-                'command': 'find',
-                'spec': document, 'projection': projection
-            },
-            cache=cache,
-            **kwargs
-        )
-
-        return result
-
-    def _remove(self, document, cache=True, **kwargs):
-
-        cache_op = None if self._cache is None \
-            else self._cache.find(selector=document).remove
-
-        result = self._process_query(
-            query_op=self._run_command,
-            cache_op=cache_op,
-            cache_kwargs={},
-            query_kwargs={'command': 'remove', 'spec_or_id': document},
-            cache=cache,
-            **kwargs
-        )
-
-        return result
-
-    def _count(self, document=None, cache=True, **kwargs):
-
-        cursor = self._find(document=document, cache=cache, **kwargs)
-
-        result = cursor if cursor is None else cursor.count(False)
-
-        return result
-
     def _run_command(self, command, **kwargs):
         """
         Run a specific command on a given backend.
@@ -503,8 +502,6 @@ class MongoStorage(MongoDataBase, Storage):
             backend_command = getattr(backend, command)
             w = 1 if self.safe else 0
             result = backend_command(w=w, wtimeout=self.out_timeout, **kwargs)
-
-            result = self._manage_query_error(result)
 
         except TimeoutError:
             self.logger.warning(

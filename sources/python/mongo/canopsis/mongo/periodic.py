@@ -128,7 +128,7 @@ class MongoPeriodicStorage(MongoStorage, PeriodicStorage):
 
         return result
 
-    def put(self, data_id, period, points, *args, **kwargs):
+    def put(self, data_id, period, points, cache=False, *args, **kwargs):
 
         # initialize a dictionary of perfdata value by value field
         # and id_timestamp
@@ -178,12 +178,14 @@ class MongoPeriodicStorage(MongoStorage, PeriodicStorage):
 
             document_properties['_id'] = _id
 
-            result = self._update(spec={'_id': _id}, document={'$set': _set})
+            result = self._update(
+                spec={'_id': _id}, document={'$set': _set}, cache=cache
+            )
 
-            self._manage_query_error(result)
+        return result
 
     def remove(
-        self, data_id, period=None, timewindow=None,
+        self, data_id, period=None, timewindow=None, cache=False,
         *args, **kwargs
     ):
 
@@ -215,12 +217,13 @@ class MongoPeriodicStorage(MongoStorage, PeriodicStorage):
                             '$set': {
                                 MongoPeriodicStorage.Index.VALUES:
                                 values_to_save}
-                        })
+                        },
+                        cache=cache)
                 else:
-                    self._remove(document=_id)
+                    self._remove(document=_id, cache=cache)
 
         else:
-            self._remove(document=query)
+            self._remove(document=query, cache=cache)
 
     def all_indexes(self, *args, **kwargs):
 

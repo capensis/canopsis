@@ -62,13 +62,13 @@ class Bench(TestCase):
         # initialize commands
         self.commands = (
             ("insert", lambda spec, document: self.storage._insert(
-                document=document)),
+                document=document, cache=True)),
             ("update", lambda spec, document: self.storage._update(
-                spec=spec, document=document, multi=False)),
+                spec=spec, document=document, multi=False, cache=True)),
             ("find", lambda spec, document: self.storage._find(
-                document=document)),
+                document=document, cache=True)),
             ("remove", lambda spec, document: self.storage._remove(
-                document=document, multi=True))
+                document=document, multi=True, cache=True))
         )
 
         self.max_connections = 1
@@ -80,7 +80,6 @@ class Bench(TestCase):
 
         # remove all data from collection
         self.storage.drop()
-        self.storage.__del__()
 
     def test(self):
         """

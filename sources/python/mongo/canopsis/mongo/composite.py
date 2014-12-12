@@ -131,7 +131,9 @@ class MongoCompositeStorage(MongoStorage, CompositeStorage):
 
         return result
 
-    def put(self, path, data_id, data, share_id=None, *args, **kwargs):
+    def put(
+        self, path, data_id, data, share_id=None, cache=False, *args, **kwargs
+    ):
 
         # get unique id
         _id = self.get_absolute_path(path=path, data_id=data_id)
@@ -149,9 +151,11 @@ class MongoCompositeStorage(MongoStorage, CompositeStorage):
             '$set': data_to_put
         }
 
-        self._update(spec=query, document=_set, multi=False)
+        self._update(spec=query, document=_set, multi=False, cache=cache)
 
-    def remove(self, path, data_ids=None, shared=False, *args, **kwargs):
+    def remove(
+        self, path, data_ids=None, shared=False, cache=False, *args, **kwargs
+    ):
 
         query = path.copy()
 
@@ -164,7 +168,7 @@ class MongoCompositeStorage(MongoStorage, CompositeStorage):
                 parameters = {'justOne': 1}
                 query[Storage.DATA_ID] = data_ids
 
-        self._remove(document=query, **parameters)
+        self._remove(document=query, cache=cache, **parameters)
 
         # remove extended data
         if shared:
@@ -176,4 +180,4 @@ class MongoCompositeStorage(MongoStorage, CompositeStorage):
                 extended = self.get(path=path, data_id=data_id, shared=True)
                 _ids.append([data[MongoStorage.ID] for data in extended])
             document = {MongoStorage.ID: {'$in': _ids}}
-            self._remove(document=document)
+            self._remove(document=document, cache=cache)
