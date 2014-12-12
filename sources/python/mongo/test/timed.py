@@ -32,7 +32,7 @@ class TimedStorageTest(TestCase):
 
     def setUp(self):
         # create a storage on test_store collections
-        self.storage = MongoTimedStorage(data_scope="test_store", cache_size=0)
+        self.storage = MongoTimedStorage(data_scope="test_store")
 
     def test_connect(self):
         self.assertTrue(self.storage.connected())

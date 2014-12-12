@@ -204,6 +204,19 @@ class StorageTest(TestCase):
         count = self.storage._count(document=data[-1])
         self.assertEqual(count, 0)
 
+    def test_thread(self):
+
+        self.storage._cache_autocommit = 0.1
+
+        self.assertTrue(self.storage._cache_thread.isAlive())
+
+        self.storage.halt_cache_thread()
+
+        self.assertFalse(self.storage._cache_thread.isAlive())
+
+        self.storage.cache_autocommit = 0.1
+
+        self.assertTrue(self.storage._cache_thread.isAlive())
 
 if __name__ == '__main__':
     main()

@@ -194,12 +194,12 @@ class Storage(DataBase):
     DATA = 'data'  #: collection/table data struct
 
     INDEXES = 'indexes'  #: storage indexes
-    CACHE_SIZE = 'cache.size'  #: query cache size to send to the server
-    CACHE_ORDERED = 'cache.ordered'  #: order query if cache is used
-    CACHE_AUTOCOMMIT = 'cache.autocommit'  #: duration before auto-commit cache
+    CACHE_SIZE = 'cache_size'  #: query cache size to send to the server
+    CACHE_ORDERED = 'cache_ordered'  #: order query if cache is used
+    CACHE_AUTOCOMMIT = 'cache_autocommit'  #: duration before auto-commit cache
 
-    DEFAULT_CACHE_SIZE = 0  #: default cache size
-    DEFAULT_CACHE_AUTOCOMMIT = 1  #: default cache auto-commit
+    DEFAULT_CACHE_SIZE = 1000  #: default cache size
+    DEFAULT_CACHE_AUTOCOMMIT = 0.2  #: default cache auto-commit
     DEFAULT_CACHE_ORDERED = True  #: default cache ordered
 
     CATEGORY = 'STORAGE'  #: storage category
@@ -230,10 +230,11 @@ class Storage(DataBase):
         :param indexes: indexes to use.
         :type indexes: list or str
         :param dict data: data structure with expected fields, keys, etc.
-        :param int cache_size: query cache size.
-        :param bool cache_ordered: query cache order
-        :param float cache_autocommit: duration before auto-commit cache if no
-            activity.
+        :param int cache_size: (default 1000) query cache size.
+        :param bool cache_ordered: (default True) query cache order
+        :param float cache_autocommit: (default 1) duration in seconds before
+            auto-commit cache if no activity. If not greater than 0, auto
+            commit is deactivated.
         """
 
         super(Storage, self).__init__(*args, **kwargs)
@@ -302,7 +303,6 @@ class Storage(DataBase):
     def cache_size(self, value):
         self._cache_size = value
         self._init_cache()
-        self.connect()
 
     @property
     def cache_ordered(self):
@@ -312,7 +312,6 @@ class Storage(DataBase):
     def cache_ordered(self, value):
         self._cache_ordered = value
         self._init_cache()
-        self.connect()
 
     @property
     def cache_autocommit(self):
@@ -321,6 +320,7 @@ class Storage(DataBase):
     @cache_autocommit.setter
     def cache_autocommit(self, value):
         self._cache_autocommit = value
+        self._init_cache()
 
     @property
     def data(self):
@@ -329,6 +329,14 @@ class Storage(DataBase):
     @data.setter
     def data(self, value):
         self._data = value
+
+    def queries_in_cache(self):
+        """
+        :return: number of queries in cache to commit.
+        :rtype: int
+        """
+
+        return self._cache_count
 
     def _init_cache(self):
         """
@@ -344,9 +352,10 @@ class Storage(DataBase):
             self._updated_cache = False  # set false to updated cache
             # kill previous thread if it's alive
             self.halt_cache_thread()
-            # start a new thread
-            self._cache_thread = Thread(target=self._cache_async_execution)
-            self._cache_thread.start()
+            # start a new thread if self cache auto commit greater than 0
+            if self._cache_autocommit > 0:
+                self._cache_thread = Thread(target=self._cache_async_execution)
+                self._cache_thread.start()
         else:  # nullify _cache if it exists
             if hasattr(self, '_cache'):
                 del self._cache
@@ -403,7 +412,11 @@ class Storage(DataBase):
         """
 
         # while parent thread is alive and cache size is greater than 0
-        while self._parent_thread.isAlive() and self._cache_size > 0:
+        while (
+            self._parent_thread.isAlive()
+            and self._cache_autocommit > 0
+            and self._cache_size > 0
+        ):
             # wait cache timeout before trying to executing it
             sleep(self._cache_autocommit)
             # if cache has not been updated
@@ -413,20 +426,26 @@ class Storage(DataBase):
             else:  # mark the cache such as not updated
                 self._updated_cache = False
 
-    def halt_cache_thread(self):
+    def halt_cache_thread(self, timeout=None):
         """
-        Halt cache auto_commit. This method aims to wait cache. at most before
-            finishing.
+        Halt cache auto_commit. This method aims to wait cache at most
+            ``cache_autocommit`` or input timeout seconds before finishing.
+
+        :param float timeout: max time to wait before waiting for this halting
+            cache thread. Default value is self cache autocommit.
         """
 
-        # change value of cache size in order to stop thread
-        cache_size, self._cache_size = self._cache_size, 0
+        # change value of cache auto commit in order to stop thread
+        cache_autocommit, self._cache_autocommit = self._cache_autocommit, 0
 
         if hasattr(self, '_cache_thread') and self._cache_thread.isAlive():
-            self._cache_thread.join()
+            try:  # wait for cache thread end
+                self._cache_thread.join(timeout)
+            except RuntimeError:
+                pass
 
-        # recover cache size
-        self._cache_size = cache_size
+        # recover cache auto commit
+        self._cache_autocommit = cache_autocommit
 
     def execute_cache(self):
         """
@@ -434,15 +453,18 @@ class Storage(DataBase):
         """
 
         result = None
-
-        try:
-            result = self._execute_cache()
-        except Exception as e:
-            self.logger.error(
-                'Interruption of cache execution: {}'.format(e)
-            )
-
-        self._cache_count = 0
+        # do something only if there are cached query to execute
+        if self._cache_count > 0:
+            try:
+                result = self._execute_cache()
+            except Exception as e:
+                self.logger.error(
+                    'Interruption of cache execution: {}'.format(e)
+                )
+            else:  # if no error, renew the cache
+                self._cache = self._new_cache()
+            # initialize cache count
+            self._cache_count = 0
 
         return result
 
@@ -792,9 +814,13 @@ Storage types must be of the same type.'.format(self, target))
             name=Storage.CATEGORY,
             new_content=(
                 Parameter(Storage.INDEXES, parser=eval),
-                Parameter(Storage.CACHE_SIZE, parser=int),
-                Parameter(Storage.CACHE_ORDERED, parser=Parameter.bool),
-                Parameter(Storage.CACHE_AUTOCOMMIT, parser=float)
+                Parameter(Storage.CACHE_SIZE, parser=int, critical=True),
+                Parameter(
+                    Storage.CACHE_ORDERED, parser=Parameter.bool, critical=True
+                ),
+                Parameter(
+                    Storage.CACHE_AUTOCOMMIT, parser=float, critical=True
+                )
             )
         )
 

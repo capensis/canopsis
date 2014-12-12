@@ -38,7 +38,7 @@ class Bench(TestCase):
         initalize a storage.
         """
 
-        self.storage = MongoStorage(data_scope='test', cache_size=1000)
+        self.storage = MongoStorage(data_scope='test')
         #self.storage.safe = False
         # remove all data from collection
         self.storage.drop()
