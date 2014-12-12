@@ -29,7 +29,8 @@ class PeriodicStoreTest(TestCase):
 
     def setUp(self):
         # create a storage on test_store collections
-        self.storage = MongoPeriodicStorage(data_scope="test_store", safe=True)
+        self.storage = MongoPeriodicStorage(
+            data_scope="test_store", cache_size=0)
 
     def test_connect(self):
         self.assertTrue(self.storage.connected())

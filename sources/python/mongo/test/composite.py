@@ -37,7 +37,7 @@ class MongoCompositeStorageTest(TestCase):
         # create a storage on test_store collections
         self.path = ['a', 'b', 'c']
         self.storage = MongoCompositeStorage(
-            data_scope="test", path=self.path, safe=True)
+            data_scope="test", path=self.path, cache_size=0)
 
     def test_connect(self):
         self.assertTrue(self.storage.connected())

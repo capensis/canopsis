@@ -184,20 +184,28 @@ class MongoStorage(MongoDataBase, Storage):
                     shardCollection=collection_full_name, key={'_id': 1}
                 )
 
-            # initialize cache count
-            if not hasattr(self, '_cache_count'):
-                self._cache_count = 0
-                self._bulk = BulkOperationBuilder(
-                    self._backend, ordered=self._cache_ordered
-                )
-
             for index in self.all_indexes():
                 try:
                     self._backend.ensure_index(index)
                 except Exception as e:
                     self.logger.error(e)
+            try:
+                self._init_cache()
+            except Exception as e:
+                raise
 
         return result
+
+    def _new_cache(self, *args, **kwargs):
+
+        backend = self._get_backend(self.get_table())
+        result = BulkOperationBuilder(backend, self._cache_ordered)
+
+        return result
+
+    def _execute_cache(self, *args, **kwargs):
+
+        return self._cache.execute()
 
     def drop(self, *args, **kwargs):
         """
@@ -303,7 +311,7 @@ class MongoStorage(MongoDataBase, Storage):
         return result
 
     def find_elements(
-        self, query, limit=0, skip=0, sort=None, with_count=False,
+        self, query, limit=0, skip=0, sort=None, with_count=False, cache=True,
         *args, **kwargs
     ):
 
@@ -314,7 +322,9 @@ class MongoStorage(MongoDataBase, Storage):
             sort=sort,
             with_count=with_count)
 
-    def remove_elements(self, ids=None, _filter=None, *args, **kwargs):
+    def remove_elements(
+        self, ids=None, _filter=None, cache=True, *args, **kwargs
+    ):
 
         query = {}
 
@@ -329,7 +339,7 @@ class MongoStorage(MongoDataBase, Storage):
 
         self._remove(query)
 
-    def put_element(self, _id, element, *args, **kwargs):
+    def put_element(self, _id, element, cache=True, *args, **kwargs):
 
         return self._update(
             spec={MongoStorage.ID: _id}, document={'$set': element},
@@ -392,77 +402,38 @@ class MongoStorage(MongoDataBase, Storage):
 
         return result
 
-    def _process_op(
-        self, cmd, bulk_op, op_kwargs, bulk_op_kwargs, cache=True, **kwargs
-    ):
-        """
-        Apply an operation related to cache status.
-
-        :param str cmd: default command name if cache is not used.
-        :param function bulk_op: bulk operation if cache is necessary.
-        :param dict op_kwargs: op kwargs args to apply.
-        :param dict bulk_op_kwargs: bulk op kwargs args to apply.
-        :param dict kwargs: op kwargs to add to bulk_op.
-        :param bool cache: if False (True by default), avoid to use cache.
-
-        :return: bulk result if executed, else None.
-        """
-
-        result = None
-
-        # if cache is required
-        if cache and self._cache > 0:
-            # process the bulk operation
-            bulk_op(**bulk_op_kwargs)
-            # if current count is less than cache count
-            if self._cache_count < self._cache:
-                # increment current count
-                self._cache_count += 1
-
-            else:
-                # in other case
-                self._cache_count = 0
-                try:
-                    result = self._bulk.execute()
-                except BulkWriteError:
-                    self.logger.warning(
-                        'Error on {} while executing bulk op with args {}'
-                        .format(cmd, bulk_op_kwargs))
-                else:
-                    result = self._manage_query_error(result)
-                    self._bulk = BulkOperationBuilder(
-                        self._backend, ordered=self._cache_ordered
-                    )
-
-        else:  # if cache is useless, simply call the operation
-            op_kwargs.update(kwargs)
-            result = self._run_command(command=cmd, **op_kwargs)
-
-        return result
-
     def _insert(self, document=None, cache=True, **kwargs):
 
-        result = self._process_op(
-            cmd='insert',
-            bulk_op=self._bulk.insert,
-            bulk_op_kwargs={'document': document},
-            op_kwargs={'doc_or_docs': document},
+        cache_op = None if self._cache is None else self._cache.insert
+
+        result = self._process_query(
+            query_op=self._run_command,
+            cache_op=cache_op,
+            cache_kwargs={'document': document},
+            query_kwargs={'command': 'insert', 'doc_or_docs': document},
             cache=cache,
             **kwargs
         )
 
         return result
 
-    def _update(self, spec, document, cache=True, multi=True, upsert=True, **kwargs):
+    def _update(
+        self, spec, document, cache=True, multi=True, upsert=True, **kwargs
+    ):
 
-        bulk_op = self._bulk.find(selector=spec).update if multi else \
-            self._bulk.find(selector=spec).update_one
+        if self._cache is None:
+            cache_op = None
+        elif multi:
+            cache_op = self._cache.find(selector=spec).update
+        else:
+            cache_op = self._cache.find(selector=spec).update_one
 
-        result = self._process_op(
-            cmd='update',
-            bulk_op=bulk_op,
-            bulk_op_kwargs={'update': document},
-            op_kwargs={
+        result = self._process_query(
+            cache_op=cache_op,
+            query_op=self._run_command,
+            cache_kwargs={'update': document},
+            query_kwargs={
+                'command': 'update',
                 'spec': spec, 'document': document,
                 'upsert': upsert, 'multi': multi
             },
@@ -474,11 +445,14 @@ class MongoStorage(MongoDataBase, Storage):
 
     def _find(self, document=None, projection=None, cache=False, **kwargs):
 
-        result = self._process_op(
-            cmd='find',
-            bulk_op=self._bulk.find,
-            bulk_op_kwargs={'selector': document},
-            op_kwargs={
+        cache_op = None if self._cache is None else self._cache.find
+
+        result = self._process_query(
+            query_op=self._run_command,
+            cache_op=cache_op,
+            cache_kwargs={'selector': document},
+            query_kwargs={
+                'command': 'find',
                 'spec': document, 'projection': projection
             },
             cache=cache,
@@ -489,22 +463,25 @@ class MongoStorage(MongoDataBase, Storage):
 
     def _remove(self, document, cache=True, **kwargs):
 
-        result = self._process_op(
-            cmd='remove',
-            bulk_op=self._bulk.find(selector=document).remove,
-            bulk_op_kwargs={},
-            op_kwargs={'spec_or_id': document},
+        cache_op = None if self._cache is None \
+            else self._cache.find(selector=document).remove
+
+        result = self._process_query(
+            query_op=self._run_command,
+            cache_op=cache_op,
+            cache_kwargs={},
+            query_kwargs={'command': 'remove', 'spec_or_id': document},
             cache=cache,
             **kwargs
         )
 
         return result
 
-    def _count(self, document=None, **kwargs):
+    def _count(self, document=None, cache=True, **kwargs):
 
-        cursor = self._find(document=document, cache=False, **kwargs)
+        cursor = self._find(document=document, cache=cache, **kwargs)
 
-        result = cursor.count(False)
+        result = cursor if cursor is None else cursor.count(False)
 
         return result
 

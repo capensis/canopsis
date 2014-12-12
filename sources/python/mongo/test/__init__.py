@@ -31,7 +31,8 @@ class DataBaseTest(TestCase):
 
     def setUp(self):
         self.database = MongoDataBase(
-            data_scope="test_store", auto_connect=False)
+            data_scope="test_store", auto_connect=False
+        )
 
     def test_connect(self):
         self.database.connect()
@@ -51,7 +52,7 @@ class TestStorage(MongoStorage):
 class StorageTest(TestCase):
 
     def setUp(self):
-        self.storage = TestStorage(data_type='test')
+        self.storage = TestStorage(data_type='test', cache_size=0)
 
     def tearDown(self):
         self.storage.drop()
