@@ -176,7 +176,7 @@ class engine(Engine):
             authored_data['duration'] = event['duration']
             authored_data['fixed'] = event['fixed']
             authored_data['entry'] = event['entry']
-            authored_data[Context.NAME] = event['id']
+            authored_data[Context.NAME] = event['rk']
 
         self.context.put(
             _type=event_type, entity=authored_data, context=context
