@@ -25,9 +25,9 @@ from canopsis.storage import Storage, DataBase
 from canopsis.common.utils import isiterable
 
 from pymongo import MongoClient
-
 from pymongo.errors import TimeoutError, OperationFailure, ConnectionFailure,\
-    DuplicateKeyError
+    DuplicateKeyError, BulkWriteError
+from pymongo.bulk import BulkOperationBuilder
 
 
 class MongoDataBase(DataBase):
@@ -189,8 +189,23 @@ class MongoStorage(MongoDataBase, Storage):
                     self._backend.ensure_index(index)
                 except Exception as e:
                     self.logger.error(e)
+            try:
+                self._init_cache()
+            except Exception as e:
+                raise
 
         return result
+
+    def _new_cache(self, *args, **kwargs):
+
+        backend = self._get_backend(self.get_table())
+        result = BulkOperationBuilder(backend, self._cache_ordered)
+
+        return result
+
+    def _execute_cache(self, *args, **kwargs):
+
+        return self._cache.execute()
 
     def drop(self, *args, **kwargs):
         """
@@ -296,7 +311,7 @@ class MongoStorage(MongoDataBase, Storage):
         return result
 
     def find_elements(
-        self, query, limit=0, skip=0, sort=None, with_count=False,
+        self, query, limit=0, skip=0, sort=None, with_count=False, cache=True,
         *args, **kwargs
     ):
 
@@ -307,7 +322,9 @@ class MongoStorage(MongoDataBase, Storage):
             sort=sort,
             with_count=with_count)
 
-    def remove_elements(self, ids=None, _filter=None, *args, **kwargs):
+    def remove_elements(
+        self, ids=None, _filter=None, cache=True, *args, **kwargs
+    ):
 
         query = {}
 
@@ -322,7 +339,7 @@ class MongoStorage(MongoDataBase, Storage):
 
         self._remove(query)
 
-    def put_element(self, _id, element, *args, **kwargs):
+    def put_element(self, _id, element, cache=True, *args, **kwargs):
 
         return self._update(
             spec={MongoStorage.ID: _id}, document={'$set': element},
@@ -385,42 +402,86 @@ class MongoStorage(MongoDataBase, Storage):
 
         return result
 
-    def _insert(self, document=None, **kwargs):
+    def _insert(self, document=None, cache=True, **kwargs):
 
-        result = self._run_command(
-            command='insert', doc_or_docs=document, **kwargs
+        cache_op = None if self._cache is None else self._cache.insert
+
+        result = self._process_query(
+            query_op=self._run_command,
+            cache_op=cache_op,
+            cache_kwargs={'document': document},
+            query_kwargs={'command': 'insert', 'doc_or_docs': document},
+            cache=cache,
+            **kwargs
         )
 
         return result
 
-    def _update(self, spec, document, multi=True, upsert=True, **kwargs):
+    def _update(
+        self, spec, document, cache=True, multi=True, upsert=True, **kwargs
+    ):
 
-        result = self._run_command(
-            command='update', spec=spec, document=document,
-            upsert=upsert, multi=multi, **kwargs
+        if self._cache is None:
+            cache_op = None
+        elif multi:
+            cache_op = self._cache.find(selector=spec).update
+        else:
+            cache_op = self._cache.find(selector=spec).update_one
+
+        result = self._process_query(
+            cache_op=cache_op,
+            query_op=self._run_command,
+            cache_kwargs={'update': document},
+            query_kwargs={
+                'command': 'update',
+                'spec': spec, 'document': document,
+                'upsert': upsert, 'multi': multi
+            },
+            cache=cache,
+            **kwargs
         )
 
         return result
 
-    def _find(self, document=None, projection=None, **kwargs):
+    def _find(self, document=None, projection=None, cache=False, **kwargs):
 
-        result = self._run_command(command='find', spec=document,
-            projection=projection, **kwargs)
+        cache_op = None if self._cache is None else self._cache.find
+
+        result = self._process_query(
+            query_op=self._run_command,
+            cache_op=cache_op,
+            cache_kwargs={'selector': document},
+            query_kwargs={
+                'command': 'find',
+                'spec': document, 'projection': projection
+            },
+            cache=cache,
+            **kwargs
+        )
 
         return result
 
-    def _remove(self, document, **kwargs):
+    def _remove(self, document, cache=True, **kwargs):
 
-        result = self._run_command(
-            command='remove', spec_or_id=document, **kwargs)
+        cache_op = None if self._cache is None \
+            else self._cache.find(selector=document).remove
+
+        result = self._process_query(
+            query_op=self._run_command,
+            cache_op=cache_op,
+            cache_kwargs={},
+            query_kwargs={'command': 'remove', 'spec_or_id': document},
+            cache=cache,
+            **kwargs
+        )
 
         return result
 
-    def _count(self, document=None, **kwargs):
+    def _count(self, document=None, cache=True, **kwargs):
 
-        cursor = self._find(document=document, **kwargs)
+        cursor = self._find(document=document, cache=cache, **kwargs)
 
-        result = cursor.count(False)
+        result = cursor if cursor is None else cursor.count(False)
 
         return result
 
