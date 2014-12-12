@@ -27,9 +27,9 @@ from functools import reduce
 from time import sleep
 
 try:
-    from threading import Thread
+    from threading import Thread, current_thread
 except ImportError:
-    from dummy_threading import Thread
+    from dummy_threading import Thread, current_thread
 
 from canopsis.common.init import basestring
 from canopsis.common.utils import isiterable
@@ -196,10 +196,11 @@ class Storage(DataBase):
     INDEXES = 'indexes'  #: storage indexes
     CACHE_SIZE = 'cache.size'  #: query cache size to send to the server
     CACHE_ORDERED = 'cache.ordered'  #: order query if cache is used
-    CACHE_TIMEOUT = 'cache.timeout'  #: timeout cache before auto executing it
+    CACHE_AUTOCOMMIT = 'cache.autocommit'  #: duration before auto-commit cache
 
-    DEFAULT_CACHE_SIZE = 1000  #: default cache size
-    DEFAULT_CACHE_TIMEOUT = 1  #: default cache timeout
+    DEFAULT_CACHE_SIZE = 0  #: default cache size
+    DEFAULT_CACHE_AUTOCOMMIT = 1  #: default cache auto-commit
+    DEFAULT_CACHE_ORDERED = True  #: default cache ordered
 
     CATEGORY = 'STORAGE'  #: storage category
 
@@ -221,8 +222,8 @@ class Storage(DataBase):
     def __init__(
         self,
         indexes=None, data=None,
-        cache_size=0, cache_ordered=True,
-        cache_timeout=DEFAULT_CACHE_TIMEOUT,
+        cache_size=DEFAULT_CACHE_SIZE, cache_ordered=DEFAULT_CACHE_ORDERED,
+        cache_autocommit=DEFAULT_CACHE_AUTOCOMMIT,
         *args, **kwargs
     ):
         """
@@ -231,8 +232,8 @@ class Storage(DataBase):
         :param dict data: data structure with expected fields, keys, etc.
         :param int cache_size: query cache size.
         :param bool cache_ordered: query cache order
-        :param float cache_timeout: cache timeout before automatically execute
-            queries.
+        :param float cache_autocommit: duration before auto-commit cache if no
+            activity.
         """
 
         super(Storage, self).__init__(*args, **kwargs)
@@ -243,7 +244,7 @@ class Storage(DataBase):
 
         self._cache_size = cache_size
         self._cache_ordered = cache_ordered
-        self._cache_timeout = cache_timeout
+        self._cache_autocommit = cache_autocommit
 
     @property
     def indexes(self):
@@ -314,12 +315,12 @@ class Storage(DataBase):
         self.connect()
 
     @property
-    def cache_timeout(self):
-        return self._cache_timeout
+    def cache_autocommit(self):
+        return self._cache_autocommit
 
-    @cache_timeout.setter
-    def cache_timeout(self, value):
-        self._cache_timeout = value
+    @cache_autocommit.setter
+    def cache_autocommit(self, value):
+        self._cache_autocommit = value
 
     @property
     def data(self):
@@ -336,20 +337,13 @@ class Storage(DataBase):
 
         # if cache size exists
         if self._cache_size > 0:
+            self._parent_thread = current_thread()
             # initialize all cache variables in order to process it
             self._cache_count = 0  # cache count equals 0
             self._cache = self._new_cache()  # (re)new cache
             self._updated_cache = False  # set false to updated cache
             # kill previous thread if it's alive
-            if hasattr(self, '_cache_thread') and self._cache_thread.isAlive():
-                # set self cache size to 0 in order to stop the thread
-                cache_size, self._cache_size = self._cache_size, 0
-                try:
-                    self._cache_thread.join()
-                except RuntimeError:
-                    pass
-                # set the right value of cache size
-                self._cache_size = cache_size
+            self.halt_cache_thread()
             # start a new thread
             self._cache_thread = Thread(target=self._cache_async_execution)
             self._cache_thread.start()
@@ -367,7 +361,7 @@ class Storage(DataBase):
 
     def _process_query(
         self,
-        query_op, cache_op, query_kwargs={}, cache_kwargs={}, cache=True,
+        query_op, cache_op, query_kwargs={}, cache_kwargs={}, cache=False,
         **kwargs
     ):
         """
@@ -388,19 +382,14 @@ class Storage(DataBase):
         if cache and self._cache_size > 0:
             if cache_op is not None:
                 cache_op(**{} if cache_kwargs is None else cache_kwargs)
-                # increment the counter
-                self._cache_count += 1
                 # check for updating cache
                 self._updated_cache = True
+                # increment the counter
+                self._cache_count += 1
                 # if cache count is greater than cache size
                 if self._cache_count >= self._cache_size:
                     # execute the cache
-                    result = self._execute_cache()
-                    # renew the cache
-                    self._cache = self._new_cache()
-                    # renew cache count
-                    self._cache_count = 0
-
+                    result = self.execute_cache()
         else:  # process the query operation
             if query_kwargs is not None:
                 kwargs.update(query_kwargs)
@@ -413,31 +402,53 @@ class Storage(DataBase):
         Threaded method which execute the cache.
         """
 
-        while self._cache_size > 0:
+        # while parent thread is alive and cache size is greater than 0
+        while self._parent_thread.isAlive() and self._cache_size > 0:
             # wait cache timeout before trying to executing it
-            sleep(self._cache_timeout)
+            sleep(self._cache_autocommit)
             # if cache has not been updated
             if not self._updated_cache:
-                try:  # try to execute self cache
-                    if self._cache_count > 0:
-                        self._execute_cache()
-                except Exception as e:
-                    self.logger.error(
-                        'Interuption of cache execution: {}'.format(e)
-                    )
+                # execute cache
+                self.execute_cache()
             else:  # mark the cache such as not updated
                 self._updated_cache = False
 
-    def __del__(self):
+    def halt_cache_thread(self):
+        """
+        Halt cache auto_commit. This method aims to wait cache. at most before
+            finishing.
+        """
 
-        self._cache_size = 0
+        # change value of cache size in order to stop thread
+        cache_size, self._cache_size = self._cache_size, 0
 
         if hasattr(self, '_cache_thread') and self._cache_thread.isAlive():
             self._cache_thread.join()
 
+        # recover cache size
+        self._cache_size = cache_size
+
+    def execute_cache(self):
+        """
+        Execute the query cache and return execution processing.
+        """
+
+        result = None
+
+        try:
+            result = self._execute_cache()
+        except Exception as e:
+            self.logger.error(
+                'Interruption of cache execution: {}'.format(e)
+            )
+
+        self._cache_count = 0
+
+        return result
+
     def _execute_cache(self):
         """
-        Execute the query cache.
+        Private cache execution. May be overriden.
         """
 
         raise NotImplementedError()
@@ -490,7 +501,8 @@ class Storage(DataBase):
 
     def get_elements(
         self,
-        ids=None, query=None, limit=0, skip=0, sort=None, with_count=False
+        ids=None, query=None, limit=0, skip=0, sort=None, with_count=False,
+        cache=False
     ):
         """
         Get a list of elements where id are input ids
@@ -498,18 +510,14 @@ class Storage(DataBase):
         :param ids: element ids or an element id to get if not None
         :type ids: list of str
 
-        :param limit: max number of elements to get
-        :type limit: int
-
-        :param skip: first element index among searched list
-        :type skip: int
-
+        :param int limit: max number of elements to get
+        :param int skip: first element index among searched list
         :param sort: contains a list of couples of field (name, ASC/DESC)
             or field name which denots an implicitelly ASC order
         :type sort: list of {(str, {ASC, DESC}}), or str}
-
         :param bool with_count: If True (False by default), add count to the
             result
+        :param bool cache: use query cache if True (False by default).
 
         :return: input id elements, or one element if ids is an element
             (None if this element does not exist).
@@ -548,7 +556,7 @@ class Storage(DataBase):
 
     def find_elements(
         self,
-        request, limit=0, skip=0, sort=None, with_count=False, cache=True,
+        request, limit=0, skip=0, sort=None, with_count=False
     ):
         """
         Find elements corresponding to input request and in taking care of
@@ -561,7 +569,6 @@ class Storage(DataBase):
             or field name which denots an implicitelly ASC order
         :param bool with_count: If True (False by default), add count to the
             result
-        :param bool cache: cache query.
 
         :return: input request elements
         :rtype: list of objects
@@ -569,7 +576,7 @@ class Storage(DataBase):
 
         raise NotImplementedError()
 
-    def remove_elements(self, ids=None, _filter=None, cache=True):
+    def remove_elements(self, ids=None, _filter=None, cache=False):
         """
         Remove elements identified by the unique input ids
 
@@ -577,7 +584,7 @@ class Storage(DataBase):
         :type ids: list of str
         :param dict _filter: removing filter.
         :param Filter _filter: additional filter to use if not None.
-        :param bool cache: cache query.
+        :param bool cache: use query cache if True (False by default).
         """
 
         raise NotImplementedError()
@@ -596,13 +603,13 @@ class Storage(DataBase):
 
         self.remove_elements(ids=ids)
 
-    def put_element(self, _id, element, cache=True):
+    def put_element(self, _id, element, cache=False):
         """
         Put an element identified by input id
 
         :param str _id: element id to update
         :param dict element: element to put (couples of field (name,value))
-        :param bool cache: cache query.
+        :param bool cache: use query cache if True (False by default).
 
         :return: True if updated
         :rtype: bool
@@ -624,12 +631,11 @@ class Storage(DataBase):
 
         self.put_element(element=element)
 
-    def count_elements(self, request=None, cache=True):
+    def count_elements(self, request=None):
         """
         Count elements corresponding to the input request
 
         :param dict request: request which contain set of couples (key, value)
-        :param bool cache: cache query.
 
         :return: Number of elements corresponding to the input request
         :rtype: int
@@ -644,42 +650,43 @@ class Storage(DataBase):
 
         return self.count_elements()
 
-    def _find(self, cache=True, *args, **kwargs):
+    def _find(self, *args, **kwargs):
         """
         Find operation dedicated to technology implementation.
-        :param bool cache: cache query.
         """
 
         raise NotImplementedError()
 
-    def _update(self, cache=True, *args, **kwargs):
+    def _update(self, cache=False, *args, **kwargs):
         """
         Update operation dedicated to technology implementation.
-        :param bool cache: cache query.
+
+        :param bool cache: use query cache if True (False by default).
         """
 
         raise NotImplementedError()
 
-    def _remove(self, cache=True, *args, **kwargs):
+    def _remove(self, cache=False, *args, **kwargs):
         """
         Remove operation dedicated to technology implementation.
-        :param bool cache: cache query.
+
+        :param bool cache: use query cache if True (False by default).
         """
 
         raise NotImplementedError()
 
-    def _insert(self, cache=True, *args, **kwargs):
+    def _insert(self, cache=False, *args, **kwargs):
         """
         Insert operation dedicated to technology implementation.
-        :param bool cache: cache query.
+
+        :param bool cache: use query cache if True (False by default).
         """
 
         raise NotImplementedError()
 
-    def _count(self, cache=True, *args, **kwargs):
+    def _count(self, *args, **kwargs):
         """
         Count operation dedicated to technology implementation.
-        :param bool cache: cache query.
         """
 
         raise NotImplementedError()
@@ -787,7 +794,7 @@ Storage types must be of the same type.'.format(self, target))
                 Parameter(Storage.INDEXES, parser=eval),
                 Parameter(Storage.CACHE_SIZE, parser=int),
                 Parameter(Storage.CACHE_ORDERED, parser=Parameter.bool),
-                Parameter(Storage.CACHE_TIMEOUT, parser=int)
+                Parameter(Storage.CACHE_AUTOCOMMIT, parser=float)
             )
         )
 
