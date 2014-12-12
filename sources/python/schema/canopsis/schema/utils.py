@@ -30,7 +30,7 @@ from canopsis.configuration.configurable.decorator import (
 
 
 @conf_path('schema/schema.conf')
-@add_category('SCHEMA', Parameter('schema_location'))
+@add_category('SCHEMA', content=Parameter('schema_location'))
 class SchemaManager(Configurable):
 
     @property
