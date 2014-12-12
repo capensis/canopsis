@@ -18,14 +18,36 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from sys import prefix
 from os import listdir
-from os.path import isfile, join
+from os.path import isfile
 from lxml.etree import parse
+
+from canopsis.configuration.parameters import Parameter
+from canopsis.configuration.configurable import Configurable
+from canopsis.configuration.configurable.decorator import (
+    add_category, conf_path
+)
+
+
+@conf_path('schema/schema.conf')
+@add_category('SCHEMA', Parameter('schema_location'))
+class SchemaManager(Configurable):
+
+    @property
+    def schema_location(self):
+        return self._schema_location
+
+    @schema_location.setter
+    def schema_location(self, value):
+        self._schema_location = value
+
+
+_schema_manager = SchemaManager()
 
 
 def get_schema_path(*args):
-    return join(prefix, 'etc/schema.d/xml', *args)
+    return _schema_manager.schema_location
+    #return join(prefix, 'etc/schema.d/xml', *args)
 
 
 def get_unique_key(schema):
@@ -156,8 +178,4 @@ def is_unique_key_existing(unique_key):
     # unique_keys (with version).
     uk_noversion = [key.split(':')[0] for key, schema in unique_keys.items()]
 
-    if unique_key in list(unique_keys.keys()) + uk_noversion:
-        return True
-    else:
-        return False
-
+    return unique_key in (list(unique_keys.keys()) + uk_noversion)
