@@ -261,7 +261,7 @@ class Storage(DataBase):
 
         result = [[(Storage.DATA_ID, 1)]]
         if self._indexes:
-            result.append(self._indexes[:])
+            result += self._indexes[:]
 
         return result
 

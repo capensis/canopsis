@@ -274,7 +274,7 @@ class MongoStorage(MongoDataBase, Storage):
 
         result = None
 
-        # search for the best hint
+        # search for the best hint if cursor is not None and query exists
         if cursor is not None and query:
             index = None
             # maximize the best hint related to query size

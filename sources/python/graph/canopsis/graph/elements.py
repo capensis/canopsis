@@ -220,28 +220,30 @@ class GraphElement(object):
 
         pass
 
-    def save(self, manager, graph_ids=None):
+    def save(self, manager, graph_ids=None, cache=False):
         """
         Save self into manager graphs.
 
         :param GraphManager manager: manager to use in order to save self.
         :param graph_ids: graph ids where save self.
         :type graph_ids: list or str
+        :param bool cache: use query cache if True (False by default).
         """
 
         # save the dict format
         elt = self.to_dict()
-        manager.put_elt(elt=elt, graph_ids=graph_ids)
+        manager.put_elt(elt=elt, graph_ids=graph_ids, cache=cache)
 
-    def delete(self, manager):
+    def delete(self, manager, cache=False):
         """
         Delete self from manager.
 
         :param GraphManager manager: manager from where delete self.
+        :param bool cache: use query cache if True (False by default).
         """
 
         # delete self from manager
-        manager.del_elts(ids=self.id)
+        manager.del_elts(ids=self.id, cache=cache)
 
 
 class Vertice(GraphElement):
@@ -266,9 +268,9 @@ class Vertice(GraphElement):
 
         self.data = data
 
-    def delete(self, manager):
+    def delete(self, manager, cache=False):
 
-        super(Vertice, self).delete(manager=manager)
+        super(Vertice, self).delete(manager=manager, cache=cache)
 
         self_id = self.id
 
@@ -284,9 +286,9 @@ class Vertice(GraphElement):
                     ])
             # delete the edge if sources or targets is empty
             if not (edge.sources and edge.targets):
-                edge.delete(manager=manager)
+                edge.delete(manager=manager, cache=cache)
             else:  # resolve_refs edge without self in sources and/or targets
-                edge.save(manager=manager)
+                edge.save(manager=manager, cache=cache)
 
 
 class Edge(Vertice):

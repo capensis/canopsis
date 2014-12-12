@@ -21,9 +21,9 @@
 from time import time
 
 from canopsis.monitoring.parser import PerfDataParser
-from canopsis.common.utils import ensure_iterable
 from canopsis.configuration.configurable.decorator import (
-    add_category, conf_paths)
+    add_category, conf_paths
+)
 from canopsis.timeserie.timewindow import Period, get_offset_timewindow
 from canopsis.middleware.registry import MiddlewareRegistry
 from canopsis.context.manager import Context
@@ -72,7 +72,8 @@ class PerfData(MiddlewareRegistry):
         period = self.get_period(metric_id, period=period)
 
         result = self[PerfData.PERFDATA_STORAGE].count(
-            data_id=metric_id, timewindow=timewindow, period=period)
+            data_id=metric_id, timewindow=timewindow, period=period
+        )
 
         return result
 
@@ -90,12 +91,14 @@ class PerfData(MiddlewareRegistry):
 
         result = self[PerfData.PERFDATA_STORAGE].get(
             data_id=metric_id, timewindow=timewindow, period=period,
-            limit=limit, skip=skip, timeserie=timeserie)
+            limit=limit, skip=skip, timeserie=timeserie
+        )
 
         if with_meta:
 
             meta = self[PerfData.META_STORAGE].get(
-                data_ids=metric_id, timewindow=timewindow)
+                data_ids=metric_id, timewindow=timewindow
+            )
 
             result = result, meta
 
@@ -118,18 +121,22 @@ class PerfData(MiddlewareRegistry):
 
         result = self[PerfData.PERFDATA_STORAGE].get(
             data_id=metric_id, timewindow=timewindow, period=period,
-            limit=1)
+            limit=1
+        )
 
         if with_meta is not None:
 
             meta = self[PerfData.META_STORAGE].get(
-                data_id=metric_id, timewindow=timewindow)
+                data_id=metric_id, timewindow=timewindow
+            )
 
             result = result, meta
 
         return result
 
-    def get_meta(self, metric_id, timewindow=None, limit=0, sort=None):
+    def get_meta(
+        self, metric_id, timewindow=None, limit=0, sort=None
+    ):
         """
         Get the meta data related to input data_id and timewindow.
         """
@@ -138,11 +145,15 @@ class PerfData(MiddlewareRegistry):
             timewindow = get_offset_timewindow()
 
         result = self[PerfData.META_STORAGE].get(
-            data_id=metric_id, timewindow=timewindow, limit=limit, sort=sort)
+            data_id=metric_id,
+            timewindow=timewindow,
+            limit=limit,
+            sort=sort
+        )
 
         return result
 
-    def put(self, metric_id, points, meta=None, period=None):
+    def put(self, metric_id, points, meta=None, period=None, cache=False):
         """
         Put a (list of) couple (timestamp, value), a meta into rated_documents
         related to input period.
@@ -164,17 +175,24 @@ class PerfData(MiddlewareRegistry):
             period = self.get_period(metric_id=metric_id, period=period)
 
             self[PerfData.PERFDATA_STORAGE].put(
-                data_id=metric_id, period=period, points=points)
+                data_id=metric_id, period=period, points=points, cache=cache
+            )
 
             if meta is not None:
 
                 min_timestamp = min(point[0] for point in points)
 
                 self[PerfData.META_STORAGE].put(
-                    data_id=metric_id, value=meta, timestamp=min_timestamp
+                    data_id=metric_id,
+                    value=meta,
+                    timestamp=min_timestamp,
+                    cache=cache
                 )
 
-    def remove(self, metric_id, period=None, with_meta=False, timewindow=None):
+    def remove(
+        self,
+        metric_id, period=None, with_meta=False, timewindow=None, cache=False
+    ):
         """
         Remove values and meta of one metric.
         meta_names is a list of meta_data to remove. An empty list ensure that
@@ -185,27 +203,31 @@ class PerfData(MiddlewareRegistry):
         period = self.get_period(metric_id, period=period)
 
         self[PerfData.PERFDATA_STORAGE].remove(
-            data_id=metric_id, timewindow=timewindow, period=period)
+            data_id=metric_id,
+            timewindow=timewindow,
+            period=period,
+            cache=cache
+        )
 
         if with_meta:
             self[PerfData.META_STORAGE].remove(
-                data_ids=metric_id, timewindow=timewindow)
+                data_ids=metric_id, timewindow=timewindow, cache=cache)
 
-    def put_meta(self, metric_id, meta, timestamp=None):
+    def put_meta(self, metric_id, meta, timestamp=None, cache=False):
         """
         Update meta information.
         """
 
         self[PerfData.PERFDATA_STORAGE].put(
-            data_id=metric_id, value=meta, timestamp=timestamp)
+            data_id=metric_id, value=meta, timestamp=timestamp, cache=cache)
 
-    def remove_meta(self, metric_id, timewindow=None):
+    def remove_meta(self, metric_id, timewindow=None, cache=False):
         """
         Remove meta information.
         """
 
         self[PerfData.PERFDATA_STORAGE].remove(
-            data_id=metric_id, timewindow=timewindow)
+            data_id=metric_id, timewindow=timewindow, cache=cache)
 
     def get_period(self, metric_id, period=None):
         """
@@ -219,7 +241,7 @@ class PerfData(MiddlewareRegistry):
         if result is None:
 
             result = DEFAULT_PERIOD
-            # TODO: to restore when the period will be specified by entity
+            # TODO: restore when the period will be specified by entity
             #entity = self.context.get_entities(ids=metric_id)
 
             #if entity is not None and 'period' in entity:

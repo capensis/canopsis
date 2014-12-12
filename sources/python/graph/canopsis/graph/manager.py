@@ -143,7 +143,7 @@ class GraphManager(MiddlewareRegistry):
 
         return result
 
-    def del_elts(self, ids=None, types=None, query=None):
+    def del_elts(self, ids=None, types=None, query=None, cache=False):
         """
         Del elements identified by input ids in removing reference before.
 
@@ -153,6 +153,7 @@ class GraphManager(MiddlewareRegistry):
         :param types: element types to delete.
         :type types: list or str
         :param dict query: additional deletion query.
+        :param bool cache: use query cache if True (False by default).
         """
 
         # initialize query if None
@@ -162,19 +163,22 @@ class GraphManager(MiddlewareRegistry):
         if types is not None:
             query[GraphElement.TYPE] = types
         # remove references in graph
-        self.remove_elts(ids=ids)
+        self.remove_elts(ids=ids, cache=cache)
         # remove edge references
-        self.del_edge_refs(vids=ids)
+        self.del_edge_refs(vids=ids, cache=cache)
         # remove elements
-        self[GraphManager.STORAGE].remove_elements(ids=ids, _filter=query)
+        self[GraphManager.STORAGE].remove_elements(
+            ids=ids, _filter=query, cache=cache
+        )
 
-    def put_elt(self, elt, graph_ids=None):
+    def put_elt(self, elt, graph_ids=None, cache=False):
         """
         Put an element.
 
         :param dict elt: element to put.
         :type elt: dict or GraphElement
         :param str graph_ids: element graph id. None if elt is a graph.
+        :param bool cache: use query cache if True (False by default).
         """
 
         # ensure elt is a dict
@@ -183,7 +187,9 @@ class GraphManager(MiddlewareRegistry):
         elt_id = elt[GraphElement.ID]
 
         # put elt value in storage
-        self[GraphManager.STORAGE].put_element(_id=elt_id, element=elt)
+        self[GraphManager.STORAGE].put_element(
+            _id=elt_id, element=elt, cache=cache
+        )
         # update graph if graph_id is not None
         if graph_ids is not None:
             graphs = self.get_graphs(ids=graph_ids)
@@ -196,11 +202,9 @@ class GraphManager(MiddlewareRegistry):
                     if elt_id not in graph.elts:
                         # add elt_id in graph elts
                         graph.elts.append(elt_id)
-                        # update graph
-                        graph_dict = graph.to_dict()
-                        self.put_elt(elt=graph_dict)
+                        graph.save(self, cache=cache)
 
-    def remove_elts(self, ids, graph_ids=None):
+    def remove_elts(self, ids, graph_ids=None, cache=False):
         """
         Remove vertices from graphs.
 
@@ -208,6 +212,7 @@ class GraphManager(MiddlewareRegistry):
         :type ids: list or str
         :param graph_ids: graph ids from where remove self.
         :type graph_ids: list or str
+        :param bool cache: use query cache if True (False by default).
         """
 
         # get graphs in order to remove references to self from them
@@ -226,9 +231,11 @@ class GraphManager(MiddlewareRegistry):
                         # remove elf from graph.elts
                         graph.remove_elts(_id)
                         # save the graph
-                        graph.save(manager=self)
+                        graph.save(manager=self, cache=cache)
 
-    def del_edge_refs(self, ids=None, vids=None, sources=None, targets=None):
+    def del_edge_refs(
+        self, ids=None, vids=None, sources=None, targets=None, cache=False
+    ):
         """
         Delete references of vertices from edges.
 
@@ -240,6 +247,7 @@ class GraphManager(MiddlewareRegistry):
         :type sources: list or str
         :param targets: target ids to remove.
         :type targets: list or str
+        :param bool cache: use query cache if True (False by default).
         """
 
         edges = self.get_edges(ids=ids, sources=sources, targets=targets)
@@ -253,7 +261,7 @@ class GraphManager(MiddlewareRegistry):
                 # del refs
                 edge.del_refs(ids=vids, sources=sources, targets=targets)
                 # and save them
-                edge.save(manager=self)
+                edge.save(manager=self, cache=cache)
 
     def get_graphs(
         self, ids=None, types=None, elts=None, graph_ids=None, data=None,
