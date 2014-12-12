@@ -59,20 +59,24 @@ class PeriodicStorage(Storage):
 
         raise NotImplementedError()
 
-    def put(self, data_id, period, points):
+    def put(self, data_id, period, points, cache=False):
         """
         Put periodic points in periodic collection with specific period values.
 
         points is an iterable of (timestamp, value)
+
+        :param bool cache: use query cache if True (False by default).
         """
 
         raise NotImplementedError()
 
-    def remove(self, data_id, period=None, timewindow=None):
+    def remove(self, data_id, period=None, timewindow=None, cache=False):
         """
         Remove periodic data related to data_id, timewindow and period.
         If timewindow is None, remove all periodic_data with input period.
-        If period is None
+        If period is None, remove all data whatever related period.
+
+        :param bool cache: use query cache if True (False by default).
         """
 
         raise NotImplementedError()
