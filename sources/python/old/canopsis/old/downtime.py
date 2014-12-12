@@ -54,7 +54,20 @@ class Downtime(Record):
         }
 
         downtimes = self.backend.find(query)
-        self.downtimes = [downtime for downtime in downtimes]
+
+        self.downtimes = {}
+
+        for downtime in downtimes:
+            co = downtime['component']
+            re = downtime['resource']
+            if co not in self.downtimes:
+                self.downtimes[co] = {}
+
+            if re not in self.downtimes[co]:
+                self.downtimes[co][re] = {
+                    'start': downtime['start'],
+                    'end': downtime['end'],
+                }
 
         return self.downtimes
 
@@ -63,12 +76,12 @@ class Downtime(Record):
 
         downtimes_end = [now]
 
-        for downtime in self.downtimes:
-            if downtime['component'] == component \
-                    and downtime['resource'] == resource \
-                    and downtime['start'] < now \
-                    and downtime['end'] > now:
-                downtimes_end.append(downtime['end'])
+        if (component in self.downtimes and
+            resource in self.downtimes[component] and
+            self.downtimes[component][resource]['start'] < now and
+                self.downtimes[component][resource]['end'] > now):
+                downtimes_end.append(
+                    self.downtimes[component][resource]['end'])
 
         return max(downtimes_end)
 
@@ -78,12 +91,11 @@ class Downtime(Record):
         # If any, it s downtime and engines should operate consequently
 
         now = time()
-        for downtime in self.downtimes:
-            if downtime['component'] == component \
-                    and downtime['resource'] == resource \
-                    and downtime['start'] < now \
-                    and downtime['end'] > now:
-                return True
+        if (component in self.downtimes and
+            resource in self.downtimes[component] and
+            self.downtimes[component][resource]['start'] < now and
+                self.downtimes[component][resource]['end'] > now):
+            return True
         return False
 
     def get_filter(self, mini=False):
