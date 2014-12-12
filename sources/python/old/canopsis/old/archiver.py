@@ -180,12 +180,9 @@ class Archiver(object):
     def reset_stealthy_event(self):
 
         def _publish_event(event):
-            self.logger.info("Sending event {}".format(event))
-            self.amqp.publish(
-                event,
-                event.get('rk', get_routingkey(event)),
-                'canopsis.events'
-                )
+            rk = event.get('rk', get_routingkey(event))
+            self.logger.info("Sending event {}".format(rk))
+            self.amqp.publish(event, rk, 'canopsis.events')
 
         # Default values
         self.restore_event = True
