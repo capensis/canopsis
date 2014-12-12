@@ -28,8 +28,7 @@ from canopsis.old.tools import legend, uniq
 from canopsis.old.rabbitmq import Amqp
 from canopsis.old.event import get_routingkey
 
-import pprint
-pp = pprint.PrettyPrinter(indent=2)
+from pymongo.errors import BulkWriteError
 
 legend_type = ['soft', 'hard']
 OFF = 0
@@ -49,6 +48,15 @@ class Archiver(object):
 
         self.namespace = namespace
         self.namespace_log = namespace + '_log'
+
+        # Bulk operation configuration
+        self.last_bulk_insert_date = time()
+        self.bulk_ids = []
+        # How many events can be buffered
+        self.bulk_amount = 500
+        # What is the maximum duration until bulk insert
+        self.bulk_delay = 3
+        self.incoming_events = {}
 
         self.autolog = autolog
 
@@ -74,7 +82,103 @@ class Archiver(object):
             logging_name='archiver-amqp'
             )
 
+        self.reset_stealthy_event_duration = time()
+        self.reset_stats()
+
+    def reset_stats(self):
+        self.stats = {
+            'update': 0,
+            'insert ' + self.namespace: 0,
+            'insert ' + self.namespace_log: 0
+        }
+
     def beat(self):
+        # process this each minute only
+        if time() - self.reset_stealthy_event_duration > 60:
+            self.reset_stealthy_event_duration = time()
+            self.reset_stealthy_event()
+        self.logger.info((
+            'DB documents stats : ' +
+            'update: {} in events, ' +
+            'insert: {} in events, ' +
+            'insert: {} in events_log').format(
+            self.stats['update'],
+            self.stats['insert ' + self.namespace],
+            self.stats['insert ' + self.namespace_log]
+        ))
+        self.reset_stats()
+
+    def process_insert_operations_collection(self, operations, collection):
+
+        self.stats['insert ' + collection] += len(operations)
+
+        if operations:
+            # is there any event to process ?
+            backend = self.storage.get_backend(collection)
+            bulk = backend.initialize_ordered_bulk_op()
+            for operation in operations:
+                _id = operation['event']['_id']
+                # Could be cleaner/faster without record system ...
+                record = Record(operation['event'])
+                record.type = "event"
+                record.chmod("o+r")
+                event = record.dump()
+                # Record looses given id, so I set it again ...
+                event['_id'] = _id
+                bulk.insert(event)
+            try:
+                bulk.execute()
+            except BulkWriteError as bwe:
+                import pprint
+                pp = pprint.PrettyPrinter(indent=2)
+                self.logger.warning(pp.pformat(bwe.details))
+
+    def process_update_operations(self, operations):
+
+        self.stats['update'] += len(operations)
+
+        if operations:
+            # is there any event to process ?
+            backend = self.storage.get_backend('events')
+            bulk = backend.initialize_ordered_bulk_op()
+            for operation in operations:
+                bulk.find(operation['query']).update(operation['update'])
+            bulk.execute()
+
+    def process_insert_operations(self, insert_operations):
+
+        events = {}
+        events_log = {}
+        # Avoid same RK insert
+        for operation in insert_operations:
+            if '_id' not in operation['event']:
+                self.logger.error(
+                    'Unable to find _id value in event {}'.format(
+                        operation['event']))
+            else:
+                _id = operation['event']['_id']
+
+                if operation['collection'] == self.namespace:
+                    events[_id] = operation
+                elif operation['collection'] == self.namespace_log:
+                    _id = '{}.{}'.format(_id, time())
+                    operation['event']['_id'] = _id
+                    events_log[_id] = operation
+                else:
+                    self.logger.critical('Wrong operation type {}'.format(
+                        operation['collection']))
+
+        self.process_insert_operations_collection(
+            events.values(),
+            'events'
+        )
+        self.process_insert_operations_collection(
+            events_log.values(),
+            'events_log'
+        )
+
+    def reset_stealthy_event(self):
+
         def _publish_event(event):
             self.logger.info("Sending event {}".format(event))
             self.amqp.publish(
@@ -110,15 +214,6 @@ class Archiver(object):
                 self.restore_event
             )
 
-        self.logger.debug(pp.pformat({
-            'restore_event': self.restore_event,
-            'bagot_freq': self.bagot_freq,
-            'bagot_time': self.bagot_time,
-            'stealthy_time': self.stealthy_time,
-            'stealthy_show': self.stealthy_show,
-            'state_config': state_config,
-        }))
-
         self.logger.debug(
             "Checking stealthy events in collection {}".format(self.namespace)
             )
@@ -142,7 +237,6 @@ class Archiver(object):
 
                 new_status = ONGOING if event['state'] else OFF
                 self.set_status(event, new_status)
-                # self.store_new_event(event['_id'], event)
                 event['pass_status'] = 1
                 _publish_event(event)
 
@@ -305,9 +399,74 @@ class Archiver(object):
             self.set_status(event, CANCELED)
 
     def check_event(self, _id, event):
+
+        """
+            This method aims to buffer and process incoming events.
+            Processing is done on buffer to reduce database operations.
+        """
+
+        # As this was not done until now... setting event primary key
+        event['_id'] = _id
+
+        # Buffering event informations
+        self.bulk_ids.append(_id)
+        self.incoming_events[_id] = event
+
+        # Processing many events condition computation
+        bulk_modulo = len(self.bulk_ids) % self.bulk_amount
+        elapsed_time = time() - self.last_bulk_insert_date
+
+        # When enough event buffered/time elapsed
+        # processing events buffers
+        if bulk_modulo == 0 or elapsed_time > self.bulk_delay:
+
+            insert_operations = []
+            update_operations = []
+
+            query = {'_id': {'$in': self.bulk_ids}}
+            devents = {}
+
+            # Put previous events in pretty data structure
+            backend = self.storage.get_backend(self.namespace)
+            for devent in backend.find(query):
+                devents[devent['_id']] = devent
+
+            # Try to match previous and new incoming event
+            for _id in self.incoming_events:
+                event = self.incoming_events[_id]
+                devent = None
+                if _id in devents:
+                    devent = devents[_id]
+                else:
+                    self.logger.info(
+                        'Previous event for rk {} not found'.format(_id))
+
+                # Effective archiver processing call
+                operations = self.process_an_event(_id, event, devent)
+                for operation in operations:
+                    if operation['type'] == 'insert':
+                        insert_operations.append(operation)
+                    else:
+                        update_operations.append(operation)
+
+            self.process_insert_operations(insert_operations)
+            self.process_update_operations(update_operations)
+
+            # Buld processing done, reseting informations
+            self.bulk_ids = []
+            self.incoming_events = {}
+            self.last_bulk_insert_date = time()
+
+        # Half useless retro compatibility
+        if 'state' in event and event['state']:
+            return _id
+
+    def process_an_event(self, _id, event, devent):
+
+        operations = []
+
         changed = False
         new_event = False
-        devent = {}
 
         self.logger.debug(" + Event:")
 
@@ -326,8 +485,6 @@ class Archiver(object):
                 'perf_data_array',
                 'processing'
             }
-
-            devent = self.collection.find_one(_id)
 
             if not devent:
                 new_event = True
@@ -370,7 +527,14 @@ class Archiver(object):
             event['last_state_change'] = event.get('timestamp', now)
 
         if new_event:
-            self.store_new_event(_id, event)
+            # copy avoid side effects
+            operations.append({
+                'type': 'insert',
+                'event': event.copy(),
+                'collection': 'events'
+            })
+            self.logger.info(' + New event, have to log {}'.format(_id))
+
         else:
             change = {}
 
@@ -434,17 +598,31 @@ class Archiver(object):
                 change['output'] = devent.get('output', '')
 
             if change:
-                self.storage.get_backend('events').update({'_id': _id},
-                                                          {'$set': change})
+                operations.append({
+                    'type': 'update',
+                    'update': {'$set': change},
+                    'query': {'_id': _id},
+                    'collection': 'events'
+                })
 
-        mid = None
-        if changed or self.autolog:
+        # I think that is the right condition to log
+        have_to_log = event.get('previous_state', state) != state
+        if have_to_log:
+
             # store ack information to log collection
             if 'ack' in devent:
                 event['ack'] = devent['ack']
-            mid = self.log_event(_id, event)
 
-        return mid
+            self.logger.info(' + State changed, have to log {}'.format(_id))
+
+            # copy avoid side effects
+            operations.append({
+                'type': 'insert',
+                'event': event.copy(),
+                'collection': 'events_log'
+            })
+
+        return operations
 
     def store_new_event(self, _id, event):
         record = Record(event)
@@ -466,7 +644,6 @@ class Archiver(object):
         record.chmod("o+r")
         record.data['event_id'] = _id
         record._id = _id + '.' + str(time())
-
         self.storage.put(record,
                          namespace=self.namespace_log,
                          account=self.account)
