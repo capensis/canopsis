@@ -56,8 +56,9 @@ class Downtime(Record):
         downtimes = self.backend.find(query)
 
         self.downtimes = {}
-
+        self.downtimes_list = []
         for downtime in downtimes:
+            self.downtimes_list.append(downtime)
             co = downtime['component']
             re = downtime['resource']
             if co not in self.downtimes:
@@ -116,7 +117,7 @@ class Downtime(Record):
             return None
 
         new_field = []
-        for downtime in self.downtimes:
+        for downtime in self.downtimes_list:
             new_filter = [
                 {component: {'$ne': downtime['component']}},
                 {resource: {'$ne': downtime['resource']}}
