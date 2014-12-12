@@ -22,7 +22,8 @@
 Rule condition functions
 """
 
-from canopsis.task import get_task_with_params, register_task
+from canopsis.common.init import basestring
+from canopsis.task import get_task_with_params, register_task, run_task
 
 from time import time
 from datetime import datetime
@@ -32,12 +33,10 @@ from dateutil.rrule import rrule as rrule_class
 
 
 @register_task
-def during(event, ctx, rrule, duration=None, timestamp=None, **kwargs):
+def during(rrule, duration=None, timestamp=None, **kwargs):
     """
     Check if input timestamp is in rrule+duration period
 
-    :param dict event: event to process
-    :param dict ctx: rule context
     :param rrule: rrule to check
     :type rrule: str or dict
         (freq, dtstart, interval, count, wkst, until, bymonth, byminute, etc.)
@@ -78,7 +77,7 @@ def during(event, ctx, rrule, duration=None, timestamp=None, **kwargs):
 
 
 @register_task
-def any(event, ctx, conditions=None, **kwargs):
+def any(conditions=None, **kwargs):
     """
     True if at least one input condition is True
     """
@@ -89,8 +88,8 @@ def any(event, ctx, conditions=None, **kwargs):
 
         for condition in conditions:
             condition_task, params = get_task_with_params(condition)
-
-            result = condition_task(event=event, ctx=ctx, **params)
+            params.update(kwargs)
+            result = condition_task(**params)
 
             if result:
                 break
@@ -99,7 +98,7 @@ def any(event, ctx, conditions=None, **kwargs):
 
 
 @register_task
-def all(event, ctx, conditions=None, **kwargs):
+def all(conditions=None, **kwargs):
     """
     True iif all input conditions is True
     """
@@ -112,10 +111,35 @@ def all(event, ctx, conditions=None, **kwargs):
 
         for condition in conditions:
             condition_task, params = get_task_with_params(condition)
-
-            result = condition_task(event=event, ctx=ctx, **params)
+            params.update(kwargs)
+            result = condition_task(**params)
 
             if not result:
                 break
+
+    return result
+
+
+@register_task
+def switch(rules, cached=True, raiseError=False, **kwargs):
+    """
+    Execute first rule among input
+    """
+
+    result = False, None
+
+    for rule in rules:
+
+        # try to execute all rules while condition is False
+        condition, action = run_task(
+            rule=rule,
+            cached=cached,
+            raiseError=raiseError,
+            **kwargs)
+
+        # stop when condition is True
+        if condition is True:
+            result = condition, action
+            break
 
     return result

@@ -27,7 +27,7 @@ from canopsis.task import get_task_with_params, ActionError, register_task
 
 
 @register_task
-def actions(event, ctx, actions=None, raiseError=False, **kwargs):
+def actions(actions=None, raiseError=False, **kwargs):
     """
     Action which process several input actions and returns a list of results
     """
@@ -39,8 +39,9 @@ def actions(event, ctx, actions=None, raiseError=False, **kwargs):
         action_confs = ensure_iterable(actions)
         for action_conf in action_confs:
             action_task, params = get_task_with_params(action_conf)
+            params.update(kwargs)
             try:
-                action_result = action_task(event=event, ctx=ctx, **params)
+                action_result = action_task(**params)
             except Exception as e:
                 error = ActionError(e)
                 if raiseError:
