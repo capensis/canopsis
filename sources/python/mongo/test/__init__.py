@@ -82,19 +82,29 @@ class StorageTest(TestCase):
             ('b', Storage.DESC),
             ['c', ('d', Storage.ASC)]
         ]
+        data = {
+            'e': '',
+            'f': {
+                Storage.KEY: Storage.DESC
+            }
+        }
         final_indexes = [
+            [(Storage.DATA_ID, Storage.ASC)],
             [('a', Storage.ASC)],
             [('b', Storage.DESC)],
-            [('c', Storage.ASC), ('d', Storage.ASC)]
+            [('c', Storage.ASC), ('d', Storage.ASC)],
+            [('f', Storage.DESC)],
+            [('_id', Storage.ASC)]
         ]
 
         with open(conf_path, 'w') as _file:
-            _file.write('[%s]' % MongoStorage.CATEGORY)
-            _file.write('\nindexes=%s' % (indexes))
+            _file.write('[{}]'.format(MongoStorage.CATEGORY))
+            _file.write('\nindexes={}'.format(indexes))
+            _file.write('\ndata={}'.format(data))
 
         self.storage.apply_configuration(conf_paths=conf_path)
 
-        _indexes = self.storage.indexes
+        _indexes = self.storage.all_indexes()
 
         self.assertEqual(final_indexes, _indexes)
 
