@@ -826,6 +826,7 @@ Storage types must be of the same type.'.format(self, target))
             name=Storage.CATEGORY,
             new_content=(
                 Parameter(Storage.INDEXES, parser=eval),
+                Parameter(Storage.DATA, parser=eval),
                 Parameter(Storage.CACHE_SIZE, parser=int, critical=True),
                 Parameter(
                     Storage.CACHE_ORDERED, parser=Parameter.bool, critical=True
