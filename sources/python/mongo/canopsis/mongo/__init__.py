@@ -190,6 +190,7 @@ class MongoStorage(MongoDataBase, Storage):
                     self._backend.ensure_index(index)
                 except Exception as e:
                     self.logger.error(e)
+
             try:
                 self._init_cache()
             except Exception as e:

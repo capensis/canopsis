@@ -260,8 +260,19 @@ class Storage(DataBase):
         """
 
         result = [[(Storage.DATA_ID, 1)]]
+        # add indexes from self indexes
         if self._indexes:
             result += self._indexes[:]
+        # add indexes from self data
+        if self._data:
+            data = self._data
+            # search key among data fields
+            for field in data:
+                value = data[field]
+                if isinstance(value, dict):
+                    if Storage.KEY in value:
+                        index = [(field, value[Storage.KEY])]
+                        result.append(index)
 
         return result
 
@@ -296,6 +307,15 @@ class Storage(DataBase):
         self.reconnect()
 
     @property
+    def data(self):
+        return self._data
+
+    @data.setter
+    def data(self, value):
+        self._data = value
+        self.reconnect()
+
+    @property
     def cache_size(self):
         return self._cache_size
 
@@ -321,14 +341,6 @@ class Storage(DataBase):
     def cache_autocommit(self, value):
         self._cache_autocommit = value
         self._init_cache()
-
-    @property
-    def data(self):
-        return self._data
-
-    @data.setter
-    def data(self, value):
-        self._data = value
 
     def queries_in_cache(self):
         """
