@@ -25,11 +25,11 @@ from lxml.etree import parse
 from canopsis.configuration.parameters import Parameter
 from canopsis.configuration.configurable import Configurable
 from canopsis.configuration.configurable.decorator import (
-    add_category, conf_path
+    add_category, conf_paths
 )
 
 
-@conf_path('schema/schema.conf')
+@conf_paths('schema/schema.conf')
 @add_category('SCHEMA', content=Parameter('schema_location'))
 class SchemaManager(Configurable):
 
@@ -47,7 +47,6 @@ _schema_manager = SchemaManager()
 
 def get_schema_path(*args):
     return _schema_manager.schema_location
-    #return join(prefix, 'etc/schema.d/xml', *args)
 
 
 def get_unique_key(schema):
@@ -113,7 +112,10 @@ def get_xml(schema):
 
     # First, we check for the filename
     if is_name_available(schema):
-        return get_xml_from_name(schema)
+        try:
+            return get_xml_from_name(schema)
+        except:
+            pass
 
     # If no matches are found, we check for the unique_key, both with
     # and without version. A full match (with the version) is
