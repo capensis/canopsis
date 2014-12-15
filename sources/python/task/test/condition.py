@@ -26,7 +26,6 @@ from time import time
 from dateutil import rrule
 
 from datetime import datetime
-
 from canopsis.task import register_task, TASK_ID, TASK_PARAMS
 from canopsis.task.condition import (
     _any, _all, during, _not, condition, switch, STATEMENT
@@ -365,6 +364,7 @@ class SwitchTest(TestCase):
     def test_statements(self):
 
         confs = self._generate_conf(['false', 'true', 'error'])
+
         switch(confs=confs)
         self.assertEqual(self.count_by_indexes[0], 0)
         self.assertEqual(self.count_by_indexes[1], 1)

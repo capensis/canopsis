@@ -47,17 +47,9 @@ class TaskUnregisterTest(TestCase):
         """
 
         # clear dico and add only self names
-        TASKS_BY_ID.clear()
         self.names = 'a', 'b'
         for name in self.names:
-            register_tasks(**{name: None})
-
-    def tearDown(self):
-        """
-        Empty task_by_id.
-        """
-
-        TASKS_BY_ID.clear()
+            register_tasks(force=True, **{name: None})
 
     def test_unregister(self):
         """
@@ -74,15 +66,18 @@ class TaskUnregisterTest(TestCase):
         """
 
         unregister_tasks(*self.names)
-        self.assertFalse(TASKS_BY_ID)
+        for name in self.names:
+            self.assertNotIn(name, TASKS_BY_ID)
 
     def test_unregister_clear(self):
         """
         Unregister all tasks with an empty parameter.
         """
 
+        _TASKS_BY_ID = TASKS_BY_ID.copy()
         unregister_tasks()
         self.assertFalse(TASKS_BY_ID)
+        TASKS_BY_ID.update(_TASKS_BY_ID)
 
 
 class TaskRegistrationTest(TestCase):
@@ -94,16 +89,8 @@ class TaskRegistrationTest(TestCase):
         """
         """
         # clean task paths
-        TASKS_BY_ID.clear()
         self.tasks = {'a': 1, 'b': 2, 'c': 3}
-        register_tasks(**self.tasks)
-
-    def tearDown(self):
-        """
-        Empty task_by_id.
-        """
-
-        TASKS_BY_ID.clear()
+        register_tasks(force=True, **self.tasks)
 
     def test_register(self):
         """
@@ -142,17 +129,6 @@ class GetTaskTest(TestCase):
     Test get task function.
     """
 
-    def setUp(self):
-        # clean all task paths
-        TASKS_BY_ID.clear()
-
-    def tearDown(self):
-        """
-        Empty task_by_id.
-        """
-
-        TASKS_BY_ID.clear()
-
     def test_get_unregisteredtask(self):
         """
         Test to get unregistered task.
@@ -168,7 +144,7 @@ class GetTaskTest(TestCase):
         """
 
         _id = 'a'
-        register_tasks(**{_id: GetTaskTest})
+        register_tasks(force=True, **{_id: GetTaskTest})
         task = get_task(_id=_id)
         self.assertEqual(task, GetTaskTest)
 
@@ -178,19 +154,16 @@ class TaskRegistrationDecoratorTest(TestCase):
     Test registration decorator
     """
 
-    def setUp(self):
-        TASKS_BY_ID.clear()
-
     def test_register_without_parameters(self):
 
-        @register_task
         def register():
             pass
+        register_task(force=True)(register)
         self.assertIn(path(register), TASKS_BY_ID)
 
     def test_register(self):
 
-        @register_task()
+        @register_task(force=True)
         def register():
             pass
         self.assertIn(path(register), TASKS_BY_ID)
@@ -199,7 +172,7 @@ class TaskRegistrationDecoratorTest(TestCase):
 
         _id = 'toto'
 
-        @register_task(_id)
+        @register_task(_id, force=True)
         def register():
             pass
         self.assertIn(_id, TASKS_BY_ID)
@@ -210,7 +183,7 @@ class TaskRegistrationDecoratorTest(TestCase):
             pass
         _id = path(toto)
 
-        register_tasks(**{_id: 6})
+        register_tasks(force=True, **{_id: 6})
 
         self.assertRaises(TaskError, register_task, toto)
 
@@ -291,25 +264,18 @@ class RunTaskTest(TestCase):
     """
 
     def setUp(self):
-        unregister_tasks()
 
-        @register_task('test')
+        @register_task('test', force=True)
         def test(**kwargs):
             return self
 
-        @register_task('test_exception')
+        @register_task('test_exception', force=True)
         def test_exception(**kwargs):
             raise Exception()
 
-        @register_task('test_params')
+        @register_task('test_params', force=True)
         def test_params(ctx, **kwargs):
             return kwargs['a'] + kwargs['b'] + ctx['a'] + 1
-
-    def tearDown(self):
-        """
-        Clear registered tasks.
-        """
-        unregister_tasks()
 
     def test_simple(self):
         """
@@ -385,22 +351,19 @@ class TasksTest(TestCase):
 
     def setUp(self):
 
-        @register_task('action')
+        @register_task('action', force=True)
         def action(**kwargs):
             pass
 
         self.error = NotImplementedError()
 
-        @register_task('error')
+        @register_task('error', force=True)
         def action_raise(**kwargs):
             raise self.error
 
-        @register_task('one')
+        @register_task('one', force=True)
         def action_one(**kwargs):
             return 1
-
-    def tearDown(self):
-        unregister_tasks()
 
     def test_empty(self):
         """
