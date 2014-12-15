@@ -284,5 +284,97 @@ class GetTaskWithParamsTest(TestCase):
         self.assertTrue(task_cached_0 is task_cached_1)
 
 
+class RunTaskTest(TestCase):
+    """
+    Test run task.
+    """
+
+    def setUp(self):
+        unregister_tasks()
+
+        @register_task('test')
+        def test(**kwargs):
+            return self
+
+        @register_task('test_exception')
+        def test_exception(**kwargs):
+            raise Exception()
+
+        @register_task('test_params')
+        def test_params(ctx, **kwargs):
+            return kwargs['a'] + kwargs['b'] + ctx['a'] + 1
+
+    def tearDown(self):
+        """
+        Clear registered tasks.
+        """
+        unregister_tasks()
+
+    def test_simple(self):
+        """
+        Test simple task.
+        """
+
+        result = run_task('test')
+        self.assertIs(result, self)
+
+    def test_exception(self):
+        """
+        Test task which raises an exception.
+        """
+
+        self.assertRaises(Exception, run_task, 'test_exception')
+
+    def test_exception_without_raise(self):
+        """
+        Test task which raises an exception.
+        """
+
+        result = run_task('test_exception', raiseError=False)
+        self.assertTrue(isinstance(result, Exception))
+
+    def test_simple_params(self):
+        """
+        Test task with params
+        """
+
+        conf = new_conf('test_params', **{'a': 1, 'b': 2})
+        result = run_task(conf, ctx={'a': 1})
+        self.assertEqual(result, 5)
+
+
+class NewConfTest(TestCase):
+    """
+    Test new conf.
+    """
+
+    def test_id(self):
+        """
+        Test to generate a new conf with only an id.
+        """
+
+        conf = new_conf('a')
+        self.assertEqual(conf, 'a')
+
+    def test_with_empty_params(self):
+        """
+        Test to generate a new conf with empty params.
+        """
+
+        conf = new_conf('a', **{})
+
+        self.assertEqual(conf, 'a')
+
+    def test_with_params(self):
+        """
+        Test to generate a new conf with params.
+        """
+
+        params = {'a': 1}
+        conf = new_conf('a', **params)
+
+        self.assertEqual(conf[TASK_ID], 'a')
+        self.assertEqual(conf[TASK_PARAMS], params)
+
 if __name__ == '__main__':
     main()

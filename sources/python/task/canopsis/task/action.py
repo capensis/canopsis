@@ -22,32 +22,45 @@
 Rule action functions
 """
 
-from canopsis.common.utils import ensure_iterable
-from canopsis.task import get_task_with_params, ActionError, register_task
+from canopsis.utils.init import basestring
+from canopsis.task import get_task_with_params, register_task
+
+#: action result
+RESULT = 'result'
+#: action error
+ERROR = 'error'
 
 
 @register_task
-def actions(actions=None, raiseError=False, **kwargs):
+def actions(confs=None, raiseError=False, **kwargs):
     """
-    Action which process several input actions and returns a list of results
+    Action which process several input confs and returns a list
+        of dict {'result': action result, 'error': action error}.
+
+    :return: a list containing dict of {RESULT: result, ERROR: error}.
+    :rtype: list
     """
 
     result = []
 
-    if actions is not None:
-
-        action_confs = ensure_iterable(actions)
-        for action_conf in action_confs:
-            action_task, params = get_task_with_params(action_conf)
+    if confs is not None:
+        # ensure confs is a list
+        if isinstance(confs, basestring):
+            confs = [confs]
+        for conf in confs:
+            action, params = get_task_with_params(conf)
             params.update(kwargs)
             try:
-                action_result = action_task(**params)
-            except Exception as e:
-                error = ActionError(e)
+                action_result = action(**params)
+            except Exception as action_error:
                 if raiseError:
-                    raise error
-                result.append(error)
-            else:
-                result.append(action_result)
+                    raise
+
+            action_error = None
+            result_to_append = {
+                RESULT: action_result,
+                ERROR: action_error
+            }
+            result.append(result_to_append)
 
     return result

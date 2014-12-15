@@ -110,25 +110,18 @@ def register_tasks(force=False, **tasks):
 
     for _id in tasks:
         task = tasks[_id]
-        old_task = None
-        try:  # is task existing ?
-            old_task = get_task(_id)
-        except ImportError:
-            pass
-        # if old task does not exist, save new task in global cache
-        if old_task is None:
-            __TASKS_BY_ID[_id] = task
-        else:
-            if force:  # if force, overwrite old task in cache
-                __TASKS_BY_ID[_id] = task
-            # save old task in the result
-            result[_id] = old_task
-
-    # raise old tasks if not force
-    if result and not force:
-        raise TaskError(
-            'Rule(s) {} are already registered'.format(result)
-        )
+        # if _id has been already registered
+        if _id in __TASKS_BY_ID:
+            if force:
+                # save old task in result
+                result[_id] = __TASKS_BY_ID[_id]
+            else:
+                # raise old tasks if not force
+                raise TaskError(
+                    'Rule {} is already registered'.format(_id)
+                )
+        # save new task
+        __TASKS_BY_ID[_id] = task
 
     return result
 
