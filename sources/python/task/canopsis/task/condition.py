@@ -138,6 +138,33 @@ STATEMENT = 'statement'
 
 
 @register_task
+def condition(condition=None, statement=None, **kwargs):
+    """
+    Run an statement if input condition is checked and return statement result.
+
+    :param condition: condition to check.
+    :type condition: str or dict
+    :param statement: statement to process if condition is checked.
+    :type statement: str or dict
+    :param kwargs: condition and statement additional parameters.
+
+    :return: statement result.
+    """
+
+    result = None
+
+    checked = False
+
+    if condition is not None:
+        checked = run_task(condition, **kwargs)
+
+    if checked and statement is not None:
+        result = run_task(statement, **kwargs)
+
+    return result
+
+
+@register_task
 def switch(confs=None, remain=False, all_checked=False, **kwargs):
     """
     Execute first statement among conf where task result is True.

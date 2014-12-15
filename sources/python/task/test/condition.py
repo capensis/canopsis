@@ -28,7 +28,9 @@ from dateutil import rrule
 from datetime import datetime
 
 from canopsis.task import register_task, TASK_ID, TASK_PARAMS
-from canopsis.task.condition import any, all, during, switch, STATEMENT
+from canopsis.task.condition import (
+    any, all, during, condition, switch, STATEMENT
+)
 
 
 @register_task('error')
@@ -128,6 +130,83 @@ class AllTest(TestCase):
     def test_raise(self):
         confs = ["error"]
         self.assertRaises(Exception, all, confs=confs)
+
+
+class ConditionTest(TestCase):
+    """
+    Test condition task.
+    """
+
+    def setUp(self):
+
+        self.count = 0
+        register_task('count', force=True)(self._count)
+
+    def _count(self, **kwargs):
+
+        self.count += 1
+        return self
+
+    def test_empty(self):
+        """
+        Test condition with no params
+        """
+
+        result = condition()
+        self.assertIsNone(result)
+        self.assertEqual(self.count, 0)
+
+    def test_empty_condition(self):
+        """
+        Test with an empty condition.
+        """
+
+        result = condition(statement='count')
+        self.assertIsNone(result)
+        self.assertEqual(self.count, 0)
+
+    def test_empty_action(self):
+        """
+        Test with an empty statement.
+        """
+
+        result = condition(condition='true')
+        self.assertIsNone(result)
+        self.assertEqual(self.count, 0)
+
+    def test_false(self):
+        """
+        Test with a false condition.
+        """
+
+        result = condition(condition='false')
+        self.assertIsNone(result)
+        self.assertEqual(self.count, 0)
+
+    def test_true(self):
+        """
+        Test with a true condition.
+        """
+
+        result = condition(condition='true', statement='count')
+        self.assertIs(result, self)
+        self.assertEqual(self.count, 1)
+
+    def test_error_condition(self):
+        """
+        Test with an error condition.
+        """
+
+        self.assertRaises(Exception, condition, condition='error')
+
+    def test_error_statement(self):
+        """
+        Test with an error statement.
+        """
+
+        self.assertRaises(
+            Exception, condition, condition='true', statement='error'
+        )
 
 
 class SwitchTest(TestCase):

@@ -18,12 +18,6 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-__version__ = "0.1"
-
-from canopsis.common.init import basestring
-from canopsis.common.utils import lookup
-
-from inspect import isroutine
 
 """
 Event rule module.
@@ -78,24 +72,17 @@ name ``my_action``.
 }
 """
 
+__version__ = "0.1"
+
+from canopsis.common.init import basestring
+from canopsis.task import register_task, run_task
+
 RULE = 'rule'
 
 CONDITION_FIELD = 'condition'  #: condition field name in rule conf
 ACTION_FIELD = 'action'  #: actions field name in rule conf
 
-TASK_PARAMS = 'params'  #: task params field name in task conf
-
-TASK_PATH = 'task_path'  #: task path field name in task conf
-
 RULES = 'rules'  #: rules rule name
-SWITCH = 'switch'  #: switch rule name
-
-
-def task(event, ctx, **kwargs):
-    """
-    Default task signature.
-    """
-    pass
 
 
 class RuleError(Exception):
@@ -104,165 +91,6 @@ class RuleError(Exception):
     """
 
     pass
-
-
-class ConditionError(RuleError):
-    """
-    Handle condition error.
-    """
-
-    pass
-
-
-class ActionError(RuleError):
-    """
-    Handle action error
-    """
-
-    pass
-
-
-__TASK_PATHS = {}
-
-
-def get_task(path, cached=True):
-    """
-    Get task related to a path which could be:
-
-    - a registered task.
-    - a python function.
-
-    :param str path: task path to get.
-    :param bool cached: use cache (True by default).
-
-    :raises ImportError: if task is not found in runtime.
-    """
-
-    result = None
-
-    if path not in __TASK_PATHS:
-        result = lookup(path=path, cached=cached)
-    else:
-        result = __TASK_PATHS[path]
-
-    return result
-
-
-def register_tasks(force=False, **tasks):
-    """
-    Register a set of input task by name.
-
-    :param bool force: force registration (default False).
-    :param dict tasks: set of couple(name, function)
-
-    :raises RuleError: if not force and task already exist
-    """
-
-    for path in tasks:
-        task = tasks[path]
-        if not force and path in __TASK_PATHS:
-            raise RuleError('Rule %s already registered' % path)
-        else:
-            __TASK_PATHS[path] = task
-
-
-def register_task(name=None, force=False):
-    """
-    Decorator which registers function in registered tasks with function name
-    """
-
-    if isroutine(name):
-        # if no parameter has been given
-        result = name
-        name = name.__name__
-        register_tasks(force=force, **{name: result})
-
-    else:  # if name is a str or None
-        def register_task(function, name=name):
-            """
-            Register input function as a task
-            """
-
-            if name is None:
-                name = function.__name__
-
-            register_tasks(force=force, **{name: function})
-
-            return function
-
-        result = register_task
-
-    return result
-
-
-def unregister_tasks(*paths):
-    """
-    Unregister input paths. If paths is empty, clear all registered tasks.
-
-    :param tuple paths: tuple of task paths
-    """
-
-    if paths:
-        for path in paths:
-            __TASK_PATHS.pop(path, None)
-    else:
-        __TASK_PATHS.clear()
-
-
-def get_task_with_params(task_conf, task_name=None, cached=True):
-    """
-    Get callable task processing with params.
-
-    :param task_conf: task conf from where getting task.
-    :type task_conf: str or dict
-
-    :param str task_name: task name to find from input task_conf if not None
-
-    :param bool cached: try to get a cached task or not.
-
-    :return: tuple of (callable task, task parameters)
-    """
-
-    task, params = None, {}
-
-    # if task_name is not None, try to find it in task_conf
-    if task_name is not None:
-
-        # in ensuring than task_conf is a dict
-        if isinstance(task_conf, dict):
-            # if task_name exists in task_conf, get it
-            if task_name in task_conf:
-                task_conf = task_conf[task_name]
-
-    # get dedicated callable task without params
-    if isinstance(task_conf, basestring):
-        try:
-            task = get_task(path=task_conf, cached=cached)
-        except ImportError as ie:
-            # Embed importerror in RuleError
-            raise RuleError(ie)
-
-    # get dedicated callable task with params
-    elif TASK_PATH in task_conf:
-        task_path = task_conf[TASK_PATH]
-        try:
-            task = get_task(path=task_path, cached=cached)
-
-        except ImportError as ie:
-            # embed import error in Rule Error
-            raise RuleError(ie)
-
-        else:
-            # if task has been founded
-            if task is not None:
-                # try to get params
-                if TASK_PARAMS in task_conf:
-                    params = task_conf[TASK_PARAMS]
-
-    # result is the couple (task, params)
-    result = task, params
-
-    return result
 
 
 def process_rule(event, rule, ctx=None, cached=True, raiseError=False):
@@ -305,8 +133,8 @@ def process_rule(event, rule, ctx=None, cached=True, raiseError=False):
             task_conf=rule,
             task_name=CONDITION_FIELD,
             cached=cached,
-            exception_type=ConditionError,
-            raiseError=raiseError)
+            raiseError=raiseError
+        )
 
     action_result = None
 
@@ -319,52 +147,10 @@ def process_rule(event, rule, ctx=None, cached=True, raiseError=False):
             task_conf=rule,
             task_name=ACTION_FIELD,
             cached=cached,
-            exception_type=ActionError,
-            raiseError=raiseError)
+            raiseError=raiseError
+        )
 
     result = do_actions, action_result
-
-    return result
-
-
-def run_task(
-    event, ctx, task_conf, task_name, raiseError, exception_type, cached
-):
-    """
-    Run a single task related to an event, a ctx, a task_conf, and a task_name.
-
-    If an error occures, input exception_type is raised.
-
-    :param dict event: event to process.
-    :param dict ctx: task execution context.
-    :param task_conf: task configuration.
-    :type task_conf: str or dict.
-    :param str task_name task name to execute.
-    :param bool raiseError: if True, raise any task error, else result if the
-        raised error.
-    :param type exception_type: exception type to raise if an error occured
-    :param bool cached: use cache memory to save task references from input
-        task name.
-    """
-
-    result = None
-
-    try:
-        task, params = get_task_with_params(
-            task_conf=task_conf, task_name=task_name, cached=cached)
-    except RuleError as e:
-        # if action does not exist, do nothing
-        pass
-    else:
-        # initialize params if None
-        try:
-            result = task(
-                event=event, ctx=ctx, raiseError=raiseError, **params)
-        except Exception as e:
-            error = exception_type(e)
-            if raiseError:
-                raise error
-            result = error
 
     return result
 
