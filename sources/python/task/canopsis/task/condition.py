@@ -19,7 +19,7 @@
 # ---------------------------------
 
 """
-Rule condition functions
+Task condition functions.
 """
 
 from canopsis.common.init import basestring

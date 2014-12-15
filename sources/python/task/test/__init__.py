@@ -25,7 +25,8 @@ from canopsis.common.utils import path
 from canopsis.task import (
     __TASKS_BY_ID as TASKS_BY_ID, TASK_PARAMS, TASK_ID, TaskError,
     get_task, new_conf, get_task_with_params,
-    run_task, register_tasks, register_task, unregister_tasks
+    run_task, register_tasks, register_task, unregister_tasks,
+    tasks, RESULT, ERROR
 )
 
 
@@ -375,6 +376,85 @@ class NewConfTest(TestCase):
 
         self.assertEqual(conf[TASK_ID], 'a')
         self.assertEqual(conf[TASK_PARAMS], params)
+
+
+class TasksTest(TestCase):
+    """
+    Test tasks function.
+    """
+
+    def setUp(self):
+
+        @register_task('action')
+        def action(**kwargs):
+            pass
+
+        self.error = NotImplementedError()
+
+        @register_task('error')
+        def action_raise(**kwargs):
+            raise self.error
+
+        @register_task('one')
+        def action_one(**kwargs):
+            return 1
+
+    def tearDown(self):
+        unregister_tasks()
+
+    def test_empty(self):
+        """
+        Test to execute empty tasks.
+        """
+
+        results = tasks()
+        self.assertEqual(len(results), 0)
+
+    def test_unary(self):
+        """
+        Test to execute one void action.
+        """
+
+        results = tasks(confs='one')
+        self.assertEqual(results, [{RESULT: 1, ERROR: None}])
+
+    def test_exception(self):
+        """
+        Test to run an action which raises an exception.
+        """
+
+        results = tasks(confs='error')
+        self.assertEqual(len(results), 1)
+        self.assertIsNone(results[0][RESULT])
+        self.assertTrue(isinstance(results[0][ERROR], NotImplementedError))
+
+    def test_raiseError(self):
+        """
+        Test to raise an error from a task execution.
+        """
+
+        self.assertRaises(
+            NotImplementedError,
+            tasks,
+            confs='error',
+            raiseError=True
+        )
+
+    def test_many(self):
+        """
+        Test to run tasks without errors.
+        """
+
+        confs = ["action", "error", "one"]
+        _results = [
+            {RESULT: None, ERROR: None},
+            {RESULT: None, ERROR: self.error},
+            {RESULT: 1, ERROR: None}
+        ]
+        results = tasks(confs=confs)
+        self.assertEqual(len(results), len(confs))
+        self.assertEqual(_results, results)
+
 
 if __name__ == '__main__':
     main()

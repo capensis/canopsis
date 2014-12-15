@@ -284,3 +284,52 @@ def new_conf(_id, **params):
         }
 
     return result
+
+
+#: action result
+RESULT = 'result'
+#: action error
+ERROR = 'error'
+
+
+@register_task
+def tasks(confs=None, raiseError=False, **kwargs):
+    """
+    run a list of tasks in processing several input confs and returns a list
+        of dict {'result': task result, 'error': task error}.
+
+    :param confs: task confs to process.
+    :type confs: str or list
+    :param bool raiseError: if True (default False) raise the first encountered
+        error during processing of tasks.
+    :param kwargs: additional parameters to process in all tasks.
+
+    :return: a list containing dict of {RESULT: result, ERROR: error}.
+    :rtype: list
+    """
+
+    result = []
+
+    if confs is not None:
+        # ensure confs is a list
+        if isinstance(confs, basestring):
+            confs = [confs]
+        for conf in confs:
+            task, params = get_task_with_params(conf)
+            # add kwargs in params
+            params.update(kwargs)
+            # initialize both result and error
+            task_result, task_error = None, None
+            try:
+                task_result = task(**params)
+            except Exception as task_error:
+                if raiseError:
+                    raise
+
+            result_to_append = {
+                RESULT: task_result,
+                ERROR: task_error
+            }
+            result.append(result_to_append)
+
+    return result
