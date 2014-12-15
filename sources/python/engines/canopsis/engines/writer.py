@@ -18,8 +18,31 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-[GRAPH]
-graph_storage_uri=mongodb-default-graph://
+from canopsis.engines import Engine
+from canopsis.old.account import Account
+from canopsis.old.storage import get_storage
 
-[GRAPH_STORAGE_CONF]
-indexes=[['_type', 'type'], ['_type', 'sources', 'type'], ['_type', 'targets', 'type'], ['id'], ['_type', 'elts', 'type']]
+
+class engine(Engine):
+    """
+    In charge of doing write operation on DB.
+    """
+
+    etype = "writer"
+
+    def __init__(self, *args, **kwargs):
+        super(engine, self).__init__(*args, **kwargs)
+
+        self.clean_collection = {}
+        collections_to_clean = ['events', 'events_log']
+
+        for collection in collections_to_clean:
+            self.clean_collection[collection] = get_storage(
+                collection,
+                account=Account(user='root')
+            ).get_backend()
+
+        self.object = get_storage(
+            'object',
+            account=Account(user='root')
+        ).get_backend()

@@ -87,7 +87,11 @@ class engine(Engine):
         # add connector
         entity = {Context.NAME: connector}
         if not already_added:
-            self.context.put(_type='connector', entity=entity)
+            self.context.put(
+                _type='connector',
+                entity=entity,
+                cache=True
+            )
 
         # add connector_name
         entity[Context.NAME] = connector_name
@@ -95,7 +99,10 @@ class engine(Engine):
         context['connector'] = connector
         if not already_added:
             self.context.put(
-                _type='connector_name', entity=entity, context=context
+                _type='connector_name',
+                entity=entity,
+                context=context,
+                cache=True
             )
 
         # add status entity which is a component or a resource
@@ -115,7 +122,10 @@ class engine(Engine):
             # add component
             if not already_added:
                 self.context.put(
-                    _type='component', entity=status_entity, context=context
+                    _type='component',
+                    entity=status_entity,
+                    context=context,
+                    cache=True
                 )
             is_status_entity = True
             context['component'] = component
@@ -133,14 +143,21 @@ class engine(Engine):
             status_entity['state_type'] = event['state_type']
             if not already_added:
                 self.context.put(
-                    _type=source_type, entity=status_entity, context=context
+                    _type=source_type,
+                    entity=status_entity,
+                    context=context,
+                    cache=True
                 )
 
         if not already_added:
             # add hostgroups
             for hostgroup in hostgroups:
                 hostgroup_data = {Context.NAME: hostgroup}
-                self.context.put(_type='hostgroup', entity=hostgroup_data)
+                self.context.put(
+                    _type='hostgroup',
+                    entity=hostgroup_data,
+                    cache=True
+                )
 
             # add servicegroups
             for servicegroup in servicegroups:
@@ -148,7 +165,10 @@ class engine(Engine):
                     Context.NAME: servicegroup
                 }
                 self.context.put(
-                    _type='servicegroup', entity=servicegroup_data)
+                    _type='servicegroup',
+                    entity=servicegroup_data,
+                    cache=True
+                )
 
         context['component'] = component
         if resource:
@@ -176,10 +196,13 @@ class engine(Engine):
             authored_data['duration'] = event['duration']
             authored_data['fixed'] = event['fixed']
             authored_data['entry'] = event['entry']
-            authored_data[Context.NAME] = event['id']
+            authored_data[Context.NAME] = event['rk']
 
         self.context.put(
-            _type=event_type, entity=authored_data, context=context
+            _type=event_type,
+            entity=authored_data,
+            context=context,
+            cache=True
         )
 
         # add perf data
@@ -191,7 +214,10 @@ class engine(Engine):
             perfdata_rk = '{0}.{1}'.format(rk, name)
             if perfdata_rk not in self.cache:
                 self.context.put(
-                    _type='metric', entity=perfdata_entity, context=context
+                    _type='metric',
+                    entity=perfdata_entity,
+                    context=context,
+                    cache=True
                 )
                 self.cache.add(perfdata_rk)
 

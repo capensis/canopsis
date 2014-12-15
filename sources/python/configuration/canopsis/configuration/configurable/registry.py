@@ -19,6 +19,7 @@
 # ---------------------------------
 
 from . import Configurable
+from canopsis.common.init import basestring
 from canopsis.configuration.parameters import Configuration, Category
 from canopsis.common.utils import lookup
 
@@ -85,7 +86,9 @@ class Configurables(dict):
         # do nothing if configurable is not an instance of configurable_type
         if not isinstance(configurable, configurable_type):
             self.registry.logger.error(
-                "Impossible to set configurable {0}:{1}. Not an instance of {2}".format(name, configurable, configurable_type))
+                "Impossible to set configurable {}:{}. Not an instance of {}"
+                .format(name, configurable, configurable_type)
+            )
 
         else:
             # update self.configurables
@@ -139,8 +142,9 @@ class ConfigurableTypes(dict):
         # check if configurable_type is a subclass of Configurable
         if not issubclass(configurable_type, Configurable):
             self.registry.logger.error(
-                "Impossible to set configurable type {0}: {1}. Wrong type".format(
-                    name, configurable_type))
+                "Impossible to set configurable type {}: {}. Wrong type"
+                .format(name, configurable_type)
+            )
 
         else:
             # check if an old value exiss
@@ -149,8 +153,9 @@ class ConfigurableTypes(dict):
                         self.registry._configurables[name], configurable_type):
                 # if the old value is not an instance of newly type
                 self.registry.logger.warning(
-                    "Old configurable {0} removed. Not an instance of {1}".format(
-                        name, configurable_type))
+                    "Old configurable {} removed. Not an instance of {}"
+                    .format(name, configurable_type)
+                )
                 # delete if
                 del self.registry._configurables[name]
 
@@ -218,7 +223,8 @@ class ConfigurableRegistry(Configurable):
     def _get_conf_paths(self, *args, **kwargs):
 
         result = super(ConfigurableRegistry, self)._get_conf_paths(
-            *args, **kwargs)
+            *args, **kwargs
+        )
 
         result.append(ConfigurableRegistry.CONF_PATH)
 
@@ -233,7 +239,8 @@ class ConfigurableRegistry(Configurable):
         super(ConfigurableRegistry, self).apply_configuration(
             conf=conf, conf_paths=conf_paths, drivers=drivers, logger=logger,
             override=override,
-            *args, **kwargs)
+            *args, **kwargs
+        )
 
         if conf_paths is None:
             conf_paths = self.conf_paths
@@ -259,19 +266,23 @@ class ConfigurableRegistry(Configurable):
             configurable_configuration = configurable.conf.copy()
             # add a unified category where name is {NAME}_CONF
             category_name = ConfigurableRegistry.get_configurable_category(
-                name)
+                name
+            )
             configurable_configuration.add_unified_category(
-                name=category_name, copy=True)
+                name=category_name, copy=True
+            )
             # apply configurable configuration
             configurable.apply_configuration(
                 conf=configurable_configuration,
                 conf_paths=configurable_conf_paths,
-                drivers=drivers, logger=logger, override=override)
+                drivers=drivers, logger=logger, override=override
+            )
 
     def _configure(self, unified_conf, *args, **kwargs):
 
         super(ConfigurableRegistry, self)._configure(
-            unified_conf=unified_conf, *args, **kwargs)
+            unified_conf=unified_conf, *args, **kwargs
+        )
 
         foreigns = unified_conf[Configuration.FOREIGNS]
 
@@ -301,7 +312,8 @@ class ConfigurableRegistry(Configurable):
     def _is_local(self, to_configure, name, *args, **kwargs):
 
         result = super(ConfigurableRegistry, self)._is_local(
-            to_configure, name, *args, **kwargs)
+            to_configure, name, *args, **kwargs
+        )
 
         if not result:
 

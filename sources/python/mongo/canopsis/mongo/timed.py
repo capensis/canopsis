@@ -117,7 +117,7 @@ class MongoTimedStorage(MongoStorage, TimedStorage):
 
         return result
 
-    def put(self, data_id, value, timestamp, *args, **kwargs):
+    def put(self, data_id, value, timestamp, cache=False, *args, **kwargs):
 
         timewindow = get_offset_timewindow(offset=timestamp)
 
@@ -136,9 +136,9 @@ class MongoTimedStorage(MongoStorage, TimedStorage):
                     MongoTimedStorage.Key.TIMESTAMP: timestamp,
                     MongoTimedStorage.Key.VALUE: value
             }
-            self._insert(document=values_to_insert)
+            self._insert(document=values_to_insert, cache=cache)
 
-    def remove(self, data_ids, timewindow=None, *args, **kwargs):
+    def remove(self, data_ids, timewindow=None, cache=False, *args, **kwargs):
 
         where = {}
 
@@ -151,7 +151,7 @@ class MongoTimedStorage(MongoStorage, TimedStorage):
             where[MongoTimedStorage.Key.TIMESTAMP] = \
                 {'$gte': timewindow.start(), '$lte': timewindow.stop()}
 
-        self._remove(document=where)
+        self._remove(document=where, cache=cache)
 
     def all_indexes(self, *args, **kwargs):
 

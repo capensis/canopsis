@@ -83,7 +83,8 @@ class CompositeStorage(Storage):
         """
         Get all shared data related to input shared ids.
 
-        :param data: one or more data
+        :param shared_ids: one or more data.
+        :type shared_ids: list or str
 
         :return: depending on input shared_ids::
 
@@ -107,17 +108,16 @@ class CompositeStorage(Storage):
         return result
 
     def share_data(
-        self, data, shared_id=None, share_extended=False
+        self, data, shared_id=None, share_extended=False, cache=False
     ):
         """
         Set input data as a shared data with input shared id
 
         :param data: one data
-
-        :param shared_id: unique shared id. If None, the id is generated.
-
-        :param share_extended: if True (False by default), set shared value to
-            all shared data with input data
+        :param str shared_id: unique shared id. If None, the id is generated.
+        :param bool share_extended: if True (False by default), set shared
+            value to all shared data with input data
+        :param bool cache: use query cache if True (False by default).
 
         :return: shared_id value (generated if None)
         """
@@ -143,15 +143,16 @@ class CompositeStorage(Storage):
             for dt in dts:
                 path, data_id = self.get_path_with_id(dt)
                 dt[CompositeStorage.SHARED] = result
-                self.put(path=path, data_id=data_id, data=dt)
+                self.put(path=path, data_id=data_id, data=dt, cache=cache)
 
         return result
 
-    def unshare_data(self, data):
+    def unshare_data(self, data, cache=False):
         """
         Remove share property from input data
 
-        :param data: one or more data to unshare
+        :param data: one or more data to unshare.
+        :param bool cache: use query cache if True (False by default).
         """
         data = ensure_iterable(data)
 
@@ -159,7 +160,7 @@ class CompositeStorage(Storage):
             if CompositeStorage.SHARED in d:
                 d[CompositeStorage.SHARED] = str(uuid())
                 path, data_id = self.get_path_with_id(d)
-                self.put(path=path, data_id=data_id, data=d)
+                self.put(path=path, data_id=data_id, data=d, cache=cache)
 
     def get(
         self,
@@ -170,23 +171,16 @@ class CompositeStorage(Storage):
         Get data related to input data_ids, input path and input filter.
 
         :param dict path: dictionnary of path valut by path name
-
         :param data_ids: data ids in the input path.
         :type data_ids: str or iterable of str
-
         :param _filter: additional filter condition to input path
         :type _filter: storage filter
-
         :param bool shared: if True, convert result to list of list of data
             where list of data are list of shared data.
-
         :param int limit: max number of data to get. Useless if data_id exists.
-
         :param int skip: starting index of research if multi data to get
-
         :param dict sort: couples of field (name, value) to sort with ASC/DESC
             Storage fields
-
         :param bool with_count: If True (False by default), add count to the
             result
 
@@ -207,20 +201,14 @@ class CompositeStorage(Storage):
 
         :param path: path
         :type path: storage filter
-
         :param _filter: additional filter condition to input path
         :type _filter: storage filter
-
         :param bool shared: if True, convert result to list of list of data
             where list of data are list of shared data.
-
         :param int limit: max number of data to get. Useless if data_id exists.
-
         :param int skip: starting index of research if multi data to get
-
         :param dict sort: couples of field (name, value) to sort with ASC/DESC
             Storage fields
-
         :param bool with_count: If True (False by default), add count to the
             result
 
@@ -230,38 +218,32 @@ class CompositeStorage(Storage):
 
         raise NotImplementedError()
 
-    def put(self, path, data_id, data, shared_id=None):
+    def put(self, path, data_id, data, shared_id=None, cache=False):
         """
         Put a data related to an id
 
         :param path: path
         :type path: storage filter
-
-        :param data_id: data id
-        :type data_id: str
-
-        :param data: data to update
-        :type data: dict
-
-        :param shared_id: shared_id id not None
-        :type shared_id: str
+        :param str data_id: data id
+        :param dict data: data to update
+        :param str shared_id: shared_id id not None
+        :param bool cache: use query cache if True (False by default).
         """
 
         raise NotImplementedError()
 
-    def remove(self, path, data_ids=None, shared=False):
+    def remove(self, path, data_ids=None, shared=False, cache=False):
         """
         Remove data from ids or type
 
         :param path: path to remove
         :type path: storage filter
-
         :param data_ids: data id or list of data id
         :type data_ids: list or str
 
-        :param shared: remove shared data if data ids are related to shared
-            data.
-        :type shared: bool
+        :param bool shared: remove shared data if data ids are related to
+            shared data.
+        :param bool cache: use query cache if True (False by default).
         """
 
         raise NotImplementedError()
