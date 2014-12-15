@@ -21,35 +21,33 @@
 __version__ = "0.1"
 
 from canopsis.common.init import basestring
-from canopsis.common.utils import lookup
+from canopsis.common.utils import lookup, path
 
 from inspect import isroutine
 
 """
 Task module.
 
-Provides tools to process tasks rules.
+Provides tools to process tasks.
 
 A task uses a python function. Therefore it is possible to use an absolute
-path or to register a function in rule tasks with the function/decorator
-``register_task``. The related function must takes in parameter the ``event``
-to process, a dict ``ctx`` which exists on a rule life and a ``**kwargs`` which
-contains parameters filled related to task parameters and the rule api.
+path, an id or to register a function in tasks with the function/decorator
+``register_task``. The related function may take in parameter a dict ``ctx``
+which exists on a task life and a ``**kwargs`` which
+contains parameters filled related to task parameters.
 
 A task respects those types::
-   - str: task path to execute.
-   - dict: optional parameters
-      + task_path: task path to execute.
+   - str: task name to execute.
+   - dict:
+      + id: task name to execute.
       + params: dict of task parameters.
-
-Therefore, a task could be as a str as a dict containing above structure.
 """
 
 TASK = 'task'  #: task parameter name
 
 TASK_PARAMS = 'params'  #: task params field name in task conf
 
-TASK_PATH = 'task_path'  #: task path field name in task conf
+TASK_ID = 'id'  #: task id field name in task conf
 
 
 def task(**kwargs):
@@ -68,29 +66,30 @@ class TaskError(Exception):
     pass
 
 
-__TASK_PATHS = {}
+# global set of tasks by ids
+__TASKS_BY_ID = {}
 
 
-def get_task(path, cached=True):
+def get_task(_id, cache=True):
     """
-    Get task related to a path which could be:
+    Get task related to an id which could be:
 
-    - a registered task.
-    - a python function.
+    - a registered task id.
+    - a python path to a function.
 
-    :param str path: task path to get.
-    :param bool cached: use cache (True by default).
+    :param str id: task id to get.
+    :param bool cache: use cache system to quick access to task
+        (True by default).
 
     :raises ImportError: if task is not found in runtime.
     """
 
     result = None
 
-    if path in __TASK_PATHS:
-        result = __TASK_PATHS[path]
+    if _id in __TASKS_BY_ID:
+        result = __TASKS_BY_ID[_id]
     else:
-        result = lookup(path=path, cached=cached)
-        __TASK_PATHS[path] = result
+        result = lookup(path=_id, cached=cache)
 
     return result
 
@@ -102,48 +101,59 @@ def register_tasks(force=False, **tasks):
     :param bool force: force registration (default False).
     :param dict tasks: set of couple(name, function)
 
+    :return: old tasks by id.
+    :rtype: dict
     :raises: TaskError if not force and task already exists.
     """
 
-    already_registered = []
+    result = {}
 
-    for path in tasks:
-        try:
-            task = get_task(path)
+    for _id in tasks:
+        task = tasks[_id]
+        old_task = None
+        try:  # is task existing ?
+            old_task = get_task(_id)
         except ImportError:
-            task = None
-        if task is not None and not force:
-            already_registered.append(path)
+            pass
+        # if old task does not exist, save new task in global cache
+        if old_task is None:
+            __TASKS_BY_ID[_id] = task
         else:
-            __TASK_PATHS[path] = task
+            if force:  # if force, overwrite old task in cache
+                __TASKS_BY_ID[_id] = task
+            # save old task in the result
+            result[_id] = old_task
 
-    if already_registered:
+    # raise old tasks if not force
+    if result and not force:
         raise TaskError(
-            'Rule(s) {} are already registered'.format(already_registered)
+            'Rule(s) {} are already registered'.format(result)
         )
 
+    return result
 
-def register_task(name=None, force=False):
+
+def register_task(_id=None, force=False):
     """
-    Decorator which registers function in registered tasks with function name
+    Decorator which registers function in registered tasks with function _id
     """
 
-    if isroutine(name):  # if name is a routine <=> no parameter is given
-        # name is routine name
-        result = name
-        name = name.__name__
-        register_tasks(force=force, **{name: result})
+    if isroutine(_id):  # if _id is a routine <=> no parameter is given
+        # _id is routine _id
+        result = _id  # task is the routine
+        _id = path(_id)  # task id is its python path
+        register_tasks(force=force, **{_id: result})
 
-    else:  # if name is a str or None
-        def register_task(function, name=name):
+    else:  # if _id is a str or None
+        def register_task(function, _id=_id):
             """
             Register input function as a task
             """
 
-            if name is None:
-                name = function.__name__
+            if _id is None:
+                _id = path(function)
 
-            register_tasks(force=force, **{name: function})
+            register_tasks(force=force, **{_id: function})
 
             return function
 
@@ -152,70 +162,55 @@ def register_task(name=None, force=False):
     return result
 
 
-def unregister_tasks(*paths):
+def unregister_tasks(*ids):
     """
-    Unregister input paths. If paths is empty, clear all registered tasks.
+    Unregister input ids. If ids is empty, clear all registered tasks.
 
-    :param tuple paths: tuple of task paths
+    :param tuple ids: tuple of task ids
     """
 
-    if paths:
-        for path in paths:
-            if path in __TASK_PATHS:
-                del __TASK_PATHS[path]
+    if ids:
+        for id in ids:
+            if id in __TASKS_BY_ID:
+                del __TASKS_BY_ID[id]
     else:
-        __TASK_PATHS.clear()
+        __TASKS_BY_ID.clear()
 
 
-def get_task_with_params(task_conf, task_name=None, cached=True):
+def get_task_with_params(conf, cache=True):
     """
     Get callable task processing with params.
 
-    :param task_conf: task conf from where getting task.
-    :type task_conf: str or dict
-
-    :param str task_name: task name to find from input task_conf if not None
-
-    :param bool cached: try to get a cached task or not.
+    :param conf: task conf from where getting task.
+    :type conf: str or dict
+    :param str task_name: task name to find from input conf if not None.
+    :param bool cache: try to get a cache task or not.
 
     :return: tuple of (callable task, task parameters)
+    :raises: ImportError if task is not registered.
     """
 
     task, params = None, {}
 
-    # if task_name is not None, try to find it in task_conf
-    if task_name is not None:
-
-        # in ensuring than task_conf is a dict
-        if isinstance(task_conf, dict):
-            # if task_name exists in task_conf, get it
-            if task_name in task_conf:
-                task_conf = task_conf[task_name]
-
     # get dedicated callable task without params
-    if isinstance(task_conf, basestring):
-        try:
-            task = get_task(path=task_conf, cached=cached)
-        except ImportError as ie:
-            # Embed importerror in TaskError
-            raise TaskError(ie)
+    if isinstance(conf, basestring):
+        task = get_task(_id=conf, cache=cache)
 
     # get dedicated callable task with params
-    elif TASK_PATH in task_conf:
-        task_path = task_conf[TASK_PATH]
+    elif TASK_ID in conf:
+        task_path = conf[TASK_ID]
         try:
-            task = get_task(path=task_path, cached=cached)
+            task = get_task(_id=task_path, cache=cache)
 
-        except ImportError as ie:
-            # embed import error in Rule Error
-            raise TaskError(ie)
+        except ImportError:
+            raise
 
         else:
             # if task has been founded
             if task is not None:
                 # try to get params
-                if TASK_PARAMS in task_conf:
-                    params = task_conf[TASK_PARAMS]
+                if TASK_PARAMS in conf:
+                    params = conf[TASK_PARAMS]
 
     # result is the couple (task, params)
     result = task, params
@@ -224,27 +219,26 @@ def get_task_with_params(task_conf, task_name=None, cached=True):
 
 
 def run_task(
-    task_conf=None, task_name=None,
+    conf=None,
     ctx=None,
     raiseError=True, exception_type=TaskError,
-    cached=True
+    cache=True
 ):
     """
-    Run a single task related to a task_conf, and a task_name, a task ctx and
+    Run a single task related to a conf, and a task_name, a task ctx and
         not functional parameters.
 
     If an error occures, input exception_type is raised with raised error
         inside.
 
-    :param task_conf: task configuration. None by default.
-    :type task_conf: str or dict.
-    :param str task_name task name to execute. None by default.
+    :param conf: task configuration. None by default.
+    :type conf: str or dict.
     :param dict ctx: task execution context. Empty dict by default.
     :param bool raiseError: if True (default), raise any task error, else
         result if the raised error.
     :param type exception_type: (default TaskError) exception type to raise if
         an error occured.
-    :param bool cached: (True by default) use cache memory to save task
+    :param bool cache: (True by default) use cache memory to save task
         references from input task name.
     """
 
@@ -255,8 +249,7 @@ def run_task(
         ctx = {}
 
     try:
-        task, params = get_task_with_params(
-            task_conf=task_conf, task_name=task_name, cached=cached)
+        task, params = get_task_with_params(conf=conf, cache=cache)
     except TaskError as e:
         # if action does not exist and raiseError is False, do nothing
         if raiseError:
@@ -269,5 +262,32 @@ def run_task(
             if raiseError:  # if raiseError, raise it
                 raise error
             result = error  # or result is the error
+
+    return result
+
+
+def new_conf(_id, **params):
+    """
+    Generate a new task conf related to input _id and params.
+
+    :param str _id: task id
+    :param dict params: task parameters.
+
+    :return: task conf depending on params:
+        - empty: _id
+        - not empty: {TASK_ID: _id, TASK_PARAMS: params}
+    :rtype: str or dict
+    """
+
+    result = None
+
+    if not params:
+        result = _id
+
+    else:
+        result = {
+            TASK_ID: _id,
+            TASK_PARAMS: params
+        }
 
     return result

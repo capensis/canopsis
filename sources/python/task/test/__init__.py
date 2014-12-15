@@ -21,281 +21,265 @@
 
 from unittest import TestCase, main
 
+from canopsis.common.utils import path
 from canopsis.task import (
-    TASK_PATH, TASK_PARAMS, TaskError,
-    get_task_with_params, run_task,
-    get_task, register_tasks, unregister_tasks, register_task,
-    __TASK_PATHS as TASK_PATHS,
+    __TASKS_BY_ID as TASKS_BY_ID, TASK_PARAMS, TASK_ID, TaskError,
+    get_task, new_conf, get_task_with_params,
+    run_task, register_tasks, register_task, unregister_tasks
 )
 
-from canopsis.common.utils import path
 
-
-def test_condition_true(event, ctx, **kwargs):
-    return True
-
-
-def test_condition_false(event, ctx, **kwargs):
-    return False
-
-
-MESSAGE = 'message'
-
-
-def test_exception(event, ctx, **kwargs):
+def test_exception(**kwargs):
     raise Exception()
 
 COUNT = 'count'
 
 
-def test_condition_count(event, ctx, **kwargs):
-    ctx[COUNT] = 0
-    return True
-
-
-def test_action(event, ctx, **kwargs):
-    ctx[COUNT] += 1
-    return ctx[COUNT]
-
-
-def test_wrong_params():
-    pass
-
-
 class TaskUnregisterTest(TestCase):
+    """
+    Test unregister_tasks function
+    """
 
     def setUp(self):
+        """
+        Create two tasks for future unregistration.
+        """
+
         # clear dico and add only self names
-        TASK_PATHS.clear()
+        TASKS_BY_ID.clear()
         self.names = 'a', 'b'
         for name in self.names:
             register_tasks(**{name: None})
 
+    def tearDown(self):
+        """
+        Empty task_by_id.
+        """
+
+        TASKS_BY_ID.clear()
+
     def test_unregister(self):
+        """
+        Unregister one by one
+        """
+
         for name in self.names:
             unregister_tasks(name)
-            self.assertNotIn(name, TASK_PATHS)
+            self.assertNotIn(name, TASKS_BY_ID)
 
     def test_unregister_all(self):
+        """
+        Unregister all tasks at a time.
+        """
+
         unregister_tasks(*self.names)
-        self.assertFalse(TASK_PATHS)
+        self.assertFalse(TASKS_BY_ID)
 
     def test_unregister_clear(self):
+        """
+        Unregister all tasks with an empty parameter.
+        """
+
         unregister_tasks()
-        self.assertFalse(TASK_PATHS)
+        self.assertFalse(TASKS_BY_ID)
 
 
 class TaskRegistrationTest(TestCase):
+    """
+    Test to register tasks.
+    """
 
     def setUp(self):
+        """
+        """
         # clean task paths
-        TASK_PATHS.clear()
-        self.tasks = {'a': None, 'b': None}
+        TASKS_BY_ID.clear()
+        self.tasks = {'a': 1, 'b': 2, 'c': 3}
         register_tasks(**self.tasks)
+
+    def tearDown(self):
+        """
+        Empty task_by_id.
+        """
+
+        TASKS_BY_ID.clear()
 
     def test_register(self):
         """
         Check for registered task in registered tasks
         """
         for task in self.tasks:
-            self.assertIn(task, TASK_PATHS)
+            self.assertIn(task, TASKS_BY_ID)
 
     def test_register_raise(self):
+        """
+        Test to catch TaskError while registring already present tasks.
+        """
 
         self.assertRaises(TaskError, register_tasks, **self.tasks)
 
     def test_register_force(self):
+        """
+        Test to register existing tasks with force.
+        """
 
-        register_tasks(force=True, **self.tasks)
+        self.assertNotIn('d', TASKS_BY_ID)
+        new_tasks = {'a': 'a', 'c': 'c', 'd': 'd'}
+        old_tasks = register_tasks(
+            force=True, **new_tasks
+        )
+        for new_task in new_tasks:
+            self.assertEqual(get_task(new_task), new_tasks[new_task])
+        self.assertNotIn('b', old_tasks)
+        self_tasks_wo_b = self.tasks
+        del self_tasks_wo_b['b']
+        self.assertEqual(old_tasks, self_tasks_wo_b)
 
 
 class GetTaskTest(TestCase):
+    """
+    Test get task function.
+    """
 
     def setUp(self):
         # clean all task paths
-        TASK_PATHS.clear()
+        TASKS_BY_ID.clear()
+
+    def tearDown(self):
+        """
+        Empty task_by_id.
+        """
+
+        TASKS_BY_ID.clear()
 
     def test_get_unregisteredtask(self):
+        """
+        Test to get unregistered task.
+        """
 
         getTaskTest = path(GetTaskTest)
         task = get_task(getTaskTest)
-        self.assertIs(task, GetTaskTest)
+        self.assertEqual(task, GetTaskTest)
 
     def test_get_registeredtask(self):
-        task_path = 'a'
-        register_tasks(**{task_path: GetTaskTest})
-        task = get_task(path=task_path)
-        self.assertIs(task, GetTaskTest)
+        """
+        Test to get registered task.
+        """
+
+        _id = 'a'
+        register_tasks(**{_id: GetTaskTest})
+        task = get_task(_id=_id)
+        self.assertEqual(task, GetTaskTest)
 
 
 class TaskRegistrationDecoratorTest(TestCase):
+    """
+    Test registration decorator
+    """
 
     def setUp(self):
-        TASK_PATHS.clear()
+        TASKS_BY_ID.clear()
 
     def test_register_without_parameters(self):
 
         @register_task
         def register():
             pass
-        self.assertIn('register', TASK_PATHS)
+        self.assertIn(path(register), TASKS_BY_ID)
 
     def test_register(self):
 
         @register_task()
         def register():
             pass
-        self.assertIn('register', TASK_PATHS)
+        self.assertIn(path(register), TASKS_BY_ID)
 
     def test_registername(self):
 
-        name = 'toto'
+        _id = 'toto'
 
-        @register_task(name)
+        @register_task(_id)
         def register():
             pass
-        self.assertIn(name, TASK_PATHS)
+        self.assertIn(_id, TASKS_BY_ID)
 
     def test_raise(self):
-        name = 'toto'
-        register_tasks(**{name: None})
 
-        error = False
-        try:
-            @register_task
-            def toto():
-                pass
-        except Exception:
-            error = True
-        self.assertTrue(error)
+        def toto():
+            pass
+        _id = path(toto)
+
+        register_tasks(**{_id: 6})
+
+        self.assertRaises(TaskError, register_task, toto)
 
 
 class GetTaskWithParamsTest(TestCase):
+    """
+    Test get task with params function.
+    """
 
     def setUp(self):
 
         self.wrong_function = 'test.test'
 
-        self.existing_function = 'canopsis.rule.get_task_with_params'
+        self.existing_function = 'canopsis.task.get_task_with_params'
 
     def test_none_task_from_str(self):
 
-        task_conf = self.wrong_function
+        conf = self.wrong_function
 
-        self.assertRaises(TaskError, get_task_with_params, task_conf=task_conf)
+        self.assertRaises(ImportError, get_task_with_params, conf=conf)
 
     def test_none_task_from_dict(self):
 
-        task_conf = {TASK_PATH: self.wrong_function}
+        conf = {TASK_ID: self.wrong_function}
 
-        self.assertRaises(TaskError, get_task_with_params, task_conf=task_conf)
-
-    def test_none_task_from_dict_with_task_name(self):
-
-        task_name = 'test'
-
-        task_conf = {task_name: self.wrong_function}
-
-        self.assertRaises(
-            TaskError,
-            get_task_with_params,
-            task_conf=task_conf, task_name=task_name)
-
-    def test_none_task_from_dict_with_task_name_and_dict(self):
-
-        task_name = 'test'
-
-        task_conf = {task_name: {TASK_PATH: self.wrong_function}}
-
-        self.assertRaises(
-            TaskError,
-            get_task_with_params,
-            task_conf=task_conf, task_name=task_name)
+        self.assertRaises(ImportError, get_task_with_params, conf=conf)
 
     def test_task_from_str(self):
 
-        task_conf = self.existing_function
+        conf = self.existing_function
 
-        task, params = get_task_with_params(task_conf=task_conf)
+        task, params = get_task_with_params(conf=conf)
 
         self.assertEqual((task, params), (get_task_with_params, {}))
 
     def test_task_from_dict(self):
 
-        task_conf = {TASK_PATH: self.existing_function}
+        conf = {TASK_ID: self.existing_function}
 
-        task, params = get_task_with_params(task_conf=task_conf)
-
-        self.assertEqual((task, params), (get_task_with_params, {}))
-
-    def test_task_from_dict_with_task_name(self):
-
-        task_name = 'test'
-
-        task_conf = {task_name: self.existing_function}
-
-        task, params = get_task_with_params(
-            task_conf=task_conf, task_name=task_name)
-
-        self.assertEqual((task, params), (get_task_with_params, {}))
-
-    def test_task_from_dict_with_task_name_and_dict(self):
-
-        task_name = 'test'
-
-        task_conf = {task_name: {TASK_PATH: self.existing_function}}
-
-        task, params = get_task_with_params(
-            task_conf=task_conf, task_name=task_name)
+        task, params = get_task_with_params(conf=conf)
 
         self.assertEqual((task, params), (get_task_with_params, {}))
 
     def test_task_from_dict_with_params(self):
 
-        param = 1
+        param = {'a': 1}
 
-        task_conf = {
-            TASK_PATH: self.existing_function,
+        conf = {
+            TASK_ID: self.existing_function,
             TASK_PARAMS: param}
 
-        task, params = get_task_with_params(task_conf=task_conf)
-
-        self.assertEqual((task, params), (get_task_with_params, param))
-
-    def test_task_from_dict_with_name_and_params(self):
-
-        param = 1
-
-        task_name = 'test'
-
-        task_conf = {
-            task_name:
-            {
-                TASK_PATH: self.existing_function,
-                TASK_PARAMS: param
-            }
-        }
-
-        task, params = get_task_with_params(
-            task_conf=task_conf, task_name=task_name)
+        task, params = get_task_with_params(conf=conf)
 
         self.assertEqual((task, params), (get_task_with_params, param))
 
     def test_cache(self):
 
-        task_conf = self.existing_function
+        conf = self.existing_function
 
         task_not_cached_0, _ = get_task_with_params(
-            task_conf=task_conf, cached=False)
+            conf=conf, cache=False)
 
         task_not_cached_1, _ = get_task_with_params(
-            task_conf=task_conf, cached=False)
+            conf=conf, cache=False)
 
         self.assertTrue(task_not_cached_0 is task_not_cached_1)
 
-        task_cached_0, _ = get_task_with_params(task_conf=task_conf)
+        task_cached_0, _ = get_task_with_params(conf=conf)
 
-        task_cached_1, _ = get_task_with_params(task_conf=task_conf)
+        task_cached_1, _ = get_task_with_params(conf=conf)
 
         self.assertTrue(task_cached_0 is task_cached_1)
 
