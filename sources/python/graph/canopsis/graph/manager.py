@@ -337,6 +337,46 @@ class GraphManager(MiddlewareRegistry):
 
         return result
 
+    def get_targets(
+        self,
+        ids=None, graph_ids=None,
+        data=None, query=None,
+        types=None, edge_ids=None, add_edges=False, edge_types=None,
+        edge_data=None, edge_query=None
+    ):
+        """
+        Ease the use of get_neighbourhood method in order to get targets
+            vertices.
+        """
+
+        return self.get_neighbourhood(
+            ids=ids, graph_ids=graph_ids, sources=False, targets=True,
+            target_data=data, target_query=query, target_types=types,
+            edge_ids=edge_ids, add_edges=add_edges,
+            target_edge_types=edge_types, target_edge_data=edge_data,
+            target_edge_query=edge_query
+        )
+
+    def get_sources(
+        self,
+        ids=None, graph_ids=None,
+        data=None, query=None,
+        types=None, edge_ids=None, add_edges=False, edge_types=None,
+        edge_data=None, edge_query=None
+    ):
+        """
+        Ease the use of get_neighbourhood method in order to get sources
+            vertices.
+        """
+
+        return self.get_neighbourhood(
+            ids=ids, graph_ids=graph_ids, sources=True, targets=False,
+            source_data=data, source_query=query, source_types=types,
+            edge_ids=edge_ids, add_edges=add_edges,
+            source_edge_types=edge_types, source_edge_data=edge_data,
+            source_edge_query=edge_query
+        )
+
     def get_neighbourhood(
         self,
         ids=None, sources=False, targets=True,
@@ -432,7 +472,7 @@ class GraphManager(MiddlewareRegistry):
                 source_edge_data.update(edge_data)
             else:
                 source_edge_data = edge_data
-        # get all target edges
+        # get all source edges
         source_edges = self.get_edges(
             ids=edge_ids,
             graph_ids=graph_ids,

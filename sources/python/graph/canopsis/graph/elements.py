@@ -124,7 +124,7 @@ class GraphElement(object):
 
     __slots__ = (ID, TYPE)
 
-    def __init__(self, _id=None, _type=None, _manager=None):
+    def __init__(self, _id=None, _type=None):
         """
         :param str _id: element id. generated if None.
         :param str _type: element type name. self lower type name if None.
