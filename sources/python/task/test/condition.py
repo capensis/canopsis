@@ -178,10 +178,22 @@ class ConditionTest(TestCase):
 
         self.count = 0
         register_task('count', force=True)(self._count)
+        register_task('-count', force=True)(self._else_count)
 
     def _count(self, **kwargs):
+        """
+        Statement related to checked condition.
+        """
 
         self.count += 1
+        return self
+
+    def _else_count(self, **kwargs):
+        """
+        Statement related to unchecked condition.
+        """
+
+        self.count -= 1
         return self
 
     def test_empty(self):
@@ -198,16 +210,16 @@ class ConditionTest(TestCase):
         Test with an empty condition.
         """
 
-        result = condition(statement='count')
-        self.assertIsNone(result)
-        self.assertEqual(self.count, 0)
+        result = condition(statement='count', _else='-count')
+        self.assertIs(result, self)
+        self.assertEqual(self.count, -1)
 
     def test_empty_action(self):
         """
         Test with an empty statement.
         """
 
-        result = condition(condition='true')
+        result = condition(condition='true', _else='-count')
         self.assertIsNone(result)
         self.assertEqual(self.count, 0)
 
@@ -216,16 +228,18 @@ class ConditionTest(TestCase):
         Test with a false condition.
         """
 
-        result = condition(condition='false')
-        self.assertIsNone(result)
-        self.assertEqual(self.count, 0)
+        result = condition(
+            condition='false', statement='count', _else='-count'
+        )
+        self.assertIs(result, self)
+        self.assertEqual(self.count, -1)
 
     def test_true(self):
         """
         Test with a true condition.
         """
 
-        result = condition(condition='true', statement='count')
+        result = condition(condition='true', statement='count', _else='-count')
         self.assertIs(result, self)
         self.assertEqual(self.count, 1)
 
@@ -245,6 +259,19 @@ class ConditionTest(TestCase):
             Exception, condition, condition='true', statement='error'
         )
 
+    def test_error_else(self):
+        """
+        Test with an errored else statement.
+        """
+
+        self.assertRaises(
+            Exception,
+            condition,
+            condition='true',
+            statement='error',
+            _else='-count'
+        )
+
 
 class SwitchTest(TestCase):
     """
@@ -253,12 +280,13 @@ class SwitchTest(TestCase):
 
     def setUp(self):
 
-        self.count_by_indexes = {}
+        self.count_by_indexes = {'default': 0}
         register_task('count', force=True)(self._count)
 
-    def _count(self, index, **kwargs):
+    def _count(self, index='default', **kwargs):
 
         self.count_by_indexes[index] += 1
+        return self
 
     def _generate_conf(self, ids):
         """
@@ -278,7 +306,8 @@ class SwitchTest(TestCase):
             for i, value in enumerate(ids)
         ]
         # initialize count by indexes
-        self.count_by_indexes = {i: 0 for i in range(len(ids))}
+        self.count_by_indexes.update({i: 0 for i in range(len(ids))})
+
         return result
 
     def test_empty_switch(self):
@@ -288,6 +317,14 @@ class SwitchTest(TestCase):
 
         result = switch()
         self.assertIsNone(result, None)
+
+    def test_empty_switch_with_default(self):
+        """
+        Test empty switch.
+        """
+
+        result = switch(_default='count')
+        self.assertIs(result, self)
 
     def test_one_true_statement(self):
         """
@@ -306,6 +343,16 @@ class SwitchTest(TestCase):
         confs = self._generate_conf(['false'])
         switch(confs=confs)
         self.assertEqual(self.count_by_indexes[0], 0)
+
+    def test_one_false_statement_with_default(self):
+        """
+        Test a switch with one statement.
+        """
+
+        confs = self._generate_conf(['false'])
+        switch(confs=confs, _default='count')
+        self.assertEqual(self.count_by_indexes[0], 0)
+        self.assertEqual(self.count_by_indexes['default'], 1)
 
     def test_one_error_statement(self):
         """
@@ -326,10 +373,11 @@ class SwitchTest(TestCase):
     def test_remain_statements(self):
 
         confs = self._generate_conf(['false', 'true', 'false'])
-        switch(confs=confs, remain=True)
+        switch(confs=confs, remain=True, _default='count')
         self.assertEqual(self.count_by_indexes[0], 0)
         self.assertEqual(self.count_by_indexes[1], 1)
         self.assertEqual(self.count_by_indexes[2], 1)
+        self.assertEqual(self.count_by_indexes['default'], 1)
 
     def test_remain_error_statements(self):
 
@@ -342,10 +390,11 @@ class SwitchTest(TestCase):
     def test_all_statements(self):
 
         confs = self._generate_conf(['true', 'false', 'true'])
-        switch(confs=confs, all_checked=True)
+        switch(confs=confs, all_checked=True, _default='count')
         self.assertEqual(self.count_by_indexes[0], 1)
         self.assertEqual(self.count_by_indexes[1], 0)
         self.assertEqual(self.count_by_indexes[2], 1)
+        self.assertEqual(self.count_by_indexes['default'], 1)
 
     def test_all_error_statements(self):
 

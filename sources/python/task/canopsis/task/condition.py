@@ -157,7 +157,7 @@ def _not(condition=None, **kwargs):
 
 
 @register_task
-def condition(condition=None, statement=None, **kwargs):
+def condition(condition=None, statement=None, _else=None, **kwargs):
     """
     Run an statement if input condition is checked and return statement result.
 
@@ -165,6 +165,8 @@ def condition(condition=None, statement=None, **kwargs):
     :type condition: str or dict
     :param statement: statement to process if condition is checked.
     :type statement: str or dict
+    :param _else: else statement.
+    :type _else: str or dict
     :param kwargs: condition and statement additional parameters.
 
     :return: statement result.
@@ -177,14 +179,19 @@ def condition(condition=None, statement=None, **kwargs):
     if condition is not None:
         checked = run_task(condition, **kwargs)
 
-    if checked and statement is not None:
-        result = run_task(statement, **kwargs)
+    if checked:  # if condition is checked
+        if statement is not None:  # process statement
+            result = run_task(statement, **kwargs)
+    elif _else is not None:  # else process _else statement
+        result = run_task(_else, **kwargs)
 
     return result
 
 
 @register_task
-def switch(confs=None, remain=False, all_checked=False, **kwargs):
+def switch(
+    confs=None, remain=False, all_checked=False, _default=None, **kwargs
+):
     """
     Execute first statement among conf where task result is True.
     If remain, process all statements conf starting from the first checked
@@ -197,6 +204,8 @@ def switch(confs=None, remain=False, all_checked=False, **kwargs):
         first checked condition.
     :param bool all_checked: execute all statements where conditions are
         checked.
+    :param _default: default task to process if others have not been checked.
+    :type _default: str or dict
 
     :return: statement result or list of statement results if remain.
     :rtype: list or object
@@ -205,11 +214,12 @@ def switch(confs=None, remain=False, all_checked=False, **kwargs):
     # init result
     result = [] if remain else None
 
+        # check if remain and one task has already been checked.
+    remaining = False
+
     if confs is not None:
         if isinstance(confs, (basestring, dict)):
             confs = [confs]
-        # check if remain and one task has already been checked.
-        remaining = False
         for conf in confs:
             # check if task has to be checked or not
             check = remaining
@@ -235,5 +245,13 @@ def switch(confs=None, remain=False, all_checked=False, **kwargs):
                     pass
                 else:  # leave execution if one statement has been executed
                     break
+
+    # process _default statement if necessary
+    if _default is not None and (remaining or (not result) or all_checked):
+        last_result = run_task(_default, **kwargs)
+        if not remain:
+            result = last_result
+        else:
+            result.append(last_result)
 
     return result
