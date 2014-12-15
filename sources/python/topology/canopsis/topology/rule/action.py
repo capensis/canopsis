@@ -32,50 +32,40 @@ For logical reasons, the propagate action runned such as the last action.
 """
 
 from canopsis.task import register_task
+from canopsis.common.init import basestring
 from canopsis.common.utils import lookup
-from canopsis.topology.manager import Topology
+from canopsis.topology.manager import TopologyManager
 from canopsis.check import Check
-from canopsis.topology.process import SOURCES, NODE
+from canopsis.topology.process import SOURCES
 
-topology = Topology()
+tm = TopologyManager()
 
 
-@register_task(name='topology.change_state')
-def change_state(event, ctx, state=None, **kwargs):
+@register_task
+def change_state(event, node, state=None, manager=None, **kwargs):
     """
-    Change of state for node ctx.
+    Change of state for node.
+
+    :param event: event to process in order to change of state.
+    :param node: node to change of state.
+    :param state: new state to apply on input node. If None, get state from
+        input event.
     """
 
     # if state is None, use event state
     if state is None:
         state = event[Check.STATE]
 
+    if manager is None:
+        manager = tm
+
     # update node state from ctx
-    node = ctx[NODE]
-    node[Check.STATE] = state
-    topology.push_nodes(node)
+    node.data[Check.STATE] = state
+    node.save(manager=manager)
 
 
-@register_task(name='topology.worst_state')
-def worst_state(event, ctx, **kwargs):
-    """
-    Check the worst state among source nodes.
-    """
-
-    change_state_from_source_nodes(event=event, ctx=ctx, f=max)
-
-
-@register_task(name='topology.best_state')
-def best_state(event, ctx, **kwargs):
-    """
-    Get the best state among source nodes.
-    """
-
-    change_state_from_source_nodes(event=event, ctx=ctx, f=min)
-
-
-@register_task(name='topology.change_state_from_source_nodes')
-def change_state_from_source_nodes(event, ctx, f, **kwargs):
+@register_task
+def state_from_sources(event, node, ctx, f, manager=None, **kwargs):
     """
     Change ctx node state which equals to f result on source nodes.
     """
@@ -84,18 +74,39 @@ def change_state_from_source_nodes(event, ctx, f, **kwargs):
     if isinstance(f, basestring):
         f = lookup(f)
 
-    # retrieve the node from where find source nodes
-    node = ctx[NODE]
+    if manager is None:
+        manager = tm
 
     # if sources are in ctx, get them
     if SOURCES in ctx:
         sources = ctx[SOURCES]
     else:  # else get them with the topology object
-        sources = topology.find_source_nodes(node=node)
+        sources = manager.get_neighbourhood(
+            ids=node.id, sources=True, targets=False
+        )
 
-    # calculate the state
-    state = f(source_node[Check.STATE] for source_node in sources)
+    if sources:  # do something only if sources exist
+        # calculate the state
+        state = f(source_node.data[Check.STATE] for source_node in sources)
 
-    # update the node state
-    node[Check.STATE] = state
-    topology.push_nodes(node=node)
+        # update the node state
+        node.data[Check.STATE] = state
+        node.save(manager=manager)
+
+
+@register_task
+def worst_state(event, ctx, manager=None, **kwargs):
+    """
+    Check the worst state among source nodes.
+    """
+
+    state_from_sources(event=event, ctx=ctx, f=max, manager=manager, **kwargs)
+
+
+@register_task
+def best_state(event, ctx, manager=None, **kwargs):
+    """
+    Get the best state among source nodes.
+    """
+
+    state_from_sources(event=event, ctx=ctx, f=min, manager=manager, **kwargs)

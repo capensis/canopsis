@@ -28,7 +28,7 @@ First, a topology processing is triggered when an event occured.
 
 From this event, bound topology nodes are got in order to apply node rules.
 
-A typical topological rule condition is an ``canopsis.rule.condition.all``
+A typical topological task condition is an ``canopsis.task.condition.all``
 composed of the ``canopsis.topology.process.new_state`` condition.
 If this condition is checked, then other specific conditions can be applied
 such as::
@@ -36,18 +36,19 @@ such as::
     - ``canopsis.topology.process.all``
     - ``canopsis.topology.process.any``
 
-A topology rule use the condition ``new_state``
+A topology task use the condition ``new_state``
 """
 
+from canopsis.topology.elements import Topology
 from canopsis.topology.manager import TopologyManager
 from canopsis.context.manager import Context
-from canopsis.task import process_rule, RULE, register_task
+from canopsis.task import register_task
 from canopsis.event import Event
 from canopsis.check import Check
 
 
 context = Context()
-topology = TopologyManager()
+tm = TopologyManager()
 
 SOURCE = 'source'
 SOURCES = 'sources'
@@ -56,7 +57,7 @@ PUBLISHER = 'publisher'
 WEIGHT = 'weight'
 
 
-@register_task(name='topology.event_processing')
+@register_task
 def event_processing(event, ctx=None, **params):
     """
     Process input event in getting topology nodes bound to input event entity.
@@ -78,50 +79,49 @@ def event_processing(event, ctx=None, **params):
         source_type = event[Event.SOURCE_TYPE]
 
         # in case of topology node
-        if source_type == TopologyManager.GRAPH_TYPE:
-             # get nodes from the event topology node id
-            nodes = [topology.get_nodes(event[TopologyManager.ID])]
+        if source_type == Topology.TYPE:
+            node = tm.get_vertices(ids=event[Topology.ID])
+            if node is not None:
+                nodes = [node]
 
         else:  # in case of entity event
             # get nodes from entity
             entity = context.get_entity(event)
             if entity is not None:
                 entity_id = context.get_entity_id(entity)
-                nodes = topology.get_nodes(entity_id=entity_id)
+                nodes = tm.get_nodes(entity=entity_id)
 
         # iterate on nodes
         for node in nodes:
 
-            # add node in the ctx
+            # put node in the ctx
             ctx[NODE] = node
 
+            data = node.data
+
             # save old state in order to check for its modification
-            if Check.STATE in node:
-                old_state = node[Check.STATE]
+            if Check.STATE in data:
+                old_state = data[Check.STATE]
+
             else:
                 old_state = event[Check.STATE]
 
-            # process rule
-            if RULE in node:
-                rule = node[RULE]
-                process_rule(event=event, rule=rule, ctx=ctx)
-                # propagate the change of state in case of new state
-                if old_state != node[Check.STATE]:
+            # process task
+            node.process(event=event, ctx=ctx)
 
-                    # get next nodes
-                    next_nodes = topology.get_next_nodes(node)
-
-                    # send the event_to_propagate to all next_nodes
-                    for next_node in next_nodes:
-
-                        # create event to propagate with source and node ids
-                        event_to_propagate = {
-                            Event.TYPE: Check.get_type(),
-                            Event.SOURCE_TYPE: TopologyManager.TOPOLOGY_NODE_TYPE,
-                            TopologyManager.ID: next_node[TopologyManager.ID],
-                            SOURCE: node[TopologyManager.ID]
-                        }
-
-                        ctx[PUBLISHER].publish(event_to_propagate)
+            # propagate the change of state in case of new state
+            if old_state != data[Check.STATE]:
+                # get next nodes
+                next_nodes = tm.get_vertices(sources=node.id)
+                # send the event_to_propagate to all next_nodes
+                for next_node in next_nodes:
+                    # create event to propagate with source and node ids
+                    event_to_propagate = {
+                        Event.TYPE: Check.get_type(),
+                        Event.SOURCE_TYPE: node.TYPE,
+                        Topology.ID: next_node.id,
+                        SOURCE: node.id
+                    }
+                    ctx[PUBLISHER].publish(event_to_propagate)
 
     return event

@@ -21,37 +21,41 @@
 
 from unittest import TestCase, main
 
-from canopsis.task import RULE
+from canopsis.topology.elements import Node
 from canopsis.topology.manager import TopologyManager
 from canopsis.topology.process import event_processing, PUBLISHER
 from canopsis.context.manager import Context
 
 
 class ProcessingTest(TestCase):
+    """
+    Test event processing function.
+    """
 
     def setUp(self):
-        self.context = Context(data_scope='test')
-        self.topology = TopologyManager(data_scope='test')
+        self.context = Context(data_scope='test_topology')
+        self.topology = TopologyManager(data_scope='test_topology')
+        self.topology.del_elts()
         self.check = {
             'event_type': 'check',
             'connector': '',
             'connector_name': '',
             'component': '',
             'source_type': 'component',
-            'state': 0}
+            'state': 0
+        }
         entity = self.context.get_entity(self.check)
         entity_id = self.context.get_entity_id(entity)
-        self.node = {
-            TopologyManager.ENTITY_ID: entity_id,
-            TopologyManager.ID: 'test',
-            'state': 0,
-            RULE: 'canopsis.topology.rule.action.change_state'
-        }
+        self.node = Node(
+            entity=entity_id,
+            state=0,
+            task='canopsis.topology.rule.action.change_state'
+        )
         self.topology.put_nodes(self.node)
 
     def test_no_bound(self):
         """
-        Test in case of not bound nodes
+        Test in case of not bound nodes.
         """
 
         _event = self.check.copy()
@@ -68,8 +72,12 @@ class ProcessingTest(TestCase):
         event = event_processing(event=self.check)
         _node = self.topology.get_nodes(ids=self.node[TopologyManager.ID])[0]
         self.assertEqual(
-            self.node[TopologyManager.ENTITY_ID], _node[TopologyManager.ENTITY_ID])
-        self.assertEqual(self.node[TopologyManager.ID], _node[TopologyManager.ID])
+            self.node[TopologyManager.ENTITY_ID],
+            _node[TopologyManager.ENTITY_ID]
+        )
+        self.assertEqual(
+            self.node[TopologyManager.ID], _node[TopologyManager.ID]
+        )
         self.assertEqual(self.check, event)
 
     def test_one_state(self):
@@ -126,7 +134,7 @@ class ProcessingTest(TestCase):
             self.topology.del_nodes(next[TopologyManager.ID])
 
     def tearDown(self):
-        self.topology.del_nodes(self.node[TopologyManager.ID])
+        self.topology.del_elts()
 
 
 if __name__ == '__main__':

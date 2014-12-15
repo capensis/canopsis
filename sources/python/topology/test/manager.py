@@ -21,223 +21,64 @@
 
 from unittest import TestCase, main
 
+from canopsis.topology.elements import Topology, Node
 from canopsis.topology.manager import TopologyManager
 
 
-class IsRootTest(TestCase):
+class GetNodesTest(TestCase):
     """
-    Test TopologyManager.is_root function
-    """
-
-    def test_true(self):
-        """
-        Test if a root is recognized by the TopologyManager.
-        """
-        root = TopologyManager.new_node(
-            graph_id='test', _type=TopologyManager.ROOT)
-
-        self.assertTrue(TopologyManager.is_root(root))
-
-    def test_false(self):
-        """
-        Test if a common node is not recognized such as a root by the
-            TopologyManager.
-        """
-
-        root = TopologyManager.new_node(graph_id='test')
-
-        self.assertFalse(TopologyManager.is_root(root))
-
-
-class IsClusterTest(TestCase):
-    """
-    Test TopologyManager.is_cluster function
+    Test TopologyManager.get_nodes method.
     """
 
-    def test_true(self):
-        """
-        Test if a cluster is recognized by the TopologyManager.
-        """
-        cluster = TopologyManager.new_node(
-            graph_id='test', _type=TopologyManager.CLUSTER)
-
-        self.assertTrue(TopologyManager.is_cluster(cluster))
-
-    def test_false(self):
-        """
-        Test if a common node is not recognized such as a cluster by the
-            TopologyManager.
-        """
-
-        cluster = TopologyManager.new_node(graph_id='test')
-
-        self.assertFalse(TopologyManager.is_cluster(cluster))
-
-
-class NewGraphTest(TestCase):
-    """
-    Test Topology.new_graph method.
-    """
-
-    def test_without_root_and_nodes(self):
-        """
-        Test when nodes is not in parameters.
-        """
-
-        graph = TopologyManager.new_graph()
-
-        nodes = graph[TopologyManager.NODES]
-
-        self.assertEqual(len(nodes), 1)
-
-        root = nodes[0]
-
-        self.assertTrue(TopologyManager.is_root(root))
-
-    def test_without_root(self):
-        """
-        Test when root is not in parameter nodes.
-        """
-
-        node = TopologyManager.new_node(graph_id='test')
-
-        nodes = [node]
-
-        graph = TopologyManager.new_graph(nodes=nodes)
-
-        nodes = graph[TopologyManager.NODES]
-
-        self.assertEqual(len(nodes), 2)
-
-        root = nodes[0]
-
-        self.assertTrue(TopologyManager.is_root(root))
-
-    def test_with_root(self):
-        """
-        Test when root is in nodes.
-        """
-
-        nodes = [TopologyManager.new_node(graph_id='test') for i in range(10)]
-
-        root = TopologyManager.new_node(
-            graph_id='test', _type=TopologyManager.ROOT)
-
-        nodes.insert(5, root)
-
-        graph = TopologyManager.new_graph(nodes=nodes)
-
-        nodes = graph[TopologyManager.NODES]
-
-        self.assertEqual(len(nodes), 11)
-
-        root = nodes[0]
-
-        self.assertTrue(TopologyManager.is_root(root))
-
-
-class NewNodeTest(TestCase):
-    """
-    Test TopologyManager.new_node
-    """
-
-    def test_without_state_weight(self):
-
-        node = TopologyManager.new_node(graph_id='test')
-
-        self.assertIn(TopologyManager.DATA, node)
-
-        data = node[TopologyManager.DATA]
-
-        node_state = data[TopologyManager.STATE]
-        self.assertEqual(node_state, TopologyManager.DEFAULT_STATE)
-
-        node_weight = data[TopologyManager.WEIGHT]
-        self.assertEqual(node_weight, TopologyManager.DEFAULT_WEIGHT)
-
-    def test_with_state_weight(self):
-
-        state, weight = 50, 51
-
-        node = TopologyManager.new_node(
-            graph_id='test', state=state, weight=weight)
-
-        self.assertIn(TopologyManager.DATA, node)
-
-        data = node[TopologyManager.DATA]
-
-        node_state = data[TopologyManager.STATE]
-        self.assertEqual(state, node_state)
-
-        node_weight = data[TopologyManager.WEIGHT]
-        self.assertEqual(weight, node_weight)
-
-
-class PutGraphTest(TestCase):
-    """
-    Test put_graph method
-    """
     def setUp(self):
         """
-        Instantiate a new TopologyManager
+        Initialize a manager.
         """
 
-        self.id = 'test'
-        self.tm = TopologyManager()
+        self.manager = TopologyManager(data_scope='test_topology')
+        self.manager.del_elts()
 
     def tearDown(self):
         """
-        Delete self.id graph.
+        Empty DB.
         """
 
-        self.tm.del_graph(ids=self.id)
+        self.manager.del_elts()
 
-    def test_without_root(self):
+    def test_empty(self):
         """
-        Test to put a graph without root.
+        Test to get nodes from an not existing entity.
         """
 
-        graph = TopologyManager.new_graph(_id=self.id)
+        nodes = self.manager.get_nodes(entity='')
+        self.assertFalse(nodes)
 
-        graph[TopologyManager.NODES] = []
+    def test_one_node(self):
+        """
+        Test to get one node from an existing entity.
+        """
 
-        self.tm.put_graph(graph=graph)
-
-        graph = self.tm.get_graph(_id=self.id)
-
-        nodes = graph[TopologyManager.NODES]
-
+        node = Node(entity='test')
+        node.save(manager=self.manager)
+        nodes = self.manager.get_nodes(entity='test')
         self.assertEqual(len(nodes), 1)
+        node.delete(manager=self.manager)
 
-        root = nodes[0]
-
-        self.assertTrue(TopologyManager.is_root(root))
-
-    def test_with_root(self):
+    def test_nodes(self):
         """
-        Test to put a graph with root
+        Test to get nodes from an existing entity.
         """
-        root = TopologyManager.new_node(
-            graph_id=self.id, _type=TopologyManager.ROOT)
 
-        nodes = [TopologyManager.new_node(graph_id=self.id) for i in range(10)]
-
-        nodes.insert(5, root)
-
-        graph = TopologyManager.new_graph(_id=self.id, nodes=nodes)
-
-        self.tm.put_graph(graph=graph)
-
-        graph = self.tm.get_graph(_id=self.id)
-
-        nodes = graph[TopologyManager.NODES]
-
-        self.assertEqual(len(nodes), 11)
-
-        root = nodes[0]
-
-        self.assertTrue(TopologyManager.is_root(root))
-
+        count = 10
+        nodes = [None] * count
+        for i in range(count):
+            node = Node(entity='test')
+            node.save(manager=self.manager)
+            nodes[i] = node
+        _nodes = self.manager.get_nodes(entity='test')
+        self.assertEqual(len(_nodes), count)
+        for node in nodes:
+            node.delete(manager=self.manager)
 
 if __name__ == '__main__':
     main()

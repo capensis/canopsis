@@ -38,63 +38,65 @@ update such nodes when the entity change of state.
 Related rule actions are defined in .condition module.
 """
 
-from canopsis.topology.manager import Topology
-from canopsis.topology.process import SOURCES, NODE, WEIGHT
+from canopsis.topology.manager import TopologyManager
+from canopsis.topology.process import SOURCES, WEIGHT
 from canopsis.check import Check
 from canopsis.task import register_task
 
 from sys import maxint
 
-topology = Topology()
+tm = TopologyManager()
 
 
-@register_task(name='topology.new_state')
-def new_state(event, ctx, state=None, **kwargs):
+@register_task
+def new_state(event, node, state=None, **kwargs):
     """
-    Condition triggered when state is different than in node ctx state.
-    """
+    Condition triggered when state is different than node state.
 
-    # get node context
-    node = ctx[NODE]
+    :param dict event: event from where get state if input state is None.
+    :param Node node: node from where check if node state != input state.
+    :param int state: state to compare with input node state.
+    """
 
     # if state is None, use event state
     if state is None:
         state = event[Check.STATE]
 
     # True if node state is different than state
-    result = node[Check.STATE] != state
+    result = node.data[Check.STATE] != state
 
     return result
 
 
-@register_task(name='topology.condition')
-def condition(event, ctx, min_weight=1, state=None, rrule=None, **kwargs):
+@register_task
+def condition(
+    event, ctx, node, min_weight=1, state=None, rrule=None, **kwargs
+):
     """
-    Generic condition applied on sources of ctx node
+    Generic condition applied on sources of node.
 
-    :param dict event: event which has fired this condition
-    :param dict ctx: rule context which must contain rule node
+    :param dict ctx: rule context which must contain rule node.
     :param int min_weight:
-    :param int state: state to check among sources nodes
+    :param int state: state to check among sources nodes.
     """
 
-    node = ctx[NODE]
+    source_nodes = tm.get_neighbourhood(
+        ids=node.id, sources=True, targets=False
+    )
 
-    source_nodes = topology.find_source_nodes(node=node)
-
-    # start to remove downtime entities
-
-    weights = (source_node[WEIGHT] for source_node in source_nodes)
-    min_weight = min(min_weight, weights)
+    weights = list(source_node.data[WEIGHT] for source_node in source_nodes)
+    if weights:
+        weights.append(min_weight)
+        min_weight = min(weights)
 
     result = False
 
     for source_node in source_nodes:
 
-        source_node_state = source_node[Check.STATE]
+        source_node_state = source_node.data[Check.STATE]
 
         if source_node_state == state:
-            min_weight -= source_node[WEIGHT]
+            min_weight -= source_node.data[WEIGHT]
 
             if min_weight <= 0:
                 result = True
@@ -107,17 +109,15 @@ def condition(event, ctx, min_weight=1, state=None, rrule=None, **kwargs):
     return result
 
 
-@register_task(name='topology.all')
-def all(event, ctx, state, **kwargs):
+@register_task
+def _all(**kwargs):
     """
-    Check if all source nodes match with input check_state
+    Check if all source nodes match with input check_state.
     """
 
     result = condition(
-        event=event,
-        ctx=ctx,
-        state=state,
         min_weight=maxint,
-        **kwargs)
+        **kwargs
+    )
 
     return result
