@@ -27,109 +27,214 @@ from dateutil import rrule
 
 from datetime import datetime
 
-from canopsis.rule import register_task
-from canopsis.rule.condition import any, all, during
+from canopsis.task import register_task, TASK_ID, TASK_PARAMS
+from canopsis.task.condition import any, all, during, switch, STATEMENT
 
 
-@register_task
-def condition(event, ctx, **kwargs):
-    pass
-
-
-@register_task
-def condition_raise(event, ctx, **kwargs):
+@register_task('error')
+def condition_raise(**kwargs):
     raise Exception()
 
 
-@register_task
-def condition_true(event, ctx, **kwargs):
+@register_task('true')
+def condition_true(**kwargs):
     return True
 
 
-@register_task
-def condition_false(event, ctx, **kwargs):
+@register_task('false')
+def condition_false(**kwargs):
     return False
 
 
 class DuringTest(TestCase):
+    """
+    Test during test.
+    """
 
     def test_inside(self):
         duration = {"seconds": 5}
         now = time()
         now = datetime.fromtimestamp(now)
         rrule_p = {"freq": rrule.DAILY, "dtstart": now}
-        result = during(event=None, ctx=None, rrule=rrule_p, duration=duration)
+        result = during(rrule=rrule_p, duration=duration)
         self.assertTrue(result)
 
     def test_outside(self):
         now = time()
         now = datetime.fromtimestamp(now + 5)
         rrule_p = {"freq": rrule.DAILY, "dtstart": now}
-        result = during(event=None, ctx=None, rrule=rrule_p)
+        result = during(rrule=rrule_p)
         self.assertFalse(result)
 
 
 class AnyTest(TestCase):
+    """
+    Test any function.
+    """
 
     def test_empty(self):
-        result = any(event=None, ctx=None)
+        result = any()
         self.assertFalse(result)
 
     def test_unary(self):
-        conditions = ["condition_true"]
-        result = any(event=None, ctx=None, conditions=conditions)
+        confs = ["true"]
+        result = any(confs=confs)
         self.assertTrue(result)
 
     def test_false(self):
-        conditions = ["condition_false", "condition_false"]
-        result = any(event=None, ctx=None, conditions=conditions)
+        confs = ["false", "false"]
+        result = any(confs=confs)
         self.assertFalse(result)
 
     def test_true(self):
-        conditions = ["condition_false", "condition_true", "condition_true"]
-        result = any(event=None, ctx=None, conditions=conditions)
+        confs = ["false", "true", "true"]
+        result = any(confs=confs)
         self.assertTrue(result)
 
     def test_all_true(self):
-        conditions = ["condition_true", "condition_true", "condition_true"]
-        result = any(event=None, ctx=None, conditions=conditions)
+        confs = ["true", "true", "true"]
+        result = any(confs=confs)
         self.assertTrue(result)
 
     def test_raise(self):
-        conditions = ["condition_raise"]
-        self.assertRaises(
-            Exception,
-            any,
-            event=None, ctx=None, conditions=conditions)
+        confs = ["error"]
+        self.assertRaises(Exception, any, confs=confs)
 
 
 class AllTest(TestCase):
+    """
+    Test all function.
+    """
 
     def test_empty(self):
-        result = all(event=None, ctx=None)
+        result = all()
         self.assertFalse(result)
 
     def test_unary(self):
-        conditions = ["condition_true"]
-        result = all(event=None, ctx=None, conditions=conditions)
+        confs = ["true"]
+        result = all(confs=confs)
         self.assertTrue(result)
 
     def test_false(self):
-        conditions = ["condition_false", "condition_true", "condition_false"]
-        result = all(event=None, ctx=None, conditions=conditions)
+        confs = ["false", "true", "false"]
+        result = all(confs=confs)
         self.assertFalse(result)
 
     def test_true(self):
-        conditions = ["condition_true", "condition_true", "condition_true"]
-        result = all(event=None, ctx=None, conditions=conditions)
+        confs = ["true", "true", "true"]
+        result = all(confs=confs)
         self.assertTrue(result)
 
     def test_raise(self):
-        conditions = ["condition_raise"]
-        self.assertRaises(
-            Exception,
-            all,
-            event=None, ctx=None, conditions=conditions)
+        confs = ["error"]
+        self.assertRaises(Exception, all, confs=confs)
+
+
+class SwitchTest(TestCase):
+    """
+    Test switch function.
+    """
+
+    def setUp(self):
+
+        self.count_by_indexes = {}
+        register_task('count', force=True)(self._count)
+
+    def _count(self, index, **kwargs):
+
+        self.count_by_indexes[index] += 1
+
+    def _generate_conf(self, ids):
+        """
+        Generate a conf of size items and with true indexes.
+
+        :param list ids: ids to generate.
+        """
+
+        result = [
+            {
+                TASK_ID: value,
+                STATEMENT: {
+                    TASK_ID: 'count',
+                    TASK_PARAMS: {'index': i}
+                }
+            }
+            for i, value in enumerate(ids)
+        ]
+        # initialize count by indexes
+        self.count_by_indexes = {i: 0 for i in range(len(ids))}
+        return result
+
+    def test_empty_switch(self):
+        """
+        Test empty switch.
+        """
+
+        result = switch()
+        self.assertIsNone(result, None)
+
+    def test_one_true_statement(self):
+        """
+        Test a switch with one statement.
+        """
+
+        confs = self._generate_conf(['true'])
+        switch(confs=confs)
+        self.assertEqual(self.count_by_indexes[0], 1)
+
+    def test_one_false_statement(self):
+        """
+        Test a switch with one statement.
+        """
+
+        confs = self._generate_conf(['false'])
+        switch(confs=confs)
+        self.assertEqual(self.count_by_indexes[0], 0)
+
+    def test_one_error_statement(self):
+        """
+        Test a switch with one statement.
+        """
+
+        confs = self._generate_conf(['error'])
+        self.assertRaises(Exception, switch, confs)
+
+    def test_statements(self):
+
+        confs = self._generate_conf(['false', 'true', 'error'])
+        switch(confs=confs)
+        self.assertEqual(self.count_by_indexes[0], 0)
+        self.assertEqual(self.count_by_indexes[1], 1)
+        self.assertEqual(self.count_by_indexes[2], 0)
+
+    def test_remain_statements(self):
+
+        confs = self._generate_conf(['false', 'true', 'false'])
+        switch(confs=confs, remain=True)
+        self.assertEqual(self.count_by_indexes[0], 0)
+        self.assertEqual(self.count_by_indexes[1], 1)
+        self.assertEqual(self.count_by_indexes[2], 1)
+
+    def test_remain_error_statements(self):
+
+        confs = self._generate_conf(['false', 'true', 'error'])
+        switch(confs=confs, remain=True)
+        self.assertEqual(self.count_by_indexes[0], 0)
+        self.assertEqual(self.count_by_indexes[1], 1)
+        self.assertEqual(self.count_by_indexes[2], 1)
+
+    def test_all_statements(self):
+
+        confs = self._generate_conf(['true', 'false', 'true'])
+        switch(confs=confs, all_checked=True)
+        self.assertEqual(self.count_by_indexes[0], 1)
+        self.assertEqual(self.count_by_indexes[1], 0)
+        self.assertEqual(self.count_by_indexes[2], 1)
+
+    def test_all_error_statements(self):
+
+        confs = self._generate_conf(['false', 'true', 'error'])
+        self.assertRaises(Exception, switch, confs=confs, all_checked=True)
 
 
 if __name__ == '__main__':

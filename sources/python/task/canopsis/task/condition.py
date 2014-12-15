@@ -19,11 +19,11 @@
 # ---------------------------------
 
 """
-Task condition functions.
+Task condition functions such as duration/rrule condition, switch, all and any.
 """
 
 from canopsis.common.init import basestring
-from canopsis.task import get_task_with_params, register_task, run_task
+from canopsis.task import register_task, run_task
 
 from time import time
 from datetime import datetime
@@ -77,69 +77,117 @@ def during(rrule, duration=None, timestamp=None, **kwargs):
 
 
 @register_task
-def any(conditions=None, **kwargs):
+def any(confs=None, **kwargs):
     """
-    True if at least one input condition is True
+    True iif at least one input condition is equivalent to True.
+
+    :param confs: confs to check.
+    :type confs: list or dict or str
+    :param kwargs: additional task kwargs.
+
+    :return: True if at least one condition is checked (compared to True, but
+            not an strict equivalence to True). False otherwise.
+    :rtype: bool
     """
 
     result = False
 
-    if conditions is not None:
-
-        for condition in conditions:
-            condition_task, params = get_task_with_params(condition)
-            params.update(kwargs)
-            result = condition_task(**params)
-
-            if result:
+    if confs is not None:
+        # ensure confs is a list
+        if isinstance(confs, (basestring, dict)):
+            confs = [confs]
+        for conf in confs:
+            result = run_task(conf, **kwargs)
+            if result:  # leave function as soon as a result if True
                 break
 
     return result
 
 
 @register_task
-def all(conditions=None, **kwargs):
+def all(confs=None, **kwargs):
     """
-    True iif all input conditions is True
+    True iif all input confs are True.
+
+    :param confs: confs to check.
+    :type confs: list or dict or str
+    :param kwargs: additional task kwargs.
+
+    :return: True if all conditions are checked. False otherwise.
+    :rtype: bool
     """
 
     result = False
 
-    if conditions is not None:
-
+    if confs is not None:
+        # ensure confs is a list
+        if isinstance(confs, (basestring, dict)):
+            confs = [confs]
+        # if at least one conf exists, result is True by default
         result = True
-
-        for condition in conditions:
-            condition_task, params = get_task_with_params(condition)
-            params.update(kwargs)
-            result = condition_task(**params)
-
+        for conf in confs:
+            result = run_task(conf, **kwargs)
+            # stop when a result is False
             if not result:
                 break
 
     return result
 
 
+STATEMENT = 'statement'
+
+
 @register_task
-def switch(rules, cached=True, raiseError=False, **kwargs):
+def switch(confs=None, remain=False, all_checked=False, **kwargs):
     """
-    Execute first rule among input
+    Execute first statement among conf where task result is True.
+    If remain, process all statements conf starting from the first checked
+        conf.
+
+    :param confs: task confs to check. Each one may contain a task action at
+        the key 'action' in conf.
+    :type confs: str or dict or list
+    :param bool remain: if True, execute all remaining actions after the
+        first checked condition.
+    :param bool all_checked: execute all statements where conditions are
+        checked.
+
+    :return: statement result or list of statement results if remain.
+    :rtype: list or object
     """
 
-    result = False, None
+    # init result
+    result = [] if remain else None
 
-    for rule in rules:
-
-        # try to execute all rules while condition is False
-        condition, action = run_task(
-            rule=rule,
-            cached=cached,
-            raiseError=raiseError,
-            **kwargs)
-
-        # stop when condition is True
-        if condition is True:
-            result = condition, action
-            break
+    if confs is not None:
+        if isinstance(confs, (basestring, dict)):
+            confs = [confs]
+        # check if remain and one task has already been checked.
+        remaining = False
+        for conf in confs:
+            # check if task has to be checked or not
+            check = remaining
+            if not check:
+                # try to check current conf
+                check = run_task(conf=conf, **kwargs)
+            # if task is checked or remaining
+            if check:
+                if STATEMENT in conf:  # if statements exist, run them
+                    statement = conf[STATEMENT]
+                    statement_result = run_task(statement, **kwargs)
+                    # save result
+                    if not remain:  # if not remain, result is statement_result
+                        result = statement_result
+                    else:  # else, add statement_result to result
+                        result.append(statement_result)
+                # if remain
+                if remain:
+                    # change of remaining status
+                    if not remaining:
+                        remaining = True
+                elif all_checked:
+                    pass
+                else:  # leave execution if one statement has been executed
+                    break
 
     return result

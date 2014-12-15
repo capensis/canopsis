@@ -211,12 +211,7 @@ def get_task_with_params(conf, cache=True):
     return result
 
 
-def run_task(
-    conf=None,
-    ctx=None,
-    raiseError=True, exception_type=TaskError,
-    cache=True
-):
+def run_task(conf=None, ctx=None, raiseError=True, cache=True):
     """
     Run a single task related to a conf, and a task_name, a task ctx and
         not functional parameters.
@@ -229,8 +224,6 @@ def run_task(
     :param dict ctx: task execution context. Empty dict by default.
     :param bool raiseError: if True (default), raise any task error, else
         result if the raised error.
-    :param type exception_type: (default TaskError) exception type to raise if
-        an error occured.
     :param bool cache: (True by default) use cache memory to save task
         references from input task name.
     """
@@ -241,20 +234,14 @@ def run_task(
     if ctx is None:
         ctx = {}
 
-    try:
-        task, params = get_task_with_params(conf=conf, cache=cache)
-    except TaskError as e:
-        # if action does not exist and raiseError is False, do nothing
-        if raiseError:
+    task, params = get_task_with_params(conf=conf, cache=cache)
+
+    try:  # process task
+        result = task(ctx=ctx, **params)
+    except Exception as error:  # if an error occured
+        if raiseError:  # if raiseError, raise it
             raise
-    else:
-        try:  # process task
-            result = task(ctx=ctx, **params)
-        except Exception as e:  # if an error occured
-            error = exception_type(e)  # embed it
-            if raiseError:  # if raiseError, raise it
-                raise error
-            result = error  # or result is the error
+        result = error  # or result is the error
 
     return result
 
@@ -299,7 +286,7 @@ def tasks(confs=None, raiseError=False, **kwargs):
         of dict {'result': task result, 'error': task error}.
 
     :param confs: task confs to process.
-    :type confs: str or list
+    :type confs: str or list or dict
     :param bool raiseError: if True (default False) raise the first encountered
         error during processing of tasks.
     :param kwargs: additional parameters to process in all tasks.
@@ -312,7 +299,7 @@ def tasks(confs=None, raiseError=False, **kwargs):
 
     if confs is not None:
         # ensure confs is a list
-        if isinstance(confs, basestring):
+        if isinstance(confs, (basestring, dict)):
             confs = [confs]
         for conf in confs:
             task, params = get_task_with_params(conf)
