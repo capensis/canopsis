@@ -21,7 +21,7 @@
 
 from unittest import TestCase, main
 from mock import patch
-from os.path import join
+from os.path import join, abspath, dirname
 from lxml.etree import parse, tostring, _ElementTree
 
 from canopsis.schema.utils import get_unique_key, get_existing_unique_keys, \
@@ -29,7 +29,8 @@ from canopsis.schema.utils import get_unique_key, get_existing_unique_keys, \
 
 
 def mock_get_schema_path(*args):
-    return join('xml/schema', *args)
+    this_file_dir = dirname(abspath(__file__))
+    return join(this_file_dir, 'xml/schema', *args)
 
 
 class TestUtils(TestCase):

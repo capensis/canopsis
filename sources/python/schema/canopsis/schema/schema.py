@@ -93,8 +93,6 @@ class Schema(object):
         with open(get_schema_path(name), 'w') as schema_file:
             schema_file.write(schema)
 
-        return True
-
     def validate_schema(self, schema):
         """
         Make sure provided schema's syntax/grammar are correct
