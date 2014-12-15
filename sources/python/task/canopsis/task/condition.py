@@ -77,7 +77,7 @@ def during(rrule, duration=None, timestamp=None, **kwargs):
 
 
 @register_task
-def any(confs=None, **kwargs):
+def _any(confs=None, **kwargs):
     """
     True iif at least one input condition is equivalent to True.
 
@@ -105,7 +105,7 @@ def any(confs=None, **kwargs):
 
 
 @register_task
-def all(confs=None, **kwargs):
+def _all(confs=None, **kwargs):
     """
     True iif all input confs are True.
 
@@ -135,6 +135,25 @@ def all(confs=None, **kwargs):
 
 
 STATEMENT = 'statement'
+
+
+@register_task
+def _not(condition=None, **kwargs):
+    """
+    Return the opposite of input condition.
+
+    :param condition: condition to process.
+
+    :result: not condition.
+    :rtype: bool
+    """
+
+    result = True
+
+    if condition is not None:
+        result = not run_task(condition, **kwargs)
+
+    return result
 
 
 @register_task

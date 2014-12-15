@@ -29,7 +29,7 @@ from datetime import datetime
 
 from canopsis.task import register_task, TASK_ID, TASK_PARAMS
 from canopsis.task.condition import (
-    any, all, during, condition, switch, STATEMENT
+    _any, _all, during, _not, condition, switch, STATEMENT
 )
 
 
@@ -71,65 +71,102 @@ class DuringTest(TestCase):
 
 class AnyTest(TestCase):
     """
-    Test any function.
+    Test _any function.
     """
 
     def test_empty(self):
-        result = any()
+        result = _any()
         self.assertFalse(result)
 
     def test_unary(self):
         confs = ["true"]
-        result = any(confs=confs)
+        result = _any(confs=confs)
         self.assertTrue(result)
 
     def test_false(self):
         confs = ["false", "false"]
-        result = any(confs=confs)
+        result = _any(confs=confs)
         self.assertFalse(result)
 
     def test_true(self):
         confs = ["false", "true", "true"]
-        result = any(confs=confs)
+        result = _any(confs=confs)
         self.assertTrue(result)
 
     def test_all_true(self):
         confs = ["true", "true", "true"]
-        result = any(confs=confs)
+        result = _any(confs=confs)
         self.assertTrue(result)
 
     def test_raise(self):
         confs = ["error"]
-        self.assertRaises(Exception, any, confs=confs)
+        self.assertRaises(Exception, _any, confs=confs)
 
 
 class AllTest(TestCase):
     """
-    Test all function.
+    Test _all function.
     """
 
     def test_empty(self):
-        result = all()
+        result = _all()
         self.assertFalse(result)
 
     def test_unary(self):
         confs = ["true"]
-        result = all(confs=confs)
+        result = _all(confs=confs)
         self.assertTrue(result)
 
     def test_false(self):
         confs = ["false", "true", "false"]
-        result = all(confs=confs)
+        result = _all(confs=confs)
         self.assertFalse(result)
 
     def test_true(self):
         confs = ["true", "true", "true"]
-        result = all(confs=confs)
+        result = _all(confs=confs)
         self.assertTrue(result)
 
     def test_raise(self):
         confs = ["error"]
-        self.assertRaises(Exception, all, confs=confs)
+        self.assertRaises(Exception, _all, confs=confs)
+
+
+class NotTest(TestCase):
+    """
+    Test _not operator.
+    """
+
+    def test_empty(self):
+        """
+        Test empty condition.
+        """
+
+        result = _not()
+        self.assertTrue(result)
+
+    def test_false(self):
+        """
+        Test true condition.
+        """
+
+        result = _not(condition='true')
+        self.assertFalse(result)
+
+    def test_true(self):
+        """
+        Test false condition.
+        """
+
+        result = _not(condition='false')
+        self.assertTrue(result)
+
+    def test_error(self):
+        """
+        Test error condition.
+        """
+
+        self.assertRaises(Exception, _not, condition='error')
 
 
 class ConditionTest(TestCase):
