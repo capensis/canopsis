@@ -154,7 +154,13 @@ def register_task(_id=None, force=False):
 
     return result
 
+# register the function register_tasks
+register_task()(register_tasks)
+# register the function get_task
+register_task()(get_task)
 
+
+@register_task
 def unregister_tasks(*ids):
     """
     Unregister input ids. If ids is empty, clear all registered tasks.
@@ -211,7 +217,8 @@ def get_task_with_params(conf, cache=True):
     return result
 
 
-def run_task(conf=None, ctx=None, raiseError=True, cache=True):
+@register_task
+def run_task(conf=None, ctx=None, raiseError=True, cache=True, **kwargs):
     """
     Run a single task related to a conf, and a task_name, a task ctx and
         not functional parameters.
@@ -226,6 +233,7 @@ def run_task(conf=None, ctx=None, raiseError=True, cache=True):
         result if the raised error.
     :param bool cache: (True by default) use cache memory to save task
         references from input task name.
+    :param kwargs: additional task parameters.
     """
 
     result = None
@@ -235,6 +243,8 @@ def run_task(conf=None, ctx=None, raiseError=True, cache=True):
         ctx = {}
 
     task, params = get_task_with_params(conf=conf, cache=cache)
+    # add kwargs in params
+    params.update(kwargs)
 
     try:  # process task
         result = task(ctx=ctx, **params)
@@ -246,6 +256,7 @@ def run_task(conf=None, ctx=None, raiseError=True, cache=True):
     return result
 
 
+@register_task
 def new_conf(_id, **params):
     """
     Generate a new task conf related to input _id and params.
