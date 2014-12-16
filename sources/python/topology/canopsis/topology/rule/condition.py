@@ -32,10 +32,10 @@ Such conditions are::
     - ``all``: test if all source node states match with an input state.
     - ``any``: test if one of source node states match with an input state.
 
-the ``new_state`` condition may be used by nodes bound to entities in order to
+The ``new_state`` condition may be used by nodes bound to entities in order to
 update such nodes when the entity change of state.
 
-Related rule actions are defined in .condition module.
+Related rule actions are defined in ``canopsis.topology.rule.action`` module.
 """
 
 from canopsis.topology.manager import TopologyManager
@@ -80,9 +80,7 @@ def condition(
     :param int state: state to check among sources nodes.
     """
 
-    source_nodes = tm.get_neighbourhood(
-        ids=node.id, sources=True, targets=False
-    )
+    source_nodes = tm.get_sources(ids=node.id)
 
     weights = list(source_node.data[WEIGHT] for source_node in source_nodes)
     if weights:

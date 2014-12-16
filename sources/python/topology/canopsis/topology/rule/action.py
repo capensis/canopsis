@@ -81,9 +81,7 @@ def state_from_sources(event, node, ctx, f, manager=None, **kwargs):
     if SOURCES in ctx:
         sources = ctx[SOURCES]
     else:  # else get them with the topology object
-        sources = manager.get_neighbourhood(
-            ids=node.id, sources=True, targets=False
-        )
+        sources = manager.get_sources(ids=node.id)
 
     if sources:  # do something only if sources exist
         # calculate the state

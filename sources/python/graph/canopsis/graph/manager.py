@@ -354,7 +354,7 @@ class GraphManager(MiddlewareRegistry):
             target_data=data, target_query=query, target_types=types,
             edge_ids=edge_ids, add_edges=add_edges,
             target_edge_types=edge_types, target_edge_data=edge_data,
-            target_edge_query=edge_query
+            edge_query=edge_query
         )
 
     def get_sources(
@@ -374,7 +374,7 @@ class GraphManager(MiddlewareRegistry):
             source_data=data, source_query=query, source_types=types,
             edge_ids=edge_ids, add_edges=add_edges,
             source_edge_types=edge_types, source_edge_data=edge_data,
-            source_edge_query=edge_query
+            edge_query=edge_query
         )
 
     def get_neighbourhood(
