@@ -19,51 +19,111 @@
 # ---------------------------------
 
 from StringIO import StringIO
+from os import listdir
 from lxml.etree import parse, tostring, XMLSchema, XSLT
 
-from canopsis.schema.utils import is_name_available, get_unique_key, get_xml, \
-    is_unique_key_existing, get_schema_path
+from canopsis.schema.utils import get_unique_key, get_schema_path, \
+    is_name_available
 
 
 class Schema(object):
 
     def __init__(self, *args, **kwargs):
         super(Schema, self).__init__(*args, **kwargs)
-        pass
 
-    def get_schema(self, schema):
+        #: Store both metamorphic and structural schemas in cache. They
+        #: can be retrieved by their unique_key.
+        self.cache = {}
+        self.load_cache()
+
+    def load_cache(self):
+        self.cache = {}
+
+        # For the moment only one location is allowed for schemas : in
+        # sys.prefix/share/canopsis/schema/xml
+        for schema_file in listdir(get_schema_path()):
+            try:
+                xschema = parse(get_schema_path(schema_file))
+            except:
+                # If we don't manage to parse it, it may be a non-xml
+                # file that we ignore
+                continue
+
+            unique_key = get_unique_key(xschema)
+            # unique_key is None when an xml parsable ressource does not
+            # fit the unique_key requirement
+            if unique_key is not None and unique_key not in self.cache:
+                self.cache[unique_key] = xschema
+
+    def cache_schema(self, xschema):
+        """
+        (Over)write a cache entry for supplied schema
+
+        :param _ElementTree xschema: schema to cache
+        :return: False is xschema has no unique_key, True otherwise
+        """
+        unique_key = get_unique_key(xschema)
+        if unique_key is None:
+            return False
+        else:
+            self.cache[unique_key] = xschema
+            return True
+
+    def get_existing_unique_keys(self):
+        """
+        Return all unique keys from all available schemas regarding to
+        the API
+
+        :return: {unique_key: xschema+}
+        :rtype: dict
+        """
+        return self.cache.keys()
+
+    def is_unique_key_existing(self, unique_key):
+        """
+        Assert if a unique_key already exists
+
+        :param str unique_key: unique key token
+        :return: True if a match is found, False otherwise
+        :rtype: bool
+        """
+        return unique_key in self.get_existing_unique_keys()
+
+    def get_cached_schema(self, unique_key):
+        """
+        Checks if schema is cached and returns it
+
+        :param str unique_key: schema unique_key
+        :return: schema
+        :rtype: _ElementTree or None
+        """
+
+        if self.is_unique_key_existing(unique_key):
+            return self.cache[unique_key]
+        else:
+            return None
+
+    def get_schema(self, unique_key):
         """
         Return an available schema
 
-        :param str schema: unique_key or filename
-        :return: schema in xml
-        :rtype: str
-        :raises ValueError: if schema param is neither a unique_key nor
-          a file
+        :param str unique_key: schema unique_key
+        :return: schema in xml or None
+        :rtype: str or None
         """
 
-        # Xml Schema. It will be set to a filename if a match is found.
-        xschema = get_xml(schema)
-
-        # xschema not set <=> no matches found
-        if xschema is None:
-            raise ValueError(
-                '{} neither matches with a schema filename nor with a '
-                'schema unique_key (targetNamespace)'.format(schema))
-
-        return tostring(xschema.getroot())
-
-    def get_data_type_schemas(self, data_type):
-        raise NotImplementedError
+        xschema = self.get_cached_schema(unique_key)
+        if xschema is not None:
+            return tostring(xschema.getroot())
+        else:
+            return None
 
     def push_schema(self, name, schema):
         """
-        Store a schema on server
+        Store a schema on server and cache it
 
         :param str name: name of schema file
         :param str schema: xml content in a string
-        :return: True if insertion has been performed
-        :rtype: bool
         :raises ValueError: if schema name already exists
         :raises SyntaxError: if xml cannot be read by lxml
         :raises AttributeError: if unique_key does not exist
@@ -84,12 +144,13 @@ class Schema(object):
             raise AttributeError('Unique key (targetNamespace attribute of '
                                  'root element) does not exist')
 
-        if is_unique_key_existing(unique_key):
+        if self.is_unique_key_existing(unique_key):
             raise ValueError('Unique key (\'{}\') already exists'.
                              format(unique_key))
 
         # if no exception has been raised until here, we can write the
-        # schema
+        # schema and add it to cache
+        self.cache_schema(xschema)
         with open(get_schema_path(name), 'w') as schema_file:
             schema_file.write(schema)
 
@@ -97,18 +158,17 @@ class Schema(object):
         """
         Make sure provided schema's syntax/grammar are correct
 
-        :param str schema: xml (schema itself) or unique_key or
-          filename
+        :param str schema: xml (schema itself) or unique_key
         :return: [True, <schema_type>] if schema is correct and
           [False, None] otherwise
         :rtype: list
 
-        .. info:: <schema_type> can be either 'XMLSchema' or 'XSLT'
+        .. info:: <schema_type> can either be 'XMLSchema' or 'XSLT'
         """
 
-        xschema = get_xml(schema)
-
-        if xschema is None:
+        if schema in self.get_existing_unique_keys():
+            xschema = self.get_cached_schema(schema)
+        else:
             try:
                 xschema = parse(StringIO(schema))
             except:
@@ -132,8 +192,7 @@ class Schema(object):
         """
         Raise an error if a schema is not a structural one
 
-        :param str schema: xml (schema itself) or unique_key or
-          filename
+        :param str schema: xml (schema itself) or unique_key
         :raises AssertionError: if schema is not a structural one
         """
 
@@ -144,8 +203,7 @@ class Schema(object):
         """
         Raise an error if a schema is not a metamorphic one
 
-        :param str schema: xml (schema itself) or unique_key or
-          filename
+        :param str schema: xml (schema itself) or unique_key
         :raises AssertionError: if schema is not a metamorphic one
         """
 
@@ -158,8 +216,8 @@ class Schema(object):
         Ensure that a data structure matches a schema (xml schema)
 
         :param str data: data to check
-        :param str structural_schema: unique_key or filename
-        :param str metamorphic_schema: unique_key or filename
+        :param str structural_schema: unique_key
+        :param str metamorphic_schema: unique_key
         :param bool validate_schemas: Any provided schema will be
           valided before use if set to True. They are used as is
           otherwise. This option is suited for better perfs. Use it at
@@ -177,7 +235,9 @@ class Schema(object):
         if metamorphic_schema is not None:
             self.transform(data, metamorphic_schema)
 
-        xmlschema = XMLSchema(get_xml(structural_schema))
+        xsl_xml = self.get_cached_schema(structural_schema)
+        xmlschema = XMLSchema(xsl_xml)
+
         xml = parse(StringIO(data))
 
         return xmlschema.validate(xml)
@@ -194,11 +254,11 @@ class Schema(object):
         Transform provided data with a metamorphic schema (xslt)
 
         :param str data: data to transform
-        :param str metamorphic_schema: unique_key or filename
-        :param from_structure: Structural schema (unique_key or
-          filename) to check data. Check is not performed if None.
+        :param str metamorphic_schema: unique_key
+        :param from_structure: Structural schema unique_key to check
+          data. Check is not performed if None.
         :type from_structure: str or None
-        :param to_structure: Structural schema (unique_key or filename)
+        :param to_structure: Structural schema unique_key
           to check transformed data. Check is not performed if None.
         :type to_structure: str or None
         :param bool validate_data: Structural schemas are used if True,
@@ -228,7 +288,9 @@ class Schema(object):
                 raise ValueError('Original data has not been validated '
                                  'according to \'{}\''.format(from_structure))
 
-        xslt = XSLT(get_xml(metamorphic_schema))
+        xsl_xml = self.get_cached_schema(metamorphic_schema)
+        xslt = XSLT(xsl_xml)
+
         xml = parse(StringIO(data))
 
         transformed_data = xslt(xml)
