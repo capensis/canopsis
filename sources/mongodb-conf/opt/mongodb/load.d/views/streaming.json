@@ -29,7 +29,7 @@
           },
           "filters" : [],
           "mixins": [
-            "Customfilter",
+            "Customfilterlist",
             "Sortablearray",
             "Pagination"
           ],

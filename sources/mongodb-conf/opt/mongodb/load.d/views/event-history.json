@@ -37,12 +37,12 @@
             }
           ],
           "mixins": [
-            "Customfilter",
-            "Sortablearray",
-            "Arraysearch",
-            "Pagination",
-            "History",
-            "Eventhistory"
+            {"name": "Customfilterlist"},
+            {"name": "Sortablearray"},
+            {"name": "Arraysearch"},
+            {"name": "Pagination"},
+            {"name": "History"},
+            {"name": "Eventhistory"}
           ],
           "displayed_columns": [
             "domain",

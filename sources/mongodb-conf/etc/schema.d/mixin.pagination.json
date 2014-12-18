@@ -1,0 +1,15 @@
+{
+	"type": "object",
+	"categories": [{
+		"title": "General",
+		"keys":["itemsPerPage"]
+	}],
+
+	"properties": {
+		"itemsPerPage": {
+			"type": "integer",
+			"required": true,
+			"default": 5
+		}
+	}
+}

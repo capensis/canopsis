@@ -5,7 +5,6 @@
 		"xtype": {"type": "string"},
 		"widgetId": {"type": "string"},
 		"tagName": {"type": "string"},
-		"cssClass": {"type": "string"},
 		"refreshInterval": {
 			"type": "integer",
 			"default": 60,

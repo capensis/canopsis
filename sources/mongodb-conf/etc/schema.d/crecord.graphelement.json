@@ -2,7 +2,7 @@
     "type": "object",
     "categories": [{
         "title": "General",
-        "keys": ["crecord_name", "data", "type", "_cls", "_type"]
+        "keys": ["crecord_name", "_data", "type", "_cls", "_type"]
     }],
     "properties": {
         "crecord_type": {
@@ -14,7 +14,7 @@
             "default": "canopsis.graph.elements.GraphElement",
             "required": true
         },
-        "data": {
+        "_data": {
             "type": "object",
             "role": "json",
             "required": false
