@@ -93,10 +93,7 @@ class Archiver(object):
         }
 
     def beat(self):
-        # process this each minute only
-        if time() - self.reset_stealthy_event_duration > 60:
-            self.reset_stealthy_event_duration = time()
-            self.reset_stealthy_event()
+
         self.logger.info((
             'DB documents stats : ' +
             'update: {} in events, ' +
@@ -127,7 +124,7 @@ class Archiver(object):
                 event['_id'] = _id
                 bulk.insert(event)
             try:
-                bulk.execute()
+                bulk.execute({'w': 0})
             except BulkWriteError as bwe:
                 import pprint
                 pp = pprint.PrettyPrinter(indent=2)
@@ -143,7 +140,7 @@ class Archiver(object):
             bulk = backend.initialize_ordered_bulk_op()
             for operation in operations:
                 bulk.find(operation['query']).update(operation['update'])
-            bulk.execute()
+            bulk.execute({'w': 0})
 
     def process_insert_operations(self, insert_operations):
 
@@ -421,6 +418,7 @@ class Archiver(object):
             update_operations = []
 
             query = {'_id': {'$in': self.bulk_ids}}
+
             devents = {}
 
             # Put previous events in pretty data structure
@@ -465,13 +463,8 @@ class Archiver(object):
         changed = False
         new_event = False
 
-        self.logger.debug(" + Event:")
-
         state = event['state']
         state_type = event['state_type']
-
-        self.logger.debug("   - State:\t'%s'" % legend[state])
-        self.logger.debug("   - State type:\t'%s'" % legend_type[state_type])
 
         now = int(time())
 
@@ -488,30 +481,21 @@ class Archiver(object):
                 # may have side effects on acks/cancels
                 devent = {}
 
-            self.logger.debug(" + Check with old record:")
             old_state = devent['state']
             old_state_type = devent['state_type']
             event['last_state_change'] = devent.get('last_state_change',
                                                     event['timestamp'])
 
-            self.logger.debug("   - State:\t\t'{}'".format(legend[old_state]))
-            self.logger.debug("   - State type:\t'{}'".format(
-                legend_type[old_state_type]))
-
             if state != old_state:
                 event['previous_state'] = old_state
 
             if state != old_state or state_type != old_state_type:
-                self.logger.debug(" + Event has changed !")
                 changed = True
-            else:
-                self.logger.debug(" + No change.")
 
             self.check_statuses(event, devent)
 
         except:
             # No old record
-            self.logger.debug(' + New event')
             event['ts_first_stealthy'] = 0
             changed = True
             old_state = state

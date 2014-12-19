@@ -45,15 +45,12 @@ class engine(Engine):
             'consolidation'
         ]
 
-        """
-            self.beat_interval_trigger
-            defines manual trigger for some engines with information like below
-            'downtime': {
+        self.beat_interval_trigger = {
+            'eventstore': {
                 'delay': 60,
                 'elapsed_since_last_beat': 0
             },
-        """
-        self.beat_interval_trigger = {}
+        }
 
     def pre_run(self):
         # Load crecords from database
@@ -147,7 +144,7 @@ class engine(Engine):
 
             tengine = self.beat_interval_trigger[trigger_engine]
 
-            if tengine['delay'] > tengine['elapsed_since_last_beat']:
+            if tengine['elapsed_since_last_beat'] > tengine['delay']:
 
                 self.logger.debug(u'triggering dispatch for {}'.format(
                     trigger_engine

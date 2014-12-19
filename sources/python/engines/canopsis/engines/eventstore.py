@@ -24,6 +24,7 @@ from canopsis.old.downtime import Downtime
 from canopsis.old.storage import CONFIG
 
 from csv import reader
+from time import time
 
 
 class engine(Engine):
@@ -59,12 +60,12 @@ class engine(Engine):
         if _id:
             event['_id'] = _id
             event['event_id'] = event['rk']
-            ## Event to Alert
+            # Event to Alert
             self.amqp.publish(
                 event, event['rk'], self.amqp.exchange_name_alerts)
 
     def store_log(self, event, store_new_event=True):
-        ## passthrough
+        # passthrough
 
         if store_new_event:
             self.archiver.store_new_event(event['rk'], event)
@@ -73,7 +74,7 @@ class engine(Engine):
         event['_id'] = _id
         event['event_id'] = event['rk']
 
-        ## Event to Alert
+        # Event to Alert
         self.amqp.publish(event, event['rk'], self.amqp.exchange_name_alerts)
 
     def work(self, event, *args, **kargs):
@@ -97,3 +98,11 @@ class engine(Engine):
             self.store_log(event, store_new_event=False)
 
         return event
+
+    def consume_dispatcher(self, event, *args, **kargs):
+
+        # Process this each minute only
+        self.logger.info('proceed stealthy reset')
+
+        self.reset_stealthy_event_duration = time()
+        self.archiver.reset_stealthy_event()
