@@ -24,9 +24,9 @@
             "actionbutton-removeselection"
           ],
           "mixins": [
-            "Sortablearray",
-            "Arraysearch",
-            "Pagination"
+            { "name" : "Sortablearray" },
+            { "name" : "Arraysearch" },
+            { "name" : "Pagination" }
           ]
         }
       }

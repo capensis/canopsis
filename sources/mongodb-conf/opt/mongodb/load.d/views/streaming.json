@@ -29,9 +29,9 @@
           },
           "filters" : [],
           "mixins": [
-            "Customfilterlist",
-            "Sortablearray",
-            "Pagination"
+            { "name" : "Customfilterlist" },
+            { "name" : "Sortablearray" },
+            { "name" : "Pagination" }
           ],
           "displayed_columns": [
             "output",

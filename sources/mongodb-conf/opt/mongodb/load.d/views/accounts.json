@@ -26,10 +26,10 @@
             "actionbutton-removeselection"
           ],
           "mixins": [
-            "Sortablearray",
-            "Arraysearch",
-            "Pagination",
-            "Crud"
+            { "name": "Sortablearray" },
+            { "name": "Arraysearch" },
+            { "name": "Pagination" },
+            { "name": "Crud" }
           ],
           "displayed_columns": [
             "_id",

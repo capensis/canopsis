@@ -27,9 +27,9 @@
             "actionbutton-create"
           ],
           "mixins": [
-            "Sortablearray",
-            "Arraysearch",
-            "Pagination"
+            { "name" : "Sortablearray" },
+            { "name" : "Arraysearch" },
+            { "name" : "Pagination" }
           ],
           "displayed_columns": [
             "task",
