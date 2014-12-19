@@ -112,7 +112,7 @@ class Archiver(object):
         if operations:
             # is there any event to process ?
             backend = self.storage.get_backend(collection)
-            bulk = backend.initialize_ordered_bulk_op()
+            bulk = backend.initialize_unordered_bulk_op()
             for operation in operations:
                 _id = operation['event']['_id']
                 # Could be cleaner/faster without record system ...
@@ -137,7 +137,7 @@ class Archiver(object):
         if operations:
             # is there any event to process ?
             backend = self.storage.get_backend('events')
-            bulk = backend.initialize_ordered_bulk_op()
+            bulk = backend.initialize_unordered_bulk_op()
             for operation in operations:
                 bulk.find(operation['query']).update(operation['update'])
             bulk.execute({'w': 0})
