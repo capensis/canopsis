@@ -22,10 +22,9 @@
 from unittest import TestCase, main
 from mock import patch
 from os.path import join, abspath, dirname
-from lxml.etree import parse, tostring, _ElementTree
+from lxml.etree import parse, _ElementTree
 
-from canopsis.schema.utils import get_unique_key, get_existing_unique_keys, \
-    get_xml, get_xml_from_name, is_name_available, is_unique_key_existing
+from canopsis.schema.utils import get_unique_key, get_xml, is_name_available
 
 
 def mock_get_schema_path(*args):
@@ -53,41 +52,12 @@ class TestUtils(TestCase):
 
     @patch('canopsis.schema.utils.get_schema_path',
            side_effect=mock_get_schema_path)
-    def test_get_existing_unique_keys(self, get_schema_path):
-        supposed_keys = {
-            'profile:1.0': 'profile.xsd',
-            'profile:2.0': 'profile2.xsd',
-            'profile>name:1.0': 'profile_to_name.xsl',
-        }
-
-        returned_keys = get_existing_unique_keys()
-
-        self.assertEqual(supposed_keys, returned_keys)
-
-    @patch('canopsis.schema.utils.get_schema_path',
-           side_effect=mock_get_schema_path)
     def test_get_xml(self, get_schema_path):
-        xschema_query1 = get_xml('profile_to_name.xsl')
-        xschema_query2 = get_xml('profile>name:1.0')
-        xschema_query3 = get_xml('profile>name')
-        xschema_wrong_query = get_xml('a_wrong_query_token')
+        xschema = get_xml('profile>name:1.0')
+        wrong_xschema = get_xml('wrong_key')
 
-        self.assertIsInstance(xschema_query1, _ElementTree)
-        self.assertIsInstance(xschema_query2, _ElementTree)
-        self.assertIsInstance(xschema_query3, _ElementTree)
-        self.assertIs(xschema_wrong_query, None)
-
-        self.assertEqual(tostring(xschema_query1), tostring(xschema_query2))
-        self.assertEqual(tostring(xschema_query2), tostring(xschema_query3))
-
-    @patch('canopsis.schema.utils.get_schema_path',
-           side_effect=mock_get_schema_path)
-    def test_get_xml_from_name(self, get_schema_path):
-        xschema_query = get_xml_from_name('profile_to_name.xsl')
-        self.assertIsInstance(xschema_query, _ElementTree)
-
-        self.assertRaises(IOError, get_xml_from_name, ('profile>name:1.0'))
-        self.assertRaises(IOError, get_xml_from_name, ('a_wrong_query_token'))
+        self.assertIsInstance(xschema, _ElementTree)
+        self.assertIs(wrong_xschema, None)
 
     @patch('canopsis.schema.utils.get_schema_path',
            side_effect=mock_get_schema_path)
@@ -95,15 +65,6 @@ class TestUtils(TestCase):
         self.assertTrue(is_name_available('profile.xsd'))
         self.assertTrue(is_name_available('profile_to_name.xsl'))
         self.assertFalse(is_name_available('a_wrong_query_token'))
-
-    @patch('canopsis.schema.utils.get_schema_path',
-           side_effect=mock_get_schema_path)
-    def test_is_unique_key_existing(self, get_schema_path):
-        for key in get_existing_unique_keys():
-            self.assertTrue(is_unique_key_existing(key))
-
-        self.assertFalse(is_unique_key_existing('profile.xsd'))
-        self.assertFalse(is_unique_key_existing('a_wrong_key'))
 
 
 if __name__ == '__main__':
