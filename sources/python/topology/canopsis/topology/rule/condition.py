@@ -69,15 +69,24 @@ def new_state(event, node, state=None, **kwargs):
 
 
 @register_task
-def condition(
-    event, ctx, node, min_weight=1, state=None, rrule=None, **kwargs
+def at_least(
+    event, ctx, node, min_weight=1, state=None, rrule=None, f=None, **kwargs
 ):
     """
-    Generic condition applied on sources of node.
+    Generic condition applied on sources of node which check if at least source
+        nodes check a condition.
 
+    :param dict event: processed event.
     :param dict ctx: rule context which must contain rule node.
-    :param int min_weight:
+    :param Node node: node to check.
+    :param int min_weight: minimal node weight.
     :param int state: state to check among sources nodes.
+    :param rrule rrule: rrule to consider in order to check condition in time.
+    :param f: function to apply on source node state. If None, use equality
+        between input state and source node state.
+
+    :return: True if condition is checked among source nodes.
+    :rtype: bool
     """
 
     source_nodes = tm.get_sources(ids=node.id)
@@ -93,7 +102,7 @@ def condition(
 
         source_node_state = source_node.data[Check.STATE]
 
-        if source_node_state == state:
+        if source_node_state == state if f is None else f(source_node_state):
             min_weight -= source_node.data[WEIGHT]
 
             if min_weight <= 0:
@@ -108,14 +117,60 @@ def condition(
 
 
 @register_task
-def _all(**kwargs):
+def _all(event, ctx, node, min_weight=1, state=None, rrule=None, **kwargs):
     """
     Check if all source nodes match with input check_state.
+
+    :param dict event: processed event.
+    :param dict ctx: rule context which must contain rule node.
+    :param Node node: node to check.
+    :param int min_weight: minimal node weight.
+    :param int state: state to check among sources nodes.
+    :param rrule rrule: rrule to consider in order to check condition in time.
+    :param f: function to apply on source node state. If None, use equality
+        between input state and source node state.
+
+    :return: True if condition is checked among source nodes.
+    :rtype: bool
     """
 
-    result = condition(
+    result = at_least(
+        event=event,
+        ctx=ctx,
+        node=node,
         min_weight=maxint,
+        state=state,
+        rrule=rrule,
         **kwargs
     )
 
     return result
+
+
+@register_task
+def nok(event, ctx, node, min_weight=1, rrule=None, **kwargs):
+    """
+    Condition which check if source nodes are not ok.
+
+    :param dict event: processed event.
+    :param dict ctx: rule context which must contain rule node.
+    :param Node node: node to check.
+    :param int min_weight: minimal node weight.
+    :param int state: state to check among sources nodes.
+    :param rrule rrule: rrule to consider in order to check condition in time.
+    :param f: function to apply on source node state. If None, use equality
+        between input state and source node state.
+
+    :return: True if condition is checked among source nodes.
+    :rtype: bool
+    """
+
+    return at_least(
+        event=event,
+        ctx=ctx,
+        node=node,
+        min_weight=min_weight,
+        rrule=rrule,
+        f=lambda x: x != 0,
+        **kwargs
+    )

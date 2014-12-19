@@ -77,7 +77,7 @@ class GraphManager(MiddlewareRegistry):
     def get_elts(
         self,
         ids=None, types=None, graph_ids=None, data=None, base_type=None,
-        query=None
+        query=None, serialize=True
     ):
         """
         Get graph element(s) related to input ids, types and query.
@@ -92,12 +92,16 @@ class GraphManager(MiddlewareRegistry):
         :param data: data query
         :param dict query: element search query.
         :param str base_type: elt base type.
+        :param bool serialize: serialize result in GraphElements if True
+            (by default).
 
         :return: element(s) corresponding to input ids and query.
         :rtype: list or dict
         """
 
-        # init query if None
+        # check if only one element is asked
+        unique = isinstance(ids, basestring)
+        # init query
         if query is None:
             query = {}
         # put base type in query
@@ -119,7 +123,7 @@ class GraphManager(MiddlewareRegistry):
         # find ids among graphs
         if graph_ids is not None:
             result = []
-            graphs = self.get_elts(ids=graph_ids)
+            graphs = self.get_elts(ids=graph_ids, serialize=False)
             if graphs is not None:
                 # all graph elt ids
                 elt_ids = set()
@@ -140,6 +144,18 @@ class GraphManager(MiddlewareRegistry):
 
         # get elements with ids and query
         result = self[GraphManager.STORAGE].get_elements(ids=ids, query=query)
+        if result is not None and serialize:
+            if isinstance(result, dict):
+                result = GraphElement.new_element(**result)
+            else:
+                # save reference to new_element in order to ease its use
+                new_element = GraphElement.new_element
+                result = list(
+                    new_element(**elt) for elt in result
+                )
+
+        if unique and isinstance(result, list):
+            result = result[0] if result else None
 
         return result
 
@@ -265,8 +281,7 @@ class GraphManager(MiddlewareRegistry):
 
     def get_graphs(
         self, ids=None, types=None, elts=None, graph_ids=None, data=None,
-        query=None,
-        add_elts=False
+        query=None, add_elts=False, serialize=True
     ):
         """
         Get one or more graphs related to input ids, types and elts.
@@ -275,14 +290,15 @@ class GraphManager(MiddlewareRegistry):
         :type ids: list or str
         :param types: graph types to retrieve.
         :type types: list or str
-        :param elts: elts embedded by graphs to retrieve.
-        :type elts: list or str
         :param graph_ids: graph ids from where get graphs.
         :type graph_ids: list or str
         :param data: data to find among graphs.
         :param dict query: additional graph search query. Could help to search
             specific data information.
-        :param bool add_elts: (False by default) add elts in the result.
+        :param bool add_elts: (False by default) add elts in the result. Works
+            only if serialize is True.
+        :param bool serialize: serialize result in GraphElements if True
+            (by default).
 
         :return: graph(s) corresponding to input parameters.
         :rtype: list or Graph
@@ -298,42 +314,22 @@ class GraphManager(MiddlewareRegistry):
                 elts = {'$in': elts}
             query[Graph.ELTS] = elts
         # get graphs with ids and query
-        graphs = self.get_elts(
+        result = self.get_elts(
             ids=ids,
             query=query,
             types=types,
             graph_ids=graph_ids,
             data=data,
-            base_type=Graph.BASE_TYPE
+            base_type=Graph.BASE_TYPE,
+            serialize=serialize
         )
-        # check if result may one graph or a list
-        unique = False
         # if add_elts is asked
-        if graphs is not None:
-            # if graphs is unique, graphs is a dict
-            if isinstance(graphs, dict):
-                # set unique value to True
-                unique = True
-                # put graphs in a list
-                graphs = [graphs]
-            # save new_element method for quick resolution
-            new_element = GraphElement.new_element
-            # iterate on graphs
-            for graph in graphs:
-                try:
-                    new_graph = new_element(**graph)
-                    # if add elts, find them and add them into the graph
-                    if add_elts:
-                        # fill the graph with
-                        new_graph.update_gelts(manager=self)
-                    result.append(new_graph)
-                except TypeError as te:
-                    self.logger.warning(
-                        'element {0} is not a graph. {1}'.format(graph, te)
-                    )
-        # get the first element if unique
-        if unique:
-            result = result[0] if result else None
+        if result is not None and serialize and add_elts:
+            if isinstance(result, Graph):
+                result.update_gelts(manager=self)
+            else:
+                for graph in result:
+                    graph.update_gelts(manager=self)
 
         return result
 
@@ -342,11 +338,26 @@ class GraphManager(MiddlewareRegistry):
         ids=None, graph_ids=None,
         data=None, query=None,
         types=None, edge_ids=None, add_edges=False, edge_types=None,
-        edge_data=None, edge_query=None
+        edge_data=None, edge_query=None, serialize=True
     ):
         """
         Ease the use of get_neighbourhood method in order to get targets
             vertices.
+
+        :param ids: graph ids to retrieve.
+        :type ids: list or str
+        :param types: graph types to retrieve.
+        :type types: list or str
+        :param graph_ids: graph ids from where get graphs.
+        :type graph_ids: list or str
+        :param data: data to find among graphs.
+        :param dict query: additional graph search query. Could help to search
+            specific data information.
+        :param bool serialize: serialize result in GraphElements if True
+            (by default).
+
+        :return: graph(s) corresponding to input parameters.
+        :rtype: list or Graph
         """
 
         return self.get_neighbourhood(
@@ -354,7 +365,7 @@ class GraphManager(MiddlewareRegistry):
             target_data=data, target_query=query, target_types=types,
             edge_ids=edge_ids, add_edges=add_edges,
             target_edge_types=edge_types, target_edge_data=edge_data,
-            edge_query=edge_query
+            edge_query=edge_query, serialize=serialize
         )
 
     def get_sources(
@@ -362,11 +373,26 @@ class GraphManager(MiddlewareRegistry):
         ids=None, graph_ids=None,
         data=None, query=None,
         types=None, edge_ids=None, add_edges=False, edge_types=None,
-        edge_data=None, edge_query=None
+        edge_data=None, edge_query=None, serialize=True
     ):
         """
         Ease the use of get_neighbourhood method in order to get sources
             vertices.
+
+        :param ids: graph ids to retrieve.
+        :type ids: list or str
+        :param types: graph types to retrieve.
+        :type types: list or str
+        :param graph_ids: graph ids from where get graphs.
+        :type graph_ids: list or str
+        :param data: data to find among graphs.
+        :param dict query: additional graph search query. Could help to search
+            specific data information.
+        :param bool serialize: serialize result in GraphElements if True
+            (by default).
+
+        :return: graph(s) corresponding to input parameters.
+        :rtype: list or Graph
         """
 
         return self.get_neighbourhood(
@@ -374,7 +400,7 @@ class GraphManager(MiddlewareRegistry):
             source_data=data, source_query=query, source_types=types,
             edge_ids=edge_ids, add_edges=add_edges,
             source_edge_types=edge_types, source_edge_data=edge_data,
-            edge_query=edge_query
+            edge_query=edge_query, serialize=serialize
         )
 
     def get_neighbourhood(
@@ -386,7 +412,8 @@ class GraphManager(MiddlewareRegistry):
         edge_ids=None, edge_types=None, add_edges=False,
         source_edge_types=None, target_edge_types=None,
         edge_data=None, source_edge_data=None, target_edge_data=None,
-        query=None, edge_query=None, source_query=None, target_query=None
+        query=None, edge_query=None, source_query=None, target_query=None,
+        serialize=True
     ):
         """
         Get neighbour vertices identified by context parameters.
@@ -427,6 +454,9 @@ class GraphManager(MiddlewareRegistry):
         :param dict edge_query: additional edge query.
         :param dict source_query: additional source query.
         :param dict target_query: additional target query.
+        :param bool serialize: serialize result in GraphElements if True
+            (by default).
+
         :return: list of neighbour vertices designed by ids, or dict of
             {edge: list(vertices)} if add_edges.
         :rtype: list or dict
@@ -439,7 +469,7 @@ class GraphManager(MiddlewareRegistry):
             types = [types]
 
         # init edges
-        edges = set()
+        edges = dict()
 
         # search among source edges even if not sources because
         # edges can be not directed
@@ -479,22 +509,26 @@ class GraphManager(MiddlewareRegistry):
             types=source_edge_types,
             targets=ids,
             data=source_edge_data,
-            query=source_query
+            query=source_query,
+            serialize=False
         )
         # fill edges
         if source_edges is not None:
             # if source_edges is an edge
             if isinstance(source_edges, Edge):
                 # and sources or source_edges is not directed
-                if sources or not source_edges.directed:
-                    edges.add(source_edges)
+                if sources or not source_edges[Edge.DIRECTED]:
+                    edges[source_edges[GraphElement.ID]] = source_edges
             elif sources:  # if sources
-                edges |= set(source_edges)
+                for source_edge in source_edges:
+                    source_edge_id = source_edge[GraphElement.ID]
+                    if source_edge_id not in edges:
+                        edges[source_edge_id] = source_edge
             else:
                 for source_edge in source_edges:
                     # add not directed edges
-                    if not source_edge.directed:
-                        edges.add(source_edge)
+                    if not source_edge[Edge.DIRECTED]:
+                        edges[source_edge[GraphElement.ID]] = source_edge
 
         # search among target edges
         # init target types
@@ -533,22 +567,27 @@ class GraphManager(MiddlewareRegistry):
             types=target_edge_types,
             sources=ids,
             data=target_edge_data,
-            query=target_query
+            query=target_query,
+            serialize=False
         )
         # fill edges
         if target_edges is not None:
             # if target_edges is an edge
             if isinstance(target_edges, Edge):
                 # and targets or target_edges is not directed
-                if targets or not target_edges.directed:
-                    edges.add(target_edges)
+                if targets or not target_edges[Edge.DIRECTED]:
+                    if target_edges[GraphElement.ID] not in edges:
+                        edges[target_edges[GraphElement.ID]] = target_edges
             elif targets:  # if targets
-                edges |= set(target_edges)
+                for target_edge in target_edges:
+                    if target_edge[GraphElement.ID] not in edges:
+                        edges[target_edge[GraphElement.ID]] = target_edge
             else:
                 for target_edge in target_edges:
                     # add not directed edges
-                    if not target_edge.directed:
-                        edges.add(target_edge)
+                    if not target_edge[Edge.DIRECTED]:
+                        if target_edge[GraphElement.ID] not in edges:
+                            edges[target_edge[GraphElement.ID]] = target_edge
 
         # store edge sources and targets ids before get them at a time
         if not add_edges:
@@ -556,37 +595,32 @@ class GraphManager(MiddlewareRegistry):
             edge_targets = []
 
         # add sources and targets from all edges
-        for edge in edges:
-            if sources or not edge.directed:
+        for edge_id in edges:
+            edge = edges[edge_id]
+            if sources or not edge[Edge.DIRECTED]:
                 if add_edges:
-                    elts = self.get_elts(
-                        ids=edge.sources,
+                    result[edge] = self.get_elts(
+                        ids=edge[Edge.SOURCES],
                         graph_ids=graph_ids,
                         data=source_data,
                         types=source_types,
-                        query=source_query
+                        query=source_query,
+                        serialize=serialize
                     )
-                    result[edge] = [
-                        GraphElement.new_element(**elt)
-                        for elt in elts
-                    ]
                 else:
-                    edge_sources += edge.sources
-            if targets or not edge.directed:
+                    edge_sources += edge[Edge.SOURCES]
+            if targets or not edge[Edge.DIRECTED]:
                 if add_edges:
-                    elts = self.get_elts(
-                        ids=edge.targets,
+                    result[edge] = self.get_elts(
+                        ids=edge[Edge.TARGETS],
                         graph_ids=graph_ids,
                         data=target_data,
                         types=target_types,
-                        query=target_query
+                        query=target_query,
+                        serialize=serialize
                     )
-                    result[edge] = [
-                        GraphElement.new_element(**elt)
-                        for elt in elts
-                    ]
                 else:
-                    edge_targets += edge.targets
+                    edge_targets += edge[Edge.TARGETS]
 
         # improve complexity if not add_edges
         if not add_edges:
@@ -597,9 +631,10 @@ class GraphManager(MiddlewareRegistry):
                     graph_ids=graph_ids,
                     data=source_data,
                     types=source_types,
-                    query=source_query
+                    query=source_query,
+                    serialize=serialize
                 )
-                result += [GraphElement.new_element(**elt) for elt in elts]
+                result += elts
 
             # get target graph elements
             if edge_targets:
@@ -608,15 +643,17 @@ class GraphManager(MiddlewareRegistry):
                     graph_ids=graph_ids,
                     data=target_data,
                     types=target_types,
-                    query=target_query
+                    query=target_query,
+                    serialize=serialize
                 )
-                result += [GraphElement.new_element(**elt) for elt in elts]
+                result += elts
 
         return result
 
     def get_vertices(
         self,
-        ids=None, graph_ids=None, types=None, data=None, query=None
+        ids=None, graph_ids=None, types=None, data=None, query=None,
+        serialize=True
     ):
         """
         Get graph vertices related to some context property.
@@ -629,36 +666,30 @@ class GraphManager(MiddlewareRegistry):
         :type types: list or str
         :param data: data to find among vertices.
         :param dict query: additional search query.
+        :param bool serialize: serialize result in GraphElements if True
+            (by default).
 
         :return: list of vertices if ids is a list. One vertice if ids is a
             str.
         :rtype: list or dict
         """
 
-        result = None
-
-        elts = self.get_elts(
+        result = self.get_elts(
             ids=ids,
             graph_ids=graph_ids,
             types=types,
             data=data,
             base_type=Vertice.BASE_TYPE,
-            query=query
+            query=query,
+            serialize=serialize
         )
-
-        if elts is not None:
-            if isinstance(elts, dict):
-                result = GraphElement.new_element(**elts)
-            else:
-                result = [GraphElement.new_element(**elt) for elt in elts]
 
         return result
 
     def get_edges(
         self,
         ids=None, types=None, sources=None, targets=None, graph_ids=None,
-        data=None,
-        query=None
+        data=None, query=None, serialize=True
     ):
         """
         Get edges related to input ids, types and source/target ids.
@@ -675,6 +706,8 @@ class GraphManager(MiddlewareRegistry):
         :param graph_ids: graph ids from where find edges.
         :type graph_ids: list or str
         :param dict query: additional query.
+        :param bool serialize: serialize result in GraphElements if True
+            (by default).
 
         :return: Edge(s) corresponding to input parameters.
         :rtype: Edge or list of Edges.
@@ -682,9 +715,6 @@ class GraphManager(MiddlewareRegistry):
 
         # by default, result is a list
         result = []
-
-        # init unique by default
-        unique = False
 
         if query is None:
             query = {}
@@ -699,29 +729,14 @@ class GraphManager(MiddlewareRegistry):
                 targets = {'$in': targets}
             query[Edge.TARGETS] = targets
 
-        edges = self.get_elts(
+        result = self.get_elts(
             ids=ids,
             types=types,
             query=query,
             graph_ids=graph_ids,
             data=data,
-            base_type=Edge.BASE_TYPE
+            base_type=Edge.BASE_TYPE,
+            serialize=serialize
         )
-
-        if edges is not None:
-            # ensure edges is a list
-            if isinstance(edges, dict):
-                unique = True
-                edges = [edges]
-            graph_type = self.GRAPH_TYPE
-            for edge in edges:
-                elt = graph_type.new_element(**edge)
-                if isinstance(elt, Edge):
-                    result.append(elt)
-        else:
-            result = None
-
-        if unique:
-            result = result[0] if result else None
 
         return result

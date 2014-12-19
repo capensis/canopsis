@@ -541,21 +541,21 @@ class Storage(DataBase):
         """
         Get a list of elements where id are input ids
 
-        :param ids: element ids or an element id to get if not None
+        :param ids: element ids or an element id to get if is a string.
         :type ids: list of str
 
-        :param int limit: max number of elements to get
-        :param int skip: first element index among searched list
+        :param int limit: max number of elements to get.
+        :param int skip: first element index among searched list.
         :param sort: contains a list of couples of field (name, ASC/DESC)
-            or field name which denots an implicitelly ASC order
+            or field name which denots an implicitelly ASC order.
         :type sort: list of {(str, {ASC, DESC}}), or str}
         :param bool with_count: If True (False by default), add count to the
-            result
+            result.
         :param bool cache: use query cache if True (False by default).
 
-        :return: input id elements, or one element if ids is an element
-            (None if this element does not exist).
-        :rtype: iterable of dict or dict or NoneType
+        :return: a Cursor of input id elements, or one element if ids is a
+            string (None if this element does not exist).
+        :rtype: Cursor of dict elements or dict or NoneType
         """
 
         raise NotImplementedError()
@@ -596,16 +596,16 @@ class Storage(DataBase):
         Find elements corresponding to input request and in taking care of
         limit, skip and sort find parameters.
 
-        :param dict request: set of couple of (field name, field value)
-        :param int limit: max number of elements to get
-        :param int skip: first element index among searched list
+        :param dict request: set of couple of (field name, field value).
+        :param int limit: max number of elements to get.
+        :param int skip: first element index among searched list.
         :param list sort: contains a list of couples of field (name, ASC/DESC)
-            or field name which denots an implicitelly ASC order
+            or field name which denots an implicitelly ASC order.
         :param bool with_count: If True (False by default), add count to the
-            result
+            result.
 
-        :return: input request elements
-        :rtype: list of objects
+        :return: a cursor of input request elements.
+        :rtype: Cursor
         """
 
         raise NotImplementedError()
@@ -848,5 +848,58 @@ Storage types must be of the same type.'.format(self, target))
         :type sort: list of {tuple(str, int), str}
         """
 
-        sort[:] = [item if isinstance(item, tuple) else (item, Storage.ASC)
-            for item in sort]
+        sort[:] = [
+            item if isinstance(item, tuple) else (item, Storage.ASC)
+            for item in sort
+        ]
+
+
+class Cursor(object):
+    """
+    Query cursor object.
+
+    An iterable object in order to retrieve data from a Storage.
+    A reference to the technology cursor is provided by the cursor getter.
+    """
+
+    __slots__ = ('_cursor', )
+
+    def __init__(self, cursor):
+        """
+        :param cursor: Technology implementation cursor.
+        """
+
+        super(Cursor, self).__init__()
+
+        self._cursor = cursor
+
+    @property
+    def cursor(self):
+        """
+        Get technology implementation cursor.
+        """
+
+        return self._cursor
+
+    def __len__(self):
+        """
+        Get number of cursor items.
+        """
+
+        raise NotImplementedError()
+
+    def __iter__(self):
+        """
+        Iterate on cursor items.
+        """
+
+        raise NotImplementedError()
+
+    def __getitem__(self, index):
+        """
+        Get a single document or a slice of documents from this cursor.
+
+        :param index: An integer or slice index to be applied to this cursor.
+        :type index: int or slice
+        """
+        raise NotImplementedError()

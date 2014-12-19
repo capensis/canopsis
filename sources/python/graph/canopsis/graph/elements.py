@@ -349,19 +349,17 @@ class Edge(Vertice):
         for source in self.sources:
             if source not in elts:
                 elt = manager.get_elts(ids=source)
-                new_elt = GraphElement.new_element(**elt)
-                elts[source] = new_elt
+                elts[source] = elt
             else:
-                new_elt = elts[source]
-            self._gsources[source] = new_elt
+                elt = elts[source]
+            self._gsources[source] = elt
         for target in self.targets:
             if target not in elts:
                 elt = manager.get_elts(ids=target)
-                new_elt = GraphElement.new_element(**elt)
-                elts[target] = new_elt
+                elts[target] = elt
             else:
-                new_elt = elts[target]
-            self._gtargets[target] = new_elt
+                elt = elts[target]
+            self._gtargets[target] = elt
 
     def del_refs(self, ids=None, sources=None, targets=None):
         """
@@ -513,7 +511,7 @@ class Graph(Vertice):
         # initialize self graph elts
         self._gelts = []
         # get elts
-        elts = manager.get_elts(ids=self.elts)
+        elts = manager.get_elts(ids=self.elts, serialize=False)
         # for all elt ids
         for elt in elts:
             elt_id = elt[GraphElement.ID]

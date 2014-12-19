@@ -36,7 +36,8 @@ class MongoCompositeStorageTest(TestCase):
     def setUp(self):
         # create a storage on test_store collections
         self.path = ['a', 'b', 'c']
-        self.storage = MongoCompositeStorage(data_scope="test", path=self.path)
+        self.storage = MongoCompositeStorage(
+            data_scope="test", path=self.path, safe=True)
 
     def test_connect(self):
         self.assertTrue(self.storage.connected())
@@ -67,19 +68,15 @@ class MongoCompositeStorageTest(TestCase):
 
             # compare absolute path
             absolute_path = self.storage.get_absolute_path(
-                path=_path, data_id=name
-            )
+                path=_path, data_id=name)
             __path = [path for path in self.storage.path if path in _path]
             _absolute_path = reduce(
                 lambda x, y: '%s%s%s' % (
-                    x, CompositeStorage.PATH_SEPARATOR, y), __path
-            )
+                    x, CompositeStorage.PATH_SEPARATOR, y), __path)
             _absolute_path = '%s%s%s' % (
-                _absolute_path, CompositeStorage.PATH_SEPARATOR, name
-            )
+                _absolute_path, CompositeStorage.PATH_SEPARATOR, name)
             _absolute_path = '%s%s' % (
-                CompositeStorage.PATH_SEPARATOR, _absolute_path
-            )
+                CompositeStorage.PATH_SEPARATOR, _absolute_path)
             self.assertEqual(absolute_path, _absolute_path)
             # put new entry
             self.storage.put(path=_path, data_id=name, data={'value': n})
@@ -106,13 +103,13 @@ class MongoCompositeStorageTest(TestCase):
 
         for n in range(10):
             d = path.copy()
-            d[Storage.DATA_ID] = str(n)
+            d[Storage.DATA_ID] = n
             data.append(d)
 
         # check unary data sharing
         for n, d in enumerate(data):
-            self.storage.put(path=path, data_id=str(n), data=d)
-            ds = self.storage.get(path=path, data_ids=str(n), shared=True)
+            self.storage.put(path=path, data_id=n, data=d)
+            ds = self.storage.get(path=path, data_ids=n, shared=True)
             self.assertEqual(len(ds), 1)
 
             shared_id = self.storage.share_data(data=d)
@@ -123,32 +120,26 @@ class MongoCompositeStorageTest(TestCase):
             self.storage.unshare_data(d)
             self.assertNotEqual(shared_id, d[CompositeStorage.SHARED])
 
-            shared_data = self.storage.get_shared_data(
-                shared_ids=str(shared_id)
-            )
+            shared_data = self.storage.get_shared_data(shared_ids=shared_id)
             self.assertEqual(len(shared_data), 0)
 
         shared_id = 1
 
         # check shared data
         for n, d in enumerate(data):
-            self.storage.share_data(data=d, shared_id=str(shared_id))
-            shared_data = self.storage.get_shared_data(
-                shared_ids=str(shared_id)
-            )
+            self.storage.share_data(data=d, shared_id=shared_id)
+            shared_data = self.storage.get_shared_data(shared_ids=shared_id)
             self.assertEqual(len(shared_data), n + 1)
+
             shared_id += 1
             self.storage.share_data(
-                data=d, shared_id=str(shared_id), share_extended=True
-            )
-            shared_data = self.storage.get_shared_data(
-                shared_ids=str(shared_id)
-            )
+                data=d, shared_id=shared_id, share_extended=True)
+            shared_data = self.storage.get_shared_data(shared_ids=shared_id)
             self.assertEqual(len(shared_data), n + 1)
 
         # unshare the first data and check if number of shared data is data - 1
         self.storage.unshare_data(data=data[0])
-        shared_data = self.storage.get_shared_data(shared_ids=str(shared_id))
+        shared_data = self.storage.get_shared_data(shared_ids=shared_id)
         self.assertEqual(len(shared_data), len(data) - 1)
 
 if __name__ == '__main__':

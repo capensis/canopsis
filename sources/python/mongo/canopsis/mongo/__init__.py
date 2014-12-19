@@ -21,10 +21,11 @@
 __version__ = '0.1'
 
 from canopsis.common.init import basestring
-from canopsis.storage import Storage, DataBase
+from canopsis.storage import Storage, DataBase, Cursor
 from canopsis.common.utils import isiterable
 
 from pymongo import MongoClient
+from pymongo.cursor import Cursor as _Cursor
 from pymongo.errors import (
     TimeoutError, OperationFailure, ConnectionFailure, DuplicateKeyError
 )
@@ -224,15 +225,13 @@ class MongoStorage(MongoDataBase, Storage):
 
         _query = {} if query is None else query.copy()
 
-        one_element = False
+        one_element = isinstance(ids, basestring)
 
         if ids is not None:
-            if isiterable(ids, is_str=False):
-                _query[MongoStorage.ID] = {'$in': ids}
-
-            else:
-                one_element = True
+            if one_element:
                 _query[MongoStorage.ID] = ids
+            else:
+                _query[MongoStorage.ID] = {'$in': ids}
 
         cursor = self._find(_query)
 
@@ -245,25 +244,22 @@ class MongoStorage(MongoDataBase, Storage):
             MongoStorage._update_sort(sort)
             cursor.sort(sort)
 
-        # calculate count
-        count = cursor.count() if with_count else 0
-
         hint = self._get_hint(query=_query, cursor=cursor)
 
         if hint is not None:
             cursor.hint(hint)
 
         # TODO: enrich a cursor with methods to use it such as a tuple
-        result = list(cursor)
+        #result = list(cursor)
+        result = MongoCursor(cursor)
 
         if one_element:
-            if result:
-                result = result[0]
-            else:
-                result = None
+            result = result[0] if result else None
 
         # if with_count, add count to the result
         if with_count:
+            # calculate count
+            count = cursor.count()
             result = result, count
 
         return result
@@ -514,3 +510,37 @@ class MongoStorage(MongoDataBase, Storage):
                 .format(of, command, kwargs, backend))
 
         return result
+
+
+class MongoCursor(Cursor):
+    """
+    In charge of handle cursors wit MongoDB.
+    """
+
+    __slots__ = ('_len', ) + Cursor.__slots__
+
+    def __init__(self, *args, **kwargs):
+
+        super(MongoCursor, self).__init__(*args, **kwargs)
+
+        self._len = None
+
+    def __getitem__(self, index):
+
+        result = self._cursor.__getitem__(index)
+
+        if isinstance(result, _Cursor):  # in case of slice
+            result = MongoCursor(result)
+
+        return result
+
+    def __iter__(self):
+
+        return self._cursor.__iter__()
+
+    def __len__(self):
+
+        if self._len is None:
+            self._len = self._cursor.count(True)
+
+        return self._len

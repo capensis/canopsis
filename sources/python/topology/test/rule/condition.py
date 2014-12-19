@@ -22,7 +22,7 @@
 from unittest import TestCase, main
 
 from canopsis.topology.elements import Node
-from canopsis.topology.rule.condition import new_state, condition, _all
+from canopsis.topology.rule.condition import new_state, at_least, _all, nok
 
 
 class NewStateTest(TestCase):
@@ -71,11 +71,27 @@ class NewStateTest(TestCase):
         self.assertFalse(result)
 
 
-class ConditionTest(TestCase):
+class AtLeastTest(TestCase):
+    """
+    Test at least test.
+    """
+
     pass
 
 
-class AllTest(TestCase):
+class AllTest(AtLeastTest):
+    """
+    Test _all test.
+    """
+
+    pass
+
+
+class NOKTest(AtLeastTest):
+    """
+    Test nok test.
+    """
+
     pass
 
 

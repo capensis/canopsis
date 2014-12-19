@@ -22,7 +22,7 @@
 from unittest import TestCase, main
 
 from canopsis.graph.manager import GraphManager
-from canopsis.graph.elements import Graph, Vertice, Edge, GraphElement
+from canopsis.graph.elements import Graph, Vertice, Edge
 
 
 class GraphTest(TestCase):
@@ -163,15 +163,16 @@ class GraphTest(TestCase):
 
         # check to get one element from graph_ids
         last_vertice_id = self.vertice_ids[-1]
-        elts = self.manager.get_elts(
-            ids=last_vertice_id, graph_ids=self.graph_ids)
-        self.assertEqual(len(elts), 1)
+        vertice = self.manager.get_elts(
+            ids=last_vertice_id, graph_ids=self.graph_ids
+        )
+        self.assertTrue(isinstance(vertice, Vertice))
 
         # check get data
         for elt in self.elts:
             _elt = self.manager.get_elts(ids=elt.id, data=elt.data)
             self.assertIsNotNone(_elt)
-            self.assertEqual(_elt[GraphElement.ID], elt.id)
+            self.assertEqual(_elt.id, elt.id)
             if elt.data is not None:
                 elts = self.manager.get_elts(data=elt.data)
                 self.assertEqual(len(elts), 3)

@@ -18,7 +18,6 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from canopsis.common.init import basestring
 from canopsis.common.utils import isiterable
 from canopsis.mongo import MongoStorage
 from canopsis.storage import Storage
@@ -56,42 +55,64 @@ class MongoCompositeStorage(MongoStorage, CompositeStorage):
         query = path.copy()
         if _filter is not None:
             query.update(_filter)
-        # check if only one element is asked
-        one_result = isinstance(data_ids, basestring)
+
+        one_result = False
+
         # if data_ids is given
         if data_ids is not None:
-            # if one element is asked
-            if one_result:
-                query[Storage.DATA_ID] = data_ids
-            else:
+
+            # add absolute pathes into ids
+            if isiterable(data_ids, is_str=False):
                 query[Storage.DATA_ID] = {"$in": data_ids}
+            else:
+                query[Storage.DATA_ID] = data_ids
+                one_result = True
+
         # get elements
         result = self.find_elements(
             query=query,
             limit=limit,
             skip=skip,
             sort=sort,
-            with_count=with_count
-        )
+            with_count=with_count)
+
         if with_count:
             count = result[1]
             result = result[0]
 
         if result is not None and shared:
-            # if result is a list of data, use data_to_extend
-            result, data_to_extend = [], result
-            # for all data in result
-            for data in data_to_extend:
-                # if data is shared, get shared data
-                if CompositeStorage.SHARED in data:
-                    shared_id = data[CompositeStorage.SHARED]
-                    data = list(self.get_shared_data(shared_ids=shared_id))
+            # if result is one value
+            if isinstance(result, dict):
+                # if result is shared
+                if CompositeStorage.SHARED in result:
+                    shared_id = result[CompositeStorage.SHARED]
+                    # result equals shared data
+                    result = [self.get_shared_data(shared_ids=shared_id)]
                 else:
-                    data = [data]
-                # append data in result
-                result.append(data)
+                    # else, result is a list of itself
+                    result = [[result]]
+
+            else:
+                # if result is a list of data, use data_to_extend
+                data_to_extend = result[:]
+                # and initialize result such as an empty list
+                result = []
+                # for all data in result
+                for data in data_to_extend:
+                    # if data is shared, get shared data
+                    if CompositeStorage.SHARED in data:
+                        shared_id = data[CompositeStorage.SHARED]
+                        data = self.get_shared_data(shared_ids=shared_id)
+                    else:
+                        data = [data]
+                    # append data in result
+                    result.append(data)
+
         if result is not None and one_result:
-            result = result[0] if result else [] if shared else None
+            if result:
+                result = result[0]
+            else:
+                result = None
 
         if with_count:
             result = result, count
@@ -110,9 +131,7 @@ class MongoCompositeStorage(MongoStorage, CompositeStorage):
 
         return result
 
-    def put(
-        self, path, data_id, data, share_id=None, cache=False, *args, **kwargs
-    ):
+    def put(self, path, data_id, data, share_id=None, *args, **kwargs):
 
         # get unique id
         _id = self.get_absolute_path(path=path, data_id=data_id)
@@ -129,11 +148,10 @@ class MongoCompositeStorage(MongoStorage, CompositeStorage):
         _set = {
             '$set': data_to_put
         }
-        self._update(spec=query, document=_set, multi=False, cache=cache)
 
-    def remove(
-        self, path, data_ids=None, shared=False, cache=False, *args, **kwargs
-    ):
+        self._update(spec=query, document=_set, multi=False)
+
+    def remove(self, path, data_ids=None, shared=False, *args, **kwargs):
 
         query = path.copy()
 
@@ -146,7 +164,7 @@ class MongoCompositeStorage(MongoStorage, CompositeStorage):
                 parameters = {'justOne': 1}
                 query[Storage.DATA_ID] = data_ids
 
-        self._remove(document=query, cache=cache, **parameters)
+        self._remove(document=query, **parameters)
 
         # remove extended data
         if shared:
@@ -158,4 +176,4 @@ class MongoCompositeStorage(MongoStorage, CompositeStorage):
                 extended = self.get(path=path, data_id=data_id, shared=True)
                 _ids.append([data[MongoStorage.ID] for data in extended])
             document = {MongoStorage.ID: {'$in': _ids}}
-            self._remove(document=document, cache=cache)
+            self._remove(document=document)

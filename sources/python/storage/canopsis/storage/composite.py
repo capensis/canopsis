@@ -125,14 +125,18 @@ class CompositeStorage(Storage):
         result = str(uuid()) if shared_id is None else shared_id
 
         # get an iterable version of input data
-        data_to_share = ensure_iterable(data)
+        if isinstance(data, dict):
+            data_to_share = [data]
+        else:
+            data_to_share = data
 
         for dts in data_to_share:
             # update extended data if necessary
             if share_extended:
                 path, data_id = self.get_path_with_id(dts)
                 extended_data = self.get(
-                    path=path, data_ids=data_id, shared=True)
+                    path=path, data_ids=data_id, shared=True
+                )
                 # decompose extended data into a list
                 dts = []
                 for ed in extended_data:
