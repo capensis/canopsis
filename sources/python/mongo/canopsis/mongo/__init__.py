@@ -64,40 +64,45 @@ class MongoDataBase(DataBase):
         connection_args['w'] = 1 if self.safe else 0
 
         if self.ssl:
-            connection_args.update({
-                'ssl': self.ssl,
-                'ssl_keyfile': self.ssl_key,
-                'ssl_certfile': self.ssl_cert
-            })
+            connection_args.update(
+                {
+                    'ssl': self.ssl,
+                    'ssl_keyfile': self.ssl_key,
+                    'ssl_certfile': self.ssl_cert
+                }
+            )
 
         try:
             result = MongoClient(**connection_args)
         except ConnectionFailure as e:
             self.logger.error(
                 'Raised {2} during connection attempting to {0}:{1}.'.
-                format(self.host, self.port, e))
+                format(self.host, self.port, e)
+            )
         else:
             self._database = result[self.db]
 
             if (self.user, self.pwd) != (None, None):
 
-                authenticate = self._database.authenticate(
-                    self.user, self.pwd)
+                authenticate = self._database.authenticate(self.user, self.pwd)
 
                 if authenticate:
                     self.logger.debug("Connected on {0}:{1}".format(
-                        self.host, self.port))
+                        self.host, self.port)
+                    )
 
                 else:
                     self.logger.error(
                         'Impossible to authenticate {0} on {1}:{2}'.format(
-                            self.host, self.port))
+                            self.host, self.port)
+                    )
                     self.disconnect()
                     result = None
 
             else:
-                self.logger.debug("Connected on {0}:{1}".format(
-                    self.host, self.port))
+                self.logger.debug(
+                    "Connected on {0}:{1}".format(self.host, self.port)
+                )
 
         return result
 
