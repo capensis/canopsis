@@ -332,8 +332,28 @@ class Edge(Vertice):
 
         super(Edge, self).__init__(*args, **kwargs)
 
-        self.sources = [] if sources is None else sources
-        self.targets = [] if targets is None else targets
+        # init sources such as an array of ids
+        if sources is None:
+            self.sources = []
+        else:
+            # ensure sources and targets are list if they are string
+            if isinstance(sources, basestring):
+                sources = [sources]
+            self.sources = list(
+                source.id if isinstance(source, GraphElement) else source
+                for source in sources
+            )
+        # init targets such as an array of ids
+        if targets is None:
+            self.targets = []
+        else:
+            if isinstance(targets, basestring):
+                targets = [targets]
+            self.targets = list(
+                target.id if isinstance(target, GraphElement) else target
+                for target in targets
+            )
+
         self.directed = directed
         self._dsources = [] if _dsources is None else _dsources
         self._dtargets = [] if _dtargets is None else _dtargets
@@ -464,7 +484,17 @@ class Graph(Vertice):
 
         super(Graph, self).__init__(*args, **kwargs)
 
-        self.elts = [] if elts is None else elts
+        # init elts such as an array of ids
+        if elts is None:
+            self.elts = []
+        else:
+            if isinstance(elts, basestring):
+                elts = [elts]
+            self.elts = list(
+                elt.id if isinstance(elt, GraphElement) else elt
+                for elt in elts
+            )
+
         self._delts = [] if _delts is None else _delts
         self._gelts = {} if _gelts is None else _gelts
         self._updating = False
