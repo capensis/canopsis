@@ -39,13 +39,14 @@ Related rule actions are defined in ``canopsis.topology.rule.action`` module.
 """
 
 from canopsis.topology.manager import TopologyManager
-from canopsis.topology.process import SOURCES, WEIGHT
+from canopsis.topology.elements import Node
 from canopsis.check import Check
 from canopsis.task import register_task
 
-from sys import maxint
-
 tm = TopologyManager()
+
+#: parameter name which contain sources by edges
+SOURCES_BY_EDGES = 'sources_by_edges'
 
 
 @register_task
@@ -70,7 +71,8 @@ def new_state(event, node, state=None, **kwargs):
 
 @register_task
 def at_least(
-    event, ctx, node, min_weight=1, state=None, rrule=None, f=None, **kwargs
+    event, ctx, node, state=Check.OK, min_weight=1, rrule=None, f=None,
+    **kwargs
 ):
     """
     Generic condition applied on sources of node which check if at least source
@@ -79,8 +81,10 @@ def at_least(
     :param dict event: processed event.
     :param dict ctx: rule context which must contain rule node.
     :param Node node: node to check.
-    :param int min_weight: minimal node weight.
     :param int state: state to check among sources nodes.
+    :param float min_weight: minimal weight (default 1) to reach in order to
+        validate this condition. If None, condition results in checking all
+            sources.
     :param rrule rrule: rrule to consider in order to check condition in time.
     :param f: function to apply on source node state. If None, use equality
         between input state and source node state.
@@ -89,42 +93,55 @@ def at_least(
     :rtype: bool
     """
 
-    source_nodes = tm.get_sources(ids=node.id)
-
-    weights = list(source_node.data[WEIGHT] for source_node in source_nodes)
-    if weights:
-        weights.append(min_weight)
-        min_weight = min(weights)
-
     result = False
 
-    for source_node in source_nodes:
+    sources_by_edges = tm.get_sources(ids=node.id, add_edges=True)
 
-        source_node_state = source_node.data[Check.STATE]
+    # get weight field name for quick access
+    _weight = Node.WEIGHT
 
-        if source_node_state == state if f is None else f(source_node_state):
-            min_weight -= source_node.data[WEIGHT]
+    if sources_by_edges and min_weight is None:
+        # if edges & checking all nodes is required, result is True by default
+        result = True
 
-            if min_weight <= 0:
-                result = True
+    # for all edges
+    for edge_id in sources_by_edges:
+        # get edge and sources
+        edge, sources = sources_by_edges[edge_id]
+        # get edge_weight which is 1 by default
+        if isinstance(edge.data, dict) and _weight in edge.data:
+            edge_weight = edge.data[_weight]
+        else:
+            edge_weight = 1
+        for source in sources:
+            source_state = source.data.get(Node.STATE, Check.OK)
+            if (source_state == state if f is None else f(source_state)):
+                if min_weight is not None:  # if min_weight is not None
+                    min_weight -= edge_weight  # remove edge_weight
+                    if min_weight <= 0:  # if min_weight is negative, ends loop
+                        result = True
+                        break
+            elif min_weight is None:
+                # stop if condition is not checked and min_weight is None
+                result = False
                 break
 
     # if result, save source_nodes in ctx in order to save read data from db
     if result:
-        ctx[SOURCES] = source_nodes
+        ctx[SOURCES_BY_EDGES] = sources_by_edges
 
     return result
 
 
 @register_task
-def _all(event, ctx, node, min_weight=1, state=None, rrule=None, **kwargs):
+def _all(**kwargs):
     """
     Check if all source nodes match with input check_state.
 
     :param dict event: processed event.
     :param dict ctx: rule context which must contain rule node.
     :param Node node: node to check.
-    :param int min_weight: minimal node weight.
+    :param int min_weight: minimal node weight to check.
     :param int state: state to check among sources nodes.
     :param rrule rrule: rrule to consider in order to check condition in time.
     :param f: function to apply on source node state. If None, use equality
@@ -135,12 +152,7 @@ def _all(event, ctx, node, min_weight=1, state=None, rrule=None, **kwargs):
     """
 
     result = at_least(
-        event=event,
-        ctx=ctx,
-        node=node,
-        min_weight=maxint,
-        state=state,
-        rrule=rrule,
+        min_weight=None,
         **kwargs
     )
 
@@ -148,14 +160,14 @@ def _all(event, ctx, node, min_weight=1, state=None, rrule=None, **kwargs):
 
 
 @register_task
-def nok(event, ctx, node, min_weight=1, rrule=None, **kwargs):
+def nok(**kwargs):
     """
     Condition which check if source nodes are not ok.
 
     :param dict event: processed event.
     :param dict ctx: rule context which must contain rule node.
     :param Node node: node to check.
-    :param int min_weight: minimal node weight.
+    :param int min_weight: minimal node weight to check.
     :param int state: state to check among sources nodes.
     :param rrule rrule: rrule to consider in order to check condition in time.
     :param f: function to apply on source node state. If None, use equality
@@ -166,11 +178,6 @@ def nok(event, ctx, node, min_weight=1, rrule=None, **kwargs):
     """
 
     return at_least(
-        event=event,
-        ctx=ctx,
-        node=node,
-        min_weight=min_weight,
-        rrule=rrule,
-        f=lambda x: x != 0,
+        f=lambda x: x != Check.OK,
         **kwargs
     )

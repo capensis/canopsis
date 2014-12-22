@@ -21,7 +21,9 @@
 
 from unittest import TestCase, main
 
-from canopsis.topology.elements import Node
+from canopsis.check import Check
+from canopsis.topology.manager import TopologyManager
+from canopsis.topology.elements import Node, Edge
 from canopsis.topology.rule.condition import new_state, at_least, _all, nok
 
 
@@ -71,28 +73,190 @@ class NewStateTest(TestCase):
         self.assertFalse(result)
 
 
-class AtLeastTest(TestCase):
+class _AtLeastTest(TestCase):
+    """
+    Default test class for at least function.
+    """
+
+    def setUp(self):
+
+        self.manager = TopologyManager()
+
+    def tearDown(self):
+        """
+        Drop nodes and edges.
+        """
+
+        self.manager.del_elts()
+
+
+class AtLeastTest(_AtLeastTest):
     """
     Test at least test.
     """
 
-    pass
+    def test_empty(self):
+        """
+        Test to process at least with no children.
+        """
+
+        target = Node()
+        target.save(self.manager)
+        check = at_least(event={}, ctx={}, node=target)
+
+        self.assertFalse(check)
+
+    def test_default(self):
+        """
+        Test to check default condition.
+        """
+
+        source = Node()
+        source.save(self.manager)
+        target = Node()
+        target.save(self.manager)
+        edge = Edge(sources=source.id, targets=target.id)
+        edge.save(self.manager)
+
+        check = at_least(event={}, ctx={}, node=target)
+
+        self.assertTrue(check)
+
+    def test_false(self):
+        """
+        Test to check if there are at least one
+        """
+
+        source = Node()
+        source.save(self.manager)
+        target = Node()
+        target.save(self.manager)
+        edge = Edge(sources=source.id, targets=target.id)
+        edge.save(self.manager)
+
+        check = at_least(event={}, ctx={}, state=1, node=target)
+        self.assertFalse(check)
+
+        edge.data = {Node.WEIGHT: 0.5}
+        edge.save(self.manager)
+        source.data[Check.STATE] = 1
+        source.save(self.manager)
+
+        check = at_least(event={}, ctx={}, state=1, node=target)
+        self.assertFalse(check)
+
+        edge.data[Node.WEIGHT] = 1.5
+        edge.save(self.manager)
+
+        check = at_least(event={}, ctx={}, state=1, node=target)
+        self.assertTrue(check)
 
 
-class AllTest(AtLeastTest):
+class AllTest(_AtLeastTest):
     """
-    Test _all test.
+    Test _all function.
     """
 
-    pass
+    def test_one(self):
+        """
+        Test one source.
+        """
+
+        source = Node()
+        source.save(self.manager)
+        target = Node()
+        target.save(self.manager)
+        edge = Edge(sources=source.id, targets=target.id)
+        edge.save(self.manager)
+
+        check = _all(event={}, ctx={}, node=target)
+        self.assertTrue(check)
+
+        source.data[Check.STATE] = 1
+        source.save(self.manager)
+
+        check = _all(event={}, ctx={}, node=target)
+        self.assertFalse(check)
+
+    def test_many(self):
+
+        target = Node()
+        target.save(self.manager)
+        count = 5
+        sources = [Node() for i in range(count)]
+        for source in sources:
+            source.save(self.manager)
+        edge = Edge(
+            sources=[source.id for source in sources], targets=target.id
+        )
+        edge.save(self.manager)
+
+        check = _all(event={}, ctx={}, node=target)
+        self.assertTrue(check)
+
+        sources[0].data[Check.STATE] = 1
+        sources[0].save(self.manager)
+
+        check = _all(event={}, ctx={}, node=target)
+        self.assertFalse(check)
 
 
-class NOKTest(AtLeastTest):
+class NOKTest(_AtLeastTest):
     """
     Test nok test.
     """
 
-    pass
+    def test_one(self):
+        """
+        Test one source.
+        """
+
+        source = Node()
+        source.save(self.manager)
+        target = Node()
+        target.save(self.manager)
+        edge = Edge(sources=source.id, targets=target.id)
+        edge.save(self.manager)
+
+        check = nok(event={}, ctx={}, node=target)
+        self.assertFalse(check)
+
+        source.data[Check.STATE] = 1
+        source.save(self.manager)
+
+        check = nok(event={}, ctx={}, node=target)
+        self.assertTrue(check)
+
+    def test_many(self):
+
+        target = Node()
+        target.save(self.manager)
+        count = 5
+        sources = [Node() for i in range(count)]
+        for source in sources:
+            target.save(self.manager)
+        edge = Edge(
+            sources=[source.id for source in sources], targets=target.id
+        )
+        edge.save(self.manager)
+
+        check = nok(event={}, ctx={}, node=target, min_weight=count)
+        self.assertFalse(check)
+
+        sources[0].data[Check.STATE] = 1
+        sources[0].save(self.manager)
+
+        check = nok(event={}, ctx={}, node=target)
+        self.assertTrue(check)
+        check = nok(event={}, ctx={}, node=target, min_weight=count)
+        self.assertFalse(check)
+
+        for source in sources:
+            source.data[Check.STATE] = 1
+            source.save(self.manager)
+
+        check = nok(event={}, ctx={}, node=target, min_weight=count)
+        self.assertTrue(check)
 
 
 if __name__ == '__main__':

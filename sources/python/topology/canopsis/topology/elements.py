@@ -61,7 +61,9 @@ A topology edge contains::
 
 """
 
-from canopsis.graph.elements import Graph, Vertice
+__all__ = ['Topology', 'Edge', 'Node']
+
+from canopsis.graph.elements import Graph, Vertice, Edge
 from canopsis.task import run_task, TASK
 
 

@@ -77,7 +77,7 @@ class GraphManager(MiddlewareRegistry):
     def get_elts(
         self,
         ids=None, types=None, graph_ids=None, data=None, base_type=None,
-        query=None, serialize=True
+        query=None, serialize=True, cls=None
     ):
         """
         Get graph element(s) related to input ids, types and query.
@@ -94,6 +94,7 @@ class GraphManager(MiddlewareRegistry):
         :param str base_type: elt base type.
         :param bool serialize: serialize result in GraphElements if True
             (by default).
+        :param type cls: GraphElement type to retrieve if not None.
 
         :return: element(s) corresponding to input ids and query.
         :rtype: list or dict
@@ -147,12 +148,18 @@ class GraphManager(MiddlewareRegistry):
         if result is not None and serialize:
             if isinstance(result, dict):
                 result = GraphElement.new_element(**result)
+                # ensure cls is respected
+                if cls is not None and not isinstance(result, cls):
+                    result = None
             else:
                 # save reference to new_element in order to ease its use
                 new_element = GraphElement.new_element
                 result = list(
                     new_element(**elt) for elt in result
                 )
+                # ensure cls is respected
+                if cls is not None:
+                    result = [elt for elt in result if isinstance(elt, cls)]
 
         if unique and isinstance(result, list):
             result = result[0] if result else None
@@ -442,7 +449,7 @@ class GraphManager(MiddlewareRegistry):
         :param edge_types: edge types from where find target/source vertices.
         :type edge_types: list or str
         :param bool add_edges: if True (default), add pathed edges in the
-            result.
+            result such as {edge_id: (edge, list(vertices))}.
         :param source_edge_types: edge types from where find source vertices.
         :type source_edge_types: list or str
         :param target_edge_types: edge types from where find target vertices.
@@ -458,7 +465,7 @@ class GraphManager(MiddlewareRegistry):
             (by default).
 
         :return: list of neighbour vertices designed by ids, or dict of
-            {edge: list(vertices)} if add_edges.
+            {edge_id: (edge, list(vertices))} if add_edges.
         :rtype: list or dict
         """
 
@@ -594,12 +601,15 @@ class GraphManager(MiddlewareRegistry):
             edge_sources = []
             edge_targets = []
 
+        if serialize:  # save new_element method in memory for quicker access
+            new_element = GraphElement.new_element
+
         # add sources and targets from all edges
         for edge_id in edges:
             edge = edges[edge_id]
             if sources or not edge[Edge.DIRECTED]:
                 if add_edges:
-                    result[edge] = self.get_elts(
+                    elts = self.get_elts(
                         ids=edge[Edge.SOURCES],
                         graph_ids=graph_ids,
                         data=source_data,
@@ -607,11 +617,18 @@ class GraphManager(MiddlewareRegistry):
                         query=source_query,
                         serialize=serialize
                     )
+                    # serialize edge if required
+                    _edge = new_element(**edge) if serialize else edge
+                    if edge_id in result:
+                        # TODO: check if this case can happen
+                        result[edge_id][1] += elts
+                    else:
+                        result[edge_id] = (_edge, elts)
                 else:
                     edge_sources += edge[Edge.SOURCES]
             if targets or not edge[Edge.DIRECTED]:
                 if add_edges:
-                    result[edge] = self.get_elts(
+                    elts = self.get_elts(
                         ids=edge[Edge.TARGETS],
                         graph_ids=graph_ids,
                         data=target_data,
@@ -619,6 +636,13 @@ class GraphManager(MiddlewareRegistry):
                         query=target_query,
                         serialize=serialize
                     )
+                    # serialize edge if required
+                    _edge = new_element(**edge) if serialize else edge
+                    if edge_id not in result:
+                        # TODO: check if this case can happen
+                        result[edge_id][1] += elts
+                    else:
+                        result[edge_id] = (_edge, elts)
                 else:
                     edge_targets += edge[Edge.TARGETS]
 

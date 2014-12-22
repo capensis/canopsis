@@ -102,6 +102,8 @@ A graph inherits from vertice and contains::
 
 from uuid import uuid4 as uuid
 
+from collections import Iterable
+
 from canopsis.common.init import basestring
 from canopsis.storage import Storage
 from canopsis.common.utils import lookup, path
@@ -132,6 +134,18 @@ class GraphElement(object):
 
         self.type = type(self).__name__.lower() if _type is None else _type
         self.id = str(uuid()) if _id is None else _id
+
+    def __repr__(self):
+
+        result = '{}:('.format(type(self).__name__)
+
+        for index, slot in enumerate(type(self).__slots__):
+            value = getattr(self, slot, None)
+            result += '{}:{}, '.format(slot, value)
+
+        result += ')'
+
+        return result
 
     def __eq__(self, other):
         """
@@ -500,6 +514,46 @@ class Graph(Vertice):
         self._updating = False
         self._sources = {} if _sources is None else _sources
         self._targets = {} if _targets is None else _targets
+
+    def __contains__(self, other):
+        """
+        True if other is a vertice inside self.
+
+        :param other: possible vertice(s) or vertice(s) id(s) in self graph.
+        :type other: str or dict or GraphElement or list of other.
+        """
+        # by default, result is False
+        result = False
+
+        if isinstance(other, basestring):
+            result = other in self.elts
+        elif isinstance(other, dict):
+            result = other[GraphElement.ID] in self.elts
+        elif isinstance(other, GraphElement):
+            result = other.id in self.elts
+        elif isinstance(other, Iterable):
+            # ids is a set of graph element ids to compare with self.elts
+            ids = set()
+            # quick access to the field name GraphElement ID
+            _id = GraphElement.ID
+            for item in other:
+                if isinstance(item, basestring):
+                    ids.add(item)
+                elif isinstance(item, dict):
+                    ids.add(item[_id])
+                elif isinstance(item, GraphElement):
+                    ids.add(item.id)
+                else:
+                    raise Exception(
+                        'item {0} is not supported.'.format(item)
+                    )
+            # transform self elts in a set in order to do quick comparison
+            self_elts = set(self.elts)
+            result = (self_elts & ids) == ids
+        else:
+            raise Exception('elt {0} is not supported.'.format(other))
+
+        return result
 
     def resolve_refs(self, elts, manager):
 

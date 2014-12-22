@@ -32,6 +32,11 @@ class Check(Event):
     STATE = 'state'
     STATUS = 'status'
 
+    OK = 0
+    WARNING = 1
+    CRITICAL = 2
+    UNKNOWN = 3
+
     def __init__(self, source, state, status, meta):
 
         super(Event, self).__init__(

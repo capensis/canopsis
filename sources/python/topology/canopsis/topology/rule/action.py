@@ -36,7 +36,7 @@ from canopsis.common.init import basestring
 from canopsis.common.utils import lookup
 from canopsis.topology.manager import TopologyManager
 from canopsis.check import Check
-from canopsis.topology.process import SOURCES
+from canopsis.topology.rule.condition import SOURCES_BY_EDGES
 
 tm = TopologyManager()
 
@@ -78,13 +78,17 @@ def state_from_sources(event, node, ctx, f, manager=None, **kwargs):
         manager = tm
 
     # if sources are in ctx, get them
-    if SOURCES in ctx:
-        sources = ctx[SOURCES]
+    if SOURCES_BY_EDGES in ctx:
+        sources_by_edges = ctx[SOURCES_BY_EDGES]
     else:  # else get them with the topology object
-        sources = manager.get_sources(ids=node.id)
+        sources_by_edges = manager.get_sources(ids=node.id, add_edges=True)
 
-    if sources:  # do something only if sources exist
+    if sources_by_edges:  # do something only if sources exist
         # calculate the state
+        sources = []
+        for edge_id in sources_by_edges:
+            edge_sources = sources_by_edges[edge_id][1]
+            sources += edge_sources
         state = f(source_node.data[Check.STATE] for source_node in sources)
 
         # update the node state

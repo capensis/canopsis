@@ -51,10 +51,8 @@ context = Context()
 tm = TopologyManager()
 
 SOURCE = 'source'
-SOURCES = 'sources'
 NODE = 'node'
 PUBLISHER = 'publisher'
-WEIGHT = 'weight'
 
 
 @register_task
