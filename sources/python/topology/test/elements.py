@@ -36,7 +36,7 @@ class NodeTest(TestCase):
         """
 
         node = Node()
-        result = node.process()
+        result = Node.process(node, event=None)
         self.assertIsNone(result)
 
     def test_process_task(self):
@@ -45,15 +45,15 @@ class NodeTest(TestCase):
         """
 
         @register_task('process')
-        def process_node(node, ctx, **kwargs):
+        def process_node(node, ctx, event=None, **kwargs):
 
             return node, ctx, kwargs
 
-        ctx, entity, state, task, weight = {'b': 1}, 'e', 0, 'process', 1
+        ctx, entity, state, task = {'b': 1}, 'e', 0, 'process'
 
-        node = Node(task=task, entity=entity, state=state, weight=weight)
+        node = Node(task=task, entity=entity, state=state)
 
-        _node, _ctx, _kwargs = node.process(ctx=ctx)
+        _node, _ctx, _kwargs = Node.process(node, ctx=ctx, event=None)
 
         self.assertIs(_node, node)
         self.assertIs(_ctx, ctx)

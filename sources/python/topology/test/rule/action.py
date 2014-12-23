@@ -40,7 +40,7 @@ class ChangeStateTest(TestCase):
     def setUp(self):
 
         self.node = Node()
-        self.assertEqual(self.node.data['state'], 0)
+        self.assertEqual(Node.state(self.node), 0)
         self.new_state = 1
 
     def test_state(self):
@@ -63,7 +63,7 @@ class ChangeStateTest(TestCase):
     def tearDown(self):
 
         node = tm.get_vertices(ids=self.node.id)
-        self.assertEqual(node.data['state'], self.new_state)
+        self.assertEqual(Node.state(node), self.new_state)
         tm.del_elts()
 
 

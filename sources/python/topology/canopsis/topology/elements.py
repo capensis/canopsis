@@ -65,6 +65,7 @@ __all__ = ['Topology', 'Edge', 'Node']
 
 from canopsis.graph.elements import Graph, Vertice, Edge
 from canopsis.task import run_task, TASK
+from canopsis.check import Check
 
 
 class Topology(Graph):
@@ -86,12 +87,8 @@ class Node(Vertice):
     """
 
     ENTITY = 'entity'  #: entity data name
-    STATE = 'state'  #: state data name
-    WEIGHT = 'weight'  #: weight data name
-    TASK = 'task'  #: task data name
 
-    DEFAULT_WEIGHT = 1  #: default weight value
-    DEFAULT_STATE = 0  #: default state value
+    DEFAULT_STATE = Check.OK  #: default state value
 
     PARAM = 'node'  #: parameter name
 
@@ -99,7 +96,7 @@ class Node(Vertice):
 
     def __init__(
         self,
-        entity=None, state=DEFAULT_STATE, task=None, weight=DEFAULT_WEIGHT,
+        entity=None, state=DEFAULT_STATE, task=None,
         *args, **kwargs
     ):
         """
@@ -119,25 +116,68 @@ class Node(Vertice):
             self.data[Node.ENTITY] = entity
 
         if state is not None:
-            self.data[Node.STATE] = state
+            self.data[Check.STATE] = state
 
         if task is not None:
-            self.data[Node.TASK] = task
+            self.data[TASK] = task
 
-        if weight is not None:
-            self.data[Node.WEIGHT] = weight
+    @staticmethod
+    def task(elt, value=None):
+        """
+        Get task value. If value is not None, update task value.
 
-    def process(self, **kwargs):
+        :param GraphElement elt: from where get task.
+        :param value: new task to use.
+        :type value: str or dict
+        :return: elt task.
+        :rtype: str or dict
+        """
+
+        if value is not None:
+            elt.data[TASK] = value
+        return elt.data[TASK] if TASK in elt.data else None
+
+    @staticmethod
+    def entity(elt, value=None):
+        """
+        Get task entity id. If value is not None, update entity value.
+
+        :param GraphElement elt: from where get entity.
+        :param str value: new entity to use.
+        :return: elt entity.
+        :rtype: str
+        """
+
+        if value is not None:
+            elt.data[Node.ENTITY] = value
+        return elt.data[Node.ENTITY] if Node.ENTITY in elt.data else None
+
+    @staticmethod
+    def state(elt, value=None):
+        """
+        Get state value. If value is not None, update state value.
+
+        :param GraphElement elt: from where get state.
+        :param float value: new state to use.
+        :return: elt state.
+        :rtype: float
+        """
+
+        if value is not None:
+            elt.data[Check.STATE] = value
+        return elt.data[Check.STATE] if Check.STATE in elt.data else Check.OK
+
+    @staticmethod
+    def process(node, event, **kwargs):
         """
         Process this node task.
         """
 
         result = None
 
-        task = self.data[TASK] if TASK in self.data else None
+        task = Node.task(node)
 
         if task is not None:
-            kwargs[Node.PARAM] = self
-            result = run_task(conf=task, **kwargs)
+            result = run_task(conf=task, node=node, event=event, **kwargs)
 
         return result

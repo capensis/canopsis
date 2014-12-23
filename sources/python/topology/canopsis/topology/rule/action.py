@@ -35,9 +35,11 @@ from canopsis.task import register_task
 from canopsis.common.init import basestring
 from canopsis.common.utils import lookup
 from canopsis.topology.manager import TopologyManager
-from canopsis.check import Check
+from canopsis.topology.elements import Node
 from canopsis.topology.rule.condition import SOURCES_BY_EDGES
+from canopsis.check import Check
 
+#: default topology manager
 tm = TopologyManager()
 
 
@@ -55,12 +57,15 @@ def change_state(event, node, state=None, manager=None, **kwargs):
     # if state is None, use event state
     if state is None:
         state = event[Check.STATE]
-
+    # init manager
     if manager is None:
         manager = tm
+    # init node
+    if isinstance(node, basestring):
+        node = manager.get_elts(ids=node)
 
     # update node state from ctx
-    node.data[Check.STATE] = state
+    Node.state(node, state)
     node.save(manager=manager)
 
 
@@ -73,9 +78,12 @@ def state_from_sources(event, node, ctx, f, manager=None, **kwargs):
     # get function f
     if isinstance(f, basestring):
         f = lookup(f)
-
+    # init manager
     if manager is None:
         manager = tm
+    # init node
+    if isinstance(node, basestring):
+        node = manager.get_elts(ids=node)
 
     # if sources are in ctx, get them
     if SOURCES_BY_EDGES in ctx:
@@ -87,28 +95,28 @@ def state_from_sources(event, node, ctx, f, manager=None, **kwargs):
         # calculate the state
         sources = []
         for edge_id in sources_by_edges:
-            edge_sources = sources_by_edges[edge_id][1]
+            _, edge_sources = sources_by_edges[edge_id]
             sources += edge_sources
         state = f(source_node.data[Check.STATE] for source_node in sources)
 
         # update the node state
-        node.data[Check.STATE] = state
+        Node.state(node, state)
         node.save(manager=manager)
 
 
 @register_task
-def worst_state(event, ctx, manager=None, **kwargs):
+def worst_state(**kwargs):
     """
     Check the worst state among source nodes.
     """
 
-    state_from_sources(event=event, ctx=ctx, f=max, manager=manager, **kwargs)
+    state_from_sources(f=max, **kwargs)
 
 
 @register_task
-def best_state(event, ctx, manager=None, **kwargs):
+def best_state(**kwargs):
     """
     Get the best state among source nodes.
     """
 
-    state_from_sources(event=event, ctx=ctx, f=min, manager=manager, **kwargs)
+    state_from_sources(f=min, **kwargs)

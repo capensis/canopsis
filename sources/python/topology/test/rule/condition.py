@@ -41,7 +41,10 @@ class NewStateTest(TestCase):
         Test if state is different from an event.
         """
 
-        result = new_state(node=self.node, event={'state': 1})
+        result = new_state(
+            node=self.node,
+            event={'state': Check.WARNING}
+        )
 
         self.assertTrue(result)
 
@@ -50,7 +53,10 @@ class NewStateTest(TestCase):
         Test if state is the same than the one from an event.
         """
 
-        result = new_state(node=self.node, event={'state': 0})
+        result = new_state(
+            node=self.node,
+            event={'state': Check.OK}
+        )
 
         self.assertFalse(result)
 
@@ -59,7 +65,11 @@ class NewStateTest(TestCase):
         Test if state is different than the input state.
         """
 
-        result = new_state(node=self.node, event={}, state=1)
+        result = new_state(
+            node=self.node,
+            event={},
+            state=Check.WARNING
+        )
 
         self.assertTrue(result)
 
@@ -68,8 +78,11 @@ class NewStateTest(TestCase):
         Test if state is the same than the input state.
         """
 
-        result = new_state(node=self.node, event={}, state=0)
-
+        result = new_state(
+            node=self.node,
+            event={},
+            state=Check.OK
+        )
         self.assertFalse(result)
 
 
@@ -80,7 +93,7 @@ class _AtLeastTest(TestCase):
 
     def setUp(self):
 
-        self.manager = TopologyManager()
+        self.manager = TopologyManager(data_scope='topology_test')
 
     def tearDown(self):
         """
@@ -102,7 +115,7 @@ class AtLeastTest(_AtLeastTest):
 
         target = Node()
         target.save(self.manager)
-        check = at_least(event={}, ctx={}, node=target)
+        check = at_least(event={}, ctx={}, node=target, manager=self.manager)
 
         self.assertFalse(check)
 
@@ -118,7 +131,7 @@ class AtLeastTest(_AtLeastTest):
         edge = Edge(sources=source.id, targets=target.id)
         edge.save(self.manager)
 
-        check = at_least(event={}, ctx={}, node=target)
+        check = at_least(event={}, ctx={}, node=target, manager=self.manager)
 
         self.assertTrue(check)
 
@@ -134,21 +147,35 @@ class AtLeastTest(_AtLeastTest):
         edge = Edge(sources=source.id, targets=target.id)
         edge.save(self.manager)
 
-        check = at_least(event={}, ctx={}, state=1, node=target)
+        check = at_least(
+            event={},
+            ctx={},
+            state=Check.WARNING,
+            node=target,
+            manager=self.manager
+        )
         self.assertFalse(check)
 
-        edge.data = {Node.WEIGHT: 0.5}
+        edge.weight = 0.5
         edge.save(self.manager)
-        source.data[Check.STATE] = 1
+        Node.state(source, Check.WARNING)
         source.save(self.manager)
 
-        check = at_least(event={}, ctx={}, state=1, node=target)
+        check = at_least(
+            event={}, ctx={}, state=Check.WARNING, node=target, manager=self.manager
+        )
         self.assertFalse(check)
 
-        edge.data[Node.WEIGHT] = 1.5
+        edge.weight = 1.5
         edge.save(self.manager)
 
-        check = at_least(event={}, ctx={}, state=1, node=target)
+        check = at_least(
+            event={},
+            ctx={},
+            state=Check.WARNING,
+            node=target,
+            manager=self.manager
+        )
         self.assertTrue(check)
 
 
@@ -169,13 +196,13 @@ class AllTest(_AtLeastTest):
         edge = Edge(sources=source.id, targets=target.id)
         edge.save(self.manager)
 
-        check = _all(event={}, ctx={}, node=target)
+        check = _all(event={}, ctx={}, node=target, manager=self.manager)
         self.assertTrue(check)
 
-        source.data[Check.STATE] = 1
+        Node.state(source, 1)
         source.save(self.manager)
 
-        check = _all(event={}, ctx={}, node=target)
+        check = _all(event={}, ctx={}, node=target, manager=self.manager)
         self.assertFalse(check)
 
     def test_many(self):
@@ -191,13 +218,13 @@ class AllTest(_AtLeastTest):
         )
         edge.save(self.manager)
 
-        check = _all(event={}, ctx={}, node=target)
+        check = _all(event={}, ctx={}, node=target, manager=self.manager)
         self.assertTrue(check)
 
-        sources[0].data[Check.STATE] = 1
+        Node.state(sources[0], 1)
         sources[0].save(self.manager)
 
-        check = _all(event={}, ctx={}, node=target)
+        check = _all(event={}, ctx={}, node=target, manager=self.manager)
         self.assertFalse(check)
 
 
@@ -218,13 +245,13 @@ class NOKTest(_AtLeastTest):
         edge = Edge(sources=source.id, targets=target.id)
         edge.save(self.manager)
 
-        check = nok(event={}, ctx={}, node=target)
+        check = nok(event={}, ctx={}, node=target, manager=self.manager)
         self.assertFalse(check)
 
-        source.data[Check.STATE] = 1
+        Node.state(source, 1)
         source.save(self.manager)
 
-        check = nok(event={}, ctx={}, node=target)
+        check = nok(event={}, ctx={}, node=target, manager=self.manager)
         self.assertTrue(check)
 
     def test_many(self):
@@ -240,22 +267,40 @@ class NOKTest(_AtLeastTest):
         )
         edge.save(self.manager)
 
-        check = nok(event={}, ctx={}, node=target, min_weight=count)
+        check = nok(
+            event={},
+            ctx={},
+            node=target,
+            min_weight=count,
+            manager=self.manager
+        )
         self.assertFalse(check)
 
-        sources[0].data[Check.STATE] = 1
+        Node.state(sources[0], 1)
         sources[0].save(self.manager)
 
-        check = nok(event={}, ctx={}, node=target)
+        check = nok(event={}, ctx={}, node=target, manager=self.manager)
         self.assertTrue(check)
-        check = nok(event={}, ctx={}, node=target, min_weight=count)
+        check = nok(
+            event={},
+            ctx={},
+            node=target,
+            min_weight=count,
+            manager=self.manager
+        )
         self.assertFalse(check)
 
         for source in sources:
-            source.data[Check.STATE] = 1
+            Node.state(source, 1)
             source.save(self.manager)
 
-        check = nok(event={}, ctx={}, node=target, min_weight=count)
+        check = nok(
+            event={},
+            ctx={},
+            node=target,
+            min_weight=count,
+            manager=self.manager
+        )
         self.assertTrue(check)
 
 

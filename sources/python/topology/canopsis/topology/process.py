@@ -39,36 +39,39 @@ such as::
 A topology task use the condition ``new_state``
 """
 
-from canopsis.topology.elements import Topology
+from canopsis.old.event import forger
+from canopsis.topology.elements import Topology, Node
 from canopsis.topology.manager import TopologyManager
 from canopsis.context.manager import Context
 from canopsis.task import register_task
 from canopsis.event import Event
 from canopsis.check import Check
+from canopsis.engines import publish
 
 
 context = Context()
 tm = TopologyManager()
 
 SOURCE = 'source'
-NODE = 'node'
 PUBLISHER = 'publisher'
 
 
 @register_task
-def event_processing(event, ctx=None, **params):
+def event_processing(event, engine, manager=None, **kwargs):
     """
     Process input event in getting topology nodes bound to input event entity.
 
     One topology nodes are founded, executing related rules.
+
+    :param dict event: event to process.
+    :param Engine engine: engine which consumes the event.
+    :param TopologyManager manager: topology manager to use.
     """
 
+    if manager is None:
+        manager = tm
+
     event_type = event[Event.TYPE]
-
-    nodes = []
-
-    if ctx is None:
-        ctx = {}
 
     # TODO: remove when Check event will be used
     # apply processing only in case of check event
@@ -76,50 +79,45 @@ def event_processing(event, ctx=None, **params):
 
         source_type = event[Event.SOURCE_TYPE]
 
-        # in case of topology node
+        # in case of topology element
         if source_type == Topology.TYPE:
-            node = tm.get_vertices(ids=event[Topology.ID])
-            if node is not None:
-                nodes = [node]
+            elt = manager.get_elts(ids=event[Topology.ID])
+            if elt is not None:
+                elts = [elt]
 
         else:  # in case of entity event
-            # get nodes from entity
+            # get elts from entity
             entity = context.get_entity(event)
             if entity is not None:
                 entity_id = context.get_entity_id(entity)
-                nodes = tm.get_nodes(entity=entity_id)
+                elts = manager.get_elts(data={'entity': entity_id})
 
-        # iterate on nodes
-        for node in nodes:
-
-            # put node in the ctx
-            ctx[NODE] = node
-
-            data = node.data
-
+        # iterate on elts
+        for elt in elts:
             # save old state in order to check for its modification
-            if Check.STATE in data:
-                old_state = data[Check.STATE]
-
-            else:
-                old_state = event[Check.STATE]
+            old_state = Node.state(elt)
 
             # process task
-            node.process(event=event, ctx=ctx)
+            Node.process(elt, event=event, manager=manager, **kwargs)
 
             # propagate the change of state in case of new state
-            if old_state != data[Check.STATE]:
-                # get next nodes
-                next_nodes = tm.get_vertices(sources=node.id)
-                # send the event_to_propagate to all next_nodes
-                for next_node in next_nodes:
-                    # create event to propagate with source and node ids
-                    event_to_propagate = {
-                        Event.TYPE: Check.get_type(),
-                        Event.SOURCE_TYPE: node.TYPE,
-                        Topology.ID: next_node.id,
-                        SOURCE: node.id
-                    }
-                    ctx[PUBLISHER].publish(event_to_propagate)
+            if old_state != Node.state(elt):
+                # get next elts
+                targets = manager.get_targets(ids=elt.id)
+                # send the event_to_propagate to all targets
+                for target in targets:
+                    # create event to propagate with source and elt ids
+                    event_to_propagate = forger(
+                        connector=Topology.TYPE,
+                        connector_name=Topology.TYPE,
+                        event_type=Check.get_type(),
+                        component=target.id,
+                        state=Node.state(elt),
+                        source_type=Topology.TYPE,
+                        id=target.id,
+                        source=elt.id
+                    )
+                    # publish the event in the context of the engine
+                    publish(event=event_to_propagate, engine=engine)
 
     return event

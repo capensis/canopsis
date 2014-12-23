@@ -21,10 +21,13 @@
 
 from unittest import TestCase, main
 
-from canopsis.topology.elements import Node
-from canopsis.topology.manager import TopologyManager
-from canopsis.topology.process import event_processing, PUBLISHER
 from canopsis.context.manager import Context
+from canopsis.topology.elements import Node, Edge
+from canopsis.topology.manager import TopologyManager
+from canopsis.topology.process import event_processing
+from canopsis.topology.rule.action import change_state
+from canopsis.task import new_conf
+from canopsis.check import Check
 
 
 class ProcessingTest(TestCase):
@@ -32,110 +35,129 @@ class ProcessingTest(TestCase):
     Test event processing function.
     """
 
+    class _Amqp(object):
+        """
+        In charge of processing publishing of test.
+        """
+
+        def __init__(self, processingTest):
+
+            self.exchange_name_events = None
+            self.processingTest = processingTest
+            self.event = None
+
+        def publish(self, event, rk, exchange):
+            """
+            Called when an event process publishes an event.
+            """
+
+            self.event = event
+            self.processingTest.count += 1
+
+            event_processing(
+                event=event,
+                engine=self.processingTest,
+                manager=self.processingTest.manager
+            )
+
     def setUp(self):
-        self.context = Context(data_scope='test_topology')
-        self.topology = TopologyManager(data_scope='test_topology')
-        self.topology.del_elts()
+
+        self.context = Context(data_scope='test_context')
+        self.manager = TopologyManager(data_scope='test_topology')
         self.check = {
             'event_type': 'check',
-            'connector': '',
-            'connector_name': '',
-            'component': '',
+            'connector': 'c',
+            'connector_name': 'c',
+            'component': 'c',
             'source_type': 'component',
-            'state': 0
+            'state': Check.OK
         }
         entity = self.context.get_entity(self.check)
         entity_id = self.context.get_entity_id(entity)
-        self.node = Node(
-            entity=entity_id,
-            state=0,
-            task='canopsis.topology.rule.action.change_state'
-        )
-        self.topology.put_nodes(self.node)
+        self.node = Node(entity=entity_id)
+        self.node.save(self.manager)
+        self.count = 0
+        self.amqp = ProcessingTest._Amqp(self)
+
+    def tearDown(self):
+
+        self.manager.del_elts()
 
     def test_no_bound(self):
         """
         Test in case of not bound nodes.
         """
 
-        _event = self.check.copy()
-        _event['source_type'] = 'resource'
-        _event['resource'] = ''
-        event = event_processing(event=_event)
-        self.assertEqual(_event, event)
+        event_processing(event=self.check, engine=self, manager=self.manager)
+        self.assertEqual(self.count, 0)
 
     def test_one_node(self):
         """
         Test in case of one bound node
         """
 
-        event = event_processing(event=self.check)
-        _node = self.topology.get_nodes(ids=self.node[TopologyManager.ID])[0]
-        self.assertEqual(
-            self.node[TopologyManager.ENTITY_ID],
-            _node[TopologyManager.ENTITY_ID]
+        source = Node()
+        source.save(self.manager)
+        edge = Edge(sources=source.id, targets=self.node.id)
+        edge.save(self.manager)
+
+        event_processing(event=self.check, engine=self, manager=self.manager)
+        self.assertEqual(self.count, 0)
+
+    def test_change_state(self):
+        """
+        Test in case of change state.
+        """
+
+        change_state_conf = new_conf(
+            change_state,
+            state=Check.WARNING
         )
-        self.assertEqual(
-            self.node[TopologyManager.ID], _node[TopologyManager.ID]
+        Node.task(self.node, change_state_conf)
+        self.node.save(self.manager)
+
+        event_processing(event=self.check, engine=self, manager=self.manager)
+
+        target = self.manager.get_elts(ids=self.node.id)
+        self.assertEqual(Node.state(target), Check.WARNING)
+
+    def test_chain_change_state(self):
+        """
+        Test to change of state in a chain of nodes.
+
+        This test consists to link three node in such way:
+        self.node(state=0) -> node(state=0) -> root(state=0)
+        And to propagate the change state task with state = 1 in order to check
+        if root state equals 1.
+        """
+
+        # create a simple task which consists to change of state
+        change_state_conf = new_conf(
+            change_state,
+            state=Check.WARNING
         )
-        self.assertEqual(self.check, event)
 
-    def test_one_state(self):
-        """
-        Test with a changing state on one node.
-        """
+        # create a root node with the change state task
+        root = Node(task=change_state_conf)
+        root.save(self.manager)
+        # create a node with the change state task
+        node = Node(task=change_state_conf)
+        node.save(self.manager)
+        # create a leaf with the change state task
+        Node.task(self.node, change_state_conf)
+        self.node.save(self.manager)
+        # link node to root
+        rootnode = Edge(targets=root.id, sources=node.id)
+        rootnode.save(self.manager)
+        # link self.node to node
+        selfnodenode = Edge(targets=node.id, sources=self.node.id)
+        selfnodenode.save(self.manager)
 
-        # new state to propagate to one node
-        new_state = 1
-        self.check['state'] = new_state
-        event = event_processing(event=self.check)
-        self.assertEqual(event, self.check)
+        event_processing(event=self.check, engine=self, manager=self.manager)
+        self.assertEqual(self.count, 2)
 
-        _node = self.topology.get_nodes(ids=self.node[TopologyManager.ID])[0]
-        self.assertNotEqual(self.node['state'], _node['state'])
-        self.assertEqual(_node['state'], new_state)
-
-    def test_nexts(self):
-        """
-        Test next nodes
-        """
-
-        # create a publisher
-        class Publisher(object):
-            def publish(self, event, **kwargs):
-                event_processing(event=event, **kwargs)
-        # create next nodes from self.nodes
-        nexts = (
-            {
-                TopologyManager.ID: str(i),
-                RULE: self.node[RULE],
-                'state': 0
-            } for i in range(3)
-        )
-        # list of next ids
-        next_ids = []
-        for next in nexts:
-            # push next nodes
-            self.topology.put_nodes(next)
-            next_ids.append(next[TopologyManager.ID])
-        # add next nodes into self.node
-        #self.node[TopologyManager.NEXT] = next_ids
-        # save the node
-        self.topology.put_nodes(self.node)
-
-        # propagate a new state
-        new_state = 1
-        self.check['state'] = new_state
-        event_processing(event=self.check, ctx={PUBLISHER: Publisher()})
-
-        for next in nexts:
-            _node = self.topology.get_nodes(next[TopologyManager.ID])
-            self.assertEqual(_node['state'], 1)
-            self.topology.del_nodes(next[TopologyManager.ID])
-
-    def tearDown(self):
-        self.topology.del_elts()
-
+        self.node = self.manager.get_elts(ids=self.node.id)
+        self.assertEqual(Node.state(self.node), Check.WARNING)
 
 if __name__ == '__main__':
     main()

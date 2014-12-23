@@ -28,9 +28,9 @@ refers to source nodes if they exist.
 
 Such conditions are::
     - ``new_state``: test if state (or event state) is not equal to node state
-    - ``condition``: test if source node states match with an input state.
+    - ``at_least``: test if source node states match with an input state.
     - ``all``: test if all source node states match with an input state.
-    - ``any``: test if one of source node states match with an input state.
+    - ``nok``: test if source node states are not OK.
 
 The ``new_state`` condition may be used by nodes bound to entities in order to
 update such nodes when the entity change of state.
@@ -38,6 +38,7 @@ update such nodes when the entity change of state.
 Related rule actions are defined in ``canopsis.topology.rule.action`` module.
 """
 
+from canopsis.common.init import basestring
 from canopsis.topology.manager import TopologyManager
 from canopsis.topology.elements import Node
 from canopsis.check import Check
@@ -50,7 +51,7 @@ SOURCES_BY_EDGES = 'sources_by_edges'
 
 
 @register_task
-def new_state(event, node, state=None, **kwargs):
+def new_state(event, node, state=None, manager=None, **kwargs):
     """
     Condition triggered when state is different than node state.
 
@@ -59,12 +60,18 @@ def new_state(event, node, state=None, **kwargs):
     :param int state: state to compare with input node state.
     """
 
+    if manager is None:
+        manager = tm
+
+    if isinstance(node, basestring):
+        node = manager.get_elts(ids=node)
+
     # if state is None, use event state
     if state is None:
         state = event[Check.STATE]
 
     # True if node state is different than state
-    result = node.data[Check.STATE] != state
+    result = Node.state(node) != state
 
     return result
 
@@ -72,7 +79,7 @@ def new_state(event, node, state=None, **kwargs):
 @register_task
 def at_least(
     event, ctx, node, state=Check.OK, min_weight=1, rrule=None, f=None,
-    **kwargs
+    manager=None, **kwargs
 ):
     """
     Generic condition applied on sources of node which check if at least source
@@ -95,10 +102,13 @@ def at_least(
 
     result = False
 
-    sources_by_edges = tm.get_sources(ids=node.id, add_edges=True)
+    if manager is None:
+        manager = tm
 
-    # get weight field name for quick access
-    _weight = Node.WEIGHT
+    if isinstance(node, basestring):
+        node = manager.get_elts(ids=node)
+
+    sources_by_edges = manager.get_sources(ids=node.id, add_edges=True)
 
     if sources_by_edges and min_weight is None:
         # if edges & checking all nodes is required, result is True by default
@@ -109,15 +119,11 @@ def at_least(
         # get edge and sources
         edge, sources = sources_by_edges[edge_id]
         # get edge_weight which is 1 by default
-        if isinstance(edge.data, dict) and _weight in edge.data:
-            edge_weight = edge.data[_weight]
-        else:
-            edge_weight = 1
         for source in sources:
-            source_state = source.data.get(Node.STATE, Check.OK)
+            source_state = Node.state(source)
             if (source_state == state if f is None else f(source_state)):
                 if min_weight is not None:  # if min_weight is not None
-                    min_weight -= edge_weight  # remove edge_weight
+                    min_weight -= edge.weight  # remove edge_weight from result
                     if min_weight <= 0:  # if min_weight is negative, ends loop
                         result = True
                         break
