@@ -61,21 +61,8 @@ class TopologyManager(GraphManager):
 
     DATA_SCOPE = 'topology'  #: default data scope
 
-    DATA_ENTITY = 'data.entity'  #: data entity name
-
     def __init__(self, data_scope=DATA_SCOPE, *args, **kwargs):
 
         super(TopologyManager, self).__init__(
             data_scope=data_scope, *args, **kwargs
         )
-
-    def get_nodes(self, entity):
-        """
-        Get nodes by entity id.
-        """
-
-        query = {TopologyManager.DATA_ENTITY: entity}
-
-        result = self.get_vertices(query=query)
-
-        return result

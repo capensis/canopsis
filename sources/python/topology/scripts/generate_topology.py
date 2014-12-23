@@ -20,100 +20,65 @@
 # ---------------------------------
 
 from canopsis.context.manager import Context
-from canopsis.topology.manager import Topology
+from canopsis.topology.manager import TopologyManager
+from canopsis.topology.elements import Edge, Node, Topology
 
-from uuid import uuid4 as uuid
 from argparse import ArgumentParser
 
 
 def generate_context_topology(name='test'):
     """
-    Generate a context topology related to some random parameters
+    Generate a context topology where nodes are components and resources,
+    and edges are dependencies from components to resources, or from resources
+    to the topology.
 
     :param str name: topology name
     """
 
     # initialize context and topology
     context = Context()
-    topology = Topology()
+    manager = TopologyManager()
 
     # clean old topology
-    topology.delete(ids=name)
+    manager.del_elts(ids=name)
 
-    # create a root node
-    root_node = {
-        Topology.ID: str(uuid()),
-        Topology.ENTITY_ID: topology_name,
-        Topology.TOPOLOGY_ID: topology_name,
-        Topology.NEXT: []
-    }
+    topology = manager.get_graphs(ids=name)
+    if topology is not None:  # if topology already exists, delete content
+        manager.del_elts(ids=topology.elts)
+        topology.delete(manager)
+    # init the topology
+    topology = Topology(_id=name)
+    topology.save(manager)
 
-    topology_graph = {
-        Topology.ID: topology_name,  # topology name
-        Topology.ROOT: root_node[Topology.ID]  # root id
-    }
-
-    # get all components and resources
     components = context.find('component')
-    resources = context.find('resource')
-
-    nodes_by_entity_id = {}
-
-    def generate_node(entity):
-        entity_id = entity['_id']
-        node_id = str(uuid())
-        result = {
-            Topology.ID: node_id,
-            Topology.ENTITY_ID: entity_id,
-            Topology.NEXT: [],
-            Topology.TOPOLOGY_ID: topology_name
-        }
-        nodes_by_entity_id[entity_id] = result
-        return result
-
-    # generate nodes from components
     for component in components:
-        generate_node(component)
+        component_id = context.get_entity_id(component)
+        component_node = Node(entity=component_id)
+        component_node.save(manager)
 
-    # generate nodes from resources
-    for resource in resources:
-        node = generate_node(resource)
-        component = resource.copy()
-        component[Context.TYPE] = 'component'
-        component[Context.NAME] = component['component']
-        del component['component']
-        entity_id = context.get_entity_id(component)
-        # add resource in parent component node next nodes
-        try:
-            next = nodes_by_entity_id[entity_id][Topology.NEXT]
-        except Exception as e:
-            # in some awkward cases, entity_id does not exist in nodes_by_entity_id
-            # TODO: fix this case x)
-            print(e)
-            continue
-        next.append(node[Topology.ID])
-        # add root in resource.next
-        node[Topology.NEXT].append(root_node[Topology.ID])
+        ctx, _ = context.get_entity_context_and_name(component)
 
-    # save nodes in storage
-    for entity_id in nodes_by_entity_id:
-        node = nodes_by_entity_id[entity_id]
-        topology.push_node(node)
-    # add root node
-    topology.push_node(root_node)
-    # save topology graph
-    topology.push(topology_graph)
+        resources = context.find('resource', context=ctx)
+        if resources:  # link component to all its resources with the same edge
+            edge = Edge(sources=component_id, targets=[])
+            for resource in resources:
+                resource_id = context.get_entity_id(resource)
+                resource_node = Node(entity=resource_id)
+                resource_node.save(manager)
+                edge.targets.append(resource_id)
+                root_edge = Edge(sources=resource_id, targets=topology.id)
+                root_edge.save(manager)
+            # save relationship between
+            edge.save(manager)
+        else:  # if no resources, link the component to the topology
+            edge = Edge(sources=component_id, targets=topology.id)
+            edge.save(manager)
 
 
 if __name__ == '__main__':
 
     parser = ArgumentParser(description='Generate a topology')
     parser.add_argument(dest='name', help='topology name to generate')
-    parser.add_argument(
-        '-o', dest='operations', help='number of operations to add', default=0)
-    parser.add_argument(
-        '-n', dest='nodes', default=1,
-        help='maximal number of nodes to bind to operations')
     args = parser.parse_args()
 
     topology_name = args.name
