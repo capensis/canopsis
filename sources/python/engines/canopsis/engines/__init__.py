@@ -25,7 +25,7 @@ from canopsis.old.rabbitmq import Amqp
 from canopsis.old.storage import get_storage
 from canopsis.old.account import Account
 from canopsis.old.event import forger, get_routingkey
-
+from canopsis.task import register_task
 from canopsis.tools import schema as cschema
 
 from traceback import format_exc, print_exc
@@ -375,8 +375,7 @@ class Engine(object):
                     perf_data_array=perf_data_array
                 )
 
-                rk = get_routingkey(event)
-                self.amqp.publish(event, rk, self.amqp.exchange_name_events)
+                publish(event=event, engine=self)
 
             self.counter_error = 0
             self.counter_event = 0
@@ -522,9 +521,7 @@ class TaskHandler(Engine):
             'execution_time': end - start
         }
 
-        self.amqp.publish(
-            event, get_routingkey(event),
-            self.amqp.exchange_name_events)
+        publish(event=event, engine=self)
 
     def handle_task(self, job):
         """
@@ -535,3 +532,18 @@ class TaskHandler(Engine):
         """
 
         raise NotImplementedError()
+
+
+@register_task
+def publish(event, engine, **kwargs):
+    """
+    Task dedicated to publish an event from an engine.
+
+    :param dict event to send.
+    :param Engine engine: engine to use in order to send the event.
+    """
+
+    rk = get_routingkey(event)
+    engine.amqp.publish(
+        event, rk, engine.amqp.exchange_name_events
+    )
