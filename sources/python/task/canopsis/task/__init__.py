@@ -209,7 +209,7 @@ def get_task_with_params(conf, cache=True):
             if task is not None:
                 # try to get params
                 if TASK_PARAMS in conf:
-                    params = conf[TASK_PARAMS]
+                    params = conf[TASK_PARAMS].copy()
 
     # result is the couple (task, params)
     result = task, params
