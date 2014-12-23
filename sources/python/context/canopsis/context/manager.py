@@ -151,8 +151,11 @@ class Context(MiddlewareRegistry):
 
         path = {Context.TYPE: _type}
 
-        if context is not None:
-            path.update(context)
+        if context is None:
+            path = {Context.TYPE: _type}
+        else:
+            path = context.copy()
+            path[Context.TYPE] = _type
 
         result = self[Context.CTX_STORAGE].get(
             path=path, data_ids=names, shared=extended)
@@ -172,10 +175,11 @@ class Context(MiddlewareRegistry):
 
         path = {}
 
-        if _type is not None:
-            path[Context.TYPE] = _type
         if context is not None:
             path.update(context)
+
+        if _type is not None:
+            path[Context.TYPE] = _type
 
         result = self[Context.CTX_STORAGE].get(
             path=path, _filter=_filter, shared=extended,
