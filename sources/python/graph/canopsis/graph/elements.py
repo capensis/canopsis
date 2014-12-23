@@ -314,6 +314,7 @@ class Edge(Vertice):
 
     BASE_TYPE = 'edge'  # base type name
 
+    WEIGHT = 'weight'  #: weight edge attribute name
     SOURCES = 'sources'  #: source vertice ids attribute name
     TARGETS = 'targets'  #: target vertice ids attribute name
     DIRECTED = 'directed'  #: directed attribute name
@@ -325,16 +326,17 @@ class Edge(Vertice):
     DEFAULT_DIRECTED = True  #: default directed value
 
     __slots__ = (
-        SOURCES, TARGETS, DIRECTED,
+        WEIGHT, SOURCES, TARGETS, DIRECTED,
         _DSOURCES, _DTARGETS, _GSOURCES, _GTARGETS,
     ) + Vertice.__slots__
 
     def __init__(
-        self, sources=None, targets=None, directed=DEFAULT_DIRECTED,
+        self, weight=1, sources=None, targets=None, directed=DEFAULT_DIRECTED,
         _dsources=None, _dtargets=None, _gsources=None, _gtargets=None,
         *args, **kwargs
     ):
         """
+        :param float weight: self weight.
         :param list sources: self sources.
         :param list targets: self targets.
         :param bool directed: self directed. (default DEFAULT_DIRECTED)
@@ -345,6 +347,9 @@ class Edge(Vertice):
         """
 
         super(Edge, self).__init__(*args, **kwargs)
+
+        # init weight
+        self.weight = weight
 
         # init sources such as an array of ids
         if sources is None:
