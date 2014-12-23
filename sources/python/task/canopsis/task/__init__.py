@@ -257,11 +257,12 @@ def run_task(conf=None, ctx=None, raiseError=True, cache=True, **kwargs):
 
 
 @register_task
-def new_conf(_id, **params):
+def new_conf(task, **params):
     """
-    Generate a new task conf related to input _id and params.
+    Generate a new task conf related to input task id and params.
 
-    :param str _id: task id
+    :param task: task identifier.
+    :type task: str or routine
     :param dict params: task parameters.
 
     :return: task conf depending on params:
@@ -272,12 +273,19 @@ def new_conf(_id, **params):
 
     result = None
 
+    # if task is a task routine, find the corresponding task id
+    if isroutine(task):
+        for task_id in __TASKS_BY_ID:
+            _task = __TASKS_BY_ID[task_id]
+            if _task == task:
+                task = task_id
+
     if not params:
-        result = _id
+        result = task
 
     else:
         result = {
-            TASK_ID: _id,
+            TASK_ID: task,
             TASK_PARAMS: params
         }
 

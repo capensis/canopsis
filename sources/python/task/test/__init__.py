@@ -343,6 +343,25 @@ class NewConfTest(TestCase):
         self.assertEqual(conf[TASK_ID], 'a')
         self.assertEqual(conf[TASK_PARAMS], params)
 
+    def test_with_routine(self):
+        """
+        Test to generate a new conf related to a task routine.
+        """
+
+        conf = new_conf(run_task)
+
+        self.assertEqual(conf, path(run_task))
+
+    def test_with_routine_and_params(self):
+        """
+        Test to generate a new conf related to a task routine and params.
+        """
+
+        params = {'a': 1}
+        conf = new_conf(run_task, **params)
+
+        self.assertEqual(conf[TASK_ID], path(run_task))
+        self.assertEqual(conf[TASK_PARAMS], params)
 
 class TasksTest(TestCase):
     """
