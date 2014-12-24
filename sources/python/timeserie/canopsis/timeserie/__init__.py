@@ -23,6 +23,7 @@ __version__ = "0.1"
 # provide only TimeSerie
 __all__ = ('TimeSerie')
 
+from canopsis.common.init import basestring
 from canopsis.timeserie.timewindow import Period, TimeWindow
 from canopsis.timeserie.aggregation import get_aggregations
 from canopsis.configuration.configurable import Configurable
@@ -66,7 +67,7 @@ class TimeSerie(Configurable):
         self,
         aggregation=VDEFAULT_AGGREGATION,
         max_points=VMAX_POINTS,
-        period=VPERIOD,
+        period=None,
         round_time=VROUND_TIME,
         fill=VFILL,
         *args, **kwargs
@@ -144,10 +145,9 @@ class TimeSerie(Configurable):
         The upper bound is timewindow.stop_datetime()
         """
 
+        result = []
         # get the right period to apply on timewindow
         period = self._get_period(timewindow=timewindow)
-
-        result = []
 
         # set start and stop datetime
         start_datetime = timewindow.start_datetime()
@@ -155,7 +155,8 @@ class TimeSerie(Configurable):
 
         if self.round_time:  # normalize if round time is True
             start_datetime = period.round_datetime(
-                datetime=start_datetime, normalize=True)
+                datetime=start_datetime, normalize=True
+            )
 
         current_datetime = start_datetime
         delta = period.get_delta()
@@ -186,19 +187,24 @@ class TimeSerie(Configurable):
         if self.round_time:
             period = self._get_period(timewindow)
             round_starttimestamp = period.round_timestamp(
-                timestamp=timewindow.start(), normalize=True)
+                timestamp=timewindow.start(),
+                normalize=True
+            )
             timewindow = TimeWindow(
-                start=round_starttimestamp, stop=timewindow.stop(),
-                timezone=timewindow.timezone)
+                start=round_starttimestamp,
+                stop=timewindow.stop(),
+                timezone=timewindow.timezone
+            )
 
         # start to exclude points which are not in timewindow
         points = [point for point in points if point[0] in timewindow]
-        points_len = len(points)
 
         if not meta:
             meta = {}
 
-        points = self.apply_transform(points, method=meta.get('type', None))
+        transform_method = meta.get('value', {}).get('type', None)
+        points = self.apply_transform(points, method=transform_method)
+        points_len = len(points)
 
         fn = None
 
@@ -223,7 +229,6 @@ class TimeSerie(Configurable):
             # iterate on all timesteps in order to get points
             # between [previous_timestamp, timestamp[
             for index in range(1, len(timesteps)):
-
                 # initialize values_to_aggregate
                 values_to_aggregate = []
                 # set timestamp and previous_timestamp
@@ -298,13 +303,13 @@ class TimeSerie(Configurable):
         def derive(pts):
             points = []
 
-            for i in range(1, len(pts) + 1):
+            for i in range(1, len(pts)):
                 ts, val = pts[i][0], pts[i][1]
                 prevts, prevval = pts[i - 1][0], pts[i - 1][1]
 
                 interval = abs(ts - prevts)
                 if interval:
-                    val = round(float(value) / interval, 3)
+                    val = round(float(val) / interval, 3)
 
                 points.append([ts, val])
 
@@ -346,7 +351,9 @@ class TimeSerie(Configurable):
                 Parameter(TimeSerie.PERIOD, parser=Period.from_str),
                 Parameter(TimeSerie.FILL, parser=Parameter.bool),
                 Parameter(TimeSerie.ROUND_TIME, parser=Parameter.bool),
-                Parameter(TimeSerie.MAX_POINTS, parser=int)))
+                Parameter(TimeSerie.MAX_POINTS, parser=int)
+            )
+        )
 
         return result
 
@@ -374,11 +381,9 @@ class TimeSerie(Configurable):
             fn = get_aggregations()[self.aggregation]
 
         if len(values_to_aggregate) > 0:
-
             result = round(fn(values_to_aggregate), 2)
 
         else:
-
             result = 0 if self.fill else None
 
         return result

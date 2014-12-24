@@ -6,7 +6,7 @@ from random import random, randint
 from time import time
 
 
-class AggregationTest(TestCase):
+class TimeSerieTest(TestCase):
 
     def setUp(self):
         self.timeserie = TimeSerie()
@@ -48,10 +48,11 @@ class AggregationTest(TestCase):
         return result
 
     def test_scenario(self):
+        """
+        Calculate aggregations over 5 years
+        """
 
         timewindow = self._five_years_timewidow()
-
-        total_seconds = timewindow.total_seconds()
 
         # for all round_time values
         for round_time in (True, False):
@@ -72,38 +73,36 @@ class AggregationTest(TestCase):
                 ):
                     continue
 
-                if unit is Period.WEEK:
-                    value = randint(2, 500)
-                    kwargs = {'max_points': value}
-                    period_length = total_seconds / value
-                else:
-                    value = randint(2, max_value_unit)
-                    kwargs = {'period': Period(**{unit: value})}
-                    period_length = unit_length * value
+                value = randint(2, max_value_unit)
+                period = Period(**{unit: value})
+                kwargs = {'period': period}
+                period_length = unit_length * value
 
-                timeserie = TimeSerie(
-                    aggregation="MEAN", round_time=round_time, **kwargs
-                )
+                timeserie = TimeSerie(round_time=round_time, **kwargs)
 
                 timesteps = timeserie.timesteps(timewindow)
 
-                self.assertEqual(timesteps[1] - timesteps[0], period_length)
+                timesteps_gap = timesteps[1] - timesteps[0]
 
-                all_aggregated_points = list()
+                self.assertEqual(timesteps_gap, period_length)
 
                 for i in range(5):
 
                     points = [
-                        (t, random()) for t in range(
+                        (t, random()) for t in
+                        range(
                             int(timewindow.start()),
-                            int(timewindow.stop()), 3600)]
+                            int(timewindow.stop()),
+                            Period(**{unit: 1}).total_seconds()
+                        )
+                    ]
 
                     aggregated_points = timeserie.calculate(points, timewindow)
-
-                    all_aggregated_points.append(aggregated_points)
-
                     len_aggregated_points = len(aggregated_points)
-                    self.assertTrue((len(timesteps) - 1) in (
+                    print (unit, len_aggregated_points, len(timesteps))
+                    if unit == "week":
+                        print aggregated_points
+                    self.assertIn(len(timesteps) - 1, (
                         len_aggregated_points, len_aggregated_points + 1))
 
                 unit_length *= max_value_unit

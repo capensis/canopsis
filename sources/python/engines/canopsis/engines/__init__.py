@@ -25,7 +25,7 @@ from canopsis.old.rabbitmq import Amqp
 from canopsis.old.storage import get_storage
 from canopsis.old.account import Account
 from canopsis.old.event import forger, get_routingkey
-
+from canopsis.task import register_task
 from canopsis.tools import schema as cschema
 
 from traceback import format_exc, print_exc
@@ -72,7 +72,7 @@ class Engine(object):
 
         self.name = name
 
-        #Set parametrized Amqp for testing purposes
+        # Set parametrized Amqp for testing purposes
         if camqp_custom is None:
             self.Amqp = Amqp
         else:
@@ -87,7 +87,7 @@ class Engine(object):
         self.next_amqp_queues = next_amqp_queues
         self.get_amqp_queue = cycle(self.next_amqp_queues)
 
-        ## Get from internal or external queue
+        # Get from internal or external queue
         self.next_balanced = next_balanced
 
         init = Init()
@@ -95,12 +95,16 @@ class Engine(object):
         self.logger = init.getLogger(name, logging_level=self.logging_level)
 
         logHandler = FileHandler(
-            filename=join(sys_prefix, 'var', 'log', 'engines', '{0}.log'.format(name))
+            filename=join(
+                sys_prefix, 'var', 'log', 'engines', '{0}.log'.format(name)
+            )
         )
 
         logHandler.setFormatter(
             Formatter(
-                "%(asctime)s %(levelname)s %(name)s %(message)s"))
+                "%(asctime)s %(levelname)s %(name)s %(message)s"
+            )
+        )
 
         # Log in file
         self.logger.addHandler(logHandler)
@@ -127,40 +131,43 @@ class Engine(object):
 
         self.dispatcher_crecords = [
             'selector', 'topology', 'derogation', 'consolidation', 'sla',
-            'downtime', 'perfstore2_rotate']
+            'downtime', 'eventstore'
+        ]
 
     def crecord_task_complete(self, crecord_id):
         next_ready = time() + DISPATCHER_READY_TIME
         self.storage.update(
-            crecord_id, {'loaded': False, 'next_ready_time': next_ready})
+            crecord_id, {'loaded': False, 'next_ready_time': next_ready}
+        )
         self.logger.debug(
             'next ready time for crecord {0} : {1}'.format(
-                crecord_id, next_ready))
+                crecord_id, next_ready)
+        )
 
-    def get_ready_record(self, event):
+    def get_ready_record(self, record_event):
         """
-        crecord dispatcher send an event with type and crecord id.
+        crecord dispatcher sent a record event with type and crecord id.
         So I load a crecord object instance (dynamically) from these infos
         """
 
-        ctype = event.get('crecord_type', None)
+        ctype = record_event.get('crecord_type', None)
 
-        if '_id' in event and ctype and ctype in self.dispatcher_crecords:
-            self.logger.warning('Record type {0} not found'.format(ctype))
+        if ('_id' in record_event and ctype and
+                ctype in self.dispatcher_crecords):
 
             record_object = None
 
             try:
                 record_object = self.storage.get(
-                    event['_id'],
+                    record_event['_id'],
                     account=Account(user="root", group="root")
                 )
 
             except Exception as e:
                 self.logger.critical(
-                    'Record <{0}> not found in {1} : {2}'.format(
+                    '<{}> record ({}) not found : {}'.format(
                         ctype,
-                        str(self.dispatcher_crecords),
+                        record_event['_id'],
                         e
                     )
                 )
@@ -330,7 +337,7 @@ class Engine(object):
                 sec_per_evt = self.counter_worktime / self.counter_event
                 self.logger.debug(" + %0.5f seconds/event" % sec_per_evt)
 
-            ## Submit event
+            # Submit event
             if self.send_stats_event and self.counter_event != 0:
                 state = 0
 
@@ -368,8 +375,7 @@ class Engine(object):
                     perf_data_array=perf_data_array
                 )
 
-                rk = get_routingkey(event)
-                self.amqp.publish(event, rk, self.amqp.exchange_name_events)
+                publish(event=event, engine=self)
 
             self.counter_error = 0
             self.counter_event = 0
@@ -499,10 +505,6 @@ class TaskHandler(Engine):
                     state = 1
                     output = 'Not implemented'
 
-                #except Exception as err:
-                #    state = 2
-                #    output = 'Unhandled exception: {0}'.format(err)
-
         end = int(time())
 
         event = {
@@ -519,9 +521,7 @@ class TaskHandler(Engine):
             'execution_time': end - start
         }
 
-        self.amqp.publish(
-            event, get_routingkey(event),
-            self.amqp.exchange_name_events)
+        publish(event=event, engine=self)
 
     def handle_task(self, job):
         """
@@ -532,3 +532,18 @@ class TaskHandler(Engine):
         """
 
         raise NotImplementedError()
+
+
+@register_task
+def publish(event, engine, **kwargs):
+    """
+    Task dedicated to publish an event from an engine.
+
+    :param dict event to send.
+    :param Engine engine: engine to use in order to send the event.
+    """
+
+    rk = get_routingkey(event)
+    engine.amqp.publish(
+        event, rk, engine.amqp.exchange_name_events
+    )

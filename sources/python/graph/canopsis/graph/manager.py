@@ -19,52 +19,44 @@
 # ---------------------------------
 
 """
+===========
 Description
 ===========
 
+This module defines the GraphManager which interacts between graph elements and
+the DB.
+
 Functional
-----------
+==========
 
-A graph is an entity which permits to define relationships of entities in using
-composed of nodes and edges each one bound to entities.
+The role of the GraphManager is to ease graph element CRUD operations and
+to retrieve graphs, vertices and edges thanks to methods with all element
+parameters useful to find them.
 
-A node contains information about itself and associated entity.
+This last could be specialized in assigning the GRAPH_TYPE class attribute to a
+dedicated Graph type.
 
-An edge is a node which binds one or more nodes with direction property which
-    specifies target and source nodes if true.
+All methods may have to be enough generics without the need to override them,
+the business code is ensured by graph elements.
 
 Technical
----------
+=========
 
-As a graph is composed of nodes and edges, an edge inherits from a node.
+The graph manager permits to get graph elements with any context information.
 
-A graph node contains::
+First, generic methods permit to get/put/delete elements in understanding such
+elements such as dictionaries.
 
-    - graph: required field which binds a graph element to a graph id.
-    - entity: optional field which binds a graph element to an entity id.
-    - id: unique id among elements of the same graph_id and the same element
-        kind.
-    - type: optional field for graph element typing.
-    - data: optional field which contains element data.
-    - task: optional field which contains task information.
-
-A graph edge contains::
-
-    - sources: graph element ids.
-    - targets: graph element ids.
-    - directed: graph edge boolean direction information.
-        If false, sources and targets are same.
+Two, it is possible to find graphs, vertices and edges thanks to parameters
+which correspond to their properties.
 """
 
-from uuid import uuid4 as uuid
-
+from canopsis.common.init import basestring
 from canopsis.configuration.configurable.decorator import (
     conf_paths, add_category
 )
 from canopsis.middleware.registry import MiddlewareRegistry
-from canopsis.context.manager import Context
-from canopsis.storage import Storage
-from canopsis.task.manager import TaskManager
+from canopsis.graph.elements import Graph, Edge, GraphElement, Vertice
 
 CONF_PATH = 'graph/graph.conf'
 CATEGORY = 'GRAPH'
@@ -74,395 +66,701 @@ CATEGORY = 'GRAPH'
 @conf_paths(CONF_PATH)
 class GraphManager(MiddlewareRegistry):
     """
-    Manage graph data.
+    Manage graph data in using a graph type which choose how to deserialize
+    graph elements.
     """
 
     STORAGE = 'graph_storage'  #: graph storage name
 
-    ID = Storage.DATA_ID  #: graph element ID
+    GRAPH_TYPE = Graph  #: default graph type
 
-    # graph specific fields
-    NODES = 'nodes'  #: graph nodes attribute name
-    EDGES = 'edges'  #: graph edges attribute name
-    ENTITY = 'entity'  #: graph node entity attribute name
-
-    # node specific fields
-    GRAPH_ID = 'graph_id'  #: graph node graph id
-    ENTITY_ID = 'entity_id'  #: graph node entity id field name
-    TYPE = 'type'  #: graph node type field name
-    DATA = 'data'  #: graph node data field name
-    TASK = TaskManager.NAME  #: graph node task field name
-
-    # edge specific fields
-    SOURCES = 'sources'  #: graph node next field name
-    TARGETS = 'targets'  #: graph targets field name
-    DIRECTED = 'directed'  #: graph edge direction field name
-
-    # element type specific field
-    GRAPH_TYPE = 'graph'  #: graph type name
-    GRAPH_NODE_TYPE = 'node'  #: graph node type name
-    GRAPH_EDGE_TYPE = 'edge'  #: graph node type name
-
-    def __init__(self, *args, **kwargs):
-
-        super(GraphManager, self).__init__(*args, **kwargs)
-
-        self.context = Context()
-
-    def get_graph(self, _id, _type=None):
+    def get_elts(
+        self,
+        ids=None, types=None, graph_ids=None, data=None, base_type=None,
+        query=None, serialize=True, cls=None
+    ):
         """
-        Get one graph and optionally its nodes.
+        Get graph element(s) related to input ids, types and query.
 
-        :param str _id: get a graph and its nodes related to input
-            _id
-        :param str _type: graph type to retrieve (default
-            GraphManager.GRAPH_TYPE)
+        :param ids: list of ids or id of element to retrieve. If None, get all
+            elements. If str, get one element.
+        :type ids: list or str
+        :param types: graph element types to retrieve.
+        :type types: list or str
+        :param graph_ids: graph ids from where find elts.
+        :type graph_ids: list or str
+        :param data: data query
+        :param dict query: element search query.
+        :param str base_type: elt base type.
+        :param bool serialize: serialize result in GraphElements if True
+            (by default).
+        :param type cls: GraphElement type to retrieve if not None.
+
+        :return: element(s) corresponding to input ids and query.
+        :rtype: list or dict
         """
 
-        # get the right path
-        if _type is None:
-            _type = self.GRAPH_TYPE
+        # check if only one element is asked
+        unique = isinstance(ids, basestring)
+        # init query
+        if query is None:
+            query = {}
+        # put base type in query
+        if base_type is not None:
+            query[GraphElement.BASE_TYPE] = base_type
+        # put types in query if not None
+        if types is not None:
+            if not isinstance(types, basestring):
+                types = {'$in': types}
+            query[GraphElement.TYPE] = types
+        # put data if not None
+        if data is not None:
+            if isinstance(data, dict):
+                for name in data:
+                    data_name = 'data.{0}'.format(name)
+                    query[data_name] = data[name]
+            else:
+                query[Vertice.DATA] = data
+        # find ids among graphs
+        if graph_ids is not None:
+            result = []
+            graphs = self.get_elts(ids=graph_ids, serialize=False)
+            if graphs is not None:
+                # all graph elt ids
+                elt_ids = set()
+                # ensure graphs is a list of graphs
+                if isinstance(graphs, dict):
+                    graphs = [graphs]
+                for graph in graphs:
+                    if Graph.ELTS in graph:
+                        elts = set(graph[Graph.ELTS])
+                        elt_ids |= elts
+                # if ids is not given, use elt_ids
+                if ids is None:
+                    ids = list(elt_ids)
+                else:  # else use jonction of elt_ids and ids
+                    if isinstance(ids, basestring):
+                        ids = [ids]
+                    ids = list(elt_ids & set(ids))
 
-        result = self.context.get(_type=_type, names=_id)
+        # get elements with ids and query
+        result = self[GraphManager.STORAGE].get_elements(ids=ids, query=query)
+        if result is not None and serialize:
+            if isinstance(result, dict):
+                result = GraphElement.new_element(**result)
+                # ensure cls is respected
+                if cls is not None and not isinstance(result, cls):
+                    result = None
+            else:
+                # save reference to new_element in order to ease its use
+                new_element = GraphElement.new_element
+                result = list(
+                    new_element(**elt) for elt in result
+                )
+                # ensure cls is respected
+                if cls is not None:
+                    result = [elt for elt in result if isinstance(elt, cls)]
 
-        if result is not None:
-            nodes = self.get_nodes(graph_id=_id)
-            result[GraphManager.NODES] = nodes
+        if unique and isinstance(result, list):
+            result = result[0] if result else None
 
         return result
 
-    def del_graph(self, ids=None, _type=None):
+    def del_elts(self, ids=None, types=None, query=None, cache=False):
         """
-        Get graph elements related to input graph_id.
+        Del elements identified by input ids in removing reference before.
 
-        :param ids: graph id from where get elements.
-        :type ids: None, str or list
-        :param str _type: graph type to delete.
-        """
-
-        if _type is None:
-            _type = self.GRAPH_TYPE
-
-        # if graph ids is a str
-        if isinstance(ids, str):
-            ids = [ids]
-
-        # if graph ids is None, remove all
-        if ids is None:
-            self[GraphManager.STORAGE].remove({})
-
-        else:
-            for graph_id in ids:
-                query = {GraphManager.GRAPH_ID: graph_id}
-                self[GraphManager.STORAGE].remove_elements(query=query)
-                self.context.remove(_type=_type, ids=graph_id)
-
-    def put_graph(self, graph):
-        """
-        Put graph in DB.
-
-        :param dict graph: graph to put in DB.
-        :return: putted graph.
+        :param ids: list of ids or id elements to delete. If None, delete all
+            elements.
+        :type ids: list or str
+        :param types: element types to delete.
+        :type types: list or str
+        :param dict query: additional deletion query.
+        :param bool cache: use query cache if True (False by default).
         """
 
-        # get graph id
-        if GraphManager.ID not in graph:
-            # set it in graph if it does not exist
-            graph[GraphManager.ID] = str(uuid())
-        graph_id = graph[GraphManager.ID]
+        # initialize query if None
+        if query is None:
+            query = {}
+        # put types in query
+        if types is not None:
+            query[GraphElement.TYPE] = types
+        # remove references in graph
+        self.remove_elts(ids=ids, cache=cache)
+        # remove edge references
+        self.del_edge_refs(vids=ids, cache=cache)
+        # remove elements
+        self[GraphManager.STORAGE].remove_elements(
+            ids=ids, _filter=query, cache=cache
+        )
 
-        # create an entity sucha as a copy of input graph
-        entity = graph.copy()
-        # add type if not specified in the entity
-        if GraphManager.TYPE in graph:
-            _type = graph[GraphManager.TYPE]
-        else:
-            _type = self.GRAPH_TYPE
-
-        # put nodes if they exist
-        if GraphManager.NODES in graph:
-            # get nodes
-            nodes = graph[GraphManager.NODES]
-            # put nodes in storage
-            self.put_nodes(nodes=nodes, graph_id=graph_id)
-            # delete nodes from entity
-            del entity[GraphManager.NODES]
-
-        # put graph in context
-        self.context.put(_type=_type, entity=entity)
-
-        return graph
-
-    def put_nodes(self, nodes, graph_id=None):
+    def put_elt(self, elt, graph_ids=None, cache=False):
         """
-        Put nodes in DB and add node ids in nodes if they do not exist.
+        Put an element.
 
-        :param nodes: node(s) to put in DB.
-        :type nodes: dict or list
-        :param str graph_id: graph id of nodes. If None, let the one in nodes.
-        :return: putted nodes.
+        :param dict elt: element to put.
+        :type elt: dict or GraphElement
+        :param str graph_ids: element graph id. None if elt is a graph.
+        :param bool cache: use query cache if True (False by default).
         """
 
-        if isinstance(nodes, dict):
-            nodes = [nodes]
+        # ensure elt is a dict
+        if isinstance(elt, GraphElement):
+            elt = elt.to_dict()
+        elt_id = elt[GraphElement.ID]
 
-        for node in nodes:
-            # set node id
-            if GraphManager.ID not in node:
-                node[GraphManager.ID] = str(uuid())
-            _id = node[GraphManager.ID]
-            # set graph_id
-            if graph_id is not None:
-                node[GraphManager.GRAPH_ID] = graph_id
-            # put node in storage
-            self[GraphManager.STORAGE].put_element(_id=_id, element=node)
+        # put elt value in storage
+        self[GraphManager.STORAGE].put_element(
+            _id=elt_id, element=elt, cache=cache
+        )
+        # update graph if graph_id is not None
+        if graph_ids is not None:
+            graphs = self.get_graphs(ids=graph_ids)
+            if graphs is not None:
+                # ensure graphs is a list of graphs
+                if isinstance(graphs, Graph):
+                    graphs = [graphs]
+                for graph in graphs:
+                    # if graph exists and elt_id not already present
+                    if elt_id not in graph.elts:
+                        # add elt_id in graph elts
+                        graph.elts.append(elt_id)
+                        graph.save(self, cache=cache)
 
-        return nodes
+    def remove_elts(self, ids, graph_ids=None, cache=False):
+        """
+        Remove vertices from graphs.
 
-    def get_nodes(
-        self,
-        graph_id=None,
-        ids=None, sources=None, targets=None,
-        _type=None,
-        entity_id=None,
+        :param ids: elt ids to remove from graph_ids.
+        :type ids: list or str
+        :param graph_ids: graph ids from where remove self.
+        :type graph_ids: list or str
+        :param bool cache: use query cache if True (False by default).
+        """
+
+        # get graphs in order to remove references to self from them
+        graphs = self.get_graphs(ids=graph_ids, elts=ids)
+        if graphs is not None:
+            # ensure graps is a list
+            if isinstance(graphs, Graph):
+                graphs = [graphs]
+            if ids is None:
+                ids = []
+            elif isinstance(ids, basestring):
+                ids = [ids]
+            for graph in graphs:
+                for _id in ids:
+                    if _id in graph.elts:
+                        # remove elf from graph.elts
+                        graph.remove_elts(_id)
+                        # save the graph
+                        graph.save(manager=self, cache=cache)
+
+    def del_edge_refs(
+        self, ids=None, vids=None, sources=None, targets=None, cache=False
     ):
         """
-        Get graph nodes related to some context.
+        Delete references of vertices from edges.
 
-        :param str graph_id: graph id from where get nodes.
-        :param ids: node ids.
-        :type ids: list or str.
-        :param list sources: source edge ids. If edges exist, add target nodes.
-        :param list targets: target edge ids. If edges exist, add source nodes.
-        :param str _type: graph type (default GraphManager.GRAPH_NODE_TYPE)
-        :param str entity_id: related entity id.
+        :param ids: edge ids to select for removing vertices links.
+        :type ids: list or str
+        :param vids: vertice ids to remove from edge links.
+        :type vids: list or str
+        :param sources: source ids to remove.
+        :type sources: list or str
+        :param targets: target ids to remove.
+        :type targets: list or str
+        :param bool cache: use query cache if True (False by default).
+        """
+
+        edges = self.get_edges(ids=ids, sources=sources, targets=targets)
+
+        if edges is not None:
+            # ensure edges is a list
+            if isinstance(edges, basestring):
+                edges = [edges]
+            # for all edges
+            for edge in edges:
+                # del refs
+                edge.del_refs(ids=vids, sources=sources, targets=targets)
+                # and save them
+                edge.save(manager=self, cache=cache)
+
+    def get_graphs(
+        self, ids=None, types=None, elts=None, graph_ids=None, data=None,
+        query=None, add_elts=False, serialize=True
+    ):
+        """
+        Get one or more graphs related to input ids, types and elts.
+
+        :param ids: graph ids to retrieve.
+        :type ids: list or str
+        :param types: graph types to retrieve.
+        :type types: list or str
+        :param graph_ids: graph ids from where get graphs.
+        :type graph_ids: list or str
+        :param data: data to find among graphs.
+        :param dict query: additional graph search query. Could help to search
+            specific data information.
+        :param bool add_elts: (False by default) add elts in the result. Works
+            only if serialize is True.
+        :param bool serialize: serialize result in GraphElements if True
+            (by default).
+
+        :return: graph(s) corresponding to input parameters.
+        :rtype: list or Graph
         """
 
         result = []
-
-        query = {}
-
-        # add graph id in query
-        if graph_id is not None:
-            query[GraphManager.GRAPH_ID] = graph_id
-
-        # initialize ids
-        if ids is not None:
-            if isinstance(ids, str):
-                ids = [ids]
-        else:
-            ids = []
-
-        # if target nodes are requested
-        if sources is not None:
-            # transform sources into a list
-            if isinstance(sources, str):
-                sources = [sources]
-            # get all edges which have sources
-            query[GraphManager.SOURCES] = {'$in': sources}
-            edges = self[GraphManager.STORAGE].find_elements(query=query)
-            # remove sources from query
-            del query[GraphManager.SOURCES]
-            # put edge targets in ids
-            ids = [] if edges else [None]  # cancel future search if not edges
-            for edge in edges:
-                # put other sources in case of undirected edge
-                if GraphManager.DIRECTED in edge \
-                        and not edge[GraphManager.DIRECTED]:
-                    ids += edge[GraphManager.SOURCES]
-                    # remove one occurence of sources from edge sources
-                    for source in sources:
-                        if source in ids:
-                            ids.remove(source)
-                # put targets
-                ids += edge[GraphManager.TARGETS]
-            # add edges in the result
-            result += edges
-
-        # if source nodes are requested
-        if targets is not None:
-            # transform targets into a list
-            if isinstance(targets, str):
-                targets = [targets]
-            # get all edges which have targets
-            query[GraphManager.TARGETS] = {'$in': targets}
-            edges = self[GraphManager.STORAGE].find_elements(query=query)
-            # remove sources from query
-            del query[GraphManager.TARGETS]
-            # put edge sources in ids
-            ids = [] if edges else [None]  # cancel future search if not edges
-            targets = []
-            for edge in edges:
-                # put other targets in case of undirected edge
-                if GraphManager.DIRECTED in edge \
-                        and not edge[GraphManager.DIRECTED]:
-                    ids += edge[GraphManager.TARGETS]
-                    # remove one occurence of targets from edge targets
-                    for target in targets:
-                        if target in ids:
-                            ids.remove(target)
-                # put sources
-                ids += edge[GraphManager.SOURCES]
-            # add edges in the result
-            result += edges
-
-        # set entity_id into the query
-        if entity_id is not None:
-            query[GraphManager.ENTITY_ID] = entity_id
-
-        # set type if not None
-        if _type is not None:
-            query[GraphManager.TYPE] = _type
-
-        # get nodes related to ids
-        if ids:
-            query = {GraphManager.ID: {'$in': ids}}
-
-        nodes = self[GraphManager.STORAGE].find_elements(query=query)
-
-        # add nodes in result
-        result += nodes
-
-        # add entity in nodes
-        for node in nodes:
-            if GraphManager.ENTITY_ID in node:
-                entity_id = node[GraphManager.ENTITY_ID]
-                entities = self.context.get_entities(ids=entity_id)
-                node[GraphManager.ENTITY] = entities
-
-        return result
-
-    def del_nodes(self, ids=None):
-        """
-        Delete one or more nodes depending on input ids:
-
-            - an id: try to delete nodes where id correspond to id
-            - list of ids: try to delete nodes where id are in input ids
-            - None: delete all nodes
-        """
-
-        _filter = {}
-
-        if ids is not None:
-            if isinstance(ids, str):
-                ids = [ids]
-            _filter = {GraphManager.ID: {'$in': ids}}
-
-        self[GraphManager.STORAGE].remove_elements(_filter=_filter)
-
-    def is_edge(self, node):
-        """
-        True if node is an edge.
-
-        :param dict node: node to compare to an edge.
-        """
-
-        # a node is an edge only if it has sources and targets
-        result = GraphManager.SOURCES in node and GraphManager.TARGETS in node
-
-        return result
-
-    @classmethod
-    def new_edge(
-        cls, graph_id,
-        _id=None, entity_id=None, _type=None, data=None, task=None,
-        sources=None, targets=None, directed=True
-    ):
-        """
-        Create a new edge with parameters
-
-        :param str graph_id: graph id.
-        :param str _id: edge id.
-        :param str entity_id: bound entity id.
-        :param str _type: edge type. If None, equals cls.GRAPH_EDGE_TYPE.
-        :param data: edge data.
-        :param task: edge task.
-        :param list sources: source node ids.
-        :param list targets: target node ids.
-        :param bool directed: edge directed property (True by default).
-        """
-
-        # get default _type value if None
-        if _type is None:
-            _type = cls.GRAPH_EDGE_TYPE
-
-        result = cls.new_node(
-            graph_id=graph_id,
-            _id=_id,
-            entity_id=entity_id,
-            _type=_type,
+        # init query
+        if query is None:
+            query = {}
+        # put elts in query
+        if elts is not None:
+            if not isinstance(elts, basestring):
+                elts = {'$in': elts}
+            query[Graph.ELTS] = elts
+        # get graphs with ids and query
+        result = self.get_elts(
+            ids=ids,
+            query=query,
+            types=types,
+            graph_ids=graph_ids,
             data=data,
-            task=task)
-        # set sources, targets and directed
-        result[GraphManager.SOURCES] = sources
-        result[GraphManager.TARGETS] = targets
-        result[GraphManager.DIRECTED] = directed
+            base_type=Graph.BASE_TYPE,
+            serialize=serialize
+        )
+        # if add_elts is asked
+        if result is not None and serialize and add_elts:
+            if isinstance(result, Graph):
+                result.update_gelts(manager=self)
+            else:
+                for graph in result:
+                    graph.update_gelts(manager=self)
 
         return result
 
-    @classmethod
-    def new_node(
-        cls,
-        graph_id, _id=None, entity_id=None, _type=None, data=None, task=None
+    def get_targets(
+        self,
+        ids=None, graph_ids=None,
+        data=None, query=None,
+        types=None, edge_ids=None, add_edges=False, edge_types=None,
+        edge_data=None, edge_query=None, serialize=True
     ):
         """
-        Create a new node with parameters.
+        Ease the use of get_neighbourhood method in order to get targets
+            vertices.
 
-        :param str graph_id: graph id.
-        :param str _id: node id.
-        :param str entity_id: bound entity id.
-        :param str _type: node type. If None, equals cls.GRAPH_NODE_TYPE.
-        :param data: node data.
-        :param task: task information
+        :param ids: graph ids to retrieve.
+        :type ids: list or str
+        :param types: graph types to retrieve.
+        :type types: list or str
+        :param graph_ids: graph ids from where get graphs.
+        :type graph_ids: list or str
+        :param data: data to find among graphs.
+        :param dict query: additional graph search query. Could help to search
+            specific data information.
+        :param bool serialize: serialize result in GraphElements if True
+            (by default).
+
+        :return: graph(s) corresponding to input parameters.
+        :rtype: list or Graph
         """
 
-        # create a new node with graph_id
-        result = {GraphManager.GRAPH_ID: graph_id}
+        return self.get_neighbourhood(
+            ids=ids, graph_ids=graph_ids, sources=False, targets=True,
+            target_data=data, target_query=query, target_types=types,
+            edge_ids=edge_ids, add_edges=add_edges,
+            target_edge_types=edge_types, target_edge_data=edge_data,
+            edge_query=edge_query, serialize=serialize
+        )
 
-        # set id
-        if _id is None:
-            _id = cls.new_id()
-        result[GraphManager.ID] = _id
-        # set entity_id
-        result[GraphManager.ENTITY_ID] = entity_id
-        # set _type
-        if _type is None:
-            _type = cls.GRAPH_NODE_TYPE
-        result[GraphManager.TYPE] = _type
-        # set data
-        result[GraphManager.DATA] = data
-        # set task
-        result[GraphManager.TASK] = task
+    def get_sources(
+        self,
+        ids=None, graph_ids=None,
+        data=None, query=None,
+        types=None, edge_ids=None, add_edges=False, edge_types=None,
+        edge_data=None, edge_query=None, serialize=True
+    ):
+        """
+        Ease the use of get_neighbourhood method in order to get sources
+            vertices.
+
+        :param ids: graph ids to retrieve.
+        :type ids: list or str
+        :param types: graph types to retrieve.
+        :type types: list or str
+        :param graph_ids: graph ids from where get graphs.
+        :type graph_ids: list or str
+        :param data: data to find among graphs.
+        :param dict query: additional graph search query. Could help to search
+            specific data information.
+        :param bool serialize: serialize result in GraphElements if True
+            (by default).
+
+        :return: graph(s) corresponding to input parameters.
+        :rtype: list or Graph
+        """
+
+        return self.get_neighbourhood(
+            ids=ids, graph_ids=graph_ids, sources=True, targets=False,
+            source_data=data, source_query=query, source_types=types,
+            edge_ids=edge_ids, add_edges=add_edges,
+            source_edge_types=edge_types, source_edge_data=edge_data,
+            edge_query=edge_query, serialize=serialize
+        )
+
+    def get_neighbourhood(
+        self,
+        ids=None, sources=False, targets=True,
+        graph_ids=None,
+        data=None, source_data=None, target_data=None,
+        types=None, source_types=None, target_types=None,
+        edge_ids=None, edge_types=None, add_edges=False,
+        source_edge_types=None, target_edge_types=None,
+        edge_data=None, source_edge_data=None, target_edge_data=None,
+        query=None, edge_query=None, source_query=None, target_query=None,
+        serialize=True
+    ):
+        """
+        Get neighbour vertices identified by context parameters.
+
+        Sources and targets are handled in not directed edges.
+
+        :param ids: vertice ids from where get neighbours.
+        :type ids: list or str
+        :param bool sources: if True (False by default) add source vertices.
+        :param bool targets: if True (default) add target vertices.
+        :param graph_ids: vertice graph ids.
+        :type graph_ids: list or str
+        :param dict data: neighbourhood data to find.
+        :param dict source_data: source neighbourhood data to find.
+        :param dict target_data: target neighbourhood data to find.
+        :param types: vertice type(s).
+        :type types: list or str
+        :param types: neighbourhood types to retrieve.
+        :type types: list or str
+        :param source_types: neighbourhood source types to retrieve.
+        :type source_types: list or str
+        :param target_types: neighbourhood target types to retrieve.
+        :type target_types: list or str
+        :param edge_ids: edge from where find target/source vertices.
+        :type edge_ids: list or str
+        :param edge_types: edge types from where find target/source vertices.
+        :type edge_types: list or str
+        :param bool add_edges: if True (default), add pathed edges in the
+            result such as {edge_id: (edge, list(vertices))}.
+        :param source_edge_types: edge types from where find source vertices.
+        :type source_edge_types: list or str
+        :param target_edge_types: edge types from where find target vertices.
+        :type target_edge_types: list or str
+        :param dict edge_data: edge data to find.
+        :param dict source_edge_data: source edge data to find.
+        :param dict target_edge_data: target edge data to find.
+        :param dict query: additional search query.
+        :param dict edge_query: additional edge query.
+        :param dict source_query: additional source query.
+        :param dict target_query: additional target query.
+        :param bool serialize: serialize result in GraphElements if True
+            (by default).
+
+        :return: list of neighbour vertices designed by ids, or dict of
+            {edge_id: (edge, list(vertices))} if add_edges.
+        :rtype: list or dict
+        """
+
+        result = {} if add_edges else []
+
+        # init types
+        if isinstance(types, basestring):
+            types = [types]
+
+        # init edges
+        edges = dict()
+
+        # search among source edges even if not sources because
+        # edges can be not directed
+        # init source_types
+        if source_types is not None:
+            if isinstance(source_types, basestring):
+                source_types = [source_types]
+        if types is not None:
+            source_types += types
+        # init source query
+        if source_query is not None:
+            if query is not None:
+                source_query.update(query)
+        else:
+            source_query = query
+        # init source edge types
+        if source_edge_types is not None:
+            if isinstance(source_edge_types, basestring):
+                source_edge_types = [source_edge_types]
+            if edge_types is not None:
+                if isinstance(edge_types, basestring):
+                    source_edge_types.append(edge_types)
+                else:
+                    source_edge_types += edge_types
+        else:
+            source_edge_types = edge_types
+        # init source edge data
+        if source_edge_data is not None:
+            if edge_data is not None:
+                source_edge_data.update(edge_data)
+            else:
+                source_edge_data = edge_data
+        # get all source edges
+        source_edges = self.get_edges(
+            ids=edge_ids,
+            graph_ids=graph_ids,
+            types=source_edge_types,
+            targets=ids,
+            data=source_edge_data,
+            query=source_query,
+            serialize=False
+        )
+        # fill edges
+        if source_edges is not None:
+            # if source_edges is an edge
+            if isinstance(source_edges, Edge):
+                # and sources or source_edges is not directed
+                if sources or not source_edges[Edge.DIRECTED]:
+                    edges[source_edges[GraphElement.ID]] = source_edges
+            elif sources:  # if sources
+                for source_edge in source_edges:
+                    source_edge_id = source_edge[GraphElement.ID]
+                    if source_edge_id not in edges:
+                        edges[source_edge_id] = source_edge
+            else:
+                for source_edge in source_edges:
+                    # add not directed edges
+                    if not source_edge[Edge.DIRECTED]:
+                        edges[source_edge[GraphElement.ID]] = source_edge
+
+        # search among target edges
+        # init target types
+        if target_types is not None:
+            if isinstance(target_types, basestring):
+                target_types = [target_types]
+        if types is not None:
+            target_types += types
+        # init target query
+        if target_query is not None:
+            if query is not None:
+                target_query.update(query)
+        else:
+            target_query = query
+        # init target edge types
+        if target_edge_types is not None:
+            if isinstance(target_edge_types, basestring):
+                target_edge_types = [target_edge_types]
+            if edge_types is not None:
+                if isinstance(edge_types, basestring):
+                    target_edge_types.append(edge_types)
+                else:
+                    target_edge_types += edge_types
+        else:
+            target_edge_types = edge_types
+        # init target edge data
+        if target_edge_data is not None:
+            if edge_data is not None:
+                target_edge_data.update(edge_data)
+            else:
+                target_edge_data = edge_data
+        # get all target edges
+        target_edges = self.get_edges(
+            ids=edge_ids,
+            graph_ids=graph_ids,
+            types=target_edge_types,
+            sources=ids,
+            data=target_edge_data,
+            query=target_query,
+            serialize=False
+        )
+        # fill edges
+        if target_edges is not None:
+            # if target_edges is an edge
+            if isinstance(target_edges, Edge):
+                # and targets or target_edges is not directed
+                if targets or not target_edges[Edge.DIRECTED]:
+                    if target_edges[GraphElement.ID] not in edges:
+                        edges[target_edges[GraphElement.ID]] = target_edges
+            elif targets:  # if targets
+                for target_edge in target_edges:
+                    if target_edge[GraphElement.ID] not in edges:
+                        edges[target_edge[GraphElement.ID]] = target_edge
+            else:
+                for target_edge in target_edges:
+                    # add not directed edges
+                    if not target_edge[Edge.DIRECTED]:
+                        if target_edge[GraphElement.ID] not in edges:
+                            edges[target_edge[GraphElement.ID]] = target_edge
+
+        # store edge sources and targets ids before get them at a time
+        if not add_edges:
+            edge_sources = []
+            edge_targets = []
+
+        if serialize:  # save new_element method in memory for quicker access
+            new_element = GraphElement.new_element
+
+        # add sources and targets from all edges
+        for edge_id in edges:
+            edge = edges[edge_id]
+            if sources or not edge[Edge.DIRECTED]:
+                if add_edges:
+                    elts = self.get_elts(
+                        ids=edge[Edge.SOURCES],
+                        graph_ids=graph_ids,
+                        data=source_data,
+                        types=source_types,
+                        query=source_query,
+                        serialize=serialize
+                    )
+                    # serialize edge if required
+                    _edge = new_element(**edge) if serialize else edge
+                    if edge_id in result:
+                        # TODO: check if this case can happen
+                        result[edge_id][1] += elts
+                    else:
+                        result[edge_id] = (_edge, elts)
+                else:
+                    edge_sources += edge[Edge.SOURCES]
+            if targets or not edge[Edge.DIRECTED]:
+                if add_edges:
+                    elts = self.get_elts(
+                        ids=edge[Edge.TARGETS],
+                        graph_ids=graph_ids,
+                        data=target_data,
+                        types=target_types,
+                        query=target_query,
+                        serialize=serialize
+                    )
+                    # serialize edge if required
+                    _edge = new_element(**edge) if serialize else edge
+                    if edge_id not in result:
+                        # TODO: check if this case can happen
+                        result[edge_id][1] += elts
+                    else:
+                        result[edge_id] = (_edge, elts)
+                else:
+                    edge_targets += edge[Edge.TARGETS]
+
+        # improve complexity if not add_edges
+        if not add_edges:
+            # get source graph elements
+            if edge_sources:
+                elts = self.get_elts(
+                    ids=edge_sources,
+                    graph_ids=graph_ids,
+                    data=source_data,
+                    types=source_types,
+                    query=source_query,
+                    serialize=serialize
+                )
+                result += elts
+
+            # get target graph elements
+            if edge_targets:
+                elts = self.get_elts(
+                    ids=edge_targets,
+                    graph_ids=graph_ids,
+                    data=target_data,
+                    types=target_types,
+                    query=target_query,
+                    serialize=serialize
+                )
+                result += elts
 
         return result
 
-    @classmethod
-    def new_graph(cls, _id=None, nodes=None, _type=None):
+    def get_vertices(
+        self,
+        ids=None, graph_ids=None, types=None, data=None, query=None,
+        serialize=True
+    ):
         """
-        Create a graph related to an id, nodes and a type.
+        Get graph vertices related to some context property.
 
-        :param str _id: graph id. Generated if None.
-        :param list nodes: graph nodes to put in the graph.
-        :param str _type: graph type. cls.GRAPH_TYPE if None.
+        :param ids: vertice ids to get.
+        :type ids: list or str
+        :param graph_ids: vertice graph ids.
+        :type graph_ids: list or str
+        :param types: vertice type(s).
+        :type types: list or str
+        :param data: data to find among vertices.
+        :param dict query: additional search query.
+        :param bool serialize: serialize result in GraphElements if True
+            (by default).
+
+        :return: list of vertices if ids is a list. One vertice if ids is a
+            str.
+        :rtype: list or dict
         """
 
-        result = {}
-
-        result[GraphManager.TYPE] = cls.GRAPH_TYPE if _type is None else _type
-
-        if _id is None:
-            _id = cls.new_id()
-
-        result[GraphManager.ID] = _id
-
-        result[GraphManager.NODES] = nodes if nodes else []
+        result = self.get_elts(
+            ids=ids,
+            graph_ids=graph_ids,
+            types=types,
+            data=data,
+            base_type=Vertice.BASE_TYPE,
+            query=query,
+            serialize=serialize
+        )
 
         return result
 
-    @classmethod
-    def new_id(cls):
+    def get_edges(
+        self,
+        ids=None, types=None, sources=None, targets=None, graph_ids=None,
+        data=None, query=None, serialize=True
+    ):
         """
-        Generate a new id
+        Get edges related to input ids, types and source/target ids.
+
+        :param ids: edge ids to find. If ids is a str, result is an Edge or
+            None.
+        :type ids: list or str
+        :param types: edge types to find.
+        :type types: list or str
+        :param sources: source edge attribute to find.
+        :type sources: list or str
+        :param targets: target edge attribute to find.
+        :type targets: list or str
+        :param graph_ids: graph ids from where find edges.
+        :type graph_ids: list or str
+        :param dict query: additional query.
+        :param bool serialize: serialize result in GraphElements if True
+            (by default).
+
+        :return: Edge(s) corresponding to input parameters.
+        :rtype: Edge or list of Edges.
         """
 
-        return str(uuid())
+        # by default, result is a list
+        result = []
+
+        if query is None:
+            query = {}
+
+        if sources is not None:
+            if not isinstance(sources, basestring):
+                sources = {'$in': sources}
+            query[Edge.SOURCES] = sources
+
+        if targets is not None:
+            if not isinstance(targets, basestring):
+                targets = {'$in': targets}
+            query[Edge.TARGETS] = targets
+
+        result = self.get_elts(
+            ids=ids,
+            types=types,
+            query=query,
+            graph_ids=graph_ids,
+            data=data,
+            base_type=Edge.BASE_TYPE,
+            serialize=serialize
+        )
+
+        return result

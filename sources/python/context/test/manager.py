@@ -26,7 +26,7 @@ from canopsis.context.manager import Context
 class ContextTest(TestCase):
 
     def setUp(self):
-        self.context = Context(data_scope='test')
+        self.context = Context(data_scope='test_context')
 
     def test_ctx_storage(self):
 
@@ -42,31 +42,36 @@ class ContextTest(TestCase):
             entity_context = {c: c for c in sub_context[1:]}
             entity = {}
             for i in range(count_per_entity_type):
-                entity[Context.NAME] = i
+                entity[Context.NAME] = str(i)
                 self.context.put(
-                    _type=context[n], context=entity_context, entity=entity)
+                    _type=context[n], context=entity_context, entity=entity
+                )
 
         entities = self.context.find()
 
         self.assertEqual(
-            len(entities), count_per_entity_type * (len(context) - 1))
+            len(entities), count_per_entity_type * (len(context) - 1)
+        )
 
         for n in range(1, len(context)):
             sub_context = context[:n]
             entity_context = {c: c for c in sub_context[1:]}
             entities = self.context.find(
-                _type=context[n], context=entity_context)
+                _type=context[n], context=entity_context
+            )
             self.assertEqual(len(entities), 2)
 
             _id = self.context.get_entity_id(entities[0])
             self.context.remove(ids=_id)
             entities = self.context.find(
-                _type=context[n], context=entity_context)
+                _type=context[n], context=entity_context
+            )
             self.assertEqual(len(entities), 1)
 
             self.context.remove(_type=context[n], context=entity_context)
             entities = self.context.find(
-                _type=context[n], context=entity_context)
+                _type=context[n], context=entity_context
+            )
             self.assertEqual(len(entities), 0)
 
 

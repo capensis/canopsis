@@ -20,129 +20,76 @@
 
 __version__ = "0.1"
 
-from canopsis.common.utils import lookup
+from canopsis.common.init import basestring
+from canopsis.common.utils import lookup, path
 
 from inspect import isroutine
 
 """
-Event processing rule module.
+Task module.
 
-Provides tools to process event rules.
-
-A rule is a couple of (condition, action) tasks where condition can be None.
-
-A rule respects those types::
-
-   - task: task to execute.
-   - dict:
-      + condition (optional): condition task to check.
-      + action: action task to run if condition does not exist or is True.
+Provides tools to process tasks.
 
 A task uses a python function. Therefore it is possible to use an absolute
-path or to register a function in rule tasks with the function/decorator
-``register_task``. The related function must takes in parameter the ``event``
-to process, a dict ``ctx`` which exists on a rule life and a ``**kwargs`` which
-contains parameters filled related to task parameters and the rule api.
+path, an id or to register a function in tasks with the function/decorator
+``register_task``. The related function may take in parameter a dict ``ctx``
+which exists on a task life and a ``**kwargs`` which
+contains parameters filled related to task parameters.
 
 A task respects those types::
-   - str: task path to execute.
+   - str: task name to execute.
    - dict:
-      + task_path: task path to execute.
+      + id: task name to execute.
       + params: dict of task parameters.
-
-For example, let ``my.my_condition`` and ``my.my_action`` respectively
-custom condition and action.
-
-A typical parameterized rule configuration is as follow:
-{
-    "condition": "my.my_condition",
-    "action": "my.my_action"
-}
-
-Or this one if you have the parameter ``foo`` equals to 2 to use in the action:
-{
-    "condition": "my.my_condition",
-    "action": {
-        "task_path": "my.my_action",
-        "params": {
-            "foo": 2
-        }
-    }
-}
-
-Or even this one without condition and where the action is registered with the
-name ``my_action``.
-{
-    "action": "my_action"
-}
 """
 
-RULE = 'rule'
-
-CONDITION_FIELD = 'condition'  #: condition field name in rule conf
-ACTION_FIELD = 'action'  #: actions field name in rule conf
+TASK = 'task'  #: task parameter name
 
 TASK_PARAMS = 'params'  #: task params field name in task conf
 
-TASK_PATH = 'task_path'  #: task path field name in task conf
-
-RULES = 'rules'  #: rules rule name
-SWITCH = 'switch'  #: switch rule name
+TASK_ID = 'id'  #: task id field name in task conf
 
 
-def task(event, ctx, **kwargs):
+def task(**kwargs):
     """
     Default task signature.
     """
-    pass
-
-
-class RuleError(Exception):
-    """
-    Handle rule error.
-    """
 
     pass
 
 
-class ConditionError(RuleError):
+class TaskError(Exception):
     """
-    Handle condition error.
+    Default task error.
     """
 
     pass
 
 
-class ActionError(RuleError):
+# global set of tasks by ids
+__TASKS_BY_ID = {}
+
+
+def get_task(_id, cache=True):
     """
-    Handle action error
-    """
+    Get task related to an id which could be:
 
-    pass
+    - a registered task id.
+    - a python path to a function.
 
-
-__TASK_PATHS = {}
-
-
-def get_task(path, cached=True):
-    """
-    Get task related to a path which could be:
-
-    - a registered task.
-    - a python function.
-
-    :param str path: task path to get.
-    :param bool cached: use cache (True by default).
+    :param str id: task id to get.
+    :param bool cache: use cache system to quick access to task
+        (True by default).
 
     :raises ImportError: if task is not found in runtime.
     """
 
     result = None
 
-    if path not in __TASK_PATHS:
-        result = lookup(path=path, cached=cached)
+    if _id in __TASKS_BY_ID:
+        result = __TASKS_BY_ID[_id]
     else:
-        result = __TASK_PATHS[path]
+        result = lookup(path=_id, cached=cache)
 
     return result
 
@@ -154,38 +101,52 @@ def register_tasks(force=False, **tasks):
     :param bool force: force registration (default False).
     :param dict tasks: set of couple(name, function)
 
-    :raises RuleError: if not force and task already exist
+    :return: old tasks by id.
+    :rtype: dict
+    :raises: TaskError if not force and task already exists.
     """
 
-    for path in tasks:
-        task = tasks[path]
-        if not force and path in __TASK_PATHS:
-            raise RuleError('Rule %s already registered' % path)
-        else:
-            __TASK_PATHS[path] = task
+    result = {}
+
+    for _id in tasks:
+        task = tasks[_id]
+        # if _id has been already registered
+        if _id in __TASKS_BY_ID:
+            if force:
+                # save old task in result
+                result[_id] = __TASKS_BY_ID[_id]
+            else:
+                # raise old tasks if not force
+                raise TaskError(
+                    'Rule {} is already registered'.format(_id)
+                )
+        # save new task
+        __TASKS_BY_ID[_id] = task
+
+    return result
 
 
-def register_task(name=None, force=False):
+def register_task(_id=None, force=False):
     """
-    Decorator which registers function in registered tasks with function name
+    Decorator which registers function in registered tasks with function _id
     """
 
-    if isroutine(name):
-        # if no parameter has been given
-        result = name
-        name = name.__name__
-        register_tasks(force=force, **{name: result})
+    if isroutine(_id):  # if _id is a routine <=> no parameter is given
+        # _id is routine _id
+        result = _id  # task is the routine
+        _id = path(_id)  # task id is its python path
+        register_tasks(force=force, **{_id: result})
 
-    else:  # if name is a str or None
-        def register_task(function, name=name):
+    else:  # if _id is a str or None
+        def register_task(function, _id=_id):
             """
             Register input function as a task
             """
 
-            if name is None:
-                name = function.__name__
+            if _id is None:
+                _id = path(function)
 
-            register_tasks(force=force, **{name: function})
+            register_tasks(force=force, **{_id: function})
 
             return function
 
@@ -193,70 +154,62 @@ def register_task(name=None, force=False):
 
     return result
 
+# register the function register_tasks
+register_task()(register_tasks)
+# register the function get_task
+register_task()(get_task)
 
-def unregister_tasks(*paths):
+
+@register_task
+def unregister_tasks(*ids):
     """
-    Unregister input paths. If paths is empty, clear all registered tasks.
+    Unregister input ids. If ids is empty, clear all registered tasks.
 
-    :param tuple paths: tuple of task paths
+    :param tuple ids: tuple of task ids
     """
 
-    if paths:
-        for path in paths:
-            __TASK_PATHS.pop(path, None)
+    if ids:
+        for id in ids:
+            if id in __TASKS_BY_ID:
+                del __TASKS_BY_ID[id]
     else:
-        __TASK_PATHS.clear()
+        __TASKS_BY_ID.clear()
 
 
-def get_task_with_params(task_conf, task_name=None, cached=True):
+def get_task_with_params(conf, cache=True):
     """
     Get callable task processing with params.
 
-    :param task_conf: task conf from where getting task.
-    :type task_conf: str or dict
-
-    :param str task_name: task name to find from input task_conf if not None
-
-    :param bool cached: try to get a cached task or not.
+    :param conf: task conf from where getting task.
+    :type conf: str or dict
+    :param str task_name: task name to find from input conf if not None.
+    :param bool cache: try to get a cache task or not.
 
     :return: tuple of (callable task, task parameters)
+    :raises: ImportError if task is not registered.
     """
 
     task, params = None, {}
 
-    # if task_name is not None, try to find it in task_conf
-    if task_name is not None:
-
-        # in ensuring than task_conf is a dict
-        if isinstance(task_conf, dict):
-            # if task_name exists in task_conf, get it
-            if task_name in task_conf:
-                task_conf = task_conf[task_name]
-
     # get dedicated callable task without params
-    if isinstance(task_conf, basestring):
-        try:
-            task = get_task(path=task_conf, cached=cached)
-        except ImportError as ie:
-            # Embed importerror in RuleError
-            raise RuleError(ie)
+    if isinstance(conf, basestring):
+        task = get_task(_id=conf, cache=cache)
 
     # get dedicated callable task with params
-    elif TASK_PATH in task_conf:
-        task_path = task_conf[TASK_PATH]
+    elif TASK_ID in conf:
+        task_path = conf[TASK_ID]
         try:
-            task = get_task(path=task_path, cached=cached)
+            task = get_task(_id=task_path, cache=cache)
 
-        except ImportError as ie:
-            # embed import error in Rule Error
-            raise RuleError(ie)
+        except ImportError:
+            raise
 
         else:
             # if task has been founded
             if task is not None:
                 # try to get params
-                if TASK_PARAMS in task_conf:
-                    params = task_conf[TASK_PARAMS]
+                if TASK_PARAMS in conf:
+                    params = conf[TASK_PARAMS].copy()
 
     # result is the couple (task, params)
     result = task, params
@@ -264,164 +217,125 @@ def get_task_with_params(task_conf, task_name=None, cached=True):
     return result
 
 
-def process_rule(event, rule, ctx=None, cached=True, raiseError=False):
+@register_task
+def run_task(conf=None, ctx=None, raiseError=True, cache=True, **kwargs):
     """
-    Apply input rule on input event in checking if the rule condition matches
-    with the event and if True, execute rule actions.
+    Run a single task related to a conf, and a task_name, a task ctx and
+        not functional parameters.
 
-    :param rule: rule to apply on input event. contains both condition and
-        actions.
-    :type rule: dict
+    If an error occures, input exception_type is raised with raised error
+        inside.
 
-    :param event: event to check and to process.
-    :type event: dict
-
-    :param cached: indicates to actions to use cache instead of
-        importing them dynamically.
-    :type cached: bool
-
-    :param bool raiseError: If True (False by default), raise the first error
-        encountered while executing conditions (ConditionError) or actions
-        (ActionError).
-
-    :return: a tuple of (condition, action) results.
-    :rtype: tuple
-    """
-
-    # create a context which will be shared among condition and actions
-    if ctx is None:
-        ctx = {}
-
-    # do actions if a condition may exist (not if rule is an iterable)
-    do_actions = not isinstance(rule, dict) or CONDITION_FIELD not in rule
-
-    # if a condition may be founded
-    if not do_actions:
-
-        do_actions = run_task(
-            event=event,
-            ctx=ctx,
-            task_conf=rule,
-            task_name=CONDITION_FIELD,
-            cached=cached,
-            exception_type=ConditionError,
-            raiseError=raiseError)
-
-    action_result = None
-
-    # if actions have to be performed
-    if do_actions is True:
-
-        action_result = run_task(
-            event=event,
-            ctx=ctx,
-            task_conf=rule,
-            task_name=ACTION_FIELD,
-            cached=cached,
-            exception_type=ActionError,
-            raiseError=raiseError)
-
-    result = do_actions, action_result
-
-    return result
-
-
-def run_task(
-    event, ctx, task_conf, task_name, raiseError, exception_type, cached
-):
-    """
-    Run a single task related to an event, a ctx, a task_conf, and a task_name.
-
-    If an error occures, input exception_type is raised.
-
-    :param dict event: event to process.
-    :param dict ctx: task execution context.
-    :param task_conf: task configuration.
-    :type task_conf: str or dict.
-    :param str task_name task name to execute.
-    :param bool raiseError: if True, raise any task error, else result if the
-        raised error.
-    :param type exception_type: exception type to raise if an error occured
-    :param bool cached: use cache memory to save task references from input
-        task name.
+    :param conf: task configuration. None by default.
+    :type conf: str or dict.
+    :param dict ctx: task execution context. Empty dict by default.
+    :param bool raiseError: if True (default), raise any task error, else
+        result if the raised error.
+    :param bool cache: (True by default) use cache memory to save task
+        references from input task name.
+    :param kwargs: additional task parameters.
     """
 
     result = None
 
-    try:
-        task, params = get_task_with_params(
-            task_conf=task_conf, task_name=task_name, cached=cached)
-    except RuleError as e:
-        # if action does not exist, do nothing
-        pass
+    # initialize the ctx
+    if ctx is None:
+        ctx = {}
+
+    task, params = get_task_with_params(conf=conf, cache=cache)
+    # add kwargs in params
+    params.update(kwargs)
+
+    try:  # process task
+        result = task(ctx=ctx, **params)
+    except Exception as error:  # if an error occured
+        if raiseError:  # if raiseError, raise it
+            raise
+        result = error  # or result is the error
+
+    return result
+
+
+@register_task
+def new_conf(task, **params):
+    """
+    Generate a new task conf related to input task id and params.
+
+    :param task: task identifier.
+    :type task: str or routine
+    :param dict params: task parameters.
+
+    :return: task conf depending on params:
+        - empty: _id
+        - not empty: {TASK_ID: _id, TASK_PARAMS: params}
+    :rtype: str or dict
+    """
+
+    result = None
+
+    # if task is a task routine, find the corresponding task id
+    if isroutine(task):
+        for task_id in __TASKS_BY_ID:
+            _task = __TASKS_BY_ID[task_id]
+            if _task == task:
+                task = task_id
+
+    if not params:
+        result = task
+
     else:
-        # initialize params if None
-        try:
-            result = task(
-                event=event, ctx=ctx, raiseError=raiseError, **params)
-        except Exception as e:
-            error = exception_type(e)
-            if raiseError:
-                raise error
-            result = error
+        result = {
+            TASK_ID: task,
+            TASK_PARAMS: params
+        }
 
     return result
 
 
-@register_task
-def rules(event, ctx, rules, cached=True, raiseError=False, **kwargs):
-    """
-    Rule which run all input rules.
-
-    :param rules: rules to process
-    :return: condition, action where condition is a logical and on all
-        conditions, and action is a list of all action results.
-    """
-
-    condition = False
-    action = []
-
-    for rule in rules:
-
-        #  execute all rules while condition is False
-        result_condition, result_action = process_rule(
-            event=event,
-            ctx=ctx,
-            rule=rule,
-            cached=cached,
-            raiseError=raiseError,
-            **kwargs)
-
-        condition |= result_condition
-        action.append(result_action)
-
-    result = condition, action
-
-    return result
+#: action result
+RESULT = 'result'
+#: action error
+ERROR = 'error'
 
 
 @register_task
-def switch(event, ctx, rules, cached=True, raiseError=False, **kwargs):
+def tasks(confs=None, raiseError=False, **kwargs):
     """
-    Execute first rule among input
+    run a list of tasks in processing several input confs and returns a list
+        of dict {'result': task result, 'error': task error}.
+
+    :param confs: task confs to process.
+    :type confs: str or list or dict
+    :param bool raiseError: if True (default False) raise the first encountered
+        error during processing of tasks.
+    :param kwargs: additional parameters to process in all tasks.
+
+    :return: a list containing dict of {RESULT: result, ERROR: error}.
+    :rtype: list
     """
 
-    result = False, None
+    result = []
 
-    for rule in rules:
+    if confs is not None:
+        # ensure confs is a list
+        if isinstance(confs, (basestring, dict)):
+            confs = [confs]
+        for conf in confs:
+            task, params = get_task_with_params(conf)
+            # add kwargs in params
+            params.update(kwargs)
+            # initialize both result and error
+            task_result, task_error = None, None
+            try:
+                task_result = task(**params)
+            except Exception as task_error:
+                if raiseError:
+                    raise
 
-        # try to execute all rules while condition is False
-        condition, action = process_rule(
-            event=event,
-            ctx=ctx,
-            rule=rule,
-            cached=cached,
-            raiseError=raiseError,
-            **kwargs)
-
-        # stop when condition is True
-        if condition is True:
-            result = condition, action
-            break
+            result_to_append = {
+                RESULT: task_result,
+                ERROR: task_error
+            }
+            result.append(result_to_append)
 
     return result

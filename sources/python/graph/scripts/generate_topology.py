@@ -20,7 +20,9 @@
 # ---------------------------------
 
 from canopsis.context.manager import Context
-from canopsis.topology.manager import Topology
+from canopsis.topology.elements import Topology, Node
+from canopsis.topology.manager import TopologyManager
+from canopsis.graph.elements import Edge
 
 from uuid import uuid4 as uuid
 from argparse import ArgumentParser
@@ -28,14 +30,13 @@ from argparse import ArgumentParser
 
 def generate_context_topology(name='test'):
     """
-    Generate a context topology related to some random parameters
+    Generate a context topology.
 
     :param str name: topology name
     """
 
     # initialize context and topology
     context = Context()
-    topology = Topology()
 
     # clean old topology
     topology.delete(ids=name)

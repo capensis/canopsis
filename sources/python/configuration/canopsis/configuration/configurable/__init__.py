@@ -25,6 +25,7 @@ from sys import prefix as sys_prefix
 
 from inspect import isclass
 
+from canopsis.common.init import basestring
 from canopsis.configuration.parameters \
     import Configuration, Category, Parameter
 
@@ -625,17 +626,15 @@ class Configurable(object):
 
         for parameter in values + foreigns:
             name = parameter.name
-
             if not parameter.asitem:
-                # if parameter is local, to_configure must a related attribute name
+                # if parameter is local, to_configure must a related name
                 if self._is_local(to_configure, name):
-
                     if hasattr(to_configure, name):
                         param_value = parameter.value
 
                         # in case of a critical parameter
                         if parameter.critical:
-                            # check if current value is not the same as new value
+                            # check if current value is not the same as new val
                             value = getattr(to_configure, name)
 
                             if value != parameter.value:
@@ -657,7 +656,7 @@ class Configurable(object):
                             setattr(to_configure, name, param_value)
 
                 else:  # else log the warning
-                    message = 'Parameter {0} is not bound to an attribute in {1}'
+                    message = 'Parameter {} is not bound to an attribute in {}'
                     self.logger.warning(message.format(name, to_configure))
 
             else:

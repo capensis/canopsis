@@ -61,7 +61,9 @@ class PeriodTest(unittest.TestCase):
         for unit, value in period.unit_values.iteritems():
             if unit is Period.WEEK or unit is Period.DAY:
                 value_to_compare = int(delta.days)
-                value = int(period.unit_values['day'] + 7 * period.unit_values['week'])
+                value = int(
+                    period.unit_values['day'] + 7 * period.unit_values['week']
+                )
 
             else:
                 unit = "{0}s".format(unit)
@@ -140,6 +142,119 @@ class PeriodTest(unittest.TestCase):
         max_unit = period.get_max_unit()
 
         self.assertTrue(max_unit[Period.UNIT], Period.YEAR)
+
+    def _assert_total_seconds(self, period, value):
+        """
+        Test if period total_seconds equals value
+        """
+
+        total_seconds = period.total_seconds()
+
+        self.assertEqual(value, total_seconds)
+
+    def test_total_seconds_zero(self):
+        """
+        Test total seconds with 0.
+        """
+
+        period = Period()
+
+        self._assert_total_seconds(period, 0)
+
+    def test_total_seconds_microseconds(self):
+        """
+        Test total seconds with microseconds.
+        """
+
+        period = Period(**{Period.MICROSECOND: 1})
+
+        self._assert_total_seconds(period, 0.000000001)
+
+    def test_total_seconds_seconds(self):
+        """
+        Test total seconds with seconds
+        """
+
+        period = Period(**{Period.SECOND: 1})
+
+        self._assert_total_seconds(period, 1)
+
+    def test_total_seconds_minutes(self):
+        """
+        Test total seconds with minutes
+        """
+
+        period = Period(**{Period.MINUTE: 1})
+
+        self._assert_total_seconds(period, 60)
+
+    def test_total_seconds_hours(self):
+        """
+        Test total seconds with hours
+        """
+
+        period = Period(**{Period.HOUR: 1})
+
+        self._assert_total_seconds(period, 3600)
+
+    def test_total_seconds_days(self):
+        """
+        Test total seconds with days
+        """
+
+        period = Period(**{Period.DAY: 1})
+
+        self._assert_total_seconds(period, 86400)
+
+    def test_total_seconds_weeks(self):
+        """
+        Test total seconds with weeks
+        """
+
+        period = Period(**{Period.WEEK: 1})
+
+        self._assert_total_seconds(period, 604800)
+
+    def test_total_seconds_months(self):
+        """
+        Test total seconds with months
+        """
+
+        period = Period(**{Period.MONTH: 1})
+
+        self._assert_total_seconds(period, 2592000)
+
+    def test_total_seconds_years(self):
+        """
+        Test total seconds with years
+        """
+
+        period = Period(**{Period.YEAR: 1})
+
+        self._assert_total_seconds(period, 31536000)
+
+    def test_total_seconds_mix(self):
+        """
+        Test total seconds with all units
+        """
+
+        kwargs = {
+            Period.MICROSECOND: 1,
+            Period.SECOND: 1,
+            Period.MINUTE: 1,
+            Period.HOUR: 1,
+            Period.DAY: 1,
+            Period.WEEK: 1,
+            Period.MONTH: 1,
+            Period.YEAR: 1
+        }
+
+        period = Period(**kwargs)
+
+        self._assert_total_seconds(
+            period,
+            0.000000001 + 1 + 60 + 3600 + 86400 + 604800 + 2592000 + 31536000
+        )
 
 
 class IntervalTest(unittest.TestCase):
