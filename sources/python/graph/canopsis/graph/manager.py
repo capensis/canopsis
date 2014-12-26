@@ -331,12 +331,25 @@ class GraphManager(MiddlewareRegistry):
             serialize=serialize
         )
         # if add_elts is asked
-        if result is not None and serialize and add_elts:
-            if isinstance(result, Graph):
-                result.update_gelts(manager=self)
-            else:
-                for graph in result:
-                    graph.update_gelts(manager=self)
+        if result is not None and add_elts:
+            if serialize:  # add elts in _gelts
+                if isinstance(result, Graph):
+                    result.update_gelts(manager=self)
+                else:
+                    for graph in result:
+                        graph.update_gelts(manager=self)
+            else:  # add elts in _delts
+                if isinstance(result, dict):
+                    result[Graph._DELTS] = self.get_elts(
+                        ids=result[Graph.ELTS],
+                        serialize=False
+                    )
+                else:
+                    for graph in result:
+                        graph[Graph._DELTS] = self.get_elts(
+                            ids=graph[Graph.ELTS],
+                            serialize=False
+                        )
 
         return result
 

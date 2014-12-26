@@ -6,39 +6,37 @@
             "crecord_name",
             "info",
             "type",
-            "sources",
-            "targets",
-            "weight",
             "_cls",
             "_type"
         ]
     }],
     "properties": {
         "crecord_type": {
-            "enum": ["edge"],
+            "enum": ["node"],
             "required": true
         },
         "_cls": {
             "type": "string",
-            "default": "canopsis.graph.elements.Edge",
-            "required": true
-        },
-        "sources": {
-            "type": "array",
-            "required": true
-        },
-        "targets": {
-            "type": "array",
+            "default": "canopsis.topology.elements.Node",
             "required": true
         },
         "_type": {
             "type": "string",
-            "default": "edge",
+            "default": "vertice",
             "required": true
         },
-        "weight": {
-            "type": "float",
-            "default": 1,
+        "state": {
+            "type": "int",
+            "default": 0,
+            "required": false
+        },
+        "entity": {
+            "type": "string",
+            "required": false
+        },
+        "task": {
+            "type": "object",
+            "role": "json",
             "required": false
         }
     }
