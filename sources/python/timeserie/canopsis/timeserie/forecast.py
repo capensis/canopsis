@@ -702,7 +702,8 @@ import time
 
 from datetime import datetime
 
-from ctimeserie.threshold import Threshold
+# To delete
+#from ctimeserie.threshold import Threshold
 
 
 class Forecast(object):
@@ -761,8 +762,7 @@ class Forecast(object):
             max_points=MAX_POINTS,
             date=None,
             duration=None,
-            parameters=NotLinearMidVariable,
-            threshold=Threshold()):
+            parameters=NotLinearMidVariable):
 
         super(Forecast, self).__init__()
 
@@ -783,6 +783,10 @@ class Forecast(object):
             self.parameters)
         return result
 
+
+    def validate_serie(y,c):
+        return (len(y)>2 and len(y)%c ==0)
+
     def holtwinters(
             y,
             alpha=DEFAULT_ALPHA,
@@ -802,6 +806,9 @@ class Forecast(object):
         The length of y must be a an integer multiple (> 2) of c.
         """
 
+        # Validate the serie
+        if(not validate_serie(y,c)):
+            return
         logger.debug(
             "y = %s, alpha = %s, beta = %s, gamma = %s, c = %s" %
             (y, alpha, beta, gamma, c))
