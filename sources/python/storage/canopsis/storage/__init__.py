@@ -641,8 +641,8 @@ class Storage(DataBase):
         """
         Put an element identified by input id
 
-        :param str _id: element id to update
-        :param dict element: element to put (couples of field (name,value))
+        :param str _id: element id to update.
+        :param dict element: element to put (couples of field (name,value)).
         :param bool cache: use query cache if True (False by default).
 
         :return: True if updated
