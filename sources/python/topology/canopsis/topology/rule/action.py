@@ -38,13 +38,20 @@ from canopsis.topology.manager import TopologyManager
 from canopsis.topology.elements import Node
 from canopsis.topology.rule.condition import SOURCES_BY_EDGES
 from canopsis.check import Check
+from canopsis.check.manager import CheckManager
 
 #: default topology manager
 tm = TopologyManager()
+#: default check manager
+check = CheckManager()
 
 
 @register_task
-def change_state(event, node, state=None, manager=None, **kwargs):
+def change_state(
+    event, node, state=None, update_entity=False, criticity=CheckManager.HARD,
+    manager=None, check_manager=None,
+    **kwargs
+):
     """
     Change of state for node.
 
@@ -52,6 +59,8 @@ def change_state(event, node, state=None, manager=None, **kwargs):
     :param node: node to change of state.
     :param state: new state to apply on input node. If None, get state from
         input event.
+    :param bool update_entity: update entity status if True (False by default).
+    :param int criticity: criticity level. Default HARD.
     """
 
     # if state is None, use event state
@@ -67,6 +76,12 @@ def change_state(event, node, state=None, manager=None, **kwargs):
     # update node state from ctx
     Node.state(node, state)
     node.save(manager=manager)
+
+    # update entity if necessary
+    if update_entity:
+        entity = Node.entity(node)
+        if entity is not None:
+            check_manager.state(ids=entity, state=state, criticity=criticity)
 
 
 @register_task
