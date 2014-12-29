@@ -13,6 +13,7 @@
       {
         "widget": {
           "id" : "item_13019673-ebdf-6271-e595-6be7338aeb62",
+          "widgetId" : "item_13019673-ebdf-6271-e595-6be7338aeb62",
           "item_actions": [
             "actionbutton-edit",
             "actionbutton-show",
@@ -43,7 +44,8 @@
             "mfilter",
             "enable",
             "crecord_write_time",
-            "run_once"
+            "run_once",
+            "break"
           ],
           "actions_toolbar": [
             "actionbutton-removeselection"

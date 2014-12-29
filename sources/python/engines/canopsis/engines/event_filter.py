@@ -92,14 +92,15 @@ class engine(Engine):
                 event[afield].append(avalue)
             else:
                 event[afield] = avalue
-            self.logger.debug(u"    + %s: Override: '%s' -> '%s'"
-                              % (event['rk'], afield, avalue))
+            self.logger.debug(
+                u"    + {}: Override: '{}' -> '{}'".format(
+                    event['rk'], afield, avalue))
             return True
 
         else:
             self.logger.error(
-                u"Action malformed (needs 'field' and 'value'): %s" % action
-                )
+                u"Action malformed (needs 'field' and 'value'): {}".format(
+                    action))
             return False
 
     def a_remove(self, event, action):
@@ -124,20 +125,24 @@ class engine(Engine):
                 elif isinstance(event[akey], list):
                     del event[akey][event[akey].index(aelement)]
 
-                self.logger.debug(u"    + %s: Removed: '%s' from '%s'"
-                                  % (event['rk'], aelement, akey))
+                self.logger.debug(u"    + {}: Removed: '{}' from '{}'".format(
+                    event['rk'],
+                    aelement,
+                    akey))
 
             else:
                 del event[akey]
-                self.logger.debug(u"    + %s: Removed: '%s'"
-                                  % (event['rk'], akey))
+                self.logger.debug(u"    + {}: Removed: '{}'".format(
+                    event['rk'],
+                    akey))
 
             return True
 
         else:
-            self.logger.error(u"Action malformed (needs 'key' and/or 'element'): %s" % action)
+            self.logger.error(
+                u"Action malformed (needs 'key' and/or 'element'): {}".format(
+                    action))
             return False
-
 
     def a_modify(self, event, action, name):
         """
@@ -158,11 +163,11 @@ class engine(Engine):
             derogated = actionMap[atype](event, action)
 
         else:
-            self.logger.warning(u"Unknown action '%s'" % atype)
+            self.logger.warning(u"Unknown action '{}'".format(atype))
 
         # If the event was derogated, fill some informations
         if derogated:
-            self.logger.debug(u"Event changed by rule '%s'" % name)
+            self.logger.debug(u"Event changed by rule '{}'".format(name))
 
         return None
 
@@ -177,7 +182,7 @@ class engine(Engine):
             ``None``
         """
 
-        self.logger.debug(u"Event dropped by rule '%s'" % name)
+        self.logger.debug(u"Event dropped by rule '{}'".format(name))
         self.drop_event_count += 1
         return DROP
 
@@ -192,7 +197,7 @@ class engine(Engine):
             ``None``
         """
 
-        self.logger.debug(u"Event passed by rule '%s'" % name)
+        self.logger.debug(u"Event passed by rule '{}'".format(name))
         self.pass_event_count += 1
         return event
 
@@ -209,9 +214,10 @@ class engine(Engine):
 
         if "route" in action:
             self.next_amqp_queues = [action["route"]]
-            self.logger.debug(u"Event re-routed by rule '%s'" % name)
+            self.logger.debug(u"Event re-routed by rule '{}'".format(name))
         else:
-            self.logger.error(u"Action malformed (needs 'route'): %s" % action)
+            self.logger.error(
+                u"Action malformed (needs 'route'): {}".format(action))
 
         return None
 
@@ -229,7 +235,7 @@ class engine(Engine):
                 if ret:
                     pass_event = True
             else:
-                self.logger.warning(u"Unknown action '%s'" % action)
+                self.logger.warning(u"Unknown action '{}'".format(action))
 
         return pass_event
 
@@ -257,7 +263,7 @@ class engine(Engine):
             if check(filterItem['mfilter'], event):
 
                 self.logger.debug(
-                    'Event: {}, filter matches'.format(event['rk'])
+                    u'Event: {}, filter matches'.format(event['rk'])
                     )
 
                 for action in actions:
@@ -267,7 +273,11 @@ class engine(Engine):
                     to_apply.append((name, action))
 
                 if filterItem.get('break', 0):
-                    self.logger.debug(u'Filter {} stopped the processing of further fiters'.format(filterItem))
+                    self.logger.debug(
+                        u' + Filter {} broke the next filters processing'.format(
+                            filterItem.get('name', 'filter')
+                        )
+                    )
                     break
 
         if len(to_apply):
@@ -310,32 +320,41 @@ class engine(Engine):
                 self.logger.debug('Loading record_dump:')
                 self.logger.debug(record_dump)
                 self.configuration['rules'].append(record_dump)
-            self.logger.info('Loaded {} rules'.format(len(self.configuration['rules'])))
+            self.logger.info('Loaded {} rules'.format(
+                len(self.configuration['rules']))
+            )
             self.send_stat_event()
 
         except Exception as e:
             self.logger.warning(str(e))
 
-
     def set_loaded(self, record):
         if 'run_once' in record and not record['run_once']:
             self.storage.update(record['_id'], {'run_once': True})
-            self.logger.info('record {} has been run once'.format(record['_id']))
-
+            self.logger.info('record {} has been run once'.format(
+                record['_id'])
+            )
 
     def send_stat_event(self):
         """ Send AMQP Event for drop and pass metrics """
 
+        message_dropped = '{} event dropped since {}'.format(
+            self.drop_event_count,
+            self.beat_interval
+        )
+        message_passed = '{} event passed since {}'.format(
+            self.pass_event_count,
+            self.beat_interval
+        )
         event = forger(
-            connector="Engine",
-            connector_name="engine",
-            event_type="check",
-            source_type="resource",
-            resource=self.amqp_queue + '_data',
-            state=0,
-            state_type=1,
-            output=("%s event dropped since %s"
-                  % (self.drop_event_count, self.beat_interval)),
+            connector = "Engine",
+            connector_name = "engine",
+            event_type = "check",
+            source_type = "resource",
+            resource = self.amqp_queue + '_data',
+            state = 0,
+            state_type = 1,
+            output = message_dropped,
             perf_data_array = [
                 {'metric': 'pass_event',
                  'value': self.pass_event_count,
@@ -344,22 +363,24 @@ class engine(Engine):
                  'value': self.drop_event_count,
                  'type': 'GAUGE'}])
 
-        self.logger.debug(("%s event dropped since %s"
-                   % (self.drop_event_count, self.beat_interval)))
-        self.logger.debug(("%s event passed since %s"
-                   % (self.pass_event_count, self.beat_interval)))
-
+        self.logger.debug(message_dropped)
+        self.logger.debug(message_passed)
         rk = get_routingkey(event)
         self.amqp.publish(event, rk, self.amqp.exchange_name_events)
         self.drop_event_count = 0
         self.pass_event_count = 0
 
     def find_default_action(self):
-        """ Find the default action stored and returns it, else assume it default action is pass """
+        """
+        Find the default action stored and returns it,
+        else assume it default action is pass
+        """
 
         records = self.storage.find({'crecord_type': 'defaultrule'})
         if records:
             return records[0].dump()["action"]
 
-        self.logger.debug("No default action found. Assuming default action is pass")
+        self.logger.debug(
+            "No default action found. Assuming default action is pass"
+        )
         return 'pass'

@@ -1,3 +1,5 @@
 *.pyc
 _build/
 doc/logs
+log
+doc/locale

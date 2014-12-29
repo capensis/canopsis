@@ -52,7 +52,11 @@ class RouteTest(TestCase):
 
     def assertRoutes(self, routes):
 
-        self.assertEqual(self.routes, routes)
+        final_routes = []
+        for _route in routes:
+            final_routes += [_route, '{0}/'.format(_route)]
+
+        self.assertEqual(self.routes, final_routes)
 
     def test_empty_params(self):
 

@@ -4,7 +4,7 @@
 	"type": "object",
 	"categories": [{
 		"title": "general",
-		"keys":["author", "connector", "component", "resource"]
+		"keys":["author", "connector", "component", "resource", "output"]
 	}],
 	"properties": {
 		"connector": {
@@ -57,8 +57,7 @@
 		},
 		"output": {
 			"type": "string",
-			"required": false,
-			"readOnly": true
+			"required": false
 		}
 	}
 }

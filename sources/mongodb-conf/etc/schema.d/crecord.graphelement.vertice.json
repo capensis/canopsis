@@ -1,0 +1,29 @@
+{
+    "type": "object",
+    "categories": [{
+        "title": "General",
+        "keys": [
+            "crecord_name",
+            "info",
+            "type",
+            "_cls",
+            "_type"
+        ]
+    }],
+    "properties": {
+        "crecord_type": {
+            "enum": ["vertice"],
+            "required": true
+        },
+        "_cls": {
+            "type": "string",
+            "default": "canopsis.graph.elements.Vertice",
+            "required": true
+        },
+        "_type": {
+            "type": "string",
+            "default": "vertice",
+            "required": true
+        }
+    }
+}

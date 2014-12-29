@@ -32,50 +32,60 @@ For logical reasons, the propagate action runned such as the last action.
 """
 
 from canopsis.task import register_task
+from canopsis.common.init import basestring
 from canopsis.common.utils import lookup
-from canopsis.topology.manager import Topology
+from canopsis.topology.manager import TopologyManager
+from canopsis.topology.elements import Node
+from canopsis.topology.rule.condition import SOURCES_BY_EDGES
 from canopsis.check import Check
-from canopsis.topology.process import SOURCES, NODE
+from canopsis.check.manager import CheckManager
 
-topology = Topology()
+#: default topology manager
+tm = TopologyManager()
+#: default check manager
+check = CheckManager()
 
 
-@register_task(name='topology.change_state')
-def change_state(event, ctx, state=None, **kwargs):
+@register_task
+def change_state(
+    event, node, state=None, update_entity=False, criticity=CheckManager.HARD,
+    manager=None, check_manager=None,
+    **kwargs
+):
     """
-    Change of state for node ctx.
+    Change of state for node.
+
+    :param event: event to process in order to change of state.
+    :param node: node to change of state.
+    :param state: new state to apply on input node. If None, get state from
+        input event.
+    :param bool update_entity: update entity status if True (False by default).
+    :param int criticity: criticity level. Default HARD.
     """
 
     # if state is None, use event state
     if state is None:
         state = event[Check.STATE]
+    # init manager
+    if manager is None:
+        manager = tm
+    # init node
+    if isinstance(node, basestring):
+        node = manager.get_elts(ids=node)
 
     # update node state from ctx
-    node = ctx[NODE]
-    node[Check.STATE] = state
-    topology.push_nodes(node)
+    Node.state(node, state)
+    node.save(manager=manager)
+
+    # update entity if necessary
+    if update_entity:
+        entity = Node.entity(node)
+        if entity is not None:
+            check_manager.state(ids=entity, state=state, criticity=criticity)
 
 
-@register_task(name='topology.worst_state')
-def worst_state(event, ctx, **kwargs):
-    """
-    Check the worst state among source nodes.
-    """
-
-    change_state_from_source_nodes(event=event, ctx=ctx, f=max)
-
-
-@register_task(name='topology.best_state')
-def best_state(event, ctx, **kwargs):
-    """
-    Get the best state among source nodes.
-    """
-
-    change_state_from_source_nodes(event=event, ctx=ctx, f=min)
-
-
-@register_task(name='topology.change_state_from_source_nodes')
-def change_state_from_source_nodes(event, ctx, f, **kwargs):
+@register_task
+def state_from_sources(event, node, ctx, f, manager=None, **kwargs):
     """
     Change ctx node state which equals to f result on source nodes.
     """
@@ -83,19 +93,45 @@ def change_state_from_source_nodes(event, ctx, f, **kwargs):
     # get function f
     if isinstance(f, basestring):
         f = lookup(f)
-
-    # retrieve the node from where find source nodes
-    node = ctx[NODE]
+    # init manager
+    if manager is None:
+        manager = tm
+    # init node
+    if isinstance(node, basestring):
+        node = manager.get_elts(ids=node)
 
     # if sources are in ctx, get them
-    if SOURCES in ctx:
-        sources = ctx[SOURCES]
+    if SOURCES_BY_EDGES in ctx:
+        sources_by_edges = ctx[SOURCES_BY_EDGES]
     else:  # else get them with the topology object
-        sources = topology.find_source_nodes(node=node)
+        sources_by_edges = manager.get_sources(ids=node.id, add_edges=True)
 
-    # calculate the state
-    state = f(source_node[Check.STATE] for source_node in sources)
+    if sources_by_edges:  # do something only if sources exist
+        # calculate the state
+        sources = []
+        for edge_id in sources_by_edges:
+            _, edge_sources = sources_by_edges[edge_id]
+            sources += edge_sources
+        state = f(source_node.data[Check.STATE] for source_node in sources)
 
-    # update the node state
-    node[Check.STATE] = state
-    topology.push_nodes(node=node)
+        # update the node state
+        Node.state(node, state)
+        node.save(manager=manager)
+
+
+@register_task
+def worst_state(**kwargs):
+    """
+    Check the worst state among source nodes.
+    """
+
+    state_from_sources(f=max, **kwargs)
+
+
+@register_task
+def best_state(**kwargs):
+    """
+    Get the best state among source nodes.
+    """
+
+    state_from_sources(f=min, **kwargs)

@@ -1,0 +1,37 @@
+{
+    "type": "object",
+    "categories": [{
+        "title": "General",
+        "keys": [
+            "crecord_name",
+            "info",
+            "type",
+            "elts",
+            "_delts",
+            "_cls",
+            "_type"
+        ]
+    }],
+    "properties": {
+        "crecord_type": {
+            "enum": ["graph"],
+            "required": true
+        },
+        "_cls": {
+            "type": "string",
+            "default": "canopsis.graph.elements.Graph",
+            "required": true
+        },
+        "elts": {
+            "type": "array"
+        },
+        "_delts": {
+            "type": "array"
+        },
+        "_type": {
+            "type": "string",
+            "default": "graph",
+            "required": true
+        }
+    }
+}

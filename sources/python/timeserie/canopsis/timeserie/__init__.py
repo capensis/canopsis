@@ -23,6 +23,7 @@ __version__ = "0.1"
 # provide only TimeSerie
 __all__ = ('TimeSerie')
 
+from canopsis.common.init import basestring
 from canopsis.timeserie.timewindow import Period, TimeWindow
 from canopsis.timeserie.aggregation import get_aggregations
 from canopsis.configuration.configurable import Configurable
@@ -66,7 +67,7 @@ class TimeSerie(Configurable):
         self,
         aggregation=VDEFAULT_AGGREGATION,
         max_points=VMAX_POINTS,
-        period=VPERIOD,
+        period=None,
         round_time=VROUND_TIME,
         fill=VFILL,
         *args, **kwargs
@@ -144,10 +145,9 @@ class TimeSerie(Configurable):
         The upper bound is timewindow.stop_datetime()
         """
 
+        result = []
         # get the right period to apply on timewindow
         period = self._get_period(timewindow=timewindow)
-
-        result = []
 
         # set start and stop datetime
         start_datetime = timewindow.start_datetime()
@@ -155,7 +155,8 @@ class TimeSerie(Configurable):
 
         if self.round_time:  # normalize if round time is True
             start_datetime = period.round_datetime(
-                datetime=start_datetime, normalize=True)
+                datetime=start_datetime, normalize=True
+            )
 
         current_datetime = start_datetime
         delta = period.get_delta()
@@ -169,7 +170,7 @@ class TimeSerie(Configurable):
 
         return result
 
-    def calculate(self, points, timewindow):
+    def calculate(self, points, timewindow, meta=None):
         """
         Do an operation on all points with input timewindow.
 
@@ -186,13 +187,23 @@ class TimeSerie(Configurable):
         if self.round_time:
             period = self._get_period(timewindow)
             round_starttimestamp = period.round_timestamp(
-                timestamp=timewindow.start(), normalize=True)
+                timestamp=timewindow.start(),
+                normalize=True
+            )
             timewindow = TimeWindow(
-                start=round_starttimestamp, stop=timewindow.stop(),
-                timezone=timewindow.timezone)
+                start=round_starttimestamp,
+                stop=timewindow.stop(),
+                timezone=timewindow.timezone
+            )
 
         # start to exclude points which are not in timewindow
         points = [point for point in points if point[0] in timewindow]
+
+        if not meta:
+            meta = {}
+
+        transform_method = meta.get('value', {}).get('type', None)
+        points = self.apply_transform(points, method=transform_method)
         points_len = len(points)
 
         fn = None
@@ -218,7 +229,6 @@ class TimeSerie(Configurable):
             # iterate on all timesteps in order to get points
             # between [previous_timestamp, timestamp[
             for index in range(1, len(timesteps)):
-
                 # initialize values_to_aggregate
                 values_to_aggregate = []
                 # set timestamp and previous_timestamp
@@ -265,6 +275,71 @@ class TimeSerie(Configurable):
 
         return result
 
+    def apply_transform(self, points, method=None):
+        """
+        Apply DERIVE, ABSOLUTE, COUNTER, GAUGE transforms to points.
+
+        :param points: list of points
+        :param str method: method (it's the "type" metadata of perfdata)
+        :returns: list of points
+        """
+
+        def gauge(pts):
+            return pts
+
+        def absolute(pts):
+            points = []
+
+            for pt in pts:
+                ts, val = pt[0], pt[1]
+
+                if val < 0:
+                    val = -val
+
+                points.append([ts, val])
+
+            return points
+
+        def derive(pts):
+            points = []
+
+            for i in range(1, len(pts)):
+                ts, val = pts[i][0], pts[i][1]
+                prevts, prevval = pts[i - 1][0], pts[i - 1][1]
+
+                interval = abs(ts - prevts)
+                if interval:
+                    val = round(float(val) / interval, 3)
+
+                points.append([ts, val])
+
+            return points
+
+        def counter(pts):
+            points = []
+
+            val = 0
+
+            for pt in pts:
+                ts, increment = pt[0], pt[1]
+                val += increment
+
+                points.append([ts, val])
+
+            return points
+
+        methods = {
+            'GAUGE': gauge,
+            'ABSOLUTE': absolute,
+            'DERIVE': derive,
+            'COUNTER': counter
+        }
+
+        if not method or method not in methods:
+            return points
+
+        return methods[method](points)
+
     def _conf(self, *args, **kwargs):
 
         result = super(TimeSerie, self)._conf(*args, **kwargs)
@@ -276,7 +351,9 @@ class TimeSerie(Configurable):
                 Parameter(TimeSerie.PERIOD, parser=Period.from_str),
                 Parameter(TimeSerie.FILL, parser=Parameter.bool),
                 Parameter(TimeSerie.ROUND_TIME, parser=Parameter.bool),
-                Parameter(TimeSerie.MAX_POINTS, parser=int)))
+                Parameter(TimeSerie.MAX_POINTS, parser=int)
+            )
+        )
 
         return result
 
@@ -304,11 +381,9 @@ class TimeSerie(Configurable):
             fn = get_aggregations()[self.aggregation]
 
         if len(values_to_aggregate) > 0:
-
             result = round(fn(values_to_aggregate), 2)
 
         else:
-
             result = 0 if self.fill else None
 
         return result

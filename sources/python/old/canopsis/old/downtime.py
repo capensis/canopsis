@@ -32,9 +32,8 @@ class Downtime(Record):
         This class provide easy management for downtime by allowing
         component/resource test against any downtime at now time
     """
-    def __init__(self, logger, storage=None):
+    def __init__(self, storage=None):
 
-        self.logger = logger
         if not storage:
             storage = get_storage(
                 namespace='object', account=Account(user="root", group="root"))
@@ -47,8 +46,7 @@ class Downtime(Record):
                 delta_beat takes care of engines beat interval.
                 for accurate measure, it should be equal to 0
         """
-        self.logger.debug(
-            'Reloading downtimes @ %s' % (str(datetime.now())))
+
         now = time()
         query = {
             'start': {'$lte': now + delta_beat},
@@ -56,8 +54,21 @@ class Downtime(Record):
         }
 
         downtimes = self.backend.find(query)
-        self.downtimes = [downtime for downtime in downtimes]
-        self.logger.debug('Got %s downtimes loaded' % (len(self.downtimes)))
+
+        self.downtimes = {}
+        self.downtimes_list = []
+        for downtime in downtimes:
+            self.downtimes_list.append(downtime)
+            co = downtime['component']
+            re = downtime['resource']
+            if co not in self.downtimes:
+                self.downtimes[co] = {}
+
+            if re not in self.downtimes[co]:
+                self.downtimes[co][re] = {
+                    'start': downtime['start'],
+                    'end': downtime['end'],
+                }
 
         return self.downtimes
 
@@ -66,27 +77,26 @@ class Downtime(Record):
 
         downtimes_end = [now]
 
-        for downtime in self.downtimes:
-            if downtime['component'] == component \
-                    and downtime['resource'] == resource \
-                    and downtime['start'] < now \
-                    and downtime['end'] > now:
-                downtimes_end.append(downtime['end'])
+        if (component in self.downtimes and
+            resource in self.downtimes[component] and
+            self.downtimes[component][resource]['start'] < now and
+                self.downtimes[component][resource]['end'] > now):
+                downtimes_end.append(
+                    self.downtimes[component][resource]['end'])
 
         return max(downtimes_end)
 
     def is_downtime(self, component, resource):
-        #Tests whether or not given component/resource information exists in
+        # Tests whether or not given component/resource information exists in
         # downtime list.
-        #If any, it s downtime and engines should operate consequently
+        # If any, it s downtime and engines should operate consequently
 
         now = time()
-        for downtime in self.downtimes:
-            if downtime['component'] == component \
-                    and downtime['resource'] == resource \
-                    and downtime['start'] < now \
-                    and downtime['end'] > now:
-                return True
+        if (component in self.downtimes and
+            resource in self.downtimes[component] and
+            self.downtimes[component][resource]['start'] < now and
+                self.downtimes[component][resource]['end'] > now):
+            return True
         return False
 
     def get_filter(self, mini=False):
@@ -107,7 +117,7 @@ class Downtime(Record):
             return None
 
         new_field = []
-        for downtime in self.downtimes:
+        for downtime in self.downtimes_list:
             new_filter = [
                 {component: {'$ne': downtime['component']}},
                 {resource: {'$ne': downtime['resource']}}

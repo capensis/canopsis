@@ -142,7 +142,9 @@ def lookup(path, cached=True):
                 __RESOLVED_ELEMENTS[path] = result
 
         else:  # get relative object from current module
-            raise ImportError('Does not handle relative path')
+            raise ImportError(
+                'Does not handle relative path: {0}'.format(path)
+            )
 
     return result
 

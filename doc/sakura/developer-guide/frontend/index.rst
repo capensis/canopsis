@@ -15,3 +15,7 @@ Frontend
    serializers-and-adapters
    managing-dependencies
    translation
+   data-management
+   routes-system
+   model-layer
+   user-preferences

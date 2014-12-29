@@ -26,4 +26,5 @@ install_requires = ['canopsis.storage', 'canopsis.task', 'canopsis.graph']
 setup(
     description='Canopsis topology',
     install_requires=install_requires,
-    keywords='topology')
+    keywords='topology'
+)

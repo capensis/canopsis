@@ -33,14 +33,17 @@ from canopsis.old.storage import get_storage
 from canopsis.old.downtime import Downtime
 
 root_account = Account(user="root", group="root")
-storage = get_storage(account=root_account, namespace='unittest', logging_level=logging.DEBUG)
+storage = get_storage(
+    account=root_account,
+    namespace='unittest',
+    logging_level=logging.DEBUG)
 
 
 class KnownValues(unittest.TestCase):
     def setUp(self):
         self.backend = storage.get_backend('unittest')
         self.cdowntime = Downtime(storage)
-        #Overidding default backend
+        # Overidding default backend
         self.cdowntime.backend = self.backend
 
     def test_01_Method_get_filter_no_data(self):
@@ -51,18 +54,18 @@ class KnownValues(unittest.TestCase):
     def test_02_Method_get_filter_data_feed(self):
 
         self.backend.insert({
-            'component' :'component_test_1',
-            'resource' :'resource_test_1',
-            'type' :'downtime',
-            'start' :0,
-            'end' :time.time() + 10000
+            'component': 'component_test_1',
+            'resource': 'resource_test_1',
+            'type': 'downtime',
+            'start': 0,
+            'end': time.time() + 10000
         })
         self.backend.insert({
-            'component' :'component_test_2',
-            'resource' :'resource_test_2',
-            'type' :'downtime',
-            'start' :time.time() + 10000,
-            'end' :time.time() + 10000
+            'component': 'component_test_2',
+            'resource': 'resource_test_2',
+            'type': 'downtime',
+            'start': time.time() + 10000,
+            'end': time.time() + 10000
         })
 
         mongo_filter = self.cdowntime.get_filter()
@@ -72,8 +75,13 @@ class KnownValues(unittest.TestCase):
             raise('filter should be defined for excactly one element')
         for element in mongo_filter['$and'][0]['$and']:
             for element_type in ['component', 'resource']:
-                if element_type in element['$ne'] and element['$ne'][element_type] not in  ['component_test_1', 'resource_test_1']:
-                    raise('iterated keys should had either component_test_1|resource_test_1 values')
+                if (element_type in element
+                    and element[element_type]['$ne'] not in
+                        ['component_test_1', 'resource_test_1']):
+                    raise(
+                        'iterated keys should had either ' +
+                        'component_test_1|resource_test_1 values'
+                    )
 
     def test_99_DropNamespace(self):
         storage.drop_namespace('unittest')

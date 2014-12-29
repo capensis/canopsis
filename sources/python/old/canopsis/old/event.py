@@ -63,7 +63,8 @@ def forger(
     component_problem=False,
     author=None,
     perimeter=None,
-    keep_state=None
+    keep_state=None,
+    **kwargs
 ):
 
     if not timestamp:
@@ -136,7 +137,7 @@ def forger(
         'long_output': long_output,
     }
 
-    if author != None:
+    if author is not None:
         dump["author"] = author
 
     if perimeter:
@@ -171,6 +172,9 @@ def forger(
 
     if event_type == 'check' and source_type == 'resource':
         dump['component_problem'] = component_problem
+
+    if kwargs:
+        dump.update(kwargs)
 
     return dump
 

@@ -1,35 +1,27 @@
 {
-  "type": "object",
-  "metadata": {
-      "icon": "list-alt"
-  },
-  "categories": [{
-      "title": "General",
-      "keys":["title", "datatype", "library"]
-    }, {
-      "title": "Options",
-      "keys":["refreshableWidget", "refreshInterval", "graphid"]
-    }],
-  "properties": {
-    "datatype": {
-      "type": "string",
-      "enum": ["graph", "topology"],
-      "default": "topology",
-      "role": "simplelist"
+    "type": "object",
+    "metadata": {
+        "classes": ["system"]
     },
-    "graphid": {
-      "type": "string",
-      "default": "test"
-    },
-    "refreshableWidget": {
-      "type": "boolean",
-      "default": true
-    },
-    "library": {
-      "type": "string",
-      "enum": ["d3", "jsplumb", "cytoscape"],
-      "default": "d3",
-      "role": "simplelist"
+    "categories": [
+        {
+            "title": "General",
+            "keys":["title", "graph_type", "graph_id"]
+        }, {
+            "title": "Options",
+            "keys":["refreshableWidget", "refreshInterval"]
+        }
+    ],
+    "properties": {
+        "graph_type": {
+            "type": "string",
+            "enum": ["graph", "topology"],
+            "default": "topology",
+            "role": "simplelist"
+        },
+        "graph_id": {
+            "type": "string",
+            "default": "test"
+        }
     }
-  }
 }
