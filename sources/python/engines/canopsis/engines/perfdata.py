@@ -117,7 +117,7 @@ class engine(Engine):
 
                 self.perfdata.put(
                     metric_id=metric_id, points=[(timestamp, value)],
-                    meta=perf_data, cache=True
+                    meta=perf_data, cache=False
                 )
 
         return event
