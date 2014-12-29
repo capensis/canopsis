@@ -90,7 +90,7 @@ class engine(Engine):
             self.context.put(
                 _type='connector',
                 entity=entity,
-                cache=True
+                cache=False
             )
 
         # add connector_name
@@ -102,7 +102,7 @@ class engine(Engine):
                 _type='connector_name',
                 entity=entity,
                 context=context,
-                cache=True
+                cache=False
             )
 
         # add status entity which is a component or a resource
@@ -125,7 +125,7 @@ class engine(Engine):
                     _type='component',
                     entity=status_entity,
                     context=context,
-                    cache=True
+                    cache=False
                 )
             is_status_entity = True
             context['component'] = component
@@ -146,7 +146,7 @@ class engine(Engine):
                     _type=source_type,
                     entity=status_entity,
                     context=context,
-                    cache=True
+                    cache=False
                 )
 
         if not already_added:
@@ -156,7 +156,7 @@ class engine(Engine):
                 self.context.put(
                     _type='hostgroup',
                     entity=hostgroup_data,
-                    cache=True
+                    cache=False
                 )
 
             # add servicegroups
@@ -167,7 +167,7 @@ class engine(Engine):
                 self.context.put(
                     _type='servicegroup',
                     entity=servicegroup_data,
-                    cache=True
+                    cache=False
                 )
 
         context['component'] = component
@@ -202,7 +202,7 @@ class engine(Engine):
             _type=event_type,
             entity=authored_data,
             context=context,
-            cache=True
+            cache=False
         )
 
         # add perf data
@@ -217,7 +217,7 @@ class engine(Engine):
                     _type='metric',
                     entity=perfdata_entity,
                     context=context,
-                    cache=True
+                    cache=False
                 )
                 self.cache.add(perfdata_rk)
 
