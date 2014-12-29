@@ -402,7 +402,7 @@ class Storage(DataBase):
 
         if cache and self._cache_size > 0:
             if cache_op is not None:
-                cache_op(**{} if cache_kwargs is None else cache_kwargs)
+                cache_op(**cache_kwargs)
                 # check for updating cache
                 self._updated_cache = True
                 # increment the counter
