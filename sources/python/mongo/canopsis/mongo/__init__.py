@@ -399,10 +399,14 @@ class MongoStorage(MongoDataBase, Storage):
 
         if self._cache is None:
             cache_op = None
-        elif multi:
-            cache_op = self._cache.find(selector=spec).update
         else:
-            cache_op = self._cache.find(selector=spec).update_one
+            cache_op = self._cache.find(selector=spec)
+            if upsert:
+                cache_op = cache_op.upsert()
+            if multi:
+                cache_op = cache_op.update
+            else:
+                cache_op = cache_op.update_one
 
         result = self._process_query(
             cache_op=cache_op,
