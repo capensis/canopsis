@@ -69,10 +69,6 @@ class engine(Engine):
             mWarn = self.sla.data['mWarn']
         """
 
-        self.logger.info('%s' % self.context)
-        self.logger.info('%s' % self.context['ctx_storage'])
-        self.logger.info('%s' % self.context['ctx_storage']._cache_count)
-
         context = {}
 
         # Get event informations
@@ -126,7 +122,7 @@ class engine(Engine):
                 entity=hostgroup_data,
                 cache=True
             )
-            self.logger.info('%s' % self.context['ctx_storage']._cache_count)
+
         # add servicegroups
         for servicegroup in servicegroups:
             servicegroup_data = {Context.NAME: servicegroup}
@@ -135,7 +131,7 @@ class engine(Engine):
                 entity=servicegroup_data,
                 cache=True
             )
-            self.logger.info('%s' % self.context['ctx_storage']._cache_count)
+
         # put the entity in the context
         self.context.put(
             _type=source_type,
@@ -143,7 +139,7 @@ class engine(Engine):
             entity=status_entity,
             cache=True
         )
-        self.logger.info('%s' % self.context['ctx_storage']._cache_count)
+
         # udpdate context information with resource or component
         if resource is not None:
             context['resource'] = resource
@@ -180,7 +176,7 @@ class engine(Engine):
             context=context,
             cache=True
         )
-        self.logger.info('%s' % self.context['ctx_storage']._cache_count)
+
         # add perf data
         for perfdata in event.get('perf_data_array', []):
             perfdata_entity = entity.copy()
@@ -193,7 +189,5 @@ class engine(Engine):
                 context=context,
                 cache=True
             )
-            self.logger.info('%s' % self.context['ctx_storage']._cache_count)
-        self.logger.info('%s' % self.context['ctx_storage']._cache_count)
 
         return event
