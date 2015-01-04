@@ -37,6 +37,10 @@ class Schema(object):
         self.load_cache()
 
     def load_cache(self):
+        """
+        Put each available schema in cache
+        """
+
         self.cache = {}
 
         # For the moment only one location is allowed for schemas : in
