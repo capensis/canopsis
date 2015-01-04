@@ -30,11 +30,9 @@ class ContextTest(TestCase):
         self.context.remove()
 
     def tearDown(self):
-        2;  #self.context.remove()
+        self.context.remove()
 
     def test_ctx_storage(self):
-
-        self.context[Context.CTX_STORAGE].drop()
 
         context = self.context.context
 
@@ -54,7 +52,8 @@ class ContextTest(TestCase):
         entities = self.context.find()
 
         self.assertEqual(
-            len(entities), count_per_entity_type * (len(context) - 1)
+            len(entities),
+            count_per_entity_type * (len(context) - 1) + len(context) - 2
         )
 
         for n in range(1, len(context)):
@@ -63,14 +62,21 @@ class ContextTest(TestCase):
             entities = self.context.find(
                 _type=context[n], context=entity_context
             )
-            self.assertEqual(len(entities), 2)
+
+            self.assertEqual(
+                len(entities),
+                count_per_entity_type + (1 if n < (len(context) - 1) else 0)
+            )
 
             _id = self.context.get_entity_id(entities[0])
             self.context.remove(ids=_id)
             entities = self.context.find(
                 _type=context[n], context=entity_context
             )
-            self.assertEqual(len(entities), 1)
+            self.assertEqual(
+                len(entities),
+                count_per_entity_type - (0 if n < (len(context) - 1) else 1)
+            )
 
             self.context.remove(_type=context[n], context=entity_context)
             entities = self.context.find(
