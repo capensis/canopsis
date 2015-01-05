@@ -224,7 +224,7 @@ class CompositeStorage(Storage):
 
     def put(self, path, data_id, data, shared_id=None, cache=False):
         """
-        Put a data related to an id
+        Put a data related to an id and a path.
 
         :param path: path
         :type path: storage filter

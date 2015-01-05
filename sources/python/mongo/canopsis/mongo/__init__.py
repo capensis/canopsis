@@ -197,12 +197,17 @@ class MongoStorage(MongoDataBase, Storage):
                 except Exception as e:
                     self.logger.error(e)
 
-            try:
-                self._init_cache()
-            except Exception as e:
-                raise
+            # initialize cache
+            if not hasattr(self, '_cache'):
+                self._cache = None
 
         return result
+
+    def _disconnect(self, *args, **kwargs):
+
+        super(MongoStorage, self)._disconnect(*args, **kwargs)
+
+        self.halt_cache_thread()
 
     def _new_cache(self, *args, **kwargs):
 
@@ -380,7 +385,10 @@ class MongoStorage(MongoDataBase, Storage):
 
     def _insert(self, document=None, cache=False, **kwargs):
 
-        cache_op = None if self._cache is None else self._cache.insert
+        if cache and self._cache is None:
+            self._init_cache()
+
+        cache_op = self._cache.insert if cache else None
 
         result = self._process_query(
             query_op=self._run_command,
@@ -397,12 +405,19 @@ class MongoStorage(MongoDataBase, Storage):
         self, spec, document, cache=False, multi=True, upsert=True, **kwargs
     ):
 
-        if self._cache is None:
-            cache_op = None
-        elif multi:
-            cache_op = self._cache.find(selector=spec).update
+        if cache and self._cache is None:
+            self._init_cache()
+
+        if cache:
+            cache_op = self._cache.find(selector=spec)
+            if upsert:
+                cache_op = cache_op.upsert()
+            if multi:
+                cache_op = cache_op.update
+            else:
+                cache_op = cache_op.update_one
         else:
-            cache_op = self._cache.find(selector=spec).update_one
+            cache_op = None
 
         result = self._process_query(
             cache_op=cache_op,
@@ -429,8 +444,11 @@ class MongoStorage(MongoDataBase, Storage):
 
     def _remove(self, document, cache=False, **kwargs):
 
-        cache_op = None if self._cache is None \
-            else self._cache.find(selector=document).remove
+        if cache and self._cache is None:
+            self._init_cache()
+
+        cache_op = self._cache.find(selector=document).remove if cache \
+            else None
 
         result = self._process_query(
             query_op=self._run_command,
