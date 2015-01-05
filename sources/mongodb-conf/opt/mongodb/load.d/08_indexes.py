@@ -101,6 +101,9 @@ INDEXES = {
     ],
     'downtime': [
         [('start', 1), ('end', 1)]
+    ],
+    'ack': [
+        [('rk', 1), ('solved', 1)]
     ]
 }
 

@@ -49,7 +49,7 @@ class engine(Engine):
         if event['event_type'] in ['cancel', 'uncancel']:
 
             devent = self.storage.get_backend().find_one(
-                {'rk': event['ref_rk']}
+                {'_id': event['ref_rk']}
             )
             if devent is not None:
 
@@ -103,6 +103,6 @@ class engine(Engine):
                 # Update database with cancel informations
                 if update:
                     self.storage.get_backend().update(
-                        {'rk': event['ref_rk']},
+                        {'_id': event['ref_rk']},
                         update_query
                     )

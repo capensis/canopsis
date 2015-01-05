@@ -106,6 +106,7 @@ class engine(Engine):
 
             for perf_data in perf_data_array:
 
+                perf_data = perf_data.copy()
                 event_with_metric = deepcopy(event)
                 event_with_metric['type'] = 'metric'
                 event_with_metric[Context.NAME] = perf_data.pop('metric')
@@ -117,7 +118,7 @@ class engine(Engine):
 
                 self.perfdata.put(
                     metric_id=metric_id, points=[(timestamp, value)],
-                    meta=perf_data, cache=False
+                    meta=perf_data, cache=True
                 )
 
         return event

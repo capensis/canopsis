@@ -160,6 +160,7 @@ class StorageTest(TestCase):
         count = cache_size + 1  # play with 2 * cache_size + 1
 
         # activate cache
+        self.storage.cache_autocommit = 0.1
         self.storage.cache_size = cache_size
         data = list({'_id': str(i)} for i in range(count))
 
@@ -216,16 +217,18 @@ class StorageTest(TestCase):
 
     def test_thread(self):
 
-        self.storage._cache_autocommit = 0.1
-
+        # ensure cache auto commit is short
+        self.storage._cache_autocommit = 0.01
+        # check the cache thread is started
+        self.storage.remove_elements(cache=True)
         self.assertTrue(self.storage._cache_thread.isAlive())
 
+        # check the cache thread is halted
         self.storage.halt_cache_thread()
-
         self.assertFalse(self.storage._cache_thread.isAlive())
 
-        self.storage.cache_autocommit = 0.1
-
+        # check the cache thread is started twice
+        self.storage.remove_elements(cache=True)
         self.assertTrue(self.storage._cache_thread.isAlive())
 
 if __name__ == '__main__':

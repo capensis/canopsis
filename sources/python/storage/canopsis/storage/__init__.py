@@ -27,7 +27,7 @@ from functools import reduce
 from time import sleep
 
 try:
-    from threading import Thread, current_thread
+    from threading import Thread, current_thread, Lock
 except ImportError:
     from dummy_threading import Thread, current_thread
 
@@ -199,7 +199,7 @@ class Storage(DataBase):
     CACHE_AUTOCOMMIT = 'cache_autocommit'  #: duration before auto-commit cache
 
     DEFAULT_CACHE_SIZE = 1000  #: default cache size
-    DEFAULT_CACHE_AUTOCOMMIT = 0.2  #: default cache auto-commit
+    DEFAULT_CACHE_AUTOCOMMIT = 1  #: default cache auto-commit in seconds
     DEFAULT_CACHE_ORDERED = True  #: default cache ordered
 
     CATEGORY = 'STORAGE'  #: storage category
@@ -244,8 +244,10 @@ class Storage(DataBase):
         self._data = data
 
         self._cache_size = cache_size
+        self._cache_count = 0
         self._cache_ordered = cache_ordered
         self._cache_autocommit = cache_autocommit
+        self._lock = Lock()  # lock for asynchronous autocommit
 
     @property
     def indexes(self):
@@ -321,8 +323,12 @@ class Storage(DataBase):
 
     @cache_size.setter
     def cache_size(self, value):
-        self._cache_size = value
-        self._init_cache()
+        self._lock.acquire()
+        try:
+            self.execute_cache()
+            self._cache_size = value
+        finally:
+            self._lock.release()
 
     @property
     def cache_ordered(self):
@@ -330,8 +336,12 @@ class Storage(DataBase):
 
     @cache_ordered.setter
     def cache_ordered(self, value):
-        self._cache_ordered = value
-        self._init_cache()
+        self._lock.acquire()
+        try:
+            self.execute_cache()
+            self._cache_ordered = value
+        finally:
+            self._lock.release()
 
     @property
     def cache_autocommit(self):
@@ -339,8 +349,12 @@ class Storage(DataBase):
 
     @cache_autocommit.setter
     def cache_autocommit(self, value):
-        self._cache_autocommit = value
-        self._init_cache()
+        self._lock.acquire()
+        try:
+            self.execute_cache()
+            self._cache_autocommit = value
+        finally:
+            self._lock.release()
 
     def queries_in_cache(self):
         """
@@ -401,16 +415,24 @@ class Storage(DataBase):
         result = None
 
         if cache and self._cache_size > 0:
-            if cache_op is not None:
-                cache_op(**cache_kwargs)
-                # check for updating cache
-                self._updated_cache = True
-                # increment the counter
-                self._cache_count += 1
-                # if cache count is greater than cache size
-                if self._cache_count >= self._cache_size:
-                    # execute the cache
-                    result = self.execute_cache()
+            # if self cache is None, that means thisd is the first use to cache
+            if self._cache_thread is None or not self._cache_thread.isAlive():
+                # init cache
+                self._init_cache()
+            self._lock.acquire()  # avoid concurrent calls to cache execution
+            try:
+                if cache_op is not None:
+                    cache_op(**cache_kwargs)
+                    # check for updating cache
+                    self._updated_cache = True
+                    # increment the counter
+                    self._cache_count += 1
+                    # if cache count is greater than cache size
+                    if self._cache_count >= self._cache_size:
+                        # execute the cache
+                        result = self.execute_cache()
+            finally:
+                self._lock.release()
         else:  # process the query operation
             if query_kwargs is not None:
                 kwargs.update(query_kwargs)
@@ -431,12 +453,16 @@ class Storage(DataBase):
         ):
             # wait cache timeout before trying to executing it
             sleep(self._cache_autocommit)
-            # if cache has not been updated
-            if not self._updated_cache:
-                # execute cache
-                self.execute_cache()
-            else:  # mark the cache such as not updated
-                self._updated_cache = False
+            self._lock.acquire()  # avoid concurrent calls to cache execution
+            try:
+                # if cache has not been updated
+                if not self._updated_cache:
+                    # execute cache
+                    self.execute_cache()
+                else:  # mark the cache such as not updated
+                    self._updated_cache = False
+            finally:
+                self._lock.release()
 
     def halt_cache_thread(self, timeout=None):
         """
