@@ -28,96 +28,162 @@ refers to source nodes if they exist.
 
 Such conditions are::
     - ``new_state``: test if state (or event state) is not equal to node state
-    - ``condition``: test if source node states match with an input state.
+    - ``at_least``: test if source node states match with an input state.
     - ``all``: test if all source node states match with an input state.
-    - ``any``: test if one of source node states match with an input state.
+    - ``nok``: test if source node states are not OK.
 
-the ``new_state`` condition may be used by nodes bound to entities in order to
+The ``new_state`` condition may be used by nodes bound to entities in order to
 update such nodes when the entity change of state.
 
-Related rule actions are defined in .condition module.
+Related rule actions are defined in ``canopsis.topology.rule.action`` module.
 """
 
-from canopsis.topology.manager import Topology
-from canopsis.topology.process import SOURCES, NODE, WEIGHT
+from canopsis.common.init import basestring
+from canopsis.topology.manager import TopologyManager
+from canopsis.topology.elements import Node
 from canopsis.check import Check
 from canopsis.task import register_task
 
-from sys import maxint
+tm = TopologyManager()
 
-topology = Topology()
+#: parameter name which contain sources by edges
+SOURCES_BY_EDGES = 'sources_by_edges'
 
 
-@register_task(name='topology.new_state')
-def new_state(event, ctx, state=None, **kwargs):
+@register_task
+def new_state(event, node, state=None, manager=None, **kwargs):
     """
-    Condition triggered when state is different than in node ctx state.
+    Condition triggered when state is different than node state.
+
+    :param dict event: event from where get state if input state is None.
+    :param Node node: node from where check if node state != input state.
+    :param int state: state to compare with input node state.
     """
 
-    # get node context
-    node = ctx[NODE]
+    if manager is None:
+        manager = tm
+
+    if isinstance(node, basestring):
+        node = manager.get_elts(ids=node)
 
     # if state is None, use event state
     if state is None:
         state = event[Check.STATE]
 
     # True if node state is different than state
-    result = node[Check.STATE] != state
+    result = Node.state(node) != state
 
     return result
 
 
-@register_task(name='topology.condition')
-def condition(event, ctx, min_weight=1, state=None, rrule=None, **kwargs):
+@register_task
+def at_least(
+    event, ctx, node, state=Check.OK, min_weight=1, rrule=None, f=None,
+    manager=None, **kwargs
+):
     """
-    Generic condition applied on sources of ctx node
+    Generic condition applied on sources of node which check if at least source
+        nodes check a condition.
 
-    :param dict event: event which has fired this condition
-    :param dict ctx: rule context which must contain rule node
-    :param int min_weight:
-    :param int state: state to check among sources nodes
+    :param dict event: processed event.
+    :param dict ctx: rule context which must contain rule node.
+    :param Node node: node to check.
+    :param int state: state to check among sources nodes.
+    :param float min_weight: minimal weight (default 1) to reach in order to
+        validate this condition. If None, condition results in checking all
+            sources.
+    :param rrule rrule: rrule to consider in order to check condition in time.
+    :param f: function to apply on source node state. If None, use equality
+        between input state and source node state.
+
+    :return: True if condition is checked among source nodes.
+    :rtype: bool
     """
-
-    node = ctx[NODE]
-
-    source_nodes = topology.find_source_nodes(node=node)
-
-    # start to remove downtime entities
-
-    weights = (source_node[WEIGHT] for source_node in source_nodes)
-    min_weight = min(min_weight, weights)
 
     result = False
 
-    for source_node in source_nodes:
+    if manager is None:
+        manager = tm
 
-        source_node_state = source_node[Check.STATE]
+    if isinstance(node, basestring):
+        node = manager.get_elts(ids=node)
 
-        if source_node_state == state:
-            min_weight -= source_node[WEIGHT]
+    sources_by_edges = manager.get_sources(ids=node.id, add_edges=True)
 
-            if min_weight <= 0:
-                result = True
+    if sources_by_edges and min_weight is None:
+        # if edges & checking all nodes is required, result is True by default
+        result = True
+
+    # for all edges
+    for edge_id in sources_by_edges:
+        # get edge and sources
+        edge, sources = sources_by_edges[edge_id]
+        # get edge_weight which is 1 by default
+        for source in sources:
+            source_state = Node.state(source)
+            if (source_state == state if f is None else f(source_state)):
+                if min_weight is not None:  # if min_weight is not None
+                    min_weight -= edge.weight  # remove edge_weight from result
+                    if min_weight <= 0:  # if min_weight is negative, ends loop
+                        result = True
+                        break
+            elif min_weight is None:
+                # stop if condition is not checked and min_weight is None
+                result = False
                 break
 
     # if result, save source_nodes in ctx in order to save read data from db
     if result:
-        ctx[SOURCES] = source_nodes
+        ctx[SOURCES_BY_EDGES] = sources_by_edges
 
     return result
 
 
-@register_task(name='topology.all')
-def all(event, ctx, state, **kwargs):
+@register_task
+def _all(**kwargs):
     """
-    Check if all source nodes match with input check_state
+    Check if all source nodes match with input check_state.
+
+    :param dict event: processed event.
+    :param dict ctx: rule context which must contain rule node.
+    :param Node node: node to check.
+    :param int min_weight: minimal node weight to check.
+    :param int state: state to check among sources nodes.
+    :param rrule rrule: rrule to consider in order to check condition in time.
+    :param f: function to apply on source node state. If None, use equality
+        between input state and source node state.
+
+    :return: True if condition is checked among source nodes.
+    :rtype: bool
     """
 
-    result = condition(
-        event=event,
-        ctx=ctx,
-        state=state,
-        min_weight=maxint,
-        **kwargs)
+    result = at_least(
+        min_weight=None,
+        **kwargs
+    )
 
     return result
+
+
+@register_task
+def nok(**kwargs):
+    """
+    Condition which check if source nodes are not ok.
+
+    :param dict event: processed event.
+    :param dict ctx: rule context which must contain rule node.
+    :param Node node: node to check.
+    :param int min_weight: minimal node weight to check.
+    :param int state: state to check among sources nodes.
+    :param rrule rrule: rrule to consider in order to check condition in time.
+    :param f: function to apply on source node state. If None, use equality
+        between input state and source node state.
+
+    :return: True if condition is checked among source nodes.
+    :rtype: bool
+    """
+
+    return at_least(
+        f=lambda x: x != Check.OK,
+        **kwargs
+    )

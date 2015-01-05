@@ -24,6 +24,14 @@ __all__ = ('DataBase', 'Storage')
 
 from functools import reduce
 
+from time import sleep
+
+try:
+    from threading import Thread, current_thread
+except ImportError:
+    from dummy_threading import Thread, current_thread
+
+from canopsis.common.init import basestring
 from canopsis.common.utils import isiterable
 from canopsis.configuration.parameters import Parameter
 from canopsis.middleware import Middleware
@@ -45,18 +53,20 @@ class DataBase(Middleware):
     DB = 'db'
     JOURNALING = 'journaling'
 
+    SHARDING = 'sharding'
+
     CONF_RESOURCE = 'storage/storage.conf'
 
     class DataBaseError(Exception):
         pass
 
-    def __init__(self, db='canopsis', journaling=False, *args, **kwargs):
+    def __init__(
+        self, db='canopsis', journaling=False, sharding=False, *args, **kwargs
+    ):
         """
-        :param db: db name
-        :param journaling: journaling mode enabling.
-
-        :type db: str
-        :type journaling: bool
+        :param str db: db name
+        :param bool journaling: journaling mode enabling.
+        :param bool sharding: db sharding mode enabling.
         """
 
         super(DataBase, self).__init__(*args, **kwargs)
@@ -64,6 +74,7 @@ class DataBase(Middleware):
         # initialize instance properties with default values
         self._db = db
         self._journaling = journaling
+        self._sharding = sharding
 
     @property
     def db(self):
@@ -81,6 +92,15 @@ class DataBase(Middleware):
     @journaling.setter
     def journaling(self, value):
         self._journaling = value
+        self.reconnect()
+
+    @property
+    def sharding(self):
+        return self._sharding
+
+    @sharding.setter
+    def sharding(self, value):
+        self._sharding = value
         self.reconnect()
 
     def drop(self, table=None, *args, **kwargs):
@@ -131,7 +151,9 @@ class DataBase(Middleware):
             new_content=(
                 Parameter(DataBase.DB, critical=True),
                 Parameter(
-                    DataBase.JOURNALING, parser=Parameter.bool, critical=True)
+                    DataBase.JOURNALING, parser=Parameter.bool, critical=True),
+                Parameter(
+                    DataBase.SHARDING, critical=True, parser=Parameter.bool)
             )
         )
 
@@ -152,6 +174,16 @@ class Storage(DataBase):
     Manage different kind of storages by data_scope.
 
     For example, perfdata and context are two data types.
+
+    Related to such data types, it is possible to specialize the storage
+        related to such data type structure thanks to the data attribute.
+    And for better improvements, the indexes attribute permits to specify kind
+        of indexes to use even if storages are data oriented.
+
+    For technical improvements, a storage manages a query cache for processing
+        multi queries at a time (reduce use of the network). Such feature is
+        enabled by the cache_size which specified the size of the cache. If 0,
+        cache is disabled.
     """
 
     __protocol__ = 'storage'
@@ -159,9 +191,24 @@ class Storage(DataBase):
 
     DATA_ID = 'id'  #: db data id
 
-    INDEXES = 'indexes'
+    DATA = 'data'  #: collection/table data struct
 
-    CATEGORY = 'STORAGE'
+    INDEXES = 'indexes'  #: storage indexes
+    CACHE_SIZE = 'cache_size'  #: query cache size to send to the server
+    CACHE_ORDERED = 'cache_ordered'  #: order query if cache is used
+    CACHE_AUTOCOMMIT = 'cache_autocommit'  #: duration before auto-commit cache
+
+    DEFAULT_CACHE_SIZE = 1000  #: default cache size
+    DEFAULT_CACHE_AUTOCOMMIT = 0.2  #: default cache auto-commit
+    DEFAULT_CACHE_ORDERED = True  #: default cache ordered
+
+    CATEGORY = 'STORAGE'  #: storage category
+
+    KEY = 'key'  #: data field key name
+    TYPE = 'type'  #: data field type name
+    DEFAULT = 'default'  #: data field default name
+    NULL = 'null'  #: data field NULL name
+    FOREIGN = 'foreign'  #: data field FOREIGN name
 
     ASC = 1  #: ASC order
     DESC = -1  #: DESC order
@@ -172,11 +219,33 @@ class Storage(DataBase):
         """
         pass
 
-    def __init__(self, indexes=None, *args, **kwargs):
+    def __init__(
+        self,
+        indexes=None, data=None,
+        cache_size=DEFAULT_CACHE_SIZE, cache_ordered=DEFAULT_CACHE_ORDERED,
+        cache_autocommit=DEFAULT_CACHE_AUTOCOMMIT,
+        *args, **kwargs
+    ):
+        """
+        :param indexes: indexes to use.
+        :type indexes: list or str
+        :param dict data: data structure with expected fields, keys, etc.
+        :param int cache_size: (default 1000) query cache size.
+        :param bool cache_ordered: (default True) query cache order
+        :param float cache_autocommit: (default 1) duration in seconds before
+            auto-commit cache if no activity. If not greater than 0, auto
+            commit is deactivated.
+        """
 
         super(Storage, self).__init__(*args, **kwargs)
 
         self._indexes = [] if indexes is None else indexes
+
+        self._data = data
+
+        self._cache_size = cache_size
+        self._cache_ordered = cache_ordered
+        self._cache_autocommit = cache_autocommit
 
     @property
     def indexes(self):
@@ -185,13 +254,25 @@ class Storage(DataBase):
 
     def all_indexes(self):
         """
-        :return: all self indexes.
+        :return: all self indexes (concatenation of id and additional indexes),
+            such as a list of list of tuple(s).
+        :rtype: list
         """
 
         result = [[(Storage.DATA_ID, 1)]]
-        _indexes = self._indexes
-        if _indexes:
-            result.append(self._indexes[:])
+        # add indexes from self indexes
+        if self._indexes:
+            result += self._indexes[:]
+        # add indexes from self data
+        if self._data:
+            data = self._data
+            # search key among data fields
+            for field in data:
+                value = data[field]
+                if isinstance(value, dict):
+                    if Storage.KEY in value:
+                        index = [(field, value[Storage.KEY])]
+                        result.append(index)
 
         return result
 
@@ -203,20 +284,232 @@ class Storage(DataBase):
         :param value: indexes such as::
             - one name
             - one tuple of kind (name, ASC/DESC)
-            - a list of tuple or name [((name, ASC/DESC) | name)* ]
+            - a list of tuple or name [{(name, ASC/DESC), name}* ]
         :type value: str, tuple ot list
         """
 
+        indexes = []
+
         # if value is a name, transform it into a list
-        if isinstance(value, (str, tuple)):
-            value = [value]
-        # if value is iterable
-        elif not isinstance(value, list):
+        if isinstance(value, basestring):
+            indexes = [[(value, Storage.ASC)]]
+        elif isinstance(value, tuple):  # if value is a tuple
+            indexes = [[value]]
+        elif isinstance(value, list):  # if value is a list
+            for index in value:
+                index = self._ensure_index(index)
+                indexes.append(index)
+        else:  # error in other cases
             raise Storage.StorageError(
                 "wrong indexes value %s. str, tuple or list accepted" % value)
 
-        self._indexes = value
+        self._indexes = indexes
         self.reconnect()
+
+    @property
+    def data(self):
+        return self._data
+
+    @data.setter
+    def data(self, value):
+        self._data = value
+        self.reconnect()
+
+    @property
+    def cache_size(self):
+        return self._cache_size
+
+    @cache_size.setter
+    def cache_size(self, value):
+        self._cache_size = value
+        self._init_cache()
+
+    @property
+    def cache_ordered(self):
+        return self._cache_ordered
+
+    @cache_ordered.setter
+    def cache_ordered(self, value):
+        self._cache_ordered = value
+        self._init_cache()
+
+    @property
+    def cache_autocommit(self):
+        return self._cache_autocommit
+
+    @cache_autocommit.setter
+    def cache_autocommit(self, value):
+        self._cache_autocommit = value
+        self._init_cache()
+
+    def queries_in_cache(self):
+        """
+        :return: number of queries in cache to commit.
+        :rtype: int
+        """
+
+        return self._cache_count
+
+    def _init_cache(self):
+        """
+        Initialize cache processing.
+        """
+
+        # if cache size exists
+        if self._cache_size > 0:
+            self._parent_thread = current_thread()
+            # initialize all cache variables in order to process it
+            self._cache_count = 0  # cache count equals 0
+            self._cache = self._new_cache()  # (re)new cache
+            self._updated_cache = False  # set false to updated cache
+            # kill previous thread if it's alive
+            self.halt_cache_thread()
+            # start a new thread if self cache auto commit greater than 0
+            if self._cache_autocommit > 0:
+                self._cache_thread = Thread(target=self._cache_async_execution)
+                self._cache_thread.start()
+        else:  # nullify _cache if it exists
+            if hasattr(self, '_cache'):
+                del self._cache
+            self._cache = None
+
+    def _new_cache(self):
+        """
+        Get self cache for query.
+        """
+
+        raise NotImplementedError()
+
+    def _process_query(
+        self,
+        query_op, cache_op, query_kwargs={}, cache_kwargs={}, cache=False,
+        **kwargs
+    ):
+        """
+        Execute a query or the query cache depending on values of _cache_size
+            and input cache parameter.
+
+        :param function query_op: query operation.
+        :param function cache_op: query operation to cache.
+        :param dict query_kwargs: query operation kwargs.
+        :param dict cache_kwargs: query operation kwargs to cache.
+        :param bool cache: avoid cache operation if False (True by default).
+
+        :return: query/cache operation result.
+        """
+
+        result = None
+
+        if cache and self._cache_size > 0:
+            if cache_op is not None:
+                cache_op(**cache_kwargs)
+                # check for updating cache
+                self._updated_cache = True
+                # increment the counter
+                self._cache_count += 1
+                # if cache count is greater than cache size
+                if self._cache_count >= self._cache_size:
+                    # execute the cache
+                    result = self.execute_cache()
+        else:  # process the query operation
+            if query_kwargs is not None:
+                kwargs.update(query_kwargs)
+            result = query_op(**kwargs)
+
+        return result
+
+    def _cache_async_execution(self):
+        """
+        Threaded method which execute the cache.
+        """
+
+        # while parent thread is alive and cache size is greater than 0
+        while (
+            self._parent_thread.isAlive()
+            and self._cache_autocommit > 0
+            and self._cache_size > 0
+        ):
+            # wait cache timeout before trying to executing it
+            sleep(self._cache_autocommit)
+            # if cache has not been updated
+            if not self._updated_cache:
+                # execute cache
+                self.execute_cache()
+            else:  # mark the cache such as not updated
+                self._updated_cache = False
+
+    def halt_cache_thread(self, timeout=None):
+        """
+        Halt cache auto_commit. This method aims to wait cache at most
+            ``cache_autocommit`` or input timeout seconds before finishing.
+
+        :param float timeout: max time to wait before waiting for this halting
+            cache thread. Default value is self cache autocommit.
+        """
+
+        # change value of cache auto commit in order to stop thread
+        cache_autocommit, self._cache_autocommit = self._cache_autocommit, 0
+
+        if hasattr(self, '_cache_thread') and self._cache_thread.isAlive():
+            try:  # wait for cache thread end
+                self._cache_thread.join(timeout)
+            except RuntimeError:
+                pass
+
+        # recover cache auto commit
+        self._cache_autocommit = cache_autocommit
+
+    def execute_cache(self):
+        """
+        Execute the query cache and return execution processing.
+        """
+
+        result = None
+        # do something only if there are cached query to execute
+        if self._cache_count > 0:
+            try:
+                result = self._execute_cache()
+            except Exception as e:
+                self.logger.error(
+                    'Interruption of cache execution: {}'.format(e)
+                )
+            else:  # if no error, renew the cache
+                self._cache = self._new_cache()
+            # initialize cache count
+            self._cache_count = 0
+
+        return result
+
+    def _execute_cache(self):
+        """
+        Private cache execution. May be overriden.
+        """
+
+        raise NotImplementedError()
+
+    def _ensure_index(self, index):
+        """
+        Get a right index structure related to input index.
+
+        :return: depending on index:
+            - str: [(index, Storage.ASC)]
+            - tuple: (index, order): [(index, order)]
+            - list: [{(index, order), (index)}+]: [(index, order)+]
+        """
+
+        result = []
+
+        if isinstance(index, basestring):  # one value
+            result = [(index, Storage.ASC)]
+        elif isinstance(index, tuple):  # one value with order
+            result = [index]
+        elif isinstance(index, list) and index:  # not empty list of indexes
+            for idx in index:  # convert
+                if isinstance(idx, basestring):
+                    idx = (idx, Storage.ASC)
+                result.append(idx)
+
+        return result
 
     def bool_compare_and_swap(self, _id, oldvalue, newvalue):
         """
@@ -242,30 +535,27 @@ class Storage(DataBase):
 
     def get_elements(
         self,
-        ids=None, query=None, limit=0, skip=0, sort=None, with_count=False
+        ids=None, query=None, limit=0, skip=0, sort=None, with_count=False,
+        cache=False
     ):
         """
         Get a list of elements where id are input ids
 
-        :param ids: element ids or an element id to get if not None
+        :param ids: element ids or an element id to get if is a string.
         :type ids: list of str
 
-        :param limit: max number of elements to get
-        :type limit: int
-
-        :param skip: first element index among searched list
-        :type skip: int
-
+        :param int limit: max number of elements to get.
+        :param int skip: first element index among searched list.
         :param sort: contains a list of couples of field (name, ASC/DESC)
-            or field name which denots an implicitelly ASC order
+            or field name which denots an implicitelly ASC order.
         :type sort: list of {(str, {ASC, DESC}}), or str}
-
         :param bool with_count: If True (False by default), add count to the
-            result
+            result.
+        :param bool cache: use query cache if True (False by default).
 
-        :return: input id elements, or one element if ids is an element
-            (None if this element does not exist).
-        :rtype: iterable of dict or dict or NoneType
+        :return: a Cursor of input id elements, or one element if ids is a
+            string (None if this element does not exist).
+        :rtype: Cursor of dict elements or dict or NoneType
         """
 
         raise NotImplementedError()
@@ -299,35 +589,28 @@ class Storage(DataBase):
         return result
 
     def find_elements(
-        self, request, limit=0, skip=0, sort=None, with_count=False
+        self,
+        request, limit=0, skip=0, sort=None, with_count=False
     ):
         """
         Find elements corresponding to input request and in taking care of
         limit, skip and sort find parameters.
 
-        :param request: set of couple of (field name, field value)
-        :type request: dict(str, object)
-
-        :param limit: max number of elements to get
-        :type limit: int
-
-        :param skip: first element index among searched list
-        :type skip: int
-
-        :param sort: contains a list of couples of field (name, ASC/DESC)
-            or field name which denots an implicitelly ASC order
-        :type sort: list of {(str, {ASC, DESC}}), or str}
-
+        :param dict request: set of couple of (field name, field value).
+        :param int limit: max number of elements to get.
+        :param int skip: first element index among searched list.
+        :param list sort: contains a list of couples of field (name, ASC/DESC)
+            or field name which denots an implicitelly ASC order.
         :param bool with_count: If True (False by default), add count to the
-            result
+            result.
 
-        :return: input request elements
-        :rtype: list of objects
+        :return: a cursor of input request elements.
+        :rtype: Cursor
         """
 
         raise NotImplementedError()
 
-    def remove_elements(self, ids=None, _filter=None):
+    def remove_elements(self, ids=None, _filter=None, cache=False):
         """
         Remove elements identified by the unique input ids
 
@@ -335,6 +618,7 @@ class Storage(DataBase):
         :type ids: list of str
         :param dict _filter: removing filter.
         :param Filter _filter: additional filter to use if not None.
+        :param bool cache: use query cache if True (False by default).
         """
 
         raise NotImplementedError()
@@ -353,15 +637,13 @@ class Storage(DataBase):
 
         self.remove_elements(ids=ids)
 
-    def put_element(self, _id, element):
+    def put_element(self, _id, element, cache=False):
         """
         Put an element identified by input id
 
-        :param id: element id to update
-        :type id: str
-
-        :param element: element to put (couples of field (name,value))
-        :type element: dict
+        :param str _id: element id to update.
+        :param dict element: element to put (couples of field (name,value)).
+        :param bool cache: use query cache if True (False by default).
 
         :return: True if updated
         :rtype: bool
@@ -387,8 +669,7 @@ class Storage(DataBase):
         """
         Count elements corresponding to the input request
 
-        :param id: request which contain set of couples (key, value)
-        :type id: dict
+        :param dict request: request which contain set of couples (key, value)
 
         :return: Number of elements corresponding to the input request
         :rtype: int
@@ -410,23 +691,29 @@ class Storage(DataBase):
 
         raise NotImplementedError()
 
-    def _update(self, *args, **kwargs):
+    def _update(self, cache=False, *args, **kwargs):
         """
         Update operation dedicated to technology implementation.
+
+        :param bool cache: use query cache if True (False by default).
         """
 
         raise NotImplementedError()
 
-    def _remove(self, *args, **kwargs):
+    def _remove(self, cache=False, *args, **kwargs):
         """
         Remove operation dedicated to technology implementation.
+
+        :param bool cache: use query cache if True (False by default).
         """
 
         raise NotImplementedError()
 
-    def _insert(self, *args, **kwargs):
+    def _insert(self, cache=False, *args, **kwargs):
         """
         Insert operation dedicated to technology implementation.
+
+        :param bool cache: use query cache if True (False by default).
         """
 
         raise NotImplementedError()
@@ -537,7 +824,18 @@ Storage types must be of the same type.'.format(self, target))
 
         result.add_unified_category(
             name=Storage.CATEGORY,
-            new_content=(Parameter(Storage.INDEXES, parser=eval)))
+            new_content=(
+                Parameter(Storage.INDEXES, parser=eval),
+                Parameter(Storage.DATA, parser=eval),
+                Parameter(Storage.CACHE_SIZE, parser=int, critical=True),
+                Parameter(
+                    Storage.CACHE_ORDERED, parser=Parameter.bool, critical=True
+                ),
+                Parameter(
+                    Storage.CACHE_AUTOCOMMIT, parser=float, critical=True
+                )
+            )
+        )
 
         return result
 
@@ -550,5 +848,58 @@ Storage types must be of the same type.'.format(self, target))
         :type sort: list of {tuple(str, int), str}
         """
 
-        sort[:] = [item if isinstance(item, tuple) else (item, Storage.ASC)
-            for item in sort]
+        sort[:] = [
+            item if isinstance(item, tuple) else (item, Storage.ASC)
+            for item in sort
+        ]
+
+
+class Cursor(object):
+    """
+    Query cursor object.
+
+    An iterable object in order to retrieve data from a Storage.
+    A reference to the technology cursor is provided by the cursor getter.
+    """
+
+    __slots__ = ('_cursor', )
+
+    def __init__(self, cursor):
+        """
+        :param cursor: Technology implementation cursor.
+        """
+
+        super(Cursor, self).__init__()
+
+        self._cursor = cursor
+
+    @property
+    def cursor(self):
+        """
+        Get technology implementation cursor.
+        """
+
+        return self._cursor
+
+    def __len__(self):
+        """
+        Get number of cursor items.
+        """
+
+        raise NotImplementedError()
+
+    def __iter__(self):
+        """
+        Iterate on cursor items.
+        """
+
+        raise NotImplementedError()
+
+    def __getitem__(self, index):
+        """
+        Get a single document or a slice of documents from this cursor.
+
+        :param index: An integer or slice index to be applied to this cursor.
+        :type index: int or slice
+        """
+        raise NotImplementedError()

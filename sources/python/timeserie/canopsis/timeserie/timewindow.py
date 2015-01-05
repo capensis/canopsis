@@ -94,6 +94,52 @@ class Period(object):
 
         return result
 
+    def __len__(self):
+        """
+        Get number of seconds.
+        :return: this period in seconds. Approximation if period is in months
+            or years.
+        :rtype: int
+        """
+
+        return self.total_seconds()
+
+    def total_seconds(self):
+        """
+        Get number of seconds.
+        :return: this period in seconds. Approximation if this period has
+            months.
+        :rtype: int
+        """
+
+        result = 0
+
+        if Period.MICROSECOND in self:
+            result += self[Period.MICROSECOND] * 10 ** -9
+
+        if Period.SECOND in self:
+            result += self[Period.SECOND]
+
+        if Period.MINUTE in self:
+            result += self[Period.MINUTE] * 60
+
+        if Period.HOUR in self:
+            result += self[Period.HOUR] * 3600
+
+        if Period.DAY in self:
+            result += self[Period.DAY] * 86400
+
+        if Period.WEEK in self:
+            result += self[Period.WEEK] * 604800
+
+        if Period.MONTH in self:
+            result += self[Period.MONTH] * 2592000
+
+        if Period.YEAR in self:
+            result += self[Period.YEAR] * 31536000
+
+        return result
+
     def get_delta(self):
         """
         Get a delta object in order to add/remove a period on a datetime.

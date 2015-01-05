@@ -95,12 +95,6 @@ class engine(Engine):
 
         self.logger.debug('perf_data_array: {0}'.format(perf_data_array))
 
-        #self.internal_amqp.publish(event, INTERNAL_QUEUE)
-        self.on_internal_event(event)
-
-        return event
-
-    def on_internal_event(self, event, msg=None):
         event = deepcopy(event)
 
         ## Metrology
@@ -117,9 +111,13 @@ class engine(Engine):
                 event_with_metric[Context.NAME] = perf_data.pop('metric')
 
                 metric_id = self.perfdata.context.get_entity_id(
-                    event_with_metric)
+                    event_with_metric
+                )
                 value = perf_data.pop('value', None)
 
                 self.perfdata.put(
                     metric_id=metric_id, points=[(timestamp, value)],
-                    meta=perf_data)
+                    meta=perf_data, cache=False
+                )
+
+        return event

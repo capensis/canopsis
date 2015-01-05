@@ -58,7 +58,8 @@ class Context(MiddlewareRegistry):
     EXTENDED = 'extended'  #: extended field name
 
     DEFAULT_CONTEXT = [
-        TYPE, 'connector', 'connector_name', 'component', 'resource']
+        TYPE, 'connector', 'connector_name', 'component', 'resource'
+    ]
 
     def __init__(
         self, context=DEFAULT_CONTEXT, ctx_storage=None, *args, **kwargs
@@ -85,19 +86,22 @@ class Context(MiddlewareRegistry):
         """
         Get entities by id
 
-        :param ids: one id or a set of ids
+        :param ids: one id or a set of ids.
         """
 
         return self[Context.CTX_STORAGE].get_elements(ids=ids)
 
-    def get_entity(self, event, from_db=False, create_if_not_exists=False):
+    def get_entity(
+        self, event, from_db=False, create_if_not_exists=False, cache=False
+    ):
         """
         Get event entity.
 
         :param bool from_base: If True (False by default), check return entity
             from base, otherwise, return entity information from the event.
         :param bool create_if_not_exists: Create the event entity if it does
-            not exists (False by default)
+            not exists (False by default).
+        :param bool cache: use query cache if True (False by default).
         """
 
         result = {}
@@ -128,7 +132,7 @@ class Context(MiddlewareRegistry):
         # if entity does not exists, create it if specified
         if result is None and create_if_not_exists:
             result = {Context.NAME: name}
-            self.put(_type=_type, entity=result, context=context)
+            self.put(_type=_type, entity=result, context=context, cache=cache)
 
         return result
 
@@ -136,16 +140,10 @@ class Context(MiddlewareRegistry):
         """
         Get one entity
 
-        :param _type: entity type (connector, component, etc.)
-        :type _type: str
-
-        :param names: entity names
-        :type names: str
-
-        :param context: entity context such as couples of name, value.
-        :type context: dict
-
-        :param extended: get extended entities if entity is shared.
+        :param str _type: entity type (connector, component, etc.)
+        :param str names: entity names
+        :param dict context: entity context such as couples of name, value.
+        :param bool extended: get extended entities if entity is shared.
 
         :return: one element, list of elements if entity is shared or None
         :rtype: dict, list or None
@@ -153,8 +151,11 @@ class Context(MiddlewareRegistry):
 
         path = {Context.TYPE: _type}
 
-        if context is not None:
-            path.update(context)
+        if context is None:
+            path = {Context.TYPE: _type}
+        else:
+            path = context.copy()
+            path[Context.TYPE] = _type
 
         result = self[Context.CTX_STORAGE].get(
             path=path, data_ids=names, shared=extended)
@@ -169,26 +170,30 @@ class Context(MiddlewareRegistry):
         Find all entities which of input _type and context with an additional
         filter.
 
-        :param extended: get extended entities if they are shared
+        :param extended: get extended entities if they are shared.
         """
 
         path = {}
 
-        if _type is not None:
-            path[Context.TYPE] = _type
         if context is not None:
             path.update(context)
 
+        if _type is not None:
+            path[Context.TYPE] = _type
+
         result = self[Context.CTX_STORAGE].get(
             path=path, _filter=_filter, shared=extended,
-            limit=limit, skip=skip, sort=sort, with_count=with_count)
+            limit=limit, skip=skip, sort=sort, with_count=with_count
+        )
 
         return result
 
-    def put(self, _type, entity, context=None, extended_id=None):
+    def put(self, _type, entity, context=None, extended_id=None, cache=False):
         """
         Put an element designated by the element_id, element_type and element.
         If timestamp is None, time.now is used.
+
+        :param bool cache: use query cache if True (False by default).
         """
 
         path = {Context.TYPE: _type}
@@ -203,12 +208,21 @@ class Context(MiddlewareRegistry):
         if entity_db is None:
 
             self[Context.CTX_STORAGE].put(
-                path=path, data_id=name, data=entity, shared_id=extended_id)
+                path=path,
+                data_id=name,
+                data=entity,
+                shared_id=extended_id,
+                cache=cache
+            )
 
-    def remove(self, ids=None, _type=None, context=None, extended=False):
+    def remove(
+        self, ids=None, _type=None, context=None, extended=False, cache=False
+    ):
         """
         Remove a set of elements identified by element_ids, an element type or
-        a timewindow
+        a timewindow.
+
+        :param bool cache: use query cache if True (False by default).
         """
 
         path = {}
@@ -220,10 +234,12 @@ class Context(MiddlewareRegistry):
             path.update(context)
 
         if path:
-            self[Context.CTX_STORAGE].remove(path=path, shared=extended)
+            self[Context.CTX_STORAGE].remove(
+                path=path, shared=extended, cache=cache
+            )
 
         if ids is not None:
-            self[Context.CTX_STORAGE].remove_elements(ids=ids)
+            self[Context.CTX_STORAGE].remove_elements(ids=ids, cache=cache)
 
     def get_entity_context_and_name(self, entity):
         """
@@ -242,16 +258,21 @@ class Context(MiddlewareRegistry):
         path, data_id = self.get_entity_context_and_name(entity=entity)
 
         result = self[Context.CTX_STORAGE].get_absolute_path(
-            path=path, data_id=data_id)
+            path=path, data_id=data_id
+        )
 
         return result
 
-    def unify_entities(self, entities, extended=False):
+    def unify_entities(self, entities, extended=False, cache=False):
         """
-        Unify input entities as the same entity
+        Unify input entities as the same entity.
+
+        :param bool cache: use query cache if True (False by default).
         """
 
-        self[Context.CTX_STORAGE].share_data(data=entities, shared=extended)
+        self[Context.CTX_STORAGE].share_data(
+            data=entities, shared=extended, cache=cache
+        )
 
     def _configure(self, unified_conf, *args, **kwargs):
 

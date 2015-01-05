@@ -29,7 +29,7 @@ class PeriodicStoreTest(TestCase):
 
     def setUp(self):
         # create a storage on test_store collections
-        self.storage = MongoPeriodicStorage(data_scope="test_store", safe=True)
+        self.storage = MongoPeriodicStorage(data_scope="test_store")
 
     def test_connect(self):
         self.assertTrue(self.storage.connected())
@@ -48,8 +48,10 @@ class PeriodicStoreTest(TestCase):
 
         # let's play with different data_names
         data_ids = ['m0', 'm1']
-        periods = [Period(**{Period.MINUTE: 60}),
-            Period(**{Period.HOUR: 24})]
+        periods = [
+            Period(**{Period.MINUTE: 60}),
+            Period(**{Period.HOUR: 24})
+        ]
 
         timewindow = TimeWindow()
 
@@ -104,7 +106,8 @@ class PeriodicStoreTest(TestCase):
 
                 self.storage.remove(
                     data_id=data_id,
-                    period=period, timewindow=timewindow)
+                    period=period, timewindow=timewindow
+                )
 
                 # check for count equals 1
                 count = self.storage.count(

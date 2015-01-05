@@ -1,0 +1,27 @@
+{
+    "type": "object",
+    "metadata": {
+        "classes": ["system"]
+    },
+    "categories": [
+        {
+            "title": "General",
+            "keys":["title", "graph_type", "graph_id"]
+        }, {
+            "title": "Options",
+            "keys":["refreshableWidget", "refreshInterval"]
+        }
+    ],
+    "properties": {
+        "graph_type": {
+            "type": "string",
+            "enum": ["graph", "topology"],
+            "default": "topology",
+            "role": "simplelist"
+        },
+        "graph_id": {
+            "type": "string",
+            "default": "test"
+        }
+    }
+}

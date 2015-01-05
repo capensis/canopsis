@@ -102,6 +102,8 @@ A graph inherits from vertice and contains::
 
 from uuid import uuid4 as uuid
 
+from collections import Iterable
+
 from canopsis.common.init import basestring
 from canopsis.storage import Storage
 from canopsis.common.utils import lookup, path
@@ -124,7 +126,7 @@ class GraphElement(object):
 
     __slots__ = (ID, TYPE)
 
-    def __init__(self, _id=None, _type=None, _manager=None):
+    def __init__(self, _id=None, _type=None):
         """
         :param str _id: element id. generated if None.
         :param str _type: element type name. self lower type name if None.
@@ -132,6 +134,18 @@ class GraphElement(object):
 
         self.type = type(self).__name__.lower() if _type is None else _type
         self.id = str(uuid()) if _id is None else _id
+
+    def __repr__(self):
+
+        result = '{}:('.format(type(self).__name__)
+
+        for index, slot in enumerate(type(self).__slots__):
+            value = getattr(self, slot, None)
+            result += '{}:{}, '.format(slot, value)
+
+        result += ')'
+
+        return result
 
     def __eq__(self, other):
         """
@@ -220,28 +234,30 @@ class GraphElement(object):
 
         pass
 
-    def save(self, manager, graph_ids=None):
+    def save(self, manager, graph_ids=None, cache=False):
         """
         Save self into manager graphs.
 
         :param GraphManager manager: manager to use in order to save self.
         :param graph_ids: graph ids where save self.
         :type graph_ids: list or str
+        :param bool cache: use query cache if True (False by default).
         """
 
         # save the dict format
         elt = self.to_dict()
-        manager.put_elt(elt=elt, graph_ids=graph_ids)
+        manager.put_elt(elt=elt, graph_ids=graph_ids, cache=cache)
 
-    def delete(self, manager):
+    def delete(self, manager, cache=False):
         """
         Delete self from manager.
 
         :param GraphManager manager: manager from where delete self.
+        :param bool cache: use query cache if True (False by default).
         """
 
         # delete self from manager
-        manager.del_elts(ids=self.id)
+        manager.del_elts(ids=self.id, cache=cache)
 
 
 class Vertice(GraphElement):
@@ -261,13 +277,14 @@ class Vertice(GraphElement):
         """
         :param data: self data.
         """
+
         super(Vertice, self).__init__(*args, **kwargs)
 
         self.data = data
 
-    def delete(self, manager):
+    def delete(self, manager, cache=False):
 
-        super(Vertice, self).delete(manager=manager)
+        super(Vertice, self).delete(manager=manager, cache=cache)
 
         self_id = self.id
 
@@ -283,9 +300,9 @@ class Vertice(GraphElement):
                     ])
             # delete the edge if sources or targets is empty
             if not (edge.sources and edge.targets):
-                edge.delete(manager=manager)
+                edge.delete(manager=manager, cache=cache)
             else:  # resolve_refs edge without self in sources and/or targets
-                edge.save(manager=manager)
+                edge.save(manager=manager, cache=cache)
 
 
 class Edge(Vertice):
@@ -297,6 +314,7 @@ class Edge(Vertice):
 
     BASE_TYPE = 'edge'  # base type name
 
+    WEIGHT = 'weight'  #: weight edge attribute name
     SOURCES = 'sources'  #: source vertice ids attribute name
     TARGETS = 'targets'  #: target vertice ids attribute name
     DIRECTED = 'directed'  #: directed attribute name
@@ -308,16 +326,17 @@ class Edge(Vertice):
     DEFAULT_DIRECTED = True  #: default directed value
 
     __slots__ = (
-        SOURCES, TARGETS, DIRECTED,
+        WEIGHT, SOURCES, TARGETS, DIRECTED,
         _DSOURCES, _DTARGETS, _GSOURCES, _GTARGETS,
     ) + Vertice.__slots__
 
     def __init__(
-        self, sources=None, targets=None, directed=DEFAULT_DIRECTED,
+        self, weight=1, sources=None, targets=None, directed=DEFAULT_DIRECTED,
         _dsources=None, _dtargets=None, _gsources=None, _gtargets=None,
         *args, **kwargs
     ):
         """
+        :param float weight: self weight.
         :param list sources: self sources.
         :param list targets: self targets.
         :param bool directed: self directed. (default DEFAULT_DIRECTED)
@@ -329,8 +348,31 @@ class Edge(Vertice):
 
         super(Edge, self).__init__(*args, **kwargs)
 
-        self.sources = [] if sources is None else sources
-        self.targets = [] if targets is None else targets
+        # init weight
+        self.weight = weight
+
+        # init sources such as an array of ids
+        if sources is None:
+            self.sources = []
+        else:
+            # ensure sources and targets are list if they are string
+            if isinstance(sources, basestring):
+                sources = [sources]
+            self.sources = list(
+                source.id if isinstance(source, GraphElement) else source
+                for source in sources
+            )
+        # init targets such as an array of ids
+        if targets is None:
+            self.targets = []
+        else:
+            if isinstance(targets, basestring):
+                targets = [targets]
+            self.targets = list(
+                target.id if isinstance(target, GraphElement) else target
+                for target in targets
+            )
+
         self.directed = directed
         self._dsources = [] if _dsources is None else _dsources
         self._dtargets = [] if _dtargets is None else _dtargets
@@ -346,19 +388,17 @@ class Edge(Vertice):
         for source in self.sources:
             if source not in elts:
                 elt = manager.get_elts(ids=source)
-                new_elt = GraphElement.new_element(**elt)
-                elts[source] = new_elt
+                elts[source] = elt
             else:
-                new_elt = elts[source]
-            self._gsources[source] = new_elt
+                elt = elts[source]
+            self._gsources[source] = elt
         for target in self.targets:
             if target not in elts:
                 elt = manager.get_elts(ids=target)
-                new_elt = GraphElement.new_element(**elt)
-                elts[target] = new_elt
+                elts[target] = elt
             else:
-                new_elt = elts[target]
-            self._gtargets[target] = new_elt
+                elt = elts[target]
+            self._gtargets[target] = elt
 
     def del_refs(self, ids=None, sources=None, targets=None):
         """
@@ -463,12 +503,62 @@ class Graph(Vertice):
 
         super(Graph, self).__init__(*args, **kwargs)
 
-        self.elts = [] if elts is None else elts
+        # init elts such as an array of ids
+        if elts is None:
+            self.elts = []
+        else:
+            if isinstance(elts, basestring):
+                elts = [elts]
+            self.elts = list(
+                elt.id if isinstance(elt, GraphElement) else elt
+                for elt in elts
+            )
+
         self._delts = [] if _delts is None else _delts
         self._gelts = {} if _gelts is None else _gelts
         self._updating = False
         self._sources = {} if _sources is None else _sources
         self._targets = {} if _targets is None else _targets
+
+    def __contains__(self, other):
+        """
+        True if other is a vertice inside self.
+
+        :param other: possible vertice(s) or vertice(s) id(s) in self graph.
+        :type other: str or dict or GraphElement or list of other.
+        """
+        # by default, result is False
+        result = False
+
+        if isinstance(other, basestring):
+            result = other in self.elts
+        elif isinstance(other, dict):
+            result = other[GraphElement.ID] in self.elts
+        elif isinstance(other, GraphElement):
+            result = other.id in self.elts
+        elif isinstance(other, Iterable):
+            # ids is a set of graph element ids to compare with self.elts
+            ids = set()
+            # quick access to the field name GraphElement ID
+            _id = GraphElement.ID
+            for item in other:
+                if isinstance(item, basestring):
+                    ids.add(item)
+                elif isinstance(item, dict):
+                    ids.add(item[_id])
+                elif isinstance(item, GraphElement):
+                    ids.add(item.id)
+                else:
+                    raise Exception(
+                        'item {0} is not supported.'.format(item)
+                    )
+            # transform self elts in a set in order to do quick comparison
+            self_elts = set(self.elts)
+            result = (self_elts & ids) == ids
+        else:
+            raise Exception('elt {0} is not supported.'.format(other))
+
+        return result
 
     def resolve_refs(self, elts, manager):
 
@@ -510,7 +600,7 @@ class Graph(Vertice):
         # initialize self graph elts
         self._gelts = []
         # get elts
-        elts = manager.get_elts(ids=self.elts)
+        elts = manager.get_elts(ids=self.elts, serialize=False)
         # for all elt ids
         for elt in elts:
             elt_id = elt[GraphElement.ID]
@@ -554,8 +644,8 @@ class Graph(Vertice):
                 if elt_id not in self._gelts:
                     self._gelts[elt_id] = elt
                     elt_dict = elt.to_dict()
-                    if elt_dict not in self._delt:
-                        self._delt.append(elt_dict)
+                    if elt_dict not in self._delts:
+                        self._delts.append(elt_dict)
                         if elt_id not in self.elts:
                             self.elts.append(elt_id)
 
@@ -590,9 +680,19 @@ class Graph(Vertice):
         result = super(Graph, self).to_dict()
 
         # if self _elts not empty
-        if self._delts:
-            # resolve_refs result['elt'] with dictionary versions
-            result[Graph.ELT_IDS] = [elt.to_dict() for elt in self._delts]
+        if self._delts:  # add delts ids which are not present in elts
+            elts = result[Graph.ELTS]
+            for delt in self._delts:
+                delt_id = delt[Graph.ID]
+                if delt_id not in elts:
+                    elts.append(delt_id)
+
+        # if gelts not empty
+        if self._gelts:
+            elts = result[Graph.ELTS]
+            for gelt_id in self._gelts:
+                if gelt_id not in elts:
+                    elts.append(gelt_id)
 
         return result
 

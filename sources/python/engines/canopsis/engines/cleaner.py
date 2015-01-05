@@ -24,6 +24,7 @@ from bson import BSON
 from json import loads
 from time import time
 
+from canopsis.common.init import basestring
 from canopsis.common.utils import ensure_unicode
 
 

@@ -2,7 +2,16 @@
     "type": "object",
     "categories": [{
         "title": "General",
-        "keys": ["crecord_name", "data", "type", "sources", "targets", "_cls", "_type"]
+        "keys": [
+            "crecord_name",
+            "info",
+            "type",
+            "sources",
+            "targets",
+            "weight",
+            "_cls",
+            "_type"
+        ]
     }],
     "properties": {
         "crecord_type": {
@@ -24,8 +33,13 @@
         },
         "_type": {
             "type": "string",
-            "defaule": "edge",
+            "default": "edge",
             "required": true
+        },
+        "weight": {
+            "type": "float",
+            "default": 1,
+            "required": false
         }
     }
 }
