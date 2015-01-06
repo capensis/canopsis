@@ -193,6 +193,7 @@ Create a node with the change_state task and save it in DB
       'task': 'canopsis.topology.rule.action.change_state',
       'update_entity': True
    }
-   # create a node with previous task and default state to (WARNING)
-   node = Node(task=task, state=Check.WARNING)
+   entity_id = '/component/connector_name/connector/component'
+   # create a node with previous task, default state to (WARNING) and bound to an entity
+   node = Node(task=task, state=Check.WARNING, entity=entity_id)
    node.save(topologyManager)
