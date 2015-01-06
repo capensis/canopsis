@@ -19,24 +19,21 @@
 # ---------------------------------
 
 """
-Module in charge of defining main topological rules.
+Module in charge of defining topology processing in engines.
 
 When an event occured, the related entity is retrieved and all bound
 topological nodes are retrieved as well in order to execute theirs rules.
 
 First, a topology processing is triggered when an event occured.
 
-From this event, bound topology nodes are got in order to apply node rules.
+From this event, bound topology nodes are retrieved in order to apply node
+    rules.
 
 A typical topological task condition is an ``canopsis.task.condition.all``
-composed of the ``canopsis.topology.process.new_state`` condition.
+composed of the ``canopsis.topology.rule.condition.new_state`` condition and
+``canopsis.topology.rule.action.change_state`` action.
 If this condition is checked, then other specific conditions can be applied
-such as::
-    - ``canopsis.topology.process.condition``
-    - ``canopsis.topology.process.all``
-    - ``canopsis.topology.process.any``
-
-A topology task use the condition ``new_state``
+such as those defined in the canopsis.topology.rule.action module.
 """
 
 from canopsis.old.event import forger

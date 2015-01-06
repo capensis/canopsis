@@ -21,14 +21,13 @@
 """
 Module in charge of defining main topological rule actions.
 
-A topological node has at least one of three rule action in charge of changing
+A topological node has at least one of four actions in charge of changing
 of state::
 
     - ``change_state``: change of state related to an input or event state.
+    - ``state_from_sources``: change of state related to source nodes.
     - ``best_state``: change of state related to the best source node state.
     - ``worst_state``: change of state related to the worst source node state.
-
-For logical reasons, the propagate action runned such as the last action.
 """
 
 from canopsis.task import register_task
@@ -53,13 +52,15 @@ def change_state(
     **kwargs
 ):
     """
-    Change of state for node.
+    Change of state on node and propagate the change of state on bound entity
+        if necessary.
 
     :param event: event to process in order to change of state.
     :param node: node to change of state.
     :param state: new state to apply on input node. If None, get state from
         input event.
-    :param bool update_entity: update entity status if True (False by default).
+    :param bool update_entity: update entity state if True (False by default).
+        The topology graph may have this flag to True.
     :param int criticity: criticity level. Default HARD.
     """
 
