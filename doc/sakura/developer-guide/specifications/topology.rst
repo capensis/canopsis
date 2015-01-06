@@ -4,308 +4,195 @@ Topology: library for managing topologies
 
 .. module:: canopsis.topology
 
-A topology aims to resolve root cause analysis thanks to a graph where nodes and edges are respectively system infrastructure components or status changing rules with technical and functional dependencies among them.
-
-Topology processing is as follow:
-
-1. Configure a topology in binding nodes to system components and in adding status dependencies and status changing rules.
-2. Start topology engine(s) which get topology configuration and monitore the IT system in order to identify which status are changing.
-3. topology execution can be done in two ways, synchronously and asynchronously to event consumption:
-    - Synchronously: When a status changing rule is triggered, a topology engine updates the topology configuration and execute the rule.
-    - Periodically: a topology engine gets a topology configuration and resolves all node status.
-
-Specification
-=============
-
-A topology is a directed graph, where edges represent status changing dependencies and where nodes represent logical and technical status system component information.
-
-----
-Node
-----
-
 Description
------------
+===========
 
-There are three types of nodes:
+Functional
+----------
 
-- technical node: bound to a technical system component such as a (virtual) machine, service, DB, etc.
-- logical node: bound to a logical system component such as cluster of machines, etc.
-- root: First topology component which is also a logical node. Used to export the topology in other topologies.
+A topology is a graph dedicated to enriches status model of entities with state
+dependency between entities.
 
-Rule
-####
+Topological tasks consist to update status vertice information and to propagate
+the change of state in sending check events.
 
-A node can depend on child nodes. This dependency specify status changing rule propagation from child nodes to parent nodes, and is coordinated by topology rules.
+vertices could be finally connected to the topology in order to propagate all
+ change of state to the topology itelf.
 
-Here are examples of rules:
+An example of application is root cause analysis where a topology may react
+when an entity change of state and can propagate over topology nodes the change
+of state in some propagation conditions such as operations like ``worst state``
 
-- Operator.
-- Worst_state.
-- Best_state.
-- And.
-- Or.
+Topology tasks are commonly rules of (condition, actions). A condition takes in
+parameter the execution context of an event, the engine and the vertice which
+embeds the rule.
 
-Operator
->>>>>>>>
-
-Every operation is a specialization of this one. Therefore, defined parameters will take different values depending on operation type.
-
-Here are list of parameters:
-
-- check state: state able to trigger the operation.
-- at least: maximal number of status nodes which can impact the node state change.
-- at most: minimal number of status nodes which can impact the node state change.
-- default state: state when operation is not triggered.
-- in state: state when operation is triggered.
-
-If a parameter is not given, its value is setted by the user.
-
-TODO: in a future version, ``in state`` should be a generic action, and other parameters except ``default state`` will be part of a generic condition.
-
-Worst state
-~~~~~~~~~~~
-
-- check state: different state than actual.
-- at least: 1 (very effective in synchronous mode if new state is worst than the old one).
-- at most: 1
-- default state: {bound entity state, ok} if no child node exist.
-- in state: max(child node states).
-
-Best state
-~~~~~~~~~~
-
-- check state: different state than actual.
-- at least: 1 (very effective in synchronous mode if new state is better than the old one).
-- at most: 1.
-- default state: {bound entity state, ok} if no child node exist.
-- in state: minimal(child node states).
-
-All
-~~~
-
-- at least: -1 (all nodes)
-- at most: -1 (all nodes)
-- default state: {bound entity state, ok}.
-
-Any
-~~~
-
-- at least: 1
-- at most: 1
-- default state: {bound entity state, ok}.
-
-Structure
+Technical
 ---------
 
-It is important to separate topology and node structures in order to modify a node without busying the topology and other nodes (in a future situation, it could be interesting to propose a collaborative edition/visualization of a topology).
+Three types of vertices exist in topology::
 
-Topology
-########
+- cluster: operation between vertice states.
+- node: vertice bound to an entity, like components, resources, etc.
 
-- ``id``: unique id among topologies
-- ``nodes``: node ids
-- ``root``: root node id
+A topology vertice contains::
 
+- state: vertice state which change at runtime depending on bound entity state
+    and event propagation.
 
-Topology-node
-#############
+A topology edge contains::
 
-- ``id``: unique id among one topology.
-- ``rules``: rules.
-- ``next``: nodes which are concerned by a change of state.
-- ``state``: topology node state.
+- weight: vertice weight in the graph.
 
 Rule
-####
+====
 
-- ``name``: rule name (``'worst state'``, etc.).
-- ``parameters``: couple of (name, value) where name is in {``at_least``, ``default state``, ...}.
+.. module:: canopsis.topology.rule
 
----------------------------
-Asynchronous vs Synchronous
----------------------------
+Condition
+#########
 
-When a node status change, impacted nodes can be among nodes pointed by edges from potentially same nodes, among several topologies.
+.. module:: canopsis.topology.rule.condition
 
-That mean time and space complexity depends on number of nodes and edges.
+Module in charge of defining main topological rule conditions.
 
-Let E the set of entities, N the set of nodes and M the set of edges.
+A topological node doesn't require a condition.
 
-In a connected graph of n nodes, there is at least n-1 edges. That means \|N\| in [\|M\|-1; inf[
+In addition to this condition, it is possible to test another condition which
+refers to source nodes if they exist.
 
-And when a node has to be calculated, it consists to get all child node status which could come from bound entities or sub-child nodes.
+Such conditions are::
+    - ``new_state``: test if state (or event state) is not equal to node state
+    - ``at_least``: test if source node states match with an input state.
+    - ``_all``: test if all source node states match with an input state.
+    - ``nok``: test if source node states are not OK.
 
-Asynchronous mode
------------------
+The ``new_state`` condition may be used by nodes bound to entities in order to
+update such nodes when the entity change of state.
 
-This mode consist to get periodically all topologies and to resolve node status on the entire topology.
+Related rule actions are defined in ``canopsis.topology.rule.action`` module.
 
-Each step, such mode consists to get all nodes and all bound entites in order to set the rights states on each nodes.
+new_state
+---------
 
-Even if there is a root node in a topology, the graph is not a tree, and so, it is important to ensure an order of status change from parent to children. In such situation, it is required to resolve such mode in a width path instead of a depth path.
+Condition triggered when state is different than node state.
 
-In time complexity, this mode depends on number of edges where for each edge, we require to get a node information and the bound entity status if exist.
+   - dict event: event from where get state if input state is None.
+   - Node node: node from where check if node state != input state.
+   - int state: state to compare with input node state.
 
-Therefore the time complexity is O(N) = 2|M|.
-
-In space complexity, this mode is hard because dependency between topologies implies to load all topology each time we need to solve topologies.
-
-Advantages
-##########
-
-The topology consistency.
-
-Weaknesses
-##########
-
-- Space complexity: require to load all topologies at a time. Impossible to use distributed calculus to solve topologies.
-- During topology solving, it is possible most node rule checking are useless.
-- The period of resolution is a time gap between real-time system and close-real-time system. This delta has an impact in monitoring and root cause analysis time (and so in precision). Several status changing propagations will be fired during the period of topology resolution.
-
-Synchronous mode
-----------------
-
-This mode aims to focus on a topology nodes which corresponds to an event processed by an engine.
-
-A topology engine in this mode gets only events of type check. When such event arrives, it tries to get all nodes related to such event. If nodes are found, the engine runs all node rules. Some rule require to get child nodes, in this case, the engine get all child nodes. For every nodes which have been modified after the rule execution, it sends an event of type ``topology-propagation`` in order to ensure than only one engine will do this operation in a distributed calculus.
-
-Advantages
-##########
-
-- Very close-real-time solution.
-- Limit number of rule execution to required ones.
-- Allows distributed calculus.
-
-Weaknesses
-##########
-
-TODO:
-    ... to determinate
-
--------------------
-Root cause analysis
--------------------
-
-The root cause analysis is of two types:
-
-- dynamically (close-)real-time.
-- static.
-
-Dynamically close-real-time
----------------------------
-
-In such situation, it is useful to be notified as soon as possible about propagation of a change of status.
-
-A dedicated widget in the UI could permit to see how a topology change in close-real-time.
-
-TODO:
-    - engines and managers
-
-Static
-------
-
-This mode should permit to solve root cause analysis from historical data, and to do analysis about the system consistency/state.
-
-TODO:
-    - functionalities
-
-CRUD on topology
-================
-
-Here are CRUD operations useful to monitor topologies.
-
---------
-Topology
+at_least
 --------
 
-.. module:: canopsis.topology.ws
+Generic condition applied on sources of node which check if at least source nodes check a condition.
 
-.. function:: get(ids=None, add_nodes=False)
+   - dict event: processed event.
+   - dict ctx: rule context which must contain rule node.
+   - Node node: node to check.
+   - int state: state to check among sources nodes.
+   - float min_weight: minimal weight (default 1) to reach in order to
+        validate this condition. If None, condition results in checking all
+            sources.
+   - rrule rrule: rrule to consider in order to check condition in time.
+   - f: function to apply on source node state. If None, use equality
+        between input state and source node state.
 
-    .. data:: REST route = 'GET:/topology[/ids[/add_nodes[/limit[/skip]]]]'
+   - return True if condition is checked among source nodes.
 
-    :param ids: None, one id or a list of ids
-    :type ids: NoneType, list(str) or str
+_all
+----
 
-    :param add_nodes: if True (default False), replace nodes references in the result by topology node data.
-    :type add_nodes: bool
+Check if all source nodes match with input check_state.
 
-    :return: depending on ids
+   - dict event: processed event.
+   - dict ctx: rule context which must contain rule node.
+   - Node node: node to check.
+   - int min_weight: minimal node weight to check.
+   - int state: state to check among sources nodes.
+   - rrule rrule: rrule to consider in order to check condition in time.
+   - f: function to apply on source node state. If None, use equality
+        between input state and source node state.
 
-        - one id: one topology or None if topology does not exist.
-        - list of ids: list of topologies.
-        - None: all topologies.
+   - True if condition is checked among source nodes.
 
-.. function:: find(regex, add_nodes=False)
+nok
+---
 
-    .. data:: REST route = 'GET:/topology-regex[/regex[/add_nodes]]'
+Condition which check if source nodes are not ok.
 
-    :param regex: regex expression which could match with topology ids.
-    :type regex: str
+   - dict event: processed event.
+   - dict ctx: rule context which must contain rule node.
+   - Node node: node to check.
+   - int min_weight: minimal node weight to check.
+   - int state: state to check among sources nodes.
+   - rrule rrule: rrule to consider in order to check condition in time.
+   - f: function to apply on source node state. If None, use equality
+        between input state and source node state.
 
-    :param add_nodes: if True (default False), replace nodes references in the result by topology node data.
-    :type add_nodes: bool
+   - True if condition is checked among source nodes.
 
-    :return: find all topologies where ids correspond to input regex
+Action
+######
 
-.. function:: put(topology)
-
-    .. data:: REST route = 'PUT:/topology[/topology]'
-
-    put input topology in DB. If topology already exist, update existing information with input information, or add them if they does not exist.
-
-    :param topology: topology
-    :type topology: dict
-
-.. function:: remove(ids)
-
-    .. data:: REST route = 'DELETE:/topology[/ids]'
-
-    remove one or more topologies depending on ids:
-
-    - None: remove all topologies
-    - id: remove one topology where id is input ids
-    - list of id: remove topologies where id is in input ids
-
--------------
-Topology node
--------------
-
-.. module:: canopsis.topology.node.ws
-
-.. function:: get(ids=None)
-
-    .. data:: route = 'GET:/rest/topology-node[/ids]'
-
-    get topology-nodes depending on a ``topology`` and ``ids``:
-
-    The related topology is the one where the id equals ``topology_id``
-
-    - None: get all topology-nodes which are in the related topology.
-    - id: get one topology-node which is in the related topology.
-    - lit of id: get one or more topology-nodes which are in the related topology and where id are in input ids.
-
-.. function:: find_nodes_by_entity(entity_id)
-
-    .. data:: route = 'GET:/rest/topology-node-entity[/id]'
-
-    Find all topology-nodes which are bound to entity_id.
-
-.. function:: find_nodes_by_next(next_id)
-
-    .. data:: route = 'GET:/rest/topology-node-next[/id]'
-
-    Find all topology-nodes which are sources of a topology-node id given in parameter.
-
-.. function:: remove_nodes(ids=None)
-
-    .. data:: route = 'DELETE:/rest/topology-node[/ids]'
-
-    Remove all topology-nodes which are in a topology and identified among one id or a list of ids.
+.. module:: canopsis.topology.rule.action
 
 
-User Interface
-==============
+A topological node has at least one of four actions in charge of changing
+of state::
 
-TODO: ...
+    - ``change_state``: change of state related to an input or event state.
+    - ``state_from_sources``: change of state related to source nodes.
+    - ``best_state``: change of state related to the best source node state.
+    - ``worst_state``: change of state related to the worst source node state
 
+change_state
+------------
+
+Change of state on node and propagate the change of state on bound entity if necessary.
+
+   - event: event to process in order to change of state.
+   - node: node to change of state.
+   - state: new state to apply on input node. If None, get state from
+        input event.
+   - bool update_entity: update entity state if True (False by default).
+        The topology graph may have this flag to True.
+   - int criticity: criticity level. Default HARD.
+
+
+state_from_sources
+------------------
+
+Change ctx node state which equals to f result on source nodes.
+
+worst_state
+-----------
+
+Check the worst state among source nodes.
+
+best_state
+----------
+
+Get the best state among source nodes.
+
+Tutorial
+========
+
+Create a node with the change_state task and save it in DB
+----------------------------------------------------------
+
+.. code-block:: python
+
+   from canopsis.topology.elements import Node
+   from canopsis.topology.manager import TopologyManager
+   from canopsis.check import Check
+
+   topologyManager = TopologyManager()
+
+   # create a parameterized task
+   task = {
+      'task': 'canopsis.topology.rule.action.change_state',
+      'update_entity': True
+   }
+   # create a node with previous task and default state to (WARNING)
+   node = Node(task=task, state=Check.WARNING)
+   node.save(topologyManager)
