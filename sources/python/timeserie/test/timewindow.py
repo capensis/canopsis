@@ -110,7 +110,10 @@ class PeriodTest(unittest.TestCase):
                     if unit is Period.YEAR:
                         self.assertEqual(round_value, 2000)
                     elif unit is Period.DAY:
-                        _, monthday = monthrange(dt.year, dt.month - 1)
+                        month = dt.month - 1
+                        if month == 0:
+                            month = 12
+                        _, monthday = monthrange(dt.year, month)
                         self.assertEqual(round_value, monthday)
                     elif unit is Period.MONTH:
                         self.assertEqual(round_value, 12)
@@ -510,7 +513,6 @@ class TimeWindowTest(unittest.TestCase):
         stop = start + random() * 10000
         timewindow = TimeWindow(start=start, stop=stop)
         TimeWindow()
-        #print stop, timewindow.stop(), round(stop), timewindow
 
         self.assertEqual(timewindow.start(), int(start))
         self.assertEqual(timewindow.stop(), int(stop))
