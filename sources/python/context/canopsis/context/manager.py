@@ -58,7 +58,8 @@ class Context(MiddlewareRegistry):
     EXTENDED = 'extended'  #: extended field name
 
     DEFAULT_CONTEXT = [
-        TYPE, 'connector', 'connector_name', 'component', 'resource']
+        TYPE, 'connector', 'connector_name', 'component', 'resource'
+    ]
 
     def __init__(
         self, context=DEFAULT_CONTEXT, ctx_storage=None, *args, **kwargs
@@ -85,19 +86,22 @@ class Context(MiddlewareRegistry):
         """
         Get entities by id
 
-        :param ids: one id or a set of ids
+        :param ids: one id or a set of ids.
         """
 
         return self[Context.CTX_STORAGE].get_elements(ids=ids)
 
-    def get_entity(self, event, from_db=False, create_if_not_exists=False):
+    def get_entity(
+        self, event, from_db=False, create_if_not_exists=False, cache=False
+    ):
         """
         Get event entity.
 
         :param bool from_base: If True (False by default), check return entity
             from base, otherwise, return entity information from the event.
         :param bool create_if_not_exists: Create the event entity if it does
-            not exists (False by default)
+            not exists (False by default).
+        :param bool cache: use query cache if True (False by default).
         """
 
         result = {}
@@ -128,7 +132,7 @@ class Context(MiddlewareRegistry):
         # if entity does not exists, create it if specified
         if result is None and create_if_not_exists:
             result = {Context.NAME: name}
-            self.put(_type=_type, entity=result, context=context)
+            self.put(_type=_type, entity=result, context=context, cache=cache)
 
         return result
 
@@ -136,16 +140,10 @@ class Context(MiddlewareRegistry):
         """
         Get one entity
 
-        :param _type: entity type (connector, component, etc.)
-        :type _type: str
-
-        :param names: entity names
-        :type names: str
-
-        :param context: entity context such as couples of name, value.
-        :type context: dict
-
-        :param extended: get extended entities if entity is shared.
+        :param str _type: entity type (connector, component, etc.)
+        :param str names: entity names
+        :param dict context: entity context such as couples of name, value.
+        :param bool extended: get extended entities if entity is shared.
 
         :return: one element, list of elements if entity is shared or None
         :rtype: dict, list or None
@@ -154,7 +152,8 @@ class Context(MiddlewareRegistry):
         path = {Context.TYPE: _type}
 
         if context is not None:
-            path.update(context)
+            path = context.copy()
+            path[Context.TYPE] = _type
 
         result = self[Context.CTX_STORAGE].get(
             path=path, data_ids=names, shared=extended)
@@ -169,61 +168,137 @@ class Context(MiddlewareRegistry):
         Find all entities which of input _type and context with an additional
         filter.
 
-        :param extended: get extended entities if they are shared
+        :param extended: get extended entities if they are shared.
         """
 
         path = {}
 
-        if _type is not None:
-            path[Context.TYPE] = _type
         if context is not None:
             path.update(context)
 
+        if _type is not None:
+            path[Context.TYPE] = _type
+
         result = self[Context.CTX_STORAGE].get(
             path=path, _filter=_filter, shared=extended,
-            limit=limit, skip=skip, sort=sort, with_count=with_count)
+            limit=limit, skip=skip, sort=sort, with_count=with_count
+        )
 
         return result
 
-    def put(self, _type, entity, context=None, extended_id=None):
+    def put(
+        self,
+        _type, entity, context=None, extended_id=None, add_parents=True,
+        cache=False
+    ):
         """
-        Put an element designated by the element_id, element_type and element.
-        If timestamp is None, time.now is used.
+        Put an entity designated by the _type, context and entity.
+
+        If parent entities do not exist, create them automatically.
+
+        :param bool add_parents: ensure to add parents if child do not exists.
+        :param bool cache: use query cache if True (False by default).
         """
 
         path = {Context.TYPE: _type}
 
         if context is not None:
             path.update(context)
+            path[Context.TYPE] = _type
 
         name = entity[Context.NAME]
 
-        entity_db = self.get(_type=_type, names=name, context=context)
+        entity_db = self.get(
+            _type=_type, names=name, context=context
+        )
+        # check if entity exists in db
+        if add_parents and context is not None and entity_db is None:
+            # if entity does not exist in db
 
+            # check if parent entities exists
+            # path is a copy of context
+            parent_path = path.copy()
+            # ensure all parent context exist, or create them if necessary
+            # get key context without type
+            keys = self._context[1:]
+            keys.reverse()
+            for key in keys:
+                if key in context:
+                    # update path type with input key
+                    parent_path['type'] = key
+                    # parent name is path[key]
+                    parent_name = parent_path[key]
+                    # del path[key] in order to avoid wrong path resolution
+                    del parent_path[key]
+                    # get entity
+                    parent_entity = self[Context.CTX_STORAGE].get(
+                        path=parent_path, data_ids=parent_name
+                    )
+                    # if entity does not exist
+                    if parent_entity is None:
+                        # put a new entity in DB
+                        parent_entity = {Context.NAME: parent_name}
+                        self[Context.CTX_STORAGE].put(
+                            path=parent_path,
+                            data_id=parent_name,
+                            data=parent_entity,
+                            cache=cache
+                        )
+                    else:
+                        break
+
+        # initialize entity db for future update
         if entity_db is None:
+            entity_db = {}
 
+        # check if an update is necessary in comparing entity fields with
+        to_update = False
+        # if entity different than entity_db
+        for field in entity:
+            value = entity[field]
+            to_update = (field not in entity_db) or entity_db[field] != value
+            if to_update:
+                break
+
+        if to_update:
+            # finally, put the entity if necessary
             self[Context.CTX_STORAGE].put(
-                path=path, data_id=name, data=entity, shared_id=extended_id)
+                path=path,
+                data_id=name,
+                data=entity,
+                shared_id=extended_id,
+                cache=cache
+            )
 
-    def remove(self, ids=None, _type=None, context=None, extended=False):
+    def remove(
+        self, ids=None, _type=None, context=None, extended=False, cache=False
+    ):
         """
         Remove a set of elements identified by element_ids, an element type or
-        a timewindow
+        a timewindow. If ids, _type and context are all None, remove all
+        elements.
+
+        :param bool cache: use query cache if True (False by default).
         """
 
         path = {}
 
-        if _type is not None:
-            path[Context.TYPE] = _type
-
         if context is not None:
             path.update(context)
 
+        if _type is not None:
+            path[Context.TYPE] = _type
+
         if path:
-            self[Context.CTX_STORAGE].remove(path=path, shared=extended)
+            self[Context.CTX_STORAGE].remove(
+                path=path, shared=extended, cache=cache
+            )
 
         if ids is not None:
-            self[Context.CTX_STORAGE].remove_elements(ids=ids)
+            self[Context.CTX_STORAGE].remove_elements(ids=ids, cache=cache)
+        # if all parameters are None, delete all elements
+        elif (_type, context) == (None, None):
+            self[Context.CTX_STORAGE].remove_elements()
 
     def get_entity_context_and_name(self, entity):
         """
@@ -242,16 +317,21 @@ class Context(MiddlewareRegistry):
         path, data_id = self.get_entity_context_and_name(entity=entity)
 
         result = self[Context.CTX_STORAGE].get_absolute_path(
-            path=path, data_id=data_id)
+            path=path, data_id=data_id
+        )
 
         return result
 
-    def unify_entities(self, entities, extended=False):
+    def unify_entities(self, entities, extended=False, cache=False):
         """
-        Unify input entities as the same entity
+        Unify input entities as the same entity.
+
+        :param bool cache: use query cache if True (False by default).
         """
 
-        self[Context.CTX_STORAGE].share_data(data=entities, shared=extended)
+        self[Context.CTX_STORAGE].share_data(
+            data=entities, shared=extended, cache=cache
+        )
 
     def _configure(self, unified_conf, *args, **kwargs):
 

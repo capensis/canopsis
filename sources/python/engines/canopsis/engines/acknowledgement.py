@@ -81,7 +81,7 @@ class engine(Engine):
             # And deleted if event is ack again
             rk = event['ref_rk']
             self.events_collection.update(
-                {'rk': rk},
+                {'_id': rk},
                 {
                     '$set': {
                         'ack_remove': {
@@ -158,10 +158,10 @@ class engine(Engine):
             del ack_info['ackts']
 
             # clean eventual previous ack remove information
-            self.events_collection.update({
-                'rk': rk
-                },
+            self.events_collection.update(
                 {
+                    '_id': rk
+                }, {
                     '$set': {
                         'ack': ack_info,
                     },
@@ -176,7 +176,7 @@ class engine(Engine):
 
                 # Emit an event log
                 referer_event = self.storage.find_one(
-                    mfilter={'rk': rk},
+                    mfilter={'_id': rk},
                     namespace='events'
                 )
 

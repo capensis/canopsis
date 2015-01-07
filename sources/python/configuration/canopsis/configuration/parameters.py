@@ -20,6 +20,7 @@
 
 from collections import OrderedDict, Iterable
 
+from canopsis.common.init import basestring
 from canopsis.common.utils import lookup
 
 
@@ -372,7 +373,8 @@ class Parameter(object):
             parameter can require to restart a component for example.
         :param bool local: distinguish local parameters from those found in
             configuration resources.
-        :param Category asitem: distinguish parameters from those in a ParamList
+        :param Category asitem: distinguish parameters from those in a
+            ParamList.
         """
 
         super(Parameter, self).__init__()

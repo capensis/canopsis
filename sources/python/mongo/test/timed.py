@@ -32,7 +32,7 @@ class TimedStorageTest(TestCase):
 
     def setUp(self):
         # create a storage on test_store collections
-        self.storage = MongoTimedStorage(data_scope="test_store", safe=True)
+        self.storage = MongoTimedStorage(data_scope="test_store")
 
     def test_connect(self):
         self.assertTrue(self.storage.connected())
@@ -66,7 +66,8 @@ class TimedStorageTest(TestCase):
             timewindow.start(),
             timewindow.start() + 5,
             timewindow.stop() - 5,
-            timewindow.stop()]
+            timewindow.stop()
+        ]
         after_timewindow = [timewindow.stop() + 1000]
 
         # set timestamps without sort

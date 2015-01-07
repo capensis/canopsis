@@ -128,7 +128,7 @@ class MongoPeriodicStorage(MongoStorage, PeriodicStorage):
 
         return result
 
-    def put(self, data_id, period, points, *args, **kwargs):
+    def put(self, data_id, period, points, cache=False, *args, **kwargs):
 
         # initialize a dictionary of perfdata value by value field
         # and id_timestamp
@@ -138,52 +138,54 @@ class MongoPeriodicStorage(MongoStorage, PeriodicStorage):
 
         # prepare data to insert/update in db
         for ts, value in points:
-            # round timestamp with seconds
+
             ts = int(ts)
             id_timestamp = int(period.round_timestamp(ts, normalize=True))
-            doc_props = doc_props_by_id_ts.setdefault(
+            document_properties = doc_props_by_id_ts.setdefault(
                 id_timestamp, {}
             )
 
-            if '_id' not in doc_props:
-                doc_props['_id'] = MongoPeriodicStorage._get_document_id(
-                    data_id=data_id,
-                    timestamp=id_timestamp, period=period
-                )
-                doc_props[MongoPeriodicStorage.Index.LAST_UPDATE] = ts
+            if '_id' not in document_properties:
+                document_properties['_id'] = \
+                    MongoPeriodicStorage._get_document_id(
+                        data_id=data_id,
+                        timestamp=id_timestamp, period=period)
+                document_properties[MongoPeriodicStorage.Index.LAST_UPDATE] = \
+                    ts
 
             else:
                 last_update = MongoPeriodicStorage.Index.LAST_UPDATE
-                if doc_props[last_update] < ts:
-                    doc_props[last_update] = ts
+                if document_properties[last_update] < ts:
+                    document_properties[last_update] = ts
 
             field_name = "{0}.{1}".format(
-                MongoPeriodicStorage.Index.VALUES, ts - id_timestamp
-            )
+                MongoPeriodicStorage.Index.VALUES, ts - id_timestamp)
 
-            doc_props[field_name] = value
+            document_properties[field_name] = value
 
         for id_timestamp in doc_props_by_id_ts:
-            doc_props = doc_props_by_id_ts[id_timestamp]
+            document_properties = doc_props_by_id_ts[id_timestamp]
 
-            # get _id
-            _id = doc_props['_id']
+            # remove _id and last_update
+            _id = document_properties.pop('_id')
 
             _set = {
                 MongoPeriodicStorage.Index.DATA_ID: data_id,
                 MongoPeriodicStorage.Index.PERIOD: period.unit_values,
                 MongoPeriodicStorage.Index.TIMESTAMP: id_timestamp
             }
-            _set.update(doc_props)
-            # remove _id from _set
-            del _set['_id']
+            _set.update(document_properties)
 
-            result = self._update(_id={'_id': _id}, document={'$set': _set})
+            document_properties['_id'] = _id
 
-            self._manage_query_error(result)
+            result = self._update(
+                spec={'_id': _id}, document={'$set': _set}, cache=cache
+            )
+
+        return result
 
     def remove(
-        self, data_id, period=None, timewindow=None,
+        self, data_id, period=None, timewindow=None, cache=False,
         *args, **kwargs
     ):
 
@@ -210,17 +212,18 @@ class MongoPeriodicStorage(MongoStorage, PeriodicStorage):
 
                 if len(values_to_save) > 0:
                     self._update(
-                        _id={'_id': _id},
+                        spec={'_id': _id},
                         document={
                             '$set': {
                                 MongoPeriodicStorage.Index.VALUES:
                                 values_to_save}
-                        })
+                        },
+                        cache=cache)
                 else:
-                    self._remove(document=_id)
+                    self._remove(document=_id, cache=cache)
 
         else:
-            self._remove(document=query)
+            self._remove(document=query, cache=cache)
 
     def all_indexes(self, *args, **kwargs):
 

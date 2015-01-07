@@ -1,0 +1,47 @@
+{
+  "id": "view.graph",
+  "_id": "view.graph",
+  "crecord_type": "view",
+  "crecord_write_time": 1400853201,
+  "enable": true,
+  "containerwidget": {
+    "xtype": "verticalbox",
+    "title": "container title vbox",
+    "items": [
+      {
+        "title": "wrapper",
+        "xtype": "widgetwrapper",
+        "widget": {
+          "id" : "item_13019673-ebdf-6271-e595-6be7338aeb69",
+          "widgetId" : "item_13019673-ebdf-6271-e595-6be7338aeb69",
+          "xtype": "graph",
+          "refreshInterval": 40,
+          "refreshableWidget" : true,
+          "title": "Death graph",
+          "mixins": [
+            "Infobutton"
+          ]
+        }
+      }
+    ]
+  },
+  "parent": [],
+  "aaa_access_owner": [
+    "r",
+    "w"
+  ],
+  "aaa_group": "group.CPS_view_admin",
+  "crecord_creation_time": 1400853201,
+  "aaa_access_unauth": [],
+  "aaa_owner": "account.root",
+  "internal": false,
+  "aaa_access_other": [
+    "r"
+  ],
+  "aaa_access_group": [
+    "r"
+  ],
+  "aaa_admin_group": "group.CPS_view_admin",
+  "children": [],
+  "crecord_name": "Graph view"
+}

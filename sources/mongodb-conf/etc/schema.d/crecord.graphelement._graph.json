@@ -2,7 +2,15 @@
     "type": "object",
     "categories": [{
         "title": "General",
-        "keys": ["crecord_name", "data", "type", "elts", "_delts", "_cls", "_type"]
+        "keys": [
+            "crecord_name",
+            "info",
+            "type",
+            "elts",
+            "_delts",
+            "_cls",
+            "_type"
+        ]
     }],
     "properties": {
         "crecord_type": {

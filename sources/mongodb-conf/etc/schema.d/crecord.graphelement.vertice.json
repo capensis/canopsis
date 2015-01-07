@@ -2,7 +2,13 @@
     "type": "object",
     "categories": [{
         "title": "General",
-        "keys": ["crecord_name", "data", "type", "_cls", "_type"]
+        "keys": [
+            "crecord_name",
+            "info",
+            "type",
+            "_cls",
+            "_type"
+        ]
     }],
     "properties": {
         "crecord_type": {

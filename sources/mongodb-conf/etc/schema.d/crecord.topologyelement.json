@@ -1,0 +1,37 @@
+{
+    "type": "object",
+    "categories": [{
+        "title": "General",
+        "keys": [
+            "crecord_name",
+            "info",
+            "type",
+            "_cls",
+            "_type"
+        ]
+    }],
+    "properties": {
+        "crecord_type": {
+            "enum": ["topologyelement"],
+            "required": true
+        },
+        "_cls": {
+            "type": "string",
+            "required": true,
+            "default": "canopsis.topology.elements.TopologyElement"
+        },
+        "info": {
+            "type": "object",
+            "role": "json",
+            "required": false
+        },
+        "type": {
+            "type": "string",
+            "required": false
+        },
+        "_type": {
+            "type": "string",
+            "required": false
+        }
+    }
+}

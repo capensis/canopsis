@@ -21,13 +21,15 @@
 __version__ = '0.1'
 
 from canopsis.common.init import basestring
-from canopsis.storage import Storage, DataBase
+from canopsis.storage import Storage, DataBase, Cursor
 from canopsis.common.utils import isiterable
 
 from pymongo import MongoClient
-
-from pymongo.errors import TimeoutError, OperationFailure, ConnectionFailure,\
-    DuplicateKeyError
+from pymongo.cursor import Cursor as _Cursor
+from pymongo.errors import (
+    TimeoutError, OperationFailure, ConnectionFailure, DuplicateKeyError
+)
+from pymongo.bulk import BulkOperationBuilder
 
 
 class MongoDataBase(DataBase):
@@ -40,7 +42,8 @@ class MongoDataBase(DataBase):
     ):
 
         super(MongoDataBase, self).__init__(
-            port=port, host=host, *args, **kwargs)
+            port=port, host=host, *args, **kwargs
+        )
 
     def _connect(self, *args, **kwargs):
 
@@ -61,41 +64,45 @@ class MongoDataBase(DataBase):
         connection_args['w'] = 1 if self.safe else 0
 
         if self.ssl:
-            connection_args.update({
-                'ssl': self.ssl,
-                'ssl_keyfile': self.ssl_key,
-                'ssl_certfile': self.ssl_cert
-            })
+            connection_args.update(
+                {
+                    'ssl': self.ssl,
+                    'ssl_keyfile': self.ssl_key,
+                    'ssl_certfile': self.ssl_cert
+                }
+            )
 
         try:
             result = MongoClient(**connection_args)
         except ConnectionFailure as e:
             self.logger.error(
                 'Raised {2} during connection attempting to {0}:{1}.'.
-                format(self.host, self.port, e))
-
+                format(self.host, self.port, e)
+            )
         else:
             self._database = result[self.db]
 
             if (self.user, self.pwd) != (None, None):
 
-                authenticate = self._database.authenticate(
-                    self.user, self.pwd)
+                authenticate = self._database.authenticate(self.user, self.pwd)
 
                 if authenticate:
                     self.logger.debug("Connected on {0}:{1}".format(
-                        self.host, self.port))
+                        self.host, self.port)
+                    )
 
                 else:
                     self.logger.error(
                         'Impossible to authenticate {0} on {1}:{2}'.format(
-                            self.host, self.port))
+                            self.host, self.port)
+                    )
                     self.disconnect()
                     result = None
 
             else:
-                self.logger.debug("Connected on {0}:{1}".format(
-                    self.host, self.port))
+                self.logger.debug(
+                    "Connected on {0}:{1}".format(self.host, self.port)
+                )
 
         return result
 
@@ -174,6 +181,15 @@ class MongoStorage(MongoDataBase, Storage):
         if result:
             table = self.get_table()
             self._backend = self._database[table]
+            # enable sharding
+            if self.sharding:
+                # on db
+                self._database.command(enableSharding=self.db)
+                # and on collection
+                collection_full_name = '{0}.{1}'.format(self.db, table)
+                self._database.command(
+                    shardCollection=collection_full_name, key={'_id': 1}
+                )
 
             for index in self.all_indexes():
                 try:
@@ -181,7 +197,28 @@ class MongoStorage(MongoDataBase, Storage):
                 except Exception as e:
                     self.logger.error(e)
 
+            # initialize cache
+            if not hasattr(self, '_cache'):
+                self._cache = None
+
         return result
+
+    def _disconnect(self, *args, **kwargs):
+
+        super(MongoStorage, self)._disconnect(*args, **kwargs)
+
+        self.halt_cache_thread()
+
+    def _new_cache(self, *args, **kwargs):
+
+        backend = self._get_backend(self.get_table())
+        result = BulkOperationBuilder(backend, self._cache_ordered)
+
+        return result
+
+    def _execute_cache(self, *args, **kwargs):
+
+        return self._cache.execute()
 
     def drop(self, *args, **kwargs):
         """
@@ -198,15 +235,13 @@ class MongoStorage(MongoDataBase, Storage):
 
         _query = {} if query is None else query.copy()
 
-        one_element = False
+        one_element = isinstance(ids, basestring)
 
         if ids is not None:
-            if isiterable(ids, is_str=False):
-                _query[MongoStorage.ID] = {'$in': ids}
-
-            else:
-                one_element = True
+            if one_element:
                 _query[MongoStorage.ID] = ids
+            else:
+                _query[MongoStorage.ID] = {'$in': ids}
 
         cursor = self._find(_query)
 
@@ -219,25 +254,22 @@ class MongoStorage(MongoDataBase, Storage):
             MongoStorage._update_sort(sort)
             cursor.sort(sort)
 
-        # calculate count
-        count = cursor.count() if with_count else 0
-
         hint = self._get_hint(query=_query, cursor=cursor)
 
         if hint is not None:
             cursor.hint(hint)
 
         # TODO: enrich a cursor with methods to use it such as a tuple
-        result = list(cursor)
+        #result = list(cursor)
+        result = MongoCursor(cursor)
 
         if one_element:
-            if result:
-                result = result[0]
-            else:
-                result = None
+            result = result[0] if result else None
 
         # if with_count, add count to the result
         if with_count:
+            # calculate count
+            count = cursor.count()
             result = result, count
 
         return result
@@ -249,7 +281,7 @@ class MongoStorage(MongoDataBase, Storage):
 
         result = None
 
-        # search for the best hint
+        # search for the best hint if cursor is not None and query exists
         if cursor is not None and query:
             index = None
             # maximize the best hint related to query size
@@ -298,7 +330,9 @@ class MongoStorage(MongoDataBase, Storage):
             sort=sort,
             with_count=with_count)
 
-    def remove_elements(self, ids=None, _filter=None, *args, **kwargs):
+    def remove_elements(
+        self, ids=None, _filter=None, cache=False, *args, **kwargs
+    ):
 
         query = {}
 
@@ -311,13 +345,13 @@ class MongoStorage(MongoDataBase, Storage):
         if _filter is not None:
             query.update(_filter)
 
-        self._remove(query)
+        self._remove(query, cache=cache)
 
-    def put_element(self, _id, element, *args, **kwargs):
+    def put_element(self, _id, element, cache=False, *args, **kwargs):
 
         return self._update(
-            _id={MongoStorage.ID: _id}, document={'$set': element},
-            multi=False)
+            spec={MongoStorage.ID: _id}, document={'$set': element},
+            multi=False, cache=cache)
 
     def bool_compare_and_swap(self, _id, oldvalue, newvalue):
 
@@ -349,6 +383,100 @@ class MongoStorage(MongoDataBase, Storage):
 
         return result
 
+    def _insert(self, document=None, cache=False, **kwargs):
+
+        if cache and self._cache is None:
+            self._init_cache()
+
+        cache_op = self._cache.insert if cache else None
+
+        result = self._process_query(
+            query_op=self._run_command,
+            cache_op=cache_op,
+            cache_kwargs={'document': document},
+            query_kwargs={'command': 'insert', 'doc_or_docs': document},
+            cache=cache,
+            **kwargs
+        )
+
+        return result
+
+    def _update(
+        self, spec, document, cache=False, multi=True, upsert=True, **kwargs
+    ):
+
+        if cache and self._cache is None:
+            self._init_cache()
+
+        if cache:
+            cache_op = self._cache.find(selector=spec)
+            if upsert:
+                cache_op = cache_op.upsert()
+            if multi:
+                cache_op = cache_op.update
+            else:
+                cache_op = cache_op.update_one
+        else:
+            cache_op = None
+
+        result = self._process_query(
+            cache_op=cache_op,
+            query_op=self._run_command,
+            cache_kwargs={'update': document},
+            query_kwargs={
+                'command': 'update',
+                'spec': spec, 'document': document,
+                'upsert': upsert, 'multi': multi
+            },
+            cache=cache,
+            **kwargs
+        )
+
+        return result
+
+    def _find(self, document=None, projection=None, **kwargs):
+
+        result = self._run_command(
+            command='find', spec=document, projection=projection, **kwargs
+        )
+
+        return result
+
+    def _remove(self, document, cache=False, **kwargs):
+
+        if cache and self._cache is None:
+            self._init_cache()
+
+        cache_op = self._cache.find(selector=document).remove if cache \
+            else None
+
+        result = self._process_query(
+            query_op=self._run_command,
+            cache_op=cache_op,
+            cache_kwargs={},
+            query_kwargs={'command': 'remove', 'spec_or_id': document},
+            cache=cache,
+            **kwargs
+        )
+
+        return result
+
+    def _count(self, document=None, **kwargs):
+
+        cursor = self._find(document=document, **kwargs)
+
+        result = cursor.count(False)
+
+        return result
+
+    def _process_query(self, *args, **kwargs):
+
+        result = super(MongoStorage, self)._process_query(*args, **kwargs)
+
+        result = self._manage_query_error(result)
+
+        return result
+
     def _manage_query_error(self, result_query):
         """
         Manage mongo query error.
@@ -376,43 +504,6 @@ class MongoStorage(MongoDataBase, Storage):
 
         return result
 
-    def _insert(self, document, **kwargs):
-
-        result = self._run_command(
-            command='insert', doc_or_docs=document, **kwargs)
-
-        return result
-
-    def _update(self, _id, document, multi=True, **kwargs):
-
-        result = self._run_command(
-            command='update', spec=_id, document=document,
-            upsert=True, multi=multi, **kwargs)
-
-        return result
-
-    def _find(self, document=None, projection=None, **kwargs):
-
-        result = self._run_command(command='find', spec=document,
-            projection=projection, **kwargs)
-
-        return result
-
-    def _remove(self, document, **kwargs):
-
-        result = self._run_command(
-            command='remove', spec_or_id=document, **kwargs)
-
-        return result
-
-    def _count(self, document=None, **kwargs):
-
-        cursor = self._find(document=document, **kwargs)
-
-        result = cursor.count(False)
-
-        return result
-
     def _run_command(self, command, **kwargs):
         """
         Run a specific command on a given backend.
@@ -432,8 +523,6 @@ class MongoStorage(MongoDataBase, Storage):
             w = 1 if self.safe else 0
             result = backend_command(w=w, wtimeout=self.out_timeout, **kwargs)
 
-            result = self._manage_query_error(result)
-
         except TimeoutError:
             self.logger.warning(
                 'Try to run command {0}({1}) on {2} attempts left'
@@ -444,3 +533,37 @@ class MongoStorage(MongoDataBase, Storage):
                 .format(of, command, kwargs, backend))
 
         return result
+
+
+class MongoCursor(Cursor):
+    """
+    In charge of handle cursors wit MongoDB.
+    """
+
+    __slots__ = ('_len', ) + Cursor.__slots__
+
+    def __init__(self, *args, **kwargs):
+
+        super(MongoCursor, self).__init__(*args, **kwargs)
+
+        self._len = None
+
+    def __getitem__(self, index):
+
+        result = self._cursor.__getitem__(index)
+
+        if isinstance(result, _Cursor):  # in case of slice
+            result = MongoCursor(result)
+
+        return result
+
+    def __iter__(self):
+
+        return self._cursor.__iter__()
+
+    def __len__(self):
+
+        if self._len is None:
+            self._len = self._cursor.count(True)
+
+        return self._len
