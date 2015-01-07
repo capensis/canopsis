@@ -10,7 +10,10 @@
     "parent" : [ ],
     "containerwidget" : {
         "widgetId" : null,
-        "xtype" : "verticalbox",
+        "xtype": "widgetcontainer",
+        "mixins": [
+          { "name": "verticallayout" }
+        ],
         "title" : null,
         "items" : [
             {

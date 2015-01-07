@@ -1,0 +1,14 @@
+{
+	"type": "object",
+	"categories": [{
+		"title": "General",
+		"keys":["stackableColumnsPriority"]
+	}],
+
+	"properties": {
+		"stackableColumnsPriority": {
+			"reorderable": true,
+			"type": "array"
+		}
+	}
+}

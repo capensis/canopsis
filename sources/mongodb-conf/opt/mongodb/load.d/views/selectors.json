@@ -89,7 +89,10 @@
       }
     ],
     "widgetslotTemplate": null,
-    "xtype": "verticalbox",
+    "xtype": "widgetcontainer",
+    "mixins": [
+      { "name": "verticallayout" }
+    ],
     "title": "container title vbox"
   },
   "aaa_access_owner": [
