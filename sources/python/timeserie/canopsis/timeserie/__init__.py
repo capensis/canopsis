@@ -209,7 +209,8 @@ class TimeSerie(Configurable):
         fn = None
 
         # if no period and max_points > len(points)
-        if self.period is None and self.max_points > points_len:
+        if (not points) or self.period is None\
+                and self.max_points > points_len:
             result = points  # result is points
 
         else:  # else get the right aggregation function
@@ -221,13 +222,12 @@ class TimeSerie(Configurable):
             # get timesteps
             timesteps = self.timesteps(timewindow)
 
-            #initialize variables for loop
+            # initialize variables for loop
             i = 0
             values_to_aggregate = []
             last_point = None
 
-            # iterate on all timesteps in order to get points
-            # between [previous_timestamp, timestamp[
+            # iterate on all timesteps in order to get points in [prev_ts, ts[
             for index in range(1, len(timesteps)):
                 # initialize values_to_aggregate
                 values_to_aggregate = []

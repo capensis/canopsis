@@ -46,12 +46,17 @@ class SchemaManager(Configurable):
     def schema_location(self, value):
         self._schema_location = value
 
-
-_schema_manager = SchemaManager()
+try:
+    _schema_manager = SchemaManager()
+except IOError:
+    _schema_manager = None
 
 
 def get_schema_path(*args):
-    return join(prefix, _schema_manager.schema_location, *args)
+    if _schema_manager is not None:
+        return join(prefix, _schema_manager.schema_location, *args)
+    else:
+        return join('.', *args)
 
 
 def get_unique_key(xschema):
@@ -99,5 +104,4 @@ def is_name_available(name):
     :return: True is the schema is present, False otherwise
     :rtype: bool
     """
-
     return isfile(get_schema_path(name))

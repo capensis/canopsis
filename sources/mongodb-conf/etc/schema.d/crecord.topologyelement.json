@@ -12,13 +12,13 @@
     }],
     "properties": {
         "crecord_type": {
-            "enum": ["graphelement"],
+            "enum": ["topologyelement"],
             "required": true
         },
         "_cls": {
             "type": "string",
-            "default": "canopsis.graph.elements.GraphElement",
-            "required": true
+            "required": true,
+            "default": "canopsis.topology.elements.TopologyElement"
         },
         "info": {
             "type": "object",

@@ -29,7 +29,7 @@ refers to source nodes if they exist.
 Such conditions are::
     - ``new_state``: test if state (or event state) is not equal to node state
     - ``at_least``: test if source node states match with an input state.
-    - ``all``: test if all source node states match with an input state.
+    - ``_all``: test if all source node states match with an input state.
     - ``nok``: test if source node states are not OK.
 
 The ``new_state`` condition may be used by nodes bound to entities in order to

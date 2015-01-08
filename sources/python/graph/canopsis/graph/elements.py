@@ -92,6 +92,7 @@ and can bind several source with several targets, directly or not.
     - directed: directed orientation. If False, source and target vertices are
         directly connected, otherwise, only sources are directly connected to
         targets.
+    - weight: edge weight. Default 1.
     - _type: equals edge.
 
 A graph inherits from vertice and contains::
@@ -292,7 +293,6 @@ class Vertice(GraphElement):
         edges = manager.get_edges(sources=self_id, targets=self_id)
         links = Edge.SOURCES, Edge.TARGETS
         for edge in edges:
-            edge = manager.GRAPH_TYPE.EDGE_TYPE.new(**edge)
             for link in links:
                 if self_id in getattr(edge, link):
                     setattr(edge, link, [
@@ -644,8 +644,8 @@ class Graph(Vertice):
                 if elt_id not in self._gelts:
                     self._gelts[elt_id] = elt
                     elt_dict = elt.to_dict()
-                    if elt_dict not in self._delt:
-                        self._delt.append(elt_dict)
+                    if elt_dict not in self._delts:
+                        self._delts.append(elt_dict)
                         if elt_id not in self.elts:
                             self.elts.append(elt_id)
 
@@ -680,9 +680,19 @@ class Graph(Vertice):
         result = super(Graph, self).to_dict()
 
         # if self _elts not empty
-        if self._delts:
-            # resolve_refs result['elt'] with dictionary versions
-            result[Graph.ELT_IDS] = [elt.to_dict() for elt in self._delts]
+        if self._delts:  # add delts ids which are not present in elts
+            elts = result[Graph.ELTS]
+            for delt in self._delts:
+                delt_id = delt[Graph.ID]
+                if delt_id not in elts:
+                    elts.append(delt_id)
+
+        # if gelts not empty
+        if self._gelts:
+            elts = result[Graph.ELTS]
+            for gelt_id in self._gelts:
+                if gelt_id not in elts:
+                    elts.append(gelt_id)
 
         return result
 

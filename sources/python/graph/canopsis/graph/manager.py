@@ -33,19 +33,14 @@ The role of the GraphManager is to ease graph element CRUD operations and
 to retrieve graphs, vertices and edges thanks to methods with all element
 parameters useful to find them.
 
-This last could be specialized in assigning the GRAPH_TYPE class attribute to a
-dedicated Graph type.
-
-All methods may have to be enough generics without the need to override them,
-the business code is ensured by graph elements.
-
 Technical
 =========
 
 The graph manager permits to get graph elements with any context information.
 
 First, generic methods permit to get/put/delete elements in understanding such
-elements such as dictionaries.
+elements such as dictionaries or GraphElement depending on serialize parameter
+value.
 
 Two, it is possible to find graphs, vertices and edges thanks to parameters
 which correspond to their properties.
@@ -71,8 +66,6 @@ class GraphManager(MiddlewareRegistry):
     """
 
     STORAGE = 'graph_storage'  #: graph storage name
-
-    GRAPH_TYPE = Graph  #: default graph type
 
     def get_elts(
         self,
@@ -142,7 +135,6 @@ class GraphManager(MiddlewareRegistry):
                     if isinstance(ids, basestring):
                         ids = [ids]
                     ids = list(elt_ids & set(ids))
-
         # get elements with ids and query
         result = self[GraphManager.STORAGE].get_elements(ids=ids, query=query)
         if result is not None and serialize:
@@ -226,6 +218,38 @@ class GraphManager(MiddlewareRegistry):
                         # add elt_id in graph elts
                         graph.elts.append(elt_id)
                         graph.save(self, cache=cache)
+
+    def put_elts(self, elts, graph_ids=None, cache=False):
+        """
+        Put graph elements in DB.
+
+        :param elts: graph elements to put in DB.
+        :type elts: dict, GraphElement or list of dict/GraphElement.
+        :param str graph_ids: element graph id. None if elt is a graph.
+        :param bool cache: use query cache if True (False by default).
+        """
+
+        # ensure elts is a list of GraphElements
+        if isinstance(elts, dict):
+            elts = [GraphElement.new_element(**elts)]
+        elif isinstance(elts, GraphElement):
+            elts = [elts]
+
+        for elt in elts:
+            if isinstance(elt, dict):
+                elt = GraphElement.new_element(**elt)
+            # save elt
+            elt.save(self, cache=cache)
+
+        # save elts in graphs
+        if graph_ids is not None:
+            # ensure graph_ids such as an array of graph ids
+            if isinstance(graph_ids, str):
+                graph_ids = [graph_ids]
+            graphs = self.get_graphs(ids=graph_ids)
+            for graph in graphs:
+                graph.add_elts(elts)
+                graph.save(self, cache=cache)
 
     def remove_elts(self, ids, graph_ids=None, cache=False):
         """
@@ -331,12 +355,25 @@ class GraphManager(MiddlewareRegistry):
             serialize=serialize
         )
         # if add_elts is asked
-        if result is not None and serialize and add_elts:
-            if isinstance(result, Graph):
-                result.update_gelts(manager=self)
-            else:
-                for graph in result:
-                    graph.update_gelts(manager=self)
+        if result is not None and add_elts:
+            if serialize:  # add elts in _gelts
+                if isinstance(result, Graph):
+                    result.update_gelts(manager=self)
+                else:
+                    for graph in result:
+                        graph.update_gelts(manager=self)
+            else:  # add elts in _delts
+                if isinstance(result, dict):
+                    result[Graph._DELTS] = self.get_elts(
+                        ids=result[Graph.ELTS],
+                        serialize=False
+                    )
+                else:
+                    for graph in result:
+                        graph[Graph._DELTS] = self.get_elts(
+                            ids=graph[Graph.ELTS],
+                            serialize=False
+                        )
 
         return result
 

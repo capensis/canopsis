@@ -48,31 +48,42 @@ def generate_context_topology(name='test'):
         topology.delete(manager)
     # init the topology
     topology = Topology(_id=name)
-    topology.save(manager)
+
+    def addElt(elt):
+        """
+        Add input elt in topology.
+
+        :param GraphElement elt: elt to add to topology.
+        """
+
+        topology.add_elts(elt)
+        elt.save(manager)
 
     components = context.find('component')
     for component in components:
         component_id = context.get_entity_id(component)
         component_node = Node(entity=component_id)
-        component_node.save(manager)
+        addElt(component_node)
 
         ctx, _ = context.get_entity_context_and_name(component)
 
         resources = context.find('resource', context=ctx)
         if resources:  # link component to all its resources with the same edge
-            edge = Edge(sources=component_id, targets=[])
+            edge = Edge(sources=component_node.id, targets=[])
+            addElt(edge)  # add edge in topology
             for resource in resources:
                 resource_id = context.get_entity_id(resource)
                 resource_node = Node(entity=resource_id)
-                resource_node.save(manager)
+                addElt(resource_node)  # add edge in topology
                 edge.targets.append(resource_id)
-                root_edge = Edge(sources=resource_id, targets=topology.id)
-                root_edge.save(manager)
-            # save relationship between
-            edge.save(manager)
+                root_edge = Edge(sources=resource_node.id, targets=topology.id)
+                addElt(root_edge)  # add edge in topology
         else:  # if no resources, link the component to the topology
-            edge = Edge(sources=component_id, targets=topology.id)
-            edge.save(manager)
+            edge = Edge(sources=component_node.id, targets=topology.id)
+            addElt(edge)  # add edge in topology
+
+    # save topology
+    topology.save(manager)
 
 
 if __name__ == '__main__':

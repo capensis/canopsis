@@ -45,6 +45,11 @@ class engine(Engine):
         self.cdowntime = Downtime()
         self.beat()
 
+        self.log_bulk_amount = 100
+        self.log_bulk_delay = 3
+        self.last_bulk_insert_date = time()
+        self.events_log_buffer = []
+
     def beat(self):
         self.archiver.beat()
         self.cdowntime.reload(self.beat_interval)
@@ -65,16 +70,34 @@ class engine(Engine):
                 event, event['rk'], self.amqp.exchange_name_alerts)
 
     def store_log(self, event, store_new_event=True):
-        # passthrough
 
-        if store_new_event:
-            self.archiver.store_new_event(event['rk'], event)
+        """
+            Stores events in events_log collection
+            Logged events are no more in event collection at the moment
+        """
 
-        _id = self.archiver.log_event(event['rk'], event)
-        event['_id'] = _id
-        event['event_id'] = event['rk']
+        # Ensure event Id exists from rk key
+        event['_id'] = event['rk']
+
+        # Prepare log event collection async insert
+        log_event = event.copy()
+        log_id = '{}.{}'.format(event['_id'], time())
+        log_event['_id'] = log_id
+        self.events_log_buffer.append({'event': log_event})
+
+        bulk_modulo = len(self.events_log_buffer) % self.log_bulk_amount
+        elapsed_time = time() - self.last_bulk_insert_date
+
+        if bulk_modulo == 0 or elapsed_time > self.log_bulk_delay:
+            self.archiver.process_insert_operations_collection(
+                self.events_log_buffer,
+                'events_log'
+            )
+            self.events_log_buffer = []
+            self.last_bulk_insert_date = time()
 
         # Event to Alert
+        event['event_id'] = event['rk']
         self.amqp.publish(event, event['rk'], self.amqp.exchange_name_alerts)
 
     def work(self, event, *args, **kargs):
@@ -85,7 +108,12 @@ class engine(Engine):
         event_type = event['event_type']
 
         if event_type not in self.event_types:
-            self.logger.warning("Unknown event type '%s', id: '%s', event:\n%s" % (event_type, event['rk'], event))
+            self.logger.warning(
+                "Unknown event type '{}', id: '{}', event:\n{}".format(
+                    event_type,
+                    event['rk'],
+                    event
+                ))
             return event
 
         elif event_type in self.check_types:

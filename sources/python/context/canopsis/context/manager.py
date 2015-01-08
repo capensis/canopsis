@@ -151,9 +151,7 @@ class Context(MiddlewareRegistry):
 
         path = {Context.TYPE: _type}
 
-        if context is None:
-            path = {Context.TYPE: _type}
-        else:
+        if context is not None:
             path = context.copy()
             path[Context.TYPE] = _type
 
@@ -188,11 +186,17 @@ class Context(MiddlewareRegistry):
 
         return result
 
-    def put(self, _type, entity, context=None, extended_id=None, cache=False):
+    def put(
+        self,
+        _type, entity, context=None, extended_id=None, add_parents=True,
+        cache=False
+    ):
         """
-        Put an element designated by the element_id, element_type and element.
-        If timestamp is None, time.now is used.
+        Put an entity designated by the _type, context and entity.
 
+        If parent entities do not exist, create them automatically.
+
+        :param bool add_parents: ensure to add parents if child do not exists.
         :param bool cache: use query cache if True (False by default).
         """
 
@@ -200,13 +204,64 @@ class Context(MiddlewareRegistry):
 
         if context is not None:
             path.update(context)
+            path[Context.TYPE] = _type
 
         name = entity[Context.NAME]
 
-        entity_db = self.get(_type=_type, names=name, context=context)
+        entity_db = self.get(
+            _type=_type, names=name, context=context
+        )
+        # check if entity exists in db
+        if add_parents and context is not None and entity_db is None:
+            # if entity does not exist in db
 
+            # check if parent entities exists
+            # path is a copy of context
+            parent_path = path.copy()
+            # ensure all parent context exist, or create them if necessary
+            # get key context without type
+            keys = self._context[1:]
+            keys.reverse()
+            for key in keys:
+                if key in context:
+                    # update path type with input key
+                    parent_path['type'] = key
+                    # parent name is path[key]
+                    parent_name = parent_path[key]
+                    # del path[key] in order to avoid wrong path resolution
+                    del parent_path[key]
+                    # get entity
+                    parent_entity = self[Context.CTX_STORAGE].get(
+                        path=parent_path, data_ids=parent_name
+                    )
+                    # if entity does not exist
+                    if parent_entity is None:
+                        # put a new entity in DB
+                        parent_entity = {Context.NAME: parent_name}
+                        self[Context.CTX_STORAGE].put(
+                            path=parent_path,
+                            data_id=parent_name,
+                            data=parent_entity,
+                            cache=cache
+                        )
+                    else:
+                        break
+
+        # initialize entity db for future update
         if entity_db is None:
+            entity_db = {}
 
+        # check if an update is necessary in comparing entity fields with
+        to_update = False
+        # if entity different than entity_db
+        for field in entity:
+            value = entity[field]
+            to_update = (field not in entity_db) or entity_db[field] != value
+            if to_update:
+                break
+
+        if to_update:
+            # finally, put the entity if necessary
             self[Context.CTX_STORAGE].put(
                 path=path,
                 data_id=name,
@@ -220,18 +275,19 @@ class Context(MiddlewareRegistry):
     ):
         """
         Remove a set of elements identified by element_ids, an element type or
-        a timewindow.
+        a timewindow. If ids, _type and context are all None, remove all
+        elements.
 
         :param bool cache: use query cache if True (False by default).
         """
 
         path = {}
 
-        if _type is not None:
-            path[Context.TYPE] = _type
-
         if context is not None:
             path.update(context)
+
+        if _type is not None:
+            path[Context.TYPE] = _type
 
         if path:
             self[Context.CTX_STORAGE].remove(
@@ -240,6 +296,9 @@ class Context(MiddlewareRegistry):
 
         if ids is not None:
             self[Context.CTX_STORAGE].remove_elements(ids=ids, cache=cache)
+        # if all parameters are None, delete all elements
+        elif (_type, context) == (None, None):
+            self[Context.CTX_STORAGE].remove_elements()
 
     def get_entity_context_and_name(self, entity):
         """
