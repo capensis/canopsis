@@ -92,6 +92,7 @@ and can bind several source with several targets, directly or not.
     - directed: directed orientation. If False, source and target vertices are
         directly connected, otherwise, only sources are directly connected to
         targets.
+    - weight: edge weight. Default 1.
     - _type: equals edge.
 
 A graph inherits from vertice and contains::
@@ -292,7 +293,6 @@ class Vertice(GraphElement):
         edges = manager.get_edges(sources=self_id, targets=self_id)
         links = Edge.SOURCES, Edge.TARGETS
         for edge in edges:
-            edge = manager.GRAPH_TYPE.EDGE_TYPE.new(**edge)
             for link in links:
                 if self_id in getattr(edge, link):
                     setattr(edge, link, [

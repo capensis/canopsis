@@ -6,4 +6,5 @@ Specifications
    :titlesonly:
 
    packaging
+   graph
    topology

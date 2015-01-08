@@ -99,9 +99,6 @@ class TimeSerieTest(TestCase):
 
                     aggregated_points = timeserie.calculate(points, timewindow)
                     len_aggregated_points = len(aggregated_points)
-                    print (unit, len_aggregated_points, len(timesteps))
-                    if unit == "week":
-                        print aggregated_points
                     self.assertIn(len(timesteps) - 1, (
                         len_aggregated_points, len_aggregated_points + 1))
 

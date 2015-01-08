@@ -419,5 +419,47 @@ class GraphTest(TestCase):
 
         # test target_query
 
+
+class PutEltsTest(TestCase):
+
+    def setUp(self):
+
+        self.manager = GraphManager(data_scope='graph_test')
+
+    def tearDown(self):
+
+        self.manager.del_elts()
+
+    def test_put_elts(self):
+        """
+        Test put elts method.
+        """
+
+        vertice = Vertice()
+
+        def assertVertice():
+            """
+            Assert vertice exists in DB
+            """
+            # get vertice
+            _vertice = self.manager.get_elts(ids=vertice.id)
+            # check ids
+            self.assertEqual(_vertice.id, vertice.id)
+            # delete vertice
+            self.manager.del_elts()
+
+        self.manager.put_elts(elts=vertice)
+        assertVertice()
+
+        self.manager.put_elts(elts=vertice.to_dict())
+        assertVertice()
+
+        self.manager.put_elts(elts=[vertice])
+        assertVertice()
+
+        self.manager.put_elts(elts=[vertice.to_dict()])
+        assertVertice()
+
+
 if __name__ == '__main__':
     main()
