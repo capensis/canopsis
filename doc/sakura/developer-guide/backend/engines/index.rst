@@ -10,3 +10,4 @@ Engines
    rule
    state-spec
    scheduler
+   eventstore
