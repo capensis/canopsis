@@ -190,8 +190,8 @@ Create a node with the change_state task and save it in DB
 
    # create a parameterized task
    task = {
-      'task': 'canopsis.topology.rule.action.change_state',
-      'update_entity': True
+      'id': 'canopsis.topology.rule.action.change_state',
+      'params': {'update_entity': True}
    }
    entity_id = '/component/connector_name/connector/component'
    # create a node with previous task, default state to (WARNING) and bound to an entity
