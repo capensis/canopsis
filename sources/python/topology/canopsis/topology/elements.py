@@ -81,7 +81,7 @@ class Node(Vertice):
 
     Contains:
         - (optionnally) an entity id.
-        - a state (integer greater or equal to 0).
+        - an entity state.
         - a weight information.
         - (optionnally) a task information.
     """

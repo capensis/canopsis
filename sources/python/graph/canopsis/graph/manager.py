@@ -135,7 +135,6 @@ class GraphManager(MiddlewareRegistry):
                     if isinstance(ids, basestring):
                         ids = [ids]
                     ids = list(elt_ids & set(ids))
-
         # get elements with ids and query
         result = self[GraphManager.STORAGE].get_elements(ids=ids, query=query)
         if result is not None and serialize:
@@ -219,6 +218,28 @@ class GraphManager(MiddlewareRegistry):
                         # add elt_id in graph elts
                         graph.elts.append(elt_id)
                         graph.save(self, cache=cache)
+
+    def put_elts(self, elts, graph_ids=None, cache=False):
+        """
+        Put graph elements in DB.
+
+        :param elts: graph elements to put in DB.
+        :type elts: dict, GraphElement or list of dict/GraphElement.
+        :param str graph_ids: element graph id. None if elt is a graph.
+        :param bool cache: use query cache if True (False by default).
+        """
+
+        # ensure elts is a list of GraphElements
+        if isinstance(elts, dict):
+            elts = [GraphElement.new_element(**elts)]
+        elif isinstance(elts, GraphElement):
+            elts = [elts]
+
+        for elt in elts:
+            if isinstance(elt, dict):
+                elt = GraphElement.new_element(**elt)
+            # save elt
+            elt.save(self, cache=cache, graph_ids=graph_ids)
 
     def remove_elts(self, ids, graph_ids=None, cache=False):
         """
