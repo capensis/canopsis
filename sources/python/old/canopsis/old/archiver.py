@@ -129,6 +129,7 @@ class Archiver(object):
                 import pprint
                 pp = pprint.PrettyPrinter(indent=2)
                 self.logger.warning(pp.pformat(bwe.details))
+            self.logger.info('inserted log events {}'.format(len(operations)))
 
     def process_update_operations(self, operations):
 
@@ -604,39 +605,3 @@ class Archiver(object):
             })
 
         return operations
-
-    def store_new_event(self, _id, event):
-        record = Record(event)
-        record.type = "event"
-        record.chmod("o+r")
-        record._id = _id
-
-        self.storage.put(
-            record,
-            namespace=self.namespace,
-            account=self.account
-        )
-
-    def log_event(self, _id, event):
-        self.logger.debug(
-            "Log event '%s' in %s ..." % (_id, self.namespace_log))
-        record = Record(event)
-        record.type = "event"
-        record.chmod("o+r")
-        record.data['event_id'] = _id
-        record._id = _id + '.' + str(time())
-        self.storage.put(record,
-                         namespace=self.namespace_log,
-                         account=self.account)
-        return record._id
-
-    def get_logs(self, _id, start=None, stop=None):
-        return self.storage.find({'event_id': _id},
-                                 namespace=self.namespace_log,
-                                 account=self.account)
-
-    def remove_all(self):
-        self.logger.debug("Remove all logs and state archives")
-
-        self.storage.drop_namespace(self.namespace)
-        self.storage.drop_namespace(self.namespace_log)

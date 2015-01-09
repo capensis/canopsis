@@ -55,7 +55,7 @@ def event_processing(event, ctx=None, **params):
         for node in nodes:
             task = node[Graph.TASK]
             if task is not None:
-                task_result = process_task(
+                process_task(
                     event=event,
                     task=task,
                     ctx=ctx,
