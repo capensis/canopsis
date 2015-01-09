@@ -222,7 +222,7 @@ class Period(object):
             parameters[unit] = rounding_period_value
 
         rounding_period = Period(**parameters)
-        #print rounding_period
+
         delta = rounding_period.get_delta()
 
         result = datetime - delta

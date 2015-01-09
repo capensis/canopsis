@@ -30,17 +30,8 @@ A topology manager aims to get topology elements from DB.
 Technical
 ---------
 
-Three types of nodes exist in topology::
-
-- cluster: operation between node states.
-- node: node bound to an entity, like components, resources, and the root.
-- root: root node.
-
-A topology data contains several thinks among::
-
-- weight: node weight in the graph.
-- state: node state which change at runtime depending on bound entity state and
-    event propagation.
+A topology manager inherits from a GraphManager in order to play with topology
+elements such as graph elements.
 """
 
 from canopsis.configuration.configurable.decorator import (
