@@ -306,6 +306,9 @@ class TimeSerie(Configurable):
                 ts, val = pts[i][0], pts[i][1]
                 prevts, prevval = pts[i - 1][0], pts[i - 1][1]
 
+                if val > prevval:
+                    val -= prevval
+
                 interval = abs(ts - prevts)
                 if interval:
                     val = round(float(val) / interval, 3)
