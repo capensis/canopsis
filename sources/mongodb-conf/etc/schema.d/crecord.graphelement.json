@@ -11,10 +11,6 @@
         ]
     }],
     "properties": {
-        "crecord_type": {
-            "enum": ["graphelement"],
-            "required": true
-        },
         "_cls": {
             "type": "string",
             "default": "canopsis.graph.elements.GraphElement",

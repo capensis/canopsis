@@ -3,18 +3,11 @@
     "categories": [{
         "title": "General",
         "keys": [
-            "crecord_name",
             "info",
-            "type",
-            "_cls",
-            "_type"
+            "entity"
         ]
     }],
     "properties": {
-        "crecord_type": {
-            "enum": ["node"],
-            "required": true
-        },
         "_cls": {
             "type": "string",
             "default": "canopsis.topology.elements.Node",
@@ -25,19 +18,14 @@
             "default": "vertice",
             "required": true
         },
-        "state": {
-            "type": "int",
-            "default": 0,
-            "required": false
-        },
         "entity": {
             "type": "string",
             "required": false
         },
-        "task": {
+        "operator": {
             "type": "object",
-            "role": "json",
-            "required": false
+            "required": false,
+            "role": "json"
         }
     }
 }

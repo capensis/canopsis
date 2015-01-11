@@ -3,7 +3,7 @@
     "categories": [{
         "title": "General",
         "keys": [
-            "crecord_name",
+            "cid",
             "info",
             "type",
             "sources",
@@ -14,10 +14,6 @@
         ]
     }],
     "properties": {
-        "crecord_type": {
-            "enum": ["edge"],
-            "required": true
-        },
         "_cls": {
             "type": "string",
             "default": "canopsis.graph.elements.Edge",
@@ -25,10 +21,12 @@
         },
         "sources": {
             "type": "array",
+            "default": [],
             "required": true
         },
         "targets": {
             "type": "array",
+            "default": [],
             "required": true
         },
         "_type": {
