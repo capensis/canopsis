@@ -3,17 +3,16 @@
     "categories": [{
         "title": "General",
         "keys": [
-            "cid",
             "info",
-            "type",
-            "sources",
-            "targets",
-            "weight",
-            "_cls",
-            "_type"
+            "weight"
         ]
     }],
     "properties": {
+        "crecord_type": {
+            "type": "string",
+            "required": true,
+            "default": "edge"
+        },
         "_cls": {
             "type": "string",
             "default": "canopsis.graph.elements.Edge",

@@ -13,6 +13,11 @@
         }
     ],
     "properties": {
+        "crecord_type": {
+            "type": "string",
+            "required": true,
+            "default": "graph"
+        },
         "graph_type": {
             "type": "string",
             "enum": ["graph", "topology"],

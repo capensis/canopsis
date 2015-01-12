@@ -12,6 +12,11 @@
         "cid": {
             "type": "string",
             "required": true
+        },
+        "info": {
+            "type": "object",
+            "required": false,
+            "default": {}
         }
     }
 }

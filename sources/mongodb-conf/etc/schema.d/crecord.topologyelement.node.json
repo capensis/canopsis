@@ -3,11 +3,16 @@
     "categories": [{
         "title": "General",
         "keys": [
-            "info",
-            "entity"
+            "entity",
+            "operator"
         ]
     }],
     "properties": {
+        "crecord_type": {
+            "type": "string",
+            "required": true,
+            "default": "node"
+        },
         "_cls": {
             "type": "string",
             "default": "canopsis.topology.elements.Node",
@@ -20,12 +25,14 @@
         },
         "entity": {
             "type": "string",
+            "default": "",
             "required": false
         },
         "operator": {
             "type": "object",
             "required": false,
-            "role": "json"
+            "role": "json",
+            "default": {}
         }
     }
 }

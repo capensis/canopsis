@@ -10,6 +10,11 @@
         }
     ],
     "properties": {
+        "crecord_type": {
+            "type": "string",
+            "required": true,
+            "default": "topology"
+        },
         "graph_type": {
             "type": "string",
             "default": "topology",
