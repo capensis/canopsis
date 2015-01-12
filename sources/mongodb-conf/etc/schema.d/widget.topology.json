@@ -38,6 +38,11 @@
             "type": "string",
             "default": "topology",
             "required": true
+        },
+        "elts": {
+            "type": "array",
+            "default": [],
+            "required": true
         }
     }
 }

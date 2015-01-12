@@ -37,7 +37,12 @@
         "weight": {
             "type": "float",
             "default": 1,
-            "required": false
+            "required": true
+        },
+        "directed": {
+            "type": "boolean",
+            "default": true,
+            "required": true
         }
     }
 }
