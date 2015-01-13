@@ -2,36 +2,21 @@
     "type": "object",
     "categories": [{
         "title": "General",
-        "keys": [
-            "crecord_name",
-            "info",
-            "type",
-            "_cls",
-            "_type"
-        ]
+        "keys": []
     }],
     "properties": {
-        "crecord_type": {
-            "enum": ["topologyelement"],
+        "_id": {
+            "type": "string",
             "required": true
         },
-        "_cls": {
+        "cid": {
             "type": "string",
-            "required": true,
-            "default": "canopsis.topology.elements.TopologyElement"
+            "required": true
         },
         "info": {
             "type": "object",
-            "role": "json",
-            "required": false
-        },
-        "type": {
-            "type": "string",
-            "required": false
-        },
-        "_type": {
-            "type": "string",
-            "required": false
+            "required": false,
+            "default": {}
         }
     }
 }

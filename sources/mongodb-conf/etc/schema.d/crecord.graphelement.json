@@ -3,26 +3,25 @@
     "categories": [{
         "title": "General",
         "keys": [
-            "crecord_name",
-            "info",
-            "type",
-            "_cls",
-            "_type"
         ]
     }],
     "properties": {
-        "crecord_type": {
-            "enum": ["graphelement"],
+        "cid": {
+            "type": "string",
+            "required": true
+        },
+        "_id": {
+            "type": "string",
             "required": true
         },
         "_cls": {
             "type": "string",
-            "default": "canopsis.graph.elements.GraphElement",
             "required": true
         },
         "info": {
             "type": "object",
             "role": "json",
+            "default": {},
             "required": false
         },
         "type": {
@@ -31,7 +30,7 @@
         },
         "_type": {
             "type": "string",
-            "required": false
+            "required": true
         }
     }
 }

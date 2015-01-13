@@ -31,10 +31,10 @@
             "actionbutton-removeselection"
           ],
           "mixins": [
-            "Sortablearray",
-            "Arraysearch",
-            "Pagination",
-            "Crud"
+            { "name" : "Sortablearray" },
+            { "name" : "Arraysearch" },
+            { "name" : "Pagination" },
+            { "name" : "Crud" }
           ],
           "displayed_columns": [
             "name",
@@ -57,7 +57,10 @@
       }
     ],
     "widgetslotTemplate": null,
-    "xtype": "verticalbox",
+    "xtype": "widgetcontainer",
+    "mixins": [
+      { "name": "verticallayout" }
+    ],
     "title": "container title vbox"
   },
   "aaa_access_owner": [

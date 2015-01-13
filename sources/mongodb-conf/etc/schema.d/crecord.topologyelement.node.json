@@ -3,17 +3,15 @@
     "categories": [{
         "title": "General",
         "keys": [
-            "crecord_name",
-            "info",
-            "type",
-            "_cls",
-            "_type"
+            "entity",
+            "operator"
         ]
     }],
     "properties": {
         "crecord_type": {
-            "enum": ["node"],
-            "required": true
+            "type": "string",
+            "required": true,
+            "default": "node"
         },
         "_cls": {
             "type": "string",
@@ -25,19 +23,16 @@
             "default": "vertice",
             "required": true
         },
-        "state": {
-            "type": "int",
-            "default": 0,
-            "required": false
-        },
         "entity": {
             "type": "string",
+            "default": "",
             "required": false
         },
-        "task": {
+        "operator": {
             "type": "object",
+            "required": false,
             "role": "json",
-            "required": false
+            "default": {}
         }
     }
 }

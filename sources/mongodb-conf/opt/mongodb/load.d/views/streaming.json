@@ -5,8 +5,10 @@
   "crecord_write_time": 1400853201,
   "enable": true,
   "containerwidget": {
-    "xtype": "verticalbox",
-    "title": "container title vbox",
+    "xtype": "widgetcontainer",
+    "mixins": [
+      { "name": "verticallayout" }
+    ],    "title": "container title vbox",
     "items": [
       {
         "title": "wrapper",
@@ -29,9 +31,9 @@
           },
           "filters" : [],
           "mixins": [
-            "Customfilter",
-            "Sortablearray",
-            "Pagination"
+            { "name" : "Customfilterlist" },
+            { "name" : "Sortablearray" },
+            { "name" : "Pagination" }
           ],
           "displayed_columns": [
             "output",

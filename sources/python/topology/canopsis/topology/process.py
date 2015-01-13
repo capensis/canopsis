@@ -97,24 +97,40 @@ def event_processing(event, engine, manager=None, **kwargs):
             # process task
             Node.process(elt, event=event, manager=manager, **kwargs)
 
+            new_state = Node.state(elt)
             # propagate the change of state in case of new state
-            if old_state != Node.state(elt):
+            if old_state != new_state:
                 # get next elts
-                targets = manager.get_targets(ids=elt.id)
+                targets_by_edge = manager.get_targets(
+                    ids=elt.id,
+                    add_edges=True
+                )
                 # send the event_to_propagate to all targets
-                for target in targets:
-                    # create event to propagate with source and elt ids
-                    event_to_propagate = forger(
-                        connector=Topology.TYPE,
-                        connector_name=Topology.TYPE,
-                        event_type=Check.get_type(),
-                        component=target.id,
-                        state=Node.state(elt),
-                        source_type=Topology.TYPE,
-                        id=target.id,
-                        source=elt.id
-                    )
-                    # publish the event in the context of the engine
-                    publish(event=event_to_propagate, engine=engine)
+                for edge_id in targets_by_edge:
+                    # get edge and targets
+                    edge, targets = targets_by_edge[edge_id]
+                    # update the edge state
+                    if edge.data is None:
+                        edge.data = {
+                            'state': new_state
+                        }
+                    elif isinstance(edge.data, dict):
+                        edge.data['state'] = new_state
+                    edge.save(manager=manager)
+                    # send check events
+                    for target in targets:
+                        # create event to propagate with source and elt ids
+                        event_to_propagate = forger(
+                            connector=Topology.TYPE,
+                            connector_name=Topology.TYPE,
+                            event_type=Check.get_type(),
+                            component=target.id,
+                            state=new_state,
+                            source_type=Topology.TYPE,
+                            id=target.id,
+                            source=elt.id
+                        )
+                        # publish the event in the context of the engine
+                        publish(event=event_to_propagate, engine=engine)
 
     return event

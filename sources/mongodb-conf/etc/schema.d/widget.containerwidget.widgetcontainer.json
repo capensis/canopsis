@@ -7,6 +7,9 @@
 	"categories": [{
 		"title": "General",
 		"keys":["title", "widgetslotTemplate"]
+	},{
+		"title": "Mixins",
+		"keys":["mixins"]
 	}],
 	"properties": {
 		"xtype": {"type": "string"},
@@ -15,6 +18,14 @@
 			"type": "string",
 			"enum": ["widgetslot-default", "widgetslot-grey"],
 			"role": "simplelist"
+		},
+		"mixins": {
+			"type": "array",
+			"role": "mixins",
+			"items": {
+				"type": "string"
+			},
+			"reorderable": true
 		}
 	}
 }

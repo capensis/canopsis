@@ -1,0 +1,53 @@
+{
+    "type": "object",
+    "categories": [
+        {
+            "title": "General",
+            "keys":["title", "graph_id", "entity"]
+        }, {
+            "title": "Options",
+            "keys":["refreshableWidget", "refreshInterval"]
+        }
+    ],
+    "properties": {
+        "crecord_type": {
+            "type": "string",
+            "required": true,
+            "default": "topology"
+        },
+        "graph_type": {
+            "type": "string",
+            "default": "topology",
+            "required": true
+        },
+        "graph_id": {
+            "type": "string",
+            "default": "test",
+            "required": true
+        },
+        "entity": {
+            "type": "string",
+            "required": false
+        },
+        "_cls": {
+            "type": "string",
+            "default": "canopsis.topology.elements.Topology",
+            "required": true
+        },
+        "_type": {
+            "type": "string",
+            "default": "graph",
+            "required": true
+        },
+        "type": {
+            "type": "string",
+            "default": "topology",
+            "required": true
+        },
+        "elts": {
+            "type": "array",
+            "default": [],
+            "required": true
+        }
+    }
+}

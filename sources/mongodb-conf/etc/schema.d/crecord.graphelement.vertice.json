@@ -12,7 +12,8 @@
     }],
     "properties": {
         "crecord_type": {
-            "enum": ["vertice"],
+            "type": "string",
+            "default": "vertice",
             "required": true
         },
         "_cls": {

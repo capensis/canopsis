@@ -24,10 +24,10 @@
             "actionbutton-removeselection"
           ],
           "mixins": [
-            "Sortablearray",
-            "Arraysearch",
-            "Pagination",
-            "Crud"
+            { "name" : "Sortablearray" },
+            { "name" : "Arraysearch" },
+            { "name" : "Pagination" },
+            { "name" : "Crud" }
           ],
           "displayed_columns": [
             "crecord_type",
@@ -53,10 +53,10 @@
             "actionbutton-removeselection"
           ],
           "mixins": [
-            "Sortablearray",
-            "Arraysearch",
-            "Pagination",
-            "Crud"
+            { "name" : "Sortablearray" },
+            { "name" : "Arraysearch" },
+            { "name" : "Pagination" },
+            { "name" : "Crud" }
           ],
           "displayed_columns": [
             "crecord_type",
@@ -81,10 +81,10 @@
             "actionbutton-removeselection"
           ],
           "mixins": [
-            "Sortablearray",
-            "Arraysearch",
-            "Pagination",
-            "Crud"
+            { "name" : "Sortablearray" },
+            { "name" : "Arraysearch" },
+            { "name" : "Pagination" },
+            { "name" : "Crud" }
           ],
           "displayed_columns": [
             "crecord_type",

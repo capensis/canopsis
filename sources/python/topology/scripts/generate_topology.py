@@ -32,7 +32,7 @@ def generate_context_topology(name='test'):
     and edges are dependencies from components to resources, or from resources
     to the topology.
 
-    :param str name: topology name
+    :param str name: topology name.
     """
 
     # initialize context and topology
@@ -42,10 +42,12 @@ def generate_context_topology(name='test'):
     # clean old topology
     manager.del_elts(ids=name)
 
-    topology = manager.get_graphs(ids=name)
+    topology = manager.get_graphs(ids=name, add_elts=True)
     if topology is not None:  # if topology already exists, delete content
-        manager.del_elts(ids=topology.elts)
-        topology.delete(manager)
+        for elt_id in topology._gelts:
+            elt = topology._gelts[elt_id]
+            elt.delete(manager=manager)
+        topology.delete(manager=manager)
     # init the topology
     topology = Topology(_id=name)
 
@@ -56,7 +58,7 @@ def generate_context_topology(name='test'):
         :param GraphElement elt: elt to add to topology.
         """
 
-        topology.add_elts(elt)
+        topology.add_elts(elt.id)
         elt.save(manager)
 
     components = context.find('component')
@@ -83,7 +85,7 @@ def generate_context_topology(name='test'):
             addElt(edge)  # add edge in topology
 
     # save topology
-    topology.save(manager)
+    topology.save(manager=manager)
 
 
 if __name__ == '__main__':
