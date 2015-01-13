@@ -35,17 +35,11 @@ class KnownValues(unittest.TestCase):
         pass
 
     def test_01_Init(self):
-        global ACCOUNT
-        ACCOUNT = Account(user="wpain", lastname="Pain", firstname="William", mail="wpain@capensis.fr", group="capensis", groups=['group.titi', 'group.tata'])
-        global GROUP
-
         user_account = Account(user="william", group="capensis")
-        user_account.cat()
-
-    def test_02_Cat(self):
-        ACCOUNT.cat()
 
     def test_03_Passwd(self):
+        ACCOUNT = Account(user="william", group="capensis")
+
         passwd = 'root'
         ACCOUNT.passwd(passwd)
 
@@ -60,102 +54,25 @@ class KnownValues(unittest.TestCase):
         if not ACCOUNT.check_tmp_cryptedKey(cryptedKey):
             raise Exception('Invalid cryptedKey ... (%s)' % authkey)
 
-        ACCOUNT.cat()
-
     def test_04_authkey(self):
+        ACCOUNT = Account(user="william", group="capensis")
+
         authkey = ACCOUNT.get_authkey()
         if not authkey:
             raise Exception('Invalid authkey ... (%s)' % authkey)
 
     def test_05_Store(self):
+        ACCOUNT = Account(user="william", group="capensis")
+
         STORAGE.put(ACCOUNT)
-        ACCOUNT.cat()
-    """
-    def test_05_GetAll(self):
-        account = Account(user="ojan", lastname="Jan", firstname="Olivier", mail="ojan@capensis.fr", group="capensis")
-        STORAGE.put(account)
-
-        accounts = caccount_getall(STORAGE)
-
-        if len(accounts) != 2:
-            raise Exception('caccount_getall dont work ...')
-    """
-    def test_06_Edit(self):
-        ACCOUNT.chgrp('toto')
-        ACCOUNT.cat()
-        STORAGE.put(ACCOUNT)
-
-    def test_07_CheckGet(self):
-        record = STORAGE.get("account.wpain")
-        record.cat()
-        account = Account(record)
-        account.cat()
-
-        if account.user != 'wpain':
-            raise Exception('account.user: Corruption in load ...')
-
-        if account.group != 'group.toto':
-            raise Exception('account.group: Corruption in load ...')
-
-        if account.groups != ['group.titi', 'group.tata']:
-            raise Exception('account.groups: Corruption in load ...')
-
-    def test_08_CheckEdit(self):
-        account = caccount_get(STORAGE, "wpain")
-
-        if account.group != 'group.toto':
-            raise Exception('Impossible to edit account in DB ...')
 
     def test_09_Remove(self):
-        ## Anonymous cant remove account
+        # Anonymous cant remove account
         self.assertRaises(ValueError, STORAGE.remove, ACCOUNT, Account())
 
-        ## But root can ;)
+        # But root can ;)
         STORAGE.remove(ACCOUNT)
-    """
-    def test_10_check_addgroup_removegroup(self):
-        GROUP = Group(name='mygroup')
-        ACCOUNT.add_in_groups(GROUP)
 
-        if GROUP._id not in ACCOUNT.groups:
-            raise Exception('Error while add_in_groups, group not added')
-        if ACCOUNT._id not in GROUP.account_ids:
-            raise Exception('Error while add_in_groups, account not added to group')
-
-        ACCOUNT.remove_from_groups(GROUP)
-
-        if GROUP._id in ACCOUNT.groups:
-            raise Exception('Error while remove_from_groups, group not removed')
-        if ACCOUNT._id in GROUP.account_ids:
-            raise Exception('Error while remove_from_groups, group not removed from account')
-    """
-    def test_11_check_group_func_autosav(self):
-        account = Account(user='test', lastname='testify', storage=STORAGE)
-        group = Group(name='Mgroup')
-
-        STORAGE.put(account)
-        STORAGE.put(group)
-
-        account.add_in_groups(group._id)
-
-        bdd_account = Account(STORAGE.get(account._id))
-        bdd_group = Group(STORAGE.get(group._id))
-
-        if group._id not in bdd_account.groups:
-            raise Exception('Group corruption while stock in bdd after add in group')
-        if account._id not in bdd_group.account_ids:
-            raise Exception('Group corruption while stock in bdd after add in group')
-        '''
-        account.remove_from_groups(group._id)
-
-        bdd_account = Account(STORAGE.get(bdd_account._id))
-        bdd_group = Group(STORAGE.get(bdd_group._id))
-
-        if group._id in bdd_account.groups:
-            raise Exception('Group corruption while stock in bdd after remove from group')
-        if account._id in bdd_group.account_ids:
-            raise Exception('Group corruption while stock in bdd after remove from group')
-        '''
     def test_99_DropNamespace(self):
         STORAGE.drop_namespace('unittest')
 

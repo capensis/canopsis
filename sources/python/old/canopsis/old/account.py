@@ -57,13 +57,9 @@ class Account(Record):
         self.external = False
 
         if isinstance(record, Record):
-            Record.__init__(
-                self, _id=self._id, record=record, _type=self.type,
-                *args, **kargs)
+            Record.__init__(self, _id=self._id, record=record, *args, **kargs)
         else:
-            Record.__init__(
-                self, _id=self._id, owner="account.%s" % self.user,
-                group=self.group, _type=self.type, *args, **kargs)
+            Record.__init__(self, _id=self._id, *args, **kargs)
 
     def get_full_mail(self):
         return "\"%s %s\" <%s>" % (self.firstname, self.lastname, self.mail)
@@ -156,71 +152,6 @@ class Account(Record):
         print(" + Owner:\t", self.owner)
         print(" + Group:\t", self.group)
         print(" + Groups:\t", self.groups, "\n")
-
-    """
-    def add_in_groups(self, groups, storage=None):
-        if not storage:
-            storage = self.storage
-
-        if not isinstance(groups, list):
-            groups = [groups]
-
-        # String _id to group
-        group_list = []
-        for group in groups:
-            if isinstance(group, group):
-                group_list.append(group)
-            elif isinstance(group, basestring):
-                if storage:
-                    try:
-                        record = storage.get(group)
-                        group_list.append(Group(record, storage=storage))
-                    except Exception as err:
-                        raise Exception('Group not found: %s', err)
-
-        # Add to groups
-        for group in group_list:
-                if group._id not in self.groups:
-                    self.groups.append(group._id)
-                    if self.storage:
-                        self.save()
-
-                if self._id not in group.account_ids:
-                    group.account_ids.append(self._id)
-                    if group.storage:
-                        group.save()
-
-    def remove_from_groups(self, groups, storage=None):
-        if not storage:
-            storage = self.storage
-
-        if not isinstance(groups, list):
-                groups = [groups]
-
-        # String _id to group
-        group_list = []
-        for group in groups:
-            if isinstance(group, Record):
-                group_list.append(group)
-            elif isinstance(group, basestring):
-                if storage:
-                    try:
-                        record = storage.get(group)
-                        group_list.append(group(record, storage=storage))
-                    except Exception as err:
-                        raise Exception('Group not found: %s', err)
-        # Remove groups
-        for group in group_list:
-                if group._id in self.groups:
-                    self.groups.remove(group._id)
-                    if self.storage:
-                        self.save()
-
-                if self._id in group.account_ids:
-                    group.account_ids.remove(self._id)
-                    if group.storage:
-                        group.save()
-    """
 
 
 def caccount_getall(storage):
