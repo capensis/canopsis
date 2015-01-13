@@ -114,11 +114,10 @@ class Archiver(object):
             backend = self.storage.get_backend(collection)
             bulk = backend.initialize_unordered_bulk_op()
             for operation in operations:
-                _id = operation['event']['_id']
+                _id = get_routingkey(operation['event'])
                 # Could be cleaner/faster without record system ...
                 record = Record(operation['event'])
                 record.type = "event"
-                record.chmod("o+r")
                 event = record.dump()
                 # Record looses given id, so I set it again ...
                 event['_id'] = _id

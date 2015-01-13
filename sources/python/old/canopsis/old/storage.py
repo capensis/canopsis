@@ -275,19 +275,17 @@ class Storage(object):
         for record in records:
             _id = record._id
 
-            if not record.owner:
-                record.chown(account.user)
-
-            if not record.group:
-                record.chgrp(account.group)
-
             access = False
 
             new_record = True
             oldrecord = None
             if _id:
                 try:
-                    oldrecord = self.get(_id, namespace=namespace, account=self.root_account)
+                    oldrecord = self.get(
+                        _id,
+                        namespace=namespace,
+                        account=self.root_account
+                    )
                     new_record = False
                 except:
                     pass
@@ -299,8 +297,8 @@ class Storage(object):
                 else:
                     access = oldrecord.check_write(account)
             else:
-                ## New record
-                ## Todo: check if account have right to create record ...
+                # New record
+                # Todo: check if account have right to create record ...
                 access = True
 
             if not access:
@@ -308,44 +306,63 @@ class Storage(object):
                 raise ValueError("Access denied")
 
             if new_record:
-                ## Insert new record
+                # Insert new record
                 self.logger.debug("Insert new record")
 
                 try:
-                    ## Check if record have binary and store in grid fs
-                    if record.binary:
-                        record.data['binary_id'] = self.put_binary(record.binary, record.data['file_name'], record.data['content_type'])
+                    # Check if record have binary and store in grid fs
+                    if getattr(record, 'binary', None):
+                        record.data['binary_id'] = self.put_binary(
+                            record.binary,
+                            record.data['file_name'],
+                            record.data['content_type']
+                        )
 
                     record.write_time = int(time.time())
                     data = record.dump()
                     data['crecord_creation_time'] = record.write_time
 
-                    ## Del it if 'None'
+                    # Del it if 'None'
                     if not data['_id']:
                         del data['_id']
 
                     if not _id:
-                        _id = backend.insert(data, safe=self.mongo_safe, w=1)
+                        _id = backend.insert(
+                            data,
+                            safe=self.mongo_safe,
+                            w=1
+                        )
                     else:
-                        backend.update({'_id': _id}, data, safe=self.mongo_safe, upsert=True)
+                        backend.update(
+                            {'_id': _id},
+                            data,
+                            safe=self.mongo_safe,
+                            upsert=True
+                        )
 
-                    self.logger.debug("Successfully inserted (_id: '%s')" % _id)
+                    self.logger.debug("Inserted (_id: '{}'')".format(_id))
 
                 except Exception as err:
-                    self.logger.error("Impossible to store !\nReason: %s" % err)
-                    self.logger.debug("Record dump:\n%s" % record.dump())
-                    raise ValueError("Impossible to insert (%s)" % err)
+                    self.logger.error(
+                        "Impossible to store !\nReason: {}".format(err)
+                    )
+                    self.logger.debug("Dump:\n {}".format(record.dump()))
+                    raise ValueError("Impossible to insert {}".format(err))
 
                 record._id = _id
                 return_ids.append(_id)
             else:
-                ## Update record
+                # Update record
                 self.logger.debug("Update record '%s'" % _id)
 
                 try:
-                    ## Check if record have binary and store in grid fs
-                    if record.binary:
-                        record.data['binary_id'] = self.put_binary(record.binary, record.data['file_name'], record.data['content_type'])
+                    # Check if record have binary and store in grid fs
+                    if getattr(record, 'binary', None):
+                        record.data['binary_id'] = self.put_binary(
+                            record.binary,
+                            record.data['file_name'],
+                            record.data['content_type']
+                        )
 
                     record.write_time = int(time.time())
                     data = record.dump()
@@ -354,20 +371,33 @@ class Storage(object):
                     _id = self.clean_id(_id)
 
                     if mset:
-                        ret = backend.update({'_id': _id}, {"$set": data}, upsert=True, safe=self.mongo_safe)
+                        ret = backend.update(
+                            {'_id': _id},
+                            {"$set": data},
+                            upsert=True,
+                            safe=self.mongo_safe
+                        )
                     else:
-                        ret = backend.update({'_id': _id}, data, upsert=True, safe=self.mongo_safe)
+                        ret = backend.update(
+                            {'_id': _id},
+                            data,
+                            upsert=True,
+                            safe=self.mongo_safe
+                        )
 
                     if self.mongo_safe:
                         if ret['updatedExisting']:
-                            self.logger.debug("Successfully updated (_id: '%s')" % _id)
+                            self.logger.debug(
+                                "Updated (_id: '{}')".format(_id)
+                            )
                         else:
-                            self.logger.debug("Successfully saved (_id: '%s')" % _id)
+                            self.logger.debug("Saved (_id: '{}')".format(_id))
 
                 except Exception as err:
-                    self.logger.error("Impossible to store !\nReason: %s" % err)
-                    self.logger.debug("Record dump:\n%s" % record.dump())
-                    raise ValueError("Impossible to store (%s)" % err)
+                    self.logger.error(
+                        "Impossible to store !\nReason: {}".format(err))
+                    self.logger.debug("Record dump:\n{}".format(record.dump()))
+                    raise ValueError("Impossible to store ({})".format(err))
 
                 record._id = _id
                 return_ids.append(_id)

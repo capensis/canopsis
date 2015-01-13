@@ -78,6 +78,5 @@ def create_view(_id, name, data, clear, mod='o+r'):
 
     if record is None:
         logger.info(' + Create view {}'.format(_id))
-        record = Record(data, _type='view', name=name, group='group.CPS_view')
-        record.chmod(mod)
+        record = Record(data, _type='view', name=name)
         storage.put(record)

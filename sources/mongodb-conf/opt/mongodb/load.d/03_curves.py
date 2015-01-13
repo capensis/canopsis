@@ -99,9 +99,6 @@ def init():
                 _type='curve'
             )
 
-            record.chmod('g+w')
-            record.chmod('o+r')
-            record.chgrp('group.CPS_curve_admin')
             storage.put(record)
 
 

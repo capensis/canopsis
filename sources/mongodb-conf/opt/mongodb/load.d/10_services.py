@@ -71,7 +71,6 @@ def create_cservice(_id, name, data, mod='o+r', autorm=True, internal=False):
         pass
 
     logger.info(" + Create cservice '%s'" % name)
-    record = Record(data, _type='cservice', name=name, group='group.CPS_cservice_admin')
-    record.chmod(mod)
+    record = Record(data, _type='cservice', name=name)
     storage.put(record)
     return record
