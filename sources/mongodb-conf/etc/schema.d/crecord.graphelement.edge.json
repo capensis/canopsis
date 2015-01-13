@@ -3,8 +3,8 @@
     "categories": [{
         "title": "General",
         "keys": [
-            "info",
-            "weight"
+            "weight",
+            "directed"
         ]
     }],
     "properties": {

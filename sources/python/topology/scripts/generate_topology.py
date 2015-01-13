@@ -26,7 +26,7 @@ from canopsis.topology.elements import Edge, Node, Topology
 from argparse import ArgumentParser
 
 
-def generate_context_topology(name='test'):
+def generate_context_topology(name='context'):
     """
     Generate a context topology where nodes are components and resources,
     and edges are dependencies from components to resources, or from resources
@@ -91,7 +91,11 @@ def generate_context_topology(name='test'):
 if __name__ == '__main__':
 
     parser = ArgumentParser(description='Generate a topology')
-    parser.add_argument(dest='name', help='topology name to generate')
+    parser.add_argument(
+        dest='name',
+        help='topology name to generate (default: context)',
+        default='context'
+    )
     args = parser.parse_args()
 
     topology_name = args.name

@@ -16,7 +16,8 @@
         "info": {
             "type": "object",
             "required": false,
-            "default": {}
+            "default": {},
+            "role": "json"
         }
     }
 }

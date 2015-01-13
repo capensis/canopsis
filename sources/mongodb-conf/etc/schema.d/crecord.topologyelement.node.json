@@ -3,8 +3,7 @@
     "categories": [{
         "title": "General",
         "keys": [
-            "entity",
-            "operator"
+            "info"
         ]
     }],
     "properties": {
@@ -23,16 +22,10 @@
             "default": "vertice",
             "required": true
         },
-        "entity": {
+        "type": {
             "type": "string",
-            "default": "",
-            "required": false
-        },
-        "operator": {
-            "type": "object",
-            "required": false,
-            "role": "json",
-            "default": {}
+            "default": "node",
+            "required": true
         }
     }
 }
