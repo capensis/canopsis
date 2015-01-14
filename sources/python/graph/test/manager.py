@@ -34,6 +34,8 @@ class GraphTest(TestCase):
 
         self.manager = GraphManager(data_scope='test_graph')
 
+        self.manager.del_elts()
+
         self.count = 10
         self.graphs = [None] * 10
         self.types = (i for i in range(self.count))

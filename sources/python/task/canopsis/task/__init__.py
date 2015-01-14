@@ -50,14 +50,6 @@ TASK_PARAMS = 'params'  #: task params field name in task conf
 TASK_ID = 'id'  #: task id field name in task conf
 
 
-def task(**kwargs):
-    """
-    Default task signature.
-    """
-
-    pass
-
-
 class TaskError(Exception):
     """
     Default task error.
@@ -68,30 +60,6 @@ class TaskError(Exception):
 
 # global set of tasks by ids
 __TASKS_BY_ID = {}
-
-
-def get_task(_id, cache=True):
-    """
-    Get task related to an id which could be:
-
-    - a registered task id.
-    - a python path to a function.
-
-    :param str id: task id to get.
-    :param bool cache: use cache system to quick access to task
-        (True by default).
-
-    :raises ImportError: if task is not found in runtime.
-    """
-
-    result = None
-
-    if _id in __TASKS_BY_ID:
-        result = __TASKS_BY_ID[_id]
-    else:
-        result = lookup(path=_id, cached=cache)
-
-    return result
 
 
 def register_tasks(force=False, **tasks):
@@ -156,8 +124,40 @@ def register_task(_id=None, force=False):
 
 # register the function register_tasks
 register_task()(register_tasks)
-# register the function get_task
-register_task()(get_task)
+
+
+@register_task
+def get_task(_id, cache=True):
+    """
+    Get task related to an id which could be:
+
+    - a registered task id.
+    - a python path to a function.
+
+    :param str id: task id to get.
+    :param bool cache: use cache system to quick access to task
+        (True by default).
+
+    :raises ImportError: if task is not found in runtime.
+    """
+
+    result = None
+
+    if _id in __TASKS_BY_ID:
+        result = __TASKS_BY_ID[_id]
+    else:
+        result = lookup(path=_id, cached=cache)
+
+    return result
+
+
+@register_task
+def task(**kwargs):
+    """
+    Default task signature.
+    """
+
+    pass
 
 
 @register_task
@@ -176,6 +176,7 @@ def unregister_tasks(*ids):
         __TASKS_BY_ID.clear()
 
 
+@register_task
 def get_task_with_params(conf, cache=True):
     """
     Get callable task processing with params.

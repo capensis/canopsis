@@ -1,8 +1,8 @@
 #!/bin/bash
 
 NAME="python"
-VERSION=2.7.3
-RELEASE=3
+VERSION=2.7.9
+RELEASE=1
 DESCRIPTION=""
 REQUIRES="canohome"
 

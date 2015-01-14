@@ -239,17 +239,7 @@ class GraphManager(MiddlewareRegistry):
             if isinstance(elt, dict):
                 elt = GraphElement.new_element(**elt)
             # save elt
-            elt.save(self, cache=cache)
-
-        # save elts in graphs
-        if graph_ids is not None:
-            # ensure graph_ids such as an array of graph ids
-            if isinstance(graph_ids, str):
-                graph_ids = [graph_ids]
-            graphs = self.get_graphs(ids=graph_ids)
-            for graph in graphs:
-                graph.add_elts(elts)
-                graph.save(self, cache=cache)
+            elt.save(self, cache=cache, graph_ids=graph_ids)
 
     def remove_elts(self, ids, graph_ids=None, cache=False):
         """
