@@ -3,9 +3,22 @@
     "categories": [{
         "title": "General",
         "keys": [
+            "cid",
+            "type",
+            "info"
         ]
     }],
     "properties": {
+        "crecord_type": {
+            "type": "string",
+            "default": "graphelement",
+            "required": false
+        },
+        "crecord_name": {
+            "type": "string",
+            "default": "",
+            "required": true
+        },
         "cid": {
             "type": "string",
             "required": true

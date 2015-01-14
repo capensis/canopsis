@@ -4,7 +4,9 @@
         "title": "General",
         "keys": [
             "weight",
-            "directed"
+            "directed",
+            "type",
+            "info"
         ]
     }],
     "properties": {

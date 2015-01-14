@@ -3,19 +3,12 @@
     "categories": [{
         "title": "General",
         "keys": [
-            "crecord_name",
-            "info",
+            "cid",
             "type",
-            "_cls",
-            "_type"
+            "info"
         ]
     }],
     "properties": {
-        "crecord_type": {
-            "type": "string",
-            "default": "vertice",
-            "required": true
-        },
         "_cls": {
             "type": "string",
             "default": "canopsis.graph.elements.Vertice",
