@@ -37,7 +37,7 @@ such as those defined in the canopsis.topology.rule.action module.
 """
 
 from canopsis.old.event import forger
-from canopsis.topology.elements import Topology, Node
+from canopsis.topology.elements import Topology, TopoNode
 from canopsis.topology.manager import TopologyManager
 from canopsis.context.manager import Context
 from canopsis.task import register_task
@@ -92,12 +92,12 @@ def event_processing(event, engine, manager=None, **kwargs):
         # iterate on elts
         for elt in elts:
             # save old state in order to check for its modification
-            old_state = Node.state(elt)
+            old_state = TopoNode.state(elt)
 
             # process task
-            Node.process(elt, event=event, manager=manager, **kwargs)
+            TopoNode.process(elt, event=event, manager=manager, **kwargs)
 
-            new_state = Node.state(elt)
+            new_state = TopoNode.state(elt)
             # propagate the change of state in case of new state
             if old_state != new_state:
                 # get next elts

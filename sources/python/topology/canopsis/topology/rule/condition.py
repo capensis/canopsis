@@ -21,7 +21,7 @@
 """
 Module in charge of defining main topological rule conditions.
 
-A topological node doesn't require a condition.
+A topological toponode doesn't require a condition.
 
 In addition to this condition, it is possible to test another condition which
 refers to source nodes if they exist.
@@ -40,7 +40,7 @@ Related rule actions are defined in ``canopsis.topology.rule.action`` module.
 
 from canopsis.common.init import basestring
 from canopsis.topology.manager import TopologyManager
-from canopsis.topology.elements import Node
+from canopsis.topology.elements import TopoNode
 from canopsis.check import Check
 from canopsis.task import register_task
 
@@ -51,50 +51,50 @@ SOURCES_BY_EDGES = 'sources_by_edges'
 
 
 @register_task
-def new_state(event, node, state=None, manager=None, **kwargs):
+def new_state(event, toponode, state=None, manager=None, **kwargs):
     """
-    Condition triggered when state is different than node state.
+    Condition triggered when state is different than toponode state.
 
     :param dict event: event from where get state if input state is None.
-    :param Node node: node from where check if node state != input state.
-    :param int state: state to compare with input node state.
+    :param TopoNode toponode: toponode from where check if toponode state != input state.
+    :param int state: state to compare with input toponode state.
     """
 
     if manager is None:
         manager = tm
 
-    if isinstance(node, basestring):
-        node = manager.get_elts(ids=node)
+    if isinstance(toponode, basestring):
+        toponode = manager.get_elts(ids=toponode)
 
     # if state is None, use event state
     if state is None:
         state = event[Check.STATE]
 
-    # True if node state is different than state
-    result = Node.state(node) != state
+    # True if toponode state is different than state
+    result = TopoNode.state(toponode) != state
 
     return result
 
 
 @register_task
 def at_least(
-    event, ctx, node, state=Check.OK, min_weight=1, rrule=None, f=None,
+    event, ctx, toponode, state=Check.OK, min_weight=1, rrule=None, f=None,
     manager=None, **kwargs
 ):
     """
-    Generic condition applied on sources of node which check if at least source
+    Generic condition applied on sources of toponode which check if at least source
         nodes check a condition.
 
     :param dict event: processed event.
-    :param dict ctx: rule context which must contain rule node.
-    :param Node node: node to check.
+    :param dict ctx: rule context which must contain rule toponode.
+    :param TopoNode toponode: toponode to check.
     :param int state: state to check among sources nodes.
     :param float min_weight: minimal weight (default 1) to reach in order to
         validate this condition. If None, condition results in checking all
             sources.
     :param rrule rrule: rrule to consider in order to check condition in time.
-    :param f: function to apply on source node state. If None, use equality
-        between input state and source node state.
+    :param f: function to apply on source toponode state. If None, use equality
+        between input state and source toponode state.
 
     :return: True if condition is checked among source nodes.
     :rtype: bool
@@ -105,10 +105,10 @@ def at_least(
     if manager is None:
         manager = tm
 
-    if isinstance(node, basestring):
-        node = manager.get_elts(ids=node)
+    if isinstance(toponode, basestring):
+        toponode = manager.get_elts(ids=toponode)
 
-    sources_by_edges = manager.get_sources(ids=node.id, add_edges=True)
+    sources_by_edges = manager.get_sources(ids=toponode.id, add_edges=True)
 
     if sources_by_edges and min_weight is None:
         # if edges & checking all nodes is required, result is True by default
@@ -120,7 +120,7 @@ def at_least(
         edge, sources = sources_by_edges[edge_id]
         # get edge_weight which is 1 by default
         for source in sources:
-            source_state = Node.state(source)
+            source_state = TopoNode.state(source)
             if (source_state == state if f is None else f(source_state)):
                 if min_weight is not None:  # if min_weight is not None
                     min_weight -= edge.weight  # remove edge_weight from result
@@ -145,13 +145,13 @@ def _all(**kwargs):
     Check if all source nodes match with input check_state.
 
     :param dict event: processed event.
-    :param dict ctx: rule context which must contain rule node.
-    :param Node node: node to check.
-    :param int min_weight: minimal node weight to check.
+    :param dict ctx: rule context which must contain rule toponode.
+    :param TopoNode toponode: toponode to check.
+    :param int min_weight: minimal toponode weight to check.
     :param int state: state to check among sources nodes.
     :param rrule rrule: rrule to consider in order to check condition in time.
-    :param f: function to apply on source node state. If None, use equality
-        between input state and source node state.
+    :param f: function to apply on source toponode state. If None, use equality
+        between input state and source toponode state.
 
     :return: True if condition is checked among source nodes.
     :rtype: bool
@@ -171,13 +171,13 @@ def nok(**kwargs):
     Condition which check if source nodes are not ok.
 
     :param dict event: processed event.
-    :param dict ctx: rule context which must contain rule node.
-    :param Node node: node to check.
-    :param int min_weight: minimal node weight to check.
+    :param dict ctx: rule context which must contain rule toponode.
+    :param TopoNode toponode: toponode to check.
+    :param int min_weight: minimal toponode weight to check.
     :param int state: state to check among sources nodes.
     :param rrule rrule: rrule to consider in order to check condition in time.
-    :param f: function to apply on source node state. If None, use equality
-        between input state and source node state.
+    :param f: function to apply on source toponode state. If None, use equality
+        between input state and source toponode state.
 
     :return: True if condition is checked among source nodes.
     :rtype: bool

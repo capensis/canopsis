@@ -21,7 +21,7 @@
 
 from canopsis.context.manager import Context
 from canopsis.topology.manager import TopologyManager
-from canopsis.topology.elements import Edge, Node, Topology
+from canopsis.topology.elements import StatePropagation, Node, Topology
 
 from argparse import ArgumentParser
 
@@ -71,17 +71,17 @@ def generate_context_topology(name='context'):
 
         resources = context.find('resource', context=ctx)
         if resources:  # link component to all its resources with the same edge
-            edge = Edge(sources=component_node.id, targets=[])
+            edge = StatePropagation(sources=component_node.id, targets=[])
             addElt(edge)  # add edge in topology
             for resource in resources:
                 resource_id = context.get_entity_id(resource)
                 resource_node = Node(entity=resource_id)
                 addElt(resource_node)  # add edge in topology
                 edge.targets.append(resource_id)
-                root_edge = Edge(sources=resource_node.id, targets=topology.id)
+                root_edge = StatePropagation(sources=resource_node.id, targets=topology.id)
                 addElt(root_edge)  # add edge in topology
         else:  # if no resources, link the component to the topology
-            edge = Edge(sources=component_node.id, targets=topology.id)
+            edge = StatePropagation(sources=component_node.id, targets=topology.id)
             addElt(edge)  # add edge in topology
 
     # save topology

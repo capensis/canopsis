@@ -22,7 +22,7 @@
 from unittest import TestCase, main
 
 from canopsis.context.manager import Context
-from canopsis.topology.elements import Node, Edge
+from canopsis.topology.elements import TopoNode, TopoEdge
 from canopsis.topology.manager import TopologyManager
 from canopsis.topology.process import event_processing
 from canopsis.topology.rule.action import change_state
@@ -74,7 +74,7 @@ class ProcessingTest(TestCase):
         }
         entity = self.context.get_entity(self.check)
         entity_id = self.context.get_entity_id(entity)
-        self.node = Node(entity=entity_id)
+        self.node = TopoNode(entity=entity_id)
         self.node.save(self.manager)
         self.count = 0
         self.amqp = ProcessingTest._Amqp(self)
@@ -96,9 +96,9 @@ class ProcessingTest(TestCase):
         Test in case of one bound node
         """
 
-        source = Node()
+        source = TopoNode()
         source.save(self.manager)
-        edge = Edge(sources=source.id, targets=self.node.id)
+        edge = TopoEdge(sources=source.id, targets=self.node.id)
         edge.save(self.manager)
 
         event_processing(event=self.check, engine=self, manager=self.manager)
@@ -113,13 +113,13 @@ class ProcessingTest(TestCase):
             change_state,
             state=Check.WARNING
         )
-        Node.task(self.node, change_state_conf)
+        TopoNode.task(self.node, change_state_conf)
         self.node.save(self.manager)
 
         event_processing(event=self.check, engine=self, manager=self.manager)
 
         target = self.manager.get_elts(ids=self.node.id)
-        self.assertEqual(Node.state(target), Check.WARNING)
+        self.assertEqual(TopoNode.state(target), Check.WARNING)
 
     def test_chain_change_state(self):
         """
@@ -138,26 +138,26 @@ class ProcessingTest(TestCase):
         )
 
         # create a root node with the change state task
-        root = Node(task=change_state_conf)
+        root = TopoNode(task=change_state_conf)
         root.save(self.manager)
         # create a node with the change state task
-        node = Node(task=change_state_conf)
+        node = TopoNode(task=change_state_conf)
         node.save(self.manager)
         # create a leaf with the change state task
-        Node.task(self.node, change_state_conf)
+        TopoNode.task(self.node, change_state_conf)
         self.node.save(self.manager)
         # link node to root
-        rootnode = Edge(targets=root.id, sources=node.id)
+        rootnode = TopoEdge(targets=root.id, sources=node.id)
         rootnode.save(self.manager)
         # link self.node to node
-        selfnodenode = Edge(targets=node.id, sources=self.node.id)
-        selfnodenode.save(self.manager)
+        self_node = TopoEdge(targets=node.id, sources=self.node.id)
+        self_node.save(self.manager)
 
         event_processing(event=self.check, engine=self, manager=self.manager)
         self.assertEqual(self.count, 2)
 
         self.node = self.manager.get_elts(ids=self.node.id)
-        self.assertEqual(Node.state(self.node), Check.WARNING)
+        self.assertEqual(TopoNode.state(self.node), Check.WARNING)
 
 if __name__ == '__main__':
     main()
