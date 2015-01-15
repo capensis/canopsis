@@ -20,8 +20,7 @@
 
 
 from canopsis.context.manager import Context
-
-
+from canopsis.topology.format import formatter
 
 class Factory(object):
     """docstring for Factory"""
