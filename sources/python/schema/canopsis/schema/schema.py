@@ -167,7 +167,7 @@ class Schema(object):
           [False, None] otherwise
         :rtype: list
 
-        .. info:: <schema_type> can either be 'XMLSchema' or 'XSLT'
+        .. note:: <schema_type> can either be 'XMLSchema' or 'XSLT'
         """
 
         if schema in self.get_existing_unique_keys():
