@@ -18,7 +18,7 @@
           "default_filter" : "{\"$or\":[{\"$and\":[{\"ack.isAck\":{\"$ne\":true}},{\"state\":{\"$ne\":0}},{\"event_type\":{\"$eq\":\"check\"}}]}]}",
           "refreshInterval": 40,
           "refreshableWidget" : true,
-          "itemsPerPage" : 5,
+          "itemsPerPage" : 50,
           "listed_crecord_type": "event",
           "title": "Bac à évenements",
           "maximized_column_index": 5,
