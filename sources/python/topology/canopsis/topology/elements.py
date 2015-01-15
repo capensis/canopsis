@@ -153,7 +153,13 @@ class TopoNode(Vertice):
 
         if value is not None:
             elt.data[TopoNode.ENTITY] = value
-        return elt.data[TopoNode.ENTITY] if TopoNode.ENTITY in elt.data else None
+
+        result = None
+
+        if TopoNode.ENTITY in elt.data:
+            result = elt.data[TopoNode.ENTITY]
+
+        return result
 
     @staticmethod
     def state(elt, value=None):

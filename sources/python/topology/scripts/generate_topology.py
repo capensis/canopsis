@@ -77,8 +77,11 @@ def generate_context_topology(name='context'):
                 resource_id = context.get_entity_id(resource)
                 resource_node = TopoNode(entity=resource_id)
                 addElt(resource_node)  # save resource node
-                edge.targets.append(resource_id)  # add resource from component
-                res2topo = TopoEdge(sources=resource_id, targets=topology.id)
+                # add resource from component
+                edge.targets.append(resource_node.id)
+                res2topo = TopoEdge(
+                    sources=resource_node.id, targets=topology.id
+                )
                 addElt(res2topo)
             if not edge.targets:  # bind topology from component if not sources
                 edge.targets.append(topology.id)
