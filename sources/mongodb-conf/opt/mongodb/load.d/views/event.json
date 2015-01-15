@@ -26,7 +26,7 @@
           "record_template" : "<div>Connecteur : {{connector}}</div><div>Composant : {{component}} / Adresse IP : {{address}}</div><div>Hostgroups : {{hostgroups}}</div><div>Ressource : {{resource}}</div><div>Message :&nbsp;<span style=\"line-height: 1.428571429;\">{{output}}</span></div>",
           "default_column_sort" : {
             "direction" : "DESC",
-            "property" : "timestamp"
+            "property" : "last_state_change"
           },
           "filters" : [
             {
