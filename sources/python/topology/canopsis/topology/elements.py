@@ -202,3 +202,10 @@ class TopoEdge(Edge):
     __slots__ = Edge.__slots__
 
     TYPE = 'topoedge'  #: topology edge type name
+
+    def __init__(self, data=None, *args, **kwargs):
+
+        super(TopoEdge, self).__init__(
+            data={} if data is None else data,
+            *args, **kwargs
+        )
