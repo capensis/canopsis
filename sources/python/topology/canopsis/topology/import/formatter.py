@@ -55,7 +55,7 @@ class Formatter(object):
       '''
       connection = Connection()
       db = connection.canopsis
-      if(kind==0):
+      if kind==0:
          query = self.TOPOQ
          json_acceptable = query.replace("'", "\"") # Format string
          query = json.loads(json_acceptable)
@@ -98,8 +98,8 @@ class Formatter(object):
       return self.data.get(value)
 
    def get_comp_graph(self):
-      ''' 
-         TODO
+      '''
+        TODO
       '''
       return self.data.get(self.TOPOIDS[0])
 
