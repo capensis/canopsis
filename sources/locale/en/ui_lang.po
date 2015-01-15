@@ -1261,8 +1261,8 @@ msgstr "Available"
 msgid "Metric"
 msgstr "Metric"
 
-msgid "last_state_change"
-msgstr "last_state_change"
+msgid "last state change"
+msgstr "last state change"
 
 msgid "Filter remains incomplete"
 msgstr "Filter remains incomplete"
