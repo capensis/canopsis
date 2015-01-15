@@ -20,28 +20,32 @@
 
 from StringIO import StringIO
 from os import listdir
-from lxml.etree import parse, tostring, XMLSchema, XSLT
+from lxml.etree import parse, tostring, XMLSchema, XSLT, XML, XMLParser
 
 from canopsis.schema.utils import get_unique_key, get_schema_path, \
     is_name_available
+from canopsis.schema.xslt2py import xslt2py
 
 
-class Schema(object):
+class FSchema(object):
 
     def __init__(self, *args, **kwargs):
-        super(Schema, self).__init__(*args, **kwargs)
+        super(FSchema, self).__init__(*args, **kwargs)
 
         #: Store both metamorphic and structural schemas in cache. They
         #: can be retrieved by their unique_key.
         self.cache = {}
         self.load_cache()
 
+        #: Factorisable schemas (xslt) are stored in a special cache,
+        #: which is first checked
+        self.factorisation_cache = {}
+        self.load_factorisation_cache()
+
     def load_cache(self):
         """
         Put each available schema in cache
         """
-
-        self.cache = {}
 
         # For the moment only one location is allowed for schemas : in
         # sys.prefix/share/canopsis/schema/xml
@@ -58,6 +62,24 @@ class Schema(object):
             # fit the unique_key requirement
             if unique_key is not None and unique_key not in self.cache:
                 self.cache[unique_key] = xschema
+
+    def load_factorisation_cache(self):
+        """
+        Put factorisable schemas in cache
+        """
+        cache_temp = self.cache.copy()
+
+        for uk, xslt in cache_temp.items():
+            if self.validate_schema(uk) == [True, 'XSLT']:
+                # Factorisable schemas are cached only if they are
+                # factorisable. If it's not, it's still in the standard
+                # cache.
+                try:
+                    parser = XMLParser(target=xslt2py())
+                    factorised_schema = XML(tostring(xslt.getroot()), parser)
+                    self.factorisation_cache[uk] = factorised_schema
+                except:
+                    pass
 
     def cache_schema(self, xschema):
         """
@@ -201,7 +223,8 @@ class Schema(object):
         """
 
         assert(self.validate_schema(schema) == [True, 'XMLSchema']), \
-            'Schema \'{}\' has not been validated as a structural schema.'
+            'Schema \'{}\' has not been validated as a structural schema.'. \
+            format(schema)
 
     def assert_metamorphic_schema(self, schema):
         """
@@ -211,8 +234,9 @@ class Schema(object):
         :raises AssertionError: if schema is not a metamorphic one
         """
 
-        assert(self.validate_schema(schema) == [True, 'XLST']), \
-            'Schema \'{}\' has not been validated as a metamorphic schema.'
+        assert(self.validate_schema(schema) == [True, 'XSLT']), \
+            'Schema \'{}\' has not been validated as a metamorphic schema.'. \
+            format(schema)
 
     def validate_data(self, data, structural_schema, metamorphic_schema=None,
                       validate_schemas=False):
@@ -228,6 +252,7 @@ class Schema(object):
           your own risk.
         :return: True if data is valid, False otherwise
         :rtype: bool
+        :raises
         """
 
         if validate_schemas is True:
@@ -242,7 +267,10 @@ class Schema(object):
         xsl_xml = self.get_cached_schema(structural_schema)
         xmlschema = XMLSchema(xsl_xml)
 
-        xml = parse(StringIO(data))
+        try:
+            xml = parse(StringIO(data))
+        except:
+            raise SyntaxError('Wrong xml syntax : {}'.format(data))
 
         return xmlschema.validate(xml)
 
@@ -292,12 +320,22 @@ class Schema(object):
                 raise ValueError('Original data has not been validated '
                                  'according to \'{}\''.format(from_structure))
 
-        xsl_xml = self.get_cached_schema(metamorphic_schema)
-        xslt = XSLT(xsl_xml)
+        if metamorphic_schema in self.factorisation_cache:
+            xin = parse(StringIO(data))
+            factorisation_namespace = {'xin': xin}
 
-        xml = parse(StringIO(data))
+            factorised_py = self.factorisation_cache[metamorphic_schema]
 
-        transformed_data = xslt(xml)
+            exec(factorised_py, factorisation_namespace)
+
+            transformed_data = factorisation_namespace['xout']
+        else:
+            xsl_xml = self.get_cached_schema(metamorphic_schema)
+            xslt = XSLT(xsl_xml)
+
+            xml = parse(StringIO(data))
+
+            transformed_data = tostring(xslt(xml).getroot())
 
         if validate_data is True and to_structure is not None:
             if self.validate_data(transformed_data, to_structure) is False:

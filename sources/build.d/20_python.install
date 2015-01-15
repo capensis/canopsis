@@ -20,6 +20,8 @@ function install_pylib(){
 				extract_archive "$BASE.tgz"
 			elif [ -e "$BASE.tar.bz2" ]; then
 				extract_archive "$BASE.tar.bz2"
+			elif [ -e "$BASE.tar.xz" ]; then
+				extract_archive "$BASE.tar.xz"
 			else
 				echo "Impossible to find archive ..."
 				exit 1
@@ -42,7 +44,7 @@ function build(){
 	cd $SRC_PATH/externals
 	
 	if [ ! -e $BASE ]; then
-		extract_archive "$BASE.tar.bz2"
+		extract_archive "$BASE.tar.xz"
 	fi
 	cd $BASE
 
