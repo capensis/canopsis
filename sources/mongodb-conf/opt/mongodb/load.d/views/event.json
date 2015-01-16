@@ -18,7 +18,6 @@
           "id" : "item_13019673-ebdf-6271-e595-6be7338aeb60",
           "widgetId" : "item_13019673-ebdf-6271-e595-6be7338aeb60",
           "xtype": "list",
-          "default_filter" : "{\"$or\":[{\"$and\":[{\"ack.isAck\":{\"$ne\":true}},{\"state\":{\"$ne\":0}},{\"event_type\":{\"$eq\":\"check\"}}]}]}",
           "refreshInterval": 40,
           "refreshableWidget" : true,
           "itemsPerPage" : 5,
@@ -49,7 +48,10 @@
             }
           ],
           "mixins": [
-            { "name": "Customfilterlist" },
+            {
+              "name": "Customfilterlist",
+              "default_filter" : "{\"$or\":[{\"$and\":[{\"ack.isAck\":{\"$ne\":true}},{\"state\":{\"$ne\":0}},{\"event_type\":{\"$eq\":\"check\"}}]}]}"
+            },
             { "name": "Sortablearray" },
             { "name": "Arraysearch" },
             { "name": "Pagination" },
