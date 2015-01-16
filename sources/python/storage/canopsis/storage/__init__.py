@@ -562,7 +562,6 @@ class Storage(DataBase):
     def get_elements(
         self,
         ids=None, query=None, limit=0, skip=0, sort=None, with_count=False,
-        cache=False
     ):
         """
         Get a list of elements where id are input ids
@@ -577,7 +576,6 @@ class Storage(DataBase):
         :type sort: list of {(str, {ASC, DESC}}), or str}
         :param bool with_count: If True (False by default), add count to the
             result.
-        :param bool cache: use query cache if True (False by default).
 
         :return: a Cursor of input id elements, or one element if ids is a
             string (None if this element does not exist).

@@ -3,20 +3,17 @@
     "categories": [{
         "title": "General",
         "keys": [
-            "crecord_name",
-            "info",
-            "type",
-            "sources",
-            "targets",
             "weight",
-            "_cls",
-            "_type"
+            "directed",
+            "type",
+            "info"
         ]
     }],
     "properties": {
         "crecord_type": {
-            "enum": ["edge"],
-            "required": true
+            "type": "string",
+            "required": true,
+            "default": "edge"
         },
         "_cls": {
             "type": "string",
@@ -25,10 +22,12 @@
         },
         "sources": {
             "type": "array",
+            "default": [],
             "required": true
         },
         "targets": {
             "type": "array",
+            "default": [],
             "required": true
         },
         "_type": {
@@ -39,7 +38,12 @@
         "weight": {
             "type": "float",
             "default": 1,
-            "required": false
+            "required": true
+        },
+        "directed": {
+            "type": "boolean",
+            "default": true,
+            "required": true
         }
     }
 }

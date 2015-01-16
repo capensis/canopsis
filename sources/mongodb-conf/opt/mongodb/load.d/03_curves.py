@@ -80,7 +80,7 @@ def init():
             'bar_width': 10,
             'line_style': 'line',
             'point_shape': 'circle',
-            'area_opacity': 1
+            'area_opacity': 0.35
         }
     ]
 
@@ -99,9 +99,6 @@ def init():
                 _type='curve'
             )
 
-            record.chmod('g+w')
-            record.chmod('o+r')
-            record.chgrp('group.CPS_curve_admin')
             storage.put(record)
 
 

@@ -1250,8 +1250,8 @@ msgstr "Disponible"
 msgid "Metric"
 msgstr "Métrique"
 
-msgid "last_state_change"
-msgstr "durée"
+msgid "last state change"
+msgstr "Durée"
 
 msgid "Filter remains incomplete"
 msgstr "Le filtre est incomplet"

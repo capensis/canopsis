@@ -28,10 +28,9 @@ from datetime import datetime
 from logging import INFO
 
 from canopsis.old.storage import Storage
-from canopsis.old.record import access_to_str
 
 
-## Main object
+# Main object
 class Cmd(Cmd):
     def __init__(self, prompt):
         super(Cmd, self).__init__()
@@ -115,11 +114,6 @@ class Browser(Cmd):
         for record in records:
             line = []
 
-            line.append(access_to_str(record.access_owner))
-            line.append(access_to_str(record.access_group))
-            line.append(access_to_str(record.access_other))
-            line.append(access_to_str(record.access_unauth))
-
             line.append(record.owner)
             line.append(record.group)
 
@@ -134,10 +128,10 @@ class Browser(Cmd):
 
             line.append(str(record.name))
 
-            #self.columnize(line, displaywidth=200)
+            # self.columnize(line, displaywidth=200)
             lines.append(line)
 
-        ### Quick and dirty ...
+        # Quick and dirty ...
 
         max_ln = {}
         for line in lines:
@@ -151,7 +145,7 @@ class Browser(Cmd):
 
                 i += 1
 
-        #new_lines = []
+        # new_lines = []
         for line in lines:
             i = 0
             new_line = ""

@@ -175,8 +175,6 @@ class Schema2MongoDB(object):
                 'schema': self.schemas[schema_id]
             }, name=crecord_name)
 
-            schema.chmod('o+r')
-
             storage.update({'_id': schema_id}, schema.dump(), upsert=True)
 
         del storage

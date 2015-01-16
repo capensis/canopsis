@@ -21,12 +21,11 @@
 
 from unittest import TestCase, main
 
-from canopsis.topology.elements import Node
+from canopsis.topology.elements import TopoNode, TopoEdge
 from canopsis.topology.manager import TopologyManager
 from canopsis.topology.rule.action import (
     change_state, state_from_sources, worst_state, best_state
 )
-from canopsis.graph.elements import Edge
 
 
 tm = TopologyManager(data_scope='test_topology')
@@ -39,8 +38,8 @@ class ChangeStateTest(TestCase):
 
     def setUp(self):
 
-        self.node = Node()
-        self.assertEqual(Node.state(self.node), 0)
+        self.toponode = TopoNode()
+        self.assertEqual(TopoNode.state(self.toponode), 0)
         self.new_state = 1
 
     def test_state(self):
@@ -49,7 +48,7 @@ class ChangeStateTest(TestCase):
         """
 
         change_state(
-            node=self.node, event={}, state=self.new_state, manager=tm
+            toponode=self.toponode, event={}, state=self.new_state, manager=tm
         )
 
     def test_event(self):
@@ -58,12 +57,12 @@ class ChangeStateTest(TestCase):
         """
 
         event = {'state': self.new_state}
-        change_state(node=self.node, event=event, manager=tm)
+        change_state(toponode=self.toponode, event=event, manager=tm)
 
     def tearDown(self):
 
-        node = tm.get_vertices(ids=self.node.id)
-        self.assertEqual(Node.state(node), self.new_state)
+        toponode = tm.get_vertices(ids=self.toponode.id)
+        self.assertEqual(TopoNode.state(toponode), self.new_state)
         tm.del_elts()
 
 
@@ -107,35 +106,38 @@ class StateFromSourcesTest(TestCase):
         Test to change of state without sources.
         """
 
-        node = Node()
+        toponode = TopoNode()
         event = {}
 
         self.get_function()(
-            node=node, event=event, manager=tm, ctx={}, **self.get_kwargs()
+            toponode=toponode, event=event, manager=tm, ctx={},
+            **self.get_kwargs()
         )
-        self.assertEqual(node.data['state'], 0)
+        self.assertEqual(toponode.data['state'], 0)
 
     def test_sources(self):
         """
         Test to change of state with sources.
         """
 
-        node = Node()
+        toponode = TopoNode()
         event = {}
 
         count = 5
 
-        sources = [Node(state=i) for i in range(count)]
+        sources = [TopoNode(state=i) for i in range(count)]
         for source in sources:
             source.save(manager=tm)
-        edge = Edge(
-            targets=[node.id], sources=list(source.id for source in sources)
+        edge = TopoEdge(
+            targets=[toponode.id],
+            sources=list(source.id for source in sources)
         )
         edge.save(manager=tm)
         self.get_function()(
-            node=node, event=event, manager=tm, ctx={}, **self.get_kwargs()
+            toponode=toponode, event=event, manager=tm, ctx={},
+            **self.get_kwargs()
         )
-        self.assertEqual(node.data['state'], self.get_new_state())
+        self.assertEqual(toponode.data['state'], self.get_new_state())
         edge.delete(manager=tm)
         for source in sources:
             source.delete(manager=tm)

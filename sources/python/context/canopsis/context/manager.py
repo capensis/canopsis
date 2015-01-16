@@ -136,16 +136,51 @@ class Context(MiddlewareRegistry):
 
         return result
 
+    def get_by_id(
+        self,
+        ids=None, limit=0, skip=0, sort=None, with_count=False
+    ):
+        """
+        Get a list of entities where id are input ids.
+
+        :param ids: element ids or an element id to get if is a string.
+        :type ids: list of str
+
+        :param int limit: max number of elements to get.
+        :param int skip: first element index among searched list.
+        :param sort: contains a list of couples of field (name, ASC/DESC)
+            or field name which denots an implicitelly ASC order.
+        :type sort: list of {(str, {ASC, DESC}}), or str}
+        :param bool with_count: If True (False by default), add count to the
+            result.
+
+        :return: a Cursor of input id elements, or one element if ids is a
+            string (None if this element does not exist).
+        :rtype: Cursor of dict elements or dict or NoneType
+        """
+
+        result = self[Context.CTX_STORAGE].get_elements(
+            ids=ids,
+            limit=limit,
+            skip=skip,
+            sort=sort,
+            with_count=with_count
+        )
+
+        return result
+
     def get(self, _type, names, context=None, extended=False):
         """
-        Get one entity
+        Get entities by name.
 
         :param str _type: entity type (connector, component, etc.)
-        :param str names: entity names
+        :param str names: entity names.
         :param dict context: entity context such as couples of name, value.
         :param bool extended: get extended entities if entity is shared.
 
-        :return: one element, list of elements if entity is shared or None
+        :return: one element (dict or None) if names is a str and not extended.
+            List of elements if names is a list or extended and names is a str.
+            List of list of elements if names is a list and extended.
         :rtype: dict, list or None
         """
 
@@ -156,7 +191,8 @@ class Context(MiddlewareRegistry):
             path[Context.TYPE] = _type
 
         result = self[Context.CTX_STORAGE].get(
-            path=path, data_ids=names, shared=extended)
+            path=path, data_ids=names, shared=extended
+        )
 
         return result
 
