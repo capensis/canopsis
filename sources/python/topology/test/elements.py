@@ -62,7 +62,7 @@ class TopoNodeTest(TestCase):
         self.assertFalse(_kwargs)
 
 
-class TopologyTest(TestCase):
+class TopologyGraphTest(TestCase):
     """
     Test topology element.
     """
@@ -75,7 +75,7 @@ class TopologyTest(TestCase):
     def tearDown(self):
 
         self.context.remove()
-        self.manager.remove()
+        self.manager.del_elts()
 
     def test_save(self):
 

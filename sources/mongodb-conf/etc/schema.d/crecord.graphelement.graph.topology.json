@@ -1,0 +1,19 @@
+{
+    "type": "object",
+    "categories": [{
+        "title": "General",
+        "keys": [
+        ]
+    }],
+    "properties": {
+        "crecord_type": {
+            "default": "topology"
+        },
+        "_cls": {
+            "default": "canopsis.topology.elements.Topology",
+        },
+        "type": {
+            "default": "topology"
+        }
+    }
+}
