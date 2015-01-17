@@ -18,18 +18,17 @@
           "id" : "item_13019673-ebdf-6271-e595-6be7338aeb60",
           "widgetId" : "item_13019673-ebdf-6271-e595-6be7338aeb60",
           "xtype": "list",
-          "default_filter" : "{\"$or\":[{\"$and\":[{\"ack.isAck\":{\"$ne\":true}},{\"state\":{\"$ne\":0}},{\"event_type\":{\"$eq\":\"check\"}}]}]}",
           "refreshInterval": 40,
           "refreshableWidget" : true,
-          "itemsPerPage" : 5,
+          "itemsPerPage" : 50,
           "listed_crecord_type": "event",
           "title": "Bac à évenements",
           "maximized_column_index": 5,
           "display_record_field": "resource",
           "record_template" : "<div>Connecteur : {{connector}}</div><div>Composant : {{component}} / Adresse IP : {{address}}</div><div>Hostgroups : {{hostgroups}}</div><div>Ressource : {{resource}}</div><div>Message :&nbsp;<span style=\"line-height: 1.428571429;\">{{output}}</span></div>",
           "default_column_sort" : {
-            "direction" : "DESC",
-            "property" : "timestamp"
+            "direction" : "ASC",
+            "property" : "last_state_change"
           },
           "filters" : [
             {
@@ -49,7 +48,10 @@
             }
           ],
           "mixins": [
-            { "name": "Customfilterlist" },
+            {
+              "name": "Customfilterlist",
+              "default_filter" : "{\"$or\":[{\"$and\":[{\"ack.isAck\":{\"$ne\":true}},{\"state\":{\"$ne\":0}},{\"event_type\":{\"$eq\":\"check\"}}]}]}"
+            },
             { "name": "Sortablearray" },
             { "name": "Arraysearch" },
             { "name": "Pagination" },

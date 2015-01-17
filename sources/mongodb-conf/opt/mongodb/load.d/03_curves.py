@@ -80,7 +80,7 @@ def init():
             'bar_width': 10,
             'line_style': 'line',
             'point_shape': 'circle',
-            'area_opacity': 1
+            'area_opacity': 0.35
         }
     ]
 
