@@ -80,25 +80,27 @@ class Topology(Graph):
 
     CONNECTOR = 'canopsis'
     CONNECTOR_NAME = 'canopsis'
+    COMPONENT = 'canopsis'
 
-    def __init__(self, *args, **kwargs):
-
-        super(Topology, self).__init__(*args, **kwargs)
-
-        self.entity = '/topology/canopsis/topology/topology/{}'.format(self.id)
-
-    def get_entity(self):
+    def get_context_w_entity(self):
         """
-        Get self entity structure.
+        Get self entity structure and its context.
+
+        :return: tuple of self context and entity.
+        :rtype: tuple
         """
 
-        result = {
+        context = {
             'connector': Topology.CONNECTOR,
             'connector_name': Topology.CONNECTOR_NAME,
+            'component': Topology.COMPONENT
+        }
+
+        entity = {
             Context.NAME: self.id
         }
 
-        return result
+        return context, entity
 
     def save(self, context=None, *args, **kwargs):
 
@@ -108,9 +110,9 @@ class Topology(Graph):
         if context is None:
             context = _context
         # get self entity
-        entity = self.get_entity()
+        ctx, entity = self.get_context_w_entity()
         # put the topology in the context by default
-        context.put(_type=Topology.TYPE, entity=entity)
+        context.put(_type=Topology.TYPE, entity=entity, context=ctx)
 
 
 class TopoNode(Vertice):
