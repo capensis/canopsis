@@ -67,6 +67,9 @@ __all__ = ['Topology', 'TopoEdge', 'TopoNode']
 from canopsis.graph.elements import Graph, Vertice, Edge
 from canopsis.task import run_task, TASK
 from canopsis.check import Check
+from canopsis.context.manager import Context
+
+_context = Context()
 
 
 class Topology(Graph):
@@ -74,6 +77,40 @@ class Topology(Graph):
     TYPE = 'topology'  #: topology type name
 
     __slots__ = Graph.__slots__
+
+    CONNECTOR = 'canopsis'
+    CONNECTOR_NAME = 'canopsis'
+
+    def __init__(self, *args, **kwargs):
+
+        super(Topology, self).__init__(*args, **kwargs)
+
+        self.entity = '/topology/canopsis/topology/topology/{}'.format(self.id)
+
+    def get_entity(self):
+        """
+        Get self entity structure.
+        """
+
+        result = {
+            'connector': Topology.CONNECTOR,
+            'connector_name': Topology.CONNECTOR_NAME,
+            Context.NAME: self.id
+        }
+
+        return result
+
+    def save(self, context=None, *args, **kwargs):
+
+        super(Topology, self).save(*args, **kwargs)
+
+        # use global context if input context is None
+        if context is None:
+            context = _context
+        # get self entity
+        entity = self.get_entity()
+        # put the topology in the context by default
+        context.put(_type=Topology.TYPE, entity=entity)
 
 
 class TopoNode(Vertice):
