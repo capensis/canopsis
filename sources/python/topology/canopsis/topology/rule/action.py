@@ -71,6 +71,9 @@ def change_state(
     # init manager
     if manager is None:
         manager = tm
+    # init check manager
+    if check_manager is None:
+        check_manager = check
     # init toponode
     if isinstance(toponode, basestring):
         toponode = manager.get_elts(ids=toponode)
@@ -87,7 +90,7 @@ def change_state(
 
 
 @register_task
-def state_from_sources(event, toponode, ctx, f, manager=None, **kwargs):
+def state_from_sources(event, toponode, ctx, f, manager=None, *args, **kwargs):
     """
     Change ctx toponode state which equals to f result on source nodes.
     """
@@ -115,10 +118,11 @@ def state_from_sources(event, toponode, ctx, f, manager=None, **kwargs):
             _, edge_sources = sources_by_edges[edge_id]
             sources += edge_sources
         state = f(source_node.data[Check.STATE] for source_node in sources)
-
-        # update the toponode state
-        TopoNode.state(toponode, state)
-        toponode.save(manager=manager)
+        # change state
+        change_state(
+            state=state, event=event, toponode=toponode, ctx=ctx,
+            manager=manager, *args, **kwargs
+        )
 
 
 @register_task
