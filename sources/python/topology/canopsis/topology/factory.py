@@ -126,31 +126,23 @@ class Factory(object):
 
                 dict_cluster = {}
                 dict_cluster['state'] = int(cond_value)
-
-                #dict_least = {}
-                #dict_least['state'] = int(least_value)
                 # Create at_least (Voir avec Jonathan)
-                least_conf = new_conf(condition.at_least, min_weight=int(least_value))
-
-                # Create Condition
-                conf = new_conf(condition.at_least, **dict_cluster)
-                condition = self.create_component(c.keys()[0], c.values[0], conf)
-
+                least_conf = new_conf(condition.at_least, min_weight=int(least_value), state=int(cond_value))
                 # Create statement/action
                 if stat_value != '-1':
                     statement = new_conf(action.change_state, state=int(stat_value))
                 else:
                     statement = new_conf(action.worst_state)
-
                 # Create the else
                 if else_value != '-1':
                     _else = new_conf(action.change_state, state=int(else_value))
                 else:
                     _else = new_conf(action.worst_state)
-                node_list.append(self.create_component(self.cluster(condition, statement, _else)))
+                node_list.append(self.create_component(self.cluster(least_conf, statement, _else)))
         for cmps in opcomps.get(f.OPERATOR_ID[1]):
             for c in cmps:
                 node_list.append(new_conf(action.worst_state))
+
         # OPERATOR_ID[2] --> And
         for cmps in opcomps.get(f.OPERATOR_ID[2]):
             for c in cmps:
@@ -161,23 +153,21 @@ class Factory(object):
 
                 dict_and = {}
                 dict_and['state'] = int(cond_value)
-
                 # Create the condition
                 conf = new_conf(condition.at_least, **dict_and)
                 condition = self.create_component(c.keys()[0], c.values[0], conf)
-
                 # Create the statement/action
                 if stat_value != '-1':
                     statement = new_conf(action.change_state, state=int(stat_value))
                 else:
                     statement = new_conf(action.worst_state)
-
                 # Create the else
                 if else_value != '-1':
                     _else = new_conf(action.change_state, state=int(else_value))
                 else:
                     _else = new_conf(action.worst_state)
                 node_list.append(self.create_component(self.cluster(condition, statement, _else)))
+
         # OPERATOR_ID[3] --> Or
         for cmps in opcomps.get(f.OPERATOR_ID[3]):
             for c in cmps:
