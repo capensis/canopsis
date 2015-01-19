@@ -38,7 +38,7 @@ class TopoNodeTest(TestCase):
         """
 
         toponode = TopoNode()
-        result = TopoNode.process(toponode, event=None)
+        result = toponode.process(event=None)
         self.assertIsNone(result)
 
     def test_process_task(self):
@@ -55,7 +55,7 @@ class TopoNodeTest(TestCase):
 
         toponode = TopoNode(task=task, entity=entity, state=state)
 
-        _node, _ctx, _kwargs = TopoNode.process(toponode, ctx=ctx, event=None)
+        _node, _ctx, _kwargs = toponode.process(ctx=ctx, event=None)
 
         self.assertIs(_node, toponode)
         self.assertIs(_ctx, ctx)

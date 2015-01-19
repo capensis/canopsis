@@ -45,7 +45,8 @@ class Check(Event):
                 Check.STATE: state,
                 Check.STATUS: status
             },
-            meta=meta)
+            meta=meta
+        )
 
     @property
     def state(self):

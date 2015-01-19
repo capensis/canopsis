@@ -113,13 +113,13 @@ class ProcessingTest(TestCase):
             change_state,
             state=Check.WARNING
         )
-        TopoNode.task(self.node, change_state_conf)
+        self.node.operator = change_state_conf
         self.node.save(self.manager)
 
         event_processing(event=self.check, engine=self, manager=self.manager)
 
         target = self.manager.get_elts(ids=self.node.id)
-        self.assertEqual(TopoNode.state(target), Check.WARNING)
+        self.assertEqual(target.state, Check.WARNING)
 
     def test_chain_change_state(self):
         """
@@ -144,7 +144,7 @@ class ProcessingTest(TestCase):
         node = TopoNode(task=change_state_conf)
         node.save(self.manager)
         # create a leaf with the change state task
-        TopoNode.task(self.node, change_state_conf)
+        self.node.operator = change_state_conf
         self.node.save(self.manager)
         # link node to root
         rootnode = TopoEdge(targets=root.id, sources=node.id)
@@ -157,7 +157,7 @@ class ProcessingTest(TestCase):
         self.assertEqual(self.count, 2)
 
         self.node = self.manager.get_elts(ids=self.node.id)
-        self.assertEqual(TopoNode.state(self.node), Check.WARNING)
+        self.assertEqual(self.node.state, Check.WARNING)
 
 if __name__ == '__main__':
     main()

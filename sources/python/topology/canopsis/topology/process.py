@@ -70,14 +70,13 @@ def event_processing(engine, event, manager=None, **kwargs):
 
     event_type = event[Event.TYPE]
 
-    # TODO: remove when Check event will be used
     # apply processing only in case of check event
     if event_type == Check.get_type():
 
         source_type = event[Event.SOURCE_TYPE]
 
         # in case of topology element
-        if source_type == Topology.TYPE:
+        if source_type in [Topology.TYPE, TopoNode.TYPE]:
             elt = manager.get_elts(ids=event[Topology.ID])
             if elt is not None:
                 elts = [elt]
@@ -87,17 +86,17 @@ def event_processing(engine, event, manager=None, **kwargs):
             entity = context.get_entity(event)
             if entity is not None:
                 entity_id = context.get_entity_id(entity)
-                elts = manager.get_elts(data={'entity': entity_id})
+                elts = manager.get_elts(data={TopoNode.ENTITY: entity_id})
 
         # iterate on elts
         for elt in elts:
             # save old state in order to check for its modification
-            old_state = TopoNode.state(elt)
+            old_state = elt.state
 
             # process task
             TopoNode.process(elt, event=event, manager=manager, **kwargs)
 
-            new_state = TopoNode.state(elt)
+            new_state = elt.state
             # propagate the change of state in case of new state
             if old_state != new_state:
                 # get next elts
@@ -121,12 +120,12 @@ def event_processing(engine, event, manager=None, **kwargs):
                     for target in targets:
                         # create event to propagate with source and elt ids
                         event_to_propagate = forger(
-                            connector=Topology.TYPE,
-                            connector_name=Topology.TYPE,
+                            connector=Topology.CONNECTOR,
+                            connector_name=Topology.CONNECTOR_NAME,
                             event_type=Check.get_type(),
-                            component=target.id,
+                            component=Topology.COMPONENT,
                             state=new_state,
-                            source_type=Topology.TYPE,
+                            source_type=target.type,
                             id=target.id,
                             source=elt.id
                         )

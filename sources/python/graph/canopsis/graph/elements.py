@@ -120,21 +120,24 @@ class GraphElement(object):
     Contains an ID and a type.
     """
 
-    ID = Storage.DATA_ID  #: graph element id
-    TYPE = 'type'  #: graph element type name
-    BASE_TYPE = '_type'  #: base graph element type name
-    _CLS = '_cls'  #: graph element class type
+    ID = Storage.DATA_ID  #: graph element id.
+    NAME = 'name'  #: graph element name.
+    TYPE = 'type'  #: graph element type name.
+    BASE_TYPE = '_type'  #: base graph element type name.
+    _CLS = '_cls'  #: graph element class type.
 
-    __slots__ = (ID, TYPE)
+    __slots__ = (ID, TYPE, NAME)
 
-    def __init__(self, _id=None, _type=None):
+    def __init__(self, _id=None, name=None, _type=None):
         """
         :param str _id: element id. generated if None.
+        :param str name: element name. id if None.
         :param str _type: element type name. self lower type name if None.
         """
 
         self.type = type(self).__name__.lower() if _type is None else _type
         self.id = str(uuid()) if _id is None else _id
+        self.name = self.id if name is None else name
 
     def __repr__(self):
 
@@ -223,7 +226,6 @@ class GraphElement(object):
         result[GraphElement._CLS] = path(self_type)
         # set base type
         result[GraphElement.BASE_TYPE] = self.BASE_TYPE
-
         return result
 
     def resolve_refs(self, elts, manager):
