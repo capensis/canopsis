@@ -65,7 +65,6 @@
           "itemsPerPage" : 10,
           "mixins" : [ ],
           "cssClass" : null,
-          "default_filter" : "{\"event_type\":\"selector\"}",
           "cloaking" : false,
           "filters" : [ ],
           "selection_toolbar" : [ ],
@@ -78,6 +77,20 @@
             "status",
             "timestamp"
           ],
+          "mixins": [
+            { "name": "Sortablearray" },
+            { "name": "Arraysearch" },
+            { "name": "Pagination" },
+            {
+              "name": "Customfilterlist",
+              "filters" : [],
+              "default_filter" : "{\"event_type\":\"selector\"}"
+            },
+            { "name": "History" },
+            { "name": "Infobutton" },
+            { "name": "Sendevent" },
+            { "name": "Responsivelist" },
+            { "name": "Eventnavigation" }],
           "listed_crecord_type" : "event",
           "actions_toolbar" : [ ],
           "refreshInterval" : 30,

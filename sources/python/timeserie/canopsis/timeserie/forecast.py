@@ -847,7 +847,7 @@ class Forecast(object):
             logger.debug("S[%s]=%s" % (i, S[i]))
 
         # Holt - winters proper ...
-        logger.debug("Use Holt Winters formulae")
+        logger.debug("Use Holt Winters forecast method")
         F = [0] * (ylen + c)
 
         At = a0
