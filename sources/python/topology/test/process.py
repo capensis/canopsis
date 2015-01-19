@@ -138,10 +138,10 @@ class ProcessingTest(TestCase):
         )
 
         # create a root node with the change state task
-        root = TopoNode(task=change_state_conf)
+        root = TopoNode(operator=change_state_conf)
         root.save(self.manager)
         # create a node with the change state task
-        node = TopoNode(task=change_state_conf)
+        node = TopoNode(operator=change_state_conf)
         node.save(self.manager)
         # create a leaf with the change state task
         self.node.operator = change_state_conf

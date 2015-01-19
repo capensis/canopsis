@@ -84,6 +84,9 @@ class TopoOp(object):
     STATE = Check.STATE  #: state field name in data
     ENTITY = 'entity'  #: entity field name in data
     OPERATOR = 'operator'  #: operator field name in data
+    NAME = 'name'  #: element name.
+
+    DEFAULT_STATE = Check.OK  #: default state value
 
     @property
     def entity(self):
@@ -113,6 +116,14 @@ class TopoOp(object):
         self.data[TopoOp.ENTITY] = entity_id
         # update entity state
         self.data[TopoOp.STATE] = _check.state(ids=entity_id)
+
+    @property
+    def name(self):
+        return self.data.get(TopoOp.NAME, self.id)
+
+    @name.setter
+    def name(self, value):
+        self.data[TopoOp.NAME] = value
 
     @property
     def state(self):
@@ -159,7 +170,9 @@ class Topology(Graph, TopoOp):
     CONNECTOR_NAME = 'canopsis'
     COMPONENT = 'canopsis'
 
-    def __init__(self, *args, **kwargs):
+    def __init__(
+        self, operator=None, state=TopoOp.DEFAULT_STATE, *args, **kwargs
+    ):
 
         super(Topology, self).__init__(*args, **kwargs)
 
@@ -174,6 +187,11 @@ class Topology(Graph, TopoOp):
                     'update_entity': True
                 }
             )
+        # set operator
+        if operator is not None:
+            self.operator = operator
+        # set state
+        self.state = state
 
     @property
     def entity(self):
@@ -231,17 +249,13 @@ class TopoNode(Vertice, TopoOp):
 
     TYPE = 'toponode'  #: node type name
 
-    ENTITY = 'entity'  #: entity data name
-
-    DEFAULT_STATE = Check.OK  #: default state value
-
     PARAM = 'toponode'  #: parameter name
 
     __slots__ = Vertice.__slots__
 
     def __init__(
         self,
-        entity=None, state=DEFAULT_STATE, task=None,
+        entity=None, state=TopoOp.DEFAULT_STATE, operator=None,
         *args, **kwargs
     ):
         """
@@ -253,18 +267,17 @@ class TopoNode(Vertice, TopoOp):
         """
 
         super(TopoNode, self).__init__(*args, **kwargs)
-
+        # init data
         if self.data is None:
             self.data = {}
-
+        # set entity
         if entity is not None:
-            self.data[TopoNode.ENTITY] = entity
-
-        if state is not None:
-            self.data[Check.STATE] = state
-
-        if task is not None:
-            self.data[TASK] = task
+            self.entity = entity
+        # set state
+        self.state = state
+        # set operator
+        if operator is not None:
+            self.operator = operator
 
 
 class TopoEdge(Edge, TopoOp):

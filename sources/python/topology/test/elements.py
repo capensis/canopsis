@@ -51,9 +51,9 @@ class TopoNodeTest(TestCase):
 
             return toponode, ctx, kwargs
 
-        ctx, entity, state, task = {'b': 1}, 'e', 0, 'process'
+        ctx, entity, state, operator = {'b': 1}, 'e', 0, 'process'
 
-        toponode = TopoNode(task=task, entity=entity, state=state)
+        toponode = TopoNode(state=state, entity=entity, operator=operator)
 
         _node, _ctx, _kwargs = toponode.process(ctx=ctx, event=None)
 
@@ -84,7 +84,7 @@ class TopologyGraphTest(TestCase):
         topology = Topology(_id=_id)
         topology.save(manager=self.manager, context=self.context)
 
-        topology = self.context.get(_type=Topology.TYPE, names=_id)
+        topology = self.context.get(_type=topology.type, names=_id)
 
         self.assertEqual(topology[Context.NAME], _id)
 
