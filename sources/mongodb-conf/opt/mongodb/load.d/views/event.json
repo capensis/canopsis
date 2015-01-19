@@ -30,31 +30,31 @@
             "direction" : "ASC",
             "property" : "last_state_change"
           },
-          "filters" : [
-            {
-              "filter" : "{\"$or\":[{\"$and\":[{\"ack.isAck\":{\"$ne\":true}},{\"state\":{\"$ne\":0}},{\"event_type\":{\"$eq\":\"check\"}}]}]}",
-              "cfilter" : "",
-              "title" : "Alert not ack"
-            },
-            {
-              "filter" : "{\"$or\":[{\"$and\":[{\"ack.isAck\":{\"$eq\":true}},{\"event_type\":{\"$eq\":\"check\"}}]}]}",
-              "cfilter" : "",
-              "title" : "Ack"
-            },
-            {
-              "filter" : "{\"$or\":[{\"$and\":[{\"state\":{\"$ne\":0}},{\"event_type\":{\"$eq\":\"check\"}}]}]}",
-              "cfilter" : "",
-              "title" : "Alert"
-            }
-          ],
           "mixins": [
-            {
-              "name": "Customfilterlist",
-              "default_filter" : "{\"$or\":[{\"$and\":[{\"ack.isAck\":{\"$ne\":true}},{\"state\":{\"$ne\":0}},{\"event_type\":{\"$eq\":\"check\"}}]}]}"
-            },
             { "name": "Sortablearray" },
             { "name": "Arraysearch" },
             { "name": "Pagination" },
+            {
+              "name": "Customfilterlist",
+              "filters" : [
+                {
+                  "filter" : "{\"$or\":[{\"$and\":[{\"ack.isAck\":{\"$ne\":true}},{\"state\":{\"$ne\":0}},{\"event_type\":{\"$eq\":\"check\"}}]}]}",
+                  "cfilter" : "",
+                  "title" : "Alert not ack"
+                },
+                {
+                  "filter" : "{\"$or\":[{\"$and\":[{\"ack.isAck\":{\"$eq\":true}},{\"event_type\":{\"$eq\":\"check\"}}]}]}",
+                  "cfilter" : "",
+                  "title" : "Ack"
+                },
+                {
+                  "filter" : "{\"$or\":[{\"$and\":[{\"state\":{\"$ne\":0}},{\"event_type\":{\"$eq\":\"check\"}}]}]}",
+                  "cfilter" : "",
+                  "title" : "Alert"
+                }
+              ],
+              "default_filter" : "{\"$or\":[{\"$and\":[{\"ack.isAck\":{\"$ne\":true}},{\"state\":{\"$ne\":0}},{\"event_type\":{\"$eq\":\"check\"}}]}]}"
+            },
             { "name": "History" },
             { "name": "Infobutton" },
             { "name": "Sendevent" },
