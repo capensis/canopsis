@@ -6,7 +6,7 @@
     "categories": [
         {
             "title": "General",
-            "keys":["title", "graph_id", "name"]
+            "keys":["title", "graph_id"]
         }, {
             "title": "Options",
             "keys":["refreshableWidget", "refreshInterval"]
@@ -20,10 +20,6 @@
         },
         "graph_type": {
             "default": "topology"
-        },
-        "name": {
-            "type": "string",
-            "required": false
         }
     }
 }
