@@ -10,7 +10,10 @@
     "parent" : [ ],
    "containerwidget" : {
     "items" : [],
-    "xtype" : "tabmanager",
+    "xtype" : "widgetcontainer",
+    "mixins": [{
+       "name": "tablayout"
+    }],
     "title" : "container title vbox"
     },
 
