@@ -5,8 +5,8 @@
   "crecord_write_time": 1400853201,
   "enable": true,
   "containerwidget": {
-    "xtype": "verticalbox",
-    "title": "container title vbox",
+    "xtype": "widgetcontainer",
+    "title": "container title vbox services2",
     "_id": "test_view_vertical_container",
     "items": [
       {
@@ -22,6 +22,9 @@
           ]
         }
       }
+    ],
+    "mixins": [
+      { "name": "verticallayout" }
     ]
   },
   "parent": [],

@@ -45,27 +45,38 @@ embeds the rule.
 Technical
 ---------
 
-Three types of vertices exist in topology::
+A topology node can be bound to an entity or/and contain a task.
 
-- cluster: operation between vertice states.
-- node: vertice bound to an entity, like components, resources, etc.
+Both permits to update the node state. The first one will update its state
+related to the bound entity state, while the task can update the state
+independently to the entity state.
 
-A topology vertice contains::
+A topology node contains::
 
-- state: vertice state which change at runtime depending on bound entity state
+- state: node state which change at runtime depending on bound entity state
     and event propagation.
 
 A topology edge contains::
 
-- weight: vertice weight in the graph.
+- weight: node weight in the graph related to edge targets.
+
+A topology contains::
+
+- state: current topology state.
+- data.task: the change_state operator with a propagation to the entity.
 
 """
 
-__all__ = ['Topology', 'Edge', 'Node']
+__all__ = ['Topology', 'TopoEdge', 'TopoNode']
 
 from canopsis.graph.elements import Graph, Vertice, Edge
 from canopsis.task import run_task, TASK
 from canopsis.check import Check
+from canopsis.check.manager import CheckManager
+from canopsis.context.manager import Context
+
+_context = Context()
+_check = CheckManager()
 
 
 class Topology(Graph):
@@ -74,8 +85,69 @@ class Topology(Graph):
 
     __slots__ = Graph.__slots__
 
+    CONNECTOR = 'canopsis'
+    CONNECTOR_NAME = 'canopsis'
+    COMPONENT = 'canopsis'
 
-class Node(Vertice):
+    def __init__(self, *args, **kwargs):
+
+        super(Topology, self).__init__(*args, **kwargs)
+
+        if self.data is None:
+            self.data = {}
+        # ensure entity id is in topology
+        if TopoNode.ENTITY not in self.data:
+            entity_id = self.entity_id()
+            self.data[TopoNode.ENTITY] = entity_id
+        # ensure state is in data
+        if Check.STATE not in self.data:
+            entity_id = self.data[TopoNode.ENTITY]
+            self.data[TASK] = _check.state(ids=entity_id)
+
+    def entity_id(self):
+        """
+        Get self entity id.
+        """
+
+        ctx, entity = self.get_context_w_entity()
+        entity.update(ctx)
+        result = _context.get_entity_id(entity)
+        return result
+
+    def get_context_w_entity(self):
+        """
+        Get self entity structure and its context.
+
+        :return: tuple of self context and entity.
+        :rtype: tuple
+        """
+
+        context = {
+            'connector': Topology.CONNECTOR,
+            'connector_name': Topology.CONNECTOR_NAME,
+            'component': Topology.COMPONENT
+        }
+
+        entity = {
+            Context.NAME: self.id
+        }
+
+        return context, entity
+
+    def save(self, context=None, *args, **kwargs):
+
+        super(Topology, self).save(*args, **kwargs)
+
+        # use global context if input context is None
+        if context is None:
+            context = _context
+        # get self entity
+        ctx, entity = self.get_context_w_entity()
+        # put the topology in the context by default
+        context.put(_type=Topology.TYPE, entity=entity, context=ctx)
+
+
+class TopoNode(Vertice):
     """
     Class representation of a topology node.
 
@@ -86,11 +158,13 @@ class Node(Vertice):
         - (optionnally) a task information.
     """
 
+    TYPE = 'topovertice'  #: node type name
+
     ENTITY = 'entity'  #: entity data name
 
     DEFAULT_STATE = Check.OK  #: default state value
 
-    PARAM = 'node'  #: parameter name
+    PARAM = 'toponode'  #: parameter name
 
     __slots__ = Vertice.__slots__
 
@@ -107,13 +181,13 @@ class Node(Vertice):
         :param float weight: node weight.
         """
 
-        super(Node, self).__init__(*args, **kwargs)
+        super(TopoNode, self).__init__(*args, **kwargs)
 
         if self.data is None:
             self.data = {}
 
         if entity is not None:
-            self.data[Node.ENTITY] = entity
+            self.data[TopoNode.ENTITY] = entity
 
         if state is not None:
             self.data[Check.STATE] = state
@@ -149,8 +223,14 @@ class Node(Vertice):
         """
 
         if value is not None:
-            elt.data[Node.ENTITY] = value
-        return elt.data[Node.ENTITY] if Node.ENTITY in elt.data else None
+            elt.data[TopoNode.ENTITY] = value
+
+        result = None
+
+        if TopoNode.ENTITY in elt.data:
+            result = elt.data[TopoNode.ENTITY]
+
+        return result
 
     @staticmethod
     def state(elt, value=None):
@@ -168,16 +248,35 @@ class Node(Vertice):
         return elt.data[Check.STATE] if Check.STATE in elt.data else Check.OK
 
     @staticmethod
-    def process(node, event, **kwargs):
+    def process(toponode, event, **kwargs):
         """
         Process this node task.
         """
 
         result = None
 
-        task = Node.task(node)
+        task = TopoNode.task(toponode)
 
         if task is not None:
-            result = run_task(conf=task, node=node, event=event, **kwargs)
+            result = run_task(
+                conf=task, toponode=toponode, event=event, **kwargs
+            )
 
         return result
+
+
+class TopoEdge(Edge):
+    """
+    Topology edge.
+    """
+
+    __slots__ = Edge.__slots__
+
+    TYPE = 'topoedge'  #: topology edge type name
+
+    def __init__(self, data=None, *args, **kwargs):
+
+        super(TopoEdge, self).__init__(
+            data={} if data is None else data,
+            *args, **kwargs
+        )

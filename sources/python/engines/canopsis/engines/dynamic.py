@@ -19,7 +19,7 @@
 # ---------------------------------
 
 from canopsis.common.init import basestring
-from canopsis.common.utils import lookup
+from canopsis.task import get_task
 from canopsis.engines import Engine
 from canopsis.configuration.configurable import Configurable
 from canopsis.configuration.configurable.decorator import conf_paths
@@ -87,13 +87,21 @@ class engine(Engine, Configurable):
         # if str, load the related function
         elif isinstance(value, basestring):
             try:
-                value = lookup(value)
+                value = get_task(value)
             except ImportError:
                 self.logger.error('Impossible to load %s' % value)
                 value = event_processing
 
         # set _event_processing and work
-        self._event_processing = self.work = value
+        self._event_processing = value
+
+    def work(self, event, msg, *args, **kwargs):
+
+        result = self._event_processing(
+            engine=self, event=event, msg=msg, *args, **kwargs
+        )
+
+        return result
 
     @property
     def params(self):
@@ -166,15 +174,16 @@ def load_dynamic_engine(name, *args, **kwargs):
     return result
 
 
-def event_processing(event, ctx=None, **params):
+def event_processing(engine, event, ctx=None, **params):
     """
     Event processing signature to respect in order to process an event.
 
     A condition may returns a boolean value.
 
-    :param dict event: event to process
-    :param dict ctx: event processing context
-    :param dict params: event processing additional parameters
+    :param Engine engine: engine which process the event.
+    :param dict event: event to process.
+    :param dict ctx: event processing context.
+    :param dict params: event processing additional parameters.
     """
 
     return event

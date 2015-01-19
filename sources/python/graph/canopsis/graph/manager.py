@@ -354,15 +354,19 @@ class GraphManager(MiddlewareRegistry):
                         graph.update_gelts(manager=self)
             else:  # add elts in _delts
                 if isinstance(result, dict):
-                    result[Graph._DELTS] = self.get_elts(
-                        ids=result[Graph.ELTS],
-                        serialize=False
+                    result[Graph._DELTS] = list(
+                        self.get_elts(
+                            ids=result[Graph.ELTS],
+                            serialize=False
+                        )
                     )
                 else:
                     for graph in result:
-                        graph[Graph._DELTS] = self.get_elts(
-                            ids=graph[Graph.ELTS],
-                            serialize=False
+                        graph[Graph._DELTS] = list(
+                            self.get_elts(
+                                ids=graph[Graph.ELTS],
+                                serialize=False
+                            )
                         )
 
         return result
@@ -475,8 +479,8 @@ class GraphManager(MiddlewareRegistry):
         :type edge_ids: list or str
         :param edge_types: edge types from where find target/source vertices.
         :type edge_types: list or str
-        :param bool add_edges: if True (default), add pathed edges in the
-            result such as {edge_id: (edge, list(vertices))}.
+        :param bool add_edges: if True (False by default), add pathed edges in
+            the result such as {edge_id: (edge, list(vertices))}.
         :param source_edge_types: edge types from where find source vertices.
         :type source_edge_types: list or str
         :param target_edge_types: edge types from where find target vertices.
@@ -665,7 +669,7 @@ class GraphManager(MiddlewareRegistry):
                     )
                     # serialize edge if required
                     _edge = new_element(**edge) if serialize else edge
-                    if edge_id not in result:
+                    if edge_id in result:
                         # TODO: check if this case can happen
                         result[edge_id][1] += elts
                     else:

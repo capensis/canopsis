@@ -1,0 +1,16 @@
+{
+	"type": "object",
+	"categories": [{
+		"title": "General",
+		"keys":["searchable_columns"]
+	}],
+	"properties": {
+		"searchable_columns": {
+			"type": "array",
+			"items": {
+				"type": "string"
+			},
+			"reorderable": true
+		}
+	}
+}

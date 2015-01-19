@@ -6,10 +6,6 @@
 	}],
 	"showEditButton": true,
 	"properties": {
-		"event_type": {
-			"type": "string",
-			"required": true
-		},
 		"source_type": {
 			"type": "string",
 			"required": true

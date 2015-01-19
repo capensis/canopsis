@@ -5,7 +5,10 @@
   "crecord_write_time": 1400853201,
   "enable": true,
   "containerwidget": {
-    "xtype": "verticalbox",
+    "xtype": "widgetcontainer",
+    "mixins": [
+      { "name": "verticallayout" }
+    ],
     "title": "container title vbox",
     "items": [
       {
@@ -26,10 +29,10 @@
             "actionbutton-removeselection"
           ],
           "mixins": [
-            "Sortablearray",
-            "Arraysearch",
-            "Pagination",
-            "Crud"
+            { "name": "Sortablearray" },
+            { "name": "Arraysearch" },
+            { "name": "Pagination" },
+            { "name": "Crud" }
           ],
           "displayed_columns": [
             "_id",

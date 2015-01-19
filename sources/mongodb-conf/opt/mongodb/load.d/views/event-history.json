@@ -5,7 +5,10 @@
   "crecord_write_time": 1400853201,
   "enable": true,
   "containerwidget": {
-    "xtype": "verticalbox",
+    "xtype": "widgetcontainer",
+    "mixins": [
+      { "name": "verticallayout" }
+    ],
     "title": "container title vbox",
     "items": [
       {
@@ -37,12 +40,12 @@
             }
           ],
           "mixins": [
-            "Customfilter",
-            "Sortablearray",
-            "Arraysearch",
-            "Pagination",
-            "History",
-            "Eventhistory"
+            {"name": "Customfilterlist"},
+            {"name": "Sortablearray"},
+            {"name": "Arraysearch"},
+            {"name": "Pagination"},
+            {"name": "History"},
+            {"name": "Eventhistory"}
           ],
           "displayed_columns": [
             "domain",

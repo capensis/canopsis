@@ -23,7 +23,7 @@ from unittest import TestCase, main
 
 from canopsis.check import Check
 from canopsis.topology.manager import TopologyManager
-from canopsis.topology.elements import Node, Edge
+from canopsis.topology.elements import TopoNode, TopoEdge
 from canopsis.topology.rule.condition import new_state, at_least, _all, nok
 
 
@@ -34,7 +34,7 @@ class NewStateTest(TestCase):
 
     def setUp(self):
 
-        self.node = Node()
+        self.toponode = TopoNode()
 
     def test_new_state_from_event(self):
         """
@@ -42,7 +42,7 @@ class NewStateTest(TestCase):
         """
 
         result = new_state(
-            node=self.node,
+            toponode=self.toponode,
             event={'state': Check.WARNING}
         )
 
@@ -54,7 +54,7 @@ class NewStateTest(TestCase):
         """
 
         result = new_state(
-            node=self.node,
+            toponode=self.toponode,
             event={'state': Check.OK}
         )
 
@@ -66,7 +66,7 @@ class NewStateTest(TestCase):
         """
 
         result = new_state(
-            node=self.node,
+            toponode=self.toponode,
             event={},
             state=Check.WARNING
         )
@@ -79,7 +79,7 @@ class NewStateTest(TestCase):
         """
 
         result = new_state(
-            node=self.node,
+            toponode=self.toponode,
             event={},
             state=Check.OK
         )
@@ -113,9 +113,9 @@ class AtLeastTest(_AtLeastTest):
         Test to process at least with no children.
         """
 
-        target = Node()
+        target = TopoNode()
         target.save(self.manager)
-        check = at_least(event={}, ctx={}, node=target, manager=self.manager)
+        check = at_least(event={}, ctx={}, toponode=target, manager=self.manager)
 
         self.assertFalse(check)
 
@@ -124,14 +124,14 @@ class AtLeastTest(_AtLeastTest):
         Test to check default condition.
         """
 
-        source = Node()
+        source = TopoNode()
         source.save(self.manager)
-        target = Node()
+        target = TopoNode()
         target.save(self.manager)
-        edge = Edge(sources=source.id, targets=target.id)
+        edge = TopoEdge(sources=source.id, targets=target.id)
         edge.save(self.manager)
 
-        check = at_least(event={}, ctx={}, node=target, manager=self.manager)
+        check = at_least(event={}, ctx={}, toponode=target, manager=self.manager)
 
         self.assertTrue(check)
 
@@ -140,29 +140,29 @@ class AtLeastTest(_AtLeastTest):
         Test to check if there are at least one
         """
 
-        source = Node()
+        source = TopoNode()
         source.save(self.manager)
-        target = Node()
+        target = TopoNode()
         target.save(self.manager)
-        edge = Edge(sources=source.id, targets=target.id)
+        edge = TopoEdge(sources=source.id, targets=target.id)
         edge.save(self.manager)
 
         check = at_least(
             event={},
             ctx={},
             state=Check.WARNING,
-            node=target,
+            toponode=target,
             manager=self.manager
         )
         self.assertFalse(check)
 
         edge.weight = 0.5
         edge.save(self.manager)
-        Node.state(source, Check.WARNING)
+        TopoNode.state(source, Check.WARNING)
         source.save(self.manager)
 
         check = at_least(
-            event={}, ctx={}, state=Check.WARNING, node=target, manager=self.manager
+            event={}, ctx={}, state=Check.WARNING, toponode=target, manager=self.manager
         )
         self.assertFalse(check)
 
@@ -173,7 +173,7 @@ class AtLeastTest(_AtLeastTest):
             event={},
             ctx={},
             state=Check.WARNING,
-            node=target,
+            toponode=target,
             manager=self.manager
         )
         self.assertTrue(check)
@@ -189,42 +189,42 @@ class AllTest(_AtLeastTest):
         Test one source.
         """
 
-        source = Node()
+        source = TopoNode()
         source.save(self.manager)
-        target = Node()
+        target = TopoNode()
         target.save(self.manager)
-        edge = Edge(sources=source.id, targets=target.id)
+        edge = TopoEdge(sources=source.id, targets=target.id)
         edge.save(self.manager)
 
-        check = _all(event={}, ctx={}, node=target, manager=self.manager)
+        check = _all(event={}, ctx={}, toponode=target, manager=self.manager)
         self.assertTrue(check)
 
-        Node.state(source, 1)
+        TopoNode.state(source, 1)
         source.save(self.manager)
 
-        check = _all(event={}, ctx={}, node=target, manager=self.manager)
+        check = _all(event={}, ctx={}, toponode=target, manager=self.manager)
         self.assertFalse(check)
 
     def test_many(self):
 
-        target = Node()
+        target = TopoNode()
         target.save(self.manager)
         count = 5
-        sources = [Node() for i in range(count)]
+        sources = [TopoNode() for i in range(count)]
         for source in sources:
             source.save(self.manager)
-        edge = Edge(
+        edge = TopoEdge(
             sources=[source.id for source in sources], targets=target.id
         )
         edge.save(self.manager)
 
-        check = _all(event={}, ctx={}, node=target, manager=self.manager)
+        check = _all(event={}, ctx={}, toponode=target, manager=self.manager)
         self.assertTrue(check)
 
-        Node.state(sources[0], 1)
+        TopoNode.state(sources[0], 1)
         sources[0].save(self.manager)
 
-        check = _all(event={}, ctx={}, node=target, manager=self.manager)
+        check = _all(event={}, ctx={}, toponode=target, manager=self.manager)
         self.assertFalse(check)
 
 
@@ -238,31 +238,31 @@ class NOKTest(_AtLeastTest):
         Test one source.
         """
 
-        source = Node()
+        source = TopoNode()
         source.save(self.manager)
-        target = Node()
+        target = TopoNode()
         target.save(self.manager)
-        edge = Edge(sources=source.id, targets=target.id)
+        edge = TopoEdge(sources=source.id, targets=target.id)
         edge.save(self.manager)
 
-        check = nok(event={}, ctx={}, node=target, manager=self.manager)
+        check = nok(event={}, ctx={}, toponode=target, manager=self.manager)
         self.assertFalse(check)
 
-        Node.state(source, 1)
+        TopoNode.state(source, 1)
         source.save(self.manager)
 
-        check = nok(event={}, ctx={}, node=target, manager=self.manager)
+        check = nok(event={}, ctx={}, toponode=target, manager=self.manager)
         self.assertTrue(check)
 
     def test_many(self):
 
-        target = Node()
+        target = TopoNode()
         target.save(self.manager)
         count = 5
-        sources = [Node() for i in range(count)]
+        sources = [TopoNode() for i in range(count)]
         for source in sources:
             target.save(self.manager)
-        edge = Edge(
+        edge = TopoEdge(
             sources=[source.id for source in sources], targets=target.id
         )
         edge.save(self.manager)
@@ -270,34 +270,34 @@ class NOKTest(_AtLeastTest):
         check = nok(
             event={},
             ctx={},
-            node=target,
+            toponode=target,
             min_weight=count,
             manager=self.manager
         )
         self.assertFalse(check)
 
-        Node.state(sources[0], 1)
+        TopoNode.state(sources[0], 1)
         sources[0].save(self.manager)
 
-        check = nok(event={}, ctx={}, node=target, manager=self.manager)
+        check = nok(event={}, ctx={}, toponode=target, manager=self.manager)
         self.assertTrue(check)
         check = nok(
             event={},
             ctx={},
-            node=target,
+            toponode=target,
             min_weight=count,
             manager=self.manager
         )
         self.assertFalse(check)
 
         for source in sources:
-            Node.state(source, 1)
+            TopoNode.state(source, 1)
             source.save(self.manager)
 
         check = nok(
             event={},
             ctx={},
-            node=target,
+            toponode=target,
             min_weight=count,
             manager=self.manager
         )

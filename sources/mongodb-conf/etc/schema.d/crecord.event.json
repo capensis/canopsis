@@ -44,7 +44,9 @@
 		"last_state_change": {
 			"type": "integer",
 			"role": "eventtimestamp",
-			"canDisplayAgo" : true
+			"canDisplayAgo" : true,
+			"title": "last state change"
+
 		},
 		"ticket_date": {
 			"type": "number"

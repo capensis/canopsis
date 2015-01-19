@@ -1,0 +1,28 @@
+{
+	"type": "object",
+	"categories": [{
+		"title": "General",
+		"keys": ["default_filter"]
+	},{
+		"title": "Filters",
+		"keys":["filters"]
+	}],
+	"properties": {
+		"filters": {
+			"type": "array",
+			"items": {
+				"type": "object",
+				"objectDict": { "title": "untitled filter", "cfilter": ""},
+				"role": "cfilterwithproperties"
+			}
+		},
+		"default_filter": {
+			"type": "string",
+			"role": "cfilter"
+		},
+		"additional_filter": {
+			"type": "string",
+			"role": "cfilter"
+		}
+	}
+}

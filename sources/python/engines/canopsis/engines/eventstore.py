@@ -81,17 +81,17 @@ class engine(Engine):
 
         # Prepare log event collection async insert
         log_event = event.copy()
-        log_id = '{}.{}'.format(event['_id'], time())
-        log_event['_id'] = log_id
-        self.events_log_buffer.append({'event': log_event})
+        self.events_log_buffer.append({
+            'event': log_event,
+            'collection': 'events_log'
+        })
 
         bulk_modulo = len(self.events_log_buffer) % self.log_bulk_amount
         elapsed_time = time() - self.last_bulk_insert_date
 
         if bulk_modulo == 0 or elapsed_time > self.log_bulk_delay:
-            self.archiver.process_insert_operations_collection(
-                self.events_log_buffer,
-                'events_log'
+            self.archiver.process_insert_operations(
+                self.events_log_buffer
             )
             self.events_log_buffer = []
             self.last_bulk_insert_date = time()

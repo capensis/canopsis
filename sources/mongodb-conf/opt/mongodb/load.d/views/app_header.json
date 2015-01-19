@@ -9,18 +9,19 @@
     "description" : null,
     "parent" : [ ],
    "containerwidget" : {
-    "items" : [
-                {
-                    "widget" : {
-                            "xtype" : "uimaintabcollection",
-                            "title" : "",
-                            "tabs" : [{"label": "Evenements", "value": "view.event"}, {"label": "Services", "value": "view.services"}]
-                    },
-                    "xtype" : "widgetwrapper",
-                    "title" : "wrapper"
-            }
+    "items" : [{
+                "widget" : {
+                        "xtype" : "uimaintabcollection",
+                        "title" : "",
+                        "tabs" : [{"label": "Evenements", "value": "view.event"}, {"label": "Services", "value": "view.services"}]
+                },
+                "xtype" : "widgetwrapper",
+                "title" : "wrapper"
+            }],
+    "xtype": "widgetcontainer",
+    "mixins": [
+      { "name": "lightlayout" }
     ],
-    "xtype" : "lighthbox",
     "title" : "container title vbox"
     },
 

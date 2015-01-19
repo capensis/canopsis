@@ -5,7 +5,10 @@
   "crecord_write_time": 1400853201,
   "enable": true,
   "containerwidget": {
-    "xtype": "verticalbox",
+    "xtype": "widgetcontainer",
+    "mixins": [
+      { "name": "verticallayout" }
+    ],
     "title": "container title vbox",
     "items": [
       {
@@ -15,7 +18,6 @@
           "id" : "item_13019673-ebdf-6271-e595-6be7338aeb60",
           "widgetId" : "item_13019673-ebdf-6271-e595-6be7338aeb60",
           "xtype": "list",
-          "default_filter" : "{\"$or\":[{\"$and\":[{\"ack.isAck\":{\"$ne\":true}},{\"state\":{\"$ne\":0}},{\"event_type\":{\"$eq\":\"check\"}}]}]}",
           "refreshInterval": 40,
           "refreshableWidget" : true,
           "itemsPerPage" : 50,
@@ -25,36 +27,39 @@
           "display_record_field": "resource",
           "record_template" : "<div>Connecteur : {{connector}}</div><div>Composant : {{component}} / Adresse IP : {{address}}</div><div>Hostgroups : {{hostgroups}}</div><div>Ressource : {{resource}}</div><div>Message :&nbsp;<span style=\"line-height: 1.428571429;\">{{output}}</span></div>",
           "default_column_sort" : {
-            "direction" : "DESC",
-            "property" : "timestamp"
+            "direction" : "ASC",
+            "property" : "last_state_change"
           },
-          "filters" : [
-            {
-              "filter" : "{\"$or\":[{\"$and\":[{\"ack.isAck\":{\"$ne\":true}},{\"state\":{\"$ne\":0}},{\"event_type\":{\"$eq\":\"check\"}}]}]}",
-              "cfilter" : "",
-              "title" : "Alert not ack"
-            },
-            {
-              "filter" : "{\"$or\":[{\"$and\":[{\"ack.isAck\":{\"$eq\":true}},{\"event_type\":{\"$eq\":\"check\"}}]}]}",
-              "cfilter" : "",
-              "title" : "Ack"
-            },
-            {
-              "filter" : "{\"$or\":[{\"$and\":[{\"state\":{\"$ne\":0}},{\"event_type\":{\"$eq\":\"check\"}}]}]}",
-              "cfilter" : "",
-              "title" : "Alert"
-            }
-          ],
           "mixins": [
-            "Customfilter",
-            "Sortablearray",
-            "Arraysearch",
-            "Pagination",
-            "History",
-            "Infobutton",
-            "Sendevent",
-            "Responsivelist",
-            "Eventnavigation"],
+            { "name": "Sortablearray" },
+            { "name": "Arraysearch" },
+            { "name": "Pagination" },
+            {
+              "name": "Customfilterlist",
+              "filters" : [
+                {
+                  "filter" : "{\"$or\":[{\"$and\":[{\"ack.isAck\":{\"$ne\":true}},{\"state\":{\"$ne\":0}},{\"event_type\":{\"$eq\":\"check\"}}]}]}",
+                  "cfilter" : "",
+                  "title" : "Alert not ack"
+                },
+                {
+                  "filter" : "{\"$or\":[{\"$and\":[{\"ack.isAck\":{\"$eq\":true}},{\"event_type\":{\"$eq\":\"check\"}}]}]}",
+                  "cfilter" : "",
+                  "title" : "Ack"
+                },
+                {
+                  "filter" : "{\"$or\":[{\"$and\":[{\"state\":{\"$ne\":0}},{\"event_type\":{\"$eq\":\"check\"}}]}]}",
+                  "cfilter" : "",
+                  "title" : "Alert"
+                }
+              ],
+              "default_filter" : "{\"$or\":[{\"$and\":[{\"ack.isAck\":{\"$ne\":true}},{\"state\":{\"$ne\":0}},{\"event_type\":{\"$eq\":\"check\"}}]}]}"
+            },
+            { "name": "History" },
+            { "name": "Infobutton" },
+            { "name": "Sendevent" },
+            { "name": "Responsivelist" },
+            { "name": "Eventnavigation" }],
           "displayed_columns": [
             "domain",
             "perimeter",
