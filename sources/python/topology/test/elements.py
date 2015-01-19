@@ -22,10 +22,12 @@
 from unittest import TestCase, main
 
 from canopsis.task import register_task
-from canopsis.topology.elements import TopoNode
+from canopsis.topology.elements import TopoNode, Topology
+from canopsis.topology.manager import TopologyManager
+from canopsis.context.manager import Context
 
 
-class NodeTest(TestCase):
+class TopoNodeTest(TestCase):
     """
     Test event processing function.
     """
@@ -58,6 +60,34 @@ class NodeTest(TestCase):
         self.assertIs(_node, toponode)
         self.assertIs(_ctx, ctx)
         self.assertFalse(_kwargs)
+
+
+class TopologyGraphTest(TestCase):
+    """
+    Test topology element.
+    """
+
+    def setUp(self):
+
+        self.context = Context(data_scope='test')
+        self.manager = TopologyManager(data_scope='test')
+
+    def tearDown(self):
+
+        self.context.remove()
+        self.manager.del_elts()
+
+    def test_save(self):
+
+        _id = 'test'
+
+        topology = Topology(_id=_id)
+        topology.save(manager=self.manager, context=self.context)
+
+        topology = self.context.get(_type=Topology.TYPE, names=_id)
+
+        self.assertEqual(topology[Context.NAME], _id)
+
 
 if __name__ == '__main__':
     main()

@@ -60,6 +60,11 @@ A topology edge contains::
 
 - weight: node weight in the graph related to edge targets.
 
+A topology contains::
+
+- state: current topology state.
+- data.task: the change_state operator with a propagation to the entity.
+
 """
 
 __all__ = ['Topology', 'TopoEdge', 'TopoNode']
@@ -67,6 +72,11 @@ __all__ = ['Topology', 'TopoEdge', 'TopoNode']
 from canopsis.graph.elements import Graph, Vertice, Edge
 from canopsis.task import run_task, TASK
 from canopsis.check import Check
+from canopsis.check.manager import CheckManager
+from canopsis.context.manager import Context
+
+_context = Context()
+_check = CheckManager()
 
 
 class Topology(Graph):
@@ -74,6 +84,67 @@ class Topology(Graph):
     TYPE = 'topology'  #: topology type name
 
     __slots__ = Graph.__slots__
+
+    CONNECTOR = 'canopsis'
+    CONNECTOR_NAME = 'canopsis'
+    COMPONENT = 'canopsis'
+
+    def __init__(self, *args, **kwargs):
+
+        super(Topology, self).__init__(*args, **kwargs)
+
+        if self.data is None:
+            self.data = {}
+        # ensure entity id is in topology
+        if TopoNode.ENTITY not in self.data:
+            entity_id = self.entity_id()
+            self.data[TopoNode.ENTITY] = entity_id
+        # ensure state is in data
+        if Check.STATE not in self.data:
+            entity_id = self.data[TopoNode.ENTITY]
+            self.data[TASK] = _check.state(ids=entity_id)
+
+    def entity_id(self):
+        """
+        Get self entity id.
+        """
+
+        ctx, entity = self.get_context_w_entity()
+        entity.update(ctx)
+        result = _context.get_entity_id(entity)
+        return result
+
+    def get_context_w_entity(self):
+        """
+        Get self entity structure and its context.
+
+        :return: tuple of self context and entity.
+        :rtype: tuple
+        """
+
+        context = {
+            'connector': Topology.CONNECTOR,
+            'connector_name': Topology.CONNECTOR_NAME,
+            'component': Topology.COMPONENT
+        }
+
+        entity = {
+            Context.NAME: self.id
+        }
+
+        return context, entity
+
+    def save(self, context=None, *args, **kwargs):
+
+        super(Topology, self).save(*args, **kwargs)
+
+        # use global context if input context is None
+        if context is None:
+            context = _context
+        # get self entity
+        ctx, entity = self.get_context_w_entity()
+        # put the topology in the context by default
+        context.put(_type=Topology.TYPE, entity=entity, context=ctx)
 
 
 class TopoNode(Vertice):

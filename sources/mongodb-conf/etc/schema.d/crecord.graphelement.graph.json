@@ -1,0 +1,28 @@
+{
+    "type": "object",
+    "categories": [{
+        "title": "General",
+        "keys": [
+            "cid",
+            "type",
+            "info"
+        ]
+    }],
+    "properties": {
+        "crecord_type": {
+            "type": "string",
+            "default": "graph",
+            "required": false
+        },
+        "_cls": {
+            "type": "string",
+            "default": "canopsis.graph.elements.Graph",
+            "required": true
+        },
+        "type": {
+            "default": "graph",
+            "type": "string",
+            "required": false
+        }
+    }
+}

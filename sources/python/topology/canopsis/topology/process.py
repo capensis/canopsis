@@ -54,7 +54,7 @@ PUBLISHER = 'publisher'
 
 
 @register_task
-def event_processing(event, engine, manager=None, **kwargs):
+def event_processing(engine, event, manager=None, **kwargs):
     """
     Process input event in getting topology nodes bound to input event entity.
 
