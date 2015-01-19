@@ -51,26 +51,26 @@ Both permits to update the node state. The first one will update its state
 related to the bound entity state, while the task can update the state
 independently to the entity state.
 
-A topology node contains::
+A topology operator (to) contains::
 
-- state: node state which change at runtime depending on bound entity state
-    and event propagation.
+- data.state: to state which change at runtime depending on bound entity
+    state and event propagation.
+- data.entity: to entity.
+- data.operator: to operator.
+
+A topology node inherits from both vertice and to.
 
 A topology edge contains::
 
 - weight: node weight in the graph related to edge targets.
 
-A topology contains::
-
-- state: current topology state.
-- data.task: the change_state operator with a propagation to the entity.
-
+A topology inherits from both grapg and to and contains.
 """
 
 __all__ = ['Topology', 'TopoEdge', 'TopoNode']
 
 from canopsis.graph.elements import Graph, Vertice, Edge
-from canopsis.task import run_task, TASK
+from canopsis.task import run_task, TASK, new_conf
 from canopsis.check import Check
 from canopsis.check.manager import CheckManager
 from canopsis.context.manager import Context
@@ -79,7 +79,77 @@ _context = Context()
 _check = CheckManager()
 
 
-class Topology(Graph):
+class TopoOp(object):
+
+    STATE = Check.STATE  #: state field name in data
+    ENTITY = 'entity'  #: entity field name in data
+    OPERATOR = 'operator'  #: operator field name in data
+
+    @property
+    def entity(self):
+        """
+        Get self entity id.
+        :return: self entity id.
+        :rtype: str
+        """
+        return self.data[TopoOp.ENTITY]
+
+    @entity.setter
+    def entity(self, value):
+        """
+        Change of entity id and update state.
+
+        :param value: new entity (id) to use.
+        :type value: dict or str
+        """
+
+        if isinstance(value, dict):
+            # get entity id
+            entity_id = _context.get_entity_id(value)
+        else:
+            entity_id = value
+
+        # update entity
+        self.data[TopoOp.ENTITY] = entity_id
+        # update entity state
+        self.data[TopoOp.STATE] = _check.state(ids=entity_id)
+
+    @property
+    def state(self):
+        result = self.data.get(TopoOp.STATE)
+        return result
+
+    @state.setter
+    def state(self, value):
+        self.data[TopoOp.STATE] = value
+
+    @property
+    def operator(self):
+        result = self.data.get(TopoOp.OPERATOR)
+        return result
+
+    @operator.setter
+    def operator(self, value):
+        self.data[TopoOp.OPERATOR] = value
+
+    def process(self, event, **kwargs):
+        """
+        Process this node task.
+        """
+
+        result = None
+
+        task = self.operator
+
+        if task is not None:
+            result = run_task(
+                conf=task, toponode=self, event=event, **kwargs
+            )
+
+        return result
+
+
+class Topology(Graph, TopoOp):
 
     TYPE = 'topology'  #: topology type name
 
@@ -95,24 +165,25 @@ class Topology(Graph):
 
         if self.data is None:
             self.data = {}
-        # ensure entity id is in topology
-        if TopoNode.ENTITY not in self.data:
-            entity_id = self.entity_id()
-            self.data[TopoNode.ENTITY] = entity_id
-        # ensure state is in data
-        if Check.STATE not in self.data:
-            entity_id = self.data[TopoNode.ENTITY]
-            self.data[TASK] = _check.state(ids=entity_id)
 
-    def entity_id(self):
+        # ensure change state is the default task
+        if TASK not in self.data:
+            self.data[TASK] = new_conf(
+                'canopsis.topology.rule.action.change_state',
+                **{
+                    'update_entity': True
+                }
+            )
+
+    @property
+    def entity(self):
         """
         Get self entity id.
+        :return: self entity id.
+        :rtype: str
         """
 
-        ctx, entity = self.get_context_w_entity()
-        entity.update(ctx)
-        result = _context.get_entity_id(entity)
-        return result
+        return self.data[TopoOp.ENTITY]
 
     def get_context_w_entity(self):
         """
@@ -129,7 +200,7 @@ class Topology(Graph):
         }
 
         entity = {
-            Context.NAME: self.id
+            Context.NAME: self.name
         }
 
         return context, entity
@@ -144,10 +215,10 @@ class Topology(Graph):
         # get self entity
         ctx, entity = self.get_context_w_entity()
         # put the topology in the context by default
-        context.put(_type=Topology.TYPE, entity=entity, context=ctx)
+        context.put(_type=self.type, entity=entity, context=ctx)
 
 
-class TopoNode(Vertice):
+class TopoNode(Vertice, TopoOp):
     """
     Class representation of a topology node.
 
@@ -158,7 +229,7 @@ class TopoNode(Vertice):
         - (optionnally) a task information.
     """
 
-    TYPE = 'topovertice'  #: node type name
+    TYPE = 'toponode'  #: node type name
 
     ENTITY = 'entity'  #: entity data name
 
@@ -195,77 +266,8 @@ class TopoNode(Vertice):
         if task is not None:
             self.data[TASK] = task
 
-    @staticmethod
-    def task(elt, value=None):
-        """
-        Get task value. If value is not None, update task value.
 
-        :param GraphElement elt: from where get task.
-        :param value: new task to use.
-        :type value: str or dict
-        :return: elt task.
-        :rtype: str or dict
-        """
-
-        if value is not None:
-            elt.data[TASK] = value
-        return elt.data[TASK] if TASK in elt.data else None
-
-    @staticmethod
-    def entity(elt, value=None):
-        """
-        Get task entity id. If value is not None, update entity value.
-
-        :param GraphElement elt: from where get entity.
-        :param str value: new entity to use.
-        :return: elt entity.
-        :rtype: str
-        """
-
-        if value is not None:
-            elt.data[TopoNode.ENTITY] = value
-
-        result = None
-
-        if TopoNode.ENTITY in elt.data:
-            result = elt.data[TopoNode.ENTITY]
-
-        return result
-
-    @staticmethod
-    def state(elt, value=None):
-        """
-        Get state value. If value is not None, update state value.
-
-        :param GraphElement elt: from where get state.
-        :param float value: new state to use.
-        :return: elt state.
-        :rtype: float
-        """
-
-        if value is not None:
-            elt.data[Check.STATE] = value
-        return elt.data[Check.STATE] if Check.STATE in elt.data else Check.OK
-
-    @staticmethod
-    def process(toponode, event, **kwargs):
-        """
-        Process this node task.
-        """
-
-        result = None
-
-        task = TopoNode.task(toponode)
-
-        if task is not None:
-            result = run_task(
-                conf=task, toponode=toponode, event=event, **kwargs
-            )
-
-        return result
-
-
-class TopoEdge(Edge):
+class TopoEdge(Edge, TopoOp):
     """
     Topology edge.
     """

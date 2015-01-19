@@ -115,7 +115,9 @@ class AtLeastTest(_AtLeastTest):
 
         target = TopoNode()
         target.save(self.manager)
-        check = at_least(event={}, ctx={}, toponode=target, manager=self.manager)
+        check = at_least(
+            event={}, ctx={}, toponode=target, manager=self.manager
+        )
 
         self.assertFalse(check)
 
@@ -131,7 +133,9 @@ class AtLeastTest(_AtLeastTest):
         edge = TopoEdge(sources=source.id, targets=target.id)
         edge.save(self.manager)
 
-        check = at_least(event={}, ctx={}, toponode=target, manager=self.manager)
+        check = at_least(
+            event={}, ctx={}, toponode=target, manager=self.manager
+        )
 
         self.assertTrue(check)
 
@@ -158,11 +162,15 @@ class AtLeastTest(_AtLeastTest):
 
         edge.weight = 0.5
         edge.save(self.manager)
-        TopoNode.state(source, Check.WARNING)
+        source.state = Check.WARNING
         source.save(self.manager)
 
         check = at_least(
-            event={}, ctx={}, state=Check.WARNING, toponode=target, manager=self.manager
+            event={},
+            ctx={},
+            state=Check.WARNING,
+            toponode=target,
+            manager=self.manager
         )
         self.assertFalse(check)
 
@@ -199,7 +207,7 @@ class AllTest(_AtLeastTest):
         check = _all(event={}, ctx={}, toponode=target, manager=self.manager)
         self.assertTrue(check)
 
-        TopoNode.state(source, 1)
+        source.state = Check.WARNING
         source.save(self.manager)
 
         check = _all(event={}, ctx={}, toponode=target, manager=self.manager)
@@ -221,7 +229,7 @@ class AllTest(_AtLeastTest):
         check = _all(event={}, ctx={}, toponode=target, manager=self.manager)
         self.assertTrue(check)
 
-        TopoNode.state(sources[0], 1)
+        sources[0].state = Check.WARNING
         sources[0].save(self.manager)
 
         check = _all(event={}, ctx={}, toponode=target, manager=self.manager)
@@ -248,7 +256,7 @@ class NOKTest(_AtLeastTest):
         check = nok(event={}, ctx={}, toponode=target, manager=self.manager)
         self.assertFalse(check)
 
-        TopoNode.state(source, 1)
+        source.state = Check.WARNING
         source.save(self.manager)
 
         check = nok(event={}, ctx={}, toponode=target, manager=self.manager)
@@ -276,7 +284,7 @@ class NOKTest(_AtLeastTest):
         )
         self.assertFalse(check)
 
-        TopoNode.state(sources[0], 1)
+        sources[0].state = Check.WARNING
         sources[0].save(self.manager)
 
         check = nok(event={}, ctx={}, toponode=target, manager=self.manager)
@@ -291,7 +299,7 @@ class NOKTest(_AtLeastTest):
         self.assertFalse(check)
 
         for source in sources:
-            TopoNode.state(source, 1)
+            source.state = Check.WARNING
             source.save(self.manager)
 
         check = nok(
