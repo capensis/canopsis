@@ -249,7 +249,7 @@ class Formatter(object):
         '''
         return list(set([i for i in self.CONTEXT]) - set(newList))
 
-    def query_generator(self, comp):
+    def query_generator(self, comp=None):
         '''
         '''
         start = "{"
@@ -259,7 +259,10 @@ class Formatter(object):
         comma = ","
         separator = ":"
         missing_ctx = []
-        top = self.get_components().get(comp)
+        if comp is None:
+            top = self.get_event_type().get(self.EVENT_TYPE[3])[0]
+        else:
+            top = self.get_components().get(comp)
         if top.get(self.CONTEXT[0]) is not None:
             missing_ctx.append(self.CONTEXT[0])
             data += quote + self.CONTEXT[0] + quote + separator + quote + top.get(self.CONTEXT[0]) + quote + comma
@@ -302,11 +305,12 @@ class Formatter(object):
 
     def get_root_id(self):
         '''
-        Get the component root ID.
+        Get the components root ID.
         '''
         return self.data.get(self.TOPOIDS[2])
 
     def get_operator_data(self, op_dict):
         '''
+        Get Component form items.
         '''
         return op_dict.values().get('form').get('items')
