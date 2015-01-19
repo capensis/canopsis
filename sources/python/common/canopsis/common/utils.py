@@ -106,8 +106,8 @@ def lookup(path, cached=True):
         # try to import the first component name
         try:
             result = import_module(module_name)
-        except ImportError:
-            pass
+        except ImportError as e:
+            print 'Error while importing module {} : {}'.format(module_name, e)
 
         if result is not None:
 
@@ -125,7 +125,7 @@ def lookup(path, cached=True):
                         result = import_module(module_name)
                         index += 1
 
-                except ImportError:
+                except ImportError as ie:
                     # path sub-module content
                     try:
 
@@ -133,10 +133,17 @@ def lookup(path, cached=True):
                             result = getattr(result, components[index])
                             index += 1
 
-                    except AttributeError:
+                    except AttributeError as ae:
                         raise ImportError(
-                            'Wrong path {0} at {1}'.format(
-                                path, components[:index]))
+                            ('Wrong path {0} at {1}, ' +
+                                'errors when importing module {2} ' +
+                                ': {3}, {4}').format(
+                                path,
+                                components[:index],
+                                module_name,
+                                ie,
+                                ae
+                            ))
 
             if result is not None and cached:
                 __RESOLVED_ELEMENTS[path] = result

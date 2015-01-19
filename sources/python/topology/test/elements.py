@@ -22,42 +22,72 @@
 from unittest import TestCase, main
 
 from canopsis.task import register_task
-from canopsis.topology.elements import Node
+from canopsis.topology.elements import TopoNode, Topology
+from canopsis.topology.manager import TopologyManager
+from canopsis.context.manager import Context
 
 
-class NodeTest(TestCase):
+class TopoNodeTest(TestCase):
     """
     Test event processing function.
     """
 
     def test_empty(self):
         """
-        Test to process a node without task.
+        Test to process a toponode without task.
         """
 
-        node = Node()
-        result = Node.process(node, event=None)
+        toponode = TopoNode()
+        result = TopoNode.process(toponode, event=None)
         self.assertIsNone(result)
 
     def test_process_task(self):
         """
-        Process a task which returns all node data.
+        Process a task which returns all toponode data.
         """
 
         @register_task('process')
-        def process_node(node, ctx, event=None, **kwargs):
+        def process_node(toponode, ctx, event=None, **kwargs):
 
-            return node, ctx, kwargs
+            return toponode, ctx, kwargs
 
         ctx, entity, state, task = {'b': 1}, 'e', 0, 'process'
 
-        node = Node(task=task, entity=entity, state=state)
+        toponode = TopoNode(task=task, entity=entity, state=state)
 
-        _node, _ctx, _kwargs = Node.process(node, ctx=ctx, event=None)
+        _node, _ctx, _kwargs = TopoNode.process(toponode, ctx=ctx, event=None)
 
-        self.assertIs(_node, node)
+        self.assertIs(_node, toponode)
         self.assertIs(_ctx, ctx)
         self.assertFalse(_kwargs)
+
+
+class TopologyGraphTest(TestCase):
+    """
+    Test topology element.
+    """
+
+    def setUp(self):
+
+        self.context = Context(data_scope='test')
+        self.manager = TopologyManager(data_scope='test')
+
+    def tearDown(self):
+
+        self.context.remove()
+        self.manager.del_elts()
+
+    def test_save(self):
+
+        _id = 'test'
+
+        topology = Topology(_id=_id)
+        topology.save(manager=self.manager, context=self.context)
+
+        topology = self.context.get(_type=Topology.TYPE, names=_id)
+
+        self.assertEqual(topology[Context.NAME], _id)
+
 
 if __name__ == '__main__':
     main()

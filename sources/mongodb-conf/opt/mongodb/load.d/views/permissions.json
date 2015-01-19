@@ -5,9 +5,10 @@
   "crecord_write_time": 1400853201,
   "enable": true,
   "containerwidget": {
-    "xtype": "tabmanager",
-    "title": "container title vbox",
-    "_id": "test_view_vertical_container",
+    "xtype": "widgetcontainer",
+    "mixins": [{
+      "name": "tablayout"
+    }],
     "items": [
       {
         "title": "wrapper",
@@ -24,10 +25,10 @@
             "actionbutton-removeselection"
           ],
           "mixins": [
-            "Sortablearray",
-            "Arraysearch",
-            "Pagination",
-            "Crud"
+            { "name" : "Sortablearray" },
+            { "name" : "Arraysearch" },
+            { "name" : "Pagination" },
+            { "name" : "Crud" }
           ],
           "displayed_columns": [
             "crecord_type",
@@ -53,10 +54,10 @@
             "actionbutton-removeselection"
           ],
           "mixins": [
-            "Sortablearray",
-            "Arraysearch",
-            "Pagination",
-            "Crud"
+            { "name" : "Sortablearray" },
+            { "name" : "Arraysearch" },
+            { "name" : "Pagination" },
+            { "name" : "Crud" }
           ],
           "displayed_columns": [
             "crecord_type",
@@ -81,10 +82,10 @@
             "actionbutton-removeselection"
           ],
           "mixins": [
-            "Sortablearray",
-            "Arraysearch",
-            "Pagination",
-            "Crud"
+            { "name" : "Sortablearray" },
+            { "name" : "Arraysearch" },
+            { "name" : "Pagination" },
+            { "name" : "Crud" }
           ],
           "displayed_columns": [
             "crecord_type",

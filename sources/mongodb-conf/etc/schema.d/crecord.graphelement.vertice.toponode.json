@@ -1,0 +1,17 @@
+{
+    "type": "object",
+    "categories": [{
+        "title": "General",
+        "keys": [
+            "info"
+        ]
+    }],
+    "properties": {
+        "_cls": {
+            "default": "canopsis.topology.elements.TopoNode"
+        },
+        "type": {
+            "default": "toponode"
+        }
+    }
+}

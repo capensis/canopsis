@@ -7,7 +7,6 @@
     "properties": {
         "title": {"type": "string"},
         "job": {
-            "type": "object",
             "model": "crecord.job",
             "relationship": "belongsTo",
             "required": true

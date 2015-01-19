@@ -1,0 +1,22 @@
+{
+    "type": "object",
+    "categories": [
+        {
+            "title": "General",
+            "keys":["title", "graph_id"]
+        }, {
+            "title": "Options",
+            "keys":["refreshableWidget", "refreshInterval"]
+        }
+    ],
+    "properties": {
+        "crecord_type": {
+            "type": "string",
+            "required": true,
+            "default": "wtopology"
+        },
+        "graph_type": {
+            "default": "topology"
+        }
+    }
+}

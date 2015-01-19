@@ -21,18 +21,18 @@
 
 from canopsis.context.manager import Context
 from canopsis.topology.manager import TopologyManager
-from canopsis.topology.elements import Edge, Node, Topology
+from canopsis.topology.elements import TopoEdge, TopoNode, Topology
 
 from argparse import ArgumentParser
 
 
-def generate_context_topology(name='test'):
+def generate_context_topology(name='context'):
     """
     Generate a context topology where nodes are components and resources,
     and edges are dependencies from components to resources, or from resources
     to the topology.
 
-    :param str name: topology name
+    :param str name: topology name.
     """
 
     # initialize context and topology
@@ -42,10 +42,12 @@ def generate_context_topology(name='test'):
     # clean old topology
     manager.del_elts(ids=name)
 
-    topology = manager.get_graphs(ids=name)
+    topology = manager.get_graphs(ids=name, add_elts=True)
     if topology is not None:  # if topology already exists, delete content
-        manager.del_elts(ids=topology.elts)
-        topology.delete(manager)
+        for elt_id in topology._gelts:
+            elt = topology._gelts[elt_id]
+            elt.delete(manager=manager)
+        topology.delete(manager=manager)
     # init the topology
     topology = Topology(_id=name)
 
@@ -56,40 +58,50 @@ def generate_context_topology(name='test'):
         :param GraphElement elt: elt to add to topology.
         """
 
-        topology.add_elts(elt)
+        topology.add_elts(elt.id)
         elt.save(manager)
 
     components = context.find('component')
     for component in components:
         component_id = context.get_entity_id(component)
-        component_node = Node(entity=component_id)
+        component_node = TopoNode(entity=component_id)
         addElt(component_node)
 
         ctx, _ = context.get_entity_context_and_name(component)
 
         resources = context.find('resource', context=ctx)
         if resources:  # link component to all its resources with the same edge
-            edge = Edge(sources=component_node.id, targets=[])
+            edge = TopoEdge(sources=component_node.id, targets=[])
             addElt(edge)  # add edge in topology
             for resource in resources:
                 resource_id = context.get_entity_id(resource)
-                resource_node = Node(entity=resource_id)
-                addElt(resource_node)  # add edge in topology
-                edge.targets.append(resource_id)
-                root_edge = Edge(sources=resource_node.id, targets=topology.id)
-                addElt(root_edge)  # add edge in topology
+                resource_node = TopoNode(entity=resource_id)
+                addElt(resource_node)  # save resource node
+                # add resource from component
+                edge.targets.append(resource_node.id)
+                res2topo = TopoEdge(
+                    sources=resource_node.id, targets=topology.id
+                )
+                addElt(res2topo)
+            if not edge.targets:  # bind topology from component if not sources
+                edge.targets.append(topology.id)
+            addElt(edge)  # save edge in all cases
         else:  # if no resources, link the component to the topology
-            edge = Edge(sources=component_node.id, targets=topology.id)
+            edge = TopoEdge(sources=component_node.id, targets=topology.id)
             addElt(edge)  # add edge in topology
 
     # save topology
-    topology.save(manager)
+    topology.save(manager=manager)
 
 
 if __name__ == '__main__':
 
     parser = ArgumentParser(description='Generate a topology')
-    parser.add_argument(dest='name', help='topology name to generate')
+    parser.add_argument(
+        dest='name',
+        help='topology name to generate (default: context)',
+        default='context'
+    )
     args = parser.parse_args()
 
     topology_name = args.name

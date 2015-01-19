@@ -67,9 +67,6 @@ def base_init():
     # (0'login', 1'pass', 2'group', 3'lastname', 4'firstname', 5'groups' ,6'email')
     accounts = [
         ('root', 'root', 'CPS_root', 'Lastname', 'Firstname', [], ''),
-        ('AP234760', 'AP234760', 'CPS_root', 'Psis', 'Cano', ['group.CPS_view'], ''),
-        ('X2008332', 'X2008332', 'CPS_root', 'Psis', 'Cano', ['group.CPS_view'], ''),
-        ('MT704129', 'MT704129', 'CPS_root', 'Psis', 'Cano', ['group.CPS_view'], '')
     ]
 
     for name in groups:
@@ -80,12 +77,13 @@ def base_init():
             storage.put(record)
         except:
             logger.info(" + Create group '%s'" % name)
-            record = Record({'_id': 'group.%s' % name}, _type='group', name=name,
-                group='group.CPS_account_admin')
+            record = Record(
+                {'_id': 'group.%s' % name},
+                _type='group',
+                name=name
+            )
             record.admin_group = 'group.CPS_account_admin'
             record.data['description'] = groups[name]
-            record.data['internal'] = True
-            record.chmod('o+r')
             storage.put(record)
 
     for account in accounts:
@@ -100,10 +98,7 @@ def base_init():
             record.firstname = account[4]
             record.lastname = account[3]
             record.groups = account[5]
-            record.chown(record._id)
-            record.chgrp(record.group)
             record.admin_group = 'group.CPS_account_admin'
-            record.chmod('g+r')
             record.passwd(account[1])
             record.generate_new_authkey()
             storage.put(record)
@@ -117,7 +112,6 @@ def base_init():
         rootdir = Record(
             {'_id': 'directory.root', 'id': 'directory.root', 'expanded': 'true'},
             _type='view_directory', name="root directory")
-        rootdir.chmod('o+r')
         storage.put(rootdir)
 
     records = storage.find(
@@ -191,11 +185,7 @@ def update_for_new_rights():
     dump = storage.find({})
 
     for record in dump:
-        if record.owner.find('account.') == -1:
-            record.owner = 'account.%s' % record.owner
-        if record.group.find('group.') == -1:
-            record.group = 'group.%s' % record.group
-        #for Account
+        # for Account
         if 'groups' in record.data:
             for group in record.data['groups']:
                 if group.find('group.') == -1:
@@ -244,57 +234,3 @@ def update_for_new_rights():
     except:
         pass
 
-    #clean all groups in account.groups
-    try:
-        group_list = ['group.canopsis', 'group.root', 'canopsis', 'root',
-        'curves_admin', 'group.curves_admin']
-        records = storage.find(
-            {'crecord_type': 'account', 'groups': {'$in': group_list}})
-        if not isinstance(records, list):
-            records = [records]
-
-        for record in records:
-            new_groups_array = []
-            for group in record.data['groups']:
-                if group == 'group.canopsis' or group == 'canopsis' or \
-                        group == 'CPS_canopsis' or group == 'group.CPS_canopsis':
-                    group = 'Canopsis'
-                if group == 'group.root' or group == 'root':
-                    group = 'CPS_root'
-                if group == 'group.curves_admin' or group == 'curves_admin':
-                    group = 'CPS_curves_admin'
-                new_groups_array.append(group)
-            record.data['groups'] = new_groups_array
-
-        storage.put(records)
-    except:
-        pass
-    #---------------------update each record type--------------------
-    #update view
-    dump = storage.find(
-        {'$or': [{'crecord_type': 'view'}, {'crecord_type': 'view_directory'}]})
-    for record in dump:
-        record.chgrp('group.CPS_view_admin')
-        record.admin_group = 'group.CPS_view_admin'
-        record.chmod('g+w')
-        record.chmod('g+r')
-    storage.put(dump, account=root)
-
-    #update schedule
-    dump = storage.find({'crecord_type': 'schedule'})
-    for record in dump:
-        record.chgrp('group.CPS_schedule_admin')
-        record.admin_group = 'group.CPS_schedule_admin'
-        record.chmod('g+w')
-        record.chmod('g+r')
-    storage.put(dump)
-
-    #update accounts
-    dump = storage.find(
-        {'$or': [{'crecord_type': 'account'}, {'crecord_type': 'group'}]})
-    for record in dump:
-        #record.chgrp('group.CPS_account_admin')
-        record.admin_group = 'group.CPS_account_admin'
-        record.chmod('g+w')
-        record.chmod('g+r')
-    storage.put(dump)

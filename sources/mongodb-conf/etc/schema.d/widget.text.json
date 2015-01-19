@@ -14,6 +14,9 @@
 	{
 		"title": "Metrics",
 		"keys":["use_metrics"]
+	},{
+		"title": "Mixins",
+		"keys":["mixins"]
 	}],
 	"properties": {
 		"title": {
@@ -52,6 +55,14 @@
             },
             "role": "cmetric",
             "title": "Metrics data source"
-        }
+        },
+   		"mixins": {
+			"type": "array",
+			"role": "mixins",
+			"items": {
+				"type": "string"
+			},
+			"reorderable": true
+		}
 	}
 }

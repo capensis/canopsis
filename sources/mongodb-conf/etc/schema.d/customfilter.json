@@ -7,7 +7,7 @@
 	"properties": {
 		"filter": {
 			"type": "string",
-			"role": "cfilter3",
+			"role": "cfilter",
 			"required": true
 		},
 		"title": {

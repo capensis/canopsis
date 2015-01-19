@@ -10,7 +10,10 @@
     "parent" : [ ],
     "containerwidget" : {
         "widgetId" : null,
-        "xtype" : "verticalbox",
+        "xtype": "widgetcontainer",
+        "mixins": [
+          { "name": "verticallayout" }
+        ],
         "title" : null,
         "items" : [
             {
@@ -28,9 +31,9 @@
                     "title" : "Series",
                     "maximized_column_index" : 0,
                     "mixins" : [
-                        "Crud",
-                        "Pagination",
-                        "Arraysearch"
+                        { "name": "Crud" },
+                        { "name": "Pagination" },
+                        { "name": "Arraysearch" }
                     ],
                     "itemsPerPage" : 10,
                     "cssClass" : null,
@@ -75,9 +78,9 @@
                     "title" : "Curves",
                     "maximized_column_index" : 0,
                     "mixins" : [
-                        "Pagination",
-                        "Crud",
-                        "Arraysearch"
+                        { "name": "Pagination" },
+                        { "name": "Crud" },
+                        { "name": "Arraysearch" }
                     ],
                     "itemsPerPage" : 10,
                     "cssClass" : null,

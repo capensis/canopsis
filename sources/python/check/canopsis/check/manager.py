@@ -143,7 +143,9 @@ class CheckManager(MiddlewareRegistry):
                         last_name: last_state
                     }
                     # save new state_document
-                    storage.put_element(_id=_id, element=new_state_document)
+                    storage.put_element(
+                        _id=_id, element=new_state_document, cache=cache
+                    )
                     # save state entity in result
                     result[_id] = entity_state
             # for all not found documents
@@ -162,7 +164,9 @@ class CheckManager(MiddlewareRegistry):
                     last_name: state
                 }
                 # save it in storage
-                storage.put_element(_id=entity_id, element=new_state_document)
+                storage.put_element(
+                    _id=entity_id, element=new_state_document, cache=cache
+                )
                 # and put entity state in the result
                 result[entity_id] = entity_state
 
@@ -172,12 +176,13 @@ class CheckManager(MiddlewareRegistry):
 
         return result
 
-    def del_state(self, ids=None):
+    def del_state(self, ids=None, cache=False):
         """
         Delete states related to input ids. If ids is None, delete all states.
 
         :param ids: entity ids. Delete all states if ids is None (default).
         :type ids: str or list
+        :param bool cache: storage cache when udpate state.
         """
 
-        self[CheckManager.CHECK_STORAGE].remove_elements(ids=ids)
+        self[CheckManager.CHECK_STORAGE].remove_elements(ids=ids, cache=cache)

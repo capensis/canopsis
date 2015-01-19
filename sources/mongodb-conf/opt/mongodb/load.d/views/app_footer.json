@@ -23,7 +23,10 @@
                         }
                 ],
                 "widgetslotTemplate" : null,
-                "xtype" : "lighthbox",
+                "xtype": "widgetcontainer",
+                "mixins": [
+                { "name": "lightlayout" }
+                ],
                 "title" : "container title vbox"
         },
         "aaa_access_owner" : [
