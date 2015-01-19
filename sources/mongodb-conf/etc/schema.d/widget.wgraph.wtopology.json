@@ -1,5 +1,8 @@
 {
     "type": "object",
+    "metadata": {
+        "classes": []
+    },
     "categories": [
         {
             "title": "General",

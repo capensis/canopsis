@@ -71,7 +71,7 @@ def new_state(event, toponode, state=None, manager=None, **kwargs):
         state = event[Check.STATE]
 
     # True if toponode state is different than state
-    result = TopoNode.state(toponode) != state
+    result = toponode.state != state
 
     return result
 
@@ -120,7 +120,7 @@ def at_least(
         edge, sources = sources_by_edges[edge_id]
         # get edge_weight which is 1 by default
         for source in sources:
-            source_state = TopoNode.state(source)
+            source_state = source.state
             if (source_state == state if f is None else f(source_state)):
                 if min_weight is not None:  # if min_weight is not None
                     min_weight -= edge.weight  # remove edge_weight from result

@@ -10,7 +10,7 @@
             "default": "topology"
         },
         "_cls": {
-            "default": "canopsis.topology.elements.Topology",
+            "default": "canopsis.topology.elements.Topology"
         },
         "type": {
             "default": "topology"
