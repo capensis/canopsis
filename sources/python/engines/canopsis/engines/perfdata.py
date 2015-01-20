@@ -54,7 +54,8 @@ class engine(Engine):
 
             except Exception as err:
                 self.logger.error(
-                    "Impossible to parse: {0} ('{1}')".format(perf_data, err))
+                    "Impossible to parse: {0} ('{1}')".format(perf_data, err)
+                )
 
         self.logger.debug(' + perf_data_array: {0}'.format(perf_data_array))
 
@@ -78,7 +79,8 @@ class engine(Engine):
                 {
                     "metric": "cps_state",
                     "value": cps_state
-                })
+                }
+            )
 
         event['perf_data_array'] = perf_data_array
 
