@@ -401,7 +401,7 @@ if __name__ == '__main__':
         print t.is_context_compatible(c)
 
     for c in t.get_component_keys():
-        q, lst = t.query_generator1(c)
+        q, lst = t.query_generator(c)
         print t.get_connector_name()
         print q, lst
     print t.comp_formatter()
