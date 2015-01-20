@@ -101,7 +101,7 @@ class Factory(object):
     def build(self):
         '''
         '''
-        f = formatter()
+        f = formatter.Formatter('cpsmongo', 'canopsis')
         # kind=1 means to get formatted components
         components = f.get_event_type(kind=1)
         # Operator components
@@ -215,3 +215,7 @@ class Factory(object):
         # Create the Topology
         root_id = f.get_root_id()
         self.create_topology(root_id, conn_list, node_list)
+
+if __name__ == '__main__':
+    fact = Factory()
+    fact.build()

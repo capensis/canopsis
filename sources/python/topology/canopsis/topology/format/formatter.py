@@ -121,7 +121,7 @@ class Formatter(object):
     def get_components(self):
         '''
         '''
-        return self.data.get(self.TOPOIDS[0])
+        return self.data.get(self.TOPOIDS[1])
 
     def get_component_keys(self):
         '''
@@ -197,6 +197,34 @@ class Formatter(object):
         bes_list = []
         operators = {}
         components = comps
+        for comp in components.get(self.EVENT_TYPE[0]):
+            if comp.values()[0].get('label') == self.OPERATOR_ID[0]:
+                clt_list.append(comp)
+                operators[self.OPERATOR_ID[0]] = clt_list
+            if comp.values()[0].get('label') == self.OPERATOR_ID[1]:
+                wst_list.append(comp)
+                operators[self.OPERATOR_ID[1]] = wst_list
+            if comp.values()[0].get('label') == self.OPERATOR_ID[2]:
+                and_list.append(comp)
+                operators[self.OPERATOR_ID[2]] = and_list
+            if comp.values()[0].get('label') == self.OPERATOR_ID[3]:
+                or_list.append(comp)
+                operators[self.OPERATOR_ID[3]] = or_list
+            if comp.values()[0].get('label') == self.OPERATOR_ID[4]:
+                bes_list.append(comp)
+                operators[self.OPERATOR_ID[4]] = bes_list
+        return operators
+
+    def match_operator(self, kind=0):
+        '''
+        '''
+        clt_list = []
+        wst_list = []
+        and_list = []
+        or_list = []
+        bes_list = []
+        operators = {}
+        components = self.get_event_type(kind)
         for comp in components.get(self.EVENT_TYPE[0]):
             if comp.values()[0].get('label') == self.OPERATOR_ID[0]:
                 clt_list.append(comp)
