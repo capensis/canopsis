@@ -99,8 +99,14 @@ class TimeSerieTest(TestCase):
 
                     aggregated_points = timeserie.calculate(points, timewindow)
                     len_aggregated_points = len(aggregated_points)
-                    self.assertIn(len(timesteps) - 1, (
-                        len_aggregated_points, len_aggregated_points + 1))
+                    self.assertIn(
+                        len(timesteps) - 1,
+                        (
+                            len_aggregated_points - 1,
+                            len_aggregated_points,
+                            len_aggregated_points + 1
+                        )
+                    )
 
                 unit_length *= max_value_unit
 

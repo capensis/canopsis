@@ -46,8 +46,17 @@ class MetaConfigurable(type):
         result = type.__call__(cls, *args, **kwargs)
 
         if result.auto_conf or result.reconf_once:
+            # get configuration
+            conf = result.conf
+            # add a last category which contains args and kwargs as parameters
+            if kwargs:
+                init_category = Category(Configurable.INIT_CAT)
+                for name in kwargs:
+                    param = Parameter(name=name, value=kwargs[name])
+                    init_category += param
+                conf += init_category
             # apply configuration
-            result.apply_configuration()
+            result.apply_configuration(conf=conf)
 
         return result
 
@@ -69,6 +78,8 @@ class Configurable(object):
     DEFAULT_DRIVERS = '{0},{1}'.format(
         'canopsis.configuration.driver.file.json.JSONConfigurationDriver',
         'canopsis.configuration.driver.file.ini.INIConfigurationDriver')
+
+    INIT_CAT = 'init_cat'  #: initialization category
 
     CONF_PATH = 'configuration/configurable.conf'
 
