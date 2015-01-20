@@ -211,7 +211,8 @@ class Period(object):
             value = unit_values[unit]
             if unit is Period.WEEK:
                 monthcalendar = calendar.monthcalendar(
-                    datetime.year, datetime.month)
+                    datetime.year, datetime.month
+                )
                 for week_index, week in enumerate(monthcalendar):
                     if datetime.day in week:
                         datetime_value = week_index
