@@ -347,5 +347,51 @@ class Formatter(object):
             return a == b
 
 if __name__ == '__main__':
-    f = Formatter('cpsmongo', 'canopsis')
-    print f.loads()
+    t = Formatter('cpsmongo', 'canopsis')
+    print t.loads()
+
+    for k, v in t.get_event_type().iteritems():
+        print k
+        print v
+    print ('\n\n\n')
+
+    for k, v in t.get_source_type().iteritems():
+        print k
+        print ('\n\n')
+        print v
+    print t.get_component_keys()
+    
+    print t.get_comp_graph()
+
+    t.topology_format()
+
+    print t.query_generator()
+
+    print t.get_connector_name()
+
+    print t.is_context_compatible('component-1371')
+
+    for c in t.get_component_keys():
+        print t.is_context_compatible(c)
+
+    for c in t.get_component_keys():
+        q, lst = t.query_generator1(c)
+        print t.get_connector_name()
+        print q, lst
+    print t.comp_formatter()
+
+    print t.comp_formatter().keys()
+
+    print t.match_operator(1).get(t.OPERATOR_ID[3])
+
+    for c in t.match_operator(1).get(t.OPERATOR_ID[3]):
+        print c.keys()[0]
+        print c.values()[0]
+        print c.values()[0].get('form')
+        print len(c.values()[0].get('form'))
+        print c.values()[0].get('form').get('items')
+        print len(c.values()[0].get('form').get('items'))
+        print ('data')
+        print c.values()[0].get('form').get('items')[0].get('value')
+        print c.values()[0].get('form').get('items')[1].get('value')
+        print c.values()[0].get('form').get('items')[2].get('value')
