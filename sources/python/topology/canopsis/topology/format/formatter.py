@@ -67,13 +67,13 @@ class Formatter(object):
             # Format string
             json_acceptable = query.replace("'", "\"")
             query = json.loads(json_acceptable)
-            cursor = db.events.findOne(query)
+            cursor = db.objectv1.find(query)
         else:
             query = self.query_generator()[0]
             # Format string
             json_acceptable = query.replace("'", "\"")
             query = json.loads(json_acceptable)
-            cursor = db.events.findOne(query)
+            cursor = db.eventsv1.findOne(query)
         connection.close()
         return cursor
 
