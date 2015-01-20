@@ -5,15 +5,11 @@
 	},
 	"categories": [{
 		"title": "General",
-		"keys":["title", "html", "filters","events", "use_code"]
+		"keys":["title", "html"]
 	},
 	{
-		"title": "Events",
-		"keys":["use_events"]
-	},
-	{
-		"title": "Metrics",
-		"keys":["use_metrics"]
+		"title": "Series",
+		"keys":["series"]
 	},{
 		"title": "Mixins",
 		"keys":["mixins"]
@@ -23,38 +19,17 @@
 			"type": "string"
 		},
 		"html": {
+			"description": "Allow writting widget text template with some helpers. Refer to the documentation to get information about all availables features.",
 			"type": "string",
 			"role": "richtext"
 		},
-		"events": {
-			"type": "string",
-			"role": "cfilter"
-		},
-		"filters": {
-			"type": "array",
-			"items": {
-				"type": "string"
-			}
-		},
-		"use_code": {
-			"type": "boolean",
-			"default": false
-		},
-		"use_events": {
-			"type": "array",
-			"items": {
-				"type": "string"
-			},
-			"role": "eventselector",
-            "title": "Events data source"
-		},
-        "use_metrics": {
+        "series": {
+        	"description": "Select computed metric values usable in the texteditor. When many points selected for the serie interval, the last one's value only is displayed.",
             "type": "array",
-            "items": {
-                "type": "string"
-            },
-            "role": "cmetric",
-            "title": "Metrics data source"
+            "role": "arrayclassifiedcrecordselector",
+            "model": "serie",
+			"crecordtype": "serie",
+			"multiselect": true
         },
    		"mixins": {
 			"type": "array",
