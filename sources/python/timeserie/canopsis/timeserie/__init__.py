@@ -107,7 +107,7 @@ class TimeSerie(Configurable):
 
     @property
     def aggregation(self):
-        return self._aggregation
+        return self._aggregation.upper()
 
     @aggregation.setter
     def aggregation(self, value):
@@ -272,6 +272,9 @@ class TimeSerie(Configurable):
 
                 if i >= points_len:
                     break
+
+        else:
+            result = points
 
         return result
 
