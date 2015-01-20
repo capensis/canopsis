@@ -39,7 +39,7 @@ class ChangeStateTest(TestCase):
     def setUp(self):
 
         self.toponode = TopoNode()
-        self.assertEqual(TopoNode.state(self.toponode), 0)
+        self.assertEqual(self.toponode.state, 0)
         self.new_state = 1
 
     def test_state(self):
@@ -62,7 +62,7 @@ class ChangeStateTest(TestCase):
     def tearDown(self):
 
         toponode = tm.get_vertices(ids=self.toponode.id)
-        self.assertEqual(TopoNode.state(toponode), self.new_state)
+        self.assertEqual(toponode.state, self.new_state)
         tm.del_elts()
 
 
@@ -113,7 +113,7 @@ class StateFromSourcesTest(TestCase):
             toponode=toponode, event=event, manager=tm, ctx={},
             **self.get_kwargs()
         )
-        self.assertEqual(toponode.data['state'], 0)
+        self.assertEqual(toponode.state, 0)
 
     def test_sources(self):
         """
@@ -137,7 +137,7 @@ class StateFromSourcesTest(TestCase):
             toponode=toponode, event=event, manager=tm, ctx={},
             **self.get_kwargs()
         )
-        self.assertEqual(toponode.data['state'], self.get_new_state())
+        self.assertEqual(toponode.state, self.get_new_state())
         edge.delete(manager=tm)
         for source in sources:
             source.delete(manager=tm)

@@ -120,10 +120,10 @@ class GraphElement(object):
     Contains an ID and a type.
     """
 
-    ID = Storage.DATA_ID  #: graph element id
-    TYPE = 'type'  #: graph element type name
-    BASE_TYPE = '_type'  #: base graph element type name
-    _CLS = '_cls'  #: graph element class type
+    ID = Storage.DATA_ID  #: graph element id.
+    TYPE = 'type'  #: graph element type name.
+    BASE_TYPE = '_type'  #: base graph element type name.
+    _CLS = '_cls'  #: graph element class type.
 
     __slots__ = (ID, TYPE)
 
@@ -223,7 +223,6 @@ class GraphElement(object):
         result[GraphElement._CLS] = path(self_type)
         # set base type
         result[GraphElement.BASE_TYPE] = self.BASE_TYPE
-
         return result
 
     def resolve_refs(self, elts, manager):

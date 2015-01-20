@@ -79,7 +79,7 @@ def change_state(
         toponode = manager.get_elts(ids=toponode)
 
     # update toponode state from ctx
-    TopoNode.state(toponode, state)
+    toponode.state = state
     toponode.save(manager=manager)
 
     # update entity if necessary
