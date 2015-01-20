@@ -73,7 +73,7 @@ class Formatter(object):
             # Format string
             json_acceptable = query.replace("'", "\"")
             query = json.loads(json_acceptable)
-            cursor = db.eventsv1.findOne(query)
+            cursor = db.eventsv1.find(query)
         connection.close()
         return cursor
 
@@ -121,7 +121,7 @@ class Formatter(object):
     def get_components(self):
         '''
         '''
-        return self.data.get(self.TOPOIDS[0])
+        return self.data.get(self.TOPOIDS[1])
 
     def get_component_keys(self):
         '''
@@ -197,6 +197,34 @@ class Formatter(object):
         bes_list = []
         operators = {}
         components = comps
+        for comp in components.get(self.EVENT_TYPE[0]):
+            if comp.values()[0].get('label') == self.OPERATOR_ID[0]:
+                clt_list.append(comp)
+                operators[self.OPERATOR_ID[0]] = clt_list
+            if comp.values()[0].get('label') == self.OPERATOR_ID[1]:
+                wst_list.append(comp)
+                operators[self.OPERATOR_ID[1]] = wst_list
+            if comp.values()[0].get('label') == self.OPERATOR_ID[2]:
+                and_list.append(comp)
+                operators[self.OPERATOR_ID[2]] = and_list
+            if comp.values()[0].get('label') == self.OPERATOR_ID[3]:
+                or_list.append(comp)
+                operators[self.OPERATOR_ID[3]] = or_list
+            if comp.values()[0].get('label') == self.OPERATOR_ID[4]:
+                bes_list.append(comp)
+                operators[self.OPERATOR_ID[4]] = bes_list
+        return operators
+
+    def match_operator(self, kind=0):
+        '''
+        '''
+        clt_list = []
+        wst_list = []
+        and_list = []
+        or_list = []
+        bes_list = []
+        operators = {}
+        components = self.get_event_type(kind)
         for comp in components.get(self.EVENT_TYPE[0]):
             if comp.values()[0].get('label') == self.OPERATOR_ID[0]:
                 clt_list.append(comp)
@@ -309,9 +337,8 @@ class Formatter(object):
                 if d == 'type':
                     comps.get(c)[unicode(d)] = unicode(comps.get(c).get(self.TYPE[0]))
                 else:
-                    if res is not None:
-                        comps.get(c)[unicode(d)] = res.get(unicode(d))
-            return comps
+                    comps.get(c)[unicode(d)] = res.get(unicode(d))
+        return comps
 
     def get_root(self):
         '''
@@ -363,8 +390,6 @@ if __name__ == '__main__':
     
     print t.get_comp_graph()
 
-    t.topology_format()
-
     print t.query_generator()
 
     print t.get_connector_name()
@@ -375,7 +400,7 @@ if __name__ == '__main__':
         print t.is_context_compatible(c)
 
     for c in t.get_component_keys():
-        q, lst = t.query_generator1(c)
+        q, lst = t.query_generator(c)
         print t.get_connector_name()
         print q, lst
     print t.comp_formatter()

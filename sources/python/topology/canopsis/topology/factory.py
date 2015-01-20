@@ -29,8 +29,8 @@ from canopsis.topology.rule import action, condition
 
 class Factory(object):
     """docstring for Factory"""
-    def __init__(self, arg):
-        self.arg = arg
+    def __init__(self):
+        pass
 
     def create_topology(self, topo_name, topoEdge, topoNode):
         '''
@@ -101,7 +101,7 @@ class Factory(object):
     def build(self):
         '''
         '''
-        f = formatter()
+        f = formatter.Formatter('cpsmongo', 'canopsis')
         # kind=1 means to get formatted components
         components = f.get_event_type(kind=1)
         # Operator components
@@ -112,9 +112,11 @@ class Factory(object):
         conn_list = []
         # Create components
         for c in components.get(f.EVENT_TYPE[1]):
-            node_list.append(self.create_component(c.keys()[0], c.values[0]))
+            print c.keys()[0]
+            print c.values()[0]
+            node_list.append(self.create_component(c.keys()[0], c.values()[0]))
         for c in components.get(f.EVENT_TYPE[2]):
-            node_list.append(self.create_component(c.keys()[0], c.values[0]))
+            node_list.append(self.create_component(c.keys()[0], c.values()[0]))
         # OPERATOR_ID[0] --> Cluster
         for cmps in opcomps.get(f.OPERATOR_ID[0]):
             for c in cmps:
@@ -215,3 +217,7 @@ class Factory(object):
         # Create the Topology
         root_id = f.get_root_id()
         self.create_topology(root_id, conn_list, node_list)
+
+if __name__ == '__main__':
+    fact = Factory()
+    fact.build()

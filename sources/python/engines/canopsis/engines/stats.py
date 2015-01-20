@@ -19,9 +19,9 @@
 # ---------------------------------
 
 from canopsis.engines import Engine
-from canopsis.perfdata.manager import PerfData
-from canopsis.context.manager import Context
-
+from canopsis.old.storage import get_storage
+from canopsis.old.account import Account
+from canopsis.old.event import get_routingkey, forger
 from time import time
 
 
@@ -39,13 +39,99 @@ class engine(Engine):
 
         super(engine, self).__init__(*args, **kargs)
 
-        self.perfdata = PerfData()
-
-    def pre_run(self):
-        pass
+        self.states_str = {
+            0: 'info',
+            1: 'minor',
+            2: 'major',
+            3: 'critical'
+        }
+        self.storage = get_storage(
+            namespace='events',
+            account=Account(
+                user="root",
+                group="root"
+            )
+        )
 
     def consume_dispatcher(self, event, *args, **kargs):
-        pass
+        self.logger.debug('Entered in stats consume dispatcher')
 
-    def work(self, event, *args, **kargs):
-        pass
+        self.perf_data_array = []
+
+        self.compute_states()
+
+        self.publish_states()
+
+    def compute_states(self):
+
+        # Event count computation by state
+        for state in [0, 1, 2, 3]:
+            # There is an index on state field in events collection,
+            # that would keep the query efficient
+            count = self.storage.get_backend().find(
+                {'state': state}
+            ).count()
+
+            state_str = self.states_str[state]
+
+            self.perf_data_array.append({
+                'metric': 'states_{}'.format(state_str),
+                'value': count
+            })
+
+        for source_type in ['resource', 'component']:
+            # Event count source type
+            count = self.storage.get_backend().find(
+                {'source_type': source_type}
+            ).count()
+
+            self.perf_data_array.append({
+                'metric': 'states_{}'.format(
+                    source_type
+                ),
+                'value': count
+            })
+
+            # Event count by source type and state
+            for state in [0, 1, 2, 3]:
+
+                # There is an index on state and source_type field in
+                # events collection, that would keep the query efficient
+                count = self.storage.get_backend().find(
+                    {'source_type': source_type, 'state': state}
+                ).count()
+
+                state_str = self.states_str[state]
+
+                self.perf_data_array.append({
+                    'metric': 'states_{}_{}'.format(
+                        source_type,
+                        state_str
+                    ),
+                    'value': count
+                })
+
+        self.logger.debug('perf_data_array {}'.format(self.perf_data_array))
+
+    def publish_states(self):
+
+        stats_event = forger(
+            connector='canopsis',
+            connector_name='engine',
+            event_type="check",
+            source_type="resource",
+            component='stats',
+            resource='internal',
+            state=0,
+            perf_data_array=self.perf_data_array
+        )
+
+        rk = get_routingkey(stats_event)
+
+        self.logger.debug('Publishing {} : {}'.format(rk, stats_event))
+
+        self.amqp.publish(
+            stats_event,
+            rk,
+            self.amqp.exchange_name_events
+        )

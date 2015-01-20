@@ -82,8 +82,8 @@ class PerfData(MiddlewareRegistry):
         limit=0, skip=0, timeserie=None
     ):
         """
-        Get a set of data related to input data_id on the timewindow \
-        and input period.
+        Get a set of data related to input data_id on the timewindow and input
+            period.
         If with_meta, result is a couple of (points, list of meta by timestamp)
         """
 
@@ -108,8 +108,8 @@ class PerfData(MiddlewareRegistry):
         self, metric_id, period=None, with_meta=True, timestamp=None
     ):
         """
-        Get the closest point before input timestamp. Add meta informations \
-        if with_meta.
+        Get the closest point before input timestamp. Add meta informations if
+            with_meta.
         """
 
         if timestamp is None:
@@ -158,7 +158,7 @@ class PerfData(MiddlewareRegistry):
         Put a (list of) couple (timestamp, value), a meta into rated_documents
         related to input period.
         kwargs will be added to all document in order to extend
-        periodic_documents
+        periodic_documents.
 
         :param iterable points: points to put. One point (timestamp, value) or
             points (timestamp, values)+.
@@ -211,7 +211,8 @@ class PerfData(MiddlewareRegistry):
 
         if with_meta:
             self[PerfData.META_STORAGE].remove(
-                data_ids=metric_id, timewindow=timewindow, cache=cache)
+                data_ids=metric_id, timewindow=timewindow, cache=cache
+            )
 
     def put_meta(self, metric_id, meta, timestamp=None, cache=False):
         """

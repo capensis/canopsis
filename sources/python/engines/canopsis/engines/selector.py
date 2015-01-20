@@ -27,10 +27,12 @@ import time
 
 class engine(Engine):
     """
-        This engine's goal is to compute an aggregated information from an event selection.
-        The event selection is done thanks to a filter whitch can include event, exclude events or select them from a cfilter.
-        The worst state is then computed on the selected event set and a new event holding this information is produced.
-        This computation is triggered each time the crecord dispatcher emit a crecord event of selector type.
+        This engine's goal is to compute an aggregated information from an
+        event selection. The event selection is done thanks to a filter witch
+        can include event, exclude events or select them from a cfilter. The
+        worst state is then computed on the selected event set and a new event
+        holding this information is produced. This computation is triggered
+        each time the crecord dispatcher emit a crecord event of selector type.
     """
 
     etype = 'selector'
@@ -44,7 +46,7 @@ class engine(Engine):
         self.thd_crit_sec_per_evt = 2
 
     def pre_run(self):
-        #load selectors
+        # Load selectors
         self.storage = get_storage(
             namespace='object', account=Account(user="root", group="root"))
 
@@ -81,11 +83,11 @@ class engine(Engine):
                     name
                 ))
 
-            #Update crecords informations
+            # Update crecords informations
             self.crecord_task_complete(event_id)
 
         self.nb_beat += 1
-        #set record free for dispatcher engine
+        # Set record free for dispatcher engine
 
     def publish_event(self, selector):
 
@@ -100,7 +102,7 @@ class engine(Engine):
         )
 
         if publish_ack:
-            #define a clean ack information to the event
+            # Define a clean ack information to the event
             now = int(time.time())
             selector_event['ack'] = {
                 'timestamp': now,
@@ -109,9 +111,12 @@ class engine(Engine):
                 'comment': 'All matched event are acknowleged',
                 'isAck': True
             }
-            self.logger.debug(' + Selector event is ack because all matched NOK event are ack')
+            self.logger.debug(
+                ' + Selector event is ack because ' +
+                'all matched NOK event are ack'
+            )
         else:
-            #define or reset ack key for selector generated event
+            # Define or reset ack key for selector generated event
             selector_event['ack'] = {}
             self.logger.debug(' + Selector event is NOT ack')
 
