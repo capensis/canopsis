@@ -73,7 +73,7 @@ class Formatter(object):
             # Format string
             json_acceptable = query.replace("'", "\"")
             query = json.loads(json_acceptable)
-            cursor = db.eventsv1.findOne(query)
+            cursor = db.eventsv1.find(query)
         connection.close()
         return cursor
 
