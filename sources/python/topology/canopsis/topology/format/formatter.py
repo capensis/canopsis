@@ -337,9 +337,8 @@ class Formatter(object):
                 if d == 'type':
                     comps.get(c)[unicode(d)] = unicode(comps.get(c).get(self.TYPE[0]))
                 else:
-                    if res is not None:
-                        comps.get(c)[unicode(d)] = res.get(unicode(d))
-            return comps
+                    comps.get(c)[unicode(d)] = res.get(unicode(d))
+        return comps
 
     def get_root(self):
         '''

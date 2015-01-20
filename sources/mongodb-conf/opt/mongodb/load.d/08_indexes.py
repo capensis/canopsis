@@ -33,7 +33,8 @@ storage = get_storage(account=root, namespace='object')
 
 INDEXES = {
     'object': [
-        [('crecord_type', 1)]
+        [('crecord_type', 1)],
+        [('crecord_type', 1), ('crecord_name', 1)],
     ],
     'events': [
         [
@@ -45,7 +46,7 @@ INDEXES = {
             ('state', 1)
         ], [
             ('source_type', 1),
-            ('tags', 1)
+            ('state', 1)
         ], [
             ('event_type', 1),
             ('component', 1),
@@ -53,8 +54,9 @@ INDEXES = {
         ], [
             ('event_type', 1),
             ('resource', 1)
-        ], [('event_type', 1)],
+        ],
         [('event_type', 1)],
+        [('source_type', 1)],
         [('domain', 1)],
         [('perimeter', 1)],
         [('connector', 1)],
@@ -77,7 +79,6 @@ INDEXES = {
         [('event_type', 1), ('component', 1), ('resource', 1)],
         [('event_type', 1), ('resource', 1)],
         [('event_type', 1)],
-        [('state_type', 1)],
         [('tags', 1)],
         [('referer', 1)],
         [('event_type', 1)],
@@ -89,15 +90,6 @@ INDEXES = {
         [('status', 1)],
         [('state', 1)],
         [('ack', 1)],
-    ],
-    'entities': [
-        [('type', 1)],
-        [('type', 1), ('name', 1)],
-        [('type', 1), ('component', 1), ('name', 1)],
-        [('type', 1), ('component', 1), ('id', 1)],
-        [('type', 1), ('component', 1), ('resource', 1), ('id', 1)],
-        [('type', 1), ('component', 1), ('resource', 1), ('name', 1)],
-        [('type', 1), ('nodeid', 1)]
     ],
     'downtime': [
         [('start', 1), ('end', 1)]
