@@ -46,9 +46,6 @@ class engine(Engine):
             account=Account(user='root')
         ).get_backend()
 
-        # task ran daily
-        self.beat_interval = 3600 * 24
-
     def get_configuration(self):
         """ Retrieve engine configuration from database """
         self.logger.info('Reloading configuration from database')
@@ -124,8 +121,8 @@ class engine(Engine):
 
         return compare_duration
 
-    def beat(self):
-
+    def consume_dispatcher(self, event, *args, **kargs):
+        self.logger.warning('enter datacleaner beat')
         # getting retention date limit
         retention_date_limit = self.get_retention_date()
 

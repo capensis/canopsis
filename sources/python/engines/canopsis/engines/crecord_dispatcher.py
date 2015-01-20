@@ -50,6 +50,18 @@ class engine(Engine):
                 'delay': 60,
                 'elapsed_since_last_beat': 0
             },
+            'eventstore': {
+                'delay': 60,
+                'elapsed_since_last_beat': 0
+            },
+            'datacleaner': {
+                'delay': 3600,
+                'elapsed_since_last_beat': 0
+            },
+            'stats': {
+                'delay': 60,
+                'elapsed_since_last_beat': 0
+            },
         }
 
     def pre_run(self):
