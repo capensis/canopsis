@@ -37,14 +37,14 @@ class engine(Engine):
 
     def work(self, event, *args, **kargs):
 
-        ## Get perfdata
+        # Get perfdata
         perf_data = event.get('perf_data')
         perf_data_array = event.get('perf_data_array', [])
 
         if perf_data_array is None:
             perf_data_array = []
 
-        ### Parse perfdata
+        # Parse perfdata
         if perf_data:
 
             self.logger.debug(' + perf_data: {0}'.format(perf_data))
@@ -58,7 +58,7 @@ class engine(Engine):
 
         self.logger.debug(' + perf_data_array: {0}'.format(perf_data_array))
 
-        ### Add status informations
+        # Add status informations
         event_type = event.get('event_type')
 
         handled_event_types = ['check', 'selected', 'sla']
@@ -97,7 +97,7 @@ class engine(Engine):
 
         event = deepcopy(event)
 
-        ## Metrology
+        # Metrology
         timestamp = event['timestamp'] if 'timestamp' in event else None
 
         if timestamp is not None:
